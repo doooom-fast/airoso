@@ -35,7 +35,36 @@ This train cannot converge until `fleet/MIGRATION.md` **M1** (publish + tag) and
 consumers) are done — there is no tag for `fleet.cli pin` to point at yet. `0004`'s first step (wire
 SD's `drive_test`) is independent and can start immediately.
 
-## Build matrix — measured 2026-07-25, k10-colorado through the engine (v0.21.1)
+## Build matrix — v0.22.0, per-track terrain resolution
+
+Every circuit now declares `terrain_cell_m` finer than its road (LAWS L3b). Deck-to-ground gap,
+before → after:
+
+| Track | cells | median gap | over 5 cm | drive | audit | kn5 verify |
+|---|---|---|---|---|---|---|
+| imi | 1.25 m | +0.091 → **+0.017** | 73.7% → **0.7%** | PASS | CLEAN | **passed** |
+| pueblo | 1.5 m | +0.136 → **+0.021** | 76.0% → **17.6%** | PASS | CLEAN | **passed** |
+| second-creek | 1.25 m | +0.138 → **+0.021** | 79.9% → **13.1%** | PASS | CLEAN | **passed** |
+| high-plains | 1.5 m | +0.300 → **+0.054** | 88.7% → **52.0%** | PASS | CLEAN | **passed** |
+| sand-creek | default | +0.020 | 0.8% | PASS | CLEAN | — |
+| lookout-lariat | default | — | — | PASS | CLEAN | dup meshes (0007) |
+
+All four circuits now pass drive_test, audit CLEAN, **and verify_kn5 with no duplicate meshes** —
+0007 did not reproduce at these resolutions. Not closing 0007 on that: it may be incidental to how
+the finer grass splits, and Lariat (unchanged, default cells) still fails it.
+
+**The single remaining blocker is a threshold policy, not geometry.** `ROAD_GAP_FRAC = 0.0` means
+zero samples may exceed 5 cm. Medians of ~2 cm sit well inside the design intent (1 cm clearance),
+but a few outliers (pueblo max +0.337) hold the fraction above zero. High Plains is the exception —
+its median sits *on* the line at +0.054 and wants finer cells still; it is also fabricated geometry,
+so it proves the pipeline rather than the track.
+
+The open question for Kevin: should "green means zero" mean zero samples, or zero at p95? Every
+track's p95 is already ≤ 0.080 m.
+
+## Build matrix — superseded (v0.21.1)
+
+### v0.21.1 table
 
 `GATE_EXCURSIONS_ADVISORY=1` (rc setting). Supersedes the v0.20.2 table below.
 

@@ -102,6 +102,20 @@ at speed) has never looked at the Lake Murray loop or the freeway network.
 
 ---
 
+## Running things (learned the hard way)
+
+Two failure modes cost several hours overnight, both of which *look* like the fleet breaking:
+
+- **`python3 -m fleet.cli` only works from this repo's root.** Launched from a project directory it
+  dies with `ModuleNotFoundError: No module named 'fleet'`, and the build matrix then prints FAIL for
+  every track having never run one. Use **`./fleet.sh`**, which cd's itself.
+- **A project's `build.sh` only exists in that project.** After any command that changes directory
+  (or one that times out and leaves the shell elsewhere), `./build.sh` gives `exit 127`. Always
+  invoke it with an explicit absolute path.
+
+Neither error produces track output, so treat "every track failed instantly with no gate output" as
+a launch mistake, not a regression.
+
 ## Adding a track
 
 1. Create `tracks/<slug>/track.config.json` in the owning repo, with S5's keys, an `archetype` (S6),

@@ -133,16 +133,16 @@
     },
     "k10-colorado/high-plains": {
       "kind": "circuit_port",
-      "fidelity": "FABRICATED",
-      "source": "rough KML trace off the old unified map",
-      "action": "re-source to real location + real aerial + real 3DEP"
+      "fidelity": "real",
+      "source": "OSM highway=raceway ways at Deer Trail (39.7353,-103.8980), closed 2.00 mi cycle",
+      "note": "Re-sourced 2026-07-26 from fabricated geometry. Full 2.55 mi course needs a 110 m aerial trace where OSM's north section dangles."
     },
     "k10-colorado/second-creek": {
       "kind": "circuit_port",
       "fidelity": "FABRICATED",
+      "historical": true,
       "source": "rough KML trace off the old unified map",
-      "action": "re-source; the facility is closed (historical port)",
-      "historical": true
+      "action": "BLOCKED on sourcing. Verified against Overpass 2026-07-26: the circuit is NOT in OSM (only 'Second Creek Trail', a footpath, and the creek). It closed in the 2000s and the site was redeveloped, so no current imagery shows it either. Needs a georeferenced PRE-2008 aerial plus two control points, then the aerial-tracing skill. Until then its geometry is invented and it must not ship as a real port (L1)."
     },
     "k10-colorado-rally/dragon-tail-gravel": {
       "kind": "rally_stage",

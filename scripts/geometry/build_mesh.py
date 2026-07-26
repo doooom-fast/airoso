@@ -665,9 +665,31 @@ def build(project_dir: str | Path) -> dict:
     # deck+apron raft perched a metre above the ACTUAL terrain along the whole Lariat while flat
     # Sand Creek sat perfectly (same code, different terrain frequency). ~6 m cells halve the
     # bench error at the source; split_mesh_under_cap absorbs the vertex count.
-    up = 8
-    while up > 3 and ((_nx0 - 1) * up + 1) * ((_ny0 - 1) * up + 1) > 1_100_000:
-        up -= 1
+    # terrain_cell_m (opt-in, PER TRACK): drive the upsample from a TARGET CELL SIZE instead of the
+    # flat budget. The rule this whole block exists for is "terrain triangles must be fine enough to
+    # follow the road cut" — but a cell can only follow a cut it is SMALLER than. A 6.5 m graded
+    # county road on 10 m cells is narrower than one triangle, so that triangle bridges over the
+    # deck no matter how well its corner nodes are clamped. Tracks that want terrain finer than
+    # their road declare it; everything else keeps the 1.1 M budget and its exact current output.
+    #
+    # Restored from v0.19.0 — the key was dropped after that tag while the rally stages still
+    # declared it, so their declared 8 m cells were silently ignored and terrain went back to
+    # spanning the carriageway (fleet ledger 0006: Dragon Tail 10 -> 6314 ground-on-top at HEAD).
+    _cell_target = float(cfg_raw.get("terrain_cell_m") or 0.0)
+    if _cell_target:
+        _budget = int(cfg_raw.get("terrain_vertex_budget", 3_000_000))
+        # Cap 32, not 8: x8 is the DEFAULT budget ceiling, but a track that declares a
+        # target is asking for cells finer than its road and the vertex budget below is
+        # the real bound. IMI already hits x8 by default, so the old cap left it no lever.
+        up = max(3, min(32, int(math.ceil(float(meta["spacing_m"]) / _cell_target))))
+        while up > 3 and ((_nx0 - 1) * up + 1) * ((_ny0 - 1) * up + 1) > _budget:
+            up -= 1
+        print(f"[build_mesh] terrain_cell_m={_cell_target} m declared -> upsample x{up} "
+              f"(~{float(meta['spacing_m']) / up:.1f} m cells, budget {_budget:,} verts)")
+    else:
+        up = 8
+        while up > 3 and ((_nx0 - 1) * up + 1) * ((_ny0 - 1) * up + 1) > 1_100_000:
+            up -= 1
     grid, meta = ribbon.upsample_grid(grid, meta, up)
     print(f"[build_mesh] grass upsample x{up} -> {meta['nx']}x{meta['ny']} = {meta['nx']*meta['ny']} verts (< 65535)")
     grid_xyz = project_grid(grid, meta, origin, elev0, mirror_x=mirror_x)

@@ -180,10 +180,12 @@ def build(track_dir: Path) -> Path:
         # the barrier. 12 meshes were affected there while every other gate read green. Trigger on
         # the raw loop count: an earlier attempt keyed off a render-vertex estimate and never fired,
         # because the smooth-shading rescue above makes that estimate the position count (~30k).
-        # 1GRASS is excluded: it is smooth-shaded and welded watertight, the exporter has never
-        # duplicated its names, and re-splitting welded terrain risks opening a seam the car falls
-        # through. The observed duplicates were all props/walls.
-        if len(ob.data.loops) > 98_000 and not ob.name.upper().startswith("1GRASS"):
+        # 1GRASS and 1ROAD are excluded. Rebuilding faces with from_pydata does not carry the
+        # source's custom split normals, so a split drivable surface came back FACE-DOWN
+        # ('1ROAD_shoulder_a_0', 8846 up / 4577 dn) — the car falls through it (L6). Welded terrain
+        # has the same hazard plus seam risk. The duplicates actually observed were props and walls
+        # (1WALL_barrier, LAMPHEAD, LIGHTPOST), which this still covers.
+        if len(ob.data.loops) > 98_000 and not ob.name.upper().startswith(("1GRASS", "1ROAD")):
             _split_over_cap(ob, cap=60000)
             continue
         if len(ob.data.vertices) > 65535:

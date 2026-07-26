@@ -35,7 +35,50 @@ This train cannot converge until `fleet/MIGRATION.md` **M1** (publish + tag) and
 consumers) are done — there is no tag for `fleet.cli pin` to point at yet. `0004`'s first step (wire
 SD's `drive_test`) is independent and can start immediately.
 
-## Build matrix — measured 2026-07-25, k10-colorado through the engine (v0.20.2)
+## Build matrix — measured 2026-07-25, k10-colorado through the engine (v0.21.1)
+
+`GATE_EXCURSIONS_ADVISORY=1` (rc setting). Supersedes the v0.20.2 table below.
+
+| Track | drive_test | audit_mesh | kn5 stage | blocker |
+|---|---|---|---|---|
+| sand-creek | **PASS** | **CLEAN** | — | road-float check (see below) |
+| lookout-lariat | **PASS** | **CLEAN** | verify FAIL | dup mesh names — [0007](../feedback/0007-exporter-duplicates-mesh-names.md) |
+| imi | **PASS** | **CLEAN** | — | road floating 73.7% |
+| pueblo | **PASS** | **CLEAN** | — | road floating 76.0% |
+| second-creek | **PASS** | **CLEAN** | — | road floating 79.9% · *fabricated* |
+| high-plains | **PASS** | **CLEAN** | — | road floating 88.7% · *fabricated* |
+| aspen | FAIL | — | — | drive test |
+| grand-junction | FAIL | — | — | drive test |
+| pikes-peak | FAIL | — | — | drive test |
+
+**6 of 9 pass drive_test AND audit clean**, up from 0 building at all at the start of the day.
+Sand Creek needed 29 despiked strip verts to get there; the rest came from un-forking colorado
+(M3), the bridgeless-track crash fix (v0.20.2) and the curb-flush rescope (v0.21.0).
+
+### The open contradiction — read this before working on road float
+
+`kn5_ground_check` reports the road floating over ground on **73.7–88.7%** of samples for four
+tracks. The same four percentages appeared before AND after un-forking, so it is not a fork
+artifact and it is stable.
+
+But two other gates measuring closely related things disagree, on the same builds:
+
+- `drive_test`: **0 daylight gaps at edges**
+- `audit_mesh` check B (terrain poking through road): **0**; check H (ground cutting into road): **0**
+
+They cannot all be right about one piece of geometry. The difference worth chasing first is *what
+each reads*: `audit_mesh` and `drive_test` measure the built `track.obj`, while `kn5_ground_check`
+measures the **shipped kn5** — which on this path is written via an intermediate FBX
+(`[build_kn5] no direct kn5 exporter found — wrote AC-standard FBX`) and a second Blender program.
+So the disagreement may be about alignment between those two artifacts rather than about the road.
+
+Given today's pattern — three of four investigations found a gate measuring the wrong thing rather
+than broken geometry — establish which artifact is wrong before changing any terrain code.
+
+## Build matrix — superseded (v0.20.2)
+
+### v0.20.2 table
+
 
 First honest sweep, after un-forking colorado (M3). `GATE_EXCURSIONS_ADVISORY=1` (rc setting).
 

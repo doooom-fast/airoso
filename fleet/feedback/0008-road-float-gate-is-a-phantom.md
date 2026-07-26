@@ -33,19 +33,21 @@ Then the decisive test — **sink the entire grass mesh by 1 metre** before writ
 A metre of terrain moved under the road and the "road floating over ground" metric did not budge.
 It is not measuring the built terrain.
 
-## Two defects found so far
+## Two hypothesised causes — BOTH CHECKED AND WRONG
 
-1. **`1KERB` is in the "GRASS ONLY" terrain set.** Triangles are bucketed with
-   `(tri_pav if name.startswith("1ROAD") else tri_grs)`, so `1KERB` lands in `tri_grs` — and the
-   gate then measures the deck against its own kerb. The block's own comment forbids exactly this:
-   *"GRASS ONLY … measuring the deck against its own shoulder/kerb/underside apron is the road
-   resting on itself."* Excluding `1KERB` moves the numbers (0.091 → 0.133, 73.7% → 87.6%), so it
-   is real — but it is not the whole story, since the result is still insensitive to the 1 m sink.
+Recorded so nobody re-tests them:
 
-2. **Most of the road is never sampled.** `kn5_road = kn5.get("1ROAD_MAIN", []) + kn5.get("1ROAD", [])`
-   — exact-key lookups. The kn5 carries **20,244** `1ROAD*` vertices, but the gate ends up with
-   **137 samples** (`road[::7]` ⇒ ~960 verts). Groups named `1ROAD_main`, `1ROAD_shoulder_a` etc.
-   match neither key, so the check runs on a small unrepresentative slice.
+1. **"`1KERB` is wrongly in the GRASS-ONLY terrain set."** Wrong — it is deliberate. A later pass
+   adds `1RUNOFF` to `tri_grs` describing it as "ground cover exactly like `1KERB`". The
+   "GRASS ONLY" comment belongs to a different variable (`ground_h`), not to `tri_grs`.
+   Measured on the shipped kn5: of 414 deck samples, **1GRASS supplies the surface 348 times** and
+   `1KERB` only 66 — grass already dominates the reference.
+
+2. **"Most of the road is never sampled."** Wrong. `_bucket()` prefix-matches, so `1ROAD_main`
+   lands in `1ROAD_MAIN`. The check targets the DECK, and 137 samples over IMI's 1.44 km is one
+   per ~10 m — that is the intended density, not a truncation.
+
+**So the mechanism is still unknown.** The reproduction below is solid; the explanation is not.
 
 ## Consequence
 
@@ -56,13 +58,14 @@ Whatever the true deck-to-terrain relationship is on those tracks, this gate has
 Do not tune terrain code against this metric until it is fixed; that is chasing a number that does
 not move.
 
-## Fix
+## Next step
 
-1. Build the terrain reference from `1GRASS` **only** — matching the comment's stated intent.
-2. Collect road vertices by **prefix**, not exact key, so the whole road is sampled.
-3. Re-establish the baseline afterwards. The real gap may be fine, or may not — it is currently
-   unknown, and that is the honest position.
-4. Add a self-test: perturb the terrain by a known offset and assert the reported gap moves by that
+Start from the reproduction, not from a theory: instrument `kn5_ground_check` itself to dump, per
+sample, the road vertex, the surface it selected, that surface's mesh, and the resulting gap — for
+the SAME track built twice with a known terrain offset between them. The samples whose gap does not
+change by that offset will name the mechanism directly.
+
+Then add a self-test: perturb the terrain by a known offset and assert the reported gap moves by that
    offset. A gate that cannot detect a 1 m shift should fail loudly rather than report a number.
 
 ## Note on a related finding

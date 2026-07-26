@@ -1,148 +1,120 @@
-# Prodrive AC Builder
+# k10-track-agents
 
-Convert real-world road loops into playable Assetto Corsa (AC) tracks. Given a Google Maps
-screenshot, a location, and route notes, this project produces a complete, installable AC track
-folder — proper geometry, real elevation, accurate lighting, and multiple layout variants.
+**The track engine and the control plane above it.** This repo builds Assetto Corsa tracks from real
+world data, and it orchestrates the four project repos that own the tracks.
 
-First target: **Sand Creek Raceway** — a street loop in Commerce City, Colorado (US), with optional alternate routes.
-
-> **Working on the Steam game (_1978_), not an AC track?** This repo's pipeline is also the *seed*
-> for a UE5 driving-as-art game — gritty autumn 1978, codename `Gala`. The game lives in its own
-> repo, **`k10-motorsports/k10-1978`** — its plan is the source of truth for the game; this file
-> governs the AC track pipeline it reuses. What this repo owes the game: the `projects/gala-seed/`
-> route project and a `scripts/game/export_seed.py` bundle exporter (contract in the game repo's
-> `PIPELINE_BRIDGE.md`).
+It *is* `prodrive-ac-builder` — that repo's full history was absorbed here, `scripts/` and all, with
+package paths unchanged. See `fleet/MIGRATION.md` for the cutover state.
 
 ---
 
-## First principle
+## The two halves
 
-> **The screenshot is a selection aid, not data.**
+| | Path | What it is |
+|---|---|---|
+| **Engine** | `scripts/` | The pipeline: OSM/aerial/KML → centerline → real elevation → mesh → gates → kn5 → installable track folder. Consumer repos run these modules directly from a pinned checkout at `.engine/`. |
+| **Control plane** | `fleet/` | Which repos and tracks exist, what standards they must meet, what feedback is outstanding, and how a fix reaches all fifteen tracks at once. |
 
-Precise geometry derives from **OpenStreetMap via the Overpass API**. Hand-drawn **KML** is used
-*only* where the intended route deliberately leaves the real road network (shortcuts, private land,
-connectors). A map screenshot tells us *which* roads to grab — it is never traced for coordinates.
+**Never move or rename anything under `scripts/`.** Consumers execute
+`(cd .engine && python3 -m scripts.<pkg>.<mod> <ABSOLUTE-project-dir>)`. Those import paths are the
+seam that makes the whole fleet work; breaking them breaks every repo simultaneously.
 
-## Reproducibility
+## Read these before working
 
-> **The whole pipeline is reproducible from `track.config.json`.**
+- **`fleet/LAWS.md`** — the non-negotiable laws, each with the failure that bought it. This is the
+  single source; project repos point here rather than restating them. Read it before any geometry
+  change or any diagnosis.
+- **`fleet/STANDARDS.md`** — what a project repo must look like. Enforced by `fleet.cli lint`.
+- **`fleet/MIGRATION.md`** — the engine absorption cutover, still in progress.
+- **`fleet/feedback/README.md`** — how feedback becomes a fix on every track.
 
-Every track lives under `projects/<slug>/` and is fully described by its `track.config.json`.
-No hardcoded coordinates, widths, or rotations in scripts — read them from config, and write
-derived values (e.g. `true_north_rotation_deg`) back to it. A clean checkout plus the config plus
-the source screenshot must be enough to rebuild the track end to end.
+## The fleet
 
----
+Four repos, fifteen tracks, four kinds:
 
-## Build environment split
+| Kind | Meaning | Tracks |
+|---|---|---|
+| `fictional_street_circuit` | a racing loop invented on real streets | Sand Creek Raceway |
+| `street_port` | real public roads as they exist, route or network | Lookout Lariat, Lake Murray, SD freeway network |
+| `circuit_port` | a real facility, extant or shut down | IMI, Aspen, Grand Junction, Pikes Peak, Pueblo, High Plains, Second Creek |
+| `rally_stage` | a real point-to-point special stage | Dragon Tail, Under the Dragon (gravel + tarmac each) |
 
-| Platform | Role | Used for |
-|----------|------|----------|
-| **Mac** (headless) | Build engine | Data acquisition, geometry processing, Blender mesh building, kn5 export. Phases 1–5 are fully code-driven here. |
-| **Windows** | Drive & QA | AC + Content Manager + Custom Shaders Patch. Manual driving, AI line recording, visual QA. Phase 6 is the manual loop. |
+```bash
+python3 -m fleet.cli status      # repos, engine pins, drift
+python3 -m fleet.cli tracks      # every track, kind, archetype, version
+python3 -m fleet.cli lint        # standards check (exit 1 on FAIL)
+python3 -m fleet.cli feedback    # the ledger
+python3 -m fleet.cli build --run --from mesh
+```
 
-`ac-track-modding` documents what it **can't own**: AI recording and in-game testing require the
-Windows GUI. Don't pretend those steps are scriptable on Mac.
+Project repos live beside this one and are declared in `fleet/registry.json`: `k10-colorado`
+(circuits + the Lariat), `k10-colorado-rally` (Rangely stages), `k10-san-diego` (Lake Murray +
+freeway). Tracks are **discovered** by scanning, not listed by hand.
 
-## Coordinate & unit conventions
+## Orchestrators
 
-- **Units: meters.** Everything in the geometry/Blender/AC pipeline is metric.
-- **Up axis: Y-up** (AC / kn5 convention). Projection and mesh code target Y-up; convert once,
-  at the projection boundary, and stay consistent after.
-- **Origin:** set by `origin` in config (default `"centroid"` of the centerline). Project
-  `lat/lon/elev → local meters` relative to that origin.
-- **True north:** orient the mesh to true north so computed sun shadows align. The resolved
-  rotation is written back to `true_north_rotation_deg`.
+`.claude/agents/` — the reason this repo exists:
 
-## Surface naming (AC convention — enforced by `ac-track-modding`)
+- **`standards-auditor`** — audits the fleet against STANDARDS; sorts k10-colorado's 72 shadowing
+  modules into delete / port-up buckets.
+- **`feedback-router`** — raw observation → evidence-grounded ledger entry, routed to engine,
+  project, or standards.
+- **`geometry-surgeon`** — implements a diagnosed engine geometry fix and proves it with a gate.
+- **`fleet-builder`** — builds a selection across repos, reports the matrix *including its holes*.
+- **`engine-pin`** — operates the version seam: rehearse, cut over, converge, bisect.
 
-| Mesh prefix | Meaning |
-|-------------|---------|
-| `1ROAD_*` | Drivable physical surface, keyed to `surfaces.ini` |
-| `1KERB_*` | Kerb geometry / material |
-| *(no numeric prefix)* | Visual-only geometry (no physics) |
-
-**Required dummy objects:**
-- Start / pit: `AC_START_0..N`, `AC_PIT_0..N`
-- Timing: `AC_TIME_0_L` / `AC_TIME_0_R` (start-finish), `AC_TIME_1_L/R…` (one pair per sector)
-- Hotlap: `AC_HOTLAP_START_0`
-
-**Materials:** `ksGrass` for grass, a road shader for `1ROAD_*`, assigned via the AC Blender Tools
-addon's `settings.json`.
-
-## Elevation source priority
-
-1. **USGS 3DEP 1 m** — preferred for US locations (free, high resolution). Primary for Commerce City.
-2. **OpenTopography** — fallback / non-US coverage.
-3. **SRTM 30 m** — last-resort global fallback.
-
-Smooth aggressively *along the racing line* to avoid stepping. Commerce City is gentle terrain —
-expect mild grades, not big elevation.
+`.claude/skills/` — the pipeline skills (`gps-extraction`, `aerial-tracing`, `elevation`,
+`road-grounding`, `track-grading`, `mesh-audit`, `drive-test`, `ac-track-modding`, `lighting`,
+`route-tracing`, `scs-extraction`) plus **`track-feedback`** for filing into the ledger.
 
 ---
 
-## Build pipeline
+## Engine reference
+
+### Build pipeline
 
 | Phase | Task | Where | Skill |
 |-------|------|-------|-------|
-| 0 | Provide screenshot, location, route notes | Claude Code | — |
-| 1 | Identify roads → Overpass/KML → resampled centerline | Mac | `gps-extraction` |
-| 1-alt | **No GPS/OSM data** (private circuit)? Trace the asphalt off an aerial screenshot → georeferenced centerline | Mac | `aerial-tracing` |
-| 2 | Sample USGS 3DEP elevation + margin grid, smooth | Mac | `elevation` |
-| 3 | Project lat/lon/elev → local meters, set origin + true north | Mac | `geometry` / `lighting` |
-| 4 | Road ribbon (`1ROAD`) + grass heightfield (`GRASS`) + dummies | Mac | `geometry` / `ac` |
-| 5 | Material JSON → headless Blender → kn5 + track config | Mac | `ac` / `lighting` |
-| 6 | Install (`scripts.ac.install` — optional, auto-finds AC tracks dir), drive, record AI lines, QA | **Windows** | `ac` |
-| 7+ | Objects: barriers, kerbs, trees, buildings — iterative passes | Mac → Win | `ac` |
-
-Phases 1–5 are fully code-driven. Phase 6 is the manual loop on Windows.
-
-## Skills
-
-Specialized capabilities live in `.claude/skills/`. Reach for them by name:
-
-- **`gps-extraction`** — region + rough route → clean ordered centerline (Overpass, KML, resample, width tags).
-- **`aerial-tracing`** — aerial/satellite screenshot of a circuit with no GPS/OSM data → asphalt traced + georeferenced to real lon/lat → the same `centerline.geojson` (so it stays elevation-correct).
-- **`elevation`** — sample real terrain along the line, smooth, emit a heightfield.
-- **`lighting`** — solar position, true-north orientation, CSP/Sol lighting config.
-- **`ac-track-modding`** — AC conventions, surface naming, dummies, headless Blender build & kn5 export, track folder layout.
-
-## Layouts
-
-A `track.config.json` `layouts[]` entry is a route variant. All layouts **share one kn5 model**
-and differ only in AC configuration (which connectors they use, which AI line, etc.). Express
-variants as separate AC configs over a single mesh — never rebuild the mesh per layout.
-
----
-
-## Repo layout
-
-```
-prodrive-ac-builder/
-├── CLAUDE.md                  # this file — conventions & pipeline
-├── README.md
-├── pyproject.toml
-├── .claude/skills/            # gps-extraction, aerial-tracing, elevation, lighting, ac-track-modding
-├── scripts/
-│   ├── gps/                   # overpass query, kml parse, resample, width tagging
-│   ├── aerial/               # aerial-screenshot front-end: asphalt detect, skeleton, georef → centerline
-│   ├── elevation/             # USGS 3DEP fetch, sample-along-path, heightfield, smooth
-│   ├── geometry/              # projection, road ribbon mesh, grass heightfield, dummies
-│   ├── lighting/              # solar position, true-north orient, CSP config emit
-│   └── ac/                    # blender headless build, material json, track config gen
-└── projects/
-    └── sand-creek-raceway/
-        ├── source/            # screenshot, any KML, route notes
-        ├── data/              # centerline.geojson, dem.tif, heightfield.npy, splines
-        ├── blender/           # working .blend
-        ├── build/             # fbx, kn5, full installable track folder
-        └── track.config.json  # source of truth
-```
-
-## Headless Blender export
+| 0 | Screenshot, location, route notes | — | — |
+| 1 | Roads → Overpass/KML → resampled centerline | Mac | `gps-extraction` |
+| 1-alt | No OSM data? Trace asphalt off a georeferenced aerial | Mac | `aerial-tracing` |
+| 2 | Sample USGS 3DEP + margin grid, smooth | Mac | `elevation` |
+| 3 | Project to local metres, set origin + true north | Mac | `geometry` / `lighting` |
+| 4 | Road ribbon + grass + dummies | Mac | `geometry` / `ac` |
+| 5 | Gates → Blender → kn5 → track folder | Mac | `ac` |
+| 6 | Install, drive, record AI lines, QA | **Windows** | `ac` |
 
 ```bash
-blender --background --python scripts/ac/build_kn5.py -- projects/sand-creek-raceway
+./scripts/build.sh <project-dir>          # phases 1-5
+./scripts/build.sh <project-dir> mesh     # resume offline from cached data
 ```
 
-Requires **Blender 4.x** with the **AC Blender Tools** (kn5 export) addon installed.
+Phases 1–5 are code-driven on the Mac. **Phase 6 is Windows-only** — AC + Content Manager + CSP on a
+GUI. `ac-track-modding` documents what it cannot own; don't pretend those steps are scriptable here.
+
+### Conventions
+
+Metres, Y-up, origin per track, true north written back to config. Surface prefixes `1ROAD_*`
+drivable, `1KERB_*`, `1WALL_*`, unprefixed = visual-only. Dummies `AC_START_*`, `AC_PIT_*`,
+`AC_TIME_*_L/R`, `AC_HOTLAP_START_0`. kn5 export needs **Blender 4.2** with the vendored AC Tools
+addon (`scripts/bootstrap_blender.sh` pins it). Full detail and the reasons: `fleet/LAWS.md` L6–L8.
+
+### The gates
+
+`drive_test` → `audit_mesh` → `verify_kn5` → `kn5_ground_check`. All four run on the **built**
+artifact, all four abort the build. Never validate geometry against the data that placed it (L5).
+
+### Layouts
+
+A `layouts[]` entry is a route variant. All layouts **share one kn5 model** and differ only in AC
+configuration — never rebuild the mesh per layout. The one exception is surface physics, which AC
+applies per track: a gravel/tarmac fork must be two installable tracks (L8).
+
+### External contract
+
+`projects/gala-seed/` + `scripts/game/export_seed.py` are owed to the **`k10-1978`** game repo per
+its `PIPELINE_BRIDGE.md`. Absorbing the engine moved that contract here — the game repo's bridge doc
+points at the old location and needs updating (MIGRATION M1).
+
+`projects/` otherwise holds stale duplicates of tracks now owned by project repos. **Do not build
+from them** — see `fleet/registry.json` `engine_projects` for each one's disposition.

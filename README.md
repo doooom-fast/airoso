@@ -1,92 +1,60 @@
-# Prodrive AC Builder
+# k10-track-agents
 
-Turn a real-world road loop into a playable **Assetto Corsa** track. Feed it a Google Maps
-screenshot, a location, and route notes; get back a complete, installable AC track folder — real
-geometry from OpenStreetMap, real elevation from USGS 3DEP, accurate sun/lighting, and multiple
-layout variants — all reproducible from a single `track.config.json`.
+Build **Assetto Corsa** tracks from real-world data — and manage the fleet of them.
 
-First track: **Sand Creek Raceway** — a street loop in Commerce City, Colorado (`projects/sand-creek-raceway/`).
+Feed the engine a location and a route; get back a complete, installable AC track folder — geometry
+from OpenStreetMap or a georeferenced aerial trace, real elevation from USGS 3DEP, accurate sun and
+lighting, gated at four points, reproducible from a single `track.config.json`.
 
 > **First principle:** the screenshot is a *selection aid, not data*. Precise geometry comes from
-> OpenStreetMap via Overpass; hand-drawn KML is used only where the route leaves the real network.
+> OpenStreetMap via Overpass, or a georeferenced aerial trace; hand-drawn KML only where the route
+> deliberately leaves the real road network.
 
-## How it works
+This repo is the former `prodrive-ac-builder`, absorbed whole, plus the control plane that was
+missing: the thing that knows what tracks exist, whether they conform, and how one fix reaches all
+of them.
 
-| Phase | Task | Where | Skill |
-|-------|------|-------|-------|
-| 0 | Provide screenshot, location, route notes | Claude Code | — |
-| 1 | Identify roads → Overpass/KML → resampled centerline | Mac | `gps-extraction` |
-| 1-alt | No GPS/OSM data? Trace the asphalt off an aerial screenshot → georeferenced centerline | Mac | `aerial-tracing` |
-| 2 | Sample USGS 3DEP elevation + margin grid, smooth | Mac | `elevation` |
-| 3 | Project lat/lon/elev → local meters, set origin + true north | Mac | `geometry` / `lighting` |
-| 4 | Road ribbon (`1ROAD`) + grass heightfield (`GRASS`) + dummies | Mac | `geometry` / `ac` |
-| 5 | Material JSON → headless Blender → kn5 + track config | Mac | `ac` / `lighting` |
-| 6 | Install (`scripts.ac.install`, optional), drive, record AI lines, QA | **Windows** | `ac` |
-| 7+ | Objects: barriers, kerbs, trees, buildings — iterative | Mac → Win | `ac` |
+## Two halves
 
-Phases 1–5 run headless on macOS; phase 6 is the manual loop on Windows (AC + Content Manager + CSP).
+- **`scripts/`** — the engine. Consumer repos pin a tag and run these modules from `.engine/`.
+- **`fleet/`** — the control plane. Registry, laws, standards, feedback ledger, build trains.
 
-## Tech stack
+## The fleet
 
-- **Python 3.11+** — pipeline engine (Overpass, projection, sampling, mesh prep)
-- **Blender 4.x** + **AC Blender Tools** addon — mesh build & `.kn5` export
-- Geospatial: `requests`, `pyproj`, `shapely`, `numpy`, `scipy`, `rasterio`, `trimesh`, `astral`
-- **Windows** for driving/QA: Assetto Corsa, Content Manager, Custom Shaders Patch
-
-## Layout
-
-```
-scripts/        gps · aerial · elevation · geometry · lighting · ac   (pipeline code)
-.claude/skills/ gps-extraction · aerial-tracing · elevation · lighting · ac-track-modding
-projects/<slug>/source · data · blender · build · track.config.json
-```
-
-See **[CLAUDE.md](CLAUDE.md)** for conventions (units, axes, surface naming, source priority) and
-**[docs/PLAN.md](docs/PLAN.md)** for the full project plan and a survey of existing AC track-building
-tools and 3D asset sources.
-
-## Setup
+Fifteen tracks across four repos and four kinds — a fictional street circuit on real roads
+(Sand Creek), real street ports including whole networks (Lookout Lariat, Lake Murray, the San Diego
+freeway graph), real circuit ports both extant and shut down (IMI, Pikes Peak, Second Creek), and
+real rally stages (Rally Colorado, gravel and tarmac).
 
 ```bash
-python -m venv .venv && source .venv/bin/activate
-pip install -e .          # geospatial deps (rasterio needs system GDAL)
-# Blender 4.2 + the kn5 export add-on are pinned/vendored — bootstrap fetches them, see Build.
+python3 -m fleet.cli status      # repos, engine pins, drift
+python3 -m fleet.cli tracks      # every track, kind, archetype, version
+python3 -m fleet.cli lint        # standards check
+python3 -m fleet.cli feedback    # the ledger
+python3 -m fleet.cli build --run --from mesh
 ```
 
-## Build
-
-One command runs the whole Mac pipeline (Phases 1–5) for a track, from `track.config.json` to an
-installable `.zip`. It pins Blender 4.2 (the add-on's required version) into a stable cache on first
-run — no manual Blender install, no ephemeral `/tmp`.
+## Building one track
 
 ```bash
-./scripts/build.sh projects/sand-creek-raceway          # full run, Phases 1–5
-./scripts/build.sh projects/sand-creek-raceway mesh      # resume from a stage (skip the OSM/USGS fetch)
-./scripts/build.sh projects/sand-creek-raceway --list    # list the stages
+./scripts/build.sh <project-dir>          # phases 1-5 -> installable .zip
+./scripts/build.sh <project-dir> mesh     # resume offline from cached data
 ```
 
-Stages, in order: `gps` (Overpass centerline + street labels) → `elev` (USGS 3DEP) → `project`
-(local metres, origin, true north) → `mesh` (road ribbon + grass + dummies + decals) → `env`
-(buildings/trees/highways/mountains) → `blend` → `kn5` (Blender 4.2 + vendored add-on) → `pack`
-(AC folder + zip). The `gps`/`elev` front half hits the network and only re-runs when the route or
-region changes; the geometry→package back half is offline and deterministic.
+Phases 1–5 run headless on a Mac. Phase 6 — install, drive, record AI lines, visual QA — needs
+Assetto Corsa with Content Manager and CSP on Windows, and is not scriptable.
 
-## Install (optional, phase 6 — Windows)
+## Documentation
 
-Drop a built track into your local Assetto Corsa `content/tracks`. It auto-detects the AC folder
-(Steam library scan on Windows/macOS/Linux) and **asks where tracks are if it can't find them**:
+| File | What |
+|---|---|
+| `CLAUDE.md` | How to work in this repo |
+| `fleet/LAWS.md` | The non-negotiable laws, each with the failure that bought it |
+| `fleet/STANDARDS.md` | What every project repo must satisfy |
+| `fleet/MIGRATION.md` | The engine absorption cutover |
+| `fleet/feedback/README.md` | How feedback becomes a fix on every track |
+| `fleet/trains/README.md` | How a batch of fixes ships |
 
-```bash
-python -m scripts.ac.install                          # pick from all built tracks (interactive)
-python -m scripts.ac.install projects/sand-creek-raceway
-python -m scripts.ac.install --list                   # show what's built
-python -m scripts.ac.install --tracks-dir "D:/SteamLibrary" --yes   # explicit path, no prompts
-```
+## License
 
-Each built track is an optional item you choose from; the installer copies the folder and drops the
-`.kn5` inside it (where `models_<layout>.ini` expects it). Building can install in one step with
-`python -m scripts.ac.track_folder projects/<slug> --install`. Override detection with `AC_TRACKS_DIR`.
-
-## Status
-
-🚧 Early scaffold. Pipeline modules are stubbed (`NotImplementedError`) and tracked per skill.
+See `LICENSE`.

@@ -207,10 +207,26 @@ def run(project_dir: str | Path) -> dict:
 
     problems = {"soft_top_in_lane": [], "steps": [], "severe_steps": [], "kinks": [], "obstructions": [],
                 "daylight_gaps": []}
-    # Cells that contain any 1ROAD triangle — an O(1) "is there pavement here at all?" lookup.
-    # A full road-only TriField answered the same question but took 20+ minutes on a 25 km stage.
-    road_cells = {k for k, idxs in surface.cells.items()
-                  if any(surface.tris[i][9].upper().startswith("1ROAD") for i in idxs)}
+    def _pavement_at(x, z):
+        """Is there 1ROAD directly under (x,z)? Point-precise, but scans only the ONE hash cell's
+        road triangles — a road-only TriField answered the same question and took 20+ minutes on a
+        25 km stage, while plain cell-membership was too coarse (a sample 3 m off the ribbon end
+        still lands in a cell the first quad reaches into)."""
+        for i in surface.cells.get((int(x // CELL), int(z // CELL)), ()):
+            ax, ay, az, bx, by, bz, cx, cy, cz, name = surface.tris[i]
+            if not name.upper().startswith("1ROAD"):
+                continue
+            d = (bz - cz) * (ax - cx) + (cx - bx) * (az - cz)
+            if abs(d) < 1e-12:
+                continue
+            w0 = ((bz - cz) * (x - cx) + (cx - bx) * (z - cz)) / d
+            w1 = ((cz - az) * (x - cx) + (ax - cx) * (z - cz)) / d
+            if w0 >= -1e-6 and w1 >= -1e-6 and 1.0 - w0 - w1 >= -1e-6:
+                return True
+        return False
+    _has_ends = not bool(cfg.get("loop", True))
+    _lap_end = sum(math.dist((pts[i][0], pts[i][2]), (pts[i + 1][0], pts[i + 1][2]))
+                   for i in range(len(pts) - 1))
     prev_h = [None] * 10
     prev_slope = [None] * 10
     off_pavement = 0
@@ -244,7 +260,11 @@ def run(project_dir: str | Path) -> dict:
         # the sole blocker on all four rally stages, and pure artifact. Ask the ROAD-ONLY field
         # whether there is pavement here at all: no pavement = off the stage, not a defect. Grass
         # sitting ON a road that IS here still fails, which is the case this gate exists for.
-        if (int(x // CELL), int(z // CELL)) not in road_cells:
+        # Only near the ENDS, and only on a stage that has ends. This artifact is the finished
+        # centerline overhanging the built ribbon at a start/finish cap, so it cannot occur mid-lap
+        # — and running the point test on all 25,260 stations of a 25 km stage took 5 HOURS of CPU
+        # without finishing. Bounded to ~60 stations it is free.
+        if _has_ends and (s < 30.0 or s > _lap_end - 30.0) and not _pavement_at(x, z):
             off_pavement += 1
             prev_h = [None] * 10
             prev_slope = [None] * 10

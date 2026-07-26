@@ -340,6 +340,48 @@ def audit(project_dir: str | Path) -> dict:
     EDGE_REACH = 2.0
     TOP_BAND = 0.20        # > one kerb height (curb_h defaults to 0.15) below the local top = a face
     curb_hash4 = _hash(g["1KERB"], 4.0)
+    # J. OVERSIZED TERRAIN TRIANGLE. A vertex-based check cannot see a triangle whose corners are
+    #    hundreds of metres away but whose SURFACE crosses the pavement. That is exactly how the
+    #    inverted 500 m skirt hid: check B compared grass VERTICES to road vertices, found nothing,
+    #    and Aspen shipped 1,037 wheel-path hits that only drive_test could see. On a terrain grid
+    #    nothing legitimate spans more than a few cells, so measure the triangles themselves — no
+    #    proximity reasoning needed, and it catches the whole class rather than one instance.
+    span_bad, worst_span = 0, 0.0
+    _cellm = 0.0
+    _hf = data / "heightfield.meta.json"
+    if _hf.exists():
+        try:
+            _m = json.loads(_hf.read_text(encoding="utf-8"))
+            _cellm = float(_m.get("spacing_m") or 0.0)
+        except (json.JSONDecodeError, ValueError):
+            _cellm = 0.0
+    SPAN_LIMIT = max(60.0, _cellm * 3.0)      # generous: the raw DEM spacing is the coarse bound
+    # Being oversized is NOT itself a fault: the 500 m skirt is deliberate, extruded outward so you
+    # cannot drive off the edge of the world. The fault is an oversized triangle that lies OVER THE
+    # ROAD. So pair the span test with "does it cover a road vertex" — which is what made the
+    # inverted skirt a hazard and leaves the honest one alone.
+    _road_pts = g["1ROAD"][::7]
+    for a, b, c in _obj_tris(data / "track.obj", ("1GRASS",)):
+        e = max(math.hypot(a[0] - b[0], a[2] - b[2]),
+                math.hypot(b[0] - c[0], b[2] - c[2]),
+                math.hypot(c[0] - a[0], c[2] - a[2]))
+        if e <= SPAN_LIMIT:
+            continue
+        x0 = min(a[0], b[0], c[0]); x1 = max(a[0], b[0], c[0])
+        z0 = min(a[2], b[2], c[2]); z1 = max(a[2], b[2], c[2])
+        d = (b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2])
+        if abs(d) < 1e-12:
+            continue
+        for rx, ry, rz in _road_pts:
+            if not (x0 <= rx <= x1 and z0 <= rz <= z1):
+                continue
+            w0 = ((b[2] - c[2]) * (rx - c[0]) + (c[0] - b[0]) * (rz - c[2])) / d
+            w1 = ((c[2] - a[2]) * (rx - c[0]) + (a[0] - c[0]) * (rz - c[2])) / d
+            if w0 >= -1e-6 and w1 >= -1e-6 and 1.0 - w0 - w1 >= -1e-6:
+                span_bad += 1
+                worst_span = max(worst_span, e)
+                break
+
     curb_bad = 0
     curb_skirt = 0
     curb_faces = 0
@@ -481,6 +523,8 @@ def audit(project_dir: str | Path) -> dict:
         "C_junction_crossings": len(cross),
         "D_wall_on_road": wall_on_road,
         "E_wall_floating": wall_float,
+        "J_terrain_span": span_bad,
+        "worst_terrain_span_m": round(worst_span, 1),
         "F_curb_not_flush": curb_bad,
         "F_skirt_off_terrain": curb_skirt,
         "F_side_faces_skipped": curb_faces,
@@ -510,7 +554,9 @@ def audit(project_dir: str | Path) -> dict:
           f"  (worst +{report['worst_ground_cut_m']} m)")
     print(f"  I. sidewalk isolating pavement : {sw_isolate}"
           + (f"  e.g. {sw_worst[:3]}" if sw_worst else ""))
-    total = (len(support_hits) + len(poke_hits) + len(cross) + wall_on_road + wall_float + curb_bad
+    print(f"  J. terrain triangles over road : {span_bad}"
+          + (f"  (worst {worst_span:.0f} m edge; limit {SPAN_LIMIT:.0f} m)" if span_bad else ""))
+    total = (span_bad + len(support_hits) + len(poke_hits) + len(cross) + wall_on_road + wall_float + curb_bad
              + (prop_float or 0) + (ground_cut or 0) + sw_isolate)
     print(f"  => {'CLEAN' if total == 0 else str(total) + ' issues'}")
     return report

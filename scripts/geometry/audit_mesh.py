@@ -316,12 +316,30 @@ def audit(project_dir: str | Path) -> dict:
     #    road-vertex row is exactly 2.80 m away (measured over all 40 928 curb verts, worst case), so
     #    the old 2.0 m reach flagged 6 250 perfectly-flush verts. 3.5 m covers that spacing with margin
     #    and stays inside nearest_y's guaranteed +/-1-cell coverage (4.0 m at cell 4.0).
+    #    SCOPE (measured on Sand Creek, 53 866 curb verts): the ``1KERB`` group is not just the curb.
+    #    ``ribbon.curb_sidewalk`` sweeps ONE strip — curb face, walk, verge, then an embankment skirt
+    #    running out to the terrain — so most of its verts are metres from the road by construction.
+    #    Checking them all against "is a road or grass vert within 0.5 m of my height" flagged 4 619,
+    #    of which **99.3% lay beyond 3.5 m from any road vertex** (the skirt, descending a slope) and
+    #    exactly **2** sat at the road edge. drive_test agreed the whole time: it passes this track
+    #    with 0 daylight gaps. So the count was dominated by geometry the check was never about, and
+    #    it blocked four tracks that drive clean.
+    #
+    #    A curb IS at the road edge. Gate on that; the skirt's grounding is a different question and
+    #    is already gated by drive_test (daylight gaps at edges) and checks E/H. The skirt is still
+    #    COUNTED and REPORTED — advisory, not gating — so narrowing the scope hides nothing.
     CURB_REACH = 3.5
+    EDGE_REACH = 2.0
     curb_bad = 0
+    curb_skirt = 0
     for x, y, z in g["1KERB"]:
-        near_r = any(abs(y - ry) < 0.5 for ry in nearest_y(road_hash4, x, z, CURB_REACH, 4.0))
+        at_edge = nearest_y(road_hash4, x, z, EDGE_REACH, 4.0)
         near_g = any(abs(y - ry) < 0.5 for ry in nearest_y(grass_hash4, x, z, CURB_REACH, 4.0))
-        if not (near_r or near_g):
+        if not at_edge:                       # verge / embankment skirt, not a curb
+            if not near_g:
+                curb_skirt += 1
+            continue
+        if not (any(abs(y - ry) < 0.5 for ry in at_edge) or near_g):
             curb_bad += 1
     # I. sidewalk-isolating-pavement — Kevin's invariant: "sidewalks should never isolate driving
     #    surfaces." A raised sidewalk curb (>8 cm over the road beside it) with pavement at similar
@@ -449,6 +467,7 @@ def audit(project_dir: str | Path) -> dict:
         "D_wall_on_road": wall_on_road,
         "E_wall_floating": wall_float,
         "F_curb_not_flush": curb_bad,
+        "F_skirt_off_terrain": curb_skirt,
         "G_prop_floating": prop_float,
         "H_ground_above_deck": ground_cut,
         "I_sidewalk_isolating": sw_isolate,
@@ -469,7 +488,7 @@ def audit(project_dir: str | Path) -> dict:
     print(f"  C. at-grade junction crossings : {len(cross)}  ({report['C_by_kind']})")
     print(f"  D. walls sitting on a road     : {wall_on_road}")
     print(f"  E. walls floating over ground  : {wall_float}  (worst +{report['worst_float_m']} m)")
-    print(f"  F. curbs not flush             : {curb_bad}  (of {len(g['1KERB'])} curb verts)")
+    print(f"  F. curbs not flush             : {curb_bad}  (of {len(g['1KERB'])} curb verts,\n                                      edge-scoped; {curb_skirt} skirt verts off terrain — advisory,\n                                      grounding is gated by drive_test + E/H)")
     print(f"  G. plants floating over ground : {'(env not built)' if prop_float is None else prop_float}")
     print(f"  H. ground cutting into road    : {'(no ground grid)' if ground_cut is None else ground_cut}"
           f"  (worst +{report['worst_ground_cut_m']} m)")

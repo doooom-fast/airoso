@@ -207,8 +207,13 @@ def run(project_dir: str | Path) -> dict:
 
     problems = {"soft_top_in_lane": [], "steps": [], "severe_steps": [], "kinks": [], "obstructions": [],
                 "daylight_gaps": []}
+    # Cells that contain any 1ROAD triangle — an O(1) "is there pavement here at all?" lookup.
+    # A full road-only TriField answered the same question but took 20+ minutes on a 25 km stage.
+    road_cells = {k for k, idxs in surface.cells.items()
+                  if any(surface.tris[i][9].upper().startswith("1ROAD") for i in idxs)}
     prev_h = [None] * 10
     prev_slope = [None] * 10
+    off_pavement = 0
     obst_names = defaultdict(int)
     s = 0.0
     i = 1
@@ -232,6 +237,18 @@ def run(project_dir: str | Path) -> dict:
         # smoothness (steps/kinks) gates only on INTERIOR paths — nobody laps on the hinge
         edge_line = {0, len(lines) - 1}
         paths = [off + d for off in lines for d in (-WHEEL_HALF_TRACK, WHEEL_HALF_TRACK)]
+        # OFF THE END OF THE PAVEMENT. A point-to-point stage's finished_centerline can overhang
+        # the built ribbon: on Dragon Tail its first point sits 30 m before the road starts, over
+        # bare terrain. Every wheel path there reads grass as the top surface, so ONE station minted
+        # 10 "ground on top mid-lane" hits and an 0.8 m "severe step" climbing back onto the road —
+        # the sole blocker on all four rally stages, and pure artifact. Ask the ROAD-ONLY field
+        # whether there is pavement here at all: no pavement = off the stage, not a defect. Grass
+        # sitting ON a road that IS here still fails, which is the case this gate exists for.
+        if (int(x // CELL), int(z // CELL)) not in road_cells:
+            off_pavement += 1
+            prev_h = [None] * 10
+            prev_slope = [None] * 10
+            continue
         deck_c, _ = surface.top_at(x, z, y_ref)
         for pi, off in enumerate(paths):
             is_edge = (pi // 2) in edge_line
@@ -497,6 +514,7 @@ def run(project_dir: str | Path) -> dict:
     report = {
         "lap_m": round(lap, 1),
         "soft_top_in_lane": len(problems["soft_top_in_lane"]),
+        "off_pavement_stations": off_pavement,
         "severe_steps": len(problems["severe_steps"]),
         "severe_per_km": round(len(problems["severe_steps"]) / per_km, 2),
         "steps_per_km": round(len(problems["steps"]) / per_km, 2),
@@ -556,7 +574,8 @@ def run(project_dir: str | Path) -> dict:
             or severe_per_km > 12.0
             or report["steps_per_km"] > _bump_limit)
     print(f"DRIVE TEST {cfg['slug']}  lap {lap/1000:.2f} km  (10 wheel paths @ {STEP_M} m)")
-    print(f"  ground on top mid-lane : {report['soft_top_in_lane']}")
+    print(f"  ground on top mid-lane : {report['soft_top_in_lane']}"
+          + (f"   [{off_pavement} station(s) skipped: no pavement — off the stage end]" if off_pavement else ""))
     print(f"  floating furniture (walls/fences off support): {report['floating_furniture']} "
           f"{problems['floating_furniture'][:3] if problems['floating_furniture'] else ''}")
     print(f"  undrivable corners (>100deg @ <11m): {report['undrivable_corners']} "

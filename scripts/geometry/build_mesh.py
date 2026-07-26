@@ -1245,17 +1245,23 @@ def build(project_dir: str | Path) -> dict:
     # 2.4 m from centreline on 7.7 m pavement. Tested against the BUILT road triangles.
     from collections import defaultdict as _rcdd
     _rc: dict = _rcdd(list)
-    _rv = road["vertices"]
-    for _t in road["tris"]:
-        _xs = [_rv[_v][0] for _v in _t]; _zs = [_rv[_v][2] for _v in _t]
-        for _ci in range(int(min(_xs) // 3.0), int(max(_xs) // 3.0) + 1):
-            for _cj in range(int(min(_zs) // 3.0), int(max(_zs) // 3.0) + 1):
-                _rc[(_ci, _cj)].append(_t)
+    # EVERY drivable ribbon, not just the main loop. A sidewalk can cross a connector or an opposing
+    # carriageway just as easily, and hashing only road["tris"] made those crossings invisible.
+    # Coordinates are stored directly (not indices) so meshes with separate vertex arrays can share
+    # the hash.
+    for _rmesh in [road] + [_cm for _nm, _cm in conn_meshes]:
+        _rvv = _rmesh["vertices"]
+        for _t in _rmesh["tris"]:
+            _tri = (_rvv[_t[0]], _rvv[_t[1]], _rvv[_t[2]])
+            _xs = [_v[0] for _v in _tri]; _zs = [_v[2] for _v in _tri]
+            for _ci in range(int(min(_xs) // 3.0), int(max(_xs) // 3.0) + 1):
+                for _cj in range(int(min(_zs) // 3.0), int(max(_zs) // 3.0) + 1):
+                    _rc[(_ci, _cj)].append(_tri)
 
     def _road_tops(px, pz):
         tops = []
-        for _t in _rc.get((int(px // 3.0), int(pz // 3.0)), ()):
-            _a, _b, _c = _rv[_t[0]], _rv[_t[1]], _rv[_t[2]]
+        for _tri in _rc.get((int(px // 3.0), int(pz // 3.0)), ()):
+            _a, _b, _c = _tri
             _d = (_b[2] - _c[2]) * (_a[0] - _c[0]) + (_c[0] - _b[0]) * (_a[2] - _c[2])
             if abs(_d) < 1e-12:
                 continue
@@ -1295,8 +1301,22 @@ def build(project_dir: str | Path) -> dict:
                 continue
             keep.append(tri)
         if len(keep) != len(mesh["tris"]):
-            print(f"  {label}: dropped {len(mesh['tris']) - len(keep)} tris over/on the road surface")
+            _dropped = len(mesh["tris"]) - len(keep)
             mesh["tris"] = keep
+            # PRUNE THE ORPHANS. Dropping triangles leaves their vertices behind, and the OBJ writer
+            # emits every vertex whether a face uses it or not — so the geometry is gone from render
+            # and collision while the verts still sit in the file. Audit check K counts 1KERB verts,
+            # so it kept reporting 206 sidewalk verts in the carriageway after the tris that made
+            # them were already dropped. Reindex so what the file says matches what the mesh is.
+            _used = sorted({v for tri in keep for v in tri})
+            if len(_used) != len(mesh["vertices"]):
+                _remap = {v: i for i, v in enumerate(_used)}
+                mesh["vertices"] = [mesh["vertices"][v] for v in _used]
+                if mesh.get("uvs"):
+                    mesh["uvs"] = [mesh["uvs"][v] for v in _used]
+                mesh["tris"] = [(_remap[a], _remap[b], _remap[c]) for a, b, c in keep]
+            print(f"  {label}: dropped {_dropped} tris over/on the road surface "
+                  f"(+{len(_used) and len(mesh['vertices'])} verts kept)")
 
     # shoulder: SINK any geometry that rises over the deck to below it instead of dropping tris —
     # dropped tris left HOLES in the embankment skirt (visible daylight under the road at the
@@ -2151,6 +2171,20 @@ def build(project_dir: str | Path) -> dict:
                 _reseated += 1
         print(f"  concrete barriers: re-seated {_reseated} modules onto the exact edge surface")
     drop_over_road(barrier, "warning barriers", lo=-1.0, hi=3.5)
+    # A SIDEWALK NEVER CROSSES A DRIVING LINE (Kevin's rule, and the one invariant here that needs
+    # no judgement). The kerb/sidewalk strip is swept continuously along the centerline and along
+    # every connector, and nothing broke either sweep at a junction mouth — so a raised slab ran
+    # straight across the Lake Murray intersections and the car hit it. No gate saw it either:
+    # drive_test's ground-on-top only flags SOFT owners and a sidewalk is 1KERB_*, which counts as
+    # drivable; audit D covers walls only. Audit check K now measures it (206 verts standing up to
+    # +0.33 m on the loop), and this drops the geometry that causes it.
+    #
+    # lo=0.02: anything at or above the road surface is in the carriageway. hi=1.5: a kerb far above
+    # is a different layer (a bridge deck's kerb over the road beneath), which the layer rule leaves
+    # alone.
+    drop_over_road(kerb, "sidewalk/kerb in carriageway", lo=0.02, hi=1.5)
+    if edge_group.startswith("1KERB"):
+        drop_over_road(shoulder, "sidewalk strip in carriageway", lo=0.02, hi=1.5)
     # proximity trim: drop barrier tris pressing within 1.0 m of the MAIN carriageway at deck
     # height (flare tapers pull a handful of modules tighter than any real installation)
     if barrier["tris"]:

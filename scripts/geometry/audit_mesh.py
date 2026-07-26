@@ -284,6 +284,25 @@ def audit(project_dir: str | Path) -> dict:
         ry = _surf_at(main_th, 8.0, x, z, y, dy_max=1.2)
         if ry is not None and abs(y - ry) < 1.2:
             wall_on_road += 1
+    # K. KERB/SIDEWALK STANDING IN THE CARRIAGEWAY. A raised sidewalk slab crossing the driving lane
+    #    is invisible to every other check: drive_test's ground-on-top only flags SOFT owners
+    #    (1GRASS/1LAWN) and a sidewalk is 1KERB_*, which counts as drivable and lands in the surface
+    #    field; D covers walls only; F measures whether curbs are FLUSH, not whether they are in the
+    #    way; I only catches a sidewalk that isolates pavement. Kevin drove straight into sidewalks
+    #    running through the Lake Murray intersections while all ten checks read green.
+    #
+    #    The invariant is the same one the barriers already obey: nothing that is not road may stand
+    #    on the road surface. A kerb vert RISING above the road beneath it, more than a kerb height,
+    #    is in the carriageway.
+    KERB_STAND_M = 0.06        # a flush kerb sits within a few cm; higher than this is a step up
+    kerb_on_road = 0
+    worst_kerb_stand = 0.0
+    for x, y, z in g["1KERB"]:
+        ry = _surf_at(main_th, 8.0, x, z, y, dy_max=1.2)
+        if ry is not None and y - ry > KERB_STAND_M:
+            kerb_on_road += 1
+            worst_kerb_stand = max(worst_kerb_stand, y - ry)
+
     # E. wall-float — the BASE of a wall (min y per 0.6 m column) sitting above the ground/road beneath it.
     wall_col = defaultdict(lambda: 1e9)
     for x, y, z in g["1WALL"]:
@@ -524,6 +543,8 @@ def audit(project_dir: str | Path) -> dict:
         "D_wall_on_road": wall_on_road,
         "E_wall_floating": wall_float,
         "J_terrain_span": span_bad,
+        "K_kerb_in_carriageway": kerb_on_road,
+        "worst_kerb_stand_m": round(worst_kerb_stand, 2),
         "worst_terrain_span_m": round(worst_span, 1),
         "F_curb_not_flush": curb_bad,
         "F_skirt_off_terrain": curb_skirt,
@@ -554,9 +575,11 @@ def audit(project_dir: str | Path) -> dict:
           f"  (worst +{report['worst_ground_cut_m']} m)")
     print(f"  I. sidewalk isolating pavement : {sw_isolate}"
           + (f"  e.g. {sw_worst[:3]}" if sw_worst else ""))
+    print(f"  K. kerb/sidewalk in carriageway: {kerb_on_road}"
+          + (f"  (worst +{worst_kerb_stand:.2f} m above the road)" if kerb_on_road else ""))
     print(f"  J. terrain triangles over road : {span_bad}"
           + (f"  (worst {worst_span:.0f} m edge; limit {SPAN_LIMIT:.0f} m)" if span_bad else ""))
-    total = (span_bad + len(support_hits) + len(poke_hits) + len(cross) + wall_on_road + wall_float + curb_bad
+    total = (kerb_on_road + span_bad + len(support_hits) + len(poke_hits) + len(cross) + wall_on_road + wall_float + curb_bad
              + (prop_float or 0) + (ground_cut or 0) + sw_isolate)
     print(f"  => {'CLEAN' if total == 0 else str(total) + ' issues'}")
     return report

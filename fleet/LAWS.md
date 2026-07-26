@@ -59,6 +59,28 @@ The three specific ways this breaks, all seen:
 > not bare earth — cuts, fills, embankments and engineered grades are the road's own datum. See
 > `fleet/feedback/0002-road-elevation-datum.md`.
 
+## L3b — A terrain cell can only follow a cut it is smaller than
+
+The ground is pinned to the **lowest** deck surface within ~0.55 of a terrain cell, deliberately:
+pin each grass vertex to the deck directly above *it* and the straight triangle edge between two
+vertices bridges **up through** the road wherever it cambers or sags between them — grass poking
+through the pavement, which launches the car.
+
+The price is that the deck-to-ground gap scales with **cell size × local deck slope**. Measured on
+IMI (8 m road, `kn5_ground_check` gates at 5 cm):
+
+| terrain cells | median gap | over 5 cm |
+|---|---|---|
+| 5.0 m (default) | +0.091 m | 73.7% |
+| 2.5 m | +0.026 m | 16.1% |
+| 1.25 m | +0.017 m | 0.7% |
+
+So a track whose road is narrower than its terrain triangles cannot be made flush by better
+clamping — the triangle spans the carriageway no matter how well its corners are pinned. **Declare
+`terrain_cell_m` finer than the road** on any track where the gap gates. It costs vertices
+(`terrain_vertex_budget`), and the right value differs by kind: a 6.5 m gravel stage needs finer
+cells than a 12 m circuit; a flat street loop is already fine at the default.
+
 ## L4 — Conform passes never cross layers
 
 Any pass that seats, clamps, grades or drapes something "to the nearby surface" — grass clamp,

@@ -532,11 +532,23 @@ def grass_terrain(grid_xyz: list[list[Vertex]], *, tile_m: float = 6.0, skirt_m:
         # ACTUAL border vertex indices (gi). Each skirt quad's inner edge IS a real grid edge, so it
         # shares with the grid face — no coincident copies, no reliance on welding, no open seam (the
         # old copy-and-weld approach left ~780 holes the car fell through).
+        # OUTWARD IS DERIVED, NOT ASSUMED. These offsets used to hardcode +x for the i=nx-1 edge
+        # and -x for i=0, which is only correct while x increases with i. Every k10-colorado track
+        # sets mirror_x, so x DECREASES with i and both x skirts extruded 500 m straight ACROSS the
+        # grid instead of away from it. Measured on Aspen: the west border at x=-255.4 had its skirt
+        # partner at x=+244.6 (exactly -255.4 + 500), and the east border at 307.0 had one at
+        # -193.0 — a 500 m plane laid over the interior. Where the border sits higher than the road
+        # (a mountain site: +18.59 vs a deck at 4.17) that plane passes OVER the pavement, which is
+        # Aspen's 1,037 "ground on top mid-lane" hits. Flat sites hid it because the skirt drops to
+        # a low floor and never rises above their deck.
+        _sx = 1.0 if grid_xyz[0][nx - 1][0] >= grid_xyz[0][0][0] else -1.0   # does x grow with i?
+        _sz = 1.0 if grid_xyz[ny - 1][0][2] >= grid_xyz[0][0][2] else -1.0   # does z grow with j?
+        _ox, _oz = skirt_m * _sx, skirt_m * _sz
         perim: list[tuple[int, float, float]] = []  # (grid_index, outward_dx, outward_dz)
-        for i in range(nx):                 perim.append((i, 0.0, skirt_m))                 # north  j=0
-        for j in range(1, ny):              perim.append((j * nx + nx - 1, skirt_m, 0.0))   # east   i=nx-1
-        for i in range(nx - 2, -1, -1):     perim.append(((ny - 1) * nx + i, 0.0, -skirt_m))  # south j=ny-1
-        for j in range(ny - 2, 0, -1):      perim.append((j * nx, -skirt_m, 0.0))           # west   i=0
+        for i in range(nx):                 perim.append((i, 0.0, -_oz))                  # j=0    edge
+        for j in range(1, ny):              perim.append((j * nx + nx - 1, _ox, 0.0))      # i=nx-1 edge
+        for i in range(nx - 2, -1, -1):     perim.append(((ny - 1) * nx + i, 0.0, _oz))    # j=ny-1 edge
+        for j in range(ny - 2, 0, -1):      perim.append((j * nx, -_ox, 0.0))              # i=0    edge
         # Drop the far edge to one flat LOW level (below all terrain) instead of extruding each border
         # FLAT at its own height — otherwise a high DEM border (here up to +35 m vs a ~17 m track) makes
         # a 500 m grass plane hanging in the sky. The skirt now ramps gently down-and-out to a floor you

@@ -1595,17 +1595,21 @@ def build(project_dir: str | Path) -> dict:
         if _lo8 is None:
             continue
         _tgt8 = _lo8 - GRASS_CLEARANCE_M
+        # THE BRIDGE GUARD APPLIES IN BOTH DIRECTIONS. It used to live inside the `_tgt8 > _gy8`
+        # raise branch, so a pin that LOWERED fell straight through to the write untested — and
+        # under a declared span the whole point is that the terrain keeps its natural creek/valley
+        # height so the deck can cross it. A lowering under a bridge is exactly as wrong as a raise.
+        _s8 = _near_station7(_gx8, _gz8)
+        if _s8 is not None and bridge_of(_s8):
+            continue
         if _tgt8 > _gy8:
             # two-sided under pavement: raise capped by the ROAD window-min (chord safety vs the
-            # deck) and never under bridges. Down-only here let deck-edge gaps grow to ~1.2 m
-            # where the shoulder overlaps the lip (the weld seals the VISIBLE seam; this keeps
-            # the under-slab contact number tight too).
+            # deck). Down-only here let deck-edge gaps grow to ~1.2 m where the shoulder overlaps
+            # the lip (the weld seals the VISIBLE seam; this keeps the under-slab contact number
+            # tight too).
             _wm8 = _deck_window_min7(_gx8, _gz8, _gy8)
             if _wm8 is not None and _tgt8 > _wm8 - GRASS_CLEARANCE_M:
                 _tgt8 = _wm8 - GRASS_CLEARANCE_M
-            _s8 = _near_station7(_gx8, _gz8)
-            if _s8 is not None and bridge_of(_s8):
-                continue
             if _tgt8 <= _gy8:
                 continue
         if abs(_tgt8 - _gy8) > 1e-4:

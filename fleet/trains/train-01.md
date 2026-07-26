@@ -35,7 +35,7 @@ This train cannot converge until `fleet/MIGRATION.md` **M1** (publish + tag) and
 consumers) are done — there is no tag for `fleet.cli pin` to point at yet. `0004`'s first step (wire
 SD's `drive_test`) is independent and can start immediately.
 
-## Build matrix — overnight 2026-07-26, engine v0.24.3
+## Build matrix — overnight 2026-07-26, engine v0.24.4 (verified)
 
 | Track | kind | real? | status |
 |---|---|---|---|
@@ -57,8 +57,18 @@ SD's `drive_test`) is independent and can start immediately.
 Engine work behind it: absorbed + published; the bridgeless-track crash (v0.20.2); curb-flush
 rescoped and the sidewalk despiked (v0.21.x); per-track `terrain_cell_m` restored and its cap
 raised (v0.22.0); road-over-ground gated on p95 (v0.23.0); **PR #20 merged to main** — it was never
-a regression, main simply lacked the point-to-point work (v0.24.0); exporter duplicate-name
-pre-split for props and walls (v0.24.1–3).
+a regression, main simply lacked the point-to-point work (v0.24.0).
+
+An exporter duplicate-name pre-split (v0.24.1–3) was shipped and then **reverted** in v0.24.4: it
+renamed `LIGHTPOST`/`LIGHTS` tiles, so the kn5 no longer matched the OBJs and `kn5_ground_check`
+failed every lamped track with "100% of sampled kn5 verts have no OBJ counterpart" and "27 lamp
+heads floating without a mast". It un-packaged five working tracks before the verification sweep
+caught it. A correct fix must keep the kn5↔OBJ name correspondence (prefix-aware matching for split
+tiles) rather than renaming behind the gate's back — see [0007](../feedback/0007-exporter-duplicates-mesh-names.md).
+
+**Lesson for the next engine change: re-run the full sweep before believing it.** The regression was
+invisible on the track being worked on (Lariat) and only appeared on the five that were already
+shipping.
 
 ## Build matrix — superseded (v0.22.0)
 

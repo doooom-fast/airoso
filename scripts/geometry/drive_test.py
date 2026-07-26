@@ -144,6 +144,13 @@ class TriField:
 
 
 def run(project_dir: str | Path) -> dict:
+    import time as _tmod
+    _t0 = _tmod.time()
+    def _phase(_label):
+        nonlocal _t0
+        _now = _tmod.time()
+        print(f"  [drive-time] {_label:22} {_now - _t0:7.1f}s", flush=True)
+        _t0 = _now
     project = Path(project_dir)
     data = project / "data"
     cfg = json.loads((project / "track.config.json").read_text())
@@ -217,6 +224,7 @@ def run(project_dir: str | Path) -> dict:
 
     if _culled:
         print(f"  [drive] corridor cull: skipped {_culled} triangles beyond {_CULL_M:.0f} m")
+    _phase("load + hash")
 
     # SANITY: there must BE a road. A build_mesh that dies mid-write (2.87 M grid verts ran the
     # process out of memory) leaves a TRUNCATED track.obj holding only the 1GRASS chunks written so
@@ -271,6 +279,7 @@ def run(project_dir: str | Path) -> dict:
     prev_slope = [None] * 10
     off_pavement = 0
     obst_names = defaultdict(int)
+    _phase("pre-sweep setup")
     s = 0.0
     i = 1
     while s < lap:
@@ -571,6 +580,7 @@ def run(project_dir: str | Path) -> dict:
 
     # collapse obstruction runs (one wall = many stations)
     per_km = lap / 1000
+    _phase("post-sweep passes")
     report = {
         "lap_m": round(lap, 1),
         "soft_top_in_lane": len(problems["soft_top_in_lane"]),

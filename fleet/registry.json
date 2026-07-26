@@ -152,7 +152,9 @@
     "k10-colorado-rally/dragon-tail-tarmac": {
       "kind": "rally_stage",
       "fidelity": "real geometry / fictional surface",
-      "source": "same road as dragon-tail-gravel"
+      "source": "same road as dragon-tail-gravel",
+      "status": "DEPRIORITISED — Kevin 2026-07-26: 'may be cancelled, not super interesting'",
+      "note": "Not deleted, but out of the installable target. Convenient: the tarmac variants are the only stages blocked on surface roughness (113 bumps/km against tarmac's 75 limit; gravel allows 150), so dropping them removes that from the critical path. The gravel stages carry the real geometry."
     },
     "k10-colorado-rally/under-the-dragon-gravel": {
       "kind": "rally_stage",
@@ -162,7 +164,9 @@
     "k10-colorado-rally/under-the-dragon-tarmac": {
       "kind": "rally_stage",
       "fidelity": "real geometry / fictional surface",
-      "source": "same road as under-the-dragon-gravel"
+      "source": "same road as under-the-dragon-gravel",
+      "status": "DEPRIORITISED — Kevin 2026-07-26: 'may be cancelled, not super interesting'",
+      "note": "Not deleted, but out of the installable target. Convenient: the tarmac variants are the only stages blocked on surface roughness (113 bumps/km against tarmac's 75 limit; gravel allows 150), so dropping them removes that from the critical path. The gravel stages carry the real geometry."
     },
     "k10-san-diego/project": {
       "kind": "street_port",

@@ -41,11 +41,11 @@ First honest sweep, after un-forking colorado (M3). `GATE_EXCURSIONS_ADVISORY=1`
 
 | Track | mesh | drive_test | audit | kn5 | blocker |
 |---|---|---|---|---|---|
-| sand-creek | ok | **PASS** | F=4619 | — | curb flush |
+| sand-creek | ok | **PASS** | **F=31** | — | curb flush (was 4619 — see below) |
 | lookout-lariat | ok | **PASS** | **clean** | FAIL | duplicate `1WALL_barrier_a/_b` meshes — AC drops dup-named meshes from collision |
-| imi | ok | **PASS** | F=15 | — | curb flush (0.13% of 11,168 curb verts) |
-| second-creek | ok | **PASS** | F=18 | — | curb flush · *fabricated geometry, proves nothing* |
-| high-plains | ok | **PASS** | F=168 | — | curb flush · *fabricated geometry, proves nothing* |
+| imi | ok | **PASS** | **F=18** | — | curb flush |
+| second-creek | ok | **PASS** | F=18* | — | curb flush · *fabricated geometry, proves nothing* |
+| high-plains | ok | **PASS** | F=168* | — | curb flush · *fabricated geometry, proves nothing* |
 | pueblo | ok | **PASS** | **clean** | FAIL | road floating over ground, 76.0% of samples |
 | aspen | ok | FAIL | — | — | drive test |
 | grand-junction | ok | FAIL | — | — | 23 ground-on-top, 42 severe steps |
@@ -54,7 +54,16 @@ First honest sweep, after un-forking colorado (M3). `GATE_EXCURSIONS_ADVISORY=1`
 **6 of 9 pass the drive test.** Two tracks (grand-junction, pikes-peak) only got this far because
 v0.20.2 fixed a crash that killed every bridgeless track in `build_mesh`.
 
-The dominant remaining defect is **audit check F, curbs not flush** — and it is newly visible:
+**v0.20.5 rescoped check F** (`*` = not yet re-measured). The `1KERB` group is the whole swept
+strip — curb, walk, verge, embankment skirt — so 99.3% of Sand Creek's 4,619 flags lay beyond 3.5 m
+from any road vertex, and exactly **2** sat at the road edge. Scoped to the road edge, Sand Creek
+reads **31**; the 7,789 skirt verts are still counted and reported as advisory.
+
+The 31 that remain are real: curbs sitting **0.5–1.4 m BELOW** the adjacent road edge, clustered at
+~6 locations (e.g. 3 verts at x=-1771/z=-488, 2 at x=767/z=75). That is the genuine version of the
+defect, and it is small enough to fix by inspection.
+
+The earlier dominant defect was **audit check F, curbs not flush** — and it is newly visible:
 colorado's fork grepped a `"KERB"` prefix against groups named `1KERB_*`, so F reported "0 of 0"
 for months. Sand Creek's 4,619 is the same underlying curb/sidewalk problem as
 [0001](../feedback/0001-junction-flare-drags-the-sidewalks.md).

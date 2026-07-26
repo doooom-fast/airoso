@@ -1367,7 +1367,10 @@ def build(project_dir: str | Path) -> dict:
             _best7 = _wm7
         if _gy7 < _best7 - GRASS_CLEARANCE_M:
             _s7 = _near_station7(_gx7, _gz7)
-            if _s7 is not None and bridge_of(_s7):
+            # bridge_of is None on a track with NO bridge spans (_bridge_detector returns None
+            # rather than a never-true predicate) — so a bridgeless track crashed here. Flat sites
+            # are exactly the ones with no bridges: Grand Junction and Pikes Peak both died on it.
+            if _s7 is not None and bridge_of is not None and bridge_of(_s7):
                 continue  # valley under a bridge deck stays open
         if abs(_gy7 - (_best7 - GRASS_CLEARANCE_M)) > 1e-4:
             # TWO-SIDED contact pin: under the pavement footprint the ground IS the deck

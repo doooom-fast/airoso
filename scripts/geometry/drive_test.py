@@ -58,16 +58,24 @@ def _load_obj(path: Path):
     cur = None
     base = 0
     verts_all: list[tuple[float, float, float]] = []
-    for ln in path.read_text().splitlines():
-        if ln.startswith("o "):
-            cur = {"name": ln[2:].strip(), "v0": len(verts_all), "tris": []}
-            groups.append(cur)
-        elif ln.startswith("v "):
-            p = ln.split()
-            verts_all.append((float(p[1]), float(p[2]), float(p[3])))
-        elif ln.startswith("f ") and cur is not None:
-            idx = [int(t.split("/")[0]) - 1 for t in ln.split()[1:4]]
-            cur["tris"].append(tuple(idx))
+    # Stream the file. read_text().splitlines() materialises the whole OBJ twice over, and a 25 km
+    # stage ships a ~170 MB track.obj beside a ~300 MB environment.obj.
+    _va = verts_all.append
+    with path.open() as fh:
+        for ln in fh:
+            k = ln[:2]
+            if k == "v ":
+                p = ln.split()
+                _va((float(p[1]), float(p[2]), float(p[3])))
+            elif k == "f ":
+                if cur is not None:
+                    p = ln.split()
+                    cur["tris"].append((int(p[1].partition("/")[0]) - 1,
+                                        int(p[2].partition("/")[0]) - 1,
+                                        int(p[3].partition("/")[0]) - 1))
+            elif k == "o ":
+                cur = {"name": ln[2:].strip(), "v0": len(verts_all), "tris": []}
+                groups.append(cur)
     return verts_all, groups
 
 
@@ -159,11 +167,35 @@ def run(project_dir: str | Path) -> dict:
     surface = TriField()      # everything the car can roll on
     obstacle = TriField()     # everything else that could stand in the corridor
     _wall_verts = []          # 1WALL columns for the furniture-seating gate
+    # CORRIDOR CULL. Every query this gate makes happens within a corridor around the centerline —
+    # wheel paths, excursion sweeps, obstruction checks. On a 25 km stage the terrain grid covers
+    # roughly 90 km2 while that corridor is about 4 km2, so hashing the whole world costs ~20x more
+    # than it needs to and the load/hash phase dominates the run (measured on IMI: top_at was 0.65 s
+    # of 9.4 s, while loading and hashing was over 7 s).
+    _CULL_M = 120.0          # generous: the widest excursion sweep is well inside this
+    _ccell = 64.0
+    _cnear: set = set()
+    for _px, _py, _pz in pts:
+        _ci0, _cj0 = int(_px // _ccell), int(_pz // _ccell)
+        _r = int(_CULL_M // _ccell) + 1
+        for _di in range(-_r, _r + 1):
+            for _dj in range(-_r, _r + 1):
+                _cnear.add((_ci0 + _di, _cj0 + _dj))
+
+    def _near_corridor(a, b, c):
+        return (((int(a[0] // _ccell), int(a[2] // _ccell)) in _cnear)
+                or ((int(b[0] // _ccell), int(b[2] // _ccell)) in _cnear)
+                or ((int(c[0] // _ccell), int(c[2] // _ccell)) in _cnear))
+
+    _track_groups: list = []
+    _culled = 0
     for objfile in ("track.obj", "environment.obj"):
         p = data / objfile
         if not p.exists():
             continue
         verts, groups = _load_obj(p)
+        if objfile == "track.obj":
+            _track_groups = groups
         for grp in groups:
             up = grp["name"].upper()
             if up.startswith(PAINT):
@@ -177,15 +209,23 @@ def run(project_dir: str | Path) -> dict:
                             _wall_verts.append(verts[vi])
             field = surface if up.startswith(DRIVABLE) else obstacle
             for tri in grp["tris"]:
+                _a, _b, _c = verts[tri[0]], verts[tri[1]], verts[tri[2]]
+                if not _near_corridor(_a, _b, _c):
+                    _culled += 1
+                    continue
                 field.add(verts, tri, grp["name"])
+
+    if _culled:
+        print(f"  [drive] corridor cull: skipped {_culled} triangles beyond {_CULL_M:.0f} m")
 
     # SANITY: there must BE a road. A build_mesh that dies mid-write (2.87 M grid verts ran the
     # process out of memory) leaves a TRUNCATED track.obj holding only the 1GRASS chunks written so
     # far — no 1ROAD at all. This gate then scored a world with no road in it: every wheel-path
     # sample landed on grass, so it reported 159,635 "ground above the road" and 548 bumps/km and
     # called it a surface problem. A gate that cannot tell a bad road from NO road is not a gate.
-    _road_groups = [g for objfile in ("track.obj",) if (data / objfile).exists()
-                    for g in _load_obj(data / objfile)[1] if g["name"].upper().startswith("1ROAD")]
+    # Reuse the groups already parsed above. This used to re-read track.obj in full just to list the
+    # road groups — a third parse of a file that can be 170 MB.
+    _road_groups = [g for g in _track_groups if g["name"].upper().startswith("1ROAD")]
     if not _road_groups:
         raise SystemExit(
             "drive_test: track.obj contains no 1ROAD_* geometry — the mesh build did not finish "

@@ -35,7 +35,35 @@ This train cannot converge until `fleet/MIGRATION.md` **M1** (publish + tag) and
 consumers) are done — there is no tag for `fleet.cli pin` to point at yet. `0004`'s first step (wire
 SD's `drive_test`) is independent and can start immediately.
 
-## Build matrix
+## Build matrix — measured 2026-07-25, k10-colorado through the engine (v0.20.2)
+
+First honest sweep, after un-forking colorado (M3). `GATE_EXCURSIONS_ADVISORY=1` (rc setting).
+
+| Track | mesh | drive_test | audit | kn5 | blocker |
+|---|---|---|---|---|---|
+| sand-creek | ok | **PASS** | F=4619 | — | curb flush |
+| lookout-lariat | ok | **PASS** | **clean** | FAIL | duplicate `1WALL_barrier_a/_b` meshes — AC drops dup-named meshes from collision |
+| imi | ok | **PASS** | F=15 | — | curb flush (0.13% of 11,168 curb verts) |
+| second-creek | ok | **PASS** | F=18 | — | curb flush · *fabricated geometry, proves nothing* |
+| high-plains | ok | **PASS** | F=168 | — | curb flush · *fabricated geometry, proves nothing* |
+| pueblo | ok | **PASS** | **clean** | FAIL | road floating over ground, 76.0% of samples |
+| aspen | ok | FAIL | — | — | drive test |
+| grand-junction | ok | FAIL | — | — | 23 ground-on-top, 42 severe steps |
+| pikes-peak | ok | FAIL | — | — | 70 severe steps |
+
+**6 of 9 pass the drive test.** Two tracks (grand-junction, pikes-peak) only got this far because
+v0.20.2 fixed a crash that killed every bridgeless track in `build_mesh`.
+
+The dominant remaining defect is **audit check F, curbs not flush** — and it is newly visible:
+colorado's fork grepped a `"KERB"` prefix against groups named `1KERB_*`, so F reported "0 of 0"
+for months. Sand Creek's 4,619 is the same underlying curb/sidewalk problem as
+[0001](../feedback/0001-junction-flare-drags-the-sidewalks.md).
+
+Not yet swept: **k10-colorado-rally** (held at v0.19.0 — see
+[0006](../feedback/0006-head-regresses-rally-terrain.md)) and **k10-san-diego** (Blender-first; must
+not be re-seeded).
+
+## Build matrix — planned
 
 Filled in at step 6. `—` = deliberately excluded, with the reason.
 

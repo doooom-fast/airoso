@@ -14,79 +14,6 @@ import sys
 from pathlib import Path
 
 
-def _split_over_cap(ob, cap: int = 60000) -> None:
-    """Split an over-cap mesh into UNIQUELY-named spatial tiles (``base_0``, ``base_1``, …).
-
-    Ported from the loop front-end's ``build_kn5_loop._split_large`` — the OBJ program never had
-    it, so over-cap meshes reached the vendored exporter, which auto-splits them and gives every
-    piece the SAME name. AC drops dup-named PHYSICAL meshes from collision, so the car falls
-    through them, and nothing upstream notices: Lookout Lariat's ``1WALL_barrier_a`` shipped as two
-    65,535 + 35,607 vert meshes sharing one name while drive_test and the whole audit read green.
-
-    Tiles are banded along the mesh's longest horizontal axis and sized by RENDER verts (~3 per
-    triangle when flat-shaded), which is what the cap actually constrains. ``pbr``/``surfaces``
-    key off the shared name prefix, so ``1WALL_barrier_a_0`` is still a wall.
-    """
-    import bpy
-
-    me = ob.data
-    if not me.polygons:
-        return
-    flat = not me.polygons[0].use_smooth
-    # Size the split by LOOPS regardless of shading. The exporter's own count tracks loops, not the
-    # smooth-shared vertex count: 1WALL_barrier_a is 29,406 positions but 174,279 loops, and the
-    # exporter emitted it as 65,535 + 35,607. Using the vertex count gave K=1 — a rename with no
-    # actual split, which the exporter then split anyway, right back to duplicate names.
-    render_est = len(me.loops)
-    K = max(2, render_est // cap + 1)
-    co = [(v.co.x, v.co.y, v.co.z) for v in me.vertices]
-    ax = 0 if (max(c[0] for c in co) - min(c[0] for c in co)) >= \
-             (max(c[1] for c in co) - min(c[1] for c in co)) else 1
-    lo = min(c[ax] for c in co)
-    span = (max(c[ax] for c in co) - lo) or 1.0
-    bands: list[list] = [[] for _ in range(K)]
-    for p in me.polygons:
-        bands[min(K - 1, int((p.center[ax] - lo) / span * K))].append(p)
-    base, mat = ob.name, (me.materials[0] if me.materials else None)
-    vert_uv = None
-    if me.uv_layers.active:
-        uvl = me.uv_layers.active
-        vert_uv = [(0.0, 0.0)] * len(me.vertices)
-        for loop in me.loops:
-            vert_uv[loop.vertex_index] = tuple(uvl.data[loop.index].uv)
-    made = 0
-    for k, polys in enumerate(bands):
-        if not polys:
-            continue
-        used, nv, nf, orig = {}, [], [], []
-        for poly in polys:
-            idx = []
-            for vi in poly.vertices:
-                if vi not in used:
-                    used[vi] = len(nv)
-                    nv.append(co[vi])
-                    orig.append(vi)
-                idx.append(used[vi])
-            nf.append(idx)
-        nm = bpy.data.meshes.new(f"{base}_{k}")
-        nm.from_pydata(nv, [], nf)
-        nm.update()
-        if not flat:
-            for poly in nm.polygons:
-                poly.use_smooth = True
-        if vert_uv is not None:
-            nuv = nm.uv_layers.new(name="UVMap")
-            for loop in nm.loops:
-                nuv.data[loop.index].uv = vert_uv[orig[loop.vertex_index]]
-        if mat:
-            nm.materials.append(mat)
-        bpy.context.scene.collection.objects.link(bpy.data.objects.new(f"{base}_{k}", nm))
-        made += 1
-    print(f"[build_kn5] split '{base}' ({render_est} render verts) -> {made} uniquely-named tiles "
-          f"under {cap} — the exporter would have duplicated the name")
-    bpy.data.objects.remove(ob, do_unlink=True)
-
-
 def _track_dir_from_argv(argv: list[str]) -> Path:
     """Blender passes script args after a literal ``--``.
 
@@ -174,20 +101,6 @@ def build(track_dir: Path) -> Path:
             ob.data.update()
             print(f"[build_kn5] smooth-shaded '{ob.name}' ({len(ob.data.vertices)} positions) to fit "
                   f"the 65,535 render-vertex limit")
-        # PRE-SPLIT before the exporter can. Measured on Lookout Lariat: 1WALL_barrier_a (174,279
-        # loops) came out of the vendored exporter as TWO meshes of 65,535 + 35,607 verts sharing
-        # one name, and AC drops dup-named physical meshes from collision - the car falls through
-        # the barrier. 12 meshes were affected there while every other gate read green. Trigger on
-        # the raw loop count: an earlier attempt keyed off a render-vertex estimate and never fired,
-        # because the smooth-shading rescue above makes that estimate the position count (~30k).
-        # 1GRASS and 1ROAD are excluded. Rebuilding faces with from_pydata does not carry the
-        # source's custom split normals, so a split drivable surface came back FACE-DOWN
-        # ('1ROAD_shoulder_a_0', 8846 up / 4577 dn) — the car falls through it (L6). Welded terrain
-        # has the same hazard plus seam risk. The duplicates actually observed were props and walls
-        # (1WALL_barrier, LAMPHEAD, LIGHTPOST), which this still covers.
-        if len(ob.data.loops) > 98_000 and not ob.name.upper().startswith(("1GRASS", "1ROAD")):
-            _split_over_cap(ob, cap=60000)
-            continue
         if len(ob.data.vertices) > 65535:
             raise SystemExit(f"[build_kn5] FATAL: '{ob.name}' has {len(ob.data.vertices)} positions "
                              f"(> 65535) — AC silently drops over-cap meshes (the invisible-forest "

@@ -378,6 +378,21 @@ def grade_embankment(grid_xyz: list[list[Vertex]], centerline_m: list[Vertex],
     for ec, ew in (extra_roads or []):        # connectors: graded too, no bridge, no station
         for (sx, sy, sz, _si) in _road_surface_samples(ec, ew, None)[0]:
             stationed.append((sx, sy, sz, -1.0))
+    # BAND MUST BE REPRESENTABLE BY THE GRID. The shelf only exists where a grid NODE lands on it:
+    # nodes carry the height, triangles interpolate between them. A band narrower than the grid's
+    # half-diagonal is a shelf no node ever samples, so every node anchoring a road-spanning triangle
+    # has already ramped down at ``ratio``:1 — and the terrain sags under the deck by roughly
+    # (spacing/2 - band)/ratio. That is L3b one level up: a shelf can only exist if it is WIDER than
+    # the cell that has to represent it. Measured on Dragon Tail (40 m 3DEP -> 10 m cells, band 2.5):
+    # median 0.48 m, p95 1.51 m, max 4.12 m of air under the road, 98.6% of samples off the ground.
+    # Raising the floor, never lowering a caller's request: a track that asks for a wide bench keeps it.
+    _dx = abs(grid_xyz[0][1][0] - grid_xyz[0][0][0]) if len(grid_xyz[0]) > 1 else 0.0
+    _dz = abs(grid_xyz[1][0][2] - grid_xyz[0][0][2]) if len(grid_xyz) > 1 else 0.0
+    _need = 0.5 * math.hypot(_dx, _dz) + 1.0   # half-diagonal + margin: the ring of nodes flanking the road
+    if _need > band:
+        print(f"[grade_embankment] band {band:.1f} m < grid half-diagonal {_need - 1.0:.1f} m "
+              f"({_dx:.1f}x{_dz:.1f} m cells) -> widening to {_need:.1f} m so the shelf is representable")
+        band = _need
     reach = band + 60.0                        # search radius: band + a tall fill's run (30 m fill @2:1 = 60 m)
     cell = 24.0
     BRIDGE_CLEAR = 14.0                         # keep terrain NATURAL within this of a bridge-span road point

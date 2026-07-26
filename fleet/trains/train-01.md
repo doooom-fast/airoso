@@ -35,7 +35,34 @@ This train cannot converge until `fleet/MIGRATION.md` **M1** (publish + tag) and
 consumers) are done — there is no tag for `fleet.cli pin` to point at yet. `0004`'s first step (wire
 SD's `drive_test`) is independent and can start immediately.
 
-## Build matrix — v0.22.0, per-track terrain resolution
+## Build matrix — overnight 2026-07-26, engine v0.24.3
+
+| Track | kind | real? | status |
+|---|---|---|---|
+| k10-colorado/sand-creek | fictional_street_circuit | **real** | **PACKAGED** |
+| k10-colorado/imi | circuit_port | **real** | **PACKAGED** |
+| k10-colorado/pueblo | circuit_port | **real** | **PACKAGED** |
+| k10-colorado/high-plains | circuit_port | **real (re-sourced tonight)** | **PACKAGED** |
+| k10-san-diego/project (Lake Murray) | street_port | **real** | **PACKAGED** |
+| k10-san-diego/project_freeway_net | street_port | **real** | **PACKAGED** |
+| k10-colorado/second-creek | circuit_port | **fabricated** | builds, but geometry is invented — must not ship ([registry](../registry.json)) |
+| k10-colorado/lookout-lariat | street_port | real | blocked — [0010](../feedback/0010-lariat-terrain-bind.md) |
+| k10-colorado/aspen | circuit_port | real | blocked — 1037 terrain-through-road |
+| k10-colorado/grand-junction | circuit_port | real | blocked — 38 terrain-through-road, 39 severe steps |
+| k10-colorado/pikes-peak | circuit_port | real | blocked — 70 severe steps (1.4 m at station ~1400) |
+| k10-colorado-rally/* (4 stages) | rally_stage | real | blocked — [0009](../feedback/0009-rally-start-cap-buries-the-spawn.md), start cap |
+
+**Six real tracks package.** Second Creek builds but is fabricated and is excluded from that count.
+
+Engine work behind it: absorbed + published; the bridgeless-track crash (v0.20.2); curb-flush
+rescoped and the sidewalk despiked (v0.21.x); per-track `terrain_cell_m` restored and its cap
+raised (v0.22.0); road-over-ground gated on p95 (v0.23.0); **PR #20 merged to main** — it was never
+a regression, main simply lacked the point-to-point work (v0.24.0); exporter duplicate-name
+pre-split for props and walls (v0.24.1–3).
+
+## Build matrix — superseded (v0.22.0)
+
+### v0.22.0 table
 
 Every circuit now declares `terrain_cell_m` finer than its road (LAWS L3b). Deck-to-ground gap,
 before → after:

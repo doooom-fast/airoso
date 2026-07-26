@@ -543,6 +543,17 @@ def build(project_dir: str | Path) -> dict:
     # (placed below) and the facing (build_kn5) are all COMPUTED in the mirrored frame, never reflected
     # as matrices (that's what broke the spawn before). orient_up re-faces the drivable surfaces.
     cfg_raw = json.loads((project_dir / "track.config.json").read_text())
+    # APPLY THE ARCHETYPE. This read the raw JSON and never went through load_config, so the
+    # ARCHETYPES presets — the thing STANDARDS S6 calls "a construction philosophy, not a tag",
+    # which decides whether a track gets kerbs, runoff and racing furniture — had no effect on the
+    # code that actually builds kerbs, runoff and racing furniture. Sand Creek is a street_circuit
+    # (preset: kerb off) and was still building 12,429 racing-kerb verts, 9 of them standing 0.76 m
+    # over the road. Presets fill only what the config leaves unset, so an explicit key still wins.
+    from scripts.config import ARCHETYPES as _ARCH, _deep_defaults as _dd
+    _arch = cfg_raw.get("archetype")
+    if _arch in _ARCH:
+        _dd(cfg_raw, _ARCH[_arch])
+        print(f"  [archetype] {_arch}: presets applied under explicit keys")
     mirror_x = bool(cfg_raw.get("mirror_x", False))
 
     # Grade cap: a launch-spike safety net, NOT a terrain flattener. 6% suits flat street circuits;

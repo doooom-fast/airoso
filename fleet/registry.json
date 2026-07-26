@@ -36,13 +36,13 @@
       "role": "Colorado circuits + the Lookout Lariat street port",
       "tracks_glob": "tracks/*/track.config.json",
       "build": {
-        "cmd": "./scripts/build.sh",
+        "cmd": "./build.sh",
         "arg": "track_dir",
         "resume_stage": "mesh"
       },
       "method": "blender-first (live operator bridge) for refinement; headless seed + export",
       "local_scripts_allowlist": [],
-      "notes": "Carries a FULL local copy of the engine scripts/ tree alongside its .engine pin. That is the stale-fork hazard SD already paid for twice — see fleet/MIGRATION.md M3."
+      "notes": "Un-forked 2026-07-25 (MIGRATION M3): the 72-module shadow tree is deleted and every stage runs from .engine/. 64 of 72 were byte-identical to the engine, 8 were older, none carried anything the engine lacked. Its audit had been grepping a 'KERB' prefix against groups named '1KERB_*', so the curb-flush check reported '0 of 0' for months."
     },
     {
       "name": "k10-colorado-rally",

@@ -328,11 +328,26 @@ def audit(project_dir: str | Path) -> dict:
     #    A curb IS at the road edge. Gate on that; the skirt's grounding is a different question and
     #    is already gated by drive_test (daylight gaps at edges) and checks E/H. The skirt is still
     #    COUNTED and REPORTED — advisory, not gating — so narrowing the scope hides nothing.
+    #    TOP SURFACE ONLY. A curb mesh has vertical extent — the 3D-ridged racing kerb drops a skirt
+    #    to the terrain, measured at a consistent 0.69-0.72 m below its own top on Sand Creek. Those
+    #    underside verts are BELOW the road by construction, and sampling them accounted for 21 of
+    #    the 31 remaining flags there, every one of which sat under a kerb whose top read 30.92 vs a
+    #    road at 30.81 — an 11 cm kerb, correctly flush. Flushness is a property of the TOP edge, so
+    #    a vert with more than a kerb-height of its own mesh standing above it is a side/underside
+    #    face and is not what this check is about. A wholly-sunken kerb still fails, because its top
+    #    vert is still tested.
     CURB_REACH = 3.5
     EDGE_REACH = 2.0
+    TOP_BAND = 0.20        # > one kerb height (curb_h defaults to 0.15) below the local top = a face
+    curb_hash4 = _hash(g["1KERB"], 4.0)
     curb_bad = 0
     curb_skirt = 0
+    curb_faces = 0
     for x, y, z in g["1KERB"]:
+        col = nearest_y(curb_hash4, x, z, 1.0, 4.0)
+        if col and max(col) - y > TOP_BAND:
+            curb_faces += 1
+            continue
         at_edge = nearest_y(road_hash4, x, z, EDGE_REACH, 4.0)
         near_g = any(abs(y - ry) < 0.5 for ry in nearest_y(grass_hash4, x, z, CURB_REACH, 4.0))
         if not at_edge:                       # verge / embankment skirt, not a curb
@@ -468,6 +483,7 @@ def audit(project_dir: str | Path) -> dict:
         "E_wall_floating": wall_float,
         "F_curb_not_flush": curb_bad,
         "F_skirt_off_terrain": curb_skirt,
+        "F_side_faces_skipped": curb_faces,
         "G_prop_floating": prop_float,
         "H_ground_above_deck": ground_cut,
         "I_sidewalk_isolating": sw_isolate,
@@ -488,7 +504,7 @@ def audit(project_dir: str | Path) -> dict:
     print(f"  C. at-grade junction crossings : {len(cross)}  ({report['C_by_kind']})")
     print(f"  D. walls sitting on a road     : {wall_on_road}")
     print(f"  E. walls floating over ground  : {wall_float}  (worst +{report['worst_float_m']} m)")
-    print(f"  F. curbs not flush             : {curb_bad}  (of {len(g['1KERB'])} curb verts,\n                                      edge-scoped; {curb_skirt} skirt verts off terrain — advisory,\n                                      grounding is gated by drive_test + E/H)")
+    print(f"  F. curbs not flush             : {curb_bad}  (of {len(g['1KERB'])} curb verts,\n                                      edge-scoped, top-surface only;\n                                      {curb_skirt} skirt verts off terrain (advisory), {curb_faces} side faces skipped,\n                                      grounding is gated by drive_test + E/H)")
     print(f"  G. plants floating over ground : {'(env not built)' if prop_float is None else prop_float}")
     print(f"  H. ground cutting into road    : {'(no ground grid)' if ground_cut is None else ground_cut}"
           f"  (worst +{report['worst_ground_cut_m']} m)")

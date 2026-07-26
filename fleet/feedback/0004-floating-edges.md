@@ -43,6 +43,35 @@ And yet floating persists. Two concrete reasons found so far:
    san-diego are still pinned there (rule S3). Whatever was fixed in `v0.17`–`v0.19` has never
    reached 12 of the 15 tracks.
 
+## Measured, 2026-07-25 — the whole of k10-colorado
+
+First fleet sweep (`fleet.cli build --run --repo k10-colorado --from mesh`, excursions advisory).
+The drive gate largely passes; the build then dies at the **`kn5_ground_check` road-float check**:
+
+| Track | archetype | drive_test | road floating over ground |
+|---|---|---|---|
+| sand-creek | `street_circuit` | PASS | **0.9%** |
+| lookout-lariat | `real_road` | PASS | — (died later, `TypeError`) |
+| imi | **none** | PASS | **73.7%** |
+| pueblo | **none** | PASS | **76.0%** |
+| second-creek | **none** | PASS | **79.9%** |
+| high-plains | **none** | PASS | **88.7%** |
+| aspen | **none** | FAIL | — |
+| grand-junction | **none** | — | `TypeError: 'NoneType' object is not callable` |
+| pikes-peak | **none** | — | `TypeError: 'NoneType' object is not callable` |
+
+This is the goal-2 symptom ("roads that don't float") measured for the first time, and it is not
+subtle: on four tracks the road hovers over the terrain across **three quarters or more** of the
+track.
+
+**The correlation to test first:** every heavily-floating track declares **no `archetype`**
+(STANDARDS S6), while the two that declare one are clean or near-clean. An archetype-less track gets
+none of the `ARCHETYPES` presets, so whatever terrain/edge behaviour the street tracks receive never
+applies to the circuits. That is a hypothesis with a strong signal, not a proven cause — `aspen`,
+`grand-junction` and `pikes-peak` are also archetype-less and fail earlier, so the sample is
+confounded. Test it by setting `archetype: race_circuit` on `imi` (real-sourced, mid-range at 73.7%)
+and re-measuring before changing any geometry code.
+
 ## Diagnosis
 
 Partly a coverage problem rather than a geometry problem: the gates that catch floating exist, but

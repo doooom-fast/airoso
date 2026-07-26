@@ -189,7 +189,18 @@ def run(project_dir: str | Path) -> dict:
             for _dj in range(-_r, _r + 1):
                 _cnear.add((_ci0 + _di, _cj0 + _dj))
 
+    # SKIP THE GIANTS. TriField.add registers a triangle in EVERY 3 m cell its bbox covers, so one
+    # 500 m terrain-skirt triangle lands in ~27,000 cells. A 25 km stage has a long enough border
+    # that every corridor cell then holds thousands of them, and each top_at scans the lot: measured
+    # at >200 ms per station on Dragon Tail against ~0.6 ms on Sand Creek — the sweep that appeared
+    # to take hours. The skirt is a flat apron far outside the track that no wheel path can reach,
+    # and terrain spanning the road is audit check J's job, not this gate's.
+    _MAX_TRI_M = 60.0
+
     def _near_corridor(a, b, c):
+        if (max(a[0], b[0], c[0]) - min(a[0], b[0], c[0]) > _MAX_TRI_M
+                or max(a[2], b[2], c[2]) - min(a[2], b[2], c[2]) > _MAX_TRI_M):
+            return False
         return (((int(a[0] // _ccell), int(a[2] // _ccell)) in _cnear)
                 or ((int(b[0] // _ccell), int(b[2] // _ccell)) in _cnear)
                 or ((int(c[0] // _ccell), int(c[2] // _ccell)) in _cnear))
@@ -282,7 +293,14 @@ def run(project_dir: str | Path) -> dict:
     _phase("pre-sweep setup")
     s = 0.0
     i = 1
+    _nst = 0
+    _tsweep = _tmod.time()
     while s < lap:
+        _nst += 1
+        if _nst % 2000 == 0:
+            _el = _tmod.time() - _tsweep
+            print(f"  [drive-time] sweep {_nst:6} stations ({s/1000:6.2f} km)  {_el:7.1f}s  "
+                  f"{1000*_el/_nst:.2f} ms/station", flush=True)
         while i < n - 1 and st[i] < s:
             i += 1
         t = (s - st[i - 1]) / max(st[i] - st[i - 1], 1e-9)
@@ -317,7 +335,9 @@ def run(project_dir: str | Path) -> dict:
             off_pavement += 1
             prev_h = [None] * 10
             prev_slope = [None] * 10
-            continue
+            s += STEP_M          # MUST advance: `s += STEP_M` lives at the END of this body, so a
+            continue             # bare `continue` here spins forever. That hung every rally build
+                                 # from v0.25.1 on — the stages were never slow, they never finished.
         deck_c, _ = surface.top_at(x, z, y_ref)
         for pi, off in enumerate(paths):
             is_edge = (pi // 2) in edge_line

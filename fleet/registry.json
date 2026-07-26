@@ -7,7 +7,6 @@
     "its place in the four-kind taxonomy, migration status).",
     "Read it with: python3 -m fleet.cli tracks"
   ],
-
   "engine": {
     "name": "k10-track-agents",
     "remote": "git@github.com:k10-motorsports/k10-track-agents.git",
@@ -19,10 +18,9 @@
       "path": "../racecor-prodrive/prodrive-ac-builder",
       "at_commit": "3e1aa52",
       "last_tag": "v0.19.0",
-      "status": "history cloned in full; consumers not yet re-pointed (see fleet/MIGRATION.md)"
+      "status": "history cloned in full and PUBLISHED (private); tags identical in both remotes; consumers not yet re-pointed (fleet/MIGRATION.md M2)"
     }
   },
-
   "kinds": {
     "_doc": "Kevin's four track types. Orthogonal to `archetype` (the construction philosophy in scripts/config.py ARCHETYPES) but they should agree — see fleet/STANDARDS.md S6.",
     "fictional_street_circuit": "A racing loop invented on top of real streets (Sand Creek Raceway). archetype: street_circuit",
@@ -30,7 +28,6 @@
     "circuit_port": "A real purpose-built facility, extant or historical (IMI, High Plains, Second Creek, PPIR). archetype: race_circuit",
     "rally_stage": "A real point-to-point special stage, gravel or the tarmac fiction (Rally Colorado). archetype: real_road TODAY (kerb/runoff off, which is right); a dedicated `rally_stage` archetype is PROPOSED, not implemented — see fleet/STANDARDS.md S6"
   },
-
   "repos": [
     {
       "name": "k10-colorado",
@@ -38,7 +35,11 @@
       "remote": "git@github.com:k10-motorsports/k10-colorado.git",
       "role": "Colorado circuits + the Lookout Lariat street port",
       "tracks_glob": "tracks/*/track.config.json",
-      "build": { "cmd": "./scripts/build.sh", "arg": "track_dir", "resume_stage": "mesh" },
+      "build": {
+        "cmd": "./scripts/build.sh",
+        "arg": "track_dir",
+        "resume_stage": "mesh"
+      },
       "method": "blender-first (live operator bridge) for refinement; headless seed + export",
       "local_scripts_allowlist": [],
       "notes": "Carries a FULL local copy of the engine scripts/ tree alongside its .engine pin. That is the stale-fork hazard SD already paid for twice — see fleet/MIGRATION.md M3."
@@ -49,7 +50,11 @@
       "remote": "git@github.com:k10-motorsports/k10-colorado-rally.git",
       "role": "Rally Colorado gravel/tarmac special stages near Rangely",
       "tracks_glob": "tracks/*/track.config.json",
-      "build": { "cmd": "./build.sh", "arg": "track_dir", "resume_stage": "mesh" },
+      "build": {
+        "cmd": "./build.sh",
+        "arg": "track_dir",
+        "resume_stage": "mesh"
+      },
       "method": "fully headless; engine-only (thinnest consumer, the reference shape)",
       "local_scripts_allowlist": [],
       "notes": "Cleanest consumer: no local scripts/ at all, everything runs from .engine/. This is the target shape for the other two."
@@ -83,40 +88,144 @@
       "notes": "SD-unique code is legitimate and declared above. Anything OUTSIDE the allowlist that shadows an engine module is drift."
     }
   ],
-
   "track_annotations": {
     "_doc": "Keyed by <repo>/<track-dir>. `kind` is the taxonomy; `fidelity` records how honestly the geometry is sourced; `owner_of` marks a track that supersedes a stale copy elsewhere.",
-
-    "k10-colorado/sand-creek":     { "kind": "fictional_street_circuit", "fidelity": "real", "source": "KML + phone capture + textures", "owner_of": ["engine-legacy/projects/sand-creek-raceway"] },
-    "k10-colorado/lookout-lariat": { "kind": "street_port",  "fidelity": "real", "source": "OSM route (named + ref: + id: ways)" },
-    "k10-colorado/imi":            { "kind": "circuit_port", "fidelity": "real", "source": "aerial trace, georeferenced", "owner_of": ["engine-legacy/projects/imi-motorsports"] },
-    "k10-colorado/aspen":          { "kind": "circuit_port", "fidelity": "real", "source": "OSM highway=raceway way 192313782" },
-    "k10-colorado/grand-junction": { "kind": "circuit_port", "fidelity": "real", "source": "OSM highway=raceway way 293789503" },
-    "k10-colorado/pikes-peak":     { "kind": "circuit_port", "fidelity": "real", "source": "OSM highway=raceway way 1134026181 (D-oval)" },
-    "k10-colorado/pueblo":         { "kind": "circuit_port", "fidelity": "real", "source": "OSM highway=raceway ways 558378826+823+824" },
-    "k10-colorado/high-plains":    { "kind": "circuit_port", "fidelity": "FABRICATED", "source": "rough KML trace off the old unified map", "action": "re-source to real location + real aerial + real 3DEP" },
-    "k10-colorado/second-creek":   { "kind": "circuit_port", "fidelity": "FABRICATED", "source": "rough KML trace off the old unified map", "action": "re-source; the facility is closed (historical port)", "historical": true },
-
-    "k10-colorado-rally/dragon-tail-gravel":      { "kind": "rally_stage", "fidelity": "real", "source": "OSM County Road 116 (3 ways, unpaved)" },
-    "k10-colorado-rally/dragon-tail-tarmac":      { "kind": "rally_stage", "fidelity": "real geometry / fictional surface", "source": "same road as dragon-tail-gravel" },
-    "k10-colorado-rally/under-the-dragon-gravel": { "kind": "rally_stage", "fidelity": "real", "source": "OSM County Road 109 (10 ways, unpaved)" },
-    "k10-colorado-rally/under-the-dragon-tarmac": { "kind": "rally_stage", "fidelity": "real geometry / fictional surface", "source": "same road as under-the-dragon-gravel" },
-
-    "k10-san-diego/project":             { "kind": "street_port", "fidelity": "real", "source": "OSM network routing, 5 roads round the reservoir", "owner_of": ["engine-legacy/projects/san-diego-loop"] },
-    "k10-san-diego/project_freeway_net": { "kind": "street_port", "fidelity": "real", "source": "OSM motorway network in bbox, refs I-5/I-8/CA-52/CA-163", "network": true },
-    "k10-san-diego/project_freeway":     { "kind": "street_port", "fidelity": "real", "source": "single-ribbon freeway layout", "status": "RETIRED — superseded by project_freeway_net" }
+    "k10-colorado/sand-creek": {
+      "kind": "fictional_street_circuit",
+      "fidelity": "real",
+      "source": "KML + phone capture + textures",
+      "owner_of": [
+        "engine-legacy/projects/sand-creek-raceway"
+      ]
+    },
+    "k10-colorado/lookout-lariat": {
+      "kind": "street_port",
+      "fidelity": "real",
+      "source": "OSM route (named + ref: + id: ways)"
+    },
+    "k10-colorado/imi": {
+      "kind": "circuit_port",
+      "fidelity": "real",
+      "source": "aerial trace, georeferenced",
+      "owner_of": [
+        "engine-legacy/projects/imi-motorsports"
+      ]
+    },
+    "k10-colorado/aspen": {
+      "kind": "circuit_port",
+      "fidelity": "real",
+      "source": "OSM highway=raceway way 192313782"
+    },
+    "k10-colorado/grand-junction": {
+      "kind": "circuit_port",
+      "fidelity": "real",
+      "source": "OSM highway=raceway way 293789503"
+    },
+    "k10-colorado/pikes-peak": {
+      "kind": "circuit_port",
+      "fidelity": "real",
+      "source": "OSM highway=raceway way 1134026181 (D-oval)"
+    },
+    "k10-colorado/pueblo": {
+      "kind": "circuit_port",
+      "fidelity": "real",
+      "source": "OSM highway=raceway ways 558378826+823+824"
+    },
+    "k10-colorado/high-plains": {
+      "kind": "circuit_port",
+      "fidelity": "FABRICATED",
+      "source": "rough KML trace off the old unified map",
+      "action": "re-source to real location + real aerial + real 3DEP"
+    },
+    "k10-colorado/second-creek": {
+      "kind": "circuit_port",
+      "fidelity": "FABRICATED",
+      "source": "rough KML trace off the old unified map",
+      "action": "re-source; the facility is closed (historical port)",
+      "historical": true
+    },
+    "k10-colorado-rally/dragon-tail-gravel": {
+      "kind": "rally_stage",
+      "fidelity": "real",
+      "source": "OSM County Road 116 (3 ways, unpaved)"
+    },
+    "k10-colorado-rally/dragon-tail-tarmac": {
+      "kind": "rally_stage",
+      "fidelity": "real geometry / fictional surface",
+      "source": "same road as dragon-tail-gravel"
+    },
+    "k10-colorado-rally/under-the-dragon-gravel": {
+      "kind": "rally_stage",
+      "fidelity": "real",
+      "source": "OSM County Road 109 (10 ways, unpaved)"
+    },
+    "k10-colorado-rally/under-the-dragon-tarmac": {
+      "kind": "rally_stage",
+      "fidelity": "real geometry / fictional surface",
+      "source": "same road as under-the-dragon-gravel"
+    },
+    "k10-san-diego/project": {
+      "kind": "street_port",
+      "fidelity": "real",
+      "source": "OSM network routing, 5 roads round the reservoir",
+      "owner_of": [
+        "engine-legacy/projects/san-diego-loop"
+      ]
+    },
+    "k10-san-diego/project_freeway_net": {
+      "kind": "street_port",
+      "fidelity": "real",
+      "source": "OSM motorway network in bbox, refs I-5/I-8/CA-52/CA-163",
+      "network": true
+    },
+    "k10-san-diego/project_freeway": {
+      "kind": "street_port",
+      "fidelity": "real",
+      "source": "single-ribbon freeway layout",
+      "status": "RETIRED — superseded by project_freeway_net"
+    }
   },
-
   "engine_projects": {
     "_doc": "projects/ inside this repo, inherited from prodrive-ac-builder. Most are STALE duplicates now owned by a project repo (see track_annotations.owner_of). Kept, not deleted, until fleet/MIGRATION.md M4 verifies each. Do not build from these.",
-    "sand-creek-raceway":    { "status": "stale duplicate", "engine_version": "0.15.3", "live_version": "0.26.0 in k10-colorado/sand-creek" },
-    "imi-motorsports":       { "status": "stale duplicate", "engine_version": "0.1.0",  "live_version": "0.1.1 in k10-colorado/imi" },
-    "san-diego-loop":        { "status": "stale duplicate", "engine_version": "0.2.0",  "live_version": "0.15.0 in k10-san-diego/project" },
-    "san-diego-freeway-loop":{ "status": "stale duplicate", "engine_version": "0.5.0",  "live_version": "0.5.0 in k10-san-diego/project_freeway (itself retired)" },
-    "k10-colorado":          { "status": "retired concept", "note": "the unified connect-everything corridor; k10-colorado deliberately abandoned connectors" },
-    "san-diego-cruise":      { "status": "retired concept", "note": "predecessor of the SD loop work" },
-    "gala-seed":             { "status": "ACTIVE — external contract", "note": "owed to the k10-1978 game repo via scripts/game/export_seed.py + its PIPELINE_BRIDGE.md. Absorbing the engine moved this contract here. Do not delete or relocate without updating the game repo." },
-    "ats-colorado-sample":   { "status": "fixture", "note": "scs-extraction sample; the SCS seam is only partly implemented" },
-    "dashcam-loop-0406":     { "status": "fixture", "note": "prototype of the any-drive -> track path via scripts/gps/from_track" }
+    "sand-creek-raceway": {
+      "status": "stale duplicate",
+      "engine_version": "0.15.3",
+      "live_version": "0.26.0 in k10-colorado/sand-creek"
+    },
+    "imi-motorsports": {
+      "status": "stale duplicate",
+      "engine_version": "0.1.0",
+      "live_version": "0.1.1 in k10-colorado/imi"
+    },
+    "san-diego-loop": {
+      "status": "stale duplicate",
+      "engine_version": "0.2.0",
+      "live_version": "0.15.0 in k10-san-diego/project"
+    },
+    "san-diego-freeway-loop": {
+      "status": "stale duplicate",
+      "engine_version": "0.5.0",
+      "live_version": "0.5.0 in k10-san-diego/project_freeway (itself retired)"
+    },
+    "k10-colorado": {
+      "status": "retired concept",
+      "note": "the unified connect-everything corridor; k10-colorado deliberately abandoned connectors"
+    },
+    "san-diego-cruise": {
+      "status": "retired concept",
+      "note": "predecessor of the SD loop work"
+    },
+    "gala-seed": {
+      "status": "ACTIVE — external contract",
+      "note": "owed to the k10-1978 game repo via scripts/game/export_seed.py + its PIPELINE_BRIDGE.md. Absorbing the engine moved this contract here. Do not delete or relocate without updating the game repo."
+    },
+    "ats-colorado-sample": {
+      "status": "fixture",
+      "note": "scs-extraction sample; the SCS seam is only partly implemented"
+    },
+    "dashcam-loop-0406": {
+      "status": "fixture",
+      "note": "prototype of the any-drive -> track path via scripts/gps/from_track"
+    }
   }
 }

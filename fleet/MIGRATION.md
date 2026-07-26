@@ -18,13 +18,19 @@ nothing is lost and the old repo is still reachable.
 across as-is. Their dispositions are M4 and M5 below — each needs evidence before removal, not a
 guess.
 
-## ☐ M1 — Publish this repo *(needs Kevin — outward-facing)*
+## ☑ M1 — Publish this repo
 
-The remote `git@github.com:k10-motorsports/k10-track-agents.git` is recorded in the registry but
-**does not exist yet and has not been pushed**. Creating the GitHub repo and the first push are
-yours to make; nothing here has left this machine.
+Done. `k10-motorsports/k10-track-agents`, **private** (matching `prodrive-ac-builder`; the track
+repos stay public). `main` pushed, and all 94 absorbed tags pushed — consumers pinning `v0.16.0` or
+`v0.19.0` can resolve them here.
 
-Once it exists, tag the absorption point so consumers have something to pin:
+`engine-origin` (the local builder checkout the history came from) has its push URL set to
+`no_push`, so a bare `git push` can never write back to it.
+
+Still owed: the **`k10-1978`** game repo's `PIPELINE_BRIDGE.md` points at `prodrive-ac-builder` for
+`projects/gala-seed/` + `scripts/game/export_seed.py`. That contract now lives here.
+
+Tag the absorption point once M2 is proven, so consumers have something to pin:
 
 ```bash
 git tag v0.20.0 -m "Engine absorbed into k10-track-agents; control plane added"
@@ -32,16 +38,28 @@ git tag v0.20.0 -m "Engine absorbed into k10-track-agents; control plane added"
 
 ## ☐ M2 — Re-point the consumers
 
-Each repo's `bootstrap.sh` hardcodes the old URL but reads an `ENGINE_REPO` override — so the
-cutover can be **rehearsed before it is committed**, against this local checkout:
+**The cutover is content-neutral, and this is provable without building anything.** The absorbed
+tags point at the same commits in both remotes:
 
 ```bash
-cd ../k10-colorado-rally
-ENGINE_REPO=/Users/kevinconboy/Documents/K10/k10-track-agents ./bootstrap.sh
-./build.sh tracks/dragon-tail-gravel mesh      # offline resume; proves the seam
+git ls-remote --tags git@github.com:k10-motorsports/prodrive-ac-builder.git v0.19.0
+git ls-remote --tags git@github.com:k10-motorsports/k10-track-agents.git   v0.19.0
+# a5005e33… for v0.16.0, 8638edac… for v0.19.0 — identical in both
 ```
 
-Only when a rehearsal passes, change the default in that repo's `bootstrap.sh`:
+A consumer pinned at a tag therefore gets byte-identical code from either remote. The URL swap
+cannot change build behaviour; anything that fails after it was already failing before it.
+
+> **`ENGINE_REPO` does NOT work as a rehearsal when `.engine/` already exists.** `bootstrap.sh`
+> only clones when `.engine/.git` is absent — otherwise it fetches from the *existing* origin and
+> the override is silently ignored. A "rehearsal" run that way tests the old repo and reports
+> success. To genuinely point an existing checkout at this repo:
+> ```bash
+> git -C .engine remote set-url origin git@github.com:k10-motorsports/k10-track-agents.git
+> ./bootstrap.sh && git -C .engine rev-parse HEAD    # compare against the SHA above
+> ```
+
+Change the default in each repo's `bootstrap.sh`:
 
 ```diff
 -REPO="${ENGINE_REPO:-git@github.com:k10-motorsports/prodrive-ac-builder.git}"

@@ -33,8 +33,12 @@ def _split_over_cap(ob, cap: int = 60000) -> None:
     if not me.polygons:
         return
     flat = not me.polygons[0].use_smooth
-    render_est = len(me.loops) if flat else len(me.vertices)
-    K = render_est // cap + 1
+    # Size the split by LOOPS regardless of shading. The exporter's own count tracks loops, not the
+    # smooth-shared vertex count: 1WALL_barrier_a is 29,406 positions but 174,279 loops, and the
+    # exporter emitted it as 65,535 + 35,607. Using the vertex count gave K=1 — a rename with no
+    # actual split, which the exporter then split anyway, right back to duplicate names.
+    render_est = len(me.loops)
+    K = max(2, render_est // cap + 1)
     co = [(v.co.x, v.co.y, v.co.z) for v in me.vertices]
     ax = 0 if (max(c[0] for c in co) - min(c[0] for c in co)) >= \
              (max(c[1] for c in co) - min(c[1] for c in co)) else 1
@@ -176,7 +180,10 @@ def build(track_dir: Path) -> Path:
         # the barrier. 12 meshes were affected there while every other gate read green. Trigger on
         # the raw loop count: an earlier attempt keyed off a render-vertex estimate and never fired,
         # because the smooth-shading rescue above makes that estimate the position count (~30k).
-        if len(ob.data.loops) > 98_000:
+        # 1GRASS is excluded: it is smooth-shaded and welded watertight, the exporter has never
+        # duplicated its names, and re-splitting welded terrain risks opening a seam the car falls
+        # through. The observed duplicates were all props/walls.
+        if len(ob.data.loops) > 98_000 and not ob.name.upper().startswith("1GRASS"):
             _split_over_cap(ob, cap=60000)
             continue
         if len(ob.data.vertices) > 65535:

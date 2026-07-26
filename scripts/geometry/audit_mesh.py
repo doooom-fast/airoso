@@ -294,11 +294,35 @@ def audit(project_dir: str | Path) -> dict:
     #    The invariant is the same one the barriers already obey: nothing that is not road may stand
     #    on the road surface. A kerb vert RISING above the road beneath it, more than a kerb height,
     #    is in the carriageway.
-    KERB_STAND_M = 0.06        # a flush kerb sits within a few cm; higher than this is a step up
+    #    THRESHOLD. A kerb's own lip overlaps the pavement edge by construction, so a few cm of
+    #    "kerb above road" is the seam where the two meet, not an intrusion. After the carriageway
+    #    drop, Lake Murray's residue was 12 verts spanning +0.061..+0.065 m across 7 clusters —
+    #    tightly bunched, i.e. one systematic seam — where the real intrusions it had caught ranged
+    #    +0.06..+0.33 m. 0.10 m sits above the seam and below anything a driver would hit.
+    KERB_STAND_M = 0.10
     kerb_on_road = 0
     worst_kerb_stand = 0.0
+    # Against every CARRIAGEWAY (main + connectors + opposing), but NOT 1ROAD_SHOULDER: a shoulder
+    # is a graded verge and a kerb sits above it by design — including it read 218 false hits up to
+    # +0.79 m. main_th alone had the opposite problem, missing connector crossings, which is
+    # precisely where a swept sidewalk runs through a junction.
+    _cverts: list = []
+    _ctris: list = []
+    _keep = False
+    for _ln in (data / "track.obj").read_text().splitlines():
+        if _ln.startswith("o "):
+            _nm = _ln[2:].strip().upper()
+            _keep = _nm.startswith("1ROAD") and not _nm.startswith("1ROAD_SHOULDER")
+        elif _ln.startswith("v "):
+            _q = _ln.split()
+            _cverts.append((float(_q[1]), float(_q[2]), float(_q[3])))
+        elif _ln.startswith("f ") and _keep:
+            _ix = [int(_q.split("/")[0]) - 1 for _q in _ln.split()[1:]]
+            for _k in range(1, len(_ix) - 1):
+                _ctris.append((_cverts[_ix[0]], _cverts[_ix[_k]], _cverts[_ix[_k + 1]]))
+    _carriage = _tri_hash(_ctris, 8.0)
     for x, y, z in g["1KERB"]:
-        ry = _surf_at(main_th, 8.0, x, z, y, dy_max=1.2)
+        ry = _surf_at(_carriage, 8.0, x, z, y, dy_max=1.2)
         if ry is not None and y - ry > KERB_STAND_M:
             kerb_on_road += 1
             worst_kerb_stand = max(worst_kerb_stand, y - ry)

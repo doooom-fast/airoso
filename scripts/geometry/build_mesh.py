@@ -260,7 +260,12 @@ def _bridge_detector(centerline_m: list[Vertex], natural_grid: list[list[Vertex]
             spans.append((st[i], st[j - 1]))
         i = j
     if not spans:
-        return None
+        # A never-true predicate, NOT None. Six call sites below ask `bridge_of(station)` and only
+        # one guarded it, so every bridgeless track crashed in build_mesh — which is every flat
+        # site (Grand Junction, Pikes Peak). Returning a callable keeps "no bridges" a normal
+        # answer instead of a special case each caller has to remember.
+        _bridge_detector.last_spans = []      # don't let a previous track's spans leak through
+        return lambda station_m: False
     print(f"  bridge spans: {len(spans)} ({[f'{a:.0f}-{b:.0f}m' for a, b in spans]}) — deck+piers, no fill")
     _bridge_detector.last_spans = [(float(a), float(b)) for a, b in spans]   # for persistence
 
@@ -1367,10 +1372,7 @@ def build(project_dir: str | Path) -> dict:
             _best7 = _wm7
         if _gy7 < _best7 - GRASS_CLEARANCE_M:
             _s7 = _near_station7(_gx7, _gz7)
-            # bridge_of is None on a track with NO bridge spans (_bridge_detector returns None
-            # rather than a never-true predicate) — so a bridgeless track crashed here. Flat sites
-            # are exactly the ones with no bridges: Grand Junction and Pikes Peak both died on it.
-            if _s7 is not None and bridge_of is not None and bridge_of(_s7):
+            if _s7 is not None and bridge_of(_s7):
                 continue  # valley under a bridge deck stays open
         if abs(_gy7 - (_best7 - GRASS_CLEARANCE_M)) > 1e-4:
             # TWO-SIDED contact pin: under the pavement footprint the ground IS the deck

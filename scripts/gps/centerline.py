@@ -275,7 +275,7 @@ def build_centerline(project_dir: str | Path) -> tuple[Path, dict]:
     connectors_cfg = route.get("connectors", {})
 
     all_names = list(road_names) + [n for v in connectors_cfg.values() for n in v]
-    fetched = overpass.fetch_ways(bbox, all_names)
+    fetched = overpass.fetch_ways(bbox, all_names, cache=project_dir / "data" / "osm.cache.json")
 
     road_lines = [road_path(fetched[n]) for n in road_names]
     missing = [n for n, line in zip(road_names, road_lines) if not line]

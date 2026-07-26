@@ -13,6 +13,7 @@ build_mesh to lay paved intersection pads.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import sys
@@ -64,11 +65,37 @@ def _overpass(query: str, *, timeout: int = 120) -> dict:
     raise SystemExit(f"overpass unreachable (all mirrors): {last}")
 
 
-def fetch_ways(bbox: tuple[float, float, float, float]) -> list[dict]:
-    """Every drivable OSM way in bbox WITH the tags we need: id, name, highway, lanes, width, node ids, geom."""
+def fetch_ways(bbox: tuple[float, float, float, float], cache=None) -> list[dict]:
+    """Every drivable OSM way in bbox WITH the tags we need: id, name, highway, lanes, width, node ids, geom.
+
+    ``cache`` snapshots the raw payload so a width pass is reproducible without live Overpass — OSM
+    is mutable, and a lane retag silently changes every width on the track (L2). Keyed by a
+    fingerprint of the query, so a changed bbox re-fetches instead of reusing the wrong snapshot."""
     s, w, n, e = bbox
     q = (f'[out:json][timeout:120];(way["highway"~"^({DRIVABLE})(_link)?$"]({s},{w},{n},{e}););out geom;')
-    d = _overpass(q)
+    d = None
+    fp = hashlib.sha256(q.encode()).hexdigest()[:16]
+    if cache is not None:
+        cache = Path(cache)
+        if cache.is_file():
+            try:
+                snap = json.loads(cache.read_text(encoding="utf-8"))
+                if snap.get("query_fingerprint") == fp:
+                    print(f"  [widths_from_osm] using cached snapshot {cache.name} "
+                          f"(fetched {snap.get('fetched_utc','?')})")
+                    d = snap["payload"]
+                else:
+                    print(f"  [widths_from_osm] {cache.name} is for a different bbox — re-fetching")
+            except (json.JSONDecodeError, KeyError):
+                pass
+    if d is None:
+        d = _overpass(q)
+        if cache is not None:
+            cache.parent.mkdir(parents=True, exist_ok=True)
+            cache.write_text(json.dumps({"query_fingerprint": fp,
+                                         "fetched_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                                         "bbox": [s, w, n, e], "payload": d}), encoding="utf-8")
+            print(f"  [widths_from_osm] snapshotted {len(d.get('elements',[]))} ways -> {cache.name}")
     ways = []
     for el in d.get("elements", []):
         if el.get("type") != "way" or "geometry" not in el:
@@ -289,7 +316,7 @@ def build(project_dir: str | Path) -> dict:
     bbox = (min(lats) - pad, min(lons) - pad, max(lats) + pad, max(lons) + pad)
     route = json.loads((project / "track.config.json").read_text()).get("route", {}) or {}
     profile = route.get("width_profile", "urban")
-    ways = fetch_ways(bbox)
+    ways = fetch_ways(bbox, cache=data / "osm.widths.cache.json")
     # IDENTITY LOCK: freeway-class ways may donate widths ONLY when the route declares them
     # (by name, "ref:NAME" or "id:N,N"). A street circuit beside I-270/US-85 was inheriting
     # freeway widths from nearest-way matching — "sand creek is fucking highways".

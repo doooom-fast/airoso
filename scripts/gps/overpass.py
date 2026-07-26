@@ -8,9 +8,11 @@ transient 504s the public instance occasionally returns.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import time
+from pathlib import Path
 import urllib.parse
 import urllib.request
 
@@ -49,9 +51,33 @@ def fetch_ways(
     road_names: list[str],
     *,
     retries: int = 3,
+    cache=None,
 ) -> dict[str, list[list[Vertex]]]:
-    """Run the query and return ``{name: [way, ...]}``; each way is a list of (lon, lat)."""
-    body = urllib.parse.urlencode({"data": build_query(bbox, road_names)}).encode()
+    """Run the query and return ``{name: [way, ...]}``; each way is a list of (lon, lat).
+
+    ``cache``: a path to snapshot the raw Overpass payload into. OSM is a MUTABLE external
+    database, so a track whose geometry comes from it is only reproducible while nobody edits the
+    ways it names — retag County Road 116 or the Lariat's ways and the track silently rebuilds
+    different, with no way to see what changed (L2 wants config + sources to be enough). The
+    snapshot is keyed by a fingerprint of the actual query, so changing the route or bbox ignores
+    the old file instead of quietly reusing it. Delete the file to re-fetch.
+    """
+    query = build_query(bbox, road_names)
+    fingerprint = hashlib.sha256(query.encode()).hexdigest()[:16]
+    if cache is not None:
+        cache = Path(cache)
+        if cache.is_file():
+            try:
+                snap = json.loads(cache.read_text(encoding="utf-8"))
+                if snap.get("query_fingerprint") == fingerprint:
+                    print(f"  [overpass] using cached snapshot {cache.name} "
+                          f"({len(snap['payload'].get('elements', []))} elements, "
+                          f"fetched {snap.get('fetched_utc', '?')})")
+                    return _parse_payload(snap["payload"], road_names)
+                print(f"  [overpass] {cache.name} is for a different query — re-fetching")
+            except (json.JSONDecodeError, KeyError):
+                print(f"  [overpass] {cache.name} unreadable — re-fetching")
+    body = urllib.parse.urlencode({"data": query}).encode()
     payload: dict = {}
     for attempt in range(retries):
         req = urllib.request.Request(
@@ -68,6 +94,17 @@ def fetch_ways(
                 raise
             time.sleep(2 * (attempt + 1))  # back off on transient 504/timeout
 
+    if cache is not None:
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        cache.write_text(json.dumps({"query_fingerprint": fingerprint,
+                                     "fetched_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                                     "bbox": list(bbox), "road_names": list(road_names),
+                                     "payload": payload}), encoding="utf-8")
+        print(f"  [overpass] snapshotted {len(payload.get('elements', []))} elements -> {cache.name}")
+    return _parse_payload(payload, road_names)
+
+
+def _parse_payload(payload: dict, road_names: list[str]) -> dict[str, list[list[Vertex]]]:
     out: dict[str, list[list[Vertex]]] = {n: [] for n in road_names}
     refs = {n: n[4:] for n in road_names if n.startswith("ref:")}
     ids = {n: {int(i) for i in n[3:].split(",")} for n in road_names if n.startswith("id:")}

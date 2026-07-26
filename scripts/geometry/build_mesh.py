@@ -766,8 +766,37 @@ def build(project_dir: str | Path) -> dict:
                         _nfz += 1
                         break
         print(f"  [flat zones] {_nfz} grid nodes graded flat through junction interiors")
+    # STAGE-END APRONS (point-to-point only). grade_embankment references each grid node to the
+    # NEAREST road sample — but a stage that does not close has no samples past its two ends, so
+    # nodes behind the start keep natural ground. Where the start sits in a cut, the triangle from
+    # a graded node to an ungraded one behind it SPANS OVER the road cap: grass on top of the
+    # pavement at station 0, which is exactly where loop:false puts the grid (LAWS L11). Dragon
+    # Tail spawned the car under terrain this way. A loop never exposes it — it has no ends.
+    #
+    # Fix: extend the road tangentially past each end and grade to that too. This is also what is
+    # actually there in reality — the county road continues past the stage's timing point — so the
+    # terrain reads as a road running on, not a wall across it.
+    _end_aprons: list[tuple[list, list]] = []
+    if not cfg_raw.get("loop", True) and len(centerline) > 2:
+        _APRON_M, _STEP_M = 40.0, 4.0
+        for _idx, _nbr in ((0, 1), (len(centerline) - 1, len(centerline) - 2)):
+            _px, _py, _pz = centerline[_idx]
+            _qx, _qy, _qz = centerline[_nbr]
+            _dx, _dz = _px - _qx, _pz - _qz              # outward, away from the stage
+            _L = math.hypot(_dx, _dz)
+            if _L < 1e-6:
+                continue
+            _dx, _dz = _dx / _L, _dz / _L
+            # Held LEVEL at the end's own height: the real grade beyond the cap is unknown, and
+            # extrapolating a slope would invent terrain the DEM never measured (L1/L3).
+            _pts = [(_px + _dx * (_k * _STEP_M), _py, _pz + _dz * (_k * _STEP_M))
+                    for _k in range(1, int(_APRON_M / _STEP_M) + 1)]
+            _end_aprons.append((_pts, [widths[_idx]] * len(_pts)))
+        if _end_aprons:
+            print(f"  [stage ends] {len(_end_aprons)} tangent apron(s) graded {_APRON_M:.0f} m "
+                  f"past the cap (point-to-point)")
     ribbon.grade_embankment(grid_xyz, centerline, widths, bank_at=bnk, band=2.5,
-                            extra_roads=[(p, w) for _n, p, w in connectors],
+                            extra_roads=[(p, w) for _n, p, w in connectors] + _end_aprons,
                             clearance=GRASS_CLEARANCE_M, bridge_of=bridge_of)
 
     # tile_m=8 m — the LA Canyons cracked-tarmac detail reads at its real scale (cracks crisp, not

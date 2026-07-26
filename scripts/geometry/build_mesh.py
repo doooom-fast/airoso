@@ -910,6 +910,41 @@ def build(project_dir: str | Path) -> dict:
                                         curb_face_w=float(edge_cfg.get("curb_face_w", 0.08)),
                                         sidewalk_w=float(edge_cfg.get("sidewalk_w", 1.5)),
                                         grade_w=float(edge_cfg.get("grade_w", 1.0)))
+        # DESPIKE THE NEAR-ROAD BAND. The strip's outer edge is draped onto the real grass surface,
+        # and where that lookup lands badly a SINGLE vertex gets yanked down while both its
+        # neighbours stay put. Measured on Sand Creek: across the whole curb/gutter band the strip
+        # tracks the road within -0.02 .. -0.20 m — except one vert at 0.96 m offset sitting at
+        # -0.84 m, 0.7 m below the verts either side of it at 0.92 m and 0.97 m. Four such spikes
+        # in 53,866 verts, each a ~1 m mini-cliff at the pavement edge.
+        #
+        # Within a walk's width of the road the profile is flat BY CONSTRUCTION (curb top, walk,
+        # gutter) — nothing there is entitled to descend, so anything that has is a bad drape
+        # sample. Clamp it to a gutter depth. Beyond that band the verge/embankment legitimately
+        # falls away to the terrain and is left alone (LAWS L9: curbs stay tight to the road edge
+        # at deck height).
+        _NEAR_M, _MAX_DROP, _GUTTER = 2.0, 0.35, 0.15
+        _sv = shoulder["vertices"]
+        _rh_sp = {}
+        for _rx, _ry, _rz in road["vertices"]:
+            _k = (int(_rx // 4.0), int(_rz // 4.0))
+            _rh_sp.setdefault(_k, []).append((_rx, _ry, _rz))
+        _despiked = 0
+        for _i in range(len(_sv)):
+            _x, _y, _z = _sv[_i]
+            _ci, _cj = int(_x // 4.0), int(_z // 4.0)
+            _best = None
+            for _di in (-1, 0, 1):
+                for _dj in (-1, 0, 1):
+                    for _rx, _ry, _rz in _rh_sp.get((_ci + _di, _cj + _dj), ()):
+                        if (_x - _rx) ** 2 + (_z - _rz) ** 2 <= _NEAR_M * _NEAR_M:
+                            if _best is None or _ry > _best:
+                                _best = _ry
+            if _best is not None and _best - _y > _MAX_DROP:
+                _sv[_i] = (_x, _best - _GUTTER, _z)
+                _despiked += 1
+        if _despiked:
+            print(f"  [sidewalk] despiked {_despiked} strip vert(s) that drape-dropped >"
+                  f"{_MAX_DROP:.2f} m below the road inside the walk band")
         edge_group, edge_mat = "1KERB_sidewalk", "kerb"
     else:
         shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,

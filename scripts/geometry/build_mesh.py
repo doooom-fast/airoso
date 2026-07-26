@@ -552,6 +552,18 @@ def build(project_dir: str | Path) -> dict:
     _max_grade = float(cfg_raw.get("road_profile", {}).get("max_grade_pct", 6.0)) / 100.0
     raw_pts = evidence.cap_grade(raw_pts, max_grade=_max_grade)
     widths = local["widths_m"]
+    # NO SAWTOOTH EDGES. OSM lane-derived widths step instantly at junction pads (Lake Murray's
+    # College Avenue: 13 -> 30 m across one 3 m vertex), and a swept ribbon turns that into a
+    # visible sawtooth on a road that should stay wide. Cap the rate of change, not the value —
+    # the width envelope is untouched, only the approach to it. Off by default for the racetracks,
+    # whose widths are authored rather than derived; opt in with route.width_slew_m_per_m.
+    _slew = float((cfg_raw.get("route", {}) or {}).get("width_slew_m_per_m", 0.0))
+    if _slew > 0:
+        from scripts.geometry.projection import slew_limit_widths
+        _before = sum(1 for _i in range(len(widths) - 1) if abs(widths[_i + 1] - widths[_i]) > 1.0)
+        widths = slew_limit_widths(widths, local["points_xyz_m"], rate=_slew)
+        _after = sum(1 for _i in range(len(widths) - 1) if abs(widths[_i + 1] - widths[_i]) > 1.0)
+        print(f"  [widths] slew-limited at {_slew} m/m: jumps >1 m {_before} -> {_after}")
     origin = (local["origin"]["lon"], local["origin"]["lat"])
     elev0 = local["origin"]["elev_m"]
     _lead_offset = 0.0        # metres of lead-in road prepended; config stations exclude it

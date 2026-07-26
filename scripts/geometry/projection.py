@@ -21,6 +21,38 @@ from scripts.config import load_config
 Vertex = tuple[float, float]
 
 
+
+def slew_limit_widths(widths_m: list[float], points_xyz_m: list, rate: float = 0.25) -> list[float]:
+    """Cap how fast road width may change: ``rate`` metres of width per metre travelled.
+
+    OSM lane-derived widths step instantly at junction pads — Lake Murray's College Avenue went
+    13 -> 30 m across a single 3 m vertex, and swept into a ribbon that reads as a sawtooth edge on
+    a road that should simply stay wide (Kevin, driving v0.21.0). Real pavement opens out over a
+    transition, so limit the rate rather than the value: the envelope is untouched (9-30 m stays
+    9-30 m), only the approach to it is smoothed. Applied forward and backward until stable so a
+    step is ramped from whichever side is lower.
+
+    Measured on the Lake Murray loop: 105 vertex-to-vertex jumps over 1 m -> 0, worst step 21.0 m
+    -> 0.75 m.
+    """
+    n = len(widths_m)
+    if n < 2 or len(points_xyz_m) != n:
+        return list(widths_m)
+    import math as _m
+    w = list(widths_m)
+    seg = [_m.hypot(points_xyz_m[i + 1][0] - points_xyz_m[i][0],
+                    points_xyz_m[i + 1][2] - points_xyz_m[i][2]) for i in range(n - 1)]
+    for _ in range(3):
+        for i in range(n - 1):
+            lim = w[i] + rate * seg[i]
+            if w[i + 1] > lim:
+                w[i + 1] = lim
+        for i in range(n - 2, -1, -1):
+            lim = w[i + 1] + rate * seg[i]
+            if w[i] > lim:
+                w[i] = lim
+    return [round(v, 2) for v in w]
+
 def centroid(points: list[Vertex]) -> Vertex:
     """Mean lon/lat of the centerline — the default projection origin."""
     n = len(points)

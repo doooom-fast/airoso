@@ -116,6 +116,12 @@ Two failure modes cost several hours overnight, both of which *look* like the fl
 Neither error produces track output, so treat "every track failed instantly with no gate output" as
 a launch mistake, not a regression.
 
+- **An instrumented `.engine` blocks the next pin.** Debug prints patched into a consumer's
+  `.engine/` checkout leave it dirty; the next `bootstrap.sh` then dies with *"Your local changes
+  would be overwritten by checkout"* and every build after it silently never runs. Always
+  `git -C .engine checkout .` when an instrumented experiment ends — in **every** repo you
+  instrumented, not just the one you remember.
+
 ## Adding a track
 
 1. Create `tracks/<slug>/track.config.json` in the owning repo, with S5's keys, an `archetype` (S6),

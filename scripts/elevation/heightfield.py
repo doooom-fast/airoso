@@ -85,6 +85,17 @@ def snap_to_ground(z: list[float], *, spacing_m: float, grade_cap_pct: float,
     n = len(z)
     if n == 0:
         return []
+    # DUPLICATE CLOSING VERTEX. A closed centerline repeats its first point as its last, so the
+    # seam sample appears TWICE in z. Every wrap-around filter below then double-counts it and
+    # hands indices 0 and n-1 different neighbourhoods — the same physical point smooths to two
+    # different heights, and the profile kinks over the smoothing window either side of the seam.
+    # Measured on Second Creek: raw 1588.120 at both ends, smoothed 1588.140 vs 1588.110, a 4.3%
+    # grade against 1% across the seam, and 26 severe steps + 40 ground-on-top hits in the last
+    # 90 m of the lap (the mean window is 39 m). Fold the duplicate out, filter, then restore it.
+    _dup = closed and n > 2 and abs(z[0] - z[-1]) < 1e-9
+    if _dup:
+        z = z[:-1]
+        n -= 1
     mw = max(3, round(median_m / spacing_m)) | 1
     h = mw // 2
     out = _median_despike(z, h, closed)
@@ -98,6 +109,8 @@ def snap_to_ground(z: list[float], *, spacing_m: float, grade_cap_pct: float,
             out[i] = min(out[i], out[i + 1] + step)
         if closed:
             out[0] = min(out[0], out[-1] + step)
+    if _dup:
+        out.append(out[0])      # restore the closing vertex, now identical to the first by construction
     return out
 
 

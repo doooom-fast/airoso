@@ -539,6 +539,32 @@ def audit(project_dir: str | Path) -> dict:
         sxm = -1.0 if cfg_raw.get("mirror_x", False) else 1.0
         rpts = [(sxm * p[0], p[1], p[2]) for p in cl["points_xyz_m"]]
         rw = cl["widths_m"]
+        # MESH CONFIRMATION. The raster is bilinear over coarse cells (13.3 m on the rally
+        # stages), so near a switchback stack the upper leg's bench bleeds into the lower leg's
+        # sample — a phantom cut the car never touches. On corridor-refined tracks the raster is
+        # not even the shipping surface: the refined 1GRASS mesh is, and drive_test reads THAT
+        # at 10 wheel paths. So: the raster nominates a candidate, the actual grass mesh
+        # confirms it. A real bench standing over the deck exists in the mesh and still fails.
+        _gh_tris = _obj_tris(data / "track.obj", ("1GRASS",))
+        _gh_hash = _tri_hash(_gh_tris, 4.0)
+
+        def _gmax(x, z, y_ref):
+            """HIGHEST grass surface at (x,z) within 6 m of y_ref — no angle filter (a steep
+            bench face standing over the deck is exactly what H exists to catch)."""
+            best = None
+            for a, b, c in _gh_hash.get((int(x // 4.0), int(z // 4.0)), ()):
+                d = (b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2])
+                if abs(d) < 1e-12:
+                    continue
+                w0 = ((b[2] - c[2]) * (x - c[0]) + (c[0] - b[0]) * (z - c[2])) / d
+                w1 = ((c[2] - a[2]) * (x - c[0]) + (a[0] - c[0]) * (z - c[2])) / d
+                w2 = 1.0 - w0 - w1
+                if w0 >= -1e-6 and w1 >= -1e-6 and w2 >= -1e-6:
+                    y = w0 * a[1] + w1 * b[1] + w2 * c[1]
+                    if abs(y - y_ref) <= 6.0 and (best is None or y > best):
+                        best = y
+            return best
+
         ground_cut = 0
         for i in range(10, len(rpts), 10):
             ax, ay, az = rpts[i - 1]
@@ -555,8 +581,11 @@ def audit(project_dir: str | Path) -> dict:
                     continue
                 gy2 = _hsurf(px, pz)
                 if gy2 is not None and gy2 - max(deck) > 0.10:
+                    _gm2 = _gmax(px, pz, max(deck))
+                    if _gm2 is None or _gm2 - max(deck) <= 0.10:
+                        continue        # raster artifact: the real mesh does not stand over the deck
                     ground_cut += 1
-                    worst_cut = max(worst_cut, gy2 - max(deck))
+                    worst_cut = max(worst_cut, _gm2 - max(deck))
 
     report = {
         "slug": slug, "road_verts": len(g["1ROAD"]), "grass_verts": len(g["1GRASS"]), "piers": len(piers),

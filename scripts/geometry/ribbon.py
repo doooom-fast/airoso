@@ -12,11 +12,25 @@ import math
 Vertex = tuple[float, float, float]
 
 
+def _uniq_n(pts: list[Vertex], closed: bool) -> int:
+    """Number of UNIQUE vertices: a closed centerline repeats its first point as its last, and
+    every wrap-around index below must skip that duplicate. With the raw length, vertex 0's
+    backward neighbour is pts[-1] — which IS vertex 0 — so the centered difference collapses to a
+    one-sided one and the cross-section at the seam is swept off a half tangent. Measured on Lake
+    Murray: a 0.78 m step at station 13476 of a 13478 m lap, right on the start/finish line, plus
+    both remaining ground-on-top hits at that same point. Same defect class as the elevation seam
+    (heightfield.snap_to_ground), one mesh stage later."""
+    n = len(pts)
+    if closed and n > 2 and abs(pts[0][0] - pts[-1][0]) < 1e-6 and abs(pts[0][2] - pts[-1][2]) < 1e-6:
+        return n - 1
+    return n
+
+
 def _horiz_tangent(pts: list[Vertex], i: int, closed: bool) -> tuple[float, float]:
     """Unit tangent in the horizontal X-Z plane at vertex i (centered difference)."""
-    n = len(pts)
+    n = _uniq_n(pts, closed)
     a = pts[(i - 1) % n] if closed else pts[max(0, i - 1)]
-    b = pts[(i + 1) % n] if closed else pts[min(n - 1, i + 1)]
+    b = pts[(i + 1) % n] if closed else pts[min(len(pts) - 1, i + 1)]
     dx, dz = b[0] - a[0], b[2] - a[2]
     L = math.hypot(dx, dz) or 1.0
     return dx / L, dz / L
@@ -28,10 +42,10 @@ def _signed_curvature(pts: list[Vertex], i: int, closed: bool) -> float:
     PLEATING: when a lateral offset exceeds the local curve radius, consecutive sections sweep
     backwards over each other and the ribbon lays multiple road layers at one (x,z) — five stacked
     decks inside the Lariat's flared hogback curve read as 0.3-0.6 m random steps."""
-    n = len(pts)
+    n = _uniq_n(pts, closed)
     a = pts[(i - 1) % n] if closed else pts[max(0, i - 1)]
     b = pts[i]
-    c = pts[(i + 1) % n] if closed else pts[min(n - 1, i + 1)]
+    c = pts[(i + 1) % n] if closed else pts[min(len(pts) - 1, i + 1)]
     v1x, v1z = b[0] - a[0], b[2] - a[2]
     v2x, v2z = c[0] - b[0], c[2] - b[2]
     l1, l2 = math.hypot(v1x, v1z), math.hypot(v2x, v2z)

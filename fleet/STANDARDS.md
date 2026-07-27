@@ -116,6 +116,11 @@ Two failure modes cost several hours overnight, both of which *look* like the fl
 Neither error produces track output, so treat "every track failed instantly with no gate output" as
 a launch mistake, not a regression.
 
+- **A `cd` inside one command leaks into the next.** The session's working directory persists, so a
+  command ending in `cd <track-dir>` leaves the following command running there — and
+  `python3 scripts/...` or `git commit` then fails on a path that exists only from the repo root.
+  This shape has cost five separate cycles. Use `git -C <repo>` and absolute script paths in every
+  command that follows a `cd`, rather than assuming where the shell is.
 - **An instrumented `.engine` blocks the next pin.** Debug prints patched into a consumer's
   `.engine/` checkout leave it dirty; the next `bootstrap.sh` then dies with *"Your local changes
   would be overwritten by checkout"* and every build after it silently never runs. Always

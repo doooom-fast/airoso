@@ -249,6 +249,21 @@ def build(project_dir: str | Path) -> Path:
             start_yaw = math.atan2(tx / L, tz / L)
     FACING = ("AC_START", "AC_PIT", "AC_HOTLAP")
 
+    def yaw_at(px, pz, fallback):
+        """Road heading AT THIS DUMMY. Every facing dummy used to be written with the heading at
+        AC_START_0, so a pit box 20 points up the road inherited the start line's direction. On a
+        circuit the boxes sit together on the start straight and it never showed; Dragon Tail
+        starts on a BEND, and its boxes came out up to 28.6 deg off the road — the car spawns
+        pointing at the edge (Kevin). Use a +/-3 point baseline: long enough not to chase
+        resample noise, short enough to track a real curve."""
+        if not mpts:
+            return fallback
+        j = min(range(len(mpts)), key=lambda k: (mpts[k][0] - px) ** 2 + (mpts[k][1] - pz) ** 2)
+        ja, jb = max(0, j - 3), min(len(mpts) - 1, j + 3)
+        ux, uz = mpts[jb][0] - mpts[ja][0], mpts[jb][1] - mpts[ja][1]
+        ul = math.hypot(ux, uz)
+        return math.atan2(ux / ul, uz / ul) if ul > 1e-9 else fallback
+
     w.i32(1); w.s(slug); w.u32(len(groups) + len(dummies)); w.u8(1)
     ident = [1.0, 0, 0, 0, 0, 1.0, 0, 0, 0, 0, 1.0, 0, 0, 0, 0, 1.0]
     for v in ident:
@@ -303,7 +318,7 @@ def build(project_dir: str | Path) -> Path:
         w.u8(1)                                      # renderable
     for name, (x, y, z) in dummies.items():
         px, py, pz = rot(x, y, z)
-        phi = (start_yaw + yaw) if any(name.startswith(p) for p in FACING) else 0.0
+        phi = (yaw_at(x, z, start_yaw) + yaw) if any(name.startswith(p) for p in FACING) else 0.0
         cph, sph = math.cos(phi), math.sin(phi)
         m = [cph, 0, -sph, 0,  0, 1, 0, 0,  sph, 0, cph, 0,  px, py, pz, 1]
         w.i32(1); w.s(name); w.u32(0); w.u8(1)
@@ -344,7 +359,9 @@ def build(project_dir: str | Path) -> Path:
         for _nm, (_px, _py, _pz) in _ld.items():
             _sw.i32(1); _sw.s(_nm); _sw.u32(0); _sw.u8(1)
             _rx, _rz = _px * _c2 - _pz * _s2, _px * _s2 + _pz * _c2
-            _phi = (_lyaw + yaw) if any(_nm.startswith(_q) for _q in FACING2) else 0.0
+            # per-dummy heading here too; a reverse layout travels the other way
+            _dy = yaw_at(_px, _pz, _lyaw) + (math.pi if _layout == "reverse" else 0.0)
+            _phi = (_dy + yaw) if any(_nm.startswith(_q) for _q in FACING2) else 0.0
             _cp, _sp = math.cos(_phi), math.sin(_phi)
             for _v in [_cp, 0, -_sp, 0, 0, 1, 0, 0, _sp, 0, _cp, 0, _rx, _py, _rz, 1]:
                 _sw.f32(_v)

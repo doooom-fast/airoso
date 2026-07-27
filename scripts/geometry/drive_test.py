@@ -39,6 +39,19 @@ from pathlib import Path
 STEP_BUMP_M = 0.025
 STEP_SEVERE_M = 0.060
 KINK_PCT = 3.0
+# SPEED. The thresholds above are fixed heights, and their own rationale is written in terms of
+# speed ("~ hitting a lane reflector curb AT SPEED") — but nothing here ever knew how fast the car
+# was going, so a 30 km/h hairpin and a 200 km/h straight were judged identically. A wheel crossing
+# a step of height h at speed v is thrown with vertical velocity ~ v*h/L, so equal severity means a
+# threshold that scales as 1/v. Measured consequence on Grand Junction: 40 of its 43 severe steps
+# sit above 100 km/h (worst 0.187 m at ~145 km/h) and only 3 in tight corners — the unweighted
+# count was flattering the places that matter most.
+SPEED_REF_KMH = 100.0        # the speed the fixed thresholds above were hand-calibrated for
+SPEED_MIN_KMH = 30.0         # below this the scaling stops helping: a curb is still a curb
+SPEED_MAX_KMH = 260.0
+GRIP_LAT = 1.3               # lateral g a GT car carries — sets the cornering speed from radius
+ACCEL_MS2 = 4.5              # tractive
+BRAKE_MS2 = 12.0             # braking dominates: the fast-approach-to-slow-corner case
 OBST_CLEAR_M = 0.25
 OBST_HEIGHT_M = 1.8          # car-strike ceiling: AC cars are ~1.3 m tall; walls/trunks rise from deck
 #                              level and still trip this, while legit overhead furniture (cobra-head
@@ -50,6 +63,47 @@ CELL = 3.0                   # spatial hash cell (m)
 DRIVABLE = ("1ROAD", "1KERB", "1RUNOFF", "1LAWN", "1GRASS")   # car can roll on these
 SOFT = ("1GRASS", "1LAWN")   # ...but these mid-lane on TOP = ground through road
 PAINT = ("MARKINGS", "ROADTEXT", "YLINE")   # flat paint decals ~1.5 cm over deck — never obstructions
+
+
+def speed_profile(pts, st, closed: bool) -> list[float]:
+    """Speed (m/s) the car can carry at each centerline point: cornering grip capped by how fast it
+    can actually get there and stop again. Three passes — radius, then forward acceleration, then
+    backward braking — which is what makes the approach to a slow corner read fast (the wheel meets
+    the bumps before the apex at entry speed, not apex speed)."""
+    n = len(pts)
+    if n < 3:
+        return [SPEED_MAX_KMH / 3.6] * n
+    vmax = SPEED_MAX_KMH / 3.6
+    v = []
+    for i in range(n):
+        # Wrap only on a closed lap. On a point-to-point stage the two ends are different places
+        # (Dragon Tail's finish is 17 km and 145 m from its start), and sampling across them
+        # invents a hairpin at each end — which then drags the whole opening straight down through
+        # the forward acceleration pass. Same trap the elevation profile documents for its filters.
+        ia = (i - 3) % n if closed else max(0, i - 3)
+        ic = (i + 3) % n if closed else min(n - 1, i + 3)
+        a, b, c = pts[ia], pts[i], pts[ic]
+        A = math.dist((a[0], a[2]), (b[0], b[2]))
+        B = math.dist((b[0], b[2]), (c[0], c[2]))
+        C = math.dist((a[0], a[2]), (c[0], c[2]))
+        sp = (A + B + C) / 2.0
+        ar2 = sp * (sp - A) * (sp - B) * (sp - C)
+        R = (A * B * C) / (4.0 * math.sqrt(ar2)) if ar2 > 1e-9 else 1e6
+        v.append(min(vmax, math.sqrt(max(1.0, R) * 9.81 * GRIP_LAT)))
+    # FROM A STANDING START AT THE LINE (Kevin). Station 0 is the start/pit line, and the car is
+    # stationary there — not arriving at flying-lap speed. Seeding v[0]=0 and refusing to wrap the
+    # passes past it gives the speeds the car ACTUALLY carries over this lap: the opening stretch is
+    # acceleration-limited, everything after is grip- and braking-limited as normal. Wrapping
+    # instead converges a flying lap, which reads faster over the first few hundred metres than any
+    # real first lap does.
+    v[0] = 0.0
+    for i in range(1, n):                         # forward: how fast can it GET here from the line
+        d = max(1e-6, st[i] - st[i - 1])
+        v[i] = min(v[i], math.sqrt(v[i - 1] ** 2 + 2 * ACCEL_MS2 * d))
+    for i in range(n - 2, -1, -1):                # backward: and still make the next corner
+        d = max(1e-6, st[i + 1] - st[i])
+        v[i] = min(v[i], math.sqrt(v[i + 1] ** 2 + 2 * BRAKE_MS2 * d))
+    return v
 
 
 def _load_obj(path: Path):

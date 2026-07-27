@@ -1241,7 +1241,10 @@ def build(project_dir: str | Path) -> dict:
     print(f"  [contact] bent {_bent} grid nodes through the shoulder meet line (they TOUCH)")
     # the bend seals seams but must NEVER raise ground through pavement — re-run the ROAD clamp
     # after it (audit B caught exactly one bent node poking +2.74 through a hairpin deck).
-    ribbon.clamp_terrain_below_road(grid_xyz, road["vertices"] + runoff["vertices"] + _end_apron,
+    # conn_verts: the clamp took the main ribbon + runoff only, so terrain was never seated under a
+    # connector. Measured on Lake Murray: 1ROAD_main p95 float 0.040 m (fine) while navajo_road_opp
+    # ran 0.907 and college_avenue_opp 0.618 — the loop was seated and every side street floated.
+    ribbon.clamp_terrain_below_road(grid_xyz, road["vertices"] + runoff["vertices"] + conn_verts + _end_apron,
                                     clear=GRASS_CLEARANCE_M, grid_spacing=float(meta["spacing_m"]),
                                     foot_m=8.0, recover=0.35)
     ribbon.clamp_terrain_below_road(grid_xyz, shoulder["vertices"] + kerb["vertices"], clear=0.05, reach=6.0,
@@ -1477,6 +1480,8 @@ def build(project_dir: str | Path) -> dict:
     # del_cerro_blvd by 3.54 m onto the loop, the ground it used to clear stood 0.30 m through its
     # deck — 39 audit pokes clustered at that junction. Index connector tris into the same hash,
     # remapped to the road vertex list so every existing consumer keeps working unchanged.
+    _rv7 = list(_rv7)          # COPY: extending in place appended connector verts to the exported
+    #                            1ROAD mesh as orphans (no tri references them) — v0.51.0 slip.
     _cadd = 0
     for _cn7, _cm7 in conn_meshes:
         _base7 = len(_rv7)

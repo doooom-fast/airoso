@@ -1593,11 +1593,34 @@ def build(project_dir: str | Path) -> dict:
     # low (the daylight strip). Window-min for chord safety; road-footprint verts (already
     # pinned lower, chord-safe vs the deck) are never raised above their road pin.
     _down8 = 0
+    def _shoulder_at_point8(px, pz, y_ref):
+        """Lowest shoulder/runoff/kerb surface AT this exact XZ, NO angle filter. The window scan
+        excludes tris >60° off horizontal as walls — but on a mountain fill the shoulder face IS
+        that steep, and a grid node over it then never pins (Aspen's last audit poke: 1GRASS_e at
+        0.26 over a shoulder face at 0.09 that the filtered scan refused to see). At a point the
+        filter buys nothing: a vertical triangle projects to a line and the determinant rejects it."""
+        lo = None
+        for a, b, c in _rc8.get((int(px // 4.0), int(pz // 4.0)), ()):
+            d = (b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2])
+            if abs(d) < 1e-12:
+                continue
+            w0 = ((b[2] - c[2]) * (px - c[0]) + (c[0] - b[0]) * (pz - c[2])) / d
+            w1 = ((c[2] - a[2]) * (px - c[0]) + (a[0] - c[0]) * (pz - c[2])) / d
+            w2 = 1.0 - w0 - w1
+            if w0 >= -1e-6 and w1 >= -1e-6 and w2 >= -1e-6:
+                y = w0 * a[1] + w1 * b[1] + w2 * c[1]
+                if abs(y - y_ref) <= 20.0 and (lo is None or y < lo):
+                    lo = y
+        return lo
+
     for _i8 in range(len(_gv7)):
         _gx8, _gy8, _gz8 = _gv7[_i8]
         if (int(_gx8 // 24.0), int(_gz8 // 24.0)) not in _near7:
             continue
         _lo8 = _shoulder_window_min8(_gx8, _gz8, _gy8)
+        _lp8 = _shoulder_at_point8(_gx8, _gz8, _gy8)
+        if _lp8 is not None and (_lo8 is None or _lp8 < _lo8):
+            _lo8 = _lp8
         if _lo8 is None:
             continue
         _tgt8 = _lo8 - GRASS_CLEARANCE_M

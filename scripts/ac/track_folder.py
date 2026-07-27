@@ -400,6 +400,15 @@ def generate(project_dir: str | Path, kn5_name: str | None = None) -> dict:
             preview_img.save(uid / "preview.png")
         else:
             _rasterize(preview_src, uid / "preview.png", 600)
+        # STALE OUTPUT. build/<slug>/ is not cleaned between runs and pack re-zips whatever it
+        # finds, so an artifact a fixed build no longer writes still ships. Dragon Tail's 288 MB
+        # ui/preview.svg survived the fix that stopped emitting it and went out in v0.1.0 — a file
+        # the game never reads, at 60% of the zip. Once a real preview.png exists, drop it.
+        _stale_svg = uid / "preview.svg"
+        if _stale_svg.exists() and (uid / "preview.png").exists():
+            print(f"[track_folder] removing stale {_stale_svg.relative_to(out)} "
+                  f"({_stale_svg.stat().st_size/1e6:.0f} MB) — superseded by preview.png")
+            _stale_svg.unlink()
         if not single:
             # Kunos multi-layout: <track>/<layout>/ holds map.png + data/ + ai/ per layout
             _lroot = out / layout

@@ -741,6 +741,55 @@ def build(project_dir: str | Path) -> dict:
             connectors.append((c["name"], pts, c["widths_m"]))
         print(f"  interior connectors: {len(connectors)} ({[n for n, _p, _w in connectors]})")
 
+        # JUNCTION ELEVATION. A connector's Y comes from 3DEP sampled along its OWN line, with no
+        # knowledge of the loop. Where it actually MEETS the loop the two must agree — otherwise the
+        # connector's deck lies OVER the mainline and the car drives on a roof. Lake Murray's
+        # del_cerro_blvd passes within 1.0 m of the loop sitting 2.51 m ABOVE it: the loop's own
+        # carriageway is covered for tens of metres and the wheel drops 2.1 m through the gap where
+        # the connector ends (ledger 0017 — the defect the Blender-first kn5 hid for months).
+        # Snap the connector to the loop's height inside JOIN_R, then ease back to its own profile
+        # over BLEND_L. Connectors that never come near the loop (separate streets 90-140 m away,
+        # legitimately at their own elevations) are untouched.
+        _JOIN_R, _BLEND_L = 12.0, 45.0
+        _lc = [(q[0], q[1], q[2]) for q in centerline]
+        _lh: dict = {}
+        for _q in _lc:
+            _lh.setdefault((int(_q[0] // 24.0), int(_q[2] // 24.0)), []).append(_q)
+
+        def _loop_y(px, pz):
+            """(loop deck height, horizontal distance) at the nearest mainline point, or None."""
+            best = None
+            ci, cj = int(px // 24.0), int(pz // 24.0)
+            for di in (-1, 0, 1):
+                for dj in (-1, 0, 1):
+                    for qx, qy, qz in _lh.get((ci + di, cj + dj), ()):
+                        d2 = (px - qx) ** 2 + (pz - qz) ** 2
+                        if best is None or d2 < best[0]:
+                            best = (d2, qy)
+            return (best[1], math.sqrt(best[0])) if best else None
+
+        _adj = 0
+        for _ci in range(len(connectors)):
+            _nm, _cp, _cw = connectors[_ci]
+            _new, _moved = [], 0.0
+            for _x, _y, _z in _cp:
+                _hit = _loop_y(_x, _z)
+                if _hit is None or _hit[1] > _JOIN_R + _BLEND_L:
+                    _new.append((_x, _y, _z))
+                    continue
+                _ly, _d = _hit
+                _t = 0.0 if _d <= _JOIN_R else (_d - _JOIN_R) / _BLEND_L
+                _w = 1.0 - (_t * _t * (3.0 - 2.0 * _t))       # smoothstep: 1 at the junction, 0 out
+                _ny = _y * (1.0 - _w) + _ly * _w
+                _moved = max(_moved, abs(_ny - _y))
+                _new.append((_x, _ny, _z))
+            if _moved > 0.01:
+                connectors[_ci] = (_nm, _new, _cw)
+                _adj += 1
+                print(f"  [junction] {_nm}: reconciled to the mainline (max {_moved:.2f} m)")
+        if _adj:
+            print(f"  [junction] {_adj}/{len(connectors)} connectors met the loop and were levelled to it")
+
     grid = read_npy(data / "heightfield.npy")
     meta = json.loads((data / "heightfield.meta.json").read_text(encoding="utf-8"))
     # Upsample as fine as a ~420k-vertex terrain budget allows (never below x3): the terrain

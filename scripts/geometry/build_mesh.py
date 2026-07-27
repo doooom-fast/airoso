@@ -1470,6 +1470,27 @@ def build(project_dir: str | Path) -> dict:
         for _ci7 in range(int(min(_xs7) // 4.0), int(max(_xs7) // 4.0) + 1):
             for _cj7 in range(int(min(_zs7) // 4.0), int(max(_zs7) // 4.0) + 1):
                 _rc7[(_ci7, _cj7)].append(_t7)
+    # CONNECTOR PAVEMENT IS PAVEMENT. _rc7 held only the main ribbon, so the contact pin never
+    # clamped terrain under a connector — the grading above (grade_embankment's extra_roads) does
+    # see them, but the pin that actually seats the grass does not. Harmless while a connector sat
+    # ABOVE its terrain; the moment junction reconciliation (v0.49.0) lowered Lake Murray's
+    # del_cerro_blvd by 3.54 m onto the loop, the ground it used to clear stood 0.30 m through its
+    # deck — 39 audit pokes clustered at that junction. Index connector tris into the same hash,
+    # remapped to the road vertex list so every existing consumer keeps working unchanged.
+    _cadd = 0
+    for _cn7, _cm7 in conn_meshes:
+        _base7 = len(_rv7)
+        _rv7.extend(_cm7["vertices"])
+        for _ct7 in _cm7["tris"]:
+            _t7 = (_ct7[0] + _base7, _ct7[1] + _base7, _ct7[2] + _base7)
+            _xs7 = [_rv7[_v][0] for _v in _t7]; _zs7 = [_rv7[_v][2] for _v in _t7]
+            for _ci7 in range(int(min(_xs7) // 4.0), int(max(_xs7) // 4.0) + 1):
+                for _cj7 in range(int(min(_zs7) // 4.0), int(max(_zs7) // 4.0) + 1):
+                    _rc7[(_ci7, _cj7)].append(_t7)
+            _cadd += 1
+    if _cadd:
+        print(f"  [contact pin] indexed {_cadd} connector tris as pavement "
+              f"({len(conn_meshes)} connector ribbons)")
     _gv7 = [_n7g for _row7g in grid_xyz for _n7g in _row7g]   # flat view of the grid nodes
     # bridge spans keep their valley: under a bridge the pin may only push DOWN, never lift.
     _st7 = [0.0]

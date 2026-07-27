@@ -1444,11 +1444,15 @@ def build(project_dir: str | Path) -> dict:
     _FILL_SLOPE7 = 0.5          # 2:1 (H:V) engineered fill, per docs/ROAD-CONSTRUCTION.md
     _hs7 = float(meta["spacing_m"]) * 0.55
 
-    def _deck_window_min7(px, pz, y_ref):
-        """Lowest deck surface within half a grid cell of (px,pz), 9-point scan, layer-guarded."""
+    def _deck_window_min7(px, pz, y_ref, hs=None):
+        """Lowest deck surface within half a grid cell of (px,pz), 9-point scan, layer-guarded.
+        ``hs`` overrides the stencil radius: corridor-refined nodes sit a FRACTION of a coarse cell
+        apart, and charging them the coarse radius would hand them the coarse sag (ledger 0014 —
+        the drop is (radius x local slope), so the radius must track the node spacing)."""
+        r = _hs7 if hs is None else hs
         lo = None
-        for ox, oz in ((0.0, 0.0), (_hs7, 0.0), (-_hs7, 0.0), (0.0, _hs7), (0.0, -_hs7),
-                       (_hs7, _hs7), (-_hs7, -_hs7), (_hs7, -_hs7), (-_hs7, _hs7)):
+        for ox, oz in ((0.0, 0.0), (r, 0.0), (-r, 0.0), (0.0, r), (0.0, -r),
+                       (r, r), (-r, -r), (r, -r), (-r, r)):
             for t in _rc7.get((int((px + ox) // 4.0), int((pz + oz) // 4.0)), ()):
                 a, b, c = _rv7[t[0]], _rv7[t[1]], _rv7[t[2]]
                 d = (b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2])
@@ -1504,13 +1508,15 @@ def build(project_dir: str | Path) -> dict:
             for _cj8 in range(int(min(_zs8) // 4.0), int(max(_zs8) // 4.0) + 1):
                 _rc8[(_ci8, _cj8)].append(_tt8)
 
-    def _shoulder_window_min8(px, pz, y_ref):
+    def _shoulder_window_min8(px, pz, y_ref, hs=None):
         """Lowest shoulder/runoff/kerb SURFACE within half a grid cell (9-point), layer-guarded.
         Near-vertical tris (battered wall faces, cut faces) are excluded — they are walls, and
-        their barycentric heights dive metres down the face, poisoning the window minimum."""
+        their barycentric heights dive metres down the face, poisoning the window minimum.
+        ``hs`` overrides the stencil radius for corridor-refined nodes (see _deck_window_min7)."""
+        r = _hs7 if hs is None else hs
         lo = None
-        for ox, oz in ((0.0, 0.0), (_hs7, 0.0), (-_hs7, 0.0), (0.0, _hs7), (0.0, -_hs7),
-                       (_hs7, _hs7), (-_hs7, -_hs7), (_hs7, -_hs7), (-_hs7, _hs7)):
+        for ox, oz in ((0.0, 0.0), (r, 0.0), (-r, 0.0), (0.0, r), (0.0, -r),
+                       (r, r), (-r, -r), (r, -r), (-r, r)):
             for a, b, c in _rc8.get((int((px + ox) // 4.0), int((pz + oz) // 4.0)), ()):
                 ux, uy, uz = b[0] - a[0], b[1] - a[1], b[2] - a[2]
                 vx, vy, vz = c[0] - a[0], c[1] - a[1], c[2] - a[2]
@@ -1627,8 +1633,67 @@ def build(project_dir: str | Path) -> dict:
     (data / "flat_zones.json").write_text(json.dumps(
         [[round(a, 2), round(b, 2), round(c, 2), round(d, 2)] for a, b, c, d in _flat_zones]),
         encoding="utf-8")
+    # ===================== CORRIDOR REFINEMENT (ledger 0014) =====================
+    # The contact pin drops each node by (stencil radius x local slope), and the chord between
+    # nodes then interpolates across a whole cell. Both terms scale with the grid, so on a mountain
+    # road at 8 m cells the deck rides ~0.40 m of air (p95 1.11, max 3.2) and NO pin policy can fix
+    # it: with the stencils removed entirely the p95 is still 0.249 against a 0.10 gate.
+    #
+    # The corridor is ~1% of the grid's area, so refine only the quads the pavement touches (plus a
+    # ring of margin, so no coarse chord can span pavement) and re-pin those nodes at the FINE
+    # radius. Opt-in per track via `corridor_refine_factor` — this changes geometry on every track
+    # that sets it, and the fleet has been burned before by a shared-geometry change that looked
+    # safe (the exporter pre-split un-packaged five working tracks).
+    _RN = int(cfg_raw.get("corridor_refine_factor", 0) or 0)
+    _refine_q: set = set()
+    _fine_height = None
+    if _RN > 1:
+        _nxg, _nyg = len(grid_xyz[0]), len(grid_xyz)
+        _gx0, _gz0 = grid_xyz[0][0][0], grid_xyz[0][0][2]
+        _gdx = (grid_xyz[0][1][0] - _gx0) if _nxg > 1 else 1.0
+        _gdz = (grid_xyz[1][0][2] - _gz0) if _nyg > 1 else 1.0
+        _hsF = float(meta["spacing_m"]) / _RN * 0.55
+        _pav_tris = [(_rv7[_t[0]], _rv7[_t[1]], _rv7[_t[2]]) for _t in road["tris"]] + _all8
+        for _a, _b, _c in _pav_tris:
+            _is = [ (_v[0] - _gx0) / _gdx for _v in (_a, _b, _c) ]
+            _js = [ (_v[2] - _gz0) / _gdz for _v in (_a, _b, _c) ]
+            for _qi in range(int(math.floor(min(_is))) - 1, int(math.floor(max(_is))) + 2):
+                for _qj in range(int(math.floor(min(_js))) - 1, int(math.floor(max(_js))) + 2):
+                    if 0 <= _qi < _nxg - 1 and 0 <= _qj < _nyg - 1:
+                        _refine_q.add((_qi, _qj))
+
+        def _fine_height(px, pz, base_y):
+            """Two-sided contact pin at a refined node: the ground under pavement IS the pavement
+            underside. Same rule as the coarse pin, but with the stencil sized to THIS node."""
+            lo = _deck_window_min7(px, pz, base_y, _hsF)
+            lo8 = _shoulder_window_min8(px, pz, base_y, _hsF)
+            if lo8 is not None and (lo is None or lo8 < lo):
+                lo = lo8
+            if lo is None:
+                return base_y                       # no pavement overhead — natural ground stands
+            _sF = _near_station7(px, pz)
+            if _sF is not None and bridge_of(_sF):
+                return base_y                       # declared span: the valley stays open
+            return lo - GRASS_CLEARANCE_M
+
+        # The refined quads' own CORNERS are coarse nodes still carrying the coarse stencil's sag,
+        # and they anchor the fine triangles. Re-pin them at the fine radius too. Safe because every
+        # quad touching pavement is refined, so no remaining COARSE chord spans pavement.
+        _rp = 0
+        for _qi, _qj in _refine_q:
+            for _ii, _jj in ((_qi, _qj), (_qi + 1, _qj), (_qi, _qj + 1), (_qi + 1, _qj + 1)):
+                _vx, _vy, _vz = grid_xyz[_jj][_ii]
+                _ny = _fine_height(_vx, _vz, _vy)
+                if abs(_ny - _vy) > 1e-4:
+                    grid_xyz[_jj][_ii] = (_vx, _ny, _vz)
+                    _rp += 1
+        print(f"[corridor] refine x{_RN} over {len(_refine_q):,} quads "
+              f"(~{float(meta['spacing_m'])/_RN:.2f} m sub-cells, stencil {_hsF:.2f} m); "
+              f"{_rp:,} coarse corner nodes re-pinned")
+
     write_ground_local(data / "ground.local.json", grid_xyz)
-    grass = ribbon.grass_terrain(grid_xyz)
+    grass = ribbon.grass_terrain(grid_xyz, refine_quads=_refine_q, refine_factor=_RN,
+                                 height_at=_fine_height)
 
     # ================= #17 PRO CONSTRUCTION: welded edge rings + stone works =================
     # THE WELD: terrain's boundary ring re-uses the shoulder's ground-meet vertices EXACTLY, so

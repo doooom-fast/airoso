@@ -524,23 +524,106 @@ def upsample_grid(grid: list[list[float]], meta: dict, factor: int) -> tuple[lis
     return out, meta2
 
 
-def grass_terrain(grid_xyz: list[list[Vertex]], *, tile_m: float = 6.0, skirt_m: float = 500.0) -> dict:
+def grass_terrain(grid_xyz: list[list[Vertex]], *, tile_m: float = 6.0, skirt_m: float = 500.0,
+                  refine_quads: set | None = None, refine_factor: int = 1, height_at=None) -> dict:
     """Triangulate the projected terrain grid (ny rows × nx cols of (x,y,z)) into the GRASS mesh.
     UVs are world-planar (x/tile, z/tile) so the grass texture tiles seamlessly over any terrain.
 
     A flat **skirt** (``skirt_m`` m) is extruded outward from every grid border at the border height,
     so the physical ground extends far past the loop — run wide onto the grass and you stay on a
-    surface instead of dropping off the edge of the world."""
+    surface instead of dropping off the edge of the world.
+
+    CORRIDOR REFINEMENT (``refine_quads``: a set of (i,j) quad corners to subdivide ``refine_factor``
+    ways per axis; ``height_at(x, z, base_y) -> y`` supplies each new node's height).
+
+    The road contact problem is that a cell can only follow a cut it is SMALLER than (L3b), but the
+    corridor is ~1% of the grid's area — on Dragon Tail, 1.01 km² of a 94 km² grid. Refining
+    UNIFORMLY to 2 m costs 23.4 M verts and is unbuildable; refining only the quads the pavement
+    touches costs ~0.2 M and buys the identical contact. The coarse raster is left completely
+    untouched — same nx/ny, same spacing, same vertex indices, same ``ground.local.json`` — because
+    four other modules (audit check G, scenery seating, both network builders) re-read it as a
+    regular raster. Only the emitted TRIANGLES change.
+
+    T-junctions are the trap: subdividing a quad leaves hanging nodes on the edges it shares with
+    un-refined neighbours, and an un-stitched hanging node is daylight beside the pavement (the
+    failure class of ledger 0004). So every quad bordering the refined region is fan-triangulated
+    from its centroid through those hanging nodes — no cracks, no constraint on the region's shape."""
     ny = len(grid_xyz)
     nx = len(grid_xyz[0])
     verts = [grid_xyz[j][i] for j in range(ny) for i in range(nx)]
     uvs = [(grid_xyz[j][i][0] / tile_m, grid_xyz[j][i][2] / tile_m) for j in range(ny) for i in range(nx)]
     tris: list[tuple[int, int, int]] = []
+
+    N = max(1, int(refine_factor))
+    RQ = refine_quads if (refine_quads and N > 1) else set()
+    # sub-lattice index: coarse node (i,j) is (i*N, j*N), so coarse verts keep their existing ids
+    _sub: dict[tuple[int, int], int] = {}
+
+    def _node(I: int, J: int) -> int:
+        """Vertex id at sub-lattice (I,J), creating it (and its height) on first use."""
+        if I % N == 0 and J % N == 0:
+            return (J // N) * nx + (I // N)
+        k = (I, J)
+        got = _sub.get(k)
+        if got is not None:
+            return got
+        i0, si = divmod(I, N)
+        j0, sj = divmod(J, N)
+        i1, j1 = min(nx - 1, i0 + 1), min(ny - 1, j0 + 1)
+        tx, tz = si / N, sj / N
+        p00, p10 = grid_xyz[j0][i0], grid_xyz[j0][i1]
+        p01, p11 = grid_xyz[j1][i0], grid_xyz[j1][i1]
+        x = (p00[0] * (1 - tx) + p10[0] * tx) * (1 - tz) + (p01[0] * (1 - tx) + p11[0] * tx) * tz
+        z = (p00[2] * (1 - tx) + p10[2] * tx) * (1 - tz) + (p01[2] * (1 - tx) + p11[2] * tx) * tz
+        y = (p00[1] * (1 - tx) + p10[1] * tx) * (1 - tz) + (p01[1] * (1 - tx) + p11[1] * tx) * tz
+        if height_at is not None:
+            y = height_at(x, z, y)
+        got = len(verts)
+        verts.append((x, y, z))
+        uvs.append((x / tile_m, z / tile_m))
+        _sub[k] = got
+        return got
+
     for j in range(ny - 1):
         for i in range(nx - 1):
-            a, b, c, d = j * nx + i, j * nx + i + 1, (j + 1) * nx + i + 1, (j + 1) * nx + i
-            tris.append((a, b, c))
-            tris.append((a, c, d))
+            if (i, j) in RQ:
+                for sj in range(N):                       # fine sub-quads, all nodes shared by key
+                    for si in range(N):
+                        a = _node(i * N + si,     j * N + sj)
+                        b = _node(i * N + si + 1, j * N + sj)
+                        c = _node(i * N + si + 1, j * N + sj + 1)
+                        d = _node(i * N + si,     j * N + sj + 1)
+                        tris.append((a, b, c))
+                        tris.append((a, c, d))
+                continue
+            # un-refined: does any neighbour refine, leaving hanging nodes on our shared edge?
+            nb = (RQ and ((i, j - 1) in RQ or (i + 1, j) in RQ or (i, j + 1) in RQ or (i - 1, j) in RQ))
+            if not nb:
+                a, b, c, d = j * nx + i, j * nx + i + 1, (j + 1) * nx + i + 1, (j + 1) * nx + i
+                tris.append((a, b, c))
+                tris.append((a, c, d))
+                continue
+            ring: list[int] = []                          # perimeter a->b->c->d, hanging nodes inserted
+            for (di0, dj0), (di1, dj1), side in (((0, 0), (1, 0), (i, j - 1)),
+                                                 ((1, 0), (1, 1), (i + 1, j)),
+                                                 ((1, 1), (0, 1), (i, j + 1)),
+                                                 ((0, 1), (0, 0), (i - 1, j))):
+                ring.append(_node((i + di0) * N, (j + dj0) * N))
+                if side in RQ:
+                    for s in range(1, N):
+                        t = s / N
+                        ring.append(_node(int(round(((i + di0) * (1 - t) + (i + di1) * t) * N)),
+                                          int(round(((j + dj0) * (1 - t) + (j + dj1) * t) * N))))
+            cx = sum(verts[r][0] for r in ring) / len(ring)
+            cz = sum(verts[r][2] for r in ring) / len(ring)
+            cy = sum(verts[r][1] for r in ring) / len(ring)
+            if height_at is not None:
+                cy = height_at(cx, cz, cy)
+            ci = len(verts)
+            verts.append((cx, cy, cz))
+            uvs.append((cx / tile_m, cz / tile_m))
+            for k in range(len(ring)):
+                tris.append((ci, ring[k], ring[(k + 1) % len(ring)]))
 
     if skirt_m > 0.0:
         # WATERTIGHT skirt: walk the grid's border as a closed perimeter loop and reference the grid's

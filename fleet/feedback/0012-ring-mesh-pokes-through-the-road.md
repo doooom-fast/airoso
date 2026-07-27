@@ -63,3 +63,60 @@ is no longer where it ends up. Compare the two surfaces at station 1466 before w
 - `soft_top_in_lane` is 0 on both tracks.
 - Grand Junction's severe steps do not rise as a side effect.
 - Aspen packages (it has nothing else outstanding).
+
+---
+
+## Attempt 4 (v0.38.0) — reverted, measured no-op. But it located the real cause.
+
+**Result:** Aspen 2 → 2, Grand Junction 38 → 38, Under the Dragon's ring hits 9 → 9. Reverted in
+v0.38.1. Recorded so it is not tried a fifth time.
+
+**What was tried:** all three scans the ring clamps with (`_deck_window_min7`,
+`_shoulder_window_min8`, `_pav_at17`) drop triangles more than 60° off horizontal as "walls", and
+on a steep stage the deck itself can qualify — the same blindness that hid a 0.54 m shoulder poke
+from the corridor pin in [0014](0014-road-floats-over-the-mountain-on-rally-stages.md). Adding a
+no-filter point test changed nothing, so that is not what is happening here.
+
+**What the measurement actually shows.** Under the Dragon, station 2480, the offending triangle:
+
+```
+corner (4875.49, 5666.51)  ring 200.609   road 200.613   -0.004  OK
+corner (4874.57, 5678.83)  ring 200.609   road 200.553   +0.056  POKE
+corner (4878.30, 5667.43)  ring 200.609   road 200.613   -0.004  OK
+edges: 12.4 / 12.0 / 3.0 m
+```
+
+Three corners at **exactly** the same height across 12 m — terrain sampled at three points 12 m
+apart never lands on the same millimetre, so this is not a terrain-derived row. 200.609 is
+`_grid_trisurf(grid_xyz) + 0.02` with **no clamp applied at all**, where a working clamp would give
+`road − 0.03` = 200.583.
+
+**So 0012's headline is half right.** The faces do span — but not because the clamp samples too
+sparsely, which is why attempts 1–3 all failed (vertex sink fired on 0 verts; `drop_over_road`
+38→32; dense barycentric 32→27; Aspen unmoved throughout). Dense *sampling* cannot help when the
+node was never a candidate for clamping.
+
+The poking corner is `_m0`, the **weld vertex at ring row 0** (`build_mesh.py:1804`). It is
+deliberately outside the `_RINGS17` clamp loop because it is shared *exactly* with the shoulder's
+ground-meet vertex — that sharing is what makes the pavement/terrain seam watertight. It folds only
+when a distinct lower sheet is more than 0.10 m beneath it. At a hairpin the opposing leg is
+~0.05 m away, so it neither folds nor terminates: it spans 12 m straight over the other
+carriageway, level, grazing it.
+
+**Why 12 m:** the ring quad spans two `_secs` cross-sections, and they are 12 m apart there. The
+road's own vertices are ~3 m apart. The ring is built at a quarter of the road's own density.
+
+## What to try next (in this order)
+
+1. **Densify `_secs` through curvature** so ring quads span ~3 m rather than 12 m. This is the same
+   move that fixed the terrain in 0014 — a surface cannot follow a road it is coarser than — and it
+   shortens every span without touching the weld's watertightness.
+2. **Terminate the annulus where a quad would cross another leg's carriageway**, regardless of
+   height difference. The existing guard only terminates on a *deep* fold (>3 m); the hairpin case
+   is a shallow one and slips through. `_kcut` already exists for exactly this.
+3. Do **not** retry dropping triangles: 0012 attempt 2 raised Grand Junction's severe steps 39 → 44,
+   because holes leave edges the car reads as steps.
+
+Aspen's 2 hits and Grand Junction's 38 are almost certainly this same shallow-hairpin span, which
+would explain why every fix aimed at sampling density has moved Grand Junction slightly and Aspen
+not at all.

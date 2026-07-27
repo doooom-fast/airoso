@@ -1,7 +1,7 @@
 ---
 id: 0017
-title: Lake Murray — a 6 m hole in the upper deck where two roads cross
-status: diagnosed
+title: Lake Murray — a connector roofs the mainline (first read as "a hole in the upper deck")
+status: fixed in part (v0.49.0); lap seam still open
 scope: k10-san-diego/project (Lake Murray loop)
 layer: engine
 train: 02
@@ -68,3 +68,49 @@ gates measured but nobody drove. It is exactly the "gates green, game broken" ga
 - No station on any wheel path drops onto a lower road surface and climbs back.
 - `drive_test` severe steps fall from 28 with the 2.5 m pair gone.
 - Lake Murray's kn5 is written by `kn5_write` (fidelity 0.00 m by construction), not from a blend.
+
+
+---
+
+## CORRECTION — the first reading above is inverted
+
+"A 6 m hole in Del Cerro Blvd" is wrong, and `drop_over_road` is not involved: it is only ever
+applied to `barrier`, `kerb` and `shoulder`, never to a road mesh.
+
+The trace is along the LOOP's own centerline. `1ROAD_del_cerro_blvd` being the top surface at
+stations 3238–3247 and 3254+ means **the connector is lying over the mainline**. The six metres at
+3248–3253 are not a hole in the connector — they are the only stretch where the loop's own deck is
+still the top surface. The car is not falling through Del Cerro; it is driving on Del Cerro's roof
+either side of a gap.
+
+Measured deltas, each connector at its closest approach to the loop:
+
+| connector | closest approach | Δy |
+|---|---|---|
+| **del_cerro_blvd** | **1.0 m** | **+2.51 m** |
+| college_avenue_opp | 11.2 m | +5.01 m |
+| navajo_road_opp | 11.2 m | +0.31 m |
+| wisconsin | 15.0 m | −0.18 m |
+| del_cerro_ave, airoso, adelante, colorado, connecticut | 44–137 m | +0.79 … +13.54 m |
+
+A connector's Y is sampled from 3DEP along its OWN line with no knowledge of the mainline. The
+ones that physically meet the loop must agree with it; the ones 44–137 m away are separate streets
+at their own legitimate elevations and must not be touched.
+
+## Fix (v0.49.0)
+
+Snap a connector to the loop's height within 12 m, smoothstep back to its own profile over 45 m.
+Result on Lake Murray: 4 of 9 connectors reconciled (college_avenue 7.40 m, del_cerro 3.54 m,
+navajo 0.83 m, wisconsin 0.18 m), 5 untouched. **Severe steps 28 → 20, and the 2.55 m pair is
+gone** — the worst junction step is now 0.35 m.
+
+## Still open
+
+1. **The lap seam.** Worst severe step is now **0.78 m at station 13476** on a 13478 m lap, and
+   both remaining `soft_top` hits are at stations 0.0 and 13478.0 — the same physical point. The
+   ribbon does not close cleanly. Note v0.45.0 fixed the *elevation* seam (a closed centerline
+   repeats its first vertex and every wrap-around filter double-counted it); this is the *mesh*
+   seam and is a separate defect. Check whether the sweep closes the ribbon or leaves the first and
+   last cross-sections unjoined.
+2. **Residual junction lip, 0.29–0.35 m** at 3237–3254. The 12 m snap radius levels the decks but
+   the blend still leaves a step where the connector's own crossfall meets the mainline's.

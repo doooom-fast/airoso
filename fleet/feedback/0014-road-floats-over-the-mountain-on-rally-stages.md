@@ -1,7 +1,7 @@
 ---
 id: 0014
 title: The road floats over the mountain — the contact pin charges slope, and 8 m cells cannot pay
-status: diagnosed
+status: fixed (dragon-tail shipped; lariat float fixed, blocked elsewhere)
 scope: k10-colorado-rally/dragon-tail-gravel, k10-colorado-rally/under-the-dragon-gravel, k10-colorado/lookout-lariat
 layer: engine
 train: 02
@@ -137,3 +137,53 @@ degrades to today's full slope charge. Any chord form must be measured before it
 - Sand Creek, Aspen, Grand Junction, Pikes Peak, IMI, Pueblo, High Plains, Lariat unchanged or
   better — they share every function touched.
 - Kevin drives Dragon Tail and the grass meets the gravel at the edge.
+
+---
+
+## Resolution (v0.36.0 → v0.37.0)
+
+**Corridor refinement**: subdivide only the terrain quads the pavement touches (plus a margin ring),
+re-pin those nodes with a stencil sized to the finer spacing, and charge **curvature rather than
+slope**. The coarse raster is untouched — same nx/ny, spacing, vertex ids, `ground.local.json` — so
+audit check G, scenery seating and both network builders keep their regular-raster contract.
+
+| track | before (median / p95 / max) | after | verdict |
+|---|---|---|---|
+| dragon-tail-gravel | 0.400 / 1.114 / 3.216 | **0.031 / 0.095 / 0.198** | all four gates PASS — **shipped v0.1.0** |
+| lookout-lariat | 0.412 / 1.013 / 7.007 | **0.040 / 0.071 / 3.481** | float fixed; blocked on check H (below) |
+
+### The three defects found on the way, each real
+
+1. **v0.36.1** — refined nodes outside the pavement footprint take a bilinear base from their coarse
+   corners, and beside a cut face a corner legitimately stands metres above the deck. Those nodes
+   are created *after* `clamp_terrain_below_road` runs, so nothing had ever clamped them.
+2. **v0.36.2** — `_shoulder_window_min8` skips triangles >60° off horizontal as "walls", but on a
+   mountain fill the shoulder *is* that steep. Both window scans went blind and a node kept natural
+   ground 0.54 m over the shoulder. A point test needs no angle filter: a vertical triangle
+   projects to a line in XZ and the determinant rejects it.
+3. **v0.37.0** — the Lariat failed `drive_test` on a **6 mm** poke over 24.8 km: the chord sagitta
+   across 1.67 m nodes over a ~58 m crown, against a 10 mm clearance. Widening the stencil would
+   re-buy the slope charge everywhere. The second difference `2*mid − neighbour` costs nothing on a
+   constant grade and pays exactly the sagitta on a crest.
+
+**On (3):** this is the operator the original diagnosis recommended shipping first, and which both
+refuters measured as a near-no-op (0.400 → 0.341) and rejected. They were right *at 8 m cells* — the
+far sample lands off a 6.5 m carriageway, so it degrades to the full slope charge. At refined
+spacing every sample is on pavement, which is the condition it always needed. The refinement had to
+come first; the operator was never wrong, only mis-sequenced.
+
+## Still open
+
+- **Lookout Lariat — audit check H, 49 hits, worst 0.45 m.** `drive_test` PASS, float fixed, but H
+  went CLEAN → 49. H reads the **coarse raster** (`ground.local.json`) via bilinear, samples out to
+  `w/2 + 2 m`, and compares against the highest road vert within 4 m — so on a switchback stack it
+  can read the upper leg's bench against the lower leg's deck. The coarse-corner re-pin changes
+  exactly those values. Establish whether the 49 are real before changing anything, the way the
+  0.54 m shoulder poke was real and the 6 mm one was too.
+- **Lariat max is still 3.481 m** at one point — a single site, not the pervasive float.
+- **under-the-dragon-gravel** — corridor fix cleared the terrain grid entirely; the remaining 11
+  `soft_top_in_lane` are 9 from `1GRASS_ring_a` (ledger [0012](0012-ring-mesh-pokes-through-the-road.md),
+  a different mesh and a different defect) and 2 at station 25705 of a 25706 m stage.
+- **Tuning**: `corridor_refine_factor` and `corridor_stencil_factor` are per-track and default off.
+  Only dragon-tail-gravel and lookout-lariat opt in. IMI / Pueblo / High Plains are green without
+  it (p95 0.040 / 0.079 / 0.084) and are deliberately left alone.

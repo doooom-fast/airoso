@@ -994,6 +994,7 @@ def build(project_dir: str | Path) -> dict:
         cm["vertices"] = [(x, y + ROAD_LIFT_M, z) for x, y, z in cm["vertices"]]
         conn_meshes.append((f"1ROAD_{name}", cm))
     conn_verts = [v for _n, cm in conn_meshes for v in cm["vertices"]]
+    conn_shoulders: list = []      # draped verges, built later (needs grass_surf)
 
     # OPEN-ROAD END APRONS. clamp_terrain_below_road lets the allowed terrain height RECOVER with
     # distance from the road, so the corridor rejoins the real ground instead of sitting in a shaved
@@ -1138,6 +1139,21 @@ def build(project_dir: str | Path) -> dict:
         shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
                                         ground_drop=GRASS_CLEARANCE_M, ground=grass_surf)
         edge_group, edge_mat = "1ROAD_shoulder", "road"
+        # CONNECTORS GET A DRAPED VERGE TOO. The main loop's shoulder extends a MANAGED corridor
+        # outward from the deck and drapes its outer lip onto grass_surf; a connector had only a
+        # bare ribbon, so its deck edge had an inner corner pinned and an outer neighbour left at
+        # natural ground, and the grass under that edge interpolated low however fine the cells got.
+        # Measured on Lake Murray at 3 m cells: 1ROAD_main p95 float 0.040 against navajo 0.422 and
+        # college_avenue 0.431, with the float alternating left-edge/right-edge along every
+        # connector. Built HERE, not where conn_meshes is built, because grass_surf does not exist
+        # that early.
+        for _cn5, _cp5, _cw5 in connectors:
+            _cs5 = ribbon.road_shoulder(_cp5, _cw5, lift=ROAD_LIFT_M,
+                                        ground_drop=GRASS_CLEARANCE_M, ground=grass_surf)
+            if _cs5.get("vertices"):
+                conn_shoulders.append((f"1ROAD_{_cn5}_verge", _cs5))
+        if conn_shoulders:
+            print(f"  connector verges: {len(conn_shoulders)} draped onto the ground")
     # Kerb geometry is config-driven so a track can opt into taller RACING kerbs without touching the
     # default 5 cm street kerb. `kerb.height_m` / `kerb.width_m` / `kerb.top_frac` in track.config.json.
     kerb_cfg = cfg_raw.get("kerb", {})
@@ -1573,7 +1589,7 @@ def build(project_dir: str | Path) -> dict:
     # shoulder HEM: anchoring at the road edge left grass 0.7-1.0 m below the shoulder — a
     # daylight strip under the hem for kilometres, THE 'ribbon above the mountain' look).
     _all8 = []
-    for _m8 in (shoulder, runoff, kerb):
+    for _m8 in [shoulder, runoff, kerb] + [_cs for _nm, _cs in conn_shoulders]:
         for _t8 in _m8["tris"]:
             _all8.append((_m8["vertices"][_t8[0]], _m8["vertices"][_t8[1]], _m8["vertices"][_t8[2]]))
     _rc8: dict = _add7(list)

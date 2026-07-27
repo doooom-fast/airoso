@@ -994,6 +994,40 @@ def build(project_dir: str | Path) -> dict:
         cm["vertices"] = [(x, y + ROAD_LIFT_M, z) for x, y, z in cm["vertices"]]
         conn_meshes.append((f"1ROAD_{name}", cm))
     conn_verts = [v for _n, cm in conn_meshes for v in cm["vertices"]]
+
+    # ===================== THE PAVEMENT REGISTRY =====================
+    # ONE list of every pavement mesh, registered once as it is built. Eight passes decide what the
+    # ground does near a road — the terrain clamp, the contact pin's lookup hash, the pin's presence
+    # filter, the corridor refine region, the grading, the ring clamp — and each used to assemble its
+    # own idea of "pavement" by hand. Connectors were bolted on as bare ribbons and had to be taught
+    # to every pass SEPARATELY: grading knew about them, the pin hash did not (v0.51.0), the refine
+    # region did not (v0.52.0), the clamp did not (v0.53.0), the presence filter did not (v0.54.0).
+    # Four defects from one missing concept, and a fifth was only a matter of time.
+    # Register a mesh once, tagged with its kind; every consumer selects kinds instead of rebuilding
+    # a list. Adding a new pavement type is one append, not eight edits.
+    _PAV: list = []                       # (name, mesh, kind)
+
+    def _pav_reg(name, mesh, kind):
+        if mesh and mesh.get("vertices"):
+            _PAV.append((name, mesh, kind))
+        return mesh
+
+    def _pav_meshes(*kinds):
+        """Meshes of the given kinds (all of them when none are named)."""
+        return [m for _n, m, k in _PAV if not kinds or k in kinds]
+
+    def _pav_verts(*kinds):
+        return [v for m in _pav_meshes(*kinds) for v in m["vertices"]]
+
+    def _pav_world_tris(*kinds):
+        out = []
+        for m in _pav_meshes(*kinds):
+            _v = m["vertices"]
+            out += [(_v[t[0]], _v[t[1]], _v[t[2]]) for t in m["tris"]]
+        return out
+
+    for _cn0, _cm0 in conn_meshes:
+        _pav_reg(_cn0, _cm0, "connector")
     conn_shoulders: list = []      # draped verges, built later (needs grass_surf)
 
     # OPEN-ROAD END APRONS. clamp_terrain_below_road lets the allowed terrain height RECOVER with
@@ -1021,8 +1055,10 @@ def build(project_dir: str | Path) -> dict:
               f"(keeps the clamp's recovery ramp off the deck)")
     # ANTI-POKE pass 1: clamp the grid below the flat drivable ribbons (road + runoff + connectors) so the
     # graded grass surface is FINAL before the edge strips drape onto it. One-sided (natural dips survive).
+    _pav_reg("1ROAD_main", road, "main")
+    _pav_reg("1ROAD_runoff", runoff, "runoff")
     ribbon.clamp_terrain_below_road(grid_xyz,
-                                    road["vertices"] + runoff["vertices"] + conn_verts + _end_apron,
+                                    _pav_verts("main", "runoff", "connector") + _end_apron,
                                     clear=GRASS_CLEARANCE_M, grid_spacing=float(meta["spacing_m"]),
                                     foot_m=8.0, recover=0.35)
     # The finalized grass SURFACE (bilinear on the graded+clamped grid) — the single source of truth the
@@ -1139,6 +1175,7 @@ def build(project_dir: str | Path) -> dict:
         shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
                                         ground_drop=GRASS_CLEARANCE_M, ground=grass_surf)
         edge_group, edge_mat = "1ROAD_shoulder", "road"
+        _pav_reg(edge_group, shoulder, "shoulder")
         # CONNECTORS GET A DRAPED VERGE TOO. The main loop's shoulder extends a MANAGED corridor
         # outward from the deck and drapes its outer lip onto grass_surf; a connector had only a
         # bare ribbon, so its deck edge had an inner corner pinned and an outer neighbour left at
@@ -1174,6 +1211,7 @@ def build(project_dir: str | Path) -> dict:
                                             ground_drop=GRASS_CLEARANCE_M, ground=grass_surf)
                 if _cs5.get("vertices"):
                     conn_shoulders.append((f"1ROAD_{_cn5}_verge", _cs5))
+                    _pav_reg(f"1ROAD_{_cn5}_verge", _cs5, "verge")
         if conn_shoulders:
             print(f"  connector verges: {len(conn_shoulders)} draped onto the ground")
     # Kerb geometry is config-driven so a track can opt into taller RACING kerbs without touching the
@@ -1282,7 +1320,7 @@ def build(project_dir: str | Path) -> dict:
     # conn_verts: the clamp took the main ribbon + runoff only, so terrain was never seated under a
     # connector. Measured on Lake Murray: 1ROAD_main p95 float 0.040 m (fine) while navajo_road_opp
     # ran 0.907 and college_avenue_opp 0.618 — the loop was seated and every side street floated.
-    ribbon.clamp_terrain_below_road(grid_xyz, road["vertices"] + runoff["vertices"] + conn_verts + _end_apron,
+    ribbon.clamp_terrain_below_road(grid_xyz, _pav_verts("main", "runoff", "connector") + _end_apron,
                                     clear=GRASS_CLEARANCE_M, grid_spacing=float(meta["spacing_m"]),
                                     foot_m=8.0, recover=0.35)
     ribbon.clamp_terrain_below_road(grid_xyz, shoulder["vertices"] + kerb["vertices"], clear=0.05, reach=6.0,
@@ -1611,7 +1649,8 @@ def build(project_dir: str | Path) -> dict:
     # shoulder HEM: anchoring at the road edge left grass 0.7-1.0 m below the shoulder — a
     # daylight strip under the hem for kilometres, THE 'ribbon above the mountain' look).
     _all8 = []
-    for _m8 in [shoulder, runoff, kerb] + [_cs for _nm, _cs in conn_shoulders]:
+    _pav_reg("1KERB", kerb, "kerb")
+    for _m8 in _pav_meshes("shoulder", "runoff", "kerb", "verge"):
         for _t8 in _m8["tris"]:
             _all8.append((_m8["vertices"][_t8[0]], _m8["vertices"][_t8[1]], _m8["vertices"][_t8[2]]))
     _rc8: dict = _add7(list)
@@ -1665,9 +1704,8 @@ def build(project_dir: str | Path) -> dict:
     # college_avenue_opp 0.618 (never examined). clamp_terrain_below_road had already pulled that
     # terrain DOWN to the minimum deck height within its 18.1 m reach; the pin is what raises it
     # back to deck - clearance, and for connectors it never ran.
-    for _cn6, _cm6 in conn_meshes:
-        for _v6 in _cm6["vertices"]:
-            _near7.add((int(_v6[0] // 24.0), int(_v6[2] // 24.0)))
+    for _v6 in _pav_verts():                      # EVERY pavement kind, from the one registry
+        _near7.add((int(_v6[0] // 24.0), int(_v6[2] // 24.0)))
     _near7 = {(ci + di, cj + dj) for (ci, cj) in _near7 for di in (-1, 0, 1) for dj in (-1, 0, 1)}
     _fixed7 = 0
     _feathered7 = 0
@@ -1811,9 +1849,7 @@ def build(project_dir: str | Path) -> dict:
         # connector got pinned at COARSE resolution, which is the 0014 float mechanism exactly.
         # Lake Murray: audit clean but p95 float 0.569 m with 43.5% of samples off the ground.
         _pav_tris = [(_rv7[_t[0]], _rv7[_t[1]], _rv7[_t[2]]) for _t in road["tris"]] + _all8
-        for _cn9, _cm9 in conn_meshes:
-            _cv9 = _cm9["vertices"]
-            _pav_tris += [(_cv9[_t[0]], _cv9[_t[1]], _cv9[_t[2]]) for _t in _cm9["tris"]]
+        _pav_tris += _pav_world_tris("connector", "verge")
         for _a, _b, _c in _pav_tris:
             _is = [ (_v[0] - _gx0) / _gdx for _v in (_a, _b, _c) ]
             _js = [ (_v[2] - _gz0) / _gdz for _v in (_a, _b, _c) ]

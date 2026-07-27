@@ -134,8 +134,28 @@ def models_ini(kn5_name: str, spawn_kn5: str | None = None) -> str:
 
 # --- minimap / images ----------------------------------------------------------
 
-def _xz(local: dict) -> list[tuple[float, float]]:
-    return [(p[0], p[2]) for p in local["points_xyz_m"]]  # (X east, Z north) metres
+def _xz(local: dict, cfg=None) -> list[tuple[float, float]]:
+    """(X, Z) in the SHIPPED frame — the one the car reports positions in.
+
+    centerline.local.json is stored UNMIRRORED and UNROTATED; every other consumer converts before
+    using it (kn5_write: `mpts = [(sx*q[0], q[2]) ...]`, audit_mesh check H the same). The minimap
+    did not, so map.png and map.ini were built in a different handedness from the kn5: with
+    mirror_x and true_north 180 the net effect is a reflection, and the car's dot traces the mirror
+    image of the drawn line instead of following it (Kevin: "car doesn't follow it. Chirality?").
+    Apply the same mirror and yaw kn5_write applies, so pixel space and car space agree."""
+    pts = local["points_xyz_m"]
+    if cfg is None:
+        return [(p[0], p[2]) for p in pts]
+    sx = -1.0 if getattr(cfg, "mirror_x", None) or (isinstance(cfg, dict) and cfg.get("mirror_x")) else 1.0
+    ydeg = (getattr(cfg, "true_north_rotation_deg", None)
+            if not isinstance(cfg, dict) else cfg.get("true_north_rotation_deg")) or 0.0
+    yr = math.radians(float(ydeg))
+    c, s_ = math.cos(yr), math.sin(yr)
+    out = []
+    for p in pts:                       # mirror first (projection), then true-north (kn5_write.rot)
+        x, z = sx * p[0], p[2]
+        out.append((x * c - z * s_, x * s_ + z * c))
+    return out
 
 
 def _map_params(xz, size: int = 900, margin: int = 28):
@@ -326,7 +346,7 @@ def generate(project_dir: str | Path, kn5_name: str | None = None) -> dict:
         multi = edges_xz
     else:
         local = json.loads((project_dir / "data" / "centerline.local.json").read_text(encoding="utf-8"))
-        xz = _xz(local)
+        xz = _xz(local, cfg)
         multi = None
         length_m = json.loads((project_dir / "data" / "centerline.geojson").read_text())["features"][0]["properties"]["length_m"]
 

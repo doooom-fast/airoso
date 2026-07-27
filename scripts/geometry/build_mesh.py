@@ -1928,6 +1928,29 @@ def build(project_dir: str | Path) -> dict:
     _flatten_pavement(ring_mesh, 0.004)     # rings weld to PRE-flatten meet heights — snap
     _flatten_pavement(para_mesh, 0.004)     # them (and stone runs) to the junction plane too
     _flatten_pavement(wallskin, 0.004)
+    # ZONE-RIM GUARD. The snap is binary; the road is not. A road triangle straddling the zone
+    # circle interpolates from the pad plane down to its natural profile across ~3 m, while a
+    # ring vertex just INSIDE the rim holds the full plane — so at the rim the flattened ring
+    # stands proud of the descending road. Under the Dragon: 9 soft_top at the hairpin pad,
+    # ring verts snapped to plane+0.004 = 200.609 over a road already down at 200.553 — the
+    # snap OVERWROTE the clamp loop's correct heights (it computed 199.946 for the same node;
+    # traced, then found mutated here). The invariant is the same one as everywhere else:
+    # grass never stands above the pavement actually overhead. Ring only — the pavement
+    # meshes' own lifts (road 0.012 > ring 0.004) keep their ordering inside the pad.
+    if _flat_zones:
+        _rg9 = ring_mesh["vertices"]
+        _fixed9 = 0
+        for _i9 in range(len(_rg9)):
+            _x9, _y9, _z9 = _rg9[_i9]
+            for _zx9, _zz9, _zy9, _zr9 in _flat_zones:
+                if (_x9 - _zx9) ** 2 + (_z9 - _zz9) ** 2 < _zr9 * _zr9 and abs(_y9 - _zy9) < 4.0:
+                    _pav9 = _pav_at17(_x9, _z9, _y9)
+                    if _pav9 is not None and _y9 > _pav9 - GRASS_CLEARANCE_M - 0.02:
+                        _rg9[_i9] = (_x9, _pav9 - GRASS_CLEARANCE_M - 0.02, _z9)
+                        _fixed9 += 1
+                    break
+        if _fixed9:
+            print(f"  [#17] zone-rim guard: {_fixed9} ring verts re-tucked under the pavement")
     print(f"  [#17] welded rings {len(ring_mesh['vertices'])}v; parapets {len(para_mesh['vertices'])}v; "
           f"wall skins {len(wallskin['vertices'])}v; rock skins {len(rockskin['vertices'])}v")
     # ==========================================================================================

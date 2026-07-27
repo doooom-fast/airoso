@@ -1662,6 +1662,30 @@ def build(project_dir: str | Path) -> dict:
                     if 0 <= _qi < _nxg - 1 and 0 <= _qj < _nyg - 1:
                         _refine_q.add((_qi, _qj))
 
+        def _pav_at_point(px, pz, y_ref):
+            """Lowest pavement surface DIRECTLY over (px,pz) — no stencil, every pavement group.
+            The window scans skip triangles more than 60° off horizontal as "walls", but on a
+            mountain fill the SHOULDER itself is that steep: at station 18022 the shoulder sat at
+            138.97 and neither scan saw it, so the node kept natural ground at 139.51 and poked
+            0.54 m through. A point test needs no such filter — a truly vertical triangle projects
+            to a line in XZ and its determinant rejects it anyway."""
+            lo = None
+            for src in (_rc7.get((int(px // 4.0), int(pz // 4.0)), ()),
+                        _rc8.get((int(px // 4.0), int(pz // 4.0)), ())):
+                for t in src:
+                    a, b, c = (_rv7[t[0]], _rv7[t[1]], _rv7[t[2]]) if isinstance(t[0], int) else t
+                    d = (b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2])
+                    if abs(d) < 1e-12:
+                        continue
+                    w0 = ((b[2] - c[2]) * (px - c[0]) + (c[0] - b[0]) * (pz - c[2])) / d
+                    w1 = ((c[2] - a[2]) * (px - c[0]) + (a[0] - c[0]) * (pz - c[2])) / d
+                    w2 = 1.0 - w0 - w1
+                    if w0 >= -1e-6 and w1 >= -1e-6 and w2 >= -1e-6:
+                        y = w0 * a[1] + w1 * b[1] + w2 * c[1]
+                        if abs(y - y_ref) <= 20.0 and (lo is None or y < lo):
+                            lo = y
+            return lo
+
         def _fine_height(px, pz, base_y):
             """Two-sided contact pin at a refined node: the ground under pavement IS the pavement
             underside. Same rule as the coarse pin, but with the stencil sized to THIS node."""
@@ -1669,23 +1693,13 @@ def build(project_dir: str | Path) -> dict:
             if _sF is not None and bridge_of(_sF):
                 return base_y                       # declared span: the valley stays open
             lo = _deck_window_min7(px, pz, base_y, _hsF)
-            lo8 = _shoulder_window_min8(px, pz, base_y, _hsF)
-            if lo8 is not None and (lo is None or lo8 < lo):
-                lo = lo8
+            for _cand in (_shoulder_window_min8(px, pz, base_y, _hsF),
+                          _pav_at_point(px, pz, base_y)):
+                if _cand is not None and (lo is None or _cand < lo):
+                    lo = _cand
             if lo is not None:
                 return lo - GRASS_CLEARANCE_M
-            # NOT under pavement. base_y is a bilinear blend of this quad's coarse corners, and
-            # beside a cut face one of those corners legitimately stands metres ABOVE the deck —
-            # so the blend can land above the pavement just outside its edge. The coarse nodes were
-            # protected from that by clamp_terrain_below_road; these nodes are created afterwards
-            # and never saw it. Clamp DOWN-ONLY (a cut face that is genuinely high stays high).
-            cap = _deck_window_min7(px, pz, base_y, _hs7)
-            cap8 = _shoulder_window_min8(px, pz, base_y, _hs7)
-            if cap8 is not None and (cap is None or cap8 < cap):
-                cap = cap8
-            if cap is not None and base_y > cap - GRASS_CLEARANCE_M:
-                return cap - GRASS_CLEARANCE_M
-            return base_y
+            return base_y                           # genuinely no pavement overhead: real ground
 
         # The refined quads' own CORNERS are coarse nodes still carrying the coarse stencil's sag,
         # and they anchor the fine triangles. Re-pin them at the fine radius too. Safe because every

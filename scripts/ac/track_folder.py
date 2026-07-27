@@ -297,7 +297,13 @@ def _rasterize(svg: str, png: Path, size: int) -> bool:
             return True
     except Exception:
         pass
-    png.with_suffix(".svg").write_text(svg, encoding="utf-8")
+    # Fallback: keep it SMALL. Dumping the raw SVG shipped a 288 MB ui/preview.svg once; a
+    # fallback the game cannot read may as well be tiny.
+    if len(svg) <= 2_000_000:
+        png.with_suffix(".svg").write_text(svg, encoding="utf-8")
+    else:
+        print(f"[track_folder] preview rasterization failed and the SVG source is "
+              f"{len(svg)/1e6:.0f} MB — skipping the fallback (no preview shipped)")
     return False
 
 
@@ -350,7 +356,12 @@ def generate(project_dir: str | Path, kn5_name: str | None = None) -> dict:
     # or the plain outline when no ways cache exists (aerial-traced facilities).
     preview_img = _osm_preview(project_dir)
     render_svg = project_dir / "data" / "track_render.svg"
-    preview_src = render_svg.read_text(encoding="utf-8") if render_svg.exists() else \
+    # Only use the 3D render as preview source if it is a sane size for the rasterizer. On a
+    # 25 km stage it is 275 MB, qlmanage times out, and _rasterize's fallback then wrote the
+    # ENTIRE SVG into ui/ — Dragon Tail v0.1.0 shipped a 288 MB ui/preview.svg that CM never
+    # reads (it wants preview.png). The plain outline is always small and always rasterizes.
+    _use_render = render_svg.exists() and render_svg.stat().st_size < 5_000_000
+    preview_src = render_svg.read_text(encoding="utf-8") if _use_render else \
         _track_svg(xz, geom, stroke="#ff3b30", width=5, bg="#0c1116", flip_y=True, multi=multi)
 
     import shutil

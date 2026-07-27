@@ -1659,6 +1659,7 @@ def build(project_dir: str | Path) -> dict:
         # sag curve. At 8 m spacing 0.55 was right; at 2 m it charges 135 mm to prevent 5 mm
         # (measured: p95 1.114 -> 0.197 from refinement alone, of which ~0.135 is this stencil).
         _hsF = float(meta["spacing_m"]) / _RN * float(cfg_raw.get("corridor_stencil_factor", 0.25))
+        _sN = float(meta["spacing_m"]) / _RN        # refined node spacing (the chord span)
         _pav_tris = [(_rv7[_t[0]], _rv7[_t[1]], _rv7[_t[2]]) for _t in road["tris"]] + _all8
         for _a, _b, _c in _pav_tris:
             _is = [ (_v[0] - _gx0) / _gdx for _v in (_a, _b, _c) ]
@@ -1703,9 +1704,25 @@ def build(project_dir: str | Path) -> dict:
                           _pav_at_point(px, pz, base_y)):
                 if _cand is not None and (lo is None or _cand < lo):
                     lo = _cand
-            if lo is not None:
-                return lo - GRASS_CLEARANCE_M
-            return base_y                           # genuinely no pavement overhead: real ground
+            if lo is None:
+                return base_y                       # genuinely no pavement overhead: real ground
+            # CHARGE CURVATURE, NOT SLOPE. The chord from this node to its neighbour rises above
+            # the pavement only where the pavement CRESTS, by the sagitta s²/8R. A window minimum
+            # charges the full slope over its radius instead, which on a grade is far larger and
+            # is the whole road-float mechanism (0014). The second difference 2*mid - neighbour is
+            # exactly the height that keeps the chord under the deck at its midpoint: on a constant
+            # grade it returns this node's own height (zero cost), and on a crest it pays the
+            # sagitta and nothing more. The Lariat needed this — 1.67 m nodes over a ~58 m crown
+            # left 6 mm of grass above the deck, enough to fail drive_test on a 24.8 km lap.
+            for _ex, _ez in ((1.0, 0.0), (-1.0, 0.0), (0.0, 1.0), (0.0, -1.0)):
+                _ym = _pav_at_point(px + _ex * _sN * 0.5, pz + _ez * _sN * 0.5, base_y)
+                if _ym is None:
+                    continue
+                _yn = _pav_at_point(px + _ex * _sN, pz + _ez * _sN, base_y)
+                _need = (2.0 * _ym - _yn) if _yn is not None else _ym
+                if _need < lo:
+                    lo = _need
+            return lo - GRASS_CLEARANCE_M
 
         # The refined quads' own CORNERS are coarse nodes still carrying the coarse stencil's sag,
         # and they anchor the fine triangles. Re-pin them at the fine radius too. Safe because every

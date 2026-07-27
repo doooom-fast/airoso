@@ -120,3 +120,32 @@ road's own vertices are ~3 m apart. The ring is built at a quarter of the road's
 Aspen's 2 hits and Grand Junction's 38 are almost certainly this same shallow-hairpin span, which
 would explain why every fix aimed at sampling density has moved Grand Junction slightly and Aspen
 not at all.
+
+---
+
+## Attempts 5–7 (v0.39.0–v0.42.0) — the in-lane hits SOLVED; the audit poke located
+
+**v0.39.0 zone-rim guard** — the flat-zone pad snap was overwriting the ring clamp's correct
+heights (traced: clamp computed 199.946, `_flatten_pavement(ring_mesh)` rewrote it to
+plane+0.004 = 200.609). At the pad rim the road interpolates off the plane across one triangle
+while a just-inside ring vertex holds it. Guard: after the snap, re-tuck any in-zone ring vertex
+above the pavement actually overhead. **Aspen drive_test PASS for the first time ever (2→0);
+Under the Dragon ring hits 9→0; Grand Junction 38→18.**
+
+**v0.42.0 shallow-crossing termination** (option 2 from the notes above) — flaring UTD's
+switchback legs to 10 m brought the carriageways together and one leg's annulus rode over the
+other at its own height (31 hits). Terminate when pavement within 3 m of the row's height has a
+nearest-road station >50 m of arc away; lap-wrap safe.
+
+**Aspen's one remaining audit poke (+0.19 at (122.5, −64.1)) is NOT the ring** — instrumented
+twice: the ring meets and rows there are all correct. It is the coarse contact pin's RAISE branch:
+a grid node at −0.028 raised to ~0.26 by a filtered window value (0.271, the flat shoulder top
+up-slope) straight through the steep face overhead at 0.088. Neither scan sees that face — the 60°
+filter rejects it, and the **no-filter point test returns None because the face's triangles are
+not in `_rc8` at pin time**: the surface matches `SHOULDERUND`, built in the #17 section AFTER the
+pin's hashes are frozen. An ordering problem: the pin cannot clamp against geometry that does not
+exist yet. Fix candidates, unmeasured: (a) gate the raise on pavement actually overhead at the
+point; (b) run a post-#17 re-pin pass over nodes the raise moved; (c) hash the #17 extensions
+before the pin. Do NOT widen the raise's stencil — that is the 0014 slope charge again.
+
+Grand Junction's remaining 18 + bumps 85.29/km (limit 75) are separate defects, undiagnosed.

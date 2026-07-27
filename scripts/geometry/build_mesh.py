@@ -1822,6 +1822,14 @@ def build(project_dir: str | Path) -> dict:
             # face's neighbor tris sweeping under the meet at concave bends. No window — the
             # window smeared crossfall and false-folded banked sections.
             _pv0 = _pav_at17(_mx, _mz, _my)
+            # NO-FILTER fallback: this test's stated purpose includes "the own face's neighbor
+            # tris sweeping under the meet" — but on a mountain fill those tris are steeper than
+            # the 60° wall filter allows, so the fold never fires. Aspen's one stubborn audit
+            # poke (+0.19 at (122.5,-64.1), the same spot 0012 recorded from the start): ring
+            # meet at 0.356 over a shoulder face at 0.088 that only the unfiltered test sees.
+            _pv0n = _pav_any17(_mx, _mz, _my)
+            if _pv0n is not None and (_pv0 is None or _pv0n < _pv0):
+                _pv0 = _pv0n
             if _pv0 is not None and _pv0 < _my - 0.10:
                 _m0 = (_mx, _pv0 - GRASS_CLEARANCE_M - 0.02, _mz)
             _col = [_m0]

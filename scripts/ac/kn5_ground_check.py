@@ -641,10 +641,13 @@ def check(project_dir: str | Path) -> dict:
         nC = len(gaps_c)
         print(f"  deck-vs-mountain (tri-exact): median {gaps_c[nC//2]:+.3f}  p95 {gaps_c[19*nC//20]:+.3f}  max {gaps_c[-1]:+.3f}")
     import os as _os
+    # A gate that is failing must never print a reassuring number. This used to zero `frac` for
+    # the advisory, then print THAT zero in the summary line and in the p95 FAIL message — so a
+    # hard FAIL sat under "(0.0%)", reading as harmless (Dragon Tail: 98.6% shown as 0.0%). The
+    # advisory now only marks the fraction check as non-gating; every printed number is real.
     if _os.environ.get("GATE_CONTACT_ADVISORY") == "1" and frac > ROAD_GAP_FRAC:
-        print(f"  !! CONTACT ADVISORY MODE: {over}/{tot} samples over {ROAD_GAP_M} m NOT gating "
-              f"(sub-5cm everywhere needs the verge density gradient, task #17)")
-        frac = 0.0
+        print(f"  !! CONTACT ADVISORY MODE: the {100*frac:.1f}% fraction is informational "
+              f"(sub-5cm everywhere needs the verge density gradient, task #17); p95 still gates")
     _p95 = gaps_c[19 * len(gaps_c) // 20] if gaps_c else 0.0
     print(f"  road-over-ground: {over}/{tot} samples gap > {ROAD_GAP_M} m ({100*frac:.1f}%)  "
           f"p95 {_p95:+.3f} m (gate {ROAD_GAP_P95_M} m)")

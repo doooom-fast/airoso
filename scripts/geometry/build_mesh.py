@@ -994,6 +994,7 @@ def build(project_dir: str | Path) -> dict:
         cm["vertices"] = [(x, y + ROAD_LIFT_M, z) for x, y, z in cm["vertices"]]
         conn_meshes.append((f"1ROAD_{name}", cm))
     conn_verts = [v for _n, cm in conn_meshes for v in cm["vertices"]]
+    conn_shoulders: list = []      # draped verges, built later (needs grass_surf)
 
     # OPEN-ROAD END APRONS. clamp_terrain_below_road lets the allowed terrain height RECOVER with
     # distance from the road, so the corridor rejoins the real ground instead of sitting in a shaved
@@ -1138,6 +1139,43 @@ def build(project_dir: str | Path) -> dict:
         shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
                                         ground_drop=GRASS_CLEARANCE_M, ground=grass_surf)
         edge_group, edge_mat = "1ROAD_shoulder", "road"
+        # CONNECTORS GET A DRAPED VERGE TOO. The main loop's shoulder extends a MANAGED corridor
+        # outward from the deck and drapes its outer lip onto grass_surf; a connector had only a
+        # bare ribbon, so its deck edge had an inner corner pinned and an outer neighbour left at
+        # natural ground, and the grass under that edge interpolated low however fine the cells got.
+        # Measured on Lake Murray at 3 m cells: 1ROAD_main p95 float 0.040 against navajo 0.422 and
+        # college_avenue 0.431, with the float alternating left-edge/right-edge along every
+        # connector. Built HERE, not where conn_meshes is built, because grass_surf does not exist
+        # that early.
+        # JUNCTION TRIM. Draping every connector verge for its whole length seated the bulk
+        # (samples over 5 cm 12.4% -> 7.1%) but grew a heavy tail (p95 0.142 -> 0.258, max
+        # 1.941 -> 4.051) where verges collide with the mainline or each other at a junction and
+        # each drapes to a different ground. Keep the drape only OUTSIDE the junction radius the
+        # elevation reconciliation already uses; inside it the mainline's own shoulder owns the
+        # ground and a second opinion is what made the tail.
+        for _cn5, _cp5, _cw5 in connectors:
+            _keep5 = [_j5 for _j5, _q5 in enumerate(_cp5)
+                      if (_loop_y(_q5[0], _q5[2]) or (0.0, 1e9))[1] > _JOIN_R + 6.0]
+            if len(_keep5) < 4:
+                continue                      # entirely inside a junction: the mainline owns it
+            # contiguous runs only — a verge swept across an index gap would cut the corner
+            _runs5, _cur5 = [], [_keep5[0]]
+            for _a5, _b5 in zip(_keep5, _keep5[1:]):
+                if _b5 == _a5 + 1:
+                    _cur5.append(_b5)
+                else:
+                    _runs5.append(_cur5); _cur5 = [_b5]
+            _runs5.append(_cur5)
+            for _r5 in _runs5:
+                if len(_r5) < 4:
+                    continue
+                _cs5 = ribbon.road_shoulder([_cp5[_j5] for _j5 in _r5],
+                                            [_cw5[_j5] for _j5 in _r5], lift=ROAD_LIFT_M,
+                                            ground_drop=GRASS_CLEARANCE_M, ground=grass_surf)
+                if _cs5.get("vertices"):
+                    conn_shoulders.append((f"1ROAD_{_cn5}_verge", _cs5))
+        if conn_shoulders:
+            print(f"  connector verges: {len(conn_shoulders)} draped onto the ground")
     # Kerb geometry is config-driven so a track can opt into taller RACING kerbs without touching the
     # default 5 cm street kerb. `kerb.height_m` / `kerb.width_m` / `kerb.top_frac` in track.config.json.
     kerb_cfg = cfg_raw.get("kerb", {})
@@ -1573,7 +1611,7 @@ def build(project_dir: str | Path) -> dict:
     # shoulder HEM: anchoring at the road edge left grass 0.7-1.0 m below the shoulder — a
     # daylight strip under the hem for kilometres, THE 'ribbon above the mountain' look).
     _all8 = []
-    for _m8 in (shoulder, runoff, kerb):
+    for _m8 in [shoulder, runoff, kerb] + [_cs for _nm, _cs in conn_shoulders]:
         for _t8 in _m8["tris"]:
             _all8.append((_m8["vertices"][_t8[0]], _m8["vertices"][_t8[1]], _m8["vertices"][_t8[2]]))
     _rc8: dict = _add7(list)

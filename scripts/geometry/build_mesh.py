@@ -1890,6 +1890,24 @@ def build(project_dir: str | Path) -> dict:
                 _pn17 = _pav_any17(_px, _pz, _gy17)
                 if _pn17 is not None and abs(_gy17 - _pn17) <= 1.0 and (_pv17 is None or _pn17 < _pv17):
                     _pv17 = _pn17
+                # SHALLOW-CROSSING TERMINATION (0012 option 2). 'Outward' from a hairpin leg sails
+                # over the OPPOSING leg's carriageway at nearly its own height — the deep-fold rule
+                # (>3 m) never fires there, so the annulus used to CLAMP under the foreign road and
+                # its faces spanned it (UTD: 31 in-lane hits at the flared switchback throat, all
+                # ring, once 10 m legs brought the carriageways together). Pavement at own height
+                # whose nearest road station is far from this column's own arc = the annulus has
+                # left its leg's corridor. Terminate; the inter-leg space belongs to the other leg's
+                # shoulder and cut face. Arc distance respects the lap wrap so a loop's start/finish
+                # seam (arc 5 beside arc 9670, the same physical place) never false-terminates.
+                if _pv17 is not None and abs(_gy17 - _pv17) <= 3.0:
+                    _sx17 = _near_station7(_px, _pz)
+                    if _sx17 is not None:
+                        _da17 = abs(_sx17 - _sc["arc"])
+                        if cfg_raw.get("loop", True) and _stp:
+                            _da17 = min(_da17, _stp[-1] - _da17)
+                        if _da17 > 50.0:
+                            _kcut = _ki17 + 1
+                            break
                 if _pv17 is not None and _gy17 > _pv17 - GRASS_CLEARANCE_M - 0.02:
                     if _gy17 - _pv17 > 3.0:
                         _kcut = _ki17 + 1             # usable rows: ring0.._ki17 (exclusive of this)

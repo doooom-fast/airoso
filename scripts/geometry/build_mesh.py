@@ -1652,7 +1652,13 @@ def build(project_dir: str | Path) -> dict:
         _gx0, _gz0 = grid_xyz[0][0][0], grid_xyz[0][0][2]
         _gdx = (grid_xyz[0][1][0] - _gx0) if _nxg > 1 else 1.0
         _gdz = (grid_xyz[1][0][2] - _gz0) if _nyg > 1 else 1.0
-        _hsF = float(meta["spacing_m"]) / _RN * 0.55
+        # STENCIL FACTOR: 0.55 (the coarse value) charges (radius x local slope) at every node, and
+        # that safeguard stops earning its keep once the nodes are close together. It exists so the
+        # chord between adjacent grass nodes cannot rise above the deck — but a chord only rises
+        # above a CONCAVE surface, and the sagitta over a 2 m span is L²/8R = 5 mm even on a 100 m
+        # sag curve. At 8 m spacing 0.55 was right; at 2 m it charges 135 mm to prevent 5 mm
+        # (measured: p95 1.114 -> 0.197 from refinement alone, of which ~0.135 is this stencil).
+        _hsF = float(meta["spacing_m"]) / _RN * float(cfg_raw.get("corridor_stencil_factor", 0.25))
         _pav_tris = [(_rv7[_t[0]], _rv7[_t[1]], _rv7[_t[2]]) for _t in road["tris"]] + _all8
         for _a, _b, _c in _pav_tris:
             _is = [ (_v[0] - _gx0) / _gdx for _v in (_a, _b, _c) ]

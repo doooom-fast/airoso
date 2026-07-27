@@ -514,6 +514,7 @@ def audit(project_dir: str | Path) -> dict:
     #    the Lariat shipped with the mountainside knifing +4.4 m through its switchbacks and B read 0.
     ground_cut = None
     worst_cut = 0.0
+    cut_hits = []
     clp = data / "centerline.local.json"
     if glp.exists() and clp.exists():
         gl2 = json.loads(glp.read_text())
@@ -566,6 +567,7 @@ def audit(project_dir: str | Path) -> dict:
             return best
 
         ground_cut = 0
+        cut_hits = []
         for i in range(10, len(rpts), 10):
             ax, ay, az = rpts[i - 1]
             bx, by, bz = rpts[i]
@@ -586,6 +588,11 @@ def audit(project_dir: str | Path) -> dict:
                         continue        # raster artifact: the real mesh does not stand over the deck
                     ground_cut += 1
                     worst_cut = max(worst_cut, _gm2 - max(deck))
+                    # RECORD WHERE. A bare count sent every H investigation to an instrumented
+                    # build; the x/z and the offset say immediately whether the hits are a cut
+                    # face at the verge (off = ±(w/2+2)) or ground in the lane (off ≈ 0).
+                    cut_hits.append((round(px, 1), round(pz, 1), round(_gm2 - max(deck), 2),
+                                     round(off, 1), i))
 
     report = {
         "slug": slug, "road_verts": len(g["1ROAD"]), "grass_verts": len(g["1GRASS"]), "piers": len(piers),
@@ -612,6 +619,7 @@ def audit(project_dir: str | Path) -> dict:
         "C_by_kind": {"ramp": sum(1 for c in cross if c[3] == "ramp"),
                       "mainline": sum(1 for c in cross if c[3] == "mainline")},
         "samples": {"supports": support_hits[:8],
+                    "ground_cut": sorted(cut_hits, key=lambda h: -h[2])[:12],
                     "poke": sorted(poke_hits, key=lambda h: -h[2])[:8],
                     "crossings": cross[:10]},
     }

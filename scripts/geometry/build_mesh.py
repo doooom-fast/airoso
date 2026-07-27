@@ -1753,7 +1753,14 @@ def build(project_dir: str | Path) -> dict:
         # (measured: p95 1.114 -> 0.197 from refinement alone, of which ~0.135 is this stencil).
         _hsF = float(meta["spacing_m"]) / _RN * float(cfg_raw.get("corridor_stencil_factor", 0.25))
         _sN = float(meta["spacing_m"]) / _RN        # refined node spacing (the chord span)
+        # road["tris"] is the MAIN ribbon only. _rc7 now indexes connector pavement too (the pin
+        # clamps under it), but the refine REGION was still main-loop-only — so terrain under a
+        # connector got pinned at COARSE resolution, which is the 0014 float mechanism exactly.
+        # Lake Murray: audit clean but p95 float 0.569 m with 43.5% of samples off the ground.
         _pav_tris = [(_rv7[_t[0]], _rv7[_t[1]], _rv7[_t[2]]) for _t in road["tris"]] + _all8
+        for _cn9, _cm9 in conn_meshes:
+            _cv9 = _cm9["vertices"]
+            _pav_tris += [(_cv9[_t[0]], _cv9[_t[1]], _cv9[_t[2]]) for _t in _cm9["tris"]]
         for _a, _b, _c in _pav_tris:
             _is = [ (_v[0] - _gx0) / _gdx for _v in (_a, _b, _c) ]
             _js = [ (_v[2] - _gz0) / _gdz for _v in (_a, _b, _c) ]

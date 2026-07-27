@@ -1665,16 +1665,27 @@ def build(project_dir: str | Path) -> dict:
         def _fine_height(px, pz, base_y):
             """Two-sided contact pin at a refined node: the ground under pavement IS the pavement
             underside. Same rule as the coarse pin, but with the stencil sized to THIS node."""
+            _sF = _near_station7(px, pz)
+            if _sF is not None and bridge_of(_sF):
+                return base_y                       # declared span: the valley stays open
             lo = _deck_window_min7(px, pz, base_y, _hsF)
             lo8 = _shoulder_window_min8(px, pz, base_y, _hsF)
             if lo8 is not None and (lo is None or lo8 < lo):
                 lo = lo8
-            if lo is None:
-                return base_y                       # no pavement overhead — natural ground stands
-            _sF = _near_station7(px, pz)
-            if _sF is not None and bridge_of(_sF):
-                return base_y                       # declared span: the valley stays open
-            return lo - GRASS_CLEARANCE_M
+            if lo is not None:
+                return lo - GRASS_CLEARANCE_M
+            # NOT under pavement. base_y is a bilinear blend of this quad's coarse corners, and
+            # beside a cut face one of those corners legitimately stands metres ABOVE the deck —
+            # so the blend can land above the pavement just outside its edge. The coarse nodes were
+            # protected from that by clamp_terrain_below_road; these nodes are created afterwards
+            # and never saw it. Clamp DOWN-ONLY (a cut face that is genuinely high stays high).
+            cap = _deck_window_min7(px, pz, base_y, _hs7)
+            cap8 = _shoulder_window_min8(px, pz, base_y, _hs7)
+            if cap8 is not None and (cap is None or cap8 < cap):
+                cap = cap8
+            if cap is not None and base_y > cap - GRASS_CLEARANCE_M:
+                return cap - GRASS_CLEARANCE_M
+            return base_y
 
         # The refined quads' own CORNERS are coarse nodes still carrying the coarse stencil's sag,
         # and they anchor the fine triangles. Re-pin them at the fine radius too. Safe because every

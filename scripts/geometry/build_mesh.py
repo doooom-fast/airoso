@@ -1824,6 +1824,16 @@ def build(project_dir: str | Path) -> dict:
                 if abs(y - y_ref) <= 20.0 and (lo is None or y < lo):
                     lo = y
         return lo
+    import bisect as _bis17
+
+    def _hdg17(arc):
+        """Unit centerline heading at an arc station (for the throat test below)."""
+        i = max(1, min(len(centerline) - 1, _bis17.bisect_left(_stp, arc)))
+        dx17 = centerline[i][0] - centerline[i - 1][0]
+        dz17 = centerline[i][2] - centerline[i - 1][2]
+        L17 = math.hypot(dx17, dz17) or 1.0
+        return (dx17 / L17, dz17 / L17)
+
     _secs_all = shoulder.get("sections", {1.0: [], -1.0: []})
     for _sd17 in (1.0, -1.0):
         _secs = _secs_all.get(_sd17, [])
@@ -1905,7 +1915,16 @@ def build(project_dir: str | Path) -> dict:
                         _da17 = abs(_sx17 - _sc["arc"])
                         if cfg_raw.get("loop", True) and _stp:
                             _da17 = min(_da17, _stp[-1] - _da17)
-                        if _da17 > 50.0:
+                        # ARC DISTANCE CANNOT SEE A HAIRPIN THROAT: the opposing leg there is the
+                        # same road 20-40 m later, inside any sane arc threshold (UTD's 31 hits sat
+                        # at columns ~2530 over pavement ~2500). HEADING can: across a throat the
+                        # foreign carriageway runs against the column's own direction. Terminate on
+                        # either signal — far in arc (parallel doubled-back legs), or opposing in
+                        # heading (the throat) — never on aligned nearby pavement, which is the
+                        # column's own road.
+                        _ho17 = _hdg17(_sc["arc"])
+                        _hf17 = _hdg17(_sx17)
+                        if _da17 > 50.0 or (_ho17[0] * _hf17[0] + _ho17[1] * _hf17[1]) < -0.2:
                             _kcut = _ki17 + 1
                             break
                 if _pv17 is not None and _gy17 > _pv17 - GRASS_CLEARANCE_M - 0.02:

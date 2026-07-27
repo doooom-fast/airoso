@@ -583,11 +583,21 @@ def audit(project_dir: str | Path) -> dict:
                     continue
                 gy2 = _hsurf(px, pz)
                 if gy2 is not None and gy2 - max(deck) > 0.10:
-                    _gm2 = _gmax(px, pz, max(deck))
-                    if _gm2 is None or _gm2 - max(deck) <= 0.10:
-                        continue        # raster artifact: the real mesh does not stand over the deck
+                    # BOTH SIDES MUST BE SURFACES AT THIS POINT. max(deck) is the highest road
+                    # VERTEX within 4 m; on a descending or banked road those sit BELOW the deck
+                    # surface directly overhead, so grass correctly tucked 4 cm under the deck
+                    # reads as standing over a vertex downhill. That is the Lariat's 47 hits:
+                    # measured at three of them, grass is 43-51 mm UNDER 1ROAD_main. Compare
+                    # surface-to-surface where the road exists at this point; only fall back to
+                    # vertices out beyond the pavement (the w/2+2 samples), where by definition
+                    # there is no deck overhead and a cut face legitimately rises.
+                    _dk2 = _surf_at(road_th, 8.0, px, pz, max(deck), 6.0)
+                    _ref2 = _dk2 if _dk2 is not None else max(deck)
+                    _gm2 = _gmax(px, pz, _ref2)
+                    if _gm2 is None or _gm2 - _ref2 <= 0.10:
+                        continue        # artifact: the real mesh does not stand over the real deck
                     ground_cut += 1
-                    worst_cut = max(worst_cut, _gm2 - max(deck))
+                    worst_cut = max(worst_cut, _gm2 - _ref2)
                     # RECORD WHERE. A bare count sent every H investigation to an instrumented
                     # build; the x/z and the offset say immediately whether the hits are a cut
                     # face at the verge (off = ±(w/2+2)) or ground in the lane (off ≈ 0).

@@ -1757,6 +1757,26 @@ def build(project_dir: str | Path) -> dict:
     rockskin = {"vertices": [], "uvs": [], "tris": []}
     _RINGS17 = (1.5, 4.0, 10.0, 22.0)
 
+    def _pav_any17(px, pz, y_ref):
+        """Lowest pavement surface AT this exact XZ with NO angle filter — a truly vertical
+        triangle projects to a line in XZ and the determinant rejects it, so the filter buys
+        nothing at a point and costs the steep decks it was never meant to exclude."""
+        lo = None
+        cell = (int(px // 4.0), int(pz // 4.0))
+        for a, b, c in ([(_rv7[t[0]], _rv7[t[1]], _rv7[t[2]]) for t in _rc7.get(cell, ())]
+                        + list(_rc8.get(cell, ()))):
+            d = (b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2])
+            if abs(d) < 1e-12:
+                continue
+            w0 = ((b[2] - c[2]) * (px - c[0]) + (c[0] - b[0]) * (pz - c[2])) / d
+            w1 = ((c[2] - a[2]) * (px - c[0]) + (a[0] - c[0]) * (pz - c[2])) / d
+            w2 = 1.0 - w0 - w1
+            if w0 >= -1e-6 and w1 >= -1e-6 and w2 >= -1e-6:
+                y = w0 * a[1] + w1 * b[1] + w2 * c[1]
+                if abs(y - y_ref) <= 20.0 and (lo is None or y < lo):
+                    lo = y
+        return lo
+
     def _pav_at17(px, pz, y_ref):
         """Lowest flat-ish pavement surface AT this exact XZ (road + shoulder/runoff/kerb),
         steep faces excluded, 20 m layer window — the audit's own geometry model."""
@@ -1827,6 +1847,18 @@ def build(project_dir: str | Path) -> dict:
                 _pa17 = _pav_at17(_px, _pz, _gy17)
                 if _pa17 is not None and (_pv17 is None or _pa17 < _pv17):
                     _pv17 = _pa17
+                # NO-FILTER LOCAL TEST. All three scans above drop triangles more than 60° off
+                # horizontal, and on a steep stage that can be the deck itself — so the clamp never
+                # fires and the ring keeps `terrain + 0.02`. Measured on Under the Dragon at station
+                # 2480: a ring triangle flat at 200.609 across a road descending 200.613 -> 200.553,
+                # so two corners rode 4 mm under the deck and the third 56 mm over it. That is
+                # ledger 0012's "the faces span" — the faces span because the ring follows the
+                # COARSE terrain grid (13.3 m cells here), which cannot follow the road.
+                # Bounded to 1 m: this must find the deck directly overhead, never another leg of a
+                # switchback, or it would trip the >3 m deep-fold termination below.
+                _pn17 = _pav_any17(_px, _pz, _gy17)
+                if _pn17 is not None and abs(_gy17 - _pn17) <= 1.0 and (_pv17 is None or _pn17 < _pv17):
+                    _pv17 = _pn17
                 if _pv17 is not None and _gy17 > _pv17 - GRASS_CLEARANCE_M - 0.02:
                     if _gy17 - _pv17 > 3.0:
                         _kcut = _ki17 + 1             # usable rows: ring0.._ki17 (exclusive of this)

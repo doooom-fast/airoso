@@ -1620,6 +1620,16 @@ def build(project_dir: str | Path) -> dict:
     for _tt8 in _all8:
         for _v8 in _tt8:
             _near7.add((int(_v8[0] // 24.0), int(_v8[2] // 24.0)))
+    # CONNECTORS BELONG IN THE PRESENCE FILTER TOO. v0.51.0 put connector tris in the lookup hash
+    # (_rc7) but not here, and this filter `continue`s BEFORE the lookup ever runs — so every grid
+    # node under a connector was skipped and never pinned, however good the hash was. Measured on
+    # Lake Murray: 1ROAD_main p95 float 0.040 m (pinned, correct) against navajo_road_opp 0.907 and
+    # college_avenue_opp 0.618 (never examined). clamp_terrain_below_road had already pulled that
+    # terrain DOWN to the minimum deck height within its 18.1 m reach; the pin is what raises it
+    # back to deck - clearance, and for connectors it never ran.
+    for _cn6, _cm6 in conn_meshes:
+        for _v6 in _cm6["vertices"]:
+            _near7.add((int(_v6[0] // 24.0), int(_v6[2] // 24.0)))
     _near7 = {(ci + di, cj + dj) for (ci, cj) in _near7 for di in (-1, 0, 1) for dj in (-1, 0, 1)}
     _fixed7 = 0
     _feathered7 = 0

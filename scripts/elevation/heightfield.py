@@ -259,8 +259,17 @@ def build(project_dir: str | Path) -> dict:
     # not be smoothed or grade-limited as if they were adjacent. Same `loop` key the rest of the
     # pipeline reads; the geojson carries it as the centerline's `closed` property.
     _closed = bool(full["properties"].get("closed", _cfgj.get("loop", True)))
+    # DESPIKE WINDOW, PER TRACK. 3DEP is CURRENT terrain. On a circuit that closed and whose site
+    # was redeveloped, the DEM measures today's earthworks — graded pads, spoil heaps, stockpiles —
+    # not the racing surface. Second Creek's raw profile steps a median 0.06 m but a p95 of 0.35 m
+    # and a max of 1.04 m over one 3 m sample (a 35% grade on a flat plains circuit): that is
+    # construction spoil, and the 33 m median cannot reject a heap wider than 33 m. A track whose
+    # site has been rebuilt declares a wider window; everything else keeps today's exact output.
+    _med_m = float((_cfgj.get("road_profile", {}) or {}).get("despike_window_m", MEDIAN_WINDOW_M))
     z_smooth = snap_to_ground(z_raw, spacing_m=CENTERLINE_SPACING_M, grade_cap_pct=_cap_pct,
-                              closed=_closed)
+                              median_m=_med_m, closed=_closed)
+    if _med_m != MEDIAN_WINDOW_M:
+        print(f"  [elev] despike window {_med_m:.0f} m (declared; default {MEDIAN_WINDOW_M:.0f} m)")
     fetch_corridor(coords, project_dir)   # near-native corridor terrain (the rc6 Lariat lesson)
 
     dist = [0.0]

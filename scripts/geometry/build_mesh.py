@@ -771,10 +771,23 @@ def build(project_dir: str | Path) -> dict:
         _adj = 0
         for _ci in range(len(connectors)):
             _nm, _cp, _cw = connectors[_ci]
+            # A CONNECTOR JOINS AT ITS ENDS, NOT ALONG ITS FLANK. Blending toward the nearest loop
+            # height anywhere within reach lifts a connector that merely RUNS PAST the loop several
+            # metres off its own terrain — on Lake Murray that put a continuous 70 m run of
+            # del_cerro_blvd 3.5-4.1 m in the air (the whole remaining float tail, max 4.072).
+            # Measure arc distance from each end and only reconcile within one blend length of a
+            # junction; a flank that happens to pass close keeps its own profile.
+            _arc5 = [0.0]
+            for _q5 in range(1, len(_cp)):
+                _arc5.append(_arc5[-1] + math.hypot(_cp[_q5][0] - _cp[_q5 - 1][0],
+                                                    _cp[_q5][2] - _cp[_q5 - 1][2]))
+            _len5 = _arc5[-1] or 1.0
+            _endr = _JOIN_R + _BLEND_L        # how far from an end a junction can still reach
             _new, _moved = [], 0.0
-            for _x, _y, _z in _cp:
+            for _k5, (_x, _y, _z) in enumerate(_cp):
+                _from_end = min(_arc5[_k5], _len5 - _arc5[_k5])
                 _hit = _loop_y(_x, _z)
-                if _hit is None or _hit[1] > _JOIN_R + _BLEND_L:
+                if _hit is None or _hit[1] > _JOIN_R + _BLEND_L or _from_end > _endr:
                     _new.append((_x, _y, _z))
                     continue
                 _ly, _d = _hit

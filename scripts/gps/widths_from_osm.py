@@ -285,6 +285,13 @@ def flare_widths(widths: list[float], cl: list[Vertex], junctions: list[dict], *
         arc.append(arc[-1] + math.hypot((cl[i][0] - cl[i - 1][0]) * kx, (cl[i][1] - cl[i - 1][1]) * ky))
     out = widths[:]
     n = len(widths)
+    # LAP WRAP. Arc distance alone makes the start/finish line the far end of the track from
+    # itself, so a junction sitting near the seam flares one side and cannot reach the other:
+    # Lake Murray's width collapsed 26.98 -> 17.00 m across the seam, jumping each ribbon edge 5 m
+    # sideways in one 2.4 m step (a 0.43 m severe step, its worst). Fourth instance of this defect
+    # class after the elevation profile, the drive test's speed stencil and the ribbon tangent.
+    _closed = (len(cl) > 2 and abs(cl[0][0] - cl[-1][0]) < 1e-9 and abs(cl[0][1] - cl[-1][1]) < 1e-9)
+    _lap = arc[-1] or 1.0
     for j in junctions:
         k = min(j["idx"], n - 1)
         size = j["size"]
@@ -292,6 +299,8 @@ def flare_widths(widths: list[float], cl: list[Vertex], junctions: list[dict], *
         reach = half + blend_m
         for i in range(n):
             d = abs(arc[i] - arc[k])
+            if _closed:
+                d = min(d, _lap - d)                      # the seam is adjacent to itself
             if d > reach:
                 continue
             f = 1.0 if d <= half else max(0.0, 1.0 - (d - half) / blend_m)   # 1 at the box, taper to 0

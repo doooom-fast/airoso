@@ -168,3 +168,34 @@ only in-game: the run simply never times.
 When operating Blender or reporting on a build, check the actual scene/mesh state before claiming
 anything. When Kevin says the real world is a certain way and the data disagrees, **trust Kevin and
 fix the data** — he has driven these roads.
+
+---
+
+## L13 — A closed lap repeats its first vertex, and every wrap-around must skip it
+
+A closed centerline stores its start point twice: once as `points[0]`, once as `points[-1]`. An open
+point-to-point stage does not. **Any loop that wraps — modulo, "the previous vertex", a distance
+comparison — has to know which it is holding**, or it silently does the wrong thing at the seam and
+nowhere else.
+
+Four separate defects, all found on 2026-07-27, all the same mistake:
+
+| where | what it did |
+|---|---|
+| `heightfield.snap_to_ground` | wrap-around filters counted the duplicate twice, so the SAME physical point smoothed to two different heights (0.030 m apart) and the profile kinked 4.3% against 1% across the seam |
+| `drive_test.speed_profile` | wrapped on an OPEN stage, inventing a hairpin at each end and dragging the opening straight from 190 to 64 km/h |
+| `ribbon._horiz_tangent` / `_signed_curvature` | wrapped modulo the RAW length, so vertex 0's backward neighbour was vertex 0 — the centered difference collapsed to one-sided and the seam cross-section swept off a half tangent (0.78 m step) |
+| `widths_from_osm.flare_widths` | compared raw arc distance, so the start/finish line was the far end of the track from itself; a junction at the seam flared one side and the width collapsed 26.98 → 17.00 m in one 2.4 m step |
+
+The failure is always **localised to the seam**, which is exactly where a lap starts — so it is the
+first thing the driver meets and the last thing a lap-average metric notices.
+
+Two rules:
+
+1. **Derive, never assume.** `closed = points[0] == points[-1]` (within 1e-6), and take the unique
+   count as `n - 1` when closed. `ribbon._uniq_n` is the reference.
+2. **Wrap distances too, not just indices.** On a closed lap `d = min(d, lap - d)`. An index-only
+   wrap still leaves distance comparisons believing the seam is 13 km wide.
+
+Both halves matter: `road_ribbon` got the index rule right in its sweep (`m = n - 1`) and wrong in
+its own tangent helper three lines away.

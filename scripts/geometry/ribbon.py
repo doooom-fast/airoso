@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import math
 
+from scripts.geometry import nodedbg
+
 Vertex = tuple[float, float, float]
 
 
@@ -357,7 +359,7 @@ def conform_terrain_to_road(grid_xyz: list[list[Vertex]], centerline_m: list[Ver
 def grade_embankment(grid_xyz: list[list[Vertex]], centerline_m: list[Vertex],
                      widths_m: list[float] | None = None, *, band: float = 4.0, ratio: float = 2.0,
                      clearance: float = 0.0, bank_at=None, extra_roads=None,
-                     bridge_of=None) -> None:
+                     bridge_of=None) -> float:
     """Build the terrain UP from the real ground to the road — an EMBANKMENT (fill) where the road sits
     above bare earth, a CUT where it sits below — instead of pulling the whole corridor UP to a flat
     plateau (the old ``conform_terrain_to_road``, which buried valleys under a 10 m mesa the car floats on).
@@ -370,7 +372,10 @@ def grade_embankment(grid_xyz: list[list[Vertex]], centerline_m: list[Vertex],
         reaches natural ground it STAYS there — so the real valley/hillside is preserved, and running off
         is a slope to the real ground, not a fall off a tabletop edge.
 
-    Mutates ``grid_xyz`` in place (Y only). ``bridge_of(station_m) -> bool`` (optional) marks stations the
+    Mutates ``grid_xyz`` in place (Y only) and RETURNS the effective ``band`` — widened below when the
+    grid is too coarse to represent the one asked for. clamp_terrain_below_road needs that same number
+    to reproduce this fill profile as its layer window, and recomputing it there would let the two
+    drift apart. ``bridge_of(station_m) -> bool`` (optional) marks stations the
     road crosses on a BRIDGE: fill is suppressed there (the terrain keeps its natural creek/valley height
     so the deck can span it). On a near-flat racetrack the fills are tiny, so this reads as the "smooth
     gradations to the ground" a purpose-built circuit wants — same code path, no special-casing."""
@@ -419,6 +424,7 @@ def grade_embankment(grid_xyz: list[list[Vertex]], centerline_m: list[Vertex],
     R = int(reach // cell) + 1
     br2 = BRIDGE_CLEAR * BRIDGE_CLEAR
     for row in grid_xyz:
+        _dbgrow = nodedbg.ENABLED and isinstance(row, nodedbg.WatchRow)
         for k in range(len(row)):
             gx, gy, gz = row[k]                # gy = natural bare earth
             ci, cj = int(gx // cell), int(gz // cell)
@@ -451,13 +457,20 @@ def grade_embankment(grid_xyz: list[list[Vertex]], centerline_m: list[Vertex],
                 tgt = max(gy, shelf - slope * over)
             else:                               # CUT — a steep excavated face rising into the ridge
                 tgt = min(gy, shelf + over / 0.75)
+            if _dbgrow and k == nodedbg.COL:
+                nodedbg.note(f"  grade: natural {gy:.3f} -> {tgt:.3f}; nearest road sample y "
+                             f"{ref_y:.3f} at {d:.2f} m (band {band:.2f}, over {over:.2f}, "
+                             f"{'FILL' if shelf >= gy else 'CUT'}, on_bridge {on_bridge})")
             row[k] = (gx, tgt, gz)
+    return band
 
 
 def clamp_terrain_below_road(grid_xyz: list[list[Vertex]], road_verts: list[Vertex],
                              *, reach: float = 11.0, clear: float = 0.25, cell: float = 12.0,
                              grid_spacing: float | None = None,
-                             foot_m: float | None = None, recover: float = 0.0) -> None:
+                             foot_m: float | None = None, recover: float = 0.0,
+                             fill_ratio: float | None = None, band: float = 0.0,
+                             layer_ref: list[list[float]] | None = None) -> None:
     """One-sided ANTI-POKE against the ACTUAL built road surface. For every terrain grid node within
     ``reach`` m of a road vertex, if the node sits above ``road_y - clear`` push it DOWN to that level so
     no grass triangle pokes up through the drivable ribbon. Never RAISES a node (natural dips survive).
@@ -485,6 +498,31 @@ def clamp_terrain_below_road(grid_xyz: list[list[Vertex]], road_verts: list[Vert
     # layers Kevin drove through). A road vert far below the node's own height belongs to a DIFFERENT
     # leg: never conform across more than LAYER_DY of vertical separation.
     LAYER_DY = 20.0
+    # ...but a FLAT 20 m only separates legs that are more than 20 m apart. L4 already says the layer
+    # gap is scale-dependent ("~20 m generally; ~4 m for a shoulder against its own deck"), and a
+    # DIVIDED STREET is the case where the general figure has nothing to bite on: Del Cerro Boulevard
+    # carries its two carriageways 13-20 m apart horizontally and only 2.0-4.7 m apart vertically, so
+    # the lower one sits well inside 20 m of the upper one's embankment and shaves it flat. Measured
+    # on Lake Murray: grade_embankment builds the shelf at 47.840, this pass drops it to 43.600 one
+    # line later, and nothing downstream can lift it because the node is 0.18 m OUTSIDE the upper
+    # carriageway's pavement (so the contact pin, which needs a road triangle overhead, skips it).
+    # Result: p95 4.051 m of air under 1ROAD_del_cerro_blvd's outer edge — ledger 0019.
+    #
+    # The window that actually separates them is the FILL FACE, not a constant. grade_embankment
+    # builds terrain up from a road at ``fill_ratio``:1 through a flush ``band``; so the highest this
+    # node could legitimately stand while still belonging to THIS road vert is (d - band) / ratio
+    # above its deck. A node higher than that is standing on someone else's embankment — a different
+    # layer — and this vert has no business pulling it down. Near the pavement the window closes to
+    # ~clear (anti-poke intact, which is the whole point of the pass); it only opens out where the
+    # ground is legitimately climbing away. Callers that pass no fill_ratio keep the flat LAYER_DY.
+    _fill_slope = (1.0 / max(fill_ratio, 1e-3)) if fill_ratio else None
+    # ...measured against ``layer_ref`` — the height the GRADING pass gave this node — not against
+    # whatever it currently holds. This pass runs more than once, and after the first call has
+    # lowered a node the window sees it sitting near the lower road and waves the second call
+    # through: measured at Lake Murray station ~ -1640,-128, call #1 correctly rejected the mainline
+    # (dy -3.443 against a 3.325 m window) and call #2 then shaved the same node to it anyway
+    # (dy -0.795, nothing rejected). Which road OWNS a node is decided once, by the grading; later
+    # anti-poke passes may lower it but must not re-decide its layer.
     # DISTANCE-GRADED, not a flat shave: clamping every node within reach to road_y - clear carved
     # a reach-wide (15 m on a 10 m grid) sunken APRON along the whole lap — the dark moat between
     # road edge and natural grass in Kevin's night photo. Full clamp beside the pavement, then the
@@ -496,20 +534,67 @@ def clamp_terrain_below_road(grid_xyz: list[list[Vertex]], road_verts: list[Vert
     # Creek bridge approach caught a 0.43 m step when recovery started inside the verge band).
     FOOT_M = foot_m if foot_m is not None else reach + 1.0
     RECOVER = recover
-    for row in grid_xyz:
+    _GRID_SP = grid_spacing or 0.0
+    for _rj, row in enumerate(grid_xyz):
+        _dbgrow = nodedbg.ENABLED and isinstance(row, nodedbg.WatchRow)
+        _lrow = layer_ref[_rj] if layer_ref is not None else None
         for k in range(len(row)):
             gx, gy, gz = row[k]
+            ref = _lrow[k] if _lrow is not None else gy
             ci, cj = int(gx // cell), int(gz // cell)
             lim = None
             for di in (-1, 0, 1):
                 for dj in (-1, 0, 1):
                     for rx, ry, rz in buckets.get((ci + di, cj + dj), ()):
                         d2 = (gx - rx) ** 2 + (gz - rz) ** 2
-                        if d2 <= r2 and gy - ry <= LAYER_DY:
+                        if d2 > r2 or gy - ry > LAYER_DY:
+                            continue
+                        d = d2 ** 0.5
+                        if _fill_slope is not None and \
+                                ref - ry > clear + max(0.0, d - band) * _fill_slope:
+                            continue        # standing on a HIGHER road's fill face — different layer
+                        t = ry - clear + max(0.0, d - FOOT_M) * RECOVER
+                        if lim is None or t < lim:
+                            lim = t
+            # THE GRADING IS NOT OVERRULED BY MORE THAN ONE CELL OF FILL. The window above asks
+            # "could this node belong to that road", and at a grade separation BOTH roads answer
+            # yes: the node measured at Lake Murray -1643,-126 sits 1.4 m from the connector it was
+            # graded to and 10.9 m from the mainline 3.7 m below, and a 2:1 cone from the mainline
+            # reaches 3.95 m at 10.9 m — so the far road squeaks in and wins the minimum. Distance
+            # is the discriminator the window cannot see, and grade_embankment already applied it
+            # (it grades to the NEAREST road). This pass exists to catch the BUILT ribbon sitting
+            # lower than the SAMPLED surface the grading used — banking, lift, discretisation —
+            # which is a cell-scale correction, not a 3 m one. Bound it at exactly that.
+            if _fill_slope is not None and lim is not None and _GRID_SP:
+                lim = max(lim, ref - (clear + _GRID_SP * _fill_slope))
+            if _dbgrow and k == nodedbg.COL:
+                # name the vertex that won the minimum — "which road shaved this node?"
+                _cands = []
+                for di in (-1, 0, 1):
+                    for dj in (-1, 0, 1):
+                        for rx, ry, rz in buckets.get((ci + di, cj + dj), ()):
+                            d2 = (gx - rx) ** 2 + (gz - rz) ** 2
+                            if d2 > r2 or gy - ry > LAYER_DY:
+                                continue
                             d = d2 ** 0.5
-                            t = ry - clear + max(0.0, d - FOOT_M) * RECOVER
-                            if lim is None or t < lim:
-                                lim = t
+                            _off = (_fill_slope is not None and
+                                    ref - ry > clear + max(0.0, d - band) * _fill_slope)
+                            _cands.append((ry - clear + max(0.0, d - FOOT_M) * RECOVER, d, ry, _off))
+                _cands.sort()
+                _acc = [c for c in _cands if not c[3]]
+                nodedbg.note(f"  clamp: node y {gy:.3f}, reach {reach:.2f} m, LAYER_DY {LAYER_DY}, "
+                             f"fill window {'off' if _fill_slope is None else f'1:{1/_fill_slope:.0f} past {band:.2f} m'}, "
+                             f"{len(_cands)} road verts in range, {len(_cands) - len(_acc)} rejected")
+                for _lim, _d, _ry, _off in _cands[:3]:
+                    nodedbg.note(f"    limit {_lim:8.3f}  from a road vert at y {_ry:8.3f}, "
+                                 f"{_d:6.2f} m away (dy {_ry - gy:+.3f})"
+                                 f"{'  [REJECTED: different layer]' if _off else ''}")
+                if _acc:
+                    _wl, _wd, _wy, _ = _acc[0]
+                    nodedbg.note(f"    WINNER  limit {_wl:8.3f}  road vert y {_wy:8.3f}, "
+                                 f"{_wd:6.2f} m away (dy {_wy - gy:+.3f})")
+                else:
+                    nodedbg.note("    WINNER  none — every candidate was a different layer")
             if lim is not None and gy > lim:
                 row[k] = (gx, lim, gz)
 

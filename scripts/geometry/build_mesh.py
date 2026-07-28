@@ -19,7 +19,7 @@ from pathlib import Path
 
 from scripts.capture import evidence
 from scripts.geometry import dummies as dummies_mod
-from scripts.geometry import kerbs, ribbon, road_text
+from scripts.geometry import kerbs, nodedbg, ribbon, road_text
 from scripts.geometry import profile as profile_mod
 from scripts.geometry.projection import _meters_per_degree
 
@@ -840,6 +840,7 @@ def build(project_dir: str | Path) -> dict:
     grid, meta = ribbon.upsample_grid(grid, meta, up)
     print(f"[build_mesh] grass upsample x{up} -> {meta['nx']}x{meta['ny']} = {meta['nx']*meta['ny']} verts (< 65535)")
     grid_xyz = project_grid(grid, meta, origin, elev0, mirror_x=mirror_x)
+    nodedbg.attach(grid_xyz)      # NODEDBG=<x>,<z> traces one node through every write below
     # CORRIDOR SPLICE: override grid heights within the corridor with the near-native 3DEP field
     # (data/corridor.elev.json — the rc6 Lariat lesson: the 40 m area grid cannot contain the 8 m
     # bench; the corridor field can). Bilinear in (station, lateral) space; beyond the corridor the
@@ -940,9 +941,19 @@ def build(project_dir: str | Path) -> dict:
                         _nfz += 1
                         break
         print(f"  [flat zones] {_nfz} grid nodes graded flat through junction interiors")
-    ribbon.grade_embankment(grid_xyz, centerline, widths, bank_at=bnk, band=2.5,
-                            extra_roads=[(p, w) for _n, p, w in connectors],
-                            clearance=GRASS_CLEARANCE_M, bridge_of=bridge_of)
+    nodedbg.note("=== pass: grade_embankment ===")
+    # GRADE_RATIO/_grade_band are handed straight to the anti-poke clamps below as their layer
+    # window, so the pass that BUILDS the fill face and the passes that may cut it back agree on
+    # what that face is (ledger 0019 — they did not, and a divided street lost its embankment).
+    GRADE_RATIO = 2.0
+    _grade_band = ribbon.grade_embankment(grid_xyz, centerline, widths, bank_at=bnk, band=2.5,
+                                          ratio=GRADE_RATIO,
+                                          extra_roads=[(p, w) for _n, p, w in connectors],
+                                          clearance=GRASS_CLEARANCE_M, bridge_of=bridge_of)
+    # THE LAYER REFERENCE. Which road owns a grid node is decided HERE, once. The anti-poke clamps
+    # below run three times and each would otherwise re-read ownership off the node's running
+    # height, so the first call's correct rejection is undone by the second (ledger 0019).
+    _graded_y = [[_v[1] for _v in _row] for _row in grid_xyz]
 
     # tile_m=8 m — the LA Canyons cracked-tarmac detail reads at its real scale (cracks crisp, not
     # stretched). The cracking is irregular enough to hide the repeat.
@@ -1025,6 +1036,25 @@ def build(project_dir: str | Path) -> dict:
     def _pav_verts(*kinds):
         return [v for m in _pav_meshes(*kinds) for v in m["vertices"]]
 
+    def _pav_cover(px, pz):
+        """(name, kind, y) for every registered pavement mesh with a triangle over (px,pz).
+        NODEDBG only — answers "which mesh is holding this node down" by name instead of by
+        whichever anonymous tri hash happened to find it."""
+        out = []
+        for _n, _m, _k in _PAV:
+            _v = _m["vertices"]
+            for _t in _m["tris"]:
+                a, b, c = _v[_t[0]], _v[_t[1]], _v[_t[2]]
+                d = (b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2])
+                if abs(d) < 1e-12:
+                    continue
+                w0 = ((b[2] - c[2]) * (px - c[0]) + (c[0] - b[0]) * (pz - c[2])) / d
+                w1 = ((c[2] - a[2]) * (px - c[0]) + (a[0] - c[0]) * (pz - c[2])) / d
+                w2 = 1.0 - w0 - w1
+                if w0 >= -1e-6 and w1 >= -1e-6 and w2 >= -1e-6:
+                    out.append((_n, _k, w0 * a[1] + w1 * b[1] + w2 * c[1]))
+        return sorted(out, key=lambda r: -r[2])
+
     def _pav_world_tris(*kinds):
         out = []
         for m in _pav_meshes(*kinds):
@@ -1063,10 +1093,13 @@ def build(project_dir: str | Path) -> dict:
     # graded grass surface is FINAL before the edge strips drape onto it. One-sided (natural dips survive).
     _pav_reg("1ROAD_main", road, "main")
     _pav_reg("1ROAD_runoff", runoff, "runoff")
+    nodedbg.note("=== pass: clamp_terrain_below_road #1 (main+runoff+connector, anti-poke) ===")
     ribbon.clamp_terrain_below_road(grid_xyz,
                                     _pav_verts("main", "runoff", "connector") + _end_apron,
                                     clear=GRASS_CLEARANCE_M, grid_spacing=float(meta["spacing_m"]),
-                                    foot_m=8.0, recover=0.35)
+                                    foot_m=8.0, recover=0.35,
+                                    fill_ratio=GRADE_RATIO, band=_grade_band,
+                                    layer_ref=_graded_y)
     # The finalized grass SURFACE (bilinear on the graded+clamped grid) — the single source of truth the
     # edge strips DRAPE onto so their outer lip sits flush on the ground at road resolution (no float,
     # independent of the coarse grass grid). Same sampler build_env + audit use via ground.local.json.
@@ -1196,9 +1229,51 @@ def build(project_dir: str | Path) -> dict:
         # each drapes to a different ground. Keep the drape only OUTSIDE the junction radius the
         # elevation reconciliation already uses; inside it the mainline's own shoulder owns the
         # ground and a second opinion is what made the tail.
-        for _cn5, _cp5, _cw5 in connectors:
+        # ...AND WHERE THEY COLLIDE WITH EACH OTHER. The trim above only ever asked about the
+        # MAINLINE, so a DIVIDED STREET — two carriageways of one connector, 13 m apart and 4.1 m
+        # of height between them — kept both verges, and they overlap in XZ over the embankment
+        # between them. The window scans that seat grass under pavement take the MINIMUM in the
+        # column, so the ground under the UPPER carriageway's verge was pinned beneath the LOWER
+        # one's, 3 m down. That is the other half of ledger 0019's 4.051 m, and it is exactly the
+        # "or each other" this comment has claimed to cover since the trim was written.
+        # A verge sheds at most (verge width / fill ratio) of height across its own width, so two
+        # decks further apart than that cannot drape to one ground: keep neither verge there and
+        # let the graded fill face own the gap.
+        _VERGE_W = 2.5                              # road_shoulder's verge width (== the grading band)
+        _VERGE_DY = _VERGE_W / GRADE_RATIO
+        _ph5: dict = {}
+        for _ci5, (_n5, _p5, _w5) in enumerate(connectors):
+            _arc5 = [0.0]
+            for _k5 in range(1, len(_p5)):
+                _arc5.append(_arc5[-1] + math.hypot(_p5[_k5][0] - _p5[_k5 - 1][0],
+                                                    _p5[_k5][2] - _p5[_k5 - 1][2]))
+            for _k5, _q5 in enumerate(_p5):
+                _ph5.setdefault((int(_q5[0] // 24.0), int(_q5[2] // 24.0)), []).append(
+                    (_q5[0], _q5[1], _q5[2], _w5[_k5] / 2.0 + _VERGE_W, _ci5, _arc5[_k5]))
+
+        def _verge_collides(ci5, x5, y5, z5, hw5, arc5):
+            """Another carriageway's verge claims this ground at a different height."""
+            cx5, cz5 = int(x5 // 24.0), int(z5 // 24.0)
+            for _d1 in (-1, 0, 1):
+                for _d2 in (-1, 0, 1):
+                    for _ox, _oy, _oz, _ohw, _oci, _oarc in _ph5.get((cx5 + _d1, cz5 + _d2), ()):
+                        if _oci == ci5 and abs(_oarc - arc5) < 40.0:
+                            continue            # the same leg of the same street, not a neighbour
+                        if abs(_oy - y5) <= _VERGE_DY:
+                            continue            # close enough in height to share one ground
+                        if math.hypot(x5 - _ox, z5 - _oz) < hw5 + _ohw:
+                            return True
+            return False
+
+        for _ci5, (_cn5, _cp5, _cw5) in enumerate(connectors):
+            _arcs5 = [0.0]
+            for _k5 in range(1, len(_cp5)):
+                _arcs5.append(_arcs5[-1] + math.hypot(_cp5[_k5][0] - _cp5[_k5 - 1][0],
+                                                      _cp5[_k5][2] - _cp5[_k5 - 1][2]))
             _keep5 = [_j5 for _j5, _q5 in enumerate(_cp5)
-                      if (_loop_y(_q5[0], _q5[2]) or (0.0, 1e9))[1] > _JOIN_R + 6.0]
+                      if (_loop_y(_q5[0], _q5[2]) or (0.0, 1e9))[1] > _JOIN_R + 6.0
+                      and not _verge_collides(_ci5, _q5[0], _q5[1], _q5[2],
+                                              _cw5[_j5] / 2.0 + _VERGE_W, _arcs5[_j5])]
             if len(_keep5) < 4:
                 continue                      # entirely inside a junction: the mainline owns it
             # contiguous runs only — a verge swept across an index gap would cut the corner
@@ -1302,6 +1377,7 @@ def build(project_dir: str | Path) -> dict:
     for _mx6, _my6, _mz6 in _pull:
         _ph6[(int(_mx6 // 8), int(_mz6 // 8))].append((_mx6, _my6, _mz6))
     _bent = 0
+    nodedbg.note("=== pass: contact bend through the shoulder meet line ===")
     for _row6 in grid_xyz:
         for _k6 in range(len(_row6)):
             _gx6, _gy6, _gz6 = _row6[_k6]
@@ -1326,11 +1402,19 @@ def build(project_dir: str | Path) -> dict:
     # conn_verts: the clamp took the main ribbon + runoff only, so terrain was never seated under a
     # connector. Measured on Lake Murray: 1ROAD_main p95 float 0.040 m (fine) while navajo_road_opp
     # ran 0.907 and college_avenue_opp 0.618 — the loop was seated and every side street floated.
+    nodedbg.note("=== pass: clamp_terrain_below_road #2 (main+runoff+connector, post-bend) ===")
     ribbon.clamp_terrain_below_road(grid_xyz, _pav_verts("main", "runoff", "connector") + _end_apron,
                                     clear=GRASS_CLEARANCE_M, grid_spacing=float(meta["spacing_m"]),
-                                    foot_m=8.0, recover=0.35)
+                                    foot_m=8.0, recover=0.35,
+                                    fill_ratio=GRADE_RATIO, band=_grade_band,
+                                    layer_ref=_graded_y)
+    nodedbg.note("=== pass: clamp_terrain_below_road #3 (shoulder+kerb, tight) ===")
+    # the shoulder/kerb clamp needs the same layer discipline as the road clamps above: it is the
+    # MAINLINE's shoulder, and beside a connector 14 m away and 3.5 m up it was shaving the
+    # connector's embankment by a further metre after the road clamps had correctly left it alone.
     ribbon.clamp_terrain_below_road(grid_xyz, shoulder["vertices"] + kerb["vertices"], clear=0.05, reach=6.0,
-                                    grid_spacing=float(meta["spacing_m"]))
+                                    grid_spacing=float(meta["spacing_m"]),
+                                    fill_ratio=GRADE_RATIO, band=_grade_band, layer_ref=_graded_y)
     mk_cfg = cfg_raw.get("road_markings", {}) or {}
     # EDGE LINES FOLLOW THE LANE, not the pavement boundary (Kevin: "why don't outer lines
     # follow centerline?"): a rolling-median width line, clamped inside the real pavement —
@@ -1579,6 +1663,7 @@ def build(project_dir: str | Path) -> dict:
         print(f"  [contact pin] indexed {_cadd} connector tris as pavement "
               f"({len(conn_meshes)} connector ribbons)")
     _gv7 = [_n7g for _row7g in grid_xyz for _n7g in _row7g]   # flat view of the grid nodes
+    _gv7 = nodedbg.attach_flat(_gv7)   # writes below land here, not in grid_xyz, until the writeback
     # bridge spans keep their valley: under a bridge the pin may only push DOWN, never lift.
     _st7 = [0.0]
     for _q7 in range(1, len(centerline)):
@@ -1666,6 +1751,15 @@ def build(project_dir: str | Path) -> dict:
             for _cj8 in range(int(min(_zs8) // 4.0), int(max(_zs8) // 4.0) + 1):
                 _rc8[(_ci8, _cj8)].append(_tt8)
 
+    # NO LAYER FLOOR HERE, AND THAT IS DELIBERATE. The clamps above take a layer reference because
+    # they decide the SHAPE of the terrain and a wrong-layer road there flattens an embankment
+    # (ledger 0019). The pins are a different job: they are the anti-poke GUARANTEE, and the
+    # pavement they measure against is the built truth while the grading is only an estimate. Giving
+    # them the same "that surface belongs to another road" opinion lets the estimate overrule the
+    # truth. Measured: flooring the pin scans and _fine_height at one cell of fill below the graded
+    # height moved the gate's p95 from 0.198 to 0.186 and bought 3058 terrain pokes through the road
+    # (audit B, worst +1.05 m) for it. A pin may always pin DOWN to real pavement.
+
     def _shoulder_window_min8(px, pz, y_ref, hs=None):
         """Lowest shoulder/runoff/kerb SURFACE within half a grid cell (9-point), layer-guarded.
         Near-vertical tris (battered wall faces, cut faces) are excluded — they are walls, and
@@ -1715,8 +1809,17 @@ def build(project_dir: str | Path) -> dict:
     _near7 = {(ci + di, cj + dj) for (ci, cj) in _near7 for di in (-1, 0, 1) for dj in (-1, 0, 1)}
     _fixed7 = 0
     _feathered7 = 0
+    nodedbg.note("=== pass: contact pin #1 (road+connector deck underside) ===")
+    _NDBG = nodedbg.ENABLED       # hoisted: this loop runs once per grid node (millions)
     for _i7 in range(len(_gv7)):
         _gx7, _gy7, _gz7 = _gv7[_i7]
+        _dbg7 = _NDBG and nodedbg.is_flat(_i7)
+        if _dbg7:
+            nodedbg.note(f"  pin#1: in the presence filter? "
+                         f"{(int(_gx7 // 24.0), int(_gz7 // 24.0)) in _near7} "
+                         f"(this loop does not consult it); "
+                         f"{len(_rc7.get((int(_gx7 // 4.0), int(_gz7 // 4.0)), ())):d} pavement tris "
+                         f"in its own 4 m cell")
         _best7 = None
         for _t7 in _rc7.get((int(_gx7 // 4.0), int(_gz7 // 4.0)), ()):
             _a7, _b7, _c7 = _rv7[_t7[0]], _rv7[_t7[1]], _rv7[_t7[2]]
@@ -1734,17 +1837,25 @@ def build(project_dir: str | Path) -> dict:
             # outside the pavement footprint the WELDED EDGE RINGS own the transition (#17):
             # the grass boundary shares the shoulder's ground-meet vertices, so the grid here
             # stays at natural ground and rides ~2 cm under the ring annulus.
+            if _dbg7:
+                nodedbg.note("  pin#1: NO pavement tri covers this node -> skipped, stays at "
+                             f"y {_gy7:.3f}")
             continue
         # SAG-PROOF: pin to the MINIMUM deck height within half a grid cell (all 8 directions),
         # not the deck at the exact point — otherwise 6 m grass chords bridge ABOVE the deck
         # through sags and across cambered decks. With each vert at its local window minimum,
         # every chord between verts stays under the deck everywhere on the span.
         _wm7 = _deck_window_min7(_gx7, _gz7, _gy7)
+        if _dbg7:
+            nodedbg.note(f"  pin#1: covered — deck at point {_best7:.3f}, window-min "
+                         f"{'None' if _wm7 is None else format(_wm7, '.3f')} (stencil {_hs7:.3f} m)")
         if _wm7 is not None and _wm7 < _best7:
             _best7 = _wm7
         if _gy7 < _best7 - GRASS_CLEARANCE_M:
             _s7 = _near_station7(_gx7, _gz7)
             if _s7 is not None and bridge_of(_s7):
+                if _dbg7:
+                    nodedbg.note(f"  pin#1: bridge span at station {_s7:.1f} -> skipped (valley stays open)")
                 continue  # valley under a bridge deck stays open
         if abs(_gy7 - (_best7 - GRASS_CLEARANCE_M)) > 1e-4:
             # TWO-SIDED contact pin: under the pavement footprint the ground IS the deck
@@ -1780,15 +1891,27 @@ def build(project_dir: str | Path) -> dict:
                     lo = y
         return lo
 
+    nodedbg.note("=== pass: contact pin #2 (shoulder/runoff/kerb underside) ===")
     for _i8 in range(len(_gv7)):
         _gx8, _gy8, _gz8 = _gv7[_i8]
+        _dbg8 = _NDBG and nodedbg.is_flat(_i8)
         if (int(_gx8 // 24.0), int(_gz8 // 24.0)) not in _near7:
+            if _dbg8:
+                nodedbg.note("  pin#2: NOT in the 24 m presence filter -> skipped")
             continue
         _lo8 = _shoulder_window_min8(_gx8, _gz8, _gy8)
         _lp8 = _shoulder_at_point8(_gx8, _gz8, _gy8)
+        if _dbg8:
+            nodedbg.note(f"  pin#2: shoulder window-min "
+                         f"{'None' if _lo8 is None else format(_lo8, '.3f')}, at-point "
+                         f"{'None' if _lp8 is None else format(_lp8, '.3f')}")
+            for _cn, _ck, _cy in _pav_cover(_gx8, _gz8):
+                nodedbg.note(f"    covered by {_cn} ({_ck}) at y {_cy:.3f}")
         if _lp8 is not None and (_lo8 is None or _lp8 < _lo8):
             _lo8 = _lp8
         if _lo8 is None:
+            if _dbg8:
+                nodedbg.note("  pin#2: no shoulder/runoff/kerb surface here -> skipped")
             continue
         _tgt8 = _lo8 - GRASS_CLEARANCE_M
         # THE BRIDGE GUARD APPLIES IN BOTH DIRECTIONS. It used to live inside the `_tgt8 > _gy8`
@@ -1923,10 +2046,22 @@ def build(project_dir: str | Path) -> dict:
         # and they anchor the fine triangles. Re-pin them at the fine radius too. Safe because every
         # quad touching pavement is refined, so no remaining COARSE chord spans pavement.
         _rp = 0
+        nodedbg.note("=== pass: corridor refine, coarse corner re-pin (_fine_height) ===")
+        if nodedbg.ENABLED:
+            _qs = [(_qi, _qj) for _qi, _qj in _refine_q
+                   if _qi in (nodedbg.COL - 1, nodedbg.COL) and _qj in (nodedbg.ROW - 1, nodedbg.ROW)]
+            nodedbg.note(f"  refine: {len(_qs)} of the node's 4 quads are in the refine region "
+                         f"(needs >=1 for the node to be re-pinned at the fine stencil)")
         for _qi, _qj in _refine_q:
             for _ii, _jj in ((_qi, _qj), (_qi + 1, _qj), (_qi, _qj + 1), (_qi + 1, _qj + 1)):
                 _vx, _vy, _vz = grid_xyz[_jj][_ii]
                 _ny = _fine_height(_vx, _vz, _vy)
+                if _NDBG and nodedbg.is_node(_ii, _jj):
+                    nodedbg.note(f"  refine: _fine_height -> {_ny:.3f} (was {_vy:.3f}); "
+                                 f"pav at point "
+                                 f"{'None' if _pav_at_point(_vx, _vz, _vy) is None else format(_pav_at_point(_vx, _vz, _vy), '.3f')}, "
+                                 f"deck window-min "
+                                 f"{'None' if _deck_window_min7(_vx, _vz, _vy, _hsF) is None else format(_deck_window_min7(_vx, _vz, _vy, _hsF), '.3f')}")
                 if abs(_ny - _vy) > 1e-4:
                     grid_xyz[_jj][_ii] = (_vx, _ny, _vz)
                     _rp += 1
@@ -1934,6 +2069,23 @@ def build(project_dir: str | Path) -> dict:
               f"(~{float(meta['spacing_m'])/_RN:.2f} m sub-cells, stencil {_hsF:.2f} m); "
               f"{_rp:,} coarse corner nodes re-pinned")
 
+    if nodedbg.ENABLED:
+        # What the grass mesh will actually put here: the 4 neighbours (chord anchors), and the
+        # pavement the node is supposed to be hugging.
+        _nx_, _ny_ = len(grid_xyz[0]), len(grid_xyz)
+        _cx_, _cy_, _cz_ = grid_xyz[nodedbg.ROW][nodedbg.COL]
+        nodedbg.note(f"=== FINAL grid state at (i={nodedbg.COL}, j={nodedbg.ROW}) ===")
+        for _lbl_, _di_, _dj_ in (("W", -1, 0), ("E", 1, 0), ("N", 0, -1), ("S", 0, 1)):
+            _i_, _j_ = nodedbg.COL + _di_, nodedbg.ROW + _dj_
+            if 0 <= _i_ < _nx_ and 0 <= _j_ < _ny_:
+                nodedbg.note(f"  neighbour {_lbl_} (i={_i_}, j={_j_}) y {grid_xyz[_j_][_i_][1]:.3f} "
+                             f"(dy {grid_xyz[_j_][_i_][1] - _cy_:+.3f})")
+        _deck_ = _road_tops(_cx_, _cz_)
+        nodedbg.note(f"  pavement decks over this XZ: "
+                     f"{[round(_d_, 3) for _d_ in sorted(_deck_)] if _deck_ else 'none'}; "
+                     f"node y {_cy_:.3f}"
+                     + (f"; float under the LOWEST deck {min(_deck_) - _cy_:+.3f} m" if _deck_ else ""))
+        nodedbg.stop_if_asked()
     write_ground_local(data / "ground.local.json", grid_xyz)
     grass = ribbon.grass_terrain(grid_xyz, refine_quads=_refine_q, refine_factor=_RN,
                                  height_at=_fine_height)

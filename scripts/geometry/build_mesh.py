@@ -750,7 +750,13 @@ def build(project_dir: str | Path) -> dict:
         # Snap the connector to the loop's height inside JOIN_R, then ease back to its own profile
         # over BLEND_L. Connectors that never come near the loop (separate streets 90-140 m away,
         # legitimately at their own elevations) are untouched.
-        _JOIN_R, _BLEND_L = 12.0, 45.0
+        # REACH, not location. Restricting reconciliation to connector ENDS was wrong: del_cerro_blvd
+        # CROSSES the loop mid-connector, and excluding it brought back the 2.55 m roofing steps at
+        # stations 3243-3256 (ledger 0017's original symptom). The defect was the 57 m blend reach
+        # lifting points that merely PASS near the loop several metres below it - a continuous 70 m
+        # run of del_cerro floated 3.5-4.1 m. A junction merge is a LOCAL grade change: snap within
+        # 12 m, blend out over 12 more. Beyond 24 m a connector keeps its own profile.
+        _JOIN_R, _BLEND_L = 12.0, 12.0
         _lc = [(q[0], q[1], q[2]) for q in centerline]
         _lh: dict = {}
         for _q in _lc:
@@ -771,23 +777,10 @@ def build(project_dir: str | Path) -> dict:
         _adj = 0
         for _ci in range(len(connectors)):
             _nm, _cp, _cw = connectors[_ci]
-            # A CONNECTOR JOINS AT ITS ENDS, NOT ALONG ITS FLANK. Blending toward the nearest loop
-            # height anywhere within reach lifts a connector that merely RUNS PAST the loop several
-            # metres off its own terrain — on Lake Murray that put a continuous 70 m run of
-            # del_cerro_blvd 3.5-4.1 m in the air (the whole remaining float tail, max 4.072).
-            # Measure arc distance from each end and only reconcile within one blend length of a
-            # junction; a flank that happens to pass close keeps its own profile.
-            _arc5 = [0.0]
-            for _q5 in range(1, len(_cp)):
-                _arc5.append(_arc5[-1] + math.hypot(_cp[_q5][0] - _cp[_q5 - 1][0],
-                                                    _cp[_q5][2] - _cp[_q5 - 1][2]))
-            _len5 = _arc5[-1] or 1.0
-            _endr = _JOIN_R + _BLEND_L        # how far from an end a junction can still reach
             _new, _moved = [], 0.0
-            for _k5, (_x, _y, _z) in enumerate(_cp):
-                _from_end = min(_arc5[_k5], _len5 - _arc5[_k5])
+            for _x, _y, _z in _cp:
                 _hit = _loop_y(_x, _z)
-                if _hit is None or _hit[1] > _JOIN_R + _BLEND_L or _from_end > _endr:
+                if _hit is None or _hit[1] > _JOIN_R + _BLEND_L:
                     _new.append((_x, _y, _z))
                     continue
                 _ly, _d = _hit

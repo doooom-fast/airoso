@@ -127,3 +127,52 @@ whose road is narrower than its terrain triangles does.
   divided section shows the clamp rejecting the far leg).
 - `audit_mesh` B and H stay at 0 on Lake Murray **and** on a stacked-switchback track.
 - `kn5_ground_check` p95 under 0.10 — **not yet met**.
+
+---
+
+## Resuming this work
+
+Branch `claude/k10-track-agents-connector-debug-ce619e`, one commit ahead of `main`. Everything
+needed is committed; nothing lives outside the repo. **`k10-san-diego/project` was never written to**
+— every build above ran against a throwaway copy, so that project still holds its pre-fix artifacts
+and must be rebuilt to see any of these numbers.
+
+Set up a scratch copy (the inputs are ~6 MB; the outputs are ~1.8 GB, which is why they are excluded
+going in and why this does not run in place):
+
+```bash
+rsync -a --exclude='track.obj' --exclude='*_render.svg' --exclude='environment.obj' \
+      --exclude='ground.local.json' <k10-san-diego>/project/ /tmp/lm/
+```
+
+Rebuild and gate (~25 min for the mesh on Lake Murray, most of it the ×6 corridor refine):
+
+```bash
+python3 -m scripts.geometry.build_mesh   /tmp/lm
+python3 -m scripts.geometry.audit_mesh   /tmp/lm      # expect CLEAN
+python3 -m scripts.geometry.drive_test   /tmp/lm      # expect the pre-existing lap-seam FAIL, 21 severe steps
+python3 -m scripts.ac.kn5_write          /tmp/lm
+python3 -m scripts.ac.verify_kn5         /tmp/lm      # expect PASS
+python3 -m scripts.ac.kn5_ground_check   /tmp/lm      # expect FAIL at p95 0.198 (gate 0.100)
+```
+
+`drive_test`'s FAIL is **not** from this work: it is ledger 0017's still-open lap seam (worst severe
+0.442 m at station 13478 on a 13478 m lap) plus the 0.29–0.35 m junction lip. Every one of its
+metrics is bit-identical to the pre-fix baseline except the two excursion counts, which improved.
+
+Aiming the next attempt — find *where*, then *why* (`scripts/diag/README.md`):
+
+```bash
+python3 -m scripts.diag.gate_tail_by_group /tmp/lm/data/track.obj
+NODEDBG="<x>,<z>" NODEDBG_STOP=1 python3 -m scripts.geometry.build_mesh /tmp/lm
+```
+
+`NODEDBG_STOP=1` aborts right after the last pre-grass write, so a trace costs a corridor pass
+(~4 min) instead of a full build. Two nodes worth re-reading: `-702,-865.5` (the original float, now
+seated) and `-1643.13,-126.228` (college_avenue, still on the tail).
+
+The regression target for any further change to these passes is **Lookout Lariat** — 24.8 km of
+stacked switchbacks and no connectors, so it isolates the clamp behaviour from the verge behaviour.
+Compare its `data/drive_test.json` against the one committed in `k10-colorado`; that comparison is
+trustworthy because Lake Murray's shipped `drive_test.json` reproduced bit-for-bit from a clean
+build, which shows the committed artifacts were built at current HEAD.

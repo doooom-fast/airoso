@@ -26,6 +26,15 @@ PROJ="${1:?usage: build.sh <project-dir> [from-stage|--list]}"
 FROM="${2:-gps}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
+# Git Bash hands MSYS /c/... paths to a WINDOWS Python that cannot resolve them (every stage runs
+# `python -m scripts... "$PROJ"`). Normalise to a native path here, once, for every consumer.
+# The [ -d ] guard keeps --list working with a bogus path and keeps the case from tripping set -e.
+if [ -d "$PROJ" ]; then
+  case "$(uname -s)" in
+    MINGW*|MSYS*) PROJ="$(cd "$PROJ" && pwd -W)" ;;
+    CYGWIN*)      PROJ="$(cygpath -m "$(cd "$PROJ" && pwd)")" ;;
+  esac
+fi
 PY="${PYTHON:-python3}"
 STAGES=(gps elev project mesh env blend kn5 pack)
 

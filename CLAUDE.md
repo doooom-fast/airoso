@@ -24,6 +24,9 @@ seam that makes the whole fleet work; breaking them breaks every repo simultaneo
 - **`fleet/LAWS.md`** — the non-negotiable laws, each with the failure that bought it. This is the
   single source; project repos point here rather than restating them. Read it before any geometry
   change or any diagnosis.
+- **`fleet/REALISM.md`** — the doctrine since 2026-08-06: the engine prepares a data underlay,
+  authorship happens in Blender (lean in, never eject), the game is the judge. Read it before
+  deciding *what kind* of fix any track problem deserves.
 - **`fleet/STANDARDS.md`** — what a project repo must look like. Enforced by `fleet.cli lint`.
 - **`fleet/MIGRATION.md`** — the engine absorption cutover, still in progress.
 - **`fleet/feedback/README.md`** — how feedback becomes a fix on every track.

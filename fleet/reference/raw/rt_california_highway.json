@@ -1,0 +1,795 @@
+{
+ "track": "rt_california_highway",
+ "path": "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks\\rt_california_highway",
+ "ui": {
+  "name": "California Highway",
+  "length": "20640m",
+  "width": "12-18m",
+  "pitboxes": "16",
+  "run": "clockwise"
+ },
+ "layouts": {
+  "normal": [
+   "rt_california_highway.kn5",
+   "rt_california_highway_phy.kn5",
+   "rt_california_highway_wal.kn5",
+   "rt_california_highway_veg1.kn5",
+   "rt_california_highway_veg2.kn5",
+   "rt_california_highway_veg3.kn5",
+   "rt_california_highway_overlays.kn5",
+   "rt_california_highway_barr.kn5",
+   "rt_california_highway_barr2.kn5",
+   "100.kn5",
+   "rt_california_highway_vehicrow.kn5",
+   "audio.kn5",
+   "rt_california_highway_phy_refl.kn5",
+   "rt_california_highway_palms.kn5"
+  ],
+  "reverse": [
+   "rt_california_highway.kn5",
+   "rt_california_highway_phy.kn5",
+   "rt_california_highway_wal.kn5",
+   "rt_california_highway_veg1.kn5",
+   "rt_california_highway_veg2.kn5",
+   "rt_california_highway_veg3.kn5",
+   "rt_california_highway_overlays.kn5",
+   "rt_california_highway_barr.kn5",
+   "rt_california_highway_barr2.kn5",
+   "001.kn5",
+   "rt_california_highway_vehicrow.kn5",
+   "audio.kn5",
+   "rt_california_highway_phy_refl.kn5",
+   "rt_california_highway_palms.kn5"
+  ],
+  "roamfree": [
+   "rt_california_highway.kn5",
+   "rt_california_highway_phy.kn5",
+   "rt_california_highway_wal.kn5",
+   "rt_california_highway_veg1.kn5",
+   "rt_california_highway_veg2.kn5",
+   "rt_california_highway_veg3.kn5",
+   "rt_california_highway_overlays.kn5",
+   "rt_california_highway_barr.kn5",
+   "000.kn5",
+   "audio.kn5",
+   "rt_california_highway_phy_refl.kn5",
+   "rt_california_highway_vehicrow_free.kn5",
+   "rt_california_highway_palms.kn5"
+  ]
+ },
+ "kn5_count": 17,
+ "totals": {
+  "meshes": 3140,
+  "verts": 10794709,
+  "tris": 9600211,
+  "bytes": 1014495139,
+  "texture_bytes": 481317164
+ },
+ "surfaces_ini": {
+  "PIT": {
+   "FRICTION": "0.9857",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.005",
+   "SIN_LENGTH": "0.01",
+   "VIBRATION_GAIN": "0.02",
+   "VIBRATION_LENGTH": "0.04",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "normal\\data\\surfaces.ini"
+  },
+  "GRAVEL": {
+   "FRICTION": "0.9",
+   "DAMPING": "0.025",
+   "WAV": "sand.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.01",
+   "SIN_LENGTH": "0.35",
+   "VIBRATION_GAIN": "0.1",
+   "VIBRATION_LENGTH": "0.2",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "0",
+   "_from": "normal\\data\\surfaces.ini"
+  }
+ },
+ "surface_geometry": {
+  "KERB": {
+   "meshes": 101,
+   "invisible": 94,
+   "verts": 39820,
+   "tris": 49025,
+   "area_m2": 983.9,
+   "edge_med_m": 0.184,
+   "grid_m": 0.137
+  },
+  "WALL": {
+   "meshes": 102,
+   "invisible": 102,
+   "verts": 53500,
+   "tris": 29358,
+   "area_m2": 770166.9,
+   "edge_med_m": 10.574,
+   "grid_m": 6.992
+  },
+  "ROAD": {
+   "meshes": 131,
+   "invisible": 131,
+   "verts": 676389,
+   "tris": 1233260,
+   "area_m2": 674814.9,
+   "edge_med_m": 0.957,
+   "grid_m": 0.853
+  },
+  "SAND": {
+   "meshes": 23,
+   "invisible": 23,
+   "verts": 24332,
+   "tris": 36631,
+   "area_m2": 107206.7,
+   "edge_med_m": 1.813,
+   "grid_m": 1.817
+  },
+  "GRAVEL": {
+   "meshes": 16,
+   "invisible": 16,
+   "verts": 17558,
+   "tris": 25280,
+   "area_m2": 135078.8,
+   "edge_med_m": 2.818,
+   "grid_m": 2.932
+  },
+  "GRASS": {
+   "meshes": 46,
+   "invisible": 46,
+   "verts": 110128,
+   "tris": 151927,
+   "area_m2": 4800935.2,
+   "edge_med_m": 4.243,
+   "grid_m": 7.217
+  }
+ },
+ "ai": [
+  {
+   "file": "normal\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 3716,
+   "length_m": 21843.3,
+   "spacing_m": 5.88,
+   "has_extras": true
+  },
+  {
+   "file": "normal\\data\\ideal_line.ai",
+   "version": 7,
+   "points": 3716,
+   "length_m": 21843.8,
+   "spacing_m": 5.88,
+   "has_extras": true
+  },
+  {
+   "file": "reverse\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 13332,
+   "length_m": 21328.6,
+   "spacing_m": 1.6,
+   "has_extras": true
+  },
+  {
+   "file": "reverse\\data\\ideal_line.ai",
+   "version": 7,
+   "points": 13332,
+   "length_m": 21328.6,
+   "spacing_m": 1.6,
+   "has_extras": true
+  }
+ ],
+ "ext_config": {
+  "grass_fx": true,
+  "rain_fx": true,
+  "lights": 1,
+  "light_series": 1,
+  "trees": false,
+  "mesh_adjustments": 0,
+  "includes": [
+   "common\\conditions.ini, common\\materials_base.ini, common\\materials_track.ini, common\\custom_emissive.ini"
+  ],
+  "files": 1
+ },
+ "vao_patches": [
+  "rt_california_highway.vao-patch"
+ ],
+ "cameras": 195,
+ "errors": [],
+ "kn5s": [
+  {
+   "file": "000.kn5",
+   "summary": {
+    "meshes": 39,
+    "verts": 1258,
+    "tris": 468,
+    "textures": 1,
+    "texture_bytes": 136,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 39,
+      "tris": 468
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "001.kn5",
+   "summary": {
+    "meshes": 39,
+    "verts": 1320,
+    "tris": 468,
+    "textures": 1,
+    "texture_bytes": 136,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 39,
+      "tris": 468
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "100.kn5",
+   "summary": {
+    "meshes": 39,
+    "verts": 1320,
+    "tris": 468,
+    "textures": 1,
+    "texture_bytes": 136,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 39,
+      "tris": 468
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "audio.kn5",
+   "summary": {
+    "meshes": 11,
+    "verts": 396,
+    "tris": 132,
+    "textures": 1,
+    "texture_bytes": 136,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 11,
+      "tris": 132
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "rt_california_highway.kn5",
+   "summary": {
+    "meshes": 201,
+    "verts": 638464,
+    "tris": 679221,
+    "textures": 63,
+    "texture_bytes": 113737744,
+    "materials": 37,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 47,
+      "tris": 319511
+     },
+     "ksMultilayer_fresnel_nm": {
+      "meshes": 114,
+      "tris": 268322
+     },
+     "ksPerPixelNM_UVMult": {
+      "meshes": 31,
+      "tris": 75098
+     },
+     "ksPerPixel": {
+      "meshes": 6,
+      "tris": 9449
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 2,
+      "tris": 6697
+     },
+     "ksPerPixelAT": {
+      "meshes": 1,
+      "tris": 144
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "wat_waves.dds",
+     "wat_wavesn.dds"
+    ]
+   }
+  },
+  {
+   "file": "rt_california_highway_barr.kn5",
+   "summary": {
+    "meshes": 1032,
+    "verts": 1522620,
+    "tris": 1282104,
+    "textures": 306,
+    "texture_bytes": 57318512,
+    "materials": 186,
+    "surfaces": {
+     "KERB": {
+      "meshes": 7,
+      "verts": 4135,
+      "tris": 2358,
+      "area_m2": 347.6,
+      "invisible": 0,
+      "edge_med_m": 1.754,
+      "grid_m": 0.511
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelMultiMap_AT": {
+      "meshes": 71,
+      "tris": 486028
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 474,
+      "tris": 412276
+     },
+     "ksPerPixel": {
+      "meshes": 169,
+      "tris": 176518
+     },
+     "ksPerPixelAT": {
+      "meshes": 130,
+      "tris": 82194
+     },
+     "ksPerPixelMultiMap_AT_NMDetail": {
+      "meshes": 92,
+      "tris": 57280
+     },
+     "ksPerPixelNM": {
+      "meshes": 40,
+      "tris": 43108
+     },
+     "ksFlags": {
+      "meshes": 21,
+      "tris": 15256
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 26,
+      "tris": 9404
+     },
+     "ksPerPixelAlpha": {
+      "meshes": 9,
+      "tris": 40
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "warn.dds",
+     "warn_e.dds",
+     "Build12B_D.dds",
+     "rsign_crest.dds",
+     "flag_vertical_pcars_white2.dds",
+     "flag_califhwy_d2.dds",
+     "flag_nat_rus_usa_aus2.dds",
+     "balloona.dds"
+    ]
+   }
+  },
+  {
+   "file": "rt_california_highway_barr2.kn5",
+   "summary": {
+    "meshes": 41,
+    "verts": 224633,
+    "tris": 181904,
+    "textures": 18,
+    "texture_bytes": 4240680,
+    "materials": 8,
+    "surfaces": {
+     "WALL": {
+      "meshes": 15,
+      "verts": 1936,
+      "tris": 970,
+      "area_m2": 21940.8,
+      "invisible": 15,
+      "edge_med_m": 10.616,
+      "grid_m": 6.467
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelMultiMap": {
+      "meshes": 15,
+      "tris": 170802
+     },
+     "ksPerPixel": {
+      "meshes": 26,
+      "tris": 11102
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "rt_california_highway_overlays.kn5",
+   "summary": {
+    "meshes": 213,
+    "verts": 480688,
+    "tris": 694056,
+    "textures": 29,
+    "texture_bytes": 34957712,
+    "materials": 19,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAlpha": {
+      "meshes": 48,
+      "tris": 522578
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 112,
+      "tris": 164140
+     },
+     "ksPerPixelAT": {
+      "meshes": 53,
+      "tris": 7338
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "rt_california_highway_palms.kn5",
+   "summary": {
+    "meshes": 61,
+    "verts": 277428,
+    "tris": 214067,
+    "textures": 5,
+    "texture_bytes": 4268752,
+    "materials": 5,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 24,
+      "tris": 127680
+     },
+     "ksPerPixel": {
+      "meshes": 24,
+      "tris": 78552
+     },
+     "ksPerPixelNM": {
+      "meshes": 13,
+      "tris": 7835
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "rt_california_highway_phy.kn5",
+   "summary": {
+    "meshes": 218,
+    "verts": 829724,
+    "tris": 1447941,
+    "textures": 1,
+    "texture_bytes": 136,
+    "materials": 1,
+    "surfaces": {
+     "ROAD": {
+      "meshes": 131,
+      "verts": 676389,
+      "tris": 1233260,
+      "area_m2": 674814.9,
+      "invisible": 131,
+      "edge_med_m": 0.957,
+      "grid_m": 0.853
+     },
+     "SAND": {
+      "meshes": 23,
+      "verts": 24332,
+      "tris": 36631,
+      "area_m2": 107206.7,
+      "invisible": 23,
+      "edge_med_m": 1.813,
+      "grid_m": 1.817
+     },
+     "GRAVEL": {
+      "meshes": 16,
+      "verts": 17558,
+      "tris": 25280,
+      "area_m2": 135078.8,
+      "invisible": 16,
+      "edge_med_m": 2.818,
+      "grid_m": 2.932
+     },
+     "GRASS": {
+      "meshes": 46,
+      "verts": 110128,
+      "tris": 151927,
+      "area_m2": 4800935.2,
+      "invisible": 46,
+      "edge_med_m": 4.243,
+      "grid_m": 7.217
+     },
+     "KERB": {
+      "meshes": 2,
+      "verts": 1317,
+      "tris": 843,
+      "area_m2": 398.3,
+      "invisible": 2,
+      "edge_med_m": 0.812,
+      "grid_m": 0.972
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 218,
+      "tris": 1447941
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "rt_california_highway_phy_refl.kn5",
+   "summary": {
+    "meshes": 92,
+    "verts": 34368,
+    "tris": 45824,
+    "textures": 1,
+    "texture_bytes": 136,
+    "materials": 1,
+    "surfaces": {
+     "KERB": {
+      "meshes": 92,
+      "verts": 34368,
+      "tris": 45824,
+      "area_m2": 238.0,
+      "invisible": 92,
+      "edge_med_m": 0.092,
+      "grid_m": 0.102
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 92,
+      "tris": 45824
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "rt_california_highway_veg1.kn5",
+   "summary": {
+    "meshes": 336,
+    "verts": 391829,
+    "tris": 186890,
+    "textures": 35,
+    "texture_bytes": 92455360,
+    "materials": 37,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 333,
+      "tris": 186402
+     },
+     "ksPerPixel": {
+      "meshes": 3,
+      "tris": 488
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "rt_california_highway_veg2.kn5",
+   "summary": {
+    "meshes": 191,
+    "verts": 1589878,
+    "tris": 1481256,
+    "textures": 30,
+    "texture_bytes": 18878732,
+    "materials": 27,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 74,
+      "tris": 1278137
+     },
+     "ksPerPixelAT": {
+      "meshes": 75,
+      "tris": 183016
+     },
+     "ksTree": {
+      "meshes": 40,
+      "tris": 14996
+     },
+     "ksPerPixel": {
+      "meshes": 2,
+      "tris": 5107
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "rt_california_highway_veg3.kn5",
+   "summary": {
+    "meshes": 107,
+    "verts": 3141308,
+    "tris": 1626472,
+    "textures": 11,
+    "texture_bytes": 32506784,
+    "materials": 11,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 86,
+      "tris": 1535562
+     },
+     "ksTree": {
+      "meshes": 21,
+      "tris": 90910
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "rt_california_highway_vehicrow.kn5",
+   "summary": {
+    "meshes": 224,
+    "verts": 858730,
+    "tris": 927604,
+    "textures": 92,
+    "texture_bytes": 60864144,
+    "materials": 43,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 28,
+      "tris": 570345
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 62,
+      "tris": 289693
+     },
+     "ksPerPixelMultiMap_AT": {
+      "meshes": 49,
+      "tris": 32758
+     },
+     "ksPerPixel": {
+      "meshes": 66,
+      "tris": 30480
+     },
+     "ksPerPixelMultiMapSimpleRefl": {
+      "meshes": 13,
+      "tris": 3996
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 6,
+      "tris": 332
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "cars_a.dds",
+     "cars_n.dds",
+     "cars_s.dds",
+     "cars_e.dds"
+    ]
+   }
+  },
+  {
+   "file": "rt_california_highway_vehicrow_free.kn5",
+   "summary": {
+    "meshes": 211,
+    "verts": 749285,
+    "tris": 803000,
+    "textures": 94,
+    "texture_bytes": 62087792,
+    "materials": 43,
+    "surfaces": {
+     "WALL": {
+      "meshes": 2,
+      "verts": 104,
+      "tris": 52,
+      "area_m2": 1416.5,
+      "invisible": 2,
+      "edge_med_m": 7.322,
+      "grid_m": 7.301
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 26,
+      "tris": 478073
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 57,
+      "tris": 265559
+     },
+     "ksPerPixelMultiMap_AT": {
+      "meshes": 45,
+      "tris": 29052
+     },
+     "ksPerPixel": {
+      "meshes": 65,
+      "tris": 26906
+     },
+     "ksPerPixelMultiMapSimpleRefl": {
+      "meshes": 12,
+      "tris": 3078
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 6,
+      "tris": 332
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "cars_a.dds",
+     "cars_n.dds",
+     "cars_s.dds",
+     "cars_e.dds"
+    ]
+   }
+  },
+  {
+   "file": "rt_california_highway_wal.kn5",
+   "summary": {
+    "meshes": 85,
+    "verts": 51460,
+    "tris": 28336,
+    "textures": 1,
+    "texture_bytes": 136,
+    "materials": 1,
+    "surfaces": {
+     "WALL": {
+      "meshes": 85,
+      "verts": 51460,
+      "tris": 28336,
+      "area_m2": 746809.6,
+      "invisible": 85,
+      "edge_med_m": 10.579,
+      "grid_m": 7.009
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 85,
+      "tris": 28336
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  }
+ ]
+}

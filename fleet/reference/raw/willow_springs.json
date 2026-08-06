@@ -1,0 +1,1203 @@
+{
+ "track": "willow_springs",
+ "path": "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks\\willow_springs",
+ "ui": {
+  "name": "Willow Springs - Big Willow",
+  "length": "2000",
+  "width": "15",
+  "pitboxes": "40",
+  "run": "anti-clockwise"
+ },
+ "layouts": {
+  "big_willow": [
+   "willow_springs.kn5",
+   "fujiblimp.kn5",
+   "bal_bridgestone.kn5",
+   "bal_kandn.kn5",
+   "bal_tictac.kn5",
+   "bal_oakley.kn5",
+   "bal_bp.kn5",
+   "bal_dsl.kn5",
+   "bal_valv2.kn5",
+   "bal_rockstar.kn5",
+   "bal_snapon.kn5",
+   "bal_autobacs2.kn5",
+   "bal_hein2.kn5",
+   "bal_liquimoly.kn5",
+   "bal_heineken.kn5",
+   "bal_redbull2.kn5",
+   "bal_chupa.kn5",
+   "bal_garmin.kn5",
+   "bal_tag.kn5",
+   "bal_repsol.kn5",
+   "bal_diesel.kn5",
+   "bal_jegs.kn5",
+   "bal_nos.kn5",
+   "bal_petronas.kn5",
+   "bal_quantum.kn5",
+   "bal_simpson.kn5",
+   "bal_vuhl.kn5",
+   "bal_gingham.kn5",
+   "bal_herring.kn5",
+   "bal_cocacola.kn5",
+   "bal_rainbowtri.kn5",
+   "bal_pepsi.kn5",
+   "bal_breitling.kn5"
+  ],
+  "big_willow_real": [
+   "willow_springs_real.kn5"
+  ]
+ },
+ "kn5_count": 34,
+ "totals": {
+  "meshes": 1476,
+  "verts": 2072063,
+  "tris": 2250101,
+  "bytes": 777753440,
+  "texture_bytes": 672662222
+ },
+ "surfaces_ini": {
+  "ROAD": {
+   "FRICTION": "0.99",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.02",
+   "VIBRATION_LENGTH": "0.03",
+   "DIRT_ADDITIVE": "0.0",
+   "IS_VALID_TRACK": "1",
+   "_from": "big_willow\\data\\surfaces.ini"
+  },
+  "GROUND": {
+   "FRICTION": "0.89",
+   "DAMPING": "0.3",
+   "WAV": "sand.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.01",
+   "SIN_LENGTH": "1",
+   "VIBRATION_GAIN": "0.04",
+   "VIBRATION_LENGTH": "0.05",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "big_willow\\data\\surfaces.ini"
+  },
+  "SNICE": {
+   "FRICTION": "0.72",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.02",
+   "VIBRATION_LENGTH": "0.03",
+   "DIRT_ADDITIVE": "0.2",
+   "IS_VALID_TRACK": "1",
+   "_from": "big_willow\\data\\surfaces.ini"
+  },
+  "SNOWT": {
+   "FRICTION": "0.88",
+   "DAMPING": "0",
+   "WAV": "sand.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.02",
+   "VIBRATION_LENGTH": "0.03",
+   "DIRT_ADDITIVE": "0.4",
+   "IS_VALID_TRACK": "1",
+   "_from": "big_willow\\data\\surfaces.ini"
+  },
+  "ASPHALT": {
+   "FRICTION": "0.95",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.01",
+   "VIBRATION_LENGTH": "0.02",
+   "DIRT_ADDITIVE": "0.5",
+   "IS_VALID_TRACK": "1",
+   "_from": "big_willow\\data\\surfaces.ini"
+  },
+  "SEMISN": {
+   "FRICTION": "0.86",
+   "DAMPING": "0",
+   "WAV": "sand.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.01",
+   "VIBRATION_LENGTH": "0.02",
+   "DIRT_ADDITIVE": "0.2",
+   "IS_VALID_TRACK": "1",
+   "_from": "big_willow\\data\\surfaces.ini"
+  },
+  "1PIT": {
+   "FRICTION": "0.99",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.02",
+   "VIBRATION_LENGTH": "0.03",
+   "DIRT_ADDITIVE": "0.0",
+   "IS_VALID_TRACK": "1",
+   "_from": "big_willow\\data\\surfaces.ini"
+  }
+ },
+ "surface_geometry": {
+  "ROAD": {
+   "meshes": 42,
+   "invisible": 0,
+   "verts": 155699,
+   "tris": 283533,
+   "area_m2": 124406.0,
+   "edge_med_m": 1.023,
+   "grid_m": 0.932
+  },
+  "PHYS?": {
+   "meshes": 14,
+   "invisible": 0,
+   "verts": 23661,
+   "tris": 39926,
+   "area_m2": 14501.6,
+   "edge_med_m": 0.854,
+   "grid_m": 0.799
+  },
+  "SAND": {
+   "meshes": 10,
+   "invisible": 0,
+   "verts": 45735,
+   "tris": 62023,
+   "area_m2": 118870.6,
+   "edge_med_m": 1.981,
+   "grid_m": 1.926
+  },
+  "WALL": {
+   "meshes": 23,
+   "invisible": 23,
+   "verts": 5356,
+   "tris": 5310,
+   "area_m2": 45186.8,
+   "edge_med_m": 4.886,
+   "grid_m": 4.116
+  },
+  "GRASS": {
+   "meshes": 2,
+   "invisible": 0,
+   "verts": 35477,
+   "tris": 48214,
+   "area_m2": 3005381.4,
+   "edge_med_m": 7.818,
+   "grid_m": 11.166
+  }
+ },
+ "ai": [
+  {
+   "file": "big_willow\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 2485,
+   "length_m": 3912.1,
+   "spacing_m": 1.57,
+   "has_extras": true
+  },
+  {
+   "file": "big_willow\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 2507,
+   "length_m": 3898.6,
+   "spacing_m": 1.56,
+   "has_extras": true
+  },
+  {
+   "file": "big_willow_real\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 2485,
+   "length_m": 3912.1,
+   "spacing_m": 1.57,
+   "has_extras": true
+  },
+  {
+   "file": "big_willow_real\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 2507,
+   "length_m": 3898.6,
+   "spacing_m": 1.56,
+   "has_extras": true
+  }
+ ],
+ "ext_config": {
+  "grass_fx": false,
+  "rain_fx": false,
+  "lights": 0,
+  "light_series": 0,
+  "trees": false,
+  "mesh_adjustments": 0,
+  "includes": [],
+  "files": 0
+ },
+ "vao_patches": [
+  "willow_springs.vao-patch",
+  "willow_springs_real.vao-patch"
+ ],
+ "cameras": 293,
+ "errors": [],
+ "kn5s": [
+  {
+   "file": "bal_autobacs2.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_bp.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_breitling.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_bridgestone.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_chupa.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_cocacola.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_diesel.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_dsl.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_garmin.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_gingham.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_hein2.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_heineken.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_herring.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_jegs.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_kandn.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_liquimoly.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_nos.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_oakley.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_pepsi.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_petronas.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_quantum.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_rainbowtri.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_redbull2.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_repsol.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_rockstar.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_simpson.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_snapon.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_tag.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_tictac.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_valv2.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bal_vuhl.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 1337,
+    "tris": 1404,
+    "textures": 3,
+    "texture_bytes": 1484856,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 1388
+     },
+     "ksFlags": {
+      "meshes": 2,
+      "tris": 16
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "fujiblimp.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 4799,
+    "tris": 4236,
+    "textures": 1,
+    "texture_bytes": 2796344,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 1,
+      "tris": 4236
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "willow_springs.kn5",
+   "summary": {
+    "meshes": 712,
+    "verts": 1038568,
+    "tris": 1125675,
+    "textures": 253,
+    "texture_bytes": 312830754,
+    "materials": 278,
+    "surfaces": {
+     "ROAD": {
+      "meshes": 21,
+      "verts": 78043,
+      "tris": 142055,
+      "area_m2": 62106.7,
+      "invisible": 0,
+      "edge_med_m": 1.022,
+      "grid_m": 0.931
+     },
+     "PHYS?": {
+      "meshes": 7,
+      "verts": 11830,
+      "tris": 19963,
+      "area_m2": 7250.8,
+      "invisible": 0,
+      "edge_med_m": 0.854,
+      "grid_m": 0.799
+     },
+     "SAND": {
+      "meshes": 5,
+      "verts": 22674,
+      "tris": 30723,
+      "area_m2": 59531.6,
+      "invisible": 0,
+      "edge_med_m": 1.994,
+      "grid_m": 1.94
+     },
+     "WALL": {
+      "meshes": 10,
+      "verts": 2640,
+      "tris": 2620,
+      "area_m2": 22455.6,
+      "invisible": 10,
+      "edge_med_m": 4.904,
+      "grid_m": 4.134
+     },
+     "GRASS": {
+      "meshes": 1,
+      "verts": 17738,
+      "tris": 24107,
+      "area_m2": 1502690.7,
+      "invisible": 0,
+      "edge_med_m": 7.818,
+      "grid_m": 11.166
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 449,
+      "tris": 691793
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 48,
+      "tris": 173574
+     },
+     "ksPerPixelMultiMap_NMDetail": {
+      "meshes": 13,
+      "tris": 142481
+     },
+     "ksMultilayer": {
+      "meshes": 118,
+      "tris": 80193
+     },
+     "ksPerPixelAT": {
+      "meshes": 51,
+      "tris": 31258
+     },
+     "ksTree": {
+      "meshes": 25,
+      "tris": 5328
+     },
+     "ksGrass": {
+      "meshes": 8,
+      "tris": 1048
+     }
+    },
+    "near_vert_cap": [
+     "OBJ51"
+    ],
+    "non_pot_textures": [
+     "LIDI3D.DDS"
+    ]
+   }
+  },
+  {
+   "file": "willow_springs_real.kn5",
+   "summary": {
+    "meshes": 670,
+    "verts": 987249,
+    "tris": 1076666,
+    "textures": 223,
+    "texture_bytes": 311004588,
+    "materials": 248,
+    "surfaces": {
+     "ROAD": {
+      "meshes": 21,
+      "verts": 77656,
+      "tris": 141478,
+      "area_m2": 62299.3,
+      "invisible": 0,
+      "edge_med_m": 1.024,
+      "grid_m": 0.933
+     },
+     "PHYS?": {
+      "meshes": 7,
+      "verts": 11831,
+      "tris": 19963,
+      "area_m2": 7250.8,
+      "invisible": 0,
+      "edge_med_m": 0.854,
+      "grid_m": 0.799
+     },
+     "WALL": {
+      "meshes": 13,
+      "verts": 2716,
+      "tris": 2690,
+      "area_m2": 22731.2,
+      "invisible": 13,
+      "edge_med_m": 4.868,
+      "grid_m": 4.098
+     },
+     "GRASS": {
+      "meshes": 1,
+      "verts": 17739,
+      "tris": 24107,
+      "area_m2": 1502690.7,
+      "invisible": 0,
+      "edge_med_m": 7.818,
+      "grid_m": 11.166
+     },
+     "SAND": {
+      "meshes": 5,
+      "verts": 23061,
+      "tris": 31300,
+      "area_m2": 59339.0,
+      "invisible": 0,
+      "edge_med_m": 1.968,
+      "grid_m": 1.912
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 419,
+      "tris": 654437
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 47,
+      "tris": 168978
+     },
+     "ksPerPixelMultiMap_NMDetail": {
+      "meshes": 13,
+      "tris": 142481
+     },
+     "ksMultilayer": {
+      "meshes": 121,
+      "tris": 80263
+     },
+     "ksPerPixelAT": {
+      "meshes": 37,
+      "tris": 24131
+     },
+     "ksTree": {
+      "meshes": 25,
+      "tris": 5328
+     },
+     "ksGrass": {
+      "meshes": 8,
+      "tris": 1048
+     }
+    },
+    "near_vert_cap": [
+     "OBJ48"
+    ],
+    "non_pot_textures": [
+     "LIDI3D.DDS"
+    ]
+   }
+  }
+ ]
+}

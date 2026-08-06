@@ -1,0 +1,784 @@
+{
+ "track": "ks_brands_hatch",
+ "path": "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks\\ks_brands_hatch",
+ "ui": {
+  "name": "Brands Hatch - GP",
+  "length": "3908",
+  "width": "11",
+  "pitboxes": "24",
+  "run": "clockwise"
+ },
+ "layouts": {
+  "gp": [
+   "4.kn5",
+   "ks_brands_hatch.kn5",
+   "2.kn5",
+   "1.kn5",
+   "6.kn5",
+   "7.kn5",
+   "100.kn5"
+  ],
+  "indy": [
+   "4.kn5",
+   "ks_brands_hatch.kn5",
+   "3.kn5",
+   "1.kn5",
+   "5.kn5",
+   "7.kn5",
+   "100.kn5"
+  ]
+ },
+ "kn5_count": 9,
+ "totals": {
+  "meshes": 2058,
+  "verts": 2851003,
+  "tris": 2720185,
+  "bytes": 381776642,
+  "texture_bytes": 239719820
+ },
+ "surfaces_ini": {
+  "PITS": {
+   "FRICTION": "0.98",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "gp\\data\\surfaces.ini"
+  },
+  "ASPH_BRANDS": {
+   "FRICTION": "0.98",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "gp\\data\\surfaces.ini"
+  },
+  "CONCRETE": {
+   "FRICTION": "0.9",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "gp\\data\\surfaces.ini"
+  },
+  "OUT": {
+   "FRICTION": "0.90",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0.05",
+   "IS_VALID_TRACK": "0",
+   "_from": "gp\\data\\surfaces.ini"
+  },
+  "KERB": {
+   "FRICTION": "0.95",
+   "DAMPING": "0",
+   "WAV": "kerb.wav",
+   "WAV_PITCH": "1.3",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.0",
+   "VIBRATION_LENGTH": "0.0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "gp\\data\\surfaces.ini"
+  },
+  "CURB": {
+   "FRICTION": "0.95",
+   "DAMPING": "0",
+   "WAV": "kerb.wav",
+   "WAV_PITCH": "1.3",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.2",
+   "VIBRATION_LENGTH": "1.5",
+   "DIRT_ADDITIVE": "0.0",
+   "IS_VALID_TRACK": "1",
+   "_from": "gp\\data\\surfaces.ini"
+  },
+  "DRAIN": {
+   "FRICTION": "0.80",
+   "DAMPING": "0",
+   "WAV": "extraturf.wav",
+   "WAV_PITCH": "1.3",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.2",
+   "VIBRATION_LENGTH": "0.2",
+   "DIRT_ADDITIVE": "0.1",
+   "IS_VALID_TRACK": "1",
+   "_from": "gp\\data\\surfaces.ini"
+  },
+  "TURF": {
+   "FRICTION": "0.85",
+   "DAMPING": "0",
+   "WAV": "extraturf.wav",
+   "WAV_PITCH": "1.2",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.2",
+   "VIBRATION_LENGTH": "0.1",
+   "DIRT_ADDITIVE": "0.0",
+   "IS_VALID_TRACK": "1",
+   "_from": "gp\\data\\surfaces.ini"
+  },
+  "CARPET": {
+   "FRICTION": "0.65",
+   "DAMPING": "0",
+   "WAV": "extraturf.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0.1",
+   "IS_VALID_TRACK": "1",
+   "_from": "gp\\data\\surfaces.ini"
+  },
+  "CNCPTS": {
+   "FRICTION": "0.92",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "gp\\data\\surfaces.ini"
+  },
+  "GRSCUT": {
+   "FRICTION": "0.6",
+   "DAMPING": "0",
+   "WAV": "grass.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.03",
+   "SIN_LENGTH": "0.5",
+   "VIBRATION_GAIN": "0.2",
+   "VIBRATION_LENGTH": "0.6",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "0",
+   "_from": "gp\\data\\surfaces.ini"
+  }
+ },
+ "surface_geometry": {
+  "WALL": {
+   "meshes": 9,
+   "invisible": 9,
+   "verts": 6704,
+   "tris": 3781,
+   "area_m2": 189378.4,
+   "edge_med_m": 19.222,
+   "grid_m": 9.646
+  },
+  "ASPH_BRANDS": {
+   "meshes": 16,
+   "invisible": 16,
+   "verts": 122009,
+   "tris": 209479,
+   "area_m2": 40393.5,
+   "edge_med_m": 0.68,
+   "grid_m": 0.621
+  },
+  "SAND": {
+   "meshes": 14,
+   "invisible": 14,
+   "verts": 667,
+   "tris": 614,
+   "area_m2": 22501.2,
+   "edge_med_m": 11.31,
+   "grid_m": 8.132
+  },
+  "GRASS": {
+   "meshes": 18,
+   "invisible": 18,
+   "verts": 4685,
+   "tris": 4139,
+   "area_m2": 78224.3,
+   "edge_med_m": 6.934,
+   "grid_m": 5.996
+  },
+  "CONCRETE": {
+   "meshes": 14,
+   "invisible": 14,
+   "verts": 876,
+   "tris": 760,
+   "area_m2": 990.4,
+   "edge_med_m": 1.863,
+   "grid_m": 1.185
+  },
+  "ROAD": {
+   "meshes": 14,
+   "invisible": 14,
+   "verts": 835,
+   "tris": 736,
+   "area_m2": 6188.0,
+   "edge_med_m": 4.154,
+   "grid_m": 4.005
+  },
+  "CURB": {
+   "meshes": 18,
+   "invisible": 18,
+   "verts": 5295,
+   "tris": 3983,
+   "area_m2": 1743.1,
+   "edge_med_m": 0.985,
+   "grid_m": 0.839
+  },
+  "KERB": {
+   "meshes": 7,
+   "invisible": 7,
+   "verts": 4565,
+   "tris": 4298,
+   "area_m2": 469.7,
+   "edge_med_m": 0.694,
+   "grid_m": 0.466
+  },
+  "TURF": {
+   "meshes": 1,
+   "invisible": 1,
+   "verts": 34,
+   "tris": 32,
+   "area_m2": 241.3,
+   "edge_med_m": 4.362,
+   "grid_m": 3.883
+  },
+  "DRAIN": {
+   "meshes": 4,
+   "invisible": 4,
+   "verts": 108,
+   "tris": 96,
+   "area_m2": 88.7,
+   "edge_med_m": 1.491,
+   "grid_m": 1.298
+  },
+  "PHYS?": {
+   "meshes": 2,
+   "invisible": 2,
+   "verts": 106,
+   "tris": 102,
+   "area_m2": 1539.4,
+   "edge_med_m": 7.022,
+   "grid_m": 5.494
+  },
+  "PITS": {
+   "meshes": 2,
+   "invisible": 2,
+   "verts": 139,
+   "tris": 145,
+   "area_m2": 3320.7,
+   "edge_med_m": 7.115,
+   "grid_m": 6.683
+  },
+  "GRSCUT": {
+   "meshes": 7,
+   "invisible": 7,
+   "verts": 246,
+   "tris": 233,
+   "area_m2": 5054.1,
+   "edge_med_m": 8.717,
+   "grid_m": 6.236
+  }
+ },
+ "ai": [
+  {
+   "file": "gp\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 2493,
+   "length_m": 3886.1,
+   "spacing_m": 1.56,
+   "has_extras": true
+  },
+  {
+   "file": "gp\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 780,
+   "length_m": 1194.4,
+   "spacing_m": 1.53,
+   "has_extras": true
+  },
+  {
+   "file": "gp\\ai\\pit_lane_with_grid.ai",
+   "version": 7,
+   "points": 780,
+   "length_m": 1194.4,
+   "spacing_m": 1.53,
+   "has_extras": true
+  },
+  {
+   "file": "gp\\data\\ideal_line.ai",
+   "version": 7,
+   "points": 2493,
+   "length_m": 3886.1,
+   "spacing_m": 1.56,
+   "has_extras": true
+  },
+  {
+   "file": "indy\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 1226,
+   "length_m": 1914.2,
+   "spacing_m": 1.56,
+   "has_extras": true
+  },
+  {
+   "file": "indy\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 806,
+   "length_m": 1233.1,
+   "spacing_m": 1.53,
+   "has_extras": true
+  },
+  {
+   "file": "indy\\data\\ideal_line.ai",
+   "version": 7,
+   "points": 1226,
+   "length_m": 1914.2,
+   "spacing_m": 1.56,
+   "has_extras": true
+  }
+ ],
+ "ext_config": {
+  "grass_fx": false,
+  "rain_fx": false,
+  "lights": 0,
+  "light_series": 0,
+  "trees": false,
+  "mesh_adjustments": 0,
+  "includes": [],
+  "files": 0
+ },
+ "vao_patches": [],
+ "cameras": 111,
+ "errors": [],
+ "kn5s": [
+  {
+   "file": "1.kn5",
+   "summary": {
+    "meshes": 264,
+    "verts": 391197,
+    "tris": 375144,
+    "textures": 9,
+    "texture_bytes": 2209468,
+    "materials": 5,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelMultiMap": {
+      "meshes": 96,
+      "tris": 291312
+     },
+     "ksPerPixel": {
+      "meshes": 96,
+      "tris": 66504
+     },
+     "ksPerPixelReflection": {
+      "meshes": 72,
+      "tris": 17328
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "100.kn5",
+   "summary": {
+    "meshes": 5,
+    "verts": 180,
+    "tris": 160,
+    "textures": 1,
+    "texture_bytes": 2793600,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelReflection": {
+      "meshes": 5,
+      "tris": 160
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "2.kn5",
+   "summary": {
+    "meshes": 32,
+    "verts": 19954,
+    "tris": 28087,
+    "textures": 13,
+    "texture_bytes": 12365068,
+    "materials": 7,
+    "surfaces": {
+     "WALL": {
+      "meshes": 1,
+      "verts": 224,
+      "tris": 192,
+      "area_m2": 5395.2,
+      "invisible": 1,
+      "edge_med_m": 20.387,
+      "grid_m": 7.497
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelMultiMap": {
+      "meshes": 19,
+      "tris": 17612
+     },
+     "ksPerPixelAlpha": {
+      "meshes": 12,
+      "tris": 10283
+     },
+     "ksPerPixel": {
+      "meshes": 1,
+      "tris": 192
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "barriers.dds",
+     "barriers_NM.dds",
+     "barriers_MAP.dds"
+    ]
+   }
+  },
+  {
+   "file": "3.kn5",
+   "summary": {
+    "meshes": 19,
+    "verts": 13734,
+    "tris": 18484,
+    "textures": 10,
+    "texture_bytes": 11618576,
+    "materials": 6,
+    "surfaces": {
+     "WALL": {
+      "meshes": 2,
+      "verts": 392,
+      "tris": 266,
+      "area_m2": 4091.1,
+      "invisible": 2,
+      "edge_med_m": 8.668,
+      "grid_m": 4.045
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelMultiMap": {
+      "meshes": 14,
+      "tris": 15735
+     },
+     "ksPerPixelAlpha": {
+      "meshes": 3,
+      "tris": 2483
+     },
+     "ksPerPixel": {
+      "meshes": 2,
+      "tris": 266
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "barriers.dds",
+     "barriers_NM.dds",
+     "barriers_MAP.dds"
+    ]
+   }
+  },
+  {
+   "file": "4.kn5",
+   "summary": {
+    "meshes": 123,
+    "verts": 145653,
+    "tris": 227940,
+    "textures": 1,
+    "texture_bytes": 174720,
+    "materials": 1,
+    "surfaces": {
+     "ASPH_BRANDS": {
+      "meshes": 16,
+      "verts": 122009,
+      "tris": 209479,
+      "area_m2": 40393.5,
+      "invisible": 16,
+      "edge_med_m": 0.68,
+      "grid_m": 0.621
+     },
+     "SAND": {
+      "meshes": 14,
+      "verts": 667,
+      "tris": 614,
+      "area_m2": 22501.2,
+      "invisible": 14,
+      "edge_med_m": 11.31,
+      "grid_m": 8.132
+     },
+     "GRASS": {
+      "meshes": 18,
+      "verts": 4685,
+      "tris": 4139,
+      "area_m2": 78224.3,
+      "invisible": 18,
+      "edge_med_m": 6.934,
+      "grid_m": 5.996
+     },
+     "CONCRETE": {
+      "meshes": 14,
+      "verts": 876,
+      "tris": 760,
+      "area_m2": 990.4,
+      "invisible": 14,
+      "edge_med_m": 1.863,
+      "grid_m": 1.185
+     },
+     "ROAD": {
+      "meshes": 14,
+      "verts": 835,
+      "tris": 736,
+      "area_m2": 6188.0,
+      "invisible": 14,
+      "edge_med_m": 4.154,
+      "grid_m": 4.005
+     },
+     "CURB": {
+      "meshes": 18,
+      "verts": 5295,
+      "tris": 3983,
+      "area_m2": 1743.1,
+      "invisible": 18,
+      "edge_med_m": 0.985,
+      "grid_m": 0.839
+     },
+     "KERB": {
+      "meshes": 7,
+      "verts": 4565,
+      "tris": 4298,
+      "area_m2": 469.7,
+      "invisible": 7,
+      "edge_med_m": 0.694,
+      "grid_m": 0.466
+     },
+     "TURF": {
+      "meshes": 1,
+      "verts": 34,
+      "tris": 32,
+      "area_m2": 241.3,
+      "invisible": 1,
+      "edge_med_m": 4.362,
+      "grid_m": 3.883
+     },
+     "DRAIN": {
+      "meshes": 4,
+      "verts": 108,
+      "tris": 96,
+      "area_m2": 88.7,
+      "invisible": 4,
+      "edge_med_m": 1.491,
+      "grid_m": 1.298
+     },
+     "PHYS?": {
+      "meshes": 2,
+      "verts": 106,
+      "tris": 102,
+      "area_m2": 1539.4,
+      "invisible": 2,
+      "edge_med_m": 7.022,
+      "grid_m": 5.494
+     },
+     "PITS": {
+      "meshes": 2,
+      "verts": 139,
+      "tris": 145,
+      "area_m2": 3320.7,
+      "invisible": 2,
+      "edge_med_m": 7.115,
+      "grid_m": 6.683
+     },
+     "WALL": {
+      "meshes": 6,
+      "verts": 6088,
+      "tris": 3323,
+      "area_m2": 179892.1,
+      "invisible": 6,
+      "edge_med_m": 20.0,
+      "grid_m": 10.219
+     },
+     "GRSCUT": {
+      "meshes": 7,
+      "verts": 246,
+      "tris": 233,
+      "area_m2": 5054.1,
+      "invisible": 7,
+      "edge_med_m": 8.717,
+      "grid_m": 6.236
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 123,
+      "tris": 227940
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "5.kn5",
+   "summary": {
+    "meshes": 53,
+    "verts": 1272,
+    "tris": 636,
+    "textures": 1,
+    "texture_bytes": 174720,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 53,
+      "tris": 636
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "6.kn5",
+   "summary": {
+    "meshes": 55,
+    "verts": 1320,
+    "tris": 660,
+    "textures": 1,
+    "texture_bytes": 174720,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 55,
+      "tris": 660
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "7.kn5",
+   "summary": {
+    "meshes": 4,
+    "verts": 96,
+    "tris": 48,
+    "textures": 1,
+    "texture_bytes": 174720,
+    "materials": 2,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 2,
+      "tris": 24
+     },
+     "GL": {
+      "meshes": 2,
+      "tris": 24
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "ks_brands_hatch.kn5",
+   "summary": {
+    "meshes": 1503,
+    "verts": 2277597,
+    "tris": 2069026,
+    "textures": 184,
+    "texture_bytes": 210034228,
+    "materials": 95,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelMultiMap": {
+      "meshes": 691,
+      "tris": 987614
+     },
+     "ksGrass": {
+      "meshes": 207,
+      "tris": 622758
+     },
+     "ksPerPixel": {
+      "meshes": 190,
+      "tris": 148995
+     },
+     "ksPerPixelAT": {
+      "meshes": 91,
+      "tris": 100100
+     },
+     "ksTree": {
+      "meshes": 55,
+      "tris": 73142
+     },
+     "ksPerPixelReflection": {
+      "meshes": 110,
+      "tris": 58647
+     },
+     "ksPerPixelMultiMap_NMDetail": {
+      "meshes": 109,
+      "tris": 41038
+     },
+     "ksMultilayer_fresnel_nm": {
+      "meshes": 28,
+      "tris": 21357
+     },
+     "ksPerPixelAlpha": {
+      "meshes": 10,
+      "tris": 10315
+     },
+     "ksMultilayer_objsp": {
+      "meshes": 5,
+      "tris": 3410
+     },
+     "ksWindscreen": {
+      "meshes": 5,
+      "tris": 1604
+     },
+     "ksPerPixelMultiMap_AT": {
+      "meshes": 2,
+      "tris": 46
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "barriers.dds",
+     "barriers_NM.dds",
+     "barriers_MAP.dds",
+     "soft-barriers1.dds",
+     "soft-barriers1_NM.dds",
+     "soft-barriers1_MAP.dds",
+     "fences3.dds",
+     "dotted1..dds",
+     "dist.dds"
+    ]
+   }
+  }
+ ]
+}

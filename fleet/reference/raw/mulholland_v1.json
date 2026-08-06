@@ -1,0 +1,786 @@
+{
+ "track": "mulholland_v1",
+ "path": "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks\\mulholland_v1",
+ "ui": {
+  "name": "Mulholland Drive",
+  "length": "1900",
+  "width": null,
+  "pitboxes": "21",
+  "run": "point-to-point"
+ },
+ "layouts": {
+  "east": [
+   "mulholland_v1.kn5",
+   "la_terrain_background.kn5",
+   "mulholland_foliage.kn5",
+   "hedges.kn5",
+   "mulholland_houses.kn5",
+   "mulholland_props.kn5",
+   "mulholland_props_east.kn5",
+   "mulholland_AC_east.kn5",
+   "mulholland_pits.kn5",
+   "mulholland_misc.kn5"
+  ],
+  "freeroam": [
+   "mulholland_v1.kn5",
+   "la_terrain_background.kn5",
+   "mulholland_foliage.kn5",
+   "hedges.kn5",
+   "mulholland_houses.kn5",
+   "mulholland_props.kn5",
+   "mulholland_props_freeroam.kn5",
+   "mulholland_AC_freeroam.kn5",
+   "mulholland_pits.kn5",
+   "mulholland_misc.kn5"
+  ],
+  "west": [
+   "mulholland_v1.kn5",
+   "la_terrain_background.kn5",
+   "mulholland_foliage.kn5",
+   "hedges.kn5",
+   "mulholland_houses.kn5",
+   "mulholland_props.kn5",
+   "mulholland_props_west.kn5",
+   "mulholland_AC_west.kn5",
+   "mulholland_pits.kn5",
+   "mulholland_misc.kn5"
+  ]
+ },
+ "kn5_count": 14,
+ "totals": {
+  "meshes": 2117,
+  "verts": 3923526,
+  "tris": 3903773,
+  "bytes": 772280707,
+  "texture_bytes": 575973650
+ },
+ "surfaces_ini": {
+  "PITS": {
+   "FRICTION": "0.965",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0.05",
+   "IS_VALID_TRACK": "1",
+   "_from": "east\\data\\surfaces.ini"
+  },
+  "KERB": {
+   "FRICTION": "0.968",
+   "DAMPING": "0",
+   "WAV": "kerb.wav",
+   "WAV_PITCH": "1.3",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.2",
+   "VIBRATION_LENGTH": "1.0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "east\\data\\surfaces.ini"
+  },
+  "CURB": {
+   "FRICTION": "0.968",
+   "DAMPING": "0",
+   "WAV": "kerb.wav",
+   "WAV_PITCH": "1.0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "1.0",
+   "VIBRATION_LENGTH": "0.3",
+   "DIRT_ADDITIVE": "0.0",
+   "IS_VALID_TRACK": "1",
+   "_from": "east\\data\\surfaces.ini"
+  },
+  "CONCRETE": {
+   "FRICTION": "0.965",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.1",
+   "VIBRATION_LENGTH": "0.5",
+   "DIRT_ADDITIVE": "0.0",
+   "IS_VALID_TRACK": "1",
+   "_from": "east\\data\\surfaces.ini"
+  },
+  "DRAIN": {
+   "FRICTION": "0.92",
+   "DAMPING": "0",
+   "WAV": "kerb.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.2",
+   "VIBRATION_LENGTH": "0.3",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "east\\data\\surfaces.ini"
+  },
+  "GRAVEL": {
+   "FRICTION": "0.75",
+   "DAMPING": "0.04",
+   "WAV": "grass.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.03",
+   "SIN_LENGTH": "0.5",
+   "VIBRATION_GAIN": "0.5",
+   "VIBRATION_LENGTH": "0.6",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "1",
+   "_from": "east\\data\\surfaces.ini"
+  },
+  "ASPHNEW": {
+   "FRICTION": "0.99",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "east\\data\\surfaces.ini"
+  },
+  "RDOLD": {
+   "FRICTION": "0.94",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.02",
+   "VIBRATION_LENGTH": "0.1",
+   "DIRT_ADDITIVE": "0.2",
+   "IS_VALID_TRACK": "1",
+   "_from": "east\\data\\surfaces.ini"
+  },
+  "CNCGREEN": {
+   "FRICTION": "0.96",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "east\\data\\surfaces.ini"
+  },
+  "CNCPTS": {
+   "FRICTION": "0.96",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "east\\data\\surfaces.ini"
+  },
+  "PAINT": {
+   "FRICTION": "0.96",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "east\\data\\surfaces.ini"
+  },
+  "ROAD": {
+   "FRICTION": "0.97",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "east\\data\\surfaces.ini"
+  },
+  "SAND": {
+   "FRICTION": "0.8",
+   "DAMPING": "0.15",
+   "WAV": "sand.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.04",
+   "SIN_LENGTH": "0.5",
+   "VIBRATION_GAIN": "0.2",
+   "VIBRATION_LENGTH": "0.3",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "1",
+   "_from": "east\\data\\surfaces.ini"
+  },
+  "RCVTP": {
+   "FRICTION": "0.94",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.02",
+   "VIBRATION_LENGTH": "0.1",
+   "DIRT_ADDITIVE": "0.2",
+   "IS_VALID_TRACK": "0",
+   "_from": "east\\data\\surfaces.ini"
+  },
+  "CUTGRV": {
+   "FRICTION": "0.75",
+   "DAMPING": "0.04",
+   "WAV": "grass.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.03",
+   "SIN_LENGTH": "0.5",
+   "VIBRATION_GAIN": "0.5",
+   "VIBRATION_LENGTH": "0.6",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "0",
+   "_from": "east\\data\\surfaces.ini"
+  },
+  "ASPHALT": {
+   "FRICTION": "1.0",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.1",
+   "VIBRATION_LENGTH": "0.03",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "freeroam\\data\\surfaces.ini"
+  },
+  "PIT": {
+   "FRICTION": "0.98",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.00",
+   "SIN_LENGTH": "0.0",
+   "VIBRATION_GAIN": "0.1",
+   "VIBRATION_LENGTH": "0.2",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "freeroam\\data\\surfaces.ini"
+  }
+ },
+ "surface_geometry": {
+  "WALL": {
+   "meshes": 262,
+   "invisible": 0,
+   "verts": 47450,
+   "tris": 32250,
+   "area_m2": 67225.8,
+   "edge_med_m": 2.009,
+   "grid_m": 1.82
+  },
+  "PIT": {
+   "meshes": 3,
+   "invisible": 0,
+   "verts": 880,
+   "tris": 1412,
+   "area_m2": 5333.0,
+   "edge_med_m": 2.828,
+   "grid_m": 2.588
+  },
+  "DIRT": {
+   "meshes": 97,
+   "invisible": 0,
+   "verts": 109083,
+   "tris": 158124,
+   "area_m2": 204331.8,
+   "edge_med_m": 1.773,
+   "grid_m": 1.57
+  },
+  "GRASS": {
+   "meshes": 15,
+   "invisible": 0,
+   "verts": 200902,
+   "tris": 319377,
+   "area_m2": 3402625.4,
+   "edge_med_m": 3.347,
+   "grid_m": 4.547
+  },
+  "ROAD": {
+   "meshes": 178,
+   "invisible": 0,
+   "verts": 286680,
+   "tris": 391256,
+   "area_m2": 246589.5,
+   "edge_med_m": 1.346,
+   "grid_m": 0.951
+  }
+ },
+ "ai": [
+  {
+   "file": "east\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 10840,
+   "length_m": 16851.5,
+   "spacing_m": 1.55,
+   "has_extras": true
+  },
+  {
+   "file": "east\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 74,
+   "length_m": 110.3,
+   "spacing_m": 1.51,
+   "has_extras": true
+  },
+  {
+   "file": "east\\ai\\pit_lane_with_grid.ai",
+   "version": 7,
+   "points": 61,
+   "length_m": 90.8,
+   "spacing_m": 1.51,
+   "has_extras": true
+  },
+  {
+   "file": "freeroam\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 22363,
+   "length_m": 34368.8,
+   "spacing_m": 1.54,
+   "has_extras": true
+  },
+  {
+   "file": "freeroam\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 112,
+   "length_m": 167.9,
+   "spacing_m": 1.51,
+   "has_extras": true
+  },
+  {
+   "file": "freeroam\\ai\\pit_lane_with_grid.ai",
+   "version": 7,
+   "points": 112,
+   "length_m": 167.9,
+   "spacing_m": 1.51,
+   "has_extras": true
+  },
+  {
+   "file": "west\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 10815,
+   "length_m": 16794.1,
+   "spacing_m": 1.55,
+   "has_extras": true
+  },
+  {
+   "file": "west\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 126,
+   "length_m": 189.0,
+   "spacing_m": 1.51,
+   "has_extras": true
+  },
+  {
+   "file": "west\\ai\\pit_lane_with_grid.ai",
+   "version": 7,
+   "points": 106,
+   "length_m": 158.8,
+   "spacing_m": 1.51,
+   "has_extras": true
+  }
+ ],
+ "ext_config": {
+  "grass_fx": true,
+  "rain_fx": false,
+  "lights": 0,
+  "light_series": 0,
+  "trees": false,
+  "mesh_adjustments": 0,
+  "includes": [],
+  "files": 1
+ },
+ "vao_patches": [],
+ "cameras": 0,
+ "errors": [],
+ "kn5s": [
+  {
+   "file": "hedges.kn5",
+   "summary": {
+    "meshes": 62,
+    "verts": 327834,
+    "tris": 291408,
+    "textures": 3,
+    "texture_bytes": 4194768,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 62,
+      "tris": 291408
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "la_terrain_background.kn5",
+   "summary": {
+    "meshes": 35,
+    "verts": 466903,
+    "tris": 691428,
+    "textures": 20,
+    "texture_bytes": 141519034,
+    "materials": 20,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 35,
+      "tris": 691428
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "mulholland_AC_east.kn5",
+   "summary": {
+    "meshes": 47,
+    "verts": 5316,
+    "tris": 2068,
+    "textures": 1,
+    "texture_bytes": 1398256,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 47,
+      "tris": 2068
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "mulholland_AC_freeroam.kn5",
+   "summary": {
+    "meshes": 49,
+    "verts": 5542,
+    "tris": 2156,
+    "textures": 1,
+    "texture_bytes": 1398256,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 49,
+      "tris": 2156
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "mulholland_AC_west.kn5",
+   "summary": {
+    "meshes": 47,
+    "verts": 1128,
+    "tris": 2068,
+    "textures": 1,
+    "texture_bytes": 1398256,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 47,
+      "tris": 2068
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "mulholland_foliage.kn5",
+   "summary": {
+    "meshes": 33,
+    "verts": 401949,
+    "tris": 349656,
+    "textures": 3,
+    "texture_bytes": 20971904,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 33,
+      "tris": 349656
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "mulholland_houses.kn5",
+   "summary": {
+    "meshes": 408,
+    "verts": 887855,
+    "tris": 570703,
+    "textures": 12,
+    "texture_bytes": 2754048,
+    "materials": 12,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 408,
+      "tris": 570703
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "mulholland_misc.kn5",
+   "summary": {
+    "meshes": 15,
+    "verts": 6778,
+    "tris": 4188,
+    "textures": 3,
+    "texture_bytes": 2844400,
+    "materials": 3,
+    "surfaces": {
+     "WALL": {
+      "meshes": 2,
+      "verts": 116,
+      "tris": 64,
+      "area_m2": 464.2,
+      "invisible": 0,
+      "edge_med_m": 5.211,
+      "grid_m": 3.674
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 15,
+      "tris": 4188
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "mulholland_pits.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 880,
+    "tris": 1412,
+    "textures": 1,
+    "texture_bytes": 4224,
+    "materials": 1,
+    "surfaces": {
+     "PIT": {
+      "meshes": 3,
+      "verts": 880,
+      "tris": 1412,
+      "area_m2": 5333.0,
+      "invisible": 0,
+      "edge_med_m": 2.828,
+      "grid_m": 2.588
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 3,
+      "tris": 1412
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "mulholland_props.kn5",
+   "summary": {
+    "meshes": 795,
+    "verts": 1046891,
+    "tris": 952630,
+    "textures": 34,
+    "texture_bytes": 27045040,
+    "materials": 34,
+    "surfaces": {
+     "WALL": {
+      "meshes": 1,
+      "verts": 180,
+      "tris": 90,
+      "area_m2": 893.7,
+      "invisible": 0,
+      "edge_med_m": 5.348,
+      "grid_m": 4.456
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 795,
+      "tris": 952630
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "lifts_metal.dds",
+     "police_texture.dds",
+     "banner_start_finish.dds",
+     "MetalBase0121_9_M.dds"
+    ]
+   }
+  },
+  {
+   "file": "mulholland_props_east.kn5",
+   "summary": {
+    "meshes": 10,
+    "verts": 5988,
+    "tris": 6016,
+    "textures": 4,
+    "texture_bytes": 3456184,
+    "materials": 4,
+    "surfaces": {
+     "WALL": {
+      "meshes": 1,
+      "verts": 8,
+      "tris": 4,
+      "area_m2": 25.6,
+      "invisible": 0,
+      "edge_med_m": 6.4,
+      "grid_m": 3.577
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 10,
+      "tris": 6016
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "mulholland_props_freeroam.kn5",
+   "summary": {
+    "meshes": 6,
+    "verts": 3846,
+    "tris": 3730,
+    "textures": 4,
+    "texture_bytes": 3495792,
+    "materials": 4,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 6,
+      "tris": 3730
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "mulholland_props_west.kn5",
+   "summary": {
+    "meshes": 6,
+    "verts": 3846,
+    "tris": 3730,
+    "textures": 4,
+    "texture_bytes": 3495792,
+    "materials": 4,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 6,
+      "tris": 3730
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "mulholland_v1.kn5",
+   "summary": {
+    "meshes": 601,
+    "verts": 758770,
+    "tris": 1022580,
+    "textures": 60,
+    "texture_bytes": 361997696,
+    "materials": 55,
+    "surfaces": {
+     "DIRT": {
+      "meshes": 97,
+      "verts": 109083,
+      "tris": 158124,
+      "area_m2": 204331.8,
+      "invisible": 0,
+      "edge_med_m": 1.773,
+      "grid_m": 1.57
+     },
+     "WALL": {
+      "meshes": 258,
+      "verts": 47146,
+      "tris": 32092,
+      "area_m2": 65842.3,
+      "invisible": 0,
+      "edge_med_m": 1.993,
+      "grid_m": 1.809
+     },
+     "GRASS": {
+      "meshes": 15,
+      "verts": 200902,
+      "tris": 319377,
+      "area_m2": 3402625.4,
+      "invisible": 0,
+      "edge_med_m": 3.347,
+      "grid_m": 4.547
+     },
+     "ROAD": {
+      "meshes": 178,
+      "verts": 286680,
+      "tris": 391256,
+      "area_m2": 246589.5,
+      "invisible": 0,
+      "edge_med_m": 1.346,
+      "grid_m": 0.951
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 429,
+      "tris": 632754
+     },
+     "ksMultilayer_fresnel_nm": {
+      "meshes": 172,
+      "tris": 389826
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "cliffs_A_diff.dds",
+     "Roads0015_1_seamless_M_mask.dds",
+     "grass_plain_A.dds"
+    ]
+   }
+  }
+ ]
+}

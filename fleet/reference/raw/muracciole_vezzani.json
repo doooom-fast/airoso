@@ -1,0 +1,282 @@
+{
+ "track": "muracciole_vezzani",
+ "path": "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks\\muracciole_vezzani",
+ "ui": {
+  "name": "muracciole_vezzani",
+  "length": "10500",
+  "width": "4m-5m",
+  "pitboxes": "16",
+  "run": "point-to-point"
+ },
+ "layouts": {
+  "default": [
+   "muracciole_vezzani.kn5",
+   "nocetageneral.kn5"
+  ]
+ },
+ "kn5_count": 2,
+ "totals": {
+  "meshes": 8096,
+  "verts": 1971118,
+  "tris": 2491624,
+  "bytes": 996833137,
+  "texture_bytes": 893484117
+ },
+ "surfaces_ini": {
+  "ASPHALT": {
+   "FRICTION": "1",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "data\\surfaces.ini"
+  },
+  "KERB": {
+   "FRICTION": "0.92",
+   "DAMPING": "0",
+   "WAV": "kerb.wav",
+   "WAV_PITCH": "1.3",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.1",
+   "VIBRATION_LENGTH": "0.2",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "data\\surfaces.ini"
+  },
+  "1PIT": {
+   "FRICTION": "0.95",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "data\\surfaces.ini"
+  },
+  "ROAD": {
+   "FRICTION": "1",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.06",
+   "VIBRATION_LENGTH": "0.06",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "data\\surfaces.ini"
+  },
+  "GRASS": {
+   "FRICTION": "0.89",
+   "DAMPING": "0",
+   "WAV": "grass.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.01",
+   "SIN_LENGTH": "0.01",
+   "VIBRATION_GAIN": "0,4",
+   "VIBRATION_LENGTH": "0,5",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "data\\surfaces.ini"
+  }
+ },
+ "surface_geometry": {
+  "ROAD": {
+   "meshes": 112,
+   "invisible": 0,
+   "verts": 516894,
+   "tris": 913740,
+   "area_m2": 484021.4,
+   "edge_med_m": 1.272,
+   "grid_m": 0.834
+  },
+  "GRASS": {
+   "meshes": 569,
+   "invisible": 0,
+   "verts": 319886,
+   "tris": 496783,
+   "area_m2": 9724088.7,
+   "edge_med_m": 3.528,
+   "grid_m": 3.891
+  },
+  "SAND": {
+   "meshes": 17,
+   "invisible": 0,
+   "verts": 1263,
+   "tris": 1716,
+   "area_m2": 3042.9,
+   "edge_med_m": 2.558,
+   "grid_m": 1.818
+  },
+  "KERB": {
+   "meshes": 402,
+   "invisible": 0,
+   "verts": 271594,
+   "tris": 311094,
+   "area_m2": 39200.5,
+   "edge_med_m": 0.308,
+   "grid_m": 0.257
+  },
+  "WALL": {
+   "meshes": 866,
+   "invisible": 848,
+   "verts": 10834,
+   "tris": 9776,
+   "area_m2": 42857.2,
+   "edge_med_m": 3.688,
+   "grid_m": 2.592
+  }
+ },
+ "ai": [
+  {
+   "file": "ai\\fast_lane.ai",
+   "version": 7,
+   "points": 7185,
+   "length_m": 11060.2,
+   "spacing_m": 1.54,
+   "has_extras": true
+  },
+  {
+   "file": "ai\\pit_lane.ai",
+   "version": 7,
+   "points": 245,
+   "length_m": 369.8,
+   "spacing_m": 1.52,
+   "has_extras": true
+  }
+ ],
+ "ext_config": {
+  "grass_fx": false,
+  "rain_fx": false,
+  "lights": 0,
+  "light_series": 0,
+  "trees": false,
+  "mesh_adjustments": 0,
+  "includes": [],
+  "files": 0
+ },
+ "vao_patches": [],
+ "cameras": 77,
+ "errors": [],
+ "kn5s": [
+  {
+   "file": "muracciole_vezzani.kn5",
+   "summary": {
+    "meshes": 8095,
+    "verts": 1964567,
+    "tris": 2478892,
+    "textures": 1018,
+    "texture_bytes": 855535895,
+    "materials": 1049,
+    "surfaces": {
+     "ROAD": {
+      "meshes": 112,
+      "verts": 516894,
+      "tris": 913740,
+      "area_m2": 484021.4,
+      "invisible": 0,
+      "edge_med_m": 1.272,
+      "grid_m": 0.834
+     },
+     "GRASS": {
+      "meshes": 569,
+      "verts": 319886,
+      "tris": 496783,
+      "area_m2": 9724088.7,
+      "invisible": 0,
+      "edge_med_m": 3.528,
+      "grid_m": 3.891
+     },
+     "SAND": {
+      "meshes": 17,
+      "verts": 1263,
+      "tris": 1716,
+      "area_m2": 3042.9,
+      "invisible": 0,
+      "edge_med_m": 2.558,
+      "grid_m": 1.818
+     },
+     "KERB": {
+      "meshes": 402,
+      "verts": 271594,
+      "tris": 311094,
+      "area_m2": 39200.5,
+      "invisible": 0,
+      "edge_med_m": 0.308,
+      "grid_m": 0.257
+     },
+     "WALL": {
+      "meshes": 866,
+      "verts": 10834,
+      "tris": 9776,
+      "area_m2": 42857.2,
+      "invisible": 848,
+      "edge_med_m": 3.688,
+      "grid_m": 2.592
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 1574,
+      "tris": 1440402
+     },
+     "ksPerPixelAT": {
+      "meshes": 2768,
+      "tris": 397358
+     },
+     "ksMultilayer": {
+      "meshes": 917,
+      "tris": 274450
+     },
+     "ksTree": {
+      "meshes": 2776,
+      "tris": 191256
+     },
+     "ksPerPixelMultiMap_NMDetail": {
+      "meshes": 9,
+      "tris": 167040
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 51,
+      "tris": 8386
+     }
+    },
+    "near_vert_cap": [
+     "1GRASS_0"
+    ],
+    "non_pot_textures": [
+     "SPECTA3D.dds"
+    ]
+   }
+  },
+  {
+   "file": "nocetageneral.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 6551,
+    "tris": 12732,
+    "textures": 6,
+    "texture_bytes": 37948222,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksMultilayer": {
+      "meshes": 1,
+      "tris": 12732
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  }
+ ]
+}

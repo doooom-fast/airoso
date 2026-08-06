@@ -1,0 +1,4334 @@
+{
+ "track": "la_canyons",
+ "path": "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks\\la_canyons",
+ "ui": {
+  "name": "LAC - Traffic 2-Way",
+  "length": "42408",
+  "width": "9",
+  "pitboxes": "46",
+  "run": "clockwise"
+ },
+ "layouts": {
+  "2way": [
+   "la_canyons.kn5",
+   "layout_traffic_oneway_normal.kn5",
+   "main.kn5",
+   "main_bushes.kn5",
+   "main_pines.kn5",
+   "main_rails.kn5",
+   "main_rocky.kn5",
+   "main_signs.kn5",
+   "main_structures.kn5",
+   "main_trees.kn5",
+   "main_tunnel.kn5",
+   "rc2.kn5",
+   "vip.kn5",
+   "vip_bushes.kn5",
+   "vip_pines.kn5",
+   "vip_rocky.kn5",
+   "vip_structures.kn5",
+   "vip_trees.kn5",
+   "main_test_a.kn5",
+   "main_test_b.kn5",
+   "main_test_c.kn5",
+   "vip_test_a.kn5",
+   "vip_test_b.kn5",
+   "vip_test_c.kn5",
+   "main_roads.kn5",
+   "dyn_cars_a.kn5",
+   "dyn_cars_b.kn5",
+   "dyn_cars_c.kn5",
+   "dyn_cars_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5"
+  ],
+  "angeles_crest_east": [
+   "la_canyons.kn5",
+   "layout_angeles_crest_east.kn5",
+   "main.kn5",
+   "main_bushes.kn5",
+   "main_pines.kn5",
+   "main_rails.kn5",
+   "main_rocky.kn5",
+   "main_signs.kn5",
+   "main_structures.kn5",
+   "main_trees.kn5",
+   "main_tyremarks.kn5",
+   "rc3.kn5",
+   "vip.kn5",
+   "vip_bushes.kn5",
+   "vip_pines.kn5",
+   "vip_rocky.kn5",
+   "vip_structures.kn5",
+   "vip_trees.kn5",
+   "main_test_a.kn5",
+   "main_test_b.kn5",
+   "main_test_c.kn5",
+   "vip_test_a.kn5",
+   "vip_test_b.kn5",
+   "vip_test_c.kn5",
+   "main_roads.kn5",
+   "dyn_cars_a.kn5",
+   "dyn_cars_b.kn5",
+   "dyn_cars_c.kn5",
+   "dyn_cars_d.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_i.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5"
+  ],
+  "angeles_crest_west": [
+   "la_canyons.kn5",
+   "layout_angeles_crest_west.kn5",
+   "main.kn5",
+   "main_bushes.kn5",
+   "main_pines.kn5",
+   "main_rails.kn5",
+   "main_rocky.kn5",
+   "main_signs.kn5",
+   "main_structures.kn5",
+   "main_trees.kn5",
+   "main_tyremarks.kn5",
+   "rc3.kn5",
+   "vip.kn5",
+   "vip_bushes.kn5",
+   "vip_pines.kn5",
+   "vip_rocky.kn5",
+   "vip_structures.kn5",
+   "vip_trees.kn5",
+   "main_test_a.kn5",
+   "main_test_b.kn5",
+   "main_test_c.kn5",
+   "vip_test_a.kn5",
+   "vip_test_b.kn5",
+   "vip_test_c.kn5",
+   "main_roads.kn5",
+   "dyn_cars_a.kn5",
+   "dyn_cars_b.kn5",
+   "dyn_cars_c.kn5",
+   "dyn_cars_d.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_i.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5"
+  ],
+  "freeroam": [
+   "la_canyons.kn5",
+   "layout_freeroam.kn5",
+   "main.kn5",
+   "main_bushes.kn5",
+   "main_pines.kn5",
+   "main_rails.kn5",
+   "main_rocky.kn5",
+   "main_signs.kn5",
+   "main_structures.kn5",
+   "main_trees.kn5",
+   "main_tyremarks.kn5",
+   "rc2.kn5",
+   "vip.kn5",
+   "vip_bushes.kn5",
+   "vip_pines.kn5",
+   "vip_rocky.kn5",
+   "vip_structures.kn5",
+   "vip_trees.kn5",
+   "main_test_a.kn5",
+   "main_test_b.kn5",
+   "main_test_c.kn5",
+   "vip_test_a.kn5",
+   "vip_test_b.kn5",
+   "vip_test_c.kn5",
+   "main_roads.kn5",
+   "dyn_cars_a.kn5",
+   "dyn_cars_b.kn5",
+   "dyn_cars_c.kn5",
+   "dyn_cars_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5"
+  ],
+  "freeroam_distant": [
+   "la_canyons.kn5",
+   "layout_freeroam_distant.kn5",
+   "main.kn5",
+   "main_bushes.kn5",
+   "main_pines.kn5",
+   "main_rails.kn5",
+   "main_rocky.kn5",
+   "main_signs.kn5",
+   "main_structures.kn5",
+   "main_trees.kn5",
+   "main_tyremarks.kn5",
+   "rc2.kn5",
+   "vip.kn5",
+   "vip_bushes.kn5",
+   "vip_pines.kn5",
+   "vip_rocky.kn5",
+   "vip_structures.kn5",
+   "vip_trees.kn5",
+   "main_test_a.kn5",
+   "main_test_b.kn5",
+   "main_test_c.kn5",
+   "vip_test_a.kn5",
+   "vip_test_b.kn5",
+   "vip_test_c.kn5",
+   "main_roads.kn5",
+   "dyn_cars_a.kn5",
+   "dyn_cars_b.kn5",
+   "dyn_cars_c.kn5",
+   "dyn_cars_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5"
+  ],
+  "freeroam_urban": [
+   "la_canyons.kn5",
+   "layout_freeroam_urban.kn5",
+   "main.kn5",
+   "main_bushes.kn5",
+   "main_pines.kn5",
+   "main_rails.kn5",
+   "main_rocky.kn5",
+   "main_signs.kn5",
+   "main_structures.kn5",
+   "main_trees.kn5",
+   "main_tyremarks.kn5",
+   "rc4.kn5",
+   "vip.kn5",
+   "vip_bushes.kn5",
+   "vip_pines.kn5",
+   "vip_rocky.kn5",
+   "vip_structures.kn5",
+   "vip_trees.kn5",
+   "main_test_a.kn5",
+   "main_test_b.kn5",
+   "main_test_c.kn5",
+   "vip_test_a.kn5",
+   "vip_test_b.kn5",
+   "vip_test_c.kn5",
+   "main_roads.kn5",
+   "dyn_cars_a.kn5",
+   "dyn_cars_b.kn5",
+   "dyn_cars_c.kn5",
+   "dyn_cars_d.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5"
+  ],
+  "freeroam_vip": [
+   "la_canyons.kn5",
+   "layout_freeroam_vip.kn5",
+   "main.kn5",
+   "main_bushes.kn5",
+   "main_pines.kn5",
+   "main_rails.kn5",
+   "main_rocky.kn5",
+   "main_signs.kn5",
+   "main_structures.kn5",
+   "main_trees.kn5",
+   "main_tyremarks.kn5",
+   "rc4.kn5",
+   "vip.kn5",
+   "vip_bushes.kn5",
+   "vip_pines.kn5",
+   "vip_rocky.kn5",
+   "vip_structures.kn5",
+   "vip_trees.kn5",
+   "main_test_a.kn5",
+   "main_test_b.kn5",
+   "main_test_c.kn5",
+   "vip_test_a.kn5",
+   "vip_test_b.kn5",
+   "vip_test_c.kn5",
+   "main_roads.kn5",
+   "dyn_cars_a.kn5",
+   "dyn_cars_b.kn5",
+   "dyn_cars_c.kn5",
+   "dyn_cars_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5"
+  ],
+  "mt_lawlor_tourist": [
+   "la_canyons.kn5",
+   "layout_mt_lawlor_tourist.kn5",
+   "main.kn5",
+   "main_bushes.kn5",
+   "main_pines.kn5",
+   "main_rails.kn5",
+   "main_rocky.kn5",
+   "main_signs.kn5",
+   "main_structures.kn5",
+   "main_trees.kn5",
+   "main_tyremarks.kn5",
+   "rc2.kn5",
+   "vip.kn5",
+   "vip_bushes.kn5",
+   "vip_pines.kn5",
+   "vip_rocky.kn5",
+   "vip_structures.kn5",
+   "vip_trees.kn5",
+   "main_test_a.kn5",
+   "main_test_b.kn5",
+   "main_test_c.kn5",
+   "vip_test_a.kn5",
+   "vip_test_b.kn5",
+   "vip_test_c.kn5",
+   "main_roads.kn5",
+   "dyn_cars_a.kn5",
+   "dyn_cars_b.kn5",
+   "dyn_cars_c.kn5",
+   "dyn_cars_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_c.kn5",
+   "dyn_balloon_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5"
+  ],
+  "mt_wilson_downhill": [
+   "la_canyons.kn5",
+   "layout_mt_wilson_downhill.kn5",
+   "main.kn5",
+   "main_bushes.kn5",
+   "main_pines.kn5",
+   "main_rails.kn5",
+   "main_rocky.kn5",
+   "main_signs.kn5",
+   "main_structures.kn5",
+   "main_trees.kn5",
+   "main_tyremarks.kn5",
+   "rc3.kn5",
+   "vip.kn5",
+   "vip_bushes.kn5",
+   "vip_pines.kn5",
+   "vip_rocky.kn5",
+   "vip_structures.kn5",
+   "vip_trees.kn5",
+   "main_test_a.kn5",
+   "main_test_b.kn5",
+   "main_test_c.kn5",
+   "vip_test_a.kn5",
+   "vip_test_b.kn5",
+   "vip_test_c.kn5",
+   "main_roads.kn5",
+   "dyn_cars_a.kn5",
+   "dyn_cars_b.kn5",
+   "dyn_cars_c.kn5",
+   "dyn_cars_d.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5"
+  ],
+  "mt_wilson_hillclimb": [
+   "la_canyons.kn5",
+   "layout_mt_wilson_hillclimb.kn5",
+   "main.kn5",
+   "main_bushes.kn5",
+   "main_pines.kn5",
+   "main_rails.kn5",
+   "main_rocky.kn5",
+   "main_signs.kn5",
+   "main_structures.kn5",
+   "main_trees.kn5",
+   "main_tyremarks.kn5",
+   "rc3.kn5",
+   "vip.kn5",
+   "vip_bushes.kn5",
+   "vip_pines.kn5",
+   "vip_rocky.kn5",
+   "vip_structures.kn5",
+   "vip_trees.kn5",
+   "main_test_a.kn5",
+   "main_test_b.kn5",
+   "main_test_c.kn5",
+   "vip_test_a.kn5",
+   "vip_test_b.kn5",
+   "vip_test_c.kn5",
+   "main_roads.kn5",
+   "dyn_cars_a.kn5",
+   "dyn_cars_b.kn5",
+   "dyn_cars_c.kn5",
+   "dyn_cars_d.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5"
+  ],
+  "normal": [
+   "la_canyons.kn5",
+   "layout_normal.kn5",
+   "main.kn5",
+   "main_bushes.kn5",
+   "main_pines.kn5",
+   "main_rails.kn5",
+   "main_rocky.kn5",
+   "main_signs.kn5",
+   "main_structures.kn5",
+   "main_trees.kn5",
+   "main_tyremarks.kn5",
+   "main_roads.kn5",
+   "rc1.kn5",
+   "rc2.kn5",
+   "main_test_a.kn5",
+   "main_test_b.kn5",
+   "main_test_c.kn5",
+   "dyn_cars_a.kn5",
+   "dyn_cars_b.kn5",
+   "dyn_cars_c.kn5",
+   "dyn_cars_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5"
+  ],
+  "pursuit": [
+   "la_canyons.kn5",
+   "layout_pursuit.kn5",
+   "main.kn5",
+   "main_bushes.kn5",
+   "main_pines.kn5",
+   "main_rails.kn5",
+   "main_rocky.kn5",
+   "main_signs.kn5",
+   "main_structures.kn5",
+   "main_trees.kn5",
+   "main_tyremarks.kn5",
+   "rc2.kn5",
+   "vip.kn5",
+   "vip_bushes.kn5",
+   "vip_pines.kn5",
+   "vip_rocky.kn5",
+   "vip_structures.kn5",
+   "vip_trees.kn5",
+   "main_test_a.kn5",
+   "main_test_b.kn5",
+   "main_test_c.kn5",
+   "vip_test_a.kn5",
+   "vip_test_b.kn5",
+   "vip_test_c.kn5",
+   "main_roads.kn5",
+   "dyn_cars_a.kn5",
+   "dyn_cars_b.kn5",
+   "dyn_cars_c.kn5",
+   "dyn_cars_d.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5"
+  ],
+  "pursuit_vip": [
+   "la_canyons.kn5",
+   "layout_pursuit_vip.kn5",
+   "main.kn5",
+   "main_bushes.kn5",
+   "main_pines.kn5",
+   "main_rails.kn5",
+   "main_rocky.kn5",
+   "main_signs.kn5",
+   "main_structures.kn5",
+   "main_trees.kn5",
+   "main_tyremarks.kn5",
+   "rc4.kn5",
+   "vip.kn5",
+   "vip_bushes.kn5",
+   "vip_pines.kn5",
+   "vip_rocky.kn5",
+   "vip_structures.kn5",
+   "vip_trees.kn5",
+   "main_test_a.kn5",
+   "main_test_b.kn5",
+   "main_test_c.kn5",
+   "vip_test_a.kn5",
+   "vip_test_b.kn5",
+   "vip_test_c.kn5",
+   "main_roads.kn5",
+   "dyn_cars_a.kn5",
+   "dyn_cars_b.kn5",
+   "dyn_cars_c.kn5",
+   "dyn_cars_d.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_g.kn5",
+   "dyn_balloon_h.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_f.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5"
+  ],
+  "reverse": [
+   "la_canyons.kn5",
+   "layout_reverse.kn5",
+   "main.kn5",
+   "main_bushes.kn5",
+   "main_pines.kn5",
+   "main_rails.kn5",
+   "main_rocky.kn5",
+   "main_signs.kn5",
+   "main_structures.kn5",
+   "main_trees.kn5",
+   "main_tyremarks.kn5",
+   "main_roads.kn5",
+   "rc1.kn5",
+   "rc2.kn5",
+   "main_test_a.kn5",
+   "main_test_b.kn5",
+   "main_test_c.kn5",
+   "dyn_cars_a.kn5",
+   "dyn_cars_b.kn5",
+   "dyn_cars_c.kn5",
+   "dyn_cars_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5"
+  ],
+  "traffic_oneway_normal": [
+   "la_canyons.kn5",
+   "layout_traffic_oneway_normal.kn5",
+   "main.kn5",
+   "main_bushes.kn5",
+   "main_pines.kn5",
+   "main_rails.kn5",
+   "main_rocky.kn5",
+   "main_signs.kn5",
+   "main_structures.kn5",
+   "main_trees.kn5",
+   "main_tyremarks.kn5",
+   "rc1.kn5",
+   "main_test_a.kn5",
+   "main_test_b.kn5",
+   "main_test_c.kn5",
+   "main_roads.kn5",
+   "dyn_cars_a.kn5",
+   "dyn_cars_b.kn5",
+   "dyn_cars_c.kn5",
+   "dyn_cars_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5"
+  ],
+  "traffic_oneway_reverse": [
+   "la_canyons.kn5",
+   "layout_traffic_oneway_reverse.kn5",
+   "main.kn5",
+   "main_bushes.kn5",
+   "main_pines.kn5",
+   "main_rails.kn5",
+   "main_rocky.kn5",
+   "main_signs.kn5",
+   "main_structures.kn5",
+   "main_trees.kn5",
+   "main_tyremarks.kn5",
+   "rc1.kn5",
+   "main_test_a.kn5",
+   "main_test_b.kn5",
+   "main_test_c.kn5",
+   "main_roads.kn5",
+   "dyn_cars_a.kn5",
+   "dyn_cars_b.kn5",
+   "dyn_cars_c.kn5",
+   "dyn_cars_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5"
+  ],
+  "traffic_two_way": [
+   "la_canyons.kn5",
+   "layout_traffic_two_way.kn5",
+   "main.kn5",
+   "main_bushes.kn5",
+   "main_pines.kn5",
+   "main_rails.kn5",
+   "main_rocky.kn5",
+   "main_signs.kn5",
+   "main_structures.kn5",
+   "main_trees.kn5",
+   "main_tyremarks.kn5",
+   "rc1.kn5",
+   "main_test_a.kn5",
+   "main_test_b.kn5",
+   "main_test_c.kn5",
+   "main_roads.kn5",
+   "dyn_cars_a.kn5",
+   "dyn_cars_b.kn5",
+   "dyn_cars_c.kn5",
+   "dyn_cars_d.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_e.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_a.kn5",
+   "dyn_balloon_b.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_w.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_v.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_x.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_y.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5",
+   "dyn_balloon_z.kn5"
+  ]
+ },
+ "kn5_count": 62,
+ "totals": {
+  "meshes": 7844,
+  "verts": 26524325,
+  "tris": 19490037,
+  "bytes": 1697865030,
+  "texture_bytes": 412951528
+ },
+ "surfaces_ini": {
+  "ROADACM": {
+   "FRICTION": "0.955",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "ROADACB": {
+   "FRICTION": "0.96",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "ROADACT": {
+   "FRICTION": "0.955",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "ROADAFM": {
+   "FRICTION": "0.96",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "ROADAFT": {
+   "FRICTION": "0.955",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "ROADBT": {
+   "FRICTION": "0.955",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "ROADMTD": {
+   "FRICTION": "0.92",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "ROADMTL": {
+   "FRICTION": "0.925",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "ROADMTW": {
+   "FRICTION": "0.915",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "ROADPAS": {
+   "FRICTION": "0.94",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "ROADSRE": {
+   "FRICTION": "0.913",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0.001",
+   "IS_VALID_TRACK": "0",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "ROADSRM": {
+   "FRICTION": "0.912",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0.001",
+   "IS_VALID_TRACK": "0",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "ROADUBT": {
+   "FRICTION": "0.97",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "PARKINGM": {
+   "FRICTION": "0.92",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0.05",
+   "IS_VALID_TRACK": "1",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "PARKINGE": {
+   "FRICTION": "0.92",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "SHMAIN": {
+   "FRICTION": "0.92",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "SHEXT": {
+   "FRICTION": "0.92",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "GRASS": {
+   "FRICTION": "0.79",
+   "DAMPING": "0",
+   "WAV": "grass.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.03",
+   "SIN_LENGTH": "0.5",
+   "VIBRATION_GAIN": "0.09",
+   "VIBRATION_LENGTH": "0.3",
+   "DIRT_ADDITIVE": "0.5",
+   "IS_VALID_TRACK": "0",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "GRASSEDGE": {
+   "FRICTION": "0.85",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.02",
+   "SIN_LENGTH": "0.6",
+   "VIBRATION_GAIN": "0.05",
+   "VIBRATION_LENGTH": "0.4",
+   "DIRT_ADDITIVE": "0.1",
+   "IS_VALID_TRACK": "1",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "KERB": {
+   "FRICTION": "0.95",
+   "DAMPING": "0",
+   "WAV": "kerb.wav",
+   "WAV_PITCH": "1.3",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.0",
+   "VIBRATION_LENGTH": "0.0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "2way\\data\\surfaces.ini"
+  },
+  "PARKINGV": {
+   "FRICTION": "0.94",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "angeles_crest_east\\data\\surfaces.ini"
+  },
+  "PARKINGC": {
+   "FRICTION": "0.93",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "angeles_crest_east\\data\\surfaces.ini"
+  },
+  "PARKINGMD": {
+   "FRICTION": "0.93",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "angeles_crest_east\\data\\surfaces.ini"
+  },
+  "PARKINGML": {
+   "FRICTION": "0.93",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "angeles_crest_east\\data\\surfaces.ini"
+  },
+  "PARKINGMW": {
+   "FRICTION": "0.93",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "angeles_crest_east\\data\\surfaces.ini"
+  },
+  "DRIVEWAY": {
+   "FRICTION": "0.91",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "angeles_crest_east\\data\\surfaces.ini"
+  },
+  "PARKINGDAM": {
+   "FRICTION": "0.91",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "angeles_crest_east\\data\\surfaces.ini"
+  }
+ },
+ "surface_geometry": {
+  "WALL": {
+   "meshes": 909,
+   "invisible": 626,
+   "verts": 584301,
+   "tris": 272504,
+   "area_m2": 1762019.6,
+   "edge_med_m": 3.111,
+   "grid_m": 2.614
+  },
+  "GRASS": {
+   "meshes": 70,
+   "invisible": 0,
+   "verts": 972943,
+   "tris": 1707147,
+   "area_m2": 797627754.9,
+   "edge_med_m": 13.025,
+   "grid_m": 19.71
+  },
+  "PHYS?": {
+   "meshes": 4,
+   "invisible": 0,
+   "verts": 581,
+   "tris": 232,
+   "area_m2": 4017059122.6,
+   "edge_med_m": 1774.37,
+   "grid_m": 1446.598
+  },
+  "GRASSEDGE": {
+   "meshes": 45,
+   "invisible": 0,
+   "verts": 200506,
+   "tris": 199610,
+   "area_m2": 50017.6,
+   "edge_med_m": 1.774,
+   "grid_m": 0.707
+  },
+  "ROADACM": {
+   "meshes": 36,
+   "invisible": 35,
+   "verts": 289548,
+   "tris": 551883,
+   "area_m2": 176084.6,
+   "edge_med_m": 1.086,
+   "grid_m": 0.72
+  },
+  "ROADSRM": {
+   "meshes": 34,
+   "invisible": 33,
+   "verts": 72355,
+   "tris": 120206,
+   "area_m2": 29645.7,
+   "edge_med_m": 0.812,
+   "grid_m": 0.683
+  },
+  "ROADAFM": {
+   "meshes": 36,
+   "invisible": 36,
+   "verts": 284973,
+   "tris": 515271,
+   "area_m2": 143695.0,
+   "edge_med_m": 1.122,
+   "grid_m": 0.742
+  },
+  "ROADUBT": {
+   "meshes": 40,
+   "invisible": 40,
+   "verts": 268517,
+   "tris": 512707,
+   "area_m2": 134625.6,
+   "edge_med_m": 1.088,
+   "grid_m": 0.723
+  },
+  "ROADMTL": {
+   "meshes": 18,
+   "invisible": 17,
+   "verts": 99427,
+   "tris": 154080,
+   "area_m2": 42586.3,
+   "edge_med_m": 0.839,
+   "grid_m": 0.716
+  },
+  "ROADMTD": {
+   "meshes": 15,
+   "invisible": 14,
+   "verts": 104689,
+   "tris": 196521,
+   "area_m2": 40399.3,
+   "edge_med_m": 0.747,
+   "grid_m": 0.638
+  },
+  "ROADACB": {
+   "meshes": 26,
+   "invisible": 25,
+   "verts": 195980,
+   "tris": 377444,
+   "area_m2": 101317.3,
+   "edge_med_m": 1.105,
+   "grid_m": 0.73
+  },
+  "SHEXT": {
+   "meshes": 20,
+   "invisible": 0,
+   "verts": 9401,
+   "tris": 5830,
+   "area_m2": 79280.2,
+   "edge_med_m": 4.588,
+   "grid_m": 4.236
+  },
+  "PARKINGE": {
+   "meshes": 11,
+   "invisible": 2,
+   "verts": 9386,
+   "tris": 8647,
+   "area_m2": 23358.8,
+   "edge_med_m": 1.626,
+   "grid_m": 1.975
+  },
+  "SHMAIN": {
+   "meshes": 9,
+   "invisible": 0,
+   "verts": 11690,
+   "tris": 6550,
+   "area_m2": 38102.4,
+   "edge_med_m": 2.936,
+   "grid_m": 3.373
+  },
+  "PARKINGV": {
+   "meshes": 5,
+   "invisible": 0,
+   "verts": 916,
+   "tris": 501,
+   "area_m2": 22987.4,
+   "edge_med_m": 14.787,
+   "grid_m": 9.039
+  },
+  "PARKINGMW": {
+   "meshes": 1,
+   "invisible": 0,
+   "verts": 171,
+   "tris": 139,
+   "area_m2": 7153.0,
+   "edge_med_m": 13.476,
+   "grid_m": 10.145
+  },
+  "PARKINGC": {
+   "meshes": 2,
+   "invisible": 0,
+   "verts": 385,
+   "tris": 421,
+   "area_m2": 3733.1,
+   "edge_med_m": 4.265,
+   "grid_m": 4.159
+  },
+  "PARKINGDAM": {
+   "meshes": 1,
+   "invisible": 0,
+   "verts": 279,
+   "tris": 93,
+   "area_m2": 4460.5,
+   "edge_med_m": 14.028,
+   "grid_m": 9.794
+  },
+  "PARKINGML": {
+   "meshes": 1,
+   "invisible": 0,
+   "verts": 60,
+   "tris": 58,
+   "area_m2": 7377.9,
+   "edge_med_m": 49.803,
+   "grid_m": 15.95
+  },
+  "PARKINGMD": {
+   "meshes": 1,
+   "invisible": 0,
+   "verts": 428,
+   "tris": 170,
+   "area_m2": 5005.5,
+   "edge_med_m": 11.319,
+   "grid_m": 7.674
+  },
+  "PARKINGM": {
+   "meshes": 1,
+   "invisible": 0,
+   "verts": 352,
+   "tris": 213,
+   "area_m2": 6367.7,
+   "edge_med_m": 10.308,
+   "grid_m": 7.732
+  },
+  "ROAD": {
+   "meshes": 8,
+   "invisible": 0,
+   "verts": 572,
+   "tris": 312,
+   "area_m2": 999.6,
+   "edge_med_m": 3.009,
+   "grid_m": 2.005
+  },
+  "KERB": {
+   "meshes": 3,
+   "invisible": 2,
+   "verts": 338,
+   "tris": 210,
+   "area_m2": 500.5,
+   "edge_med_m": 2.408,
+   "grid_m": 2.03
+  },
+  "ROADACT": {
+   "meshes": 32,
+   "invisible": 32,
+   "verts": 239070,
+   "tris": 460977,
+   "area_m2": 117818.8,
+   "edge_med_m": 1.069,
+   "grid_m": 0.702
+  },
+  "ROADSRE": {
+   "meshes": 29,
+   "invisible": 29,
+   "verts": 104679,
+   "tris": 194769,
+   "area_m2": 47887.2,
+   "edge_med_m": 0.86,
+   "grid_m": 0.695
+  },
+  "ROADBT": {
+   "meshes": 33,
+   "invisible": 33,
+   "verts": 237245,
+   "tris": 456562,
+   "area_m2": 121512.0,
+   "edge_med_m": 1.105,
+   "grid_m": 0.728
+  },
+  "ROADAFT": {
+   "meshes": 16,
+   "invisible": 16,
+   "verts": 94856,
+   "tris": 182142,
+   "area_m2": 62896.3,
+   "edge_med_m": 1.143,
+   "grid_m": 0.79
+  },
+  "ROADMTW": {
+   "meshes": 39,
+   "invisible": 39,
+   "verts": 169521,
+   "tris": 324633,
+   "area_m2": 76610.9,
+   "edge_med_m": 1.023,
+   "grid_m": 0.682
+  },
+  "ROADPAS": {
+   "meshes": 25,
+   "invisible": 25,
+   "verts": 99314,
+   "tris": 189902,
+   "area_m2": 88206.2,
+   "edge_med_m": 1.023,
+   "grid_m": 0.944
+  },
+  "DRIVEWAY": {
+   "meshes": 1,
+   "invisible": 0,
+   "verts": 1153,
+   "tris": 967,
+   "area_m2": 3164.4,
+   "edge_med_m": 2.014,
+   "grid_m": 2.558
+  }
+ },
+ "ai": [
+  {
+   "file": "2way\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 59192,
+   "length_m": 93202.5,
+   "spacing_m": 1.57,
+   "has_extras": true
+  },
+  {
+   "file": "2way\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 59192,
+   "length_m": 93202.5,
+   "spacing_m": 1.57,
+   "has_extras": true
+  },
+  {
+   "file": "angeles_crest_east\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 26053,
+   "length_m": 42505.3,
+   "spacing_m": 1.63,
+   "has_extras": true
+  },
+  {
+   "file": "angeles_crest_east\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 950,
+   "length_m": 1450.7,
+   "spacing_m": 1.53,
+   "has_extras": true
+  },
+  {
+   "file": "angeles_crest_east\\data\\ideal_line.ai",
+   "version": 7,
+   "points": 26053,
+   "length_m": 42505.3,
+   "spacing_m": 1.63,
+   "has_extras": true
+  },
+  {
+   "file": "angeles_crest_west\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 24771,
+   "length_m": 40528.0,
+   "spacing_m": 1.64,
+   "has_extras": true
+  },
+  {
+   "file": "angeles_crest_west\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 400,
+   "length_m": 685.9,
+   "spacing_m": 1.72,
+   "has_extras": true
+  },
+  {
+   "file": "angeles_crest_west\\data\\ideal_line.ai",
+   "version": 7,
+   "points": 24771,
+   "length_m": 40528.0,
+   "spacing_m": 1.64,
+   "has_extras": true
+  },
+  {
+   "file": "mt_wilson_downhill\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 4242,
+   "length_m": 6705.0,
+   "spacing_m": 1.58,
+   "has_extras": true
+  },
+  {
+   "file": "mt_wilson_downhill\\data\\ideal_line.ai",
+   "version": 7,
+   "points": 4242,
+   "length_m": 6705.0,
+   "spacing_m": 1.58,
+   "has_extras": true
+  },
+  {
+   "file": "mt_wilson_hillclimb\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 4306,
+   "length_m": 6946.0,
+   "spacing_m": 1.61,
+   "has_extras": true
+  },
+  {
+   "file": "mt_wilson_hillclimb\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 149,
+   "length_m": 222.8,
+   "spacing_m": 1.51,
+   "has_extras": true
+  },
+  {
+   "file": "mt_wilson_hillclimb\\data\\ideal_line.ai",
+   "version": 7,
+   "points": 4306,
+   "length_m": 6946.0,
+   "spacing_m": 1.61,
+   "has_extras": true
+  },
+  {
+   "file": "normal\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 26443,
+   "length_m": 42861.0,
+   "spacing_m": 1.62,
+   "has_extras": true
+  },
+  {
+   "file": "normal\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 592,
+   "length_m": 913.6,
+   "spacing_m": 1.55,
+   "has_extras": true
+  },
+  {
+   "file": "normal\\data\\ideal_line.ai",
+   "version": 7,
+   "points": 26443,
+   "length_m": 42861.0,
+   "spacing_m": 1.62,
+   "has_extras": true
+  },
+  {
+   "file": "reverse\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 26605,
+   "length_m": 42852.2,
+   "spacing_m": 1.61,
+   "has_extras": true
+  },
+  {
+   "file": "reverse\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 833,
+   "length_m": 1284.4,
+   "spacing_m": 1.54,
+   "has_extras": true
+  },
+  {
+   "file": "reverse\\data\\ideal_line.ai",
+   "version": 7,
+   "points": 26605,
+   "length_m": 42852.2,
+   "spacing_m": 1.61,
+   "has_extras": true
+  },
+  {
+   "file": "traffic_oneway_normal\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 27058,
+   "length_m": 42986.2,
+   "spacing_m": 1.59,
+   "has_extras": true
+  },
+  {
+   "file": "traffic_oneway_normal\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 27058,
+   "length_m": 42986.2,
+   "spacing_m": 1.59,
+   "has_extras": true
+  },
+  {
+   "file": "traffic_oneway_normal\\data\\ideal_line.ai",
+   "version": 7,
+   "points": 27058,
+   "length_m": 42986.2,
+   "spacing_m": 1.59,
+   "has_extras": true
+  },
+  {
+   "file": "traffic_oneway_reverse\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 27117,
+   "length_m": 43024.8,
+   "spacing_m": 1.59,
+   "has_extras": true
+  },
+  {
+   "file": "traffic_oneway_reverse\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 27117,
+   "length_m": 43024.8,
+   "spacing_m": 1.59,
+   "has_extras": true
+  },
+  {
+   "file": "traffic_oneway_reverse\\data\\ideal_line.ai",
+   "version": 7,
+   "points": 27117,
+   "length_m": 43024.8,
+   "spacing_m": 1.59,
+   "has_extras": true
+  },
+  {
+   "file": "traffic_two_way\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 55257,
+   "length_m": 86112.0,
+   "spacing_m": 1.56,
+   "has_extras": true
+  },
+  {
+   "file": "traffic_two_way\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 55257,
+   "length_m": 86112.0,
+   "spacing_m": 1.56,
+   "has_extras": true
+  },
+  {
+   "file": "traffic_two_way\\data\\ideal_line.ai",
+   "version": 7,
+   "points": 55257,
+   "length_m": 86112.0,
+   "spacing_m": 1.56,
+   "has_extras": true
+  }
+ ],
+ "ext_config": {
+  "grass_fx": false,
+  "rain_fx": false,
+  "lights": 1,
+  "light_series": 19,
+  "trees": false,
+  "mesh_adjustments": 0,
+  "includes": [
+   "common/conditions.ini , common/materials_track.ini",
+   "common/conditions.ini"
+  ],
+  "files": 2
+ },
+ "vao_patches": [],
+ "cameras": 1611,
+ "errors": [
+  "main_test_a.kn5: named by models.ini but missing",
+  "main_test_b.kn5: named by models.ini but missing",
+  "main_test_c.kn5: named by models.ini but missing",
+  "main_tunnel.kn5: named by models.ini but missing",
+  "vip_test_a.kn5: named by models.ini but missing",
+  "vip_test_b.kn5: named by models.ini but missing",
+  "vip_test_c.kn5: named by models.ini but missing"
+ ],
+ "kn5s": [
+  {
+   "file": "dyn_balloon_a.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 424704,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "balloon_lac_001.dds"
+    ]
+   }
+  },
+  {
+   "file": "dyn_balloon_b.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 424704,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "balloon_tst_001.dds"
+    ]
+   }
+  },
+  {
+   "file": "dyn_balloon_c.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 424704,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "balloon_angeles_forest_001.dds"
+    ]
+   }
+  },
+  {
+   "file": "dyn_balloon_d.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 424704,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "balloon_california_001.dds"
+    ]
+   }
+  },
+  {
+   "file": "dyn_balloon_e.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 424704,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "balloon_colour_grad_a_001.dds"
+    ]
+   }
+  },
+  {
+   "file": "dyn_balloon_f.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 424704,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "balloon_colour_grad_b_001.dds"
+    ]
+   }
+  },
+  {
+   "file": "dyn_balloon_g.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 424704,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "balloon_colour_grad_c_001.dds"
+    ]
+   }
+  },
+  {
+   "file": "dyn_balloon_h.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 424704,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "balloon_colour_grad_d_001.dds"
+    ]
+   }
+  },
+  {
+   "file": "dyn_balloon_i.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 424704,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "balloon_base51_001.dds"
+    ]
+   }
+  },
+  {
+   "file": "dyn_balloon_v.kn5",
+   "summary": {
+    "meshes": 4,
+    "verts": 12527,
+    "tris": 14007,
+    "textures": 2,
+    "texture_bytes": 147720,
+    "materials": 4,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 4,
+      "tris": 14007
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "747_livery.dds"
+    ]
+   }
+  },
+  {
+   "file": "dyn_balloon_w.kn5",
+   "summary": {
+    "meshes": 4,
+    "verts": 12527,
+    "tris": 14007,
+    "textures": 2,
+    "texture_bytes": 147720,
+    "materials": 4,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 4,
+      "tris": 14007
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "747_livery.dds"
+    ]
+   }
+  },
+  {
+   "file": "dyn_balloon_x.kn5",
+   "summary": {
+    "meshes": 2,
+    "verts": 2053,
+    "tris": 1664,
+    "textures": 2,
+    "texture_bytes": 7576592,
+    "materials": 2,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 2,
+      "tris": 1664
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "bo_city_dest.dds",
+     "bo_city_d_nrm.dds"
+    ]
+   }
+  },
+  {
+   "file": "dyn_balloon_y.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 2419,
+    "tris": 2228,
+    "textures": 2,
+    "texture_bytes": 1398384,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 2228
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "dyn_balloon_z.kn5",
+   "summary": {
+    "meshes": 4,
+    "verts": 27488,
+    "tris": 19536,
+    "textures": 1,
+    "texture_bytes": 136,
+    "materials": 4,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelReflection": {
+      "meshes": 2,
+      "tris": 15840
+     },
+     "ksPerPixel": {
+      "meshes": 2,
+      "tris": 3696
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "dyn_cars_a.kn5",
+   "summary": {
+    "meshes": 209,
+    "verts": 59528,
+    "tris": 46292,
+    "textures": 7,
+    "texture_bytes": 7248552,
+    "materials": 23,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 184,
+      "tris": 37647
+     },
+     "ksPerPixelReflection": {
+      "meshes": 25,
+      "tris": 8645
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "bo_cop.dds",
+     "bo_camper.dds",
+     "bo_cars.dds"
+    ]
+   }
+  },
+  {
+   "file": "dyn_cars_b.kn5",
+   "summary": {
+    "meshes": 178,
+    "verts": 41078,
+    "tris": 32809,
+    "textures": 4,
+    "texture_bytes": 3556720,
+    "materials": 14,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 162,
+      "tris": 27529
+     },
+     "ksPerPixelReflection": {
+      "meshes": 16,
+      "tris": 5280
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "bo_cop.dds",
+     "bo_cars2.dds"
+    ]
+   }
+  },
+  {
+   "file": "dyn_cars_c.kn5",
+   "summary": {
+    "meshes": 334,
+    "verts": 95879,
+    "tris": 81127,
+    "textures": 8,
+    "texture_bytes": 10465968,
+    "materials": 23,
+    "surfaces": {
+     "WALL": {
+      "meshes": 1,
+      "verts": 46,
+      "tris": 24,
+      "area_m2": 16.8,
+      "invisible": 1,
+      "edge_med_m": 1.431,
+      "grid_m": 1.184
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 323,
+      "tris": 77102
+     },
+     "ksPerPixelReflection": {
+      "meshes": 11,
+      "tris": 4025
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "bo_cop.dds",
+     "bo_cars.dds",
+     "bo_cars3.dds",
+     "bo_camper.dds"
+    ]
+   }
+  },
+  {
+   "file": "dyn_cars_d.kn5",
+   "summary": {
+    "meshes": 753,
+    "verts": 154611,
+    "tris": 90729,
+    "textures": 2,
+    "texture_bytes": 338480,
+    "materials": 9,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelReflection": {
+      "meshes": 138,
+      "tris": 45540
+     },
+     "ksPerPixel": {
+      "meshes": 615,
+      "tris": 45189
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "bo_cop.dds"
+    ]
+   }
+  },
+  {
+   "file": "la_canyons.kn5",
+   "summary": {
+    "meshes": 180,
+    "verts": 1172776,
+    "tris": 1905897,
+    "textures": 9,
+    "texture_bytes": 54230400,
+    "materials": 5,
+    "surfaces": {
+     "GRASS": {
+      "meshes": 66,
+      "verts": 970641,
+      "tris": 1705448,
+      "area_m2": 797608773.2,
+      "invisible": 0,
+      "edge_med_m": 13.033,
+      "grid_m": 19.725
+     },
+     "PHYS?": {
+      "meshes": 1,
+      "verts": 17,
+      "tris": 14,
+      "area_m2": 4017058952.6,
+      "invisible": 0,
+      "edge_med_m": 29392.398,
+      "grid_m": 23955.491
+     },
+     "GRASSEDGE": {
+      "meshes": 45,
+      "verts": 200506,
+      "tris": 199610,
+      "area_m2": 50017.6,
+      "invisible": 0,
+      "edge_med_m": 1.774,
+      "grid_m": 0.707
+     }
+    },
+    "shaders_by_tris": {
+     "ksMultilayer_fresnel_nm": {
+      "meshes": 168,
+      "tris": 1888648
+     },
+     "ksPerPixelNM": {
+      "meshes": 11,
+      "tris": 17235
+     },
+     "ksPerPixel": {
+      "meshes": 1,
+      "tris": 14
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "CITY_PLANE_LR_01.dds"
+    ]
+   }
+  },
+  {
+   "file": "layout_angeles_crest_east.kn5",
+   "summary": {
+    "meshes": 77,
+    "verts": 1386,
+    "tris": 624,
+    "textures": 1,
+    "texture_bytes": 72128,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 77,
+      "tris": 624
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "lac_startline_02.dds"
+    ]
+   }
+  },
+  {
+   "file": "layout_angeles_crest_west.kn5",
+   "summary": {
+    "meshes": 47,
+    "verts": 846,
+    "tris": 384,
+    "textures": 1,
+    "texture_bytes": 72128,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 47,
+      "tris": 384
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "lac_startline_02.dds"
+    ]
+   }
+  },
+  {
+   "file": "layout_freeroam.kn5",
+   "summary": {
+    "meshes": 155,
+    "verts": 2814,
+    "tris": 1256,
+    "textures": 1,
+    "texture_bytes": 72128,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 155,
+      "tris": 1256
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "lac_startline_02.dds"
+    ]
+   }
+  },
+  {
+   "file": "layout_freeroam_distant.kn5",
+   "summary": {
+    "meshes": 125,
+    "verts": 2274,
+    "tris": 1016,
+    "textures": 1,
+    "texture_bytes": 72128,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 125,
+      "tris": 1016
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "lac_startline_02.dds"
+    ]
+   }
+  },
+  {
+   "file": "layout_freeroam_urban.kn5",
+   "summary": {
+    "meshes": 98,
+    "verts": 1776,
+    "tris": 796,
+    "textures": 1,
+    "texture_bytes": 72128,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 98,
+      "tris": 796
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "lac_startline_02.dds"
+    ]
+   }
+  },
+  {
+   "file": "layout_freeroam_vip.kn5",
+   "summary": {
+    "meshes": 125,
+    "verts": 2274,
+    "tris": 1016,
+    "textures": 1,
+    "texture_bytes": 72128,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 125,
+      "tris": 1016
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "lac_startline_02.dds"
+    ]
+   }
+  },
+  {
+   "file": "layout_mt_lawlor_tourist.kn5",
+   "summary": {
+    "meshes": 117,
+    "verts": 10155,
+    "tris": 6187,
+    "textures": 1,
+    "texture_bytes": 5570688,
+    "materials": 4,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 8,
+      "tris": 5280
+     },
+     "ksPerPixelAT": {
+      "meshes": 109,
+      "tris": 907
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "layout_mt_wilson_downhill.kn5",
+   "summary": {
+    "meshes": 47,
+    "verts": 846,
+    "tris": 384,
+    "textures": 1,
+    "texture_bytes": 72128,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 47,
+      "tris": 384
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "lac_startline_02.dds"
+    ]
+   }
+  },
+  {
+   "file": "layout_mt_wilson_hillclimb.kn5",
+   "summary": {
+    "meshes": 47,
+    "verts": 846,
+    "tris": 384,
+    "textures": 1,
+    "texture_bytes": 72128,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 47,
+      "tris": 384
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "lac_startline_02.dds"
+    ]
+   }
+  },
+  {
+   "file": "layout_normal.kn5",
+   "summary": {
+    "meshes": 72,
+    "verts": 1318,
+    "tris": 594,
+    "textures": 1,
+    "texture_bytes": 72128,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 72,
+      "tris": 594
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "lac_startline_02.dds"
+    ]
+   }
+  },
+  {
+   "file": "layout_pursuit.kn5",
+   "summary": {
+    "meshes": 106,
+    "verts": 1920,
+    "tris": 860,
+    "textures": 1,
+    "texture_bytes": 72128,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 106,
+      "tris": 860
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "lac_startline_02.dds"
+    ]
+   }
+  },
+  {
+   "file": "layout_pursuit_vip.kn5",
+   "summary": {
+    "meshes": 116,
+    "verts": 2100,
+    "tris": 940,
+    "textures": 1,
+    "texture_bytes": 72128,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 116,
+      "tris": 940
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "lac_startline_02.dds"
+    ]
+   }
+  },
+  {
+   "file": "layout_reverse.kn5",
+   "summary": {
+    "meshes": 72,
+    "verts": 1320,
+    "tris": 596,
+    "textures": 1,
+    "texture_bytes": 72128,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 72,
+      "tris": 596
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "lac_startline_02.dds"
+    ]
+   }
+  },
+  {
+   "file": "layout_traffic_oneway_normal.kn5",
+   "summary": {
+    "meshes": 99,
+    "verts": 1818,
+    "tris": 816,
+    "textures": 1,
+    "texture_bytes": 72128,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 99,
+      "tris": 816
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "lac_startline_02.dds"
+    ]
+   }
+  },
+  {
+   "file": "layout_traffic_oneway_reverse.kn5",
+   "summary": {
+    "meshes": 99,
+    "verts": 1818,
+    "tris": 816,
+    "textures": 1,
+    "texture_bytes": 72128,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 99,
+      "tris": 816
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "lac_startline_02.dds"
+    ]
+   }
+  },
+  {
+   "file": "layout_traffic_two_way.kn5",
+   "summary": {
+    "meshes": 115,
+    "verts": 2094,
+    "tris": 936,
+    "textures": 1,
+    "texture_bytes": 72128,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 115,
+      "tris": 936
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "lac_startline_02.dds"
+    ]
+   }
+  },
+  {
+   "file": "main.kn5",
+   "summary": {
+    "meshes": 161,
+    "verts": 1013058,
+    "tris": 1853213,
+    "textures": 1,
+    "texture_bytes": 136,
+    "materials": 1,
+    "surfaces": {
+     "ROADACM": {
+      "meshes": 35,
+      "verts": 289476,
+      "tris": 551795,
+      "area_m2": 144280.9,
+      "invisible": 35,
+      "edge_med_m": 1.083,
+      "grid_m": 0.716
+     },
+     "ROADSRM": {
+      "meshes": 33,
+      "verts": 72341,
+      "tris": 120198,
+      "area_m2": 29633.9,
+      "invisible": 33,
+      "edge_med_m": 0.812,
+      "grid_m": 0.683
+     },
+     "ROADAFM": {
+      "meshes": 36,
+      "verts": 284973,
+      "tris": 515271,
+      "area_m2": 143695.0,
+      "invisible": 36,
+      "edge_med_m": 1.122,
+      "grid_m": 0.742
+     },
+     "ROADUBT": {
+      "meshes": 40,
+      "verts": 268517,
+      "tris": 512707,
+      "area_m2": 134625.6,
+      "invisible": 40,
+      "edge_med_m": 1.088,
+      "grid_m": 0.723
+     },
+     "ROADMTL": {
+      "meshes": 17,
+      "verts": 97751,
+      "tris": 153242,
+      "area_m2": 41820.3,
+      "invisible": 17,
+      "edge_med_m": 0.835,
+      "grid_m": 0.713
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 161,
+      "tris": 1853213
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "main_bushes.kn5",
+   "summary": {
+    "meshes": 92,
+    "verts": 3035754,
+    "tris": 1579860,
+    "textures": 2,
+    "texture_bytes": 5625456,
+    "materials": 2,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksGrass": {
+      "meshes": 92,
+      "tris": 1579860
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "main_pines.kn5",
+   "summary": {
+    "meshes": 95,
+    "verts": 569689,
+    "tris": 301416,
+    "textures": 2,
+    "texture_bytes": 17787904,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 91,
+      "tris": 295416
+     },
+     "ksPerPixelAT": {
+      "meshes": 4,
+      "tris": 6000
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "bo_pines_low.dds",
+     "bo_pines_hd05.dds"
+    ]
+   }
+  },
+  {
+   "file": "main_rails.kn5",
+   "summary": {
+    "meshes": 267,
+    "verts": 1927767,
+    "tris": 1538912,
+    "textures": 6,
+    "texture_bytes": 24631568,
+    "materials": 6,
+    "surfaces": {
+     "WALL": {
+      "meshes": 12,
+      "verts": 108674,
+      "tris": 55937,
+      "area_m2": 41540.8,
+      "invisible": 9,
+      "edge_med_m": 1.929,
+      "grid_m": 1.206
+     },
+     "PHYS?": {
+      "meshes": 1,
+      "verts": 14,
+      "tris": 10,
+      "area_m2": 38.1,
+      "invisible": 0,
+      "edge_med_m": 4.076,
+      "grid_m": 2.762
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 229,
+      "tris": 1522154
+     },
+     "ksPerPixel": {
+      "meshes": 38,
+      "tris": 16758
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "guardrail_07.dds",
+     "guardrail_08_NM.dds",
+     "stonewall_grey_03.dds",
+     "stonewall_grey_NM_02.dds"
+    ]
+   }
+  },
+  {
+   "file": "main_roads.kn5",
+   "summary": {
+    "meshes": 196,
+    "verts": 406938,
+    "tris": 395775,
+    "textures": 11,
+    "texture_bytes": 48656064,
+    "materials": 8,
+    "surfaces": {
+     "ROADMTD": {
+      "meshes": 1,
+      "verts": 1704,
+      "tris": 852,
+      "area_m2": 834.3,
+      "invisible": 0,
+      "edge_med_m": 1.595,
+      "grid_m": 1.399
+     },
+     "ROADSRM": {
+      "meshes": 1,
+      "verts": 14,
+      "tris": 8,
+      "area_m2": 11.8,
+      "invisible": 0,
+      "edge_med_m": 1.958,
+      "grid_m": 1.72
+     },
+     "ROADMTL": {
+      "meshes": 1,
+      "verts": 1676,
+      "tris": 838,
+      "area_m2": 766.0,
+      "invisible": 0,
+      "edge_med_m": 1.543,
+      "grid_m": 1.352
+     },
+     "ROADACB": {
+      "meshes": 1,
+      "verts": 186,
+      "tris": 62,
+      "area_m2": 849.5,
+      "invisible": 0,
+      "edge_med_m": 8.891,
+      "grid_m": 5.235
+     },
+     "SHEXT": {
+      "meshes": 20,
+      "verts": 9401,
+      "tris": 5830,
+      "area_m2": 79280.2,
+      "invisible": 0,
+      "edge_med_m": 4.588,
+      "grid_m": 4.236
+     },
+     "PARKINGE": {
+      "meshes": 8,
+      "verts": 997,
+      "tris": 570,
+      "area_m2": 9397.1,
+      "invisible": 0,
+      "edge_med_m": 7.003,
+      "grid_m": 5.203
+     },
+     "PHYS?": {
+      "meshes": 1,
+      "verts": 378,
+      "tris": 128,
+      "area_m2": 127.9,
+      "invisible": 0,
+      "edge_med_m": 0.68,
+      "grid_m": 1.414
+     },
+     "SHMAIN": {
+      "meshes": 9,
+      "verts": 11690,
+      "tris": 6550,
+      "area_m2": 38102.4,
+      "invisible": 0,
+      "edge_med_m": 2.936,
+      "grid_m": 3.373
+     },
+     "ROADACM": {
+      "meshes": 1,
+      "verts": 72,
+      "tris": 88,
+      "area_m2": 31803.7,
+      "invisible": 0,
+      "edge_med_m": 17.214,
+      "grid_m": 26.885
+     },
+     "PARKINGV": {
+      "meshes": 5,
+      "verts": 916,
+      "tris": 501,
+      "area_m2": 22987.4,
+      "invisible": 0,
+      "edge_med_m": 14.787,
+      "grid_m": 9.039
+     },
+     "PARKINGMW": {
+      "meshes": 1,
+      "verts": 171,
+      "tris": 139,
+      "area_m2": 7153.0,
+      "invisible": 0,
+      "edge_med_m": 13.476,
+      "grid_m": 10.145
+     },
+     "PARKINGC": {
+      "meshes": 2,
+      "verts": 385,
+      "tris": 421,
+      "area_m2": 3733.1,
+      "invisible": 0,
+      "edge_med_m": 4.265,
+      "grid_m": 4.159
+     },
+     "PARKINGDAM": {
+      "meshes": 1,
+      "verts": 279,
+      "tris": 93,
+      "area_m2": 4460.5,
+      "invisible": 0,
+      "edge_med_m": 14.028,
+      "grid_m": 9.794
+     },
+     "PARKINGML": {
+      "meshes": 1,
+      "verts": 60,
+      "tris": 58,
+      "area_m2": 7377.9,
+      "invisible": 0,
+      "edge_med_m": 49.803,
+      "grid_m": 15.95
+     },
+     "PARKINGMD": {
+      "meshes": 1,
+      "verts": 428,
+      "tris": 170,
+      "area_m2": 5005.5,
+      "invisible": 0,
+      "edge_med_m": 11.319,
+      "grid_m": 7.674
+     },
+     "PARKINGM": {
+      "meshes": 1,
+      "verts": 352,
+      "tris": 213,
+      "area_m2": 6367.7,
+      "invisible": 0,
+      "edge_med_m": 10.308,
+      "grid_m": 7.732
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelAT_NM": {
+      "meshes": 20,
+      "tris": 226062
+     },
+     "ksMultilayer_fresnel_nm": {
+      "meshes": 164,
+      "tris": 167922
+     },
+     "ksPerPixelAlpha": {
+      "meshes": 12,
+      "tris": 1791
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "lac_road_addons_03.dds",
+     "lac_tarmac_edge_NM_071.dds"
+    ]
+   }
+  },
+  {
+   "file": "main_rocky.kn5",
+   "summary": {
+    "meshes": 568,
+    "verts": 1261895,
+    "tris": 1002842,
+    "textures": 2,
+    "texture_bytes": 5592688,
+    "materials": 1,
+    "surfaces": {
+     "WALL": {
+      "meshes": 298,
+      "verts": 94559,
+      "tris": 31625,
+      "area_m2": 438789.2,
+      "invisible": 297,
+      "edge_med_m": 6.067,
+      "grid_m": 5.133
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelAT_NM": {
+      "meshes": 568,
+      "tris": 1002842
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "main_signs.kn5",
+   "summary": {
+    "meshes": 356,
+    "verts": 128989,
+    "tris": 69301,
+    "textures": 6,
+    "texture_bytes": 31978016,
+    "materials": 11,
+    "surfaces": {
+     "PHYS?": {
+      "meshes": 1,
+      "verts": 172,
+      "tris": 80,
+      "area_m2": 4.0,
+      "invisible": 0,
+      "edge_med_m": 0.406,
+      "grid_m": 0.317
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 282,
+      "tris": 55730
+     },
+     "ksPerPixelAlpha": {
+      "meshes": 55,
+      "tris": 11019
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 19,
+      "tris": 2552
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "sign_warning_06.dds",
+     "sign_warning_NM_04.dds"
+    ]
+   }
+  },
+  {
+   "file": "main_structures.kn5",
+   "summary": {
+    "meshes": 623,
+    "verts": 465885,
+    "tris": 324854,
+    "textures": 33,
+    "texture_bytes": 34152672,
+    "materials": 44,
+    "surfaces": {
+     "WALL": {
+      "meshes": 184,
+      "verts": 26434,
+      "tris": 14275,
+      "area_m2": 11853.8,
+      "invisible": 43,
+      "edge_med_m": 1.151,
+      "grid_m": 1.08
+     },
+     "ROAD": {
+      "meshes": 8,
+      "verts": 572,
+      "tris": 312,
+      "area_m2": 999.6,
+      "invisible": 0,
+      "edge_med_m": 3.009,
+      "grid_m": 2.005
+     },
+     "KERB": {
+      "meshes": 1,
+      "verts": 116,
+      "tris": 58,
+      "area_m2": 146.2,
+      "invisible": 1,
+      "edge_med_m": 2.607,
+      "grid_m": 2.246
+     },
+     "GRASS": {
+      "meshes": 1,
+      "verts": 600,
+      "tris": 332,
+      "area_m2": 120.2,
+      "invisible": 0,
+      "edge_med_m": 0.328,
+      "grid_m": 0.851
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 18,
+      "tris": 193996
+     },
+     "ksPerPixel": {
+      "meshes": 295,
+      "tris": 76263
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 229,
+      "tris": 43718
+     },
+     "ksPerPixelAT": {
+      "meshes": 66,
+      "tris": 3851
+     },
+     "ksPerPixelMultiMapSimpleRefl": {
+      "meshes": 1,
+      "tris": 2251
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 7,
+      "tris": 2136
+     },
+     "ksFlags": {
+      "meshes": 6,
+      "tris": 2048
+     },
+     "ksPerPixelReflection": {
+      "meshes": 1,
+      "tris": 591
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "bo_crazypavement.dds",
+     "bo_crazypavement_nrm.dds",
+     "concrete_07.dds",
+     "concrete_06_NM.dds",
+     "bo_rv_dif.dds",
+     "bo_rv_nrm.dds",
+     "bo_rv_map.dds",
+     "rigel_rv.dds",
+     "bo_cars2.dds",
+     "bo_salt.dds",
+     "bo_wood_nrm.dds",
+     "bo_sign_wood.dds",
+     "heli_wh_pave.dds",
+     "dam_pave_nrm.dds",
+     "heli_pave.dds",
+     "bo_bridge_tujunga.dds",
+     "bo_bridge_tujunga_nrm.dds",
+     "bo_wood.dds",
+     "bo_sign_font.dds",
+     "bo_signs.dds",
+     "bo_wooden_fence.dds"
+    ]
+   }
+  },
+  {
+   "file": "main_trees.kn5",
+   "summary": {
+    "meshes": 272,
+    "verts": 5281609,
+    "tris": 2647732,
+    "textures": 2,
+    "texture_bytes": 14308416,
+    "materials": 2,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 272,
+      "tris": 2647732
+     }
+    },
+    "near_vert_cap": [
+     "desertlow_022b_KSLAYER3",
+     "desertlow_021_KSLAYER3",
+     "desertlow_021b_KSLAYER3",
+     "desertfar_72b_KSLAYER4",
+     "desertlow_024b_KSLAYER3",
+     "desertlow_054_KSLAYER3"
+    ],
+    "non_pot_textures": [
+     "bo_bushy_hd04.dds",
+     "bo_leafy_hd04.dds"
+    ]
+   }
+  },
+  {
+   "file": "main_tyremarks.kn5",
+   "summary": {
+    "meshes": 80,
+    "verts": 137343,
+    "tris": 135023,
+    "textures": 2,
+    "texture_bytes": 12230912,
+    "materials": 2,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAlpha": {
+      "meshes": 34,
+      "tris": 86407
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 46,
+      "tris": 48616
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "rc1.kn5",
+   "summary": {
+    "meshes": 90,
+    "verts": 39606,
+    "tris": 29512,
+    "textures": 2,
+    "texture_bytes": 6095104,
+    "materials": 10,
+    "surfaces": {
+     "WALL": {
+      "meshes": 1,
+      "verts": 2310,
+      "tris": 1302,
+      "area_m2": 422.2,
+      "invisible": 1,
+      "edge_med_m": 0.898,
+      "grid_m": 0.805
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 78,
+      "tris": 25832
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 12,
+      "tris": 3680
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "rc2.kn5",
+   "summary": {
+    "meshes": 59,
+    "verts": 33644,
+    "tris": 30402,
+    "textures": 2,
+    "texture_bytes": 6095104,
+    "materials": 12,
+    "surfaces": {
+     "WALL": {
+      "meshes": 1,
+      "verts": 216,
+      "tris": 108,
+      "area_m2": 200.1,
+      "invisible": 1,
+      "edge_med_m": 1.81,
+      "grid_m": 1.925
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 41,
+      "tris": 23780
+     },
+     "ksPerPixel": {
+      "meshes": 14,
+      "tris": 5918
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 4,
+      "tris": 704
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "rc3.kn5",
+   "summary": {
+    "meshes": 149,
+    "verts": 117104,
+    "tris": 79004,
+    "textures": 2,
+    "texture_bytes": 6095104,
+    "materials": 15,
+    "surfaces": {
+     "WALL": {
+      "meshes": 1,
+      "verts": 4102,
+      "tris": 2392,
+      "area_m2": 381.3,
+      "invisible": 1,
+      "edge_med_m": 0.898,
+      "grid_m": 0.565
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 116,
+      "tris": 70414
+     },
+     "ksPerPixel": {
+      "meshes": 13,
+      "tris": 5810
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 20,
+      "tris": 2780
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "rc4.kn5",
+   "summary": {
+    "meshes": 99,
+    "verts": 125769,
+    "tris": 101345,
+    "textures": 2,
+    "texture_bytes": 6095104,
+    "materials": 17,
+    "surfaces": {
+     "WALL": {
+      "meshes": 17,
+      "verts": 11252,
+      "tris": 9382,
+      "area_m2": 15241.6,
+      "invisible": 16,
+      "edge_med_m": 1.727,
+      "grid_m": 1.107
+     },
+     "PARKINGE": {
+      "meshes": 3,
+      "verts": 8389,
+      "tris": 8077,
+      "area_m2": 13961.7,
+      "invisible": 2,
+      "edge_med_m": 1.247,
+      "grid_m": 1.747
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 76,
+      "tris": 91428
+     },
+     "ksPerPixel": {
+      "meshes": 14,
+      "tris": 6222
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 9,
+      "tris": 3695
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "vip.kn5",
+   "summary": {
+    "meshes": 213,
+    "verts": 1243464,
+    "tris": 2382036,
+    "textures": 1,
+    "texture_bytes": 136,
+    "materials": 1,
+    "surfaces": {
+     "ROADACB": {
+      "meshes": 25,
+      "verts": 195794,
+      "tris": 377382,
+      "area_m2": 100467.8,
+      "invisible": 25,
+      "edge_med_m": 1.104,
+      "grid_m": 0.729
+     },
+     "ROADACT": {
+      "meshes": 32,
+      "verts": 239070,
+      "tris": 460977,
+      "area_m2": 117818.8,
+      "invisible": 32,
+      "edge_med_m": 1.069,
+      "grid_m": 0.702
+     },
+     "ROADSRE": {
+      "meshes": 29,
+      "verts": 104679,
+      "tris": 194769,
+      "area_m2": 47887.2,
+      "invisible": 29,
+      "edge_med_m": 0.86,
+      "grid_m": 0.695
+     },
+     "ROADBT": {
+      "meshes": 33,
+      "verts": 237245,
+      "tris": 456562,
+      "area_m2": 121512.0,
+      "invisible": 33,
+      "edge_med_m": 1.105,
+      "grid_m": 0.728
+     },
+     "ROADAFT": {
+      "meshes": 16,
+      "verts": 94856,
+      "tris": 182142,
+      "area_m2": 62896.3,
+      "invisible": 16,
+      "edge_med_m": 1.143,
+      "grid_m": 0.79
+     },
+     "ROADMTW": {
+      "meshes": 39,
+      "verts": 169521,
+      "tris": 324633,
+      "area_m2": 76610.9,
+      "invisible": 39,
+      "edge_med_m": 1.023,
+      "grid_m": 0.682
+     },
+     "ROADMTD": {
+      "meshes": 14,
+      "verts": 102985,
+      "tris": 195669,
+      "area_m2": 39565.0,
+      "invisible": 14,
+      "edge_med_m": 0.743,
+      "grid_m": 0.635
+     },
+     "ROADPAS": {
+      "meshes": 25,
+      "verts": 99314,
+      "tris": 189902,
+      "area_m2": 88206.2,
+      "invisible": 25,
+      "edge_med_m": 1.023,
+      "grid_m": 0.944
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 213,
+      "tris": 2382036
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "vip_bushes.kn5",
+   "summary": {
+    "meshes": 61,
+    "verts": 1848368,
+    "tris": 1390656,
+    "textures": 2,
+    "texture_bytes": 5625456,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksGrass": {
+      "meshes": 61,
+      "tris": 1390656
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "vip_pines.kn5",
+   "summary": {
+    "meshes": 63,
+    "verts": 444319,
+    "tris": 287920,
+    "textures": 3,
+    "texture_bytes": 34548384,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 63,
+      "tris": 287920
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "bo_palm.dds",
+     "bo_pines_low.dds",
+     "bo_pines_abies01.dds"
+    ]
+   }
+  },
+  {
+   "file": "vip_rocky.kn5",
+   "summary": {
+    "meshes": 565,
+    "verts": 2898665,
+    "tris": 1128444,
+    "textures": 2,
+    "texture_bytes": 5592688,
+    "materials": 1,
+    "surfaces": {
+     "WALL": {
+      "meshes": 225,
+      "verts": 75888,
+      "tris": 27564,
+      "area_m2": 924712.6,
+      "invisible": 224,
+      "edge_med_m": 9.028,
+      "grid_m": 7.721
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelAT_NM": {
+      "meshes": 565,
+      "tris": 1128444
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "vip_structures.kn5",
+   "summary": {
+    "meshes": 545,
+    "verts": 668530,
+    "tris": 351707,
+    "textures": 47,
+    "texture_bytes": 45534040,
+    "materials": 71,
+    "surfaces": {
+     "WALL": {
+      "meshes": 169,
+      "verts": 260820,
+      "tris": 129895,
+      "area_m2": 328861.2,
+      "invisible": 33,
+      "edge_med_m": 2.025,
+      "grid_m": 1.857
+     },
+     "GRASS": {
+      "meshes": 3,
+      "verts": 1702,
+      "tris": 1367,
+      "area_m2": 18861.5,
+      "invisible": 0,
+      "edge_med_m": 5.51,
+      "grid_m": 5.229
+     },
+     "KERB": {
+      "meshes": 2,
+      "verts": 222,
+      "tris": 152,
+      "area_m2": 354.3,
+      "invisible": 1,
+      "edge_med_m": 2.332,
+      "grid_m": 1.947
+     },
+     "DRIVEWAY": {
+      "meshes": 1,
+      "verts": 1153,
+      "tris": 967,
+      "area_m2": 3164.4,
+      "invisible": 0,
+      "edge_med_m": 2.014,
+      "grid_m": 2.558
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 384,
+      "tris": 256435
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 105,
+      "tris": 70000
+     },
+     "ksPerPixelAT": {
+      "meshes": 22,
+      "tris": 18504
+     },
+     "ksPerPixelMultiMapSimpleRefl": {
+      "meshes": 21,
+      "tris": 3418
+     },
+     "ksPerPixelReflection": {
+      "meshes": 13,
+      "tris": 3350
+     }
+    },
+    "near_vert_cap": [
+     "1WALL_can_housesA_SUB0"
+    ],
+    "non_pot_textures": [
+     "bo_can_rtiles_b.dds",
+     "bo_can_rtiles_a.dds",
+     "bo_can_wall.dds",
+     "dam_pave.dds",
+     "bo_cars.dds",
+     "dam_pave_nrm.dds",
+     "bo_brick2.dds",
+     "bo_brick2_nrm.dds",
+     "bo_can_edges.dds",
+     "bo_crazypavement.dds",
+     "bo_crazypavement_nrm.dds",
+     "bo_fence_metal.dds",
+     "bo_fence_metal-nrm.dds",
+     "dam_road.dds",
+     "dam_road-nrm.dds",
+     "bo_wood.dds",
+     "bo_wood_nrm.dds",
+     "snow_basic.dds",
+     "snow_basic_nrm.dds",
+     "bo_sign_font.dds"
+    ]
+   }
+  },
+  {
+   "file": "vip_trees.kn5",
+   "summary": {
+    "meshes": 95,
+    "verts": 3253345,
+    "tris": 1627072,
+    "textures": 1,
+    "texture_bytes": 6720960,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 95,
+      "tris": 1627072
+     }
+    },
+    "near_vert_cap": [
+     "desertlow_can_34_KSLAYER3",
+     "desertfar_can_69_KSLAYER4",
+     "desertfar_n97_KSLAYER4"
+    ],
+    "non_pot_textures": [
+     "bo_bushy_hd04.dds"
+    ]
+   }
+  }
+ ]
+}

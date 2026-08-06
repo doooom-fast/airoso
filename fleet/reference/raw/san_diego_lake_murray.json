@@ -1,0 +1,217 @@
+{
+ "track": "san_diego_lake_murray",
+ "path": "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks\\san_diego_lake_murray",
+ "ui": {
+  "name": "K10 - San Diego",
+  "length": "13490",
+  "width": "12",
+  "pitboxes": "8",
+  "run": "clockwise"
+ },
+ "layouts": {
+  "default": [
+   "san_diego_lake_murray.kn5"
+  ]
+ },
+ "kn5_count": 1,
+ "totals": {
+  "meshes": 25,
+  "verts": 813065,
+  "tris": 761148,
+  "bytes": 69618309,
+  "texture_bytes": 29267113
+ },
+ "surfaces_ini": {
+  "ROAD": {
+   "FRICTION": "0.99",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "data\\surfaces.ini"
+  },
+  "KERB": {
+   "FRICTION": "0.92",
+   "DAMPING": "0",
+   "WAV": "kerb.wav",
+   "WAV_PITCH": "1.3",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "1.0",
+   "VIBRATION_LENGTH": "1.5",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "data\\surfaces.ini"
+  },
+  "RUNOFF": {
+   "FRICTION": "0.9",
+   "DAMPING": "0.02",
+   "WAV": "gravel.wav",
+   "WAV_PITCH": "1.2",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.4",
+   "VIBRATION_LENGTH": "2.0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "data\\surfaces.ini"
+  },
+  "GRASS": {
+   "FRICTION": "0.6",
+   "DAMPING": "0.1",
+   "WAV": "grass.wav",
+   "WAV_PITCH": "1.0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "0",
+   "_from": "data\\surfaces.ini"
+  },
+  "LAWN": {
+   "FRICTION": "0.65",
+   "DAMPING": "0.09",
+   "WAV": "grass.wav",
+   "WAV_PITCH": "1.0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "0",
+   "_from": "data\\surfaces.ini"
+  },
+  "WALL": {
+   "FRICTION": "0.3",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "data\\surfaces.ini"
+  }
+ },
+ "surface_geometry": {
+  "GRASS": {
+   "meshes": 2,
+   "invisible": 0,
+   "verts": 97314,
+   "tris": 193312,
+   "area_m2": 27376454.2,
+   "edge_med_m": 12.823,
+   "grid_m": 16.752
+  },
+  "KERB": {
+   "meshes": 1,
+   "invisible": 0,
+   "verts": 58455,
+   "tris": 87167,
+   "area_m2": 134543.7,
+   "edge_med_m": 3.002,
+   "grid_m": 1.757
+  },
+  "ROAD": {
+   "meshes": 1,
+   "invisible": 0,
+   "verts": 22420,
+   "tris": 29797,
+   "area_m2": 330282.9,
+   "edge_med_m": 5.41,
+   "grid_m": 4.708
+  },
+  "WALL": {
+   "meshes": 1,
+   "invisible": 0,
+   "verts": 503,
+   "tris": 168,
+   "area_m2": 239.2,
+   "edge_med_m": 2.996,
+   "grid_m": 1.687
+  }
+ },
+ "ai": [],
+ "ext_config": {
+  "grass_fx": false,
+  "rain_fx": true,
+  "lights": 1,
+  "light_series": 0,
+  "trees": false,
+  "mesh_adjustments": 0,
+  "includes": [],
+  "files": 1
+ },
+ "vao_patches": [],
+ "cameras": 0,
+ "errors": [],
+ "kn5s": [
+  {
+   "file": "san_diego_lake_murray.kn5",
+   "summary": {
+    "meshes": 25,
+    "verts": 813065,
+    "tris": 761148,
+    "textures": 12,
+    "texture_bytes": 29267113,
+    "materials": 24,
+    "surfaces": {
+     "GRASS": {
+      "meshes": 2,
+      "verts": 97314,
+      "tris": 193312,
+      "area_m2": 27376454.2,
+      "invisible": 0,
+      "edge_med_m": 12.823,
+      "grid_m": 16.752
+     },
+     "KERB": {
+      "meshes": 1,
+      "verts": 58455,
+      "tris": 87167,
+      "area_m2": 134543.7,
+      "invisible": 0,
+      "edge_med_m": 3.002,
+      "grid_m": 1.757
+     },
+     "ROAD": {
+      "meshes": 1,
+      "verts": 22420,
+      "tris": 29797,
+      "area_m2": 330282.9,
+      "invisible": 0,
+      "edge_med_m": 5.41,
+      "grid_m": 4.708
+     },
+     "WALL": {
+      "meshes": 1,
+      "verts": 503,
+      "tris": 168,
+      "area_m2": 239.2,
+      "invisible": 0,
+      "edge_med_m": 2.996,
+      "grid_m": 1.687
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelMultiMap": {
+      "meshes": 6,
+      "tris": 310998
+     },
+     "ksPerPixel": {
+      "meshes": 11,
+      "tris": 243610
+     },
+     "ksTree": {
+      "meshes": 8,
+      "tris": 206540
+     }
+    },
+    "near_vert_cap": [
+     "PALMTRUNK_0"
+    ],
+    "non_pot_textures": []
+   }
+  }
+ ]
+}

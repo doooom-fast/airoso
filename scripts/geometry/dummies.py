@@ -49,6 +49,7 @@ def place_dummies(
     n_sectors: int = 3,
     n_pits: int = 4,
     loop: bool = True,
+    start_arc_m: float | None = None,
 ) -> dict[str, list[float]]:
     """Return {dummy_name: [x, y, z]}. Gates split the run into ``n_sectors`` equal-length arcs —
     around the lap when ``loop``, from start to finish when not (see the module docstring)."""
@@ -107,7 +108,12 @@ def place_dummies(
         return n - 1
 
     if loop:
-        start_arc = cum[best_i] + 45.0    # a car-grid's length into the straightest window
+        # A DECLARED start wins over the derived one (0026: "the start is a contract") — the scan
+        # is the fallback for tracks that haven't stated where their line belongs.
+        if start_arc_m is not None:
+            start_arc = float(start_arc_m) % total
+        else:
+            start_arc = cum[best_i] + 45.0    # a car-grid's length into the straightest window
     else:
         # A stage starts where the road starts — the start line is a fixed place in the world, not
         # whichever window happens to be straightest. Far enough in to leave grid room behind it.

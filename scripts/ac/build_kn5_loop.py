@@ -794,7 +794,11 @@ def main():
     cl = [tuple(p) for p in local["points_xyz_m"]]
     widths = local["widths_m"]
     n_pits = 8
-    placed = dmod.place_dummies(cl, widths, n_sectors=3, n_pits=n_pits)
+    # The start is a CONTRACT (0026): when the config declares start_arc_m, the grid goes there —
+    # Kevin: "i prefer starting on alvarado toward college" (station 3,467 on the Lake Murray
+    # loop); the straightest-window heuristic had parked it on Navajo. Declared beats derived.
+    placed = dmod.place_dummies(cl, widths, n_sectors=3, n_pits=n_pits,
+                                start_arc_m=cfg.get("start_arc_m"))
     # start facing = travel direction pts[0]->pts[1], as a yaw about Blender Z(up)
     tx, ty = cl[1][0] - cl[0][0], cl[1][2] - cl[0][2]          # Blender (E, N)
     start_yaw = math.atan2(tx, ty)

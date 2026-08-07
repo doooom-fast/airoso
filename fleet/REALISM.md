@@ -170,6 +170,11 @@ barriers, lane striping, streetlights that light at night. Rally: nothing urban 
 clusters, hazard tape, the sparse high-desert reality of Rangely. Circuits: kerbs with real
 sections, tyre walls, marshal posts, paddock mass.
 
+For street ports the floor includes their actual product mode — **living traffic** (Kevin,
+2026-08-07: "2real traffic is far more interesting to me than track day or races"): a CSP lane
+graph (`traffic.json`) generated from the same centerline/width/junction data the underlay holds,
+so the neighbourhood and the freeway are *cruised through moving traffic*, not lapped.
+
 The floor is: real assets wired in (ledger 0005 — the Dropbox library, not the 1.1 MB stand-ins),
 CSP `ext_config` per track (GrassFX, RainFX, LightsFX for the night freeway, TreeFX-grade trees,
 baked VAO), **SurfacesFX gravel physics on the rally stages** (CSP ≥0.2.4 makes gravel feel like

@@ -99,6 +99,11 @@ def ui_track_json(cfg, layout: str, length_m: float, n_pits: int) -> dict:
     tags = cfg.raw.get("ui_tags") or (
         ["freeroam", "cruise", "street", "open-world", "real-roads"] if freeroam else
         ["street", "loop", "fictional", "real-roads"])
+    # Content Manager refuses Race and Track Day sessions on any track not tagged "circuit" — on a
+    # closed loop the AI modes are simply unreachable without it (hit on Lake Murray 2026-08-06,
+    # the day the first AI line shipped). A loop gets the tag even when ui_tags is explicit.
+    if not freeroam and "circuit" not in tags:
+        tags = ["circuit", *tags]
     # per-layout label: use the layout's configured `name` (e.g. "Sand Creek Raceway") so each config
     # in the in-game dropdown reads as its actual track, not the raw id.
     lo_meta = next((lo for lo in (cfg.raw.get("layouts", []) or []) if lo.get("id") == layout), {})

@@ -147,6 +147,17 @@ def place_dummies(
     out["AC_START_0"] = [round(sx, 3), round(sy, 3), round(sz, 3)]
     out["AC_HOTLAP_START_0"] = [round(sx, 3), round(sy, 3), round(sz, 3)]
 
+    # A RACE needs a grid, not just pole. AC forms the field on AC_START_1..N-1 — with only
+    # AC_START_0 present, every extra car falls back to a pit box, and the pits here ARE the start
+    # straight, so a race read as "the grid is in the pits" (ledger 0021 — found the day Race mode
+    # first became reachable, once AI lines + the circuit tag existed). Two staggered columns
+    # BEHIND pole, ~5.5 m per slot, ±30% of a half-lane — the same on-road placement rules as the
+    # pits below (the verge drops cars; the road is the only trustworthy surface).
+    for g in range(1, n_pits):
+        i = index_at_arc(start_arc - g * 5.5)
+        side = (widths_m[i] / 2.0) * 0.3 * (1.0 if g % 2 == 1 else -1.0)
+        out[f"AC_START_{g}"] = offset(i, side)
+
     # Pit slots ON the road along the start straight (no separate pit lane is modeled). Offsetting them
     # onto the verge dropped the car — the graded grass sits below the road there, so a pit-spawned car
     # fell off the edge (the hotlap start, which sits ON the road, was fine). Stagger them back along the

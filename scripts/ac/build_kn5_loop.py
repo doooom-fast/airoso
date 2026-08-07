@@ -581,6 +581,54 @@ def _conform_and_reseat(proj: Path, spans):
           f"{n_rel} props rode the terrain delta")
 
 
+def _corridor_hash(proj):
+    """0020's corridor discipline needs 'is this point inside ANY carriageway, and how high is the
+    deck there' answered ~200k times. Spatial hash over every road polyline (mainline + the
+    connectors from connectors.local.json), sampled ~2 m, cell 8 m. Engine frame is x=E, y=up,
+    z=N; the .blend is (x, z, y) — so hash keys are (east, north) and deck height is Blender z."""
+    cell = 8.0
+    grid = {}
+    def add_line(pts, widths):
+        import math as _m
+        prev = None
+        for i, p in enumerate(pts):
+            if prev is not None:
+                d = _m.dist(prev, p)
+                steps = max(1, int(d / 2.0))
+                for s in range(steps):
+                    t = (s + 1) / steps
+                    q = [prev[k] + (p[k] - prev[k]) * t for k in range(3)]
+                    w = widths[i - 1] + (widths[i] - widths[i - 1]) * t
+                    key = (int(q[0] // cell), int(q[2] // cell))
+                    grid.setdefault(key, []).append((q[0], q[2], q[1], w / 2.0))
+            prev = p
+    fc = json.loads((proj / "data" / "finished_centerline.json").read_text())
+    add_line(fc["points_xyz_m"], fc["widths_m"])
+    cj = proj / "data" / "connectors.local.json"
+    if cj.exists():
+        for c in json.loads(cj.read_text()).get("connectors", []):
+            if c.get("points_xyz_m"):
+                add_line(c["points_xyz_m"], c["widths_m"])
+
+    def query(east, north, height, vwin=3.5):
+        """(signed clearance to nearest carriageway edge, deck z there). Negative = inside the
+        road. Only samples within ``vwin`` vertically count — a deck BELOW a bridge you are on is
+        not your layer (L4). Sidewalk checks use the tight default; canopy clearance checks pass
+        a taller window (the offending crown hangs ~5 m over the deck)."""
+        ix, iy = int(east // cell), int(north // cell)
+        best = (1e9, 0.0)
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                for (sx, sy, sz, half) in grid.get((ix + dx, iy + dy), ()):
+                    if abs(height - sz) > vwin:
+                        continue
+                    d = ((east - sx) ** 2 + (north - sy) ** 2) ** 0.5 - half
+                    if d < best[0]:
+                        best = (d, sz)
+        return best
+    return query
+
+
 def main():
     import bpy
 
@@ -617,6 +665,7 @@ def main():
         _split_large(ob)
 
     import bmesh
+    corr = _corridor_hash(proj)
     for ob in [o for o in bpy.data.objects if o.type == "MESH"]:
         me = ob.data
         # props / billboards carry authored UVs — don't flatten (freeway BUSHES/CHAINLINK too)
@@ -651,6 +700,66 @@ def main():
                 bmesh.ops.reverse_faces(bm, faces=flip)
                 bm.normal_update()
                 print(f"[build_kn5_loop] {ob.name}: consensus-flipped {len(flip)} inverted faces")
+        # CORRIDOR DISCIPLINE (ledger 0020, Kevin: "messy" = junctions & sidewalks + edges).
+        # Rule 1: no sidewalk/kerb face inside ANY carriageway — this is 0013's sweep-through-
+        # junction mechanism killed at the artifact: the sweep may run, the mouth gets carved.
+        # Rule 2: no vegetation in the driving corridor below 5.2 m clearance (the canopy that
+        # stood at station 10,545). Both use the same layered corridor query (deck-height guarded).
+        upname = ob.name.upper()
+        if upname.startswith("1KERB"):
+            doomed = []
+            for f in bm.faces:
+                c = f.calc_center_median()
+                d, deck = corr(c.x, c.y, c.z)
+                if d < -0.15 and abs(c.z - deck) < 3.0:
+                    doomed.append(f)
+            if doomed:
+                bmesh.ops.delete(bm, geom=doomed, context="FACES")
+                print(f"[build_kn5_loop] {ob.name}: carved {len(doomed)} faces out of carriageways (0020)")
+        elif upname.startswith(("TREETRUNK", "PALMTRUNK")):
+            # Trunks are COLUMNS: band-cutting severs them and the ground gate flags the floating
+            # tops (it did, twice — 2.0% then 1.5% hovering). Remove whole face-islands instead,
+            # and only when the island's BASE stands in the road; a verge palm keeps every face.
+            seen = set()
+            doomed = []
+            removed = 0
+            for f0 in bm.faces:
+                if f0.index in seen:
+                    continue
+                island, stack = [], [f0]
+                seen.add(f0.index)
+                while stack:
+                    f = stack.pop()
+                    island.append(f)
+                    for e in f.edges:
+                        for lf in e.link_faces:
+                            if lf.index not in seen:
+                                seen.add(lf.index)
+                                stack.append(lf)
+                lowz = min(v.co.z for f in island for v in f.verts)
+                base = [f for f in island if f.calc_center_median().z < lowz + 1.0]
+                bx = sum(f.calc_center_median().x for f in base) / len(base)
+                by = sum(f.calc_center_median().y for f in base) / len(base)
+                d, _deck = corr(bx, by, lowz + 0.5)
+                if d < -0.3:
+                    doomed.extend(island)
+                    removed += 1
+            if doomed:
+                bmesh.ops.delete(bm, geom=doomed, context="FACES")
+                print(f"[build_kn5_loop] {ob.name}: removed {removed} whole trunks standing in a road (0020)")
+        elif upname.startswith(("TREECANOPY", "SCRUB", "PALMFROND", "BUSHES")):
+            doomed = []
+            for f in bm.faces:
+                # big leaf cards span metres — a centroid test leaves their tips hanging in the
+                # corridor (drive_test still counted 14 canopy stations). Any VERT inside dooms it.
+                for v in f.verts:
+                    d, deck = corr(v.co.x, v.co.y, v.co.z, vwin=7.0)
+                    if d < 0.2 and 0.2 < (v.co.z - deck) < 5.2:
+                        doomed.append(f)
+                        break
+            if doomed:
+                bmesh.ops.delete(bm, geom=doomed, context="FACES")
+                print(f"[build_kn5_loop] {ob.name}: trimmed {len(doomed)} leaf faces from the clearance envelope (0020)")
         if ob.name.upper().startswith("1GRASS"):
             bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=0.05)   # terrain must be watertight
             try:

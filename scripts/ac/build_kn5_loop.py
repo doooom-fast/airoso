@@ -623,7 +623,13 @@ def main():
         if not ob.name.upper().startswith(("PALM", "TREE", "SCRUB", "BUSHES", "CHAINLINK", "ROADTEXT")):
             planar_uv(me)
         bm = bmesh.new(); bm.from_mesh(me)
-        bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-4)
+        # NEVER weld foliage/prop groups: their double-sided shells are duplicated face pairs at
+        # IDENTICAL positions with opposite winding, and remove_doubles collapses each pair into
+        # one face keeping a random side — salt-and-pepper inverted triangles all over trunks and
+        # bushes (measured 15-16% on PALMTRUNK, 8% on SCRUB; ledger 0024, Kevin: "points are
+        # closing with the wrong vectors"). Weld exists to clean GENERATED seams, not authored props.
+        if not ob.name.upper().startswith(("PALM", "TREE", "SCRUB", "BUSHES", "CHAINLINK")):
+            bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-4)
         if ob.name.upper().startswith("1GRASS"):
             bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=0.05)   # terrain must be watertight
             try:

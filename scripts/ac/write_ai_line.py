@@ -195,6 +195,13 @@ def main() -> None:
     line = build_line(pts, widths, closed=closed, spacing=args.spacing, lat_g=args.lat_g,
                       decel_g=args.decel_g, accel_g=args.accel_g, vmax_kmh=args.vmax_kmh,
                       margin_m=args.margin_m)
+    # The kn5/AC world is z-MIRRORED relative to the engine local frame (verified against the
+    # installed dummies: kn5 z = -engine z). An unflipped line sends the AI down a ghost mirror
+    # route through the terrain — they launch and never come back (ledger 0023). Flip once, here.
+    for p in line["pts"]:
+        p[2] = -p[2]
+    for f in line["fwd"]:
+        f[2] = -f[2]
 
     out = args.out or ((args.src if args.src.is_dir() else src.parent.parent) / "ai")
     out.mkdir(parents=True, exist_ok=True)

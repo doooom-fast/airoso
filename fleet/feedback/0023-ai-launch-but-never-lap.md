@@ -20,7 +20,17 @@ line's direction sense vs the track's is worth checking while in there (note: th
 follows the OSM centerline order, which is the REVERSE of Kevin's canonical driving direction —
 see sd-restart canon).
 
-## Hypotheses (unresolved, in order)
+## Diagnosis (same night, promoted above the original hypotheses)
+
+**Frame mismatch.** `write_ai_line` wrote positions straight from `finished_centerline.json` —
+the ENGINE local frame — but the installed world is z-mirrored (kn5 z = −engine z, proven on the
+dummies). The AI accepted the spline and launched down a ghost mirror route through the terrain;
+of course they never came back past the line. The wrong-way icon at spawn fits the same story.
+Fix landed the same night: the writer now flips z (positions + forward vectors) at write time;
+Lake Murray and IMI regenerated and reinstalled (first .ai point now z = −1666, kn5 frame).
+Retest pending in game (IMI race = 65 s expected lap, fastest confirmation).
+
+## Original hypotheses (now secondary)
 
 1. **Extras `speed` unit.** `write_ai_line` writes m/s (flagged as an empirical assumption in the
    v0.61.0 commit). If AC interprets the field as km/h, AI target ~3.6× slower speeds — a 13.5 km

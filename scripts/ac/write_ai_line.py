@@ -184,6 +184,9 @@ def main() -> None:
     ap.add_argument("--vmax-kmh", type=float, default=250.0)
     ap.add_argument("--margin-m", type=float, default=1.2, help="kept clear of each road edge")
     ap.add_argument("--no-pit-copy", action="store_true", help="skip pit_lane.ai = fast_lane.ai")
+    ap.add_argument("--reverse", action="store_true",
+                    help="run the line opposite the centerline order (match an installed track "
+                         "whose grid faces the other way — found on IMI, alignment dot -0.93)")
     args = ap.parse_args()
 
     src = args.src / "data" / "finished_centerline.json" if args.src.is_dir() else args.src
@@ -192,6 +195,8 @@ def main() -> None:
     closed = math.dist(pts[0], pts[-1]) < 1e-6
     if closed:
         pts, widths = pts[:-1], widths[:-1]            # L13: drop the duplicate, wrap everything
+    if args.reverse:
+        pts, widths = list(reversed(pts)), list(reversed(widths))
     line = build_line(pts, widths, closed=closed, spacing=args.spacing, lat_g=args.lat_g,
                       decel_g=args.decel_g, accel_g=args.accel_g, vmax_kmh=args.vmax_kmh,
                       margin_m=args.margin_m)

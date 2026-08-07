@@ -31,12 +31,16 @@ fail exclusively on `excursion_drops` (ground falling >20 cm just beyond the pav
 1. **KILLED: terrain cell size.** Declared `terrain_cell_m` 1.25 (imi) / 2.0 (pueblo) +
    `corridor_refine_factor` 6 per L3b; rebuilt; drops effectively unchanged (28→30, 128→118).
    The declarations are kept (L3b hygiene) but they are not this mechanism.
-2. **OPEN, primary: no archetype declared.** S6's exact warning — every Colorado circuit except
-   Sand Creek and the Lariat declares no `archetype`, so the `race_circuit` preset (engineered
-   runoff, bench edges) is never applied and raw graded terrain meets the pavement edge. Next
-   session's first probe: declare `race_circuit` on imi + pueblo, rebuild, re-gate.
-3. high-plains / lookout-lariat additionally carry the 0018 roughness class (mechanism still
-   open there) — they ride whatever 0018's resolution is, plus hypothesis 2.
+2. **KILLED: no archetype declared.** Checked same day — imi and pueblo already declare
+   `race_circuit` (S6's "ten tracks undeclared" note predates these configs). The runoff preset
+   applies; the defect is downstream of it.
+3. **DIAGNOSED, primary: the apron's outer seam.** `worst_excursions` cluster at lateral
+   ±9.5–10 m on a ~9.8 m road — **~4–5 m beyond the pavement edge, 0.26–0.4 m steps** — the
+   built runoff/shoulder apron ends against the raw terrain grid without a feather, exactly the
+   road-grounding drape class. Assigned to the geometry surgeon (2026-08-07 pm): feather the
+   outer hem in `build_mesh.py`, prove on imi + pueblo (excursion_drops → 0, no regressions).
+4. high-plains / lookout-lariat additionally carry the 0018 roughness class (mechanism still
+   open) — they ride 0018's resolution plus hypothesis 3's fix.
 
 ## Verification
 

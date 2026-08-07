@@ -80,6 +80,25 @@ is the concrete work list for R3's Lake Murray pilot:
 3. Export → OBJ → all four gates → kn5; drive_test and audit numbers recorded here.
 4. Kevin drives; "messy" either survives or it doesn't.
 
+## Corridor discipline outcome (2026-08-07, engine v0.63.0 — the mechanical half, landed)
+
+Four build iterations, each steered by a gate catch (two palm-crown shears caught by
+kn5_ground_check, one canopy miss caught by drive_test's centroid blind spot):
+
+| metric | baseline | after v0.63.0 |
+|---|---|---|
+| obstructed stations | 14 | **0** |
+| severe steps | 69 | **31** |
+| trunks standing in a road | (uncounted) | **61 removed, whole** |
+| audit total | 3,089 | 2,685 |
+| K kerb/sidewalk in carriageway | 1,096 | 904 |
+| I sidewalk isolating pavement | 1,203 | 1,008 |
+
+Ground-on-top mid-lane (~4k stations) is untouched — that is R4 surface-layer work, not corridor
+work. The residual K/I ≈900 with worst +1.18 m is the junction-mouth SHAPES: the authored half
+(REALISM §8), which this entry stays open for. Installed same day with the full presentation
+stack (grid, frame-fixed AI, traffic lanes, 39 TV cameras, GrassFX).
+
 ## Verification
 
 - No sidewalk/curb geometry inside any junction mouth on the loop (0013's criterion, now on this

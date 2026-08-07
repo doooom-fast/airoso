@@ -16,6 +16,9 @@
 # generated-OBJ circuits ship via scripts/build.sh and networks via scripts/build_network.sh; the
 # two build_kn5 programs are deliberately separate and must never be merged.
 set -euo pipefail
+# Windows Python defaults stdout to cp1252, which cannot encode the gates' ✓/━ glyphs — a PASSING
+# gate then dies printing its own verdict (seen on verify_kn5, 2026-08-07). Force UTF-8 everywhere.
+export PYTHONUTF8=1
 
 PROJ="${1:?usage: build_loop.sh <project-dir> [from-stage|--list]}"
 FROM="${2:-blend}"

@@ -43,11 +43,29 @@ Kevin's lap, ks_mclaren_650_gt3, 4:42.794, harness attached end-to-end (first re
 - Same session, verbal: track is "messy" (verdict repeated); AI drives the loop "mostly"
   (failure specifics not yet captured).
 
-## Diagnosis
+## Diagnosis — MEASURED (2026-08-07, first offline gates ever run on this artifact)
 
-Deferred — 0013's mechanisms are the obvious suspects, but per the doctrine this entry stays open
-until measured on THIS artifact (export the OBJ from loop.blend, run `audit_mesh` + `drive_test`,
-cross-section the junction mouths). An empty diagnosis is better than a confident wrong one.
+The v0.61.0 rebuild's kn5 was extracted back to `data/track.obj` (`modkit.kn5_to_gate_obj`, L5:
+gate the shipped artifact) and both missing gates ran. **Kevin's two classes are exactly what they
+found:**
+
+**Junctions & sidewalks** (audit): **K = 1,096 kerb/sidewalk verts inside the carriageway**
+(worst **+1.18 m** above the road) · **I = 1,203 sidewalk-isolating-pavement spots** (e.g.
+−1445, −549). The 0013 mechanism — one continuous sidewalk sweep that never breaks at junction
+mouths — confirmed on this artifact by count.
+
+**Edges & seams** (audit + drive_test): F = 285 curbs not flush · 35 daylight gaps at edges ·
+8 floating fence posts at (−1874, −1025) · H = 2 ground-cuts into the road, **worst +1.1 m**,
+matching drive_test's severe-step cluster at **stations 3837–3870** (steps up to 0.86 m) ·
+3,991 soft-top stations (grass surfacing mid-lane, e.g. station 3804 at −6 m lateral).
+
+Also surfaced: **tree canopy/trunk hanging into the corridor at stations 10,545–10,548** — the
+strongest candidate yet for the in-game contact class (the measured Navajo contact at 8,202 m is a
+different station; both go on the corridor-sweep list). Clean elsewhere: A/B/C/E/J = 0 — the
+terrain/support conforming holds; this artifact's problems are the *edge and junction* layer,
+precisely as Kevin said from the seat.
+
+drive_test verdict: **FAIL** (full numbers in `project/data/drive_test.json`; audit total 3,089).
 
 ## Fix direction (why this is R3's pilot charter, not a sweep patch)
 

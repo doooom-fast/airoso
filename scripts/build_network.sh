@@ -10,6 +10,9 @@
 # Stages: net (Overpass) -> classify (OSM class/lanes/layer) -> elev (3DEP) -> mesh (+audit) -> env
 #         -> blend (Blender 4.2) -> kn5 (addon export) -> verify -> pack (folder + zip).
 set -euo pipefail
+# Windows Python defaults stdout to cp1252, which cannot encode the gates' ✓/━ glyphs — a PASSING
+# gate then dies printing its own verdict (seen on verify_kn5, 2026-08-07). Force UTF-8 everywhere.
+export PYTHONUTF8=1
 
 PROJ="${1:?usage: build_network.sh <project-dir> [from-stage|--list]}"
 FROM="${2:-net}"

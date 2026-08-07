@@ -630,6 +630,27 @@ def main():
         # closing with the wrong vectors"). Weld exists to clean GENERATED seams, not authored props.
         if not ob.name.upper().startswith(("PALM", "TREE", "SCRUB", "BUSHES", "CHAINLINK")):
             bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-4)
+        else:
+            # REPAIR damage already baked into the source .blend (earlier welds): a lone inverted
+            # face's VERTEX normals are dominated by its coherent neighbours, so flipping any face
+            # that opposes its own vertices' consensus heals salt-and-pepper inversion (0024's
+            # residue, PALMTRUNK 13%) deterministically — and leaves true double-sided shells
+            # alone, because their duplicated verts vote for their own side.
+            bm.normal_update()
+            for _ in range(3):
+                flip = []
+                for f in bm.faces:
+                    cx = cy = cz = 0.0
+                    for v in f.verts:
+                        cx += v.normal.x; cy += v.normal.y; cz += v.normal.z
+                    if (cx * cx + cy * cy + cz * cz) > 1e-12 and \
+                       (f.normal.x * cx + f.normal.y * cy + f.normal.z * cz) < -1e-4:
+                        flip.append(f)
+                if not flip:
+                    break
+                bmesh.ops.reverse_faces(bm, faces=flip)
+                bm.normal_update()
+                print(f"[build_kn5_loop] {ob.name}: consensus-flipped {len(flip)} inverted faces")
         if ob.name.upper().startswith("1GRASS"):
             bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=0.05)   # terrain must be watertight
             try:

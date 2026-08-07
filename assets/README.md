@@ -1,45 +1,21 @@
-# Assets
+# Asset provenance
 
-> **Policy: ship the real assets, not small derived stand-ins.** The 10 models currently in
-> `models/` are minimal placeholder geometry — that is a stopgap, not the target. The full-resolution
-> library in Dropbox `/Blender/` is what should reach the tracks, resized only where AC's own limits
-> force it (power-of-two textures; the 65 k vert per-mesh cap on props instanced hundreds of times).
-> Tracked in `fleet/feedback/0005-ship-the-real-assets.md`.
+Real assets from Kevin's Dropbox library (`C:\Users\Owner\Dropbox\Blender\`), converted
+2026-08-07 per fleet/feedback/0005 (PoT textures, instance-safe decimation, base at y=0,
+Y-up, heights normalized). Conversion scripts: session scratchpad `convert_dropbox_props.py`
++ `convert2.py` (headless Blender 4.2).
 
-## Source of truth: Dropbox `/Blender/`
+| engine file | source | processing |
+|---|---|---|
+| models/poplar_trunk.obj | tree_topol.rar → tree_poplar.glb (bark material part) | split by material, decimated to 1,800 tris, height 14 m |
+| models/poplar_leaves.obj | tree_topol.rar → tree_poplar.glb (leaf material part) | decimated to 2,382 tris |
+| models/lamp_post.obj | Street_Lamp.zip → Street_Lamp.blend (94,587 tris) | decimated to 3,783 tris, height 9 m (build_env rescales per config) |
+| textures/poplar_bark.png | glb-embedded BARK_tex_uv_COLOR 4096² | PoT 2048² |
+| textures/poplar_leaves.png | glb-embedded TexturesCom_Branches0025 1366×1600 | PoT 1024² |
+| textures/pine_leaves.png | pine_tree.zip → assets/PinesLeaves.png 1800×1200 | PoT 1024² (existing pine model, real needles) |
+| textures/pine_bark.png | pine_tree.zip → assets/Bark.jpg 4600×1960 | PoT 1024² (staged for the pine two-part upgrade) |
+| textures/street_lamp_new.png | Street_Lamp.zip → Textures/lamp_basecolor.png 4096² | PoT 1024² |
 
-| Dropbox path | What |
-|---|---|
-| `/Blender/obj/` | source models |
-| `/Blender/Textures/`, `/Blender/textures-2/` | source textures, 4k+ |
-| `/Blender/Concrete Barrier and Transition Barrier OBJ/` | the concrete barrier set |
-| `/Blender/Concrete Barrier and Transition Barrier - Models and Textures/` | the same, with textures |
-
-These are full-resolution originals — single textures run over 10 MB. Reach for them when an asset
-is missing, needs re-exporting at a different resolution, or a new prop is wanted. **A build never
-consumes them directly**; it consumes the derived copies here.
-
-There is no local Dropbox folder on the Mac — access is through the Dropbox MCP connector.
-
-## Two rules when bringing something across
-
-1. **Resize to a power of two.** A non-power-of-two texture can hard-crash the GPU on AC load —
-   the mipmap/DXT upload hangs the driver. `scripts/build.sh` pre-flights this and refuses to build;
-   keep it that way (LAWS L7).
-2. **Force-add models to git.** `*.obj` is gitignored in every repo, so the 10 models in
-   `models/` are tracked only because they were added with `git add -f`. A new model that is merely
-   copied in will be invisible to every consumer:
-   ```bash
-   git add -f assets/models/<new>.obj
-   ```
-
-That second rule is not theoretical: `k10-colorado` builds failed with
-`FileNotFoundError: assets/models/concrete_barrier_4m.obj` because it runs its own shadow copy of
-the pipeline (MIGRATION M3) and never received the tracked models the engine carries. A repo
-consuming `.engine/` gets them automatically.
-
-## What's here
-
-- `models/` — 10 props: concrete barrier, lamp post/lens/head, pine, poplar trunk/leaves, pylon,
-  ranch and wood fence panels.
-- `textures/` — the shared texture set, power-of-two.
+Still placeholder (0005 remainder): concrete barrier set, traffic-sign pack (`Dropbox/Blender/obj/`),
+fences, pine trunk geometry (Small_Pine.blend has unlabeled materials — needs a hand pass),
+Street_Lamp full PBR (ao/metal/norm/emiss staged in Dropbox, engine shader path is diffuse-only today).

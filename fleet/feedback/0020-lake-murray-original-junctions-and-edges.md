@@ -30,6 +30,19 @@ junction in `build_loop_blend.py:658/:677`; 105 width jumps >1 m producing sawto
 generated underlay in `loop.blend` shares that lineage, and this build predates every gate — no
 OBJ was ever audited for it (0013 §"why no gate caught it").
 
+## Evidence (first in-game telemetry on this artifact — `ac_drive_test`, 2026-08-06 21:45)
+
+Kevin's lap, ks_mclaren_650_gt3, 4:42.794, harness attached end-to-end (first real capture):
+
+- **lap_completes ✓ · stays_on_surface ✓** (worst tyres-out streak 0.2 s) · speed 1.3–262.7 km/h
+- **no_unexplained_contact ✗ — damage +8.42 at normalized position 0.6073** →
+  station ~8,202 m of 13,506 m, world (1042, 86, −1080) engine frame, centerline index 2732:
+  **NAVAJO RD** (single-street 180 m window). Something on Navajo strikes a car near the
+  driving line — kerb lip, sidewalk edge, or corridor object; unverified which. The pilot
+  inspects this exact station in Blender first.
+- Same session, verbal: track is "messy" (verdict repeated); AI drives the loop "mostly"
+  (failure specifics not yet captured).
+
 ## Diagnosis
 
 Deferred — 0013's mechanisms are the obvious suspects, but per the doctrine this entry stays open

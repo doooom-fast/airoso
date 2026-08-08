@@ -50,3 +50,11 @@ BOTH pipelines (OBJ path post-weld; loop path via the weld-exempt branch), never
 (their winding is authored — the graveyard of normal passes documented in build_kn5.py stands).
 Root-cause entry for the sweep's winding stays open if residual clustered inversion survives the
 repair (consensus heals scatter, not whole-side mirrors).
+
+**Parity result (v0.64.3, measured on a fresh Lariat kn5):** installed-era 20–22% → modern build
+7.4% (consensus repair provably blind in the OBJ path: imported normals restate winding) →
+**1.4–1.8% with parity propagation** (55,333 faces flipped across 245 components — the ~half-per-
+component ratio says the barrier sweep emits ALTERNATING winding per strip; root-cause cleanup in
+the sweep is the durable follow-up, the repair ships meanwhile). Residual ~1.6% is at the metric's
+curvature-noise floor; whether anything remains visible is Kevin's eyeball call on the next
+installed build.

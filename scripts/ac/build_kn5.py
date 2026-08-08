@@ -171,24 +171,50 @@ def build(track_dir: Path) -> Path:
         # authored and the block above documents the graveyard of passes that touched it.
         _up = ob.name.upper()
         if _up.startswith(("1WALL", "RETWALL", "FENCE", "CHAINL")) or "BARRIER" in _up:
-            bm.normal_update()
-            _tot = 0
-            for _ in range(3):
-                _flip = []
-                for f in bm.faces:
-                    _cx = _cy = _cz = 0.0
-                    for v in f.verts:
-                        _cx += v.normal.x; _cy += v.normal.y; _cz += v.normal.z
-                    if (_cx * _cx + _cy * _cy + _cz * _cz) > 1e-12 and \
-                       (f.normal.x * _cx + f.normal.y * _cy + f.normal.z * _cz) < -1e-4:
-                        _flip.append(f)
-                if not _flip:
-                    break
-                bmesh.ops.reverse_faces(bm, faces=_flip)
-                bm.normal_update()
-                _tot += len(_flip)
-            if _tot:
-                print(f"[build_kn5] {ob.name}: consensus-flipped {_tot} wall faces (0024)")
+            # Winding-PARITY repair (0024 ext.). Consensus-vs-vertex-normals is BLIND here: OBJ
+            # import derives vertex normals FROM winding, so they always agree (measured: zero
+            # flips while the fresh kn5 still carried 7.4% inverted). Instead use pure topology:
+            # two faces sharing an edge wind consistently iff they traverse it in OPPOSITE
+            # directions. BFS each connected component assigning parity, then flip the MINORITY
+            # parity — heals scatter deterministically and leaves the majority side authoritative.
+            # Never applied to grass/road (their winding is authored; see the block above).
+            bm.faces.index_update()
+            _seen = set()
+            _flip_all = []
+            _comps = 0
+            for _f0 in bm.faces:
+                if _f0.index in _seen:
+                    continue
+                _comps += 1
+                _par = {_f0.index: 0}
+                _seen.add(_f0.index)
+                _stack = [_f0]
+                _members = [(_f0, 0)]
+                while _stack:
+                    _f = _stack.pop()
+                    _p = _par[_f.index]
+                    _loops = {(_l.vert.index, _l.link_loop_next.vert.index) for _l in _f.loops}
+                    for _e in _f.edges:
+                        for _lf in _e.link_faces:
+                            if _lf.index in _seen or _lf is _f:
+                                continue
+                            _consistent = True
+                            for _l2 in _lf.loops:
+                                _pair = (_l2.vert.index, _l2.link_loop_next.vert.index)
+                                if _pair in _loops:      # same direction on shared edge = INCONSISTENT
+                                    _consistent = False
+                                    break
+                            _par[_lf.index] = _p if _consistent else 1 - _p
+                            _seen.add(_lf.index)
+                            _stack.append(_lf)
+                            _members.append((_lf, _par[_lf.index]))
+                _ones = sum(1 for _, _pp in _members if _pp == 1)
+                _minor = 1 if _ones * 2 <= len(_members) else 0
+                _flip_all += [_ff for _ff, _pp in _members if _pp == _minor and len(_members) > 1]
+            if _flip_all:
+                bmesh.ops.reverse_faces(bm, faces=_flip_all)
+                print(f"[build_kn5] {ob.name}: parity-flipped {len(_flip_all)} wall faces "
+                      f"across {_comps} components (0024)")
         bm.to_mesh(ob.data)
         bm.free()
         ob.data.update()

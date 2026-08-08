@@ -542,15 +542,19 @@ def run(project_dir: str | Path) -> dict:
                     # job, per the construction research: stone parapets at every drop > 2 m on
                     # the real Lariat). Unguarded car-destroyer drops in the band fail — they mark
                     # exactly where the four-condition selector must place walls.
+                    # ANY 1WALL between the pavement edge and the drop guards it — the car hits
+                    # the wall first regardless of how far outboard the drop sits. The old scan
+                    # looked only 2 m behind, so a verge parapet with its drop 3 m outboard was
+                    # "unguarded" while physically unreachable (imi toes, ledger 0025).
                     guarded = False
-                    for _wo in (off - 2.0, off - 1.0, off - 0.5):
-                        if _wo <= we - 0.5:
-                            break
+                    _wo = max(we - 0.4, 0.5)
+                    while _wo < off - 0.25:
                         _wx, _wz = x0 + nxe * _wo * sgn, z0 + nze * _wo * sgn
                         _wy, _wown = surface.top_at(_wx, _wz, y0 + 0.5, 2.5)
                         if _wown is not None and str(_wown).upper().startswith("1WALL"):
                             guarded = True
                             break
+                        _wo += 0.5
                     _drop = prev_y - ey
                     if _unpaved:
                         # Gate on PHYSICAL DANGER, not on proximity to the pavement. Two reasons the

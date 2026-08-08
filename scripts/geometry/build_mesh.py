@@ -2306,8 +2306,8 @@ def build(project_dir: str | Path) -> dict:
                 out.append(run)
             return out
         # stone parapets: fill edges dropping > 2 m (incl. wall tops) — 0.5 h x 0.4 w at the verge
-        for _run in _runs17(lambda sc: (not sc["cutting"]) and sc["drop"] > 2.0,
-                            exit_flag=lambda sc: (not sc["cutting"]) and sc["drop"] > 1.4,
+        for _run in _runs17(lambda sc: (not sc["cutting"]) and sc["drop"] > 1.2,
+                            exit_flag=lambda sc: (not sc["cutting"]) and sc["drop"] > 0.9,
                             min_run=10, max_gap=4):
             _bs17 = len(para_mesh["vertices"])
             # smooth the cap line: a parapet is coursed masonry, its top runs fair, not jittery
@@ -2867,6 +2867,135 @@ def build(project_dir: str | Path) -> dict:
     # 1GRASS (not GRASS): the leading digit makes the terrain a PHYSICAL surface keyed to
     # surfaces.ini GRASS, so you don't fall through the world off the racing line either.
     # (Orientation confirmed in-game — the temporary CALIB calibration poles are removed.)
+    # RING-SEAM WELD (ledger 0025): the ring strip's outer boundary and the main grass sheet meet
+    # with 1-sample V-notches (0.18 down, back up 0.5 m later — probed). Snap main-grass nodes
+    # within 1 m of a ring boundary vertex up to that edge − 0.04. Isolated by elimination across
+    # 17 builds: face slopes, skirts, caps and plateaus all left the count at 30; the weld was the
+    # only intervention that cut it.
+    if edge_group == "1ROAD_shoulder" and ring_mesh.get("tris") and grass.get("vertices"):
+        _reW: dict = {}
+        for _tW in ring_mesh["tris"]:
+            for _eW in ((_tW[0], _tW[1]), (_tW[1], _tW[2]), (_tW[2], _tW[0])):
+                _kW = (min(_eW), max(_eW))
+                _reW[_kW] = _reW.get(_kW, 0) + 1
+        _rvW = ring_mesh["vertices"]
+        _rhW: dict = {}
+        for _iW in {_i2 for _k2, _c2 in _reW.items() if _c2 == 1 for _i2 in _k2}:
+            _xW, _yW, _zW = _rvW[_iW]
+            _rhW.setdefault((int(_xW // 4.0), int(_zW // 4.0)), []).append((_xW, _yW, _zW))
+        # every OTHER managed edge is a floor source too: the ring-only floor cut 24 -> 16 and
+        # the survivors sat where the shoulder's ground-meet or a runoff pad boundary is the
+        # local rim instead of the ring
+        _secW = shoulder.get("sections") or {}
+        _shvW = shoulder.get("vertices", [])
+        _mW = len(_secW.get(1.0) or _secW.get(-1.0) or [])
+        if _mW and len(_shvW) == 2 * _mW * 4:
+            for _sdW in (0, 1):
+                for _sW in _secW[1.0 if _sdW == 0 else -1.0]:
+                    _xW, _yW, _zW = _shvW[(_sdW * _mW + _sW["i"]) * 4 + 2]
+                    _rhW.setdefault((int(_xW // 4.0), int(_zW // 4.0)), []).append((_xW, _yW, _zW))
+        _reW2: dict = {}
+        for _tW in runoff.get("tris", ()):
+            for _eW in ((_tW[0], _tW[1]), (_tW[1], _tW[2]), (_tW[2], _tW[0])):
+                _kW = (min(_eW), max(_eW))
+                _reW2[_kW] = _reW2.get(_kW, 0) + 1
+        _rvW2 = runoff.get("vertices", [])
+        for _iW in {_i2 for _k2, _c2 in _reW2.items() if _c2 == 1 for _i2 in _k2}:
+            _xW, _yW, _zW = _rvW2[_iW]
+            _rhW.setdefault((int(_xW // 4.0), int(_zW // 4.0)), []).append((_xW, _yW, _zW))
+        # graded FLOOR from the ring edge: node height >= edge - 0.04 - 0.22*dist within 5 m.
+        # 22%/m = 0.11 per 0.5 m sample — under the gate's 0.12 budget; the floor only RAISES
+        # toward a line that starts below the edge and descends, so it can never poke pavement,
+        # and it feathers itself out wherever natural ground already sits above the line.
+        # (Weld-to-edge alone cut 30 -> 24; the surviving 0.28-0.52 cliffs sat 0.5-1 m past its
+        # 1 m reach — this is the same idea carried to the gate's own grade budget.)
+        # pavement footprint cap: a floor sourced from a cross-road or inner edge must never
+        # raise grass through pavement (audit B hit 61k the build this was missing). Nodes under
+        # a pavement triangle cap at that surface − 0.06.
+        _ptW: dict = {}
+        for _sheetW in (road, runoff, kerb):    # NOT the shoulder: capping under its own descending face pins the floor away from the toe it exists to fill
+            _svW = _sheetW.get("vertices", [])
+            for _tW in _sheetW.get("tris", ()):
+                _triW = (_svW[_tW[0]], _svW[_tW[1]], _svW[_tW[2]])
+                _xsW = [_vW[0] for _vW in _triW]
+                _zsW = [_vW[2] for _vW in _triW]
+                for _ciW in range(int(min(_xsW) // 4.0), int(max(_xsW) // 4.0) + 1):
+                    for _cjW in range(int(min(_zsW) // 4.0), int(max(_zsW) // 4.0) + 1):
+                        _ptW.setdefault((_ciW, _cjW), []).append(_triW)
+
+        def _pav_below_W(_pxW, _pzW, _refW):
+            _bW = None
+            for _AW, _BW, _CW in _ptW.get((int(_pxW // 4.0), int(_pzW // 4.0)), ()):
+                _dW2 = (_BW[2] - _CW[2]) * (_AW[0] - _CW[0]) + (_CW[0] - _BW[0]) * (_AW[2] - _CW[2])
+                if abs(_dW2) < 1e-12:
+                    continue
+                _w0W = ((_BW[2] - _CW[2]) * (_pxW - _CW[0]) + (_CW[0] - _BW[0]) * (_pzW - _CW[2])) / _dW2
+                _w1W = ((_CW[2] - _AW[2]) * (_pxW - _CW[0]) + (_AW[0] - _CW[0]) * (_pzW - _CW[2])) / _dW2
+                _w2W = 1.0 - _w0W - _w1W
+                if _w0W >= -1e-6 and _w1W >= -1e-6 and _w2W >= -1e-6:
+                    _yyW = _w0W * _AW[1] + _w1W * _BW[1] + _w2W * _CW[1]
+                    if abs(_yyW - _refW) <= 4.0 and (_bW is None or _yyW < _bW):
+                        _bW = _yyW
+            return _bW
+
+        _gvW = grass["vertices"]
+        # DROP-EDGE PREFILTER: only an edge whose nearby natural grass sits BELOW it may emit a
+        # floor. At a cut/fill corner (station 302.5) high cut-side edges radiated 20% lines over
+        # low ground and built HILLS — 0.5-1.0 m cliffs at their own borders. Judged against a
+        # natural-height snapshot so the pass is order-independent.
+        _gy0W = [_vW[1] for _vW in _gvW]
+        _gnhW: dict = {}
+        for _giW, (_gxW, _gyW, _gzW) in enumerate(_gvW):
+            _gnhW.setdefault((int(_gxW // 4.0), int(_gzW // 4.0)), []).append(_giW)
+        _rh2W: dict = {}
+        _keptW = _dropdW = 0
+        for _cellW, _srcsW in _rhW.items():
+            for _xW, _yW, _zW in _srcsW:
+                _loW = None
+                _hiW = None
+                for _diW in (-1, 0, 1):
+                    for _djW in (-1, 0, 1):
+                        for _giW in _gnhW.get((int(_xW // 4.0) + _diW, int(_zW // 4.0) + _djW), ()):
+                            _gvW2 = _gvW[_giW]
+                            if math.hypot(_gvW2[0] - _xW, _gvW2[2] - _zW) <= 2.0 \
+                                    and abs(_gy0W[_giW] - _yW) <= 3.5:
+                                _nyW = _gy0W[_giW]
+                                if _loW is None or _nyW < _loW:
+                                    _loW = _nyW
+                                if _hiW is None or _nyW > _hiW:
+                                    _hiW = _nyW
+                if _loW is not None and _loW < _yW - 0.15 and (_hiW is None or _hiW < _yW + 0.5):
+                    _rh2W.setdefault(_cellW, []).append((_xW, _yW, _zW))
+                    _keptW += 1
+                else:
+                    _dropdW += 1
+        _rhW = _rh2W
+        print(f"  [seam-weld] drop-edge prefilter: {_keptW} floor sources kept, {_dropdW} silenced")
+        _weldW = 0
+        for _giW in range(len(_gvW)):
+            _gxW, _gyW, _gzW = _gvW[_giW]
+            _gyW = _gy0W[_giW]
+            _floorW = None
+            for _diW in (-2, -1, 0, 1, 2):
+                for _djW in (-2, -1, 0, 1, 2):
+                    for _xW, _yW, _zW in _rhW.get((int(_gxW // 4.0) + _diW, int(_gzW // 4.0) + _djW), ()):
+                        if abs(_yW - _gyW) > 3.5:
+                            continue
+                        _dW = math.hypot(_gxW - _xW, _gzW - _zW)
+                        if _dW <= 5.0:
+                            _fW = _yW - 0.01 - 0.20 * _dW
+                            if _floorW is None or _fW > _floorW:
+                                _floorW = _fW
+            if _floorW is not None and _gyW < _floorW - 0.01:
+                _pavW = _pav_below_W(_gxW, _gzW, _floorW)
+                if _pavW is not None and _floorW > _pavW - 0.06:
+                    _floorW = _pavW - 0.06
+                if _gyW < _floorW - 0.01:
+                    _gvW[_giW] = (_gxW, _floorW, _gzW)
+                    _weldW += 1
+        if _weldW:
+            print(f"  [seam-weld] {_weldW} grass nodes raised to the 22% floor off the ring edge (0025)")
+
     groups = [*split_mesh_under_cap("1GRASS", "grass", grass),
               *split_mesh_under_cap("1GRASS_ring", "grass", orient_up(ring_mesh)),
               *split_mesh_under_cap(edge_group, edge_mat, shoulder),

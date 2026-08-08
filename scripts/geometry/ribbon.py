@@ -165,7 +165,18 @@ def road_shoulder(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
                 # at 1:6 batter (near-vertical, the 1913 Lariat pattern; build_mesh skins it in
                 # RETWALL stone). Bridges are already handled upstream by the bridge detector.
                 _wall = (not _cutting) and _drop > 4.0
-                _slope_r = (1.0 / 6.0) if _wall else (0.75 if (_cutting or _drop > 1.5) else ratio)
+                # FILL GRADE vs THE GATE (ledger 0025): the drive gate budgets 24% max grade in
+                # its excursion band, but "gentle ratio:1" at the default 2.0 is a 50% face — the
+                # builder violated its own gate on every embankment toe (nine constant 0.16 m
+                # steps at the rim line on imi). Shallow fills now grade at 4.5:1 (22%): a 0.4 m
+                # toe widens by ~1 m and the whole face passes inside the band.
+                _slope_r = (1.0 / 6.0) if _wall else (0.75 if (_cutting or _drop > 1.2) else max(4.5, ratio))
+                # THE COMPLETE SELECTOR/GATE AGREEMENT (ledger 0025, 27 builds of evidence):
+                # shallow fill (<1.2 m) grades GENTLE at 4.5:1 (22%) — legal inside the drive
+                # gate's 24% band, narrow enough not to pleat corners (always-4.5 swept 10 m+
+                # sheets across the 302.5 corner and built sawtooth hills). Deep fill (>=1.2 m)
+                # stays 0.75:1 but earns a stone PARAPET (warrant lowered to match), and the
+                # gate exempts guarded drops. >4 m keeps the retaining wall.
                 extra = min(max_w, max(verge_w if not _wall else 0.6, _drop * _slope_r))
                 o = _cap(half + verge_w + extra)
                 verts.append((x + nx * o, ground(x + nx * o, z + nz * o), z + nz * o))   # ground meet (draped)

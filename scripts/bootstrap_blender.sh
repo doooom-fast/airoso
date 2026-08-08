@@ -12,6 +12,14 @@
 set -euo pipefail
 
 VER="4.2.9"
+# Windows: no dmg to download — use the installed Blender 4.2 (the windows-build-box standard).
+# Resolved BEFORE the Mac path so a Git Bash build never tries to fetch a macOS image (it 403s).
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*)
+    WIN_BL="${BLENDER:-C:/Program Files/Blender Foundation/Blender 4.2/blender.exe}"
+    if [[ -x "$WIN_BL" || -f "$WIN_BL" ]]; then echo "$WIN_BL"; exit 0; fi
+    echo "Blender 4.2 not found at '$WIN_BL' — install it or set BLENDER" >&2; exit 1 ;;
+esac
 ARCH="$(uname -m)"                       # arm64 | x86_64
 case "$ARCH" in
   arm64)  DMG_ARCH="arm64" ;;

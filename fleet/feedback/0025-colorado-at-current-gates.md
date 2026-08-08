@@ -47,3 +47,16 @@ fail exclusively on `excursion_drops` (ground falling >20 cm just beyond the pav
 - imi + pueblo rebuild PASS drive_test after the archetype declaration (or hypothesis 2 joins 1
   in the killed list with numbers).
 - The passing builds install with grid/AI/cameras and Kevin drives one.
+
+## Fix attempt 1 — KILLED BY THE GATE (v0.65.0, reverted in v0.65.1 same hour)
+
+A feathered flush-band lift of grass nodes toward the shoulder's outer rim. drive_test verdict on
+imi: drops 30 → 29 (no help) while **severe 0 → 27 and soft-top 0 → 161** — in CUT sections the
+rim sits ABOVE the deck, so lifting grass toward it pushed lawn up through the lane. The pass
+ignored the one distinction the builder itself makes (`road_shoulder`'s per-station construction
+selector: cutting / fill / wall). Reverted; the gate did exactly its job.
+
+**v2 direction (the durable cut):** rim targets from FILL and WALL stations only, using
+`road_shoulder`'s `sections` metadata rather than re-deriving; per-node lift additionally capped
+by the LOCAL deck height (never above deck − 0.3 within lane influence); verify on imi (drops → ~0
+with severe/soft-top back to 0) before pueblo.

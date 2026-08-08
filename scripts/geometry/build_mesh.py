@@ -2867,6 +2867,51 @@ def build(project_dir: str | Path) -> dict:
     # 1GRASS (not GRASS): the leading digit makes the terrain a PHYSICAL surface keyed to
     # surfaces.ini GRASS, so you don't fall through the world off the racing line either.
     # (Orientation confirmed in-game — the temporary CALIB calibration poles are removed.)
+    # FLUSH BAND (ledger 0025 — "the moat"): the shoulder's outer rim (ground-meet + hem) is
+    # DRAPED onto the bilinear grass_surf, but the grass MESH between grid nodes cuts BELOW that
+    # surface — the rim hangs 0.26–0.4 m above the first grass triangle, a trench ring the
+    # excursion sweep gates (imi 30, pueblo 118) and Kevin can see from the seat ("a moat cut
+    # around it"). Raise nearby grass nodes into a feathered ramp: within FLUSH_R of a rim vertex
+    # a node >0.10 m below comes up to rim−0.05; the lift fades to nothing by FEATHER_R. Lift cap
+    # is BELOW the sheet's own edge so this cannot re-poke; the L4 layer guard (3 m) keeps
+    # stacked switchback legs from cross-grabbing.
+    if edge_group == "1ROAD_shoulder" and grass.get("vertices"):
+        _rimF = []
+        _shvF = shoulder["vertices"]
+        for _kF in range(0, len(_shvF) - 3, 4):            # rows are [lip, verge, meet, hem]
+            _rimF.extend(_shvF[_kF + 2:_kF + 4])
+        _rhF: dict = {}
+        for _rxF, _ryF, _rzF in _rimF:
+            _rhF.setdefault((int(_rxF // 4.0), int(_rzF // 4.0)), []).append((_rxF, _ryF, _rzF))
+        _FLUSH_R, _FEATHER_R = 2.0, 7.0
+        _gvF = grass["vertices"]
+        _liftedF = 0
+        for _giF in range(len(_gvF)):
+            _gxF, _gyF, _gzF = _gvF[_giF]
+            _bestF = None
+            _bdF = 1e9
+            _ciF, _cjF = int(_gxF // 4.0), int(_gzF // 4.0)
+            for _diF in (-2, -1, 0, 1, 2):
+                for _djF in (-2, -1, 0, 1, 2):
+                    for _rxF, _ryF, _rzF in _rhF.get((_ciF + _diF, _cjF + _djF), ()):
+                        if abs(_ryF - _gyF) > 3.0:
+                            continue
+                        _dF = math.hypot(_gxF - _rxF, _gzF - _rzF)
+                        if _dF < _bdF:
+                            _bdF, _bestF = _dF, _ryF
+            if _bestF is None or _bdF > _FEATHER_R:
+                continue
+            _targetF = _bestF - 0.05
+            if _gyF >= _targetF - 0.05:
+                continue
+            _wF = 1.0 if _bdF <= _FLUSH_R else (_FEATHER_R - _bdF) / (_FEATHER_R - _FLUSH_R)
+            _nyF = _gyF + (_targetF - _gyF) * _wF
+            if _nyF - _gyF > 0.01:
+                _gvF[_giF] = (_gxF, _nyF, _gzF)
+                _liftedF += 1
+        if _liftedF:
+            print(f"  [flush-band] lifted {_liftedF} grass verts into the shoulder-rim ramp (0025 moat)")
+
     groups = [*split_mesh_under_cap("1GRASS", "grass", grass),
               *split_mesh_under_cap("1GRASS_ring", "grass", orient_up(ring_mesh)),
               *split_mesh_under_cap(edge_group, edge_mat, shoulder),

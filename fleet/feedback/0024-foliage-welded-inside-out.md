@@ -37,3 +37,16 @@ planar-UV pass already exempts. Welding exists to clean generated seams, not aut
 
 - Re-run the coherence scan on the rebuilt kn5: PALMTRUNK/SCRUB at ~0% inverted, unit normals.
 - Kevin looks at a palm and it reads as a palm from every side.
+
+## Extension — barriers carry the same class (Kevin, 2026-08-08)
+
+> "The barriers look weird too like they have the same wrongly closed vertices"
+
+Measured on the installed Lariat: `1WALL_barrier_*` (the corner guardrails, ~116k tris across
+five bands) run **20–22% inverted** — worse than the palms were; PARA stone and RETWALL are
+clean, so it is the barrier sweep's emission plus the unconditional weld closing coincident
+instance end-caps. Fix (v0.64.1): the consensus-flip repair now runs on wall-class groups in
+BOTH pipelines (OBJ path post-weld; loop path via the weld-exempt branch), never on grass/road
+(their winding is authored — the graveyard of normal passes documented in build_kn5.py stands).
+Root-cause entry for the sweep's winding stays open if residual clustered inversion survives the
+repair (consensus heals scatter, not whole-side mirrors).

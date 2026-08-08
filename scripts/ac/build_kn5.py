@@ -163,6 +163,32 @@ def build(track_dir: Path) -> Path:
             # past the 65,535 cap into duplicate meshes. Weld + fill holes, then leave the winding alone.
             after = sum(1 for e in bm.edges if len(e.link_faces) == 1)
             print(f"[build_kn5] 1GRASS open edges {before} -> {after} (weld 5 cm + holes_fill)")
+        # WALL-CLASS winding repair (0024, extended): the barrier sweep ships ~20% inverted faces
+        # (measured on the Lariat's 1WALL_barrier_* bands, 2026-08-08 — Kevin: "the barriers look
+        # weird too like they have the same wrongly closed vertices"), and the weld above can close
+        # coincident instance end-caps into cross-segment faces. Flip any face that opposes its own
+        # vertices' consensus normal, to convergence. NEVER applied to grass/road — their winding is
+        # authored and the block above documents the graveyard of passes that touched it.
+        _up = ob.name.upper()
+        if _up.startswith(("1WALL", "RETWALL", "FENCE", "CHAINL")) or "BARRIER" in _up:
+            bm.normal_update()
+            _tot = 0
+            for _ in range(3):
+                _flip = []
+                for f in bm.faces:
+                    _cx = _cy = _cz = 0.0
+                    for v in f.verts:
+                        _cx += v.normal.x; _cy += v.normal.y; _cz += v.normal.z
+                    if (_cx * _cx + _cy * _cy + _cz * _cz) > 1e-12 and \
+                       (f.normal.x * _cx + f.normal.y * _cy + f.normal.z * _cz) < -1e-4:
+                        _flip.append(f)
+                if not _flip:
+                    break
+                bmesh.ops.reverse_faces(bm, faces=_flip)
+                bm.normal_update()
+                _tot += len(_flip)
+            if _tot:
+                print(f"[build_kn5] {ob.name}: consensus-flipped {_tot} wall faces (0024)")
         bm.to_mesh(ob.data)
         bm.free()
         ob.data.update()

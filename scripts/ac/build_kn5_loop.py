@@ -677,7 +677,8 @@ def main():
         # one face keeping a random side — salt-and-pepper inverted triangles all over trunks and
         # bushes (measured 15-16% on PALMTRUNK, 8% on SCRUB; ledger 0024, Kevin: "points are
         # closing with the wrong vectors"). Weld exists to clean GENERATED seams, not authored props.
-        if not ob.name.upper().startswith(("PALM", "TREE", "SCRUB", "BUSHES", "CHAINLINK")):
+        if not ob.name.upper().startswith(("PALM", "TREE", "SCRUB", "BUSHES", "CHAINLINK",
+                                           "1WALL", "RETWALL")):
             bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-4)
         else:
             # REPAIR damage already baked into the source .blend (earlier welds): a lone inverted

@@ -1,4 +1,15 @@
 ---
+# 2026-08-09 measured anatomy (the lap-seam tail, finally profiled): between arcs 3799-3877 the
+# DATA centerline and the AUTHORED road diverge up to 7.09 m (p95 elsewhere: 0.04 m). The gate's
+# virtual path crosses the interchange diagonally: 40 m with no road beneath it at all (grass
+# hillside 5 m above), then the overpass deck 3 m ABOVE the path (YLINE'd, real), then a 4 m
+# drop off its end — severe-31 and both 0.8 m "ledges" live entirely on that phantom line. The
+# in-game harness lap (AI on the shipped fast_lane, 2026-08-06) drove this zone with 0.2 s worst
+# tyres-out and no contact: the DRIVEN road is continuous. The defect is the PATH DATA at the
+# interchange (0019's wrong-carriageway picker class), not the driven geometry. Two real fixes
+# remain: regenerate the centerline through the interchange on the correct carriageway, and
+# carve the terrain lid that still roofs the underpass corridor (a deck-bridge + grounded fence
+# landed in loop.blend 2026-08-09; the lid carve is open).
 id: 0017
 title: Lake Murray — a connector roofs the mainline (first read as "a hole in the upper deck")
 status: fixed in part (v0.49.0); lap seam still open

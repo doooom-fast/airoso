@@ -1,7 +1,7 @@
 ---
 id: 0025
 title: Colorado at current gates — two clean laps blocked at the runoff edge, two on surface roughness
-status: fixed at the gates (v0.66.1, installed 2026-08-08) — imi 30→0, pueblo 12→2-in-allowance; in-seat verdict open; high-plains/lariat still carry 0018-class roughness
+status: fixed at the gates (v0.66.3 wave, 2026-08-09) — 5 of 7 circuits green (imi, pueblo, aspen, high-plains, second-creek); sand-creek 1 soft-top from un-excavated cut-corridor grass (deferred), lariat its own campaign; in-seat verdict open
 scope: k10-colorado/imi, pueblo, high-plains, lookout-lariat
 layer: engine
 train: R4
@@ -80,3 +80,40 @@ git-side note; the survivors):
    and still "unguarded", because the gate's guard scan probed the one TriField that structurally
    cannot contain a wall. One-word fix in `drive_test.py` (probe `obstacle`, not `surface`).
    Filed separately as 0027 because it is a gate defect, not a grading one.
+
+## The wave (2026-08-09, v0.66.3) — the toolkit against the rest of Colorado
+
+Kevin: "So you only did two tracks?" Ran the other seven. Four more mechanisms fell out, each
+traced to a vertex before it was fixed (the byte-identical rule: a parameter that changes nothing
+is not the lever):
+
+4. **Ring rows obey the graded floor:** the annulus sampled the RAW grid while the seam-weld
+   raised the grass beside it — a 40% construction chute at every fill edge, tripping the gate at
+   every 150 m sweep station (aspen: 18 gated drops of pure gradient).
+5. **Buried skirts do not clamp (the 0028 defect inside the builder):** the ring's pavement clamp
+   tucked rows under the shoulder's own hem — traced live: floor raises to 3.438, clamp pulls to
+   3.177 under a "pavement" at 3.207 that sits below natural grade. Per-scan discriminator: the
+   deck scan always clamps (a deck cut in at grade is still a deck — second-creek proved the
+   overcorrection with 68 in-lane ring soft-tops), the shoulder-family scans only when +0.10
+   proud of natural grade.
+6. **Fan-stitch guard:** at a tight corner adjacent ring columns fan apart and the stitched face
+   sweeps across the deck while every NODE is legal — second-creek's 24 soft-tops rode a 15 m
+   sliver 21 mm over the apex, byte-stable through three node-level fixes because no node was
+   ever wrong. Row segments fanned > 6 m get sampled for pavement and the stitch cut at the
+   first crossing.
+7. **corridor_refine_factor 6 is a fleet standard, not an imi tweak:** the floor raises NODES;
+   on a 2 m grid the surface between a floored node and its natural neighbour sags back under
+   the line and the gate's 0.5 m samples catch it. aspen/second-creek/sand-creek/high-plains
+   configs now carry the refine the proven pair always had.
+
+Killed on the way (recorded so they stay dead): a universal deck-cap (562k nodes moved to fix
+one — and missed it); an under-deck sink (697k nodes, broke kn5_ground_check's float budget);
+widening the meet clamp deadband (regressed sand-creek 3→13 drops).
+
+**Matrix on identical v0.66.3 code, all four gates:** imi PASS, pueblo PASS, aspen PASS,
+high-plains PASS, second-creek PASS, sand-creek FAIL (1 soft-top: refined grass at natural
+height inside the shoulder's cut corridor spans the deck edge at 8047 — the honest fix is
+corridor excavation, deferred; 1 severe at 1274 unprobed), lookout-lariat FAIL (severe 1033,
+drops 184 — the mountain road is its own campaign). Aspen carries a known blemish inside its
+passing budget: a 13 cm/m kink in finished_centerline y at stations 1517-1519 — elevation-side,
+not mesh-side.

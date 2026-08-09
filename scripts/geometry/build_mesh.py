@@ -2105,6 +2105,7 @@ def build(project_dir: str | Path) -> dict:
     wallskin = {"vertices": [], "uvs": [], "tris": []}
     rockskin = {"vertices": [], "uvs": [], "tris": []}
     _RINGS17 = (1.5, 4.0, 10.0, 22.0)
+    _ring_floor17 = [0]     # ring rows raised to the graded floor (printed with the weld counts)
 
     def _pav_any17(px, pz, y_ref):
         """Lowest pavement surface AT this exact XZ with NO angle filter — a truly vertical
@@ -2197,6 +2198,18 @@ def build(project_dir: str | Path) -> dict:
             for _ki17, _dk in enumerate(_RINGS17):
                 _px, _pz = _mx + _nx17 * _dk, _mz + _nz17 * _dk
                 _gy17 = _grid_trisurf(grid_xyz, _px, _pz) + 0.02
+                _gyraw17 = _gy17     # natural grade here — the buried-skirt discriminator below
+                # RING ROWS OBEY THE GRADED FLOOR (0025 wave): the seam-weld raises GRASS
+                # nodes to the 22% floor off the managed edges, but ring rows sampled the
+                # RAW grid — so the annulus dove from its meet anchor to un-floored terrain
+                # in one quad. Aspen measured: meet 3.778, ring row 1 at 3.177, the outer
+                # grass beside it floored to 3.43 — a 40% construction chute tripping the
+                # gate's sweep at every 150 m station (18 gated drops of pure gradient).
+                # max() never lowers natural ground, so cut banks are untouched.
+                _rf17 = _m0[1] - 0.01 - 0.22 * _dk
+                if _rf17 > _gy17:
+                    _gy17 = _rf17
+                    _ring_floor17[0] += 1
                 if abs(_gy17 - _py17) > 20.0:
                     # cliff edge / another leg's valley: TERMINATE the annulus here — a flat
                     # extension hung 30 m grass shelves over the real terrain (74 double-sheets)
@@ -2207,12 +2220,12 @@ def build(project_dir: str | Path) -> dict:
                 # leg's corridor far below) must TERMINATE the strip instead: that space belongs
                 # to the inter-leg cut face, and folding created 10-20 m grass curtains (the
                 # double-sheet gate caught 76 of them).
-                _pv17 = _deck_window_min7(_px, _pz, _gy17)
+                _pv17 = _deck_window_min7(_px, _pz, _gy17)   # a real deck ALWAYS clamps (buried-skirt note below)
                 _ps17 = _shoulder_window_min8(_px, _pz, _gy17)
-                if _ps17 is not None and (_pv17 is None or _ps17 < _pv17):
+                if _ps17 is not None and _ps17 > _gyraw17 + 0.10 and (_pv17 is None or _ps17 < _pv17):
                     _pv17 = _ps17
                 _pa17 = _pav_at17(_px, _pz, _gy17)
-                if _pa17 is not None and (_pv17 is None or _pa17 < _pv17):
+                if _pa17 is not None and _pa17 > _gyraw17 + 0.10 and (_pv17 is None or _pa17 < _pv17):
                     _pv17 = _pa17
                 # NO-FILTER LOCAL TEST. All three scans above drop triangles more than 60° off
                 # horizontal, and on a steep stage that can be the deck itself — so the clamp never
@@ -2224,7 +2237,8 @@ def build(project_dir: str | Path) -> dict:
                 # Bounded to 1 m: this must find the deck directly overhead, never another leg of a
                 # switchback, or it would trip the >3 m deep-fold termination below.
                 _pn17 = _pav_any17(_px, _pz, _gy17)
-                if _pn17 is not None and abs(_gy17 - _pn17) <= 1.0 and (_pv17 is None or _pn17 < _pv17):
+                if (_pn17 is not None and abs(_gy17 - _pn17) <= 1.0 and _pn17 > _gyraw17 + 0.10
+                        and (_pv17 is None or _pn17 < _pv17)):
                     _pv17 = _pn17
                 # SHALLOW-CROSSING TERMINATION (0012 option 2). 'Outward' from a hairpin leg sails
                 # over the OPPOSING leg's carriageway at nearly its own height — the deep-fold rule
@@ -2253,6 +2267,19 @@ def build(project_dir: str | Path) -> dict:
                         if _da17 > 50.0 or (_ho17[0] * _hf17[0] + _ho17[1] * _hf17[1]) < -0.2:
                             _kcut = _ki17 + 1
                             break
+                # BURIED SKIRTS DO NOT CLAMP (0025 wave, the 0028 defect inside the builder):
+                # the invariant is "grass never stands above the pavement OVERHEAD", but the
+                # shoulder-family scans cannot tell a deck from the shoulder's own hem — a
+                # skirt sunk below grade BY DESIGN. Traced on aspen station 301.9: ring row
+                # raised to the 22% floor (3.438), then clamped to 3.177 under a "pavement"
+                # at 3.207 that sits below the natural grade (3.265) — the builder digging
+                # the exact chute the drive gate then trips on, at every fill edge, on three
+                # tracks. So the shoulder/any-pavement scans only contribute a clamp target
+                # when they stand +0.10 proud of natural grade (hems hover within a few cm of
+                # it; real aprons and stacked sheets stand decimetres proud). The DECK scan is
+                # exempt: a deck cut in at/below grade is still a deck, and the ring must tuck
+                # under it (second-creek 2638-2640: 68 in-lane ring soft-tops the build this
+                # distinction was missing).
                 if _pv17 is not None and _gy17 > _pv17 - GRASS_CLEARANCE_M - 0.02:
                     if _gy17 - _pv17 > 3.0:
                         _kcut = _ki17 + 1             # usable rows: ring0.._ki17 (exclusive of this)
@@ -2274,6 +2301,29 @@ def build(project_dir: str | Path) -> dict:
                 continue
             _ca, _cb = _ea[0], _eb[0]
             _K17 = min(len(_ca), len(_cb), _ea[1], _eb[1])
+            # FAN-STITCH GUARD (0025 wave): at a tight corner adjacent columns fan apart and
+            # the stitched face can sweep across the deck while every NODE stays legal — the
+            # node-level clamps and terminations never see it (second-creek 2638-2640: a 15 m
+            # sliver over the apex, 21 mm proud of the deck, byte-stable through three node-
+            # level fixes because no node was ever wrong). When a row segment is fanned wider
+            # than any honest stitch (> 6 m), sample it for pavement at its own height and cut
+            # the stitch at the first crossing row.
+            for _k17 in range(_K17):
+                _va17, _vb17 = _ca[_k17], _cb[_k17]
+                if math.hypot(_va17[0] - _vb17[0], _va17[2] - _vb17[2]) <= 6.0:
+                    continue
+                _cut17 = False
+                for _fq17 in (0.25, 0.5, 0.75):
+                    _qx17 = _va17[0] + (_vb17[0] - _va17[0]) * _fq17
+                    _qy17 = _va17[1] + (_vb17[1] - _va17[1]) * _fq17
+                    _qz17 = _va17[2] + (_vb17[2] - _va17[2]) * _fq17
+                    _pq17 = _pav_any17(_qx17, _qz17, _qy17)
+                    if _pq17 is not None and abs(_pq17 - _qy17) <= 1.5:
+                        _cut17 = True
+                        break
+                if _cut17:
+                    _K17 = _k17
+                    break
             if _K17 < 2:
                 continue
             _bs17 = len(ring_mesh["vertices"])
@@ -2372,18 +2422,27 @@ def build(project_dir: str | Path) -> dict:
         for _i9 in range(len(_rg9)):
             _x9, _y9, _z9 = _rg9[_i9]
             for _zx9, _zz9, _zy9, _zr9 in _flat_zones:
-                if (_x9 - _zx9) ** 2 + (_z9 - _zz9) ** 2 < _zr9 * _zr9 and abs(_y9 - _zy9) < 4.0:
+                # +3.5 past the rim: a road tri straddling the zone circle interpolates from the
+                # pad plane down to its natural profile across ~3 m (this guard's own header),
+                # so a snapped ring vert just OUTSIDE the circle still rides over the descending
+                # road — second-creek 2638-2640, 24 in-lane ring soft-tops at exactly a pad rim.
+                if (_x9 - _zx9) ** 2 + (_z9 - _zz9) ** 2 < (_zr9 + 3.5) ** 2 and abs(_y9 - _zy9) < 4.0:
                     # the NO-FILTER test: on a mountain fill the shoulder is steeper than the 60°
                     # wall filter allows, and _pav_at17 goes blind exactly where the tuck matters
                     # (Aspen's stubborn +0.19 at (122.5,-64.1): ring 0.27 over a shoulder whose
                     # underside sits at the same height — a steep thin sheet no filtered scan sees)
                     _pav9 = _pav_any17(_x9, _z9, _y9)
-                    if _pav9 is not None and _y9 > _pav9 - GRASS_CLEARANCE_M - 0.02:
+                    # |pav - zone plane| <= 1.0: in zone context the deck hugs the pad plane;
+                    # a buried shoulder hem sits ~0.8 under grade and must not pull the ring
+                    # down (the aspen chute lesson, 0025) — discriminate by distance from plane.
+                    if (_pav9 is not None and abs(_pav9 - _zy9) <= 1.0
+                            and _y9 > _pav9 - GRASS_CLEARANCE_M - 0.02):
                         _rg9[_i9] = (_x9, _pav9 - GRASS_CLEARANCE_M - 0.02, _z9)
                         _fixed9 += 1
                     break
         if _fixed9:
             print(f"  [#17] zone-rim guard: {_fixed9} ring verts re-tucked under the pavement")
+    print(f"  [ring-floor] {_ring_floor17[0]} ring rows raised to the 22% floor off their meet (0025)")
     print(f"  [#17] welded rings {len(ring_mesh['vertices'])}v; parapets {len(para_mesh['vertices'])}v; "
           f"wall skins {len(wallskin['vertices'])}v; rock skins {len(rockskin['vertices'])}v")
     # ==========================================================================================

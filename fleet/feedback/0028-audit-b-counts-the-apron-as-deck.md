@@ -1,7 +1,7 @@
 ---
 id: 0028
 title: Audit B counts the shoulder's buried apron as deck — every correct cut bank reads as a poke
-status: diagnosed
+status: fixed (v0.66.1) — B 59,162→0 and kn5 pokes 52,658→0 on the same artifacts, other counts unchanged
 scope: engine — every track with cut sections; proof k10-colorado/imi, regression any flat track (B unchanged)
 layer: engine
 train: R4 (rides with 0025/0027)

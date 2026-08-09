@@ -1,7 +1,7 @@
 ---
 id: 0027
 title: The gate's guard exemption was dead code — no wall could ever be in the field it probed
-status: diagnosed
+status: fixed (v0.66.1) — proof: imi's 3 lips credited same build; regression: wall-less counts unchanged
 scope: engine — every track that ships 1WALL geometry; proof k10-colorado/imi, regression any wall-less build
 layer: engine
 train: R4 (rides with 0025)

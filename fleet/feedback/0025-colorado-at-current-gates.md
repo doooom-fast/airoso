@@ -1,7 +1,7 @@
 ---
 id: 0025
 title: Colorado at current gates — two clean laps blocked at the runoff edge, two on surface roughness
-status: diagnosed
+status: fixed at the gates (v0.66.1, installed 2026-08-08) — imi 30→0, pueblo 12→2-in-allowance; in-seat verdict open; high-plains/lariat still carry 0018-class roughness
 scope: k10-colorado/imi, pueblo, high-plains, lookout-lariat
 layer: engine
 train: R4

@@ -1212,7 +1212,9 @@ def build(project_dir: str | Path) -> dict:
         edge_group, edge_mat = "1KERB_sidewalk", "kerb"
     else:
         shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
-                                        ground_drop=GRASS_CLEARANCE_M, ground=grass_surf)
+                                        ground_drop=GRASS_CLEARANCE_M, ground=grass_surf,
+                                        fill_apron=(str(cfg_raw.get("road_surface", "tarmac"))
+                                                    == "tarmac"))
         edge_group, edge_mat = "1ROAD_shoulder", "road"
         _pav_reg(edge_group, shoulder, "shoulder")
         # CONNECTORS GET A DRAPED VERGE TOO. The main loop's shoulder extends a MANAGED corridor
@@ -2306,6 +2308,9 @@ def build(project_dir: str | Path) -> dict:
                 out.append(run)
             return out
         # stone parapets: fill edges dropping > 2 m (incl. wall tops) — 0.5 h x 0.4 w at the verge
+        # ...and DEEP CUTS get the same stone lip: a bank looming >1.2 m over the verge means a
+        # bench trench beside the pavement, and the sweep's unguarded-drop rule marks the wall's
+        # place identically in both directions (the last 3 imi drops, station 302.5's cut corner).
         for _run in _runs17(lambda sc: (not sc["cutting"]) and sc["drop"] > 1.2,
                             exit_flag=lambda sc: (not sc["cutting"]) and sc["drop"] > 0.9,
                             min_run=10, max_gap=4):
@@ -2995,6 +3000,116 @@ def build(project_dir: str | Path) -> dict:
                     _weldW += 1
         if _weldW:
             print(f"  [seam-weld] {_weldW} grass nodes raised to the 22% floor off the ring edge (0025)")
+
+    # MEASUREMENT-DRIVEN GUARDS (ledger 0025, closing move): the drive gate's comment says
+    # unguarded in-band drops "mark exactly where the four-condition selector must place walls" —
+    # but verge-line metadata cannot see drops beyond it (302.5's cut bench: 29 builds of grading
+    # killed 27 of 30; the last 3 are metadata-invisible). So the builder mirrors the gate's own
+    # outboard sweep 1:1 over its own built meshes — same origin (centerline out to we+9.0), same
+    # band (built_edge+4.0, built = 1ROAD/1KERB owners, so shoulder counts and 1RUNOFF does not),
+    # same 0.5 m stride and 0.12 m trip, same flare exemption — and sets a 1913-pattern stone lip
+    # just inboard of every measured drop face that sits clear of the pavement. Measured, not
+    # modeled. (Known limit: existing walls/railings are not in the hash, so a track with real
+    # barriers may get a cosmetic extra lip beside them — harmless, revisit on the LM rebuild.)
+    if edge_group == "1ROAD_shoulder":
+        _mgH = {}
+        for _srcH, _clsH in ((road, "P"), (kerb, "P"), (shoulder, "P"),
+                             (grass, "G"), (ring_mesh, "G"), (runoff, "G"), (shoulder_under, "G")):
+            _svH = _srcH.get("vertices", [])
+            for _tH in _srcH.get("tris", ()):
+                _trH = (_svH[_tH[0]], _svH[_tH[1]], _svH[_tH[2]], _clsH)
+                _xsH = (_trH[0][0], _trH[1][0], _trH[2][0])
+                _zsH = (_trH[0][2], _trH[1][2], _trH[2][2])
+                for _ciH in range(int(min(_xsH) // 4.0), int(max(_xsH) // 4.0) + 1):
+                    for _cjH in range(int(min(_zsH) // 4.0), int(max(_zsH) // 4.0) + 1):
+                        _mgH.setdefault((_ciH, _cjH), []).append(_trH)
+
+        def _top_H(_pxH, _pzH, _refH):
+            _bH, _boH = None, None
+            for _AH, _BH, _CH, _clH in _mgH.get((int(_pxH // 4.0), int(_pzH // 4.0)), ()):
+                _dH = (_BH[2] - _CH[2]) * (_AH[0] - _CH[0]) + (_CH[0] - _BH[0]) * (_AH[2] - _CH[2])
+                if abs(_dH) < 1e-12:
+                    continue
+                _w0H = ((_BH[2] - _CH[2]) * (_pxH - _CH[0]) + (_CH[0] - _BH[0]) * (_pzH - _CH[2])) / _dH
+                _w1H = ((_CH[2] - _AH[2]) * (_pxH - _CH[0]) + (_AH[0] - _CH[0]) * (_pzH - _CH[2])) / _dH
+                _w2H = 1.0 - _w0H - _w1H
+                if _w0H >= -1e-6 and _w1H >= -1e-6 and _w2H >= -1e-6:
+                    _yH = _w0H * _AH[1] + _w1H * _BH[1] + _w2H * _CH[1]
+                    if abs(_yH - _refH) <= 8.0 and (_bH is None or _yH > _bH):
+                        _bH, _boH = _yH, _clH
+            return _bH, _boH
+
+        _wmedH = sorted(widths)[len(widths) // 2]
+        _guardH = 0
+        _prev_endH = {1.0: None, -1.0: None}
+        for _iH in range(len(centerline)):
+            if widths[_iH] > _wmedH + 1.5:      # flare mouths: the gate exempts them
+                _prev_endH[1.0] = _prev_endH[-1.0] = None
+                continue
+            _xH, _yH0, _zH = centerline[_iH]
+            _aH = centerline[max(0, _iH - 1)]
+            _bH2 = centerline[min(len(centerline) - 1, _iH + 1)]
+            _txH, _tzH = _bH2[0] - _aH[0], _bH2[2] - _aH[2]
+            _nLH = math.hypot(_txH, _tzH) or 1.0
+            _txH, _tzH = _txH / _nLH, _tzH / _nLH
+            _weH = widths[_iH] / 2.0
+            for _sideH in (1.0, -1.0):
+                _nxH, _nzH = -_tzH * _sideH, _txH * _sideH
+                _prevH = None
+                _builtH = None
+                _offH = 0.0
+                while _offH <= _weH + 9.0:
+                    _pxH, _pzH = _xH + _nxH * _offH, _zH + _nzH * _offH
+                    _tyH, _toH = _top_H(_pxH, _pzH, _yH0)
+                    if _toH == "P":
+                        _builtH = _offH
+                    _bandH = _builtH is not None and _offH <= _builtH + 4.0
+                    _lipokH = False
+                    if (_bandH and _tyH is not None and _prevH is not None
+                            and _prevH - _tyH > 0.115 and _offH > _weH - 0.5):
+                        # A creditable lip needs a guard probe (0.5 m grid) strictly inboard of
+                        # the drop (< off-0.25), clear of the pavement (>= built+0.15), AND clear
+                        # of the gate's obstruction scan (obstacles within min(lane_half,6)+0.3
+                        # of the centerline fail the corridor — a bank draping the road edge
+                        # stalls built_edge early, and a built-anchored lip then stands beside
+                        # the lane: IMI 550-555, twice). Lip spans [inner, off-0.25], inner =
+                        # max of all three clearances, up to 1.25 m thick; if under 0.5 m of
+                        # room remains, the probe grid can miss it — no lip can legally stand,
+                        # so the station is skipped (close-in drops are the graded floor's
+                        # domain, lane-edge banks are the corridor's own business).
+                        _inH = max(_builtH + 0.15, _offH - 1.25, min(_weH, 6.0) + 0.45)
+                        _lipokH = (_offH - 0.25) - _inH >= 0.5
+                    if _lipokH:
+                        _vxH = _xH + _nxH * _inH
+                        _vzH = _zH + _nzH * _inH
+                        _vyH = min(_prevH, _yH0 + 1.8) - 0.2
+                        _pH = _prev_endH[_sideH]
+                        if _pH is not None and math.hypot(_vxH - _pH[0], _vzH - _pH[2]) <= 6.0:
+                            _sxH, _syH, _szH = _pH
+                        else:
+                            _sxH, _syH, _szH = _vxH - _txH * 1.5, _vyH, _vzH - _tzH * 1.5
+                        _exH = _vxH + _txH * 1.5
+                        _ezH = _vzH + _tzH * 1.5
+                        _thH = (_offH - 0.25) - _inH
+                        _lxH, _lzH = _nxH * _thH, _nzH * _thH
+                        _b0H = len(para_mesh["vertices"])
+                        for (_qxH, _qyH, _qzH) in ((_sxH, _syH, _szH), (_exH, _vyH, _ezH)):
+                            for _dyH in (0.0, 0.7):
+                                para_mesh["vertices"].append((_qxH, _qyH + _dyH, _qzH))
+                                para_mesh["vertices"].append((_qxH + _lxH, _qyH + _dyH, _qzH + _lzH))
+                                para_mesh["uvs"].append((0.0, _dyH))
+                                para_mesh["uvs"].append((0.5, _dyH))
+                        for (_qaH, _qbH, _qcH) in ((0, 4, 6), (0, 6, 2), (1, 7, 5), (1, 3, 7),
+                                                   (2, 6, 7), (2, 7, 3), (0, 5, 4), (0, 1, 5)):
+                            para_mesh["tris"].append((_b0H + _qaH, _b0H + _qbH, _b0H + _qcH))
+                        _prev_endH[_sideH] = (_exH, _vyH, _ezH)
+                        _guardH += 1
+                        break        # one lip per crossing: it guards every drop outboard of it
+                    if _tyH is not None:
+                        _prevH = _tyH
+                    _offH += 0.5
+        if _guardH:
+            print(f"  [measured-guard] {_guardH} stone-lip guards straddling measured in-band drops (0025)")
 
     groups = [*split_mesh_under_cap("1GRASS", "grass", grass),
               *split_mesh_under_cap("1GRASS_ring", "grass", orient_up(ring_mesh)),

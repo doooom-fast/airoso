@@ -60,3 +60,23 @@ selector: cutting / fill / wall). Reverted; the gate did exactly its job.
 `road_shoulder`'s `sections` metadata rather than re-deriving; per-node lift additionally capped
 by the LOCAL deck height (never above deck − 0.3 within lane influence); verify on imi (drops → ~0
 with severe/soft-top back to 0) before pueblo.
+
+## The campaign (v0.66.0 → v0.66.1) — 30 drops to 0 in three mechanisms
+
+~29 gated builds. What held, in the order it landed (each intermediate hypothesis that died is a
+git-side note; the survivors):
+
+1. **Graded floor (v0.66.0, committed):** every managed boundary the builder owns — ring edge,
+   shoulder ground-meets, runoff rim — becomes a floor source; grass within 5 m of a source is
+   floored at `source − 0.01 − 0.22·distance`, drop-edge-prefiltered against the natural-terrain
+   snapshot so real banks stay wild, pavement-capped (road/runoff/kerb, never the shoulder — the
+   self-reference stranded the floor 3×). IMI 30 → 3.
+2. **Measured stone lips (v0.66.1):** the last 3 (station 302.5, a cut-bench trench invisible to
+   `sections` metadata — "parapets 0v" at every warrant tried) fall to the builder mirroring the
+   gate's own outboard sweep 1:1 over its built meshes and straddling every measured in-band drop
+   face with a 0.6 m-thick 1913-pattern lip the 0.5 m guard-probe grid cannot step over.
+   Metadata cannot see the trench; the measurement is the mesh itself.
+3. **[[0027]] guard exemption un-deadened (v0.66.1):** the lips were present, on-ray, correct —
+   and still "unguarded", because the gate's guard scan probed the one TriField that structurally
+   cannot contain a wall. One-word fix in `drive_test.py` (probe `obstacle`, not `surface`).
+   Filed separately as 0027 because it is a gate defect, not a grading one.

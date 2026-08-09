@@ -546,11 +546,17 @@ def run(project_dir: str | Path) -> dict:
                     # the wall first regardless of how far outboard the drop sits. The old scan
                     # looked only 2 m behind, so a verge parapet with its drop 3 m outboard was
                     # "unguarded" while physically unreachable (imi toes, ledger 0025).
+                    # Walls are NOT drivable, so the loader routes every 1WALL group into
+                    # `obstacle` — probing `surface` here could never find one, which made this
+                    # exemption dead code: every wall the builder ever placed was invisible to
+                    # the scan that exists to credit it (found via ledger 0025's stone lips,
+                    # physically present in track.obj yet "unguarded"). Probe the field walls
+                    # actually live in.
                     guarded = False
                     _wo = max(we - 0.4, 0.5)
                     while _wo < off - 0.25:
                         _wx, _wz = x0 + nxe * _wo * sgn, z0 + nze * _wo * sgn
-                        _wy, _wown = surface.top_at(_wx, _wz, y0 + 0.5, 2.5)
+                        _wy, _wown = obstacle.top_at(_wx, _wz, y0 + 0.5, 2.5)
                         if _wown is not None and str(_wown).upper().startswith("1WALL"):
                             guarded = True
                             break

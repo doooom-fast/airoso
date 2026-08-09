@@ -174,7 +174,12 @@ def verify(project_dir: str | Path) -> list[str]:
     dtris: dict[tuple[int, int], list] = {}
     cell = 8.0
     for m in meshes:
-        if not any(m["name"].upper().startswith(p) for p in ("1ROAD", "1KERB")):
+        _up6 = m["name"].upper()
+        # DECK ONLY (matches audit B, ledger 0028): the shoulder's ground-meet/hem quads bury
+        # into cut banks by construction, and the lowest-surface pick below means they always
+        # read as "the road" under a legitimate bank — 52,658 false pokes on an IMI whose
+        # drive_test and audit both passed. Grass through the driven deck still fails.
+        if not any(_up6.startswith(p) for p in ("1ROAD", "1KERB")) or "SHOULDER" in _up6:
             continue
         P, idx = m["P"], m["T"]
         for t in range(0, len(idx) - 2, 3):

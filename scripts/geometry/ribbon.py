@@ -112,7 +112,8 @@ def road_ribbon(centerline_m: list[Vertex], widths_m: list[float], *, tile_m: fl
 
 def road_shoulder(centerline_m: list[Vertex], widths_m: list[float], *, lift: float = 0.1,
                   verge_w: float = 2.5, tile_m: float = 4.0, bank_at=None, ground_drop: float = 0.0,
-                  ground=None, ratio: float = 2.0, max_w: float = 60.0) -> dict:
+                  ground=None, ratio: float = 2.0, max_w: float = 60.0,
+                  fill_apron: bool = False) -> dict:
     """A graded **verge + embankment** that ramps each road edge down (fill) or up (cut) to the REAL
     ground, so the road reads like a real shouldered/embanked road instead of a ribbon floating on a
     hard edge. Three points out from the lane edge: inner lip (road edge, ``lift`` proud) → a short
@@ -170,16 +171,45 @@ def road_shoulder(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
                 # builder violated its own gate on every embankment toe (nine constant 0.16 m
                 # steps at the rim line on imi). Shallow fills now grade at 4.5:1 (22%): a 0.4 m
                 # toe widens by ~1 m and the whole face passes inside the band.
-                _slope_r = (1.0 / 6.0) if _wall else (0.75 if (_cutting or _drop > 1.2) else max(4.5, ratio))
+                _steep_fill = (not _cutting) and _drop > 1.2 and not fill_apron
+                _slope_r = (1.0 / 6.0) if _wall else (0.75 if (_cutting or _steep_fill) else max(4.5, ratio))
                 # THE COMPLETE SELECTOR/GATE AGREEMENT (ledger 0025, 27 builds of evidence):
                 # shallow fill (<1.2 m) grades GENTLE at 4.5:1 (22%) — legal inside the drive
                 # gate's 24% band, narrow enough not to pleat corners (always-4.5 swept 10 m+
                 # sheets across the 302.5 corner and built sawtooth hills). Deep fill (>=1.2 m)
                 # stays 0.75:1 but earns a stone PARAPET (warrant lowered to match), and the
                 # gate exempts guarded drops. >4 m keeps the retaining wall.
+                # ``fill_apron`` (tarmac tracks, 0025 closing): the deep-fill "steep + parapet
+                # + exemption" design never once functioned end-to-end — the metadata parapets
+                # built 0 verts at every warrant tried, and the exemption was dead code until
+                # 0027. On a PAVED track the gate is also right to demand an apron (its own
+                # doctrine: "run-off there is a flat apron, so any drop really is a ledge") —
+                # Pueblo's 12 residual gated drops were all this band's fill faces, starting on
+                # the shoulder's own quads where no lip can legally stand. So on tarmac the
+                # whole 0-4 m fill range grades at 4.5:1 (22%); cuts stay 0.75:1 (the always-4.5
+                # pleating came from grading a CUT corner), >4 m keeps the retaining wall, and
+                # unpaved tracks keep their steep rally-stage character exactly as the gate
+                # keeps its relaxed unpaved thresholds.
                 extra = min(max_w, max(verge_w if not _wall else 0.6, _drop * _slope_r))
                 o = _cap(half + verge_w + extra)
-                verts.append((x + nx * o, ground(x + nx * o, z + nz * o), z + nz * o))   # ground meet (draped)
+                _my = ground(x + nx * o, z + nz * o)
+                # THE FACE GRADE IS MEASURED AT THE MEET, NOT AT THE SIZING SAMPLE (0025
+                # closing): ``_drop`` reads ground at the verge, but the sheet lands at
+                # verge+extra — where natural ground can sit far lower. Pueblo's staircases
+                # were 30-50% faces built exactly this way: extra floored at verge_w while
+                # the terrain kept falling beyond the sample, so no _slope_r value changed
+                # the mesh by a byte. On fill, re-size against the drop where the sheet
+                # actually lands until the face respects the selected slope — terrain
+                # gentler than the face converges in a few rounds; max_w caps runaways.
+                if not _cutting and not _wall:
+                    for _ in range(6):
+                        _mdrop = verge_y - _my
+                        if _mdrop <= 0 or extra >= max_w or _mdrop * _slope_r <= extra + 0.05:
+                            break
+                        extra = min(max_w, _mdrop * _slope_r)
+                        o = _cap(half + verge_w + extra)
+                        _my = ground(x + nx * o, z + nz * o)
+                verts.append((x + nx * o, _my, z + nz * o))   # ground meet (draped)
                 uvs.append((1.0, arc / tile_m))
                 sections[1.0 if side > 0 else -1.0].append({
                     "i": i, "cutting": _cutting, "drop": round(_drop, 2), "wall": _wall,

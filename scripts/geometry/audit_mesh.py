@@ -63,13 +63,15 @@ def _obj_groups(obj_path: Path, prefixes):
     return want
 
 
-def _obj_tris(obj_path: Path, prefixes):
-    """World-space triangles of every object whose name starts with one of `prefixes`.
-    OBJ face indices are global, so all verts are kept; faces are filtered by group."""
+def _obj_tris(obj_path: Path, prefixes, exclude=()):
+    """World-space triangles of every object whose name starts with one of `prefixes`
+    (and contains no `exclude` substring). OBJ face indices are global, so all verts are
+    kept; faces are filtered by group."""
     verts, tris, cur = [], [], False
     for ln in obj_path.read_text().splitlines():
         if ln.startswith("o "):
-            cur = ln[2:].strip().upper().startswith(prefixes)
+            _up = ln[2:].strip().upper()
+            cur = _up.startswith(prefixes) and not any(e in _up for e in exclude)
         elif ln.startswith("v "):
             _, x, y, z = ln.split()[:4]
             verts.append((float(x), float(y), float(z)))
@@ -221,7 +223,13 @@ def audit(project_dir: str | Path) -> dict:
     # Footprint-exact: a grass vert is a poke only if it sits OVER the pavement, above it.
     # (The old vertex-radius test false-positived on legitimate bench-cut faces standing
     # legally beside the deck — 5 m into a 0.75:1 cut is ~6.7 m up by design.)
-    road_tris = _obj_tris(data / "track.obj", ("1ROAD",))
+    # DECK ONLY: the shoulder's outer quads (ground-meet, hem at -0.8) bury into cut banks BY
+    # CONSTRUCTION, so grass legitimately stands metres above them — the same bench-cut
+    # false-positive class this check was rewritten to kill, reintroduced through 1ROAD_shoulder
+    # (59,162 "pokes" on an IMI whose every one was a bank over the apron; _surf_at picks the
+    # LOWEST in-window surface, so the buried hem always reads as "the road"). Grass through the
+    # driven deck still fails; grass draped over the transition apron is the terrain doing its job.
+    road_tris = _obj_tris(data / "track.obj", ("1ROAD",), exclude=("SHOULDER",))
     road_th = _tri_hash(road_tris, 8.0)
     poke_hits = []
     for x, y, z in g["1GRASS"]:

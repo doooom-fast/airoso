@@ -294,6 +294,18 @@ def build(project_dir: str | Path) -> dict:
     # construction spoil, and the 33 m median cannot reject a heap wider than 33 m. A track whose
     # site has been rebuilt declares a wider window; everything else keeps today's exact output.
     _med_m = float((_cfgj.get("road_profile", {}) or {}).get("despike_window_m", MEDIAN_WINDOW_M))
+    # DO NOT pre-smooth a coarse source to chase the drive test's bump count. Tried and measured on
+    # both calibration tracks: despiking/smoothing at the DEM's own 30 m scale before the grade cap
+    # scores better against the reference racing line (Bathurst 2.43 -> 2.17 m RMS) and looks like a
+    # free win offline — and then fails the thing that actually matters. It lifts the deck OFF the
+    # ground, which is the exact float snap_to_ground exists to prevent:
+    #
+    #                     replication vs measured road      ground-on-top   bumps/km
+    #   snap_to_ground    median 0.00 m  p95 0.21  max 1.56           31      94.4
+    #   pre-smoothed      median 0.81 m  p95 2.20  max 3.81           94      90.1
+    #
+    # The bumps barely moved, because they do not come from the centerline profile at all — that
+    # was an offline proxy measuring the wrong quantity. Road touching ground takes precedence.
     z_smooth = snap_to_ground(z_raw, spacing_m=CENTERLINE_SPACING_M, grade_cap_pct=_cap_pct,
                               median_m=_med_m, closed=_closed)
     if _med_m != MEDIAN_WINDOW_M:

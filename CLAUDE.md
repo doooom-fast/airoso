@@ -28,8 +28,18 @@ seam that makes the whole fleet work; breaking them breaks every repo simultaneo
   authorship happens in Blender (lean in, never eject), the game is the judge. Read it before
   deciding *what kind* of fix any track problem deserves.
 - **`fleet/STANDARDS.md`** — what a project repo must look like. Enforced by `fleet.cli lint`.
+- **`fleet/DEFINITION-OF-DONE.md`** — the T0–T5 tier ladder and where every track actually stands.
+  "Done" is not a word this repo uses about a track; a tier is claimed with its artifact or not at
+  all. Read it before reporting progress on anything.
+- **`fleet/GATES-CHANGELOG.md`** — every gate threshold and bypass, with the invented ones marked.
+  Amend it in the same commit as any gate change.
 - **`fleet/MIGRATION.md`** — the engine absorption cutover, still in progress.
 - **`fleet/feedback/README.md`** — how feedback becomes a fix on every track.
+
+`fleet/templates/` holds the two forms that bracket a build: **`LOCATION-DOSSIER.md`** (the research
+a place gets *before* geometry — the engine stays general, the dossier is where a track is allowed
+to be specific) and **`DRIVE-TEST-REPORT.md`** (the Windows drive that closes the loop).
+`fleet/reference/ASSET-LIBRARY.md` is the owned-asset master list behind ledger 0005.
 
 ## The fleet
 

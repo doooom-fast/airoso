@@ -1,0 +1,74 @@
+# Owned 3D asset library — Dropbox `/Blender`
+
+*Inventoried 2026-08-10 (items downloaded 2026-07-21 → 07-24). Ported into the fleet from the
+v2-reboot draft, prodrive-ac-builder PR #21.*
+
+This is the **primary asset source** for the presentation floor (REALISM §6) and the input ledger
+[0005](../feedback/0005-ship-the-real-assets.md) has been waiting on: 0005's complaint is that
+tracks ship 1.1 MB stand-ins instead of these. Its first half has landed — commit `50a70ac` put the
+real Dropbox trees and lamps in place of the stand-ins — and the rest of the table below is the
+remaining work. Per-track mapping belongs in that track's dossier §8
+([template](../templates/LOCATION-DOSSIER.md)); this file is the master list.
+
+The wider kitbash pool beyond this library: `/simracing/mods archive`, assets pulled from installed
+mods via `scripts/modkit`, and future purchases.
+
+**Licensing.** Personal use is the default and nothing here needs a license entry for that. But
+REALISM §3's clean-room rule is absolute for anything that leaves this machine: we measure and
+imitate *technique*; mined third-party meshes and textures stay in private builds. Shipped content
+comes from this library or a license-clean source. Note also v2 backlog #4 — the pack stage
+generates `LICENSES.md`/`CREDITS.txt` asserting "all CC0" over mined content, and a generated
+document must not lie.
+
+## Barriers & road furniture
+| Asset | Files | Notes |
+|---|---|---|
+| Concrete Barrier 4 MTS + Transition | `Concrete Barrier and Transition Barrier - Models and Textures/` (OBJ+MTL + full PBR sets) | Jersey-style 4 m modules — Sand Creek's barrier need exactly; **top pick for an in-game proof** |
+| Barrier set | `Barrier02.obj`, `Barrier_end01/02.obj`, `Barrier_circle.obj`, `barriers_MA.rar`, `Road_Barrier.blend`, `RoadBlockade_02.blend` | Duplicates present (`Barrier02 2.obj`) |
+| Stop-sign barriers | `barrier_stopSign01/02.obj` | |
+| US traffic signs pack | `obj/traffic signs-01.obj` + `.mtl` + 57 sign JPGs + `galvanized.jpg` | Street blades + regulatory set — the biggest realism lever for street ports |
+| Overhead highway sign | `Highway_OverheadSign.obj` | Freeway gantries (REALISM §6) |
+| Fences | `Fence.FBX`, `FENCE.rar`, `wooden_fence_mt1.zip` (216 MB), `Wooden_Fence_Geo_Piskas_new_obj.rar` | Chain-link may stay procedural (`make_chainlink`) |
+
+## Lighting & utility
+| Asset | Files | Notes |
+|---|---|---|
+| Street lamps | `Street_Lamp.zip` (19 MB), `Street_light_obj.rar`, `black_lamp_spotII_01.blend` | Partly landed (`50a70ac`). 0029 §7 — the glow orbs float off the fixtures; that is a light-placement bug, not an asset bug |
+| Utility pylon | `Pylone.blend` | Pairs with the procedural power-line cables |
+
+## Buildings & industrial
+| Asset | Files | Notes |
+|---|---|---|
+| Modular buildings | `ModularBuildings.blend1` (**1.23 GB — a Blender *backup* file**; open and re-save as `.blend`, or re-download), `building_1.blend`, `building_05_blend.rar` (84 MB) | Replaces mined building textures |
+| Highway modular set | `Highway_modular_set.blend` (14.6 MB) | Decks and ramps for backdrop freeways |
+| Cargo container | `Cargo_Container.obj` + BaseColor/Normal/Roughness/Metallic/Height | Commerce City container yards — direct fit for Sand Creek |
+| Racetrack scene | `Racetrack_1.blend` (617 MB) | Kitbash source; too heavy to import wholesale |
+
+## Vegetation & terrain
+| Asset | Files | Notes |
+|---|---|---|
+| Poplar trees | `tree_topol.rar` (229 MB) | "topol" = poplar — the Commerce City creek rows |
+| Pine trees | `pine_tree.zip` (93 MB) | Landed for the Lariat forest (`50a70ac`) |
+| Cliff | `cliff.obj` (303 MB) | Decimate before any use |
+
+## Surfaces & sky
+`textures-2/`: `concrete_wall_008` 4K, `grass_path_2` 4K, `rusty_painted_metal` 4K,
+`bloem_hill_02_4k.exr` (HDRI), `door.png`; plus `Textures.rar` (104 MB), `textures.zip`.
+Poly Haven naming suggests CC0 — confirm before anything ships.
+
+## Conversion pipeline — applies to every import
+1. Extract archives (`.rar` needs `unrar`/`7z`; re-store as zip in the project).
+2. Verify **metres and Y-up** at the projection boundary; fix once, on import.
+3. Textures: power-of-two (build preflight enforces), **EXR → PNG/JPG** (AC has no EXR), check the
+   normal-map green-channel convention (OpenGL vs DirectX), keep props ≤2K.
+4. Bind materials through `scripts/ac/pbr.py` (name prefix → texture set → shader).
+5. Poly budget: props ≤10k tris preferred; AC's 65,535 verts/mesh cap is enforced by `verify_kn5`.
+
+Two defects in 0029 are import defects, not modelling ones, and this pipeline is where they get
+caught: barriers reading one-dimensional, and trees rendering as blobs — the latter traced in
+ledger [0024](../feedback/0024-foliage-welded-inside-out.md) to a weld eating double-sided shells.
+
+## Related Dropbox holdings — dossier inputs, not assets
+- `/simracing/` — drive and session recordings (2026-06-23, 07-09 ×4, 07-11 ×3), plus
+  `mods archive/`, `projects/`, `K10/`.
+- Root — `Untitled_Scan_13_05_26.las` (LiDAR, 2026-08-02, 235 MB), `route map.pdf` (2026-07-24).

@@ -16,7 +16,30 @@ import sys
 from pathlib import Path
 
 from scripts.elevation import usgs_3dep
+from scripts.elevation import srtm as srtm_mod
 from scripts.gps.centerline import haversine
+
+
+def _pick_source(project_dir):
+    """3DEP for the US, SRTM 30 m everywhere else."""
+    import json as _j
+    cfg = _j.loads((Path(project_dir) / "track.config.json").read_text())
+    country = cfg.get("location", {}).get("country", "")
+    if country in ("", "US", "USA", "United States"):
+        return usgs_3dep
+    print(f"  [elev] non-US location ({country}) -> SRTM 30 m source")
+    return srtm_mod
+
+
+def _sample(src, points, spacing_m):
+    """Sample `src`, telling it the input spacing when it can use one.
+
+    3DEP is 1 m and batches by point, so it neither needs nor accepts this. SRTM is 30 m and
+    decimates to its own resolution — it must know how far apart the inputs are, or it will
+    decimate a 40 m terrain grid as if it were the 3 m centerline."""
+    if src is usgs_3dep:
+        return src.sample_points(points)
+    return src.sample_points(points, spacing_m=spacing_m)
 
 Vertex = tuple[float, float]
 
@@ -159,8 +182,11 @@ def write_npy(path: Path, grid: list[list[float]]) -> None:
 
 # --- grid ----------------------------------------------------------------------
 
-def build_heightfield(coords: list[Vertex], spacing_m: float, margin_m: float) -> tuple[list[list[float]], dict]:
+def build_heightfield(coords: list[Vertex], spacing_m: float, margin_m: float,
+                      elev_source=None) -> tuple[list[list[float]], dict]:
     """Sample a regular terrain grid over the centerline bbox + margin (row 0 = north)."""
+    if elev_source is None:
+        elev_source = usgs_3dep
     lons = [c[0] for c in coords]
     lats = [c[1] for c in coords]
     midlat = (min(lats) + max(lats)) / 2
@@ -172,7 +198,7 @@ def build_heightfield(coords: list[Vertex], spacing_m: float, margin_m: float) -
     ny = int((n - s) / gy) + 1
     nx = int((e - w) / gx) + 1
     points = [(w + i * gx, n - j * gy) for j in range(ny) for i in range(nx)]
-    flat = usgs_3dep.sample_points(points)
+    flat = _sample(elev_source, points, spacing_m)
     grid = [flat[j * nx:(j + 1) * nx] for j in range(ny)]
     meta = {"bbox_swne": [round(s, 6), round(w, 6), round(n, 6), round(e, 6)],
             "nx": nx, "ny": ny, "spacing_m": spacing_m, "margin_m": margin_m, "row0": "north"}
@@ -186,7 +212,7 @@ CORRIDOR_STEP_S = 6.0     # along-road station step
 CORRIDOR_STEP_L = 5.0     # lateral step
 
 
-def fetch_corridor(coords, project_dir) -> None:
+def fetch_corridor(coords, project_dir, elev_source=None) -> None:
     """Sample 3DEP at NEAR-NATIVE resolution in a corridor around the centerline; cache to
     data/corridor.elev.json.
 
@@ -206,7 +232,8 @@ def fetch_corridor(coords, project_dir) -> None:
                 return
         except Exception:
             pass
-    from scripts.elevation import usgs_3dep
+    if elev_source is None:
+        elev_source = usgs_3dep
     lat0 = coords[0][1]
     m_lon = 111_320.0 * _m.cos(_m.radians(lat0))
     m_lat = 110_540.0
@@ -235,7 +262,7 @@ def fetch_corridor(coords, project_dir) -> None:
         for off in offs:
             pts.append((lon + nx * off / m_lon, lat + nz * off / m_lat))
     print(f"[corridor] sampling {len(pts)} pts ({len(st_pts)} stations x {len(offs)} offsets) at 3DEP native...")
-    z = usgs_3dep.sample_points(pts)
+    z = elev_source.sample_points(pts)
     field = [z[i2 * len(offs):(i2 + 1) * len(offs)] for i2 in range(len(st_pts))]
     out_p.write_text(_j.dumps({"n_src": n, "step_s": CORRIDOR_STEP_S, "step_l": CORRIDOR_STEP_L,
                                "half_l": CORRIDOR_HALF_M, "stations_lonlat": st_pts,
@@ -251,7 +278,8 @@ def build(project_dir: str | Path) -> dict:
     full = next(f for f in gj["features"] if f["properties"].get("kind") == "full")
     coords = [(lon, lat) for lon, lat in full["geometry"]["coordinates"]]
 
-    z_raw = usgs_3dep.sample_points(coords)
+    src = _pick_source(project_dir)
+    z_raw = _sample(src, coords, CENTERLINE_SPACING_M)
     import json as _json
     _cfgj = _json.loads((Path(project_dir) / "track.config.json").read_text())
     _cap_pct = float((_cfgj.get("road_profile", {}) or {}).get("max_grade_pct", 9.0))
@@ -270,7 +298,8 @@ def build(project_dir: str | Path) -> dict:
                               median_m=_med_m, closed=_closed)
     if _med_m != MEDIAN_WINDOW_M:
         print(f"  [elev] despike window {_med_m:.0f} m (declared; default {MEDIAN_WINDOW_M:.0f} m)")
-    fetch_corridor(coords, project_dir)   # near-native corridor terrain (the rc6 Lariat lesson)
+    if src is usgs_3dep:
+        fetch_corridor(coords, project_dir, elev_source=src)
 
     dist = [0.0]
     for i in range(1, len(coords)):
@@ -311,7 +340,7 @@ def build(project_dir: str | Path) -> dict:
     except Exception as e:
         print(f"[heightfield] connector-extent widening skipped: {e}")
 
-    grid, meta = build_heightfield(bbox_coords, HF_SPACING_M, HF_MARGIN_M)
+    grid, meta = build_heightfield(bbox_coords, HF_SPACING_M, HF_MARGIN_M, elev_source=src)
     write_npy(data / "heightfield.npy", grid)
     (data / "heightfield.meta.json").write_text(json.dumps(meta), encoding="utf-8")
 

@@ -1,0 +1,50 @@
+{
+  "name": "Nordschleife",
+  "slug": "nordschleife",
+  "version": "0.1.0",
+  "author": "prodrive-ac-builder",
+  "year": 2026,
+  "location": {
+    "lat": 50.332,
+    "lon": 6.942,
+    "timezone": "Europe/Berlin",
+    "city": "Nuerburg",
+    "country": "Germany"
+  },
+  "source": {
+    "type": "osm"
+  },
+  "route": {
+    "bbox": [
+      50.3,
+      6.87,
+      50.36,
+      7.01
+    ],
+    "roads": [
+      "Nordschleife"
+    ]
+  },
+  "loop": true,
+  "mirror_x": false,
+  "default_width_m": 10.0,
+  "origin": "centroid",
+  "archetype": "circuit_port",
+  "road_surface": "tarmac",
+  "surfaces": {
+    "road": "1ROAD",
+    "grass": "GRASS"
+  },
+  "layouts": [
+    {
+      "id": "nordschleife",
+      "ai": "ai/nordschleife"
+    }
+  ],
+  "lighting": {
+    "presets": [
+      "noon"
+    ]
+  },
+  "true_north_rotation_deg": 0.0
+}

@@ -162,6 +162,53 @@ def write_sides(line: dict, out_dir: Path) -> None:
         (out_dir / name).write_text("\n".join(rows) + "\n", encoding="ascii")
 
 
+def grid_alignment(pts: list[list[float]], dummies: dict, closed: bool) -> tuple[float, str] | None:
+    """Measure which way the grid faces, against the line's own order (ledger 0026).
+
+    A track's direction is a contract: the grid faces one way and the spline must run the same
+    way, or AC's spline-based direction logic contradicts its dummy-based grid and the field
+    launches into a ghost route (0023) or is told it is going the wrong way in both directions
+    (0026, IMI measured at −0.93). Everything is read in the ENGINE frame — the frame
+    ``finished_centerline.json`` and ``dummies.json`` share, before the kn5 z-mirror.
+
+    The two track kinds need different rulers, and using the loop's ruler on a stage is wrong:
+
+    * **closed loop** — AC_TIME_0 sits within metres of the grid, so the grid→timing chord IS the
+      local heading. Dot it against the tangent at the start. If the timing line turns out to be
+      far away the chord is a straight line across a curve and means nothing, so we refuse it
+      rather than report a confident-looking number.
+    * **point-to-point** — AC_TIME_0 is the *finish*, up to 18 km away (under-the-dragon), and the
+      chord is not a heading at all. Direction is instead unambiguous from where the grid sits
+      along the line: near index 0 means forward, near the end means reverse.
+
+    Returns (score in [−1, 1], how it was measured), or None when nothing can be measured.
+    """
+    start = dummies.get("AC_START_0")
+    if not start:
+        return None
+    n = len(pts)
+    i = min(range(n), key=lambda k: (pts[k][0] - start[0]) ** 2 + (pts[k][2] - start[2]) ** 2)
+
+    if not closed:
+        frac = i / max(1, n - 1)                       # 0 = line starts at the grid, 1 = ends there
+        return (1.0 - 2.0 * frac, f"grid at {frac * 100:.0f}% along the stage")
+
+    tl, tr = dummies.get("AC_TIME_0_L"), dummies.get("AC_TIME_0_R")
+    if not (tl and tr):
+        return None
+    mx, mz = (tl[0] + tr[0]) / 2, (tl[2] + tr[2]) / 2
+    gx, gz = mx - start[0], mz - start[2]
+    gn = math.hypot(gx, gz)
+    if gn < 1e-6 or gn > 250.0:                        # on top of the grid, or too far to be a heading
+        return None
+    a, b = pts[i], pts[(i + 1) % n]
+    tx, tz = b[0] - a[0], b[2] - a[2]
+    tn = math.hypot(tx, tz)
+    if tn < 1e-6:
+        return None
+    return ((gx / gn) * (tx / tn) + (gz / gn) * (tz / tn), f"grid→timing chord over {gn:.0f} m")
+
+
 def verify(path: Path) -> str:
     d = path.read_bytes()
     ver, count, lap, _ = struct.unpack_from("<4i", d, 0)
@@ -185,8 +232,10 @@ def main() -> None:
     ap.add_argument("--margin-m", type=float, default=1.2, help="kept clear of each road edge")
     ap.add_argument("--no-pit-copy", action="store_true", help="skip pit_lane.ai = fast_lane.ai")
     ap.add_argument("--reverse", action="store_true",
-                    help="run the line opposite the centerline order (match an installed track "
-                         "whose grid faces the other way — found on IMI, alignment dot -0.93)")
+                    help="force the line opposite the centerline order (same as --direction reverse)")
+    ap.add_argument("--direction", choices=("auto", "forward", "reverse"), default="auto",
+                    help="auto (default) measures the grid heading in data/dummies.json and runs "
+                         "the line the way the grid faces (ledger 0026); forward/reverse override it")
     args = ap.parse_args()
 
     src = args.src / "data" / "finished_centerline.json" if args.src.is_dir() else args.src
@@ -195,7 +244,20 @@ def main() -> None:
     closed = math.dist(pts[0], pts[-1]) < 1e-6
     if closed:
         pts, widths = pts[:-1], widths[:-1]            # L13: drop the duplicate, wrap everything
-    if args.reverse:
+    # Direction, measured rather than assumed (0026). The grid is the contract; the spline obeys.
+    mode = "reverse" if args.reverse else args.direction
+    if mode == "auto":
+        dpath = src.parent / "dummies.json"
+        m = grid_alignment(pts, json.loads(dpath.read_text(encoding="utf-8")), closed) if dpath.exists() else None
+        if m is None:
+            mode = "forward"
+            print("direction: nothing measurable in dummies.json — running FORWARD unverified")
+        else:
+            dot, how = m
+            mode = "reverse" if dot < 0 else "forward"
+            flag = "" if abs(dot) >= 0.5 else "  ** WEAK — verify in game **"
+            print(f"direction: {dot:+.2f} ({how}) -> {mode.upper()}{flag}")
+    if mode == "reverse":
         pts, widths = list(reversed(pts)), list(reversed(widths))
     line = build_line(pts, widths, closed=closed, spacing=args.spacing, lat_g=args.lat_g,
                       decel_g=args.decel_g, accel_g=args.accel_g, vmax_kmh=args.vmax_kmh,

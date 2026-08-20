@@ -1,0 +1,95 @@
+{
+  "archetype": "race_circuit",
+  "name": "Pikes Peak International Raceway",
+  "slug": "pikes_peak_international_raceway",
+  "version": "0.2.2",
+  "mirror_x": true,
+  "loop": true,
+  "default_width_m": 15.0,
+  "location": {
+    "lat": 38.591704,
+    "lon": -104.676701,
+    "timezone": "America/Denver",
+    "city": "Fountain",
+    "country": "United States"
+  },
+  "origin": "centroid",
+  "true_north_rotation_deg": 180.0,
+  "surfaces": {
+    "road": "1ROAD",
+    "grass": "GRASS",
+    "kerb": "1KERB"
+  },
+  "kerb": {
+    "height_m": 0.08,
+    "width_m": 1.2,
+    "top_frac": 0.6,
+    "edge_ramp": 0.4
+  },
+  "scenery": {
+    "corridor_margin_m": 3.0,
+    "tree_step_m": 45,
+    "tree_cap": 150,
+    "tree_atlas_cols": 3,
+    "tree_atlas_rows": 2,
+    "bush_spacing_m": 9,
+    "bush_density": 0.25,
+    "bush_off_min_m": 6,
+    "bush_off_span_m": 22,
+    "bush_size_min_m": 1.0,
+    "bush_size_span_m": 1.2,
+    "light_spacing_m": 90
+  },
+  "layouts": [
+    {
+      "id": "full",
+      "ai": "ai/full",
+      "uses_connectors": []
+    }
+  ],
+  "lighting": {
+    "presets": [
+      "morning",
+      "noon",
+      "golden_hour"
+    ],
+    "grassfx": true
+  },
+  "source": {
+    "type": "from_track",
+    "track": "source/osm_oval_fixes.json",
+    "_note": "Re-sourced from real OSM highway=raceway way 1134026181 at Fountain, CO (reversed to CW winding), resampled to 3 m via scripts.gps.from_track. Real 1.03-mi D-oval; elevation from USGS 3DEP (real ~2 m sunken bowl, do not flatten)."
+  },
+  "road_profile": {
+    "_doc": "1.65 km paved oval/roval, engineered and near-flat. 3DEP sampled every 3 m over a lap this short is mostly DEM surface noise, and the 33 m default median cannot reject it: 130-236 kinks/km against a 3%-slope-change threshold, i.e. a jagged deck everywhere rather than a few bad spots. Same lever that fixed Second Creek. A graded racetrack is smooth by construction; the profile should be too.",
+    "dips": [],
+    "cambers": [
+      {
+        "name": "turn_arc_1",
+        "start_m": 231,
+        "len_m": 435,
+        "bank_deg": 10.0,
+        "ramp_m": 50
+      },
+      {
+        "name": "turn_arc_2",
+        "start_m": 1007,
+        "len_m": 435,
+        "bank_deg": 10.0,
+        "ramp_m": 50
+      }
+    ],
+    "despike_window_m": 90.0,
+    "max_grade_pct": 4.0
+  },
+  "route": {
+    "reverse": true,
+    "start_at": [
+      38.591,
+      -104.6785
+    ],
+    "_orientation_doc": "Research 2026-07-20: PPIR oval raced COUNTERCLOCKWISE (NASCAR/IRL 1997-2005); S/F mid front stretch in front of the main grandstand (~38.5910,-104.6785), cars heading SSE. Our OSM ring was CW -> route.reverse. Cambers re-derived from curvature after reversal; bank sign flipped (+10) because outside/inside swap when direction reverses \u2014 verify outside-edge-up in Blender/game."
+  },
+  "terrain_cell_m": 2.0,
+  "terrain_vertex_budget": 1500000
+}

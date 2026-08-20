@@ -1,0 +1,84 @@
+{
+  "archetype": "race_circuit",
+  "name": "Second Creek Raceway",
+  "slug": "second_creek",
+  "version": "0.66.3",
+  "mirror_x": true,
+  "loop": true,
+  "default_width_m": 10.0,
+  "location": {
+    "lat": 39.8583,
+    "lon": -104.7844,
+    "timezone": "America/Denver",
+    "city": "Colorado",
+    "country": "United States"
+  },
+  "origin": "centroid",
+  "true_north_rotation_deg": 180.0,
+  "surfaces": {
+    "road": "1ROAD",
+    "grass": "GRASS",
+    "kerb": "1KERB"
+  },
+  "kerb": {
+    "height_m": 0.08,
+    "width_m": 1.2,
+    "top_frac": 0.6,
+    "edge_ramp": 0.4
+  },
+  "scenery": {
+    "corridor_margin_m": 3.0,
+    "tree_step_m": 45,
+    "tree_cap": 150,
+    "tree_atlas_cols": 3,
+    "tree_atlas_rows": 2,
+    "bush_spacing_m": 9,
+    "bush_density": 0.25,
+    "bush_off_min_m": 6,
+    "bush_off_span_m": 22,
+    "bush_size_min_m": 1.0,
+    "bush_size_span_m": 1.2,
+    "light_spacing_m": 90
+  },
+  "layouts": [
+    {
+      "id": "full",
+      "ai": "ai/full",
+      "uses_connectors": []
+    }
+  ],
+  "lighting": {
+    "presets": [
+      "morning",
+      "noon",
+      "golden_hour"
+    ],
+    "grassfx": true
+  },
+  "source": {
+    "type": "geojson",
+    "geojson": "data/centerline.geojson",
+    "kml_original": "source/second_creek.kml.original-unplaced",
+    "kml_placed": "source/second_creek_placed.kml",
+    "_note": "Layout-map trace, translated 2026-07-27 to OSM street anchors (Buckley Rd lon -104.7909, E 88th Ave lat 39.85640). Position is FITTED to those anchors, not surveyed and not traced from the aerial scar - see source/SOURCING.md. The pre-placement KML is kept with a non-.kml suffix on purpose: centerline_from_kml() globs source/*.km* and would otherwise pick it. This track SKIPS the gps stage (no route.bbox, centerline provided directly); resume from 'elev'."
+  },
+  "route": {
+    "reverse": true,
+    "start_at": [
+      39.8595,
+      -104.7896
+    ],
+    "_orientation_doc": "Research 2026-07-20: Second Creek ran CLOCKWISE as the primary direction (SCCA-CDR kept separate CW/CCW record books; CW records to 1985, CW is faster). Our ring was CCW -> reverse. S/F on the Buckley Straight (the old Denver Dragway strip, west edge, cars heading NORTH into the Oval Turn), ~39.8595,-104.7896. Pit Road ~280 m on the WEST side of the straight (driver's left), entry mid-straight, exit at the Oval Turn. A CCW layout (2001-2005 era) is a future variant."
+  },
+  "terrain_cell_m": 1.25,
+  "corridor_refine_factor": 6,
+  "terrain_vertex_budget": 1500000,
+  "road_profile": {
+    "despike_window_m": 120.0,
+    "max_grade_pct": 4.0,
+    "_doc": "Site redeveloped after closure, so 3DEP measures graded pads and spoil heaps, not the 1970s racing surface (raw p95 step 0.35 m, max 1.04 m over 3 m). 120 m median rejects heaps the 33 m default cannot; 4% cap suits a flat plains circuit with 16 m of relief over 2.7 km."
+  },
+  "ui_tags": [
+    "circuit"
+  ]
+}

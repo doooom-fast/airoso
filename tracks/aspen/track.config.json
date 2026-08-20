@@ -1,0 +1,81 @@
+{
+  "archetype": "race_circuit",
+  "name": "Aspen Motorsports Park",
+  "slug": "aspen_motorsports_park",
+  "version": "0.66.3",
+  "mirror_x": true,
+  "loop": true,
+  "default_width_m": 9.0,
+  "location": {
+    "lat": 39.2642,
+    "lon": -106.8805,
+    "timezone": "America/Denver",
+    "city": "Woody Creek",
+    "country": "United States"
+  },
+  "origin": "centroid",
+  "true_north_rotation_deg": 180.0,
+  "surfaces": {
+    "road": "1ROAD",
+    "grass": "GRASS",
+    "kerb": "1KERB"
+  },
+  "kerb": {
+    "height_m": 0.08,
+    "width_m": 1.2,
+    "top_frac": 0.6,
+    "edge_ramp": 0.4
+  },
+  "scenery": {
+    "corridor_margin_m": 3.0,
+    "tree_step_m": 45,
+    "tree_cap": 150,
+    "tree_atlas_cols": 3,
+    "tree_atlas_rows": 2,
+    "bush_spacing_m": 9,
+    "bush_density": 0.25,
+    "bush_off_min_m": 6,
+    "bush_off_span_m": 22,
+    "bush_size_min_m": 1.0,
+    "bush_size_span_m": 1.2,
+    "light_spacing_m": 90
+  },
+  "layouts": [
+    {
+      "id": "full",
+      "ai": "ai/full",
+      "uses_connectors": []
+    }
+  ],
+  "lighting": {
+    "presets": [
+      "morning",
+      "noon",
+      "golden_hour"
+    ],
+    "grassfx": true
+  },
+  "source": {
+    "type": "from_track",
+    "track": "source/osm_fixes.json",
+    "_note": "Real Aspen Motorsports Park (550 Raceway Rd, Woody Creek, CO). From OSM highway=raceway way 192313782 (1-mile road course), native CCW winding reversed to CW, resampled to 3 m via scripts.gps.from_track. Elevation from USGS 3DEP bare-earth (mountain site, do NOT flatten); NO banking (road course)."
+  },
+  "road_profile": {
+    "_doc": "Flat road course — no banking. dips/cambers intentionally empty; deck follows bare-earth 3DEP.",
+    "dips": [],
+    "cambers": []
+  },
+  "route": {
+    "start_at": [
+      39.2669,
+      -106.88
+    ],
+    "_orientation_doc": "Research 2026-07-20: Aspen Motorsports Park runs CLOCKWISE (official map corners 1-7 CW; crash-report geometry corroborates). Our ring is already CW. S/F on the short N-S chute south of the final hairpin (~39.2669,-106.8800), cars heading SSW; checkered timing stand beside it. Pit lane: east side of the S/F chute (driver's left), ~100-150 m, splits at hairpin exit, rejoins after S/F."
+  },
+  "terrain_cell_m": 1.5,
+  "corridor_refine_factor": 6,
+  "terrain_vertex_budget": 1500000,
+  "ui_tags": [
+    "circuit"
+  ]
+}

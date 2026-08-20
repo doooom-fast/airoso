@@ -1,0 +1,202 @@
+{
+  "name": "Sand Creek Raceway",
+  "slug": "sand_creek_raceway",
+  "version": "0.26.0",
+  "mirror_x": true,
+  "osm_road_widths": true,
+  "_osm_road_widths_doc": "Real street circuit \u2014 after the project stage, scripts.gps.widths_from_osm map-matches each centerline vertex to its OSM way and sets curb-to-curb widths from lanes (arterials ~2x a side street) + writes intersection pads at the real junctions. Racetracks (defined widths) leave this off.",
+  "capture": {
+    "_doc": "Sand Creek is a ROAD circuit stitched from real Commerce City streets, so its elevation is the REAL road-surface profile: USGS 3DEP sampled ALONG the real street centerline (3 m spacing), median-despiked + smoothed into a launch-free longitudinal grade, with the terrain conforming DOWN to that road. The phone's GPS/baro altitude is NOT used \u2014 it is too noisy on flat terrain and injected fake metre-scale bumps (56th/45th/Sand Creek Dr) and a phone-fell dip (~idx 1240); use_elevation=false ignores it. Captured TEXTURES and lateral evidence in realworld_capture.json ARE still consumed (do not delete the file). 'bridges' is RETAINED: evidence.level_bridge_decks uses it to hold a LEVEL deck (geometry only, no phone) over the two real Sand Creek crossings where bare-earth 3DEP dives into the creek bed \u2014 E 56th over Sand Creek (station ~2485, bare earth dips ~7 m) and Quebec over Sand Creek (station ~5950, ~6 m); both also get visual parapets/piers from build_env._creek_bridge. 'bridges' = [{center_m, len_m}] in lap-station metres.",
+    "use_elevation": false,
+    "bridges": [
+      {
+        "name": "e56th_over_sand_creek",
+        "center_m": 2485,
+        "len_m": 100
+      },
+      {
+        "name": "quebec_over_sand_creek",
+        "center_m": 5950,
+        "len_m": 130
+      },
+      {
+        "name": "e46th_leg_over_sand_creek",
+        "center_m": 6549,
+        "len_m": 110,
+        "_doc": "Third crossing Kevin reported: the dip after the rise on the 46th leg - a real bridge with railing over the creek channel; the channel is NOT in OSM waterways so it was never leveled or dressed (found at 5.2 m deep in the smooth profile)."
+      }
+    ]
+  },
+  "road_text": {
+    "_doc": "Big painted street-name decals at each turn-onto. mode 'along' = lengthwise down the lane (drive over it, head-tilt to read); 'across' = sign-flat facing the driver (wraps the road type to a 2nd line). cap_m = letter height across the road. flip_read/flip_up mirror the axes if it reads backwards in-game. min_leg_m = shortest street leg that gets a label.",
+    "mode": "along",
+    "cap_m": 4.8,
+    "min_leg_m": 200,
+    "flip_read": false,
+    "flip_up": false
+  },
+  "road_profile": {
+    "_doc": "Corkscrew dips/cambers REMOVED \u2014 Sand Creek elevation now comes from real USGS 3DEP + capture (user: the hand-authored corkscrew sucks). Re-add dips/cambers here to bring it back.",
+    "dips": [],
+    "cambers": []
+  },
+  "location": {
+    "lat": 39.7839155,
+    "lon": -104.9398905,
+    "timezone": "America/Denver",
+    "city": "Commerce City",
+    "country": "United States"
+  },
+  "source": {
+    "type": "kml",
+    "kml": "source/Sand Creek Raceway Drive-3.kml",
+    "kml_overrides": []
+  },
+  "route": {
+    "bbox": [
+      39.773,
+      -104.945,
+      39.802,
+      -104.893
+    ],
+    "connectors": {
+      "cut_48th": [
+        "East 48th Avenue"
+      ]
+    }
+  },
+  "loop": true,
+  "default_width_m": 9.0,
+  "width_overrides": [],
+  "road_edge": {
+    "_doc": "Urban street edge swept along every road: road -> raised curb -> flat sidewalk -> graded grass as ONE continuous profile sharing seam vertices with the road and the grass, so nothing hovers (scripts/geometry/ribbon.py:curb_sidewalk; physical 1KERB_sidewalk). Omit (or profile != 'sidewalk') for the default asphalt shoulder. curb_h/sidewalk_w/grade_w in metres.",
+    "profile": "shoulder",
+    "_why": "Kevin 2026-07-26: 'I do want sand creek to have no sidewalks so that's a valid build type'. Sand Creek is a RACING loop laid on real streets - the race-day overlay is concrete barriers along the line, not pedestrian furniture. Set profile back to 'sidewalk' to restore the urban edge."
+  },
+  "scenery": {
+    "_doc": "Per-track foliage/scatter knobs read by scripts/environment/build_env.py. Defaults (shown) reproduce the original look; override per track (e.g. a desert track wants sparser, lower scrub). corridor_margin_m keeps ALL scatter this far clear of every road (main loop + connectors).",
+    "corridor_margin_m": 3.0,
+    "tree_step_m": 28.0,
+    "tree_cap": 1400,
+    "tree_atlas_cols": 3,
+    "tree_atlas_rows": 2,
+    "bush_spacing_m": 6.0,
+    "bush_density": 0.55,
+    "bush_off_min_m": 7.0,
+    "bush_off_span_m": 33.0,
+    "bush_size_min_m": 1.2,
+    "bush_size_span_m": 1.4,
+    "light_spacing_m": 96,
+    "powerline_spacing_m": 52.0,
+    "signs": {
+      "_doc": "Street-name blade signs at each major junction (from data/street_labels.json, same legs as the painted road decals). enabled=false drops them. flip_read/flip_up are one-bit fixes if the text reads mirrored or upside-down in-game (verify on the first Windows drive).",
+      "enabled": true,
+      "flip_read": false,
+      "flip_up": false
+    },
+    "lamp_model": "street_lamp_new.obj",
+    "lamp_height_m": 5.5,
+    "forest3d": {
+      "module": "poplar",
+      "spacing_m": 42.0,
+      "off_min_m": 9.0,
+      "off_max_m": 30.0,
+      "cap": 260,
+      "scale_min": 0.9,
+      "scale_max": 1.6,
+      "_doc": "3D poplars scattered near the streets; riparian billboards stay on the creek"
+    },
+    "road_signs": {
+      "enabled": false
+    },
+    "fence_auto": false,
+    "fences": false
+  },
+  "origin": "centroid",
+  "true_north_rotation_deg": 180.0,
+  "surfaces": {
+    "road": "1ROAD",
+    "grass": "GRASS",
+    "kerb": "1KERB"
+  },
+  "layouts": [
+    {
+      "id": "full",
+      "ai": "ai/full",
+      "uses_connectors": [],
+      "_doc": "Outer loop: Colorado -> 50th -> Dahlia -> 56th -> Sand Creek -> Quebec -> 45th -> 46th -> start. The 'interior' layout was dropped: its interior_grid connector was never defined, and layouts share one kn5 so a distinct interior circuit isn't achievable without splitting geometry."
+    },
+    {
+      "id": "reverse",
+      "ai": "ai/reverse",
+      "_doc": "same world, opposite direction \u2014 own grid/timing via dummies_reverse.json + spawn kn5"
+    }
+  ],
+  "lighting": {
+    "presets": [
+      "morning",
+      "noon",
+      "golden_hour"
+    ],
+    "grassfx": true,
+    "streetlight": {
+      "_doc": "Wide DIM wash (Kevin: ~3x spread, no ground saturation). CSP RANGE scales deposited energy - widening range demands cutting intensity: 60 m range at 1.1, soft 155-deg cone, high gradient offset, damped specular.",
+      "range_m": 60.0,
+      "intensity": 0.35,
+      "emissive": 0.22,
+      "color": [
+        1.0,
+        0.85,
+        0.3
+      ],
+      "emissive_color": [
+        255,
+        220,
+        60
+      ],
+      "spot_deg": 155,
+      "spot_sharpness": 0.1,
+      "range_gradient_offset": 0.55,
+      "specular_mult": 0.12
+    }
+  },
+  "kerb": {
+    "_about": "Racing-circuit kerbs: taller + rideable ramp on the lane side (vs the default 5cm street kerb).",
+    "height_m": 0.05,
+    "width_m": 1.4,
+    "top_frac": 0.6,
+    "edge_ramp": 0.4
+  },
+  "road_markings": {
+    "style": "lane",
+    "center_yellow": true,
+    "_doc": "Lake Murray-style painted lines (double-yellow + white edges) - same assets as the Lariat."
+  },
+  "props": {
+    "concrete_barriers": true,
+    "_doc": "Kevin's model pack: 4 m concrete barrier modules instanced along warning-barrier runs as collidable 1WALL geometry (replaces the procedural swept jersey)."
+  },
+  "archetype": "street_circuit",
+  "texture_overrides": {
+    "1ROAD": {
+      "diffuse": "assets/textures/asphalt_cracked_diffuse.jpg",
+      "normal": "assets/textures/asphalt_cracked_normal.jpg",
+      "_doc": "Kevin: use the Lariat's road texture (stock cracked asphalt), not the phone capture"
+    },
+    "1GRASS": {
+      "diffuse": "assets/textures/grass_diffuse.jpg",
+      "normal": "assets/textures/grass_normal.jpg",
+      "_doc": "Kevin: the Lariat's alpine grass look on Sand Creek too"
+    },
+    "LIGHTPOST": {
+      "diffuse": "assets/textures/street_lamp_new.png",
+      "_doc": "the purpose-modeled lamp's own skin (emissive baked, opacity alpha)"
+    },
+    "LAMPHEAD": {
+      "diffuse": "assets/textures/street_lamp_new.png"
+    }
+  },
+  "terrain_cell_m": 1.5,
+  "corridor_refine_factor": 6,
+  "terrain_vertex_budget": 1500000
+}

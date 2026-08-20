@@ -1,0 +1,279 @@
+{
+  "name": "Lookout Mountain Lariat",
+  "slug": "lookout_lariat",
+  "version": "0.15.0",
+  "mirror_x": true,
+  "osm_road_widths": true,
+  "_osm_road_widths_doc": "Real public-road loop \u2014 per-vertex curb-to-curb widths map-matched from OSM lanes, same as Sand Creek. Matters here because the lap spans three very different roads: the ~6.5 m Lariat Trail switchbacks, 2-lane US-40 with shoulders, and one carriageway of 4-lane US-6.",
+  "location": {
+    "lat": 39.727,
+    "lon": -105.225,
+    "timezone": "America/Denver",
+    "city": "Golden",
+    "country": "United States"
+  },
+  "source": {
+    "type": "osm",
+    "_doc": "No KML \u2014 the whole loop lives on the OSM road network, fetched by route.roads. 'ref:' entries match numbered highways whose ways are unnamed in OSM (rural US routes); motorways are excluded so US-40/US-6 refs never drag I-70 in."
+  },
+  "route": {
+    "width_profile": "mountain",
+    "start_at": [
+      39.7424,
+      -105.2285
+    ],
+    "_start_at_doc": "Station 0 = the Lariat Trail stone gates on 19th St (the route doc's start/finish gantry). Also keeps the pit boxes off the US-6 interchange gore, where AC_PIT_2 previously spawned 1.3 m off-road.",
+    "_width_profile_doc": "Rural width table in widths_from_osm (3.0 m lanes, no urban parking/turn allowances): Lariat Trail ~6.5 m, US-40 ~9 m, one US-6 carriageway ~9 m \u2014 instead of the urban table's 11/18 m.",
+    "bbox": [
+      39.693,
+      -105.265,
+      39.758,
+      -105.183
+    ],
+    "roads": [
+      "19th Street",
+      "Lookout Mountain Road",
+      "Paradise Road",
+      "ref:US 40",
+      "ref:US 6",
+      "id:484287799,1351773584,533503588,533503214"
+    ],
+    "_roads_doc": "Paradise Road is the historic Lariat Loop leg through the Mount Vernon townsite \u2014 it tees off Lookout Mountain Rd and drops to US-40 at the exit-256 junction. Without it there is a 1.1 km hole (Lookout Mtn Rd itself never touches US-40). The id: entry is the US-6 northbound off-ramp at the 19th St interchange \u2014 19th St crosses US-6 on a bridge, so closing the ring mainline-to-bridge directly creates a fake 6.5 m vertical step (a 17% launch ramp at start/finish); the lap must climb the real ramp.",
+    "connectors": {},
+    "wide_corners": [
+      {
+        "station_m": 262,
+        "width_m": 14.0,
+        "_doc": "Kevin: 'the turn on the mountain route is impossible' \u2014 base-of-climb 90deg kink, 2-4 turns ahead of the start; same geometry as a switchback so it needs a human call"
+      }
+    ]
+  },
+  "loop": true,
+  "default_width_m": 7.0,
+  "width_overrides": [],
+  "road_text": {
+    "enabled": false,
+    "_doc": "No painted street-name decals \u2014 they land in the wrong places on this rural loop (Kevin), and mountain roads don't have them anyway."
+  },
+  "road_profile": {
+    "_doc": "Elevation is 100% real USGS 3DEP along the route \u2014 ~1,300 ft from the 19th St gates to the Buffalo Bill summit (~7,375 ft). No hand-authored dips/cambers; the mountain provides them. max_grade_pct 16 clears the real steepest pitch (Paradise Rd -14.5%) \u2014 the default 6% cap flattened the descent and floated the road metres above the canyon floor.",
+    "max_grade_pct": 16.0,
+    "dips": [],
+    "cambers": [],
+    "_crossfall_doc": "Camber is MEASURED (data/crossfall.json): lateral 1 m-DEM pairs -> cross-slope, median+mean smoothed, 1.5% deadband (flat where mild - not everywhere), capped 6% (~3.4 deg, no launching). 61.7% of the lap banked, mountain sections tilt into the hillside."
+  },
+  "scenery": {
+    "_doc": "Foothills pine forest (BAKED mesh, treefx OFF): TurboSquid-derived pine sprite atlas billboards packed HARD near the road (step 7 m, 68/station/side, bias 2.4 -> most trees within ~25 m of the verge) + real 3D pine OBJs in the corridor, grass ground + GrassFX. v0.15.0 cranked ~4x denser than the v0.8.0 baked forest Kevin drove. Streetlights ON per Kevin: yellow, 96 m, dim wide pools.",
+    "tree_style": "conifer",
+    "fill_terrain": true,
+    "corridor_margin_m": 4.0,
+    "tree_step_m": 7.0,
+    "tree_cap": 480000,
+    "fill_range_m": 220.0,
+    "fill_per_station": 68,
+    "_treefx_count_doc": "BAKED FOREST (treefx OFF): the 2D conifer billboards carry the mass and are the main density lever. MEASURED yield: on the steep foothills only ~25% of fill_terrain candidates seat (the rest hit seat_y cliff-lips on the 220 m band or land on pavement), so placed ~= tree_cap * 0.25 and the CAP is the real knob. tree_cap 40000->480000 (and fill_per_station 6->68 so the candidate pool ~482k over the 24.8 km lap keeps p_keep~1 and the cap governs) takes the baked forest from ~12.3k billboards (v0.8.0) to ~120k -- ~10x, a genuine wall of trees. Cheap crossed-star cards (~12 verts each, a small slice of the kn5 next to the 3D pines); AC handles hundreds of thousands. Offsets stay road-biased (fill_bias 2.4, range 220 m) so the wall reads dense from the seat while the tail reaches back; corridor_margin 4 + fill_off_min_extra 12 keep every trunk off the pavement (drive-test obstruction stays 0). Uniform natural fill along the whole lap (no elevation knob on the baked path).",
+    "tree_atlas_cols": 3,
+    "tree_atlas_rows": 2,
+    "bush_spacing_m": 9.0,
+    "bush_density": 0.35,
+    "bush_off_min_m": 5.0,
+    "bush_off_span_m": 25.0,
+    "bush_size_min_m": 0.9,
+    "bush_size_span_m": 1.1,
+    "light_spacing_m": 96,
+    "powerline_spacing_m": 0,
+    "signs": {
+      "enabled": false
+    },
+    "fill_bias": 2.4,
+    "lamp_model": "street_lamp_new.obj",
+    "fences": false,
+    "pylons": [
+      {
+        "start_m": 20600,
+        "end_m": 24000,
+        "side": -1,
+        "offset_m": 55.0,
+        "_doc": "distribution line paralleling the plains legs, well off the road; module carries its own 134 m cable span (tower-only module; cables strung in the Blender pass)",
+        "sink_m": 1.2
+      }
+    ],
+    "road_signs": {
+      "enabled": false,
+      "speed_signs": [
+        {
+          "station_m": 700,
+          "face": 0
+        },
+        {
+          "station_m": 12800,
+          "face": 1
+        },
+        {
+          "station_m": 21200,
+          "face": 1
+        }
+      ],
+      "_doc": "Euro faces per Kevin: sharp-turn arrows at warning-barrier entries; 70 disc on the climb, 110 discs on the plains legs."
+    },
+    "lamp_height_m": 5.5,
+    "forest3d": {
+      "module": "pine",
+      "spacing_m": 14.0,
+      "off_min_m": 7.0,
+      "off_max_m": 40.0,
+      "cap": 2500,
+      "scale_min": 2.2,
+      "scale_max": 4.2,
+      "_doc": "real 3D pines (~2000 tris each) in the driver's corridor; billboards carry the slopes. spacing 20->14 tightens the near-road pines and cap 900->2500 gives headroom (spacing is the real limiter -> ~1.5x the pines, geometry kept sane). Canopy clearance (_too_close3) still rejects any pine whose branches reach a lane, so obstruction stays 0."
+    },
+    "fence_auto": false,
+    "fill_off_min_extra_m": 12.0,
+    "treefx": {
+      "enabled": false,
+      "_disabled_doc": "TreeFX DISABLED (v0.15.0): TreeFX needs a Windows-only CSP manifest/bake step to load its text tree list, so on this build the .bin forest never renders. Reverted to the legacy BAKED-MESH forest (2D conifer billboards + 3D pine OBJs) that renders everywhere with no CSP dependency. Block kept intact but off so it can be re-enabled once the manifest path exists.",
+      "seed": 20260724,
+      "grassfx": true,
+      "bundle": true,
+      "bundle_dir": "source/trees",
+      "_doc": "CSP TreeFX 3D conifers + GrassFX (Mac-native, no kn5 bake). TWO zones route the two real forest sources build_env already places: 'forest' = the fill_terrain mass swept along the whole lap (elevation-graded \u2014 sparse at the Golden base, dense at the Buffalo Bill summit, Kevin's 'more trees the higher up'); 'forest3d' = the near-corridor 3D pines that carry their own per-tree scale + yaw. BUNDLED (personal, non-distributed build): the 3 conifer .bin MODELS live gitignored in bundle_dir (source/trees/) and the pack step COPIES them into the build's extension/trees/ next to trees.txt, so the forest is baked into the package \u2014 no manual drop-in. The .bin files stay gitignored (never committed), they only ride along in the build output. (treePine1 dropped \u2014 it was a legacy .mesh, not a TreeFX .bin.) Trunks stay off the corridor via the SAME on_road/clearance rejection the baked path used, and TreeFX trees are runtime-visual (not kn5 geometry) so they can never trip the obstruction gate. NOTE on the density block: elev_lo_m/elev_hi_m are LOCAL-frame metres (the frame ground_y() returns), not absolute ASL \u2014 this lap runs Y~0 on the low legs to ~500 at the summit; 'curve' is a numeric exponent (the emitter has no 'smoothstep' keyword) where 1.5 keeps the low slopes barer; 'aspect_favored' uses the emitter's compass labels N/E (moister slopes -> denser conifer). VERIFY IN-GAME: forest3d trees carry the corridor scale (2.2-4.2x, tuned for the old OBJ pine module) \u2014 retune scenery.forest3d.scale_* if the real model's native size makes them read too tall.",
+      "zones": {
+        "forest": {
+          "source": "fill_terrain",
+          "species": [
+            "MRS_pine_high_2_1.bin",
+            "MRS_Sapin_3_0_high.bin",
+            "MRS_Sapin_4_0_high.bin"
+          ],
+          "size_variance": [
+            0.85,
+            1.2
+          ],
+          "angle_variance": [
+            0,
+            360
+          ],
+          "density": {
+            "by": "elevation",
+            "elev_lo_m": 0.0,
+            "elev_hi_m": 500.0,
+            "keep_lo": 0.25,
+            "keep_hi": 0.95,
+            "curve": 1.5,
+            "aspect_bonus": 0.2,
+            "aspect_favored": [
+              "N",
+              "E"
+            ]
+          }
+        },
+        "forest3d": {
+          "source": "forest3d",
+          "species": [
+            "MRS_pine_high_2_1.bin",
+            "MRS_Sapin_3_0_high.bin",
+            "MRS_Sapin_4_0_high.bin"
+          ],
+          "angle_variance": [
+            0,
+            360
+          ],
+          "density": {
+            "by": "elevation",
+            "elev_lo_m": 0.0,
+            "elev_hi_m": 500.0,
+            "keep_lo": 0.5,
+            "keep_hi": 1.0,
+            "curve": 1.2,
+            "aspect_bonus": 0.15,
+            "aspect_favored": [
+              "N",
+              "E"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "origin": "centroid",
+  "surfaces": {
+    "road": "1ROAD",
+    "grass": "GRASS",
+    "kerb": "1KERB"
+  },
+  "layouts": [
+    {
+      "id": "full",
+      "ai": "ai/full",
+      "uses_connectors": [],
+      "_doc": "One layout: gates -> Lariat Trail switchback climb -> Buffalo Bill summit -> Lookout Mountain Rd south to US-40 (Mount Vernon, exit 256) -> US-40 down Mt Vernon Canyon past Heritage Square -> US-6 north -> 19th St -> gates. ~20.9 km, the Nordschleife-length ring."
+    },
+    {
+      "id": "reverse",
+      "ai": "ai/reverse",
+      "_doc": "same world, opposite direction \u2014 own grid/timing via dummies_reverse.json + spawn kn5"
+    }
+  ],
+  "lighting": {
+    "presets": [
+      "morning",
+      "noon",
+      "golden_hour"
+    ],
+    "grassfx": true,
+    "streetlight": {
+      "_doc": "Wide DIM wash (Kevin: ~3x spread, no ground saturation). CSP RANGE scales deposited energy - widening range demands cutting intensity: 60 m range at 1.1, soft 155-deg cone, high gradient offset, damped specular.",
+      "range_m": 60.0,
+      "intensity": 0.35,
+      "emissive": 0.22,
+      "color": [
+        1.0,
+        0.85,
+        0.3
+      ],
+      "emissive_color": [
+        255,
+        220,
+        60
+      ],
+      "spot_deg": 155,
+      "spot_sharpness": 0.1,
+      "range_gradient_offset": 0.55,
+      "specular_mult": 0.12
+    }
+  },
+  "true_north_rotation_deg": 180.0,
+  "kerb": {
+    "enabled": false,
+    "_doc": "Real mountain road: NO kerbs. The curvature test classed the whole mountain as corners and lined 25 km of a 6.5 m lane with 5 cm vertical-lip rumble strips on both edges - Kevin's 'undriveable slop'. Flush paved shoulder only."
+  },
+  "runoff": {
+    "enabled": false,
+    "_doc": "No flat tarmac runoff aprons on a pitched mountainside - run-off here is dirt, trees, and guardrail (warning barriers stay)."
+  },
+  "texture_overrides": {
+    "1GRASS": {
+      "diffuse": "assets/textures/grass_diffuse.jpg",
+      "normal": "assets/textures/grass_normal.jpg",
+      "_doc": "Alpine grass instead of dry dirt (Kevin) - mesh stays 1GRASS so physics, audits and GrassFX are untouched; GrassFX (lighting.grassfx) grows 3D blades on it."
+    },
+    "LIGHTPOST": {
+      "diffuse": "assets/textures/street_lamp_new.png",
+      "_doc": "the purpose-modeled lamp's own skin (emissive baked, opacity alpha)"
+    },
+    "LAMPHEAD": {
+      "diffuse": "assets/textures/street_lamp_new.png"
+    }
+  },
+  "road_markings": {
+    "style": "lane",
+    "center_yellow": true,
+    "_doc": "Lake Murray look: solid double-yellow centre + white edge lines (ribbon.lane_markings port); road asphalt tiles at 4 m to match."
+  },
+  "props": {
+    "concrete_barriers": true,
+    "_doc": "Kevin's model pack: 4 m concrete barrier modules instanced along warning-barrier runs as collidable 1WALL geometry (replaces the procedural swept jersey)."
+  },
+  "archetype": "real_road",
+  "corridor_refine_factor": 4
+}

@@ -7,16 +7,24 @@ that road doesn't look like that there" (0037). The pro pattern (docs/JUNCTIONS.
 ONE continuous pavement slab, with the median standing ON it as a raised island.
 
 This tool does the data half:
-  1. finds the opposing carriageway chain for each route.median_islands road (same geometric
-     clustering the old extra_lines used, now for good);
-  2. on cleanly-divided runs (separation >= 11 m sustained >= 200 m) shifts the RAW centerline
-     laterally to the true midpoint between carriageways and widens the ribbon to span both
-     (new_width = separation + single_carriageway_width), tapered over ~36 m at run ends —
-     never a step (the sawtooth lesson);
-  3. writes data/median_bands.json: per-vertex island widths for the authored island, with
-     gaps cut around every connector mouth (left turns) and pulled back from run ends.
+  1. finds the opposing carriageway chain for each route.median_islands road (median-lateral
+     chain classification with the ridden chain explicitly excluded — mean-based selection once
+     picked the mainline's own chain as "opposing");
+  2. decomposes each mainline vertex's offset to the opposing POLYLINE (segment distance — OSM
+     nodes are 20-60 m apart on straights) into lateral + along components, and trusts a vertex
+     only when the offset is genuinely LATERAL (|along| <= 0.5*|lat|) and 11-24 m — near corners
+     the nearest "opposing" geometry is the CROSS street and the raw vector drags the road along
+     its own axis (the Navajo jank, 2026-08-20: an 11.24 m sideways step at vert 1501);
+  3. shifts the RAW centerline by the smoothed signed lateral/2 toward the true middle and widens
+     the ribbon to span both carriageways, tapered over ~36 m at run ends — never a step;
+  4. trims runs of DIFFERENT roads that meet at a shared corner back to a neutral buffer (real
+     medians end before the intersection; overlapping runs were the other half of the jank);
+  5. writes data/median_bands.json (per-vertex island widths, gapped at every connector mouth);
+  6. SELF-GATE: re-measures its own output — any displacement step > 1.2 m between consecutive
+     verts restores the pristine backup and exits 1. This tool must never ship a step.
 
-Edits data/centerline.raw.local.json IN PLACE (backup: .pre-median, written once).
+Edits data/centerline.raw.local.json IN PLACE (backup: .pre-median, written once; every run
+re-derives from the backup, so the tool is idempotent).
 The Blender half is tools/author_median_blend.py — run AFTER build_loop_blend.
 
     python tools/median_envelope.py <project-dir>
@@ -28,16 +36,17 @@ import math
 import sys
 from pathlib import Path
 
-MIN_SEP = 11.0        # carriageways this far apart = real median between them (same as old machinery)
-SEP_TRUST = 24.0      # above this, it's a junction flare / wrong-chain match, not a median — exclude
-MAX_SEP = 40.0
+MIN_SEP = 11.0        # carriageways this far apart = real median between them
+SEP_TRUST = 24.0      # above this it's a junction flare / wrong-chain match — untrusted
 MIN_RUN_M = 120.0
 GAP_BRIDGE = 8        # out-of-band verts (~24 m) tolerated INSIDE a run (turn-pocket flares)
 TAPER_VERTS = 12      # ~36 m blend of shift+width at run ends
+CORNER_BUFFER = 10    # neutral verts kept between two different roads' runs at a shared corner
 ISLAND_MIN_W, ISLAND_MAX_W = 1.5, 7.0
-ISLAND_PULLBACK = 5   # island starts this many verts inside the full-shift zone
+ISLAND_PULLBACK = 5
 GAP_HALF = 6          # island gap half-length (verts, ~18 m) around each connector mouth
 CLIP_REACH = 45.0
+MAX_STEP_M = 1.2      # self-gate: max allowed displacement change between consecutive verts
 
 
 def _chains(ways):
@@ -80,6 +89,33 @@ def _meters_per_degree(lat):
     return (r * math.cos(math.radians(lat)) * math.pi / 180.0, r * math.pi / 180.0)
 
 
+def _nearest_on_polyline(px, pz, line):
+    best, bp = float("inf"), (line[0][0], line[0][1])
+    for a, b in zip(line, line[1:]):
+        ax, az = a
+        bx, bz = b
+        dx, dz = bx - ax, bz - az
+        L2 = dx * dx + dz * dz
+        t = 0.0 if L2 == 0 else max(0.0, min(1.0, ((px - ax) * dx + (pz - az) * dz) / L2))
+        qx, qz = ax + t * dx, az + t * dz
+        d = math.hypot(px - qx, pz - qz)
+        if d < best:
+            best, bp = d, (qx, qz)
+    return best, bp
+
+
+def _median_filter(v, half=2):
+    n = len(v)
+    return [sorted(v[max(0, k - half):min(n, k + half + 1)])[
+            len(v[max(0, k - half):min(n, k + half + 1)]) // 2] for k in range(n)]
+
+
+def _mean_smooth(v, half=4):
+    n = len(v)
+    return [sum(v[max(0, k - half):min(n, k + half + 1)]) /
+            len(v[max(0, k - half):min(n, k + half + 1)]) for k in range(n)]
+
+
 def build(project_dir):
     proj = Path(project_dir)
     data = proj / "data"
@@ -92,7 +128,6 @@ def build(project_dir):
     raw_path = data / "centerline.raw.local.json"
     bak = data / "centerline.raw.local.json.pre-median"
     if bak.exists():
-        # idempotent: always work from the pristine pre-median snapshot
         raw = json.loads(bak.read_text(encoding="utf-8"))
     else:
         raw = json.loads(raw_path.read_text(encoding="utf-8"))
@@ -113,16 +148,17 @@ def build(project_dir):
 
     main_xz = [(p[0], p[2]) for p in pts]
 
-    # signed per-vertex state: shift vector (dx,dz), new width, island width (0 = none)
-    shift = [(0.0, 0.0)] * n
-    new_w = list(widths)
-    island_w = [0.0] * n
-    run_ranges = []
+    def _tangent(k):
+        a, b = pts[max(0, k - 1)], pts[min(n - 1, k + 1)]
+        dx, dz = b[0] - a[0], b[2] - a[2]
+        d = math.hypot(dx, dz) or 1.0
+        return dx / d, dz / d
+
+    per_road_lat = {}
+    road_runs = []
 
     for road in roads:
         chs = [c for c in _chains(byname.get(road, [])) if len(c) >= 10]
-        # classify chains by MEDIAN lateral distance (mean is inflated by turn-flare outliers —
-        # that mis-pick selected the mainline's own chain as "opposing" on the first attempt)
         cands = []
         for c in chs:
             xz = [((lo - lon0) * m_lon, (la - lat0) * m_lat) for lo, la in c]
@@ -132,12 +168,8 @@ def build(project_dir):
                 continue
             lats = sorted(min(math.hypot(x - mx, z - mz) for mx, mz in main_xz[::4])
                           for x, z in near)
-            # classify on the near points, but keep the FULL ordered chain for geometry —
-            # the near-filter punches holes and a holed polyline chords across them
             cands.append((lats[len(lats) // 2], xz))
         cands.sort(key=lambda t: t[0])
-        # the ridden carriageway is the chain closest to the mainline; the opposing one is the
-        # NEXT chain sitting a plausible median away (8-30 m median lateral)
         if not cands or cands[0][0] > 8.0:
             print(f"[median] '{road}': could not identify the ridden carriageway — skipped")
             continue
@@ -147,22 +179,21 @@ def build(project_dir):
                   f"(chain med-lats: {[f'{lat:.1f}' for lat, _ in cands]}) — skipped")
             continue
 
-        # per-mainline-vertex separation to the opposing POLYLINE (segment distance — OSM nodes
-        # on straights are 20-60 m apart, so nearest-VERTEX distance balloons between nodes)
-        def _seg_dist(px, pz, line):
-            best = float("inf")
-            for a, b in zip(line, line[1:]):
-                ax, az = a
-                bx, bz = b
-                dx, dz = bx - ax, bz - az
-                L2 = dx * dx + dz * dz
-                t = 0.0 if L2 == 0 else max(0.0, min(1.0, ((px - ax) * dx + (pz - az) * dz) / L2))
-                best = min(best, math.hypot(px - (ax + t * dx), pz - (az + t * dz)))
-            return best
+        lat_signed = [0.0] * n
+        ok = [False] * n
+        for k, (mx, mz) in enumerate(main_xz):
+            d, (qx, qz) = _nearest_on_polyline(mx, mz, opp)
+            if d > SEP_TRUST * 1.5:
+                continue
+            tx, tz = _tangent(k)
+            lxn, lzn = -tz, tx
+            vlat = (qx - mx) * lxn + (qz - mz) * lzn
+            valong = (qx - mx) * tx + (qz - mz) * tz
+            s = abs(vlat)
+            lat_signed[k] = vlat
+            ok[k] = MIN_SEP <= s <= SEP_TRUST and abs(valong) <= 0.5 * s
+        per_road_lat[road] = lat_signed
 
-        sep = [_seg_dist(mx, mz, opp) for mx, mz in main_xz]
-        ok = [MIN_SEP <= s <= SEP_TRUST for s in sep]
-        # runs of ok verts, bridging short out-of-band gaps (turn-pocket flares mid-median)
         i = 0
         while i < n:
             if not ok[i]:
@@ -183,38 +214,51 @@ def build(project_dir):
                 j = n
             while j > i and not ok[j - 1]:
                 j -= 1
-            # clamp bridged verts' sep into the trust band so shift/width stay continuous
-            for k in range(i, j):
-                sep[k] = max(MIN_SEP, min(SEP_TRUST, sep[k]))
             run_len = sum(math.hypot(pts[k][0] - pts[k - 1][0], pts[k][2] - pts[k - 1][2])
                           for k in range(i + 1, j))
             if run_len >= MIN_RUN_M:
-                run_ranges.append((road, i, j))
-                for k in range(i, j):
-                    # taper factor: 0 at run edge -> 1 inside
-                    t = min(1.0, (k - i) / TAPER_VERTS, (j - 1 - k) / TAPER_VERTS)
-                    t = max(0.0, t)
-                    s = sep[k]
-                    # lateral direction: toward the nearest opp point
-                    mx, mz = main_xz[k]
-                    ox, oz = min(opp, key=lambda p: math.hypot(mx - p[0], mz - p[1]))
-                    dx, dz = ox - mx, oz - mz
-                    dl = math.hypot(dx, dz) or 1.0
-                    w_single = widths[k] / 2.0
-                    shift[k] = (t * (s / 2.0) * dx / dl, t * (s / 2.0) * dz / dl)
-                    new_w[k] = widths[k] + t * (s + w_single - widths[k])
-                    if t >= 1.0 and (k - i) >= TAPER_VERTS + ISLAND_PULLBACK and \
-                            (j - 1 - k) >= TAPER_VERTS + ISLAND_PULLBACK:
-                        island_w[k] = max(ISLAND_MIN_W, min(ISLAND_MAX_W, s - w_single))
-                svals = sorted(sep[k] for k in range(i, j))
-                print(f"[median] '{road}': divided run verts {i}-{j} ({run_len:.0f} m), "
-                      f"sep min/med/max {svals[0]:.1f}/{svals[len(svals) // 2]:.1f}/{svals[-1]:.1f} m, "
-                      f"max shift {max(sep[k] for k in range(i, j)) / 2:.1f} m")
+                road_runs.append([road, i, j])
             i = j
 
-    # cut island gaps at every connector mouth (left-turn access). Connector polylines are FULL
-    # street sweeps — their endpoints sit far up the hill; they meet the mainline mid-polyline.
-    # A mouth = a contiguous cluster of mainline verts that any connector point approaches.
+    # neutral corner buffer between runs of DIFFERENT roads (their shared intersection):
+    # overlapping/abutting runs were half the Navajo jank — an 11 m step where one road's
+    # full shift met the other road's zero.
+    road_runs.sort(key=lambda r: r[1])
+    for a, b in zip(road_runs, road_runs[1:]):
+        if a[0] != b[0] and b[1] < a[2] + 2 * TAPER_VERTS + CORNER_BUFFER:
+            mid = (min(a[2], b[1]) + max(a[2], b[1])) // 2
+            a[2] = min(a[2], mid - CORNER_BUFFER // 2)
+            b[1] = max(b[1], mid + CORNER_BUFFER // 2)
+    road_runs = [r for r in road_runs if r[2] - r[1] > 2 * TAPER_VERTS]
+
+    shift = [(0.0, 0.0)] * n
+    new_w = list(widths)
+    island_w = [0.0] * n
+
+    for road, i, j in road_runs:
+        lat = per_road_lat[road][i:j]
+        # majority sign, spike/flip-proof: median filter then mean smooth on the signed lateral
+        sgn = 1.0 if sum(1 for v in lat if v > 0) >= len(lat) / 2 else -1.0
+        mag = _mean_smooth(_median_filter([abs(v) for v in lat]))
+        run_len = sum(math.hypot(pts[k][0] - pts[k - 1][0], pts[k][2] - pts[k - 1][2])
+                      for k in range(i + 1, j))
+        for idx, k in enumerate(range(i, j)):
+            t = max(0.0, min(1.0, idx / TAPER_VERTS, (j - 1 - k) / TAPER_VERTS))
+            s = max(MIN_SEP, min(SEP_TRUST, mag[idx]))
+            tx, tz = _tangent(k)
+            lxn, lzn = -tz, tx
+            shift[k] = (t * (s / 2.0) * sgn * lxn, t * (s / 2.0) * sgn * lzn)
+            w_single = widths[k] / 2.0
+            new_w[k] = widths[k] + t * (s + w_single - widths[k])
+            if t >= 1.0 and idx >= TAPER_VERTS + ISLAND_PULLBACK and \
+                    (j - 1 - k) >= TAPER_VERTS + ISLAND_PULLBACK:
+                island_w[k] = max(ISLAND_MIN_W, min(ISLAND_MAX_W, s - w_single))
+        svals = sorted(max(MIN_SEP, min(SEP_TRUST, m)) for m in mag)
+        print(f"[median] '{road}': divided run verts {i}-{j} ({run_len:.0f} m), "
+              f"lat min/med/max {svals[0]:.1f}/{svals[len(svals) // 2]:.1f}/{svals[-1]:.1f} m, "
+              f"side {'+' if sgn > 0 else '-'}")
+
+    # island gaps at every connector mouth (connectors meet the mainline MID-polyline)
     conns = json.loads((data / "connectors.local.json").read_text(encoding="utf-8"))
     mouths = 0
     MOUTH_REACH = 16.0
@@ -232,7 +276,6 @@ def build(project_dir):
             j = i
             while j < n and close[j]:
                 j += 1
-            mid = (i + j) // 2
             lo, hi = max(0, i - GAP_HALF), min(n, j + GAP_HALF)
             if any(island_w[m] > 0 for m in range(lo, hi)):
                 mouths += 1
@@ -241,21 +284,29 @@ def build(project_dir):
                 island_w[m] = 0.0
             i = j
 
-    # apply shift + width to the raw snapshot
     for k in range(n):
         pts[k][0] += shift[k][0]
         pts[k][2] += shift[k][1]
+
+    # SELF-GATE: the output must be step-free before it is allowed to exist on disk
+    disp = [math.hypot(shift[k][0], shift[k][1]) for k in range(n)]
+    worst = max((abs(disp[k] - disp[k - 1]), k) for k in range(1, n))
+    if worst[0] > MAX_STEP_M:
+        raw_path.write_text(bak.read_text(encoding="utf-8"), encoding="utf-8")
+        print(f"[median] FAIL: displacement step {worst[0]:.2f} m at vert {worst[1]} "
+              f"(limit {MAX_STEP_M}) — raw restored from backup, nothing shipped")
+        sys.exit(1)
+
     raw["points_xyz_m"] = [[round(v, 4) for v in p] for p in pts]
     raw["widths_m"] = [round(w, 2) for w in new_w]
     raw_path.write_text(json.dumps(raw), encoding="utf-8")
-
     n_isl = sum(1 for w in island_w if w > 0)
     (data / "median_bands.json").write_text(json.dumps({
         "island_w_by_vertex": [round(w, 2) for w in island_w],
-        "runs": [{"road": r, "i": i, "j": j} for r, i, j in run_ranges],
+        "runs": [{"road": r, "i": i, "j": j} for r, i, j in road_runs],
     }), encoding="utf-8")
-    print(f"[median] shifted {sum(1 for s in shift if s != (0.0, 0.0))} verts to true center; "
-          f"island on {n_isl} verts; {mouths} connector-mouth gaps; wrote data/median_bands.json")
+    print(f"[median] shifted {sum(1 for s in shift if s != (0.0, 0.0))} verts; island on {n_isl} "
+          f"verts; {mouths} mouth gaps; worst step {worst[0]:.2f} m at vert {worst[1]} — OK")
 
 
 if __name__ == "__main__":

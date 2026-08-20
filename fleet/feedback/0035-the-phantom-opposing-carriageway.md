@@ -75,3 +75,7 @@ connector`, a different code path), and the mainline outside the divided section
 - 0032's width criterion holds on the re-derived centerline (the stripes die with the same
   config key).
 - Kevin drives College and there is exactly one College.
+
+---
+
+**2026-08-19 (C1 build):** split-carriageway machinery deleted (config + connectors.local.json); rebuilt via the v021 workshop; July verify gate PASS. Width steps >3 m on the mainline: 70 -> 0 (>1 m: 105 -> 62, remaining are OSM lane transitions). Installed side-by-side as san_diego_lake_murray_v3 (0.16.0) for the A/B. Status stays until Kevin's seat verdict.

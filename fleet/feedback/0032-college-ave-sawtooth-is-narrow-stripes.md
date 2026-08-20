@@ -75,3 +75,7 @@ still unlanded (`widths_base_m` still has no consumer — see 0036).
   (`centerline.local.json`), measured before export. Today: 105.
 - `narrow_main` absent from `connectors.local.json` after the config change.
 - Kevin drives College Ave and the edges hold a line.
+
+---
+
+**2026-08-19 (C1 build):** split-carriageway machinery deleted (config + connectors.local.json); rebuilt via the v021 workshop; July verify gate PASS. Width steps >3 m on the mainline: 70 -> 0 (>1 m: 105 -> 62, remaining are OSM lane transitions). Installed side-by-side as san_diego_lake_murray_v3 (0.16.0) for the A/B. Status stays until Kevin's seat verdict.

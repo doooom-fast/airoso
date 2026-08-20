@@ -4,7 +4,7 @@
   "ui_series": "",
   "_ui_series_doc": "Engine track_folder prefixes the CM display name with ui_series (default 'K10 Colorado'); empty = use the track name as-is (SD names already carry the K10 - San Diego branding).",
   "slug": "san_diego_lake_murray",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "author": "k10-san-diego",
   "year": 2026,
   "_about": "A single drivable LOOP around Lake Murray (Kevin's childhood neighborhood). This repo is the standalone, Blender-first home for the track: the loop is mapped from the REAL roads (OpenStreetMap) at REAL elevation (USGS 3DEP), imported into Blender, and shaped there interactively (Kevin designs, Claude operates) BEFORE any kn5 export. Start point = just the 5-road main loop; everything else is added deliberately, in Blender.",
@@ -59,11 +59,7 @@
     },
     "connectors_kml": [],
     "connector_width_m": 10.0,
-    "split_carriageways": [
-      "Navajo Road",
-      "College Avenue"
-    ],
-    "split_width_m": 9.0
+    "_split_carriageways_doc": "DELETED 2026-08-19 (campaign C1; ledger 0029 decision, closes 0032+0035). The split-carriageway machinery produced the College Ave sawtooth (286 mainline verts clamped to 9 m in 35 disjoint stripes) and the phantom floating _opp ribbons (college_avenue_opp 1585 m, navajo_road_opp) that connected to nothing. Navajo & College are now single honest full-width ribbons on the mainline alignment. Do not re-add without a junction model."
   },
   "loop": true,
   "mirror_x": false,
@@ -124,5 +120,5 @@
     "tree_pct": 38,
     "scrub_pct": 24
   },
-  "ui_description": "K10 - San Diego: a real-world Assetto Corsa track built from OpenStreetMap + USGS 3DEP. Drive the 13.5 km Lake Murray loop around the reservoir (Kevin's childhood neighborhood) — now with the Del Cerro sub-loop and true per-direction elevations on Navajo & College — plus the full San Diego central freeway network (I-5 / CA-52 / CA-163 / I-8, every ramp, on real elevated structure) in one map."
+  "ui_description": "K10 - San Diego: a real-world Assetto Corsa track built from OpenStreetMap + USGS 3DEP. Drive the 13.5 km Lake Murray loop around the reservoir (Kevin's childhood neighborhood) with the Del Cerro sub-loop. V3 C1 build: split carriageways deleted — Navajo & College are single full-width streets (no more sawtooth edges or phantom opposing lanes)."
 }

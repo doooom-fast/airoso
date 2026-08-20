@@ -1,0 +1,1469 @@
+{
+ "track": "shuto_revival_project_beta",
+ "path": "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks\\shuto_revival_project_beta",
+ "ui": {
+  "name": "Shutoko Revival Project 0.9.3 - Daishi PA",
+  "length": "165km",
+  "width": "4.5-13.5m",
+  "pitboxes": "14",
+  "run": "clockwise"
+ },
+ "layouts": {
+  "daishi_pa": [
+   "shuto_revival_project_beta.kn5",
+   "srp_yaesu_0_9_3.kn5",
+   "srp_bayshore_0_9_3.kn5",
+   "srp_yokohane_0_9_3.kn5",
+   "srp_mirai_0_9_3.kn5",
+   "srp_shibuyashinjuku_0_9_3.kn5",
+   "srp_shibuyacrossing_0_9_3.kn5",
+   "physical.kn5",
+   "reverb.kn5",
+   "terrain.kn5",
+   "srp_animations_0_9_3.kn5",
+   "srp_barriers_0_9_3.kn5",
+   "srp_yoyogi_0_9_3.kn5",
+   "vantablack.kn5",
+   "srp_pits_daishi.kn5"
+  ],
+  "heiwajima_pa_n": [
+   "shuto_revival_project_beta.kn5",
+   "srp_yaesu_0_9_3.kn5",
+   "srp_bayshore_0_9_3.kn5",
+   "srp_yokohane_0_9_3.kn5",
+   "srp_mirai_0_9_3.kn5",
+   "srp_shibuyashinjuku_0_9_3.kn5",
+   "srp_shibuyacrossing_0_9_3.kn5",
+   "physical.kn5",
+   "reverb.kn5",
+   "terrain.kn5",
+   "srp_animations_0_9_3.kn5",
+   "srp_barriers_0_9_3.kn5",
+   "srp_yoyogi_0_9_3.kn5",
+   "vantablack.kn5",
+   "srp_pits_heiwajima_n.kn5"
+  ],
+  "heiwajima_pa_s": [
+   "shuto_revival_project_beta.kn5",
+   "srp_yaesu_0_9_3.kn5",
+   "srp_bayshore_0_9_3.kn5",
+   "srp_yokohane_0_9_3.kn5",
+   "srp_mirai_0_9_3.kn5",
+   "srp_shibuyashinjuku_0_9_3.kn5",
+   "srp_shibuyacrossing_0_9_3.kn5",
+   "physical.kn5",
+   "reverb.kn5",
+   "terrain.kn5",
+   "srp_animations_0_9_3.kn5",
+   "srp_barriers_0_9_3.kn5",
+   "srp_yoyogi_0_9_3.kn5",
+   "vantablack.kn5",
+   "srp_pits_heiwajima_s.kn5"
+  ],
+  "main_layout": [
+   "shuto_revival_project_beta.kn5",
+   "srp_yaesu_0_9_3.kn5",
+   "srp_bayshore_0_9_3.kn5",
+   "srp_yokohane_0_9_3.kn5",
+   "srp_mirai_0_9_3.kn5",
+   "srp_shibuyashinjuku_0_9_3.kn5",
+   "srp_shibuyacrossing_0_9_3.kn5",
+   "physical.kn5",
+   "reverb.kn5",
+   "terrain.kn5",
+   "srp_animations_0_9_3.kn5",
+   "srp_barriers_0_9_3.kn5",
+   "srp_yoyogi_0_9_3.kn5",
+   "vantablack.kn5",
+   "srp_pits_main.kn5"
+  ],
+  "shibaura_pa": [
+   "shuto_revival_project_beta.kn5",
+   "srp_yaesu_0_9_3.kn5",
+   "srp_bayshore_0_9_3.kn5",
+   "srp_yokohane_0_9_3.kn5",
+   "srp_mirai_0_9_3.kn5",
+   "srp_shibuyashinjuku_0_9_3.kn5",
+   "srp_shibuyacrossing_0_9_3.kn5",
+   "physical.kn5",
+   "reverb.kn5",
+   "terrain.kn5",
+   "srp_animations_0_9_3.kn5",
+   "srp_barriers_0_9_3.kn5",
+   "srp_yoyogi_0_9_3.kn5",
+   "vantablack.kn5",
+   "srp_pits_shibaura.kn5"
+  ],
+  "shibaura_pa_traffic": [
+   "shuto_revival_project_beta.kn5",
+   "srp_yaesu_0_9_3.kn5",
+   "srp_bayshore_0_9_3.kn5",
+   "srp_yokohane_0_9_3.kn5",
+   "srp_mirai_0_9_3.kn5",
+   "srp_shibuyashinjuku_0_9_3.kn5",
+   "srp_shibuyacrossing_0_9_3.kn5",
+   "physical.kn5",
+   "reverb.kn5",
+   "terrain.kn5",
+   "srp_animations_0_9_3.kn5",
+   "srp_barriers_0_9_3.kn5",
+   "srp_yoyogi_0_9_3.kn5",
+   "vantablack.kn5",
+   "srp_pits_shibaura.kn5"
+  ],
+  "tatsumi_pa": [
+   "shuto_revival_project_beta.kn5",
+   "srp_yaesu_0_9_3.kn5",
+   "srp_bayshore_0_9_3.kn5",
+   "srp_yokohane_0_9_3.kn5",
+   "srp_mirai_0_9_3.kn5",
+   "srp_shibuyashinjuku_0_9_3.kn5",
+   "srp_shibuyacrossing_0_9_3.kn5",
+   "physical.kn5",
+   "reverb.kn5",
+   "terrain.kn5",
+   "srp_animations_0_9_3.kn5",
+   "srp_barriers_0_9_3.kn5",
+   "srp_yoyogi_0_9_3.kn5",
+   "vantablack.kn5",
+   "srp_pits_tatsumi.kn5"
+  ],
+  "tatsumi_pa_traffic": [
+   "shuto_revival_project_beta.kn5",
+   "srp_yaesu_0_9_3.kn5",
+   "srp_bayshore_0_9_3.kn5",
+   "srp_yokohane_0_9_3.kn5",
+   "srp_mirai_0_9_2.kn5",
+   "srp_shibuyashinjuku_0_9_3.kn5",
+   "srp_shibuyacrossing_0_9_3.kn5",
+   "physical.kn5",
+   "reverb.kn5",
+   "terrain.kn5",
+   "srp_animations_0_9_3.kn5",
+   "srp_barriers_0_9_3.kn5",
+   "srp_yoyogi_0_9_3.kn5",
+   "vantablack.kn5",
+   "srp_pits_tatsumi.kn5"
+  ],
+  "yoyogi_pa": [
+   "shuto_revival_project_beta.kn5",
+   "srp_yaesu_0_9_3.kn5",
+   "srp_bayshore_0_9_3.kn5",
+   "srp_yokohane_0_9_3.kn5",
+   "srp_mirai_0_9_3.kn5",
+   "srp_shibuyashinjuku_0_9_3.kn5",
+   "srp_shibuyacrossing_0_9_3.kn5",
+   "physical.kn5",
+   "reverb.kn5",
+   "terrain.kn5",
+   "srp_animations_0_9_3.kn5",
+   "srp_barriers_0_9_3.kn5",
+   "srp_yoyogi_0_9_3.kn5",
+   "vantablack.kn5",
+   "srp_pits_yoyogi.kn5"
+  ]
+ },
+ "kn5_count": 22,
+ "totals": {
+  "meshes": 5072,
+  "verts": 26438148,
+  "tris": 21106980,
+  "bytes": 1820727985,
+  "texture_bytes": 373660
+ },
+ "surfaces_ini": {
+  "ROAD": {
+   "FRICTION": "1",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "extended-0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "daishi_pa\\data\\surfaces.ini"
+  },
+  "PIT": {
+   "FRICTION": "1",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "daishi_pa\\data\\surfaces.ini"
+  },
+  "NOTROAD": {
+   "FRICTION": "1",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "daishi_pa\\data\\surfaces.ini"
+  },
+  "OVERLAP": {
+   "FRICTION": "1",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "daishi_pa\\data\\surfaces.ini"
+  },
+  "MORE": {
+   "FRICTION": "1",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "daishi_pa\\data\\surfaces.ini"
+  },
+  "CUT": {
+   "FRICTION": "1",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "daishi_pa\\data\\surfaces.ini"
+  },
+  "BRIDGE": {
+   "FRICTION": "0.92",
+   "DAMPING": "0",
+   "WAV": "bridge.wav",
+   "WAV_PITCH": "0.968",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.4",
+   "VIBRATION_LENGTH": "1.5",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "daishi_pa\\data\\surfaces.ini"
+  },
+  "OLD": {
+   "FRICTION": "1",
+   "DAMPING": "0",
+   "WAV": "old.wav",
+   "WAV_PITCH": "0.968",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "daishi_pa\\data\\surfaces.ini"
+  },
+  "TURNAROUND": {
+   "FRICTION": "1",
+   "DAMPING": "0",
+   "WAV": "old.wav",
+   "WAV_PITCH": "0.968",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "main_layout\\data\\surfaces.ini"
+  },
+  "OVERLAPA": {
+   "FRICTION": "1",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "soyo_daikoku\\garage\\data\\surfaces.ini"
+  },
+  "OVERLAPB": {
+   "FRICTION": "1",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "soyo_daikoku\\garage\\data\\surfaces.ini"
+  },
+  "OVERLAPC": {
+   "FRICTION": "1",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "soyo_daikoku\\garage\\data\\surfaces.ini"
+  },
+  "OVERLAPD": {
+   "FRICTION": "1",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "soyo_daikoku\\garage\\data\\surfaces.ini"
+  },
+  "OVERLAPE": {
+   "FRICTION": "1",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "soyo_daikoku\\garage\\data\\surfaces.ini"
+  },
+  "OVERLAPG": {
+   "FRICTION": "1",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "soyo_daikoku\\garage\\data\\surfaces.ini"
+  }
+ },
+ "surface_geometry": {
+  "BRIDGE": {
+   "meshes": 2,
+   "invisible": 2,
+   "verts": 10345,
+   "tris": 8254,
+   "area_m2": 328259356.9,
+   "edge_med_m": 414.732,
+   "grid_m": 278.534
+  },
+  "MORE": {
+   "meshes": 14,
+   "invisible": 13,
+   "verts": 220758,
+   "tris": 338760,
+   "area_m2": 11499197370.0,
+   "edge_med_m": 329.696,
+   "grid_m": 240.062
+  },
+  "ROAD": {
+   "meshes": 271,
+   "invisible": 214,
+   "verts": 3507674,
+   "tris": 5612111,
+   "area_m2": 133394814641.3,
+   "edge_med_m": 253.152,
+   "grid_m": 190.097
+  },
+  "OVERLAP": {
+   "meshes": 70,
+   "invisible": 68,
+   "verts": 436265,
+   "tris": 706950,
+   "area_m2": 29358287459.9,
+   "edge_med_m": 341.415,
+   "grid_m": 259.828
+  },
+  "PIT": {
+   "meshes": 2,
+   "invisible": 2,
+   "verts": 15652,
+   "tris": 27813,
+   "area_m2": 488060435.3,
+   "edge_med_m": 278.611,
+   "grid_m": 181.714
+  },
+  "OLD": {
+   "meshes": 13,
+   "invisible": 13,
+   "verts": 262686,
+   "tris": 463168,
+   "area_m2": 9304488538.9,
+   "edge_med_m": 245.096,
+   "grid_m": 177.185
+  },
+  "PHYS?": {
+   "meshes": 1,
+   "invisible": 1,
+   "verts": 260,
+   "tris": 344,
+   "area_m2": 7804012.0,
+   "edge_med_m": 236.673,
+   "grid_m": 213.007
+  },
+  "WALL": {
+   "meshes": 26,
+   "invisible": 16,
+   "verts": 656825,
+   "tris": 616022,
+   "area_m2": 24087844288.6,
+   "edge_med_m": 345.558,
+   "grid_m": 254.843
+  },
+  "GRASS": {
+   "meshes": 2,
+   "invisible": 0,
+   "verts": 1783,
+   "tris": 1943,
+   "area_m2": 5425800.9,
+   "edge_med_m": 92.023,
+   "grid_m": 71.703
+  },
+  "KERB": {
+   "meshes": 1,
+   "invisible": 0,
+   "verts": 27925,
+   "tris": 22920,
+   "area_m2": 180502232.0,
+   "edge_med_m": 156.1,
+   "grid_m": 125.502
+  }
+ },
+ "ai": [],
+ "ext_config": {
+  "grass_fx": true,
+  "rain_fx": true,
+  "lights": 4,
+  "light_series": 54,
+  "trees": true,
+  "mesh_adjustments": 1,
+  "includes": [
+   "common/materials_track.ini",
+   "common/conditions.ini, common/materials_track.ini, common/materials_glass.ini"
+  ],
+  "files": 2
+ },
+ "vao_patches": [
+  "shuto_revival_project_beta.vao-patch"
+ ],
+ "cameras": 84,
+ "errors": [
+  "srp_mirai_0_9_2.kn5: named by models.ini but missing"
+ ],
+ "kn5s": [
+  {
+   "file": "physical.kn5",
+   "summary": {
+    "meshes": 312,
+    "verts": 4237630,
+    "tris": 6978336,
+    "textures": 6,
+    "texture_bytes": 420,
+    "materials": 6,
+    "surfaces": {
+     "BRIDGE": {
+      "meshes": 2,
+      "verts": 10345,
+      "tris": 8254,
+      "area_m2": 328259356.9,
+      "invisible": 2,
+      "edge_med_m": 414.732,
+      "grid_m": 278.534
+     },
+     "MORE": {
+      "meshes": 13,
+      "verts": 171870,
+      "tris": 300975,
+      "area_m2": 11200004174.3,
+      "invisible": 13,
+      "edge_med_m": 353.863,
+      "grid_m": 254.401
+     },
+     "ROAD": {
+      "meshes": 213,
+      "verts": 3341909,
+      "tris": 5471953,
+      "area_m2": 130757903972.9,
+      "invisible": 213,
+      "edge_med_m": 253.229,
+      "grid_m": 190.163
+     },
+     "OVERLAP": {
+      "meshes": 68,
+      "verts": 434908,
+      "tris": 705829,
+      "area_m2": 29351079255.4,
+      "invisible": 68,
+      "edge_med_m": 341.755,
+      "grid_m": 260.062
+     },
+     "PIT": {
+      "meshes": 2,
+      "verts": 15652,
+      "tris": 27813,
+      "area_m2": 488060435.3,
+      "invisible": 2,
+      "edge_med_m": 278.611,
+      "grid_m": 181.714
+     },
+     "OLD": {
+      "meshes": 13,
+      "verts": 262686,
+      "tris": 463168,
+      "area_m2": 9304488538.9,
+      "invisible": 13,
+      "edge_med_m": 245.096,
+      "grid_m": 177.185
+     },
+     "PHYS?": {
+      "meshes": 1,
+      "verts": 260,
+      "tris": 344,
+      "area_m2": 7804012.0,
+      "invisible": 1,
+      "edge_med_m": 236.673,
+      "grid_m": 213.007
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 312,
+      "tris": 6978336
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "reverb.kn5",
+   "summary": {
+    "meshes": 27,
+    "verts": 53568,
+    "tris": 25920,
+    "textures": 1,
+    "texture_bytes": 70,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 27,
+      "tris": 25920
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "shuto_revival_project_beta.kn5",
+   "summary": {
+    "meshes": 830,
+    "verts": 6182946,
+    "tris": 4133734,
+    "textures": 1286,
+    "texture_bytes": 90020,
+    "materials": 739,
+    "surfaces": {
+     "ROAD": {
+      "meshes": 2,
+      "verts": 16832,
+      "tris": 16857,
+      "area_m2": 659128242.4,
+      "invisible": 1,
+      "edge_med_m": 383.387,
+      "grid_m": 279.442
+     },
+     "WALL": {
+      "meshes": 6,
+      "verts": 172027,
+      "tris": 200464,
+      "area_m2": 4833212409.0,
+      "invisible": 5,
+      "edge_med_m": 259.779,
+      "grid_m": 216.75
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 178,
+      "tris": 1160801
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 100,
+      "tris": 884943
+     },
+     "ksPerPixel": {
+      "meshes": 215,
+      "tris": 792113
+     },
+     "ksPerPixelMultiMap_emissive": {
+      "meshes": 187,
+      "tris": 765864
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 22,
+      "tris": 212793
+     },
+     "ksPerPixelMultiMap_AT": {
+      "meshes": 6,
+      "tris": 177928
+     },
+     "ksPerPixelAT": {
+      "meshes": 88,
+      "tris": 93984
+     },
+     "ksPerPixelMultiMap_AT_emissive": {
+      "meshes": 21,
+      "tris": 34265
+     },
+     "ksTree": {
+      "meshes": 5,
+      "tris": 6776
+     },
+     "ksPerPixelMultiMap_AT_NMDetail": {
+      "meshes": 1,
+      "tris": 2522
+     },
+     "stPerPixelNM_UVflow": {
+      "meshes": 4,
+      "tris": 1589
+     },
+     "ksPerPixelReflection": {
+      "meshes": 3,
+      "tris": 156
+     }
+    },
+    "near_vert_cap": [
+     "geo_fence_01.002",
+     "geo_blue_variation.002",
+     "geo_auto_back_tx",
+     "geo_road_01.001",
+     "geo_sitamiti00_sh.002",
+     "geo_fence_top",
+     "geo_fence_top.003",
+     "geo_fence_03x.001",
+     "geo_fence_03.003",
+     "geo_line.001"
+    ],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "srp_animations_0_9_3.kn5",
+   "summary": {
+    "meshes": 72,
+    "verts": 57525,
+    "tris": 39980,
+    "textures": 18,
+    "texture_bytes": 1260,
+    "materials": 7,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 6,
+      "tris": 23572
+     },
+     "ksPerPixelMultiMap_AT_emissive": {
+      "meshes": 62,
+      "tris": 11900
+     },
+     "ksPerPixelAT": {
+      "meshes": 3,
+      "tris": 3476
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 1,
+      "tris": 1032
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "srp_barriers_0_9_3.kn5",
+   "summary": {
+    "meshes": 8,
+    "verts": 51904,
+    "tris": 26258,
+    "textures": 12,
+    "texture_bytes": 840,
+    "materials": 8,
+    "surfaces": {
+     "WALL": {
+      "meshes": 7,
+      "verts": 51244,
+      "tris": 25928,
+      "area_m2": 1010881047.0,
+      "invisible": 1,
+      "edge_med_m": 305.253,
+      "grid_m": 246.73
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelAT_NM": {
+      "meshes": 1,
+      "tris": 19856
+     },
+     "ksPerPixelNM": {
+      "meshes": 3,
+      "tris": 5147
+     },
+     "ksPerPixel": {
+      "meshes": 3,
+      "tris": 925
+     },
+     "ksPerPixelAT": {
+      "meshes": 1,
+      "tris": 330
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "srp_bayshore_0_9_3.kn5",
+   "summary": {
+    "meshes": 1035,
+    "verts": 5451348,
+    "tris": 3360895,
+    "textures": 831,
+    "texture_bytes": 58170,
+    "materials": 554,
+    "surfaces": {
+     "WALL": {
+      "meshes": 2,
+      "verts": 74272,
+      "tris": 108873,
+      "area_m2": 6272343052.2,
+      "invisible": 2,
+      "edge_med_m": 449.794,
+      "grid_m": 319.884
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 329,
+      "tris": 1206221
+     },
+     "ksPerPixelAT": {
+      "meshes": 78,
+      "tris": 619653
+     },
+     "ksPerPixel": {
+      "meshes": 195,
+      "tris": 583709
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 117,
+      "tris": 304073
+     },
+     "ksPerPixelMultiMap_emissive": {
+      "meshes": 226,
+      "tris": 279330
+     },
+     "ksPerPixelMultiMap_AT_emissive": {
+      "meshes": 27,
+      "tris": 174791
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 35,
+      "tris": 88299
+     },
+     "ksPerPixelMultiMap_AT": {
+      "meshes": 14,
+      "tris": 58611
+     },
+     "ksTree": {
+      "meshes": 12,
+      "tris": 44346
+     },
+     "ksPerPixelMultiMap_AT_NMDetail": {
+      "meshes": 1,
+      "tris": 1694
+     },
+     "ksPerPixelReflection": {
+      "meshes": 1,
+      "tris": 168
+     }
+    },
+    "near_vert_cap": [
+     "bayshore_chunk2_geo_lamp701.001",
+     "bayshore_chunk6_geo_grd_01.002",
+     "bayshore_chunk2_geo_saku_15.002",
+     "bayshore_chunk1_geo_auto_minka_sh",
+     "bayshore_chunk2_geo_parts_sh.003",
+     "bayshore_chunk5_geo_fence_03.002",
+     "bayshore_chunk2_geo_fence_03.001",
+     "bayshore_chunk4_geo_lamp_tnl_01_metal.001",
+     "bayshore_chunk5_geo_lamp_tnl_01_metal.002"
+    ],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "srp_mirai_0_9_3.kn5",
+   "summary": {
+    "meshes": 645,
+    "verts": 2646815,
+    "tris": 1742003,
+    "textures": 571,
+    "texture_bytes": 39970,
+    "materials": 391,
+    "surfaces": {
+     "WALL": {
+      "meshes": 4,
+      "verts": 117462,
+      "tris": 99532,
+      "area_m2": 8908123516.1,
+      "invisible": 1,
+      "edge_med_m": 606.757,
+      "grid_m": 415.903
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 176,
+      "tris": 614254
+     },
+     "ksPerPixelMultiMap_emissive": {
+      "meshes": 111,
+      "tris": 345525
+     },
+     "ksPerPixel": {
+      "meshes": 171,
+      "tris": 261209
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 88,
+      "tris": 248534
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 31,
+      "tris": 190542
+     },
+     "ksPerPixelAT": {
+      "meshes": 45,
+      "tris": 64755
+     },
+     "ksPerPixelMultiMap_AT_emissive": {
+      "meshes": 13,
+      "tris": 14426
+     },
+     "ksPerPixelMultiMap_AT": {
+      "meshes": 3,
+      "tris": 1666
+     },
+     "ksTree": {
+      "meshes": 4,
+      "tris": 966
+     },
+     "ksPerPixelMultiMap_NMDetail": {
+      "meshes": 3,
+      "tris": 126
+     }
+    },
+    "near_vert_cap": [
+     "geo_mirai_chunk2_window3_aka_sh_1",
+     "geo_mirai_chunk2_window3_aka_sh_2"
+    ],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "srp_pits_daishi.kn5",
+   "summary": {
+    "meshes": 0,
+    "verts": 0,
+    "tris": 0,
+    "textures": 0,
+    "texture_bytes": 0,
+    "materials": 0,
+    "surfaces": {},
+    "shaders_by_tris": {},
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "srp_pits_heiwajima_n.kn5",
+   "summary": {
+    "meshes": 0,
+    "verts": 0,
+    "tris": 0,
+    "textures": 0,
+    "texture_bytes": 0,
+    "materials": 0,
+    "surfaces": {},
+    "shaders_by_tris": {},
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "srp_pits_heiwajima_s.kn5",
+   "summary": {
+    "meshes": 0,
+    "verts": 0,
+    "tris": 0,
+    "textures": 0,
+    "texture_bytes": 0,
+    "materials": 0,
+    "surfaces": {},
+    "shaders_by_tris": {},
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "srp_pits_main.kn5",
+   "summary": {
+    "meshes": 0,
+    "verts": 0,
+    "tris": 0,
+    "textures": 0,
+    "texture_bytes": 0,
+    "materials": 0,
+    "surfaces": {},
+    "shaders_by_tris": {},
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "srp_pits_shibaura.kn5",
+   "summary": {
+    "meshes": 0,
+    "verts": 0,
+    "tris": 0,
+    "textures": 0,
+    "texture_bytes": 0,
+    "materials": 0,
+    "surfaces": {},
+    "shaders_by_tris": {},
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "srp_pits_tatsumi.kn5",
+   "summary": {
+    "meshes": 0,
+    "verts": 0,
+    "tris": 0,
+    "textures": 0,
+    "texture_bytes": 0,
+    "materials": 0,
+    "surfaces": {},
+    "shaders_by_tris": {},
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "srp_pits_yoyogi.kn5",
+   "summary": {
+    "meshes": 0,
+    "verts": 0,
+    "tris": 0,
+    "textures": 0,
+    "texture_bytes": 0,
+    "materials": 0,
+    "surfaces": {},
+    "shaders_by_tris": {},
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "srp_shibuyacrossing_0_9_3.kn5",
+   "summary": {
+    "meshes": 127,
+    "verts": 476274,
+    "tris": 328111,
+    "textures": 212,
+    "texture_bytes": 14840,
+    "materials": 108,
+    "surfaces": {
+     "ROAD": {
+      "meshes": 1,
+      "verts": 580,
+      "tris": 644,
+      "area_m2": 4494102.7,
+      "invisible": 0,
+      "edge_med_m": 162.616,
+      "grid_m": 118.139
+     },
+     "GRASS": {
+      "meshes": 1,
+      "verts": 372,
+      "tris": 360,
+      "area_m2": 2416784.8,
+      "invisible": 0,
+      "edge_med_m": 130.629,
+      "grid_m": 115.873
+     },
+     "KERB": {
+      "meshes": 1,
+      "verts": 27925,
+      "tris": 22920,
+      "area_m2": 180502232.0,
+      "invisible": 0,
+      "edge_med_m": 156.1,
+      "grid_m": 125.502
+     },
+     "MORE": {
+      "meshes": 1,
+      "verts": 48888,
+      "tris": 37785,
+      "area_m2": 299193195.7,
+      "invisible": 0,
+      "edge_med_m": 137.193,
+      "grid_m": 125.844
+     }
+    },
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 6,
+      "tris": 106530
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 19,
+      "tris": 68523
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 9,
+      "tris": 50881
+     },
+     "ksPerPixel": {
+      "meshes": 22,
+      "tris": 50170
+     },
+     "ksPerPixelNM": {
+      "meshes": 27,
+      "tris": 34801
+     },
+     "ksPerPixelAT": {
+      "meshes": 12,
+      "tris": 8103
+     },
+     "ksPerPixelMultiMap_emissive": {
+      "meshes": 25,
+      "tris": 7810
+     },
+     "ksPerPixelMultiMap_AT": {
+      "meshes": 2,
+      "tris": 728
+     },
+     "ksPerPixelMultiMap_NMDetail": {
+      "meshes": 1,
+      "tris": 298
+     },
+     "ksPerPixelMultiMap_AT_emissive": {
+      "meshes": 3,
+      "tris": 253
+     },
+     "stPerPixelNM_UVflow": {
+      "meshes": 1,
+      "tris": 14
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "srp_shibuyashinjuku_0_9_3.kn5",
+   "summary": {
+    "meshes": 754,
+    "verts": 2510982,
+    "tris": 1602466,
+    "textures": 1132,
+    "texture_bytes": 79240,
+    "materials": 674,
+    "surfaces": {
+     "ROAD": {
+      "meshes": 18,
+      "verts": 28504,
+      "tris": 33890,
+      "area_m2": 630931380.3,
+      "invisible": 0,
+      "edge_med_m": 219.341,
+      "grid_m": 192.94
+     },
+     "OVERLAP": {
+      "meshes": 1,
+      "verts": 1321,
+      "tris": 1097,
+      "area_m2": 7196685.9,
+      "invisible": 0,
+      "edge_med_m": 129.313,
+      "grid_m": 114.545
+     },
+     "WALL": {
+      "meshes": 2,
+      "verts": 53885,
+      "tris": 70669,
+      "area_m2": 975587904.8,
+      "invisible": 2,
+      "edge_med_m": 242.438,
+      "grid_m": 163.035
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 140,
+      "tris": 465305
+     },
+     "ksPerPixelMultiMap_emissive": {
+      "meshes": 157,
+      "tris": 404330
+     },
+     "ksPerPixel": {
+      "meshes": 203,
+      "tris": 339165
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 124,
+      "tris": 196619
+     },
+     "ksPerPixelAT": {
+      "meshes": 97,
+      "tris": 138745
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 17,
+      "tris": 42079
+     },
+     "ksPerPixelMultiMap_AT_emissive": {
+      "meshes": 8,
+      "tris": 11030
+     },
+     "ksPerPixelReflection": {
+      "meshes": 3,
+      "tris": 2976
+     },
+     "ksPerPixelMultiMap_AT": {
+      "meshes": 1,
+      "tris": 1192
+     },
+     "ksTree": {
+      "meshes": 2,
+      "tris": 1001
+     },
+     "stPerPixelNM_UVflow": {
+      "meshes": 1,
+      "tris": 20
+     },
+     "ksPerPixelMultiMap_AT_NMDetail": {
+      "meshes": 1,
+      "tris": 4
+     }
+    },
+    "near_vert_cap": [
+     "geo_HF_TS_waku"
+    ],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "srp_yaesu_0_9_3.kn5",
+   "summary": {
+    "meshes": 222,
+    "verts": 718904,
+    "tris": 512358,
+    "textures": 462,
+    "texture_bytes": 32340,
+    "materials": 218,
+    "surfaces": {
+     "ROAD": {
+      "meshes": 2,
+      "verts": 27027,
+      "tris": 31624,
+      "area_m2": 719939013.2,
+      "invisible": 0,
+      "edge_med_m": 323.323,
+      "grid_m": 212.696
+     },
+     "WALL": {
+      "meshes": 1,
+      "verts": 48174,
+      "tris": 39387,
+      "area_m2": 982303659.9,
+      "invisible": 1,
+      "edge_med_m": 342.173,
+      "grid_m": 223.337
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 54,
+      "tris": 178120
+     },
+     "ksPerPixel": {
+      "meshes": 38,
+      "tris": 121411
+     },
+     "ksPerPixelMultiMap_emissive": {
+      "meshes": 64,
+      "tris": 75297
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 27,
+      "tris": 54226
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 11,
+      "tris": 38901
+     },
+     "ksPerPixelMultiMap_AT_emissive": {
+      "meshes": 7,
+      "tris": 21595
+     },
+     "ksPerPixelAT": {
+      "meshes": 17,
+      "tris": 12192
+     },
+     "ksPerPixelReflection": {
+      "meshes": 1,
+      "tris": 5878
+     },
+     "ksPerPixelMultiMap_AT": {
+      "meshes": 2,
+      "tris": 4296
+     },
+     "ksPerPixelMultiMap_AT_NMDetail": {
+      "meshes": 1,
+      "tris": 442
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "srp_yokohane_0_9_3.kn5",
+   "summary": {
+    "meshes": 919,
+    "verts": 3859007,
+    "tris": 2236786,
+    "textures": 753,
+    "texture_bytes": 52710,
+    "materials": 428,
+    "surfaces": {
+     "ROAD": {
+      "meshes": 2,
+      "verts": 3548,
+      "tris": 2896,
+      "area_m2": 88188692.0,
+      "invisible": 0,
+      "edge_med_m": 257.531,
+      "grid_m": 217.351
+     },
+     "GRASS": {
+      "meshes": 1,
+      "verts": 1411,
+      "tris": 1583,
+      "area_m2": 3009016.1,
+      "invisible": 0,
+      "edge_med_m": 83.243,
+      "grid_m": 61.658
+     },
+     "OVERLAP": {
+      "meshes": 1,
+      "verts": 36,
+      "tris": 24,
+      "area_m2": 11518.6,
+      "invisible": 0,
+      "edge_med_m": 44.802,
+      "grid_m": 30.982
+     },
+     "WALL": {
+      "meshes": 4,
+      "verts": 139761,
+      "tris": 71169,
+      "area_m2": 1105392699.6,
+      "invisible": 4,
+      "edge_med_m": 181.376,
+      "grid_m": 148.95
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 142,
+      "tris": 754656
+     },
+     "ksPerPixelNM": {
+      "meshes": 278,
+      "tris": 661730
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 174,
+      "tris": 319211
+     },
+     "ksPerPixelMultiMap_emissive": {
+      "meshes": 165,
+      "tris": 196120
+     },
+     "ksPerPixelMultiMap_AT_emissive": {
+      "meshes": 31,
+      "tris": 105792
+     },
+     "ksTree": {
+      "meshes": 21,
+      "tris": 73419
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 45,
+      "tris": 54678
+     },
+     "ksPerPixelMultiMap_AT": {
+      "meshes": 11,
+      "tris": 36974
+     },
+     "ksPerPixelAT": {
+      "meshes": 49,
+      "tris": 32506
+     },
+     "ksPerPixelReflection": {
+      "meshes": 3,
+      "tris": 1700
+     }
+    },
+    "near_vert_cap": [
+     "chunk2_geo_yoko_auto_minka_sh.001",
+     "chunk2_geo_yoko_parts_sh.001",
+     "chunk3_geo_yoko_fence_03"
+    ],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "srp_yoyogi_0_9_3.kn5",
+   "summary": {
+    "meshes": 117,
+    "verts": 168861,
+    "tris": 97475,
+    "textures": 48,
+    "texture_bytes": 3360,
+    "materials": 26,
+    "surfaces": {
+     "ROAD": {
+      "meshes": 33,
+      "verts": 89274,
+      "tris": 54247,
+      "area_m2": 534229237.8,
+      "invisible": 0,
+      "edge_med_m": 186.011,
+      "grid_m": 140.084
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 30,
+      "tris": 31806
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 11,
+      "tris": 23863
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 57,
+      "tris": 18369
+     },
+     "ksPerPixelAT": {
+      "meshes": 5,
+      "tris": 15687
+     },
+     "ksPerPixelNM": {
+      "meshes": 11,
+      "tris": 6610
+     },
+     "ksPerPixelMultiMap_emissive": {
+      "meshes": 3,
+      "tris": 1140
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "terrain.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 7819,
+    "tris": 15205,
+    "textures": 5,
+    "texture_bytes": 350,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 2,
+      "tris": 15203
+     },
+     "ksPerPixel": {
+      "meshes": 1,
+      "tris": 2
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "vantablack.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 14565,
+    "tris": 7453,
+    "textures": 1,
+    "texture_bytes": 70,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 1,
+      "tris": 7453
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  }
+ ]
+}

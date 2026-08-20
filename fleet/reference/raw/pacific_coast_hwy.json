@@ -1,0 +1,1866 @@
+{
+ "track": "pacific_coast_hwy",
+ "path": "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks\\pacific_coast_hwy",
+ "ui": {
+  "name": "PCH - Cruise",
+  "length": "46382",
+  "width": "9",
+  "pitboxes": "70",
+  "run": "Traffic"
+ },
+ "layouts": {
+  "cruise": [
+   "pacific_coast_hwy.kn5",
+   "layout_cruise.kn5",
+   "ocean.kn5",
+   "sound_fx.kn5",
+   "signs.kn5",
+   "mansion.kn5",
+   "trees.kn5",
+   "roads.kn5",
+   "mansion_roads.kn5",
+   "rails.kn5",
+   "structures.kn5",
+   "struct_cars.kn5",
+   "terrain.kn5",
+   "rocks.kn5",
+   "collision.kn5",
+   "waves.kn5",
+   "roads_other.kn5",
+   "roads_detail.kn5",
+   "bushes.kn5",
+   "bushes_x.kn5",
+   "mansion_terrain.kn5",
+   "roadside_cars.kn5",
+   "mansion_trees.kn5",
+   "mansion_cars.kn5",
+   "rc_1.kn5",
+   "balloon_pch.kn5",
+   "balloon_604.kn5",
+   "balloon_tst.kn5",
+   "balloon_tem.kn5",
+   "balloon_pch.kn5",
+   "balloon_lac.kn5",
+   "balloon_for.kn5",
+   "balloon_rnd.kn5",
+   "balloon_tem.kn5",
+   "balloon_604.kn5",
+   "balloon_rnd.kn5",
+   "balloon_for.kn5",
+   "balloon_chsr.kn5",
+   "balloon_chsr.kn5",
+   "balloon_604.kn5",
+   "balloon_rnd.kn5",
+   "balloon_tst.kn5",
+   "balloon_pch.kn5",
+   "shipa.kn5",
+   "shipb.kn5",
+   "aira.kn5",
+   "airb.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "airb.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "balloon_cd.kn5",
+   "balloon_cd.kn5",
+   "balloon_cd.kn5",
+   "balloon_cd.kn5",
+   "balloon_city.kn5",
+   "balloon_cd.kn5",
+   "balloon_cd.kn5"
+  ],
+  "northbound": [
+   "pacific_coast_hwy.kn5",
+   "layout_northbound.kn5",
+   "ocean.kn5",
+   "sound_fx.kn5",
+   "signs.kn5",
+   "mansion.kn5",
+   "trees.kn5",
+   "roads.kn5",
+   "mansion_roads.kn5",
+   "rails.kn5",
+   "structures.kn5",
+   "struct_cars.kn5",
+   "terrain.kn5",
+   "rocks.kn5",
+   "collision.kn5",
+   "waves.kn5",
+   "roads_other.kn5",
+   "roads_detail.kn5",
+   "bushes.kn5",
+   "bushes_x.kn5",
+   "mansion_terrain.kn5",
+   "roadside_cars.kn5",
+   "mansion_trees.kn5",
+   "mansion_cars.kn5",
+   "rc_1.kn5",
+   "balloon_pch.kn5",
+   "balloon_rnd.kn5",
+   "balloon_604.kn5",
+   "balloon_tst.kn5",
+   "balloon_bm.kn5",
+   "balloon_tem.kn5",
+   "balloon_604.kn5",
+   "balloon_pch.kn5",
+   "balloon_lac.kn5",
+   "balloon_tem.kn5",
+   "balloon_rnd.kn5",
+   "balloon_for.kn5",
+   "balloon_604.kn5",
+   "balloon_604.kn5",
+   "balloon_rnd.kn5",
+   "balloon_tst.kn5",
+   "balloon_chsr.kn5",
+   "balloon_abg.kn5",
+   "balloon_tem.kn5",
+   "balloon_pch.kn5",
+   "balloon_604.kn5",
+   "balloon_chsr.kn5",
+   "balloon_tem.kn5",
+   "balloon_abg.kn5",
+   "balloon_chsr.kn5",
+   "balloon_604.kn5",
+   "balloon_tem.kn5",
+   "balloon_rnd.kn5",
+   "balloon_tst.kn5",
+   "balloon_pch.kn5",
+   "shipa.kn5",
+   "shipb.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "airb.kn5",
+   "airb.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "airb.kn5",
+   "airb.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "airb.kn5",
+   "airb.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "airb.kn5",
+   "airb.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "airb.kn5",
+   "airb.kn5",
+   "balloon_cd.kn5",
+   "balloon_cd.kn5",
+   "balloon_cd.kn5",
+   "balloon_cd.kn5",
+   "balloon_city.kn5",
+   "balloon_cd.kn5",
+   "balloon_cd.kn5"
+  ],
+  "southbound": [
+   "pacific_coast_hwy.kn5",
+   "layout_southbound.kn5",
+   "ocean.kn5",
+   "sound_fx.kn5",
+   "signs.kn5",
+   "mansion.kn5",
+   "trees.kn5",
+   "roads.kn5",
+   "mansion_roads.kn5",
+   "rails.kn5",
+   "structures.kn5",
+   "struct_cars.kn5",
+   "terrain.kn5",
+   "rocks.kn5",
+   "collision.kn5",
+   "waves.kn5",
+   "roads_other.kn5",
+   "roads_detail.kn5",
+   "bushes.kn5",
+   "bushes_x.kn5",
+   "mansion_terrain.kn5",
+   "roadside_cars.kn5",
+   "mansion_trees.kn5",
+   "mansion_cars.kn5",
+   "rc_1.kn5",
+   "balloon_pch.kn5",
+   "balloon_rnd.kn5",
+   "balloon_604.kn5",
+   "balloon_tst.kn5",
+   "balloon_bm.kn5",
+   "balloon_tem.kn5",
+   "balloon_604.kn5",
+   "balloon_pch.kn5",
+   "balloon_lac.kn5",
+   "balloon_tem.kn5",
+   "balloon_rnd.kn5",
+   "balloon_for.kn5",
+   "balloon_604.kn5",
+   "balloon_604.kn5",
+   "balloon_rnd.kn5",
+   "balloon_tst.kn5",
+   "balloon_chsr.kn5",
+   "balloon_abg.kn5",
+   "balloon_tem.kn5",
+   "balloon_pch.kn5",
+   "balloon_604.kn5",
+   "balloon_chsr.kn5",
+   "balloon_tem.kn5",
+   "balloon_abg.kn5",
+   "balloon_chsr.kn5",
+   "balloon_604.kn5",
+   "balloon_tem.kn5",
+   "balloon_rnd.kn5",
+   "balloon_tst.kn5",
+   "balloon_pch.kn5",
+   "shipa.kn5",
+   "shipb.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "airb.kn5",
+   "airb.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "airb.kn5",
+   "airb.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "airb.kn5",
+   "airb.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "airb.kn5",
+   "airb.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "aira.kn5",
+   "airb.kn5",
+   "airb.kn5",
+   "balloon_cd.kn5",
+   "balloon_cd.kn5",
+   "balloon_cd.kn5",
+   "balloon_cd.kn5",
+   "balloon_city.kn5",
+   "balloon_cd.kn5",
+   "balloon_cd.kn5"
+  ]
+ },
+ "kn5_count": 43,
+ "totals": {
+  "meshes": 3716,
+  "verts": 14875727,
+  "tris": 15325420,
+  "bytes": 1580312135,
+  "texture_bytes": 833356710
+ },
+ "surfaces_ini": {
+  "ROAD": {
+   "FRICTION": "0.97",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "cruise\\data\\surfaces.ini"
+  },
+  "GRASS": {
+   "FRICTION": "0.8",
+   "DAMPING": "0",
+   "WAV": "grass.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.03",
+   "SIN_LENGTH": "0.5",
+   "VIBRATION_GAIN": "0.06",
+   "VIBRATION_LENGTH": "0.3",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "0",
+   "_from": "cruise\\data\\surfaces.ini"
+  },
+  "GRAVEL": {
+   "FRICTION": "0.84",
+   "DAMPING": "0",
+   "WAV": "grass.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.02",
+   "SIN_LENGTH": "0.6",
+   "VIBRATION_GAIN": "0.03",
+   "VIBRATION_LENGTH": "0.4",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "cruise\\data\\surfaces.ini"
+  },
+  "DIRT": {
+   "FRICTION": "0.78",
+   "DAMPING": "0",
+   "WAV": "grass.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.01",
+   "SIN_LENGTH": "0.7",
+   "VIBRATION_GAIN": "0.03",
+   "VIBRATION_LENGTH": "0.4",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "0",
+   "_from": "cruise\\data\\surfaces.ini"
+  },
+  "KERB": {
+   "FRICTION": "0.7",
+   "DAMPING": "0",
+   "WAV": "kerb.wav",
+   "WAV_PITCH": "1.2",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.25",
+   "VIBRATION_LENGTH": "0.3",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "cruise\\data\\surfaces.ini"
+  },
+  "GASROAD": {
+   "FRICTION": "0.92",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "cruise\\data\\surfaces.ini"
+  },
+  "CONCRETE": {
+   "FRICTION": "0.9",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "cruise\\data\\surfaces.ini"
+  },
+  "STEEL": {
+   "FRICTION": "0.5",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "cruise\\data\\surfaces.ini"
+  },
+  "RC_CATS_EYES": {
+   "FRICTION": "0.7",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "cruise\\data\\surfaces.ini"
+  },
+  "PARKFLOOR": {
+   "FRICTION": "0.94",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "cruise\\data\\surfaces.ini"
+  },
+  "PARKRAMP": {
+   "FRICTION": "0.95",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "cruise\\data\\surfaces.ini"
+  },
+  "PARKBAY": {
+   "FRICTION": "0.925",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "cruise\\data\\surfaces.ini"
+  },
+  "PARKTOPFLOOR": {
+   "FRICTION": "0.95",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "cruise\\data\\surfaces.ini"
+  },
+  "PARKTOPBAY": {
+   "FRICTION": "0.95",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "cruise\\data\\surfaces.ini"
+  },
+  "DRIVEWAY": {
+   "FRICTION": "0.93",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "cruise\\data\\surfaces.ini"
+  },
+  "MANSIONROAD": {
+   "FRICTION": "0.96",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "cruise\\data\\surfaces.ini"
+  },
+  "PARKING": {
+   "FRICTION": "0.96",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "cruise\\data\\surfaces.ini"
+  }
+ },
+ "surface_geometry": {
+  "WALL": {
+   "meshes": 751,
+   "invisible": 14,
+   "verts": 130711,
+   "tris": 122661,
+   "area_m2": 85329.1,
+   "edge_med_m": 0.847,
+   "grid_m": 0.655
+  },
+  "CONCRETE": {
+   "meshes": 5,
+   "invisible": 3,
+   "verts": 676,
+   "tris": 643,
+   "area_m2": 2118.9,
+   "edge_med_m": 3.193,
+   "grid_m": 2.232
+  },
+  "STEEL": {
+   "meshes": 1,
+   "invisible": 0,
+   "verts": 96,
+   "tris": 48,
+   "area_m2": 31.1,
+   "edge_med_m": 2.389,
+   "grid_m": 1.138
+  },
+  "KERB": {
+   "meshes": 3,
+   "invisible": 1,
+   "verts": 2594,
+   "tris": 2518,
+   "area_m2": 868.2,
+   "edge_med_m": 0.778,
+   "grid_m": 0.648
+  },
+  "SAND": {
+   "meshes": 4,
+   "invisible": 1,
+   "verts": 5027,
+   "tris": 2847,
+   "area_m2": 3650782.6,
+   "edge_med_m": 138.311,
+   "grid_m": 46.269
+  },
+  "ROAD": {
+   "meshes": 254,
+   "invisible": 253,
+   "verts": 2938128,
+   "tris": 5263647,
+   "area_m2": 262594.1,
+   "edge_med_m": 0.371,
+   "grid_m": 0.294
+  },
+  "PARKING": {
+   "meshes": 7,
+   "invisible": 4,
+   "verts": 1913,
+   "tris": 2702,
+   "area_m2": 18905.8,
+   "edge_med_m": 2.916,
+   "grid_m": 3.425
+  },
+  "GRAVEL": {
+   "meshes": 4,
+   "invisible": 4,
+   "verts": 12454,
+   "tris": 13253,
+   "area_m2": 45948.1,
+   "edge_med_m": 2.318,
+   "grid_m": 2.63
+  },
+  "GASROAD": {
+   "meshes": 2,
+   "invisible": 2,
+   "verts": 656,
+   "tris": 638,
+   "area_m2": 6276.1,
+   "edge_med_m": 4.93,
+   "grid_m": 4.402
+  },
+  "PHYS?": {
+   "meshes": 15,
+   "invisible": 1,
+   "verts": 234424,
+   "tris": 262175,
+   "area_m2": 124222.1,
+   "edge_med_m": 0.652,
+   "grid_m": 0.653
+  },
+  "GRASS": {
+   "meshes": 45,
+   "invisible": 41,
+   "verts": 936639,
+   "tris": 1738971,
+   "area_m2": 115608735.7,
+   "edge_med_m": 4.623,
+   "grid_m": 6.672
+  }
+ },
+ "ai": [
+  {
+   "file": "northbound\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 15642,
+   "length_m": 24730.6,
+   "spacing_m": 1.58,
+   "has_extras": true
+  },
+  {
+   "file": "northbound\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 755,
+   "length_m": 1162.6,
+   "spacing_m": 1.54,
+   "has_extras": true
+  },
+  {
+   "file": "northbound\\data\\ideal_line.ai",
+   "version": 7,
+   "points": 15642,
+   "length_m": 24730.6,
+   "spacing_m": 1.58,
+   "has_extras": true
+  },
+  {
+   "file": "southbound\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 15409,
+   "length_m": 24312.8,
+   "spacing_m": 1.58,
+   "has_extras": true
+  },
+  {
+   "file": "southbound\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 419,
+   "length_m": 635.7,
+   "spacing_m": 1.52,
+   "has_extras": true
+  },
+  {
+   "file": "southbound\\data\\ideal_line.ai",
+   "version": 7,
+   "points": 15409,
+   "length_m": 24312.8,
+   "spacing_m": 1.58,
+   "has_extras": true
+  }
+ ],
+ "ext_config": {
+  "grass_fx": true,
+  "rain_fx": true,
+  "lights": 0,
+  "light_series": 1,
+  "trees": false,
+  "mesh_adjustments": 0,
+  "includes": [
+   "common/conditions.ini"
+  ],
+  "files": 1
+ },
+ "vao_patches": [],
+ "cameras": 245,
+ "errors": [
+  "balloon_city.kn5: named by models.ini but missing",
+  "mansion_cars.kn5: named by models.ini but missing",
+  "mansion_roads.kn5: named by models.ini but missing",
+  "mansion_terrain.kn5: named by models.ini but missing",
+  "mansion_trees.kn5: named by models.ini but missing"
+ ],
+ "kn5s": [
+  {
+   "file": "aira.kn5",
+   "summary": {
+    "meshes": 4,
+    "verts": 4069,
+    "tris": 4669,
+    "textures": 2,
+    "texture_bytes": 349704,
+    "materials": 4,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 4,
+      "tris": 4669
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "airb.kn5",
+   "summary": {
+    "meshes": 4,
+    "verts": 4145,
+    "tris": 4669,
+    "textures": 2,
+    "texture_bytes": 349704,
+    "materials": 4,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 4,
+      "tris": 4669
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "balloon_604.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 1425664,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "balloon_abg.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 1425664,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "balloon_bm.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 1425664,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "balloon_cd.kn5",
+   "summary": {
+    "meshes": 2,
+    "verts": 2053,
+    "tris": 1664,
+    "textures": 2,
+    "texture_bytes": 7576592,
+    "materials": 2,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 2,
+      "tris": 1664
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "bo_city_dest.dds",
+     "bo_city_d_nrm.dds"
+    ]
+   }
+  },
+  {
+   "file": "balloon_chsr.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 1425664,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "balloon_for.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 1425664,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "balloon_lac.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 1425664,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "balloon_pch.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 1425664,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "balloon_rnd.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 1425664,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "balloon_tem.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 1425664,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "balloon_tst.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 677,
+    "tris": 790,
+    "textures": 2,
+    "texture_bytes": 1425664,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 790
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "bushes.kn5",
+   "summary": {
+    "meshes": 167,
+    "verts": 4607024,
+    "tris": 2303512,
+    "textures": 1,
+    "texture_bytes": 13453792,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 167,
+      "tris": 2303512
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "bo_pch_bushes.dds"
+    ]
+   }
+  },
+  {
+   "file": "bushes_x.kn5",
+   "summary": {
+    "meshes": 281,
+    "verts": 4190616,
+    "tris": 4017952,
+    "textures": 1,
+    "texture_bytes": 4986432,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 281,
+      "tris": 4017952
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "bo_pch_bushes_x.dds"
+    ]
+   }
+  },
+  {
+   "file": "collision.kn5",
+   "summary": {
+    "meshes": 5,
+    "verts": 28963,
+    "tris": 17769,
+    "textures": 1,
+    "texture_bytes": 312,
+    "materials": 1,
+    "surfaces": {
+     "WALL": {
+      "meshes": 5,
+      "verts": 28963,
+      "tris": 17769,
+      "area_m2": 8058.2,
+      "invisible": 5,
+      "edge_med_m": 1.5,
+      "grid_m": 0.95
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 5,
+      "tris": 17769
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "layout_cruise.kn5",
+   "summary": {
+    "meshes": 147,
+    "verts": 3332,
+    "tris": 1200,
+    "textures": 1,
+    "texture_bytes": 312,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 147,
+      "tris": 1200
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "layout_northbound.kn5",
+   "summary": {
+    "meshes": 105,
+    "verts": 2340,
+    "tris": 856,
+    "textures": 1,
+    "texture_bytes": 312,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 105,
+      "tris": 856
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "layout_southbound.kn5",
+   "summary": {
+    "meshes": 57,
+    "verts": 1290,
+    "tris": 472,
+    "textures": 1,
+    "texture_bytes": 312,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 57,
+      "tris": 472
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "mansion.kn5",
+   "summary": {
+    "meshes": 87,
+    "verts": 76277,
+    "tris": 71294,
+    "textures": 44,
+    "texture_bytes": 113805272,
+    "materials": 41,
+    "surfaces": {
+     "WALL": {
+      "meshes": 9,
+      "verts": 1764,
+      "tris": 1148,
+      "area_m2": 15039.6,
+      "invisible": 4,
+      "edge_med_m": 1.183,
+      "grid_m": 4.47
+     },
+     "CONCRETE": {
+      "meshes": 2,
+      "verts": 212,
+      "tris": 208,
+      "area_m2": 22.8,
+      "invisible": 0,
+      "edge_med_m": 0.96,
+      "grid_m": 0.468
+     },
+     "STEEL": {
+      "meshes": 1,
+      "verts": 96,
+      "tris": 48,
+      "area_m2": 31.1,
+      "invisible": 0,
+      "edge_med_m": 2.389,
+      "grid_m": 1.138
+     },
+     "KERB": {
+      "meshes": 2,
+      "verts": 1284,
+      "tris": 1272,
+      "area_m2": 11.5,
+      "invisible": 0,
+      "edge_med_m": 0.071,
+      "grid_m": 0.134
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 38,
+      "tris": 30882
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 10,
+      "tris": 26712
+     },
+     "ksPerPixel": {
+      "meshes": 21,
+      "tris": 12260
+     },
+     "ksMultilayer_fresnel_nm": {
+      "meshes": 11,
+      "tris": 1216
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 4,
+      "tris": 208
+     },
+     "ksPerPixelReflection": {
+      "meshes": 2,
+      "tris": 12
+     },
+     "ksPerPixelAT": {
+      "meshes": 1,
+      "tris": 4
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "mansion_stone_01_2k.dds",
+     "mansion_stone_NM.dds",
+     "sidewalk.dds",
+     "sidewalk_NM.dds",
+     "roller_shutter.dds",
+     "roller_shutter_NM.dds",
+     "gas_door_back.dds",
+     "gas_door_back_NM.dds",
+     "kerbs.dds",
+     "kerbs_NM.dds",
+     "wall_wood_panel_white.dds",
+     "wall_wood_panel_white_NM.dds",
+     "sign_neon_colour.dds",
+     "gas_sign_front_S.dds",
+     "window_blinds_wood.dds",
+     "gas_door_front.dds",
+     "cardboard_box.dds",
+     "park_floor_white_DIFF.dds",
+     "pch_park_floor_mask.dds",
+     "park_floor_sandy_DIFF.dds",
+     "park_floor_NM.dds",
+     "keep_door_clear.dds"
+    ]
+   }
+  },
+  {
+   "file": "ocean.kn5",
+   "summary": {
+    "meshes": 48,
+    "verts": 5382,
+    "tris": 2855,
+    "textures": 8,
+    "texture_bytes": 49154440,
+    "materials": 3,
+    "surfaces": {
+     "SAND": {
+      "meshes": 1,
+      "verts": 4536,
+      "tris": 2266,
+      "area_m2": 3640414.1,
+      "invisible": 0,
+      "edge_med_m": 172.515,
+      "grid_m": 56.684
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelAT_NM": {
+      "meshes": 1,
+      "tris": 2266
+     },
+     "ksPerPixel": {
+      "meshes": 46,
+      "tris": 563
+     },
+     "ksPerPixelMultiMap_AT_NMDetail": {
+      "meshes": 1,
+      "tris": 26
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "bo_foam.dds",
+     "bo_shore4_Grey_Version.dds",
+     "bo_shore5_NM.dds"
+    ]
+   }
+  },
+  {
+   "file": "pacific_coast_hwy.kn5",
+   "summary": {
+    "meshes": 87,
+    "verts": 571122,
+    "tris": 707307,
+    "textures": 30,
+    "texture_bytes": 268917008,
+    "materials": 15,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksMultilayer_fresnel_nm": {
+      "meshes": 43,
+      "tris": 478776
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 27,
+      "tris": 158536
+     },
+     "ksPerPixel": {
+      "meshes": 2,
+      "tris": 57332
+     },
+     "ksPerPixelNM": {
+      "meshes": 15,
+      "tris": 12663
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "rails.kn5",
+   "summary": {
+    "meshes": 30,
+    "verts": 511713,
+    "tris": 344533,
+    "textures": 8,
+    "texture_bytes": 17500784,
+    "materials": 6,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 30,
+      "tris": 344533
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "pch_stone_wall_01.dds",
+     "pch_stone_wall_01_NM.dds",
+     "guardrail_07.dds",
+     "guardrail_08_NM.dds"
+    ]
+   }
+  },
+  {
+   "file": "rc_1.kn5",
+   "summary": {
+    "meshes": 33,
+    "verts": 16082,
+    "tris": 10132,
+    "textures": 2,
+    "texture_bytes": 6095104,
+    "materials": 9,
+    "surfaces": {
+     "WALL": {
+      "meshes": 3,
+      "verts": 36,
+      "tris": 18,
+      "area_m2": 40.2,
+      "invisible": 3,
+      "edge_med_m": 3.0,
+      "grid_m": 2.117
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 29,
+      "tris": 9300
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 4,
+      "tris": 832
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "roads.kn5",
+   "summary": {
+    "meshes": 243,
+    "verts": 2930704,
+    "tris": 5254288,
+    "textures": 1,
+    "texture_bytes": 312,
+    "materials": 3,
+    "surfaces": {
+     "ROAD": {
+      "meshes": 243,
+      "verts": 2930704,
+      "tris": 5254288,
+      "area_m2": 223135.2,
+      "invisible": 243,
+      "edge_med_m": 0.365,
+      "grid_m": 0.29
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 243,
+      "tris": 5254288
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "roads_detail.kn5",
+   "summary": {
+    "meshes": 4,
+    "verts": 61492,
+    "tris": 77806,
+    "textures": 2,
+    "texture_bytes": 50331904,
+    "materials": 2,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT_NM": {
+      "meshes": 3,
+      "tris": 67494
+     },
+     "ksPerPixelAlpha": {
+      "meshes": 1,
+      "tris": 10312
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "roads_other.kn5",
+   "summary": {
+    "meshes": 26,
+    "verts": 23346,
+    "tris": 24214,
+    "textures": 1,
+    "texture_bytes": 312,
+    "materials": 1,
+    "surfaces": {
+     "PARKING": {
+      "meshes": 4,
+      "verts": 24,
+      "tris": 16,
+      "area_m2": 3963.7,
+      "invisible": 4,
+      "edge_med_m": 31.533,
+      "grid_m": 21.211
+     },
+     "ROAD": {
+      "meshes": 10,
+      "verts": 5839,
+      "tris": 6589,
+      "area_m2": 31384.3,
+      "invisible": 10,
+      "edge_med_m": 4.05,
+      "grid_m": 2.751
+     },
+     "GRAVEL": {
+      "meshes": 4,
+      "verts": 12454,
+      "tris": 13253,
+      "area_m2": 45948.1,
+      "invisible": 4,
+      "edge_med_m": 2.318,
+      "grid_m": 2.63
+     },
+     "GASROAD": {
+      "meshes": 2,
+      "verts": 656,
+      "tris": 638,
+      "area_m2": 6276.1,
+      "invisible": 2,
+      "edge_med_m": 4.93,
+      "grid_m": 4.402
+     },
+     "CONCRETE": {
+      "meshes": 3,
+      "verts": 464,
+      "tris": 435,
+      "area_m2": 2096.1,
+      "invisible": 3,
+      "edge_med_m": 4.26,
+      "grid_m": 3.076
+     },
+     "KERB": {
+      "meshes": 1,
+      "verts": 1310,
+      "tris": 1246,
+      "area_m2": 856.7,
+      "invisible": 1,
+      "edge_med_m": 1.499,
+      "grid_m": 1.173
+     },
+     "PHYS?": {
+      "meshes": 1,
+      "verts": 1513,
+      "tris": 1487,
+      "area_m2": 506.8,
+      "invisible": 1,
+      "edge_med_m": 1.485,
+      "grid_m": 0.826
+     },
+     "WALL": {
+      "meshes": 1,
+      "verts": 1086,
+      "tris": 550,
+      "area_m2": 289.2,
+      "invisible": 1,
+      "edge_med_m": 2.5,
+      "grid_m": 1.025
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 26,
+      "tris": 24214
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "roadside_cars.kn5",
+   "summary": {
+    "meshes": 303,
+    "verts": 234543,
+    "tris": 149986,
+    "textures": 17,
+    "texture_bytes": 17542964,
+    "materials": 22,
+    "surfaces": {
+     "WALL": {
+      "meshes": 1,
+      "verts": 5719,
+      "tris": 2032,
+      "area_m2": 3532.4,
+      "invisible": 1,
+      "edge_med_m": 2.0,
+      "grid_m": 1.865
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelMultiMap": {
+      "meshes": 113,
+      "tris": 72297
+     },
+     "ksPerPixelNM": {
+      "meshes": 50,
+      "tris": 36732
+     },
+     "ksPerPixel": {
+      "meshes": 64,
+      "tris": 31737
+     },
+     "ksPerPixelReflection": {
+      "meshes": 44,
+      "tris": 8966
+     },
+     "ksPerPixelAT": {
+      "meshes": 32,
+      "tris": 254
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "bo_20suv.dds",
+     "bo_20suv-nrm.dds",
+     "bo_20cars.dds",
+     "bo_20cars-nrm.dds",
+     "bo_car_shade.dds"
+    ]
+   }
+  },
+  {
+   "file": "rocks.kn5",
+   "summary": {
+    "meshes": 264,
+    "verts": 274507,
+    "tris": 329438,
+    "textures": 4,
+    "texture_bytes": 13628224,
+    "materials": 3,
+    "surfaces": {
+     "PHYS?": {
+      "meshes": 14,
+      "verts": 232911,
+      "tris": 260688,
+      "area_m2": 123715.3,
+      "invisible": 0,
+      "edge_med_m": 0.647,
+      "grid_m": 0.652
+     },
+     "WALL": {
+      "meshes": 250,
+      "verts": 41596,
+      "tris": 68750,
+      "area_m2": 3879.7,
+      "invisible": 0,
+      "edge_med_m": 0.266,
+      "grid_m": 0.244
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 264,
+      "tris": 329438
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "Rock_A1.dds",
+     "Rock_A_NM.dds"
+    ]
+   }
+  },
+  {
+   "file": "shipa.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 18862,
+    "tris": 10564,
+    "textures": 2,
+    "texture_bytes": 1179904,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 10564
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "shipb.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 11934,
+    "tris": 6688,
+    "textures": 2,
+    "texture_bytes": 1179904,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1,
+      "tris": 6688
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "signs.kn5",
+   "summary": {
+    "meshes": 672,
+    "verts": 27059,
+    "tris": 17138,
+    "textures": 9,
+    "texture_bytes": 72233440,
+    "materials": 13,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 2,
+      "tris": 6640
+     },
+     "ksPerPixelNM": {
+      "meshes": 517,
+      "tris": 5752
+     },
+     "ksPerPixel": {
+      "meshes": 153,
+      "tris": 4746
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "PCH_Signs_Warning_16.dds",
+     "sign_warning_NM_04.dds",
+     "PCH_Signs_Warning_15.dds"
+    ]
+   }
+  },
+  {
+   "file": "sound_fx.kn5",
+   "summary": {
+    "meshes": 11,
+    "verts": 1411,
+    "tris": 1024,
+    "textures": 1,
+    "texture_bytes": 312,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 11,
+      "tris": 1024
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "struct_cars.kn5",
+   "summary": {
+    "meshes": 365,
+    "verts": 106875,
+    "tris": 70804,
+    "textures": 16,
+    "texture_bytes": 17628700,
+    "materials": 22,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelMultiMap": {
+      "meshes": 60,
+      "tris": 35547
+     },
+     "ksPerPixelNM": {
+      "meshes": 60,
+      "tris": 17346
+     },
+     "ksPerPixelAT": {
+      "meshes": 180,
+      "tris": 14765
+     },
+     "ksPerPixelReflection": {
+      "meshes": 65,
+      "tris": 3146
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "bo_20suv.dds",
+     "bo_20suv-nrm.dds",
+     "bo_20cars.dds",
+     "bo_20cars-nrm.dds",
+     "bo_car_shade.dds"
+    ]
+   }
+  },
+  {
+   "file": "structures.kn5",
+   "summary": {
+    "meshes": 623,
+    "verts": 79768,
+    "tris": 52590,
+    "textures": 36,
+    "texture_bytes": 54974854,
+    "materials": 25,
+    "surfaces": {
+     "WALL": {
+      "meshes": 482,
+      "verts": 51547,
+      "tris": 32394,
+      "area_m2": 54489.8,
+      "invisible": 0,
+      "edge_med_m": 1.609,
+      "grid_m": 1.147
+     },
+     "PARKING": {
+      "meshes": 3,
+      "verts": 1889,
+      "tris": 2686,
+      "area_m2": 14942.1,
+      "invisible": 0,
+      "edge_med_m": 2.746,
+      "grid_m": 3.319
+     },
+     "ROAD": {
+      "meshes": 1,
+      "verts": 1585,
+      "tris": 2770,
+      "area_m2": 8074.6,
+      "invisible": 0,
+      "edge_med_m": 2.363,
+      "grid_m": 2.415
+     },
+     "SAND": {
+      "meshes": 2,
+      "verts": 276,
+      "tris": 331,
+      "area_m2": 2662.0,
+      "invisible": 0,
+      "edge_med_m": 3.122,
+      "grid_m": 3.981
+     },
+     "GRASS": {
+      "meshes": 4,
+      "verts": 2143,
+      "tris": 1255,
+      "area_m2": 12025.2,
+      "invisible": 0,
+      "edge_med_m": 3.597,
+      "grid_m": 3.892
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelAT_NM": {
+      "meshes": 390,
+      "tris": 21264
+     },
+     "ksPerPixelAT": {
+      "meshes": 147,
+      "tris": 10672
+     },
+     "ksPerPixelMultiMap_AT": {
+      "meshes": 9,
+      "tris": 9326
+     },
+     "ksPerPixel": {
+      "meshes": 71,
+      "tris": 5820
+     },
+     "ksMultilayer_fresnel_nm": {
+      "meshes": 4,
+      "tris": 5456
+     },
+     "ksPerPixelReflection": {
+      "meshes": 2,
+      "tris": 52
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "bo_ragged_mask.dds",
+     "bo_asphalt1.dds",
+     "bo_soil03.dds",
+     "bo_asphalt1-nrm.dds",
+     "bo_asphalt.dds",
+     "bo_asphalt-nrm.dds",
+     "bo_caltran_diff.dds",
+     "bo_caltran_mask.dds",
+     "fence.dds",
+     "fence-nrm.dds",
+     "bo_wood_red.dds",
+     "bo_poll_wood.dds",
+     "bo_poll_wood-nrm.dds",
+     "bo_wood_nrm.dds",
+     "bo_pave_brick.dds",
+     "bo_pave_brick_nrm.dds",
+     "bo_soil_nrm.dds",
+     "bo_wood.dds",
+     "tiles_roof.dds",
+     "tiles_roof-nrm.dds",
+     "bo_wall.dds",
+     "bo_wall-nrm.dds",
+     "bo_grass.dds",
+     "bo_pavement_red.dds"
+    ]
+   }
+  },
+  {
+   "file": "terrain.kn5",
+   "summary": {
+    "meshes": 43,
+    "verts": 934769,
+    "tris": 1738022,
+    "textures": 1,
+    "texture_bytes": 312,
+    "materials": 1,
+    "surfaces": {
+     "GRASS": {
+      "meshes": 41,
+      "verts": 934496,
+      "tris": 1737716,
+      "area_m2": 115596710.5,
+      "invisible": 41,
+      "edge_med_m": 4.624,
+      "grid_m": 6.674
+     },
+     "SAND": {
+      "meshes": 1,
+      "verts": 215,
+      "tris": 250,
+      "area_m2": 7706.5,
+      "invisible": 1,
+      "edge_med_m": 7.279,
+      "grid_m": 7.852
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 43,
+      "tris": 1738022
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "trees.kn5",
+   "summary": {
+    "meshes": 47,
+    "verts": 138485,
+    "tris": 95511,
+    "textures": 4,
+    "texture_bytes": 92680768,
+    "materials": 4,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 47,
+      "tris": 95511
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "bo_pch_pines.dds",
+     "bo_pch_trees2.dds",
+     "bo_pch_exotic.dds",
+     "bo_pch_trees3.dds"
+    ]
+   }
+  },
+  {
+   "file": "waves.kn5",
+   "summary": {
+    "meshes": 46,
+    "verts": 794,
+    "tris": 563,
+    "textures": 1,
+    "texture_bytes": 15528080,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 46,
+      "tris": 563
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "bo_foam.dds"
+    ]
+   }
+  }
+ ]
+}

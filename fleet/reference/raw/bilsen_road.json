@@ -1,0 +1,402 @@
+{
+ "track": "bilsen_road",
+ "path": "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks\\bilsen_road",
+ "ui": {},
+ "layouts": {
+  "Bilsen": [
+   "Bilsen.kn5",
+   "Bilsen_buildings.kn5",
+   "Bilsen_pits.kn5",
+   "Bilsen_treesA_B1400.kn5",
+   "Bilsen_treesB_C1500.kn5",
+   "Bilsen_treesC_D1481.kn5",
+   "Bilsen_treesD_D3500.kn5",
+   "Bilsen_treesD_D4870.kn5",
+   "Bilsen_treesD_E2000.kn5",
+   "Bilsen_treesE_H.kn5",
+   "Bilsen_treesdetail.kn5"
+  ]
+ },
+ "kn5_count": 11,
+ "totals": {
+  "meshes": 414,
+  "verts": 962625,
+  "tris": 760423,
+  "bytes": 342466507,
+  "texture_bytes": 295488811
+ },
+ "surfaces_ini": {
+  "ROAD": {
+   "FRICTION": "0.99",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "extended-0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.0",
+   "VIBRATION_LENGTH": "0.0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "Bilsen\\data\\surfaces.ini"
+  },
+  "GRASS": {
+   "FRICTION": "0.85",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0.3",
+   "IS_VALID_TRACK": "1",
+   "_from": "Bilsen\\data\\surfaces.ini"
+  },
+  "KERB": {
+   "FRICTION": "0.96",
+   "DAMPING": "0",
+   "WAV": "kerb.wav",
+   "WAV_PITCH": "1.3",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.2",
+   "VIBRATION_LENGTH": "1.0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "Bilsen\\data\\surfaces.ini"
+  }
+ },
+ "surface_geometry": {
+  "WALL": {
+   "meshes": 30,
+   "invisible": 0,
+   "verts": 54282,
+   "tris": 28378,
+   "area_m2": 794399.5,
+   "edge_med_m": 5.614,
+   "grid_m": 5.088
+  },
+  "ROAD": {
+   "meshes": 5,
+   "invisible": 0,
+   "verts": 66628,
+   "tris": 33308,
+   "area_m2": 167900.4,
+   "edge_med_m": 3.912,
+   "grid_m": 3.153
+  },
+  "GRASS": {
+   "meshes": 1,
+   "invisible": 0,
+   "verts": 61182,
+   "tris": 116260,
+   "area_m2": 11464809.9,
+   "edge_med_m": 6.012,
+   "grid_m": 14.044
+  }
+ },
+ "ai": [
+  {
+   "file": "Bilsen\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 10266,
+   "length_m": 15883.6,
+   "spacing_m": 1.55,
+   "has_extras": true
+  },
+  {
+   "file": "Bilsen\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 10266,
+   "length_m": 15883.6,
+   "spacing_m": 1.55,
+   "has_extras": true
+  }
+ ],
+ "ext_config": {
+  "grass_fx": true,
+  "rain_fx": true,
+  "lights": 0,
+  "light_series": 1,
+  "trees": true,
+  "mesh_adjustments": 0,
+  "includes": [
+   "common/all_conditions.ini, common/materials_track.ini, common/grass_fx.ini, common/rain_fx.ini"
+  ],
+  "files": 1
+ },
+ "vao_patches": [],
+ "cameras": 0,
+ "errors": [],
+ "kn5s": [
+  {
+   "file": "Bilsen.kn5",
+   "summary": {
+    "meshes": 325,
+    "verts": 346530,
+    "tris": 431208,
+    "textures": 16,
+    "texture_bytes": 76731486,
+    "materials": 17,
+    "surfaces": {
+     "WALL": {
+      "meshes": 1,
+      "verts": 1026,
+      "tris": 532,
+      "area_m2": 20.2,
+      "invisible": 0,
+      "edge_med_m": 1.715,
+      "grid_m": 0.275
+     },
+     "ROAD": {
+      "meshes": 5,
+      "verts": 66628,
+      "tris": 33308,
+      "area_m2": 167900.4,
+      "invisible": 0,
+      "edge_med_m": 3.912,
+      "grid_m": 3.153
+     },
+     "GRASS": {
+      "meshes": 1,
+      "verts": 61182,
+      "tris": 116260,
+      "area_m2": 11464809.9,
+      "invisible": 0,
+      "edge_med_m": 6.012,
+      "grid_m": 14.044
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 324,
+      "tris": 431136
+     },
+     "ksTree": {
+      "meshes": 1,
+      "tris": 72
+     }
+    },
+    "near_vert_cap": [
+     "1GRASS0"
+    ],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "Bilsen_buildings.kn5",
+   "summary": {
+    "meshes": 29,
+    "verts": 53256,
+    "tris": 27846,
+    "textures": 13,
+    "texture_bytes": 31095871,
+    "materials": 14,
+    "surfaces": {
+     "WALL": {
+      "meshes": 29,
+      "verts": 53256,
+      "tris": 27846,
+      "area_m2": 794379.3,
+      "invisible": 0,
+      "edge_med_m": 5.688,
+      "grid_m": 5.18
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 29,
+      "tris": 27846
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "Bilsen_pits.kn5",
+   "summary": {
+    "meshes": 31,
+    "verts": 159,
+    "tris": 97,
+    "textures": 2,
+    "texture_bytes": 4266116,
+    "materials": 2,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 31,
+      "tris": 97
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "Bilsen_treesA_B1400.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 66996,
+    "tris": 33504,
+    "textures": 1,
+    "texture_bytes": 22369776,
+    "materials": 2,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 3,
+      "tris": 33504
+     }
+    },
+    "near_vert_cap": [
+     "B"
+    ],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "Bilsen_treesB_C1500.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 147876,
+    "tris": 73944,
+    "textures": 1,
+    "texture_bytes": 22369776,
+    "materials": 2,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 3,
+      "tris": 73944
+     }
+    },
+    "near_vert_cap": [
+     "C",
+     "B"
+    ],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "Bilsen_treesC_D1481.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 71892,
+    "tris": 39120,
+    "textures": 2,
+    "texture_bytes": 30167628,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 3,
+      "tris": 39120
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "Bilsen_treesD_D3500.kn5",
+   "summary": {
+    "meshes": 2,
+    "verts": 11280,
+    "tris": 5904,
+    "textures": 1,
+    "texture_bytes": 7797852,
+    "materials": 2,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 2,
+      "tris": 5904
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "Bilsen_treesD_D4870.kn5",
+   "summary": {
+    "meshes": 2,
+    "verts": 25944,
+    "tris": 14376,
+    "textures": 1,
+    "texture_bytes": 7797852,
+    "materials": 2,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 2,
+      "tris": 14376
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "Bilsen_treesD_E2000.kn5",
+   "summary": {
+    "meshes": 4,
+    "verts": 62196,
+    "tris": 37296,
+    "textures": 2,
+    "texture_bytes": 13616897,
+    "materials": 4,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 4,
+      "tris": 37296
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "Bilsen_treesE_H.kn5",
+   "summary": {
+    "meshes": 6,
+    "verts": 157536,
+    "tris": 87648,
+    "textures": 4,
+    "texture_bytes": 29682706,
+    "materials": 6,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 6,
+      "tris": 87648
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "Bilsen_treesdetail.kn5",
+   "summary": {
+    "meshes": 6,
+    "verts": 18960,
+    "tris": 9480,
+    "textures": 5,
+    "texture_bytes": 49592851,
+    "materials": 5,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 6,
+      "tris": 9480
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  }
+ ]
+}

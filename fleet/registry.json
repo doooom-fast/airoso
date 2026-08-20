@@ -1,0 +1,239 @@
+{
+  "_doc": [
+    "The fleet registry \u2014 the ONE place that knows which repos and tracks exist.",
+    "Repos are declared here. Tracks are DISCOVERED by scanning each repo's tracks_glob, so this",
+    "file can never go stale on a track that was added or renamed. Per-track annotations below are",
+    "only for things a track.config.json cannot know about itself (its owning repo's build command,",
+    "its place in the four-kind taxonomy, migration status).",
+    "Read it with: python3 -m fleet.cli tracks"
+  ],
+  "engine": {
+    "name": "k10-track-agents",
+    "remote": "git@github.com:k10-motorsports/k10-track-agents.git",
+    "scripts_root": "scripts",
+    "consumed_as": ".engine",
+    "absorbed_from": {
+      "repo": "prodrive-ac-builder",
+      "remote": "git@github.com:k10-motorsports/prodrive-ac-builder.git",
+      "path": "../racecor-prodrive/prodrive-ac-builder",
+      "at_commit": "3e1aa52",
+      "last_tag": "v0.19.0",
+      "status": "history cloned in full and PUBLISHED (private); tags identical in both remotes; consumers not yet re-pointed (fleet/MIGRATION.md M2)"
+    }
+  },
+  "kinds": {
+    "_doc": "Kevin's four track types. Orthogonal to `archetype` (the construction philosophy in scripts/config.py ARCHETYPES) but they should agree \u2014 see fleet/STANDARDS.md S6.",
+    "fictional_street_circuit": "A racing loop invented on top of real streets (Sand Creek Raceway). archetype: street_circuit",
+    "street_port": "Real public road(s) ported as they exist, single route or whole network (Lookout Lariat, Lake Murray, SD freeway). archetype: real_road",
+    "circuit_port": "A real purpose-built facility, extant or historical (IMI, High Plains, Second Creek, PPIR). archetype: race_circuit",
+    "rally_stage": "A real point-to-point special stage, gravel or the tarmac fiction (Rally Colorado). archetype: real_road TODAY (kerb/runoff off, which is right); a dedicated `rally_stage` archetype is PROPOSED, not implemented \u2014 see fleet/STANDARDS.md S6"
+  },
+  "repos": [
+    {
+      "name": "k10-colorado",
+      "path": "../k10-colorado",
+      "remote": "git@github.com:k10-motorsports/k10-colorado.git",
+      "role": "Colorado circuits + the Lookout Lariat street port",
+      "tracks_glob": "tracks/*/track.config.json",
+      "build": {
+        "cmd": "./build.sh",
+        "arg": "track_dir",
+        "resume_stage": "mesh"
+      },
+      "method": "blender-first (live operator bridge) for refinement; headless seed + export",
+      "local_scripts_allowlist": [],
+      "notes": "Un-forked 2026-07-25 (MIGRATION M3): the 72-module shadow tree is deleted and every stage runs from .engine/. 64 of 72 were byte-identical to the engine, 8 were older, none carried anything the engine lacked. Its audit had been grepping a 'KERB' prefix against groups named '1KERB_*', so the curb-flush check reported '0 of 0' for months."
+    },
+    {
+      "name": "k10-colorado-rally",
+      "path": "../k10-colorado-rally",
+      "remote": "git@github.com:k10-motorsports/k10-colorado-rally.git",
+      "role": "Rally Colorado gravel/tarmac special stages near Rangely",
+      "tracks_glob": "tracks/*/track.config.json",
+      "build": {
+        "cmd": "./build.sh",
+        "arg": "track_dir",
+        "resume_stage": "mesh"
+      },
+      "method": "fully headless; engine-only (thinnest consumer, the reference shape)",
+      "local_scripts_allowlist": [],
+      "notes": "Cleanest consumer: no local scripts/ at all, everything runs from .engine/. This is the target shape for the other two."
+    },
+    {
+      "name": "k10-san-diego",
+      "path": "../k10-san-diego",
+      "remote": "git@github.com:k10-motorsports/k10-san-diego.git",
+      "role": "Lake Murray loop + the I-5/I-8/CA-52/CA-163 freeway network, shipped as one kn5",
+      "tracks_glob": "project*/track.config.json",
+      "build": {
+        "cmd": "scripts/build_kn5.sh",
+        "arg": "track_dir",
+        "resume_stage": "mesh",
+        "variants": {
+          "network": "scripts/build_network.sh project_freeway_net",
+          "combined": "scripts/build_combined.sh"
+        }
+      },
+      "method": "blender-first for the loop (loop.blend is truth); deterministic network pipeline for the freeway",
+      "local_scripts_allowlist": [
+        "scripts/ac/build_network_kn5.py",
+        "scripts/ac/merge_freeway.py",
+        "scripts/ac/combine_layouts.py",
+        "scripts/blender/build_loop_blend.py",
+        "scripts/gps/street_route.py",
+        "scripts/geometry/bridge_level.py",
+        "scripts/geometry/extra_lines.py",
+        "scripts/geometry/audit_mesh.py"
+      ],
+      "notes": "SD-unique code is legitimate and declared above. Anything OUTSIDE the allowlist that shadows an engine module is drift."
+    }
+  ],
+  "track_annotations": {
+    "_doc": "Keyed by <repo>/<track-dir>. `kind` is the taxonomy; `fidelity` records how honestly the geometry is sourced; `owner_of` marks a track that supersedes a stale copy elsewhere.",
+    "k10-colorado/sand-creek": {
+      "kind": "fictional_street_circuit",
+      "fidelity": "real",
+      "source": "KML + phone capture + textures",
+      "owner_of": [
+        "engine-legacy/projects/sand-creek-raceway"
+      ]
+    },
+    "k10-colorado/lookout-lariat": {
+      "kind": "street_port",
+      "fidelity": "real",
+      "source": "OSM route (named + ref: + id: ways)"
+    },
+    "k10-colorado/imi": {
+      "kind": "circuit_port",
+      "fidelity": "real",
+      "source": "aerial trace, georeferenced",
+      "owner_of": [
+        "engine-legacy/projects/imi-motorsports"
+      ]
+    },
+    "k10-colorado/aspen": {
+      "kind": "circuit_port",
+      "fidelity": "real",
+      "source": "OSM highway=raceway way 192313782"
+    },
+    "k10-colorado/grand-junction": {
+      "kind": "circuit_port",
+      "fidelity": "real",
+      "source": "OSM highway=raceway way 293789503"
+    },
+    "k10-colorado/pikes-peak": {
+      "kind": "circuit_port",
+      "fidelity": "real",
+      "source": "OSM highway=raceway way 1134026181 (D-oval)"
+    },
+    "k10-colorado/pueblo": {
+      "kind": "circuit_port",
+      "fidelity": "real",
+      "source": "OSM highway=raceway ways 558378826+823+824"
+    },
+    "k10-colorado/high-plains": {
+      "kind": "circuit_port",
+      "fidelity": "real",
+      "source": "OSM highway=raceway ways at Deer Trail (39.7353,-103.8980), closed 2.00 mi cycle",
+      "note": "Re-sourced 2026-07-26 from fabricated geometry. Full 2.55 mi course needs a 110 m aerial trace where OSM's north section dangles."
+    },
+    "k10-colorado/second-creek": {
+      "kind": "circuit_port",
+      "fidelity": "FABRICATED",
+      "historical": true,
+      "source": "rough KML trace off the old unified map",
+      "action": "BLOCKED on sourcing. Verified against Overpass 2026-07-26: the circuit is NOT in OSM (only 'Second Creek Trail', a footpath, and the creek). It closed in the 2000s and the site was redeveloped, so no current imagery shows it either. Needs a georeferenced PRE-2008 aerial plus two control points, then the aerial-tracing skill. Until then its geometry is invented and it must not ship as a real port (L1)."
+    },
+    "k10-colorado-rally/dragon-tail-gravel": {
+      "kind": "rally_stage",
+      "fidelity": "real",
+      "source": "OSM County Road 116 (3 ways, unpaved)"
+    },
+    "k10-colorado-rally/dragon-tail-tarmac": {
+      "kind": "rally_stage",
+      "fidelity": "real geometry / fictional surface",
+      "source": "same road as dragon-tail-gravel",
+      "status": "DEPRIORITISED \u2014 Kevin 2026-07-26: 'may be cancelled, not super interesting'",
+      "note": "Not deleted, but out of the installable target. Convenient: the tarmac variants are the only stages blocked on surface roughness (113 bumps/km against tarmac's 75 limit; gravel allows 150), so dropping them removes that from the critical path. The gravel stages carry the real geometry."
+    },
+    "k10-colorado-rally/under-the-dragon-gravel": {
+      "kind": "rally_stage",
+      "fidelity": "real",
+      "source": "OSM County Road 109 (10 ways, unpaved)"
+    },
+    "k10-colorado-rally/under-the-dragon-tarmac": {
+      "kind": "rally_stage",
+      "fidelity": "real geometry / fictional surface",
+      "source": "same road as under-the-dragon-gravel",
+      "status": "DEPRIORITISED \u2014 Kevin 2026-07-26: 'may be cancelled, not super interesting'",
+      "note": "Not deleted, but out of the installable target. Convenient: the tarmac variants are the only stages blocked on surface roughness (113 bumps/km against tarmac's 75 limit; gravel allows 150), so dropping them removes that from the critical path. The gravel stages carry the real geometry."
+    },
+    "k10-san-diego/project": {
+      "kind": "street_port",
+      "fidelity": "real",
+      "source": "OSM network routing, 5 roads round the reservoir",
+      "owner_of": [
+        "engine-legacy/projects/san-diego-loop"
+      ]
+    },
+    "k10-san-diego/project_freeway_net": {
+      "kind": "street_port",
+      "fidelity": "real",
+      "source": "OSM motorway network in bbox, refs I-5/I-8/CA-52/CA-163",
+      "network": true
+    },
+    "k10-san-diego/project_freeway": {
+      "kind": "street_port",
+      "fidelity": "real",
+      "source": "single-ribbon freeway layout",
+      "status": "RETIRED \u2014 superseded by project_freeway_net"
+    },
+    "second_creek": {
+      "kind": "circuit_port",
+      "fidelity": "fitted \u2014 shape and length from the 1970s layout map (2741 m vs stated 1.7 mi); POSITION fitted to OSM street anchors (Buckley Rd, E 88th Ave) plus Kevin's east-of-Buckley confirmation, 2026-07-27. NOT surveyed, NOT traced from the aerial \u2014 the site is regraded and the scar is not distinguishable. Rotation about the site remains an open question. See tracks/second-creek/source/SOURCING.md."
+    }
+  },
+  "engine_projects": {
+    "_doc": "projects/ inside this repo, inherited from prodrive-ac-builder. Most are STALE duplicates now owned by a project repo (see track_annotations.owner_of). Kept, not deleted, until fleet/MIGRATION.md M4 verifies each. Do not build from these.",
+    "sand-creek-raceway": {
+      "status": "stale duplicate",
+      "engine_version": "0.15.3",
+      "live_version": "0.26.0 in k10-colorado/sand-creek"
+    },
+    "imi-motorsports": {
+      "status": "stale duplicate",
+      "engine_version": "0.1.0",
+      "live_version": "0.1.1 in k10-colorado/imi"
+    },
+    "san-diego-loop": {
+      "status": "stale duplicate",
+      "engine_version": "0.2.0",
+      "live_version": "0.15.0 in k10-san-diego/project"
+    },
+    "san-diego-freeway-loop": {
+      "status": "stale duplicate",
+      "engine_version": "0.5.0",
+      "live_version": "0.5.0 in k10-san-diego/project_freeway (itself retired)"
+    },
+    "k10-colorado": {
+      "status": "retired concept",
+      "note": "the unified connect-everything corridor; k10-colorado deliberately abandoned connectors"
+    },
+    "san-diego-cruise": {
+      "status": "retired concept",
+      "note": "predecessor of the SD loop work"
+    },
+    "gala-seed": {
+      "status": "ACTIVE \u2014 external contract",
+      "note": "owed to the k10-1978 game repo via scripts/game/export_seed.py + its PIPELINE_BRIDGE.md. Absorbing the engine moved this contract here. Do not delete or relocate without updating the game repo."
+    },
+    "ats-colorado-sample": {
+      "status": "fixture",
+      "note": "scs-extraction sample; the SCS seam is only partly implemented"
+    },
+    "dashcam-loop-0406": {
+      "status": "fixture",
+      "note": "prototype of the any-drive -> track path via scripts/gps/from_track"
+    }
+  }
+}

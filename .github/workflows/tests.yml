@@ -1,0 +1,21 @@
+name: tests
+
+# The first machine check in this lineage's history. The suite is hermetic and stdlib-only —
+# no Blender, no AC, no network — so it runs anywhere in seconds. It cannot judge a track
+# (rule 0: only the game does that); it judges the engine that builds one.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run test suite
+        run: python3 tests/run_tests.py

@@ -1,0 +1,224 @@
+{
+ "track": "pueblo_motorsports_park",
+ "path": "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks\\pueblo_motorsports_park",
+ "ui": {
+  "name": "K10 Colorado - Pueblo Motorsports Park",
+  "length": "3457",
+  "width": "12",
+  "pitboxes": "4",
+  "run": "clockwise"
+ },
+ "layouts": {
+  "default": [
+   "pueblo_motorsports_park.kn5"
+  ]
+ },
+ "kn5_count": 1,
+ "totals": {
+  "meshes": 43,
+  "verts": 822992,
+  "tris": 1229242,
+  "bytes": 52807434,
+  "texture_bytes": 9205212
+ },
+ "surfaces_ini": {
+  "ROAD": {
+   "FRICTION": "0.99",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "data\\surfaces.ini"
+  },
+  "KERB": {
+   "FRICTION": "0.92",
+   "DAMPING": "0",
+   "WAV": "kerb.wav",
+   "WAV_PITCH": "1.3",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "1.0",
+   "VIBRATION_LENGTH": "1.5",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "data\\surfaces.ini"
+  },
+  "RUNOFF": {
+   "FRICTION": "0.9",
+   "DAMPING": "0.02",
+   "WAV": "gravel.wav",
+   "WAV_PITCH": "1.2",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.4",
+   "VIBRATION_LENGTH": "2.0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "data\\surfaces.ini"
+  },
+  "GRASS": {
+   "FRICTION": "0.6",
+   "DAMPING": "0.1",
+   "WAV": "grass.wav",
+   "WAV_PITCH": "1.0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "0",
+   "_from": "data\\surfaces.ini"
+  },
+  "LAWN": {
+   "FRICTION": "0.65",
+   "DAMPING": "0.09",
+   "WAV": "grass.wav",
+   "WAV_PITCH": "1.0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "0",
+   "_from": "data\\surfaces.ini"
+  }
+ },
+ "surface_geometry": {
+  "GRASS": {
+   "meshes": 18,
+   "invisible": 0,
+   "verts": 547309,
+   "tris": 999428,
+   "area_m2": 3832294.8,
+   "edge_med_m": 1.515,
+   "grid_m": 1.953
+  },
+  "KERB": {
+   "meshes": 2,
+   "invisible": 0,
+   "verts": 23924,
+   "tris": 33972,
+   "area_m2": 2240.6,
+   "edge_med_m": 0.385,
+   "grid_m": 0.363
+  },
+  "ROAD": {
+   "meshes": 2,
+   "invisible": 0,
+   "verts": 48315,
+   "tris": 16142,
+   "area_m2": 84813.2,
+   "edge_med_m": 4.281,
+   "grid_m": 3.003
+  },
+  "RUNOFF": {
+   "meshes": 1,
+   "invisible": 0,
+   "verts": 2314,
+   "tris": 772,
+   "area_m2": 10964.1,
+   "edge_med_m": 7.826,
+   "grid_m": 5.33
+  },
+  "WALL": {
+   "meshes": 1,
+   "invisible": 0,
+   "verts": 670,
+   "tris": 224,
+   "area_m2": 1173.9,
+   "edge_med_m": 3.674,
+   "grid_m": 3.238
+  }
+ },
+ "ai": [],
+ "ext_config": {
+  "grass_fx": true,
+  "rain_fx": true,
+  "lights": 46,
+  "light_series": 0,
+  "trees": false,
+  "mesh_adjustments": 0,
+  "includes": [
+   "common/conditions.ini"
+  ],
+  "files": 1
+ },
+ "vao_patches": [],
+ "cameras": 0,
+ "errors": [],
+ "kn5s": [
+  {
+   "file": "pueblo_motorsports_park.kn5",
+   "summary": {
+    "meshes": 43,
+    "verts": 822992,
+    "tris": 1229242,
+    "textures": 12,
+    "texture_bytes": 9205212,
+    "materials": 43,
+    "surfaces": {
+     "GRASS": {
+      "meshes": 18,
+      "verts": 547309,
+      "tris": 999428,
+      "area_m2": 3832294.8,
+      "invisible": 0,
+      "edge_med_m": 1.515,
+      "grid_m": 1.953
+     },
+     "KERB": {
+      "meshes": 2,
+      "verts": 23924,
+      "tris": 33972,
+      "area_m2": 2240.6,
+      "invisible": 0,
+      "edge_med_m": 0.385,
+      "grid_m": 0.363
+     },
+     "ROAD": {
+      "meshes": 2,
+      "verts": 48315,
+      "tris": 16142,
+      "area_m2": 84813.2,
+      "invisible": 0,
+      "edge_med_m": 4.281,
+      "grid_m": 3.003
+     },
+     "RUNOFF": {
+      "meshes": 1,
+      "verts": 2314,
+      "tris": 772,
+      "area_m2": 10964.1,
+      "invisible": 0,
+      "edge_med_m": 7.826,
+      "grid_m": 5.33
+     },
+     "WALL": {
+      "meshes": 1,
+      "verts": 670,
+      "tris": 224,
+      "area_m2": 1173.9,
+      "invisible": 0,
+      "edge_med_m": 3.674,
+      "grid_m": 3.238
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 36,
+      "tris": 1203858
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 5,
+      "tris": 22528
+     },
+     "ksTree": {
+      "meshes": 2,
+      "tris": 2856
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  }
+ ]
+}

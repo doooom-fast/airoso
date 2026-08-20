@@ -1,0 +1,53 @@
+{
+  "name": "Mount Panorama",
+  "slug": "bathurst",
+  "version": "0.1.0",
+  "author": "prodrive-ac-builder",
+  "year": 2026,
+  "location": {
+    "lat": -33.4487,
+    "lon": 149.5539,
+    "timezone": "Australia/Sydney",
+    "city": "Bathurst",
+    "country": "Australia"
+  },
+  "source": {
+    "type": "osm"
+  },
+  "route": {
+    "bbox": [
+      -33.46,
+      149.545,
+      -33.438,
+      149.5625
+    ],
+    "roads": [
+      "Mount Panorama Circuit"
+    ]
+  },
+  "loop": true,
+  "mirror_x": false,
+  "default_width_m": 12.0,
+  "origin": "centroid",
+  "archetype": "circuit_port",
+  "road_surface": "tarmac",
+  "road_profile": {
+    "max_grade_pct": 18.0
+  },
+  "surfaces": {
+    "road": "1ROAD",
+    "grass": "GRASS"
+  },
+  "layouts": [
+    {
+      "id": "bathurst",
+      "ai": "ai/bathurst"
+    }
+  ],
+  "lighting": {
+    "presets": [
+      "noon"
+    ]
+  },
+  "true_north_rotation_deg": 0.0
+}

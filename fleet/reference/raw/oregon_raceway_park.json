@@ -1,0 +1,409 @@
+{
+ "track": "oregon_raceway_park",
+ "path": "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks\\oregon_raceway_park",
+ "ui": {
+  "name": "Oregon Raceway Park Anticlockwise",
+  "length": "2847 m",
+  "width": "12 m",
+  "pitboxes": "20",
+  "run": "clockwise"
+ },
+ "layouts": {
+  "anticlockwise": [
+   "oregon_raceway_park.kn5",
+   "oregon_raceway_park_anticlockwise.kn5",
+   "oregon_raceway_park_anticlockwise_markers.kn5",
+   "mt_hood.kn5"
+  ],
+  "clockwise": [
+   "oregon_raceway_park.kn5",
+   "oregon_raceway_park_clockwise.kn5",
+   "oregon_raceway_park_clockwise_markers.kn5",
+   "mt_hood.kn5"
+  ]
+ },
+ "kn5_count": 6,
+ "totals": {
+  "meshes": 325,
+  "verts": 294136,
+  "tris": 377803,
+  "bytes": 389485164,
+  "texture_bytes": 374219774
+ },
+ "surfaces_ini": {
+  "ROAD": {
+   "FRICTION": "0.89",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.02",
+   "VIBRATION_LENGTH": "0.03",
+   "DIRT_ADDITIVE": "0.0",
+   "IS_VALID_TRACK": "1",
+   "_from": "anticlockwise\\data\\bk\\surfaces.ini"
+  },
+  "GROUND": {
+   "FRICTION": "0.89",
+   "DAMPING": "0.3",
+   "WAV": "sand.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.01",
+   "SIN_LENGTH": "1",
+   "VIBRATION_GAIN": "0.04",
+   "VIBRATION_LENGTH": "0.05",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "anticlockwise\\data\\bk\\surfaces.ini"
+  },
+  "SNICE": {
+   "FRICTION": "0.72",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.02",
+   "VIBRATION_LENGTH": "0.03",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "1",
+   "_from": "anticlockwise\\data\\bk\\surfaces.ini"
+  },
+  "SNOWT": {
+   "FRICTION": "0.88",
+   "DAMPING": "0",
+   "WAV": "sand.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.02",
+   "VIBRATION_LENGTH": "0.03",
+   "DIRT_ADDITIVE": "0.4",
+   "IS_VALID_TRACK": "1",
+   "_from": "anticlockwise\\data\\bk\\surfaces.ini"
+  },
+  "ASPHALT": {
+   "FRICTION": "0.95",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.01",
+   "VIBRATION_LENGTH": "0.02",
+   "DIRT_ADDITIVE": "0.5",
+   "IS_VALID_TRACK": "1",
+   "_from": "anticlockwise\\data\\bk\\surfaces.ini"
+  },
+  "SEMISN": {
+   "FRICTION": "0.86",
+   "DAMPING": "0",
+   "WAV": "sand.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.01",
+   "VIBRATION_LENGTH": "0.02",
+   "DIRT_ADDITIVE": "0.2",
+   "IS_VALID_TRACK": "1",
+   "_from": "anticlockwise\\data\\bk\\surfaces.ini"
+  },
+  "1PIT": {
+   "FRICTION": "0.99",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.02",
+   "VIBRATION_LENGTH": "0.03",
+   "DIRT_ADDITIVE": "0.0",
+   "IS_VALID_TRACK": "1",
+   "_from": "anticlockwise\\data\\bk\\surfaces.ini"
+  }
+ },
+ "surface_geometry": {
+  "ROAD": {
+   "meshes": 15,
+   "invisible": 0,
+   "verts": 80686,
+   "tris": 148376,
+   "area_m2": 64411.6,
+   "edge_med_m": 1.056,
+   "grid_m": 0.91
+  },
+  "PHYS?": {
+   "meshes": 23,
+   "invisible": 0,
+   "verts": 21770,
+   "tris": 22163,
+   "area_m2": 3105.4,
+   "edge_med_m": 0.954,
+   "grid_m": 0.503
+  },
+  "GRASS": {
+   "meshes": 7,
+   "invisible": 0,
+   "verts": 48719,
+   "tris": 70944,
+   "area_m2": 1236852.8,
+   "edge_med_m": 5.09,
+   "grid_m": 4.961
+  },
+  "WALL": {
+   "meshes": 19,
+   "invisible": 19,
+   "verts": 688,
+   "tris": 1300,
+   "area_m2": 10452.0,
+   "edge_med_m": 4.6,
+   "grid_m": 4.001
+  }
+ },
+ "ai": [
+  {
+   "file": "anticlockwise\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 2341,
+   "length_m": 3639.8,
+   "spacing_m": 1.56,
+   "has_extras": true
+  },
+  {
+   "file": "anticlockwise\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 664,
+   "length_m": 1021.8,
+   "spacing_m": 1.54,
+   "has_extras": true
+  },
+  {
+   "file": "clockwise\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 2340,
+   "length_m": 3636.9,
+   "spacing_m": 1.55,
+   "has_extras": true
+  },
+  {
+   "file": "clockwise\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 780,
+   "length_m": 1204.3,
+   "spacing_m": 1.55,
+   "has_extras": true
+  },
+  {
+   "file": "clockwise\\ai\\pit_lane_with_grid.ai",
+   "version": 7,
+   "points": 780,
+   "length_m": 1204.3,
+   "spacing_m": 1.55,
+   "has_extras": true
+  }
+ ],
+ "ext_config": {
+  "grass_fx": true,
+  "rain_fx": true,
+  "lights": 1,
+  "light_series": 0,
+  "trees": false,
+  "mesh_adjustments": 0,
+  "includes": [
+   "common/conditions.ini, common/materials_base.ini, common/materials_track.ini"
+  ],
+  "files": 1
+ },
+ "vao_patches": [
+  "models_anticlockwise.vao-patch",
+  "models_clockwise.vao-patch"
+ ],
+ "cameras": 18,
+ "errors": [],
+ "kn5s": [
+  {
+   "file": "mt_hood.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 64,
+    "tris": 32,
+    "textures": 1,
+    "texture_bytes": 22369776,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 1,
+      "tris": 32
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "oregon_raceway_park.kn5",
+   "summary": {
+    "meshes": 222,
+    "verts": 292950,
+    "tris": 377163,
+    "textures": 51,
+    "texture_bytes": 139216200,
+    "materials": 35,
+    "surfaces": {
+     "ROAD": {
+      "meshes": 15,
+      "verts": 80686,
+      "tris": 148376,
+      "area_m2": 64411.6,
+      "invisible": 0,
+      "edge_med_m": 1.056,
+      "grid_m": 0.91
+     },
+     "PHYS?": {
+      "meshes": 23,
+      "verts": 21770,
+      "tris": 22163,
+      "area_m2": 3105.4,
+      "invisible": 0,
+      "edge_med_m": 0.954,
+      "grid_m": 0.503
+     },
+     "GRASS": {
+      "meshes": 7,
+      "verts": 48719,
+      "tris": 70944,
+      "area_m2": 1236852.8,
+      "invisible": 0,
+      "edge_med_m": 5.09,
+      "grid_m": 4.961
+     },
+     "WALL": {
+      "meshes": 19,
+      "verts": 688,
+      "tris": 1300,
+      "area_m2": 10452.0,
+      "invisible": 19,
+      "edge_med_m": 4.6,
+      "grid_m": 4.001
+     }
+    },
+    "shaders_by_tris": {
+     "ksMultilayer_fresnel_nm": {
+      "meshes": 41,
+      "tris": 225628
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 72,
+      "tris": 104445
+     },
+     "ksPerPixel": {
+      "meshes": 85,
+      "tris": 37168
+     },
+     "ksTree": {
+      "meshes": 6,
+      "tris": 4172
+     },
+     "ksPerPixelAT": {
+      "meshes": 15,
+      "tris": 3136
+     },
+     "ksPerPixelMultiMap_NMDetail": {
+      "meshes": 2,
+      "tris": 2484
+     },
+     "ksPerPixelReflection": {
+      "meshes": 1,
+      "tris": 130
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "detailhi.dds"
+    ]
+   }
+  },
+  {
+   "file": "oregon_raceway_park_anticlockwise.kn5",
+   "summary": {
+    "meshes": 47,
+    "verts": 141,
+    "tris": 94,
+    "textures": 6,
+    "texture_bytes": 105616711,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksMultilayer": {
+      "meshes": 47,
+      "tris": 94
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "oregon_raceway_park_anticlockwise_markers.kn5",
+   "summary": {
+    "meshes": 4,
+    "verts": 408,
+    "tris": 204,
+    "textures": 1,
+    "texture_bytes": 699216,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 4,
+      "tris": 204
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "oregon_raceway_park_clockwise.kn5",
+   "summary": {
+    "meshes": 47,
+    "verts": 141,
+    "tris": 94,
+    "textures": 6,
+    "texture_bytes": 105618655,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksMultilayer": {
+      "meshes": 47,
+      "tris": 94
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "oregon_raceway_park_clockwise_markers.kn5",
+   "summary": {
+    "meshes": 4,
+    "verts": 432,
+    "tris": 216,
+    "textures": 1,
+    "texture_bytes": 699216,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 4,
+      "tris": 216
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  }
+ ]
+}

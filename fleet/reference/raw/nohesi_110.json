@@ -1,0 +1,367 @@
+{
+ "track": "nohesi_110",
+ "path": "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks\\nohesi_110",
+ "ui": {},
+ "layouts": {
+  "default": [
+   "",
+   "V6_M1_M2_M3_M4_TRACK.kn5",
+   "V4_M1_M2_M3_M4_BUILDING.kn5",
+   "V4_M1_M2_M3_M4_SIGN_LIGHTS.kn5",
+   "V4_SKY_V25.kn5",
+   "V4_BARRIER_COLLIDER.kn5",
+   "V4_BUILD_PLANE.kn5"
+  ]
+ },
+ "kn5_count": 7,
+ "totals": {
+  "meshes": 8327,
+  "verts": 25894961,
+  "tris": 18476515,
+  "bytes": 2097930136,
+  "texture_bytes": 15459393
+ },
+ "surfaces_ini": {
+  "ROAD": {
+   "FRICTION": "1",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.05",
+   "VIBRATION_LENGTH": "0.06",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "data\\surfaces.ini"
+  },
+  "KERB": {
+   "FRICTION": "0.92",
+   "DAMPING": "0",
+   "WAV": "kerb.wav",
+   "WAV_PITCH": "1.3",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.1",
+   "VIBRATION_LENGTH": "0.2",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "data\\surfaces.ini"
+  },
+  "GRAVEL": {
+   "FRICTION": "0.89",
+   "DAMPING": "0.001",
+   "WAV": "dirt.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.003",
+   "SIN_LENGTH": "0.002",
+   "VIBRATION_GAIN": "0.3",
+   "VIBRATION_LENGTH": "0.002",
+   "DIRT_ADDITIVE": "0.2",
+   "IS_VALID_TRACK": "1",
+   "_from": "data\\surfaces.ini"
+  },
+  "PIT": {
+   "FRICTION": "1",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "data\\surfaces.ini"
+  }
+ },
+ "surface_geometry": {
+  "WALL": {
+   "meshes": 923,
+   "invisible": 0,
+   "verts": 4545667,
+   "tris": 3592404,
+   "area_m2": 16341712037.8,
+   "edge_med_m": 107.191,
+   "grid_m": 82.413
+  },
+  "GRASS": {
+   "meshes": 40,
+   "invisible": 0,
+   "verts": 506688,
+   "tris": 946055,
+   "area_m2": 11384591341.4,
+   "edge_med_m": 159.511,
+   "grid_m": 120.127
+  },
+  "KERB": {
+   "meshes": 52,
+   "invisible": 0,
+   "verts": 112912,
+   "tris": 108416,
+   "area_m2": 911984228.6,
+   "edge_med_m": 168.109,
+   "grid_m": 125.038
+  },
+  "PIT": {
+   "meshes": 3,
+   "invisible": 0,
+   "verts": 2622,
+   "tris": 2758,
+   "area_m2": 22225519.9,
+   "edge_med_m": 179.789,
+   "grid_m": 126.92
+  },
+  "ROAD": {
+   "meshes": 129,
+   "invisible": 0,
+   "verts": 520319,
+   "tris": 528166,
+   "area_m2": 3673647176.2,
+   "edge_med_m": 144.784,
+   "grid_m": 108.157
+  }
+ },
+ "ai": [],
+ "ext_config": {
+  "grass_fx": true,
+  "rain_fx": true,
+  "lights": 0,
+  "light_series": 1,
+  "trees": true,
+  "mesh_adjustments": 1,
+  "includes": [
+   "occluders.ini, LODs.ini, lights.ini, sound.ini, LODs2.ini"
+  ],
+  "files": 1
+ },
+ "vao_patches": [],
+ "cameras": 12,
+ "errors": [
+  ": [Errno 13] Permission denied: 'D:\\\\SteamLibrary\\\\steamapps\\\\common\\\\assettocorsa\\\\content\\\\tracks\\\\nohesi_110'"
+ ],
+ "kn5s": [
+  {
+   "file": "V4_BARRIER_COLLIDER.kn5",
+   "summary": {
+    "meshes": 6,
+    "verts": 96757,
+    "tris": 44907,
+    "textures": 1,
+    "texture_bytes": 70,
+    "materials": 3,
+    "surfaces": {
+     "WALL": {
+      "meshes": 6,
+      "verts": 96757,
+      "tris": 44907,
+      "area_m2": 462948872.4,
+      "invisible": 0,
+      "edge_med_m": 181.118,
+      "grid_m": 137.653
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 6,
+      "tris": 44907
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "V4_BUILD_PLANE.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 2836,
+    "tris": 1832,
+    "textures": 3,
+    "texture_bytes": 210,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT_NM_emissive": {
+      "meshes": 1,
+      "tris": 1832
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "V4_M1_M2_M3_M4_BUILDING.kn5",
+   "summary": {
+    "meshes": 6826,
+    "verts": 17417559,
+    "tris": 10298542,
+    "textures": 133,
+    "texture_bytes": 9310,
+    "materials": 75,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 3839,
+      "tris": 5376470
+     },
+     "ksPerPixelAT_NM_emissive": {
+      "meshes": 2554,
+      "tris": 4534097
+     },
+     "ksPerPixelReflection": {
+      "meshes": 195,
+      "tris": 224104
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 53,
+      "tris": 150754
+     },
+     "ksPerPixel": {
+      "meshes": 185,
+      "tris": 13117
+     }
+    },
+    "near_vert_cap": [
+     "Prop_Wire_02_SUB0",
+     "PropSet_M3_M4_02_SUB5",
+     "PropSet_M3_M4_05_SUB3",
+     "PropSet_M3_M4_04_SUB4",
+     "PropSet_M3_M4_13_SUB3",
+     "PropSet_M3_M4_14_SUB3"
+    ],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "V4_M1_M2_M3_M4_SIGN_LIGHTS.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 1048,
+    "tris": 524,
+    "textures": 1,
+    "texture_bytes": 70,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 1,
+      "tris": 524
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "V4_SKY_V25.kn5",
+   "summary": {
+    "meshes": 1,
+    "verts": 4,
+    "tris": 2,
+    "textures": 5,
+    "texture_bytes": 15443783,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelMultiMap_emissive": {
+      "meshes": 1,
+      "tris": 2
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "V6_M1_M2_M3_M4_TRACK.kn5",
+   "summary": {
+    "meshes": 1492,
+    "verts": 8376757,
+    "tris": 8130708,
+    "textures": 85,
+    "texture_bytes": 5950,
+    "materials": 44,
+    "surfaces": {
+     "WALL": {
+      "meshes": 917,
+      "verts": 4448910,
+      "tris": 3547497,
+      "area_m2": 15878763165.4,
+      "invisible": 0,
+      "edge_med_m": 106.255,
+      "grid_m": 81.714
+     },
+     "GRASS": {
+      "meshes": 40,
+      "verts": 506688,
+      "tris": 946055,
+      "area_m2": 11384591341.4,
+      "invisible": 0,
+      "edge_med_m": 159.511,
+      "grid_m": 120.127
+     },
+     "KERB": {
+      "meshes": 52,
+      "verts": 112912,
+      "tris": 108416,
+      "area_m2": 911984228.6,
+      "invisible": 0,
+      "edge_med_m": 168.109,
+      "grid_m": 125.038
+     },
+     "PIT": {
+      "meshes": 3,
+      "verts": 2622,
+      "tris": 2758,
+      "area_m2": 22225519.9,
+      "invisible": 0,
+      "edge_med_m": 179.789,
+      "grid_m": 126.92
+     },
+     "ROAD": {
+      "meshes": 129,
+      "verts": 520319,
+      "tris": 528166,
+      "area_m2": 3673647176.2,
+      "invisible": 0,
+      "edge_med_m": 144.784,
+      "grid_m": 108.157
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelNM": {
+      "meshes": 1131,
+      "tris": 6467750
+     },
+     "ksMultilayer_fresnel_nm": {
+      "meshes": 36,
+      "tris": 941450
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 99,
+      "tris": 306860
+     },
+     "ksPerPixelAT_NM_emissive": {
+      "meshes": 39,
+      "tris": 248783
+     },
+     "ksPerPixel": {
+      "meshes": 58,
+      "tris": 95847
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 129,
+      "tris": 70018
+     }
+    },
+    "near_vert_cap": [
+     "Misc_Railings_M04_01_SUB1",
+     "1WALL_BarrierM01_01.001_SUB0"
+    ],
+    "non_pot_textures": []
+   }
+  }
+ ]
+}

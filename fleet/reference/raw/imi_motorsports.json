@@ -1,0 +1,224 @@
+{
+ "track": "imi_motorsports",
+ "path": "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks\\imi_motorsports",
+ "ui": {
+  "name": "K10 Colorado - IMI Motorsports Complex",
+  "length": "1446",
+  "width": "8",
+  "pitboxes": "4",
+  "run": "clockwise"
+ },
+ "layouts": {
+  "default": [
+   "imi_motorsports.kn5"
+  ]
+ },
+ "kn5_count": 1,
+ "totals": {
+  "meshes": 34,
+  "verts": 531258,
+  "tris": 807166,
+  "bytes": 37435719,
+  "texture_bytes": 9205212
+ },
+ "surfaces_ini": {
+  "ROAD": {
+   "FRICTION": "0.99",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "data\\surfaces.ini"
+  },
+  "KERB": {
+   "FRICTION": "0.92",
+   "DAMPING": "0",
+   "WAV": "kerb.wav",
+   "WAV_PITCH": "1.3",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "1.0",
+   "VIBRATION_LENGTH": "1.5",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "data\\surfaces.ini"
+  },
+  "RUNOFF": {
+   "FRICTION": "0.9",
+   "DAMPING": "0.02",
+   "WAV": "gravel.wav",
+   "WAV_PITCH": "1.2",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.4",
+   "VIBRATION_LENGTH": "2.0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "data\\surfaces.ini"
+  },
+  "GRASS": {
+   "FRICTION": "0.6",
+   "DAMPING": "0.1",
+   "WAV": "grass.wav",
+   "WAV_PITCH": "1.0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "0",
+   "_from": "data\\surfaces.ini"
+  },
+  "LAWN": {
+   "FRICTION": "0.65",
+   "DAMPING": "0.09",
+   "WAV": "grass.wav",
+   "WAV_PITCH": "1.0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "0",
+   "_from": "data\\surfaces.ini"
+  }
+ },
+ "surface_geometry": {
+  "GRASS": {
+   "meshes": 13,
+   "invisible": 0,
+   "verts": 352857,
+   "tris": 654192,
+   "area_m2": 2491148.6,
+   "edge_med_m": 3.692,
+   "grid_m": 1.712
+  },
+  "KERB": {
+   "meshes": 1,
+   "invisible": 0,
+   "verts": 44737,
+   "tris": 15036,
+   "area_m2": 902.5,
+   "edge_med_m": 0.304,
+   "grid_m": 0.346
+  },
+  "ROAD": {
+   "meshes": 2,
+   "invisible": 0,
+   "verts": 20244,
+   "tris": 6748,
+   "area_m2": 29672.4,
+   "edge_med_m": 3.712,
+   "grid_m": 2.846
+  },
+  "RUNOFF": {
+   "meshes": 1,
+   "invisible": 0,
+   "verts": 1776,
+   "tris": 592,
+   "area_m2": 6811.7,
+   "edge_med_m": 5.4,
+   "grid_m": 4.797
+  },
+  "WALL": {
+   "meshes": 1,
+   "invisible": 0,
+   "verts": 80,
+   "tris": 28,
+   "area_m2": 123.4,
+   "edge_med_m": 3.08,
+   "grid_m": 2.969
+  }
+ },
+ "ai": [],
+ "ext_config": {
+  "grass_fx": true,
+  "rain_fx": true,
+  "lights": 33,
+  "light_series": 0,
+  "trees": false,
+  "mesh_adjustments": 0,
+  "includes": [
+   "common/conditions.ini"
+  ],
+  "files": 1
+ },
+ "vao_patches": [],
+ "cameras": 0,
+ "errors": [],
+ "kn5s": [
+  {
+   "file": "imi_motorsports.kn5",
+   "summary": {
+    "meshes": 34,
+    "verts": 531258,
+    "tris": 807166,
+    "textures": 12,
+    "texture_bytes": 9205212,
+    "materials": 34,
+    "surfaces": {
+     "GRASS": {
+      "meshes": 13,
+      "verts": 352857,
+      "tris": 654192,
+      "area_m2": 2491148.6,
+      "invisible": 0,
+      "edge_med_m": 3.692,
+      "grid_m": 1.712
+     },
+     "KERB": {
+      "meshes": 1,
+      "verts": 44737,
+      "tris": 15036,
+      "area_m2": 902.5,
+      "invisible": 0,
+      "edge_med_m": 0.304,
+      "grid_m": 0.346
+     },
+     "ROAD": {
+      "meshes": 2,
+      "verts": 20244,
+      "tris": 6748,
+      "area_m2": 29672.4,
+      "invisible": 0,
+      "edge_med_m": 3.712,
+      "grid_m": 2.846
+     },
+     "RUNOFF": {
+      "meshes": 1,
+      "verts": 1776,
+      "tris": 592,
+      "area_m2": 6811.7,
+      "invisible": 0,
+      "edge_med_m": 5.4,
+      "grid_m": 4.797
+     },
+     "WALL": {
+      "meshes": 1,
+      "verts": 80,
+      "tris": 28,
+      "area_m2": 123.4,
+      "invisible": 0,
+      "edge_med_m": 3.08,
+      "grid_m": 2.969
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 28,
+      "tris": 791498
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 4,
+      "tris": 9188
+     },
+     "ksTree": {
+      "meshes": 2,
+      "tris": 6480
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  }
+ ]
+}

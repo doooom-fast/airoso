@@ -1,0 +1,1298 @@
+{
+ "track": "union_island",
+ "path": "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks\\union_island",
+ "ui": {
+  "name": "Union Island - Freeroam",
+  "length": "33.5km",
+  "width": "10m",
+  "pitboxes": "45",
+  "run": "clockwise"
+ },
+ "layouts": {
+  "freeroam": [
+   "leyaourt_freeroam.kn5",
+   "union_island.kn5",
+   "bo_sea.kn5",
+   "bo_structure.kn5",
+   "bo_verdure.kn5",
+   "bo_verdure2.kn5",
+   "bo_verdure3.kn5",
+   "union_col.kn5",
+   "dyn_blimp.kn5",
+   "bo_viz.kn5",
+   "union_road.kn5",
+   "dyn_santa.kn5",
+   "dyn_santa.kn5",
+   "dyn_bryce.kn5"
+  ],
+  "rally": [
+   "leyaourt_rally.kn5",
+   "union_island.kn5",
+   "bo_sea.kn5",
+   "bo_structure.kn5",
+   "bo_verdure.kn5",
+   "bo_verdure2.kn5",
+   "bo_verdure3.kn5",
+   "union_col.kn5",
+   "dyn_blimp.kn5",
+   "bo_viz.kn5",
+   "union_road.kn5",
+   "dyn_santa.kn5",
+   "dyn_santa.kn5",
+   "dyn_bryce.kn5"
+  ],
+  "scenic": [
+   "leyaourt_scenic.kn5",
+   "union_island.kn5",
+   "bo_sea.kn5",
+   "bo_structure.kn5",
+   "bo_verdure.kn5",
+   "bo_verdure2.kn5",
+   "bo_verdure3.kn5",
+   "union_col.kn5",
+   "dyn_blimp.kn5",
+   "bo_viz.kn5",
+   "union_road.kn5",
+   "dyn_santa.kn5",
+   "dyn_santa.kn5",
+   "dyn_bryce.kn5"
+  ],
+  "traffic": [
+   "leyaourt_traffic.kn5",
+   "union_island.kn5",
+   "bo_sea.kn5",
+   "bo_structure.kn5",
+   "bo_verdure.kn5",
+   "bo_verdure2.kn5",
+   "bo_verdure3.kn5",
+   "union_col.kn5",
+   "dyn_blimp.kn5",
+   "bo_viz.kn5",
+   "union_road.kn5",
+   "dyn_santa.kn5",
+   "dyn_santa.kn5",
+   "dyn_bryce.kn5"
+  ],
+  "west": [
+   "leyaourt_west.kn5",
+   "union_island.kn5",
+   "bo_sea.kn5",
+   "bo_structure.kn5",
+   "bo_verdure.kn5",
+   "bo_verdure2.kn5",
+   "bo_verdure3.kn5",
+   "union_col.kn5",
+   "dyn_blimp.kn5",
+   "bo_viz.kn5",
+   "union_road.kn5",
+   "dyn_santa.kn5",
+   "dyn_santa.kn5",
+   "dyn_bryce.kn5"
+  ]
+ },
+ "kn5_count": 17,
+ "totals": {
+  "meshes": 5527,
+  "verts": 9558049,
+  "tris": 5890339,
+  "bytes": 953766320,
+  "texture_bytes": 497291299
+ },
+ "surfaces_ini": {
+  "ROAD": {
+   "FRICTION": "0.9741",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "freeroam\\data\\surfaces.ini"
+  },
+  "GRASS": {
+   "FRICTION": "0.73",
+   "DAMPING": "0",
+   "WAV": "grass.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.03",
+   "SIN_LENGTH": "0.5",
+   "VIBRATION_GAIN": "0.15",
+   "VIBRATION_LENGTH": "0.3",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "1",
+   "_from": "freeroam\\data\\surfaces.ini"
+  },
+  "KERB": {
+   "FRICTION": "0.92",
+   "DAMPING": "0",
+   "WAV": "kerb.wav",
+   "WAV_PITCH": "1.3",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.4",
+   "VIBRATION_LENGTH": "1.5",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "freeroam\\data\\surfaces.ini"
+  },
+  "SOIL": {
+   "FRICTION": "0.8",
+   "DAMPING": "0.1",
+   "WAV": "sand.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.04",
+   "SIN_LENGTH": "0.5",
+   "VIBRATION_GAIN": "0.2",
+   "VIBRATION_LENGTH": "0.3",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "1",
+   "_from": "freeroam\\data\\surfaces.ini"
+  },
+  "PARKINGSOIL": {
+   "FRICTION": "0.85",
+   "DAMPING": "0",
+   "WAV": "grass.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.01",
+   "SIN_LENGTH": "0.02",
+   "VIBRATION_GAIN": "0.09",
+   "VIBRATION_LENGTH": "0.3",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "1",
+   "_from": "freeroam\\data\\surfaces.ini"
+  },
+  "SAND": {
+   "FRICTION": "0.7",
+   "DAMPING": "0.1",
+   "WAV": "sand.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.04",
+   "SIN_LENGTH": "0.5",
+   "VIBRATION_GAIN": "0.2",
+   "VIBRATION_LENGTH": "0.3",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "1",
+   "_from": "freeroam\\data\\surfaces.ini"
+  },
+  "ROADSIDE": {
+   "FRICTION": "0.88",
+   "DAMPING": "0",
+   "WAV": "grass.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.01",
+   "VIBRATION_LENGTH": "0.3",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "freeroam\\data\\surfaces.ini"
+  },
+  "ROADB": {
+   "FRICTION": "0.90",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.01",
+   "VIBRATION_LENGTH": "0.3",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "freeroam\\data\\surfaces.ini"
+  },
+  "GRAVEL-2": {
+   "FRICTION": "0.89",
+   "DAMPING": "0.0",
+   "WAV": "grass.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.03",
+   "SIN_LENGTH": "0.5",
+   "VIBRATION_GAIN": "0.15",
+   "VIBRATION_LENGTH": "0.3",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "1",
+   "_from": "freeroam\\data\\surfaces.ini"
+  },
+  "GRAVEL-3": {
+   "FRICTION": "0.89",
+   "DAMPING": "0.0",
+   "WAV": "sand.wav",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0.03",
+   "SIN_LENGTH": "0.5",
+   "VIBRATION_GAIN": "0.15",
+   "VIBRATION_LENGTH": "0.3",
+   "DIRT_ADDITIVE": "1",
+   "IS_VALID_TRACK": "1",
+   "_from": "freeroam\\data\\surfaces.ini"
+  },
+  "ROADC": {
+   "FRICTION": "0.90",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "freeroam\\data\\surfaces.ini"
+  },
+  "ROADD": {
+   "FRICTION": "0.87",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0.1",
+   "VIBRATION_LENGTH": "0.1",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "1",
+   "_from": "freeroam\\data\\surfaces.ini"
+  },
+  "PARKING": {
+   "FRICTION": "0.92",
+   "DAMPING": "0",
+   "WAV": "",
+   "WAV_PITCH": "0",
+   "SIN_HEIGHT": "0",
+   "SIN_LENGTH": "0",
+   "VIBRATION_GAIN": "0",
+   "VIBRATION_LENGTH": "0",
+   "DIRT_ADDITIVE": "0",
+   "IS_VALID_TRACK": "0",
+   "_from": "scenic\\data\\surfaces.ini"
+  }
+ },
+ "surface_geometry": {
+  "PHYS?": {
+   "meshes": 5,
+   "invisible": 0,
+   "verts": 2468,
+   "tris": 2384,
+   "area_m2": 180223.2,
+   "edge_med_m": 3.286,
+   "grid_m": 2.994
+  },
+  "WALL": {
+   "meshes": 653,
+   "invisible": 53,
+   "verts": 239574,
+   "tris": 181116,
+   "area_m2": 267059.7,
+   "edge_med_m": 1.759,
+   "grid_m": 1.329
+  },
+  "KERB": {
+   "meshes": 65,
+   "invisible": 5,
+   "verts": 17114,
+   "tris": 13493,
+   "area_m2": 3885.7,
+   "edge_med_m": 0.96,
+   "grid_m": 0.539
+  },
+  "ROADB": {
+   "meshes": 9,
+   "invisible": 3,
+   "verts": 26246,
+   "tris": 49812,
+   "area_m2": 19356.4,
+   "edge_med_m": 0.909,
+   "grid_m": 0.829
+  },
+  "ROAD": {
+   "meshes": 34,
+   "invisible": 32,
+   "verts": 254786,
+   "tris": 467577,
+   "area_m2": 199602.7,
+   "edge_med_m": 0.967,
+   "grid_m": 0.872
+  },
+  "ROADC": {
+   "meshes": 2,
+   "invisible": 2,
+   "verts": 36758,
+   "tris": 71030,
+   "area_m2": 17227.5,
+   "edge_med_m": 0.769,
+   "grid_m": 0.696
+  },
+  "PARKING": {
+   "meshes": 2,
+   "invisible": 2,
+   "verts": 394,
+   "tris": 701,
+   "area_m2": 1694.0,
+   "edge_med_m": 1.847,
+   "grid_m": 2.183
+  },
+  "GRAVEL-2": {
+   "meshes": 7,
+   "invisible": 1,
+   "verts": 8381,
+   "tris": 14584,
+   "area_m2": 21033.0,
+   "edge_med_m": 1.854,
+   "grid_m": 1.441
+  },
+  "ROADD": {
+   "meshes": 12,
+   "invisible": 0,
+   "verts": 2549,
+   "tris": 2916,
+   "area_m2": 17660.5,
+   "edge_med_m": 3.174,
+   "grid_m": 3.186
+  },
+  "GRAVEL": {
+   "meshes": 2,
+   "invisible": 0,
+   "verts": 9057,
+   "tris": 13515,
+   "area_m2": 7718.2,
+   "edge_med_m": 1.466,
+   "grid_m": 1.069
+  },
+  "GRASS": {
+   "meshes": 20,
+   "invisible": 0,
+   "verts": 201525,
+   "tris": 241325,
+   "area_m2": 9686204.8,
+   "edge_med_m": 2.514,
+   "grid_m": 8.61
+  },
+  "SOIL": {
+   "meshes": 5,
+   "invisible": 0,
+   "verts": 4782,
+   "tris": 5150,
+   "area_m2": 22688.4,
+   "edge_med_m": 2.123,
+   "grid_m": 2.787
+  },
+  "GRAVEL-3": {
+   "meshes": 2,
+   "invisible": 0,
+   "verts": 266,
+   "tris": 248,
+   "area_m2": 2028.0,
+   "edge_med_m": 2.513,
+   "grid_m": 3.983
+  }
+ },
+ "ai": [
+  {
+   "file": "scenic\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 11197,
+   "length_m": 17458.9,
+   "spacing_m": 1.56,
+   "has_extras": true
+  },
+  {
+   "file": "scenic\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 77,
+   "length_m": 114.8,
+   "spacing_m": 1.51,
+   "has_extras": true
+  },
+  {
+   "file": "traffic\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 21611,
+   "length_m": 33206.0,
+   "spacing_m": 1.54,
+   "has_extras": true
+  },
+  {
+   "file": "traffic\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 21611,
+   "length_m": 33206.0,
+   "spacing_m": 1.54,
+   "has_extras": true
+  },
+  {
+   "file": "west\\ai\\fast_lane.ai",
+   "version": 7,
+   "points": 7790,
+   "length_m": 12202.2,
+   "spacing_m": 1.57,
+   "has_extras": true
+  },
+  {
+   "file": "west\\ai\\fast_lane_disabled.ai",
+   "version": 7,
+   "points": 269,
+   "length_m": 406.1,
+   "spacing_m": 1.52,
+   "has_extras": true
+  },
+  {
+   "file": "west\\ai\\pit_lane.ai",
+   "version": 7,
+   "points": 77,
+   "length_m": 114.8,
+   "spacing_m": 1.51,
+   "has_extras": true
+  }
+ ],
+ "ext_config": {
+  "grass_fx": true,
+  "rain_fx": true,
+  "lights": 1,
+  "light_series": 1,
+  "trees": false,
+  "mesh_adjustments": 0,
+  "includes": [
+   "common/conditions.ini, common/materials_base.ini, common/materials_track.ini"
+  ],
+  "files": 1
+ },
+ "vao_patches": [],
+ "cameras": 385,
+ "errors": [],
+ "kn5s": [
+  {
+   "file": "bo_sea.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 683,
+    "tris": 444,
+    "textures": 5,
+    "texture_bytes": 7078728,
+    "materials": 2,
+    "surfaces": {
+     "PHYS?": {
+      "meshes": 2,
+      "verts": 130,
+      "tris": 148,
+      "area_m2": 180203.0,
+      "invisible": 0,
+      "edge_med_m": 51.353,
+      "grid_m": 46.248
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelMultiMap_AT_NMDetail": {
+      "meshes": 1,
+      "tris": 296
+     },
+     "ksPerPixelNM_UVMult": {
+      "meshes": 2,
+      "tris": 148
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "the_sea_maps.dds"
+    ]
+   }
+  },
+  {
+   "file": "bo_structure.kn5",
+   "summary": {
+    "meshes": 2600,
+    "verts": 2210444,
+    "tris": 1271023,
+    "textures": 91,
+    "texture_bytes": 158509242,
+    "materials": 122,
+    "surfaces": {
+     "PHYS?": {
+      "meshes": 3,
+      "verts": 2338,
+      "tris": 2236,
+      "area_m2": 20.2,
+      "invisible": 0,
+      "edge_med_m": 0.104,
+      "grid_m": 0.131
+     },
+     "WALL": {
+      "meshes": 168,
+      "verts": 31403,
+      "tris": 19005,
+      "area_m2": 54324.5,
+      "invisible": 0,
+      "edge_med_m": 2.51,
+      "grid_m": 1.908
+     },
+     "KERB": {
+      "meshes": 53,
+      "verts": 8583,
+      "tris": 5387,
+      "area_m2": 3445.4,
+      "invisible": 0,
+      "edge_med_m": 1.417,
+      "grid_m": 1.021
+     },
+     "ROADB": {
+      "meshes": 1,
+      "verts": 4,
+      "tris": 2,
+      "area_m2": 157.9,
+      "invisible": 0,
+      "edge_med_m": 14.482,
+      "grid_m": 12.568
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelAT_NM": {
+      "meshes": 847,
+      "tris": 577441
+     },
+     "ksPerPixelMultiMap_AT_NMDetail": {
+      "meshes": 517,
+      "tris": 230954
+     },
+     "ksPerPixelMultiMapSimpleRefl": {
+      "meshes": 160,
+      "tris": 130981
+     },
+     "ksPerPixelNM": {
+      "meshes": 246,
+      "tris": 127730
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 408,
+      "tris": 101728
+     },
+     "ksPerPixelSimpleRefl": {
+      "meshes": 17,
+      "tris": 31467
+     },
+     "ksPerPixel": {
+      "meshes": 133,
+      "tris": 25033
+     },
+     "ksPerPixelAT": {
+      "meshes": 83,
+      "tris": 16621
+     },
+     "ksPerPixelReflection": {
+      "meshes": 103,
+      "tris": 15104
+     },
+     "ksPerPixelNM_UVMult": {
+      "meshes": 15,
+      "tris": 8552
+     },
+     "ksPerPixelMultiMap_AT": {
+      "meshes": 71,
+      "tris": 5412
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "font-nrm.dds",
+     "bo_planes.dds",
+     "bo_concrete3_mix.dds",
+     "bo_union_cars.dds",
+     "bo_uk_emergency.dds",
+     "bo_uk_emergency_map.dds",
+     "win_diff.dds",
+     "win_nrm_alpha.dds",
+     "win_refl.dds",
+     "bo_planes-nrm.dds",
+     "roof_metal.dds",
+     "roof_metal-nrm.dds",
+     "poll_bo_wood.dds",
+     "building_airport_ao.dds",
+     "bo_parpaing-nrm.dds",
+     "bo_brick2.dds",
+     "bo_brick2_nrm.dds",
+     "metal_rust.dds",
+     "poll_bo_wood-nrm.dds",
+     "wire_metal.dds",
+     "wire_metal-nrm.dds",
+     "bo_union_cars-nrm.dds",
+     "tiles_roof_bitume.dds",
+     "hay_coco.dds",
+     "hay_coco-nrm.dds",
+     "signs_bo_uk-nrm.dds",
+     "fence.dds",
+     "fence-nrm.dds",
+     "bo_parpaing.dds",
+     "bo_boats_shade.dds",
+     "bo_car_shade.dds",
+     "bo_planes_shade.dds"
+    ]
+   }
+  },
+  {
+   "file": "bo_verdure.kn5",
+   "summary": {
+    "meshes": 200,
+    "verts": 4991736,
+    "tris": 2495868,
+    "textures": 3,
+    "texture_bytes": 19487312,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 184,
+      "tris": 2469086
+     },
+     "ksTree": {
+      "meshes": 16,
+      "tris": 26782
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "trees1_bo_unions02.dds",
+     "bushes_bo_union02.dds"
+    ]
+   }
+  },
+  {
+   "file": "bo_verdure2.kn5",
+   "summary": {
+    "meshes": 1513,
+    "verts": 1152610,
+    "tris": 697634,
+    "textures": 3,
+    "texture_bytes": 25137600,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksTree": {
+      "meshes": 1513,
+      "tris": 697634
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "trees2_bo_union02.dds"
+    ]
+   }
+  },
+  {
+   "file": "bo_verdure3.kn5",
+   "summary": {
+    "meshes": 97,
+    "verts": 89695,
+    "tris": 85608,
+    "textures": 3,
+    "texture_bytes": 16365824,
+    "materials": 2,
+    "surfaces": {
+     "WALL": {
+      "meshes": 72,
+      "verts": 49042,
+      "tris": 53976,
+      "area_m2": 23583.4,
+      "invisible": 0,
+      "edge_med_m": 1.789,
+      "grid_m": 0.89
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelAT_NM": {
+      "meshes": 80,
+      "tris": 67008
+     },
+     "ksTree": {
+      "meshes": 17,
+      "tris": 18600
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "trees3_bo_union.dds"
+    ]
+   }
+  },
+  {
+   "file": "bo_viz.kn5",
+   "summary": {
+    "meshes": 181,
+    "verts": 4200,
+    "tris": 4115,
+    "textures": 9,
+    "texture_bytes": 37795519,
+    "materials": 6,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksFlags": {
+      "meshes": 7,
+      "tris": 2800
+     },
+     "ksPerPixel": {
+      "meshes": 71,
+      "tris": 460
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 28,
+      "tris": 402
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 56,
+      "tris": 344
+     },
+     "ksPerPixelNM_UVMult": {
+      "meshes": 19,
+      "tris": 109
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "grpahe_opsis_kobra.dds",
+     "ads_bo.dds",
+     "poll_bo_wood.dds",
+     "poll_bo_wood-nrm.dds"
+    ]
+   }
+  },
+  {
+   "file": "dyn_blimp.kn5",
+   "summary": {
+    "meshes": 8,
+    "verts": 1649,
+    "tris": 1088,
+    "textures": 6,
+    "texture_bytes": 4878608,
+    "materials": 6,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelMultiMap": {
+      "meshes": 2,
+      "tris": 678
+     },
+     "ksPerPixelNM": {
+      "meshes": 2,
+      "tris": 276
+     },
+     "ksPerPixelReflection": {
+      "meshes": 1,
+      "tris": 100
+     },
+     "ksPerPixel": {
+      "meshes": 3,
+      "tris": 34
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "bo_planes.dds",
+     "bo_planes-nrm.dds"
+    ]
+   }
+  },
+  {
+   "file": "dyn_bryce.kn5",
+   "summary": {
+    "meshes": 4,
+    "verts": 136,
+    "tris": 68,
+    "textures": 1,
+    "texture_bytes": 15528080,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 4,
+      "tris": 68
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "the_sea_foam.dds"
+    ]
+   }
+  },
+  {
+   "file": "dyn_santa.kn5",
+   "summary": {
+    "meshes": 3,
+    "verts": 966,
+    "tris": 770,
+    "textures": 1,
+    "texture_bytes": 5592560,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 3,
+      "tris": 770
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "leyaourt_freeroam.kn5",
+   "summary": {
+    "meshes": 52,
+    "verts": 1774,
+    "tris": 1036,
+    "textures": 2,
+    "texture_bytes": 1092560,
+    "materials": 3,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixelAT": {
+      "meshes": 1,
+      "tris": 608
+     },
+     "GL": {
+      "meshes": 49,
+      "tris": 400
+     },
+     "ksPerPixel": {
+      "meshes": 2,
+      "tris": 28
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "warning.dds"
+    ]
+   }
+  },
+  {
+   "file": "leyaourt_rally.kn5",
+   "summary": {
+    "meshes": 160,
+    "verts": 28676,
+    "tris": 26924,
+    "textures": 4,
+    "texture_bytes": 1861632,
+    "materials": 4,
+    "surfaces": {
+     "WALL": {
+      "meshes": 130,
+      "verts": 17225,
+      "tris": 18460,
+      "area_m2": 1170.0,
+      "invisible": 0,
+      "edge_med_m": 0.444,
+      "grid_m": 0.347
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelAT_NM": {
+      "meshes": 65,
+      "tris": 16120
+     },
+     "ksPerPixel": {
+      "meshes": 72,
+      "tris": 10564
+     },
+     "GL": {
+      "meshes": 23,
+      "tris": 240
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "warning.dds",
+     "hay_coco.dds",
+     "hay_coco-nrm.dds"
+    ]
+   }
+  },
+  {
+   "file": "leyaourt_scenic.kn5",
+   "summary": {
+    "meshes": 235,
+    "verts": 29190,
+    "tris": 28970,
+    "textures": 4,
+    "texture_bytes": 1861632,
+    "materials": 4,
+    "surfaces": {
+     "WALL": {
+      "meshes": 174,
+      "verts": 23055,
+      "tris": 24708,
+      "area_m2": 1566.0,
+      "invisible": 0,
+      "edge_med_m": 0.444,
+      "grid_m": 0.347
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelAT_NM": {
+      "meshes": 87,
+      "tris": 21576
+     },
+     "ksPerPixelAT": {
+      "meshes": 3,
+      "tris": 3744
+     },
+     "ksPerPixel": {
+      "meshes": 90,
+      "tris": 3186
+     },
+     "GL": {
+      "meshes": 55,
+      "tris": 464
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "warning.dds",
+     "hay_coco.dds",
+     "hay_coco-nrm.dds"
+    ]
+   }
+  },
+  {
+   "file": "leyaourt_traffic.kn5",
+   "summary": {
+    "meshes": 44,
+    "verts": 804,
+    "tris": 360,
+    "textures": 1,
+    "texture_bytes": 136,
+    "materials": 1,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksPerPixel": {
+      "meshes": 44,
+      "tris": 360
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "leyaourt_west.kn5",
+   "summary": {
+    "meshes": 99,
+    "verts": 7962,
+    "tris": 7318,
+    "textures": 4,
+    "texture_bytes": 1861632,
+    "materials": 4,
+    "surfaces": {
+     "WALL": {
+      "meshes": 40,
+      "verts": 5300,
+      "tris": 5680,
+      "area_m2": 345.4,
+      "invisible": 0,
+      "edge_med_m": 0.434,
+      "grid_m": 0.339
+     }
+    },
+    "shaders_by_tris": {
+     "ksPerPixelAT_NM": {
+      "meshes": 20,
+      "tris": 4960
+     },
+     "ksPerPixelAT": {
+      "meshes": 1,
+      "tris": 1120
+     },
+     "ksPerPixel": {
+      "meshes": 23,
+      "tris": 774
+     },
+     "GL": {
+      "meshes": 55,
+      "tris": 464
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "warning.dds",
+     "hay_coco.dds",
+     "hay_coco-nrm.dds"
+    ]
+   }
+  },
+  {
+   "file": "union_col.kn5",
+   "summary": {
+    "meshes": 101,
+    "verts": 439255,
+    "tris": 656142,
+    "textures": 0,
+    "texture_bytes": 0,
+    "materials": 1,
+    "surfaces": {
+     "ROAD": {
+      "meshes": 32,
+      "verts": 254097,
+      "tris": 466735,
+      "area_m2": 196367.6,
+      "invisible": 32,
+      "edge_med_m": 0.963,
+      "grid_m": 0.869
+     },
+     "ROADB": {
+      "meshes": 3,
+      "verts": 25692,
+      "tris": 49202,
+      "area_m2": 16316.9,
+      "invisible": 3,
+      "edge_med_m": 0.891,
+      "grid_m": 0.802
+     },
+     "ROADC": {
+      "meshes": 2,
+      "verts": 36758,
+      "tris": 71030,
+      "area_m2": 17227.5,
+      "invisible": 2,
+      "edge_med_m": 0.769,
+      "grid_m": 0.696
+     },
+     "PARKING": {
+      "meshes": 2,
+      "verts": 394,
+      "tris": 701,
+      "area_m2": 1694.0,
+      "invisible": 2,
+      "edge_med_m": 1.847,
+      "grid_m": 2.183
+     },
+     "KERB": {
+      "meshes": 5,
+      "verts": 6859,
+      "tris": 5990,
+      "area_m2": 322.8,
+      "invisible": 5,
+      "edge_med_m": 0.611,
+      "grid_m": 0.189
+     },
+     "WALL": {
+      "meshes": 53,
+      "verts": 110845,
+      "tris": 56520,
+      "area_m2": 159528.6,
+      "invisible": 53,
+      "edge_med_m": 2.507,
+      "grid_m": 2.28
+     },
+     "GRAVEL-2": {
+      "meshes": 1,
+      "verts": 2198,
+      "tris": 3834,
+      "area_m2": 4600.5,
+      "invisible": 1,
+      "edge_med_m": 1.454,
+      "grid_m": 1.549
+     }
+    },
+    "shaders_by_tris": {
+     "GL": {
+      "meshes": 101,
+      "tris": 656142
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": []
+   }
+  },
+  {
+   "file": "union_island.kn5",
+   "summary": {
+    "meshes": 206,
+    "verts": 495257,
+    "tris": 485664,
+    "textures": 37,
+    "texture_bytes": 152303203,
+    "materials": 19,
+    "surfaces": {
+     "GRAVEL-2": {
+      "meshes": 6,
+      "verts": 6183,
+      "tris": 10750,
+      "area_m2": 16432.5,
+      "invisible": 0,
+      "edge_med_m": 1.997,
+      "grid_m": 1.403
+     },
+     "ROADD": {
+      "meshes": 12,
+      "verts": 2549,
+      "tris": 2916,
+      "area_m2": 17660.5,
+      "invisible": 0,
+      "edge_med_m": 3.174,
+      "grid_m": 3.186
+     },
+     "KERB": {
+      "meshes": 7,
+      "verts": 1672,
+      "tris": 2116,
+      "area_m2": 117.5,
+      "invisible": 0,
+      "edge_med_m": 0.783,
+      "grid_m": 0.301
+     },
+     "ROADB": {
+      "meshes": 5,
+      "verts": 550,
+      "tris": 608,
+      "area_m2": 2881.6,
+      "invisible": 0,
+      "edge_med_m": 2.283,
+      "grid_m": 2.963
+     },
+     "GRAVEL": {
+      "meshes": 2,
+      "verts": 9057,
+      "tris": 13515,
+      "area_m2": 7718.2,
+      "invisible": 0,
+      "edge_med_m": 1.466,
+      "grid_m": 1.069
+     },
+     "GRASS": {
+      "meshes": 20,
+      "verts": 201525,
+      "tris": 241325,
+      "area_m2": 9686204.8,
+      "invisible": 0,
+      "edge_med_m": 2.514,
+      "grid_m": 8.61
+     },
+     "SOIL": {
+      "meshes": 5,
+      "verts": 4782,
+      "tris": 5150,
+      "area_m2": 22688.4,
+      "invisible": 0,
+      "edge_med_m": 2.123,
+      "grid_m": 2.787
+     },
+     "WALL": {
+      "meshes": 16,
+      "verts": 2704,
+      "tris": 2767,
+      "area_m2": 26541.8,
+      "invisible": 0,
+      "edge_med_m": 3.993,
+      "grid_m": 3.822
+     },
+     "GRAVEL-3": {
+      "meshes": 2,
+      "verts": 266,
+      "tris": 248,
+      "area_m2": 2028.0,
+      "invisible": 0,
+      "edge_med_m": 2.513,
+      "grid_m": 3.983
+     },
+     "ROAD": {
+      "meshes": 2,
+      "verts": 689,
+      "tris": 842,
+      "area_m2": 3235.1,
+      "invisible": 0,
+      "edge_med_m": 2.913,
+      "grid_m": 2.771
+     }
+    },
+    "shaders_by_tris": {
+     "ksMultilayer_fresnel_nm": {
+      "meshes": 54,
+      "tris": 296255
+     },
+     "ksPerPixelAT_NM": {
+      "meshes": 114,
+      "tris": 159734
+     },
+     "ksPerPixelNM": {
+      "meshes": 5,
+      "tris": 16162
+     },
+     "ksPerPixelMultiMap_AT_NMDetail": {
+      "meshes": 7,
+      "tris": 9107
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 16,
+      "tris": 3110
+     },
+     "ksPerPixelAT": {
+      "meshes": 8,
+      "tris": 1286
+     },
+     "ksPerPixel": {
+      "meshes": 2,
+      "tris": 10
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "road_dirt.dds",
+     "road_dirt-nrm.dds",
+     "road_concrete_01.dds",
+     "road_concrete-nrm.dds",
+     "kerb_sewer.dds",
+     "kerb_sewer_nrm.dds",
+     "ads_bo.dds",
+     "road_asphalt.dds",
+     "road_asphalt_mask.dds",
+     "road_asphalt02.dds",
+     "island_10.dds",
+     "island_mask3.dds",
+     "grass_03_HR.dds",
+     "sandy.dds",
+     "sandy-nrm.dds",
+     "grey_rock.dds",
+     "bo_soil_nrm.dds",
+     "airport_tarmac.dds",
+     "bo_asphalt.dds",
+     "road_worn.dds",
+     "road_worn-nrm.dds",
+     "bo_cliff_horA.dds",
+     "bo_cliff_horA-nrm3.dds",
+     "bo_wavebreaker_.dds",
+     "bo_wavebreaker_nrm.dds"
+    ]
+   }
+  },
+  {
+   "file": "union_road.kn5",
+   "summary": {
+    "meshes": 21,
+    "verts": 103012,
+    "tris": 127307,
+    "textures": 10,
+    "texture_bytes": 47937031,
+    "materials": 6,
+    "surfaces": {},
+    "shaders_by_tris": {
+     "ksMultilayer_fresnel_nm": {
+      "meshes": 6,
+      "tris": 79611
+     },
+     "ksPerPixel": {
+      "meshes": 14,
+      "tris": 45147
+     },
+     "ksPerPixelMultiMap": {
+      "meshes": 1,
+      "tris": 2549
+     }
+    },
+    "near_vert_cap": [],
+    "non_pot_textures": [
+     "road_main_03.dds",
+     "dirt_crossroad.dds",
+     "road_asphalt.dds",
+     "road_mask_b.dds",
+     "road_asphalt02.dds"
+    ]
+   }
+  }
+ ]
+}

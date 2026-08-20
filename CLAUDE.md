@@ -1,23 +1,30 @@
-# k10-track-agents
+# airoso — THE one repo (V3)
 
-**The track engine and the control plane above it.** This repo builds Assetto Corsa tracks from real
-world data, and it orchestrates the four project repos that own the tracks.
+**Every track, the engine, the gates, the doctrine, and the ledger live HERE.** All other track
+repos (prodrive-ac-builder, k10-track-agents, k10-colorado, k10-colorado-rally, k10-sd-v021) are
+retired and tombstoned — never work in them, never build from them. This repo carries
+k10-track-agents' full history (which itself absorbed prodrive-ac-builder), so nothing was lost.
+`prodrive-agents` is the telemetry product — unrelated, leave it alone.
 
-It *is* `prodrive-ac-builder` — that repo's full history was absorbed here, `scripts/` and all, with
-package paths unchanged. See `fleet/MIGRATION.md` for the cutover state.
+**The V3 model (docs/V3-PLAN.md):** the engine emits first drafts; Claude hand-authors geometry
+(Blender / readable intermediates); deterministic gates judge every build; Kevin's drive test is
+the only ground truth. Do not write kn5 generators, do not reverse-engineer binaries, do not
+generate AI splines from GPS (docs/HANDOFF.md bans stand). Priority: San Diego, then Sand Creek.
 
 ---
 
-## The two halves
+## The pieces
 
 | | Path | What it is |
 |---|---|---|
-| **Engine** | `scripts/` | The pipeline: OSM/aerial/KML → centerline → real elevation → mesh → gates → kn5 → installable track folder. Consumer repos run these modules directly from a pinned checkout at `.engine/`. |
-| **Control plane** | `fleet/` | Which repos and tracks exist, what standards they must meet, what feedback is outstanding, and how a fix reaches all fifteen tracks at once. |
+| **Engine** | `scripts/` | The draft pipeline: OSM/aerial/KML → centerline → real elevation → mesh → gates → kn5 → installable track folder. |
+| **Doctrine + ledger** | `fleet/` | Laws, standards, DoD ladder, feedback ledger, reference measurements. (The multi-repo pin/train machinery in here is obsolete — one repo now.) |
+| **Tracks** | `tracks/<slug>/` | Per-track source of truth. `san-diego-lake-murray/` includes `loop.blend` (the hand-edit surface — NEVER regenerate over authored layers) and the quarantined `scripts-v021/` build tooling of record. |
+| **Tools** | `tools/` | blender-bridge (live agent↔Blender socket), kn5 inspectors. |
 
-**Never move or rename anything under `scripts/`.** Consumers execute
-`(cd .engine && python3 -m scripts.<pkg>.<mod> <ABSOLUTE-project-dir>)`. Those import paths are the
-seam that makes the whole fleet work; breaking them breaks every repo simultaneously.
+**Never move or rename anything under `scripts/`.** Everything executes as
+`python -m scripts.<pkg>.<mod> <ABSOLUTE-project-dir>` from the repo root; those import paths are
+load-bearing (and on Windows, run with `PYTHONUTF8=1`).
 
 ## Read these before working
 

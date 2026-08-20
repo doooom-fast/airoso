@@ -1,60 +1,40 @@
-# k10-track-agents
+# airoso
 
-Build **Assetto Corsa** tracks from real-world data — and manage the fleet of them.
+**THE repo. The only one.** Every Assetto Corsa track, the engine, the gates, the doctrine, and
+the feedback ledger live here. If you are working on tracks and you are not in
+`C:\Users\Owner\Documents\GitHub\airoso`, you are in the wrong place — the old repos
+(prodrive-ac-builder, k10-track-agents, k10-colorado, k10-colorado-rally, k10-sd-v021) are
+retired, tombstoned, and read-only history. (`prodrive-agents` is the telemetry product's repo —
+unrelated to tracks, still live, leave it alone.)
 
-Feed the engine a location and a route; get back a complete, installable AC track folder — geometry
-from OpenStreetMap or a georeferenced aerial trace, real elevation from USGS 3DEP, accurate sun and
-lighting, gated at four points, reproducible from a single `track.config.json`.
+Named for Airoso Avenue, in the neighborhood the memorial track remembers.
 
-> **First principle:** the screenshot is a *selection aid, not data*. Precise geometry comes from
-> OpenStreetMap via Overpass, or a georeferenced aerial trace; hand-drawn KML only where the route
-> deliberately leaves the real road network.
+## The V3 operating model (docs/V3-PLAN.md)
 
-This repo is the former `prodrive-ac-builder`, absorbed whole, plus the control plane that was
-missing: the thing that knows what tracks exist, whether they conform, and how one fix reaches all
-of them.
+1. **The engine drafts.** `scripts/` (the absorbed k10-track-agents engine, full history) emits a
+   regenerable data underlay — centerline, terrain, first-pass road — never a finished track.
+2. **Hands author.** Claude edits geometry in Blender (`tools/blender-bridge/` for live sessions,
+   headless otherwise) and in readable intermediates. Authored work lives in `AUTH_*` layers the
+   engine never regenerates over (`fleet/REALISM.md`).
+3. **Gates judge.** drive-test, mesh-audit, kn5 checks — deterministic, no bypass flags. Kevin
+   never loads a build the machine already failed.
+4. **Kevin drives.** The seat is the only ground truth. No drive-test report, no claim.
 
-## Two halves
+## Layout
 
-- **`scripts/`** — the engine. Consumer repos pin a tag and run these modules from `.engine/`.
-- **`fleet/`** — the control plane. Registry, laws, standards, feedback ledger, build trains.
-
-## The fleet
-
-Fifteen tracks across four repos and four kinds — a fictional street circuit on real roads
-(Sand Creek), real street ports including whole networks (Lookout Lariat, Lake Murray, the San Diego
-freeway graph), real circuit ports both extant and shut down (IMI, Pikes Peak, Second Creek), and
-real rally stages (Rally Colorado, gravel and tarmac).
-
-```bash
-python3 -m fleet.cli status      # repos, engine pins, drift
-python3 -m fleet.cli tracks      # every track, kind, archetype, version
-python3 -m fleet.cli lint        # standards check
-python3 -m fleet.cli feedback    # the ledger
-python3 -m fleet.cli build --run --from mesh
-```
-
-## Building one track
-
-```bash
-./scripts/build.sh <project-dir>          # phases 1-5 -> installable .zip
-./scripts/build.sh <project-dir> mesh     # resume offline from cached data
-```
-
-Phases 1–5 run headless on a Mac. Phase 6 — install, drive, record AI lines, visual QA — needs
-Assetto Corsa with Content Manager and CSP on Windows, and is not scriptable.
-
-## Documentation
-
-| File | What |
+| Path | What |
 |---|---|
-| `CLAUDE.md` | How to work in this repo |
-| `fleet/LAWS.md` | The non-negotiable laws, each with the failure that bought it |
-| `fleet/STANDARDS.md` | What every project repo must satisfy |
-| `fleet/MIGRATION.md` | The engine absorption cutover |
-| `fleet/feedback/README.md` | How feedback becomes a fix on every track |
-| `fleet/trains/README.md` | How a batch of fixes ships |
+| `scripts/` | The engine. Package paths are load-bearing (`python -m scripts.<pkg>.<mod>`) — never move or rename. |
+| `tracks/<slug>/` | One dir per track = source of truth (config, data, dossier, authored blends). Priority: `san-diego-lake-murray`, then `sand-creek`. |
+| `tools/` | Blender bridge, kn5 inspectors, install/reload helpers. |
+| `fleet/` | Doctrine + ledger: LAWS, REALISM, DEFINITION-OF-DONE, GATES-CHANGELOG, `feedback/` (0001–0036), reference measurements. |
+| `docs/` | V3-PLAN, the V1/V2 postmortems, measured pro standards (PRO-KN5-CONSTRUCTION, ROAD-CONSTRUCTION, JUNCTIONS). |
+| `tests/` | Hermetic suite — `python tests/run_tests.py` (177 tests, CI-wired). |
 
-## License
+## History, honestly
 
-See `LICENSE`.
+V1 (prodrive-ac-builder, Jun–Jul 2026) built a real engine and never verified a track in-game.
+V2 (airoso's minimal generator, Aug 2026) proved the one-shot approach dead a second time. The
+fleet era (k10-track-agents + consumer repos) fixed a lot and diagnosed everything, but green
+gates kept shipping undrivable junctions. V3 is the synthesis: draft → author → gate → drive.
+Read `docs/V1-AUTOPSY.md` and `fleet/REALISM.md` before repeating any of it.

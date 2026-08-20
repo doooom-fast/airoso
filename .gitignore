@@ -81,3 +81,10 @@ projects/*/assets/props/
 Thumbs.db
 # Per-track build output dirs in the V3 tracks/ layout
 tracks/*/build/
+
+# V3 tracks/ layout: per-track source-of-truth data IS committed (cached elevation is
+# expensive to re-derive; authored blends are the hand-edit surface, never regenerable)
+!tracks/*/data/*.npy
+!tracks/*/data/*.tif
+!tracks/*/data/*.json
+!tracks/*/loop.blend

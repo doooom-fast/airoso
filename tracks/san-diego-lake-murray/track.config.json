@@ -59,7 +59,12 @@
     },
     "connectors_kml": [],
     "connector_width_m": 10.0,
-    "_split_carriageways_doc": "DELETED 2026-08-19 (campaign C1; ledger 0029 decision, closes 0032+0035). The split-carriageway machinery produced the College Ave sawtooth (286 mainline verts clamped to 9 m in 35 disjoint stripes) and the phantom floating _opp ribbons (college_avenue_opp 1585 m, navajo_road_opp) that connected to nothing. Navajo & College are now single honest full-width ribbons on the mainline alignment. Do not re-add without a junction model."
+    "_split_carriageways_doc": "DELETED 2026-08-19 (campaign C1; ledger 0029 decision, closes 0032+0035). The split-carriageway machinery produced the College Ave sawtooth (286 mainline verts clamped to 9 m in 35 disjoint stripes) and the phantom floating _opp ribbons (college_avenue_opp 1585 m, navajo_road_opp) that connected to nothing. Do not re-add without a junction model.",
+    "median_islands": [
+      "College Avenue",
+      "Navajo Road"
+    ],
+    "_median_islands_doc": "Ledger 0037 (Kevin's seat, 2026-08-20): C1's single slab 'loses realism because that road doesn't look like that there' — the real streets are divided by raised landscaped medians ('flowers and barriers... grass etc... shrubs'). The rt_macau pattern (docs/JUNCTIONS.md): ONE continuous pavement slab, median standing ON it as a raised island. tools/median_envelope.py measures the real median from the OSM dual-carriageway geometry, re-centers the ribbon over the true middle and spans both carriageways; tools/author_median_blend.py authors the island (grass deck, shrub clumps, barrier runs) after build_loop_blend, gapped at every connector mouth."
   },
   "loop": true,
   "mirror_x": false,

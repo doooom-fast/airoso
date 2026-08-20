@@ -5,6 +5,16 @@ first-draft generator; Claude hand-edits geometry (in Blender and in readable in
 deterministic gates (mesh-audit, drive-test, kn5 checks) are the quality bar; Kevin's seat is the
 only thing that closes a loop. San Diego first, Sand Creek second.
 
+> **STATUS 2026-08-19 (evening):** Phase 0 DONE (all five landmines cleared; k10-sd-v021 salvaged
+> to `_salvage/`, 144 files / 299.6 MB verified). Phase 1 merge DONE — airoso adopted
+> k10-track-agents' full history (508df30) including the rescued natural_ground patch and ledger
+> 0032–0036; all donors imported (Blender bridge, 9 Colorado tracks, 4 rally stages, San Diego
+> loop + loop.blend + quarantined scripts-v021). 177/177 hermetic tests pass in the merged repo.
+> **Remaining in Phase 1:** the reduction/kill list, texture-library reconciliation (93 MB
+> diverged), AC-junction re-pointing check, archiving the donor repos (Kevin decisions 3–5).
+> Note: `tracks/` temporarily holds both hyphenated source dirs (V3) and underscored built track
+> folders (engine-era committed kn5s) — the built ones are slated for the reduction pass.
+
 This is not a new idea — it is the execution of a decision the fleet already made in writing:
 `fleet/REALISM.md` (2026-08-06, in k10-track-agents) — *"gates measure self-consistency;
 believability is authored"* — and k10-colorado's CLAUDE.md — *"Kevin is the designer. Claude is

@@ -1210,11 +1210,17 @@ def build(project_dir: str | Path) -> dict:
             print(f"  [sidewalk] despiked {_despiked} strip vert(s) that drape-dropped >"
                   f"{_MAX_DROP:.2f} m below the road inside the walk band")
         edge_group, edge_mat = "1KERB_sidewalk", "kerb"
-    else:
+    elif cfg_raw.get("natural_ground"):
+        # NATURAL GROUND (Kevin, 2026-08-09, verbatim diagnosis: "you can't seem to generate
+        # natural ground... it's obvious how the terrain should meet the road when you look at
+        # it. There's a ton of extra terrain now just for you to cut it into a moat"). The lidar
+        # already recorded the real earthworks — real shoulders, ditches, cut faces are IN the
+        # 3DEP heights. So: NO constructed corridor. A plain two-point verge (road_shoulder's
+        # no-ground fallback: lip + 1 m verge, no sections, which also silences the ring
+        # annulus, the graded floor and the stone lips downstream), raw-grid grass everywhere,
+        # and a short blend band sewn in later where grass approaches the deck.
         shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
-                                        ground_drop=GRASS_CLEARANCE_M, ground=grass_surf,
-                                        fill_apron=(str(cfg_raw.get("road_surface", "tarmac"))
-                                                    == "tarmac"))
+                                        ground_drop=GRASS_CLEARANCE_M)
         edge_group, edge_mat = "1ROAD_shoulder", "road"
         _pav_reg(edge_group, shoulder, "shoulder")
         # CONNECTORS GET A DRAPED VERGE TOO. The main loop's shoulder extends a MANAGED corridor
@@ -3059,6 +3065,36 @@ def build(project_dir: str | Path) -> dict:
                     _weldW += 1
         if _weldW:
             print(f"  [seam-weld] {_weldW} grass nodes raised to the 22% floor off the ring edge (0025)")
+        # CUT-EDGE EXCAVATION (0025 wave, sand-creek's hole): in a cut the terrain at the deck
+        # edge sits AT deck height, so a face from a bank crest outside the footprint to a
+        # "buried" node 1 cm under the deck crosses the deck plane inside the lane (8047:
+        # crest +1.69, inner nodes deck-0.01, face +0.49 over the outermost wheel). The real
+        # road removed that dirt. Sink ONLY inner nodes of bank-crossing faces — one end in
+        # the deck footprint within (deck-0.35, deck+0.15], the other end outside standing
+        # > deck+0.30 — to deck-0.35. The two universal versions of this are dead for cause
+        # (562k/697k nodes, broke the ground-check float budget); this touches the cut-edge
+        # strip only.
+        _excW = 0
+        _edone = set()
+        for _tW in grass.get("tris", ()):
+            for _eaW, _ebW in ((_tW[0], _tW[1]), (_tW[1], _tW[2]), (_tW[2], _tW[0])):
+                for _inW, _outW in ((_eaW, _ebW), (_ebW, _eaW)):
+                    if _inW in _edone:
+                        continue
+                    _ixW, _iyW, _izW = _gvW[_inW]
+                    _pavIW = _pav_below_W(_ixW, _izW, _iyW)
+                    if _pavIW is None or not (_pavIW - 0.35 < _iyW <= _pavIW + 0.15):
+                        continue
+                    _oxW, _oyW, _ozW = _gvW[_outW]
+                    if _oyW <= _pavIW + 0.30:
+                        continue
+                    if _pav_below_W(_oxW, _ozW, _oyW) is not None:
+                        continue
+                    _gvW[_inW] = (_ixW, _pavIW - 0.35, _izW)
+                    _edone.add(_inW)
+                    _excW += 1
+        if _excW:
+            print(f"  [cut-edge] {_excW} deck-edge grass nodes excavated to deck-0.35 (0025)")
 
     # MEASUREMENT-DRIVEN GUARDS (ledger 0025, closing move): the drive gate's comment says
     # unguarded in-band drops "mark exactly where the four-condition selector must place walls" —
@@ -3070,7 +3106,53 @@ def build(project_dir: str | Path) -> dict:
     # just inboard of every measured drop face that sits clear of the pavement. Measured, not
     # modeled. (Known limit: existing walls/railings are not in the hash, so a track with real
     # barriers may get a cosmetic extra lip beside them — harmless, revisit on the LM rebuild.)
-    if edge_group == "1ROAD_shoulder":
+    if cfg_raw.get("natural_ground") and edge_group == "1ROAD_shoulder" and grass.get("vertices"):
+        # NATURAL BLEND BAND: the only terrain intervention in natural_ground mode. The band
+        # width is DERIVED, not chosen: the road rides ROAD_LIFT_M above the data, and the
+        # blend absorbs that delta at <=5% added grade (half the drive gate's budget, gentler
+        # than any measured embankment) -> B = lift/0.05, floored at 2 m. Inside the band,
+        # grass eases from the deck edge height to raw data; under the deck it stays buried.
+        _cbn = {}
+        for _ib in range(len(centerline)):
+            _pb = centerline[_ib]
+            _cbn.setdefault((int(_pb[0] // 8.0), int(_pb[2] // 8.0)), []).append(_ib)
+        _BW = max(2.0, (ROAD_LIFT_M + GRASS_CLEARANCE_M) / 0.05)
+        _gvN = grass["vertices"]
+        _blendN = _buryN = 0
+        for _gi in range(len(_gvN)):
+            _gx, _gy, _gz = _gvN[_gi]
+            _best = None
+            _ci, _cj = int(_gx // 8.0), int(_gz // 8.0)
+            for _di in (-2, -1, 0, 1, 2):
+                for _dj in (-2, -1, 0, 1, 2):
+                    for _ib in _cbn.get((_ci + _di, _cj + _dj), ()):
+                        _pb = centerline[_ib]
+                        _d2 = (_gx - _pb[0]) ** 2 + (_gz - _pb[2]) ** 2
+                        if _best is None or _d2 < _best[0]:
+                            _best = (_d2, _ib)
+            if _best is None:
+                continue
+            _ib = _best[1]
+            _dc = math.sqrt(_best[0])
+            _de = _dc - widths[_ib] / 2.0
+            _ey = centerline[_ib][1] + ROAD_LIFT_M
+            if abs(_gy - _ey) > 6.0:
+                continue                      # another leg / stacked geometry: leave it alone
+            if _de <= 0.0:
+                _by = _ey - GRASS_CLEARANCE_M - 0.02
+                if _gy > _by:
+                    _gvN[_gi] = (_gx, _by, _gz)
+                    _buryN += 1
+            elif _de < _BW:
+                _t = _de / _BW
+                _s = _t * _t * (3.0 - 2.0 * _t)
+                _ny = (_ey - 0.02) * (1.0 - _s) + _gy * _s
+                _gvN[_gi] = (_gx, _ny, _gz)
+                _blendN += 1
+        print(f"  [natural-ground] blend band {_BW:.1f} m: {_blendN} nodes eased to the deck edge, "
+              f"{_buryN} buried beneath it; corridor machinery OFF (Kevin 2026-08-09)")
+
+    if edge_group == "1ROAD_shoulder" and not cfg_raw.get("natural_ground"):
         _mgH = {}
         for _srcH, _clsH in ((road, "P"), (kerb, "P"), (shoulder, "P"),
                              (grass, "G"), (ring_mesh, "G"), (runoff, "G"), (shoulder_under, "G")):

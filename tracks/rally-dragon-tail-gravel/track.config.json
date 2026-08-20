@@ -1,0 +1,188 @@
+{
+  "name": "Rally Colorado - Dragon Tail (Gravel)",
+  "slug": "rally_co_dragon_tail_gravel",
+  "version": "0.1.0",
+  "author": "k10-motorsports",
+  "year": 2026,
+  "ui_series": "K10 Colorado Rally",
+  "archetype": "real_road",
+  "road_surface": "gravel",
+  "_road_surface_doc": "The real thing: a graded dirt/clay county road. Forks ROAD physics (FRICTION 0.70, DAMPING 0.03, DIRT_ADDITIVE 1, gravel roll sound) and the 1ROAD/1RUNOFF texture. The tarmac twin at tracks/dragon-tail-tarmac shares this exact route and elevation and differs ONLY in this key.",
+  "location": {
+    "lat": 39.8563,
+    "lon": -108.8466,
+    "timezone": "America/Denver",
+    "city": "Rangely",
+    "country": "United States"
+  },
+  "source": {
+    "type": "osm",
+    "_doc": "Whole stage lives on the OSM road network as County Road 116 - three contiguous ways, tertiary, surface=unpaved, chaining east to west with no gaps. Verified against Overpass 2026-07-24. No KML or aerial tracing needed; see docs/STAGE-SOURCING.md."
+  },
+  "route": {
+    "roads": [
+      "County Road 116"
+    ],
+    "_roads_doc": "The rally lists this stage as 'Dragon Tail - CR 116/133 NW'. Only the CR 116 portion exists in OSM (CR 133 is unmapped anywhere in the region), so this build is the CR 116 leg: 25.2 km from the eastern end at 39.8319,-108.7445 to the western end at 39.8739,-108.9443.",
+    "bbox": [
+      39.81,
+      -108.97,
+      39.9,
+      -108.72
+    ],
+    "start_at": [
+      39.8319,
+      -108.7445
+    ],
+    "_start_at_doc": "Eastern end of CR 116 - the stage runs east to west, downhill-ish toward the Douglas Creek drainage.",
+    "width_profile": "mountain",
+    "_width_profile_doc": "Rural table (3.0 m lanes, no urban parking/turn allowances). A graded county road is one narrow two-way surface, not a laned highway.",
+    "connectors": {},
+    "wide_corners": [
+      {
+        "station_m": 6364,
+        "width_m": 10.0,
+        "_doc": "First switchback of the Douglas Creek descent \u2014 three consecutive 116-126 deg turns over 30 m on a 7 m OSM radius. A graded county-road hairpin is cut wider at the apex than the road it joins."
+      },
+      {
+        "station_m": 6565,
+        "width_m": 10.0,
+        "_doc": "Second switchback, the tightest on the stage (137-150 deg). 10 m, not the 12 m first tried: the wider flare overhung its own embankment and left a 3.12 m drop off the outside edge. 10 m still clears the 9 m the corner-feasibility check needs."
+      },
+      {
+        "station_m": 7425,
+        "width_m": 11.0,
+        "_doc": "Third, gentler at 110 deg \u2014 flared just past the drive-test's undrivable threshold."
+      }
+    ]
+  },
+  "loop": false,
+  "_loop_doc": "POINT-TO-POINT. A rally stage has two ends and is driven once: the grid goes at the eastern start, AC_TIME_0 (AC's start/finish) goes at the western finish, and the splits divide the run between them. See CLAUDE.md.",
+  "default_width_m": 6.5,
+  "width_overrides": [],
+  "osm_road_widths": false,
+  "_osm_road_widths_doc": "Off. OSM carries no lane count for an unpaved county road, so the lane-derived widths would be guesses dressed as data. A flat 6.5 m matches a graded two-track county road.",
+  "origin": "centroid",
+  "surfaces": {
+    "road": "1ROAD",
+    "grass": "GRASS",
+    "kerb": "1KERB"
+  },
+  "road_markings": {
+    "style": "none",
+    "_doc": "Nobody paints lane lines on graded dirt."
+  },
+  "road_text": {
+    "enabled": false
+  },
+  "kerb": {
+    "enabled": false,
+    "_doc": "No racing kerbs on a public dirt road - the edge is loose gravel into sagebrush."
+  },
+  "runoff": {
+    "enabled": false,
+    "_doc": "Run-off here is dirt, scrub and drop-off, not a paved apron."
+  },
+  "road_profile": {
+    "_doc": "Elevation is 100% real USGS 3DEP along the route - 1,833-2,216 m (6,017-7,270 ft) over the stage. max_grade_pct 18 clears the real steepest measured pitch (17.5%); the default 6% cap would flatten the mesa climbs and float the road over the drainages. Nothing hand-authored: no dips, no cambers, the terrain provides them.",
+    "max_grade_pct": 18.0,
+    "dips": [],
+    "cambers": []
+  },
+  "scenery": {
+    "_doc": "Pinyon-juniper woodland - the real vegetation of the Rio Blanco mesas at 5,000-7,000 ft. NOT the bare sagebrush flat an earlier pass assumed, and not a Front Range spruce forest either: continuous short-conifer woodland over the slopes and mesa tops, thinning into sage where the road drops into the drainages. Billboards carry the mass out to 300 m; real 3D pine geometry fills the corridor the driver actually reads. All of it bakes into the kn5 from bundled assets - nothing here depends on external models that could go missing.",
+    "fill_terrain": true,
+    "tree_style": "conifer",
+    "tree_atlas_cols": 3,
+    "tree_atlas_rows": 2,
+    "tree_step_m": 4.0,
+    "fill_per_station": 10,
+    "fill_range_m": 300.0,
+    "fill_bias": 1.5,
+    "_fill_bias_doc": "1.5, not the Lariat's 2.4: pinyon-juniper spreads evenly across a slope rather than crowding the verge, so the bias toward the road is gentle.",
+    "fill_off_min_extra_m": 6.0,
+    "tree_cap": 60000,
+    "_tree_cap_doc": "Billboards are ~12 verts each, so 40-60k of them cost under 1 M verts and are what makes the mesa read as continuous woodland. This is the immersion lever - NOT the 3D count, which is 4,006 verts per instance and blew environment.obj to 341 MB at 1,167 trees.",
+    "forest3d": {
+      "module": "pine",
+      "spacing_m": 26.0,
+      "off_min_m": 4.5,
+      "off_max_m": 45.0,
+      "cap": 500,
+      "scale_min": 0.8,
+      "scale_max": 1.7,
+      "_doc": "Real 3D trees only where the driver reads them - within 45 m of the road, 500 of them. Scale 0.8-1.7 on a 4.31 m module = 3.4-7.3 m trees, pinyon/juniper height (the Lariat's 2.2-4.2 would put 18 m alpine pines on a high-desert mesa). The cap is a hard budget: the module is 4,006 verts, so 500 instances is already ~2 M verts of forest."
+    },
+    "bush_spacing_m": 5.0,
+    "bush_density": 0.5,
+    "bush_off_min_m": 3.0,
+    "bush_off_span_m": 45.0,
+    "bush_size_min_m": 0.5,
+    "bush_size_span_m": 0.9,
+    "_bush_doc": "Sagebrush and rabbitbrush under and between the trees - the understory that makes the woodland floor read right.",
+    "corridor_margin_m": 3.0,
+    "light_spacing_m": 0,
+    "powerline_spacing_m": 0,
+    "fences": false,
+    "fence_auto": false,
+    "signs": {
+      "enabled": false
+    },
+    "road_signs": {
+      "enabled": false
+    },
+    "treefx": {
+      "enabled": false,
+      "_doc": "OFF. TreeFX renders third-party .bin models we do not have, and a species with no model is exactly the 'tree manifest missing' failure. The forest above is baked geometry + billboards from bundled assets, so it ships with the track and cannot go missing."
+    },
+    "fill_tree_h_min_m": 3.5,
+    "fill_tree_h_span_m": 4.0,
+    "_fill_tree_h_doc": "3.5-7.5 m billboards. The engine default is 8-16 m (mature montane ponderosa, the Lariat's forest); pinyon and juniper on a 6,000 ft mesa are short and bushy. Matches the forest3d scale range so the two layers read as one woodland."
+  },
+  "lighting": {
+    "presets": [
+      "morning",
+      "noon",
+      "golden_hour"
+    ],
+    "_presets_doc": "The rally runs mid-July; noon is the honest high-desert look (harsh, overhead, short shadows).",
+    "grassfx": true,
+    "_grassfx_doc": "CSP-native 3D grass on the ground mesh - no external models, so nothing to go missing. This is what makes the verge read as dry scrub.",
+    "light_pollution": {
+      "color": [
+        1.0,
+        0.88,
+        0.7
+      ],
+      "density": 0.02,
+      "radius_km": 3.0,
+      "_note": "Rangely is a small town 25 km away across empty mesa - the night sky here is essentially dark."
+    }
+  },
+  "texture_overrides": {
+    "1GRASS": {
+      "diffuse": "assets/textures/ground_dry_diffuse.jpg",
+      "_doc": "Dry high-desert dirt, not green grass. Mesh stays 1GRASS so physics, audits and GrassFX are untouched."
+    }
+  },
+  "layouts": [
+    {
+      "id": "stage",
+      "ai": "ai/stage",
+      "_doc": "The stage as the rally runs it: east to west along CR 116."
+    }
+  ],
+  "ui_tags": [
+    "rally",
+    "stage",
+    "point-to-point",
+    "gravel",
+    "real-roads"
+  ],
+  "ui_description": "Gravel point-to-point rally stage near Rangely, Colorado, built from real OpenStreetMap county-road geometry and USGS 3DEP elevation. Drive it once, start to finish - it is a stage, not a lap.",
+  "true_north_rotation_deg": 0.0,
+  "terrain_cell_m": 8.0,
+  "_terrain_cell_doc": "The road is 6.5 m wide; the engine default gives ~10 m cells here, so a terrain triangle can span the whole carriageway. 8 m target -> x5 upsample -> ~8 m cells and ~1.46 M verts. x7 (5.7 m cells, 2.87 M verts) ran the mesh build out of memory and left a truncated track.obj, so the budget is capped deliberately.",
+  "terrain_vertex_budget": 1600000,
+  "corridor_refine_factor": 4
+}

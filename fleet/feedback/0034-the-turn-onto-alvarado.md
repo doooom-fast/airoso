@@ -72,3 +72,26 @@ width fix.
   closure vertex carries one width). Today: 17.0 vs 27.5.
 - No adjacent width jump > 1 m within 250 m of the seam.
 - Kevin makes the turn onto Alvarado and calls it a corner, not a mess.
+
+## 2026-10-08 — measured on the r2 (C1+median) gate OBJ, correct frame
+
+Neither seam candidate. The corner that breaks is the **south end of College**, where the loop runs
+beside itself: the outbound leg (verts 690–760, heading SW, climbing 0.5→9.7 m) hairpins at
+verts 760–770 and returns NE (780–850) **22.8 m away, antiparallel**. Two defects stack there:
+
+- *Inherited:* a ribbon cannot turn a hairpin with half-width 6.5 m without folding — fold
+  verts (turn radius < half-width) measured at 768–772; the July reference carries the same
+  corner (its widths were narrower there, so the fold was milder).
+- *New in the first median build (0037 r1/r2):* re-centring College over its true median and
+  widening it to ~24 m walked the ribbon (780–850, shifted 7–11 m) onto its own outbound leg —
+  closest approach 22.8 → 15.2 m at verts 722/809, the shifted deck ~1.2 m above the approach,
+  grass over road, the road surface unreachable at lateral −0.75 for verts 721–726 (an 18 m
+  "hole"; the drive test's 1.53 m "severe step" at station 2152). The palms at stations
+  2144–2149 are the same stretch's verge furniture landing in the approach's lane.
+
+Fix landed: `tools/median_envelope.py` self-proximity guard — a vertex whose widened ribbon
+would come within 1 m of any other part of the loop is not a median candidate, so the run starts
+past the self-adjacent stretch. The hairpin itself (fold) stays open: it is a C3 authored-pad job
+per docs/JUNCTIONS.md (PAD topology; arms cut at straight lateral cuts), not a ribbon parameter.
+Spawn for it: `start_positions.json` → `seam-alvarado` is the wrong site; add `0034-college-hairpin`
+at vert ~765 when C3 starts.

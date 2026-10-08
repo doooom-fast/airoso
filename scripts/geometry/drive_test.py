@@ -209,7 +209,14 @@ def run(project_dir: str | Path) -> dict:
     data = project / "data"
     cfg = json.loads((project / "track.config.json").read_text())
     fin = data / "finished_centerline.json"
-    if fin.exists():
+    gate_cl = data / "gate_centerline.json"
+    if gate_cl.exists():
+        # written by kn5_to_gate_obj beside track.obj, in the OBJ's (engine) frame — the loop
+        # prep's finished_centerline is in the KN5 frame (z mirrored) and must not be walked
+        # against this OBJ (see scripts/modkit/kn5_to_gate_obj.py)
+        lc = json.loads(gate_cl.read_text())
+        pts = [tuple(p) for p in lc["points_xyz_m"]]
+    elif fin.exists():
         # the line the ribbon was actually swept along (already in mesh frame) — driving the raw
         # centerline instead reads phantom obstructions where corner-rounding moved the pavement
         lc = json.loads(fin.read_text())
@@ -340,6 +347,18 @@ def run(project_dir: str | Path) -> dict:
     _has_ends = not bool(cfg.get("loop", True))
     _lap_end = sum(math.dist((pts[i][0], pts[i][2]), (pts[i + 1][0], pts[i + 1][2]))
                    for i in range(len(pts) - 1))
+    # MEDIAN ISLAND (0037). On a divided road the centreline IS the raised island — sweeping the
+    # centre wheel pair over it reads the curb as a severe step and the grass deck as soft ground
+    # in the lane. Where data/median_bands.json declares an island, the ten paths move into the
+    # driven lane (right of the island: lane edge .. pavement lip), same shape: edges, thirds,
+    # centre. The step/kink memory resets at each island boundary so the lateral re-seat is not
+    # scored as a bump. Nothing is skipped — the island itself is gated by audit (curb must be
+    # 1KERB, deck 1GRASS) and the lane is swept in full.
+    from scripts.geometry.median_zone import MedianZone
+    _zone = MedianZone.load(project)
+    if _zone:
+        print(f"  (median island on {_zone.n_island} verts — wheel paths swept in the driven lane there)")
+    _prev_island = False
     prev_h = [None] * 10
     prev_slope = [None] * 10
     off_pavement = 0
@@ -370,6 +389,18 @@ def run(project_dir: str | Path) -> dict:
         # un-swept notches and read grass 'mid-lane'. Cars travel the center swath; test THAT.
         lane_half = min(max(w / 2 - 0.4, 0.8), 6.0)
         lines = (-(w / 2 - 0.5), -w / 3, 0.0, w / 3, (w / 2 - 0.5))   # edges included
+        _isl = _zone.island_half_at(i) if _zone else 0.0
+        _on_island = _isl > 0 and (w / 2 - 0.5) - (_isl + 0.4) >= 2.0
+        if _on_island:
+            # driven lane = right of the island (negative offsets are the right-hand side here)
+            lo, hi = _isl + 0.4, w / 2 - 0.5
+            mid = (lo + hi) / 2.0
+            third = (hi - lo) / 3.0
+            lines = (-hi, -(mid + third / 2), -mid, -(mid - third / 2), -lo)
+        if _on_island != _prev_island:
+            prev_h = [None] * 10
+            prev_slope = [None] * 10
+            _prev_island = _on_island
         # edge paths (|line| = w/2-0.5) DETECT holes/ground-through at the pavement lip;
         # smoothness (steps/kinks) gates only on INTERIOR paths — nobody laps on the hinge
         edge_line = {0, len(lines) - 1}
@@ -446,7 +477,15 @@ def run(project_dir: str | Path) -> dict:
             # corridor CAP: at junction-flare boxes lane_half balloons to 12-16 m and the box's
             # own edge furniture (barriers hugging a 33 m mouth) reads as an obstruction. The
             # car needs a clear TRAVEL SWATH — 6 m half-width is a full two-lane clearance.
-            for name in obstacle.rising_in(x, z, min(lane_half, 6.0) + 0.3,
+            # MEDIAN ISLAND (0037): the island's barrier and planting stand at the centreline by
+            # design — scan the driven lane (right of the island) instead of a disc on the centre.
+            _ox, _oz, _orad = x, z, min(lane_half, 6.0) + 0.3
+            if _on_island:
+                _lo, _hi = _isl + 0.4, w / 2 - 0.5
+                _mid = (_lo + _hi) / 2.0
+                _ox, _oz = x + nx * (-_mid), z + nz * (-_mid)
+                _orad = min((_hi - _lo) / 2.0, 6.0) + 0.3
+            for name in obstacle.rising_in(_ox, _oz, _orad,
                                            lambda vx, vz: surface.top_at(vx, vz, y_ref)[0],
                                            OBST_CLEAR_M, OBST_HEIGHT_M):
                 if on_bridge and "BRIDGE" in name.upper():

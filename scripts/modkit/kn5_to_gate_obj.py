@@ -84,6 +84,20 @@ def main() -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     s = kn5_to_obj(kn5, out, flip_z=not args.no_flip_z)
     print(f"{kn5.name} -> {out}  ({s['meshes']} groups, {s['verts']:,} v, {s['tris']:,} tri)")
+    # GATE CENTRELINE. The loop prep (build_kn5_loop) writes data/finished_centerline.json in the
+    # KN5 frame (x, y, -z) for kn5_ground_check, which reads the kn5 itself. This OBJ is in the
+    # ENGINE frame (z un-mirrored above), so drive_test/audit must walk the same line in the same
+    # frame: write it beside the OBJ as data/gate_centerline.json. (2026-10-08: drive_test preferred
+    # finished_centerline and swept a z-mirrored path over a local-frame OBJ — every finding was
+    # from the wrong side of the map; the median-zone exemption inherited the same mismatch.)
+    fin = args.project / "data" / "finished_centerline.json"
+    if fin.exists() and not args.no_flip_z:
+        f = json.loads(fin.read_text(encoding="utf-8"))
+        f["points_xyz_m"] = [[p[0], p[1], -p[2]] for p in f["points_xyz_m"]]
+        f["frame"] = "engine (x=E, y=up, z=N) — finished_centerline with z un-mirrored, matches track.obj"
+        gc = args.project / "data" / "gate_centerline.json"
+        gc.write_text(json.dumps(f), encoding="utf-8")
+        print(f"  gate centreline -> {gc.name} (finished_centerline, z un-mirrored to the OBJ frame)")
 
 
 if __name__ == "__main__":

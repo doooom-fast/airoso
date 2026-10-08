@@ -40,7 +40,8 @@ MIN_SEP = 11.0        # carriageways this far apart = real median between them
 SEP_TRUST = 24.0      # above this it's a junction flare / wrong-chain match — untrusted
 MIN_RUN_M = 120.0
 GAP_BRIDGE = 8        # out-of-band verts (~24 m) tolerated INSIDE a run (turn-pocket flares)
-TAPER_VERTS = 12      # ~36 m blend of shift+width at run ends
+TAPER_VERTS = 16      # ~48 m blend of shift+width at run ends (cosine ramp — see _ramp)
+MIN_RADIUS_MARGIN = 1.0   # self-gate: turn radius must exceed the (widened) half-width + this
 CORNER_BUFFER = 10    # neutral verts kept between two different roads' runs at a shared corner
 ISLAND_MIN_W, ISLAND_MAX_W = 1.5, 7.0
 ISLAND_PULLBACK = 5
@@ -181,6 +182,7 @@ def build(project_dir):
 
         lat_signed = [0.0] * n
         ok = [False] * n
+        self_blocked = 0
         for k, (mx, mz) in enumerate(main_xz):
             d, (qx, qz) = _nearest_on_polyline(mx, mz, opp)
             if d > SEP_TRUST * 1.5:
@@ -192,6 +194,32 @@ def build(project_dir):
             s = abs(vlat)
             lat_signed[k] = vlat
             ok[k] = MIN_SEP <= s <= SEP_TRUST and abs(valong) <= 0.5 * s
+            # SELF-PROXIMITY GUARD. Where the loop runs beside ITSELF (College's south end: the
+            # outbound leg hairpins at verts 760-770 and comes back 22.8 m away), re-centring and
+            # widening the ribbon walked it onto its own other leg — the shifted deck sat 1.2 m over
+            # the approach, grass over road, an 18 m "hole" at verts 721-726 (2026-10-08). A vertex
+            # whose widened ribbon would come within 1 m of any other part of the loop is not a
+            # median candidate; the run simply starts past the self-adjacent stretch.
+            if ok[k]:
+                half_new = (s + widths[k] / 2.0) / 2.0
+                # judge the SHIFTED centre (the ribbon moves s/2 toward the opposing side) — the
+                # unshifted test cleared 22.8 m at verts 722/809 while the shifted ribbon collided
+                sx = mx + lxn * (vlat / 2.0)
+                sz = mz + lzn * (vlat / 2.0)
+                cx0, cz0 = int(sx // 25.0), int(sz // 25.0)
+                for q in range(max(0, k - 400), min(n, k + 400)):
+                    if abs(q - k) < 40:
+                        continue
+                    qx2, qz2 = main_xz[q]
+                    if abs(int(qx2 // 25.0) - cx0) > 2 or abs(int(qz2 // 25.0) - cz0) > 2:
+                        continue
+                    if math.hypot(qx2 - sx, qz2 - sz) < half_new + widths[q] / 2.0 + 1.0:
+                        ok[k] = False
+                        self_blocked += 1
+                        break
+        if self_blocked:
+            print(f"[median] '{road}': {self_blocked} vert(s) excluded — widened ribbon would touch "
+                  f"another part of the loop (self-adjacent stretch)")
         per_road_lat[road] = lat_signed
 
         i = 0
@@ -243,7 +271,13 @@ def build(project_dir):
         run_len = sum(math.hypot(pts[k][0] - pts[k - 1][0], pts[k][2] - pts[k - 1][2])
                       for k in range(i + 1, j))
         for idx, k in enumerate(range(i, j)):
-            t = max(0.0, min(1.0, idx / TAPER_VERTS, (j - 1 - k) / TAPER_VERTS))
+            # COSINE RAMP, not linear. A linear 12 m shift over 36 m puts an 18-degree kink at each
+            # end of the taper (1 m lateral per 3 m vertex); on a ribbon widened to 15 m half-width
+            # that is R≈9 m < half-width — the inside edge folds over itself (found 2026-10-08 as
+            # fold verts 768-772 / 1512-1516 on Lake Murray r2). The cosine ramp's minimum radius is
+            # 2L²/(Sπ²): 48 m for 12 m ≈ 39 m, comfortably above any half-width here.
+            t_lin = max(0.0, min(1.0, idx / TAPER_VERTS, (j - 1 - k) / TAPER_VERTS))
+            t = 0.5 - 0.5 * math.cos(math.pi * t_lin)
             s = max(MIN_SEP, min(SEP_TRUST, mag[idx]))
             tx, tz = _tangent(k)
             lxn, lzn = -tz, tx
@@ -288,7 +322,7 @@ def build(project_dir):
         pts[k][0] += shift[k][0]
         pts[k][2] += shift[k][1]
 
-    # SELF-GATE: the output must be step-free before it is allowed to exist on disk
+    # SELF-GATE 1: the output must be step-free before it is allowed to exist on disk
     disp = [math.hypot(shift[k][0], shift[k][1]) for k in range(n)]
     worst = max((abs(disp[k] - disp[k - 1]), k) for k in range(1, n))
     if worst[0] > MAX_STEP_M:
@@ -296,6 +330,28 @@ def build(project_dir):
         print(f"[median] FAIL: displacement step {worst[0]:.2f} m at vert {worst[1]} "
               f"(limit {MAX_STEP_M}) — raw restored from backup, nothing shipped")
         sys.exit(1)
+    # SELF-GATE 2: no shifted vertex may turn tighter than its own half-width — a ribbon whose
+    # turn radius is below half-width folds its inside edge over itself (faces invert, the kn5
+    # drops them, the sidewalk lands in the lane). Only shifted verts are judged: the ring's own
+    # sharp corners are a separate, pre-existing class (0034 / C3).
+    worst_r = (float("inf"), -1)
+    for k in range(1, n - 1):
+        if shift[k] == (0.0, 0.0):
+            continue
+        a, b, c = pts[k - 1], pts[k], pts[k + 1]
+        t1 = math.atan2(b[2] - a[2], b[0] - a[0])
+        t2 = math.atan2(c[2] - b[2], c[0] - b[0])
+        d = (t2 - t1 + math.pi) % (2 * math.pi) - math.pi
+        seg = (math.hypot(b[0] - a[0], b[2] - a[2]) + math.hypot(c[0] - b[0], c[2] - b[2])) / 2
+        r = seg / abs(d) if abs(d) > 1e-9 else float("inf")
+        need = new_w[k] / 2.0 + MIN_RADIUS_MARGIN
+        if r - need < worst_r[0] - (new_w[worst_r[1]] / 2.0 + MIN_RADIUS_MARGIN if worst_r[1] >= 0 else 0):
+            worst_r = (r, k)
+        if r < need:
+            raw_path.write_text(bak.read_text(encoding="utf-8"), encoding="utf-8")
+            print(f"[median] FAIL: turn radius {r:.1f} m at shifted vert {k} < half-width+margin "
+                  f"{need:.1f} m (inside edge would fold) — raw restored, nothing shipped")
+            sys.exit(1)
 
     raw["points_xyz_m"] = [[round(v, 4) for v in p] for p in pts]
     raw["widths_m"] = [round(w, 2) for w in new_w]

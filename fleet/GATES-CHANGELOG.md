@@ -88,3 +88,47 @@ nothing is worse than no gate. Fixed by the un-forking (`registry.json`).
 skips gates bound to earlier stages — a resumed build is not a gated build. `build_network.sh` and
 `build_loop.sh` are separate paths and do not run the full set; REALISM §4 folds them into one
 gated export path (`scripts/blender/export.py`, R3, not started).
+
+## 2026-10-08 — median island awareness (ledger 0037)
+
+**Change.** `scripts/geometry/median_zone.py` (new) reads `data/median_bands.json` — the per-vertex
+island width `tools/median_envelope.py` writes for divided roads — and the gates consult it:
+
+| Gate | Before | After |
+|---|---|---|
+| audit **D** walls-on-road | every median-barrier vert counted (25,896 on Lake Murray r2) | verts on the declared island band exempt |
+| audit **K** kerb-in-carriageway | island curb counted (4,213 incl. ~3,100 island) | island band exempt — K measures *intrusions* again |
+| audit **I** sidewalk-isolating | island curb counted (pavement on both sides, by design) | island band exempt |
+| drive_test wheel paths | centre pair swept over the island (curb = "severe step", deck = "soft top in lane") | on island stations the ten paths move into the driven lane; step/kink memory resets at island boundaries |
+
+**Why it is not a bypass.** The exemption is a *band* (island half-width + 0.6 m, laterally,
+±2 m along), only where the track declares an island, only for the three checks whose invariant
+("nothing that is not road stands on the road") the island legitimately breaks. The island's own
+correctness is still gated: the kn5 rename pass enforces its curb is `1KERB` (collidable) and its
+deck `1GRASS`; `verify_kn5` still checks the spawn and face-up; F (curb flush) is untouched. A
+track that declares no island gets no exemption (`median_bands.json` absent → zone `None`).
+
+**Measured basis.** rt_macau / union_island / ks_black_cat_county dissections
+(docs/JUNCTIONS.md): islands and traffic islands stand ON continuous pavement in every pro track
+measured; a gate that forbids that forbids the professional pattern.
+
+**Still owed (0036 / C2).** K becomes part of the *hard* exit total once the connector-mouth
+sidewalk sweeps are gapped — until then K would fail every street track on inherited defects.
+
+### Same day — gate centreline frame (a wrong-frame gate, found while measuring the above)
+
+`drive_test` prefers `data/finished_centerline.json` (the line the ribbon was swept along). On the
+loop path that file is written by `build_kn5_loop` **in the kn5 frame (z mirrored)** for
+`kn5_ground_check`, while `kn5_to_gate_obj` un-mirrors the kn5 into the **engine frame** for
+`drive_test`/`audit_mesh`. Result on Lake Murray r2: the drive test swept a z-mirrored path over a
+local-frame OBJ — "14 obstructed stations", a 0.4 m step at the median run end, island soft-tops
+— **all from the wrong side of the map**; the correct-frame run finds different, real defects
+(a 1.5 m step and palm trunks at the College/I-8 approach). The median-zone exemption inherited
+the same mismatch and exempted nothing (D 25,896 → 25,812).
+
+Fix: `kn5_to_gate_obj` now also writes `data/gate_centerline.json` (finished_centerline with z
+un-mirrored, i.e. the OBJ's frame) and `drive_test` + `median_zone` prefer it. Nothing else
+changes: `finished_centerline.json` stays in the kn5 frame for its kn5-reading consumers. A gate
+walking a line in a different frame than its mesh is the phantom-gate class (0008); this entry
+exists so the next person who sees a "clean" OBJ-gate run on a Blender-first track asks which
+frame it walked.

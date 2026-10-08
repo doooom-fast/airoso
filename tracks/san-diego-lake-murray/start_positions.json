@@ -1,6 +1,6 @@
 {
   "_doc": "Per-issue spawn registry (Kevin, 2026-08-20: 'write starting positions for each issue you fix so that you can start right where the issue is'). tools/set_start_blend.py moves AC_START_0/AC_HOTLAP_START_0 (+ the AC_PIT_n row behind) to positions[active] in the prepped blend, between the build_kn5_loop prep and the kn5 export. vertex indexes into data/centerline.local.json (post-smoothing); offset_right_m is lateral in the driving direction (right-hand lane; keeps the car off the median island).",
-  "active": "0037-college-median",
+  "active": "0033-college-del-cerro",
   "positions": {
     "seam-alvarado": {
       "vertex": 0,

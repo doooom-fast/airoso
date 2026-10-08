@@ -51,3 +51,16 @@ flowers need a texture of their own).
 Kevin's seat, same protocol as C1: does College now read as the real divided street? Island in
 the right place (it derives from the true carriageway midline, not our ribbon's center)? Left
 turn at Del Cerro still open? Barriers/planting where he remembers them?
+
+## 2026-10-08 — gates taught about the island; two guards added
+
+- The gates read the island as defects (audit D/K/I, drive_test centre paths) — fixed by
+  `scripts/geometry/median_zone.py` + a gate-frame centreline (fleet/GATES-CHANGELOG.md, this date).
+  With both: D 25,896→512, K 4,213→553, I 4,285→625 — the remainder is the connector mouths
+  ([0033](0033-junction-mouths-navajo-jackson-and-college-del-cerro.md)), already below the July
+  reference (K 1,096 / I 1,203) because the `_opp` ribbons' curbs are gone.
+- Envelope guards: **cosine taper** (the linear 36 m ramp folded the widened ribbon at both ends
+  of every run — fold verts 768–772, 1512–1516) with a turn-radius self-gate; **self-proximity**
+  (see [0034](0034-the-turn-onto-alvarado.md), this date) so the median never walks the ribbon
+  onto another part of the loop.
+- Seat verdict on the island itself: still pending (last AC session, Sep 29, loaded Lookout Lariat).

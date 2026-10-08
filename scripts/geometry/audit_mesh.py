@@ -287,8 +287,19 @@ def audit(project_dir: str | Path) -> dict:
     if not main_tris:
         main_tris = road_tris
     main_th = _tri_hash(main_tris, 8.0)
+    # MEDIAN ISLAND (0037): a raised landscaped island stands ON the slab of a divided road by
+    # design — its barrier is a wall on a road, its curb is kerb in the carriageway, its curb is a
+    # sidewalk with pavement on both sides. D/K/I exempt verts on the declared island (and only
+    # there — scripts/geometry/median_zone.py, band + 0.6 m). Zero-width = no exemption.
+    from scripts.geometry.median_zone import MedianZone
+    _zone = MedianZone.load(project_dir)
+    _in_island = _zone.contains if _zone else (lambda x, z: False)
+    if _zone:
+        print(f"  (median island declared on {_zone.n_island} centreline verts — D/K/I exempt there)")
     wall_on_road = 0
     for x, y, z in g["1WALL"]:
+        if _in_island(x, z):
+            continue
         ry = _surf_at(main_th, 8.0, x, z, y, dy_max=1.2)
         if ry is not None and abs(y - ry) < 1.2:
             wall_on_road += 1
@@ -330,6 +341,8 @@ def audit(project_dir: str | Path) -> dict:
                 _ctris.append((_cverts[_ix[0]], _cverts[_ix[_k]], _cverts[_ix[_k + 1]]))
     _carriage = _tri_hash(_ctris, 8.0)
     for x, y, z in g["1KERB"]:
+        if _in_island(x, z):
+            continue
         ry = _surf_at(_carriage, 8.0, x, z, y, dy_max=1.2)
         if ry is not None and y - ry > KERB_STAND_M:
             kerb_on_road += 1
@@ -459,6 +472,8 @@ def audit(project_dir: str | Path) -> dict:
     if sw_verts:
         all_road_th = _tri_hash(_obj_tris(data / "track.obj", ("1ROAD",)), 4.0)
         for x, y, z in sw_verts:
+            if _in_island(x, z):
+                continue
             ry = _surf_at(all_road_th, 4.0, x, z, y, dy_max=3.0)
             if ry is None or y - ry <= 0.08:
                 continue

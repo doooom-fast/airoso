@@ -480,7 +480,18 @@ def run(project_dir: str | Path) -> dict:
             # MEDIAN ISLAND (0037): the island's barrier and planting stand at the centreline by
             # design — scan the driven lane (right of the island) instead of a disc on the centre.
             _ox, _oz, _orad = x, z, min(lane_half, 6.0) + 0.3
-            if _on_island:
+            # transition band: within 2 stations of an island the centre disc still reaches the
+            # nose (12 SCRUB "obstructions" at the island/gap boundaries, 2026-10-08) — scan the
+            # lane there too, using the neighbouring island's half-width
+            _near_isl = 0.0
+            if _zone and not _on_island:
+                _near_isl = max(_zone.island_half_at(j) for j in range(i - 2, i + 3))
+            if not _on_island and _near_isl > 0 and (w / 2 - 0.5) - (_near_isl + 0.4) >= 2.0:
+                _on_island_scan, _isl_scan = True, _near_isl
+            else:
+                _on_island_scan, _isl_scan = _on_island, _isl
+            if _on_island_scan:
+                _isl = _isl_scan
                 _lo, _hi = _isl + 0.4, w / 2 - 0.5
                 _mid = (_lo + _hi) / 2.0
                 _ox, _oz = x + nx * (-_mid), z + nz * (-_mid)

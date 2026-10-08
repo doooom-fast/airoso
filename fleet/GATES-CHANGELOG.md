@@ -100,6 +100,7 @@ island width `tools/median_envelope.py` writes for divided roads — and the gat
 | audit **K** kerb-in-carriageway | island curb counted (4,213 incl. ~3,100 island) | island band exempt — K measures *intrusions* again |
 | audit **I** sidewalk-isolating | island curb counted (pavement on both sides, by design) | island band exempt |
 | drive_test wheel paths | centre pair swept over the island (curb = "severe step", deck = "soft top in lane") | on island stations the ten paths move into the driven lane; step/kink memory resets at island boundaries |
+| drive_test obstruction scan | 6.3 m disc on the centreline — the barrier/planting at every island station (2,670 + 2,589 hits) | on island stations, and within 2 stations of one (the disc otherwise reaches the nose), the scan covers the driven lane instead |
 
 **Why it is not a bypass.** The exemption is a *band* (island half-width + 0.6 m, laterally,
 ±2 m along), only where the track declares an island, only for the three checks whose invariant

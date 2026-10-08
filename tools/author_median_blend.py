@@ -153,17 +153,24 @@ def main():
         curbF.append((z + 3, z + 2, z + 1, z + 0))
         curbF.append((z + 5, z + 4, z + 3, z + 0))
 
-        # shrubs/planting: cross-quads along the deck
+        # shrubs/planting: cross-quads along the deck — placed within the NOSE-TAPERED half-width,
+        # not the data width (the first build put 16 bushes on the pavement beside the noses:
+        # drive_test obstruction stations 3204-3206 / 3771-3773, 2026-10-08)
         dist = 0.0
         for si in range(1, len(ks) - 1):
             k = ks[si]
             dist += math.hypot(pts[k][0] - pts[k - 1][0], pts[k][2] - pts[k - 1][2])
-            if dist < SHRUB_EVERY_M or iw[k] < 2.2:
+            half_here = iw[k] / 2.0
+            if si < NOSE_VERTS:
+                half_here = NOSE_HALF + (half_here - NOSE_HALF) * si / NOSE_VERTS
+            if (len(ks) - 1 - si) < NOSE_VERTS:
+                half_here = NOSE_HALF + (half_here - NOSE_HALF) * (len(ks) - 1 - si) / NOSE_VERTS
+            if dist < SHRUB_EVERY_M or half_here < 1.1:
                 continue
             dist = 0.0
             tx, tz = _tangent(pts, k)
             lx, lz = -tz, tx
-            off = (rnd() - 0.5) * max(0.2, iw[k] - 1.6)
+            off = (rnd() - 0.5) * max(0.2, 2.0 * half_here - 1.6)
             h = 0.35 + rnd() * 0.35
             w = 0.5 + rnd() * 0.4
             cx = pts[k][0] + lx * off

@@ -78,3 +78,23 @@ these two, audit K/I at the others should be unchanged (proves the edit was loca
 - No ribbon dead-end visible in either mouth (0035's check).
 - Kevin drives Navajo→Jackson and College past Del Cerro and neither word is "messy" nor
   "undriveable."
+
+## 2026-10-08 — C2 v1 built: ribbon-through at every connector mouth
+
+- `tools/trim_connectors.py` cuts each connector polyline at College's pavement edge (0.4 m
+  overlap, no sliver): del_cerro_blvd → 3 pieces, 18 points inside the mainline dropped, **4 mouth
+  cuts at College verts 1083–1088** — it is a 4-way crossing, both legs of the sub-loop meet
+  College here. `tools/gap_mouths_blend.py` removes the mainline's own curb+sidewalk faces across
+  each mouth on the connector's side (126 ring faces, station windows = connector half-width + 3 m).
+  The island is gapped across the same mouths by `median_envelope` (verts 1072–1099).
+- Measured on the gate OBJ (correct frame, island-aware): **K 1,096 → 387, I 1,203 → 417** vs the
+  July reference. What remains is NOT College/Del Cerro: the samples sit at (3, −1654) — the
+  southern seam where the wisconsin/connecticut connectors end beside the mainline without
+  crossing it (ends 14.9 / 44 m off, so no cut) and the sub-loop streets meet EACH OTHER
+  (airoso/adelante/colorado/connecticut/wisconsin). Connector-to-connector mouths = C2 v1.5.
+- Navajo/Jackson (station 6944, vert 2323): the width flip and the `navajo_road_opp` stub are
+  gone with C1; the ring's own sidewalk still wraps the inside of the corner as a ribbon. A
+  proper 4-way pad is C3-class authored work (docs/JUNCTIONS.md, PAD topology).
+- Not yet authored: corner-return arcs (JUNCTIONS R4). v1 is the gap 0036 routes; the pros wrap
+  the corner on R 3–6.5 m — next authored step, after Kevin's seat on the gapped mouth.
+- Spawn: `start_positions.json` → `0033-college-del-cerro` (vert 1078, right lane, mouth ~30 m ahead).

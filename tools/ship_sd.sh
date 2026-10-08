@@ -95,7 +95,8 @@ if [ "$INSTALL" = 1 ]; then
   step "install: $AC/${SLUG}_v3"
   B="$PROJ/build/$SLUG"
   cp "$AC/$SLUG/ai/fast_lane.ai" "$AC/$SLUG/ai/pit_lane.ai" "$AC/$SLUG/ai/side_l.csv" "$AC/$SLUG/ai/side_r.csv" "$B/ai/"
-  rm -rf "$AC/${SLUG}_v3" && cp -r "$B" "$AC/${SLUG}_v3"
+  if [ -d "$AC/${SLUG}_v3" ]; then rm -rf "$AC/${SLUG}_v3_prev"; mv "$AC/${SLUG}_v3" "$AC/${SLUG}_v3_prev"; fi
+  cp -r "$B" "$AC/${SLUG}_v3"
   python - <<PY
 import json
 p = r"$AC/${SLUG}_v3/ui/ui_track.json"

@@ -31,5 +31,16 @@ salvage (the vanished k10-san-diego repo's Windows snapshot; raw copy preserved 
 C1 delete split carriageways (0029/0032/0035) → C2 junction mouths + make audit K gate
 (0033/0036) → C3 the turn onto Alvarado (0034) → C4 full-loop drive report.
 
+**Status 2026-10-08.** C1 shipped and seat-confirmed ("dimensions look good"). 0037 median
+island built (r2) — seat verdict pending. C2 v1 built (`tools/trim_connectors.py` +
+`tools/gap_mouths_blend.py`): Del Cerro's 4-way at College trimmed and gapped; K/I now 387/417
+vs the July reference's 1,096/1,203; connector-to-connector mouths (v1.5) and corner-return
+arcs still open. C3's real site measured: the College south-end hairpin (verts 760–770), not
+the seam. The gates themselves were fixed this day (frame + island awareness —
+fleet/GATES-CHANGELOG.md); the July reference has NEVER passed them.
+
+**Build it:** `bash tools/ship_sd.sh` from airoso (draft → author → ship → gate → install;
+`--no-install`, `--force-install`, `--skip-blend`). Spawn site: `start_positions.json` → `active`.
+
 The installed kn5 (~66 MB, ui version 0.15.0) is the standing drive-feel reference (0029) —
 preserve it before any reinstall over the same slug.

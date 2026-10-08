@@ -86,3 +86,15 @@ un-gapped sidewalks, and the one audit check that would refuse them is advisory.
 - Regression rows above build with bit-identical edge geometry.
 - Kevin drives a multi-street network — Sand Creek or Lake Murray — and the junctions are the
   part he doesn't mention.
+
+## 2026-10-08 — fix landed as V3 tools; K-gate promotion still owed
+
+Both routed mechanisms are now handled OUTSIDE the quarantined assembler, as scripted authoring
+on the draft (the white-glove shape): `tools/trim_connectors.py` (the side street ends at the
+mainline's edge — ribbon-through) and `tools/gap_mouths_blend.py` (the mainline sweep stops at
+every mouth). Audit K on Lake Murray: 1,096 (July reference) → 4,213 (island counted, pre-fix)
+→ 387. The island itself is exempt by construction (`scripts/geometry/median_zone.py`).
+
+**K hard** waits on C2 v1.5 (connector-to-connector mouths inside the Del Cerro sub-loop):
+promoting it today would fail the build on 387 inherited verts the fix does not yet reach.
+Tracked in fleet/GATES-CHANGELOG.md ("Still owed").

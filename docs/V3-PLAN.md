@@ -14,6 +14,16 @@ only thing that closes a loop. San Diego first, Sand Creek second.
 > diverged), AC-junction re-pointing check, archiving the donor repos (Kevin decisions 3–5).
 > Note: `tracks/` temporarily holds both hyphenated source dirs (V3) and underscored built track
 > folders (engine-era committed kn5s) — the built ones are slated for the reduction pass.
+>
+> **STATUS 2026-10-08:** Phase 2 DONE (docs/JUNCTIONS.md). Phase 3 pit-wall loop: in use
+> (`tools/ship_sd.sh` is the one-command cycle; per-issue spawns in `start_positions.json`;
+> the in-game AI-drive harness is blocked on desktop-control approval — denied twice, not re-asked).
+> Phase 4: C1 shipped + seat-confirmed; 0037 median island built (seat pending); **C2 v1 built**
+> (connector mouths trimmed + gapped) and shipped as `san_diego_lake_murray_v3` — the first build
+> that beats the July reference on every drive-test metric (severe steps 84→0, soft-top 913→130,
+> kinks 47→8/km) and on audit K/I/F. The gates themselves needed two fixes first (frame + island
+> awareness — fleet/GATES-CHANGELOG.md). Open: C2 v1.5 (connector-to-connector mouths),
+> corner-return arcs, C3 = the College south-end hairpin (verts 760–770, measured), K→hard.
 
 This is not a new idea — it is the execution of a decision the fleet already made in writing:
 `fleet/REALISM.md` (2026-08-06, in k10-track-agents) — *"gates measure self-consistency;

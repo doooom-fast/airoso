@@ -67,6 +67,8 @@ step "ship: verify_kn5 (hard)"
 step "ship: track folder"
 (cd "$ENG" && python -m scripts.ac.track_folder "$PROJ") | grep -E "wrote|length_m|n_pits"
 cp "$PROJ/build/$SLUG.kn5" "$PROJ/build/$SLUG/"
+step "ship: minimap in the KN5 frame (track_folder draws it mirrored — tools/make_map.py)"
+(cd "$AIROSO" && python tools/make_map.py "$PROJ")
 
 step "gate: kn5 -> gate OBJ (engine frame) + gate centreline"
 (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")

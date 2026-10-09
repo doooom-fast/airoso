@@ -60,6 +60,8 @@ if [ "$SKIP_BLEND" = 0 ]; then
   step "author: export scatter positions, strip procedural vegetation (TreeFX replaces it)"
   (cd "$WS" && "$BL" --background --python "$AIROSO/tools/export_scatter_blend.py" -- project 2>&1 | grep "^\[scatter" )
   (cd "$WS" && "$BL" --background --python "$AIROSO/tools/strip_scenery_blend.py" -- project 2>&1 | grep "^\[strip" | cut -c1-160 )
+  step "author: Kevin's lamp model at every streetlight (LIGHTPOST + LIGHTS lens)"
+  (cd "$WS" && "$BL" --background --python "$AIROSO/tools/author_lamps_blend.py" -- project 2>&1 | grep "^\[lamps\]\|Error\|Traceback" )
 fi
 
 step "ship: prep (AC naming, dummies, 65k splits)"

@@ -40,6 +40,7 @@ cp "$SRC/start_positions.json" "$PROJ/start_positions.json"
 for f in centerline.raw.local.json.pre-median connectors.local.json.pre-trim; do
   [ -f "$SRC/data/$f" ] && cp "$SRC/data/$f" "$PROJ/data/$f"
 done
+mkdir -p "$PROJ/source/trees" && cp "$SRC/source/trees/"*.bin "$PROJ/source/trees/" 2>/dev/null || true   # TreeFX models (gitignored, personal use)
 
 if [ "$SKIP_BLEND" = 0 ]; then
   step "draft: median envelope (self-gated)"
@@ -56,6 +57,9 @@ if [ "$SKIP_BLEND" = 0 ]; then
   (cd "$WS" && "$BL" --background --python "$AIROSO/tools/author_median_blend.py" -- project 2>&1 | grep "^\[median" )
   step "author: gap the mainline sidewalk at every mouth"
   (cd "$WS" && "$BL" --background --python "$AIROSO/tools/gap_mouths_blend.py" -- project 2>&1 | grep "^\[gap" )
+  step "author: export scatter positions, strip procedural vegetation (TreeFX replaces it)"
+  (cd "$WS" && "$BL" --background --python "$AIROSO/tools/export_scatter_blend.py" -- project 2>&1 | grep "^\[scatter" )
+  (cd "$WS" && "$BL" --background --python "$AIROSO/tools/strip_scenery_blend.py" -- project 2>&1 | grep "^\[strip" | cut -c1-160 )
 fi
 
 step "ship: prep (AC naming, dummies, 65k splits)"
@@ -71,6 +75,8 @@ step "ship: track folder"
 cp "$PROJ/build/$SLUG.kn5" "$PROJ/build/$SLUG/"
 step "ship: minimap in the KN5 frame (track_folder draws it mirrored — tools/make_map.py)"
 (cd "$AIROSO" && python tools/make_map.py "$PROJ")
+step "ship: TreeFX palms / street trees / scrub (tools/make_treefx.py)"
+(cd "$AIROSO" && python tools/make_treefx.py "$PROJ")
 
 step "gate: kn5 -> gate OBJ (engine frame) + gate centreline"
 (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")

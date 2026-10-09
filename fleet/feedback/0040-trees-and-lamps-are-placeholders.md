@@ -1,0 +1,58 @@
+---
+id: 0040
+title: "The trees and lamps are pretty trash" — procedural cross-quad palms, blob trees and box lamps
+status: in-progress
+scope: tracks/san-diego-lake-murray scenery; engine TreeFX route (scripts/environment/treefx.py, scripts/ac/ext_config.py)
+layer: track + tools
+train: -
+---
+
+## Symptom (Kevin, seat, 2026-10-08)
+
+> "let's start replacing the trees and lamps. They're pretty trash right now."
+
+## What is there today
+
+`build_loop_blend.py` generates 898 Mexican fan palms as cross-quad fronds on cylinder trunks
+(PALMFROND_A–H / PALMTRUNK_A–B, ~500k verts), 420 shade trees as blob canopies, 1,000 scrub blobs,
+and 239 streetlights as 9 m box posts (LIGHTS) from which `ext_config` clusters [LIGHT_N].
+
+## Inventory (3 agents, 2026-10-08)
+
+- **Owned library** (C:\Users\Owner\Dropbox\Blender): no palm of any kind; every file is a
+  Dropbox online-only stub (0 bytes resident) until marked "Available offline". The one owned
+  lamp (Street_Lamp.zip) is already decimated into the repo: `assets/models/lamp_post.obj`
+  (2,060 v) + `lamp_lens.obj`; its emissive/opacity PBR maps are only in the dehydrated zip.
+- **Jackpot — No Hesi 1.10** (installed, hydrated): CSP TreeFX `.bin` models of the right
+  Southern-California species — PalmV1/V2/V3 (20/25/28 m fan palms with LOD chains),
+  PepperV1 (California pepper), SycamoreV1–V6, Agave/Yucca/Sage/Ocotillo. Plus
+  algarve_portimao_2023 (Gum = eucalyptus, Bush1–3) and shuto (Pine_Aleppo). All personal-use
+  mod content: `*.bin` is gitignored, never leaves this machine, never in a shared folder
+  (No Hesi's licence forbids derivative works — Kevin's standing personal-use decision covers it).
+- **rt_california_highway_palms.kn5**: 61 real fan-palm meshes with the dead-frond skirt —
+  ~13.6k verts each, so only for a few hero palms or as a billboard texture source.
+- **Engine**: `scripts/environment/treefx.py` + `scripts/ac/ext_config.py` already emit
+  `extension/trees/trees.txt` + `[TREES]`; nothing was ever wired for Lake Murray.
+
+## Fix — pass 1 (vegetation, built this day)
+
+TreeFX: `tools/export_scatter_blend.py` reads every palm/tree/scrub/median-plant position out
+of the built scene (island walk; the scatter is deterministic), `tools/strip_scenery_blend.py`
+deletes the procedural meshes, `tools/make_treefx.py` writes `trees.txt` + `[TREES]` with
+species mixes (palms 60/30/10 V1/V2/V3 scaled to residential 13–19 m; yards pepper/sycamore/
+eucalyptus/Aleppo pine; chaparral sage/yucca/bush/agave; median planting small bush/sage),
+positions in the kn5 frame, snapping onto `1GRASS_0_mat, 1GRASS_1_mat, 1ROAD_road_mat`, and a
+corridor guard (TreeFX is invisible to the gates, so no tree may stand within half-width + 1 m
+of any centreline). Wired into `tools/ship_sd.sh`.
+
+## Fix — pass 2 (lamps, next)
+
+Replace the LIGHTS box posts with `assets/models/lamp_post.obj` instances (chunked under the
+65k cap), lens as the LIGHTS emitter so `ext_config`'s clustering keeps one [LIGHT_N] per lamp;
+style vs the real cobra-head poles unverified until Kevin looks.
+
+## Verification
+
+Kevin's seat: palms read as Mexican fan palms at believable heights, pepper/sycamore in the
+yards, scrub on the Cowles side, median planting on the islands; no tree in any lane; frame rate
+no worse (TreeFX is instanced). Then the lamp pass.

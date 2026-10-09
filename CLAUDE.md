@@ -42,6 +42,8 @@ load-bearing (and on Windows, run with `PYTHONUTF8=1`).
   Amend it in the same commit as any gate change.
 - **`fleet/MIGRATION.md`** — the engine absorption cutover, still in progress.
 - **`fleet/feedback/README.md`** — how feedback becomes a fix on every track.
+- **`docs/PUBLISHING.md`** — how a build reaches doooom.fast (GitHub Releases, read by
+  prodrive-server), the CC0-vs-full package split, and why the full one stays on this machine.
 
 `fleet/templates/` holds the two forms that bracket a build: **`LOCATION-DOSSIER.md`** (the research
 a place gets *before* geometry — the engine stays general, the dossier is where a track is allowed

@@ -89,3 +89,9 @@ no worse (TreeFX is instanced). Then the lamp pass.
   per lamp) — lands with the next build. Lamp style ("old style, okay") accepted for now.
 
 **2026-10-09 (seat):** Kevin on the rebuilt V3 (TreeFX vegetation, dimmed lights, route-derived side streets): **"incredible."** Detailed verdicts (palm species/height, lamp style, each mouth) still to come from a full drive.
+
+**2026-10-09 — "fill in with lots more trees and bushes; median bushes a little too tall".**
+Density fill from the terrain grid (yards 6–40 m / slopes 40–120 m / far ground to 200 m,
+lake-basin skip, corridor guard, uniform thinning): **15,261 TreeFX entries** installed
+(892 palms, 412 + 3,441 trees, 994 + 8,919 bushes, 603 median plants), 14 species (+ Oak3).
+Median planting size 0.35–0.6 → 0.24–0.40 (Bush) / 0.34–0.52 (Sage).

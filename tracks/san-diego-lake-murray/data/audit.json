@@ -3,63 +3,63 @@
  "road_verts": 17978,
  "grass_verts": 98684,
  "piers": 0,
- "wall_verts": 35740,
- "curb_verts": 55261,
+ "wall_verts": 35688,
+ "curb_verts": 55268,
  "A_supports_in_road": 0,
  "B_terrain_poke": 0,
  "C_junction_crossings": 0,
  "D_wall_on_road": 512,
  "E_wall_floating": 0,
  "J_terrain_span": 0,
- "K_kerb_in_carriageway": 147,
- "worst_kerb_stand_m": 1.15,
+ "K_kerb_in_carriageway": 159,
+ "worst_kerb_stand_m": 0.97,
  "worst_terrain_span_m": 0.0,
- "F_curb_not_flush": 57,
- "F_skirt_off_terrain": 2225,
- "F_side_faces_skipped": 1629,
+ "F_curb_not_flush": 60,
+ "F_skirt_off_terrain": 2217,
+ "F_side_faces_skipped": 1613,
  "G_prop_floating": null,
  "H_ground_above_deck": null,
- "I_sidewalk_isolating": 138,
+ "I_sidewalk_isolating": 142,
  "I_samples": [
   [
    3.4,
    -1654.0,
-   0.2
+   0.14
   ],
   [
    2.8,
    -1652.3,
-   0.31
+   0.15
   ],
   [
    1.7,
    -1652.7,
-   0.17
+   0.12
   ],
   [
    -1976.2,
    -1269.7,
-   0.09
+   0.19
   ],
   [
    -1975.9,
    -1267.9,
-   0.16
+   0.24
   ],
   [
    -1978.3,
    -1268.5,
-   0.18
+   0.25
+  ],
+  [
+   -1978.3,
+   -1268.6,
+   0.1
   ],
   [
    -1977.9,
    -1266.8,
-   0.25
-  ],
-  [
-   -1979.9,
-   -1267.3,
-   0.26
+   0.3
   ]
  ],
  "worst_ground_cut_m": 0.0,

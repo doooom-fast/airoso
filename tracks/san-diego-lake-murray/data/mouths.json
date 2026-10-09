@@ -2,46 +2,24 @@
  "mouths": [
   {
    "connector": "del_cerro_blvd",
-   "main_vertex": 1088,
+   "main_vertex": 1085,
    "side": 1,
-   "connector_width_m": 10.0,
+   "connector_width_m": 22.91,
    "cut_xyz": [
-    -1444.791,
-    41.768,
-    -536.839
+    -1445.267,
+    41.437,
+    -544.375
    ]
   },
   {
    "connector": "del_cerro_blvd",
-   "main_vertex": 1088,
+   "main_vertex": 1086,
    "side": -1,
-   "connector_width_m": 10.0,
+   "connector_width_m": 21.82,
    "cut_xyz": [
-    -1416.318,
-    41.451,
-    -536.272
-   ]
-  },
-  {
-   "connector": "del_cerro_blvd",
-   "main_vertex": 1084,
-   "side": -1,
-   "connector_width_m": 10.0,
-   "cut_xyz": [
-    -1417.756,
-    40.85,
-    -550.131
-   ]
-  },
-  {
-   "connector": "del_cerro_blvd",
-   "main_vertex": 1083,
-   "side": 1,
-   "connector_width_m": 10.0,
-   "cut_xyz": [
-    -1446.014,
-    41.104,
-    -551.964
+    -1416.935,
+    41.153,
+    -543.179
    ]
   }
  ]

@@ -35,16 +35,20 @@ CELL_M = 8.0
 
 
 class MedianZone:
-    def __init__(self, pts, island_w):
+    def __init__(self, pts, island_w, extra=()):
+        """pts/island_w: the mainline (gate frame). extra: [(pts, island_w), ...] for divided
+        connectors' islands (tools/divide_connectors.py), same frame as the gate OBJ."""
         self.pts = pts
         self.island_w = island_w
-        self.cells: dict[tuple[int, int], list[int]] = {}
-        for i, w in enumerate(island_w):
-            if w <= 0:
-                continue
-            x, z = pts[i][0], pts[i][2]
-            self.cells.setdefault((int(x // CELL_M), int(z // CELL_M)), []).append(i)
-        self.n_island = sum(1 for w in island_w if w > 0)
+        self.polys = [(pts, island_w)] + list(extra)
+        self.cells: dict[tuple[int, int], list[tuple[int, int]]] = {}
+        for pi, (pp, ww) in enumerate(self.polys):
+            for i, w in enumerate(ww):
+                if w <= 0:
+                    continue
+                x, z = pp[i][0], pp[i][2]
+                self.cells.setdefault((int(x // CELL_M), int(z // CELL_M)), []).append((pi, i))
+        self.n_island = sum(1 for _, ww in self.polys for w in ww if w > 0)
 
     @classmethod
     def load(cls, project_dir) -> "MedianZone | None":
@@ -69,7 +73,13 @@ class MedianZone:
             print(f"  [median-zone] bands ({len(iw)}) vs centreline ({len(pts)}) length mismatch "
                   f"— island exemption DISABLED")
             return None
-        zone = cls(pts, iw)
+        # divided connectors' islands are stored in the ENGINE frame (connectors.local.json's
+        # frame); the gate OBJ is the engine frame too, so no remap — but if the mainline came
+        # from finished_centerline (kn5 frame) they would disagree, hence gate_centerline first.
+        extra = []
+        for ci in json.loads(bands.read_text(encoding="utf-8")).get("connector_islands", []):
+            extra.append(([tuple(p) for p in ci["points_xyz_m"]], ci["island_w_by_point"]))
+        zone = cls(pts, iw, extra)
         if zone.n_island == 0:
             return None
         return zone
@@ -85,16 +95,17 @@ class MedianZone:
         cx, cz = int(x // CELL_M), int(z // CELL_M)
         for dx in (-1, 0, 1):
             for dz in (-1, 0, 1):
-                for i in self.cells.get((cx + dx, cz + dz), ()):
-                    px, _, pz = self.pts[i]
-                    a = self.pts[max(0, i - 1)]
-                    b = self.pts[min(len(self.pts) - 1, i + 1)]
+                for (pi, i) in self.cells.get((cx + dx, cz + dz), ()):
+                    pp, ww = self.polys[pi]
+                    px, _, pz = pp[i]
+                    a = pp[max(0, i - 1)]
+                    b = pp[min(len(pp) - 1, i + 1)]
                     tx, tz = b[0] - a[0], b[2] - a[2]
                     L = math.hypot(tx, tz) or 1e-9
                     tx, tz = tx / L, tz / L
                     vx, vz = x - px, z - pz
                     along = abs(vx * tx + vz * tz)
                     lat = abs(-vx * tz + vz * tx)
-                    if along <= 2.0 and lat <= self.island_w[i] / 2.0 + MARGIN_M:
+                    if along <= 2.0 and lat <= ww[i] / 2.0 + MARGIN_M:
                         return True
         return False

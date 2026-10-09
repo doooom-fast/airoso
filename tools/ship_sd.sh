@@ -46,6 +46,8 @@ if [ "$SKIP_BLEND" = 0 ]; then
   (cd "$AIROSO" && python tools/median_envelope.py "$PROJ")
   step "draft: build loop.blend (scene regen — GEN layer)"
   (cd "$WS" && "$BL" --background --python scripts/blender/build_loop_blend.py -- project 2>&1 | grep "^\[blend\]" | tail -4)
+  step "draft: divided side streets -> one trunk + island (Del Cerro)"
+  (cd "$AIROSO" && python tools/divide_connectors.py "$PROJ")
   step "draft: trim connectors at the mainline edge"
   (cd "$AIROSO" && python tools/trim_connectors.py "$PROJ")
   step "draft: rebuild loop.blend with trimmed connectors"

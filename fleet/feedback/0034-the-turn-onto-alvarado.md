@@ -95,3 +95,11 @@ past the self-adjacent stretch. The hairpin itself (fold) stays open: it is a C3
 per docs/JUNCTIONS.md (PAD topology; arms cut at straight lateral cuts), not a ribbon parameter.
 Spawn for it: `start_positions.json` → `seam-alvarado` is the wrong site; add `0034-college-hairpin`
 at vert ~765 when C3 starts.
+
+**Addendum, same day — the seam IS also a fold.** A top-down render of the gate OBJ around the
+southern seam (3, −1654) shows the lap seam as a sharp V with the inside sidewalk pinching into
+the pavement at the apex — the residual audit K/I samples after C2 v1 (387 / 417) sit exactly
+there, not at any connector mouth. So both of this entry's candidates are real, and both are
+the same class: a ribbon cannot turn a corner tighter than its half-width (seam V and the
+College south-end hairpin). C3 = authored pads at both; add start positions `0034-seam-v` (vert
+~4490) and `0034-college-hairpin` (vert ~765).

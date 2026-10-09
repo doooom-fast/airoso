@@ -93,13 +93,16 @@ def main():
     bpy.ops.wm.open_mainfile(filepath=str(proj / "loop.blend"))
 
     local = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
-    pts = [tuple(p) for p in local["points_xyz_m"]]
     bands = json.loads((data / "median_bands.json").read_text(encoding="utf-8"))
-    iw = bands["island_w_by_vertex"]
-    if len(iw) != len(pts):
-        raise SystemExit(f"[median-blend] vertex count mismatch: bands {len(iw)} vs centerline {len(pts)}")
+    main_pts = [tuple(p) for p in local["points_xyz_m"]]
+    main_iw = bands["island_w_by_vertex"]
+    if len(main_iw) != len(main_pts):
+        raise SystemExit(f"[median-blend] vertex count mismatch: bands {len(main_iw)} vs centerline {len(main_pts)}")
+    # islands to author: the mainline's, plus divided connectors' (tools/divide_connectors.py)
+    islands = [("mainline", main_pts, main_iw)]
+    for ci in bands.get("connector_islands", []):
+        islands.append((ci["name"], [tuple(p) for p in ci["points_xyz_m"]], ci["island_w_by_point"]))
 
-    segs = _segments(iw)
     curbV, curbF, deckV, deckF = [], [], [], []
     railV, railF, shrubV, shrubF = [], [], [], []
     rng_state = 12345
@@ -110,7 +113,10 @@ def main():
         return rng_state / 0x7FFFFFFF
 
     total_len = 0.0
-    for (i, j) in segs:
+    segs = []
+    for name, pts, iw in islands:
+        segs += [(name, pts, iw, i, j) for (i, j) in _segments(iw)]
+    for (_name, pts, iw, i, j) in segs:
         ring_start = len(curbV)
         deck_start = len(deckV)
         ks = list(range(i, j))

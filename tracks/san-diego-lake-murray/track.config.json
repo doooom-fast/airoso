@@ -64,6 +64,10 @@
       "College Avenue",
       "Navajo Road"
     ],
+    "divided_connectors": [
+      "del_cerro_blvd"
+    ],
+    "_divided_connectors_doc": "Ledger 0039 (Kevin's seat, 2026-10-08: side streets 'not connecting correctly'). Del Cerro Boulevard is a divided boulevard whose two carriageways OSM stores as one out-and-back loop (the connector polyline parallels itself at 12-15 m for 0-475 / 625-1100); tools/divide_connectors.py collapses the legs into one trunk ribbon + median island (far loop kept as a plain ribbon) so it meets College as ONE mouth with a set-back nose.",
     "_median_islands_doc": "Ledger 0037 (Kevin's seat, 2026-08-20): C1's single slab 'loses realism because that road doesn't look like that there' — the real streets are divided by raised landscaped medians ('flowers and barriers... grass etc... shrubs'). The rt_macau pattern (docs/JUNCTIONS.md): ONE continuous pavement slab, median standing ON it as a raised island. tools/median_envelope.py measures the real median from the OSM dual-carriageway geometry, re-centers the ribbon over the true middle and spans both carriageways; tools/author_median_blend.py authors the island (grass deck, shrub clumps, barrier runs) after build_loop_blend, gapped at every connector mouth."
   },
   "loop": true,

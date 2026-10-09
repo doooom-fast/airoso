@@ -98,3 +98,5 @@ these two, audit K/I at the others should be unchanged (proves the edit was loca
 - Not yet authored: corner-return arcs (JUNCTIONS R4). v1 is the gap 0036 routes; the pros wrap
   the corner on R 3–6.5 m — next authored step, after Kevin's seat on the gapped mouth.
 - Spawn: `start_positions.json` → `0033-college-del-cerro` (vert 1078, right lane, mouth ~30 m ahead).
+
+**2026-10-08 (seat):** Kevin driving `san_diego_lake_murray_v3` (C1 + median island + C2 v1 mouths, spawn at the College/Del Cerro mouth): **"this is super clean (v3)"**. First in-seat verdict that a rebuilt path beats the July restoration. DoD: Lake Murray T0 → T2; T3 on a full-lap report.

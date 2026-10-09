@@ -43,7 +43,7 @@ Recorded conservatively — a tier not evidenced here is not held.
 | IMI, Pueblo, Aspen, High Plains, Second Creek | **T1** | Green at the v0.66.3 gate wave (ledger 0025); in-seat verdict open. Second Creek's geometry is fabricated, not sourced — flagged in `registry.json`, must not ship as a real place |
 | Sand Creek | **T0** | 1 soft-top from un-excavated cut-corridor grass, deferred (0025) |
 | Lookout Lariat | **T0** | Its own campaign (0025) |
-| Lake Murray | **T0** | July restoration is the drive-feel reference until the rebuilt path beats it in his seat (0029) |
+| Lake Murray | **T2** | 2026-10-08, Kevin in the seat on `san_diego_lake_murray_v3` (C1 + median island + C2 v1 mouths): **"this is super clean (v3)"** — the first rebuilt build to beat the July restoration in his seat (0029's condition). T3 claims on a full-lap DRIVE-TEST-REPORT; open: sub-loop connector-to-connector mouths, corner returns, the College south-end hairpin (C3) |
 | Dragon Tail / Under the Dragon (gravel) | **T0** | Packaged and shipped; gates not re-run at current engine |
 | Grand Junction, Pikes Peak | **blocked** | Rough everywhere, mechanism not found (0018 / 0031) |
 | Dragon Tail / Under the Dragon (tarmac) | **blocked** | No packaged build |

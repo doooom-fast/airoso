@@ -64,3 +64,5 @@ turn at Del Cerro still open? Barriers/planting where he remembers them?
   (see [0034](0034-the-turn-onto-alvarado.md), this date) so the median never walks the ribbon
   onto another part of the loop.
 - Seat verdict on the island itself: still pending (last AC session, Sep 29, loaded Lookout Lariat).
+
+**2026-10-08 (seat):** Kevin driving `san_diego_lake_murray_v3` (C1 + median island + C2 v1 mouths, spawn at the College/Del Cerro mouth): **"this is super clean (v3)"**. First in-seat verdict that a rebuilt path beats the July restoration. DoD: Lake Murray T0 → T2; T3 on a full-lap report.

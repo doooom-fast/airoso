@@ -69,3 +69,5 @@ train: R5
 
 His seat, on LM, unprompted. Nothing else counts. Interim instrument: renders attached to every
 terrain-touching change, and the in-game harness lap staying clean.
+
+**2026-10-08 (seat):** Kevin driving `san_diego_lake_murray_v3` (C1 + median island + C2 v1 mouths, spawn at the College/Del Cerro mouth): **"this is super clean (v3)"**. First in-seat verdict that a rebuilt path beats the July restoration. DoD: Lake Murray T0 → T2; T3 on a full-lap report.

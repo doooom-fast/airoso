@@ -55,6 +55,8 @@ if [ "$SKIP_BLEND" = 0 ]; then
   (cd "$AIROSO" && python tools/trim_connectors.py "$PROJ")
   step "draft: rebuild loop.blend with trimmed connectors"
   (cd "$WS" && "$BL" --background --python scripts/blender/build_loop_blend.py -- project 2>&1 | grep "^\[blend\]" | tail -3)
+  step "author: seat the terrain under every road (verge finer than the road)"
+  (cd "$WS" && "$BL" --background --python "$AIROSO/tools/seat_terrain_blend.py" -- project 2>&1 | grep "^\[seat\]\|Error\|Traceback" )
   step "author: median island"
   (cd "$WS" && "$BL" --background --python "$AIROSO/tools/author_median_blend.py" -- project 2>&1 | grep "^\[median" )
   step "author: gap the mainline sidewalk at every mouth"

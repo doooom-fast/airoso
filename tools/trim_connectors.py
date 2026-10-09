@@ -105,7 +105,25 @@ def _trim_against(conns, hosts, mouths):
                     di, hi, k_in, side, hname = info[edge_idx]
                     target = hi - OVERLAP_M
                     f = 0.0 if do == di else max(0.0, min(1.0, (do - target) / (do - di)))
-                    cut = (po[0] + (pi_[0] - po[0]) * f, po[1] + (pi_[1] - po[1]) * f, po[2] + (pi_[2] - po[2]) * f)
+                    # HEIGHT MATCH (Kevin 2026-10-09: "lots of hovering" at the side-street
+                    # intersections — measured 0.10-0.91 m between a side street's end and the host's
+                    # deck): the cut lands on the host's own centreline height, and the piece's last
+                    # BLEND_M blend linearly onto it so the mouth is a grade change, not a step
+                    host_y = next(hp[k_in][1] for hn, hp, _ in hosts if hn == hname)
+                    cut = (po[0] + (pi_[0] - po[0]) * f, host_y, po[2] + (pi_[2] - po[2]) * f)
+                    BLEND_M = 30.0
+                    seq = list(range(len(piece))) if edge_idx >= i else list(range(len(piece) - 1, -1, -1))
+                    # walk back from the cut end accumulating distance; blend y toward the cut height
+                    acc = 0.0
+                    prev = cut
+                    for q in (seq[::-1] if edge_idx >= i else seq):
+                        p = piece[q]
+                        acc += math.hypot(p[0] - prev[0], p[2] - prev[2])
+                        if acc >= BLEND_M:
+                            break
+                        t = 1.0 - acc / BLEND_M
+                        piece[q] = (p[0], p[1] + (host_y - p[1]) * t, p[2])
+                        prev = p
                     if edge_idx < i:
                         piece.insert(0, cut)
                         pw.insert(0, w[nbr])

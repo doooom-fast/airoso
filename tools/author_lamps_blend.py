@@ -29,7 +29,7 @@ import bpy
 
 AIROSO = Path(__file__).resolve().parents[1]
 ARM_M = 1.8
-POST_H = 9.0
+POST_H = 11.5   # Kevin 2026-10-09: "lights need to be taller" — arterial cobra-head height (was 9.0)
 CAP = 60000
 
 

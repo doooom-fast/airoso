@@ -87,3 +87,5 @@ no worse (TreeFX is instanced). Then the lamp pass.
   The "glowing ball" is the 0.5 m lens mesh with ksEmissive: `tools/author_lamps_blend.py` now
   places the engine's own 2 cm marker triangle instead (invisible, still clusters one [LIGHT_N]
   per lamp) — lands with the next build. Lamp style ("old style, okay") accepted for now.
+
+**2026-10-09 (seat):** Kevin on the rebuilt V3 (TreeFX vegetation, dimmed lights, route-derived side streets): **"incredible."** Detailed verdicts (palm species/height, lamp style, each mouth) still to come from a full drive.

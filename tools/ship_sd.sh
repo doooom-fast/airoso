@@ -57,6 +57,8 @@ if [ "$SKIP_BLEND" = 0 ]; then
   (cd "$WS" && "$BL" --background --python scripts/blender/build_loop_blend.py -- project 2>&1 | grep "^\[blend\]" | tail -3)
   step "author: seat the terrain under every road (verge finer than the road)"
   (cd "$WS" && "$BL" --background --python "$AIROSO/tools/seat_terrain_blend.py" -- project 2>&1 | grep "^\[seat\]\|Error\|Traceback" )
+  step "author: thin the far terrain (headroom for the prep's grass tiles)"
+  (cd "$WS" && "$BL" --background --python "$AIROSO/tools/slim_far_terrain_blend.py" -- project 2>&1 | grep "^\[slim\]\|Error\|Traceback" )
   step "author: median island"
   (cd "$WS" && "$BL" --background --python "$AIROSO/tools/author_median_blend.py" -- project 2>&1 | grep "^\[median" )
   step "author: gap the mainline sidewalk at every mouth"
@@ -69,7 +71,7 @@ if [ "$SKIP_BLEND" = 0 ]; then
 fi
 
 step "ship: prep (AC naming, dummies, 65k splits)"
-"$BL" --background --python "$ENG/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped" | cut -c1-120
+"$BL" --background --python "$ENG/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS" | cut -c1-160
 step "ship: per-issue start position"
 "$BL" --background --python "$AIROSO/tools/set_start_blend.py" -- "$PROJ" 2>&1 | grep "^\[set-start\]"
 step "ship: export kn5"

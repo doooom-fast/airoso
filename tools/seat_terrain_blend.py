@@ -74,7 +74,10 @@ def main():
     if cp.exists():
         for c in json.loads(cp.read_text(encoding="utf-8")).get("connectors", []):
             lines.append(([tuple(p) for p in c["points_xyz_m"]], [w / 2.0 for w in c["widths_m"]]))
-    roads = Roads(lines)
+    # CONNECTORS ONLY: the kn5 prep (build_kn5_loop "terrain conform": corridor edges split, verts
+    # pinned to deck-0.02) already seats the terrain along the MAINLINE; covering it here too pushed
+    # a grass tile to 71,821 verts (> 65,535) and the prep refused to export (2026-10-09)
+    roads = Roads(lines[1:])
 
     bpy.ops.wm.open_mainfile(filepath=str(proj / "loop.blend"))
     ob = bpy.data.objects.get("TERRAIN")
@@ -92,11 +95,11 @@ def main():
         cx = sum(v.co.x for v in f.verts) / len(f.verts)
         cz = sum(v.co.y for v in f.verts) / len(f.verts)
         r = roads.nearest(cx, cz)
-        if r is not None and r[0] < reach + 12.0:
+        if r is not None and r[0] < reach + 4.0:
             near_faces.append(f)
     edges = {e for f in near_faces for e in f.edges}
     before = len(bm.verts)
-    bmesh.ops.subdivide_edges(bm, edges=list(edges), cuts=2, use_grid_fill=True)
+    bmesh.ops.subdivide_edges(bm, edges=list(edges), cuts=1, use_grid_fill=True)
     bm.verts.ensure_lookup_table()
     moved = 0
     for v in bm.verts:

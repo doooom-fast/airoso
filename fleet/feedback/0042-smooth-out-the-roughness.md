@@ -31,3 +31,7 @@ in-lane 130 → 82, excursion drops 103 → 101, severe 0, no metric worse than 
 Kevin's seat. If still rough: next levers are denser stations (3 → 1.5 m resample, with the same
 smoothing) and the kerb/edge seams; ledger 0031 (bumps not in the profile) stays open for what
 smoothing cannot explain.
+
+**2026-10-09 (later) — "grass cutting through the road".** Not the mainline (audit B = 0): the
+side streets' terrain facets. Fixed with the seating + thinning passes above (0041 addendum);
+audit F (curbs not flush) 60 → 15.

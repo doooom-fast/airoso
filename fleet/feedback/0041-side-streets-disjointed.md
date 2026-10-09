@@ -56,3 +56,14 @@ gapped, trunk island gapped on 11 points. Audit K 169 → 147, I 167 → 138, F 
 unchanged (severe 0, obstruction 0). Installed as `san_diego_lake_murray_v3`.
 
 **2026-10-09 (seat):** Kevin on the rebuilt V3 (TreeFX vegetation, dimmed lights, route-derived side streets): **"incredible."** Detailed verdicts (palm species/height, lamp style, each mouth) still to come from a full drive.
+
+**2026-10-09 — "side street intersections, lots of hovering" (Kevin, seat).** Measured on the gate
+OBJ: every side-street end sat BELOW its host deck — Del Cerro × College −0.23 / −0.70 m, Wisconsin ×
+Lake Murray −0.10 m, Madra × Del Cerro trunk **−0.91 m** — the cuts had never been height-matched.
+`trim_connectors` now lands each cut on the host's centreline height and blends the piece's last
+30 m onto it. After: all four mouths flush (host deck +0.10..+0.12 m over the side-street end, i.e.
+the two ribbons' own 0.10 m lift — level). Seating: the Del Cerro hilltop loop 28 pokes / 37 floats
+(worst 2.58 m) → 7 / 5 (worst 0.55 m); the neighbourhood chain 3 / 3 → 0 / 3 (0.40 m) —
+`tools/seat_terrain_blend.py` (connector corridors only: the kn5 prep already seats the mainline)
++ `tools/slim_far_terrain_blend.py` (far terrain decimated 0.35 so the prep's grass tiles stay
+under the 65,535-position cap — it refused twice at 67–72k).

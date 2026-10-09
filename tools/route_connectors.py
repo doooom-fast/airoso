@@ -77,9 +77,13 @@ def _despike_smooth_cap(z, spacing):
     if n < 3:
         return list(z)
     med = [z[0]] + [sorted(z[i - 1:i + 2])[1] for i in range(1, n - 1)] + [z[-1]]
-    k = max(3, round(45.0 / spacing)) | 1
+    # two mean passes over ~75 m (was one over 45 m): Kevin 2026-10-09 "smooth out the roughness" —
+    # 3DEP sample noise at 3 m spacing reads as texture under the wheels on the side streets
+    k = max(3, round(75.0 / spacing)) | 1
     h = k // 2
-    sm = [sum(med[max(0, i - h):min(n, i + h + 1)]) / len(med[max(0, i - h):min(n, i + h + 1)]) for i in range(n)]
+    sm = list(med)
+    for _ in range(2):
+        sm = [sum(sm[max(0, i - h):min(n, i + h + 1)]) / len(sm[max(0, i - h):min(n, i + h + 1)]) for i in range(n)]
     cap = MAX_GRADE * spacing
     for i in range(1, n):
         sm[i] = max(sm[i - 1] - cap, min(sm[i - 1] + cap, sm[i]))

@@ -78,7 +78,9 @@
         "del_cerro_blvd"
       ],
       "_doc": "Ledger 0041 (Kevin's seat, 2026-10-08): side streets disjointed. The per-name connectors missed Madra Ave and Delaware Ave and never had Pennsylvania Lane; tools/route_connectors.py derives the side streets from airoso data/routes.json (tools/route_tracks.py \u2014 Kevin's confirmed routes as continuous OSM node paths): the medium/short routes' off-loop runs become connector pieces, cut at College / the Del Cerro trunk by trim_connectors. route.connectors above is now documentation of the old name-based set."
-    }
+    },
+    "smooth_sigma_y_pts": 5.0,
+    "_smooth_sigma_y_doc": "Kevin 2026-10-09: 'smooth out the roughness'. The road profile is 3DEP sampled every 3 m (noise ~\u00b110 cm) and build_loop_blend's vertical smoothing was sigma 1.5 pts (~4.5 m) \u2014 every sample step is a felt event (fleet/reference/MEASURED.md). 5.0 pts (~15 m) rounds the sample noise while keeping the real grades (climbs are hundreds of metres long). Measured by drive_test bumps/km + kinks/km vs the locked build."
   },
   "loop": true,
   "mirror_x": false,

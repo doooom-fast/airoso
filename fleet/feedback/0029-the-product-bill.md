@@ -71,3 +71,10 @@ His seat, on LM, unprompted. Nothing else counts. Interim instrument: renders at
 terrain-touching change, and the in-game harness lap staying clean.
 
 **2026-10-08 (seat):** Kevin driving `san_diego_lake_murray_v3` (C1 + median island + C2 v1 mouths, spawn at the College/Del Cerro mouth): **"this is super clean (v3)"**. First in-seat verdict that a rebuilt path beats the July restoration. DoD: Lake Murray T0 → T2; T3 on a full-lap report.
+
+**2026-10-09 — closing condition met.** Kevin on the V3 build (C1 + median islands + C2 mouths +
+route-derived side streets + TreeFX vegetation + owned lamps): "super clean" (10-08),
+"incredible" (10-09), and "lock this all in." Tagged `sd-v3-locked-2026-10-09`; the installed
+build copied to `san_diego_lake_murray_v3_locked` — **the drive-feel reference from here**, replacing
+the July restoration this entry named. Next asks logged on the day: smooth the remaining roughness,
+far more trees and bushes, shorter median planting.

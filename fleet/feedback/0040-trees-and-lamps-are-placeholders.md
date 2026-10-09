@@ -73,3 +73,17 @@ no worse (TreeFX is instanced). Then the lamp pass.
   closer model or trim one arm), palm species read (PalmV1-3 are smooth-trunk; the skirted
   Mexican fan palm exists only as kn5 mesh in rt_california_highway — hero-palm option),
   flower texture for the island beds, scrub density on the Cowles side.
+
+## 2026-10-08 (later) — seat: palms invisible; lights "way too bright", "still the glowing ball"
+
+- **Zero trees rendered.** CSP log: `🚨 Failed to load trees: Tree manifest is missing:
+  ...\extension\trees\san_diego_lake_murray — V` — CSP read the `;` comment line at the top of
+  my trees.txt as a manifest filename and rejected the whole list. The working packs (nohesi,
+  algarve) carry no comments at all; `tools/make_treefx.py` now emits none. Fixed in place
+  (list reinstalled, 2,906 trees, first line `configure:`) — verify in the CSP log next session:
+  no "Failed to load trees".
+- **Lights:** `lighting.streetlight.intensity` 5.0 → 1.6 and lens emissive 0.35 → 0.08 (config
+  keys the engine's ext_config reads; patched into the installed ext_config.ini too, 295 lights).
+  The "glowing ball" is the 0.5 m lens mesh with ksEmissive: `tools/author_lamps_blend.py` now
+  places the engine's own 2 cm marker triangle instead (invisible, still clusters one [LIGHT_N]
+  per lamp) — lands with the next build. Lamp style ("old style, okay") accepted for now.

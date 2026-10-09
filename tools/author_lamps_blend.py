@@ -122,11 +122,14 @@ def main():
         fx = bx + rx * fixture[0] * scale + tx * fixture[2] * scale
         fz = bz + rz * fixture[0] * scale + tz * fixture[2] * scale
         fy = by + fixture[1] * scale - 0.3
-        if len(lensV) + len(lens_v) > CAP:
+        # NO lens blob: the 0.5 m emissive lens read as "the glowing ball" (Kevin, 2026-10-08).
+        # A 2 cm marker triangle at the fixture is invisible in game but still clusters one
+        # [LIGHT_N] per lamp from the LIGHTS mesh (the engine's own fallback, build_env.py:1265).
+        if len(lensV) + 3 > CAP:
             flush("LIGHTS", lensV, lensF)
         off = len(lensV)
-        lensV += [B((fx + v[0], fy + v[1], fz + v[2])) for v in lens_v]
-        lensF += [(off + c_, off + b_, off + a_) for (a_, b_, c_) in lens_f]
+        lensV += [B((fx, fy, fz)), B((fx + 0.02, fy, fz)), B((fx, fy + 0.02, fz))]
+        lensF += [(off, off + 1, off + 2)]
         n += 1
     flush("LIGHTPOST", postV, postF)
     flush("LIGHTS", lensV, lensF)

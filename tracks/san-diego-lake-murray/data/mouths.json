@@ -2,7 +2,8 @@
  "mouths": [
   {
    "connector": "del_cerro_blvd",
-   "main_vertex": 1085,
+   "host": "MAINLINE",
+   "host_vertex": 1085,
    "side": 1,
    "connector_width_m": 22.91,
    "cut_xyz": [
@@ -13,13 +14,38 @@
   },
   {
    "connector": "del_cerro_blvd",
-   "main_vertex": 1086,
+   "host": "MAINLINE",
+   "host_vertex": 1086,
    "side": -1,
    "connector_width_m": 21.82,
    "cut_xyz": [
     -1416.935,
     41.153,
     -543.179
+   ]
+  },
+  {
+   "connector": "medium#2+0",
+   "host": "MAINLINE",
+   "host_vertex": 4424,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    115.9,
+    24.111,
+    -1472.181
+   ]
+  },
+  {
+   "connector": "medium#2+0#0",
+   "host": "del_cerro_blvd#1",
+   "host_vertex": 82,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -1190.753,
+    38.767,
+    -618.251
    ]
   }
  ]

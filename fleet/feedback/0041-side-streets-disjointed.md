@@ -49,3 +49,8 @@ vertex blocks in connectors.local.json order).
 
 Kevin drives the medium and short routes end to end: no sidewalk across any mouth, every turn
 onto the next street is paved through, Del Cerro Blvd is one boulevard. Audit K/I not up.
+
+**Built 2026-10-08:** 4 mouths (Del Cerro × College both sides; chain × Lake Murray Blvd at
+mainline vert 4424; chain × Del Cerro trunk at del_cerro_blvd#1 vert 82), 192 host curb faces
+gapped, trunk island gapped on 11 points. Audit K 169 → 147, I 167 → 138, F 61 → 57; drive-test
+unchanged (severe 0, obstruction 0). Installed as `san_diego_lake_murray_v3`.

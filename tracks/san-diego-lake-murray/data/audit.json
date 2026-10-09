@@ -1,10 +1,10 @@
 {
  "slug": "san_diego_lake_murray",
  "road_verts": 18601,
- "grass_verts": 100125,
+ "grass_verts": 100128,
  "piers": 0,
- "wall_verts": 36261,
- "curb_verts": 56991,
+ "wall_verts": 36273,
+ "curb_verts": 57000,
  "A_supports_in_road": 0,
  "B_terrain_poke": 0,
  "C_junction_crossings": 0,

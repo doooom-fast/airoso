@@ -56,3 +56,20 @@ style vs the real cobra-head poles unverified until Kevin looks.
 Kevin's seat: palms read as Mexican fan palms at believable heights, pepper/sycamore in the
 yards, scrub on the Cowles side, median planting on the islands; no tree in any lane; frame rate
 no worse (TreeFX is instanced). Then the lamp pass.
+
+## 2026-10-08 — both passes shipped (installed as `san_diego_lake_murray_v3`)
+
+- **Pass 1 (vegetation):** 2,906 TreeFX trees (892 palms, 412 street trees, 992 scrub, 610 median
+  plants; 17 rejected by the corridor guard), 13 species; procedural PALM*/TREE*/SCRUB meshes
+  stripped from the kn5 (80 → 46 MB before lamps).
+- **Pass 2 (lamps):** `tools/author_lamps_blend.py` — 239 × `lamp_post.obj` (2,060 v) + lens
+  (994 v) → 9 LIGHTPOST + 4 LIGHTS meshes; ext_config clusters **296 [LIGHT_N]** (was 367 from
+  the box posts; the 0.5 m lens straddles 5 m cells at some lamps). kn5 now 107 MB — the lamp
+  geometry is ~730k verts; re-decimate the mast to ≤700 v if frame rate says so.
+- Gates vs the July reference: no metric worse (drive: severe 0, obstruction 0; audit
+  K 169 / I 167 / F 61).
+- Open after Kevin's look: lamp *style* (the owned model is a symmetric double-arm luminaire,
+  placed arm-axis across the road; real Lake Murray poles are single-arm cobra-heads — hunt a
+  closer model or trim one arm), palm species read (PalmV1-3 are smooth-trunk; the skirted
+  Mexican fan palm exists only as kn5 mesh in rt_california_highway — hero-palm option),
+  flower texture for the island beds, scrub density on the Cowles side.

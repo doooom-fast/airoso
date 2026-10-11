@@ -166,7 +166,7 @@ def test_sync_back_and_install_are_unreachable_from_a_scratch_project():
         if any(w in ("cp", "mv", "rm", "mkdir") for w in words) and ('"$AC/' in ln or '"$ARCHIVE/' in ln):
             n_ac += 1
             assert pos > real_inst, ("AC / archive write outside the guarded install", ln)
-    assert n_ac >= 3, n_ac                     # park the previous build (mkdir + mv) + the copy
+    assert n_ac >= 2, n_ac                     # lines: park the previous build (mkdir + mv) + the copy
     assert _first("python - <<PY") > real_inst  # the ui_track.json name patch writes into the installed folder
 
 

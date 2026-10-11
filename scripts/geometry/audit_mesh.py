@@ -308,7 +308,8 @@ def audit(project_dir: str | Path, *, race: bool = False, obj: str = "track.obj"
     # there — scripts/geometry/median_zone.py, band + 0.6 m). Zero-width = no exemption.
     # BARRIER BANDS (0047): under --race, D also exempts a 1WALL vert standing on a DECLARED
     # barrier band (centre chain 0.335 + 0.6 m, kerb-line strip |lat - (w/2 - 0.485)| <= 0.935,
-    # sealed-mouth polylines, +/- 2 m along) — the strips are walls on the road by design and are
+    # sealed-mouth polylines; continuous between consecutive declared vertices, +/- 2 m past a run's
+    # ends) — the strips are walls on the road by design and are
     # gated for presence (drive_test barrier_missing), seating (E) and lane clearance (drive_test
     # disc) instead. A strip OFF its band still counts; K and I never read the barrier kind.
     from scripts.geometry.median_zone import MedianZone, ALL_KINDS

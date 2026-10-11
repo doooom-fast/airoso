@@ -35,10 +35,35 @@ and `audit_mesh --race` key on. `L`/`R` are in the FORWARD frame (increasing ver
 clockwise); the strip on the chain's far carriageway is the other layout's outer wall, so both race
 layouts share one race kn5 by construction.
 
-**Why strips, not 2,100 instanced modules.** 122,338 positions in 36 objects (none over 8,000
-positions, worst flat-shaded render-vert estimate 47,940 < 65,535) versus ~2.2 M positions for
-~8,700 modules; every reference measured (SRP, nohesi, Macau, rt_california) ships strips/sheets.
-The texture tiles at u = arc / 4.04 m so the joints still read every module.
+**Why strips, not 2,100 instanced modules.** 123,148 positions in 36 objects (none over 8,000
+positions) versus ~2.2 M positions for ~8,700 modules; every reference measured (SRP, nohesi,
+Macau, rt_california) ships strips/sheets. The texture tiles at u = arc / 4.04 m so the joints
+still read every module.
+
+**Shading and ring density (2026-10-11 weld pass).** The first real rehearsal exported a 35.6 MB
+race kn5 that leaked nothing — 36 RACE meshes, the three race textures — but carried 719,576
+vertices for 241,190 triangles (2.98 per triangle): the strips were flat-shaded, so the exporter
+(`exporter.kn5`, which welds face corners sharing position + normal + UV + tangent) wrote one vertex
+per triangle corner. Every strip and kerb is now SMOOTH-shaded with hard edges only on real creases
+— `race_furniture.sharp_edges`: faces meeting at more than 30° (the jersey base corner 90°,
+base/slope 33°, top lip 86°, the end caps 90°; the slope/upper break is two steps of 17° and 12°
+over a 9 cm chamfer and stays smooth) plus the kerb outline (`kerb_outline_edges`: ramp/top and
+top/outer). UVs are per vertex (u along, v across the profile, no seam), so only hard edges split a
+vertex: ~16 render verts per 20-triangle ring interval, `render_vertex_count` ≈ 0.81 per triangle
+before the export. The prep keeps it (its bmesh round trip preserves the smooth/sharp flags, its
+`DOUBLE_SIDE` pass only touches merged `data/track_*.obj` groups, its face-up pass flips 2 of 4,545
+kerb faces at the hairpin fold, and it only ever ADDS smooth shading above 65,535 loops).
+The same rehearsal measured outside-lip ring spacing up to 7.02 m (one ring per ~3 m centreline
+vertex on a 10 m corner) with the strip chording the arc by up to 0.27 m. `densify_rings` now inserts
+rings ON the declared offset curve (centre lerp + normalised lerp of the vertex tangents × lerp of the
+declared lateral) until consecutive rings are ≤ 3.5 m apart and within 0.10 m of the curve; a
+fold-drop chord (the inside lips the sweep drops) is only cut on its own straight line. 81 rings
+inserted, spacing max 3.50 m, chord max 0.043 m. The new rings exposed two defects in `audit_mesh
+--race`'s band test (`scripts/geometry/median_zone.py`): ±2 m rectangles round band points that
+stand ~7 m apart on the outside lips left gaps (460 strip verts read as walls on the road), and a
+closed lap's duplicate last vertex was a band point of its own at the last street's width (28 more at
+the seam). The band is now continuous between consecutive declared vertices and the seam is vertex
+0's — race D back to 512, the same as the pre-weld kn5 set re-audited with the fixed module.
 
 ## 2. Frames and winding
 
@@ -156,7 +181,9 @@ meshes / 122,330 positions / **36 RACE-named materials** / 0 AC nodes, `loop_mai
 
 **Export.** `export_kn5_addon.py` (engine-july, mirrored byte-identical into airoso) takes
 `--blend <file>` and `--out <name.kn5>` and runs once per split scene — `loop_main.blend` →
-`<slug>.kn5`, `loop_race.blend --out <slug>_race.kn5` (asserted < 20 MB by the ship script); each
+`<slug>.kn5`, `loop_race.blend --out <slug>_race.kn5` (content-checked by the ship script:
+`inspect_kn5 --json` then `tools/check_race_kn5.py` — every mesh 1WALL_RACE* / 1KERB_RACE*, every
+texture from `pbr.py`'s race rows, no `AC_*` node; the size is printed, WARN above 20 MB); each
 pass purges and rewrites the one persistence `.ini` (named after its kn5) from the materials the
 opened scene holds, so the race kn5 embeds only its own material table.
 
@@ -167,16 +194,23 @@ open one in Blender to see the grid — and a fallback input, not a second sourc
 
 ## 6. Budget
 
-| | objects | positions | worst object | flat render verts (worst, = loops × 3/2) |
-|---|---|---|---|---|
-| chain | 8 | 28,530 | 7,160 positions / 28,624 loops | 42,936 |
-| edge strips | 21 | 87,720 | 8,000 / 31,960 | 47,940 |
-| kerbs | 7 | 6,088 | 1,400 / 4,188 | 6,282 |
-| **race kn5** | **36** | **122,338** | | all < 65,535; `MAX_RINGS_PER_OBJECT = 800` |
+Measured on the 2026-10-11 weld-pass rehearsal (`SHIP_PROJ=<scratch> bash tools/ship_sd.sh
+--skip-blend`, run to the end): authored positions, the author's predicted render verts
+(`render_vertex_count`) and what the exporter actually wrote into `<slug>_race.kn5`, against the
+flat-shaded rehearsal before it.
 
-Chain 8,525.3 m = 2,853 rings = 2,110 × 4.04 m modules; edge strips 26,307.4 m = 8,772 rings
-(6,512 modules) after the fold skip; kerbs 481.6 m of declared runs = 1,522 stations after it. Main blend unchanged at 716,927 positions (the
-prep's `_split_large` still tiles TERRAIN/GRASS as today).
+| | objects | positions | worst object (positions) | predicted render verts | kn5 verts / tris (worst mesh) | flat-shaded kn5 before |
+|---|---|---|---|---|---|---|
+| chain | 8 | 28,530 | 7,160 | 45,768 | 45,768 / 56,996 (11,466) | 169,948 / 56,996 (42,706) |
+| edge strips | 21 | 88,530 | 8,000 | 141,836 | 141,837 / 176,736 (12,809) | 522,482 / 175,116 (47,568) |
+| kerbs | 7 | 6,088 | 1,400 | 9,170 | 9,158 / 9,078 (2,100) | 27,146 / 9,078 (6,254) |
+| **race kn5** | **36** | **123,148** (123,140 after the prep's weld) | 8,000; `MAX_RINGS_PER_OBJECT = 800` | **196,774** | **196,763 / 242,810 = 0.81 per triangle; 12,558,972 B** | 719,576 / 241,190 = 2.98; 35,553,024 B |
+
+Chain 8,525.3 m = 2,853 rings = 2,110 × 4.04 m modules; edge strips 26,307.4 m = 8,853 rings
+(8,772 + 81 densified) after the fold skip; kerbs 481.6 m of declared runs = 1,522 stations after it.
+The road kn5 is unchanged: 31 meshes / 1,258,109 v / 1,232,927 tri / 14 textures / 91,934,629 B,
+per-mesh rows identical (its md5 is not stable: re-exporting the same `loop_main.blend` twice gives
+two md5s, 189,579 bytes apart — the exporter, not the scene).
 
 ## 7. Commands
 
@@ -219,14 +253,18 @@ re-measured from every `data/dummies_<id>.json` of a race layout (what the spawn
 a 1.9 m car on every grid / pit / hotlap slot stands ≥ 0.30 m off every strip face, else FAIL (the
 author tool's own record fails on the same floor) — and the lamp posts (G: every mast, base = the
 `lights.local.json` head set back by `author_lamps_blend.ARM_M`, footprint radius 0.585 m from
-`lamp_post.obj`, stands outside every strip footprint; minimum margin reported). `--pre-author` runs F
-and G alone. Dry run: OK — spawn minimum 0.48 m (AC_START_1/3/5/7 of both race layouts), lamps 238
+`lamp_post.obj`, stands outside every strip footprint; minimum margin reported) and, since the
+2026-10-11 weld pass, the ring density (H: every chain / kerb-line strip span vs the DECLARED offset
+curve rebuilt from the bands + centreline alone; a chord error above 0.15 m FAILS, fold spans are
+counted not judged, spacing above 3.5 m is reported — the pre-densify build measures 0.271 m / 7.02 m
+at the seam corner's outside lip and FAILS; the densified one 0.043 m / 3.50 m). `--pre-author` runs F
+and G alone. Dry run (before the weld pass): OK — spawn minimum 0.48 m (AC_START_1/3/5/7 of both race layouts), lamps 238
 masts beside a strip, minimum margin 2.36 m, none inside; chain worst ring spacing 3.16 m; edge missing {L 0, R 23} against
 fold-dropped {L 0, R 27}; the two notes it raises are the 19 `other_deck_above` rings (the
 ribbon's folds and the Del Cerro mouth step) and the outside-lip ring spacing: with one ring per
 centreline vertex the outside lip of a 10 m corner gets rings 5-7 m apart and the strip chords the
-arc by up to ~0.39 m (noted, not gated — the mesh is continuous; denser rings at corners would be
-this tool's refinement). Writes `data/race_verify.json`.
+arc by up to ~0.39 m (that estimate; measured against the declared curve it was 0.27 m — now H, and
+fixed by `densify_rings`). Writes `data/race_verify.json`.
 
 ## 8. Pictures
 

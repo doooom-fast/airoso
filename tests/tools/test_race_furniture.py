@@ -189,6 +189,134 @@ def test_kerb_mesh_faces_up_with_the_declared_profile():
     assert abs(vr[3][2] - (4.63 - 1.0)) < 1e-9 and rf.face_normal(vr, fr[1])[1] > 0
 
 
+def _profile_turns_deg():
+    """the turn of the jersey outline at each ring vertex (straight strip, full height)"""
+    ring = rf.ring_profile()
+    out = []
+    for i in range(10):
+        a, b, c = ring[i - 1], ring[i], ring[(i + 1) % 10]
+        d0 = math.atan2(b[1] - a[1], b[0] - a[0])
+        d1 = math.atan2(c[1] - b[1], c[0] - b[0])
+        out.append(abs(math.degrees((d1 - d0 + math.pi) % (2 * math.pi) - math.pi)))
+    return out
+
+
+def test_strip_is_smooth_with_hard_edges_only_on_real_creases():
+    """2026-10-11 weld pass: the flat-shaded strips shipped 3.0 kn5 vertices per triangle (35.6 MB race
+    kn5); smooth shading + hard creases + per-vertex UVs lets the exporter weld them to ~0.8"""
+    turns = _profile_turns_deg()
+    # base corner 90, base/slope 33.3, slope/upper 16.6 + 12.2 (smooth), top lip 85.5 — mirrored
+    assert [round(t, 1) for t in turns[:5]] == [90.0, 33.3, 16.6, 12.2, 85.5], turns
+    hard = {i for i, t in enumerate(turns) if t > rf.SHARP_DEG}
+    assert hard == {0, 1, 4, 5, 8, 9}
+    n = 12
+    # full-height rings (a `join` end has no taper): the exact crease set; tapered free ends add a few
+    verts, faces, _ = rf.strip_mesh(_straight_rings(n, start="join", end="join"), True, True)
+    sharp = set(rf.sharp_edges(verts, faces))
+    along = {(r * 10 + i, (r + 1) * 10 + i) for r in range(n - 1) for i in range(10)}
+    cap_rings = {tuple(sorted((base + i, base + (i + 1) % 10))) for base in (0, (n - 1) * 10) for i in range(10)}
+    assert {e for e in along if e in sharp} == {(r * 10 + i, (r + 1) * 10 + i) for r in range(n - 1) for i in hard}
+    assert cap_rings <= sharp                                    # the end caps are hard all round
+    assert len(sharp) == (n - 1) * len(hard) + 20                # nothing else: no cross edge, no cap diagonal
+    # the reflection to Blender keeps every dihedral
+    bverts, bfaces = rf.to_blender(verts, faces)
+    assert set(rf.sharp_edges(bverts, bfaces)) == sharp
+    # what the exporter emits: 16 per ring (6 hard profile vertices x 2 + 4 smooth) + one cap fan per end ring
+    rv = rf.render_vertex_count(len(verts), faces, sharp)
+    tris = rf.triangle_count(faces)
+    assert rv == 16 * n + 20 and tris == 20 * (n - 1) + 16, (rv, tris)
+    v, f, _ = rf.strip_mesh(_straight_rings(rf.MAX_RINGS_PER_OBJECT, start="join", end="join"), True, True)
+    ratio = rf.render_vertex_count(len(v), f, rf.sharp_edges(v, f)) / rf.triangle_count(f)
+    assert 0.79 < ratio < 0.81, ratio                            # vs 3.0 flat-shaded
+    # a flat-shaded mesh would be every face its own fan: the same counter says 4 per quad
+    all_edges = list(rf.edge_faces(faces))
+    assert rf.render_vertex_count(len(verts), faces, all_edges) == sum(len(fc) for fc in faces)
+
+
+def test_kerb_outline_is_hard_and_the_kerb_welds():
+    sts = [{"s": q * 0.3, "k": q, "cx": q * 0.3, "cz": 0.0, "y": 0.0, "y_hint": 0.1, "tx": 1.0, "tz": 0.0,
+            "lip": 4.63, "h": rf.KERB_H, "arc": q * 0.3} for q in range(40)]
+    verts, faces, _ = rf.kerb_mesh(sts, 1.0)
+    outline = rf.kerb_outline_edges(len(sts))
+    assert len(outline) == 2 * 39 and (1, 5) in outline and (2, 6) in outline
+    # the 26.6 deg ramp would stay smooth by angle alone; the top/outer face is a 90 deg crease anyway
+    by_angle = set(rf.sharp_edges(verts, faces))
+    assert (2, 6) in by_angle and (1, 5) not in by_angle
+    sharp = by_angle | set(outline)
+    assert rf.render_vertex_count(len(verts), faces, sharp) == 6 * len(sts)    # lip, 2 x ramp top, 2 x outer top, base
+    assert rf.triangle_count(faces) == 6 * 39
+
+
+def _circle(n_vert, radius):
+    """a closed CCW (left-turning) ring of n_vert vertices + the repeated closure vertex"""
+    pts = [(radius * math.cos(2 * math.pi * k / n_vert), 0.0, radius * math.sin(2 * math.pi * k / n_vert))
+           for k in range(n_vert)]
+    return pts + [pts[0]]
+
+
+def test_densify_keeps_rings_on_the_offset_curve_within_spacing_and_chord():
+    pts = _circle(12, 5.8)                                       # ~3 m vertex spacing, a 5.8 m radius corner
+    m = rf.unique_count(pts)
+    st = rf.stations(pts)
+    ks = list(range(0, 9))
+    lat = -8.0                                                   # the OUTSIDE lip (right of a left turn)
+    plan = rf._plan_run(pts, [16.0] * len(pts), m, st, ks, lambda k: lat, "free", "free", rf.BARRIER_H,
+                        "edge", "t", "R", (0, 8))
+    before = plan["rings"]
+    sp0 = max(math.dist(rf._strip_xz(a), rf._strip_xz(b)) for a, b in zip(before, before[1:]))
+    ch0 = max(rf.chord_error(a, b) for a, b in zip(before, before[1:]))
+    assert sp0 > 7.0 and ch0 > 0.25, (sp0, ch0)                  # the 7 m / 0.27 m class the rehearsal measured
+    vertex_rings = [dict(r) for r in before]
+    rings, n_ins = rf.densify_rings([dict(r) for r in before], m)
+    assert n_ins == len(rings) - len(before) > 0
+    sp, ch, folds = rf.ring_stats(rings)
+    assert sp <= rf.RING_SPACING_MAX_M and ch <= rf.CHORD_MAX_M and folds == 0, (sp, ch, folds)
+    # every inserted ring stands ON the declared offset curve of its vertex pair, arcs keep rising, the
+    # vertex rings are untouched, and the texture u (arc / pitch) stays continuous
+    by_k = {r["k"]: r for r in vertex_rings}
+    for r in rings:
+        if r.get("inserted"):
+            a, b = by_k[r["k"]], by_k[r["k"] + 1]
+            p = rf.offset_xz(a, b, r["u"])
+            assert math.dist(rf._strip_xz(r), p) < 1e-9 and 0 < r["u"] < 1
+            assert abs(abs(r["lat"]) - 8.0) < 1e-12
+        else:
+            assert rf._strip_xz(r) == rf._strip_xz(by_k[r["k"]])
+    arcs = [r["arc"] for r in rings]
+    assert all(b > a for a, b in zip(arcs, arcs[1:]))
+    # the swept mesh of the dense run is still one closed solid
+    for r in rings:
+        r["y"] = 0.0
+    v, f, uv = rf.strip_mesh(rings, True, True)
+    assert rf.signed_volume(v, f) > 0 and len(v) == 10 * len(rings)
+
+
+def test_densify_leaves_a_straight_chain_alone_and_splits_only_long_gaps():
+    rings = _straight_rings(6)                                   # 3 m apart, lat 0: nothing to add
+    out, n = rf.densify_rings([dict(r) for r in rings], 1000)
+    assert n == 0 and len(out) == 6 and all(r["seg_chord_m"] in (0.0, None) for r in out)
+    gap = _straight_rings(3, step=7.2)                           # one 7.2 m vertex gap on the centreline
+    out, n = rf.densify_rings([dict(r, u=0.0) for r in gap], 1000)
+    assert n == 2 * 2 and max(math.dist(rf._strip_xz(a), rf._strip_xz(b)) for a, b in zip(out, out[1:])) <= 3.5
+
+
+def test_a_fold_drop_chord_is_only_cut_on_its_straight_line():
+    pts = _circle(40, 20.0)
+    m = rf.unique_count(pts)
+    st = rf.stations(pts)
+    plan = rf._plan_run(pts, [16.0] * len(pts), m, st, [0, 3], lambda k: 6.0, "free", "free", rf.BARRIER_H,
+                        "edge", "t", "L", (0, 3))
+    a, b = plan["rings"]                                          # vertices 0 and 3: not adjacent = a fold chord
+    out, n = rf.densify_rings([a, b], m)
+    pa, pb = rf._strip_xz(a), rf._strip_xz(b)
+    L = math.dist(pa, pb)
+    assert n == math.ceil(L / rf.RING_SPACING_MAX_M) - 1 > 0
+    for r in out[1:-1]:
+        assert r["fold_fill"] and r["seg_chord_m"] is None
+        assert rf.seg_dist(rf._strip_xz(r), pa, pb) < 1e-9       # on the chord itself
+    assert max(math.dist(rf._strip_xz(x), rf._strip_xz(y)) for x, y in zip(out, out[1:])) <= 3.5 + 1e-9
+
+
 def test_spawn_clearance_is_hard_below_the_margin():
     """HARD below SPAWN_MARGIN_M (0.30 m) since 2026-10-11 — the 1.4 m stagger's 0.08 m used to be a note"""
     pts = [(float(k) * 3.0, 0.0, 0.0) for k in range(10)] + [(0.0, 0.0, 0.0)]
@@ -291,9 +419,21 @@ def test_real_lake_murray_declaration_plans_cleanly():
     assert 0 < dropped < 60 and len(missing) == dropped, (len(missing), dropped, missing[:8])
     assert all(side == "R" for side, _ in missing), missing
     assert all(min((k - a) % m, (a - k) % m) <= 15 for _, k in missing for a in [min((0, 770, 1514, 2319, 3297), key=lambda a: min((k - a) % m, (a - k) % m))]), missing
+    def declared(k):
+        return widths[k % m] / 2.0 - 0.82 + rf.BARRIER_HALF_W
     for p in edge:
-        for r in p["rings"][:3]:
-            assert abs(abs(r["lat"]) - (widths[r["k"]] / 2.0 - 0.82 + rf.BARRIER_HALF_W)) < 1e-9
+        for r in p["rings"]:
+            if r.get("fold_fill"):
+                continue                      # on a fold-drop chord: no declared curve to stand on
+            u = r.get("u") or 0.0             # a densified ring: the lerp of its vertex pair's laterals
+            assert abs(abs(r["lat"]) - ((1 - u) * declared(r["k"]) + u * declared(r["k"] + 1))) < 1e-9, (r["k"], u)
+    # ring density (2026-10-11): every span <= 3.5 m, every span that follows the curve within 0.10 m of it,
+    # the split still <= 800 rings (<= 8,000 positions) per object, and the corners did get rings
+    for p in chain + edge:
+        sp, ch, _ = rf.ring_stats(p["rings"])
+        assert sp <= rf.RING_SPACING_MAX_M + 1e-9 and ch <= rf.CHORD_MAX_M + 1e-9, (rf.object_name(p), sp, ch)
+        assert 10 * len(p["rings"]) <= 8000
+    assert sum(p["densified"] for p in edge) > 50 and sum(p["densified"] for p in chain) == 0
     gaps = [(g["i"], g["j"]) for g in bands.get("edge_gaps", [])]
     assert len(gaps) == 3
     for i, j in gaps:

@@ -77,6 +77,11 @@ class MedianZone:
         sealed mouths."""
         n = len(pts)
         self.pts = pts
+        # a CLOSED lap repeats vertex 0 as its last point; that duplicate is not a vertex of its own
+        # (the ribbon and the race author both stop at n - 1 and wrap): the barrier bands take vertex
+        # 0's width and a wrapped tangent there — the duplicate carries the LAST street's width
+        # (SD: 27.5 m vs Alvarado's 17.0 m) and a one-sided tangent that is 6.8 deg off at the seam
+        self.closed = n > 2 and abs(pts[0][0] - pts[-1][0]) < 1e-6 and abs(pts[0][2] - pts[-1][2]) < 1e-6
         self.island_w = list(island_w) if island_w else [0.0] * n
         self.polys = [(pts, self.island_w)] + list(extra)
         self.widths = list(widths) if widths and len(widths) == n else [0.0] * n
@@ -97,7 +102,7 @@ class MedianZone:
         # barrier bands are hashed by their own CENTRE point (the edge band stands up to half a
         # road away from the centreline vertex, beyond a one-cell reach on a 30 m arterial)
         self.bcells: dict[tuple[int, int], list[tuple[str, int, float, float]]] = {}
-        for i in range(n):
+        for i in range(n - 1 if self.closed else n):     # the closure duplicate is vertex 0's band
             if self.centre_w[i] > 0:
                 self._bput("centre", i, pts[i][0], pts[i][2])
             if self.edge_strip[i]:
@@ -118,10 +123,15 @@ class MedianZone:
         self.bcells.setdefault((int(x // CELL_M), int(z // CELL_M)), []).append((kind, i, x, z))
 
     def _normal(self, i):
-        """left-hand unit normal (-tz, tx) of the local tangent at mainline vertex i"""
+        """left-hand unit normal (-tz, tx) of the local tangent at mainline vertex i (central
+        difference; wrapped across the seam of a closed lap, one-sided at the ends of an open one)"""
         pp = self.pts
-        a = pp[max(0, i - 1)]
-        b = pp[min(len(pp) - 1, i + 1)]
+        if self.closed:
+            m = len(pp) - 1
+            a, b = pp[(i - 1) % m], pp[(i + 1) % m]
+        else:
+            a = pp[max(0, i - 1)]
+            b = pp[min(len(pp) - 1, i + 1)]
         tx, tz = b[0] - a[0], b[2] - a[2]
         L = math.hypot(tx, tz) or 1e-9
         return -tz / L, tx / L
@@ -250,7 +260,38 @@ class MedianZone:
                         lat = abs(vx * nx + vz * nz)
                         if along <= ALONG_M and lat <= reach:
                             return True
+                        # CONTINUOUS between consecutive declared vertices of the same kind (2026-10-11):
+                        # on the outside lip of a 10 m corner the edge-band points stand ~7 m apart, so
+                        # the +-2 m rectangles left ~3 m gaps the declared strip runs straight through
+                        # (race_furniture.densify_rings puts rings there). Same lateral reach, no widening.
+                        for j in (i - 1, i + 1):
+                            q = self._band_point(kind, j)
+                            if q is not None and self._span_dist(x, z, bx, bz, q[0], q[2]) <= reach:
+                                return True
         return False
+
+    @staticmethod
+    def _span_dist(x, z, ax, az, bx, bz):
+        """distance to the segment a-b itself (no along extension: the end rectangles own the ends)"""
+        dx, dz = bx - ax, bz - az
+        L2 = dx * dx + dz * dz
+        t = 0.0 if L2 < 1e-12 else max(0.0, min(1.0, ((x - ax) * dx + (z - az) * dz) / L2))
+        return math.hypot(x - (ax + t * dx), z - (az + t * dz))
+
+    def _band_point(self, kind, j):
+        """(x, 0, z) of the declared band point of `kind` at mainline vertex j, None where that kind
+        is not declared (or j is off the mainline)"""
+        if self.closed:
+            j %= len(self.pts) - 1                        # across the seam: -1 -> n-2, n-1 -> 0
+        elif not 0 <= j < len(self.pts):
+            return None
+        if kind == "centre":
+            return (self.pts[j][0], 0.0, self.pts[j][2]) if self.centre_w[j] > 0 else None
+        if kind in ("edge_L", "edge_R") and self.edge_strip[j]:
+            nx, nz = self._normal(j)
+            off = (self.widths[j] / 2.0 + self.edge_centre_from_lip) * (1.0 if kind == "edge_L" else -1.0)
+            return (self.pts[j][0] + nx * off, 0.0, self.pts[j][2] + nz * off)
+        return None
 
     @staticmethod
     def _seg_dist(x, z, a, b):

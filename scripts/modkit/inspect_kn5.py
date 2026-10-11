@@ -110,6 +110,7 @@ def parse_stats(path: Path, *, surface_keys: list[str] | None = None,
         materials.append({"name": name, "shader": shader, "props": props, "textures": slots})
 
     meshes = []                        # inventory rows for every mesh; measured rows carry more
+    nodes = []                         # every transform (class 1) node's name: the AC_* dummies live here
 
     def _measure(name: str, world: list[float], vcount: int, vo: int, idx: array) -> dict:
         """Decode positions, apply world transform, return area/edge/bbox stats."""
@@ -145,6 +146,7 @@ def parse_stats(path: Path, *, surface_keys: list[str] | None = None,
     def read_node(parent: list[float]):
         ncls = r.u32(); name = r.string(); child_count = r.u32(); r.boolean()
         if ncls == 1:
+            nodes.append(name)
             world = _matmul(r.matrix(), parent)
             for _ in range(child_count):
                 read_node(world)
@@ -180,7 +182,7 @@ def parse_stats(path: Path, *, surface_keys: list[str] | None = None,
 
     read_node(_IDENT)
     return {"file": str(path), "version": version, "file_bytes": len(d),
-            "textures": textures, "materials": materials, "meshes": meshes}
+            "textures": textures, "materials": materials, "meshes": meshes, "nodes": nodes}
 
 
 def summarize(parsed: dict, *, top: int = 12) -> dict:

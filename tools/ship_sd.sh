@@ -178,8 +178,11 @@ step "ship: export road kn5 (shared by all layouts, spawn-free)"
 "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/export_kn5_addon.py" -- "$PROJ" --blend "$PROJ/blender/split/loop_main.blend" 2>&1 | grep "KN5 EXISTS\|INI materials"
 step "ship: export race-furniture kn5 (loaded by the race layouts only)"
 "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/export_kn5_addon.py" -- "$PROJ" --blend "$PROJ/blender/split/loop_race.blend" --out "${SLUG}_race.kn5" 2>&1 | grep "KN5 EXISTS\|INI materials"
-RACE_BYTES=$(stat -c %s "$PROJ/build/${SLUG}_race.kn5")
-[ "$RACE_BYTES" -lt 20000000 ] || { echo "race kn5 is $RACE_BYTES B (>= 20 MB): the split leaked road geometry or textures into it"; exit 1; }
+# content guard (was a 20 MB size cap, which fired on a clean but flat-shaded 35.6 MB kn5): every mesh
+# 1WALL_RACE* / 1KERB_RACE*, every texture from pbr.py's race rows, no AC_* node — exit 1 otherwise.
+# The size is printed (WARN above 20 MB), never the gate.
+(cd "$AIROSO" && python -m scripts.modkit.inspect_kn5 "$PROJ/build/${SLUG}_race.kn5" --json "$PROJ/data/race_kn5.json" >/dev/null)
+(cd "$AIROSO" && python tools/check_race_kn5.py "$PROJ/data/race_kn5.json")
 step "ship: spawn kn5 per layout (nodes only: AC_START/PIT/HOTLAP/TIME from data/dummies_<id>.json)"
 "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/build_spawn_kn5.py" -- "$PROJ" 2>&1 | grep "^\[spawn_kn5\]"
 

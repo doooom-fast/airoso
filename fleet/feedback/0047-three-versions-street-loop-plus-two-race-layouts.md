@@ -504,7 +504,7 @@ declared in config, not a second archetype.
    → `author_race_furniture_blend.py` (saves `loop.blend` with the `RACE` collection) →
    `verify_race.py` (hard) → `plot_race_furniture.py`.
 4. **prep** (spawn-free, UV-keep) → **split** → `--dry-run` stops here →
-   **export** road kn5, race kn5 (asserted < 20 MB), spawn kn5s ×3 →
+   **export** road kn5, race kn5 (content guard `tools/check_race_kn5.py`: RACE meshes, race textures, no `AC_*`), spawn kn5s ×3 →
    **AI** `write_ai_line --layout race_cw`, `--layout race_acw`, `--layout street` (`STREET_AI=july`
    copies the July `write_ai_line` draft instead) → **verify_kn5** (hard) → **track_folder** →
    **make_map** → **make_treefx**.
@@ -564,6 +564,49 @@ layout as today except the start.
   three names and run texts, pitboxes 8, `<id>/ai/` from `ai/<id>/`, and removes the stale root
   `ai/`, `ui/ui_track.json`, `models.ini`; `make_map` writes the four maps. Wall: gate OBJ 5 s,
   street drive_test 11 s, audits 9 s, both race drive_tests 20 s, verify_kn5 5 s, packer 7 s.
+
+## Real rehearsal + weld pass (2026-10-11, `SHIP_PROJ=<scratch copy> bash tools/ship_sd.sh`; nothing synced back, nothing installed)
+
+The first REAL rehearsal (no `--dry-run`) stopped at the race-kn5 size guard: `<slug>_race.kn5` 35,553,024 B.
+It leaked nothing (36 meshes, all `1WALL_RACE*` / `1KERB_RACE*`; textures kerb_diffuse.png +
+concrete_barrier_diffuse/normal.png, 2.4 MB) — it was 719,576 kn5 vertices for 241,190 triangles,
+2.98 per triangle: the strips were flat-shaded, and the exporter (`exporter.kn5`, welds position +
+normal + UV + tangent) writes one vertex per face corner then. verify_race also noted outside-lip ring
+spacing up to 7.02 m. Fixed and re-run to the end (`--skip-blend`, the same authored scene):
+
+- **Shading**: every RACE object smooth-shaded, hard edges only on creases > 30° (jersey base 90°,
+  base/slope 33°, top lip 86°, the end caps; slope/upper is 17° + 12° and stays smooth) + the kerb
+  outline. The prep was READ, not edited: `DOUBLE_SIDE` only touches merged `data/track_*.obj` groups
+  (241,190 = authored quads × 2 + caps: nothing doubled), its bmesh round trip keeps the flags (all
+  faces smooth, 4,300 hard edges on `1WALL_race_kbar_navajo_2297_0` after prep + split, as authored),
+  its face-up pass flips 2 of 4,545 kerb faces (hairpin fold), it never un-smooths. engine-july
+  `build_kn5_loop.py` 2dcc8e8b… / airoso 8752e963… unchanged.
+- **Ring density**: `densify_rings` puts rings ON the declared offset curve: 81 inserted, spacing max
+  3.50 m (was 7.02), chord vs the curve max 0.043 m (was 0.271 m at the seam corner's outside lip,
+  0.171 m at the hairpin). verify_race H gates it (> 0.15 m FAILS): the old authored file FAILS H,
+  the new one passes (11,668 spans measured, 0 over, 5 fold spans counted).
+- **Race kn5**: 12,558,972 B; 36 meshes (max 12,809 v); **196,763 v / 242,810 tri = 0.81 per
+  triangle** (predicted 196,774 before Blender); positions 123,148 authored / 123,140 after the prep,
+  max 8,000 per object. The size guard is now a content guard (`tools/check_race_kn5.py` on
+  `inspect_kn5 --json`): only RACE meshes, only pbr.py's race textures, no `AC_*` node — OK.
+- **Road kn5 unchanged**: 31 meshes / 1,258,109 v / 1,232,927 tri / 14 textures / 91,934,629 B,
+  per-mesh rows identical (the exporter is byte-nondeterministic: the same blend exported twice
+  differs in 189,579 bytes).
+- **Gates, every line identical to the same gates run on the pre-weld kn5 set** except the race
+  audit's vertex inventory: street drive_test ground-through 82 / floating 391 / severe 0 / kinks
+  4.97 per km / excursions 101 / obstruction 0 → FAIL; street audit D 512 / F 15 / I 145 / K 154 =
+  826; verify_kn5 ✓; race_cw obstruction 220 / `barrier_missing` 22 of 34,833 / ground-through 65 /
+  excursions 4 / kinks 5.12 → FAIL; race_acw obstruction 175 / `barrier_missing` 32 / ground-through
+  13 / excursions 0 / kinks 2.74 → FAIL; race audit D 512 / F 15 / I 145 / K 154 = 826 →
+  `RACE_RED = race_cw race_acw`, NOT INSTALLED (scratch: never installed anyway). The densified rings
+  first read as 972 race-audit D walls: the band test's ±2 m rectangles left gaps between outside-lip
+  band points ~7 m apart (460 verts) and the lap's closure duplicate carried Lake Murray's 27.5 m width
+  at the seam (28) — both fixed in `scripts/geometry/median_zone.py` (fleet/GATES-CHANGELOG.md), D
+  back to 512 on both the new and the pre-weld kn5 set.
+- The race layouts' own reds (obstruction 220 / 175 stations, all on kerb-line strips — race_cw
+  edge_R Jackson / College / Lake Murray, race_acw edge_L Lake Murray / College / Jackson;
+  `barrier_missing` 22 / 32, worst runs at the seam and two mid-lap stretches) are unchanged by this
+  pass, key for key, and stay open.
 
 ## Notes filed here (not conclusions elsewhere)
 

@@ -4,7 +4,7 @@ The island kind (data/median_bands.json) is what every gate read before 0047; th
 (data/barrier_bands.json: centre chain, kerb-line strips, sealed-mouth polylines) is consulted only
 by callers that ask for it. These pin: default kinds = island only (byte-identical behaviour for
 every existing caller), the centre / edge / mouth band maths (half-width + 0.6 m laterally, 2 m
-along), one kind disabling on a length mismatch while the other keeps working, and ``reversed()``
+along past a run's end, continuous between consecutive declared vertices), one kind disabling on a length mismatch while the other keeps working, and ``reversed()``
 mapping vertex i -> n-1-i. Plain ``test_*`` for tests/run_tests.py.
 """
 
@@ -58,7 +58,13 @@ def test_centre_band_is_half_plus_margin_laterally_and_two_metres_along():
     assert z.contains(reach - 0.05, 150.0, ALL_KINDS)
     assert not z.contains(reach + 0.1, 150.0, ALL_KINDS)
     assert z.contains(0.0, 151.5, ALL_KINDS)             # 1.5 m along from v30
-    assert not z.contains(0.0, 152.5, ALL_KINDS)         # 2.5 m from both v30 and v31: outside the band
+    # 2.5 m from both v30 and v31 — but BETWEEN two declared vertices: the band is continuous there
+    # (2026-10-11: the outside-lip edge points stand ~7 m apart and the densified strip fills the gap)
+    assert z.contains(0.0, 152.5, ALL_KINDS)
+    assert z.contains(reach - 0.05, 152.5, ALL_KINDS) and not z.contains(reach + 0.1, 152.5, ALL_KINDS)
+    assert z.contains(0.0, 176.5, ALL_KINDS)             # 1.5 m past the run's last vertex v35
+    assert not z.contains(0.0, 177.5, ALL_KINDS)         # 2.5 m past it: outside the band
+    assert not z.contains(0.0, 122.5, ALL_KINDS)         # 2.5 m before its first vertex v25 (v24 undeclared)
     assert z.barrier_half_at(30) == 0.335 and z.barrier_half_at(5) == 0.0
     assert z.island_half_at(15) == 2.0 and z.divider_half_at(15) == 2.0 and z.divider_half_at(30) == 0.335
 
@@ -71,6 +77,8 @@ def test_edge_band_sits_at_half_width_plus_offset_on_both_sides():
         assert z.contains(sgn * (ec + 0.9), 100.0, ALL_KINDS)
         assert not z.contains(sgn * (ec + 1.0), 100.0, ALL_KINDS)
         assert not z.contains(sgn * 3.0, 100.0, ALL_KINDS)
+        assert z.contains(sgn * ec, 102.5, ALL_KINDS)    # mid-way between v20 and v21: continuous
+        assert not z.contains(sgn * (ec + 1.0), 102.5, ALL_KINDS)
     assert z.edge_inset_at(20) == 0.82 and z.edge_strip_at(20)
     assert not z.contains(ec, 100.0)                     # default kinds: not exempt
 
@@ -107,3 +115,35 @@ def test_reversed_maps_vertex_i_to_n_minus_1_minus_i():
     assert r.edge_inset_at(N - 1 - 20) == 0.82
     assert r.contains(0.0, 150.0, ALL_KINDS) and r.contains(0.0, 75.0)   # geometry unchanged
     assert r.contains(W / 2 - 0.485, 100.0, ALL_KINDS)
+
+
+def test_closed_lap_seam_band_is_vertex_0s():
+    """A closed lap repeats vertex 0 as its last point and that duplicate carries the LAST street's
+    width (Lake Murray: 27.5 m vs Alvarado's 17.0 m) with a one-sided tangent 6.8 deg off: the barrier
+    band at the seam must be vertex 0's (the ribbon and the race author wrap there). Found 2026-10-11
+    when the densified outside-lip rings of the seam corner read as 28 audit-D walls on the road."""
+    import math
+    n_v, rad = 40, 40.0
+    d = Path(tempfile.mkdtemp())
+    (d / "data").mkdir()
+    (d / "track.config.json").write_text(json.dumps({"slug": "t", "mirror_x": False}))
+    pts = [[rad * math.cos(2 * math.pi * k / n_v), 0.0, rad * math.sin(2 * math.pi * k / n_v)] for k in range(n_v)]
+    pts.append(list(pts[0]))
+    widths = [W] * n_v + [W + 10.0]                       # the closure duplicate: another street's width
+    (d / "data" / "gate_centerline.json").write_text(json.dumps({"points_xyz_m": pts, "widths_m": widths}))
+    (d / "data" / "barrier_bands.json").write_text(json.dumps({
+        "centre_w_by_vertex": [0.0] * (n_v + 1), "edge_strip_by_vertex": [1] * (n_v + 1),
+        "edge_inset_by_vertex": [0.82] * (n_v + 1), "params": {"barrier_half_m": 0.335, "edge_centre_from_lip_m": -0.485}}))
+    z = MedianZone.load(d)
+    assert z.closed and z.n_edge == n_v + 1
+    nx, nz = z._normal(0)
+    assert abs(nx + 1.0) < 1e-9 and abs(nz) < 1e-9 and z._normal(n_v) == z._normal(0)   # wrapped: inward at angle 0
+    left = rad - (W / 2 - 0.485)                          # the left (inner) band radius, 35.485 m
+    assert z.contains(left, 0.0, ALL_KINDS)               # vertex 0's own band point
+    a = math.radians(-4.5)                                # half-way back to vertex 39, on the declared curve
+    r_mid = rad * math.cos(math.radians(4.5)) - (W / 2 - 0.485)
+    assert z.contains(r_mid * math.cos(a), r_mid * math.sin(a), ALL_KINDS)
+    wrong = rad - ((W + 10.0) / 2 - 0.485)                # where the duplicate's width would put it
+    assert not z.contains(wrong, 0.0, ALL_KINDS)
+    # an OPEN polyline keeps its one-sided end tangents
+    assert not MedianZone.load(_project()).closed

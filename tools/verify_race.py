@@ -22,9 +22,8 @@ drive_test's ``barrier_missing`` then proves the strips are in the BUILT OBJ (L5
      stands inside a declared gap (the three bridge spans); every `join` end meets the neighbouring
      object's end (JOIN_TOL_M) and every `free` end stands at a declared gap edge — a free end in
      the middle of a declared stretch is a hole in the wall
-  A swept strip is continuous between ANY two consecutive rings (the mesh spans them), so ring
-  spacing is reported, not gated: on the outside lip of a 10 m corner the 3 m centreline spacing
-  stretches to 5-7 m and the strip chords up to ~0.4 m inside the arc (noted for the author tool).
+  A swept strip is continuous between ANY two consecutive rings (the mesh spans them); how CLOSELY it
+  follows the declaration between them is H.
   E  race kerbs — the declared (apex, in|out) set == the authored set, every kerb has stations,
      nothing declared-but-unmatched, as many corners as the declaration
   F  spawn clearance — HARD (2026-10-11): every grid / pit / hotlap slot of every race layout, re-measured
@@ -38,6 +37,15 @@ drive_test's ``barrier_missing`` then proves the strips are in the BUILT OBJ (L5
      at its POST_H scale) stands OUTSIDE every kerb-line strip and centre-chain footprint; FAIL on any
      overlap, the minimum margin reported (counts.lamp_min_margin_m). Q6 `walk` puts the strip on the
      sidewalk top, where the masts are — this is the check that would catch it.
+  H  ring density (2026-10-11; was a note) — every consecutive pair of chain / kerb-line strip ring
+     centres vs the DECLARED offset curve rebuilt here from the bands + centreline alone (centre lerped
+     along each centreline segment, left normal of the normalised lerp of the vertex tangents, the
+     declared lateral half_w + edge_centre_from_lip_m lerped; lat 0 for the chain): the chord error
+     (max distance of the curve between the two rings from the straight span) > CHORD_FAIL_M = 0.15 m
+     FAILS (the author keeps it <= 0.10 m). Spans where the declared curve folds back (an inside lip
+     tighter than its offset: the author chords those on purpose) are counted, not judged; ring
+     spacing above 3.5 m is reported. The 2026-10-11 rehearsal measured 0.27 m / 7.02 m at the seam
+     corner's outside lip before densify_rings.
 
 Reported, never gated: another ROAD sheet above a strip base (a fold / mouth defect for its owner,
 0033/0046 class), the worst deck-vs-data height, the minimum spawn clearance.
@@ -70,7 +78,13 @@ JOIN_TOL_M = 0.05       # a `join` end and its neighbour's end are the SAME ring
 END_TOL_M = 1.5         # a run's first/last ring vs the declared end vertex (the ring sits ON the vertex)
 VERTEX_TOL = 1          # edge rings sit ~6 m off the centreline: on a tight curve the nearest vertex may be k+-1
 FREE_END_VERTEX_TOL = 3 # a `free` edge end must stand within this many vertices of a declared gap vertex
-SPACING_NOTE_M = 6.0    # ring spacing above this is reported (the strip chords the arc), never gated
+CHORD_FAIL_M = 0.15     # H: a strip span chording the declared offset curve by more than this FAILS (2026-10-11)
+CHORD_TARGET_M = 0.10   # H: race_furniture.CHORD_MAX_M, the author's own target (quoted in the message)
+SPACING_TARGET_M = 3.5  # H: race_furniture.RING_SPACING_MAX_M — ring spacing above it is reported, never gated
+SPACING_ROUND_M = 0.015 # H: ring_centres are rounded to 0.01 m, so a 3.500 m span can read 3.507 m
+DENSE_PER_VERTEX = 32   # H: declared-curve samples per centreline interval
+OFF_CURVE_M = 0.5       # H: a ring centre farther than this from every declared sample is not measured (C / D judge it)
+SPAN_MAX_VERTICES = 40  # H: a span covering more centreline intervals than this (~120 m) is not measured (D judges holes)
 CAR_HALF_W_M = 0.95     # a 1.9 m car on a grid / pit slot
 SPAWN_MARGIN_M = 0.30   # F: HARD floor between a slot's car and any strip face (GATES-CHANGELOG 2026-10-11)
 FACING = ("AC_START", "AC_PIT", "AC_HOTLAP")   # the slots a car sits on (AC_TIME_* are timing planes)
@@ -142,6 +156,8 @@ def verify(authored: dict | None, bands: dict, pts: list, island_w: list, *, all
     counts: dict = {}
     if not pre_author:
         _verify_authored(authored or {}, bands, pts, island_w, allow_standin, fails, warns, counts)
+        if widths is not None:
+            _verify_density(authored or {}, bands, pts, widths, fails, warns, counts)
     m = _unique_count(pts)
     grid = VertexGrid(pts[:m])
     if spawns is not None and widths is not None:
@@ -333,6 +349,173 @@ def _verify_lamps(heads, bands, pts, widths, grid, fails, warns, counts, arm_m=N
     counts.update({"lamps": len(bases), "lamps_checked": len(rows), "lamp_arm_m": arm, "lamp_post_h_m": post_h,
                    "mast_r_m": round(r_m, 3), "lamp_min_margin_m": worst["margin_m"] if worst else None,
                    "lamp_min": worst, "lamps_inside": len(bad)})
+
+
+# --- H: ring density — the authored strip polyline vs the DECLARED offset curve ---------------------
+
+def declared_curve(bands: dict, pts: list, widths: list, side: str, per_vertex: int = DENSE_PER_VERTEX) -> dict:
+    """{sample index i = k * per_vertex + j: (x, z, tx, tz)} — the strip-centre curve the declaration
+    implies on `side` ('L' / 'R' kerb-line strip at |lat| = half_w + edge_centre_from_lip_m; 'C' the
+    centre chain at lat 0), sampled over every centreline interval [k, k+1] declared at both ends: the
+    centre lerped along the segment, the left normal of the normalised lerp of the two vertex tangents
+    (central differences), the lateral lerped. Built from the declaration and the centreline only."""
+    m = _unique_count(pts)
+    params = bands.get("params", {}) or {}
+    c = params.get("edge_centre_from_lip_m")
+    c = float(c) if c is not None else (-0.485 if str(params.get("edge_mode", "road")) == "road" else 0.445)
+    if side == "C":
+        flags = bands.get("centre_w_by_vertex") or []
+        lat_of = lambda k: 0.0  # noqa: E731
+    else:
+        flags = bands.get("edge_strip_by_vertex") or bands.get("edge_inset_by_vertex") or []
+        sgn = 1.0 if side == "L" else -1.0
+        lat_of = lambda k: sgn * (float(widths[k]) / 2.0 + c)  # noqa: E731
+
+    def tangent(k):
+        a, b = pts[(k - 1) % m], pts[(k + 1) % m]
+        tx, tz = b[0] - a[0], b[2] - a[2]
+        L = math.hypot(tx, tz) or 1.0
+        return tx / L, tz / L
+    out = {}
+    for k in range(min(m, len(flags))):
+        k1 = (k + 1) % m
+        if not (flags[k] > 0 and k1 < len(flags) and flags[k1] > 0):
+            continue
+        (t0x, t0z), (t1x, t1z) = tangent(k), tangent(k1)
+        la, lb = lat_of(k), lat_of(k1)
+        for j in range(per_vertex):
+            u = j / per_vertex
+            cx = pts[k][0] + (pts[k1][0] - pts[k][0]) * u
+            cz = pts[k][2] + (pts[k1][2] - pts[k][2]) * u
+            tx, tz = t0x + (t1x - t0x) * u, t0z + (t1z - t0z) * u
+            L = math.hypot(tx, tz) or 1.0
+            tx, tz = tx / L, tz / L
+            lat = la + (lb - la) * u
+            out[k * per_vertex + j] = (cx - tz * lat, cz + tx * lat, tx, tz)     # left normal (-tz, tx)
+        # the interval's far end (sample k1 * per_vertex) is laid by interval k1, or added here when k1 ends the run
+        if not flags[(k1 + 1) % m] > 0:
+            t = tangent(k1)
+            lat = lat_of(k1)
+            out[k1 * per_vertex] = (pts[k1][0] - t[1] * lat, pts[k1][2] + t[0] * lat, t[0], t[1])
+    return out
+
+
+class _SampleGrid:
+    CELL = 2.0
+
+    def __init__(self, samples):
+        self.s = samples
+        self.cells: dict[tuple[int, int], list[int]] = {}
+        for i, (x, z, _, _) in samples.items():
+            self.cells.setdefault((int(math.floor(x / self.CELL)), int(math.floor(z / self.CELL))), []).append(i)
+
+    def nearest(self, x, z, reach=3):
+        cx, cz = int(math.floor(x / self.CELL)), int(math.floor(z / self.CELL))
+        best, bi = float("inf"), None
+        for r in range(1, reach + 1):
+            for i in range(cx - r, cx + r + 1):
+                for j in range(cz - r, cz + r + 1):
+                    for q in self.cells.get((i, j), ()):
+                        s = self.s[q]
+                        d = (s[0] - x) ** 2 + (s[1] - z) ** 2
+                        if d < best:
+                            best, bi = d, q
+            if bi is not None:
+                return bi, math.sqrt(best)
+        return None, None
+
+
+def _seg_dist(p, a, b):
+    ax, az = b[0] - a[0], b[1] - a[1]
+    L2 = ax * ax + az * az
+    t = 0.0 if L2 <= 0 else max(0.0, min(1.0, ((p[0] - a[0]) * ax + (p[1] - a[1]) * az) / L2))
+    return math.hypot(p[0] - a[0] - t * ax, p[1] - a[1] - t * az)
+
+
+def span_chords(centres: list, samples: dict, grid: _SampleGrid, n_samples: int, per_vertex: int = DENSE_PER_VERTEX):
+    """per consecutive ring pair: ('ok', chord_m, spacing_m, ring index) where the declared curve runs
+    forward between them, ('fold', None, spacing, idx) where it folds back (an inside lip tighter than its
+    offset — the author chords it on purpose) and ('off', None, spacing, idx) where a ring is off the
+    declared curve / the span leaves the declaration"""
+    out = []
+    params = []
+    for c in centres:
+        i, d = grid.nearest(c[0], c[2])
+        params.append(i if (i is not None and d <= OFF_CURVE_M) else None)
+    for idx, (a, b) in enumerate(zip(centres, centres[1:])):
+        sp = math.hypot(b[0] - a[0], b[2] - a[2])
+        i0, i1 = params[idx], params[idx + 1]
+        if i0 is None or i1 is None:
+            out.append(("off", None, sp, idx))
+            continue
+        di = (i1 - i0) % n_samples
+        if di > SPAN_MAX_VERTICES * per_vertex:
+            out.append(("off", None, sp, idx))
+            continue
+        pa, pb = (a[0], a[2]), (b[0], b[2])
+        worst, kind, prev = 0.0, "ok", samples.get(i0)
+        for q in range(1, di + 1):
+            s = samples.get((i0 + q) % n_samples)
+            if s is None:
+                kind = "off"
+                break
+            if prev is not None and (s[0] - prev[0]) * s[2] + (s[1] - prev[1]) * s[3] <= 0.0:
+                kind = "fold"
+                break
+            prev = s
+            if q < di:
+                worst = max(worst, _seg_dist((s[0], s[1]), pa, pb))
+        out.append((kind, worst if kind == "ok" else None, sp, idx))
+    return out
+
+
+def _verify_density(authored, bands, pts, widths, fails, warns, counts):
+    """H: every chain / kerb-line strip span within CHORD_FAIL_M of the declared offset curve"""
+    m = _unique_count(pts)
+    n_samples = m * DENSE_PER_VERTEX
+    objects = authored.get("objects", [])
+    rc = authored.get("ring_centres", {})
+    curves, grids = {}, {}
+    worst = {"chord_m": 0.0}
+    sp_all = sp_ok = 0.0
+    n_ok = n_fold = n_off = 0
+    over = []
+    for o in objects:
+        if o.get("kind") not in ("chain", "edge"):
+            continue
+        side = "C" if o.get("kind") == "chain" else str(o.get("side"))
+        if side not in curves:
+            curves[side] = declared_curve(bands, pts, widths, side)
+            grids[side] = _SampleGrid(curves[side])
+        cs = rc.get(o["name"], [])
+        for kind, ch, sp, idx in span_chords(cs, curves[side], grids[side], n_samples):
+            sp_all = max(sp_all, sp)
+            if kind == "fold":
+                n_fold += 1
+                continue
+            if kind == "off":
+                n_off += 1
+                continue
+            n_ok += 1
+            sp_ok = max(sp_ok, sp)
+            if ch > worst["chord_m"]:
+                worst = {"chord_m": round(ch, 4), "object": o["name"], "ring": idx, "at_xz": [cs[idx][0], cs[idx][2]]}
+            if ch > CHORD_FAIL_M:
+                over.append((ch, o["name"], idx))
+    over.sort(reverse=True)
+    if over:
+        fails.append(f"H: {len(over)} strip spans chord the declared offset curve by > {CHORD_FAIL_M} m (worst "
+                     f"{over[0][0]:.3f} m at {over[0][1]} ring {over[0][2]}) — the rings are too sparse there "
+                     f"(race_furniture.densify_rings keeps them within {CHORD_TARGET_M} m)")
+    if sp_all > SPACING_TARGET_M + SPACING_ROUND_M:
+        warns.append(f"H: ring spacing reaches {sp_all:.2f} m (author target {SPACING_TARGET_M} m)")
+    if n_off:
+        warns.append(f"H: {n_off} strip spans not measured (a ring > {OFF_CURVE_M} m off the declared curve or the "
+                     f"span leaves the declaration) — C / D judge where the rings stand")
+    counts.update({"chord_max_m": worst["chord_m"], "chord_worst": worst, "chord_fail_m": CHORD_FAIL_M,
+                   "chord_spans_measured": n_ok, "chord_spans_fold": n_fold, "chord_spans_unmeasured": n_off,
+                   "chord_spans_over": len(over), "ring_spacing_max_m": round(sp_all, 3),
+                   "ring_spacing_max_measured_m": round(sp_ok, 3)})
 
 
 def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns, counts):
@@ -552,10 +735,6 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
         warns.append("F: no spawn_clearance recorded (no dummies_<id>.json at authoring time)")
 
     # reported, not gated
-    if edge_gap_worst > SPACING_NOTE_M:
-        warns.append(f"edge strip ring spacing reaches {edge_gap_worst:.2f} m on an outside lip (3 m at the centreline): "
-                     f"the strip chords the arc there by up to ~{edge_gap_worst ** 2 / (8 * 16.0):.2f} m — denser rings at "
-                     f"corners would be the author tool's fix; the mesh itself is continuous")
     oda = authored.get("other_deck_above", []) or []
     if oda:
         warns.append(f"{len(oda)} rings have another ROAD sheet > 0.15 m above the strip base (max "
@@ -641,6 +820,13 @@ def main(argv=None) -> int:
               f"{c.get('edge_rings')} rings on {c.get('edge_declared_vertices')} declared vertices (missing {c.get('edge_missing')}, "
               f"fold-dropped {c.get('edge_fold_dropped')}, worst gap {c.get('edge_gap_worst_m')} m); kerbs {c.get('kerb_objects')} "
               f"at {c.get('corners')} corners; interpolated {c.get('interpolated')}/{c.get('rings_total')}")
+    if not pre_author and "chord_max_m" in c:
+        cw = c.get("chord_worst") or {}
+        where = f" at {cw['object']} ring {cw['ring']}" if cw.get("object") else ""
+        print(f"[verify-race] H density: {c['chord_spans_measured']} spans vs the declared offset curve, chord max "
+              f"{c['chord_max_m']} m{where} (FAIL > {CHORD_FAIL_M} m, {c['chord_spans_over']} over); ring spacing max "
+              f"{c['ring_spacing_max_m']} m (measured spans {c['ring_spacing_max_measured_m']} m); "
+              f"{c['chord_spans_fold']} fold spans, {c['chord_spans_unmeasured']} unmeasured")
     for lid, rows in (c.get("spawn_slots") or {}).items():
         cells = ", ".join(f"{q['name'].replace('AC_', '')} {q['clear_edge_m']:+.2f}" if q["clear_centre_m"] is None
                           else f"{q['name'].replace('AC_', '')} {q['clear_edge_m']:+.2f}/c{q['clear_centre_m']:+.2f}" for q in rows)

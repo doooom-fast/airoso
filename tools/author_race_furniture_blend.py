@@ -24,6 +24,14 @@ those is counted in race_authored.json; a run with no seated ring at all fails. 
 (a connector's) stands more than 0.15 m above the strip base the ring is listed under
 `other_deck_above` — that is a junction defect (0033/0046 class) for its owner, not a seating choice.
 
+SHADING (2026-10-11): every strip and kerb is smooth-shaded (Mesh.shade_smooth) with hard edges
+(MeshEdge.use_edge_sharp) only where race_furniture.sharp_edges finds faces meeting at > 30 deg (the
+jersey base, base/slope and top-lip creases, the end caps) plus the kerb outline — the flat-shaded
+strips made the exporter emit one vertex per triangle corner (3.0 per triangle, a 35.6 MB race kn5).
+The prep (build_kn5_loop.py) keeps it: its remove_doubles / face-up pass round-trip the sharp and smooth
+flags through bmesh, it never double-sides a loop.blend mesh (DOUBLE_SIDE only touches merged
+data/track_*.obj groups) and it only ever ADDS smooth shading (above 65,535 loops).
+
 Default --out-blend is the input blend (saved in place, like every other author tool). The
 hand-edit surface airoso/tracks/<track>/loop.blend is NEVER written by this tool (ship_sd.sh's
 sync-back is the only writer); an --out-blend under airoso/tracks is refused.
@@ -155,7 +163,11 @@ def _remove_existing():
     return n
 
 
-def _mk(name, verts, faces, uvs, col):
+def _mk(name, verts, faces, uvs, col, sharp=None):
+    """the mesh object, SMOOTH-shaded with `sharp` (vertex-index pairs) as its only hard edges (Blender
+    4.2: Mesh.shade_smooth + MeshEdge.use_edge_sharp; no auto-smooth). UVs are per VERTEX — one UV per
+    position, no seam — so the exporter's weld (position + normal + UV + tangent) is blocked only where
+    an edge is hard. `sharp=None` leaves the mesh flat (the collider sheets)."""
     me = bpy.data.meshes.new(name)
     me.from_pydata(verts, [], faces)
     me.validate()
@@ -163,6 +175,16 @@ def _mk(name, verts, faces, uvs, col):
     for poly in me.polygons:
         for li in poly.loop_indices:
             uvl.data[li].uv = uvs[me.loops[li].vertex_index]
+    if sharp is not None:
+        me.shade_smooth()
+        key = {(a, b) if a < b else (b, a) for a, b in sharp}
+        flags = [tuple(sorted(e.vertices)) in key for e in me.edges]
+        me.edges.foreach_set("use_edge_sharp", flags)
+        n_smooth = sum(1 for p in me.polygons if p.use_smooth)
+        n_sharp = sum(1 for e in me.edges if e.use_edge_sharp)
+        if n_smooth != len(me.polygons) or n_sharp != len(key):
+            raise SystemExit(f"[race] FATAL {name}: shading not applied ({n_smooth}/{len(me.polygons)} smooth faces, "
+                             f"{n_sharp}/{len(key)} hard edges) — validate() changed the topology?")
     me.update()
     ob = bpy.data.objects.new(name, me)
     col.objects.link(ob)
@@ -294,7 +316,8 @@ def main():
     kerbs = Seater(road_main, road_any, KERB_SINK_M)
     objects, centres = [], {}
     tot = {"chain_len": 0.0, "chain_rings": 0, "edge_len": 0.0, "edge_rings": 0, "kerb_len": 0.0,
-           "kerb_stations": 0, "positions": 0}
+           "kerb_stations": 0, "positions": 0, "triangles": 0, "render_verts_est": 0, "densified": 0,
+           "spacing_max": 0.0, "chord_max": 0.0}
     failed_runs = []
     for plan in plans:
         name = rf.object_name(plan)
@@ -309,16 +332,23 @@ def main():
                 failed_runs.append(name)
                 continue
             verts, faces, uvs = rf.strip_mesh(plan["rings"], plan["cap_start"], plan["cap_end"], rf.MODULE_PITCH_M)
+            sharp = rf.sharp_edges(verts, faces)
             length = plan["rings"][-1]["arc"] - plan["rings"][0]["arc"]
             key = "chain" if plan["kind"] == "chain" else "edge"
             tot[f"{key}_len"] += length
             tot[f"{key}_rings"] += len(plan["rings"])
+            sp, ch, folds = rf.ring_stats(plan["rings"])
+            tot["densified"] += plan.get("densified", 0)
+            tot["spacing_max"] = max(tot["spacing_max"], sp)
+            tot["chord_max"] = max(tot["chord_max"], ch)
             rec = {"name": name, "kind": plan["kind"], "side": plan["side"], "street": plan["street"],
                    "run": plan["run"], "part": plan["part"], "rings": len(plan["rings"]), "length_m": round(length, 1),
                    "segments_4m": round(length / rf.MODULE_PITCH_M, 1),
                    "seated": {"hit": seater.hit - h0, "near": seater.near - n0, "interpolated": seater.interp - i0},
                    "seat_gap_max_m": 0.0, "ends": [plan["start_kind"], plan["end_kind"]],
-                   "caps": [plan["cap_start"], plan["cap_end"]], "fold_skipped_run": plan.get("fold_skipped", 0)}
+                   "caps": [plan["cap_start"], plan["cap_end"]], "fold_skipped_run": plan.get("fold_skipped", 0),
+                   "densified": plan.get("densified", 0), "spacing_max_m": round(sp, 3), "chord_max_m": round(ch, 4),
+                   "fold_spans": folds}
             centres[name] = [[round(x, 2), round(r["y"], 2), round(z, 2)] for r in plan["rings"] for (x, z) in (xz(r),)]
         else:
             sgn = 1.0 if plan["side"] == "L" else -1.0
@@ -332,6 +362,7 @@ def main():
                 failed_runs.append(name)
                 continue
             verts, faces, uvs = rf.kerb_mesh(plan["stations"], sgn, rf.KERB_TILE_M)
+            sharp = sorted(set(rf.sharp_edges(verts, faces)) | set(rf.kerb_outline_edges(len(plan["stations"]))))
             tot["kerb_len"] += plan["length_m"]
             tot["kerb_stations"] += len(plan["stations"])
             rec = {"name": name, "kind": "kerb", "side": plan["side"], "sub": plan["sub"], "apex": plan["apex"],
@@ -343,11 +374,16 @@ def main():
         bverts, bfaces = rf.to_blender(verts, faces)
         if len(bverts) >= 60000:
             raise SystemExit(f"[race] FATAL {name}: {len(bverts)} positions (>= 60,000) — lower MAX_RINGS_PER_OBJECT")
-        ob, me = _mk(name, bverts, bfaces, uvs, col)
-        rec.update({"positions": len(me.vertices), "faces": len(me.polygons), "loops": len(me.loops)})
-        if len(me.loops) * 3 // 2 > 65535:     # worst case: every quad = 2 flat tris x 3 unique render verts
+        ob, me = _mk(name, bverts, bfaces, uvs, col, sharp=sharp)     # the reflection keeps every dihedral
+        rv = rf.render_vertex_count(len(verts), faces, sharp)
+        tris = rf.triangle_count(faces)
+        rec.update({"positions": len(me.vertices), "faces": len(me.polygons), "loops": len(me.loops),
+                    "smooth": True, "sharp_edges": len(sharp), "triangles": tris, "render_verts_est": rv})
+        if len(me.loops) * 3 // 2 > 65535:     # worst case if the shading were ever lost: 2 flat tris x 3 per quad
             print(f"[race] WARNING {name}: {len(me.loops)} loops — flat-shaded render verts may exceed 65,535")
         tot["positions"] += len(me.vertices)
+        tot["triangles"] += tris
+        tot["render_verts_est"] += rv
         objects.append(rec)
 
     # optional invisible collider sheets (Q11 — OFF by default; needs the 1WALL_RACECOL pbr/ALPHATEST row first)
@@ -417,6 +453,12 @@ def main():
         "blend": str(out_blend), "standin_bands": standin, "edge_mode": mode, "barrier_height_m": height,
         "removed_existing": removed, "collection": "RACE", "race_prefixes": list(rf.RACE_PREFIXES),
         "max_rings_per_object": rf.MAX_RINGS_PER_OBJECT,
+        "shading": {"smooth": True, "sharp_deg": rf.SHARP_DEG, "kerb_outline_hard": True,
+                    "triangles": tot["triangles"], "render_verts_est": tot["render_verts_est"],
+                    "verts_per_triangle_est": round(tot["render_verts_est"] / max(1, tot["triangles"]), 3)},
+        "density": {"ring_spacing_max_target_m": rf.RING_SPACING_MAX_M, "chord_max_target_m": rf.CHORD_MAX_M,
+                    "rings_inserted": tot["densified"], "ring_spacing_max_m": round(tot["spacing_max"], 3),
+                    "chord_max_m": round(tot["chord_max"], 4)},
         "totals": {"objects": len(objects), "positions": tot["positions"], "rings": n_rings,
                    "chain_length_m": round(tot["chain_len"], 1), "chain_rings": tot["chain_rings"],
                    "chain_segments_4m": round(tot["chain_len"] / rf.MODULE_PITCH_M),
@@ -460,6 +502,12 @@ def main():
           f"{t['seated_near']} near / {t['seated_interpolated']} interpolated; deck vs data max {t['deck_vs_data_max_m']} m; "
           f"other deck above {t['other_deck_above_rings']} rings (max {t['other_deck_above_max_m']} m); "
           f"removed {removed} old; saved {out_blend.name} ({report['seconds']} s)")
+    sh, dn = report["shading"], report["density"]
+    print(f"[race] shading: smooth, hard edges > {sh['sharp_deg']:.0f} deg + kerb outline; {sh['triangles']} triangles -> "
+          f"~{sh['render_verts_est']} render verts ({sh['verts_per_triangle_est']} per triangle; flat-shaded was 3.0)")
+    print(f"[race] density: {dn['rings_inserted']} rings inserted; ring spacing max {dn['ring_spacing_max_m']} m "
+          f"(target {dn['ring_spacing_max_target_m']}), chord vs the declared curve max {dn['chord_max_m']} m "
+          f"(target {dn['chord_max_target_m']})")
     if failed_runs:
         print(f"[race] FAIL: runs with no deck under any ring: {failed_runs}")
         raise SystemExit(1)

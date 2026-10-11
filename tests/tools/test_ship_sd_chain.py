@@ -34,6 +34,8 @@ def test_stage_order():
         "DRY RUN: stopping before the kn5 exports",
         "--blend \"$PROJ/blender/split/loop_main.blend\"",
         "--blend \"$PROJ/blender/split/loop_race.blend\" --out \"${SLUG}_race.kn5\"",
+        'inspect_kn5 "$PROJ/build/${SLUG}_race.kn5" --json "$PROJ/data/race_kn5.json"',
+        'tools/check_race_kn5.py "$PROJ/data/race_kn5.json"',
         "scripts/ac/build_spawn_kn5.py",
         "scripts.ac.write_ai_line",
         "scripts.ac.verify_kn5",
@@ -72,7 +74,9 @@ def test_safety_rails():
     assert 'cp "$JULY_AI/fast_lane.ai"' in TEXT and '"$B/ai/"' not in TEXT, "the July copy moved to the ship stage (root ai/ no longer exists)"
     assert "--allow-missing-kn5" not in TEXT, "the ship chain never packs with a missing kn5"
     assert 'WS_PROJ="$WS/project"' in TEXT and 'PROJ="${SHIP_PROJ:-$WS_PROJ}"' in TEXT
-    assert "RACE_BYTES" in TEXT and "20000000" in TEXT, "race kn5 size cap"
+    # the race kn5 is judged on CONTENT (2026-10-11): the 20 MB size cap fired on a clean, flat-shaded kn5
+    assert "RACE_BYTES" not in TEXT and "20000000" not in TEXT and "stat -c %s" not in TEXT, "size is not the race-kn5 gate"
+    assert '(cd "$AIROSO" && python tools/check_race_kn5.py "$PROJ/data/race_kn5.json")' in TEXT
     # the four gate exits all decide the install, and a race-furniture red is never forced
     assert '[ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ]' in TEXT
     assert 'if [ -n "$RACE_RED" ]; then' in TEXT
@@ -215,3 +219,37 @@ def test_previous_build_is_parked_outside_content_tracks():
     assert 'mv "$AC/$old" "$ARCHIVE/$STAMP/$old"' in install
     assert 'mv "$AC/${SLUG}_v3" "$AC/${SLUG}_v3_prev"' not in TEXT
     assert 'ARCHIVE="D:/k10-track-archive"' in TEXT
+
+
+def test_race_kn5_guard_is_a_content_check():
+    """tools/check_race_kn5.py (the step after the race export): RACE meshes only, the race textures only
+    (read from scripts/ac/pbr.py's 1WALL_RACE / 1KERB_RACE rows), no AC_* node; size only WARNS"""
+    import sys
+    sys.path.insert(0, str(ROOT / "tools"))
+    import check_race_kn5 as ck
+    sys.path.insert(0, str(ROOT))
+    from scripts.ac import pbr
+    allowed = ck.race_texture_set()
+    assert allowed == {"kerb_diffuse.png", "concrete_barrier_diffuse.png", "concrete_barrier_normal.png"}
+    assert allowed == {f for k, row in pbr.TEXTURES.items() if k.startswith(("1WALL_RACE", "1KERB_RACE")) for f in row[:2] if f}
+    assert ck.race_texture_set({"1WALL_RACE": ("a.png", "b.png"), "1WALL": ("c.png", None), "1KERB_RACE": ("d.png", None)}) == {"a.png", "b.png", "d.png"}
+    clean = {"file_bytes": 35_553_024, "nodes": ["BlenderFile"],
+             "textures": [{"name": t} for t in sorted(allowed)],
+             "meshes": [{"name": "1WALL_race_kbar_navajo_2297_0", "verts": 12000, "tris": 14316},
+                        {"name": "1KERB_race_770_out", "verts": 2100, "tris": 2094}]}
+    r = ck.check(clean, allowed)
+    assert r["ok"] and r["fails"] == [], r
+    assert len(r["warns"]) == 1 and "35,553,024" in r["warns"][0]          # big: a WARN, not a FAIL
+    assert r["summary"]["meshes"] == 2 and r["summary"]["verts"] == 14100 and r["summary"]["tris"] == 16410
+    small = dict(clean, file_bytes=9_000_000)
+    assert ck.check(small, allowed) == dict(ck.check(small, allowed), ok=True, warns=[])
+    leaks = [
+        (dict(clean, meshes=clean["meshes"] + [{"name": "1ROAD_road", "verts": 9, "tris": 3}]), "non-race meshes"),
+        (dict(clean, textures=clean["textures"] + [{"name": "asphalt_cracked_diffuse.jpg"}]), "textures outside the race set"),
+        (dict(clean, nodes=["BlenderFile", "AC_START_0"]), "AC_* nodes"),
+        (dict(clean, meshes=[]), "no mesh"),
+        ({k: v for k, v in clean.items() if k != "nodes"}, "no transform-node list"),
+    ]
+    for parsed, msg in leaks:
+        r = ck.check(parsed, allowed)
+        assert not r["ok"] and any(msg in f for f in r["fails"]), (msg, r["fails"])

@@ -17,9 +17,24 @@ and REVERSED winding (LAWS L6: the remap is a reflection):
                                                         corners the sign detector finds (|D| >= 45 deg)
 
 Why strips and not 2,100+ instanced modules: ~130k positions in ~30 objects (each <= MAX_RINGS_PER_OBJECT
-rings, flat-shaded render verts well under the exporter's 65,535 split) versus ~2.2 M positions; every
+rings, render verts well under the exporter's 65,535 split) versus ~2.2 M positions; every
 reference measured (SRP, nohesi, Macau, rt_california) ships strips/sheets. The texture tiles at the
 module pitch (u = arc / 4.04 m) so the joints still read every 4.04 m.
+
+SHADING (2026-10-11 weld pass): every object is SMOOTH-shaded with hard edges only on real creases —
+`sharp_edges` (faces meeting at more than SHARP_DEG = 30 deg: the jersey base corner 90, base/slope 33,
+top lip 86, the end caps 90; the slope/upper break is two 17 / 12 deg steps and stays smooth) plus the
+kerb outline (`kerb_outline_edges`: ramp/top and top/outer). The exporter (exporter.kn5, AppData
+blender-assetto-corsa-tools) welds face corners sharing position + normal + UV + tangent, and the UVs are
+per VERTEX (u = arc / pitch along, v across: no seam anywhere), so a smooth-shaded strip ships ~16
+render verts per 20-triangle ring interval (~0.8 per triangle) where the flat-shaded one shipped 3.0.
+`render_vertex_count` predicts it without Blender.
+
+RING DENSITY (same pass): the plan rings sit on the centreline vertices (~3 m apart), which on the
+outside lip of a 10 m corner stretched to 7 m with the strip chording the arc by up to 0.27 m. Every
+strip is densified (`densify_rings`) so consecutive rings are <= RING_SPACING_MAX_M apart and the
+polyline stays within CHORD_MAX_M of the declared offset curve `offset_xz` (centre lerp + normalised
+lerp of the vertex tangents x lerp of the declared lateral) — the inserted rings stand ON that curve.
 
 Everything here is testable without Blender: the Blender tool only supplies the deck height per ring
 (a BVH ray onto ROAD/CURB) and turns the (verts, faces, uvs) into mesh objects. The corner detector is
@@ -52,7 +67,13 @@ NOSE_H = 0.30            # chain height at the shared nose vertex (island curb t
 NOSE_TAPER_RINGS = 3     # the nose ring + the two before it taper 0.335 -> 0.25 / 1.20 -> 0.30
 FREE_END_H = 0.30        # free ends (v780 / v4440 / bridge-span gaps): 3-ring height taper 1.20 -> 0.30
 FREE_TAPER_RINGS = 3
-MAX_RINGS_PER_OBJECT = 800   # 10 quads x 2 tris x 3 flat render verts = 60/ring -> 48,000 + caps < 65,535
+MAX_RINGS_PER_OBJECT = 800   # 10 positions/ring -> <= 8,000 positions/object; smooth render verts ~16/ring
+#                              (12,800 + caps); even fully flat (60/ring) 48,000 + caps < 65,535
+RING_SPACING_MAX_M = 3.5     # densify_rings: consecutive rings along a strip at most this far apart (xz)
+CHORD_MAX_M = 0.10           # densify_rings: the strip polyline within this of the declared offset curve
+DENSIFY_SAMPLES = 16         # samples of the offset curve per sub-interval when measuring the chord error
+DENSIFY_MAX_SPLIT = 64       # an interval is cut into at most this many pieces
+SHARP_DEG = 30.0             # a hard edge where two faces meet at more than this (a real crease)
 EDGE_INSET_M = 0.82      # road mode: the strip's road-side face at half_w - 0.82 (curb-side face at half_w - 0.15)
 EDGE_WALK_CENTRE_M = 0.445   # walk mode: strip centre at half_w + 0.445 on the sidewalk top (road-side face half_w + 0.11)
 KERB_W = 1.0
@@ -275,6 +296,97 @@ def face_normal(verts, f):
 
 
 # ---------------------------------------------------------------------------------------------
+# shading: smooth everywhere, hard only on real creases (what the exporter's weld needs)
+def newell_normal(verts, f):
+    """unit polygon normal by Newell's method (Blender's own for a non-planar quad); (0,0,0) if degenerate"""
+    nx = ny = nz = 0.0
+    for i in range(len(f)):
+        a, b = verts[f[i]], verts[f[(i + 1) % len(f)]]
+        nx += (a[1] - b[1]) * (a[2] + b[2])
+        ny += (a[2] - b[2]) * (a[0] + b[0])
+        nz += (a[0] - b[0]) * (a[1] + b[1])
+    L = math.sqrt(nx * nx + ny * ny + nz * nz)
+    return (nx / L, ny / L, nz / L) if L > 0 else (0.0, 0.0, 0.0)
+
+
+def edge_faces(faces):
+    """{(a, b) with a < b: [face indices using that edge]}"""
+    out = {}
+    for fi, f in enumerate(faces):
+        for i in range(len(f)):
+            a, b = f[i], f[(i + 1) % len(f)]
+            out.setdefault((a, b) if a < b else (b, a), []).append(fi)
+    return out
+
+
+def sharp_edges(verts, faces, max_deg=SHARP_DEG):
+    """the manifold edges whose two faces meet at more than max_deg (the Blender 4.2
+    Mesh.set_sharp_from_angle rule, pure): sorted [(a, b), a < b]. Boundary edges (one face) need no
+    mark — the fan ends there anyway. Frame-independent (a reflection with reversed winding keeps every
+    dihedral)."""
+    cos_max = math.cos(math.radians(max_deg))
+    normals = [newell_normal(verts, f) for f in faces]
+    out = []
+    for e, fs in edge_faces(faces).items():
+        if len(fs) != 2:
+            continue
+        n0, n1 = normals[fs[0]], normals[fs[1]]
+        if n0[0] * n1[0] + n0[1] * n1[1] + n0[2] * n1[2] < cos_max:
+            out.append(e)
+    return sorted(out)
+
+
+def kerb_outline_edges(n_stations):
+    """the race kerb's hard outline: along every station interval the ramp/top edge (profile vertex 1)
+    and the top/outer edge (profile vertex 2) — the flat top reads as a flat plate. kerb_mesh lays 4
+    vertices per station (lip, ramp top, outer top, outer base)."""
+    out = []
+    for q in range(n_stations - 1):
+        a, b = 4 * q, 4 * (q + 1)
+        out += [(a + 1, b + 1), (a + 2, b + 2)]
+    return out
+
+
+def render_vertex_count(n_verts, faces, sharp):
+    """what the exporter emits for a smooth-shaded mesh with per-vertex UVs: one vertex per (position,
+    smooth fan) — the faces round a vertex joined across its non-sharp manifold edges. (A flat-shaded
+    triangulated mesh is 3 per triangle.)"""
+    sharp = {(a, b) if a < b else (b, a) for a, b in sharp}
+    ef = edge_faces(faces)
+    by_vertex = [[] for _ in range(n_verts)]
+    for fi, f in enumerate(faces):
+        for v in f:
+            by_vertex[v].append(fi)
+    total = 0
+    for v, fs in enumerate(by_vertex):
+        if not fs:
+            continue
+        parent = {fi: fi for fi in fs}
+
+        def find(x):
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+        for fi in fs:
+            f = faces[fi]
+            i = f.index(v)
+            for w in (f[i - 1], f[(i + 1) % len(f)]):
+                e = (v, w) if v < w else (w, v)
+                fe = ef.get(e, [])
+                if len(fe) == 2 and e not in sharp:          # both faces hold v, so both are in `parent`
+                    a, b = find(fe[0]), find(fe[1])
+                    if a != b:
+                        parent[a] = b
+        total += len({find(fi) for fi in fs})
+    return total
+
+
+def triangle_count(faces):
+    return sum(len(f) - 2 for f in faces)
+
+
+# ---------------------------------------------------------------------------------------------
 # bands: the declaration the gates read (written by tools/barrier_bands.py — the data agent's file)
 def load_bands(proj):
     p = Path(proj) / "data" / "barrier_bands.json"
@@ -411,7 +523,7 @@ def _plan_run(pts, widths, m, st, ks, lat_fn, start_kind, end_kind, height, kind
         prev = k
         tx, tz = tangent(pts, k, m)
         ls, h = taper(idx, len(ks), start_kind, end_kind)
-        rings.append({"k": k, "s": st[k], "cx": pts[k][0], "cz": pts[k][2], "y_hint": pts[k][1] + LIFT,
+        rings.append({"k": k, "u": 0.0, "s": st[k], "cx": pts[k][0], "cz": pts[k][2], "y_hint": pts[k][1] + LIFT,
                       "tx": tx, "tz": tz, "lat": lat_fn(k), "ls": ls, "h": h * (height / BARRIER_H),
                       "arc": arc})
     return {"kind": kind, "street": street, "side": side, "run": list(run), "rings": rings,
@@ -437,6 +549,166 @@ def split_plan(plan, max_rings=MAX_RINGS_PER_OBJECT):
     return parts
 
 
+# ---------------------------------------------------------------------------------------------
+# ring density: the strip polyline vs the declared offset curve
+def offset_xz(a, b, u):
+    """the declared offset curve between two VERTEX rings a (vertex k) and b (vertex k+1): the centre
+    lerped along the centreline segment, the left normal of the normalised lerp of the two vertex
+    tangents, the lerp of the two declared laterals. u = 0 / 1 return a's / b's own strip centre exactly,
+    so every ring the plan already had lies on it."""
+    cx = a["cx"] + (b["cx"] - a["cx"]) * u
+    cz = a["cz"] + (b["cz"] - a["cz"]) * u
+    tx = a["tx"] + (b["tx"] - a["tx"]) * u
+    tz = a["tz"] + (b["tz"] - a["tz"]) * u
+    L = math.hypot(tx, tz) or 1.0
+    lx, lz = left_normal(tx / L, tz / L)
+    lat = a["lat"] + (b["lat"] - a["lat"]) * u
+    return cx + lx * lat, cz + lz * lat
+
+
+def seg_dist(p, a, b):
+    """xz distance from p to the segment a-b"""
+    ax, az = b[0] - a[0], b[1] - a[1]
+    L2 = ax * ax + az * az
+    t = 0.0 if L2 <= 0 else max(0.0, min(1.0, ((p[0] - a[0]) * ax + (p[1] - a[1]) * az) / L2))
+    return math.hypot(p[0] - a[0] - t * ax, p[1] - a[1] - t * az)
+
+
+def chord_error(a, b, u0=0.0, u1=1.0, samples=DENSIFY_SAMPLES):
+    """max distance of the offset curve between u0 and u1 from the straight chord the strip draws there"""
+    p0, p1 = offset_xz(a, b, u0), offset_xz(a, b, u1)
+    return max([seg_dist(offset_xz(a, b, u0 + (u1 - u0) * i / samples), p0, p1) for i in range(1, samples)] or [0.0])
+
+
+def _runs_forward(a, b, steps=64):
+    """the offset curve advances along the travel tangent everywhere between a and b (an inside lip
+    tighter than its offset runs backwards — that span stays the fold-drop chord)"""
+    prev = offset_xz(a, b, 0.0)
+    for i in range(1, steps + 1):
+        u = i / steps
+        cur = offset_xz(a, b, u)
+        tx = a["tx"] + (b["tx"] - a["tx"]) * u
+        tz = a["tz"] + (b["tz"] - a["tz"]) * u
+        if (cur[0] - prev[0]) * tx + (cur[1] - prev[1]) * tz <= 0.0:
+            return False
+        prev = cur
+    return True
+
+
+def interp_ring(a, b, u):
+    """a ring ON the offset curve at fraction u of the vertex interval a -> b: centre, tangent, lateral,
+    taper, deck hint and texture arc interpolated (u = arc / pitch stays continuous); k stays a's vertex"""
+    r = {key: val for key, val in a.items() if key != "y"}
+    for key in ("cx", "cz", "y_hint", "lat", "ls", "h", "arc"):
+        r[key] = a[key] + (b[key] - a[key]) * u
+    tx, tz = a["tx"] + (b["tx"] - a["tx"]) * u, a["tz"] + (b["tz"] - a["tz"]) * u
+    L = math.hypot(tx, tz) or 1.0
+    r["tx"], r["tz"] = tx / L, tz / L
+    r["s"] = a["s"] + u * math.hypot(b["cx"] - a["cx"], b["cz"] - a["cz"])
+    r["u"] = u
+    r["inserted"] = True
+    return r
+
+
+def _strip_xz(r):
+    lx, lz = left_normal(r["tx"], r["tz"])
+    return r["cx"] + lx * r["lat"], r["cz"] + lz * r["lat"]
+
+
+def fill_ring(a, b, f):
+    """a ring ON THE STRAIGHT CHORD a -> b at fraction f (a fold-drop chord: the declared offset curve
+    folds back between a and b, so there is no curve to follow — the chord IS the strip there): the
+    position lerped, the profile turned by the normalised lerp of the two tangents, everything else lerped"""
+    r = {key: val for key, val in a.items() if key != "y"}
+    pa, pb = _strip_xz(a), _strip_xz(b)
+    px, pz = pa[0] + (pb[0] - pa[0]) * f, pa[1] + (pb[1] - pa[1]) * f
+    tx, tz = a["tx"] + (b["tx"] - a["tx"]) * f, a["tz"] + (b["tz"] - a["tz"]) * f
+    L = math.hypot(tx, tz) or 1.0
+    r["tx"], r["tz"] = tx / L, tz / L
+    for key in ("y_hint", "lat", "ls", "h", "arc", "s"):
+        r[key] = a[key] + (b[key] - a[key]) * f
+    lx, lz = left_normal(r["tx"], r["tz"])
+    r["cx"], r["cz"] = px - lx * r["lat"], pz - lz * r["lat"]      # so that cx + left * lat is the chord point
+    r["u"] = None
+    r["inserted"] = r["fold_fill"] = True
+    return r
+
+
+def densify_rings(rings, m, max_spacing=RING_SPACING_MAX_M, max_chord=CHORD_MAX_M):
+    """Insert rings between every pair of consecutive VERTEX rings (k, k+1) until each piece is
+    <= max_spacing long and within max_chord of the offset curve (uniform cuts in u, the fewest that
+    pass). A pair that is not adjacent on the centreline (a fold-drop chord) or whose curve runs
+    backwards has no curve to follow: it is only cut into <= max_spacing pieces ON its straight chord
+    (`fill_ring`). Each ring gets `seg_chord_m`: the chord error of the span to the next ring (None
+    after the last ring and along a fold chord). Returns (rings, n_inserted)."""
+    if len(rings) < 2:
+        return rings, 0
+    out = []
+    n_ins = 0
+
+    def fold_fill(a, b):
+        pa, pb = _strip_xz(a), _strip_xz(b)
+        n = max(1, math.ceil(math.hypot(pb[0] - pa[0], pb[1] - pa[1]) / max_spacing))
+        a["seg_chord_m"] = None
+        added = []
+        for i in range(1, n):
+            r = fill_ring(a, b, i / n)
+            r["seg_chord_m"] = None
+            added.append(r)
+        return added
+    for a, b in zip(rings, rings[1:]):
+        out.append(a)
+        if (b["k"] - a["k"]) % m != 1 or a.get("u", 0.0) != 0.0 or b.get("u", 0.0) != 0.0:
+            add = fold_fill(a, b)
+            out += add
+            n_ins += len(add)
+            continue
+
+        def ok(n):
+            for i in range(n):
+                u0, u1 = i / n, (i + 1) / n
+                p0, p1 = offset_xz(a, b, u0), offset_xz(a, b, u1)
+                if math.hypot(p1[0] - p0[0], p1[1] - p0[1]) > max_spacing or chord_error(a, b, u0, u1) > max_chord:
+                    return False
+            return True
+        n = 1
+        while n < DENSIFY_MAX_SPLIT and not ok(n):
+            n += 1
+        if n > 1 and not _runs_forward(a, b):
+            add = fold_fill(a, b)
+            out += add
+            n_ins += len(add)
+            continue
+        a["seg_chord_m"] = round(chord_error(a, b, 0.0, 1.0 / n), 4)
+        for i in range(1, n):
+            r = interp_ring(a, b, i / n)
+            r["seg_chord_m"] = round(chord_error(a, b, i / n, (i + 1) / n), 4)
+            out.append(r)
+            n_ins += 1
+    rings[-1]["seg_chord_m"] = None
+    out.append(rings[-1])
+    return out, n_ins
+
+
+def ring_stats(rings):
+    """(max consecutive xz spacing of the strip centres, max seg_chord_m, fold/unmeasured spans) of a
+    planned ring list"""
+    sp = 0.0
+    for a, b in zip(rings, rings[1:]):
+        pa, pb = _strip_xz(a), _strip_xz(b)
+        sp = max(sp, math.hypot(pb[0] - pa[0], pb[1] - pa[1]))
+    chords = [r.get("seg_chord_m") for r in rings[:-1]]
+    return sp, max([c for c in chords if c is not None] or [0.0]), sum(1 for c in chords if c is None)
+
+
+def _count_inserted(parts):
+    """part['densified'] = the rings densify_rings inserted in this part (a part's first ring is the
+    previous part's last, so it is not counted twice)"""
+    for part in parts:
+        part["densified"] = sum(1 for r in part["rings"][1:] if r.get("inserted"))
+    return parts
+
+
 def chain_plans(pts, widths, island_w, bands, height=BARRIER_H):
     m = unique_count(pts)
     st = stations(pts)
@@ -449,7 +721,9 @@ def chain_plans(pts, widths, island_w, bands, height=BARRIER_H):
         sk = "nose" if island_w[i] > 0 else "free"
         ek = "nose" if island_w[j] > 0 else "free"
         plan = _plan_run(pts, widths, m, st, ks, lambda k: 0.0, sk, ek, height, "chain", street_of(i, table), "C", (i, j))
-        plans += split_plan(plan)
+        # lat 0: the offset curve IS the centreline chord, so this only ever splits a > 3.5 m vertex gap
+        plan["rings"], _ = densify_rings(plan["rings"], m)
+        plans += _count_inserted(split_plan(plan))
     return plans
 
 
@@ -476,6 +750,7 @@ def edge_plans(pts, widths, bands, mode="road", height=BARRIER_H):
                               lambda k, s=sgn: s * edge_lateral(widths[k] / 2.0, ei[k] or EDGE_INSET_M, mode),
                               "free", "free", height, "edge", street_of(ks[0], table), side, (i, j))
             rings, skipped = drop_folded_rings(whole["rings"])
+            rings, _ = densify_rings(rings, m)      # AFTER the fold drop: a fold chord stays a chord
             pieces, cur = [], [rings[0]]
             for r in rings[1:]:
                 cur.append(r)
@@ -488,7 +763,7 @@ def edge_plans(pts, widths, bands, mode="road", height=BARRIER_H):
                 ek = "free" if pi == len(pieces) - 1 else "join"
                 plan = dict(whole, rings=pr, street=street_of(pr[0]["k"], table), run=(pr[0]["k"], pr[-1]["k"]),
                             start_kind=sk, end_kind=ek, fold_skipped=(skipped if pi == 0 else 0))
-                for part in split_plan(plan):
+                for part in _count_inserted(split_plan(plan)):
                     part["cap_start"] = part["cap_start"] and sk == "free"
                     part["cap_end"] = part["cap_end"] and ek == "free"
                     plans.append(part)

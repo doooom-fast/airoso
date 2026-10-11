@@ -203,6 +203,41 @@ def test_kerb_set_spawn_overlap_and_provenance():
     assert any("interpolation" in f for f in _run(a)["fails"])
 
 
+def test_ring_density_is_judged_against_the_declared_offset_curve():
+    """H (2026-10-11, was a note): the strip polyline vs the curve the declaration implies, rebuilt from the
+    bands + centreline alone. The synthetic strips sit ON it (one ring per vertex, R 109.5 m outside lip)."""
+    pts = _pts()
+    widths = [W] * (N + 1)
+    r = vr.verify(_authored(pts), _bands(), pts, _island_w(), widths=widths)
+    assert r["ok"], r["fails"]
+    c = r["counts"]
+    assert c["chord_max_m"] < 0.01 and c["chord_spans_over"] == 0 and c["chord_spans_fold"] == 0, c["chord_worst"]
+    assert c["chord_spans_measured"] >= 4 * 60 + 39 and abs(c["ring_spacing_max_m"] - 3.44) < 0.01
+    # one ring dropped on the outside lip: a 2-interval span chords the 109.5 m arc by ~0.05 m — legal
+    a = _authored(pts)
+    name = "1WALL_race_edge_R_t_0_0"
+    cs = a["ring_centres"][name]
+    a["ring_centres"][name] = cs[:40] + cs[41:]
+    r = vr.verify(a, _bands(), pts, _island_w(), widths=widths)
+    assert not any(f.startswith("H:") for f in r["fails"]), r["fails"]
+    assert 0.04 < r["counts"]["chord_max_m"] < 0.07, r["counts"]["chord_worst"]
+    # five dropped: a 6-interval span chords it by ~0.49 m > 0.15 m -> FAIL (D also misses the vertices)
+    a = _authored(pts)
+    cs = a["ring_centres"][name]
+    a["ring_centres"][name] = cs[:21] + cs[26:]
+    r = vr.verify(a, _bands(), pts, _island_w(), widths=widths)
+    assert any(f.startswith("H: 1 strip spans chord the declared offset curve") for f in r["fails"]), r["fails"]
+    assert 0.45 < r["counts"]["chord_max_m"] < 0.52 and r["counts"]["chord_worst"]["object"] == name
+    # a ring shoved 0.3 m off the declared curve: the spans either side of it miss the curve too
+    a = _authored(pts)
+    p = a["ring_centres"][name][60]
+    a["ring_centres"][name][60] = [p[0] * 1.003, p[1], p[2] * 1.003]   # ~0.31 m radially outward
+    r = vr.verify(a, _bands(), pts, _island_w(), widths=widths)
+    assert any(f.startswith("H: ") for f in r["fails"]), r["fails"]
+    # pre-author runs and calls without widths never run H
+    assert "chord_max_m" not in _run(_authored(pts))["counts"]
+
+
 def test_cli_writes_the_report_and_exits_nonzero_on_a_miss():
     import tempfile
     d = Path(tempfile.mkdtemp())

@@ -1,7 +1,9 @@
 {
  "slug": "san_diego_lake_murray",
+ "obj": "track.obj",
+ "race": false,
  "road_verts": 17978,
- "grass_verts": 77948,
+ "grass_verts": 76648,
  "piers": 0,
  "wall_verts": 35688,
  "curb_verts": 55268,

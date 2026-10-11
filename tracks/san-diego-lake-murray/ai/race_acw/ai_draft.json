@@ -1,0 +1,28 @@
+{
+ "status": "GENERATED DRAFT from the built centreline \u2014 not an in-game recording (docs/HANDOFF.md :284, ledger 0023). Replace file-for-file with CSP's fast_lane.ai.candidate recorded in this layout.",
+ "layout": "race_acw",
+ "direction": "reverse",
+ "race_furniture": true,
+ "lane_offset": true,
+ "frame": "kn5 frame (median dist to centerline.local: engine 50.0 m / kn5 0.0 m)",
+ "points": 8993,
+ "spacing_m": 1.5,
+ "lap_m": 13489.5,
+ "lap_s_est": 350.4,
+ "offset_points": 7343,
+ "offset_max_m": 9.421,
+ "clearance": {
+  "points": 8993,
+  "unmatched": 0,
+  "divider_stations": 7329,
+  "right_side": 7329,
+  "island_hits": 0,
+  "divider_too_close": 0,
+  "edge_too_close": 0,
+  "min_divider_clear_m": 3.3526992398575466,
+  "min_edge_clear_m": 3.3798298247266354,
+  "max_lat_m": 9.421232934764939,
+  "right_side_frac": 1.0,
+  "ok": true
+ }
+}

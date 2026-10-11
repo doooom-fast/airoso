@@ -1,0 +1,417 @@
+{
+ "ok": true,
+ "fails": [],
+ "warnings": [
+  "F: race_cw: author-time: minimum spawn clearance 0.48 m at AC_START_1 v289 (edge-strip face 5.68 m) (hard floor 0.30 m)",
+  "F: race_acw: author-time: minimum spawn clearance 0.48 m at AC_START_1 v312 (edge-strip face 5.68 m) (hard floor 0.30 m)",
+  "7 rings have another ROAD sheet > 0.15 m above the strip base (max 0.539 m) \u2014 a fold / mouth defect for the ribbon's owner, e.g. [0.539, '1WALL_race_edge_L_college_903_0', 1081]",
+  "built deck vs data height, worst 0.194 m"
+ ],
+ "counts": {
+  "rings_total": 14723,
+  "interpolated": 1,
+  "objects": 36,
+  "chain_objects": 8,
+  "chain_runs": 6,
+  "chain_gap_worst_m": 3.16,
+  "chain_rings": 2853,
+  "edge_objects": 21,
+  "edge_declared_vertices": 4392,
+  "edge_missing": {
+   "L": 0,
+   "R": 30
+  },
+  "edge_missing_undeclared": {
+   "L": 0,
+   "R": 0
+  },
+  "edge_trimmed_declared": {
+   "L": 0,
+   "R": 41
+  },
+  "edge_corners_declared": 5,
+  "edge_corners": [
+   {
+    "side": "R",
+    "in_vertex": 763,
+    "out_vertex": 774,
+    "xz": [
+     -1976.734,
+     -1270.025
+    ],
+    "nearest_ring_m": 0.006
+   },
+   {
+    "side": "R",
+    "in_vertex": 1508,
+    "out_vertex": 1517,
+    "xz": [
+     -1961.396,
+     592.809
+    ],
+    "nearest_ring_m": 0.004
+   },
+   {
+    "side": "R",
+    "in_vertex": 2314,
+    "out_vertex": 2324,
+    "xz": [
+     50.035,
+     1710.941
+    ],
+    "nearest_ring_m": 0.005
+   },
+   {
+    "side": "R",
+    "in_vertex": 3292,
+    "out_vertex": 3300,
+    "xz": [
+     2602.469,
+     517.362
+    ],
+    "nearest_ring_m": 0.002
+   },
+   {
+    "side": "R",
+    "in_vertex": 4495,
+    "out_vertex": 5,
+    "xz": [
+     -2.915,
+     -1654.496
+    ],
+    "nearest_ring_m": 0.006
+   }
+  ],
+  "edge_fold_dropped": {
+   "L": 0,
+   "R": 41
+  },
+  "edge_gap_worst_m": 3.503,
+  "edge_rings": 8842,
+  "kerb_objects": 7,
+  "corners": 5,
+  "kerb_fold_dropped": 98,
+  "inside_out_spans": 0,
+  "inside_out_by_object": {},
+  "inside_out_unmeasured": 0,
+  "chord_max_m": 0.0428,
+  "chord_worst": {
+   "chord_m": 0.0428,
+   "object": "1WALL_race_edge_L_alvarado_620_0",
+   "ring": 163,
+   "at_xz": [
+    -2000.55,
+    -1286.07
+   ]
+  },
+  "chord_fail_m": 0.15,
+  "chord_spans_measured": 11666,
+  "chord_spans_fold": 0,
+  "chord_spans_unmeasured": 0,
+  "chord_spans_over": 0,
+  "ring_spacing_max_m": 3.503,
+  "ring_spacing_max_measured_m": 3.503,
+  "spawn_margin_m": 0.3,
+  "spawn_min_clear_m": {
+   "race_acw": 0.48,
+   "race_cw": 0.48
+  },
+  "spawn_slots": {
+   "race_acw": [
+    {
+     "name": "AC_HOTLAP_START_0",
+     "vertex": 310,
+     "lat_m": 3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_PIT_0",
+     "vertex": 327,
+     "lat_m": 3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_PIT_1",
+     "vertex": 330,
+     "lat_m": 3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_PIT_2",
+     "vertex": 332,
+     "lat_m": 3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_PIT_3",
+     "vertex": 334,
+     "lat_m": 3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_PIT_4",
+     "vertex": 337,
+     "lat_m": 3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_PIT_5",
+     "vertex": 339,
+     "lat_m": 3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_PIT_6",
+     "vertex": 341,
+     "lat_m": 3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_PIT_7",
+     "vertex": 344,
+     "lat_m": 3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_START_0",
+     "vertex": 310,
+     "lat_m": 3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_START_1",
+     "vertex": 312,
+     "lat_m": 4.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 0.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_START_2",
+     "vertex": 314,
+     "lat_m": 2.249,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 2.481,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_START_3",
+     "vertex": 315,
+     "lat_m": 4.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 0.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_START_4",
+     "vertex": 317,
+     "lat_m": 2.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 2.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_START_5",
+     "vertex": 319,
+     "lat_m": 4.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 0.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_START_6",
+     "vertex": 321,
+     "lat_m": 2.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 2.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_START_7",
+     "vertex": 323,
+     "lat_m": 4.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 0.48,
+     "clear_centre_m": null
+    }
+   ],
+   "race_cw": [
+    {
+     "name": "AC_HOTLAP_START_0",
+     "vertex": 291,
+     "lat_m": -3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_PIT_0",
+     "vertex": 274,
+     "lat_m": -3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_PIT_1",
+     "vertex": 271,
+     "lat_m": -3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_PIT_2",
+     "vertex": 269,
+     "lat_m": -3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_PIT_3",
+     "vertex": 267,
+     "lat_m": -3.251,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.479,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_PIT_4",
+     "vertex": 264,
+     "lat_m": -3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_PIT_5",
+     "vertex": 262,
+     "lat_m": -3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_PIT_6",
+     "vertex": 260,
+     "lat_m": -3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_PIT_7",
+     "vertex": 257,
+     "lat_m": -3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_START_0",
+     "vertex": 291,
+     "lat_m": -3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_START_1",
+     "vertex": 289,
+     "lat_m": -4.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 0.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_START_2",
+     "vertex": 287,
+     "lat_m": -2.249,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 2.481,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_START_3",
+     "vertex": 286,
+     "lat_m": -4.249,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 0.481,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_START_4",
+     "vertex": 284,
+     "lat_m": -2.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 2.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_START_5",
+     "vertex": 282,
+     "lat_m": -4.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 0.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_START_6",
+     "vertex": 280,
+     "lat_m": -2.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 2.48,
+     "clear_centre_m": null
+    },
+    {
+     "name": "AC_START_7",
+     "vertex": 278,
+     "lat_m": -4.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 0.48,
+     "clear_centre_m": null
+    }
+   ]
+  },
+  "lamps": 239,
+  "lamps_checked": 238,
+  "lamp_arm_m": 1.8,
+  "lamp_post_h_m": 11.5,
+  "mast_r_m": 0.585,
+  "lamp_min_margin_m": 2.364,
+  "lamp_min": {
+   "lamp": 0,
+   "vertex": 20,
+   "lat_m": 10.21,
+   "base_xz": [
+    -51.27,
+    -1645.74
+   ],
+   "against": "edge",
+   "margin_m": 2.364,
+   "fallback": false
+  },
+  "lamps_inside": 0
+ }
+}

@@ -1,0 +1,28 @@
+{
+ "status": "GENERATED DRAFT from the built centreline \u2014 not an in-game recording (docs/HANDOFF.md :284, ledger 0023). Replace file-for-file with CSP's fast_lane.ai.candidate recorded in this layout.",
+ "layout": "street",
+ "direction": "forward",
+ "race_furniture": false,
+ "lane_offset": true,
+ "frame": "kn5 frame (median dist to centerline.local: engine 50.0 m / kn5 0.0 m)",
+ "points": 8993,
+ "spacing_m": 1.5,
+ "lap_m": 13489.5,
+ "lap_s_est": 388.6,
+ "offset_points": 1718,
+ "offset_max_m": 9.83,
+ "clearance": {
+  "points": 8993,
+  "unmatched": 0,
+  "divider_stations": 1649,
+  "right_side": 1649,
+  "island_hits": 0,
+  "divider_too_close": 0,
+  "edge_too_close": 0,
+  "min_divider_clear_m": 1.5997954863088877,
+  "min_edge_clear_m": 4.198873363257272,
+  "max_lat_m": 9.830022484645633,
+  "right_side_frac": 1.0,
+  "ok": true
+ }
+}

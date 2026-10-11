@@ -79,7 +79,8 @@ now, uncommitted, each step with its own record:
     CorrugatedSteel002, CC0. `SOURCES.txt` gives CorrugatedSteel002 to `warehouse_metal_*`
     instead. It is the same class of fix, outside the approved item, and waits on Kevin's say-so.
 
-P0's done-when list (V3-PLAN P0) is not claimed here.
+P0's done-when list (V3-PLAN P0) is not claimed here. *(Now claimed, each item with its artifact:
+see **P0 done** at the end of this entry.)*
 
 ## Symptom (Kevin, 2026-10-10)
 
@@ -547,3 +548,62 @@ A second review found six problems. Both files are revised again; nothing is bui
   - The race layouts are due in Drive 3 and slip past it if Lake Murray's tools are late; P1 now
     matches A13 and the risks.
   - The July install is 559 MB (534 MiB), not "534 MB".
+
+## P0 done (2026-10-11)
+
+P0 is committed (airoso 324ec41), and its done-when list (V3-PLAN P0) is met. Each item has its
+artifact. Status stays `open` and the tier stays T0: there is no geometry, kn5 or Blender build.
+- **`fleet.cli tracks`** lists `airoso/lookout-lariat` at 0.16.0. **`fleet.cli lint`** exits 1 on
+  two FAILs, S0 (k10-san-diego not found) and S3 (engine pins disagree). Both failed before P0 too,
+  so none is new. Re-run after the follow-ups below: same result.
+- **`data/source-july/`** holds the five July files, byte-identical to k10-colorado `0a897bb^`
+  (`git hash-object` matches all five), with `PROVENANCE.md`.
+- **The centreline is re-derived:** 24,890.8 m, 8,302 points, closed. The ramp end is an ordinary
+  left, about +87° over 12 m. No vertex turns more than 90°, and July's 168° U-turn is gone.
+- **The one-way check** (`data/oneway_check.json`): Street Full runs 0 m against a one-way way.
+  Street Reverse runs 4,486.5 m against, all of it on its four declared D2 stretches. The race
+  layouts are not checked.
+- **Kevin sees** `data/route_map.png` and `data/route_map_switchbacks.png`, both sent to him. They
+  show corners C0–C18, both route fixes before and after, the five race boxes and the two C-470
+  crossings. The script that draws them lives in session scratch, not the repo.
+
+**Three deviations from the plan's letter, for Kevin:**
+- **A1 needed one more excluded way:** 533500102, 19th St's eastbound side. With only the two
+  ramp-end ids, the lap still ran 59.6 m against its arrows.
+- **D2 totals 4.49 km, not ~4.6.** 19th St is 54 m on its westbound side; the 105 m was the
+  eastbound side July drove.
+- **The street layouts are `street_full` and `street_reverse`,** because `tools/layout_dummies.py`
+  refuses the id `full`.
+
+**Follow-ups after the commit (on disk, uncommitted):**
+- **Every Python HTTPS fetch now verifies through `scripts/tls.https_context()`.**
+  - Eight more modules route their fetches through it: buildings, zones, trace/osm, build_seed,
+    map_overlay, usgs_3dep, srtm and `tools/fetch_osm.py`.
+  - `scripts/elevation/srtm.py` had verification switched off (`CERT_NONE`). That is removed, and
+    opentopodata, Open-Meteo and USGS 3DEP verify live through the engine's own transports.
+  - `tests/net/test_https_everywhere.py` scans `scripts/`, `tools/`, `fleet/` and `tracks/` and
+    fails on any call that skips the context or weakens verification. Lake Murray's frozen
+    `scripts-v021/` is not scanned and keeps six unrouted calls; that track owns it.
+- **P0 step 1's diagnosis is corrected on paper.** The cause was the expired cross-certificate
+  "ISRG Root X2, issued by ISRG Root X1" in the Windows Intermediate store, which Python loads as a
+  trust anchor. It was not Python's own store or `certifi`, which `urllib` never reads. V3-PLAN P0
+  step 1 and risk 11 are fixed, and so are dossier §9 and §11.
+- **Stale mirrors.**
+  - `widths_from_osm` now names the mirror that answered and its OSM data timestamp. It refuses to
+    snapshot data older than `route.osm_max_age_days` (default 7) unless run with
+    `--allow-stale-osm`. Tests: `tests/gps/test_widths_osm_freshness.py`.
+  - overpass.kumi.systems was serving OSM as of 2026-07-28. The July snapshot itself holds OSM as
+    of 2026-07-02, fetched on 07-27.
+- **OSM retag.**
+  - OSM now tags exit 259's pair, ways 42005706 and 119006778, as `secondary` with no name. The
+    dossier, from July data, had them as `primary` "Lariat Loop Scenic Byway".
+  - All 26 lap ways on I-70 Business and Colfax (3.66 km) changed the same way, with the same
+    lanes.
+  - In the mountain width table each of them drafts 1.0 m narrower, for example 119006778 goes
+    from 10.0 to 9.0 m. Dossier §2a has the detail.
+- **Tests:** `tests/run_tests.py` 470 passed, 0 failed.
+
+**Still owed:**
+- the GATES-CHANGELOG entry for the one-way gate (that file belongs to the race-corridor run);
+- C9's hairpin fit, at 2.04 m against the invented 1.5 m limit;
+- P1 onward.

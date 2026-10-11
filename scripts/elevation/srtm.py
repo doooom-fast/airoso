@@ -20,17 +20,24 @@ Open-Meteo stays wired as a fallback so a build still completes if opentopodata 
 
 Same interface as ``usgs_3dep.sample_points`` so heightfield.py can swap sources freely.
 
+TLS is verified through ``scripts.tls.https_context()``, like every other live fetch. Until
+2026-10-11 this module switched verification off (``check_hostname=False``, ``CERT_NONE``) on the
+belief that "this box's Python 3.14 ships expired root certs". The real fault was one expired
+cross-certificate in the Windows Intermediate store. Of the engine's HTTPS hosts it breaks only
+overpass-api.de's chain; both hosts here verify with the default context too (see scripts/tls.py).
+
 Run:  python -m scripts.elevation.srtm      (self-test)
 """
 
 from __future__ import annotations
 
 import json
-import ssl
 import time
 import urllib.error
 import urllib.parse
 import urllib.request
+
+from scripts.tls import https_context
 
 OPENTOPODATA_URL = "https://api.opentopodata.org/v1/{dataset}"
 OPEN_METEO_URL = "https://api.open-meteo.com/v1/elevation"
@@ -42,11 +49,6 @@ OTD_BATCH = 100            # opentopodata: 100 locations per call, 1 call/s, 100
 
 Vertex = tuple[float, float]  # (lon, lat)
 
-# This box's Python 3.14 ships expired root certs; the payload is public elevation data.
-_ctx = ssl.create_default_context()
-_ctx.check_hostname = False
-_ctx.verify_mode = ssl.CERT_NONE
-
 
 # --- transports -----------------------------------------------------------------
 
@@ -56,7 +58,7 @@ def _otd_batch(batch: list[Vertex], *, dataset: str, retries: int) -> list[float
     for attempt in range(retries):
         try:
             req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-            with urllib.request.urlopen(req, timeout=60, context=_ctx) as resp:
+            with urllib.request.urlopen(req, timeout=60, context=https_context()) as resp:
                 payload = json.loads(resp.read().decode())
             if payload.get("status") != "OK":
                 raise RuntimeError(payload.get("error", "opentopodata status != OK"))
@@ -82,7 +84,7 @@ def _meteo_batch(batch: list[Vertex], *, retries: int) -> list[float | None]:
     for attempt in range(retries):
         try:
             req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-            with urllib.request.urlopen(req, timeout=60, context=_ctx) as resp:
+            with urllib.request.urlopen(req, timeout=60, context=https_context()) as resp:
                 payload = json.loads(resp.read().decode())
             return [float(e) if e is not None else None for e in payload.get("elevation", [])]
         except urllib.error.HTTPError as exc:

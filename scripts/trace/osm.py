@@ -8,6 +8,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+from scripts.tls import https_context
+
 OVERPASS_URL = "https://overpass-api.de/api/interpreter"
 # Tried in order per attempt — overpass-api.de rate-limits bursty use (429); kumi tolerates more.
 OVERPASS_MIRRORS = [OVERPASS_URL, "https://overpass.kumi.systems/api/interpreter"]
@@ -24,7 +26,7 @@ def _post(query: str, *, retries: int = 4) -> dict:
                                          headers={"User-Agent": USER_AGENT,
                                                   "Accept": "application/json"})
             try:
-                with urllib.request.urlopen(req, timeout=150) as resp:
+                with urllib.request.urlopen(req, timeout=150, context=https_context()) as resp:
                     return json.loads(resp.read().decode())
             except Exception as e:  # noqa: BLE001 — 429/504/timeouts all retry the same way
                 last = e

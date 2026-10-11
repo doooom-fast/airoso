@@ -13,6 +13,8 @@ import time
 import urllib.parse
 import urllib.request
 
+from scripts.tls import https_context
+
 USGS_3DEP_IMAGE_SERVER = "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer"
 GET_SAMPLES = USGS_3DEP_IMAGE_SERVER + "/getSamples"
 USER_AGENT = "prodrive-ac-builder/0.1 (https://github.com/k10-motorsports/prodrive-ac-builder)"
@@ -34,7 +36,7 @@ def _sample_batch(batch: list[Vertex], *, retries: int) -> list[float | None]:
             headers={"User-Agent": USER_AGENT, "Accept": "application/json"},
         )
         try:
-            with urllib.request.urlopen(req, timeout=150) as resp:
+            with urllib.request.urlopen(req, timeout=150, context=https_context()) as resp:
                 payload = json.loads(resp.read().decode())
             # Map by echoed location so we're robust to dropped no-data points / reordering.
             by_loc = {}

@@ -19,6 +19,10 @@ import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(os.path.dirname(HERE), "data")
+if os.path.dirname(HERE) not in sys.path:      # run as `python tools/fetch_osm.py`: the repo root
+    sys.path.insert(0, os.path.dirname(HERE))  # holds scripts.tls
+
+from scripts.tls import https_context  # noqa: E402  (OS-verified TLS; never unverified)
 
 # Lake Murray / Del Cerro / Alvarado. Same box the v2 build used, so the three
 # layouts and the old work are directly comparable.
@@ -56,7 +60,7 @@ def fetch(query):
                     data=urllib.parse.urlencode({"data": query}).encode(),
                     headers={"User-Agent": "airoso-track-builder/0.1 (OSM fetch)"},
                 )
-                with urllib.request.urlopen(req, timeout=180) as r:
+                with urllib.request.urlopen(req, timeout=180, context=https_context()) as r:
                     return json.load(r)
             except Exception as exc:  # noqa: BLE001 - report and try the next mirror
                 last = exc

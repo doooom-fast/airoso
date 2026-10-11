@@ -19,6 +19,7 @@ import urllib.request
 from pathlib import Path
 
 from scripts.config import load_config
+from scripts.tls import https_context
 
 OVERPASS_URL = "https://overpass-api.de/api/interpreter"
 USER_AGENT = "prodrive-ac-builder/0.1 (https://github.com/k10-motorsports/prodrive-ac-builder)"
@@ -54,7 +55,7 @@ def fetch_buildings(bbox: tuple[float, float, float, float], *, retries: int = 3
         req = urllib.request.Request(OVERPASS_URL, data=body,
                                      headers={"User-Agent": USER_AGENT, "Accept": "application/json"})
         try:
-            with urllib.request.urlopen(req, timeout=200) as resp:
+            with urllib.request.urlopen(req, timeout=200, context=https_context()) as resp:
                 payload = json.loads(resp.read().decode())
             break
         except Exception:

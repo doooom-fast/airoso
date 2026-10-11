@@ -18,7 +18,9 @@ import json
 import math
 import sys
 import time
+import urllib.parse
 import urllib.request
+from datetime import datetime, timezone
 from pathlib import Path
 
 from scripts.tls import https_context
@@ -42,6 +44,16 @@ MOUNTAIN_CLASS = {
 }
 MIRRORS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter",
            "https://maps.mail.ru/osm/tools/overpass/api/interpreter"]
+# A mirror is a separate Overpass server that copies OSM on its own schedule, and one that has
+# stopped copying keeps answering with old data. 2026-10-11: overpass.kumi.systems served OSM as of
+# 2026-07-28 while overpass-api.de was minutes old, and this module fell back to it without a word
+# (the July Lariat snapshot holds OSM as of 2026-07-02, fetched 07-27). A live answer whose
+# osm3s.timestamp_osm_base is older than this is never written to the width snapshot unless forced.
+# Healthy mirrors lag minutes to hours; a week behind means the copying stopped.
+# Per track: route.osm_max_age_days. One-off override: --allow-stale-osm. A snapshot already on
+# disk is never judged by age: pinning old data on purpose is what the snapshot is for.
+OSM_MAX_AGE_DAYS = 7.0
+_RETRY_PAUSE_S = 2.0
 
 
 def haversine_m(a: Vertex, b: Vertex) -> float:
@@ -54,25 +66,88 @@ def haversine_m(a: Vertex, b: Vertex) -> float:
 DRIVABLE = "motorway|trunk|primary|secondary|tertiary|unclassified|residential|service"
 
 
-def _overpass(query: str, *, timeout: int = 120) -> dict:
+def osm_base(payload: dict) -> str | None:
+    """The OSM data timestamp an Overpass answer was computed from (``osm3s.timestamp_osm_base``):
+    how current the server's copy of OSM is, not when it was fetched. ``None`` if absent."""
+    return ((payload or {}).get("osm3s") or {}).get("timestamp_osm_base")
+
+
+def osm_age_days(payload: dict, now: datetime | None = None) -> float | None:
+    """Age in days of the payload's OSM data (``None`` when the timestamp is missing or unreadable)."""
+    try:
+        t = datetime.strptime(osm_base(payload), "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    except (TypeError, ValueError):
+        return None
+    return ((now or datetime.now(timezone.utc)) - t).total_seconds() / 86400.0
+
+
+def _too_old(age: float | None, max_age_days: float | None) -> bool:
+    """Unknown age counts as too old: freshness that cannot be shown is not assumed."""
+    return max_age_days is not None and (age is None or age > max_age_days)
+
+
+def _describe(payload: dict, age: float | None) -> str:
+    base = osm_base(payload)
+    if age is not None:
+        when = f"OSM data as of {base} ({age:.1f} days old)"
+    elif base:
+        when = f"OSM data timestamp unreadable ({base!r})"
+    else:
+        when = "OSM data timestamp MISSING (no osm3s.timestamp_osm_base)"
+    remark = (payload or {}).get("remark")
+    return when + (f"; server remark: {remark}" if remark else "")
+
+
+def _host(url: str) -> str:
+    return urllib.parse.urlsplit(url).hostname or url
+
+
+def _overpass(query: str, *, timeout: int = 120, max_age_days: float | None = None) -> tuple[dict, str]:
+    """POST ``query`` to the mirrors in order and return ``(payload, mirror_url)``.
+
+    Every failure, every fallback and the OSM data timestamp of the answer are printed. With
+    ``max_age_days``, an answer older than that (or without a timestamp) is set aside and the next
+    mirror is tried; if no mirror answers fresh, the freshest stale answer is returned and the caller
+    decides (:func:`fetch_ways` refuses to snapshot it unless forced)."""
     last = None
+    stale: list[tuple[float, dict, str]] = []
     for m in MIRRORS:
         for attempt in range(2):
             try:
                 req = urllib.request.Request(m, data=query.encode(), headers={"User-Agent": "k10-colorado/1.0"})
-                return json.load(urllib.request.urlopen(req, timeout=timeout, context=https_context()))
+                d = json.load(urllib.request.urlopen(req, timeout=timeout, context=https_context()))
             except Exception as e:  # noqa: BLE001
                 last = e
-                time.sleep(2)
+                print(f"  [widths_from_osm] {_host(m)} failed (try {attempt + 1}/2): {e}")
+                time.sleep(_RETRY_PAUSE_S)
+                continue
+            age = osm_age_days(d)
+            role = "primary" if m == MIRRORS[0] else f"FALLBACK mirror (not {_host(MIRRORS[0])})"
+            print(f"  [widths_from_osm] {_host(m)} answered, {role}: {_describe(d, age)}")
+            if _too_old(age, max_age_days):
+                print(f"  [widths_from_osm] {_host(m)} fails the {max_age_days:g}-day freshness limit; "
+                      f"trying the next mirror")
+                stale.append((age if age is not None else float("inf"), d, m))
+                break
+            return d, m
+    if stale:
+        _, d, m = min(stale, key=lambda s: s[0])
+        return d, m
     raise SystemExit(f"overpass unreachable (all mirrors): {last}")
 
 
-def fetch_ways(bbox: tuple[float, float, float, float], cache=None) -> list[dict]:
+def fetch_ways(bbox: tuple[float, float, float, float], cache=None, *,
+               max_age_days: float | None = OSM_MAX_AGE_DAYS, allow_stale: bool = False) -> list[dict]:
     """Every drivable OSM way in bbox WITH the tags we need: id, name, highway, lanes, width, node ids, geom.
 
     ``cache`` snapshots the raw payload so a width pass is reproducible without live Overpass — OSM
     is mutable, and a lane retag silently changes every width on the track (L2). Keyed by a
-    fingerprint of the query, so a changed bbox re-fetches instead of reusing the wrong snapshot."""
+    fingerprint of the query, so a changed bbox re-fetches instead of reusing the wrong snapshot.
+
+    A live answer whose OSM data is older than ``max_age_days`` (or carries no timestamp) is NOT
+    written to ``cache``: the stage stops (SystemExit) naming the mirror and its data timestamp,
+    unless ``allow_stale``. ``max_age_days=None`` means no limit. Without a ``cache`` it only warns.
+    The snapshot records which mirror answered (``source``) and its data timestamp (``osm_base``)."""
     s, w, n, e = bbox
     q = (f'[out:json][timeout:120];(way["highway"~"^({DRIVABLE})(_link)?$"]({s},{w},{n},{e}););out geom;')
     d = None
@@ -84,20 +159,38 @@ def fetch_ways(bbox: tuple[float, float, float, float], cache=None) -> list[dict
                 snap = json.loads(cache.read_text(encoding="utf-8"))
                 if snap.get("query_fingerprint") == fp:
                     print(f"  [widths_from_osm] using cached snapshot {cache.name} "
-                          f"(fetched {snap.get('fetched_utc','?')})")
+                          f"(fetched {snap.get('fetched_utc','?')} from {snap.get('source', 'an unrecorded mirror')}, "
+                          f"OSM data as of {osm_base(snap['payload']) or 'unknown'})")
                     d = snap["payload"]
                 else:
                     print(f"  [widths_from_osm] {cache.name} is for a different bbox — re-fetching")
             except (json.JSONDecodeError, KeyError):
                 pass
     if d is None:
-        d = _overpass(q)
+        d, mirror = _overpass(q, max_age_days=max_age_days)
+        age = osm_age_days(d)
+        stale = _too_old(age, max_age_days)
+        if stale:
+            what = (f"the freshest answer came from {mirror} with {_describe(d, age)}, "
+                    f"older than the {max_age_days:g}-day limit (route.osm_max_age_days)")
+            if cache is not None and not allow_stale:
+                raise SystemExit(
+                    f"[widths_from_osm] REFUSING to snapshot {cache.name}: {what}. Writing it would pin "
+                    f"old OSM tags under a current query fingerprint. Retry later, raise "
+                    f"route.osm_max_age_days, or re-run with --allow-stale-osm to snapshot it anyway.")
+            print(f"  [widths_from_osm] WARNING {what}"
+                  + (" - snapshotting it anyway (allow_stale)" if cache is not None else ""))
         if cache is not None:
             cache.parent.mkdir(parents=True, exist_ok=True)
-            cache.write_text(json.dumps({"query_fingerprint": fp,
-                                         "fetched_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-                                         "bbox": [s, w, n, e], "payload": d}), encoding="utf-8")
-            print(f"  [widths_from_osm] snapshotted {len(d.get('elements',[]))} ways -> {cache.name}")
+            snap = {"query_fingerprint": fp,
+                    "fetched_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                    "source": mirror, "osm_base": osm_base(d),
+                    "bbox": [s, w, n, e], "payload": d}
+            if stale:
+                snap["stale_allowed"] = True
+            cache.write_text(json.dumps(snap), encoding="utf-8")
+            print(f"  [widths_from_osm] snapshotted {len(d.get('elements',[]))} ways from {_host(mirror)} "
+                  f"(OSM data as of {osm_base(d) or 'unknown'}) -> {cache.name}")
     ways = []
     for el in d.get("elements", []):
         if el.get("type") != "way" or "geometry" not in el:
@@ -310,7 +403,17 @@ def flare_widths(widths: list[float], cl: list[Vertex], junctions: list[dict], *
     return out
 
 
-def build(project_dir: str | Path) -> dict:
+def max_age_from_route(route: dict) -> float:
+    """``route.osm_max_age_days`` (a positive number of days), or :data:`OSM_MAX_AGE_DAYS` when absent."""
+    v = (route or {}).get("osm_max_age_days")
+    if v is None:
+        return OSM_MAX_AGE_DAYS
+    if isinstance(v, bool) or not isinstance(v, (int, float)) or not v > 0:
+        raise ValueError(f"route.osm_max_age_days must be a positive number of days, got {v!r}")
+    return float(v)
+
+
+def build(project_dir: str | Path, *, allow_stale: bool = False, max_age_days: float | None = None) -> dict:
     project = Path(project_dir)
     data = project / "data"
     gj = json.loads((data / "centerline.geojson").read_text())
@@ -327,7 +430,9 @@ def build(project_dir: str | Path) -> dict:
     bbox = (min(lats) - pad, min(lons) - pad, max(lats) + pad, max(lons) + pad)
     route = json.loads((project / "track.config.json").read_text()).get("route", {}) or {}
     profile = route.get("width_profile", "urban")
-    ways = fetch_ways(bbox, cache=data / "osm.widths.cache.json")
+    ways = fetch_ways(bbox, cache=data / "osm.widths.cache.json",
+                      max_age_days=max_age_days if max_age_days is not None else max_age_from_route(route),
+                      allow_stale=allow_stale)
     # IDENTITY LOCK: freeway-class ways may donate widths ONLY when the route declares them
     # (by name, "ref:NAME" or "id:N,N"). A street circuit beside I-270/US-85 was inheriting
     # freeway widths from nearest-way matching — "sand creek is fucking highways".
@@ -453,10 +558,18 @@ def build(project_dir: str | Path) -> dict:
     return stats
 
 
-def main() -> None:
-    if len(sys.argv) < 2:
-        raise SystemExit("usage: python -m scripts.gps.widths_from_osm <project-dir>")
-    st = build(sys.argv[1])
+def main(argv: list[str] | None = None) -> None:
+    import argparse
+    ap = argparse.ArgumentParser(prog="python -m scripts.gps.widths_from_osm")
+    ap.add_argument("project_dir")
+    ap.add_argument("--allow-stale-osm", action="store_true",
+                    help="snapshot a live Overpass answer even if its OSM data is older than the limit")
+    ap.add_argument("--max-osm-age-days", type=float, default=None,
+                    help=f"override route.osm_max_age_days (default {OSM_MAX_AGE_DAYS:g})")
+    a = ap.parse_args(sys.argv[1:] if argv is None else argv)
+    if a.max_osm_age_days is not None and not a.max_osm_age_days > 0:
+        ap.error("--max-osm-age-days must be positive")
+    st = build(a.project_dir, allow_stale=a.allow_stale_osm, max_age_days=a.max_osm_age_days)
     print(f"widths_from_osm: {st['vertices']} verts  matched {st['matched_pct']}%  "
           f"width min/median/max = {st['min_w']}/{st['median_w']}/{st['max_w']} m  "
           f"junction flares = {st['junctions']}")

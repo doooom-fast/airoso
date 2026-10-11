@@ -32,6 +32,7 @@ from scripts.elevation import network_elev
 from scripts.geometry.projection import centroid, project_to_local
 from scripts.gps.classify import classify
 from scripts.gps.network import build_network
+from scripts.tls import https_context
 from scripts.trace.osm import OVERPASS_URL, USER_AGENT
 
 Vertex = tuple[float, float]
@@ -49,7 +50,7 @@ def _fetch_osm_elements(ids: list[str]) -> dict[str, list[Vertex]]:
         req = urllib.request.Request(OVERPASS_URL, data=body,
                                      headers={"User-Agent": USER_AGENT, "Accept": "application/json"})
         try:
-            with urllib.request.urlopen(req, timeout=150) as resp:
+            with urllib.request.urlopen(req, timeout=150, context=https_context()) as resp:
                 payload = json.loads(resp.read().decode())
             break
         except Exception:

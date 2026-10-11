@@ -8,6 +8,10 @@
 >   elsewhere are stale and get fixed together in one change outside these files (P0 step 9):
 >   `docs/V3-PLAN.md` still says "San Diego first, Sand Creek second", and
 >   `fleet/DEFINITION-OF-DONE.md:45` lists the Lariat at T0 without saying the current pin fails.
+>   *(Both fixed in P0, commit 324ec41.)*
+> - *2026-10-11, after P0 (commit 324ec41):* P0 step 1's diagnosis is corrected, A1 needed one more
+>   excluded way, and D2's total is measured (4.49 km). Each is noted where it applies; ledger 0048
+>   records P0.
 >
 > Kevin's asks:
 > - 2026-10-10: *"rebuild lookout mountain in the same high fidelity style with all of the fixes
@@ -27,7 +31,7 @@
 |---|---|---|---|
 | **D0** | **Take the Lariat download that is public right now down, or re-pack it?** Urgent, and separate from V3. It is k10-colorado v0.14.0, `lookout_lariat_ai.zip`, listed on doooom.fast. Its credits say everything in it is free to share (CC0). It isn't. The road, dirt and bush textures were taken from the LA Canyons mod. The concrete texture was taken from the Hamburg mod. The tree pictures are a TurboSquid-derived sheet. The 3D pines and the concrete barriers come from your own model packs, whose licences aren't on record. | **Take the Lariat zip down now.** That's your click on the release; I prepare the matching catalog edit in prodrive-server. Once `gh` is logged in, I check the texture lists of the other five Colorado zips. Any that carry the LA Canyons road texture (the engine's default road texture) get re-packed with `tools/repack_kn5_textures.py` plus honest credits. | A texture swap can't take the tree and barrier models out of the Lariat file. If you know both packs allow sharing, say so: I re-pack the Lariat instead (free textures, blank tree sheet, honest credits) and it stays listed. |
 | **D1** | **Keep the lap's double-back at Colfax, or take Heritage Rd like the real byway?** At the US-6/Colfax signal the lap turns 152° back on itself, then runs 1.9 km back beside the Colfax it just drove. Keeping it gives 24.9 km; Heritage Rd gives ≈ 22.7 km with no reversal. | **Keep it.** The in-game text says the turn is unverified. | It is the lap you have driven, and the length doooom.fast lists. Nobody has confirmed the turn is legal. |
-| **D2** | **Four stretches of the lap are one side of a divided road. What does Reverse drive there?** The four: US-6 plus its off-ramp to 19th St (4.1 km), 309 m of Colfax, 105 m of 19th St, and 85 m at exit 259. At exit 259 the lap (after A1) takes the 2-lane north-east-bound side, OSM way 119006778; the 4-lane south-west-bound side, way 42005706, is the other half. Full drives all four with the arrows. Reverse, driving the same line backwards, would drive all four against them.<br>**(a)** Build each as one piece of pavement carrying both sides and the real median. Every layout drives the Full side, so **Reverse drives all four stretches against the arrows, about 4.6 km in all, including the 85 m at exit 259**, and its in-game text says so.<br>**(b)** As (a), plus a second route so Reverse drives each stretch the legal way: US-6's other carriageway, the 19th St → US-6 on-ramp (way 642334992), 19th St's eastbound side at the ramp terminals, the southbound Colfax approach, and exit 259's south-west-bound side (way 42005706). Reverse then gets its own centreline and a different lap length. This brings back, as real road, the opposite carriageway that today's build draws as one of the ribbons beside the return leg (26 ways, ~1.3 km).<br>**(c)** Only the side Full drives, with no median and ground beside it. Reverse drives that single side against the arrows on all four stretches, and its in-game text says so. | **(a): one slab with its real median; Reverse drives the four stretches against the arrows, and its text says so.** | It looks like the real divided road without adding a second route. If D3 keeps the race version, its layouts close the other side anyway. |
+| **D2** | **Four stretches of the lap are one side of a divided road. What does Reverse drive there?** The four: US-6 plus its off-ramp to 19th St (4.1 km), 309 m of Colfax, 105 m of 19th St, and 85 m at exit 259. *(Measured on the P0 line: 4,035.1 m, 311.6 m, **53.6 m** of 19th St's westbound side (the 105 m was the eastbound side July drove; see A1) and 86.2 m; 4,486.5 m in all.)* At exit 259 the lap (after A1) takes the 2-lane north-east-bound side, OSM way 119006778; the 4-lane south-west-bound side, way 42005706, is the other half. Full drives all four with the arrows. Reverse, driving the same line backwards, would drive all four against them.<br>**(a)** Build each as one piece of pavement carrying both sides and the real median. Every layout drives the Full side, so **Reverse drives all four stretches against the arrows, about 4.6 km in all, including the 85 m at exit 259**, and its in-game text says so. *(P0 measured 4.49 km: `tools/route_oneway_check.py`, `data/oneway_check.json`.)*<br>**(b)** As (a), plus a second route so Reverse drives each stretch the legal way: US-6's other carriageway, the 19th St → US-6 on-ramp (way 642334992), 19th St's eastbound side at the ramp terminals, the southbound Colfax approach, and exit 259's south-west-bound side (way 42005706). Reverse then gets its own centreline and a different lap length. This brings back, as real road, the opposite carriageway that today's build draws as one of the ribbons beside the return leg (26 ways, ~1.3 km).<br>**(c)** Only the side Full drives, with no median and ground beside it. Reverse drives that single side against the arrows on all four stretches, and its in-game text says so. | **(a): one slab with its real median; Reverse drives the four stretches against the arrows, and its text says so.** | It looks like the real divided road without adding a second route. If D3 keeps the race version, its layouts close the other side anyway. |
 | **D3** | **Does the Lariat get a race version, when its mountain road is half Alvarado's width?** Your race brief asks for *"more or less an Alvarado's width for the entire track with deviances in various areas"*; Alvarado is about 13 m curb to curb. On the Lariat only Golden's streets come near that. I-70 Business and Colfax (2–6 lanes) are 3.7 km, 15 % of the 24.94 km lap. Add US-6's 2-lane carriageway, the ramp and 19th St and Golden is 8.4 km (34 %), but those are narrower. The 6 km climb is 6.1–6.7 m; the summit and back side are 2-lane roads and Paradise Rd is unmeasured; US-40's three canyon lanes may come close once measured. Every layout drives the same road surface (rule L8), so a race layout cannot make any of it wider.<br>**(a) A race version on the real narrow road.** Race anticlockwise and Race clockwise, beside Street Full and Street Reverse. The race runs one way over the whole mountain road, edge to edge: half Alvarado's width on the climb, with its real stone, steel and open edges and nothing added in it or along it. Every side road is closed with a barrier at its edge. The five corners where the race turns from one road to another (the Paradise tee, Paradise → US-40, exit 259, Colfax → US-6, ramp → 19th St) are open boxes. Golden's multi-lane streets are narrowed to about Alvarado's width with lane barriers, and on each divided stretch (D2) the race keeps one side, with every gap to the other side closed.<br>**(b) No race version of the Lariat.** Street Full and Street Reverse only: no race barriers, no race file, and no wait on Lake Murray's race tools.<br>*Checked and dropped: a race only on a town loop that has Alvarado's width.* The only loop that closes in Golden (≈ 5.2 km: Colfax → US-6 → Heritage Rd) needs 1.5 km of Heritage Rd, which isn't part of the lap, and Heritage Rd is mostly 2 lanes, like US-6's carriageway, so it doesn't have Alvarado's width either. | **(a): a race version on the real narrow road, one-way, half Alvarado's width on the climb.** | It is the race you asked for, on the road that is really there; width is the one part of the brief the mountain can't give, and the race arrives last (Drive 3), so nothing waits on it. Pick (b) if Alvarado's width was the point. |
 | **D4** | **How wide is the mountain road under your wheels?** The July Lariat you have driven has about **22.6 m** you can drive on: a 9.8 m road plus 6.4 m of drivable shoulder each side. The real road is **6.1–6.7 m** with no shoulder. **A:** real width, then the real edge (rock cut, ditch or drop). **B:** real pavement plus a 1–1.5 m firm gravel strip each side that you can put a wheel on. | **Build both for Drive 1** (two installs, identical apart from the edge), and you pick by driving. | The July shoulders went in because the narrow lane, lined with rumble-strip lips, was *"undriveable slop"* (your words, July). The lips are gone either way, so only the seat can say whether the real width is enough. |
 | **D5** | **Where C-470 crosses over the lap: build its bridges, or dig its embankments away?** The lap passes under C-470 twice: on Colfax at st ~19,300 (both directions plus two ramps) and on US-6 at st ~21,100. With C-470's road removed, its two approach embankments stand on either side of the lap with a gap in the air between them. The bridges would be scenery only: deck and abutments, no road on top, nothing running along the lap. | **Build the bridges.** | That is what is really there, overhead. Digging the embankments away would replace real ground with made-up ground, and a bridge you pass under is not the wavy ribbon beside the road you asked to remove. |
@@ -40,6 +44,13 @@
   - The ramp end turns left onto 19th St west (OSM ways 533503210 + 1283267904, replacing 533503214). Today it makes a ~190° U-turn and runs ~100 m the wrong way up a one-way.
   - Exit 259 uses the northeast-bound way 119006778. Today the lap drives 84 m up the southwest-bound way 42005706.
   - A check fails any build whose lap runs against a one-way. Both defects are errors in the July route list, not choices.
+  - *P0 deviation (2026-10-11), for Kevin:* the two ramp-end ids on their own still left the lap
+    59.6 m against the arrows on 19th St's eastbound one-way way **533500102**: the 19th St path
+    ran on the eastbound side, and the ring is cut at the ramp node, so 1283267904 was never
+    driven. `route.exclude_ids` drops 533500102 as well as 42005706 (the same mechanism as exit
+    259), so the left turn runs 1283267904 → 1106864351 → 533504135 on the westbound side, with
+    the arrows. That is A1's intent with one more excluded way. It shortens D2's 19th St stretch
+    to 54 m and the D2 total to **4.49 km** (4,486.5 m), not ~4.6 km.
 - **A2 — The hairpins become smooth curves before the road is built.** Each hairpin is fitted as an arc or transition curve at the radius measured on the aerial, and a gate checks the turn is smooth from point to point.
   - Today's line kinks up to 25° between 3 m points at the base hairpin, and that is likely what made it "impossible".
   - Your July widening there (14 m; *"the turn on the mountain route is impossible"*) is **off for Drive 1** but one switch away.
@@ -141,14 +152,33 @@ Each phase lists its tools, what "done" means, and what Kevin sees. Tool status 
 
 ### P0 — Import, correct, make runnable (no geometry)
 
-1. **Fix Python's certificate store first.**
-   - Overpass fails in Python with "certificate has expired" while curl works, so Python's trust
-     store is stale.
-   - Update it (refresh `certifi`, or point Python at the Windows store) and confirm with a live
-     fetch.
-   - **Never disable verification.** The widths stage fetches over `urllib`
-     (`scripts/gps/widths_from_osm.py:60`), and its cache fingerprint depends on the bbox. So any
-     bbox change after D1 forces a live re-fetch, and that must work.
+1. **Fix Python's HTTPS trust first.** *(Corrected 2026-10-11 after P0 ran it. This step first
+   blamed a stale Python trust store and proposed refreshing `certifi`. `urllib` never reads
+   `certifi`, so that would have changed nothing.)*
+   - Overpass failed in Python with "certificate has expired" while curl worked. **The cause is in
+     the Windows Intermediate ("CA") certificate store, not in Python:** it still holds Let's
+     Encrypt's 2020 cross-certificate "ISRG Root X2, issued by ISRG Root X1", which expired
+     2025-09-15. Python's default context loads both Windows stores (Trusted Root and
+     Intermediate) as trust anchors, so OpenSSL takes that expired copy and fails. overpass-api.de
+     sends a valid 2026 cross-certificate for the same link (leaf → YE2 → Root YE → Root X2 →
+     Root X1). curl uses Schannel, so Windows itself verifies the chain, finds the valid path and
+     succeeds. Of the engine's hosts, only overpass-api.de's chain runs through that link.
+   - **The fix:** `scripts/tls.https_context()` hands verification to the operating system's
+     verifier (`truststore`, the library pip uses), with hostname and chain checks on. No
+     certificate store was edited. Every Python HTTPS fetch in `scripts/`, `tools/`, `fleet/` and
+     `tracks/` now passes `context=https_context()`, and `tests/net/test_https_everywhere.py` fails
+     on any that doesn't. Lake Murray's frozen trees of record (`scripts-v021/`,
+     `engine-july-snapshot/`) are not scanned; six unrouted `urlopen` calls remain in five files of
+     `scripts-v021/`.
+   - **Never disable verification.** `scripts/elevation/srtm.py` had turned it off
+     (`CERT_NONE`) for the same symptom. That is removed, and opentopodata, Open-Meteo and USGS
+     3DEP are shown to verify through `https_context()`.
+   - The widths stage fetches over `urllib` (`scripts/gps/widths_from_osm.py`, `_overpass`), and
+     its cache fingerprint depends on the bbox. So any bbox change after D1 forces a live re-fetch,
+     and that must work. Its mirror fallback now names the mirror that answered and the OSM data
+     timestamp it served. It refuses to snapshot data older than `route.osm_max_age_days` (default
+     7) unless run with `--allow-stale-osm`. overpass.kumi.systems was serving OSM as of
+     2026-07-28.
 2. **Restore only frame-free July data, into `tracks/lookout-lariat/data/source-july/`.** Copy with
    `git -C ../k10-colorado show 0a897bb^:tracks/lookout-lariat/data/<file>`, and never check out the
    retired repo.
@@ -174,6 +204,7 @@ Each phase lists its tools, what "done" means, and what Kevin sees. Tool status 
 6. **Rewrite the config from the dossier.**
    - **Route:**
      - A1's two fixes: the ramp-end ways, and exit 259's way 119006778 in place of 42005706.
+       *(P0 also excluded 533500102; see A1.)*
      - D1.
      - The grade cap stays at 16 % (A7).
      - Exit 259 needs a way to drop one OSM way from a `ref:` match. A new opt-in route key (e.g.
@@ -185,8 +216,9 @@ Each phase lists its tools, what "done" means, and what Kevin sees. Tool status 
      `race_furniture: false`), plus, under D3(a), `race_acw` and `race_cw`
      (`race_furniture: true`). Each has a `direction`, a declared `start` at the pylons facing its
      own way, and `ui_description` / `run` text that says anticlockwise or clockwise truthfully.
-     Under D2(a) or (c), Reverse's text says it drives the four divided stretches (~4.6 km)
-     against the arrows.
+     Under D2(a) or (c), Reverse's text says it drives the four divided stretches (~4.6 km;
+     measured in P0, 4.49 km) against the arrows. *(P0 named the two street layouts `street_full`
+     and `street_reverse`, because `tools/layout_dummies.py` refuses the id `full`.)*
    - **Width:** `widths` overrides from the dossier; the D4 A/B verge as one parameter
      (`road_profile.verge_m`: 0.4 for A, 1.25 for B).
    - **July build knobs to drop:**
@@ -476,7 +508,8 @@ Blender as on Lake Murray.
 - **adapted** `median_envelope` + `author_median_blend`, with the separation values moved into
   config.
 - One slab per divided stretch, with its median: US-6, the 309 m of Colfax, the 105 m of 19th St,
-  and the 85 m at exit 259 (ways 119006778 + 42005706).
+  and the 85 m at exit 259 (ways 119006778 + 42005706). *(P0: 19th St is 54 m on its westbound
+  side, beside 533500102. The stretches and both sides' ways are in the config's `divided` block.)*
 - Under D2(b) only, the second Reverse route is added: US-6's other carriageway, the on-ramp
   (642334992), 19th St's eastbound side, the southbound Colfax approach and exit 259's way
   42005706. It gets its own centreline, and road-inventory exemptions.
@@ -733,7 +766,9 @@ A smoother, lower-detail lamp would halve the lamp share if frame rate or size n
 10. **Lamp weight.** At ~4k positions per lamp, the July 304 alone would add 60 MB. The inventory
     keeps it to dozens.
 11. **Network.**
-    - Python's certificate store fails Overpass today; P0 step 1 fixes it properly.
+    - Python's certificate store fails Overpass today; P0 step 1 fixes it properly. *(Done in
+      P0. The fault was an expired cross-certificate in the Windows Intermediate store, not
+      Python's store. Every Python fetch now verifies through `scripts/tls.https_context()`.)*
     - The far tiers need a live USGS fetch.
     - `gh` isn't logged in; PUBLISHING.md's credential-manager method covers that, and D0 needs it.
 12. **Gate runtime.** Gate time and memory grow with ground detail (Dragon Tail peaked at 7 GB for

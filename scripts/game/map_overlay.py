@@ -19,6 +19,8 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
+from scripts.tls import https_context
+
 TILE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
 USER_AGENT = "prodrive-ac-builder/0.1 (https://github.com/k10-motorsports/prodrive-ac-builder)"
 MAX_TILES = 120
@@ -35,7 +37,7 @@ def _tile_xy(lon: float, lat: float, z: int) -> tuple[float, float]:
 def _fetch_tile(z: int, x: int, y: int) -> Image.Image:
     req = urllib.request.Request(TILE_URL.format(z=z, x=x, y=y),
                                  headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(req, timeout=30) as resp:
+    with urllib.request.urlopen(req, timeout=30, context=https_context()) as resp:
         return Image.open(io.BytesIO(resp.read())).convert("RGB")
 
 

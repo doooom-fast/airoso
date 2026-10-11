@@ -82,11 +82,45 @@ The lap was re-derived today two ways, and they agree exactly:
 | 1d | 7,700–9,710 | Lookout Mountain Rd, back side | tertiary | 2.01 km | 2 lanes, 35 mph; not measured | none mapped | houses among pines, driveways, ~10 residential side streets (§4b); lap high point 2,288 m at st ~9,150 |
 | 2 | 9,710–11,652 | Paradise Rd | residential | 1.94 km | no OSM lane or width tags; **measure** | unknown | ends at stop signs on US-40 beside the RTD Paradise Hills Park-n-Ride (exit 256) |
 | 3 | 11,652–16,546 | US-40 down Mt Vernon Canyon (unnamed in OSM) | secondary | 4.89 km | `lanes=3`; the split is unclear (one 300 m piece is tagged 2 eastbound + 1 westbound), **verify on the aerial**. Shoulders were widened in CDOT's 2021 resurfacing; widths unpublished | none | 50 mph (35 near exit 259). I-70 runs 20–50 m beside it for ~75 % of the leg (median 30 m) |
-| 4 | 16,546–18,344 | I-70 Business / US-40 ("Lariat Loop Scenic Byway") | primary | 1.80 km | 3–5 lanes, divided in places | urban, to measure | from the exit-259 signals past Heritage Square. **Route defect at exit 259 (§2d)** |
-| 5 | 18,344–20,191 | West Colfax Ave | primary | 1.85 km | 2–6 lanes; **309 m is one side of a divided piece** (one-way) | urban, to measure | signals at st ~19,139 and ~19,861–19,909; concrete retaining walls at st ~19,232–19,816; **the lap passes under C-470 at st ~19,300** (§2e) |
+| 4 | 16,546–18,344 | I-70 Business / US-40 ("Lariat Loop Scenic Byway"; **unnamed in OSM since**, see below) | primary in July; **secondary now** (see below) | 1.80 km | 3–5 lanes, divided in places | urban, to measure | from the exit-259 signals past Heritage Square. **Route defect at exit 259 (§2d)** |
+| 5 | 18,344–20,191 | West Colfax Ave | primary in July; **secondary now** (see below) | 1.85 km | 2–6 lanes; **309 m is one side of a divided piece** (one-way) | urban, to measure | signals at st ~19,139 and ~19,861–19,909; concrete retaining walls at st ~19,232–19,816; **the lap passes under C-470 at st ~19,300** (§2e) |
 | 6 | 20,191–23,831 | US-6, the carriageway heading toward Golden (West 6th Ave 0.82 km, unnamed 1.09 km, "Lariat Loop Scenic Byway" 1.73 km) | trunk, one-way | 3.64 km | 2 lanes of a 2+2 divided expressway. The two carriageway centrelines are 7–16 m apart, so the median is narrow; probably a barrier where they nearly touch | none | 45 → 55 mph; signals at Johnson Rd (~21,000) and Heritage Rd / Jefferson County Pkwy (~22,100); **the lap passes under C-470 at st ~21,100** (§2e); lowest point 1,783 m at st ~23,050 |
 | 7 | 23,831–24,247 | US-6 northbound off-ramp to 19th St | trunk_link, one-way | 0.42 km | 1 lane (2 at the split) | retaining walls at st ~24,070–24,085 | 35 mph advisory; climbs out of US-6's sunken cut. **Route defect at its end (§2d)** |
-| 8 | 24,247–24,942 | 19th St | secondary 144 m, then tertiary 496 m | 0.69 km | 2 lanes; divided at the ramp terminals (**105 m one-way**) | bike lanes with plastic flex posts; raised crosswalk table at st ~24,462 | 25/30 mph; crosses US-6 on the "Linking Lookout" lid park at st ~24,390 (~550 m before the pylons); climbs +5.7 % to the pylons |
+| 8 | 24,247–24,942 | 19th St | secondary 144 m, then tertiary 496 m | 0.69 km | 2 lanes; divided at the ramp terminals (**105 m one-way**, the eastbound side July drove; the V3 lap uses the westbound side, 54 m, §2d #1) | bike lanes with plastic flex posts; raised crosswalk table at st ~24,462 | 25/30 mph; crosses US-6 on the "Linking Lookout" lid park at st ~24,390 (~550 m before the pylons); climbs +5.7 % to the pylons |
+
+**OSM has retagged rows 4 and 5 since July** *(found 2026-10-11 in P0)*.
+- **Then:** the July snapshot (OSM as of 2026-07-02) and the overpass.kumi.systems mirror (OSM as
+  of 2026-07-28) tag exit 259's pair, ways **42005706** (4 lanes) and **119006778** (2 lanes), as
+  `highway=primary`, named "Lariat Loop Scenic Byway". That is what row 4 and §2d #2 record.
+- **Now:** live OSM (overpass-api.de, OSM as of 2026-10-11T19:28:01Z, re-checked 21:17Z) tags both
+  `highway=secondary` with **no name**. Their `ref` (`I 70 BUS;US 40`), lanes and `oneway` are
+  unchanged.
+- **How far it goes:** the same retag covers all of rows 4–5. All 26 ways the V3 lap drives on I-70
+  Business / US-40 and West Colfax (V3 st ~16,610–20,270, 3,659 m) went from primary to secondary,
+  with lane counts unchanged. The I-70 Business ways lost the byway name, and so did several US-6
+  ways. Some of US-6 is now named West 6th Avenue; it is still trunk.
+- **What it changes in the width table:** `scripts/gps/widths_from_osm.py` uses its mountain
+  table, because the config sets `route.width_profile: mountain`. The table has 3.0 m lanes, plus
+  a 4.0 m allowance for a primary road and 3.0 m for a secondary one. So every retagged way drafts
+  **1.0 m narrower** than with the July tags:
+  - 119006778, the lap's side at exit 259: 10.0 → 9.0 m;
+  - 42005706, its other half in the D2 slab: 16.0 → 15.0 m;
+  - the 3-lane I-70 Business: 13.0 → 12.0 m;
+  - Colfax's 6-lane block: 22.0 → 21.0 m.
+
+  These are draft numbers for the stretch `width_overrides` leaves at "OSM lanes until measured"
+  (V3 st 16,612–20,271). The aerial still decides.
+- **What it doesn't change:**
+  - the route, which matches these ways by `ref`;
+  - which junctions get flared (`detect_junctions` counts primary and secondary alike as major),
+    though each flare's size follows the narrower widths;
+  - the one-way check, whose verdicts are the same on both snapshots.
+
+  `street_labels` reads named ways only, so the I-70 Business stretch has no OSM name of its own
+  now. Its signs and labels take the name from this dossier.
+- **Build from the live tags, never the July or kumi copy.** The widths stage now refuses to
+  snapshot OSM data older than `route.osm_max_age_days` (default 7) unless run with
+  `--allow-stale-osm`.
 
 **Width honesty.** The July Lariat Kevin has driven gives him about **22.6 m of drivable surface**:
 - `1ROAD_main` averages 9.8 m;
@@ -119,7 +153,7 @@ What still has to be measured:
   up the canyon → Paradise Rd → over the top → down the Lariat to the pylons.
   - Under the default *(D2a)* it drives all four divided stretches against the arrows: the ramp
     and US-6, plus the three short pieces on Colfax, on 19th St and at exit 259 (about 4.6 km in
-    all). The ui text says so.
+    all; *measured on the P0 line: 4.49 km*). The ui text says so.
   - Option *(D2b)* gives it its own legal route instead: US-6's other carriageway, the 19th St
     on-ramp (way 642334992), and the other side of each short piece (at exit 259, way 42005706).
     That means its own centreline and a different length.
@@ -195,10 +229,15 @@ The 43 out-of-box ways include:
      confirmed this today in the recovered July snapshot.
    - Fix: `id:484287799,1351773584,533503588,533503210,1283267904`. Re-run the centreline and check
      the start/finish seam before trusting it.
+   - *P0 (2026-10-11):* with those ids alone, the 19th St path still ran on the eastbound one-way
+     way 533500102, 59.6 m against its arrows. `route.exclude_ids` now drops 533500102 as well.
+     The left turn runs 1283267904 → 1106864351 → 533504135 on the westbound side, with the
+     arrows (V3-PLAN A1).
 2. **84 m the wrong way at exit 259 (st ~16,602–16,686).** Measured today on the recovered July
    centreline against the July snapshot.
    - **What it drives:** the lap heads north-east (25–36°) along way 42005706, which is
      `primary, oneway=yes, lanes=4, turn:lanes=left|||right`, drawn south-west-bound (84 m).
+     *(July tags. Both ways of the pair are `secondary` and unnamed in OSM now; see §2a.)*
    - **The divided pair:** its north-east-bound partner is way 119006778 (`primary, oneway=yes,
      lanes=2`, 85 m), which meets it at the same node.
    - **The geometry:** the July line also carries a 90° kink and ±14° zig-zags at st
@@ -230,7 +269,8 @@ The 43 out-of-box ways include:
   road, driven as a single carriageway:
   - US-6 (all of segment 6, 3.64 km) plus its off-ramp;
   - 309 m of one-way West Colfax;
-  - 105 m of one-way 19th St at the ramp terminals;
+  - 105 m of one-way 19th St at the ramp terminals *(the eastbound side July drove; the V3 lap
+    uses the westbound side, 54 m, so D2 totals 4.49 km)*;
   - 85 m at exit 259: way 119006778 (`oneway=yes`, 2 lanes, north-east-bound) once A1's fix is
     in, with way 42005706 (`oneway=yes`, 4 lanes, south-west-bound) as its other half (§2d #2).
 
@@ -901,7 +941,7 @@ Rules:
 | Source | What | Date | Where |
 |---|---|---|---|
 | The retired twin's git history | 19 derived data files, incl. the centreline (8,319 pts, 24,941.8 m) and the full Overpass payload (2,493 ways, fingerprint 253170f584109f60). **Only the frame-free ones are restored** into `data/source-july/` (V3-PLAN P0): `osm.widths.cache.json`, `osm.ways.json`, `centerline.geojson`, `corridor.elev.json` (lon/lat stations), `environment.geojson` (reference only). Everything keyed to the July frame or July stations is regenerated | widths 2026-07-27T15:03Z; env 2026-07-20 | `k10-colorado` commit `0a897bb^`, path `tracks/lookout-lariat/data/`. Read with `git show`; never check out the retired repo. **This contradicts 0048's first claim that "no Overpass snapshot survives"; 0048 is corrected** |
-| Overpass snapshot of the config's own query | 196 elements; reproduces the July lap exactly | 2026-10-11 16:45Z | scratch only (session temp). Python's TLS store rejects the Overpass certificate; curl works (P0 fixes the store, never by disabling verification) |
+| Overpass snapshot of the config's own query | 196 elements; reproduces the July lap exactly | 2026-10-11 16:45Z | scratch only (session temp). Python's TLS failed on overpass-api.de while curl worked. *Corrected after P0:* this row first blamed Python's own trust store. The cause is an expired cross-certificate ("ISRG Root X2, issued by ISRG Root X1", expired 2025-09-15) in the **Windows Intermediate store**, which Python loads as a trust anchor; `certifi` is never read by `urllib`. Fixed with `scripts/tls.https_context()` (the OS verifier), never by disabling verification. P0's own snapshot is `data/osm.cache.json` (197 ways, OSM as of 2026-10-11T19:28:01Z) |
 | USGS 3DEP 1 m | the elevation profile every 25 m, plus the sightline samples | 2026-10-11 | scratch only |
 | Measured today on the recovered July data | the exit-259 wrong-way run (ways 42005706 / 119006778); the C-470 and tunnel crossings of the lap (§2e); the ≈145 ways touching the lap (§4b); the 1,188 stacked-leg pairs; the hairpin facets; the crossfall statistics | 2026-10-11 | session scratch; reproducible from the restored snapshot |
 | The installed track | kn5 inventory (550.5 MB, 321 meshes, 19 textures), ext_config (304 lights), AI drafts (Aug 10) | built 2026-07-27 (engine v0.46.0) | `D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks/lookout_lariat/` |
@@ -981,9 +1021,11 @@ Rules:
 
 ## 11. Build plan (summary — the full plan is [`V3-PLAN.md`](V3-PLAN.md))
 
-1. **P0:** fix Python's certificate store, then restore only the frame-free July data. Archive the
-   twin's `.blend` and point the registry at airoso. Apply both route fixes *(A1)* and rewrite the
-   July config (the layouts D3 settles on, the D7 knobs). Then add the one-way check.
+1. **P0:** fix Python's certificate store *(corrected: the fault was an expired cross-certificate
+   in the Windows Intermediate store, not Python's store; fixed in P0)*, then restore only the
+   frame-free July data. Archive the twin's `.blend` and point the registry at airoso. Apply both
+   route fixes *(A1)* and rewrite the July config (the layouts D3 settles on, the D7 knobs). Then
+   add the one-way check.
 2. **P1:** generalise the ship chain so a non-SD track can ship, race stages included, on the race
    tools Lake Murray's corridor run lands. SD's `ship_sd.sh` stays byte-identical. The prep fixes
    are the frame bug, balanced tiling and station-matched seating.

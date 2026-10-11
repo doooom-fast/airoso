@@ -1,0 +1,30 @@
+K10 - San Diego (V3) — Lake Murray Loop — credits
+==================================================
+
+Built by Kevin Conboy with the airoso track engine (k10-motorsports), hand-finished in Blender.
+Surface scrub and kerb-rumble sounds are the player's own stock Assetto Corsa sounds
+(content/sfx), referenced by name in data/surfaces.ini — none are redistributed here.
+
+Data
+  - OpenStreetMap road geometry (ODbL-1.0)        https://www.openstreetmap.org/copyright
+  - USGS 3DEP 1 m elevation (US public domain)    https://www.usgs.gov/3d-elevation-program
+
+Our own work (CC0-1.0)
+  - Road, kerb, sidewalk, median, terrain, lamp-post geometry; AI line; map; outline
+  - Lane lines, kerb stripe and the solid lamp textures (generated)
+  - Street-lamp model: Kevin Conboy's own asset library
+
+CC0 textures bundled in the kn5
+  - Grass001 (grass)                  ambientCG   CC0-1.0   https://ambientcg.com/view?id=Grass001
+  - Plaster004 (houses)               ambientCG   CC0-1.0   https://ambientcg.com/view?id=Plaster004
+
+Third-party content bundled in this build — NOT ours, NOT CC0
+  Read LICENSES.md before redistributing this package. These were taken from other Assetto Corsa
+  mods for a personal build; their authors have not licensed them for redistribution.
+  - Road surface texture (asphalt_cracked_*)     LA Canyons 1.2 by Phoenix77
+  - Building concrete texture (building_*)       Hamburg by 4r (TextureCom / KitBash3D maps)
+  - CSP TreeFX vegetation models (extension/trees/*.bin):
+      PalmV1, PalmV2, PalmV3, PepperV1, SycamoreV1, SycamoreV2, Sage, Yucca, Agave
+                                                 No Hesi 1.10 (nohesi_110)
+      Gum, Oak3, Bush, Bush3                     Algarve Portimão 2023 (algarve_portimao_2023)
+      Pine_Aleppo                                Shutoko Revival Project 0.9.3

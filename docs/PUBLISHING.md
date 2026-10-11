@@ -58,6 +58,21 @@ So two zips exist per release, built from the same track folder:
   `_salvage/k10-sd-v021/assets/textures/`) so every material binding survives and no gate needs
   re-running. It has no vegetation until free TreeFX models replace the mined ones.
 
+## Packing — one command
+
+```bash
+python tools/pack_release.py --version 0.23.0
+```
+
+writes `full/<slug>_v0.23.0.zip`, `cc0/<slug>_v0.23.0.zip` and `san_diego_freeway_v0.5.0.zip` under
+`k10-sd-v021/project/build/release/` from the installed `_v3` folder (or `--src`), applying the CC0
+transforms above and the release texts in `tracks/san-diego-lake-murray/release/{full,cc0}/`.
+**A zip is a snapshot of `extension/ext_config.ini`:** any config-only change (lights, GrassFX) means
+re-packing both variants and re-uploading before `--draft=false`; the kn5 does not change.
+`--src` must be a build whose start is the public one — the installed `_v3` carries whatever per-issue
+debug start `start_positions.json` is set to; until the layouts work puts the grid on Alvarado, pack from
+a seam-start re-export (see above), not from the installed folder.
+
 ## Mechanics
 
 `gh` is not logged in on this machine; the Git Credential Manager holds Kevin's GitHub token

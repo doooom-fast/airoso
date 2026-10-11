@@ -1,0 +1,28 @@
+K10 - San Diego (V3) — Lake Murray Loop — credits
+==================================================
+
+Built by Kevin Conboy with the airoso track engine (k10-motorsports), hand-finished in Blender.
+Everything bundled here is CC0-1.0 / public domain. Surface scrub and kerb-rumble sounds are the
+player's own stock Assetto Corsa sounds (content/sfx), referenced by name in data/surfaces.ini —
+none are redistributed here.
+
+Data
+  - OpenStreetMap road geometry (ODbL-1.0)        https://www.openstreetmap.org/copyright
+  - USGS 3DEP 1 m elevation (US public domain)    https://www.usgs.gov/3d-elevation-program
+
+Our own work (CC0-1.0)
+  - Road, kerb, sidewalk, median, terrain, lamp-post geometry; AI line; map; outline
+  - Lane lines, kerb stripe and the solid lamp textures (generated)
+  - Street-lamp model: Kevin Conboy's own asset library
+
+CC0 textures bundled in the kn5
+  - aerial_asphalt_01 (road)          Poly Haven  CC0-1.0   https://polyhaven.com/a/aerial_asphalt_01
+  - Grass001 (grass)                  ambientCG   CC0-1.0   https://ambientcg.com/view?id=Grass001
+  - Plaster004 (houses)               ambientCG   CC0-1.0   https://ambientcg.com/view?id=Plaster004
+  - Concrete034 (buildings)           ambientCG   CC0-1.0   https://ambientcg.com/view?id=Concrete034
+
+Vegetation
+  This public package ships NO tree models. The track was authored with CSP TreeFX plants
+  (extension/trees/trees.txt lists all ~15,000 placements) using models from other mods that
+  their authors have not licensed for redistribution. See extension/trees/README.txt to use
+  your own TreeFX models.

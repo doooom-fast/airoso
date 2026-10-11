@@ -24,14 +24,24 @@ kerbs) and on EACH race layout's closure (counts.by_layout).
      this inverts ledger 0047's "no ring inside a span"), except the vertices the DECLARATION trims
      (barrier_bands.json `edge_corners[].removed`, a SET check); every declared corner has an authored
      ring AT its X (CORNER_TOL_M)
-  E  race kerbs — the declared (apex, in|out) set == the authored set (10 on SD), each with the
-     declared (clipped) i/j; every kerb's footprint stands >= KERB_CLEAR_M off EVERY race layout's
-     AUTHORED closure footprint (re-measured here; the author's own clip is reported)
+  E  race kerbs — the declared (apex, in|out) set == the authored set (8 on SD since the 0049 fix round: the
+     1514 / 2319 inside kerbs are declared DROPPED, `kerbs_dropped`, and none of those may be authored), each
+     with the declared (clipped / pulled-back) i/j; every kerb's footprint stands >= KERB_CLEAR_M off EVERY
+     race layout's AUTHORED closure footprint (re-measured here; the author's own clip is reported); and NO
+     kerb station under another ROAD sheet (race_authored objects[].under_road, measured by the author on the
+     real deck at the kerb's lip, mid-line and outer edge — a kerb laid across a ribbon fold is invisible from
+     the seat; the fix is track.config.json race.kerbs.trims)
   F  spawn clearance — HARD: every grid / pit / hotlap slot of every race layout, re-measured HERE from
      data/dummies_<id>.json against the declared strip faces AND (0049) that layout's declared lane
      (corridors.<id>.lane_by_vertex): a 1.9 m car stands >= SPAWN_MARGIN_M = 0.30 m off every face
   G  lamp posts — every lamp mast stands OUTSIDE every kerb-line strip footprint and every race
-     layout's closure footprint (lerped at the mast); FAIL on any overlap, the minimum margin reported
+     layout's closure footprint (lerped at the mast); FAIL on any overlap, the minimum margin reported.
+     Scenery (0049 fix round): every CSP TreeFX trunk (radius TREE_TRUNK_R_M) and every W1-6 sign post
+     (data/signs.local.json base_xz, SIGN_POST_R_M) stands OUTSIDE each race layout's LANE
+     (corridors.<id>.lane_by_vertex) and outside both curb strips and that layout's closure — none of them is
+     physical in AC, so a trunk in the lane is a car driving through a palm. The trees are the WRITTEN
+     trees.txt with --trees (the ship re-checks the packed file after tools/make_treefx.py), else
+     make_treefx's own plan of it (make_treefx.plan, every species assumed present)
   H  ring density — every consecutive pair of curb-strip / closure ring centres vs the DECLARED offset
      curve rebuilt here from the bands + centreline alone: a chord error > CHORD_FAIL_M = 0.15 m FAILS
   I  inside-out — no span of any strip / closure / kerb has a profile column running backwards
@@ -54,15 +64,20 @@ Reported, never gated: another ROAD sheet above a strip base (a fold / mouth def
 0033/0046 class), the worst deck-vs-data height, the minimum spawn clearance, the author's kerb clips.
 
     python tools/verify_race.py <project-dir> [--allow-standin] [--authored <file>] [--bands <file>]
-                                [--config <track.config.json>] [--pre-author] [--out <file>]
+                                [--config <track.config.json>] [--pre-author | --scenery-only]
+                                [--trees <trees.txt>] [--out <file>]
 
 --pre-author runs F (disk) and G only — no data/race_authored.json needed; it writes
-data/race_verify.pre.json, never the full report's file. Writes data/race_verify.json (or --out).
+data/race_verify.pre.json, never the full report's file. --scenery-only runs G's trunks + posts only (no
+authored file, no spawns, no lamps) and writes data/race_verify.scenery.json; `--trees <trees.txt>` reads the
+TreeFX placements from a written file (kn5 frame x, y, -z) instead of planning them. Writes
+data/race_verify.json (or --out).
 Plain functions so tests/run_tests.py can drive it without Blender. Independent of tools/race_furniture.py
 by design (it re-derives every declared curve itself).
 """
 from __future__ import annotations
 
+import importlib.util
 import json
 import math
 import re
@@ -101,6 +116,9 @@ LAMP_POST_H_FALLBACK_M = 11.5  # author_lamps_blend.POST_H
 MAST_R_FALLBACK_M = 0.60       # lamp_post.obj base plate corner radius at 11.5 m (measured 0.585 m)
 LAMP_CELL_M = 30.0             # author_lamps_blend's nearest-centreline cell (its fallback is vertex 0)
 KNOWN_KINDS = ("edge", "close", "kerb")
+TREE_TRUNK_R_M = 0.30   # G scenery: a TreeFX trunk's radius (INVENTED, 0049 fix round: palm trunks 0.3-0.5 m across)
+SIGN_POST_R_M = 0.03    # G scenery: the W1-6 sign's 2 in post (tools/author_signs_blend.py), rounded up
+SCENERY_REACH_M = 2.0   # G scenery: farther than half-width + this from the centreline = not beside the race road
 
 
 # --- geometry helpers ------------------------------------------------------------------------
@@ -258,10 +276,12 @@ def _closure_side(c):
 
 def verify(authored: dict | None, bands: dict, pts: list, island_w: list, *, allow_standin: bool = False,
            widths: list | None = None, spawns: dict | None = None, lamps: list | None = None,
-           pre_author: bool = False, lamp_arm_m: float | None = None, mast_r_m: float | None = None) -> dict:
+           pre_author: bool = False, lamp_arm_m: float | None = None, mast_r_m: float | None = None,
+           scenery: list | None = None, scenery_source: str | None = None) -> dict:
     """A-E and J-N (+ the author's own F record) on the authored file unless ``pre_author``; H and I too; F
-    re-measured from ``spawns`` ({race layout id: dummies dict, or None when its file is missing}) and G from
-    ``lamps`` (lights.local.json heads) whenever they and ``widths`` are given (main always gives them)."""
+    re-measured from ``spawns`` ({race layout id: dummies dict, or None when its file is missing}), G from
+    ``lamps`` (lights.local.json heads) and G-scenery from ``scenery`` (TreeFX trunks + sign posts, scenery_items)
+    whenever they and ``widths`` are given (main always gives them)."""
     fails: list[str] = []
     warns: list[str] = []
     counts: dict = {"by_layout": {}}
@@ -278,6 +298,8 @@ def verify(authored: dict | None, bands: dict, pts: list, island_w: list, *, all
         _verify_spawns(spawns, bands, pts, widths, grid, fails, warns, counts)
     if lamps is not None and widths is not None:
         _verify_lamps(lamps, bands, pts, widths, grid, fails, warns, counts, lamp_arm_m, mast_r_m)
+    if scenery is not None and widths is not None:
+        _verify_scenery(scenery, bands, pts, widths, grid, fails, warns, counts, scenery_source)
     return {"ok": not fails, "fails": fails, "warnings": warns, "counts": counts}
 
 
@@ -510,6 +532,129 @@ def _verify_lamps(heads, bands, pts, widths, grid, fails, warns, counts, arm_m=N
                    "mast_r_m": round(r_m, 3), "lamp_min_margin_m": worst["margin_m"] if worst else None,
                    "lamp_min": worst, "lamps_inside": len(bad),
                    "lamp_min_vs_closure": min(closure_rows, key=lambda r: r["closure_margin_m"]) if closure_rows else None})
+
+
+# --- G (scenery): TreeFX trunks and sign posts vs every race layout's lane and walls -------------------
+
+_TREE_RE = re.compile(r"^\s*tree:\s*([^;]+);\s*pos\s*=\s*([-0-9.eE+]+)\s*,\s*([-0-9.eE+]+)\s*,\s*([-0-9.eE+]+)")
+
+
+def tree_items_from_txt(text: str) -> list[dict]:
+    """the `tree: <model>.bin; pos=X, Y, Z; ...` lines of a TreeFX trees.txt (tools/make_treefx.py) as scenery
+    items. trees.txt is in the kn5 world (x, y, -z of the engine frame): z is flipped back here."""
+    out = []
+    for ln in text.splitlines():
+        mt = _TREE_RE.match(ln)
+        if mt:
+            out.append({"kind": "tree", "id": f"{mt.group(1).strip()}#{len(out)}", "x": float(mt.group(2)),
+                        "z": -float(mt.group(4)), "r": TREE_TRUNK_R_M})
+    return out
+
+
+def tree_items_planned(proj: Path) -> list[dict]:
+    """what tools/make_treefx.py WILL write, from its own planner (make_treefx.plan, every species assumed present:
+    positions only) — G runs before the models are copied; the ship re-checks the written trees.txt (--trees)"""
+    spec = importlib.util.spec_from_file_location("_make_treefx_ro", AIROSO / "tools" / "make_treefx.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return [{"kind": "tree", "id": f"{e['model']}@{e['zone']}#{i}", "x": float(e["x"]), "z": float(e["z"]),
+             "r": TREE_TRUNK_R_M} for i, e in enumerate(mod.plan(proj, all_species=True)["entries"])]
+
+
+def sign_items(signs: dict) -> list[dict]:
+    """every W1-6 sign post of data/signs.local.json (tools/place_signs.py: `base_xz`, engine frame)"""
+    out = []
+    for s in (signs or {}).get("signs", []) or []:
+        b = s.get("base_xz")
+        if isinstance(b, (list, tuple)) and len(b) >= 2:
+            out.append({"kind": "sign", "id": str(s.get("id")), "x": float(b[0]), "z": float(b[1]), "r": SIGN_POST_R_M})
+    return out
+
+
+def _lane_at(lane, pts, m, k, x, z):
+    """the declared lane [lo, hi] at (x, z), lerped along the centreline segment the point projects onto (either side
+    of its nearest vertex k, the _closure_y_at rule); None where no lane is declared"""
+    best = None
+    for a, b in ((k - 1) % m, k), (k, (k + 1) % m):
+        if a >= len(lane) or b >= len(lane) or not lane[a] or not lane[b]:
+            continue
+        dx, dz = pts[b][0] - pts[a][0], pts[b][2] - pts[a][2]
+        L2 = dx * dx + dz * dz or 1.0
+        t = max(0.0, min(1.0, ((x - pts[a][0]) * dx + (z - pts[a][2]) * dz) / L2))
+        d = math.hypot(x - pts[a][0] - t * dx, z - pts[a][2] - t * dz)
+        lo = float(lane[a][0]) + (float(lane[b][0]) - float(lane[a][0])) * t
+        hi = float(lane[a][1]) + (float(lane[b][1]) - float(lane[a][1])) * t
+        if best is None or d < best[0]:
+            best = (d, lo, hi)
+    if best is None:
+        return (float(lane[k][0]), float(lane[k][1])) if k < len(lane) and lane[k] else None
+    return best[1], best[2]
+
+
+def scenery_margins(items: list, bands: dict, pts: list, widths: list, grid=None) -> dict:
+    """G (scenery, ledger 0049 fix round): every item (a TreeFX trunk or a sign post: {kind, id, x, z, r}) against
+    EACH race layout's lane (corridors.<id>.lane_by_vertex) and wall footprints (both curb strips — common — and
+    that layout's closure), all lerped at the item's nearest centreline vertex. margin = the clear distance from
+    the item's disk (radius r) to the nearest of them; < 0 = the trunk / post stands IN the lane or INSIDE a
+    wall. TreeFX trees and sign posts are not physical in AC — nothing else would ever see one there. Items
+    farther than half-width + SCENERY_REACH_M from the centreline are not beside the race road (counted, never
+    measured). Returns {checked, beside, hits [rows], min {layout: row}}."""
+    m = _unique_count(pts)
+    grid = grid or VertexGrid(pts[:m])
+    bh = float((bands.get("params") or {}).get("barrier_half_m", 0.335))
+    cors = _corridors(bands)
+    hits, mins, beside = [], {lid: None for lid in cors}, 0
+    for it in items:
+        x, z, r = float(it["x"]), float(it["z"]), float(it.get("r", 0.0))
+        k = grid.nearest(x, z)
+        lat = _lateral(pts, m, k, x, z)
+        a = abs(lat)
+        if a - r > float(widths[k]) / 2.0 + SCENERY_REACH_M:
+            continue
+        beside += 1
+        edge, _centre = strip_footprint(bands, widths, k)
+        strip = None
+        if edge:
+            inner, outer = edge
+            strip = ((a - outer) if a >= outer else ((inner - a) if a <= inner else -min(a - inner, outer - a))) - r
+        for lid, c in sorted(cors.items()):
+            cand = [] if strip is None else [("curb strip", strip)]
+            ln = _lane_at(c.get("lane_by_vertex") or [], pts, m, k, x, z)
+            if ln is not None:
+                cand.append(("lane", max(ln[0] - lat, lat - ln[1]) - r))
+            yy = _closure_y_at(c.get("closure_y_by_vertex") or [], pts, m, k, x, z)
+            if yy is not None:
+                cand.append(("closure", abs(lat - yy) - bh - r))
+            if not cand:
+                continue
+            what, mg = min(cand, key=lambda t: t[1])
+            row = {"layout": lid, "kind": it.get("kind"), "id": it.get("id"), "vertex": k, "lat_m": round(lat, 3),
+                   "xz": [round(x, 2), round(z, 2)], "against": what, "margin_m": round(mg, 3)}
+            if mins[lid] is None or mg < mins[lid]["margin_m"]:
+                mins[lid] = row
+            if mg < 0.0:
+                hits.append(row)
+    return {"checked": len(items), "beside": beside, "hits": hits, "min": mins}
+
+
+def _verify_scenery(items, bands, pts, widths, grid, fails, warns, counts, source=None):
+    res = scenery_margins(items, bands, pts, widths, grid)
+    bad = sorted(res["hits"], key=lambda r: r["margin_m"])
+    for r in bad[:12]:
+        where = "in the lane" if r["against"] == "lane" else f"inside the {r['against']}"
+        fails.append(f"G: scenery: {r['layout']}: {r['kind']} {r['id']} at v{r['vertex']} lat {r['lat_m']:+.2f} "
+                     f"({r['xz'][0]}, {r['xz'][1]}) stands {where} ({-r['margin_m']:.2f} m over) — a non-physical "
+                     f"trunk / post on the race road")
+    if len(bad) > 12:
+        fails.append(f"G: scenery: ... and {len(bad) - 12} more trunks / posts in a lane or a wall")
+    if not _corridors(bands):
+        warns.append("G: scenery: no corridors declared — no race lane to check against")
+    by_kind = {}
+    for it in items:
+        by_kind[it.get("kind")] = by_kind.get(it.get("kind"), 0) + 1
+    counts.update({"scenery_source": source, "scenery_items": by_kind, "scenery_beside": res["beside"],
+                   "scenery_hits": len(bad), "scenery_min": res["min"],
+                   "scenery_r_m": {"tree": TREE_TRUNK_R_M, "sign": SIGN_POST_R_M}})
 
 
 # --- H: ring density — the authored strip polyline vs the DECLARED offset curve ---------------------
@@ -1125,6 +1270,26 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
             warns.append(f"E: {o['name']}: the author clipped {clip['stations_removed']} stations (start, end) for "
                          f"{clip.get('by')} that the declaration's i/j still held — re-run tools/barrier_bands.py so the "
                          f"declared i/j are the clipped ones (race_furniture.kerb_closure_clips)")
+    # a kerb under another ROAD sheet (laid across a ribbon fold — invisible from the seat; ledger 0049 fix round):
+    # the author measures it on the real deck (race_authored objects[].under_road), the fix is the declaration's
+    under, unmeasured = {}, []
+    for o in kerb_objs:
+        ur = o.get("under_road")
+        if not isinstance(ur, dict) or ur.get("unmeasured"):
+            unmeasured.append(o["name"])
+            continue
+        under[o["name"]] = int(ur.get("stations", 0) or 0)
+        if under[o["name"]] > 0:
+            fails.append(f"E: {o['name']}: {under[o['name']]} stations sit UNDER another ROAD sheet (up to "
+                         f"{ur.get('max_m')} m over the kerb's top, at v{ur.get('vertices')}) — a kerb laid across a "
+                         f"ribbon fold; pull its run back or drop it (track.config.json race.kerbs.trims)")
+    if unmeasured:
+        warns.append(f"E: {len(unmeasured)} kerbs carry no under_road measure (an author run before the 0049 fix "
+                     f"round) — kerb-under-a-road-sheet not checked: {unmeasured[:4]}")
+    dropped = bands.get("kerbs_dropped") or []
+    for d in dropped:
+        if (int(d.get("apex", -1)), sub_of.get(str(d.get("kind")), str(d.get("kind")))) in authored_set:
+            fails.append(f"E: the {d.get('kind')} kerb at v{d.get('apex')} is declared DROPPED but was authored")
     if authored.get("kerbs_declared_unmatched"):
         fails.append(f"E: declared kerbs matching no detected corner: {authored['kerbs_declared_unmatched']}")
     n_corners_decl = len(bands.get("corners", []) or [])
@@ -1152,6 +1317,8 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
         if w < KERB_CLEAR_M - ROUND_M:
             fails.append(f"E: {name}: stands {w:.2f} m off {lid}'s authored closure (< {KERB_CLEAR_M} m) — a kerb under a wall")
     counts.update({"kerb_objects": len(kerb_objs), "corners": n_corners_auth,
+                   "kerbs_dropped": [[d.get("apex"), d.get("kind")] for d in dropped],
+                   "kerb_under_road": under,
                    "kerb_fold_dropped": sum(int(o.get("fold_skipped", 0) or 0) for o in kerb_objs),
                    "kerb_closure_clear_m": {n: (round(w, 3) if w < float("inf") else None, lid) for n, (w, lid) in kerb_clear.items()},
                    "kerb_clips": {o["name"]: (o.get("clip") or {}).get("stations_removed") for o in kerb_objs}})
@@ -1252,9 +1419,9 @@ def main(argv=None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     if not argv:
         raise SystemExit("usage: python tools/verify_race.py <project-dir> [--allow-standin] [--authored <file>] [--bands <file>] "
-                         "[--config <track.config.json>] [--pre-author] [--out <file>]")
-    allow_standin = pre_author = False
-    authored_p = bands_p = config_p = out_p = None
+                         "[--config <track.config.json>] [--pre-author | --scenery-only] [--trees <trees.txt>] [--out <file>]")
+    allow_standin = pre_author = scenery_only = False
+    authored_p = bands_p = config_p = out_p = trees_p = None
     rest = []
     i = 0
     while i < len(argv):
@@ -1263,6 +1430,10 @@ def main(argv=None) -> int:
             allow_standin = True; i += 1
         elif a == "--pre-author":
             pre_author = True; i += 1
+        elif a == "--scenery-only":
+            scenery_only = True; i += 1
+        elif a == "--trees":
+            trees_p = Path(argv[i + 1]); i += 2
         elif a == "--authored":
             authored_p = Path(argv[i + 1]); i += 2
         elif a == "--bands":
@@ -1278,8 +1449,11 @@ def main(argv=None) -> int:
     authored_p = authored_p or data / "race_authored.json"
     bands_p = bands_p or data / "barrier_bands.json"
     config_p = config_p or proj / "track.config.json"
-    out_p = out_p or data / ("race_verify.pre.json" if pre_author else "race_verify.json")   # a partial run never overwrites the full report
-    need = [bands_p, data / "centerline.local.json", data / "median_bands.json"]
+    if scenery_only:
+        pre_author = True                                             # no authored file needed; F and lamp G are skipped below
+    out_p = out_p or data / ("race_verify.scenery.json" if scenery_only else
+                             "race_verify.pre.json" if pre_author else "race_verify.json")   # a partial run never overwrites the full report
+    need = [bands_p, data / "centerline.local.json", data / "median_bands.json"] + ([trees_p] if trees_p else [])
     if not pre_author:
         need.insert(0, authored_p)
     for p in need:
@@ -1294,12 +1468,27 @@ def main(argv=None) -> int:
     if len(island_w) != len(pts) or len(widths) != len(pts):
         raise SystemExit(f"[verify-race] median_bands {len(island_w)} / widths {len(widths)} vs centreline {len(pts)} vertices")
     cfg = json.loads(config_p.read_text(encoding="utf-8")) if config_p.exists() else None
-    spawns = race_layout_spawns(data, cfg)
+    spawns = None if scenery_only else race_layout_spawns(data, cfg)
     lp = data / "lights.local.json"
-    lamps = json.loads(lp.read_text(encoding="utf-8")).get("lampheads", []) if lp.exists() else None
+    lamps = json.loads(lp.read_text(encoding="utf-8")).get("lampheads", []) if (lp.exists() and not scenery_only) else None
+    # G scenery: the TreeFX trunks (the WRITTEN trees.txt with --trees, else make_treefx's own plan of it) and the
+    # W1-6 sign posts, against every race layout's lane and walls
+    scenery, src_note = [], []
+    if trees_p:
+        scenery += tree_items_from_txt(trees_p.read_text(encoding="utf-8"))
+        src_note.append(f"trees: {trees_p.name} (written)")
+    elif (data / "scatter_positions.json").exists():
+        scenery += tree_items_planned(proj)
+        src_note.append("trees: tools/make_treefx.py plan (every species)")
+    else:
+        src_note.append("trees: none (no data/scatter_positions.json)")
+    sgp = data / "signs.local.json"
+    if sgp.exists():
+        scenery += sign_items(json.loads(sgp.read_text(encoding="utf-8")))
+        src_note.append("signs: data/signs.local.json")
     r = verify(authored, bands, pts, island_w, allow_standin=allow_standin, widths=widths, spawns=spawns,
-               lamps=lamps, pre_author=pre_author)
-    if lamps is None:
+               lamps=lamps, pre_author=pre_author, scenery=scenery, scenery_source="; ".join(src_note))
+    if lamps is None and not scenery_only:
         r["warnings"].append("G: no data/lights.local.json — no lamps authored, nothing to check")
     c = r["counts"]
     if not pre_author:
@@ -1337,12 +1526,20 @@ def main(argv=None) -> int:
               f"mast r {c.get('mast_r_m')} m); minimum margin {c.get('lamp_min_margin_m')} m at lamp {lm['lamp']} v{lm['vertex']} "
               f"lat {lm['lat_m']:+.2f} vs the {lm['against']} strip; {c.get('lamps_inside')} inside"
               + (f"; nearest to a closure {lc['closure_margin_m']} m (lamp {lc['lamp']} v{lc['vertex']}, {lc['closure']})" if lc else ""))
+    if "scenery_beside" in c:
+        mins = c.get("scenery_min") or {}
+        print(f"[verify-race] G scenery ({c.get('scenery_source')}): {c.get('scenery_items')} items, {c.get('scenery_beside')} "
+              f"beside the race road; {c.get('scenery_hits')} in a lane or a wall (trunk r {TREE_TRUNK_R_M} m, post r "
+              f"{SIGN_POST_R_M} m); nearest per layout: "
+              + ", ".join(f"{lid} {row['margin_m']} m ({row['kind']} {row['id']} v{row['vertex']} vs the {row['against']})"
+                          for lid, row in sorted(mins.items()) if row))
     for w in r["warnings"]:
         print(f"[verify-race] note: {w}")
     for f in r["fails"]:
         print(f"[verify-race] FAIL {f}")
     out_p.write_text(json.dumps(r, indent=1), encoding="utf-8")
-    print(f"[verify-race] {'OK' if r['ok'] else 'FAILED'}{' (pre-author: F + G only)' if pre_author else ''} -> {out_p}")
+    print(f"[verify-race] {'OK' if r['ok'] else 'FAILED'}"
+          f"{' (scenery only: G trunks + posts)' if scenery_only else ' (pre-author: F + G only)' if pre_author else ''} -> {out_p}")
     return 0 if r["ok"] else 1
 
 

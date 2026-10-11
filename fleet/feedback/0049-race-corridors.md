@@ -2,21 +2,25 @@
 id: 0049
 title: "We need full intersections available for turning. And the entire other lane blocked off from access" — the race versions as an Alvarado-wide corridor per direction, open boxes at the corners, nothing reachable on the other side
 status: open
-scope: tracks/san-diego-lake-murray (proof: race.corridor, layouts[].closure_token); tools/{barrier_bands,race_corridor,no_route}.py (declaration v2 + the containment gate), tools/{race_furniture,author_race_furniture_blend,split_exports_blend,verify_race,check_race_kn5,plot_race_furniture}.py, tools/ship_sd.sh, scripts/geometry/{median_zone,drive_test,audit_mesh}.py, scripts/ac/{verify_kn5,track_folder,write_ai_line}.py, tools/pack_release.py
+scope: tracks/san-diego-lake-murray (proof: race.corridor, race.kerbs.trims, layouts[].closure_token); tools/{barrier_bands,race_corridor,no_route}.py (declaration v2 + the containment gate), tools/{race_furniture,author_race_furniture_blend,split_exports_blend,verify_race,check_race_kn5,plot_race_furniture}.py, tools/{ship_sd.sh,make_treefx.py}, scripts/geometry/{median_zone,drive_test,audit_mesh}.py, scripts/ac/{verify_kn5,track_folder,write_ai_line}.py, tools/pack_release.py
 layer: project + engine
 train: -
-supersedes: 0047's shared centre K-rail chain (0047 Q2 and Q7 moot; Q1 stays answered — side streets sealed; Q5, Q6, Q9, Q10, Q11 stand)
+supersedes: 0047's shared centre K-rail chain (0047 Q2 and Q7 moot; Q1 stays answered — side streets sealed; Q5, Q6, Q9, Q11 stand; Q10 settled by Kevin's stance, 2026-10-11)
 ---
 
 ## Status
 
-**Open — built and gated end to end on a SCRATCH copy only; NOT shipped from the workshop, NOT installed**
-(2026-10-11). The declaration, authoring, packaging, the ship chain (`tools/ship_sd.sh`), the AI drafts and every
-gate are in the working tree; the full chain ran on a fresh scratch copy of the workshop (twice, identical
-numbers — "Full scratch rehearsal" below): both race layouts are contained on their BUILT kn5 sets and the
-street layout's gates are identical to the pre-change build. The workshop `loop.blend` and the AC folder were
-not touched; the real ship (`bash tools/ship_sd.sh` on the workshop) is the next step, then Kevin's drive. No
-tier is claimed; Kevin's drive is the only ground truth.
+**Open — committed at `c0361f7`, fix round applied (2026-10-11), built and gated end to end on a SCRATCH copy
+only; NOT shipped from the workshop, NOT installed.** The fix round (the critic's findings on `c0361f7`): no kerb
+under a road sheet any more (the 1514 / 2319 inside kerbs dropped, the hairpin's pulled back — race audit K back
+to **154**, the installed build's), a new scenery gate (TreeFX trunks and sign posts out of every race lane and
+wall), the release texts and the licence wording per Kevin's stance, build version 0.17.0, and a pre-filled drive
+report. The fix-round rehearsal ("Fix-round rehearsal" below) passes every race layout's own gate; the street
+layout's gates are identical to the installed build. The workshop `loop.blend` and the AC folder were not
+touched. **Next: the real ship — exactly `bash tools/ship_sd.sh --skip-blend --force-install`, with Assetto
+Corsa and Content Manager closed ("Ship" below) — then Kevin's drive
+(`tracks/san-diego-lake-murray/drive-reports/2026-10-1x-race-corridors.md`).** No tier is claimed; Kevin's
+drive is the only ground truth.
 
 **The installed race layouts are not sealed today, independent of anything new.** The containment fill on
 today's installed build (the gate OBJ of road kn5 + race kn5, `track.race.obj`) reaches 752,562 m² outside
@@ -78,8 +82,10 @@ supposed to drive, none of which ask whether it can leave):
   v2328-3289, Lake Murray Blvd v3304-4454 (10.9 km per direction), each end PINNED on the far curb strip.
 - **Islands**: the closure runs on the pavement 0.15 m off the island's race-side curb, nose tip to nose tip, so
   every nose, the deck and the beam's bare ends lie behind it (6.86 m minimum beside the island).
-- **Curb strips** continuous over all three bridge spans (one closed loop per side); 10 kerbs (the three inside
-  kerbs return), cut back where either closure stands on them.
+- **Curb strips** continuous over all three bridge spans (one closed loop per side); kerbs at all five corners, cut
+  back where either closure stands on them — 8 since the fix round: the College/Navajo and Navajo/Jackson inside
+  kerbs are DROPPED and the hairpin's inside kerb is pulled back to v751-763, each because it lay across a ribbon
+  fold (track.config.json `race.kerbs.trims`, measured; "Fix round" below).
 - **Packaging**: common `_race.kn5` (strips + kerbs) + `_closure_race_cw.kn5` / `_closure_race_acw.kn5`; each race
   ini lists only its own closure.
 - **Gates**: `tools/no_route.py` on each layout's built gate OBJ (planned inside the band writer), `verify_race`
@@ -118,7 +124,7 @@ fresh copies, identical numbers, about 5 minutes each. Every gate line:
 | **no_route BUILT** | **PASS — 0 leaks, 0 doors, 0 / 406 probes, lap complete, spawns reached** | **PASS — the same** | — |
 | RACE_RED | not red | not red | — |
 
-- **K 158 > 154 is a ribbon defect, named, not exempted:** 4 verts of the new `1KERB_race_1514_in` at v1518, where
+- **(Resolved by the fix round: K 154.)** **K 158 > 154 is a ribbon defect, named, not exempted:** 4 verts of the new `1KERB_race_1514_in` at v1518, where
   the road is two `1ROAD` sheets 0.093 m apart (College/Navajo inside-corner fold, 0033/0046 class). The kerb sits
   flush on the upper (driven) sheet; K measures it against the lower one (+0.133 / +0.136 m). Fix = one sheet
   at the fold (the ribbon's owner).
@@ -127,12 +133,109 @@ fresh copies, identical numbers, about 5 minutes each. Every gate line:
 - **Teeth on the real kn5s:** race_cw without its closure kn5 FAILS (81,466 m², 5 doors, 390 / 406 probes); with
   the other direction's closure FAILS (60,266 m², 10 doors, 311 / 406 probes, the lap blocked in 20 spans).
 
+### Fix round (2026-10-11, after the critic of `c0361f7`)
+
+**1. No kerb under a road sheet.** Measured on the P7 rehearsal's BUILT road kn5 (scratchpad `corr2/m/kerb_sheets2.py`:
+every non-shoulder 1ROAD sheet under each kerb station's footprint, at its lane lip, mid-line and outer edge, every
+0.3 m; "under" = a second sheet more than 0.02 m away standing over the kerb's top):
+
+| kerb (inside, side R) | stations | on one sheet | under the other sheet | decision (`race.kerbs.trims`) |
+|---|---|---|---|---|
+| `1KERB_race_1514_in` College/Navajo | 34 | 18 — about 1.5 m at each end (v1508-1509, v1518-1519) | 13 at v1517-1518, ≤ 0.05 m; 4 verts +0.13 m over the lower sheet (race K 158) | **dropped** — no single-sheet stretch reaches the apex |
+| `1KERB_race_2319_in` Navajo/Jackson | 51 | 43, but in two pieces: 4.5 m on entry (v2313-2314), about 5 m on exit (v2324-2326) | 8 at v2315 / v2323-2324, up to **0.42 m** (sheets 0.46 m apart) — the kerb vanishes under the asphalt at the apex race_cw's AI uses | **dropped** — neither piece is at the apex |
+| `1KERB_race_770_in` hairpin (installed since 0047) | 139 | 126 | 13 at v764 (≤ 0.04 m) and v774 (≤ 0.14 m; the installed `race_authored.json` lists 0.166 m of other deck over it at v774) | **pulled back to v751-763**: 111 stations, all one sheet; a 26 m kerb on the entry that stops 4 m short of the old trimmed corner (the 4 m exit leg goes) |
+| `1KERB_race_3297_in` Jackson/Lake Murray | 46 | 40 | 0 — two sheets 0.026-0.028 m apart at v3298-3299, the kerb's top 0.012 m clear of the upper one | kept |
+| `1KERB_race_0_in` seam, all five outside kerbs | — | all | 0 | kept |
+
+The folds themselves stay a named ribbon defect (0033/0046 class, the ribbon's owner) — not fixed here. A kerb can
+now only leave or shorten through `race.kerbs.trims` (each entry carries its measured why; `barrier_bands` refuses a
+trim that lengthens a run or names no kerb), and `verify_race` E fails any authored kerb station under another ROAD
+sheet (the author measures it on the real deck: `race_authored.json objects[].under_road`).
+
+**2. Scenery vs the race lanes.** `verify_race` G now also checks every CSP TreeFX trunk (r 0.30 m) and every W1-6
+sign post (r 0.03 m) against each race layout's lane and wall footprints — before Blender from
+`make_treefx.plan`, and again on the WRITTEN `trees.txt` right after `make_treefx` in the ship
+(`--scenery-only`). On this build: 15,261 trees + 18 posts, 394 beside the race road, **0 in a lane or a wall**,
+nearest 0.655 m (a median bush beside the closure). Teeth: the raw scatter palms the critic named (v763 on the
+hairpin kerb, v4495 at the seam) FAIL it.
+
+**3. Release + licensing per Kevin's stance** (2026-10-11: "No one actually cares about assets in free mods for a
+13 year old game" — provenance never withholds or degrades a release; the CC0/full split is a tool; publishing is
+his go per release). The release READMEs' VERSIONS blocks describe the corridors (own-side Alvarado-wide lane,
+whole street on Alvarado and the I-8 deck, open boxes at the three corners, closure along the medians), both
+CREDITS / LICENSES name the K-rail on `_race.kn5` AND both `_closure_race_*.kn5`, and
+`tools/pack_release.py --with-race` keeps the race layouts in the CC0 package (default still street-only, only
+because the prodrive-server catalog text describes one layout). What the K-rail is, for the record: Kevin's
+owned asset pack, the 4 m jersey module (`assets/models/concrete_barrier_4m.obj` + `concrete_barrier_diffuse /
+normal.png`), whose licence terms are not recorded in `assets/licenses.json` — a fact, not a blocker.
+
+**4. Version** `track.config.json` 0.16.0 → **0.17.0** (Content Manager shows `[build 0.17.0]`; the installed 0047
+build is 0.16.0).
+
+### Fix-round rehearsal (2026-10-11, 14:41:36-14:46:56)
+
+A fresh copy of `k10-sd-v021/project` minus `build/` (scratchpad `corr2/project`), `SHIP_PROJ=<copy> bash
+tools/ship_sd.sh --skip-blend`, log `corr2/ship.log`. Every gate line, against the installed build (`8fbfa0e`,
+`tracks/san-diego-lake-murray/data/`: 0047's one `track.race.obj` for both race layouts):
+
+| Gate | race_cw | race_acw | street |
+|---|---|---|---|
+| planned no_route | PASS — 0 leaks, 0 doors, 139,130 m² (read-back: 0 leak cells / 0 blocked / 0 probes / 0 spawns) | PASS — 138,826 m² (the same zeros) | — |
+| verify_race | OK: 8 kerbs, every `under_road` 0; closure 3,637 rings ≤ 0.007 m off its line, 8 pins ≤ 0.006 m; G scenery 0 of 15,279 in a lane / wall | OK: 3,636 rings, ≤ 0.007 m, pins ≤ 0.005 m | — |
+| (common) | 15 curb-strip objects / 9,054 rings, 0 free ends, 16 pins 0.000 m, bridges 328 hit / 0 interpolated; F 0.48 m (floor 0.30); G lamps 0 inside, nearest closure 2.365 m | | |
+| check_race_kn5 | common OK — `_race.kn5` 10,253,588 B, 23 meshes (15 strips + **8** kerbs); closure `cw` OK 5,433,534 B | closure `acw` OK 5,432,722 B | — |
+| verify_kn5 / `--inis` | OK / OK (16 START/PIT in the lane, nearest face 0.48 m) | OK / OK | OK / OK |
+| scenery re-check (written `trees.txt`) | OK — 0 in a lane / wall, nearest 0.656 m | OK | — |
+| drive_test barrier_missing / obstruction / severe | 0 of 37,869 / 0 / 0 (installed: 0 of 34,833 / 0 / 0) | 0 of 37,870 / 0 / 0 (installed: the same zeros) | — / 0 / 0 |
+| drive_test soft top / floating / excursion / kinks per km | **44** / 391 / **1** / **1.48** (installed 67 / 391 / 4 / 5.27) | **40** / 391 / 0 / **1.34** (installed **13** / 391 / 0 / 2.82) | 82 / 391 / 101 / 4.97 — identical (only an informational `lane` key added) |
+| audit A / B / C / E / J | 0 | 0 | 0 |
+| audit D / K / I / F | **0 / 154 / 145 / 15**, W 0 = 314 (installed `audit.race.json` 512 / 154 / 145 / 15 = 826) | the same | 512 / 154 / 145 / 15 = 826 — `audit.json` byte-identical (md5 `296a2bc1…`) |
+| **no_route BUILT** | **PASS** — 0 leaks, 0 doors, 0 / 406 probes, 0 blocked, 0 spawns unreached, 139.1k m² | **PASS** — 138.8k m² | — |
+| RACE_RED | not red | not red | — |
+
+Final line: `GATES: street drive_test exit 1, street audit exit 1, race drive_test exit 1, race audit exit 1, race
+no_route exit 0; race layouts red on their own gates: none; NOT INSTALLED` — the inherited counters only, as on
+every build of this track. Street AI `fast_lane.ai` byte-identical (md5 `93a09e5a…`); workshop `loop.blend` md5
+`fbcbbff4…` before and after; nothing in the AC folder newer than the run.
+
+**No worse than the installed build — the per-metric comparison the `--force-install` rule asks for:**
+- Street: every gate value identical.
+- Race audit: D 512 → 0 (exemption on each layout's own bands; the street audit keeps all 512), K 154 = 154, I 145
+  = 145, F 15 = 15, A/B/C/E/J 0 = 0, W 0 (new). No worse.
+- Race drive_test, race_cw: soft top 67 → 44, excursion drops 4 → 1, kinks 5.27 → 1.48 /km; floating 391 = 391;
+  barrier_missing, obstruction, severe 0 = 0. No worse.
+- Race drive_test, race_acw: excursion 0 = 0, kinks 2.82 → 1.34 /km, floating 391 = 391, barrier_missing,
+  obstruction, severe 0 = 0 — but **soft top 13 → 40 is a higher count.** Every one of the 40 is grass poking
+  through the UNCHANGED road kn5 (the street layout counts 82 on it, identical to the installed build), now inside
+  the race lane because the lane changed: 25 in the College/Navajo intersection (v1511-1514), 11 in the hairpin
+  (v754-756) and 2 in the Navajo/Jackson intersection (v2317) — the boxes are the whole intersection now, where
+  0047's centre chain cut them in half — and 2 at the left lane edge by the Del Cerro West mouth (v1082). No new
+  geometry; a wider window onto the same inherited defect. **Kevin's call** whether that counts as "no worse"
+  for `--force-install` — it is stated here so the call is made on the number.
+
+### Ship (the exact command)
+
+On the workshop, with **Assetto Corsa and Content Manager closed** (the install now refuses while `acs.exe` or
+Content Manager runs):
+
+```bash
+bash tools/ship_sd.sh --skip-blend --force-install
+```
+
+`--skip-blend` resumes from the authored `loop.blend` (the race author step still runs — it is what this
+rehearsal exercised); without it the chain regenerates the draft `loop.blend` and re-runs every authoring stage,
+which no rehearsal has run under the v2 config. `--force-install` is needed only for the inherited street / race
+counters above; RACE_RED and a failing no_route are never forced. The sync-back then writes `loop.blend`,
+`data/` (incl. `race_verify.scenery.json`) and `ai/` into `tracks/san-diego-lake-murray/` — commit those
+separately ("Reinstalled: …", the 8fbfa0e pattern).
+
 ## Decisions left (defaults encoded — Kevin's call)
 
-1. **K-rail pack licence unrecorded** → the race versions ship only in the full local package (the CC0 package
-   strips `_race` and `_closure_*` kn5s).
-2. **L8 wording** (layouts add kn5s, never alter the road) — built under the proposed wording (0047 Q9).
-3. **Barrier height** 1.20 m (Kevin's module).
+1. **L8 wording** (layouts add kn5s, never alter the road) — built under the proposed wording (0047 Q9).
+2. **Barrier height** 1.20 m (Kevin's module).
+3. **Publishing the race versions** — whenever he wants: `tools/pack_release.py --with-race` puts them in the CC0
+   zip (update the prodrive-server catalog text with it). Not a licence question (Kevin's stance, 2026-10-11).
+4. **race_acw soft top 40 vs 13** for the `--force-install` comparison (above).
 
 Tune after the drive, not before (spec §17): `clear_width_m` (own side only ≈ 7.7 m on 17 m roads),
 `island_mode` (island top, +0.97 m beside the medians, after three proofs), the steep exit funnels, a centred grid.
@@ -145,6 +248,7 @@ Tune after the drive, not before (spec §17): `clear_width_m` (own side only ≈
 | Authoring / packaging / AI | `tools/{race_furniture,author_race_furniture_blend,split_exports_blend,verify_race,check_race_kn5,plot_race_furniture}.py`, `scripts/ac/{verify_kn5,track_folder,write_ai_line}.py`, `tools/pack_release.py` | built, tested on scratch copies |
 | Ship chain | `tools/ship_sd.sh`, `tests/tools/test_ship_sd_chain.py` | wired and rehearsed end to end on a scratch copy (above) |
 | Config | `tracks/san-diego-lake-murray/track.config.json` `race.corridor` + `layouts[].closure_token`, `run` / `ui_description` | applied (spec §9.1) |
+| Fix round (critic of `c0361f7`) | `track.config.json` (`race.kerbs.trims`, version 0.17.0), `tools/{barrier_bands,race_furniture,author_race_furniture_blend,verify_race,make_treefx,pack_release}.py`, `tools/ship_sd.sh`, release texts, tests, `fleet/GATES-CHANGELOG.md`, ledger 0047's status, the drive report | rehearsed on scratch (above); not committed, not shipped |
 
 ## Scope
 
@@ -156,8 +260,14 @@ v2 declaration and a gate OBJ.
 Decided before the build: for each race layout on its BUILT gate OBJ — `no_route` 0 leaks with the lap complete
 and every forbidden probe unreached, `barrier_missing` 0, `obstruction_stations` 0, audit D / K / I / F no higher
 than 512 / 154 / 145 / 15 and W 0; the street layout's gates identical to the pre-change build (drive_test
-82 / 391 / 0 / 101, audit 512 / 154 / 145 / 15). Then Kevin's drive (`fleet/templates/DRIVE-TEST-REPORT.md`):
-the cw Navajo exit funnel v1521; acw v2311 / v1506; the 6.86 m island carriageways; the 17 m roads; every box.
+82 / 391 / 0 / 101, audit 512 / 154 / 145 / 15); since the fix round also no kerb under a road sheet and no
+TreeFX trunk / sign post in a race lane or wall. Then Kevin's drive — pre-filled for both directions by street
+name in `tracks/san-diego-lake-murray/drive-reports/2026-10-1x-race-corridors.md`: the cw Navajo exit funnel
+(v1521); acw Navajo/Jackson and College/Navajo exits (v2311 / v1506); the acw 1:10 funnel off the I-8 deck at
+speed (v4454-4427); the 6.86 m island carriageways; the 17 m roads with the dead lane behind the closure; every
+box in and out; the grid on Alvarado; a wall hit at speed (does the K-rail's sloped foot launch the car into the
+closed lanes?); flicker where the closure meets the curb strip; an AI race with 7 opponents; load time and FPS at
+College/Navajo and on the I-8 deck.
 
 ---
 

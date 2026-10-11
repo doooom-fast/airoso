@@ -15,6 +15,12 @@ sounds are referenced by name (`data/surfaces.ini` `WAV=`), never redistributed.
 | Generated MUTCD sign artwork — W1-6L/R Large Arrow, W1-7 Two-Direction Large Arrow, W1-8L/R chevron (MUTCD sign designs are public-domain US Government works, 17 U.S.C. §105) | `mutcd_w1-6r.png`, `mutcd_w1-6l.png`, `mutcd_w1-7.png`, `mutcd_w1-8l.png`, `mutcd_w1-8r.png` |
 | Street-lamp model | Kevin Conboy's asset library (`fleet/reference/ASSET-LIBRARY.md`, ledger 0005) |
 
+## Kevin's owned asset pack — the race layouts' barriers (not CC0)
+
+| Asset | Files | Source | Terms |
+|---|---|---|---|
+| Concrete K-rail barrier, 4 m jersey module | `concrete_barrier_diffuse.png`, `concrete_barrier_normal.png` in `san_diego_lake_murray_race.kn5` (curb strips), `san_diego_lake_murray_closure_race_cw.kn5` and `san_diego_lake_murray_closure_race_acw.kn5` (each direction's closing line); the race barriers sweep the silhouette of the pack's `concrete_barrier_4m.obj` | Kevin Conboy's owned asset pack (`fleet/reference/ASSET-LIBRARY.md`, "Concrete Barrier 4 MTS") | the pack's licence terms are not recorded (`assets/licenses.json`) |
+
 ## CC0 from others — bundled in the kn5
 
 | Asset | Files | Source | Licence | URL |
@@ -28,7 +34,6 @@ sounds are referenced by name (`data/surfaces.ini` `WAV=`), never redistributed.
 |---|---|---|---|
 | Cracked asphalt road surface | `asphalt_cracked_diffuse.jpg`, `asphalt_cracked_normal.jpg` | LA Canyons 1.2 (Phoenix77), `main_roads.kn5` / `lac_tarmac_detail_cracked_04.dds` | mod author's; no redistribution licence |
 | Tilt-up concrete (buildings) | `building_diffuse.jpg`, `building_normal.jpg` | Hamburg by 4r, `nhh_detail.kn5` material `concretebunker` (TextureCom `TCom_Wall_ConcreteBunker2`) | TextureCom / KitBash3D commercial maps embedded in the mod; no redistribution licence |
-| Concrete K-rail barrier (race layouts) — Kevin's owned asset pack, licence not recorded, personal use only | `concrete_barrier_diffuse.png`, `concrete_barrier_normal.png` in `san_diego_lake_murray_race.kn5`; the race barrier strips sweep the silhouette of the pack's `concrete_barrier_4m.obj` | Kevin's owned asset pack (`assets/licenses.json`: licence `UNRECORDED`, ledger 0047 Q10) | licence not recorded — personal use only; the CC0 package leaves the race layouts and this kn5 out |
 | TreeFX models: PalmV1/V2/V3, PepperV1, SycamoreV1/V2, Sage, Yucca, Agave | `extension/trees/*.bin` | No Hesi 1.10 (`nohesi_110/extension/trees`) | No Hesi's licence forbids derivative works and redistribution |
 | TreeFX models: Gum, Oak3, Bush, Bush3 | `extension/trees/*.bin` | Algarve Portimão 2023 (`algarve_portimao_2023/extension/trees`) | mod author's; no redistribution licence |
 | TreeFX model: Pine_Aleppo | `extension/trees/Pine_Aleppo.bin` | Shutoko Revival Project 0.9.3 (`Pine_Aleppo_Desktop_5_Forest_custom1`; a SpeedTree asset) | mod author's / SpeedTree; no redistribution licence |

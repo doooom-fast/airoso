@@ -19,8 +19,10 @@ with the (x, z, y) remap and REVERSED winding (LAWS L6: the remap is a reflectio
                                                         box / whole-street edge (the end cap buried in it)
   race kerbs            `1KERB_race_<apexvertex>_<in|out>`  COMMON: a 1.0 m x 0.05 m flat rumble strip ON the
                                                         pavement inboard of the edge strip at the five corners
-                                                        the sign detector finds (|D| >= 45 deg), in AND out (10),
-                                                        clipped where either direction's closure stands on it
+                                                        the sign detector finds (|D| >= 45 deg), in AND out,
+                                                        clipped where either direction's closure stands on it;
+                                                        a kerb the declaration drops or pulls back
+                                                        (race.kerbs.trims: off a ribbon fold) follows it
 
 The retired ledger-0047 centre chain (`1WALL_race_kbar_*`, `centre_w_by_vertex`, `centre_runs`) is refused:
 a declaration that still carries it is a v1 file (check_bands). The owner token rides in a closure's NAME
@@ -1009,12 +1011,19 @@ def apply_declared_kerbs(rb, corners, bands):
     i/j replace the detector's own so the authored kerb IS the declared band (the median_zone
     precedent). Kinds 'outside'/'inside' map to 'out'/'in'. Stations come from the ribbon's own
     cumulative length (rb.cum[k]), the frame the detector's PC/PT live in. Returns the declared runs
-    nothing in the detector's corner table matched (an author-time warning; verify_race's gate)."""
+    nothing in the detector's corner table matched (an author-time warning; verify_race's gate).
+
+    A kerb the declaration DROPS (`kerbs_dropped`, from track.config.json race.kerbs.trims — ledger 0049 fix
+    round: an inside kerb on a ribbon fold sits under the other road sheet) is removed from its corner here, so
+    nothing is swept there; the declared set and the authored set stay equal (verify_race E)."""
     KIND = {"outside": "out", "inside": "in", "out": "out", "in": "in"}
     declared = {(int(kb["apex"]), str(kb["side"]).upper()): kb for kb in (bands.get("kerbs") or [])}
+    dropped = {(int(d["apex"]), str(d["side"]).upper()) for d in (bands.get("kerbs_dropped") or [])}
     matched = set()
     n = len(rb.raw)
     for c in corners:
+        if dropped:
+            c["kerbs"] = [kb for kb in c["kerbs"] if (c["apex_vertex"], kb["side"]) not in dropped]
         for kb in c["kerbs"]:
             d = declared.get((c["apex_vertex"], kb["side"]))
             if d is None:

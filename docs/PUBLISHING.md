@@ -47,18 +47,25 @@ The V3 Lake Murray build binds third-party content that is **not licensed for re
 | `asphalt_cracked_*.jpg` road texture | LA Canyons 1.2 |
 | `building_*.jpg` concrete | Hamburg by 4r (TextureCom maps) |
 
+**The split is a tool, not a rule** (Kevin, 2026-10-11: "No one actually cares about assets in free mods
+for a 13 year old game"). Asset provenance never withholds or degrades a release. `tools/pack_release.py`
+builds both zips every time; which one goes public — full or CC0, with or without the race layouts — is
+Kevin's call at publish time, and publishing itself is still his go, per release.
+
 So two zips exist per release, built from the same track folder:
 
 - **Full** (Kevin's own install; what he drove) — everything above included; `CREDITS.txt` lists
-  the third-party content by origin. Private use only unless Kevin explicitly decides otherwise.
-- **Race layouts (ledger 0047, 2026-10-11)** — once the three-version build ships, the installed
-  folder carries `models_street.ini` + `models_race_cw.ini` + `models_race_acw.ini` and
-  `san_diego_lake_murray_race.kn5`. The K-rail barrier pack behind the race kn5 has an `UNRECORDED`
-  licence (`assets/licenses.json`), so `tools/pack_release.py` drops the race kn5, the two race
-  `models_*.ini`, their `ui/<id>/` and `<id>/` dirs and their spawn kn5s from the CC0 variant
-  (`strip_race_layouts`); the FULL (local) package carries all three. prodrive-server's catalog
-  (`layouts` text) still describes one layout — update it when the street-only CC0 zip is cut.
-- **CC0 variant** (what goes public by default) — `.bin` models stripped, `[TREES]` lines
+  the third-party content by origin.
+- **Race layouts (ledgers 0047 / 0049)** — the installed folder carries `models_street.ini` +
+  `models_race_cw.ini` + `models_race_acw.ini`, `san_diego_lake_murray_race.kn5` (both curb walls + kerbs) and,
+  since 0049, one `san_diego_lake_murray_closure_<id>.kn5` per race direction. The barriers sweep Kevin's owned
+  K-rail pack (4 m jersey module; its licence terms are not recorded in `assets/licenses.json` — a fact, not a
+  blocker). By default the CC0 zip is the Street Loop only (`strip_race_layouts` drops the race kn5s, the two
+  race `models_*.ini`, their `ui/<id>/` and `<id>/` dirs and their spawn kn5s); **`--with-race`** keeps all
+  three layouts in it and renders the `[[with-race]]` blocks of the CC0 release texts (the K-rail credit, the
+  three-version README). The default stays street-only for now only because prodrive-server's catalog
+  (`layouts` text) describes one layout — update it in the same breath as a `--with-race` zip goes up.
+- **CC0 variant** — `.bin` models stripped, `[TREES]` lines
   commented out with `extension/trees/README.txt` telling players how to drop in models they own;
   `tools/repack_kn5_textures.py` swaps the two mined texture pairs for CC0 bytes under the same
   names (Poly Haven `aerial_asphalt_01`, ambientCG `Concrete034` from
@@ -68,12 +75,14 @@ So two zips exist per release, built from the same track folder:
 ## Packing — one command
 
 ```bash
-python tools/pack_release.py --version 0.23.0
+python tools/pack_release.py --version 0.23.0              # CC0 zip = the Street Loop only (default)
+python tools/pack_release.py --version 0.24.0 --with-race  # CC0 zip keeps the two race layouts too
 ```
 
 writes `full/<slug>_v0.23.0.zip`, `cc0/<slug>_v0.23.0.zip` and `san_diego_freeway_v0.5.0.zip` under
 `k10-sd-v021/project/build/release/` from the installed `_v3` folder (or `--src`), applying the CC0
-transforms above and the release texts in `tracks/san-diego-lake-murray/release/{full,cc0}/`.
+transforms above and the release texts in `tracks/san-diego-lake-murray/release/{full,cc0}/` (each text's
+`[[street-only]]` / `[[with-race]]` blocks resolved for the package it goes into).
 **A zip is a snapshot of `extension/ext_config.ini`:** any config-only change (lights, GrassFX) means
 re-packing both variants and re-uploading before `--draft=false`; the kn5 does not change.
 `--src` must be a build whose start is the public one — the installed `_v3` carries whatever per-issue

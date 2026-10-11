@@ -35,8 +35,12 @@ What it declares (spec: the 2026-10-11 judged corridor spec, ledger 0049):
                 off it), both ends PINNED on the far curb strip at the box edges (tools/race_corridor.py).
   lanes         corridors.<id>.lane_by_vertex = [y_lo, y_hi], the corridor FACES in the forward frame
                 (+ = left of increasing vertex); full width at box / whole / pin vertices.
-  kerbs         10 (outside + inside at all five corners: the chain no longer holds the insides), each cut
-                to the longest run containing its apex that stands >= 0.05 m off every closure.
+  kerbs         outside + inside at every corner (the chain no longer holds the insides), each cut to the
+                longest run containing its apex that stands >= 0.05 m off every closure — EXCEPT where
+                track.config.json race.kerbs.trims (hand-authored, measured: an inside kerb on a ribbon fold sits
+                under the other road sheet) pulls a run back or drops the kerb (`kerbs_dropped`, with its why).
+                Lake Murray since the 0049 fix round: 8 declared (1514 / 2319 inside dropped, 770 inside
+                pulled back to v751-763).
   no-route      corridors.<id>.no_route.forbidden_probes (pocket centres every 25 m, island tops every 25 m,
                 10 m into each mainline mouth) + the PLANNED fill itself (tools/no_route.py --planned, run
                 here on the declared polylines: 0 leaks and the lap complete, or exit 1).
@@ -46,8 +50,9 @@ pins on the far strip line (+-0.01 m) on a real strip ring; rates (toward the ra
 <= 1:6, pin zones at the forced rate, nothing steeper than 1:3); clear width >= 6.5 m everywhere and >= the
 floor except listed island / pin-zone / convergence vertices, pocket >= 2 m behind every running closure;
 closure >= 0.15 m off the AUTHORED island at every vertex (race side of every nose); 0 backward steps,
-plan radius >= 20 m; mouths per policy; spawns >= 0.30 m off every face; exactly 10 kerbs clear of every
-closure; strips on every vertex; the Alvarado re-measure; the planned no-route.
+plan radius >= 20 m; mouths per policy; spawns >= 0.30 m off every face; every detected kerb declared or
+dropped (2 per corner), each declared one clear of every closure; strips on every vertex; the Alvarado
+re-measure; the planned no-route.
 
 Inputs (read-only; loop.blend is never opened):
   track.config.json            race.* (+ race.corridor) and layouts[] (closure_token, direction, start)
@@ -345,9 +350,13 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
 
     # ---- kerbs: outside + inside at every corner, clipped against EVERY layout's closure --------------
     kerbs = _kerbs(corners, st, m, ext_lo, ext_hi)
+    # the authored pull-backs / drops (race.kerbs.trims) come BEFORE the closure clip: the clip then works on
+    # what will actually be swept, and a dropped kerb never reaches the author (race_furniture.apply_declared_kerbs)
+    kerbs, kerbs_dropped, trim_fails = _apply_kerb_trims(kerbs, kerb_cfg.get("trims"), m)
+    fails += trim_fails
     partial = {"version": 2, "edge_strip_by_vertex": edge_strip, "edge_inset_by_vertex": edge_inset_v,
                "centre_w_by_vertex": [0.0] * n, "edge_corners": edge_corners, "corridors": corridors,
-               "kerbs": [dict(k) for k in kerbs], "streets": streets, "corners": corners,
+               "kerbs": [dict(k) for k in kerbs], "kerbs_dropped": kerbs_dropped, "streets": streets, "corners": corners,
                "params": {"edge_mode": edge_mode, "edge_inset_m": edge_inset, "barrier_half_m": bhalf,
                           "edge_centre_from_lip_m": EDGE_CENTRE_FROM_LIP[edge_mode], "barrier_height_m": height}}
     kerbs, clip_method = _clip_kerbs(kerbs, partial, pts, widths, m, corridors, edge_inset, bhalf, edge_mode)
@@ -410,6 +419,9 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
                 "loops (no bridge gaps); band centre at +-(half_w + params.edge_centre_from_lip_m) EXCEPT at "
                 "edge_corners (the strip trimmed to the curb's corner: in_vertex band point -> xz -> out_vertex, the "
                 "`removed` vertices carry none). centre_w_by_vertex: all 0 (the chain is retired; removed in v3). "
+                "kerbs: the race kerbs as swept (i/j after race.kerbs.trims and the closure clip; trimmed_from / "
+                "clipped_from record the detector's run); kerbs_dropped: detected kerbs race.kerbs.trims drops, each "
+                "with its why (nothing is authored there). "
                 "corridors.<layout id>: that layout's closure (closure_y_by_vertex = the strip CENTRE lateral, null "
                 "where none stands; pins included), its lane faces (lane_by_vertex [y_lo, y_hi], forward frame), "
                 "zones (whole | box | pin | closure | island), runs, mouth policies and the no_route probes. Written "
@@ -425,6 +437,7 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
             "edge_gaps": "none", "kerb_width_m": kerb_w, "kerb_height_m": kerb_h,
             "kerb_outer_from_lip_m": KERB_OUTER_FROM_LIP[edge_mode], "kerb_min_turn_deg": min_turn,
             "kerb_outer_extension_m": [float(ext_lo), float(ext_hi)], "kerb_clip": clip_method,
+            "kerb_trims": [dict(t) for t in (kerb_cfg.get("trims") or []) if isinstance(t, dict)],
             "mouths": str(race.get("mouths", "sealed")),
             "edge_loop_start_vertex": (_RF.loop_start(pts, m) if hasattr(_RF, "loop_start") else None),
             "corridor": _corridor_params_echo(cor_cfg, P, measured_clear, island_mode),
@@ -440,6 +453,7 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
         "edge_corners": edge_corners,
         "edge_fold_vertices": edge_fold_vertices,
         "kerbs": kerbs,
+        "kerbs_dropped": kerbs_dropped,
         "no_gap_zones": no_gap,
         "streets": streets,
         "corners": corners,
@@ -653,6 +667,69 @@ def _kerbs(corners, st, m, ext_lo, ext_hi):
         kerbs.append({"apex": apex, "side": inside, "kind": "inside", "i": pc, "j": pt, "wraps": pc > pt,
                       "R_apex_m": c["R_apex_m"], "D_deg": c["D_deg"], "extension_m": 0.0})
     return kerbs
+
+
+KERB_KIND = {"inside": "inside", "in": "inside", "outside": "outside", "out": "outside"}
+
+
+def _apply_kerb_trims(kerbs, trims, m):
+    """track.config.json race.kerbs.trims — HAND-AUTHORED, measured pull-backs of the detector's kerb runs (ledger
+    0049 fix round: an inside kerb laid over a ribbon fold sits under the other road sheet — invisible from the
+    seat, and audit K counts it against the lower sheet). Each entry is {apex, kind: inside | outside, why} plus
+    either drop: true (the kerb leaves the declaration and is listed in kerbs_dropped — nothing is swept there)
+    or i and / or j (a PULL-BACK: both inside the detected run, in its walk order, i before j). The kept kerb
+    records trimmed_from [i, j] and trim {why}. Returns (kerbs, dropped, fails); an entry that matches no kerb,
+    names one twice, lengthens a run or carries no `why` FAILS — the declaration never guesses."""
+    fails, dropped = [], []
+    if not trims:
+        return kerbs, dropped, fails
+    if not isinstance(trims, list):
+        return kerbs, dropped, [f"race.kerbs.trims must be a list of {{apex, kind, why, drop | i / j}}, got {trims!r}"]
+    by = {(int(k["apex"]), k["kind"]): k for k in kerbs}
+    seen = set()
+    for t in trims:
+        try:
+            key = (int(t["apex"]), KERB_KIND[str(t["kind"]).lower()])
+        except (KeyError, TypeError, ValueError):
+            fails.append(f"race.kerbs.trims: {t!r} needs apex (vertex) and kind (inside | outside)")
+            continue
+        what = f"race.kerbs.trims apex v{key[0]} {key[1]}"
+        k = by.get(key)
+        if k is None:
+            fails.append(f"{what}: no such kerb (detected: {sorted(by)})")
+            continue
+        if key in seen:
+            fails.append(f"{what}: named twice")
+            continue
+        seen.add(key)
+        why = str(t.get("why") or "").strip()
+        if not why:
+            fails.append(f"{what}: no `why` — a trim is an authored decision; record the measurement behind it")
+            continue
+        if t.get("drop"):
+            if "i" in t or "j" in t:
+                fails.append(f"{what}: drop and i / j together — a dropped kerb has no run")
+                continue
+            dropped.append({"apex": k["apex"], "side": k["side"], "kind": k["kind"], "i": k["i"], "j": k["j"],
+                            "why": why})
+            continue
+        ks = _RC.walk(int(k["i"]) % m, int(k["j"]) % m, m)
+        try:
+            ni = int(t.get("i", k["i"])) % m
+            nj = int(t.get("j", k["j"])) % m
+        except (TypeError, ValueError):
+            fails.append(f"{what}: i / j must be vertex numbers, got {t.get('i')!r} / {t.get('j')!r}")
+            continue
+        if ni not in ks or nj not in ks or ks.index(ni) >= ks.index(nj):
+            fails.append(f"{what}: v{ni}-v{nj} is not a pull-back inside the detected run v{k['i']}-v{k['j']}")
+            continue
+        if (ni, nj) != (k["i"], k["j"]):
+            k["trimmed_from"] = [k["i"], k["j"]]
+            k["trim"] = {"why": why}
+            k["i"], k["j"] = ni, nj
+            k["wraps"] = ni > nj
+    gone = {(d["apex"], d["kind"]) for d in dropped}
+    return [k for k in kerbs if (int(k["apex"]), k["kind"]) not in gone], dropped, fails
 
 
 def _kerb_band(widths, k, side, inset):
@@ -1001,8 +1078,16 @@ def validate(out: dict, ctx: dict) -> list[str]:
 
     # 9. kerbs
     kerbs = out.get("kerbs") or []
-    if len(kerbs) != 2 * len(ctx["corners"]) or len(kerbs) != 10:
-        fails.append(f"kerbs: {len(kerbs)} declared — expected exactly 10 (outside + inside at the five corners)")
+    dropped = out.get("kerbs_dropped") or []
+    if len(kerbs) + len(dropped) != 2 * len(ctx["corners"]):
+        fails.append(f"kerbs: {len(kerbs)} declared + {len(dropped)} dropped — expected outside + inside at each of "
+                     f"the {len(ctx['corners'])} corners ({2 * len(ctx['corners'])})")
+    both = {(int(k["apex"]), k["kind"]) for k in kerbs} & {(int(d["apex"]), d["kind"]) for d in dropped}
+    if both:
+        fails.append(f"kerbs: {sorted(both)} both declared and dropped")
+    for d in dropped:
+        if not str(d.get("why") or "").strip():
+            fails.append(f"kerbs: the dropped {d.get('kind')} kerb at v{d.get('apex')} carries no why")
     for kb in kerbs:
         for k in _RC.walk(int(kb["i"]), int(kb["j"]), m):
             g, by = _kerb_clear(widths, k, kb["side"], corridors, inset, bhalf)
@@ -1073,6 +1158,9 @@ def _summary(out, corridors, kerbs, edge_corners, corners, island_w, planned):
         "edge_gaps": 0,
         "edge_corners": len(edge_corners),
         "kerbs": len(kerbs),
+        "kerbs_dropped": [[d["apex"], d["kind"]] for d in (out.get("kerbs_dropped") or [])],
+        "kerb_trims": [{"apex": k["apex"], "kind": k["kind"], "from": k["trimmed_from"], "to": [k["i"], k["j"]]}
+                       for k in kerbs if k.get("trimmed_from")],
         "kerb_clips": [{"apex": k["apex"], "side": k["side"], "kind": k["kind"], "from": k.get("clipped_from"),
                         "to": [k["i"], k["j"]], "by": (k.get("clip") or {}).get("by")} for k in kerbs if k.get("clipped_from")],
         "corners": len(corners),
@@ -1110,7 +1198,11 @@ def _report(proj, out, fails):
               f"({s['mirror_max_m']} m incl. the convergences, which lead each island in each layout's own travel)")
     for k in out["kerbs"]:
         print(f"[bands]   kerb apex v{k['apex']} {k['kind']:7} side {k['side']} v{k['i']}-v{k['j']}"
-              f"{' (wraps)' if k['wraps'] else ''}{' clipped from ' + str(k['clipped_from']) if k.get('clipped_from') else ''}")
+              f"{' (wraps)' if k['wraps'] else ''}{' clipped from ' + str(k['clipped_from']) if k.get('clipped_from') else ''}"
+              f"{' pulled back from ' + str(k['trimmed_from']) + ' (race.kerbs.trims)' if k.get('trimmed_from') else ''}")
+    for d in out.get("kerbs_dropped") or []:
+        print(f"[bands]   kerb apex v{d['apex']} {d['kind']:7} side {d['side']} DROPPED (race.kerbs.trims; detected "
+              f"v{d['i']}-v{d['j']}): {d['why'][:110]}")
     for c in out["edge_corners"]:
         print(f"[bands]   edge corner {c['side']} {c['kind']:6} v{c['in_vertex']}->v{c['out_vertex']} "
               f"{len(c['removed'])} vertices trimmed")

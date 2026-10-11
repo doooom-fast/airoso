@@ -1,8 +1,16 @@
 # K10 - San Diego (V3) — Lake Murray Loop — licence manifest
 
+[[street-only]]
 Every bundled binary asset is CC0-1.0 (public domain); credit is courtesy, not required. Stock
 Assetto Corsa surface sounds are referenced by name (`data/surfaces.ini` `WAV=`), never
 redistributed. No third-party mod content is included.
+[[/street-only]]
+[[with-race]]
+Every bundled binary asset is CC0-1.0 (public domain) except the race versions' K-rail barrier,
+which comes from Kevin's owned asset pack (below); credit is courtesy, not required. Stock Assetto
+Corsa surface sounds are referenced by name (`data/surfaces.ini` `WAV=`), never redistributed. No
+third-party mod content is included.
+[[/with-race]]
 
 ## Ours — CC0-1.0
 
@@ -15,6 +23,14 @@ redistributed. No third-party mod content is included.
 | Street-lamp model | Kevin Conboy's asset library (`fleet/reference/ASSET-LIBRARY.md`, ledger 0005) |
 | TreeFX placement list (positions only, no models) | `extension/trees/trees.txt` |
 
+[[with-race]]
+## Kevin's owned asset pack — the race versions' barriers (not CC0)
+
+| Asset | Files | Source | Terms |
+|---|---|---|---|
+| Concrete K-rail barrier, 4 m jersey module | `concrete_barrier_diffuse.png`, `concrete_barrier_normal.png` in `san_diego_lake_murray_race.kn5` (curb strips), `san_diego_lake_murray_closure_race_cw.kn5` and `san_diego_lake_murray_closure_race_acw.kn5` (each direction's closing line); the race barriers sweep the silhouette of the pack's `concrete_barrier_4m.obj` | Kevin Conboy's owned asset pack | the pack's licence terms are not recorded |
+
+[[/with-race]]
 ## CC0 from others — bundled in the kn5
 
 | Asset | Files | Source | Licence | URL |

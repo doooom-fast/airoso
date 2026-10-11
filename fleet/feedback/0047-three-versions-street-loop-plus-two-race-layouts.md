@@ -1,7 +1,7 @@
 ---
 id: 0047
 title: "Actually make it three versions: the regular one, and then the two tracks" — the open street loop plus two one-way race layouts, barrier-split on the wide roads, both starting on Alvarado
-status: open
+status: shipped
 scope: tracks/san-diego-lake-murray (proof; layouts[], declared start, race furniture); engine scripts/ac/{build_kn5_loop,build_spawn_kn5,track_folder,verify_kn5,write_ai_line}.py + scripts/geometry/{median_zone,audit_mesh,drive_test}.py + new tools/ (barrier bands, race-furniture authoring, multi-layout ship); standard fleet/LAWS.md L8 wording + fleet/STANDARDS.md S6 (archetype is per-track, the race overlay is per-layout)
 layer: project + engine + standard
 train: -
@@ -9,7 +9,17 @@ train: -
 
 ## Status
 
-**Open — designed, built as tools, gated, dry-run on a scratch copy; NOT shipped** (2026-10-11).
+**Shipped and installed — `07cb217` (three versions, `--force-install`), reinstalled at `8fbfa0e` (drivable AI
+drafts, CM previews, honest ui/README text).** Superseded in part by ledger 0049 (2026-10-11): its shared
+centre K-rail chain is retired — a containment fill on the installed build found 11 doors per race layout —
+and replaced by one corridor per direction (the 0049 build is gated on a scratch copy; until it is shipped the
+installed race layouts are this entry's). **Q2 and Q7 are moot** (no chain), Q1 stays answered (side streets
+sealed); **Q5, Q6, Q9 and Q11 stand**; **Q10 is settled by Kevin's stance** (2026-10-11: "No one actually
+cares about assets in free mods for a 13 year old game" — the K-rail pack's provenance never withholds or
+degrades a release; `tools/pack_release.py --with-race` keeps the race layouts in the CC0 package when he wants
+them public). No tier is claimed. Everything below is the history as written at the time.
+
+**Was (2026-10-11, before 07cb217): open — designed, built as tools, gated, dry-run on a scratch copy; NOT shipped.**
 Everything below the Symptom was measured 2026-10-10; the design that followed is recorded in
 "Decisions and the built design" and the ship chain is wired in `tools/ship_sd.sh` (the three-version
 chain is now the only chain). **No kn5 has been exported, the hand-edit surface
@@ -729,7 +739,9 @@ own triage (diagnosis 1).
    today, but in the oncoming carriageway on every divided run, see Notes).
 9. **Q9 Sign-off on the L8 wording** above (+ the CLAUDE.md sentence and the S6 note). Nothing in the
    laws is edited until you say so.
-10. **Q10 Licence.** `concrete_barrier_4m.obj` and its two PNGs are the owned Dropbox pack with an
+10. **Q10 Licence** (settled 2026-10-11 by Kevin's stance — see Status: provenance never withholds a release;
+    the CC0/full split is a tool, `pack_release --with-race`, his call at publish time). As first asked:
+    `concrete_barrier_4m.obj` and its two PNGs are the owned Dropbox pack with an
     `UNRECORDED` entry in `assets/licenses.json`; the race kn5 and the two race layouts stay in the
     FULL (local) package only until the pack's licence is recorded. Also: import the pack's real
     Transition Barrier for the two free ends later instead of the procedural taper?

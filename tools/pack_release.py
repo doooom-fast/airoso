@@ -3,19 +3,30 @@
 The procedure docs/PUBLISHING.md describes, as one deterministic command, so a config-only change
 (lights, GrassFX) re-packs in seconds instead of being redone by hand:
 
-    python tools/pack_release.py --version 0.23.0 [--src <track folder>] [--out <dir>]
+    python tools/pack_release.py --version 0.23.0 [--src <track folder>] [--out <dir>] [--with-race]
 
   full/  <slug>_v<ver>.zip   the folder as installed (third-party TreeFX models + mined textures
-                             included — personal use; CREDITS.txt names every third-party item)
-  cc0/   <slug>_v<ver>.zip   the redistributable variant: extension/trees/*.bin stripped, the
-                             [TREES] lines commented out with a bring-your-own README, the two mined
-                             texture pairs swapped for CC0 bytes under the same names
-                             (tools/repack_kn5_textures.py), CC0 credits/licences
+                             included; CREDITS.txt names every third-party item)
+  cc0/   <slug>_v<ver>.zip   the variant with the mined content swapped out: extension/trees/*.bin
+                             stripped, the [TREES] lines commented out with a bring-your-own README,
+                             the two mined texture pairs swapped for CC0 bytes under the same names
+                             (tools/repack_kn5_textures.py), CC0 credits/licences. By default it is
+                             the Street Loop only; --with-race keeps the two race layouts, their
+                             _race / _closure_* kn5s and the K-rail credit in it
   <freeway>_v0.5.0.zip       the freeway network, unchanged since v0.21.0, re-zipped from its
                              installed folder because only the latest release's assets show on the site
 
+THE SPLIT IS A TOOL, NOT A RULE (Kevin, 2026-10-11: "No one actually cares about assets in free mods for a
+13 year old game"). Asset provenance never withholds or degrades a release: this command builds both zips,
+and which one goes public — the full one, the CC0 one, with or without the race layouts — is Kevin's call at
+publish time (publishing itself is still his go, per release). --with-race is opt-in only because the
+public catalog text in prodrive-server still describes one layout; the default stays street-only until
+Kevin says otherwise.
+
 Release texts live in tracks/<slug>/release/{full,cc0}/ (README.txt, CREDITS.txt, LICENSES.md) and
-release/cc0/trees-README.txt. Every preview.svg an older engine left as its fallback — the root ui/ of a
+release/cc0/trees-README.txt. Where the race layouts change the words, a text carries both alternatives as
+`[[street-only]] ... [[/street-only]]` and `[[with-race]] ... [[/with-race]]` blocks (each marker on its own
+line); render_variant keeps the one the package is and drops the other. Every preview.svg an older engine left as its fallback — the root ui/ of a
 single-layout folder AND each layout's ui/<id>/ of a multi-layout one (ledger 0047: street, race_cw,
 race_acw) — is rasterised to preview.png beside it with scripts/ac/svg_raster.py (the drawer
 track_folder itself now uses on every OS, so a fresh pack has no SVG left); Content Manager never
@@ -94,14 +105,13 @@ def disable_treefx(ini: Path) -> None:
 
 
 def strip_race_layouts(folder: Path, cfg_path: Path = TRACK_DIR / "track.config.json") -> list[str]:
-    """CC0 variant: drop the race layouts and every race-furniture kn5. The K-rail pack the strips and
-    closures sweep (assets/models/concrete_barrier_4m.obj + its two PNGs) has an UNRECORDED licence
-    (assets/licenses.json, ledger 0047 Q10; ledger 0049's default keeps it that way), so
-    san_diego_lake_murray_race.kn5, EVERY san_diego_lake_murray_closure_*.kn5 (ledger 0049: one per race
-    direction — matched by name, so a closure of a layout no longer declared goes too), and every
-    models_<id>.ini / ui/<id>/ / <id>/ / <slug>__<id>.kn5 of a layout with race_furniture: true leave the
-    public package; the street layout stays. Returns the relative paths removed. Refuses to leave the
-    folder without a layout."""
+    """The street-only CC0 package (the default; --with-race skips this): drop the race layouts and every
+    race-furniture kn5 — san_diego_lake_murray_race.kn5, EVERY san_diego_lake_murray_closure_*.kn5 (ledger
+    0049: one per race direction — matched by name, so a closure of a layout no longer declared goes too), and
+    every models_<id>.ini / ui/<id>/ / <id>/ / <slug>__<id>.kn5 of a layout with race_furniture: true; the street
+    layout stays. A packaging choice, not a licence verdict: which package goes public is Kevin's call at
+    publish time (module docstring). Returns the relative paths removed. Refuses to leave the folder without a
+    layout."""
     layouts = json.loads(cfg_path.read_text(encoding="utf-8")).get("layouts", []) or []
     race_ids = [str(lo["id"]) for lo in layouts if isinstance(lo, dict) and lo.get("race_furniture")]
     keep_ids = [str(lo["id"]) for lo in layouts if isinstance(lo, dict) and not lo.get("race_furniture")]
@@ -127,6 +137,26 @@ def strip_race_layouts(folder: Path, cfg_path: Path = TRACK_DIR / "track.config.
     return removed
 
 
+_VARIANT_RE = re.compile(r"^\[\[(street-only|with-race)\]\]\r?\n(.*?)^\[\[/\1\]\]\r?\n", re.S | re.M)
+_MARKER_RE = re.compile(r"^\[\[/?(street-only|with-race)\]\]", re.M)
+
+
+def render_variant(text: str, with_race: bool) -> str:
+    """a release text as THIS package: keep the `[[with-race]]` blocks when the race layouts ship in it, else the
+    `[[street-only]]` ones; the other kind is dropped, every marker line removed. A text without markers comes back
+    unchanged (byte for byte, CRLF kept). An unbalanced or nested marker is a SystemExit — a half-rendered README
+    never ships."""
+    keep = "with-race" if with_race else "street-only"
+    out = _VARIANT_RE.sub(lambda m: m.group(2) if m.group(1) == keep else "", text)
+    if _MARKER_RE.search(out):
+        raise SystemExit(f"[pack] unbalanced [[street-only]] / [[with-race]] markers: {_MARKER_RE.search(out).group(0)}")
+    return out
+
+
+def copy_text(src: Path, dst: Path, with_race: bool) -> None:
+    dst.write_bytes(render_variant(src.read_bytes().decode("utf-8"), with_race).encode("utf-8"))
+
+
 def zip_folder(folder: Path, out: Path) -> None:
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as z:
         for root, _, files in os.walk(folder):
@@ -140,13 +170,20 @@ def zip_folder(folder: Path, out: Path) -> None:
           f"bins {sum(n.endswith('.bin') for n in names)}")
 
 
-def main():
+def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser()
     ap.add_argument("--version", required=True, help="asset version suffix, e.g. 0.23.0")
     ap.add_argument("--src", type=Path, default=AC_TRACKS / f"{SLUG}_v3", help="track folder to pack (default: the installed _v3)")
     ap.add_argument("--freeway", type=Path, default=AC_TRACKS / "san_diego_freeway")
     ap.add_argument("--out", type=Path, default=GH / "k10-sd-v021/project/build/release")
-    a = ap.parse_args()
+    ap.add_argument("--with-race", action="store_true",
+                    help="keep the race layouts (and their _race / _closure_* kn5s, K-rail credit) in the CC0 package "
+                         "too; default: the CC0 package is the Street Loop only. Kevin decides at publish time")
+    return ap
+
+
+def main(argv=None):
+    a = build_parser().parse_args(argv)
     texts = TRACK_DIR / "release"
     out = a.out
     stage = out / "_stage"
@@ -158,19 +195,22 @@ def main():
     for rel in rasterize_previews(full / "ui"):
         print(f"[pack] full: ui/{rel + '/' if rel != '.' else ''}preview.svg -> preview.png")
     for f in ("README.txt", "CREDITS.txt", "LICENSES.md"):
-        shutil.copy(texts / "full" / f, full / f)
+        copy_text(texts / "full" / f, full / f, with_race=True)     # the full package is the installed folder: every layout
     print("[pack] full:")
     zip_folder(full, out / "full" / f"{SLUG}_v{a.version}.zip")
 
     cc0 = stage / "cc0" / SLUG
     shutil.copytree(full, cc0)
-    for rel in strip_race_layouts(cc0):
-        print(f"[pack] cc0: dropped {rel} (race layouts stay in the FULL package until the K-rail pack's licence is recorded — 0047 Q10)")
+    if a.with_race:
+        print("[pack] cc0: --with-race — the race layouts, the _race kn5 and every _closure_* kn5 stay in this package")
+    else:
+        for rel in strip_race_layouts(cc0):
+            print(f"[pack] cc0: dropped {rel} (street-only CC0 package, the default; --with-race keeps the race layouts)")
     for b in (cc0 / "extension" / "trees").glob("*.bin"):
         b.unlink()
     shutil.copy(texts / "cc0" / "trees-README.txt", cc0 / "extension" / "trees" / "README.txt")
     for f in ("README.txt", "CREDITS.txt", "LICENSES.md"):
-        shutil.copy(texts / "cc0" / f, cc0 / f)
+        copy_text(texts / "cc0" / f, cc0 / f, with_race=a.with_race)
     disable_treefx(cc0 / "extension" / "ext_config.ini")
     kn5 = cc0 / f"{SLUG}.kn5"
     swaps = [f"{name}={path}" for name, path in TEXTURE_SWAPS.items()]

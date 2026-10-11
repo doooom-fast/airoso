@@ -129,16 +129,22 @@ def _pick(species, i):
     return species[-1]
 
 
-def build(project_dir):
+def plan(project_dir, all_species=False, verbose=False):
+    """Every TreeFX placement build() writes, computed WITHOUT writing anything: {lines, entries, counts, used,
+    rejected}. entries = [{zone, model, x, y, z}] in the ENGINE frame (x = E, y = up, z = N; trees.txt carries
+    x, y, -z). all_species=True plans as if every species of every zone were in source/trees/ — positions only:
+    tools/verify_race.py G checks them against the race lanes and walls before the models are copied (a missing
+    .bin changes which model a position gets, or drops a whole zone, never moves a position)."""
     proj = Path(project_dir)
     data = proj / "data"
-    slug = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))["slug"]
     pos = json.loads((data / "scatter_positions.json").read_text(encoding="utf-8"))
     # W1-6 signs (tools/place_signs.py): a plant inside 2.5 m of a sign post is dropped here, the sign never moves
     sp = data / "signs.local.json"
     excluded = {(e["zone"], e["index"]) for e in (json.loads(sp.read_text(encoding="utf-8")).get("exclude_plants", []) if sp.exists() else [])}
     src = proj / "source" / "trees"
     available = {p.name for p in src.glob("*.bin")}
+    if all_species:
+        available = {s[0] for zone in ZONES.values() for s in zone}
 
     local = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
     lines = [([tuple(p) for p in local["points_xyz_m"]], [w / 2.0 for w in local["widths_m"]])]
@@ -149,6 +155,7 @@ def build(project_dir):
     field = RoadField(lines, cell=60.0)
 
     out = []
+    entries_out = []
     used = set()
     counts = {}
     rejected = 0
@@ -172,6 +179,7 @@ def build(project_dir):
             size = s[1] + (s[2] - s[1]) * _hash(i, 2)
             angle = int(360 * _hash(i, 3))
             out.append(f"tree: {s[0]}; pos={e['x']:.2f}, {e['y']:.2f}, {-e['z']:.2f}; angle = {angle}; size = {size:.2f}")
+            entries_out.append({"zone": zone_key, "model": s[0], "x": e["x"], "y": e["y"], "z": e["z"]})
             used.add(s[0])
             n += 1
         counts[zone_key] = n
@@ -241,8 +249,17 @@ def build(project_dir):
         for zone, entries in fill.items():
             emit_zone(zone, entries, idx_base=base)
             base += 100000
-        print(f"[treefx] fill: {n_tree} trees + {n_bush} bushes from the terrain grid ({sub}x{sub} sub-cells per {sp:.0f} m)")
+        if verbose:
+            print(f"[treefx] fill: {n_tree} trees + {n_bush} bushes from the terrain grid ({sub}x{sub} sub-cells per {sp:.0f} m)")
+    return {"lines": out, "entries": entries_out, "counts": counts, "used": used, "rejected": rejected}
 
+
+def build(project_dir):
+    proj = Path(project_dir)
+    slug = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))["slug"]
+    src = proj / "source" / "trees"
+    p = plan(proj, verbose=True)
+    out, used, counts, rejected = p["lines"], p["used"], p["counts"], p["rejected"]
     total = sum(counts.values())
     build = proj / "build" / slug
     tdir = build / "extension" / "trees"

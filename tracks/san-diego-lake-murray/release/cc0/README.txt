@@ -23,17 +23,55 @@ WHAT IT IS
   curbs, barriers and planting on College and Navajo; Del Cerro as a divided boulevard; side
   streets welded into the mainline with sidewalks that stop at every mouth; terrain seated under
   every road; 11.5 m street lamps. Start/finish, grid and pits sit on Alvarado Rd (the pits single
+[[street-only]]
   file behind the grid). An AI line ships (street/ai/fast_lane.ai) for traffic and AI drive — computed from
   the road in the right-hand lane, NOT recorded in game, so AI behaviour is unverified.
+[[/street-only]]
+[[with-race]]
+  file behind the grid). Each version ships its own AI line (<version>/ai/fast_lane.ai) for traffic and
+  AI drive — a line computed from the road in that version's own lane, NOT recorded in game, so AI
+  behaviour is unverified.
+[[/with-race]]
 
 VERSIONS
-  This public package carries the Street Loop only (open two-way streets, start/finish on
-  Alvarado Rd). The two one-way race layouts (Race — Clockwise / Race — Anticlockwise: concrete
-  K-rail between the carriageways of the wide roads, barriers along the kerbs, race kerbs at the
-  corners) use a barrier model whose licence is not recorded yet, so they are not included here.
+[[street-only]]
+  This package carries the Street Loop: Lake Murray as it is, the open two-way streets with raised
+  landscaped medians on College and Navajo and the side streets open, start/finish on Alvarado Rd.
+  The two one-way race versions (an Alvarado-wide lane on your own side of every road, the opposite
+  lanes closed off with concrete K-rail, the full intersection open at the corners the race turns
+  at) are not part of this download.
+[[/street-only]]
+[[with-race]]
+  (pick one in Content Manager)
+  Street Loop          — Lake Murray as it is: the open two-way streets, raised landscaped medians
+                         on College and Navajo, the side streets open, no race furniture. Lap
+                         clockwise from the line on Alvarado Rd.
+  Race — Clockwise     — the same 13.5 km as a one-way race track: Alvarado westbound, College
+                         northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest.
+                         You race an Alvarado-wide lane (about 11.4 m) on your own side of every
+                         road: concrete K-rail along your curb and a second line closing off the
+                         opposite lanes, running along the medians where there is one. The whole
+                         street is yours on Alvarado and on the I-8 bridge deck; the full
+                         intersection is open at the three corners the race turns at
+                         (College/Navajo, Navajo/Jackson, Jackson/Lake Murray Blvd); side streets
+                         are sealed; red/white kerbs at the corners. Grid and pits on Alvarado.
+  Race — Anticlockwise — the same track the other way round: Alvarado eastbound, Lake Murray Blvd
+                         northeast, Jackson north, Navajo westbound, College southbound, on your
+                         own side again (its closing line stands in the other lanes).
+[[/with-race]]
 
 KNOWN
   - Side-street terrain still floats a little (under 0.6 m) in a couple of Del Cerro spots.
   - The College Ave south hairpin and the lap seam are rougher than the rest of the loop.
+[[with-race]]
+  - The race versions have no inside kerb at College/Navajo or Navajo/Jackson: the road surface
+    folds over itself on those two inside corners, and a kerb there would sit under the asphalt.
+[[/with-race]]
 
+[[street-only]]
 Credits: CREDITS.txt. Licences: LICENSES.md (everything bundled is CC0).
+[[/street-only]]
+[[with-race]]
+Credits: CREDITS.txt. Licences: LICENSES.md (everything bundled is CC0 except the race versions'
+K-rail barrier, from Kevin's owned asset pack).
+[[/with-race]]

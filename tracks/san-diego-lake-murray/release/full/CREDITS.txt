@@ -18,6 +18,12 @@ Our own work (CC0-1.0)
     public-domain US Government works, 17 U.S.C. 105)
   - Street-lamp model: Kevin Conboy's own asset library
 
+Kevin's owned asset pack (race layouts; not CC0, licence terms not recorded)
+  - Concrete K-rail barrier, 4 m jersey module: concrete_barrier_diffuse.png /
+    concrete_barrier_normal.png on the race barriers in san_diego_lake_murray_race.kn5 (the curb
+    strips), san_diego_lake_murray_closure_race_cw.kn5 and san_diego_lake_murray_closure_race_acw.kn5
+    (each direction's closing line); the barriers sweep the module's silhouette
+
 CC0 textures bundled in the kn5
   - Grass001 (grass)                  ambientCG   CC0-1.0   https://ambientcg.com/view?id=Grass001
   - Plaster004 (houses)               ambientCG   CC0-1.0   https://ambientcg.com/view?id=Plaster004
@@ -27,9 +33,6 @@ Third-party content bundled in this build — NOT ours, NOT CC0
   mods for a personal build; their authors have not licensed them for redistribution.
   - Road surface texture (asphalt_cracked_*)     LA Canyons 1.2 by Phoenix77
   - Building concrete texture (building_*)       Hamburg by 4r (TextureCom / KitBash3D maps)
-  - Concrete K-rail barrier (race layouts) — Kevin's owned asset pack, licence not recorded, personal use only
-      (concrete_barrier_diffuse.png / concrete_barrier_normal.png on the race-layout barriers in
-      san_diego_lake_murray_race.kn5; the barrier strips sweep the pack's 4 m module silhouette)
   - CSP TreeFX vegetation models (extension/trees/*.bin):
       PalmV1, PalmV2, PalmV3, PepperV1, SycamoreV1, SycamoreV2, Sage, Yucca, Agave
                                                  No Hesi 1.10 (nohesi_110)

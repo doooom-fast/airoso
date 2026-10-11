@@ -51,6 +51,7 @@ def test_stage_order():
         '(cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ" --inis)',
         "tools/make_map.py",
         "tools/make_treefx.py",
+        'tools/verify_race.py "$PROJ" --scenery-only --trees "$PROJ/build/$SLUG/extension/trees/trees.txt"',
         'rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"',
         'kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")',
         'drive_test "$PROJ" --layout street',
@@ -130,7 +131,7 @@ def test_safety_rails():
 
 
 def test_sync_list_carries_the_new_outputs():
-    for f in ("barrier_bands.json", "race_authored.json", "race_verify.json", "race_kn5.json",
+    for f in ("barrier_bands.json", "race_authored.json", "race_verify.json", "race_verify.scenery.json", "race_kn5.json",
               '"dummies_$lid.json"', '"drive_test.$lid.json"', '"$SRC/ai/$lid"', "race_plots", "split_manifest.json",
               '"no_route.$lid.json"', '"no_route.$lid.planned.json"', '"audit.$lid.json"', '"closure_$lid.kn5.json"'):
         assert f in TEXT, f
@@ -300,6 +301,28 @@ def test_race_kn5_guard_is_a_content_check():
     for parsed, msg in leaks:
         r = ck.check(parsed, allowed)
         assert not r["ok"] and any(msg in f for f in r["fails"]), (msg, r["fails"])
+
+
+def test_scenery_gate_judges_the_written_trees_and_is_hard():
+    """0049 fix round: after make_treefx writes trees.txt, verify_race --scenery-only judges THAT file (TreeFX trunks
+    and sign posts vs each race layout's lane and walls) — a plain step under set -e, never softened"""
+    line = next(ln for _, ln in _code_lines() if 'python tools/verify_race.py "$PROJ" --scenery-only' in ln)
+    assert '--trees "$PROJ/build/$SLUG/extension/trees/trees.txt"' in line
+    assert "|| true" not in line and "|| rc" not in line and "tail" not in line, line
+    assert (_first('python tools/make_treefx.py "$PROJ"') < _first('python tools/verify_race.py "$PROJ" --scenery-only')
+            < _first('kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")'))
+
+
+def test_install_refuses_while_ac_or_content_manager_runs():
+    """the install parks the old folder with mv: Assetto Corsa / Content Manager holding it makes that fail half-way,
+    so the REAL install refuses while either runs (the scratch path never reaches it)"""
+    real_inst = _first('elif [ "$INSTALL" = 1 ]; then')
+    guard = _first("tasklist //FO CSV //NH")
+    park = _first('mv "$AC/$old"')
+    assert real_inst < guard < park
+    blk = TEXT[guard:park]
+    for frag in ("acs[.]exe", "Content Manager", "NOT INSTALLED: close", "exit 1"):
+        assert frag in blk, frag
 
 
 def test_install_folder_is_one_name_in_the_config_and_the_chain():

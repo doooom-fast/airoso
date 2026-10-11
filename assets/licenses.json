@@ -150,7 +150,7 @@
    "source": "Kevin's owned asset pack (Dropbox; fleet/reference/ASSET-LIBRARY.md, ledger 0005) — bound by its own 1WALL_RACE pbr row (immune to pbr.network_walls, 2026-10-11); the race kn5's 1WALL_race_* strips sweep its measured silhouette and tile its texture at 4.04 m",
    "license": "UNRECORDED",
    "url": "",
-   "_note": "Licence not yet recorded (ledger 0047 Q10). Until it is, san_diego_lake_murray_race.kn5 and models_race_*.ini ship in the FULL (local) package only and are EXCLUDED from the CC0 variant; tools/pack_release.py must drop them when it builds cc0/."
+   "_note": "Kevin's own asset pack; licence terms not recorded. Not a publishing blocker (Kevin 2026-10-11: \"No one actually cares about assets in free mods for a 13 year old game\"). The race kn5s (_race, _closure_race_cw, _closure_race_acw) ship wherever Kevin chooses: tools/pack_release.py leaves them out of cc0/ by default and keeps them with --with-race."
   },
   {
    "name": "Invisible collider texture (procedural, fully transparent 4x4 RGBA)",

@@ -16,7 +16,7 @@
 # side streets sealed). The kn5 set:
 #   <slug>.kn5                    the ROAD, no AC_* node — all three layouts
 #   <slug>_race.kn5               COMMON race furniture: both curb strips (one closed loop per side, across
-#                                 all three bridges) + 10 kerbs — race_cw and race_acw
+#                                 all three bridges) + the declared kerbs (8) — race_cw and race_acw
 #   <slug>_closure_<id>.kn5       ONE per race layout: the wall closing off the other direction's lanes.
 #                                 Each race layout loads ONLY its own (the clockwise closure stands in the
 #                                 anticlockwise lane); a race layout without its closure kn5 never packs
@@ -31,7 +31,7 @@
 #   ship   : build_kn5_loop prep → split_exports (road / common race / closure per race layout / spawns)
 #            → export road / race / closure x race layouts (each content-checked) / spawn kn5s
 #            → AI per layout → verify_kn5 → track_folder (three layouts) → verify_kn5 --inis
-#            → make_map → make_treefx
+#            → make_map → make_treefx → verify_race --scenery-only on the written trees.txt (hard)
 #   gate   : street: kn5_to_gate_obj (road) → drive_test --layout street → audit_mesh
 #            per race layout: kn5_to_gate_obj (road + race + ITS closure → data/track.<id>.obj)
 #            → drive_test --layout <id> → audit_mesh --layout <id> → no_route --layout <id> (BUILT)
@@ -264,6 +264,11 @@ step "ship: minimap in the KN5 frame, per layout (tools/make_map.py)"
 (cd "$AIROSO" && python tools/make_map.py "$PROJ")
 step "ship: TreeFX palms / street trees / scrub (tools/make_treefx.py)"
 (cd "$AIROSO" && python tools/make_treefx.py "$PROJ")
+step "gate: scenery vs the race lanes and walls, on the WRITTEN trees.txt (tools/verify_race.py --scenery-only, hard)"
+# TreeFX trunks and sign posts are not physical in AC: one standing in a race lane or inside a wall is a car
+# driving through a palm. verify_race G already judged make_treefx's PLAN before Blender; this judges the file
+# that ships (data/race_verify.scenery.json; exit 1 on any trunk / post in a lane or a wall — ledger 0049 fix round).
+(cd "$AIROSO" && python tools/verify_race.py "$PROJ" --scenery-only --trees "$PROJ/build/$SLUG/extension/trees/trees.txt")
 
 # A verdict from an earlier run is not this run's verdict: every per-layout gate file is removed before its
 # gate runs, so a gate that does not run reads as "not run" (red), never as last time's pass. 0047's ONE
@@ -323,7 +328,7 @@ cp "$PROJ/loop.blend" "$SRC/loop.blend"
 for f in centerline.local.json centerline.raw.local.json median_bands.json dummies.json \
          finished_centerline.json gate_centerline.json lights.local.json connectors.local.json \
          mouths.json signs.local.json signs_preview.svg signs_measured.json drive_test.json audit.json \
-         barrier_bands.json race_authored.json race_verify.json race_kn5.json; do
+         barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json; do
   [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
 done
 rm -f "$SRC/data/audit.race.json"   # 0047's shared race audit: retired (ledger 0049 audits each race layout on its own OBJ)
@@ -365,6 +370,13 @@ if [ "$INSTALL" = 1 ] && [ "$SCRATCH" = 1 ]; then
   echo "$PROJ/build/$SLUG (load it by hand if you mean to)."
 elif [ "$INSTALL" = 1 ]; then
   step "install: $AC/${SLUG}_v3 (three layouts; previous build parked in $ARCHIVE/<stamp>/)"
+  # Assetto Corsa or Content Manager holding the folder makes the park (mv) fail half-way: refuse while either runs
+  if command -v tasklist >/dev/null 2>&1; then
+    RUNNING=$(tasklist //FO CSV //NH 2>/dev/null | grep -i -E '^"(acs[.]exe|acs_x86[.]exe|Content Manager[^"]*[.]exe)"' | cut -d, -f1 | tr '\n' ' ' || true)
+    if [ -n "$RUNNING" ]; then echo "NOT INSTALLED: close $RUNNING first (Assetto Corsa / Content Manager hold the track folder)"; exit 1; fi
+  else
+    echo "(tasklist not found — make sure Assetto Corsa and Content Manager are closed)"
+  fi
   B="$PROJ/build/$SLUG"
   for lid in $LAYOUT_IDS; do [ -f "$B/models_$lid.ini" ] || { echo "missing $B/models_$lid.ini"; exit 1; }; done
   STAMP=$(date +%Y-%m-%d_%H%M%S)

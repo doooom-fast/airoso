@@ -4,7 +4,7 @@
   "ui_series": "",
   "_ui_series_doc": "Engine track_folder prefixes the CM display name with ui_series (default 'K10 Colorado'); empty = use the track name as-is (SD names already carry the K10 - San Diego branding).",
   "slug": "san_diego_lake_murray",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "author": "k10-san-diego",
   "year": 2026,
   "_about": "A single drivable LOOP around Lake Murray (Kevin's childhood neighborhood). This repo is the standalone, Blender-first home for the track: the loop is mapped from the REAL roads (OpenStreetMap) at REAL elevation (USGS 3DEP), imported into Blender, and shaped there interactively (Kevin designs, Claude operates) BEFORE any kn5 export. Start point = just the 5-road main loop; everything else is added deliberately, in Blender.",
@@ -244,6 +244,27 @@
       "outer_extension_m": [
         10,
         30
+      ],
+      "_trims_doc": "Ledger 0049 fix round (2026-10-11): hand-authored pull-backs of the detector's kerb runs, each measured on the scratch rehearsal's BUILT road kn5 (every 1ROAD sheet under the kerb's footprint at its lip, mid-line and outer edge, every 0.3 m station). A kerb laid across a ribbon fold (two road sheets, 0033/0046 class) sits UNDER the upper sheet: invisible from the seat, and audit K counts it against the lower sheet. drop = no single-sheet stretch of useful length reaches the apex; i / j = a pull-back to the stations where the road is one sheet. The folds themselves stay a named ribbon defect (the ribbon's owner). Read by tools/barrier_bands.py (kerbs / kerbs_dropped); verify_race E fails any authored kerb under another road sheet.",
+      "trims": [
+        {
+          "apex": 770,
+          "kind": "inside",
+          "j": 763,
+          "why": "Hairpin inside kerb (installed since 0047 at v751-775): 13 of its 139 stations sat under the other sheet of the hairpin's ribbon fold - v764 by up to 0.04 m, v774 by up to 0.14 m (the installed race_authored.json lists 0.166 m of other deck above it at v774). v751-763 is one sheet throughout: 111 stations, a 26 m kerb on the entry that stops 4 m short of the old trimmed corner; the 4 m exit leg (v774-775) goes."
+        },
+        {
+          "apex": 1514,
+          "kind": "inside",
+          "drop": true,
+          "why": "College/Navajo inside apex: only 18 of the kerb's 34 stations sit on one sheet - about 1.5 m at each end (v1508-1509, v1518-1519); at v1517-1518 13 stations sit under the fold's upper sheet (up to 0.05 m) and 4 verts stand +0.13 m over the lower one (race audit K 158 vs the installed 154). No single-sheet stretch of useful length reaches the apex: dropped until the ribbon fold is one sheet."
+        },
+        {
+          "apex": 2319,
+          "kind": "inside",
+          "drop": true,
+          "why": "Navajo/Jackson inside apex (race_cw's AI line apexes 1.5 m off it): the ribbon folds into two sheets up to 0.46 m apart at v2315 and v2323-2324, and 8 of the kerb's 51 stations sit under the upper sheet by up to 0.42 m - a red/white kerb vanishing under the asphalt at the apex. The single-sheet pieces are 4.5 m on entry (v2313-2314) and about 5 m on exit (v2324-2326), neither at the apex: dropped until the ribbon fold is one sheet."
+        }
       ]
     },
     "grid_slots": 8,

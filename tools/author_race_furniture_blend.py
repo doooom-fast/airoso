@@ -15,8 +15,9 @@ What is built (pure geometry in tools/race_furniture.py):
   * per race layout, its closure along corridors.<id>.closure_y_by_vertex: the far boundary of its Alvarado-wide
     lane, along the island's race-side curb nose tip to nose tip, both ends PINNED full height on the far curb
     strip at a box / whole-street edge (the cap buried in that strip);
-  * the race kerbs at the five corners, in and out (10), clipped where EITHER layout's closure footprint comes
-    within 0.05 m (race_furniture.clip_kerbs — the stations removed are recorded per kerb).
+  * the race kerbs at the five corners, in and out, as DECLARED (8 on SD since the 0049 fix round: the kerbs
+    race.kerbs.trims drops are not swept), clipped where EITHER layout's closure footprint comes within 0.05 m
+    (race_furniture.clip_kerbs — the stations removed are recorded per kerb).
 The owner token rides in each closure's NAME (the prep re-links every object to the scene root, so the collection
 is for Kevin's eye and toggling; the export split routes on the name): RACE -> <slug>_race.kn5, RACE_CLOSE_CW ->
 <slug>_closure_race_cw.kn5, RACE_CLOSE_ACW -> <slug>_closure_race_acw.kn5. Every name keeps the 1WALL_RACE /
@@ -34,7 +35,10 @@ wedge, and linear interpolation from the run's seated neighbours for the handful
 those is counted in race_authored.json (and, since 0049, separately for the rings inside the declared bridge
 spans: `bridge_seating` — verify_race L fails any interpolated ring there); a run with no seated ring at all
 fails. Where ANOTHER deck (a connector's) stands more than 0.15 m above the strip base the ring is listed under
-`other_deck_above` — a junction defect (0033/0046 class) for its owner, not a seating choice.
+`other_deck_above` — a junction defect (0033/0046 class) for its owner, not a seating choice. Every race kerb
+also records `under_road` (ledger 0049 fix round): the stations where a second ROAD sheet stands over the kerb's
+TOP at its lip, mid-line or outer edge — a kerb laid across a ribbon fold, invisible from the seat. verify_race E
+fails any; the fix is the declaration's (track.config.json race.kerbs.trims pulls the run back or drops it).
 
 SHADING (2026-10-11): every strip and kerb is smooth-shaded (Mesh.shade_smooth) with hard edges
 (MeshEdge.use_edge_sharp) only where race_furniture.sharp_edges finds faces meeting at > 30 deg plus the kerb
@@ -72,6 +76,9 @@ RAY_LEN_M = 60.0
 KERB_SINK_M = 0.01
 PROBE_M = 0.4
 OTHER_DECK_M = 0.15
+KERB_SHEET_TOL_M = 0.02    # two ROAD hits under one point further apart than this are two sheets (a ribbon fold)
+KERB_UNDER_TOL_M = 0.005   # ... and the upper one stands over the kerb's TOP by more than this: the kerb is under it
+KERB_FOLD_REACH_M = 1.5    # only sheets within this above the lowest count (a fold, not a deck overhead)
 INTERP_MAX_FRAC = 0.01     # more than 1 % interpolated rings = something is wrong with the deck
 
 
@@ -268,6 +275,39 @@ class Seater:
         return True
 
 
+def _kerb_under_road(any_bvh, sts, sgn):
+    """the seated kerb's stations where ANOTHER road sheet stands over its top (ledger 0049 fix round: an inside
+    kerb laid across a ribbon fold disappears under the upper sheet — the seat sees no kerb there, audit K reads
+    it against the lower sheet). Probed at the lane lip, the mid-line and the outer edge of every station: two
+    ROAD sheets more than KERB_SHEET_TOL_M apart within KERB_FOLD_REACH_M, and the upper one more than
+    KERB_UNDER_TOL_M over the kerb's top (seated base + its height). verify_race E fails any.
+    {stations, max_m, vertices}"""
+    n, worst, ks = 0, 0.0, set()
+    if any_bvh is None:
+        return {"stations": 0, "max_m": 0.0, "vertices": [], "unmeasured": True}
+    for s in sts:
+        if s.get("y") is None:
+            continue
+        top = s["y"] + s["h"]
+        a, b = rf.kerb_station_footprint(s, sgn)
+        over = 0.0
+        for f in (0.0, 0.5, 1.0):
+            x, z = a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f
+            lo = _seat_lowest(any_bvh, x, z, s["y_hint"])
+            if lo is None:
+                continue
+            hi = _cast(any_bvh, x, z, lo + KERB_FOLD_REACH_M, up=False)
+            if hi is None or hi - lo <= KERB_SHEET_TOL_M:
+                continue
+            if hi - top > KERB_UNDER_TOL_M:
+                over = max(over, hi - top)
+        if over > 0.0:
+            n += 1
+            worst = max(worst, over)
+            ks.add(int(s["k"]))
+    return {"stations": n, "max_m": round(worst, 3), "vertices": sorted(ks)}
+
+
 def _poly_dist(p, polys):
     """xz distance from p to the nearest segment of any polyline in polys"""
     best = float("inf")
@@ -440,7 +480,8 @@ def main():
                    "inside_out_spans": len(rf.inside_out_spans(plan["stations"], lambda s_, g=sgn: rf.kerb_mid_xz(s_, g),
                                                                rf.KERB_W / 2.0)),
                    "seated": {"hit": kerbs.hit - h0, "near": kerbs.near - n0, "interpolated": kerbs.interp - i0},
-                   "seat_gap_max_m": 0.0}
+                   "seat_gap_max_m": 0.0,
+                   "under_road": _kerb_under_road(road_any, plan["stations"], sgn)}
             centres[name] = [[round(x, 2), round(s["y"], 2), round(z, 2)] for s in plan["stations"] for (x, z) in (xz(s),)]
             frames[name] = [[round(s["tx"], 5), round(s["tz"], 5), round(s.get("ls", 1.0), 4)] for s in plan["stations"]]
         bverts, bfaces = rf.to_blender(verts, faces)
@@ -564,6 +605,8 @@ def main():
                    "close_rings": sum(L["rings"] for L in per_layout.values()),
                    "kerb_length_m": round(tot["kerb_len"], 1), "kerb_stations": tot["kerb_stations"],
                    "kerb_objects": sum(1 for o in objects if o["kind"] == "kerb"),
+                   "kerb_under_road_stations": sum(int((o.get("under_road") or {}).get("stations", 0) or 0)
+                                                   for o in objects if o["kind"] == "kerb"),
                    "seated_hit": strips.hit + kerbs.hit + (walk.hit if walk is not strips else 0),
                    "seated_near": strips.near + kerbs.near + (walk.near if walk is not strips else 0),
                    "seated_interpolated": n_interp,
@@ -606,6 +649,11 @@ def main():
     print(f"[race] closure pins: {len(pins)}, gap to the far curb strip max "
           f"{max([e['gap_m'] for e in pins] or [0.0]):.3f} m; free ends: "
           f"{sum(1 for o in objects for e in o.get('ends', []) if e.get('kind') == 'free')}")
+    for o in objects:
+        ur = o.get("under_road") if o["kind"] == "kerb" else None
+        if ur:
+            print(f"[race] kerb {o['name']} run v{o['run'][0]}-v{o['run'][1]}: {ur['stations']} stations under another "
+                  f"ROAD sheet" + (f" (max {ur['max_m']} m over its top, at v{ur['vertices']})" if ur['stations'] else ""))
     for name, clip in report["kerb_clips"].items():
         if clip and clip.get("stations_removed") != [0, 0]:
             print(f"[race] kerb {name} clipped by {clip['by']}: {clip['stations_removed']} stations (start, end) removed, "

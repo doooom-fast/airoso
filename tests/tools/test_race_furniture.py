@@ -505,6 +505,20 @@ def test_apply_declared_kerbs_overrides_matching_runs_only():
     assert [d["apex"] for d in unmatched] == [90]
 
 
+def test_apply_declared_kerbs_drops_what_the_declaration_drops():
+    """0049 fix round: a kerb the declaration DROPS (kerbs_dropped, from race.kerbs.trims) is removed from its corner —
+    nothing is swept there, so the authored set equals the declared one"""
+    class RB:
+        raw = [None] * 100
+        cum = [float(3 * k) for k in range(100)]
+    corners = [{"apex_vertex": 50, "kerbs": [{"side": "L", "kind": "out", "i": 40, "j": 60, "s0": 120.0, "s1": 180.0},
+                                              {"side": "R", "kind": "in", "i": 45, "j": 55, "s0": 135.0, "s1": 165.0}]}]
+    bands = {"kerbs": [{"apex": 50, "side": "L", "kind": "outside", "i": 42, "j": 58}],
+             "kerbs_dropped": [{"apex": 50, "side": "R", "kind": "inside", "i": 45, "j": 55, "why": "on a ribbon fold"}]}
+    assert rf.apply_declared_kerbs(RB(), corners, bands) == []
+    assert [(kb["side"], kb["kind"], kb["i"]) for kb in corners[0]["kerbs"]] == [("L", "out", 42)]
+
+
 # ---------------------------------------------------------------------------------------------
 # ledger 0049: closed curb-strip loops, per-direction closures, the kerb clip, the v1 refusal
 
@@ -855,7 +869,9 @@ def test_real_lake_murray_plans_cleanly():
     edge = [p for p in plans if p["kind"] == "edge"]
     kerb = [p for p in plans if p["kind"] == "kerb"]
     close = [p for p in plans if p["kind"] == "close"]
-    assert len(kerb) == 10 and 10 <= len(edge) <= 20 and 8 <= len(close) <= 20, (len(edge), len(kerb), len(close))
+    # 10 at five corners, minus what a v2 declaration drops (0049 fix round: race.kerbs.trims -> kerbs_dropped)
+    assert len(kerb) == len(bands["kerbs"]) and len(kerb) + len(bands.get("kerbs_dropped") or []) == 10, len(kerb)
+    assert 10 <= len(edge) <= 20 and 8 <= len(close) <= 20, (len(edge), len(kerb), len(close))
     # curb strips: closed loops — no free end anywhere — covering every vertex on both sides but the declared trims
     assert all(p["start_kind"] == p["end_kind"] == "join" and not p["cap_start"] and not p["cap_end"] for p in edge)
     assert [(c["side"], c["kind"]) for c in folds] == [("R", "loop")] * 3 + [("R", "extend")] * 2, folds
@@ -883,8 +899,10 @@ def test_real_lake_murray_plans_cleanly():
                     assert end["h"] == rf.BARRIER_H and end["ls"] == 1.0
         length = sum(rf.strip_length(p["rings"]) for p in ps)
         assert 10_700 < length < 11_100, (lid, length)            # spec §3: ~10.9 km per direction
-    # kerbs: 10, in and out at the five corners; only the outside kerbs beside race_cw's pins are cut back
-    assert sorted((p["apex"], p["sub"]) for p in kerb) == sorted((a, s) for a in (0, 770, 1514, 2319, 3297) for s in ("in", "out"))
+    # kerbs: in and out at the five corners but the declared drops; only the outside kerbs beside race_cw's pins are cut back
+    dropped = {(int(d["apex"]), "in" if str(d["kind"]).startswith("in") else "out") for d in (bands.get("kerbs_dropped") or [])}
+    assert sorted((p["apex"], p["sub"]) for p in kerb) == sorted(
+        (a, s) for a in (0, 770, 1514, 2319, 3297) for s in ("in", "out") if (a, s) not in dropped)
     cut = sorted(p["apex"] for p in kerb if p["clip"]["stations_removed"] != [0, 0])
     assert set(cut) <= {770, 1514, 2319, 3297}, cut
     for p in kerb:

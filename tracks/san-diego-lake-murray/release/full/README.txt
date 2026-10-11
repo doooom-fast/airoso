@@ -24,15 +24,26 @@ WHAT IT IS
   behaviour is unverified.
 
 VERSIONS (pick one in Content Manager)
-  Street Loop          — the open two-way streets as they are, start/finish on Alvarado Rd.
-  Race — Clockwise     — one-way race track: Alvarado westbound, College northbound. Concrete
-                         K-rail between the carriageways of the wide roads (never on Alvarado,
-                         never on a median island), barriers along the kerbs, race kerbs at the
-                         corners. Grid and pits on Alvarado in the north lane.
-  Race — Anticlockwise — the same track the other way round, grid in the south lane.
+  Street Loop          — Lake Murray as it is: the open two-way streets, raised landscaped medians
+                         on College and Navajo, the side streets open, no race furniture. Lap
+                         clockwise from the line on Alvarado Rd.
+  Race — Clockwise     — the same 13.5 km as a one-way race track: Alvarado westbound, College
+                         northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest.
+                         You race an Alvarado-wide lane (about 11.4 m) on your own side of every
+                         road: concrete K-rail along your curb and a second line closing off the
+                         opposite lanes, running along the medians where there is one. The whole
+                         street is yours on Alvarado and on the I-8 bridge deck; the full
+                         intersection is open at the three corners the race turns at
+                         (College/Navajo, Navajo/Jackson, Jackson/Lake Murray Blvd); side streets
+                         are sealed; red/white kerbs at the corners. Grid and pits on Alvarado.
+  Race — Anticlockwise — the same track the other way round: Alvarado eastbound, Lake Murray Blvd
+                         northeast, Jackson north, Navajo westbound, College southbound, on your
+                         own side again (its closing line stands in the other lanes).
 
 KNOWN
   - Side-street terrain still floats a little (under 0.6 m) in a couple of Del Cerro spots.
   - The College Ave south hairpin and the lap seam are rougher than the rest of the loop.
+  - The race versions have no inside kerb at College/Navajo or Navajo/Jackson: the road surface
+    folds over itself on those two inside corners, and a kerb there would sit under the asphalt.
 
 Credits: CREDITS.txt. Licences — including what in here is NOT ours — LICENSES.md.

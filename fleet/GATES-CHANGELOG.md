@@ -641,3 +641,44 @@ closure: FAIL, 60,266 m² through 10 opposite doors, 311 / 406 probes, the lap b
 `tests/tools/test_ship_sd_chain.py` (stage order, the per-layout gate loop, RACE_RED and the planned read-back
 RUN on crafted verdict files — clean passes, every red condition turns red, a missing `drive_test.json` turns
 both layouts red).
+
+### Same day — fix round: no kerb under a road sheet, scenery out of the race lanes (ledger 0049, critic round)
+
+**Change.**
+
+| Gate / rail | Before | After |
+|---|---|---|
+| `barrier_bands` self-gate 9 (kerbs) | exactly 10 kerbs (hard-coded), each clear of every closure | every detected kerb (2 per corner) is either DECLARED or DROPPED (`kerbs_dropped`, each with its why); none both; each declared kerb clear of every closure. `track.config.json race.kerbs.trims` is the only way a kerb leaves or shortens: `{apex, kind, why}` + `drop: true` or `i` / `j` — a PULL-BACK inside the detected run, in walk order. A trim that matches no kerb, names one twice, lengthens a run, reverses it, mixes drop with i/j or carries no `why` FAILS |
+| `verify_race` E (kerbs) | declared set == authored set, i/j equal, clear of the authored closures | + no kerb station under another ROAD sheet: the author measures `objects[].under_road` on the real deck (lip, mid-line and outer edge of every 0.3 m station: two ROAD sheets more than 0.02 m apart within 1.5 m, the upper one more than 0.005 m over the kerb's top) and E FAILS any; a declared-dropped kerb that was authored FAILS by name. An authored file without the measure is a warning (pre-fix-round author), never a pass of the check |
+| `verify_race` G (scenery, new) | lamp masts only | + every CSP TreeFX trunk (r 0.30 m, INVENTED: palm trunks are 0.3-0.5 m across) and every W1-6 sign post (`signs.local.json base_xz`, r 0.03 m: the 2 in post) against EACH race layout's lane (`lane_by_vertex`, lerped) and its wall footprints (both curb strips; that layout's closure): a disk overlapping the lane or a wall FAILS. Items farther than half-width + 2.0 m (INVENTED) from the centreline are counted, not measured. The trees come from `make_treefx.plan` (every species assumed present: positions only) at author time |
+| `ship_sd.sh` scenery re-check (new, hard) | — | right after `make_treefx`: `verify_race --scenery-only --trees build/<slug>/extension/trees/trees.txt` judges the WRITTEN file (kn5 frame x, y, -z flipped back) → `data/race_verify.scenery.json` (synced back) |
+| `ship_sd.sh` install guard (new) | — | the REAL install refuses (exit 1) while `acs.exe` / `acs_x86.exe` / `Content Manager*.exe` runs (`tasklist`): the park is a `mv`, which fails half-way on a held folder. Scratch runs never reach it |
+
+**Why.** The critic of the 0049 build: race audit K 158 vs the installed 154 = 4 verts of the new
+`1KERB_race_1514_in` at v1518, and `1KERB_race_2319_in` sitting up to 0.44 m UNDER the folded ribbon at the
+Navajo/Jackson apex (a red/white kerb vanishing under the asphalt) — no gate failed either. And no gate checked
+scenery against the race lanes: two scatter palms (v763 on the hairpin kerb, v4495 at the seam) were kept out
+of `trees.txt` only because `make_treefx`'s centreline guard happened to catch them.
+
+**Measured** (scratchpad `corr2/m/kerb_sheets2.py`: every 1ROAD sheet under each kerb station's footprint on the
+previous rehearsal's built road kn5): `1KERB_race_1514_in` 18 of 34 stations single-sheet (about 1.5 m each side
+of the fold), 13 under the upper sheet (≤ 0.05 m) — DROPPED; `1KERB_race_2319_in` 8 of 51 stations under the upper
+sheet by up to 0.42 m, single-sheet pieces 4.5 m on entry and about 5 m on exit, neither at the apex — DROPPED;
+`1KERB_race_770_in` (installed since 0047) 13 of 139 stations under the hairpin fold's upper sheet (v764 ≤ 0.04 m,
+v774 ≤ 0.14 m) — PULLED BACK to v751-763 (111 stations, all one sheet); `3297_in` has two sheets 0.026-0.028 m
+apart at v3298-3299 with its top 0.012 m clear of the upper one — kept, under-road 0. The ribbon folds stay a
+named ribbon defect (0033/0046 class) for the ribbon's owner.
+
+**The rehearsal** (fresh copy of the workshop minus `build/`, `SHIP_PROJ=<copy> bash tools/ship_sd.sh --skip-blend`,
+14:41:36-14:46:56): every kerb `under_road` 0 (8 kerbs); verify_race OK incl. G scenery (15,261 TreeFX entries +
+18 sign posts, 394 beside the race road, 0 in a lane or a wall, nearest 0.655 m — a median bush vs the
+closure); the written-trees re-check OK (nearest 0.656 m); race audit K **154** both layouts (D 0 / I 145 / F 15,
+W 0); no_route BUILT PASS both; street gates identical to the installed build (`audit.json` md5 `296a2bc1…`).
+
+**Teeth.** `kerb_sheets2.py` on the previous build reproduces the author's reports; `scenery_margins` on the RAW
+(unguarded) scatter palms FAILS exactly the two the critic found (v763 lane −0.52 m, v4495 lane −2.18 m, both
+layouts). Tests: `tests/tools/test_barrier_bands.py` (the 8 declared + 2 dropped + 770 pull-back; every trim
+refusal; neither/both declared-and-dropped), `test_verify_race.py` (E under-road and dropped-but-authored; G
+scenery: lane, curb strip, closure, open box, the far tree uncounted; trees.txt frame; the `--scenery-only` CLI),
+`test_race_furniture.py` (a dropped kerb leaves its corner), `test_make_treefx_plan.py` (`plan()` is what
+`build()` writes), `test_ship_sd_chain.py` (the re-check after `make_treefx`, hard; the install guard).

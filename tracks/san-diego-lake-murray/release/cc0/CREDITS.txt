@@ -2,9 +2,16 @@ K10 - San Diego (V3) — Lake Murray Loop — credits
 ==================================================
 
 Built by Kevin Conboy with the airoso track engine (k10-motorsports), hand-finished in Blender.
+[[street-only]]
 Everything bundled here is CC0-1.0 / public domain. Surface scrub and kerb-rumble sounds are the
 player's own stock Assetto Corsa sounds (content/sfx), referenced by name in data/surfaces.ini —
 none are redistributed here.
+[[/street-only]]
+[[with-race]]
+Everything bundled here is CC0-1.0 / public domain except the race versions' K-rail barrier (below).
+Surface scrub and kerb-rumble sounds are the player's own stock Assetto Corsa sounds (content/sfx),
+referenced by name in data/surfaces.ini — none are redistributed here.
+[[/with-race]]
 
 Data
   - OpenStreetMap road geometry (ODbL-1.0)        https://www.openstreetmap.org/copyright
@@ -19,6 +26,14 @@ Our own work (CC0-1.0)
     public-domain US Government works, 17 U.S.C. 105)
   - Street-lamp model: Kevin Conboy's own asset library
 
+[[with-race]]
+Kevin's owned asset pack (race versions; not CC0, licence terms not recorded)
+  - Concrete K-rail barrier, 4 m jersey module: concrete_barrier_diffuse.png /
+    concrete_barrier_normal.png on the race barriers in san_diego_lake_murray_race.kn5 (the curb
+    strips), san_diego_lake_murray_closure_race_cw.kn5 and san_diego_lake_murray_closure_race_acw.kn5
+    (each direction's closing line); the barriers sweep the module's silhouette
+
+[[/with-race]]
 CC0 textures bundled in the kn5
   - aerial_asphalt_01 (road)          Poly Haven  CC0-1.0   https://polyhaven.com/a/aerial_asphalt_01
   - Grass001 (grass)                  ambientCG   CC0-1.0   https://ambientcg.com/view?id=Grass001

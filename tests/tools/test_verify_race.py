@@ -492,3 +492,98 @@ def test_cli_pre_author_needs_no_authored_file():
     assert not (d / "data" / "race_verify.json").exists()
     (d / "data" / "dummies_race_cw.json").write_text(json.dumps(_dummies({"AC_START_1": _radial(12, 8.0)})))
     assert vr.main([str(d), "--pre-author", "--out", str(out)]) == 1
+
+
+# --- 0049 fix round: E kerb under a road sheet / dropped kerbs; G scenery (TreeFX trunks + sign posts) ----------
+
+def test_e_a_kerb_under_another_road_sheet_fails_and_a_dropped_kerb_may_not_be_authored():
+    a, b = _fixture()
+    kn = "1KERB_race_100_out"
+    r = _run(a, b)
+    assert r["ok"] and any("no under_road measure" in w for w in r["warnings"]), r["warnings"]   # older authored file
+    _obj(a, kn)["under_road"] = {"stations": 0, "max_m": 0.0, "vertices": []}
+    r = _run(a, b)
+    assert r["ok"] and r["counts"]["kerb_under_road"] == {kn: 0} and not any("under_road" in w for w in r["warnings"])
+    _obj(a, kn)["under_road"] = {"stations": 9, "max_m": 0.135, "vertices": [99, 100]}       # laid across a ribbon fold
+    r = _run(a, b)
+    assert _has(r, "E: " + kn, "9 stations sit UNDER another ROAD sheet", "0.135", "race.kerbs.trims"), r["fails"]
+    # the declaration drops the kerb, the author still sweeps it: both the set check and the drop check fire
+    a, b = _fixture()
+    b["kerbs_dropped"] = [dict(b["kerbs"][0], why="on a fold")]
+    b["kerbs"] = []
+    r = _run(a, b)
+    assert _has(r, "E: the outside kerb at v100 is declared DROPPED but was authored"), r["fails"]
+    assert _has(r, "E: declared kerbs")
+    assert r["counts"]["kerbs_dropped"] == [[100, "outside"]]
+
+
+def _run_scenery(items, bands=None):
+    return vr.verify(None, bands or _bands(), _pts(), [0.0] * (N + 1), pre_author=True, widths=WIDTHS, scenery=items,
+                     scenery_source="test")
+
+
+def _item(kind, k, r_out, rr=None):
+    p = _radial(k, r_out)
+    return {"kind": kind, "id": f"{kind}@{k}/{r_out}", "x": p[0], "z": p[2],
+            "r": rr if rr is not None else (vr.TREE_TRUNK_R_M if kind == "tree" else vr.SIGN_POST_R_M)}
+
+
+def test_g_scenery_trunks_and_posts_stay_out_of_every_lane_and_wall():
+    # + lateral = toward the centre; _radial(k, r) stands r m OUTWARD (lat -r). Curb strips |lat| 9.18-9.85; at v60
+    # race_cw's closure stands at lat +2.0 (its lane -9.18 .. +1.665), race_acw's at -2.0 (its lane -1.665 .. +9.18)
+    clear = [_item("tree", 60, 11.0), _item("tree", 150, 12.0), _item("sign", 30, 10.9), _item("tree", 60, 40.0)]
+    r = _run_scenery(clear)
+    assert r["ok"], r["fails"]
+    c = r["counts"]
+    assert c["scenery_items"] == {"tree": 3, "sign": 1} and c["scenery_beside"] == 3 and c["scenery_hits"] == 0
+    assert abs(c["scenery_min"]["race_cw"]["margin_m"] - (11.0 - 9.85 - 0.30)) < 1e-3, c["scenery_min"]
+    # a palm in race_cw's lane (lat -5): in race_acw's dead lane behind its closure, which is fine for race_acw
+    r = _run_scenery(clear + [_item("tree", 60, 5.0)])
+    assert _has(r, "G: scenery: race_cw: tree tree@60/5.0 at v60", "in the lane"), r["fails"]
+    assert not _has(r, "G: scenery: race_acw"), r["fails"]
+    # a sign post inside the curb strip: both layouts (the strips are common)
+    r = _run_scenery([_item("sign", 120, 9.5)])
+    assert _has(r, "G: scenery: race_cw: sign", "inside the curb strip") and _has(r, "G: scenery: race_acw: sign",
+                                                                                  "inside the curb strip"), r["fails"]
+    # a trunk ON race_acw's closure (lat -2.0): inside race_acw's wall, in race_cw's lane
+    r = _run_scenery([_item("tree", 60, 2.0)])
+    assert _has(r, "G: scenery: race_acw: tree", "inside the closure") and _has(r, "G: scenery: race_cw: tree", "in the lane")
+    # in an open box (v100) the lane is the whole road: a bush on the road is in both lanes
+    r = _run_scenery([_item("tree", 100, 0.0)])
+    assert _has(r, "G: scenery: race_cw:", "in the lane") and _has(r, "G: scenery: race_acw:", "in the lane")
+
+
+def test_g_scenery_reads_trees_txt_in_the_kn5_frame_and_sign_posts():
+    p = _radial(60, 5.0)
+    txt = ("configure: seed = 20261013\nconfigure: size variance = 1, 1\n"
+           f"tree: PalmV1.bin; pos={p[0]:.2f}, 5.00, {-p[2]:.2f}; angle = 10; size = 0.80\n"
+           "tree: Sage.bin; pos=0.00, 1.00, -0.00; angle = 0; size = 1.00\n")
+    items = vr.tree_items_from_txt(txt)
+    assert [i["id"] for i in items] == ["PalmV1.bin#0", "Sage.bin#1"]
+    assert abs(items[0]["x"] - p[0]) < 0.01 and abs(items[0]["z"] - p[2]) < 0.01 and items[0]["r"] == vr.TREE_TRUNK_R_M
+    signs = {"signs": [{"id": "M1", "base_xz": [1.0, 2.0]}, {"id": "M2"}]}
+    assert vr.sign_items(signs) == [{"kind": "sign", "id": "M1", "x": 1.0, "z": 2.0, "r": vr.SIGN_POST_R_M}]
+
+
+def test_cli_scenery_only_judges_the_written_trees_txt():
+    import tempfile
+    d = Path(tempfile.mkdtemp())
+    (d / "data").mkdir()
+    pts = _pts()
+    (d / "data" / "centerline.local.json").write_text(json.dumps({"points_xyz_m": [list(p) for p in pts], "widths_m": WIDTHS}))
+    (d / "data" / "median_bands.json").write_text(json.dumps({"island_w_by_vertex": [0.0] * (N + 1)}))
+    (d / "data" / "barrier_bands.json").write_text(json.dumps(_bands()))
+    s = _radial(30, 10.4)
+    (d / "data" / "signs.local.json").write_text(json.dumps({"signs": [{"id": "M1", "base_xz": [s[0], s[2]]}]}))
+    ok, bad = _radial(60, 11.0), _radial(60, 5.0)
+    trees = d / "trees.txt"
+    trees.write_text(f"tree: PalmV1.bin; pos={ok[0]:.2f}, 5.00, {-ok[2]:.2f}; angle = 1; size = 1.00\n", encoding="utf-8")
+    assert vr.main([str(d), "--scenery-only", "--trees", str(trees)]) == 0      # no race_authored.json needed
+    rep = json.loads((d / "data" / "race_verify.scenery.json").read_text(encoding="utf-8"))
+    assert rep["ok"] and rep["counts"]["scenery_items"] == {"tree": 1, "sign": 1} and "spawn_slots" not in rep["counts"]
+    assert not (d / "data" / "race_verify.json").exists()
+    trees.write_text(trees.read_text(encoding="utf-8") +
+                     f"tree: PalmV2.bin; pos={bad[0]:.2f}, 5.00, {-bad[2]:.2f}; angle = 1; size = 1.00\n", encoding="utf-8")
+    assert vr.main([str(d), "--scenery-only", "--trees", str(trees)]) == 1
+    rep = json.loads((d / "data" / "race_verify.scenery.json").read_text(encoding="utf-8"))
+    assert any(f.startswith("G: scenery: race_cw: tree PalmV2.bin#1") for f in rep["fails"]), rep["fails"]

@@ -1,6 +1,8 @@
-"""tools/pack_release.py — the CC0 variant drops the race layouts (ledger 0047 Q10: the K-rail pack's
-licence is UNRECORDED in assets/licenses.json, so san_diego_lake_murray_race.kn5, every
-san_diego_lake_murray_closure_<id>.kn5 (ledger 0049) and the two race layouts ship in the FULL package only)."""
+"""tools/pack_release.py — the CC0 package's race layouts. By default it is the Street Loop only (strip_race_layouts:
+san_diego_lake_murray_race.kn5, every san_diego_lake_murray_closure_<id>.kn5 (ledger 0049) and the two race layouts
+leave it); --with-race keeps them. The split is a tool, not a licence verdict: which package goes public is
+Kevin's call at publish time (Kevin 2026-10-11). The release texts carry [[street-only]] / [[with-race]]
+alternatives that render_variant resolves per package."""
 from __future__ import annotations
 
 import json
@@ -102,12 +104,49 @@ def test_root_preview_still_rasterised_and_a_real_png_is_never_overwritten():
     assert not (ui / "street" / "preview.svg").exists()
 
 
-def test_full_release_texts_name_the_k_rail_and_cc0_drops_it():
+def test_full_release_texts_credit_the_k_rail_on_every_race_kn5():
     texts = pr.TRACK_DIR / "release"
-    line = "Concrete K-rail barrier (race layouts) — Kevin's owned asset pack, licence not recorded, personal use only"
+    kn5s = (f"{SLUG}_race.kn5", f"{SLUG}_closure_race_cw.kn5", f"{SLUG}_closure_race_acw.kn5")
     for f in ("CREDITS.txt", "LICENSES.md"):
-        assert line in (texts / "full" / f).read_text(encoding="utf-8"), f
-        assert "K-rail" not in (texts / "cc0" / f).read_text(encoding="utf-8"), f   # the cc0 package drops the race layouts
+        t = (texts / "full" / f).read_text(encoding="utf-8")
+        assert "K-rail" in t and "Kevin" in t and all(k in t for k in kn5s), f
+        assert "personal use only" not in t.split("K-rail")[1][:400], f"{f}: the K-rail is not a personal-use blocker"
+    readme = (texts / "full" / "README.txt").read_text(encoding="utf-8")
+    for frag in ("Alvarado-wide lane", "own side of every", "I-8 bridge deck", "three corners", "closing off the"):
+        assert frag in readme, frag
+    assert "between the carriageways" not in readme, "the retired 0047 centre-chain wording"
+
+
+def test_cc0_texts_render_street_only_by_default_and_with_race_on_request():
+    texts = pr.TRACK_DIR / "release"
+    kn5s = (f"{SLUG}_race.kn5", f"{SLUG}_closure_race_cw.kn5", f"{SLUG}_closure_race_acw.kn5")
+    for f in ("CREDITS.txt", "LICENSES.md", "README.txt"):
+        raw = (texts / "cc0" / f).read_bytes().decode("utf-8")
+        street, race = pr.render_variant(raw, False), pr.render_variant(raw, True)
+        assert "[[" not in street and "[[" not in race, f
+        if f != "README.txt":
+            assert "K-rail" not in street, f                                   # the default package has no race layout
+            assert "K-rail" in race and all(k in race for k in kn5s), f        # --with-race credits every race kn5
+        else:
+            assert "not part of this download" in street and "Race — Clockwise" not in street
+            assert "Race — Clockwise" in race and "Race — Anticlockwise" in race and "not part of this download" not in race
+        for t in (street, race):
+            assert "licence is not recorded yet" not in t, "a licence blocker in a public README"
+    assert pr.render_variant("a\r\n[[with-race]]\r\nb\r\n[[/with-race]]\r\nc\r\n", False) == "a\r\nc\r\n"   # CRLF kept
+    assert pr.render_variant("plain\n", True) == "plain\n"
+    try:
+        pr.render_variant("[[with-race]]\nb\n", True)
+    except SystemExit as e:
+        assert "unbalanced" in str(e)
+    else:
+        raise AssertionError("an unbalanced marker rendered")
+
+
+def test_with_race_is_an_opt_in_flag():
+    assert pr.build_parser().parse_args(["--version", "0.24.0"]).with_race is False
+    assert pr.build_parser().parse_args(["--version", "0.24.0", "--with-race"]).with_race is True
+    doc = pr.__doc__
+    assert "THE SPLIT IS A TOOL, NOT A RULE" in doc and "Kevin's call at" in doc
 
 
 def test_every_closure_kn5_leaves_the_cc0_folder_with_the_race_layouts():

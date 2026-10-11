@@ -27,7 +27,14 @@ the built gates; its gate lines are in §10 "Measured on the full rehearsal". In
 contained on their BUILT kn5 sets (no_route 0 leaks, lap complete, 0 / 406 forbidden probes reached),
 `barrier_missing` 0 and `obstruction_stations` 0, and the street layout's gates are identical to the
 pre-change build. The §1, §4 numbers marked "0047" were measured on the 0047 build and are kept because the
-curb strips and kerbs are the same objects. No tier is claimed: Kevin's drive is the only ground truth.
+curb strips and kerbs are the same objects. **Fix round (2026-10-11, after the critic of `c0361f7`):** the
+College/Navajo and Navajo/Jackson inside kerbs are dropped and the hairpin's inside kerb pulled back to
+v751-763 (each lay across a ribbon fold, under the other road sheet — `race.kerbs.trims`, measured), so race
+audit K is back to 154; `verify_race` E now fails any kerb under a road sheet and G any TreeFX trunk or sign
+post in a race lane or wall (re-checked on the written `trees.txt` in the ship); build 0.17.0. The fix-round
+rehearsal is at the end of §10; the exact ship command is `bash tools/ship_sd.sh --skip-blend --force-install`
+with Assetto Corsa and Content Manager closed (ledger 0049 "Ship"). No tier is claimed: Kevin's drive is the only
+ground truth.
 
 ---
 
@@ -240,7 +247,7 @@ input fresh for each output and **removes** what does not belong (then `meshes.r
 | output | holds | → kn5 (loaded by) |
 |---|---|---|
 | `loop_main.blend` | everything EXCEPT RACE members / `1WALL_RACE*` / `1KERB_RACE*` names and every `AC_*` object | `<slug>.kn5` — the road, unchanged (all three layouts) |
-| `loop_race.blend` | the COMMON race furniture: both curb strips + the 10 kerbs; no `1WALL_RACE_CLOSE_*` | `<slug>_race.kn5` (race_cw, race_acw) |
+| `loop_race.blend` | the COMMON race furniture: both curb strips + the declared kerbs (8 since the 0049 fix round); no `1WALL_RACE_CLOSE_*` | `<slug>_race.kn5` (race_cw, race_acw) |
 | `loop_close_<id>.blend` ×2 | that race layout's `1WALL_RACE_CLOSE_<TOKEN>_*` only | `<slug>_closure_<id>.kn5` (that layout ONLY) |
 | `loop_spawn_<id>.blend` ×3 | `AC_*` empties from `data/dummies_<id>.json` (tools/layout_dummies.py) | `<slug>__<id>.kn5` (own layout) |
 | `split_manifest.json` | census per output + problems (exit 1 on any: an undeclared token, a KBAR object, an empty closure blend, a closure object in `loop_race.blend`, race ∪ closures ≠ all RACE objects, an orphan material) | |
@@ -256,10 +263,15 @@ race.corridor declared, a race layout whose `build/<slug>_closure_<id>.kn5` is m
 declared layout loads is removed before packing. A track without race.corridor keeps the 0047 shape
 ([road, `_race`, spawn]).
 
-**The packages (`tools/pack_release.py`).** The CC0 variant drops the race layouts, `<slug>_race.kn5`
-and EVERY `<slug>_closure_*.kn5` (by name, so a stale one goes too): the K-rail pack's licence is still
-UNRECORDED (0047 Q10; the 0049 default keeps the race versions in the FULL local package only). The
-street layout stays in both.
+**The packages (`tools/pack_release.py`).** By default the CC0 variant is the Street Loop only: it drops the
+race layouts, `<slug>_race.kn5` and EVERY `<slug>_closure_*.kn5` (by name, so a stale one goes too);
+`--with-race` keeps all three layouts in it (and renders the release texts' `[[with-race]]` blocks: the K-rail
+credit on every race kn5, the three-version README). The split is a tool, not a rule — which package goes
+public is Kevin's call at publish time (Kevin, 2026-10-11: "No one actually cares about assets in free mods for
+a 13 year old game"; `docs/PUBLISHING.md`). What the K-rail is, for the record: Kevin's owned asset pack (the
+4 m jersey module, `assets/models/concrete_barrier_4m.obj` + `concrete_barrier_diffuse/normal.png`,
+`fleet/reference/ASSET-LIBRARY.md`), whose licence terms are not recorded in `assets/licenses.json`. The
+street layout is in both packages.
 
 Why removal and not selection, collections or `__` renames: the exporter that actually runs
 (`exporter.kn5`, the AppData blender-assetto-corsa-tools 1.0.7) walks `blend_data.objects`
@@ -291,7 +303,7 @@ meshes / 122,330 positions / **36 RACE-named materials** / 0 AC nodes, `loop_mai
 `<slug>.kn5`, `loop_race.blend --out <slug>_race.kn5`, and per race layout
 `loop_close_<id>.blend --out <slug>_closure_<id>.kn5`. Each is content-checked by the ship script with
 `inspect_kn5 --json` then `tools/check_race_kn5.py`: `--role common` FAILS on any non-RACE mesh, any
-CLOSE or KBAR mesh, no edge mesh, a kerb count other than 10, a texture outside the race rows or any
+CLOSE or KBAR mesh, no edge mesh, a kerb count other than the declaration's (`--bands`: 8 on SD), a texture outside the race rows or any
 `AC_*` node; `--role closure --owner <token>` FAILS unless every mesh is `1WALL_RACE_CLOSE_<TOKEN>_*` (at
 least one, no kerbs or edges, race textures only, no `AC_*`). Both WARN above 20 MB. Each pass purges
 and rewrites the one persistence `.ini` (named after its kn5) from the materials the opened scene holds,
@@ -309,13 +321,14 @@ open one in Blender to see the grid — and a fallback input, not a second sourc
 | kn5 | meshes | verts / tris (per triangle) | bytes | loaded by |
 |---|---|---|---|---|
 | `<slug>.kn5` (road) | 31 | 1,258,109 / 1,232,927 | 91,934,629 (unchanged) | all three layouts |
-| `<slug>_race.kn5` (common) | 25 = 15 curb strips + 10 kerbs | 152,576 / 188,326 (0.81) | 10,283,552 | race_cw, race_acw |
+| `<slug>_race.kn5` (common) | 25 = 15 curb strips + 10 kerbs (fix round: 23 = 15 + 8) | 152,576 / 188,326 (0.81); fix round 151,984 / 187,764 | 10,283,552; fix round 10,253,588 | race_cw, race_acw |
 | `<slug>_closure_race_cw.kn5` | 6 | 58,272 / 72,684 (0.80) | 5,433,534 | race_cw only |
 | `<slug>_closure_race_acw.kn5` | 6 | 58,256 / 72,664 (0.80) | 5,432,722 | race_acw only |
 
 The closures are 1.6 MB each over the estimate (the exporter writes ~93 B per render vertex here, not 63.8). The
 FULL package's race files grow from 12.56 MB (0047's one race kn5) to 21.15 MB, **+8.6 MB**; the CC0 package is
-unchanged (`tools/pack_release.py` strips `_race.kn5` and every `_closure_*.kn5`). The table below is the
+unchanged by default (`tools/pack_release.py` strips `_race.kn5` and every `_closure_*.kn5` unless `--with-race`,
+which adds the same +21 MB to it). The table below is the
 **0047** build as measured.
 
 Measured on the 2026-10-11 weld-pass rehearsal (`SHIP_PROJ=<scratch> bash tools/ship_sd.sh
@@ -410,9 +423,9 @@ exists before Blender.
 | Q2 / Q7 the 13.5-17 m stretches / interior corners | (0047 `centre_runs`) | **moot**: the chain is retired; the corridor rule decides (§0) |
 | Q5 height | `race.barrier_height_m` / `--barrier-height` | 1.20 m (the module's full silhouette); real street K-rail is 0.81-1.07 m, which would let you see over the closure to the closed lanes |
 | Q6 edge placement | `race.edge_mode` / `--edge-mode` | `road` (on the pavement, 0.15 m off the curb) |
-| Q8 kerbs | detector + declared runs | ten runs at five corners, clipped clear of every closure |
+| Q8 kerbs | detector + declared runs + `race.kerbs.trims` | eight runs at five corners (0049 fix round: the 1514 / 2319 inside kerbs dropped and the 770 inside kerb pulled back to v751-763, each off a ribbon fold, measured), clipped clear of every closure |
 | Q9 L8 wording | "layouts add kn5s, never alter the road" | the build proceeds under the proposed wording; the law entry waits for Kevin's OK |
-| Q10 licence | `assets/licenses.json` → `UNRECORDED` entry for the K-rail pack | race layouts and every race kn5 in the FULL package only until recorded |
+| Q10 licence | — | **settled** by Kevin's stance (2026-10-11): provenance never withholds a release; `pack_release --with-race` puts the race layouts in the CC0 package when he wants them public (default street-only until the site catalog is updated) |
 | Q11 collider | `--collider` | off |
 
 **Tune after the drive, not before (one knob each):** width on the 17 m roads (`race.corridor.clear_width_m`
@@ -485,6 +498,26 @@ byte-identical in every field; the street AI line is byte-identical.
 closure kn5 → FAIL, 81,466 m² outside the corridor through 5 door clusters (4 opposite, 1 island), 390 / 406
 probes reached; road + common + the OTHER direction's closure (`_closure_race_acw`) → FAIL, 60,266 m² through 10
 opposite doors, 311 / 406 probes reached, the lap blocked in 20 spans.
+
+### Measured on the fix-round rehearsal (2026-10-11, 14:41:36-14:46:56, a fresh scratch copy, `--skip-blend`)
+
+The K 158 above is gone: the kerbs it came from are out of the declaration (§9 Q8, ledger 0049 "Fix round").
+
+| stage | race_cw | race_acw |
+|---|---|---|
+| planned no_route | PASS: 0 leaks, 0 blocked, 0 / 406 probes, 0 spawns unreached, 139,130 m² | PASS: the same, 138,826 m² |
+| verify_race | OK — 8 kerbs, `under_road` 0 on every one; closure 3,637 rings ≤ 0.007 m, pins ≤ 0.006 m; G lamps 0 inside; G scenery 15,261 TreeFX + 18 sign posts, 394 beside the race road, 0 in a lane or wall (nearest 0.655 m) | OK — 3,636 rings, ≤ 0.007 m, pins ≤ 0.005 m |
+| check_race_kn5 | common OK (15 strips + 8 kerbs, 10,253,588 B); closure `cw` OK | closure `acw` OK |
+| verify_kn5 / `--inis` | OK / OK | OK / OK |
+| scenery on the written `trees.txt` | OK — 0 in a lane or wall, nearest 0.656 m | |
+| drive_test | `barrier_missing` 0 of 37,869, obstruction 0, severe 0; soft top 44, excursion 1 | 0 of 37,870, 0, 0; soft top 40, excursion 0 |
+| audit_mesh `--layout` | **D 0 / K 154 / I 145 / F 15, W 0** | **D 0 / K 154 / I 145 / F 15, W 0** |
+| no_route BUILT | **PASS** — 0 leaks, 0 doors, 0 / 406 probes, lap complete, spawns reached | **PASS** — the same |
+
+Street: identical to the installed build (drive_test 82 / 391 / 0 / 101, `audit.json` byte-identical, street AI
+byte-identical). race_acw's soft top 40 (the installed 0047 build: 13) is the same inherited grass-through-road
+on the unchanged road kn5 seen through a wider lane — the open boxes are now the whole intersection (ledger 0049,
+"No worse than the installed build").
 
 ## 11. The AI lines (`scripts/ac/write_ai_line.py --layout race_cw|race_acw`)
 

@@ -5,8 +5,9 @@ Pins the measured shape of the declaration and that every self-gate FIRES on a c
   * the SD declaration passes: both curb strips on every vertex (no bridge gaps), five trimmed inside corners,
     the centre chain retired (centre_w all 0, no runs), the whole-street zone v4454 -> v0 -> v777, three open
     boxes, four closure runs per layout pinned on the far curb strip (+-0.01 m) at the spec's pins, the forced
-    pin rates (1:4.7 / 1:3.6 / 1:3.3), 6.86 m minimum beside the islands, 22.4 m minimum plan radius, ten kerbs
-    clear of both closures, the mirror within 0.3 m on the running vertices, the Alvarado re-measure (11.36 m),
+    pin rates (1:4.7 / 1:3.6 / 1:3.3), 6.86 m minimum beside the islands, 22.4 m minimum plan radius, eight kerbs
+    clear of both closures (two fold kerbs dropped and one pulled back by race.kerbs.trims, each with its why),
+    the mirror within 0.3 m on the running vertices, the Alvarado re-measure (11.36 m),
     and the PLANNED no-route fill: 0 leaks and the lap complete for both layouts;
   * crafted defects each FAIL with their own message: a closure in a box, a pin off the far strip, a 1:2 rate, a
     far mouth not behind the closure, a kerb under a closure, a missing strip ring (and the planned fill finds the
@@ -152,16 +153,70 @@ def test_forced_pin_rates_clear_widths_radius_and_mirror_are_measured():
     assert out["params"]["corridor"]["clear_width_measured_m"] == 11.36
 
 
-def test_ten_kerbs_clear_of_both_closures_cw_outside_kerbs_clipped():
+def test_kerbs_clear_of_both_closures_cw_outside_kerbs_clipped_fold_kerbs_trimmed():
+    """five corners x (outside + inside) detected; the 0049 fix round's race.kerbs.trims (measured on the built road:
+    the inside kerb laid across a ribbon fold sits under the other sheet) drops 1514 / 2319 inside and pulls 770
+    inside back to v751-763 — 8 declared, 2 dropped, each with its why"""
     _d, out = _sd()
     ks = {(k["apex"], k["kind"]): k for k in out["kerbs"]}
-    assert len(out["kerbs"]) == 10 and set(a for a, _ in ks) == {0, 770, 1514, 2319, 3297}
-    assert all(ks[(a, "inside")]["side"] == "R" and ks[(a, "outside")]["side"] == "L" for a in (0, 770, 1514, 2319, 3297))
+    assert len(out["kerbs"]) == 8 and set(ks) == {(a, "outside") for a in (0, 770, 1514, 2319, 3297)} | {
+        (0, "inside"), (770, "inside"), (3297, "inside")}, sorted(ks)
+    assert [(d["apex"], d["kind"], d["side"]) for d in out["kerbs_dropped"]] == [(1514, "inside", "R"), (2319, "inside", "R")]
+    assert all(d["why"] and (d["i"], d["j"]) != (0, 0) for d in out["kerbs_dropped"])
+    k770 = ks[(770, "inside")]
+    assert (k770["i"], k770["j"], k770["trimmed_from"]) == (751, 763, [751, 775]) and k770["trim"]["why"], k770
+    assert out["summary"]["kerbs_dropped"] == [[1514, "inside"], [2319, "inside"]]
+    assert out["summary"]["kerb_trims"] == [{"apex": 770, "kind": "inside", "from": [751, 775], "to": [751, 763]}]
+    assert all(k["side"] == ("R" if kind == "inside" else "L") for (a, kind), k in ks.items())
     for a in (1514, 2319, 3297):
         k = ks[(a, "outside")]
         assert k.get("clipped_from"), k                                          # cut back under race_cw's funnels
         assert "race_cw" in (k.get("clip") or {}).get("by", [])
-        assert not ks[(a, "inside")].get("clipped_from")                         # acw's pins are on the inside, in the box
+    assert not ks[(3297, "inside")].get("clipped_from")                          # acw's pins are on the inside, in the box
+
+
+def test_kerb_trims_are_measured_pull_backs_never_guesses():
+    kerbs = [{"apex": 50, "side": "R", "kind": "inside", "i": 45, "j": 55, "wraps": False},
+             {"apex": 50, "side": "L", "kind": "outside", "i": 40, "j": 60, "wraps": False}]
+
+    def run(trims, ks=None):
+        return bb._apply_kerb_trims(copy.deepcopy(ks or kerbs), trims, 100)
+    k, d, f = run([{"apex": 50, "kind": "in", "i": 47, "why": "fold at v45-46"},
+                   {"apex": 50, "kind": "outside", "drop": True, "why": "fold"}])
+    assert f == [] and [x["kind"] for x in k] == ["inside"], f
+    assert (k[0]["i"], k[0]["j"], k[0]["trimmed_from"], k[0]["trim"]) == (47, 55, [45, 55], {"why": "fold at v45-46"})
+    assert d == [{"apex": 50, "side": "L", "kind": "outside", "i": 40, "j": 60, "why": "fold"}]
+    for trims, msg in (([{"apex": 50, "kind": "inside", "j": 58, "why": "x"}], "not a pull-back"),        # lengthens
+                       ([{"apex": 50, "kind": "inside", "i": 52, "j": 49, "why": "x"}], "not a pull-back"),  # reversed
+                       ([{"apex": 50, "kind": "inside", "j": 50}], "no `why`"),
+                       ([{"apex": 51, "kind": "inside", "drop": True, "why": "x"}], "no such kerb"),
+                       ([{"apex": 50, "kind": "inside", "drop": True, "j": 50, "why": "x"}], "drop and i / j together"),
+                       ([{"apex": 50, "kind": "inside", "j": 50, "why": "x"}] * 2, "named twice"),
+                       ([{"apex": 50, "why": "x"}], "needs apex"),
+                       ({"apex": 50}, "must be a list")):
+        _k, _d, f = run(trims)
+        assert any(msg in x for x in f), (trims, f)
+    # a run that wraps the seam pulls back across it
+    k, _d, f = run([{"apex": 0, "kind": "inside", "i": 98, "j": 2, "why": "w"}],
+                   [{"apex": 0, "side": "R", "kind": "inside", "i": 95, "j": 5, "wraps": True}])
+    assert f == [] and (k[0]["i"], k[0]["j"], k[0]["wraps"]) == (98, 2, True)
+
+
+def test_a_kerb_neither_declared_nor_dropped_or_both_fails():
+    def gone(b):
+        b["kerbs"] = [k for k in b["kerbs"] if not (k["apex"] == 0 and k["kind"] == "inside")]
+    fails = _defect(gone)
+    assert any("expected outside + inside at each of the 5 corners" in f for f in fails), fails
+
+    def both(b):
+        b["kerbs_dropped"].append({"apex": 770, "side": "R", "kind": "inside", "i": 751, "j": 775, "why": "x"})
+    fails = _defect(both)
+    assert any("both declared and dropped" in f for f in fails), fails
+
+    def no_why(b):
+        b["kerbs_dropped"][0]["why"] = ""
+    fails = _defect(no_why)
+    assert any("the dropped inside kerb at v1514 carries no why" in f for f in fails), fails
 
 
 def test_mouth_policies_and_forbidden_probes():

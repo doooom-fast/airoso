@@ -5,24 +5,259 @@
  "race_furniture": true,
  "lane_offset": true,
  "frame": "kn5 frame (median dist to centerline.local: engine 50.0 m / kn5 0.0 m)",
- "points": 8993,
+ "points": 8988,
  "spacing_m": 1.5,
- "lap_m": 13489.5,
- "lap_s_est": 365.5,
- "offset_points": 7342,
- "offset_max_m": 9.42,
+ "lap_m": 13481.3,
+ "lap_s_est": 368.8,
+ "offset_points": 7416,
+ "offset_max_m": 9.456,
  "clearance": {
-  "points": 8993,
+  "points": 8988,
   "unmatched": 0,
-  "divider_stations": 7328,
-  "right_side": 7328,
+  "divider_stations": 7334,
+  "right_side": 7334,
   "island_hits": 0,
+  "divider_hits": 0,
   "divider_too_close": 0,
   "edge_too_close": 0,
-  "min_divider_clear_m": 3.387438182591361,
-  "min_edge_clear_m": 3.3618617960938986,
-  "max_lat_m": 9.42002248534024,
+  "min_divider_clear_m": 1.513283533018378,
+  "min_edge_clear_m": 3.602508963023185,
+  "max_lat_m": 9.45616208403071,
   "right_side_frac": 1.0,
   "ok": true
+ },
+ "geometry": {
+  "ramps": [
+   {
+    "kind": "joint",
+    "station": 1683,
+    "from_m": 5.31,
+    "to_m": 6.45,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 1705,
+    "from_m": 5.98,
+    "to_m": 6.33,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 1797,
+    "from_m": 6.71,
+    "to_m": 6.32,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 2143,
+    "from_m": 8.31,
+    "to_m": 6.72,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 2187,
+    "from_m": 6.55,
+    "to_m": 7.67,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 2517,
+    "from_m": 9.36,
+    "to_m": 7.78,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 2747,
+    "from_m": 7.33,
+    "to_m": 8.9,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 2979,
+    "from_m": 8.91,
+    "to_m": 7.33,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 3078,
+    "from_m": 6.34,
+    "to_m": 7.31,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 3482,
+    "from_m": 5.51,
+    "to_m": 4.83,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 4600,
+    "from_m": 6.64,
+    "to_m": 6.28,
+    "len_m": 40.5
+   },
+   {
+    "kind": "leave",
+    "station": 8881,
+    "from_m": 5.81,
+    "to_m": 0.0,
+    "len_m": 58.5
+   },
+   {
+    "kind": "enter",
+    "station": 1551,
+    "from_m": 0.0,
+    "to_m": 7.26,
+    "len_m": 73.5
+   }
+  ],
+  "ramp_clamped": 0,
+  "corner_approach": [
+   {
+    "station": 3028,
+    "xz": [
+     -1974.96,
+     596.45
+    ],
+    "road_radius_m": 7.52,
+    "shift_m": 5.42,
+    "taper_m": 55.5
+   },
+   {
+    "station": 4641,
+    "xz": [
+     52.83,
+     1723.05
+    ],
+    "road_radius_m": 7.97,
+    "shift_m": 3.93,
+    "taper_m": 40.5
+   },
+   {
+    "station": 6593,
+    "xz": [
+     2614.78,
+     517.41
+    ],
+    "road_radius_m": 7.85,
+    "shift_m": 4.77,
+    "taper_m": 48.0
+   }
+  ],
+  "folds": [],
+  "fillets": [
+   {
+    "xz": [
+     2612.99,
+     516.92
+    ],
+    "radius_m": 12.6,
+    "floor_m": 7.85,
+    "lane": "comfort",
+    "window_pts": 16,
+    "turn_deg": -96.7
+   },
+   {
+    "xz": [
+     51.22,
+     1721.46
+    ],
+    "radius_m": 12.6,
+    "floor_m": 7.97,
+    "lane": "comfort",
+    "window_pts": 25,
+    "turn_deg": -128.6
+   },
+   {
+    "xz": [
+     -1973.13,
+     596.36
+    ],
+    "radius_m": 12.6,
+    "floor_m": 7.52,
+    "lane": "comfort",
+    "window_pts": 19,
+    "turn_deg": -104.5
+   },
+   {
+    "xz": [
+     -1985.85,
+     -1273.11
+    ],
+    "radius_m": 12.6,
+    "floor_m": 6.33,
+    "lane": "comfort",
+    "window_pts": 20,
+    "turn_deg": -103.4
+   },
+   {
+    "xz": [
+     -1962.09,
+     -1279.44
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 10,
+    "turn_deg": -60.3
+   },
+   {
+    "xz": [
+     6.0,
+     -1662.2
+    ],
+    "radius_m": 12.6,
+    "floor_m": 8.87,
+    "lane": "comfort",
+    "window_pts": 14,
+    "turn_deg": -78.5
+   }
+  ],
+  "smoothing": [
+   {
+    "iterations": 0,
+    "violations_before": 0,
+    "violations_after": 0,
+    "moved_points": 0,
+    "corridor_clamps": 0
+   },
+   {
+    "iterations": 0,
+    "violations_before": 0,
+    "violations_after": 0,
+    "moved_points": 0,
+    "corridor_clamps": 0
+   }
+  ],
+  "start": {
+   "xz": [
+    -761.98,
+    -1276.1
+   ],
+   "dist_m": 0.0,
+   "requested_xz": [
+    -761.98,
+    -1276.1
+   ],
+   "source": "dummies_race_cw.json AC_TIME_0 midpoint"
+  },
+  "min_radius_m": 12.57,
+  "min_radius_at": 925,
+  "radius_below_floor": 0,
+  "max_turn_deg": 6.8,
+  "turns_over_limit": 0,
+  "turns_over_limit_road_tight": 0,
+  "max_lateral_jump_m": 1.075,
+  "backward_steps": 0,
+  "self_crossings": 0
  }
 }

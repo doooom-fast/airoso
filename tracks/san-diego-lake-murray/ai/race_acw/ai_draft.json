@@ -5,24 +5,195 @@
  "race_furniture": true,
  "lane_offset": true,
  "frame": "kn5 frame (median dist to centerline.local: engine 50.0 m / kn5 0.0 m)",
- "points": 8993,
+ "points": 9013,
  "spacing_m": 1.5,
- "lap_m": 13489.5,
- "lap_s_est": 350.4,
- "offset_points": 7343,
- "offset_max_m": 9.421,
+ "lap_m": 13519.2,
+ "lap_s_est": 350.2,
+ "offset_points": 7442,
+ "offset_max_m": 9.458,
  "clearance": {
-  "points": 8993,
+  "points": 9013,
   "unmatched": 0,
-  "divider_stations": 7329,
-  "right_side": 7329,
+  "divider_stations": 7342,
+  "right_side": 7342,
   "island_hits": 0,
+  "divider_hits": 0,
   "divider_too_close": 0,
   "edge_too_close": 0,
-  "min_divider_clear_m": 3.3526992398575466,
-  "min_edge_clear_m": 3.3798298247266354,
-  "max_lat_m": 9.421232934764939,
+  "min_divider_clear_m": 3.38779425390097,
+  "min_edge_clear_m": 3.607963136729137,
+  "max_lat_m": 9.457984305908639,
   "right_side_frac": 1.0,
   "ok": true
+ },
+ "geometry": {
+  "ramps": [
+   {
+    "kind": "joint",
+    "station": 4392,
+    "from_m": 6.28,
+    "to_m": 6.64,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 5511,
+    "from_m": 4.84,
+    "to_m": 5.51,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 5914,
+    "from_m": 7.28,
+    "to_m": 6.3,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 6014,
+    "from_m": 7.33,
+    "to_m": 8.91,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 6246,
+    "from_m": 8.9,
+    "to_m": 7.34,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 6475,
+    "from_m": 7.78,
+    "to_m": 9.36,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 6806,
+    "from_m": 7.69,
+    "to_m": 6.58,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 6849,
+    "from_m": 6.72,
+    "to_m": 8.31,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 7196,
+    "from_m": 6.32,
+    "to_m": 6.71,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 7288,
+    "from_m": 6.34,
+    "to_m": 5.99,
+    "len_m": 40.5
+   },
+   {
+    "kind": "joint",
+    "station": 7310,
+    "from_m": 6.45,
+    "to_m": 5.31,
+    "len_m": 40.5
+   },
+   {
+    "kind": "leave",
+    "station": 7442,
+    "from_m": 7.26,
+    "to_m": 0.0,
+    "len_m": 73.5
+   },
+   {
+    "kind": "enter",
+    "station": 111,
+    "from_m": 0.0,
+    "to_m": 5.78,
+    "len_m": 58.5
+   }
+  ],
+  "ramp_clamped": 0,
+  "corner_approach": [],
+  "folds": [],
+  "fillets": [
+   {
+    "xz": [
+     -1993.13,
+     -1280.14
+    ],
+    "radius_m": 12.6,
+    "floor_m": 7.22,
+    "lane": "comfort",
+    "window_pts": 14,
+    "turn_deg": 85.3
+   },
+   {
+    "xz": [
+     -1981.72,
+     599.48
+    ],
+    "radius_m": 12.6,
+    "floor_m": 8.13,
+    "lane": "comfort",
+    "window_pts": 12,
+    "turn_deg": 73.2
+   },
+   {
+    "xz": [
+     5.31,
+     -1662.42
+    ],
+    "radius_m": 12.6,
+    "floor_m": 9.98,
+    "lane": "comfort",
+    "window_pts": 13,
+    "turn_deg": 76.6
+   }
+  ],
+  "smoothing": [
+   {
+    "iterations": 0,
+    "violations_before": 0,
+    "violations_after": 0,
+    "moved_points": 0,
+    "corridor_clamps": 0
+   },
+   {
+    "iterations": 0,
+    "violations_before": 0,
+    "violations_after": 0,
+    "moved_points": 0,
+    "corridor_clamps": 0
+   }
+  ],
+  "start": {
+   "xz": [
+    -761.98,
+    -1276.1
+   ],
+   "dist_m": 0.0,
+   "requested_xz": [
+    -761.98,
+    -1276.1
+   ],
+   "source": "dummies_race_acw.json AC_TIME_0 midpoint"
+  },
+  "min_radius_m": 10.3,
+  "min_radius_at": 3003,
+  "radius_below_floor": 0,
+  "max_turn_deg": 8.3,
+  "turns_over_limit": 0,
+  "turns_over_limit_road_tight": 0,
+  "max_lateral_jump_m": 0.291,
+  "backward_steps": 0,
+  "self_crossings": 0
  }
 }

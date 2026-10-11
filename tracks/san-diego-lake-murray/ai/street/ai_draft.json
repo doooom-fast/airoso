@@ -5,24 +5,195 @@
  "race_furniture": false,
  "lane_offset": true,
  "frame": "kn5 frame (median dist to centerline.local: engine 50.0 m / kn5 0.0 m)",
- "points": 8993,
+ "points": 8994,
  "spacing_m": 1.5,
- "lap_m": 13489.5,
- "lap_s_est": 388.6,
- "offset_points": 1718,
- "offset_max_m": 9.83,
+ "lap_m": 13490.4,
+ "lap_s_est": 317.6,
+ "offset_points": 2138,
+ "offset_max_m": 11.709,
  "clearance": {
-  "points": 8993,
+  "points": 8994,
   "unmatched": 0,
-  "divider_stations": 1649,
-  "right_side": 1649,
+  "divider_stations": 1669,
+  "right_side": 1669,
   "island_hits": 0,
+  "divider_hits": 0,
   "divider_too_close": 0,
   "edge_too_close": 0,
-  "min_divider_clear_m": 1.5997954863088877,
-  "min_edge_clear_m": 4.198873363257272,
-  "max_lat_m": 9.830022484645633,
+  "min_divider_clear_m": 4.207280535824474,
+  "min_edge_clear_m": 0.8286155479143336,
+  "max_lat_m": 11.704835107145183,
   "right_side_frac": 1.0,
   "ok": true
+ },
+ "geometry": {
+  "ramps": [
+   {
+    "kind": "hold",
+    "station": 2143,
+    "from_m": 8.72,
+    "to_m": 8.08,
+    "gap_m": 66.0,
+    "len_m": 67.5
+   },
+   {
+    "kind": "leave",
+    "station": 2517,
+    "from_m": 9.77,
+    "to_m": 0.0,
+    "len_m": 99.0
+   },
+   {
+    "kind": "enter",
+    "station": 2747,
+    "from_m": 0.0,
+    "to_m": 9.31,
+    "len_m": 94.5
+   },
+   {
+    "kind": "hold",
+    "station": 2979,
+    "from_m": 9.32,
+    "to_m": 7.72,
+    "gap_m": 148.5,
+    "len_m": 150.0
+   },
+   {
+    "kind": "leave",
+    "station": 3482,
+    "from_m": 5.92,
+    "to_m": 0.0,
+    "len_m": 60.0
+   },
+   {
+    "kind": "enter",
+    "station": 4368,
+    "from_m": 0.0,
+    "to_m": 6.43,
+    "len_m": 64.5
+   },
+   {
+    "kind": "leave",
+    "station": 4600,
+    "from_m": 7.05,
+    "to_m": 0.0,
+    "len_m": 72.0
+   },
+   {
+    "kind": "enter",
+    "station": 1683,
+    "from_m": 0.0,
+    "to_m": 6.86,
+    "len_m": 69.0
+   }
+  ],
+  "ramp_clamped": 0,
+  "corner_approach": [],
+  "folds": [],
+  "fillets": [
+   {
+    "xz": [
+     2614.32,
+     518.92
+    ],
+    "radius_m": 12.6,
+    "floor_m": 7.85,
+    "lane": "comfort",
+    "window_pts": 17,
+    "turn_deg": -86.7
+   },
+   {
+    "xz": [
+     51.02,
+     1722.9
+    ],
+    "radius_m": 12.6,
+    "floor_m": 7.97,
+    "lane": "comfort",
+    "window_pts": 21,
+    "turn_deg": -117.4
+   },
+   {
+    "xz": [
+     -1966.29,
+     595.76
+    ],
+    "radius_m": 12.6,
+    "floor_m": 7.52,
+    "lane": "hard",
+    "window_pts": 27,
+    "turn_deg": -110.5
+   },
+   {
+    "xz": [
+     -1990.85,
+     -1274.65
+    ],
+    "radius_m": 12.6,
+    "floor_m": 6.33,
+    "lane": "comfort",
+    "window_pts": 18,
+    "turn_deg": -100.6
+   },
+   {
+    "xz": [
+     -1962.96,
+     -1280.69
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": -45.2
+   },
+   {
+    "xz": [
+     6.0,
+     -1662.2
+    ],
+    "radius_m": 12.6,
+    "floor_m": 8.87,
+    "lane": "comfort",
+    "window_pts": 14,
+    "turn_deg": -78.5
+   }
+  ],
+  "smoothing": [
+   {
+    "iterations": 0,
+    "violations_before": 0,
+    "violations_after": 0,
+    "moved_points": 0,
+    "corridor_clamps": 0
+   },
+   {
+    "iterations": 0,
+    "violations_before": 0,
+    "violations_after": 0,
+    "moved_points": 0,
+    "corridor_clamps": 0
+   }
+  ],
+  "start": {
+   "xz": [
+    -761.98,
+    -1276.1
+   ],
+   "dist_m": 0.0,
+   "requested_xz": [
+    -761.98,
+    -1276.1
+   ],
+   "source": "dummies_street.json AC_TIME_0 midpoint"
+  },
+  "min_radius_m": 12.5,
+  "min_radius_at": 2430,
+  "radius_below_floor": 0,
+  "max_turn_deg": 6.9,
+  "turns_over_limit": 0,
+  "turns_over_limit_road_tight": 0,
+  "max_lateral_jump_m": 0.859,
+  "backward_steps": 0,
+  "self_crossings": 0
  }
 }

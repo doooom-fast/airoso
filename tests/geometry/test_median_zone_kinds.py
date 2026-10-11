@@ -11,6 +11,7 @@ mapping vertex i -> n-1-i. Plain ``test_*`` for tests/run_tests.py.
 from __future__ import annotations
 
 import json
+import math
 import tempfile
 from pathlib import Path
 
@@ -147,3 +148,31 @@ def test_closed_lap_seam_band_is_vertex_0s():
     assert not z.contains(wrong, 0.0, ALL_KINDS)
     # an OPEN polyline keeps its one-sided end tangents
     assert not MedianZone.load(_project()).closed
+
+
+def test_a_trimmed_corner_band_runs_through_its_corner_not_the_folded_offsets():
+    """2026-10-11: barrier_bands.json `edge_corners` — on that side the removed vertices have NO band point and
+    the band is the polyline in_vertex band point -> X -> out_vertex band point (what the author sweeps), so
+    audit D exempts the corner strip and nothing at the folded offsets; reversed() moves the corner to the
+    other side of travel with its vertices walked backwards"""
+    d = _project(island=(0, -1), centre=(0, -1), mouth=False)
+    bj = json.loads((d / "data" / "barrier_bands.json").read_text())
+    # straight road along +z: right of travel is +x here (left normal (-tz, tx) = (-1, 0)); the R band at x = +4.515
+    X = [6.0, 100.0]                                       # an (artificial) corner 1.5 m outboard at v20
+    bj["edge_corners"] = [{"side": "R", "in_vertex": 18, "out_vertex": 22, "removed": [19, 20, 21], "xz": X}]
+    (d / "data" / "barrier_bands.json").write_text(json.dumps(bj))
+    z = MedianZone.load(d)
+    off = W / 2 - 0.485
+    assert z._band_point("edge_R", 20) is None and z._band_point("edge_L", 20) is not None
+    assert z.contains(6.0, 100.0, ALL_KINDS)               # AT X
+    assert z.contains(5.25, 95.0, ALL_KINDS)               # on the leg in_vertex (x 4.515, z 90) -> X
+    assert not z.contains(off, 100.0, ALL_KINDS)            # the removed vertex's own (folded) band point
+    assert z.contains(-off, 100.0, ALL_KINDS)               # the other side is untouched
+    spans = z.edge_corner_spans("edge_R")
+    assert len(spans) == 1 and spans[0][:2] == (18, 22) and spans[0][2][1] == (6.0, 100.0)
+    assert z.edge_corner_spans("edge_L") == []
+    r = z.reversed()
+    rs = r.edge_corner_spans("edge_L")                      # walked backwards the corner is on the LEFT
+    assert len(rs) == 1 and rs[0][:2] == (N - 1 - 22, N - 1 - 18) and rs[0][2][1] == (6.0, 100.0)
+    assert r._band_point("edge_L", N - 1 - 20) is None and r.contains(6.0, 100.0, ALL_KINDS)
+    assert math.dist(rs[0][2][0], (off, 110.0)) < 1e-9 and math.dist(rs[0][2][2], (off, 90.0)) < 1e-9

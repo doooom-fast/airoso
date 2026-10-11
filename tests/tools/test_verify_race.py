@@ -72,6 +72,13 @@ def _edge_obj(pts, side, ks, ends, part=0, fold=0):
             [_lip(pts, k, side) for k in ks])
 
 
+def _frame(c):
+    """the ring frame (tangent of forward travel, lateral scale 1) of a ring centre on the synthetic ring:
+    anticlockwise travel, so the tangent at polar angle a is (-sin a, cos a)"""
+    a = math.atan2(c[2], c[0])
+    return [round(-math.sin(a), 5), round(math.cos(a), 5), 1.0]
+
+
 def _authored(pts):
     objs, centres = [], {}
     ks = list(range(CENTRE_RUN[0], CENTRE_RUN[1] + 1))
@@ -103,6 +110,7 @@ def _authored(pts):
         "corners": [{"apex_vertex": 150}], "kerbs_declared_unmatched": [], "failed_runs": [],
         "spawn_clearance": {"race_cw": {"hard": [], "notes": [], "synthesised": False}},
         "other_deck_above": [], "objects": objs, "ring_centres": centres,
+        "ring_frames": {n: [_frame(c) for c in cs] for n, cs in centres.items()},
     }
 
 
@@ -144,22 +152,119 @@ def test_chain_run_end_off_the_declared_vertex_fails():
     assert any("ends" in f and "declared end vertices" in f for f in r["fails"]), r["fails"]
 
 
-def test_missing_edge_rings_beyond_the_reported_fold_drop_fail():
+def test_missing_edge_rings_need_the_declarations_trim_not_the_authors_count():
+    """D (2026-10-11): a declared edge vertex without a ring passes only when barrier_bands.json edge_corners
+    trims it — a SET check. It used to be a COUNT against the author's own fold_skipped_run, which passed the
+    rehearsal's 23 missing vertices against 27 self-reported drops that were not the same vertices."""
     pts = _pts()
     a = _authored(pts)
     name = "1WALL_race_edge_R_t_0_0"
-    a["ring_centres"][name] = a["ring_centres"][name][:100]     # rings 100..119 gone, end still 'free' -> hole
+    cs = a["ring_centres"][name]
+    a["ring_centres"][name] = cs[:100]                          # rings 100..119 gone, end still 'free' -> hole
+    a["ring_frames"][name] = a["ring_frames"][name][:100]
     r = _run(a)
     assert any(f.startswith("D: edge R") and "without a ring" in f for f in r["fails"]), r["fails"]
     assert any("free end" in f and "not at a declared gap" in f for f in r["fails"]), r["fails"]
-    # the same loss, declared as fold-dropped by the author, is accepted (the inside-apex rule)
+    # the author reporting those rings as fold-dropped no longer excuses them
     for o in a["objects"]:
         if o["name"] == name:
             o["fold_skipped_run"] = 20
-            o["ends"] = ["join", "join"]            # ...but a join that nothing meets is still a miss
+            o["ends"] = ["join", "join"]            # ...and a join that nothing meets is still a miss
     r = _run(a)
-    assert not any("without a ring" in f for f in r["fails"]), r["fails"]
+    assert any("no declared edge corner trims" in f for f in r["fails"]), r["fails"]
     assert any("no same-side object meets it" in f for f in r["fails"]), r["fails"]
+    # the declaration trimming exactly those vertices accepts them — and wants its corner BUILT
+    b = _bands()
+    b["edge_corners"] = [{"side": "R", "in_vertex": 99, "out_vertex": 120, "removed": list(range(100, 120)),
+                          "xz": [cs[99][0], cs[99][2]]}]
+    r = _run(a, b)
+    assert not any("without a ring" in f for f in r["fails"]), r["fails"]
+    assert not any("declared but not built" in f for f in r["fails"]), r["fails"]
+    b["edge_corners"][0]["xz"] = [cs[99][0] + 0.5, cs[99][2]]
+    r = _run(a, b)
+    assert any("declared but not built" in f for f in r["fails"]), r["fails"]
+    # ...on that side only: the same trim declared on L does not cover R's hole
+    b["edge_corners"][0].update(side="L", xz=[cs[99][0], cs[99][2]])
+    assert any(f.startswith("D: edge R") and "without a ring" in f for f in _run(a, b)["fails"])
+
+
+def _trimmed_corner(pts, k0=40, k1=44, side="R"):
+    """the authored file + bands with a strip TRIMMED between vertices k0 and k1 on `side`: the legs' tangent
+    lines meet at X (0.22 m outside the 109.5 m arc), rings k0 -> fill -> X (mitred) -> fill -> k1"""
+    a = _authored(pts)
+    name = f"1WALL_race_edge_{side}_t_0_0"
+    cs, fr = a["ring_centres"][name], a["ring_frames"][name]
+    A, B = cs[k0], cs[k1]
+    ta, tb = fr[k0], fr[k1]
+    d = ta[0] * (-tb[1]) - ta[1] * (-tb[0])                   # X = A + t ta = B - u tb
+    t = ((B[0] - A[0]) * (-tb[1]) - (B[2] - A[2]) * (-tb[0])) / d
+    X = [A[0] + t * ta[0], A[1], A[2] + t * ta[1]]
+    bis = [ta[0] + tb[0], ta[1] + tb[1]]
+    L = math.hypot(*bis)
+    bis = [bis[0] / L, bis[1] / L]
+    ls = 1.0 / (bis[0] * ta[0] + bis[1] * ta[1])
+
+    def mid(p, q):
+        return [(p[0] + q[0]) / 2, p[1], (p[2] + q[2]) / 2]
+
+    def chord(p, q):
+        dx, dz = q[0] - p[0], q[2] - p[2]
+        n = math.hypot(dx, dz)
+        return [dx / n, dz / n, 1.0]
+    new_c = [mid(A, X), [round(v, 3) for v in X], mid(X, B)]
+    new_f = [chord(A, X), [bis[0], bis[1], ls], chord(X, B)]
+    a["ring_centres"][name] = cs[:k0 + 1] + new_c + cs[k1:]
+    a["ring_frames"][name] = fr[:k0 + 1] + new_f + fr[k1:]
+    b = _bands()
+    b["edge_corners"] = [{"side": side, "in_vertex": k0, "out_vertex": k1, "removed": list(range(k0 + 1, k1)),
+                          "xz": [round(X[0], 3), round(X[2], 3)]}]
+    return a, b, name
+
+
+def test_a_declared_trimmed_corner_is_measured_on_its_polyline():
+    """H across a declared edge corner follows in_vertex -> X -> out_vertex (not the offset curve), so the
+    trimmed strip measures ON it: no fold span, nothing unmeasured; without the declaration the same strip
+    chords the offset curve and H fails"""
+    pts = _pts()
+    widths = [W] * (N + 1)
+    a, b, name = _trimmed_corner(pts)
+    r = vr.verify(a, b, pts, _island_w(), widths=widths)
+    assert r["ok"], r["fails"]
+    c = r["counts"]
+    assert c["chord_spans_fold"] == 0 and c["chord_spans_unmeasured"] == 0 and c["chord_max_m"] < 0.02, c["chord_worst"]
+    assert c["inside_out_spans"] == 0 and c["edge_corners"][0]["nearest_ring_m"] < 0.01
+    r = vr.verify(a, _bands(), pts, _island_w(), widths=widths)
+    assert any(f.startswith("H: ") for f in r["fails"]), r["fails"]
+
+
+def test_inside_out_spans_fail():
+    """I (2026-10-11): a profile column running backwards between two rings is a span of the swept solid
+    turned inside-out — FAIL; so is an object whose frames cannot be matched to its rings"""
+    pts = _pts()
+    a = _authored(pts)
+    assert _run(a)["counts"]["inside_out_spans"] == 0
+    name = "1WALL_race_edge_L_t_0_0"
+    f = a["ring_frames"][name][50]
+    a["ring_frames"][name][50] = [-f[0], -f[1], f[2]]          # one ring's profile turned round
+    r = _run(a)
+    assert r["counts"]["inside_out_spans"] == 2 and any(x.startswith("I: 2 inside-out spans") for x in r["fails"]), r["fails"]
+    a = _authored(pts)
+    c = a["ring_centres"][name]
+    t = a["ring_frames"][name][60]
+    c[60] = [c[59][0] - 0.5 * t[0], c[59][1], c[59][2] - 0.5 * t[1]]     # a ring stepped 0.5 m BACK past its predecessor
+    r = _run(a)
+    assert r["counts"]["inside_out_spans"] >= 1 and name in r["counts"]["inside_out_by_object"], r["counts"]
+    # the mitred corner of a trimmed fold is NOT inside-out (the legs clear the mitre)
+    a, b, _ = _trimmed_corner(pts)
+    assert _run(a, b)["counts"]["inside_out_spans"] == 0
+    a = _authored(pts)
+    del a["ring_frames"][name]
+    assert any(x.startswith("I: 1 objects carry no ring_frames") for x in _run(a)["fails"])
+    # a kerb is measured about its mid-line (+-kerb_width / 2)
+    a = _authored(pts)
+    kf = a["ring_frames"]["1KERB_race_150_out"]
+    kf[5] = [-kf[5][0], -kf[5][1], 1.0]
+    assert "1KERB_race_150_out" in _run(a)["counts"]["inside_out_by_object"]
 
 
 def test_edge_ring_inside_a_declared_gap_fails():

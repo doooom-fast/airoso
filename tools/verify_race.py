@@ -17,11 +17,14 @@ drive_test's ``barrier_missing`` then proves the strips are in the BUILT OBJ (L5
      vertex the band declares (centre_w > 0), never on a median island beyond the shared nose
      vertex, never on Alvarado or inside the hairpin arc; the run's first / last ring within
      END_TOL_M of the declared end vertices; consecutive PARTS of a run share their boundary ring
-  D  kerb-line strips — every declared edge vertex has a ring on each side, except the
-     fold-dropped rings the author reports (the inside lip of the five right-handers); no ring
-     stands inside a declared gap (the three bridge spans); every `join` end meets the neighbouring
-     object's end (JOIN_TOL_M) and every `free` end stands at a declared gap edge — a free end in
-     the middle of a declared stretch is a hole in the wall
+  D  kerb-line strips — every declared edge vertex has a ring on each side, except the vertices
+     the DECLARATION trims (barrier_bands.json `edge_corners[].removed`: the inside lips of the five
+     right-handers, where the strip is cut to the curb's own corner) — a SET check since 2026-10-11
+     (it was a count against the author's own fold_skipped_run, which passed 23 missing vertices
+     against 27 self-reported drops that were not the same vertices); every declared corner has an
+     authored ring AT its X (CORNER_TOL_M); no ring stands inside a declared gap (the three bridge
+     spans); every `join` end meets the neighbouring object's end (JOIN_TOL_M) and every `free` end
+     stands at a declared gap edge — a free end in the middle of a declared stretch is a hole in the wall
   A swept strip is continuous between ANY two consecutive rings (the mesh spans them); how CLOSELY it
   follows the declaration between them is H.
   E  race kerbs — the declared (apex, in|out) set == the authored set, every kerb has stations,
@@ -45,7 +48,15 @@ drive_test's ``barrier_missing`` then proves the strips are in the BUILT OBJ (L5
      FAILS (the author keeps it <= 0.10 m). Spans where the declared curve folds back (an inside lip
      tighter than its offset: the author chords those on purpose) are counted, not judged; ring
      spacing above 3.5 m is reported. The 2026-10-11 rehearsal measured 0.27 m / 7.02 m at the seam
-     corner's outside lip before densify_rings.
+     corner's outside lip before densify_rings. Across a declared trimmed corner the declared curve
+     is the polyline in_vertex band point -> X -> out_vertex band point (the strip is cut to the curb's
+     corner there), so those spans are measured like any other, not counted as folds.
+  I  inside-out (2026-10-11) — every consecutive pair of rings of every chain / kerb-line strip / race
+     kerb object, rebuilt from the authored ring centres and ring_frames (tangent + lateral scale): the
+     two extreme profile columns (+-barrier_half_m x ls; a kerb +-kerb_width_m / 2 x ls about its mid-line)
+     must both ADVANCE along the span's mean tangent — a column moving backwards is a span of the swept
+     solid turned inside-out (the 2026-10-11 rehearsal had six on the R strips and seven on the inside
+     kerbs, all at the folds). Any such span FAILS; an object without ring_frames FAILS (not measurable).
 
 Reported, never gated: another ROAD sheet above a strip base (a fold / mouth defect for its owner,
 0033/0046 class), the worst deck-vs-data height, the minimum spawn clearance.
@@ -85,6 +96,8 @@ SPACING_ROUND_M = 0.015 # H: ring_centres are rounded to 0.01 m, so a 3.500 m sp
 DENSE_PER_VERTEX = 32   # H: declared-curve samples per centreline interval
 OFF_CURVE_M = 0.5       # H: a ring centre farther than this from every declared sample is not measured (C / D judge it)
 SPAN_MAX_VERTICES = 40  # H: a span covering more centreline intervals than this (~120 m) is not measured (D judges holes)
+CORNER_TOL_M = 0.05     # D: a declared trimmed corner's X vs the nearest authored ring centre of that side (centres are
+#                         rounded to 0.01 m; the corner ring stands ON X by construction)
 CAR_HALF_W_M = 0.95     # a 1.9 m car on a grid / pit slot
 SPAWN_MARGIN_M = 0.30   # F: HARD floor between a slot's car and any strip face (GATES-CHANGELOG 2026-10-11)
 FACING = ("AC_START", "AC_PIT", "AC_HOTLAP")   # the slots a car sits on (AC_TIME_* are timing planes)
@@ -155,7 +168,8 @@ def verify(authored: dict | None, bands: dict, pts: list, island_w: list, *, all
     warns: list[str] = []
     counts: dict = {}
     if not pre_author:
-        _verify_authored(authored or {}, bands, pts, island_w, allow_standin, fails, warns, counts)
+        _verify_authored(authored or {}, bands, pts, island_w, allow_standin, fails, warns, counts, widths)
+        _verify_inside_out(authored or {}, bands, fails, warns, counts)
         if widths is not None:
             _verify_density(authored or {}, bands, pts, widths, fails, warns, counts)
     m = _unique_count(pts)
@@ -376,11 +390,15 @@ def declared_curve(bands: dict, pts: list, widths: list, side: str, per_vertex: 
         tx, tz = b[0] - a[0], b[2] - a[2]
         L = math.hypot(tx, tz) or 1.0
         return tx / L, tz / L
+    corners = [c for c in (bands.get("edge_corners") or []) if side != "C" and str(c.get("side")) == side]
+    removed = {int(v) % m for c in corners for v in c.get("removed", [])}
     out = {}
     for k in range(min(m, len(flags))):
         k1 = (k + 1) % m
         if not (flags[k] > 0 and k1 < len(flags) and flags[k1] > 0):
             continue
+        if k in removed or k1 in removed:
+            continue                      # a trimmed corner's interval: laid below as in -> X -> out
         (t0x, t0z), (t1x, t1z) = tangent(k), tangent(k1)
         la, lb = lat_of(k), lat_of(k1)
         for j in range(per_vertex):
@@ -397,6 +415,32 @@ def declared_curve(bands: dict, pts: list, widths: list, side: str, per_vertex: 
             t = tangent(k1)
             lat = lat_of(k1)
             out[k1 * per_vertex] = (pts[k1][0] - t[1] * lat, pts[k1][2] + t[0] * lat, t[0], t[1])
+    # trimmed corners: the band runs straight from the in_vertex's band point to X and on to the out_vertex's,
+    # sampled over the same index range (in * per_vertex .. out * per_vertex), X itself one of the samples
+    n_samples = m * per_vertex
+    for cn in corners:
+        i, j = int(cn["in_vertex"]) % m, int(cn["out_vertex"]) % m
+        ti, tj = tangent(i), tangent(j)
+        A = (pts[i][0] - ti[1] * lat_of(i), pts[i][2] + ti[0] * lat_of(i))
+        B = (pts[j][0] - tj[1] * lat_of(j), pts[j][2] + tj[0] * lat_of(j))
+        X = (float(cn["xz"][0]), float(cn["xz"][1]))
+        l0, l1 = math.dist(A, X), math.dist(X, B)
+        N = ((j - i) % m) * per_vertex
+        if N <= 0 or l0 + l1 <= 0:
+            continue
+        din = ((X[0] - A[0]) / (l0 or 1.0), (X[1] - A[1]) / (l0 or 1.0))
+        dout = ((B[0] - X[0]) / (l1 or 1.0), (B[1] - X[1]) / (l1 or 1.0))
+        qx = min(N - 1, max(1, round(N * l0 / (l0 + l1))))
+        for q in range(N):
+            if q < qx:
+                f = q / qx
+                pt, t = (A[0] + (X[0] - A[0]) * f, A[1] + (X[1] - A[1]) * f), din
+            elif q == qx:
+                pt, t = X, din            # X closes the in-leg: the step onto it runs along din
+            else:
+                f = (q - qx) / (N - qx)
+                pt, t = (X[0] + (B[0] - X[0]) * f, X[1] + (B[1] - X[1]) * f), dout
+            out[(i * per_vertex + q) % n_samples] = (pt[0], pt[1], t[0], t[1])
     return out
 
 
@@ -518,7 +562,56 @@ def _verify_density(authored, bands, pts, widths, fails, warns, counts):
                    "ring_spacing_max_measured_m": round(sp_ok, 3)})
 
 
-def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns, counts):
+def inside_out_spans(centres: list, frames: list, half: float) -> list[int]:
+    """span indices i (rings i -> i+1) where one of the two extreme profile columns — the ring centre +-
+    half x ls along the ring's left normal (-tz, tx) — moves BACKWARDS (or not at all) along the span's mean
+    tangent: the swept solid is inside-out there. The test is affine in the column offset, so the two
+    extremes bound every column of the profile. centres: [[x, y, z], ...]; frames: [[tx, tz, ls], ...]."""
+    bad = []
+    for i in range(min(len(centres), len(frames)) - 1):
+        (ax, _, az), (bx, _, bz) = centres[i][:3], centres[i + 1][:3]
+        ta, tb = frames[i], frames[i + 1]
+        tmx, tmz = ta[0] + tb[0], ta[1] + tb[1]
+        for o in (-1.0, 1.0):
+            sa, sb = o * half * float(ta[2]), o * half * float(tb[2])
+            dx = (bx - tb[1] * sb) - (ax - ta[1] * sa)
+            dz = (bz + tb[0] * sb) - (az + ta[0] * sa)
+            if dx * tmx + dz * tmz <= 0.0:
+                bad.append(i)
+                break
+    return bad
+
+
+def _verify_inside_out(authored, bands, fails, warns, counts):
+    """I: no span of any chain / kerb-line strip / race kerb is inside-out (ring_centres + ring_frames)"""
+    params = bands.get("params", {}) or {}
+    bh = float(params.get("barrier_half_m", 0.335))
+    kh = float(params.get("kerb_width_m", 1.0)) / 2.0
+    rc = authored.get("ring_centres", {}) or {}
+    rf_ = authored.get("ring_frames", {}) or {}
+    total, per, unmeasured = 0, {}, []
+    for o in authored.get("objects", []):
+        if o.get("kind") not in ("chain", "edge", "kerb"):
+            continue
+        cs, fr = rc.get(o["name"], []), rf_.get(o["name"])
+        if not fr or len(fr) != len(cs):
+            unmeasured.append(o["name"])
+            continue
+        bad = inside_out_spans(cs, fr, kh if o.get("kind") == "kerb" else bh)
+        if bad:
+            per[o["name"]] = bad[:12]
+            total += len(bad)
+    if unmeasured:
+        fails.append(f"I: {len(unmeasured)} objects carry no ring_frames matching their ring_centres — inside-out not "
+                     f"measurable (re-author with tools/author_race_furniture_blend.py): {unmeasured[:6]}")
+    if total:
+        worst = sorted(per.items(), key=lambda kv: -len(kv[1]))
+        fails.append(f"I: {total} inside-out spans (a profile column runs backwards between two rings): "
+                     + "; ".join(f"{n} spans {v}" for n, v in worst[:6]))
+    counts.update({"inside_out_spans": total, "inside_out_by_object": per, "inside_out_unmeasured": len(unmeasured)})
+
+
+def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns, counts, widths=None):
     m = _unique_count(pts)
     grid = VertexGrid(pts[:m])
     objects = authored.get("objects", [])
@@ -680,24 +773,69 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
             covered.setdefault(side, set()).add(k)
             if k < len(es) and not es[k] > 0 and all(not es[(k + d) % m] > 0 for d in (-1, 1)):
                 on_gap[side] = on_gap.get(side, 0) + 1
-    allowed = {"L": 0, "R": 0}
-    for o in edge_objs:
-        if int(o.get("part", 0)) == 0:
-            allowed[str(o.get("side"))] = allowed.get(str(o.get("side")), 0) + int(o.get("fold_skipped_run", 0) or 0)
+    reported = {"L": 0, "R": 0}          # the author's own count — reported, never the allowance
+    for o in edge_objs:                  # (each trimmed corner is reported by the one object holding its corner ring)
+        reported[str(o.get("side"))] = reported.get(str(o.get("side")), 0) + int(o.get("fold_skipped_run", 0) or 0)
+    decl_corners = list(bands.get("edge_corners") or [])
+    trimmed: dict[str, set] = {"L": set(), "R": set()}
+    for c in decl_corners:
+        trimmed.setdefault(str(c.get("side")), set()).update(int(v) % m for v in c.get("removed", []))
     missing: dict[str, list] = {"L": [], "R": []}
+    undeclared: dict[str, list] = {"L": [], "R": []}
     declared_edge = [k for k in range(min(m, len(es))) if es[k] > 0]
+    # a ring AT a vertex's declared band point covers it too: inside a tight corner the inside lip's offset
+    # (up to 14.5 m) stands nearer to the other leg's vertices than to its own, so the nearest-vertex map
+    # alone loses the leg rings either side of a trimmed corner (v774 / v1517 on SD) that stand exactly there
+    by_cell: dict[tuple, list] = {}
+    if widths is not None:
+        params_ = bands.get("params", {}) or {}
+        c_ = params_.get("edge_centre_from_lip_m")
+        c_ = float(c_) if c_ is not None else (-0.485 if str(params_.get("edge_mode", "road")) == "road" else 0.445)
+        for o in edge_objs:
+            for q in rc.get(o["name"], []):
+                by_cell.setdefault((str(o.get("side")), int(math.floor(q[0])), int(math.floor(q[2]))), []).append(q)
+
+    def at_band_point(side, k):
+        if widths is None:
+            return False
+        lx, lz = _left_normal_at(pts, k, m)
+        lat = (1.0 if side == "L" else -1.0) * (float(widths[k]) / 2.0 + c_)
+        bx, bz = pts[k][0] + lx * lat, pts[k][2] + lz * lat
+        for i in (-1, 0, 1):
+            for j in (-1, 0, 1):
+                for q in by_cell.get((side, int(math.floor(bx)) + i, int(math.floor(bz)) + j), ()):
+                    if math.hypot(q[0] - bx, q[2] - bz) <= CORNER_TOL_M:
+                        return True
+        return False
     for side in ("L", "R"):
         cov = covered.get(side, set())
         for k in declared_edge:
-            if not any(((k + d) % m) in cov for d in range(-VERTEX_TOL, VERTEX_TOL + 1)):
+            if not any(((k + d) % m) in cov for d in range(-VERTEX_TOL, VERTEX_TOL + 1)) and not at_band_point(side, k):
                 missing[side].append(k)
-        if len(missing[side]) > allowed.get(side, 0):
-            fails.append(f"D: edge {side}: {len(missing[side])} declared vertices without a ring "
-                         f"(author reports {allowed.get(side, 0)} fold-dropped): {missing[side][:12]}")
+        undeclared[side] = [k for k in missing[side] if k not in trimmed.get(side, set())]
+        if undeclared[side]:
+            fails.append(f"D: edge {side}: {len(undeclared[side])} declared vertices without a ring that no declared "
+                         f"edge corner trims (barrier_bands.json edge_corners): {undeclared[side][:12]}")
         if on_gap.get(side, 0):
             fails.append(f"D: edge {side}: {on_gap[side]} rings stand inside a declared gap (bridge span)")
+    corner_rows = []
+    for c in decl_corners:
+        side = str(c.get("side"))
+        X = (float(c["xz"][0]), 0.0, float(c["xz"][1]))
+        near = min((_dist_xz(X, q) for o in edge_objs if str(o.get("side")) == side for q in rc.get(o["name"], [])),
+                   default=float("inf"))
+        corner_rows.append({"side": side, "in_vertex": c.get("in_vertex"), "out_vertex": c.get("out_vertex"),
+                            "xz": c["xz"], "nearest_ring_m": round(near, 3) if near < float("inf") else None})
+        if near > CORNER_TOL_M:
+            fails.append(f"D: declared edge corner {side} v{c.get('in_vertex')}->v{c.get('out_vertex')} at "
+                         f"({X[0]:.2f}, {X[2]:.2f}): the nearest authored {side} ring is {near:.2f} m away "
+                         f"(> {CORNER_TOL_M} m) — the corner is declared but not built")
     counts.update({"edge_objects": len(edge_objs), "edge_declared_vertices": len(declared_edge),
-                   "edge_missing": {s: len(v) for s, v in missing.items()}, "edge_fold_dropped": allowed,
+                   "edge_missing": {s: len(v) for s, v in missing.items()},
+                   "edge_missing_undeclared": {s: len(v) for s, v in undeclared.items()},
+                   "edge_trimmed_declared": {s: len(v) for s, v in trimmed.items()},
+                   "edge_corners_declared": len(decl_corners), "edge_corners": corner_rows,
+                   "edge_fold_dropped": reported,
                    "edge_gap_worst_m": round(edge_gap_worst, 3),
                    "edge_rings": sum(len(rc.get(o["name"], [])) for o in edge_objs)})
 
@@ -818,7 +956,9 @@ def main(argv=None) -> int:
         print(f"[verify-race] {c.get('objects')} objects: chain {c.get('chain_objects')} objects / {c.get('chain_runs')} runs / "
               f"{c.get('chain_rings')} rings (worst gap {c.get('chain_gap_worst_m')} m); edge {c.get('edge_objects')} objects / "
               f"{c.get('edge_rings')} rings on {c.get('edge_declared_vertices')} declared vertices (missing {c.get('edge_missing')}, "
-              f"fold-dropped {c.get('edge_fold_dropped')}, worst gap {c.get('edge_gap_worst_m')} m); kerbs {c.get('kerb_objects')} "
+              f"declared trimmed {c.get('edge_trimmed_declared')} at {c.get('edge_corners_declared')} corners, missing undeclared "
+              f"{c.get('edge_missing_undeclared')}, author fold-dropped {c.get('edge_fold_dropped')}, worst gap "
+              f"{c.get('edge_gap_worst_m')} m); kerbs {c.get('kerb_objects')} "
               f"at {c.get('corners')} corners; interpolated {c.get('interpolated')}/{c.get('rings_total')}")
     if not pre_author and "chord_max_m" in c:
         cw = c.get("chord_worst") or {}
@@ -827,6 +967,9 @@ def main(argv=None) -> int:
               f"{c['chord_max_m']} m{where} (FAIL > {CHORD_FAIL_M} m, {c['chord_spans_over']} over); ring spacing max "
               f"{c['ring_spacing_max_m']} m (measured spans {c['ring_spacing_max_measured_m']} m); "
               f"{c['chord_spans_fold']} fold spans, {c['chord_spans_unmeasured']} unmeasured")
+    if not pre_author and "inside_out_spans" in c:
+        print(f"[verify-race] I inside-out: {c['inside_out_spans']} spans over every chain / edge / kerb object "
+              f"({c['inside_out_unmeasured']} objects unmeasured)")
     for lid, rows in (c.get("spawn_slots") or {}).items():
         cells = ", ".join(f"{q['name'].replace('AC_', '')} {q['clear_edge_m']:+.2f}" if q["clear_centre_m"] is None
                           else f"{q['name'].replace('AC_', '')} {q['clear_edge_m']:+.2f}/c{q['clear_centre_m']:+.2f}" for q in rows)

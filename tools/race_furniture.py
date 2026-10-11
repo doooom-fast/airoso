@@ -36,6 +36,13 @@ strip is densified (`densify_rings`) so consecutive rings are <= RING_SPACING_MA
 polyline stays within CHORD_MAX_M of the declared offset curve `offset_xz` (centre lerp + normalised
 lerp of the vertex tangents x lerp of the declared lateral) — the inserted rings stand ON that curve.
 
+FOLDS (2026-10-11): at an inside lip tighter than the strip's offset (the five right-handers' inside lips) the
+offset curve folds back on itself. The strip and the inside race kerb are TRIMMED to the curb's own corner
+(_trim_folds: one mitred corner ring where the offset curve crosses itself, or where its legs extended meet)
+instead of dropping the backward rings and chording back across the fold — that left six inside-out strip spans,
+a hook of wall standing 1-3.5 m inside three exit carriageways and seven inverted kerb spans. The corners are
+what tools/barrier_bands.py declares (`edge_corners`, edge_fold_corners here), so the gates stand on them.
+
 Everything here is testable without Blender: the Blender tool only supplies the deck height per ring
 (a BVH ray onto ROAD/CURB) and turns the (verts, faces, uvs) into mesh objects. The corner detector is
 tools/place_signs.py's, imported READ-ONLY (that file belongs to the signs workflow).
@@ -73,6 +80,16 @@ RING_SPACING_MAX_M = 3.5     # densify_rings: consecutive rings along a strip at
 CHORD_MAX_M = 0.10           # densify_rings: the strip polyline within this of the declared offset curve
 DENSIFY_SAMPLES = 16         # samples of the offset curve per sub-interval when measuring the chord error
 DENSIFY_MAX_SPLIT = 64       # an interval is cut into at most this many pieces
+# fold TRIM (2026-10-11, replaces the one-sided drop): an inside lip tighter than the strip's offset folds
+# the offset curve into a swallowtail; the strip is trimmed to the curb's own corner (_trim_folds)
+FOLD_SEARCH_RINGS = 12       # vertex rings searched either side of a backward cluster for the crossing legs (~36 m)
+FOLD_SEARCH_STATIONS = 120   # the same reach for the 0.3 m kerb stations (~36 m)
+FOLD_MERGE_M = 6.0           # backward steps closer than this (along the run's arc) are ONE fold: the 0.3 m kerb stations
+#                              saw-tooth back at every ~3 m polyline vertex of a folding lip (two vertex spacings)
+FOLD_STRETCH_MIN = 0.5       # an `extend` leg step moves >= this fraction of its centreline step (not curling into the cusp)
+FOLD_EXTEND_MAX_M = 8.0      # an `extend` join runs at most this far past either leg's last ring (SD's seam corner: 7.0)
+MITRE_MAX = 2.0              # corner ring lateral scale cap 1/cos(psi/2) (2.0 at psi 120 deg; SD's corners 67-93: 1.20-1.45)
+MITRE_CLEAR_M = 0.25         # a leg ring stays >= half_w * tan(psi/2) + this from the corner (clear of the reflex mitre tip)
 SHARP_DEG = 30.0             # a hard edge where two faces meet at more than this (a real crease)
 EDGE_INSET_M = 0.82      # road mode: the strip's road-side face at half_w - 0.82 (curb-side face at half_w - 0.15)
 EDGE_WALK_CENTRE_M = 0.445   # walk mode: strip centre at half_w + 0.445 on the sidewalk top (road-side face half_w + 0.11)
@@ -252,7 +269,9 @@ def strip_mesh(rings, cap_start, cap_end, u_scale=MODULE_PITCH_M):
 def kerb_mesh(stations_, side, u_scale=KERB_TILE_M):
     """Open rumble-strip profile per station: lane lip (0, 0) -> ramp top (0.10, h) -> outer top
     (1.0, h) -> outer base (1.0, 0), offsets OUTWARD from the lane lip. Each station: dict(cx, cz, y,
-    tx, tz, lip (lateral of the lane lip, signed +left), h, arc). u across the profile, v = arc / 1 m."""
+    tx, tz, lip (lateral of the lane lip, signed +left), h, arc). u across the profile, v = arc / 1 m.
+    A trimmed fold's corner station carries `ls` (the mitre scale 1/cos(psi/2)): its profile is
+    stretched about the kerb's mid-line so both edges meet their legs' edges as a mitre."""
     verts, faces, uvs = [], [], []
     prof = ((0.0, 0.0), (KERB_RAMP_W, 1.0), (KERB_W, 1.0), (KERB_W, 0.0))
     us = (0.0, 0.1, 0.9, 1.0)
@@ -261,7 +280,10 @@ def kerb_mesh(stations_, side, u_scale=KERB_TILE_M):
         lx, lz = left_normal(s["tx"], s["tz"])
         base = len(verts)
         for (o, hf), u in zip(prof, us):
-            off = s["lip"] + side * o
+            if "ls" in s:
+                off = s["lip"] + side * KERB_W / 2.0 + side * (o - KERB_W / 2.0) * s["ls"]
+            else:
+                off = s["lip"] + side * o
             verts.append((s["cx"] + lx * off, s["y"] + hf * s["h"], s["cz"] + lz * off))
             uvs.append((u, s["arc"] / u_scale))
         rows.append(base)
@@ -616,17 +638,28 @@ def _strip_xz(r):
 
 
 def fill_ring(a, b, f):
-    """a ring ON THE STRAIGHT CHORD a -> b at fraction f (a fold-drop chord: the declared offset curve
-    folds back between a and b, so there is no curve to follow — the chord IS the strip there): the
-    position lerped, the profile turned by the normalised lerp of the two tangents, everything else lerped"""
-    r = {key: val for key, val in a.items() if key != "y"}
+    """a ring ON THE STRAIGHT CHORD a -> b at fraction f — the chord IS the strip there (a trimmed fold's
+    leg running into its mitred corner ring, or a vertex pair whose offset curve runs backwards): the
+    position lerped, the profile SQUARE TO THE CHORD (the leg is a prism that meets the corner's mitre
+    plane flat — the old lerp of the two end tangents twisted it by up to psi / 2), the corner ring's
+    mitre scale never inherited (a fill ring next to a corner keeps its leg's width), everything else
+    lerped"""
+    r = {key: val for key, val in a.items() if key not in ("y", "corner", "corner_turn_deg")}
     pa, pb = _strip_xz(a), _strip_xz(b)
     px, pz = pa[0] + (pb[0] - pa[0]) * f, pa[1] + (pb[1] - pa[1]) * f
-    tx, tz = a["tx"] + (b["tx"] - a["tx"]) * f, a["tz"] + (b["tz"] - a["tz"]) * f
+    tx, tz = pb[0] - pa[0], pb[1] - pa[1]
+    if math.hypot(tx, tz) < 1e-9:
+        tx, tz = a["tx"] + (b["tx"] - a["tx"]) * f, a["tz"] + (b["tz"] - a["tz"]) * f
     L = math.hypot(tx, tz) or 1.0
     r["tx"], r["tz"] = tx / L, tz / L
-    for key in ("y_hint", "lat", "ls", "h", "arc", "s"):
+    for key in ("y_hint", "lat", "h", "arc", "s"):
         r[key] = a[key] + (b[key] - a[key]) * f
+    if a.get("corner") and not b.get("corner"):
+        r["ls"] = b["ls"]
+    elif b.get("corner") and not a.get("corner"):
+        r["ls"] = a["ls"]
+    else:
+        r["ls"] = a["ls"] + (b["ls"] - a["ls"]) * f
     lx, lz = left_normal(r["tx"], r["tz"])
     r["cx"], r["cz"] = px - lx * r["lat"], pz - lz * r["lat"]      # so that cx + left * lat is the chord point
     r["u"] = None
@@ -736,21 +769,28 @@ def edge_lateral(half_w, inset, mode):
 
 def edge_plans(pts, widths, bands, mode="road", height=BARRIER_H):
     """both curb faces: one swept run per edge interval (the gaps are the declared bridge spans, free
-    tapered ends), folded rings dropped on the WHOLE run first, then cut at street boundaries (the
-    boundary ring shared: zero gap, no cap) so every object is named for its street"""
+    tapered ends), every inside-lip fold TRIMMED on the WHOLE run first (trim_folded_rings: one mitred
+    corner ring where the offset curve's legs meet — the curb's own corner), then cut at street
+    boundaries (the boundary ring shared: zero gap, no cap) so every object is named for its street.
+    The declaration wins: when data/barrier_bands.json carries `edge_corners` (tools/barrier_bands.py,
+    the same computation) every trimmed corner must be one it declares, and every declared corner must
+    be trimmed — else SystemExit (re-run the band writer)."""
     m = unique_count(pts)
     st = stations(pts)
     ei = bands["edge_inset_by_vertex"]
     table = street_table(bands)
     plans = []
+    found = []
     for side, sgn in (("L", 1.0), ("R", -1.0)):
         for i, j in intervals(ei, m):
             ks = walk(i, j, m)
             whole = _plan_run(pts, widths, m, st, ks,
                               lambda k, s=sgn: s * edge_lateral(widths[k] / 2.0, ei[k] or EDGE_INSET_M, mode),
                               "free", "free", height, "edge", street_of(ks[0], table), side, (i, j))
-            rings, skipped = drop_folded_rings(whole["rings"])
-            rings, _ = densify_rings(rings, m)      # AFTER the fold drop: a fold chord stays a chord
+            rings, skipped, corners = trim_folded_rings(whole["rings"])
+            found += [dict(c, side=side) for c in corners]
+            assigned = set()
+            rings, _ = densify_rings(rings, m)      # AFTER the trim: the two corner spans stay straight chords
             pieces, cur = [], [rings[0]]
             for r in rings[1:]:
                 cur.append(r)
@@ -762,11 +802,21 @@ def edge_plans(pts, widths, bands, mode="road", height=BARRIER_H):
                 sk = "free" if pi == 0 else "join"
                 ek = "free" if pi == len(pieces) - 1 else "join"
                 plan = dict(whole, rings=pr, street=street_of(pr[0]["k"], table), run=(pr[0]["k"], pr[-1]["k"]),
-                            start_kind=sk, end_kind=ek, fold_skipped=(skipped if pi == 0 else 0))
+                            start_kind=sk, end_kind=ek)
                 for part in _count_inserted(split_plan(plan)):
                     part["cap_start"] = part["cap_start"] and sk == "free"
                     part["cap_end"] = part["cap_end"] and ek == "free"
+                    # each trimmed corner is reported ONCE, by the object that holds its corner ring
+                    mine = [ci for ci, c in enumerate(corners) if ci not in assigned and any(
+                        r.get("corner") and math.dist(_strip_xz(r), c["xz"]) <= 2e-3 for r in part["rings"])]
+                    assigned.update(mine)
+                    part["fold_corners"] = [dict(corners[ci], side=side) for ci in mine]
+                    part["fold_skipped"] = sum(corners[ci]["n_removed"] for ci in mine)
                     plans.append(part)
+            if len(assigned) != len(corners) or sum(c["n_removed"] for c in corners) != skipped:
+                raise SystemExit(f"[race] edge {side} run v{i}-v{j}: {len(corners)} trimmed corners, {len(assigned)} found "
+                                 f"in the swept objects — the corner rings went missing between trim and split")
+    match_declared_corners(bands, found)
     return plans
 
 
@@ -851,61 +901,280 @@ def kerb_plans(rb, corners, bands, mode="road"):
                 h = max(0.005, KERB_H * min(1.0, (d + 0.5) / KERB_TAPER_STATIONS))
                 sts.append({"s": s, "k": k, "cx": x, "cz": z, "y_hint": y + LIFT, "tx": tx / L, "tz": tz / L,
                             "lip": sgn * (outer - KERB_W), "h": h, "arc": q * KERB_STEP_M})
-            sts, skipped = drop_folded_stations(sts, sgn)
+            sts, skipped, kcorners = trim_folded_stations(sts, sgn)
             plans.append({"kind": "kerb", "apex": kb["apex_vertex"], "side": kb["side"], "sub": kb["kind"],
                           "run": [kb["i"], kb["j"]], "stations": sts, "length_m": round(length, 1),
-                          "fold_skipped": skipped})
+                          "fold_skipped": skipped, "fold_corners": kcorners})
     return plans
 
 
-def drop_folded_rings(rings):
-    """The strip-ring form of drop_folded_stations: at an inside apex whose raw local radius is under
-    the ~8 m lip offset (Navajo/Jackson, Jackson/Lake Murray, the seam, the hairpin's inner curl) the
-    offset path runs backwards for a ring or three and a swept strip there is a knot of overlapping
-    faces, a sharp V the driver would hit; dropping those rings chords the wall across the fold at the
-    lip's own crossing point. The chain (lat 0) never folds. Returns (rings, n_dropped)."""
-    if len(rings) < 3:
-        return rings, 0
-    def pos(r):
-        lx, lz = left_normal(r["tx"], r["tz"])
-        return r["cx"] + lx * r["lat"], r["cz"] + lz * r["lat"]
-    keep, dropped = [rings[0]], 0
-    for r in rings[1:]:
-        px, pz = pos(keep[-1])
-        x, z = pos(r)
-        if (x - px) * r["tx"] + (z - pz) * r["tz"] < 0.0:
-            dropped += 1
-            continue
-        keep.append(r)
-    if len(keep) < 2:
-        return rings, 0
-    return keep, dropped
+def _seg_cross(p1, p2, p3, p4):
+    """(t, s) where the line p1 + t (p2 - p1) meets the line p3 + s (p4 - p3); None if parallel"""
+    d = (p2[0] - p1[0]) * (p4[1] - p3[1]) - (p2[1] - p1[1]) * (p4[0] - p3[0])
+    if abs(d) < 1e-12:
+        return None
+    t = ((p3[0] - p1[0]) * (p4[1] - p3[1]) - (p3[1] - p1[1]) * (p4[0] - p3[0])) / d
+    s = ((p3[0] - p1[0]) * (p2[1] - p1[1]) - (p3[1] - p1[1]) * (p2[0] - p1[0])) / d
+    return t, s
 
 
-def drop_folded_stations(sts, sgn):
-    """Where the pavement lip's local radius goes negative (the hairpin's inside lip: R 9.4 m apex
-    on a 30 m flare) the offset path runs BACKWARDS against the centreline tangent and the ribbon
-    folds over itself; a kerb swept there zig-zags inside the fold. Those stations are dropped (the
-    prep's bury-cull would discard their faces anyway); the strip then joins the fold's entry to its
-    exit, which coincide where the lip path crosses itself. Returns (stations, n_dropped)."""
-    if len(sts) < 3:
-        return sts, 0
-    def lip_xz(s):
-        lx, lz = left_normal(s["tx"], s["tz"])
-        mid = s["lip"] + sgn * KERB_W / 2.0
-        return s["cx"] + lx * mid, s["cz"] + lz * mid
-    keep = [sts[0]]
-    dropped = 0
-    for s in sts[1:]:
-        px, pz = lip_xz(keep[-1])
-        x, z = lip_xz(s)
-        if (x - px) * s["tx"] + (z - pz) * s["tz"] < 0.0:
-            dropped += 1
+def _unit2(dx, dz):
+    L = math.hypot(dx, dz) or 1.0
+    return dx / L, dz / L
+
+
+def _mitre(din, dout):
+    """(bisector tangent, cos(psi / 2), signed turn psi) of a corner from leg direction din to dout"""
+    tx, tz = _unit2(din[0] + dout[0], din[1] + dout[1])
+    cos_half = max(1e-6, tx * din[0] + tz * din[1])
+    psi = math.atan2(din[0] * dout[1] - din[1] * dout[0], din[0] * dout[0] + din[1] * dout[1])
+    return (tx, tz), cos_half, psi
+
+
+def corner_ring(a, nxt, X, din, dout, t):
+    """the mitred strip ring AT a trimmed fold's corner X: profile on the bisector of the two leg directions,
+    lateral scale 1/cos(psi/2) (capped at MITRE_MAX) so each face of the strip meets its partner on the other
+    leg as a mitre — the curb-side face lands in the curb's own corner, the road-side face is the corner the
+    driver sees. Deck hint / lateral / height lerped a -> nxt at t (X's fraction along a's segment); u None so
+    densify_rings treats both corner spans as straight chords. Returns (ring, |psi|)."""
+    (tx, tz), cos_half, psi = _mitre(din, dout)
+    r = {key: val for key, val in a.items() if key != "y"}
+    for key in ("y_hint", "lat", "h"):
+        r[key] = a[key] + (nxt[key] - a[key]) * t
+    r["tx"], r["tz"] = tx, tz
+    lx, lz = left_normal(tx, tz)
+    r["cx"], r["cz"] = X[0] - lx * r["lat"], X[1] - lz * r["lat"]     # so that _strip_xz(r) == X
+    r["ls"] = min(MITRE_MAX, a["ls"] / cos_half)
+    r["u"] = None
+    r["inserted"] = r["corner"] = True
+    r["corner_turn_deg"] = round(math.degrees(psi), 1)
+    return r, abs(psi)
+
+
+def corner_station(a, nxt, X, din, dout, t, sgn):
+    """the kerb form of corner_ring: the station's mid-line (lip + sgn KERB_W / 2) at X, profile on the
+    bisector, `ls` = the mitre scale kerb_mesh stretches the profile by about that mid-line"""
+    (tx, tz), cos_half, psi = _mitre(din, dout)
+    r = {key: val for key, val in a.items() if key != "y"}
+    for key in ("y_hint", "lip", "h"):
+        r[key] = a[key] + (nxt[key] - a[key]) * t
+    r["tx"], r["tz"] = tx, tz
+    lx, lz = left_normal(tx, tz)
+    mid = r["lip"] + sgn * KERB_W / 2.0
+    r["cx"], r["cz"] = X[0] - lx * mid, X[1] - lz * mid
+    r["ls"] = min(MITRE_MAX, 1.0 / cos_half)
+    r["corner"] = True
+    r["corner_turn_deg"] = round(math.degrees(psi), 1)
+    return r, abs(psi)
+
+
+def _trim_folds(recs, pos, place, half, search, what):
+    """Offset-curve LOOP REMOVAL on the polyline pos(recs) of ONE run (strip rings or kerb stations) —
+    ledger 0047, 2026-10-11; replaces the one-sided drop (drop_folded_rings / drop_folded_stations), whose
+    test kept the 'ear' rings v768 / v1512 / v2317 / v3295 and chorded BACKWARDS across the fold: six
+    inside-out strip spans on the R side, seven on the inside kerbs, and a hook of wall standing 1-3.5 m
+    inside the exit carriageway at College/Navajo, Navajo/Jackson and Jackson/Lake Murray.
+
+    Where an inside lip is tighter than the offset (|lat| > R: the hairpin v770, College/Navajo v1514,
+    Navajo/Jackson v2319, Jackson/Lake Murray v3297, the seam v0) the offset curve runs forward through a
+    self-intersection X to a cusp, BACKWARDS to a second cusp, and forward through X again (a swallowtail);
+    the ROAD ribbon's own inside edge folds the same way. The pavement's real inside boundary — the curb —
+    is the TRIMMED curve: the in-leg up to X, then the out-leg, a sharp corner. So the furniture does the same:
+      1. a backward step: record i behind record i-1 along EITHER record's tangent (the two-sided test);
+         backward steps within FOLD_MERGE_M of each other (along the run) are one fold;
+      2. each cluster of backward steps is cut between the in-leg segment (a, a+1) and the out-leg segment
+         (b, b+1) that CROSS, the pair removing the fewest records (kind 'loop'); where the legs never cross
+         — the lip flares while it folds (v3297) or the width steps (the seam v0: a Z-fold) — the last
+         in-leg step and the first out-leg step that are not curling into a cusp (polyline step >=
+         FOLD_STRETCH_MIN x the centreline step) are extended to meet, each <= FOLD_EXTEND_MAX_M (kind 'extend');
+      3. ONE mitred corner record (`place`) stands AT X; a leg record nearer X than the reflex mitre tip
+         (half x tan(psi / 2) + MITRE_CLEAR_M along its leg) is dropped too, so no span turns inside-out;
+      4. arcs after X are rebased so the texture (u = arc / pitch) stays continuous along the trimmed run.
+    No trim found (no crossing, no extension within reach) or a leg too short to clear the mitre is a
+    SystemExit: that corner is authored by hand. Returns (records, n_dropped, corners); a corner record is
+    what tools/barrier_bands.py declares as `edge_corners` (edge_fold_corners)."""
+    n = len(recs)
+    if n < 3:
+        return recs, 0, []
+    P = [pos(r) for r in recs]
+
+    def backward(i):
+        dx, dz = P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]
+        return (dx * recs[i - 1]["tx"] + dz * recs[i - 1]["tz"] < 0.0) or (dx * recs[i]["tx"] + dz * recs[i]["tz"] < 0.0)
+
+    def leg_ok(i):          # the step i -> i+1 is a real leg, not the curl into a cusp
+        cs = math.hypot(recs[i + 1]["cx"] - recs[i]["cx"], recs[i + 1]["cz"] - recs[i]["cz"]) or 1e-9
+        ss = math.hypot(P[i + 1][0] - P[i][0], P[i + 1][1] - P[i][1])
+        return ss / cs >= FOLD_STRETCH_MIN and not backward(i + 1)
+
+    clusters = []
+    for i in range(1, n):
+        if backward(i):
+            if clusters and recs[i]["arc"] - recs[clusters[-1][1]]["arc"] <= FOLD_MERGE_M:
+                clusters[-1][1] = i
+            else:
+                clusters.append([i, i])
+    cuts = []
+    for f0, f1 in clusters:
+        best = None
+        for a in range(f0 - 1, max(-1, f0 - 1 - search), -1):         # in-leg segment (a, a+1), a < f0
+            for b in range(f1, min(n - 1, f1 + search)):               # out-leg segment (b, b+1), b >= f1
+                r = _seg_cross(P[a], P[a + 1], P[b], P[b + 1])
+                if r and 0.0 <= r[0] <= 1.0 and 0.0 <= r[1] <= 1.0 and (best is None or b - a < best[1] - best[0]):
+                    X = (P[a][0] + r[0] * (P[a + 1][0] - P[a][0]), P[a][1] + r[0] * (P[a + 1][1] - P[a][1]))
+                    best = (a, b, X, _unit2(P[a + 1][0] - P[a][0], P[a + 1][1] - P[a][1]),
+                            _unit2(P[b + 1][0] - P[b][0], P[b + 1][1] - P[b][1]), r[0], "loop", 0.0)
+        if best is None:
+            for a in range(f0 - 1, max(0, f0 - 1 - search), -1):      # in-leg step (a-1, a)
+                if not leg_ok(a - 1):
+                    continue
+                for b in range(f1, min(n - 1, f1 + search)):          # out-leg step (b, b+1)
+                    if not leg_ok(b):
+                        continue
+                    din = _unit2(P[a][0] - P[a - 1][0], P[a][1] - P[a - 1][1])
+                    dout = _unit2(P[b + 1][0] - P[b][0], P[b + 1][1] - P[b][1])
+                    r = _seg_cross(P[a], (P[a][0] + din[0], P[a][1] + din[1]), (P[b][0] - dout[0], P[b][1] - dout[1]), P[b])
+                    if not r or not (0.0 <= r[0] <= FOLD_EXTEND_MAX_M and 0.0 <= 1.0 - r[1] <= FOLD_EXTEND_MAX_M):
+                        continue
+                    ext = r[0] + 1.0 - r[1]
+                    if best is None or (b - a, ext) < (best[1] + 1 - best[0], best[7]):
+                        X = (P[a][0] + din[0] * r[0], P[a][1] + din[1] * r[0])
+                        best = (a, b - 1, X, din, dout, 0.0, "extend", ext)
+        if best is None:
+            raise SystemExit(f"[race] {what} fold at v{recs[f0]['k']}..v{recs[f1]['k']}: no trim (no crossing, no "
+                             f"extension within {FOLD_EXTEND_MAX_M} m) — author this corner by hand")
+        if cuts and best[0] < cuts[-1][1] + 1:
+            raise SystemExit(f"[race] {what} folds at v{recs[cuts[-1][0]]['k']} and v{recs[f0]['k']} overlap — "
+                             f"author this corner by hand")
+        cuts.append(best)
+    out, dropped, corners = [], 0, []
+    i = ci = 0
+    shift = 0.0
+    while i < n:
+        if ci < len(cuts) and i == cuts[ci][0] + 1:
+            a, b, X, din, dout, t, kind, ext = cuts[ci]
+            cr, psi = place(recs[a], recs[a + 1], X, din, dout, t)
+            reach = half * math.tan(min(psi, math.radians(150.0)) / 2.0) + MITRE_CLEAR_M
+            removed = []
+            while len(out) > 1:
+                q = pos(out[-1])
+                if (X[0] - q[0]) * din[0] + (X[1] - q[1]) * din[1] >= reach:
+                    break
+                removed.append(out.pop()["k"])
+            q = pos(out[-1])
+            if (X[0] - q[0]) * din[0] + (X[1] - q[1]) * din[1] < reach:
+                raise SystemExit(f"[race] {what} fold corner at ({X[0]:.2f}, {X[1]:.2f}): the in-leg is shorter than the "
+                                 f"mitre ({reach:.2f} m) — author this corner by hand")
+            cr["arc"] = out[-1]["arc"] + math.hypot(X[0] - q[0], X[1] - q[1])
+            cr["k"], cr["s"] = out[-1]["k"], out[-1]["s"]     # the corner belongs to the last kept leg record's vertex
+            out.append(cr)
+            j = b + 1
+            while j < n - 1:
+                q = pos(recs[j])
+                if (q[0] - X[0]) * dout[0] + (q[1] - X[1]) * dout[1] >= reach:
+                    break
+                j += 1
+            q = pos(recs[j])
+            if (q[0] - X[0]) * dout[0] + (q[1] - X[1]) * dout[1] < reach:
+                raise SystemExit(f"[race] {what} fold corner at ({X[0]:.2f}, {X[1]:.2f}): the out-leg is shorter than the "
+                                 f"mitre ({reach:.2f} m) — author this corner by hand")
+            removed += [recs[q_]["k"] for q_ in range(a + 1, j)]
+            dropped += len(removed)
+            shift = cr["arc"] + math.hypot(q[0] - X[0], q[1] - X[1]) - recs[j]["arc"]
+            corners.append({"kind": kind, "xz": [round(X[0], 3), round(X[1], 3)], "turn_deg": cr["corner_turn_deg"],
+                            "mitre": round(cr["ls"], 3), "in_vertex": out[-2]["k"], "out_vertex": recs[j]["k"],
+                            "removed": sorted(set(removed)), "n_removed": len(removed),
+                            "extension_m": round(ext, 2)})
+            i = j
+            ci += 1
             continue
-        keep.append(s)
-    if len(keep) < 2:
-        return sts, 0
-    return keep, dropped
+        out.append(dict(recs[i], arc=recs[i]["arc"] + shift) if shift else recs[i])
+        i += 1
+    return out, dropped, corners
+
+
+def trim_folded_rings(rings, search=FOLD_SEARCH_RINGS):
+    """_trim_folds on a kerb-line strip's vertex rings (the strip centre polyline, a mitred corner_ring at
+    each corner). The chain (lat 0) never folds. Returns (rings, n_dropped, corners)."""
+    return _trim_folds(rings, _strip_xz, corner_ring, BARRIER_HALF_W, search, "edge")
+
+
+def trim_folded_stations(sts, sgn, search=FOLD_SEARCH_STATIONS):
+    """_trim_folds on a race kerb's 0.3 m stations (the kerb's mid-line, a mitred corner_station at each
+    corner): the inside kerbs at the hairpin and the seam fold exactly like the strip they run beside.
+    Returns (stations, n_dropped, corners)."""
+    def place(a, nxt, X, din, dout, t):
+        return corner_station(a, nxt, X, din, dout, t, sgn)
+    return _trim_folds(sts, lambda s: kerb_mid_xz(s, sgn), place, KERB_W / 2.0, search, "kerb")
+
+
+def kerb_mid_xz(s, sgn):
+    """the kerb's mid-line point of a station (lip + sgn KERB_W / 2) — the polyline the trim works on"""
+    lx, lz = left_normal(s["tx"], s["tz"])
+    mid = s["lip"] + sgn * KERB_W / 2.0
+    return s["cx"] + lx * mid, s["cz"] + lz * mid
+
+
+def inside_out_spans(recs, pos, half):
+    """[(span index, column offset)] of the spans between consecutive records (strip rings or kerb stations)
+    where a profile column moves BACKWARD along the span's mean tangent — the swept solid / kerb sheet there
+    is inside-out. Columns at the profile's two extreme offsets +-half x ls about pos(rec) along its left
+    normal (the test is affine in the offset, so the extremes bound every column). [] = no inverted span."""
+    bad = []
+    for i in range(len(recs) - 1):
+        a, b = recs[i], recs[i + 1]
+        tm = (a["tx"] + b["tx"], a["tz"] + b["tz"])
+        pa, pb = pos(a), pos(b)
+        la, lb = left_normal(a["tx"], a["tz"]), left_normal(b["tx"], b["tz"])
+        sa, sb = half * a.get("ls", 1.0), half * b.get("ls", 1.0)
+        for o in (-1.0, 1.0):
+            dx = (pb[0] + lb[0] * o * sb) - (pa[0] + la[0] * o * sa)
+            dz = (pb[1] + lb[1] * o * sb) - (pa[1] + la[1] * o * sa)
+            if dx * tm[0] + dz * tm[1] <= 0.0:
+                bad.append((i, o))
+                break
+    return bad
+
+
+def match_declared_corners(bands, found, tol=0.05):
+    """The declaration wins (the median_zone precedent): when data/barrier_bands.json carries `edge_corners`
+    (tools/barrier_bands.py — edge_fold_corners, the same computation) every corner the sweep trims must be a
+    declared one (same side, same removed vertices, X within tol) and every declared corner must be trimmed;
+    else SystemExit (re-run the band writer: the declaration IS the authored line). A bands file written
+    before 2026-10-11 has no key: nothing to match here — verify_race D then fails every vertex the trim
+    leaves without a ring, because nothing declares it."""
+    if "edge_corners" not in bands:
+        return
+    declared = list(bands.get("edge_corners") or [])
+
+    def same(c, d):
+        return (str(c.get("side")) == str(d.get("side")) and sorted(c["removed"]) == sorted(d["removed"])
+                and math.dist(c["xz"], d["xz"]) <= tol)
+    extra = [c for c in found if not any(same(c, d) for d in declared)]
+    unbuilt = [d for d in declared if not any(same(c, d) for c in found)]
+    if extra or unbuilt:
+        raise SystemExit(f"[race] the trimmed edge corners differ from barrier_bands.json edge_corners: "
+                         f"{len(extra)} trimmed but not declared {[(c['side'], c['in_vertex'], c['out_vertex']) for c in extra]}, "
+                         f"{len(unbuilt)} declared but not trimmed {[(d['side'], d['in_vertex'], d['out_vertex']) for d in unbuilt]} "
+                         f"— re-run tools/barrier_bands.py")
+
+
+def edge_fold_corners(pts, widths, edge_inset, mode="road", height=BARRIER_H):
+    """the kerb-line strips' trimmed inside corners on both sides — what tools/barrier_bands.py declares as
+    `edge_corners`: the SAME _plan_run + trim_folded_rings that edge_plans authors, so the declaration IS the
+    authored line. Each record: side, kind (loop | extend), xz (the corner X, engine frame), turn_deg, mitre,
+    in_vertex / out_vertex (the leg rings either side), removed (the vertices with no ring on that side: the
+    declared band runs in_vertex -> xz -> out_vertex across them), n_removed, extension_m."""
+    m = unique_count(pts)
+    st = stations(pts)
+    out = []
+    for side, sgn in (("L", 1.0), ("R", -1.0)):
+        for i, j in intervals(edge_inset, m):
+            run = _plan_run(pts, widths, m, st, walk(i, j, m),
+                            lambda k, s=sgn: s * edge_lateral(widths[k] / 2.0, edge_inset[k] or EDGE_INSET_M, mode),
+                            "free", "free", height, "edge", "", side, (i, j))
+            out += [dict(c, side=side) for c in trim_folded_rings(run["rings"])[2]]
+    return out
 
 
 # ---------------------------------------------------------------------------------------------

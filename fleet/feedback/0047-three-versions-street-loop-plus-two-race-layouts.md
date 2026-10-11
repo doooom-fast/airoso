@@ -608,6 +608,34 @@ spacing up to 7.02 m. Fixed and re-run to the end (`--skip-blend`, the same auth
   `barrier_missing` 22 / 32, worst runs at the seam and two mid-lap stretches) are unchanged by this
   pass, key for key, and stay open.
 
+## Red-gates round (2026-10-11, the same scratch rehearsal, `bash tools/ship_sd.sh --skip-blend`; nothing synced back, nothing installed)
+
+Three read-only diagnoses replayed the race layouts' own reds on the built OBJ. Two were gate bugs, one
+geometry: (1) the race lane read the width of the vertex AHEAD of each station, up to 1.36 m too wide on
+SD's mouth flares, so the scan disc hit the previous ring of a strip standing exactly on its declaration
+(341 of 395 obstruction stations); the round disc also reached strips outside the declared lane along the
+road (2); the presence probe read the lap's closure duplicate's 27.5 m and never wrapped the seam (1 + 1).
+(3) `drop_folded_rings` kept the ear rings of the five inside-lip swallowtails and chorded back across the
+fold: a hook of wall 1–3.5 m inside the exit carriageways of the three chained right-handers (52 race_cw
+stations), six inside-out strip spans + one on the seam's inside kerb, and the declaration still put the
+band on the folded offsets (52 `barrier_missing` stations). Fixed: the lane / probe / clip / seam in
+`drive_test` (race layouts only), the strips and inside kerbs TRIMMED to the curb's own corner
+(`race_furniture._trim_folds`, one mitred corner at X), the corners DECLARED (`barrier_bands.json`
+`edge_corners`) and read by `median_zone` / drive_test / verify_race (D a set check against the
+declaration, H on the corner polyline, new I: no inside-out span). Gate entries: fleet/GATES-CHANGELOG.md.
+
+Result: race_cw obstruction 220 → **0**, `barrier_missing` 22 → **0**; race_acw 175 → **0**, 32 → **0**;
+verify_race OK with 0 fold / 0 unmeasured spans and 0 inside-out (the built blend: 7 → 0); street
+82 / 391 / 0 / 101 and audit D 512 / F 15 / I 145 / K 154, byte-identical reports; race audit 826 → 826.
+The chain is still red on the INHERITED road defects (street + race ground-through-lane, floating 391,
+street excursions 101, audit 826) — `RACE_RED` is empty now, so the install block falls back to the
+July-reference rule. Still open: the seam closure steps 27.5 → 17.0 m in one 2.29 m segment inside the
+right-hander, so 4.16 m of the seam corner's 6.99 m strip polyline stands off the ROAD ribbon over the curb
+notch (1 ring seated by interpolation); the fix is a width taper in the centreline data and a ribbon
+rebuild. Unchanged: the 6.3 m disc cap on a lane with no divider (Alvarado, the hairpin) — the trim removed
+the hairpin knot the capped disc could not see; lifting the cap surfaces other stations that need their
+own triage (diagnosis 1).
+
 ## Notes filed here (not conclusions elsewhere)
 
 - **Spawn facing, two stacked causes** (measured on the workshop road kn5: `AC_START_0` local +Z ·

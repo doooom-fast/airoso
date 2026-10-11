@@ -28,7 +28,14 @@ finished_centerline.json, else centerline.local.json with mirror_x), and answers
     zone.island_half_at(i)                         # island half-width at centreline vertex i
     zone.barrier_half_at(i)                        # 0.335 where the centre chain stands, else 0
     zone.edge_inset_at(i)                          # the kerb-line barrier's lane inset (0.82), else 0
+    zone.edge_corner_spans('edge_R')               # trimmed fold corners of that strip: [(i, j, [A, X, B])]
     zone.reversed()                                # the same zone walked the other way (reverse layouts)
+
+TRIMMED CORNERS (2026-10-11): where a kerb-line strip's inside lip is tighter than its offset the
+declaration carries `edge_corners` (tools/barrier_bands.py: the strip is trimmed to the curb's own
+corner X). On that side the `removed` vertices have NO band point; the band across them is the polyline
+in_vertex band point -> X -> out_vertex band point — exactly what the author sweeps, so the D exemption
+and drive_test's presence probe sit on the built corner, never on the folded offset positions.
 
 Exempting a vert from a check because it lies on a divider is NOT a bypass: the island is
 authored geometry with its own gates (curb 1KERB, deck 1GRASS — the kn5 rename pass enforces the
@@ -67,14 +74,15 @@ def _load_pts(project: Path):
 
 class MedianZone:
     def __init__(self, pts, island_w, extra=(), *, widths=None, centre_w=None, edge_strip=None,
-                 edge_inset=None, barrier_half=0.335, edge_centre_from_lip=-0.485, mouths=()):
+                 edge_inset=None, barrier_half=0.335, edge_centre_from_lip=-0.485, mouths=(), edge_corners=()):
         """pts/island_w: the mainline (gate frame). extra: [(pts, island_w), ...] for divided
         connectors' islands (tools/divide_connectors.py), same frame as the gate OBJ.
         Barrier kind (all per mainline vertex, same length as pts, or absent): centre_w (the chain's
         base width where it stands), edge_strip (1 where the kerb-line barrier runs), edge_inset
         (the lane inset it takes from the lip), widths (road width — the edge band sits at
         half_w + edge_centre_from_lip), mouths: polylines (gate frame) the strip follows across
-        sealed mouths."""
+        sealed mouths, edge_corners: the declaration's trimmed fold corners ({side 'L'|'R', in_vertex,
+        out_vertex, removed: [vertex], xz: [x, z]}, indices into pts, side relative to pts' direction)."""
         n = len(pts)
         self.pts = pts
         # a CLOSED lap repeats vertex 0 as its last point; that duplicate is not a vertex of its own
@@ -91,6 +99,12 @@ class MedianZone:
         self.barrier_half = float(barrier_half)
         self.edge_centre_from_lip = float(edge_centre_from_lip)
         self.mouths = [[tuple(p) for p in m] for m in mouths]
+        self.edge_corners = [{"side": str(c["side"]), "i": int(c["in_vertex"]), "j": int(c["out_vertex"]),
+                              "removed": sorted(int(v) for v in c.get("removed", [])),
+                              "xz": (float(c["xz"][0]), float(c["xz"][1]))} for c in edge_corners]
+        self.removed = {"L": set(), "R": set()}
+        for c in self.edge_corners:
+            self.removed.setdefault(c["side"], set()).update(c["removed"])
         self.cells: dict[tuple[int, int], list[tuple[int, int]]] = {}
         for pi, (pp, ww) in enumerate(self.polys):
             for i, w in enumerate(ww):
@@ -108,8 +122,22 @@ class MedianZone:
             if self.edge_strip[i]:
                 nx, nz = self._normal(i)
                 off = self.widths[i] / 2.0 + self.edge_centre_from_lip
-                self._bput("edge_L", i, pts[i][0] + nx * off, pts[i][2] + nz * off)
-                self._bput("edge_R", i, pts[i][0] - nx * off, pts[i][2] - nz * off)
+                if i not in self.removed["L"]:          # a trimmed fold vertex has no band point on that side
+                    self._bput("edge_L", i, pts[i][0] + nx * off, pts[i][2] + nz * off)
+                if i not in self.removed["R"]:
+                    self._bput("edge_R", i, pts[i][0] - nx * off, pts[i][2] - nz * off)
+        # the trimmed corners' bands: in_vertex band point -> X -> out_vertex band point, hashed per segment
+        self._corner_polys = []
+        for ci, c in enumerate(self.edge_corners):
+            kind = "edge_" + c["side"]
+            a, b = self._band_point(kind, c["i"]), self._band_point(kind, c["j"])
+            poly = [(a[0], a[2]) if a else c["xz"], c["xz"], (b[0], b[2]) if b else c["xz"]]
+            self._corner_polys.append(poly)
+            for k in range(2):
+                (ax, az), (bx, bz) = poly[k], poly[k + 1]
+                for cx in range(int(min(ax, bx) // CELL_M), int(max(ax, bx) // CELL_M) + 1):
+                    for cz in range(int(min(az, bz) // CELL_M), int(max(az, bz) // CELL_M) + 1):
+                        self.bcells.setdefault((cx, cz), []).append(("corner", ci * 100000 + k, 0.0, 0.0))
         for mi, m in enumerate(self.mouths):
             for k in range(len(m) - 1):
                 (ax, _, az), (bx, _, bz) = m[k], m[k + 1]
@@ -173,7 +201,8 @@ class MedianZone:
                       "edge_inset": bj.get("edge_inset_by_vertex", []),
                       "barrier_half": float(params.get("barrier_half_m", 0.335)),
                       "edge_centre_from_lip": float(params.get("edge_centre_from_lip_m", -0.485)),
-                      "mouths": [m.get("polyline_xyz_m", []) for m in bj.get("closed_mouths", [])]}
+                      "mouths": [m.get("polyline_xyz_m", []) for m in bj.get("closed_mouths", [])],
+                      "edge_corners": bj.get("edge_corners", []) or []}
                 if len(kw["edge_strip"]) != len(pts):
                     kw["edge_strip"] = []
                 if len(kw["edge_inset"]) != len(pts):
@@ -208,6 +237,14 @@ class MedianZone:
     def edge_strip_at(self, i: int) -> bool:
         return 0 <= i < len(self.edge_strip) and bool(self.edge_strip[i])
 
+    def edge_corner_spans(self, kind: str) -> list:
+        """[(i, j, [A, X, B])] — the trimmed fold corners of the `kind` ('edge_L' | 'edge_R') strip in THIS
+        zone's index frame and travel order: the strip runs from the band point A at vertex i straight to the
+        corner X and on to the band point B at vertex j; the vertices strictly between i and j (wrapping a
+        closed lap's seam) carry no band point of their own on that side"""
+        side = kind[-1]
+        return [(c["i"], c["j"], self._corner_polys[ci]) for ci, c in enumerate(self.edge_corners) if c["side"] == side]
+
     @property
     def has_barrier(self) -> bool:
         return self.n_barrier > 0 or self.n_edge > 0
@@ -215,11 +252,18 @@ class MedianZone:
     def reversed(self) -> "MedianZone":
         """The same dividers indexed the other way round (a `direction: reverse` layout walks the
         lap backwards; station 0 stays the seam because a closed lap repeats its first vertex)."""
+        n = len(self.pts)
+
+        def rev(k):           # forward vertex k -> its index walked backwards (a closed lap: v0 stays v0)
+            return (n - 1 - k) % (n - 1) if self.closed else n - 1 - k
+        # a trimmed corner walked backwards: the other side of travel, its out_vertex first
+        corners = [{"side": {"L": "R", "R": "L"}[c["side"]], "in_vertex": rev(c["j"]), "out_vertex": rev(c["i"]),
+                    "removed": [rev(v) for v in c["removed"]], "xz": list(c["xz"])} for c in self.edge_corners]
         return MedianZone(self.pts[::-1], self.island_w[::-1], self.polys[1:],
                           widths=self.widths[::-1], centre_w=self.centre_w[::-1],
                           edge_strip=self.edge_strip[::-1], edge_inset=self.edge_inset[::-1],
                           barrier_half=self.barrier_half, edge_centre_from_lip=self.edge_centre_from_lip,
-                          mouths=self.mouths)
+                          mouths=self.mouths, edge_corners=corners)
 
     # ---- the band test --------------------------------------------------------------------
     def contains(self, x: float, z: float, kinds=ISLAND_KINDS) -> bool:
@@ -251,6 +295,12 @@ class MedianZone:
                             m = self.mouths[i // 100000]
                             k = i % 100000
                             if self._seg_dist(x, z, m[k], m[k + 1]) <= reach:
+                                return True
+                            continue
+                        if kind == "corner":        # a trimmed fold: the leg ring -> X -> the leg ring, no extension
+                            poly = self._corner_polys[i // 100000]
+                            k = i % 100000
+                            if self._span_dist(x, z, poly[k][0], poly[k][1], poly[k + 1][0], poly[k + 1][1]) <= reach:
                                 return True
                             continue
                         nx, nz = self._normal(i)
@@ -288,6 +338,8 @@ class MedianZone:
         if kind == "centre":
             return (self.pts[j][0], 0.0, self.pts[j][2]) if self.centre_w[j] > 0 else None
         if kind in ("edge_L", "edge_R") and self.edge_strip[j]:
+            if j in self.removed.get(kind[-1], ()):
+                return None                               # trimmed: the band runs through the corner X instead
             nx, nz = self._normal(j)
             off = (self.widths[j] / 2.0 + self.edge_centre_from_lip) * (1.0 if kind == "edge_L" else -1.0)
             return (self.pts[j][0] + nx * off, 0.0, self.pts[j][2] + nz * off)

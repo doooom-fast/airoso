@@ -86,6 +86,38 @@ def test_edge_strips_gap_only_inside_the_declared_bridge_spans():
     assert all(len(m["polyline_xyz_m"]) >= 3 for m in out["closed_mouths"])
 
 
+def test_the_five_inside_lip_folds_are_declared_as_trimmed_corners():
+    """2026-10-11: where the inside lip is tighter than the strip's offset the strip is trimmed to the curb's own
+    corner — the declaration carries each corner (race_furniture.edge_fold_corners, the author's own trim), so
+    every gate stands on what is built: SD's five right-handers, all side R, three crossing loops (the hairpin,
+    College/Navajo, Navajo/Jackson) and two extended Z-folds (Jackson/Lake Murray's flare, the seam's 27.5 ->
+    17 m width step)"""
+    import race_furniture as rf
+    d = _project()
+    out = bb.build(d)
+    ec = out["edge_corners"]
+    assert out["summary"]["edge_corners"] == 5 and out["fails"] == []
+    assert [(c["side"], c["kind"], c["in_vertex"], c["out_vertex"]) for c in ec] == [
+        ("R", "loop", 763, 774), ("R", "loop", 1508, 1517), ("R", "loop", 2314, 2324),
+        ("R", "extend", 3292, 3300), ("R", "extend", 4495, 5)], ec
+    assert out["edge_fold_vertices"]["L"] == [] and len(out["edge_fold_vertices"]["R"]) == 41
+    assert all(c["removed"] and 60.0 < abs(c["turn_deg"]) < 95.0 and 1.0 < c["mitre"] < 1.5 for c in ec)
+    # the declaration IS the author's computation: the sweep matches it exactly (and refuses a drifted one)
+    cl = json.loads((d / "data" / "centerline.local.json").read_text())
+    pts = [tuple(p) for p in cl["points_xyz_m"]]
+    widths = [float(w) for w in cl["widths_m"]]
+    plans = rf.edge_plans(pts, widths, out)
+    built = [c for p in plans for c in p.get("fold_corners", [])]
+    assert len(built) == 5
+    drift = dict(out, edge_corners=[dict(c, xz=[c["xz"][0] + 0.2, c["xz"][1]]) if i == 0 else c for i, c in enumerate(ec)])
+    try:
+        rf.edge_plans(pts, widths, drift)
+    except SystemExit as e:
+        assert "edge_corners" in str(e)
+    else:
+        raise AssertionError("a drifted declaration was authored")
+
+
 def test_kerbs_outside_only_at_chained_corners_both_lips_elsewhere():
     d = _project()
     out = bb.build(d)

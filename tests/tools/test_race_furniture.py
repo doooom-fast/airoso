@@ -317,6 +317,116 @@ def test_a_fold_drop_chord_is_only_cut_on_its_straight_line():
     assert max(math.dist(rf._strip_xz(x), rf._strip_xz(y)) for x, y in zip(out, out[1:])) <= 3.5 + 1e-9
 
 
+def _right_hander(R=8.0, leg=40.0, step=3.0):
+    """a 90 deg right-hander on an OPEN centreline (x = E, z = N): +x along z = 0 to (0, 0), a radius-R arc
+    about (0, -R) to (R, -R), then -z along x = R — vertices ~step apart"""
+    pts = [(x, 0.0, 0.0) for x in [-leg + step * i for i in range(int(leg / step))]]
+    n_arc = max(2, int(math.ceil(R * math.pi / 2 / step)))
+    for i in range(n_arc + 1):
+        a = math.pi / 2 - (math.pi / 2) * i / n_arc
+        pts.append((R * math.cos(a), 0.0, -R + R * math.sin(a)))
+    pts += [(R, 0.0, -R - step * (i + 1)) for i in range(int(leg / step))]
+    return pts
+
+
+def test_a_fold_is_trimmed_to_one_mitred_corner_never_inside_out():
+    """2026-10-11: an inside lip tighter than the strip's offset (R 8 m centreline, strip centre 11.5 m) folds
+    the offset curve into a swallowtail. The one-sided drop kept the 'ear' rings and chorded BACKWARDS across
+    the fold (a hook of wall 1-3.5 m inside the exit carriageway, inside-out spans); the trim cuts both legs at
+    their crossing X = (R - 11.5, -11.5): no ring on the lane side of the other leg's line, ONE mitred corner
+    ring at X, no inside-out span, a closed solid after densify"""
+    R, lat = 8.0, 11.5
+    pts = _right_hander(R)
+    n = len(pts)
+    st = rf.stations(pts)
+    # an open run: tangent() wraps on a ring of m vertices, so give it the open polyline's own ends
+    plan = rf._plan_run(pts + [pts[0]], [2 * (lat + 0.485)] * (n + 1), n, st, list(range(1, n - 1)), lambda k: -lat,
+                        "free", "free", rf.BARRIER_H, "edge", "t", "R", (1, n - 2))
+    rings = plan["rings"]
+    P = [rf._strip_xz(r) for r in rings]
+    back = [i for i in range(1, len(rings)) if (P[i][0] - P[i - 1][0]) * rings[i]["tx"] + (P[i][1] - P[i - 1][1]) * rings[i]["tz"] < 0]
+    assert back, "the synthetic corner must fold"
+    out, dropped, corners = rf.trim_folded_rings([dict(r) for r in rings])
+    X = (R - lat, -lat)
+    # (the leg rings next to the arc carry central-difference tangents, so X lands within a few mm of the ideal)
+    assert len(corners) == 1 and corners[0]["kind"] == "loop" and math.dist(corners[0]["xz"], X) < 0.01, corners
+    assert abs(corners[0]["turn_deg"] + 90.0) < 1.0 and abs(corners[0]["mitre"] - math.sqrt(2)) < 0.02
+    cr = [r for r in out if r.get("corner")]
+    assert len(cr) == 1 and math.dist(rf._strip_xz(cr[0]), corners[0]["xz"]) < 1e-3
+    assert dropped == len(rings) + 1 - len(out) == len(corners[0]["removed"])
+    for r in out:
+        x, z = rf._strip_xz(r)
+        assert x <= X[0] + 0.05 and z <= X[1] + 0.05, (r["k"], x, z)     # never on the lane side of either leg's line
+    assert rf.inside_out_spans(out, rf._strip_xz, rf.BARRIER_HALF_W) == []
+    # the legs clear the mitre's reflex tip (half x tan(psi / 2) + MITRE_CLEAR_M)
+    reach = rf.BARRIER_HALF_W * math.tan(math.radians(45.0)) + rf.MITRE_CLEAR_M
+    i = out.index(cr[0])
+    assert math.dist(rf._strip_xz(out[i - 1]), X) >= reach - 1e-9 and math.dist(rf._strip_xz(out[i + 1]), X) >= reach - 1e-9
+    dense, _ = rf.densify_rings(out, n)
+    assert rf.inside_out_spans(dense, rf._strip_xz, rf.BARRIER_HALF_W) == []
+    for r in dense:
+        if r.get("fold_fill"):
+            assert not r.get("corner") and r["ls"] == 1.0          # a leg's fill ring keeps the leg's width
+        r["y"] = 0.0
+    v, f, _ = rf.strip_mesh(dense, True, True)
+    assert rf.signed_volume(v, f) > 0
+    arcs = [r["arc"] for r in dense]
+    assert all(b > a for a, b in zip(arcs, arcs[1:]))              # the texture stays continuous past X
+
+
+def test_a_folding_inside_kerb_is_trimmed_too():
+    """the race kerb inboard of the strip folds the same way (1KERB_race_0_in / _770_in carried seven inside-out
+    spans): its 0.3 m stations are trimmed at its own mid-line's crossing, one mitred corner station"""
+    R = 8.0
+    pts = _right_hander(R)
+    st = rf.stations(pts)
+    lip = -(11.5 - 0.885 - rf.KERB_W / 2.0)       # the kerb's lane lip, right of travel (its mid-line 10.615 m out)
+    def at(s):
+        k = min(len(st) - 2, max(i for i in range(len(st)) if st[i] <= s))
+        u = (s - st[k]) / (st[k + 1] - st[k])
+        return pts[k][0] + (pts[k + 1][0] - pts[k][0]) * u, pts[k][2] + (pts[k + 1][2] - pts[k][2]) * u, k
+    sts = []
+    s = st[1]
+    while s < st[-2]:                              # kerb_plans' station rule: tangent from s -+ 1 m
+        x, z, k = at(s)
+        (xa, za, _), (xb, zb, _) = at(s - 1.0), at(s + 1.0)
+        L = math.hypot(xb - xa, zb - za)
+        sts.append({"s": s, "k": k, "cx": x, "cz": z, "y_hint": 0.1, "tx": (xb - xa) / L, "tz": (zb - za) / L,
+                    "lip": lip, "h": rf.KERB_H, "arc": s})
+        s += rf.KERB_STEP_M
+    mid = lambda q: rf.kerb_mid_xz(q, -1.0)   # noqa: E731
+    assert rf.inside_out_spans(sts, mid, rf.KERB_W / 2.0) != []
+    out, dropped, corners = rf.trim_folded_stations(sts, -1.0)
+    assert len(corners) == 1 and dropped > 0
+    assert rf.inside_out_spans(out, mid, rf.KERB_W / 2.0) == []
+    c = [q for q in out if q.get("corner")]
+    assert len(c) == 1 and abs(c[0]["ls"] - math.sqrt(2)) < 0.05
+    for q in out:
+        q["y"] = 0.0
+    v, f, _ = rf.kerb_mesh(out, -1.0)
+    assert len(v) == 4 * len(out)
+    # the corner station's profile is stretched about its mid-line: the lip and the outer edge meet the legs' edges
+    i = out.index(c[0])
+    lip_pt = v[4 * i]
+    assert abs(math.dist((lip_pt[0], lip_pt[2]), mid(c[0])) - c[0]["ls"] * rf.KERB_W / 2.0) < 1e-9
+
+
+def test_the_sweep_refuses_corners_the_declaration_does_not_carry():
+    """the declaration wins: with `edge_corners` in the bands every trimmed corner must be declared (same side,
+    same removed vertices, X within 0.05 m) and every declared corner trimmed; no key = nothing to match"""
+    found = [{"side": "R", "removed": [3, 4], "xz": [1.0, 2.0], "in_vertex": 2, "out_vertex": 5}]
+    rf.match_declared_corners({}, found)
+    rf.match_declared_corners({"edge_corners": [dict(found[0])]}, found)
+    for bad in ({"edge_corners": []}, {"edge_corners": [dict(found[0], removed=[3])]},
+                {"edge_corners": [dict(found[0], xz=[1.2, 2.0])]}, {"edge_corners": found + [dict(found[0], side="L")]}):
+        try:
+            rf.match_declared_corners(bad, found)
+        except SystemExit as e:
+            assert "re-run tools/barrier_bands.py" in str(e)
+        else:
+            raise AssertionError(bad)
+
+
 def test_spawn_clearance_is_hard_below_the_margin():
     """HARD below SPAWN_MARGIN_M (0.30 m) since 2026-10-11 — the 1.4 m stagger's 0.08 m used to be a note"""
     pts = [(float(k) * 3.0, 0.0, 0.0) for k in range(10)] + [(0.0, 0.0, 0.0)]
@@ -411,20 +521,34 @@ def test_real_lake_murray_declaration_plans_cleanly():
     ei = bands["edge_inset_by_vertex"]
     covered = {(p["side"], r["k"]) for p in edge for r in p["rings"]}
     assert not any(ei[k] == 0 for (_, k) in covered)
-    # the only flagged vertices without a ring are the folded inside-apex rings the sweep drops
-    # (drop_folded_rings): all on the R side (the five corners are right-handers), within 15 vertices
-    # of a corner apex, and exactly as many as the plans report
+    # the only flagged vertices without a ring are the ones the sweep TRIMS at the five inside lips tighter
+    # than the offset (2026-10-11: one mitred corner each, at the curb's own corner — edge_fold_corners, the
+    # computation barrier_bands.py declares): all on the R side (the five corners are right-handers), within
+    # 15 vertices of a corner apex, exactly the corners' removed sets, and as many as the plans report
     missing = [(side, k) for k in range(m) for side in ("L", "R") if ei[k] > 0 and (side, k) not in covered]
-    dropped = sum(p.get("fold_skipped", 0) for p in edge if p["part"] == 0)
+    dropped = sum(p.get("fold_skipped", 0) for p in edge)        # each corner reported by the object holding it
+    folds = rf.edge_fold_corners(pts, widths, ei)
+    assert sum(len(p["fold_corners"]) for p in edge) == 5
+    assert [(c["side"], c["kind"]) for c in folds] == [("R", "loop")] * 3 + [("R", "extend")] * 2, folds
+    assert sorted((c["side"], v) for c in folds for v in c["removed"]) == sorted(missing), missing
     assert 0 < dropped < 60 and len(missing) == dropped, (len(missing), dropped, missing[:8])
     assert all(side == "R" for side, _ in missing), missing
     assert all(min((k - a) % m, (a - k) % m) <= 15 for _, k in missing for a in [min((0, 770, 1514, 2319, 3297), key=lambda a: min((k - a) % m, (a - k) % m))]), missing
+    corners_built = [r for p in edge for r in p["rings"] if r.get("corner")]
+    assert len(corners_built) == 5 and all(any(math.dist(rf._strip_xz(r), c["xz"]) < 1e-3 for r in corners_built) for c in folds)
+    # geometry never inside-out: every strip and every kerb (the inside kerbs at the hairpin and the seam fold too)
+    for p in chain + edge:
+        assert rf.inside_out_spans(p["rings"], rf._strip_xz, rf.BARRIER_HALF_W) == [], rf.object_name(p)
+    for p in kerb:
+        g = 1.0 if p["side"] == "L" else -1.0
+        assert rf.inside_out_spans(p["stations"], lambda s_: rf.kerb_mid_xz(s_, g), rf.KERB_W / 2.0) == [], rf.object_name(p)
+    assert sorted((p["apex"], p["sub"]) for p in kerb if p["fold_corners"]) == [(0, "in"), (770, "in")]
     def declared(k):
         return widths[k % m] / 2.0 - 0.82 + rf.BARRIER_HALF_W
     for p in edge:
         for r in p["rings"]:
-            if r.get("fold_fill"):
-                continue                      # on a fold-drop chord: no declared curve to stand on
+            if r.get("fold_fill") or r.get("corner"):
+                continue                      # on a trimmed corner's chord / AT the corner: the declared corner, not the lateral
             u = r.get("u") or 0.0             # a densified ring: the lerp of its vertex pair's laterals
             assert abs(abs(r["lat"]) - ((1 - u) * declared(r["k"]) + u * declared(r["k"] + 1))) < 1e-9, (r["k"], u)
     # ring density (2026-10-11): every span <= 3.5 m, every span that follows the curve within 0.10 m of it,

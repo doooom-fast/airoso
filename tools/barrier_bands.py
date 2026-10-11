@@ -42,6 +42,14 @@ declared bridge spans (the authored rails are the barrier there; drive_test's `g
 still gates a span with no rail). Mouths are sealed (the strip runs straight across the mouth line
 on the connector's 1ROAD, the Macau rule) and the grid/pit zones are declared no-gap zones.
 
+Trimmed corners (2026-10-11): where an inside lip is tighter than the kerb-line strip's offset (|lat| > R —
+SD's five right-handers) the offset curve folds into a swallowtail; the strip is trimmed to the curb's own
+corner and `edge_corners` declares each one (side, kind loop | extend, the corner xz, in_vertex / out_vertex,
+the `removed` vertices whose band runs in -> xz -> out instead). The computation is race_furniture's own
+(edge_fold_corners — the same plan + trim the author sweeps; the author refuses a declaration that differs).
+A fold more than 15 vertices from every inside corner apex fails (a fold where no corner is detected is a
+data defect).
+
 Race kerbs: at every corner the sign detector finds (tools/place_signs.py, imported read-only —
 the signs workflow owns that file), |D| >= race.kerbs.min_turn_deg: an OUTSIDE kerb on the lip
 outside the turn, symmetric about the apex (one layout's exit is the other's entry), extended by
@@ -80,6 +88,10 @@ def _load_tool(stem, alias):
 # the grid geometry is tools/layout_dummies.py's (the producer of record) — read, never restated:
 # a stale copy here (1.4 m while the producer moved) would declare a clearance the grid does not have
 _LD = _load_tool("layout_dummies", "_layout_dummies_ro")
+# the kerb-line strips' trimmed inside corners are race_furniture's own computation (edge_fold_corners — the
+# same _plan_run + trim the author sweeps), read-only: the declaration IS the authored line
+_RF = _load_tool("race_furniture", "_race_furniture_ro")
+FOLD_APEX_MAX_VERTICES = 15  # a trimmed fold farther than this from every inside corner apex is a data defect
 GRID_STAGGER_M = _LD.GRID_STAGGER_M   # two columns at lane centre +/- this (1.0 m since 2026-10-11)
 GRID_PITCH_M = _LD.GRID_PITCH_M
 GRID_SLOTS_DEFAULT = 8
@@ -329,6 +341,21 @@ def build(project_dir, out_name: str | None = None, config_path=None) -> dict:
                              "length_m": round(st[v] - st[a], 1)})
             v += 1
 
+    # ---- trimmed inside corners: where an inside lip is tighter than the strip's offset (|lat| > R) the
+    #      offset curve folds into a swallowtail; the strip is trimmed to the curb's own corner — the curve's
+    #      self-intersection (kind loop) or its legs extended to meet (kind extend) — and the band across the
+    #      `removed` vertices on that side IS in_vertex -> xz -> out_vertex (race_furniture.edge_fold_corners,
+    #      the author's own computation: what is declared is what is swept)
+    edge_corners = _RF.edge_fold_corners(pts, widths, edge_inset_v, edge_mode)
+    for c in edge_corners:
+        inside = [x for x in corners if ("R" if x["sign"] < 0 else "L") == c["side"]]
+        near = min((min((v_ - x["apex"]) % ring, (x["apex"] - v_) % ring) for x in inside for v_ in c["removed"]),
+                   default=ring)
+        if near > FOLD_APEX_MAX_VERTICES:
+            fails.append(f"edge {c['side']} fold v{c['in_vertex']}..v{c['out_vertex']} is {near} vertices from every "
+                         f"inside corner apex — a fold where no corner is detected is a data defect")
+    edge_fold_vertices = {s_: sorted({v_ for c in edge_corners if c["side"] == s_ for v_ in c["removed"]}) for s_ in ("L", "R")}
+
     # ---- sealed mouths: the edge strip runs straight across each mainline mouth ----------------
     closed = []
     for m in mouths:
@@ -443,7 +470,11 @@ def build(project_dir, out_name: str | None = None, config_path=None) -> dict:
                 "shared nose). edge_strip_by_vertex: 1 where the kerb-line barrier runs on both curb faces "
                 "(0 inside declared bridge spans). edge_inset_by_vertex: the LANE inset the strip takes from "
                 "the lip (road mode) — 0 in walk mode. Band centres for the gates: centre = the centreline; "
-                "edge = half_w + params.edge_centre_from_lip_m (signed outward). Written by "
+                "edge = half_w + params.edge_centre_from_lip_m (signed outward), EXCEPT at edge_corners: where an "
+                "inside lip is tighter than the strip's offset the strip is trimmed to the curb's corner — the offset "
+                "curve's self-intersection (kind loop) or its two legs extended to meet (kind extend) — so the "
+                "`removed` vertices carry no ring on that side and the declared band there runs from the in_vertex's "
+                "band point to the corner `xz` to the out_vertex's (edge_fold_vertices lists them per side). Written by "
                 "tools/barrier_bands.py; consumed by tools/author_race_blend.py and scripts/geometry/median_zone.py.",
         "n": n,
         "lap_m": round(lap, 1),
@@ -465,6 +496,8 @@ def build(project_dir, out_name: str | None = None, config_path=None) -> dict:
         "edge_inset_by_vertex": edge_inset_v,
         "runs": runs_out,
         "closed_mouths": closed,
+        "edge_corners": edge_corners,
+        "edge_fold_vertices": edge_fold_vertices,
         "kerbs": kerbs,
         "no_gap_zones": no_gap,
         "streets": streets,
@@ -478,6 +511,7 @@ def build(project_dir, out_name: str | None = None, config_path=None) -> dict:
             "centre_verts": sum(1 for w in centre_w if w > 0),
             "edge_verts": sum(edge_strip),
             "edge_gaps": len(gaps),
+            "edge_corners": len(edge_corners),
             "kerbs": len(kerbs),
             "corners": len(corners),
             "island_runs": [list(r) for r in isl_runs],
@@ -501,6 +535,10 @@ def build(project_dir, out_name: str | None = None, config_path=None) -> dict:
     for k in kerbs:
         print(f"[bands]   kerb apex v{k['apex']} {k['kind']:7} side {k['side']} v{k['i']}-v{k['j']}"
               f"{' (wraps)' if k['wraps'] else ''} R {k['R_apex_m']} D {k['D_deg']}")
+    for c in edge_corners:
+        print(f"[bands]   edge corner {c['side']} {c['kind']:6} v{c['in_vertex']}->v{c['out_vertex']} at "
+              f"({c['xz'][0]:.2f}, {c['xz'][1]:.2f}) turn {c['turn_deg']:+.1f} deg, mitre {c['mitre']}, "
+              f"{len(c['removed'])} vertices trimmed{(', extension ' + str(c['extension_m']) + ' m') if c['kind'] == 'extend' else ''}")
     for z in no_gap:
         print(f"[bands]   no-gap zone {z['layout']}: v{z['i']}-v{z['j']} grid clearance {z['grid_clearance_m']:+.2f} m")
     print(f"[bands] wrote {out_path}")

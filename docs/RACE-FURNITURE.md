@@ -25,7 +25,7 @@ ship script's own command lines, including the prep and the split on the PREPPED
 | Kind | Mesh names | Where | Geometry |
 |---|---|---|---|
 | Centre K-rail chain | `1WALL_race_kbar_<street>_<run-start>_<part>` (8 objects) | the six declared `centre_runs` on the ≥ 17 m roads: v780-846, 1073-1096, 1258-1374, 1487-1540, 1739-2183, 2297-4440 | a swept jersey strip whose cross-section IS Kevin's `assets/models/concrete_barrier_4m.obj` silhouette (0.67 m base, 1.20 m tall), one ring per centreline vertex (3.0 m), continuous round the three interior corners, nose-to-nose with the five median islands, tapered free ends |
-| Kerb-line barriers | `1WALL_race_edge_<L\|R>_<street>_<run-start>_<part>` (21 objects; `run-start` = the first ring's vertex, so an inside-lip piece that begins after a dropped fold starts a few vertices past the apex) | BOTH curb faces of EVERY street incl. Alvarado, gapped only inside the three declared bridge spans | the same strip, centre at `half_w − 0.485` (road-side face at `half_w − 0.82` = `race.edge_inset_m`, curb-side face 0.15 m clear of the curb batter); straight across the three sealed mouths (Q1) |
+| Kerb-line barriers | `1WALL_race_edge_<L\|R>_<street>_<run-start>_<part>` (21 objects; `run-start` = the first ring's vertex, so an inside-lip piece that begins after a trimmed fold starts a few vertices past the apex) | BOTH curb faces of EVERY street incl. Alvarado, gapped only inside the three declared bridge spans | the same strip, centre at `half_w − 0.485` (road-side face at `half_w − 0.82` = `race.edge_inset_m`, curb-side face 0.15 m clear of the curb batter); straight across the three sealed mouths (Q1) |
 | Race kerbs | `1KERB_race_<apex-vertex>_<in\|out>` (7 objects) | the five corners the sign detector finds at \|D\| ≥ 45°: v770 (in + out), v1514, v2319, v3297 (out only — the chain is the inside), v0 (in + out) | 1.0 m wide × 0.05 m flat rumble strip ON the pavement, inboard of the edge strip (outer edge at `half_w − 0.87`), 0.10 m lane-side ramp, height tapering over the first/last 3 stations, 0.3 m stations |
 | (optional, OFF) tall invisible collider | `1WALL_racecol_<k>` | `--collider` only | 2-vert/station sheet, deck −0.3 … +2.5 m — the Macau pattern, deferred (Q11); needs the `1WALL_RACECOL` pbr/ALPHATEST row and `assets/textures/invisible_4x4.png` (generated, CC0) first |
 
@@ -57,7 +57,7 @@ The same rehearsal measured outside-lip ring spacing up to 7.02 m (one ring per 
 vertex on a 10 m corner) with the strip chording the arc by up to 0.27 m. `densify_rings` now inserts
 rings ON the declared offset curve (centre lerp + normalised lerp of the vertex tangents × lerp of the
 declared lateral) until consecutive rings are ≤ 3.5 m apart and within 0.10 m of the curve; a
-fold-drop chord (the inside lips the sweep drops) is only cut on its own straight line. 81 rings
+trimmed corner's two chords (leg ring → corner X → leg ring, §4 below) are only cut on their own straight lines, the fill rings square to the chord. 81 rings
 inserted, spacing max 3.50 m, chord max 0.043 m. The new rings exposed two defects in `audit_mesh
 --race`'s band test (`scripts/geometry/median_zone.py`): ±2 m rectangles round band points that
 stand ~7 m apart on the outside lips left gaps (460 strip verts read as walls on the road), and a
@@ -128,18 +128,39 @@ apexes the ribbon's inside edge folds over itself and the lowest sheet is up to 
 one, so a kerb or strip seated there is partly hidden inside the fold (0033/0046 class). It is
 reported, not papered over.
 
-**Folded rings and stations are dropped.** Where the pavement lip's offset path runs backwards
-against the centreline tangent (the lip's local radius goes negative: the hairpin's inside lip on the
-30 m flare, and every inside apex where the raw polyline's kink is tighter than the ~8 m lip offset)
-a strip or kerb swept there is a knot of overlapping faces — a sharp V the driver would hit.
-`race_furniture.drop_folded_rings` / `drop_folded_stations` remove those rings/stations, so the wall
-chords across the fold at the lip path's own crossing point. Dry run: 27 edge-strip rings dropped,
-all on the forward-RIGHT (inside) lip (the five corners are right-handers): the hairpin 6, the seam 5,
-and 16 along the College→Lake Murray run at College/Navajo, Navajo/Jackson and Jackson/Lake Murray —
-folds are dropped per WHOLE run before the street cut, so a street boundary never splits one — and
-51 of 211 kerb stations at `1KERB_race_770_in`, 37 of
-106 at `1KERB_race_0_in`. The counts land in the object records as `fold_skipped_run` /
-`fold_skipped`, and the real-data test pins that the only flagged vertices without a ring are those.
+**Folds are trimmed to the curb's own corner (2026-10-11).** Where an inside lip is tighter than the
+strip's offset (|lat| > R: the hairpin v770, College/Navajo v1514, Navajo/Jackson v2319, Jackson/Lake
+Murray v3297, the seam v0) the offset curve runs forward through a self-intersection X to a cusp,
+BACKWARDS to a second cusp, and forward through X again — a swallowtail; the ROAD ribbon's own inside
+edge folds the same way, and the pavement's real inside boundary, the curb, is the TRIMMED curve: the
+in-leg up to X, then the out-leg. `race_furniture._trim_folds` does exactly that to a strip's rings and
+to an inside kerb's stations: a backward step is one behind its predecessor along EITHER record's
+tangent, backward steps within 6 m are one fold, each fold is cut between the in-leg and out-leg
+segments that cross (`loop`: the hairpin, College/Navajo, Navajo/Jackson) or, where the legs never cross
+because the lip flares or the width steps while it folds, the last real in-leg step and first real
+out-leg step are extended to meet (`extend`, ≤ 8 m each: Jackson/Lake Murray 3.09 m, the seam 6.99 m),
+and ONE mitred corner record stands at X (profile on the bisector, lateral scale 1/cos(ψ/2), 1.20–1.45
+here) with every leg record nearer X than the mitre's reflex tip dropped too. The one-sided drop it
+replaces (`drop_folded_rings` / `drop_folded_stations`) tested a ring only against its own tangent, kept
+the "ear" rings past X (v768, v1512, v2317, v3295) and chorded BACKWARDS from them: six inside-out
+strip spans, a hook of wall standing 1–3.5 m inside the exit carriageways of the three chained corners
+(52 of race_cw's 220 obstruction stations) and seven inverted inside-kerb spans. The trimmed corners are
+DECLARED — `barrier_bands.json` `edge_corners`, computed by `race_furniture.edge_fold_corners`, the same
+plan + trim, and the author refuses a declaration that differs — so audit D's band, drive_test's presence
+probe and verify_race D / H all stand on the built corner. Rehearsal 2026-10-11: 41 edge rings trimmed,
+all forward-RIGHT (hairpin 10, College/Navajo 8, Navajo/Jackson 9, Jackson/Lake Murray 7, seam 7); kerbs
+`1KERB_race_770_in` 73 stations (one loop corner), `1KERB_race_0_in` 25 (one extend corner, +59° — it
+follows the ribbon's 27.5 → 17 m width-step jog at the seam). Each object records `fold_corners` and
+`fold_skipped(_run)` (a corner is reported by the object holding its corner ring); the real-data test
+pins that the only flagged vertices without a ring are the declared corners' removed sets.
+
+**The seam corner stands over the ribbon's notch.** The closure steps the road from Lake Murray's 27.5 m
+(v4497) to Alvarado's 17.0 m (v0) inside one 2.29 m segment, so the ribbon's inside lip jogs 5.25 m
+sideways inside the right-hander; the strip's extend corner continues Lake Murray's strip line straight to
+Alvarado's and 4.16 m of its 6.99 m corner polyline stands off the ROAD ribbon, over the curb notch (one
+ring seated by interpolation; Jackson/Lake Murray's Z-fold finger leaves 0.40 m off). No gate fails on it.
+The fix is the ribbon's, not the strip's: taper the width over the seam corner in the centreline widths
+(the mouth flares elsewhere step ≤ 1.5 m per 3 m vertex) and rebuild the ribbon (a draft-layer change).
 
 ## 5. The export split — one blend, three kinds of kn5
 
@@ -246,7 +267,9 @@ declaration, the RACE prefixes, no failed run, ≤ 1 % interpolated rings), per-
 ≤ 0.05 m), the chain (one object per declared run, every ring on a declared vertex, never on an
 island beyond the nose or on Alvarado / inside the hairpin arc, run ends within 1.5 m of the
 declared vertices, parts joined on their shared ring), the kerb-line strips (every declared vertex
-covered on each side except the fold-dropped rings this file reports, no ring inside a bridge span,
+covered on each side except the vertices the DECLARATION trims (`edge_corners[].removed`, a set check
+since 2026-10-11 — it was a count against the author's own fold report), every declared corner built (a
+ring of that side within 0.05 m of its X), no ring inside a bridge span,
 every `join` end met by its neighbour, every `free` end at a declared gap edge), the kerbs (the
 declared (apex, in|out) set == the authored set), the spawn clearance — HARD since 2026-10-11:
 re-measured from every `data/dummies_<id>.json` of a race layout (what the spawn kn5s are built from),
@@ -255,10 +278,14 @@ author tool's own record fails on the same floor) — and the lamp posts (G: eve
 `lights.local.json` head set back by `author_lamps_blend.ARM_M`, footprint radius 0.585 m from
 `lamp_post.obj`, stands outside every strip footprint; minimum margin reported) and, since the
 2026-10-11 weld pass, the ring density (H: every chain / kerb-line strip span vs the DECLARED offset
-curve rebuilt from the bands + centreline alone; a chord error above 0.15 m FAILS, fold spans are
-counted not judged, spacing above 3.5 m is reported — the pre-densify build measures 0.271 m / 7.02 m
+curve rebuilt from the bands + centreline alone — across a declared trimmed corner the curve IS the
+in → X → out polyline; a chord error above 0.15 m FAILS, fold spans are counted not judged (none since the
+trim), spacing above 3.5 m is reported — the pre-densify build measures 0.271 m / 7.02 m
 at the seam corner's outside lip and FAILS; the densified one 0.043 m / 3.50 m). `--pre-author` runs F
-and G alone. Dry run (before the weld pass): OK — spawn minimum 0.48 m (AC_START_1/3/5/7 of both race layouts), lamps 238
+and G alone. I (2026-10-11): no inside-out span — every chain / strip / kerb object's two extreme profile
+columns, rebuilt from `ring_centres` + `ring_frames` (tangent + lateral scale per ring), must both advance
+along each span's mean tangent; any that does not FAILS, and an object without frames FAILS (rehearsal:
+7 → 0 on the built blend). Dry run (before the weld pass): OK — spawn minimum 0.48 m (AC_START_1/3/5/7 of both race layouts), lamps 238
 masts beside a strip, minimum margin 2.36 m, none inside; chain worst ring spacing 3.16 m; edge missing {L 0, R 23} against
 fold-dropped {L 0, R 27}; the two notes it raises are the 19 `other_deck_above` rings (the
 ribbon's folds and the Del Cerro mouth step) and the outside-lip ring spacing: with one ring per

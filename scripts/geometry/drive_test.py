@@ -38,7 +38,11 @@ because the normal is recomputed from the reversed tangent); a ``kind: race`` la
 scripts/geometry/median_zone.py kind 'barrier'): the wheel paths move into the lane between the
 divider face and the kerb-line barrier face, the obstruction disc scans that lane, and every
 declared barrier station must carry a 1WALL (``barrier_missing``, gated at 0 — a declared but
-unbuilt chain fails, so the band is never a bypass). Each layout writes
+unbuilt chain fails, so the band is never a bypass). The race lane is the declared one AT the station
+(2026-10-11): the road width lerped between the two vertices (on a closed lap the closure duplicate is
+vertex 0), the scan disc clipped to the lane at each obstacle vertex's own station, a trimmed fold corner
+(barrier_bands.json edge_corners) probed on its declared in -> X -> out polyline, and the presence
+continuity wrapped across the seam of a closed lap. Each layout writes
 ``data/drive_test.<id>.json``; ``data/drive_test.json`` becomes the per-layout summary. A
 single-layout track is byte-for-byte today's gate.
 """
@@ -195,10 +199,11 @@ class TriField:
                 best, owner = y, name
         return best, owner
 
-    def rising_in(self, x, z, r, deck_at, clear, cap):
+    def rising_in(self, x, z, r, deck_at, clear, cap, keep=None):
         """Names of tri owners with a vertex inside radius r of (x,z) rising ``clear``..``cap``
         above the deck DIRECTLY BENEATH that vertex (deck_at(x,z) sampler) — comparing against the
-        station-centre deck instead reads ordinary up-slope geometry on any grade as a wall."""
+        station-centre deck instead reads ordinary up-slope geometry on any grade as a wall.
+        ``keep(vx, vz)`` (optional): a vertex it rejects is not looked at (the race lane clip)."""
         hits = set()
         R = int(r // CELL) + 1
         ci, cj = int(x // CELL), int(z // CELL)
@@ -210,6 +215,8 @@ class TriField:
                         continue
                     for vx, vy, vz in ((t[0], t[1], t[2]), (t[3], t[4], t[5]), (t[6], t[7], t[8])):
                         if math.hypot(vx - x, vz - z) >= r:
+                            continue
+                        if keep is not None and not keep(vx, vz):
                             continue
                         d = deck_at(vx, vz)
                         if d is not None and d + clear < vy < d + cap:
@@ -302,11 +309,24 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
         lc = json.loads((data / "centerline.local.json").read_text())
         pts = [(mirror * p[0], p[1], p[2]) for p in lc["points_xyz_m"]]
     widths = list(lc["widths_m"])
+    # LANE WIDTHS (race layouts, 2026-10-11). The lane a race layout drives is bounded by the declared
+    # strips, and the declaration lerps the road width between vertices; `widths[i]` (the vertex AHEAD
+    # of a station) made the lane up to 1.36 m too wide on a mouth flare (0.55-1.50 m per 3 m vertex),
+    # so the scan disc reached past the strip's road-side face — 341 of 395 race obstruction stations
+    # were the previous ring of a strip standing exactly on its declaration. _wl is the width the lane
+    # and the presence probe read, lerped at the station; on a closed lap the closure duplicate is
+    # vertex 0 (it carried the LAST street's width: 27.5 m on SD vs Alvarado's 17.0 m — median_zone's
+    # rule). The street layout and every single-layout track keep `widths` and are unchanged.
+    _closed_lap = (len(pts) > 2 and abs(pts[0][0] - pts[-1][0]) < 1e-6 and abs(pts[0][2] - pts[-1][2]) < 1e-6)
+    _wl = list(widths)
+    if _closed_lap:
+        _wl[-1] = _wl[0]
     if reverse:
         # the lap walked backwards: station 0 stays the seam (a closed lap repeats v0), the tangent
         # flips, so the right-hand side of travel (negative offsets) is the other carriageway
         pts = pts[::-1]
         widths = widths[::-1]
+        _wl = _wl[::-1]
 
     # declared bridge spans: parapet/railing furniture INSIDE these is expected (a bridge with no
     # railing is the defect, not the railing) — obstruction hits on *bridge-named meshes there are skipped
@@ -475,6 +495,72 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
 
     _bm_hits: dict = {"centre": [], "edge_L": [], "edge_R": []}   # (station, hit) per declared band
 
+    # TRIMMED CORNERS (race layouts, 2026-10-11): where the declaration trims a kerb-line strip to the
+    # curb's own corner (barrier_bands.json edge_corners) the band across the removed vertices is the
+    # polyline A (band point at vertex i) -> X -> B (band point at vertex j), not the folded offset curve:
+    # every station between st[i] and st[j] probes THAT polyline at the same fraction of its length, the
+    # +-BARRIER_PROBE_M spread along its own normal — every declared metre is still probed, nothing skipped.
+    _corner_spans: dict = {"edge_L": [], "edge_R": []}
+    if race and _zone is not None:
+        for _ck in _corner_spans:
+            for _ci, _cj, _poly in _zone.edge_corner_spans(_ck):
+                _sa, _sb = st[_ci], st[_cj]
+                _span = (_sb - _sa) if _cj >= _ci else (lap - _sa + _sb)
+                _segs = [math.dist(_poly[0], _poly[1]), math.dist(_poly[1], _poly[2])]
+                if _span > 0 and sum(_segs) > 0:
+                    _corner_spans[_ck].append((_sa, _sb, _cj < _ci, _span, _poly, _segs))
+
+    def _corner_probe_at(kind, s_at):
+        """(x, z, nx, nz) on the declared corner polyline for station s_at, None when s_at is not inside
+        one of `kind`'s trimmed corners"""
+        for _sa, _sb, _wrap, _span, _poly, _segs in _corner_spans[kind]:
+            if _wrap:
+                if not (s_at >= _sa or s_at <= _sb):
+                    continue
+                f = ((s_at - _sa) if s_at >= _sa else (s_at + lap - _sa)) / _span
+            else:
+                if not (_sa <= s_at <= _sb):
+                    continue
+                f = (s_at - _sa) / _span
+            d_ = f * (_segs[0] + _segs[1])
+            k_ = 0 if (d_ <= _segs[0] or _segs[1] <= 0) else 1
+            u_ = (d_ if k_ == 0 else d_ - _segs[0]) / (_segs[k_] or 1e-9)
+            (ax_, az_), (bx_, bz_) = _poly[k_], _poly[k_ + 1]
+            L_ = _segs[k_] or 1e-9
+            return (ax_ + (bx_ - ax_) * u_, az_ + (bz_ - az_) * u_, -(bz_ - az_) / L_, (bx_ - ax_) / L_)
+        return None
+
+    def _in_lane(vx, vz, i0, dh_, ins_):
+        """the race LANE CLIP: is the obstacle vertex (vx, vz) inside the declared lane at its OWN station?
+        Projected onto the walked line (segments i0 +- 8, wrapped on a closed lap), the lane there is
+        _lane_geometry(lerped width, dh_, ins_) and the vertex counts when it stands between 0.1 m off the
+        divider face and 0.1 m off the strip face (the scan disc's own margins). The round disc reaches
+        along the road as far as across it, so on a steep flare it caught a strip ring standing exactly on
+        its declaration a metre behind the station (s2271 / s4534 on race_cw) — this can only drop a vertex
+        that stands outside the declared lane; one inside it still fails."""
+        best = None
+        for kr in range(i0 - 8, i0 + 9):
+            if _closed_lap:
+                k = (kr - 1) % (n - 1) + 1
+            elif 1 <= kr <= n - 1:
+                k = kr
+            else:
+                continue
+            ax_, az_ = pts[k - 1][0], pts[k - 1][2]
+            dx_, dz_ = pts[k][0] - ax_, pts[k][2] - az_
+            L2 = dx_ * dx_ + dz_ * dz_
+            if L2 < 1e-12:
+                continue
+            u_ = max(0.0, min(1.0, ((vx - ax_) * dx_ + (vz - az_) * dz_) / L2))
+            d2 = (vx - ax_ - u_ * dx_) ** 2 + (vz - az_ - u_ * dz_) ** 2
+            if best is None or d2 < best[0]:
+                best = (d2, k, u_, ((vx - ax_) * (-dz_) + (vz - az_) * dx_) / math.sqrt(L2))
+        if best is None:
+            return True
+        _, k, u_, lat_ = best
+        lv = _lane_geometry(_wl[k - 1] + (_wl[k] - _wl[k - 1]) * u_, dh_, ins_)
+        return lv is None or (lv[0] - 0.3 <= -lat_ <= lv[1] + 0.3)
+
     def _bm_probe(kind, s_at, cx, cz, nx_, nz_, lat, deck):
         """does a 1WALL stand on the declared band at lateral `lat` of this station?"""
         hit = False
@@ -515,6 +601,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
         L = math.hypot(tx, tz) or 1e-9
         nx, nz = -tz / L, tx / L
         w = widths[i]
+        # race layouts: the lane at THIS station (the lerped declared width, see _wl); everything else
+        # keeps widths[i]
+        w_lane = (_wl[i - 1] + (_wl[i] - _wl[i - 1]) * t) if race else w
         # TRAVEL-SWATH cap: at junction-flare boxes w balloons to 24-40 m, but a swept ribbon
         # covers a bowtie there, not the full square — wheel paths at box-width offsets ride the
         # un-swept notches and read grass 'mid-lane'. Cars travel the center swath; test THAT.
@@ -522,7 +611,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
         lines = (-(w / 2 - 0.5), -w / 3, 0.0, w / 3, (w / 2 - 0.5))   # edges included
         _clamp_c, _clamp_r = 0.0, lane_half       # today's clamp: +/- lane_half about the centreline
         _dh, _inset = _divider_at(i)
-        _lane = _lane_geometry(w, _dh, _inset)
+        _lane = _lane_geometry(w_lane, _dh, _inset)
         if _lane is not None:
             # driven lane = right of the divider (negative offsets are the right-hand side here) and
             # inside the kerb-line barrier; edges, thirds, centre of THAT lane. The inner wheel clears
@@ -635,7 +724,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                 _sdh = _dh if _dh > 0 else _ndh
                 _sins = _inset if _inset > 0 else _nins
                 if _sdh > _dh or _sins > _inset:
-                    _lane_scan = _lane_geometry(w, _sdh, _sins)
+                    _lane_scan = _lane_geometry(w_lane, _sdh, _sins)
             if _lane_scan is not None:
                 # scan band: inner edge DIVIDER_CLEAR_M - 0.3 = 0.1 m off the divider face, outer
                 # edge 0.1 m off the kerb-line barrier face (or 0.2 m inside the lip)
@@ -643,9 +732,13 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                 _mid = (_lo + _hi) / 2.0
                 _ox, _oz = x + nx * (-_mid), z + nz * (-_mid)
                 _orad = min((_hi - _lo) / 2.0, 6.0) + 0.3
+            _keep = None
+            if race and _lane_scan is not None:
+                _kdh, _kins = (_sdh, _sins) if _zone is not None else (_dh, _inset)
+                _keep = (lambda vx, vz, _i0=i, _a=_kdh, _b=_kins: _in_lane(vx, vz, _i0, _a, _b))
             for name in obstacle.rising_in(_ox, _oz, _orad,
                                            lambda vx, vz: surface.top_at(vx, vz, y_ref)[0],
-                                           OBST_CLEAR_M, OBST_HEIGHT_M):
+                                           OBST_CLEAR_M, OBST_HEIGHT_M, keep=_keep):
                 if on_bridge and "BRIDGE" in name.upper():
                     continue                       # declared-span railing = required furniture
                 problems["obstructions"].append((round(s, 1), name))
@@ -661,9 +754,15 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                 if _zone.barrier_half_at(i) > 0 and _zone.barrier_half_at(i - 1) > 0:
                     _bm_probe("centre", s, x, z, nx, nz, 0.0, deck_c)
                 if _zone.edge_strip_at(i) and _zone.edge_strip_at(i - 1):
-                    _ec = w / 2.0 + _zone.edge_centre_from_lip
-                    _bm_probe("edge_L", s, x, z, nx, nz, +_ec, deck_c)
-                    _bm_probe("edge_R", s, x, z, nx, nz, -_ec, deck_c)
+                    # at the declared band of THIS station: the lerped width (the strip's own lateral; the
+                    # closure duplicate is vertex 0), or on a trimmed corner's polyline
+                    _ec = w_lane / 2.0 + _zone.edge_centre_from_lip
+                    for _bk_, _sg in (("edge_L", 1.0), ("edge_R", -1.0)):
+                        _cp = _corner_probe_at(_bk_, s)
+                        if _cp is None:
+                            _bm_probe(_bk_, s, x, z, nx, nz, _sg * _ec, deck_c)
+                        else:
+                            _bm_probe(_bk_, s, _cp[0], _cp[1], _cp[2], _cp[3], 0.0, deck_c)
         s += STEP_M
 
     # BARRIER CONTINUITY: a declared station is MISSING when no 1WALL hit lies within half a
@@ -681,6 +780,11 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
             while _hp < len(_hit_s) and _hit_s[_hp] < s_ - BARRIER_GAP_MAX_M / 2.0:
                 _hp += 1
             if _hp < len(_hit_s) and _hit_s[_hp] <= s_ + BARRIER_GAP_MAX_M / 2.0:
+                continue
+            # a CLOSED lap's band runs on across the seam: a miss within half a module of the lap end is
+            # covered by the hits just past station 0, and the reverse (median_zone's seam rule)
+            if _closed_lap and _hit_s and (_hit_s[0] + lap - s_ <= BARRIER_GAP_MAX_M / 2.0
+                                           or s_ + lap - _hit_s[-1] <= BARRIER_GAP_MAX_M / 2.0):
                 continue
             barrier_missing.append((s_, _bk))
     problems["barrier_missing"] = barrier_missing

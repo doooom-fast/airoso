@@ -32,6 +32,12 @@ The prep (build_kn5_loop.py) keeps it: its remove_doubles / face-up pass round-t
 flags through bmesh, it never double-sides a loop.blend mesh (DOUBLE_SIDE only touches merged
 data/track_*.obj groups) and it only ever ADDS smooth shading (above 65,535 loops).
 
+FOLDS (2026-10-11): at the five inside lips tighter than the strip's offset the plan TRIMS the strip and the
+inside kerbs to the curb's own corner (race_furniture._trim_folds: one mitred corner ring at the offset curve's
+self-intersection, or where its legs extended meet) — what barrier_bands.json declares as `edge_corners`;
+race_authored.json records each object's fold_corners, an author-time inside-out count and `ring_frames`
+(tangent + lateral scale per ring), from which verify_race I re-checks that no span is inside-out.
+
 Default --out-blend is the input blend (saved in place, like every other author tool). The
 hand-edit surface airoso/tracks/<track>/loop.blend is NEVER written by this tool (ship_sd.sh's
 sync-back is the only writer); an --out-blend under airoso/tracks is refused.
@@ -314,7 +320,7 @@ def main():
     strips = Seater(road_main, road_any, rf.BURY_M)
     walk = Seater(curb_bvh, curb_bvh, rf.BURY_M) if mode == "walk" else strips
     kerbs = Seater(road_main, road_any, KERB_SINK_M)
-    objects, centres = [], {}
+    objects, centres, frames = [], {}, {}
     tot = {"chain_len": 0.0, "chain_rings": 0, "edge_len": 0.0, "edge_rings": 0, "kerb_len": 0.0,
            "kerb_stations": 0, "positions": 0, "triangles": 0, "render_verts_est": 0, "densified": 0,
            "spacing_max": 0.0, "chord_max": 0.0}
@@ -348,8 +354,11 @@ def main():
                    "seat_gap_max_m": 0.0, "ends": [plan["start_kind"], plan["end_kind"]],
                    "caps": [plan["cap_start"], plan["cap_end"]], "fold_skipped_run": plan.get("fold_skipped", 0),
                    "densified": plan.get("densified", 0), "spacing_max_m": round(sp, 3), "chord_max_m": round(ch, 4),
-                   "fold_spans": folds}
+                   "fold_spans": folds, "fold_corners": plan.get("fold_corners", []),
+                   "inside_out_spans": len(rf.inside_out_spans(plan["rings"], rf._strip_xz, rf.BARRIER_HALF_W))}
             centres[name] = [[round(x, 2), round(r["y"], 2), round(z, 2)] for r in plan["rings"] for (x, z) in (xz(r),)]
+            # the ring frames verify_race I rebuilds the profile columns from (tangent + lateral scale)
+            frames[name] = [[round(r["tx"], 5), round(r["tz"], 5), round(r.get("ls", 1.0), 4)] for r in plan["rings"]]
         else:
             sgn = 1.0 if plan["side"] == "L" else -1.0
 
@@ -367,10 +376,13 @@ def main():
             tot["kerb_stations"] += len(plan["stations"])
             rec = {"name": name, "kind": "kerb", "side": plan["side"], "sub": plan["sub"], "apex": plan["apex"],
                    "run": plan["run"], "stations": len(plan["stations"]), "length_m": plan["length_m"],
-                   "fold_skipped": plan.get("fold_skipped", 0),
+                   "fold_skipped": plan.get("fold_skipped", 0), "fold_corners": plan.get("fold_corners", []),
+                   "inside_out_spans": len(rf.inside_out_spans(plan["stations"], lambda s_, g=sgn: rf.kerb_mid_xz(s_, g),
+                                                               rf.KERB_W / 2.0)),
                    "seated": {"hit": kerbs.hit - h0, "near": kerbs.near - n0, "interpolated": kerbs.interp - i0},
                    "seat_gap_max_m": 0.0}
             centres[name] = [[round(x, 2), round(s["y"], 2), round(z, 2)] for s in plan["stations"] for (x, z) in (xz(s),)]
+            frames[name] = [[round(s["tx"], 5), round(s["tz"], 5), round(s.get("ls", 1.0), 4)] for s in plan["stations"]]
         bverts, bfaces = rf.to_blender(verts, faces)
         if len(bverts) >= 60000:
             raise SystemExit(f"[race] FATAL {name}: {len(bverts)} positions (>= 60,000) — lower MAX_RINGS_PER_OBJECT")
@@ -485,6 +497,7 @@ def main():
         "other_deck_above": all_other[:24],
         "objects": objects,
         "ring_centres": centres,
+        "ring_frames": frames,
         "seconds": round(time.time() - t0, 1),
     }
     (data / "race_authored.json").write_text(json.dumps(report), encoding="utf-8")
@@ -502,6 +515,12 @@ def main():
           f"{t['seated_near']} near / {t['seated_interpolated']} interpolated; deck vs data max {t['deck_vs_data_max_m']} m; "
           f"other deck above {t['other_deck_above_rings']} rings (max {t['other_deck_above_max_m']} m); "
           f"removed {removed} old; saved {out_blend.name} ({report['seconds']} s)")
+    n_io = sum(int(o.get("inside_out_spans", 0) or 0) for o in objects)
+    for o in objects:
+        for c in o.get("fold_corners", []) or []:
+            print(f"[race] trimmed fold {o['name']}: {c['kind']} corner at ({c['xz'][0]:.2f}, {c['xz'][1]:.2f}) turn "
+                  f"{c['turn_deg']:+.1f} deg, mitre {c['mitre']}, {c.get('n_removed', len(c['removed']))} rings/stations removed")
+    print(f"[race] inside-out spans (author-time column test): {n_io}")
     sh, dn = report["shading"], report["density"]
     print(f"[race] shading: smooth, hard edges > {sh['sharp_deg']:.0f} deg + kerb outline; {sh['triangles']} triangles -> "
           f"~{sh['render_verts_est']} render verts ({sh['verts_per_triangle_est']} per triangle; flat-shaded was 3.0)")

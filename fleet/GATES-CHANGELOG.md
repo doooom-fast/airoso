@@ -348,3 +348,66 @@ face-up pass reverses 2 of 4,545 kerb faces (the hairpin fold of `1KERB_race_770
 sets `use_smooth = True` (above 65,535 loops; no RACE object comes near). engine-july
 `scripts/ac/build_kn5_loop.py` md5 2dcc8e8b9d4024ec9a9ee3fadb1236b8 and airoso's
 8752e96360b2882021c089322f0e5771, both unchanged.
+
+### Same day — the race furniture gates measure the built lane and the built corner (ledger 0047 red-gates round)
+
+The first full REAL rehearsal of `tools/ship_sd.sh` (scratch `SHIP_PROJ`, `--skip-blend`) passed everything
+except the race layouts' own furniture gates: race_cw obstruction **220** / `barrier_missing` **22**,
+race_acw **175** / **32** (34,833 probes each). Three read-only diagnoses replayed the gates on the built
+OBJ; the stations split into two gate bugs and one geometry bug, and every fix below is measured on that
+rehearsal.
+
+| Gate | Was | Now | Basis |
+|---|---|---|---|
+| `drive_test` race lane width (race layouts only — the street layout and every single-layout track read `widths` exactly as before) | the lane and the scan disc at a station between vertices i-1 and i used `widths[i]`, the vertex AHEAD | `_wl` lerped at the station (`w_lane`); on a closed lap the closure duplicate is vertex 0 (it carried Lake Murray's 27.5 m vs Alvarado's 17.0 m — median_zone's rule) | not a threshold. SD's mouth flares grow 0.55–1.50 m per ~3 m vertex, so the lane was up to 1.36 m too wide and the disc reached the PREVIOUS ring of a strip standing on its declaration (OBJ footprint minus declared face: median +0.009 m, 332 of 341 within ±0.03 m): **341 of the 395** obstruction stations |
+| `drive_test` race lane clip (new `TriField.rising_in(keep=)`) | a round disc mid-lane (radius half-lane + 0.3, cap 6.3 m) | an obstacle vertex inside the disc counts only if it stands inside the declared lane AT ITS OWN STATION (projected onto the walked line, ±8 segments ⚠, wrapped on a closed lap), with the disc's existing 0.1 m off each face (no new margin) | can only DROP a vertex outside the declared lane; one inside it still fails. The disc reaches as far along the road as across it, so on a steep flare it caught strip rings on their declaration up to 1.33 m behind the station (s2271, s4534) |
+| `drive_test` barrier presence (`barrier_missing`) | probe at `widths[i]/2 + edge_centre_from_lip` (the closure duplicate's 27.5 m put the seam probe 5.25 m outboard of the strip); continuity check linear in station, blind across the seam | probe at the lerped width; a station inside a declared trimmed corner (`edge_corners`, below) probes the declared in → X → out polyline at the same fraction of its length, the ±0.3 m spread along the polyline's normal (every declared metre still probed, nothing skipped); on a closed lap a miss within half a module of the seam is covered by hits across it | the seam station s13480 (race_cw edge_L) / s0 (race_acw edge_R) was a gate bug: the forward-left strip there is complete. Skipping the fold stations instead was measured 0 / 0 and REJECTED as a bypass (chords up to 5.26 m > one 4.04 m module would go unprobed) |
+| `scripts/geometry/median_zone.py` barrier kind (audit D `--race` exemption, drive_test lookups) | an edge band point at every flagged vertex, incl. the folded inside-lip offsets | `edge_corners` loaded: a trimmed vertex has NO band point on that side; the band across it is the polyline in-vertex band point → X → out-vertex band point (same 0.935 m reach, no extension); `edge_corner_spans(kind)`; `reversed()` swaps the side and maps k → (n−1−k) mod (n−1) | the exemption stands on the built corner only. audit `--race` D 512 → **512** |
+| `tools/barrier_bands.py` (the declaration) | inside-lip band points declared on the folded offset curve at every vertex | `edge_corners` (+ `edge_fold_vertices`, `summary.edge_corners`) from `race_furniture.edge_fold_corners` — the author's own plan + trim; FAIL when a fold's removed vertices are > 15 ⚠ vertices from every inside corner apex of that side | SD declares 5, all side R: loop v763→774 (hairpin, −74.9°), loop v1508→1517 (−66.8°), loop v2314→2324 (−92.8°), extend v3292→3300 (−85.7°, 3.09 m), extend v4495→5 (seam, −73.1°, 6.99 m); 41 vertices |
+| `tools/verify_race.py` D | `len(missing) ≤` the AUTHOR's own `fold_skipped_run` count — passed 23 missing against 27 self-reported drops that were not the same vertices | a SET check: every declared edge vertex without a ring must be in a declared corner's `removed` (a ring within 0.05 m ⚠ `CORNER_TOL_M` of the vertex's declared band point also covers it — inside a tight corner the nearest-vertex map loses the leg rings); every declared corner must have a ring of that side within 0.05 m ⚠ of its X | ⚠ 0.05 m: `ring_centres` are rounded to 0.01 m and the corner ring stands ON X by construction (measured 0.002–0.006 m) |
+| `tools/verify_race.py` H | fold spans counted, not judged (5 fold + 4 unmeasured on the rehearsal) | across a declared trimmed corner the declared curve IS the in → X → out polyline (X a sample), so those spans are measured | rehearsal: 5 fold / 4 unmeasured → **0 / 0**, chord max 0.0428 m unchanged |
+| `tools/verify_race.py` I (new) | nothing failed an inverted span | from `ring_centres` + `ring_frames` (tangent + lateral scale per ring, written by the author tool): both extreme profile columns (±`barrier_half_m` × ls; a kerb ±`kerb_width_m`/2 × ls about its mid-line) must advance along each span's mean tangent; any inside-out span FAILS; an object without matching frames FAILS | geometric, not tuned. Built blend (all 36 RACE objects, their own vertices; before = the weld-pass blend authored by HEAD's plan code): **7 → 0** (`edge_R_alvarado_620_0` ×3, `college_903_0`, `navajo_1519_0`, `jackson_2324_1`, `1KERB_race_0_in`) |
+
+**The geometry fix (not a gate, load-bearing).** `race_furniture.drop_folded_rings` tested a ring only
+against its own tangent, kept the "ear" rings past the offset curve's self-intersection (v768, v1512,
+v2317, v3295) and chorded BACKWARDS from them: the inside-out spans above and a hook of wall standing
+1–3.5 m inside the exit carriageway of the three chained right-handers (**52** of race_cw's 220). It is
+replaced by `_trim_folds` (strips and the inside kerbs): two-sided backward test, folds within 6 m ⚠
+merged, the cluster cut where the in- and out-leg cross (`loop`) or where their last real steps extended
+≤ 8 m ⚠ meet (`extend`), ONE mitred corner record at X (lateral scale 1/cos(ψ/2), cap 2.0 ⚠), every leg
+record nearer X than the mitre's reflex tip + 0.25 m ⚠ dropped; fill rings on a corner chord stand square
+to the chord and keep their leg's width. The author refuses a declaration whose `edge_corners` differ
+from what it trims (`match_declared_corners`). Kerbs: `1KERB_race_770_in` one loop corner,
+`1KERB_race_0_in` one extend corner (+59°, it follows the ribbon's width-step jog at the seam).
+
+**Measured on the rehearsal** (same scratch project, `bash tools/ship_sd.sh --skip-blend`, before →
+after):
+
+| line | before | after |
+|---|---|---|
+| street drive_test: ground-on-top / floating / obstruction / excursion | 82 / 391 / 0 / 101 | 82 / 391 / 0 / 101 (`drive_test.street.json` byte-identical) |
+| street audit D / F / I / K (total) | 512 / 15 / 145 / 154 (826) | 512 / 15 / 145 / 154 (826) (`audit.json` byte-identical) |
+| race_cw obstruction / barrier_missing | 220 / 22 | **0 / 0** |
+| race_acw obstruction / barrier_missing | 175 / 32 | **0 / 0** |
+| race_cw ground-on-top / floating / excursion / kinks per km | 65 / 391 / 4 / 5.12 | 67 / 391 / 4 / 5.27 |
+| race_acw ground-on-top / floating / excursion / kinks per km | 13 / 391 / 0 / 2.74 | 13 / 391 / 0 / 2.82 |
+| audit `--race` D / F / I / K (total) | 512 / 15 / 145 / 154 (826) | 512 / 15 / 145 / 154 (826) |
+| verify_race edge missing / fold spans / unmeasured / inside-out | R 23 vs author 27 / 5 / 4 / (not measured) | R 30, all declared (41 trimmed) / 0 / 0 / 0 |
+| verify_kn5 | passed | passed |
+
+The race ground-on-top rows moved only in their wheel offsets (the lane is now the declared one): the
+same stations before and after (College/Navajo s4535-4539 and Lake Murray s10242-10243, ribbon folds /
+ground through the road — inherited, also in the street layout's 82). Gate-only on the OLD build:
+52 / 24 and 0 / 28 (all at the folds); geometry-only (old gate on the NEW build): 170 / 60 and 175 / 54 —
+neither half alone reaches 0. **Known ribbon defect, not gated:** the seam closure steps 27.5 → 17.0 m in
+one 2.29 m segment inside the right-hander, so 4.16 m of the seam corner's 6.99 m polyline stands off
+the ROAD ribbon over the curb notch (1 ring seated by interpolation; Jackson/Lake Murray's Z-fold leaves
+0.40 m); the fix is a width taper over the seam corner in the centreline data and a ribbon rebuild.
+Tests: `tests/geometry/test_drive_test_layouts.py` (a 17 → 24 m flare with strips on their declaration
+has 0 obstructions, a ring 1 m in the lane fails; a trimmed corner built by race_furniture passes
+presence + obstruction both ways, cut away it fails, undeclared it fails, the untrimmed knot is an
+obstruction), `tests/geometry/test_median_zone_kinds.py`, `tests/tools/test_barrier_bands.py`,
+`tests/tools/test_race_furniture.py` (an R 8 m / 11.5 m right-hander trims to one mitred corner, no ring on
+the lane side of either leg, no inside-out span; the inside kerb too; a drifted declaration is refused),
+`tests/tools/test_verify_race.py` (D needs the declaration's trim, not the author's count; a declared
+corner must be built; H on the polyline; I fails a turned ring, a backward ring, missing frames).

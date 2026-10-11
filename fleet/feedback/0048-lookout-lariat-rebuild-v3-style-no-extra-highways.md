@@ -12,7 +12,8 @@ train: -
 **Open, queued after San Diego** (2026-10-10). Nothing built, nothing committed, no `.blend` touched.
 The "wavy ribbons" half is measured and diagnosed below; the rebuild half waits on a LOCATION-DOSSIER
 Kevin approves, on 0043/0044/0045/0046/0047 landing on Lake Murray first (their tools are what gets
-ported), and on Kevin's explicit re-ordering of the priority line (see **Priority**). 0047 (the
+ported), and on Kevin's explicit re-ordering of the priority line (see **Priority**; *2026-10-11:
+done, see the status update*). 0047 (the
 three-version / per-layout machinery) is on disk; 0044 (arrow signs) is cited by number as filed this
 day — 0045 and 0046 already cite it — and its rule is restated here so nothing dangles if the file
 lands later.
@@ -40,13 +41,15 @@ means is the only Lariat on this machine: `D:/SteamLibrary/.../content/tracks/lo
   history"; last commit a28e8a1 2026-08-19). Its `tracks/lookout-lariat/track.config.json` and
   `source/route-notes.md` are byte-identical to `airoso/tracks/lookout-lariat/` (`diff` empty, both
   files) — **airoso's copy is the one to edit**. Derived data (`data/`, `build/`) was deleted in
-  k10-colorado 0a897bb (2026-08-09, "Delete all generated output"); no Overpass snapshot survives in
-  either repo.
+  k10-colorado 0a897bb (2026-08-09, "Delete all generated output"). *Corrected 2026-10-11: the
+  Overpass snapshot does survive, in the twin's history at `0a897bb^` (see the status update).*
 - `k10-colorado/tracks/lookout-lariat/blender/lookout_lariat.blend` (586.8 MB, 2026-08-08 13:27,
-  plus `.blend1`) is a live-Blender refinement workspace from the Aug 7–8 sessions — **not** the
-  source of the installed kn5 (built Jul 27) and not inspected here. V3-PLAN Phase 0 already flags
-  the ~3.5 GB of Colorado `.blend` workspaces for archival. It carries hand edits a regenerate
-  discards: archive it, never regenerate over it, salvage from it only by inspection.
+  plus `.blend1`) is **not** the source of the installed kn5 (built Jul 27). *Corrected 2026-10-11,
+  after inspection: it is not a live-Blender refinement workspace but build_kn5's phase-5 output
+  from the 0024 barrier-winding measurement builds (0 collections, 0 text blocks, 0 modifiers,
+  identity transforms). It carries no authored layer. Archive it rather than delete it, since
+  vertex-level edits can't be ruled out.* V3-PLAN Phase 0 already flags the ~3.5 GB of Colorado
+  `.blend` workspaces for archival.
 
 ### The route, as configured (`tracks/lookout-lariat/track.config.json`)
 
@@ -109,8 +112,9 @@ The extra highways are not route data. They come from the **environment stage**,
    - **5,127 deck stations, 37.3 km of 22 m-wide deck** against a 24.9 km lap — 1.5× the lap's
      length of pavement that is not the lap. **9.6 km of it within 100 m of the lap, 15.3 km within
      300 m** (the US-40 / I-70 pairing down Mt Vernon Canyon and both US-6 carriageways beside the
-     return leg); the rest reaches **3.9 km past the lap's west edge** (`HWYSTRUCT_1`: the Clear Creek
-     Canyon US-6 at y 325–466) and 1.4 km south.
+     return leg); the rest reaches **3.9 km past the lap's west edge** (`HWYSTRUCT_1`, y 325–466:
+     *corrected 2026-10-11, this is I-70 west toward Genesee, not the Clear Creek Canyon US-6*) and
+     1.4 km south.
    - **Wavy, measured:** 408 vertical direction reversals > 5 cm along the deck centrelines =
      **10.9 per km** overall; individual runs 20–74/km (run #11, 811 m beside the lap at 577 m:
      66.6/km, max second difference **1.82 m per 8 m station**; run #5, 1,349 m at 49 m from the
@@ -167,6 +171,10 @@ first, Sand Creek second" and Phase 4 ends "Then Sand Creek". Kevin's sentence p
 next. **Both lines need his explicit edit** — not changed here, and this entry does not out-rank
 them until he does.
 
+*2026-10-11: Kevin re-ordered it ("what about lariat"). `CLAUDE.md:12` now reads "San Diego, then
+Lookout Lariat …, then Sand Creek" (918d7f1); `docs/V3-PLAN.md:6` still needs the same edit
+(V3-PLAN P0 step 9).*
+
 ## Diagnosis
 
 Two things, not one.
@@ -191,7 +199,7 @@ and the bridge at 19th St are authored once, per place, and gated.
 Everything below is the Lake Murray chain applied to a mountain route; no new kind of code path
 (the dossier template's own rule). Honest gaps in the chain are marked **[gap]**.
 
-0. **Dossier first** (`fleet/templates/LOCATION-DOSSIER.md` → `tracks/lookout-lariat/dossier.md`,
+0. **Dossier first** (`fleet/templates/LOCATION-DOSSIER.md` → `tracks/lookout-lariat/DOSSIER.md`,
    Kevin approves before geometry). Sections that decide this build: §2 widths per segment measured
    off the aerial (Lariat Trail 6.1 m, 7.5 at hairpins; `docs/ROAD-CONSTRUCTION.md:71-76` already
    holds the 1913 construction parameters — 6 % max grade, R 15–25 m hairpins, dry-stone walls at
@@ -205,6 +213,10 @@ Everything below is the Lake Murray chain applied to a mountain route; no new ki
    County lamps are the ordinary HPS → LED history, so the "sodium" hue here is 0043's HPS line
    (`255,183,76`, `SINGLE_FREQUENCY 0.7`), one config line, *after* the dossier confirms which era
    Kevin wants; §10 the look-rows the seat must confirm (below).
+   *2026-10-11, from the dossier: Paradise Rd measures −10.3 % over 100 m (−11.5 % worst over 20 m),
+   so the 16 % cap never binds (V3-PLAN A7); the OSM hairpins are R≈12–14 m and faceted, so each is
+   measured on the aerial and fitted before the road is built (A2); and Gambel oak is dropped, since
+   no source puts it on Lookout Mountain (dossier §6a).*
 1. **Draft, route-only.** Same `route.roads`; the draft is the lap's ribbon, its own ramp, and the
    terrain underlay — **no `build_env` highways, no `MOUNTAINS`**. In the V3 chain that is by
    construction (SD's draft never runs `build_env`); as a separate engine courtesy for Sand Creek
@@ -214,16 +226,24 @@ Everything below is the Lake Murray chain applied to a mountain route; no new ki
    `scripts/blender/underlay.py` from REALISM §4 does not exist yet (`scripts/blender/` is empty).
    The Lariat needs the generalised `draft` verb or a `tools/ship_lariat.sh` that reuses the same
    tools against `tracks/lookout-lariat/` — a decision for whoever lands 0047's layout machinery.
+   *2026-10-11: V3-PLAN P1 decides it: a generic `tools/ship_track.sh` driven by
+   `tracks/<track>/ship.json`, with `ship_sd.sh` left byte-identical.*
 2. **US-6 as one slab with its median** (0037 pattern, `tools/median_envelope.py` +
    `author_median_blend.py`): the driven carriageway is the `1ROAD`; the opposing carriageway and the
    median island are authored *on* the same pavement, physics single-coverage, never a second
-   ribbon. Kevin's call in the dossier: full divided US-6 vs driven carriageway only.
+   ribbon. Kevin's call in the dossier: full divided US-6 vs driven carriageway only. *2026-10-11: the
+   same treatment covers the lap's other divided pieces (309 m of Colfax, 105 m of 19th St and, found
+   in the second revision, the 85 m divided pair at exit 259); Kevin's options are V3-PLAN D2
+   (a)/(b)/(c), each of which says what Reverse drives there.*
 3. **Five mouths + the bridge, per `docs/JUNCTIONS.md`** (R1–R9, R18): pad topology at Paradise/US-40
    and US-40/US-6, ribbon-through at the Paradise tee and the gates, the off-ramp butt-welded to
    19th St; every strip terminates at the mouth; the 19th St deck over US-6 held level between
    abutments (L3 "Bridges dip"; 0017 is the failure it prevents). Side-road mouths off the lap
    (Charros Dr, Colorow Rd, the summit lot) are set-dressing mouths (R18c) or omitted — route-only
-   means no second drivable road.
+   means no second drivable road. *2026-10-11: the five mouths are now the corners where the lap
+   turns from one road to another: C12 Paradise tee, C14 Paradise → US-40, C15 exit 259, C16 Colfax
+   → US-6 and C18 ramp → 19th St (V3-PLAN P3b). The lap reaches US-6 from Colfax, not from US-40,
+   and the night gates are not a turn.*
 4. **Terrain: fine where the road is, real where it is not** — resolves 0010's bind. 0046 E1 tiers
    (`terrain.tiers`, corridor cells finer than the 6.1 m road per L3b, far cells coarse,
    `far_extent_m` to the Clear Creek Canyon walls and Genesee), `tools/seat_terrain_blend.py` on the
@@ -233,7 +253,9 @@ Everything below is the Lake Murray chain applied to a mountain route; no new ki
    shelf must not grab the wrong leg's height on the stacked switchbacks.
 5. **Switchback cross-slope** — 0003 is still `open`/`standard`: L10's "streets are not
    superelevated" must be amended before the hairpins get their crown + superelevation; the
-   measured-crossfall pass (`data/crossfall.json`, 6 % cap) is the interim, as today.
+   measured-crossfall pass (`data/crossfall.json`, 6 % cap) is the interim, as today. *2026-10-11:
+   that file is DEM-estimated, not measured (~10 % of stations at the cap, sign swings within 30 m on
+   the climb). V3 re-measures it inside the real-width footprint, under a roll-rate gate (V3-PLAN P2).*
 6. **TreeFX with Front Range species** (0040's `tools/make_treefx.py` zones: forest band by elevation
    and aspect, corridor guard half-width + 1 m, no `;` comment lines; L7: every species resolved or
    dropped). `.bin` models stay gitignored under `source/trees/` and ride only the **Full** package;
@@ -246,7 +268,10 @@ Everything below is the Lake Murray chain applied to a mountain route; no new ki
    `[LIGHT_N]` count = inventory count. Expect a few dozen, not 304.
 8. **Arrow signs at the switchbacks** (0044 rule): the hazard-marking face at each hairpin from the
    dossier §4 inventory (US faces, not the Euro atlas the old config planned), placed on true ground
-   (dossier §5 rule), nothing collidable in the lane.
+   (dossier §5 rule), nothing collidable in the lane. *2026-10-11: the Euro faces were Kevin's July
+   call ("Euro faces per Kevin"), so the switch to US faces is put to him as a reversal (V3-PLAN
+   D7), not treated as a defect. The same applies to the July lamps, the alpine grass and the
+   concrete-barrier modules.*
 9. **GrassFX** per 0045's corrected grammar, occluders = the allow-list.
 10. **Full / Reverse** via 0047's layout machinery, with no race overlay: `layouts[]` `direction`
     `forward` / `reverse`, a declared `start` at the stone gates (station 0) in each layout's own
@@ -257,13 +282,19 @@ Everything below is the Lake Murray chain applied to a mountain route; no new ki
     direction and `verify_kn5`'s per-layout spawn check (0047 G); the L8 sentence 0047 H adds
     (L8, L11, 0016/0026 direction contract). The current `full`/`reverse` pair is 0047's
     `street_port` regression case: a direction pair with no chain.
+    *2026-10-11: superseded in part by V3-PLAN D3 (Kevin's race brief, 2026-10-11). By default
+    (D3 a) the Lariat gets four layouts: these two street layouts (`race_furniture: false`) plus
+    Race anticlockwise and Race clockwise (`race_furniture: true`, one shared race kn5). Under D3 (b)
+    it stays the two street layouts described here.*
 11. **Gates, then seat**: all four on the built artifact (L5), JUNCTIONS §4 checks at the five
     mouths, then DRIVE-TEST-REPORT. Package as `lookout_lariat` with `ui/preview.png`, honest
     `README`/`CREDITS`/`LICENSES`, tags without `fictional`; release beside every other Colorado zip.
 
 **Cost:** one dossier; the generalised draft/ship chain (**[gap]** above — the only real engineering
 item); a 3DEP re-sample at tiered spacing (≈ 7 × 7 km far ring); authoring time for five mouths, one
-median, one bridge and ~20 hairpins; TreeFX/GrassFX/lamp/sign lists regenerated; a release.
+median, one bridge and ~20 hairpins; TreeFX/GrassFX/lamp/sign lists regenerated; a release. *2026-10-11: the dossier counts 11 corners
+of ≥ 135° (the 7 named hairpins among them), four divided slabs (D2), the lid and two C-470 decks
+(D5); V3-PLAN's phases replace this estimate.*
 **Not in this entry:** Sand Creek's own I-70 decks (its feature, its call), the circuits (no
 motorway in their bboxes — `HIGHWAY` is empty there), San Diego (untouched), 0003's law amendment
 (its own entry).
@@ -285,11 +316,15 @@ motorway in their bboxes — `HIGHWAY` is empty there), San Diego (untouched), 0
 
 1. **Road inventory (the "no extra highways" gate).** On the built kn5: **zero** meshes named
    `HIGHWAY*` / `HWYSTRUCT*` / `MOUNTAINS*`; every pavement triangle (any mesh carrying a road
-   material or a `1ROAD*` name) lies within half-width + 2 m of the route centreline; total pavement
-   centreline length within 1 % of the lap (24.9 km) plus the authored US-6 slab. Today: 37.3 km of
+   material or a `1ROAD*` name) lies within half-width + 2 m of the route centreline **or inside a
+   declared exemption polygon for authored pavement** (hairpin pads, junction mouths, side-road
+   stubs, the Windy Saddle lot, overlooks, the lid, the static C-470 decks, the divided-road slabs:
+   V3-PLAN P5); total pavement centreline length within 1 % of each layout's lap. Today: 37.3 km of
    deck, 9.6 km of it within 100 m of the lap. Add the check to `verify_kn5` so it stays true.
 2. **Wavy is gone by construction, and nothing else is:** `drive_test` severe 0, kinks ≤ 5/km (SD V3
-   reached 4.97; the Lariat's last measure was 68.3), obstruction 0, replication vs independent 3DEP
+   reached 4.97; the Lariat's last measure was 68.3; *2026-10-11: a suburban number copied onto
+   R≈12 m hairpins, so it is marked invented until it is derived from reference mountain roads,
+   per V3-PLAN P5*), obstruction 0, replication vs independent 3DEP
    p95 ≤ 0.5 m; `audit_mesh` B 0, J 0, K hard = 0 at the five mouths (0036's promotion), F not above
    SD V3's 15; `kn5_ground_check` road-over-ground **p95 ≤ 0.10 m AND floating_furniture 0 at the
    same cell size** — 0010's two numbers, finally in one build; the 19th St deck: no step > 0.10 m
@@ -302,16 +337,149 @@ motorway in their bboxes — `HIGHWAY` is empty there), San Diego (untouched), 0
    sine mesh; no terrain vertex below the real canyon floor.
 5. **Lamps and signs match the dossier:** `[LIGHT_N]` count = §5 inventory (not 304); every
    `COLOR` 4th term in the 255-scale decade; hue per §7; one arrow/chevron set per numbered hairpin
-   in §4, none in the lane.
+   in §4, none in the lane. *2026-10-11: superseded by V3-PLAN A5 and D7: arrows face both
+   directions at each qualifying corner (≈ 44, the count Kevin approves), chevron runs go only where
+   the survey shows them, and the lamp count and sign faces follow Kevin's D7 answers.*
 6. **TreeFX loads:** CSP log has no "Failed to load trees"; 0 trees within half-width + 1 m of any
    centreline; species = the dossier's Front Range set; the public zip contains no `.bin`.
 7. **Both layouts (0047's checks):** `models_full.ini` and `models_reverse.ini` both list the one
    road kn5 and each its own `__<layout>.kn5`; the road kn5 carries **0** `AC_START`/`AC_PIT`; each
    spawn kn5 carries ≥ `n_pits` `AC_START_n` facing within 25° of the tangent in its own direction;
    `AC_TIME` fires in each; `drive_test --layout` green in each; AI launches and laps in each (T4
-   harness). `map.png` orientation checked against the real map (0038's class).
+   harness). `map.png` orientation checked against the real map (0038's class). *2026-10-11: under
+   V3-PLAN D3 (a), the default from Kevin's race brief (2026-10-11), these checks run on all four
+   layouts, and the two race layouts' `models_<layout>.ini` also list the race kn5. The facing check
+   that shipped in `verify_kn5` is 30° (`HEADING_MIN_DEG`, flagged ⚠ invented), not 25° (V3-PLAN
+   P5).*
 8. **Kevin's seat (the only verdict that closes it):** T3 = three clean laps each direction; then
    the §10 look-rows: the M-curves read as the real stacked switchbacks with their stone walls and
    parapets; US-40 descends Mt Vernon Canyon with **nothing beside it but the canyon**; US-6 home is
    one divided highway with its median, not two ribbons; nothing drawn in Clear Creek Canyon; the
    Front Range is the real skyline from the summit; night drive lit only where Golden is lit.
+   *2026-10-11: stone only where the survey puts it; between stacked legs the ground is rock cut
+   and fill (V3-PLAN A3/A4). The night look follows Kevin's D7 answer on lamps.*
+
+## Status update (2026-10-11): dossier and plan written, four corrections
+
+Kevin's "what about lariat" (2026-10-11) puts the Lariat next after San Diego. `CLAUDE.md` already
+says so (918d7f1). `docs/V3-PLAN.md`'s "Sand Creek second" still needs the same edit.
+
+Two files are now written:
+- [`tracks/lookout-lariat/DOSSIER.md`](../../tracks/lookout-lariat/DOSSIER.md), the LOCATION-DOSSIER,
+  awaiting Kevin's approval.
+- [`tracks/lookout-lariat/V3-PLAN.md`](../../tracks/lookout-lariat/V3-PLAN.md): phases P0–P7, the
+  tool map, budget and gates. It opens with eight decisions for Kevin (D0–D7, each with a
+  default), followed by the defaults it applies unless he objects (A1–A13).
+
+Nothing has been built or committed, and no `.blend` has been touched.
+
+Four corrections to the Evidence above, measured read-only today:
+1. **The Overpass snapshot does survive.** All 19 data files are in k10-colorado at
+   `0a897bb^:tracks/lookout-lariat/data/`, including `osm.widths.cache.json` (2,493 ways,
+   2026-07-27).
+2. **The extra road set is larger than stated.** `HWYSTRUCT_1` is I-70 running west toward Genesee,
+   not the Clear Creek Canyon US-6. C-470 (32 ways, ~5.75 km of deck) is also part of the extra set.
+   In all, 202 ways make ≈ 40.6 km of deck.
+3. **The twin's `lookout_lariat.blend` is engine output, not a hand-edit workspace.**
+   - It is build_kn5's intermediate from the 0024 barrier-winding measurement builds: 0 collections,
+     0 text blocks, 0 modifiers.
+   - It was saved 2 min 31 s after 62bc1fa and 45 s after 56a0e3d.
+   - Archive it; there is nothing to salvage.
+4. **A route defect at the ramp terminal.**
+   - The `id:` list ends on way 533503214, the ramp's right-turn branch onto 19th St east.
+   - That gives a ~190° U-turn at st ~24,250, followed by ~100 m driven the wrong way.
+   - The fix is ways 533503210 + 1283267904 (default A1).
+
+Also measured: the lap runs anticlockwise in plan view, although both installed ui files say
+clockwise.
+
+### Revision after review (2026-10-11)
+
+A review of the first draft found 25 gaps, 5 of them high severity. Kevin's race brief also
+arrived the same day. Both files were revised, and nothing is built or committed. The changes that
+matter:
+
+- **The race version is in (D3).** *Second revision: D3 is now an explicit choice, (a) this race
+  version (the default) or (b) none; see below.*
+  - Kevin, for Lake Murray and the Lariat: *"racetrack versions of these, we need full
+    intersections available for turning. And the entire other lane blocked off from access."*;
+    *"We want more or less an Alvarado's width for the entire track with deviances in various
+    areas"*; open boxes at the *"Corners the race turns at"*.
+  - The Lariat gets four layouts: Street Full, Street Reverse, Race anticlockwise and Race
+    clockwise.
+  - On the 6–7 m mountain road the race uses the whole road one-way, with no K-rail down it or
+    along its historic edges. Side roads are closed at their edges.
+  - Open boxes at C12, C14, C15, C16 and C18. About Alvarado's width on Golden's multi-lane
+    streets. One carriageway on US-6.
+  - The race tools are adapted from Lake Murray's corridor run, not forked (dossier §4c).
+- **A second wrong-way run.** At exit 259 the July lap drives 84 m against one-way way 42005706
+  (st ~16,602–16,686). The fix is its north-east-bound partner 119006778. A one-way check now gates
+  P0. Both route fixes are default A1.
+- **C-470 crosses over the lap twice,** at st ~19,300 on Colfax and ~21,100 on US-6
+  (`bridge=yes, layer=1`). Bare-earth 3DEP keeps the approach fills. The default is static decks
+  and abutments only (D5), exempted from the road-inventory gate.
+- **The hairpins are faceted in the data.** The base hairpin steps up to 25° between 3 m points,
+  and the engine never smooths an OSM line in plan. A hairpin fit plus a heading gate now precede
+  the ribbon (A2). Kevin's July 14 m widening is re-asked only after he drives the fitted curve.
+- **Road width is Kevin's call (D4).** July gave him ~22.6 m of drivable surface; the real road is
+  6.1–6.7 m. Both a real-width edge and a 1–1.5 m firm gravel strip are built for Drive 1.
+- **The live public v0.14.0 zip misstates its licences (D0, urgent, separate from V3).**
+  - Its CC0 claim covers LA Canyons and Hamburg textures, a TurboSquid-derived tree atlas, and the
+    `pine_tree.zip` pines and barrier pack (licences not recorded).
+  - The default is to take the Lariat zip down and re-pack any other Colorado zip that carries the
+    LA Canyons road texture.
+  - Separately, `assets/licenses.json` labels `building_*` as ambientCG Concrete034, but
+    `SOURCES.txt` says those bytes were mined from Hamburg.
+- **Kevin's July calls are put to him as reversals (D7), not called defects:** the lamps, the Euro
+  sign faces, the alpine grass, and the concrete-barrier modules.
+- **Walls.** Between stacked legs the default is rock cut + fill (A3). Walls go in only where
+  surveyed or genuinely needed, since the Register lists two on the climb.
+- **Seating and data.**
+  - Seating is station-matched; there is no height window. The stacked-leg gate is defined as
+    pairs < 40 m apart on the map and > 150 m apart along the lap: 1,188 pairs on the July line.
+  - Only frame-free July data is restored.
+  - The lid is declared from the US-6 tunnel footprint. It sits ~550 m before the pylons, not at
+    the seam, and both July auto spans are treated as suspects.
+- **Views.** A 20–30 m terrain tier now runs to ~3 km on the view side, with a tier-seam check.
+  There is an OSM-height Denver skyline option (D6 ii).
+- **Gates.** Every new gate threshold is marked invented, and the Drive-1 gate set is named.
+  *Second revision: every number is now tagged [std] or [invented] by a stated rule (V3-PLAN P5).*
+- **Packaging.** Per-package budgets: the Full install ~145–180 MB with trees, the CC0 zip ~80–100
+  MB with no vegetation.
+
+Status stays `open` until Kevin answers D0–D7 (or says "defaults") and approves the dossier.
+
+### Second revision after review (2026-10-11)
+
+A second review found six problems. Both files are revised again; nothing is built or committed.
+
+- **Exit 259 is a divided pair too.** After A1's fix, Full drives the 2-lane north-east-bound way
+  119006778 with its arrows, but Reverse would drive it against them; the 4-lane south-west-bound
+  way 42005706 is its other half. Exit 259 joins US-6, Colfax and 19th St in D2, whose three options
+  now each say what Reverse drives (about 4.6 km against the arrows under the default).
+- **Every gate number is tagged** [std] or [invented] in V3-PLAN P5, by a stated rule. Three
+  corrections fell out of the tagging:
+  - the spawn-facing check that shipped in `verify_kn5` is 30° and flagged ⚠ (the plan said 25°,
+    [std]);
+  - `audit_mesh` reports J and K without gating them, so 0 at the mouths is new ([invented], was
+    [std]);
+  - severe steps 0 is new against drive_test's own > 12/km line ([invented], was [std]).
+
+  F ≤ 15 is now labelled as what it is: a relaxation of `audit_mesh`'s hard gate at 0.
+- **Stale text in this entry** is annotated inline rather than rewritten: Status, Priority, Fix 0,
+  1, 2, 3 and 10, Cost, and Verification 5, 7 and 8.
+- **Tree density.** The dossier said Kevin's July *"more trees the higher up"* was kept, while its
+  own bands make the top open woodland. The research supports the bands (densest on the
+  north-facing upper hairpins, open ponderosa woodland with meadows on top), so it is now D7's
+  fifth July call, proposed for reversal.
+- **D3 is now an explicit choice.** About Alvarado's width exists only on Golden's streets (15 % of
+  the lap, 34 % counting its narrower roads), and no layout can widen the shared mountain road
+  (L8). The options are (a) a race version on the real narrow road, the default, or (b) no race
+  version. A town-only race loop was checked and dropped: the only loop that closes (≈ 5.2 km via
+  Heritage Rd) uses a road outside the lap that is mostly 2 lanes.
+- **Physical wording and small fixes.**
+  - D5 and D6(i) now say what the driver sees, not which rule applies.
+  - The hairpin gate reads (spacing ÷ R_fit) × 57.3° + 1°.
+  - The race layouts are due in Drive 3 and slip past it if Lake Murray's tools are late; P1 now
+    matches A13 and the risks.
+  - The July install is 559 MB (534 MiB), not "534 MB".

@@ -122,13 +122,21 @@ def test_island_lane_and_no_divider_centreline():
     expect = ((3.0 + 0.4) + (13.0 - 0.4)) / 2                   # 8.0 m right of westbound = +z
     for p in north:
         assert math.isclose(p[2] - SIDE, expect, abs_tol=0.05), p
-    # east edge (no divider at all): the centreline, symmetric sides = w/2 − margin (as before 0047)
-    east = [(i, p) for i, p in enumerate(line["pts"]) if abs(p[0] - SIDE) < 0.01 and 60 <= p[2] <= 140]
+    # east edge (no divider at all): the centreline, symmetric sides = w/2 − margin (as before 0047) —
+    # up to where the taper into the north island begins: ramp_length_m(8.0) = 80 m before the nose
+    # (x = 190 on the north edge), i.e. from z = 130 on the east edge (0047 fix round, finding B)
+    east = [(i, p) for i, p in enumerate(line["pts"]) if abs(p[0] - SIDE) < 0.01 and 60 <= p[2] <= 125]
     assert east
     for i, p in east:
         assert math.isclose(line["off"][i], 0.0, abs_tol=1e-9)
         assert math.isclose(line["side_l"][i], 13.0 - 1.2, abs_tol=1e-6)
         assert math.isclose(line["side_r"][i], 13.0 - 1.2, abs_tol=1e-6)
+    enter = [r for r in line["geometry"]["ramps"] if r["kind"] == "enter"]
+    assert enter and enter[0]["to_m"] == 8.0 and enter[0]["len_m"] >= 80.0, line["geometry"]["ramps"]
+    # the taper is under way on the east edge's top, gently: no point of it steps sideways > 0.25 m
+    top = [line["off"][i] for i, p in enumerate(line["pts"]) if p[0] > SIDE - 5 and 132 <= p[2] <= 185]
+    assert top and 0.0 < max(top) < 8.0
+    assert all(abs(b - a) < 0.25 for a, b in zip(top, top[1:])), top
     chk = w.check_lane_clearance(line["pts"], pts, widths, dh, inset, island, closed=True, expect_right=True)
     assert chk["ok"] and chk["island_hits"] == 0, chk
 

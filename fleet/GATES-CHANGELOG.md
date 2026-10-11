@@ -411,3 +411,34 @@ obstruction), `tests/geometry/test_median_zone_kinds.py`, `tests/tools/test_barr
 the lane side of either leg, no inside-out span; the inside kerb too; a drifted declaration is refused),
 `tests/tools/test_verify_race.py` (D needs the declaration's trim, not the author's count; a declared
 corner must be built; H on the polyline; I fails a turned ring, a backward ring, missing frames).
+
+## 2026-10-11 — `write_ai_line` write-time self-check: geometry refusals, segment ruler (ledger 0047 fix round)
+
+**Change.** The AI draft writer's self-check (it refuses to write; it is not one of the four build
+gates) gains geometry refusals and a truer lateral ruler. The audit of the installed three-version
+build found race_cw's draft folding at the three chained right-handers (R 0.3 m, 7 km/h at
+College/Navajo) and the street draft jogging 21–27° in one step at twelve island noses; both had
+passed the old check, which measured only lane clearance.
+
+| Check | Before | After |
+|---|---|---|
+| fold | — | **refuse** any backward step (a step against the nearest station's tangent) or self-crossing (segments 2–200 apart) |
+| curvature | — | **refuse** a step turning > `TURN_MAX_DEG` 10° ⚠ where the road is not that tight (road radius at the point's place ≥ 8.6 m, the radius a 10° step means at 1.5 m), or a 3-point radius < `RADIUS_CHECK` 0.95 ⚠ × min(road radius there, `RADIUS_FLOOR_M` 12 m ⚠). "There" = the tightest raw centreline radius (6 m chord) within ±(3 stations + the point's lateral offset): a lane line rounding a corner sits ~its offset along the leg from the apex. With `--lane-offset none` only the fold refusal applies (the legacy centreline is not reshaped) |
+| lateral ruler | nearest declared VERTEX, its central tangent, its own channels | nearest declared SEGMENT (among the segments of every vertex within 4 m of the nearest), signed point-to-segment distance; width interpolated along the segment, divider / island / inset the larger end (the resampler's declaration rule). The apex vertex's diagonal normal overstated a corner-cutting point's lateral by up to (1 − 1/√2) of it |
+| edge | kerb-line barrier face − 0.6 m only where an inset is declared | also the pavement edge − 0.6 m where none is (the street layout's lane is "inside the pavement − 0.6 m") |
+| divider hits | island hits only | + `divider_hits` (on the island or the chain), reported |
+
+**Why it is not a bypass.** Every old refusal stands (island, divider face + 0.6 m, barrier face −
+0.6 m, right side 100 %); the ruler change only removes the vertex ruler's overstatement inside
+tight corners (measured: one street point at College/Navajo read 0.34 m from the edge by the
+vertex ruler, 0.83 m by the segment it actually sits beside — the ribbon edge is straight between
+edge vertices). The new refusals are added, not traded.
+
+**Measured basis (scratch copy of the workshop, `write_ai_line --layout <id>`).** street / race_cw /
+race_acw: 0 backward steps, 0 self-crossings, 0 steps > 10° (installed: 29 / 17 / 16), min radius
+12.5 / 12.6 / 10.3 m (installed 3.28 / 0.27 / 4.27), min divider clearance 4.21 / 1.51 / 3.39 m, min
+edge clearance 0.83 / 3.60 / 3.61 m; Dragon Tail and Under the Dragon (gravel) drafts written, 0 refusals
+(Dragon Tail was refused by an intermediate version whose Laplacian smoother dragged R 10 m bends onto
+the lane edge — the shipped smoother is a Taubin pair that returns its best state). ⚠ 10° / 12 m /
+0.95 are the ledger-0047 audit's numbers, not measured envelopes. Tests:
+`tests/ac/test_ai_line_geometry.py`, `tests/ac/test_write_ai_line_layouts.py`.

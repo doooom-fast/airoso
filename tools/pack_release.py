@@ -15,9 +15,11 @@ The procedure docs/PUBLISHING.md describes, as one deterministic command, so a c
                              installed folder because only the latest release's assets show on the site
 
 Release texts live in tracks/<slug>/release/{full,cc0}/ (README.txt, CREDITS.txt, LICENSES.md) and
-release/cc0/trees-README.txt. Every preview.svg the engine left as its fallback — the root ui/ of a
+release/cc0/trees-README.txt. Every preview.svg an older engine left as its fallback — the root ui/ of a
 single-layout folder AND each layout's ui/<id>/ of a multi-layout one (ledger 0047: street, race_cw,
-race_acw) — is rasterised to preview.png beside it; Content Manager never reads the SVG.
+race_acw) — is rasterised to preview.png beside it with scripts/ac/svg_raster.py (the drawer
+track_folder itself now uses on every OS, so a fresh pack has no SVG left); Content Manager never
+reads the SVG.
 """
 from __future__ import annotations
 
@@ -68,17 +70,13 @@ def rasterize_preview(ui: Path) -> None:
         # never overwrite the real picture with the polyline sketch
         svg.unlink()
         return
-    from PIL import Image, ImageDraw
-    s = svg.read_text(encoding="utf-8")
-    w = int(re.search(r'width="(\d+)"', s).group(1)); h = int(re.search(r'height="(\d+)"', s).group(1))
-    bg = re.search(r'<rect[^>]*fill="(#[0-9a-fA-F]{6})"', s)
-    im = Image.new("RGB", (w, h), bg.group(1) if bg else "#0c1116"); d = ImageDraw.Draw(im)
-    for m in re.finditer(r'<polyline([^>]*)points="([^"]+)"([^>]*)/?>', s):
-        attrs = m.group(1) + m.group(3)
-        stroke = re.search(r'stroke="([^"]+)"', attrs); width = re.search(r'stroke-width="([\d.]+)"', attrs)
-        pts = [tuple(map(float, p.split(","))) for p in m.group(2).split()]
-        d.line(pts, fill=(stroke.group(1) if stroke else "#ffffff"), width=max(1, round(float(width.group(1)) if width else 2)), joint="curve")
-    im.save(ui / "preview.png", optimize=True)
+    # the engine's own Pillow drawer (scripts/ac/svg_raster.py — track_folder uses it too since the
+    # 0047 fix round, so a fresh engine pack carries preview.png already; this remains for older folders)
+    if str(AIROSO) not in sys.path:
+        sys.path.insert(0, str(AIROSO))
+    from scripts.ac.svg_raster import rasterize_svg
+    if not rasterize_svg(svg.read_text(encoding="utf-8"), ui / "preview.png"):
+        raise SystemExit(f"[pack] {svg}: nothing drawable — no preview.png")
     svg.unlink()
 
 

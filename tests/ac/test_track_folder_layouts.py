@@ -205,3 +205,112 @@ def test_models_ini_extras_in_load_order_and_old_call_shape():
 
 def _ini_models_text(s: str) -> list[str]:
     return [ln.split("=", 1)[1] for ln in s.splitlines() if ln.startswith("FILE=")]
+
+
+# --- 0047 fix round: previews on every OS (finding D), honest ui text and README (finding E) -------
+
+def test_every_layout_gets_a_preview_png_without_qlmanage_and_no_svg_is_left():
+    import shutil
+    from PIL import Image
+    real_which = shutil.which
+    shutil.which = lambda *a, **k: None                      # no qlmanage anywhere (Windows, Linux)
+    try:
+        with tempfile.TemporaryDirectory() as td:
+            d = _project(Path(td), _THREE,
+                         kn5s=(f"{SLUG}.kn5", f"{SLUG}_race.kn5", f"{SLUG}__street.kn5",
+                               f"{SLUG}__race_cw.kn5", f"{SLUG}__race_acw.kn5"),
+                         dummies_for=("street", "race_cw", "race_acw"))
+            out = d / "build" / SLUG
+            (out / "ui" / "street").mkdir(parents=True)
+            (out / "ui" / "street" / "preview.svg").write_text("<svg/>")   # an older Windows pack's leftover
+            tf.generate(d)
+            for lo in _THREE:
+                ui = out / "ui" / lo["id"]
+                assert (ui / "preview.png").exists(), lo["id"]
+                assert not (ui / "preview.svg").exists(), lo["id"]
+                im = Image.open(ui / "preview.png").convert("RGB")
+                assert im.size == (600, 600)
+                # the dark background with the red outline drawn on it — not an empty canvas
+                assert im.getpixel((2, 2)) == (0x0c, 0x11, 0x16)
+                assert any(px[0] > 200 and px[1] < 120 for px in im.getdata()), "no outline drawn"
+    finally:
+        shutil.which = real_which
+
+
+def test_svg_raster_draws_the_engines_own_elements():
+    from PIL import Image
+    from scripts.ac.svg_raster import rasterize_svg
+    svg = ('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="20" viewBox="0 0 80 40">'
+           '<rect width="100%" height="100%" fill="#102030"/>'
+           '<polygon points="0,0 40,0 0,40" fill="rgb(200, 10, 10)"/>'
+           '<line x1="60" y1="0" x2="60" y2="40" stroke="#00ff00" stroke-width="8"/>'
+           '<polyline points="44,38 78,38" fill="none" stroke="#0000ff" stroke-width="4"/>'
+           '<text x="1" y="1">ignored</text></svg>')
+    with tempfile.TemporaryDirectory() as td:
+        png = Path(td) / "p.png"
+        assert rasterize_svg(svg, png)
+        im = Image.open(png).convert("RGB")
+        assert im.size == (40, 20)                                  # width/height, viewBox scaled into it
+        r, g, b = im.getpixel((2, 2))
+        assert r > 150 and g < 60                                   # the polygon
+        r, g, b = im.getpixel((30, 10))
+        assert g > 150 and r < 80                                   # the line
+        assert im.getpixel((15, 15)) == (0x10, 0x20, 0x30)           # background
+        assert rasterize_svg(svg, png, size=100) and Image.open(png).size == (100, 50)
+        assert not rasterize_svg('<svg width="10" height="10"><rect width="100%" height="100%" fill="#000"/></svg>',
+                                 Path(td) / "none.png")
+        assert not (Path(td) / "none.png").exists()
+
+
+def test_ui_track_json_text_per_layout_tags_and_width():
+    from scripts.config import load_config
+    layouts = [dict(_THREE[0], ui_description="the open street"), dict(_THREE[1], ui_tags=["street", "race"]),
+               dict(_THREE[2])]
+    with tempfile.TemporaryDirectory() as td:
+        p = Path(td) / "track.config.json"
+        p.write_text(json.dumps(dict(_config(layouts), archetype="real_road", ui_description="track text",
+                                     ui_tags=["street", "loop", "real-roads"])), encoding="utf-8")
+        cfg = load_config(p)
+        st = tf.ui_track_json(cfg, "street", 13489.7, 8, 13.0)
+        cw = tf.ui_track_json(cfg, "race_cw", 13489.7, 8, 13.0)
+        acw = tf.ui_track_json(cfg, "race_acw", 13489.7, 8)
+        assert st["description"] == "[build 0.1] the open street"           # the layout's own text first
+        assert acw["description"] == "[build 0.1] track text"               # else the track's
+        assert st["tags"] == ["circuit", "street", "loop", "real-roads"]     # circuit for CM race modes
+        assert cw["tags"] == ["circuit", "street", "race"]
+        assert st["width"] == "13" and acw["width"] == "12"                 # measured, else default_width_m
+        assert st["length"] == "13490"
+        # the engine default no longer calls a real-roads loop fictional; an invented circuit still is
+        p.write_text(json.dumps(dict(_config(_THREE), archetype="real_road")), encoding="utf-8")
+        assert "fictional" not in tf.ui_track_json(load_config(p), "street", 1000.0, 1)["tags"]
+        p.write_text(json.dumps(dict(_config(_THREE), archetype="street_circuit")), encoding="utf-8")
+        assert "fictional" in tf.ui_track_json(load_config(p), "street", 1000.0, 1)["tags"]
+        p.write_text(json.dumps(dict(_config(_THREE), ui_width_m=14.5)), encoding="utf-8")
+        assert tf.ui_track_json(load_config(p), "street", 1000.0, 1, 13.0)["width"] == "14"
+
+
+def test_readme_says_what_the_folder_is_and_where_it_installs():
+    with tempfile.TemporaryDirectory() as td:
+        d = _project(Path(td), _THREE,
+                     kn5s=(f"{SLUG}.kn5", f"{SLUG}_race.kn5", f"{SLUG}__street.kn5",
+                           f"{SLUG}__race_cw.kn5", f"{SLUG}__race_acw.kn5"),
+                     dummies_for=("street", "race_cw", "race_acw"), ai_layouts=("street", "race_cw", "race_acw"))
+        cfg = json.loads((d / "track.config.json").read_text(encoding="utf-8"))
+        cfg["install_folder"] = "sq_loop_v3"
+        (d / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
+        for lid in ("street", "race_cw", "race_acw"):
+            (d / "ai" / lid / "ai_draft.json").write_text("{}")             # write_ai_line's draft marker
+        tf.generate(d)
+        text = (d / "build" / SLUG / "README.txt").read_text(encoding="utf-8")
+        assert "STILL NEEDED" not in text and "prodrive-ac-builder" not in text
+        assert "airoso" in text
+        assert "content/tracks/sq_loop_v3/" in text
+        for lo in _THREE:
+            assert f"{lo['name']} ({lo['id']})" in text
+        assert f"{SLUG}_race.kn5" in text                                   # what the race layouts load
+        assert "GENERATED DRAFT" in text
+        # a line without write_ai_line's ai_draft.json is never called a draft (nor a recording)
+        (d / "ai" / "street" / "ai_draft.json").unlink()
+        tf.generate(d)
+        text = (d / "build" / SLUG / "README.txt").read_text(encoding="utf-8")
+        assert "AI (street): shipped from the project's ai/" in text and "AI (race_cw): a GENERATED DRAFT" in text

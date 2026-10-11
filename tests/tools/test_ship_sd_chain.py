@@ -253,3 +253,15 @@ def test_race_kn5_guard_is_a_content_check():
     for parsed, msg in leaks:
         r = ck.check(parsed, allowed)
         assert not r["ok"] and any(msg in f for f in r["fails"]), (msg, r["fails"])
+
+
+def test_install_folder_is_one_name_in_the_config_and_the_chain():
+    # track_folder names the install folder in README.txt from track.config.json `install_folder`; the
+    # chain installs as "${SLUG}_v3" — the two must stay one name (0047 fix round, finding E: the
+    # installed README named <slug>, the wrong folder)
+    import json
+    cfg = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
+    slug = cfg["slug"]
+    assert 'SLUG="%s"' % slug in TEXT
+    assert cfg["install_folder"] == f"{slug}_v3"
+    assert 'cp -r "$B" "$AC/${SLUG}_v3"' in TEXT

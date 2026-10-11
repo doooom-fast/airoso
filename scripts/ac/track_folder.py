@@ -106,31 +106,39 @@ def surfaces_ini(*, wall: bool = False, road_surface: str = "tarmac") -> str:
     return "\n\n".join(out) + "\n"
 
 
-def ui_track_json(cfg, layout: str, length_m: float, n_pits: int) -> dict:
+def ui_track_json(cfg, layout: str, length_m: float, n_pits: int, width_m: float | None = None) -> dict:
+    """ui/<id>/ui_track.json. Text comes from track.config.json, per layout first: ``layouts[].
+    ui_description`` / ``ui_tags`` / ``ui_width_m``, then the track's ``ui_description`` / ``ui_tags`` /
+    ``ui_width_m``, then defaults. ``width_m`` is the caller's measured road width (track_folder passes
+    the narrowest declared width of data/centerline.local.json — Lake Murray's 13.0 m Alvarado, where
+    default_width_m said 12); without either, default_width_m. The default tags no longer call every
+    loop "fictional": only a track whose archetype is ``street_circuit`` (an invented circuit) is."""
     loc = cfg.raw.get("location", {})
     city = loc.get("city", "Commerce City")
     country = loc.get("country", "United States")
     freeroam = not cfg.raw.get("loop", True)
-    desc = cfg.raw.get("ui_description") or (
+    # per-layout label: use the layout's configured `name` (e.g. "Sand Creek Raceway") so each config
+    # in the in-game dropdown reads as its actual track, not the raw id.
+    lo_meta = next((lo for lo in (cfg.raw.get("layouts", []) or []) if isinstance(lo, dict) and lo.get("id") == layout), {})
+    lo_label = lo_meta.get("name") or layout
+    desc = lo_meta.get("ui_description") or cfg.raw.get("ui_description") or (
         f"Open-world freeroam cruise of {city} — a real street network ({round(length_m/1000)} km) "
-        f"merged from map exports, with real USGS terrain. Built by prodrive-ac-builder. Just drive."
+        f"merged from map exports, with real USGS terrain. Built with airoso. Just drive."
         if freeroam else
-        f"Real-world street circuit built from OpenStreetMap + USGS 3DEP by prodrive-ac-builder "
+        f"Real-world street circuit built from OpenStreetMap + USGS 3DEP with airoso "
         f"({city}, {country}).")
     # `loop: false` alone does NOT mean freeroam — a point-to-point rally stage is also not a loop,
     # and labelling it an open-world cruise is simply wrong. Let a track state its own tags.
-    tags = cfg.raw.get("ui_tags") or (
+    fictional = cfg.raw.get("archetype") == "street_circuit"
+    tags = list(lo_meta.get("ui_tags") or cfg.raw.get("ui_tags") or (
         ["freeroam", "cruise", "street", "open-world", "real-roads"] if freeroam else
-        ["street", "loop", "fictional", "real-roads"])
+        ["street", "loop", *(["fictional"] if fictional else []), "real-roads"]))
     # Content Manager refuses Race and Track Day sessions on any track not tagged "circuit" — on a
     # closed loop the AI modes are simply unreachable without it (hit on Lake Murray 2026-08-06,
     # the day the first AI line shipped). A loop gets the tag even when ui_tags is explicit.
     if not freeroam and "circuit" not in tags:
         tags = ["circuit", *tags]
-    # per-layout label: use the layout's configured `name` (e.g. "Sand Creek Raceway") so each config
-    # in the in-game dropdown reads as its actual track, not the raw id.
-    lo_meta = next((lo for lo in (cfg.raw.get("layouts", []) or []) if lo.get("id") == layout), {})
-    lo_label = lo_meta.get("name") or layout
+    width = lo_meta.get("ui_width_m") or cfg.raw.get("ui_width_m") or width_m or cfg.default_width_m
     # Content Manager display name: prefix the series so all K10 Colorado circuits group together in the
     # in-game list ("K10 Colorado - Sand Creek Raceway", ...). Override per track via `ui_series`.
     series = cfg.raw.get("ui_series", "K10 Colorado")
@@ -151,7 +159,7 @@ def ui_track_json(cfg, layout: str, length_m: float, n_pits: int) -> dict:
         "tags": tags,
         "geotags": [f"{cfg.lat}", f"{cfg.lon}"],
         "country": country, "city": city,
-        "length": str(round(length_m)), "width": str(round(cfg.default_width_m)),
+        "length": str(round(length_m)), "width": str(round(float(width))),
         "pitboxes": str(n_pits), "run": run,
         "author": cfg.author, "version": str(cfg.version), "year": cfg.year,
     }
@@ -439,26 +447,86 @@ def _draw_track_png(xz, geom, png: Path, *, stroke=(255, 255, 255, 255), width: 
 
 
 def _rasterize(svg: str, png: Path, size: int) -> bool:
-    """qlmanage SVG→PNG (macOS build host). Falls back to writing the .svg if unavailable."""
+    """SVG -> ``png``. macOS (the original build host): qlmanage. Any other OS — or qlmanage failing —
+    Pillow (scripts/ac/svg_raster.py, the polyline drawer tools/pack_release.py used to patch this over
+    at pack time). Content Manager reads only preview.png: the old fallback wrote a preview.svg it never
+    reads, and the Lake Murray V3 install (built on Windows) shipped no ui/<id>/preview.png at all
+    (ledger 0047 fix round, finding D). Nothing is written when neither can draw the SVG."""
+    import shutil
+    if sys.platform == "darwin" and shutil.which("qlmanage"):
+        try:
+            with tempfile.NamedTemporaryFile("w", suffix=".svg", delete=False) as f:
+                f.write(svg); tmp = f.name
+            subprocess.run(["qlmanage", "-t", "-s", str(size), "-o", str(png.parent), tmp],
+                           capture_output=True, timeout=30)
+            out = png.parent / (Path(tmp).name + ".png")
+            if out.exists():
+                out.replace(png)
+                return True
+        except Exception:
+            pass
     try:
-        with tempfile.NamedTemporaryFile("w", suffix=".svg", delete=False) as f:
-            f.write(svg); tmp = f.name
-        subprocess.run(["qlmanage", "-t", "-s", str(size), "-o", str(png.parent), tmp],
-                       capture_output=True, timeout=30)
-        out = png.parent / (Path(tmp).name + ".png")
-        if out.exists():
-            out.replace(png)
+        from scripts.ac.svg_raster import rasterize_svg
+        if rasterize_svg(svg, png, size):
             return True
-    except Exception:
-        pass
-    # Fallback: keep it SMALL. Dumping the raw SVG shipped a 288 MB ui/preview.svg once; a
-    # fallback the game cannot read may as well be tiny.
-    if len(svg) <= 2_000_000:
-        png.with_suffix(".svg").write_text(svg, encoding="utf-8")
-    else:
-        print(f"[track_folder] preview rasterization failed and the SVG source is "
-              f"{len(svg)/1e6:.0f} MB — skipping the fallback (no preview shipped)")
+    except Exception as e:                                     # Pillow missing, or a broken SVG
+        print(f"[track_folder] Pillow preview rasterization failed: {e}")
+    print(f"[track_folder] no preview rasterizer could draw this SVG — {png.name} not written")
     return False
+
+
+def readme_text(cfg, layout_cfgs: list[dict], extras_by_layout: dict, kn5_name: str, length_m: float, *,
+                single: bool, ai_kind: dict[str, str], has_ext: bool) -> str:
+    """The root README.txt: what this folder is, its layouts, what it needs, where it installs.
+
+    Written from track.config.json and what this pack actually put in the folder — never a to-do list
+    (the old text listed the kn5 and the AI under "STILL NEEDED" in a folder that shipped both, named
+    the builder prodrive-ac-builder and the install folder <slug> where Lake Murray installs as
+    san_diego_lake_murray_v3). The install folder is ``install_folder`` in the config, else the slug."""
+    folder = str(cfg.raw.get("install_folder") or cfg.slug)
+    loc = cfg.raw.get("location", {}) or {}
+    where = ", ".join(x for x in (loc.get("city"), loc.get("country")) if x)
+    lines = [f"{cfg.name} — Assetto Corsa track, build {cfg.version}" + (f" ({where})" if where else ""),
+             "",
+             (str(cfg.raw.get("readme_about")) if cfg.raw.get("readme_about") else
+              f"Real roads from OpenStreetMap at real USGS 3DEP elevation, {length_m / 1000:.1f} km a lap."),
+             "Built with airoso (the K10 track engine): the folder is generated from track.config.json; "
+             "the road is one shared kn5.",
+             ""]
+    if single:
+        lines += ["ONE LAYOUT — models.ini, ui/ (name, preview, outline), ai/, data/, map.png."]
+    else:
+        lines += [f"{len(layout_cfgs)} LAYOUTS — pick one in Content Manager (one models_<id>.ini each):"]
+        import textwrap
+        for lo in layout_cfgs:
+            lid = lo["id"]
+            name = str(lo.get("name") or lid)
+            kn5s = [kn5_name] + [n for n, _ in extras_by_layout.get(lid, [])]
+            lines.append(f"  {name} ({lid})")
+            lines += textwrap.wrap(str(lo.get("run") or ""), 96, initial_indent="    ", subsequent_indent="    ")
+            lines += textwrap.wrap("loads " + " + ".join(kn5s), 96, initial_indent="    ", subsequent_indent="      ")
+        lines += ["  Each layout has its own <id>/ (map.png, data/, ai/) and ui/<id>/ (name, preview, outline)."]
+    lines += [""]
+    if has_ext:
+        lines += ["REQUIRES Custom Shaders Patch (CSP): extension/ext_config.ini carries the lights, GrassFX,",
+                  "RainFX and sky glow; without CSP the track still loads, with none of them.", ""]
+    kinds = set(ai_kind.values())
+    if kinds == {"draft"}:
+        lines += ["AI: every layout's ai/fast_lane.ai is a GENERATED DRAFT from the built centreline, not an",
+                  "in-game recording (whether the AI laps on it is decided in game). Record over it per layout",
+                  "with CSP's AI recorder (fast_lane.ai.candidate) to replace it.", ""]
+    elif kinds == {"none"}:
+        lines += ["AI: none shipped — record ai/fast_lane.ai in game (CSP), or draft one with",
+                  "python -m scripts.ac.write_ai_line <project-dir>.", ""]
+    else:
+        for lid, kind in ai_kind.items():
+            lines.append({"draft": f"AI ({lid}): a GENERATED DRAFT from the built centreline, not an in-game recording.",
+                          "project": f"AI ({lid}): shipped from the project's ai/ (its provenance is not recorded here).",
+                          "none": f"AI ({lid}): none shipped — record it in game (CSP)."}[kind])
+        lines += [""]
+    lines += [f"INSTALL: copy this folder to <Assetto Corsa>/content/tracks/{folder}/ — the folder name",
+              f"must stay {folder}. Then pick the track (and layout) in Content Manager.", ""]
+    return "\n".join(lines)
 
 
 # --- orchestration -------------------------------------------------------------
@@ -474,6 +542,7 @@ def generate(project_dir: str | Path, kn5_name: str | None = None, *, strict_kn5
     # Freeroam NETWORK (this project) vs single-loop (legacy): the minimap draws every edge and the
     # "length" is the total drivable road, not a lap.
     net = _network_edges_xz(project_dir)
+    road_width_m = None
     if net is not None:
         edges_xz, length_m = net
         xz = [p for e in edges_xz for p in e]      # all points (for bbox/centering)
@@ -483,6 +552,9 @@ def generate(project_dir: str | Path, kn5_name: str | None = None, *, strict_kn5
         xz = _xz(local, cfg)
         multi = None
         length_m = json.loads((project_dir / "data" / "centerline.geojson").read_text())["features"][0]["properties"]["length_m"]
+        # CM's "width": the narrowest declared width of the lap (Lake Murray: Alvarado's 13.0 m)
+        if local.get("widths_m"):
+            road_width_m = min(float(v) for v in local["widths_m"])
 
     # Network tracks (top-level "network" config block, or built from network.geojson) carry the
     # swept 1WALL_* freeway barriers and need the WALL surface entry; circuits don't emit one.
@@ -515,10 +587,11 @@ def generate(project_dir: str | Path, kn5_name: str | None = None, *, strict_kn5
     # ENTIRE SVG into ui/ — Dragon Tail v0.1.0 shipped a 288 MB ui/preview.svg that CM never
     # reads (it wants preview.png). The plain outline is always small and always rasterizes.
     _use_render = render_svg.exists() and render_svg.stat().st_size < 5_000_000
-    preview_src = render_svg.read_text(encoding="utf-8") if _use_render else \
-        _track_svg(xz, geom, stroke="#ff3b30", width=5, bg="#0c1116", flip_y=True, multi=multi)
+    outline_svg = _track_svg(xz, geom, stroke="#ff3b30", width=5, bg="#0c1116", flip_y=True, multi=multi)
+    preview_src = render_svg.read_text(encoding="utf-8") if _use_render else outline_svg
 
     import shutil
+    ai_kind: dict[str, str] = {}
     layout_cfgs = [lo if isinstance(lo, dict) else {"id": str(lo)} for lo in cfg.layouts]
     layouts = [lo["id"] for lo in layout_cfgs]
     if len(set(layouts)) != len(layouts):
@@ -549,22 +622,25 @@ def generate(project_dir: str | Path, kn5_name: str | None = None, *, strict_kn5
                 shutil.copyfile(src, out / name)
         uid = (out / "ui") if single else (out / "ui" / layout)
         uid.mkdir(parents=True, exist_ok=True)
-        (uid / "ui_track.json").write_text(json.dumps(ui_track_json(cfg, layout, length_m, layout_pits), indent=2),
+        (uid / "ui_track.json").write_text(json.dumps(ui_track_json(cfg, layout, length_m, layout_pits,
+                                                                  road_width_m), indent=2),
                                            encoding="utf-8")
         _draw_track_png(xz, geom, uid / "outline.png", stroke=(232, 236, 240, 255),
                         width=3, flip_y=True, multi=multi)
         if preview_img is not None:
             preview_img.save(uid / "preview.png")
-        else:
-            _rasterize(preview_src, uid / "preview.png", 600)
+        elif not _rasterize(preview_src, uid / "preview.png", 600) and preview_src is not outline_svg:
+            _rasterize(outline_svg, uid / "preview.png", 600)        # the 3D render drew nothing: the outline
         # STALE OUTPUT. build/<slug>/ is not cleaned between runs and pack re-zips whatever it
         # finds, so an artifact a fixed build no longer writes still ships. Dragon Tail's 288 MB
         # ui/preview.svg survived the fix that stopped emitting it and went out in v0.1.0 — a file
         # the game never reads, at 60% of the zip. Once a real preview.png exists, drop it.
+        # Nothing writes a preview.svg any more (CM never reads one): any left from an older pack goes.
         _stale_svg = uid / "preview.svg"
-        if _stale_svg.exists() and (uid / "preview.png").exists():
+        if _stale_svg.exists():
             print(f"[track_folder] removing stale {_stale_svg.relative_to(out)} "
-                  f"({_stale_svg.stat().st_size/1e6:.0f} MB) — superseded by preview.png")
+                  f"({_stale_svg.stat().st_size/1e6:.1f} MB)"
+                  + (" — superseded by preview.png" if (uid / "preview.png").exists() else ""))
             _stale_svg.unlink()
         if not single:
             # Kunos multi-layout: <track>/<layout>/ holds map.png + data/ + ai/ per layout
@@ -591,6 +667,10 @@ def generate(project_dir: str | Path, kn5_name: str | None = None, *, strict_kn5
                                      and any(p.suffix.lower() == ".ai" for p in _per_layout_ai.iterdir())) \
             else project_dir / "ai"
         _shipped_ai = 0
+        # what the README may honestly say about this layout's line: write_ai_line leaves ai_draft.json
+        # beside every draft; a line without one came from elsewhere (a recording, or an old draft)
+        _has_ai = _src_ai.is_dir() and any(p.suffix.lower() == ".ai" for p in _src_ai.iterdir())
+        ai_kind[layout] = ("draft" if (_src_ai / "ai_draft.json").exists() else "project") if _has_ai else "none"
         if _src_ai.is_dir():
             for _f in sorted(_src_ai.iterdir()):
                 if _f.is_file() and _f.suffix.lower() in (".ai", ".csv", ".ini"):
@@ -613,18 +693,12 @@ def generate(project_dir: str | Path, kn5_name: str | None = None, *, strict_kn5
             shutil.copyfile(_cam, _dst_data / "cameras.ini")
             print(f"[track_folder] data/cameras.ini shipped")
 
-    (out / "README.txt").write_text(
-        f"{cfg.name} — Assetto Corsa track folder (generated by prodrive-ac-builder).\n\n"
-        f"GENERATED HERE: surfaces.ini, map.ini, map.png, models_<layout>.ini, ui/<layout>/*.\n"
-        f"STILL NEEDED:\n"
-        f"  - {kn5_name}: build with Blender 4.x + AC Blender Tools — `blender --background "
-        f"--python scripts/ac/build_kn5.py -- {project_dir}`\n"
-        f"  - ai/<layout>/fast_lane.ai: record in-game (Windows).\n"
-        f"Install: `python -m scripts.ac.install {project_dir}` (auto-finds AC, asks if it can't), "
-        f"or copy this folder to <AC>/content/tracks/{cfg.slug}/. Validate in Content Manager.\n",
-        encoding="utf-8")
     credits.generate(project_dir, cfg)  # CREDITS.txt + LICENSES.md from assets/licenses.json
     ext_config.generate(project_dir)  # extension/ext_config.ini — GrassFX / RainFX / light pollution / water
+    (out / "README.txt").write_text(readme_text(cfg, layout_cfgs, extras_by_layout, kn5_name, length_m,
+                                                single=single, ai_kind=ai_kind,
+                                                has_ext=(out / "extension" / "ext_config.ini").exists()),
+                                    encoding="utf-8")
     # the structure the installer discovers (install.py: models_*.ini) must be exactly the
     # declared layouts — a leftover or a missing ini here is the stale-folder class, not a build
     packed = sorted(p.stem[len("models_"):] for p in out.glob("models_*.ini"))

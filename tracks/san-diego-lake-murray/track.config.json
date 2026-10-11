@@ -122,6 +122,7 @@
         "per_issue": "start_positions.json"
       },
       "run": "open two-way street; lap clockwise: Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest",
+      "ui_description": "Street Loop \u2014 Lake Murray as it is: the open two-way 13.5 km loop of Alvarado Road, College Avenue, Navajo Road, Jackson Drive and Lake Murray Boulevard around the reservoir (Kevin's childhood neighbourhood), from OpenStreetMap at real USGS 3DEP elevation. Raised landscaped medians on College and Navajo, the side streets left open, no race furniture; lap clockwise from the line on Alvarado. The AI line is a generated draft, not an in-game recording.",
       "ai": "ai/street",
       "_doc": "Version 1 = today's loop: main kn5 only, open mouths, full width, no race furniture. Only its spawn moves (ledger 0047 Q3): grid A on Alvarado, line v300. start_positions.json `active` still moves START/HOTLAP/PIT for THIS layout only (Kevin 2026-08-20 per-issue spawns) via tools/layout_dummies.py --issue-spawn, never AC_TIME, never the race layouts."
     },
@@ -141,6 +142,7 @@
         ]
       },
       "run": "clockwise, one-way: Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest \u2014 lake-side carriageway on the wide roads, centre barrier on your left",
+      "ui_description": "Race \u2014 Clockwise: the same 13.5 km of real Lake Murray roads as a one-way race track, run clockwise \u2014 Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest. The side streets are sealed, concrete barriers line both curbs, a concrete centre barrier (or the landscaped median) splits the wide roads \u2014 the lake-side carriageway, barrier on your left \u2014 and red/white kerbs mark the five corners. The AI line is a generated draft, not an in-game recording.",
       "ai": "ai/race_cw"
     },
     {
@@ -159,6 +161,7 @@
         ]
       },
       "run": "anticlockwise, one-way: Alvarado eastbound, Lake Murray Blvd northeast, Jackson north, Navajo westbound, College southbound \u2014 outer carriageway on the wide roads, centre barrier on your left",
+      "ui_description": "Race \u2014 Anticlockwise: the same 13.5 km of real Lake Murray roads as a one-way race track, run anticlockwise \u2014 Alvarado eastbound, Lake Murray Blvd northeast, Jackson north, Navajo westbound, College southbound. The side streets are sealed, concrete barriers line both curbs, a concrete centre barrier (or the landscaped median) splits the wide roads \u2014 the outer carriageway, barrier on your left \u2014 and red/white kerbs mark the five corners. The AI line is a generated draft, not an in-game recording.",
       "ai": "ai/race_acw"
     }
   ],
@@ -301,5 +304,14 @@
     "tree_pct": 38,
     "scrub_pct": 24
   },
-  "ui_description": "K10 - San Diego: a real-world Assetto Corsa track built from OpenStreetMap + USGS 3DEP. Drive the 13.5 km Lake Murray loop around the reservoir (Kevin's childhood neighborhood) with the Del Cerro sub-loop. V3 C1 build: split carriageways deleted \u2014 Navajo & College are single full-width streets (no more sawtooth edges or phantom opposing lanes)."
+  "ui_description": "Lake Murray, San Diego (Kevin's childhood neighbourhood): the real 13.5 km loop of Alvarado Road, College Avenue, Navajo Road, Jackson Drive and Lake Murray Boulevard around the reservoir, from OpenStreetMap at real USGS 3DEP elevation. Three versions: the open Street Loop and two one-way race layouts.",
+  "_ui_description_doc": "Ledger 0047 fix round (2026-10-11): the CM description is per layout (layouts[].ui_description, read first by scripts/ac/track_folder.ui_track_json); this track-level text is the fallback. The old one described the V3 C1 build (split carriageways deleted, 'no phantom opposing lanes') and a Del Cerro sub-loop, even on the race layouts that seal every side street.",
+  "ui_tags": [
+    "street",
+    "loop",
+    "real-roads"
+  ],
+  "_ui_tags_doc": "Real public roads: never 'fictional' (the engine default before the 0047 fix round). track_folder prepends 'circuit' on every closed loop \u2014 Content Manager refuses Race / Track Day sessions without it, on the street layout as much as the race ones. CM's width is the narrowest declared width of the lap (Alvarado, 13.0 m), measured by track_folder from data/centerline.local.json.",
+  "install_folder": "san_diego_lake_murray_v3",
+  "_install_folder_doc": "The folder under content/tracks this track installs as. tools/ship_sd.sh spells it \"${SLUG}_v3\"; track_folder names it in the root README.txt; tests/tools/test_ship_sd_chain.py pins the two together."
 }

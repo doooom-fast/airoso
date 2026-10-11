@@ -37,6 +37,29 @@ rasterises every `ui/<id>/preview.svg` and the full package's CREDITS/LICENSES n
 0.000 m, built-mesh march within 0.006 m of the approved coordinates). The build-of-record files
 engine-july runs are snapshotted in `tracks/san-diego-lake-murray/engine-july-snapshot/` with a drift test.
 
+**Install audit round 2026-10-11, after `07cb217` (the three versions were installed with `--force-install`;
+this round changes code + config text only — nothing exported, synced, installed, and `loop.blend` untouched).**
+An audit of the INSTALLED folder found five things; each is fixed in the engine and proven on a scratch copy
+of the workshop (`write_ai_line` x3 + `track_folder`), and reaches the install on the next `ship_sd.sh` run.
+(A) race_cw's AI draft folded inside the three chained right-handers (R 0.3 m / 7 km/h at College -> Navajo,
+R 1.1 m / 15 km/h at the other two): the lane offset exceeded the corners' R 7.4-8.2 m. (B) the street draft
+stepped 21-27 deg sideways in one 1.5 m station at the island noses. (C) every line started at the lap
+seam v0, 300 m before the timing line (race_cw's line at spline index 598, race_acw's at 8394). (D) no
+`ui/<id>/preview.png` anywhere: `track_folder` rasterised with macOS `qlmanage` and left a `preview.svg` on
+Windows. (E) stale text: `ui_track.json` described the V3 C1 build and a Del Cerro sub-loop on all three
+layouts, tagged a real-roads port "fictional", width 12 (Alvarado is 13.0 m); the root README named
+prodrive-ac-builder, listed the shipped kn5 and AI under "STILL NEEDED" and the wrong install folder.
+Fixes: `scripts/ac/write_ai_line.py` (cosine tapers, corner approach, loop trim, fillets + Taubin clean-up
+inside the lane, start/finish rotation, write-time geometry refusals — `fleet/GATES-CHANGELOG.md`);
+`scripts/ac/svg_raster.py` (shared Pillow drawer, used by `track_folder` on every OS and by `pack_release`);
+`scripts/ac/track_folder.py` (per-layout `ui_description`/`ui_tags`, measured width, an honest README naming
+`install_folder`); `tracks/san-diego-lake-murray/track.config.json` (per-layout descriptions, `ui_tags`,
+`install_folder`). Measured on the scratch drafts, street / race_cw / race_acw: min radius 3.28 / 0.27 /
+4.27 -> 12.5 / 12.6 / 10.3 m, min target 26 / 7 / 30 -> 50 / 51 / 46 km/h, steps > 10 deg 29 / 17 / 16 -> 0,
+start/finish at spline index 0, 0 points on an island or the chain, nearest curb-strip face 3.65 m
+(race_cw) and pavement edge 0.83 m (street, the inside of College -> Navajo). Still GENERATED DRAFTS
+(0023 open): whether the AI laps is Kevin's drive.
+
 ## Symptom (Kevin, 2026-10-10, verbatim, in order)
 
 > "I will also want two layouts, with Barriers making tracks out of north/south kind lanes. Place

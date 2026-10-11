@@ -218,3 +218,13 @@ streetlight and `light_pollution` blocks) and the writer edit are in the airoso 
 one beside it as `ext_config.ini.pre-sodium` (74,641 bytes). No `loop.blend`, no kn5, no
 `ship_sd` install block touched. Next: Kevin at 22:00 clear; then commit, GATES-CHANGELOG, and the
 deferred items (writer default, coincident pairs, 1-in-3 density).
+
+## Drive verdict 1 (2026-10-11)
+
+Kevin, after driving the three-version build: "Lights need to be a bit brighter but not much."
+Colour, cone, softness and glare drew no comment, so the 255x-scale diagnosis stands (pools were
+visible at 0.010 — CSP does not normalise). Intensity 0.010 -> 0.013 (+30%, deliberately under the
+ladder's 0.015 step), config-only: `lighting.streetlight.intensity` in track.config.json, ini
+regenerated (diff = the 243 COLOR lines only) and swapped into the installed `_v3` folder; the 0.010
+ini is archived in D:/k10-track-archive/2026-10-11_083425_ext_config_intensity_0.010/. Next step if
+still dim: 0.015; if now too bright: 0.0115.

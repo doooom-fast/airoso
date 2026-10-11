@@ -275,6 +275,21 @@ report. First step is the cheapest possible: Kevin drives it 10 minutes, files w
 same loop runs. Its known open item: one soft-top gate failure (un-excavated cut-corridor grass,
 ledger 0025).
 
+**Street furniture — W1-6 arrows at the tight corners (2026-10-10).** Kevin: "arrow signs on
+TIGHT corners, where they actually go ... AT the corner, just past the outside edge." The old engine
+rule (build_env's euro/MUTCD diamonds 50-95 m upstream) never ran on V3 and is not revived; the new
+pass is `tools/place_signs.py` (the rule: corner detector, failed-to-turn ray, sign 1.63 m behind the
+outside curb, facing the approach, geometric outside assertion) + `tools/author_signs_blend.py`
+(Blender: ground ray-cast, SIGNPLATE/SIGNARROW/SIGNPOST meshes, bound by prefix to the new 64x64
+solids in pbr.TEXTURES) + `tools/verify_signs.py` (eight mechanical checks, a ship gate) +
+`tools/plot_signs.py` (the pictures). Overrides live in `tracks/san-diego-lake-murray/signs.json`;
+the authored intermediate is `data/signs.local.json`. The step is wired into `tools/ship_sd.sh`
+after the lamps, inside the SKIP_BLEND block. **When to rebuild:** not before the concurrent
+lights (track.config.json lighting block) + GrassFX (ext_config.py) work has landed — one ship
+carries both; then Kevin's first-drive acceptance is the M1 plate (70th/Alvarado) showing a
+RIGHT-pointing arrow straight through the windscreen. Six mainline plates first; the fourteen
+connector plates ride on `defaults.include_connectors`.
+
 ---
 
 ## Decisions Kevin owns

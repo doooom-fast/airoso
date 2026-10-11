@@ -68,6 +68,9 @@ if [ "$SKIP_BLEND" = 0 ]; then
   (cd "$WS" && "$BL" --background --python "$AIROSO/tools/strip_scenery_blend.py" -- project 2>&1 | grep "^\[strip" | cut -c1-160 )
   step "author: Kevin's lamp model at every streetlight (LIGHTPOST + LIGHTS lens)"
   (cd "$WS" && "$BL" --background --python "$AIROSO/tools/author_lamps_blend.py" -- project 2>&1 | grep "^\[lamps\]\|Error\|Traceback" )
+  step "author: W1-6 large-arrow signs at every tight corner (SIGNPLATE + SIGNARROW + SIGNPOST)"
+  (cd "$WS" && "$BL" --background --python "$AIROSO/tools/author_signs_blend.py" -- project 2>&1 | grep "^\[signs\]\|Error\|Traceback" )
+  (cd "$AIROSO" && python tools/verify_signs.py "$PROJ" | tail -3)
 fi
 
 step "ship: prep (AC naming, dummies, 65k splits)"
@@ -97,7 +100,7 @@ step "sync outputs workshop -> airoso"
 cp "$PROJ/loop.blend" "$SRC/loop.blend"
 for f in centerline.local.json centerline.raw.local.json median_bands.json dummies.json \
          finished_centerline.json gate_centerline.json lights.local.json connectors.local.json \
-         mouths.json drive_test.json audit.json; do
+         mouths.json signs.local.json signs_preview.svg drive_test.json audit.json; do
   [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
 done
 

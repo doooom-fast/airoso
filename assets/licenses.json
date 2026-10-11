@@ -82,7 +82,7 @@
    "files": [
     "tree_diffuse.png"
    ],
-   "source": "placeholder \u2014 not a verified CC0 asset yet; replaced in the v0.6.0 props pass",
+   "source": "placeholder — not a verified CC0 asset yet; replaced in the v0.6.0 props pass",
    "license": "UNVERIFIED",
    "url": ""
   },
@@ -122,7 +122,22 @@
    "source": "prodrive-ac-builder (scripts/assets/make_gravel.py)",
    "license": "CC0-1.0",
    "url": "",
-   "_note": "Synthesised, not mined \u2014 keeps road_surface:gravel tracks redistributable."
+   "_note": "Synthesised, not mined — keeps road_surface:gravel tracks redistributable."
+  },
+  {
+   "name": "W1-6 Large Arrow sign solids + MUTCD arrow/chevron artwork",
+   "files": [
+    "solid_sign_yellow.png",
+    "solid_sign_black.png",
+    "mutcd_w1-6r.png",
+    "mutcd_w1-6l.png",
+    "mutcd_w1-7.png",
+    "mutcd_w1-8l.png",
+    "mutcd_w1-8r.png"
+   ],
+   "source": "airoso tools/make_sign_textures.py (generated; MUTCD sign designs are public domain — MUTCD Introduction para 04, 17 U.S.C. 105)",
+   "license": "CC0-1.0",
+   "url": ""
   }
  ],
  "stock_audio_note": "Surface scrub/rumble (data/surfaces.ini WAV=) references the player's own stock Assetto Corsa sounds (content/sfx). No audio is bundled or redistributed."

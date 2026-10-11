@@ -26,6 +26,31 @@
       "vertex": 2340,
       "offset_right_m": 5.0,
       "_doc": "Approach to Navajo/Jackson (just past Navajo's second divided run, 2162-2319) — C2's other junction site. Refine vertex when C2 starts."
+    },
+    "0044-sign-M1": {
+      "vertex": 4463,
+      "offset_right_m": 5.0,
+      "_doc": "70th St (Lake Murray Blvd south of I-8) southbound, 90 m before M1's PC (station 13468; apex = the lap seam v0, the right-hander onto Alvarado Rd): the first W1-6R, on the outside/left curb at S ≈ (-0.9, -1673.6), must fill the windscreen with a RIGHT arrow — the first-drive acceptance test (a left arrow = every plate mirrored). 13.5 m road, no island; 5.0 = right lane, ~1.8 m to the curb."
+    },
+    "0044-sign-M2": {
+      "vertex": 721,
+      "offset_right_m": 5.0,
+      "_doc": "Alvarado Rd heading SSW at the Mb6 kink, 89 m before the College Ave south hairpin's PC (station 2249), 111 m before the first W1-6R at the R 60 crossing S ≈ (-1962.0, -1290.2) and 160 m before the second at the tip S2 ≈ (-2008.0, -1267.2) — the hairpin clause's two-arrow pair (ledger 0044; 0034's C3 site). 13.0 m road, no island."
+    },
+    "0044-sign-M3": {
+      "vertex": 1478,
+      "offset_right_m": 6.0,
+      "_doc": "College Ave northbound inside the third median run (1374-1487, island 7.0 m — 6.0 keeps 2.5 m off the island curb), 91 m before M3's PC (station 4525): the Mb11 left kink, then the right-hander onto Navajo Rd with the W1-6R on the west curb at S ≈ (-1985.1, 613.2); the M3 palm at 4.4 m is the sight-line case. AC_TIME_2 gate 31 m ahead."
+    },
+    "0044-sign-M4": {
+      "vertex": 2284,
+      "offset_right_m": 6.0,
+      "_doc": "Navajo Rd heading NE in the tail of the second median run (2162-2319, island 2.2 m here), 89 m before M4's PC (station 6941), the right-hander onto Jackson Dr: W1-6R at S ≈ (65.6, 1731.3). 26 m road."
+    },
+    "0044-sign-M5": {
+      "vertex": 3261,
+      "offset_right_m": 5.5,
+      "_doc": "Jackson Dr heading ESE, 42 m before the Mb16 left kink and 89 m before M5's PC (station 9869), the right-hander onto Lake Murray Blvd: W1-6R at S ≈ (2628.0, 504.6); the M5 palm at 4.8 m is the other sight-line case. 17 m road, no island; 5.5 = right lane, 3 m to the curb."
     }
   }
 }

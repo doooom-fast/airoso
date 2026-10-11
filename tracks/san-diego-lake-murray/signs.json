@@ -1,0 +1,36 @@
+{
+  "_doc": "Per-corner overrides for tools/place_signs.py / tools/author_signs_blend.py (W1-6 Large Arrow signs AT tight corners, Kevin 2026-10-10: 'they go AT the corner, just past the outside edge'). The rule detects corners itself; an entry here NAMES a detected corner (matched by ribbon + vertex within 30 m of the detected apex — stale after a centreline regen = refused with a WARN) and may skip it, force it, slide it along the curb, pin its base, or re-aim it. Ids: M<k> mainline in station order from the lap seam, connector corners <DC0|DC1|DCL|MED>-<k> (survey numbering); each connector corner yields a -fwd and a -rev sign because side streets are two-way. 'ship' is a note for Kevin, not read by the tools: the six mainline plates are the first seat test; set defaults.include_connectors=false to ship only those.",
+  "defaults": {
+    "_doc": "see place_signs.DEFAULTS; lateral offsets = curb face 0.08 + raised walk 1.8 (1.5 connector) - 0.25 back-of-walk set-back; height 2.13 m = MUTCD 2A.15 7 ft over a sidewalk; om1_3 = the Type N-1(CA) all-yellow diamond under every arrow (CA MUTCD 2C.10 'should')",
+    "r_sign_max_m": 30.0,
+    "defl_min_deg": 45.0,
+    "hairpin_deg": 135.0,
+    "lateral_offset_m": 1.63,
+    "lateral_offset_connector_m": 1.33,
+    "height_m": 2.13,
+    "om1_3": true,
+    "skew_deg": 0.0,
+    "include_connectors": true,
+    "both_directions_mainline": false,
+    "lamp_clear_m": 3.0,
+    "plant_clear_m": 2.5,
+    "kappa_window_m": 12,
+    "hysteresis_stations": 6
+  },
+  "corners": {
+    "M1": {"ribbon": "MAINLINE", "vertex": 0, "plate": "W1-6", "expect_arrow": "right", "where": "70th St / Alvarado Rd - the lap-seam right-hander onto Alvarado", "ship": "first", "note": "R 12 m, ~95 deg; the ribbon width steps 27.5 -> 17 m across the seam so the Blender ROAD ray-cast is authoritative here; slide_along_curb_m / base_xz are the backstop"},
+    "M2": {"ribbon": "MAINLINE", "vertex": 770, "plate": "W1-6", "expect_arrow": "right", "where": "Alvarado -> College Ave south hairpin", "ship": "first", "second_arrow": true, "note": "R 9 m, ~180 deg hairpin: two W1-6R (first where hard turning starts at the R 60 crossing, second from the R 20 crossing at the tip, ~50 m on). Four W1-8R chevrons are the opt-in replacement for the second arrow if it reads wrong from the seat"},
+    "M3": {"ribbon": "MAINLINE", "vertex": 1514, "plate": "W1-6", "expect_arrow": "right", "where": "College Ave -> Navajo Rd", "ship": "first", "note": "R 10 m, ~110 deg; 4-lane approach so lane_off is ~5 m right of the centreline - if the plate looks one lane off from the seat, slide_along_curb_m, not the formula"},
+    "M4": {"ribbon": "MAINLINE", "vertex": 2319, "plate": "W1-6", "expect_arrow": "right", "where": "Navajo Rd -> Jackson Dr", "ship": "first", "note": "R 10 m, ~110 deg; Navajo's median run ends 22 verts before the apex, no island term"},
+    "M5": {"ribbon": "MAINLINE", "vertex": 3296, "plate": "W1-6", "expect_arrow": "right", "where": "Jackson Dr -> Lake Murray Blvd", "ship": "first", "note": "R 11 m, ~90 deg; palm ~4-5 m away passes clearance but may sit in the sight line"},
+    "MED-1": {"ribbon": "medium#2+0#0#0", "vertex": 10, "plate": "W1-6", "where": "Wisconsin Ave / Connecticut Ave - residential right-angle 28 m in from the Lake Murray Blvd mouth", "ship": "second", "note": "the -rev plate stands in the Wisconsin throat ~19 m from the mouth cut with the MED-2 jog behind it - the fiddliest spot on the track, check its diagram first; skip:true drops both"},
+    "MED-6": {"ribbon": "medium#2+0#0#0", "vertex": 205, "plate": "W1-6", "where": "Connecticut Ave -> Delaware Ave, the sharpest connector corner (R 5.7 m, 120 deg)", "ship": "second"},
+    "MED-7": {"ribbon": "medium#2+0#0#0", "vertex": 245, "plate": "W1-6", "where": "Delaware Ave -> Pennsylvania Ln (R 14 m, 48 deg - kept by the 45-deg floor)", "ship": "second", "note": "the -rev ray exits ~1 m past the PT and qualifies via the +10 m in-arc tolerance; drop the rev plate with skip if it reads odd"},
+    "MED-8": {"ribbon": "medium#2+0#0#0", "vertex": 313, "plate": "W1-6", "where": "Pennsylvania Ln -> Colorado Ave right-angle after the connector's longest straight (189 m)", "ship": "second"},
+    "MED-10": {"ribbon": "medium#2+0#0#0", "vertex": 390, "plate": "W1-6", "where": "Colorado Ave -> Adelante Ave (R 11 m, 63 deg)", "ship": "second"},
+    "MED-13": {"ribbon": "medium#2+0#0#0", "vertex": 701, "plate": "W1-6", "where": "Airoso Ave -> Del Cerro Ave (R 13.5 m, 98 deg)", "ship": "second"},
+    "DCL-2": {"ribbon": "del_cerro_blvd_loop", "vertex": 75, "plate": "W1-6", "where": "Del Cerro Blvd loop, the far (east) turnaround (R 4.6 m, 150 deg)", "ship": "second", "note": "probably a cul-de-sac loop turnaround nobody signs in reality - Kevin's call; skip:true drops both approaches"},
+    "MED-16": {"ribbon": "medium#2+0#0#0", "vertex": 844, "skip": true, "reason": "the stem arriving at the Del Cerro Blvd / Madra Ave T: a W1-7 Two-Direction Large Arrow on Del Cerro's far (north) curb is the second-pass device, not a W1-6 on the stem", "where": "Madra Ave / Del Cerro Blvd (T-end)"},
+    "DCL-1": {"ribbon": "del_cerro_blvd_loop", "vertex": 0, "skip": true, "reason": "junction with the del_cerro_blvd#1 trunk: the forward ray runs down the trunk and never leaves pavement; a W1-7 across the loop for traffic arriving on the trunk is a second-pass candidate", "where": "Del Cerro Blvd / Regis Ave turnaround"}
+  }
+}

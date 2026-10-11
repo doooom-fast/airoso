@@ -87,6 +87,8 @@ TEXTURES = {
     "SIGNS":   ("signs_atlas.png", None, 0.55, (0.12, 0.40, 0.18, 1), 0.0, False),  # green street-name panels
     "MOUNTAINS": (None, None, 0.95, (0.52, 0.57, 0.66, 1), 0.0, False),  # hazy blue Front Range backdrop (flat silhouette)
     "SIGNPOST": ("solid_metal_grey.png", None, 0.60, (0.45, 0.46, 0.48, 1), 0.0, False),      # grey metal posts — SOLID TEXTURE (texture-less renders black)
+    "SIGNPLATE": ("solid_sign_yellow.png", None, 0.35, (1.0, 0.80, 0.0, 1), 0.0, False),   # W1-6 Large Arrow plate + OM1-3 diamond (tools/author_signs_blend.py) — SOLID TEXTURE: the arrow is geometry, the prep's planar UVs would collapse artwork
+    "SIGNARROW": ("solid_sign_black.png", None, 0.45, (0.05, 0.05, 0.05, 1), 0.0, False),  # the black arrow + border standing 2-4 mm proud of that plate
     "POLE":    (None, None, 0.85, (0.34, 0.24, 0.16, 1), 0.0, False),               # wooden utility/power pole
     "WIRE":    (None, None, 0.50, (0.06, 0.06, 0.07, 1), 0.0, False),               # overhead power cable
 }

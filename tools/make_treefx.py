@@ -134,6 +134,9 @@ def build(project_dir):
     data = proj / "data"
     slug = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))["slug"]
     pos = json.loads((data / "scatter_positions.json").read_text(encoding="utf-8"))
+    # W1-6 signs (tools/place_signs.py): a plant inside 2.5 m of a sign post is dropped here, the sign never moves
+    sp = data / "signs.local.json"
+    excluded = {(e["zone"], e["index"]) for e in (json.loads(sp.read_text(encoding="utf-8")).get("exclude_plants", []) if sp.exists() else [])}
     src = proj / "source" / "trees"
     available = {p.name for p in src.glob("*.bin")}
 
@@ -160,6 +163,8 @@ def build(project_dir):
         n = 0
         nonlocal rejected
         for i, e in enumerate(entries, start=idx_base):
+            if (zone_key, i - idx_base) in excluded:
+                continue
             if guard and field.query(e["x"], e["z"])[0] < 1.0:
                 rejected += 1
                 continue

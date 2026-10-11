@@ -9,9 +9,10 @@ sounds are referenced by name (`data/surfaces.ini` `WAV=`), never redistributed.
 
 | Asset | Files |
 |---|---|
-| Geometry: road, kerbs, sidewalks, median islands, terrain seating, lamp posts | `san_diego_lake_murray.kn5` meshes |
+| Geometry: road, kerbs, sidewalks, median islands, terrain seating, lamp posts, W1-6 Large Arrow signs (plate, arrow, post) | `san_diego_lake_murray.kn5` meshes |
 | AI line, map, outline, preview | `ai/*`, `map.png`, `ui/*` |
-| Generated textures: lane lines, kerb stripe, lamp solids | `line_white.png`, `line_yellow.png`, `solid_metal_dark.png`, `solid_lens_warm.png` |
+| Generated textures: lane lines, kerb stripe, lamp solids, sign solids | `line_white.png`, `line_yellow.png`, `solid_metal_dark.png`, `solid_lens_warm.png`, `solid_sign_yellow.png`, `solid_sign_black.png` |
+| Generated MUTCD sign artwork — W1-6L/R Large Arrow, W1-7 Two-Direction Large Arrow, W1-8L/R chevron (MUTCD sign designs are public-domain US Government works, 17 U.S.C. §105) | `mutcd_w1-6r.png`, `mutcd_w1-6l.png`, `mutcd_w1-7.png`, `mutcd_w1-8l.png`, `mutcd_w1-8r.png` |
 | Street-lamp model | Kevin Conboy's asset library (`fleet/reference/ASSET-LIBRARY.md`, ledger 0005) |
 
 ## CC0 from others — bundled in the kn5

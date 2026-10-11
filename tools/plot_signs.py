@@ -108,26 +108,28 @@ def plot_sign(s, ribbons, island, out_dir):
     cx, cz = s["base_xz"]
     cv = Canvas(cx, cz, WIN_M, PX_PER_M)
     draw_ribbons(cv, ribbons, island)
-    t = s["approach"]["t_xz"]
-    f = s["face_dir_xz"]
-    r = s["right_xz"]
-    A, C = s["ray"]["A_xz"], s["ray"]["C_xz"]
-    # where the driver comes from: the approach heading, dashed back 45 m from the launch point
-    tail = (A[0] - t[0] * 45, A[1] - t[1] * 45)
-    pa, pb = cv.px(tail), cv.px(A)
-    L = math.hypot(pb[0] - pa[0], pb[1] - pa[1]) or 1
-    for k in range(0, int(L), 16):
-        q0 = (pa[0] + (pb[0] - pa[0]) * k / L, pa[1] + (pb[1] - pa[1]) * k / L)
-        q1 = (pa[0] + (pb[0] - pa[0]) * min(k + 9, L) / L, pa[1] + (pb[1] - pa[1]) * min(k + 9, L) / L)
-        cv.d.line([q0, q1], fill=COL["driver"], width=3)
-    cv.arrow(cv.px((A[0] - t[0] * 12, A[1] - t[1] * 12)), pb, COL["driver"], width=4, head=12)
-    cv.text((pa[0] - 40, pa[1] + 8), "driver comes from here", 15, bold=True)
-    # the failed-to-turn ray: launch point -> the curb crossing (the built mesh's when Blender measured it) -> the sign
-    C = s["ray"].get("C_mesh_xz", C)
-    cv.d.line([pb, cv.px(C)], fill=COL["ray"], width=2)
-    pc = cv.px(C)
-    cv.d.ellipse([pc[0] - 4, pc[1] - 4, pc[0] + 4, pc[1] + 4], outline=COL["ray"], width=2)
-    cv.text((pc[0] + 8, pc[1] - 18), "a car that did not turn crosses the curb here", 12)
+    plates = s.get("plates") or [s]
+    for k, p in enumerate(plates):
+        t = p["approach"]["t_xz"]
+        A, C = p["ray"]["A_xz"], p["ray"]["C_xz"]
+        # where the driver comes from: the approach heading, dashed back 45 m from the launch point
+        tail = (A[0] - t[0] * 45, A[1] - t[1] * 45)
+        pa, pb = cv.px(tail), cv.px(A)
+        L = math.hypot(pb[0] - pa[0], pb[1] - pa[1]) or 1
+        for j in range(0, int(L), 16):
+            q0 = (pa[0] + (pb[0] - pa[0]) * j / L, pa[1] + (pb[1] - pa[1]) * j / L)
+            q1 = (pa[0] + (pb[0] - pa[0]) * min(j + 9, L) / L, pa[1] + (pb[1] - pa[1]) * min(j + 9, L) / L)
+            cv.d.line([q0, q1], fill=COL["driver"], width=3)
+        cv.arrow(cv.px((A[0] - t[0] * 12, A[1] - t[1] * 12)), pb, COL["driver"], width=4, head=12)
+        cv.text((pa[0] - 40, pa[1] + 8), "driver comes from here" + (" (%s)" % p["direction"] if len(plates) > 1 else ""), 15, bold=True)
+        # the failed-to-turn ray: launch point -> the curb crossing (the built mesh's when Blender measured it) -> the sign
+        C = p["ray"].get("C_mesh_xz", C)
+        cv.d.line([pb, cv.px(C)], fill=COL["ray"], width=2)
+        pc = cv.px(C)
+        cv.d.ellipse([pc[0] - 4, pc[1] - 4, pc[0] + 4, pc[1] + 4], outline=COL["ray"], width=2)
+        if k == 0:
+            cv.text((pc[0] + 8, pc[1] - 18), "a car that did not turn crosses the curb here", 12)
+    f, r = plates[0]["face_dir_xz"], plates[0]["right_xz"]
     # the OLD rule's points, grey
     o1 = cv.px(s["old_rule"]["rev1_xz"])
     cv.d.ellipse([o1[0] - 7, o1[1] - 7, o1[0] + 7, o1[1] + 7], fill=COL["old"], outline=COL["post"], width=2)
@@ -144,29 +146,39 @@ def plot_sign(s, ribbons, island, out_dir):
     if built.get("outside_edge_xz"):
         e = cv.px(built["outside_edge_xz"][0])
         cv.text((e[0] + 6, e[1] - 16), "built curb (mesh)", 12, fill=(120, 220, 255))
-    # the NEW sign: post, plate across the driver's right vector, facing tick, arrow glyph
+    # the NEW sign: post, plate(s) across the driver's right vector, facing tick, arrow glyph
     b = cv.px((cx, cz))
-    fp = cv.px((cx + f[0] * 9, cz + f[1] * 9))
-    cv.arrow(b, fp, COL["sign"], width=3, head=10)
-    cv.text((fp[0] + 6, fp[1] - 8), "faces the driver", 13, bold=True, fill=COL["sign"])
     hw = PLATE_W * 1.6   # drawn 1.6x so the plate reads at 8 px/m
-    p1, p2 = cv.px((cx + r[0] * hw, cz + r[1] * hw)), cv.px((cx - r[0] * hw, cz - r[1] * hw))
-    cv.d.line([p1, p2], fill=COL["post"], width=10)
-    cv.d.line([p1, p2], fill=COL["sign"], width=6)
+    for k, p in enumerate(plates):
+        f, r = p["face_dir_xz"], p["right_xz"]
+        fp = cv.px((cx + f[0] * 9, cz + f[1] * 9))
+        cv.arrow(b, fp, COL["sign"], width=3, head=10)
+        cv.text((fp[0] + 6, fp[1] - 8), "faces the driver" + (" (%s)" % p["direction"] if len(plates) > 1 else ""), 13, bold=True, fill=COL["sign"])
+        p1, p2 = cv.px((cx + r[0] * hw, cz + r[1] * hw)), cv.px((cx - r[0] * hw, cz - r[1] * hw))
+        cv.d.line([p1, p2], fill=COL["post"], width=10)
+        cv.d.line([p1, p2], fill=COL["sign"], width=6)
+        g = 1.0 if p["arrow"] == "right" else -1.0
+        ga = cv.px((cx - f[0] * 5 - r[0] * g * 3.0, cz - f[1] * 5 - r[1] * g * 3.0))
+        gb = cv.px((cx - f[0] * 5 + r[0] * g * 3.0, cz - f[1] * 5 + r[1] * g * 3.0))
+        cv.arrow(ga, gb, COL["sign"], width=5, head=12)
+        cv.text((min(ga[0], gb[0]) - 10, max(ga[1], gb[1]) + 6 + 16 * k), "arrow points %s (as the %sdriver sees it)"
+                % (p["arrow"].upper(), (p["direction"] + " ") if len(plates) > 1 else ""), 13, bold=True, fill=COL["sign"])
     cv.d.ellipse([b[0] - 5, b[1] - 5, b[0] + 5, b[1] + 5], fill=COL["post"], outline=COL["sign"], width=2)
-    g = 1.0 if s["arrow"] == "right" else -1.0
-    ga = cv.px((cx - f[0] * 5 - r[0] * g * 3.0, cz - f[1] * 5 - r[1] * g * 3.0))
-    gb = cv.px((cx - f[0] * 5 + r[0] * g * 3.0, cz - f[1] * 5 + r[1] * g * 3.0))
-    cv.arrow(ga, gb, COL["sign"], width=5, head=12)
-    cv.text((min(ga[0], gb[0]) - 10, max(ga[1], gb[1]) + 6), "arrow points %s (as the driver sees it)" % s["arrow"].upper(), 13, bold=True, fill=COL["sign"])
-    # furniture: title, numbers, north, scale
-    cv.text((10, 8), "%s   %s   %s" % (s["id"], s["kind"], s.get("where", "")), 18, bold=True)
-    cv.text((10, 34), "corner: R %.0f m at the apex, turns %.0f deg %s   |   approach heading %.0f deg, plate faces %.0f deg"
-            % (s["corner"]["R_apex_m"], abs(s["corner"]["D_deg"]), s["corner"]["turn"], s["approach"]["bearing_deg"], s["face_bearing_deg"]), 13)
+    # the un-slid mesh point (the ray strike) when the lamp/plant slide moved the post along the curb
     c = s["checks"]
-    gate = ("drive_test margin %+.1f m" % c["gate_margin_m"]) if s["ribbon"] == "MAINLINE" else "side street (drive_test sweeps the loop only)"
-    cv.text((10, 54), "ray %.0f m to the curb, post %.2f m behind the %s curb face, plate bottom %.2f m up   |   lamp %.1f m, plant %.1f m, %s"
-            % (s["ray"].get("len_mesh_m", s["ray"]["len_m"]), c.get("mesh_clear_m", c["edge_clear_m"]),
+    if abs(c.get("slid_m", 0.0)) > 0.01 and s.get("curb_dir_xz"):
+        u = s["curb_dir_xz"]
+        q = cv.px((cx - u[0] * c["slid_m"], cz - u[1] * c["slid_m"]))
+        cv.d.ellipse([q[0] - 4, q[1] - 4, q[0] + 4, q[1] + 4], outline=COL["sign"], width=2)
+        cv.text((q[0] + 6, q[1] + 4), "slid %+.2f m along the curb (lamp/plant clearance)" % c["slid_m"], 12, fill=COL["sign"])
+    # furniture: title, numbers, north, scale
+    cv.text((10, 8), "%s   %s   %s%s" % (s["id"], s["kind"], s.get("where", ""), "   (one post, two plates)" if s.get("pair") else ""), 18, bold=True)
+    cv.text((10, 34), "corner: R %.0f m at the apex, turns %.0f deg %s   |   approach heading %s deg, plate faces %s deg"
+            % (s["corner"]["R_apex_m"], abs(s["corner"]["D_deg"]), s["corner"]["turn"],
+               "/".join("%.0f" % p["approach"]["bearing_deg"] for p in plates), "/".join("%.0f" % p["face_bearing_deg"] for p in plates)), 13)
+    gate = "drive_test disc margin %+.2f m (plate footprint, every centreline)" % c["gate_margin_m"]
+    cv.text((10, 54), "ray %.0f m to the curb, post %.2f m behind the %s curb face (measured), plate bottom %.2f m up   |   lamp %.1f m, plant %.1f m, %s"
+            % (plates[0]["ray"].get("len_mesh_m", plates[0]["ray"]["len_m"]), c.get("mesh_clear_m", c["edge_clear_m"]),
                "built" if "mesh_clear_m" in c else "polyline", s["height_m"], c["lamp_m"], c["plant_m"], gate), 13)
     if s["checks"].get("warnings"):
         cv.text((10, 74), "WARN: " + "; ".join(s["checks"]["warnings"]), 12, fill=(255, 190, 120))

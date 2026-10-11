@@ -32,11 +32,28 @@ THE RULE (all maths in the engine frame x = E, y = up, z = N of data/centerline.
   hairpin   |D| >= 135 AND arc >= 50 m -> a SECOND W1-6 from PC2 = the R = 20 m crossing, kept if
             the two bases are >= 12 m apart.
   mainline  driven direction only (increasing index = clockwise lap); connectors both approaches.
+  slide     lamps (>= 3.0 m) and plants (>= 2.5 m) are cleared by sliding S along the local curb
+            direction u (station sC), the smallest |slide| first, 0.25 m steps, capped at 1.0 m;
+            beyond the cap the sign stays on the ray and the plant is excluded from TreeFX
+            (lamps never move: a lamp inside 3.0 m is fatal). The slide is the ONLY lateral
+            deviation from the ray; the plate stays square to it. The record carries u
+            (curb_dir_xz) and slid_m so tools/author_signs_blend.py re-chooses the slide on the
+            built mesh and tools/verify_signs.py tests the un-slid point against the ray.
+  disc      drive_test's obstacle disc, min(lane_half, 6) + 0.3 m of EVERY centreline (its own
+            street included: 4.9 m on a 10 m street), must clear every SIGN* vertex: the plate's
+            footprint base +- 0.61 m along the right vector. Fatal on every ribbon.
+  pair      a two-way connector corner whose -fwd and -rev points land < 2.0 m apart becomes ONE
+            post at the mean base carrying both plates (W1-6R + W1-6L), each still facing its own
+            approach (merge_pairs; re-run after the mesh march, which is where DCL-2's pair met).
+  expect    signs.json expect_arrow names the arrow the corner must get; a computed arrow that
+            differs is a skip with a logged reason, never a silent relocation (and a ship FAIL in
+            tools/verify_signs.py check (j)).
 
 Overrides: tracks/<slug>/signs.json {defaults{...}, corners{<id>: {ribbon, vertex, skip, reason,
-slide_along_curb_m, base_xz, face_bearing_deg, plate, arrow, height_m, om1_3, second_arrow,
-force}}}. An entry whose vertex has no detected corner within 30 m is refused with a WARN (stale
-after a centreline regen).
+slide_along_curb_m, base_xz, face_bearing_deg, plate, arrow, expect_arrow, height_m, om1_3,
+second_arrow, force}}}. defaults.kappa_window_m / hysteresis_stations drive the detector (12 m /
+6 stations). An entry whose vertex has no detected corner within 30 m is refused with a WARN
+(stale after a centreline regen).
 
     PYTHONUTF8=1 python tools/place_signs.py <project-dir> [--signs PATH] [--no-connectors]
 
@@ -98,7 +115,11 @@ ARROW_IN = [(43.5, 12.0), (29.4, 21.0), (30.0, 15.33), (4.5, 15.33), (4.5, 8.67)
 LAMP_CLEAR_M = 3.0
 PLANT_CLEAR_M = 2.5
 LAMP_ARM_M = 1.8                # lights.local.json stores the HEAD; the post is 1.8 m away from the road
-SLIDE_MAX_M, SLIDE_STEP_M = 1.5, 0.5
+SLIDE_MAX_M, SLIDE_STEP_M = 1.0, 0.25   # along the curb only; beyond the cap the plant is excluded instead
+HALF_PLATE = PLATE_W / 2        # the disc footprint: every SIGN* vertex lies within +-0.61 m of the base
+PAIR_MERGE_M = 2.0              # -fwd/-rev points of one two-way corner closer than this share ONE post
+SIGN_SPACING_M = 2.0            # verify (i): no two posts closer than this
+PAIR_STACK_GAP = 0.05           # a paired plate whose facing is < 90 deg from the first stacks above it
 SPAWN_CLEAR_M = 200.0           # WARN only: AC_TIME_1 sits 30 m from M1, which the plan places
 GROUND_WARN_M = 0.30
 OVERRIDE_STALE_M = 30.0
@@ -136,10 +157,11 @@ def bearing(vx, vz):
 class Ribbon:
     """one road centreline resampled to 1 m stations: (x, z, y, w, vfrac)"""
 
-    def __init__(self, name, pts3, widths, closed, reverse=False):
+    def __init__(self, name, pts3, widths, closed, reverse=False, kappa_half=KAPPA_HALF_WIN):
         self.name = name
         self.closed = closed
         self.reverse = reverse
+        self.kappa_half = max(1, int(kappa_half))   # signs.json defaults.kappa_window_m / 2
         P = [tuple(p) for p in pts3]
         W = list(widths)
         if closed and math.dist(P[0][::2], P[-1][::2]) < 1e-6:   # L13: drop the repeated seam vertex
@@ -202,7 +224,13 @@ class Ribbon:
         return (math.cos(h), math.sin(h))
 
     def kappa(self, i):
-        return wrap(self.heading(i + KAPPA_HALF_WIN) - self.heading(i - KAPPA_HALF_WIN)) / (2 * KAPPA_HALF_WIN)
+        kh = self.kappa_half
+        return wrap(self.heading(i + kh) - self.heading(i - kh)) / (2 * kh)
+
+    def copy(self, reverse):
+        return Ribbon(self.name, self.raw if not self.reverse else self.raw[::-1],
+                      self.raw_w if not self.reverse else self.raw_w[::-1], self.closed,
+                      reverse=reverse, kappa_half=self.kappa_half)
 
     def dist_stations(self, a, b):
         d = abs(b - a)
@@ -284,9 +312,18 @@ class PavementField:
                     worst = min(worst, d - (min(max(w / 2 - 0.4, 0.8), 6.0) + 0.3))
         return worst
 
+    def footprint_margin(self, base, rights):
+        """gate_margin over the sign's footprint: the base and both plate ends (+-HALF_PLATE along
+        every plate's right vector) — no SIGN* vertex may stand inside drive_test's disc"""
+        pts = [tuple(base)]
+        for r in rights:
+            pts.append((base[0] + r[0] * HALF_PLATE, base[1] + r[1] * HALF_PLATE))
+            pts.append((base[0] - r[0] * HALF_PLATE, base[1] - r[1] * HALF_PLATE))
+        return min(self.gate_margin(p[0], p[1]) for p in pts)
+
 
 # ----------------------------------------------------------------------------------------------
-def detect_corners(rb):
+def detect_corners(rb, hyst=HYSTERESIS):
     """runs of |k| > 1/R_STRAIGHT of one sign -> [{apex, sign, R_apex, PC, PT, arc, D_deg}]"""
     thr = 1.0 / R_STRAIGHT_M
     n = rb.n
@@ -330,8 +367,8 @@ def detect_corners(rb):
     for run in merged:
         apex = apex_of(run)
         sg = run[2]
-        pc = walk_to_straight(rb, apex, -1, thr)
-        pt = walk_to_straight(rb, apex, +1, thr)
+        pc = walk_to_straight(rb, apex, -1, thr, hyst)
+        pt = walk_to_straight(rb, apex, +1, thr, hyst)
         arc = (pt - pc) % n if rb.closed else pt - pc
         D = math.degrees(sum(k[(pc + j) % n if rb.closed else min(pc + j, n - 1)] for j in range(arc + 1)))
         out.append({"apex": apex, "sign": sg, "R_apex_m": 1.0 / max(abs(k[apex]), 1e-9),
@@ -339,11 +376,12 @@ def detect_corners(rb):
     return out
 
 
-def walk_to_straight(rb, apex, step, thr):
-    """walk from the apex until HYSTERESIS consecutive stations have |k| < thr (the station just
+def walk_to_straight(rb, apex, step, thr, hyst=HYSTERESIS):
+    """walk from the apex until `hyst` consecutive stations have |k| < thr (the station just
     before that straight stretch is the PC (step -1) / PT (step +1)) — or until the curvature
     changes sign: an S-bend's two halves are two corners, never one arc (Wisconsin v10/v16)"""
     sg = 1 if rb.kappa(apex) > 0 else -1
+    hyst = max(1, int(hyst))
     s, n_ok, walked = apex, 0, 0
     while walked < SEARCH_MAX:
         nxt = s + step
@@ -356,8 +394,8 @@ def walk_to_straight(rb, apex, step, thr):
         s = nxt
         walked += 1
         n_ok = n_ok + 1 if abs(k) < thr else 0
-        if n_ok >= HYSTERESIS:
-            return (s - step * (HYSTERESIS - 1)) % rb.n if rb.closed else s - step * (HYSTERESIS - 1)
+        if n_ok >= hyst:
+            return (s - step * (hyst - 1)) % rb.n if rb.closed else s - step * (hyst - 1)
     return s
 
 
@@ -380,16 +418,19 @@ class Context:
         self.proj = Path(proj)
         data = self.proj / "data"
         self.cfg = cfg
+        # the two detector knobs signs.json may tune (defaults.kappa_window_m / hysteresis_stations)
+        self.kappa_half = max(1, int(round(float(cfg.get("kappa_window_m", 2 * KAPPA_HALF_WIN)) / 2)))
+        self.hyst = max(1, int(cfg.get("hysteresis_stations", HYSTERESIS)))
         cl = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
         self.origin = cl.get("origin")
-        self.mainline = Ribbon("MAINLINE", cl["points_xyz_m"], cl["widths_m"], True)
+        self.mainline = Ribbon("MAINLINE", cl["points_xyz_m"], cl["widths_m"], True, kappa_half=self.kappa_half)
         self.ribbons = [self.mainline]
         cp = data / "connectors.local.json"
         self.connectors = json.loads(cp.read_text(encoding="utf-8")).get("connectors", []) if cp.exists() else []
         for c in self.connectors:
             P = c["points_xyz_m"]
             closed = math.dist(P[0][::2], P[-1][::2]) < 1e-6
-            self.ribbons.append(Ribbon(c["name"], P, c["widths_m"], closed))
+            self.ribbons.append(Ribbon(c["name"], P, c["widths_m"], closed, kappa_half=self.kappa_half))
         self.field = PavementField(self.ribbons)
         mp = data / "mouths.json"
         mouths = json.loads(mp.read_text(encoding="utf-8")) if mp.exists() else {"mouths": []}
@@ -511,6 +552,38 @@ def march(ctx, rb, A, t, d_clear):
     return res
 
 
+def slide_candidates():
+    """0, +0.25, -0.25, +0.5, ... up to +-SLIDE_MAX_M: the smallest move off the ray first"""
+    return [0.0] + [s * k for k in range(1, int(round(SLIDE_MAX_M / SLIDE_STEP_M)) + 1) for s in (SLIDE_STEP_M, -SLIDE_STEP_M)]
+
+
+def choose_slide(ctx, cfg, S, u, d_clear, clear_fn, rights=()):
+    """clear lamps (>= lamp_clear_m) and plants (>= plant_clear_m) by sliding S along the curb
+    direction u, smallest |slide| first, never beyond SLIDE_MAX_M; a candidate must also keep the
+    edge clearance clear_fn(x, z) >= d_clear - 0.05 and the disc footprint margin >= 0. When no
+    candidate clears: stay on the ray, flag a lamp (fatal), exclude the plant (TreeFX drops it).
+    -> (slid_m, S, lamp_m, plant(dist, zone, idx), exclude_plant | None, reasons[])"""
+    for sl in slide_candidates():
+        q = (S[0] + u[0] * sl, S[1] + u[1] * sl)
+        if clear_fn(q[0], q[1]) < d_clear - 0.05:
+            continue
+        if rights and ctx.field.footprint_margin(q, rights) < 0:
+            continue
+        lamp = ctx.nearest_lamp(q)
+        plant = ctx.nearest_plant(q)
+        if lamp >= cfg["lamp_clear_m"] and plant[0] >= cfg["plant_clear_m"]:
+            return sl, q, lamp, plant, None, []
+    lamp = ctx.nearest_lamp(S)
+    plant = ctx.nearest_plant(S)
+    reasons, excl = [], None
+    if lamp < cfg["lamp_clear_m"]:
+        reasons.append("lamp post base %.1f m from the sign (< %.1f, lamps are never moved; no slide <= %.1f m clears it)"
+                       % (lamp, cfg["lamp_clear_m"], SLIDE_MAX_M))
+    if plant[0] < cfg["plant_clear_m"]:
+        excl = {"zone": plant[1], "index": plant[2], "dist_m": round(plant[0], 2)}
+    return 0.0, S, lamp, plant, excl, reasons
+
+
 def place_corner(ctx, rb, corner, cid, ov, cfg, second=False):
     """one approach of one corner -> (record | None, reasons[])"""
     n = rb.n
@@ -574,42 +647,9 @@ def place_corner(ctx, rb, corner, cid, ov, cfg, second=False):
     outside_cross = cross if D < 0 else -cross
     if outside_cross <= 0:
         reasons.append("OUTSIDE ASSERTION FAILED: C is on the inside of the bend (cross %.2f)" % outside_cross)
-    # 6) clearances: lamps never move; plants are excluded from TreeFX; the sign may slide +-1.5 m
-    u = unit((rb.xz(sC + 1)[0] - rb.xz(sC - 1)[0], rb.xz(sC + 1)[1] - rb.xz(sC - 1)[1]))
-    slid = 0.0
-    excl_plant = None
-    cand = [0.0] + [s * k for k in range(1, int(SLIDE_MAX_M / SLIDE_STEP_M) + 1) for s in (SLIDE_STEP_M, -SLIDE_STEP_M)]
-    chosen = None
-    for sl in cand:
-        q = (S[0] + u[0] * sl, S[1] + u[1] * sl)
-        if ctx.field.query(q[0], q[1])[0] < d_clear - 0.05:
-            continue
-        lamp = ctx.nearest_lamp(q)
-        plant = ctx.nearest_plant(q)
-        if lamp >= cfg["lamp_clear_m"] and plant[0] >= cfg["plant_clear_m"]:
-            chosen = (sl, q, lamp, plant)
-            break
-    if chosen is None:
-        # keep the un-slid point; a lamp inside 3 m is fatal, a plant is excluded from TreeFX
-        lamp = ctx.nearest_lamp(S)
-        plant = ctx.nearest_plant(S)
-        chosen = (0.0, S, lamp, plant)
-        if lamp < cfg["lamp_clear_m"]:
-            reasons.append("lamp post base %.1f m from the sign (< %.1f, lamps are never moved)" % (lamp, cfg["lamp_clear_m"]))
-        if plant[0] < cfg["plant_clear_m"]:
-            excl_plant = {"zone": plant[1], "index": plant[2], "dist_m": round(plant[0], 2)}
-    slid, S, lamp, plant = chosen
-    # 7) manual overrides
-    applied = []
-    if ov.get("slide_along_curb_m"):
-        sl = float(ov["slide_along_curb_m"])
-        S = (S[0] + u[0] * sl, S[1] + u[1] * sl)
-        slid += sl
-        applied.append("slide_along_curb_m=%.2f" % sl)
-    if ov.get("base_xz"):
-        S = (float(ov["base_xz"][0]), float(ov["base_xz"][1]))
-        applied.append("base_xz")
+    # 6) facing + arrow first (the disc footprint needs the right vector)
     f = (-t[0], -t[1])
+    applied = []
     if ov.get("face_bearing_deg") is not None:
         b = math.radians(90.0 - float(ov["face_bearing_deg"]))
         f = (math.cos(b), math.sin(b))
@@ -619,20 +659,41 @@ def place_corner(ctx, rb, corner, cid, ov, cfg, second=False):
     if ov.get("arrow") in ("left", "right"):
         arrow = ov["arrow"]
         applied.append("arrow=%s" % arrow)
+    expect = ov.get("expect_arrow")
+    if expect in ("left", "right") and expect != arrow:
+        reasons.append("expect_arrow=%s but the rule computed %s (D %.1f deg) — not relocated, see signs.json" % (expect, arrow, D))
+    # 7) clearances: lamps never move; plants are excluded from TreeFX; the sign may slide along
+    #    the curb (u at sC), <= SLIDE_MAX_M, the smallest move first — the only lateral deviation
+    u = unit((rb.xz(sC + 1)[0] - rb.xz(sC - 1)[0], rb.xz(sC + 1)[1] - rb.xz(sC - 1)[1]))
+    slid, S, lamp, plant, excl_plant, slide_reasons = choose_slide(
+        ctx, cfg, S, u, d_clear, lambda x, z: ctx.field.query(x, z)[0], rights=(nR,))
+    reasons += slide_reasons
+    # 8) manual overrides
+    if ov.get("slide_along_curb_m"):
+        sl = float(ov["slide_along_curb_m"])
+        S = (S[0] + u[0] * sl, S[1] + u[1] * sl)
+        slid += sl
+        applied.append("slide_along_curb_m=%.2f" % sl)
+    if ov.get("base_xz"):
+        S = (float(ov["base_xz"][0]), float(ov["base_xz"][1]))
+        applied.append("base_xz")
+    if ov.get("force"):
+        applied.append("force")
     height = float(ov.get("height_m", cfg["height_m"]))
     om = bool(ov.get("om1_3", cfg["om1_3"]))
-    # 8) the rest of the checks
+    # 9) the rest of the checks
     y_road = rb.y(sC)
-    gate_margin = ctx.field.gate_margin(S[0], S[1])
+    gate_margin = ctx.field.footprint_margin(S, (nR,))
     edge_clear = ctx.field.query(S[0], S[1])[0]
     spawn = ctx.nearest_spawn(S)
     warns = []
     if abs(pca_vs_chord) > 5:
-        warns.append("approach PCA tangent differs from the chord by %.1f deg" % pca_vs_chord)
+        warns.append("approach heading: 10 m chord %.1f deg vs PCA fit %.1f deg (differ by %.1f deg; the chord is used)"
+                     % (bearing(t[0], t[1]), bearing(math.cos(th_pca), math.sin(th_pca)), abs(pca_vs_chord)))
     if spawn[0] < SPAWN_CLEAR_M:
         warns.append("%.0f m from %s (< %.0f m spawn/gate exclusion, placed anyway)" % (spawn[0], spawn[1], SPAWN_CLEAR_M))
-    if gate_margin < 0 and rb.name == "MAINLINE":     # drive_test sweeps the mainline corridor only
-        reasons.append("inside drive_test's obstacle disc by %.2f m" % -gate_margin)
+    if gate_margin < 0:     # drive_test's disc on EVERY centreline, the sign's own street included
+        reasons.append("plate footprint inside drive_test's obstacle disc by %.2f m" % -gate_margin)
     if edge_clear < 0:
         reasons.append("sign base is ON pavement (edge clearance %.2f)" % edge_clear)
     if "note" in m:
@@ -666,13 +727,15 @@ def place_corner(ctx, rb, corner, cid, ov, cfg, second=False):
                 "sC_rel_apex_m": rel_pc - ((apex - pc) % n if rb.closed else apex - pc),
                 "s_S_m": round(m["s_S"], 2)},
         "base_xz": [round(S[0], 3), round(S[1], 3)],
+        "curb_dir_xz": [round(u[0], 4), round(u[1], 4)],
         "y_road_at_sC": round(y_road, 3),
         "y_base": {"analytic": round(y_road + WALK_ABOVE_ROAD, 3), "raycast": None, "source": "analytic"},
         "face_dir_xz": [round(f[0], 4), round(f[1], 4)],
         "face_bearing_deg": round(bearing(f[0], f[1]), 1),
         "yaw_deg": round(math.degrees(math.atan2(f[1], f[0])), 2),
         "right_xz": [round(nR[0], 4), round(nR[1], 4)],
-        "arrow": arrow, "lateral_offset_m": d_clear, "height_m": height, "om1_3": om,
+        "arrow": arrow, "expect_arrow": expect if expect in ("left", "right") else None,
+        "lateral_offset_m": d_clear, "height_m": height, "om1_3": om,
         "skew_deg": cfg.get("skew_deg", 0.0),
         "checks": {"outside_cross": round(outside_cross, 2), "edge_clear_m": round(edge_clear, 2),
                    "lamp_m": round(lamp, 2), "plant_m": round(plant[0], 2), "plant_zone": plant[1],
@@ -696,6 +759,60 @@ def corner_id(rb, k):
     return "%s-c%d" % (RIBBON_PREFIX.get(rb.name, rb.name.replace("#", "_").replace("+", "_").upper()), k)
 
 
+PLATE_KEYS = ("id", "kind", "direction", "corner", "approach", "ray", "face_dir_xz", "face_bearing_deg",
+              "yaw_deg", "right_xz", "arrow", "expect_arrow", "old_rule", "where", "base_xz", "curb_dir_xz")
+
+
+def merge_pairs(signs, thr=PAIR_MERGE_M, log=None):
+    """a two-way connector corner whose -fwd and -rev posts stand < thr apart becomes ONE record:
+    one post at the mean base, both plates on it (each keeps its own approach, facing, arrow and
+    checks under "plates"); the top-level facing/arrow/ray are the -fwd plate's so every reader
+    that knows one plate still draws something sensible. Idempotent; stable order."""
+    by_corner = {}
+    for s in signs:
+        if "plates" in s or not s["id"].endswith(("-fwd", "-rev")):
+            continue
+        by_corner.setdefault(s["id"].rsplit("-", 1)[0], []).append(s)
+    merged, drop = {}, set()
+    for cid, lst in by_corner.items():
+        if len(lst) != 2:
+            continue
+        a, b = sorted(lst, key=lambda s: s["direction"])          # fwd first
+        dist = math.dist(a["base_xz"], b["base_xz"])
+        if dist >= thr:
+            continue
+        base = [round((a["base_xz"][0] + b["base_xz"][0]) / 2, 3), round((a["base_xz"][1] + b["base_xz"][1]) / 2, 3)]
+        rec = {k: a[k] for k in a if k not in ("checks", "exclude_plant")}
+        rec.update(id=cid, kind=a["kind"] + "+" + b["kind"], direction="both", pair=True,
+                   pair_split_m=round(dist, 2), base_xz=base,
+                   plates=[{k: s[k] for k in PLATE_KEYS if k in s} for s in (a, b)])
+        for p, s in zip(rec["plates"], (a, b)):
+            p["checks"] = {k: s["checks"][k] for k in ("outside_cross", "slid_m", "pushed_m", "lateral_step_m") if k in s["checks"]}
+        ca, cb = a["checks"], b["checks"]
+        rec["checks"] = dict(ca)
+        for k in ("edge_clear_m", "mesh_clear_m", "lamp_m", "plant_m", "gate_margin_m", "mouth_m", "spawn_m"):
+            if k in ca and k in cb:
+                rec["checks"][k] = min(ca[k], cb[k])
+        rec["checks"]["warnings"] = list(ca.get("warnings", [])) + list(cb.get("warnings", [])) + [
+            "paired: -fwd and -rev posts were %.2f m apart (< %.1f) -> one post, two plates" % (dist, thr)]
+        rec["exclude_plant"] = a.get("exclude_plant") or b.get("exclude_plant")
+        merged[id(a)] = rec
+        drop.add(id(b))
+        if log:
+            log("[signs] pair %s: -fwd/-rev bases %.2f m apart (< %.1f) -> one post at (%.2f, %.2f) with %s" % (cid, dist, thr, base[0], base[1], rec["kind"]))
+    out = []
+    for s in signs:
+        if id(s) in drop:
+            continue
+        out.append(merged.get(id(s), s))
+    return out
+
+
+def plates_of(rec):
+    """the plates a record carries: itself, or the pair's two"""
+    return rec.get("plates") or [rec]
+
+
 def assign_overrides(rb, fwd_rb, corners, corners_cfg):
     """{corner index: (id, entry)} — each signs.json entry names the ONE detected corner nearest
     its vertex (within 30 m, forward stations), so a mouth stub 9 m from a real corner cannot
@@ -715,7 +832,9 @@ def assign_overrides(rb, fwd_rb, corners, corners_cfg):
     return out
 
 
-def place_all(proj, cfg=None, corners_cfg=None, signs_path=None, log=print):
+def place_all(proj, cfg=None, corners_cfg=None, signs_path=None, log=print, merge=True):
+    """every sign on the polyline data -> (out, ctx). merge=False leaves -fwd/-rev pairs separate
+    (tools/author_signs_blend.py marches each plate on the built mesh first, then merges)"""
     if cfg is None:
         cfg, corners_cfg, _ = load_overrides(proj, signs_path)
     corners_cfg = corners_cfg or {}
@@ -726,13 +845,13 @@ def place_all(proj, cfg=None, corners_cfg=None, signs_path=None, log=print):
     if cfg.get("include_connectors", True):
         for rb in ctx.ribbons[1:]:
             ribbons.append(rb)
-            ribbons.append(Ribbon(rb.name, rb.raw, rb.raw_w, rb.closed, reverse=True))
+            ribbons.append(rb.copy(reverse=True))
     if cfg.get("both_directions_mainline"):
-        ribbons.insert(1, Ribbon("MAINLINE", ctx.mainline.raw, ctx.mainline.raw_w, True, reverse=True))
+        ribbons.insert(1, ctx.mainline.copy(reverse=True))
     fwd_ids = {}
     fwd_rbs = {r.name: r for r in ctx.ribbons}
     for rb in ribbons:
-        corners = detect_corners(rb)
+        corners = detect_corners(rb, ctx.hyst)
         if not rb.reverse:
             corners.sort(key=lambda c: c["apex"])
             fwd_ids[rb.name] = [(c["apex"], corner_id(rb, k + 1)) for k, c in enumerate(corners)]
@@ -780,7 +899,7 @@ def place_all(proj, cfg=None, corners_cfg=None, signs_path=None, log=print):
             if ov.get("second_arrow") is not None:
                 want2 = bool(ov["second_arrow"])
             if want2:
-                pc2 = walk_to_straight(rb, c["apex"], -1, 1.0 / HAIRPIN_R_PC2)
+                pc2 = walk_to_straight(rb, c["apex"], -1, 1.0 / HAIRPIN_R_PC2, ctx.hyst)
                 c2 = dict(c, PC2=pc2)
                 rec2, reasons2 = place_corner(ctx, rb, c2, cid_dir, ov, cfg, second=True)
                 if rec2 is None:
@@ -798,6 +917,8 @@ def place_all(proj, cfg=None, corners_cfg=None, signs_path=None, log=print):
     for cid in stale:
         log("[signs] WARN signs.json corner %s: no detected corner within %.0f m of vertex %s (stale override, refused)"
             % (cid, OVERRIDE_STALE_M, corners_cfg[cid].get("vertex")))
+    if merge:
+        signs = merge_pairs(signs, log=log)
     out = {
         "frame": "engine ENU local metres: x = East, y = up, z = North (data/centerline.local.json); Blender = (x, z, y)",
         "rule": "W1-6 at the corner, outside of the bend, in line with and facing the approach (tools/place_signs.py)",
@@ -806,28 +927,24 @@ def place_all(proj, cfg=None, corners_cfg=None, signs_path=None, log=print):
         "skipped": skipped,
         "exclude_plants": excl,
         "stale_overrides": stale,
-        "counts": {"placed": len(signs), "skipped": len(skipped)},
+        "pairs": [s["id"] for s in signs if s.get("pair")],
+        "counts": {"placed": len(signs), "plates": sum(len(plates_of(s)) for s in signs), "skipped": len(skipped)},
     }
     return out, ctx
 
 
 # ----------------------------------------------------------------------------------------------
-def sign_polygons(rec, y_base):
-    """the sign as engine-frame polygons: {kind: [(verts[(x, y, z)...], normal(x, y, z)), ...]}.
-    Winding is NOT meaningful here — the emitter orders each polygon to its normal."""
-    sx, sz = rec["base_xz"]
-    f = rec["face_dir_xz"]
-    r = rec["right_xz"]
-    h0 = y_base + rec["height_m"]
+def plate_polygons(out, sx, sz, f, r, h0, arrow, om, y_base):
+    """one plate (+ border, arrow, optional OM1-3 diamond) on the post at (sx, sz), facing f,
+    bottom edge at h0; returns the plate top height"""
     h1 = h0 + PLATE_H
-    mirror = -1.0 if rec["arrow"] == "left" else 1.0
+    mirror = -1.0 if arrow == "left" else 1.0
 
     def P(u, v, w):
         return (sx + r[0] * u + f[0] * w, v, sz + r[1] * u + f[1] * w)
 
     nf = (f[0], 0.0, f[1])
     nb = (-f[0], 0.0, -f[1])
-    out = {"SIGNPLATE": [], "SIGNARROW": [], "SIGNPOST": []}
     wf, wb = PLATE_FRONT_OFF, PLATE_FRONT_OFF - PLATE_BACK_GAP
     hw = PLATE_W / 2
     out["SIGNPLATE"].append(([P(-hw, h0, wf), P(hw, h0, wf), P(hw, h1, wf), P(-hw, h1, wf)], nf))
@@ -840,15 +957,44 @@ def sign_polygons(rec, y_base):
         out["SIGNARROW"].append(([P(ua, va, wbd), P(ub, va, wbd), P(ub, vb, wbd), P(ua, vb, wbd)], nf))
     # the arrow, 4 mm proud, tip first (fan triangulation hangs off vertex 0)
     wa = wf + ARROW_PROUD
-    arrow = [P(mirror * (x - 24.0) * 0.0254, h0 + y * 0.0254, wa) for (x, y) in ARROW_IN]
-    out["SIGNARROW"].append((arrow, nf))
+    out["SIGNARROW"].append(([P(mirror * (x - 24.0) * 0.0254, h0 + y * 0.0254, wa) for (x, y) in ARROW_IN], nf))
     # OM1-3 all-yellow diamond under the plate
-    if rec.get("om1_3", True):
+    if om:
         hd = OM13_SIDE * math.sqrt(0.5)
         vc = h0 - OM13_GAP - hd
         out["SIGNPLATE"].append(([P(0, vc + hd, wf), P(-hd, vc, wf), P(0, vc - hd, wf), P(hd, vc, wf)], nf))
         out["SIGNPOST"].append(([P(0, vc + hd, wb), P(-hd, vc, wb), P(0, vc - hd, wb), P(hd, vc, wb)], nb))
-    # the post: 2 in square tube, sunk 0.30 m, 5 cm over the plate top
+    return h1
+
+
+def sign_polygons(rec, y_base):
+    """the sign as engine-frame polygons: {kind: [(verts[(x, y, z)...], normal(x, y, z)), ...]}.
+    Winding is NOT meaningful here — the emitter orders each polygon to its normal. A paired
+    record (merge_pairs) gets ONE post and both plates: back-to-back at the same height when
+    their facings are >= 90 deg apart, else the second plate stacks above the first (two plates
+    30 deg apart at one height would cut through each other) and carries no diamond."""
+    sx, sz = rec["base_xz"]
+    out = {"SIGNPLATE": [], "SIGNARROW": [], "SIGNPOST": []}
+    plates = plates_of(rec)
+    h0 = y_base + rec["height_m"]
+    h_top = h0
+    f0 = plates[0]["face_dir_xz"]
+    for k, p in enumerate(plates):
+        f, r = p["face_dir_xz"], p["right_xz"]
+        om = rec.get("om1_3", True)
+        hk = h0
+        if k > 0 and f[0] * f0[0] + f[1] * f0[1] > 0:       # same-side facings: stack, no diamond
+            hk, om = h_top + PAIR_STACK_GAP, False
+        h_top = max(h_top, plate_polygons(out, sx, sz, f, r, hk, p["arrow"], om, y_base))
+    h1 = h_top
+    f, r = plates[0]["face_dir_xz"], plates[0]["right_xz"]
+
+    def P(u, v, w):
+        return (sx + r[0] * u + f[0] * w, v, sz + r[1] * u + f[1] * w)
+
+    nf = (f[0], 0.0, f[1])
+    nb = (-f[0], 0.0, -f[1])
+    # the post: 2 in square tube, sunk 0.30 m, 5 cm over the (highest) plate top
     hp = POST_W / 2
     v0, v1 = y_base - POST_SINK, h1 + POST_OVER_TOP
     nr = (r[0], 0.0, r[1])
@@ -907,19 +1053,21 @@ def write_svg(path, out, ctx, win_m=60.0, px_per_m=6.0):
         g.append('<text x="%.1f" y="%.1f" fill="#fff">driver comes from here</text>' % (tail[0] + 4, tail[1] - 4))
         o = px(s["old_rule"]["rev1_xz"])
         g.append('<circle cx="%.1f" cy="%.1f" r="5" fill="#999" stroke="#333"/><text x="%.1f" y="%.1f" fill="#ddd">old rule (advance, ~52 m early)</text>' % (o[0], o[1], o[0] + 7, o[1] + 4))
-        r = s["right_xz"]
-        p1 = px((cx + r[0] * PLATE_W / 2, cz + r[1] * PLATE_W / 2))
-        p2 = px((cx - r[0] * PLATE_W / 2, cz - r[1] * PLATE_W / 2))
-        g.append('<line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="#ffcc00" stroke-width="5"/>' % (p1[0], p1[1], p2[0], p2[1]))
-        f = s["face_dir_xz"]
-        fp = px((cx + f[0] * 6, cz + f[1] * 6))
         b0 = px((cx, cz))
-        g.append('<line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="#ffcc00" stroke-width="2"/>' % (b0[0], b0[1], fp[0], fp[1]))
+        for p in plates_of(s):
+            r = p["right_xz"]
+            p1 = px((cx + r[0] * PLATE_W / 2, cz + r[1] * PLATE_W / 2))
+            p2 = px((cx - r[0] * PLATE_W / 2, cz - r[1] * PLATE_W / 2))
+            g.append('<line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="#ffcc00" stroke-width="5"/>' % (p1[0], p1[1], p2[0], p2[1]))
+            f = p["face_dir_xz"]
+            fp = px((cx + f[0] * 6, cz + f[1] * 6))
+            g.append('<line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="#ffcc00" stroke-width="2"/>' % (b0[0], b0[1], fp[0], fp[1]))
         g.append('<circle cx="%.1f" cy="%.1f" r="4" fill="#111" stroke="#ffcc00" stroke-width="2"/>' % (b0[0], b0[1]))
-        g.append('<text x="%d" y="%d" fill="#fff" font-weight="bold">%s  %s  R %.0f m  D %.0f deg  faces %.0f deg  arrow %s</text>'
-                 % (ox + 6, oy + 14, s["id"], s["kind"], s["corner"]["R_apex_m"], s["corner"]["D_deg"], s["face_bearing_deg"], s["arrow"].upper()))
+        g.append('<text x="%d" y="%d" fill="#fff" font-weight="bold">%s  %s  R %.0f m  D %.0f deg  faces %s deg  arrow %s</text>'
+                 % (ox + 6, oy + 14, s["id"], s["kind"], s["corner"]["R_apex_m"], s["corner"]["D_deg"],
+                    "/".join("%.0f" % p["face_bearing_deg"] for p in plates_of(s)), "/".join(p["arrow"].upper() for p in plates_of(s))))
         g.append('<text x="%d" y="%d" fill="#ddd">ray %.0f m, curb clear %.2f m, lamp %.1f m, gate margin %.1f m</text>'
-                 % (ox + 6, oy + 28, s["ray"]["len_m"], s["checks"]["edge_clear_m"], s["checks"]["lamp_m"], s["checks"]["gate_margin_m"]))
+                 % (ox + 6, oy + 28, s["ray"]["len_m"], s["checks"].get("mesh_clear_m", s["checks"]["edge_clear_m"]), s["checks"]["lamp_m"], s["checks"]["gate_margin_m"]))
         g.append('<line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#fff" stroke-width="3"/><text x="%d" y="%d" fill="#fff">10 m</text>'
                  % (ox + 8, oy + W - 10, ox + 8 + int(10 * px_per_m), oy + W - 10, ox + 8, oy + W - 14))
         g.append('<line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#fff" stroke-width="2"/><text x="%d" y="%d" fill="#fff">N</text>'
@@ -939,8 +1087,11 @@ def write_outputs(proj, out, ctx):
 def summary_line(out):
     kinds = {}
     for s in out["signs"]:
-        kinds[s["kind"]] = kinds.get(s["kind"], 0) + 1
-    return "%d placed (%s), %d skipped" % (len(out["signs"]), ", ".join("%d %s" % (v, k) for k, v in sorted(kinds.items())) or "-", len(out["skipped"]))
+        for p in plates_of(s):
+            kinds[p["kind"]] = kinds.get(p["kind"], 0) + 1
+    pairs = sum(1 for s in out["signs"] if s.get("pair"))
+    return "%d placed (%s%s), %d skipped" % (len(out["signs"]), ", ".join("%d %s" % (v, k) for k, v in sorted(kinds.items())) or "-",
+                                             ("; %d paired post%s" % (pairs, "s" if pairs != 1 else "")) if pairs else "", len(out["skipped"]))
 
 
 def main():
@@ -957,10 +1108,10 @@ def main():
     out, ctx = place_all(proj, cfg, corners_cfg)
     write_outputs(proj, out, ctx)
     for s in out["signs"]:
-        print("[signs] %-12s %s %-22s apex v%-5d R %5.1f D %7.1f  base (%8.1f, %8.1f) faces %5.1f deg  ray %5.1f m  clear %.2f  lamp %4.1f  plant %4.1f  gate %+.1f%s"
+        print("[signs] %-12s %s %-22s apex v%-5d R %5.1f D %7.1f  base (%8.1f, %8.1f) faces %s deg  ray %5.1f m  clear %.2f  lamp %4.1f  plant %4.1f  gate %+.1f  slid %+.2f%s"
               % (s["id"], s["kind"], s["ribbon"] + "/" + s["direction"], s["corner"]["apex_vertex"], s["corner"]["R_apex_m"], s["corner"]["D_deg"],
-                 s["base_xz"][0], s["base_xz"][1], s["face_bearing_deg"], s["ray"]["len_m"], s["checks"]["edge_clear_m"],
-                 s["checks"]["lamp_m"], s["checks"]["plant_m"], s["checks"]["gate_margin_m"],
+                 s["base_xz"][0], s["base_xz"][1], "/".join("%.1f" % p["face_bearing_deg"] for p in plates_of(s)), s["ray"]["len_m"], s["checks"]["edge_clear_m"],
+                 s["checks"]["lamp_m"], s["checks"]["plant_m"], s["checks"]["gate_margin_m"], s["checks"]["slid_m"],
                  ("  WARN " + "; ".join(s["checks"]["warnings"])) if s["checks"]["warnings"] else ""))
     for s in out["skipped"]:
         print("[signs] skip %-12s %-22s apex v%-5d R %5.1f D %7.1f  %s" % (s["id"], s["ribbon"], s["apex_vertex"], s["R_apex_m"], s["D_deg"], "; ".join(s["reasons"])))

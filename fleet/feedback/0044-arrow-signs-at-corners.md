@@ -1,7 +1,7 @@
 ---
 id: 0044
 title: "Arrow signs on TIGHT corners, where they actually go" — AT the corner, just past the outside edge, facing the approach; never as a warning before it
-status: in-progress — rule judged and dry-run on the V3 data (read-only); the tools and the first kn5 with plates are the next commit; Kevin's drive decides
+status: in-progress
 scope: tracks/san-diego-lake-murray (signs.json, data/signs.local.json, the 20 W1-6 plates, start_positions 0044-sign-*); engine scenery doctrine (scripts/environment/build_env.py road_signs rule superseded; scripts/ac/pbr.py SIGNPLATE/SIGNARROW keys in airoso + engine-july)
 layer: project + engine
 train: -
@@ -200,6 +200,40 @@ are. The dossier records the five arrows as track furniture, not a survey findin
 through leg or stub is modelled at any of them, the ray stays on pavement and that corner drops
 out automatically.
 
+## Round 2 (same day) — the adversarial verifier refuted the dry run; every finding fixed, re-run on the COPY
+
+The first dry run's verifier check (c) read `mesh_clear_m`, a constant the authoring pass had
+written about itself, so seven connector posts the polyline field put ON pavement were green. What
+changed (all uncommitted at the time of this note; dry run on
+`scratchpad/signs/loop_copy.blend`, a fresh `cp` of the workshop's `loop.blend`):
+
+- **The built mesh is authoritative for the base** (`tools/author_signs_blend.py`): the walk-fraction
+  point is only the first candidate; the post keeps marching ALONG THE RAY until a 5° polar scan of
+  the built ROAD/CURB/TERRAIN top surface (`tools/signs_mesh.py`) gives ≥ 1.63 / 1.33 m in every
+  direction AND no plate vertex (base ± 0.61 m) stands inside drive_test's disc of any centreline,
+  the post's own side street included. Capped 6 m past the built curb → skip with a logged reason.
+  Result: MED-10-fwd 0.44 → 1.32 m, MED-13-rev 0.40 → 1.33 m, MED-7-fwd 0.96 → 1.32 m, MED-6-fwd
+  1.28 → 3.16 m and MED-8-rev/MED-6-rev/MED-1-rev pushed to the disc (margins −2.12…−0.09 → +0.06…+0.29).
+  The six mainline posts moved 0.00 m (M3 0.25 m: its slide, below).
+- **The slide is re-chosen on the built clearance, capped at 1.0 m, 0.25 m steps, smallest first**;
+  beyond the cap the plant is excluded (never a lamp). M3's palm at 2.455 m needs +0.25 m, not the
+  +0.50 m the polyline pass took, and no palm is excluded any more. `verify_signs` (a) tests the
+  un-slid point base − slid·u.
+- **Pairs**: a two-way corner whose two posts land < 2.0 m apart on the mesh becomes one post with
+  both plates (`place_signs.merge_pairs`; stacked when the facings are < 90° apart). DCL-2 is
+  `skip: true` by default — a cul-de-sac turnaround is not signed in reality — and with the disc
+  march its two posts would now stand 2.06 m apart (two posts, not one) if Kevin flips it.
+- **Verifier measures**: (c) from the recorded built-edge polyline AND, with `--blend`, an
+  independent in-Blender scan (`data/signs_measured.json`); (g) recomputed over the plate
+  footprint on every ribbon; (i) spacing ≥ 2.0 m; (j) `expect_arrow`. Proven to fire on a
+  corrupted copy (j on M1, a+c on a post moved 1.2 m, i on two posts 1.0 m apart).
+- **Harness**: every Blender call in `tools/ship_sd.sh` carries `--python-exit-code 1`; the author
+  pass unlinks its outputs at start; `plot_signs` runs after the verifier and `data/signs_plots/`
+  syncs back. `kappa_window_m` / `hysteresis_stations` are wired through cfg (defaults unchanged,
+  detector output identical); the M2-2 WARN names both headings (chord 277.9° vs PCA 283.6°).
+- Final: **18 posts (12 W1-6R, 6 W1-6L), 42 skipped, verify PASS with the scan**; mainline built
+  clearances 1.74–1.80 m (scan) / 1.84–1.88 m (edge polyline).
+
 ## Scope
 
 - **Project** — `tracks/san-diego-lake-murray`: `signs.json`, `data/signs.local.json`,
@@ -258,11 +292,56 @@ Connector corners (MED-1 … DCL-2) have no spawn entry: `tools/set_start_blend.
 `connector` key in the registry + the mover is the small follow-up if Kevin wants to spawn on the
 grid rather than drive there.
 
-## Status at filing (2026-10-10, evening)
+## Status at filing (2026-10-10, evening — rewritten after the first dry run)
 
-Judged and dry-run only. Exists: the survey (60 corners) and the ray dry run (89 approaches) in
-the session scratchpad, read-only against the workshop data; nothing under `scripts/`, `tracks/`,
-the workshop, the installed track, `ext_config.py` or `loop.blend` was modified, no Blender run, no
-kn5 export. Next: the four tools + textures + pbr keys + `signs.json` in one commit, the Blender
-authoring proven on a COPY of `loop.blend` under the scratchpad, then the next `ship_sd.sh`
-rebuild with the 6 mainline plates, then Kevin's drive from `0044-sign-M1`.
+**Dry run done, on a COPY.** `tools/place_signs.py` + `tools/author_signs_blend.py` (Blender 4.2
+headless, `SIGNS_BLEND` → the scratchpad's `loop_copy.blend`; the workshop's `loop.blend`
+untouched) placed **20 W1-6, 40 corners skipped** (`counts`): 1,180 verts in `SIGNPLATE_0 /
+SIGNARROW_0 / SIGNPOST_0`, 0 polygon-normal mismatches, 0 ground warnings; `tools/plot_signs.py`
+rendered `signs_overview.png` + one `sign_<id>.png` per plate. No kn5 was exported; nothing under
+`tracks/`, the workshop or the installed track changed.
+
+**The mainline six are verified.** M1, M2, M2-2, M3, M4, M5 pass all eight checks on the built
+mesh: the mesh-placed post moved 0.06–0.61 m off the polyline point (M1 is the 0.61, the 0034
+width step at the seam), outside cross +7.2 to +15.2, gate margin +2.7 to +10.4 m, nearest lamp
+≥ 21.9 m, the one plant inside 2.5 m (M3's palm at 2.45 m) excluded from TreeFX. They must come
+out of the fix round below unchanged within 0.3 m. M1's polyline-field reading is 1.02 m behind
+the curb only because the field is wrong there (27.5 → 17 m across segment 4497→0); at M1 the
+built-mesh measurement is the one that has to hold.
+
+**Connector defects, found by `tools/verify_signs.py` reading the same file:**
+
+1. **Built-edge clearance at R < 15 m.** At the tight connector corners the swept ribbon's
+   outside edge sits up to ~3 m inside the polyline half-width, so the mesh pass moved the post
+   1.9–4.3 m along the ray and the analytic pavement field then reads the base as ON the road
+   (`edge_clear_m` −0.06 … −1.74 and `gate_margin_m` negative at DCL-2 fwd/rev, MED-6 fwd/rev,
+   MED-8-rev, MED-10-fwd, MED-13-rev; 0.01–0.77 m, under the 1.3 m floor, at MED-7-fwd,
+   MED-8-fwd, MED-13-fwd, MED-1-rev). The polyline and the mesh disagree about where the curb
+   is, and nothing failed.
+2. **DCL-2 pair overlap.** The turnaround's fwd and rev posts landed 0.44 m apart,
+   (−544.79, −887.76) / (−544.76, −887.32), after mesh shifts of 3.1 and 4.3 m — two plates in
+   one post. The only spacing rule in the placer is the hairpin clause's ≥ 12 m, which governs a
+   second arrow on one approach, not the two approaches of a two-way corner.
+3. **Check (c) was tautological.** `author_signs_blend.mesh_sign_point` writes `mesh_clear_m` as
+   `(curb_face + walk_w) × frac` — the design constant, 1.63 m mainline / 1.33 m connector — and
+   the verifier prefers that key over `edge_clear_m`, so `1.3 ≤ clear ≤ 3.0` read the target
+   back and was green on all 20, the seven on pavement included. A check that passes by
+   construction is the mirror class `fleet/GATES-CHANGELOG.md` opens with.
+
+**Fix round in progress** (the entry stays `in-progress` until it lands): (c) becomes a measured
+perpendicular distance from the post to the built curb face; a spacing check between ANY two
+signs; `signs.json`'s `expect_arrow` compared with the placed arrow; the connector march redone
+against the built edge; DCL-2 resolved by `skip: true` or one merged post — Kevin's call. The
+rebuild waits for the layouts work (0047) so the kn5 is exported once with both in it; then
+Kevin's drive from `0044-sign-M1`.
+
+**Deferred devices (not in this pass, not in the fix round):**
+
+- **W1-7 Two-Direction Large Arrow at the T-ends** — the four stems, MED-16 first (Del Cerro
+  Blvd / Madra, S ≈ (−1174, −604)), after confirming the mouth mesh models the stem ending.
+- **W1-8 chevrons at M2** (18 × 24 in vertical, Table 2C-5 spacing 12.2 m for R < 61 m) — the
+  opt-in replacement for the second arrow, only after Kevin drives the two-arrow build.
+- **W1-1 Turn diamond + W13-1P advisory plaque** — the advance warning (driver's right, 0–30 m
+  before the PC, ≥ 30 m from any other sign; W1-11 Hairpin at M2 / DCL-2).
+- **Night retroreflectivity** — ksEmissive under NIGHT_SMOOTH for `SIGNPLATE_mat`, an
+  `ext_config.py` follow-up once 0043's workflow releases that file.

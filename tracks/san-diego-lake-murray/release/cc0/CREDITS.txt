@@ -11,8 +11,12 @@ Data
   - USGS 3DEP 1 m elevation (US public domain)    https://www.usgs.gov/3d-elevation-program
 
 Our own work (CC0-1.0)
-  - Road, kerb, sidewalk, median, terrain, lamp-post geometry; AI line; map; outline
-  - Lane lines, kerb stripe and the solid lamp textures (generated)
+  - Road, kerb, sidewalk, median, terrain, lamp-post and W1-6 arrow-sign geometry (plate, arrow,
+    post); AI line; map; outline
+  - Lane lines, kerb stripe, the solid lamp and sign textures (generated:
+    solid_sign_yellow.png, solid_sign_black.png)
+  - MUTCD sign artwork mutcd_w1-6l/r, w1-7, w1-8l/r (generated; MUTCD sign designs are
+    public-domain US Government works, 17 U.S.C. 105)
   - Street-lamp model: Kevin Conboy's own asset library
 
 CC0 textures bundled in the kn5

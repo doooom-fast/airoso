@@ -14,6 +14,10 @@
 #   ship   : build_kn5_loop prep → set_start → export → verify → folder  (kn5)
 #   gate   : kn5_to_gate_obj → drive_test → audit_mesh                   (deterministic gates)
 #   install: copy to AC as san_diego_lake_murray_v3 + the reference's recorded AI line
+#
+# Every Blender call carries --python-exit-code 1: a Python exception inside a --python script
+# otherwise exits 0 and the chain ships whatever the previous run left behind (found on the
+# W1-6 signs dry run, 2026-10-10).
 set -euo pipefail
 export PYTHONUTF8=1
 AIROSO="C:/Users/Owner/Documents/GitHub/airoso"
@@ -46,7 +50,7 @@ if [ "$SKIP_BLEND" = 0 ]; then
   step "draft: median envelope (self-gated)"
   (cd "$AIROSO" && python tools/median_envelope.py "$PROJ")
   step "draft: build loop.blend (scene regen — GEN layer)"
-  (cd "$WS" && "$BL" --background --python scripts/blender/build_loop_blend.py -- project 2>&1 | grep "^\[blend\]" | tail -4)
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python scripts/blender/build_loop_blend.py -- project 2>&1 | grep "^\[blend\]" | tail -4)
   step "draft: side streets from Kevin's routes (airoso data/routes.json)"
   (cd "$AIROSO" && python tools/route_connectors.py "$PROJ")
   step "draft: divided side streets -> one trunk + island (Del Cerro)"
@@ -54,31 +58,32 @@ if [ "$SKIP_BLEND" = 0 ]; then
   step "draft: trim connectors at the mainline edge"
   (cd "$AIROSO" && python tools/trim_connectors.py "$PROJ")
   step "draft: rebuild loop.blend with trimmed connectors"
-  (cd "$WS" && "$BL" --background --python scripts/blender/build_loop_blend.py -- project 2>&1 | grep "^\[blend\]" | tail -3)
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python scripts/blender/build_loop_blend.py -- project 2>&1 | grep "^\[blend\]" | tail -3)
   step "author: seat the terrain under every road (verge finer than the road)"
-  (cd "$WS" && "$BL" --background --python "$AIROSO/tools/seat_terrain_blend.py" -- project 2>&1 | grep "^\[seat\]\|Error\|Traceback" )
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/seat_terrain_blend.py" -- project 2>&1 | grep "^\[seat\]\|Error\|Traceback" )
   step "author: thin the far terrain (headroom for the prep's grass tiles)"
-  (cd "$WS" && "$BL" --background --python "$AIROSO/tools/slim_far_terrain_blend.py" -- project 2>&1 | grep "^\[slim\]\|Error\|Traceback" )
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/slim_far_terrain_blend.py" -- project 2>&1 | grep "^\[slim\]\|Error\|Traceback" )
   step "author: median island"
-  (cd "$WS" && "$BL" --background --python "$AIROSO/tools/author_median_blend.py" -- project 2>&1 | grep "^\[median" )
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_blend.py" -- project 2>&1 | grep "^\[median" )
   step "author: gap the mainline sidewalk at every mouth"
-  (cd "$WS" && "$BL" --background --python "$AIROSO/tools/gap_mouths_blend.py" -- project 2>&1 | grep "^\[gap" )
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/gap_mouths_blend.py" -- project 2>&1 | grep "^\[gap" )
   step "author: export scatter positions, strip procedural vegetation (TreeFX replaces it)"
-  (cd "$WS" && "$BL" --background --python "$AIROSO/tools/export_scatter_blend.py" -- project 2>&1 | grep "^\[scatter" )
-  (cd "$WS" && "$BL" --background --python "$AIROSO/tools/strip_scenery_blend.py" -- project 2>&1 | grep "^\[strip" | cut -c1-160 )
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/export_scatter_blend.py" -- project 2>&1 | grep "^\[scatter" )
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/strip_scenery_blend.py" -- project 2>&1 | grep "^\[strip" | cut -c1-160 )
   step "author: Kevin's lamp model at every streetlight (LIGHTPOST + LIGHTS lens)"
-  (cd "$WS" && "$BL" --background --python "$AIROSO/tools/author_lamps_blend.py" -- project 2>&1 | grep "^\[lamps\]\|Error\|Traceback" )
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_lamps_blend.py" -- project 2>&1 | grep "^\[lamps\]\|Error\|Traceback" )
   step "author: W1-6 large-arrow signs at every tight corner (SIGNPLATE + SIGNARROW + SIGNPOST)"
-  (cd "$WS" && "$BL" --background --python "$AIROSO/tools/author_signs_blend.py" -- project 2>&1 | grep "^\[signs\]\|Error\|Traceback" )
-  (cd "$AIROSO" && python tools/verify_signs.py "$PROJ" | tail -3)
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_signs_blend.py" -- project 2>&1 | grep "^\[signs\]\|Error\|Traceback" )
+  (cd "$AIROSO" && python tools/verify_signs.py "$PROJ" --blend "$PROJ/loop.blend" --blender "$BL" | tail -8)
+  (cd "$AIROSO" && PYTHONUTF8=1 python tools/plot_signs.py "$PROJ")
 fi
 
 step "ship: prep (AC naming, dummies, 65k splits)"
-"$BL" --background --python "$ENG/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS" | cut -c1-160
+"$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS" | cut -c1-160
 step "ship: per-issue start position"
-"$BL" --background --python "$AIROSO/tools/set_start_blend.py" -- "$PROJ" 2>&1 | grep "^\[set-start\]"
+"$BL" --background --python-exit-code 1 --python "$AIROSO/tools/set_start_blend.py" -- "$PROJ" 2>&1 | grep "^\[set-start\]"
 step "ship: export kn5"
-"$BL" --background --python "$ENG/scripts/ac/export_kn5_addon.py" -- "$PROJ" 2>&1 | grep "KN5 EXISTS"
+"$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/export_kn5_addon.py" -- "$PROJ" 2>&1 | grep "KN5 EXISTS"
 step "ship: verify_kn5 (hard)"
 (cd "$ENG" && python -m scripts.ac.verify_kn5 "$PROJ")
 step "ship: track folder"
@@ -100,9 +105,10 @@ step "sync outputs workshop -> airoso"
 cp "$PROJ/loop.blend" "$SRC/loop.blend"
 for f in centerline.local.json centerline.raw.local.json median_bands.json dummies.json \
          finished_centerline.json gate_centerline.json lights.local.json connectors.local.json \
-         mouths.json signs.local.json signs_preview.svg drive_test.json audit.json; do
+         mouths.json signs.local.json signs_preview.svg signs_measured.json drive_test.json audit.json; do
   [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
 done
+if [ -d "$PROJ/data/signs_plots" ]; then rm -rf "$SRC/data/signs_plots"; cp -r "$PROJ/data/signs_plots" "$SRC/data/signs_plots"; fi
 
 if [ "$DT" != 0 ] || [ "$AU" != 0 ]; then
   echo; echo "GATES: drive_test exit $DT, audit exit $AU"

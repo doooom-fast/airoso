@@ -2,14 +2,31 @@
 signs on TIGHT corners, where they actually go ... AT the corner, just past the outside edge").
 
 The rule lives in tools/place_signs.py (pure Python, importable here): corner detection, the
-failed-to-turn ray, the sign point 1.63 m behind the outside curb face, the facing (-approach
-tangent), the geometric outside assertion and the clearance checks. This script adds the two
-things only Blender knows and emits the meshes:
+failed-to-turn ray, the sign point behind the outside curb face, the facing (-approach tangent),
+the geometric outside assertion and the clearance checks. That pass works on the polyline data,
+which is only the INITIAL ESTIMATE: at R < 15 m apexes the swept ribbon's built outside edge sits
+inside the json half-width (medium v313 4.1 of 5.0 m, v700 4.3, MED-6 v205 2.1), so this script
+re-places every post on the BUILT mesh and is authoritative for the base:
 
-  ground   a BVH ray-cast straight down onto CURB + SIDEWALK + TERRAIN (ROAD separately: a hit on
-           pavement pushes the base 0.25 m further along the ray, <= 4 m — authoritative at the lap
-           seam, where the ribbon width steps 27.5 -> 17 m). The analytic expectation is
-           y_road(sC) + 0.24 (lift 0.10 + curb 0.14); more than 0.30 m apart = WARN + analytic.
+  march    the same ray against the ROAD/CURB/TERRAIN BVHs (tools/signs_mesh.py): C_mesh = where
+           the top surface stops being ROAD, the walk-fraction point 0.25 m inside the back of
+           the modelled walk is the first candidate, then the post keeps marching ALONG THE RAY
+           (never sideways — the plate stays square to the approach) until a 5-degree polar scan
+           finds >= 1.63 m (mainline) / 1.33 m (connector) of clearance to built pavement in
+           every direction AND no plate vertex (base +- 0.61 m) stands inside drive_test's
+           obstacle disc of any centreline (its own street included). Capped 6 m past C_mesh: a
+           corner that cannot satisfy both is SKIPPED with a logged reason, never placed badly
+           (a connector post that reaches the 1.0 m gate minimum but not 1.33 m is kept with a
+           WARN).
+  slide    place_signs' lamp/plant slide is re-chosen HERE on the built clearance (<= 1.0 m along
+           the curb direction u, smallest first; beyond that the plant is excluded from TreeFX),
+           then a signs.json slide_along_curb_m is added. The record keeps slid_m (mesh), the
+           un-slid mesh point (base_xz_mesh) and the polyline point (base_xz_polyline).
+  pair     after the march a two-way corner whose -fwd/-rev posts stand < 2.0 m apart becomes one
+           post with both plates (place_signs.merge_pairs) — DCL-2's two points met at 0.44 m.
+  ground   a BVH ray-cast straight down onto CURB + SIDEWALK + TERRAIN at the final base; the
+           analytic expectation is y_road(sC) + 0.24 (lift 0.10 + curb 0.14); more than 0.30 m
+           apart = WARN + analytic.
   meshes   SIGNPLATE_k (yellow: plate + OM1-3 diamond), SIGNARROW_k (black: arrow + border),
            SIGNPOST_k (grey: 2 in post, sunk 0.30 m, + the plates' back faces on their own verts
            3 mm behind — Mesh.validate() deletes a reversed duplicate on shared verts). No
@@ -23,91 +40,56 @@ things only Blender knows and emits the meshes:
            is checked against Mesh.polygons[].normal — the prep's face-up flip never touches a
            non-drivable mesh, so nothing downstream corrects a wrong winding.
 
-Idempotent: existing SIGNPLATE_* / SIGNARROW_* / SIGNPOST_* meshes are deleted first. Always
-prints one "[signs] ..." line (the ship pipe greps for it under set -euo pipefail).
+Idempotent: existing SIGNPLATE_* / SIGNARROW_* / SIGNPOST_* meshes are deleted first. The stale
+outputs (data/signs.local.json, signs_preview.svg, signs_measured.json) are unlinked at START so
+a crash can never leave the previous run's record behind for the verifier. Always prints one
+"[signs] ..." line (the ship pipe greps for it under set -euo pipefail).
 
 Runs INSIDE Blender 4.2 after author_lamps_blend, before the kn5 prep:
 
-    blender --background --python tools/author_signs_blend.py -- <project-dir> [--blend PATH]
-            [--signs PATH] [--connectors | --no-connectors]
+    blender --background --python-exit-code 1 --python tools/author_signs_blend.py -- <project-dir>
+            [--blend PATH] [--signs PATH] [--connectors | --no-connectors]
 
 SIGNS_BLEND=<path> (env) or --blend points at a COPY of loop.blend for dry runs; the default is
 <project>/loop.blend, which is also where the result is saved.
-
-Rebuild timing: this pass is config + loop.blend only; run the ship (tools/ship_sd.sh) after the
-concurrent lights + GrassFX work (track.config.json lighting block, ext_config.py) has landed, so
-one build carries both.
 """
 from __future__ import annotations
 
 import json
+import math
 import os
 import sys
 from pathlib import Path
 
 import bpy
-from mathutils import Vector
-from mathutils.bvhtree import BVHTree
 
 AIROSO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(AIROSO / "tools"))
 import place_signs as ps  # noqa: E402
+import signs_mesh as sm  # noqa: E402
 
 PREFIXES = ("SIGNPLATE", "SIGNARROW", "SIGNPOST")
-GROUND = ("CURB", "SIDEWALK", "TERRAIN", "1KERB", "1GRASS")
-ROAD = ("ROAD", "1ROAD")
 CAP = 60000             # the prep's SPLIT_CAP; 65,535 is FATAL there
 PUSH_STEP, PUSH_MAX = 0.25, 4.0
-RAY_TOP = 4000.0
+MARCH_STEP = 0.05       # along the ray, on the built mesh
+CLEAR_TOL = 0.02        # polar clearance may sit this far under the target (scan quantisation)
+DISC_CUSHION = 0.05     # the march wants this much margin outside the disc (verify asks for >= 0)
+GATE_MIN = {"MAINLINE": 1.3, "CONNECTOR": 1.0}    # tools/verify_signs.py check (c) minima
+STALE_OUTPUTS = ("signs.local.json", "signs_preview.svg", "signs_measured.json")
 
 
 def B(p):
     return (p[0], p[2], p[1])
 
 
-def world_tris(ob):
-    mw = ob.matrix_world
-    vs = [tuple(mw @ v.co) for v in ob.data.vertices]
-    tris = []
-    for poly in ob.data.polygons:
-        idx = poly.vertices
-        for k in range(1, len(idx) - 1):
-            tris.append((vs[idx[0]], vs[idx[k]], vs[idx[k + 1]]))
-    return tris
-
-
-def bvh_of(tris):
-    if not tris:
-        return None
-    return BVHTree.FromPolygons([v for t in tris for v in t], [(3 * i, 3 * i + 1, 3 * i + 2) for i in range(len(tris))])
-
-
-def top_hit(bvh, x, z):
-    """highest surface height (engine y) under the engine-frame point (x, z); None if nothing"""
-    if bvh is None:
-        return None
-    hit = bvh.ray_cast(Vector((x, z, RAY_TOP)), Vector((0.0, 0.0, -1.0)))
-    return None if hit[0] is None else hit[0].z
-
-
-def on_road(road, ground, x, z):
-    """the top surface under (x, z) is pavement (a curb/walk hit above the road wins)"""
-    r = top_hit(road, x, z)
-    if r is None:
-        return False
-    g = top_hit(ground, x, z)
-    return g is None or r >= g - 0.02
-
-
-def mesh_sign_point(road, ground, A, t, walk_w, s_hint, step=0.05, s_max=90.0):
+def mesh_curb_crossing(road, ground, A, t, walk_w, s_hint, step=0.05, s_max=90.0):
     """the failed-to-turn ray against the BUILT mesh: C = where the top surface stops being ROAD
-    (the curb face), B = where the raised walk's top starts to drop (its back edge), and the post
-    stands at the walk fraction 1 - setback/(curb_face + walk_w) between them, i.e. 0.25 m inside
-    the back of the walk measured perpendicular — the same rule place_signs applies to the
-    polyline, now on the geometry Kevin sees (at tight corners the swept ribbon's outside edge
-    sits up to ~3 m inside the polyline half-width)"""
+    (the curb face), B = where the raised walk's top starts to drop (its back edge), S_est = the
+    walk fraction 1 - setback/(curb_face + walk_w) between them, i.e. 0.25 m inside the back of
+    the walk — the FIRST CANDIDATE for the post (the march in main() then makes it clear the
+    built pavement in every direction). None when the ray never leaves built pavement."""
     s = max(0.0, s_hint - 8.0)
-    while s <= s_max and on_road(road, ground, A[0] + t[0] * s, A[1] + t[1] * s):
+    while s <= s_max and sm.on_road(road, ground, A[0] + t[0] * s, A[1] + t[1] * s):
         s += step
     if s > s_max:
         return None
@@ -115,7 +97,7 @@ def mesh_sign_point(road, ground, A, t, walk_w, s_hint, step=0.05, s_max=90.0):
     out = {"s_C": round(s_c, 2), "C": (A[0] + t[0] * s_c, A[1] + t[1] * s_c)}
     # the curb top: the first sample within 0.6 m of the road edge at the walk height (the sample
     # right at the edge can land in the gutter at terrain height, under the curb face)
-    tops = [(s_c + k * step, top_hit(ground, A[0] + t[0] * (s_c + k * step), A[1] + t[1] * (s_c + k * step))) for k in range(0, 13)]
+    tops = [(s_c + k * step, sm.top_hit(ground, A[0] + t[0] * (s_c + k * step), A[1] + t[1] * (s_c + k * step))) for k in range(0, 13)]
     vals = [v for _, v in tops if v is not None]
     if not vals:
         return out
@@ -124,7 +106,7 @@ def mesh_sign_point(road, ground, A, t, walk_w, s_hint, step=0.05, s_max=90.0):
     run_max = (ps.CURB_FACE_W + walk_w) * 4.0          # a ray nearly parallel to the curb is not a crossing
     s_b = s_top
     while s_b - s_c <= run_max:
-        g = top_hit(ground, A[0] + t[0] * s_b, A[1] + t[1] * s_b)
+        g = sm.top_hit(ground, A[0] + t[0] * s_b, A[1] + t[1] * s_b)
         if g is None or g < h_walk - 0.04:
             break
         s_b += step
@@ -133,17 +115,15 @@ def mesh_sign_point(road, ground, A, t, walk_w, s_hint, step=0.05, s_max=90.0):
         out["walk_run_m"] = round(run, 2)
         return out
     frac = 1.0 - ps.BACK_OF_WALK_SETBACK / (ps.CURB_FACE_W + walk_w)
-    s_S = s_c + run * frac
-    out.update(s_B=round(s_b, 2), walk_run_m=round(run, 2), h_walk=round(h_walk, 3), s_S=round(s_S, 2),
-               S=(A[0] + t[0] * s_S, A[1] + t[1] * s_S),
-               mesh_clear_m=round((ps.CURB_FACE_W + walk_w) * frac, 2))
+    out.update(s_B=round(s_b, 2), walk_run_m=round(run, 2), h_walk=round(h_walk, 3), s_S=round(s_c + run * frac, 2))
     return out
 
 
 def built_edges(road, ground, rb, st0, side, half=30, step=2, reach=22.0, d_step=0.1):
-    """the BUILT outside pavement edge and back-of-walk around a station, for the picture: per
-    station a perpendicular probe outward (side = +1 left of forward travel, -1 right) — the last
-    ROAD-top sample is the curb face, the last sample at the walk's height is its back edge"""
+    """the BUILT outside pavement edge and back-of-walk around a station, for the picture and for
+    tools/verify_signs.py check (c): per station a perpendicular probe outward (side = +1 left of
+    forward travel, -1 right) — the last ROAD-top sample is the curb face, the last sample at the
+    walk's height is its back edge"""
     edge, back = [], []
     for k in range(-half, half + 1, step):
         i = st0 + k
@@ -154,7 +134,7 @@ def built_edges(road, ground, rb, st0, side, half=30, step=2, reach=22.0, d_step
         nx, nz = -tz * side, tx * side
         d, last_road = 0.0, None
         while d <= reach:
-            if on_road(road, ground, p[0] + nx * d, p[1] + nz * d):
+            if sm.on_road(road, ground, p[0] + nx * d, p[1] + nz * d):
                 last_road = d
             elif last_road is not None and d - last_road > 1.0:
                 break
@@ -162,18 +142,125 @@ def built_edges(road, ground, rb, st0, side, half=30, step=2, reach=22.0, d_step
         if last_road is None:
             continue
         edge.append([round(p[0] + nx * last_road, 2), round(p[1] + nz * last_road, 2)])
-        tops = [top_hit(ground, p[0] + nx * (last_road + j * d_step), p[1] + nz * (last_road + j * d_step)) for j in range(1, 8)]
+        tops = [sm.top_hit(ground, p[0] + nx * (last_road + j * d_step), p[1] + nz * (last_road + j * d_step)) for j in range(1, 8)]
         tops = [v for v in tops if v is not None]
         if not tops:
             continue
         h_walk, db = max(tops), last_road + d_step
         while db - last_road <= 4.0:
-            g = top_hit(ground, p[0] + nx * db, p[1] + nz * db)
+            g = sm.top_hit(ground, p[0] + nx * db, p[1] + nz * db)
             if g is None or g < h_walk - 0.04:
                 break
             db += d_step
         back.append([round(p[0] + nx * (db - d_step), 2), round(p[1] + nz * (db - d_step), 2)])
     return edge, back
+
+
+def mesh_place(s, ctx, cfg, road, ground):
+    """re-place one plate's post on the built mesh (see module doc); mutates the record and
+    returns the fatal reasons (empty = placed)"""
+    x0, z0 = s["base_xz"]
+    s["base_xz_polyline"] = [x0, z0]
+    t = (-s["face_dir_xz"][0], -s["face_dir_xz"][1])
+    A = s["ray"]["A_xz"]
+    u = s["curb_dir_xz"]
+    rights = (s["right_xz"],)
+    is_main = s["ribbon"] == "MAINLINE"
+    walk_w = ps.SIDEWALK_W["MAINLINE" if is_main else "CONNECTOR"]
+    d_clear = s["lateral_offset_m"]
+    gate_min = GATE_MIN["MAINLINE" if is_main else "CONNECTOR"]
+    applied = s.get("overrides_applied", [])
+    forced = "force" in applied
+    reasons, warns = [], []
+    chk = s["checks"]
+    chk["slid_polyline_m"] = chk.get("slid_m", 0.0)
+
+    def polar(x, z, reach=sm.POLAR_REACH):
+        return sm.polar_clearance(road, ground, x, z, reach=reach)
+
+    if "base_xz" in applied:
+        x, z = x0, z0
+        s["base_source"] = "signs.json base_xz (pinned; measured, not marched)"
+        slid = chk["slid_polyline_m"]
+    else:
+        m = mesh_curb_crossing(road, ground, A, t, walk_w, s["ray"]["len_m"])
+        if m is None:
+            s["base_source"] = "polyline (ray never leaves BUILT pavement within 90 m)"
+            return ["ray never leaves the built pavement within 90 m (through leg / junction on the mesh)"]
+        s_C = m["s_C"]
+        s["ray"].update(C_mesh_xz=[round(m["C"][0], 2), round(m["C"][1], 2)], len_mesh_m=m["s_C"])
+        if m.get("s_S") is not None:
+            s_est, src = m["s_S"], "walk fraction"
+            s["ray"].update(back_of_walk_m=m["s_B"], walk_run_m=m["walk_run_m"], s_S_walk_m=m["s_S"])
+        else:
+            s_est, src = s_C + d_clear, "no modelled walk (run %s)" % m.get("walk_run_m")
+            warns.append("no modelled curb+walk found along the ray; marched from the built curb face")
+        # the authoritative march: along the ray only, until the built clearance AND the disc hold
+        s_m, capped = s_est, False
+        while True:
+            qx, qz = A[0] + t[0] * s_m, A[1] + t[1] * s_m
+            pc = polar(qx, qz, reach=d_clear + 0.05)[0]
+            fm = ctx.field.footprint_margin((qx, qz), rights)
+            if pc >= d_clear - CLEAR_TOL and fm >= DISC_CUSHION:
+                break
+            if s_m - s_C > ps.RAY_EXTRA_CAP_M:
+                capped = True
+                break
+            s_m += MARCH_STEP
+        xm, zm = A[0] + t[0] * s_m, A[1] + t[1] * s_m
+        s["base_xz_mesh"] = [round(xm, 3), round(zm, 3)]
+        beyond_walk = m.get("s_B") is not None and s_m > m["s_B"]
+        s["ray"].update(s_S_mesh_m=round(s_m, 2), marched_m=round(s_m - s_est, 2), beyond_walk=beyond_walk)
+        if beyond_walk:
+            warns.append("post stands %.2f m behind the back of the modelled walk (marched for clearance/disc); ground = terrain ray-cast" % (s_m - m["s_B"]))
+        pc_m, fm_m = polar(xm, zm)[0], ctx.field.footprint_margin((xm, zm), rights)
+        if capped:
+            if fm_m < 0:
+                reasons.append("plate footprint inside drive_test's obstacle disc by %.2f m at +%.0f m past the built curb (own street %s)"
+                               % (-fm_m, ps.RAY_EXTRA_CAP_M, s["ribbon"]))
+            if pc_m < gate_min - CLEAR_TOL:
+                reasons.append("built-edge clearance %.2f m < %.1f m gate minimum at +%.0f m past the built curb" % (pc_m, gate_min, ps.RAY_EXTRA_CAP_M))
+            elif pc_m < d_clear - CLEAR_TOL:
+                warns.append("built-edge clearance %.2f m (target %.2f) at the +%.0f m cap; passes the %.1f m gate minimum"
+                             % (pc_m, d_clear, ps.RAY_EXTRA_CAP_M, gate_min))
+        if reasons and not forced:
+            s["base_xz"] = [round(xm, 3), round(zm, 3)]
+            s["base_source"] = "mesh march capped (%s start)" % src
+            return reasons
+        # the slide, re-chosen on the built clearance (lamps >= 3 m, plants >= 2.5 m, <= 1.0 m)
+        slid, S, lamp, plant, excl, slide_reasons = ps.choose_slide(
+            ctx, cfg, (xm, zm), u, min(d_clear, pc_m), lambda x, z: polar(x, z, reach=d_clear + 0.05)[0], rights)
+        reasons += slide_reasons
+        s["exclude_plant"] = excl
+        x, z = S
+        for a in applied:
+            if a.startswith("slide_along_curb_m="):
+                sl = float(a.split("=", 1)[1])
+                x, z = x + u[0] * sl, z + u[1] * sl
+                slid += sl
+        s["base_source"] = "mesh (%s start, marched %.2f m along the ray, slid %.2f m along the curb)" % (src, s_m - s_est, slid)
+    # measure the final post
+    pc_f, pc_bearing = polar(x, z)
+    fm_f = ctx.field.footprint_margin((x, z), rights)
+    lamp, plant = ctx.nearest_lamp((x, z)), ctx.nearest_plant((x, z))
+    shift = math.hypot(x - x0, z - z0)
+    chk.update(mesh_clear_m=round(pc_f, 2), mesh_clear_bearing_deg=pc_bearing, mesh_shift_m=round(shift, 2),
+               edge_clear_m=round(ctx.field.query(x, z)[0], 2), gate_margin_m=round(fm_f, 2),
+               lamp_m=round(lamp, 2), plant_m=round(plant[0], 2), plant_zone=plant[1], slid_m=round(slid, 2))
+    if fm_f < 0:
+        reasons.append("plate footprint inside drive_test's obstacle disc by %.2f m (%s)" % (-fm_f, s["ribbon"]))
+    if pc_f < gate_min - CLEAR_TOL:
+        reasons.append("built-edge clearance %.2f m < %.1f m" % (pc_f, gate_min))
+    if is_main and pc_f > 3.0:
+        reasons.append("built-edge clearance %.2f m > 3.0 m (too far from the curb)" % pc_f)
+    if "base_xz" in applied and lamp < cfg["lamp_clear_m"]:
+        reasons.append("pinned base %.1f m from a lamp post (< %.1f)" % (lamp, cfg["lamp_clear_m"]))
+    s["base_xz"] = [round(x, 3), round(z, 3)]
+    chk["warnings"] = chk.get("warnings", []) + warns
+    if reasons and forced:
+        chk["warnings"] += ["FORCED past: " + r for r in reasons]
+        reasons = []
+    return reasons
 
 
 def oriented(poly_b, normal_b):
@@ -201,14 +288,16 @@ def main():
     proj = Path(argv[0])
     blend = Path(os.environ.get("SIGNS_BLEND") or (argv[argv.index("--blend") + 1] if "--blend" in argv else proj / "loop.blend"))
     signs_path = argv[argv.index("--signs") + 1] if "--signs" in argv else None
+    data = proj / "data"
+    for f in STALE_OUTPUTS:                     # a crash below must not leave the previous record
+        (data / f).unlink(missing_ok=True)
     cfg, corners_cfg, ov_path = ps.load_overrides(proj, signs_path)
     if "--connectors" in argv:
         cfg["include_connectors"] = True
     if "--no-connectors" in argv:
         cfg["include_connectors"] = False
 
-    out, ctx = ps.place_all(proj, cfg, corners_cfg, log=print)
-    signs = out["signs"]
+    out, ctx = ps.place_all(proj, cfg, corners_cfg, log=print, merge=False)
 
     bpy.ops.wm.open_mainfile(filepath=str(blend))
     removed = 0
@@ -216,19 +305,40 @@ def main():
         if ob.type == "MESH" and ob.name.upper().startswith(PREFIXES):
             bpy.data.objects.remove(ob, do_unlink=True)
             removed += 1
-    ground_tris, road_tris, ground_names, road_names = [], [], [], []
-    for ob in bpy.data.objects:
-        if ob.type != "MESH":
-            continue
-        up = ob.name.upper()
-        if up.startswith(ROAD):
-            road_tris += world_tris(ob)
-            road_names.append(ob.name)
-        elif up.startswith(GROUND):
-            ground_tris += world_tris(ob)
-            ground_names.append(ob.name)
-    ground, road = bvh_of(ground_tris), bvh_of(road_tris)
+    road, ground, road_names, ground_names = sm.load_bvhs()
 
+    # 1) every plate on the built mesh; a plate that cannot be placed cleanly is skipped, loudly
+    kept = []
+    for s in out["signs"]:
+        reasons = mesh_place(s, ctx, cfg, road, ground)
+        if reasons:
+            out["skipped"].append({"id": s["id"], "ribbon": s["ribbon"] + ("(rev)" if s["direction"] == "rev" else ""),
+                                   "apex_vertex": s["corner"]["apex_vertex"], "apex_station_m": s["corner"]["apex_station_m"],
+                                   "R_apex_m": s["corner"]["R_apex_m"], "D_deg": s["corner"]["D_deg"], "arc_m": s["corner"]["arc_m"],
+                                   "apex_xz": s["corner"]["apex_xz"], "reasons": ["mesh stage: " + r for r in reasons],
+                                   "would_be": s["base_xz"], "stage": "mesh"})
+            print("[signs] mesh-skip %-11s %s" % (s["id"], "; ".join(reasons)))
+            continue
+        kept.append(s)
+    # 2) pairs meet on the mesh, not on the polyline (DCL-2: 2.6 m apart there, 0.44 m here);
+    #    the shared post stands at the mean base, so its clearances are measured again there
+    signs = ps.merge_pairs(kept, log=print)
+    for s in signs:
+        if not s.get("pair"):
+            continue
+        x, z = s["base_xz"]
+        rights = [p["right_xz"] for p in s["plates"]]
+        pc, pb = sm.polar_clearance(road, ground, x, z)
+        s["checks"].update(mesh_clear_m=round(pc, 2), mesh_clear_bearing_deg=pb,
+                           gate_margin_m=round(ctx.field.footprint_margin((x, z), rights), 2),
+                           edge_clear_m=round(ctx.field.query(x, z)[0], 2),
+                           lamp_m=round(ctx.nearest_lamp((x, z)), 2), plant_m=round(ctx.nearest_plant((x, z))[0], 2))
+    out["signs"] = signs
+    out["exclude_plants"] = [dict(s["exclude_plant"], sign=s["id"]) for s in signs if s.get("exclude_plant")]
+    out["pairs"] = [s["id"] for s in signs if s.get("pair")]
+    out["counts"] = {"placed": len(signs), "plates": sum(len(ps.plates_of(s)) for s in signs), "skipped": len(out["skipped"])}
+
+    # 3) ground + meshes
     batches = {k: [] for k in PREFIXES}
     cur = {k: ([], [], []) for k in PREFIXES}       # verts, faces, intended normals
 
@@ -239,48 +349,23 @@ def main():
             V.clear(); F.clear(); N.clear()
 
     n_warn = 0
-    cfg_lamp, cfg_plant = cfg["lamp_clear_m"], cfg["plant_clear_m"]
     for s in signs:
         x, z = s["base_xz"]
-        s["base_xz_polyline"] = [x, z]
-        t = (-s["face_dir_xz"][0], -s["face_dir_xz"][1])
-        A = s["ray"]["A_xz"]
-        walk_w = ps.SIDEWALK_W["MAINLINE" if s["ribbon"] == "MAINLINE" else "CONNECTOR"]
         pushed = 0.0
-        m = mesh_sign_point(road, ground, A, t, walk_w, s["ray"]["len_m"])
-        if m and m.get("S"):
-            x, z = m["S"]
-            shift = ((x - s["base_xz"][0]) ** 2 + (z - s["base_xz"][1]) ** 2) ** 0.5
-            lamp = ctx.nearest_lamp((x, z))
-            plant = ctx.nearest_plant((x, z))
-            s["ray"].update(C_mesh_xz=[round(m["C"][0], 2), round(m["C"][1], 2)], len_mesh_m=m["s_C"],
-                            back_of_walk_m=m["s_B"], walk_run_m=m["walk_run_m"], s_S_mesh_m=m["s_S"])
-            s["checks"].update(mesh_clear_m=m["mesh_clear_m"], mesh_shift_m=round(shift, 2),
-                               edge_clear_m=round(ctx.field.query(x, z)[0], 2),
-                               gate_margin_m=round(ctx.field.gate_margin(x, z), 2),
-                               lamp_m=round(lamp, 2), plant_m=round(plant[0], 2), plant_zone=plant[1])
-            s["base_source"] = "mesh (curb face + back of walk ray-cast on ROAD/CURB)"
-            if lamp < cfg_lamp:
-                s["checks"]["warnings"].append("mesh-placed post %.1f m from a lamp post (< %.1f)" % (lamp, cfg_lamp))
-            if plant[0] < cfg_plant and not any(e["sign"] == s["id"] for e in out["exclude_plants"]):
-                out["exclude_plants"].append({"zone": plant[1], "index": plant[2], "dist_m": round(plant[0], 2), "sign": s["id"]})
-            if s["checks"]["gate_margin_m"] < 0 and s["ribbon"] == "MAINLINE":
-                s["checks"]["warnings"].append("mesh-placed post inside drive_test's obstacle disc by %.2f m" % -s["checks"]["gate_margin_m"])
-        else:
-            s["base_source"] = "polyline (no modelled walk under the ray%s)" % (": " + json.dumps(m) if m else "")
-            s["checks"]["warnings"].append("no modelled curb+walk found along the ray; polyline placement kept")
-            g = top_hit(ground, x, z)
-            r = top_hit(road, x, z)
-            while r is not None and (g is None or r >= g - 0.02) and pushed < PUSH_MAX:
-                x += t[0] * PUSH_STEP
-                z += t[1] * PUSH_STEP
-                pushed += PUSH_STEP
-                g, r = top_hit(ground, x, z), top_hit(road, x, z)
-        g = top_hit(ground, x, z)
-        r = top_hit(road, x, z)
+        g = sm.top_hit(ground, x, z)
+        r = sm.top_hit(road, x, z)
+        t = (-s["face_dir_xz"][0], -s["face_dir_xz"][1])
+        while r is not None and (g is None or r >= g - 0.02) and pushed < PUSH_MAX:   # never on ROAD
+            x += t[0] * PUSH_STEP
+            z += t[1] * PUSH_STEP
+            pushed += PUSH_STEP
+            g, r = sm.top_hit(ground, x, z), sm.top_hit(road, x, z)
         analytic = s["y_base"]["analytic"]
+        beyond = any(p["ray"].get("beyond_walk") for p in ps.plates_of(s))
         if g is None:
             y_base, src = analytic, "analytic (no ground hit)"
+        elif beyond:        # off the back of the walk: the terrain under the post IS the ground
+            y_base, src = g, "raycast (terrain behind the walk, %+.2f m vs the walk's analytic height)" % (g - analytic)
         elif abs(g - analytic) > ps.GROUND_WARN_M:
             y_base, src = analytic, "analytic (ray-cast %.2f is %.2f m off, gapped walk?)" % (g, g - analytic)
             n_warn += 1
@@ -289,24 +374,26 @@ def main():
             y_base, src = g, "raycast"
         if pushed:
             s["checks"]["warnings"].append("base was on ROAD; pushed %.2f m along the approach" % pushed)
-        s["base_xz"] = [round(x, 3), round(z, 3)]
-        # the built edge around the sign, for tools/plot_signs.py (the polyline ribbon it draws is
-        # wider than the swept mesh at tight apexes)
-        fwd = next(r for r in ctx.ribbons if r.name == s["ribbon"])
-        sc = s["ray"]["sC_station"]
-        st_fwd = sc if s["direction"] == "fwd" else ((-sc) % fwd.n if fwd.closed else fwd.n - 1 - sc)
-        side = (1 if s["corner"]["D_deg"] < 0 else -1) * (1 if s["direction"] == "fwd" else -1)
+            s["base_xz"] = [round(x, 3), round(z, 3)]
+        # the built edge around the sign (tools/plot_signs.py draws it; tools/verify_signs.py
+        # measures check (c) against it)
+        fwd = next(rb for rb in ctx.ribbons if rb.name == s["ribbon"])
+        p0 = ps.plates_of(s)[0]
+        sc = p0["ray"]["sC_station"]
+        st_fwd = sc if p0["direction"] == "fwd" else ((-sc) % fwd.n if fwd.closed else fwd.n - 1 - sc)
+        side = (1 if p0["corner"]["D_deg"] < 0 else -1) * (1 if p0["direction"] == "fwd" else -1)
         edge, back = built_edges(road, ground, fwd, st_fwd, side)
         s["built"] = {"outside_edge_xz": edge, "back_of_walk_xz": back}
         s["y_base"].update(raycast=None if g is None else round(g, 3), source=src, value=round(y_base, 3),
                            road_hit=None if r is None else round(r, 3), pushed_on_road_m=pushed)
+        polys = ps.sign_polygons(s, y_base)
+        top = max(v[1] for lst in polys.values() for verts, _ in lst for v in verts)
         s["blender"] = {"base_xyz_engine": [round(x, 3), round(y_base, 3), round(z, 3)],
                         "base_xyz_blender": [round(x, 3), round(z, 3), round(y_base, 3)],
                         "plate_bottom_y": round(y_base + s["height_m"], 3),
                         "plate_top_y": round(y_base + s["height_m"] + ps.PLATE_H, 3),
                         "post_base_y": round(y_base - ps.POST_SINK, 3),
-                        "post_top_y": round(y_base + s["height_m"] + ps.PLATE_H + ps.POST_OVER_TOP, 3)}
-        polys = ps.sign_polygons(s, y_base)
+                        "post_top_y": round(top, 3)}
         for kind, lst in polys.items():
             nv = sum(len(p[0]) for p in lst)
             V, F, N = cur[kind]
@@ -339,13 +426,15 @@ def main():
 
     out["blender"] = {"blend": str(blend), "ground_objects": ground_names, "road_objects": road_names,
                       "removed_existing": removed, "meshes": {k: ["%s_%d" % (k, i) for i in range(len(batches[k]))] for k in PREFIXES},
-                      "vertices": nverts, "faces": nfaces, "normal_mismatches": bad, "ground_warnings": n_warn}
+                      "vertices": nverts, "faces": nfaces, "normal_mismatches": bad, "ground_warnings": n_warn,
+                      "base_rule": "built mesh authoritative: walk-fraction start, marched along the ray to polar clearance >= lateral_offset and disc footprint >= 0"}
     ps.write_outputs(proj, out, ctx)
     for s in signs:
-        print("[signs] %-11s %s %-20s base (%8.1f, %6.2f, %8.1f) faces %5.1f deg  curb %.2f m (mesh shift %.2f)  y_base %s%s"
+        print("[signs] %-11s %-12s %-20s base (%8.1f, %6.2f, %8.1f) faces %s deg  built clear %.2f m (shift %.2f, slid %+.2f)  disc %+.2f  y_base %s%s"
               % (s["id"], s["kind"], s["ribbon"] + "/" + s["direction"], s["base_xz"][0], s["y_base"]["value"], s["base_xz"][1],
-                 s["face_bearing_deg"], s["checks"].get("mesh_clear_m", s["checks"]["edge_clear_m"]), s["checks"].get("mesh_shift_m", 0.0),
-                 s["y_base"]["source"], ("  WARN " + "; ".join(s["checks"]["warnings"])) if s["checks"]["warnings"] else ""))
+                 "/".join("%.1f" % p["face_bearing_deg"] for p in ps.plates_of(s)), s["checks"]["mesh_clear_m"], s["checks"]["mesh_shift_m"],
+                 s["checks"]["slid_m"], s["checks"]["gate_margin_m"], s["y_base"]["source"],
+                 ("  WARN " + "; ".join(s["checks"]["warnings"])) if s["checks"]["warnings"] else ""))
     for s in out["skipped"]:
         print("[signs] skip %-11s %-20s v%-5d %s" % (s["id"], s["ribbon"], s["apex_vertex"], "; ".join(s["reasons"])))
     print("[signs] %s -> %s; %d verts, %d faces; normals %s; ground from %s (ROAD rejects %s); removed %d old; overrides %s; saved %s"

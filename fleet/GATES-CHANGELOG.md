@@ -162,3 +162,48 @@ auto-enrolled — the same class of review `BUILDINGS` already carried.
 Same commit: the `[GRASS_FX]` writer (`scripts/environment/treefx.py`) moves to the grammar every
 shipped CSP config uses and rejects unknown/retired keys; `lighting.grassfx = {"enabled": false, …}`
 takes the OFF branch. Not a gate change — recorded in ledger 0045 and `docs/TREEFX-FORMAT.md`.
+
+## 2026-10-10 — `verify_signs` ship gate (ledger 0044)
+
+**Change.** A new gate, `tools/verify_signs.py`, runs in `tools/ship_sd.sh` right after the W1-6
+authoring step (after the lamps step, inside the `SKIP_BLEND` block) and before the prep/export. It
+reads `data/signs.local.json` — the record `tools/place_signs.py` writes and
+`tools/author_signs_blend.py` extends with the Blender measurements — and exits 1 on any FAIL;
+under the script's `set -euo pipefail` that exit propagates through `| tail -3` and **aborts the
+ship before a kn5 exists**. Per sign:
+
+| Check | Threshold | Flag |
+|---|---|---|
+| (a) ray strike | the failed-to-turn ray from A along t passes within ±0.61 m of the plate centre (half the 48 in plate), tested at the **un-slid** post point base − slid_m·u (the lamp/plant slide along the curb, ≤ 1.0 m, is the only lateral deviation the rule allows; a paired post adds half its pair split) | the sign stands where a car that did not turn would hit it (MUTCD 2C.09) |
+| (b) facing | \|angle(f, −t)\| ≤ 1° — the plate looks straight back down the approach heading | |
+| (c) built-edge clearance | mainline 1.3–3.0 m, connectors ≥ 1.0 m, **measured two ways and both must pass**: (1) the minimum distance from the base to the built outside-edge polyline the authoring pass recorded (`built.outside_edge_xz`, ROAD-top probes per station); (2) with `--blend`, an independent BVH top-surface scan inside Blender (ROAD vs CURB/SIDEWALK/TERRAIN, 5° polar scan at 0.25 m steps, bisected; `tools/signs_mesh.py`, `data/signs_measured.json`). Nothing self-reported is read. | ⚠ tautological in the first dry run — see below |
+| (d) outside of turn | cross(t_local, C − P) > 0 for D < 0 — the side is a geometric test, never a convention | |
+| (e) / (f) heights | plate bottom = y_base + 2.13 ± 0.05 m; post base = y_base − 0.30 ± 0.05 m (n/a on an analytic run with no Blender section) | |
+| (g) obstacle disc | no SIGN* vertex inside drive_test's min(lane_half, 6) + 0.3 m disc of **any** centreline, the post's own side street included (4.9 m on a 10 m street) — recomputed by the verifier from the centreline/connector json over the plate footprint (base ± 0.61 m along every plate's right vector); and the base is off pavement (measured clearance > 0, scan `on_road` false). Connector posts can now trip it; the authoring pass marches a post along its ray until both the clearance and the disc hold and SKIPS a corner that cannot satisfy both within 6 m of the built curb | extended this round: connectors were "measured for the record" only |
+| (h) one per approach | exactly one record per id (+1 under the hairpin clause), none at a `signs.json` `skip` id, no `-fwd`/`-rev` twin of a paired post | |
+| (i) spacing | no two posts' bases closer than 2.0 m, across approaches and ribbons — not only the hairpin clause's ≥ 12 m. A two-way corner whose two posts would stand < 2.0 m apart on the built mesh is emitted as ONE post carrying both plates (`place_signs.merge_pairs`) | added this round (absent at `ac8975d`) |
+| (j) expect_arrow | the placed arrow (left / right) equals `signs.json`'s per-corner `expect_arrow` where one is declared; the placement itself skips such a corner with a logged reason rather than relocating it | added this round (the key existed in `signs.json`; nothing read it) |
+| Blender normals | `blender.normal_mismatches` = 0 — every plate, arrow and post polygon faces as emitted | |
+| harness | every `"$BL" --background --python` call in `tools/ship_sd.sh` carries `--python-exit-code 1`; `author_signs_blend.py` unlinks `signs.local.json` / `signs_preview.svg` / `signs_measured.json` at start, so a Python exception inside Blender can neither exit 0 nor leave the previous run's record for the gate to pass | added this round |
+
+**Measured basis.** The thresholds are the sign's own dimensions (0.61 m = half of 48 in), the
+MUTCD mounting rule (2.13 m = 7 ft over a walk, 2A.15), the walk section the loop is built with
+(curb face 0.08 + walk 1.8 / 1.5 − 0.25 set-back = 1.63 / 1.33 m;
+`scripts-v021/blender/build_loop_blend.py:658/677`) and drive_test's existing disc. None of them is
+calibrated against our own output.
+
+**⚠ Check (c) was tautological in the first dry run — fixed this round.**
+`author_signs_blend.mesh_sign_point` wrote `mesh_clear_m` as `(curb_face + walk_w) × frac`, i.e.
+the design constant (1.63 / 1.33), and the verifier preferred that key, so `1.3 ≤ clear ≤ 3.0`
+compared the target with itself and was green on all 20 signs — including seven connector posts the
+polyline field put ON pavement (`edge_clear_m` −0.06 … −1.74 at DCL-2 fwd/rev, MED-6 fwd/rev,
+MED-8-rev, MED-10-fwd, MED-13-rev) and the DCL-2 pair standing 0.44 m apart. That is the mirror
+class the standing rule at the top of this file describes: a value written by the thing being
+checked is not a measurement. This round (c) becomes the perpendicular distance from the post to
+the built curb face found by the ray-cast, and the spacing and `expect_arrow` rows are added so the
+DCL-2 overlap and a mirrored plate fail by number. The six mainline signs (M1, M2, M2-2, M3, M4,
+M5) passed on the built mesh with 0.06–0.61 m mesh shifts and are held to ±0.3 m through the fix.
+
+**Not changed.** `drive_test`, `audit_mesh` (never reads `SIGN*`) and `verify_kn5` are untouched.
+`kn5_ground_check`'s `SIGNPOST` bucket (0.08 m) is not run by `ship_sd.sh` and would flag the
+0.30 m post sink if it ever is — exempt the bucket or sink 0.08 m then (0044, Verification §3).

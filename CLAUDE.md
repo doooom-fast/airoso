@@ -9,7 +9,7 @@ k10-track-agents' full history (which itself absorbed prodrive-ac-builder), so n
 **The V3 model (docs/V3-PLAN.md):** the engine emits first drafts; Claude hand-authors geometry
 (Blender / readable intermediates); deterministic gates judge every build; Kevin's drive test is
 the only ground truth. Do not write kn5 generators, do not reverse-engineer binaries, do not
-generate AI splines from GPS (docs/HANDOFF.md bans stand). Priority: San Diego, then Sand Creek.
+generate AI splines from GPS (docs/HANDOFF.md bans stand). Priority: San Diego, then Lookout Lariat (Kevin 2026-10-11: "what about lariat"; ledger 0048), then Sand Creek.
 
 ---
 

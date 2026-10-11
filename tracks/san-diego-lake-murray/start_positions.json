@@ -51,6 +51,16 @@
       "vertex": 3261,
       "offset_right_m": 5.5,
       "_doc": "Jackson Dr heading ESE, 42 m before the Mb16 left kink and 89 m before M5's PC (station 9869), the right-hander onto Lake Murray Blvd: W1-6R at S ≈ (2628.0, 504.6); the M5 palm at 4.8 m is the other sight-line case. 17 m road, no island; 5.5 = right lane, 3 m to the curb."
+    },
+    "0047-alvarado-grid-A": {
+      "vertex": 291,
+      "offset_right_m": 3.25,
+      "_doc": "Ledger 0047 grid A = the declared Street Loop / Race — Clockwise pole: Alvarado Rd westbound toward College (Kevin 2026-08), north lane centre (w/4 of 13.0 m), AC_TIME_0 line 27 m ahead at v300 (the straightest 376 m on the loop, v250-375). This IS layouts[street].start; tools/layout_dummies.py writes it by default and `active` only overrides the street layout's START/HOTLAP/PIT (never AC_TIME, never a race layout)."
+    },
+    "0047-alvarado-grid-B": {
+      "vertex": 310,
+      "offset_right_m": -3.25,
+      "_doc": "Ledger 0047 grid B = the Race — Anticlockwise pole: v310 on Alvarado, SOUTH lane (offset -3.25 in this registry's FORWARD frame = +3.25 right of anticlockwise travel), facing east toward 70th, line v300 30 m ahead. Listed for inspection spawns only — the acw layout's own grid comes from layouts[race_acw].start with the reverse facing; this registry entry keeps the forward yaw."
     }
   }
 }

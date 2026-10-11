@@ -1,11 +1,34 @@
 """Generate the installable Assetto Corsa track folder (everything except the kn5 + AI).
 
-All layouts share one kn5 and differ only in AC config. Emits, under build/<slug>/:
-  models_<layout>.ini, data/surfaces.ini, data/map.ini, map.png, ui/<layout>/ui_track.json,
-  ui/<layout>/{preview,outline}.png, ai/<layout>/ (placeholder), README.txt.
-The kn5 is produced by Blender (scripts/ac/build_kn5.py); the AI fast_lane is recorded in-game (Windows).
+All layouts share one ROAD kn5 and differ in AC config plus the kn5s a layout ADDS beside it
+(fleet/LAWS.md L8 as amended in ledger 0047). Emits, under build/<slug>/:
 
-Run:  python -m scripts.ac.track_folder projects/<slug>
+  SINGLE layout (suffix-free, AC's single-config structure):
+    models.ini, data/{surfaces.ini,map.ini[,cameras.ini]}, map.png, ui/{ui_track.json,outline.png,
+    preview.png}, ai/ (the project's ai/ or a README placeholder), README/CREDITS/LICENSES.
+  MULTI layout (AC's models_<id>.ini structure — never both in one folder):
+    models_<id>.ini  = [MODEL_0] <slug>.kn5 (shared road, carries NO AC_* spawn nodes)
+                       [MODEL_1] <slug>_race.kn5   only for layouts with race_furniture: true
+                       [MODEL_n] <slug>__<id>.kn5  this layout's nodes-only spawn kn5 (last)
+    ui/<id>/{ui_track.json (name "<cfg.name> — <layout name>", run = layouts[].run),
+             outline.png, preview.png}
+    <id>/{map.png, data/{surfaces.ini,map.ini[,cameras.ini]}, ai/}  ai from <project>/ai/<id>/
+             first, else <project>/ai/, else a README placeholder
+    plus the root data/+map.png (harmless), extension/ext_config.ini (global), README/CREDITS.
+  Stale structure from an earlier pack of the other shape (root ai/, root ui/ui_track.json,
+  ui/<old>/, <old>/, models.ini beside models_<id>.ini) is removed: build/<slug>/ is never wiped
+  between packs and tools/pack_release.py zips whatever it finds.
+
+A multi-layout layout that declares its own spawn set (data/dummies_<id>.json) but has no
+build/<slug>__<id>.kn5, or declares race_furniture without build/<slug>_race.kn5, is a HARD error
+— never a silently plain layout. ``--allow-missing-kn5`` downgrades that to a loud print so the
+folder can be laid out before the Blender passes (dry runs); the inis still name the files.
+
+The kn5s are produced by Blender (scripts/ac/build_kn5.py / export_kn5_addon.py / build_spawn_kn5.py);
+tools/make_map.py then redraws every map.png in the kn5 frame; the AI fast_lane is recorded
+in-game (Windows) or drafted by scripts/ac/write_ai_line.py.
+
+Run:  python -m scripts.ac.track_folder projects/<slug> [--allow-missing-kn5]
 """
 
 from __future__ import annotations
@@ -116,6 +139,10 @@ def ui_track_json(cfg, layout: str, length_m: float, n_pits: int) -> dict:
     # (e.g. IMI's one "full_course") shouldn't read "… — full_course".
     n_layouts = len(cfg.raw.get("layouts", []) or [])
     suffix = "" if (layout in ("full", "freeroam") or n_layouts <= 1) else f" — {lo_label}"
+    # `run` is hover text only (ORP ships "clockwise" on both its directions, PCH "Northbound" /
+    # "Southbound"); a layout may carry its own wording (ledger 0047: Kevin's compass words),
+    # every other track keeps the historical "clockwise".
+    run = str(lo_meta.get("run") or "clockwise")
     return {
         "name": base_name + suffix,
         # build stamp UP FRONT: a full release cycle was burned diagnosing "fixed nothing" against a
@@ -125,16 +152,118 @@ def ui_track_json(cfg, layout: str, length_m: float, n_pits: int) -> dict:
         "geotags": [f"{cfg.lat}", f"{cfg.lon}"],
         "country": country, "city": city,
         "length": str(round(length_m)), "width": str(round(cfg.default_width_m)),
-        "pitboxes": str(n_pits), "run": "clockwise",
+        "pitboxes": str(n_pits), "run": run,
         "author": cfg.author, "version": str(cfg.version), "year": cfg.year,
     }
 
 
-def models_ini(kn5_name: str, spawn_kn5: str | None = None) -> str:
+def models_ini(kn5_name: str, extras: str | list[str] | None = None) -> str:
+    """models[_<layout>].ini: MODEL_0 = the shared road kn5; ``extras`` = the kn5s THIS layout adds
+    beside it, in load order (race-furniture kn5 first, the nodes-only spawn kn5 last). A single
+    string is accepted for the old one-spawn-kn5 call shape."""
+    if isinstance(extras, str):
+        extras = [extras]
     s = f"[MODEL_0]\nFILE={kn5_name}\nPOSITION=0,0,0\nROTATION=0,0,0\n"
-    if spawn_kn5:   # per-layout spawn kn5 (AC_START/AC_PIT dummies for THIS track), loaded alongside main
-        s += f"\n[MODEL_1]\nFILE={spawn_kn5}\nPOSITION=0,0,0\nROTATION=0,0,0\n"
+    for i, extra in enumerate(extras or [], start=1):
+        s += f"\n[MODEL_{i}]\nFILE={extra}\nPOSITION=0,0,0\nROTATION=0,0,0\n"
     return s
+
+
+def layout_kn5s(cfg, layout: dict | str, project_dir: Path, *, single: bool,
+                strict: bool = True) -> list[tuple[str, Path | None]]:
+    """The kn5s a layout adds beside the shared road kn5, as (file name, source path or None).
+
+    * race furniture (``race_furniture: true``): ``build/<slug>_race.kn5`` — required.
+    * spawn set: ``build/<slug>__<id>.kn5`` — required whenever the layout declares its own
+      ``data/dummies_<id>.json`` (a multi-layout road kn5 carries no spawns, so a layout without
+      its spawn kn5 has no grid); a layout with neither keeps the baked-in dummies (legacy shape).
+    ``strict=False`` turns a missing file into a loud print (dry runs); the name is still listed."""
+    lo = layout if isinstance(layout, dict) else {"id": layout}
+    lid = lo["id"]
+    build = project_dir / "build"
+    out: list[tuple[str, Path | None]] = []
+    missing: list[str] = []
+    if lo.get("race_furniture"):
+        if lo.get("kind", "race") != "race":
+            raise ValueError(f"layout {lid!r}: race_furniture needs kind 'race' (got {lo.get('kind')!r})")
+        name = f"{cfg.slug}_race.kn5"
+        src = build / name
+        if not src.exists():
+            missing.append(name)
+        out.append((name, src if src.exists() else None))
+    if not single:
+        name = f"{cfg.slug}__{lid}.kn5"
+        src = build / name
+        declared = (project_dir / "data" / f"dummies_{lid}.json").exists()
+        if src.exists():
+            out.append((name, src))
+        elif declared:
+            missing.append(name)
+            out.append((name, None))
+        else:
+            print(f"[track_folder] layout {lid}: no data/dummies_{lid}.json and no {name} — "
+                  f"spawns must be baked into {cfg.slug}.kn5 (legacy shape)")
+    if missing:
+        msg = (f"layout {lid!r} needs {', '.join(missing)} in {build} — build it (export_kn5_addon "
+               f"--keep-prefix / build_spawn_kn5) before packing; a layout never silently drops "
+               f"its furniture or its grid")
+        if strict:
+            raise FileNotFoundError(msg)
+        print(f"[track_folder] WARNING (--allow-missing-kn5): {msg}")
+    return out
+
+
+def _is_layout_dir(p: Path) -> bool:
+    """A root-level dir that looks like AC's <track>/<layout>/ (map.png, data/ or ai/ inside)."""
+    return p.is_dir() and ((p / "map.png").exists() or (p / "data").is_dir() or (p / "ai").is_dir())
+
+
+def clean_stale_structure(out: Path, layouts: list[str], *, single: bool) -> list[str]:
+    """Remove structure files/dirs from a pack of the OTHER shape or of a layout no longer declared.
+    AC mis-detects a folder holding both shapes (ac-track-modding SKILL.md), and build/<slug>/ is
+    never wiped between packs. Root data/ and map.png stay (harmless in both shapes)."""
+    import shutil
+    removed: list[str] = []
+    keep_root = {"data", "ui", "ai", "extension"}
+
+    def _rm(p: Path):
+        if p.is_dir():
+            shutil.rmtree(p)
+        else:
+            p.unlink()
+        removed.append(str(p.relative_to(out)))
+
+    if single:
+        for st in out.glob("models_*.ini"):
+            _rm(st)
+        if (out / "ui").is_dir():
+            for d in (out / "ui").iterdir():
+                if d.is_dir():
+                    _rm(d)
+        for d in out.iterdir():
+            if d.is_dir() and d.name not in keep_root and _is_layout_dir(d):
+                _rm(d)
+    else:
+        if (out / "models.ini").exists():
+            _rm(out / "models.ini")
+        for st in out.glob("models_*.ini"):
+            if st.stem[len("models_"):] not in layouts:
+                _rm(st)
+        if (out / "ui").is_dir():
+            for d in (out / "ui").iterdir():
+                if d.is_dir() and d.name not in layouts:
+                    _rm(d)
+            for f in ("ui_track.json", "outline.png", "preview.png", "preview.svg"):
+                if (out / "ui" / f).exists():
+                    _rm(out / "ui" / f)
+        if (out / "ai").is_dir():
+            _rm(out / "ai")
+        for d in out.iterdir():
+            if d.is_dir() and d.name not in keep_root and d.name not in layouts and _is_layout_dir(d):
+                _rm(d)
+    for r in removed:
+        print(f"[track_folder] removed stale {r}")
+    return removed
 
 
 # --- minimap / images ----------------------------------------------------------
@@ -334,7 +463,7 @@ def _rasterize(svg: str, png: Path, size: int) -> bool:
 
 # --- orchestration -------------------------------------------------------------
 
-def generate(project_dir: str | Path, kn5_name: str | None = None) -> dict:
+def generate(project_dir: str | Path, kn5_name: str | None = None, *, strict_kn5: bool = True) -> dict:
     project_dir = Path(project_dir)
     cfg = load_config(project_dir)
     dummies = json.loads((project_dir / "data" / "dummies.json").read_text(encoding="utf-8")) \
@@ -390,31 +519,34 @@ def generate(project_dir: str | Path, kn5_name: str | None = None) -> dict:
         _track_svg(xz, geom, stroke="#ff3b30", width=5, bg="#0c1116", flip_y=True, multi=multi)
 
     import shutil
-    layouts = [lo["id"] for lo in cfg.layouts]
+    layout_cfgs = [lo if isinstance(lo, dict) else {"id": str(lo)} for lo in cfg.layouts]
+    layouts = [lo["id"] for lo in layout_cfgs]
+    if len(set(layouts)) != len(layouts):
+        raise ValueError(f"duplicate layout ids in track.config.json: {layouts}")
     # SINGLE-LAYOUT tracks use the suffix-FREE structure: models.ini, ui/ui_track.json, ai/ at
     # the root. Writing models_<layout>.ini makes AC treat the track as multi-layout and look
     # for <track>/<layout>/map.png — which doesn't exist, so the in-game minimap NEVER rendered.
     single = len(layouts) == 1
-    # clean STALE structure files from previous packs: models.ini beside models_<layout>.ini
-    # makes AC mis-detect the layout structure (and vice versa)
-    if single:
-        for _st in out.glob("models_*.ini"):
-            _st.unlink()
-    else:
-        (out / "models.ini").unlink(missing_ok=True)
-    for layout in layouts:
-        # Per-track spawn: if this layout has its own dummies_<layout>.json + a built spawn kn5, load it
-        # as MODEL_1 alongside the shared main kn5, and count pits from THIS layout's dummies.
+    # clean STALE structure from previous packs of the other shape or of retired layouts:
+    # models.ini beside models_<layout>.ini makes AC mis-detect the layout structure (and vice
+    # versa); the installed v0.22 carried ui/full + ui/freeway + a freeway kn5 the same way.
+    clean_stale_structure(out, layouts, single=single)
+    # the kn5s each layout adds beside the road kn5 — resolved up front so a missing race or spawn
+    # kn5 fails BEFORE anything is written (strict), never after a half-packed folder
+    extras_by_layout = {lo["id"]: layout_kn5s(cfg, lo, project_dir, single=single, strict=strict_kn5)
+                        for lo in layout_cfgs}
+    for lo in layout_cfgs:
+        layout = lo["id"]
+        # Per-layout spawn set: count pits from THIS layout's dummies_<layout>.json when it exists.
         sp_dummies_path = project_dir / "data" / f"dummies_{layout}.json"
-        spawn_kn5 = f"{cfg.slug}__{layout}.kn5"
-        spawn_kn5_src = project_dir / "build" / spawn_kn5
-        has_spawn = sp_dummies_path.exists() and spawn_kn5_src.exists()
         layout_dummies = json.loads(sp_dummies_path.read_text(encoding="utf-8")) if sp_dummies_path.exists() else dummies
         layout_pits = sum(1 for k in layout_dummies if k.startswith("AC_PIT_")) or n_pits or 1
+        extras = extras_by_layout[layout]
         (out / ("models.ini" if single else "models_%s.ini" % layout)).write_text(
-            models_ini(kn5_name, spawn_kn5 if has_spawn else None), encoding="utf-8")
-        if has_spawn:
-            shutil.copyfile(spawn_kn5_src, out / spawn_kn5)
+            models_ini(kn5_name, [name for name, _ in extras]), encoding="utf-8")
+        for name, src in extras:
+            if src is not None:
+                shutil.copyfile(src, out / name)
         uid = (out / "ui") if single else (out / "ui" / layout)
         uid.mkdir(parents=True, exist_ok=True)
         (uid / "ui_track.json").write_text(json.dumps(ui_track_json(cfg, layout, length_m, layout_pits), indent=2),
@@ -450,7 +582,14 @@ def generate(project_dir: str | Path, kn5_name: str | None = None) -> dict:
         # strips the AI from every install (the original 0022 fix died with the remote
         # cleanup of 2026-08-07; this is its permanent home). Recorded-in-game lines
         # land in the same project ai/ and ride identically.
-        _src_ai = project_dir / "ai"
+        # Per-layout source first (<project>/ai/<id>/ — a reverse layout's line is a DISTINCT
+        # file, never the forward one byte-reversed; copying ONE ai/ into every layout would send
+        # both race layouts down the centre chain and the reverse one backwards), else the
+        # project-wide <project>/ai/ (single-layout tracks, or a layout with no line of its own).
+        _per_layout_ai = project_dir / "ai" / layout
+        _src_ai = _per_layout_ai if (not single and _per_layout_ai.is_dir()
+                                     and any(p.suffix.lower() == ".ai" for p in _per_layout_ai.iterdir())) \
+            else project_dir / "ai"
         _shipped_ai = 0
         if _src_ai.is_dir():
             for _f in sorted(_src_ai.iterdir()):
@@ -459,7 +598,7 @@ def generate(project_dir: str | Path, kn5_name: str | None = None) -> dict:
                     _shipped_ai += 1
         if _shipped_ai:
             (aid / "README.txt").unlink(missing_ok=True)   # stale placeholder must not ship beside real AI
-            print(f"[track_folder] ai/: shipped {_shipped_ai} file(s) from {_src_ai}")
+            print(f"[track_folder] {'ai' if single else layout + '/ai'}/: shipped {_shipped_ai} file(s) from {_src_ai}")
         else:
             (aid / "README.txt").write_text(
                 "fast_lane.ai is recorded in-game (AC + Content Manager, Windows) — see "
@@ -486,8 +625,19 @@ def generate(project_dir: str | Path, kn5_name: str | None = None) -> dict:
         encoding="utf-8")
     credits.generate(project_dir, cfg)  # CREDITS.txt + LICENSES.md from assets/licenses.json
     ext_config.generate(project_dir)  # extension/ext_config.ini — GrassFX / RainFX / light pollution / water
+    # the structure the installer discovers (install.py: models_*.ini) must be exactly the
+    # declared layouts — a leftover or a missing ini here is the stale-folder class, not a build
+    packed = sorted(p.stem[len("models_"):] for p in out.glob("models_*.ini"))
+    if single:
+        if packed or not (out / "models.ini").exists():
+            raise RuntimeError(f"single-layout pack must leave exactly models.ini (found models_*: {packed})")
+    elif packed != sorted(layouts):
+        raise RuntimeError(f"packed models_*.ini {packed} != declared layouts {sorted(layouts)}")
+    print(f"[track_folder] layouts packed: {layouts} "
+          f"({'models.ini' if single else ', '.join('models_%s.ini' % l for l in layouts)})")
     return {"out": str(out), "layouts": layouts, "length_m": length_m, "n_pits": n_pits,
-            "map_px": f"{params['WIDTH']}x{params['HEIGHT']}", "kn5": kn5_name}
+            "map_px": f"{params['WIDTH']}x{params['HEIGHT']}", "kn5": kn5_name,
+            "models": {lid: [kn5_name] + [name for name, _ in ex] for lid, ex in extras_by_layout.items()}}
 
 
 def main() -> None:
@@ -499,9 +649,12 @@ def main() -> None:
     ap.add_argument("--install", action="store_true",
                     help="after generating, install into a local AC content/tracks folder "
                          "(auto-detects it, asks if it can't find it)")
+    ap.add_argument("--allow-missing-kn5", action="store_true",
+                    help="lay the folder out even when a layout's race/spawn kn5 is not built yet "
+                         "(dry runs only — the inis still name the files; the ship chain never passes this)")
     args = ap.parse_args()
 
-    info = generate(args.project_dir)
+    info = generate(args.project_dir, strict_kn5=not args.allow_missing_kn5)
     print(f"wrote track folder → {info['out']}")
     for k, v in info.items():
         if k != "out":

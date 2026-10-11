@@ -13,6 +13,10 @@ exactly as track_folder states it: pixel = (world + OFFSET) / SCALE_FACTOR, SCAL
 metres per pixel. Run after track_folder; it overwrites map.png + data/map.ini in the build
 folder (and installs into the AC track dir when --install <dir> is given).
 
+MULTI-LAYOUT (ledger 0047): AC reads <track>/<layout>/map.png + <layout>/data/map.ini when the
+folder carries models_<layout>.ini, so every layout dir found beside a models_<layout>.ini gets
+the same map (identical content — all layouts share the road), the root as well (harmless).
+
     python tools/make_map.py <project-dir> [--install <ac-track-dir>]
 """
 from __future__ import annotations
@@ -56,17 +60,32 @@ def build(project_dir, install_dir=None):
     ini = ("[PARAMETERS]\n"
            f"WIDTH={W}\nHEIGHT={H}\nSCALE_FACTOR={scale:.6f}\n"
            f"X_OFFSET={ox:.3f}\nZ_OFFSET={oz:.3f}\nMARGIN={MARGIN}\nDRAWING_SIZE={DRAW}\n")
-    targets = [proj / "build" / slug]
+    roots = [proj / "build" / slug]
     if install_dir:
-        targets.append(Path(install_dir))
-    for t in targets:
-        if not t.exists():
+        roots.append(Path(install_dir))
+    written = []
+    for root in roots:
+        if not root.exists():
             continue
-        img.save(t / "map.png")
-        (t / "data").mkdir(exist_ok=True)
-        (t / "data" / "map.ini").write_text(ini, encoding="utf-8")
-        print(f"[map] wrote {t / 'map.png'} + data/map.ini (kn5 frame, {len(lines)} line(s), "
-              f"{scale:.3f} m/px)")
+        for t in map_targets(root):
+            img.save(t / "map.png")
+            (t / "data").mkdir(exist_ok=True)
+            (t / "data" / "map.ini").write_text(ini, encoding="utf-8")
+            written.append(t)
+            print(f"[map] wrote {t / 'map.png'} + data/map.ini (kn5 frame, {len(lines)} line(s), "
+                  f"{scale:.3f} m/px)")
+    return written
+
+
+def map_targets(root: Path) -> list[Path]:
+    """The root plus every <root>/<layout>/ named by a models_<layout>.ini (AC's multi-layout
+    structure); a single-layout folder (models.ini) is the root alone."""
+    out = [root]
+    for ini in sorted(root.glob("models_*.ini")):
+        out.append(root / ini.stem[len("models_"):])
+    for t in out[1:]:
+        t.mkdir(parents=True, exist_ok=True)
+    return out
 
 
 if __name__ == "__main__":

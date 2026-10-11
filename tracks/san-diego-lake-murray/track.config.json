@@ -106,12 +106,111 @@
   },
   "layouts": [
     {
-      "id": "full",
-      "ai": "ai/full",
-      "uses_connectors": [],
-      "_doc": "K10 - San Diego: the Lake Murray loop (with the Del Cerro sub-loop + per-direction carriageways) AND the I-5/CA-52/CA-163/I-8 freeway network, merged into ONE kn5. Freeway sits ~12 km west at its real position."
+      "id": "street",
+      "name": "Street Loop",
+      "kind": "street",
+      "direction": "forward",
+      "race_furniture": false,
+      "start": {
+        "line_vertex": 300,
+        "grid_vertex": 291,
+        "offset_right_m": 3.25,
+        "sector_vertices": [
+          1803,
+          3310
+        ],
+        "per_issue": "start_positions.json"
+      },
+      "run": "open two-way street; lap clockwise: Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest",
+      "ai": "ai/street",
+      "_doc": "Version 1 = today's loop: main kn5 only, open mouths, full width, no race furniture. Only its spawn moves (ledger 0047 Q3): grid A on Alvarado, line v300. start_positions.json `active` still moves START/HOTLAP/PIT for THIS layout only (Kevin 2026-08-20 per-issue spawns) via tools/layout_dummies.py --issue-spawn, never AC_TIME, never the race layouts."
+    },
+    {
+      "id": "race_cw",
+      "name": "Race \u2014 Clockwise",
+      "kind": "race",
+      "direction": "forward",
+      "race_furniture": true,
+      "start": {
+        "line_vertex": 300,
+        "grid_vertex": 291,
+        "offset_right_m": 3.25,
+        "sector_vertices": [
+          1803,
+          3310
+        ]
+      },
+      "run": "clockwise, one-way: Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest \u2014 lake-side carriageway on the wide roads, centre barrier on your left",
+      "ai": "ai/race_cw"
+    },
+    {
+      "id": "race_acw",
+      "name": "Race \u2014 Anticlockwise",
+      "kind": "race",
+      "direction": "reverse",
+      "race_furniture": true,
+      "start": {
+        "line_vertex": 300,
+        "grid_vertex": 310,
+        "offset_right_m": 3.25,
+        "sector_vertices": [
+          3310,
+          1803
+        ]
+      },
+      "run": "anticlockwise, one-way: Alvarado eastbound, Lake Murray Blvd northeast, Jackson north, Navajo westbound, College southbound \u2014 outer carriageway on the wide roads, centre barrier on your left",
+      "ai": "ai/race_acw"
     }
   ],
+  "race": {
+    "_doc": "Ledger 0047 (Kevin 2026-10-10: three versions \u2014 the street loop + two one-way race layouts, barriers on the wide roads, Alvarado the entire street, race curbs + barriers along the inside of the sidewalks). Read by tools/barrier_bands.py (the declared band the gates consult), tools/author_race_blend.py (the authored strips/kerbs) and tools/layout_dummies.py (grid/pits). centre_runs are CLOSED vertex intervals into data/centerline.local.json; each end that touches a median island lands exactly on the island's nose vertex (butt joint), free ends taper. Every vertex in a run must be >= wide_threshold_m wide, off any island (except the shared nose) and clear of declared bridge spans \u2014 barrier_bands.py exits 1 otherwise. Q2 (the 13.5-17 m stretches) and Q7 (interior corners) are answered by editing centre_runs; Q6 by edge_mode.",
+    "wide_threshold_m": 17.0,
+    "centre_runs": [
+      [
+        780,
+        846
+      ],
+      [
+        1073,
+        1096
+      ],
+      [
+        1258,
+        1374
+      ],
+      [
+        1487,
+        1540
+      ],
+      [
+        1739,
+        2183
+      ],
+      [
+        2297,
+        4440
+      ]
+    ],
+    "barrier_profile_asset": "assets/models/concrete_barrier_4m.obj",
+    "barrier_height_m": 1.2,
+    "module_pitch_m": 4.04,
+    "edge_mode": "road",
+    "edge_inset_m": 0.82,
+    "edge_gaps": "declared bridge spans (data/bridge.spans.auto.json) only",
+    "mouths": "sealed",
+    "interior_corners": "continuous",
+    "kerbs": {
+      "min_turn_deg": 45,
+      "width_m": 1.0,
+      "height_m": 0.05,
+      "outer_extension_m": [
+        10,
+        30
+      ]
+    },
+    "grid_slots": 8,
+    "pit_slots": 8
+  },
   "lighting": {
     "presets": [
       "golden_hour",

@@ -669,7 +669,10 @@ def main():
     for ob in [o for o in bpy.data.objects if o.type == "MESH"]:
         me = ob.data
         # props / billboards carry authored UVs — don't flatten (freeway BUSHES/CHAINLINK too)
-        if not ob.name.upper().startswith(("PALM", "TREE", "SCRUB", "BUSHES", "CHAINLINK", "ROADTEXT")):
+        # ...and the race furniture (ledger 0047): the strips carry u = arc / 4.04 m along the
+        # vertical faces and the kerbs v = arc / 1 m — a top-down projection would smear them
+        if not ob.name.upper().startswith(("PALM", "TREE", "SCRUB", "BUSHES", "CHAINLINK", "ROADTEXT",
+                                           "1WALL_RACE", "1KERB_RACE")):
             planar_uv(me)
         bm = bmesh.new(); bm.from_mesh(me)
         # NEVER weld foliage/prop groups: their double-sided shells are duplicated face pairs at
@@ -790,29 +793,40 @@ def main():
         assert_under_cap(ob.name, len(me.vertices))
 
     # 3. AC dummies from the real centreline (local frame x=E,y=up,z=N -> Blender x=E,y=N,z=up = (x,z,y))
-    from scripts.geometry import dummies as dmod
-    local = json.loads((proj / "data" / "centerline.local.json").read_text())
-    cl = [tuple(p) for p in local["points_xyz_m"]]
-    widths = local["widths_m"]
-    n_pits = 8
-    # The start is a CONTRACT (0026): when the config declares start_arc_m, the grid goes there —
-    # Kevin: "i prefer starting on alvarado toward college" (station 3,467 on the Lake Murray
-    # loop); the straightest-window heuristic had parked it on Navajo. Declared beats derived.
-    placed = dmod.place_dummies(cl, widths, n_sectors=3, n_pits=n_pits,
-                                start_arc_m=cfg.get("start_arc_m"))
-    # start facing = travel direction pts[0]->pts[1], as a yaw about Blender Z(up)
-    tx, ty = cl[1][0] - cl[0][0], cl[1][2] - cl[0][2]          # Blender (E, N)
-    start_yaw = math.atan2(tx, ty)
+    #    MULTI-LAYOUT (ledger 0047; fleet/LAWS.md L8 as amended): with more than one layouts[] entry
+    #    the road kn5 carries NO AC_* nodes — every layout's grid / pits / timing gates ride in its
+    #    own nodes-only spawn kn5 (tools/layout_dummies.py -> data/dummies_<id>.json ->
+    #    scripts/ac/build_spawn_kn5.py), so no empties are created here and data/dummies.json is
+    #    written EMPTY. The exporter writes every object it finds, so nothing can bake what is not
+    #    there; verify_kn5 (a) fails a multi-layout road kn5 that carries a spawn node.
     FACING = ("AC_START", "AC_PIT", "AC_HOTLAP")
     dummies_out = {}
-    for name, (x, y, z) in placed.items():
-        e = bpy.data.objects.new(name, None)
-        e.empty_display_type = "ARROWS"; e.empty_display_size = 4.0
-        e.location = (x, z, y)                                  # local (E,up,N) -> Blender (E,N,up)
-        if any(name.startswith(p) for p in FACING):
-            e.rotation_euler = (0.0, 0.0, start_yaw)
-        bpy.context.scene.collection.objects.link(e)
-        dummies_out[name] = [round(x, 3), round(y, 3), round(z, 3)]
+    _layouts = cfg.get("layouts", []) or []
+    if len(_layouts) > 1:
+        print(f"[build_kn5_loop] multi-layout ({len(_layouts)} layouts): spawns ride in per-layout kn5s — "
+              f"no AC_* empties in the road scene, data/dummies.json = {{}}")
+    else:
+        from scripts.geometry import dummies as dmod
+        local = json.loads((proj / "data" / "centerline.local.json").read_text())
+        cl = [tuple(p) for p in local["points_xyz_m"]]
+        widths = local["widths_m"]
+        n_pits = 8
+        # The start is a CONTRACT (0026): when the config declares start_arc_m, the grid goes there —
+        # Kevin: "i prefer starting on alvarado toward college" (station 3,467 on the Lake Murray
+        # loop); the straightest-window heuristic had parked it on Navajo. Declared beats derived.
+        placed = dmod.place_dummies(cl, widths, n_sectors=3, n_pits=n_pits,
+                                    start_arc_m=cfg.get("start_arc_m"))
+        # start facing = travel direction pts[0]->pts[1], as a yaw about Blender Z(up)
+        tx, ty = cl[1][0] - cl[0][0], cl[1][2] - cl[0][2]          # Blender (E, N)
+        start_yaw = math.atan2(tx, ty)
+        for name, (x, y, z) in placed.items():
+            e = bpy.data.objects.new(name, None)
+            e.empty_display_type = "ARROWS"; e.empty_display_size = 4.0
+            e.location = (x, z, y)                                  # local (E,up,N) -> Blender (E,N,up)
+            if any(name.startswith(p) for p in FACING):
+                e.rotation_euler = (0.0, 0.0, start_yaw)
+            bpy.context.scene.collection.objects.link(e)
+            dummies_out[name] = [round(x, 3), round(y, 3), round(z, 3)]
     (proj / "data" / "dummies.json").write_text(json.dumps(dummies_out, indent=1))
 
     # 4. PBR materials (prefix -> texture set); export_kn5_addon re-derives shader from the same

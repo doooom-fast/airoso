@@ -51,6 +51,13 @@ So two zips exist per release, built from the same track folder:
 
 - **Full** (Kevin's own install; what he drove) — everything above included; `CREDITS.txt` lists
   the third-party content by origin. Private use only unless Kevin explicitly decides otherwise.
+- **Race layouts (ledger 0047, 2026-10-11)** — once the three-version build ships, the installed
+  folder carries `models_street.ini` + `models_race_cw.ini` + `models_race_acw.ini` and
+  `san_diego_lake_murray_race.kn5`. The K-rail barrier pack behind the race kn5 has an `UNRECORDED`
+  licence (`assets/licenses.json`), so `tools/pack_release.py` drops the race kn5, the two race
+  `models_*.ini`, their `ui/<id>/` and `<id>/` dirs and their spawn kn5s from the CC0 variant
+  (`strip_race_layouts`); the FULL (local) package carries all three. prodrive-server's catalog
+  (`layouts` text) still describes one layout — update it when the street-only CC0 zip is cut.
 - **CC0 variant** (what goes public by default) — `.bin` models stripped, `[TREES]` lines
   commented out with `extension/trees/README.txt` telling players how to drop in models they own;
   `tools/repack_kn5_textures.py` swaps the two mined texture pairs for CC0 bytes under the same

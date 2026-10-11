@@ -155,7 +155,10 @@ Four build pipelines existed. V3 keeps one flow with three verbs, matching REALI
   `build_loop_blend.py` factory-resets the scene today (k10-sd-v021 line 758) — any hand surgery
   is destroyed by a rebuild. Freezing regeneration of authored layers is rule #1 of V3.
 - **`ship`** — prep (AC naming, 65k-vert splits) → kn5 export → **all four gates** →
-  install into AC → tell Kevin it's ready. One command, exits nonzero on any gate.
+  install into AC → tell Kevin it's ready. One command, exits nonzero on any gate. Since
+  2026-10-11 (ledger 0047) the one command builds **three versions** from one `loop.blend`: the
+  prep is spawn-free, the prepped scene is split into road / race-furniture / spawn scenes, each
+  exported to its own kn5, and every layout is gated on the kn5 set it loads (`tools/ship_sd.sh`).
 
 ### Hazards checklist (from recon, all verified)
 
@@ -290,6 +293,25 @@ carries both; then Kevin's first-drive acceptance is the M1 plate (70th/Alvarado
 RIGHT-pointing arrow straight through the windscreen. Six mainline plates first; the fourteen
 connector plates ride on `defaults.include_connectors`.
 
+**Three versions — the street loop plus two one-way race layouts (ledger 0047, 2026-10-11).**
+Kevin: "Actually make it three versions: the regular one, and then the two tracks. The tracks
+will get additional race curbs and barriers along the inside of the sidewalks." Built as tools and
+wired, not shipped: `layouts[]` = `street` / `race_cw` / `race_acw` (start on Alvarado for all
+three, line v300, each race grid in its own lane facing its way); ONE road kn5 with no `AC_*`
+nodes + ONE race-furniture kn5 (`1WALL_race_*` centre K-rail chain on the ≥ 17 m roads
+nose-to-nose with the median islands and never on Alvarado, kerb-line strips on both curb faces,
+`1KERB_race_*` kerbs at the five corners — loaded by the two race layouts only) + ONE nodes-only
+spawn kn5 per layout. Tools: `tools/barrier_bands.py` (the declaration), `tools/layout_dummies.py`,
+`tools/author_race_furniture_blend.py` + `tools/race_furniture.py`, `tools/verify_race.py`,
+`tools/split_exports_blend.py`, `tools/plot_race_furniture.py`; engine: `kn5_to_gate_obj --kn5`
+repeatable, the prep's multi-layout guard + UV-keep (mirrored into engine-july), the exporter's
+`--blend` / `--out`, `build_spawn_kn5`, airoso's `track_folder` / `verify_kn5` now the packer and
+verifier of record; gates per layout (GATES-CHANGELOG 2026-10-11). Dry-run on a scratch copy
+end to end up to the exporter; the street layout's gate numbers are unchanged. **Status: waits on
+Kevin's Q1 / Q2 / Q6 / Q7 (geometry) and Q9 (the L8 wording) in ledger 0047 — then one
+`bash tools/ship_sd.sh` run builds and installs all three.** No tier is claimed; T4 is not claimed
+by a generated AI line (0023 stays open). The L8 law text is NOT edited until Kevin signs it off.
+
 ---
 
 ## Decisions Kevin owns
@@ -304,6 +326,9 @@ connector plates ride on `defaults.include_connectors`.
    vs LFS. (Plain git is fine for a private repo; LFS if clone size starts to hurt.)
 5. The ~3.5 GB k10-colorado .blend workspaces — archive location (external disk / NAS)?
 6. gala-seed / k10-1978 external contract — confirm "park in place, clearly marked" is right.
+7. **The L8 wording amendment** (ledger 0047, Q9): "layouts share one road; a layout may ADD kn5s
+   beside it (spawn, furniture), never alter the shared one". Nothing in `fleet/LAWS.md` changes
+   until this is signed off; the three-version build already follows the amended reading.
 
 ---
 

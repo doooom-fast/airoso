@@ -23,9 +23,24 @@ Thresholds (physical rationale, tune at the top):
                         curves precisely so this never happens on the carriageway
   OBST_CLEAR_M   0.25   anything rising this far above deck inside the corridor is a hit hazard
 
-Run:  python -m scripts.geometry.drive_test tracks/<slug>
+Run:  python -m scripts.geometry.drive_test tracks/<slug> [--layout <id>]...
 Writes data/drive_test.json, prints a per-problem report, exits 1 on FAIL (gate builds on it).
 Pure stdlib; ~1-3 min for a 25 km lap.
+
+LAYOUTS (ledger 0047). A track with more than one ``layouts[]`` entry is driven ONCE PER LAYOUT
+(``run(project, layout)``; the CLI runs every entry, or the ``--layout`` ids given): a
+``direction: reverse`` layout walks the lap backwards in memory (points, widths, divider bands,
+bridge spans — station 0 stays the seam, negative offsets stay the right-hand side of travel
+because the normal is recomputed from the reversed tangent); a ``kind: race`` layout is judged on
+``data/track.race.obj`` (the kn5 set it actually loads: road + race furniture — a DOT, never
+``track_race.obj``: the loop prep merges every ``data/track_*.obj`` into the scene) and, with
+``race_furniture: true``, consults the declared barrier bands (``data/barrier_bands.json``,
+scripts/geometry/median_zone.py kind 'barrier'): the wheel paths move into the lane between the
+divider face and the kerb-line barrier face, the obstruction disc scans that lane, and every
+declared barrier station must carry a 1WALL (``barrier_missing``, gated at 0 — a declared but
+unbuilt chain fails, so the band is never a bypass). Each layout writes
+``data/drive_test.<id>.json``; ``data/drive_test.json`` becomes the per-layout summary. A
+single-layout track is byte-for-byte today's gate.
 """
 
 from __future__ import annotations
@@ -59,6 +74,12 @@ OBST_HEIGHT_M = 1.8          # car-strike ceiling: AC cars are ~1.3 m tall; wall
 STEP_M = 1.0                 # sampling step along the lap
 WHEEL_HALF_TRACK = 0.75      # wheel offset around each driving line
 CELL = 3.0                   # spatial hash cell (m)
+
+DIVIDER_CLEAR_M = 0.4        # the inner wheel (or scan edge) clears a divider/barrier FACE by this
+BARRIER_GAP_MAX_M = 4.04      # one module: consecutive 1WALL hits on a declared band further apart = missing
+BARRIER_PROBE_M = 0.3         # lateral probe spread on a declared band (the band's own reach is 0.935)
+NEAR_DIVIDER_M = 7.0          # the 6.3 m centre disc reaches a strip end / island nose from this far out
+RACE_KINDS = ("island", "barrier")
 
 DRIVABLE = ("1ROAD", "1KERB", "1RUNOFF", "1LAWN", "1GRASS")   # car can roll on these
 SOFT = ("1GRASS", "1LAWN")   # ...but these mid-lane on TOP = ground through road
@@ -197,7 +218,47 @@ class TriField:
         return hits
 
 
-def run(project_dir: str | Path) -> dict:
+def _layout_of(cfg: dict, layout) -> dict | None:
+    """Resolve ``layout`` (None | id | dict) against cfg['layouts'] — None = the single-layout gate."""
+    if layout is None:
+        return None
+    if isinstance(layout, dict):
+        return layout
+    for lo in cfg.get("layouts", []) or []:
+        if isinstance(lo, dict) and lo.get("id") == layout:
+            return lo
+    raise SystemExit(f"drive_test: layout {layout!r} is not declared in track.config.json layouts[] "
+                     f"({[lo.get('id') for lo in cfg.get('layouts', []) or []]})")
+
+
+def _lane_geometry(w: float, dh: float, inset: float):
+    """Lateral bounds of the lane a layout drives at a station, as (lo_s, hi_s, lo_w, hi_w):
+    the SCAN band (clear of the divider face / the kerb-line barrier face by DIVIDER_CLEAR_M) and the
+    wheel-LINE band (the scan band minus the wheel's own half-track, so the wheel itself clears the
+    face). ``dh`` = divider half-width (island or centre chain) at the centreline, ``inset`` = the
+    kerb-line barrier's lane inset from the lip (0 where it is gapped or stands on the walk).
+    None = no divider and no inset: full width, today's centred lines verbatim. A divider whose
+    remaining lane is under 2 m wide is treated as today (no lane: the centred sweep)."""
+    if dh <= 0 and inset <= 0:
+        return None
+    if inset > 0:
+        hi_s = w / 2 - inset - DIVIDER_CLEAR_M
+        hi_w = hi_s - WHEEL_HALF_TRACK
+    else:
+        hi_s = hi_w = w / 2 - 0.5
+    if dh > 0:
+        lo_s = dh + DIVIDER_CLEAR_M
+        lo_w = lo_s + WHEEL_HALF_TRACK
+        if hi_s - lo_s < 2.0:
+            return None
+    else:
+        lo_s, lo_w = -hi_s, -hi_w          # symmetric: the whole street between the two edge strips
+        if hi_w <= 0.8:
+            return None
+    return lo_s, hi_s, lo_w, hi_w
+
+
+def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     import time as _tmod
     _t0 = _tmod.time()
     def _phase(_label):
@@ -208,6 +269,21 @@ def run(project_dir: str | Path) -> dict:
     project = Path(project_dir)
     data = project / "data"
     cfg = json.loads((project / "track.config.json").read_text())
+    # LAYOUT (0047): direction, kind and furniture come from the declared layout; the OBJ is the
+    # gate OBJ of the kn5 set that layout loads (kn5_to_gate_obj --kn5 main [--kn5 race]).
+    _lo = _layout_of(cfg, layout)
+    lid = str(_lo.get("id")) if _lo else None
+    direction = str(_lo.get("direction", "forward")) if _lo else "forward"
+    if direction not in ("forward", "reverse"):
+        raise SystemExit(f"drive_test: layout {lid!r} direction must be forward|reverse, got {direction!r}")
+    reverse = direction == "reverse"
+    race = bool(_lo.get("race_furniture")) if _lo else False
+    kind = str(_lo.get("kind", "race" if race else "street")) if _lo else "street"
+    obj_name = obj or ("track.race.obj" if kind == "race" else "track.obj")
+    if kind == "race" and not (data / obj_name).exists():
+        raise SystemExit(f"drive_test: layout {lid!r} is kind 'race' but data/{obj_name} does not exist — "
+                         f"a race layout is judged on the kn5 set it loads (main + race furniture), never on "
+                         f"track.obj alone (kn5_to_gate_obj --kn5 main --kn5 race --out data/track.race.obj)")
     fin = data / "finished_centerline.json"
     gate_cl = data / "gate_centerline.json"
     if gate_cl.exists():
@@ -225,7 +301,12 @@ def run(project_dir: str | Path) -> dict:
         mirror = -1.0 if cfg.get("mirror_x", False) else 1.0
         lc = json.loads((data / "centerline.local.json").read_text())
         pts = [(mirror * p[0], p[1], p[2]) for p in lc["points_xyz_m"]]
-    widths = lc["widths_m"]
+    widths = list(lc["widths_m"])
+    if reverse:
+        # the lap walked backwards: station 0 stays the seam (a closed lap repeats v0), the tangent
+        # flips, so the right-hand side of travel (negative offsets) is the other carriageway
+        pts = pts[::-1]
+        widths = widths[::-1]
 
     # declared bridge spans: parapet/railing furniture INSIDE these is expected (a bridge with no
     # railing is the defect, not the railing) — obstruction hits on *bridge-named meshes there are skipped
@@ -268,12 +349,12 @@ def run(project_dir: str | Path) -> dict:
 
     _track_groups: list = []
     _culled = 0
-    for objfile in ("track.obj", "environment.obj"):
+    for objfile in (obj_name, "environment.obj"):
         p = data / objfile
         if not p.exists():
             continue
         verts, groups = _load_obj(p)
-        if objfile == "track.obj":
+        if objfile == obj_name:
             _track_groups = groups
         for grp in groups:
             up = grp["name"].upper()
@@ -318,6 +399,8 @@ def run(project_dir: str | Path) -> dict:
     for i in range(1, n):
         st.append(st[-1] + math.hypot(pts[i][0] - pts[i - 1][0], pts[i][2] - pts[i - 1][2]))
     lap = st[-1]
+    if reverse:
+        spans = [(lap - b, lap - a) for a, b in spans]
 
     _fzp = project / "data" / "flat_zones.json"
     _fzones = json.loads(_fzp.read_text()) if _fzp.exists() else []
@@ -354,11 +437,59 @@ def run(project_dir: str | Path) -> dict:
     # centre. The step/kink memory resets at each island boundary so the lateral re-seat is not
     # scored as a bump. Nothing is skipped — the island itself is gated by audit (curb must be
     # 1KERB, deck 1GRASS) and the lane is swept in full.
+    # BARRIER BANDS (0047): a race layout also reads the declared centre chain (0.335 m half) and
+    # the kerb-line barrier inset as dividers of a second kind; the street layout never does, so a
+    # track without barrier_bands.json (or a layout without race_furniture) is today's gate exactly.
     from scripts.geometry.median_zone import MedianZone
     _zone = MedianZone.load(project)
+    if _zone and reverse:
+        _zone = _zone.reversed()
     if _zone:
-        print(f"  (median island on {_zone.n_island} verts — wheel paths swept in the driven lane there)")
-    _prev_island = False
+        print(f"  (median island on {_zone.n_island} verts — wheel paths swept in the driven lane there"
+              + (f"; barrier bands: centre chain on {_zone.n_barrier} verts, kerb-line strip on "
+                 f"{_zone.n_edge} verts — lane = divider face .. barrier face, presence gated" if race else "")
+              + ")")
+    if lid:
+        print(f"  layout {lid}: direction {direction}, kind {kind}, furniture {'race' if race else 'none'}, "
+              f"OBJ data/{obj_name}")
+
+    def _divider_at(j):
+        """(divider half-width, kerb-line inset) at mainline vertex j for THIS layout's kinds."""
+        if _zone is None or not (0 <= j < n):
+            return 0.0, 0.0
+        dh = _zone.island_half_at(j)
+        if race:
+            return max(dh, _zone.barrier_half_at(j)), _zone.edge_inset_at(j)
+        return dh, 0.0
+
+    def _near_divider(j, s_at):
+        """the strongest divider/inset within NEAR_DIVIDER_M (along the line) of station s_at"""
+        dh = ins = 0.0
+        k = j
+        while k >= 0 and st[k] >= s_at - NEAR_DIVIDER_M:
+            d1, i1 = _divider_at(k); dh = max(dh, d1); ins = max(ins, i1); k -= 1
+        k = j + 1
+        while k < n and st[k] <= s_at + NEAR_DIVIDER_M:
+            d1, i1 = _divider_at(k); dh = max(dh, d1); ins = max(ins, i1); k += 1
+        return dh, ins
+
+    _bm_hits: dict = {"centre": [], "edge_L": [], "edge_R": []}   # (station, hit) per declared band
+
+    def _bm_probe(kind, s_at, cx, cz, nx_, nz_, lat, deck):
+        """does a 1WALL stand on the declared band at lateral `lat` of this station?"""
+        hit = False
+        for dl in (-BARRIER_PROBE_M, 0.0, BARRIER_PROBE_M):
+            px_, pz_ = cx + nx_ * (lat + dl), cz + nz_ * (lat + dl)
+            d_here, _ = surface.top_at(px_, pz_, deck)
+            if d_here is None:
+                d_here = deck
+            h_, own_ = obstacle.top_at(px_, pz_, d_here + 0.6, 1.5)
+            if own_ is not None and str(own_).upper().startswith("1WALL") and h_ > d_here + OBST_CLEAR_M:
+                hit = True
+                break
+        _bm_hits[kind].append((round(s_at, 1), hit))
+
+    _prev_lane = None
     prev_h = [None] * 10
     prev_slope = [None] * 10
     off_pavement = 0
@@ -389,18 +520,29 @@ def run(project_dir: str | Path) -> dict:
         # un-swept notches and read grass 'mid-lane'. Cars travel the center swath; test THAT.
         lane_half = min(max(w / 2 - 0.4, 0.8), 6.0)
         lines = (-(w / 2 - 0.5), -w / 3, 0.0, w / 3, (w / 2 - 0.5))   # edges included
-        _isl = _zone.island_half_at(i) if _zone else 0.0
-        _on_island = _isl > 0 and (w / 2 - 0.5) - (_isl + 0.4) >= 2.0
-        if _on_island:
-            # driven lane = right of the island (negative offsets are the right-hand side here)
-            lo, hi = _isl + 0.4, w / 2 - 0.5
+        _clamp_c, _clamp_r = 0.0, lane_half       # today's clamp: +/- lane_half about the centreline
+        _dh, _inset = _divider_at(i)
+        _lane = _lane_geometry(w, _dh, _inset)
+        if _lane is not None:
+            # driven lane = right of the divider (negative offsets are the right-hand side here) and
+            # inside the kerb-line barrier; edges, thirds, centre of THAT lane. The inner wheel clears
+            # the divider face by DIVIDER_CLEAR_M (the old isl + 0.4 LINE put the wheel 0.35 m inside
+            # the island curb) and the clamp is lane-relative (the old +/-6 m-of-centreline clamp
+            # collapsed seven of ten island paths onto 6.0 m and never swept the outer lane).
+            lo, hi = _lane[2], _lane[3]
             mid = (lo + hi) / 2.0
             third = (hi - lo) / 3.0
             lines = (-hi, -(mid + third / 2), -mid, -(mid - third / 2), -lo)
-        if _on_island != _prev_island:
+            _clamp_c, _clamp_r = -mid, min((hi - lo) / 2.0, 6.0)
+        _lane_key = (round(_lane[2], 3), round(_lane[3], 3)) if _lane is not None else None
+        if ((_lane_key is None) != (_prev_lane is None)) or (
+                _lane_key is not None and _prev_lane is not None
+                and (abs(_lane_key[0] - _prev_lane[0]) > 0.5 or abs(_lane_key[1] - _prev_lane[1]) > 0.5)):
+            # the lane moved (island/chain boundary, a width step, a bridge gap in the edge strip):
+            # the lateral re-seat is not a bump
             prev_h = [None] * 10
             prev_slope = [None] * 10
-            _prev_island = _on_island
+        _prev_lane = _lane_key
         # edge paths (|line| = w/2-0.5) DETECT holes/ground-through at the pavement lip;
         # smoothness (steps/kinks) gates only on INTERIOR paths — nobody laps on the hinge
         edge_line = {0, len(lines) - 1}
@@ -426,8 +568,8 @@ def run(project_dir: str | Path) -> dict:
         deck_c, _ = surface.top_at(x, z, y_ref)
         for pi, off in enumerate(paths):
             is_edge = (pi // 2) in edge_line
-            if abs(off) > lane_half:
-                off = math.copysign(lane_half, off)
+            if abs(off - _clamp_c) > _clamp_r:
+                off = _clamp_c + math.copysign(_clamp_r, off - _clamp_c)
             px, pz = x + nx * off, z + nz * off
             h, owner = surface.top_at(px, pz, y_ref)
             if h is None:
@@ -480,19 +622,24 @@ def run(project_dir: str | Path) -> dict:
             # MEDIAN ISLAND (0037): the island's barrier and planting stand at the centreline by
             # design — scan the driven lane (right of the island) instead of a disc on the centre.
             _ox, _oz, _orad = x, z, min(lane_half, 6.0) + 0.3
-            # transition band: within 2 stations of an island the centre disc still reaches the
-            # nose (12 SCRUB "obstructions" at the island/gap boundaries, 2026-10-08) — scan the
-            # lane there too, using the neighbouring island's half-width
-            _near_isl = 0.0
-            if _zone and not _on_island:
-                _near_isl = max(_zone.island_half_at(j) for j in range(i - 2, i + 3))
-            if not _on_island and _near_isl > 0 and (w / 2 - 0.5) - (_near_isl + 0.4) >= 2.0:
-                _on_island_scan, _isl_scan = True, _near_isl
-            else:
-                _on_island_scan, _isl_scan = _on_island, _isl
-            if _on_island_scan:
-                _isl = _isl_scan
-                _lo, _hi = _isl + 0.4, w / 2 - 0.5
+            # transition band: within NEAR_DIVIDER_M of a divider/edge station the centre disc still
+            # reaches the island nose or the strip's tapered end (12 SCRUB "obstructions" at the
+            # island/gap boundaries, 2026-10-08, at +/-2 vertices; the 6.3 m disc reaches a 1WALL
+            # end from 6 m out) — scan the lane there too, with the neighbour's geometry
+            _lane_scan = _lane
+            if _zone is not None:
+                # a station with no divider of its own borrows the nearest one's (today's island
+                # transition rule); a station already beside a kerb-line strip but short of the
+                # chain's free end borrows the chain's half-width the same way
+                _ndh, _nins = _near_divider(i, s)
+                _sdh = _dh if _dh > 0 else _ndh
+                _sins = _inset if _inset > 0 else _nins
+                if _sdh > _dh or _sins > _inset:
+                    _lane_scan = _lane_geometry(w, _sdh, _sins)
+            if _lane_scan is not None:
+                # scan band: inner edge DIVIDER_CLEAR_M - 0.3 = 0.1 m off the divider face, outer
+                # edge 0.1 m off the kerb-line barrier face (or 0.2 m inside the lip)
+                _lo, _hi = _lane_scan[0], _lane_scan[1]
                 _mid = (_lo + _hi) / 2.0
                 _ox, _oz = x + nx * (-_mid), z + nz * (-_mid)
                 _orad = min((_hi - _lo) / 2.0, 6.0) + 0.3
@@ -503,7 +650,41 @@ def run(project_dir: str | Path) -> dict:
                     continue                       # declared-span railing = required furniture
                 problems["obstructions"].append((round(s, 1), name))
                 obst_names[name] += 1
+            # BARRIER PRESENCE (0047, race layouts): every station the bands declare a strip on
+            # must carry a 1WALL there — the chain at the centreline, the kerb-line strip at
+            # half_w + edge_centre_from_lip on both sides. Declared bridge spans are gapped by
+            # declaration (edge_strip 0) and stay covered by the `guarded` drop probe.
+            if race and _zone is not None:
+                # the segment between two consecutive vertices is declared when BOTH declare it:
+                # the authored strip starts at the first declared ring, so the 3 m before it
+                # (stations this loop assigns to vertex i) carry nothing by construction
+                if _zone.barrier_half_at(i) > 0 and _zone.barrier_half_at(i - 1) > 0:
+                    _bm_probe("centre", s, x, z, nx, nz, 0.0, deck_c)
+                if _zone.edge_strip_at(i) and _zone.edge_strip_at(i - 1):
+                    _ec = w / 2.0 + _zone.edge_centre_from_lip
+                    _bm_probe("edge_L", s, x, z, nx, nz, +_ec, deck_c)
+                    _bm_probe("edge_R", s, x, z, nx, nz, -_ec, deck_c)
         s += STEP_M
+
+    # BARRIER CONTINUITY: a declared station is MISSING when no 1WALL hit lies within half a
+    # module (BARRIER_GAP_MAX_M / 2) of it along the band — seams between strip objects pass, a
+    # hole longer than one module does not. Gate at 0: a declared-but-unbuilt chain must fail, or
+    # the audit-D / lane exemptions on the band would be a bypass.
+    barrier_missing = []
+    for _bk, _rows in _bm_hits.items():
+        _rows.sort()
+        _hit_s = [s_ for s_, h_ in _rows if h_]
+        _hp = 0
+        for s_, h_ in _rows:
+            if h_:
+                continue
+            while _hp < len(_hit_s) and _hit_s[_hp] < s_ - BARRIER_GAP_MAX_M / 2.0:
+                _hp += 1
+            if _hp < len(_hit_s) and _hit_s[_hp] <= s_ + BARRIER_GAP_MAX_M / 2.0:
+                continue
+            barrier_missing.append((s_, _bk))
+    problems["barrier_missing"] = barrier_missing
+    problems["barrier_stations"] = sum(len(r) for r in _bm_hits.values())
 
     # EXCURSION SWEEPS (Kevin: "your tests need to drive the car off the road and back onto it").
     # Every ~150 m the virtual car leaves the pavement laterally, crosses the shoulder onto the
@@ -692,6 +873,8 @@ def run(project_dir: str | Path) -> dict:
         try:
             ej = json.loads(ep.read_text())
             zr = ej.get("z_raw_m") or []
+            if reverse:
+                zr = zr[::-1]
             e0 = 0.0
             _lc9 = data / "centerline.local.json"
             if _lc9.exists():
@@ -715,8 +898,22 @@ def run(project_dir: str | Path) -> dict:
     # collapse obstruction runs (one wall = many stations)
     per_km = lap / 1000
     _phase("post-sweep passes")
+    _bm_runs = []          # collapse the missing stations into runs for the report
+    for s_, k_ in sorted(barrier_missing, key=lambda r: (r[1], r[0])):
+        if _bm_runs and _bm_runs[-1][2] == k_ and s_ - _bm_runs[-1][1] <= STEP_M + 1e-6:
+            _bm_runs[-1][1] = s_
+        else:
+            _bm_runs.append([s_, s_, k_])
     report = {
         "lap_m": round(lap, 1),
+        "layout": lid,
+        "direction": direction,
+        "kind": kind,
+        "race_furniture": race,
+        "obj": obj_name,
+        "barrier_stations": problems["barrier_stations"],
+        "barrier_missing": len(barrier_missing),
+        "barrier_missing_runs": [(a, b, k) for a, b, k in sorted(_bm_runs, key=lambda r: -(r[1] - r[0]))[:12]],
         "soft_top_in_lane": len(problems["soft_top_in_lane"]),
         "off_pavement_stations": off_pavement,
         "severe_steps": len(problems["severe_steps"]),
@@ -743,7 +940,7 @@ def run(project_dir: str | Path) -> dict:
             "obstructions": problems["obstructions"][:16],
         },
     }
-    (data / "drive_test.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
+    out_name = f"drive_test.{lid}.json" if lid else "drive_test.json"
 
     # Gate philosophy: ABSOLUTE ZERO for the things no driver tolerates (ground through the lane,
     # solid objects in the corridor); RATES vs the driver-approved baseline for surface texture
@@ -775,9 +972,13 @@ def run(project_dir: str | Path) -> dict:
             or report["obstruction_stations"] > 0
             or report["undrivable_corners"] > 0
             or report["floating_furniture"] > 0
+            or report["barrier_missing"] > 0
             or severe_per_km > 12.0
             or report["steps_per_km"] > _bump_limit)
-    print(f"DRIVE TEST {cfg['slug']}  lap {lap/1000:.2f} km  (10 wheel paths @ {STEP_M} m)")
+    report["fail"] = fail
+    (data / out_name).write_text(json.dumps(report, indent=1), encoding="utf-8")
+    print(f"DRIVE TEST {cfg['slug']}{(' [' + lid + ' ' + direction + ' ' + kind + ']') if lid else ''}  "
+          f"lap {lap/1000:.2f} km  (10 wheel paths @ {STEP_M} m)")
     print(f"  ground on top mid-lane : {report['soft_top_in_lane']}"
           + (f"   [{off_pavement} station(s) skipped: no pavement — off the stage end]" if off_pavement else ""))
     print(f"  floating furniture (walls/fences off support): {report['floating_furniture']} "
@@ -799,15 +1000,100 @@ def run(project_dir: str | Path) -> dict:
         print(f"    worst excursion drop: {r}")
     print(f"  obstructed stations    : {report['obstruction_stations']}"
           + (f"  {report['obstruction_by_mesh']}" if obst_names else ""))
+    if race:
+        print(f"  declared barrier stations without a 1WALL : {report['barrier_missing']} "
+              f"(of {report['barrier_stations']} probed; gap tolerance {BARRIER_GAP_MAX_M} m)"
+              + (f"  worst runs {report['barrier_missing_runs'][:3]}" if barrier_missing else ""))
     for label, rows in (("soft_top", report["worst"]["soft_top"]),
                         ("severe", report["worst"]["severe_steps"]),
                         ("obstruction", report["worst"]["obstructions"][:8])):
         for r in rows[:6]:
             print(f"    worst {label}: {r}")
-    print(f"  => {'FAIL' if fail else 'PASS'}   (data/drive_test.json)")
+    print(f"  => {'FAIL' if fail else 'PASS'}   (data/{out_name})")
     return {**report, "fail": fail}
 
 
+SUMMARY_KEYS = ("fail", "direction", "kind", "race_furniture", "obj", "lap_m", "soft_top_in_lane",
+                "obstruction_stations", "barrier_missing", "barrier_stations", "floating_furniture",
+                "daylight_gaps", "excursion_drops", "undrivable_corners", "severe_steps", "severe_per_km",
+                "steps_per_km", "kinks_per_km")
+
+
+def write_summary(project_dir: str | Path, ran: list[str]) -> dict:
+    """data/drive_test.json for a multi-layout track: one row per declared layout whose
+    drive_test.<id>.json exists (this invocation's and earlier ones), `fail` = any row fails.
+    Per-layout files of ids no longer declared are removed (a stale verdict is not a verdict)."""
+    project = Path(project_dir)
+    data = project / "data"
+    cfg = json.loads((project / "track.config.json").read_text())
+    ids = [str(lo.get("id")) for lo in cfg.get("layouts", []) or [] if isinstance(lo, dict) and lo.get("id")]
+    for old in sorted(data.glob("drive_test.*.json")):
+        x = old.name[len("drive_test."):-len(".json")]
+        if x in ids:
+            continue
+        try:
+            mine = json.loads(old.read_text(encoding="utf-8")).get("layout") == x
+        except (json.JSONDecodeError, OSError, AttributeError):
+            mine = False
+        if mine:                      # a per-layout report of a retired id — not a foreign file
+            old.unlink()
+            print(f"  removed stale data/{old.name} (no layout {x!r})")
+        else:
+            print(f"  (data/{old.name} is not a per-layout report of this gate — left alone)")
+    rows = {}
+    for lid in ids:
+        p = data / f"drive_test.{lid}.json"
+        if not p.exists():
+            rows[lid] = {"fail": None, "note": "not run"}
+            continue
+        r = json.loads(p.read_text(encoding="utf-8"))
+        rows[lid] = {k: r.get(k) for k in SUMMARY_KEYS}
+        rows[lid]["file"] = p.name
+    summary = {
+        "multi_layout": True,
+        "_doc": "per-layout drive tests (ledger 0047): every layouts[] id is driven on the kn5 set it "
+                "loads; the full report of each is data/drive_test.<id>.json. fail = any layout fails; "
+                "a layout not yet run has fail null.",
+        "ran": list(ran),
+        "layouts": rows,
+        "fail": any(r.get("fail") for r in rows.values()),
+        "not_run": [lid for lid, r in rows.items() if r.get("fail") is None],
+    }
+    (data / "drive_test.json").write_text(json.dumps(summary, indent=1), encoding="utf-8")
+    verdict = " ".join(f"{lid}={'FAIL' if r.get('fail') else ('PASS' if r.get('fail') is False else '-')}"
+                       for lid, r in rows.items())
+    print(f"DRIVE TEST SUMMARY {cfg.get('slug', '')}: {verdict}   (data/drive_test.json)")
+    return summary
+
+
+def main(argv: list[str] | None = None) -> int:
+    argv = list(sys.argv[1:] if argv is None else argv)
+    only: list[str] = []
+    project = "."
+    i = 0
+    while i < len(argv):
+        if argv[i] == "--layout":
+            only.append(argv[i + 1]); i += 2
+        else:
+            project = argv[i]; i += 1
+    cfg = json.loads((Path(project) / "track.config.json").read_text())
+    layouts = [lo for lo in cfg.get("layouts", []) or [] if isinstance(lo, dict) and lo.get("id")]
+    if not only and len(layouts) <= 1:
+        r = run(project)                       # single layout: today's gate, today's file
+        return 1 if r["fail"] else 0
+    ids = [str(lo["id"]) for lo in layouts]
+    for x in only:
+        if x not in ids:
+            raise SystemExit(f"drive_test: --layout {x!r} is not declared ({ids})")
+    todo = only or ids
+    any_fail = False
+    for lid in todo:
+        r = run(project, lid)
+        any_fail = any_fail or bool(r["fail"])
+        print()
+    write_summary(project, todo)
+    return 1 if any_fail else 0
+
+
 if __name__ == "__main__":
-    r = run(sys.argv[1] if len(sys.argv) > 1 else ".")
-    sys.exit(1 if r["fail"] else 0)
+    sys.exit(main())

@@ -98,3 +98,42 @@ def test_ground_check_full_fidelity_still_gates_with_objs():
     objp.write_text("\n".join(out) + "\n", encoding="utf-8")
     r = check(d)
     assert r["fail"] is True and r["reasons"]
+
+
+# --- ledger 0047: the two prep hunks (pinned on the source; the prep itself runs only in Blender) ---
+
+_ENG_PREP = Path("C:/Users/Owner/Documents/GitHub/engine-july/scripts/ac/build_kn5_loop.py")
+
+
+def _prep_sources():
+    srcs = [(ROOT / "scripts" / "ac" / "build_kn5_loop.py").read_text(encoding="utf-8")]
+    if _ENG_PREP.exists():
+        srcs.append(_ENG_PREP.read_text(encoding="utf-8"))
+    else:
+        print("  (engine-july not on this box — only airoso's copy checked)")
+    return srcs
+
+
+def test_planar_uv_skips_the_race_furniture():
+    """The strips carry u = arc / 4.04 m on their vertical faces and the kerbs v = arc / 1 m; the
+    prep's top-down planar_uv would smear both. Both copies of the prep (airoso + engine-july)."""
+    import re
+    for s in _prep_sources():
+        m = re.search(r"if not ob\.name\.upper\(\)\.startswith\(\((.*?)\)\):\s*\n\s*planar_uv\(me\)", s, re.S)
+        assert m, "the planar_uv call site with its skip tuple"
+        tup = m.group(1)
+        assert '"1WALL_RACE"' in tup and '"1KERB_RACE"' in tup, tup
+
+
+def test_multi_layout_prep_bakes_no_spawn_dummies():
+    """With more than one layouts[] entry the road kn5 carries NO AC_* nodes (L8 as amended): the
+    prep writes data/dummies.json = {} and creates no empties; single-layout tracks keep today's path."""
+    for s in _prep_sources():
+        a = s.index("# 3. AC dummies from the real centreline")
+        b = s.index('(proj / "data" / "dummies.json").write_text(json.dumps(dummies_out, indent=1))', a)
+        step = s[a:b]
+        assert 'if len(_layouts) > 1:' in step and "dummies_out = {}" in step
+        guard = step[step.index('if len(_layouts) > 1:'):step.index("else:")]
+        assert "bpy.data.objects.new" not in guard and "place_dummies" not in guard, "the guard must create nothing"
+        rest = step[step.index("else:"):]
+        assert "place_dummies" in rest and "bpy.data.objects.new" in rest, "today's single-layout path stays"

@@ -21,6 +21,7 @@ Content Manager never reads the SVG.
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import re
 import shutil
@@ -77,6 +78,36 @@ def disable_treefx(ini: Path) -> None:
     ini.write_text(s[:sec.start(2)] + body + s[sec.end(2):], encoding="utf-8")
 
 
+def strip_race_layouts(folder: Path, cfg_path: Path = TRACK_DIR / "track.config.json") -> list[str]:
+    """CC0 variant: drop the race layouts and the race-furniture kn5. The K-rail pack the strips sweep
+    (assets/models/concrete_barrier_4m.obj + its two PNGs) has an UNRECORDED licence
+    (assets/licenses.json, ledger 0047 Q10), so san_diego_lake_murray_race.kn5, every
+    models_<id>.ini / ui/<id>/ / <id>/ / <slug>__<id>.kn5 of a layout with race_furniture: true leave
+    the public package; the street layout stays. Returns the relative paths removed. Refuses to leave
+    the folder without a layout."""
+    layouts = json.loads(cfg_path.read_text(encoding="utf-8")).get("layouts", []) or []
+    race_ids = [str(lo["id"]) for lo in layouts if isinstance(lo, dict) and lo.get("race_furniture")]
+    keep_ids = [str(lo["id"]) for lo in layouts if isinstance(lo, dict) and not lo.get("race_furniture")]
+    removed: list[str] = []
+
+    def _rm(p: Path):
+        if p.is_dir():
+            shutil.rmtree(p)
+        elif p.exists():
+            p.unlink()
+        else:
+            return
+        removed.append(str(p.relative_to(folder)).replace("\\", "/"))
+
+    _rm(folder / f"{SLUG}_race.kn5")
+    for lid in race_ids:
+        for rel in (f"models_{lid}.ini", f"ui/{lid}", lid, f"{SLUG}__{lid}.kn5"):
+            _rm(folder / rel)
+    if race_ids and not any((folder / f"models_{lid}.ini").exists() for lid in keep_ids):
+        raise SystemExit(f"[pack] cc0: dropping {race_ids} would leave no layout ini — refusing")
+    return removed
+
+
 def zip_folder(folder: Path, out: Path) -> None:
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as z:
         for root, _, files in os.walk(folder):
@@ -113,6 +144,8 @@ def main():
 
     cc0 = stage / "cc0" / SLUG
     shutil.copytree(full, cc0)
+    for rel in strip_race_layouts(cc0):
+        print(f"[pack] cc0: dropped {rel} (race layouts stay in the FULL package until the K-rail pack's licence is recorded — 0047 Q10)")
     for b in (cc0 / "extension" / "trees").glob("*.bin"):
         b.unlink()
     shutil.copy(texts / "cc0" / "trees-README.txt", cc0 / "extension" / "trees" / "README.txt")

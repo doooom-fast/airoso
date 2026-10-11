@@ -25,6 +25,12 @@ WHAT IT IS
   every road; 11.5 m street lamps. Start/finish and the pit row sit at the lap seam, the turn
   onto Alvarado. An AI line ships (ai/fast_lane.ai) for traffic and AI drive.
 
+VERSIONS
+  This public package carries the Street Loop only (open two-way streets, start/finish on
+  Alvarado Rd). The two one-way race layouts (Race — Clockwise / Race — Anticlockwise: concrete
+  K-rail between the carriageways of the wide roads, barriers along the kerbs, race kerbs at the
+  corners) use a barrier model whose licence is not recorded yet, so they are not included here.
+
 KNOWN
   - Side-street terrain still floats a little (under 0.6 m) in a couple of Del Cerro spots.
   - The College Ave south hairpin and the lap seam are rougher than the rest of the loop.

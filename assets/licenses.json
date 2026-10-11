@@ -138,6 +138,28 @@
    "source": "airoso tools/make_sign_textures.py (generated; MUTCD sign designs are public domain — MUTCD Introduction para 04, 17 U.S.C. 105)",
    "license": "CC0-1.0",
    "url": ""
+  },
+  {
+   "name": "Concrete K-rail barrier (Kevin's owned Dropbox pack) — race-layout centre chain + kerb-line strips",
+   "files": [
+    "concrete_barrier_diffuse.png",
+    "concrete_barrier_normal.png",
+    "models/concrete_barrier_4m.obj"
+   ],
+   "source": "Kevin's owned asset pack (Dropbox; fleet/reference/ASSET-LIBRARY.md, ledger 0005) — bound by the 1WALL pbr row; the race kn5's 1WALL_race_* strips sweep its measured silhouette and tile its texture at 4.04 m",
+   "license": "UNRECORDED",
+   "url": "",
+   "_note": "Licence not yet recorded (ledger 0047 Q10). Until it is, san_diego_lake_murray_race.kn5 and models_race_*.ini ship in the FULL (local) package only and are EXCLUDED from the CC0 variant; tools/pack_release.py must drop them when it builds cc0/."
+  },
+  {
+   "name": "Invisible collider texture (procedural, fully transparent 4x4 RGBA)",
+   "files": [
+    "invisible_4x4.png"
+   ],
+   "source": "airoso tools/author_race_furniture_blend.py handoff (generated with Pillow: Image.new('RGBA', (4, 4), (0, 0, 0, 0)))",
+   "license": "CC0-1.0",
+   "url": "",
+   "_note": "For the deferred Macau-style tall collider sheet (ledger 0047 Q11): 1WALL_racecol_* meshes, a '1WALL_RACECOL' pbr row before '1WALL' with ALPHATEST=1. Not bound by any shipped material yet."
   }
  ],
  "stock_audio_note": "Surface scrub/rumble (data/surfaces.ini WAV=) references the player's own stock Assetto Corsa sounds (content/sfx). No audio is bundled or redistributed."

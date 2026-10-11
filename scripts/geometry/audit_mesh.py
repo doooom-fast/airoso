@@ -171,14 +171,29 @@ def _decks_trimmed(data: Path):
     return out
 
 
-def audit(project_dir: str | Path) -> dict:
+def audit(project_dir: str | Path, *, race: bool = False, obj: str = "track.obj",
+          out: str = "audit.json") -> dict:
+    """Audit the built OBJ ``data/<obj>`` and write ``data/<out>``.
+
+    ``race`` (ledger 0047): judge the race layouts' kn5 set (``--obj track.race.obj``: road + race
+    furniture, from kn5_to_gate_obj --kn5 main --kn5 race) with check D exempting 1WALL verts that
+    stand ON a declared barrier band (data/barrier_bands.json: the centre chain, the kerb-line strip
+    on both curb faces, the sealed mouths — scripts/geometry/median_zone.py kind 'barrier'). K and I
+    keep the island band only (the race kerb is 0.05 m < K's 0.10 m, no exemption needed); E and F
+    are untouched — E is the strips' seating gate. Without ``race`` the bands are never consulted,
+    so the street layout and every other track audit exactly as before."""
     proj = Path(project_dir)
     data = proj / "data"
     slug = json.loads((proj / "track.config.json").read_text())["slug"]
+    objp = data / obj
+    if not objp.exists():
+        raise SystemExit(f"audit_mesh: data/{obj} does not exist"
+                         + (" — a race audit needs the main+race gate OBJ (kn5_to_gate_obj --kn5 main "
+                            "--kn5 race --out data/track.race.obj)" if race else ""))
     # curb prefix is "1KERB": built OBJ groups are 1KERB_sidewalk_a / 1KERB_corners / ... — a bare
     # "KERB" prefix matched NOTHING, which made check F report "0 (of 0 curb verts)" forever
     # (a vacuous gate; pinned by tests/geometry/test_audit_mesh_f.py).
-    g = _obj_groups(data / "track.obj", ("1ROAD_MAIN", "1ROAD", "1GRASS", "HWYSTRUCT", "1WALL", "1KERB"))
+    g = _obj_groups(objp, ("1ROAD_MAIN", "1ROAD", "1GRASS", "HWYSTRUCT", "1WALL", "1KERB"))
     g["1ROAD"] = g["1ROAD"] + g["1ROAD_MAIN"]   # full road set (main + shoulder) for B/H
     road_hash = _hash(g["1ROAD"], 8.0)
     road_hash4 = _hash(g["1ROAD"], 4.0)
@@ -229,7 +244,7 @@ def audit(project_dir: str | Path) -> dict:
     # (59,162 "pokes" on an IMI whose every one was a bank over the apron; _surf_at picks the
     # LOWEST in-window surface, so the buried hem always reads as "the road"). Grass through the
     # driven deck still fails; grass draped over the transition apron is the terrain doing its job.
-    road_tris = _obj_tris(data / "track.obj", ("1ROAD",), exclude=("SHOULDER",))
+    road_tris = _obj_tris(objp, ("1ROAD",), exclude=("SHOULDER",))
     road_th = _tri_hash(road_tris, 8.0)
     poke_hits = []
     for x, y, z in g["1GRASS"]:
@@ -283,7 +298,7 @@ def audit(project_dir: str | Path) -> dict:
     # FOOTPRINT-exact (like B): pavement of the MAIN carriageway exists directly under the wall
     # vert at its own height. Vertex-radius false-flagged fences standing legally beside
     # junction-flare ramps (206 phantoms on Sand Creek 0.23).
-    main_tris = _obj_tris(data / "track.obj", ("1ROAD_MAIN",))
+    main_tris = _obj_tris(objp, ("1ROAD_MAIN",))
     if not main_tris:
         main_tris = road_tris
     main_th = _tri_hash(main_tris, 8.0)
@@ -291,14 +306,27 @@ def audit(project_dir: str | Path) -> dict:
     # design — its barrier is a wall on a road, its curb is kerb in the carriageway, its curb is a
     # sidewalk with pavement on both sides. D/K/I exempt verts on the declared island (and only
     # there — scripts/geometry/median_zone.py, band + 0.6 m). Zero-width = no exemption.
-    from scripts.geometry.median_zone import MedianZone
+    # BARRIER BANDS (0047): under --race, D also exempts a 1WALL vert standing on a DECLARED
+    # barrier band (centre chain 0.335 + 0.6 m, kerb-line strip |lat - (w/2 - 0.485)| <= 0.935,
+    # sealed-mouth polylines, +/- 2 m along) — the strips are walls on the road by design and are
+    # gated for presence (drive_test barrier_missing), seating (E) and lane clearance (drive_test
+    # disc) instead. A strip OFF its band still counts; K and I never read the barrier kind.
+    from scripts.geometry.median_zone import MedianZone, ALL_KINDS
     _zone = MedianZone.load(project_dir)
     _in_island = _zone.contains if _zone else (lambda x, z: False)
+    if race and _zone is not None and _zone.has_barrier:
+        _in_band_D = lambda x, z: _zone.contains(x, z, ALL_KINDS)   # noqa: E731
+    else:
+        _in_band_D = _in_island
     if _zone:
-        print(f"  (median island declared on {_zone.n_island} centreline verts — D/K/I exempt there)")
+        print(f"  (median island declared on {_zone.n_island} centreline verts — D/K/I exempt there"
+              + (f"; --race: barrier bands on {_zone.n_barrier} centre / {_zone.n_edge} edge verts — D exempt there"
+                 if race and _zone.has_barrier else "") + ")")
+    if race and (_zone is None or not _zone.has_barrier):
+        print("  (--race given but data/barrier_bands.json declares no band — nothing exempted)")
     wall_on_road = 0
     for x, y, z in g["1WALL"]:
-        if _in_island(x, z):
+        if _in_band_D(x, z):
             continue
         ry = _surf_at(main_th, 8.0, x, z, y, dy_max=1.2)
         if ry is not None and abs(y - ry) < 1.2:
@@ -328,7 +356,7 @@ def audit(project_dir: str | Path) -> dict:
     _cverts: list = []
     _ctris: list = []
     _keep = False
-    for _ln in (data / "track.obj").read_text().splitlines():
+    for _ln in objp.read_text().splitlines():
         if _ln.startswith("o "):
             _nm = _ln[2:].strip().upper()
             _keep = _nm.startswith("1ROAD") and not _nm.startswith("1ROAD_SHOULDER")
@@ -425,7 +453,7 @@ def audit(project_dir: str | Path) -> dict:
     # ROAD. So pair the span test with "does it cover a road vertex" — which is what made the
     # inverted skirt a hazard and leaves the honest one alone.
     _road_pts = g["1ROAD"][::7]
-    for a, b, c in _obj_tris(data / "track.obj", ("1GRASS",)):
+    for a, b, c in _obj_tris(objp, ("1GRASS",)):
         e = max(math.hypot(a[0] - b[0], a[2] - b[2]),
                 math.hypot(b[0] - c[0], b[2] - c[2]),
                 math.hypot(c[0] - a[0], c[2] - a[2]))
@@ -468,9 +496,9 @@ def audit(project_dir: str | Path) -> dict:
     #    rolled it flat. Tri-exact against ALL 1ROAD surfaces; rolled humps (<=8 cm) pass.
     sw_isolate = 0
     sw_worst: list = []
-    sw_verts = _obj_groups(data / "track.obj", ("1KERB_SIDEWALK",))["1KERB_SIDEWALK"]
+    sw_verts = _obj_groups(objp, ("1KERB_SIDEWALK",))["1KERB_SIDEWALK"]
     if sw_verts:
-        all_road_th = _tri_hash(_obj_tris(data / "track.obj", ("1ROAD",)), 4.0)
+        all_road_th = _tri_hash(_obj_tris(objp, ("1ROAD",)), 4.0)
         for x, y, z in sw_verts:
             if _in_island(x, z):
                 continue
@@ -569,7 +597,7 @@ def audit(project_dir: str | Path) -> dict:
         # not even the shipping surface: the refined 1GRASS mesh is, and drive_test reads THAT
         # at 10 wheel paths. So: the raster nominates a candidate, the actual grass mesh
         # confirms it. A real bench standing over the deck exists in the mesh and still fails.
-        _gh_tris = _obj_tris(data / "track.obj", ("1GRASS",))
+        _gh_tris = _obj_tris(objp, ("1GRASS",))
         _gh_hash = _tri_hash(_gh_tris, 4.0)
 
         def _gmax(x, z, y_ref):
@@ -628,7 +656,8 @@ def audit(project_dir: str | Path) -> dict:
                                      round(off, 1), i))
 
     report = {
-        "slug": slug, "road_verts": len(g["1ROAD"]), "grass_verts": len(g["1GRASS"]), "piers": len(piers),
+        "slug": slug, "obj": obj, "race": race,
+        "road_verts": len(g["1ROAD"]), "grass_verts": len(g["1GRASS"]), "piers": len(piers),
         "wall_verts": len(g["1WALL"]), "curb_verts": len(g["1KERB"]),
         "A_supports_in_road": len(support_hits),
         "B_terrain_poke": len(poke_hits),
@@ -656,8 +685,9 @@ def audit(project_dir: str | Path) -> dict:
                     "poke": sorted(poke_hits, key=lambda h: -h[2])[:8],
                     "crossings": cross[:10]},
     }
-    (data / "audit.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
-    print(f"AUDIT {slug}   (roads {len(g['1ROAD'])}v, grass {len(g['1GRASS'])}v, walls {len(g['1WALL'])}v, piers {len(piers)})")
+    (data / out).write_text(json.dumps(report, indent=1), encoding="utf-8")
+    print(f"AUDIT {slug}{' [race: ' + obj + ']' if race else ''}   (roads {len(g['1ROAD'])}v, grass {len(g['1GRASS'])}v, "
+          f"walls {len(g['1WALL'])}v, piers {len(piers)})")
     print(f"  A. supports standing in a road : {len(support_hits)}")
     print(f"  B. terrain poking through road : {len(poke_hits)}  (worst +{report['worst_poke_m']} m)")
     print(f"  C. at-grade junction crossings : {len(cross)}  ({report['C_by_kind']})")
@@ -679,7 +709,38 @@ def audit(project_dir: str | Path) -> dict:
     return report
 
 
+def main(argv: list[str] | None = None) -> int:
+    """python -m scripts.geometry.audit_mesh <project> [--race] [--obj track.race.obj] [--out audit.race.json]"""
+    argv = list(sys.argv[1:] if argv is None else argv)
+    project = "projects/san-diego-freeway-loop"
+    race, obj, out = False, "track.obj", "audit.json"
+    i = 0
+    while i < len(argv):
+        a = argv[i]
+        if a == "--race":
+            race = True; i += 1
+        elif a == "--obj":
+            obj = Path(argv[i + 1]).name; i += 2
+        elif a == "--out":
+            out = Path(argv[i + 1]).name; i += 2
+        else:
+            project = a; i += 1
+    if race and obj == "track.obj":
+        obj = "track.race.obj"
+    if race and out == "audit.json":
+        out = "audit.race.json"
+    r = audit(project, race=race, obj=obj, out=out)
+    hard = (r["A_supports_in_road"] + r["B_terrain_poke"] + r["D_wall_on_road"] + r["E_wall_floating"]
+            + r["F_curb_not_flush"] + (r["G_prop_floating"] or 0) + (r["H_ground_above_deck"] or 0)
+            + r["I_sidewalk_isolating"])
+    return 1 if hard else 0   # C (junction crossings) reported but non-gating (walls are gapped there)
+
+
 if __name__ == "__main__":
+    sys.exit(main())
+
+
+def _legacy_main():   # pragma: no cover — the pre-0047 entry, kept for reference of the gate line
     r = audit(sys.argv[1] if len(sys.argv) > 1 else "projects/san-diego-freeway-loop")
     hard = (r["A_supports_in_road"] + r["B_terrain_poke"] + r["D_wall_on_road"] + r["E_wall_floating"]
             + r["F_curb_not_flush"] + (r["G_prop_floating"] or 0) + (r["H_ground_above_deck"] or 0)

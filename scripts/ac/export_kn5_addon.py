@@ -10,7 +10,16 @@ vendored copy in the repo; nothing is downloaded. Slug/paths come from ``track.c
 
 Run (see scripts/build.sh for the full pipeline):
 
-    "$BLENDER" --background --python scripts/ac/export_kn5_addon.py -- <track-dir>
+    "$BLENDER" --background --python scripts/ac/export_kn5_addon.py -- <track-dir> [--blend <file>] [--out <name.kn5>]
+
+MULTI-LAYOUT (ledger 0047): one prepped scene yields several kn5s. ``tools/split_exports_blend.py``
+splits ``blender/<slug>.blend`` into ``blender/split/loop_main.blend`` (the road: no race furniture,
+no AC_* nodes) and ``loop_race.blend`` (the 1WALL_RACE* / 1KERB_RACE* furniture only); this pass then
+runs once per scene: ``--blend`` points it at the split scene instead of ``blender/<slug>.blend`` and
+``--out`` names the kn5 in build/ (default ``<slug>.kn5``; the race pass uses ``<slug>_race.kn5``).
+The persistence .ini is purged and rewritten per pass from the materials the opened scene actually
+holds, so each kn5 embeds only its own material table (the add-on's read_settings takes the first
+*.ini in build/ — there is exactly one at operator time, named after the kn5 of that pass).
 
 Validated on Blender 4.2 (the jwl-7 io_import_accsv add-on's target). Newer Blenders may register
 the operator under a different name — the export step auto-detects ``exporter.kn5`` / any
@@ -29,22 +38,41 @@ import addon_utils
 import bpy
 
 
-def _track_dir_from_argv(argv):
+def _args_from_argv(argv):
+    """<track-dir> [--blend <file>] [--out <name.kn5>] after the '--'."""
     if "--" not in argv:
-        raise SystemExit("usage: blender --background --python export_kn5_addon.py -- <track-dir>")
+        raise SystemExit("usage: blender --background --python export_kn5_addon.py -- <track-dir> "
+                         "[--blend <file>] [--out <name.kn5>]")
     rest = argv[argv.index("--") + 1:]
     if not rest:
         raise SystemExit("missing <track-dir> after '--'")
-    return Path(rest[0]).resolve()
+    out = {"project": Path(rest[0]).resolve(), "blend": None, "out": None}
+    i = 1
+    while i < len(rest):
+        a = rest[i]
+        if a == "--blend":
+            out["blend"] = Path(rest[i + 1]).resolve(); i += 2
+        elif a == "--out":
+            name = rest[i + 1]
+            if Path(name).name != name or not name.lower().endswith(".kn5"):
+                raise SystemExit(f"--out takes a bare file name ending in .kn5 (written into build/), got {name!r}")
+            out["out"] = name; i += 2
+        else:
+            raise SystemExit(f"unknown argument {a!r}")
+    return out
 
 
-project = _track_dir_from_argv(sys.argv)
+_a = _args_from_argv(sys.argv)
+project = _a["project"]
 repo = Path(__file__).resolve().parents[2]
 cfg = json.loads((project / "track.config.json").read_text())
 slug = cfg["slug"]
 build = project / "build"
-kn5 = build / f"{slug}.kn5"
-blend = project / "blender" / f"{slug}.blend"
+kn5 = build / (_a["out"] or f"{slug}.kn5")
+blend = _a["blend"] or (project / "blender" / f"{slug}.blend")
+if not blend.exists():
+    raise SystemExit(f"[export] scene not found: {blend}")
+print(f"[export] scene {blend} -> {kn5}")
 
 # 1. open the prebuilt scene (welded, smooth grass, dummies, materials w/ packed textures)
 bpy.ops.wm.open_mainfile(filepath=str(blend))
@@ -133,7 +161,7 @@ for mat in bpy.data.materials:
         needed[fname] = srcpath
     lines.append("")
     i += 1
-(build / f"{slug}.ini").write_text("\n".join(lines))
+(build / f"{kn5.stem}.ini").write_text("\n".join(lines))   # one .ini per pass, named after its kn5 (read_settings takes the only one in build/)
 
 # 5. stage the textures into build/texture/ (the add-on reads RES_*_TEXTURE from there)
 for fn, srcpath in needed.items():
@@ -209,4 +237,6 @@ if op is not None:
         traceback.print_exc()
 else:
     print("EXPORT EXCEPTION: no kn5 export operator registered (add-on failed to enable)")
-print("KN5 EXISTS:", kn5.exists(), "SIZE:", kn5.stat().st_size if kn5.exists() else 0)
+print("KN5 EXISTS:", kn5.exists(), "SIZE:", kn5.stat().st_size if kn5.exists() else 0, "FILE:", kn5.name)
+if not kn5.exists() or kn5.stat().st_size == 0:
+    raise SystemExit(f"[export] no kn5 written for {blend.name}")

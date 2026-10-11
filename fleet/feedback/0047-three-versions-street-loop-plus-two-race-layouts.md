@@ -9,12 +9,16 @@ train: -
 
 ## Status
 
-**Open — measured, not diagnosed as a defect, nothing designed or built** (2026-10-10, workflow
-`wf_fe6ed9e1-c20`). This is a feature request with a data-proven shape; the "Diagnosis" below is
-*what today's build does that the three versions cannot inherit*. Design/build queues behind 0043
-(sodium lights), 0044 (arrow signs) and 0045 (GrassFX); it needs a kn5 rebuild, so it rides the same
-single `ship_sd` run as 0046. Open questions for Kevin are at the end; two of them change the
-geometry, so nothing here should be built until they are answered.
+**Open — designed, built as tools, gated, dry-run on a scratch copy; NOT shipped** (2026-10-11).
+Everything below the Symptom was measured 2026-10-10; the design that followed is recorded in
+"Decisions and the built design" and the ship chain is wired in `tools/ship_sd.sh` (the three-version
+chain is now the only chain). **No kn5 has been exported, the hand-edit surface
+`tracks/san-diego-lake-murray/loop.blend` has not been touched, the installed track is unchanged.**
+One `bash tools/ship_sd.sh` run builds all three versions — but not before Kevin answers Q1, Q2, Q6
+and Q7 below (they change authored geometry; the defaults are encoded and will ship if he says
+"defaults"). The L8 wording amendment waits for Q9; nothing in `fleet/LAWS.md` is edited. The
+original 2026-10-10 status, interpretation and open questions are superseded by the sections at the
+end; the Evidence and Diagnosis stand.
 
 ## Symptom (Kevin, 2026-10-10, verbatim, in order)
 
@@ -237,7 +241,7 @@ problem. The one latent trap is the three lateral sign conventions (evidence 8) 
 gate written in one and a grid placed in another puts the grid across the barrier. Fix by naming the
 side (`driven_side`) rather than a sign, as `gap_mouths_blend` already does with `side ±1`.
 
-## Fix — design sketch, nothing built, pending the open questions
+## Fix — the 2026-10-10 design sketch (superseded by "Decisions and the built design" below; kept for the record)
 
 **A. Config (project).** `layouts[]` gains per-layout `direction` (`forward` | `reverse`), `start`
 (`{vertex, offset_right_m}` in the layout's own travel frame), `race_furniture` (bool), plus the
@@ -335,19 +339,285 @@ barrier anywhere on Alvarado; the racing kerb hugs the sidewalk lip with no lip 
 wrong-way warning never fires (0026); the opposite carriageway is unreachable for the whole lap.
 Regular layout: drives exactly as today except the start, if moved.
 
-## Open questions for Kevin (the first two change geometry — answer before design)
+## Decisions and the built design (2026-10-11, workflow `wf_…-c20` continued; nothing shipped)
 
-1. **Side-street mouths in the race layouts.** Del Cerro Blvd opens off the driven lane at v1086 in
-   one direction and v1085 in the other (inside the College island gap); the `medium#2+0` mouth at
-   v4424 opens off the forward lane only. Close them with a barrier across the mouth (a sealed
-   circuit), or leave them open as escape roads with the sidewalk barrier gapped?
-2. **The two 13.5-17 m stretches.** Lake Murray Blvd on the I-8 overcrossing (v4453-4482, 90 m,
-   13.5-16.4 m) and the Alvarado → College taper (v724-760, 108 m, 13.1-16.5 m). Under the 17 m rule
-   both get no centre barrier, so the chain has a 90 m two-way gap on the bridge between two wide
-   runs. Keep the rule (gap), or carry the chain across at 6.4 m per side?
-3. **The regular layout's start.** Today it is on Jackson (derived) with the grid at a debug spawn on
-   College. Your 2026-08 words were "i prefer starting on alvarado toward college"; 0026 recorded the
-   opposite direction as the way you drive it. Put the regular layout's line at v300 on Alvarado as
-   well — and which way?
-4. Names for Content Manager (e.g. "Lake Murray", "Lake Murray Race — toward College", "— toward
-   I-8"), and the grid size (8 slots today).
+**Config — `tracks/san-diego-lake-murray/track.config.json`.** `layouts[]` is exactly three
+(`full` retired: `track_folder.ui_track_json` suppresses the suffix for `full`/`freeroam`):
+
+| id | CM name | kind | direction | race_furniture | start (vertex into `data/centerline.local.json`) | sectors |
+|---|---|---|---|---|---|---|
+| `street` | K10 - San Diego (V3) — Street Loop | street | forward | no | line v300, grid v291 at +3.25 m right of travel (north lane), pits v274→257 | v1803, v3310 |
+| `race_cw` | — Race — Clockwise | race | forward | yes | same line and grid as `street` | v1803, v3310 |
+| `race_acw` | — Race — Anticlockwise | race | reverse | yes | line v300, grid v310 at +3.25 m right of ITS travel (south lane), pits v327→344 | v3310, v1803 |
+
+Forward = increasing vertex index = clockwise seen from above (shoelace −8.87 km² in x=E, z=N):
+Alvarado westbound → College northbound → Navajo eastbound → Jackson south → Lake Murray Blvd
+southwest; right of forward travel = the lake-side carriageway. `direction` is the flag every tool
+keys on, never the literal id `reverse`. The `race` block declares `wide_threshold_m 17.0`,
+`centre_runs [[780,846],[1073,1096],[1258,1374],[1487,1540],[1739,2183],[2297,4440]]` (closed
+vertex intervals, each island-side end ON the island's nose vertex, v780 / v4440 the free ends),
+`barrier_profile_asset assets/models/concrete_barrier_4m.obj`, `barrier_height_m 1.2`,
+`module_pitch_m 4.04`, `edge_mode road`, `edge_inset_m 0.82`, sealed mouths, continuous interior
+corners, `kerbs {min_turn_deg 45, width 1.0, height 0.05, outer_extension [10, 30]}`, 8 grid slots,
+8 pits. Q1 / Q2 / Q6 / Q7 are edits to this block, re-run `tools/barrier_bands.py`.
+
+**Three kinds of kn5 from one `loop.blend` (L8 as amended, below).**
+
+| kn5 | holds | listed in |
+|---|---|---|
+| `san_diego_lake_murray.kn5` (road) | every prepped object except the race furniture; **0 `AC_*` nodes** | `MODEL_0` of all three `models_<id>.ini` |
+| `san_diego_lake_murray_race.kn5` | ONLY `1WALL_race_*` / `1KERB_race_*` objects (RACE-named materials), 0 `AC_*` | `MODEL_1` of `models_race_cw.ini` and `models_race_acw.ini` only (rt_california's `_barr2.kn5` shape) |
+| `san_diego_lake_murray__<id>.kn5` ×3 | nodes only: `AC_START_0..7`, `AC_HOTLAP_START_0`, `AC_PIT_0..7`, `AC_TIME_{0,1,2}_{L,R}` | the last `MODEL_n` of its own ini |
+
+How: `tools/barrier_bands.py` (pure, self-gated) declares the bands → `tools/layout_dummies.py`
+(pure) writes `data/dummies_<id>.json` ×3 → `tools/author_race_furniture_blend.py` sweeps the strips
+and kerbs into a `RACE` collection in `loop.blend` (idempotent) → `tools/verify_race.py` (pure gate)
+→ the ENG prep (`build_kn5_loop.py`, two hunks: `1WALL_RACE`/`1KERB_RACE` keep their authored UVs;
+with `len(layouts) > 1` it creates NO `AC_*` empties and writes `data/dummies.json = {}`) →
+`tools/split_exports_blend.py` splits the PREPPED `blender/<slug>.blend` into
+`blender/split/loop_main.blend` / `loop_race.blend` / `loop_spawn_<id>.blend` by REMOVING objects
+(+ `meshes.remove` + `orphans_purge`, asserting RACE-only materials in the race scene and none in
+the main) → `export_kn5_addon.py` (new `--blend <file>` / `--out <name.kn5>`) once per scene →
+`build_spawn_kn5.py` reads `dummies_<id>.json` (engine frame + `_yaw_deg`) and exports the three
+nodes-only kn5s. Objects are removed rather than deselected because the exporter that runs
+(`exporter.kn5`, the AppData blender-assetto-corsa-tools 1.0.7) walks `blend_data.objects`,
+ignores the selection and embeds every material with users > 0.
+
+**Barriers.** A swept jersey STRIP whose cross-section is the measured half-profile of Kevin's
+module (0.335 m base half-width, 1.20 m tall, 10-vertex closed ring, outward normals, texture
+tiled at u = arc / 4.04 m so the joints read every module), one ring per centreline vertex (3 m),
+seated by BVH onto the mainline ROAD (lowest sheet) and sunk 0.05 m. Centre chain on the six
+declared runs (8,525 m, 2,853 rings, 8 objects `1WALL_race_kbar_<street>_<start>_<part>`), ends
+tapered onto the island noses (half-width 0.335 → 0.25 m, height 1.20 → 0.30 m over 3 rings) or
+free (height → 0.30 m). Kerb-line strips on BOTH curb faces of EVERY street (`road` mode: centre at
+`half_w − 0.485`, road-side face at `half_w − 0.82`, 0.15 m clear of the curb batter), gapped only
+inside the three declared bridge spans, straight across the three sealed mouths (26,307 m, 8,772
+rings, 21 objects `1WALL_race_edge_<L|R>_<street>_<start>_<part>`; 27 rings dropped where the
+inside lip folds at the five right-handers). Seven race kerbs (`1KERB_race_<apex>_<in|out>`, 1.0 m ×
+0.05 m flat rumble strip with a 0.10 m lane-side ramp, inboard of the strip) at the five corners
+the sign detector finds (`tools/place_signs.py`, imported read-only): outside lip only where the
+chain is the inside (v1514, v2319, v3297), inside + outside at the hairpin v770 and the seam v0.
+Budget: 122,338 positions in 36 objects, none over 8,000 positions / 31,960 loops (the add-on
+splits at 65,535 render verts). Strips, not 2,100 instanced modules (≈ 2.2 M positions; every
+reference measured ships strips/sheets).
+
+**Dummies.** `tools/layout_dummies.py`: pole = `AC_START_0` = `AC_HOTLAP_START_0` 27-30 m behind
+the line in each layout's own travel, grid `AC_START_1..7` in two staggered columns INSIDE the lane
+(lane centre ± 1.4 m, pitch 5.5 m), pits single file 45 + 7 (p+1) m behind, `AC_TIME_0` at v300
+(L/R swapped for `reverse`), sectors renumbered per direction (same two physical gates, L11). Yaw
+= `atan2(tx, −tz)` (+π for reverse) at the dummy's OWN vertex — the measured facing correction
+(see Notes). Grid clearance on 13.0 m Alvarado: the outer staggered column's car edge is 0.08 m
+off the kerb-line strip's face (legal, tight; Q6 `walk` opens it by 0.93 m).
+
+**AI.** `scripts/ac/write_ai_line.py --layout <id>`: direction and furniture from the layout; a
+per-vertex right-of-travel lane offset between the divider face and the kerb-line strip face;
+refuses a line that touches an island or comes within 0.6 m of a declared face. The race layouts
+always get these GENERATED drafts (ledger 0023 stays open, no tier claimed; in-game recording per
+layout is the end state). The street layout ships the July reference recording by default
+(`STREET_AI=july` in `ship_sd.sh`) — see the Q8 note below before deciding.
+
+**Folder and names.** airoso's `scripts/ac/track_folder.py` and `verify_kn5.py` run (the ENG
+copies are no longer executed — they are pure Python, not part of the pinned drive-feel geometry,
+and airoso's are strict supersets). `models_<id>.ini` ×3, `ui/<id>/ui_track.json` with
+`name = "<cfg.name> — <layout name>"` (the install patch writes "K10 - San Diego (V3) — …") and
+`run` = the layout's compass sentence, `<id>/{map.png, data/, ai/}`; stale single-layout structure
+(root `ai/`, root `ui/ui_track.json`, `models.ini`, `ui/full`) removed by the packer; the set of
+inis is asserted == `layouts[]`. `tools/make_map.py` writes every `<id>/map.png` in the kn5 frame.
+Install folder stays `san_diego_lake_murray_v3` (previous build kept as `_v3_prev`).
+
+**Gates (fleet/GATES-CHANGELOG.md 2026-10-11).** `median_zone` gains the `barrier` kind from
+`barrier_bands.json`; `drive_test --layout <id>` per layout (reverse walks the lap backwards,
+lane-relative sweep between the divider face and the strip face, the new `barrier_missing` at 0);
+`audit_mesh --race --obj track.race.obj --out audit.race.json` (D exempt on the declared bands
+only); `verify_kn5` multi-layout checks (a)-(f); `kn5_to_gate_obj --kn5 road --kn5 race --out
+data/track.race.obj` (ONE OBJ for the kn5 set a race layout loads; the dot in the name is
+deliberate — the prep merges every `data/track_*.obj` into the scene); `tools/verify_race.py`
+(the authored furniture vs its declaration, before any kn5 exists). The street layout's numbers
+must reproduce today's (drive_test 82 / 391 / 0 / 101, audit D 512 / K 154 / I 145 / F 15).
+
+**Licence (Q10).** The K-rail pack is `UNRECORDED` in `assets/licenses.json`; `tools/pack_release.py`
+now drops `san_diego_lake_murray_race.kn5`, `models_race_*.ini`, `ui/race_*/`, `race_*/` and the
+race spawn kn5s from the CC0 variant (`strip_race_layouts`); the FULL (local) package carries all
+three. The release READMEs say so.
+
+## Proposed L8 wording — for Kevin's sign-off (Q9); NOT applied, `fleet/LAWS.md` is untouched
+
+> ## L8 — Layouts share one road; physics does not
+>
+> Route and direction variants are **AC configuration over a single road mesh** — never rebuild,
+> alter or re-export the shared mesh per layout. A layout MAY load additional kn5s beside the shared
+> one through its own `models_<layout>.ini` (MODEL_1, MODEL_2 …): its nodes-only spawn kn5 (grid,
+> pits, timing — `<slug>__<layout>.kn5`), and furniture that exists only in that layout (barriers,
+> kerbs, boards — `<slug>_<overlay>.kn5`). Once a track has more than one layout the shared kn5
+> carries **no `AC_*` spawn or timing nodes**; every layout's set rides in its spawn kn5. Added kn5s
+> add; they never replace, move or duplicate anything in the shared kn5, and anything physical in
+> them is judged by the same gates as the road (verify_kn5 on the binary, drive_test/audit on the
+> loaded kn5 set) before it ships. Measured basis: deepforest, Oregon Raceway Park,
+> rt_california_highway, Pacific Coast Hwy — every reverse-capable reference ships a spawn-free main
+> kn5 (0 AC_START/PIT/TIME) plus per-layout kn5s (32-140 nodes each), and rt_california adds a
+> geometry kn5 to two of its three layouts.
+>
+> The one exception, and the reason it is an exception: **`surfaces.ini` is applied per track, not
+> per layout.** So a surface-physics fork (Rally Colorado's gravel vs tarmac) must be **two
+> installable tracks**, each with its own slug, sharing the route by pointing at the same roads. A
+> layout toggle makes the friction difference fragile.
+
+Matching `CLAUDE.md` "Layouts" sentence: *"All layouts share one road kn5 and differ only in AC
+configuration plus the kn5s a layout ADDS beside it (its spawn kn5; optional furniture kn5) — never
+rebuild the road mesh per layout. The one exception is surface physics (L8)."*
+
+`fleet/STANDARDS.md` S6 note (same sign-off): the archetype stays per track (`real_road` for Lake
+Murray); `layouts[].race_furniture: true` is the per-layout overlay switch that builds the
+street-circuit furniture set (centre chain, kerb-line barriers, race kerbs) into the overlay kn5 —
+declared in config, not a second archetype.
+
+## The ship run — what `bash tools/ship_sd.sh` does now (one command, three versions)
+
+1. **sync** airoso `track.config.json` (three layouts + `race`) and `start_positions.json` → workshop.
+2. **draft + author** as before (skipped by `--skip-blend`): median envelope, loop.blend regen,
+   connectors, trim, seat terrain, slim far terrain, median island, mouth gaps, scatter/strip,
+   lamps, signs (+ verify_signs, plot_signs).
+3. **race furniture, every run** (also with `--skip-blend`, because it is idempotent and the only
+   thing that keeps `loop.blend` in step with `race.*`): `barrier_bands.py` → `layout_dummies.py`
+   → `author_race_furniture_blend.py` (saves `loop.blend` with the `RACE` collection) →
+   `verify_race.py` (hard) → `plot_race_furniture.py`.
+4. **prep** (spawn-free, UV-keep) → **split** → `--dry-run` stops here →
+   **export** road kn5, race kn5 (asserted < 20 MB), spawn kn5s ×3 →
+   **AI** `write_ai_line --layout race_cw`, `--layout race_acw`; `ai/street/` = the July recording
+   (or `STREET_AI=draft` for the V3 forward draft) → **verify_kn5** (hard) → **track_folder** →
+   **make_map** → **make_treefx**.
+5. **gates**: `kn5_to_gate_obj` (road) → `drive_test --layout street` → `audit_mesh` →
+   `kn5_to_gate_obj --kn5 road --kn5 race --out data/track.race.obj` → `drive_test --layout race_cw
+   --layout race_acw` → `audit_mesh --race`.
+6. **sync back** `loop.blend`, the data files (+ `barrier_bands`, `race_authored`, `race_verify`,
+   `dummies_<id>`, `drive_test.<id>`, `audit.race`, `split_manifest`, `race_plots/`) and
+   `ai/<id>/` ×3 into `tracks/san-diego-lake-murray/`.
+7. **verdict**: any of the four gate exits red → not installed; `--force-install` installs red only
+   when NO race layout is red on its own furniture gates (`barrier_missing` / obstruction — nothing
+   exists to be "no worse than"); the street layout is expected red on the open 0046/0048 terrain
+   class (82 ground-through, 391 floating, 101 excursions) exactly as today.
+8. **install** `build/<slug>/` → `san_diego_lake_murray_v3` (previous → `_v3_prev`), the three
+   `ui/<id>/ui_track.json` names patched to "K10 - San Diego (V3) — <layout name>".
+
+Then Kevin's drive (fleet/templates/DRIVE-TEST-REPORT.md, one per layout) is the only ground truth:
+three layouts in CM; each race spawn on Alvarado in its lane facing its way with the grid and pits
+behind; the clock arms at the first crossing; the chain on the driver's left at the first nose,
+never on an island, never on Alvarado; the kerb-line barrier hugging the curb; race kerbs at the
+five corners; the wrong-way warning never fires; the opposite carriageway unreachable; the street
+layout as today except the start.
+
+## Dry run record (2026-10-11, `SHIP_PROJ=<scratch copy> bash tools/ship_sd.sh --skip-blend --dry-run` on a copy of the 2026-10-09 workshop build; nothing exported, nothing installed)
+
+- bands: chain 6 runs / 8,525 m on 2,851 verts, edge strips on 4,393/4,499 verts (3 bridge gaps),
+  7 kerbs at 5 corners, 3 sealed mouths; dummies ×3 (pole v291 yaw −101.6°, pole v310 yaw +79.0°,
+  line 27.1 / 30.1 m ahead).
+- author: 36 objects / 122,338 positions in the `RACE` collection; seated 13,144 hit / 3 near /
+  0 interpolated; deck vs data worst −0.213 m (hairpin inside lip); 19 rings with another ROAD sheet
+  0.18-0.54 m above the strip base (Del Cerro mouth v1081-1083, the Navajo/Jackson and hairpin
+  inside lips — the ribbon's fold/mouth defects, 0033/0046 class, reported not papered over).
+- verify_race: OK (chain worst ring spacing 3.16 m; edge missing {L 0, R 23} ≤ fold-dropped
+  {L 0, R 27}; outside-lip ring spacing reaches 7.0 m → the strip chords the arc by ≤ 0.39 m, an
+  author-tool refinement, noted).
+- prep: `multi-layout (3 layouts): spawns ride in per-layout kn5s — no AC_* empties in the road
+  scene, data/dummies.json = {}`; race names passed through `AC_NAME`.
+- split on the PREPPED scene: main 20 meshes / 727,123 positions / 20 materials / 0 AC / 0 race;
+  race 36 meshes / 122,330 positions (max 8,000) / 36 RACE-named materials / 0 AC; spawn ×3 =
+  23 empties each; **problems: []** (the RACE-only-materials assertion now exercised on a prepped
+  scene). Wall time of the whole dry run: 23 s.
+- AI drafts (the ship command lines): race_cw 7,342/8,993 points offset into the right-hand
+  carriageway, grid check +0.99 over 27 m, 100 % correct side, 0 island hits, min clear divider
+  3.39 m / edge 3.36 m, est lap 365.5 s; race_acw the mirror (grid −0.99 over 30 m, 350.4 s);
+  the street draft 1,718 points offset (islands only), 388.6 s. `lap_s_est` is the writer's
+  curvature estimate, not a lap time.
+- gates on the EXISTING road kn5 (the race furniture does not exist yet; the race gate OBJ is the
+  road kn5 alone as the stand-in): street ground-through 82 / floating 391 / severe 0 / excursions
+  101 / obstruction 0 / kinks 4.97 per km and audit D 512 / K 154 / I 145 / F 15 = 826 — identical
+  to 2026-10-09 key for key (the 0046/0048 class, FAIL as today); race_cw / race_acw obstruction 0,
+  ground-through 65 / 13, `barrier_missing` 34,833 / 34,833 → FAIL (the expected pre-build state,
+  the gate has teeth) → `RACE_RED = race_cw race_acw`, so the install block refuses even with
+  `--force-install`; `verify_kn5` refuses today's road kn5 under the three-layout config (16
+  spawn/timing nodes in it, no race kn5, three spawn kn5s missing) — exactly what the chain must
+  not pass; `track_folder --allow-missing-kn5` lays out `models_street.ini` [road, `__street`],
+  `models_race_cw.ini` / `models_race_acw.ini` [road, `_race`, `__race_*`], `ui/<id>/` with the
+  three names and run texts, pitboxes 8, `<id>/ai/` from `ai/<id>/`, and removes the stale root
+  `ai/`, `ui/ui_track.json`, `models.ini`; `make_map` writes the four maps. Wall: gate OBJ 5 s,
+  street drive_test 11 s, audits 9 s, both race drive_tests 20 s, verify_kn5 5 s, packer 7 s.
+
+## Notes filed here (not conclusions elsewhere)
+
+- **Spawn facing, two stacked causes** (measured on the workshop road kn5: `AC_START_0` local +Z ·
+  AI travel = −1.00; the installed set_start build −0.91; deepforest +1.00). (1) The prep yaws every
+  facing dummy with the SEAM tangent `cl[0]→cl[1]` (0016's class) wherever the grid is. (2) The
+  add-on's `convert_matrix` maps `rotation_euler.z = ψ` to kn5 local +Z = (sin ψ, cos ψ); with
+  ψ = atan2(tx, tz) that is (tx, tz) while the kn5-frame travel is (tx, −tz) — the error is
+  heading-dependent, ~correct on east-west Alvarado by accident, backwards on north-south College.
+  Fixed in `tools/layout_dummies.py`, gated by verify_kn5 (c). Whether this is 0026's mechanism is
+  not concluded. k10-colorado's reverse layouts (`kn5_write.py:362`) share the reflection — out of
+  scope here.
+- **The July reference line drives the ONCOMING carriageway on every divided run** (frame-independent
+  check at v1200, College northbound: July 7.5 m WEST of the V3 centreline, the V3 street draft 6.6 m
+  EAST = lake side = right-hand for northbound; 1,642/1,642 island stations left of forward travel;
+  under the race_cw declaration 5,322 July points are inside the chain's clearance). Every V3 install
+  to date shipped it. Q8 below.
+- **`data/track_race.obj` would have been swallowed by the prep**: `build_kn5_loop.py` step 1b merges
+  every `data/track_*.obj` into the scene; the race gate OBJ is `data/track.race.obj` and
+  `kn5_to_gate_obj` refuses a `track_*.obj` output name.
+- **engine-july is a dangling git worktree** (`git status` refuses it): nothing there is committed; the
+  mirrored files are recorded by md5 in the commit message (build_kn5_loop.py ENG `2dcc8e8b…` /
+  airoso `8752e963…` — two hunks on each of two diverged files; export_kn5_addon.py, build_spawn_kn5.py,
+  verify_kn5.py, median_zone.py, drive_test.py, audit_mesh.py byte-identical).
+- **Ribbon folds at the inside apexes** (hairpin flare, the three 90° corners, the Del Cerro mouth step
+  of 0.54 m) are the ribbon's defects; the author tool drops the folded rings/stations and chamfers
+  the inside corner by a few metres rather than knot the wall. The lane disc judges it.
+
+## Open questions for Kevin — Q1, Q2, Q6, Q7 change authored geometry; answer before the ship run
+
+1. **Q1 Side-street mouths in the race layouts.** Default SEALED: the centre chain runs nose-to-nose
+   across the Del Cerro 4-way (v1073-1096) and the kerb-line barrier runs straight across all three
+   mainline mouths (Del Cerro v1085/v1086, Parkway/Wisconsin v4424) — the Macau pattern; the Del
+   Cerro neighbourhood chain is unreachable in both race layouts; the street layout keeps every mouth
+   open (it never loads the race kn5). Alternative: escape roads — gap the kerb-line barrier at each
+   mouth (connector half-width + 3 m); race_cw then keeps the Del Cerro EAST leg + the v4424 mouth,
+   race_acw only the WEST leg.
+2. **Q2 The two 13.5-17 m stretches** (Alvarado→College taper v724-760, 108 m; I-8 overcrossing
+   approach v4453-4482, 90 m) get NO centre chain under the 17 m rule (chain v780 → v4440; a two-way
+   gap on the bridge between two chained runs, bridge rails only). Keep the rule, or carry the chain
+   across at ~6.4 m per side?
+3. **Q3 The street layout's start.** Recommend YES — Alvarado grid A (v291, +3.25 m north lane,
+   westbound toward College = your 2026-08 words, line v300), the same spawn as Race — Clockwise;
+   `start_positions.json` keeps working for the street layout only (`layout_dummies --issue-spawn`).
+   Say no and the street layout keeps today's College debug spawn (still in its own spawn kn5, with
+   the facing fix).
+4. **Q4 Names and which direction is "A".** ids `street` / `race_cw` / `race_acw`; CM names "K10 - San
+   Diego (V3) — Street Loop" / "— Race — Clockwise" (Alvarado westbound, College northbound = today's
+   build direction) / "— Race — Anticlockwise" (Alvarado eastbound); your compass wording is the hover
+   text. Today's build spawns you facing ~155° backwards on College (the yaw reflection) — confirm the
+   names once the fixed spawn faces you forward. 8 grid slots + 8 pits per layout (ledger 0021).
+5. **Q5 Barrier height.** The strip uses your module's full silhouette (0.67 m base, 1.20 m tall). Real
+   street K-rail (Long Beach / Macau) is 0.81-1.07 m; at 1.20 m the wall hides the opposite
+   carriageway's houses from the driver's eye. One constant (`race.barrier_height_m`) — keep 1.20?
+6. **Q6 Kerb-line barrier placement.** Default ON THE ROAD against the curb face (the literal "inside
+   of the sidewalks", the Long Beach placement; narrows every street by 0.82 m per side — Alvarado
+   11.36 m clear, grids 1.5 m clear, the outer staggered column 0.08 m). Alternative `walk`: on the
+   SIDEWALK TOP behind the curb (every street at full width, road lip free for the kerbs, +0.93 m grid
+   clearance). `race.edge_mode`, decided before authoring.
+7. **Q7 Interior corners.** Default: chain continuous round College/Navajo, Navajo/Jackson and
+   Jackson/Lake Murray (a median that continues; clockwise on the inside at R 34 / 25 / 23 m).
+   Alternative: gap the chain ±30 m at each apex for the real-junction look (3 × 60 m open centre).
+8. **Q8 Race kerbs and the street AI.** Seven kerbs at the five corners (outside lip at the three
+   chained corners; inside + outside at the hairpin and the 70th→Alvarado seam corner), 1.0 m × 0.05 m
+   flat red/white, inboard of the barrier; the minor v3282 kink excluded. Want kerbs anywhere else
+   (island-nose gaps, the Del Cerro 4-way)? And the street layout's AI: keep the July recording (drives
+   as today — but it is in the oncoming carriageway on every divided run, see Notes) or switch to the
+   V3 forward draft (`STREET_AI=draft`; 100 % right side, 0 island hits, unverified in game)?
+9. **Q9 Sign-off on the L8 wording** above (+ the CLAUDE.md sentence and the S6 note). Nothing in the
+   laws is edited until you say so.
+10. **Q10 Licence.** `concrete_barrier_4m.obj` and its two PNGs are the owned Dropbox pack with an
+    `UNRECORDED` entry in `assets/licenses.json`; the race kn5 and the two race layouts stay in the
+    FULL (local) package only until the pack's licence is recorded. Also: import the pack's real
+    Transition Barrier for the two free ends later instead of the procedural taper?
+11. **Q11 Tall invisible collider.** Deferred: the visible 1WALL strip is its own collider (a 1.2 m
+    rail vs a ~1.3 m car is the ordinary street-circuit case). Say if you want the Macau-style 2.5 m
+    invisible sheet from the first drive anyway (`--collider`; needs the `1WALL_RACECOL` pbr/ALPHATEST
+    row + `assets/textures/invisible_4x4.png`, generated — a material that cannot be seen working
+    before you drive).

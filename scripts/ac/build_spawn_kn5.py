@@ -1,16 +1,33 @@
-"""Export a tiny per-layout SPAWN kn5 for each layout that has a spawn anchor.
+"""Export a tiny nodes-only SPAWN kn5 per layout — the grid, pits and timing gates of THAT layout.
 
-For a multi-track network map, each track is an AC layout over ONE shared geometry kn5. AC reads the
-start/pit dummies (AC_START/AC_PIT/AC_TIME/AC_HOTLAP) from the loaded kn5s, so to give each layout its
-OWN start point we keep the main kn5 free of spawns and ship a small per-layout kn5 that contains only
-that layout's dummies. models_<layout>.ini loads BOTH (main geometry + this spawn kn5). This is the
-standard AC "timing gates in a per-config kn5" pattern and respects layouts-share-one-kn5 (CLAUDE.md).
+Multi-layout tracks keep the shared road kn5 free of AC_* spawn/timing nodes and load a small
+per-layout kn5 beside it (models_<layout>.ini MODEL_n) that holds only that layout's dummies:
+every reverse-capable reference measured (deepforest, Oregon Raceway Park, rt_california_highway,
+Pacific Coast Hwy) ships this shape, and it is what fleet/LAWS.md L8 means by "layouts add kn5s,
+never rebuild the road" (ledger 0047). AC reads AC_START/AC_PIT/AC_TIME/AC_HOTLAP from every
+loaded kn5, so each layout gets its own start, grid, pit row and clock.
 
-Dummies come from data/dummies_<layout>.json (build_network_mesh, per layouts[].spawn), placed on the
-nearest road to each anchor. They are yawed here by true_north_rotation_deg to match the main model's
-sun-fix yaw (scripts/ac/build_kn5.py).
+Dummies come from data/dummies_<layout>.json, one file per ``layouts[]`` id:
 
-    "$BLENDER" --background --python scripts/ac/build_spawn_kn5.py -- <track-dir>
+* NEW SHAPE (tools/layout_dummies.py, 2026-10-10): positions in the ENGINE frame (x=E, y=up, z=N —
+  the frame dummies.json and the loop prep share) plus underscore metadata every consumer skips:
+  ``_yaw_deg`` {name: Blender rotation_euler.z in degrees, already the reflected heading
+  atan2(tx, −tz) (+180 for a reverse layout)}, ``_layout``, ``_direction``, ``_vertex``,
+  ``_right_of_travel_m``. Placed exactly as the loop prep places its empties (build_kn5_loop step
+  3): Blender (x, z, y), yaw about Blender Z = ``_yaw_deg`` + true_north_rotation_deg for the
+  FACING names, AC_TIME_* unrotated. The AppData exporter's (x, z, −y) conversion then lands the
+  node at kn5 (x, y, −z) with local +Z along the recorded travel — the facing measured at +1.00 on
+  deepforest (ledger 0047; the old atan2(tx, tz) read −0.91 on the installed SD build).
+* LEGACY SHAPE (build_network_mesh, per layouts[].spawn — no ``_yaw_deg``): kept byte-for-byte —
+  Blender (x, −z, y) and the true-north yaw only, as before.
+
+The persistence *.ini from the main export is purged first so the add-on's read_settings returns
+{} and node_writer._write_base_node writes every empty as a plain node: a textureless nodes-only
+kn5 (rt_california's 65 KB 100.kn5). Run AFTER export_kn5_addon's passes (which need their ini).
+Stale build/<slug>__<x>.kn5 files for ids no longer in layouts[] are deleted so verify_kn5's
+"exactly one spawn kn5 per layout id" check sees the declared set only.
+
+    "$BLENDER" --background --python-exit-code 1 --python scripts/ac/build_spawn_kn5.py -- <track-dir>
 """
 
 import json
@@ -65,34 +82,49 @@ for mod in addon_utils.modules():
 
 def _find_export_op():
     if hasattr(bpy.ops, "exporter") and hasattr(bpy.ops.exporter, "kn5"):
-        return bpy.ops.exporter.kn5
+        return "exporter.kn5", bpy.ops.exporter.kn5
     for modname in dir(bpy.ops):
         mod = getattr(bpy.ops, modname)
         for opname in dir(mod):
             if "kn5" in opname.lower() or "assetto" in opname.lower():
-                return getattr(mod, opname)
-    return None
+                return f"{modname}.{opname}", getattr(mod, opname)
+    return None, None
 
 
-op = _find_export_op()
+op_name, op = _find_export_op()
+print(f"[spawn_kn5] exporter: {op_name}")
 # Clear any leftover persistence .ini from the main export — the add-on embeds every texture it lists,
 # which would bloat a dummies-only spawn kn5 by ~25 MB of unused textures.
 for old in build.glob("*.ini"):
     old.unlink()
 FACING = ("AC_START", "AC_PIT", "AC_HOTLAP")
-layouts = [lo for lo in cfg.get("layouts", []) if lo.get("spawn")]
-print(f"[spawn_kn5] yaw={yaw_deg} layouts={[lo['id'] for lo in layouts]}")
+layouts = [lo for lo in cfg.get("layouts", []) if isinstance(lo, dict) and lo.get("id")]
+ids = [lo["id"] for lo in layouts]
+print(f"[spawn_kn5] yaw={yaw_deg} layouts={ids}")
+# stale spawn kn5s of retired layout ids: verify_kn5 requires exactly one __<id>.kn5 per declared id
+for old in build.glob(f"{slug}__*.kn5"):
+    _lid = old.name[len(slug) + 2:-len(".kn5")]
+    if _lid not in ids:
+        old.unlink()
+        print(f"[spawn_kn5] removed stale {old.name} (layout {_lid!r} no longer declared)")
+failed = []
 for lo in layouts:
     lid = lo["id"]
     dpath = data / f"dummies_{lid}.json"
     if not dpath.exists():
-        print(f"[spawn_kn5] no dummies_{lid}.json — skip")
+        print(f"[spawn_kn5] no dummies_{lid}.json — skip ({lid} keeps whatever spawns the road kn5 bakes)")
         continue
     # clear the scene WITHOUT read_factory_settings (which resets prefs -> disables the add-on -> the
     # kn5 operator disappears). Just remove all objects between layouts.
     for o in list(bpy.data.objects):
         bpy.data.objects.remove(o, do_unlink=True)
-    dummies = json.loads(dpath.read_text())
+    raw = json.loads(dpath.read_text())
+    meta = {k: v for k, v in raw.items() if k.startswith("_")}
+    dummies = {k: v for k, v in raw.items() if not k.startswith("_")}
+    new_shape = "_yaw_deg" in raw
+    yaws = meta.get("_yaw_deg") or {}
+    if new_shape and str(meta.get("_layout", lid)) != lid:
+        raise SystemExit(f"[spawn_kn5] dummies_{lid}.json says _layout={meta.get('_layout')!r}")
     # dummies-only scene: the exporter writes each AC_* empty as a base node (node_writer._write_object
     # -> _write_base_node). A mesh here would hit _split_object_by_materials and fail without materials;
     # empties do not, so no root mesh is needed.
@@ -100,9 +132,19 @@ for lo in layouts:
         e = bpy.data.objects.new(name, None)
         e.empty_display_type = "ARROWS"
         e.empty_display_size = 3.0
-        e.location = (x * yc + z * ys, x * ys - z * yc, y)   # same yaw as build_kn5's dummies
-        if any(name.startswith(p) for p in FACING):
-            e.rotation_euler = (0.0, 0.0, yr)
+        facing = any(name.startswith(p) for p in FACING)
+        if new_shape:
+            # ENGINE (E, up, N) -> Blender (E, N, up) = (x, z, y), yawed by true north about Blender Z
+            # (the loop prep's placement); the exporter's (x, z, -y) then gives kn5 (x, y, -z).
+            e.location = (x * yc - z * ys, x * ys + z * yc, y)
+            if facing:
+                if name not in yaws:
+                    raise SystemExit(f"[spawn_kn5] dummies_{lid}.json: no _yaw_deg for facing node {name}")
+                e.rotation_euler = (0.0, 0.0, math.radians(float(yaws[name])) + yr)
+        else:
+            e.location = (x * yc + z * ys, x * ys - z * yc, y)   # legacy: same yaw as build_kn5's dummies
+            if facing:
+                e.rotation_euler = (0.0, 0.0, yr)
         bpy.context.scene.collection.objects.link(e)
     out = build / f"{slug}__{lid}.kn5"
     try:
@@ -111,12 +153,23 @@ for lo in layouts:
         pass
     for ob in bpy.data.objects:
         ob.select_set(True)
-    if op is not None:
-        try:
-            op("EXEC_DEFAULT", filepath=str(out))
-        except Exception as ex:
-            import traceback
-            print(f"[spawn_kn5] export EXCEPTION {lid}: {ex}")
-            traceback.print_exc()
+    if op is None:
+        raise SystemExit("[spawn_kn5] no kn5 export operator found — add-on not enabled")
+    try:
+        op("EXEC_DEFAULT", filepath=str(out))
+    except Exception as ex:
+        import traceback
+        print(f"[spawn_kn5] export EXCEPTION {lid}: {ex}")
+        traceback.print_exc()
     exists = out.exists()
-    print(f"[spawn_kn5] {lid}: kn5={exists} size={out.stat().st_size if exists else 0} dummies={len(dummies)}")
+    size = out.stat().st_size if exists else 0
+    print(f"[spawn_kn5] {lid}: kn5={exists} size={size} dummies={len(dummies)} "
+          f"shape={'engine+yaw' if new_shape else 'legacy'} direction={meta.get('_direction', '?')}")
+    # nodes-only: no textures, no materials — a spawn kn5 over 1 MB has swallowed the main export's
+    # material table (ini not purged) or a mesh, and verify_kn5 would reject it anyway
+    if not exists or size == 0:
+        failed.append(f"{lid}: no kn5 written")
+    elif size > 1_000_000:
+        failed.append(f"{lid}: {size} B is not a nodes-only kn5")
+if failed:
+    raise SystemExit("[spawn_kn5] FAILED: " + "; ".join(failed))

@@ -20,6 +20,18 @@ import json
 import sys
 from pathlib import Path
 
+# Optional CSP light keys (lighting.streetlight key -> ini key), written only when the config sets
+# them so CSP's own default applies otherwise and tracks without them keep a byte-identical ini.
+# SINGLE_FREQUENCY is the sodium switch (lit surfaces drain toward the lamp hue); the SHADOWS_*
+# trio pins the shadows a spot < 180 with RANGE > 15 switches on silently.
+_LIGHT_OPTIONAL_KEYS = (("diffuse_concentration", "DIFFUSE_CONCENTRATION"),
+                        ("single_frequency", "SINGLE_FREQUENCY"),
+                        ("shadows", "SHADOWS"),
+                        ("shadows_half_resolution", "SHADOWS_HALF_RESOLUTION"),
+                        ("shadows_extra_blur", "SHADOWS_EXTRA_BLUR"),
+                        ("volumetric_light", "VOLUMETRIC_LIGHT"),
+                        ("long_specular", "LONG_SPECULAR"))
+
 
 def _obj_groups(path: Path) -> list[str]:
     if not path.exists():
@@ -200,6 +212,22 @@ def generate(project_dir: str | Path) -> Path:
         sl_spec = sl.get("specular_mult", 0.6)
         sl_c = sl.get("color", [1.0, 0.82, 0.55])
         sl_ec = sl.get("emissive_color", [255, 209, 166])
+        sl_fade_at = sl.get("fade_at", 1200)
+        sl_fade_smooth = sl.get("fade_smooth", 200)
+        # One parameter set for both emit paths. CSP reads COLOR as rgb x intensity with NO /255, so
+        # the 0..1 config colour is scaled to 0..255 here and intensity must be sized for that scale
+        # (SD 2026-10-10: 1.6 on a 255-scaled colour was an effective 408 — "very harsh and very
+        # bright"; the soft-sodium band is 0.005-0.015). The [LIGHT_SERIES] fallback used to write
+        # the colour unscaled, i.e. 255x dimmer than the per-lamp path for the same config.
+        c255 = [round(255 * float(v)) for v in sl_c]
+        light_params = [f"COLOR = {c255[0]}, {c255[1]}, {c255[2]}, {sl_i}", "COLOR_OFF = 0, 0, 0, 0",
+                        f"SPOT = {sl_spot}", f"SPOT_SHARPNESS = {sl_sharp}",
+                        f"RANGE = {sl_r}", f"RANGE_GRADIENT_OFFSET = {sl_grad}",
+                        f"SPECULAR_MULT = {sl_spec}"]
+        light_params += [f"{ini_key} = {int(sl[key]) if isinstance(sl[key], bool) else sl[key]}"
+                         for key, ini_key in _LIGHT_OPTIONAL_KEYS if key in sl]
+        light_params += [f"FADE_AT = {sl_fade_at}", f"FADE_SMOOTH = {sl_fade_smooth}",
+                         "CONDITION = NIGHT_SMOOTH"]
         out += ["; --- Streetlights (per-lamp; see dead-lights notes in ext_config.py) ---------",
                 "[INCLUDE]",
                 "INCLUDE = common/conditions.ini   ; defines NIGHT_SMOOTH — NOT built-in", ""]
@@ -218,18 +246,10 @@ def generate(project_dir: str | Path) -> Path:
             except Exception as e:  # kn5 unreadable -> fall through to series
                 print(f"  [ext_config] LIGHTS clustering failed ({e}); falling back to LIGHT_SERIES")
         if heads:
-            c255 = [round(255 * float(v)) for v in sl_c]
             for i, (hx, hy, hz) in enumerate(sorted(heads)):
                 out += [f"[LIGHT_{i}]", "ACTIVE = 1",
                         f"POSITION = {hx:.2f}, {hy - 0.15:.2f}, {hz:.2f}",
-                        "DIRECTION = 0, -1, 0",
-                        f"COLOR = {c255[0]}, {c255[1]}, {c255[2]}, {sl_i}",
-                        "COLOR_OFF = 0, 0, 0, 0",
-                        f"SPOT = {sl_spot}", f"SPOT_SHARPNESS = {sl_sharp}",
-                        f"RANGE = {sl_r}", f"RANGE_GRADIENT_OFFSET = {sl_grad}",
-                        f"SPECULAR_MULT = {sl_spec}",
-                        "FADE_AT = 1200", "FADE_SMOOTH = 200",
-                        "CONDITION = NIGHT_SMOOTH", ""]
+                        "DIRECTION = 0, -1, 0"] + light_params + [""]
             print(f"  [ext_config] {len(heads)} per-lamp [LIGHT_N] entries clustered from the kn5")
             # --- DANGER LIGHTS: real red light sources at every warning board, FLASHING, and
             #     visible from far (Kevin: "just red boxes not lights at all... flashing
@@ -256,9 +276,7 @@ def generate(project_dir: str | Path) -> Path:
                 print(f"  [ext_config] {len(dboards)} flashing danger lights clustered from the kn5")
         else:
             out += ["[LIGHT_SERIES_STREETLIGHTS]", "MESHES = LIGHTS", "OFFSET = 0, -0.1, 0",
-                    f"COLOR = {sl_c[0]}, {sl_c[1]}, {sl_c[2]}, {sl_i}", "COLOR_OFF = 0, 0, 0, 0",
-                    "CONDITION = NIGHT_SMOOTH", f"RANGE = {sl_r}", "SPOT = 124", "SPOT_SHARPNESS = 0.3",
-                    "DIRECTION = 0, -1, 0", "CLUSTER_THRESHOLD = 8", ""]
+                    "DIRECTION = 0, -1, 0", "CLUSTER_THRESHOLD = 8"] + light_params + [""]
         # Night damping ENFORCED IN-ENGINE: the kn5's baked ksDiffuse (pbr.KS_PROPS) is the first
         # line, but CSP dynamic-light response paths vary by shader/version — this pins vegetation
         # and grass response down at night regardless, so lamp cones read as pools on the ground

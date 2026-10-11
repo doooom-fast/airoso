@@ -138,9 +138,16 @@ OR name prefix.
 
 **Materials.** The authored meshes carry no material; the prep (`build_kn5_loop.py` step 4,
 `pbr.setup_material`) creates `<object>_mat` per mesh by name prefix, so after the prep every race
-material is RACE-prefixed too (`1WALL_race_…_mat` → the generic `1WALL` row: Kevin's
-`concrete_barrier_diffuse/normal.png`; `1KERB_race_…_mat` → the `1KERB` row: `kerb_diffuse.png`
-red/white). No new pbr row, no new texture. The two prep hunks landed 2026-10-11 in BOTH copies of
+material is RACE-prefixed too, and binds its OWN pbr row: `1WALL_race_…_mat` → `1WALL_RACE` (Kevin's
+`concrete_barrier_diffuse/normal.png`, roughness 0.85, the 1WALL concrete parameters) and
+`1KERB_race_…_mat` → `1KERB_RACE` (`kerb_diffuse.png`, red/white along v: the kerbs keep their own UVs,
+v = arc / 1 m, so a 0.5 m red + 0.5 m white pair per metre). The rows were added 2026-10-11 ahead of the
+generic `1WALL` / `1KERB` rows (prefix order = match priority), in `scripts/ac/pbr.py` and engine-july's
+byte-identical copy: before them the strips fell through to the generic `1WALL` key, which Lake
+Murray's `pbr.network_walls: true` reskins with the building tile — the prepped dry-run scene of
+00:47 bound `building_diffuse/normal.jpg` on 29/29 strip materials; the re-run binds
+`concrete_barrier_*` on 29/29 and `kerb_diffuse.png` on 7/7, and the exporter's own lookup
+(`shader_and_textures`: key by prefix, override by key) resolves the same. No new texture. The two prep hunks landed 2026-10-11 in BOTH copies of
 the prep (engine-july's pin and airoso's diverged copy): the planar-UV skip tuple carries
 `"1WALL_RACE", "1KERB_RACE"`, and with `len(layouts) > 1` the prep creates no `AC_*` empties and
 writes `data/dummies.json = {}`. Measured on the prepped scratch scene: `loop_race.blend` = 36
@@ -192,7 +199,9 @@ the `--skip-blend` guard (the author is idempotent and is what keeps `loop.blend
 config's `race.*`); the prep follows, then the split runs on the PREPPED `blender/<slug>.blend`
 (materials assigned, no `AC_*` under the multi-layout guard), then the exporter runs once per
 split scene, then `build_spawn_kn5.py`. `--dry-run` stops right before the first export;
-`SHIP_PROJ=<dir>` points every project-relative step at a scratch copy.
+`SHIP_PROJ=<dir>` (absolute, outside airoso) points EVERY step at a scratch copy — no relative `project`
+argument remains — and a scratch run never syncs back into `tracks/san-diego-lake-murray/` or installs,
+so it is safe without `--dry-run` too (`tests/tools/test_ship_sd_chain.py` pins both).
 
 ## 10. The gate before the kn5 — `tools/verify_race.py`
 
@@ -205,8 +214,14 @@ island beyond the nose or on Alvarado / inside the hairpin arc, run ends within 
 declared vertices, parts joined on their shared ring), the kerb-line strips (every declared vertex
 covered on each side except the fold-dropped rings this file reports, no ring inside a bridge span,
 every `join` end met by its neighbour, every `free` end at a declared gap edge), the kerbs (the
-declared (apex, in|out) set == the authored set) and the spawn clearance (no overlap, real
-dummies). Dry run: OK — chain worst ring spacing 3.16 m; edge missing {L 0, R 23} against
+declared (apex, in|out) set == the authored set), the spawn clearance — HARD since 2026-10-11:
+re-measured from every `data/dummies_<id>.json` of a race layout (what the spawn kn5s are built from),
+a 1.9 m car on every grid / pit / hotlap slot stands ≥ 0.30 m off every strip face, else FAIL (the
+author tool's own record fails on the same floor) — and the lamp posts (G: every mast, base = the
+`lights.local.json` head set back by `author_lamps_blend.ARM_M`, footprint radius 0.585 m from
+`lamp_post.obj`, stands outside every strip footprint; minimum margin reported). `--pre-author` runs F
+and G alone. Dry run: OK — spawn minimum 0.48 m (AC_START_1/3/5/7 of both race layouts), lamps 238
+masts beside a strip, minimum margin 2.36 m, none inside; chain worst ring spacing 3.16 m; edge missing {L 0, R 23} against
 fold-dropped {L 0, R 27}; the two notes it raises are the 19 `other_deck_above` rings (the
 ribbon's folds and the Del Cerro mouth step) and the outside-lip ring spacing: with one ring per
 centreline vertex the outside lip of a 10 m corner gets rings 5-7 m apart and the strip chords the
@@ -234,7 +249,15 @@ exists before Blender.
 | Q10 licence | `assets/licenses.json` → `UNRECORDED` entry for the K-rail pack | race kn5 FULL package only until recorded |
 | Q11 collider | `--collider` | off |
 
-Grid note (both race layouts): the staggered outer slots (AC_START_1/3/5/7) sit at 4.65 m right of
-travel on 13.0 m Alvarado; a 1.9 m car's outer edge is then 0.08 m from the edge strip's face at
-5.68 m (`race_authored.json.spawn_clearance`, matching `barrier_bands.json.no_gap_zones`). Legal,
-tight; Q6 `walk` or a 1.0 m stagger instead of 1.4 m would open it.
+Grid note (both race layouts): the grid stagger is 1.0 m (`tools/layout_dummies.GRID_STAGGER_M`, read
+by `barrier_bands` and `race_furniture.synth_dummies`; 1.4 m until 2026-10-11). The staggered outer
+slots (AC_START_1/3/5/7) sit at 4.25 m right of travel on 13.0 m Alvarado, so a 1.9 m car's outer
+edge is 0.48 m from the edge strip's face at 5.68 m (`verify_race` F, `race_authored.json.spawn_clearance`,
+`barrier_bands.json.no_gap_zones` all agree); the inner column is at 2.25 m. 0.30 m is the hard floor
+(it was 0.08 m with the 1.4 m stagger — legal then, a fail now). Q6 `walk` would add 0.93 m.
+
+AI lines (other agents' part, recorded here because the default changed): every layout ships a
+GENERATED `write_ai_line` draft. The street layout's default is the V3 right-hand-lane draft
+(`STREET_AI=draft` in `tools/ship_sd.sh`); `STREET_AI=july` opts into the installed July line, which
+is itself a July `write_ai_line` draft — not an in-game recording — and drives the oncoming
+carriageway on every divided run (ledger 0047 Notes).

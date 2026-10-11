@@ -64,3 +64,47 @@ def test_refuses_to_leave_no_layout():
         assert "no layout" in str(e)
     else:
         raise AssertionError("a race-only folder was stripped to nothing")
+
+
+# --- previews: every layout's ui/<id>/preview.svg becomes preview.png (multi-layout folders have no root one)
+_SVG = ('<svg xmlns="http://www.w3.org/2000/svg" width="64" height="36"><rect width="64" height="36" fill="#102030"/>'
+        '<polyline points="2,2 30,20 60,5" stroke="#ff2010" stroke-width="3" fill="none"/></svg>')
+
+
+def test_multi_layout_previews_are_rasterised_per_layout():
+    from PIL import Image
+    f, _ = _folder(THREE)
+    ui = f / "ui"
+    for lo in THREE:
+        (ui / lo["id"] / "preview.svg").write_text(_SVG, encoding="utf-8")
+    done = pr.rasterize_previews(ui)
+    assert sorted(done) == ["race_acw", "race_cw", "street"], done
+    for lo in THREE:
+        d = ui / lo["id"]
+        assert not (d / "preview.svg").exists() and (d / "preview.png").exists(), d
+        im = Image.open(d / "preview.png").convert("RGB")
+        assert im.size == (64, 36) and im.getpixel((0, 35)) == (0x10, 0x20, 0x30)
+    assert not (ui / "preview.png").exists(), "no root preview invented for a multi-layout folder"
+
+
+def test_root_preview_still_rasterised_and_a_real_png_is_never_overwritten():
+    from PIL import Image
+    f, _ = _folder([{"id": "street", "kind": "street", "race_furniture": False}])
+    ui = f / "ui"
+    (ui / "preview.svg").write_text(_SVG, encoding="utf-8")                 # single-layout: the root ui/
+    real = Image.new("RGB", (8, 8), (1, 2, 3))
+    real.save(ui / "street" / "preview.png")                                 # the engine's real OSM preview ...
+    (ui / "street" / "preview.svg").write_text(_SVG, encoding="utf-8")      # ... beside a stale fallback SVG
+    done = pr.rasterize_previews(ui)
+    assert sorted(done) == [".", "street"], done
+    assert (ui / "preview.png").exists() and not (ui / "preview.svg").exists()
+    assert Image.open(ui / "street" / "preview.png").size == (8, 8), "the real preview was overwritten"
+    assert not (ui / "street" / "preview.svg").exists()
+
+
+def test_full_release_texts_name_the_k_rail_and_cc0_drops_it():
+    texts = pr.TRACK_DIR / "release"
+    line = "Concrete K-rail barrier (race layouts) — Kevin's owned asset pack, licence not recorded, personal use only"
+    for f in ("CREDITS.txt", "LICENSES.md"):
+        assert line in (texts / "full" / f).read_text(encoding="utf-8"), f
+        assert "K-rail" not in (texts / "cc0" / f).read_text(encoding="utf-8"), f   # the cc0 package drops the race layouts

@@ -310,7 +310,10 @@ verifier of record; gates per layout (GATES-CHANGELOG 2026-10-11). Dry-run on a 
 end to end up to the exporter; the street layout's gate numbers are unchanged. **Status: waits on
 Kevin's Q1 / Q2 / Q6 / Q7 (geometry) and Q9 (the L8 wording) in ledger 0047 — then one
 `bash tools/ship_sd.sh` run builds and installs all three.** No tier is claimed; T4 is not claimed
-by a generated AI line (0023 stays open). The L8 law text is NOT edited until Kevin signs it off.
+by a generated AI line (0023 stays open): every layout ships a `write_ai_line` DRAFT — the street
+layout's default is the V3 right-hand-lane draft since 2026-10-11, and `STREET_AI=july` opts into the
+installed July line, which is itself a July `write_ai_line` draft, not an in-game recording. The L8
+law text is NOT edited until Kevin signs it off.
 
 ---
 

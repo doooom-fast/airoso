@@ -65,7 +65,8 @@ KERB_TAPER_STATIONS = 3
 KERB_DEFL_MIN_DEG = 45.0
 KERB_EXT_MIN_M, KERB_EXT_MAX_M = 10.0, 30.0   # outside kerb symmetric extension E = clamp(2 R_apex, 10, 30)
 CAR_HALF_W = 0.95        # spawn clearance: a 1.9 m car
-SPAWN_MARGIN_M = 0.30
+SPAWN_MARGIN_M = 0.30    # HARD floor (2026-10-11; was a soft note): a car on a grid/pit slot stands >= this off any
+#                          strip face — 0.08 m (the 1.4 m stagger) left no room for a spawn wobble or a wider car
 COLLIDER_BELOW_M, COLLIDER_ABOVE_M = 0.30, 2.50   # optional invisible sheet (Q11, OFF by default)
 STREETS = (("alvarado", 0, 759), ("college", 760, 1514), ("navajo", 1515, 2320),
            ("jackson", 2321, 3297), ("lakemurray", 3298, 4498))
@@ -657,12 +658,14 @@ def nearest_vertex(pts, m, x, z, cells=None):
     return bi
 
 
-def spawn_clearance(pts, widths, bands, dummies, mode="road"):
-    """(hard, notes): hard = a car on this spawn OVERLAPS a strip (never ship); notes = clear by
-    less than SPAWN_MARGIN_M (Q6: walk mode gives Alvarado's outer grid column 1.0 m more)"""
+def spawn_clearance_table(pts, widths, bands, dummies, mode="road"):
+    """One record per FACING dummy (grid / pit / hotlap; AC_TIME_* skipped): the nearest vertex, the
+    signed lateral (+ = left of the FORWARD centreline), the edge-strip face it faces, and the car's
+    clearance to that face and (where a chain stands) to the centre chain. Pure; verify_race and the
+    author tool both read it."""
     m = unique_count(pts)
     cw, ei = bands["centre_w_by_vertex"], bands["edge_inset_by_vertex"]
-    hard, notes = [], []
+    out = []
     for name, p in dummies.items():
         if name.startswith("_") or not any(name.startswith(f) for f in FACING):
             continue
@@ -673,17 +676,40 @@ def spawn_clearance(pts, widths, bands, dummies, mode="road"):
         lat = (x - pts[k][0]) * lx + (z - pts[k][2]) * lz
         half = widths[k] / 2.0
         face = (half - (ei[k] or EDGE_INSET_M)) if mode == "road" else half + 0.11
-        clear = face - (abs(lat) + CAR_HALF_W)
+        rec = {"name": name, "vertex": k, "lat_m": round(lat, 3), "edge_face_m": round(face, 3),
+               "clear_edge_m": round(face - (abs(lat) + CAR_HALF_W), 3), "clear_centre_m": None}
+        if cw[k] > 0:
+            rec["clear_centre_m"] = round(abs(lat) - CAR_HALF_W - cw[k] / 2.0, 3)
+        out.append(rec)
+    return out
+
+
+def spawn_clearance(pts, widths, bands, dummies, mode="road"):
+    """(hard, notes): hard = a car on this spawn overlaps a strip OR stands closer than SPAWN_MARGIN_M
+    (0.30 m) to a strip face — never ship (HARD since 2026-10-11; a 0.08 m clearance used to be a note);
+    notes = the minimum clearance found, one line (reported, never gated)"""
+    hard, notes = [], []
+    worst = None
+    for r in spawn_clearance_table(pts, widths, bands, dummies, mode):
+        name, k, lat, face = r["name"], r["vertex"], r["lat_m"], r["edge_face_m"]
+        clear = r["clear_edge_m"]
         if clear < 0:
             hard.append(f"{name} at v{k} lat {lat:+.2f}: car edge {abs(lat) + CAR_HALF_W:.2f} m overlaps the edge-strip face {face:.2f} m")
         elif clear < SPAWN_MARGIN_M:
-            notes.append(f"{name} at v{k} lat {lat:+.2f}: {clear:.2f} m clear of the edge-strip face ({face:.2f} m)")
-        if cw[k] > 0:
-            clear_c = abs(lat) - CAR_HALF_W - cw[k] / 2.0
-            if clear_c < 0:
+            hard.append(f"{name} at v{k} lat {lat:+.2f}: only {clear:.2f} m clear of the edge-strip face ({face:.2f} m) "
+                        f"< {SPAWN_MARGIN_M:.2f} m")
+        if worst is None or clear < worst[0]:
+            worst = (clear, f"{name} v{k} (edge-strip face {face:.2f} m)")
+        cc = r["clear_centre_m"]
+        if cc is not None:
+            if cc < 0:
                 hard.append(f"{name} at v{k} lat {lat:+.2f}: overlaps the centre chain")
-            elif clear_c < SPAWN_MARGIN_M:
-                notes.append(f"{name} at v{k} lat {lat:+.2f}: {clear_c:.2f} m clear of the centre chain")
+            elif cc < SPAWN_MARGIN_M:
+                hard.append(f"{name} at v{k} lat {lat:+.2f}: only {cc:.2f} m clear of the centre chain < {SPAWN_MARGIN_M:.2f} m")
+            if cc < worst[0]:
+                worst = (cc, f"{name} v{k} (centre chain)")
+    if worst is not None:
+        notes.append(f"minimum spawn clearance {worst[0]:.2f} m at {worst[1]} (hard floor {SPAWN_MARGIN_M:.2f} m)")
     return hard, notes
 
 
@@ -692,8 +718,9 @@ def spawn_clearance(pts, widths, bands, dummies, mode="road"):
 def synth_dummies(pts, widths, layout, n_pits=8):
     """FULL dummy set for one layout in the engine frame + the underscore keys the spec names.
     Grid: pole at grid_vertex, +offset right of THIS layout's travel; AC_START_g at pole - 5.5 g m in
-    two staggered columns (lane centre +- 1.4 m); pits single file at the lane centre 45 + 7 (p+1) m
+    two staggered columns (lane centre +- layout_dummies.GRID_STAGGER_M); pits single file at the lane centre 45 + 7 (p+1) m
     behind; AC_TIME_0 at line_vertex across the full width; sectors at sector_vertices."""
+    from layout_dummies import GRID_STAGGER_M as stagger   # the producer's constant, never restated
     m = unique_count(pts)
     st = stations(pts)
     rev = layout.get("direction") == "reverse"
@@ -733,7 +760,7 @@ def synth_dummies(pts, widths, layout, n_pits=8):
     facing("AC_HOTLAP_START_0", g0, off)
     for g in range(1, n_pits):
         k = behind_vertex(g0, 5.5 * g)
-        facing(f"AC_START_{g}", k, off + (1.4 if g % 2 else -1.4))
+        facing(f"AC_START_{g}", k, off + (stagger if g % 2 else -stagger))
     for p in range(n_pits):
         k = behind_vertex(g0, 45.0 + 7.0 * (p + 1))
         facing(f"AC_PIT_{p}", k, off)

@@ -27,22 +27,39 @@ drive_test's ``barrier_missing`` then proves the strips are in the BUILT OBJ (L5
   stretches to 5-7 m and the strip chords up to ~0.4 m inside the arc (noted for the author tool).
   E  race kerbs — the declared (apex, in|out) set == the authored set, every kerb has stations,
      nothing declared-but-unmatched, as many corners as the declaration
-  F  spawn clearance — no race-layout spawn overlaps a strip; dummies not synthesised
+  F  spawn clearance — HARD (2026-10-11): every grid / pit / hotlap slot of every race layout, re-measured
+     HERE from data/dummies_<id>.json (what build_spawn_kn5 ships) against the declared strip faces
+     (bands params: face = half_w + edge_centre_from_lip_m -/+ barrier_half_m; chain = centre_w / 2):
+     a 1.9 m car stands >= SPAWN_MARGIN_M = 0.30 m off every face, else FAIL (it was a soft note at
+     0.08 m with the 1.4 m stagger). The author tool's own record still fails on its `hard` list and on
+     synthesised dummies. Every slot's clearance lands in race_verify.json counts.spawn_slots.
+  G  lamp posts vs the strips — every lamp mast (data/lights.local.json heads set back road-ward by
+     tools/author_lamps_blend.py's ARM_M, the footprint radius measured from assets/models/lamp_post.obj
+     at its POST_H scale) stands OUTSIDE every kerb-line strip and centre-chain footprint; FAIL on any
+     overlap, the minimum margin reported (counts.lamp_min_margin_m). Q6 `walk` puts the strip on the
+     sidewalk top, where the masts are — this is the check that would catch it.
 
 Reported, never gated: another ROAD sheet above a strip base (a fold / mouth defect for its owner,
-0033/0046 class), the worst deck-vs-data height, the soft spawn-clearance notes.
+0033/0046 class), the worst deck-vs-data height, the minimum spawn clearance.
 
     python tools/verify_race.py <project-dir> [--allow-standin] [--authored <file>] [--bands <file>]
+                                [--config <track.config.json>] [--pre-author] [--out <file>]
 
-Writes data/race_verify.json. Plain functions so tests/run_tests.py can drive it without Blender.
+--pre-author runs F (disk) and G only — no data/race_authored.json needed, so it can judge a
+workshop's dummies and lamps before (or without) the Blender author step; it writes
+data/race_verify.pre.json, never the full report's file. --config reads another
+config for the race-layout ids (a dummies file's own `_kind: race` also counts). Writes
+data/race_verify.json (or --out). Plain functions so tests/run_tests.py can drive it without Blender.
 """
 from __future__ import annotations
 
 import json
 import math
+import re
 import sys
 from pathlib import Path
 
+AIROSO = Path(__file__).resolve().parents[1]
 RACE_PREFIXES = ("1WALL_RACE", "1KERB_RACE")
 MAX_RINGS = 900
 MAX_POSITIONS = 60_000
@@ -54,6 +71,13 @@ END_TOL_M = 1.5         # a run's first/last ring vs the declared end vertex (th
 VERTEX_TOL = 1          # edge rings sit ~6 m off the centreline: on a tight curve the nearest vertex may be k+-1
 FREE_END_VERTEX_TOL = 3 # a `free` edge end must stand within this many vertices of a declared gap vertex
 SPACING_NOTE_M = 6.0    # ring spacing above this is reported (the strip chords the arc), never gated
+CAR_HALF_W_M = 0.95     # a 1.9 m car on a grid / pit slot
+SPAWN_MARGIN_M = 0.30   # F: HARD floor between a slot's car and any strip face (GATES-CHANGELOG 2026-10-11)
+FACING = ("AC_START", "AC_PIT", "AC_HOTLAP")   # the slots a car sits on (AC_TIME_* are timing planes)
+LAMP_ARM_FALLBACK_M = 1.8      # author_lamps_blend.ARM_M when its source cannot be read
+LAMP_POST_H_FALLBACK_M = 11.5  # author_lamps_blend.POST_H
+MAST_R_FALLBACK_M = 0.60       # lamp_post.obj base plate corner radius at 11.5 m (measured 0.585 m)
+LAMP_CELL_M = 30.0             # author_lamps_blend's nearest-centreline cell (its fallback is vertex 0)
 
 
 # --- geometry helpers ------------------------------------------------------------------------
@@ -107,10 +131,211 @@ def _unique_count(pts):
 
 # --- the checks ----------------------------------------------------------------------------------
 
-def verify(authored: dict, bands: dict, pts: list, island_w: list, *, allow_standin: bool = False) -> dict:
+def verify(authored: dict | None, bands: dict, pts: list, island_w: list, *, allow_standin: bool = False,
+           widths: list | None = None, spawns: dict | None = None, lamps: list | None = None,
+           pre_author: bool = False, lamp_arm_m: float | None = None, mast_r_m: float | None = None) -> dict:
+    """A-E (+ the author's own F record) on the authored file unless ``pre_author``; F re-measured from
+    ``spawns`` ({race layout id: dummies dict, or None when its file is missing}) and G from ``lamps``
+    (lights.local.json heads) whenever they and ``widths`` are given (main always gives them)."""
     fails: list[str] = []
     warns: list[str] = []
     counts: dict = {}
+    if not pre_author:
+        _verify_authored(authored or {}, bands, pts, island_w, allow_standin, fails, warns, counts)
+    m = _unique_count(pts)
+    grid = VertexGrid(pts[:m])
+    if spawns is not None and widths is not None:
+        _verify_spawns(spawns, bands, pts, widths, grid, fails, warns, counts)
+    if lamps is not None and widths is not None:
+        _verify_lamps(lamps, bands, pts, widths, grid, fails, warns, counts, lamp_arm_m, mast_r_m)
+    return {"ok": not fails, "fails": fails, "warnings": warns, "counts": counts}
+
+
+# --- F (disk) / G: the strips where the DECLARATION puts them — independent of race_furniture.py -------
+
+def _left_normal_at(pts, k, m):
+    a, b = pts[(k - 1) % m], pts[(k + 1) % m]
+    tx, tz = b[0] - a[0], b[2] - a[2]
+    L = math.hypot(tx, tz) or 1.0
+    return -tz / L, tx / L
+
+
+def _lateral(pts, m, k, x, z):
+    """signed lateral of (x, z) at vertex k: + = left of FORWARD travel"""
+    lx, lz = _left_normal_at(pts, k, m)
+    return (x - pts[k][0]) * lx + (z - pts[k][2]) * lz
+
+
+def strip_footprint(bands: dict, widths: list, k: int):
+    """(edge, centre_half) at vertex k from the declaration alone: edge = (inner, outer) |lateral| of the
+    kerb-line strip (both curb faces) where edge_strip_by_vertex > 0, else None — inner = the road-side
+    face = half_w + edge_centre_from_lip_m - barrier_half_m (road mode: half_w - 0.82; walk: half_w + 0.11);
+    centre_half = centre_w / 2 where the chain stands, else None."""
+    params = bands.get("params", {}) or {}
+    bh = float(params.get("barrier_half_m", 0.335))
+    c = params.get("edge_centre_from_lip_m")
+    c = float(c) if c is not None else (-0.485 if str(params.get("edge_mode", "road")) == "road" else 0.445)
+    es = bands.get("edge_strip_by_vertex") or bands.get("edge_inset_by_vertex") or []
+    cw = bands.get("centre_w_by_vertex") or []
+    half = float(widths[k]) / 2.0
+    edge = (half + c - bh, half + c + bh) if (k < len(es) and es[k] > 0) else None
+    centre = float(cw[k]) / 2.0 if (k < len(cw) and cw[k] > 0) else None
+    return edge, centre
+
+
+def spawn_slots(dummies: dict, pts: list, widths: list, bands: dict, grid=None) -> list[dict]:
+    """every FACING slot's car clearance to the edge-strip face and (where it stands) the centre chain"""
+    m = _unique_count(pts)
+    grid = grid or VertexGrid(pts[:m])
+    rows = []
+    for name, p in sorted(dummies.items()):
+        if name.startswith("_") or not name.startswith(FACING) or not isinstance(p, (list, tuple)) or len(p) < 3:
+            continue
+        x, z = float(p[0]), float(p[2])
+        k = grid.nearest(x, z)
+        lat = _lateral(pts, m, k, x, z)
+        edge, centre = strip_footprint(bands, widths, k)
+        a = abs(lat)
+        rows.append({"name": name, "vertex": k, "lat_m": round(lat, 3),
+                     "edge_face_m": round(edge[0], 3) if edge else None,
+                     "clear_edge_m": round(edge[0] - (a + CAR_HALF_W_M), 3) if edge else None,
+                     "clear_centre_m": round(a - CAR_HALF_W_M - centre, 3) if centre is not None else None})
+    return rows
+
+
+def _verify_spawns(spawns, bands, pts, widths, grid, fails, warns, counts):
+    mins, slots = {}, {}
+    for lid, d in sorted(spawns.items()):
+        if d is None:
+            fails.append(f"F: {lid}: no data/dummies_{lid}.json — run tools/layout_dummies.py (the spawn kn5 is built from it)")
+            continue
+        if d.get("_synthesised"):
+            fails.append(f"F: {lid}: dummies_{lid}.json is SYNTHESISED — run tools/layout_dummies.py first")
+        rows = spawn_slots(d, pts, widths, bands, grid)
+        if not rows:
+            fails.append(f"F: {lid}: dummies_{lid}.json holds no grid / pit slot")
+            continue
+        for r in rows:
+            for key, what in (("clear_edge_m", "edge-strip face"), ("clear_centre_m", "centre chain")):
+                v = r[key]
+                if v is not None and v < SPAWN_MARGIN_M:
+                    fails.append(f"F: {lid}: {r['name']} at v{r['vertex']} lat {r['lat_m']:+.2f}: {v:.2f} m clear of the "
+                                 f"{what} (< {SPAWN_MARGIN_M:.2f} m{'; the car OVERLAPS it' if v < 0 else ''})")
+        vals = [r[k] for r in rows for k in ("clear_edge_m", "clear_centre_m") if r[k] is not None]
+        mins[lid] = min(vals) if vals else None
+        slots[lid] = rows
+    counts["spawn_margin_m"] = SPAWN_MARGIN_M
+    counts["spawn_min_clear_m"] = mins
+    counts["spawn_slots"] = slots
+    if not spawns:
+        warns.append("F: no race layout declared — spawn clearance not measured")
+
+
+def _author_lamps_constant(name: str, fallback: float, path: Path | None = None) -> float:
+    """`NAME = <float>` from tools/author_lamps_blend.py — a bpy script, so PARSED, never imported: the
+    check uses the author tool's own number and cannot drift from it"""
+    p = path or (AIROSO / "tools" / "author_lamps_blend.py")
+    try:
+        mt = re.search(rf"^{name}\s*=\s*([0-9]+(?:\.[0-9]+)?)", p.read_text(encoding="utf-8"), re.M)
+    except OSError:
+        return fallback
+    return float(mt.group(1)) if mt else fallback
+
+
+def mast_radius_m(post_h: float, obj: Path | None = None) -> float:
+    """circumscribed radius of the lamp model's base (vertices within 5 % of its height of the ground),
+    at the author tool's scale POST_H / model height"""
+    obj = obj or (AIROSO / "assets" / "models" / "lamp_post.obj")
+    try:
+        verts = []
+        for ln in obj.read_text(encoding="utf-8", errors="ignore").splitlines():
+            if ln.startswith("v "):
+                q = ln.split()
+                verts.append((float(q[1]), float(q[2]), float(q[3])))
+    except OSError:
+        return MAST_R_FALLBACK_M
+    if not verts:
+        return MAST_R_FALLBACK_M
+    lo, top = min(v[1] for v in verts), max(v[1] for v in verts)
+    base = [math.hypot(v[0], v[2]) for v in verts if v[1] - lo <= 0.05 * (top - lo)]
+    return max(base) * (post_h / top) if base and top > 0 else MAST_R_FALLBACK_M
+
+
+def lamp_bases(heads: list, pts: list, arm_m: float) -> list[dict]:
+    """tools/author_lamps_blend.py's base rule, replicated: road-ward = head -> the nearest centreline
+    point in the 3 x 3 30 m cells around the head (point 0 when none — that tool's own fallback, flagged
+    here), base = head - arm_m * road-ward"""
+    cells: dict[tuple[int, int], list[int]] = {}
+    for i, p in enumerate(pts):
+        cells.setdefault((int(p[0] // LAMP_CELL_M), int(p[2] // LAMP_CELL_M)), []).append(i)
+    out = []
+    for h in heads:
+        hx, hz = float(h[0]), float(h[2])
+        best, bi = float("inf"), 0
+        cx, cz = int(hx // LAMP_CELL_M), int(hz // LAMP_CELL_M)
+        for dx in (-1, 0, 1):
+            for dz in (-1, 0, 1):
+                for i in cells.get((cx + dx, cz + dz), ()):
+                    d = (pts[i][0] - hx) ** 2 + (pts[i][2] - hz) ** 2
+                    if d < best:
+                        best, bi = d, i
+        c = pts[bi]
+        L = math.hypot(c[0] - hx, c[2] - hz) or 1e-9
+        rx, rz = (c[0] - hx) / L, (c[2] - hz) / L
+        out.append({"x": hx - rx * arm_m, "z": hz - rz * arm_m, "fallback": best == float("inf")})
+    return out
+
+
+def lamp_margins(bases: list, pts: list, widths: list, bands: dict, mast_r: float, grid=None) -> list[dict]:
+    """per mast: the clearance from its base footprint (radius mast_r) to the nearest strip footprint at
+    its nearest vertex; negative = the mast stands IN the strip. Masts at a vertex with no strip (the
+    bridge gaps) are not listed."""
+    m = _unique_count(pts)
+    grid = grid or VertexGrid(pts[:m])
+    rows = []
+    for i, b in enumerate(bases):
+        k = grid.nearest(b["x"], b["z"])
+        lat = _lateral(pts, m, k, b["x"], b["z"])
+        a = abs(lat)
+        edge, centre = strip_footprint(bands, widths, k)
+        cand = []
+        if edge:
+            inner, outer = edge
+            d = (a - outer) if a >= outer else ((inner - a) if a <= inner else -min(a - inner, outer - a))
+            cand.append(("edge", d - mast_r))
+        if centre is not None:
+            cand.append(("centre", a - centre - mast_r))
+        if not cand:
+            continue
+        kind, mg = min(cand, key=lambda t: t[1])
+        rows.append({"lamp": i, "vertex": k, "lat_m": round(lat, 3), "base_xz": [round(b["x"], 2), round(b["z"], 2)],
+                     "against": kind, "margin_m": round(mg, 3), "fallback": b["fallback"]})
+    return rows
+
+
+def _verify_lamps(heads, bands, pts, widths, grid, fails, warns, counts, arm_m=None, mast_r=None):
+    arm = arm_m if arm_m is not None else _author_lamps_constant("ARM_M", LAMP_ARM_FALLBACK_M)
+    post_h = _author_lamps_constant("POST_H", LAMP_POST_H_FALLBACK_M)
+    r_m = mast_r if mast_r is not None else mast_radius_m(post_h)
+    bases = lamp_bases(heads, pts, arm)
+    rows = lamp_margins(bases, pts, widths, bands, r_m, grid)
+    bad = sorted((r for r in rows if r["margin_m"] < 0), key=lambda r: r["margin_m"])
+    for r in bad[:10]:
+        fails.append(f"G: lamp {r['lamp']} at v{r['vertex']} lat {r['lat_m']:+.2f} ({r['base_xz'][0]}, {r['base_xz'][1]}): "
+                     f"its mast stands {-r['margin_m']:.2f} m inside the {r['against']} strip footprint")
+    if len(bad) > 10:
+        fails.append(f"G: ... and {len(bad) - 10} more lamp masts inside a strip footprint")
+    worst = min(rows, key=lambda r: r["margin_m"]) if rows else None
+    nfb = sum(1 for b in bases if b["fallback"])
+    if nfb:
+        warns.append(f"G: {nfb} lamp heads have no centreline point within the 30 m cells around them — "
+                     f"author_lamps_blend aims those at vertex 0 (measured as authored)")
+    counts.update({"lamps": len(bases), "lamps_checked": len(rows), "lamp_arm_m": arm, "lamp_post_h_m": post_h,
+                   "mast_r_m": round(r_m, 3), "lamp_min_margin_m": worst["margin_m"] if worst else None,
+                   "lamp_min": worst, "lamps_inside": len(bad)})
+
+
+def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns, counts):
     m = _unique_count(pts)
     grid = VertexGrid(pts[:m])
     objects = authored.get("objects", [])
@@ -312,15 +537,17 @@ def verify(authored: dict, bands: dict, pts: list, island_w: list, *, allow_stan
     counts.update({"kerb_objects": len(kerb_objs), "corners": n_corners_auth,
                    "kerb_fold_dropped": sum(int(o.get("fold_skipped", 0) or 0) for o in kerb_objs)})
 
-    # F. spawn clearance
+    # F. spawn clearance — the AUTHOR's record (author time); the HARD re-measure of the dummies that
+    #    actually ship is _verify_spawns (from data/dummies_<id>.json), run by verify() for every call
     sc = authored.get("spawn_clearance", {}) or {}
     for lid, r in sc.items():
         if r.get("synthesised"):
             fails.append(f"F: {lid}: spawn clearance measured on SYNTHESISED dummies — run tools/layout_dummies.py first")
         if r.get("hard"):
-            fails.append(f"F: {lid}: a spawn overlaps a strip: {r['hard'][:4]}")
+            fails.append(f"F: {lid}: a spawn overlaps a strip or stands < {SPAWN_MARGIN_M:.2f} m off it "
+                         f"(author-time record): {r['hard'][:4]}")
         for note in r.get("notes", []) or []:
-            warns.append(f"F: {lid}: {note}")
+            warns.append(f"F: {lid}: author-time: {note}")
     if not sc:
         warns.append("F: no spawn_clearance recorded (no dummies_<id>.json at authoring time)")
 
@@ -336,54 +563,99 @@ def verify(authored: dict, bands: dict, pts: list, island_w: list, *, allow_stan
     if tot.get("deck_vs_data_max_m") is not None:
         warns.append(f"built deck vs data height, worst {tot.get('deck_vs_data_max_m')} m")
 
-    return {"ok": not fails, "fails": fails, "warnings": warns, "counts": counts}
+
+def race_layout_spawns(data: Path, cfg: dict | None) -> dict:
+    """{race layout id: its data/dummies_<id>.json dict, or None when the file is missing}. A race layout
+    is one the config marks race_furniture: true OR whose dummies file says `_kind: race` (so a workshop
+    whose own track.config.json predates the layouts is still judged on the dummies it holds)."""
+    ids = {str(lo["id"]) for lo in ((cfg or {}).get("layouts") or []) if isinstance(lo, dict) and lo.get("race_furniture")}
+    found = {}
+    for f in sorted(data.glob("dummies_*.json")):
+        lid = f.stem[len("dummies_"):]
+        try:
+            d = json.loads(f.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        if lid in ids or d.get("_kind") == "race":
+            found[lid] = d
+    return {lid: found.get(lid) for lid in sorted(ids | set(found))}
 
 
 def main(argv=None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     if not argv:
-        raise SystemExit("usage: python tools/verify_race.py <project-dir> [--allow-standin] [--authored <file>] [--bands <file>]")
-    allow_standin = False
-    authored_p = bands_p = None
+        raise SystemExit("usage: python tools/verify_race.py <project-dir> [--allow-standin] [--authored <file>] [--bands <file>] "
+                         "[--config <track.config.json>] [--pre-author] [--out <file>]")
+    allow_standin = pre_author = False
+    authored_p = bands_p = config_p = out_p = None
     rest = []
     i = 0
     while i < len(argv):
         a = argv[i]
         if a == "--allow-standin":
             allow_standin = True; i += 1
+        elif a == "--pre-author":
+            pre_author = True; i += 1
         elif a == "--authored":
             authored_p = Path(argv[i + 1]); i += 2
         elif a == "--bands":
             bands_p = Path(argv[i + 1]); i += 2
+        elif a == "--config":
+            config_p = Path(argv[i + 1]); i += 2
+        elif a == "--out":
+            out_p = Path(argv[i + 1]); i += 2
         else:
             rest.append(a); i += 1
     proj = Path(rest[0]).resolve()
     data = proj / "data"
     authored_p = authored_p or data / "race_authored.json"
     bands_p = bands_p or data / "barrier_bands.json"
-    for p in (authored_p, bands_p, data / "centerline.local.json", data / "median_bands.json"):
+    config_p = config_p or proj / "track.config.json"
+    out_p = out_p or data / ("race_verify.pre.json" if pre_author else "race_verify.json")   # a partial run never overwrites the full report
+    need = [bands_p, data / "centerline.local.json", data / "median_bands.json"]
+    if not pre_author:
+        need.insert(0, authored_p)
+    for p in need:
         if not p.exists():
             raise SystemExit(f"[verify-race] missing {p}")
-    authored = json.loads(authored_p.read_text(encoding="utf-8"))
+    authored = None if pre_author else json.loads(authored_p.read_text(encoding="utf-8"))
     bands = json.loads(bands_p.read_text(encoding="utf-8"))
     cl = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
     pts = [tuple(p) for p in cl["points_xyz_m"]]
+    widths = [float(w) for w in cl["widths_m"]]
     island_w = json.loads((data / "median_bands.json").read_text(encoding="utf-8"))["island_w_by_vertex"]
-    if len(island_w) != len(pts):
-        raise SystemExit(f"[verify-race] median_bands {len(island_w)} vs centreline {len(pts)} vertices")
-    r = verify(authored, bands, pts, island_w, allow_standin=allow_standin)
+    if len(island_w) != len(pts) or len(widths) != len(pts):
+        raise SystemExit(f"[verify-race] median_bands {len(island_w)} / widths {len(widths)} vs centreline {len(pts)} vertices")
+    cfg = json.loads(config_p.read_text(encoding="utf-8")) if config_p.exists() else None
+    spawns = race_layout_spawns(data, cfg)
+    lp = data / "lights.local.json"
+    lamps = json.loads(lp.read_text(encoding="utf-8")).get("lampheads", []) if lp.exists() else None
+    r = verify(authored, bands, pts, island_w, allow_standin=allow_standin, widths=widths, spawns=spawns,
+               lamps=lamps, pre_author=pre_author)
+    if lamps is None:
+        r["warnings"].append("G: no data/lights.local.json — no lamps authored, nothing to check")
     c = r["counts"]
-    print(f"[verify-race] {c.get('objects')} objects: chain {c.get('chain_objects')} objects / {c.get('chain_runs')} runs / "
-          f"{c.get('chain_rings')} rings (worst gap {c.get('chain_gap_worst_m')} m); edge {c.get('edge_objects')} objects / "
-          f"{c.get('edge_rings')} rings on {c.get('edge_declared_vertices')} declared vertices (missing {c.get('edge_missing')}, "
-          f"fold-dropped {c.get('edge_fold_dropped')}, worst gap {c.get('edge_gap_worst_m')} m); kerbs {c.get('kerb_objects')} "
-          f"at {c.get('corners')} corners; interpolated {c.get('interpolated')}/{c.get('rings_total')}")
+    if not pre_author:
+        print(f"[verify-race] {c.get('objects')} objects: chain {c.get('chain_objects')} objects / {c.get('chain_runs')} runs / "
+              f"{c.get('chain_rings')} rings (worst gap {c.get('chain_gap_worst_m')} m); edge {c.get('edge_objects')} objects / "
+              f"{c.get('edge_rings')} rings on {c.get('edge_declared_vertices')} declared vertices (missing {c.get('edge_missing')}, "
+              f"fold-dropped {c.get('edge_fold_dropped')}, worst gap {c.get('edge_gap_worst_m')} m); kerbs {c.get('kerb_objects')} "
+              f"at {c.get('corners')} corners; interpolated {c.get('interpolated')}/{c.get('rings_total')}")
+    for lid, rows in (c.get("spawn_slots") or {}).items():
+        cells = ", ".join(f"{q['name'].replace('AC_', '')} {q['clear_edge_m']:+.2f}" if q["clear_centre_m"] is None
+                          else f"{q['name'].replace('AC_', '')} {q['clear_edge_m']:+.2f}/c{q['clear_centre_m']:+.2f}" for q in rows)
+        print(f"[verify-race] F {lid}: min clearance {c['spawn_min_clear_m'].get(lid)} m (hard floor {SPAWN_MARGIN_M} m): {cells}")
+    lm = c.get("lamp_min")
+    if lm is not None:
+        print(f"[verify-race] G lamps: {c.get('lamps_checked')}/{c.get('lamps')} masts beside a strip (arm {c.get('lamp_arm_m')} m, "
+              f"mast r {c.get('mast_r_m')} m); minimum margin {c.get('lamp_min_margin_m')} m at lamp {lm['lamp']} v{lm['vertex']} "
+              f"lat {lm['lat_m']:+.2f} vs the {lm['against']} strip; {c.get('lamps_inside')} inside")
     for w in r["warnings"]:
         print(f"[verify-race] note: {w}")
     for f in r["fails"]:
         print(f"[verify-race] FAIL {f}")
-    (data / "race_verify.json").write_text(json.dumps(r, indent=1), encoding="utf-8")
-    print(f"[verify-race] {'OK' if r['ok'] else 'FAILED'} -> data/race_verify.json")
+    out_p.write_text(json.dumps(r, indent=1), encoding="utf-8")
+    print(f"[verify-race] {'OK' if r['ok'] else 'FAILED'}{' (pre-author: F + G only)' if pre_author else ''} -> {out_p}")
     return 0 if r["ok"] else 1
 
 

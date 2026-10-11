@@ -146,7 +146,7 @@
     "concrete_barrier_normal.png",
     "models/concrete_barrier_4m.obj"
    ],
-   "source": "Kevin's owned asset pack (Dropbox; fleet/reference/ASSET-LIBRARY.md, ledger 0005) — bound by the 1WALL pbr row; the race kn5's 1WALL_race_* strips sweep its measured silhouette and tile its texture at 4.04 m",
+   "source": "Kevin's owned asset pack (Dropbox; fleet/reference/ASSET-LIBRARY.md, ledger 0005) — bound by its own 1WALL_RACE pbr row (immune to pbr.network_walls, 2026-10-11); the race kn5's 1WALL_race_* strips sweep its measured silhouette and tile its texture at 4.04 m",
    "license": "UNRECORDED",
    "url": "",
    "_note": "Licence not yet recorded (ledger 0047 Q10). Until it is, san_diego_lake_murray_race.kn5 and models_race_*.ini ship in the FULL (local) package only and are EXCLUDED from the CC0 variant; tools/pack_release.py must drop them when it builds cc0/."

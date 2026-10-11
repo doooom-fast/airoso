@@ -1,0 +1,5 @@
+# md5  bytes  path — files of the snapshotted add-on folders deliberately NOT copied: the kn5->FBX
+# IMPORT helpers (never loaded by an export). Recorded so the omission is visible, not silent.
+2cf42de5210e14cfa3b089dd4f7ba99a     565248  vendor/io_import_accsv/kn52fbx/AcTools.dll
+6e52b92b3032dfbc21532df303569b1e    4879752  vendor/io_import_accsv/kn52fbx/FbxConverter.exe
+eee689ad04643117549d5da02bf3bd89      15360  vendor/io_import_accsv/kn52fbx/kn52fbx.exe

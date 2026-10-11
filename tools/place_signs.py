@@ -484,15 +484,13 @@ class Context:
         sp = data / "scatter_positions.json"
         scat = json.loads(sp.read_text(encoding="utf-8")) if sp.exists() else {}
         self.plants = [(e["x"], e["z"], zone, i) for zone, lst in scat.items() for i, e in enumerate(lst)]
+        # the project's spawns and the repo's synced copy of them — every layout's (warning only: a
+        # spawn never moves a sign, see SPAWN_CLEAR_M)
         self.spawn_pts = []
-        for dp in (data / "dummies.json", AIROSO / "tracks" / track_dir_name(self.proj) / "data" / "dummies.json"):
-            if dp.exists():
-                try:
-                    for k, v in json.loads(dp.read_text(encoding="utf-8")).items():
-                        if k.startswith(("AC_START", "AC_HOTLAP", "AC_TIME")):
-                            self.spawn_pts.append(((v[0], v[2]), f"{k}@{dp.parent.parent.name}"))
-                except Exception:
-                    pass
+        for d in (data, AIROSO / "tracks" / track_dir_name(self.proj) / "data"):
+            for p in spawn_points(d):
+                if p not in self.spawn_pts:
+                    self.spawn_pts.append(p)
 
     def nearest_mouth(self, q):
         return min(((math.hypot(q[0] - p[0], q[1] - p[1]), lab) for p, lab in self.mouth_pts), default=(float("inf"), "-"))
@@ -505,6 +503,32 @@ class Context:
 
     def nearest_spawn(self, q):
         return min(((math.hypot(q[0] - p[0], q[1] - p[1]), lab) for p, lab in self.spawn_pts), default=(float("inf"), "-"))
+
+
+SPAWN_PREFIXES = ("AC_START", "AC_HOTLAP", "AC_PIT", "AC_TIME")
+
+
+def spawn_points(data_dir):
+    """[((x, z), label)] for every grid / pit / hotlap / timing node in ``data_dir``: the UNION of every
+    per-layout data/dummies_<id>.json (tools/layout_dummies.py; ledger 0047 — in a multi-layout build the
+    prep writes data/dummies.json = {}), falling back to the single-layout data/dummies.json only when
+    no per-layout file exists. Underscore keys are metadata and are skipped."""
+    data_dir = Path(data_dir)
+    files = sorted(data_dir.glob("dummies_*.json"))
+    single = data_dir / "dummies.json"
+    if not files and single.exists():
+        files = [single]
+    out = []
+    for dp in files:
+        try:
+            d = json.loads(dp.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        tag = dp.stem[len("dummies_"):] if dp.stem.startswith("dummies_") else dp.parent.parent.name
+        for k, v in (d.items() if isinstance(d, dict) else ()):
+            if k.startswith(SPAWN_PREFIXES) and isinstance(v, (list, tuple)) and len(v) >= 3:
+                out.append(((float(v[0]), float(v[2])), f"{k}@{tag}"))
+    return out
 
 
 def track_dir_name(proj):

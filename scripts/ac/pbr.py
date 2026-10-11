@@ -23,6 +23,13 @@ TEXTURES = {
     # black" bug). Bound to the documented-CC0 concrete tile (building_*); San Diego's local
     # concrete_diffuse.jpg has no provenance entry in its licenses.json, so it stays out of the engine.
     "1KERB_SIDEWALK": ("building_diffuse.jpg", "building_normal.jpg", 0.75, (0.66, 0.66, 0.64, 1), 0.0, False),
+    # 1KERB_RACE BEFORE 1KERB (ledger 0047): the race layouts' flat rumble kerbs
+    # (tools/author_race_furniture_blend.py) bind the red/white stripe by their OWN row. They carry
+    # their own UVs (u across the 1.0 m profile, v = arc / 1 m — race_furniture.kerb_mesh, KERB_TILE_M),
+    # kept by the prep's planar_uv skip, and kerb_diffuse.png alternates red/white along v: one
+    # 0.5 m red + 0.5 m white pair per metre. Same texture and parameters as 1KERB, but no later
+    # change to the generic row (or an override keyed "1KERB") can reach them.
+    "1KERB_RACE": ("kerb_diffuse.png",  None,                 0.55, (0.62, 0.10, 0.08, 1), 0.0, False),
     "1KERB":   ("kerb_diffuse.png",    None,                 0.55, (0.62, 0.10, 0.08, 1), 0.0, False),
     "CURB":    ("building_diffuse.jpg", "building_normal.jpg", 0.70, (0.64, 0.64, 0.66, 1), 0.0, False),   # concrete street curb (fallback if a loop mesh keeps this name)
     "SIDEWALK": ("building_diffuse.jpg", "building_normal.jpg", 0.75, (0.68, 0.68, 0.66, 1), 0.0, False),  # concrete sidewalk slab
@@ -40,6 +47,17 @@ TEXTURES = {
     # bind, and prefix order = match priority — without the sub-prefix first it would fall through
     # to the barrier-module tile. Low grey concrete rail (the loop's I-8 bridge rail).
     "1WALL_GUARD": ("building_diffuse.jpg", "building_normal.jpg", 0.55, (0.74, 0.75, 0.77, 1), 0.10, False),
+    # 1WALL_RACE BEFORE 1WALL (ledger 0047): the race K-rail (centre chain + kerb-line strips,
+    # 1WALL_race_*) is Kevin's concrete barrier module swept as a strip (u = arc / 4.04 m). Without its
+    # own row it fell through to the generic 1WALL key, and a track whose config sets
+    # pbr.network_walls (Lake Murray does, for the merged freeway's 1WALL_fw barriers) overrides THAT
+    # key with the cast-concrete building tile — the race strips would have shipped as building
+    # concrete, not K-rail. Overrides are looked up by the MATCHED key (setup_material /
+    # export_kn5_addon.shader_and_textures), so a row of its own is immune to the network-wall skin
+    # (load_overrides only ever writes "1WALL"). NOTE: a future 1WALL_RACECOL collider (Q11) also
+    # starts with 1WALL_RACE — it needs its own row ABOVE this one (alpha-tested invisible), or it
+    # would render as visible K-rail.
+    "1WALL_RACE": ("concrete_barrier_diffuse.png", "concrete_barrier_normal.png", 0.85, (0.72, 0.72, 0.70, 1), 0.0, False),
     "BUSHES":  ("bushes_atlas.png", None, 0.9, (0.36, 0.37, 0.24, 1), 0.0, False),  # dry scrub billboards (LA Canyons bo_bushes_11)
     "HIGHWAY": ("asphalt_cracked_diffuse.jpg", "asphalt_cracked_normal.jpg", 0.80, (0.30, 0.30, 0.32, 1), 0.0, False),  # I-70 deck
     "HWYSTRUCT": ("building_diffuse.jpg", "building_normal.jpg", 0.85, (0.68, 0.68, 0.66, 1), 0.0, False),  # concrete parapets/piers
@@ -149,6 +167,8 @@ def load_overrides(project_dir: str | Path) -> dict[str, dict]:
         #     barrier modules. Default = stock table (barrier modules); auto-on when the config
         #     carries a top-level "network" block, overridable either way via pbr.network_walls.
         #     An explicit texture_overrides["1WALL"] entry still wins (skipped above via `out`).
+        #     ONLY the generic "1WALL" key is reskinned: every sub-prefix row (1WALL_RACE, _GUARD,
+        #     _PARA, ...) matches first in setup_material and keeps its own texture.
         net_walls = (cfg.get("pbr", {}) or {}).get("network_walls")
         if net_walls is None:
             net_walls = "network" in cfg
@@ -185,13 +205,36 @@ def load_overrides(project_dir: str | Path) -> dict[str, dict]:
     return out
 
 
+def match_key(name: str) -> str | None:
+    """The TEXTURES row an object/material name binds: the FIRST prefix (dict order) its upper-case
+    name starts with — the same expression export_kn5_addon.shader_and_textures uses."""
+    up = str(name).upper()
+    return next((k for k in TEXTURES if up.startswith(k)), None)
+
+
+def resolve(name: str, overrides: dict | None = None, tex_dir: Path | None = None) -> dict:
+    """Pure (no bpy): what ``setup_material`` / the exporter bind for ``name`` — the matched key and
+    the diffuse / normal FILE paths (an override for the matched key wins, else the stock row)."""
+    tex_dir = Path(tex_dir) if tex_dir else texture_dir()
+    key = match_key(name)
+    diff, norm, rough, color, metal, water = TEXTURES.get(
+        key, (None, None, 0.8, (0.5, 0.5, 0.5, 1), 0.0, False))
+    ov = (overrides or {}).get(key or "", {})
+    return {
+        "key": key,
+        "diffuse": Path(ov["diffuse"]) if ov.get("diffuse") else (tex_dir / diff if diff else None),
+        "normal": Path(ov["normal"]) if ov.get("normal") else (tex_dir / norm if norm else None),
+        "roughness": rough, "color": color, "metallic": metal, "water": water,
+        "overridden": bool(ov),
+    }
+
+
 def setup_material(bpy, obj, tex_dir: Path | None = None, overrides: dict | None = None):
     """Assign a Principled material (diffuse + normal from ``tex_dir``) to ``obj`` by name prefix.
     ``overrides`` (from :func:`load_overrides`) swaps in real captured textures for matching prefixes.
     Returns the material so callers can stamp AC metadata (e.g. ``mat['shaderName']``) on it."""
     tex_dir = Path(tex_dir) if tex_dir else texture_dir()
-    name = obj.name.upper()
-    key = next((k for k in TEXTURES if name.startswith(k)), None)
+    key = match_key(obj.name)
     diff, norm, rough, color, metal, water = TEXTURES.get(
         key, (None, None, 0.8, (0.5, 0.5, 0.5, 1), 0.0, False))
     ov = (overrides or {}).get(key or "", {})

@@ -20,6 +20,23 @@ and Q7 below (they change authored geometry; the defaults are encoded and will s
 original 2026-10-10 status, interpretation and open questions are superseded by the sections at the
 end; the Evidence and Diagnosis stand.
 
+**Fix round 2026-10-11 (still not shipped: nothing exported, synced from a real run or installed).**
+The race strips would have shipped as building concrete: Lake Murray's `pbr.network_walls: true`
+reskins the generic `1WALL` key and `1WALL_race_*` fell through to it (the 00:47 dry run's prepped scene
+bound `building_diffuse/normal.jpg` on 29/29 strip materials). `scripts/ac/pbr.py` now carries its own
+`1WALL_RACE` (concrete_barrier_*) and `1KERB_RACE` (kerb_diffuse.png) rows ahead of the generic ones,
+mirrored into engine-july (both md5 `d3bbe940…`); re-measured on a scratch `--skip-blend --dry-run`:
+29/29 concrete_barrier, 7/7 kerb stripe. Grid stagger 1.4 → 1.0 m (outer column 0.48 m off the strip
+face, was 0.08) with spawn clearance a HARD fail below 0.30 m (`verify_race` F now re-measures every
+`data/dummies_<id>.json`, plus the author tool and `barrier_bands`); new `verify_race` G: lamp masts vs
+the strips, minimum margin 2.36 m, none inside. The street AI defaults to the V3 draft (`STREET_AI=july`
+is opt-in; the July line is a July `write_ai_line` draft, never an in-game recording). `SHIP_PROJ` runs
+every step on the absolute `$PROJ` and never syncs back or installs from a scratch copy; `pack_release`
+rasterises every `ui/<id>/preview.svg` and the full package's CREDITS/LICENSES name the K-rail;
+`place_signs` reads every `dummies_<id>.json` (the 18 approved posts did not move: pure placement
+0.000 m, built-mesh march within 0.006 m of the approved coordinates). The build-of-record files
+engine-july runs are snapshotted in `tracks/san-diego-lake-murray/engine-july-snapshot/` with a drift test.
+
 ## Symptom (Kevin, 2026-10-10, verbatim, in order)
 
 > "I will also want two layouts, with Barriers making tracks out of north/south kind lanes. Place
@@ -181,9 +198,10 @@ reversed draft (`--direction reverse`, 0026) and checks grid alignment against `
 (`:165-182`), but has **no lateral-offset option** — a race layout's line is the lane centre
 (±3.25 m on Alvarado, ±4.1 m on a 17 m road beside the chain), not the road centre. A reversed,
 lane-offset draft from the **built** centreline (`gate_centerline.json`, L5) is allowed as a draft;
-per-layout in-game recording is the end state. Today `ship_sd.sh` copies the July reference's recorded
-`fast_lane.ai` into the single `ai/` (`tools/ship_sd.sh` install block) — that line is the road
-centre in forward order and is wrong for both race layouts.
+per-layout in-game recording is the end state. Today `ship_sd.sh` copies the July reference's
+`fast_lane.ai` into the single `ai/` (`tools/ship_sd.sh` install block) — a July `write_ai_line` DRAFT,
+generated, never recorded in game (ledger 0023: "Lake Murray and IMI regenerated and reinstalled" by the
+writer) — and that line is the road centre in forward order and is wrong for both race layouts.
 
 **8. What the gates know today.**
 - `scripts/geometry/drive_test.py:390-399`: ten wheel paths at symmetric offsets
@@ -403,18 +421,22 @@ reference measured ships strips/sheets).
 
 **Dummies.** `tools/layout_dummies.py`: pole = `AC_START_0` = `AC_HOTLAP_START_0` 27-30 m behind
 the line in each layout's own travel, grid `AC_START_1..7` in two staggered columns INSIDE the lane
-(lane centre ± 1.4 m, pitch 5.5 m), pits single file 45 + 7 (p+1) m behind, `AC_TIME_0` at v300
+(lane centre ± 1.0 m since 2026-10-11, was ± 1.4 m; pitch 5.5 m), pits single file 45 + 7 (p+1) m behind, `AC_TIME_0` at v300
 (L/R swapped for `reverse`), sectors renumbered per direction (same two physical gates, L11). Yaw
 = `atan2(tx, −tz)` (+π for reverse) at the dummy's OWN vertex — the measured facing correction
-(see Notes). Grid clearance on 13.0 m Alvarado: the outer staggered column's car edge is 0.08 m
-off the kerb-line strip's face (legal, tight; Q6 `walk` opens it by 0.93 m).
+(see Notes). Grid clearance on 13.0 m Alvarado: the outer staggered column (4.25 m right of travel)
+puts a 1.9 m car's edge 0.48 m off the kerb-line strip's face (5.68 m) — HARD floor 0.30 m in
+`verify_race` F / `author_race_furniture_blend` / `barrier_bands` (was 0.08 m with the 1.4 m stagger, a
+soft note); Q6 `walk` would add 0.93 m.
 
 **AI.** `scripts/ac/write_ai_line.py --layout <id>`: direction and furniture from the layout; a
 per-vertex right-of-travel lane offset between the divider face and the kerb-line strip face;
 refuses a line that touches an island or comes within 0.6 m of a declared face. The race layouts
 always get these GENERATED drafts (ledger 0023 stays open, no tier claimed; in-game recording per
-layout is the end state). The street layout ships the July reference recording by default
-(`STREET_AI=july` in `ship_sd.sh`) — see the Q8 note below before deciding.
+layout is the end state). The street layout ships the V3 forward right-hand-lane draft by default
+(`STREET_AI=draft` since 2026-10-11); `STREET_AI=july` opts back into the installed July line — also a
+generated `write_ai_line` draft, not an in-game recording, and in the oncoming carriageway on every
+divided run (Notes). See Q8.
 
 **Folder and names.** airoso's `scripts/ac/track_folder.py` and `verify_kn5.py` run (the ENG
 copies are no longer executed — they are pure Python, not part of the pinned drive-feel geometry,
@@ -483,8 +505,8 @@ declared in config, not a second archetype.
    `verify_race.py` (hard) → `plot_race_furniture.py`.
 4. **prep** (spawn-free, UV-keep) → **split** → `--dry-run` stops here →
    **export** road kn5, race kn5 (asserted < 20 MB), spawn kn5s ×3 →
-   **AI** `write_ai_line --layout race_cw`, `--layout race_acw`; `ai/street/` = the July recording
-   (or `STREET_AI=draft` for the V3 forward draft) → **verify_kn5** (hard) → **track_folder** →
+   **AI** `write_ai_line --layout race_cw`, `--layout race_acw`, `--layout street` (`STREET_AI=july`
+   copies the July `write_ai_line` draft instead) → **verify_kn5** (hard) → **track_folder** →
    **make_map** → **make_treefx**.
 5. **gates**: `kn5_to_gate_obj` (road) → `drive_test --layout street` → `audit_mesh` →
    `kn5_to_gate_obj --kn5 road --kn5 race --out data/track.race.obj` → `drive_test --layout race_cw
@@ -598,7 +620,7 @@ layout as today except the start.
    carriageway's houses from the driver's eye. One constant (`race.barrier_height_m`) — keep 1.20?
 6. **Q6 Kerb-line barrier placement.** Default ON THE ROAD against the curb face (the literal "inside
    of the sidewalks", the Long Beach placement; narrows every street by 0.82 m per side — Alvarado
-   11.36 m clear, grids 1.5 m clear, the outer staggered column 0.08 m). Alternative `walk`: on the
+   11.36 m clear, grids 1.5 m clear, the outer staggered column 0.48 m with the 1.0 m stagger). Alternative `walk`: on the
    SIDEWALK TOP behind the curb (every street at full width, road lip free for the kerbs, +0.93 m grid
    clearance). `race.edge_mode`, decided before authoring.
 7. **Q7 Interior corners.** Default: chain continuous round College/Navajo, Navajo/Jackson and
@@ -607,9 +629,10 @@ layout as today except the start.
 8. **Q8 Race kerbs and the street AI.** Seven kerbs at the five corners (outside lip at the three
    chained corners; inside + outside at the hairpin and the 70th→Alvarado seam corner), 1.0 m × 0.05 m
    flat red/white, inboard of the barrier; the minor v3282 kink excluded. Want kerbs anywhere else
-   (island-nose gaps, the Del Cerro 4-way)? And the street layout's AI: keep the July recording (drives
-   as today — but it is in the oncoming carriageway on every divided run, see Notes) or switch to the
-   V3 forward draft (`STREET_AI=draft`; 100 % right side, 0 island hits, unverified in game)?
+   (island-nose gaps, the Del Cerro 4-way)? And the street layout's AI: the default is now the V3
+   forward draft (`STREET_AI=draft`; 100 % right side, 0 island hits, unverified in game); say if you
+   want the July line back (`STREET_AI=july` — a July `write_ai_line` draft, not a recording; drives as
+   today, but in the oncoming carriageway on every divided run, see Notes).
 9. **Q9 Sign-off on the L8 wording** above (+ the CLAUDE.md sentence and the S6 note). Nothing in the
    laws is edited until you say so.
 10. **Q10 Licence.** `concrete_barrier_4m.obj` and its two PNGs are the owned Dropbox pack with an

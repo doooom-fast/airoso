@@ -81,12 +81,15 @@ def test_grid_and_pits_step_back_in_each_layouts_own_travel():
         s0 = line.st[dj["_vertex"]["AC_START_0"]]
         for g in range(1, 8):
             assert abs(dj["_station_m"][f"AC_START_{g}"] - (s0 + sgn * 5.5 * g)) < 0.01, (lid, g)
-            assert dj["_right_of_travel_m"][f"AC_START_{g}"] == (4.65 if g % 2 else 1.85)
+            assert dj["_right_of_travel_m"][f"AC_START_{g}"] == (4.25 if g % 2 else 2.25)     # stagger 1.0 m (was 1.4)
         for p in range(8):
             assert abs(dj["_station_m"][f"AC_PIT_{p}"] - (s0 + sgn * (45.0 + 7.0 * (p + 1)))) < 0.01, (lid, p)
             assert dj["_right_of_travel_m"][f"AC_PIT_{p}"] == 3.25
-        # every slot inside the 13.0 m street: |lateral| + a 0.95 m car half-width < 6.5 - 0.82 (barrier face)
-        assert max(abs(v) for k, v in dj["_right_of_travel_m"].items() if k.startswith("AC_START")) + 0.95 < 6.5 - 0.82
+        # every slot inside the 13.0 m street AND >= 0.30 m off the kerb-line strip's face (6.5 - 0.82 m) —
+        # the hard spawn margin (race_furniture.SPAWN_MARGIN_M / verify_race F); the outer column is 0.48 m clear
+        worst = max(abs(v) for k, v in dj["_right_of_travel_m"].items() if k.startswith("AC_START"))
+        assert abs((6.5 - 0.82) - (worst + 0.95) - 0.48) < 1e-9, worst
+        assert (6.5 - 0.82) - (worst + 0.95) >= 0.30
 
 
 def test_yaw_is_the_reflected_heading_and_reverse_adds_180():
@@ -155,3 +158,15 @@ def test_validate_layouts_rejects_the_suffix_suppressing_ids_and_bad_kinds():
                                  {"id": "y", "direction": "forward", "kind": "street", "race_furniture": True, "start": {}}])
     assert any("'full'" in f for f in fails) and any("forward|reverse" in f for f in fails)
     assert any("requires kind 'race'" in f for f in fails)
+
+
+def test_stagger_is_one_metre_and_the_bands_tool_reads_it():
+    """tools/barrier_bands.py declares the grid clearance from THIS module's constants (no restated copy)"""
+    import importlib.util
+    assert ld.GRID_STAGGER_M == 1.0
+    spec = importlib.util.spec_from_file_location("_bb_t", Path(__file__).resolve().parents[2] / "tools" / "barrier_bands.py")
+    bb = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(bb)
+    assert bb.GRID_STAGGER_M == ld.GRID_STAGGER_M and bb.GRID_PITCH_M == ld.GRID_PITCH_M
+    assert bb.PIT_SETBACK_M == ld.PIT_SETBACK_M and bb.PIT_PITCH_M == ld.PIT_PITCH_M
+    assert bb.GRID_CLEAR_MIN_M == 0.30

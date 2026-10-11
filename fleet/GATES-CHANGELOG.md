@@ -310,3 +310,20 @@ existing road kn5: street 82 / 391 / 0 / 101 and audit 512 / 154 / 145 / 15 — 
 `RACE_RED = race_cw race_acw` → the install block refuses even with `--force-install`; verify_kn5
 refuses (16 spawn nodes in the road kn5, no race kn5, three spawn kn5s missing). Wall: gate OBJ
 5 s, street drive_test 11 s, audits 9 s, both race drive_tests 20 s, verify_kn5 5 s, packer 7 s.
+
+### Same day — race gates tightened and extended (ledger 0047 fix round)
+
+| Gate | Was | Now | Basis |
+|---|---|---|---|
+| `verify_race` F spawn clearance | the AUTHOR's record only: FAIL on overlap (clear < 0), a note below 0.30 m | **re-measured by verify_race itself** from every race layout's `data/dummies_<id>.json` (what `build_spawn_kn5` ships) against the declared strip faces (bands params: `half_w + edge_centre_from_lip_m − barrier_half_m`; chain `centre_w / 2`); FAIL when a 1.9 m car on any grid / pit / hotlap slot is < **0.30 m** off a face; the author tool's record fails on the same floor | ⚠ 0.30 m is invented (no measured reference grid-to-wall gap yet); it replaces a 0.08 m clearance (1.4 m stagger) that passed. Proven: synthetic slots at 0.73 / 0.23 / −0.27 m pass / fail / fail-OVERLAP (`tests/tools/test_verify_race.py`); real data 0.48 m on AC_START_1/3/5/7 of both race layouts |
+| `barrier_bands` no-gap zone | FAIL when the outer grid column overlaps the strip face (clear < 0) | FAIL below **0.30 m** (the same floor); the stagger / pitch / pit constants are now READ from `tools/layout_dummies.py` instead of restated (a stale 1.4 m copy would have declared a clearance the grid does not have) | as above; `no_gap_zones.grid_clearance_m` 0.08 → 0.48 on all three layouts, nothing else in `barrier_bands.json` changed |
+| `verify_race` G lamp masts (new) | — | every lamp mast (base = `lights.local.json` head set back road-ward by `author_lamps_blend.ARM_M`, parsed from that file; footprint radius from `assets/models/lamp_post.obj` at `POST_H`, 0.585 m) stands OUTSIDE every kerb-line strip and centre-chain footprint; FAIL on any overlap (margin < 0), minimum margin reported | geometric (an overlap is a mast inside a barrier), not a tuned number. Real data: 238 of 239 masts beside a strip, minimum margin 2.36 m, none inside |
+| `verify_race --pre-author` (new mode) | — | F + G alone, no `race_authored.json` needed | wiring only; the ship chain still runs the full check after the author step |
+
+**Texture binding (not a gate, found while auditing what ships).** `pbr.network_walls: true` (Lake
+Murray, for the merged freeway's barriers) reskins the generic `1WALL` key; the race strips had no row
+of their own and fell through to it. The prepped dry-run scene of 2026-10-11 00:47 bound
+`building_diffuse/normal.jpg` on 29/29 `1WALL_race_*` materials. `scripts/ac/pbr.py` (airoso and the
+engine-july copy, byte-identical) gained `1WALL_RACE` / `1KERB_RACE` rows ahead of the generic ones;
+the re-run binds `concrete_barrier_*` on 29/29 and `kerb_diffuse.png` on 7/7.
+`tests/ac/test_pbr_race_rows.py` resolves both names with network_walls on and off.

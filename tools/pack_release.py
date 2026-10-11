@@ -15,8 +15,9 @@ The procedure docs/PUBLISHING.md describes, as one deterministic command, so a c
                              installed folder because only the latest release's assets show on the site
 
 Release texts live in tracks/<slug>/release/{full,cc0}/ (README.txt, CREDITS.txt, LICENSES.md) and
-release/cc0/trees-README.txt. ui/preview.svg (the engine's fallback) is rasterised to preview.png —
-Content Manager never reads the SVG.
+release/cc0/trees-README.txt. Every preview.svg the engine left as its fallback — the root ui/ of a
+single-layout folder AND each layout's ui/<id>/ of a multi-layout one (ledger 0047: street, race_cw,
+race_acw) — is rasterised to preview.png beside it; Content Manager never reads the SVG.
 """
 from __future__ import annotations
 
@@ -47,9 +48,25 @@ TEXTURE_SWAPS = {
 }
 
 
+def rasterize_previews(ui_root: Path) -> list[str]:
+    """rasterize_preview over ui/ itself and every layout directory ui/<id>/ — a multi-layout folder has
+    no root preview, one per layout. Returns the ui-relative dirs that held an SVG."""
+    done = []
+    for d in [ui_root] + (sorted(p for p in ui_root.iterdir() if p.is_dir()) if ui_root.is_dir() else []):
+        if (d / "preview.svg").exists():
+            rasterize_preview(d)
+            done.append(d.relative_to(ui_root).as_posix())
+    return done
+
+
 def rasterize_preview(ui: Path) -> None:
     svg = ui / "preview.svg"
     if not svg.exists():
+        return
+    if (ui / "preview.png").exists():
+        # the engine wrote a real preview (the OSM street map) and the SVG is a stale fallback:
+        # never overwrite the real picture with the polyline sketch
+        svg.unlink()
         return
     from PIL import Image, ImageDraw
     s = svg.read_text(encoding="utf-8")
@@ -136,7 +153,8 @@ def main():
 
     full = stage / "full" / SLUG
     shutil.copytree(a.src, full, ignore=shutil.ignore_patterns("*.pre-*"))
-    rasterize_preview(full / "ui")
+    for rel in rasterize_previews(full / "ui"):
+        print(f"[pack] full: ui/{rel + '/' if rel != '.' else ''}preview.svg -> preview.png")
     for f in ("README.txt", "CREDITS.txt", "LICENSES.md"):
         shutil.copy(texts / "full" / f, full / f)
     print("[pack] full:")

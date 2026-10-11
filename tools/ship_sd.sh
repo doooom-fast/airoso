@@ -41,30 +41,61 @@
 #                 GATE_*_ADVISORY env vars: loud, per-run, never silent. It does NOT cover the race
 #                 layouts' own furniture gates (barrier_missing / obstruction): there is no reference
 #                 to be "no worse than", so a race layout red on those is never installed.
-# SHIP_PROJ=<dir> redirect every project-relative step to a scratch copy of the workshop project
-#                 (dry runs); the workshop's own draft/author steps are skipped with --skip-blend.
+# SHIP_PROJ=<dir> run the whole chain against a scratch copy of the workshop project (an ABSOLUTE path
+#                 outside airoso). Every step takes "$PROJ" — no relative `project` argument, no
+#                 workshop literal past WS_PROJ below. With a scratch PROJ the chain is safe
+#                 to run for real (no --dry-run): it builds, exports and gates into the scratch copy,
+#                 then SKIPS the sync-back to airoso and the install (it prints why) — only the real
+#                 workshop ($WS_PROJ) feeds tracks/san-diego-lake-murray/ and the AC folder.
+# STREET_AI=draft|july  the street layout's AI line (Q8). Default `draft` = the V3 right-hand-lane draft
+#                 (scripts/ac/write_ai_line.py --layout street). `july` (explicit opt-in) copies the
+#                 installed July line — a July write_ai_line DRAFT, never an in-game recording, and
+#                 measured in the ONCOMING carriageway on every divided run (ledger 0047 Notes).
 set -euo pipefail
 export PYTHONUTF8=1
 AIROSO="C:/Users/Owner/Documents/GitHub/airoso"
 WS="C:/Users/Owner/Documents/GitHub/k10-sd-v021"
-PROJ="${SHIP_PROJ:-$WS/project}"
+WS_PROJ="$WS/project"        # the real workshop project: the ONLY spelling of it in this script
+PROJ="${SHIP_PROJ:-$WS_PROJ}"
 SRC="$AIROSO/tracks/san-diego-lake-murray"
 ENG="C:/Users/Owner/Documents/GitHub/engine-july"
 BL="C:/Program Files/Blender Foundation/Blender 4.2/blender.exe"
 AC="D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks"
 SLUG="san_diego_lake_murray"
-# Q8 (0047): the street layout's AI line. `july` = the installed reference recording copied as today
-# (ai/street/ = the July fast_lane.ai, drives exactly as the current install); `draft` = the V3
-# forward lane-offset draft from the built centreline (write_ai_line --layout street). The July
-# line sits in the LEFT carriageway on every divided run (measured 2026-10-11, 1,642/1,642 island
-# stations) — Kevin decides; the race layouts always get V3 drafts (ledger 0023, no tier claimed).
-STREET_AI="${STREET_AI:-july}"
+# Q8 (0047): the street layout's AI line. Default `draft` = the V3 forward right-hand-lane draft from
+# the built centreline (write_ai_line --layout street: 100 % right side, 0 island hits on the dry
+# run). `july` = opt-in copy of the installed fast_lane.ai — the July write_ai_line DRAFT (generated,
+# NOT an in-game recording), which drives the LEFT/oncoming carriageway on every divided run (measured
+# 2026-10-11, 1,642/1,642 island stations). Every line shipped is a generated draft: ledger 0023 stays
+# open, no tier claimed; the race layouts always get V3 drafts.
+STREET_AI="${STREET_AI:-draft}"
+case "$STREET_AI" in draft|july) ;; *) echo "STREET_AI must be draft or july, got '$STREET_AI'"; exit 2;; esac
 INSTALL=1; SKIP_BLEND=0; FORCE=0; DRY=0
 for a in "$@"; do case "$a" in
   --no-install) INSTALL=0;; --skip-blend) SKIP_BLEND=1;; --force-install) FORCE=1;; --dry-run) DRY=1;;
   *) echo "unknown flag: $a"; exit 2;;
 esac; done
 if [ "$DRY" = 1 ]; then INSTALL=0; fi
+# SHIP_PROJ isolation: the project must be absolute; a scratch project never syncs back or installs,
+# and never lives inside airoso (the sync-inputs step would then write into the source of truth).
+case "$PROJ" in
+  /*|[A-Za-z]:/*|[A-Za-z]:\\*) ;;
+  *) echo "SHIP_PROJ must be an absolute path, got '$PROJ'"; exit 2;;
+esac
+# compare paths the way Windows does: one spelling (cygpath -m: C:/...), forward slashes, any case
+norm() { local p; p=$(cygpath -m "$1" 2>/dev/null || printf '%s' "$1"); p="${p//\\//}"; p="${p%/}"; printf '%s' "${p,,}"; }
+case "$(norm "$PROJ")" in
+  "$(norm "$AIROSO")"|"$(norm "$AIROSO")"/*) echo "SHIP_PROJ '$PROJ' is inside airoso — use a scratch copy outside the repo"; exit 2;;
+esac
+if [ "$(norm "$PROJ")" = "$(norm "$WS_PROJ")" ]; then SCRATCH=0; else SCRATCH=1; fi
+# build_loop_blend.py (the workshop's) does `from scripts.geometry import ...` with only the PROJECT'S
+# PARENT on sys.path (Blender adds neither the cwd nor the script dir) — for a scratch PROJ that is not
+# $WS, so the workshop root is put on sys.path first (--python-expr runs before --python).
+WS_SYSPATH="import sys; sys.path.insert(0, r'$WS')"
+if [ "$SCRATCH" = 1 ] && [ "$SKIP_BLEND" = 0 ] && [ -d "$(dirname "$PROJ")/scripts" ]; then
+  # the workshop's build_loop_blend.py imports scripts.geometry from the PROJECT'S PARENT first
+  echo "SHIP_PROJ '$PROJ': its parent holds a scripts/ package that would shadow the workshop's — copy the project elsewhere"; exit 2
+fi
 
 step() { echo; echo "=================== $1"; }
 pyq() { (cd "$AIROSO" && python -c "$@"); }
@@ -87,7 +118,7 @@ if [ "$SKIP_BLEND" = 0 ]; then
   step "draft: median envelope (self-gated)"
   (cd "$AIROSO" && python tools/median_envelope.py "$PROJ")
   step "draft: build loop.blend (scene regen — GEN layer)"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python scripts/blender/build_loop_blend.py -- project 2>&1 | grep "^\[blend\]" | tail -4)
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$WS_SYSPATH" --python scripts/blender/build_loop_blend.py -- "$PROJ" 2>&1 | grep "^\[blend\]" | tail -4)
   step "draft: side streets from Kevin's routes (airoso data/routes.json)"
   (cd "$AIROSO" && python tools/route_connectors.py "$PROJ")
   step "draft: divided side streets -> one trunk + island (Del Cerro)"
@@ -95,22 +126,22 @@ if [ "$SKIP_BLEND" = 0 ]; then
   step "draft: trim connectors at the mainline edge"
   (cd "$AIROSO" && python tools/trim_connectors.py "$PROJ")
   step "draft: rebuild loop.blend with trimmed connectors"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python scripts/blender/build_loop_blend.py -- project 2>&1 | grep "^\[blend\]" | tail -3)
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$WS_SYSPATH" --python scripts/blender/build_loop_blend.py -- "$PROJ" 2>&1 | grep "^\[blend\]" | tail -3)
   step "author: seat the terrain under every road (verge finer than the road)"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/seat_terrain_blend.py" -- project 2>&1 | grep "^\[seat\]\|Error\|Traceback" )
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/seat_terrain_blend.py" -- "$PROJ" 2>&1 | grep "^\[seat\]\|Error\|Traceback" )
   step "author: thin the far terrain (headroom for the prep's grass tiles)"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/slim_far_terrain_blend.py" -- project 2>&1 | grep "^\[slim\]\|Error\|Traceback" )
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/slim_far_terrain_blend.py" -- "$PROJ" 2>&1 | grep "^\[slim\]\|Error\|Traceback" )
   step "author: median island"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_blend.py" -- project 2>&1 | grep "^\[median" )
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_blend.py" -- "$PROJ" 2>&1 | grep "^\[median" )
   step "author: gap the mainline sidewalk at every mouth"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/gap_mouths_blend.py" -- project 2>&1 | grep "^\[gap" )
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/gap_mouths_blend.py" -- "$PROJ" 2>&1 | grep "^\[gap" )
   step "author: export scatter positions, strip procedural vegetation (TreeFX replaces it)"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/export_scatter_blend.py" -- project 2>&1 | grep "^\[scatter" )
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/strip_scenery_blend.py" -- project 2>&1 | grep "^\[strip" | cut -c1-160 )
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/export_scatter_blend.py" -- "$PROJ" 2>&1 | grep "^\[scatter" )
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/strip_scenery_blend.py" -- "$PROJ" 2>&1 | grep "^\[strip" | cut -c1-160 )
   step "author: Kevin's lamp model at every streetlight (LIGHTPOST + LIGHTS lens)"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_lamps_blend.py" -- project 2>&1 | grep "^\[lamps\]\|Error\|Traceback" )
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_lamps_blend.py" -- "$PROJ" 2>&1 | grep "^\[lamps\]\|Error\|Traceback" )
   step "author: W1-6 large-arrow signs at every tight corner (SIGNPLATE + SIGNARROW + SIGNPOST)"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_signs_blend.py" -- project 2>&1 | grep "^\[signs\]\|Error\|Traceback" )
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_signs_blend.py" -- "$PROJ" 2>&1 | grep "^\[signs\]\|Error\|Traceback" )
   (cd "$AIROSO" && python tools/verify_signs.py "$PROJ" --blend "$PROJ/loop.blend" --blender "$BL" | tail -8)
   (cd "$AIROSO" && PYTHONUTF8=1 python tools/plot_signs.py "$PROJ")
 fi
@@ -154,10 +185,11 @@ for lid in $RACE_IDS; do
   (cd "$AIROSO" && python -m scripts.ac.write_ai_line "$PROJ" --layout "$lid" | grep -v "^  v\|^frame")
 done
 for lid in $STREET_IDS; do
-  rm -rf "$PROJ/ai/$lid"; mkdir -p "$PROJ/ai/$lid"     # never leave a stale ai_draft.json beside a copied recording
+  rm -rf "$PROJ/ai/$lid"; mkdir -p "$PROJ/ai/$lid"     # never leave a stale ai_draft.json beside a copied line
   if [ "$STREET_AI" = july ]; then
     cp "$AC/$SLUG/ai/fast_lane.ai" "$AC/$SLUG/ai/pit_lane.ai" "$AC/$SLUG/ai/side_l.csv" "$AC/$SLUG/ai/side_r.csv" "$PROJ/ai/$lid/"
-    echo "ai/$lid/: the July reference recording copied from $AC/$SLUG/ai/ (as today)"
+    echo "ai/$lid/: STREET_AI=july — the installed July write_ai_line DRAFT copied from $AC/$SLUG/ai/ (generated, not an"
+    echo "  in-game recording; it drives the oncoming carriageway on every divided run — ledger 0047 Notes)"
   else
     (cd "$AIROSO" && python -m scripts.ac.write_ai_line "$PROJ" --layout "$lid" | grep -v "^  v\|^frame")
   fi
@@ -193,6 +225,11 @@ for lid,r in (d.get('layouts') or {}).items():
     if r.get('kind')=='race' and ((r.get('barrier_missing') or 0)>0 or (r.get('obstruction_stations') or 0)>0 or r.get('fail') is None): bad.append(lid)
 print(' '.join(bad))" "$PROJ/data/drive_test.json")
 
+if [ "$SCRATCH" = 1 ]; then
+  step "sync outputs workshop -> airoso: SKIPPED"
+  echo "SHIP_PROJ is a scratch project ($PROJ), not the workshop ($WS_PROJ): its outputs stay in the scratch copy —"
+  echo "only the workshop feeds $SRC (loop.blend, data/, ai/)."
+else
 step "sync outputs workshop -> airoso"
 cp "$PROJ/loop.blend" "$SRC/loop.blend"
 for f in centerline.local.json centerline.raw.local.json median_bands.json dummies.json \
@@ -210,6 +247,7 @@ for d in signs_plots race_plots; do
   if [ -d "$PROJ/data/$d" ]; then rm -rf "$SRC/data/$d"; cp -r "$PROJ/data/$d" "$SRC/data/$d"; fi
 done
 # track.race.obj / track.obj are 66+ MB each and regenerable from the kn5s: never synced.
+fi
 
 if [ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ]; then
   echo; echo "GATES: street drive_test exit $DT_S, street audit exit $AU_S, race drive_test exit $DT_R, race audit exit $AU_R"
@@ -222,7 +260,11 @@ if [ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ];
     echo "  NOT INSTALLED (Kevin never loads a build the machine failed)"; exit 1
   fi
 fi
-if [ "$INSTALL" = 1 ]; then
+if [ "$INSTALL" = 1 ] && [ "$SCRATCH" = 1 ]; then
+  step "install: SKIPPED"
+  echo "SHIP_PROJ is a scratch project ($PROJ): never installed — only $WS_PROJ reaches $AC. The built folder is"
+  echo "$PROJ/build/$SLUG (load it by hand if you mean to)."
+elif [ "$INSTALL" = 1 ]; then
   step "install: $AC/${SLUG}_v3 (three layouts; previous build kept as ${SLUG}_v3_prev)"
   B="$PROJ/build/$SLUG"
   for lid in $LAYOUT_IDS; do [ -f "$B/models_$lid.ini" ] || { echo "missing $B/models_$lid.ini"; exit 1; }; done

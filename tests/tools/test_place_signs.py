@@ -224,3 +224,25 @@ def test_verifier_rederives_approach_turn_and_side_from_the_centreline():
     rline = vs.Line(_L_points(), False, reverse=True)
     pc_r, t_r, _ = vs.approach(rline, (70.0 + 2.5, 70.0))
     assert abs(t_r[1] + 1.0) < 1e-6 and vs.turn_after(rline, pc_r)[0] == -1
+
+
+def test_spawn_points_union_every_layouts_dummies_with_the_old_file_as_fallback():
+    """ledger 0047: a multi-layout build writes data/dummies.json = {} and the spawns ride in
+    data/dummies_<id>.json — the sign-vs-spawn check must read every one of them"""
+    import json
+    import tempfile
+    d = Path(tempfile.mkdtemp())
+    # only the old single-layout file: it is the source (fallback)
+    (d / "dummies.json").write_text(json.dumps({"AC_START_0": [1.0, 0.0, 2.0], "AC_TIME_0_L": [3.0, 0.0, 4.0]}))
+    assert sorted(lab for _, lab in ps.spawn_points(d)) == ["AC_START_0@" + d.parent.name, "AC_TIME_0_L@" + d.parent.name]
+    # per-layout files present: their UNION, the (now empty) old file ignored, metadata keys skipped
+    (d / "dummies.json").write_text("{}")
+    (d / "dummies_race_cw.json").write_text(json.dumps({"AC_START_0": [10.0, 0.0, 20.0], "AC_PIT_3": [11.0, 0.0, 21.0],
+                                                         "_yaw_deg": {"AC_START_0": 1.0}, "_layout": "race_cw"}))
+    (d / "dummies_race_acw.json").write_text(json.dumps({"AC_START_0": [30.0, 0.0, 40.0], "AC_HOTLAP_START_0": [30.0, 0.0, 40.0]}))
+    pts = ps.spawn_points(d)
+    assert sorted(lab for _, lab in pts) == ["AC_HOTLAP_START_0@race_acw", "AC_PIT_3@race_cw", "AC_START_0@race_acw", "AC_START_0@race_cw"]
+    assert ((10.0, 20.0), "AC_START_0@race_cw") in pts and ((11.0, 21.0), "AC_PIT_3@race_cw") in pts
+    # a non-empty stale dummies.json beside per-layout files is NOT read (the per-layout set is the truth)
+    (d / "dummies.json").write_text(json.dumps({"AC_START_0": [999.0, 0.0, 999.0]}))
+    assert all(p != (999.0, 999.0) for p, _ in ps.spawn_points(d))

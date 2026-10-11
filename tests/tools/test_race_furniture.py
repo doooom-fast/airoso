@@ -189,20 +189,45 @@ def test_kerb_mesh_faces_up_with_the_declared_profile():
     assert abs(vr[3][2] - (4.63 - 1.0)) < 1e-9 and rf.face_normal(vr, fr[1])[1] > 0
 
 
-def test_spawn_clearance_hard_and_soft():
+def test_spawn_clearance_is_hard_below_the_margin():
+    """HARD below SPAWN_MARGIN_M (0.30 m) since 2026-10-11 — the 1.4 m stagger's 0.08 m used to be a note"""
     pts = [(float(k) * 3.0, 0.0, 0.0) for k in range(10)] + [(0.0, 0.0, 0.0)]
     widths = [13.0] * 11
     bands = {"centre_w_by_vertex": [0.0] * 11, "edge_inset_by_vertex": [0.82] * 11}
+    assert rf.SPAWN_MARGIN_M == 0.30
     # +3.25 right of +x travel = z -3.25 (right = (tz, -tx)); car edge 4.2 m vs the face at 5.68 m: 1.48 clear
     hard, notes = rf.spawn_clearance(pts, widths, bands, {"AC_START_0": [9.0, 0.4, -3.25], "_yaw_deg": {}})
-    assert hard == [] and notes == []
+    assert hard == [] and len(notes) == 1 and "1.48 m" in notes[0], notes
     hard, notes = rf.spawn_clearance(pts, widths, bands, {"AC_START_1": [9.0, 0.4, -4.9]})
     assert hard and "overlaps" in hard[0]
+    # 0.13 m clear: was a note, is now a hard fail
     hard, notes = rf.spawn_clearance(pts, widths, bands, {"AC_PIT_0": [9.0, 0.4, -4.6]})
-    assert hard == [] and notes and "clear" in notes[0]
+    assert hard and "0.13 m clear" in hard[0], hard
+    # the old outer column (lane centre 3.25 + 1.4 = 4.65): 0.08 m -> hard; the new one (+ 1.0 = 4.25): 0.48 m
+    hard, _ = rf.spawn_clearance(pts, widths, bands, {"AC_START_1": [9.0, 0.4, -4.65]})
+    assert hard and "0.08 m clear" in hard[0], hard
+    hard, notes = rf.spawn_clearance(pts, widths, bands, {"AC_START_1": [9.0, 0.4, -4.25]})
+    assert hard == [] and "0.48 m" in notes[0], notes
+    # just either side of the floor
+    assert rf.spawn_clearance(pts, widths, bands, {"AC_START_3": [9.0, 0.4, -4.40]})[0] == []      # 0.33 m
+    assert rf.spawn_clearance(pts, widths, bands, {"AC_START_3": [9.0, 0.4, -4.46]})[0] != []      # 0.27 m
     chained = dict(bands, centre_w_by_vertex=[0.67] * 11)
     hard, _ = rf.spawn_clearance(pts, widths, chained, {"AC_START_0": [9.0, 0.4, -0.8]})
     assert hard and "centre chain" in hard[0]
+    hard, _ = rf.spawn_clearance(pts, widths, chained, {"AC_START_0": [9.0, 0.4, -1.455]})    # 0.17 m off the chain
+    assert hard and "centre chain" in hard[0] and "0.17 m clear" in hard[0], hard
+    rows = rf.spawn_clearance_table(pts, widths, chained, {"AC_START_0": [9.0, 0.4, -3.25], "AC_TIME_0_L": [9.0, 0.4, 6.0]})
+    assert [r["name"] for r in rows] == ["AC_START_0"]                     # timing planes are not slots
+    assert abs(rows[0]["clear_edge_m"] - 1.48) < 1e-6 and abs(rows[0]["clear_centre_m"] - 1.965) < 1e-6
+
+
+def test_synth_dummies_use_the_producers_stagger():
+    import layout_dummies as ld
+    assert ld.GRID_STAGGER_M == 1.0
+    pts = [(float(k) * 3.0, 0.0, 0.0) for k in range(60)] + [(0.0, 0.0, 0.0)]
+    lo = {"id": "x", "start": {"line_vertex": 50, "grid_vertex": 45, "offset_right_m": 3.25, "sector_vertices": [10, 20]}}
+    d = rf.synth_dummies(pts, [13.0] * 61, lo)
+    assert d["_right_of_travel_m"]["AC_START_1"] == 4.25 and d["_right_of_travel_m"]["AC_START_2"] == 2.25
 
 
 def test_apply_declared_kerbs_overrides_matching_runs_only():

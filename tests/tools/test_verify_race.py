@@ -220,3 +220,105 @@ def test_cli_writes_the_report_and_exits_nonzero_on_a_miss():
     (d / "data" / "race_authored.json").write_text(json.dumps(bad))
     assert vr.main([str(d)]) == 1
     assert json.loads((d / "data" / "race_verify.json").read_text(encoding="utf-8"))["ok"] is False
+
+
+# --- F (re-measured from the dummies that ship) and G (lamp masts vs the strips) ------------------
+# On the synthetic ring the forward travel is anticlockwise, so + lateral (left) points at the centre;
+# the kerb-line strip's road-side face is at |lat| = W/2 - 0.82 = 9.18 m, its back at W/2 - 0.15 = 9.85 m.
+
+def _radial(k, r):
+    """a point r metres OUTWARD (right of forward travel) from vertex k"""
+    a = 2 * math.pi * k / N
+    return [round((R + r) * math.cos(a), 4), 5.4, round((R + r) * math.sin(a), 4)]
+
+
+def _dummies(slots, kind="race"):
+    d = {"_layout": "race_cw", "_kind": kind, "_yaw_deg": {}, "AC_TIME_0_L": _radial(20, -9.7)}
+    d.update(slots)
+    return d
+
+
+def _run_fg(spawns=None, lamps=None, **kw):
+    pts = _pts()
+    return vr.verify(None, _bands(), pts, _island_w(), pre_author=True, widths=[W] * (N + 1),
+                     spawns=spawns, lamps=lamps, **kw)
+
+
+def test_spawn_clearance_is_remeasured_from_the_dummies_and_hard_below_030():
+    ok = _dummies({"AC_START_0": _radial(10, 7.0), "AC_START_1": _radial(12, 7.5), "AC_PIT_0": _radial(30, 7.0)})
+    r = _run_fg({"race_cw": ok})
+    assert r["ok"], r["fails"]
+    assert abs(r["counts"]["spawn_min_clear_m"]["race_cw"] - 0.73) < 1e-3          # 9.18 - (7.5 + 0.95)
+    assert [s["name"] for s in r["counts"]["spawn_slots"]["race_cw"]] == ["AC_PIT_0", "AC_START_0", "AC_START_1"]
+    tight = _dummies({"AC_START_1": _radial(12, 8.0)})                              # 0.23 m: was legal, now hard
+    r = _run_fg({"race_cw": tight})
+    assert any(f.startswith("F: race_cw: AC_START_1") and "0.23 m clear of the edge-strip face" in f for f in r["fails"]), r["fails"]
+    over = _dummies({"AC_START_1": _radial(12, 8.5)})
+    assert any("OVERLAPS" in f for f in _run_fg({"race_cw": over})["fails"])
+    chain = _dummies({"AC_START_0": _radial(80, -1.4)})                            # 1.4 - 0.95 - 0.335 = 0.115 m
+    assert any("centre chain" in f for f in _run_fg({"race_cw": chain})["fails"])
+    assert any("no data/dummies_race_acw.json" in f for f in _run_fg({"race_acw": None})["fails"])
+    synth = dict(ok, _synthesised=True)
+    assert any("SYNTHESISED" in f for f in _run_fg({"race_cw": synth})["fails"])
+    # the authored path still runs F from disk too: a clean authored file with a tight dummy fails
+    pts = _pts()
+    r = vr.verify(_authored(pts), _bands(), pts, _island_w(), widths=[W] * (N + 1), spawns={"race_cw": tight})
+    assert not r["ok"] and any(f.startswith("F: race_cw: AC_START_1") for f in r["fails"])
+
+
+def test_lamp_masts_must_stand_outside_every_strip_footprint():
+    # heads 1.8 m road-ward of the mast (author_lamps_blend ARM_M): head at R + 11.0 -> mast at R + 12.8
+    clear = [_radial(30, 11.0), _radial(170, 11.0)]
+    r = _run_fg(lamps=clear, mast_r_m=0.5)
+    assert r["ok"], r["fails"]
+    c = r["counts"]
+    assert c["lamps"] == 2 and c["lamps_checked"] == 2 and c["lamp_arm_m"] == 1.8
+    assert abs(c["lamp_min_margin_m"] - (12.8 - 9.85 - 0.5)) < 1e-3, c["lamp_min_margin_m"]
+    inside = clear + [_radial(60, 7.8)]                    # mast at R + 9.6: inside [9.18, 9.85]
+    r = _run_fg(lamps=inside, mast_r_m=0.5)
+    assert not r["ok"] and any(f.startswith("G: lamp 2 at v60") and "inside the edge strip footprint" in f for f in r["fails"]), r["fails"]
+    assert r["counts"]["lamps_inside"] == 1
+    touching = clear + [_radial(60, 8.6)]                  # mast at R + 10.4: 0.55 m behind the strip, r 0.6 -> -0.05
+    assert not _run_fg(lamps=touching, mast_r_m=0.6)["ok"]
+    gap = [_radial(125, 7.8)]                              # inside a declared bridge gap: no strip there
+    r = _run_fg(lamps=gap, mast_r_m=0.5)
+    assert r["ok"] and r["counts"]["lamps_checked"] == 0
+
+
+def test_lamp_constants_come_from_the_author_tool_and_the_model():
+    assert vr._author_lamps_constant("ARM_M", -1.0) == 1.8
+    assert vr._author_lamps_constant("POST_H", -1.0) == 11.5
+    assert vr._author_lamps_constant("NOT_THERE", -1.0) == -1.0
+    r = vr.mast_radius_m(11.5)
+    assert 0.5 < r < 0.7, r                                # the base plate corner, 0.585 m at 11.5 m
+
+
+def test_race_layout_spawns_reads_every_race_dummies_file():
+    import tempfile
+    d = Path(tempfile.mkdtemp())
+    (d / "dummies_race_cw.json").write_text(json.dumps({"_kind": "race", "AC_START_0": [0, 0, 0]}))
+    (d / "dummies_street.json").write_text(json.dumps({"_kind": "street", "AC_START_0": [0, 0, 0]}))
+    cfg = {"layouts": [{"id": "street"}, {"id": "race_cw", "race_furniture": True}, {"id": "race_acw", "race_furniture": True}]}
+    sp = vr.race_layout_spawns(d, cfg)
+    assert set(sp) == {"race_cw", "race_acw"} and sp["race_acw"] is None and sp["race_cw"]["_kind"] == "race"
+    # a workshop whose config predates the layouts is judged on the files' own _kind
+    assert set(vr.race_layout_spawns(d, {"layouts": [{"id": "full"}]})) == {"race_cw"}
+
+
+def test_cli_pre_author_needs_no_authored_file():
+    import tempfile
+    d = Path(tempfile.mkdtemp())
+    (d / "data").mkdir()
+    pts = _pts()
+    (d / "data" / "centerline.local.json").write_text(json.dumps({"points_xyz_m": [list(p) for p in pts], "widths_m": [W] * (N + 1)}))
+    (d / "data" / "median_bands.json").write_text(json.dumps({"island_w_by_vertex": _island_w()}))
+    (d / "data" / "barrier_bands.json").write_text(json.dumps(_bands()))
+    (d / "data" / "lights.local.json").write_text(json.dumps({"lampheads": [_radial(30, 11.0)]}))
+    (d / "data" / "dummies_race_cw.json").write_text(json.dumps(_dummies({"AC_START_1": _radial(12, 7.5)})))
+    out = d / "pre.json"
+    assert vr.main([str(d), "--pre-author", "--out", str(out)]) == 0
+    rep = json.loads(out.read_text(encoding="utf-8"))
+    assert rep["ok"] and "race_cw" in rep["counts"]["spawn_slots"] and rep["counts"]["lamps_checked"] == 1
+    assert not (d / "data" / "race_verify.json").exists()
+    (d / "data" / "dummies_race_cw.json").write_text(json.dumps(_dummies({"AC_START_1": _radial(12, 8.0)})))
+    assert vr.main([str(d), "--pre-author", "--out", str(out)]) == 1

@@ -11,7 +11,7 @@ from the declared start in track.config.json `layouts[].start`:
     sector_vertices  [TIME_1, TIME_2] in driving order from the line (validated, never re-derived)
 
 Grid: AC_START_g (g = 1..slots-1) at pole - 5.5 g m, two staggered columns INSIDE the lane at the
-lane centre +/- 1.4 m (never dummies.py's +/-30 % of the half-width about the CENTRE, which would put
+lane centre +/- GRID_STAGGER_M = 1.0 m (never dummies.py's +/-30 % of the half-width about the CENTRE, which would put
 slots in the oncoming lane). Pits: AC_PIT_p single file at the lane centre, pole - 45 - 7 (p+1) m.
 Heights: START/PIT/HOTLAP at centreline y + LIFT 0.10 + DROP_IN 0.30 (tools/set_start_blend.py),
 TIME at y + 0.10. "Behind" = lower station for `direction: forward`, higher for `reverse`.
@@ -50,7 +50,12 @@ LIFT = 0.10                 # build_loop_blend's road lift
 DROP_IN = 0.30              # set_start_blend: spawn 30 cm above the deck
 TIME_LIFT = 0.10
 GRID_PITCH_M = 5.5
-GRID_STAGGER_M = 1.4        # two columns at lane centre +/- 1.4 m (car 1.9 m wide: 0.9 m between columns)
+GRID_STAGGER_M = 1.0        # two columns at lane centre +/- 1.0 m (car 1.9 m wide: 0.1 m between columns,
+                            # which never matters - consecutive slots are 5.5 m apart along travel). Was 1.4
+                            # (ledger 0047 fix round 2026-10-11): with the pole 3.25 m right of travel the
+                            # outer column sat at 4.65 m and a 1.9 m car was 0.08 m off the kerb-line strip's
+                            # face on 13.0 m Alvarado (5.68 m); at 4.25 m it is 0.48 m clear. Single source:
+                            # tools/barrier_bands.py and tools/race_furniture.synth_dummies read THIS constant.
 PIT_SETBACK_M = 45.0
 PIT_PITCH_M = 7.0
 LINE_AHEAD_MAX_M = 35.0     # AC_TIME_0 must be this close ahead of the pole (ac-track-modding: ~30 m)

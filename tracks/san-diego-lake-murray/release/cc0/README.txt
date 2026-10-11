@@ -22,8 +22,9 @@ WHAT IT IS
   OpenStreetMap geometry on USGS 1 m elevation, then hand-finished: raised median islands with
   curbs, barriers and planting on College and Navajo; Del Cerro as a divided boulevard; side
   streets welded into the mainline with sidewalks that stop at every mouth; terrain seated under
-  every road; 11.5 m street lamps. Start/finish and the pit row sit at the lap seam, the turn
-  onto Alvarado. An AI line ships (ai/fast_lane.ai) for traffic and AI drive.
+  every road; 11.5 m street lamps. Start/finish, grid and pits sit on Alvarado Rd (the pits single
+  file behind the grid). An AI line ships (street/ai/fast_lane.ai) for traffic and AI drive — computed from
+  the road in the right-hand lane, NOT recorded in game, so AI behaviour is unverified.
 
 VERSIONS
   This public package carries the Street Loop only (open two-way streets, start/finish on

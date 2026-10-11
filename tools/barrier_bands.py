@@ -66,13 +66,28 @@ AIROSO = HERE.parent
 BRIDGE_CLEAR_M = 9.0         # no centre chain this close to a declared span (the rail takes over; v4440 on
 #                              SD ends 10.0 m before the I-8 span, v4441 7 m — invented, see GATES-CHANGELOG)
 HAIRPIN_DEG = 135.0          # a corner this sharp keeps its whole box open (place_signs.HAIRPIN_DEG)
-CAR_HALF_W_M = 0.95          # a 1.9 m car, for the grid clearance check
-GRID_STAGGER_M = 1.4         # tools/layout_dummies.py: two columns at lane centre +/- 1.4 m
-GRID_PITCH_M = 5.5
+CAR_HALF_W_M = 0.95          # a 1.9 m car, for the grid clearance check (race_furniture.CAR_HALF_W)
+
+
+def _load_tool(stem, alias):
+    """a sibling tool module by file, read-only (no sys.path side effects on the caller)"""
+    spec = importlib.util.spec_from_file_location(alias, HERE / f"{stem}.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+# the grid geometry is tools/layout_dummies.py's (the producer of record) — read, never restated:
+# a stale copy here (1.4 m while the producer moved) would declare a clearance the grid does not have
+_LD = _load_tool("layout_dummies", "_layout_dummies_ro")
+GRID_STAGGER_M = _LD.GRID_STAGGER_M   # two columns at lane centre +/- this (1.0 m since 2026-10-11)
+GRID_PITCH_M = _LD.GRID_PITCH_M
 GRID_SLOTS_DEFAULT = 8
-PIT_SETBACK_M = 45.0
-PIT_PITCH_M = 7.0
+PIT_SETBACK_M = _LD.PIT_SETBACK_M
+PIT_PITCH_M = _LD.PIT_PITCH_M
 PIT_SLOTS_DEFAULT = 8
+GRID_CLEAR_MIN_M = 0.30      # a car on the outer grid column must stand >= this off the strip face — the same
+#                              HARD floor as race_furniture.SPAWN_MARGIN_M / verify_race F (GATES-CHANGELOG 2026-10-11)
 MOUTH_CORNER_M = 3.0         # gap_mouths_blend's CORNER_M: the mouth line spans half-width + 3 m
 BARRIER_HALF_DEFAULT = 0.335 # concrete_barrier_4m.obj x extent / 2 (re-measured from the asset when present)
 EDGE_CENTRE_FROM_LIP = {"road": -0.485, "walk": +0.445}   # strip centre relative to the pavement lip (Q6)
@@ -412,9 +427,10 @@ def build(project_dir, out_name: str | None = None, config_path=None) -> dict:
         clear = min(widths[v] / 2.0 - edge_inset - need for v in vs)
         if any(not edge_strip[v] for v in vs):
             fails.append(f"layout {lo_.get('id')}: grid/pit zone v{vs[0]}..v{vs[-1]} crosses a bridge gap")
-        if clear < 0:
+        if clear < GRID_CLEAR_MIN_M:
             fails.append(f"layout {lo_.get('id')}: grid column edge {need:.2f} m vs barrier face "
-                         f"{min(widths[v] for v in vs)/2 - edge_inset:.2f} m — {clear:+.2f} m")
+                         f"{min(widths[v] for v in vs)/2 - edge_inset:.2f} m — {clear:+.2f} m clear "
+                         f"(< {GRID_CLEAR_MIN_M:.2f} m)")
         no_gap.append({"layout": lo_.get("id"), "i": vs[0], "j": vs[-1], "station_from_m": round(s0, 1),
                        "station_to_m": round(s1, 1), "grid_clearance_m": round(clear, 2),
                        "grid_slots": grid_slots, "pit_slots": pit_slots})

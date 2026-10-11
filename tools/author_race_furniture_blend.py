@@ -382,8 +382,15 @@ def main():
             print(f"[race] spawn unchecked {lo['id']}: no {dp.name}")
             continue
         d = json.loads(dp.read_text(encoding="utf-8"))
+        # HARD below rf.SPAWN_MARGIN_M (0.30 m) since 2026-10-11 — was a note; the per-slot table rides
+        # along so verify_race / the ledger can quote every slot's clearance
         h, notes = rf.spawn_clearance(pts, widths, bands, rf.dummies_positions(d), mode)
-        clearance[lo["id"]] = {"hard": h, "notes": notes, "synthesised": bool(d.get("_synthesised"))}
+        slots = rf.spawn_clearance_table(pts, widths, bands, rf.dummies_positions(d), mode)
+        clearance[lo["id"]] = {"hard": h, "notes": notes, "synthesised": bool(d.get("_synthesised")),
+                               "margin_m": rf.SPAWN_MARGIN_M, "slots": slots,
+                               "min_clear_m": min([s["clear_edge_m"] for s in slots] +
+                                                  [s["clear_centre_m"] for s in slots if s["clear_centre_m"] is not None],
+                                                  default=None)}
         hard += [f"{lo['id']}: {p}" for p in h]
         for p in h:
             print(f"[race] spawn FAIL {lo['id']}: {p}")

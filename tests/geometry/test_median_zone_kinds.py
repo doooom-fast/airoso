@@ -176,3 +176,71 @@ def test_a_trimmed_corner_band_runs_through_its_corner_not_the_folded_offsets():
     assert len(rs) == 1 and rs[0][:2] == (N - 1 - 22, N - 1 - 18) and rs[0][2][1] == (6.0, 100.0)
     assert r._band_point("edge_L", N - 1 - 20) is None and r.contains(6.0, 100.0, ALL_KINDS)
     assert math.dist(rs[0][2][0], (off, 110.0)) < 1e-9 and math.dist(rs[0][2][2], (off, 90.0)) < 1e-9
+
+
+# --- per-layout corridors (ledger 0049) ---------------------------------------------------------------------
+
+def _corridor_project(*, other_layout=True) -> Path:
+    """the straight road with a v2 declaration: race_cw closes 1 m LEFT of the centreline (left = -x here),
+    race_acw 1 m right of it; both curb strips everywhere, no chain"""
+    d = _project(island=(0, -1), centre=(0, -1), mouth=False)
+    bj = json.loads((d / "data" / "barrier_bands.json").read_text())
+    face = W / 2 - 0.82
+
+    def cor(sgn):
+        y = [sgn * 1.0 if 10 <= i <= 30 else None for i in range(N)]
+        lane = [([-face, sgn - 0.335] if sgn > 0 else [sgn + 0.335, face]) if y[i] is not None else [-face, face]
+                for i in range(N)]
+        zone = ["closure" if y[i] is not None else "whole" for i in range(N)]
+        return {"token": "cw" if sgn > 0 else "acw", "closure_y_by_vertex": y, "lane_by_vertex": lane,
+                "zone_by_vertex": zone}
+    bj["version"] = 2
+    bj["corridors"] = {"race_cw": cor(1.0)}
+    if other_layout:
+        bj["corridors"]["race_acw"] = cor(-1.0)
+    (d / "data" / "barrier_bands.json").write_text(json.dumps(bj))
+    return d
+
+
+def test_a_layout_zone_carries_its_own_closure_band_and_lane():
+    d = _corridor_project()
+    plain = MedianZone.load(d)
+    assert not plain.has_corridor and plain.n_closure == 0 and plain.closure_at(20) is None
+    assert not plain.contains(-1.0, 100.0, ALL_KINDS)          # no layout: no closure band at all
+    cw = MedianZone.load(d, layout="race_cw")
+    assert cw.has_corridor and cw.n_closure == 21 and cw.zone_at(20) == "closure" and cw.zone_at(5) == "whole"
+    assert cw.closure_at(20) == 1.0
+    # forward travel +z: left normal (-1, 0) -> the cw closure stands at x = -1.0
+    assert cw.contains(-1.0, 100.0, ALL_KINDS) and cw.contains(-1.0 - 0.9, 100.0, ALL_KINDS)
+    assert not cw.contains(-1.0 + 1.0, 100.0, ALL_KINDS)
+    assert not cw.contains(1.0, 100.0, ALL_KINDS)              # race_acw's closure is not race_cw's band
+    assert not cw.contains(-1.0, 100.0)                        # default kinds: island only
+    lo, hi = cw.lane_r(20)                                     # right of travel: the closure face .. the right strip face
+    assert abs(lo - (-(1.0 - 0.335))) < 1e-9 and abs(hi - (W / 2 - 0.82)) < 1e-9
+    assert cw.lane_r(5) == (-(W / 2 - 0.82), W / 2 - 0.82)
+    acw = MedianZone.load(d, layout="race_acw")
+    assert acw.contains(1.0, 100.0, ALL_KINDS) and not acw.contains(-1.0, 100.0, ALL_KINDS)
+
+
+def test_a_reversed_layout_zone_flips_the_lane_into_its_own_right():
+    d = _corridor_project()
+    acw = MedianZone.load(d, layout="race_acw").reversed()
+    k = N - 1 - 20                                             # forward vertex 20 walked backwards
+    assert acw.closure_at(k) == 1.0                            # forward y -1.0 is LEFT of the reversed travel
+    lo, hi = acw.lane_r(k)                                     # right of reverse travel = forward-left = +y fwd
+    assert abs(lo - (-1.0 + 0.335)) < 1e-9 and abs(hi - (W / 2 - 0.82)) < 1e-9
+    assert acw.contains(1.0, 100.0, ALL_KINDS)                 # same world band
+    assert acw.zone_at(k) == "closure"
+
+
+def test_a_v2_file_without_the_asked_layout_is_an_error_and_v1_files_ignore_layouts():
+    d = _corridor_project(other_layout=False)
+    try:
+        MedianZone.load(d, layout="race_acw")
+    except SystemExit as e:
+        assert "race_acw" in str(e)
+    else:
+        raise AssertionError("a race layout was zoned without its declared corridor")
+    v1 = _project()
+    z = MedianZone.load(v1, layout="race_cw")                  # a v1 file: today's bands, no corridor
+    assert z is not None and not z.has_corridor and z.n_barrier == 11

@@ -1,6 +1,8 @@
-"""verify_kn5 on a multi-layout track (ledger 0047): spawn-free road kn5, one nodes-only spawn kn5
-per layout facing its travel on the right side of the road, AC_TIME_0 at the declared line with the
-sectors in driving order, and the race-furniture kn5 carrying only RACE-named meshes/materials.
+"""verify_kn5 on a multi-layout track (ledgers 0047 + 0049): spawn-free road kn5, one nodes-only spawn kn5
+per layout facing its travel on the right side of the road (or, with a declared corridor, inside its lane),
+AC_TIME_0 at the declared line with the sectors in driving order, the COMMON race-furniture kn5 carrying only
+curb strips + kerbs, each race layout's closure kn5 carrying only its own closure, and (g) the models_<id>.ini
+set listing exactly [road, common race, own closure, own spawns] with no other layout's closure.
 
 The binary fixture is written here with the same layout verify_kn5._parse_full reads (header,
 materials, class-1 nodes with a 4x4 row-major matrix whose third row is the local +Z, class-2
@@ -97,15 +99,27 @@ def _ribbon(pts, half, step=1):
     return V, T
 
 
-def _race_meshes(ok_names=True, ok_mats=True):
-    box = [(-0.3, 0.0, 10.0), (0.3, 0.0, 10.0), (0.3, 1.2, 10.0), (-0.3, 1.2, 10.0),
-           (-0.3, 0.0, 20.0), (0.3, 0.0, 20.0), (0.3, 1.2, 20.0), (-0.3, 1.2, 20.0)]
-    btris = [(3, 2, 6), (3, 6, 7), (1, 2, 6), (1, 6, 5)]
+_BOX = [(-0.3, 0.0, 10.0), (0.3, 0.0, 10.0), (0.3, 1.2, 10.0), (-0.3, 1.2, 10.0),
+        (-0.3, 0.0, 20.0), (0.3, 0.0, 20.0), (0.3, 1.2, 20.0), (-0.3, 1.2, 20.0)]
+_BTRIS = [(3, 2, 6), (3, 6, 7), (1, 2, 6), (1, 6, 5)]
+
+
+def _race_meshes(ok_names=True, ok_mats=True, extra=()):
+    """the COMMON race kn5: a curb strip + a kerb (+ `extra` mesh names, each a box)"""
     kerb = [(2.0, 0.0, 30.0), (3.0, 0.0, 30.0), (3.0, 0.05, 40.0), (2.0, 0.05, 40.0)]
     ktris = [_face_up(kerb, (0, 1, 2)), _face_up(kerb, (0, 2, 3))]
-    names = ("1WALL_race_c0_0", "1KERB_race_40_out") if ok_names else ("1WALL_guard_0", "1KERB_race_40_out")
-    mats = ["1WALL_race_mat", "1KERB_race_mat"] if ok_mats else ["1WALL_race_mat", "1ROAD_main_mat"]
-    return [(names[0], box, btris, 0), (names[1], kerb, ktris, 1)], mats
+    names = ("1WALL_race_edge_L_t_0_0", "1KERB_race_40_out") if ok_names else ("1WALL_guard_0", "1KERB_race_40_out")
+    mats = ["1WALL_race_edge_L_t_0_0_mat", "1KERB_race_40_out_mat"] if ok_mats else ["1WALL_race_mat", "1ROAD_main_mat"]
+    ms = [(names[0], _BOX, _BTRIS, 0), (names[1], kerb, ktris, 1)]
+    for n in extra:
+        ms.append((n, _BOX, _BTRIS, 0))
+    return ms, mats
+
+
+def _closure_meshes(token, extra=()):
+    """a layout's closure kn5: 1WALL_race_close_<token>_* boxes (+ `extra` names)"""
+    names = [f"1WALL_race_close_{token}_t_10_0", f"1WALL_race_close_{token}_t_10_1"] + list(extra)
+    return [(n, _BOX, _BTRIS, 0) for n in names], [f"{names[0]}_mat"]
 
 
 # ---------------------------------------------------------------- the synthetic project
@@ -113,7 +127,11 @@ N_PTS = 81                      # z = 0..400 at 5 m, open line, kn5 frame
 
 
 def _synthetic(*, spawn_in_main=False, drop_spawn_kn5=None, flip_heading=None, wrong_side=None,
-               bad_sectors=None, race_kn5="ok", stray_spawn=False) -> Path:
+               bad_sectors=None, race_kn5="ok", stray_spawn=False, closures="ok", lanes=None) -> Path:
+    """closures: "ok" (t_closure_race_cw / _acw.kn5, own tokens), None (none written), "swap" (race_cw's file holds
+    the acw closure), "kerb" (a kerb in race_cw's closure kn5), "no_token" (no closure_token declared);
+    race_kn5 "closure_in_common" puts race_cw's closure into the common kn5 as well;
+    lanes: {layout id: [lo, hi]} -> a barrier_bands.json corridor with that lane at every vertex (forward-left)"""
     d = Path(tempfile.mkdtemp())
     (d / "data").mkdir(); (d / "build").mkdir()
     pts = [[0.0, 0.0, 5.0 * i] for i in range(N_PTS)]
@@ -125,8 +143,14 @@ def _synthetic(*, spawn_in_main=False, drop_spawn_kn5=None, flip_heading=None, w
         {"id": "race_acw", "kind": "race", "direction": "reverse", "race_furniture": True,
          "start": {"line_vertex": 40, "grid_vertex": 44, "offset_right_m": 3.25, "sector_vertices": [28, 16]}},
     ]
+    if closures != "no_token":
+        layouts[1]["closure_token"], layouts[2]["closure_token"] = "cw", "acw"
     (d / "track.config.json").write_text(json.dumps({"slug": "t", "loop": False, "layouts": layouts,
                                                       "race": {"grid_slots": 8, "pit_slots": 8}}))
+    if lanes:
+        (d / "data" / "barrier_bands.json").write_text(json.dumps({"corridors": {
+            lid: {"token": {"race_cw": "cw", "race_acw": "acw"}[lid], "lane_by_vertex": [list(lane)] * N_PTS}
+            for lid, lane in lanes.items()}}))
     (d / "data" / "finished_centerline.json").write_text(json.dumps({"points_xyz_m": pts, "widths_m": [8.0] * N_PTS}))
     V, T = _ribbon(pts, 4.0)
     main_nodes = []
@@ -134,8 +158,14 @@ def _synthetic(*, spawn_in_main=False, drop_spawn_kn5=None, flip_heading=None, w
         main_nodes.append(("AC_START_0", (0.0, 0.3, 100.0), 0.0))
     write_kn5(d / "build" / "t.kn5", [("1ROAD_main", V, T, 0)], main_nodes, ["1ROAD_main_mat"])
     if race_kn5:
-        ms, mats = _race_meshes(ok_names=(race_kn5 != "bad_name"), ok_mats=(race_kn5 != "bad_mat"))
+        ms, mats = _race_meshes(ok_names=(race_kn5 != "bad_name"), ok_mats=(race_kn5 != "bad_mat"),
+                                extra=(["1WALL_race_close_cw_t_10_0"] if race_kn5 == "closure_in_common" else []))
         write_kn5(d / "build" / "t_race.kn5", ms, [], mats)
+    if closures:
+        for lid, tok in (("race_cw", "cw"), ("race_acw", "acw")):
+            use = {"swap": {"cw": "acw", "acw": "cw"}[tok]}.get(closures, tok)
+            ms, mats = _closure_meshes(use, extra=(["1KERB_race_9_in"] if closures == "kerb" and tok == "cw" else []))
+            write_kn5(d / "build" / f"t_closure_{lid}.kn5", ms, [], mats)
     for lo in layouts:
         lid = lo["id"]
         if drop_spawn_kn5 == lid:
@@ -217,6 +247,76 @@ def test_race_kn5_checks():
     assert _has(verify(_synthetic(race_kn5=None)), "declare race_furniture but build/t_race.kn5 does not exist")
     assert _has(verify(_synthetic(race_kn5="bad_name")), "non-race mesh", "1WALL_guard_0")
     assert _has(verify(_synthetic(race_kn5="bad_mat")), "non-race material", "1ROAD_main_mat")
+    # ledger 0049: no closure in the common kn5
+    assert _has(verify(_synthetic(race_kn5="closure_in_common")), "RACE kn5 't_race.kn5' carries 1 closure mesh")
+
+
+def test_closure_kn5s_carry_their_own_layouts_closure_only():
+    """(f) since ledger 0049: one <slug>_closure_<id>.kn5 per race layout, holding only that layout's
+    1WALL_RACE_CLOSE_<TOKEN>_* meshes — the token declared by barrier_bands.json corridors.<id>.token, else
+    layouts[].closure_token"""
+    assert verify(_synthetic()) == []
+    fails = verify(_synthetic(closures=None))
+    assert _has(fails, "race layout race_cw has no build/t_closure_race_cw.kn5") and _has(fails, "t_closure_race_acw.kn5"), fails
+    fails = verify(_synthetic(closures="swap"))
+    assert _has(fails, "CLOSURE kn5 't_closure_race_cw.kn5' (race_cw)", "not race_cw's closure"), fails
+    assert _has(fails, "holds no 1WALL_RACE_CLOSE_CW_* mesh"), fails
+    assert _has(verify(_synthetic(closures="kerb")), "CLOSURE kn5 't_closure_race_cw.kn5'", "1KERB_race_9_in")
+    assert _has(verify(_synthetic(closures="no_token")), "race layout race_cw declares no closure token")
+    d = _synthetic()
+    shutil.copyfile(d / "build" / "t_closure_race_cw.kn5", d / "build" / "t_closure_race_old.kn5")
+    assert _has(verify(d), "stray closure kn5 build/t_closure_race_old.kn5")
+
+
+def test_spawns_stand_inside_the_declared_lane_of_a_race_layout():
+    """(d) with a corridor declared the START / PIT cars must stand inside the layout's lane (>= 0.30 m off each
+    face); the lane replaces "right of travel" (on Alvarado the race lane is the whole street)"""
+    wide = {"race_cw": [-6.5, 6.5], "race_acw": [-6.5, 6.5]}
+    assert verify(_synthetic(lanes=wide)) == []
+    # the grid's outer column stands 4.65 m right of travel: a lane face at -5.0 leaves it -0.6 m
+    fails = verify(_synthetic(lanes={"race_cw": [-5.0, 6.5], "race_acw": [-6.5, 6.5]}))
+    assert _has(fails, "LANE 'race_cw:AC_START_1'", "OUTSIDE"), fails
+    assert not _has(fails, "LANE 'race_acw"), fails
+    # a car LEFT of its travel but inside the declared lane is legal for a race layout (the lane decides)...
+    assert not _has(verify(_synthetic(lanes=wide, wrong_side="race_acw")), "SIDE 'race_acw")
+    # ...and still a SIDE fail for a layout without a declared lane
+    assert _has(verify(_synthetic(wrong_side="race_acw")), "SIDE 'race_acw:AC_START_0'", "LEFT")
+
+
+def _write_inis(d, lists):
+    out = d / "build" / "t"
+    out.mkdir(parents=True, exist_ok=True)
+    for lid, files in lists.items():
+        s = "".join(f"[MODEL_{i}]\nFILE={f}\nPOSITION=0,0,0\nROTATION=0,0,0\n\n" for i, f in enumerate(files))
+        (out / f"models_{lid}.ini").write_text(s, encoding="utf-8")
+        for f in files:
+            (out / f).write_bytes(b"kn5")
+    return out
+
+
+def test_inis_list_exactly_road_common_own_closure_and_spawns():
+    """(g) after track_folder: each race ini = [road, common race, OWN closure, own spawns]; street = [road, spawns];
+    no ini lists the other direction's closure (both closures would block both lanes)"""
+    from scripts.ac.verify_kn5 import verify_inis
+    d = _synthetic()
+    good = {"street": ["t.kn5", "t__street.kn5"],
+            "race_cw": ["t.kn5", "t_race.kn5", "t_closure_race_cw.kn5", "t__race_cw.kn5"],
+            "race_acw": ["t.kn5", "t_race.kn5", "t_closure_race_acw.kn5", "t__race_acw.kn5"]}
+    _write_inis(d, good)
+    assert verify_inis(d) == []
+    bad = dict(good, race_cw=["t.kn5", "t_race.kn5", "t_closure_race_cw.kn5", "t_closure_race_acw.kn5", "t__race_cw.kn5"])
+    _write_inis(d, bad)
+    fails = verify_inis(d)
+    assert _has(fails, "INI: models_race_cw.ini lists another layout's closure ['t_closure_race_acw.kn5']"), fails
+    _write_inis(d, dict(good, race_acw=["t.kn5", "t_race.kn5", "t__race_acw.kn5"]))      # closure missing (the 0047 shape)
+    assert _has(verify_inis(d), "INI: models_race_acw.ini lists", "expected exactly")
+    _write_inis(d, dict(good, street=["t.kn5", "t_race.kn5", "t__street.kn5"]))          # the street loads race furniture
+    assert _has(verify_inis(d), "INI: models_street.ini lists")
+    _write_inis(d, good)
+    (d / "build" / "t" / "t_closure_race_cw.kn5").unlink()
+    assert _has(verify_inis(d), "INI: models_race_cw.ini lists t_closure_race_cw.kn5, which is not in")
+    (d / "build" / "t" / "models_street.ini").unlink()
+    assert _has(verify_inis(d), "INI: no models_street.ini")
 
 
 def test_parse_keeps_the_two_tuple_api_and_reads_local_z():
@@ -236,7 +336,11 @@ SD = ROOT / "tracks" / "san-diego-lake-murray"
 def _sd_project() -> Path:
     d = Path(tempfile.mkdtemp())
     (d / "data").mkdir(); (d / "build").mkdir()
-    shutil.copyfile(SD / "track.config.json", d / "track.config.json")
+    cfg = json.loads((SD / "track.config.json").read_text(encoding="utf-8"))
+    for lo in cfg["layouts"]:            # the ledger-0049 closure tokens (the repo config may predate them)
+        if lo.get("race_furniture"):
+            lo.setdefault("closure_token", "cw" if lo.get("direction", "forward") == "forward" else "acw")
+    (d / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
     shutil.copyfile(SD / "start_positions.json", d / "start_positions.json")
     for f in ("centerline.local.json", "median_bands.json", "finished_centerline.json", "barrier_bands.json"):
         shutil.copyfile(SD / "data" / f, d / "data" / f)
@@ -255,6 +359,10 @@ def test_lake_murray_dummies_from_layout_dummies_pass_the_spawn_gate():
     write_kn5(d / "build" / "san_diego_lake_murray.kn5", [("1ROAD_main", V, T, 0)], [], ["1ROAD_main_mat"])
     ms, mats = _race_meshes()
     write_kn5(d / "build" / "san_diego_lake_murray_race.kn5", ms, [], mats)
+    for lo in cfg["layouts"]:
+        if lo.get("race_furniture"):
+            ms, mats = _closure_meshes(lo["closure_token"])
+            write_kn5(d / "build" / f"san_diego_lake_murray_closure_{lo['id']}.kn5", ms, [], mats)
     for lo in cfg["layouts"]:
         lid = lo["id"]
         dj = json.loads((d / "data" / f"dummies_{lid}.json").read_text(encoding="utf-8"))

@@ -171,8 +171,58 @@ def _decks_trimmed(data: Path):
     return out
 
 
+RACE_CLASH_TOL_M = 0.05   # a race-strip vert within this (plan) of another wall's footprint, inside its height = a clash
+
+
+def _race_wall_clashes(objp: Path):
+    """W. RACE STRIP x OTHER WALL (ledger 0049 C1): since the curb strips run over every bridge span they stand
+    beside the decks' own 1WALL_guard rails; a vert of one standing INSIDE the other's footprint (within
+    RACE_CLASH_TOL_M in plan, within its height range) — either way round, a thin rail can stand wholly inside a
+    0.67 m strip — is two walls through each other, the clash the spec asks audit to gate. Returns (count, samples)."""
+    others = _obj_tris(objp, ("1WALL",), exclude=("1WALL_RACE",))
+    races = _obj_tris(objp, ("1WALL_RACE",))
+    if not others or not races:
+        return 0, []
+    cell = 2.0
+    tol = RACE_CLASH_TOL_M
+    hits = []
+    for probe_tris, target_tris in ((races, others), (others, races)):
+        th = _tri_hash(target_tris, cell)
+        seen = set()
+        for tri in probe_tris:
+            for x, y, z in tri:
+                key = (round(x, 4), round(y, 4), round(z, 4))
+                if key in seen:
+                    continue
+                seen.add(key)
+                for a, b, c in th.get((int(x // cell), int(z // cell)), ()):
+                    if not min(a[1], b[1], c[1]) - tol <= y <= max(a[1], b[1], c[1]) + tol:
+                        continue
+                    if _xz_tri_dist(x, z, a, b, c) <= tol:
+                        hits.append((round(x, 2), round(y, 2), round(z, 2)))
+                        break
+    return len(hits), hits[:12]
+
+
+def _xz_tri_dist(x, z, a, b, c):
+    """plan distance from (x, z) to the triangle's XZ footprint (0 inside)"""
+    d = (b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2])
+    if abs(d) > 1e-12:
+        w0 = ((b[2] - c[2]) * (x - c[0]) + (c[0] - b[0]) * (z - c[2])) / d
+        w1 = ((c[2] - a[2]) * (x - c[0]) + (a[0] - c[0]) * (z - c[2])) / d
+        if w0 >= 0 and w1 >= 0 and 1.0 - w0 - w1 >= 0:
+            return 0.0
+    best = float("inf")
+    for p, q in ((a, b), (b, c), (c, a)):
+        dx, dz = q[0] - p[0], q[2] - p[2]
+        L2 = dx * dx + dz * dz
+        t = 0.0 if L2 < 1e-12 else max(0.0, min(1.0, ((x - p[0]) * dx + (z - p[2]) * dz) / L2))
+        best = min(best, math.hypot(x - p[0] - t * dx, z - p[2] - t * dz))
+    return best
+
+
 def audit(project_dir: str | Path, *, race: bool = False, obj: str = "track.obj",
-          out: str = "audit.json") -> dict:
+          out: str = "audit.json", layout: str | None = None) -> dict:
     """Audit the built OBJ ``data/<obj>`` and write ``data/<out>``.
 
     ``race`` (ledger 0047): judge the race layouts' kn5 set (``--obj track.race.obj``: road + race
@@ -181,8 +231,15 @@ def audit(project_dir: str | Path, *, race: bool = False, obj: str = "track.obj"
     on both curb faces, the sealed mouths — scripts/geometry/median_zone.py kind 'barrier'). K and I
     keep the island band only (the race kerb is 0.05 m < K's 0.10 m, no exemption needed); E and F
     are untouched — E is the strips' seating gate. Without ``race`` the bands are never consulted,
-    so the street layout and every other track audit exactly as before."""
+    so the street layout and every other track audit exactly as before.
+
+    ``layout`` (ledger 0049): ONE race layout on its own gate OBJ (``track.<id>.obj``: road + common race +
+    that layout's closure kn5). D is exempt only on THAT layout's bands — both curb strips and its own closure
+    (MedianZone.load(project, layout=<id>)), never the other direction's closure; check W (a race strip standing
+    through another wall, e.g. a bridge rail) gates."""
     proj = Path(project_dir)
+    if layout is not None:
+        race = True
     data = proj / "data"
     slug = json.loads((proj / "track.config.json").read_text())["slug"]
     objp = data / obj
@@ -313,7 +370,7 @@ def audit(project_dir: str | Path, *, race: bool = False, obj: str = "track.obj"
     # gated for presence (drive_test barrier_missing), seating (E) and lane clearance (drive_test
     # disc) instead. A strip OFF its band still counts; K and I never read the barrier kind.
     from scripts.geometry.median_zone import MedianZone, ALL_KINDS
-    _zone = MedianZone.load(project_dir)
+    _zone = MedianZone.load(project_dir, layout=layout)
     _in_island = _zone.contains if _zone else (lambda x, z: False)
     if race and _zone is not None and _zone.has_barrier:
         _in_band_D = lambda x, z: _zone.contains(x, z, ALL_KINDS)   # noqa: E731
@@ -321,7 +378,8 @@ def audit(project_dir: str | Path, *, race: bool = False, obj: str = "track.obj"
         _in_band_D = _in_island
     if _zone:
         print(f"  (median island declared on {_zone.n_island} centreline verts — D/K/I exempt there"
-              + (f"; --race: barrier bands on {_zone.n_barrier} centre / {_zone.n_edge} edge verts — D exempt there"
+              + (f"; --race: barrier bands on {_zone.n_barrier} centre / {_zone.n_edge} edge"
+                 + (f" / {_zone.n_closure} closure ({layout})" if layout else "") + " verts — D exempt there"
                  if race and _zone.has_barrier else "") + ")")
     if race and (_zone is None or not _zone.has_barrier):
         print("  (--race given but data/barrier_bands.json declares no band — nothing exempted)")
@@ -656,6 +714,9 @@ def audit(project_dir: str | Path, *, race: bool = False, obj: str = "track.obj"
                     cut_hits.append((round(px, 1), round(pz, 1), round(_gm2 - max(deck), 2),
                                      round(off, 1), i))
 
+    # W. race strip through another wall (0049 C1: the strips now cross the bridge spans beside the deck rails)
+    race_clash, race_clash_samples = _race_wall_clashes(objp) if race else (0, [])
+
     report = {
         "slug": slug, "obj": obj, "race": race,
         "road_verts": len(g["1ROAD"]), "grass_verts": len(g["1GRASS"]), "piers": len(piers),
@@ -706,20 +767,30 @@ def audit(project_dir: str | Path, *, race: bool = False, obj: str = "track.obj"
           + (f"  (worst {worst_span:.0f} m edge; limit {SPAN_LIMIT:.0f} m)" if span_bad else ""))
     total = (kerb_on_road + span_bad + len(support_hits) + len(poke_hits) + len(cross) + wall_on_road + wall_float + curb_bad
              + (prop_float or 0) + (ground_cut or 0) + sw_isolate)
+    if race:                     # race-only keys: the street audit.json keeps today's exact shape
+        report["layout"] = layout
+        report["W_race_wall_clash"] = race_clash
+        report["samples"]["race_wall_clash"] = race_clash_samples
+        (data / out).write_text(json.dumps(report, indent=1), encoding="utf-8")
+        print(f"  W. race strip through a wall   : {race_clash}" + (f"  e.g. {race_clash_samples[:3]}" if race_clash else ""))
+    total += race_clash
     print(f"  => {'CLEAN' if total == 0 else str(total) + ' issues'}")
     return report
 
 
 def main(argv: list[str] | None = None) -> int:
-    """python -m scripts.geometry.audit_mesh <project> [--race] [--obj track.race.obj] [--out audit.race.json]"""
+    """python -m scripts.geometry.audit_mesh <project> [--race] [--layout <id>] [--obj track.<id>.obj]
+                                             [--out audit.<id>.json]"""
     argv = list(sys.argv[1:] if argv is None else argv)
     project = "projects/san-diego-freeway-loop"
-    race, obj, out = False, "track.obj", "audit.json"
+    race, obj, out, layout = False, "track.obj", "audit.json", None
     i = 0
     while i < len(argv):
         a = argv[i]
         if a == "--race":
             race = True; i += 1
+        elif a == "--layout":
+            layout = argv[i + 1]; race = True; i += 2
         elif a == "--obj":
             obj = Path(argv[i + 1]).name; i += 2
         elif a == "--out":
@@ -727,13 +798,13 @@ def main(argv: list[str] | None = None) -> int:
         else:
             project = a; i += 1
     if race and obj == "track.obj":
-        obj = "track.race.obj"
+        obj = f"track.{layout}.obj" if layout else "track.race.obj"
     if race and out == "audit.json":
-        out = "audit.race.json"
-    r = audit(project, race=race, obj=obj, out=out)
+        out = f"audit.{layout}.json" if layout else "audit.race.json"
+    r = audit(project, race=race, obj=obj, out=out, layout=layout)
     hard = (r["A_supports_in_road"] + r["B_terrain_poke"] + r["D_wall_on_road"] + r["E_wall_floating"]
             + r["F_curb_not_flush"] + (r["G_prop_floating"] or 0) + (r["H_ground_above_deck"] or 0)
-            + r["I_sidewalk_isolating"])
+            + r["I_sidewalk_isolating"] + (r.get("W_race_wall_clash", 0) if layout else 0))
     return 1 if hard else 0   # C (junction crossings) reported but non-gating (walls are gapped there)
 
 

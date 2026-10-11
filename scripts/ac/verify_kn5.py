@@ -13,11 +13,13 @@ regression can never ship silently again (all three of these have bitten us and 
   4. AC_START and the AC_PIT_* boxes sit ON a road surface at the same height as AC_HOTLAP_START — so
      you don't drop when spawning from the pits.
 
-MULTI-LAYOUT (ledger 0047; fleet/LAWS.md L8 as amended). A track with more than one ``layouts[]``
+MULTI-LAYOUT (ledgers 0047 + 0049; fleet/LAWS.md L8 as amended). A track with more than one ``layouts[]``
 entry ships a spawn-free road kn5 plus one nodes-only spawn kn5 per layout (``build/<slug>__<id>.kn5``)
-and, for layouts with ``race_furniture: true``, one race-furniture kn5 (``build/<slug>_race.kn5``) —
-the shape every reverse-capable reference measured ships (deepforest, Oregon Raceway Park,
-rt_california_highway, Pacific Coast Hwy). On such a track check 4/5 become:
+and, for layouts with ``race_furniture: true``, the COMMON race-furniture kn5 (``build/<slug>_race.kn5``: the
+curb strips + race kerbs both race layouts load) plus that layout's OWN closure kn5
+(``build/<slug>_closure_<id>.kn5``: the wall shutting off the other direction — ledger 0049) — the shape every
+reverse-capable reference measured ships (deepforest, Oregon Raceway Park, rt_california_highway, Pacific
+Coast Hwy). On such a track check 4/5 become:
 
   (a) the road kn5 and the race kn5 carry NO AC_START/AC_PIT/AC_HOTLAP/AC_TIME node; exactly one
       ``<slug>__<id>.kn5`` per declared id and no other ``__*.kn5``;
@@ -30,21 +32,34 @@ rt_california_highway, Pacific Coast Hwy). On such a track check 4/5 become:
       deepforest AC_START_0 local +Z · fast_lane travel = +1.00 (six more at +0.98..+1.00); the installed
       San Diego V3 build read −0.91 (the atan2(tx, tz) reflection, fixed in tools/layout_dummies.py) and
       must FAIL here. The dot is printed so a sign error is one constant away;
-  (d) SIDE: every START/PIT stands RIGHT of the layout's travel (kn5 frame: right = (−t.z, t.x), see
-      ``_right_of``), and at least barrier_half + CHAIN_CLEAR_M off the centreline where
-      data/barrier_bands.json declares the centre chain (a grid slot straddling the chain);
+  (d) SIDE / LANE: for a race layout whose corridor data/barrier_bands.json declares
+      (``corridors.<id>.lane_by_vertex``, forward-left frame), every START/PIT car (half-width CAR_HALF_W_M)
+      stands INSIDE that lane, >= LANE_MARGIN_M off each face — the lane, not "right of travel" (ledger 0049:
+      on Alvarado the race lane is the whole street); every other layout's START/PIT stands RIGHT of its
+      travel (kn5 frame: right = (−t.z, t.x), see ``_right_of``). (The ledger-0047 CHAIN_CLEAR_M centre-chain
+      check is retired with the chain.)
   (e) LINE: the AC_TIME_0 pair's midpoint lies within LINE_TOL_M of ``layouts[].start.line_vertex``,
       AC_TIME_0 is 0 < d ≤ LINE_AHEAD_MAX_M ahead of AC_START_0 in driving order, and AC_TIME_1 / AC_TIME_2
       sit at increasing driving-order stations from the line (L11 — sectors renumbered per direction);
-  (f) RACE kn5 (when any layout declares race_furniture): present, every mesh name 1WALL_RACE*/1KERB_RACE*
-      (≥ 1 of each), every material RACE-named (an un-purged material table or a swapped .ini ships the
-      whole road's materials), no mesh over the cap, no duplicate 1-prefixed name across road + race
-      (AC loads both), no spawn node, file under RACE_KN5_MAX_B.
+  (f) RACE kn5s (when any layout declares race_furniture): the COMMON ``<slug>_race.kn5`` present, every mesh
+      name 1WALL_RACE*/1KERB_RACE*, >= 1 curb strip (1WALL_RACE_EDGE_*) and >= 1 kerb, NO closure
+      (1WALL_RACE_CLOSE_*) and no retired centre chain (1WALL_RACE_KBAR_*); per race layout its
+      ``<slug>_closure_<id>.kn5`` present, every mesh 1WALL_RACE_CLOSE_<TOKEN>_* of THAT layout's declared
+      token (barrier_bands.json corridors.<id>.token, else layouts[].closure_token), >= 1; in both every
+      material RACE-named (an un-purged material table or a swapped .ini ships the whole road's materials), no
+      mesh over the cap, no spawn node, file under RACE_KN5_MAX_B; no duplicate 1-prefixed name across the set
+      a race layout loads (road + common + its closure: AC drops dup-named meshes from collision);
+  (g) INIs (``--inis``, after scripts/ac/track_folder.py has packed build/<slug>/): each race layout's
+      ``models_<id>.ini`` lists exactly [road, ``<slug>_race.kn5``, ``<slug>_closure_<id>.kn5``,
+      ``<slug>__<id>.kn5``] in that order, every other layout's exactly [road, ``<slug>__<id>.kn5``]; NO ini
+      lists another layout's closure kn5 (loading both closures would block both lanes), and every kn5 an ini
+      names is in the folder.
 
 Pure-stdlib kn5 parse (no deps), reproducible on the Mac. Exit 0 = drivable, 1 = a check failed (with a
 report of exactly which mesh/dummy and why).
 
-    python -m scripts.ac.verify_kn5 projects/<slug>
+    python -m scripts.ac.verify_kn5 projects/<slug>            (the kn5s: 1-6, a-f)
+    python -m scripts.ac.verify_kn5 projects/<slug> --inis     (g, on the packed build/<slug>/ folder)
 """
 
 from __future__ import annotations
@@ -73,7 +88,9 @@ FACING = ("AC_START", "AC_PIT", "AC_HOTLAP")
 RACE_PREFIXES = ("1WALL_RACE", "1KERB_RACE")
 HEADING_MIN_DEG = 30.0      # ⚠ invented pending a measured envelope: a facing node more than this off the
 #                            layout's travel fails (references read +0.98..+1.00, today's SD −0.91)
-CHAIN_CLEAR_M = 1.0         # ⚠ invented: |lateral| ≥ barrier_half + this beside a declared centre chain
+CAR_HALF_W_M = 0.95         # (d) a 1.9 m car on a grid / pit slot (tools/verify_race.py CAR_HALF_W_M)
+LANE_MARGIN_M = 0.30        # (d) the car's edge >= this off each face of its declared lane (verify_race F's floor)
+EDGE_TAG, CLOSE_TAG, KBAR_TAG = "1WALL_RACE_EDGE_", "1WALL_RACE_CLOSE_", "1WALL_RACE_KBAR_"
 LINE_TOL_M = 2.0            # AC_TIME_0 midpoint vs the declared line vertex
 LINE_AHEAD_MAX_M = 35.0     # AC_TIME_0 at most this far ahead of AC_START_0 (ac-track-modding: ~30 m)
 RACE_KN5_MAX_B = 20_000_000
@@ -205,31 +222,23 @@ class _Line:
         return d % self.lap if self.closed else d
 
 
-def _verify_race_kn5(race_p: Path, main_meshes: list, fails: list) -> list:
-    rnodes, rmeshes, rmats = _parse_full(race_p)
-    tag = f"RACE kn5 '{race_p.name}'"
+def _furniture_kn5(p: Path, tag: str, fails: list) -> tuple[list, list, list]:
+    """the checks every race-furniture kn5 shares: RACE meshes only, RACE materials only, no mesh over the cap, no
+    duplicate name inside it, no spawn / timing node, under RACE_KN5_MAX_B. Returns its (nodes, meshes, materials)."""
+    rnodes, rmeshes, rmats = _parse_full(p)
     bad = [m["name"] for m in rmeshes if not m["name"].upper().startswith(RACE_PREFIXES)]
     if bad:
         fails.append(f"{tag} carries {len(bad)} non-race mesh(es) e.g. {bad[:3]} — the export filter leaked "
                      f"(only 1WALL_RACE*/1KERB_RACE* belong in it)")
-    if not any(m["name"].upper().startswith("1WALL_RACE") for m in rmeshes):
-        fails.append(f"{tag} has no 1WALL_RACE* mesh (no centre chain / kerb-line strip)")
-    if not any(m["name"].upper().startswith("1KERB_RACE") for m in rmeshes):
-        fails.append(f"{tag} has no 1KERB_RACE* mesh (no race kerbs)")
     for m in rmeshes:
         if m["nverts"] > VERT_CAP:
-            fails.append(f"OVER-CAP '{race_p.name}:{m['name']}' {m['nverts']} v > {VERT_CAP} — will split into dup meshes")
+            fails.append(f"OVER-CAP '{p.name}:{m['name']}' {m['nverts']} v > {VERT_CAP} — will split into dup meshes")
         tot = m["up"] + m["dn"]
         if m["name"].upper().startswith("1KERB") and tot and m["up"] / tot < FACE_UP_MIN:
-            fails.append(f"FACE-DOWN drivable '{race_p.name}:{m['name']}' ({m['up']} up / {m['dn']} dn)")
+            fails.append(f"FACE-DOWN drivable '{p.name}:{m['name']}' ({m['up']} up / {m['dn']} dn)")
     dups = {n: c for n, c in Counter(m["name"] for m in rmeshes if m["name"].startswith("1")).items() if c > 1}
     for name, c in dups.items():
-        fails.append(f"DUPLICATE physical mesh '{race_p.name}:{name}' x{c}")
-    main_names = {m["name"] for m in main_meshes if m["name"].startswith("1")}
-    both = sorted(main_names & {m["name"] for m in rmeshes if m["name"].startswith("1")})
-    if both:
-        fails.append(f"DUPLICATE physical mesh name(s) across road + race kn5 {both[:4]} — AC loads both and "
-                     f"drops dup-named meshes from collision")
+        fails.append(f"DUPLICATE physical mesh '{p.name}:{name}' x{c}")
     nonrace_mats = [mn for mn in rmats if not mn.upper().startswith(RACE_PREFIXES)]
     if nonrace_mats:
         fails.append(f"{tag} embeds {len(nonrace_mats)} non-race material(s) e.g. {nonrace_mats[:3]} — the "
@@ -237,14 +246,59 @@ def _verify_race_kn5(race_p: Path, main_meshes: list, fails: list) -> list:
     spawn = [n for n, _p, _z in rnodes if n.upper().startswith(SPAWN_PREFIXES)]
     if spawn:
         fails.append(f"{tag} carries spawn/timing node(s) {spawn[:4]} — those ride in the per-layout spawn kn5s only")
-    size = race_p.stat().st_size
+    size = p.stat().st_size
     if size >= RACE_KN5_MAX_B:
-        fails.append(f"{tag} is {size / 1e6:.1f} MB ≥ {RACE_KN5_MAX_B / 1e6:.0f} MB — not the furniture-only kn5")
+        fails.append(f"{tag} is {size / 1e6:.1f} MB ≥ {RACE_KN5_MAX_B / 1e6:.0f} MB — not a furniture-only kn5")
+    return rnodes, rmeshes, rmats
+
+
+def _verify_race_kn5(race_p: Path, main_meshes: list, fails: list) -> list:
+    """(f) the COMMON race kn5: curb strips + kerbs, no closure, no retired centre chain"""
+    tag = f"RACE kn5 '{race_p.name}'"
+    _n, rmeshes, _m = _furniture_kn5(race_p, tag, fails)
+    up = [m["name"].upper() for m in rmeshes]
+    if not any(u.startswith("1WALL_RACE") for u in up):
+        fails.append(f"{tag} has no 1WALL_RACE* mesh (no kerb-line strip)")
+    elif not any(u.startswith(EDGE_TAG) for u in up):
+        fails.append(f"{tag} has no 1WALL_RACE_EDGE_* mesh (no kerb-line strip)")
+    if not any(u.startswith("1KERB_RACE") for u in up):
+        fails.append(f"{tag} has no 1KERB_RACE* mesh (no race kerbs)")
+    close = [m["name"] for m in rmeshes if m["name"].upper().startswith(CLOSE_TAG)]
+    if close:
+        fails.append(f"{tag} carries {len(close)} closure mesh(es) {close[:3]} — a closure rides in its layout's "
+                     f"<slug>_closure_<id>.kn5 only (in the common kn5 it would block the other direction)")
+    kbar = [m["name"] for m in rmeshes if m["name"].upper().startswith(KBAR_TAG)]
+    if kbar:
+        fails.append(f"{tag} carries the retired centre chain {kbar[:3]} (1WALL_race_kbar_*, ledger 0049)")
+    main_names = {m["name"] for m in main_meshes if m["name"].startswith("1")}
+    both = sorted(main_names & {m["name"] for m in rmeshes if m["name"].startswith("1")})
+    if both:
+        fails.append(f"DUPLICATE physical mesh name(s) across road + race kn5 {both[:4]} — AC loads both and "
+                     f"drops dup-named meshes from collision")
     return rmeshes
 
 
-def _verify_spawn_kn5(lo: dict, spk: Path, dummies_p: Path, road: list, line: _Line, centre_w: list,
-                      barrier_half: float, fails: list) -> None:
+def _verify_closure_kn5(p: Path, lid: str, token: str, loaded_names: set, fails: list) -> list:
+    """(f) one race layout's closure kn5: only ITS closure (1WALL_RACE_CLOSE_<TOKEN>_*), >= 1 mesh, no name shared with
+    the road + common kn5s that layout also loads"""
+    tag = f"CLOSURE kn5 '{p.name}' ({lid})"
+    _n, cmeshes, _m = _furniture_kn5(p, tag, fails)
+    want = f"{CLOSE_TAG}{token.upper()}_"
+    wrong = [m["name"] for m in cmeshes if not m["name"].upper().startswith(want)]
+    if wrong:
+        fails.append(f"{tag} carries {len(wrong)} mesh(es) that are not {lid}'s closure ({want}*) e.g. {wrong[:3]} — "
+                     f"a kerb, a curb strip or the other direction's closure")
+    if not any(m["name"].upper().startswith(want) for m in cmeshes):
+        fails.append(f"{tag} holds no {want}* mesh — the {lid} closure is empty")
+    dup = sorted(loaded_names & {m["name"] for m in cmeshes if m["name"].startswith("1")})
+    if dup:
+        fails.append(f"DUPLICATE physical mesh name(s) across road + race + closure kn5 for {lid} {dup[:4]} — AC drops "
+                     f"dup-named meshes from collision")
+    return cmeshes
+
+
+def _verify_spawn_kn5(lo: dict, spk: Path, dummies_p: Path, road: list, line: _Line, lane: list | None,
+                      fails: list) -> None:
     lid = str(lo.get("id"))
     direction = str(lo.get("direction", "forward"))
     reverse = direction == "reverse"
@@ -277,9 +331,9 @@ def _verify_spawn_kn5(lo: dict, spk: Path, dummies_p: Path, road: list, line: _L
                 fails.append(f"SPAWN off-road '{spk.name}:{nm}': {d:.1f} m from road, dY {y - nr[1]:+.1f} m")
     else:
         fails.append("no 1ROAD mesh in the road kn5 to validate spawns against")
-    # (c) heading + (d) side for every facing node
+    # (c) heading + (d) side / lane for every facing node
     cos_min = math.cos(math.radians(HEADING_MIN_DEG))
-    heading_rows = []
+    heading_rows, lane_rows = [], []
     for nm, ((x, y, z), zax) in sorted(ac.items()):
         if not nm.upper().startswith(FACING):
             continue
@@ -296,19 +350,34 @@ def _verify_spawn_kn5(lo: dict, spk: Path, dummies_p: Path, road: list, line: _L
             fails.append(f"HEADING '{lid}:{nm}' local +Z · {direction} travel = {dot:+.2f} < {cos_min:.2f} "
                          f"(faces {off:.0f}° off the travel at v{k}; the reflected atan2(tx, tz) yaw reads ≈ −1 on "
                          f"north-south roads — tools/layout_dummies.py writes atan2(tx, −tz))")
-        rx, rz = _right_of(t)
+        if not nm.upper().startswith(("AC_START", "AC_PIT")):
+            continue
         px, pz = line.pts[k][0], line.pts[k][2]
-        lateral = (x - px) * rx + (z - pz) * rz
-        if nm.upper().startswith(("AC_START", "AC_PIT")) and lateral <= 0.0:
-            fails.append(f"SIDE '{lid}:{nm}' is {lateral:+.2f} m LEFT of the {direction} travel at v{k} — grid and "
-                         f"pits sit right of travel (their own carriageway)")
-        if centre_w and 0 <= k < len(centre_w) and centre_w[k] > 0 and abs(lateral) < barrier_half + CHAIN_CLEAR_M:
-            fails.append(f"CHAIN '{lid}:{nm}' is {abs(lateral):.2f} m off the centreline at v{k} where the centre "
-                         f"chain is declared — needs ≥ {barrier_half + CHAIN_CLEAR_M:.2f} m")
+        if lane is not None and k < len(lane) and lane[k]:
+            # the declared lane is in the ENGINE forward-left frame; kn5 = (x, y, -z_engine), so with the FORWARD
+            # kn5 tangent f: lateral-left (engine) = (X - PX) f.z - (Z - PZ) f.x
+            f = line.travel(k, False)
+            lat = (x - px) * f[1] - (z - pz) * f[0]
+            lo_, hi_ = float(lane[k][0]), float(lane[k][1])
+            clear = min(lat - CAR_HALF_W_M - lo_, hi_ - (lat + CAR_HALF_W_M))
+            lane_rows.append((nm, clear))
+            if clear < LANE_MARGIN_M:
+                fails.append(f"LANE '{lid}:{nm}' at v{k} lateral {lat:+.2f} (forward-left): the car stands {clear:.2f} m "
+                             f"from a face of its declared lane [{lo_:+.2f}, {hi_:+.2f}] (< {LANE_MARGIN_M} m"
+                             f"{'; OUTSIDE it' if clear < 0 else ''})")
+        else:
+            rx, rz = _right_of(t)
+            lateral = (x - px) * rx + (z - pz) * rz
+            if lateral <= 0.0:
+                fails.append(f"SIDE '{lid}:{nm}' is {lateral:+.2f} m LEFT of the {direction} travel at v{k} — grid and "
+                             f"pits sit right of travel (their own carriageway)")
     if heading_rows:
         worst = min(heading_rows, key=lambda r: r[1])
         print(f"  [{lid}] heading: {len(heading_rows)} facing nodes, local +Z · travel min {worst[1]:+.2f} ({worst[0]})"
               f", AC_START_0 {dict(heading_rows).get('AC_START_0', float('nan')):+.2f}")
+    if lane_rows:
+        worst = min(lane_rows, key=lambda r: r[1])
+        print(f"  [{lid}] lane: {len(lane_rows)} START/PIT cars inside the declared lane, nearest face {worst[1]:+.2f} m ({worst[0]})")
     # (e) the line + the sectors
     start = lo.get("start") or {}
     line_v = start.get("line_vertex")
@@ -355,6 +424,27 @@ def _verify_spawn_kn5(lo: dict, spk: Path, dummies_p: Path, road: list, line: _L
         prev = a
 
 
+def closure_tokens(project: Path, cfg: dict, layouts: list) -> dict:
+    """{race layout id: its closure owner token} — barrier_bands.json corridors.<id>.token (the declaration), else
+    layouts[].closure_token; '' where neither declares one"""
+    bands = {}
+    bb = project / "data" / "barrier_bands.json"
+    if bb.exists():
+        bands = json.loads(bb.read_text(encoding="utf-8"))
+    cors = bands.get("corridors") or {}
+    out = {}
+    for lo in layouts:
+        if not lo.get("race_furniture"):
+            continue
+        lid = str(lo["id"])
+        out[lid] = str((cors.get(lid) or {}).get("token") or lo.get("closure_token") or "").lower()
+    return out
+
+
+def closure_kn5_name(slug: str, lid: str) -> str:
+    return f"{slug}_closure_{lid}.kn5"
+
+
 def _verify_layouts(project: Path, cfg: dict, slug: str, layouts: list, kn5_dir: Path, main_nodes: list,
                     main_meshes: list, road: list) -> list[str]:
     fails: list[str] = []
@@ -365,13 +455,33 @@ def _verify_layouts(project: Path, cfg: dict, slug: str, layouts: list, kn5_dir:
         fails.append(f"MULTI-LAYOUT road kn5 carries {len(spawn_in_main)} spawn/timing node(s) e.g. "
                      f"{spawn_in_main[:4]} — every layout's set rides in build/{slug}__<id>.kn5 (L8); the prep's "
                      f"multi-layout guard did not run")
-    # (f) the race-furniture kn5
+    # (f) the race-furniture kn5s: the common one + one closure kn5 per race layout
     race_p = kn5_dir / f"{slug}_race.kn5"
     need_race = [lid for lid, lo in zip(ids, layouts) if lo.get("race_furniture")]
     if need_race and not race_p.exists():
         fails.append(f"layout(s) {need_race} declare race_furniture but build/{race_p.name} does not exist")
-    if race_p.exists():
-        _verify_race_kn5(race_p, main_meshes, fails)
+    common = _verify_race_kn5(race_p, main_meshes, fails) if race_p.exists() else []
+    loaded = {m["name"] for m in list(main_meshes) + list(common) if m["name"].startswith("1")}
+    tokens = closure_tokens(project, cfg, layouts)
+    seen_tok = {}
+    for lid in need_race:
+        tok = tokens.get(lid, "")
+        if not tok:
+            fails.append(f"race layout {lid} declares no closure token (barrier_bands.json corridors.{lid}.token / "
+                         f"layouts[].closure_token) — its closure kn5 cannot be checked (ledger 0049)")
+            continue
+        if tok in seen_tok:
+            fails.append(f"race layouts {seen_tok[tok]} and {lid} declare the same closure token {tok!r}")
+        seen_tok[tok] = lid
+        cp = kn5_dir / closure_kn5_name(slug, lid)
+        if not cp.exists():
+            fails.append(f"race layout {lid} has no build/{cp.name} — its lane is not closed off (ledger 0049)")
+            continue
+        _verify_closure_kn5(cp, lid, tok, loaded, fails)
+    stray = sorted(p.name for p in kn5_dir.glob(f"{slug}_closure_*.kn5")
+                   if p.name not in {closure_kn5_name(slug, lid) for lid in need_race})
+    for name in stray:
+        fails.append(f"stray closure kn5 build/{name} — no race layout declares it (a retired id or a typo)")
     # (a) exactly one spawn kn5 per id, no strays
     expected = {f"{slug}__{lid}.kn5" for lid in ids}
     present = {p.name for p in kn5_dir.glob(f"{slug}__*.kn5")}
@@ -386,22 +496,79 @@ def _verify_layouts(project: Path, cfg: dict, slug: str, layouts: list, kn5_dir:
         return fails
     fj = json.loads(fin.read_text(encoding="utf-8"))
     line = _Line(fj["points_xyz_m"], closed=bool(cfg.get("loop", True)) if "loop" in cfg else None)
-    centre_w: list = []
-    barrier_half = 0.335
+    lanes: dict = {}
     bb = project / "data" / "barrier_bands.json"
     if bb.exists():
         bj = json.loads(bb.read_text(encoding="utf-8"))
-        cw = bj.get("centre_w_by_vertex", [])
-        if len(cw) == len(line.pts):
-            centre_w = cw
-            barrier_half = float((bj.get("params") or {}).get("barrier_half_m", barrier_half))
-        else:
-            print(f"  (barrier_bands.json {len(cw)} vs finished_centerline {len(line.pts)} — chain clearance check skipped)")
+        for lid, c in (bj.get("corridors") or {}).items():
+            lane = c.get("lane_by_vertex")
+            if not lane:
+                continue
+            if len(lane) < line.ring:
+                fails.append(f"corridors.{lid}.lane_by_vertex has {len(lane)} entries vs finished_centerline "
+                             f"{len(line.pts)} — the lane check cannot run")
+                continue
+            lanes[lid] = lane
     for lid, lo in zip(ids, layouts):
         spk = kn5_dir / f"{slug}__{lid}.kn5"
         if not spk.exists():
             continue
-        _verify_spawn_kn5(lo, spk, project / "data" / f"dummies_{lid}.json", road, line, centre_w, barrier_half, fails)
+        _verify_spawn_kn5(lo, spk, project / "data" / f"dummies_{lid}.json", road, line,
+                          lanes.get(lid) if lo.get("race_furniture") else None, fails)
+    return fails
+
+
+def _ini_files(text: str) -> list[str]:
+    """the FILE= of every [MODEL_n] section of a models.ini, in MODEL index order"""
+    files, cur = {}, None
+    for ln in text.splitlines():
+        s = ln.strip()
+        if s.startswith("[") and s.endswith("]"):
+            cur = s[1:-1].strip().upper()
+            continue
+        if cur and cur.startswith("MODEL_") and "=" in s:
+            k, v = s.split("=", 1)
+            if k.strip().upper() == "FILE":
+                try:
+                    files[int(cur[len("MODEL_"):])] = v.strip()
+                except ValueError:
+                    files[cur] = v.strip()
+    return [files[k] for k in sorted(files, key=lambda x: (isinstance(x, str), x))]
+
+
+def verify_inis(project_dir: str | Path, folder: str | Path | None = None) -> list[str]:
+    """(g) the packed track folder's models_<id>.ini set (scripts/ac/track_folder.py writes it): each race layout's
+    ini lists exactly [road, <slug>_race.kn5, <slug>_closure_<id>.kn5, <slug>__<id>.kn5], every other layout's
+    exactly [road, <slug>__<id>.kn5]; no ini lists another layout's closure kn5; every listed kn5 is in the folder."""
+    project = Path(project_dir)
+    cfg = json.loads((project / "track.config.json").read_text(encoding="utf-8"))
+    slug = cfg["slug"]
+    folder = Path(folder) if folder else project / "build" / slug
+    layouts = [lo for lo in (cfg.get("layouts") or []) if isinstance(lo, dict) and lo.get("id")]
+    fails: list[str] = []
+    if len(layouts) <= 1:
+        return fails
+    closures = {closure_kn5_name(slug, str(lo["id"])): str(lo["id"]) for lo in layouts if lo.get("race_furniture")}
+    for lo in layouts:
+        lid = str(lo["id"])
+        ini = folder / f"models_{lid}.ini"
+        if not ini.exists():
+            fails.append(f"INI: no {ini.name} in {folder} (layout {lid})")
+            continue
+        got = _ini_files(ini.read_text(encoding="utf-8"))
+        if lo.get("race_furniture"):
+            want = [f"{slug}.kn5", f"{slug}_race.kn5", closure_kn5_name(slug, lid), f"{slug}__{lid}.kn5"]
+        else:
+            want = [f"{slug}.kn5", f"{slug}__{lid}.kn5"]
+        others = [f for f in got if f in closures and closures[f] != lid]
+        if others:
+            fails.append(f"INI: {ini.name} lists another layout's closure {others} — loading both closures blocks both "
+                         f"lanes (ledger 0049)")
+        if got != want:
+            fails.append(f"INI: {ini.name} lists {got}, expected exactly {want}")
+        for f in got:
+            if not (folder / f).exists():
+                fails.append(f"INI: {ini.name} lists {f}, which is not in {folder}")
     return fails
 
 
@@ -520,16 +687,29 @@ def verify(project_dir: str | Path) -> list[str]:
 
 
 def main() -> None:
-    if len(sys.argv) < 2:
-        raise SystemExit("usage: python -m scripts.ac.verify_kn5 <project-dir>")
-    fails = verify(sys.argv[1])
+    args = sys.argv[1:]
+    inis = "--inis" in args
+    args = [a for a in args if a != "--inis"]
+    if len(args) != 1:
+        raise SystemExit("usage: python -m scripts.ac.verify_kn5 <project-dir> [--inis]")
+    if inis:
+        fails = verify_inis(args[0])
+        if fails:
+            print("✗ models_<id>.ini verification FAILED:")
+            for f in fails:
+                print("   -", f)
+            raise SystemExit(1)
+        print("✓ models_<id>.ini verification passed (each race layout loads road + common race + ITS closure + its "
+              "spawns; no ini loads another layout's closure)")
+        return
+    fails = verify(args[0])
     if fails:
         print("✗ kn5 verification FAILED:")
         for f in fails:
             print("   -", f)
         raise SystemExit(1)
     print("✓ kn5 verification passed (no dup meshes, drivable surfaces face-up, spawns on road"
-          ", per-layout spawn kn5s facing their travel)")
+          ", per-layout spawn kn5s facing their travel, race furniture split common / per-direction closure)")
 
 
 if __name__ == "__main__":

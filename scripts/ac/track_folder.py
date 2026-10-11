@@ -8,7 +8,12 @@ All layouts share one ROAD kn5 and differ in AC config plus the kn5s a layout AD
     preview.png}, ai/ (the project's ai/ or a README placeholder), README/CREDITS/LICENSES.
   MULTI layout (AC's models_<id>.ini structure — never both in one folder):
     models_<id>.ini  = [MODEL_0] <slug>.kn5 (shared road, carries NO AC_* spawn nodes)
-                       [MODEL_1] <slug>_race.kn5   only for layouts with race_furniture: true
+                       [MODEL_1] <slug>_race.kn5   only for layouts with race_furniture: true (the COMMON
+                                 race furniture: both curb strips + the kerbs, ledger 0049)
+                       [MODEL_2] <slug>_closure_<id>.kn5  only for a race layout of a track that declares
+                                 race.corridor (ledger 0049): THIS direction's closure walls. A race ini
+                                 never names another layout's closure — the clockwise closure stands in the
+                                 anticlockwise lane and vice versa, so loading both would block both lanes
                        [MODEL_n] <slug>__<id>.kn5  this layout's nodes-only spawn kn5 (last)
     ui/<id>/{ui_track.json (name "<cfg.name> — <layout name>", run = layouts[].run),
              outline.png, preview.png}
@@ -20,9 +25,12 @@ All layouts share one ROAD kn5 and differ in AC config plus the kn5s a layout AD
   between packs and tools/pack_release.py zips whatever it finds.
 
 A multi-layout layout that declares its own spawn set (data/dummies_<id>.json) but has no
-build/<slug>__<id>.kn5, or declares race_furniture without build/<slug>_race.kn5, is a HARD error
-— never a silently plain layout. ``--allow-missing-kn5`` downgrades that to a loud print so the
-folder can be laid out before the Blender passes (dry runs); the inis still name the files.
+build/<slug>__<id>.kn5, declares race_furniture without build/<slug>_race.kn5, or (with race.corridor
+declared) has no build/<slug>_closure_<id>.kn5, is a HARD error — never a silently plain or unsealed
+layout. ``--allow-missing-kn5`` downgrades that to a loud print so the folder can be laid out before the
+Blender passes (dry runs); the inis still name the files. A ``<slug>_closure_*.kn5`` in the folder that
+no declared layout loads (a retired layout, an earlier corridor) is removed: pack_release zips whatever
+it finds.
 
 The kn5s are produced by Blender (scripts/ac/build_kn5.py / export_kn5_addon.py / build_spawn_kn5.py);
 tools/make_map.py then redraws every map.png in the kn5 frame; the AI fast_lane is recorded
@@ -177,11 +185,37 @@ def models_ini(kn5_name: str, extras: str | list[str] | None = None) -> str:
     return s
 
 
+def closure_kn5_name(cfg, layout: dict) -> str | None:
+    """``<slug>_closure_<id>.kn5`` for a race layout of a track whose config declares ``race.corridor``
+    (ledger 0049: each direction loads only its own closure walls), else None. The declaration must be
+    whole: under a corridor every race_furniture layout names its ``closure_token`` (the token in its
+    closure meshes' names, 1WALL_race_close_<token>_*), the tokens are distinct, and only a race layout
+    carries one — anything else is a ValueError, never a silently unsealed or doubly closed layout."""
+    raw = cfg.raw if hasattr(cfg, "raw") else cfg
+    corridor = bool((raw.get("race") or {}).get("corridor"))
+    los = [lo for lo in (raw.get("layouts") or []) if isinstance(lo, dict)]
+    tokens = [lo.get("closure_token") for lo in los if lo.get("closure_token")]
+    if len(set(tokens)) != len(tokens):
+        raise ValueError(f"layouts[].closure_token must be distinct, got {tokens}")
+    lid, token = layout["id"], layout.get("closure_token")
+    if token and not layout.get("race_furniture"):
+        raise ValueError(f"layout {lid!r}: closure_token {token!r} on a layout without race_furniture")
+    if not layout.get("race_furniture"):
+        return None
+    if corridor and not token:
+        raise ValueError(f"layout {lid!r}: race.corridor is declared but the layout has no closure_token — "
+                         f"its closure walls could not be told from the other direction's")
+    slug = cfg.slug if hasattr(cfg, "slug") else raw["slug"]
+    return f"{slug}_closure_{lid}.kn5" if (corridor or token) else None
+
+
 def layout_kn5s(cfg, layout: dict | str, project_dir: Path, *, single: bool,
                 strict: bool = True) -> list[tuple[str, Path | None]]:
     """The kn5s a layout adds beside the shared road kn5, as (file name, source path or None).
 
     * race furniture (``race_furniture: true``): ``build/<slug>_race.kn5`` — required.
+    * its closure (a track with ``race.corridor``, ledger 0049): ``build/<slug>_closure_<id>.kn5`` —
+      required; THIS layout's only (closure_kn5_name).
     * spawn set: ``build/<slug>__<id>.kn5`` — required whenever the layout declares its own
       ``data/dummies_<id>.json`` (a multi-layout road kn5 carries no spawns, so a layout without
       its spawn kn5 has no grid); a layout with neither keeps the baked-in dummies (legacy shape).
@@ -194,11 +228,17 @@ def layout_kn5s(cfg, layout: dict | str, project_dir: Path, *, single: bool,
     if lo.get("race_furniture"):
         if lo.get("kind", "race") != "race":
             raise ValueError(f"layout {lid!r}: race_furniture needs kind 'race' (got {lo.get('kind')!r})")
-        name = f"{cfg.slug}_race.kn5"
-        src = build / name
-        if not src.exists():
-            missing.append(name)
-        out.append((name, src if src.exists() else None))
+        names = [f"{cfg.slug}_race.kn5"]
+        closure = closure_kn5_name(cfg, lo)
+        if closure:
+            names.append(closure)
+        for name in names:
+            src = build / name
+            if not src.exists():
+                missing.append(name)
+            out.append((name, src if src.exists() else None))
+    elif lo.get("closure_token"):
+        closure_kn5_name(cfg, lo)                          # raises: a token on a non-race layout
     if not single:
         name = f"{cfg.slug}__{lid}.kn5"
         src = build / name
@@ -506,6 +546,10 @@ def readme_text(cfg, layout_cfgs: list[dict], extras_by_layout: dict, kn5_name: 
             lines += textwrap.wrap(str(lo.get("run") or ""), 96, initial_indent="    ", subsequent_indent="    ")
             lines += textwrap.wrap("loads " + " + ".join(kn5s), 96, initial_indent="    ", subsequent_indent="      ")
         lines += ["  Each layout has its own <id>/ (map.png, data/, ai/) and ui/<id>/ (name, preview, outline)."]
+        if any(n.startswith(f"{cfg.slug}_closure_") for ex in extras_by_layout.values() for n, _ in ex):
+            lines += textwrap.wrap(f"  Each race layout loads only its OWN {cfg.slug}_closure_<id>.kn5 (the walls closing "
+                                   f"off the other direction's lanes); listing another layout's closure in a "
+                                   f"models_<id>.ini would wall off its lane.", 98, subsequent_indent="  ")
     lines += [""]
     if has_ext:
         lines += ["REQUIRES Custom Shaders Patch (CSP): extension/ext_config.ini carries the lights, GrassFX,",
@@ -608,6 +652,13 @@ def generate(project_dir: str | Path, kn5_name: str | None = None, *, strict_kn5
     # kn5 fails BEFORE anything is written (strict), never after a half-packed folder
     extras_by_layout = {lo["id"]: layout_kn5s(cfg, lo, project_dir, single=single, strict=strict_kn5)
                         for lo in layout_cfgs}
+    # a closure kn5 no declared layout loads (a retired layout, an earlier corridor) must not ride along:
+    # pack_release zips the whole folder, and an extra closure is a wall in somebody's lane
+    _wanted = {name for ex in extras_by_layout.values() for name, _ in ex}
+    for _stale in sorted(out.glob(f"{cfg.slug}_closure_*.kn5")):
+        if _stale.name not in _wanted:
+            print(f"[track_folder] removed stale {_stale.name} (no declared layout loads it)")
+            _stale.unlink()
     for lo in layout_cfgs:
         layout = lo["id"]
         # Per-layout spawn set: count pits from THIS layout's dummies_<layout>.json when it exists.

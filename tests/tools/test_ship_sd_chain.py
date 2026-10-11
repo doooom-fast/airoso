@@ -24,30 +24,42 @@ def _first(marker: str) -> int:
 
 def test_stage_order():
     order = [
+        'rm -f "$PROJ/data/no_route.$lid.planned.json" "$PROJ/data/no_route.$lid.json"',
         'tools/barrier_bands.py "$PROJ"',
+        "no_route.%s.planned.json",
         'tools/layout_dummies.py "$PROJ"',
         "tools/author_race_furniture_blend.py",
         'tools/verify_race.py "$PROJ"',
         "tools/plot_race_furniture.py",
         "scripts/ac/build_kn5_loop.py",
         "tools/split_exports_blend.py",
+        'loop_closure_$lid.blend" ] ||',
         "DRY RUN: stopping before the kn5 exports",
-        "--blend \"$PROJ/blender/split/loop_main.blend\"",
-        "--blend \"$PROJ/blender/split/loop_race.blend\" --out \"${SLUG}_race.kn5\"",
+        '--blend "$PROJ/blender/split/loop_main.blend"',
+        '--blend "$PROJ/blender/split/loop_race.blend" --out "${SLUG}_race.kn5"',
         'inspect_kn5 "$PROJ/build/${SLUG}_race.kn5" --json "$PROJ/data/race_kn5.json"',
-        'tools/check_race_kn5.py "$PROJ/data/race_kn5.json"',
+        'tools/check_race_kn5.py "$PROJ/data/race_kn5.json" --role common --bands "$PROJ/data/barrier_bands.json"',
+        "['corridors'][sys.argv[2]]['token']",
+        '--blend "$PROJ/blender/split/loop_closure_$lid.blend" --out "${SLUG}_closure_$lid.kn5"',
+        'inspect_kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --json "$PROJ/data/closure_$lid.kn5.json"',
+        'tools/check_race_kn5.py "$PROJ/data/closure_$lid.kn5.json" --role closure --owner "$tok"',
         "scripts/ac/build_spawn_kn5.py",
         "scripts.ac.write_ai_line",
-        "scripts.ac.verify_kn5",
+        '(cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ")',
         "scripts.ac.track_folder",
+        'cp "$PROJ/build/$SLUG.kn5" "$PROJ/build/$SLUG/"',
+        '(cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ" --inis)',
         "tools/make_map.py",
         "tools/make_treefx.py",
+        'rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"',
         'kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")',
-        "drive_test \"$PROJ\" --layout street",
-        "audit_mesh \"$PROJ\" 2>&1",
-        '--kn5 "$PROJ/build/${SLUG}_race.kn5" --out "$PROJ/data/track.race.obj"',
-        'drive_test "$PROJ" $RACE_FLAGS',
-        "audit_mesh \"$PROJ\" --race --obj track.race.obj --out audit.race.json",
+        'drive_test "$PROJ" --layout street',
+        'audit_mesh "$PROJ" 2>&1',
+        '--kn5 "$PROJ/build/${SLUG}_race.kn5" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --out "$PROJ/data/track.$lid.obj"',
+        'drive_test "$PROJ" --layout "$lid"',
+        'audit_mesh "$PROJ" --layout "$lid"',
+        'tools/no_route.py "$PROJ" --layout "$lid"',
+        "RACE_RED=$(pyq",
         "sync outputs workshop -> airoso",
         "NOT INSTALLED: race layout(s)",
         "install: $AC/${SLUG}_v3",
@@ -55,6 +67,38 @@ def test_stage_order():
     ]
     pos = [_first(m) for m in order]
     assert pos == sorted(pos), [m for m, p, q in zip(order, pos, sorted(pos)) if p != q]
+
+
+def test_race_corridor_chain_ledger_0049():
+    """ledger 0049: each race layout loads road + common race + ITS OWN closure kn5; every per-layout gate runs
+    on that layout's own gate OBJ; the 0047 shared race OBJ / audit are retired; the planned containment is read
+    back before Blender; the BUILT no_route runs per race layout and decides the install"""
+    import re
+    code = "\n".join(ln for _, ln in _code_lines())
+    # retired: the one shared race gate OBJ / audit (road + centre chain) — removed, never produced or synced
+    assert '--out "$PROJ/data/track.race.obj"' not in code and "--obj track.race.obj" not in code
+    assert "audit.race.json" not in code.replace('rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"', "") \
+        .replace('rm -f "$SRC/data/audit.race.json"', "")
+    # the race gates loop over the declared race layouts, one OBJ each, all three kn5s
+    loop = TEXT[_first('for lid in $RACE_IDS; do\n  step "gate: $lid'):_first("RACE_RED=$(pyq")]
+    for frag in ("kn5_to_gate_obj", "drive_test", "audit_mesh", "tools/no_route.py", "|| rc=$?"):
+        assert frag in loop, frag
+    assert "--no-planned-route" not in code, "the ship never skips the planned containment fill"
+    # the closure export is per race layout and content-checked against the DECLARED token
+    exp = TEXT[_first("for lid in $RACE_IDS; do\n  # the owner token"):_first("scripts/ac/build_spawn_kn5.py")]
+    assert "export_kn5_addon.py" in exp and "--python-exit-code 1" in exp and "--role closure --owner" in exp
+    # the stale per-layout verdicts go before the gates that rewrite them
+    clear = _first('for lid in $LAYOUT_IDS; do rm -f "$PROJ/data/drive_test.$lid.json"; done')
+    assert clear < _first('drive_test "$PROJ" --layout street')
+    assert _first('"$PROJ/data/no_route.$lid.json" "$PROJ/data/track.$lid.obj"') < _first('tools/no_route.py "$PROJ" --layout "$lid"')
+    # RACE_RED keys on the declared race ids (a layout missing from drive_test.json is red), no_route missing or failing
+    red = TEXT[_first("RACE_RED=$(pyq"):_first('"$PROJ/data/drive_test.json" "$PROJ/data" $RACE_IDS)')]
+    for frag in ("drive_test not run", "barrier_missing", "obstruction_stations", "no_route not run", "no_route FAIL",
+                 "leak_cells", "blocked", "forbidden_reached", "spawns_unreached", "is not False"):
+        assert frag in red, frag
+    # RACE_RED is decided BEFORE (and independently of) --force-install
+    assert _first('if [ -n "$RACE_RED" ]; then') < _first('elif [ "$FORCE" = 1 ]; then')
+    assert re.search(r'\[ "\$NR_R" != 0 \]', TEXT)
 
 
 def test_every_blender_call_carries_the_exit_code_flag():
@@ -76,9 +120,9 @@ def test_safety_rails():
     assert 'WS_PROJ="$WS/project"' in TEXT and 'PROJ="${SHIP_PROJ:-$WS_PROJ}"' in TEXT
     # the race kn5 is judged on CONTENT (2026-10-11): the 20 MB size cap fired on a clean, flat-shaded kn5
     assert "RACE_BYTES" not in TEXT and "20000000" not in TEXT and "stat -c %s" not in TEXT, "size is not the race-kn5 gate"
-    assert '(cd "$AIROSO" && python tools/check_race_kn5.py "$PROJ/data/race_kn5.json")' in TEXT
-    # the four gate exits all decide the install, and a race-furniture red is never forced
-    assert '[ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ]' in TEXT
+    assert '(cd "$AIROSO" && python tools/check_race_kn5.py "$PROJ/data/race_kn5.json" --role common --bands "$PROJ/data/barrier_bands.json")' in TEXT
+    # the five gate exits all decide the install, and a race-layout red is never forced
+    assert '[ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ] || [ "$NR_R" != 0 ]' in TEXT
     assert 'if [ -n "$RACE_RED" ]; then' in TEXT
     # the race author runs on every ship (also with --skip-blend): it must sit OUTSIDE the SKIP_BLEND block
     fi_end = TEXT.find("\nfi\n", TEXT.find('if [ "$SKIP_BLEND" = 0 ]; then'))
@@ -86,9 +130,12 @@ def test_safety_rails():
 
 
 def test_sync_list_carries_the_new_outputs():
-    for f in ("barrier_bands.json", "race_authored.json", "race_verify.json", "audit.race.json",
-              '"dummies_$lid.json"', '"drive_test.$lid.json"', '"$SRC/ai/$lid"', "race_plots", "split_manifest.json"):
+    for f in ("barrier_bands.json", "race_authored.json", "race_verify.json", "race_kn5.json",
+              '"dummies_$lid.json"', '"drive_test.$lid.json"', '"$SRC/ai/$lid"', "race_plots", "split_manifest.json",
+              '"no_route.$lid.json"', '"no_route.$lid.planned.json"', '"audit.$lid.json"', '"closure_$lid.kn5.json"'):
         assert f in TEXT, f
+    sync = TEXT[_first('step "sync outputs workshop -> airoso"\n'):_first("never synced.\nfi\n")]
+    assert "track.$lid.obj" not in sync and "track.race.obj" not in sync, "gate OBJs (66-78 MB) are never synced"
 
 
 def test_bash_syntax():
@@ -149,7 +196,7 @@ def test_sync_back_and_install_are_unreachable_from_a_scratch_project():
     import re
     skip_sync = _first('step "sync outputs workshop -> airoso: SKIPPED"')
     else_sync = _first('else\nstep "sync outputs workshop -> airoso"\n')
-    end_sync = _first("# track.race.obj / track.obj are 66+ MB each and regenerable from the kn5s: never synced.\nfi\n")
+    end_sync = _first("# track.obj / track.<id>.obj are 66-78 MB each and regenerable from the kn5s: never synced.\nfi\n")
     guard = TEXT.rfind('if [ "$SCRATCH" = 1 ]; then\n', 0, skip_sync)
     assert guard >= 0 and TEXT.find("\nfi\n", guard) > end_sync - 1, "the SKIPPED branch and the sync share one if/else"
     assert skip_sync < else_sync < end_sync
@@ -265,3 +312,99 @@ def test_install_folder_is_one_name_in_the_config_and_the_chain():
     assert 'SLUG="%s"' % slug in TEXT
     assert cfg["install_folder"] == f"{slug}_v3"
     assert 'cp -r "$B" "$AC/${SLUG}_v3"' in TEXT
+
+
+def _pyq_program(start: str, end: str) -> str:
+    """the python program of a `pyq "<program>" <args>` call: the text between the opening quote after `start`
+    and the closing quote before `end` (the programs hold no shell expansion: no $, no backslash, no ")"""
+    i = _first(start) + len(start)
+    j = TEXT.index(end, i)
+    prog = TEXT[i:j]
+    assert prog.startswith('pyq "') or start.endswith('pyq "'), prog[:40]
+    prog = prog[len('pyq "'):] if prog.startswith('pyq "') else prog
+    assert prog.endswith('"'), prog[-40:]
+    prog = prog[:-1]
+    assert "$" not in prog and "\\" not in prog and '"' not in prog, "the program would be altered by bash"
+    return prog
+
+
+def _run_prog(prog, *args):
+    import sys
+    return subprocess.run([sys.executable, "-c", prog, *args], capture_output=True, text=True, encoding="utf-8")
+
+
+def test_race_red_turns_red_on_every_own_gate_and_stays_quiet_on_a_clean_build():
+    """RACE_RED, run as the script runs it, on crafted verdict files: a race layout is red when its drive_test row
+    is missing / not run / has barrier_missing or obstruction_stations, or its BUILT no_route verdict is missing,
+    fails, or reports a leak / block / reached probe / unreached spawn — and the street layout never counts"""
+    import json
+    import tempfile
+    prog = _pyq_program("RACE_RED=$(", ' "$PROJ/data/drive_test.json" "$PROJ/data" $RACE_IDS)')
+    d = Path(tempfile.mkdtemp())
+    ok_dt = {"fail": True, "barrier_missing": 0, "obstruction_stations": 0}      # inherited counters: fail True
+    ok_nr = {"fail": False, "leak_cells": 0, "blocked": [], "forbidden_reached": [], "spawns_unreached": []}
+
+    def case(rows, nr: dict):
+        for f in d.glob("*.json"):
+            f.unlink()
+        if rows is not None:
+            (d / "drive_test.json").write_text(json.dumps({"layouts": rows}), encoding="utf-8")
+        for lid, v in nr.items():
+            if v is not None:
+                (d / f"no_route.{lid}.json").write_text(json.dumps(v), encoding="utf-8")
+        r = _run_prog(prog, str(d / "drive_test.json"), str(d), "race_cw", "race_acw")
+        assert r.returncode == 0, r.stderr
+        return r.stdout.strip()
+
+    street_red = {"fail": True, "barrier_missing": 9, "obstruction_stations": 9}
+    clean = {"street": street_red, "race_cw": ok_dt, "race_acw": ok_dt}
+    assert case(clean, {"race_cw": ok_nr, "race_acw": ok_nr}) == ""
+    assert case(dict(clean, race_cw=dict(ok_dt, fail=False)), {"race_cw": ok_nr, "race_acw": ok_nr}) == ""
+    red = [
+        (dict(clean, race_cw=dict(ok_dt, barrier_missing=3)), {}, "race_cw[barrier_missing 3]"),
+        (dict(clean, race_acw=dict(ok_dt, obstruction_stations=1)), {}, "race_acw[obstruction_stations 1]"),
+        ({"street": street_red, "race_acw": ok_dt}, {}, "race_cw[drive_test not run]"),
+        (dict(clean, race_cw={"fail": None, "note": "not run"}), {}, "race_cw[drive_test not run]"),
+        (clean, {"race_acw": None}, "race_acw[no_route not run]"),
+        (clean, {"race_cw": dict(ok_nr, fail=True)}, "race_cw[no_route FAIL"),
+        (clean, {"race_cw": dict(ok_nr, leak_cells=12)}, "race_cw[no_route FAIL (leak_cells 12"),
+        (clean, {"race_acw": dict(ok_nr, blocked=[[5, 9]])}, "race_acw[no_route FAIL"),
+        (clean, {"race_cw": dict(ok_nr, forbidden_reached=[{"vertex": 1}])}, "race_cw[no_route FAIL"),
+        (clean, {"race_cw": dict(ok_nr, spawns_unreached=["AC_PIT_3"])}, "race_cw[no_route FAIL"),
+        (clean, {"race_cw": {k: v for k, v in ok_nr.items() if k != "fail"}}, "race_cw[no_route FAIL"),
+    ]
+    for rows, nr_over, want in red:
+        nr = {"race_cw": ok_nr, "race_acw": ok_nr}
+        nr.update(nr_over)
+        out = case(rows, nr)
+        assert want in out, (want, out)
+    assert case(None, {"race_cw": ok_nr, "race_acw": ok_nr}) == \
+        "race_cw[drive_test not run] race_acw[drive_test not run]"           # no drive_test.json at all
+
+
+def test_planned_no_route_read_back_stops_the_chain_before_blender():
+    """the PLANNED read-back (after barrier_bands, before the author): exit nonzero unless every race layout has a
+    data/no_route.<id>.planned.json with fail false and nothing reached / blocked / unreached"""
+    import json
+    import tempfile
+    prog = _pyq_program('# that skipped or lost its planned fill cannot reach Blender.\n', ' "$PROJ/data" $RACE_IDS')
+    d = Path(tempfile.mkdtemp())
+    ok = {"fail": False, "leak_cells": 0, "blocked": [], "forbidden_reached": [], "spawns_unreached": [], "reached_m2": 139130}
+
+    def run(files):
+        for f in d.glob("*.json"):
+            f.unlink()
+        for lid, v in files.items():
+            (d / f"no_route.{lid}.planned.json").write_text(json.dumps(v), encoding="utf-8")
+        return _run_prog(prog, str(d), "race_cw", "race_acw")
+
+    r = run({"race_cw": ok, "race_acw": ok})
+    assert r.returncode == 0 and "race_cw   planned: PASS" in r.stdout, (r.stdout, r.stderr)
+    for files, msg in (({"race_cw": ok}, "race_acw: no planned verdict"),
+                       ({"race_cw": ok, "race_acw": dict(ok, fail=True)}, "race_acw: planned no_route FAIL"),
+                       ({"race_cw": dict(ok, leak_cells=4), "race_acw": ok}, "race_cw: planned no_route FAIL"),
+                       ({"race_cw": dict(ok, blocked=[[1, 2]]), "race_acw": ok}, "race_cw: planned no_route FAIL"),
+                       ({"race_cw": "skipped", "race_acw": ok}, "race_cw: the planned verdict is not a no_route report")):
+        r = run(files)
+        assert r.returncode != 0, (files, r.stdout)
+        assert msg in r.stderr, (msg, r.stderr[-300:])

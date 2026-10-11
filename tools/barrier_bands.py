@@ -1,64 +1,66 @@
-"""Declare the race-furniture bands — data/barrier_bands.json — from the data, before anything is authored.
+"""Declare the race corridors — data/barrier_bands.json VERSION 2 — from the data, before anything is authored.
 
-Ledger 0047 (Kevin, 2026-10-10): "two layouts, with Barriers making tracks out of north/south kind
-lanes … With Barriers between directions, leading up to medians but not on them" / "The barriers
-are for wide roads, Alvarado should be the entire street" / "the two tracks … will get additional
-race curbs and barriers along the inside of the sidewalks".
+Ledger 0049 (Kevin, 2026-10-11): "racetrack versions of these, we need full intersections available for
+turning. And the entire other lane blocked off from access." / "We want more or less an Alvarado's width for
+the entire track with deviances in various areas." / open boxes at the "Corners the race turns at", side
+streets sealed. It replaces ledger 0047's shared centre K-rail chain (retired: a v1 config with
+`race.centre_runs` FAILS here).
 
-This file is the one place the three consumers agree on WHERE the furniture stands:
+This file is the one place every consumer agrees on WHERE the race furniture stands:
 
-  * tools/author_race_blend.py (Blender) sweeps the strips and kerbs along these bands;
-  * scripts/geometry/median_zone.py reads them as the second divider kind, so audit D / drive_test
-    exempt a wall that stands ON its declared band — and only there — for the layouts that load it;
-  * drive_test's ``barrier_missing`` fails a declared station with no 1WALL on it.
+  * tools/race_furniture.py + tools/author_race_furniture_blend.py sweep the strips, the closures and the
+    kerbs along these bands (the declaration IS the authored line: the trimmed corners and the kerb clips are
+    race_furniture's own computation, read here);
+  * scripts/geometry/median_zone.py reads them per layout (MedianZone.load(project, layout=<id>)), so audit D
+    / drive_test exempt a wall that stands ON a declared band of THAT layout — and only there;
+  * drive_test's ``barrier_missing`` fails a declared station with no 1WALL on it (both curb strips the whole
+    lap, the layout's closure at its lateral);
+  * tools/no_route.py floods each layout's BUILT gate OBJ and fails any cell reached outside the corridor
+    declared here;
+  * scripts/ac/write_ai_line.py drafts each layout's line inside `lane_by_vertex`.
 
-So the declaration IS the authored line (the 2026-10-08 median_zone precedent) and L5 still holds:
-every gate measures the BUILT OBJ against the band, never the band against itself.
+What it declares (spec: the 2026-10-11 judged corridor spec, ledger 0049):
+
+  curb strips   both curb faces, EVERY vertex, one closed loop per side — no bridge gaps (C1: the three
+                spans had no rail on most of their length; a strip end is a door), trimmed to the curb's own
+                corner at the five inside-lip folds (`edge_corners`).
+  zones         WHOLE street (race.corridor.whole, a vertex interval that may wrap the seam: the I-8 deck,
+                the seam box, Alvarado, the hairpin box), open BOXES at the corners the race turns at
+                (race.corridor.boxes, PC-2..PT+2), CLOSURE runs between them (race.corridor.closure_runs,
+                PINNED: the writer fails if the zones derive anything else — "declared, validated, never
+                derived silently").
+  closures      per race layout (layouts[].closure_token): the jersey strip standing so the lane is
+                race.corridor.clear_width_m (11.36 m, Alvarado as raced, re-measured here) face to face
+                from the race-side strip face, along each island's race-side curb (pavement mode, 0.15 m
+                off it), both ends PINNED on the far curb strip at the box edges (tools/race_corridor.py).
+  lanes         corridors.<id>.lane_by_vertex = [y_lo, y_hi], the corridor FACES in the forward frame
+                (+ = left of increasing vertex); full width at box / whole / pin vertices.
+  kerbs         10 (outside + inside at all five corners: the chain no longer holds the insides), each cut
+                to the longest run containing its apex that stands >= 0.05 m off every closure.
+  no-route      corridors.<id>.no_route.forbidden_probes (pocket centres every 25 m, island tops every 25 m,
+                10 m into each mainline mouth) + the PLANNED fill itself (tools/no_route.py --planned, run
+                here on the declared polylines: 0 leaks and the lap complete, or exit 1).
+
+Self-gates (exit 1 on any): zones cover every vertex once, boxes hold their corner arcs, runs == pinned;
+pins on the far strip line (+-0.01 m) on a real strip ring; rates (toward the race side <= 1:12, away
+<= 1:6, pin zones at the forced rate, nothing steeper than 1:3); clear width >= 6.5 m everywhere and >= the
+floor except listed island / pin-zone / convergence vertices, pocket >= 2 m behind every running closure;
+closure >= 0.15 m off the AUTHORED island at every vertex (race side of every nose); 0 backward steps,
+plan radius >= 20 m; mouths per policy; spawns >= 0.30 m off every face; exactly 10 kerbs clear of every
+closure; strips on every vertex; the Alvarado re-measure; the planned no-route.
 
 Inputs (read-only; loop.blend is never opened):
-  track.config.json            race.* (the declared centre runs, threshold, inset, kerb params) +
-                               layouts[] (grid/pit no-gap zones) + route.roads (street names)
+  track.config.json            race.* (+ race.corridor) and layouts[] (closure_token, direction, start)
   data/centerline.local.json   points_xyz_m (engine frame x=E, y=up, z=N) + widths_m
   data/median_bands.json       island_w_by_vertex (tools/median_envelope.py)
-  data/mouths.json             the mainline mouths (sealed by the kerb-line strip — Q1 default)
-  data/bridge.spans.auto.json  [[a_m, b_m], …] station spans whose rails ARE the barrier
-
-The centre chain is DECLARED (race.centre_runs, closed vertex intervals) and VALIDATED here, never
-derived silently: Kevin's answers to Q2 (the 13.5-17 m stretches) and Q7 (interior corners) are
-edits to that list. Validation (exit 1 on any miss):
-  * every run vertex is >= race.wide_threshold_m wide;
-  * no run vertex lies on a median island, except a run END that lands exactly on the island's nose
-    vertex (butt joint, JUNCTIONS seam rule); a run end one vertex short of a nose fails — a 3 m
-    wedge between a 0.67 m strip end and a 0.25 m nose is a doorway for a 1.9 m car;
-  * no run vertex on a street whose median width is below the threshold (Alvarado: 13.0 m);
-  * no run vertex inside a hairpin's arc (|D| >= 135 deg, PC..PT — the Alvarado/College box must
-    stay open for the turn);
-  * no run vertex inside, or within BRIDGE_CLEAR_M of, a declared bridge span.
-Everything the data would ALLOW but the config leaves open is printed ("declared open") so a
-forgotten stretch is visible, not silent.
-
-Kerb-line (edge) strips: both curb faces of EVERY street, race layouts only, gapped only inside the
-declared bridge spans (the authored rails are the barrier there; drive_test's `guarded` drop probe
-still gates a span with no rail). Mouths are sealed (the strip runs straight across the mouth line
-on the connector's 1ROAD, the Macau rule) and the grid/pit zones are declared no-gap zones.
-
-Trimmed corners (2026-10-11): where an inside lip is tighter than the kerb-line strip's offset (|lat| > R —
-SD's five right-handers) the offset curve folds into a swallowtail; the strip is trimmed to the curb's own
-corner and `edge_corners` declares each one (side, kind loop | extend, the corner xz, in_vertex / out_vertex,
-the `removed` vertices whose band runs in -> xz -> out instead). The computation is race_furniture's own
-(edge_fold_corners — the same plan + trim the author sweeps; the author refuses a declaration that differs).
-A fold more than 15 vertices from every inside corner apex fails (a fold where no corner is detected is a
-data defect).
-
-Race kerbs: at every corner the sign detector finds (tools/place_signs.py, imported read-only —
-the signs workflow owns that file), |D| >= race.kerbs.min_turn_deg: an OUTSIDE kerb on the lip
-outside the turn, symmetric about the apex (one layout's exit is the other's entry), extended by
-E = clamp(2 R_apex, outer_extension_m) past PC/PT; an INSIDE kerb on the detector's own arc only
-where no centre chain occupies the inside (the geometric inside of a chained corner is the chain).
+  data/mouths.json             the mainline mouths (sealed by the curb strips — Q1)
+  data/bridge.spans.auto.json  informational only (no strip gaps since ledger 0049)
 
 Run:  python tools/barrier_bands.py <project-dir> [--out data/barrier_bands.json] [--config <track.config.json>]
-      (--config: read another config against this project's data — dry runs against the workshop
-      copy before ship_sd.sh syncs airoso's track.config.json down)
+                                   [--no-planned-route]
+      (--config: read another config against this project's data — dry runs against the workshop copy before
+      ship_sd.sh syncs airoso's track.config.json down; --no-planned-route skips self-gate 12, for quick
+      looks only: the declaration then records planned_no_route "skipped" and ship_sd never uses that flag)
 """
 from __future__ import annotations
 
@@ -71,9 +73,6 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 AIROSO = HERE.parent
 
-BRIDGE_CLEAR_M = 9.0         # no centre chain this close to a declared span (the rail takes over; v4440 on
-#                              SD ends 10.0 m before the I-8 span, v4441 7 m — invented, see GATES-CHANGELOG)
-HAIRPIN_DEG = 135.0          # a corner this sharp keeps its whole box open (place_signs.HAIRPIN_DEG)
 CAR_HALF_W_M = 0.95          # a 1.9 m car, for the grid clearance check (race_furniture.CAR_HALF_W)
 
 
@@ -85,33 +84,36 @@ def _load_tool(stem, alias):
     return mod
 
 
-# the grid geometry is tools/layout_dummies.py's (the producer of record) — read, never restated:
-# a stale copy here (1.4 m while the producer moved) would declare a clearance the grid does not have
+# the grid geometry is tools/layout_dummies.py's (the producer of record) — read, never restated
 _LD = _load_tool("layout_dummies", "_layout_dummies_ro")
-# the kerb-line strips' trimmed inside corners are race_furniture's own computation (edge_fold_corners — the
-# same _plan_run + trim the author sweeps), read-only: the declaration IS the authored line
+# the kerb-line strips' trimmed inside corners and the kerbs' closure clips are race_furniture's own
+# computation (the same plan + trim/clip the author sweeps), read-only: the declaration IS the authored line
 _RF = _load_tool("race_furniture", "_race_furniture_ro")
+_RC = _load_tool("race_corridor", "_race_corridor_ro")
 FOLD_APEX_MAX_VERTICES = 15  # a trimmed fold farther than this from every inside corner apex is a data defect
-GRID_STAGGER_M = _LD.GRID_STAGGER_M   # two columns at lane centre +/- this (1.0 m since 2026-10-11)
+GRID_STAGGER_M = _LD.GRID_STAGGER_M
 GRID_PITCH_M = _LD.GRID_PITCH_M
 GRID_SLOTS_DEFAULT = 8
 PIT_SETBACK_M = _LD.PIT_SETBACK_M
 PIT_PITCH_M = _LD.PIT_PITCH_M
 PIT_SLOTS_DEFAULT = 8
-GRID_CLEAR_MIN_M = 0.30      # a car on the outer grid column must stand >= this off the strip face — the same
-#                              HARD floor as race_furniture.SPAWN_MARGIN_M / verify_race F (GATES-CHANGELOG 2026-10-11)
+GRID_CLEAR_MIN_M = 0.30      # a car on a grid / pit slot stands >= this off every corridor face (verify_race F)
 MOUTH_CORNER_M = 3.0         # gap_mouths_blend's CORNER_M: the mouth line spans half-width + 3 m
 BARRIER_HALF_DEFAULT = 0.335 # concrete_barrier_4m.obj x extent / 2 (re-measured from the asset when present)
 EDGE_CENTRE_FROM_LIP = {"road": -0.485, "walk": +0.445}   # strip centre relative to the pavement lip (Q6)
 KERB_OUTER_FROM_LIP = {"road": -0.87, "walk": -0.05}      # kerb's outer edge: 0.05 m clear of the strip face
-
-
-def _load_place_signs():
-    """tools/place_signs.py's corner detector, read-only (that file belongs to the signs workflow)."""
-    spec = importlib.util.spec_from_file_location("_place_signs_ro", HERE / "place_signs.py")
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
+KERB_FOOTPRINT_W = 1.10      # race_furniture KERB_W 1.0 + KERB_RAMP_W 0.10: the kerb's footprint across the road
+KERB_CLOSURE_CLEAR_M = 0.05  # spec §6 clip rule
+PIN_TOL_M = 0.01             # a pin's y equals the far strip centre within this
+ISLAND_CLEAR_M = 0.15        # the closure footprint stays this far off the AUTHORED island outline
+RATE_TOL = 0.02              # 2 % over a rate limit is the solver's own 1.02 margin, not a breach
+RADIUS_MIN_M = 20.0          # INVENTED floor for the closure centre's plan radius
+CLEAR_WIDTH_TOL_M = 0.02     # the Alvarado re-measure must agree with clear_width_m within this
+CONVERGENCE_REACH_M = 150.0  # INVENTED: a below-floor vertex this close (along) to an island is its convergence
+PROBE_STEP_M = 25.0          # forbidden probes every 25 m (pockets, island tops)
+MOUTH_PROBE_M = 10.0         # ... and 10 m into each mainline mouth
+ISLAND_PROBE_MIN_HALF_M = 0.5
+MIRROR_TRANSITION_M = 100.0  # the mirror statistic skips this far either side of an island / opening end (report only)
 
 
 def _stations(pts):
@@ -183,24 +185,54 @@ def _streets(corners, roads, n_ring):
     return table, by_vertex
 
 
-def _in_span(st_v, spans, clear=0.0):
-    return any(a - clear <= st_v <= b + clear for a, b in spans)
+def _load_place_signs():
+    """tools/place_signs.py's corner detector, read-only (that file belongs to the signs workflow)."""
+    return _load_tool("place_signs", "_place_signs_ro")
 
 
-def build(project_dir, out_name: str | None = None, config_path=None) -> dict:
+def _normals(pts, m):
+    out = []
+    for k in range(m):
+        a, b = pts[(k - 1) % m], pts[(k + 1) % m]
+        tx, tz = b[0] - a[0], b[2] - a[2]
+        L = math.hypot(tx, tz) or 1.0
+        out.append((-tz / L, tx / L))
+    return out
+
+
+def _ring_interval(a, b, m):
+    return _RC.walk(a % m, b % m, m)
+
+
+def _median(vals):
+    s = sorted(vals)
+    return s[len(s) // 2] if s else 0.0
+
+
+# ---------------------------------------------------------------------------------------------
+def build(project_dir, out_name: str | None = None, config_path=None, *, planned_no_route: bool = True,
+          no_route_cell: float | None = None, write: bool = True) -> dict:
     proj = Path(project_dir)
     data = proj / "data"
     cfg = json.loads(Path(config_path or (proj / "track.config.json")).read_text(encoding="utf-8"))
     race = cfg.get("race") or {}
-    if not race.get("centre_runs"):
-        raise SystemExit("[bands] track.config.json has no race.centre_runs — nothing to declare (ledger 0047)")
+    fails: list[str] = []
+    if race.get("centre_runs"):
+        fails.append("track.config.json race.centre_runs is present — the ledger-0047 centre chain is retired "
+                     "(ledger 0049: one closure per direction); remove centre_runs / wide_threshold_m / "
+                     "interior_corners and declare race.corridor")
+    cor_cfg = race.get("corridor")
+    if not isinstance(cor_cfg, dict):
+        raise SystemExit("[bands] track.config.json has no race.corridor — nothing to declare (ledger 0049; the "
+                         "v1 centre-chain declaration is retired)")
     cl = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
     pts = [tuple(p) for p in cl["points_xyz_m"]]
     widths = [float(w) for w in cl["widths_m"]]
     n = len(pts)
     if math.dist((pts[0][0], pts[0][2]), (pts[-1][0], pts[-1][2])) > 1e-6:
         raise SystemExit("[bands] centreline is not a closed lap (v[-1] != v[0]) — the loop tool only")
-    ring = n - 1                                   # L13: the closure vertex repeats v0
+    m = n - 1                                      # L13: the closure vertex repeats v0
+    W = widths[:m]                                 # ring widths (the duplicate carries the last street's width)
     st = _stations(pts)
     lap = st[-1]
     mb = data / "median_bands.json"
@@ -210,14 +242,18 @@ def build(project_dir, out_name: str | None = None, config_path=None) -> dict:
     bsp = data / "bridge.spans.auto.json"
     spans = [tuple(map(float, s)) for s in json.loads(bsp.read_text(encoding="utf-8"))] if bsp.exists() else []
     mp = data / "mouths.json"
-    mouths = [m for m in (json.loads(mp.read_text(encoding="utf-8")).get("mouths", []) if mp.exists() else [])
-              if m.get("host") == "MAINLINE"]
+    mouths = [mo for mo in (json.loads(mp.read_text(encoding="utf-8")).get("mouths", []) if mp.exists() else [])
+              if mo.get("host") == "MAINLINE"]
 
-    wide = float(race.get("wide_threshold_m", 17.0))
     edge_mode = str(race.get("edge_mode", "road"))
-    if edge_mode not in EDGE_CENTRE_FROM_LIP:
-        raise SystemExit(f"[bands] race.edge_mode must be road|walk, got {edge_mode!r}")
-    edge_inset = float(race.get("edge_inset_m", 0.82)) if edge_mode == "road" else 0.0
+    if edge_mode != "road":
+        fails.append(f"race.edge_mode {edge_mode!r}: the corridor geometry is declared for road mode only "
+                     f"(the strip on the pavement, its face 0.82 m in)")
+        edge_mode = "road"
+    edge_inset = float(race.get("edge_inset_m", 0.82))
+    if str(race.get("edge_gaps", "")).lower() != "none":
+        fails.append(f"race.edge_gaps must be \"none\" (ledger 0049 C1: the curb strips run over every bridge span), "
+                     f"got {race.get('edge_gaps')!r}")
     kerb_cfg = race.get("kerbs") or {}
     min_turn = float(kerb_cfg.get("min_turn_deg", 45.0))
     kerb_w = float(kerb_cfg.get("width_m", 1.0))
@@ -226,275 +262,180 @@ def build(project_dir, out_name: str | None = None, config_path=None) -> dict:
     asset = AIROSO / str(race.get("barrier_profile_asset", "assets/models/concrete_barrier_4m.obj"))
     bhalf = _asset_half_width(asset)
     pitch = float(race.get("module_pitch_m", 4.04))
+    height = float(race.get("barrier_height_m", 1.2))
+    strip_c = edge_inset - bhalf                   # 0.485: the strip centre from the curb line
+    P = _RC.params_from(cor_cfg)
+    island_mode = str(cor_cfg.get("island_mode", "pavement"))
+    if island_mode != "pavement":
+        fails.append(f"race.corridor.island_mode {island_mode!r}: only \"pavement\" is part of this ship "
+                     f"(island_top is the post-drive option, spec §5)")
 
-    fails: list[str] = []
     ps = _load_place_signs()
     corners = _corners(ps, pts, widths, min_turn)
     if not corners:
         fails.append("no corner with |D| >= %.0f deg found — a loop with no corners is a data error" % min_turn)
-    streets, street_at = _streets(corners, (cfg.get("route") or {}).get("roads", []), ring)
-    street_median_w = {}
-    for row in streets:
-        ws = sorted(widths[row["vertex_from"]:row["vertex_to"] + 1])
-        street_median_w[row["street"]] = ws[len(ws) // 2] if ws else 0.0
-    narrow_streets = sorted(s for s, w in street_median_w.items() if w < wide)
-    isl_runs = _island_runs(island_w)
-    nose = set()
-    for a, b in isl_runs:
-        nose.add(a); nose.add(b)
-    hairpins = [c for c in corners if abs(c["D_deg"]) >= HAIRPIN_DEG]
+    streets, street_at = _streets(corners, (cfg.get("route") or {}).get("roads", []), m)
+    corner_by_apex = {c["apex"]: c for c in corners}
 
-    def in_hairpin(v):
-        for c in hairpins:
-            pc, pt = c["PC"], c["PT"]
-            if pc <= pt:
-                if pc <= v <= pt:
-                    return True
-            elif v >= pc or v <= pt:              # wraps the seam
-                return True
-        return False
-
-    # ---- centre chain: declared runs, validated ---------------------------------------------
-    centre_w = [0.0] * n
-    runs_out = []
-    declared = [(int(a), int(b)) for a, b in race["centre_runs"]]
-    for a, b in declared:
-        if not (0 <= a < b <= ring):
-            fails.append(f"centre run [{a},{b}] is not a closed interval inside 0..{ring}")
-            continue
-        for v in range(a, b + 1):
-            if widths[v] < wide:
-                fails.append(f"centre run [{a},{b}]: v{v} is {widths[v]:.1f} m < {wide} m wide")
-                break
-        bad_island = [v for v in range(a + 1, b) if island_w[v] > 0]
-        if bad_island:
-            fails.append(f"centre run [{a},{b}]: {len(bad_island)} interior vertices on a median island "
-                         f"(v{bad_island[0]}..v{bad_island[-1]}) — barriers lead up to medians, never on them")
-        for end, prev_v, next_v, what in ((a, a - 1, a + 1, "start"), (b, b + 1, b - 1, "end")):
-            if island_w[end] > 0 and end not in nose:
-                fails.append(f"centre run [{a},{b}]: {what} v{end} is inside an island, not on its nose")
-            if island_w[end] <= 0 and 0 <= prev_v <= ring and island_w[prev_v] > 0:
-                fails.append(f"centre run [{a},{b}]: {what} v{end} stops one vertex short of the island nose "
-                             f"v{prev_v} — the run must END ON the nose vertex (no 3 m wedge)")
-        if any(_in_span(st[v], spans, BRIDGE_CLEAR_M) for v in range(a, b + 1)):
-            fails.append(f"centre run [{a},{b}] enters a declared bridge span (+/- {BRIDGE_CLEAR_M:.0f} m)")
-        on_narrow = [v for v in range(a, b + 1) if street_at[v] in narrow_streets]
-        if on_narrow:
-            fails.append(f"centre run [{a},{b}]: {len(on_narrow)} vertices on a narrow street "
-                         f"({street_at[on_narrow[0]]}, median {street_median_w.get(street_at[on_narrow[0]], 0):.1f} m)")
-        in_hp = [v for v in range(a, b + 1) if in_hairpin(v)]
-        if in_hp:
-            fails.append(f"centre run [{a},{b}]: {len(in_hp)} vertices inside a hairpin arc (v{in_hp[0]}..)")
-        for v in range(a, b + 1):
-            centre_w[v] = round(2 * bhalf, 3)
-        runs_out.append({"kind": "centre", "i": a, "j": b, "street": street_at[a],
-                         "street_end": street_at[b], "length_m": round(st[b] - st[a], 1),
-                         "start_on_nose": a in nose, "end_on_nose": b in nose})
-    # overlaps between declared runs
-    for k in range(1, len(declared)):
-        if declared[k][0] <= declared[k - 1][1]:
-            fails.append(f"centre runs {declared[k-1]} and {declared[k]} overlap/touch — merge them")
-    chain_len = sum(r["length_m"] for r in runs_out)
-    # what the data would allow but the config leaves open (informational, never a failure)
-    allowed = [v for v in range(ring + 1) if widths[v] >= wide and island_w[v] <= 0
-               and street_at[v] not in narrow_streets and not in_hairpin(v)
-               and not _in_span(st[v], spans, BRIDGE_CLEAR_M) and centre_w[v] <= 0]
-    open_groups = []
-    for v in allowed:
-        if open_groups and v == open_groups[-1][1] + 1:
-            open_groups[-1][1] = v
-        else:
-            open_groups.append([v, v])
-
-    # ---- kerb-line (edge) strips: both sides, whole loop, gapped only in bridge spans ---------
-    edge_strip = [0] * n
-    edge_inset_v = [0.0] * n
-    for v in range(n):
-        if _in_span(st[v], spans):
-            continue
-        edge_strip[v] = 1
-        edge_inset_v[v] = edge_inset
-    gaps = []
-    v = 0
-    while v < n:
-        if edge_strip[v]:
-            v += 1
-            continue
-        g0 = v
-        while v < n and not edge_strip[v]:
-            v += 1
-        gaps.append({"i": g0, "j": v - 1, "station_from_m": round(st[g0], 1), "station_to_m": round(st[v - 1], 1)})
-    if len(gaps) != len(spans):
-        fails.append(f"edge gaps ({len(gaps)}) != declared bridge spans ({len(spans)}) — a span with no vertex "
-                     f"inside it, or a gap outside any span")
-    for side in ("L", "R"):
-        v = 0
-        while v < n:
-            if not edge_strip[v]:
-                v += 1
-                continue
-            a = v
-            s0 = street_at[a]
-            while v + 1 < n and edge_strip[v + 1] and street_at[v + 1] == s0:
-                v += 1
-            runs_out.append({"kind": f"edge_{side}", "i": a, "j": v, "street": s0,
-                             "length_m": round(st[v] - st[a], 1)})
-            v += 1
-
-    # ---- trimmed inside corners: where an inside lip is tighter than the strip's offset (|lat| > R) the
-    #      offset curve folds into a swallowtail; the strip is trimmed to the curb's own corner — the curve's
-    #      self-intersection (kind loop) or its legs extended to meet (kind extend) — and the band across the
-    #      `removed` vertices on that side IS in_vertex -> xz -> out_vertex (race_furniture.edge_fold_corners,
-    #      the author's own computation: what is declared is what is swept)
+    # ---- curb strips: both sides, every vertex, one closed loop per side --------------------------
+    edge_strip = [1] * n
+    edge_inset_v = [edge_inset] * n
     edge_corners = _RF.edge_fold_corners(pts, widths, edge_inset_v, edge_mode)
     for c in edge_corners:
         inside = [x for x in corners if ("R" if x["sign"] < 0 else "L") == c["side"]]
-        near = min((min((v_ - x["apex"]) % ring, (x["apex"] - v_) % ring) for x in inside for v_ in c["removed"]),
-                   default=ring)
+        near = min((min((v_ - x["apex"]) % m, (x["apex"] - v_) % m) for x in inside for v_ in c["removed"]),
+                   default=m)
         if near > FOLD_APEX_MAX_VERTICES:
             fails.append(f"edge {c['side']} fold v{c['in_vertex']}..v{c['out_vertex']} is {near} vertices from every "
                          f"inside corner apex — a fold where no corner is detected is a data defect")
     edge_fold_vertices = {s_: sorted({v_ for c in edge_corners if c["side"] == s_ for v_ in c["removed"]}) for s_ in ("L", "R")}
+    removed = {s_: set(edge_fold_vertices[s_]) for s_ in ("L", "R")}
 
-    # ---- sealed mouths: the edge strip runs straight across each mainline mouth ----------------
+    # ---- zones (declared) ----------------------------------------------------------------------------
+    try:
+        whole = (int(cor_cfg["whole"][0]) % m, int(cor_cfg["whole"][1]) % m)
+        boxes = [{"apex": int(b["apex"]), "i": int(b["i"]) % m, "j": int(b["j"]) % m} for b in cor_cfg.get("boxes", [])]
+        pinned = [(int(a) % m, int(b) % m) for a, b in cor_cfg["closure_runs"]]
+    except (KeyError, TypeError, ValueError, IndexError) as e:
+        raise SystemExit(f"[bands] race.corridor needs whole [i, j], boxes [{{apex, i, j}}] and closure_runs [[i, j]]: {e}")
+
+    def free(v):
+        return _RC.in_rng(v, whole[0], whole[1], m) or any(_RC.in_rng(v, b["i"], b["j"], m) for b in boxes)
+
+    # ---- the Alvarado re-measure (clear width = what the driver gets on Alvarado as raced) ---------------
+    src = str(cor_cfg.get("clear_width_source", "")).strip().lower()
+    measured_clear = None
+    if src:
+        rows = [r for r in streets if _RF.street_slug(r["street"]).startswith(_RF.street_slug(src))]
+        if not rows:
+            fails.append(f"race.corridor.clear_width_source {src!r}: no street of that name in route.roads")
+        else:
+            r0 = rows[0]
+            measured_clear = round(_median([widths[v] - 2 * edge_inset for v in range(r0["vertex_from"], r0["vertex_to"] + 1)]), 3)
+            if abs(measured_clear - float(P["clear_width_m"])) > CLEAR_WIDTH_TOL_M:
+                fails.append(f"clear width: {r0['street']} as raced is {measured_clear:.2f} m face to face (median of "
+                             f"w - 2 x {edge_inset}) but race.corridor.clear_width_m is {P['clear_width_m']} "
+                             f"(> {CLEAR_WIDTH_TOL_M} m off) — re-declare it")
+
+    # ---- the race layouts and their closures ---------------------------------------------------------
+    race_layouts = [lo for lo in cfg.get("layouts", []) if lo.get("race_furniture")]
+    if not race_layouts:
+        fails.append("no layouts[].race_furniture — no corridor to declare")
+    ctx = _RC.prepare(pts, widths, island_w, P)
+    half_auth = ctx["half_auth"]
+    corridors = {}
+    tokens = {}
+    for lo in race_layouts:
+        lid = str(lo.get("id"))
+        tok = str(lo.get("closure_token") or "")
+        if not tok or not tok.isalnum() or tok != tok.lower():
+            fails.append(f"layout {lid}: layouts[].closure_token must be a lower-case [a-z0-9]+ token (\"cw\" / "
+                         f"\"acw\"), got {tok!r} — declared, never derived")
+        elif tok in tokens:
+            fails.append(f"layout {lid}: closure_token {tok!r} is also {tokens[tok]}'s — each layout owns its closure")
+        tokens[tok] = lid
+        direction = str(lo.get("direction", "forward"))
+        if direction not in ("forward", "reverse"):
+            fails.append(f"layout {lid}: direction must be forward|reverse, got {direction!r}")
+            continue
+        d = "cw" if direction == "forward" else "acw"
+        sol = _RC.solve(pts, widths, island_w, free, d, P, inset=edge_inset, half=bhalf, context=ctx)
+        corridors[lid] = _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, street_at,
+                                          edge_inset, bhalf, strip_c, whole)
+
+    # ---- kerbs: outside + inside at every corner, clipped against EVERY layout's closure --------------
+    kerbs = _kerbs(corners, st, m, ext_lo, ext_hi)
+    partial = {"version": 2, "edge_strip_by_vertex": edge_strip, "edge_inset_by_vertex": edge_inset_v,
+               "centre_w_by_vertex": [0.0] * n, "edge_corners": edge_corners, "corridors": corridors,
+               "kerbs": [dict(k) for k in kerbs], "streets": streets, "corners": corners,
+               "params": {"edge_mode": edge_mode, "edge_inset_m": edge_inset, "barrier_half_m": bhalf,
+                          "edge_centre_from_lip_m": EDGE_CENTRE_FROM_LIP[edge_mode], "barrier_height_m": height}}
+    kerbs, clip_method = _clip_kerbs(kerbs, partial, pts, widths, m, corridors, edge_inset, bhalf, edge_mode)
+
+    # ---- sealed mouths (top-level, the 0047 shape; the per-layout policy is corridors.<id>.mouths) ----
     closed = []
-    for m in mouths:
-        h = int(m["host_vertex"])
-        half = float(m.get("connector_width_m", 10.0)) / 2.0 + MOUTH_CORNER_M
-        side = "L" if int(m.get("side", 1)) > 0 else "R"
-        lo = h
-        while lo > 0 and st[h] - st[lo - 1] <= half:
-            lo -= 1
-        hi = h
-        while hi < ring and st[hi + 1] - st[h] <= half:
-            hi += 1
-        sgn = -1.0 if side == "R" else 1.0          # left of forward travel = +n = (-tz, tx)
+    nrm = _normals(pts, m)
+    for mo in mouths:
+        h = int(mo["host_vertex"]) % m
+        half_m = float(mo.get("connector_width_m", 10.0)) / 2.0 + MOUTH_CORNER_M
+        side = "L" if int(mo.get("side", 1)) > 0 else "R"
+        lo_ = h
+        while lo_ > 0 and st[h] - st[lo_ - 1] <= half_m:
+            lo_ -= 1
+        hi_ = h
+        while hi_ < m - 1 and st[hi_ + 1] - st[h] <= half_m:
+            hi_ += 1
+        sgn = 1.0 if side == "L" else -1.0
         poly = []
-        for v in range(lo, hi + 1):
-            a, b = pts[max(0, v - 1)], pts[min(ring, v + 1)]
-            tx, tz = b[0] - a[0], b[2] - a[2]
-            L = math.hypot(tx, tz) or 1.0
-            nx, nz = -tz / L, tx / L
+        for v in range(lo_, hi_ + 1):
+            nx, nz = nrm[v]
             off = sgn * (widths[v] / 2.0 + EDGE_CENTRE_FROM_LIP[edge_mode])
             poly.append([round(pts[v][0] + nx * off, 3), round(pts[v][1], 3), round(pts[v][2] + nz * off, 3)])
-        if not all(edge_strip[v] for v in range(lo, hi + 1)):
-            fails.append(f"mouth {m['connector']} at v{h}: the edge strip is gapped across the mouth line")
-        closed.append({"connector": m["connector"], "host_vertex": h, "side": side,
-                       "connector_width_m": m.get("connector_width_m"), "vertex_from": lo, "vertex_to": hi,
-                       "policy": "sealed: strip continuous across the mouth line on the connector's 1ROAD (Q1)",
+        closed.append({"connector": mo["connector"], "host_vertex": h, "side": side,
+                       "connector_width_m": mo.get("connector_width_m"), "vertex_from": lo_, "vertex_to": hi_,
+                       "policy": "sealed: both curb strips run straight across the mouth line (Q1); per layout see "
+                                 "corridors.<id>.mouths",
                        "polyline_xyz_m": poly})
+    for lid, c in corridors.items():
+        c["mouths"] = _mouth_policies(closed, c, m, widths, nrm, pts)
+        c["no_route"]["forbidden_probes"] += _mouth_probes(closed, widths, m)
 
-    # ---- race kerbs at the detected corners -------------------------------------------------
-    kerbs = []
-    for c in corners:
-        apex, pc, pt = c["apex"], c["PC"], c["PT"]
-        inside = "R" if c["sign"] < 0 else "L"      # heading decreasing = right-hander
-        outside = "L" if inside == "R" else "R"
-        E = max(float(ext_lo), min(float(ext_hi), 2.0 * c["R_apex_m"]))
-        wraps = pc > pt
-
-        def _back(v0, dist):
-            v1 = v0
-            walked = 0.0
-            while walked < dist:
-                nv = v1 - 1 if v1 > 0 else ring - 1
-                walked += st[v1] - st[nv] if v1 > 0 else st[ring] - st[ring - 1]
-                v1 = nv
-            return v1
-
-        def _fwd(v0, dist):
-            v1 = v0
-            walked = 0.0
-            while walked < dist:
-                nv = v1 + 1 if v1 < ring else 1
-                walked += st[nv] - st[v1] if v1 < ring else st[1] - st[0]
-                v1 = nv
-            return v1
-
-        oi, oj = _back(pc, E), _fwd(pt, E)
-        kerbs.append({"apex": apex, "side": outside, "kind": "outside", "i": oi, "j": oj,
-                      "wraps": oi > oj, "R_apex_m": c["R_apex_m"], "D_deg": c["D_deg"], "extension_m": round(E, 1)})
-        if centre_w[apex] <= 0:
-            kerbs.append({"apex": apex, "side": inside, "kind": "inside", "i": pc, "j": pt, "wraps": wraps,
-                          "R_apex_m": c["R_apex_m"], "D_deg": c["D_deg"], "extension_m": 0.0})
-    for k in kerbs:
-        # a kerb exists only where the kerb-line barrier does: clip a run that reaches onto a bridge
-        # deck (the seam corner's outside kerb starts on the I-8 overcrossing) to the strip's vertices
-        rng = list(range(k["i"], k["j"] + 1)) if not k["wraps"] else list(range(k["i"], ring)) + list(range(0, k["j"] + 1))
-        kept = [v for v in rng if edge_strip[v]]
-        if len(kept) != len(rng):
-            if not kept:
-                fails.append(f"kerb at apex v{k['apex']} ({k['kind']}) lies entirely inside a bridge gap")
-                continue
-            k["clipped_from"] = [k["i"], k["j"]]
-            k["i"], k["j"] = kept[0], kept[-1]
-            k["wraps"] = kept[0] > kept[-1]
-
-    # ---- grid / pit no-gap zones + clearance ------------------------------------------------
+    # ---- grid / pit zones ----------------------------------------------------------------------------
     no_gap = []
     grid_slots = int(race.get("grid_slots", GRID_SLOTS_DEFAULT))
     pit_slots = int(race.get("pit_slots", PIT_SLOTS_DEFAULT))
-    for lo_ in cfg.get("layouts", []):
-        start = lo_.get("start") or {}
+    for lo in cfg.get("layouts", []):
+        start = lo.get("start") or {}
         if not start:
             continue
         gv = int(start.get("grid_vertex", start.get("vertex", 0)))
         off = abs(float(start.get("offset_right_m", 0.0)))
-        reverse = str(lo_.get("direction", "forward")) == "reverse"
+        reverse = str(lo.get("direction", "forward")) == "reverse"
         behind = PIT_SETBACK_M + PIT_PITCH_M * pit_slots
         s_pole = st[gv]
-        if reverse:
-            s0, s1 = s_pole, min(lap, s_pole + behind)
-        else:
-            s0, s1 = max(0.0, s_pole - behind), s_pole
-        vs = [v for v in range(n) if s0 - 1e-6 <= st[v] <= s1 + 1e-6]
+        s0, s1 = (s_pole, min(lap, s_pole + behind)) if reverse else (max(0.0, s_pole - behind), s_pole)
+        vs = [v for v in range(m) if s0 - 1e-6 <= st[v] <= s1 + 1e-6]
         if not vs:
             continue
-        need = off + GRID_STAGGER_M + CAR_HALF_W_M
-        clear = min(widths[v] / 2.0 - edge_inset - need for v in vs)
-        if any(not edge_strip[v] for v in vs):
-            fails.append(f"layout {lo_.get('id')}: grid/pit zone v{vs[0]}..v{vs[-1]} crosses a bridge gap")
-        if clear < GRID_CLEAR_MIN_M:
-            fails.append(f"layout {lo_.get('id')}: grid column edge {need:.2f} m vs barrier face "
-                         f"{min(widths[v] for v in vs)/2 - edge_inset:.2f} m — {clear:+.2f} m clear "
-                         f"(< {GRID_CLEAR_MIN_M:.2f} m)")
-        no_gap.append({"layout": lo_.get("id"), "i": vs[0], "j": vs[-1], "station_from_m": round(s0, 1),
-                       "station_to_m": round(s1, 1), "grid_clearance_m": round(clear, 2),
+        no_gap.append({"layout": lo.get("id"), "i": vs[0], "j": vs[-1], "station_from_m": round(s0, 1),
+                       "station_to_m": round(s1, 1), "offset_right_m": off, "reverse": reverse,
                        "grid_slots": grid_slots, "pit_slots": pit_slots})
 
     out = {
-        "version": 1,
-        "_doc": "Declared race-furniture bands (ledger 0047). Index = vertex of data/centerline.local.json "
-                "(engine frame x=E, y=up, z=N; same count as gate_centerline.json). centre_w_by_vertex: the "
-                "centre chain's base width where it stands (0 elsewhere, incl. every island vertex except the "
-                "shared nose). edge_strip_by_vertex: 1 where the kerb-line barrier runs on both curb faces "
-                "(0 inside declared bridge spans). edge_inset_by_vertex: the LANE inset the strip takes from "
-                "the lip (road mode) — 0 in walk mode. Band centres for the gates: centre = the centreline; "
-                "edge = half_w + params.edge_centre_from_lip_m (signed outward), EXCEPT at edge_corners: where an "
-                "inside lip is tighter than the strip's offset the strip is trimmed to the curb's corner — the offset "
-                "curve's self-intersection (kind loop) or its two legs extended to meet (kind extend) — so the "
-                "`removed` vertices carry no ring on that side and the declared band there runs from the in_vertex's "
-                "band point to the corner `xz` to the out_vertex's (edge_fold_vertices lists them per side). Written by "
-                "tools/barrier_bands.py; consumed by tools/author_race_blend.py and scripts/geometry/median_zone.py.",
+        "version": 2,
+        "_doc": "Declared race corridors (ledger 0049; replaces the 0047 centre chain). Index = vertex of "
+                "data/centerline.local.json (engine frame x=E, y=up, z=N; same count as gate_centerline.json; the "
+                "last entry repeats vertex 0). y = metres LEFT of the increasing-vertex tangent (left normal (-tz, "
+                "tx) of the central difference). edge_strip_by_vertex: 1 everywhere — both curb strips are closed "
+                "loops (no bridge gaps); band centre at +-(half_w + params.edge_centre_from_lip_m) EXCEPT at "
+                "edge_corners (the strip trimmed to the curb's corner: in_vertex band point -> xz -> out_vertex, the "
+                "`removed` vertices carry none). centre_w_by_vertex: all 0 (the chain is retired; removed in v3). "
+                "corridors.<layout id>: that layout's closure (closure_y_by_vertex = the strip CENTRE lateral, null "
+                "where none stands; pins included), its lane faces (lane_by_vertex [y_lo, y_hi], forward frame), "
+                "zones (whole | box | pin | closure | island), runs, mouth policies and the no_route probes. Written "
+                "by tools/barrier_bands.py; consumed by tools/race_furniture.py, scripts/geometry/median_zone.py, "
+                "scripts/geometry/drive_test.py, scripts/geometry/audit_mesh.py, tools/no_route.py, "
+                "scripts/ac/write_ai_line.py.",
         "n": n,
         "lap_m": round(lap, 1),
         "params": {
-            "wide_threshold_m": wide, "barrier_half_m": bhalf, "barrier_w_m": round(2 * bhalf, 3),
-            "barrier_height_m": float(race.get("barrier_height_m", 1.2)), "module_pitch_m": pitch,
-            "barrier_profile_asset": str(race.get("barrier_profile_asset", "")),
-            "edge_mode": edge_mode, "edge_inset_m": edge_inset,
-            "edge_centre_from_lip_m": EDGE_CENTRE_FROM_LIP[edge_mode],
-            "kerb_width_m": kerb_w, "kerb_height_m": kerb_h,
-            "kerb_outer_from_lip_m": KERB_OUTER_FROM_LIP[edge_mode],
-            "kerb_min_turn_deg": min_turn, "kerb_outer_extension_m": [float(ext_lo), float(ext_hi)],
-            "bridge_clear_m": BRIDGE_CLEAR_M, "hairpin_deg": HAIRPIN_DEG,
-            "mouths": str(race.get("mouths", "sealed")), "interior_corners": str(race.get("interior_corners", "continuous")),
-            "narrow_streets": narrow_streets, "street_median_w_m": street_median_w,
+            "barrier_half_m": bhalf, "barrier_w_m": round(2 * bhalf, 3), "barrier_height_m": height,
+            "module_pitch_m": pitch, "barrier_profile_asset": str(race.get("barrier_profile_asset", "")),
+            "edge_mode": edge_mode, "edge_inset_m": edge_inset, "edge_centre_from_lip_m": EDGE_CENTRE_FROM_LIP[edge_mode],
+            "edge_gaps": "none", "kerb_width_m": kerb_w, "kerb_height_m": kerb_h,
+            "kerb_outer_from_lip_m": KERB_OUTER_FROM_LIP[edge_mode], "kerb_min_turn_deg": min_turn,
+            "kerb_outer_extension_m": [float(ext_lo), float(ext_hi)], "kerb_clip": clip_method,
+            "mouths": str(race.get("mouths", "sealed")),
+            "edge_loop_start_vertex": (_RF.loop_start(pts, m) if hasattr(_RF, "loop_start") else None),
+            "corridor": _corridor_params_echo(cor_cfg, P, measured_clear, island_mode),
         },
-        "centre_w_by_vertex": centre_w,
+        "zones": {"whole": [whole[0], whole[1]], "boxes": boxes, "closure_runs": [list(r) for r in pinned],
+                  "island_zones": [list(z) for z in ctx["island_zones"]], "openings": [list(z) for z in ctx["openings"]]},
+        "centre_w_by_vertex": [0.0] * n,
         "edge_strip_by_vertex": edge_strip,
         "edge_inset_by_vertex": edge_inset_v,
-        "runs": runs_out,
+        "runs": [],
+        "corridors": corridors,
         "closed_mouths": closed,
         "edge_corners": edge_corners,
         "edge_fold_vertices": edge_fold_vertices,
@@ -503,58 +444,692 @@ def build(project_dir, out_name: str | None = None, config_path=None) -> dict:
         "streets": streets,
         "corners": corners,
         "bridge_spans_m": [list(s) for s in spans],
-        "edge_gaps": gaps,
-        "declared_open": [{"i": a, "j": b, "length_m": round(st[b] - st[a], 1), "street": street_at[a]} for a, b in open_groups],
-        "summary": {
-            "centre_runs": len([r for r in runs_out if r["kind"] == "centre"]),
-            "chain_length_m": round(chain_len, 1),
-            "centre_verts": sum(1 for w in centre_w if w > 0),
-            "edge_verts": sum(edge_strip),
-            "edge_gaps": len(gaps),
-            "edge_corners": len(edge_corners),
-            "kerbs": len(kerbs),
-            "corners": len(corners),
-            "island_runs": [list(r) for r in isl_runs],
-            "nose_vertices": sorted(nose),
-        },
-        "fails": fails,
+        "edge_gaps": [],
+        "summary": {},
+        "fails": [],
     }
-    out_path = data / (out_name or "barrier_bands.json")
-    out_path.write_text(json.dumps(out), encoding="utf-8")
-    s = out["summary"]
-    print(f"[bands] {proj.name}: chain {s['centre_runs']} runs / {s['chain_length_m']:.0f} m on {s['centre_verts']} verts; "
-          f"edge strips on {s['edge_verts']}/{n} verts ({s['edge_gaps']} bridge gaps); {s['kerbs']} kerbs at "
-          f"{s['corners']} corners; {len(closed)} sealed mouths; mode {edge_mode} inset {edge_inset} m; half {bhalf} m")
-    for r in runs_out:
-        if r["kind"] == "centre":
-            print(f"[bands]   centre v{r['i']}-v{r['j']} {r['length_m']:7.1f} m  {r['street']}"
-                  f"{' -> ' + r['street_end'] if r['street_end'] != r['street'] else ''}"
-                  f"  nose:{'S' if r['start_on_nose'] else '-'}{'E' if r['end_on_nose'] else '-'}")
-    for g in out["declared_open"]:
-        print(f"[bands]   declared open (data would allow): v{g['i']}-v{g['j']} {g['length_m']:.0f} m {g['street']}")
+    vctx = {"pts": pts, "widths": widths, "island_w": island_w, "half_auth": half_auth, "m": m, "n": n, "st": st,
+            "params": P, "free": free, "whole": whole, "boxes": boxes, "pinned": pinned, "corners": corners,
+            "corner_by_apex": corner_by_apex, "removed": removed, "layouts": race_layouts, "cfg": cfg,
+            "edge_inset": edge_inset, "bhalf": bhalf, "strip_c": strip_c}
+    fails += validate(out, vctx)
+    # ---- 12. the PLANNED no-route: the declaration checking its own topology (not an L5 gate) ----------
+    planned = {}
+    if planned_no_route and corridors and not any(f.startswith("zones") for f in fails):
+        nr = _load_tool("no_route", "_no_route_ro")
+        for lid in corridors:
+            kw = {"cell": no_route_cell} if no_route_cell else {}
+            r = nr.run(proj, lid, planned=True, bands=out, cfg=cfg, write=write, verbose=False, **kw)
+            planned[lid] = {k: r[k] for k in ("fail", "leak_m2", "reached_m2", "door_clusters", "blocked",
+                                              "forbidden_reached", "seconds")}
+            planned[lid]["file"] = f"no_route.{lid}.planned.json"
+            corridors[lid]["no_route"]["planned"] = planned[lid]
+            if r["fail"]:
+                fails += [f"planned no_route {lid}: {f}" for f in r["fails"]]
+    elif not planned_no_route:
+        for lid in corridors:
+            corridors[lid]["no_route"]["planned"] = "skipped"
+    out["_st"] = st
+    out["summary"] = _summary(out, corridors, kerbs, edge_corners, corners, island_w, planned)
+    out.pop("_st", None)
+    out["fails"] = fails
+    if write:
+        out_path = data / (out_name or "barrier_bands.json")
+        out_path.write_text(json.dumps(out), encoding="utf-8")
+        out["_path"] = str(out_path)
+    _report(proj, out, fails)
+    out["_ctx"] = vctx            # in memory only (after the write): validate(out, out["_ctx"]) re-runs the self-gates
+    return out
+
+
+def _corridor_params_echo(cor_cfg, P, measured_clear, island_mode):
+    echo = {k: (dict((str(a), b) for a, b in v.items()) if isinstance(v, dict) else v) for k, v in P.items()}
+    echo.update({"island_mode": island_mode, "clear_width_source": cor_cfg.get("clear_width_source"),
+                 "clear_width_measured_m": measured_clear, "whole": cor_cfg.get("whole"),
+                 "boxes": cor_cfg.get("boxes"), "closure_runs": cor_cfg.get("closure_runs")})
+    return echo
+
+
+def _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, street_at, inset, bhalf, strip_c,
+                     whole):
+    """corridors.<lid>: the solved closure as a declaration (forward-frame laterals per vertex)"""
+    e = sol["e"]
+    reverse = direction == "reverse"
+    race_side = "L" if reverse else "R"
+    closure_side = "R" if reverse else "L"
+    y = [None] * m
+    pins = set()
+    for R in sol["runs"]:
+        for v, g in zip(R["vs"], R["g"]):
+            y[v] = e * g
+        pins.add(R["vs"][0])
+        pins.add(R["vs"][-1])
+    half_auth = ctx["half_auth"]
+    zone = []
+    for v in range(m):
+        if v in pins:
+            zone.append("pin")
+        elif y[v] is not None:
+            zone.append("island" if half_auth[v] > 0 else "closure")
+        else:
+            zone.append("whole" if _RC.in_rng(v, whole[0], whole[1], m) else "box")
+    lane = _RC.lane_by_vertex(y, widths, m, "acw" if reverse else "cw", inset=inset, half=bhalf, pins=pins)
+    runs = []
+    for R in sol["runs"]:
+        vs, rr, g = R["vs"], R["rr"], R["g"]
+        fwd = sorted([vs[0], vs[-1]]) if not reverse else [vs[-1], vs[0]]
+        i, j = (vs[0], vs[-1]) if not reverse else (vs[-1], vs[0])
+        toward = away = 0.0
+        pin_steps = [0.0, 0.0]
+        for q in range(1, len(vs)):
+            ds = rr[q] - rr[q - 1]
+            if ds <= 1e-9:
+                continue
+            rate = (g[q] - g[q - 1]) / ds
+            if R["zone0"][q] or R["zone0"][q - 1]:
+                pin_steps[0] = max(pin_steps[0], abs(rate))
+            elif R["zone1"][q] or R["zone1"][q - 1]:
+                pin_steps[1] = max(pin_steps[1], abs(rate))
+            elif rate > 0:
+                toward = max(toward, rate)
+            else:
+                away = max(away, -rate)
+        clears = [lane[v][1] - lane[v][0] for v in vs[1:-1]] or [0.0]
+        below = []
+        floor = float(P["clear_floor_m"])
+        cur = None
+        for q in range(1, len(vs) - 1):
+            v = vs[q]
+            c = lane[v][1] - lane[v][0]
+            if c >= floor - 1e-6:
+                cur = None
+                continue
+            if half_auth[v] > 0 or (R["face"][q] is not None):
+                why = "island"
+            elif R["zone0"][q] or R["zone1"][q]:
+                why = "pin_zone"
+            elif R["L"][q] > R["Lraw"][q] + 1e-6:
+                why = "convergence"
+            else:
+                why = "unexplained"
+            if cur is not None and cur[2] == why and cur[1] == vs[q - 1]:
+                cur[1] = v
+            else:
+                cur = [v, v, why]
+                below.append(cur)
+        isl_spans = []
+        for a, b in ctx["island_zones"]:
+            if any(a <= v <= b for v in vs):
+                isl_spans.append([a, b, "island"])
+        for a, b in ctx["openings"]:
+            if any(a <= v <= b for v in vs):
+                isl_spans.append([a, b, "opening"])
+        rad, rad_v, back = _RC.plan_radius(pts, m, vs, y)
+        runs.append({
+            "i": i, "j": j, "travel_from": vs[0], "travel_to": vs[-1], "travel": "decreasing" if reverse else "increasing",
+            "street": street_at[min(fwd)], "street_end": street_at[max(fwd)], "length_m": round(rr[-1], 1),
+            "ends": [{"vertex": vs[0], "y": round(y[vs[0]], 4), "joins": "edge_" + closure_side, "role": "in"},
+                     {"vertex": vs[-1], "y": round(y[vs[-1]], 4), "joins": "edge_" + closure_side, "role": "out"}],
+            "island_spans": isl_spans,
+            "max_rate": {"toward": _ratio(toward), "away": _ratio(away),
+                         "pin_in": _ratio(R["k_pin"][0]), "pin_out": _ratio(R["k_pin"][1]),
+                         "pin_in_built": _ratio(pin_steps[0]), "pin_out_built": _ratio(pin_steps[1])},
+            "pin_zone_m": float(P["pin_zone_m"]),
+            "clear_min_m": round(min(clears), 3), "clear_median_m": round(_median(clears), 3),
+            "below_floor": [list(b) for b in below],
+            "min_radius_m": round(rad, 1) if rad < float("inf") else None, "min_radius_vertex": rad_v,
+            "backward_steps": back, "infeasible": R["infeas"], "sor_sweeps": R["iters"],
+        })
+    # forbidden probes: pockets behind the closure + island tops (+ the mouths, added by the caller)
+    probes = []
+    for R in sol["runs"]:
+        vs, rr = R["vs"], R["rr"]
+        next_s = 0.0
+        for q, v in enumerate(vs[1:-1], start=1):
+            if rr[q] < next_s:
+                continue
+            face = widths[v] / 2.0 - inset
+            if closure_side == "L":
+                lo_, hi_ = y[v] + bhalf, face
+            else:
+                lo_, hi_ = -face, y[v] - bhalf
+            if hi_ - lo_ >= float(P["pocket_min_m"]) and half_auth[v] <= 0:
+                probes.append({"vertex": v, "y": round(0.5 * (lo_ + hi_), 3), "why": "pocket"})
+                next_s = rr[q] + PROBE_STEP_M
+    for a, b in ctx["island_zones"]:
+        next_s = -1.0
+        for v in range(a, b + 1):
+            if half_auth[v] >= ISLAND_PROBE_MIN_HALF_M and st[v] >= next_s:
+                probes.append({"vertex": v, "y": 0.0, "why": "island"})
+                next_s = st[v] + PROBE_STEP_M
+    yr = [None if v is None else round(v, 4) for v in y]
+    zr = zone
+    return {
+        "token": tok, "direction": direction, "travel": "decreasing" if reverse else "increasing",
+        "race_side": race_side, "closure_side": closure_side,
+        "zone_by_vertex": zr + [zr[0]],
+        "closure_y_by_vertex": yr + [yr[0]],
+        "lane_by_vertex": [[round(a, 4), round(b, 4)] for a, b in lane] + [[round(lane[0][0], 4), round(lane[0][1], 4)]],
+        "pins": sorted(pins),
+        "runs": runs,
+        "mouths": [],
+        "no_route": {"seed": "AC_START_0", "probe_r_m": 0.5, "tol_m": 0.75, "forbidden_probes": probes},
+    }
+
+
+def _ratio(k):
+    """lateral per metre -> the x of 1:x (None for a flat run)"""
+    return round(1.0 / k, 2) if k > 1e-9 else None
+
+
+def _kerbs(corners, st, m, ext_lo, ext_hi):
+    """outside kerb on the lip outside the turn (symmetric about the apex, extended E = clamp(2 R, 10, 30) past
+    PC/PT) + inside kerb on the detector's own arc, at every corner (the chain no longer holds the insides)"""
+    kerbs = []
+    for c in corners:
+        apex, pc, pt = c["apex"], c["PC"], c["PT"]
+        inside = "R" if c["sign"] < 0 else "L"
+        outside = "L" if inside == "R" else "R"
+        E = max(float(ext_lo), min(float(ext_hi), 2.0 * c["R_apex_m"]))
+
+        def _back(v0, dist):
+            v1, walked = v0, 0.0
+            while walked < dist:
+                nv = v1 - 1 if v1 > 0 else m - 1
+                walked += st[v1] - st[nv] if v1 > 0 else st[m] - st[m - 1]
+                v1 = nv
+            return v1
+
+        def _fwd(v0, dist):
+            v1, walked = v0, 0.0
+            while walked < dist:
+                nv = v1 + 1 if v1 < m else 1
+                walked += st[nv] - st[v1] if v1 < m else st[1] - st[0]
+                v1 = nv
+            return v1 % m
+        oi, oj = _back(pc, E), _fwd(pt, E)
+        kerbs.append({"apex": apex, "side": outside, "kind": "outside", "i": oi, "j": oj, "wraps": oi > oj,
+                      "R_apex_m": c["R_apex_m"], "D_deg": c["D_deg"], "extension_m": round(E, 1)})
+        kerbs.append({"apex": apex, "side": inside, "kind": "inside", "i": pc, "j": pt, "wraps": pc > pt,
+                      "R_apex_m": c["R_apex_m"], "D_deg": c["D_deg"], "extension_m": 0.0})
+    return kerbs
+
+
+def _kerb_band(widths, k, side, inset):
+    """forward-frame lateral interval [lo, hi] of a kerb's footprint at vertex k on `side`"""
+    outer = widths[k] / 2.0 - inset - KERB_CLOSURE_CLEAR_M
+    inner = outer - KERB_FOOTPRINT_W
+    return (inner, outer) if side == "L" else (-outer, -inner)
+
+
+def _gap(a, b):
+    """signed gap between intervals a and b (negative = overlap)"""
+    return max(b[0] - a[1], a[0] - b[1])
+
+
+def _kerb_clear(widths, k, side, corridors, inset, bhalf):
+    best, by = float("inf"), []
+    kb = _kerb_band(widths, k, side, inset)
+    for lid, c in corridors.items():
+        y = c["closure_y_by_vertex"][k]
+        if y is None:
+            continue
+        g = _gap(kb, (y - bhalf, y + bhalf))
+        if g < best:
+            best = g
+        if g < KERB_CLOSURE_CLEAR_M:
+            by.append(lid)
+    return best, by
+
+
+def _clip_kerbs(kerbs, partial, pts, widths, m, corridors, inset, bhalf, mode):
+    """the spec §6 clip: race_furniture.kerb_closure_clips (the author's own station-level clip) when present,
+    else a vertex-level clip with the same rule. Every kerb records clipped_from / clip."""
+    method = "vertex"
+    rf_rows = None
+    if hasattr(_RF, "kerb_closure_clips") and corridors:
+        try:
+            rf_rows = _RF.kerb_closure_clips(pts, widths, partial, mode)
+            method = "race_furniture.kerb_closure_clips"
+        except Exception as e:  # noqa: BLE001 — the author's clip is in flux; the gate below still holds
+            print(f"[bands] race_furniture.kerb_closure_clips raised {e!r} — vertex-level clip used")
+            rf_rows = None
+    out = []
     for k in kerbs:
+        k = dict(k)
+        ks = _RC.walk(k["i"], k["j"], m)
+        if rf_rows is not None:
+            row = next((r for r in rf_rows if int(r["apex"]) == k["apex"] and str(r["side"]).upper() == k["side"]), None)
+            if row is not None:
+                ni, nj = int(row["i"]) % m, int(row["j"]) % m
+                if (ni, nj) != (k["i"], k["j"]):
+                    k["clipped_from"] = [k["i"], k["j"]]
+                    k["clip"] = {"by": row.get("by", []), "stations_removed": row.get("stations_removed")}
+                k["i"], k["j"] = ni, nj
+                k["wraps"] = ni > nj
+                out.append(k)
+                continue
+        apex_q = ks.index(k["apex"]) if k["apex"] in ks else len(ks) // 2
+        ok = [_kerb_clear(widths, v, k["side"], corridors, inset, bhalf)[0] >= KERB_CLOSURE_CLEAR_M for v in ks]
+        lo_ = apex_q
+        while lo_ > 0 and ok[lo_ - 1]:
+            lo_ -= 1
+        hi_ = apex_q
+        while hi_ < len(ks) - 1 and ok[hi_ + 1]:
+            hi_ += 1
+        if (lo_, hi_) != (0, len(ks) - 1):
+            by = sorted({lid for v in ks[:lo_] + ks[hi_ + 1:] for lid in _kerb_clear(widths, v, k["side"], corridors, inset, bhalf)[1]})
+            k["clipped_from"] = [k["i"], k["j"]]
+            k["clip"] = {"by": by, "vertices_removed": [lo_, len(ks) - 1 - hi_]}
+            k["i"], k["j"] = ks[lo_], ks[hi_]
+            k["wraps"] = k["i"] > k["j"]
+        out.append(k)
+    return out, method
+
+
+def _mouth_policies(closed, cor, m, widths, nrm, pts):
+    rows = []
+    for mo in closed:
+        h = int(mo["host_vertex"]) % m
+        if mo["side"] == cor["race_side"]:
+            pol = "sealed_race_strip"
+        elif cor["closure_y_by_vertex"][h] is not None:
+            pol = "behind_closure"
+        else:
+            pol = "sealed_far_strip"
+        rows.append({"connector": mo["connector"], "host_vertex": h, "side": mo["side"], "policy": pol,
+                     "vertex_from": mo["vertex_from"], "vertex_to": mo["vertex_to"]})
+    return rows
+
+
+def _mouth_probes(closed, widths, m):
+    out = []
+    for mo in closed:
+        h = int(mo["host_vertex"]) % m
+        sgn = 1.0 if mo["side"] == "L" else -1.0
+        out.append({"vertex": h, "y": round(sgn * (widths[h] / 2.0 + MOUTH_PROBE_M), 3),
+                    "why": f"side_street {mo['connector']}"})
+    return out
+
+
+# ---------------------------------------------------------------------------------------------
+# the self-gates — pure on (declaration, context): tests perturb a declaration and call this
+def validate(out: dict, ctx: dict) -> list[str]:
+    fails: list[str] = []
+    m, n = ctx["m"], ctx["n"]
+    P = ctx["params"]
+    widths, st, half_auth = ctx["widths"], ctx["st"], ctx["half_auth"]
+    inset, bhalf, strip_c = ctx["edge_inset"], ctx["bhalf"], ctx["strip_c"]
+    pts = ctx["pts"]
+    whole, boxes, pinned, free = ctx["whole"], ctx["boxes"], ctx["pinned"], ctx["free"]
+    corridors = out.get("corridors") or {}
+    removed = ctx["removed"]
+
+    # 10. strips on every vertex; the retired chain stays retired
+    es = out.get("edge_strip_by_vertex") or []
+    if len(es) != n or not all(int(v) == 1 for v in es):
+        fails.append(f"strips: edge_strip_by_vertex must be 1 on all {n} vertices (no bridge gaps, ledger 0049 C1) — "
+                     f"{sum(1 for v in es if not v)} gapped")
+    if any(float(w) > 0 for w in out.get("centre_w_by_vertex") or []):
+        fails.append("strips: centre_w_by_vertex declares the retired centre chain")
+
+    # 1. zones
+    for b in boxes:
+        c = ctx["corner_by_apex"].get(b["apex"])
+        if c is None:
+            fails.append(f"zones: box apex v{b['apex']} is not a detected corner apex "
+                         f"({sorted(ctx['corner_by_apex'])})")
+            continue
+        if not (_RC.in_rng(c["PC"], b["i"], b["j"], m) and _RC.in_rng(c["PT"], b["i"], b["j"], m)
+                and _RC.in_rng(c["apex"], b["i"], b["j"], m)):
+            fails.append(f"zones: box v{b['i']}-v{b['j']} does not hold its corner's arc PC v{c['PC']} .. PT v{c['PT']}")
+        if _RC.in_rng(b["i"], whole[0], whole[1], m) or _RC.in_rng(b["j"], whole[0], whole[1], m):
+            fails.append(f"zones: box v{b['i']}-v{b['j']} overlaps the whole-street zone")
+    for c in ctx["corners"]:
+        if _RC.in_rng(c["apex"], whole[0], whole[1], m) and not (
+                _RC.in_rng(c["PC"], whole[0], whole[1], m) and _RC.in_rng(c["PT"], whole[0], whole[1], m)):
+            fails.append(f"zones: the whole-street zone holds corner v{c['apex']} but not its arc PC v{c['PC']} .. PT v{c['PT']}")
+    derived = []
+    v = 0
+    # closure intervals = maximal non-free runs extended by their two pins (forward order)
+    start = next((q for q in range(m) if free(q)), None)
+    if start is None:
+        fails.append("zones: no whole-street or box vertex at all — nothing to pin a closure to")
+    else:
+        q = 0
+        while q < m:
+            k = (start + q) % m
+            if free(k):
+                q += 1
+                continue
+            q1 = q
+            while q1 + 1 < m and not free((start + q1 + 1) % m):
+                q1 += 1
+            derived.append(((start + q - 1) % m, (start + q1 + 1) % m))
+            q = q1 + 1
+    if sorted(derived) != sorted(pinned):
+        fails.append(f"zones: the declared zones give closure runs {sorted(derived)} but race.corridor.closure_runs pins "
+                     f"{sorted(pinned)} — re-declare one or the other (never derived silently)")
+    pin_set = {a for a, _ in pinned} | {b for _, b in pinned}
+    for lid, c in corridors.items():
+        y = c["closure_y_by_vertex"]
+        zn = c["zone_by_vertex"]
+        lane = c["lane_by_vertex"]
+        if len(y) != n or len(zn) != n or len(lane) != n:
+            fails.append(f"zones {lid}: closure_y / zone / lane rows {len(y)} / {len(zn)} / {len(lane)} != {n}")
+            continue
+        for k in range(m):
+            fr = free(k)
+            if k in pin_set:
+                if zn[k] != "pin" or y[k] is None:
+                    fails.append(f"zones {lid}: v{k} is a declared pin but carries zone {zn[k]!r} / closure {y[k]}")
+            elif fr:
+                if y[k] is not None:
+                    fails.append(f"zones {lid}: a closure stands at v{k} inside the "
+                                 f"{'whole-street zone' if _RC.in_rng(k, whole[0], whole[1], m) else 'open box'}")
+                    break
+                want = "whole" if _RC.in_rng(k, whole[0], whole[1], m) else "box"
+                if zn[k] != want:
+                    fails.append(f"zones {lid}: v{k} zone {zn[k]!r}, expected {want!r}")
+                    break
+            else:
+                if y[k] is None:
+                    fails.append(f"zones {lid}: v{k} is inside closure run but declares no closure — a hole in the "
+                                 f"closure is a door")
+                    break
+                if zn[k] not in ("closure", "island"):
+                    fails.append(f"zones {lid}: v{k} zone {zn[k]!r} inside a closure run")
+                    break
+
+    # 2. pins
+    for lid, c in corridors.items():
+        y = c["closure_y_by_vertex"]
+        side = c["closure_side"]
+        sgn = 1.0 if side == "L" else -1.0
+        for k in sorted(pin_set):
+            if y[k] is None:
+                continue
+            far = sgn * (widths[k] / 2.0 - strip_c)
+            if abs(y[k] - far) > PIN_TOL_M:
+                fails.append(f"pins {lid}: v{k} closure y {y[k]:+.3f} is {abs(y[k] - far):.3f} m off the far strip "
+                             f"centre {far:+.3f} (> {PIN_TOL_M}) — an unburied end is a door")
+            if k in removed.get(side, ()):
+                fails.append(f"pins {lid}: v{k} is a trimmed fold vertex of edge_{side} — no strip ring to bury the pin in")
+
+    # 3. rates, 6. shape, 4. clear width + pocket, 5. islands
+    k_conv, k_div = 1.0 / float(P["rate_toward_race_side"]), 1.0 / float(P["rate_away"])
+    k_hard = 1.0 / float(P["steepest_pin_rate"])
+    zone_m = float(P["pin_zone_m"])
+    floor_ = float(P["clear_floor_m"])
+    hard_min = float(P["clear_hard_min_m"])
+    pocket_min = float(P["pocket_min_m"])
+    for lid, c in corridors.items():
+        y = c["closure_y_by_vertex"]
+        lane = c["lane_by_vertex"]
+        e = -1.0 if c["race_side"] == "R" else 1.0       # g = e * y: lateral toward the race side
+        listed = {}
+        for r in c.get("runs", []):
+            for a, b, why in r.get("below_floor", []):
+                for k in _RC.walk(int(a), int(b), m) if c["travel"] == "increasing" else _RC.walk(int(b), int(a), m):
+                    listed[k] = why
+        for r in c.get("runs", []):
+            vs = _RC.walk(r["travel_from"], r["travel_to"], m) if c["travel"] == "increasing" else \
+                list(reversed(_RC.walk(r["travel_to"], r["travel_from"], m)))
+            if any(y[k] is None for k in vs):
+                continue                                 # reported by the zone gate
+            rr = [0.0]
+            for q in range(1, len(vs)):
+                a, b = pts[vs[q - 1]], pts[vs[q]]
+                rr.append(rr[-1] + math.hypot(b[0] - a[0], b[2] - a[2]))
+            L_ = rr[-1]
+            k_in = 1.0 / float(r["max_rate"]["pin_in"]) if r["max_rate"].get("pin_in") else k_div
+            k_out = 1.0 / float(r["max_rate"]["pin_out"]) if r["max_rate"].get("pin_out") else k_div
+            for kk in (k_in, k_out):
+                if kk > k_hard * (1 + 1e-9):
+                    fails.append(f"rates {lid}: run v{r['i']}-v{r['j']} pin rate 1:{1 / kk:.2f} is steeper than "
+                                 f"1:{P['steepest_pin_rate']}")
+            for q in range(1, len(vs)):
+                ds = rr[q] - rr[q - 1]
+                if ds <= 1e-9:
+                    continue
+                g0, g1 = e * y[vs[q - 1]], e * y[vs[q]]
+                rate = (g1 - g0) / ds
+                if abs(rate) > k_hard * (1 + RATE_TOL):
+                    fails.append(f"rates {lid}: v{vs[q - 1]}->v{vs[q]} moves 1:{1 / abs(rate):.2f} — steeper than "
+                                 f"1:{P['steepest_pin_rate']}")
+                    break
+                in_zone = min(rr[q - 1], L_ - rr[q]) <= zone_m
+                if in_zone:
+                    lim = max(max(k_conv, k_div), k_in if rr[q - 1] <= zone_m else 0.0, k_out if L_ - rr[q] <= zone_m else 0.0)
+                    if abs(rate) > lim * (1 + RATE_TOL) + 1e-4:
+                        fails.append(f"rates {lid}: v{vs[q - 1]}->v{vs[q]} 1:{1 / abs(rate):.2f} in a pin zone "
+                                     f"(limit 1:{1 / lim:.2f})")
+                        break
+                elif rate > k_conv * (1 + RATE_TOL) + 1e-4:
+                    fails.append(f"rates {lid}: v{vs[q - 1]}->v{vs[q]} closes toward the race side at 1:{1 / rate:.2f} "
+                                 f"(limit 1:{P['rate_toward_race_side']})")
+                    break
+                elif -rate > k_div * (1 + RATE_TOL) + 1e-4:
+                    fails.append(f"rates {lid}: v{vs[q - 1]}->v{vs[q]} opens away at 1:{1 / -rate:.2f} "
+                                 f"(limit 1:{P['rate_away']})")
+                    break
+            # 6. shape
+            rad, rad_v, back = _RC.plan_radius(pts, m, vs, y)
+            if back:
+                fails.append(f"shape {lid}: run v{r['i']}-v{r['j']} has {back} backward steps (a fold)")
+            if rad < RADIUS_MIN_M:
+                fails.append(f"shape {lid}: run v{r['i']}-v{r['j']} plan radius {rad:.1f} m at v{rad_v} < {RADIUS_MIN_M} m")
+            # 4. clear width / pocket ; 5. islands
+            for q in range(1, len(vs) - 1):
+                k = vs[q]
+                lo_, hi_ = lane[k]
+                clear = hi_ - lo_
+                if clear < hard_min:
+                    fails.append(f"clear {lid}: v{k} lane {clear:.2f} m < the hard minimum {hard_min} m")
+                    break
+                if clear < floor_ - 1e-6:
+                    why = listed.get(k)
+                    if why not in ("island", "pin_zone", "convergence"):
+                        fails.append(f"clear {lid}: v{k} lane {clear:.2f} m < the floor {floor_} m and not listed as an "
+                                     f"island / pin-zone / convergence vertex")
+                        break
+                    if why == "convergence":
+                        near = min((abs(st[k] - st[a]) for a in range(m) if half_auth[a] > 0), default=1e9)
+                        if near > CONVERGENCE_REACH_M:
+                            fails.append(f"clear {lid}: v{k} listed as convergence but {near:.0f} m from every island")
+                            break
+                in_zone = min(rr[q], L_ - rr[q]) <= zone_m
+                w2 = widths[k] / 2.0
+                if half_auth[k] <= 0 and not in_zone and listed.get(k) != "island":
+                    pocket = (w2 - inset) - (y[k] + bhalf) if c["closure_side"] == "L" else (y[k] - bhalf) - (-(w2 - inset))
+                    if pocket < pocket_min - 1e-6:
+                        fails.append(f"clear {lid}: v{k} the closed-off pocket behind the closure is {pocket:.2f} m "
+                                     f"(< {pocket_min} m) — declare that stretch whole street")
+                        break
+                if half_auth[k] > 0:
+                    if c["closure_side"] == "L":     # cw: closure on the island's right (race-side) face
+                        clear_isl = -half_auth[k] - (y[k] + bhalf)
+                    else:
+                        clear_isl = (y[k] - bhalf) - half_auth[k]
+                    if clear_isl < ISLAND_CLEAR_M - 1e-3:
+                        fails.append(f"islands {lid}: v{k} the closure footprint is {clear_isl:+.3f} m off the AUTHORED "
+                                     f"island (< {ISLAND_CLEAR_M} m, or on the wrong side of a nose)")
+                        break
+
+    # 7. mouths
+    for lid, c in corridors.items():
+        for mo in c.get("mouths", []):
+            h = mo["host_vertex"]
+            if mo["policy"] == "sealed_race_strip":
+                if mo["side"] != c["race_side"]:
+                    fails.append(f"mouths {lid}: {mo['connector']} v{h} is on the far side but declared sealed by the race strip")
+                rng = _RC.walk(mo["vertex_from"], mo["vertex_to"], m)
+                if any(not es[k] for k in rng if k < len(es)):
+                    fails.append(f"mouths {lid}: {mo['connector']} v{h}: the race-side strip is gapped across the mouth")
+            elif mo["policy"] == "behind_closure":
+                if c["closure_y_by_vertex"][h] is None or c["zone_by_vertex"][h] not in ("closure", "island"):
+                    fails.append(f"mouths {lid}: {mo['connector']} v{h} is declared behind the closure but no closure "
+                                 f"stands there")
+            elif mo["policy"] == "sealed_far_strip":
+                if mo["side"] == c["race_side"] or c["zone_by_vertex"][h] not in ("whole", "box", "pin"):
+                    fails.append(f"mouths {lid}: {mo['connector']} v{h} far-strip policy outside a whole/box zone")
+            else:
+                fails.append(f"mouths {lid}: {mo['connector']} v{h} unknown policy {mo['policy']!r}")
+
+    # 8. spawns: every grid and pit slot clear of both lane faces
+    for z in out.get("no_gap_zones") or []:
+        lid = str(z["layout"])
+        c = corridors.get(lid)
+        off = float(z.get("offset_right_m", 0.0))
+        reverse = bool(z.get("reverse"))
+        for k in _RC.walk(int(z["i"]), int(z["j"]), m):
+            if c is not None:
+                lo_, hi_ = c["lane_by_vertex"][k]
+            else:
+                face = widths[k] / 2.0 - inset
+                lo_, hi_ = -face, face
+            r_lo, r_hi = (lo_, hi_) if reverse else (-hi_, -lo_)
+            outer = off + GRID_STAGGER_M + CAR_HALF_W_M
+            inner = off - GRID_STAGGER_M - CAR_HALF_W_M
+            cl_out, cl_in = r_hi - outer, inner - r_lo
+            z.setdefault("grid_clearance_m", round(min(cl_out, cl_in), 2))
+            z["grid_clearance_m"] = round(min(z["grid_clearance_m"], cl_out, cl_in), 2)
+            if min(cl_out, cl_in) < GRID_CLEAR_MIN_M:
+                fails.append(f"spawns {lid}: at v{k} a grid / pit car stands {min(cl_out, cl_in):+.2f} m off a corridor "
+                             f"face (< {GRID_CLEAR_MIN_M})")
+                break
+
+    # 9. kerbs
+    kerbs = out.get("kerbs") or []
+    if len(kerbs) != 2 * len(ctx["corners"]) or len(kerbs) != 10:
+        fails.append(f"kerbs: {len(kerbs)} declared — expected exactly 10 (outside + inside at the five corners)")
+    for kb in kerbs:
+        for k in _RC.walk(int(kb["i"]), int(kb["j"]), m):
+            g, by = _kerb_clear(widths, k, kb["side"], corridors, inset, bhalf)
+            if g < KERB_CLOSURE_CLEAR_M - 1e-3:
+                fails.append(f"kerbs: the {kb['kind']} kerb at v{kb['apex']} stands {g:+.3f} m off {by}'s closure at v{k} "
+                             f"(< {KERB_CLOSURE_CLEAR_M} m)")
+                break
+    return fails
+
+
+def _summary(out, corridors, kerbs, edge_corners, corners, island_w, planned):
+    lays = {}
+    for lid, c in corridors.items():
+        y = c["closure_y_by_vertex"]
+        isl_len = clos_len = 0.0
+        clears = []
+        below_m = 0.0
+        for r in c["runs"]:
+            clos_len += r["length_m"]
+        m = len(y) - 1
+        for r in c["runs"]:
+            clears.append(r["clear_min_m"])
+        lane = c["lane_by_vertex"]
+        zn = c["zone_by_vertex"]
+        pts_isl = sum(1 for z in zn[:m] if z == "island")
+        st_ = out.get("_st") or []
+        isl_m = sum(st_[k + 1] - st_[k] for k in range(m) if zn[k] == "island" and zn[(k + 1) % m] == "island") if st_ else None
+        lays[lid] = {
+            "token": c["token"], "closure_runs": len(c["runs"]), "closure_m": round(clos_len, 1),
+            "island_vertices": pts_isl, "island_m": round(isl_m, 1) if isl_m is not None else None,
+            "clear_min_m": round(min(clears), 3) if clears else None,
+            "clear_median_m": round(_median([lane[k][1] - lane[k][0] for k in range(m) if zn[k] in ("closure", "island")]), 3)
+            if any(z in ("closure", "island") for z in zn) else None,
+            "pin_rates": [[r["travel_from"], r["max_rate"]["pin_in"]] for r in c["runs"]] +
+                         [[r["travel_to"], r["max_rate"]["pin_out"]] for r in c["runs"]],
+            "below_floor_vertices": sum(abs(b - a) + 1 for r in c["runs"] for a, b, _w in r["below_floor"]),
+            "min_radius_m": min((r["min_radius_m"] for r in c["runs"] if r["min_radius_m"]), default=None),
+            "probes": len(c["no_route"]["forbidden_probes"]),
+            "planned_no_route": planned.get(lid, c["no_route"].get("planned")),
+        }
+    mirror = mirror_run = None
+    ids = sorted(corridors)
+    if len(ids) == 2:
+        a, b = corridors[ids[0]], corridors[ids[1]]
+        if a["closure_side"] != b["closure_side"]:
+            # running vertices: off the pin zones and >= MIRROR_TRANSITION_M from every island / opening end — the
+            # 1:12 convergences come BEFORE each island in each layout's own travel, so they differ by design there
+            st_ = out.get("_st") or []
+            ends = [e_ for z_ in (out["zones"]["island_zones"] + out["zones"]["openings"]) for e_ in z_]
+            ds, dr = [], []
+            for v, (ya, yb, za, zb) in enumerate(zip(a["closure_y_by_vertex"], b["closure_y_by_vertex"],
+                                                     a["zone_by_vertex"], b["zone_by_vertex"])):
+                if ya is None or yb is None or za not in ("closure", "island") or zb not in ("closure", "island"):
+                    continue
+                ds.append(abs(ya + yb))
+                near_end = st_ and any(abs(st_[v] - st_[e_]) < MIRROR_TRANSITION_M for e_ in ends)
+                near_pin = st_ and any(abs(st_[v] - st_[p_]) <= float(out["params"]["corridor"]["pin_zone_m"])
+                                       for p_ in a.get("pins", []))
+                if not near_end and not near_pin:
+                    dr.append(abs(ya + yb))
+            mirror = round(max(ds), 3) if ds else None
+            mirror_run = round(max(dr), 3) if dr else None
+    return {
+        "layouts": lays,
+        "mirror_max_m": mirror,
+        "mirror_running_max_m": mirror_run,
+        "edge_verts": sum(out["edge_strip_by_vertex"]),
+        "edge_gaps": 0,
+        "edge_corners": len(edge_corners),
+        "kerbs": len(kerbs),
+        "kerb_clips": [{"apex": k["apex"], "side": k["side"], "kind": k["kind"], "from": k.get("clipped_from"),
+                        "to": [k["i"], k["j"]], "by": (k.get("clip") or {}).get("by")} for k in kerbs if k.get("clipped_from")],
+        "corners": len(corners),
+        "island_runs": [list(r) for r in _island_runs(island_w)],
+        "nose_vertices": sorted({v for a, b in _island_runs(island_w) for v in (a, b)}),
+    }
+
+
+def _report(proj, out, fails):
+    s = out["summary"]
+    print(f"[bands] {proj.name}: v2 corridors for {sorted(out['corridors'])}; strips on {s['edge_verts']}/{out['n']} "
+          f"verts (closed loops, {s['edge_corners']} trimmed corners); {s['kerbs']} kerbs at {s['corners']} corners; "
+          f"{len(out['closed_mouths'])} sealed mouths; clear width {out['params']['corridor']['clear_width_m']} m "
+          f"(measured {out['params']['corridor']['clear_width_measured_m']})")
+    z = out["zones"]
+    print(f"[bands]   whole v{z['whole'][0]}->v{z['whole'][1]}; boxes {[(b['i'], b['j']) for b in z['boxes']]}; "
+          f"closure runs {z['closure_runs']}; openings {z['openings']}")
+    for lid, c in out["corridors"].items():
+        L = s["layouts"][lid]
+        print(f"[bands]   {lid} (token {c['token']}, race side {c['race_side']}): {L['closure_runs']} runs, "
+              f"{L['closure_m']:.0f} m of closure, clear min {L['clear_min_m']} / median {L['clear_median_m']} m, "
+              f"min radius {L['min_radius_m']} m, {L['probes']} forbidden probes")
+        for r in c["runs"]:
+            mr = r["max_rate"]
+            print(f"[bands]     v{r['travel_from']}->v{r['travel_to']} {r['street']:<22} {r['length_m']:7.1f} m  "
+                  f"pins 1:{mr['pin_in']} / 1:{mr['pin_out']}  toward 1:{mr['toward']} away 1:{mr['away']}  "
+                  f"clear {r['clear_min_m']:.2f} / {r['clear_median_m']:.2f}  below floor "
+                  f"{[(a, b, w) for a, b, w in r['below_floor']][:4]}")
+        pl = c["no_route"].get("planned")
+        if isinstance(pl, dict):
+            print(f"[bands]     planned no_route: {'FAIL' if pl['fail'] else 'PASS'} — leak {pl['leak_m2']} m2, "
+                  f"{pl['door_clusters']} doors, reached {pl['reached_m2']} m2 ({pl['seconds']} s)")
+    if s.get("mirror_max_m") is not None:
+        print(f"[bands]   mirror: max |y_cw + y_acw| {s['mirror_running_max_m']} m on the running vertices "
+              f"({s['mirror_max_m']} m incl. the convergences, which lead each island in each layout's own travel)")
+    for k in out["kerbs"]:
         print(f"[bands]   kerb apex v{k['apex']} {k['kind']:7} side {k['side']} v{k['i']}-v{k['j']}"
-              f"{' (wraps)' if k['wraps'] else ''} R {k['R_apex_m']} D {k['D_deg']}")
-    for c in edge_corners:
-        print(f"[bands]   edge corner {c['side']} {c['kind']:6} v{c['in_vertex']}->v{c['out_vertex']} at "
-              f"({c['xz'][0]:.2f}, {c['xz'][1]:.2f}) turn {c['turn_deg']:+.1f} deg, mitre {c['mitre']}, "
-              f"{len(c['removed'])} vertices trimmed{(', extension ' + str(c['extension_m']) + ' m') if c['kind'] == 'extend' else ''}")
-    for z in no_gap:
-        print(f"[bands]   no-gap zone {z['layout']}: v{z['i']}-v{z['j']} grid clearance {z['grid_clearance_m']:+.2f} m")
-    print(f"[bands] wrote {out_path}")
+              f"{' (wraps)' if k['wraps'] else ''}{' clipped from ' + str(k['clipped_from']) if k.get('clipped_from') else ''}")
+    for c in out["edge_corners"]:
+        print(f"[bands]   edge corner {c['side']} {c['kind']:6} v{c['in_vertex']}->v{c['out_vertex']} "
+              f"{len(c['removed'])} vertices trimmed")
+    if out.get("_path"):
+        print(f"[bands] wrote {out['_path']}")
     if fails:
         print("[bands] FAIL:")
         for f in fails:
             print("   -", f)
-    return out
 
 
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
     if not argv:
-        raise SystemExit("usage: python tools/barrier_bands.py <project-dir> [--out <name.json>]")
+        raise SystemExit("usage: python tools/barrier_bands.py <project-dir> [--out <name.json>] [--config <cfg>] "
+                         "[--no-planned-route]")
     out_name = None
     config_path = None
+    planned = True
     if "--out" in argv:
         k = argv.index("--out")
         out_name = Path(argv[k + 1]).name
@@ -563,7 +1138,10 @@ def main(argv=None):
         k = argv.index("--config")
         config_path = argv[k + 1]
         del argv[k:k + 2]
-    out = build(argv[0], out_name, config_path)
+    if "--no-planned-route" in argv:
+        argv.remove("--no-planned-route")
+        planned = False
+    out = build(argv[0], out_name, config_path, planned_no_route=planned)
     return 1 if out["fails"] else 0
 
 

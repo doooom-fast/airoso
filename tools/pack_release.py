@@ -94,12 +94,14 @@ def disable_treefx(ini: Path) -> None:
 
 
 def strip_race_layouts(folder: Path, cfg_path: Path = TRACK_DIR / "track.config.json") -> list[str]:
-    """CC0 variant: drop the race layouts and the race-furniture kn5. The K-rail pack the strips sweep
-    (assets/models/concrete_barrier_4m.obj + its two PNGs) has an UNRECORDED licence
-    (assets/licenses.json, ledger 0047 Q10), so san_diego_lake_murray_race.kn5, every
-    models_<id>.ini / ui/<id>/ / <id>/ / <slug>__<id>.kn5 of a layout with race_furniture: true leave
-    the public package; the street layout stays. Returns the relative paths removed. Refuses to leave
-    the folder without a layout."""
+    """CC0 variant: drop the race layouts and every race-furniture kn5. The K-rail pack the strips and
+    closures sweep (assets/models/concrete_barrier_4m.obj + its two PNGs) has an UNRECORDED licence
+    (assets/licenses.json, ledger 0047 Q10; ledger 0049's default keeps it that way), so
+    san_diego_lake_murray_race.kn5, EVERY san_diego_lake_murray_closure_*.kn5 (ledger 0049: one per race
+    direction — matched by name, so a closure of a layout no longer declared goes too), and every
+    models_<id>.ini / ui/<id>/ / <id>/ / <slug>__<id>.kn5 of a layout with race_furniture: true leave the
+    public package; the street layout stays. Returns the relative paths removed. Refuses to leave the
+    folder without a layout."""
     layouts = json.loads(cfg_path.read_text(encoding="utf-8")).get("layouts", []) or []
     race_ids = [str(lo["id"]) for lo in layouts if isinstance(lo, dict) and lo.get("race_furniture")]
     keep_ids = [str(lo["id"]) for lo in layouts if isinstance(lo, dict) and not lo.get("race_furniture")]
@@ -115,6 +117,8 @@ def strip_race_layouts(folder: Path, cfg_path: Path = TRACK_DIR / "track.config.
         removed.append(str(p.relative_to(folder)).replace("\\", "/"))
 
     _rm(folder / f"{SLUG}_race.kn5")
+    for p in sorted(folder.glob(f"{SLUG}_closure_*.kn5")):
+        _rm(p)
     for lid in race_ids:
         for rel in (f"models_{lid}.ini", f"ui/{lid}", lid, f"{SLUG}__{lid}.kn5"):
             _rm(folder / rel)

@@ -1,10 +1,13 @@
-"""tools/verify_race.py — the authored race furniture vs its declaration (ledger 0047).
+"""tools/verify_race.py — the authored race furniture vs its declaration (ledgers 0047 + 0049).
 
-A synthetic ring loop (200 vertices, R 100 m, 20 m wide) with one median island, one declared
-centre run ending on the island nose, kerb-line strips on both sides gapped at one declared span,
-one outside kerb and one race layout's spawn clearance. The authored file is synthesised from the
-same declaration (ring centres = the vertices / the lip offsets), then mutated one defect at a
-time: each mutation must fail exactly where the gate says it does.
+A synthetic ring (200 vertices, R 100 m, 20 m wide) with a v2 declaration: both curb strips everywhere
+(closed loops, edge_gaps none), race_cw's closure on the forward-left of its lane and race_acw's mirror, each
+in two runs pinned on the far curb strip (v40-v90, v110-v190; a box v91-v109 between them), one race kerb
+across the box, one sealed side-street mouth at v150 (behind race_cw's closure, on race_acw's race side) and one
+bridge span. The authored file is built the way tools/author_race_furniture_blend.py writes it, from
+tools/race_furniture's own plans (ring centres seated flat), then mutated one defect at a time: each mutation
+must fail exactly where the gate says it does (C', D, E, J, K, L, M, N with a passing and a failing case; F, G,
+H, I kept from ledger 0047).
 """
 from __future__ import annotations
 
@@ -16,331 +19,360 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools"))
+import race_furniture as rf  # noqa: E402
 import verify_race as vr  # noqa: E402
 
 N = 200
 R = 100.0
 W = 20.0
-ISLAND = range(50, 61)          # island_w > 0 here; nose vertex 61 is the chain's end
-CENTRE_RUN = (61, 100)
-GAP = range(120, 131)           # edge strips absent here (a declared bridge span)
-KERB = (150, "outside")
+RUNS = ((40, 90), (110, 190))
+FAR = W / 2.0 - 0.485
+MOUTH = 150                       # a sealed mouth on the forward-LEFT curb
+SPAN = (60, 64)                   # a declared bridge span (vertices)
+WIDTHS = [W] * (N + 1)
 
 
 def _pts():
-    pts = []
-    for k in range(N):
-        a = 2 * math.pi * k / N
-        pts.append((R * math.cos(a), 5.0, R * math.sin(a)))
-    pts.append(pts[0])
-    return pts
+    pts = [(R * math.cos(2 * math.pi * k / N), 5.0, R * math.sin(2 * math.pi * k / N)) for k in range(N)]
+    return pts + [pts[0]]
 
 
 def _bands():
-    es = [0.0 if k in GAP else 0.82 for k in range(N + 1)]
-    cw = [0.67 if CENTRE_RUN[0] <= k <= CENTRE_RUN[1] else 0.0 for k in range(N + 1)]
-    return {
-        "params": {"edge_mode": "road", "barrier_height_m": 1.2},
-        "centre_w_by_vertex": cw, "edge_strip_by_vertex": es, "edge_inset_by_vertex": es,
-        "runs": [{"kind": "centre", "i": CENTRE_RUN[0], "j": CENTRE_RUN[1]}],
-        "streets": [{"street": "Alvarado Road", "vertex_from": 0, "vertex_to": 19}],
-        "corners": [{"apex": 150, "PC": 145, "PT": 155, "D_deg": -60.0}],
-        "kerbs": [{"apex": 150, "side": "L", "kind": "outside", "i": 140, "j": 160}],
-        "summary": {"nose_vertices": [61]},
-    }
-
-
-def _lip(pts, k, side):
-    """ring centre on the kerb-line strip: lateral (w/2 - 0.485) left (+) or right (-) of travel"""
-    m = N
-    a, b = pts[(k - 1) % m], pts[(k + 1) % m]
-    tx, tz = b[0] - a[0], b[2] - a[2]
-    L = math.hypot(tx, tz) or 1.0
-    nx, nz = -tz / L, tx / L               # left normal (-tz, tx)
-    s = 1.0 if side == "L" else -1.0
-    off = W / 2 - 0.485
-    p = pts[k]
-    return [round(p[0] + s * off * nx, 3), p[1], round(p[2] + s * off * nz, 3)]
-
-
-def _edge_obj(pts, side, ks, ends, part=0, fold=0):
-    name = f"1WALL_race_edge_{side}_t_{ks[0]}_{part}"
-    return ({"name": name, "kind": "edge", "side": side, "run": [ks[0], ks[-1]], "part": part, "rings": len(ks),
-             "seated": {"hit": len(ks), "near": 0, "interpolated": 0}, "seat_gap_max_m": 0.0, "ends": ends,
-             "caps": [ends[0] == "free", ends[1] == "free"], "fold_skipped_run": fold,
-             "positions": 10 * len(ks), "faces": 9 * len(ks), "loops": 36 * len(ks)},
-            [_lip(pts, k, side) for k in ks])
-
-
-def _frame(c):
-    """the ring frame (tangent of forward travel, lateral scale 1) of a ring centre on the synthetic ring:
-    anticlockwise travel, so the tangent at polar angle a is (-sin a, cos a)"""
-    a = math.atan2(c[2], c[0])
-    return [round(-math.sin(a), 5), round(math.cos(a), 5), 1.0]
-
-
-def _authored(pts):
-    objs, centres = [], {}
-    ks = list(range(CENTRE_RUN[0], CENTRE_RUN[1] + 1))
-    chain = {"name": "1WALL_race_kbar_t_61_0", "kind": "chain", "side": "C", "street": "t", "run": list(CENTRE_RUN),
-             "part": 0, "rings": len(ks), "seated": {"hit": len(ks), "near": 0, "interpolated": 0},
-             "seat_gap_max_m": 0.0, "ends": ["nose", "free"], "caps": [True, True], "fold_skipped_run": 0,
-             "positions": 10 * len(ks), "faces": 9 * len(ks), "loops": 36 * len(ks)}
-    objs.append(chain)
-    centres[chain["name"]] = [list(pts[k]) for k in ks]
-    for side in ("L", "R"):
-        # two objects per side: B wraps the seam (131..199 + 0) and A (0..119) starts on B's last ring
-        b_ks = list(range(131, 200)) + [0]
-        a_ks = list(range(0, 120))
-        ob, cb = _edge_obj(pts, side, b_ks, ["free", "join"])
-        oa, ca = _edge_obj(pts, side, a_ks, ["join", "free"])
-        objs += [ob, oa]
-        centres[ob["name"]] = cb
-        centres[oa["name"]] = ca
-    kerb = {"name": "1KERB_race_150_out", "kind": "kerb", "side": "L", "sub": "out", "apex": 150, "run": [140, 160],
-            "stations": 60, "length_m": 20.0, "fold_skipped": 0, "seated": {"hit": 60, "near": 0, "interpolated": 0},
-            "seat_gap_max_m": 0.0, "positions": 240, "faces": 180, "loops": 720}
-    objs.append(kerb)
-    centres[kerb["name"]] = [_lip(pts, k, "L") for k in range(140, 161)]
-    return {
-        "standin_bands": False, "edge_mode": "road", "barrier_height_m": 1.2,
-        "race_prefixes": ["1WALL_RACE", "1KERB_RACE"], "max_rings_per_object": 800,
-        "totals": {"objects": len(objs), "rings": sum(o.get("rings", 0) for o in objs), "kerb_stations": 60,
-                   "seated_interpolated": 0, "deck_vs_data_max_m": 0.02, "other_deck_above_max_m": 0.0},
-        "corners": [{"apex_vertex": 150}], "kerbs_declared_unmatched": [], "failed_runs": [],
-        "spawn_clearance": {"race_cw": {"hard": [], "notes": [], "synthesised": False}},
-        "other_deck_above": [], "objects": objs, "ring_centres": centres,
-        "ring_frames": {n: [_frame(c) for c in cs] for n, cs in centres.items()},
-    }
-
-
-def _island_w():
-    return [6.0 if k in ISLAND else 0.0 for k in range(N + 1)]
-
-
-def _run(authored, bands=None, **kw):
+    m, half = N, W / 2.0
+    st = rf.stations(_pts())
+    pins = {v for r in RUNS for v in r}
+    zone = ["pin" if k in pins else "closure" if any(i < k < j for i, j in RUNS) else "box" if 90 < k < 110 else "whole"
+            for k in range(m)] + ["whole"]
+    cors = {}
+    for lid, tok, direction, sgn in (("race_cw", "cw", "forward", 1.0), ("race_acw", "acw", "reverse", -1.0)):
+        y = [None] * m
+        for i, j in RUNS:
+            for q, k in enumerate(range(i, j + 1)):
+                f = min(1.0, min(q, j - i - q) / 8.0)
+                y[k] = round(sgn * (FAR + (2.0 - FAR) * f), 6)
+        y.append(y[0])
+        lane = [([-(half - 0.82), y[k] - 0.335] if sgn > 0 else [y[k] + 0.335, half - 0.82])
+                if (y[k] is not None and zone[k] == "closure") else [-(half - 0.82), half - 0.82] for k in range(m + 1)]
+        far = "edge_L" if sgn > 0 else "edge_R"
+        cors[lid] = {"token": tok, "direction": direction, "race_side": "R" if sgn > 0 else "L",
+                     "closure_side": "L" if sgn > 0 else "R", "zone_by_vertex": zone, "closure_y_by_vertex": y,
+                     "lane_by_vertex": lane,
+                     "runs": [{"i": a, "j": b, "ends": [{"vertex": i, "y": y[i], "joins": far}, {"vertex": j, "y": y[j], "joins": far}]}
+                              for i, j in RUNS for a, b in ((i, j) if sgn > 0 else (j, i),)],
+                     "mouths": [{"host_vertex": MOUTH, "side": "L",
+                                 "policy": "behind_closure" if sgn > 0 else "sealed_race_strip"}]}
     pts = _pts()
-    return vr.verify(authored, bands or _bands(), pts, _island_w(), **kw)
+    mouth_line = []
+    for k in range(MOUTH - 2, MOUTH + 3):
+        tx, tz = rf.tangent(pts, k, m)
+        lx, lz = rf.left_normal(tx, tz)
+        mouth_line.append([round(pts[k][0] + lx * FAR, 3), 5.0, round(pts[k][2] + lz * FAR, 3)])
+    return {"version": 2, "params": {"edge_mode": "road", "barrier_height_m": 1.2, "barrier_half_m": 0.335,
+                                     "edge_centre_from_lip_m": -0.485, "kerb_width_m": 1.0},
+            "centre_w_by_vertex": [0.0] * (m + 1), "edge_strip_by_vertex": [1] * (m + 1),
+            "edge_inset_by_vertex": [0.82] * (m + 1), "edge_gaps": [], "runs": [],
+            "streets": [{"street": "Alvarado Road", "vertex_from": 0, "vertex_to": 99},
+                        {"street": "College Avenue", "vertex_from": 100, "vertex_to": 199}],
+            "corners": [], "edge_corners": [], "bridge_spans_m": [[round(st[SPAN[0]], 3), round(st[SPAN[1]], 3)]],
+            "closed_mouths": [{"connector": "side_st", "host_vertex": MOUTH, "side": "L", "vertex_from": MOUTH - 2,
+                               "vertex_to": MOUTH + 2, "polyline_xyz_m": mouth_line}],
+            "kerbs": [], "corridors": cors}
 
 
-def test_consistent_authoring_passes_and_counts():
-    r = _run(_authored(_pts()))
+def _kerb_plan(pts, k0, k1, side="L"):
+    st = rf.stations(pts)
+    sgn = 1.0 if side == "L" else -1.0
+
+    def at(s):
+        k = max(i for i in range(N) if st[i] <= s)
+        u = (s - st[k]) / (st[k + 1] - st[k])
+        return pts[k][0] + (pts[k + 1][0] - pts[k][0]) * u, pts[k][2] + (pts[k + 1][2] - pts[k][2]) * u, k
+    sts, s, q = [], st[k0], 0
+    while s <= st[k1]:
+        x, z, k = at(s)
+        (xa, za, _), (xb, zb, _) = at(s - 1.0), at(s + 1.0)
+        L = math.hypot(xb - xa, zb - za)
+        sts.append({"s": s, "k": k, "cx": x, "cz": z, "y_hint": 5.1, "tx": (xb - xa) / L, "tz": (zb - za) / L,
+                    "lip": sgn * (W / 2.0 - 0.82 - rf.KERB_CLEAR_M - rf.KERB_W), "h": rf.KERB_H, "arc": q * 0.3})
+        s += rf.KERB_STEP_M
+        q += 1
+    return {"kind": "kerb", "apex": (k0 + k1) // 2, "side": side, "sub": "out", "run": [k0, k1], "stations": sts,
+            "apex_station": st[(k0 + k1) // 2], "lap_m": st[-1]}
+
+
+def _authored(pts=None, bands=None):
+    """race_authored.json as the author tool writes it, from race_furniture's own plans (seated flat at y 5)"""
+    pts = pts or _pts()
+    bands = bands or _bands()
+    plans = rf.edge_plans(pts, WIDTHS, bands)
+    closures = [p for lid in ("race_cw", "race_acw") for p in rf.closure_plans(pts, WIDTHS, bands, lid)]
+    kerb = rf.clip_kerbs([_kerb_plan(pts, 80, 120, "L")], closures)[0]
+    kerb["run"] = [kerb["stations"][0]["k"], kerb["stations"][-1]["k"]]
+    bands["kerbs"] = [{"apex": kerb["apex"], "side": "L", "kind": "outside", "i": kerb["run"][0], "j": kerb["run"][1]}]
+    objects, centres, frames = [], {}, {}
+    st = rf.stations(pts)
+    span = bands["bridge_spans_m"][0]
+    bridge = {"hit": 0, "near": 0, "interpolated": 0, "by_span": [{"span_m": span, "hit": 0, "near": 0, "interpolated": 0}]}
+    for p in plans + closures:
+        name = rf.object_name(p)
+        tok = p.get("token") if p["kind"] == "close" else None
+        cs = [[round(x, 2), 5.0, round(z, 2)] for (x, z) in (rf._strip_xz(r) for r in p["rings"])]
+        centres[name] = cs
+        frames[name] = [[round(r["tx"], 5), round(r["tz"], 5), round(r.get("ls", 1.0), 4)] for r in p["rings"]]
+        inside = sum(1 for r in p["rings"] if span[0] <= r["s"] <= span[1])
+        bridge["hit"] += inside
+        bridge["by_span"][0]["hit"] += inside
+        ends = []
+        for idx, cap in enumerate((p["cap_start"], p["cap_end"])):
+            ring = p["rings"][0 if idx == 0 else -1]
+            e = {"vertex": ring["k"], "h": ring["h"], "ls": ring.get("ls", 1.0)}
+            if p["kind"] == "close" and cap:
+                e.update(kind="pin", joins=p["pins"][idx]["joins"], gap_m=0.0)
+            else:
+                e.update(kind="join" if not cap else "free", joins=None, gap_m=0.0)
+            ends.append(e)
+        objects.append({"name": name, "kind": p["kind"], "owner": tok, "layout": p.get("layout"),
+                        "collection": rf.closure_collection(tok) if tok else rf.COMMON_COLLECTION, "side": p["side"],
+                        "street": p["street"], "run": list(p["run"]), "part": p["part"], "rings": len(p["rings"]),
+                        "seated": {"hit": len(p["rings"]), "near": 0, "interpolated": 0}, "seat_gap_max_m": 0.0,
+                        "caps": [p["cap_start"], p["cap_end"]], "end_kinds": [p["start_kind"], p["end_kind"]],
+                        "ends": ends, "fold_skipped_run": 0, "positions": 10 * len(p["rings"]),
+                        "faces": 10 * len(p["rings"]), "loops": 40 * len(p["rings"])})
+    kname = rf.object_name(kerb)
+    centres[kname] = [[round(x, 2), 5.0, round(z, 2)] for (x, z) in (rf.kerb_mid_xz(s, 1.0) for s in kerb["stations"])]
+    frames[kname] = [[round(s["tx"], 5), round(s["tz"], 5), round(s.get("ls", 1.0), 4)] for s in kerb["stations"]]
+    objects.append({"name": kname, "kind": "kerb", "owner": None, "layout": None, "collection": rf.COMMON_COLLECTION,
+                    "side": "L", "sub": "out", "apex": kerb["apex"], "run": kerb["run"], "stations": len(kerb["stations"]),
+                    "clip": {"stations_removed": [0, 0], "by": []}, "seated": {"hit": len(kerb["stations"]), "near": 0, "interpolated": 0},
+                    "seat_gap_max_m": 0.0, "positions": 4 * len(kerb["stations"]), "faces": 3 * len(kerb["stations"]),
+                    "loops": 12 * len(kerb["stations"])})
+    rings = sum(len(p["rings"]) for p in plans + closures)
+    return {"standin_bands": False, "edge_mode": "road", "barrier_height_m": 1.2,
+            "race_prefixes": ["1WALL_RACE", "1KERB_RACE"], "max_rings_per_object": 800,
+            "tokens": {"race_cw": "cw", "race_acw": "acw"},
+            "totals": {"objects": len(objects), "rings": rings, "kerb_stations": len(kerb["stations"]),
+                       "seated_interpolated": 0, "deck_vs_data_max_m": 0.02, "other_deck_above_max_m": 0.0},
+            "corners": [], "kerbs_declared_unmatched": [], "failed_runs": [],
+            "spawn_clearance": {"race_cw": {"hard": [], "notes": [], "synthesised": False}},
+            "bridge_seating": bridge, "other_deck_above": [], "objects": objects, "ring_centres": centres,
+            "ring_frames": frames}
+
+
+def _fixture():
+    b = _bands()
+    a = _authored(_pts(), b)
+    return a, b
+
+
+def _run(authored, bands, **kw):
+    return vr.verify(authored, bands, _pts(), [0.0] * (N + 1), widths=WIDTHS, **kw)
+
+
+def _obj(a, name):
+    return next(o for o in a["objects"] if o["name"] == name)
+
+
+def _has(r, prefix, *subs):
+    return any(f.startswith(prefix) and all(s in f for s in subs) for f in r["fails"])
+
+
+def test_consistent_v2_authoring_passes_and_counts():
+    a, b = _fixture()
+    r = _run(a, b)
     assert r["ok"], r["fails"]
     c = r["counts"]
-    assert c["chain_objects"] == 1 and c["chain_runs"] == 1 and c["edge_objects"] == 4 and c["kerb_objects"] == 1
-    assert c["edge_missing"] == {"L": 0, "R": 0}
-    assert c["edge_declared_vertices"] == N - len(GAP)
+    assert c["edge_objects"] == 4 and c["kerb_objects"] == 1 and c["free_ends"] == 0 and c["pins"] == 8
+    assert c["edge_missing"] == {"L": 0, "R": 0} and c["edge_declared_vertices"] == N
+    for lid in ("race_cw", "race_acw"):
+        row = c["by_layout"][lid]
+        assert row["closure_objects"] == 2 and row["closure_runs"] == 2 and row["closure_off_curve_max_m"] < 0.01, row
+        assert all(p["far_line_m"] is not None and p["far_line_m"] < 0.01 for p in row["pins"]), row["pins"]
+    assert c["pin_gap_max_m"] < 0.01 and c["bridge_seating"]["hit"] > 0
+    assert c["kerb_closure_clear_m"]["1KERB_race_100_out"][0] >= 0.05 and c["kbar_objects"] == 0
 
 
-def test_chain_ring_on_an_island_or_on_alvarado_fails():
-    pts = _pts()
-    a = _authored(pts)
-    a["ring_centres"]["1WALL_race_kbar_t_61_0"][5] = list(pts[55])       # onto the island
-    r = _run(a)
-    assert not r["ok"] and any("median island" in f for f in r["fails"]), r["fails"]
-    a = _authored(pts)
-    a["ring_centres"]["1WALL_race_kbar_t_61_0"][5] = list(pts[10])       # onto Alvarado (also off-band)
-    r = _run(a)
-    assert any("Alvarado" in f for f in r["fails"]) and any("does not declare" in f for f in r["fails"]), r["fails"]
+def test_c_prime_closure_rings_on_the_declared_line_and_pinned():
+    a, b = _fixture()
+    name = "1WALL_race_close_cw_alvarado_40_0"
+    p = a["ring_centres"][name][20]
+    a["ring_centres"][name][20] = [p[0] * 1.003, p[1], p[2] * 1.003]          # ~0.3 m off the line
+    assert _has(_run(a, b), "C': race_cw: 1 closure rings stand more than")
+    a, b = _fixture()
+    a["ring_centres"][name] = a["ring_centres"][name][:-3]                   # stops 3 rings short of its pin
+    a["ring_frames"][name] = a["ring_frames"][name][:-3]
+    r = _run(a, b)
+    assert _has(r, "C': " + name, "last ring", "off the declared far curb-strip line"), r["fails"]
+    a, b = _fixture()
+    b["corridors"]["race_acw"]["zone_by_vertex"][60] = "box"                  # the declaration puts a closure in a box
+    assert _has(_run(a, b), "C': race_acw: the declaration puts closure vertices in a BOX")
+    a, b = _fixture()
+    a["objects"] = [o for o in a["objects"] if o["name"] != "1WALL_race_close_acw_college_110_0"]
+    assert _has(_run(a, b), "C': race_acw: declared closure run v110-v190 has no closure object")
 
 
-def test_chain_run_end_off_the_declared_vertex_fails():
-    pts = _pts()
-    a = _authored(pts)
-    a["ring_centres"]["1WALL_race_kbar_t_61_0"] = a["ring_centres"]["1WALL_race_kbar_t_61_0"][:-3]   # ends 3 verts short
-    r = _run(a)
-    assert any("ends" in f and "declared end vertices" in f for f in r["fails"]), r["fails"]
-
-
-def test_missing_edge_rings_need_the_declarations_trim_not_the_authors_count():
-    """D (2026-10-11): a declared edge vertex without a ring passes only when barrier_bands.json edge_corners
-    trims it — a SET check. It used to be a COUNT against the author's own fold_skipped_run, which passed the
-    rehearsal's 23 missing vertices against 27 self-reported drops that were not the same vertices."""
-    pts = _pts()
-    a = _authored(pts)
-    name = "1WALL_race_edge_R_t_0_0"
+def test_d_every_vertex_both_sides_bridges_included():
+    a, b = _fixture()
+    name = "1WALL_race_edge_L_alvarado_0_0"
     cs = a["ring_centres"][name]
-    a["ring_centres"][name] = cs[:100]                          # rings 100..119 gone, end still 'free' -> hole
-    a["ring_frames"][name] = a["ring_frames"][name][:100]
-    r = _run(a)
-    assert any(f.startswith("D: edge R") and "without a ring" in f for f in r["fails"]), r["fails"]
-    assert any("free end" in f and "not at a declared gap" in f for f in r["fails"]), r["fails"]
-    # the author reporting those rings as fold-dropped no longer excuses them
-    for o in a["objects"]:
-        if o["name"] == name:
-            o["fold_skipped_run"] = 20
-            o["ends"] = ["join", "join"]            # ...and a join that nothing meets is still a miss
-    r = _run(a)
-    assert any("no declared edge corner trims" in f for f in r["fails"]), r["fails"]
-    assert any("no same-side object meets it" in f for f in r["fails"]), r["fails"]
-    # the declaration trimming exactly those vertices accepts them — and wants its corner BUILT
-    b = _bands()
-    b["edge_corners"] = [{"side": "R", "in_vertex": 99, "out_vertex": 120, "removed": list(range(100, 120)),
-                          "xz": [cs[99][0], cs[99][2]]}]
+    k_of = [vr.VertexGrid(_pts()[:N]).nearest(c[0], c[2]) for c in cs]
+    keep = [i for i, k in enumerate(k_of) if not (SPAN[0] <= k <= SPAN[1])]  # the strip lifted off the bridge
+    a["ring_centres"][name] = [cs[i] for i in keep]
+    a["ring_frames"][name] = [a["ring_frames"][name][i] for i in keep]
     r = _run(a, b)
-    assert not any("without a ring" in f for f in r["fails"]), r["fails"]
-    assert not any("declared but not built" in f for f in r["fails"]), r["fails"]
-    b["edge_corners"][0]["xz"] = [cs[99][0] + 0.5, cs[99][2]]
+    assert _has(r, "D: edge L", "without a ring", "bridge spans included"), r["fails"]
+    # a declared trim excuses exactly those vertices (a SET check)
+    b["edge_corners"] = [{"side": "L", "in_vertex": SPAN[0] - 1, "out_vertex": SPAN[1] + 1,
+                          "removed": list(range(SPAN[0], SPAN[1] + 1)), "xz": cs[keep[SPAN[0] - 1]][::2]}]
+    assert not _has(_run(a, b), "D: edge L", "without a ring")
+
+
+def test_e_kerbs_declared_and_clear_of_every_closure():
+    a, b = _fixture()
+    assert _run(a, b)["ok"]
+    b["kerbs"][0]["i"] -= 3                                                   # the declaration's i/j moved
+    assert _has(_run(a, b), "E: 1KERB_race_100_out: authored run")
+    a, b = _fixture()
+    kn = "1KERB_race_100_out"
+    # slide the kerb back over race_cw's pin at v90: its footprint now crosses the closure funnel
+    pts = _pts()
+    over = rf.clip_kerbs([_kerb_plan(pts, 86, 100, "L")], [])[0]
+    a["ring_centres"][kn] = [[round(x, 2), 5.0, round(z, 2)] for (x, z) in (rf.kerb_mid_xz(s, 1.0) for s in over["stations"])]
+    a["ring_frames"][kn] = [[s["tx"], s["tz"], 1.0] for s in over["stations"]]
     r = _run(a, b)
-    assert any("declared but not built" in f for f in r["fails"]), r["fails"]
-    # ...on that side only: the same trim declared on L does not cover R's hole
-    b["edge_corners"][0].update(side="L", xz=[cs[99][0], cs[99][2]])
-    assert any(f.startswith("D: edge R") and "without a ring" in f for f in _run(a, b)["fails"])
+    assert _has(r, "E: " + kn, "race_cw's authored closure", "a kerb under a wall"), r["fails"]
+    a, b = _fixture()
+    _obj(a, kn)["sub"] = "in"
+    assert _has(_run(a, b), "E: declared kerbs")
 
 
-def _trimmed_corner(pts, k0=40, k1=44, side="R"):
-    """the authored file + bands with a strip TRIMMED between vertices k0 and k1 on `side`: the legs' tangent
-    lines meet at X (0.22 m outside the 109.5 m arc), rings k0 -> fill -> X (mitred) -> fill -> k1"""
-    a = _authored(pts)
-    name = f"1WALL_race_edge_{side}_t_0_0"
-    cs, fr = a["ring_centres"][name], a["ring_frames"][name]
-    A, B = cs[k0], cs[k1]
-    ta, tb = fr[k0], fr[k1]
-    d = ta[0] * (-tb[1]) - ta[1] * (-tb[0])                   # X = A + t ta = B - u tb
-    t = ((B[0] - A[0]) * (-tb[1]) - (B[2] - A[2]) * (-tb[0])) / d
-    X = [A[0] + t * ta[0], A[1], A[2] + t * ta[1]]
-    bis = [ta[0] + tb[0], ta[1] + tb[1]]
-    L = math.hypot(*bis)
-    bis = [bis[0] / L, bis[1] / L]
-    ls = 1.0 / (bis[0] * ta[0] + bis[1] * ta[1])
-
-    def mid(p, q):
-        return [(p[0] + q[0]) / 2, p[1], (p[2] + q[2]) / 2]
-
-    def chord(p, q):
-        dx, dz = q[0] - p[0], q[2] - p[2]
-        n = math.hypot(dx, dz)
-        return [dx / n, dz / n, 1.0]
-    new_c = [mid(A, X), [round(v, 3) for v in X], mid(X, B)]
-    new_f = [chord(A, X), [bis[0], bis[1], ls], chord(X, B)]
-    a["ring_centres"][name] = cs[:k0 + 1] + new_c + cs[k1:]
-    a["ring_frames"][name] = fr[:k0 + 1] + new_f + fr[k1:]
-    b = _bands()
-    b["edge_corners"] = [{"side": side, "in_vertex": k0, "out_vertex": k1, "removed": list(range(k0 + 1, k1)),
-                          "xz": [round(X[0], 3), round(X[2], 3)]}]
-    return a, b, name
+def test_j_zero_free_ends():
+    a, b = _fixture()
+    o = _obj(a, "1WALL_race_edge_R_college_100_0")
+    o["caps"] = [True, False]
+    o["ends"][0]["kind"] = "free"
+    assert _has(_run(a, b), "J: 1 free strip / closure ends")
+    a, b = _fixture()
+    name = "1WALL_race_edge_R_college_100_0"
+    a["ring_centres"][name] = a["ring_centres"][name][2:]                     # its start no longer meets the loop
+    a["ring_frames"][name] = a["ring_frames"][name][2:]
+    assert _has(_run(a, b), "J: " + name, "`join` but no neighbour")
+    a, b = _fixture()
+    name = "1WALL_race_close_cw_college_110_0"
+    c0 = a["ring_centres"][name][0]
+    a["ring_centres"][name][0] = [c0[0] * 0.997, c0[1], c0[2] * 0.997]        # the pin ring 0.3 m inward
+    assert _has(_run(a, b), "J: " + name, "pinned start stands", "off the authored edge_L strip")
+    a, b = _fixture()
+    _obj(a, name)["ends"][1]["h"] = 0.3                                       # a tapered closure end
+    assert _has(_run(a, b), "J: " + name, "not full height")
 
 
-def test_a_declared_trimmed_corner_is_measured_on_its_polyline():
-    """H across a declared edge corner follows in_vertex -> X -> out_vertex (not the offset curve), so the
-    trimmed strip measures ON it: no fold span, nothing unmeasured; without the declaration the same strip
-    chords the offset curve and H fails"""
-    pts = _pts()
-    widths = [W] * (N + 1)
-    a, b, name = _trimmed_corner(pts)
-    r = vr.verify(a, b, pts, _island_w(), widths=widths)
-    assert r["ok"], r["fails"]
-    c = r["counts"]
-    assert c["chord_spans_fold"] == 0 and c["chord_spans_unmeasured"] == 0 and c["chord_max_m"] < 0.02, c["chord_worst"]
-    assert c["inside_out_spans"] == 0 and c["edge_corners"][0]["nearest_ring_m"] < 0.01
-    r = vr.verify(a, _bands(), pts, _island_w(), widths=widths)
-    assert any(f.startswith("H: ") for f in r["fails"]), r["fails"]
+def test_k_ownership_tokens_and_collections():
+    a, b = _fixture()
+    name = "1WALL_race_close_acw_alvarado_40_0"
+    o = _obj(a, name)
+    o["collection"] = "RACE"                                                  # a closure in the common collection
+    assert _has(_run(a, b), "K: " + name, "not RACE_CLOSE_ACW")
+    a, b = _fixture()
+    _obj(a, name)["owner"] = "cw"
+    assert _has(_run(a, b), "K: " + name, "record owner")
+    a, b = _fixture()
+    new = name.replace("_acw_", "_xx_")
+    a["ring_centres"][new] = a["ring_centres"].pop(name)
+    a["ring_frames"][new] = a["ring_frames"].pop(name)
+    _obj(a, name)["name"] = new
+    assert _has(_run(a, b), "K: " + new, "not declared")
+    a, b = _fixture()
+    _obj(a, "1WALL_race_edge_L_alvarado_0_0")["owner"] = "cw"
+    assert _has(_run(a, b), "K: 1WALL_race_edge_L_alvarado_0_0", "common furniture records an owner")
+    a, b = _fixture()
+    a["objects"].append(dict(_obj(a, "1WALL_race_edge_L_alvarado_0_0"), name="1WALL_racecol_0", kind="collider"))
+    a["ring_centres"]["1WALL_racecol_0"] = [[0, 0, 0], [1, 0, 0]]
+    assert _has(_run(a, b), "K: 1WALL_racecol_0", "no known kind")
 
 
-def test_inside_out_spans_fail():
-    """I (2026-10-11): a profile column running backwards between two rings is a span of the swept solid
-    turned inside-out — FAIL; so is an object whose frames cannot be matched to its rings"""
-    pts = _pts()
-    a = _authored(pts)
-    assert _run(a)["counts"]["inside_out_spans"] == 0
-    name = "1WALL_race_edge_L_t_0_0"
-    f = a["ring_frames"][name][50]
-    a["ring_frames"][name][50] = [-f[0], -f[1], f[2]]          # one ring's profile turned round
-    r = _run(a)
-    assert r["counts"]["inside_out_spans"] == 2 and any(x.startswith("I: 2 inside-out spans") for x in r["fails"]), r["fails"]
-    a = _authored(pts)
-    c = a["ring_centres"][name]
-    t = a["ring_frames"][name][60]
-    c[60] = [c[59][0] - 0.5 * t[0], c[59][1], c[59][2] - 0.5 * t[1]]     # a ring stepped 0.5 m BACK past its predecessor
-    r = _run(a)
-    assert r["counts"]["inside_out_spans"] >= 1 and name in r["counts"]["inside_out_by_object"], r["counts"]
-    # the mitred corner of a trimmed fold is NOT inside-out (the legs clear the mitre)
-    a, b, _ = _trimmed_corner(pts)
-    assert _run(a, b)["counts"]["inside_out_spans"] == 0
-    a = _authored(pts)
-    del a["ring_frames"][name]
-    assert any(x.startswith("I: 1 objects carry no ring_frames") for x in _run(a)["fails"])
-    # a kerb is measured about its mid-line (+-kerb_width / 2)
-    a = _authored(pts)
-    kf = a["ring_frames"]["1KERB_race_150_out"]
-    kf[5] = [-kf[5][0], -kf[5][1], 1.0]
-    assert "1KERB_race_150_out" in _run(a)["counts"]["inside_out_by_object"]
+def test_l_nothing_interpolated_on_a_bridge():
+    a, b = _fixture()
+    a["bridge_seating"]["interpolated"] = 2
+    assert _has(_run(a, b), "L: 2 rings inside the declared bridge spans")
+    a, b = _fixture()
+    a["bridge_seating"]["by_span"][0].update(hit=0, near=0)
+    assert _has(_run(a, b), "L: no strip ring seated on the declared bridge span")
+    a, b = _fixture()
+    del a["bridge_seating"]
+    assert _has(_run(a, b), "L: race_authored.json carries no bridge_seating")
+    b["bridge_spans_m"] = []                                                  # no bridge declared: nothing to measure
+    assert not _has(_run(a, b), "L:")
 
 
-def test_edge_ring_inside_a_declared_gap_fails():
-    pts = _pts()
-    a = _authored(pts)
-    a["ring_centres"]["1WALL_race_edge_L_t_0_0"].append(_lip(pts, 125, "L"))    # inside the span
-    r = _run(a)
-    assert any("inside a declared gap" in f for f in r["fails"]), r["fails"]
+def test_m_mouths_sealed_by_the_strip_and_behind_the_closure():
+    a, b = _fixture()
+    assert _run(a, b)["counts"]["mouths"][0]["strip_off_m"] < 0.02
+    b["closed_mouths"][0]["polyline_xyz_m"] = [[p[0] * 1.004, p[1], p[2] * 1.004] for p in b["closed_mouths"][0]["polyline_xyz_m"]]
+    assert _has(_run(a, b), "M: mouth side_st at v150 (L)", "the mouth is open")
+    a, b = _fixture()
+    b["corridors"]["race_acw"]["mouths"][0]["policy"] = "behind_closure"     # race_acw's closure is on the other side
+    assert _has(_run(a, b), "M: race_acw: mouth v150 (L)", "lane", "reaches past the closure")
+    a, b = _fixture()
+    b["corridors"]["race_cw"]["mouths"] = []
+    assert _has(_run(a, b), "M: race_cw: mouth at v150 (L) has no declared policy")
+    a, b = _fixture()
+    b["corridors"]["race_cw"]["mouths"][0]["policy"] = "open"
+    assert _has(_run(a, b), "M: race_cw: mouth v150 (L): unknown policy")
+    a, b = _fixture()
+    b["corridors"]["race_cw"]["mouths"][0]["policy"] = "sealed_far_strip"   # the other agent's third policy: the strip
+    assert not _has(_run(a, b), "M:")
 
 
-def test_budgets_and_seating_gate():
-    pts = _pts()
-    a = _authored(pts)
+def test_n_the_centre_chain_is_retired():
+    a, b = _fixture()
+    a["objects"].append(dict(_obj(a, "1WALL_race_edge_L_alvarado_0_0"), name="1WALL_race_kbar_t_61_0", kind="chain"))
+    a["ring_centres"]["1WALL_race_kbar_t_61_0"] = [[0, 0, 0], [1, 0, 0]]
+    assert _has(_run(a, b), "N: 1 centre-chain objects")
+    a, b = _fixture()
+    b["centre_w_by_vertex"][10] = 0.67
+    assert _has(_run(a, b), "N: barrier_bands.json still declares centre_w_by_vertex")
+    a, b = _fixture()
+    b.pop("corridors")
+    assert _has(_run(a, b), "K: barrier_bands.json declares no corridors")
+
+
+def test_budgets_seating_and_provenance():
+    a, b = _fixture()
     a["objects"][0]["seat_gap_max_m"] = 0.2
     a["objects"][1]["rings"] = 901
     a["objects"][2]["loops"] = 50_000
-    a["objects"][3]["name"] = "WALL_strip"      # not RACE-prefixed
-    r = _run(a)
+    r = _run(a, b)
     f = " | ".join(r["fails"])
-    assert "seating gap" in f and "901 rings" in f and "flat render verts" in f and "not RACE-prefixed" in f, f
-
-
-def test_kerb_set_spawn_overlap_and_provenance():
-    pts = _pts()
-    a = _authored(pts)
-    a["objects"][-1]["sub"] = "in"
-    r = _run(a)
-    assert any(f.startswith("E: declared kerbs") for f in r["fails"]), r["fails"]
-    a = _authored(pts)
-    a["spawn_clearance"]["race_cw"]["hard"] = ["AC_START_1 overlaps 1WALL_race_edge_R"]
-    r = _run(a)
-    assert any(f.startswith("F: race_cw: a spawn overlaps") for f in r["fails"]), r["fails"]
-    a = _authored(pts)
+    assert "seating gap" in f and "901 rings" in f and "flat render verts" in f, f
+    a, b = _fixture()
     a["standin_bands"] = True
-    assert not _run(a)["ok"] and _run(a, allow_standin=True)["ok"]
-    a = _authored(pts)
+    assert not _run(a, b)["ok"] and _run(a, b, allow_standin=True)["ok"]
+    a, b = _fixture()
     a["edge_mode"] = "walk"
-    assert any("edge_mode" in f for f in _run(a)["fails"])
-    a = _authored(pts)
-    a["totals"]["seated_interpolated"] = 50        # > 1 % of ~ 419 rings
-    assert any("interpolation" in f for f in _run(a)["fails"])
+    assert any("edge_mode" in x for x in _run(a, b)["fails"])
+    a, b = _fixture()
+    a["totals"]["seated_interpolated"] = 500
+    assert any("interpolation" in x for x in _run(a, b)["fails"])
+    a, b = _fixture()
+    a["spawn_clearance"]["race_cw"]["hard"] = ["AC_START_1 overlaps 1WALL_race_edge_R"]
+    assert _has(_run(a, b), "F: race_cw: a spawn overlaps")
 
 
-def test_ring_density_is_judged_against_the_declared_offset_curve():
-    """H (2026-10-11, was a note): the strip polyline vs the curve the declaration implies, rebuilt from the
-    bands + centreline alone. The synthetic strips sit ON it (one ring per vertex, R 109.5 m outside lip)."""
-    pts = _pts()
-    widths = [W] * (N + 1)
-    r = vr.verify(_authored(pts), _bands(), pts, _island_w(), widths=widths)
-    assert r["ok"], r["fails"]
-    c = r["counts"]
-    assert c["chord_max_m"] < 0.01 and c["chord_spans_over"] == 0 and c["chord_spans_fold"] == 0, c["chord_worst"]
-    assert c["chord_spans_measured"] >= 4 * 60 + 39 and abs(c["ring_spacing_max_m"] - 3.44) < 0.01
-    # one ring dropped on the outside lip: a 2-interval span chords the 109.5 m arc by ~0.05 m — legal
-    a = _authored(pts)
-    name = "1WALL_race_edge_R_t_0_0"
+def test_h_density_and_i_inside_out_on_strips_and_closures():
+    a, b = _fixture()
+    c = _run(a, b)["counts"]
+    assert c["chord_max_m"] < 0.02 and c["chord_spans_over"] == 0 and c["inside_out_spans"] == 0
+    name = "1WALL_race_close_cw_college_110_0"
     cs = a["ring_centres"][name]
-    a["ring_centres"][name] = cs[:40] + cs[41:]
-    r = vr.verify(a, _bands(), pts, _island_w(), widths=widths)
-    assert not any(f.startswith("H:") for f in r["fails"]), r["fails"]
-    assert 0.04 < r["counts"]["chord_max_m"] < 0.07, r["counts"]["chord_worst"]
-    # five dropped: a 6-interval span chords it by ~0.49 m > 0.15 m -> FAIL (D also misses the vertices)
-    a = _authored(pts)
-    cs = a["ring_centres"][name]
-    a["ring_centres"][name] = cs[:21] + cs[26:]
-    r = vr.verify(a, _bands(), pts, _island_w(), widths=widths)
-    assert any(f.startswith("H: 1 strip spans chord the declared offset curve") for f in r["fails"]), r["fails"]
-    assert 0.45 < r["counts"]["chord_max_m"] < 0.52 and r["counts"]["chord_worst"]["object"] == name
-    # a ring shoved 0.3 m off the declared curve: the spans either side of it miss the curve too
-    a = _authored(pts)
-    p = a["ring_centres"][name][60]
-    a["ring_centres"][name][60] = [p[0] * 1.003, p[1], p[2] * 1.003]   # ~0.31 m radially outward
-    r = vr.verify(a, _bands(), pts, _island_w(), widths=widths)
-    assert any(f.startswith("H: ") for f in r["fails"]), r["fails"]
-    # pre-author runs and calls without widths never run H
-    assert "chord_max_m" not in _run(_authored(pts))["counts"]
+    a["ring_centres"][name] = cs[:20] + cs[26:]                               # six rings gone: a 7-interval chord
+    a["ring_frames"][name] = a["ring_frames"][name][:20] + a["ring_frames"][name][26:]
+    r = _run(a, b)
+    assert any(x.startswith("H: ") for x in r["fails"]) and r["counts"]["chord_worst"]["object"] == name, r["fails"]
+    a, b = _fixture()
+    fr = a["ring_frames"][name][30]
+    a["ring_frames"][name][30] = [-fr[0], -fr[1], fr[2]]                      # one closure ring's profile turned round
+    r = _run(a, b)
+    assert r["counts"]["inside_out_spans"] == 2 and name in r["counts"]["inside_out_by_object"]
 
 
 def test_cli_writes_the_report_and_exits_nonzero_on_a_miss():
@@ -348,23 +380,24 @@ def test_cli_writes_the_report_and_exits_nonzero_on_a_miss():
     d = Path(tempfile.mkdtemp())
     (d / "data").mkdir()
     pts = _pts()
-    (d / "data" / "centerline.local.json").write_text(json.dumps({"points_xyz_m": [list(p) for p in pts], "widths_m": [W] * (N + 1)}))
-    (d / "data" / "median_bands.json").write_text(json.dumps({"island_w_by_vertex": _island_w()}))
-    (d / "data" / "barrier_bands.json").write_text(json.dumps(_bands()))
-    (d / "data" / "race_authored.json").write_text(json.dumps(_authored(pts)))
+    a, b = _fixture()
+    (d / "data" / "centerline.local.json").write_text(json.dumps({"points_xyz_m": [list(p) for p in pts], "widths_m": WIDTHS}))
+    (d / "data" / "median_bands.json").write_text(json.dumps({"island_w_by_vertex": [0.0] * (N + 1)}))
+    (d / "data" / "barrier_bands.json").write_text(json.dumps(b))
+    (d / "data" / "race_authored.json").write_text(json.dumps(a))
     assert vr.main([str(d)]) == 0
     rep = json.loads((d / "data" / "race_verify.json").read_text(encoding="utf-8"))
-    assert rep["ok"] is True
-    bad = _authored(pts)
-    bad["failed_runs"] = ["1WALL_race_kbar_t_61_0"]
+    assert rep["ok"] is True and set(rep["counts"]["by_layout"]) == {"race_cw", "race_acw"}
+    bad = copy.deepcopy(a)
+    bad["failed_runs"] = ["1WALL_race_close_cw_alvarado_40_0"]
     (d / "data" / "race_authored.json").write_text(json.dumps(bad))
     assert vr.main([str(d)]) == 1
     assert json.loads((d / "data" / "race_verify.json").read_text(encoding="utf-8"))["ok"] is False
 
 
-# --- F (re-measured from the dummies that ship) and G (lamp masts vs the strips) ------------------
-# On the synthetic ring the forward travel is anticlockwise, so + lateral (left) points at the centre;
-# the kerb-line strip's road-side face is at |lat| = W/2 - 0.82 = 9.18 m, its back at W/2 - 0.15 = 9.85 m.
+# --- F (re-measured from the dummies that ship) and G (lamp masts vs the strips and closures) --------
+# Forward travel is anticlockwise, so + lateral (left) points at the centre; the curb strip's road-side face is at
+# |lat| = W/2 - 0.82 = 9.18 m, its back at W/2 - 0.15 = 9.85 m.
 
 def _radial(k, r):
     """a point r metres OUTWARD (right of forward travel) from vertex k"""
@@ -378,35 +411,34 @@ def _dummies(slots, kind="race"):
     return d
 
 
-def _run_fg(spawns=None, lamps=None, **kw):
-    pts = _pts()
-    return vr.verify(None, _bands(), pts, _island_w(), pre_author=True, widths=[W] * (N + 1),
+def _run_fg(spawns=None, lamps=None, bands=None, **kw):
+    return vr.verify(None, bands or _bands(), _pts(), [0.0] * (N + 1), pre_author=True, widths=WIDTHS,
                      spawns=spawns, lamps=lamps, **kw)
 
 
-def test_spawn_clearance_is_remeasured_from_the_dummies_and_hard_below_030():
+def test_spawn_clearance_is_remeasured_against_the_strips_and_the_lane():
     ok = _dummies({"AC_START_0": _radial(10, 7.0), "AC_START_1": _radial(12, 7.5), "AC_PIT_0": _radial(30, 7.0)})
     r = _run_fg({"race_cw": ok})
     assert r["ok"], r["fails"]
     assert abs(r["counts"]["spawn_min_clear_m"]["race_cw"] - 0.73) < 1e-3          # 9.18 - (7.5 + 0.95)
     assert [s["name"] for s in r["counts"]["spawn_slots"]["race_cw"]] == ["AC_PIT_0", "AC_START_0", "AC_START_1"]
-    tight = _dummies({"AC_START_1": _radial(12, 8.0)})                              # 0.23 m: was legal, now hard
+    tight = _dummies({"AC_START_1": _radial(12, 8.0)})                              # 0.23 m: hard
     r = _run_fg({"race_cw": tight})
-    assert any(f.startswith("F: race_cw: AC_START_1") and "0.23 m clear of the edge-strip face" in f for f in r["fails"]), r["fails"]
+    assert _has(r, "F: race_cw: AC_START_1", "0.23 m clear of the edge-strip face"), r["fails"]
     over = _dummies({"AC_START_1": _radial(12, 8.5)})
     assert any("OVERLAPS" in f for f in _run_fg({"race_cw": over})["fails"])
-    chain = _dummies({"AC_START_0": _radial(80, -1.4)})                            # 1.4 - 0.95 - 0.335 = 0.115 m
-    assert any("centre chain" in f for f in _run_fg({"race_cw": chain})["fails"])
+    # in a closure zone the lane's far face is the closure: race_cw's at v60 stands 2.0 m LEFT of the centreline
+    # (face at +1.665): a car at 1.0 m left of the centreline is 1.665 - (1.0 + 0.95) = -0.285 -> outside its lane
+    lane = _dummies({"AC_START_0": _radial(60, -1.0)})
+    r = _run_fg({"race_cw": lane})
+    assert _has(r, "F: race_cw: AC_START_0", "lane face", "OVERLAPS"), r["fails"]
+    assert _run_fg({"race_acw": dict(lane, _layout="race_acw")})["ok"]             # race_acw's lane is the left side
     assert any("no data/dummies_race_acw.json" in f for f in _run_fg({"race_acw": None})["fails"])
     synth = dict(ok, _synthesised=True)
     assert any("SYNTHESISED" in f for f in _run_fg({"race_cw": synth})["fails"])
-    # the authored path still runs F from disk too: a clean authored file with a tight dummy fails
-    pts = _pts()
-    r = vr.verify(_authored(pts), _bands(), pts, _island_w(), widths=[W] * (N + 1), spawns={"race_cw": tight})
-    assert not r["ok"] and any(f.startswith("F: race_cw: AC_START_1") for f in r["fails"])
 
 
-def test_lamp_masts_must_stand_outside_every_strip_footprint():
+def test_lamp_masts_stand_outside_every_strip_and_closure_footprint():
     # heads 1.8 m road-ward of the mast (author_lamps_blend ARM_M): head at R + 11.0 -> mast at R + 12.8
     clear = [_radial(30, 11.0), _radial(170, 11.0)]
     r = _run_fg(lamps=clear, mast_r_m=0.5)
@@ -416,13 +448,12 @@ def test_lamp_masts_must_stand_outside_every_strip_footprint():
     assert abs(c["lamp_min_margin_m"] - (12.8 - 9.85 - 0.5)) < 1e-3, c["lamp_min_margin_m"]
     inside = clear + [_radial(60, 7.8)]                    # mast at R + 9.6: inside [9.18, 9.85]
     r = _run_fg(lamps=inside, mast_r_m=0.5)
-    assert not r["ok"] and any(f.startswith("G: lamp 2 at v60") and "inside the edge strip footprint" in f for f in r["fails"]), r["fails"]
-    assert r["counts"]["lamps_inside"] == 1
-    touching = clear + [_radial(60, 8.6)]                  # mast at R + 10.4: 0.55 m behind the strip, r 0.6 -> -0.05
-    assert not _run_fg(lamps=touching, mast_r_m=0.6)["ok"]
-    gap = [_radial(125, 7.8)]                              # inside a declared bridge gap: no strip there
-    r = _run_fg(lamps=gap, mast_r_m=0.5)
-    assert r["ok"] and r["counts"]["lamps_checked"] == 0
+    assert not r["ok"] and _has(r, "G: lamp 2 at v60", "inside the edge strip footprint"), r["fails"]
+    # a mast standing on race_acw's closure (2.0 m RIGHT of the centreline at v60): head 1.8 m further out
+    on_closure = [_radial(60, 2.0 - 1.8)]
+    r = _run_fg(lamps=on_closure, mast_r_m=0.3)
+    assert _has(r, "G: lamp 0 at v60", "closure_race_acw"), r["fails"]
+    assert r["counts"]["lamp_min_vs_closure"]["closure"] == "closure_race_acw"
 
 
 def test_lamp_constants_come_from_the_author_tool_and_the_model():
@@ -441,7 +472,6 @@ def test_race_layout_spawns_reads_every_race_dummies_file():
     cfg = {"layouts": [{"id": "street"}, {"id": "race_cw", "race_furniture": True}, {"id": "race_acw", "race_furniture": True}]}
     sp = vr.race_layout_spawns(d, cfg)
     assert set(sp) == {"race_cw", "race_acw"} and sp["race_acw"] is None and sp["race_cw"]["_kind"] == "race"
-    # a workshop whose config predates the layouts is judged on the files' own _kind
     assert set(vr.race_layout_spawns(d, {"layouts": [{"id": "full"}]})) == {"race_cw"}
 
 
@@ -450,8 +480,8 @@ def test_cli_pre_author_needs_no_authored_file():
     d = Path(tempfile.mkdtemp())
     (d / "data").mkdir()
     pts = _pts()
-    (d / "data" / "centerline.local.json").write_text(json.dumps({"points_xyz_m": [list(p) for p in pts], "widths_m": [W] * (N + 1)}))
-    (d / "data" / "median_bands.json").write_text(json.dumps({"island_w_by_vertex": _island_w()}))
+    (d / "data" / "centerline.local.json").write_text(json.dumps({"points_xyz_m": [list(p) for p in pts], "widths_m": WIDTHS}))
+    (d / "data" / "median_bands.json").write_text(json.dumps({"island_w_by_vertex": [0.0] * (N + 1)}))
     (d / "data" / "barrier_bands.json").write_text(json.dumps(_bands()))
     (d / "data" / "lights.local.json").write_text(json.dumps({"lampheads": [_radial(30, 11.0)]}))
     (d / "data" / "dummies_race_cw.json").write_text(json.dumps(_dummies({"AC_START_1": _radial(12, 7.5)})))

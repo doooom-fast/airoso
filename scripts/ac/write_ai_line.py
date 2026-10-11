@@ -90,6 +90,34 @@ The write-time self-check also refuses a backward step, a self-crossing, a turn 
 the road is not that tight, or a radius under the floor. None of this makes the line a recording: it is
 still a GENERATED DRAFT, and whether the AI laps on it is decided in game.
 
+RACE CORRIDORS (ledger 0049, 2026-10-11 — Kevin: "the entire other lane blocked off", "an Alvarado's width
+for the entire track", full intersections open at the corners the race turns at). When the bands file is
+version 2 it declares ``corridors.<layout id>`` and a race layout drafts inside THAT, not the retired centre
+chain (a version-1 file keeps the 0047 lane above, byte for byte; a version-2 file without the layout
+refuses):
+  * LANE: ``lane_by_vertex`` = [y_lo, y_hi], the two wall FACES (forward-left metres) — the race-side curb
+    strip and this direction's closure, the whole street in ``whole`` / ``box`` / ``pin`` zones —
+    stopped at an authored median island (author_median_blend's outline, nose taper included). The target
+    is the lane centre (~2 m right of the centreline on a 17 m road, 0 on Alvarado, the I-8 deck and in a
+    box), smoothed by corridor_offsets (bounded least squares, CORRIDOR_MU_M) so funnels and convergences
+    are tapers.
+  * OPEN CORNERS (the declared ``corners`` whose apex zone is open, turning <= BOX_TURN_MAX_DEG — on SD the
+    seam and the three boxes; the 177 deg hairpin keeps the floor fillet): box_targets holds the corridor's
+    OUTSIDE comfort edge from BOX_APPROACH_M before the corner's arc (PC − 2 .. PT + 2) to its end, as a
+    slope-limited envelope (BOX_EDGE_SLOPE: a funnel face is not chased); box_fillets then lays the LARGEST
+    straight-arc-straight the box allows, every point of it (walked every CHECK_STEP_M) FILLET_COMFORT_
+    CLEAR_M off every face — the apex lands that far off the trimmed inside corner X. RADIUS_FLOOR_M stays
+    the floor everywhere else.
+  * REFUSALS (on top of the ones above): any point of the line — walked every CHECK_STEP_M, not only at its
+    points — past a face (beyond a closure, in a side street), on an authored island, or < CHECK_CLEAR_M
+    from a face (funnels, island faces, the trimmed inside corners) or a sealed mouth line
+    (check_corridor, on CorridorFaces: the faces as fold-trimmed polylines on the walls' own vertex frame).
+  * sideLeft / sideRight are the distances to the two faces minus the margin; ai_draft.json carries a
+    ``corridor`` block: wall clearance minimum and where, island and mouth minima, points in an open box,
+    per corner the arc radius / speed / approach speed, min radius, min target speed, start index 0 and
+    the grid's index behind it. Still GENERATED DRAFTS: ledger 0023 stays open, no tier is claimed,
+    pit_lane.ai stays a copy, the street layout's line is unchanged.
+
 L13 applies: a closed lap repeats its first vertex — detect, drop the duplicate, and wrap every
 neighbour/distance computation; an open stage wraps nothing.
 """
@@ -135,19 +163,53 @@ SMOOTH_MU = -0.53           # ... then one back (|mu| > lambda): kinks are remov
 SMOOTH_MAX_ITERS = 4000
 SMOOTH_STALL_ITERS = 200    # stop when the violations have not improved for this many iterations
 RACE_PREFIXES_DOC = "1WALL_RACE / 1KERB_RACE (the race-furniture kn5 the race layouts load)"
+# --- race corridors (ledger 0049: an Alvarado-wide lane per direction, open boxes at the corners) -----
+CORRIDOR_MU_M = 25.0        # INVENTED: the lane-centre target is pulled toward the lane centre over this length
+                            # (bounded least squares; a lateral change of d metres tapers over ~2-3 x this)
+CORRIDOR_SOR_OMEGA = 1.8    # over-relaxation of that solve (the corridor solver's own value)
+CORRIDOR_SOR_TOL_M = 1e-5
+CORRIDOR_SOR_MAX = 6000
+FACE_STEP_M = 1.0           # the wall faces are densified on the declared curve to this spacing before the trim
+FACE_CELL_M = 4.0           # spatial index cell of the face segments
+FACE_REACH_CELLS = 12       # a point with no face within 48 m is outside the corridor
+ISLAND_REACH_CELLS = 2      # ... and one with no island edge within the widest island's half-width + 8 m is outside
+                            # every island
+BOX_TURN_MAX_DEG = 170.0    # a corner turning more than this (the hairpin, 177 deg) keeps the floor fillet
+BOX_APPROACH_M = 60.0       # INVENTED: the target holds the corridor's OUTSIDE comfort edge from this far before
+                            # the corner's arc (PC - 2) to its end (PT + 2) — turn in from outside, exit wide in the box
+BOX_EDGE_IN_M = 0.25        # ... that far inside the comfort edge, so a fillet's end point stands in the comfort lane
+                            # measured on the faces too (the line's station normals and the walls' vertex normals
+                            # differ by centimetres)
+BOX_EDGE_SLOPE = 0.10       # INVENTED: the held outside edge never moves sideways faster than this per metre — a
+                            # funnel face diverging 1:3.3 into a box is not chased (that flick was a 58 km/h bend
+                            # before an 88 km/h corner); the envelope only ever moves the target INTO the lane
+BOX_R_MAX_M = 150.0         # the box arc search: the largest radius tried, then down a geometric ladder ...
+BOX_R_LADDER = 0.92         # ... of this ratio to the floor fillet (feasibility is NOT monotone in R: a small arc
+                            # hugs the box's outside corner, a big one cuts toward the inside corner X) ...
+BOX_R_BISECT = 8            # ... then bisected between the largest feasible rung and the one above it
+CHECK_STEP_M = 0.25         # a line is judged against the faces every this many metres ALONG it, not only at its
+                            # points: the binding constraint of a box arc is the trimmed inside corner X, a sharp
+                            # convex vertex the chord between two 1.5 m points can pass much closer than either
+BOX_WINDOW_PTS = (3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 92, 108)   # fillet ends this many points before /
+                                                                       # after the corner's arc, independently
+BOX_PAD = 2                 # the corner's arc = the declared corner PC - 2 .. PT + 2 (the spec's box rule)
+OPEN_ZONES = ("whole", "box", "pin")   # zone_by_vertex values where the lane is the whole street
 
 
 # --- resampling ----------------------------------------------------------------
 
 def _resample(pts: list[list[float]], widths: list[float], spacing: float, closed: bool,
-              extra: list[list[float]] | None = None):
+              extra: list[list[float]] | None = None, lerp_extra: tuple[int, ...] = ()):
     """Linear resample of the polyline (+widths, + any per-vertex channels) to ~spacing metres.
 
     Returns (pts, widths, ds) — or (pts, widths, ds, extras) when ``extra`` channels are given.
     Every channel is index-aligned with ``pts``. Widths interpolate linearly; the ``extra``
     channels are DECLARATIONS (divider half-width, barrier inset) and take the larger of the two
     bracketing vertices, so a station between an open vertex and a divider vertex is already
-    judged as the divider's — the same nearest-vertex reading the write-time check applies."""
+    judged as the divider's — the same nearest-vertex reading the write-time check applies.
+    ``lerp_extra`` lists the extra channels (by index into ``extra``) that interpolate linearly
+    instead: a race corridor's face laterals (ledger 0049), because the walls themselves are authored
+    on the lerp of the declared laterals between two vertices (tools/race_furniture.offset_xz)."""
     n = len(pts)
     seg = []
     total = 0.0
@@ -178,7 +240,7 @@ def _resample(pts: list[list[float]], widths: list[float], spacing: float, close
             out_p.append([a[k] + (b[k] - a[k]) * t for k in range(3)])
             for c, ch in enumerate(chans):
                 ca, cb = ch[i], ch[(i + 1) % n]
-                out_c[c].append(ca + (cb - ca) * t if c == 0 else max(ca, cb))
+                out_c[c].append(ca + (cb - ca) * t if (c == 0 or (c - 1) in lerp_extra) else max(ca, cb))
         tgt += step
     if extra is None:
         return out_p, out_c[0], step
@@ -1068,10 +1130,668 @@ def self_crossings(pts, closed: bool, window: int = 200) -> int:
     return count
 
 
+# --- race corridors (ledger 0049) ------------------------------------------------------------------
+
+def corridor_offsets(lo: list[float], hi: list[float], ds: float, closed: bool,
+                     mu_m: float = CORRIDOR_MU_M) -> tuple[list[float], dict]:
+    """The race line's lane target inside a declared corridor (ledger 0049): the lane CENTRE between the
+    two wall faces ``lo`` / ``hi`` (metres right of travel), with every change of it a taper, never a step.
+
+    Minimises  sum (o[i+1] − o[i])² / ds  +  sum ds (o[i] − centre[i])² / mu_m²  with o held inside
+    [lo + LINE_MIN_CLEAR_M, hi − LINE_MIN_CLEAR_M] (projected SOR — the method of the corridor solver
+    that placed the walls). Where the lane centre moves — a funnel out of a box, a convergence onto an
+    island face, the whole street (centre 0) meeting a closure run (centre ~2 m right on a 17 m road) —
+    the line moves over a few mu_m; only a wall that moves faster drags it, because the bound is hard. A
+    lane narrower than both clearances holds its midpoint. Returns (offsets, report)."""
+    n = len(lo)
+    alo, ahi, t = [], [], []
+    for a, b in zip(lo, hi):
+        c = (a + b) / 2.0
+        x, y = a + LINE_MIN_CLEAR_M, b - LINE_MIN_CLEAR_M
+        if x > y:
+            x = y = c
+        alo.append(x)
+        ahi.append(y)
+        t.append(c)
+    o = [min(max(t[i], alo[i]), ahi[i]) for i in range(n)]
+    if n < 3:
+        return o, {"sweeps": 0}
+    k = (ds / mu_m) ** 2
+    rho = 2.0 / (2.0 + k)                                  # Jacobi radius of the screened chain
+    omega = min(CORRIDOR_SOR_OMEGA if rho >= 1.0 else 2.0 / (1.0 + math.sqrt(1.0 - rho * rho)), 1.95)
+    rng = range(n) if closed else range(1, n - 1)
+    sweeps, mx = 0, 0.0
+    for sweeps in range(1, CORRIDOR_SOR_MAX + 1):
+        mx = 0.0
+        for i in rng:
+            b = o[i + 1] if i + 1 < n else o[0]
+            new = (o[i - 1] + b + k * t[i]) / (2.0 + k)
+            new = o[i] + omega * (new - o[i])
+            new = alo[i] if new < alo[i] else ahi[i] if new > ahi[i] else new
+            d = abs(new - o[i])
+            if d > mx:
+                mx = d
+            o[i] = new
+        if mx < CORRIDOR_SOR_TOL_M:
+            break
+    m = n if closed else n - 1
+    slope = max(abs(o[(i + 1) % n] - o[i]) for i in range(m)) / ds
+    at_limit = sum(1 for i in range(n) if alo[i] < ahi[i] and (o[i] <= alo[i] + 1e-6 or o[i] >= ahi[i] - 1e-6))
+    return o, {"mu_m": mu_m, "sweeps": sweeps, "omega": round(omega, 3), "last_change_m": mx,
+               "max_lateral_slope": round(slope, 4), "stations_at_lane_limit": at_limit}
+
+
+class _SegSet:
+    """Directed segments of one or more polylines with a spatial index: ``signed(x, z)`` is the distance
+    to the nearest segment, positive on the side ``pos_left`` names (the pseudo-normal of the two segments
+    decides when the nearest point is a shared vertex), ``far`` when nothing lies within reach."""
+
+    def __init__(self, loops, closed: bool, pos_left: bool, far: float, reach_cells: int = FACE_REACH_CELLS):
+        self.ax, self.az, self.bx, self.bz, self.nl, self.prev, self.nxt = [], [], [], [], [], [], []
+        self.grid: dict[tuple[int, int], list[int]] = {}
+        self.sign, self.far, self.reach = (1.0 if pos_left else -1.0), far, reach_cells
+        for loop in loops:
+            N = len(loop)
+            nseg = N if closed else N - 1
+            base = len(self.ax)
+            for i in range(max(0, nseg)):
+                a, b = loop[i], loop[(i + 1) % N]
+                ux, uz = _unit_xz(b[0] - a[0], b[1] - a[1])
+                s = len(self.ax)
+                self.ax.append(a[0]); self.az.append(a[1]); self.bx.append(b[0]); self.bz.append(b[1])
+                self.nl.append((-uz, ux))                          # left normal, the loop's own order
+                self.prev.append(base + (i - 1) % nseg if (closed or i > 0) else -1)
+                self.nxt.append(base + (i + 1) % nseg if (closed or i < nseg - 1) else -1)
+                for gx in range(int(math.floor(min(a[0], b[0]) / FACE_CELL_M)),
+                                int(math.floor(max(a[0], b[0]) / FACE_CELL_M)) + 1):
+                    for gz in range(int(math.floor(min(a[1], b[1]) / FACE_CELL_M)),
+                                    int(math.floor(max(a[1], b[1]) / FACE_CELL_M)) + 1):
+                        self.grid.setdefault((gx, gz), []).append(s)
+
+    def signed(self, x: float, z: float) -> float:
+        cx, cz = int(math.floor(x / FACE_CELL_M)), int(math.floor(z / FACE_CELL_M))
+        ax, az, bx, bz, grid = self.ax, self.az, self.bx, self.bz, self.grid
+        best_d2, bi, bt = float("inf"), -1, 0.0
+        for r in range(self.reach + 1):
+            if r == 0:
+                cells = [(cx, cz)]
+            else:
+                cells = [(gx, gz) for gx in range(cx - r, cx + r + 1)
+                         for gz in ((cz - r, cz + r) if abs(gx - cx) < r else range(cz - r, cz + r + 1))]
+            for cell in cells:
+                segs = grid.get(cell)
+                if not segs:
+                    continue
+                for i in segs:
+                    vx, vz = bx[i] - ax[i], bz[i] - az[i]
+                    L2 = vx * vx + vz * vz
+                    t = 0.0 if L2 < 1e-12 else max(0.0, min(1.0, ((x - ax[i]) * vx + (z - az[i]) * vz) / L2))
+                    dx, dz = x - ax[i] - t * vx, z - az[i] - t * vz
+                    d2 = dx * dx + dz * dz
+                    if d2 < best_d2:
+                        best_d2, bi, bt = d2, i, t
+            if bi >= 0 and math.sqrt(best_d2) <= r * FACE_CELL_M:
+                break
+        if bi < 0:
+            return self.far
+        px, pz = ax[bi] + bt * (bx[bi] - ax[bi]), az[bi] + bt * (bz[bi] - az[bi])
+        nx, nz = self.nl[bi]
+        if bt <= 1e-9 and self.prev[bi] >= 0:                  # nearest = the segment's start vertex
+            ox, oz = self.nl[self.prev[bi]]
+            nx, nz = nx + ox, nz + oz
+        elif bt >= 1.0 - 1e-9 and self.nxt[bi] >= 0:           # ... its end vertex
+            ox, oz = self.nl[self.nxt[bi]]
+            nx, nz = nx + ox, nz + oz
+        d = math.sqrt(best_d2)
+        return d if ((x - px) * nx + (z - pz) * nz) * self.sign >= 0.0 else -d
+
+
+def authored_island_half(island_w: list[float]) -> list[float]:
+    """The median island as tools/author_median_blend.py AUTHORS it, per vertex: runs of >= 6 vertices
+    with a declared width, each end tapered to NOSE_HALF 0.25 m over NOSE_VERTS 3 vertices (MEASURED
+    constants of that tool) — the outline the corridor's island faces are declared against (spec §5)."""
+    n = len(island_w)
+    half = [0.0] * n
+    i = 0
+    while i < n:
+        if island_w[i] <= 0:
+            i += 1
+            continue
+        j = i
+        while j < n and island_w[j] > 0:
+            j += 1
+        ks = list(range(i, j))
+        if len(ks) >= 6:
+            for si, k in enumerate(ks):
+                h = island_w[k] / 2.0
+                if si < 3:
+                    h = 0.25 + (h - 0.25) * si / 3
+                if len(ks) - 1 - si < 3:
+                    h = 0.25 + (h - 0.25) * (len(ks) - 1 - si) / 3
+                half[k] = h
+        i = j
+    return half
+
+
+class CorridorFaces:
+    """The two wall faces of a race layout's corridor, and the islands inside it, as polylines in the
+    ENGINE frame (ledger 0049).
+
+    ``lane[k] = [y_lo, y_hi]`` is the declaration's ``lane_by_vertex``: metres forward-LEFT of the
+    increasing-vertex tangent, y_hi the forward-left face, y_lo the forward-right one. Each face point is
+    vertex + left_normal(tangent v−1 → v+1) × lateral — tools/race_furniture's ring frame. The faces are
+    fold-trimmed at the VERTEX rings with trim_loops (an inside face tighter than its offset swallowtails
+    exactly like the strip it belongs to and is cut at its legs' crossing — the trimmed corner the
+    authored strip stands on, edge_corners), then densified to FACE_STEP_M ON the declared curve (centre
+    lerp, normalised lerp of the two vertex tangents, lerp of the lateral: race_furniture.offset_xz, the
+    curve the walls are authored on) and straight through a trimmed corner.
+
+    ``island_half`` (authored_island_half, forward vertex order) adds every authored median island as a
+    closed outline: an obstacle of its own, whatever the closure does (pavement mode stands the closure
+    0.15 m off it; island-top mode on its curb).
+
+    ``dists(x, z)`` = signed distance to (the y_hi face, the y_lo face), positive on the corridor side
+    (right of the y_hi face, left of the y_lo face, in forward order); ``island(x, z)`` = signed distance
+    to the nearest island outline, positive outside it; ``clearance`` = the smallest of the three."""
+
+    def __init__(self, cl_pts, lane, closed: bool = True, island_half: list[float] | None = None):
+        m = len(cl_pts)
+        if len(lane) < m:
+            raise ValueError(f"lane_by_vertex has {len(lane)} rows for {m} vertices")
+        self.closed = closed
+        T = []
+        for k in range(m):
+            a = cl_pts[(k - 1) % m] if closed else cl_pts[max(k - 1, 0)]
+            b = cl_pts[(k + 1) % m] if closed else cl_pts[min(k + 1, m - 1)]
+            T.append(_unit_xz(b[0] - a[0], b[2] - a[2]))
+        self.folds: dict[str, list] = {}
+        self.lines: dict[str, list[tuple[float, float]]] = {}
+
+        def on_curve(k: int, u: float, col: int) -> tuple[float, float]:
+            j = (k + 1) % m
+            ca, cb = cl_pts[k], cl_pts[j]
+            tx, tz = _unit_xz(T[k][0] + (T[j][0] - T[k][0]) * u, T[k][1] + (T[j][1] - T[k][1]) * u)
+            lat = float(lane[k][col]) + (float(lane[j][col]) - float(lane[k][col])) * u
+            return ca[0] + (cb[0] - ca[0]) * u - tz * lat, ca[2] + (cb[2] - ca[2]) * u + tx * lat
+
+        for name, col in (("hi", 1), ("lo", 0)):
+            # 1. the face at the VERTEX rings (the strips' own ring spacing), the vertex index carried in y
+            #    through the trim (a 'loop' corner lands at a fractional index, an 'extend' corner at its
+            #    in-leg vertex): trim_loops' leg search is sized for ~1.5-3 m steps
+            V = [[cl_pts[k][0] - T[k][1] * float(lane[k][col]), float(k), cl_pts[k][2] + T[k][0] * float(lane[k][col])]
+                 for k in range(m)]
+            V, folds = trim_loops(V, list(T), closed, 3.0)
+            self.folds[name] = folds
+            # 2. densified ON the declared curve between two consecutive kept vertices, straight through a
+            #    trimmed corner (the authored strip's chords: in-leg ring -> corner X -> out-leg ring)
+            P = []
+            nv = len(V)
+            for q in range(nv if closed else nv - 1):
+                a, b = V[q], V[(q + 1) % nv]
+                ka, kb = a[1], b[1]
+                whole = ka == int(ka) and kb == int(kb) and int(kb) == (int(ka) + 1) % m
+                steps = max(1, int(math.ceil(math.hypot(b[0] - a[0], b[2] - a[2]) / FACE_STEP_M)))
+                for s in range(steps):
+                    u = s / steps
+                    P.append(on_curve(int(ka), u, col) if whole else
+                             (a[0] + (b[0] - a[0]) * u, a[2] + (b[2] - a[2]) * u))
+            if not closed:
+                P.append((V[-1][0], V[-1][2]))
+            self.lines[name] = P
+        self._hi = _SegSet([self.lines["hi"]], closed, pos_left=False, far=-1e9)   # corridor = right of it
+        self._lo = _SegSet([self.lines["lo"]], closed, pos_left=True, far=-1e9)    # corridor = left of it
+        # islands: left edge forward, right edge back — the interior is RIGHT of every edge
+        loops = []
+        if island_half:
+            k = 0
+            while k < m:
+                if island_half[k] <= 0.0:
+                    k += 1
+                    continue
+                j = k
+                while j < m and island_half[j] > 0.0:
+                    j += 1
+                ks = list(range(k, j))
+                left = [(cl_pts[q][0] - T[q][1] * island_half[q], cl_pts[q][2] + T[q][0] * island_half[q]) for q in ks]
+                right = [(cl_pts[q][0] + T[q][1] * island_half[q], cl_pts[q][2] - T[q][0] * island_half[q]) for q in ks]
+                loops.append(left + right[::-1])
+                k = j
+        self.island_loops = loops
+        # a point inside an island is at most its half-width from an edge, so a reach of the widest island's
+        # half-width + ISLAND_REACH_CELLS cells classifies every point; one farther than that from every edge
+        # is outside every island and at least that far clear (the queries stay local: a full 48 m reach
+        # from every probe of a lap was 2/3 of the writer's run time)
+        reach = ISLAND_REACH_CELLS + int(math.ceil(max(island_half or [0.0]) / FACE_CELL_M))
+        self._isl = _SegSet(loops, True, pos_left=True, far=reach * FACE_CELL_M, reach_cells=reach) if loops else None
+
+    def polyline(self, which: str) -> list[tuple[float, float]]:
+        return list(self.lines[which])
+
+    def dists(self, x: float, z: float) -> tuple[float, float]:
+        return self._hi.signed(x, z), self._lo.signed(x, z)
+
+    def island(self, x: float, z: float) -> float:
+        return self._isl.signed(x, z) if self._isl is not None else 1e9
+
+    def clearance(self, x: float, z: float) -> float:
+        a, b = self.dists(x, z)
+        c = a if a < b else b
+        d = self.island(x, z)
+        return c if c < d else d
+
+
+def _faces_lane(lo_face: list[float], hi_face: list[float], clear: float) -> tuple[list[float], list[float]]:
+    """(lo, hi): the line's lane ``clear`` metres inside a corridor's two faces (right of travel); a lane
+    narrower than both clearances collapses to its midpoint (lane_corridor's rule)."""
+    lo, hi = [], []
+    for a, b in zip(lo_face, hi_face):
+        x, y = a + clear, b - clear
+        if x > y:
+            x = y = (a + b) / 2.0
+        lo.append(x)
+        hi.append(y)
+    return lo, hi
+
+
+def _corner_stations(pts, closed: bool, ds: float, n_st: int, tan_xz, corners: list[dict]) -> list[dict]:
+    """The open corners (``corners``: travel-order vertex indices ``a`` .. ``b`` = the arc PC − 2 ..
+    PT + 2 and ``apex``) as resampled stations, with the turn's hand measured on the stations' tangents
+    15 stations outside the arc (``right`` = a right turn: its outside is left of travel)."""
+    if not corners:
+        return []
+    m = len(pts)
+    S = [0.0]
+    for j in range(1, m):
+        S.append(S[-1] + math.dist(pts[j - 1], pts[j]))
+
+    def stn(j: int) -> int:
+        k = int(round(S[j % m] / ds))
+        return k % n_st if closed else min(max(k, 0), n_st - 1)
+
+    out = []
+    wrap = (lambda i: i % n_st) if closed else (lambda i: min(max(i, 0), n_st - 1))
+    for c in corners:
+        a, b, ap = stn(c["a"]), stn(c["b"]), stn(c["apex"])
+        ta, tb = tan_xz[wrap(a - 15)], tan_xz[wrap(b + 15)]
+        turn = ta[0] * tb[1] - ta[1] * tb[0]                 # > 0: turning left (corner_approach's sign)
+        out.append({"apex_vertex": c["apex_vertex"], "zone": c.get("zone"), "D_deg": c.get("D_deg"),
+                    "a_st": a, "b_st": b, "apex_st": ap, "right": turn < 0.0})
+    return out
+
+
+def corridor_for_layout(bands: dict, layout_id: str, pts_fwd, *, reverse: bool, closed: bool = True,
+                        island_w: list[float] | None = None) -> dict | None:
+    """A race layout's corridor from a ledger-0049 declaration (``data/barrier_bands.json`` version 2,
+    ``corridors.<layout id>``), ready for build_line: the two faces right of THIS travel per travel-order
+    vertex, the zone codes, the open corners, the CorridorFaces (built on ``pts_fwd``, the forward-order
+    ENGINE-frame centreline the declaration indexes). ``island_w`` (median_bands island_w_by_vertex):
+    the authored islands become obstacles in the faces, and the lane stops at an island's outline on
+    whichever side the lane is (always right of travel on SD: each direction's own carriageway). None
+    when the file declares no corridors at all (a version-1 file: the legacy centre-chain lane). A
+    version-2 file without this layout is an error — a race layout is never silently driven down a lane
+    its walls do not have."""
+    cors = bands.get("corridors")
+    if not cors:
+        if int(bands.get("version", 1) or 1) >= 2:
+            raise SystemExit(f"barrier_bands.json is version {bands.get('version')} but declares no corridors — "
+                             f"refusing to draft {layout_id} on the retired centre-chain lane")
+        return None
+    cor = cors.get(layout_id)
+    if cor is None:
+        raise SystemExit(f"barrier_bands.json declares corridors {sorted(cors)} but none for layout {layout_id!r}")
+    m = len(pts_fwd)
+    lane, zone = cor.get("lane_by_vertex"), cor.get("zone_by_vertex")
+    if not lane or not zone or len(lane) not in (m, m + 1) or len(zone) not in (m, m + 1):
+        raise SystemExit(f"corridors.{layout_id}: lane_by_vertex / zone_by_vertex must have {m} (or {m + 1}) rows, "
+                         f"got {len(lane or [])} / {len(zone or [])}")
+    lane = [(float(a), float(b)) for a, b in lane[:m]]
+    bad = [k for k, (a, b) in enumerate(lane) if not a < b]
+    if bad:
+        raise SystemExit(f"corridors.{layout_id}: lane_by_vertex y_lo >= y_hi at {len(bad)} vertices (first v{bad[0]})")
+    codes = {"box": 2, "whole": 1, "pin": 1, "closure": 0, "island": 0}
+    unknown = sorted({z for z in zone[:m] if z not in codes})
+    if unknown:
+        raise SystemExit(f"corridors.{layout_id}: unknown zone(s) {unknown}")
+    zcode = [float(codes[z]) for z in zone[:m]]
+    ih = authored_island_half(list(island_w[:m])) if island_w else [0.0] * m
+    faces = CorridorFaces(pts_fwd, lane, closed, island_half=ih)
+    # the lane in the forward frame, stopped at an authored island's outline (a no-op in pavement mode,
+    # where the closure face already stands 0.82 m off it)
+    lane_c, island_clipped = [], 0
+    for (a, b), h in zip(lane, ih):
+        if h > 0.0:
+            if (a + b) / 2.0 <= 0.0 and b > -h:
+                b, island_clipped = -h, island_clipped + 1
+            elif (a + b) / 2.0 > 0.0 and a < h:
+                a, island_clipped = h, island_clipped + 1
+        lane_c.append((a, b))
+    if reverse:
+        lo = [lane_c[m - 1 - j][0] for j in range(m)]        # r = +y for the reverse travel
+        hi = [lane_c[m - 1 - j][1] for j in range(m)]
+        zc = [zcode[m - 1 - j] for j in range(m)]
+    else:
+        lo = [-lane_c[j][1] for j in range(m)]               # r = −y
+        hi = [-lane_c[j][0] for j in range(m)]
+        zc = zcode
+    corners, skipped = [], []
+    for c in bands.get("corners") or []:
+        v, z = int(c["apex"]) % m, zone[int(c["apex"]) % m]
+        d = float(c.get("D_deg", 0.0))
+        if z not in OPEN_ZONES or abs(d) > BOX_TURN_MAX_DEG:
+            skipped.append({"apex_vertex": v, "zone": z, "D_deg": d,
+                            "why": "closure zone" if z not in OPEN_ZONES else f"turns > {BOX_TURN_MAX_DEG:g} deg"})
+            continue
+        a, b = (int(c["PC"]) - BOX_PAD) % m, (int(c["PT"]) + BOX_PAD) % m
+        if reverse:
+            a, b, ap = (m - 1 - b) % m, (m - 1 - a) % m, (m - 1 - v) % m
+        else:
+            ap = v
+        corners.append({"apex_vertex": v, "zone": z, "D_deg": d, "a": a, "b": b, "apex": ap})
+    zcount: dict[str, int] = {}
+    for z in zone[:m]:
+        zcount[z] = zcount.get(z, 0) + 1
+    mouths = [[(p[0], p[2]) for p in mo.get("polyline_xyz_m") or []] for mo in bands.get("closed_mouths") or []]
+    return {"lo": lo, "hi": hi, "zone": zc, "corners": corners, "corners_skipped": skipped, "faces": faces,
+            "forward": not reverse, "token": cor.get("token"), "zones": zcount, "mouths": [p for p in mouths if p],
+            "face_folds": {k: [f["kind"] for f in v] for k, v in faces.folds.items()},
+            "islands": len(faces.island_loops), "lane_vertices_island_clipped": island_clipped}
+
+
+def _unwrapped_range(a: int, b: int, n: int) -> tuple[int, int]:
+    """(a, b) with b >= a: a closed lap's range that wraps the seam gets b + n."""
+    return (a, b) if b >= a else (a, b + n)
+
+
+def box_targets(off: list[float], lo_c: list[float], hi_c: list[float], corners: list[dict], ds: float,
+                closed: bool) -> tuple[list[float], list[dict]]:
+    """Turn in from the corridor's OUTSIDE edge at every open corner (ledger 0049 spec §12).
+
+    For each corner (``a_st`` .. ``b_st`` = its arc PC − 2 .. PT + 2 in stations, ``right`` = a right
+    turn, whose outside is the low, left-of-travel side) the target holds the OUTSIDE comfort edge from
+    BOX_APPROACH_M before the arc to the arc's end — exit wide, inside the box — with ramp_length_m cosine
+    tapers either side. box_fillets then lays the largest arc the box allows from those legs. Returns
+    (offsets, report)."""
+    n = len(off)
+    out = list(off)
+    rep: list[dict] = []
+    wrap = (lambda i: i % n) if closed else (lambda i: i)
+    for c in corners:
+        a, b = _unwrapped_range(c["a_st"], c["b_st"], n) if closed else (c["a_st"], c["b_st"])
+        H = int(math.ceil(BOX_APPROACH_M / ds))
+        h0, h1 = a - H, b
+
+        def edge(k: int) -> float:
+            return lo_c[k] + BOX_EDGE_IN_M if c["right"] else hi_c[k] - BOX_EDGE_IN_M
+
+        N0 = max(2, int(math.ceil(ramp_length_m(edge(wrap(h0)) - off[wrap(h0)]) / ds)))
+        N1 = max(2, int(math.ceil(ramp_length_m(edge(wrap(h1)) - off[wrap(h1)]) / ds)))
+        if not closed and (h0 - N0 < 0 or h1 + N1 > n - 1):
+            rep.append({"apex_vertex": c["apex_vertex"], "skipped": "too near an end of an open line"})
+            continue
+        # the outside edge as a slope-limited envelope, BOX_EDGE_SLOPE per metre: dilated toward the lane
+        # (a right turn's outside is the low side: the envelope is the max of edge_j − slope·|i − j|·ds)
+        span = list(range(h0 - N0, h1 + N1 + 1))
+        env = [edge(wrap(i)) for i in span]
+        step = BOX_EDGE_SLOPE * ds
+        sgn = 1.0 if c["right"] else -1.0
+        for q in range(1, len(env)):
+            env[q] = sgn * max(sgn * env[q], sgn * env[q - 1] - step)
+        for q in range(len(env) - 2, -1, -1):
+            env[q] = sgn * max(sgn * env[q], sgn * env[q + 1] - step)
+        moved_in = 0
+        for q, i in enumerate(span):
+            k = wrap(i)
+            tgt = min(max(env[q], lo_c[k]), hi_c[k])          # never past the comfort lane either way
+            if abs(tgt - edge(k)) > 1e-6:
+                moved_in += 1
+            w = 1.0 if h0 <= i <= h1 else _taper((i - (h0 - N0)) / N0) if i < h0 else _taper((h1 + N1 - i) / N1)
+            out[k] = out[k] + (tgt - out[k]) * w            # composed: two corners' tapers may overlap
+        rep.append({"apex_vertex": c["apex_vertex"], "side": "outside-left" if c["right"] else "outside-right",
+                    "hold_m": round((h1 - h0) * ds, 1), "ramp_in_m": round(N0 * ds, 1), "ramp_out_m": round(N1 * ds, 1),
+                    "stations_eased_off_the_edge": moved_in})
+    return out, rep
+
+
+def _densify_xz(pts, step: float, closed: bool = False) -> list[tuple[float, float]]:
+    """XZ points every <= ``step`` along the polyline (its own points kept): what a check of a LINE, not
+    of its samples, walks (CHECK_STEP_M). ``pts`` are (x, z) pairs, or [x, y, z] when they have 3 items."""
+    xz = [(p[0], p[2]) if len(p) == 3 else (p[0], p[1]) for p in pts]
+    n = len(xz)
+    out = []
+    for i in range(n if closed else n - 1):
+        a, b = xz[i], xz[(i + 1) % n]
+        k = max(1, int(math.ceil(math.hypot(b[0] - a[0], b[1] - a[1]) / step)))
+        for j in range(k):
+            out.append((a[0] + (b[0] - a[0]) * j / k, a[1] + (b[1] - a[1]) * j / k))
+    if not closed and xz:
+        out.append(xz[-1])
+    return out
+
+
+def _path_radius_min(P, i0: int, i1: int, closed: bool) -> float:
+    n = len(P)
+    r = 10000.0
+    for i in range(max(i0, 1 if not closed else i0), min(i1, n - 2 if not closed else i1) + 1):
+        r = min(r, _circumradius(P[(i - 1) % n], P[i % n], P[(i + 1) % n]))
+    return r
+
+
+def box_fillets(P, closed: bool, st: _Stations, faces: CorridorFaces, corners: list[dict],
+                ds: float) -> tuple[list, list[dict]]:
+    """The largest circular arc each open corner allows (ledger 0049 spec §12: "the fillet targets the
+    largest radius that keeps FILLET_COMFORT_CLEAR_M off every face").
+
+    For each corner the line is replaced, between a point s on the entry leg and a point e on the exit leg
+    (BOX_WINDOW_PTS before / after the corner's arc, independently), by straight-arc-straight from P[s]
+    along the heading arriving there to P[e] along the heading leaving there (_fillet_path: G1 at both
+    ends). The radius is bisected between the floor fillet (RADIUS_FLOOR_M × (1 + FILLET_MARGIN)) and
+    BOX_R_MAX_M; a candidate fits when every point of it stands FILLET_COMFORT_CLEAR_M inside the
+    corridor's wall FACES (CorridorFaces — the trimmed inside corner X included), else the hard
+    CHECK_CLEAR_M + CORRIDOR_TOL_M. The smallest window that fits the largest radius is taken. A window
+    never reaches into another corner's arc, nor into a window already replaced (corners closer than two
+    windows apart share the straight between them). A corner nothing fits is left to fillet_corners
+    (reported). Returns (points, report)."""
+    rep: list[dict] = []
+    P = [list(p) for p in P]
+    claimed = {id(c): (c["a_st"], c["b_st"]) for c in corners}      # station ranges, per corner
+
+    def owned_by_other(k: int, me) -> bool:
+        for key, (ra, rb) in claimed.items():
+            if key == me:
+                continue
+            if ((k - ra) % st.n if closed else k - ra) <= ((rb - ra) % st.n if closed else rb - ra) and (closed or k >= ra):
+                return True
+        return False
+
+    for c in corners:
+        n = len(P)
+        if n < 30:
+            break
+        assoc = st.associate(P)
+        a, b = c["a_st"], c["b_st"]
+        span = (b - a) % st.n if closed else b - a
+        inside = [i for i in range(n) if ((assoc[i] - a) % st.n if closed else assoc[i] - a) <= span
+                  and (closed or assoc[i] >= a)]
+        if not inside:
+            rep.append({"apex_vertex": c["apex_vertex"], "skipped": "no line point on the corner's arc"})
+            continue
+        if closed:                                         # put the corner mid-line: the seam may cut it
+            apex = min(inside, key=lambda i: min((assoc[i] - c["apex_st"]) % st.n, (c["apex_st"] - assoc[i]) % st.n))
+            shift = (apex - n // 2) % n
+            P = P[shift:] + P[:shift]
+            assoc = assoc[shift:] + assoc[:shift]
+            inside = sorted((i - shift) % n for i in inside)
+            mid = n // 2
+            # the contiguous run of arc points around the apex
+            c0 = c1 = mid
+            S = set(inside)
+            while c0 - 1 in S:
+                c0 -= 1
+            while c1 + 1 in S:
+                c1 += 1
+        else:
+            c0, c1 = inside[0], inside[-1]
+        before = _path_radius_min(P, c0, c1, False)
+        k1_max = 0                                         # how far each way before another corner's claim
+        while c0 - k1_max - 3 >= 0 and k1_max < BOX_WINDOW_PTS[-1] and not owned_by_other(assoc[c0 - k1_max - 3], id(c)):
+            k1_max += 1
+        k2_max = 0
+        while c1 + k2_max + 3 < n and k2_max < BOX_WINDOW_PTS[-1] and not owned_by_other(assoc[c1 + k2_max + 3], id(c)):
+            k2_max += 1
+        windows = []
+        for K1 in BOX_WINDOW_PTS:
+            for K2 in BOX_WINDOW_PTS:
+                s, e = c0 - K1, c1 + K2
+                if s < 2 or e > n - 3 or K1 > k1_max or K2 > k2_max:
+                    continue
+                Ps, Pe = P[s], P[e]
+                din = _unit_xz(Ps[0] - P[s - 2][0], Ps[2] - P[s - 2][2])
+                dout = _unit_xz(P[e + 2][0] - Pe[0], P[e + 2][2] - Pe[2])
+                r = _seg_cross(Ps, [Ps[0] + din[0], 0.0, Ps[2] + din[1]], [Pe[0] - dout[0], 0.0, Pe[2] - dout[1]], Pe)
+                if r is None:
+                    continue
+                t, u = r[0], 1.0 - r[1]
+                th = _signed_turn(din, dout)
+                if t <= 0.0 or u <= 0.0 or abs(th) < 1e-3 or abs(th) > math.radians(BOX_TURN_MAX_DEG):
+                    continue
+                windows.append((e - s, s, e, Ps, Pe, din, dout, t, u, th))
+        windows.sort(key=lambda w: w[0])
+
+        def fits(R: float, need: float):
+            for w in windows:
+                _, s, e, Ps, Pe, din, dout, t, u, th = w
+                dT = R * math.tan(abs(th) / 2.0)
+                if dT > t or dT > u:
+                    continue
+                path = _fillet_path(Ps, Pe, din, dout, R, ds)
+                if not path:
+                    continue
+                probe = _densify_xz([(Ps[0], Ps[2])] + path + [(Pe[0], Pe[2])], CHECK_STEP_M)
+                m = len(probe)
+                order = sorted(range(m), key=lambda q: abs(q - m // 2))     # the apex first: fail fast
+                if all(faces.clearance(probe[q][0], probe[q][1]) >= need for q in order):
+                    return w, path
+            return None
+
+        best = None
+        r_floor = RADIUS_FLOOR_M * (1.0 + FILLET_MARGIN)
+        ladder = []
+        R = BOX_R_MAX_M
+        while R > r_floor:
+            ladder.append(R)
+            R *= BOX_R_LADDER
+        ladder.append(r_floor)
+        for lane, need in (("comfort", FILLET_COMFORT_CLEAR_M), ("hard", CHECK_CLEAR_M + CORRIDOR_TOL_M)):
+            above, got = None, None
+            for R in ladder:                               # the largest rung that fits ...
+                got = fits(R, need)
+                if got is not None:
+                    break
+                above = R
+            if got is None:
+                continue
+            r_ok = R
+            if above is not None:                          # ... refined toward the rung above it
+                r_bad = above
+                for _ in range(BOX_R_BISECT):
+                    mid = 0.5 * (r_ok + r_bad)
+                    g = fits(mid, need)
+                    if g is None:
+                        r_bad = mid
+                    else:
+                        r_ok, got = mid, g
+            best = (r_ok, got, lane, need)
+            break
+        if best is None:
+            rep.append({"apex_vertex": c["apex_vertex"], "skipped": "no arc >= the floor fits the corridor",
+                        "radius_before_m": round(before, 2)})
+            continue
+        R, (win, path), lane, need = best
+        wlen, s, e, Ps, Pe, din, dout, t, u, th = win
+        ys = [Ps[1] + (Pe[1] - Ps[1]) * (j + 1) / (len(path) + 1) for j in range(len(path))]
+        clear = min(faces.clearance(x, z) for x, z in _densify_xz([(Ps[0], Ps[2])] + path + [(Pe[0], Pe[2])],
+                                                                   CHECK_STEP_M))
+        claimed[id(c)] = (assoc[s], assoc[e])             # the whole replaced window is this corner's now
+        P = P[:s + 1] + [[x, y, z] for (x, z), y in zip(path, ys)] + P[e:]
+        rep.append({"apex_vertex": c["apex_vertex"], "zone": c.get("zone"), "turn_deg": round(math.degrees(th), 1),
+                    "radius_m": round(R, 2), "lane": lane, "radius_before_m": round(before, 2),
+                    "window_m": round(wlen * ds, 1), "entry_m": round((c0 - s) * ds, 1),
+                    "exit_m": round((e - c1) * ds, 1), "path_clear_min_m": round(clear, 2)})
+    return P, rep
+
+
+def check_corridor(line_pts, faces: CorridorFaces, *, clear_m: float = CHECK_CLEAR_M, closed: bool = True,
+                   mouths: list[list[tuple[float, float]]] | None = None) -> dict:
+    """The race line against its corridor's wall FACES (ledger 0049): every point of the LINE — walked
+    every CHECK_STEP_M along each segment, not only at its points — inside the corridor and >= clear_m
+    off both faces (funnels, island faces and the trimmed inside corners included), off every authored
+    island, and >= clear_m off every sealed mouth line (``mouths``: xz polylines). The minimum is reported
+    with the line point it follows. Counts are of probes: a probe past a face (beyond a closure, in a
+    side street) is ``outside``; on an island, an ``island_hit``."""
+    res = {"points": len(line_pts), "probes": 0, "outside": 0, "too_close": 0, "min_clear_m": None,
+           "min_clear_at": None, "min_clear_face": None, "island_hits": 0, "island_too_close": 0,
+           "island_min_m": None, "mouth_min_m": None, "mouth_hits": 0}
+    best, ibest = float("inf"), float("inf")
+    n = len(line_pts)
+    for i in range(n):
+        a = line_pts[i]
+        if closed or i < n - 1:
+            b = line_pts[(i + 1) % n]
+            k = max(1, int(math.ceil(math.hypot(b[0] - a[0], b[2] - a[2]) / CHECK_STEP_M)))
+        else:
+            b, k = a, 1
+        for j in range(k):
+            x, z = a[0] + (b[0] - a[0]) * j / k, a[2] + (b[2] - a[2]) * j / k
+            res["probes"] += 1
+            dh, dl = faces.dists(x, z)
+            d = min(dh, dl)
+            if d < best:
+                best = d
+                res["min_clear_at"] = i
+                res["min_clear_face"] = "y_hi (forward-left)" if dh <= dl else "y_lo (forward-right)"
+            if d < 0.0:
+                res["outside"] += 1
+            if d < clear_m:
+                res["too_close"] += 1
+            di = faces.island(x, z)
+            ibest = min(ibest, di)
+            if di < 0.0:
+                res["island_hits"] += 1
+            if di < clear_m:
+                res["island_too_close"] += 1
+    res["min_clear_m"] = round(best, 3) if line_pts else None
+    res["island_min_m"] = round(ibest, 3) if ibest < 1e8 else None
+    if mouths:
+        mm = float("inf")
+        for poly in mouths:
+            if len(poly) < 2:
+                continue
+            xs0 = min(p[0] for p in poly) - 20.0
+            xs1 = max(p[0] for p in poly) + 20.0
+            zs0 = min(p[1] for p in poly) - 20.0
+            zs1 = max(p[1] for p in poly) + 20.0
+            for q in line_pts:
+                if not (xs0 <= q[0] <= xs1 and zs0 <= q[2] <= zs1):
+                    continue
+                for a, b in zip(poly, poly[1:]):
+                    vx, vz = b[0] - a[0], b[1] - a[1]
+                    L2 = vx * vx + vz * vz
+                    t = 0.0 if L2 < 1e-12 else max(0.0, min(1.0, ((q[0] - a[0]) * vx + (q[2] - a[1]) * vz) / L2))
+                    d = math.hypot(q[0] - a[0] - t * vx, q[2] - a[1] - t * vz)
+                    mm = min(mm, d)
+                    if d < clear_m:
+                        res["mouth_hits"] += 1
+        res["mouth_min_m"] = round(mm, 3) if mm < float("inf") else None
+    res["ok"] = (res["outside"] == 0 and res["too_close"] == 0 and res["mouth_hits"] == 0
+                 and res["island_hits"] == 0 and res["island_too_close"] == 0 and bool(line_pts))
+    return res
+
+
 def build_line(pts, widths, *, closed: bool, spacing: float, lat_g: float, decel_g: float,
                accel_g: float, vmax_kmh: float, margin_m: float,
                dh: list[float] | None = None, inset: list[float] | None = None,
-               lane_offset: bool = True, start_xz: tuple[float, float] | None = None) -> dict:
+               lane_offset: bool = True, start_xz: tuple[float, float] | None = None,
+               corridor: dict | None = None) -> dict:
     """Build the line in the ENGINE frame (x=E, y=up, z=N; right of travel = (tz, −tx)).
 
     ``dh``/``inset`` are per-vertex channels aligned with ``pts`` (divider half-width, kerb-line
@@ -1081,22 +1801,59 @@ def build_line(pts, widths, *, closed: bool, spacing: float, lat_g: float, decel
     ``spacing`` -> curvature bound again, normal moves only (spacing kept). ``start_xz`` (engine XZ, closed lines):
     point 0 is that point projected onto the line — the start/finish line; default the first station's
     point. The returned per-point channels (widths, dh, inset, base, off) are the nearest station's,
-    and ``geometry`` carries the ramps, folds, smoothing and the audit's measurements."""
+    and ``geometry`` carries the ramps, folds, smoothing and the audit's measurements.
+
+    ``corridor`` (a race layout with a ledger-0049 declaration; see _corridor_for_layout) replaces the
+    divider/inset lane: ``lo``/``hi`` = the two wall faces per vertex, metres right of THIS travel
+    (aligned with ``pts``), ``zone`` = 0 closure / 1 whole street / 2 open box per vertex, ``corners`` =
+    the open corners (travel-order vertex indices), ``faces`` = the CorridorFaces the line is judged
+    against. Then: lane-centre target (corridor_offsets) -> outside approach at every open corner
+    (box_targets) -> offset polyline -> loop trim -> the largest arc each corner allows (box_fillets) ->
+    floor fillets + curvature bound as above; sideLeft/sideRight are the distances to the faces."""
     n_in = len(pts)
     dh = list(dh) if dh is not None else [0.0] * n_in
     inset = list(inset) if inset is not None else [0.0] * n_in
     if len(dh) != n_in or len(inset) != n_in:
         raise ValueError(f"channel length mismatch: pts {n_in}, dh {len(dh)}, inset {len(inset)}")
-    base, widths_s, ds0, (dh_s, inset_s) = _resample(pts, widths, spacing, closed, extra=[dh, inset])
+    if corridor is not None:
+        for key in ("lo", "hi", "zone"):
+            if len(corridor[key]) != n_in:
+                raise ValueError(f"corridor {key}: {len(corridor[key])} values vs {n_in} vertices")
+        base, widths_s, ds0, (dh_s, inset_s, clo_s, chi_s, zone_s) = _resample(
+            pts, widths, spacing, closed, extra=[dh, inset, corridor["lo"], corridor["hi"], corridor["zone"]],
+            lerp_extra=(2, 3))
+    else:
+        base, widths_s, ds0, (dh_s, inset_s) = _resample(pts, widths, spacing, closed, extra=[dh, inset])
+        clo_s = chi_s = zone_s = None
     n0 = len(base)
     tan_xz = [_unit_xz(t[0], t[2]) for t in _tangents(base, closed, ds0, span=TANGENT_SPAN)]
-    lo, hi = lane_corridor(widths_s, dh_s, inset_s, CHECK_CLEAR_M + CORRIDOR_TOL_M)
-    lo_c, hi_c = lane_corridor(widths_s, dh_s, inset_s, FILLET_COMFORT_CLEAR_M)
+    if corridor is not None:
+        lo, hi = _faces_lane(clo_s, chi_s, CHECK_CLEAR_M + CORRIDOR_TOL_M)
+        lo_c, hi_c = _faces_lane(clo_s, chi_s, FILLET_COMFORT_CLEAR_M)
+    else:
+        lo, hi = lane_corridor(widths_s, dh_s, inset_s, CHECK_CLEAR_M + CORRIDOR_TOL_M)
+        lo_c, hi_c = lane_corridor(widths_s, dh_s, inset_s, FILLET_COMFORT_CLEAR_M)
     st = _Stations(base, tan_xz, lo, hi, road_radius(base, closed), closed, ds0, lo_c, hi_c)
     geo: dict = {"ramps": [], "ramp_clamped": 0, "corner_approach": [], "folds": [], "fillets": [],
                  "smoothing": [], "start": None}
+    corners_st = _corner_stations(pts, closed, ds0, n0, tan_xz, corridor.get("corners") or []) \
+        if corridor is not None else []
 
-    if lane_offset:
+    if lane_offset and corridor is not None:
+        off0, geo["corridor_offsets"] = corridor_offsets(clo_s, chi_s, ds0, closed)
+        off0, geo["box_approach"] = box_targets(off0, lo_c, hi_c, corners_st, ds0, closed)
+        P = [[base[i][0] + tan_xz[i][1] * off0[i], base[i][1], base[i][2] - tan_xz[i][0] * off0[i]]
+             for i in range(n0)]
+        first = (P[0][0], P[0][2])
+        P, geo["folds"] = trim_loops(P, tan_xz, closed, ds0)
+        P, _, _ = _resample(P, [0.0] * len(P), ds0, closed)
+        P, geo["box_arcs"] = box_fillets(P, closed, st, corridor["faces"], corners_st, ds0)
+        P, _, _ = _resample(P, [0.0] * len(P), ds0, closed)
+        P, geo["fillets"] = fillet_corners(P, closed, st, ds0)
+        P, _, _ = _resample(P, [0.0] * len(P), ds0, closed)
+        P, rep = bound_curvature(P, closed, st)
+        geo["smoothing"].append(rep)
+    elif lane_offset:
         target = lane_offsets(widths_s, dh_s, inset_s)
         alo, ahi = lane_corridor(widths_s, dh_s, inset_s, LINE_MIN_CLEAR_M)
         off0, geo["ramps"], geo["ramp_clamped"] = ramp_offsets(target, [d > 0.0 for d in dh_s], alo, ahi,
@@ -1167,13 +1924,45 @@ def build_line(pts, widths, *, closed: bool, spacing: float, lat_g: float, decel
     # asymmetric sides: distance from the line to the nearer boundary each way, minus the margin.
     # Boundaries (lateral, right positive): divider face / −(w/2 − inset) on the left, w/2 − inset
     # on the right. With no divider and no inset both read w/2 − margin, exactly as before.
+    # A race corridor: the distances to its two wall FACES (the forward-left face is the travel-left
+    # one for a forward layout, the travel-right one for a reverse layout).
     side_l, side_r = [], []
-    for i in range(n):
-        w, d, s, o = widths[i], dh[i], inset[i], off[i]
-        left_b = d if d > 0.0 else -(w / 2.0 - s)
-        right_b = w / 2.0 - s
-        side_l.append(max(0.5, (o - left_b) - margin_m))
-        side_r.append(max(0.5, (right_b - o) - margin_m))
+    if corridor is not None:
+        faces, fwd_travel = corridor["faces"], bool(corridor.get("forward", True))
+        for p in pts:
+            dhi, dlo = faces.dists(p[0], p[2])
+            dl, dr = (dhi, dlo) if fwd_travel else (dlo, dhi)
+            side_l.append(max(0.5, dl - margin_m))
+            side_r.append(max(0.5, dr - margin_m))
+        zone = [int(round(zone_s[k])) for k in assoc]
+        geo["corridor"] = {"points_in_open_box": sum(1 for z in zone if z == 2),
+                           "points_whole_street": sum(1 for z in zone if z == 1),
+                           "points_in_closure_lane": sum(1 for z in zone if z == 0)}
+        for arc in geo.get("box_arcs", []):
+            c = next((c for c in corners_st if c["apex_vertex"] == arc["apex_vertex"]), None)
+            if c is None:
+                continue
+            a, b = c["a_st"], c["b_st"]
+            span = (b - a) % n0 if closed else b - a
+            on = [i for i in range(n) if ((assoc[i] - a) % n0 if closed else assoc[i] - a) <= span
+                  and (closed or assoc[i] >= a)]
+            arc["points_on_arc"] = len(on)
+            arc["min_speed_kmh"] = round(min(v[i] for i in on) * 3.6, 1) if on else None
+            # the slowest point within 150 m either side of the arc: an approach that dips below the
+            # corner's own speed (a flick before it) shows here
+            reach = int(round(150.0 / ds0))
+            near = [i for i in range(n) if ((assoc[i] - (a - reach)) % n0 if closed else assoc[i] - (a - reach))
+                    <= span + 2 * reach and (closed or assoc[i] >= a - reach)]
+            arc["approach_min_speed_kmh"] = round(min(v[i] for i in near) * 3.6, 1) if near else None
+    else:
+        for i in range(n):
+            w, d, s, o = widths[i], dh[i], inset[i], off[i]
+            left_b = d if d > 0.0 else -(w / 2.0 - s)
+            right_b = w / 2.0 - s
+            side_l.append(max(0.5, (o - left_b) - margin_m))
+            side_r.append(max(0.5, (right_b - o) - margin_m))
+    geo["min_speed_kmh"] = round(min(v) * 3.6, 1) if v else None
+    geo["min_speed_at"] = min(range(n), key=lambda i: v[i]) if v else None
     return {"pts": pts, "v": v, "length": length, "radius": radius, "fwd": fwd, "grade": grade,
             "gas": gas, "brake": brake, "side_l": side_l, "side_r": side_r, "off": off,
             "base": [base[k] for k in assoc], "station": assoc, "dh": dh, "inset": inset, "widths": widths,
@@ -1464,8 +2253,8 @@ def main(argv: list[str] | None = None) -> None:
                                      "grid check against data/dummies_<id>.json")
     ap.add_argument("--lane-offset", choices=("auto", "none"), default="auto",
                     help="auto (default): right-hand carriageway wherever a divider is declared "
-                         "(median island; centre chain + kerb-line inset for race layouts); none: "
-                         "the centreline, as before")
+                         "(median island; for race layouts the corridor of a version-2 barrier_bands.json, "
+                         "else the 0047 centre chain + kerb-line inset); none: the centreline, as before")
     ap.add_argument("--race-furniture", choices=("auto", "on", "off"), default="auto",
                     help="consult data/barrier_bands.json: auto = layouts[].race_furniture")
     ap.add_argument("--bands", type=Path, help="barrier bands file (default data/barrier_bands.json)")
@@ -1546,15 +2335,30 @@ def main(argv: list[str] | None = None) -> None:
     island = _channel(data_dir / "median_bands.json", "island_w_by_vertex", n, "island") or zeros
     bands_path = args.bands or (data_dir / "barrier_bands.json")
     centre_w = inset = zeros
+    corridor = None
     if race:
-        centre_w = _channel(bands_path, "centre_w_by_vertex", n, "barrier") or zeros
-        inset = _channel(bands_path, "edge_inset_by_vertex", n, "barrier") or zeros
+        # A ledger-0049 declaration (version 2) gives the race layout its own corridor: the lane is the
+        # space between its two wall faces, the whole street on Alvarado / the I-8 deck / the open boxes.
+        # A version-1 file keeps the 0047 centre-chain lane below (legacy, until barrier_bands v2 lands).
+        bands = json.loads(bands_path.read_text(encoding="utf-8")) if bands_path.exists() else {}
+        corridor = corridor_for_layout(bands, args.layout or "", [list(p) for p in pts],
+                                       reverse=(mode == "reverse"), closed=closed, island_w=island) if bands else None
+        if corridor is None:
+            centre_w = _channel(bands_path, "centre_w_by_vertex", n, "barrier") or zeros
+            inset = _channel(bands_path, "edge_inset_by_vertex", n, "barrier") or zeros
+        else:
+            print(f"  corridor: {args.layout} (token {corridor['token']}) from {bands_path.name} v{bands.get('version')}"
+                  f" — zones {corridor['zones']}; open corners "
+                  f"{[c['apex_vertex'] for c in corridor['corners']]}, kept on the floor fillet "
+                  f"{[c['apex_vertex'] for c in corridor['corners_skipped']]}; face folds trimmed "
+                  f"{corridor['face_folds']}")
     else:
         print("  race furniture OFF for this line: centre chain / kerb-line inset not applied")
-    dh = [max(iw / 2.0, cw / 2.0) for iw, cw in zip(island, centre_w)]
+    dh = [max(iw / 2.0, cw / 2.0) for iw, cw in zip(island, centre_w)] if corridor is None else zeros
     use_offset = args.lane_offset == "auto"
     fwd_order = {"pts": [list(p) for p in pts], "widths": list(widths), "dh": dh, "inset": inset,
-                 "island": island}
+                 # a corridor is judged against the island as AUTHORED (nose taper), like its own faces
+                 "island": island if corridor is None else [2.0 * h for h in authored_island_half(island)]}
     if mode == "reverse":
         pts, widths = list(reversed(pts)), list(reversed(widths))
         dh, inset = list(reversed(dh)), list(reversed(inset))
@@ -1577,15 +2381,41 @@ def main(argv: list[str] | None = None) -> None:
     line = build_line(pts, widths, closed=closed, spacing=args.spacing, lat_g=args.lat_g,
                       decel_g=args.decel_g, accel_g=args.accel_g, vmax_kmh=args.vmax_kmh,
                       margin_m=args.margin_m, dh=dh, inset=inset, lane_offset=use_offset,
-                      start_xz=start_xz)
+                      start_xz=start_xz, corridor=corridor)
     geo = line["geometry"]
     if geo.get("start") is not None:
         geo["start"]["source"] = start_src or "first station (no AC_TIME_0 declared)"
+        geo["start"]["index"] = 0                      # point 0 IS the start/finish line (finding C)
+        grid = None
+        for dp in ([data_dir / f"dummies_{args.layout}.json"] if args.layout else []) + [data_dir / "dummies.json"]:
+            if dp.exists():
+                grid = json.loads(dp.read_text(encoding="utf-8")).get("AC_START_0")
+                if grid:
+                    break
+        if grid:
+            ln = line["pts"]
+            gi = min(range(len(ln)), key=lambda i: (ln[i][0] - grid[0]) ** 2 + (ln[i][2] - grid[2]) ** 2)
+            behind = (len(ln) - gi) * line["ds"] if gi > len(ln) // 2 else -gi * line["ds"]
+            geo["start"]["grid_index"] = gi
+            geo["start"]["grid_behind_line_m"] = round(behind, 1)
+            geo["start"]["grid_off_line_m"] = round(math.hypot(ln[gi][0] - grid[0], ln[gi][2] - grid[2]), 2)
 
     # Write-time self-check against the DECLARATION (per-vertex, forward order, engine frame).
     chk = check_lane_clearance(line["pts"], fwd_order["pts"], fwd_order["widths"], fwd_order["dh"],
                                fwd_order["inset"], fwd_order["island"], closed=closed,
                                expect_right=(mode == "forward"))
+    chk_c = None
+    if corridor is not None:
+        # the race line against its corridor's wall FACES (funnels, island faces, the trimmed inside corners)
+        chk_c = check_corridor(line["pts"], corridor["faces"], mouths=corridor["mouths"], closed=closed)
+        arcs = geo.get("box_arcs", [])
+        print(f"corridor: min clear {chk_c['min_clear_m']} m off a wall face (point {chk_c['min_clear_at']}, "
+              f"{chk_c['min_clear_face']}); outside {chk_c['outside']}, within {CHECK_CLEAR_M} m {chk_c['too_close']}; "
+              f"sealed mouths min {chk_c['mouth_min_m']} m; points in an open box "
+              f"{geo['corridor']['points_in_open_box']}; corner arcs "
+              + ", ".join(f"v{a['apex_vertex']} R {a['radius_m']} m ({a['lane']}, was {a['radius_before_m']})"
+                          if "radius_m" in a else f"v{a['apex_vertex']} {a.get('skipped')}" for a in arcs)
+              + f"; min speed {geo['min_speed_kmh']} km/h")
     n_off = sum(1 for o in line["off"] if abs(o) > 0.05)      # measured lateral, so a 5 cm floor
     print(f"lane: {n_off:,}/{len(line['off']):,} pts offset into the right-hand carriageway "
           f"(max {max(line['off']) if line['off'] else 0:.2f} m); divider stations {chk['divider_stations']:,}, "
@@ -1609,6 +2439,9 @@ def main(argv: list[str] | None = None) -> None:
           + (f"; start {geo['start']['dist_m']} m from the {geo['start']['source']}" if geo.get("start") else ""))
     if not chk["ok"]:
         raise SystemExit("REFUSED: the line crosses a declared island/barrier band — see the lane line above")
+    if chk_c is not None and not chk_c["ok"]:
+        raise SystemExit(f"REFUSED: the line leaves its race corridor or stands within {CHECK_CLEAR_M} m of a wall "
+                         f"face / sealed mouth — see the corridor line above")
     if geo["backward_steps"] or geo["self_crossings"]:
         raise SystemExit("REFUSED: the line still folds (backward step / self-crossing) — see the geometry line above")
     if use_offset and (geo["turns_over_limit"] or geo["radius_below_floor"]):
@@ -1646,6 +2479,18 @@ def main(argv: list[str] | None = None) -> None:
         "clearance": chk,
         "geometry": geo,
     }
+    if corridor is not None:
+        report["corridor"] = {
+            "declaration": f"{bands_path.name} corridors.{args.layout} (token {corridor['token']})",
+            "zones": corridor["zones"], "check": chk_c,
+            "open_corners": [{k: c[k] for k in ("apex_vertex", "zone", "D_deg")} for c in corridor["corners"]],
+            "corners_on_the_floor_fillet": corridor["corners_skipped"],
+            "face_folds_trimmed": corridor["face_folds"],
+            "min_radius_m": geo["min_radius_m"], "min_speed_kmh": geo["min_speed_kmh"],
+            "wall_clear_min_m": chk_c["min_clear_m"],
+            "points_in_open_box": geo["corridor"]["points_in_open_box"],
+            "start_index": (geo.get("start") or {}).get("index"),
+        }
     (out / "ai_draft.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
     print(f"{kind}, {len(line['pts']):,} pts at {line['ds']:.2f} m over {lap_m:,.1f} m; "
           f"est lap {line['lap_s']:.1f} s ({max(line['v']) * 3.6:.0f} km/h peak) -> {out}")

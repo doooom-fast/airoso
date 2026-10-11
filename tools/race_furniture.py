@@ -1,20 +1,31 @@
-"""Race-layout furniture for the Lake Murray loop — the PURE geometry (no bpy), ledger 0047.
+"""Race-layout furniture for the Lake Murray loop — the PURE geometry (no bpy), ledgers 0047 + 0049.
 
-Three kinds of furniture, every one a swept strip authored in the ENGINE frame (x = E, y = up,
-z = N) and emitted into Blender by `tools/author_race_furniture_blend.py` with the (x, z, y) remap
-and REVERSED winding (LAWS L6: the remap is a reflection):
+Ledger 0049 (Kevin 2026-10-11, the race-corridor spec): "racetrack versions of these, we need full
+intersections available for turning. And the entire other lane blocked off from access" — an
+Alvarado-wide lane per direction. Three kinds of furniture, every one a swept strip authored in the
+ENGINE frame (x = E, y = up, z = N) and emitted into Blender by `tools/author_race_furniture_blend.py`
+with the (x, z, y) remap and REVERSED winding (LAWS L6: the remap is a reflection):
 
-  centre K-rail chain   `1WALL_race_kbar_<street>_<k>`   Kevin's concrete_barrier_4m.obj silhouette
-                                                        swept along `barrier_bands.json` centre runs,
-                                                        nose-to-nose with the median islands, continuous
-                                                        round the three interior corners, tapered free ends
-  kerb-line barriers    `1WALL_race_edge_<L|R>_<street>_<k>`  the same strip on BOTH curb faces, every
-                                                        street incl. Alvarado, gapped only inside the
-                                                        declared bridge spans (the authored rails are the
-                                                        barrier there), straight across every mouth
-  race kerbs            `1KERB_race_<apexvertex>_<in|out>`  a 1.0 m x 0.05 m flat rumble strip ON the
-                                                        pavement inboard of the edge strip at the five
-                                                        corners the sign detector finds (|D| >= 45 deg)
+  kerb-line barriers    `1WALL_race_edge_<L|R>_<street>_<k>_<part>`   COMMON (both race layouts): Kevin's
+                                                        concrete_barrier_4m.obj silhouette swept on BOTH curb
+                                                        faces as ONE CLOSED LOOP per side — bridges included
+                                                        (C1: edge_gaps none), straight across every mouth, cut
+                                                        at street boundaries on shared rings: no free end, no cap
+  closures              `1WALL_race_close_<token>_<street>_<k>_<part>`  PER DIRECTION: the same strip on
+                                                        barrier_bands.json `corridors.<layout>.closure_y_by_vertex`
+                                                        (the far boundary 11.36 m from the race-side strip,
+                                                        along the island's race-side curb nose tip to nose tip),
+                                                        both ends PINNED full height on the far curb strip at a
+                                                        box / whole-street edge (the end cap buried in it)
+  race kerbs            `1KERB_race_<apexvertex>_<in|out>`  COMMON: a 1.0 m x 0.05 m flat rumble strip ON the
+                                                        pavement inboard of the edge strip at the five corners
+                                                        the sign detector finds (|D| >= 45 deg), in AND out (10),
+                                                        clipped where either direction's closure stands on it
+
+The retired ledger-0047 centre chain (`1WALL_race_kbar_*`, `centre_w_by_vertex`, `centre_runs`) is refused:
+a declaration that still carries it is a v1 file (check_bands). The owner token rides in a closure's NAME
+(race_owner) because the prep re-links objects to the scene root — the export split, check_race_kn5 and
+verify_kn5 route on it: common -> <slug>_race.kn5, token t -> <slug>_closure_<layout>.kn5.
 
 Why strips and not 2,100+ instanced modules: ~130k positions in ~30 objects (each <= MAX_RINGS_PER_OBJECT
 rings, render verts well under the exporter's 65,535 split) versus ~2.2 M positions; every
@@ -51,6 +62,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 import sys
 from pathlib import Path
 
@@ -69,11 +81,21 @@ BARRIER_H = 1.20         # Kevin's module is 1.202 m tall (Q5 offers 0.81-1.07 r
 # The 1.16/1.20 top chamfer is collapsed into one point so a ring is 10 vertices (10 quads/station).
 HALF_PROFILE = ((0.335, 0.00), (0.335, 0.12), (0.164, 0.38), (0.137, 0.47), (0.080, 1.20))
 BARRIER_HALF_W = HALF_PROFILE[0][0]
-NOSE_HALF = 0.25         # tools/author_median_blend.py NOSE_HALF — the island nose the chain butts into
-NOSE_H = 0.30            # chain height at the shared nose vertex (island curb top is 0.18 above the deck)
-NOSE_TAPER_RINGS = 3     # the nose ring + the two before it taper 0.335 -> 0.25 / 1.20 -> 0.30
-FREE_END_H = 0.30        # free ends (v780 / v4440 / bridge-span gaps): 3-ring height taper 1.20 -> 0.30
-FREE_TAPER_RINGS = 3
+NOSE_HALF = 0.25         # tools/author_median_blend.py NOSE_HALF — the authored island nose half-width (MEASURED)
+NOSE_VERTS = 3           # ... tapered over this many vertices at each island end (author_median_blend NOSE_VERTS)
+FREE_END_H = 0.30        # a FREE end (only a gapped, pre-0049 declaration has one — verify_race J fails it):
+FREE_TAPER_RINGS = 3     #   3-ring height taper 1.20 -> 0.30. Joins and closure pins stay full height.
+# ledger 0049 names: the kind / owner rides in the name (upper-case prefix tests)
+EDGE_TAG = "1WALL_RACE_EDGE_"
+CLOSE_TAG = "1WALL_RACE_CLOSE_"   # + <token>_ : the per-direction closure, routed to <slug>_closure_<layout>.kn5
+KBAR_TAG = "1WALL_RACE_KBAR_"     # the RETIRED centre chain (ledger 0047): its presence anywhere FAILS
+KERB_TAG = "1KERB_RACE_"
+TOKEN_RE = re.compile(r"^[a-z0-9]+$")   # a closure owner token ("cw" / "acw"): no underscore, it ends the name field
+COMMON_COLLECTION = "RACE"        # the common furniture's Blender collection; closures: RACE_CLOSE_<TOKEN>
+KERB_CLOSURE_CLEAR_M = 0.05       # a race kerb's footprint stands >= this off EVERY race layout's closure footprint
+#                                   (INVENTED, spec 0049 §6: the clip rule) — else the kerb is cut back
+LOOP_START_WINDOW = 10            # a closed curb-strip loop starts at the straightest vertex of the lap (least
+#                                   heading change over +-this many vertices): a fold never straddles its two ends
 MAX_RINGS_PER_OBJECT = 800   # 10 positions/ring -> <= 8,000 positions/object; smooth render verts ~16/ring
 #                              (12,800 + caps); even fully flat (60/ring) 48,000 + caps < 65,535
 RING_SPACING_MAX_M = 3.5     # densify_rings: consecutive rings along a strip at most this far apart (xz)
@@ -108,10 +130,6 @@ SPAWN_MARGIN_M = 0.30    # HARD floor (2026-10-11; was a soft note): a car on a 
 COLLIDER_BELOW_M, COLLIDER_ABOVE_M = 0.30, 2.50   # optional invisible sheet (Q11, OFF by default)
 STREETS = (("alvarado", 0, 759), ("college", 760, 1514), ("navajo", 1515, 2320),
            ("jackson", 2321, 3297), ("lakemurray", 3298, 4498))
-# the spec's centre runs, closed vertex intervals ending ON the island nose vertices (used only when
-# data/barrier_bands.json is absent and --standin-bands is given)
-SPEC_CENTRE_RUNS = ((780, 846), (1073, 1096), (1258, 1374), (1487, 1540), (1739, 2183), (2297, 4440))
-SPEC_CHAIN_LEN_M = 8525.0
 FACING = ("AC_START", "AC_PIT", "AC_HOTLAP")
 
 
@@ -180,6 +198,31 @@ def is_race_name(name):
     return name.upper().startswith(RACE_PREFIXES)
 
 
+def race_role(name):
+    """what a RACE object is, from its name alone: 'close' (a per-direction closure), 'edge' (a common curb
+    strip), 'kerb' (a common race kerb), 'kbar' (the RETIRED ledger-0047 centre chain — a FAIL wherever it
+    shows up), 'other' (another RACE-prefixed name); None for a non-race name"""
+    u = str(name).upper()
+    for tag, role in ((CLOSE_TAG, "close"), (EDGE_TAG, "edge"), (KERB_TAG, "kerb"), (KBAR_TAG, "kbar")):
+        if u.startswith(tag):
+            return role
+    return "other" if u.startswith(RACE_PREFIXES) else None
+
+
+def race_owner(name):
+    """the owner token of a closure `1WALL_race_close_<token>_<street>_<k>_<part>` (lower case), else None — the
+    common furniture (curb strips, kerbs) belongs to every race layout"""
+    if not str(name).upper().startswith(CLOSE_TAG):
+        return None
+    tok = str(name)[len(CLOSE_TAG):].split("_", 1)[0].lower()
+    return tok or None
+
+
+def closure_collection(token):
+    """the Blender collection a layout's closure objects are authored into (Kevin toggles a direction there)"""
+    return f"{COMMON_COLLECTION}_CLOSE_{str(token).upper()}"
+
+
 def yaw_blender(tx, tz, direction="forward"):
     """Blender rotation_euler.z for a facing dummy: the exporter's (x, z, -y) conversion makes
     atan2(tx, -tz) the kn5-frame travel heading (measured: deepforest +1.00, today's SD -0.91)"""
@@ -192,7 +235,7 @@ def yaw_blender(tx, tz, direction="forward"):
 def ring_profile(lat_scale=1.0, height=BARRIER_H):
     """closed 10-vertex ring in the cross-section plane: (lat, h), lat > 0 = LEFT of travel.
     Order: right base -> up the right face -> across the top -> down the left face -> (bottom edge
-    closes back to the right base). Scaled proportionally for the nose taper."""
+    closes back to the right base). Scaled proportionally for a free end's height taper."""
     hs = height / BARRIER_H
     right = [(-lat * lat_scale, h * hs) for lat, h in HALF_PROFILE]
     left = [(lat * lat_scale, h * hs) for lat, h in reversed(HALF_PROFILE)]
@@ -209,14 +252,12 @@ def ring_perimeter_v(ring):
 
 
 def taper(idx, n, start_kind, end_kind):
-    """(lat_scale, height) of ring idx in a run of n rings; ends are 'nose' or 'free'"""
+    """(lat_scale, height) of ring idx in a run of n rings. Only a 'free' end tapers (a gapped, pre-0049
+    declaration); 'join' (a ring shared with the neighbouring object) and 'pin' (a closure end buried in the far
+    curb strip, ledger 0049) stay full width and full height. The ledger-0047 nose taper is retired."""
     ls, h = 1.0, BARRIER_H
     for d, kind in ((idx, start_kind), (n - 1 - idx, end_kind)):
-        if kind == "nose" and d < NOSE_TAPER_RINGS:
-            f = d / NOSE_TAPER_RINGS
-            ls = min(ls, NOSE_HALF / BARRIER_HALF_W + (1.0 - NOSE_HALF / BARRIER_HALF_W) * f)
-            h = min(h, NOSE_H + (BARRIER_H - NOSE_H) * f)
-        elif kind == "free" and d < FREE_TAPER_RINGS:
+        if kind == "free" and d < FREE_TAPER_RINGS:
             f = d / FREE_TAPER_RINGS
             h = min(h, FREE_END_H + (BARRIER_H - FREE_END_H) * f)
     return ls, h
@@ -449,87 +490,55 @@ def walk(i, j, m):
     return list(range(i, m)) + list(range(0, j + 1))
 
 
-def standin_bands(pts, widths, island_w, mouths, spans, race_cfg=None, corners=None):
-    """A STAND-IN for data/barrier_bands.json built from the spec's vertex runs (centre chain), the
-    declared bridge spans (edge gaps) and the detector's corners (kerbs). Used only when the data
-    agent's file is absent and the caller passes --standin-bands; flagged `_standin: true`."""
-    race_cfg = race_cfg or {}
-    n = len(pts)
-    m = unique_count(pts)
-    st = stations(pts)
-    runs_c = [tuple(r) for r in race_cfg.get("centre_runs") or SPEC_CENTRE_RUNS]
-    centre_w = [0.0] * n
-    bw = float(race_cfg.get("barrier_width_m", 2 * BARRIER_HALF_W))
-    for i, j in runs_c:
-        for k in walk(i, j, m):
-            centre_w[k] = bw
-    inset = float(race_cfg.get("edge_inset_m", EDGE_INSET_M))
-    edge_inset = [inset] * n
-    for s0, s1 in spans:
-        for k in range(n):
-            if s0 <= st[k] <= s1:
-                edge_inset[k] = 0.0
-    centre_w[n - 1] = centre_w[0]
-    edge_inset[n - 1] = edge_inset[0]
-    runs = [{"kind": "centre", "i": i, "j": j, "street": street_of(i)} for i, j in runs_c]
-    for side in ("L", "R"):
-        for i, j in intervals(edge_inset, m):
-            runs.append({"kind": f"edge_{side}", "i": i, "j": j, "street": street_of(i)})
-    closed = []
-    for mo in mouths:
-        if mo.get("host") != "MAINLINE":
-            continue
-        k = int(mo["host_vertex"])
-        side = int(mo["side"])
-        nv = int(math.ceil((float(mo["connector_width_m"]) / 2.0 + 3.0) / 3.0))
-        poly = []
-        for q in (k - nv, k, k + nv):
-            q %= m
-            tx, tz = tangent(pts, q, m)
-            lx, lz = left_normal(tx, tz)
-            lat = side * (widths[q] / 2.0 - inset + BARRIER_HALF_W)
-            poly.append([round(pts[q][0] + lx * lat, 3), round(pts[q][2] + lz * lat, 3)])
-        closed.append({"connector": mo.get("connector"), "host_vertex": k, "side": side, "xz": poly})
-    chain_len = sum(st[j] - st[i] if j >= i else st[m] - st[i] + st[j] for i, j in runs_c)
-    out = {
-        "_standin": True,
-        "_doc": "STAND-IN written by tools/race_furniture.standin_bands from the spec's vertex runs — "
-                "replace with tools/barrier_bands.py's measured file before any ship run",
-        "centre_w_by_vertex": centre_w,
-        "edge_inset_by_vertex": edge_inset,
-        "runs": runs,
-        "closed_mouths": closed,
-        "kerbs": [{"apex": kb["apex_vertex"], "side": kb["side"], "i": kb["i"], "j": kb["j"], "kind": kb["kind"]}
-                  for c in (corners or []) for kb in c["kerbs"]],
-        "params": {"edge_mode": race_cfg.get("edge_mode", "road"), "edge_inset_m": inset,
-                   "barrier_width_m": bw, "barrier_height_m": float(race_cfg.get("barrier_height_m", BARRIER_H)),
-                   "module_pitch_m": MODULE_PITCH_M, "chain_length_m": round(chain_len, 1),
-                   "bridge_spans_m": [list(s) for s in spans]},
-    }
-    return out
+def corridors(bands):
+    """{layout id: corridor} — barrier_bands.json v2 `corridors` (ledger 0049), {} for a v1 file"""
+    return (bands or {}).get("corridors") or {}
 
 
-def check_bands(bands, pts, island_w):
-    """the band writer's self-gates, re-run on whatever file we were handed; returns a list of problems"""
-    n = len(pts)
+def closure_token(bands, layout_id):
+    """the owner token a race layout's closure objects carry in their names ("cw" / "acw"): DECLARED by
+    barrier_bands.json corridors.<id>.token (from track.config.json layouts[].closure_token)"""
+    c = corridors(bands).get(layout_id) or {}
+    return str(c.get("token") or "").lower()
+
+
+def token_layouts(bands):
+    """{token: layout id} of every declared closure (check_bands refuses a duplicate or malformed token)"""
+    return {closure_token(bands, lid): lid for lid in corridors(bands) if closure_token(bands, lid)}
+
+
+def check_bands(bands, pts, island_w=None):
+    """what the furniture needs from a declaration before it plans anything (the band writer's own self-gates
+    are tools/barrier_bands.py's); returns a list of problems. A ledger-0047 (v1) file — a centre chain
+    declared, no `corridors` — is refused: the chain is retired, each direction has its own closure."""
     m = unique_count(pts)
-    cw = bands["centre_w_by_vertex"]
     probs = []
-    if len(cw) != n:
-        return [f"centre_w_by_vertex has {len(cw)} entries, centerline {n}"]
-    runs_c = [(r["i"], r["j"]) for r in bands.get("runs", []) if r["kind"] == "centre"] or \
-             intervals(cw, m)
-    ends = {i for i, _ in runs_c} | {j for _, j in runs_c}
-    on_island = [k for k in range(m) if cw[k] > 0 and island_w[k] > 0 and k not in ends]
-    if on_island:
-        probs.append(f"{len(on_island)} centre verts on an island beyond the nose (first {on_island[:5]})")
-    on_alv = [k for k in range(0, 780) if cw[k] > 0]
-    if on_alv:
-        probs.append(f"{len(on_alv)} centre verts on Alvarado/the hairpin flare v0-779 (first {on_alv[:5]})")
-    st = stations(pts)
-    chain_len = sum(st[j] - st[i] if j >= i else st[m] - st[i] + st[j] for i, j in runs_c)
-    if abs(chain_len - SPEC_CHAIN_LEN_M) > 60.0:
-        probs.append(f"chain length {chain_len:.0f} m vs spec {SPEC_CHAIN_LEN_M:.0f} +- 60")
+    if any(float(w or 0.0) > 0.0 for w in (bands.get("centre_w_by_vertex") or [])):
+        probs.append("centre_w_by_vertex declares the ledger-0047 centre chain — retired by ledger 0049 (one closure "
+                     "per direction); re-run tools/barrier_bands.py (v2)")
+    if any(str(r.get("kind")) == "centre" for r in (bands.get("runs") or [])):
+        probs.append("runs[] declares a centre run — retired by ledger 0049")
+    ei = bands.get("edge_inset_by_vertex") or []
+    if len(ei) < m:
+        probs.append(f"edge_inset_by_vertex has {len(ei)} entries, the centreline {m} unique vertices")
+    cors = corridors(bands)
+    if not cors:
+        probs.append("no corridors.<layout id> in barrier_bands.json — a ledger-0047 (v1) declaration; re-run "
+                     "tools/barrier_bands.py (v2)")
+    seen = {}
+    for lid, c in sorted(cors.items()):
+        tok = str(c.get("token") or "")
+        if not TOKEN_RE.match(tok):
+            probs.append(f"corridors.{lid}.token {tok!r} is not a lower-case [a-z0-9]+ name token")
+        elif tok in seen:
+            probs.append(f"corridors.{lid}.token {tok!r} is also {seen[tok]}'s — each layout owns its closure")
+        seen[tok] = lid
+        y = c.get("closure_y_by_vertex")
+        if not isinstance(y, list) or len(y) < m:
+            probs.append(f"corridors.{lid}.closure_y_by_vertex has {len(y) if isinstance(y, list) else 'no'} entries, "
+                         f"the centreline {m}")
+        if not c.get("runs"):
+            probs.append(f"corridors.{lid}: no closure runs declared")
     return probs
 
 
@@ -742,24 +751,6 @@ def _count_inserted(parts):
     return parts
 
 
-def chain_plans(pts, widths, island_w, bands, height=BARRIER_H):
-    m = unique_count(pts)
-    st = stations(pts)
-    cw = bands["centre_w_by_vertex"]
-    runs = [(r["i"], r["j"]) for r in bands.get("runs", []) if r["kind"] == "centre"] or intervals(cw, m)
-    table = street_table(bands)
-    plans = []
-    for i, j in runs:
-        ks = walk(i, j, m)
-        sk = "nose" if island_w[i] > 0 else "free"
-        ek = "nose" if island_w[j] > 0 else "free"
-        plan = _plan_run(pts, widths, m, st, ks, lambda k: 0.0, sk, ek, height, "chain", street_of(i, table), "C", (i, j))
-        # lat 0: the offset curve IS the centreline chord, so this only ever splits a > 3.5 m vertex gap
-        plan["rings"], _ = densify_rings(plan["rings"], m)
-        plans += _count_inserted(split_plan(plan))
-    return plans
-
-
 def edge_lateral(half_w, inset, mode):
     """lateral (unsigned) of the strip CENTRE for a road half-width"""
     if mode == "walk":
@@ -767,56 +758,217 @@ def edge_lateral(half_w, inset, mode):
     return half_w - inset + BARRIER_HALF_W
 
 
-def edge_plans(pts, widths, bands, mode="road", height=BARRIER_H):
-    """both curb faces: one swept run per edge interval (the gaps are the declared bridge spans, free
-    tapered ends), every inside-lip fold TRIMMED on the WHOLE run first (trim_folded_rings: one mitred
-    corner ring where the offset curve's legs meet — the curb's own corner), then cut at street
-    boundaries (the boundary ring shared: zero gap, no cap) so every object is named for its street.
-    The declaration wins: when data/barrier_bands.json carries `edge_corners` (tools/barrier_bands.py,
-    the same computation) every trimmed corner must be one it declares, and every declared corner must
-    be trimmed — else SystemExit (re-run the band writer)."""
+def loop_start(pts, m, window=LOOP_START_WINDOW, lat_fns=()):
+    """the vertex a CLOSED curb-strip loop is swept from: the straightest point of the lap (the least heading change
+    between the tangents `window` vertices either side; ties -> the lowest index) among the vertices more than
+    FOLD_SEARCH_RINGS + 2 vertices from any backward step of the strip offsets `lat_fns` (each k -> signed lateral)
+    — so no fold, and no fold's crossing search, ever straddles the loop's two ends (with no safe vertex: the one
+    farthest from every backward step). The swept loop is rotated to its first street boundary afterwards
+    (_rotate_loop), so the start never names an object. loop_start(pts, m) alone is the straightest vertex."""
+    T = [tangent(pts, k, m) for k in range(m)]
+    turn = []
+    for k in range(m):
+        a, b = T[(k - window) % m], T[(k + window) % m]
+        turn.append(abs(math.atan2(a[0] * b[1] - a[1] * b[0], a[0] * b[0] + a[1] * b[1])))
+    marked = set()
+    for lat in lat_fns:
+        P = []
+        for k in range(m):
+            lx, lz = left_normal(*T[k])
+            P.append((pts[k][0] + lx * lat(k), pts[k][2] + lz * lat(k)))
+        for k in range(m):
+            a = (k - 1) % m
+            dx, dz = P[k][0] - P[a][0], P[k][1] - P[a][1]
+            if dx * T[a][0] + dz * T[a][1] < 0.0 or dx * T[k][0] + dz * T[k][1] < 0.0:
+                marked |= {a, k}
+    dist = [m] * m
+    if marked:
+        for k in marked:                       # ring index distance to the nearest backward step (two sweeps)
+            dist[k] = 0
+        for _ in range(2):
+            for k in range(m):
+                dist[k] = min(dist[k], dist[(k - 1) % m] + 1)
+            for k in range(m - 1, -1, -1):
+                dist[k] = min(dist[k], dist[(k + 1) % m] + 1)
+    safe = [k for k in range(m) if dist[k] > FOLD_SEARCH_RINGS + 2]
+    if not safe:
+        return max(range(m), key=lambda k: (dist[k], -turn[k], -k))
+    best, bk = None, safe[0]
+    for k in safe:
+        if best is None or turn[k] < best - 1e-12:
+            best, bk = turn[k], k
+    return bk
+
+
+def _edge_runs(pts, widths, ei, mode="road", height=BARRIER_H, table=None):
+    """[(side, whole-run plan, closed)] — the kerb-line strips as declared: where `edge_inset_by_vertex` is set on
+    EVERY vertex (ledger 0049 C1: edge_gaps none) each side is ONE closed loop swept from loop_start() round to
+    the same vertex again (the last ring repeats the first, both 'join'); a gapped (pre-0049) declaration gives one
+    run per interval with free ends. edge_plans (the authored line) and edge_fold_corners (what
+    tools/barrier_bands.py declares) both sweep these, so the trimmed corners agree by construction."""
     m = unique_count(pts)
     st = stations(pts)
+    ivs = intervals(ei, m)
+    closed = ivs == [(0, m - 1)]
+    out = []
+    for side, sgn in (("L", 1.0), ("R", -1.0)):
+        def lat(k, s=sgn):
+            return s * edge_lateral(widths[k] / 2.0, ei[k] or EDGE_INSET_M, mode)
+        if closed:
+            s0 = loop_start(pts, m, lat_fns=[lambda k, s=s_: s * edge_lateral(widths[k] / 2.0, ei[k] or EDGE_INSET_M, mode)
+                                             for s_ in (1.0, -1.0)])
+            ks = walk(s0, (s0 - 1) % m, m) + [s0]
+            out.append((side, _plan_run(pts, widths, m, st, ks, lat, "join", "join", height, "edge",
+                                        street_of(s0, table), side, (s0, s0)), True))
+        else:
+            for i, j in ivs:
+                out.append((side, _plan_run(pts, widths, m, st, walk(i, j, m), lat, "free", "free", height, "edge",
+                                            street_of(i, table), side, (i, j)), False))
+    return out
+
+
+def _rotate_loop(rings, table):
+    """a CLOSED strip loop (its last ring stands where its first does) rotated to start at its first street boundary,
+    so every swept object is one street's; the arcs are rebased so the texture u runs on from the new start"""
+    body = rings[:-1]
+    idx = next((i for i in range(1, len(body)) if street_of(body[i]["k"], table) != street_of(body[i - 1]["k"], table)), 0)
+    if idx == 0:
+        return rings
+    a_first, a_new, total = rings[0]["arc"], body[idx]["arc"], rings[-1]["arc"] - rings[0]["arc"]
+    out = [dict(r, arc=r["arc"] - a_new) for r in body[idx:]]
+    out += [dict(r, arc=r["arc"] - a_first + total - (a_new - a_first)) for r in body[:idx]]
+    out.append(dict(body[idx], arc=total))
+    return out
+
+
+def _cut_streets(rings, table):
+    """cut a ring list at every street change: the boundary ring is shared by both pieces (zero gap, no cap)"""
+    pieces, cur = [], [rings[0]]
+    for r in rings[1:]:
+        cur.append(r)
+        if street_of(r["k"], table) != street_of(cur[0]["k"], table) and r is not rings[-1]:
+            pieces.append(cur)
+            cur = [r]
+    pieces.append(cur)
+    return pieces
+
+
+def edge_plans(pts, widths, bands, mode="road", height=BARRIER_H):
+    """both curb faces — COMMON to every race layout (ledger 0049): each side one CLOSED loop (bridges included, C1),
+    every inside-lip fold TRIMMED on the whole loop first (trim_folded_rings: one mitred corner ring where the offset
+    curve's legs meet — the curb's own corner), densified, rotated to a street boundary and cut at street boundaries
+    on shared rings (every end a `join`, no cap, no free end) so every object is named for its street. The
+    declaration wins: when data/barrier_bands.json carries `edge_corners` (tools/barrier_bands.py, the same
+    computation — edge_fold_corners) every trimmed corner must be one it declares, and every declared corner must
+    be trimmed — else SystemExit (re-run the band writer)."""
+    m = unique_count(pts)
     ei = bands["edge_inset_by_vertex"]
     table = street_table(bands)
     plans = []
     found = []
-    for side, sgn in (("L", 1.0), ("R", -1.0)):
-        for i, j in intervals(ei, m):
-            ks = walk(i, j, m)
-            whole = _plan_run(pts, widths, m, st, ks,
-                              lambda k, s=sgn: s * edge_lateral(widths[k] / 2.0, ei[k] or EDGE_INSET_M, mode),
-                              "free", "free", height, "edge", street_of(ks[0], table), side, (i, j))
-            rings, skipped, corners = trim_folded_rings(whole["rings"])
-            found += [dict(c, side=side) for c in corners]
-            assigned = set()
-            rings, _ = densify_rings(rings, m)      # AFTER the trim: the two corner spans stay straight chords
-            pieces, cur = [], [rings[0]]
-            for r in rings[1:]:
-                cur.append(r)
-                if street_of(r["k"], table) != street_of(cur[0]["k"], table) and r is not rings[-1]:
-                    pieces.append(cur)
-                    cur = [r]
-            pieces.append(cur)
-            for pi, pr in enumerate(pieces):
-                sk = "free" if pi == 0 else "join"
-                ek = "free" if pi == len(pieces) - 1 else "join"
-                plan = dict(whole, rings=pr, street=street_of(pr[0]["k"], table), run=(pr[0]["k"], pr[-1]["k"]),
-                            start_kind=sk, end_kind=ek)
-                for part in _count_inserted(split_plan(plan)):
-                    part["cap_start"] = part["cap_start"] and sk == "free"
-                    part["cap_end"] = part["cap_end"] and ek == "free"
-                    # each trimmed corner is reported ONCE, by the object that holds its corner ring
-                    mine = [ci for ci, c in enumerate(corners) if ci not in assigned and any(
-                        r.get("corner") and math.dist(_strip_xz(r), c["xz"]) <= 2e-3 for r in part["rings"])]
-                    assigned.update(mine)
-                    part["fold_corners"] = [dict(corners[ci], side=side) for ci in mine]
-                    part["fold_skipped"] = sum(corners[ci]["n_removed"] for ci in mine)
-                    plans.append(part)
-            if len(assigned) != len(corners) or sum(c["n_removed"] for c in corners) != skipped:
-                raise SystemExit(f"[race] edge {side} run v{i}-v{j}: {len(corners)} trimmed corners, {len(assigned)} found "
-                                 f"in the swept objects — the corner rings went missing between trim and split")
+    for side, whole, closed in _edge_runs(pts, widths, ei, mode, height, table):
+        i, j = whole["run"]
+        rings, skipped, corners = trim_folded_rings(whole["rings"])
+        found += [dict(c, side=side) for c in corners]
+        assigned = set()
+        rings, _ = densify_rings(rings, m)      # AFTER the trim: the two corner spans stay straight chords
+        if closed:
+            rings = _rotate_loop(rings, table)
+        pieces = _cut_streets(rings, table)
+        for pi, pr in enumerate(pieces):
+            sk = "join" if (closed or pi > 0) else "free"
+            ek = "join" if (closed or pi < len(pieces) - 1) else "free"
+            plan = dict(whole, rings=pr, street=street_of(pr[0]["k"], table), run=(pr[0]["k"], pr[-1]["k"]),
+                        start_kind=sk, end_kind=ek, closed_loop=closed)
+            for part in _count_inserted(split_plan(plan)):
+                part["cap_start"] = part["cap_start"] and sk == "free"
+                part["cap_end"] = part["cap_end"] and ek == "free"
+                # each trimmed corner is reported ONCE, by the object that holds its corner ring
+                mine = [ci for ci, c in enumerate(corners) if ci not in assigned and any(
+                    r.get("corner") and math.dist(_strip_xz(r), c["xz"]) <= 2e-3 for r in part["rings"])]
+                assigned.update(mine)
+                part["fold_corners"] = [dict(corners[ci], side=side) for ci in mine]
+                part["fold_skipped"] = sum(corners[ci]["n_removed"] for ci in mine)
+                plans.append(part)
+        if len(assigned) != len(corners) or sum(c["n_removed"] for c in corners) != skipped:
+            raise SystemExit(f"[race] edge {side} run v{i}-v{j}: {len(corners)} trimmed corners, {len(assigned)} found "
+                             f"in the swept objects — the corner rings went missing between trim and split")
     match_declared_corners(bands, found)
+    return plans
+
+
+def closure_runs(bands, layout_id, m):
+    """[(i, j, run record)] — the layout's declared closure runs in FORWARD vertex order (increasing index; a run
+    declared in its layout's travel order, i > j for race_acw, is turned round): the walk i -> j on which
+    closure_y_by_vertex is declared at every vertex, pins included. A run with a null inside it is a SystemExit."""
+    c = corridors(bands).get(layout_id) or {}
+    y = c.get("closure_y_by_vertex") or []
+    out = []
+    for r in c.get("runs") or []:
+        i, j = int(r["i"]) % m, int(r["j"]) % m
+        fw, bw = walk(i, j, m), walk(j, i, m)
+        ok_f = all(k < len(y) and y[k] is not None for k in fw)
+        ok_b = all(k < len(y) and y[k] is not None for k in bw)
+        if ok_f and (not ok_b or len(fw) <= len(bw)):
+            out.append((i, j, r))
+        elif ok_b:
+            out.append((j, i, r))
+        else:
+            raise SystemExit(f"[race] corridors.{layout_id} run v{r['i']}-v{r['j']}: closure_y_by_vertex is null inside "
+                             f"it in both directions — the declaration is broken (re-run tools/barrier_bands.py)")
+    return out
+
+
+def closure_side(bands, layout_id):
+    """'L' / 'R': the side of the layout's lane its closure bounds, in the FORWARD frame (race_cw travels forward
+    with its race side on the right: closure 'L'; race_acw the mirror) — corridors.<id>.closure_side when declared"""
+    c = corridors(bands).get(layout_id) or {}
+    s = str(c.get("closure_side") or "").upper()
+    if s in ("L", "R"):
+        return s
+    return "R" if str(c.get("direction", "forward")) == "reverse" else "L"
+
+
+def closure_plans(pts, widths, bands, layout_id, height=BARRIER_H):
+    """ONE race layout's closure (ledger 0049): one swept run per declared closure run on
+    `corridors.<layout_id>.closure_y_by_vertex` (the CENTRE lateral, + = forward-left, lerped between vertices —
+    the declared curve verify_race C' measures against), both ends 'pin': full height and width, the end cap
+    kept and BURIED in the far curb strip (the pin ring is centred on that strip's line). A closure that folds
+    (trim_folded_rings finds a corner) is a SystemExit — the declaration's line is tighter than its own offset.
+    Densified (<= RING_SPACING_MAX_M, chord <= CHORD_MAX_M on the declared curve), split at
+    MAX_RINGS_PER_OBJECT rings on shared boundary rings. Plans carry token / layout / pins."""
+    m = unique_count(pts)
+    st = stations(pts)
+    c = corridors(bands).get(layout_id)
+    if c is None:
+        raise SystemExit(f"[race] no corridors.{layout_id} in barrier_bands.json — re-run tools/barrier_bands.py (v2)")
+    tok = closure_token(bands, layout_id)
+    if not TOKEN_RE.match(tok):
+        raise SystemExit(f"[race] corridors.{layout_id}.token {tok!r} is not a lower-case [a-z0-9]+ name token")
+    y = c["closure_y_by_vertex"]
+    table = street_table(bands)
+    side = closure_side(bands, layout_id)
+    far = "edge_L" if side == "L" else "edge_R"
+    plans = []
+    for i, j, rec in closure_runs(bands, layout_id, m):
+        ks = walk(i, j, m)
+        whole = _plan_run(pts, widths, m, st, ks, lambda k: float(y[k]), "pin", "pin", height, "close",
+                          street_of(i, table), side, (i, j))
+        rings, dropped, corners = trim_folded_rings(whole["rings"])
+        if corners or dropped:
+            raise SystemExit(f"[race] closure {layout_id} v{i}-v{j} folds at {[(cn['in_vertex'], cn['out_vertex']) for cn in corners]} "
+                             f"— the declared line is tighter than its own offset there; re-solve the corridor")
+        rings, _ = densify_rings(rings, m)
+        decl_ends = {int(e.get("vertex", -1)) % m: e for e in (rec.get("ends") or []) if isinstance(e, dict)}
+        pins = []
+        for v in (i, j):
+            e = decl_ends.get(v, {})
+            pins.append({"vertex": v, "y": round(float(y[v]), 4), "joins": str(e.get("joins") or far)})
+        whole.update(rings=rings, token=tok, layout=layout_id, pins=pins, closed_loop=False,
+                     run_length_m=round(rings[-1]["arc"] - rings[0]["arc"], 1))
+        for part in _count_inserted(split_plan(whole)):
+            part["fold_corners"], part["fold_skipped"] = [], 0
+            plans.append(part)
     return plans
 
 
@@ -825,7 +977,7 @@ def edge_plans(pts, widths, bands, mode="road", height=BARRIER_H):
 def detect_kerb_corners(pts, widths, bands, min_defl=KERB_DEFL_MIN_DEG):
     import place_signs as ps   # noqa: E402  (the signs workflow's file; imported, never edited)
     rb = ps.Ribbon("MAINLINE", pts, widths, True)
-    cw = bands["centre_w_by_vertex"]
+    cw = bands.get("centre_w_by_vertex") or []        # all 0 / absent since ledger 0049: every corner gets its inside kerb
     out = []
     for c in ps.detect_corners(rb):
         if abs(c["D_deg"]) < min_defl:
@@ -839,7 +991,7 @@ def detect_kerb_corners(pts, widths, bands, min_defl=KERB_DEFL_MIN_DEG):
         kerbs = [{"apex_vertex": apex_v, "apex_station": c["apex"], "side": outside, "kind": "out",
                   "s0": (pc - E) % rb.L, "s1": (pc + arc + E) % rb.L,
                   "i": rb.vertex(int(round(pc - E))), "j": rb.vertex(int(round(pc + arc + E)))}]
-        chained = cw[apex_v] > 0
+        chained = apex_v < len(cw) and float(cw[apex_v] or 0.0) > 0.0
         if not chained:
             kerbs.append({"apex_vertex": apex_v, "apex_station": c["apex"], "side": inside, "kind": "in",
                           "s0": float(pc), "s1": float((pc + arc) % rb.L),
@@ -904,8 +1056,144 @@ def kerb_plans(rb, corners, bands, mode="road"):
             sts, skipped, kcorners = trim_folded_stations(sts, sgn)
             plans.append({"kind": "kerb", "apex": kb["apex_vertex"], "side": kb["side"], "sub": kb["kind"],
                           "run": [kb["i"], kb["j"]], "stations": sts, "length_m": round(length, 1),
-                          "fold_skipped": skipped, "fold_corners": kcorners})
+                          "fold_skipped": skipped, "fold_corners": kcorners, "declared": bool(kb.get("declared")),
+                          "apex_station": float(kb.get("apex_station", c.get("apex_station", 0.0))), "lap_m": rb.L})
     return plans
+
+
+def seg_seg_dist(p1, p2, q1, q2):
+    """xz distance between the segments p1-p2 and q1-q2 (0 where they cross)"""
+    r = _seg_cross(p1, p2, q1, q2)
+    if r and 0.0 <= r[0] <= 1.0 and 0.0 <= r[1] <= 1.0:
+        return 0.0
+    return min(seg_dist(p1, q1, q2), seg_dist(p2, q1, q2), seg_dist(q1, p1, p2), seg_dist(q2, p1, p2))
+
+
+class SegIndex:
+    """a cell hash of footprint segments (p, q, half, tag): `near(a, b, reach)` yields every segment whose cell
+    box overlaps the box of a-b grown by reach"""
+
+    def __init__(self, segs, cell=4.0):
+        self.segs, self.cell, self.cells = segs, cell, {}
+        for si, (p, q, half, _tag) in enumerate(segs):
+            for key in self._keys(p, q, half):
+                self.cells.setdefault(key, []).append(si)
+
+    def _keys(self, p, q, grow):
+        c = self.cell
+        x0, x1 = int(math.floor((min(p[0], q[0]) - grow) / c)), int(math.floor((max(p[0], q[0]) + grow) / c))
+        z0, z1 = int(math.floor((min(p[1], q[1]) - grow) / c)), int(math.floor((max(p[1], q[1]) + grow) / c))
+        return [(i, j) for i in range(x0, x1 + 1) for j in range(z0, z1 + 1)]
+
+    def near(self, a, b, reach):
+        seen = set()
+        for key in self._keys(a, b, reach):
+            for si in self.cells.get(key, ()):
+                if si not in seen:
+                    seen.add(si)
+                    yield self.segs[si]
+
+
+def closure_footprints(cplans):
+    """[(p, q, half, layout)] — every planned closure's centre polyline as segments, half = the K-rail half base x
+    the ring's lateral scale (1 on a closure)"""
+    segs = []
+    for p in cplans:
+        rs = p["rings"]
+        for a, b in zip(rs, rs[1:]):
+            segs.append((_strip_xz(a), _strip_xz(b), BARRIER_HALF_W * max(a.get("ls", 1.0), b.get("ls", 1.0)),
+                         p.get("layout")))
+    return segs
+
+
+def kerb_station_footprint(s, sgn):
+    """the kerb's cross-section at a station in plan: lane lip -> outer edge (about the mid-line x ls at a mitre)"""
+    lx, lz = left_normal(s["tx"], s["tz"])
+    mid = s["lip"] + sgn * KERB_W / 2.0
+    h = KERB_W / 2.0 * s.get("ls", 1.0)
+    return (s["cx"] + lx * (mid - h), s["cz"] + lz * (mid - h)), (s["cx"] + lx * (mid + h), s["cz"] + lz * (mid + h))
+
+
+def _kerb_heights(sts):
+    """re-taper a (clipped) kerb's height over its first / last KERB_TAPER_STATIONS stations — kerb_plans' rule"""
+    n = len(sts)
+    out = []
+    for q, s in enumerate(sts):
+        d = min(q, n - 1 - q)
+        out.append(dict(s, h=max(0.005, KERB_H * min(1.0, (d + 0.5) / KERB_TAPER_STATIONS))))
+    return out
+
+
+def clip_kerbs(kplans, cplans, clear=KERB_CLOSURE_CLEAR_M):
+    """Ledger 0049 §6 clip rule, in place: every race kerb is cut to the longest contiguous run of its stations that
+    contains the apex and whose footprint stands >= `clear` off EVERY race layout's closure footprint (the kerbs are
+    common; a kerb under either direction's wall is cut for both). The cut ends re-taper. Each plan gets
+    `clip = {stations_removed: [start, end], by: [layouts], clear_m, min_clear_m}`. A kerb whose APEX station is
+    under a closure is a SystemExit: the declaration put a closure on a corner (boxes exist to prevent it)."""
+    segs = closure_footprints(cplans)
+    index = SegIndex(segs)
+    reach = BARRIER_HALF_W * MITRE_MAX + clear + 0.5
+    for kp in kplans:
+        sgn = 1.0 if kp["side"] == "L" else -1.0
+        sts = kp["stations"]
+        okay, mins, by = [], [], set()
+        for s in sts:
+            a, b = kerb_station_footprint(s, sgn)
+            worst = float("inf")
+            for p, q, half, lid in index.near(a, b, reach):
+                d = seg_seg_dist(a, b, p, q) - half
+                if d < clear:
+                    by.add(lid)
+                worst = min(worst, d)
+            okay.append(worst >= clear)
+            mins.append(worst)
+        L = kp.get("lap_m") or 0.0
+        ap = kp.get("apex_station")
+
+        def gap(s_):
+            d = abs(s_ - ap)
+            return min(d, L - d) if L else d
+        ai = min(range(len(sts)), key=lambda q: gap(sts[q]["s"])) if ap is not None else len(sts) // 2
+        if not okay[ai]:
+            raise SystemExit(f"[race] kerb {object_name(kp)}: its apex station stands {mins[ai]:.2f} m off a closure "
+                             f"(< {clear} m) — a closure on a corner; the corridor's boxes must hold the corner")
+        lo = ai
+        while lo > 0 and okay[lo - 1]:
+            lo -= 1
+        hi = ai
+        while hi < len(sts) - 1 and okay[hi + 1]:
+            hi += 1
+        removed = [lo, len(sts) - 1 - hi]
+        if lo or hi < len(sts) - 1:
+            kp["stations"] = _kerb_heights(sts[lo:hi + 1])
+        kept = mins[lo:hi + 1]
+        kp["clip"] = {"stations_removed": removed, "by": sorted(str(x) for x in by), "clear_m": clear,
+                      "min_clear_m": (round(min(kept), 3) if kept and min(kept) < float("inf") else None)}
+    return kplans
+
+
+def kerb_closure_clips(pts, widths, bands, mode="road", height=BARRIER_H):
+    """What tools/barrier_bands.py (v2) declares as the kerbs' clipped i/j — the SAME plan + clip the author sweeps
+    (the edge_fold_corners precedent: the declaration IS the authored line). For every declared kerb: the
+    vertices whose stations bound its kept stations, rounded INWARD (i = the first vertex at or after the first kept
+    station, j = the last at or before the last), plus the stations the clip removed and the layouts it removed
+    them for. [{apex, side, kind, i, j, stations_removed, by, clear_m, min_clear_m}]"""
+    rb, corners = detect_kerb_corners(pts, widths, bands)
+    apply_declared_kerbs(rb, corners, bands)
+    kps = kerb_plans(rb, corners, bands, mode)
+    cps = [p for lid in sorted(corridors(bands)) for p in closure_plans(pts, widths, bands, lid, height)]
+    clip_kerbs(kps, cps)
+    m = len(rb.raw)
+    out = []
+    for kp in kps:
+        s_a, s_b = kp["stations"][0]["s"], kp["stations"][-1]["s"]
+        span = (s_b - s_a) % rb.L
+        ks = walk(int(kp["run"][0]) % m, int(kp["run"][1]) % m, m)
+        inside = [k for k in ks if ((rb.cum[k] - s_a) % rb.L) <= span + 1e-6]
+        i, j = (inside[0], inside[-1]) if inside else (kp["run"][0], kp["run"][1])
+        out.append({"apex": kp["apex"], "side": kp["side"], "kind": {"out": "outside", "in": "inside"}.get(kp["sub"], kp["sub"]),
+                    "i": i, "j": j} | {k: v for k, v in kp["clip"].items()})
+    return out
 
 
 def _seg_cross(p1, p2, p3, p4):
@@ -1095,7 +1383,7 @@ def _trim_folds(recs, pos, place, half, search, what):
 
 def trim_folded_rings(rings, search=FOLD_SEARCH_RINGS):
     """_trim_folds on a kerb-line strip's vertex rings (the strip centre polyline, a mitred corner_ring at
-    each corner). The chain (lat 0) never folds. Returns (rings, n_dropped, corners)."""
+    each corner). A closure never folds (closure_plans refuses one). Returns (rings, n_dropped, corners)."""
     return _trim_folds(rings, _strip_xz, corner_ring, BARRIER_HALF_W, search, "edge")
 
 
@@ -1161,33 +1449,26 @@ def match_declared_corners(bands, found, tol=0.05):
 
 def edge_fold_corners(pts, widths, edge_inset, mode="road", height=BARRIER_H):
     """the kerb-line strips' trimmed inside corners on both sides — what tools/barrier_bands.py declares as
-    `edge_corners`: the SAME _plan_run + trim_folded_rings that edge_plans authors, so the declaration IS the
-    authored line. Each record: side, kind (loop | extend), xz (the corner X, engine frame), turn_deg, mitre,
+    `edge_corners`: the SAME _edge_runs (one closed loop per side when every vertex is declared — ledger 0049 C1)
+    + trim_folded_rings that edge_plans authors, so the declaration IS the authored line. Sorted by (side,
+    in_vertex). Each record: side, kind (loop | extend), xz (the corner X, engine frame), turn_deg, mitre,
     in_vertex / out_vertex (the leg rings either side), removed (the vertices with no ring on that side: the
     declared band runs in_vertex -> xz -> out_vertex across them), n_removed, extension_m."""
-    m = unique_count(pts)
-    st = stations(pts)
     out = []
-    for side, sgn in (("L", 1.0), ("R", -1.0)):
-        for i, j in intervals(edge_inset, m):
-            run = _plan_run(pts, widths, m, st, walk(i, j, m),
-                            lambda k, s=sgn: s * edge_lateral(widths[k] / 2.0, edge_inset[k] or EDGE_INSET_M, mode),
-                            "free", "free", height, "edge", "", side, (i, j))
-            out += [dict(c, side=side) for c in trim_folded_rings(run["rings"])[2]]
-    return out
+    for side, run, _closed in _edge_runs(pts, widths, edge_inset, mode, height):
+        out += [dict(c, side=side) for c in trim_folded_rings(run["rings"])[2]]
+    return sorted(out, key=lambda c: (c["side"], int(c["in_vertex"])))
 
 
 # ---------------------------------------------------------------------------------------------
 # names
 def object_name(plan):
-    if plan["kind"] == "chain":
-        return f"1WALL_race_kbar_{plan['street']}_{plan['run'][0]}_{plan['part']}"
     if plan["kind"] == "edge":
         return f"1WALL_race_edge_{plan['side']}_{plan['street']}_{plan['run'][0]}_{plan['part']}"
+    if plan["kind"] == "close":
+        return f"1WALL_race_close_{plan['token']}_{plan['street']}_{plan['run'][0]}_{plan['part']}"
     if plan["kind"] == "kerb":
         return f"1KERB_race_{plan['apex']}_{plan['sub']}"
-    if plan["kind"] == "collider":
-        return f"1WALL_racecol_{plan['part']}"
     raise ValueError(plan["kind"])
 
 
@@ -1202,13 +1483,16 @@ def nearest_vertex(pts, m, x, z, cells=None):
     return bi
 
 
-def spawn_clearance_table(pts, widths, bands, dummies, mode="road"):
+def spawn_clearance_table(pts, widths, bands, dummies, mode="road", layout_id=None):
     """One record per FACING dummy (grid / pit / hotlap; AC_TIME_* skipped): the nearest vertex, the
-    signed lateral (+ = left of the FORWARD centreline), the edge-strip face it faces, and the car's
-    clearance to that face and (where a chain stands) to the centre chain. Pure; verify_race and the
+    signed lateral (+ = left of the FORWARD centreline), the edge-strip face it faces and the car's
+    clearance to it; with `layout_id` and a declared corridor (ledger 0049) also `clear_lane_m`, the car's
+    clearance to the nearer face of that layout's lane (corridors.<id>.lane_by_vertex, forward frame [lo, hi] —
+    the curb-strip faces in WHOLE / BOX zones, the closure face where one stands). Pure; verify_race and the
     author tool both read it."""
     m = unique_count(pts)
-    cw, ei = bands["centre_w_by_vertex"], bands["edge_inset_by_vertex"]
+    ei = bands["edge_inset_by_vertex"]
+    lane = (corridors(bands).get(layout_id) or {}).get("lane_by_vertex") if layout_id else None
     out = []
     for name, p in dummies.items():
         if name.startswith("_") or not any(name.startswith(f) for f in FACING):
@@ -1221,20 +1505,22 @@ def spawn_clearance_table(pts, widths, bands, dummies, mode="road"):
         half = widths[k] / 2.0
         face = (half - (ei[k] or EDGE_INSET_M)) if mode == "road" else half + 0.11
         rec = {"name": name, "vertex": k, "lat_m": round(lat, 3), "edge_face_m": round(face, 3),
-               "clear_edge_m": round(face - (abs(lat) + CAR_HALF_W), 3), "clear_centre_m": None}
-        if cw[k] > 0:
-            rec["clear_centre_m"] = round(abs(lat) - CAR_HALF_W - cw[k] / 2.0, 3)
+               "clear_edge_m": round(face - (abs(lat) + CAR_HALF_W), 3), "clear_lane_m": None, "lane_m": None}
+        if lane and k < len(lane) and lane[k]:
+            lo, hi = float(lane[k][0]), float(lane[k][1])
+            rec["lane_m"] = [round(lo, 3), round(hi, 3)]
+            rec["clear_lane_m"] = round(min(lat - CAR_HALF_W - lo, hi - (lat + CAR_HALF_W)), 3)
         out.append(rec)
     return out
 
 
-def spawn_clearance(pts, widths, bands, dummies, mode="road"):
-    """(hard, notes): hard = a car on this spawn overlaps a strip OR stands closer than SPAWN_MARGIN_M
-    (0.30 m) to a strip face — never ship (HARD since 2026-10-11; a 0.08 m clearance used to be a note);
-    notes = the minimum clearance found, one line (reported, never gated)"""
+def spawn_clearance(pts, widths, bands, dummies, mode="road", layout_id=None):
+    """(hard, notes): hard = a car on this spawn overlaps a strip / its lane face OR stands closer than
+    SPAWN_MARGIN_M (0.30 m) to one — never ship (HARD since 2026-10-11); notes = the minimum clearance found, one
+    line (reported, never gated)"""
     hard, notes = [], []
     worst = None
-    for r in spawn_clearance_table(pts, widths, bands, dummies, mode):
+    for r in spawn_clearance_table(pts, widths, bands, dummies, mode, layout_id):
         name, k, lat, face = r["name"], r["vertex"], r["lat_m"], r["edge_face_m"]
         clear = r["clear_edge_m"]
         if clear < 0:
@@ -1244,14 +1530,14 @@ def spawn_clearance(pts, widths, bands, dummies, mode="road"):
                         f"< {SPAWN_MARGIN_M:.2f} m")
         if worst is None or clear < worst[0]:
             worst = (clear, f"{name} v{k} (edge-strip face {face:.2f} m)")
-        cc = r["clear_centre_m"]
-        if cc is not None:
-            if cc < 0:
-                hard.append(f"{name} at v{k} lat {lat:+.2f}: overlaps the centre chain")
-            elif cc < SPAWN_MARGIN_M:
-                hard.append(f"{name} at v{k} lat {lat:+.2f}: only {cc:.2f} m clear of the centre chain < {SPAWN_MARGIN_M:.2f} m")
-            if cc < worst[0]:
-                worst = (cc, f"{name} v{k} (centre chain)")
+        cl = r["clear_lane_m"]
+        if cl is not None:
+            if cl < 0:
+                hard.append(f"{name} at v{k} lat {lat:+.2f}: the car stands outside its lane {r['lane_m']} (a closure or strip face)")
+            elif cl < SPAWN_MARGIN_M:
+                hard.append(f"{name} at v{k} lat {lat:+.2f}: only {cl:.2f} m clear of its lane face {r['lane_m']} < {SPAWN_MARGIN_M:.2f} m")
+            if cl < worst[0]:
+                worst = (cl, f"{name} v{k} (lane face {r['lane_m']})")
     if worst is not None:
         notes.append(f"minimum spawn clearance {worst[0]:.2f} m at {worst[1]} (hard floor {SPAWN_MARGIN_M:.2f} m)")
     return hard, notes
@@ -1333,30 +1619,40 @@ def dummies_positions(d):
 
 
 # ---------------------------------------------------------------------------------------------
+def strip_length(rings):
+    """the swept strip's own plan length (its centre polyline; `arc` measures the centreline instead)"""
+    return sum(math.dist(_strip_xz(a), _strip_xz(b)) for a, b in zip(rings, rings[1:]))
+
+
 def plan_all(proj, bands, mode="road", height=BARRIER_H, kerbs=True):
-    """everything the Blender tool needs, plus the corner table for the report"""
+    """everything the Blender tool needs, plus the corner table for the report: the COMMON furniture (both curb
+    strips as closed loops, the race kerbs clipped against every closure) then every race layout's closure
+    (corridors.<id>, sorted by id). A declaration check_bands refuses (a v1 file) is a SystemExit."""
     pts, widths = load_centerline(proj)
     mb = json.loads((Path(proj) / "data" / "median_bands.json").read_text(encoding="utf-8"))
     island_w = mb["island_w_by_vertex"]
     if len(island_w) != len(pts):
         raise SystemExit(f"[race] median_bands {len(island_w)} vs centerline {len(pts)} vertices")
-    plans = chain_plans(pts, widths, island_w, bands, height) + edge_plans(pts, widths, bands, mode, height)
+    probs = check_bands(bands, pts)
+    if probs:
+        raise SystemExit("[race] barrier_bands.json refused: " + " | ".join(probs))
+    plans = edge_plans(pts, widths, bands, mode, height)
+    closures = [p for lid in sorted(corridors(bands)) for p in closure_plans(pts, widths, bands, lid, height)]
     corners = []
     if kerbs:
         rb, corners = detect_kerb_corners(pts, widths, bands)
         for d in apply_declared_kerbs(rb, corners, bands):
             print(f"[race] WARNING declared kerb apex v{d.get('apex')} {d.get('side')} {d.get('kind')} "
                   f"matches no detected corner — not authored")
-        plans += kerb_plans(rb, corners, bands, mode)
-    return pts, widths, island_w, plans, corners
+        plans += clip_kerbs(kerb_plans(rb, corners, bands, mode), closures)
+    return pts, widths, island_w, plans + closures, corners
 
 
 if __name__ == "__main__":
-    # CLI: write a stand-in bands file / synthesised dummies into a (scratch) project and print the plan
+    # CLI: synthesised dummies into a (scratch) project, and the pure plan's census
     import argparse
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("project")
-    ap.add_argument("--standin-bands", action="store_true", help="write data/barrier_bands.json (stand-in) if absent")
     ap.add_argument("--synth-dummies", action="store_true", help="write data/dummies_<id>.json (synthesised) if absent")
     ap.add_argument("--edge-mode", default=None, choices=["road", "walk"])
     a = ap.parse_args()
@@ -1366,16 +1662,6 @@ if __name__ == "__main__":
     pts, widths = load_centerline(proj)
     mode = a.edge_mode or race_cfg.get("edge_mode", "road")
     bands = load_bands(proj)
-    if bands is None and a.standin_bands:
-        mb = json.loads((proj / "data" / "median_bands.json").read_text(encoding="utf-8"))
-        mouths = json.loads((proj / "data" / "mouths.json").read_text(encoding="utf-8")).get("mouths", [])
-        spans = json.loads((proj / "data" / "bridge.spans.auto.json").read_text(encoding="utf-8"))
-        tmp = standin_bands(pts, widths, mb["island_w_by_vertex"], mouths, spans, dict(race_cfg, edge_mode=mode))
-        _, corners = detect_kerb_corners(pts, widths, tmp)
-        bands = standin_bands(pts, widths, mb["island_w_by_vertex"], mouths, spans, dict(race_cfg, edge_mode=mode), corners)
-        (proj / "data" / "barrier_bands.json").write_text(json.dumps(bands), encoding="utf-8")
-        print(f"[race] wrote STAND-IN data/barrier_bands.json: chain {bands['params']['chain_length_m']} m, "
-              f"{len(bands['runs'])} runs, {len(bands['closed_mouths'])} closed mouths, {len(bands['kerbs'])} kerbs")
     if a.synth_dummies:
         for lo in cfg.get("layouts", []):
             p = proj / "data" / f"dummies_{lo['id']}.json"
@@ -1383,14 +1669,15 @@ if __name__ == "__main__":
                 continue
             p.write_text(json.dumps(synth_dummies(pts, widths, lo), indent=1), encoding="utf-8")
             print(f"[race] wrote SYNTHESISED {p.name} ({lo.get('direction', 'forward')})")
-    if bands is not None:
-        mb = json.loads((proj / "data" / "median_bands.json").read_text(encoding="utf-8"))
-        for pr in check_bands(bands, pts, mb["island_w_by_vertex"]):
-            print(f"[race] bands: {pr}")
-        _, _, _, plans, corners = plan_all(proj, bands, mode)
-        for c in corners:
-            print(f"[race] corner apex v{c['apex_vertex']} R {c['R_apex_m']} m D {c['D_deg']} deg "
-                  f"{'chained' if c['chained'] else 'open'} -> {[k['side'] + '/' + k['kind'] for k in c['kerbs']]}")
-        print(f"[race] {len(plans)} objects planned: "
-              f"{sum(1 for p in plans if p['kind'] == 'chain')} chain, {sum(1 for p in plans if p['kind'] == 'edge')} edge, "
-              f"{sum(1 for p in plans if p['kind'] == 'kerb')} kerb")
+    if bands is None:
+        raise SystemExit("[race] no data/barrier_bands.json — run tools/barrier_bands.py first")
+    _, _, _, plans, corners = plan_all(proj, bands, (bands.get("params") or {}).get("edge_mode", mode))
+    for c in corners:
+        print(f"[race] corner apex v{c['apex_vertex']} R {c['R_apex_m']} m D {c['D_deg']} deg "
+              f"-> {[k['side'] + '/' + k['kind'] for k in c['kerbs']]}")
+    for kind in ("edge", "kerb", "close"):
+        ps = [p for p in plans if p["kind"] == kind]
+        print(f"[race] {kind}: {len(ps)} objects " + ", ".join(sorted({p.get('token') or 'common' for p in ps})))
+    for p in plans:
+        if p["kind"] == "kerb" and p.get("clip", {}).get("stations_removed") != [0, 0]:
+            print(f"[race] kerb {object_name(p)} clipped {p['clip']}")

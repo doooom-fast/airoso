@@ -314,3 +314,72 @@ def test_readme_says_what_the_folder_is_and_where_it_installs():
         tf.generate(d)
         text = (d / "build" / SLUG / "README.txt").read_text(encoding="utf-8")
         assert "AI (street): shipped from the project's ai/" in text and "AI (race_cw): a GENERATED DRAFT" in text
+
+
+# --- ledger 0049: race corridors — each race layout loads the common race kn5 + its OWN closure kn5 --------
+
+_CORRIDOR = [dict(_THREE[0]), dict(_THREE[1], closure_token="cw"), dict(_THREE[2], closure_token="acw")]
+_CORRIDOR_KN5 = (f"{SLUG}.kn5", f"{SLUG}_race.kn5", f"{SLUG}_closure_race_cw.kn5", f"{SLUG}_closure_race_acw.kn5",
+                 f"{SLUG}__street.kn5", f"{SLUG}__race_cw.kn5", f"{SLUG}__race_acw.kn5")
+
+
+def _corridor_project(root: Path, layouts=None, kn5s=_CORRIDOR_KN5) -> Path:
+    d = _project(root, layouts or _CORRIDOR, kn5s=kn5s, dummies_for=("street", "race_cw", "race_acw"))
+    cfg = json.loads((d / "track.config.json").read_text(encoding="utf-8"))
+    cfg["race"] = {"corridor": {"clear_width_m": 11.36}}
+    (d / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
+    return d
+
+
+def test_corridor_race_layouts_load_their_own_closure_and_never_the_other():
+    with tempfile.TemporaryDirectory() as td:
+        d = _corridor_project(Path(td))
+        out = d / "build" / SLUG
+        out.mkdir(parents=True)
+        (out / f"{SLUG}_closure_race_old.kn5").write_bytes(b"stale")            # a retired layout's closure
+        info = tf.generate(d)
+        assert _ini_models(out / "models_race_cw.ini") == \
+            [f"{SLUG}.kn5", f"{SLUG}_race.kn5", f"{SLUG}_closure_race_cw.kn5", f"{SLUG}__race_cw.kn5"]
+        assert _ini_models(out / "models_race_acw.ini") == \
+            [f"{SLUG}.kn5", f"{SLUG}_race.kn5", f"{SLUG}_closure_race_acw.kn5", f"{SLUG}__race_acw.kn5"]
+        assert _ini_models(out / "models_street.ini") == [f"{SLUG}.kn5", f"{SLUG}__street.kn5"]
+        assert f"{SLUG}_closure_race_acw.kn5" not in (out / "models_race_cw.ini").read_text()
+        assert f"{SLUG}_closure_race_cw.kn5" not in (out / "models_race_acw.ini").read_text()
+        for name in (f"{SLUG}_closure_race_cw.kn5", f"{SLUG}_closure_race_acw.kn5"):
+            assert (out / name).read_bytes() == b"sc6969" + name.encode()
+        assert not (out / f"{SLUG}_closure_race_old.kn5").exists()
+        assert info["models"]["race_cw"][2] == f"{SLUG}_closure_race_cw.kn5"
+        readme = (out / "README.txt").read_text(encoding="utf-8")
+        assert f"{SLUG}_closure_race_cw.kn5" in readme and "OWN" in readme
+
+
+def test_a_missing_closure_kn5_is_a_hard_error_and_dry_runs_still_name_it():
+    with tempfile.TemporaryDirectory() as td:
+        d = _corridor_project(Path(td), kn5s=tuple(k for k in _CORRIDOR_KN5 if "closure_race_acw" not in k))
+        try:
+            tf.generate(d)
+        except FileNotFoundError as e:
+            assert f"{SLUG}_closure_race_acw.kn5" in str(e)
+        else:
+            raise AssertionError("a corridor race layout must not pack without its closure walls")
+        info = tf.generate(d, strict_kn5=False)
+        assert info["models"]["race_acw"] == [f"{SLUG}.kn5", f"{SLUG}_race.kn5", f"{SLUG}_closure_race_acw.kn5",
+                                              f"{SLUG}__race_acw.kn5"]
+
+
+def test_closure_tokens_must_make_a_whole_declaration():
+    with tempfile.TemporaryDirectory() as td:
+        bad_sets = ([dict(_THREE[0]), dict(_THREE[1], closure_token="cw"), dict(_THREE[2])],          # acw has none
+                    [dict(_THREE[0]), dict(_THREE[1], closure_token="cw"), dict(_THREE[2], closure_token="cw")],
+                    [dict(_THREE[0], closure_token="st"), dict(_THREE[1], closure_token="cw"),
+                     dict(_THREE[2], closure_token="acw")])                                             # street has one
+        for i, layouts in enumerate(bad_sets):
+            d = _corridor_project(Path(td) / str(i), layouts=layouts)
+            try:
+                tf.generate(d)
+            except ValueError as e:
+                assert "closure_token" in str(e), e
+            else:
+                raise AssertionError(f"declaration {i} must be refused")
+        # no corridor and no tokens: the 0047 shape (no closure kn5) — test_three_layouts_pack_the_0047_shape
+        assert tf.closure_kn5_name({"slug": "s", "layouts": _THREE}, _THREE[1]) is None

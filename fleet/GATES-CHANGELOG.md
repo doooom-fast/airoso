@@ -442,3 +442,202 @@ edge clearance 0.83 / 3.60 / 3.61 m; Dragon Tail and Under the Dragon (gravel) d
 the lane edge — the shipped smoother is a Taubin pair that returns its best state). ⚠ 10° / 12 m /
 0.95 are the ledger-0047 audit's numbers, not measured envelopes. Tests:
 `tests/ac/test_ai_line_geometry.py`, `tests/ac/test_write_ai_line_layouts.py`.
+
+## 2026-10-11 — race corridors: `no_route` containment gate, barrier_bands v2 self-gates, per-layout lanes (ledger 0049)
+
+**Change.** Kevin's race brief ("the entire other lane blocked off from access", "an Alvarado's width for
+the entire track", open intersections at the corners the race turns at) replaces 0047's shared centre
+chain with one closure per direction. Nothing gated containment before this: every gate checked the lane
+the car is *supposed* to drive, none checked that it cannot leave it. New and changed gates:
+
+| Gate | Before | After |
+|---|---|---|
+| **`tools/no_route.py`** (new, hard) | — | flood fill per race layout from `AC_START_0` on the layout's BUILT gate OBJ (`track.<id>.obj` = road + common race + that layout's closure kn5): FAIL on any cell reached outside the declared corridor, on a reached forbidden probe, or when a lane-centre cell / `AC_START_n` / `AC_PIT_n` is not reached ("corridor blocked at v…"). Writes `data/no_route.<id>.json`, exit 1. A v1 declaration is read with its own semantics (chain / island face) |
+| no_route PLANNED (new, inside `barrier_bands.py`) | — | the same fill on the declared polylines (both strips with trimmed corners + this layout's closure + mouth lines, ±0.335 m) before any authoring; `data/no_route.<id>.planned.json`. Not an L5 gate: the declaration checking its own topology |
+| `barrier_bands.py` | v1: chain runs validated (17 m threshold, nose butt joints, hairpin arc, `BRIDGE_CLEAR_M`), strips gapped at the bridge spans | v2 self-gates (exit 1): zones cover every vertex once, boxes hold their corner arcs, derived runs == `race.corridor.closure_runs`; pins on the far strip centre ±0.01 m and not on a trimmed fold vertex; rates (toward the race side ≤ 1:12, away ≤ 1:6, pin zones ≤ their forced rate +2 %, nothing steeper than 1:3); clear ≥ 6.5 m everywhere, ≥ 10.86 m except listed island / pin-zone / convergence vertices; pocket ≥ 2.0 m behind every running closure; closure ≥ 0.15 m off the AUTHORED island (nose taper included) at every vertex; 0 backward steps; plan radius ≥ 20 m; mouth policies; grid + pit slots ≥ 0.30 m off both lane faces; exactly 10 kerbs ≥ 0.05 m off every closure; strips on every vertex; `centre_runs` refused; the Alvarado re-measure within 0.02 m of `clear_width_m`; planned no_route 0 leaks, lap complete |
+| `median_zone` | one barrier zone for every race layout | `MedianZone.load(project, layout=<id>)`: both curb strips + THAT layout's closure band (same ±(0.335 + 0.6) m, continuous between declared vertices); `lane_r(i)`, `closure_at(i)`, `zone_at(i)`. Without a layout: unchanged. A v2 file without the asked layout: SystemExit |
+| `drive_test --layout` (race, v2) | lane = divider face .. kerb-line face, neighbour borrowing near dividers; OBJ `track.race.obj` | lane = the declared `lane_by_vertex` faces lerped at the station, `DIVIDER_CLEAR_M` 0.4 inside each face, no borrowing (the declared lane is continuous; boxes / whole street are full width, 6.3 m disc cap kept); `barrier_missing` adds key `closure` (probed on the line between the two declared ring centres); OBJ default `track.<id>.obj`; report `lane`. v1 files: unchanged |
+| `audit_mesh --layout <id>` | `--race`: D exempt on every declared band | D exempt on that layout's bands only (its closure, never the other direction's); defaults `track.<id>.obj` → `audit.<id>.json`; **new W** = a race-strip vert inside another wall's footprint or vice versa (plan ±0.05 m, inside its height range), hard under `--layout`, reported under `--race` |
+
+**Retired.** `BRIDGE_CLEAR_M` 9 m (invented); "edge gaps == declared bridge spans"; the 17 m
+`wide_threshold_m`; the nose butt-joint rule; the hairpin-arc chain rule; `declared_open`. The three
+bridge spans had no rail on most of their length (Alvarado v609-619 none at all; College rail only
+v864-887 of v856-902; I-8 only v4454-4474 of v4444-4491): a strip gap there was a door.
+
+**Teeth (measured 2026-10-11 on scratch copies; nothing built, exported or installed).**
+
+| Run | Result |
+|---|---|
+| TODAY's installed race build (`track.race.obj`, v1 semantics), race_cw | **FAIL** 752,562 m² outside the corridor, 11 door clusters: Alvarado bridge v606-620 L+R, College bridge v854-903 (race side), I-8 bridge + chain end v4438-4493 L+R, chain end v779-781, all five islands' race faces nose to nose (the beam alone is not a wall) — every door escapes to the open map |
+| same, race_acw | **FAIL** 752,263 m², 11 clusters, the mirror |
+| planned v2, race_cw / race_acw | **PASS** 0 / 0 leaks, 139,130 / 138,826 m² reached (the study's prototype: 138.8 k / 138.4 k), lap complete |
+| planned v2 with today's bridge gaps put back | **FAIL** 5 clusters per layout at exactly the uncovered spans (v608-619 L+R, v855-902 race side, v4443-4491 L+R), 210 / 406 probes reached |
+| v2 swept into a virtual BUILT OBJ (declared strips + closure seated on the deck + today's road-kn5 `1WALL_guard`) | **PASS** 0 leaks both layouts, 0 / 406 probes reached, spawns reached |
+| synthetic (tests) | sealed L-corridor passes both ways; 1.5 m door FAILS at its vertex/side (off_road, escapes); 0.8 m crack passes; beam-only closure (0.63-0.93 m) FAILS, posts or not; unpinned closure end FAILS (opposite); cross wall → "blocked"; seed in a wall → exit 2; reached probe FAILS |
+
+The prototype counted 51 "clusters" because it bucketed door cells per 4 vertices and never merged
+same-side buckets; the gate clusters door cells spatially (cells within 2 m), so the same doors read as 11.
+
+**Regression floor.** The street layout's paths are untouched (no layout → the zone, lanes and OBJ are
+today's). Today's race OBJ re-audited under `--race`: D / K / I / F = 512 / 154 / 145 / 15 (the stored
+`audit.race.json`), W = 0. Planned v2 strips stand 0.15 m inboard of the College and I-8 deck rails in plan.
+
+**Wall rule detail (measured).** Per cell the union of the height ranges of the wall triangles touching it
+and its 8 neighbours must cover every 0.05 m bin of [deck + 0.20, deck + 0.90] (deck = the centreline y at
+the projection + 0.10). One cell alone sees only one face of the jersey profile (the steep face is 0.47-1.20,
+the toe 0-0.38), so the 3 × 3 union is what makes a K-rail a wall; the beam (0.63-0.93) stays open. Today's
+race strips measured: base -0.05 m, top +1.15 m relative to that deck (the v2323 ribbon fold: base -0.52, top
+1.16 — still spans).
+
+| Value | Status |
+|---|---|
+| cell 0.25 m, tile 64 m, domain w/2 + 25 m, PROBE_R 0.5 m, TOL 0.75 m, wall band 0.20-0.90 m, height bin 0.05 m + 3 × 3 union, door link 2 m | ⚠ INVENTED |
+| pocket 2.0 m, hard minimum 6.5 m, floor 10.86 m (band −0.5 / +1.5), rates 1:12 / 1:6 / I-8 1:10, steepest 1:3, pin zone 120 m, base ±60 m / σ 20 m, island envelope 30 m, attract 40 m, smooth 4 m, opening ≤ 100 m, radius floor 20 m on a ±6 m stencil, box pad 2, kerb clip 0.05 m, convergence reach 150 m, W tolerance 0.05 m, mirror report window 100 m | ⚠ INVENTED |
+| clear width 11.36 m (re-measured 11.36: median w − 2 × 0.82 on Alvarado), strip inset 0.82, strip centre 0.485, K-rail half base 0.335, nose 0.25 m over 3 vertices | MEASURED |
+
+Tests: `tests/tools/test_no_route.py`, `tests/tools/test_race_corridor.py` (the port reproduces the study's
+solution, fixture `tests/tools/fixtures/sd_corridor_proto.json`, to 1 mm), `tests/tools/test_barrier_bands.py`
+(every v2 self-gate fires on its crafted defect), `tests/geometry/test_median_zone_kinds.py`,
+`tests/geometry/test_drive_test_layouts.py`, `tests/geometry/test_audit_race_flag.py`.
+
+### Same day — the authored furniture, the export split and the kn5 checks (ledger 0049, geometry)
+
+**Change.** The furniture behind the corridors: both curb strips authored as ONE closed loop per side (across
+all three bridges), each race layout's closure authored into its own collection (`RACE_CLOSE_CW` /
+`RACE_CLOSE_ACW`) and exported to its own kn5, the 10 race kerbs clipped against every closure. The gates that
+judge it before and after the export:
+
+| Gate | Before | After |
+|---|---|---|
+| `verify_race` C (chain) → **C′ closures** | one chain object per declared centre run, rings on centre_w vertices, never on an island / Alvarado / the hairpin arc, ends within 1.5 m of the run's vertices | per race layout: one object chain per declared closure run, parts joined on a shared ring (0.05 m); EVERY ring within `CLOSE_TOL_M` 0.05 m of the declared closure line (closure_y lerped between vertices, the densify curve); no declared closure vertex in a BOX / WHOLE zone; each run's first / last ring AT its pin: within `PIN_TOL_M` 0.05 m of the declared far curb-strip line, at the pin vertex ±1 |
+| `verify_race` D | every DECLARED edge vertex covered (gaps allowed), "no ring inside a bridge span", a `free` end must stand at a declared gap | EVERY centreline vertex covered on both sides, bridge spans included (C1 — the inversion), except the declaration's `edge_corners[].removed` (set check, unchanged); declared corners built (unchanged) |
+| `verify_race` E | declared (apex, in/out) set == authored | + each kerb's run == the declaration's (clipped) i/j; + every kerb footprint (mid-line ± 0.5 m × ls) ≥ `KERB_CLEAR_M` 0.05 m off EVERY layout's AUTHORED closure footprint (re-measured on the ring centres) |
+| **`verify_race` J** (new) | — | zero free ends: every curb-strip end is a `join` met by a same-side neighbour's end (0.05 m, re-measured); every closure end is a join with its run's next part or a PIN whose centre stands ≤ 0.05 m off the AUTHORED far strip's centre polyline, full height (`h == barrier_height_m`) and full width (`ls == 1`) |
+| **`verify_race` K** (new) | — | every closure's name token is a declared corridor token, its record's owner / layout / collection (`RACE_CLOSE_<TOKEN>`) agree; common furniture owns no token and sits in `RACE`; no RACE object of an unknown kind (the old `1WALL_racecol_*` collider included) |
+| **`verify_race` L** (new) | — | 0 interpolated rings inside the declared bridge spans (`race_authored.bridge_seating`, the author's new per-ring seat record); every span carries seated strip rings |
+| **`verify_race` M** (new) | — | every `closed_mouths` line lies ≤ `MOUTH_TOL_M` 0.10 m from the authored strip of its side (both strips are common: sealed in both layouts); every mouth has a policy per layout; `behind_closure` = that layout's authored closure runs past the whole mouth (on its declared line, the lane on the race side of it) |
+| **`verify_race` N** (new) | — | no `1WALL_race_kbar_*` object; `centre_w_by_vertex` all 0; no centre run |
+| `verify_race` F / G | edge faces + centre chain | + the layout's declared lane (`lane_by_vertex`) ≥ 0.30 m off each face; lamps vs every layout's closure footprint (lerped at the mast) |
+| `verify_race` H / I | chain + strips | strips + closures (closure curve = the declared closure line) |
+| `check_race_kn5` | role-free: RACE meshes, race textures, no AC_* | `--role common` (default in the CLI): no CLOSE / KBAR mesh, ≥ 1 `1WALL_RACE_EDGE_*`, exactly the declared kerb count (`--expect-kerbs`, else `len(kerbs)` of `--bands` / the barrier_bands.json beside the parse); `--role closure --owner <t>`: every mesh `1WALL_RACE_CLOSE_<T>_*`, ≥ 1. `check(parsed, allowed)` without a role is unchanged |
+| `verify_kn5` (d) | START/PIT right of travel; ≥ barrier_half + `CHAIN_CLEAR_M` 1.0 m off a declared chain | race layout with a declared lane: every START/PIT car (half-width 0.95) inside the lane, ≥ `LANE_MARGIN_M` 0.30 m off each face (kn5 frame converted: lateral-left = (X−PX)·f.z − (Z−PZ)·f.x on the forward kn5 tangent); otherwise right of travel. `CHAIN_CLEAR_M` retired |
+| `verify_kn5` (f) | `<slug>_race.kn5`: RACE meshes ≥ 1 wall + 1 kerb, RACE materials, no dup across road + race | common kn5: + ≥ 1 `1WALL_RACE_EDGE_*`, no CLOSE, no KBAR; per race layout `<slug>_closure_<id>.kn5` present, every mesh `1WALL_RACE_CLOSE_<TOKEN>_*` of that layout's declared token (corridors.<id>.token, else layouts[].closure_token), ≥ 1, RACE materials, no spawn node, < 20 MB, no 1-prefixed name shared with road + common; a stray `<slug>_closure_*.kn5` fails |
+| **`verify_kn5 --inis` (g)** (new) | — | on the packed `build/<slug>/`: each race `models_<id>.ini` lists exactly [road, `_race`, `_closure_<id>`, `__<id>`], the street's [road, `__street`]; no ini lists another layout's closure; every listed kn5 is in the folder |
+| `split_exports_blend` manifest | race scene RACE-only | + `loop_closure_<id>.blend` per race layout; problems for an undeclared token, a KBAR object, an empty closure blend, a closure in `loop_race.blend` (or the other layout's in a closure blend), (race ∪ closures) ≠ every RACE object, a material no kept object uses |
+
+**Retired.** verify_race's chain checks (C), "no ring inside a declared gap (bridge span)", "a free end must
+stand at a declared gap"; verify_kn5's `CHAIN_CLEAR_M` 1.0 m (⚠ invented) centre-chain spawn check; the
+author's `--standin-bands` and `--collider` (Q11 not built for per-direction closures).
+
+**Teeth (dry run 2026-10-11, scratch copies only; the workshop loop.blend untouched).** Authored on a copy of
+the workshop `loop.blend` against barrier_bands.py v2's own declaration: verify_race OK — 15 curb-strip
+objects (closed loops, 0 free ends, every vertex covered but the 41 declared trims), 6 + 6 closure objects off
+their declared lines by ≤ 0.007 m, 16 pins ≤ 0.006 m off the far strip line and 0.000 m off the authored
+strip, 328 bridge rings seated by direct hit, 0 interpolated. Prep + split: `loop_race.blend` 25 meshes,
+`loop_closure_race_cw.blend` / `_acw` 6 meshes each, problems []. Exported: `check_race_kn5` OK for all three
+roles; the cw closure file checked as `acw` or as `common` FAILS. With the road and spawn kn5s exported too, `verify_kn5` passes on the full scratch build (every race START/PIT inside its lane, nearest face 0.48 m — verify_race F's number), and `verify_kn5 --inis` passes on the folder track_folder packed (after the road kn5 is copied in); the same folder with race_cw's ini pointed at the acw closure FAILS twice. Synthetic tests: every new check with a
+passing and a failing case (`tests/tools/test_verify_race.py`, `tests/tools/test_check_race_kn5.py`,
+`tests/ac/test_verify_kn5_layouts.py`, `tests/tools/test_race_furniture.py`).
+
+| Value | Status |
+|---|---|
+| `CLOSE_TOL_M` 0.05, `PIN_TOL_M` 0.05, `MOUTH_TOL_M` 0.10, `KERB_CLEAR_M` / `KERB_CLOSURE_CLEAR_M` 0.05, loop-start margin `FOLD_SEARCH_RINGS` + 2 vertices | ⚠ INVENTED |
+| `LANE_MARGIN_M` 0.30 = `SPAWN_MARGIN_M` (2026-10-11), car half-width 0.95 | as before |
+
+### Same day — `write_ai_line` inside the race corridors: face refusals walked along the line (ledger 0049, AI)
+
+**Change.** With a version-2 `data/barrier_bands.json` a race layout's AI draft is written inside
+`corridors.<id>.lane_by_vertex` (the retired centre chain is never used; a version-2 file without the
+layout's corridor, or with no corridors at all, REFUSES; a version-1 file keeps the 0047 lane byte for
+byte). The write-time self-check (it refuses to write; it is not one of the four build gates) gains:
+
+| Check | Before (0047) | After (0049 race layouts) |
+|---|---|---|
+| ruler | the line's POINTS against per-vertex divider / inset channels | every point of the LINE, walked every `CHECK_STEP_M` 0.25 m ⚠ along each 1.5 m segment, against the corridor's two wall FACES as polylines on the walls' own vertex frame (race_furniture's tangent v−1 → v+1, densified 1 m on the declared curve, fold-trimmed at the five inside lips like the strips) — a chord can pass the sharp trimmed corner X much closer than either end point (measured: 0.53 m between two points both ≥ 0.71 m) |
+| corridor | — | **refuse** any probe beyond a face (past a closure, in a side street) or < `CHECK_CLEAR_M` 0.6 m from one (funnels, island faces and the trimmed inside corners included) |
+| islands | raw `island_w_by_vertex` (no nose taper) | the island as AUTHORED (author_median_blend: NOSE_HALF 0.25 over NOSE_VERTS 3, MEASURED) is an obstacle of its own: **refuse** a probe on it or < 0.6 m from it; the legacy segment check also uses the authored outline for race corridors |
+| sealed mouths | — | **refuse** a probe < 0.6 m from a `closed_mouths` mouth line |
+| shape | today's fold / turn / radius refusals | unchanged, and apply |
+
+Line-shaping constants (not refusals, all ⚠ INVENTED): lane-centre smoothing `CORRIDOR_MU_M` 25 m;
+open-corner outside hold `BOX_APPROACH_M` 60 m, held `BOX_EDGE_IN_M` 0.25 m inside the comfort edge,
+slope-limited at `BOX_EDGE_SLOPE` 1:10 (an earlier version chased the 1:3.3 funnel face and put a
+58 km/h flick before an 88 km/h corner); box arcs searched from `BOX_R_MAX_M` 150 m down a 0.92 ladder to
+the 12.6 m floor fillet, bisected 8 steps, comfort clearance `FILLET_COMFORT_CLEAR_M` 1.5 m first;
+corners turning > `BOX_TURN_MAX_DEG` 170° (the hairpin) keep the floor fillet; an arc window never
+reaches into another corner's arc.
+
+**Why it is not a bypass.** Every 0047 refusal stands for the street layout and for a version-1 race
+declaration (both drafts byte-identical to the installed ones on the scratch copy). For a corridor the
+divider/inset ruler is replaced by the faces it approximated, and judged along the line instead of at its
+points — strictly more probes, same 0.6 m floor.
+
+**Measured basis (scratch copy of the workshop; barrier_bands v2 on the ledger-0049 config).**
+race_cw / race_acw: 0 probes outside / under 0.6 m / on an island; wall clearance minimum 1.48 / 1.49 m;
+sealed mouths ≥ 5.85 / 5.72 m; box arcs v0 45.1 / 47.5 m, v1514 28.7 / 52.3 m, v2319 32.8 / 52.3 m, v3297
+44.5 / 58.5 m (0047 drafts floor-limited at 12.6 / 10.3 m there); min radius 12.57 / 12.54 m (the
+hairpin), min target speed 50.6 / 50.5 km/h; 0 backward steps, 0 self-crossings, 0 steps > 10°; point 0
+on the start/finish line. An independent check against the per-vertex declaration (not the writer's
+faces) found 0 violations. Tests: `tests/ac/test_ai_corridor.py`,
+`tests/ac/test_ai_line_geometry.py::test_a_point_half_a_metre_from_a_closure_face_is_refused`.
+
+| Value | Status |
+|---|---|
+| `CHECK_STEP_M` 0.25, `CORRIDOR_MU_M` 25, `BOX_APPROACH_M` 60, `BOX_EDGE_IN_M` 0.25, `BOX_EDGE_SLOPE` 0.10, `BOX_R_MAX_M` 150, `BOX_R_LADDER` 0.92, `BOX_R_BISECT` 8, `BOX_TURN_MAX_DEG` 170, box window up to 108 points | ⚠ INVENTED |
+| `CHECK_CLEAR_M` 0.6, `FILLET_COMFORT_CLEAR_M` 1.5, `RADIUS_FLOOR_M` 12 | as before (ledger 0047) |
+| island nose `NOSE_HALF` 0.25 over `NOSE_VERTS` 3 | MEASURED (tools/author_median_blend.py) |
+
+### Same day — `tools/ship_sd.sh`: the corridor chain wired, per-layout BUILT gates, RACE_RED on containment (ledger 0049, integration)
+
+**Change.** The ship chain now builds and judges what ledger 0049 declares: barrier_bands v2 (with its planned
+no_route) → layout_dummies → the author (`RACE` + `RACE_CLOSE_CW` / `RACE_CLOSE_ACW`) → verify_race → plots →
+prep → split (road / common race / one closure blend per race layout / spawns) → exports, each kn5
+content-checked → spawn kn5s → AI per layout → verify_kn5 → track_folder → verify_kn5 `--inis` → make_map →
+make_treefx → the gates per layout → RACE_RED → sync → install (unchanged mechanics).
+
+| Gate / rail | Before (0047 chain) | After |
+|---|---|---|
+| planned no_route read-back (new, hard) | — | after `barrier_bands.py` (which already exits 1 on a planned leak) the ship reads every race layout's `data/no_route.<id>.planned.json` and stops before Blender unless it exists, is a report, says `fail` false with 0 leak cells, nothing blocked, no probe reached, no spawn unreached. `--no-planned-route` never appears in the ship |
+| closure exports (new) | — | per race layout: `loop_closure_<id>.blend` must exist after the split, is exported to `${SLUG}_closure_<id>.kn5`, parsed with `inspect_kn5` to `data/closure_<id>.kn5.json` and judged by `check_race_kn5 --role closure --owner <token>`, the token read from the DECLARATION (`barrier_bands.json corridors.<id>.token`) |
+| common race kn5 check | role-free content guard | `check_race_kn5 --role common --bands data/barrier_bands.json` (kerb count pinned to the declaration) |
+| `verify_kn5 --inis` (wired) | — | after track_folder AND after the road kn5 is copied into `build/<slug>/` (before that copy it fails, correctly: the ini names a kn5 not yet in the folder) |
+| race gate OBJ | ONE `data/track.race.obj` (road + race kn5) for both race layouts | one per race layout: `data/track.<id>.obj` = road + common race + THAT layout's closure kn5 (the set its ini loads) |
+| race drive_test / audit | one drive_test call over both layouts on `track.race.obj`; `audit_mesh --race` → `audit.race.json` | per layout `drive_test --layout <id>` → `drive_test.<id>.json`, `audit_mesh --layout <id>` → `audit.<id>.json` (D exempt on that layout's bands only, W hard) |
+| no_route BUILT (wired, hard) | — | per race layout, `python tools/no_route.py "$PROJ" --layout <id>` on `track.<id>.obj` → `data/no_route.<id>.json` |
+| stale verdicts | the gates read whatever per-layout file was on disk | every `drive_test.<id>.json`, `audit.<id>.json`, `no_route.<id>.json`, `no_route.<id>.planned.json` and `track.<id>.obj` is deleted before the step that rewrites it, so a gate that does not run reads "not run" (red), never last run's pass |
+| `RACE_RED` | rows of `drive_test.json` with `kind == race`: `barrier_missing` > 0, `obstruction_stations` > 0, or `fail` null; checked only when some gate exit was nonzero | keyed on the DECLARED race ids (a race layout missing from `drive_test.json`, or no `drive_test.json` at all, is red) + `no_route.<id>.json` missing, `fail` not false, `leak_cells` > 0, or any `blocked` / `forbidden_reached` / `spawns_unreached`; decided FIRST, independent of the other exits, and never overridden by `--force-install`; a no_route exit ≠ 0 (2 = input error) also stops the install |
+| sync back | + `audit.race.json` | + `no_route.<id>.json`, `no_route.<id>.planned.json`, `audit.<id>.json`, `closure_<id>.kn5.json`, `race_kn5.json`; the retired `audit.race.json` is removed from the repo copy; gate OBJs (66-78 MB) are never synced |
+
+**Retired.** `data/track.race.obj` and `data/audit.race.json` (removed from the project at the gate step and from
+`tracks/san-diego-lake-murray/data/` at the sync). No constant was added: the ship only wires the gates above.
+
+**Measured — the full scratch rehearsal (P7), 2026-10-11.** A fresh copy of the workshop project (minus
+`build/`), `SHIP_PROJ=<copy> bash tools/ship_sd.sh --skip-blend`, run twice on fresh copies with identical
+numbers (about 5 min each; the workshop `loop.blend` and the AC folder untouched):
+
+| Gate | race_cw | race_acw | street |
+|---|---|---|---|
+| planned no_route | PASS 0 leaks, 139,130 m² | PASS 0 leaks, 138,826 m² | — |
+| verify_race | OK (common + both layouts) | | — |
+| check_race_kn5 | common OK (10,283,552 B, 15 strips + 10 kerbs); closure `cw` OK (5,433,534 B, 6 meshes) | closure `acw` OK (5,432,722 B, 6 meshes) | — |
+| verify_kn5 / `--inis` | OK / OK | OK / OK | OK / OK |
+| drive_test | barrier_missing 0 / 37,869, obstruction 0, severe 0 (soft top 44, floating 391, excursion 1 — inherited counters) | 0 / 37,870, 0, 0 (soft top 40, floating 391, excursion 0) | 82 / 391 / 0 / 101 — identical |
+| audit | D 0 / K 158 / I 145 / F 15, W 0 | the same | D 512 / K 154 / I 145 / F 15 — identical, `audit.json` byte-identical |
+| no_route BUILT | **PASS** 0 leaks, 0 / 406 probes, lap complete, spawns reached | **PASS** the same | — |
+| RACE_RED | not red | not red | — |
+
+The run ends `NOT INSTALLED` (exit 1) only on the inherited street / race drive_test and audit counters, exactly
+as every build of this track has; a scratch project is never installed anyway.
+
+**Named, not exempted.** Race K 158 vs the 154 baseline = 4 verts of the new inside kerb `1KERB_race_1514_in`
+at v1518: the road there is two `1ROAD` sheets 0.093 m apart (the College/Navajo inside-corner fold, 0033/0046
+class); the kerb sits flush on the upper (driven) sheet and K measures it against the lower one (+0.133 /
++0.136 m). Race D 0 vs the street's 512: all 512 are the road kn5's own `1WALL_guard`, every one inside a race
+layout's declared band, where `--layout` exempts D by design — the street audit keeps counting them.
+
+**Teeth on the real kn5s.** `no_route --layout race_cw` on road + common WITHOUT the closure kn5: FAIL, 81,466 m²
+through 5 doors (4 opposite, 1 island), 390 / 406 probes reached. On road + common + the OTHER direction's
+closure: FAIL, 60,266 m² through 10 opposite doors, 311 / 406 probes, the lap blocked in 20 spans. Tests:
+`tests/tools/test_ship_sd_chain.py` (stage order, the per-layout gate loop, RACE_RED and the planned read-back
+RUN on crafted verdict files — clean passes, every red condition turns red, a missing `drive_test.json` turns
+both layouts red).

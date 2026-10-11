@@ -1,14 +1,17 @@
-"""Top-down pictures of the race-layout furniture over the Lake Murray loop (ledger 0047) — for
-someone who thinks in maps: pavement, median islands, the centre K-rail chain (red), the kerb-line
-barriers on both curb faces (orange = forward-left, cyan = forward-right), the race kerbs (white),
-the three bridge-span gaps, each layout's grid / pit row / timing lines, and the island noses the
-chain butts into. One overview + one 180 m window per place that matters (the Alvarado grids, the
-hairpin, the Del Cerro 4-way, the three chained corners, the I-8 end of the chain, the lap seam).
+"""Top-down pictures of the race-layout furniture over the Lake Murray loop (ledgers 0047 + 0049) — for someone
+who thinks in maps. ONE FOLDER PER RACE LAYOUT, `data/race_plots/<layout id>/`, each showing what THAT version
+loads: pavement, median islands, the race lane (green: where the car may go), both curb barriers (orange =
+forward-left curb, cyan = forward-right curb — common to both race versions), THIS version's closure wall (red:
+the barrier that shuts off the other direction), the race kerbs (red / white), the closure's pins (where each
+wall end is buried in the far curb barrier), the island noses, and the grid / pit row / timing lines.
 
-Reads data/race_authored.json (tools/author_race_furniture_blend.py: the SEATED ring centres of
-every authored object) when it exists, else plans the same geometry in pure Python
-(tools/race_furniture.plan_all) so the picture exists before any Blender run; `--planned` forces
-the latter. Pillow only (no matplotlib on this box).
+Per layout: overview.png, the five corners the race turns at (corner_<apex>.png), the Del Cerro 4-way
+(del_cerro_1085.png), the I-8 end of the closure (i8_end_4454.png), every island nose (nose_<v>.png) and every
+closure pin (pin_<v>.png).
+
+Reads data/race_authored.json (tools/author_race_furniture_blend.py: the SEATED ring centres of every authored
+object) when it exists, else plans the same geometry in pure Python (tools/race_furniture.plan_all) so the
+pictures exist before any Blender run; `--planned` forces the latter. Pillow only (no matplotlib on this box).
 
     python tools/plot_race_furniture.py <project-dir> [--out DIR] [--planned]
         (default DIR: <project>/data/race_plots/)
@@ -16,7 +19,6 @@ the latter. Pillow only (no matplotlib on this box).
 from __future__ import annotations
 
 import json
-import math
 import sys
 from pathlib import Path
 
@@ -25,20 +27,19 @@ from PIL import Image, ImageDraw, ImageFont
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import race_furniture as rf  # noqa: E402
 
-COL = {"bg": (34, 40, 34), "grass": (60, 92, 54), "road": (88, 88, 94), "island": (142, 170, 112),
-       "chain": (235, 60, 50), "edge_L": (255, 160, 40), "edge_R": (60, 200, 230), "kerb": (255, 255, 255),
-       "kerb2": (235, 60, 50), "gap": (255, 230, 80), "nose": (255, 255, 120), "text": (240, 240, 240),
-       "shadow": (0, 0, 0), "cl": (130, 130, 140),
-       "street": (255, 255, 255), "race_cw": (120, 255, 120), "race_acw": (255, 120, 255)}
+COL = {"grass": (60, 92, 54), "road": (88, 88, 94), "island": (142, 170, 112), "lane": (90, 230, 120, 70),
+       "close": (235, 50, 45), "edge_L": (255, 160, 40), "edge_R": (60, 200, 230), "kerb": (255, 255, 255),
+       "kerb2": (235, 60, 50), "nose": (255, 255, 120), "pin": (255, 60, 255), "text": (240, 240, 240),
+       "shadow": (0, 0, 0), "cl": (130, 130, 140), "grid": (120, 255, 120), "pit": (80, 170, 80), "time": (255, 255, 255)}
 CAR_L, CAR_W = 4.5, 1.9
-WINDOWS = (("alvarado_grids", 300, "Alvarado: the line (v300), grid A / pits behind (v291 down), grid B (v310 up)"),
-           ("hairpin_770", 770, "Alvarado/College hairpin: chain starts v780, inside + outside kerbs"),
-           ("del_cerro_1085", 1085, "Del Cerro 4-way: chain nose-to-nose across the mouths (sealed, Q1)"),
-           ("college_navajo_1514", 1514, "College/Navajo: chain continuous round the corner, outside kerb"),
-           ("navajo_jackson_2319", 2319, "Navajo/Jackson: chain continuous, outside kerb"),
-           ("jackson_lmb_3297", 3297, "Jackson/Lake Murray: chain continuous, outside kerb"),
-           ("i8_end_4440", 4460, "Chain end v4440 before the I-8 span; edge strips gapped on the span"),
-           ("seam_0", 0, "Lap seam 70th/Lake Murray -> Alvarado: inside + outside kerbs, no chain"))
+CORNERS = ((0, "seam: Lake Murray Blvd -> Alvarado (the I-8 interchange corner)"),
+           (770, "hairpin: Alvarado -> College"),
+           (1514, "College -> Navajo"),
+           (2319, "Navajo -> Jackson"),
+           (3297, "Jackson -> Lake Murray Blvd"))
+# the retired ledger-0047 picture names, removed from the top of the output folder (the per-layout folders replace them)
+OLD_FILES = ("overview.png", "alvarado_grids.png", "hairpin_770.png", "del_cerro_1085.png", "college_navajo_1514.png",
+             "navajo_jackson_2319.png", "jackson_lmb_3297.png", "i8_end_4440.png", "seam_0.png")
 
 
 def font(size, bold=False):
@@ -63,12 +64,24 @@ class Canvas:
         self.H = int((z1 - z0) * px_per_m) + 2 * pad_px + footer_px
         self.img = Image.new("RGB", (self.W, self.H), COL["grass"])
         self.d = ImageDraw.Draw(self.img)
+        self.overlay = Image.new("RGBA", (self.W, self.H), (0, 0, 0, 0))
+        self.od = ImageDraw.Draw(self.overlay)
 
     def px(self, p):
         return (int((p[0] - self.x0) * self.s) + self.pad, int((self.z1 - p[1]) * self.s) + self.pad)
 
     def poly(self, pts, fill):
         self.d.polygon([self.px(p) for p in pts], fill=fill)
+
+    def tint(self, pts, fill):
+        self.od.polygon([self.px(p) for p in pts], fill=fill)
+
+    def flush(self):
+        """composite the translucent layer (the lane) under everything drawn after this"""
+        self.img = Image.alpha_composite(self.img.convert("RGBA"), self.overlay).convert("RGB")
+        self.d = ImageDraw.Draw(self.img)
+        self.overlay = Image.new("RGBA", (self.W, self.H), (0, 0, 0, 0))
+        self.od = ImageDraw.Draw(self.overlay)
 
     def line(self, pts, fill, width=1):
         if len(pts) >= 2:
@@ -111,121 +124,217 @@ def _load(proj, planned):
         _, _, _, plans, _ = rf.plan_all(proj, bands, (bands.get("params") or {}).get("edge_mode", "road"))
         for p in plans:
             name = rf.object_name(p)
-            if p["kind"] in ("chain", "edge"):
-                out = []
-                for r in p["rings"]:
-                    lx, lz = rf.left_normal(r["tx"], r["tz"])
-                    out.append((r["cx"] + lx * r["lat"], r["cz"] + lz * r["lat"]))
+            if p["kind"] in ("edge", "close"):
+                curves[name] = [rf._strip_xz(r) for r in p["rings"]]
             else:
                 sgn = 1.0 if p["side"] == "L" else -1.0
-                out = []
-                for s in p["stations"]:
-                    lx, lz = rf.left_normal(s["tx"], s["tz"])
-                    mid = s["lip"] + sgn * rf.KERB_W / 2.0
-                    out.append((s["cx"] + lx * mid, s["cz"] + lz * mid))
-            curves[name] = out
+                curves[name] = [rf.kerb_mid_xz(s, sgn) for s in p["stations"]]
         source = f"PLANNED in pure Python ({len(plans)} objects; no Blender run yet)"
     dummies = {}
     for lo in cfg.get("layouts", []):
         p = data / f"dummies_{lo['id']}.json"
         if p.exists():
             dummies[lo["id"]] = json.loads(p.read_text(encoding="utf-8"))
-    return pts, widths, m, island_w, bands, curves, dummies, authored, source
+    return cfg, pts, widths, m, island_w, bands, curves, dummies, authored, source
 
 
-def _edge_pts(pts, widths, m, k, sgn):
+def island_noses(island_w, m):
+    """the first and last vertex of every median island run (island_w > 0) — where each nose tip stands"""
+    out = []
+    k = 0
+    while k < m:
+        if island_w[k] <= 0:
+            k += 1
+            continue
+        j = k
+        while j + 1 < m and island_w[j + 1] > 0:
+            j += 1
+        out += [k, j]
+        k = j + 1
+    return sorted(set(out))
+
+
+def _off(pts, m, k, lat):
     tx, tz = rf.tangent(pts, k, m)
     lx, lz = rf.left_normal(tx, tz)
-    h = widths[k] / 2.0 * sgn
-    return (pts[k][0] + lx * h, pts[k][2] + lz * h)
+    return (pts[k][0] + lx * lat, pts[k][2] + lz * lat)
 
 
-def _draw_base(cv, pts, widths, m, island_w, bands, ks):
-    """pavement quads, islands, centreline and bridge-gap marks for the vertex list ks"""
-    ei = bands["edge_inset_by_vertex"]
+def _draw_base(cv, pts, widths, m, island_w, ks, lane=None):
+    """pavement quads, the layout's lane (translucent green), islands and the centreline for the vertex list ks"""
     for a, b in zip(ks, ks[1:]):
-        cv.poly([_edge_pts(pts, widths, m, a, 1), _edge_pts(pts, widths, m, b, 1),
-                 _edge_pts(pts, widths, m, b, -1), _edge_pts(pts, widths, m, a, -1)], COL["road"])
+        cv.poly([_off(pts, m, a, widths[a] / 2), _off(pts, m, b, widths[b] / 2),
+                 _off(pts, m, b, -widths[b] / 2), _off(pts, m, a, -widths[a] / 2)], COL["road"])
     for a, b in zip(ks, ks[1:]):
         if island_w[a] > 0 and island_w[b] > 0:
-            quad = []
-            for k, sg in ((a, 1), (b, 1), (b, -1), (a, -1)):
-                tx, tz = rf.tangent(pts, k, m)
-                lx, lz = rf.left_normal(tx, tz)
-                h = island_w[k] / 2.0 * sg
-                quad.append((pts[k][0] + lx * h, pts[k][2] + lz * h))
-            cv.poly(quad, COL["island"])
-    for a, b in zip(ks, ks[1:]):
-        if ei[a] == 0 and ei[b] == 0:          # inside a declared bridge span: no edge strip
-            cv.line([_edge_pts(pts, widths, m, a, 1), _edge_pts(pts, widths, m, b, 1)], COL["gap"], 3)
-            cv.line([_edge_pts(pts, widths, m, a, -1), _edge_pts(pts, widths, m, b, -1)], COL["gap"], 3)
+            cv.poly([_off(pts, m, a, island_w[a] / 2), _off(pts, m, b, island_w[b] / 2),
+                     _off(pts, m, b, -island_w[b] / 2), _off(pts, m, a, -island_w[a] / 2)], COL["island"])
+    if lane:
+        for a, b in zip(ks, ks[1:]):
+            if a < len(lane) and b < len(lane) and lane[a] and lane[b]:
+                cv.tint([_off(pts, m, a, lane[a][0]), _off(pts, m, b, lane[b][0]),
+                         _off(pts, m, b, lane[b][1]), _off(pts, m, a, lane[a][1])], COL["lane"])
+        cv.flush()
     cv.line([(pts[k][0], pts[k][2]) for k in ks], COL["cl"], 1)
 
 
-def _draw_furniture(cv, curves, w_chain, w_edge, w_kerb):
+def _draw_furniture(cv, curves, token, w_close, w_edge, w_kerb):
     for name, cs in curves.items():
-        if "_kbar_" in name:
-            cv.line(cs, COL["chain"], w_chain)
-        elif "_edge_L_" in name:
-            cv.line(cs, COL["edge_L"], w_edge)
-        elif "_edge_R_" in name:
-            cv.line(cs, COL["edge_R"], w_edge)
-        elif name.upper().startswith("1KERB_RACE"):
-            # red/white dashes, like the texture
-            for i, (a, b) in enumerate(zip(cs, cs[1:])):
+        role = rf.race_role(name)
+        if role == "edge":
+            cv.line(cs, COL["edge_L"] if "_edge_L_" in name else COL["edge_R"], w_edge)
+        elif role == "kerb":
+            for i, (a, b) in enumerate(zip(cs, cs[1:])):          # red/white dashes, like the texture
                 cv.line([a, b], COL["kerb"] if (i // 3) % 2 == 0 else COL["kerb2"], w_kerb)
+    for name, cs in curves.items():
+        if rf.race_role(name) == "close" and rf.race_owner(name) == token:
+            cv.line(cs, COL["close"], w_close)
 
 
-def _draw_dummies(cv, pts, m, dummies, scale_ok):
-    for lid, d in dummies.items():
-        col = COL.get(lid, (200, 200, 200))
-        pos = rf.dummies_positions(d)
-        vtx = d.get("_vertex", {})
-        for name, p in pos.items():
-            x, z = p[0], p[2]
-            if name.startswith("AC_TIME"):
-                continue
-            k = int(vtx.get(name, rf.nearest_vertex(pts, m, x, z))) % m
-            tx, tz = rf.tangent(pts, k, m)
-            if d.get("_direction") == "reverse":
-                tx, tz = -tx, -tz
-            lx, lz = rf.left_normal(tx, tz)
-            L, W = (CAR_L, CAR_W) if name.startswith("AC_START") else (3.6, 1.6)
-            quad = [(x + tx * L / 2 + lx * W / 2, z + tz * L / 2 + lz * W / 2),
-                    (x + tx * L / 2 - lx * W / 2, z + tz * L / 2 - lz * W / 2),
-                    (x - tx * L / 2 - lx * W / 2, z - tz * L / 2 - lz * W / 2),
-                    (x - tx * L / 2 + lx * W / 2, z - tz * L / 2 + lz * W / 2)]
+def _draw_dummies(cv, pts, m, d, scale_ok):
+    pos = rf.dummies_positions(d)
+    vtx = d.get("_vertex", {})
+    for name, p in pos.items():
+        x, z = p[0], p[2]
+        if name.startswith("AC_TIME"):
+            continue
+        k = int(vtx.get(name, rf.nearest_vertex(pts, m, x, z))) % m
+        tx, tz = rf.tangent(pts, k, m)
+        if d.get("_direction") == "reverse":
+            tx, tz = -tx, -tz
+        lx, lz = rf.left_normal(tx, tz)
+        L, W = (CAR_L, CAR_W) if name.startswith("AC_START") else (3.6, 1.6)
+        quad = [(x + tx * L / 2 + lx * W / 2, z + tz * L / 2 + lz * W / 2),
+                (x + tx * L / 2 - lx * W / 2, z + tz * L / 2 - lz * W / 2),
+                (x - tx * L / 2 - lx * W / 2, z - tz * L / 2 - lz * W / 2),
+                (x - tx * L / 2 + lx * W / 2, z - tz * L / 2 + lz * W / 2)]
+        col = COL["grid"] if name.startswith("AC_START") else COL["pit"]
+        if scale_ok:
+            cv.poly(quad, col)
+            cv.line([(x, z), (x + tx * (L / 2 + 1.5), z + tz * (L / 2 + 1.5))], col, 2)   # nose tick
+        else:
+            cv.dot((x, z), 3, col)
+    for gi in range(3):
+        a, b = pos.get(f"AC_TIME_{gi}_L"), pos.get(f"AC_TIME_{gi}_R")
+        if a and b:
+            cv.line([(a[0], a[2]), (b[0], b[2])], COL["time"], 3 if scale_ok else 2)
             if scale_ok:
-                cv.poly(quad, col if name.startswith("AC_START") else tuple(int(c * 0.6) for c in col))
-                cv.line([(x, z), (x + tx * L / 2 + tx * 1.5, z + tz * L / 2 + tz * 1.5)], col, 2)   # nose tick
-            else:
-                cv.dot((x, z), 3, col)
-        for gi in range(3):
-            l, r = pos.get(f"AC_TIME_{gi}_L"), pos.get(f"AC_TIME_{gi}_R")
-            if l and r:
-                cv.line([(l[0], l[2]), (r[0], r[2])], col, 3 if scale_ok else 2)
-                if scale_ok:
-                    cv.text(cv.px((l[0], l[2])), f"T{gi} {lid}", 12, True, col)
+                cv.text(cv.px((a[0], a[2])), "start/finish line" if gi == 0 else f"sector line {gi}", 12, True, COL["time"])
 
 
-def _legend(cv, x, y, source, totals):
-    rows = [("chain", "centre K-rail chain (1WALL_race_kbar_*)"), ("edge_L", "kerb-line barrier, forward-left curb"),
-            ("edge_R", "kerb-line barrier, forward-right curb"), ("kerb", "race kerb (1KERB_race_*)"),
-            ("gap", "declared bridge span: no edge strip"), ("island", "median island"),
-            ("street", "street grid / line"), ("race_cw", "race_cw grid / line"), ("race_acw", "race_acw grid / line")]
+def _legend(cv, x, y, lid, source, totals, lay):
+    rows = [("lane", f"the {lid} race lane: where the car can go"), ("close", f"{lid}'s closure wall (shuts off the other direction)"),
+            ("edge_L", "curb barrier, forward-left curb (both race versions)"),
+            ("edge_R", "curb barrier, forward-right curb (both race versions)"), ("kerb", "race kerb (both race versions)"),
+            ("pin", "closure end buried in the far curb barrier"), ("island", "median island"), ("nose", "island nose"),
+            ("grid", "starting grid / pit boxes")]
     for i, (key, label) in enumerate(rows):
         yy = y + i * 18
-        cv.d.rectangle((x, yy + 3, x + 22, yy + 13), fill=COL[key])
+        cv.d.rectangle((x, yy + 3, x + 22, yy + 13), fill=COL[key][:3])
         cv.text((x + 30, yy), label, 13)
     yy = y + len(rows) * 18 + 6
     cv.text((x, yy), f"source: {source}", 12)
-    if totals:
-        cv.text((x, yy + 18), f"chain {totals['chain_length_m']:.0f} m = {totals['chain_segments_4m']} x 4.04 m modules in "
-                               f"{totals['chain_objects']} objects ({totals['chain_rings']} rings); edge strips {totals['edge_length_m']:.0f} m "
-                               f"in {totals['edge_objects']} objects; kerbs {totals['kerb_length_m']:.0f} m in {totals['kerb_objects']} objects", 12)
-        cv.text((x, yy + 36), f"{totals['positions']:,} positions in {totals['objects']} objects; seated {totals['seated_hit']} hit / "
-                               f"{totals['seated_near']} near / {totals['seated_interpolated']} interpolated; deck vs data max "
-                               f"{totals['deck_vs_data_max_m']} m; other deck above {totals['other_deck_above_rings']} rings", 12)
+    if lay:
+        cv.text((x, yy + 18), f"{lid} closure: {lay.get('length_m', 0):.0f} m of wall in {lay.get('objects')} objects "
+                              f"({lay.get('rings')} rings, {lay.get('positions', 0):,} positions)", 12)
+    if totals and "edge_length_m" in totals:
+        cv.text((x, yy + 36), f"common: curb barriers {totals['edge_length_m']:.0f} m in {totals.get('edge_objects')} objects "
+                              f"(closed loops, bridges included); kerbs {totals.get('kerb_length_m', 0):.0f} m in "
+                              f"{totals.get('kerb_objects')} objects", 12)
+
+
+def _window(cv_args, pts, widths, m, island_w, lane, k0, half_v):
+    cv = Canvas(*cv_args)
+    ks = [k % m for k in range(k0 - half_v, k0 + half_v + 1)]
+    _draw_base(cv, pts, widths, m, island_w, ks, lane)
+    return cv, ks
+
+
+def _plot_layout(out, lid, lo, cfg, pts, widths, m, island_w, bands, curves, dummies, authored, source):
+    c = rf.corridors(bands).get(lid) or {}
+    token = rf.closure_token(bands, lid)
+    lane = c.get("lane_by_vertex")
+    y = c.get("closure_y_by_vertex") or []
+    pins = sorted({int(v) % m for i, j, _r in rf.closure_runs(bands, lid, m) for v in (i, j)})
+    noses = island_noses(island_w, m)
+    out.mkdir(parents=True, exist_ok=True)
+    lay = (authored or {}).get("layouts", {}).get(lid) if authored else None
+    direction = "clockwise (increasing vertex)" if lo.get("direction", "forward") == "forward" else "anticlockwise (decreasing vertex)"
+    written = []
+
+    def pin_marks(cv, r):
+        for v in pins:
+            if y and v < len(y) and y[v] is not None:
+                cv.dot(_off(pts, m, v, float(y[v])), r, COL["pin"], (0, 0, 0))
+
+    # overview
+    xs, zs = [p[0] for p in pts], [p[2] for p in pts]
+    x0, x1, z0, z1 = min(xs) - 60, max(xs) + 60, min(zs) - 60, max(zs) + 60
+    s = min(1700.0 / (x1 - x0), 1400.0 / (z1 - z0))
+    cv = Canvas(x0, z0, x1, z1, s, pad_px=10, footer_px=260)
+    ks = list(range(m)) + [0]
+    _draw_base(cv, pts, widths, m, island_w, ks, lane)
+    _draw_furniture(cv, curves, token, 3, 2, 3)
+    for k in noses:
+        cv.dot((pts[k][0], pts[k][2]), 4, COL["nose"], (0, 0, 0))
+    pin_marks(cv, 5)
+    if lid in dummies:
+        _draw_dummies(cv, pts, m, dummies[lid], False)
+    for k, label in ((300, "start/finish v300"), (770, "hairpin v770"), (1085, "Del Cerro 4-way"), (1514, "College/Navajo"),
+                     (2319, "Navajo/Jackson"), (3297, "Jackson/LMB"), (4454, "I-8 bridge v4454"), (0, "seam v0")):
+        if k >= m:
+            continue
+        x, yy = cv.px((pts[k][0], pts[k][2]))
+        cv.text((x, yy), label, 13, True, anchor=("ra" if x > cv.W - 160 else "la"))
+    cv.text((14, 8), f"Lake Murray — {lo.get('name', lid)} ({lid}, {direction}): the race lane and its walls "
+                     f"(ledger 0049) — top-down, north up", 18, True)
+    _legend(cv, 14, cv.H - 250, lid, source, (authored or {}).get("totals"), lay)
+    cv.save(out / "overview.png")
+    written.append("overview.png")
+
+    def window(tag, k0, caption, win=180.0, pxm=6.0, extra=None):
+        cx, cz = pts[k0 % m][0], pts[k0 % m][2]
+        half_v = int(win / 2.5) + 10
+        cv, ks_ = _window((cx - win / 2, cz - win / 2, cx + win / 2, cz + win / 2, pxm, 0, 64),
+                          pts, widths, m, island_w, lane, k0, half_v)
+        _draw_furniture(cv, curves, token, 5, 4, 5)
+        for k in noses:
+            if abs(pts[k][0] - cx) < win and abs(pts[k][2] - cz) < win:
+                cv.dot((pts[k][0], pts[k][2]), 6, COL["nose"], (0, 0, 0))
+                cv.text(cv.px((pts[k][0], pts[k][2])), f"nose v{k}", 12, True, COL["nose"])
+        for v in pins:
+            if abs(pts[v][0] - cx) < win and abs(pts[v][2] - cz) < win and v < len(y) and y[v] is not None:
+                p = _off(pts, m, v, float(y[v]))
+                cv.dot(p, 7, COL["pin"], (0, 0, 0))
+                cv.text(cv.px(p), f"pin v{v}", 12, True, COL["pin"])
+        if lid in dummies:
+            _draw_dummies(cv, pts, m, dummies[lid], True)
+        step = max(3, int(win / 12 / 3))
+        for k in range(k0 - half_v, k0 + half_v + 1, step):
+            kk = k % m
+            cv.text(cv.px((pts[kk][0], pts[kk][2])), f"v{kk}", 11, False, COL["cl"])
+        cv.text((8, cv.H - 60), caption, 13 if win < 120 else 14, True)
+        cv.text((8, cv.H - 40), f"{lid}, {direction}. Green = the car's lane; red = this version's closure wall; "
+                                f"orange / cyan = the curb barriers.", 11)
+        cv.text((8, cv.H - 22), (extra + "; " if extra else "") + f"{win:.0f} m window, north up", 11)
+        cv.save(out / f"{tag}.png")
+        written.append(f"{tag}.png")
+
+    for apex, name in CORNERS:
+        window(f"corner_{apex}", apex, f"Corner v{apex} — {name}: the whole intersection is open between the curb barriers")
+    window("del_cerro_1085", 1085, "Del Cerro 4-way: not a turn — the closure runs across it nose to nose, both side "
+                                   "streets stay sealed")
+    window("i8_end_4454", 4454, "The I-8 bridge: the closure ends on the bridge's far curb barrier; the bridge and "
+                                "Alvarado are the whole street", win=220.0, pxm=5.0)
+    for k in noses:
+        window(f"nose_{k}", k, f"Island nose v{k}: the closure passes the tip on the race side — the nose is behind the wall",
+               win=70.0, pxm=11.0)
+    for v in pins:
+        yy = y[v] if v < len(y) else None
+        window(f"pin_{v}", v, f"Closure pin v{v}: the wall end is buried in the far curb barrier (no gap, no free end)",
+               win=90.0, pxm=9.0, extra=None if yy is None else f"closure centre {float(yy):+.2f} m left of the centreline "
+                                                                  f"(forward frame) at v{v}")
+    return written
 
 
 def main(argv=None):
@@ -240,51 +349,20 @@ def main(argv=None):
     proj = Path(argv[0]).resolve()
     out = out or (proj / "data" / "race_plots")
     out.mkdir(parents=True, exist_ok=True)
-    pts, widths, m, island_w, bands, curves, dummies, authored, source = _load(proj, planned)
-    totals = authored["totals"] if authored else None
-    noses = (bands.get("summary") or {}).get("nose_vertices", [])
-
-    # overview
-    xs, zs = [p[0] for p in pts], [p[2] for p in pts]
-    x0, x1, z0, z1 = min(xs) - 60, max(xs) + 60, min(zs) - 60, max(zs) + 60
-    s = min(1700.0 / (x1 - x0), 1400.0 / (z1 - z0))
-    cv = Canvas(x0, z0, x1, z1, s, pad_px=10, footer_px=230)
-    ks = list(range(m)) + [0]
-    _draw_base(cv, pts, widths, m, island_w, bands, ks)
-    _draw_furniture(cv, curves, 3, 2, 3)
-    for k in noses:
-        cv.dot((pts[k][0], pts[k][2]), 4, COL["nose"], (0, 0, 0))
-    _draw_dummies(cv, pts, m, dummies, False)
-    for k, label in ((300, "LINE v300"), (770, "hairpin v770"), (1085, "Del Cerro 4-way"), (1514, "College/Navajo"),
-                     (2319, "Navajo/Jackson"), (3297, "Jackson/LMB"), (4440, "chain end v4440"), (0, "seam v0")):
-        x, y = cv.px((pts[k][0], pts[k][2]))
-        cv.text((x, y), label, 13, True, anchor=("ra" if x > cv.W - 160 else "la"))
-    cv.text((14, 8), "Lake Murray race-layout furniture (ledger 0047) — top-down, engine frame x=E right, z=N up", 18, True)
-    _legend(cv, 14, cv.H - 220, source, totals)
-    cv.save(out / "overview.png")
-    print(f"[plot-race] overview -> {out / 'overview.png'} ({cv.W}x{cv.H})")
-
-    # windows
-    for tag, k0, caption in WINDOWS:
-        cx, cz = pts[k0][0], pts[k0][2]
-        win, pxm = 180.0, 6.0
-        cv = Canvas(cx - win / 2, cz - win / 2, cx + win / 2, cz + win / 2, pxm, pad_px=0, footer_px=60)
-        ks = [k % m for k in range(k0 - 90, k0 + 91)]
-        _draw_base(cv, pts, widths, m, island_w, bands, ks)
-        _draw_furniture(cv, curves, 5, 4, 5)
-        for k in noses:
-            if abs(pts[k][0] - cx) < win and abs(pts[k][2] - cz) < win:
-                cv.dot((pts[k][0], pts[k][2]), 6, COL["nose"], (0, 0, 0))
-                cv.text(cv.px((pts[k][0], pts[k][2])), f"nose v{k}", 12, True, COL["nose"])
-        _draw_dummies(cv, pts, m, dummies, True)
-        for k in range(k0 - 90, k0 + 91, 15):
-            kk = k % m
-            cv.text(cv.px((pts[kk][0], pts[kk][2])), f"v{kk}", 11, False, COL["cl"])
-        cv.text((8, cv.H - 54), caption, 14, True)
-        cv.text((8, cv.H - 30), f"{win:.0f} m window, {pxm:.0f} px/m; forward travel = increasing vertex index (clockwise); "
-                                f"orange = forward-left curb strip, cyan = forward-right", 12)
-        cv.save(out / f"{tag}.png")
-        print(f"[plot-race] {tag} -> {out / (tag + '.png')}")
+    for f in OLD_FILES:
+        if (out / f).is_file():
+            (out / f).unlink()
+    cfg, pts, widths, m, island_w, bands, curves, dummies, authored, source = _load(proj, planned)
+    race = [lo for lo in cfg.get("layouts", []) if lo.get("race_furniture")]
+    if not race:
+        raise SystemExit("[plot-race] no race layout in track.config.json")
+    for lo in race:
+        lid = str(lo["id"])
+        if lid not in rf.corridors(bands):
+            raise SystemExit(f"[plot-race] no corridors.{lid} in barrier_bands.json — re-run tools/barrier_bands.py (v2)")
+        written = _plot_layout(out / lid, lid, lo, cfg, pts, widths, m, island_w, bands, curves, dummies, authored, source)
+        print(f"[plot-race] {lid}: {len(written)} pictures -> {out / lid} (overview, {len(CORNERS)} corners, Del Cerro, "
+              f"I-8 end, {sum(1 for w in written if w.startswith('nose_'))} noses, {sum(1 for w in written if w.startswith('pin_'))} pins)")
     return 0
 
 

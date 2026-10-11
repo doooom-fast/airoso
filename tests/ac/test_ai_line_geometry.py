@@ -242,3 +242,20 @@ def test_closed_line_starts_at_the_start_finish_line():
         assert rep["geometry"]["start"]["dist_m"] < 1e-3
         # without a timing line point 0 stays at the seam (the corner at the origin, filleted ~5 m in)
         assert min(range(len(Q)), key=lambda i: Q[i][0] ** 2 + Q[i][2] ** 2) == 0, Q[0]
+
+
+# --- race corridors (ledger 0049): the refusal against a closure face ------------------------------
+
+def test_a_point_half_a_metre_from_a_closure_face_is_refused():
+    # a straight 100 m road along +x (forward-left = +z), the corridor between a curb face at y = −5 and a
+    # closure face at y = +3: a line 0.5 m from the closure face is refused, one past it is outside
+    cl = [[float(x), 0.0, 0.0] for x in range(0, 101)]
+    faces = w.CorridorFaces(cl, [(-5.0, 3.0)] * len(cl), closed=False)
+    line = lambda y: [[float(x), 0.0, y] for x in range(10, 91)]
+    ok = w.check_corridor(line(-1.0), faces, closed=False)
+    assert ok["ok"] and ok["outside"] == 0 and abs(ok["min_clear_m"] - 4.0) < 1e-6, ok
+    near = w.check_corridor(line(2.5), faces, closed=False)
+    assert not near["ok"] and near["too_close"] > 0 and near["outside"] == 0, near
+    assert abs(near["min_clear_m"] - 0.5) < 1e-6 and near["min_clear_face"].startswith("y_hi"), near
+    past = w.check_corridor(line(3.5), faces, closed=False)
+    assert not past["ok"] and past["outside"] > 0 and past["min_clear_m"] < 0.0, past

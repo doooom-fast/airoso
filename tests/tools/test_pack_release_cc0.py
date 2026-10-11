@@ -1,6 +1,6 @@
 """tools/pack_release.py — the CC0 variant drops the race layouts (ledger 0047 Q10: the K-rail pack's
-licence is UNRECORDED in assets/licenses.json, so san_diego_lake_murray_race.kn5 and the two race
-layouts ship in the FULL package only)."""
+licence is UNRECORDED in assets/licenses.json, so san_diego_lake_murray_race.kn5, every
+san_diego_lake_murray_closure_<id>.kn5 (ledger 0049) and the two race layouts ship in the FULL package only)."""
 from __future__ import annotations
 
 import json
@@ -108,3 +108,15 @@ def test_full_release_texts_name_the_k_rail_and_cc0_drops_it():
     for f in ("CREDITS.txt", "LICENSES.md"):
         assert line in (texts / "full" / f).read_text(encoding="utf-8"), f
         assert "K-rail" not in (texts / "cc0" / f).read_text(encoding="utf-8"), f   # the cc0 package drops the race layouts
+
+
+def test_every_closure_kn5_leaves_the_cc0_folder_with_the_race_layouts():
+    # ledger 0049: the common race kn5 + one closure kn5 per direction, plus a stale one of a retired layout
+    f, cfg = _folder(THREE)
+    for lid in ("race_cw", "race_acw", "race_old"):
+        (f / f"{SLUG}_closure_{lid}.kn5").write_bytes(b"closure")
+    removed = set(pr.strip_race_layouts(f, cfg))
+    assert {f"{SLUG}_closure_race_cw.kn5", f"{SLUG}_closure_race_acw.kn5", f"{SLUG}_closure_race_old.kn5",
+            f"{SLUG}_race.kn5", "models_race_cw.ini", "models_race_acw.ini"} <= removed, removed
+    assert not list(f.glob(f"{SLUG}_closure_*.kn5"))
+    assert (f / "models_street.ini").exists() and (f / f"{SLUG}.kn5").exists() and (f / f"{SLUG}__street.kn5").exists()

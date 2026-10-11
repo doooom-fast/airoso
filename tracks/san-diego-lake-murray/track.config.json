@@ -132,6 +132,7 @@
       "kind": "race",
       "direction": "forward",
       "race_furniture": true,
+      "closure_token": "cw",
       "start": {
         "line_vertex": 300,
         "grid_vertex": 291,
@@ -141,8 +142,8 @@
           3310
         ]
       },
-      "run": "clockwise, one-way: Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest \u2014 lake-side carriageway on the wide roads, centre barrier on your left",
-      "ui_description": "Race \u2014 Clockwise: the same 13.5 km of real Lake Murray roads as a one-way race track, run clockwise \u2014 Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest. The side streets are sealed, concrete barriers line both curbs, a concrete centre barrier (or the landscaped median) splits the wide roads \u2014 the lake-side carriageway, barrier on your left \u2014 and red/white kerbs mark the five corners. The AI line is a generated draft, not an in-game recording.",
+      "run": "clockwise, one-way: Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest \u2014 your own side of every road (an Alvarado-wide lane), the whole street on Alvarado and the I-8 bridge, the full intersection open at the five corners",
+      "ui_description": "Race \u2014 Clockwise: the same 13.5 km of real Lake Murray roads as a one-way race track, run clockwise \u2014 Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest \u2014 on an Alvarado-wide lane on your own side of every road: concrete barriers along your curb and a second line closing off the opposite lanes (along the medians where there is one); the whole street on Alvarado and the I-8 bridge; the full intersection open at the five corners; side streets sealed; red/white kerbs at the corners. The AI line is a generated draft, not an in-game recording.",
       "ai": "ai/race_cw"
     },
     {
@@ -151,6 +152,7 @@
       "kind": "race",
       "direction": "reverse",
       "race_furniture": true,
+      "closure_token": "acw",
       "start": {
         "line_vertex": 300,
         "grid_vertex": 310,
@@ -160,48 +162,81 @@
           1803
         ]
       },
-      "run": "anticlockwise, one-way: Alvarado eastbound, Lake Murray Blvd northeast, Jackson north, Navajo westbound, College southbound \u2014 outer carriageway on the wide roads, centre barrier on your left",
-      "ui_description": "Race \u2014 Anticlockwise: the same 13.5 km of real Lake Murray roads as a one-way race track, run anticlockwise \u2014 Alvarado eastbound, Lake Murray Blvd northeast, Jackson north, Navajo westbound, College southbound. The side streets are sealed, concrete barriers line both curbs, a concrete centre barrier (or the landscaped median) splits the wide roads \u2014 the outer carriageway, barrier on your left \u2014 and red/white kerbs mark the five corners. The AI line is a generated draft, not an in-game recording.",
+      "run": "anticlockwise, one-way: Alvarado eastbound, Lake Murray Blvd northeast, Jackson north, Navajo westbound, College southbound \u2014 your own side of every road (an Alvarado-wide lane), the whole street on Alvarado and the I-8 bridge, the full intersection open at the five corners",
+      "ui_description": "Race \u2014 Anticlockwise: the same 13.5 km of real Lake Murray roads as a one-way race track, run anticlockwise \u2014 Alvarado eastbound, Lake Murray Blvd northeast, Jackson north, Navajo westbound, College southbound \u2014 on an Alvarado-wide lane on your own side of every road: concrete barriers along your curb and a second line closing off the opposite lanes (along the medians where there is one); the whole street on Alvarado and the I-8 bridge; the full intersection open at the five corners; side streets sealed; red/white kerbs at the corners. The AI line is a generated draft, not an in-game recording.",
       "ai": "ai/race_acw"
     }
   ],
   "race": {
-    "_doc": "Ledger 0047 (Kevin 2026-10-10: three versions \u2014 the street loop + two one-way race layouts, barriers on the wide roads, Alvarado the entire street, race curbs + barriers along the inside of the sidewalks). Read by tools/barrier_bands.py (the declared band the gates consult), tools/author_race_blend.py (the authored strips/kerbs) and tools/layout_dummies.py (grid/pits). centre_runs are CLOSED vertex intervals into data/centerline.local.json; each end that touches a median island lands exactly on the island's nose vertex (butt joint), free ends taper. Every vertex in a run must be >= wide_threshold_m wide, off any island (except the shared nose) and clear of declared bridge spans \u2014 barrier_bands.py exits 1 otherwise. Q2 (the 13.5-17 m stretches) and Q7 (interior corners) are answered by editing centre_runs; Q6 by edge_mode.",
-    "wide_threshold_m": 17.0,
-    "centre_runs": [
-      [
-        780,
-        846
-      ],
-      [
-        1073,
-        1096
-      ],
-      [
-        1258,
-        1374
-      ],
-      [
-        1487,
-        1540
-      ],
-      [
-        1739,
-        2183
-      ],
-      [
-        2297,
-        4440
-      ]
-    ],
+    "_doc": "Ledger 0049 (Kevin 2026-10-11: \"racetrack versions of these, we need full intersections available for turning. And the entire other lane blocked off from access.\" / \"more or less an Alvarado's width for the entire track with deviances in various areas\" / open boxes at the \"Corners the race turns at\", side streets sealed). Replaces 0047's shared centre chain: each race layout gets its OWN corridor \u2014 the curb strip on its race side plus one closure wall (the same K-rail strip) standing so the lane is race.corridor.clear_width_m wide, along the race-side curb of each median island instead of on it, pinned into the far curb strip at every box edge; the whole street on Alvarado and the I-8 deck (corridor.whole); the full intersection open in each corridor.boxes; both curb strips one closed loop per side, across all three bridge spans (edge_gaps none). Read by tools/barrier_bands.py (version 2: the corridor solve + self-gates + planned no_route; FAILS if centre_runs is present or closure_runs differ from the derived ones), tools/race_corridor.py (the closure line), tools/author_race_furniture_blend.py, tools/layout_dummies.py and scripts/ac/write_ai_line.py (the race AI lane = corridors.<id>.lane_by_vertex). Each race layout loads ONLY its own <slug>_closure_<id>.kn5 (layouts[].closure_token names its meshes): the clockwise closure stands in the anticlockwise lane. Constants marked INVENTED in fleet/GATES-CHANGELOG.md; clear_width_m 11.36 is MEASURED (Alvarado 13.00 m - 2 x 0.82 as raced).",
     "barrier_profile_asset": "assets/models/concrete_barrier_4m.obj",
     "barrier_height_m": 1.2,
     "module_pitch_m": 4.04,
     "edge_mode": "road",
     "edge_inset_m": 0.82,
-    "edge_gaps": "declared bridge spans (data/bridge.spans.auto.json) only",
+    "edge_gaps": "none",
     "mouths": "sealed",
-    "interior_corners": "continuous",
+    "corridor": {
+      "_doc": "Spec \u00a79.1 (scratchpad corridor/spec.md, ledger 0049). whole = I-8 deck -> v0 -> Alvarado -> hairpin box (v4454 .. v777); boxes = the place_signs corner PC-2..PT+2 at the three interior corners (the seam and hairpin lie inside whole); closure_runs PINNED (College, Navajo, Jackson, Lake Murray Blvd); rates are 1:x lateral per metre of travel. clear_width_source alvarado = re-measured median(w - 2 x 0.82) over v25-723, fails beyond 0.02 m of clear_width_m. Tune only after Kevin's drive (spec \u00a717).",
+      "clear_width_m": 11.36,
+      "clear_width_source": "alvarado",
+      "island_mode": "pavement",
+      "whole": [
+        4454,
+        777
+      ],
+      "boxes": [
+        {
+          "apex": 1514,
+          "i": 1506,
+          "j": 1521
+        },
+        {
+          "apex": 2319,
+          "i": 2311,
+          "j": 2328
+        },
+        {
+          "apex": 3297,
+          "i": 3289,
+          "j": 3304
+        }
+      ],
+      "closure_runs": [
+        [
+          777,
+          1506
+        ],
+        [
+          1521,
+          2311
+        ],
+        [
+          2328,
+          3289
+        ],
+        [
+          3304,
+          4454
+        ]
+      ],
+      "rate_toward_race_side": 12,
+      "rate_away": 6,
+      "pin_zone_m": 120,
+      "pin_rate_min": 6,
+      "pin_rate": {
+        "4454": 10
+      },
+      "steepest_pin_rate": 3,
+      "base_open_m": 60,
+      "base_sigma_m": 20,
+      "island_env_m": 30,
+      "attract_m": 40,
+      "smooth_sigma_m": 4,
+      "clear_floor_m": 10.86,
+      "clear_hard_min_m": 6.5,
+      "pocket_min_m": 2.0
+    },
     "kerbs": {
       "min_turn_deg": 45,
       "width_m": 1.0,

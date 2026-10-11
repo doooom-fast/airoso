@@ -10,18 +10,31 @@
 # inputs down and the outputs back up.
 #
 # THREE VERSIONS (ledger 0047, Kevin 2026-10-10): `street` (the open two-way loop as today),
-# `race_cw` and `race_acw` (the loop as a one-way race track in each direction). One shared ROAD
-# kn5 (no AC_* nodes) + one RACE-FURNITURE kn5 (centre K-rail chain, kerb-line barriers, race
-# kerbs — loaded by the two race layouts only) + one nodes-only SPAWN kn5 per layout
-# (fleet/LAWS.md L8 as amended — the wording is in ledger 0047 pending Kevin's sign-off, Q9).
+# `race_cw` and `race_acw` (the loop as a one-way race track in each direction).
+# RACE CORRIDORS (ledger 0049, Kevin 2026-10-11: "the entire other lane blocked off from access", "more or
+# less an Alvarado's width for the entire track", full intersections open at the corners the race turns at,
+# side streets sealed). The kn5 set:
+#   <slug>.kn5                    the ROAD, no AC_* node — all three layouts
+#   <slug>_race.kn5               COMMON race furniture: both curb strips (one closed loop per side, across
+#                                 all three bridges) + 10 kerbs — race_cw and race_acw
+#   <slug>_closure_<id>.kn5       ONE per race layout: the wall closing off the other direction's lanes.
+#                                 Each race layout loads ONLY its own (the clockwise closure stands in the
+#                                 anticlockwise lane); a race layout without its closure kn5 never packs
+#   <slug>__<id>.kn5              nodes-only SPAWN kn5, one per layout
+# (fleet/LAWS.md L8 as amended — the wording is in ledger 0047 pending Kevin's sign-off, Q9.)
 #
 # Stages (V3-PLAN §Phase 1 "the ONE pipeline"):
 #   draft  : median_envelope → trim_connectors → build_loop_blend              (GEN layer, regenerable)
 #   author : seat_terrain → median → gap_mouths → lamps → signs                 (scripted authoring)
-#            → barrier_bands → layout_dummies → author_race_furniture → verify_race   (0047, idempotent)
-#   ship   : build_kn5_loop prep → split_exports → export road / race / spawn kn5s → AI per layout
-#            → verify_kn5 → track_folder (three layouts) → make_map → make_treefx
-#   gate   : kn5_to_gate_obj (road; road+race) → drive_test per layout → audit_mesh (street; --race)
+#            → barrier_bands v2 (corridor solve + self-gates + PLANNED no_route per race layout, hard)
+#            → layout_dummies → author_race_furniture (RACE + RACE_CLOSE_<TOKEN>) → verify_race (idempotent)
+#   ship   : build_kn5_loop prep → split_exports (road / common race / closure per race layout / spawns)
+#            → export road / race / closure x race layouts (each content-checked) / spawn kn5s
+#            → AI per layout → verify_kn5 → track_folder (three layouts) → verify_kn5 --inis
+#            → make_map → make_treefx
+#   gate   : street: kn5_to_gate_obj (road) → drive_test --layout street → audit_mesh
+#            per race layout: kn5_to_gate_obj (road + race + ITS closure → data/track.<id>.obj)
+#            → drive_test --layout <id> → audit_mesh --layout <id> → no_route --layout <id> (BUILT)
 #   install: copy to AC as san_diego_lake_murray_v3; the previous build is parked in $ARCHIVE/<stamp>/
 #            (outside content/tracks, so Content Manager never lists two "K10 - San Diego (V3)")
 #
@@ -40,8 +53,9 @@
 #                 no worse than the reference on every gate metric; the caller owns that comparison and
 #                 the handoff note must say so. This flag is the honest version of the old
 #                 GATE_*_ADVISORY env vars: loud, per-run, never silent. It does NOT cover the race
-#                 layouts' own furniture gates (barrier_missing / obstruction): there is no reference
-#                 to be "no worse than", so a race layout red on those is never installed.
+#                 layouts' own gates (drive_test barrier_missing / obstruction, the BUILT no_route
+#                 containment fill): there is no reference to be "no worse than", so a race layout red
+#                 on those is never installed.
 # SHIP_PROJ=<dir> run the whole chain against a scratch copy of the workshop project (an ABSOLUTE path
 #                 outside airoso). Every step takes "$PROJ" — no relative `project` argument, no
 #                 workshop literal past WS_PROJ below. With a scratch PROJ the chain is safe
@@ -149,40 +163,78 @@ if [ "$SKIP_BLEND" = 0 ]; then
   (cd "$AIROSO" && PYTHONUTF8=1 python tools/plot_signs.py "$PROJ")
 fi
 
-# --- 0047: the race furniture. Runs on every ship (idempotent; see --skip-blend above). ----------
-step "author: race-furniture declaration (tools/barrier_bands.py, self-gated) + per-layout dummies"
-(cd "$AIROSO" && python tools/barrier_bands.py "$PROJ")          # data/barrier_bands.json: exit 1 on a bad band
+# --- 0047/0049: the race furniture. Runs on every ship (idempotent; see --skip-blend above). -----
+# The planned and built containment verdicts of an earlier run are never read as this run's: removed first.
+for lid in $RACE_IDS; do rm -f "$PROJ/data/no_route.$lid.planned.json" "$PROJ/data/no_route.$lid.json"; done
+step "author: race-corridor declaration v2 (tools/barrier_bands.py: corridor solve + self-gates + PLANNED no_route per race layout, hard)"
+# data/barrier_bands.json v2 + data/no_route.<id>.planned.json per race layout; exit 1 on any self-gate,
+# a planned leak included. --no-planned-route is a look-only flag and never appears in the ship.
+(cd "$AIROSO" && python tools/barrier_bands.py "$PROJ")
+step "gate: PLANNED no_route per race layout (the declared walls contain the lane — read back, hard)"
+# barrier_bands already exited 1 on a planned leak; this reads the verdict files it wrote, so a declaration
+# that skipped or lost its planned fill cannot reach Blender.
+pyq "import json,os,sys
+data=sys.argv[1]; bad=[]
+for lid in sys.argv[2:]:
+    p=os.path.join(data,'no_route.%s.planned.json'%lid)
+    if not os.path.exists(p):
+        bad.append(lid+': no planned verdict (data/no_route.%s.planned.json missing)'%lid); continue
+    r=json.load(open(p,encoding='utf-8'))
+    if not isinstance(r,dict):
+        bad.append(lid+': the planned verdict is not a no_route report'); continue
+    print('  %-9s planned: %s  leak_cells %s  blocked %s  forbidden_reached %s  spawns_unreached %s  reached %s m2'%(lid,
+          'FAIL' if r.get('fail') else 'PASS', r.get('leak_cells'), len(r.get('blocked') or []),
+          len(r.get('forbidden_reached') or []), len(r.get('spawns_unreached') or []), r.get('reached_m2')))
+    if r.get('fail') is not False or (r.get('leak_cells') or 0)>0 or r.get('blocked') or r.get('forbidden_reached') or r.get('spawns_unreached'):
+        bad.append(lid+': planned no_route FAIL')
+if bad: raise SystemExit('PLANNED no_route: '+'; '.join(bad))" "$PROJ/data" $RACE_IDS
 (cd "$AIROSO" && python tools/layout_dummies.py "$PROJ")         # data/dummies_<id>.json x3 (engine frame + _yaw_deg); exit 1 on validation
-step "author: race furniture -> RACE collection in loop.blend (1WALL_race_* chain + kerb-line strips, 1KERB_race_* kerbs)"
+step "author: race furniture -> loop.blend: RACE (curb strips + kerbs, common) + RACE_CLOSE_<TOKEN> (one closure per race layout)"
 (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_race_furniture_blend.py" -- "$PROJ" 2>&1 | grep "^\[race\]\|Error\|Traceback" )
-step "author: verify the authored furniture against its declaration (tools/verify_race.py, hard)"
+step "author: verify the authored furniture against its declaration (tools/verify_race.py, hard: common set + each layout)"
 (cd "$AIROSO" && python tools/verify_race.py "$PROJ")            # data/race_verify.json; exit 1
 (cd "$AIROSO" && python tools/plot_race_furniture.py "$PROJ" | tail -3)   # data/race_plots/*.png
 
 step "ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)"
 "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS\|multi-layout" | cut -c1-160
-step "ship: split the prepped scene -> road / race / spawn scenes (tools/split_exports_blend.py)"
+step "ship: split the prepped scene -> road / common race / closure per race layout / spawn scenes (tools/split_exports_blend.py)"
 "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/split_exports_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" --out-dir "$PROJ/blender/split" 2>&1 | grep "^\[split\]"
-# the split asserts: loop_main.blend holds 0 AC_* and 0 RACE objects/materials, loop_race.blend only
-# RACE-named objects + RACE-named materials, each spawn blend only that layout's AC_* empties.
+# the split asserts: loop_main.blend holds 0 AC_* and 0 RACE objects/materials; loop_race.blend only the
+# COMMON RACE objects (curb strips + kerbs, never a 1WALL_RACE_CLOSE_*) + RACE-named materials;
+# loop_closure_<id>.blend per race layout only 1WALL_RACE_CLOSE_<its token>_* (non-empty; an undeclared
+# token, a retired KBAR object, race + closures != every RACE object -> exit 1); each spawn blend only that
+# layout's AC_* empties.
+for lid in $RACE_IDS; do
+  [ -f "$PROJ/blender/split/loop_closure_$lid.blend" ] || { echo "split wrote no loop_closure_$lid.blend — race layout $lid would load no closure"; exit 1; }
+done
 
 if [ "$DRY" = 1 ]; then
-  echo; echo "DRY RUN: stopping before the kn5 exports. Would now: export $SLUG.kn5 (road) + ${SLUG}_race.kn5 +"
-  echo "  ${SLUG}__{$(echo $LAYOUT_IDS | tr ' ' ',')}.kn5 (spawns) -> AI per layout -> verify_kn5 -> track_folder -> make_map -> make_treefx"
-  echo "  -> gates (street on track.obj; race layouts on track.race.obj) -> sync outputs -> install."
+  echo; echo "DRY RUN: stopping before the kn5 exports. Would now: export $SLUG.kn5 (road) + ${SLUG}_race.kn5 (common) +"
+  echo "  $(for lid in $RACE_IDS; do printf '%s ' "${SLUG}_closure_$lid.kn5"; done)(one closure per race layout, each content-checked) +"
+  echo "  ${SLUG}__{$(echo $LAYOUT_IDS | tr ' ' ',')}.kn5 (spawns) -> AI per layout -> verify_kn5 -> track_folder -> verify_kn5 --inis"
+  echo "  -> make_map -> make_treefx -> gates (street on track.obj; each race layout on its own track.<id>.obj:"
+  echo "  drive_test, audit_mesh --layout, no_route BUILT) -> sync outputs -> install."
   echo "  Nothing exported, nothing synced back, nothing installed ($PROJ)."
   exit 0
 fi
 
 step "ship: export road kn5 (shared by all layouts, spawn-free)"
 "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/export_kn5_addon.py" -- "$PROJ" --blend "$PROJ/blender/split/loop_main.blend" 2>&1 | grep "KN5 EXISTS\|INI materials"
-step "ship: export race-furniture kn5 (loaded by the race layouts only)"
+step "ship: export the COMMON race-furniture kn5 (curb strips + kerbs; loaded by every race layout)"
 "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/export_kn5_addon.py" -- "$PROJ" --blend "$PROJ/blender/split/loop_race.blend" --out "${SLUG}_race.kn5" 2>&1 | grep "KN5 EXISTS\|INI materials"
 # content guard (was a 20 MB size cap, which fired on a clean but flat-shaded 35.6 MB kn5): every mesh
-# 1WALL_RACE* / 1KERB_RACE*, every texture from pbr.py's race rows, no AC_* node — exit 1 otherwise.
-# The size is printed (WARN above 20 MB), never the gate.
+# 1WALL_RACE* / 1KERB_RACE*, none a closure, >= 1 curb strip, exactly the declared kerb count, every texture
+# from pbr.py's race rows, no AC_* node — exit 1 otherwise. The size is printed (WARN above 20 MB), never the gate.
 (cd "$AIROSO" && python -m scripts.modkit.inspect_kn5 "$PROJ/build/${SLUG}_race.kn5" --json "$PROJ/data/race_kn5.json" >/dev/null)
-(cd "$AIROSO" && python tools/check_race_kn5.py "$PROJ/data/race_kn5.json")
+(cd "$AIROSO" && python tools/check_race_kn5.py "$PROJ/data/race_kn5.json" --role common --bands "$PROJ/data/barrier_bands.json")
+for lid in $RACE_IDS; do
+  # the owner token is the declaration's (barrier_bands.json corridors.<id>.token, from layouts[].closure_token)
+  tok=$(pyq "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8'))['corridors'][sys.argv[2]]['token'])" "$PROJ/data/barrier_bands.json" "$lid")
+  step "ship: export the $lid CLOSURE kn5 (1WALL_RACE_CLOSE_${tok^^}_* only; loaded by $lid alone)"
+  "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/export_kn5_addon.py" -- "$PROJ" --blend "$PROJ/blender/split/loop_closure_$lid.blend" --out "${SLUG}_closure_$lid.kn5" 2>&1 | grep "KN5 EXISTS\|INI materials"
+  (cd "$AIROSO" && python -m scripts.modkit.inspect_kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --json "$PROJ/data/closure_$lid.kn5.json" >/dev/null)
+  (cd "$AIROSO" && python tools/check_race_kn5.py "$PROJ/data/closure_$lid.kn5.json" --role closure --owner "$tok")
+done
 step "ship: spawn kn5 per layout (nodes only: AC_START/PIT/HOTLAP/TIME from data/dummies_<id>.json)"
 "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/build_spawn_kn5.py" -- "$PROJ" 2>&1 | grep "^\[spawn_kn5\]"
 
@@ -201,35 +253,65 @@ for lid in $STREET_IDS; do
   fi
 done
 
-step "ship: verify_kn5 (hard — spawn-free road + race kn5, one spawn kn5 per layout, facing, side, line, sectors)"
+step "ship: verify_kn5 (hard — spawn-free road, common race kn5 + one closure kn5 per race layout (its token only), one spawn kn5 per layout, facing, side, lane, sectors)"
 (cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ")
-step "ship: track folder (models_<id>.ini x3, ui/<id>/, <id>/{map,data,ai}; stale single-layout structure removed)"
+step "ship: track folder (models_<id>.ini x3, ui/<id>/, <id>/{map,data,ai}; a race layout without its closure kn5 is a HARD error)"
 (cd "$AIROSO" && python -m scripts.ac.track_folder "$PROJ") | grep -E "wrote|length_m|n_pits|layouts packed|removed stale|models|WARNING|ai/"
-cp "$PROJ/build/$SLUG.kn5" "$PROJ/build/$SLUG/"          # the race + spawn kn5s are copied by track_folder itself
+cp "$PROJ/build/$SLUG.kn5" "$PROJ/build/$SLUG/"          # the race, closure + spawn kn5s are copied by track_folder itself
+step "ship: verify_kn5 --inis (hard — each race ini lists exactly road + common race + ITS closure + its spawns; none lists another layout's closure)"
+(cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ" --inis)   # after the road-kn5 copy: every listed kn5 must be in the folder
 step "ship: minimap in the KN5 frame, per layout (tools/make_map.py)"
 (cd "$AIROSO" && python tools/make_map.py "$PROJ")
 step "ship: TreeFX palms / street trees / scrub (tools/make_treefx.py)"
 (cd "$AIROSO" && python tools/make_treefx.py "$PROJ")
 
+# A verdict from an earlier run is not this run's verdict: every per-layout gate file is removed before its
+# gate runs, so a gate that does not run reads as "not run" (red), never as last time's pass. 0047's ONE
+# shared race gate OBJ / audit (road + the retired centre chain) are retired: each race layout is judged on
+# its own kn5 set (ledger 0049).
+for lid in $LAYOUT_IDS; do rm -f "$PROJ/data/drive_test.$lid.json"; done
+for lid in $RACE_IDS; do rm -f "$PROJ/data/audit.$lid.json" "$PROJ/data/no_route.$lid.json" "$PROJ/data/track.$lid.obj"; done
+rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"
 step "gate: road kn5 -> gate OBJ (engine frame) + gate centreline"
 (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")
 step "gate: drive_test, street layout (hard)"
 DT_S=0; (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --layout street 2>&1 | grep -v "drive-time\] sweep" | tail -30) || DT_S=$?
 step "gate: audit_mesh, street (hard total; the regression floor — must equal today's D 512 / K 154 / I 145 / F 15)"
 AU_S=0; (cd "$AIROSO" && python -m scripts.geometry.audit_mesh "$PROJ" 2>&1 | tail -16) || AU_S=$?
-step "gate: road + race kn5 -> ONE gate OBJ (the kn5 set the race layouts load) — data/track.race.obj"
-(cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --kn5 "$PROJ/build/${SLUG}_race.kn5" --out "$PROJ/data/track.race.obj")
-step "gate: drive_test, race layouts (hard; lane-relative sweep, barrier_missing must be 0)"
-RACE_FLAGS=""; for lid in $RACE_IDS; do RACE_FLAGS="$RACE_FLAGS --layout $lid"; done
-DT_R=0; (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" $RACE_FLAGS 2>&1 | grep -v "drive-time\] sweep" | tail -60) || DT_R=$?
-step "gate: audit_mesh --race (D exempt on the declared bands only; E/F unchanged)"
-AU_R=0; (cd "$AIROSO" && python -m scripts.geometry.audit_mesh "$PROJ" --race --obj track.race.obj --out audit.race.json 2>&1 | tail -18) || AU_R=$?
-# a race layout red on its OWN furniture gates is never installed, --force-install or not
-RACE_RED=$(pyq "import json,sys
-d=json.load(open(sys.argv[1],encoding='utf-8')); bad=[]
-for lid,r in (d.get('layouts') or {}).items():
-    if r.get('kind')=='race' and ((r.get('barrier_missing') or 0)>0 or (r.get('obstruction_stations') or 0)>0 or r.get('fail') is None): bad.append(lid)
-print(' '.join(bad))" "$PROJ/data/drive_test.json")
+DT_R=0; AU_R=0; NR_R=0
+for lid in $RACE_IDS; do
+  step "gate: $lid — road + common race + ITS closure kn5 -> ONE gate OBJ (the kn5 set $lid loads) — data/track.$lid.obj"
+  (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --kn5 "$PROJ/build/${SLUG}_race.kn5" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --out "$PROJ/data/track.$lid.obj")
+  step "gate: drive_test --layout $lid (hard; the declared corridor lane — barrier_missing and obstruction_stations must be 0)"
+  rc=0; (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --layout "$lid" 2>&1 | grep -v "drive-time\] sweep" | tail -40) || rc=$?
+  [ "$rc" = 0 ] || DT_R=$rc
+  step "gate: audit_mesh --layout $lid (D exempt on THIS layout's bands only; W: no race strip through another wall)"
+  rc=0; (cd "$AIROSO" && python -m scripts.geometry.audit_mesh "$PROJ" --layout "$lid" 2>&1 | tail -18) || rc=$?
+  [ "$rc" = 0 ] || AU_R=$rc
+  step "gate: no_route --layout $lid, BUILT (hard; flood fill from AC_START_0 on data/track.$lid.obj — 0 leaks, lap complete, every spawn reached)"
+  rc=0; (cd "$AIROSO" && python tools/no_route.py "$PROJ" --layout "$lid" 2>&1 | tail -30) || rc=$?
+  [ "$rc" = 0 ] || NR_R=$rc
+done
+# a race layout red on its OWN gates is never installed, --force-install or not: drive_test barrier_missing /
+# obstruction_stations / not run, or the BUILT no_route verdict missing or failing (a leak, a blocked lap, a
+# reached forbidden probe, an unreached spawn). check_race_kn5 / verify_kn5 / verify_kn5 --inis already
+# stopped the chain (set -e) before this point.
+RACE_RED=$(pyq "import json,os,sys
+d=json.load(open(sys.argv[1],encoding='utf-8')) if os.path.exists(sys.argv[1]) else {}; rows=d.get('layouts') or {}; bad=[]
+for lid in sys.argv[3:]:
+    r=rows.get(lid) or {}; why=[]
+    if r.get('fail') is None: why.append('drive_test not run')
+    if (r.get('barrier_missing') or 0)>0: why.append('barrier_missing %s'%r.get('barrier_missing'))
+    if (r.get('obstruction_stations') or 0)>0: why.append('obstruction_stations %s'%r.get('obstruction_stations'))
+    p=os.path.join(sys.argv[2],'no_route.%s.json'%lid)
+    if not os.path.exists(p): why.append('no_route not run')
+    else:
+        n=json.load(open(p,encoding='utf-8'))
+        if n.get('fail') is not False or (n.get('leak_cells') or 0)>0 or n.get('blocked') or n.get('forbidden_reached') or n.get('spawns_unreached'):
+            why.append('no_route FAIL (leak_cells %s, blocked %s, forbidden_reached %s, spawns_unreached %s)'%(n.get('leak_cells'),
+                       len(n.get('blocked') or []), len(n.get('forbidden_reached') or []), len(n.get('spawns_unreached') or [])))
+    if why: bad.append(lid+'['+'; '.join(why)+']')
+print(' '.join(bad))" "$PROJ/data/drive_test.json" "$PROJ/data" $RACE_IDS)
 
 if [ "$SCRATCH" = 1 ]; then
   step "sync outputs workshop -> airoso: SKIPPED"
@@ -241,25 +323,36 @@ cp "$PROJ/loop.blend" "$SRC/loop.blend"
 for f in centerline.local.json centerline.raw.local.json median_bands.json dummies.json \
          finished_centerline.json gate_centerline.json lights.local.json connectors.local.json \
          mouths.json signs.local.json signs_preview.svg signs_measured.json drive_test.json audit.json \
-         barrier_bands.json race_authored.json race_verify.json audit.race.json; do
+         barrier_bands.json race_authored.json race_verify.json race_kn5.json; do
   [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
 done
+rm -f "$SRC/data/audit.race.json"   # 0047's shared race audit: retired (ledger 0049 audits each race layout on its own OBJ)
 for lid in $LAYOUT_IDS; do
   for f in "dummies_$lid.json" "drive_test.$lid.json"; do [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"; done
   if [ -d "$PROJ/ai/$lid" ]; then rm -rf "$SRC/ai/$lid"; mkdir -p "$SRC/ai"; cp -r "$PROJ/ai/$lid" "$SRC/ai/$lid"; fi   # track_folder is reproducible from the repo
+done
+for lid in $RACE_IDS; do
+  for f in "no_route.$lid.json" "no_route.$lid.planned.json" "audit.$lid.json" "closure_$lid.kn5.json"; do
+    [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
+  done
 done
 [ -f "$PROJ/blender/split/split_manifest.json" ] && cp "$PROJ/blender/split/split_manifest.json" "$SRC/data/split_manifest.json"
 for d in signs_plots race_plots; do
   if [ -d "$PROJ/data/$d" ]; then rm -rf "$SRC/data/$d"; cp -r "$PROJ/data/$d" "$SRC/data/$d"; fi
 done
-# track.race.obj / track.obj are 66+ MB each and regenerable from the kn5s: never synced.
+# track.obj / track.<id>.obj are 66-78 MB each and regenerable from the kn5s: never synced.
 fi
 
-if [ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ]; then
-  echo; echo "GATES: street drive_test exit $DT_S, street audit exit $AU_S, race drive_test exit $DT_R, race audit exit $AU_R"
-  if [ -n "$RACE_RED" ]; then
-    echo "  NOT INSTALLED: race layout(s) [$RACE_RED] fail on their own furniture gates (barrier_missing / obstruction) —"
-    echo "  no reference exists to be 'no worse than', so --force-install does not apply (data/drive_test.<id>.json)"; exit 1
+echo; echo "GATES: street drive_test exit $DT_S, street audit exit $AU_S, race drive_test exit $DT_R, race audit exit $AU_R, race no_route exit $NR_R"
+echo "  race layouts red on their own gates: ${RACE_RED:-none}"
+if [ -n "$RACE_RED" ]; then
+  echo "  NOT INSTALLED: race layout(s) $RACE_RED fail on their own gates (drive_test barrier_missing / obstruction,"
+  echo "  the BUILT no_route containment fill) — no reference exists to be 'no worse than', so --force-install does not"
+  echo "  apply (data/drive_test.<id>.json, data/no_route.<id>.json)"; exit 1
+fi
+if [ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ] || [ "$NR_R" != 0 ]; then
+  if [ "$NR_R" != 0 ]; then
+    echo "  NOT INSTALLED: no_route exited $NR_R (2 = an input error: the containment verdict could not be computed)"; exit 1
   elif [ "$FORCE" = 1 ]; then
     echo "  --force-install: installing RED (caller asserts no metric is worse than the July reference)"
   else

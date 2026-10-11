@@ -45,6 +45,16 @@ vertex 0), the scan disc clipped to the lane at each obstacle vertex's own stati
 continuity wrapped across the seam of a closed lap. Each layout writes
 ``data/drive_test.<id>.json``; ``data/drive_test.json`` becomes the per-layout summary. A
 single-layout track is byte-for-byte today's gate.
+
+CORRIDORS (ledger 0049, 2026-10-11). A version-2 declaration gives every race layout its own lane:
+``corridors.<id>.lane_by_vertex`` (the corridor FACES — the race-side curb strip face and the layout's closure
+face, full width in the open boxes and the whole-street zone), read through
+``MedianZone.load(project, layout=<id>)``. The lane at a station is that declaration lerped between the two
+vertices (each face kept DIVIDER_CLEAR_M away); funnels and island faces stand outside the lane by declaration,
+so anything of them inside it is an obstruction. ``barrier_missing`` probes both curb strips the whole lap
+(bridge spans included: no gaps since 0049) and the layout's ``closure`` at its declared line (the lerp of the
+two declared ring centres). The race OBJ defaults to ``data/track.<id>.obj`` (road kn5 + common race kn5 + that
+layout's closure kn5); a version-1 file keeps the 0047 lane (chain / island face) and ``track.race.obj``.
 """
 
 from __future__ import annotations
@@ -286,11 +296,22 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     reverse = direction == "reverse"
     race = bool(_lo.get("race_furniture")) if _lo else False
     kind = str(_lo.get("kind", "race" if race else "street")) if _lo else "street"
-    obj_name = obj or ("track.race.obj" if kind == "race" else "track.obj")
+    _corridor_decl = False
+    if race and (data / "barrier_bands.json").exists():
+        try:
+            _corridor_decl = bool((json.loads((data / "barrier_bands.json").read_text(encoding="utf-8"))
+                                   .get("corridors") or {}))
+        except (json.JSONDecodeError, OSError):
+            _corridor_decl = False
+    # ledger 0049: each race layout loads road + common race + ITS closure kn5 -> its own gate OBJ
+    obj_name = obj or ((f"track.{lid}.obj" if _corridor_decl else "track.race.obj") if kind == "race" else "track.obj")
     if kind == "race" and not (data / obj_name).exists():
         raise SystemExit(f"drive_test: layout {lid!r} is kind 'race' but data/{obj_name} does not exist — "
-                         f"a race layout is judged on the kn5 set it loads (main + race furniture), never on "
-                         f"track.obj alone (kn5_to_gate_obj --kn5 main --kn5 race --out data/track.race.obj)")
+                         f"a race layout is judged on the kn5 set it loads (main + race furniture"
+                         f"{' + its closure' if _corridor_decl else ''}), never on track.obj alone "
+                         + (f"(kn5_to_gate_obj --kn5 <slug>.kn5 --kn5 <slug>_race.kn5 --kn5 <slug>_closure_{lid}.kn5 "
+                            f"--out data/track.{lid}.obj)" if _corridor_decl else
+                            "(kn5_to_gate_obj --kn5 main --kn5 race --out data/track.race.obj)"))
     fin = data / "finished_centerline.json"
     gate_cl = data / "gate_centerline.json"
     if gate_cl.exists():
@@ -461,13 +482,17 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     # the kerb-line barrier inset as dividers of a second kind; the street layout never does, so a
     # track without barrier_bands.json (or a layout without race_furniture) is today's gate exactly.
     from scripts.geometry.median_zone import MedianZone
-    _zone = MedianZone.load(project)
+    _zone = MedianZone.load(project, layout=lid if race else None)
     if _zone and reverse:
         _zone = _zone.reversed()
+    # CORRIDOR (0049): the declared lane of THIS layout, lerped per station (see the module doc)
+    _corr = bool(race and _zone is not None and _zone.has_corridor)
     if _zone:
         print(f"  (median island on {_zone.n_island} verts — wheel paths swept in the driven lane there"
-              + (f"; barrier bands: centre chain on {_zone.n_barrier} verts, kerb-line strip on "
-                 f"{_zone.n_edge} verts — lane = divider face .. barrier face, presence gated" if race else "")
+              + ((f"; corridor {lid}: closure on {_zone.n_closure} verts, curb strips on {_zone.n_edge} verts — lane = "
+                  f"the declared faces, presence gated" if _corr else
+                  f"; barrier bands: centre chain on {_zone.n_barrier} verts, kerb-line strip on "
+                  f"{_zone.n_edge} verts — lane = divider face .. barrier face, presence gated") if race else "")
               + ")")
     if lid:
         print(f"  layout {lid}: direction {direction}, kind {kind}, furniture {'race' if race else 'none'}, "
@@ -493,7 +518,17 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
             d1, i1 = _divider_at(k); dh = max(dh, d1); ins = max(ins, i1); k += 1
         return dh, ins
 
-    _bm_hits: dict = {"centre": [], "edge_L": [], "edge_R": []}   # (station, hit) per declared band
+    _bm_hits: dict = {"centre": [], "edge_L": [], "edge_R": [], "closure": []}   # (station, hit) per declared band
+
+    def _corr_lane(k, u):
+        """the declared corridor lane (scan + wheel bands, right of travel) at fraction u of segment k-1 -> k"""
+        a, b = _zone.lane_r(k - 1), _zone.lane_r(k)
+        lo_r = a[0] + (b[0] - a[0]) * u
+        hi_r = a[1] + (b[1] - a[1]) * u
+        lo_s, hi_s = lo_r + DIVIDER_CLEAR_M, hi_r - DIVIDER_CLEAR_M
+        if hi_s - lo_s < 2.0:
+            return None
+        return lo_s, hi_s, lo_s + WHEEL_HALF_TRACK, hi_s - WHEEL_HALF_TRACK
 
     # TRIMMED CORNERS (race layouts, 2026-10-11): where the declaration trims a kerb-line strip to the
     # curb's own corner (barrier_bands.json edge_corners) the band across the removed vertices is the
@@ -558,7 +593,10 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
         if best is None:
             return True
         _, k, u_, lat_ = best
-        lv = _lane_geometry(_wl[k - 1] + (_wl[k] - _wl[k - 1]) * u_, dh_, ins_)
+        if _corr:
+            lv = _corr_lane(k, u_)
+        else:
+            lv = _lane_geometry(_wl[k - 1] + (_wl[k] - _wl[k - 1]) * u_, dh_, ins_)
         return lv is None or (lv[0] - 0.3 <= -lat_ <= lv[1] + 0.3)
 
     def _bm_probe(kind, s_at, cx, cz, nx_, nz_, lat, deck):
@@ -611,7 +649,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
         lines = (-(w / 2 - 0.5), -w / 3, 0.0, w / 3, (w / 2 - 0.5))   # edges included
         _clamp_c, _clamp_r = 0.0, lane_half       # today's clamp: +/- lane_half about the centreline
         _dh, _inset = _divider_at(i)
-        _lane = _lane_geometry(w_lane, _dh, _inset)
+        _lane = _corr_lane(i, t) if _corr else _lane_geometry(w_lane, _dh, _inset)
         if _lane is not None:
             # driven lane = right of the divider (negative offsets are the right-hand side here) and
             # inside the kerb-line barrier; edges, thirds, centre of THAT lane. The inner wheel clears
@@ -716,7 +754,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
             # island/gap boundaries, 2026-10-08, at +/-2 vertices; the 6.3 m disc reaches a 1WALL
             # end from 6 m out) — scan the lane there too, with the neighbour's geometry
             _lane_scan = _lane
-            if _zone is not None:
+            if _zone is not None and not _corr:
                 # a station with no divider of its own borrows the nearest one's (today's island
                 # transition rule); a station already beside a kerb-line strip but short of the
                 # chain's free end borrows the chain's half-width the same way
@@ -734,7 +772,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                 _orad = min((_hi - _lo) / 2.0, 6.0) + 0.3
             _keep = None
             if race and _lane_scan is not None:
-                _kdh, _kins = (_sdh, _sins) if _zone is not None else (_dh, _inset)
+                _kdh, _kins = (_sdh, _sins) if (_zone is not None and not _corr) else (_dh, _inset)
                 _keep = (lambda vx, vz, _i0=i, _a=_kdh, _b=_kins: _in_lane(vx, vz, _i0, _a, _b))
             for name in obstacle.rising_in(_ox, _oz, _orad,
                                            lambda vx, vz: surface.top_at(vx, vz, y_ref)[0],
@@ -763,6 +801,13 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                             _bm_probe(_bk_, s, x, z, nx, nz, _sg * _ec, deck_c)
                         else:
                             _bm_probe(_bk_, s, _cp[0], _cp[1], _cp[2], _cp[3], 0.0, deck_c)
+                # the layout's CLOSURE (0049): on the declared line between the two ring centres (pins included)
+                if _corr and _zone.closure_at(i) is not None and _zone.closure_at(i - 1) is not None:
+                    _qa = _zone._band_point("closure", i - 1)
+                    _qb = _zone._band_point("closure", i)
+                    _qx, _qz = _qa[0] + (_qb[0] - _qa[0]) * t, _qa[2] + (_qb[2] - _qa[2]) * t
+                    _ql = math.hypot(_qb[0] - _qa[0], _qb[2] - _qa[2]) or 1e-9
+                    _bm_probe("closure", s, _qx, _qz, -(_qb[2] - _qa[2]) / _ql, (_qb[0] - _qa[0]) / _ql, 0.0, deck_c)
         s += STEP_M
 
     # BARRIER CONTINUITY: a declared station is MISSING when no 1WALL hit lies within half a
@@ -1015,6 +1060,8 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
         "kind": kind,
         "race_furniture": race,
         "obj": obj_name,
+        "lane": (f"barrier_bands.json corridors.{lid}" if _corr else
+                 ("barrier_bands.json v1 (chain / island face)" if race else "full width / island")),
         "barrier_stations": problems["barrier_stations"],
         "barrier_missing": len(barrier_missing),
         "barrier_missing_runs": [(a, b, k) for a, b, k in sorted(_bm_runs, key=lambda r: -(r[1] - r[0]))[:12]],
@@ -1117,7 +1164,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     return {**report, "fail": fail}
 
 
-SUMMARY_KEYS = ("fail", "direction", "kind", "race_furniture", "obj", "lap_m", "soft_top_in_lane",
+SUMMARY_KEYS = ("fail", "direction", "kind", "race_furniture", "obj", "lane", "lap_m", "soft_top_in_lane",
                 "obstruction_stations", "barrier_missing", "barrier_stations", "floating_furniture",
                 "daylight_gaps", "excursion_drops", "undrivable_corners", "severe_steps", "severe_per_km",
                 "steps_per_km", "kinks_per_km")
@@ -1174,10 +1221,13 @@ def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     only: list[str] = []
     project = "."
+    obj = None
     i = 0
     while i < len(argv):
         if argv[i] == "--layout":
             only.append(argv[i + 1]); i += 2
+        elif argv[i] == "--obj":
+            obj = Path(argv[i + 1]).name; i += 2
         else:
             project = argv[i]; i += 1
     cfg = json.loads((Path(project) / "track.config.json").read_text())
@@ -1190,9 +1240,11 @@ def main(argv: list[str] | None = None) -> int:
         if x not in ids:
             raise SystemExit(f"drive_test: --layout {x!r} is not declared ({ids})")
     todo = only or ids
+    if obj and len(todo) != 1:
+        raise SystemExit("drive_test: --obj names ONE layout's gate OBJ — give exactly one --layout with it")
     any_fail = False
     for lid in todo:
-        r = run(project, lid)
+        r = run(project, lid, obj=obj)
         any_fail = any_fail or bool(r["fail"])
         print()
     write_summary(project, todo)

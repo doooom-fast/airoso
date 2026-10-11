@@ -1,11 +1,13 @@
-"""Verify the authored race furniture against its declaration — a ship gate (ledger 0047).
+"""Verify the authored race furniture against its declaration — a ship gate (ledgers 0047 + 0049).
 
 Runs after tools/author_race_furniture_blend.py, pure Python, exit 1 on any miss. Reads
 data/race_authored.json (the author tool's per-object counts, seating and the SEATED ring centres)
-and data/barrier_bands.json (tools/barrier_bands.py — the declared bands the gates consult), plus
-data/centerline.local.json and data/median_bands.json. The declaration IS the authored line
-(the 2026-10-08 median_zone precedent); this file proves the two agree BEFORE a kn5 exists, and
-drive_test's ``barrier_missing`` then proves the strips are in the BUILT OBJ (L5).
+and data/barrier_bands.json (tools/barrier_bands.py, version 2 — the declared bands and, per race
+layout, `corridors.<id>`: the closure line, zones, lane, mouths), plus data/centerline.local.json and
+data/median_bands.json. The declaration IS the authored line (the 2026-10-08 median_zone precedent);
+this file proves the two agree BEFORE a kn5 exists, and the built gates (drive_test barrier_missing,
+no_route) then prove it on the BUILT OBJ (L5). Every check below runs on the COMMON set (curb strips,
+kerbs) and on EACH race layout's closure (counts.by_layout).
 
   A  provenance — the authored file was built from this declaration: not a stand-in, same
      edge_mode and barrier height as the bands, the RACE prefixes the export split keys on; no run
@@ -13,62 +15,51 @@ drive_test's ``barrier_missing`` then proves the strips are in the BUILT OBJ (L5
   B  budgets — every object stays ONE AC mesh: rings <= 900 (the author tool's own cap is 800),
      positions < 60,000, flat-shaded render verts (loops x 1.5) < 65,535, a unique RACE-prefixed
      name, seating gap <= 0.05 m
-  C  centre chain — at least one object per declared centre run; every chain ring stands on a
-     vertex the band declares (centre_w > 0), never on a median island beyond the shared nose
-     vertex, never on Alvarado or inside the hairpin arc; the run's first / last ring within
-     END_TOL_M of the declared end vertices; consecutive PARTS of a run share their boundary ring
-  D  kerb-line strips — every declared edge vertex has a ring on each side, except the vertices
-     the DECLARATION trims (barrier_bands.json `edge_corners[].removed`: the inside lips of the five
-     right-handers, where the strip is cut to the curb's own corner) — a SET check since 2026-10-11
-     (it was a count against the author's own fold_skipped_run, which passed 23 missing vertices
-     against 27 self-reported drops that were not the same vertices); every declared corner has an
-     authored ring AT its X (CORNER_TOL_M); no ring stands inside a declared gap (the three bridge
-     spans); every `join` end meets the neighbouring object's end (JOIN_TOL_M) and every `free` end
-     stands at a declared gap edge — a free end in the middle of a declared stretch is a hole in the wall
-  A swept strip is continuous between ANY two consecutive rings (the mesh spans them); how CLOSELY it
-  follows the declaration between them is H.
-  E  race kerbs — the declared (apex, in|out) set == the authored set, every kerb has stations,
-     nothing declared-but-unmatched, as many corners as the declaration
-  F  spawn clearance — HARD (2026-10-11): every grid / pit / hotlap slot of every race layout, re-measured
-     HERE from data/dummies_<id>.json (what build_spawn_kn5 ships) against the declared strip faces
-     (bands params: face = half_w + edge_centre_from_lip_m -/+ barrier_half_m; chain = centre_w / 2):
-     a 1.9 m car stands >= SPAWN_MARGIN_M = 0.30 m off every face, else FAIL (it was a soft note at
-     0.08 m with the 1.4 m stagger). The author tool's own record still fails on its `hard` list and on
-     synthesised dummies. Every slot's clearance lands in race_verify.json counts.spawn_slots.
-  G  lamp posts vs the strips — every lamp mast (data/lights.local.json heads set back road-ward by
-     tools/author_lamps_blend.py's ARM_M, the footprint radius measured from assets/models/lamp_post.obj
-     at its POST_H scale) stands OUTSIDE every kerb-line strip and centre-chain footprint; FAIL on any
-     overlap, the minimum margin reported (counts.lamp_min_margin_m). Q6 `walk` puts the strip on the
-     sidewalk top, where the masts are — this is the check that would catch it.
-  H  ring density (2026-10-11; was a note) — every consecutive pair of chain / kerb-line strip ring
-     centres vs the DECLARED offset curve rebuilt here from the bands + centreline alone (centre lerped
-     along each centreline segment, left normal of the normalised lerp of the vertex tangents, the
-     declared lateral half_w + edge_centre_from_lip_m lerped; lat 0 for the chain): the chord error
-     (max distance of the curve between the two rings from the straight span) > CHORD_FAIL_M = 0.15 m
-     FAILS (the author keeps it <= 0.10 m). Spans where the declared curve folds back (an inside lip
-     tighter than its offset: the author chords those on purpose) are counted, not judged; ring
-     spacing above 3.5 m is reported. The 2026-10-11 rehearsal measured 0.27 m / 7.02 m at the seam
-     corner's outside lip before densify_rings. Across a declared trimmed corner the declared curve
-     is the polyline in_vertex band point -> X -> out_vertex band point (the strip is cut to the curb's
-     corner there), so those spans are measured like any other, not counted as folds.
-  I  inside-out (2026-10-11) — every consecutive pair of rings of every chain / kerb-line strip / race
-     kerb object, rebuilt from the authored ring centres and ring_frames (tangent + lateral scale): the
-     two extreme profile columns (+-barrier_half_m x ls; a kerb +-kerb_width_m / 2 x ls about its mid-line)
-     must both ADVANCE along the span's mean tangent — a column moving backwards is a span of the swept
-     solid turned inside-out (the 2026-10-11 rehearsal had six on the R strips and seven on the inside
-     kerbs, all at the folds). Any such span FAILS; an object without ring_frames FAILS (not measurable).
+  C' closures (ledger 0049) — per race layout: one object chain per declared closure run, consecutive
+     parts joined on a shared ring (JOIN_TOL_M); EVERY ring within CLOSE_TOL_M of the declared curve
+     (corridors.<id>.closure_y_by_vertex, lerped between vertices the way the author densifies);
+     the declaration itself puts no closure vertex in a BOX or WHOLE zone; each run's first and last
+     ring stands AT its pin: within PIN_TOL_M of the declared far curb-strip line, at the pin vertex
+  D  kerb-line strips — EVERY centreline vertex has a ring on EACH side, bridge spans included (C1 —
+     this inverts ledger 0047's "no ring inside a span"), except the vertices the DECLARATION trims
+     (barrier_bands.json `edge_corners[].removed`, a SET check); every declared corner has an authored
+     ring AT its X (CORNER_TOL_M)
+  E  race kerbs — the declared (apex, in|out) set == the authored set (10 on SD), each with the
+     declared (clipped) i/j; every kerb's footprint stands >= KERB_CLEAR_M off EVERY race layout's
+     AUTHORED closure footprint (re-measured here; the author's own clip is reported)
+  F  spawn clearance — HARD: every grid / pit / hotlap slot of every race layout, re-measured HERE from
+     data/dummies_<id>.json against the declared strip faces AND (0049) that layout's declared lane
+     (corridors.<id>.lane_by_vertex): a 1.9 m car stands >= SPAWN_MARGIN_M = 0.30 m off every face
+  G  lamp posts — every lamp mast stands OUTSIDE every kerb-line strip footprint and every race
+     layout's closure footprint (lerped at the mast); FAIL on any overlap, the minimum margin reported
+  H  ring density — every consecutive pair of curb-strip / closure ring centres vs the DECLARED offset
+     curve rebuilt here from the bands + centreline alone: a chord error > CHORD_FAIL_M = 0.15 m FAILS
+  I  inside-out — no span of any strip / closure / kerb has a profile column running backwards
+  J  zero free ends — every curb-strip end is a `join` met by a same-side neighbour's end (the strips
+     are closed loops); every closure end is either a join with its own run's next part or a PIN:
+     its centre within PIN_TOL_M of the AUTHORED far curb strip's centre polyline (re-measured), the
+     end ring full height (h == barrier_height_m) and full width (ls == 1)
+  K  ownership — every closure's name token is a declared corridor token and its object records that
+     owner / layout / collection (RACE_CLOSE_<TOKEN>); the common furniture owns no token and sits in RACE;
+     no RACE object of an unknown kind
+  L  bridges — 0 interpolated rings inside the declared bridge spans (race_authored bridge_seating), and
+     the strips do stand on the decks
+  M  mouths — every sealed mouth line (closed_mouths) lies ON the authored curb strip of its side
+     (MOUTH_TOL_M) — both strips are common, so this holds in both race layouts; every mouth has a declared
+     policy per layout (sealed_race_strip / sealed_far_strip / behind_closure), and where it is
+     `behind_closure` that layout's own authored closure runs past the whole mouth, between lane and mouth
+  N  retired — no `1WALL_race_kbar_*` object anywhere; centre_w_by_vertex all 0; no centre run
 
 Reported, never gated: another ROAD sheet above a strip base (a fold / mouth defect for its owner,
-0033/0046 class), the worst deck-vs-data height, the minimum spawn clearance.
+0033/0046 class), the worst deck-vs-data height, the minimum spawn clearance, the author's kerb clips.
 
     python tools/verify_race.py <project-dir> [--allow-standin] [--authored <file>] [--bands <file>]
                                 [--config <track.config.json>] [--pre-author] [--out <file>]
 
---pre-author runs F (disk) and G only — no data/race_authored.json needed, so it can judge a
-workshop's dummies and lamps before (or without) the Blender author step; it writes
-data/race_verify.pre.json, never the full report's file. --config reads another
-config for the race-layout ids (a dummies file's own `_kind: race` also counts). Writes
-data/race_verify.json (or --out). Plain functions so tests/run_tests.py can drive it without Blender.
+--pre-author runs F (disk) and G only — no data/race_authored.json needed; it writes
+data/race_verify.pre.json, never the full report's file. Writes data/race_verify.json (or --out).
+Plain functions so tests/run_tests.py can drive it without Blender. Independent of tools/race_furniture.py
+by design (it re-derives every declared curve itself).
 """
 from __future__ import annotations
 
@@ -80,31 +71,36 @@ from pathlib import Path
 
 AIROSO = Path(__file__).resolve().parents[1]
 RACE_PREFIXES = ("1WALL_RACE", "1KERB_RACE")
+EDGE_TAG, CLOSE_TAG, KBAR_TAG, KERB_TAG = "1WALL_RACE_EDGE_", "1WALL_RACE_CLOSE_", "1WALL_RACE_KBAR_", "1KERB_RACE_"
+COMMON_COLLECTION = "RACE"
 MAX_RINGS = 900
 MAX_POSITIONS = 60_000
 RENDER_VERT_CAP = 65_535
 SEAT_GAP_M = 0.05
 INTERP_MAX_FRAC = 0.01
 JOIN_TOL_M = 0.05       # a `join` end and its neighbour's end are the SAME ring (split_plan shares boundary rings)
-END_TOL_M = 1.5         # a run's first/last ring vs the declared end vertex (the ring sits ON the vertex)
+CLOSE_TOL_M = 0.05      # C': every closure ring within this of the declared curve
+PIN_TOL_M = 0.05        # C' / J: a closure's end ring vs the far curb strip's line (declared and authored)
+KERB_CLEAR_M = 0.05     # E: a kerb's footprint vs every closure footprint (race_furniture.KERB_CLOSURE_CLEAR_M)
+ROUND_M = 0.01          # ring_centres are rounded to 0.01 m
+MOUTH_TOL_M = 0.10      # M: a sealed mouth line's points vs the authored strip centre polyline
 VERTEX_TOL = 1          # edge rings sit ~6 m off the centreline: on a tight curve the nearest vertex may be k+-1
-FREE_END_VERTEX_TOL = 3 # a `free` edge end must stand within this many vertices of a declared gap vertex
 CHORD_FAIL_M = 0.15     # H: a strip span chording the declared offset curve by more than this FAILS (2026-10-11)
 CHORD_TARGET_M = 0.10   # H: race_furniture.CHORD_MAX_M, the author's own target (quoted in the message)
 SPACING_TARGET_M = 3.5  # H: race_furniture.RING_SPACING_MAX_M — ring spacing above it is reported, never gated
 SPACING_ROUND_M = 0.015 # H: ring_centres are rounded to 0.01 m, so a 3.500 m span can read 3.507 m
-DENSE_PER_VERTEX = 32   # H: declared-curve samples per centreline interval
-OFF_CURVE_M = 0.5       # H: a ring centre farther than this from every declared sample is not measured (C / D judge it)
+DENSE_PER_VERTEX = 32   # H / C': declared-curve samples per centreline interval
+OFF_CURVE_M = 0.5       # H: a ring centre farther than this from every declared sample is not measured (C' / D judge it)
 SPAN_MAX_VERTICES = 40  # H: a span covering more centreline intervals than this (~120 m) is not measured (D judges holes)
-CORNER_TOL_M = 0.05     # D: a declared trimmed corner's X vs the nearest authored ring centre of that side (centres are
-#                         rounded to 0.01 m; the corner ring stands ON X by construction)
+CORNER_TOL_M = 0.05     # D: a declared trimmed corner's X vs the nearest authored ring centre of that side
 CAR_HALF_W_M = 0.95     # a 1.9 m car on a grid / pit slot
-SPAWN_MARGIN_M = 0.30   # F: HARD floor between a slot's car and any strip face (GATES-CHANGELOG 2026-10-11)
+SPAWN_MARGIN_M = 0.30   # F: HARD floor between a slot's car and any strip / lane face (GATES-CHANGELOG 2026-10-11)
 FACING = ("AC_START", "AC_PIT", "AC_HOTLAP")   # the slots a car sits on (AC_TIME_* are timing planes)
 LAMP_ARM_FALLBACK_M = 1.8      # author_lamps_blend.ARM_M when its source cannot be read
 LAMP_POST_H_FALLBACK_M = 11.5  # author_lamps_blend.POST_H
 MAST_R_FALLBACK_M = 0.60       # lamp_post.obj base plate corner radius at 11.5 m (measured 0.585 m)
 LAMP_CELL_M = 30.0             # author_lamps_blend's nearest-centreline cell (its fallback is vertex 0)
+KNOWN_KINDS = ("edge", "close", "kerb")
 
 
 # --- geometry helpers ------------------------------------------------------------------------
@@ -141,6 +137,37 @@ class VertexGrid:
         return bk
 
 
+class SegGrid:
+    """xz segments in a 4 m cell hash: dist(p) = the distance from p to the nearest one (inf beyond `reach` cells)"""
+
+    CELL = 4.0
+
+    def __init__(self, polylines):
+        self.segs = []
+        self.cells: dict[tuple[int, int], list[int]] = {}
+        for cs in polylines:
+            for a, b in zip(cs, cs[1:]):
+                a2, b2 = (a[0], a[-1]) if len(a) == 2 else (a[0], a[2]), (b[0], b[-1]) if len(b) == 2 else (b[0], b[2])
+                si = len(self.segs)
+                self.segs.append((a2, b2))
+                for i in range(int(math.floor(min(a2[0], b2[0]) / self.CELL)), int(math.floor(max(a2[0], b2[0]) / self.CELL)) + 1):
+                    for j in range(int(math.floor(min(a2[1], b2[1]) / self.CELL)), int(math.floor(max(a2[1], b2[1]) / self.CELL)) + 1):
+                        self.cells.setdefault((i, j), []).append(si)
+
+    def near(self, p, reach=2):
+        cx, cz = int(math.floor(p[0] / self.CELL)), int(math.floor(p[1] / self.CELL))
+        seen = set()
+        for i in range(cx - reach, cx + reach + 1):
+            for j in range(cz - reach, cz + reach + 1):
+                for si in self.cells.get((i, j), ()):
+                    if si not in seen:
+                        seen.add(si)
+                        yield self.segs[si]
+
+    def dist(self, p, reach=2):
+        return min((_seg_dist(p, a, b) for a, b in self.near(p, reach)), default=float("inf"))
+
+
 def _dist_xz(a, b):
     return math.hypot(a[0] - b[0], a[2] - b[2])
 
@@ -156,22 +183,95 @@ def _unique_count(pts):
     return len(pts) - 1 if len(pts) > 1 and _dist_xz(pts[0], pts[-1]) < 1e-6 else len(pts)
 
 
+def _seg_dist(p, a, b):
+    ax, az = b[0] - a[0], b[1] - a[1]
+    L2 = ax * ax + az * az
+    t = 0.0 if L2 <= 0 else max(0.0, min(1.0, ((p[0] - a[0]) * ax + (p[1] - a[1]) * az) / L2))
+    return math.hypot(p[0] - a[0] - t * ax, p[1] - a[1] - t * az)
+
+
+def _seg_seg_dist(p1, p2, q1, q2):
+    d = (p2[0] - p1[0]) * (q2[1] - q1[1]) - (p2[1] - p1[1]) * (q2[0] - q1[0])
+    if abs(d) > 1e-12:
+        t = ((q1[0] - p1[0]) * (q2[1] - q1[1]) - (q1[1] - p1[1]) * (q2[0] - q1[0])) / d
+        s = ((q1[0] - p1[0]) * (p2[1] - p1[1]) - (q1[1] - p1[1]) * (p2[0] - p1[0])) / d
+        if 0.0 <= t <= 1.0 and 0.0 <= s <= 1.0:
+            return 0.0
+    return min(_seg_dist(p1, q1, q2), _seg_dist(p2, q1, q2), _seg_dist(q1, p1, p2), _seg_dist(q2, p1, p2))
+
+
+def _walk(i, j, m):
+    return list(range(i, j + 1)) if j >= i else list(range(i, m)) + list(range(0, j + 1))
+
+
+def race_owner(name):
+    """the token of `1WALL_race_close_<token>_...` (lower case), else None — race_furniture.race_owner, restated
+    so this gate stays independent of the module it judges"""
+    if not str(name).upper().startswith(CLOSE_TAG):
+        return None
+    return str(name)[len(CLOSE_TAG):].split("_", 1)[0].lower() or None
+
+
+def race_kind(name):
+    u = str(name).upper()
+    for tag, kind in ((CLOSE_TAG, "close"), (EDGE_TAG, "edge"), (KERB_TAG, "kerb"), (KBAR_TAG, "kbar")):
+        if u.startswith(tag):
+            return kind
+    return "other" if u.startswith(RACE_PREFIXES) else None
+
+
+def _corridors(bands):
+    return (bands or {}).get("corridors") or {}
+
+
+def _token(bands, lid):
+    return str((_corridors(bands).get(lid) or {}).get("token") or "").lower()
+
+
+def _forward_runs(c, m):
+    """[(i, j, record)] — a corridor's closure runs in FORWARD vertex order (the walk on which closure_y is declared
+    everywhere; a run declared in reverse travel order is turned round)"""
+    y = c.get("closure_y_by_vertex") or []
+    out = []
+    for r in c.get("runs") or []:
+        i, j = int(r["i"]) % m, int(r["j"]) % m
+        fw, bw = _walk(i, j, m), _walk(j, i, m)
+        ok_f = all(k < len(y) and y[k] is not None for k in fw)
+        ok_b = all(k < len(y) and y[k] is not None for k in bw)
+        if ok_f and (not ok_b or len(fw) <= len(bw)):
+            out.append((i, j, r))
+        elif ok_b:
+            out.append((j, i, r))
+        else:
+            out.append((i, j, dict(r, _broken=True)))
+    return out
+
+
+def _closure_side(c):
+    s = str(c.get("closure_side") or "").upper()
+    if s in ("L", "R"):
+        return s
+    return "R" if str(c.get("direction", "forward")) == "reverse" else "L"
+
+
 # --- the checks ----------------------------------------------------------------------------------
 
 def verify(authored: dict | None, bands: dict, pts: list, island_w: list, *, allow_standin: bool = False,
            widths: list | None = None, spawns: dict | None = None, lamps: list | None = None,
            pre_author: bool = False, lamp_arm_m: float | None = None, mast_r_m: float | None = None) -> dict:
-    """A-E (+ the author's own F record) on the authored file unless ``pre_author``; F re-measured from
-    ``spawns`` ({race layout id: dummies dict, or None when its file is missing}) and G from ``lamps``
-    (lights.local.json heads) whenever they and ``widths`` are given (main always gives them)."""
+    """A-E and J-N (+ the author's own F record) on the authored file unless ``pre_author``; H and I too; F
+    re-measured from ``spawns`` ({race layout id: dummies dict, or None when its file is missing}) and G from
+    ``lamps`` (lights.local.json heads) whenever they and ``widths`` are given (main always gives them)."""
     fails: list[str] = []
     warns: list[str] = []
-    counts: dict = {}
+    counts: dict = {"by_layout": {}}
     if not pre_author:
         _verify_authored(authored or {}, bands, pts, island_w, allow_standin, fails, warns, counts, widths)
         _verify_inside_out(authored or {}, bands, fails, warns, counts)
         if widths is not None:
             _verify_density(authored or {}, bands, pts, widths, fails, warns, counts)
+        else:
+            warns.append("H / C' pin line / M: no centreline widths given — the declared strip curve cannot be rebuilt")
     m = _unique_count(pts)
     grid = VertexGrid(pts[:m])
     if spawns is not None and widths is not None:
@@ -196,15 +296,20 @@ def _lateral(pts, m, k, x, z):
     return (x - pts[k][0]) * lx + (z - pts[k][2]) * lz
 
 
+def _edge_c(bands):
+    params = bands.get("params", {}) or {}
+    c = params.get("edge_centre_from_lip_m")
+    return float(c) if c is not None else (-0.485 if str(params.get("edge_mode", "road")) == "road" else 0.445)
+
+
 def strip_footprint(bands: dict, widths: list, k: int):
     """(edge, centre_half) at vertex k from the declaration alone: edge = (inner, outer) |lateral| of the
     kerb-line strip (both curb faces) where edge_strip_by_vertex > 0, else None — inner = the road-side
     face = half_w + edge_centre_from_lip_m - barrier_half_m (road mode: half_w - 0.82; walk: half_w + 0.11);
-    centre_half = centre_w / 2 where the chain stands, else None."""
+    centre_half = centre_w / 2 where a (RETIRED, N fails it) centre chain is declared, else None."""
     params = bands.get("params", {}) or {}
     bh = float(params.get("barrier_half_m", 0.335))
-    c = params.get("edge_centre_from_lip_m")
-    c = float(c) if c is not None else (-0.485 if str(params.get("edge_mode", "road")) == "road" else 0.445)
+    c = _edge_c(bands)
     es = bands.get("edge_strip_by_vertex") or bands.get("edge_inset_by_vertex") or []
     cw = bands.get("centre_w_by_vertex") or []
     half = float(widths[k]) / 2.0
@@ -213,10 +318,12 @@ def strip_footprint(bands: dict, widths: list, k: int):
     return edge, centre
 
 
-def spawn_slots(dummies: dict, pts: list, widths: list, bands: dict, grid=None) -> list[dict]:
-    """every FACING slot's car clearance to the edge-strip face and (where it stands) the centre chain"""
+def spawn_slots(dummies: dict, pts: list, widths: list, bands: dict, grid=None, layout_id: str | None = None) -> list[dict]:
+    """every FACING slot's car clearance to the edge-strip face and, for a race layout with a declared corridor
+    (ledger 0049), to the nearer face of its lane (corridors.<id>.lane_by_vertex, forward frame)"""
     m = _unique_count(pts)
     grid = grid or VertexGrid(pts[:m])
+    lane = (_corridors(bands).get(layout_id) or {}).get("lane_by_vertex") if layout_id else None
     rows = []
     for name, p in sorted(dummies.items()):
         if name.startswith("_") or not name.startswith(FACING) or not isinstance(p, (list, tuple)) or len(p) < 3:
@@ -226,10 +333,16 @@ def spawn_slots(dummies: dict, pts: list, widths: list, bands: dict, grid=None) 
         lat = _lateral(pts, m, k, x, z)
         edge, centre = strip_footprint(bands, widths, k)
         a = abs(lat)
-        rows.append({"name": name, "vertex": k, "lat_m": round(lat, 3),
-                     "edge_face_m": round(edge[0], 3) if edge else None,
-                     "clear_edge_m": round(edge[0] - (a + CAR_HALF_W_M), 3) if edge else None,
-                     "clear_centre_m": round(a - CAR_HALF_W_M - centre, 3) if centre is not None else None})
+        row = {"name": name, "vertex": k, "lat_m": round(lat, 3),
+               "edge_face_m": round(edge[0], 3) if edge else None,
+               "clear_edge_m": round(edge[0] - (a + CAR_HALF_W_M), 3) if edge else None,
+               "clear_centre_m": round(a - CAR_HALF_W_M - centre, 3) if centre is not None else None,
+               "lane_m": None, "clear_lane_m": None}
+        if lane and k < len(lane) and lane[k]:
+            lo, hi = float(lane[k][0]), float(lane[k][1])
+            row["lane_m"] = [round(lo, 3), round(hi, 3)]
+            row["clear_lane_m"] = round(min(lat - CAR_HALF_W_M - lo, hi - (lat + CAR_HALF_W_M)), 3)
+        rows.append(row)
     return rows
 
 
@@ -241,17 +354,20 @@ def _verify_spawns(spawns, bands, pts, widths, grid, fails, warns, counts):
             continue
         if d.get("_synthesised"):
             fails.append(f"F: {lid}: dummies_{lid}.json is SYNTHESISED — run tools/layout_dummies.py first")
-        rows = spawn_slots(d, pts, widths, bands, grid)
+        if _corridors(bands) and lid not in _corridors(bands):
+            fails.append(f"F: {lid}: no corridors.{lid} declared — its lane cannot be checked (re-run tools/barrier_bands.py)")
+        rows = spawn_slots(d, pts, widths, bands, grid, layout_id=lid)
         if not rows:
             fails.append(f"F: {lid}: dummies_{lid}.json holds no grid / pit slot")
             continue
         for r in rows:
-            for key, what in (("clear_edge_m", "edge-strip face"), ("clear_centre_m", "centre chain")):
+            for key, what in (("clear_edge_m", "edge-strip face"), ("clear_centre_m", "centre chain"),
+                              ("clear_lane_m", f"lane face {r['lane_m']}")):
                 v = r[key]
                 if v is not None and v < SPAWN_MARGIN_M:
                     fails.append(f"F: {lid}: {r['name']} at v{r['vertex']} lat {r['lat_m']:+.2f}: {v:.2f} m clear of the "
                                  f"{what} (< {SPAWN_MARGIN_M:.2f} m{'; the car OVERLAPS it' if v < 0 else ''})")
-        vals = [r[k] for r in rows for k in ("clear_edge_m", "clear_centre_m") if r[k] is not None]
+        vals = [r[k] for r in rows for k in ("clear_edge_m", "clear_centre_m", "clear_lane_m") if r[k] is not None]
         mins[lid] = min(vals) if vals else None
         slots[lid] = rows
     counts["spawn_margin_m"] = SPAWN_MARGIN_M
@@ -316,12 +432,33 @@ def lamp_bases(heads: list, pts: list, arm_m: float) -> list[dict]:
     return out
 
 
+def _closure_y_at(y, pts, m, k, x, z):
+    """the declared closure lateral at (x, z), lerped along the centreline segment the point projects onto (either
+    side of its nearest vertex k); None where no closure is declared"""
+    best = None
+    for a, b in ((k - 1) % m, k), (k, (k + 1) % m):
+        if a >= len(y) or b >= len(y):
+            continue
+        dx, dz = pts[b][0] - pts[a][0], pts[b][2] - pts[a][2]
+        L2 = dx * dx + dz * dz or 1.0
+        t = max(0.0, min(1.0, ((x - pts[a][0]) * dx + (z - pts[a][2]) * dz) / L2))
+        d = math.hypot(x - pts[a][0] - t * dx, z - pts[a][2] - t * dz)
+        ya, yb = y[a], y[b]
+        if ya is None and yb is None:
+            continue
+        yy = ya if yb is None else (yb if ya is None else ya + (yb - ya) * t)
+        if best is None or d < best[0]:
+            best = (d, yy)
+    return None if best is None else float(best[1])
+
+
 def lamp_margins(bases: list, pts: list, widths: list, bands: dict, mast_r: float, grid=None) -> list[dict]:
-    """per mast: the clearance from its base footprint (radius mast_r) to the nearest strip footprint at
-    its nearest vertex; negative = the mast stands IN the strip. Masts at a vertex with no strip (the
-    bridge gaps) are not listed."""
+    """per mast: the clearance from its base footprint (radius mast_r) to the nearest strip footprint at its
+    nearest vertex — the curb strips and (ledger 0049) every race layout's closure, lerped at the mast; negative =
+    the mast stands IN it. Masts beside no strip are not listed."""
     m = _unique_count(pts)
     grid = grid or VertexGrid(pts[:m])
+    bh = float((bands.get("params") or {}).get("barrier_half_m", 0.335))
     rows = []
     for i, b in enumerate(bases):
         k = grid.nearest(b["x"], b["z"])
@@ -335,11 +472,19 @@ def lamp_margins(bases: list, pts: list, widths: list, bands: dict, mast_r: floa
             cand.append(("edge", d - mast_r))
         if centre is not None:
             cand.append(("centre", a - centre - mast_r))
+        closure = []
+        for lid, c in sorted(_corridors(bands).items()):
+            yy = _closure_y_at(c.get("closure_y_by_vertex") or [], pts, m, k, b["x"], b["z"])
+            if yy is not None:
+                closure.append((f"closure_{lid}", abs(lat - yy) - bh - mast_r))
+        cand += closure
         if not cand:
             continue
         kind, mg = min(cand, key=lambda t: t[1])
+        ck, cm = min(closure, key=lambda t: t[1]) if closure else (None, None)
         rows.append({"lamp": i, "vertex": k, "lat_m": round(lat, 3), "base_xz": [round(b["x"], 2), round(b["z"], 2)],
-                     "against": kind, "margin_m": round(mg, 3), "fallback": b["fallback"]})
+                     "against": kind, "margin_m": round(mg, 3), "fallback": b["fallback"],
+                     "closure": ck, "closure_margin_m": None if cm is None else round(cm, 3)})
     return rows
 
 
@@ -360,42 +505,49 @@ def _verify_lamps(heads, bands, pts, widths, grid, fails, warns, counts, arm_m=N
     if nfb:
         warns.append(f"G: {nfb} lamp heads have no centreline point within the 30 m cells around them — "
                      f"author_lamps_blend aims those at vertex 0 (measured as authored)")
+    closure_rows = [r for r in rows if r.get("closure_margin_m") is not None]
     counts.update({"lamps": len(bases), "lamps_checked": len(rows), "lamp_arm_m": arm, "lamp_post_h_m": post_h,
                    "mast_r_m": round(r_m, 3), "lamp_min_margin_m": worst["margin_m"] if worst else None,
-                   "lamp_min": worst, "lamps_inside": len(bad)})
+                   "lamp_min": worst, "lamps_inside": len(bad),
+                   "lamp_min_vs_closure": min(closure_rows, key=lambda r: r["closure_margin_m"]) if closure_rows else None})
 
 
 # --- H: ring density — the authored strip polyline vs the DECLARED offset curve ---------------------
 
-def declared_curve(bands: dict, pts: list, widths: list, side: str, per_vertex: int = DENSE_PER_VERTEX) -> dict:
+def declared_curve(bands: dict, pts: list, widths: list | None, side: str, per_vertex: int = DENSE_PER_VERTEX) -> dict:
     """{sample index i = k * per_vertex + j: (x, z, tx, tz)} — the strip-centre curve the declaration
-    implies on `side` ('L' / 'R' kerb-line strip at |lat| = half_w + edge_centre_from_lip_m; 'C' the
-    centre chain at lat 0), sampled over every centreline interval [k, k+1] declared at both ends: the
-    centre lerped along the segment, the left normal of the normalised lerp of the two vertex tangents
-    (central differences), the lateral lerped. Built from the declaration and the centreline only."""
+    implies: side 'L' / 'R' = the kerb-line strip at |lat| = half_w + edge_centre_from_lip_m (across a declared
+    trimmed corner the polyline in_vertex -> X -> out_vertex); side 'close:<layout id>' = that layout's closure
+    at corridors.<id>.closure_y_by_vertex (signed, + = forward-left); sampled over every centreline interval
+    [k, k+1] declared at both ends: the centre lerped along the segment, the left normal of the normalised lerp of
+    the two vertex tangents (central differences), the lateral lerped. Built from the declaration and the
+    centreline only."""
     m = _unique_count(pts)
-    params = bands.get("params", {}) or {}
-    c = params.get("edge_centre_from_lip_m")
-    c = float(c) if c is not None else (-0.485 if str(params.get("edge_mode", "road")) == "road" else 0.445)
-    if side == "C":
-        flags = bands.get("centre_w_by_vertex") or []
-        lat_of = lambda k: 0.0  # noqa: E731
+    corners = []
+    if side.startswith("close:"):
+        y = (_corridors(bands).get(side[len("close:"):]) or {}).get("closure_y_by_vertex") or []
+        flags = [1 if q is not None else 0 for q in y]
+        lat_of = lambda k: float(y[k])  # noqa: E731
     else:
+        c = _edge_c(bands)
         flags = bands.get("edge_strip_by_vertex") or bands.get("edge_inset_by_vertex") or []
         sgn = 1.0 if side == "L" else -1.0
         lat_of = lambda k: sgn * (float(widths[k]) / 2.0 + c)  # noqa: E731
+        corners = [cn for cn in (bands.get("edge_corners") or []) if str(cn.get("side")) == side]
 
     def tangent(k):
         a, b = pts[(k - 1) % m], pts[(k + 1) % m]
         tx, tz = b[0] - a[0], b[2] - a[2]
         L = math.hypot(tx, tz) or 1.0
         return tx / L, tz / L
-    corners = [c for c in (bands.get("edge_corners") or []) if side != "C" and str(c.get("side")) == side]
-    removed = {int(v) % m for c in corners for v in c.get("removed", [])}
+    removed = {int(v) % m for cn in corners for v in cn.get("removed", [])}
     out = {}
     for k in range(min(m, len(flags))):
         k1 = (k + 1) % m
         if not (flags[k] > 0 and k1 < len(flags) and flags[k1] > 0):
+            if flags[k] > 0 and not (flags[(k - 1) % m] > 0) and k not in removed:
+                t = tangent(k)                    # an isolated run start (a pin): its own sample
+                out.setdefault(k * per_vertex, (pts[k][0] - t[1] * lat_of(k), pts[k][2] + t[0] * lat_of(k), t[0], t[1]))
             continue
         if k in removed or k1 in removed:
             continue                      # a trimmed corner's interval: laid below as in -> X -> out
@@ -469,11 +621,19 @@ class _SampleGrid:
         return None, None
 
 
-def _seg_dist(p, a, b):
-    ax, az = b[0] - a[0], b[1] - a[1]
-    L2 = ax * ax + az * az
-    t = 0.0 if L2 <= 0 else max(0.0, min(1.0, ((p[0] - a[0]) * ax + (p[1] - a[1]) * az) / L2))
-    return math.hypot(p[0] - a[0] - t * ax, p[1] - a[1] - t * az)
+def curve_distance(p, samples: dict, grid: _SampleGrid, n_samples: int):
+    """(distance from p to the declared curve's sample polyline near its nearest sample, that sample's index);
+    (inf, None) when no sample lies within the grid's reach"""
+    i, d = grid.nearest(p[0], p[1])
+    if i is None:
+        return float("inf"), None
+    s = samples[i]
+    best = d
+    for j in ((i - 1) % n_samples, (i + 1) % n_samples):
+        q = samples.get(j)
+        if q is not None:
+            best = min(best, _seg_dist(p, (s[0], s[1]), (q[0], q[1])))
+    return best, i
 
 
 def span_chords(centres: list, samples: dict, grid: _SampleGrid, n_samples: int, per_vertex: int = DENSE_PER_VERTEX):
@@ -513,8 +673,15 @@ def span_chords(centres: list, samples: dict, grid: _SampleGrid, n_samples: int,
     return out
 
 
+def _curve_side(o):
+    """the declared curve an object is judged against: its curb side, or 'close:<layout>' for a closure"""
+    if o.get("kind") == "close":
+        return f"close:{o.get('layout')}"
+    return str(o.get("side"))
+
+
 def _verify_density(authored, bands, pts, widths, fails, warns, counts):
-    """H: every chain / kerb-line strip span within CHORD_FAIL_M of the declared offset curve"""
+    """H: every curb-strip / closure span within CHORD_FAIL_M of the declared offset curve"""
     m = _unique_count(pts)
     n_samples = m * DENSE_PER_VERTEX
     objects = authored.get("objects", [])
@@ -525,9 +692,9 @@ def _verify_density(authored, bands, pts, widths, fails, warns, counts):
     n_ok = n_fold = n_off = 0
     over = []
     for o in objects:
-        if o.get("kind") not in ("chain", "edge"):
+        if o.get("kind") not in ("edge", "close"):
             continue
-        side = "C" if o.get("kind") == "chain" else str(o.get("side"))
+        side = _curve_side(o)
         if side not in curves:
             curves[side] = declared_curve(bands, pts, widths, side)
             grids[side] = _SampleGrid(curves[side])
@@ -555,7 +722,7 @@ def _verify_density(authored, bands, pts, widths, fails, warns, counts):
         warns.append(f"H: ring spacing reaches {sp_all:.2f} m (author target {SPACING_TARGET_M} m)")
     if n_off:
         warns.append(f"H: {n_off} strip spans not measured (a ring > {OFF_CURVE_M} m off the declared curve or the "
-                     f"span leaves the declaration) — C / D judge where the rings stand")
+                     f"span leaves the declaration) — C' / D judge where the rings stand")
     counts.update({"chord_max_m": worst["chord_m"], "chord_worst": worst, "chord_fail_m": CHORD_FAIL_M,
                    "chord_spans_measured": n_ok, "chord_spans_fold": n_fold, "chord_spans_unmeasured": n_off,
                    "chord_spans_over": len(over), "ring_spacing_max_m": round(sp_all, 3),
@@ -583,7 +750,7 @@ def inside_out_spans(centres: list, frames: list, half: float) -> list[int]:
 
 
 def _verify_inside_out(authored, bands, fails, warns, counts):
-    """I: no span of any chain / kerb-line strip / race kerb is inside-out (ring_centres + ring_frames)"""
+    """I: no span of any curb strip / closure / race kerb is inside-out (ring_centres + ring_frames)"""
     params = bands.get("params", {}) or {}
     bh = float(params.get("barrier_half_m", 0.335))
     kh = float(params.get("kerb_width_m", 1.0)) / 2.0
@@ -591,7 +758,7 @@ def _verify_inside_out(authored, bands, fails, warns, counts):
     rf_ = authored.get("ring_frames", {}) or {}
     total, per, unmeasured = 0, {}, []
     for o in authored.get("objects", []):
-        if o.get("kind") not in ("chain", "edge", "kerb"):
+        if o.get("kind") not in ("edge", "close", "kerb", "chain"):
             continue
         cs, fr = rc.get(o["name"], []), rf_.get(o["name"])
         if not fr or len(fr) != len(cs):
@@ -611,23 +778,45 @@ def _verify_inside_out(authored, bands, fails, warns, counts):
     counts.update({"inside_out_spans": total, "inside_out_by_object": per, "inside_out_unmeasured": len(unmeasured)})
 
 
+# --- A, B, C', D, E, J, K, L, M, N: the authored file vs the declaration ---------------------------
+
+def _end_kinds(o):
+    """each end of an object as authored: 'join' / 'pin' / 'free' (from `ends` dicts; a legacy string list + caps
+    read the old way: a capless end is a join)"""
+    ends = o.get("ends") or []
+    caps = list(o.get("caps", [True, True]))
+    out = []
+    for idx in range(2):
+        e = ends[idx] if idx < len(ends) else None
+        if isinstance(e, dict):
+            out.append(str(e.get("kind")))
+        elif isinstance(e, str):
+            out.append(e if (idx >= len(caps) or caps[idx]) else "join")
+        else:
+            out.append("unknown")
+    return out
+
+
 def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns, counts, widths=None):
     m = _unique_count(pts)
     grid = VertexGrid(pts[:m])
     objects = authored.get("objects", [])
     rc = authored.get("ring_centres", {})
     params = bands.get("params", {})
+    bh = float(params.get("barrier_half_m", 0.335))
+    cors = _corridors(bands)
+    tokens = {lid: _token(bands, lid) for lid in cors}
 
     # A. provenance
     if authored.get("standin_bands") and not allow_standin:
-        fails.append("A: race_authored.json was built from STAND-IN bands (--standin-bands) — author from tools/barrier_bands.py's file")
+        fails.append("A: race_authored.json was built from a STAND-IN declaration — author from tools/barrier_bands.py's file")
     if bands.get("_standin") and not allow_standin:
         fails.append("A: barrier_bands.json is a stand-in (_standin) — run tools/barrier_bands.py")
     if str(authored.get("edge_mode")) != str(params.get("edge_mode")):
         fails.append(f"A: edge_mode authored {authored.get('edge_mode')!r} != declared {params.get('edge_mode')!r}")
-    ah, bh = authored.get("barrier_height_m"), params.get("barrier_height_m")
-    if ah is None or bh is None or abs(float(ah) - float(bh)) > 1e-6:
-        fails.append(f"A: barrier_height_m authored {ah} != declared {bh}")
+    ah, bh_ = authored.get("barrier_height_m"), params.get("barrier_height_m")
+    if ah is None or bh_ is None or abs(float(ah) - float(bh_)) > 1e-6:
+        fails.append(f"A: barrier_height_m authored {ah} != declared {bh_}")
     if tuple(authored.get("race_prefixes", ())) != RACE_PREFIXES:
         fails.append(f"A: race_prefixes {authored.get('race_prefixes')} != {list(RACE_PREFIXES)} (the export split, verify_kn5 and audit --race key on these)")
     if authored.get("failed_runs"):
@@ -666,131 +855,143 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
             fails.append(f"B: {n}: no ring_centres recorded")
     counts["objects"] = len(objects)
 
-    # C. centre chain
-    cw = bands.get("centre_w_by_vertex") or []
-    noses = set(int(v) for v in (bands.get("summary", {}) or {}).get("nose_vertices", []))
-    alv_to = -1
-    for st in bands.get("streets", []) or []:
-        if str(st.get("street", "")).lower().startswith("alvarado"):
-            alv_to = int(st.get("vertex_to", -1))
-    hairpin = set()
-    for c in bands.get("corners", []) or []:
-        if abs(float(c.get("D_deg", 0.0))) >= 135.0:
-            pc, pt = int(c["PC"]), int(c["PT"])
-            hairpin |= set(range(pc, pt + 1)) if pt >= pc else set(range(pc, m)) | set(range(0, pt + 1))
-    centre_runs = [(int(r["i"]), int(r["j"])) for r in bands.get("runs", []) if r.get("kind") == "centre"]
-    chain_objs = [o for o in objects if o.get("kind") == "chain"]
-    by_run: dict[tuple[int, int], list] = {}
-    for o in chain_objs:
-        by_run.setdefault((int(o["run"][0]), int(o["run"][1])), []).append(o)
-    for run in centre_runs:
-        if run not in by_run:
-            fails.append(f"C: declared centre run v{run[0]}-{run[1]} has no chain object")
-    for run in by_run:
-        if run not in centre_runs:
-            fails.append(f"C: chain object run v{run[0]}-{run[1]} is not a declared centre run")
-    chain_gap_worst = 0.0
-    off_band = island_hits = alvarado_hits = hairpin_hits = 0
-    for run, objs in sorted(by_run.items()):
-        objs = sorted(objs, key=lambda o: int(o.get("part", 0)))
-        for prev, nxt in zip(objs, objs[1:]):          # parts of one run share their boundary ring
-            a, b = rc.get(prev["name"], []), rc.get(nxt["name"], [])
-            if a and b and _dist_xz(a[-1], b[0]) > JOIN_TOL_M:
-                fails.append(f"C: {prev['name']} -> {nxt['name']}: parts {_dist_xz(a[-1], b[0]):.2f} m apart (not joined)")
-        for o in objs:
-            cs = rc.get(o["name"], [])
-            chain_gap_worst = max(chain_gap_worst, _max_consecutive_gap(cs))
-            for c in cs:
-                k = grid.nearest(c[0], c[2])
-                if k < len(cw) and not cw[k] > 0:
-                    off_band += 1
-                if island_w[k] > 0 and k not in noses:
-                    island_hits += 1
-                if k <= alv_to:
-                    alvarado_hits += 1
-                if k in hairpin:
-                    hairpin_hits += 1
-        if run in centre_runs and objs:
-            first = rc.get(objs[0]["name"], [[0, 0, 0]])[0]
-            last = rc.get(objs[-1]["name"], [[0, 0, 0]])[-1]
-            d0 = _dist_xz(first, pts[run[0]])
-            d1 = _dist_xz(last, pts[run[1]])
-            if d0 > END_TOL_M or d1 > END_TOL_M:
-                fails.append(f"C: run v{run[0]}-{run[1]} ends {d0:.2f} / {d1:.2f} m from the declared end vertices (> {END_TOL_M})")
-    if off_band:
-        fails.append(f"C: {off_band} chain rings stand on vertices the band does not declare")
-    if island_hits:
-        fails.append(f"C: {island_hits} chain rings on a median island beyond the nose vertex")
-    if alvarado_hits:
-        fails.append(f"C: {alvarado_hits} chain rings on Alvarado (v0-{alv_to})")
-    if hairpin_hits:
-        fails.append(f"C: {hairpin_hits} chain rings inside the hairpin arc")
-    counts.update({"chain_objects": len(chain_objs), "chain_runs": len(by_run), "chain_gap_worst_m": round(chain_gap_worst, 3),
-                   "chain_rings": sum(len(rc.get(o["name"], [])) for o in chain_objs)})
+    # N. the retired centre chain
+    kbar = sorted({n for n in names + list(rc) if race_kind(n) == "kbar"} |
+                  {o["name"] for o in objects if o.get("kind") == "chain"})
+    if kbar:
+        fails.append(f"N: {len(kbar)} centre-chain objects (1WALL_race_kbar_*, retired by ledger 0049): {kbar[:4]}")
+    if any(float(w or 0.0) > 0.0 for w in (bands.get("centre_w_by_vertex") or [])):
+        fails.append("N: barrier_bands.json still declares centre_w_by_vertex > 0 (the retired centre chain)")
+    if any(str(r.get("kind")) == "centre" for r in (bands.get("runs") or [])):
+        fails.append("N: barrier_bands.json still declares a centre run")
+    counts["kbar_objects"] = len(kbar)
 
-    # D. kerb-line strips
-    es = bands.get("edge_strip_by_vertex") or bands.get("edge_inset_by_vertex") or []
+    # K. ownership: names, owners, layouts, collections
+    if not cors:
+        fails.append("K: barrier_bands.json declares no corridors.<layout id> — a ledger-0047 (v1) declaration")
+    tok_to_lid = {}
+    for lid, t in sorted(tokens.items()):
+        if not re.match(r"^[a-z0-9]+$", t):
+            fails.append(f"K: corridors.{lid}.token {t!r} is not a [a-z0-9]+ name token")
+        elif t in tok_to_lid:
+            fails.append(f"K: corridors.{lid} and corridors.{tok_to_lid[t]} share the token {t!r}")
+        tok_to_lid[t] = lid
+    if authored.get("tokens") is not None and dict(authored.get("tokens")) != tokens:
+        fails.append(f"K: authored tokens {authored.get('tokens')} != declared {tokens}")
+    for o in objects:
+        n, kind = o["name"], race_kind(o["name"])
+        if kind not in KNOWN_KINDS:
+            if kind != "kbar":
+                fails.append(f"K: {n}: a RACE object of no known kind (edge / close / kerb) — the export split cannot route it")
+            continue
+        if kind != o.get("kind"):
+            fails.append(f"K: {n}: its name says {kind}, its record says {o.get('kind')}")
+        tok = race_owner(n)
+        if kind == "close":
+            if tok not in tok_to_lid:
+                fails.append(f"K: {n}: closure token {tok!r} is not declared (corridors tokens {sorted(tok_to_lid)})")
+                continue
+            lid = tok_to_lid[tok]
+            if o.get("owner") != tok or o.get("layout") != lid:
+                fails.append(f"K: {n}: record owner {o.get('owner')!r} / layout {o.get('layout')!r} != {tok!r} / {lid!r}")
+            if "collection" in o and o["collection"] != f"{COMMON_COLLECTION}_CLOSE_{tok.upper()}":
+                fails.append(f"K: {n}: in collection {o['collection']!r}, not {COMMON_COLLECTION}_CLOSE_{tok.upper()}")
+        else:
+            if o.get("owner") not in (None, "", "common"):
+                fails.append(f"K: {n}: common furniture records an owner {o.get('owner')!r}")
+            if "collection" in o and o["collection"] != COMMON_COLLECTION:
+                fails.append(f"K: {n}: common furniture in collection {o['collection']!r}, not {COMMON_COLLECTION}")
+
+    # C'. closures, per race layout
+    n_samples = m * DENSE_PER_VERTEX
+    close_polys: dict[str, list] = {}
+    for lid, c in sorted(cors.items()):
+        tok = tokens[lid]
+        row = counts["by_layout"].setdefault(lid, {"token": tok})
+        objs = [o for o in objects if o.get("kind") == "close" and race_owner(o["name"]) == tok]
+        close_polys[lid] = [[(q[0], q[2]) for q in rc.get(o["name"], [])] for o in objs]
+        y = c.get("closure_y_by_vertex") or []
+        zone = c.get("zone_by_vertex") or []
+        bad_zone = [k for k in range(min(m, len(y), len(zone))) if y[k] is not None and str(zone[k]) in ("box", "whole")]
+        if bad_zone:
+            fails.append(f"C': {lid}: the declaration puts closure vertices in a BOX / WHOLE zone: {bad_zone[:8]}")
+        runs = _forward_runs(c, m)
+        for i, j, r in runs:
+            if r.get("_broken"):
+                fails.append(f"C': {lid}: declared run v{r['i']}-v{r['j']} has no closure_y on its walk — broken declaration")
+        by_run: dict[tuple, list] = {}
+        for o in objs:
+            by_run.setdefault((int(o["run"][0]) % m, int(o["run"][1]) % m), []).append(o)
+        declared = [(i, j) for i, j, _r in runs]
+        for run in declared:
+            if run not in by_run:
+                fails.append(f"C': {lid}: declared closure run v{run[0]}-v{run[1]} has no closure object")
+        for run in by_run:
+            if run not in declared:
+                fails.append(f"C': {lid}: closure objects for run v{run[0]}-v{run[1]}, which is not declared")
+        curve = declared_curve(bands, pts, widths, f"close:{lid}")
+        cgrid = _SampleGrid(curve)
+        far_side = _closure_side(c)
+        far_curve = declared_curve(bands, pts, widths, far_side) if widths is not None else None
+        fgrid = _SampleGrid(far_curve) if far_curve is not None else None
+        off, worst_off = 0, 0.0
+        pin_rows = []
+        for run in declared:
+            parts = sorted(by_run.get(run, []), key=lambda o: int(o.get("part", 0)))
+            for prev, nxt in zip(parts, parts[1:]):
+                a, b = rc.get(prev["name"], []), rc.get(nxt["name"], [])
+                if a and b and _dist_xz(a[-1], b[0]) > JOIN_TOL_M:
+                    fails.append(f"C': {prev['name']} -> {nxt['name']}: parts {_dist_xz(a[-1], b[0]):.2f} m apart (not joined)")
+            for o in parts:
+                for q in rc.get(o["name"], []):
+                    d, _si = curve_distance((q[0], q[2]), curve, cgrid, n_samples)
+                    worst_off = max(worst_off, d if d < float("inf") else 99.0)
+                    if d > CLOSE_TOL_M + ROUND_M:
+                        off += 1
+            if not parts:
+                continue
+            for idx, (o, end_c, v) in enumerate(((parts[0], rc.get(parts[0]["name"], [[0, 0, 0]])[0], run[0]),
+                                                 (parts[-1], rc.get(parts[-1]["name"], [[0, 0, 0]])[-1], run[1]))):
+                p2 = (end_c[0], end_c[2])
+                d_decl = curve_distance(p2, far_curve, fgrid, n_samples)[0] if far_curve is not None else None
+                _d, si = curve_distance(p2, curve, cgrid, n_samples)
+                kv = (si // DENSE_PER_VERTEX) if si is not None else None
+                pin_rows.append({"object": o["name"], "end": "start" if idx == 0 else "end", "vertex": v,
+                                 "ring_vertex": kv, "far_line_m": None if d_decl is None else round(d_decl, 3)})
+                if d_decl is not None and d_decl > PIN_TOL_M + ROUND_M:
+                    fails.append(f"C': {o['name']}: its {'first' if idx == 0 else 'last'} ring is {d_decl:.2f} m off the "
+                                 f"declared far curb-strip line ({far_side}) at pin v{v} (> {PIN_TOL_M} m) — not pinned")
+                if kv is None or min((kv - v) % m, (v - kv) % m) > VERTEX_TOL:
+                    fails.append(f"C': {o['name']}: its {'first' if idx == 0 else 'last'} ring stands at v{kv}, not at "
+                                 f"the declared pin v{v}")
+        if off:
+            fails.append(f"C': {lid}: {off} closure rings stand more than {CLOSE_TOL_M} m off the declared closure line "
+                         f"(worst {worst_off:.2f} m)")
+        row.update({"closure_objects": len(objs), "closure_runs": len(declared),
+                    "closure_rings": sum(len(rc.get(o["name"], [])) for o in objs),
+                    "closure_off_curve_max_m": round(worst_off, 3), "pins": pin_rows})
+
+    # D. kerb-line strips: every vertex, both sides (bridges included), except the declared trims
     edge_objs = [o for o in objects if o.get("kind") == "edge"]
     covered: dict[str, set] = {"L": set(), "R": set()}
-    on_gap: dict[str, int] = {"L": 0, "R": 0}
     edge_gap_worst = 0.0
-    gap_vertices = {k for k in range(min(m, len(es))) if not es[k] > 0}
     for o in edge_objs:
         side = str(o.get("side"))
         cs = rc.get(o["name"], [])
-        if not cs:
-            continue
         edge_gap_worst = max(edge_gap_worst, _max_consecutive_gap(cs))
-        # ends: a `join` meets the neighbouring object's opposite end exactly; a `free` end stands
-        # at the edge of a declared gap (bridge span) — anywhere else it is a hole in the wall.
-        # `ends` are the RUN's end kinds; `caps` says whether THIS object holds the run's true end
-        # (split_plan: parts share their boundary ring and carry no cap) — a capless end is a join.
-        ends = list(o.get("ends", []))
-        caps = list(o.get("caps", [True, True]))
-        for idx in range(min(2, len(ends))):
-            end_kind = ends[idx] if (idx >= len(caps) or caps[idx]) else "join"
-            pt = cs[0] if idx == 0 else cs[-1]
-            if end_kind == "join":
-                met = False
-                for q in edge_objs:
-                    if q is o or str(q.get("side")) != side:
-                        continue
-                    qs = rc.get(q["name"], [])
-                    if qs and _dist_xz(pt, qs[-1] if idx == 0 else qs[0]) <= JOIN_TOL_M:
-                        met = True
-                        break
-                if not met:
-                    fails.append(f"D: {o['name']}: {'start' if idx == 0 else 'end'} is a `join` but no same-side object meets it")
-            elif end_kind == "free":
-                k = grid.nearest(pt[0], pt[2])
-                near_gap = any(((k + d) % m) in gap_vertices for d in range(-FREE_END_VERTEX_TOL, FREE_END_VERTEX_TOL + 1))
-                if gap_vertices and not near_gap:
-                    fails.append(f"D: {o['name']}: free {'start' if idx == 0 else 'end'} at v{k} is not at a declared gap — a hole in the strip")
-            else:
-                fails.append(f"D: {o['name']}: unknown end kind {end_kind!r}")
-        for c in cs:
-            k = grid.nearest(c[0], c[2])
-            covered.setdefault(side, set()).add(k)
-            if k < len(es) and not es[k] > 0 and all(not es[(k + d) % m] > 0 for d in (-1, 1)):
-                on_gap[side] = on_gap.get(side, 0) + 1
-    reported = {"L": 0, "R": 0}          # the author's own count — reported, never the allowance
-    for o in edge_objs:                  # (each trimmed corner is reported by the one object holding its corner ring)
-        reported[str(o.get("side"))] = reported.get(str(o.get("side")), 0) + int(o.get("fold_skipped_run", 0) or 0)
+        for c_ in cs:
+            covered.setdefault(side, set()).add(grid.nearest(c_[0], c_[2]))
     decl_corners = list(bands.get("edge_corners") or [])
     trimmed: dict[str, set] = {"L": set(), "R": set()}
-    for c in decl_corners:
-        trimmed.setdefault(str(c.get("side")), set()).update(int(v) % m for v in c.get("removed", []))
+    for c_ in decl_corners:
+        trimmed.setdefault(str(c_.get("side")), set()).update(int(v) % m for v in c_.get("removed", []))
     missing: dict[str, list] = {"L": [], "R": []}
     undeclared: dict[str, list] = {"L": [], "R": []}
-    declared_edge = [k for k in range(min(m, len(es))) if es[k] > 0]
     # a ring AT a vertex's declared band point covers it too: inside a tight corner the inside lip's offset
-    # (up to 14.5 m) stands nearer to the other leg's vertices than to its own, so the nearest-vertex map
-    # alone loses the leg rings either side of a trimmed corner (v774 / v1517 on SD) that stand exactly there
+    # (up to 14.5 m) stands nearer to the other leg's vertices than to its own
     by_cell: dict[tuple, list] = {}
+    c_lip = _edge_c(bands)
     if widths is not None:
-        params_ = bands.get("params", {}) or {}
-        c_ = params_.get("edge_centre_from_lip_m")
-        c_ = float(c_) if c_ is not None else (-0.485 if str(params_.get("edge_mode", "road")) == "road" else 0.445)
         for o in edge_objs:
             for q in rc.get(o["name"], []):
                 by_cell.setdefault((str(o.get("side")), int(math.floor(q[0])), int(math.floor(q[2]))), []).append(q)
@@ -799,7 +1000,7 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
         if widths is None:
             return False
         lx, lz = _left_normal_at(pts, k, m)
-        lat = (1.0 if side == "L" else -1.0) * (float(widths[k]) / 2.0 + c_)
+        lat = (1.0 if side == "L" else -1.0) * (float(widths[k]) / 2.0 + c_lip)
         bx, bz = pts[k][0] + lx * lat, pts[k][2] + lz * lat
         for i in (-1, 0, 1):
             for j in (-1, 0, 1):
@@ -809,28 +1010,29 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
         return False
     for side in ("L", "R"):
         cov = covered.get(side, set())
-        for k in declared_edge:
+        for k in range(m):
             if not any(((k + d) % m) in cov for d in range(-VERTEX_TOL, VERTEX_TOL + 1)) and not at_band_point(side, k):
                 missing[side].append(k)
         undeclared[side] = [k for k in missing[side] if k not in trimmed.get(side, set())]
         if undeclared[side]:
-            fails.append(f"D: edge {side}: {len(undeclared[side])} declared vertices without a ring that no declared "
-                         f"edge corner trims (barrier_bands.json edge_corners): {undeclared[side][:12]}")
-        if on_gap.get(side, 0):
-            fails.append(f"D: edge {side}: {on_gap[side]} rings stand inside a declared gap (bridge span)")
+            fails.append(f"D: edge {side}: {len(undeclared[side])} centreline vertices without a ring that no declared "
+                         f"edge corner trims (bridge spans included — C1): {undeclared[side][:12]}")
     corner_rows = []
-    for c in decl_corners:
-        side = str(c.get("side"))
-        X = (float(c["xz"][0]), 0.0, float(c["xz"][1]))
+    for c_ in decl_corners:
+        side = str(c_.get("side"))
+        X = (float(c_["xz"][0]), 0.0, float(c_["xz"][1]))
         near = min((_dist_xz(X, q) for o in edge_objs if str(o.get("side")) == side for q in rc.get(o["name"], [])),
                    default=float("inf"))
-        corner_rows.append({"side": side, "in_vertex": c.get("in_vertex"), "out_vertex": c.get("out_vertex"),
-                            "xz": c["xz"], "nearest_ring_m": round(near, 3) if near < float("inf") else None})
+        corner_rows.append({"side": side, "in_vertex": c_.get("in_vertex"), "out_vertex": c_.get("out_vertex"),
+                            "xz": c_["xz"], "nearest_ring_m": round(near, 3) if near < float("inf") else None})
         if near > CORNER_TOL_M:
-            fails.append(f"D: declared edge corner {side} v{c.get('in_vertex')}->v{c.get('out_vertex')} at "
+            fails.append(f"D: declared edge corner {side} v{c_.get('in_vertex')}->v{c_.get('out_vertex')} at "
                          f"({X[0]:.2f}, {X[2]:.2f}): the nearest authored {side} ring is {near:.2f} m away "
                          f"(> {CORNER_TOL_M} m) — the corner is declared but not built")
-    counts.update({"edge_objects": len(edge_objs), "edge_declared_vertices": len(declared_edge),
+    reported = {"L": 0, "R": 0}
+    for o in edge_objs:
+        reported[str(o.get("side"))] = reported.get(str(o.get("side")), 0) + int(o.get("fold_skipped_run", 0) or 0)
+    counts.update({"edge_objects": len(edge_objs), "edge_declared_vertices": m,
                    "edge_missing": {s: len(v) for s, v in missing.items()},
                    "edge_missing_undeclared": {s: len(v) for s, v in undeclared.items()},
                    "edge_trimmed_declared": {s: len(v) for s, v in trimmed.items()},
@@ -839,24 +1041,172 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
                    "edge_gap_worst_m": round(edge_gap_worst, 3),
                    "edge_rings": sum(len(rc.get(o["name"], [])) for o in edge_objs)})
 
-    # E. race kerbs
+    # J. zero free ends: strips join, closures join or pin (re-measured on the ring centres)
+    edge_side_polys = {s: [[(q[0], q[2]) for q in rc.get(o["name"], [])] for o in edge_objs if str(o.get("side")) == s]
+                       for s in ("L", "R")}
+    edge_side_grid = {s: SegGrid(p) for s, p in edge_side_polys.items()}
+    free, pin_gap_worst, pins_seen = [], 0.0, 0
+    for o in [o for o in objects if o.get("kind") in ("edge", "close")]:
+        cs = rc.get(o["name"], [])
+        if not cs:
+            continue
+        kinds = _end_kinds(o)
+        ends = o.get("ends") or []
+        for idx in range(2):
+            kind = kinds[idx]
+            pt = cs[0] if idx == 0 else cs[-1]
+            where = "start" if idx == 0 else "end"
+            if kind == "join":
+                met = False
+                for q in objects:
+                    if q is o or q.get("kind") != o.get("kind") or str(q.get("side")) != str(o.get("side")) \
+                            or race_owner(q["name"]) != race_owner(o["name"]):
+                        continue
+                    qs = rc.get(q["name"], [])
+                    if qs and _dist_xz(pt, qs[-1] if idx == 0 else qs[0]) <= JOIN_TOL_M:
+                        met = True
+                        break
+                if not met:
+                    fails.append(f"J: {o['name']}: {where} is a `join` but no neighbour of its kind and side meets it — a free end")
+            elif kind == "pin" and o.get("kind") == "close":
+                pins_seen += 1
+                e = ends[idx] if idx < len(ends) and isinstance(ends[idx], dict) else {}
+                far = str(e.get("joins") or ("edge_" + _closure_side(cors.get(o.get("layout"), {}))))
+                g = edge_side_grid.get(far[-1])
+                gap = g.dist((pt[0], pt[2]), reach=3) if g is not None else float("inf")
+                pin_gap_worst = max(pin_gap_worst, gap if gap < float("inf") else 99.0)
+                if gap > PIN_TOL_M + ROUND_M:
+                    fails.append(f"J: {o['name']}: pinned {where} stands {gap:.2f} m off the authored {far} strip "
+                                 f"(> {PIN_TOL_M} m) — a gap beside the wall end")
+                h, ls = e.get("h"), e.get("ls")
+                if h is None or ls is None:
+                    fails.append(f"J: {o['name']}: pinned {where} records no h / ls (re-author)")
+                elif abs(float(h) - float(params.get("barrier_height_m", 1.2))) > 1e-3 or abs(float(ls) - 1.0) > 1e-3:
+                    fails.append(f"J: {o['name']}: pinned {where} is not full height / width (h {h}, ls {ls}) — a "
+                                 f"tapered closure end is a ramp past the wall")
+            else:
+                free.append(f"{o['name']} {where} ({kind})")
+    if free:
+        fails.append(f"J: {len(free)} free strip / closure ends (every end must join a neighbour or pin a closure on the "
+                     f"far curb strip): {free[:6]}")
+    counts.update({"free_ends": len(free), "pins": pins_seen, "pin_gap_max_m": round(pin_gap_worst, 3)})
+
+    # L. bridges: the strips seated ON every declared deck, nothing interpolated there
+    spans = bands.get("bridge_spans_m") or []
+    bs = authored.get("bridge_seating")
+    if spans:
+        if not isinstance(bs, dict):
+            fails.append("L: race_authored.json carries no bridge_seating — not measurable (re-author)")
+        else:
+            if int(bs.get("interpolated", 0) or 0) > 0:
+                fails.append(f"L: {bs['interpolated']} rings inside the declared bridge spans were seated by "
+                             f"interpolation — the deck rows under them were not found ({bs.get('by_object')})")
+            for row in bs.get("by_span") or []:
+                if int(row.get("hit", 0) or 0) + int(row.get("near", 0) or 0) == 0:
+                    fails.append(f"L: no strip ring seated on the declared bridge span {row.get('span_m')} — the "
+                                 f"curb strips must run over every deck (C1)")
+            counts["bridge_seating"] = {k: bs.get(k) for k in ("hit", "near", "interpolated")}
+
+    # E. race kerbs: the declared set with the declared (clipped) i/j, clear of every closure
     kerb_objs = [o for o in objects if o.get("kind") == "kerb"]
     sub_of = {"inside": "in", "outside": "out", "in": "in", "out": "out"}
-    declared = {(int(k["apex"]), sub_of.get(str(k.get("kind")), str(k.get("kind")))) for k in bands.get("kerbs", []) or []}
+    decl_k = {(int(k["apex"]), sub_of.get(str(k.get("kind")), str(k.get("kind")))): k for k in bands.get("kerbs", []) or []}
     authored_set = {(int(o["apex"]), str(o.get("sub"))) for o in kerb_objs}
-    if declared != authored_set:
-        fails.append(f"E: declared kerbs {sorted(declared)} != authored {sorted(authored_set)}")
+    if set(decl_k) != authored_set:
+        fails.append(f"E: declared kerbs {sorted(decl_k)} != authored {sorted(authored_set)}")
     for o in kerb_objs:
         if int(o.get("stations", 0) or 0) <= 0:
             fails.append(f"E: {o['name']}: no stations")
+        d = decl_k.get((int(o["apex"]), str(o.get("sub"))))
+        if d is not None and [int(d["i"]), int(d["j"])] != [int(v) for v in (o.get("run") or [-1, -1])]:
+            fails.append(f"E: {o['name']}: authored run {o.get('run')} != the declared (clipped) v{d['i']}-v{d['j']}")
+        clip = o.get("clip") or {}
+        if clip.get("stations_removed") and clip["stations_removed"] != [0, 0]:
+            warns.append(f"E: {o['name']}: the author clipped {clip['stations_removed']} stations (start, end) for "
+                         f"{clip.get('by')} that the declaration's i/j still held — re-run tools/barrier_bands.py so the "
+                         f"declared i/j are the clipped ones (race_furniture.kerb_closure_clips)")
     if authored.get("kerbs_declared_unmatched"):
         fails.append(f"E: declared kerbs matching no detected corner: {authored['kerbs_declared_unmatched']}")
     n_corners_decl = len(bands.get("corners", []) or [])
     n_corners_auth = len(authored.get("corners", []) or [])
     if n_corners_decl and n_corners_auth != n_corners_decl:
         fails.append(f"E: {n_corners_auth} corners authored vs {n_corners_decl} declared")
+    frames = authored.get("ring_frames", {}) or {}
+    kw = float(params.get("kerb_width_m", 1.0))
+    kerb_clear = {}
+    for lid, polys in close_polys.items():
+        sg = SegGrid(polys)
+        for o in kerb_objs:
+            cs, fr = rc.get(o["name"], []), frames.get(o["name"], [])
+            worst = float("inf")
+            for c_, f_ in zip(cs, fr):
+                lx, lz = -f_[1], f_[0]
+                h = kw / 2.0 * float(f_[2])
+                a, b = (c_[0] - lx * h, c_[2] - lz * h), (c_[0] + lx * h, c_[2] + lz * h)
+                for p, q in sg.near(((a[0] + b[0]) / 2, (a[1] + b[1]) / 2), reach=2):
+                    worst = min(worst, _seg_seg_dist(a, b, p, q) - bh)
+            prev = kerb_clear.get(o["name"])
+            if prev is None or worst < prev[0]:
+                kerb_clear[o["name"]] = (worst, lid)
+    for name, (w, lid) in sorted(kerb_clear.items()):
+        if w < KERB_CLEAR_M - ROUND_M:
+            fails.append(f"E: {name}: stands {w:.2f} m off {lid}'s authored closure (< {KERB_CLEAR_M} m) — a kerb under a wall")
     counts.update({"kerb_objects": len(kerb_objs), "corners": n_corners_auth,
-                   "kerb_fold_dropped": sum(int(o.get("fold_skipped", 0) or 0) for o in kerb_objs)})
+                   "kerb_fold_dropped": sum(int(o.get("fold_skipped", 0) or 0) for o in kerb_objs),
+                   "kerb_closure_clear_m": {n: (round(w, 3) if w < float("inf") else None, lid) for n, (w, lid) in kerb_clear.items()},
+                   "kerb_clips": {o["name"]: (o.get("clip") or {}).get("stations_removed") for o in kerb_objs}})
+
+    # M. mouths: every sealed mouth line ON its side's strip; behind_closure mouths behind that layout's closure
+    mouth_rows = []
+    cm = {(int(mo["host_vertex"]), str(mo["side"])): mo for mo in (bands.get("closed_mouths") or [])}
+    for (host, side), mo in sorted(cm.items()):
+        poly = mo.get("polyline_xyz_m") or []
+        g = edge_side_grid.get(side)
+        worst = max((g.dist((p[0], p[2]), reach=3) for p in poly), default=None) if g is not None else None
+        mouth_rows.append({"host_vertex": host, "side": side, "strip_off_m": None if worst is None else round(worst, 3)})
+        if worst is None or worst > MOUTH_TOL_M + ROUND_M:
+            fails.append(f"M: mouth {mo.get('connector')} at v{host} ({side}): the sealing {side} strip stands "
+                         f"{'nowhere near' if worst is None else f'{worst:.2f} m off'} the mouth line — the mouth is open")
+    for lid, c in sorted(cors.items()):
+        pol = c.get("mouths")
+        if pol is None:
+            warns.append(f"M: corridors.{lid} declares no mouth policies — only the strips' seal was checked")
+            continue
+        listed = {(int(x["host_vertex"]), str(x["side"])) for x in pol}
+        for key in cm:
+            if key not in listed:
+                fails.append(f"M: {lid}: mouth at v{key[0]} ({key[1]}) has no declared policy")
+        y = c.get("closure_y_by_vertex") or []
+        lane = c.get("lane_by_vertex") or []
+        polys = close_polys.get(lid, [])
+        sg = SegGrid(polys)
+        for x in pol:
+            host, side, policy = int(x["host_vertex"]), str(x["side"]), str(x.get("policy"))
+            if policy in ("sealed_race_strip", "sealed_far_strip"):
+                continue                      # sealed by a curb strip: the strip check above holds for every mouth
+            if policy != "behind_closure":
+                fails.append(f"M: {lid}: mouth v{host} ({side}): unknown policy {policy!r}")
+                continue
+            mo = cm.get((host, side)) or {}
+            vf, vt = int(mo.get("vertex_from", host - 2)), int(mo.get("vertex_to", host + 2))
+            for k in _walk(vf % m, vt % m, m):
+                yy = y[k] if k < len(y) else None
+                if yy is None:
+                    fails.append(f"M: {lid}: mouth v{host} ({side}) is declared behind the closure, but no closure is "
+                                 f"declared at v{k}")
+                    break
+                lx, lz = _left_normal_at(pts, k, m)
+                d = sg.dist((pts[k][0] + lx * yy, pts[k][2] + lz * yy), reach=2)
+                if d > CLOSE_TOL_M + ROUND_M:
+                    fails.append(f"M: {lid}: mouth v{host} ({side}): the authored closure is {d:.2f} m off its line at v{k}")
+                    break
+                lo_hi = lane[k] if k < len(lane) else None
+                if lo_hi and ((side == "L" and float(lo_hi[1]) > yy - bh + 1e-3) or
+                              (side == "R" and float(lo_hi[0]) < yy + bh - 1e-3)):
+                    fails.append(f"M: {lid}: mouth v{host} ({side}): the lane {lo_hi} reaches past the closure at v{k} — "
+                                 f"the mouth is not behind it")
+                    break
+    counts["mouths"] = mouth_rows
 
     # F. spawn clearance — the AUTHOR's record (author time); the HARD re-measure of the dummies that
     #    actually ship is _verify_spawns (from data/dummies_<id>.json), run by verify() for every call
@@ -865,7 +1215,7 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
         if r.get("synthesised"):
             fails.append(f"F: {lid}: spawn clearance measured on SYNTHESISED dummies — run tools/layout_dummies.py first")
         if r.get("hard"):
-            fails.append(f"F: {lid}: a spawn overlaps a strip or stands < {SPAWN_MARGIN_M:.2f} m off it "
+            fails.append(f"F: {lid}: a spawn overlaps a strip / its lane or stands < {SPAWN_MARGIN_M:.2f} m off it "
                          f"(author-time record): {r['hard'][:4]}")
         for note in r.get("notes", []) or []:
             warns.append(f"F: {lid}: author-time: {note}")
@@ -953,13 +1303,19 @@ def main(argv=None) -> int:
         r["warnings"].append("G: no data/lights.local.json — no lamps authored, nothing to check")
     c = r["counts"]
     if not pre_author:
-        print(f"[verify-race] {c.get('objects')} objects: chain {c.get('chain_objects')} objects / {c.get('chain_runs')} runs / "
-              f"{c.get('chain_rings')} rings (worst gap {c.get('chain_gap_worst_m')} m); edge {c.get('edge_objects')} objects / "
-              f"{c.get('edge_rings')} rings on {c.get('edge_declared_vertices')} declared vertices (missing {c.get('edge_missing')}, "
-              f"declared trimmed {c.get('edge_trimmed_declared')} at {c.get('edge_corners_declared')} corners, missing undeclared "
-              f"{c.get('edge_missing_undeclared')}, author fold-dropped {c.get('edge_fold_dropped')}, worst gap "
-              f"{c.get('edge_gap_worst_m')} m); kerbs {c.get('kerb_objects')} "
-              f"at {c.get('corners')} corners; interpolated {c.get('interpolated')}/{c.get('rings_total')}")
+        print(f"[verify-race] {c.get('objects')} objects. COMMON: curb strips {c.get('edge_objects')} objects / "
+              f"{c.get('edge_rings')} rings on all {c.get('edge_declared_vertices')} vertices x 2 sides (missing "
+              f"{c.get('edge_missing')}, declared trimmed {c.get('edge_trimmed_declared')} at {c.get('edge_corners_declared')} "
+              f"corners, missing undeclared {c.get('edge_missing_undeclared')}, worst gap {c.get('edge_gap_worst_m')} m); "
+              f"kerbs {c.get('kerb_objects')} at {c.get('corners')} corners; free ends {c.get('free_ends')}; interpolated "
+              f"{c.get('interpolated')}/{c.get('rings_total')}; bridge seating {c.get('bridge_seating')}")
+        for lid, row in sorted((c.get("by_layout") or {}).items()):
+            print(f"[verify-race] {lid} (token {row.get('token')}): closure {row.get('closure_objects')} objects / "
+                  f"{row.get('closure_runs')} runs / {row.get('closure_rings')} rings, off the declared line max "
+                  f"{row.get('closure_off_curve_max_m')} m; pins vs the far strip line "
+                  f"{[p['far_line_m'] for p in row.get('pins', [])]}")
+        print(f"[verify-race] J pins {c.get('pins')} (gap to the authored far strip max {c.get('pin_gap_max_m')} m); "
+              f"E kerb clearance to the closures {c.get('kerb_closure_clear_m')}")
     if not pre_author and "chord_max_m" in c:
         cw = c.get("chord_worst") or {}
         where = f" at {cw['object']} ring {cw['ring']}" if cw.get("object") else ""
@@ -968,17 +1324,19 @@ def main(argv=None) -> int:
               f"{c['ring_spacing_max_m']} m (measured spans {c['ring_spacing_max_measured_m']} m); "
               f"{c['chord_spans_fold']} fold spans, {c['chord_spans_unmeasured']} unmeasured")
     if not pre_author and "inside_out_spans" in c:
-        print(f"[verify-race] I inside-out: {c['inside_out_spans']} spans over every chain / edge / kerb object "
+        print(f"[verify-race] I inside-out: {c['inside_out_spans']} spans over every strip / closure / kerb object "
               f"({c['inside_out_unmeasured']} objects unmeasured)")
     for lid, rows in (c.get("spawn_slots") or {}).items():
-        cells = ", ".join(f"{q['name'].replace('AC_', '')} {q['clear_edge_m']:+.2f}" if q["clear_centre_m"] is None
-                          else f"{q['name'].replace('AC_', '')} {q['clear_edge_m']:+.2f}/c{q['clear_centre_m']:+.2f}" for q in rows)
+        cells = ", ".join(f"{q['name'].replace('AC_', '')} {q['clear_edge_m']:+.2f}"
+                          + (f"/lane{q['clear_lane_m']:+.2f}" if q.get("clear_lane_m") is not None else "") for q in rows)
         print(f"[verify-race] F {lid}: min clearance {c['spawn_min_clear_m'].get(lid)} m (hard floor {SPAWN_MARGIN_M} m): {cells}")
     lm = c.get("lamp_min")
     if lm is not None:
+        lc = c.get("lamp_min_vs_closure")
         print(f"[verify-race] G lamps: {c.get('lamps_checked')}/{c.get('lamps')} masts beside a strip (arm {c.get('lamp_arm_m')} m, "
               f"mast r {c.get('mast_r_m')} m); minimum margin {c.get('lamp_min_margin_m')} m at lamp {lm['lamp']} v{lm['vertex']} "
-              f"lat {lm['lat_m']:+.2f} vs the {lm['against']} strip; {c.get('lamps_inside')} inside")
+              f"lat {lm['lat_m']:+.2f} vs the {lm['against']} strip; {c.get('lamps_inside')} inside"
+              + (f"; nearest to a closure {lc['closure_margin_m']} m (lamp {lc['lamp']} v{lc['vertex']}, {lc['closure']})" if lc else ""))
     for w in r["warnings"]:
         print(f"[verify-race] note: {w}")
     for f in r["fails"]:

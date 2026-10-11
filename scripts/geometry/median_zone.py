@@ -31,6 +31,22 @@ finished_centerline.json, else centerline.local.json with mirror_x), and answers
     zone.edge_corner_spans('edge_R')               # trimmed fold corners of that strip: [(i, j, [A, X, B])]
     zone.reversed()                                # the same zone walked the other way (reverse layouts)
 
+PER-LAYOUT CORRIDORS (ledger 0049, 2026-10-11): barrier_bands.json version 2 retires the shared centre chain;
+each race layout has its OWN closure (corridors.<id>.closure_y_by_vertex, the strip centre lateral, + = left of
+increasing vertex) and its own lane (corridors.<id>.lane_by_vertex = [y_lo, y_hi], the corridor faces). A race
+gate asks for its layout:
+
+    zone = MedianZone.load(project_dir, layout="race_cw")   # both curb strips (full lap, trimmed corners) + THIS
+                                                             # layout's closure band - never the other's
+    zone.closure_at(i)                             # closure centre lateral at vertex i (this zone's frame), or None
+    zone.lane_r(i)                                 # (lo, hi): the corridor faces, metres RIGHT of this zone's travel
+    zone.zone_at(i)                                # whole | box | pin | closure | island
+    zone.has_corridor
+
+Without a layout (or for a layout a v1 file has no corridor for) the zone is exactly what it was: the island kind,
+plus the barrier kind of whatever bands the file declares. A v2 file that declares corridors but none for the
+asked layout is an error - a race layout is never judged against a lane its walls do not have.
+
 TRIMMED CORNERS (2026-10-11): where a kerb-line strip's inside lip is tighter than its offset the
 declaration carries `edge_corners` (tools/barrier_bands.py: the strip is trimmed to the curb's own
 corner X). On that side the `removed` vertices have NO band point; the band across them is the polyline
@@ -74,7 +90,8 @@ def _load_pts(project: Path):
 
 class MedianZone:
     def __init__(self, pts, island_w, extra=(), *, widths=None, centre_w=None, edge_strip=None,
-                 edge_inset=None, barrier_half=0.335, edge_centre_from_lip=-0.485, mouths=(), edge_corners=()):
+                 edge_inset=None, barrier_half=0.335, edge_centre_from_lip=-0.485, mouths=(), edge_corners=(),
+                 closure_y=None, lane=None, zone_kind=None, layout=None):
         """pts/island_w: the mainline (gate frame). extra: [(pts, island_w), ...] for divided
         connectors' islands (tools/divide_connectors.py), same frame as the gate OBJ.
         Barrier kind (all per mainline vertex, same length as pts, or absent): centre_w (the chain's
@@ -105,6 +122,12 @@ class MedianZone:
         self.removed = {"L": set(), "R": set()}
         for c in self.edge_corners:
             self.removed.setdefault(c["side"], set()).update(c["removed"])
+        # the layout's corridor (ledger 0049): closure centre lateral + lane faces, in THIS zone's frame
+        self.layout = layout
+        self.closure_y = ([None if v is None else float(v) for v in closure_y]
+                          if closure_y is not None and len(closure_y) == n else None)
+        self.lane = ([(float(a), float(b)) for a, b in lane] if lane is not None and len(lane) == n else None)
+        self.zone_kind = list(zone_kind) if zone_kind is not None and len(zone_kind) == n else None
         self.cells: dict[tuple[int, int], list[tuple[int, int]]] = {}
         for pi, (pp, ww) in enumerate(self.polys):
             for i, w in enumerate(ww):
@@ -119,6 +142,10 @@ class MedianZone:
         for i in range(n - 1 if self.closed else n):     # the closure duplicate is vertex 0's band
             if self.centre_w[i] > 0:
                 self._bput("centre", i, pts[i][0], pts[i][2])
+            if self.closure_y is not None and self.closure_y[i] is not None:
+                nx, nz = self._normal(i)
+                y = self.closure_y[i]
+                self._bput("closure", i, pts[i][0] + nx * y, pts[i][2] + nz * y)
             if self.edge_strip[i]:
                 nx, nz = self._normal(i)
                 off = self.widths[i] / 2.0 + self.edge_centre_from_lip
@@ -146,6 +173,7 @@ class MedianZone:
                         self.bcells.setdefault((cx, cz), []).append(("mouth", mi * 100000 + k, 0.0, 0.0))
         self.n_barrier = sum(1 for w in self.centre_w if w > 0)
         self.n_edge = sum(1 for e in self.edge_strip if e)
+        self.n_closure = sum(1 for v in (self.closure_y or []) if v is not None)
 
     def _bput(self, kind, i, x, z):
         self.bcells.setdefault((int(x // CELL_M), int(z // CELL_M)), []).append((kind, i, x, z))
@@ -165,7 +193,7 @@ class MedianZone:
         return -tz / L, tx / L
 
     @classmethod
-    def load(cls, project_dir) -> "MedianZone | None":
+    def load(cls, project_dir, layout=None) -> "MedianZone | None":
         project = Path(project_dir)
         data = project / "data"
         bands = data / "median_bands.json"
@@ -207,8 +235,21 @@ class MedianZone:
                     kw["edge_strip"] = []
                 if len(kw["edge_inset"]) != len(pts):
                     kw["edge_inset"] = []
+                cors = bj.get("corridors") or {}
+                if layout is not None and cors:
+                    cor = cors.get(str(layout))
+                    if cor is None:
+                        raise SystemExit(f"median_zone: barrier_bands.json declares corridors {sorted(cors)} but none "
+                                         f"for layout {layout!r} - re-run tools/barrier_bands.py")
+                    lane = cor.get("lane_by_vertex") or []
+                    cy = cor.get("closure_y_by_vertex") or []
+                    if len(lane) != len(pts) or len(cy) != len(pts):
+                        raise SystemExit(f"median_zone: corridors.{layout} lane / closure rows ({len(lane)} / {len(cy)}) "
+                                         f"vs centreline ({len(pts)}) - re-run tools/barrier_bands.py")
+                    kw.update({"closure_y": cy, "lane": lane, "zone_kind": cor.get("zone_by_vertex"),
+                               "layout": str(layout)})
         zone = cls(pts, iw, extra, widths=widths, **kw)
-        if zone.n_island == 0 and zone.n_barrier == 0 and zone.n_edge == 0:
+        if zone.n_island == 0 and zone.n_barrier == 0 and zone.n_edge == 0 and zone.n_closure == 0:
             return None
         return zone
 
@@ -245,9 +286,33 @@ class MedianZone:
         side = kind[-1]
         return [(c["i"], c["j"], self._corner_polys[ci]) for ci, c in enumerate(self.edge_corners) if c["side"] == side]
 
+    def closure_at(self, i: int):
+        """the layout's closure centre lateral at vertex i (+ = left of THIS zone's travel), None where none
+        stands (or no corridor is loaded)"""
+        if self.closure_y is None or not 0 <= i < len(self.closure_y):
+            return None
+        return self.closure_y[i]
+
+    def lane_r(self, i: int):
+        """(lo, hi): the corridor faces at vertex i in metres RIGHT of this zone's travel (lo may be negative -
+        past the centreline); None without a corridor"""
+        if self.lane is None or not 0 <= i < len(self.lane):
+            return None
+        y_lo, y_hi = self.lane[i]
+        return -y_hi, -y_lo
+
+    def zone_at(self, i: int):
+        if self.zone_kind is None or not 0 <= i < len(self.zone_kind):
+            return None
+        return self.zone_kind[i]
+
+    @property
+    def has_corridor(self) -> bool:
+        return self.lane is not None
+
     @property
     def has_barrier(self) -> bool:
-        return self.n_barrier > 0 or self.n_edge > 0
+        return self.n_barrier > 0 or self.n_edge > 0 or self.n_closure > 0
 
     def reversed(self) -> "MedianZone":
         """The same dividers indexed the other way round (a `direction: reverse` layout walks the
@@ -259,11 +324,17 @@ class MedianZone:
         # a trimmed corner walked backwards: the other side of travel, its out_vertex first
         corners = [{"side": {"L": "R", "R": "L"}[c["side"]], "in_vertex": rev(c["j"]), "out_vertex": rev(c["i"]),
                     "removed": [rev(v) for v in c["removed"]], "xz": list(c["xz"])} for c in self.edge_corners]
+        # the corridor walked backwards: laterals flip sign (left of the reversed travel = right of the forward),
+        # so the forward lane [y_lo, y_hi] becomes [-y_hi, -y_lo] and the closure y becomes -y
+        cy = None if self.closure_y is None else [None if v is None else -v for v in self.closure_y[::-1]]
+        lane = None if self.lane is None else [(-b, -a) for a, b in self.lane[::-1]]
+        zk = None if self.zone_kind is None else self.zone_kind[::-1]
         return MedianZone(self.pts[::-1], self.island_w[::-1], self.polys[1:],
                           widths=self.widths[::-1], centre_w=self.centre_w[::-1],
                           edge_strip=self.edge_strip[::-1], edge_inset=self.edge_inset[::-1],
                           barrier_half=self.barrier_half, edge_centre_from_lip=self.edge_centre_from_lip,
-                          mouths=self.mouths, edge_corners=corners)
+                          mouths=self.mouths, edge_corners=corners, closure_y=cy, lane=lane, zone_kind=zk,
+                          layout=self.layout)
 
     # ---- the band test --------------------------------------------------------------------
     def contains(self, x: float, z: float, kinds=ISLAND_KINDS) -> bool:
@@ -337,6 +408,12 @@ class MedianZone:
             return None
         if kind == "centre":
             return (self.pts[j][0], 0.0, self.pts[j][2]) if self.centre_w[j] > 0 else None
+        if kind == "closure":
+            if self.closure_y is None or self.closure_y[j] is None:
+                return None
+            nx, nz = self._normal(j)
+            y = self.closure_y[j]
+            return (self.pts[j][0] + nx * y, 0.0, self.pts[j][2] + nz * y)
         if kind in ("edge_L", "edge_R") and self.edge_strip[j]:
             if j in self.removed.get(kind[-1], ()):
                 return None                               # trimmed: the band runs through the corner X instead

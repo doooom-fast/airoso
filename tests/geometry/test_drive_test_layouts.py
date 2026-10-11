@@ -351,3 +351,75 @@ def test_a_trimmed_corner_is_probed_on_its_declared_polyline_both_ways():
     d, _ = _corner_project(trim=False, declare=False)
     r = drive_run(d, "race_cw")
     assert r["obstruction_stations"] > 0, r["obstruction_by_mesh"]
+
+
+# --- per-layout corridors (ledger 0049): each race layout on its own gate OBJ, lane from the declaration ----
+
+CLOSE_Y = 1.0     # race_cw's closure centre 1 m LEFT of the centreline (x = -1 here); race_acw's the mirror
+
+
+def _corridor_bands(n):
+    face = W / 2 - 0.82
+
+    def cor(sgn):
+        y = [sgn * CLOSE_Y] * n
+        lane = [[-face, sgn * CLOSE_Y - BH] if sgn > 0 else [sgn * CLOSE_Y + BH, face]] * n
+        return {"token": "cw" if sgn > 0 else "acw", "closure_y_by_vertex": y, "lane_by_vertex": lane,
+                "zone_by_vertex": ["closure"] * n}
+    return {"version": 2, "centre_w_by_vertex": [0.0] * n, "edge_strip_by_vertex": [1] * n,
+            "edge_inset_by_vertex": [0.82] * n,
+            "params": {"barrier_half_m": BH, "edge_centre_from_lip_m": -0.485, "edge_mode": "road"},
+            "closed_mouths": [], "edge_corners": [],
+            "corridors": {"race_cw": cor(1.0), "race_acw": cor(-1.0)}}
+
+
+def _corridor_project(*, closure_built=True, stray_x=None) -> Path:
+    d = Path(tempfile.mkdtemp())
+    (d / "data").mkdir()
+    (d / "track.config.json").write_text(json.dumps({"slug": "t", "mirror_x": False, "layouts": _layouts()}))
+    cl = [(0.0, 0.0, float(z)) for z in range(0, N_M + 1, STEP)]
+    n = len(cl)
+    widths = [W] * n
+    (d / "data" / "centerline.local.json").write_text(json.dumps(
+        {"points_xyz_m": [list(p) for p in cl], "widths_m": widths, "origin": {"lon": 0.0, "lat": 0.0, "elev_m": 0.0}}))
+    road = ribbon.road_ribbon(cl, widths)
+    base = [("1ROAD_main", road), ("1GRASS", _grass_plane())]
+    _write_obj(d / "data" / "track.obj", base)
+    for lid, x in (("race_cw", -CLOSE_Y), ("race_acw", +CLOSE_Y)):       # forward-left = -x
+        objs = list(base) + [("1WALL_race_edge_L_s0_0", _box(+EDGE_C, 0.0, float(N_M))),
+                             ("1WALL_race_edge_R_s0_0", _box(-EDGE_C, 0.0, float(N_M)))]
+        if closure_built:
+            objs.append((f"1WALL_race_close_{'cw' if lid == 'race_cw' else 'acw'}_s0_0", _box(x, 0.0, float(N_M))))
+        if stray_x is not None and lid == "race_cw":
+            objs.append(("BARRIER_stray", _box(stray_x, 80.0, 90.0)))
+        _write_obj(d / "data" / f"track.{lid}.obj", objs)
+    (d / "data" / "barrier_bands.json").write_text(json.dumps(_corridor_bands(n)))
+    return d
+
+
+def test_each_race_layout_drives_its_declared_corridor_on_its_own_gate_obj():
+    d = _corridor_project()
+    for lid in ("race_cw", "race_acw"):
+        r = drive_run(d, lid)
+        assert r["obj"] == f"track.{lid}.obj" and r["lane"] == f"barrier_bands.json corridors.{lid}"
+        assert r["obstruction_stations"] == 0, (lid, r["obstruction_by_mesh"])
+        assert r["barrier_missing"] == 0, (lid, r["barrier_missing_runs"])
+        assert r["fail"] is False, lid
+    rs = drive_run(d, "street")                               # the street layout is unchanged: track.obj, no bands
+    assert rs["obj"] == "track.obj" and rs["barrier_stations"] == 0 and rs["fail"] is False
+
+
+def test_a_declared_closure_that_was_not_built_is_barrier_missing():
+    d = _corridor_project(closure_built=False)
+    r = drive_run(d, "race_cw")
+    assert r["barrier_missing"] > 0 and r["fail"] is True
+    assert {k for _a, _b, k in r["barrier_missing_runs"]} == {"closure"}, r["barrier_missing_runs"]
+
+
+def test_the_lane_is_the_corridor_not_the_half_road():
+    # a stray wall in the pocket behind race_cw's closure (forward-left 3 m = x -3) is outside its lane ...
+    r = drive_run(_corridor_project(stray_x=-3.0), "race_cw")
+    assert r["obstruction_stations"] == 0 and r["fail"] is False, r["obstruction_by_mesh"]
+    # ... one 0.5 m right of the centreline (x +0.5) is INSIDE it: the corridor reaches past the centreline
+    r2 = drive_run(_corridor_project(stray_x=0.5), "race_cw")
+    assert r2["obstruction_stations"] > 0 and any(k.startswith("BARRIER_stray") for k in r2["obstruction_by_mesh"])

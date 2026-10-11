@@ -39,9 +39,14 @@ THE RULE (all maths in the engine frame x = E, y = up, z = N of data/centerline.
             deviation from the ray; the plate stays square to it. The record carries u
             (curb_dir_xz) and slid_m so tools/author_signs_blend.py re-chooses the slide on the
             built mesh and tools/verify_signs.py tests the un-slid point against the ray.
-  disc      drive_test's obstacle disc, min(lane_half, 6) + 0.3 m of EVERY centreline (its own
-            street included: 4.9 m on a 10 m street), must clear every SIGN* vertex: the plate's
-            footprint base +- 0.61 m along the right vector. Fatal on every ribbon.
+  disc      drive_test's obstacle disc, min(lane_half, 6) + 0.3 m of a centreline, must clear every
+            SIGN* vertex: the plate's footprint base +- 0.61 m along the right vector. drive_test
+            sweeps the MAINLINE only (scripts/geometry/drive_test.py reads centerline.local.json),
+            so the mainline disc is fatal for every post; a mainline post must also clear every
+            connector's disc (hard). A CONNECTOR post is gated by the mainline disc alone — its own
+            street's disc (4.9 m on a 10 m street) is logged as gate_margin_m and a negative margin
+            is a WARN, never a march criterion: fleet/REALISM.md, a real sign stands at the back of
+            the sidewalk, never marched into a front yard to satisfy a disc nothing gates.
   pair      a two-way connector corner whose -fwd and -rev points land < 2.0 m apart becomes ONE
             post at the mean base carrying both plates (W1-6R + W1-6L), each still facing its own
             approach (merge_pairs; re-run after the mesh march, which is where DCL-2's pair met).
@@ -53,7 +58,16 @@ Overrides: tracks/<slug>/signs.json {defaults{...}, corners{<id>: {ribbon, verte
 slide_along_curb_m, base_xz, face_bearing_deg, plate, arrow, expect_arrow, height_m, om1_3,
 second_arrow, force}}}. defaults.kappa_window_m / hysteresis_stations drive the detector (12 m /
 6 stations). An entry whose vertex has no detected corner within 30 m is refused with a WARN
-(stale after a centreline regen).
+(stale after a centreline regen). `plate` selects the geometry; only W1-6 exists (PLATE_GEOMETRY)
+and any other value is a loud failure at load (never a silent W1-6). Every key in DEFAULTS is
+read; a key signs.json carries that DEFAULTS does not know is refused the same way.
+
+Ids: a corner a signs.json entry names carries that id; every other corner is <prefix>-c<k> in
+forward station order. A reversed connector reuses the forward id only when a forward corner of
+the same turn sense lies within MERGE_APEX_M of it (the same bend seen from the other side); a
+corner only the reverse scan finds (the mouth stubs at a ribbon's ends) is <prefix>-r<k>, so no two
+records of one (ribbon, direction) ever share an id, and the skipped list is deduplicated by
+(ribbon, direction, apex station).
 
     PYTHONUTF8=1 python tools/place_signs.py <project-dir> [--signs PATH] [--no-connectors]
 
@@ -132,10 +146,15 @@ DEFAULTS = {
     "r_sign_max_m": R_SIGN_MAX_M, "defl_min_deg": DEFL_MIN_DEG, "hairpin_deg": HAIRPIN_DEG,
     "lateral_offset_m": CURB_FACE_W + SIDEWALK_W["MAINLINE"] - BACK_OF_WALK_SETBACK,
     "lateral_offset_connector_m": CURB_FACE_W + SIDEWALK_W["CONNECTOR"] - BACK_OF_WALK_SETBACK,
-    "height_m": HEIGHT_M, "om1_3": True, "skew_deg": 0.0, "include_connectors": True,
+    "height_m": HEIGHT_M, "om1_3": True, "include_connectors": True,
     "both_directions_mainline": False, "lamp_clear_m": LAMP_CLEAR_M, "plant_clear_m": PLANT_CLEAR_M,
     "kappa_window_m": 2 * KAPPA_HALF_WIN, "hysteresis_stations": HYSTERESIS,
 }
+PLATE_GEOMETRY = ("W1-6",)      # the plates sign_polygons can build; W1-7 / W1-8 are second-pass devices
+CORNER_KEYS = ("ribbon", "vertex", "skip", "reason", "slide_along_curb_m", "base_xz", "face_bearing_deg",
+               "plate", "arrow", "expect_arrow", "height_m", "om1_3", "second_arrow", "force",
+               "where", "ship", "note")      # where/ship/note are prose for the pictures and for Kevin
+GATED_RIBBONS = ("MAINLINE",)   # the centrelines drive_test sweeps: its disc is the only one a gate enforces
 RIBBON_PREFIX = {"MAINLINE": "M", "del_cerro_blvd#0": "DC0", "del_cerro_blvd#1": "DC1",
                  "del_cerro_blvd_loop": "DCL", "medium#2+0#0#0": "MED"}
 
@@ -296,14 +315,17 @@ class PavementField:
                         best = (d - hw, name, hw, a[1] + (b[1] - a[1]) * t)
         return best
 
-    def gate_margin(self, x, z):
-        """distance beyond drive_test's obstacle disc min(max(w/2-0.4,0.8),6)+0.3 of EVERY ribbon"""
+    def gate_margin(self, x, z, names=None):
+        """distance beyond drive_test's obstacle disc min(max(w/2-0.4,0.8),6)+0.3 of EVERY ribbon
+        (names=None) or of the named ribbons only (GATED_RIBBONS: the ones drive_test sweeps)"""
         worst = float("inf")
         cx, cz = int(x // self.cell), int(z // self.cell)
         for dx in (-1, 0, 1):
             for dz in (-1, 0, 1):
                 for k in self.cells.get((cx + dx, cz + dz), ()):
                     name, a, b, ha, hb = self.segs[k]
+                    if names is not None and name not in names:
+                        continue
                     ddx, ddz = b[0] - a[0], b[2] - a[2]
                     L2 = ddx * ddx + ddz * ddz
                     t = 0.0 if L2 == 0 else max(0.0, min(1.0, ((x - a[0]) * ddx + (z - a[2]) * ddz) / L2))
@@ -312,14 +334,21 @@ class PavementField:
                     worst = min(worst, d - (min(max(w / 2 - 0.4, 0.8), 6.0) + 0.3))
         return worst
 
-    def footprint_margin(self, base, rights):
+    def footprint_margin(self, base, rights, names=None):
         """gate_margin over the sign's footprint: the base and both plate ends (+-HALF_PLATE along
         every plate's right vector) — no SIGN* vertex may stand inside drive_test's disc"""
         pts = [tuple(base)]
         for r in rights:
             pts.append((base[0] + r[0] * HALF_PLATE, base[1] + r[1] * HALF_PLATE))
             pts.append((base[0] - r[0] * HALF_PLATE, base[1] - r[1] * HALF_PLATE))
-        return min(self.gate_margin(p[0], p[1]) for p in pts)
+        return min(self.gate_margin(p[0], p[1], names) for p in pts)
+
+
+def disc_names_for(ribbon_name):
+    """the ribbons whose disc is a HARD requirement for a post on `ribbon_name`: every ribbon for a
+    mainline post (it must not stand in a side street's corridor either), the gated ribbons only
+    for a connector post (its own street's disc is logged + WARN, see the module doc)"""
+    return None if ribbon_name in GATED_RIBBONS else GATED_RIBBONS
 
 
 # ----------------------------------------------------------------------------------------------
@@ -494,14 +523,45 @@ def track_dir_name(proj):
     return slug.replace("_", "-")
 
 
+class SignsConfigError(ValueError):
+    """signs.json carries a knob nothing reads or a plate nothing can build — loud, never silent"""
+
+
+def validate_overrides(cfg, corners, src="signs.json"):
+    """every defaults key must be one DEFAULTS knows (= one the tools read), every corner key one of
+    CORNER_KEYS, every plate one of PLATE_GEOMETRY. Raises SignsConfigError."""
+    bad = []
+    for k in cfg:
+        if k not in DEFAULTS:
+            bad.append("defaults.%s is not a knob any tool reads (known: %s)" % (k, ", ".join(DEFAULTS)))
+    for cid, ov in corners.items():
+        if not isinstance(ov, dict):
+            bad.append("corners.%s is not an object" % cid)
+            continue
+        for k in ov:
+            if not k.startswith("_") and k not in CORNER_KEYS:
+                bad.append("corners.%s.%s is not a key any tool reads (known: %s)" % (cid, k, ", ".join(CORNER_KEYS)))
+        plate = ov.get("plate", PLATE_GEOMETRY[0])
+        if plate not in PLATE_GEOMETRY:
+            bad.append("corners.%s.plate = %r: no geometry for it (sign_polygons builds %s only)" % (cid, plate, "/".join(PLATE_GEOMETRY)))
+        if ov.get("arrow") is not None and ov["arrow"] not in ("left", "right"):
+            bad.append("corners.%s.arrow = %r (left|right)" % (cid, ov["arrow"]))
+        if ov.get("expect_arrow") is not None and ov["expect_arrow"] not in ("left", "right"):
+            bad.append("corners.%s.expect_arrow = %r (left|right)" % (cid, ov["expect_arrow"]))
+    if bad:
+        raise SignsConfigError("%s: %s" % (src, "; ".join(bad)))
+
+
 def load_overrides(proj, signs_path=None):
     p = Path(signs_path) if signs_path else AIROSO / "tracks" / track_dir_name(proj) / "signs.json"
     cfg = dict(DEFAULTS)
     corners = {}
     if p.exists():
         d = json.loads(p.read_text(encoding="utf-8"))
-        cfg.update({k: v for k, v in (d.get("defaults") or {}).items() if not k.startswith("_")})
+        given = {k: v for k, v in (d.get("defaults") or {}).items() if not k.startswith("_")}
         corners = {k: v for k, v in (d.get("corners") or {}).items() if not k.startswith("_")}
+        validate_overrides(given, corners, str(p))
+        cfg.update(given)
     return cfg, corners, p
 
 
@@ -557,17 +617,18 @@ def slide_candidates():
     return [0.0] + [s * k for k in range(1, int(round(SLIDE_MAX_M / SLIDE_STEP_M)) + 1) for s in (SLIDE_STEP_M, -SLIDE_STEP_M)]
 
 
-def choose_slide(ctx, cfg, S, u, d_clear, clear_fn, rights=()):
+def choose_slide(ctx, cfg, S, u, d_clear, clear_fn, rights=(), disc_names=None):
     """clear lamps (>= lamp_clear_m) and plants (>= plant_clear_m) by sliding S along the curb
     direction u, smallest |slide| first, never beyond SLIDE_MAX_M; a candidate must also keep the
-    edge clearance clear_fn(x, z) >= d_clear - 0.05 and the disc footprint margin >= 0. When no
-    candidate clears: stay on the ray, flag a lamp (fatal), exclude the plant (TreeFX drops it).
+    edge clearance clear_fn(x, z) >= d_clear - 0.05 and the HARD disc footprint margin >= 0
+    (disc_names: the ribbons whose disc gates this post, see disc_names_for). When no candidate
+    clears: stay on the ray, flag a lamp (fatal), exclude the plant (TreeFX drops it).
     -> (slid_m, S, lamp_m, plant(dist, zone, idx), exclude_plant | None, reasons[])"""
     for sl in slide_candidates():
         q = (S[0] + u[0] * sl, S[1] + u[1] * sl)
         if clear_fn(q[0], q[1]) < d_clear - 0.05:
             continue
-        if rights and ctx.field.footprint_margin(q, rights) < 0:
+        if rights and ctx.field.footprint_margin(q, rights, disc_names) < 0:
             continue
         lamp = ctx.nearest_lamp(q)
         plant = ctx.nearest_plant(q)
@@ -665,8 +726,9 @@ def place_corner(ctx, rb, corner, cid, ov, cfg, second=False):
     # 7) clearances: lamps never move; plants are excluded from TreeFX; the sign may slide along
     #    the curb (u at sC), <= SLIDE_MAX_M, the smallest move first — the only lateral deviation
     u = unit((rb.xz(sC + 1)[0] - rb.xz(sC - 1)[0], rb.xz(sC + 1)[1] - rb.xz(sC - 1)[1]))
+    disc_names = disc_names_for(rb.name)
     slid, S, lamp, plant, excl_plant, slide_reasons = choose_slide(
-        ctx, cfg, S, u, d_clear, lambda x, z: ctx.field.query(x, z)[0], rights=(nR,))
+        ctx, cfg, S, u, d_clear, lambda x, z: ctx.field.query(x, z)[0], rights=(nR,), disc_names=disc_names)
     reasons += slide_reasons
     # 8) manual overrides
     if ov.get("slide_along_curb_m"):
@@ -681,9 +743,13 @@ def place_corner(ctx, rb, corner, cid, ov, cfg, second=False):
         applied.append("force")
     height = float(ov.get("height_m", cfg["height_m"]))
     om = bool(ov.get("om1_3", cfg["om1_3"]))
+    plate = ov.get("plate", PLATE_GEOMETRY[0])
+    if plate not in PLATE_GEOMETRY:
+        raise SignsConfigError("corner %s: plate %r has no geometry (only %s)" % (cid, plate, "/".join(PLATE_GEOMETRY)))
     # 9) the rest of the checks
     y_road = rb.y(sC)
-    gate_margin = ctx.field.footprint_margin(S, (nR,))
+    gate_margin = ctx.field.footprint_margin(S, (nR,))                 # every centreline, logged
+    gate_margin_gated = ctx.field.footprint_margin(S, (nR,), disc_names)   # the discs a gate enforces
     edge_clear = ctx.field.query(S[0], S[1])[0]
     spawn = ctx.nearest_spawn(S)
     warns = []
@@ -692,8 +758,10 @@ def place_corner(ctx, rb, corner, cid, ov, cfg, second=False):
                      % (bearing(t[0], t[1]), bearing(math.cos(th_pca), math.sin(th_pca)), abs(pca_vs_chord)))
     if spawn[0] < SPAWN_CLEAR_M:
         warns.append("%.0f m from %s (< %.0f m spawn/gate exclusion, placed anyway)" % (spawn[0], spawn[1], SPAWN_CLEAR_M))
-    if gate_margin < 0:     # drive_test's disc on EVERY centreline, the sign's own street included
-        reasons.append("plate footprint inside drive_test's obstacle disc by %.2f m" % -gate_margin)
+    if gate_margin_gated < 0:   # the disc drive_test enforces (mainline post: every ribbon's)
+        reasons.append("plate footprint inside drive_test's obstacle disc by %.2f m" % -gate_margin_gated)
+    elif gate_margin < 0:       # a connector post inside its own street's disc: logged, not gated
+        warns.append("plate footprint %.2f m inside the obstacle disc of a connector centreline (not gated: drive_test sweeps the mainline only; the post stays at the back of the walk)" % -gate_margin)
     if edge_clear < 0:
         reasons.append("sign base is ON pavement (edge clearance %.2f)" % edge_clear)
     if "note" in m:
@@ -711,8 +779,8 @@ def place_corner(ctx, rb, corner, cid, ov, cfg, second=False):
     a_off = rb.w(apex) / 2 + OLD_REV2_LATERAL
     rec = {
         "id": cid if not second else cid + "-2",
-        "kind": "W1-6R" if arrow == "right" else "W1-6L",
-        "plate": "W1-6",
+        "kind": plate + ("R" if arrow == "right" else "L"),
+        "plate": plate,
         "ribbon": rb.name, "direction": "rev" if rb.reverse else "fwd",
         "corner": {"apex_vertex": rb.vertex(apex), "apex_station_m": apex, "PC": pc, "PT": pt, "arc_m": arc,
                    "R_apex_m": round(corner["R_apex_m"], 1), "D_deg": round(D, 1),
@@ -736,11 +804,12 @@ def place_corner(ctx, rb, corner, cid, ov, cfg, second=False):
         "right_xz": [round(nR[0], 4), round(nR[1], 4)],
         "arrow": arrow, "expect_arrow": expect if expect in ("left", "right") else None,
         "lateral_offset_m": d_clear, "height_m": height, "om1_3": om,
-        "skew_deg": cfg.get("skew_deg", 0.0),
         "checks": {"outside_cross": round(outside_cross, 2), "edge_clear_m": round(edge_clear, 2),
                    "lamp_m": round(lamp, 2), "plant_m": round(plant[0], 2), "plant_zone": plant[1],
                    "pushed_m": m["pushed_m"], "slid_m": round(slid, 2), "lateral_step_m": m.get("lateral_m", 0.0),
-                   "gate_margin_m": round(gate_margin, 2), "mouth_m": round(ctx.nearest_mouth(S)[0], 1),
+                   "gate_margin_m": round(gate_margin, 2), "gate_margin_gated_m": round(gate_margin_gated, 2),
+                   "gate_ribbons": "all" if disc_names is None else "+".join(disc_names),
+                   "mouth_m": round(ctx.nearest_mouth(S)[0], 1),
                    "spawn_m": round(spawn[0], 1), "spawn": spawn[1], "warnings": warns},
         "old_rule": {"rev1_xz": [round(o_p[0] + o_n[0] * o_off, 2), round(o_p[1] + o_n[1] * o_off, 2)],
                      "rev1": "k10-colorado 5b38b59: advance diamond ~%.0f m BEFORE the bend, outside, w/2+%.1f" % (OLD_REV1_LEAD_M, OLD_REV1_LATERAL),
@@ -759,8 +828,9 @@ def corner_id(rb, k):
     return "%s-c%d" % (RIBBON_PREFIX.get(rb.name, rb.name.replace("#", "_").replace("+", "_").upper()), k)
 
 
-PLATE_KEYS = ("id", "kind", "direction", "corner", "approach", "ray", "face_dir_xz", "face_bearing_deg",
-              "yaw_deg", "right_xz", "arrow", "expect_arrow", "old_rule", "where", "base_xz", "curb_dir_xz")
+PLATE_KEYS = ("id", "kind", "plate", "direction", "corner", "approach", "ray", "face_dir_xz", "face_bearing_deg",
+              "yaw_deg", "right_xz", "arrow", "expect_arrow", "old_rule", "where", "base_xz", "curb_dir_xz",
+              "overrides_applied")
 
 
 def merge_pairs(signs, thr=PAIR_MERGE_M, log=None):
@@ -790,9 +860,11 @@ def merge_pairs(signs, thr=PAIR_MERGE_M, log=None):
             p["checks"] = {k: s["checks"][k] for k in ("outside_cross", "slid_m", "pushed_m", "lateral_step_m") if k in s["checks"]}
         ca, cb = a["checks"], b["checks"]
         rec["checks"] = dict(ca)
-        for k in ("edge_clear_m", "mesh_clear_m", "lamp_m", "plant_m", "gate_margin_m", "mouth_m", "spawn_m"):
+        for k in ("edge_clear_m", "mesh_clear_m", "lamp_m", "plant_m", "gate_margin_m", "gate_margin_gated_m", "mouth_m", "spawn_m"):
             if k in ca and k in cb:
                 rec["checks"][k] = min(ca[k], cb[k])
+        if ca.get("walk_behind_m") is not None and cb.get("walk_behind_m") is not None:
+            rec["checks"]["walk_behind_m"] = max(ca["walk_behind_m"], cb["walk_behind_m"])
         rec["checks"]["warnings"] = list(ca.get("warnings", [])) + list(cb.get("warnings", [])) + [
             "paired: -fwd and -rev posts were %.2f m apart (< %.1f) -> one post, two plates" % (dist, thr)]
         rec["exclude_plant"] = a.get("exclude_plant") or b.get("exclude_plant")
@@ -811,6 +883,57 @@ def merge_pairs(signs, thr=PAIR_MERGE_M, log=None):
 def plates_of(rec):
     """the plates a record carries: itself, or the pair's two"""
     return rec.get("plates") or [rec]
+
+
+def fwd_station(rb, apex):
+    """a corner's apex station in the FORWARD point order of its ribbon"""
+    if not rb.reverse:
+        return apex
+    return (-apex) % rb.n if rb.closed else rb.n - 1 - apex
+
+
+def candidate_ids(rb, corners, fwd_ids):
+    """[id per corner]: a forward ribbon numbers its corners <prefix>-c<k> in station order; a
+    reversed ribbon reuses the forward id of the nearest forward corner within MERGE_APEX_M that
+    turns the SAME way (a forward right turn is a reverse left turn), else the corner is one only
+    the reverse scan sees (a mouth stub at a ribbon end) and gets <prefix>-r<k>. Unique per ribbon
+    + direction by construction (ties: the closer corner keeps the id)."""
+    if not rb.reverse:
+        return [corner_id(rb, k + 1) for k in range(len(corners))]
+    claims = {}
+    for ci, c in enumerate(corners):
+        st = fwd_station(rb, c["apex"])
+        near = [(rb.dist_stations(st, e[0]), e[1]) for e in fwd_ids if e[2] == -c["sign"]]
+        near = [e for e in near if e[0] < MERGE_APEX_M]
+        if near:
+            d, cid = min(near)
+            if cid not in claims or claims[cid][0] > d:
+                claims[cid] = (d, ci)
+    out = [None] * len(corners)
+    for cid, (_, ci) in claims.items():
+        out[ci] = cid
+    k = 0
+    for ci in sorted(range(len(corners)), key=lambda i: corners[i]["apex"]):
+        if out[ci] is None:
+            k += 1
+            out[ci] = "%s-r%d" % (RIBBON_PREFIX.get(rb.name, rb.name.replace("#", "_").replace("+", "_").upper()), k)
+    return out
+
+
+def dedupe_skipped(skipped):
+    """one entry per (ribbon label, direction suffix, apex station); the first wins, its reasons
+    gain any the duplicate carried"""
+    seen, out = {}, []
+    for s in skipped:
+        key = (s["ribbon"], s["id"].rsplit("-", 1)[-1] if s["id"].endswith(("-fwd", "-rev")) else "", s.get("apex_station_m"), s["id"].endswith("-2"))
+        if key in seen:
+            for r in s["reasons"]:
+                if r not in seen[key]["reasons"]:
+                    seen[key]["reasons"].append(r)
+            continue
+        seen[key] = s
+        out.append(s)
+    return out
 
 
 def assign_overrides(rb, fwd_rb, corners, corners_cfg):
@@ -852,14 +975,16 @@ def place_all(proj, cfg=None, corners_cfg=None, signs_path=None, log=print, merg
     fwd_rbs = {r.name: r for r in ctx.ribbons}
     for rb in ribbons:
         corners = detect_corners(rb, ctx.hyst)
+        corners.sort(key=lambda c: c["apex"])
         if not rb.reverse:
-            corners.sort(key=lambda c: c["apex"])
-            fwd_ids[rb.name] = [(c["apex"], corner_id(rb, k + 1)) for k, c in enumerate(corners)]
+            fwd_ids[rb.name] = [(c["apex"], corner_id(rb, k + 1), c["sign"]) for k, c in enumerate(corners)]
+        cids = candidate_ids(rb, corners, fwd_ids.get(rb.name, []))
         named = assign_overrides(rb, fwd_rbs[rb.name], corners, corners_cfg)
         for ci, c in enumerate(corners):
-            # id: forward numbering in station order; a reversed ribbon reuses the forward id
-            apex_fwd = c["apex"] if not rb.reverse else (rb.n - 1 - c["apex"] if not rb.closed else (-c["apex"]) % rb.n)
-            cid = min(fwd_ids[rb.name], key=lambda e: abs(e[0] - apex_fwd))[1]
+            # id: forward numbering in station order; a reversed ribbon reuses the forward id of
+            # the same bend, else a reverse-only id (candidate_ids) — never two records of one
+            # ribbon + direction under one id
+            cid = cids[ci]
             ov_id, ov = named.get(ci, (None, {}))
             if ov_id:
                 cid = ov_id
@@ -919,6 +1044,10 @@ def place_all(proj, cfg=None, corners_cfg=None, signs_path=None, log=print, merg
             % (cid, OVERRIDE_STALE_M, corners_cfg[cid].get("vertex")))
     if merge:
         signs = merge_pairs(signs, log=log)
+    skipped = dedupe_skipped(skipped)
+    dup = [i for i in {s["id"] for s in skipped} if sum(1 for s in skipped if s["id"] == i) > 1]
+    if dup:
+        raise RuntimeError("skipped ids repeat after candidate_ids/dedupe: %s" % ", ".join(sorted(dup)))
     out = {
         "frame": "engine ENU local metres: x = East, y = up, z = North (data/centerline.local.json); Blender = (x, z, y)",
         "rule": "W1-6 at the corner, outside of the bend, in line with and facing the approach (tools/place_signs.py)",
@@ -934,9 +1063,11 @@ def place_all(proj, cfg=None, corners_cfg=None, signs_path=None, log=print, merg
 
 
 # ----------------------------------------------------------------------------------------------
-def plate_polygons(out, sx, sz, f, r, h0, arrow, om, y_base):
+def plate_polygons(out, sx, sz, f, r, h0, arrow, om, y_base, info=None):
     """one plate (+ border, arrow, optional OM1-3 diamond) on the post at (sx, sz), facing f,
-    bottom edge at h0; returns the plate top height"""
+    bottom edge at h0; returns the plate top height. info (a list) receives the plate's own
+    vertices — front face, back face, arrow glyph — so tools/verify_signs.py can measure the
+    built facing, height and arrow from GEOMETRY rather than read them back from this record."""
     h1 = h0 + PLATE_H
     mirror = -1.0 if arrow == "left" else 1.0
 
@@ -947,8 +1078,15 @@ def plate_polygons(out, sx, sz, f, r, h0, arrow, om, y_base):
     nb = (-f[0], 0.0, -f[1])
     wf, wb = PLATE_FRONT_OFF, PLATE_FRONT_OFF - PLATE_BACK_GAP
     hw = PLATE_W / 2
-    out["SIGNPLATE"].append(([P(-hw, h0, wf), P(hw, h0, wf), P(hw, h1, wf), P(-hw, h1, wf)], nf))
-    out["SIGNPOST"].append(([P(-hw, h0, wb), P(hw, h0, wb), P(hw, h1, wb), P(-hw, h1, wb)], nb))
+    front = [P(-hw, h0, wf), P(hw, h0, wf), P(hw, h1, wf), P(-hw, h1, wf)]
+    back = [P(-hw, h0, wb), P(hw, h0, wb), P(hw, h1, wb), P(-hw, h1, wb)]
+    out["SIGNPLATE"].append((front, nf))
+    out["SIGNPOST"].append((back, nb))
+    if info is not None:
+        arrow_v = [P(mirror * (x - 24.0) * 0.0254, h0 + y * 0.0254, wf + ARROW_PROUD) for (x, y) in ARROW_IN]
+        info.append({"front_xyz": [[round(c, 4) for c in v] for v in front],
+                     "back_xyz": [[round(c, 4) for c in v] for v in back],
+                     "arrow_xyz": [[round(c, 4) for c in v] for v in arrow_v]})
     # black border: 0.75 in band inset 0.5 in (four strips, 2 mm proud)
     i0, i1 = PLATE_BORDER_INSET, PLATE_BORDER_INSET + PLATE_BORDER_W
     wbd = wf + BORDER_PROUD
@@ -967,12 +1105,13 @@ def plate_polygons(out, sx, sz, f, r, h0, arrow, om, y_base):
     return h1
 
 
-def sign_polygons(rec, y_base):
+def sign_polygons(rec, y_base, info=None):
     """the sign as engine-frame polygons: {kind: [(verts[(x, y, z)...], normal(x, y, z)), ...]}.
     Winding is NOT meaningful here — the emitter orders each polygon to its normal. A paired
     record (merge_pairs) gets ONE post and both plates: back-to-back at the same height when
     their facings are >= 90 deg apart, else the second plate stacks above the first (two plates
-    30 deg apart at one height would cut through each other) and carries no diamond."""
+    30 deg apart at one height would cut through each other) and carries no diamond. info (a
+    list) receives one entry per plate (plate_polygons) plus the post's base corners."""
     sx, sz = rec["base_xz"]
     out = {"SIGNPLATE": [], "SIGNARROW": [], "SIGNPOST": []}
     plates = plates_of(rec)
@@ -985,7 +1124,7 @@ def sign_polygons(rec, y_base):
         hk = h0
         if k > 0 and f[0] * f0[0] + f[1] * f0[1] > 0:       # same-side facings: stack, no diamond
             hk, om = h_top + PAIR_STACK_GAP, False
-        h_top = max(h_top, plate_polygons(out, sx, sz, f, r, hk, p["arrow"], om, y_base))
+        h_top = max(h_top, plate_polygons(out, sx, sz, f, r, hk, p["arrow"], om, y_base, info))
     h1 = h_top
     f, r = plates[0]["face_dir_xz"], plates[0]["right_xz"]
 
@@ -1006,6 +1145,9 @@ def sign_polygons(rec, y_base):
         ([P(hp, v0, -hp), P(-hp, v0, -hp), P(-hp, v1, -hp), P(hp, v1, -hp)], nb),
         ([P(-hp, v1, -hp), P(hp, v1, -hp), P(hp, v1, hp), P(-hp, v1, hp)], (0.0, 1.0, 0.0)),
     ]
+    if info is not None:
+        info.append({"post_base_xyz": [[round(c, 4) for c in v] for v in (P(hp, v0, -hp), P(hp, v0, hp), P(-hp, v0, hp), P(-hp, v0, -hp))],
+                     "post_top_y": round(v1, 4)})
     return out
 
 

@@ -234,6 +234,69 @@ changed (all uncommitted at the time of this note; dry run on
 - Final: **18 posts (12 W1-6R, 6 W1-6L), 42 skipped, verify PASS with the scan**; mainline built
   clearances 1.74–1.80 m (scan) / 1.84–1.88 m (edge polyline).
 
+### Round 3 (same day) — the verifier made independent, the connector disc demoted, dead knobs gone
+
+Kevin, on the round-2 diagrams: "placement looks right, keep the cul-de-sac sign off" — the rule is
+approved (`signs.json` `_approved`); M1–M5 + M2-2 came out of this round **0.000 m** from round 2.
+Dry run again on a fresh `cp` of the workshop's `loop.blend` (`scratchpad/signs/loop_copy.blend`),
+the workshop file untouched; nothing committed.
+
+- **`tools/verify_signs.py` no longer reads its answers from the record.** (b) re-derives the
+  approach from the centreline / connector json resampled in the verifier — PC is the station the
+  ray origin A is a pure lateral offset from (nearest-and-round was ambiguous by half a station on
+  M2-2's R 20 arc, 1.1°), t = the 10 m chord PC-12..PC-2 — and measures the plate normal from the
+  mesh (`Mesh.polygons[].normal` of the SIGNPLATE faces at the post, with `--blend`) or from the
+  plate corner vertices the author pass now records (`blender.plates[]`: front / back faces, arrow
+  glyph; `blender.post`), plus the glyph's tip side. (d) re-derives the turn (max of the 12 m
+  heading window after PC, 6 m chords either side) and tests the base's side against the local
+  travel direction, and the placed arrow against that turn. (e)/(f) with `--blend` compare the
+  lowest SIGNPLATE / SIGNPOST vertices in the mesh with a ground ray-cast the verifier makes itself
+  (±0.05); without `--blend` the recorded vertices against the centreline height + 0.24 (±0.50,
+  the terrain behind a walk sits lower) and the PASS prints **"polyline-only (not
+  authoritative)"**. `acos(dot)` was replaced by `atan2`: a facing rounded to 4 decimals read
+  0.36° between parallel vectors. Proven to fire on a corrupted copy: plate corners rotated 5°
+  (b), arrow glyph mirrored (b), post 8 m to the inside of the bend (a, c, d on M4; a, d on
+  MED-6-fwd), vertices 0.8 m up (e, f), a LEFT arrow on a right turn (b, d, j), plate W1-8 (h).
+- **The connector disc is a WARN.** `scripts/geometry/drive_test.py` reads
+  `centerline.local.json` only, so no gate ever sweeps a side street; marching a post 2.3 m into a
+  front yard to clear a disc nothing enforces was the round-2 defect (fleet/REALISM.md: a sign
+  stands at the back of the sidewalk). Now: a MAINLINE post must clear every centreline's disc
+  (hard, unchanged); a CONNECTOR post must clear the MAINLINE disc (`checks.gate_margin_gated_m`,
+  hard) while its own street's disc is logged (`checks.gate_margin_m`) and a negative margin is a
+  WARN in the author pass and in verify (g). The connector march is clearance-only, capped 1.5 m
+  behind the modelled walk; `checks.walk_behind_m` = post minus the walk's back edge along the ray
+  (−0.25 = the design point on the walk); verify also measures it from the ground profile with
+  `--blend`. Connector posts now (scan clearance / walk-behind / own disc): MED-1-fwd 1.55 /
+  −0.32 / +1.23; MED-6-fwd 1.34 / −0.26 / −2.06 (was 2.34 m into the yard); MED-7-fwd 1.32 /
+  +0.36 / +0.19; MED-8-fwd 1.40 / −0.26 / +0.76; MED-10-fwd 1.32 / +1.32 / +0.07; MED-13-fwd
+  1.59 / −0.40 / +0.53; MED-13-rev 1.19 / +1.50 / +0.17; MED-10-rev 1.77 / −0.40 / +1.35;
+  MED-8-rev 1.51 / −0.42 / −1.06 (was 0.83 m behind); MED-7-rev 1.55 / −0.40 / +1.22; MED-6-rev
+  1.40 / −0.26 / −0.52; MED-1-rev 1.34 / −0.40 / −0.08. Four own-street WARNs, none gated.
+  MED-10-fwd and MED-13-rev still stand behind the walk for the CLEARANCE, not the disc: the
+  modelled walk is only 0.85 / 1.0 m wide along their rays (not 1.58), so 1.33 m cannot be had on
+  it; MED-13-rev hits the 1.5 m cap at 1.19 m (≥ 1.0 gate minimum, WARN). There the yard is
+  modelled flush with the walk to within 4–5 cm, which is why the record's walk-behind (+1.32 /
+  +1.50, from the ray's height profile) and the verifier's (−0.40 / −0.55, from the profile
+  toward the nearest pavement) disagree — "behind the walk" is a 4 cm-of-height call on that
+  mesh; both are printed. Fixing the walk width at those two corners is a Blender authoring
+  note, not a rule change.
+- **Dead knobs.** `defaults.skew_deg` deleted (nothing ever read it); `corners.plate` wired:
+  `place_signs.PLATE_GEOMETRY = ("W1-6",)` and any other value — or any `defaults` key `DEFAULTS`
+  does not know, any corner key outside `CORNER_KEYS`, an `arrow`/`expect_arrow` that is not
+  left|right — is a `SignsConfigError` at load (both tools exit 1). `signs.json`: DCL-2's reason is
+  Kevin's words, `_approved` added, `note` documented beside `ship` as prose.
+- **Ids.** A reversed connector reuses the forward id only for the same bend (same turn sense,
+  apex within 40 m); a corner only the reverse scan finds (the mouth stubs at a ribbon's ends) is
+  `<prefix>-r<k>` (`DC0-r1/r2-rev`, `DC1-r1/r2-rev` — the three "duplicates" were distinct
+  corners sharing an id). The skipped list is deduplicated by (ribbon, direction, apex station)
+  and a repeat is a RuntimeError in the placer and a FAIL in verify. 42 skipped, 42 unique ids.
+- **`tools/plot_signs.py`**: every caption goes through `Canvas.label`, which walks a widening
+  ring around its anchor until the box clears the plate, the header and the earlier captions,
+  with a leader line once it moved — M3, M4, MED-13-fwd, MED-10-fwd and MED-6-rev no longer
+  overprint; the header wraps instead of running off the right edge.
+- Final: **18 posts, 42 skipped, verify PASS with the scan** (face-err 0.00° on all 18 from the
+  mesh normals), `tests/run_tests.py` 192/192.
+
 ## Scope
 
 - **Project** — `tracks/san-diego-lake-murray`: `signs.json`, `data/signs.local.json`,

@@ -13,11 +13,18 @@ re-places every post on the BUILT mesh and is authoritative for the base:
            the modelled walk is the first candidate, then the post keeps marching ALONG THE RAY
            (never sideways — the plate stays square to the approach) until a 5-degree polar scan
            finds >= 1.63 m (mainline) / 1.33 m (connector) of clearance to built pavement in
-           every direction AND no plate vertex (base +- 0.61 m) stands inside drive_test's
-           obstacle disc of any centreline (its own street included). Capped 6 m past C_mesh: a
-           corner that cannot satisfy both is SKIPPED with a logged reason, never placed badly
-           (a connector post that reaches the 1.0 m gate minimum but not 1.33 m is kept with a
-           WARN).
+           every direction AND no plate vertex (base +- 0.61 m) stands inside the obstacle disc
+           a gate enforces. MAINLINE posts: the disc of EVERY centreline is hard (drive_test
+           sweeps the mainline; a mainline post in a side street's corridor is wrong anyway),
+           capped 6 m past C_mesh -> skip with a logged reason. CONNECTOR posts: only the
+           mainline's disc is hard; the own-street disc is logged (checks.gate_margin_m) and a
+           negative margin is a WARN, never a march criterion (drive_test never sweeps a
+           connector; fleet/REALISM.md: a real sign stands at the back of the sidewalk, never in
+           the front yard behind it). The connector march is capped 1.5 m beyond the back of the
+           modelled walk (CONNECTOR_BEHIND_WALK_CAP_M); at the cap a post that reaches the 1.0 m
+           gate minimum but not 1.33 m is kept with a WARN, below 1.0 m it is skipped. The
+           record logs checks.walk_behind_m = how far behind the walk's back edge the post stands
+           (-0.25 m = the design point on the walk).
   slide    place_signs' lamp/plant slide is re-chosen HERE on the built clearance (<= 1.0 m along
            the curb direction u, smallest first; beyond that the plant is excluded from TreeFX),
            then a signs.json slide_along_curb_m is added. The record keeps slid_m (mesh), the
@@ -73,8 +80,9 @@ CAP = 60000             # the prep's SPLIT_CAP; 65,535 is FATAL there
 PUSH_STEP, PUSH_MAX = 0.25, 4.0
 MARCH_STEP = 0.05       # along the ray, on the built mesh
 CLEAR_TOL = 0.02        # polar clearance may sit this far under the target (scan quantisation)
-DISC_CUSHION = 0.05     # the march wants this much margin outside the disc (verify asks for >= 0)
+DISC_CUSHION = 0.05     # the march wants this much margin outside the gated disc (verify asks for >= 0)
 GATE_MIN = {"MAINLINE": 1.3, "CONNECTOR": 1.0}    # tools/verify_signs.py check (c) minima
+CONNECTOR_BEHIND_WALK_CAP_M = 1.5   # a connector post marches at most this far behind the modelled walk
 STALE_OUTPUTS = ("signs.local.json", "signs_preview.svg", "signs_measured.json")
 
 
@@ -169,11 +177,13 @@ def mesh_place(s, ctx, cfg, road, ground):
     walk_w = ps.SIDEWALK_W["MAINLINE" if is_main else "CONNECTOR"]
     d_clear = s["lateral_offset_m"]
     gate_min = GATE_MIN["MAINLINE" if is_main else "CONNECTOR"]
+    disc_names = ps.disc_names_for(s["ribbon"])     # None = every ribbon's disc is hard (mainline post)
     applied = s.get("overrides_applied", [])
     forced = "force" in applied
     reasons, warns = [], []
     chk = s["checks"]
     chk["slid_polyline_m"] = chk.get("slid_m", 0.0)
+    walk_behind = None
 
     def polar(x, z, reach=sm.POLAR_REACH):
         return sm.polar_clearance(road, ground, x, z, reach=reach)
@@ -191,45 +201,53 @@ def mesh_place(s, ctx, cfg, road, ground):
         s["ray"].update(C_mesh_xz=[round(m["C"][0], 2), round(m["C"][1], 2)], len_mesh_m=m["s_C"])
         if m.get("s_S") is not None:
             s_est, src = m["s_S"], "walk fraction"
+            s_B = m["s_B"]
             s["ray"].update(back_of_walk_m=m["s_B"], walk_run_m=m["walk_run_m"], s_S_walk_m=m["s_S"])
         else:
             s_est, src = s_C + d_clear, "no modelled walk (run %s)" % m.get("walk_run_m")
+            s_B = s_C + ps.CURB_FACE_W + walk_w      # where the walk's back edge would be
             warns.append("no modelled curb+walk found along the ray; marched from the built curb face")
-        # the authoritative march: along the ray only, until the built clearance AND the disc hold
+        # the authoritative march: along the ray only, until the built clearance AND the GATED
+        # disc hold. Cap: mainline +6 m past the built curb; connector 1.5 m behind the walk.
+        s_cap = s_C + ps.RAY_EXTRA_CAP_M if is_main else s_B + CONNECTOR_BEHIND_WALK_CAP_M
+        cap_txt = "+%.0f m past the built curb" % ps.RAY_EXTRA_CAP_M if is_main else "%.1f m behind the modelled walk" % CONNECTOR_BEHIND_WALK_CAP_M
         s_m, capped = s_est, False
         while True:
             qx, qz = A[0] + t[0] * s_m, A[1] + t[1] * s_m
             pc = polar(qx, qz, reach=d_clear + 0.05)[0]
-            fm = ctx.field.footprint_margin((qx, qz), rights)
+            fm = ctx.field.footprint_margin((qx, qz), rights, disc_names)
             if pc >= d_clear - CLEAR_TOL and fm >= DISC_CUSHION:
                 break
-            if s_m - s_C > ps.RAY_EXTRA_CAP_M:
+            if s_m >= s_cap:
                 capped = True
                 break
-            s_m += MARCH_STEP
+            s_m = min(s_m + MARCH_STEP, s_cap)
         xm, zm = A[0] + t[0] * s_m, A[1] + t[1] * s_m
         s["base_xz_mesh"] = [round(xm, 3), round(zm, 3)]
         beyond_walk = m.get("s_B") is not None and s_m > m["s_B"]
+        walk_behind = round(s_m - s_B, 2)
         s["ray"].update(s_S_mesh_m=round(s_m, 2), marched_m=round(s_m - s_est, 2), beyond_walk=beyond_walk)
         if beyond_walk:
-            warns.append("post stands %.2f m behind the back of the modelled walk (marched for clearance/disc); ground = terrain ray-cast" % (s_m - m["s_B"]))
-        pc_m, fm_m = polar(xm, zm)[0], ctx.field.footprint_margin((xm, zm), rights)
+            warns.append("post stands %.2f m behind the back of the modelled walk (marched for the built clearance%s); ground = terrain ray-cast"
+                         % (s_m - m["s_B"], "/disc" if is_main else ""))
+        pc_m, fm_m = polar(xm, zm)[0], ctx.field.footprint_margin((xm, zm), rights, disc_names)
         if capped:
             if fm_m < 0:
-                reasons.append("plate footprint inside drive_test's obstacle disc by %.2f m at +%.0f m past the built curb (own street %s)"
-                               % (-fm_m, ps.RAY_EXTRA_CAP_M, s["ribbon"]))
+                reasons.append("plate footprint inside drive_test's obstacle disc (%s) by %.2f m at the %s cap"
+                               % ("every ribbon" if disc_names is None else "+".join(disc_names), -fm_m, cap_txt))
             if pc_m < gate_min - CLEAR_TOL:
-                reasons.append("built-edge clearance %.2f m < %.1f m gate minimum at +%.0f m past the built curb" % (pc_m, gate_min, ps.RAY_EXTRA_CAP_M))
+                reasons.append("built-edge clearance %.2f m < %.1f m gate minimum at the %s cap" % (pc_m, gate_min, cap_txt))
             elif pc_m < d_clear - CLEAR_TOL:
-                warns.append("built-edge clearance %.2f m (target %.2f) at the +%.0f m cap; passes the %.1f m gate minimum"
-                             % (pc_m, d_clear, ps.RAY_EXTRA_CAP_M, gate_min))
+                warns.append("built-edge clearance %.2f m (target %.2f) at the %s cap; passes the %.1f m gate minimum"
+                             % (pc_m, d_clear, cap_txt, gate_min))
         if reasons and not forced:
             s["base_xz"] = [round(xm, 3), round(zm, 3)]
             s["base_source"] = "mesh march capped (%s start)" % src
+            chk.update(walk_behind_m=walk_behind, gate_ribbons="all" if disc_names is None else "+".join(disc_names))
             return reasons
         # the slide, re-chosen on the built clearance (lamps >= 3 m, plants >= 2.5 m, <= 1.0 m)
         slid, S, lamp, plant, excl, slide_reasons = ps.choose_slide(
-            ctx, cfg, (xm, zm), u, min(d_clear, pc_m), lambda x, z: polar(x, z, reach=d_clear + 0.05)[0], rights)
+            ctx, cfg, (xm, zm), u, min(d_clear, pc_m), lambda x, z: polar(x, z, reach=d_clear + 0.05)[0], rights, disc_names)
         reasons += slide_reasons
         s["exclude_plant"] = excl
         x, z = S
@@ -241,14 +259,20 @@ def mesh_place(s, ctx, cfg, road, ground):
         s["base_source"] = "mesh (%s start, marched %.2f m along the ray, slid %.2f m along the curb)" % (src, s_m - s_est, slid)
     # measure the final post
     pc_f, pc_bearing = polar(x, z)
-    fm_f = ctx.field.footprint_margin((x, z), rights)
+    fm_f = ctx.field.footprint_margin((x, z), rights)                  # every centreline: logged
+    fm_gated = ctx.field.footprint_margin((x, z), rights, disc_names)  # the discs a gate enforces
     lamp, plant = ctx.nearest_lamp((x, z)), ctx.nearest_plant((x, z))
     shift = math.hypot(x - x0, z - z0)
     chk.update(mesh_clear_m=round(pc_f, 2), mesh_clear_bearing_deg=pc_bearing, mesh_shift_m=round(shift, 2),
                edge_clear_m=round(ctx.field.query(x, z)[0], 2), gate_margin_m=round(fm_f, 2),
+               gate_margin_gated_m=round(fm_gated, 2), gate_ribbons="all" if disc_names is None else "+".join(disc_names),
+               walk_behind_m=walk_behind,
                lamp_m=round(lamp, 2), plant_m=round(plant[0], 2), plant_zone=plant[1], slid_m=round(slid, 2))
-    if fm_f < 0:
-        reasons.append("plate footprint inside drive_test's obstacle disc by %.2f m (%s)" % (-fm_f, s["ribbon"]))
+    if fm_gated < 0:
+        reasons.append("plate footprint inside drive_test's obstacle disc by %.2f m (%s)" % (-fm_gated, "every ribbon" if disc_names is None else "+".join(disc_names)))
+    elif fm_f < 0:
+        warns.append("plate footprint %.2f m inside the obstacle disc of a connector centreline (%s): not gated, drive_test sweeps the mainline only; the post stays at the back of the walk (REALISM)"
+                     % (-fm_f, s["ribbon"]))
     if pc_f < gate_min - CLEAR_TOL:
         reasons.append("built-edge clearance %.2f m < %.1f m" % (pc_f, gate_min))
     if is_main and pc_f > 3.0:
@@ -331,6 +355,7 @@ def main():
         pc, pb = sm.polar_clearance(road, ground, x, z)
         s["checks"].update(mesh_clear_m=round(pc, 2), mesh_clear_bearing_deg=pb,
                            gate_margin_m=round(ctx.field.footprint_margin((x, z), rights), 2),
+                           gate_margin_gated_m=round(ctx.field.footprint_margin((x, z), rights, ps.disc_names_for(s["ribbon"])), 2),
                            edge_clear_m=round(ctx.field.query(x, z)[0], 2),
                            lamp_m=round(ctx.nearest_lamp((x, z)), 2), plant_m=round(ctx.nearest_plant((x, z))[0], 2))
     out["signs"] = signs
@@ -386,14 +411,19 @@ def main():
         s["built"] = {"outside_edge_xz": edge, "back_of_walk_xz": back}
         s["y_base"].update(raycast=None if g is None else round(g, 3), source=src, value=round(y_base, 3),
                            road_hit=None if r is None else round(r, 3), pushed_on_road_m=pushed)
-        polys = ps.sign_polygons(s, y_base)
+        info = []
+        polys = ps.sign_polygons(s, y_base, info)
         top = max(v[1] for lst in polys.values() for verts, _ in lst for v in verts)
+        # the vertices the verifier measures (facing, height, arrow) — geometry, not this pass's
+        # own numbers about itself: plates[k] = front/back faces + arrow glyph, post = base corners
         s["blender"] = {"base_xyz_engine": [round(x, 3), round(y_base, 3), round(z, 3)],
                         "base_xyz_blender": [round(x, 3), round(z, 3), round(y_base, 3)],
                         "plate_bottom_y": round(y_base + s["height_m"], 3),
                         "plate_top_y": round(y_base + s["height_m"] + ps.PLATE_H, 3),
                         "post_base_y": round(y_base - ps.POST_SINK, 3),
-                        "post_top_y": round(top, 3)}
+                        "post_top_y": round(top, 3),
+                        "plates": [e for e in info if "front_xyz" in e],
+                        "post": next((e for e in info if "post_base_xyz" in e), None)}
         for kind, lst in polys.items():
             nv = sum(len(p[0]) for p in lst)
             V, F, N = cur[kind]
@@ -430,11 +460,13 @@ def main():
                       "base_rule": "built mesh authoritative: walk-fraction start, marched along the ray to polar clearance >= lateral_offset and disc footprint >= 0"}
     ps.write_outputs(proj, out, ctx)
     for s in signs:
-        print("[signs] %-11s %-12s %-20s base (%8.1f, %6.2f, %8.1f) faces %s deg  built clear %.2f m (shift %.2f, slid %+.2f)  disc %+.2f  y_base %s%s"
+        c = s["checks"]
+        print("[signs] %-11s %-12s %-20s base (%8.1f, %6.2f, %8.1f) faces %s deg  built clear %.2f m (shift %.2f, slid %+.2f)  walk-behind %s  disc %+.2f (gated %s %+.2f)  y_base %s%s"
               % (s["id"], s["kind"], s["ribbon"] + "/" + s["direction"], s["base_xz"][0], s["y_base"]["value"], s["base_xz"][1],
-                 "/".join("%.1f" % p["face_bearing_deg"] for p in ps.plates_of(s)), s["checks"]["mesh_clear_m"], s["checks"]["mesh_shift_m"],
-                 s["checks"]["slid_m"], s["checks"]["gate_margin_m"], s["y_base"]["source"],
-                 ("  WARN " + "; ".join(s["checks"]["warnings"])) if s["checks"]["warnings"] else ""))
+                 "/".join("%.1f" % p["face_bearing_deg"] for p in ps.plates_of(s)), c["mesh_clear_m"], c["mesh_shift_m"],
+                 c["slid_m"], "%+.2f" % c["walk_behind_m"] if c.get("walk_behind_m") is not None else "-",
+                 c["gate_margin_m"], c.get("gate_ribbons", "all"), c.get("gate_margin_gated_m", c["gate_margin_m"]), s["y_base"]["source"],
+                 ("  WARN " + "; ".join(c["warnings"])) if c["warnings"] else ""))
     for s in out["skipped"]:
         print("[signs] skip %-11s %-20s v%-5d %s" % (s["id"], s["ribbon"], s["apex_vertex"], "; ".join(s["reasons"])))
     print("[signs] %s -> %s; %d verts, %d faces; normals %s; ground from %s (ROAD rejects %s); removed %d old; overrides %s; saved %s"

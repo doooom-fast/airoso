@@ -155,6 +155,29 @@
       ],
       "_note": "amber LPS-era sky (city-wide low-pressure sodium, 1984-2002)",
       "_doc": "Sky glow must match the lamps or the horizon reads as a different city. The writer default 1.0, 0.86, 0.66 is a warm-white LED-era sky; nohesi (Southern California freeway) ships 1.0, 0.7176, 0.2980 and la_canyons 255,183,76. density 0.22 / radius_km 6 / relative_position left at the writer defaults."
+    },
+    "grassfx": {
+      "_doc": "Kevin 2026-10-10 'add grassfx'. v1 = ONE look, weekly-mown irrigated suburban turf on both terrain tiles (parkway strips, median decks, front yards, Kiowa Dr park lawn), because CSP blades take the colour of the ground texel and the 1GRASS texture_override IS irrigated turf (mean sRGB 68,92,40). Right within ~10 m of the kerb and in the park; wrong on the reservoir slopes (annual oats/brome, gold straw late March to first rains = 8-9 months) in exactly the way the ground texture is already wrong - v1 adds no new lie and fixes none. Every key below is CSP grammar as shipped (ks_nordschleife own override, la_canyons A, vhr_phoenix, fn_bahrain); the writer's old [GRASS_FX_TEXTURE_0]/CONFIGURATION_0/BRIGHTNESS/HEALTH/grass_ks.dds grammar matched none of 90+ configs and is retired (a build now fails loud if those keys are set). mask 'open' = wiki spawn-everywhere preset -1/0/-1/1, chosen so blades certainly appear on first load (the MASK_MAIN formula is undocumented; both tiles are 100% grass so nothing is lost). shape_size 0.7-1.1: 0.7 is the fn_bahrain/vhr_phoenix dry-lawn floor (smaller = denser = costlier), 1.1 stays under the 1.2 cap so TreeFX median bushes (Bush 0.24-0.40) are not swallowed (la_canyons 'existing bushes'). shape_width 0.6 sits between dry 0.5 (Siracusa/thunderhill) and CSP's lush 1.0. tidy/cut 1->0.6/0.5 + TRIM_PERIOD THURSDAY = the mown idiom (Nords-own, la_canyons A, fn_bahrain). texture/texture_grid are the CSP-embedded highlands atlas, stated so the first drive also verifies the atlas v2 will use. LADDERS (config-only, regen + copy ini): too sparse/thin -> shape_size [0.6, 1.0]; too tall/dense -> [0.8, 1.1]; too uniform (golf course) -> add texture_groups [[{\"piece\": [4,1,2,2], \"size_mult\": [1.2,1.5], \"wind\": 0.5}]] + configurations {\"A\": {\"texture_base_chance\": 0.8, \"texture_group_chances\": [0.04]}} + adjustments [{\"materials\": [\"1GRASS_0_mat\",\"1GRASS_1_mat\"], \"map\": \"A\"}]; patchier -> mask 'default' (colour-gated colorado-2013 quartet) with mask_blur 1; neon under the sodium lamps at night -> texture_brightness 0.8 (static, darkens day too); off without losing the tuning -> enabled false. NOT this key: the dry straw slopes need a straw ground texture under the blades = loop.blend split + kn5 rebuild (see fleet/feedback/0045 deferred list D1).",
+      "mask": "open",
+      "shape_size": [
+        0.7,
+        1.1
+      ],
+      "shape_width": 0.6,
+      "shape_tidy": [
+        1,
+        0.6
+      ],
+      "shape_cut": [
+        1,
+        0.5
+      ],
+      "trim_period": "THURSDAY",
+      "texture": "grass_fx/highlands.dds",
+      "texture_grid": [
+        8,
+        3
+      ]
     }
   },
   "terrain": {

@@ -133,3 +133,32 @@ changes: `finished_centerline.json` stays in the kn5 frame for its kn5-reading c
 walking a line in a different frame than its mesh is the phantom-gate class (0008); this entry
 exists so the next person who sees a "clean" OBJ-gate run on a Blender-first track asks which
 frame it walked.
+
+## 2026-10-10 — GrassFX occluder allow-list: `BUILDINGS` → `BUILDING` prefix, `HOUSE` added (ledger 0045)
+
+`scripts/ac/ext_config.py` `OCCLUDE_PREFIXES` (airoso + the engine-july build-of-record copy,
+md5-identical) is the crash guard: a far-field or oversized mesh enrolled as a GrassFX occluder
+explodes the occlusion volume at session load and freezes the whole PC (shipped v0.12.1–v0.12.6).
+It is an allow-list of near-field, ground-seated solids and stays one.
+
+| | Before | After |
+|---|---|---|
+| building prefix | `BUILDINGS` (Sand Creek's plural) — Lake Murray V3's singular `BUILDING` mesh **not** matched, blades through every building pad | `BUILDING` — a prefix, so `BUILDINGS`, `BUILDING_a..` and `BUILDING` all match |
+| houses | no prefix — V3's `HOUSE` mesh skipped | `HOUSE` added (`WAREHOUSE` does not start with it; listed separately as before) |
+
+**Measured basis** (gate OBJ `k10-sd-v021/project/data/track.obj`, 2026-10-10): `BUILDING` 1,637
+verts, X −2174..452 / Z −1591..1774; `HOUSE` 10,335 verts, X −2078..2532 / Z −1740..1787 — both
+inside the 1ROAD lap extent. The V3 occluder envelope grows from 4,698 × 3,413 m / 140,338 verts
+(16.0 km²) to 4,805 × 3,527 m / ~152k verts (16.9 km²): still exactly the lap, nothing elevated,
+nothing far-field, against the v0.12.x failure's 24,000 × 1,450 m MOUNTAINS backdrop. Every dry-track
+author in the census lists building floors/walls (nohesi `?Building?`, Targa, PCH).
+
+**Why not a per-track add list.** The add list is the crash class; the only way to enrol a mesh
+stays the prefix table plus `tests/ac/test_ext_config_occluders.py` (which now pins `BUILDING`,
+`HOUSE` in and `LIGHTPOST_0` out). Review discipline unchanged: every ship diff shows the
+`OCCLUDING_MESHES` line, and a future far-field mesh named `HOUSE*` / `BUILDING*` would be
+auto-enrolled — the same class of review `BUILDINGS` already carried.
+
+Same commit: the `[GRASS_FX]` writer (`scripts/environment/treefx.py`) moves to the grammar every
+shipped CSP config uses and rejects unknown/retired keys; `lighting.grassfx = {"enabled": false, …}`
+takes the OFF branch. Not a gate change — recorded in ledger 0045 and `docs/TREEFX-FORMAT.md`.

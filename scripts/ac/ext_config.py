@@ -71,8 +71,12 @@ def generate(project_dir: str | Path) -> Path:
     # WAREHOUSE/ROOFS groups into façade variants (BRICK/STUCCO, WHMETAL, RFMETAL); list every variant so
     # the split stays occlusion-transparent (grass still doesn't grow through any building wall). CHAINLINK
     # fences are deliberately NOT occluders (see-through + thin), nor are POLE/WIRE/SIGNS.
+    # BUILDING/HOUSE: singular names from the Blender-authored loop tracks (Lake Murray V3); ground-seated
+    # footprints inside the lap (BUILDING 1.6k verts, HOUSE 10k verts, both within the 1ROAD extent), so
+    # near-field by the criterion above. 'BUILDING' is a prefix, so Sand Creek's plural BUILDINGS and any
+    # BUILDING_a.. split still match. WAREHOUSE does not start with HOUSE and is listed separately.
     OCCLUDE_PREFIXES = ("1ROAD", "1KERB", "1RUNOFF", "MARKINGS", "ROADTEXT",
-                        "BUILDINGS", "BRICK", "STUCCO", "WAREHOUSE", "WHMETAL",
+                        "BUILDING", "HOUSE", "BRICK", "STUCCO", "WAREHOUSE", "WHMETAL",
                         "ROOFS", "RFMETAL", "WATER")
     occluders = [g for g in groups if g.upper().startswith(OCCLUDE_PREFIXES)]
     # PREFIX matching everywhere, never exact: split_mesh_under_cap renames every over-cap mesh to
@@ -96,9 +100,15 @@ def generate(project_dir: str | Path) -> Path:
     # huge area (a 27 km network with 100+ grass tiles) that field is enormous and can exceed the GPU
     # watchdog -> whole-PC freeze (TDR). So it's OPT-IN per track via lighting.grassfx (default off for
     # safety on big tracks; small loops like Sand Creek can turn it on).
+    # lighting.grassfx is a bool OR a dict (the writer's tuning keys, see treefx.grassfx_block), gated
+    # by truthiness: an empty dict {} is OFF (documented gotcha); a tuned dict switches off with
+    # "enabled": false so the tuning is not lost.
     _gfx_raw = (cfg_raw.get("lighting", {}) or {}).get("grassfx", False)
-    grassfx_on = bool(_gfx_raw)
+    grassfx_on = bool(_gfx_raw) and (not isinstance(_gfx_raw, dict) or _gfx_raw.get("enabled", True))
     gfx_cfg = _gfx_raw if isinstance(_gfx_raw, dict) else {}
+    if grassfx_on and not groups:
+        print("  [ext_config] grassfx: no data/track.obj or environment.obj - GRASS lists are placeholders "
+              "(1GRASS); regenerate after the gate OBJ exists")
 
     # TreeFX: build_env (with scenery.treefx.enabled) writes data/treefx.json — real tree positions
     # grouped by config zone, ground-sampled + pavement/clearance-rejected the SAME way baked foliage
@@ -140,9 +150,10 @@ def generate(project_dir: str | Path) -> Path:
            "; Ref: github.com/ac-custom-shaders-patch/acc-extension-config/wiki",
            "; ============================================================================", ""]
     if grassfx_on:
-        # Nordschleife-style block (GRASS_MESHES/OCCLUDING_MESHES + SHAPE_SIZE + a texture group + one
-        # configuration block), bound to OUR mesh/material names. The occluder list stays the same
-        # crash-safe ALLOW-LIST computed above (a far-field/oversized mesh here freezes the PC).
+        # [GRASS_FX] in the grammar every shipped CSP config uses (GRASS_MATERIALS + GRASS_MESHES,
+        # OCCLUDING_MESHES, ORIGINAL_GRASS_MATERIALS, MASK_*, SHAPE_*; atlas / groups / configurations /
+        # adjustments only when the config asks), bound to OUR mesh/material names. The occluder list
+        # stays the same crash-safe ALLOW-LIST computed above (a far-field/oversized mesh freezes the PC).
         out += _tfxmod.grassfx_block(grass_meshes=grass_meshes, occluding_meshes=occluders,
                                      grass_materials=[f"{g}_mat" for g in grass_meshes], cfg=gfx_cfg)
     else:

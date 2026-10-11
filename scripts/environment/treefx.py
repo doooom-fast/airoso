@@ -43,6 +43,15 @@ a Mac with system python. ``build_env`` computes real positions + ground Y + the
 pavement/clearance rejection it uses for baked foliage, hands them to a :class:`TreeFXCollector`,
 and serialises ``data/treefx.json``; ``scripts/ac/ext_config`` renders the text list + the
 ``[TREES]`` / ``[GRASS_FX]`` sections into the track's ``extension/``.
+
+**GrassFX** (:func:`grassfx_block`) is written in the grammar every shipped CSP track config
+uses: ``[GRASS_FX]`` holds the lists (``GRASS_MATERIALS`` / ``GRASS_MESHES`` / ``OCCLUDING_MESHES`` /
+``ORIGINAL_GRASS_MATERIALS``), the atlas (``TEXTURE`` + ``TEXTURE_GRID``), the ground-texel mask
+(``MASK_*``) and the blade shape (``SHAPE_*``, ``TRIM_PERIOD``); extra blade shapes live in
+``[GRASS_FX_TEXTURE_GROUP_n]`` and per-material / per-area looks in ``[GRASS_FX_CONFIGURATION_A..D]``
+bound by ``[GRASS_FX_ADJUSTMENT_...]``. The earlier ``[GRASS_FX_TEXTURE_0]`` / ``[GRASS_FX_CONFIGURATION_0]``
+/ ``BRIGHTNESS`` / ``HEALTH`` / ``grass_fx/grass_ks.dds`` block matched no shipped config (ledger 0045)
+and is retired; a config that still sets those keys fails loud.
 """
 
 from __future__ import annotations
@@ -542,47 +551,376 @@ def trees_ext_section(list_files: Sequence[str], *, surface_materials: Sequence[
     return out
 
 
+# --------------------------------------------------------------------------------------------------
+# GrassFX — the grammar every shipped CSP track config uses (census of 73 third-party inis + 19 CSP
+# loaded/*.ini on this machine, 2026-10-10, fleet/feedback/0045): lists + atlas + mask + shape in
+# [GRASS_FX]; extra blade shapes in [GRASS_FX_TEXTURE_GROUP_N]; per-material / per-area looks in
+# [GRASS_FX_CONFIGURATION_A..D] bound by [GRASS_FX_ADJUSTMENT_...]. The previous writer's
+# [GRASS_FX_TEXTURE_0] / [GRASS_FX_CONFIGURATION_0] / BRIGHTNESS / HEALTH / grass_fx/grass_ks.dds
+# matched NONE of them (the .dds exists nowhere, not even inside dwrite.dll), so that grammar is
+# retired and a config that still sets it fails loud (L2) instead of silently drawing nothing.
+# --------------------------------------------------------------------------------------------------
+_GFX_HEADER = [
+    "; --- GrassFX: CSP 3D grass on the terrain tiles -------------------------------",
+    "; Grammar = the one every shipped CSP track config uses: lists + atlas + mask + shape in [GRASS_FX];",
+    "; optional [GRASS_FX_TEXTURE_GROUP_N], [GRASS_FX_CONFIGURATION_A..D], [GRASS_FX_ADJUSTMENT_...].",
+    "; GRASS_* / OCCLUDING_MESHES are OUR kn5 names. OCCLUDING_MESHES is an ALLOW-LIST of near-field,",
+    "; ground-seated solids only (road, kerbs, building + house footprints): a far-field or oversized",
+    "; mesh here busts the GPU watchdog (shipped v0.12.1-v0.12.6). Blades take the colour of the ground",
+    "; texel under them, so the look follows the 1GRASS texture. VERIFY IN-GAME.",
+]
+_GFX_DEFAULT_TEXTURE = "grass_fx/highlands.dds"   # the atlas embedded in CSP (dwrite.dll); no file on disk
+_GFX_DEFAULT_GRID = (8, 3)
+_GFX_RETIRED_TEXTURE = "grass_fx/grass_ks.dds"    # the old writer's default; exists nowhere
+# MASK quartet presets = (MAIN_THRESHOLD, RED_THRESHOLD, MIN_LUMINANCE, MAX_LUMINANCE). Every mask key is
+# about the GROUND texel under the blade (blades take its colour).
+_GFX_MASK_PRESETS = {
+    # colorado-2013's shipped quartet = the fleet's numbers since the first GrassFX block. Colour-gated,
+    # so a terrain texture that mixes dirt does not sprout grass on the dirt.
+    "default": (0.5, 0.05, 0.02, 0.35),
+    # the wiki's spawn-everywhere preset (la_canyons A, willow_springs): every texel of the listed grass
+    # grows blades. For meshes that are 100% grass; it removes any dependence on the undocumented
+    # MASK_MAIN_THRESHOLD formula.
+    "open": (-1, 0, -1, 1),
+}
+_GFX_MASK_COMMENT = {
+    "default": "; mask: colour-gated (colorado-2013 quartet) - blades only where the ground texel reads as grass",
+    "open": "; mask: spawn on every texel (wiki preset) - both listed tiles are 100% grass, no colour gating",
+}
+_GFX_MASK_KEYS = (("mask_main_threshold", "MASK_MAIN_THRESHOLD"),
+                  ("mask_red_threshold", "MASK_RED_THRESHOLD"),
+                  ("mask_min_luminance", "MASK_MIN_LUMINANCE"),
+                  ("mask_max_luminance", "MASK_MAX_LUMINANCE"))
+_GFX_SHAPE_KEYS = (("shape_width", "SHAPE_WIDTH"), ("shape_tidy", "SHAPE_TIDY"), ("shape_cut", "SHAPE_CUT"))
+_GFX_WEEKDAYS = ("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY")
+_GFX_LETTERS = ("A", "B", "C", "D")              # dwrite.dll carries exactly CONFIGURATION_A..D
+_GFX_MAX_GROUPS, _GFX_MAX_PIECES = 4, 8
+# Accepted config keys. Keys beginning with '_' are documentation and skipped; ANY other key — the
+# retired brightness / health included — is a ValueError naming it and this set (L2: a stale or
+# mistyped config must not silently produce a different track). Every fleet config today passes a
+# bare bool, so nothing breaks.
+_GFX_TOP_KEYS = frozenset({
+    "enabled", "original_grass_materials", "texture", "texture_grid",
+    "mask", "mask_main_threshold", "mask_red_threshold", "mask_min_luminance", "mask_max_luminance",
+    "mask_blur", "shape_size", "shape_width", "shape_tidy", "shape_cut", "trim_period",
+    "height_mult", "texture_brightness", "color_factor",
+    "texture_groups", "configurations", "adjustments"})
+_GFX_CONF_KEYS = frozenset({
+    "mask", "mask_main_threshold", "mask_red_threshold", "mask_min_luminance", "mask_max_luminance",
+    "mask_blur", "shape_size", "shape_width", "shape_tidy", "shape_cut", "trim_period", "height_mult",
+    "texture_base_chance", "texture_group_chances"})
+_GFX_PIECE_KEYS = frozenset({"piece", "chance", "size_mult", "wind"})
+_GFX_ADJ_KEYS = frozenset({"name", "map", "materials", "meshes", "rect"})
+_GFX_RECT_KEYS = frozenset({"center", "size", "angle", "fade"})
+
+
+def _gfx_err(where: str, msg: str) -> ValueError:
+    return ValueError(f"lighting.grassfx{where}: {msg}")
+
+
+def _gfx_check_keys(d: Any, allowed: frozenset, where: str) -> None:
+    if not isinstance(d, dict):
+        raise _gfx_err(where, f"expected an object, got {d!r}")
+    bad = sorted(str(k) for k in d if not str(k).startswith("_") and k not in allowed)
+    if bad:
+        raise _gfx_err(where, f"unknown key(s) {', '.join(bad)}; accepted: {', '.join(sorted(allowed))}")
+
+
+def _gfx_num(v: Any, key: str, where: str = "") -> float:
+    if isinstance(v, bool) or not isinstance(v, (int, float)):
+        raise _gfx_err(where, f"{key} must be a number, got {v!r}")
+    return v
+
+
+def _gfx_pair(v: Any, key: str, where: str = "") -> str:
+    """A GrassFX 'pair': a number, or a 2-list emitted ``a, b`` (CSP: a per-blade range, spanning
+    TRIM_PERIOD for the shape keys — just cut -> fully grown)."""
+    if isinstance(v, (list, tuple)):
+        if len(v) != 2:
+            raise _gfx_err(where, f"{key} must be a number or [a, b], got {v!r}")
+        return _fmt_list([_gfx_num(x, key, where) for x in v], 3)
+    return _fmt(_gfx_num(v, key, where), 3)
+
+
+def _gfx_dedup(names: Iterable[str]) -> list:
+    seen: set = set()
+    out: list = []
+    for n in names:
+        if n not in seen:
+            seen.add(n)
+            out.append(n)
+    return out
+
+
+def _gfx_names(v: Any, key: str, where: str = "") -> list:
+    if not isinstance(v, (list, tuple)) or not all(isinstance(s, str) and s for s in v):
+        raise _gfx_err(where, f"{key} must be a list of names, got {v!r}")
+    return _gfx_dedup(v)
+
+
+def _gfx_trim(v: Any, where: str = "") -> str:
+    """TRIM_PERIOD: a weekday name (emitted upper-cased; THURSDAY = the mown idiom) or a positive int
+    of days (365 = never mown)."""
+    if isinstance(v, str):
+        u = v.strip().upper()
+        if u not in _GFX_WEEKDAYS:
+            raise _gfx_err(where, f"trim_period must be a weekday name or an int of days, got {v!r}")
+        return u
+    if isinstance(v, bool) or not isinstance(v, int) or v <= 0:
+        raise _gfx_err(where, f"trim_period must be a weekday name or a positive int of days, got {v!r}")
+    return str(v)
+
+
+def _gfx_mask_lines(cfg: dict, *, where: str, top: bool) -> tuple:
+    """The MASK_* lines. ``mask`` names a preset; each ``mask_*`` key overrides its one line on top of
+    it. The top level always emits the full quartet (preset 'default' when unset); a configuration
+    emits only what it sets. Returns ``(preset_or_None, lines)``."""
+    preset = cfg.get("mask", "default" if top else None)
+    vals: dict = {}
+    if preset is not None:
+        if not isinstance(preset, str) or preset not in _GFX_MASK_PRESETS:
+            raise _gfx_err(where, f"mask must be one of {', '.join(sorted(_GFX_MASK_PRESETS))}, got {preset!r}")
+        vals = dict(zip((k for k, _ in _GFX_MASK_KEYS), _GFX_MASK_PRESETS[preset]))
+    for key, _ in _GFX_MASK_KEYS:
+        if key in cfg:
+            vals[key] = _gfx_num(cfg[key], key, where)
+    return preset, [f"{ini} = {_fmt(vals[key], 3)}" for key, ini in _GFX_MASK_KEYS if key in vals]
+
+
+def _gfx_shape_comment(cfg: dict) -> str:
+    tp = cfg.get("trim_period")
+    if isinstance(tp, str):
+        return "; shape: weekly-mown suburban turf; 'a, b' pairs span TRIM_PERIOD (just cut -> a week's growth)"
+    if tp is not None:
+        return f"; shape: mown every {tp} days; 'a, b' pairs span TRIM_PERIOD (just cut -> {tp} days' growth)"
+    return "; shape: blade size multiplier (1 = CSP default); 'a, b' pairs are a per-blade range"
+
+
+def _gfx_look_lines(cfg: dict, *, where: str, top: bool, n_groups: int) -> list:
+    """The look keys shared by [GRASS_FX] (``top``) and a [GRASS_FX_CONFIGURATION_X]: mask, blur,
+    shape, trim period, height, then the top-only (texture_brightness, color_factor) or the
+    configuration-only (texture_base_chance, texture_group_chances) tail."""
+    out: list = []
+    preset, mask = _gfx_mask_lines(cfg, where=where, top=top)
+    if top:
+        out.append(_GFX_MASK_COMMENT[preset])
+    out += mask
+    if "mask_blur" in cfg:
+        out.append(f"MASK_BLUR = {max(0, min(3, int(_gfx_num(cfg['mask_blur'], 'mask_blur', where))))}")
+    if top:
+        out.append(_gfx_shape_comment(cfg))
+        out.append(f"SHAPE_SIZE = {_gfx_pair(cfg.get('shape_size', 0.9), 'shape_size', where)}")
+    elif "shape_size" in cfg:
+        out.append(f"SHAPE_SIZE = {_gfx_pair(cfg['shape_size'], 'shape_size', where)}")
+    for key, ini in _GFX_SHAPE_KEYS:
+        if key in cfg:
+            out.append(f"{ini} = {_gfx_pair(cfg[key], key, where)}")
+    if "trim_period" in cfg:
+        out.append(f"TRIM_PERIOD = {_gfx_trim(cfg['trim_period'], where)}")
+    elif any(isinstance(cfg.get(k), (list, tuple)) for k in ("shape_size", "shape_width", "shape_tidy", "shape_cut")):
+        print(f"  [grassfx] note{where or ' [GRASS_FX]'}: a shape key is an 'a, b' pair but trim_period is "
+              "unset - pairs span TRIM_PERIOD, so CSP's default period applies")
+    if "height_mult" in cfg:
+        out.append(f"HEIGHT_MULT = {_gfx_pair(cfg['height_mult'], 'height_mult', where)}")
+    if top:
+        # shipped (fn_bahrain, Nords template, black_cat) but undocumented: passed through verbatim.
+        for key, ini in (("texture_brightness", "TEXTURE_BRIGHTNESS"), ("color_factor", "COLOR_FACTOR")):
+            if key in cfg:
+                out.append(f"{ini} = {_gfx_pair(cfg[key], key, where)}")
+    else:
+        if "texture_base_chance" in cfg:
+            out.append(f"TEXTURE_BASE_CHANCE = {_fmt(_gfx_num(cfg['texture_base_chance'], 'texture_base_chance', where), 3)}")
+        chances = cfg.get("texture_group_chances")
+        if chances is not None:
+            if not isinstance(chances, (list, tuple)):
+                raise _gfx_err(where, f"texture_group_chances must be a list of numbers, got {chances!r}")
+            if len(chances) > n_groups:
+                raise _gfx_err(where, f"texture_group_chances names {len(chances)} group(s) but only "
+                                      f"{n_groups} texture_groups are defined")
+            for i, c in enumerate(chances):
+                out.append(f"TEXTURE_GROUP_{i}_CHANCE = {_fmt(_gfx_num(c, 'texture_group_chances', where), 3)}")
+    return out
+
+
+def _gfx_group_lines(groups: Any) -> list:
+    """``[GRASS_FX_TEXTURE_GROUP_n]`` blocks: ``PIECE_k = col, row[, w, h]`` cells of the atlas (row 0 is
+    the base blades, so rows 1+ are the meaningful ones) with optional CHANCE / SIZE_MULT / WIND."""
+    if not isinstance(groups, (list, tuple)):
+        raise _gfx_err(".texture_groups", f"must be a list of groups (each a list of pieces), got {groups!r}")
+    if len(groups) > _GFX_MAX_GROUPS:
+        raise _gfx_err(".texture_groups", f"at most {_GFX_MAX_GROUPS} groups, got {len(groups)}")
+    out: list = []
+    for gi, pieces in enumerate(groups):
+        where = f".texture_groups[{gi}]"
+        if not isinstance(pieces, (list, tuple)) or not pieces:
+            raise _gfx_err(where, f"a group must be a non-empty list of pieces, got {pieces!r}")
+        if len(pieces) > _GFX_MAX_PIECES:
+            raise _gfx_err(where, f"at most {_GFX_MAX_PIECES} pieces per group, got {len(pieces)}")
+        out.append(f"[GRASS_FX_TEXTURE_GROUP_{gi}]")
+        for pi, piece in enumerate(pieces):
+            pw = f"{where}[{pi}]"
+            _gfx_check_keys(piece, _GFX_PIECE_KEYS, pw)
+            cell = piece.get("piece")
+            if not isinstance(cell, (list, tuple)) or len(cell) not in (2, 4):
+                raise _gfx_err(pw, f"piece must be [col, row] or [col, row, w, h], got {cell!r}")
+            out.append(f"PIECE_{pi} = {_fmt_list([_gfx_num(c, 'piece', pw) for c in cell], 3)}")
+            if "chance" in piece:
+                out.append(f"PIECE_{pi}_CHANCE = {_fmt(_gfx_num(piece['chance'], 'chance', pw), 3)}")
+            if "size_mult" in piece:
+                out.append(f"PIECE_{pi}_SIZE_MULT = {_gfx_pair(piece['size_mult'], 'size_mult', pw)}")
+            if "wind" in piece:
+                out.append(f"PIECE_{pi}_WIND = {_fmt(_gfx_num(piece['wind'], 'wind', pw), 3)}")
+        out.append("")
+    return out
+
+
+def _gfx_configuration_lines(confs: Any, n_groups: int) -> list:
+    if not isinstance(confs, dict):
+        raise _gfx_err(".configurations", f"must be an object keyed A..D, got {confs!r}")
+    out: list = []
+    seen: set = set()
+    for letter, body in confs.items():
+        up = str(letter).upper()
+        if up not in _GFX_LETTERS or up in seen:
+            raise _gfx_err(".configurations", f"letter {letter!r} must be one of A..D, used once "
+                                              "(dwrite.dll carries exactly CONFIGURATION_A..D)")
+        seen.add(up)
+        where = f".configurations[{up}]"
+        _gfx_check_keys(body, _GFX_CONF_KEYS, where)
+        out.append(f"[GRASS_FX_CONFIGURATION_{up}]")
+        out += _gfx_look_lines(body, where=where, top=False, n_groups=n_groups)
+        out.append("")
+    return out
+
+
+def _gfx_map(m: Any, letters: set, where: str) -> str:
+    """``MAP = A`` | ``A, 0.5`` | ``0.8, 0.5, 0.2, 0`` (weights for A..D). A letter must name a
+    configuration that exists."""
+    toks = [t.strip() for t in str(m).split(",")]
+    first = toks[0].upper()
+    if first in _GFX_LETTERS:
+        if first not in letters:
+            raise _gfx_err(where, f"map {m!r} names configuration {first}, which is not in configurations")
+        if len(toks) > 2:
+            raise _gfx_err(where, f"map must be 'A' | 'A, weight' | 'wA, wB, wC, wD', got {m!r}")
+        if len(toks) == 2:
+            float(toks[1])
+        return ", ".join([first] + toks[1:])
+    try:
+        ws = [float(t) for t in toks]
+    except ValueError:
+        raise _gfx_err(where, f"map must be 'A' | 'A, weight' | 'wA, wB, wC, wD', got {m!r}") from None
+    if len(ws) > len(_GFX_LETTERS):
+        raise _gfx_err(where, f"map has {len(ws)} weights; CSP has exactly {len(_GFX_LETTERS)} (A..D)")
+    for w, letter in zip(ws, _GFX_LETTERS):
+        if w and letter not in letters:
+            raise _gfx_err(where, f"map {m!r} weights configuration {letter}, which is not in configurations")
+    return ", ".join(toks)
+
+
+def _gfx_adjustment_lines(adjs: Any, letters: set) -> list:
+    """``[GRASS_FX_ADJUSTMENT_<name>]``: bind a configuration to materials, to meshes, or to a world
+    rectangle (kn5 frame — z-mirrored vs the gate OBJ; the writer does not convert)."""
+    if not isinstance(adjs, (list, tuple)):
+        raise _gfx_err(".adjustments", f"must be a list, got {adjs!r}")
+    out: list = []
+    for i, adj in enumerate(adjs):
+        where = f".adjustments[{i}]"
+        _gfx_check_keys(adj, _GFX_ADJ_KEYS, where)
+        targets = [k for k in ("materials", "meshes", "rect") if k in adj]
+        if len(targets) != 1:
+            raise _gfx_err(where, "exactly one of materials | meshes | rect is required")
+        if "map" not in adj:
+            raise _gfx_err(where, "map is required ('A' | 'A, 0.5' | 'wA, wB, wC, wD')")
+        name = adj.get("name", "...")
+        if not isinstance(name, str) or not name or "]" in name or "\n" in name:
+            raise _gfx_err(where, f"name must be a plain string, got {name!r}")
+        out.append(f"[GRASS_FX_ADJUSTMENT_{name}]")
+        target = targets[0]
+        if target == "materials":
+            out.append(f"MATERIALS = {', '.join(_gfx_names(adj['materials'], 'materials', where))}")
+        elif target == "meshes":
+            out.append(f"MESHES = {', '.join(_gfx_names(adj['meshes'], 'meshes', where))}")
+        else:
+            rect = adj["rect"]
+            rw = f"{where}.rect"
+            _gfx_check_keys(rect, _GFX_RECT_KEYS, rw)
+            center, size = rect.get("center"), rect.get("size")
+            if not isinstance(center, (list, tuple)) or len(center) != 3:
+                raise _gfx_err(rw, f"center must be [x, y, z] (kn5 frame), got {center!r}")
+            if not isinstance(size, (list, tuple)) or len(size) != 2:
+                raise _gfx_err(rw, f"size must be [w, d] metres, got {size!r}")
+            out.append(f"CENTER = {_fmt_list([_gfx_num(c, 'center', rw) for c in center], 3)}")
+            out.append(f"SIZE = {_fmt_list([_gfx_num(c, 'size', rw) for c in size], 3)}")
+            if "angle" in rect:
+                out.append(f"ANGLE = {_fmt(_gfx_num(rect['angle'], 'angle', rw), 3)}")
+            if "fade" in rect:
+                out.append(f"FADE = {_fmt(_gfx_num(rect['fade'], 'fade', rw), 3)}")
+        out.append(f"MAP = {_gfx_map(adj['map'], letters, where)}")
+        out.append("")
+    return out
+
+
 def grassfx_block(*, grass_meshes: Sequence[str], occluding_meshes: Sequence[str],
                   grass_materials: Optional[Sequence[str]] = None, cfg: Optional[dict] = None) -> list:
-    """The ``[GRASS_FX]`` block, modeled on the Nordschleife template: ``GRASS_MESHES`` /
-    ``OCCLUDING_MESHES`` bound to OUR mesh names, ``SHAPE_SIZE``, one ``[GRASS_FX_TEXTURE_0]`` group,
-    and one ``[GRASS_FX_CONFIGURATION_0]`` block bound to our grass material. Conservative defaults;
-    every key is documented in docs/TREEFX-FORMAT.md and must be VERIFIED IN-GAME (CSP keys shift)."""
-    cfg = cfg or {}
-    grass_materials = list(grass_materials or [f"{g}_mat" for g in grass_meshes])
-    shape_size = cfg.get("shape_size", 0.9)
-    mask_main = cfg.get("mask_main_threshold", 0.5)
-    mask_red = cfg.get("mask_red_threshold", 0.05)
-    lum_min = cfg.get("mask_min_luminance", 0.02)
-    lum_max = cfg.get("mask_max_luminance", 0.35)
-    texture = cfg.get("texture", "grass_fx/grass_ks.dds")
-    brightness = cfg.get("brightness", 1.0)
-    health = cfg.get("health", 1.0)
-    out = [
-        "; --- GrassFX: 3D procedural grass on the terrain (Nordschleife-style block) --",
-        "; GRASS_MESHES / OCCLUDING_MESHES are OUR mesh names; the occluder list is an ALLOW-LIST",
-        "; (ground-level solids only) — a far-field/oversized mesh here busts the GPU watchdog.",
-        "[GRASS_FX]",
-        f"GRASS_MESHES = {', '.join(grass_meshes)}",
-        f"OCCLUDING_MESHES = {', '.join(occluding_meshes)}",
-        f"MASK_MAIN_THRESHOLD = {_fmt(mask_main, 3)}",
-        f"MASK_RED_THRESHOLD = {_fmt(mask_red, 3)}",
-        f"MASK_MIN_LUMINANCE = {_fmt(lum_min, 3)}",
-        f"MASK_MAX_LUMINANCE = {_fmt(lum_max, 3)}",
-        f"SHAPE_SIZE = {_fmt(shape_size, 3)}          ; blade size multiplier (1 = CSP default)",
-        "",
-        "; Blade atlas group — the texture CSP samples for blade shapes/tint. CSP ships a default;",
-        "; override TEXTURE only with your own power-of-two atlas under extension/grass_fx/.",
-        "[GRASS_FX_TEXTURE_0]",
-        f"TEXTURE = {texture}",
-        "",
-        "; One configuration block binding OUR grass material to the blade look (density/tint).",
-        "[GRASS_FX_CONFIGURATION_0]",
-        f"MATERIALS = {', '.join(grass_materials)}",
-        f"BRIGHTNESS = {_fmt(brightness, 3)}",
-        f"HEALTH = {_fmt(health, 3)}",
-        "",
-    ]
+    """The GrassFX ext_config lines in the grammar every shipped CSP track config uses.
+
+    Always: a ``[GRASS_FX]`` block binding OUR grass twice (``GRASS_MATERIALS`` = the kn5 material
+    names, the key 23/23 third-party configs use; ``GRASS_MESHES`` = the mesh names, wiki-documented
+    and used by CSP's own Nordschleife override), ``OCCLUDING_MESHES`` (the caller's crash-safe
+    ALLOW-LIST, omitted when empty), ``ORIGINAL_GRASS_MATERIALS`` (a missing line hides every
+    ksGrass object), the four ``MASK_*`` lines and ``SHAPE_SIZE``. Only when ``cfg`` asks: the atlas
+    (``TEXTURE`` + ``TEXTURE_GRID``), ``MASK_BLUR``, ``SHAPE_WIDTH/TIDY/CUT``, ``TRIM_PERIOD``,
+    ``HEIGHT_MULT``, ``TEXTURE_BRIGHTNESS``, ``COLOR_FACTOR``, then ``[GRASS_FX_TEXTURE_GROUP_n]``,
+    ``[GRASS_FX_CONFIGURATION_A..D]`` and ``[GRASS_FX_ADJUSTMENT_...]`` blocks.
+
+    ``cfg`` is ``lighting.grassfx`` when it is a dict (``{}`` for a bare ``true``). Keys beginning with
+    ``_`` are documentation; any other unknown key — including the retired ``brightness`` / ``health``
+    and ``texture = grass_fx/grass_ks.dds`` — raises ``ValueError``. Comments are own-line ``;``
+    lines, ASCII only, never trailing a value. Full key table: docs/TREEFX-FORMAT.md. VERIFY IN-GAME.
+    """
+    cfg = dict(cfg or {})
+    _gfx_check_keys(cfg, _GFX_TOP_KEYS, "")
+    if cfg.get("texture") == _GFX_RETIRED_TEXTURE:
+        raise _gfx_err("", f"texture {_GFX_RETIRED_TEXTURE!r} is retired (it exists nowhere); omit texture "
+                           f"for CSP's built-in atlas or set {_GFX_DEFAULT_TEXTURE!r}")
+    grass_meshes = _gfx_dedup(grass_meshes)
+    grass_materials = _gfx_dedup(grass_materials or [f"{g}_mat" for g in grass_meshes])
+    occluders = _gfx_dedup(occluding_meshes)
+
+    out = list(_GFX_HEADER)
+    out += ["[GRASS_FX]",
+            f"GRASS_MATERIALS = {', '.join(grass_materials)}",
+            f"GRASS_MESHES = {', '.join(grass_meshes)}"]
+    if occluders:   # fn_bahrain / ks_black_cat_county ship none; never an empty 'OCCLUDING_MESHES ='
+        out.append(f"OCCLUDING_MESHES = {', '.join(occluders)}")
+    original = _gfx_names(cfg.get("original_grass_materials", []), "original_grass_materials")
+    out.append(("ORIGINAL_GRASS_MATERIALS = " + ", ".join(original)).rstrip())
+
+    groups = cfg.get("texture_groups") or []
+    texture = cfg.get("texture")
+    if texture is None and groups:
+        texture = _GFX_DEFAULT_TEXTURE
+        print(f"  [grassfx] note: texture_groups set without texture - defaulting to {_GFX_DEFAULT_TEXTURE} "
+              f"{_GFX_DEFAULT_GRID[0]}x{_GFX_DEFAULT_GRID[1]} (the piece coordinates index that atlas)")
+    if texture is not None:
+        if not isinstance(texture, str) or not texture:
+            raise _gfx_err("", f"texture must be a path string, got {texture!r}")
+        grid = cfg.get("texture_grid", list(_GFX_DEFAULT_GRID))
+        if not isinstance(grid, (list, tuple)) or len(grid) != 2:
+            raise _gfx_err("", f"texture_grid must be [cols, rows], got {grid!r}")
+        out.append(f"TEXTURE = {texture}")
+        out.append(f"TEXTURE_GRID = {_fmt_list([_gfx_num(g, 'texture_grid') for g in grid], 3)}")
+    elif "texture_grid" in cfg:
+        raise _gfx_err("", "texture_grid needs texture (TEXTURE_GRID is never emitted alone)")
+
+    out += _gfx_look_lines(cfg, where="", top=True, n_groups=len(groups))
+    out.append("")
+    out += _gfx_group_lines(groups)
+    confs = cfg.get("configurations") or {}
+    out += _gfx_configuration_lines(confs, len(groups))
+    out += _gfx_adjustment_lines(cfg.get("adjustments") or [],
+                                 {str(k).upper() for k in confs})
     return out
 
 

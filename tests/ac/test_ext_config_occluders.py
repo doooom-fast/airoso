@@ -20,8 +20,8 @@ from scripts.ac import ext_config
 
 ALL_GROUPS = [
     "1ROAD_main", "1KERB_l", "1RUNOFF_c", "MARKINGS", "ROADTEXT", "1GRASS",
-    "BUILDINGS", "BRICK", "STUCCO", "WAREHOUSE", "WHMETAL", "ROOFS", "RFMETAL", "WATER",
-    "TREES", "BUSHES", "LIGHTS", "POLE", "WIRE", "SIGNS", "SIGNPOST", "CHAINLINK",
+    "BUILDINGS", "BUILDING", "HOUSE", "BRICK", "STUCCO", "WAREHOUSE", "WHMETAL", "ROOFS", "RFMETAL", "WATER",
+    "TREES", "BUSHES", "LIGHTS", "LIGHTPOST_0", "POLE", "WIRE", "SIGNS", "SIGNPOST", "CHAINLINK",
     "MOUNTAINS", "HIGHWAY", "HWYSTRUCT", "CONTAINER",
 ]
 
@@ -33,7 +33,7 @@ def _generate(groups, *, grassfx=True):
     # network its occlusion field busts the GPU watchdog (whole-PC freeze), so the default is OFF.
     (d / "track.config.json").write_text(json.dumps({"slug": "t", "lighting": {"grassfx": grassfx}}))
     (d / "data" / "environment.obj").write_text("\n".join(f"o {g}" for g in groups) + "\n")
-    return ext_config.generate(d).read_text()
+    return ext_config.generate(d).read_text(encoding="utf-8")
 
 
 def _occluding_line(groups):
@@ -45,8 +45,9 @@ def _occluding_line(groups):
 
 def test_building_wall_variants_all_occlude():
     occ = set(_occluding_line(ALL_GROUPS))
-    # every wall variant must occlude (grass never grows through a building wall)
-    for wall in ("BUILDINGS", "BRICK", "STUCCO", "WAREHOUSE", "WHMETAL"):
+    # every wall variant must occlude (grass never grows through a building wall). BUILDING / HOUSE are
+    # the Blender-authored loop tracks' singular footprints (Lake Murray V3): near-field, ground-seated.
+    for wall in ("BUILDINGS", "BUILDING", "HOUSE", "BRICK", "STUCCO", "WAREHOUSE", "WHMETAL"):
         assert wall in occ, f"{wall} wall must be a GrassFX occluder"
 
 
@@ -54,7 +55,7 @@ def test_farfield_foliage_and_thin_props_never_occlude():
     occ = set(_occluding_line(ALL_GROUPS))
     # the crash class: these MUST stay out of the occluder list
     for banned in ("MOUNTAINS", "HIGHWAY", "HWYSTRUCT", "TREES", "BUSHES",
-                   "LIGHTS", "POLE", "WIRE", "SIGNS", "SIGNPOST", "CHAINLINK"):
+                   "LIGHTS", "LIGHTPOST_0", "POLE", "WIRE", "SIGNS", "SIGNPOST", "CHAINLINK"):
         assert banned not in occ, f"{banned} must NOT be a GrassFX occluder (PC-freeze risk / cosmetic)"
 
 
@@ -64,3 +65,16 @@ def test_grassfx_defaults_off_and_emits_no_occluders():
     txt = _generate(ALL_GROUPS, grassfx=False)
     assert "[GRASS_FX]" not in txt
     assert "OCCLUDING_MESHES" not in txt
+
+
+def test_grassfx_tuned_dict_switches_off_with_enabled_false():
+    # a tuned dict keeps its tuning when switched off: "enabled": false takes the OFF branch exactly like
+    # false does (an EMPTY dict {} is also OFF, by truthiness - the documented gotcha).
+    txt = _generate(ALL_GROUPS, grassfx={"enabled": False, "mask": "open"})
+    assert "[GRASS_FX]" not in txt
+    assert "OCCLUDING_MESHES" not in txt
+    assert "GrassFX DISABLED" in txt
+    assert "[GRASS_FX]" not in _generate(ALL_GROUPS, grassfx={})
+    # and the same dict with enabled true (or absent) is ON with its tuning applied
+    on = _generate(ALL_GROUPS, grassfx={"enabled": True, "mask": "open"})
+    assert "[GRASS_FX]" in on and "MASK_MAIN_THRESHOLD = -1" in on

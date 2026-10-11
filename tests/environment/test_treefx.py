@@ -7,7 +7,8 @@ Coverage:
   - trees.txt line format: exact field order, ';' separators, degrees, simple vs extended forms.
   - configure: directive lines.
   - the [TREES] ext block is well-formed (LIST_N, SURFACE_MATERIALS).
-  - the [GRASS_FX] block carries our mesh/material names + SHAPE_SIZE + texture + configuration.
+  - the [GRASS_FX] block: shipped-CSP grammar, our mesh + material names, mask presets, the V3
+    golden, groups / configurations / adjustments, loud rejection of unknown and retired keys.
   - density INCREASES with elevation on a ramp fixture.
   - the creek band selects ONLY near-water positions.
   - N/E aspect adds density; round-trip JSON is stable.
@@ -78,18 +79,140 @@ def test_trees_ext_section_well_formed():
 
 
 # ----------------------------------------------------------------------------- [GRASS_FX] block ---
+# The grammar every shipped CSP track config uses (ledger 0045): lists + atlas + mask + shape in
+# [GRASS_FX], optional TEXTURE_GROUP_n / CONFIGURATION_A..D / ADJUSTMENT_... blocks. The old
+# [GRASS_FX_TEXTURE_0] / CONFIGURATION_0 / BRIGHTNESS / HEALTH / grass_ks.dds block matched no config
+# on this machine and must never come back.
+V3_GRASSFX_CFG = {
+    "_doc": "documentation keys are skipped",
+    "mask": "open", "shape_size": [0.7, 1.1], "shape_width": 0.6, "shape_tidy": [1, 0.6],
+    "shape_cut": [1, 0.5], "trim_period": "THURSDAY",
+    "texture": "grass_fx/highlands.dds", "texture_grid": [8, 3],
+}
+V3_GRASSFX_INI = (
+    "; --- GrassFX: CSP 3D grass on the terrain tiles -------------------------------\n"
+    "; Grammar = the one every shipped CSP track config uses: lists + atlas + mask + shape in [GRASS_FX];\n"
+    "; optional [GRASS_FX_TEXTURE_GROUP_N], [GRASS_FX_CONFIGURATION_A..D], [GRASS_FX_ADJUSTMENT_...].\n"
+    "; GRASS_* / OCCLUDING_MESHES are OUR kn5 names. OCCLUDING_MESHES is an ALLOW-LIST of near-field,\n"
+    "; ground-seated solids only (road, kerbs, building + house footprints): a far-field or oversized\n"
+    "; mesh here busts the GPU watchdog (shipped v0.12.1-v0.12.6). Blades take the colour of the ground\n"
+    "; texel under them, so the look follows the 1GRASS texture. VERIFY IN-GAME.\n"
+    "[GRASS_FX]\n"
+    "GRASS_MATERIALS = 1GRASS_0_mat, 1GRASS_1_mat\n"
+    "GRASS_MESHES = 1GRASS_0, 1GRASS_1\n"
+    "OCCLUDING_MESHES = 1KERB_sidewalk, 1ROAD_road, BUILDING, HOUSE, MARKINGS_0, MARKINGS_1\n"
+    "ORIGINAL_GRASS_MATERIALS =\n"
+    "TEXTURE = grass_fx/highlands.dds\n"
+    "TEXTURE_GRID = 8, 3\n"
+    "; mask: spawn on every texel (wiki preset) - both listed tiles are 100% grass, no colour gating\n"
+    "MASK_MAIN_THRESHOLD = -1\n"
+    "MASK_RED_THRESHOLD = 0\n"
+    "MASK_MIN_LUMINANCE = -1\n"
+    "MASK_MAX_LUMINANCE = 1\n"
+    "; shape: weekly-mown suburban turf; 'a, b' pairs span TRIM_PERIOD (just cut -> a week's growth)\n"
+    "SHAPE_SIZE = 0.7, 1.1\n"
+    "SHAPE_WIDTH = 0.6\n"
+    "SHAPE_TIDY = 1, 0.6\n"
+    "SHAPE_CUT = 1, 0.5\n"
+    "TRIM_PERIOD = THURSDAY\n"
+)
+
+
+def _gfx(cfg=None, *, grass=("1GRASS", "1LAWN"), occ=("1ROAD_main", "1KERB_l", "BUILDINGS"), mats=None):
+    return tfx.grassfx_block(grass_meshes=list(grass), occluding_meshes=list(occ),
+                             grass_materials=mats, cfg=cfg)
+
+
 def test_grassfx_block_binds_our_meshes_and_has_required_keys():
-    out = tfx.grassfx_block(grass_meshes=["1GRASS", "1LAWN"],
-                            occluding_meshes=["1ROAD_main", "1KERB_l", "BUILDINGS"])
+    out = _gfx()
     text = "\n".join(out)
     assert "[GRASS_FX]" in out
-    assert "GRASS_MESHES = 1GRASS, 1LAWN" in out
+    assert "GRASS_MATERIALS = 1GRASS_mat, 1LAWN_mat" in out     # kn5 material names (23/23 shipped configs)
+    assert "GRASS_MESHES = 1GRASS, 1LAWN" in out                 # mesh names (wiki; Nords-own override)
     assert "OCCLUDING_MESHES = 1ROAD_main, 1KERB_l, BUILDINGS" in out
-    assert any(l.startswith("SHAPE_SIZE = ") for l in out)
-    assert "[GRASS_FX_TEXTURE_0]" in out
-    assert "[GRASS_FX_CONFIGURATION_0]" in out
-    # the configuration block binds our grass MATERIALS (mesh + _mat) by default
-    assert "MATERIALS = 1GRASS_mat, 1LAWN_mat" in text
+    assert "ORIGINAL_GRASS_MATERIALS =" in out                   # a MISSING line hides every ksGrass object
+    assert "SHAPE_SIZE = 0.9" in out                             # bare-bool fleet default, byte-stable
+    # the default mask quartet = colorado-2013's shipped numbers, colour-gated
+    assert "MASK_MAIN_THRESHOLD = 0.5" in out and "MASK_RED_THRESHOLD = 0.05" in out
+    assert "MASK_MIN_LUMINANCE = 0.02" in out and "MASK_MAX_LUMINANCE = 0.35" in out
+    assert out[-1] == ""                                         # ends with the blank separator
+    # the retired grammar never comes back, and no TEXTURE line without a config asking for one
+    # (checked on the value/section lines: the header comment legitimately names TEXTURE_GROUP_N)
+    values = "\n".join(l for l in out if not l.startswith(";"))
+    for dead in ("TEXTURE", "GRASS_FX_TEXTURE_0", "GRASS_FX_CONFIGURATION_0", "BRIGHTNESS", "HEALTH", "grass_ks"):
+        assert dead not in values, dead
+    assert "grass_ks" not in text
+    # comments are own-line ';' lines only - never trailing a value
+    assert not any(";" in l for l in out if l and not l.startswith(";"))
+
+
+def test_grassfx_v3_dict_is_the_golden_ini():
+    out = _gfx(V3_GRASSFX_CFG, grass=("1GRASS_0", "1GRASS_1"),
+               occ=("1KERB_sidewalk", "1ROAD_road", "BUILDING", "HOUSE", "MARKINGS_0", "MARKINGS_1"),
+               mats=["1GRASS_0_mat", "1GRASS_1_mat"])
+    assert "\n".join(out) == V3_GRASSFX_INI
+
+
+def test_grassfx_open_mask_preset_and_overrides():
+    out = _gfx({"mask": "open"})
+    assert "MASK_MAIN_THRESHOLD = -1" in out and "MASK_MAX_LUMINANCE = 1" in out
+    assert "MASK_RED_THRESHOLD = 0" in out and "MASK_MIN_LUMINANCE = -1" in out
+    # a single mask_* key overrides its one line on top of the preset
+    out = _gfx({"mask": "open", "mask_max_luminance": 0.18, "mask_blur": 7})
+    assert "MASK_MAIN_THRESHOLD = -1" in out and "MASK_MAX_LUMINANCE = 0.18" in out
+    assert "MASK_BLUR = 3" in out                                # clamped 0..3
+
+
+def test_grassfx_groups_configurations_and_material_adjustment():
+    cfg = {"texture_groups": [[{"piece": [4, 1, 2, 2], "size_mult": [1.2, 1.5], "wind": 0.5}]],
+           "configurations": {"A": {"texture_base_chance": 0.8, "texture_group_chances": [0.04]}},
+           "adjustments": [{"materials": ["1GRASS_0_mat", "1GRASS_1_mat"], "map": "A"}]}
+    out = _gfx(cfg)
+    text = "\n".join(out)
+    assert "[GRASS_FX_TEXTURE_GROUP_0]" in out
+    assert "PIECE_0 = 4, 1, 2, 2" in out
+    assert "PIECE_0_SIZE_MULT = 1.2, 1.5" in out and "PIECE_0_WIND = 0.5" in out
+    assert "PIECE_0_CHANCE" not in text                          # unset -> CSP weight 1
+    assert "[GRASS_FX_CONFIGURATION_A]" in out
+    assert "TEXTURE_BASE_CHANCE = 0.8" in out and "TEXTURE_GROUP_0_CHANCE = 0.04" in out
+    assert "[GRASS_FX_ADJUSTMENT_...]" in out                   # default name = CSP auto-index
+    assert "MATERIALS = 1GRASS_0_mat, 1GRASS_1_mat" in out and "MAP = A" in out
+    # groups without a texture default to the CSP-embedded highlands atlas (the piece coords index it)
+    assert "TEXTURE = grass_fx/highlands.dds" in out and "TEXTURE_GRID = 8, 3" in out
+    # TEXTURE_BASE_CHANCE is a configuration key, never accepted at [GRASS_FX] top level
+    assert not any(l.startswith("TEXTURE_BASE_CHANCE") for l in out[:out.index("[GRASS_FX_CONFIGURATION_A]")])
+
+
+def test_grassfx_rect_adjustment():
+    cfg = {"configurations": {"B": {"shape_size": [0.6, 1.0], "trim_period": 365}},
+           "adjustments": [{"name": "lake_basin", "map": "B, 0.5",
+                            "rect": {"center": [120.5, 20, -300], "size": [800, 600], "angle": 12, "fade": 15}}]}
+    out = _gfx(cfg)
+    i = out.index("[GRASS_FX_ADJUSTMENT_lake_basin]")
+    assert out[i + 1:i + 6] == ["CENTER = 120.5, 20, -300", "SIZE = 800, 600", "ANGLE = 12", "FADE = 15",
+                                "MAP = B, 0.5"]
+    assert "[GRASS_FX_CONFIGURATION_B]" in out and "TRIM_PERIOD = 365" in out
+
+
+def test_grassfx_rejects_unknown_retired_and_unbound_keys():
+    for bad in ({"brightness": 1}, {"health": 1}, {"shape_sise": 1},
+                {"texture": "grass_fx/grass_ks.dds"},
+                {"configurations": {"E": {}}},                          # dwrite.dll carries exactly A..D
+                {"adjustments": [{"materials": ["x"], "map": "A"}]},    # A not defined
+                {"mask": "lush"}, {"texture_grid": [8, 3]}):            # unknown preset; grid without texture
+        try:
+            _gfx(bad)
+        except ValueError:
+            continue
+        raise AssertionError(f"{bad} must raise ValueError")
+    # documentation keys are skipped silently
+    assert "[GRASS_FX]" in _gfx({"_doc": "x"})
+
+
+def test_grassfx_no_occluder_line_when_list_is_empty():
+    out = _gfx(occ=())
+    assert "[GRASS_FX]" in out
+    assert not any(l.startswith("OCCLUDING_MESHES") for l in out)  # never an empty 'OCCLUDING_MESHES ='
 
 
 # --------------------------------------------------------------------------------- density model ---

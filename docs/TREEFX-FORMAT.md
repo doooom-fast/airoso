@@ -94,37 +94,74 @@ SURFACE_MESHES = 1GRASS
 
 ## `ext_config.ini` `[GRASS_FX]` section
 
-Modeled on the Nordschleife template, bound to **our** mesh/material names. Gated per-track by
-`lighting.grassfx` (default **off** — over a huge network the occlusion field can bust the GPU
-watchdog and freeze the PC).
+Written in the grammar **every shipped CSP track config uses** (census 2026-10-10 of 73 third-party
+inis + 19 CSP-bundled `loaded/*.ini` on this machine, ledger 0045), bound to **our** mesh/material
+names. Gated per-track by `lighting.grassfx` (default **off** — over a huge network the occlusion
+field can bust the GPU watchdog and freeze the PC): `true` = the minimal block below; a dict = the
+tuning keys in the table; `{}` is OFF (truthiness — the documented gotcha); `{"enabled": false, …}`
+switches a tuned dict off without losing it. Keys beginning with `_` are documentation; **any other
+unknown key fails the build** (L2) — including the retired `brightness`, `health` and
+`texture = grass_fx/grass_ks.dds`.
+
+What `lighting.grassfx = true` emits (the la_canyons / fn_bahrain minimal form; no `TEXTURE` line
+means CSP's built-in atlas):
 
 ```ini
 [GRASS_FX]
+GRASS_MATERIALS = 1GRASS_mat
 GRASS_MESHES = 1GRASS
-OCCLUDING_MESHES = 1ROAD_main, 1ROAD_shoulder, 1KERB_corners, BUILDINGS
+OCCLUDING_MESHES = 1ROAD_main, 1ROAD_shoulder, 1KERB_corners, BUILDING, HOUSE
+ORIGINAL_GRASS_MATERIALS =
+; mask: colour-gated (colorado-2013 quartet) - blades only where the ground texel reads as grass
 MASK_MAIN_THRESHOLD = 0.5
 MASK_RED_THRESHOLD = 0.05
 MASK_MIN_LUMINANCE = 0.02
 MASK_MAX_LUMINANCE = 0.35
+; shape: blade size multiplier (1 = CSP default); 'a, b' pairs are a per-blade range
 SHAPE_SIZE = 0.9
-
-[GRASS_FX_TEXTURE_0]
-TEXTURE = grass_fx/grass_ks.dds
-
-[GRASS_FX_CONFIGURATION_0]
-MATERIALS = 1GRASS_mat
-BRIGHTNESS = 1
-HEALTH = 1
 ```
 
-| Key | Meaning |
-|-----|---------|
-| `GRASS_MESHES` | Our grass mesh names (`1GRASS*` / `1LAWN*`); CSP grows blades over these. |
-| `OCCLUDING_MESHES` | **ALLOW-LIST** of ground-level solids the grass must not grow through (road/kerb/runoff/building walls). Never add far-field/oversized meshes (mountains, elevated decks) or thin props/foliage — an over-broad list explodes the occlusion volume at load and freezes the PC (shipped bug, v0.12.x). |
-| `MASK_*` | Where grass grows, keyed off the grass texture luminance/red channel. |
-| `SHAPE_SIZE` | Blade size multiplier (`1` = CSP default). |
-| `[GRASS_FX_TEXTURE_0]` `TEXTURE` | Blade atlas CSP samples for blade shapes/tint. CSP ships a default; override only with your own power-of-two atlas under `extension/grass_fx/`. |
-| `[GRASS_FX_CONFIGURATION_0]` | Binds our grass `MATERIALS` to the blade look (`BRIGHTNESS`, `HEALTH`). |
+A tuned dict (Lake Murray V3: one look, weekly-mown irrigated turf, mask opened because both
+terrain tiles are 100% grass):
+
+```jsonc
+"lighting": {
+  "grassfx": {
+    "mask": "open",                       // -1 / 0 / -1 / 1: blades on every texel of the listed grass
+    "shape_size": [0.7, 1.1],             // 'a, b' pairs span TRIM_PERIOD (just cut -> fully grown)
+    "shape_width": 0.6, "shape_tidy": [1, 0.6], "shape_cut": [1, 0.5],
+    "trim_period": "THURSDAY",
+    "texture": "grass_fx/highlands.dds", "texture_grid": [8, 3]
+  }
+}
+```
+
+| Ini key | Config key | Meaning |
+|-----|-----|---------|
+| `GRASS_MATERIALS` | — (derived) | Our grass **material** names (`<mesh>_mat`); the key 23/23 third-party configs use. Always emitted. |
+| `GRASS_MESHES` | — (derived) | Our grass **mesh** names (`1GRASS*` / `1LAWN*`); wiki-documented, CSP's own Nordschleife override uses it. Same geometry bound a second way. Always emitted. |
+| `OCCLUDING_MESHES` | — (allow-list) | **ALLOW-LIST** of ground-seated solids the grass must not grow through (road / kerb / runoff / markings / building + house footprints / water), from `OCCLUDE_PREFIXES` in `ext_config.py`. Never far-field/oversized meshes (mountains, elevated decks) or thin props/foliage — an over-broad list explodes the occlusion volume at load and freezes the PC (shipped bug, v0.12.x). Omitted when empty; **no per-track add list exists**, by design. |
+| `ORIGINAL_GRASS_MATERIALS` | `original_grass_materials` | Stock ksGrass-shader grass to hide while GrassFX is on. Default empty — but the line is always written: a *missing* line hides every ksGrass object. |
+| `TEXTURE`, `TEXTURE_GRID` | `texture`, `texture_grid` | Blade atlas + its `cols, rows`. Only when set; `grass_fx/highlands.dds` 8×3 is embedded in CSP (no file on disk). A custom atlas ships beside `ext_config.ini`; the writer copies nothing. Set automatically (with a note) when `texture_groups` is used. |
+| `MASK_MAIN_THRESHOLD` / `MASK_RED_THRESHOLD` / `MASK_MIN_LUMINANCE` / `MASK_MAX_LUMINANCE` | `mask` preset + `mask_*` | Where blades spawn, keyed off the **ground texel** (blades take its colour). Preset `default` = 0.5 / 0.05 / 0.02 / 0.35 (colorado-2013, colour-gated); `open` = −1 / 0 / −1 / 1 (wiki spawn-everywhere). Each `mask_*` overrides its one line on top of the preset. |
+| `MASK_BLUR` | `mask_blur` | 0–3, clamped. Softens the mask for texture-driven patchiness. |
+| `SHAPE_SIZE` | `shape_size` | Blade size (`1` = CSP default; fleet default `0.9`). Smaller = denser = costlier; keep ≤ ~1.2 where TreeFX bushes stand (la_canyons: tall blades swallow baked shrubs). |
+| `SHAPE_WIDTH` / `SHAPE_TIDY` / `SHAPE_CUT` | `shape_width` / `shape_tidy` / `shape_cut` | Blade width (dry 0.5 … lush 1.0); tidy and cut `1 → 0.5` with a weekday `TRIM_PERIOD` = the mown idiom. |
+| `TRIM_PERIOD` | `trim_period` | Weekday name (`THURSDAY`, mown weekly) or days (`365`, never). The shape pairs span it. |
+| `HEIGHT_MULT`, `TEXTURE_BRIGHTNESS`, `COLOR_FACTOR` | `height_mult`, `texture_brightness`, `color_factor` | Shipped (fn_bahrain, Nords template, black_cat) but undocumented — passed through verbatim, **VERIFY IN-GAME**. `TEXTURE_BRIGHTNESS` is the only track-side lever if lamp-lit blades read neon at night (static; darkens day too). |
+| `[GRASS_FX_TEXTURE_GROUP_n]` `PIECE_k = c, r[, w, h]`, `_CHANCE`, `_SIZE_MULT`, `_WIND` | `texture_groups: [[{piece, chance?, size_mult?, wind?}, …], …]` | Extra blade shapes from the atlas (row 0 = base blades, so rows 1+ matter; `(4,1,2,2)` is highlands' long-grass tuft). ≤ 4 groups × ≤ 8 pieces. |
+| `[GRASS_FX_CONFIGURATION_A..D]` | `configurations: {"A": {…}}` | A look: any subset of the mask / blur / shape / trim / height keys plus `texture_base_chance` and `texture_group_chances: [...]` (→ `TEXTURE_BASE_CHANCE`, `TEXTURE_GROUP_n_CHANCE`). Letters A–D only (dwrite.dll carries exactly four). Chance keys are **not** accepted at `[GRASS_FX]` top level — to thin the base look, bind a configuration to all grass materials. |
+| `[GRASS_FX_ADJUSTMENT_<name>]` `MATERIALS` / `MESHES` / `CENTER, SIZE, ANGLE, FADE` + `MAP` | `adjustments: [{name?, map, materials | meshes | rect: {center, size, angle?, fade?}}]` | Binds a configuration by material, by mesh, or by a world rectangle (**kn5 frame** — z-mirrored vs the gate OBJ; the writer does not convert). `map` = `"A"` \| `"A, 0.5"` \| `"wA, wB, wC, wD"`; a letter must exist in `configurations`. Default name `...` = CSP auto-index. |
+
+**Retired, never emitted:** `[GRASS_FX_TEXTURE_0]`, `[GRASS_FX_CONFIGURATION_0]`, `MATERIALS` inside
+a configuration, `BRIGHTNESS`, `HEALTH`, `grass_fx/grass_ks.dds` — the earlier writer's block, which
+matched none of the 90+ configs read and whose texture existed nowhere (not even inside
+`dwrite.dll`), so enabling it drew CSP defaults at best. The six installed Colorado inis still carry
+it until their next regeneration.
+
+**Known degradation:** `ext_config` reads the *previous* run's `data/track.obj` (the gate OBJ is
+rewritten after it); with no OBJ at all the lists are placeholders (`1GRASS`) and the writer now says
+so loudly. Regenerate after the gate OBJ exists.
 
 ---
 
@@ -138,7 +175,7 @@ HEALTH = 1
     "surface_materials": null,           // override; null => ext_config derives grass+road materials
     "surface_meshes": [],                // optional [TREES] SURFACE_MESHES
     "compiled_list": "compiled_trees.bin",  // optional; emitted commented-out
-    "grassfx": { "shape_size": 0.9, "texture": "grass_fx/grass_ks.dds" },  // optional GrassFX tuning
+    // (no "grassfx" here: ext_config never reads it; lighting.grassfx is the ONLY GrassFX gate)
 
     "zones": {                           // keyed by name; a build_env placement `source` -> one zone
       "<zone-name>": {

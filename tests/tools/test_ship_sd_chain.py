@@ -69,7 +69,7 @@ def test_safety_rails():
     assert '(cd "$ENG" && python -m scripts.ac.verify_kn5' not in TEXT and '(cd "$ENG" && python -m scripts.ac.track_folder' not in TEXT
     assert '(cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ")' in TEXT
     assert '(cd "$AIROSO" && python -m scripts.ac.track_folder "$PROJ")' in TEXT
-    assert 'cp "$AC/$SLUG/ai/fast_lane.ai"' in TEXT and '"$B/ai/"' not in TEXT, "the July copy moved to the ship stage (root ai/ no longer exists)"
+    assert 'cp "$JULY_AI/fast_lane.ai"' in TEXT and '"$B/ai/"' not in TEXT, "the July copy moved to the ship stage (root ai/ no longer exists)"
     assert "--allow-missing-kn5" not in TEXT, "the ship chain never packs with a missing kn5"
     assert 'WS_PROJ="$WS/project"' in TEXT and 'PROJ="${SHIP_PROJ:-$WS_PROJ}"' in TEXT
     assert "RACE_BYTES" in TEXT and "20000000" in TEXT, "race kn5 size cap"
@@ -163,10 +163,10 @@ def test_sync_back_and_install_are_unreachable_from_a_scratch_project():
     n_ac = 0
     for pos, ln in _code_lines():
         words = ln.replace(";", " ").split()
-        if any(w in ("cp", "mv", "rm") for w in words) and '"$AC/${SLUG}_v3' in ln:
+        if any(w in ("cp", "mv", "rm", "mkdir") for w in words) and ('"$AC/' in ln or '"$ARCHIVE/' in ln):
             n_ac += 1
-            assert pos > real_inst, ("AC write outside the guarded install", ln)
-    assert n_ac >= 2, n_ac                     # the _prev rotate line + the copy
+            assert pos > real_inst, ("AC / archive write outside the guarded install", ln)
+    assert n_ac >= 3, n_ac                     # park the previous build (mkdir + mv) + the copy
     assert _first("python - <<PY") > real_inst  # the ui_track.json name patch writes into the installed folder
 
 
@@ -175,7 +175,7 @@ def test_street_ai_defaults_to_the_v3_draft_and_july_is_an_opt_in_draft():
     assert 'STREET_AI="${STREET_AI:-draft}"' in TEXT
     assert 'case "$STREET_AI" in draft|july) ;;' in TEXT
     july = TEXT[_first('if [ "$STREET_AI" = july ]; then'):_first("scripts.ac.verify_kn5")]
-    assert 'cp "$AC/$SLUG/ai/fast_lane.ai"' in july
+    assert 'cp "$JULY_AI/fast_lane.ai"' in july
     # the July line is a July write_ai_line DRAFT: "recording" only ever appears negated
     hits = list(re.finditer("recording", TEXT))
     assert hits
@@ -206,3 +206,12 @@ def test_argument_guards_exit_2_before_any_file_operation():
         assert "sync inputs" not in r.stdout
     assert os.listdir(cwd) == []
     assert not Path(inside).exists()
+
+
+def test_previous_build_is_parked_outside_content_tracks():
+    """Kevin 2026-10-11 "clear old versions": a same-named _v3_prev inside content/tracks showed up in
+    Content Manager as a second "K10 - San Diego (V3)"; the install parks it in the archive instead."""
+    install = TEXT[_first('step "install: $AC/${SLUG}_v3'):]
+    assert 'mv "$AC/$old" "$ARCHIVE/$STAMP/$old"' in install
+    assert 'mv "$AC/${SLUG}_v3" "$AC/${SLUG}_v3_prev"' not in TEXT
+    assert 'ARCHIVE="D:/k10-track-archive"' in TEXT

@@ -22,7 +22,8 @@
 #   ship   : build_kn5_loop prep → split_exports → export road / race / spawn kn5s → AI per layout
 #            → verify_kn5 → track_folder (three layouts) → make_map → make_treefx
 #   gate   : kn5_to_gate_obj (road; road+race) → drive_test per layout → audit_mesh (street; --race)
-#   install: copy to AC as san_diego_lake_murray_v3 (previous build kept as _v3_prev)
+#   install: copy to AC as san_diego_lake_murray_v3; the previous build is parked in $ARCHIVE/<stamp>/
+#            (outside content/tracks, so Content Manager never lists two "K10 - San Diego (V3)")
 #
 # Every Blender call carries --python-exit-code 1: a Python exception inside a --python script
 # otherwise exits 0 and the chain ships whatever the previous run left behind (found on the
@@ -61,6 +62,8 @@ SRC="$AIROSO/tracks/san-diego-lake-murray"
 ENG="C:/Users/Owner/Documents/GitHub/engine-july"
 BL="C:/Program Files/Blender Foundation/Blender 4.2/blender.exe"
 AC="D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks"
+ARCHIVE="D:/k10-track-archive"   # old installs live here, never in content/tracks (Kevin 2026-10-11: "clear old versions")
+JULY_AI="$ARCHIVE/2026-10-11/san_diego_lake_murray/ai"   # the old v0.22 install, archived 2026-10-11
 SLUG="san_diego_lake_murray"
 # Q8 (0047): the street layout's AI line. Default `draft` = the V3 forward right-hand-lane draft from
 # the built centreline (write_ai_line --layout street: 100 % right side, 0 island hits on the dry
@@ -187,8 +190,8 @@ done
 for lid in $STREET_IDS; do
   rm -rf "$PROJ/ai/$lid"; mkdir -p "$PROJ/ai/$lid"     # never leave a stale ai_draft.json beside a copied line
   if [ "$STREET_AI" = july ]; then
-    cp "$AC/$SLUG/ai/fast_lane.ai" "$AC/$SLUG/ai/pit_lane.ai" "$AC/$SLUG/ai/side_l.csv" "$AC/$SLUG/ai/side_r.csv" "$PROJ/ai/$lid/"
-    echo "ai/$lid/: STREET_AI=july — the installed July write_ai_line DRAFT copied from $AC/$SLUG/ai/ (generated, not an"
+    cp "$JULY_AI/fast_lane.ai" "$JULY_AI/pit_lane.ai" "$JULY_AI/side_l.csv" "$JULY_AI/side_r.csv" "$PROJ/ai/$lid/"
+    echo "ai/$lid/: STREET_AI=july — the July write_ai_line DRAFT copied from $JULY_AI/ (generated, not an"
     echo "  in-game recording; it drives the oncoming carriageway on every divided run — ledger 0047 Notes)"
   else
     (cd "$AIROSO" && python -m scripts.ac.write_ai_line "$PROJ" --layout "$lid" | grep -v "^  v\|^frame")
@@ -265,10 +268,13 @@ if [ "$INSTALL" = 1 ] && [ "$SCRATCH" = 1 ]; then
   echo "SHIP_PROJ is a scratch project ($PROJ): never installed — only $WS_PROJ reaches $AC. The built folder is"
   echo "$PROJ/build/$SLUG (load it by hand if you mean to)."
 elif [ "$INSTALL" = 1 ]; then
-  step "install: $AC/${SLUG}_v3 (three layouts; previous build kept as ${SLUG}_v3_prev)"
+  step "install: $AC/${SLUG}_v3 (three layouts; previous build parked in $ARCHIVE/<stamp>/)"
   B="$PROJ/build/$SLUG"
   for lid in $LAYOUT_IDS; do [ -f "$B/models_$lid.ini" ] || { echo "missing $B/models_$lid.ini"; exit 1; }; done
-  if [ -d "$AC/${SLUG}_v3" ]; then rm -rf "$AC/${SLUG}_v3_prev"; mv "$AC/${SLUG}_v3" "$AC/${SLUG}_v3_prev"; fi
+  STAMP=$(date +%Y-%m-%d_%H%M%S)
+  for old in "${SLUG}_v3" "${SLUG}_v3_prev"; do
+    if [ -d "$AC/$old" ]; then mkdir -p "$ARCHIVE/$STAMP"; mv "$AC/$old" "$ARCHIVE/$STAMP/$old"; echo "parked $old in $ARCHIVE/$STAMP/"; fi
+  done
   cp -r "$B" "$AC/${SLUG}_v3"
   python - <<PY
 import json, glob, os

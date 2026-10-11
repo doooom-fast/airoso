@@ -445,7 +445,7 @@ and airoso's are strict supersets). `models_<id>.ini` ×3, `ui/<id>/ui_track.jso
 `run` = the layout's compass sentence, `<id>/{map.png, data/, ai/}`; stale single-layout structure
 (root `ai/`, root `ui/ui_track.json`, `models.ini`, `ui/full`) removed by the packer; the set of
 inis is asserted == `layouts[]`. `tools/make_map.py` writes every `<id>/map.png` in the kn5 frame.
-Install folder stays `san_diego_lake_murray_v3` (previous build kept as `_v3_prev`).
+Install folder stays `san_diego_lake_murray_v3` (previous build parked in `D:/k10-track-archive/<stamp>/`, never a second `_v3_prev` in content/tracks — Kevin 2026-10-11 "clear old versions").
 
 **Gates (fleet/GATES-CHANGELOG.md 2026-10-11).** `median_zone` gains the `barrier` kind from
 `barrier_bands.json`; `drive_test --layout <id>` per layout (reverse walks the lap backwards,

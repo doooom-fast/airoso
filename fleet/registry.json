@@ -5,6 +5,7 @@
     "file can never go stale on a track that was added or renamed. Per-track annotations below are",
     "only for things a track.config.json cannot know about itself (its owning repo's build command,",
     "its place in the four-kind taxonomy, migration status).",
+    "airoso itself is the first repo (engine_repo: true): it IS the engine, so the pin and shadowing rules (S1-S4) do not apply to it, while S5-S8 do. Its tracks_glob names only the tracks whose source of truth has moved here; a retired repo lists the same directory under moved_out, so the track is discovered once, at airoso.",
     "Read it with: python3 -m fleet.cli tracks"
   ],
   "engine": {
@@ -30,11 +31,31 @@
   },
   "repos": [
     {
+      "name": "airoso",
+      "path": ".",
+      "remote": null,
+      "_remote_doc": "No GitHub remote is configured: `git remote -v` lists only `engine` (the local k10-track-agents clone whose history airoso adopted, docs/V3-PLAN.md Phase 1).",
+      "role": "THE one repo (V3): the engine, the gates, the doctrine and the ledger, plus every track as its source of truth moves here",
+      "engine_repo": true,
+      "tracks_glob": "tracks/lookout-lariat/track.config.json",
+      "_tracks_glob_doc": "Only the tracks that have MOVED here. The other tracks/ dirs are Phase-1 imports whose fleet entry still points at their retired repo, and globbing them now would discover every Colorado track twice (S7 slug collisions). Widen this glob as each track moves, and add its dir to the old repo's moved_out in the same edit.",
+      "build": {
+        "cmd": null,
+        "hold": "no fleet build for the V3 Lariat yet. scripts/build.sh is the engine's whole draft pipeline: on this track its mesh stage failed drive_test at v0.66.3 (2026-08-09) and its environment stage lays the I-70/C-470 decks (ledger 0048), and V3 uses the engine for the first draft only. The V3 chain is tools/ship_track.sh + tracks/lookout-lariat/ship.json (V3-PLAN P1), not written yet."
+      },
+      "method": "V3: engine first draft -> Claude authors in Blender (AUTH_* layers) -> gates on the built kn5 -> Kevin's drive (docs/V3-PLAN.md, fleet/REALISM.md)",
+      "local_scripts_allowlist": [],
+      "notes": "The Lariat moved here 2026-10-11 (tracks/lookout-lariat/V3-PLAN.md P0 step 5, ledger 0048). Its July derived data is restored, frame-free files only, in tracks/lookout-lariat/data/source-july/ (PROVENANCE.md there)."
+    },
+    {
       "name": "k10-colorado",
       "path": "../k10-colorado",
       "remote": "git@github.com:k10-motorsports/k10-colorado.git",
       "role": "Colorado circuits + the Lookout Lariat street port",
       "tracks_glob": "tracks/*/track.config.json",
+      "moved_out": {
+        "lookout-lariat": "airoso/tracks/lookout-lariat (2026-10-11, V3-PLAN P0 step 5, ledger 0048). This repo is retired and read-only; its copy is history, never built."
+      },
       "build": {
         "cmd": "./build.sh",
         "arg": "track_dir",
@@ -98,10 +119,11 @@
         "engine-legacy/projects/sand-creek-raceway"
       ]
     },
-    "k10-colorado/lookout-lariat": {
+    "airoso/lookout-lariat": {
       "kind": "street_port",
       "fidelity": "real",
-      "source": "OSM route (named + ref: + id: ways)"
+      "source": "OSM route (named + ref: + id: ways)",
+      "moved_from": "k10-colorado/tracks/lookout-lariat (retired twin; its blender/ files archived to D:/k10-track-archive/2026-10-11_lariat-july-blend/)"
     },
     "k10-colorado/imi": {
       "kind": "circuit_port",

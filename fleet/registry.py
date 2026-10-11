@@ -3,6 +3,10 @@
 Repos are declared in ``fleet/registry.json``; tracks are found by scanning each repo's
 ``tracks_glob``, so adding a track to a project repo needs no edit here. Everything below is
 stdlib-only (same constraint as the engine — system python3, no numpy).
+
+Two keys exist for the V3 one-repo move (docs/V3-PLAN.md): a repo's ``moved_out`` names track
+dirs whose source of truth now lives elsewhere (never discovered there again), and
+``engine_repo: true`` marks airoso, which IS the engine (no pin to check, nothing to shadow).
 """
 from __future__ import annotations
 
@@ -70,6 +74,16 @@ class Repo:
     exists: bool
 
     @property
+    def is_engine(self) -> bool:
+        """airoso: the repo that IS the engine. S1-S4 (pin + shadowing) do not apply to it."""
+        return bool(self.spec.get("engine_repo"))
+
+    @property
+    def moved_out(self) -> dict:
+        """Track dirs whose source of truth moved to another repo -> where it went."""
+        return self.spec.get("moved_out") or {}
+
+    @property
     def pin(self) -> str | None:
         f = self.path / ".engine-version"
         return f.read_text(encoding="utf-8").strip() if f.is_file() else None
@@ -97,6 +111,8 @@ class Repo:
             except (OSError, json.JSONDecodeError):
                 continue
             dirname = cfg.parent.name
+            if dirname in self.moved_out:              # lives elsewhere now (see registry.json)
+                continue
             found.append(Track(self.name, dirname, cfg, data,
                                ann.get(f"{self.name}/{dirname}", {})))
         return found

@@ -21,6 +21,8 @@ import time
 import urllib.request
 from pathlib import Path
 
+from scripts.tls import https_context
+
 Vertex = tuple[float, float]
 LANE_W = 3.5
 # class → (minimum lane count, curb-to-curb allowance beyond the lanes: parking/turn/shoulder/gutter, m)
@@ -58,7 +60,7 @@ def _overpass(query: str, *, timeout: int = 120) -> dict:
         for attempt in range(2):
             try:
                 req = urllib.request.Request(m, data=query.encode(), headers={"User-Agent": "k10-colorado/1.0"})
-                return json.load(urllib.request.urlopen(req, timeout=timeout))
+                return json.load(urllib.request.urlopen(req, timeout=timeout, context=https_context()))
             except Exception as e:  # noqa: BLE001
                 last = e
                 time.sleep(2)

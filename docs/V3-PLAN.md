@@ -3,7 +3,9 @@
 **Written 2026-08-19.** V3 = everything lives in **one repo (airoso)**; the engine is demoted to a
 first-draft generator; Claude hand-edits geometry (in Blender and in readable intermediates);
 deterministic gates (mesh-audit, drive-test, kn5 checks) are the quality bar; Kevin's seat is the
-only thing that closes a loop. San Diego first, Sand Creek second.
+only thing that closes a loop. San Diego first, then Lookout Lariat, then Sand Creek *(re-ordered
+2026-10-11, Kevin: "what about lariat"; ledger 0048, `CLAUDE.md` 918d7f1; it read "San Diego
+first, Sand Creek second")*.
 
 > **STATUS 2026-08-19 (evening):** Phase 0 DONE (all five landmines cleared; k10-sd-v021 salvaged
 > to `_salvage/`, 144 files / 299.6 MB verified). Phase 1 merge DONE — airoso adopted
@@ -272,6 +274,10 @@ picks which; likely both get fixed in the same session.
 
 **C4 — Full-loop drive report.** Kevin drives the cleaned loop, files worst-3; the next defect
 classes get their own sessions. DoD tier target: T3 (clean laps) for San Diego before polish.
+
+**Then Lookout Lariat** (re-ordered ahead of Sand Creek 2026-10-11, ledger 0048): its own plan,
+[`tracks/lookout-lariat/V3-PLAN.md`](../tracks/lookout-lariat/V3-PLAN.md), on the same method —
+route-only draft, authored in Blender, gated, three drives.
 
 **Then Sand Creek:** the installed v0.26.0 build (137 MB, Jul 26) has never had an in-seat
 report. First step is the cheapest possible: Kevin drives it 10 minutes, files worst-3, and the

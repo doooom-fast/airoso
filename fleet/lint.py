@@ -35,6 +35,8 @@ def check(reg: dict | None = None) -> list[Finding]:
         if not r.exists:
             out.append(Finding("S0", "FAIL", r.name, f"repo not found at {r.path}"))
             continue
+        if r.is_engine:             # it IS the engine: nothing to pin (STANDARDS "The engine repo")
+            continue
         if not (r.path / "bootstrap.sh").is_file():
             out.append(Finding("S1", "FAIL", r.name, "no bootstrap.sh — cannot fetch the engine"))
         if r.pin is None:
@@ -57,7 +59,7 @@ def check(reg: dict | None = None) -> list[Finding]:
     # ---- S4: no undeclared shadowing of engine modules ------------------------------------
     engine = engine_modules()
     for r in rs:
-        if not r.exists:
+        if not r.exists or r.is_engine:     # the engine's own scripts/ cannot shadow itself
             continue
         allow = set(r.spec.get("local_scripts_allowlist", []))
         shadows = [m for m in r.local_scripts() if m in engine and m not in allow]

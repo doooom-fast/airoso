@@ -18,6 +18,69 @@ three-version / per-layout machinery) is on disk; 0044 (arrow signs) is cited by
 day — 0045 and 0046 already cite it — and its rule is restated here so nothing dangles if the file
 lands later.
 
+**P0 — approved and under way (2026-10-11).** Kevin: *"Those changes are good"*, which takes every
+default in [`V3-PLAN.md`](../../tracks/lookout-lariat/V3-PLAN.md):
+- **D1** keep the Colfax double-back (24.9 km).
+- **D2 (a)** one slab with its real median; Street Reverse drives the four divided stretches against
+  the arrows, and its text says so.
+- **D3 (a)** a race version on the real narrow road, one-way: four layouts, `street_full`,
+  `street_reverse`, `race_acw`, `race_cw`.
+- **D4** both widths for Drive 1 (`road_profile.verge_m` 0.4 vs 1.25, two installs).
+- **D5** static C-470 bridges.
+- **D6 (i)** real relief beyond ~50 m — the L3 amendment shared with 0046, config and plan only
+  for now, no geometry; **(ii)** the Denver skyline after Drive 2.
+- **D7** all five July calls reversed.
+- **A1–A13** as written.
+- **D0** (the public download) is handled separately. Nothing in P0 touches a release or the site.
+
+Status stays `open`. Nothing is committed, and there is no geometry, kn5 or Blender build. On disk
+now, uncommitted, each step with its own record:
+- **Step 1.** `scripts/tls.py` hands certificate checks to the operating system's verifier
+  (`truststore`). Verification is never turned off, and the step-3 fetch ran with it on.
+- **Step 2.** Five frame-free July files are restored to `tracks/lookout-lariat/data/source-july/`
+  from k10-colorado `0a897bb^` with `git show`, byte-identical (`PROVENANCE.md` there). The
+  retired repo was not checked out or changed.
+- **Step 3.** `data/osm.cache.json` is the route stage's own Overpass snapshot: 197 ways, fetched
+  2026-10-11T19:29:58Z.
+- **Step 4.** The twin's `.blend` + `.blend1` are copied, with `MD5SUMS.txt`, to
+  `D:/k10-track-archive/2026-10-11_lariat-july-blend/`. The originals in the retired repo are
+  untouched.
+- **Step 5.** `fleet/registry.json` points the Lariat at airoso and lists it under k10-colorado's
+  `moved_out`. `fleet.cli tracks` lists `airoso/lookout-lariat` at 0.16.0.
+- **Step 6.** `track.config.json` is rewritten to 0.16.0 in the V3 loop frame (`mirror_x` false,
+  true north 0), with the four layouts and the D4 verge.
+- **Step 7.** The re-derived centreline is 24,890.8 m, 8,302 points, closed. Against July's line
+  it differs only at A1's three places, and it is 51 m shorter, mostly because the U-turn is gone
+  (`data/PROVENANCE.md`).
+- **Step 8.** `tools/route_oneway_check.py` writes `data/oneway_check.json`. Street Full runs
+  against no one-way way. Street Reverse runs 4,486.5 m against the arrows, all of it on the four
+  declared D2 stretches. The race layouts are closed roads and are not checked.
+- **Step 9, the paper corrections.**
+  - `docs/V3-PLAN.md:6` now reads San Diego, then the Lariat, then Sand Creek. Phase 4 gains a
+    "Then Lookout Lariat" paragraph before "Then Sand Creek".
+  - `fleet/DEFINITION-OF-DONE.md:45` now reads **T0** (July v0.46.0 build only; current pin fails
+    drive_test).
+  - `assets/licenses.json`'s `building_*` entry now says Hamburg by 4r, personal use only, not
+    CC0, with a `_note`. The entry went stale at a7f4d6f (2026-06-27), which swapped the bytes
+    and updated `SOURCES.txt` but not this file.
+  - **Which packages that affects**, read today from each installed kn5's texture table:
+    - the Hamburg `building_*` bytes are inside eight installed folders: `lookout_lariat`,
+      `imi_motorsports`, `high_plains`, `pueblo_motorsports_park`, `second_creek`,
+      `sand_creek_raceway`, `san_diego_freeway` and `san_diego_lake_murray_v3`;
+    - each of the eight carries generated credits that call those bytes CC0 Concrete034;
+    - `tools/pack_release.py` fixes this in Lake Murray's two zips (Full text, CC0 byte swap), but
+      copies `san_diego_freeway`'s kn5 and its texts into `san_diego_freeway_v0.5.0.zip`
+      unchanged.
+
+    These are inputs for D0, and nothing was done about them here. Not checked: whether each
+    published zip matches its installed copy, and Aspen and the rally stages (not installed).
+  - **Found in passing, not corrected:** the same commit replaced `roof_*.jpg` with Hamburg maps
+    (`TCom_Roofing_PVC`), but `licenses.json` still lists `roof_*` as ambientCG
+    CorrugatedSteel002, CC0. `SOURCES.txt` gives CorrugatedSteel002 to `warehouse_metal_*`
+    instead. It is the same class of fix, outside the approved item, and waits on Kevin's say-so.
+
+P0's done-when list (V3-PLAN P0) is not claimed here.
+
 ## Symptom (Kevin, 2026-10-10)
 
 > "Then we'll rebuild lookout mountain in the same high fidelity style with all of the fixes applied,
@@ -173,7 +236,8 @@ them until he does.
 
 *2026-10-11: Kevin re-ordered it ("what about lariat"). `CLAUDE.md:12` now reads "San Diego, then
 Lookout Lariat …, then Sand Creek" (918d7f1); `docs/V3-PLAN.md:6` still needs the same edit
-(V3-PLAN P0 step 9).*
+(V3-PLAN P0 step 9).* *Later the same day: done in P0 step 9 — `docs/V3-PLAN.md:6` and a "Then
+Lookout Lariat" paragraph before Phase 4's "Then Sand Creek" (see Status).*
 
 ## Diagnosis
 

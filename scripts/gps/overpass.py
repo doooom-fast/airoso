@@ -16,6 +16,8 @@ from pathlib import Path
 import urllib.parse
 import urllib.request
 
+from scripts.tls import https_context
+
 OVERPASS_URL = "https://overpass-api.de/api/interpreter"
 USER_AGENT = "prodrive-ac-builder/0.1 (https://github.com/k10-motorsports/prodrive-ac-builder)"
 
@@ -52,8 +54,18 @@ def fetch_ways(
     *,
     retries: int = 3,
     cache=None,
+    exclude_ids=None,
 ) -> dict[str, list[list[Vertex]]]:
     """Run the query and return ``{name: [way, ...]}``; each way is a list of (lon, lat).
+
+    ``exclude_ids``: OSM way ids to drop from the name / ``ref:`` matches (``route.exclude_ids``,
+    opt-in). A ``ref:`` match takes every carriageway of a divided road, and the stitcher keeps the
+    SHORTER side wherever the road splits, which can be the side signed the other way (the Lariat's
+    exit 259: way 42005706, south-west-bound, 84 m, against the lap's north-east-bound 119006778,
+    85 m). Dropping the wrong side is a route decision, so it lives in config, applied when the
+    payload is parsed: the query, its fingerprint and the snapshot are unchanged, and the snapshot
+    keeps the excluded way for the checks that need it (tools/route_oneway_check.py). ``None`` (every
+    track without the key) is exactly the old behaviour.
 
     ``cache``: a path to snapshot the raw Overpass payload into. OSM is a MUTABLE external
     database, so a track whose geometry comes from it is only reproducible while nobody edits the
@@ -73,7 +85,7 @@ def fetch_ways(
                     print(f"  [overpass] using cached snapshot {cache.name} "
                           f"({len(snap['payload'].get('elements', []))} elements, "
                           f"fetched {snap.get('fetched_utc', '?')})")
-                    return _parse_payload(snap["payload"], road_names)
+                    return _parse_payload(snap["payload"], road_names, exclude_ids=exclude_ids)
                 print(f"  [overpass] {cache.name} is for a different query — re-fetching")
             except (json.JSONDecodeError, KeyError):
                 print(f"  [overpass] {cache.name} unreadable — re-fetching")
@@ -86,7 +98,7 @@ def fetch_ways(
             headers={"User-Agent": USER_AGENT, "Accept": "application/json"},
         )
         try:
-            with urllib.request.urlopen(req, timeout=150) as resp:
+            with urllib.request.urlopen(req, timeout=150, context=https_context()) as resp:
                 payload = json.loads(resp.read().decode())
             break
         except Exception:
@@ -101,15 +113,42 @@ def fetch_ways(
                                      "bbox": list(bbox), "road_names": list(road_names),
                                      "payload": payload}), encoding="utf-8")
         print(f"  [overpass] snapshotted {len(payload.get('elements', []))} elements -> {cache.name}")
-    return _parse_payload(payload, road_names)
+    return _parse_payload(payload, road_names, exclude_ids=exclude_ids)
 
 
-def _parse_payload(payload: dict, road_names: list[str]) -> dict[str, list[list[Vertex]]]:
+def exclude_set(road_names: list[str], exclude_ids) -> set[int]:
+    """Validate ``route.exclude_ids`` against the road list and return it as a set of ints.
+
+    An id may not be excluded and also requested by an ``id:`` entry (the config would contradict
+    itself), and every entry must be a positive integer way id."""
+    if exclude_ids is None:
+        return set()
+    if isinstance(exclude_ids, (str, bytes)) or not hasattr(exclude_ids, "__iter__"):
+        raise ValueError(f"route.exclude_ids must be a list of OSM way ids, got {exclude_ids!r}")
+    out: set[int] = set()
+    for i in exclude_ids:
+        if isinstance(i, bool) or not isinstance(i, int) or i <= 0:
+            raise ValueError(f"route.exclude_ids: {i!r} is not a positive integer OSM way id")
+        out.add(i)
+    requested = {int(i) for n in road_names if n.startswith("id:") for i in n[3:].split(",")}
+    both = sorted(out & requested)
+    if both:
+        raise ValueError(f"route.exclude_ids {both} are also requested by an id: entry in route.roads "
+                         f"- the route cannot both take and drop a way")
+    return out
+
+
+def _parse_payload(payload: dict, road_names: list[str], *, exclude_ids=None) -> dict[str, list[list[Vertex]]]:
     out: dict[str, list[list[Vertex]]] = {n: [] for n in road_names}
     refs = {n: n[4:] for n in road_names if n.startswith("ref:")}
     ids = {n: {int(i) for i in n[3:].split(",")} for n in road_names if n.startswith("id:")}
+    excl = exclude_set(road_names, exclude_ids)
+    dropped: set[int] = set()
     for el in payload.get("elements", []):
         if el.get("type") != "way":
+            continue
+        if excl and el.get("id") in excl:
+            dropped.add(el["id"])
             continue
         tags = el.get("tags", {})
         geom = [(g["lon"], g["lat"]) for g in el.get("geometry") or []]
@@ -125,6 +164,14 @@ def _parse_payload(payload: dict, road_names: list[str]) -> dict[str, list[list[
         for entry, wanted in ids.items():
             if el.get("id") in wanted:
                 out[entry].append(geom)
+    if excl:
+        stale = sorted(excl - dropped)
+        if stale:
+            # OSM re-split or retagged the way: the exclusion no longer removes anything, so the
+            # side it existed to keep the lap off would come straight back. Never silently.
+            raise SystemExit(f"route.exclude_ids {stale} are not in the fetched ways - the exclusion is "
+                             f"stale (OSM edit?). Re-check the ways on the map and update the config.")
+        print(f"  [overpass] route.exclude_ids: dropped way(s) {sorted(dropped)} from the name/ref matches")
     return out
 
 
@@ -141,7 +188,7 @@ def _post(query: str, *, retries: int = 3) -> dict:
             OVERPASS_URL, data=body,
             headers={"User-Agent": USER_AGENT, "Accept": "application/json"})
         try:
-            with urllib.request.urlopen(req, timeout=180) as resp:
+            with urllib.request.urlopen(req, timeout=180, context=https_context()) as resp:
                 return json.loads(resp.read().decode())
         except Exception:
             if attempt == retries - 1:

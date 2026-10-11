@@ -102,6 +102,26 @@ at speed) has never looked at the Lake Murray loop or the freeway network.
 
 ---
 
+## The engine repo, and tracks that move into it (V3)
+
+V3 (`docs/V3-PLAN.md`) makes **airoso** the one repo. The registry declares it as the first repo
+with `engine_repo: true`.
+- It **is** the engine, so S1–S4 do not apply to it: there is no pin to set, and its `scripts/`
+  cannot shadow itself. S0 and S5–S8 apply as to any repo.
+- Its `tracks_glob` names only the tracks whose source of truth has moved here. The other
+  `tracks/` dirs are Phase-1 imports whose fleet entry still points at the retired repo, so
+  globbing them would discover each one twice (S7).
+- **Moving a track** is one registry edit:
+  1. widen airoso's `tracks_glob` to include it;
+  2. add its dir to the old repo's `moved_out`, saying where it went (that repo then never
+     discovers it again);
+  3. re-key its `track_annotations` entry to `airoso/<dir>`.
+- A repo whose `build.cmd` is `null` carries a `build.hold` reason. `fleet.cli build` prints it
+  and reports the track as **HOLD**, which is not a pass, instead of running anything.
+- First move: the Lookout Lariat, 2026-10-11 (its V3-PLAN P0 step 5).
+
+---
+
 ## Running things (learned the hard way)
 
 Two failure modes cost several hours overnight, both of which *look* like the fleet breaking:

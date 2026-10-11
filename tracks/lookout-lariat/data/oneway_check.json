@@ -1,0 +1,2825 @@
+{
+ "tool": "tools/route_oneway_check.py",
+ "frame": "input lon/lat (WGS84); matching in local ENU metres (x=E, y=N) about the centreline's own centroid, WGS84 metres-per-degree series; stations = metres along the centreline in increasing-vertex (forward) order from v0",
+ "centerline": {
+  "path": "C:\\Users\\Owner\\Documents\\GitHub\\airoso\\tracks\\lookout-lariat\\data\\centerline.geojson",
+  "points": 8302,
+  "length_m": 24905.7,
+  "closed": true
+ },
+ "snapshot": {
+  "path": "C:\\Users\\Owner\\Documents\\GitHub\\airoso\\tracks\\lookout-lariat\\data\\osm.cache.json",
+  "query_fingerprint": "93e1c28d8828c2f2",
+  "fetched_utc": "2026-10-11T19:29:58Z",
+  "osm_base": "2026-10-11T19:28:01Z",
+  "ways": 197
+ },
+ "params": {
+  "snap_m": 3.0,
+  "min_cos": 0.7
+ },
+ "matched_m": 24891.2,
+ "unmatched_m": 14.5,
+ "unmatched_runs": [
+  {
+   "segments": 5,
+   "length_m": 14.5,
+   "vertex_from": 6756,
+   "vertex_to": 6761,
+   "st_from_m": 20268.9,
+   "st_to_m": 20283.4,
+   "drive_st_from_m": 20268.9,
+   "matched": false
+  }
+ ],
+ "ways_driven_forward": [
+  {
+   "way": 1106864348,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 47.9,
+   "first_st_m": 6.0,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 17071430,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 164.8,
+   "first_st_m": 53.9,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1432442175,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 149.9,
+   "first_st_m": 218.7,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 533494586,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 444.4,
+   "first_st_m": 368.6,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1432442174,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 249.1,
+   "first_st_m": 813.0,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1432442168,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 1485.3,
+   "first_st_m": 1062.2,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1432442173,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 129.0,
+   "first_st_m": 2547.5,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1432442172,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 108.2,
+   "first_st_m": 2676.5,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1432442171,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 114.0,
+   "first_st_m": 2784.8,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1432442170,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 75.2,
+   "first_st_m": 2898.7,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1432442169,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 98.9,
+   "first_st_m": 2973.9,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 17070828,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 2399.2,
+   "first_st_m": 3072.8,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1432422180,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 83.7,
+   "first_st_m": 5472.0,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1432422181,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 30.0,
+   "first_st_m": 5555.7,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1432422182,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 71.7,
+   "first_st_m": 5585.7,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1432422185,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 170.7,
+   "first_st_m": 5657.3,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1432422186,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 80.7,
+   "first_st_m": 5828.1,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1432422179,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 1433.5,
+   "first_st_m": 5908.8,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1432422191,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 213.4,
+   "first_st_m": 7342.3,
+   "travel_vs_nodes": -1
+  },
+  {
+   "way": 17070827,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 1550.8,
+   "first_st_m": 7555.7,
+   "travel_vs_nodes": -1
+  },
+  {
+   "way": 17071427,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Lookout Mountain Road",
+    "ref": "CR 68",
+    "lanes": "2"
+   },
+   "length_m": 635.4,
+   "first_st_m": 9106.5,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 17070468,
+   "tags": {
+    "highway": "residential",
+    "name": "Paradise Road"
+   },
+   "length_m": 381.0,
+   "first_st_m": 9742.0,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 17070469,
+   "tags": {
+    "highway": "residential",
+    "name": "Paradise Road"
+   },
+   "length_m": 290.4,
+   "first_st_m": 10122.9,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 17070464,
+   "tags": {
+    "highway": "residential",
+    "name": "Paradise Road"
+   },
+   "length_m": 197.6,
+   "first_st_m": 10413.3,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 17070466,
+   "tags": {
+    "highway": "residential",
+    "name": "Paradise Road"
+   },
+   "length_m": 1001.6,
+   "first_st_m": 10610.9,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1413205750,
+   "tags": {
+    "highway": "residential",
+    "name": "Paradise Road"
+   },
+   "length_m": 74.9,
+   "first_st_m": 11612.5,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 42005609,
+   "tags": {
+    "highway": "secondary",
+    "ref": "US 40",
+    "oneway": "no",
+    "lanes": "3"
+   },
+   "length_m": 74.5,
+   "first_st_m": 11687.4,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1413205749,
+   "tags": {
+    "highway": "secondary",
+    "ref": "US 40",
+    "oneway": "no",
+    "lanes": "3"
+   },
+   "length_m": 4092.5,
+   "first_st_m": 11761.9,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427839534,
+   "tags": {
+    "highway": "secondary",
+    "ref": "US 40",
+    "oneway": "no",
+    "lanes": "3"
+   },
+   "length_m": 63.0,
+   "first_st_m": 15854.4,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 297689036,
+   "tags": {
+    "highway": "secondary",
+    "ref": "US 40",
+    "oneway": "no",
+    "lanes": "3"
+   },
+   "length_m": 60.0,
+   "first_st_m": 15917.3,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427839539,
+   "tags": {
+    "highway": "secondary",
+    "ref": "US 40",
+    "oneway": "no",
+    "lanes": "3"
+   },
+   "length_m": 63.0,
+   "first_st_m": 15977.3,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427839533,
+   "tags": {
+    "highway": "secondary",
+    "ref": "US 40",
+    "oneway": "no",
+    "lanes": "4"
+   },
+   "length_m": 107.9,
+   "first_st_m": 16040.3,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427839535,
+   "tags": {
+    "highway": "secondary",
+    "ref": "US 40",
+    "oneway": "no",
+    "lanes": "3"
+   },
+   "length_m": 9.0,
+   "first_st_m": 16148.2,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427839551,
+   "tags": {
+    "highway": "secondary",
+    "ref": "US 40",
+    "oneway": "no",
+    "lanes": "3"
+   },
+   "length_m": 134.8,
+   "first_st_m": 16157.2,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427839546,
+   "tags": {
+    "highway": "secondary",
+    "ref": "US 40",
+    "oneway": "no",
+    "lanes": "3"
+   },
+   "length_m": 71.9,
+   "first_st_m": 16292.0,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 297659227,
+   "tags": {
+    "highway": "secondary",
+    "ref": "US 40",
+    "oneway": "no",
+    "lanes": "3"
+   },
+   "length_m": 174.1,
+   "first_st_m": 16363.9,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427839536,
+   "tags": {
+    "highway": "secondary",
+    "ref": "US 40",
+    "oneway": "no",
+    "lanes": "4"
+   },
+   "length_m": 57.1,
+   "first_st_m": 16538.0,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 119006891,
+   "tags": {
+    "highway": "secondary",
+    "ref": "US 40",
+    "lanes": "2"
+   },
+   "length_m": 15.0,
+   "first_st_m": 16595.1,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 119006778,
+   "tags": {
+    "highway": "secondary",
+    "ref": "I 70 BUS;US 40",
+    "oneway": "yes",
+    "lanes": "2"
+   },
+   "length_m": 86.2,
+   "first_st_m": 16610.1,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 17081944,
+   "tags": {
+    "highway": "secondary",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "5"
+   },
+   "length_m": 80.9,
+   "first_st_m": 16696.3,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 119006816,
+   "tags": {
+    "highway": "secondary",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "3"
+   },
+   "length_m": 74.9,
+   "first_st_m": 16777.2,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1100814604,
+   "tags": {
+    "highway": "secondary",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "3"
+   },
+   "length_m": 6.0,
+   "first_st_m": 16852.1,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1100814605,
+   "tags": {
+    "highway": "secondary",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "3"
+   },
+   "length_m": 284.6,
+   "first_st_m": 16858.1,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1265703265,
+   "tags": {
+    "highway": "secondary",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "3"
+   },
+   "length_m": 638.2,
+   "first_st_m": 17142.7,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427836577,
+   "tags": {
+    "highway": "secondary",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "4"
+   },
+   "length_m": 203.9,
+   "first_st_m": 17780.8,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427836579,
+   "tags": {
+    "highway": "secondary",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "3"
+   },
+   "length_m": 239.8,
+   "first_st_m": 17984.7,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427836578,
+   "tags": {
+    "highway": "secondary",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "4"
+   },
+   "length_m": 191.7,
+   "first_st_m": 18224.5,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1292939778,
+   "tags": {
+    "highway": "secondary",
+    "name": "West Colfax Avenue",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "3"
+   },
+   "length_m": 122.9,
+   "first_st_m": 18416.2,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 119006905,
+   "tags": {
+    "highway": "secondary",
+    "name": "West Colfax Avenue",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "3"
+   },
+   "length_m": 135.1,
+   "first_st_m": 18539.1,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427836580,
+   "tags": {
+    "highway": "secondary",
+    "name": "West Colfax Avenue",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "4"
+   },
+   "length_m": 84.1,
+   "first_st_m": 18674.2,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1354790968,
+   "tags": {
+    "highway": "secondary",
+    "name": "West Colfax Avenue",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "5"
+   },
+   "length_m": 96.2,
+   "first_st_m": 18758.3,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427690919,
+   "tags": {
+    "highway": "secondary",
+    "name": "West Colfax Avenue",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "3"
+   },
+   "length_m": 324.6,
+   "first_st_m": 18854.5,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427690915,
+   "tags": {
+    "highway": "secondary",
+    "name": "West Colfax Avenue",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "5"
+   },
+   "length_m": 33.1,
+   "first_st_m": 19179.1,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427690916,
+   "tags": {
+    "highway": "secondary",
+    "name": "West Colfax Avenue",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "6"
+   },
+   "length_m": 45.1,
+   "first_st_m": 19212.2,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427690908,
+   "tags": {
+    "highway": "secondary",
+    "name": "West Colfax Avenue",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "6"
+   },
+   "length_m": 27.0,
+   "first_st_m": 19257.3,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 131492996,
+   "tags": {
+    "highway": "secondary",
+    "name": "West Colfax Avenue",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "3"
+   },
+   "length_m": 306.4,
+   "first_st_m": 19284.3,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427690917,
+   "tags": {
+    "highway": "secondary",
+    "name": "West Colfax Avenue",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "5"
+   },
+   "length_m": 12.0,
+   "first_st_m": 19590.8,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427690921,
+   "tags": {
+    "highway": "secondary",
+    "name": "West Colfax Avenue",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "6"
+   },
+   "length_m": 48.1,
+   "first_st_m": 19602.8,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427690920,
+   "tags": {
+    "highway": "secondary",
+    "name": "West Colfax Avenue",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "3"
+   },
+   "length_m": 51.1,
+   "first_st_m": 19650.9,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427690914,
+   "tags": {
+    "highway": "secondary",
+    "name": "West Colfax Avenue",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "4"
+   },
+   "length_m": 153.2,
+   "first_st_m": 19701.9,
+   "travel_vs_nodes": -1
+  },
+  {
+   "way": 1353356530,
+   "tags": {
+    "highway": "secondary",
+    "name": "West Colfax Avenue",
+    "ref": "I 70 BUS;US 40",
+    "lanes": "6"
+   },
+   "length_m": 102.2,
+   "first_st_m": 19855.2,
+   "travel_vs_nodes": -1
+  },
+  {
+   "way": 998316318,
+   "tags": {
+    "highway": "secondary",
+    "name": "West Colfax Avenue",
+    "ref": "I 70 BUS;US 40",
+    "oneway": "yes",
+    "lanes": "2"
+   },
+   "length_m": 35.9,
+   "first_st_m": 19957.3,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427877837,
+   "tags": {
+    "highway": "secondary",
+    "name": "West Colfax Avenue",
+    "ref": "I 70 BUS;US 40",
+    "oneway": "yes",
+    "lanes": "3",
+    "turn:lanes": "||slight_right"
+   },
+   "length_m": 147.2,
+   "first_st_m": 19993.2,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427877838,
+   "tags": {
+    "highway": "secondary",
+    "name": "West Colfax Avenue",
+    "ref": "I 70 BUS;US 40",
+    "oneway": "yes",
+    "lanes": "4",
+    "turn:lanes": "left|left||"
+   },
+   "length_m": 128.5,
+   "first_st_m": 20140.4,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1491101458,
+   "tags": {
+    "highway": "trunk",
+    "name": "West 6th Avenue",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "2"
+   },
+   "length_m": 210.5,
+   "first_st_m": 20283.4,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1068495781,
+   "tags": {
+    "highway": "trunk",
+    "name": "West 6th Avenue",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "3"
+   },
+   "length_m": 81.2,
+   "first_st_m": 20493.9,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1068495780,
+   "tags": {
+    "highway": "trunk",
+    "name": "West 6th Avenue",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "4",
+    "turn:lanes": "none|none|none|right"
+   },
+   "length_m": 90.2,
+   "first_st_m": 20575.1,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1068495782,
+   "tags": {
+    "highway": "trunk",
+    "name": "West 6th Avenue",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "3"
+   },
+   "length_m": 81.2,
+   "first_st_m": 20665.4,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1068495783,
+   "tags": {
+    "highway": "trunk",
+    "name": "West 6th Avenue",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "4"
+   },
+   "length_m": 57.1,
+   "first_st_m": 20746.6,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 17088051,
+   "tags": {
+    "highway": "trunk",
+    "name": "West 6th Avenue",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "3",
+    "turn:lanes": "none|none|right"
+   },
+   "length_m": 174.4,
+   "first_st_m": 20803.7,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427696018,
+   "tags": {
+    "highway": "trunk",
+    "name": "West 6th Avenue",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "3",
+    "turn:lanes": "||right"
+   },
+   "length_m": 15.0,
+   "first_st_m": 20978.1,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427696019,
+   "tags": {
+    "highway": "trunk",
+    "name": "West 6th Avenue",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "5",
+    "turn:lanes": "reverse;left|left|none|none|right"
+   },
+   "length_m": 78.2,
+   "first_st_m": 20993.2,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 37551870,
+   "tags": {
+    "highway": "trunk",
+    "name": "West 6th Avenue",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "2"
+   },
+   "length_m": 15.0,
+   "first_st_m": 21071.4,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 962597802,
+   "tags": {
+    "highway": "trunk",
+    "name": "West 6th Avenue",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "2"
+   },
+   "length_m": 414.6,
+   "first_st_m": 21086.4,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1412921019,
+   "tags": {
+    "highway": "trunk",
+    "name": "West 6th Avenue",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "3",
+    "turn:lanes": "||merge_to_left"
+   },
+   "length_m": 186.0,
+   "first_st_m": 21501.0,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 484287795,
+   "tags": {
+    "highway": "trunk",
+    "name": "West 6th Avenue",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "2"
+   },
+   "length_m": 309.5,
+   "first_st_m": 21687.0,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 492253010,
+   "tags": {
+    "highway": "trunk",
+    "name": "West 6th Avenue",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "2"
+   },
+   "length_m": 72.2,
+   "first_st_m": 21996.4,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427838688,
+   "tags": {
+    "highway": "trunk",
+    "name": "West 6th Avenue",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "2",
+    "turn:lanes": "left;through|through;slight_right"
+   },
+   "length_m": 27.1,
+   "first_st_m": 22068.6,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427838687,
+   "tags": {
+    "highway": "trunk",
+    "name": "West 6th Avenue",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "4",
+    "destination": "Heritage Road",
+    "turn:lanes": "left|||right"
+   },
+   "length_m": 60.1,
+   "first_st_m": 22095.6,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1459465702,
+   "tags": {
+    "highway": "trunk",
+    "name": "West 6th Avenue",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "3",
+    "destination": "Heritage Road",
+    "turn:lanes": "left||"
+   },
+   "length_m": 27.1,
+   "first_st_m": 22155.8,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 427838686,
+   "tags": {
+    "highway": "trunk",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "3",
+    "turn:lanes": "left||"
+   },
+   "length_m": 12.0,
+   "first_st_m": 22182.8,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 492253011,
+   "tags": {
+    "highway": "trunk",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "2"
+   },
+   "length_m": 279.2,
+   "first_st_m": 22194.8,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 37551855,
+   "tags": {
+    "highway": "trunk",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "2"
+   },
+   "length_m": 515.9,
+   "first_st_m": 22474.1,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 923692719,
+   "tags": {
+    "highway": "trunk",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "2"
+   },
+   "length_m": 623.9,
+   "first_st_m": 22990.0,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 923692718,
+   "tags": {
+    "highway": "trunk",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "2"
+   },
+   "length_m": 36.0,
+   "first_st_m": 23613.8,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 914977542,
+   "tags": {
+    "highway": "trunk",
+    "ref": "US 6",
+    "oneway": "yes",
+    "lanes": "2"
+   },
+   "length_m": 266.9,
+   "first_st_m": 23649.8,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 484287799,
+   "tags": {
+    "highway": "trunk_link",
+    "oneway": "yes",
+    "lanes": "1",
+    "destination": "19th Street;Lookout Mountain Road"
+   },
+   "length_m": 278.8,
+   "first_st_m": 23916.8,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1351773584,
+   "tags": {
+    "highway": "trunk_link",
+    "oneway": "yes",
+    "lanes": "2"
+   },
+   "length_m": 21.0,
+   "first_st_m": 24195.6,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 533503588,
+   "tags": {
+    "highway": "trunk_link",
+    "oneway": "yes",
+    "lanes": "2",
+    "turn:lanes": "left|right"
+   },
+   "length_m": 24.0,
+   "first_st_m": 24216.6,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 533503210,
+   "tags": {
+    "highway": "trunk_link",
+    "oneway": "yes",
+    "lanes": "1",
+    "destination": "19th Street west;Lookout Mountain Road",
+    "turn:lanes": "left"
+   },
+   "length_m": 72.0,
+   "first_st_m": 24240.6,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1283267904,
+   "tags": {
+    "highway": "trunk_link",
+    "oneway": "yes",
+    "lanes": "1",
+    "destination": "19th Street west;Lookout Mountain Road",
+    "turn:lanes": "left"
+   },
+   "length_m": 6.0,
+   "first_st_m": 24312.6,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1106864351,
+   "tags": {
+    "highway": "secondary",
+    "name": "19th Street",
+    "oneway": "yes",
+    "lanes": "1"
+   },
+   "length_m": 23.8,
+   "first_st_m": 24318.5,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 533504135,
+   "tags": {
+    "highway": "secondary",
+    "name": "19th Street",
+    "oneway": "yes",
+    "lanes": "1"
+   },
+   "length_m": 29.8,
+   "first_st_m": 24342.4,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 533504393,
+   "tags": {
+    "highway": "secondary",
+    "name": "19th Street",
+    "oneway": "no",
+    "lanes": "3"
+   },
+   "length_m": 39.1,
+   "first_st_m": 24372.1,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 823159312,
+   "tags": {
+    "highway": "tertiary",
+    "name": "19th Street",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 38.9,
+   "first_st_m": 24411.2,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 533503587,
+   "tags": {
+    "highway": "tertiary",
+    "name": "19th Street",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 27.0,
+   "first_st_m": 24450.2,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 1106864349,
+   "tags": {
+    "highway": "tertiary",
+    "name": "19th Street",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 18.0,
+   "first_st_m": 24477.2,
+   "travel_vs_nodes": 1
+  },
+  {
+   "way": 40472940,
+   "tags": {
+    "highway": "tertiary",
+    "name": "19th Street",
+    "oneway": "no",
+    "lanes": "2"
+   },
+   "length_m": 416.5,
+   "first_st_m": 24495.2,
+   "travel_vs_nodes": 1
+  }
+ ],
+ "layouts": [
+  {
+   "id": "street_full",
+   "kind": "street",
+   "direction": "forward",
+   "checked": true,
+   "verdict": "PASS",
+   "declared_stretches": [],
+   "against_runs": [],
+   "against_total_m": 0,
+   "against_by_stretch_m": {},
+   "undeclared_against_m": 0,
+   "with_arrows_runs": [
+    {
+     "segments": 29,
+     "length_m": 86.2,
+     "vertex_from": 5536,
+     "vertex_to": 5565,
+     "st_from_m": 16610.1,
+     "st_to_m": 16696.3,
+     "drive_st_from_m": 16610.1,
+     "matched": true,
+     "way": 119006778,
+     "tags": {
+      "highway": "secondary",
+      "ref": "I 70 BUS;US 40",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 12,
+     "length_m": 35.9,
+     "vertex_from": 6652,
+     "vertex_to": 6664,
+     "st_from_m": 19957.3,
+     "st_to_m": 19993.2,
+     "drive_st_from_m": 19957.3,
+     "matched": true,
+     "way": 998316318,
+     "tags": {
+      "highway": "secondary",
+      "name": "West Colfax Avenue",
+      "ref": "I 70 BUS;US 40",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 49,
+     "length_m": 147.2,
+     "vertex_from": 6664,
+     "vertex_to": 6713,
+     "st_from_m": 19993.2,
+     "st_to_m": 20140.4,
+     "drive_st_from_m": 19993.2,
+     "matched": true,
+     "way": 427877837,
+     "tags": {
+      "highway": "secondary",
+      "name": "West Colfax Avenue",
+      "ref": "I 70 BUS;US 40",
+      "oneway": "yes",
+      "lanes": "3",
+      "turn:lanes": "||slight_right"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 43,
+     "length_m": 128.5,
+     "vertex_from": 6713,
+     "vertex_to": 6756,
+     "st_from_m": 20140.4,
+     "st_to_m": 20268.9,
+     "drive_st_from_m": 20140.4,
+     "matched": true,
+     "way": 427877838,
+     "tags": {
+      "highway": "secondary",
+      "name": "West Colfax Avenue",
+      "ref": "I 70 BUS;US 40",
+      "oneway": "yes",
+      "lanes": "4",
+      "turn:lanes": "left|left||"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 70,
+     "length_m": 210.5,
+     "vertex_from": 6761,
+     "vertex_to": 6831,
+     "st_from_m": 20283.4,
+     "st_to_m": 20493.9,
+     "drive_st_from_m": 20283.4,
+     "matched": true,
+     "way": 1491101458,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 27,
+     "length_m": 81.2,
+     "vertex_from": 6831,
+     "vertex_to": 6858,
+     "st_from_m": 20493.9,
+     "st_to_m": 20575.1,
+     "drive_st_from_m": 20493.9,
+     "matched": true,
+     "way": 1068495781,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "3"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 30,
+     "length_m": 90.2,
+     "vertex_from": 6858,
+     "vertex_to": 6888,
+     "st_from_m": 20575.1,
+     "st_to_m": 20665.4,
+     "drive_st_from_m": 20575.1,
+     "matched": true,
+     "way": 1068495780,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "4",
+      "turn:lanes": "none|none|none|right"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 27,
+     "length_m": 81.2,
+     "vertex_from": 6888,
+     "vertex_to": 6915,
+     "st_from_m": 20665.4,
+     "st_to_m": 20746.6,
+     "drive_st_from_m": 20665.4,
+     "matched": true,
+     "way": 1068495782,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "3"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 19,
+     "length_m": 57.1,
+     "vertex_from": 6915,
+     "vertex_to": 6934,
+     "st_from_m": 20746.6,
+     "st_to_m": 20803.7,
+     "drive_st_from_m": 20746.6,
+     "matched": true,
+     "way": 1068495783,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "4"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 58,
+     "length_m": 174.4,
+     "vertex_from": 6934,
+     "vertex_to": 6992,
+     "st_from_m": 20803.7,
+     "st_to_m": 20978.1,
+     "drive_st_from_m": 20803.7,
+     "matched": true,
+     "way": 17088051,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "3",
+      "turn:lanes": "none|none|right"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 5,
+     "length_m": 15.0,
+     "vertex_from": 6992,
+     "vertex_to": 6997,
+     "st_from_m": 20978.1,
+     "st_to_m": 20993.2,
+     "drive_st_from_m": 20978.1,
+     "matched": true,
+     "way": 427696018,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "3",
+      "turn:lanes": "||right"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 26,
+     "length_m": 78.2,
+     "vertex_from": 6997,
+     "vertex_to": 7023,
+     "st_from_m": 20993.2,
+     "st_to_m": 21071.4,
+     "drive_st_from_m": 20993.2,
+     "matched": true,
+     "way": 427696019,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "5",
+      "turn:lanes": "reverse;left|left|none|none|right"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 5,
+     "length_m": 15.0,
+     "vertex_from": 7023,
+     "vertex_to": 7028,
+     "st_from_m": 21071.4,
+     "st_to_m": 21086.4,
+     "drive_st_from_m": 21071.4,
+     "matched": true,
+     "way": 37551870,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 138,
+     "length_m": 414.6,
+     "vertex_from": 7028,
+     "vertex_to": 7166,
+     "st_from_m": 21086.4,
+     "st_to_m": 21501.0,
+     "drive_st_from_m": 21086.4,
+     "matched": true,
+     "way": 962597802,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 62,
+     "length_m": 186.0,
+     "vertex_from": 7166,
+     "vertex_to": 7228,
+     "st_from_m": 21501.0,
+     "st_to_m": 21687.0,
+     "drive_st_from_m": 21501.0,
+     "matched": true,
+     "way": 1412921019,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "3",
+      "turn:lanes": "||merge_to_left"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 103,
+     "length_m": 309.5,
+     "vertex_from": 7228,
+     "vertex_to": 7331,
+     "st_from_m": 21687.0,
+     "st_to_m": 21996.4,
+     "drive_st_from_m": 21687.0,
+     "matched": true,
+     "way": 484287795,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 24,
+     "length_m": 72.2,
+     "vertex_from": 7331,
+     "vertex_to": 7355,
+     "st_from_m": 21996.4,
+     "st_to_m": 22068.6,
+     "drive_st_from_m": 21996.4,
+     "matched": true,
+     "way": 492253010,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 9,
+     "length_m": 27.1,
+     "vertex_from": 7355,
+     "vertex_to": 7364,
+     "st_from_m": 22068.6,
+     "st_to_m": 22095.6,
+     "drive_st_from_m": 22068.6,
+     "matched": true,
+     "way": 427838688,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2",
+      "turn:lanes": "left;through|through;slight_right"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 20,
+     "length_m": 60.1,
+     "vertex_from": 7364,
+     "vertex_to": 7384,
+     "st_from_m": 22095.6,
+     "st_to_m": 22155.8,
+     "drive_st_from_m": 22095.6,
+     "matched": true,
+     "way": 427838687,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "4",
+      "destination": "Heritage Road",
+      "turn:lanes": "left|||right"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 9,
+     "length_m": 27.1,
+     "vertex_from": 7384,
+     "vertex_to": 7393,
+     "st_from_m": 22155.8,
+     "st_to_m": 22182.8,
+     "drive_st_from_m": 22155.8,
+     "matched": true,
+     "way": 1459465702,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "3",
+      "destination": "Heritage Road",
+      "turn:lanes": "left||"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 4,
+     "length_m": 12.0,
+     "vertex_from": 7393,
+     "vertex_to": 7397,
+     "st_from_m": 22182.8,
+     "st_to_m": 22194.8,
+     "drive_st_from_m": 22182.8,
+     "matched": true,
+     "way": 427838686,
+     "tags": {
+      "highway": "trunk",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "3",
+      "turn:lanes": "left||"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 93,
+     "length_m": 279.2,
+     "vertex_from": 7397,
+     "vertex_to": 7490,
+     "st_from_m": 22194.8,
+     "st_to_m": 22474.1,
+     "drive_st_from_m": 22194.8,
+     "matched": true,
+     "way": 492253011,
+     "tags": {
+      "highway": "trunk",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 172,
+     "length_m": 515.9,
+     "vertex_from": 7490,
+     "vertex_to": 7662,
+     "st_from_m": 22474.1,
+     "st_to_m": 22990.0,
+     "drive_st_from_m": 22474.1,
+     "matched": true,
+     "way": 37551855,
+     "tags": {
+      "highway": "trunk",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 208,
+     "length_m": 623.9,
+     "vertex_from": 7662,
+     "vertex_to": 7870,
+     "st_from_m": 22990.0,
+     "st_to_m": 23613.8,
+     "drive_st_from_m": 22990.0,
+     "matched": true,
+     "way": 923692719,
+     "tags": {
+      "highway": "trunk",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 12,
+     "length_m": 36.0,
+     "vertex_from": 7870,
+     "vertex_to": 7882,
+     "st_from_m": 23613.8,
+     "st_to_m": 23649.8,
+     "drive_st_from_m": 23613.8,
+     "matched": true,
+     "way": 923692718,
+     "tags": {
+      "highway": "trunk",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 89,
+     "length_m": 266.9,
+     "vertex_from": 7882,
+     "vertex_to": 7971,
+     "st_from_m": 23649.8,
+     "st_to_m": 23916.8,
+     "drive_st_from_m": 23649.8,
+     "matched": true,
+     "way": 914977542,
+     "tags": {
+      "highway": "trunk",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 93,
+     "length_m": 278.8,
+     "vertex_from": 7971,
+     "vertex_to": 8064,
+     "st_from_m": 23916.8,
+     "st_to_m": 24195.6,
+     "drive_st_from_m": 23916.8,
+     "matched": true,
+     "way": 484287799,
+     "tags": {
+      "highway": "trunk_link",
+      "oneway": "yes",
+      "lanes": "1",
+      "destination": "19th Street;Lookout Mountain Road"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 7,
+     "length_m": 21.0,
+     "vertex_from": 8064,
+     "vertex_to": 8071,
+     "st_from_m": 24195.6,
+     "st_to_m": 24216.6,
+     "drive_st_from_m": 24195.6,
+     "matched": true,
+     "way": 1351773584,
+     "tags": {
+      "highway": "trunk_link",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 8,
+     "length_m": 24.0,
+     "vertex_from": 8071,
+     "vertex_to": 8079,
+     "st_from_m": 24216.6,
+     "st_to_m": 24240.6,
+     "drive_st_from_m": 24216.6,
+     "matched": true,
+     "way": 533503588,
+     "tags": {
+      "highway": "trunk_link",
+      "oneway": "yes",
+      "lanes": "2",
+      "turn:lanes": "left|right"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 24,
+     "length_m": 72.0,
+     "vertex_from": 8079,
+     "vertex_to": 8103,
+     "st_from_m": 24240.6,
+     "st_to_m": 24312.6,
+     "drive_st_from_m": 24240.6,
+     "matched": true,
+     "way": 533503210,
+     "tags": {
+      "highway": "trunk_link",
+      "oneway": "yes",
+      "lanes": "1",
+      "destination": "19th Street west;Lookout Mountain Road",
+      "turn:lanes": "left"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 2,
+     "length_m": 6.0,
+     "vertex_from": 8103,
+     "vertex_to": 8105,
+     "st_from_m": 24312.6,
+     "st_to_m": 24318.5,
+     "drive_st_from_m": 24312.6,
+     "matched": true,
+     "way": 1283267904,
+     "tags": {
+      "highway": "trunk_link",
+      "oneway": "yes",
+      "lanes": "1",
+      "destination": "19th Street west;Lookout Mountain Road",
+      "turn:lanes": "left"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 8,
+     "length_m": 23.8,
+     "vertex_from": 8105,
+     "vertex_to": 8113,
+     "st_from_m": 24318.5,
+     "st_to_m": 24342.4,
+     "drive_st_from_m": 24318.5,
+     "matched": true,
+     "way": 1106864351,
+     "tags": {
+      "highway": "secondary",
+      "name": "19th Street",
+      "oneway": "yes",
+      "lanes": "1"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    },
+    {
+     "segments": 10,
+     "length_m": 29.8,
+     "vertex_from": 8113,
+     "vertex_to": 8123,
+     "st_from_m": 24342.4,
+     "st_to_m": 24372.1,
+     "drive_st_from_m": 24342.4,
+     "matched": true,
+     "way": 533504135,
+     "tags": {
+      "highway": "secondary",
+      "name": "19th Street",
+      "oneway": "yes",
+      "lanes": "1"
+     },
+     "travel_vs_nodes": 1,
+     "oneway": 1,
+     "against": false,
+     "with_arrows": true,
+     "unjudged": false
+    }
+   ],
+   "unjudged_runs": []
+  },
+  {
+   "id": "street_reverse",
+   "kind": "street",
+   "direction": "reverse",
+   "checked": true,
+   "verdict": "PASS",
+   "declared_stretches": [
+    "exit259",
+    "colfax",
+    "us6_offramp",
+    "nineteenth"
+   ],
+   "against_runs": [
+    {
+     "segments": 10,
+     "length_m": 29.8,
+     "vertex_from": 8123,
+     "vertex_to": 8113,
+     "st_from_m": 24372.1,
+     "st_to_m": 24342.4,
+     "drive_st_from_m": 533.6,
+     "matched": true,
+     "way": 533504135,
+     "tags": {
+      "highway": "secondary",
+      "name": "19th Street",
+      "oneway": "yes",
+      "lanes": "1"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 8,
+     "length_m": 23.8,
+     "vertex_from": 8113,
+     "vertex_to": 8105,
+     "st_from_m": 24342.4,
+     "st_to_m": 24318.5,
+     "drive_st_from_m": 563.3,
+     "matched": true,
+     "way": 1106864351,
+     "tags": {
+      "highway": "secondary",
+      "name": "19th Street",
+      "oneway": "yes",
+      "lanes": "1"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 2,
+     "length_m": 6.0,
+     "vertex_from": 8105,
+     "vertex_to": 8103,
+     "st_from_m": 24318.5,
+     "st_to_m": 24312.6,
+     "drive_st_from_m": 587.2,
+     "matched": true,
+     "way": 1283267904,
+     "tags": {
+      "highway": "trunk_link",
+      "oneway": "yes",
+      "lanes": "1",
+      "destination": "19th Street west;Lookout Mountain Road",
+      "turn:lanes": "left"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 24,
+     "length_m": 72.0,
+     "vertex_from": 8103,
+     "vertex_to": 8079,
+     "st_from_m": 24312.6,
+     "st_to_m": 24240.6,
+     "drive_st_from_m": 593.1,
+     "matched": true,
+     "way": 533503210,
+     "tags": {
+      "highway": "trunk_link",
+      "oneway": "yes",
+      "lanes": "1",
+      "destination": "19th Street west;Lookout Mountain Road",
+      "turn:lanes": "left"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 8,
+     "length_m": 24.0,
+     "vertex_from": 8079,
+     "vertex_to": 8071,
+     "st_from_m": 24240.6,
+     "st_to_m": 24216.6,
+     "drive_st_from_m": 665.1,
+     "matched": true,
+     "way": 533503588,
+     "tags": {
+      "highway": "trunk_link",
+      "oneway": "yes",
+      "lanes": "2",
+      "turn:lanes": "left|right"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 7,
+     "length_m": 21.0,
+     "vertex_from": 8071,
+     "vertex_to": 8064,
+     "st_from_m": 24216.6,
+     "st_to_m": 24195.6,
+     "drive_st_from_m": 689.1,
+     "matched": true,
+     "way": 1351773584,
+     "tags": {
+      "highway": "trunk_link",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 93,
+     "length_m": 278.8,
+     "vertex_from": 8064,
+     "vertex_to": 7971,
+     "st_from_m": 24195.6,
+     "st_to_m": 23916.8,
+     "drive_st_from_m": 710.1,
+     "matched": true,
+     "way": 484287799,
+     "tags": {
+      "highway": "trunk_link",
+      "oneway": "yes",
+      "lanes": "1",
+      "destination": "19th Street;Lookout Mountain Road"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 89,
+     "length_m": 266.9,
+     "vertex_from": 7971,
+     "vertex_to": 7882,
+     "st_from_m": 23916.8,
+     "st_to_m": 23649.8,
+     "drive_st_from_m": 988.9,
+     "matched": true,
+     "way": 914977542,
+     "tags": {
+      "highway": "trunk",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 12,
+     "length_m": 36.0,
+     "vertex_from": 7882,
+     "vertex_to": 7870,
+     "st_from_m": 23649.8,
+     "st_to_m": 23613.8,
+     "drive_st_from_m": 1255.9,
+     "matched": true,
+     "way": 923692718,
+     "tags": {
+      "highway": "trunk",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 208,
+     "length_m": 623.9,
+     "vertex_from": 7870,
+     "vertex_to": 7662,
+     "st_from_m": 23613.8,
+     "st_to_m": 22990.0,
+     "drive_st_from_m": 1291.9,
+     "matched": true,
+     "way": 923692719,
+     "tags": {
+      "highway": "trunk",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 172,
+     "length_m": 515.9,
+     "vertex_from": 7662,
+     "vertex_to": 7490,
+     "st_from_m": 22990.0,
+     "st_to_m": 22474.1,
+     "drive_st_from_m": 1915.7,
+     "matched": true,
+     "way": 37551855,
+     "tags": {
+      "highway": "trunk",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 93,
+     "length_m": 279.2,
+     "vertex_from": 7490,
+     "vertex_to": 7397,
+     "st_from_m": 22474.1,
+     "st_to_m": 22194.8,
+     "drive_st_from_m": 2431.6,
+     "matched": true,
+     "way": 492253011,
+     "tags": {
+      "highway": "trunk",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 4,
+     "length_m": 12.0,
+     "vertex_from": 7397,
+     "vertex_to": 7393,
+     "st_from_m": 22194.8,
+     "st_to_m": 22182.8,
+     "drive_st_from_m": 2710.9,
+     "matched": true,
+     "way": 427838686,
+     "tags": {
+      "highway": "trunk",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "3",
+      "turn:lanes": "left||"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 9,
+     "length_m": 27.1,
+     "vertex_from": 7393,
+     "vertex_to": 7384,
+     "st_from_m": 22182.8,
+     "st_to_m": 22155.8,
+     "drive_st_from_m": 2722.9,
+     "matched": true,
+     "way": 1459465702,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "3",
+      "destination": "Heritage Road",
+      "turn:lanes": "left||"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 20,
+     "length_m": 60.1,
+     "vertex_from": 7384,
+     "vertex_to": 7364,
+     "st_from_m": 22155.8,
+     "st_to_m": 22095.6,
+     "drive_st_from_m": 2749.9,
+     "matched": true,
+     "way": 427838687,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "4",
+      "destination": "Heritage Road",
+      "turn:lanes": "left|||right"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 9,
+     "length_m": 27.1,
+     "vertex_from": 7364,
+     "vertex_to": 7355,
+     "st_from_m": 22095.6,
+     "st_to_m": 22068.6,
+     "drive_st_from_m": 2810.1,
+     "matched": true,
+     "way": 427838688,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2",
+      "turn:lanes": "left;through|through;slight_right"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 24,
+     "length_m": 72.2,
+     "vertex_from": 7355,
+     "vertex_to": 7331,
+     "st_from_m": 22068.6,
+     "st_to_m": 21996.4,
+     "drive_st_from_m": 2837.1,
+     "matched": true,
+     "way": 492253010,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 103,
+     "length_m": 309.5,
+     "vertex_from": 7331,
+     "vertex_to": 7228,
+     "st_from_m": 21996.4,
+     "st_to_m": 21687.0,
+     "drive_st_from_m": 2909.3,
+     "matched": true,
+     "way": 484287795,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 62,
+     "length_m": 186.0,
+     "vertex_from": 7228,
+     "vertex_to": 7166,
+     "st_from_m": 21687.0,
+     "st_to_m": 21501.0,
+     "drive_st_from_m": 3218.7,
+     "matched": true,
+     "way": 1412921019,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "3",
+      "turn:lanes": "||merge_to_left"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 138,
+     "length_m": 414.6,
+     "vertex_from": 7166,
+     "vertex_to": 7028,
+     "st_from_m": 21501.0,
+     "st_to_m": 21086.4,
+     "drive_st_from_m": 3404.7,
+     "matched": true,
+     "way": 962597802,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 5,
+     "length_m": 15.0,
+     "vertex_from": 7028,
+     "vertex_to": 7023,
+     "st_from_m": 21086.4,
+     "st_to_m": 21071.4,
+     "drive_st_from_m": 3819.3,
+     "matched": true,
+     "way": 37551870,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 26,
+     "length_m": 78.2,
+     "vertex_from": 7023,
+     "vertex_to": 6997,
+     "st_from_m": 21071.4,
+     "st_to_m": 20993.2,
+     "drive_st_from_m": 3834.3,
+     "matched": true,
+     "way": 427696019,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "5",
+      "turn:lanes": "reverse;left|left|none|none|right"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 5,
+     "length_m": 15.0,
+     "vertex_from": 6997,
+     "vertex_to": 6992,
+     "st_from_m": 20993.2,
+     "st_to_m": 20978.1,
+     "drive_st_from_m": 3912.5,
+     "matched": true,
+     "way": 427696018,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "3",
+      "turn:lanes": "||right"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 58,
+     "length_m": 174.4,
+     "vertex_from": 6992,
+     "vertex_to": 6934,
+     "st_from_m": 20978.1,
+     "st_to_m": 20803.7,
+     "drive_st_from_m": 3927.6,
+     "matched": true,
+     "way": 17088051,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "3",
+      "turn:lanes": "none|none|right"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 19,
+     "length_m": 57.1,
+     "vertex_from": 6934,
+     "vertex_to": 6915,
+     "st_from_m": 20803.7,
+     "st_to_m": 20746.6,
+     "drive_st_from_m": 4102.0,
+     "matched": true,
+     "way": 1068495783,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "4"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 27,
+     "length_m": 81.2,
+     "vertex_from": 6915,
+     "vertex_to": 6888,
+     "st_from_m": 20746.6,
+     "st_to_m": 20665.4,
+     "drive_st_from_m": 4159.1,
+     "matched": true,
+     "way": 1068495782,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "3"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 30,
+     "length_m": 90.2,
+     "vertex_from": 6888,
+     "vertex_to": 6858,
+     "st_from_m": 20665.4,
+     "st_to_m": 20575.1,
+     "drive_st_from_m": 4240.3,
+     "matched": true,
+     "way": 1068495780,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "4",
+      "turn:lanes": "none|none|none|right"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 27,
+     "length_m": 81.2,
+     "vertex_from": 6858,
+     "vertex_to": 6831,
+     "st_from_m": 20575.1,
+     "st_to_m": 20493.9,
+     "drive_st_from_m": 4330.6,
+     "matched": true,
+     "way": 1068495781,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "3"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 70,
+     "length_m": 210.5,
+     "vertex_from": 6831,
+     "vertex_to": 6761,
+     "st_from_m": 20493.9,
+     "st_to_m": 20283.4,
+     "drive_st_from_m": 4411.8,
+     "matched": true,
+     "way": 1491101458,
+     "tags": {
+      "highway": "trunk",
+      "name": "West 6th Avenue",
+      "ref": "US 6",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 43,
+     "length_m": 128.5,
+     "vertex_from": 6756,
+     "vertex_to": 6713,
+     "st_from_m": 20268.9,
+     "st_to_m": 20140.4,
+     "drive_st_from_m": 4636.8,
+     "matched": true,
+     "way": 427877838,
+     "tags": {
+      "highway": "secondary",
+      "name": "West Colfax Avenue",
+      "ref": "I 70 BUS;US 40",
+      "oneway": "yes",
+      "lanes": "4",
+      "turn:lanes": "left|left||"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 49,
+     "length_m": 147.2,
+     "vertex_from": 6713,
+     "vertex_to": 6664,
+     "st_from_m": 20140.4,
+     "st_to_m": 19993.2,
+     "drive_st_from_m": 4765.3,
+     "matched": true,
+     "way": 427877837,
+     "tags": {
+      "highway": "secondary",
+      "name": "West Colfax Avenue",
+      "ref": "I 70 BUS;US 40",
+      "oneway": "yes",
+      "lanes": "3",
+      "turn:lanes": "||slight_right"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 12,
+     "length_m": 35.9,
+     "vertex_from": 6664,
+     "vertex_to": 6652,
+     "st_from_m": 19993.2,
+     "st_to_m": 19957.3,
+     "drive_st_from_m": 4912.5,
+     "matched": true,
+     "way": 998316318,
+     "tags": {
+      "highway": "secondary",
+      "name": "West Colfax Avenue",
+      "ref": "I 70 BUS;US 40",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    },
+    {
+     "segments": 29,
+     "length_m": 86.2,
+     "vertex_from": 5565,
+     "vertex_to": 5536,
+     "st_from_m": 16696.3,
+     "st_to_m": 16610.1,
+     "drive_st_from_m": 8209.4,
+     "matched": true,
+     "way": 119006778,
+     "tags": {
+      "highway": "secondary",
+      "ref": "I 70 BUS;US 40",
+      "oneway": "yes",
+      "lanes": "2"
+     },
+     "travel_vs_nodes": -1,
+     "oneway": 1,
+     "against": true,
+     "with_arrows": false,
+     "unjudged": false
+    }
+   ],
+   "against_total_m": 4486.5,
+   "against_by_stretch_m": {
+    "colfax": 311.6,
+    "exit259": 86.2,
+    "nineteenth": 53.6,
+    "us6_offramp": 4035.1
+   },
+   "undeclared_against_m": 0,
+   "with_arrows_runs": [],
+   "unjudged_runs": []
+  },
+  {
+   "id": "race_acw",
+   "kind": "race",
+   "direction": "forward",
+   "checked": false,
+   "verdict": "SKIP",
+   "why": "race layouts are closed roads; one-way rules do not apply (V3-PLAN P0 step 8)"
+  },
+  {
+   "id": "race_cw",
+   "kind": "race",
+   "direction": "reverse",
+   "checked": false,
+   "verdict": "SKIP",
+   "why": "race layouts are closed roads; one-way rules do not apply (V3-PLAN P0 step 8)"
+  }
+ ],
+ "fails": [],
+ "verdict": "PASS"
+}

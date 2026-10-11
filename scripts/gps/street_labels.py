@@ -29,6 +29,7 @@ from pathlib import Path
 
 from scripts.geometry.projection import _meters_per_degree
 from scripts.gps.overpass import OVERPASS_URL, USER_AGENT  # noqa: F401  (kept for parity / discoverability)
+from scripts.tls import https_context
 
 Vertex = tuple[float, float]
 
@@ -49,7 +50,7 @@ def _fetch_named_highways(bbox: tuple[float, float, float, float], *, retries: i
         req = urllib.request.Request(OVERPASS_URL, data=body,
                                      headers={"User-Agent": USER_AGENT, "Accept": "application/json"})
         try:
-            with urllib.request.urlopen(req, timeout=180) as resp:
+            with urllib.request.urlopen(req, timeout=180, context=https_context()) as resp:
                 payload = json.loads(resp.read().decode())
             break
         except Exception:

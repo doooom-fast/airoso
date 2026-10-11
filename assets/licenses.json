@@ -40,14 +40,15 @@
    "url": "https://ambientcg.com/view?id=Grass001"
   },
   {
-   "name": "Concrete034",
+   "name": "Tilt-up concrete (building set, mined from Hamburg by 4r)",
    "files": [
     "building_diffuse.jpg",
     "building_normal.jpg"
    ],
-   "source": "ambientCG",
-   "license": "CC0-1.0",
-   "url": "https://ambientcg.com/view?id=Concrete034"
+   "source": "Hamburg by 4r (AC mod), nhh_detail.kn5 material 'concretebunker' (TextureCom/KitBash3D map TCom_Wall_ConcreteBunker2), mined with scripts/modkit/extract_kn5.py; see assets/textures/SOURCES.txt",
+   "license": "PERSONAL-USE-ONLY (not CC0; no redistribution licence)",
+   "url": "",
+   "_note": "Corrected 2026-10-11 (ledger 0048, tracks/lookout-lariat/V3-PLAN.md P0 step 9, Kevin's approval). Until then this entry read 'Concrete034 / ambientCG / CC0-1.0'. That was true of the June bytes (3c8e502) and stopped being true at a7f4d6f, which replaced assets/textures/building_diffuse.jpg + building_normal.jpg with the Hamburg maps (md5 0df17da92f1fe9bb302be58a942c9c13 / d9d60d5ba84030af5084fca7929c2240) and updated SOURCES.txt but not this file. The genuine CC0 ambientCG Concrete034 pair is ../_salvage/k10-sd-v021/assets/textures/building_*.jpg (md5 163f7b7bbc40f02101e0267df70ec350 / 972d29fbb0b54a90418a77efd4366cac); tools/pack_release.py swaps it in under the same names for Lake Murray's CC0 zip. AFFECTED PACKAGES, read 2026-10-11 from each installed kn5's texture table (read-only): the Hamburg bytes are embedded in lookout_lariat (the build behind public k10-colorado v0.14.0, ledger 0048), imi_motorsports, high_plains, pueblo_motorsports_park, second_creek, sand_creek_raceway, san_diego_freeway and san_diego_lake_murray_v3 (Lake Murray's Full package, local only). All eight installed folders carry a CREDITS.txt/LICENSES.md generated from the old entry that calls those bytes CC0 Concrete034. tools/pack_release.py replaces that text in Lake Murray's Full zip (release/full/LICENSES.md credits Hamburg) and swaps the bytes in its CC0 zip, but copies san_diego_freeway's kn5 and its CC0-claiming texts into san_diego_freeway_v0.5.0.zip unchanged. Not checked: whether each published zip is byte-identical to its installed copy, and Aspen and the rally stages (not installed). Public downloads are V3-PLAN D0's business, handled separately; this file is only the record."
   },
   {
    "name": "CorrugatedSteel002",

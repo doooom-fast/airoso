@@ -1,10 +1,13 @@
 {
+  "archetype": "real_road",
   "name": "Lookout Mountain Lariat",
   "slug": "lookout_lariat",
-  "version": "0.15.0",
-  "mirror_x": true,
-  "osm_road_widths": true,
-  "_osm_road_widths_doc": "Real public-road loop \u2014 per-vertex curb-to-curb widths map-matched from OSM lanes, same as Sand Creek. Matters here because the lap spans three very different roads: the ~6.5 m Lariat Trail switchbacks, 2-lane US-40 with shoulders, and one carriageway of 4-lane US-6.",
+  "version": "0.16.0",
+  "_version_doc": "The V3 config (2026-10-11). Nothing has been built at this version; the installed July build is 0.15.0. ui_track.json stamps '[build <version>]' so a stale install is visible at a glance.",
+  "author": "k10-motorsports",
+  "year": 2026,
+  "ui_series": "K10 Colorado",
+  "_about": "V3 rebuild of the Lariat (ledger 0048; tracks/lookout-lariat/V3-PLAN.md and DOSSIER.md). Kevin approved the plan's defaults on 2026-10-11 ('Those changes are good'): D1 keep the Colfax double-back; D2 (a) one slab per divided stretch, Reverse drives them against the arrows and says so; D3 (a) a race version on the real narrow road (four layouts); D4 build both edge widths for Drive 1; D5 static C-470 bridges; D6 real relief beyond ~50-100 m (the L3 amendment shared with ledger 0046) and a Denver skyline after Drive 2; D7 all five July calls reversed; A1-A13 as written. The engine drafts route-only, Claude authors in Blender, the gates judge the built file, Kevin's drive decides. P0 only so far: no geometry, no kn5, nothing installed. Stations below are metres along the V3 centreline in centerline.local.json's frame from local v0 = the pylons (scripts/geometry/projection.py; local index = data/centerline.geojson index + 1, because projection's own start_at pick lands one vertex earlier). Dossier stations before exit 259 carry over within 2 m; later ones shift up to +20 m (the A1 fixes).",
   "location": {
     "lat": 39.727,
     "lon": -105.225,
@@ -14,16 +17,16 @@
   },
   "source": {
     "type": "osm",
-    "_doc": "No KML \u2014 the whole loop lives on the OSM road network, fetched by route.roads. 'ref:' entries match numbered highways whose ways are unnamed in OSM (rural US routes); motorways are excluded so US-40/US-6 refs never drag I-70 in."
+    "_doc": "The whole lap lives on the OSM road network, fetched by route.roads (named, 'ref:' and 'id:' entries) into data/osm.cache.json (query fingerprint 93e1c28d8828c2f2, fetched 2026-10-11T19:29:58Z, OSM base 2026-10-11T19:28:01Z, 197 ways). 'ref:' entries exclude motorways, so US-40 / US-6 never drag I-70 in; route.exclude_ids then drops the wrong side of two divided pieces when the payload is parsed. No KML."
   },
   "route": {
     "width_profile": "mountain",
+    "_width_profile_doc": "Rural width table in scripts/gps/widths_from_osm.py (3.0 m lanes, no urban parking/turn allowances). The real widths the dossier has are in width_overrides; the rest is measured on the aerial (dossier section 12) before the road is drawn.",
     "start_at": [
       39.7424,
       -105.2285
     ],
-    "_start_at_doc": "Station 0 = the Lariat Trail stone gates on 19th St (the route doc's start/finish gantry). Also keeps the pit boxes off the US-6 interchange gore, where AC_PIT_2 previously spawned 1.3 m off-road.",
-    "_width_profile_doc": "Rural width table in widths_from_osm (3.0 m lanes, no urban parking/turn allowances): Lariat Trail ~6.5 m, US-40 ~9 m, one US-6 carriageway ~9 m \u2014 instead of the urban table's 11/18 m.",
+    "_start_at_doc": "Station 0 = the two 1917 stone pylons on 19th St at the foot of the Lariat (dossier 2b). Every layout's timing line is here; each grid stands just behind it in its own direction.",
     "bbox": [
       39.693,
       -105.265,
@@ -36,244 +39,1458 @@
       "Paradise Road",
       "ref:US 40",
       "ref:US 6",
-      "id:484287799,1351773584,533503588,533503214"
+      "id:484287799,1351773584,533503588,533503210,1283267904"
     ],
-    "_roads_doc": "Paradise Road is the historic Lariat Loop leg through the Mount Vernon townsite \u2014 it tees off Lookout Mountain Rd and drops to US-40 at the exit-256 junction. Without it there is a 1.1 km hole (Lookout Mtn Rd itself never touches US-40). The id: entry is the US-6 northbound off-ramp at the 19th St interchange \u2014 19th St crosses US-6 on a bridge, so closing the ring mainline-to-bridge directly creates a fake 6.5 m vertical step (a 17% launch ramp at start/finish); the lap must climb the real ramp.",
-    "connectors": {},
-    "wide_corners": [
+    "_roads_doc": "Order = the ring: 19th St -> Lookout Mountain Rd (the Lariat Trail, over the top) -> Paradise Rd (Mount Vernon) -> US-40 down Mt Vernon Canyon, I-70 Business and West Colfax ('ref:US 40') -> US-6 ('ref:US 6') -> the id: entry, the US-6 off-ramp to 19th St (the lap climbs the real ramp; closing mainline-to-bridge directly made a fake 6.5 m step). A1 (Kevin, 2026-10-11): the ramp ends on its LEFT branch onto 19th St west, ways 533503210 + 1283267904 ('19th Street west;Lookout Mountain Road', turn:lanes left), not 533503214 (the right branch to 19th St east, which made a ~190 deg U-turn and ~105 m the wrong way). D1 (Kevin, default): the Colfax double-back stays, a 24.9 km lap; the in-game text says the turn is unverified.",
+    "exclude_ids": [
+      42005706,
+      533500102
+    ],
+    "_exclude_ids_doc": "Opt-in route key (scripts/gps/overpass.fetch_ways), applied when the payload is parsed: the query, its fingerprint and the snapshot are unchanged, and the snapshot keeps both ways for tools/route_oneway_check.py. Each id is the WRONG side of a divided piece that the stitcher keeps because it is shorter. 42005706 = exit 259's 4-lane south-west-bound side (A1: the July lap drove it 84 m against its arrows; the lap now takes the north-east-bound 119006778). 533500102 = 19th St's eastbound one-way side at the ramp terminal: with A1's ids alone the 19th St path still ran on it and the lap drove 59.6 m against its arrows (found by tools/route_oneway_check.py on 2026-10-11); dropping it puts the left turn on 1283267904 -> 1106864351 -> 533504135, the westbound side, as A1 intends. An id that is no longer in the snapshot (OSM re-split) fails the stage.",
+    "connectors": {}
+  },
+  "hairpin_fit": {
+    "_doc": "A2 / P2 step 2 (tools/fit_hairpins.py): each declared corner's OSM facets are replaced by a clothoid-arc-clothoid (curvature 0 -> 1/R -> 0) resampled at <= max_spacing_m, before any ribbon exists. st_m = the corner's apex station on data/centerline.geojson (metres from v0, the pylons), re-found within 40 m, so a small route edit does not orphan it. radius_m null = measured from the centreline (a circle through the core of the turn; when an arc at that radius cannot pass the gate within max_move_m, the nearest radius that can, scanned 0.7-1.3 x the measurement). A number overrides it: this is the hook the aerial pass (dossier 12) fills. Optional span_st_m [from, to] pins the replaced stretch. C12 and C13 are kinks (one OSM node holds over 90 % of the turn), so the centreline has no radius there and they stay PENDING until radius_m comes from the aerial or P3b's junction mouth. The ~90-111 deg bends at st ~1,752 / 4,102 / 4,960 / 6,809 / 6,982 are not in the dossier's corner table and are not declared here (the tool lists them). PROTOTYPE: the fitted line goes to a scratch --out-dir only; when it replaces data/centerline.geojson, every vertex index this config declares after C1 shifts (starts, sectors, race boxes), so P2 re-derives them in the same step.",
+    "gate": {
+      "step_slack_deg": 1.0,
+      "adjacent_step_deg": 1.5,
+      "max_move_m": 1.5,
+      "_doc": "Checked on each fitted span plus join_margin untouched points either side: every heading change between consecutive points <= (spacing / R_fit) x 57.3 deg + step_slack_deg (spacing = the mean of the two segments at the point; the first term is the fitted arc's own turn per point); adjacent heading changes differ by <= adjacent_step_deg; the fitted line stays within max_move_m of the OSM line, both ways. All three numbers [invented] (plan P2 step 2; max_move_m stands for 'the OSM way's lateral tolerance', which nobody publishes). The GATES-CHANGELOG.md entry is owed."
+    },
+    "max_spacing_m": 1.0,
+    "join_margin": 2,
+    "climb_st_m": [
+      0,
+      7100
+    ],
+    "corners": [
       {
-        "station_m": 262,
-        "width_m": 14.0,
-        "_doc": "Kevin: 'the turn on the mountain route is impossible' \u2014 base-of-climb 90deg kink, 2-4 turns ahead of the start; same geometry as a switchback so it needs a human call"
+        "id": "C1",
+        "name": "Base hairpin",
+        "st_m": 276,
+        "radius_m": null,
+        "_doc": "way 1432442175, 10 mph advisory; Kevin's 'impossible' turn. The July 14 m widening stays off (A2, _history)"
+      },
+      {
+        "id": "C2",
+        "name": "Chimney Gulch",
+        "st_m": 1077,
+        "radius_m": null
+      },
+      {
+        "id": "C3",
+        "name": "Below Lookout Mountain Crag",
+        "st_m": 1401,
+        "radius_m": null
+      },
+      {
+        "id": "C4",
+        "name": "Lower hairpin 1",
+        "st_m": 2607,
+        "radius_m": null
+      },
+      {
+        "id": "C5",
+        "name": "Lower hairpin 2",
+        "st_m": 2845,
+        "radius_m": null
+      },
+      {
+        "id": "C6",
+        "name": "Lower hairpin 3",
+        "st_m": 3004,
+        "radius_m": null
+      },
+      {
+        "id": "C7",
+        "name": "Upper hairpin 1",
+        "st_m": 5424,
+        "radius_m": null
+      },
+      {
+        "id": "C8",
+        "name": "Upper hairpin 2",
+        "st_m": 5523,
+        "radius_m": null
+      },
+      {
+        "id": "C9",
+        "name": "Upper hairpin 3",
+        "st_m": 5624,
+        "radius_m": null
+      },
+      {
+        "id": "C10",
+        "name": "Upper hairpin 4",
+        "st_m": 5879,
+        "radius_m": null
+      },
+      {
+        "id": "C11",
+        "name": "Wildcat Point bend",
+        "st_m": 6479,
+        "radius_m": null
+      },
+      {
+        "id": "C12",
+        "name": "Paradise Rd tee",
+        "st_m": 9742,
+        "radius_m": null,
+        "_doc": "kink: a junction node turns 78.5 deg; radius from the aerial / P3b junction mouth (the dossier's 'R~13 m' depends on how far apart the three measuring points sit)"
+      },
+      {
+        "id": "C13",
+        "name": "Paradise Rd bend",
+        "st_m": 10611,
+        "radius_m": null,
+        "_doc": "kink: one OSM node turns 76.4 deg; radius from the aerial"
       }
     ]
   },
   "loop": true,
-  "default_width_m": 7.0,
-  "width_overrides": [],
-  "road_text": {
-    "enabled": false,
-    "_doc": "No painted street-name decals \u2014 they land in the wrong places on this rural loop (Kevin), and mountain roads don't have them anyway."
-  },
-  "road_profile": {
-    "_doc": "Elevation is 100% real USGS 3DEP along the route \u2014 ~1,300 ft from the 19th St gates to the Buffalo Bill summit (~7,375 ft). No hand-authored dips/cambers; the mountain provides them. max_grade_pct 16 clears the real steepest pitch (Paradise Rd -14.5%) \u2014 the default 6% cap flattened the descent and floated the road metres above the canyon floor.",
-    "max_grade_pct": 16.0,
-    "dips": [],
-    "cambers": [],
-    "_crossfall_doc": "Camber is MEASURED (data/crossfall.json): lateral 1 m-DEM pairs -> cross-slope, median+mean smoothed, 1.5% deadband (flat where mild - not everywhere), capped 6% (~3.4 deg, no launching). 61.7% of the lap banked, mountain sections tilt into the hillside."
-  },
-  "scenery": {
-    "_doc": "Foothills pine forest (BAKED mesh, treefx OFF): TurboSquid-derived pine sprite atlas billboards packed HARD near the road (step 7 m, 68/station/side, bias 2.4 -> most trees within ~25 m of the verge) + real 3D pine OBJs in the corridor, grass ground + GrassFX. v0.15.0 cranked ~4x denser than the v0.8.0 baked forest Kevin drove. Streetlights ON per Kevin: yellow, 96 m, dim wide pools.",
-    "tree_style": "conifer",
-    "fill_terrain": true,
-    "corridor_margin_m": 4.0,
-    "tree_step_m": 7.0,
-    "tree_cap": 480000,
-    "fill_range_m": 220.0,
-    "fill_per_station": 68,
-    "_treefx_count_doc": "BAKED FOREST (treefx OFF): the 2D conifer billboards carry the mass and are the main density lever. MEASURED yield: on the steep foothills only ~25% of fill_terrain candidates seat (the rest hit seat_y cliff-lips on the 220 m band or land on pavement), so placed ~= tree_cap * 0.25 and the CAP is the real knob. tree_cap 40000->480000 (and fill_per_station 6->68 so the candidate pool ~482k over the 24.8 km lap keeps p_keep~1 and the cap governs) takes the baked forest from ~12.3k billboards (v0.8.0) to ~120k -- ~10x, a genuine wall of trees. Cheap crossed-star cards (~12 verts each, a small slice of the kn5 next to the 3D pines); AC handles hundreds of thousands. Offsets stay road-biased (fill_bias 2.4, range 220 m) so the wall reads dense from the seat while the tail reaches back; corridor_margin 4 + fill_off_min_extra 12 keep every trunk off the pavement (drive-test obstruction stays 0). Uniform natural fill along the whole lap (no elevation knob on the baked path).",
-    "tree_atlas_cols": 3,
-    "tree_atlas_rows": 2,
-    "bush_spacing_m": 9.0,
-    "bush_density": 0.35,
-    "bush_off_min_m": 5.0,
-    "bush_off_span_m": 25.0,
-    "bush_size_min_m": 0.9,
-    "bush_size_span_m": 1.1,
-    "light_spacing_m": 96,
-    "powerline_spacing_m": 0,
-    "signs": {
-      "enabled": false
-    },
-    "fill_bias": 2.4,
-    "lamp_model": "street_lamp_new.obj",
-    "fences": false,
-    "pylons": [
-      {
-        "start_m": 20600,
-        "end_m": 24000,
-        "side": -1,
-        "offset_m": 55.0,
-        "_doc": "distribution line paralleling the plains legs, well off the road; module carries its own 134 m cable span (tower-only module; cables strung in the Blender pass)",
-        "sink_m": 1.2
-      }
-    ],
-    "road_signs": {
-      "enabled": false,
-      "speed_signs": [
-        {
-          "station_m": 700,
-          "face": 0
-        },
-        {
-          "station_m": 12800,
-          "face": 1
-        },
-        {
-          "station_m": 21200,
-          "face": 1
-        }
-      ],
-      "_doc": "Euro faces per Kevin: sharp-turn arrows at warning-barrier entries; 70 disc on the climb, 110 discs on the plains legs."
-    },
-    "lamp_height_m": 5.5,
-    "forest3d": {
-      "module": "pine",
-      "spacing_m": 14.0,
-      "off_min_m": 7.0,
-      "off_max_m": 40.0,
-      "cap": 2500,
-      "scale_min": 2.2,
-      "scale_max": 4.2,
-      "_doc": "real 3D pines (~2000 tris each) in the driver's corridor; billboards carry the slopes. spacing 20->14 tightens the near-road pines and cap 900->2500 gives headroom (spacing is the real limiter -> ~1.5x the pines, geometry kept sane). Canopy clearance (_too_close3) still rejects any pine whose branches reach a lane, so obstruction stays 0."
-    },
-    "fence_auto": false,
-    "fill_off_min_extra_m": 12.0,
-    "treefx": {
-      "enabled": false,
-      "_disabled_doc": "TreeFX DISABLED (v0.15.0): TreeFX needs a Windows-only CSP manifest/bake step to load its text tree list, so on this build the .bin forest never renders. Reverted to the legacy BAKED-MESH forest (2D conifer billboards + 3D pine OBJs) that renders everywhere with no CSP dependency. Block kept intact but off so it can be re-enabled once the manifest path exists.",
-      "seed": 20260724,
-      "grassfx": true,
-      "bundle": true,
-      "bundle_dir": "source/trees",
-      "_doc": "CSP TreeFX 3D conifers + GrassFX (Mac-native, no kn5 bake). TWO zones route the two real forest sources build_env already places: 'forest' = the fill_terrain mass swept along the whole lap (elevation-graded \u2014 sparse at the Golden base, dense at the Buffalo Bill summit, Kevin's 'more trees the higher up'); 'forest3d' = the near-corridor 3D pines that carry their own per-tree scale + yaw. BUNDLED (personal, non-distributed build): the 3 conifer .bin MODELS live gitignored in bundle_dir (source/trees/) and the pack step COPIES them into the build's extension/trees/ next to trees.txt, so the forest is baked into the package \u2014 no manual drop-in. The .bin files stay gitignored (never committed), they only ride along in the build output. (treePine1 dropped \u2014 it was a legacy .mesh, not a TreeFX .bin.) Trunks stay off the corridor via the SAME on_road/clearance rejection the baked path used, and TreeFX trees are runtime-visual (not kn5 geometry) so they can never trip the obstruction gate. NOTE on the density block: elev_lo_m/elev_hi_m are LOCAL-frame metres (the frame ground_y() returns), not absolute ASL \u2014 this lap runs Y~0 on the low legs to ~500 at the summit; 'curve' is a numeric exponent (the emitter has no 'smoothstep' keyword) where 1.5 keeps the low slopes barer; 'aspect_favored' uses the emitter's compass labels N/E (moister slopes -> denser conifer). VERIFY IN-GAME: forest3d trees carry the corridor scale (2.2-4.2x, tuned for the old OBJ pine module) \u2014 retune scenery.forest3d.scale_* if the real model's native size makes them read too tall.",
-      "zones": {
-        "forest": {
-          "source": "fill_terrain",
-          "species": [
-            "MRS_pine_high_2_1.bin",
-            "MRS_Sapin_3_0_high.bin",
-            "MRS_Sapin_4_0_high.bin"
-          ],
-          "size_variance": [
-            0.85,
-            1.2
-          ],
-          "angle_variance": [
-            0,
-            360
-          ],
-          "density": {
-            "by": "elevation",
-            "elev_lo_m": 0.0,
-            "elev_hi_m": 500.0,
-            "keep_lo": 0.25,
-            "keep_hi": 0.95,
-            "curve": 1.5,
-            "aspect_bonus": 0.2,
-            "aspect_favored": [
-              "N",
-              "E"
-            ]
-          }
-        },
-        "forest3d": {
-          "source": "forest3d",
-          "species": [
-            "MRS_pine_high_2_1.bin",
-            "MRS_Sapin_3_0_high.bin",
-            "MRS_Sapin_4_0_high.bin"
-          ],
-          "angle_variance": [
-            0,
-            360
-          ],
-          "density": {
-            "by": "elevation",
-            "elev_lo_m": 0.0,
-            "elev_hi_m": 500.0,
-            "keep_lo": 0.5,
-            "keep_hi": 1.0,
-            "curve": 1.2,
-            "aspect_bonus": 0.15,
-            "aspect_favored": [
-              "N",
-              "E"
-            ]
-          }
-        }
-      }
-    }
-  },
+  "mirror_x": false,
+  "true_north_rotation_deg": 0.0,
+  "_frame_doc": "The V3 loop frame used by every V3 tool: local ENU metres (x = east, y = up, z = north) about the centreline centroid, mirror_x false, true north 0 (scripts/geometry/projection.py). July built mirror_x true / true north 180; everything keyed to that frame or to July stations (AI lines, map, lights, dummies, crossfall, bridge spans) is regenerated, never reused (ledgers 0015, 0038).",
   "origin": "centroid",
+  "default_width_m": 6.7,
+  "_default_width_doc": "The width of a vertex nothing else sets: 2 lanes averaging 3.35 m, the Lariat Trail's published average (Jeffco/FHU 2025). osm_road_widths and width_overrides set the real per-vertex widths in P2.",
+  "osm_road_widths": true,
+  "_osm_road_widths_doc": "Per-vertex curb-to-curb widths map-matched from OSM lanes (mountain profile), overridden by width_overrides wherever the dossier has a published or measured width. The lap spans very different roads: the 6.1-6.7 m Lariat Trail, 3-lane US-40, 2-6 lane Golden streets, one 2-lane carriageway of US-6.",
+  "width_overrides": [
+    {
+      "road": "Lookout Mountain Rd in Golden (Beverly Heights)",
+      "st_m": [
+        0,
+        1073
+      ],
+      "width_m": null,
+      "status": "measure on the aerial (dossier 12)"
+    },
+    {
+      "road": "The Lariat Trail (National Register district, CR 68)",
+      "st_m": [
+        1073,
+        7102
+      ],
+      "width_m": 6.7,
+      "min_width_m": 6.1,
+      "status": "published",
+      "source": "Jeffco/FHU corridor study 2025 + NRHP: 2 lanes averaging 3.35 m (11 ft), so ~6.7 m paved; as narrow as 6.1 m (20 ft, the 1913 design width); no paved shoulder anywhere"
+    },
+    {
+      "road": "The Lariat Trail at the Tiers of Zion switchbacks",
+      "st_m": [
+        2500,
+        3100
+      ],
+      "width_m": 5.48,
+      "status": "published",
+      "source": "Jeffco/FHU 2025: lanes narrow to 2.74 m (9 ft); the station range is the dossier's 'about'"
+    },
+    {
+      "road": "Every hairpin on the climb (C1-C11)",
+      "width_m": null,
+      "status": "measure each on the aerial; the 1913 design widened turns to ~7.3-7.9 m (24-26 ft, docs/ROAD-CONSTRUCTION.md), never assumed"
+    },
+    {
+      "road": "Summit, Buffalo Bill lot (Lookout Mountain Park)",
+      "st_m": [
+        7102,
+        7702
+      ],
+      "width_m": null,
+      "status": "measure on the aerial"
+    },
+    {
+      "road": "Lookout Mountain Rd, back side",
+      "st_m": [
+        7702,
+        9744
+      ],
+      "width_m": null,
+      "status": "measure on the aerial (2 lanes)"
+    },
+    {
+      "road": "Paradise Rd",
+      "st_m": [
+        9744,
+        11690
+      ],
+      "width_m": null,
+      "status": "measure on the aerial (no OSM lane or width tags)"
+    },
+    {
+      "road": "US-40, Mt Vernon Canyon",
+      "st_m": [
+        11690,
+        16612
+      ],
+      "width_m": null,
+      "lanes": 3,
+      "status": "measure on the aerial: the 3-lane split is unclear (one 300 m piece is tagged 2 eastbound + 1 westbound); CDOT's 2021 resurfacing widened the shoulders (widths unpublished)"
+    },
+    {
+      "road": "I-70 Business / US-40 and West Colfax (Golden)",
+      "st_m": [
+        16612,
+        20271
+      ],
+      "width_m": null,
+      "status": "OSM lanes (2-6) until measured; the race narrows the wide stretches to about Alvarado's width (race.corridor)"
+    },
+    {
+      "road": "US-6, one carriageway",
+      "st_m": [
+        20286,
+        23919
+      ],
+      "width_m": null,
+      "lanes": 2,
+      "status": "OSM lanes; median type and width to measure (D2 slab)"
+    },
+    {
+      "road": "US-6 off-ramp to 19th St",
+      "st_m": [
+        23919,
+        24321
+      ],
+      "width_m": null,
+      "lanes": "1 (2 at the split)",
+      "status": "OSM lanes"
+    },
+    {
+      "road": "19th St (bike lanes with flex posts; the lid)",
+      "st_m": [
+        24321,
+        24906
+      ],
+      "width_m": null,
+      "status": "measure on the aerial"
+    }
+  ],
+  "_width_overrides_doc": "From the dossier (2a, 12): a number only where a source gives one, null + status where the aerial still has to measure it. Read in P2 by the road draft (nothing consumes this key yet). Stations are V3 local stations.",
   "surfaces": {
     "road": "1ROAD",
     "grass": "GRASS",
     "kerb": "1KERB"
   },
+  "road_profile": {
+    "_doc": "Elevation is 100 % real USGS 3DEP along the route: 1,829 m at the pylons, ~2,228 m at the Buffalo Bill lot, the lap high point 2,288 m on the back side (st ~9,150), the low point 1,783 m on US-6 (st ~23,070); 505 m of relief, ~552 m of climbing per lap (dossier 3). No authored dips or cambers.",
+    "max_grade_pct": 16.0,
+    "_max_grade_doc": "A7: stays at 16 %, and never binds: the steepest 20 m on the lap is -11.5 % on 1 m 3DEP (July's 'Paradise Rd -14.5 %' does not reproduce: -10.3 % over 100 m). The 6 % default 'flattened the descent and floated the road metres above the canyon floor' (July). Any change is gated on replication vs 3DEP, measured before and after.",
+    "dips": [],
+    "cambers": [],
+    "crossfall": {
+      "status": "estimated",
+      "banking": false,
+      "_doc": "A6: the road is not tilted into the hairpins, because the real one isn't (L10; ledger 0003 stays open). July's data/crossfall.json was DEM-estimated, not measured (~10 % of stations sat at its 6 % cap, 19 % on US-40; 9 swings of >= 3 % each way within 30 m), and is not reused. P2 re-measures inside the real-width footprint with a roll-rate gate; until a 3DEP source-lidar sample agrees it is 'estimated', and failing stretches take the construction standard: 2 % crown, or 2 % toward the cut ditch on bench sections."
+    },
+    "verge_m": 0.4,
+    "_verge_doc": "D4 (Kevin 2026-10-11: build both, pick by driving). The strip beside the pavement: A = 0.4 m (real width, then the real edge: rock cut, ditch or drop; 0.3-0.5 m gravel); B = 1.25 m (a 1-1.5 m firm gravel strip you can put a wheel on). Both builds are in drive1_variants. Replaces July's 6.4 m drivable 'shoulder' per side (22.6 m drivable in all, against the real 6.1-6.7 m). No rumble lips in either."
+  },
+  "drive1_variants": {
+    "_doc": "D4: two Drive-1 installs, identical apart from road_profile.verge_m. P1's ship chain (tools/ship_track.sh) builds each into its own folder.",
+    "a_real_edge": {
+      "road_profile.verge_m": 0.4,
+      "install_folder": "lookout_lariat_v3"
+    },
+    "b_verge": {
+      "road_profile.verge_m": 1.25,
+      "install_folder": "lookout_lariat_v3_verge"
+    }
+  },
+  "road_text": {
+    "enabled": false,
+    "_doc": "No painted street-name decals \u2014 they land in the wrong places on this rural loop (Kevin), and mountain roads don't have them anyway."
+  },
+  "road_markings": {
+    "style": "lane",
+    "center_yellow": true,
+    "_doc": "Double yellow the whole way up the Lariat (20 mph, dossier 2a) plus white edge lines; Golden's own markings (19th St bike lanes and flex posts, crosswalks) are authored in P3i."
+  },
+  "kerb": {
+    "enabled": false,
+    "_doc": "No racing kerbs anywhere. July's curvature test lined 25 km of a 6.5 m lane with 5 cm vertical-lip rumble strips, Kevin's 'undriveable slop'. Real curbs and sidewalks in Golden are authored where they are real (A9, P3i), not drawn by this engine switch."
+  },
+  "runoff": {
+    "enabled": false,
+    "_doc": "No tarmac run-off on a pitched mountainside: the edge is rock cut, fill, stone, W-beam or open ground (scenery.edges)."
+  },
+  "divided": {
+    "_doc": "D2 (a), Kevin 2026-10-11: each divided stretch is ONE slab carrying both sides and the real median (ledger 0037's pattern), never a second ribbon. Every layout drives the lap's side, the Full direction's, with the arrows; Street Reverse drives all four against the arrows and its ui text says so. 'ways' = the lap's side, which route_oneway_check reads as Reverse's declared exceptions; 'other_side_ways' = the opposite one-way carriageway beside it, for the slab (P3e) and the race closures (P3j). Derived 2026-10-11 by tools/route_oneway_check.py on the V3 centreline + data/osm.cache.json. 19th St is 54 m on its westbound side (the dossier's 105 m was the eastbound side the July line drove); the left-turn branch 1283267904 (6 m) is counted with the ramp.",
+    "treatment": "one_slab_with_median",
+    "total_m": 4486.5,
+    "stretches": [
+      {
+        "id": "exit259",
+        "name": "I-70 Business at exit 259: the 2-lane north-east-bound side (A1)",
+        "st_m": [
+          16612.3,
+          16698.5
+        ],
+        "length_m": 86.2,
+        "ways": [
+          119006778
+        ],
+        "other_side_ways": [
+          42005706
+        ]
+      },
+      {
+        "id": "colfax",
+        "name": "West Colfax Ave: its one-way piece before the US-6 signal",
+        "st_m": [
+          19959.5,
+          20271.1
+        ],
+        "length_m": 311.6,
+        "ways": [
+          998316318,
+          427877837,
+          427877838
+        ],
+        "other_side_ways": [
+          815581608
+        ]
+      },
+      {
+        "id": "us6_offramp",
+        "name": "US-6, the Golden-bound carriageway, plus its off-ramp and the left-turn branch onto 19th St",
+        "st_m": [
+          20285.6,
+          24320.7
+        ],
+        "length_m": 4035.1,
+        "ways": [
+          1491101458,
+          1068495781,
+          1068495780,
+          1068495782,
+          1068495783,
+          17088051,
+          427696018,
+          427696019,
+          37551870,
+          962597802,
+          1412921019,
+          484287795,
+          492253010,
+          427838688,
+          427838687,
+          1459465702,
+          427838686,
+          492253011,
+          37551855,
+          923692719,
+          923692718,
+          914977542,
+          484287799,
+          1351773584,
+          533503588,
+          533503210,
+          1283267904
+        ],
+        "other_side_ways": [
+          427696023,
+          1014299198,
+          427696021,
+          427696024,
+          484287796,
+          1497294395,
+          1422209260,
+          1459465700,
+          1459465699,
+          484287797,
+          289242826,
+          427838691,
+          427838690,
+          427838692,
+          427838689,
+          914977543,
+          533496340,
+          923692720,
+          923692721,
+          645156331
+        ]
+      },
+      {
+        "id": "nineteenth",
+        "name": "19th St at the ramp terminal: the westbound side",
+        "st_m": [
+          24320.7,
+          24374.3
+        ],
+        "length_m": 53.6,
+        "ways": [
+          1106864351,
+          533504135
+        ],
+        "other_side_ways": [
+          533500102
+        ]
+      }
+    ]
+  },
   "layouts": [
     {
-      "id": "full",
-      "ai": "ai/full",
-      "uses_connectors": [],
-      "_doc": "One layout: gates -> Lariat Trail switchback climb -> Buffalo Bill summit -> Lookout Mountain Rd south to US-40 (Mount Vernon, exit 256) -> US-40 down Mt Vernon Canyon past Heritage Square -> US-6 north -> 19th St -> gates. ~20.9 km, the Nordschleife-length ring."
+      "id": "street_full",
+      "name": "Street \u2014 Full",
+      "kind": "street",
+      "direction": "forward",
+      "race_furniture": false,
+      "start": {
+        "line_vertex": 0,
+        "grid_vertex": 8292,
+        "offset_right_m": 1.6,
+        "sector_vertices": [
+          2394,
+          5518
+        ]
+      },
+      "_start_doc": "Ledger 0047's declared start, as vertices into data/centerline.local.json (its own index space: local v0 = the pylons). line_vertex 0 = AC_TIME_0 at the pylons. Forward grid v8292 = 26.9 m behind the line on 19th St; reverse grid v9 = 26.1 m behind it on Lookout Mountain Rd (layout_dummies: 0 < d <= 35 m). Sectors on straight vertices (kink < 1 deg over +/-6 vertices): v2394 near the summit (st 7179.7) and v5518 on US-40 just before exit 259 (st 16555.2), so the three sectors are the climb, the top + canyon, and Golden. Validated 2026-10-11 by tools/layout_dummies.py on a plan-only projection of this centreline; re-run on the real centerline.local.json in P4. offset_right_m 1.6 = the right-hand lane's centre on a ~6.5 m two-lane road, PROVISIONAL: the width at the pylons is not measured (dossier 12). With layout_dummies' +/-1.0 m grid stagger the outer column's car edge sits 3.55 m right of centre, past the edge of a 6.5 m road; re-set it from the aerial width (or single-file the grid) in P4.",
+      "against_oneway": [],
+      "run": "anticlockwise: from the pylons up the Lariat Trail, over the top past Buffalo Bill, Paradise Rd, down Mt Vernon Canyon on US-40, home through Golden on I-70 Business, Colfax, US-6 and 19th St",
+      "ui_description": "Street \u2014 Full: 24.9 km of open two-way roads, anticlockwise seen from above. From the 1917 stone pylons on 19th St up the 1913 Lariat Trail's stacked hairpins (20 mph, double yellow, about 6.5 m wide), over Lookout Mountain past Buffalo Bill's grave, down Paradise Rd and Mt Vernon Canyon on US-40, and home through Golden on I-70 Business, Colfax, US-6 and its 19th St ramp, every one-way with its arrows. At the US-6/Colfax signal the lap turns back on itself (152 deg); whether that turn is legal there is unverified. Real roads from OpenStreetMap at real USGS 3DEP elevation; nothing closed. The AI line is a generated draft, not an in-game recording.",
+      "ai": "ai/street_full",
+      "_doc": "Kevin's 'Full' (D3 a): the July layout id 'full' is renamed because tools/layout_dummies.validate_layouts refuses 'full' and 'freeroam' (track_folder drops the Content Manager name suffix for them). direction is the flag every tool keys on, never the id."
     },
     {
-      "id": "reverse",
-      "ai": "ai/reverse",
-      "_doc": "same world, opposite direction \u2014 own grid/timing via dummies_reverse.json + spawn kn5"
+      "id": "street_reverse",
+      "name": "Street \u2014 Reverse",
+      "kind": "street",
+      "direction": "reverse",
+      "race_furniture": false,
+      "start": {
+        "line_vertex": 0,
+        "grid_vertex": 9,
+        "offset_right_m": 1.6,
+        "sector_vertices": [
+          5518,
+          2394
+        ]
+      },
+      "_start_doc": "As street_full's _start_doc, mirrored: grid v9 on Lookout Mountain Rd, 26 m behind the line in reverse travel, sectors in reverse driving order. Reverse has its OWN grid facing its own way (July's Reverse shared Full's grid and spawned facing forward). offset_right_m is provisional, as on street_full.",
+      "against_oneway": [
+        "exit259",
+        "colfax",
+        "us6_offramp",
+        "nineteenth"
+      ],
+      "_against_oneway_doc": "D2 (a): the four divided stretches, 4486.5 m in all, driven against the arrows; tools/route_oneway_check.py fails this layout on any other wrong-way run, and on a declared stretch it no longer drives against.",
+      "run": "clockwise: 19th St, the US-6 off-ramp and US-6, Colfax, I-70 Business, up Mt Vernon Canyon on US-40, Paradise Rd, over the top and down the Lariat Trail to the pylons",
+      "ui_description": "Street \u2014 Reverse: the same 24.9 km driven the other way, clockwise seen from above: 19th St, the US-6 off-ramp and US-6, Colfax, I-70 Business, up Mt Vernon Canyon on US-40, Paradise Rd, over the top and down the Lariat Trail's hairpins to the pylons. It drives four one-way pieces of divided road against their arrows, about 4.5 km in all: the US-6 carriageway with its off-ramp (4.0 km), 312 m of West Colfax, 54 m of 19th St at the ramp and 86 m at I-70 exit 259; the other side of each is beside you, not driven. At the US-6/Colfax signal the lap turns back on itself (152 deg); whether that turn is legal there is unverified. Real roads from OpenStreetMap at real USGS 3DEP elevation. The AI line is a generated draft, not an in-game recording.",
+      "ai": "ai/street_reverse"
+    },
+    {
+      "id": "race_acw",
+      "name": "Race \u2014 Anticlockwise",
+      "kind": "race",
+      "direction": "forward",
+      "race_furniture": true,
+      "closure_token": "acw",
+      "start": {
+        "line_vertex": 0,
+        "grid_vertex": 8292,
+        "offset_right_m": 0.0,
+        "sector_vertices": [
+          2394,
+          5518
+        ]
+      },
+      "_start_doc": "As street_full's _start_doc. offset_right_m 0.0: a one-way race uses the whole road, so the grid is centred (columns at +/-1.0 m, car edges 1.95 m from centre, inside a 6.1 m road).",
+      "run": "anticlockwise, one-way: up the Lariat Trail, over the top, Paradise Rd, down Mt Vernon Canyon, home through Golden; the whole mountain road edge to edge",
+      "ui_description": "Race \u2014 Anticlockwise: the Full direction as a closed one-way race on the real roads. The whole mountain road is yours edge to edge (about half Alvarado's width on the climb), with its real stone, steel and open edges and nothing added in it or along it. Every side road is barriered at its edge; the full intersection is open at the five corners where the race turns (the Paradise Rd tee, Paradise Rd onto US-40, exit 259, Colfax onto US-6, the ramp onto 19th St); Golden's multi-lane streets are narrowed to about Alvarado's width; on each divided road you race one side and the other is closed off. The AI line is a generated draft, not an in-game recording.",
+      "ai": "ai/race_acw"
+    },
+    {
+      "id": "race_cw",
+      "name": "Race \u2014 Clockwise",
+      "kind": "race",
+      "direction": "reverse",
+      "race_furniture": true,
+      "closure_token": "cw",
+      "start": {
+        "line_vertex": 0,
+        "grid_vertex": 9,
+        "offset_right_m": 0.0,
+        "sector_vertices": [
+          5518,
+          2394
+        ]
+      },
+      "_start_doc": "As street_reverse's (grid v9, sectors reversed); offset_right_m 0.0: centred grid on the whole one-way road.",
+      "run": "clockwise, one-way: 19th St, US-6, Colfax, up Mt Vernon Canyon, Paradise Rd, over the top and down the Lariat Trail; the whole mountain road edge to edge",
+      "ui_description": "Race \u2014 Clockwise: the Reverse direction as a closed one-way race on the real roads, the same closures and open boxes turned the other way. The whole mountain road is yours edge to edge (about half Alvarado's width on the descent), with its real stone, steel and open edges and nothing added in it or along it. Every side road is barriered at its edge; the full intersection is open at the five corners where the race turns; Golden's multi-lane streets are narrowed to about Alvarado's width; on each divided road you race one side and the other is closed off. One-way rules do not apply on a closed road. The AI line is a generated draft, not an in-game recording.",
+      "ai": "ai/race_cw"
     }
   ],
+  "race": {
+    "_doc": "D3 (a), Kevin 2026-10-11: a race version on the real narrow road (dossier 4c), on the corridor rules of ledgers 0047 / 0049 (Lake Murray) adapted to this road: Kevin's brief asks for 'more or less an Alvarado's width for the entire track with deviances in various areas'; on the Lariat the deviation is most of the lap, because every layout drives the same road surface (L8) and the mountain road is 6.1-6.7 m. Read by the race tools AFTER P1 adapts them (SD's hard-coded STREETS become this block, SD byte-identical). Today's tools/barrier_bands.py is Lake Murray's and refuses this block loudly (no single 'whole' interval, no pinned closure_runs, clear_width_source is not a street in route.roads).",
+    "rules": [
+      "1. The 6-7 m two-lane mountain road is used whole, one-way: closing 'the other lane' would leave a 3 m strip.",
+      "2. No K-rail down the historic road and no barrier added along its edges: the real edges (1913 stone, W-beam, open) are the race edges. No race kerbs on the mountain (Kevin's July 'undriveable slop').",
+      "3. Closures go at junction edges; curb-line barriers only where a real curb line exists, on Golden's streets."
+    ],
+    "segments": [
+      {
+        "road": "Lookout Mountain Rd in Golden",
+        "st_m": [
+          0,
+          1073
+        ],
+        "real_width": "2 lanes, to measure",
+        "corridor": "whole road, one-way",
+        "closed_off": "the 3 side streets at their edges (Goldenvue Dr, Mount Zion Dr, Bonvue Dr)"
+      },
+      {
+        "road": "The Lariat Trail",
+        "st_m": [
+          1073,
+          7102
+        ],
+        "real_width": "6.1-6.7 m",
+        "corridor": "whole road, one-way (the main deviation: about half Alvarado)",
+        "closed_off": "nothing in the road; pull-offs, overlooks and the Windy Saddle lot stay open (dead ends)"
+      },
+      {
+        "road": "Summit + back side",
+        "st_m": [
+          7102,
+          9744
+        ],
+        "real_width": "2 lanes, to measure",
+        "corridor": "whole road",
+        "closed_off": "the park access and ~10 side streets; Lookout Mtn Rd's south leg at the C12 box edge"
+      },
+      {
+        "road": "Paradise Rd",
+        "st_m": [
+          9744,
+          11690
+        ],
+        "real_width": "to measure",
+        "corridor": "whole road",
+        "closed_off": "its 8 side streets"
+      },
+      {
+        "road": "US-40, Mt Vernon Canyon",
+        "st_m": [
+          11690,
+          16612
+        ],
+        "real_width": "3 lanes, to measure",
+        "corridor": "whole road (about Alvarado if 3 lanes)",
+        "closed_off": "exit 256 ramps and US-40 west at the C14 box edge; South Grapevine Rd, Cabrini Blvd; the exit 259 ramps"
+      },
+      {
+        "road": "I-70 Business / US-40",
+        "st_m": [
+          16612,
+          18418
+        ],
+        "real_width": "3-5 lanes; at exit 259 an 86 m divided pair",
+        "corridor": "about 13 m on the race side, a lane-closure barrier closing the rest (leading up to medians, never on them); at exit 259 the 2-lane side (119006778)",
+        "closed_off": "Hogback Rd and the I-70 ramps at the C15 box edge; exit 259's 4-lane side (42005706) at the C15 box edge; the CR 93 link; Heritage Rd"
+      },
+      {
+        "road": "West Colfax Ave",
+        "st_m": [
+          18418,
+          20271
+        ],
+        "real_width": "2-6 lanes",
+        "corridor": "about 13 m; the whole road where it is 2 lanes; its one-way piece (divided.colfax) is its own carriageway",
+        "closed_off": "Zeta St, West St / Rooney Rd, Violet St, Corporate Dr, Interplaza West"
+      },
+      {
+        "road": "US-6",
+        "st_m": [
+          20286,
+          23919
+        ],
+        "real_width": "one 2-lane carriageway",
+        "corridor": "that carriageway",
+        "closed_off": "every median gap; Johnson Rd, Jefferson County Pkwy / Heritage Rd, the ramps; US-6 beyond the C17 gore"
+      },
+      {
+        "road": "US-6 off-ramp",
+        "st_m": [
+          23919,
+          24321
+        ],
+        "real_width": "1 lane (2 at the split)",
+        "corridor": "the ramp",
+        "closed_off": "-"
+      },
+      {
+        "road": "19th St",
+        "st_m": [
+          24321,
+          24906
+        ],
+        "real_width": "2 lanes + bike lanes",
+        "corridor": "whole road",
+        "closed_off": "19th St east at the C18 box edge; Parfet Estates Dr, Moly Rd, Pinal Rd x2, Tangent Way, Smith Rd"
+      }
+    ],
+    "corridor": {
+      "clear_width_m": 11.36,
+      "clear_width_source": "lake_murray_alvarado_0049",
+      "_clear_width_doc": "Alvarado as raced on Lake Murray: 13.00 m curb to curb minus two 0.82 m strip insets = 11.36 m (ledger 0049, measured). It applies only where the race narrows a wide Golden street; everywhere else the race corridor is the whole real road.",
+      "island_mode": "pavement",
+      "boxes": [
+        {
+          "corner": "C12",
+          "name": "Paradise Rd tee (Lookout Mountain Rd onto Paradise Rd, 90 deg left)",
+          "apex": 3249,
+          "i": 3241,
+          "j": 3257,
+          "st_m": [
+            9720.6,
+            9768.1
+          ],
+          "legs_raced": [
+            "Lookout Mountain Rd from the north",
+            "Paradise Rd"
+          ],
+          "legs_sealed_at_box_edge": [
+            "Lookout Mountain Rd's south leg"
+          ]
+        },
+        {
+          "corner": "C14",
+          "name": "Paradise Rd onto US-40 (stop signs; the RTD Park-n-Ride, exit 256)",
+          "apex": 3898,
+          "i": 3890,
+          "j": 3906,
+          "st_m": [
+            11665.6,
+            11712.9
+          ],
+          "legs_raced": [
+            "Paradise Rd",
+            "US-40 east, down the canyon"
+          ],
+          "legs_sealed_at_box_edge": [
+            "US-40 west",
+            "the exit 256 ramps"
+          ]
+        },
+        {
+          "corner": "C15",
+          "name": "Exit 259 signals (US-40 onto I-70 Business)",
+          "apex": 5537,
+          "i": 5529,
+          "j": 5545,
+          "st_m": [
+            16588.2,
+            16635.6
+          ],
+          "legs_raced": [
+            "US-40 from the canyon",
+            "I-70 Business north-east-bound (119006778)"
+          ],
+          "legs_sealed_at_box_edge": [
+            "Hogback Rd",
+            "the I-70 ramps",
+            "exit 259's south-west-bound side (42005706)"
+          ]
+        },
+        {
+          "corner": "C16",
+          "name": "Colfax onto US-6 (the 152 deg double-back, D1)",
+          "apex": 6762,
+          "i": 6749,
+          "j": 6770,
+          "st_m": [
+            20247.7,
+            20309.6
+          ],
+          "legs_raced": [
+            "West Colfax",
+            "US-6 (West 6th Ave)"
+          ],
+          "legs_sealed_at_box_edge": [
+            "the other legs of the US-6/Colfax signal"
+          ]
+        },
+        {
+          "corner": "C18",
+          "name": "The ramp onto 19th St west (A1's ordinary left)",
+          "apex": 8106,
+          "i": 8098,
+          "j": 8114,
+          "st_m": [
+            24296.7,
+            24344.5
+          ],
+          "legs_raced": [
+            "the US-6 off-ramp's left branch",
+            "19th St west"
+          ],
+          "legs_sealed_at_box_edge": [
+            "19th St east",
+            "the ramp's right branch (533503214)"
+          ]
+        }
+      ],
+      "_boxes_doc": "Kevin's 'Corners the race turns at': the full intersection drivable, the legs the race doesn't take sealed at the box edge; the clockwise race uses the same boxes turned the other way. apex = the corner vertex on the V3 centreline (centerline.local.json index); i / j = apex +/- 8 vertices (~24 m), PROVISIONAL until P3b authors the junction mouths and the box edges come from their footprint. C16 spans both junction nodes (v6757, v6762). C17 (the US-6 diverge) is a gore, not a box.",
+      "closure_runs_pending": {
+        "where": [
+          "I-70 Business / US-40",
+          "West Colfax Ave"
+        ],
+        "rule": "a lane-closure barrier gives the race about clear_width_m on the race side and closes the rest, leading up to medians, never on them",
+        "status": "pinned after P2 measures the widths: only stretches wider than ~13 m get a run (dossier 4c)"
+      },
+      "divided_sides": "on every divided stretch (divided.stretches) the race keeps the lap's side; every gap to other_side_ways is closed"
+    },
+    "mouths": "sealed",
+    "mouths_source": "every side-road mouth the race does not take (~45 named, dossier 4b), from the P3b junction pass; closed straight across the mouth at the junction edge",
+    "edge_mode": "town_curbs_only",
+    "_edge_mode_doc": "Not Lake Murray's 'road' mode (strips along both curbs of every street): on this road the real edges are the race edges (rule 2); curb-line barriers only on Golden's streets where the survey shows a real curb line.",
+    "barrier_profile_asset": "assets/models/concrete_barrier_4m.obj",
+    "barrier_height_m": 1.2,
+    "module_pitch_m": 4.04,
+    "_barrier_doc": "Kevin's 4 m K-rail silhouette, swept as strips (Lake Murray's race pattern). Its licence is UNRECORDED, so the race kn5s stay in the Full package, as on Lake Murray (A12).",
+    "kerbs": {
+      "enabled": false,
+      "_doc": "No race kerbs on the mountain (rule 2); none in town until Kevin asks."
+    },
+    "grid_slots": 8,
+    "pit_slots": 8
+  },
   "lighting": {
     "presets": [
       "morning",
       "noon",
       "golden_hour"
     ],
-    "grassfx": true,
+    "_presets_doc": "The climb faces east / north-east, so mornings light the switchbacks with the plains in haze below (the money shot); by late afternoon the east face goes into shadow first (dossier 7).",
     "streetlight": {
-      "_doc": "Wide DIM wash (Kevin: ~3x spread, no ground saturation). CSP RANGE scales deposited energy - widening range demands cutting intensity: 60 m range at 1.1, soft 155-deg cone, high gradient offset, damped specular.",
+      "_doc": "D7 item 1 reversed (Kevin 2026-10-11): lamps only where they really stand (scenery.lamps); the mountain and the canyon are dark. His July pool SHAPE stays ('~3x spread, no ground saturation': range 60, spot 155, sharpness 0.1, gradient offset 0.55, specular 0.12). Colour: high-pressure sodium, the type OSM tags on 24 of the 25 typed lamps (ledger 0043's HPS line 255,183,76 with single_frequency 0.7; San Diego's low-pressure finding does not transfer). Intensity in the 255-scale decade (ledger 0043: CSP multiplies the 0-255 colour by intensity with no /255; July's 0.35 was an effective 89). 0.010 is 0043's soft-sodium start; ladder if too dark 0.015 -> 0.020, ceiling 0.03; if the 60 m pools read hot, step down toward 0.006. The 0043 soft keys (diffuse concentration, half-res blurred shadows, no volumetric, no long specular, fade 800/200) are copied. emissive 0.5 = the low end of 0043's band for an authored lamp head (Kevin's lamp_lens.obj is a visible head).",
+      "intensity": 0.01,
       "range_m": 60.0,
-      "intensity": 0.35,
-      "emissive": 0.22,
       "color": [
         1.0,
-        0.85,
+        0.72,
         0.3
       ],
-      "emissive_color": [
-        255,
-        220,
-        60
-      ],
+      "single_frequency": 0.7,
       "spot_deg": 155,
       "spot_sharpness": 0.1,
       "range_gradient_offset": 0.55,
-      "specular_mult": 0.12
+      "specular_mult": 0.12,
+      "diffuse_concentration": 0.25,
+      "shadows": 1,
+      "shadows_half_resolution": 1,
+      "shadows_extra_blur": 1,
+      "volumetric_light": 0,
+      "long_specular": 0,
+      "fade_at": 800,
+      "fade_smooth": 200,
+      "emissive": 0.5,
+      "emissive_color": [
+        255,
+        183,
+        76
+      ]
+    },
+    "light_pollution": {
+      "color": [
+        1.0,
+        0.72,
+        0.3
+      ],
+      "relative_position": [
+        2.0,
+        0.0,
+        0.0
+      ],
+      "_note": "sodium glow toward Denver, east",
+      "_doc": "The night glow is Denver's, on the eastern horizon, and matches the HPS lamps (la_canyons ships 255,183,76). relative_position biases it east: in the kn5 frame with mirror_x false, +x is east; the magnitude copies the writer default's (~2) and CSP's units are unverified, so VERIFY at the Drive 2 night row. density / radius_km stay at the writer defaults."
+    },
+    "grassfx": {
+      "_doc": "Ledger 0045's grammar (scripts/environment/treefx.grassfx_block). D7 item 3: tawny late-summer foothill grass, unmown, from 0045's deferred straw-slope settings (SHAPE_SIZE 0.7-1.2, SHAPE_WIDTH 0.5, TRIM_PERIOD 365). mask 'open' so blades certainly appear on first load. Blades take the ground texel's colour, so the tawny look rides on the ground texture (texture_overrides). The writer binds only 1GRASS* meshes: the corridor and medium terrain tiers. The view / far / plains tiers carry no digit prefix and rock cuts and wall faces are their own meshes, so no grass grows there. LADDERS (config only): patchier -> mask 'default' + mask_blur 1; too tall -> shape_size [0.6, 1.0]; neon under the lamps at night -> texture_brightness 0.8; off without losing the tuning -> enabled false.",
+      "mask": "open",
+      "shape_size": [
+        0.7,
+        1.2
+      ],
+      "shape_width": 0.5,
+      "trim_period": 365,
+      "texture": "grass_fx/highlands.dds",
+      "texture_grid": [
+        8,
+        3
+      ]
     }
   },
-  "true_north_rotation_deg": 180.0,
-  "kerb": {
-    "enabled": false,
-    "_doc": "Real mountain road: NO kerbs. The curvature test classed the whole mountain as corners and lined 25 km of a 6.5 m lane with 5 cm vertical-lip rumble strips on both edges - Kevin's 'undriveable slop'. Flush paved shoulder only."
-  },
-  "runoff": {
-    "enabled": false,
-    "_doc": "No flat tarmac runoff aprons on a pitched mountainside - run-off here is dirt, trees, and guardrail (warning barriers stay)."
-  },
-  "texture_overrides": {
-    "1GRASS": {
-      "diffuse": "assets/textures/grass_diffuse.jpg",
-      "normal": "assets/textures/grass_normal.jpg",
-      "_doc": "Alpine grass instead of dry dirt (Kevin) - mesh stays 1GRASS so physics, audits and GrassFX are untouched; GrassFX (lighting.grassfx) grows 3D blades on it."
+  "terrain": {
+    "_doc": "P3a terrain tiers (dossier 6d, V3-PLAN P3a). D6 (i), Kevin 2026-10-11: real relief beyond the road. Near the road (out to ~60-100 m) the ground stays shaped to the road; beyond that it blends back to its real surveyed 3DEP height within a few hundred metres, so Clear Creek Canyon below Wildcat Point and Golden below Windy Saddle exist. This needs the one-line amendment to rule L3 (today: all ground within 22 m of the nearest road's height), shared with ledger 0046 (Lake Murray's Cowles Mountain). The amendment is NOT yet written into fleet/LAWS.md: config and plan only now, no geometry.",
+    "l3_amendment": {
+      "status": "approved by Kevin 2026-10-11 (D6 i); not yet in fleet/LAWS.md",
+      "shared_with": "ledger 0046",
+      "near_road_shaped_m": [
+        60,
+        100
+      ],
+      "blend_to_survey": "within a few hundred metres"
     },
-    "LIGHTPOST": {
-      "diffuse": "assets/textures/street_lamp_new.png",
-      "_doc": "the purpose-modeled lamp's own skin (emissive baked, opacity alpha)"
+    "tiers": [
+      {
+        "name": "corridor",
+        "cell_m": 3.0,
+        "extent": "~20-25 m past the pavement edge",
+        "physics": true,
+        "prefix": "1GRASS",
+        "grassfx": true,
+        "_doc": "cells smaller than the 6.1 m road (L3b); shaped by cross_section; every point seated to its own leg by station (L4)"
+      },
+      {
+        "name": "medium",
+        "cell_m": [
+          15,
+          20
+        ],
+        "extent_m": 500,
+        "physics": true,
+        "prefix": "1GRASS",
+        "grassfx": true
+      },
+      {
+        "name": "view",
+        "cell_m": [
+          20,
+          30
+        ],
+        "extent_m": 3000,
+        "sides": [
+          "N",
+          "E"
+        ],
+        "physics": false,
+        "prefix": null,
+        "grassfx": false,
+        "kn5": "backdrop",
+        "_doc": "the view side: the Clear Creek mouth (-11.8 deg from Wildcat Point, 1.5-2.2 km), Golden (1.6-2.9 km), Mount Zion and the M, North Table Mountain, Mount Galbraith; at far-tier cells a canyon a few hundred metres wide smears away"
+      },
+      {
+        "name": "far",
+        "cell_m": [
+          60,
+          100
+        ],
+        "extent_m": 10000,
+        "sides": [
+          "W",
+          "S",
+          "N"
+        ],
+        "physics": false,
+        "prefix": null,
+        "grassfx": false,
+        "kn5": "backdrop",
+        "_doc": "real, unflattened 3DEP: Genesee, Mount Morrison, Mount Galbraith, North Table Mountain, the Clear Creek Canyon walls"
+      },
+      {
+        "name": "plains",
+        "cell_m": 250,
+        "extent_m": 25000,
+        "sides": [
+          "E"
+        ],
+        "physics": false,
+        "prefix": null,
+        "grassfx": false,
+        "kn5": "backdrop",
+        "_doc": "a coarse, nearly flat plane out to ~25 km east"
+      }
+    ],
+    "_tiers_doc": "Visual-only tiers carry no digit prefix, so physics, GrassFX and the gates never touch them; they ship in their own backdrop kn5, listed in every layout. Confirm in game (Drive 2) that AC/CSP draws terrain at 10-25 km and trim the far tier to what draws.",
+    "seams": {
+      "coincide_within_m": 0.05,
+      "or": "skirted down",
+      "_tag": "[invented] (V3-PLAN P5: tier seams gate)"
     },
-    "LAMPHEAD": {
-      "diffuse": "assets/textures/street_lamp_new.png"
+    "cross_section": {
+      "_doc": "docs/ROAD-CONSTRUCTION.md's Lariat section, uphill to downhill. Between stacked hairpin legs the default is cut + fill, not walls (A3): the legs sit >= 13.8 m apart edge to edge at real width with 6.5-14.7 m between them vertically, and the section closes 13 m of height in 11 m. A wall only where the survey shows one (Wildcat Point's two battered walls, the Windy Saddle walls, the stone guardrails' footings) or where the section cannot close; those are AUTH_wall_authored_* and listed for Kevin.",
+      "rock_cut_slope": "0.25:1",
+      "soil_cut_slope": "1-1.5:1",
+      "toe_ditch_m": [
+        0.4,
+        1.2
+      ],
+      "fill_slope": "1.5:1 (hand-placed rock)",
+      "fill_to_wall_trigger_m": 8.0
+    },
+    "stacked_legs": {
+      "pair_max_plan_m": 40,
+      "pair_min_along_m": 150,
+      "seating": "station-matched (L4)",
+      "_doc": "On the July line: 1,188 pairs at st ~2,500-2,950 and ~5,300-5,850, vertical gap 6.5-14.7 m, nearest 20.5 m on the map; re-measured on the V3 line in P2. [invented] thresholds, V3-PLAN P5."
+    },
+    "skyline": {
+      "enabled": false,
+      "when": "after Drive 2 (D6 ii)",
+      "_doc": "a low-poly Denver skyline extruded from OSM building heights at its real bearing, 19.6-23.2 km east, one visual-only mesh in the backdrop kn5 (sourced, so L1 allows it); visible from the lower hairpins up, blocked from the pylons by South Table Mountain's shoulder"
     }
   },
-  "road_markings": {
-    "style": "lane",
-    "center_yellow": true,
-    "_doc": "Lake Murray look: solid double-yellow centre + white edge lines (ribbon.lane_markings port); road asphalt tiles at 4 m to match."
+  "scenery": {
+    "_doc": "V3 never runs the engine's environment stage (scripts/environment/build_env.py): no I-70 / C-470 decks (the 'wavy ribbons', ~40 km of 22 m deck, ledger 0048), no sine-wave MOUNTAINS, no creek ribbons, no unverified power-line run, no baked forest. Each block below is read by a V3 authoring tool (V3-PLAN P1-P3).",
+    "treefx": {
+      "_doc": "A8 + D7 item 5 reversed (Kevin 2026-10-11): trees where the real forest is, zoned by which way the slope faces and by band (dossier 6a), densest on the north-facing upper hairpins and opening into ponderosa woodland over the top; NOT July's 'more trees the higher up' (sparse at the base, densest at the summit). North- and east-facing slopes carry conifers; south- and west-facing are open grass and shrub. Read by tools/make_treefx.py once P1 adapts it to take zones, species and ground tiles from config. Every model is third-party mod content (personal use): it rides in the Full package only; the public zip ships no vegetation (A12). Corridor guard: no tree within half-width + 1 m of any centreline (ledger 0040).",
+      "enabled": true,
+      "bundle_dir": "source/trees",
+      "aspect": {
+        "conifer": [
+          "N",
+          "NE",
+          "E",
+          "NW"
+        ],
+        "open": [
+          "S",
+          "SW",
+          "W",
+          "SE"
+        ],
+        "open_conifer_factor": 0.25
+      },
+      "density_classes": {
+        "none": 0.0,
+        "street_trees": 0.08,
+        "sparse": 0.04,
+        "patchy": 0.12,
+        "open_woodland": 0.18,
+        "closed_canopy": 0.45
+      },
+      "_density_doc": "Trees per 10 m ground cell (make_treefx's fill grammar), on conifer-aspect cells; open-aspect cells take conifers at open_conifer_factor and shrubs instead. [authored] starting points: the dossier gives the classes, not numbers; tuned in Drive 2.",
+      "species": {
+        "ponderosa": {
+          "models": [
+            "ScotsPine.bin"
+          ],
+          "alternates": [
+            "Pine.bin",
+            "Pine_1.bin"
+          ],
+          "from": "shuto_revival_project_beta (ScotsPine), nohesi_110 (Pine), Kruth_Larcenaire (Pine_1)",
+          "fit": "closest shape (tall clear trunk, open crown); verify in game"
+        },
+        "douglas_fir": {
+          "models": [
+            "Spruce1.bin",
+            "Spruce2.bin",
+            "Spruce3.bin",
+            "Spruce4.bin",
+            "Spruce_11.bin",
+            "Spruce_1.bin",
+            "MRS_Sapin_0_0.bin"
+          ],
+          "from": "algarve_portimao_2023 (Spruce1-4, Spruce_11), Kruth_Larcenaire (Spruce_1, MRS_Sapin_0_0)",
+          "fit": "a dark cone-shaped stand-in; also the Spring House spruce"
+        },
+        "juniper": {
+          "models": [
+            "AlaskaCedar1.bin",
+            "AlaskaCedar2.bin"
+          ],
+          "from": "shuto_revival_project_beta",
+          "fit": "weak; scaled well down, or left out"
+        },
+        "cottonwood_street": {
+          "models": [
+            "SycamoreV1.bin",
+            "SycamoreV2.bin",
+            "SycamoreV3.bin"
+          ],
+          "from": "tracks/san-diego-lake-murray/source/trees",
+          "fit": "broadleaf stand-in (town, streamside)"
+        },
+        "shrub": {
+          "models": [
+            "Bush.bin",
+            "Bush2.bin",
+            "Bush3.bin"
+          ],
+          "from": "tracks/san-diego-lake-murray/source/trees",
+          "fit": "mountain mahogany, skunkbush, chokecherry / plum"
+        },
+        "yucca": {
+          "models": [
+            "Yucca.bin"
+          ],
+          "from": "tracks/san-diego-lake-murray/source/trees",
+          "fit": "soapweed yucca on dry lower slopes; check its size first"
+        }
+      },
+      "_species_doc": "Stand-ins on this machine (dossier 6b; every file checked present 2026-10-11 under the AC content/tracks folders named, or the SD source/trees/). Sizes come from each model's native height (P1 reads the .bin bounds), checked in game. Missing outright: a true ponderosa, Douglas-fir, Rocky Mountain juniper and cottonwood (dossier 8). Never: Gambel oak, pinyon, anything urban on the mountain.",
+      "zones": [
+        {
+          "name": "golden_town",
+          "st_m": [
+            [
+              0,
+              1073
+            ],
+            [
+              16612,
+              24906
+            ]
+          ],
+          "elev_m": [
+            1783,
+            1900
+          ],
+          "trees": "street_trees",
+          "species": [
+            "cottonwood_street"
+          ],
+          "shrubs": "sparse",
+          "shrub_species": [
+            "shrub",
+            "yucca"
+          ],
+          "_doc": "watered lawns, planted street trees and cottonwoods in town; short dry grasses (blue grama, sideoats grama, purple threeawn) on unwatered ground; yucca, prickly pear, smooth sumac on dry slopes. No forest."
+        },
+        {
+          "name": "lower_lariat",
+          "st_m": [
+            [
+              1073,
+              2500
+            ]
+          ],
+          "elev_m": [
+            1830,
+            2000
+          ],
+          "trees": "sparse",
+          "species": [
+            "juniper",
+            "ponderosa"
+          ],
+          "shrubs": "patchy",
+          "shrub_species": [
+            "shrub",
+            "yucca"
+          ],
+          "_doc": "the bare lower east face: open grass and shrub, scattered juniper and ponderosa, shrubs in the gulches; why the views are open"
+        },
+        {
+          "name": "lower_hairpins_windy_saddle",
+          "st_m": [
+            [
+              2500,
+              4950
+            ]
+          ],
+          "elev_m": [
+            2000,
+            2110
+          ],
+          "trees": "patchy",
+          "species": [
+            "ponderosa",
+            "juniper",
+            "douglas_fir"
+          ],
+          "shrubs": "patchy",
+          "shrub_species": [
+            "shrub"
+          ],
+          "_doc": "scattered ponderosa and juniper with grass between; Douglas-fir in shaded pockets"
+        },
+        {
+          "name": "upper_hairpins_north",
+          "st_m": [
+            [
+              4950,
+              6500
+            ]
+          ],
+          "elev_m": [
+            2110,
+            2230
+          ],
+          "trees": "closed_canopy",
+          "species": [
+            "ponderosa",
+            "douglas_fir"
+          ],
+          "shrubs": "patchy",
+          "shrub_species": [
+            "shrub"
+          ],
+          "_doc": "the DENSEST band: north-facing, a closed canopy of ponderosa and Douglas-fir with maple, ninebark, juniper, raspberry and barberry under it; spruce in the Spring House drainage (species unconfirmed)"
+        },
+        {
+          "name": "summit_back_side",
+          "st_m": [
+            [
+              6500,
+              9744
+            ]
+          ],
+          "elev_m": [
+            2225,
+            2290
+          ],
+          "trees": "open_woodland",
+          "species": [
+            "ponderosa"
+          ],
+          "shrubs": "sparse",
+          "shrub_species": [
+            "shrub"
+          ],
+          "_doc": "ponderosa groves with grass and wildflower meadows, houses among the pines. st 6,500-7,100 (Wildcat Point to the summit) sits between the dossier's bands and is given this one (rock outcrops, open views)"
+        },
+        {
+          "name": "paradise_canyon",
+          "st_m": [
+            [
+              9744,
+              16612
+            ]
+          ],
+          "elev_m": [
+            1942,
+            2284
+          ],
+          "trees": "split_by_aspect",
+          "trees_conifer_aspect": "open_woodland",
+          "trees_open_aspect": "sparse",
+          "species": [
+            "ponderosa",
+            "douglas_fir",
+            "juniper"
+          ],
+          "shrubs": "patchy",
+          "shrub_species": [
+            "shrub"
+          ],
+          "streamside": {
+            "along": "Mount Vernon Creek",
+            "species": [
+              "cottonwood_street"
+            ],
+            "status": "species unverified"
+          },
+          "_doc": "south-facing side open grass and shrub with juniper and mahogany; north-facing side denser ponderosa and Douglas-fir"
+        }
+      ]
+    },
+    "lamps": {
+      "_doc": "D7 item 1 reversed (Kevin 2026-10-11): street lamps only where they really stand. 39 OSM-mapped lamps within 40 m of the lap (a floor: 509 of 576 lamps in the area carry no type tag, so Golden's main roads are under-mapped); expect a few dozen, not July's 304 at 96 m. The Lariat (st 1,073-7,102), the back side, Paradise Rd and the US-40 canyon have none: the mountain and the canyon are dark. Night stays available. tools/lamp_inventory.py (new, P3h) turns the surveyed list into data/lights.local.json; tools/author_lamps_blend.py (adapted) takes those positions with a height per lamp. Gated since November 2024: the Chimney Gulch -> Lookout Mountain Park section is shut at night; the gates are shown open.",
+      "rule": "inventory_only",
+      "source": "OSM highway=street_lamp nodes within 40 m of the lap, plus the Street View pass (dossier 12)",
+      "stretches": [
+        {
+          "where": "Golden part of Lookout Mountain Rd, plus near the pylons",
+          "st_m": [
+            [
+              500,
+              1000
+            ]
+          ],
+          "mapped": 3
+        },
+        {
+          "where": "Buffalo Bill complex",
+          "st_m": [
+            [
+              6500,
+              7000
+            ]
+          ],
+          "mapped": 1
+        },
+        {
+          "where": "Exit 259",
+          "st_m": [
+            [
+              15500,
+              16500
+            ]
+          ],
+          "mapped": 8
+        },
+        {
+          "where": "Heritage / Colfax (incomplete: every junction has signals)",
+          "st_m": [
+            [
+              19020,
+              19520
+            ]
+          ],
+          "mapped": 1
+        },
+        {
+          "where": "US-6 at Johnson Rd (the rest of US-6 is lit=no; the wildlife crossing's 'lit' is its strobes)",
+          "st_m": [
+            [
+              20920,
+              21120
+            ]
+          ],
+          "mapped": 3
+        },
+        {
+          "where": "19th St interchange, ramp, lid and 19th St",
+          "st_m": [
+            [
+              23020,
+              24450
+            ]
+          ],
+          "mapped": 23
+        }
+      ],
+      "type": "high-pressure sodium cobra heads, high masts and straight masts (24 of 25 typed lamps HPS, 1 LED)",
+      "model": [
+        "assets/models/lamp_post.obj",
+        "assets/models/lamp_lens.obj"
+      ],
+      "_model_doc": "Kevin's owned lamp (~3k vertices, ~4k AC positions each): a few dozen keep it at 120-240k positions (budget); a lower-detail version if the budget bites.",
+      "also_lit_at_night": [
+        "the lit M on Mount Zion (whether nightly is unverified)",
+        "red aircraft-warning lights on the summit towers (type unverified)",
+        "Denver's glow (lighting.light_pollution)"
+      ]
+    },
+    "signs": {
+      "_doc": "D7 item 2 reversed (Kevin 2026-10-11): US faces on a US road, not July's Euro faces (70 / 110 discs). A5, one pass: the sourced signs first, then the rule-placed arrows, marked authored. tools/place_signs.py (adapted, P3f): both directions, set-back for a road with no sidewalk, station-matched, wall or rail mounting where the ground falls away.",
+      "faces": "US (MUTCD)",
+      "sourced": {
+        "speed_limits": "the OSM traffic_sign nodes (13 x 20 mph, 1 x 35 mph at the summit; dossier 5c), placed from their lon/lat, never from stations",
+        "advisory_plaques": [
+          {
+            "way": 1432442175,
+            "corner": "C1",
+            "mph": 10
+          },
+          {
+            "ways": [
+              1432442169,
+              1432442171,
+              1432442173
+            ],
+            "corners": "C4-C6",
+            "mph": 15
+          },
+          {
+            "way": 1432422186,
+            "mph_uphill": 10,
+            "mph_downhill": 15
+          },
+          {
+            "where": "most upper hairpins",
+            "mph": 15
+          }
+        ],
+        "us6_golden": "CDOT's set: 45/55 mph on US-6, the EXIT 35 M.P.H. advisory, 25 mph on 19th St, Right Lane Ends, Signal Ahead, Sharp Left Curve, Merging Traffic, the cross-traffic/railroad warning, wildlife-crossing warnings with strobes, the green guide signs (dossier 5c)",
+        "not_built": "the 15 mph speed-hump plaques (the humps are left out, A10); I-70's own signs beside US-40"
+      },
+      "arrows": {
+        "rule": "ledger 0044: W1-6 at the corner just past the outside edge, facing the approach; apex radius <= 30 m and >= 45 deg of turn, the failed-to-turn ray leaving the pavement inside the arc; a corner of >= 135 deg with >= 50 m of arc gets a second W1-6 (or a W1-8 chevron run, opt-in)",
+        "both_directions": true,
+        "authored": true,
+        "candidate_corners": [
+          "C1",
+          "C2",
+          "C3",
+          "C4",
+          "C5",
+          "C6",
+          "C7",
+          "C8",
+          "C9",
+          "C10",
+          "C11",
+          "C12",
+          "C13"
+        ],
+        "estimated_plates": 44,
+        "approved_count": null,
+        "_doc": "None is mapped, so every arrow is authored. Kevin sees the count on signs_preview.svg before any build and can cap it; verify_signs gates on exactly the count he approves. C16 and C18 are route shapes, not signed. Chevron runs only where the survey shows real ones."
+      },
+      "setback": "the post on true ground just beyond the pavement edge or guardrail line; on W-beam over a drop, mounted on the rail; at a historic stone guardrail over a drop, on true ground within 2 m behind the wall, or no sign. Never on the stone, never floating, never in the lane.",
+      "overrides_file": "tracks/lookout-lariat/signs.json"
+    },
+    "edges": {
+      "_doc": "D7 item 4 reversed + A3 / A4 (Kevin 2026-10-11): the road's real edges. The 1913 stone works are built as themselves; modern W-beam only where it really is; open where it is open. A Street View pass decides which edge is which, run by run (dossier 12); where the survey is silent a drop-height rule decides and the run is labelled authored. Placed after the ground is final, station-matched (L4). Not gating in Drive 1 (verify_edges).",
+      "stone_works": [
+        {
+          "what": "the two 1917 stone pylons (~10.7 m rough-stone columns, each with a pedestrian arch)",
+          "st_m": 0,
+          "when": "first build"
+        },
+        {
+          "what": "3 stone guardrails with their deliberate gaps (cable eye-bolts)",
+          "where": "survey"
+        },
+        {
+          "what": "Wildcat Point's 2 sloping stone retaining walls",
+          "st_m": 6450
+        },
+        {
+          "what": "Sensation Point's concrete overlook wall with its pipe rail, rising out of the rock",
+          "st_m": 2225
+        },
+        {
+          "what": "the Windy Saddle dry-stone walls (1-2 m)",
+          "st_m": [
+            4920,
+            4965
+          ]
+        },
+        {
+          "what": "old concrete posts behind the steel at Windy Point",
+          "where": "survey"
+        }
+      ],
+      "w_beam": {
+        "where": "only where it really is; OSM marks metal guard rail near st 858, 1,651, 2,459, 2,762, 2,942, 5,179, 5,459, 5,569, 5,742, 6,653 and 7,380 (points, not runs) and W-beam on US-6 at st ~20670-21430",
+        "post_spacing_m": 1.905,
+        "unsurveyed_rule": "fill height x slope (docs/ROAD-CONSTRUCTION.md 'Barriers'), labelled authored",
+        "surface": "1WALL_"
+      },
+      "concrete_barrier_module": {
+        "asset": "assets/models/concrete_barrier_4m.obj",
+        "only_at": [
+          "the summit's one real concrete barrier (st ~7,219)",
+          "the race closures (race)"
+        ],
+        "licence": "UNRECORDED: Full package only"
+      },
+      "open": "where the slope is gentle; ~20 dirt pull-offs (16 on switchbacks), 4 paved overlooks and the Windy Saddle lot stay open, flat ground"
+    },
+    "structures": {
+      "c470_bridges": {
+        "_doc": "D5 (Kevin 2026-10-11): build C-470's two bridges where it crosses over the lap, as scenery only: deck slabs at C-470's real alignment and width with abutments meeting the approach fills 3DEP already contains, piers outside the lap corridor, no prefix (visual only), named AUTH_overpass_*, never HIGHWAY*; no pavement continues along the lap. Crossing stations measured 2026-10-11 where the V3 line crosses the ways (July widths snapshot).",
+        "crossings": [
+          {
+            "on": "West Colfax",
+            "st_m": [
+              19340,
+              19369
+            ],
+            "ways": [
+              84721006,
+              84720931,
+              84720904,
+              1459465701
+            ]
+          },
+          {
+            "on": "US-6",
+            "st_m": 21140,
+            "ways": [
+              84720905
+            ]
+          }
+        ],
+        "clearance_m": null,
+        "deck_width_m": null,
+        "_measure": "aerial + Street View (dossier 12)"
+      },
+      "lid": {
+        "_doc": "The 19th St 'Linking Lookout' lid over US-6 (Colorado's first highway lid, a park deck ~85 m wide along US-6). Its level span is declared from the US-6 tunnel footprint, not the auto-detector, and held level between its ends (L3 'Bridges dip'); the lap crosses the two tunnel ways at these stations. July's auto spans [24,278-24,803] (a wrap artefact ending on the last vertex, L13) and [20,742-21,166] (it contains the C-470 underpass, where the lap passes UNDER a bridge) are dropped unless the aerial shows a real lap bridge.",
+        "tunnel_ways": [
+          533503591,
+          533679737
+        ],
+        "crosses_st_m": [
+          24353,
+          24366
+        ],
+        "footprint": "measure on the aerial"
+      }
+    },
+    "buildings": {
+      "_doc": "A9: Golden looks like Golden. OSM building footprints within ~150 m of the road on the town stretches, extruded to OSM height / levels and seated at each footprint's lowest true ground (SD build_loop_blend.py:419-491's method, ported into scripts/blender/underlay.py). Facade textures: the engine's building_* are mined from Hamburg (Full only); CC0 facades for the public zip.",
+      "stretches": [
+        "Beverly Heights (Lookout Mountain Rd in Golden)",
+        "the back side",
+        "Paradise Rd",
+        "Colfax / Heritage",
+        "19th St"
+      ],
+      "max_offset_m": 150,
+      "side_road_stubs": "~45 named side roads (dossier 4b), the four signalised ones first: short visual stubs with full curb returns, no physics, an invisible wall across the mouth line in every layout (JUNCTIONS R18c)",
+      "speed_humps": "left out of the first build (A10)"
+    }
   },
   "props": {
-    "concrete_barriers": true,
-    "_doc": "Kevin's model pack: 4 m concrete barrier modules instanced along warning-barrier runs as collidable 1WALL geometry (replaces the procedural swept jersey)."
+    "concrete_barriers": false,
+    "_doc": "D7 item 4 reversed (Kevin 2026-10-11): no 4 m concrete modules instanced along warning-barrier runs. The module stays only for the summit's one real concrete barrier and the race closures (scenery.edges, race)."
   },
-  "archetype": "real_road",
-  "corridor_refine_factor": 4
+  "texture_overrides": {},
+  "_texture_overrides_doc": "D7 item 3 reversed: the July 1GRASS override (ambientCG Grass001, 'alpine grass instead of dry dirt', Kevin July) is gone; the real foothill slopes are tawny short grass July-October. Until a CC0 tawny foothill-grass ground texture exists (the GAP in dossier 8), 1GRASS falls back to the engine default ground_dry_diffuse (dry dirt/chaparral, mined from LA Canyons: Full package only; the public zip swaps it with tools/repack_kn5_textures.py). GrassFX blades take the ground texel's colour. July's LIGHTPOST/LAMPHEAD skins belonged to its street_lamp_new.obj; V3's lamps are Kevin's lamp_post.obj + lamp_lens.obj (dossier 8).",
+  "ui_description": "A 24.9 km lap built on the Lariat Trail, Golden, Colorado: up the 1913 Lariat Trail's stacked hairpins from the 1917 stone pylons, over Lookout Mountain past Buffalo Bill's grave, down Mt Vernon Canyon and home through Golden. Real roads from OpenStreetMap at real USGS 3DEP elevation.",
+  "_ui_description_doc": "Track-level fallback; each layout carries its own. Not 'the Lariat Loop' (the ~40 mile byway leaves the mountain westward); no Nordschleife comparison, no 'most photographed corners' (dossier 1).",
+  "readme_about": "Real roads from OpenStreetMap at real USGS 3DEP elevation, 24.9 km a lap: the 1913 Lariat Trail up Lookout Mountain from Golden's 1917 stone pylons, the summit, Paradise Rd, US-40 down Mt Vernon Canyon, and Golden's I-70 Business, Colfax, US-6 and 19th St.",
+  "ui_tags": [
+    "street",
+    "loop",
+    "real-roads",
+    "mountain"
+  ],
+  "_ui_tags_doc": "The installed July ui carried 'fictional' (an old engine default); this is a real road. track_folder adds 'circuit' on a loop so Content Manager allows Race / Track Day sessions.",
+  "install_folder": "lookout_lariat_v3",
+  "_install_folder_doc": "A11: every file inside is lookout_lariat; the folder on this machine is lookout_lariat_v3 while the July build stays installed (July is parked only after V3 reaches T3, three clean laps each way); the release zip's folder is lookout_lariat, so it replaces the old public copy. Drive 1's verge variant installs as lookout_lariat_v3_verge (drive1_variants).",
+  "_history": {
+    "_doc": "July (v0.15.0) values this V3 config removed, kept short; the full July text is git show 30ad2a3:tracks/lookout-lariat/track.config.json. A2: the base-hairpin widening is OFF for Drive 1 and re-asked after Kevin drives the fitted curve; to switch it back on, copy route.wide_corners below into route.",
+    "route.wide_corners": [
+      {
+        "station_m": 262,
+        "width_m": 14.0,
+        "_doc": "Kevin: 'the turn on the mountain route is impossible' \u2014 base-of-climb 90deg kink, 2-4 turns ahead of the start; same geometry as a switchback so it needs a human call"
+      }
+    ],
+    "route.roads[5]": "id:484287799,1351773584,533503588,533503214",
+    "frame": {
+      "mirror_x": true,
+      "true_north_rotation_deg": 180.0
+    },
+    "default_width_m": 7.0,
+    "corridor_refine_factor": 4,
+    "layouts": "full + reverse: one shared start grid, Reverse spawned facing forward; full._doc said '~20.9 km' (it is 24.9)",
+    "D7 knobs": {
+      "lamps": {
+        "scenery.light_spacing_m": 96,
+        "scenery.lamp_model": "street_lamp_new.obj",
+        "lighting.streetlight": {
+          "range_m": 60.0,
+          "intensity": 0.35,
+          "color": [
+            1.0,
+            0.85,
+            0.3
+          ],
+          "spot_deg": 155
+        }
+      },
+      "signs": "scenery.road_signs: Euro faces, 70 disc on the climb, 110 discs on the plains legs (enabled false)",
+      "grass": "texture_overrides.1GRASS = assets/textures/grass_diffuse.jpg (ambientCG Grass001, 'alpine grass')",
+      "barriers": {
+        "props.concrete_barriers": true
+      },
+      "trees": "scenery.treefx (enabled false): MRS_* conifers, density by elevation 0-500 m local, keep 0.25 -> 0.95, aspect bonus N/E"
+    },
+    "build_env knobs": {
+      "scenery.tree_cap": 480000,
+      "scenery.fill_per_station": 68,
+      "scenery.forest3d.cap": 2500,
+      "scenery.pylons": "st 20,600-24,000, 55 m off (unverified line)",
+      "also": "fill_terrain, fill_range_m, fill_bias, fill_off_min_extra_m, tree_style, tree_step_m, tree_atlas_*, bush_*, corridor_margin_m, lamp_height_m, powerline_spacing_m, fences, fence_auto, signs.enabled; LIGHTPOST / LAMPHEAD texture overrides"
+    },
+    "claims corrected": [
+      "camber 'MEASURED ... 61.7 % banked' (DEM-estimated, dossier 3)",
+      "Paradise Rd '-14.5 %' (1 m 3DEP: -10.3 % over 100 m)",
+      "installed ui: run 'clockwise' (Full is anticlockwise), tag 'fictional', author prodrive-ac-builder"
+    ]
+  }
 }

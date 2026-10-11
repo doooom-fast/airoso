@@ -39,9 +39,9 @@ def cmd_status(args) -> int:
         if not r.exists:
             print(f"{r.name:20} {_c('MISSING', RED)}  {r.path}")
             continue
-        pin = r.pin or "-"
+        pin = "(engine)" if r.is_engine else (r.pin or "-")
         flag = ""
-        if newest and pin != newest:
+        if newest and pin != newest and not r.is_engine:
             flag = _c(f"  (engine {newest})", YEL)
         dirt = _c("  dirty", YEL) if r.dirty else ""
         n = len(r.tracks())
@@ -172,6 +172,13 @@ def cmd_build(args) -> int:
     results = []
     for t in rows:
         spec = by_name[t.repo]["build"]
+        if not spec.get("cmd"):
+            # a declared hold (registry build.cmd null): report the hole, never improvise a build
+            why = spec.get("hold", "no build command declared in fleet/registry.json")
+            print(_c(f"HOLD {t.key}: {why}", YEL))
+            if args.run:
+                results.append((t.key, None))
+            continue
         repo_path = (ROOT / by_name[t.repo]["path"]).resolve()
         cmd = [spec["cmd"], str(t.project_dir.relative_to(repo_path))]
         if args.from_stage:
@@ -187,6 +194,10 @@ def cmd_build(args) -> int:
     if results:
         print("\n---- build matrix")
         for k, code in results:
+            if code is None:                 # held: not built, so not a pass
+                print(f"  {_c('HOLD', YEL)}  {k}  (see fleet/registry.json build.hold)")
+                rc |= 1
+                continue
             print(f"  {_c('PASS', GRN) if code == 0 else _c('FAIL', RED)}  {k}"
                   + (f"  (exit {code})" if code else ""))
     elif not args.run:

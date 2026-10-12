@@ -275,7 +275,11 @@ def test_real_lariat_config_is_on_the_committed_centreline():
     assert rep["layout_dummies_fails"]["new"] == []
     ch = {c["path"]: c for c in rep["changes"]}
     assert cfg["layouts"][0]["start"]["grid_vertex"] == ch["layouts[0].start.grid_vertex"]["new"]
-    assert all(c["moved_m"] < 1.5 for c in rep["changes"] if c["frame"] == "local index")
+    # a junction apex (race.corridor.boxes[*].apex: C12, C14, C15, C16, C18) was the OSM junction NODE; since the
+    # junction fillets (2026-10-12) the lap turns on an arc inside it, so its nearest vertex sits up to the arc's
+    # offset from the node (R (sec(turn / 2) - 1), <= 5 m on these corners); every other vertex stays within 1.5 m
+    assert all(c["moved_m"] < (6.0 if ".apex" in c["path"] else 1.5) for c in rep["changes"]
+               if c["frame"] == "local index"), [c for c in rep["changes"] if c["frame"] == "local index" and c["moved_m"] >= 1.5]
     assert cfg["hairpin_fit"]["climb_st_m"] == [0, 7100]
     out, _ = rc.run(LARIAT, write=False, log=lambda *a: None)
     assert out["changes"] == [] and out.get("already_on") == cfg["centerline_frame"]["md5"]

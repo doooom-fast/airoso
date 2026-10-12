@@ -21,8 +21,10 @@ under it cannot be judged, and fails the gate (it is never a skip).
 
 Classes (group-name prefixes, case-insensitive; a track can override them in track.config.json
 ``gates.stacked_legs.classes``): ground (1GRASS, GRASS, GEN_terrain, TERRAIN, 1DIRT, 1SAND, 1GRAVEL,
-AUTH_cut / AUTH_fill / AUTH_terrain), edge (1WALL, 1KERB, GEN_verge, AUTH_wall / AUTH_edge / AUTH_stone /
-AUTH_rail / AUTH_guardrail), sign (SIGN, AUTH_sign), closure (CLOSURE, AUTH_closure, 1WALL_closure). Closure is
+AUTH_cut / AUTH_fill / AUTH_terrain), edge (1WALL, 1KERB, 1RUNOFF, GEN_verge, AUTH_wall / AUTH_edge / AUTH_stone /
+AUTH_rail / AUTH_guardrail; 1RUNOFF since 2026-10-12: GEN_verge is a Blender collection name that never reaches a
+built OBJ, so the built D4 verge, 1RUNOFF_verge_*, went untested — L4's July failure was exactly a lower leg's
+verge on the upper leg's fill), sign (SIGN, AUTH_sign), closure (CLOSURE, AUTH_closure, 1WALL_closure). Closure is
 matched first (a 1WALL_closure is a closure). The road itself (1ROAD) is the reference, never tested.
 
 CROSSINGS. Where the lap crosses over itself (a bridge: the two legs' segments intersect in plan) the legs are
@@ -67,7 +69,8 @@ DEFAULT_CLASSES = {
     "closure": ["1WALL_CLOSURE", "CLOSURE", "AUTH_CLOSURE"],
     "ground": ["1GRASS", "GRASS", "GEN_TERRAIN", "TERRAIN", "1DIRT", "1SAND", "1GRAVEL",
                "AUTH_CUT", "AUTH_FILL", "AUTH_TERRAIN"],
-    "edge": ["1WALL", "1KERB", "GEN_VERGE", "AUTH_WALL", "AUTH_EDGE", "AUTH_STONE", "AUTH_RAIL", "AUTH_GUARDRAIL"],
+    "edge": ["1WALL", "1KERB", "1RUNOFF", "GEN_VERGE", "AUTH_WALL", "AUTH_EDGE", "AUTH_STONE", "AUTH_RAIL",
+             "AUTH_GUARDRAIL"],
     "sign": ["SIGN", "AUTH_SIGN"],
 }
 CLASS_ORDER = ("closure", "ground", "edge", "sign")

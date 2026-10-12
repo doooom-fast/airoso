@@ -128,6 +128,19 @@ def test_a_vertex_seated_to_the_other_leg_fails_in_every_class():
         assert w["dy_own_m"] > w["dy_other_m"]
 
 
+def test_the_built_verge_is_an_edge_and_is_tested():
+    # 2026-10-12 (the verifiers' code lens): the default edge class listed GEN_VERGE, a Blender collection name that
+    # never reaches a built OBJ, and not 1RUNOFF, so the built D4 verge (1RUNOFF_verge_0/1) was never tested and a
+    # verge vertex seated to the other leg passed
+    assert vsl.classify("1RUNOFF_verge_0", vsl.DEFAULT_CLASSES) == "edge"
+    d = _project(SWITCHBACK, [("1ROAD_main", _road(SWITCHBACK)), ("1RUNOFF_verge_0", _dots([(4.0, 0.4, 200)]))])
+    r = vsl.run(d)
+    assert r["fail"] is False and r["tested"].get("edge") == 3, r
+    d = _project(SWITCHBACK, [("1ROAD_main", _road(SWITCHBACK)), ("1RUNOFF_verge_planted", _dots([(4.0, 9.0, 200)]))])
+    r = vsl.run(d)
+    assert r["fail"] and r["failures_by_class"] == {"edge": 3}, r
+
+
 def test_a_vertex_outside_the_stacked_stretch_is_not_judged():
     # z = 20: across to leg B is 2 * 20 + 25 = 65 m along the lap (< 150): not a pair, whatever its height
     d = _project(SWITCHBACK, [("1ROAD_main", _road(SWITCHBACK)), ("1GRASS_end", _dots([(5, 9.0, 20)]))])

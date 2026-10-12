@@ -580,6 +580,30 @@ def audit(project_dir: str | Path, *, race: bool = False, obj: str = "track.obj"
     #    environment.obj + ground.local.json (both built after the mesh), else skipped at mesh-audit time.
     prop_float = None
     envp = data / "environment.obj"; glp = data / "ground.local.json"
+    # MESH-GROUND MODE (opt-in per track: track.config.json gates.audit.mesh_ground; 2026-10-12, ledger 0048). A
+    # Blender-first track (the Lookout Lariat's underlay) writes no environment.obj and no ground.local.json raster,
+    # so G and H were SKIPPED (null) and a null read as 0 downstream: the Drive-1 verdict and ledger 0048 called the
+    # audit "CLEAN (every class 0)" with H, the class that caught July's +4.4 m mountainside, never run. With the
+    # opt-in, H nominates on the BUILT grass mesh itself (the confirmation surface it already used) and G reads the
+    # prop groups of the built OBJ against it; a build with no prop group has G = 0 (nothing can float). Every other
+    # track keeps today's exact behaviour.
+    _cfg_a = json.loads((proj / "track.config.json").read_text())
+    mesh_ground = bool(((_cfg_a.get("gates") or {}).get("audit") or {}).get("mesh_ground", False))
+    if mesh_ground and not (envp.exists() and glp.exists()):
+        _pg = _obj_groups(objp, ("BUSHES", "TREES", "PALMS", "CONIFER", "TREETRUNK", "PALMTRUNK", "SCRUB"))
+        _pverts = [v for vs in _pg.values() for v in vs]
+        prop_float = 0
+        if _pverts:
+            _gt = _tri_hash(_obj_tris(objp, ("1GRASS",)), 4.0)
+            _col: dict = {}
+            for x, y, z in _pverts:
+                k = (round(x / 0.8), round(z / 0.8))
+                if k not in _col or y < _col[k][0]:
+                    _col[k] = (y, x, z)
+            for by, bx, bz in _col.values():
+                gy_ = _surf_at(_gt, 4.0, bx, bz, by, dy_max=20.0)
+                if gy_ is not None and by > gy_ + 0.7:
+                    prop_float += 1
     if envp.exists() and glp.exists():
         gl = json.loads(glp.read_text())
         gx0, gz0, gdx, gdz, gnx, gny, GY = gl["x0"], gl["z0"], gl["dx"], gl["dz"], gl["nx"], gl["ny"], gl["y"]
@@ -626,9 +650,13 @@ def audit(project_dir: str | Path, *, race: bool = False, obj: str = "track.obj"
     worst_cut = 0.0
     cut_hits = []
     clp = data / "centerline.local.json"
-    if glp.exists() and clp.exists():
-        gl2 = json.loads(glp.read_text())
-        hx0, hz0, hdx, hdz, hnx, hny, HY = gl2["x0"], gl2["z0"], gl2["dx"], gl2["dz"], gl2["nx"], gl2["ny"], gl2["y"]
+    if clp.exists() and (glp.exists() or mesh_ground):
+        if glp.exists():
+            gl2 = json.loads(glp.read_text())
+            hx0, hz0, hdx, hdz, hnx, hny, HY = gl2["x0"], gl2["z0"], gl2["dx"], gl2["dz"], gl2["nx"], gl2["ny"], gl2["y"]
+        else:
+            hx0 = hz0 = hdx = hdz = HY = None
+            hnx = hny = 0
 
         def _hsurf(x, z):
             fi = (x - hx0) / hdx if hdx else 0.0
@@ -691,7 +719,7 @@ def audit(project_dir: str | Path, *, race: bool = False, obj: str = "track.obj"
                 deck = nearest_y(road_hash4, px, pz, 3.5, 4.0)
                 if not deck:
                     continue
-                gy2 = _hsurf(px, pz)
+                gy2 = _hsurf(px, pz) if HY is not None else _gmax(px, pz, max(deck))   # mesh-ground mode
                 if gy2 is not None and gy2 - max(deck) > 0.10:
                     # BOTH SIDES MUST BE SURFACES AT THIS POINT. max(deck) is the highest road
                     # VERTEX within 4 m; on a descending or banked road those sit BELOW the deck

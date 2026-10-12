@@ -168,8 +168,24 @@ def test_closure_seam_and_wrap():
     assert r["d_closure"]["pass"] and not r["b_curvature"]["pass"]
 
 
+def test_facets_off_the_climb_fail():
+    # (e), 2026-10-12: the integrated Drive-1 line passed (a)-(d) with 52-72 deg single-vertex junction chevrons off
+    # the climb (C12, C13, C14, exit 259, the lid's east end); (e) fails a vertex off the climb turning more than
+    # FACET_STEP_DEG, or tighter than FACET_R_MIN_M over its own spacing, and passes the same corner as an arc
+    tr = traces_of([])
+    chevron = straight((0.0, 0.0), (200.0, 0.0), 3.0) + straight((200.0, 0.0), (200.0, 200.0), 3.0)[1:]
+    r = vp.gate(line_of(chevron), tr, [0, 0], loop=False)
+    assert not r["e_facets"]["pass"] and r["e_facets"]["max_step_deg"] > 85, r["e_facets"]
+    filleted = straight((0.0, 0.0), (188.0, 0.0), 3.0) + arc((188.0, 12.0), 12.0, -math.pi / 2, 0.0, 1.0)[1:]         + straight((200.0, 12.0), (200.0, 200.0), 3.0)[1:]
+    r = vp.gate(line_of(filleted), tr, [0, 0], loop=False)
+    assert r["e_facets"]["pass"] and r["e_facets"]["tightest_radius_m"] > 10.0, r["e_facets"]
+    # the same chevron ON the climb is (b)'s business, not (e)'s
+    r = vp.gate(line_of(chevron), tr, [0, 1000], loop=False)
+    assert r["e_facets"]["pass"] and r["e_facets"]["points_off_climb"] == 0
+
+
 def test_cli_and_real_lariat():
-    """The committed paint centreline passes all four checks; the OSM line it replaced fails (a) and (b)."""
+    """The committed paint centreline passes all five checks; the OSM line it replaced fails (a), (b) and (e)."""
     cl = LARIAT / "data" / "centerline.geojson"
     tp = LARIAT / "data" / "aerial" / "paint_traces.json"
     osm = LARIAT / "data" / "centerline.osm.geojson"
@@ -182,8 +198,10 @@ def test_cli_and_real_lariat():
         assert r["pass"] and r["a_paint"]["max_m"] <= vp.PAINT_MAX_M and r["a_paint"]["points"] > 5000
         assert r["b_curvature"]["points"] > 7000 and r["b_curvature"]["climb_by"] == "osm_station_m"
         assert r["d_closure"]["closed_exactly"] and r["d_closure"]["seam_on_climb"]
+        assert r["e_facets"]["pass"] and r["e_facets"]["max_step_deg"] <= vp.FACET_STEP_DEG
         assert vp.main([str(LARIAT), "--centerline", str(osm), "--out", str(out)]) == 1
         r = json.loads(out.read_text(encoding="utf-8"))
         assert not r["a_paint"]["pass"] and r["a_paint"]["max_m"] > 7.0  # C4: OSM cuts the hairpin
         assert not r["b_curvature"]["pass"] and r["b_curvature"]["spacing_fails"] > 0
+        assert not r["e_facets"]["pass"] and r["e_facets"]["max_step_deg"] > 70      # C12 / C13 / exit 259 nodes
         assert vp.main([str(LARIAT), "--centerline", str(Path(td) / "nope.geojson")]) == 2

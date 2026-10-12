@@ -1,4 +1,5 @@
-"""Centreline paint gate: is the lap on the painted road, smooth on the climb, never folding, closed at the seam?
+"""Centreline paint gate: is the lap on the painted road, smooth on the climb, never folding, closed at the seam,
+and free of junction facets off the climb?
 
 Lookout Lariat V3 (ledger 0048, P2). Replaces tools/fit_hairpins.py's 1.5 m-from-OSM criterion as the judge
 of WHERE the line runs: the aerial pass showed that criterion passing lines 7 m off the real road (C4, where
@@ -27,6 +28,13 @@ Checks, on a centreline GeoJSON (default ``data/centerline.geojson``, the ``kind
     vertex, measured across the wrap (v[-2] -> v0 -> v1, skipping the duplicate, L13), passes (b) when the
     climb starts at the seam.
 
+(e) **no facets off the climb** (2026-10-12, ledger 0048 "P2 fixed"): no vertex off the climb turns more than
+    ``FACET_STEP_DEG`` 20 deg [invented], or tighter than ``FACET_R_MIN_M`` 6 m over its own spacing (its heading
+    change divided into the mean of its two segments) while turning more than 3 deg [invented]. The integrated
+    Drive-1 build passed (a)-(d) with single-vertex chevrons of 52-72 deg at C12, C13, C14, exit 259 and the lid's
+    east end (built R 3.3-8.4 m, the ribbon folded at C13); tools/paint_centreline.py's junction fillets remove
+    them, and this check is what proves it.
+
 Writes ``--out`` (default ``data/aerial/paint_gate.json``) and exits 1 on any failure, 2 on a usage error.
 
     python tools/verify_centreline_paint.py <project-dir> [--centerline F] [--traces F] [--out F]
@@ -54,9 +62,13 @@ REVERSAL_DEG = 120.0
 MIN_SEG_M = 0.001
 SAME_WAY_COS = 0.5
 CELL_M = 25.0
+FACET_STEP_DEG = 20.0
+FACET_R_MIN_M = 6.0
+FACET_MIN_DEG = 3.0
 THRESHOLDS = {"paint_max_m": PAINT_MAX_M, "step_slack_deg": STEP_SLACK_DEG, "adjacent_step_deg": ADJ_STEP_DEG,
               "local_window_m": LOCAL_M, "climb_spacing_m": list(SPACING_RANGE_M), "reversal_deg": REVERSAL_DEG,
-              "min_segment_m": MIN_SEG_M, "same_way_cos": SAME_WAY_COS,
+              "min_segment_m": MIN_SEG_M, "same_way_cos": SAME_WAY_COS, "facet_step_deg": FACET_STEP_DEG,
+              "facet_radius_min_m": FACET_R_MIN_M, "facet_min_deg": FACET_MIN_DEG,
               "_tags": "every value [invented] 2026-10-11 (ledger 0048); see fleet/GATES-CHANGELOG.md"}
 
 
@@ -304,7 +316,27 @@ def gate(line: Line, traces, climb, loop=True) -> dict:
                             "seam_gap_m": math.dist(line.P[0], line.P[-1]), "seam": seam, "seam_on_climb": bool(mask[0])}
     else:
         res["d_closure"] = {"pass": True, "note": "point-to-point (loop false): no seam"}
-    res["pass"] = all(res[k]["pass"] for k in ("a_paint", "b_curvature", "c_topology", "d_closure"))
+    # (e) no facets off the climb
+    facets = []
+    worst_r, worst_step = None, 0.0
+    for i in range(m):
+        if mask[i]:
+            continue
+        sp = spacing(i)
+        if sp is None:
+            continue
+        a = abs(S[i]) * DEG
+        r = sp / abs(S[i]) if abs(S[i]) > 1e-12 else float("inf")
+        worst_step = max(worst_step, a)
+        if a > FACET_MIN_DEG and (worst_r is None or r < worst_r):
+            worst_r = r
+        if a > FACET_STEP_DEG or (a > FACET_MIN_DEG and r < FACET_R_MIN_M):
+            facets.append({"v": i, "osm_st_m": _osm_st(line, i), "step_deg": round(a, 2), "radius_m": round(r, 2)})
+    res["e_facets"] = {"pass": not facets, "points_off_climb": sum(1 for i in range(m) if not mask[i]),
+                       "max_step_deg": round(worst_step, 2),
+                       "tightest_radius_m": round(worst_r, 2) if worst_r is not None else None,
+                       "facets": len(facets), "worst": sorted(facets, key=lambda f: -f["step_deg"])[:20]}
+    res["pass"] = all(res[k]["pass"] for k in ("a_paint", "b_curvature", "c_topology", "d_closure", "e_facets"))
     return res
 
 
@@ -378,6 +410,10 @@ def main(argv=None) -> int:
     print(f"(c) topology   {'PASS' if c_['pass'] else 'FAIL'}: max step {c_['max_step_deg']} deg, reversals {len(c_['reversals'])}, "
           f"self-intersections {len(c_['self_intersections'])}, short segments {len(c_['short_segments'])}")
     print(f"(d) closure    {'PASS' if d_['pass'] else 'FAIL'}: {d_}")
+    e_ = r["e_facets"]
+    print(f"(e) facets     {'PASS' if e_['pass'] else 'FAIL'}: {e_['points_off_climb']} points off the climb, max step "
+          f"{e_['max_step_deg']} deg, tightest {e_['tightest_radius_m']} m, facets {e_['facets']}"
+          + (f" (worst {e_['worst'][:3]})" if e_["facets"] else ""))
     print(f"[paint-gate] {'PASS' if r['pass'] else 'FAIL'}")
     return 0 if r["pass"] else 1
 

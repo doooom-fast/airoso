@@ -430,7 +430,8 @@ gate_stacked_legs() {
 # chain): SHIP_VARIANT checked before anything is touched, applied to the install folder / name, and guarded before
 # the prep so a blend drafted for the other edge never ships under this one's name.
 # =============================================================================================================
-D1_FORCE_OK=1
+D1_FORCE_OK=0          # a forced install needs the verdict's force_install_ok (2026-10-12: it defaulted to 1, so a
+#                       run whose road gates were red but which never reached drive1_verdict could be forced)
 prep_split_street() {
   local rc
   step "ship: split the prepped scene -> road + spawn scenes, street layouts only (tools/split_exports_blend.py; its two no-race-furniture PROBLEMs accepted, nothing else)"
@@ -524,6 +525,57 @@ u=json.load(open(sys.argv[2],encoding='utf-8')); got=(u.get('verge') or {}).get(
 if got is None or want is None or abs(float(got)-float(want))>1e-6:
     sys.exit('D4: loop.blend carries a %s m verge (underlay variant %s) but this run builds %s m (%s): re-run the draft, or set SHIP_VARIANT to match'%(got,u.get('variant'),want,var or 'the config as written'))
 print('D4: loop.blend carries the %s m verge this run builds (%s)'%(got,var or 'the config as written'))" "$PROJ/track.config.json" "$PROJ/data/underlay.json" "$VARIANT"
+}
+
+# =============================================================================================================
+# LARIAT DRIVE-1 FIXES (ledger 0048 "P2 fixed", 2026-10-12). One block, appended after the Drive-1 build block; no
+# step above is changed. The C-470 bridges (P3a overpass_decks, D5) authored into loop.blend as AUTH_overpass_*;
+# verify_kn5 / --inis with their output kept as reports (data/verify_kn5.txt, data/verify_inis.txt) so the Drive-1
+# verdict judges the reports, not the kn5's existence; the installed names stamped into the BUILT folder (the
+# install copies exactly what was gated and named) with data/drive1_build.json saying which D4 variant it is.
+# =============================================================================================================
+author_overpass_decks() {
+  step "author: the C-470 bridges over the lap (tools/overpass_decks.py -> data/overpass_decks.json; tools/author_overpass_blend.py -> loop.blend AUTH_overpass_*, scenery only)"
+  (cd "$AIROSO" && python tools/overpass_decks.py "$PROJ")
+  "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_overpass_blend.py" -- "$PROJ" 2>&1 | grep "^\[overpass\]\|Error\|Traceback"
+}
+ship_verify_kn5_report() {
+  local rc
+  step "ship: verify_kn5 (hard) -> data/verify_kn5.txt (spawn-free road, one spawn kn5 per layout, facing, side, lane, sectors)"
+  rm -f "$PROJ/data/verify_kn5.txt"
+  rc=0; (cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ" > "$PROJ/data/verify_kn5.txt" 2>&1) || rc=$?
+  echo "exit $rc" >> "$PROJ/data/verify_kn5.txt"
+  tail -6 "$PROJ/data/verify_kn5.txt"
+  [ "$rc" = 0 ] || { echo "verify_kn5 FAILED (exit $rc): $PROJ/data/verify_kn5.txt"; exit 1; }
+}
+ship_verify_inis_report() {
+  local rc
+  step "ship: verify_kn5 --inis (hard) -> data/verify_inis.txt (each models_<id>.ini lists exactly its kn5 set)"
+  rm -f "$PROJ/data/verify_inis.txt"
+  rc=0; (cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ" --inis > "$PROJ/data/verify_inis.txt" 2>&1) || rc=$?
+  echo "exit $rc" >> "$PROJ/data/verify_inis.txt"
+  tail -4 "$PROJ/data/verify_inis.txt"
+  [ "$rc" = 0 ] || { echo "verify_kn5 --inis FAILED (exit $rc): $PROJ/data/verify_inis.txt"; exit 1; }
+}
+ship_ui_names() {
+  step "ship: the installed names into the BUILT folder (<ui_name_prefix> - <layout>; the variant's prefix under SHIP_VARIANT) + data/drive1_build.json"
+  pyq "import json,glob,os,sys
+cfg=json.load(open(sys.argv[1],encoding='utf-8'))
+names={str(lo['id']): lo.get('name', lo['id']) for lo in cfg['layouts']}
+out={'variant': sys.argv[4] or None, 'install_folder': sys.argv[5], 'ui_name_prefix': sys.argv[3], 'ui': {}}
+for p in sorted(glob.glob(os.path.join(sys.argv[2],'ui','*','ui_track.json'))):
+    lid=os.path.basename(os.path.dirname(p))
+    u_=json.load(open(p,encoding='utf-8'))
+    u_['name']=sys.argv[3]+' '+chr(8212)+' '+names[lid]
+    json.dump(u_,open(p,'w',encoding='utf-8'),indent=2,ensure_ascii=False)
+    out['ui'][lid]={'name': u_['name'], 'description': u_.get('description')}
+    print('built:',u_['name'])
+missing=sorted(set(names)-set(out['ui']))
+if missing: raise SystemExit('built folder lacks ui/<id>/ui_track.json for %s'%missing)
+u=os.path.join(sys.argv[6],'underlay.json')
+out['verge_m']=(json.load(open(u,encoding='utf-8')).get('verge') or {}).get('width_m') if os.path.exists(u) else None
+json.dump(out,open(os.path.join(sys.argv[6],'drive1_build.json'),'w',encoding='utf-8'),indent=1,ensure_ascii=False)
+print('installs as',sys.argv[5],'(verge %s m)'%out['verge_m'])" "$PROJ/track.config.json" "$PROJ/build/$SLUG" "$UI_PREFIX" "$VARIANT" "$INSTALL_FOLDER" "$PROJ/data"
 }
 
 # a draft step that needs no Blender (what --draft-only runs)

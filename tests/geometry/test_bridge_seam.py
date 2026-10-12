@@ -91,13 +91,28 @@ def test_the_prep_detector_wraps_spans_and_pads_at_the_seam():
     # a bridge way along the lap's first and last 20 m (it straddles vertex 0)
     way = _bridge_way(origin, -20.0, 0.0, 20.0, 0.0)
     way2 = _bridge_way(origin, 0.0, 20.0, 0.0, -1.0)
-    spans = detect_bridge_spans(pts, origin, [way, way2], match_m=1.0, pad_m=8.0)
+    spans = detect_bridge_spans(pts, origin, [way, way2], match_m=1.0, pad_m=8.0, seam_rule=True)
     assert all(0.0 <= a <= b <= lap + 1e-9 for a, b in spans), spans
     ends_at_close = [s for s in spans if abs(s[1] - lap) < 1e-6]
     starts_at_0 = [s for s in spans if s[0] == 0.0]
     assert ends_at_close and starts_at_0, spans               # the seam span continues from vertex 0 (L13)
     assert abs(starts_at_0[0][1] - (20.0 + 8.0)) < 5.0 + 1e-6
     assert abs(ends_at_close[0][0] - (lap - 20.0 - 8.0)) < 5.0 + 1e-6
+
+
+def test_the_prep_detector_seam_wrap_is_opt_in():
+    # without bridges.l13_seam_rule a closed lap's spans are exactly the pre-2026-10-12 ones: the seam span is NOT
+    # continued from vertex 0 and the last pad may run past the lap (every other track byte-identical)
+    import math
+    pts = _ring()
+    lap = sum(math.hypot(pts[i][0] - pts[i - 1][0], pts[i][2] - pts[i - 1][2]) for i in range(1, len(pts)))
+    origin = (-105.2, 39.7)
+    way = _bridge_way(origin, -20.0, 0.0, 20.0, 0.0)
+    way2 = _bridge_way(origin, 0.0, 20.0, 0.0, -1.0)
+    old = detect_bridge_spans(pts, origin, [way, way2], match_m=1.0, pad_m=8.0)
+    new = detect_bridge_spans(pts, origin, [way, way2], match_m=1.0, pad_m=8.0, seam_rule=True)
+    assert old != new, (old, new)
+    assert old[0][0] == 0.0 and old[-1][1] > lap, old            # the legacy shape: pad past the lap, no wrap
 
 
 def test_the_prep_detector_is_unchanged_on_an_open_road():

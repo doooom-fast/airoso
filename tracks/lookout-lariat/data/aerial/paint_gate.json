@@ -1,7 +1,7 @@
 {
  "gate": "tools/verify_centreline_paint.py",
- "centerline": "C:\\Users\\Owner\\Documents\\GitHub\\airoso\\tracks\\lookout-lariat\\data\\centerline.geojson",
- "traces": "C:\\Users\\Owner\\Documents\\GitHub\\airoso\\tracks\\lookout-lariat\\data\\aerial\\paint_traces.json",
+ "centerline": "C:\\Users\\Owner\\AppData\\Local\\Temp\\claude\\C--Users-Owner-Documents-GitHub-airoso\\59395b0b-e098-4e22-9ea8-1346efc0cf70\\scratchpad\\p2\\fix\\trk\\data\\centerline.geojson",
+ "traces": "C:\\Users\\Owner\\AppData\\Local\\Temp\\claude\\C--Users-Owner-Documents-GitHub-airoso\\59395b0b-e098-4e22-9ea8-1346efc0cf70\\scratchpad\\p2\\fix\\trk\\data\\aerial\\paint_traces.json",
  "thresholds": {
   "paint_max_m": 0.75,
   "step_slack_deg": 1.0,
@@ -14,19 +14,22 @@
   "reversal_deg": 120.0,
   "min_segment_m": 0.001,
   "same_way_cos": 0.5,
+  "facet_step_deg": 20.0,
+  "facet_radius_min_m": 6.0,
+  "facet_min_deg": 3.0,
   "_tags": "every value [invented] 2026-10-11 (ledger 0048); see fleet/GATES-CHANGELOG.md"
  },
  "a_paint": {
   "pass": true,
   "points": 5813,
   "over_limit": 0,
-  "max_m": 0.61,
+  "max_m": 0.721,
   "windows": [
    {
     "window": "C1",
     "points": 385,
-    "max_m": 0.338,
-    "median_m": 0.098,
+    "max_m": 0.337,
+    "median_m": 0.097,
     "over": 0
    },
    {
@@ -39,50 +42,50 @@
    {
     "window": "C3",
     "points": 342,
-    "max_m": 0.33,
+    "max_m": 0.327,
     "median_m": 0.048,
     "over": 0
    },
    {
     "window": "C4",
     "points": 335,
-    "max_m": 0.317,
-    "median_m": 0.064,
+    "max_m": 0.31,
+    "median_m": 0.087,
     "over": 0
    },
    {
     "window": "C5",
     "points": 360,
-    "max_m": 0.431,
-    "median_m": 0.117,
+    "max_m": 0.319,
+    "median_m": 0.126,
     "over": 0
    },
    {
     "window": "C6",
     "points": 444,
-    "max_m": 0.251,
-    "median_m": 0.069,
+    "max_m": 0.252,
+    "median_m": 0.067,
     "over": 0
    },
    {
     "window": "C7",
     "points": 157,
-    "max_m": 0.46,
-    "median_m": 0.055,
+    "max_m": 0.285,
+    "median_m": 0.048,
     "over": 0
    },
    {
     "window": "C8",
     "points": 456,
-    "max_m": 0.27,
-    "median_m": 0.102,
+    "max_m": 0.266,
+    "median_m": 0.1,
     "over": 0
    },
    {
     "window": "C9",
     "points": 456,
-    "max_m": 0.293,
-    "median_m": 0.095,
+    "max_m": 0.305,
+    "median_m": 0.097,
     "over": 0
    },
    {
@@ -95,15 +98,15 @@
    {
     "window": "C11",
     "points": 46,
-    "max_m": 0.335,
+    "max_m": 0.334,
     "median_m": 0.073,
     "over": 0
    },
    {
     "window": "W00150",
     "points": 56,
-    "max_m": 0.373,
-    "median_m": 0.078,
+    "max_m": 0.353,
+    "median_m": 0.071,
     "over": 0
    },
    {
@@ -123,8 +126,8 @@
    {
     "window": "W01600",
     "points": 82,
-    "max_m": 0.228,
-    "median_m": 0.042,
+    "max_m": 0.229,
+    "median_m": 0.043,
     "over": 0
    },
    {
@@ -144,8 +147,8 @@
    {
     "window": "W02400",
     "points": 30,
-    "max_m": 0.172,
-    "median_m": 0.059,
+    "max_m": 0.17,
+    "median_m": 0.061,
     "over": 0
    },
    {
@@ -158,14 +161,14 @@
    {
     "window": "W03250",
     "points": 88,
-    "max_m": 0.227,
-    "median_m": 0.043,
+    "max_m": 0.225,
+    "median_m": 0.042,
     "over": 0
    },
    {
     "window": "W03550",
     "points": 89,
-    "max_m": 0.165,
+    "max_m": 0.166,
     "median_m": 0.038,
     "over": 0
    },
@@ -179,14 +182,14 @@
    {
     "window": "W04100",
     "points": 85,
-    "max_m": 0.165,
+    "max_m": 0.163,
     "median_m": 0.04,
     "over": 0
    },
    {
     "window": "W04350",
     "points": 89,
-    "max_m": 0.229,
+    "max_m": 0.228,
     "median_m": 0.048,
     "over": 0
    },
@@ -207,7 +210,7 @@
    {
     "window": "W05150",
     "points": 47,
-    "max_m": 0.143,
+    "max_m": 0.144,
     "median_m": 0.061,
     "over": 0
    },
@@ -235,7 +238,7 @@
    {
     "window": "W06800",
     "points": 39,
-    "max_m": 0.334,
+    "max_m": 0.325,
     "median_m": 0.053,
     "over": 0
    },
@@ -263,64 +266,64 @@
    {
     "window": "W10150",
     "points": 28,
-    "max_m": 0.384,
-    "median_m": 0.066,
+    "max_m": 0.361,
+    "median_m": 0.123,
     "over": 0
    },
    {
     "window": "W10400",
     "points": 13,
-    "max_m": 0.228,
-    "median_m": 0.09,
+    "max_m": 0.248,
+    "median_m": 0.095,
     "over": 0
    },
    {
     "window": "W10850",
     "points": 70,
-    "max_m": 0.228,
-    "median_m": 0.062,
+    "max_m": 0.227,
+    "median_m": 0.061,
     "over": 0
    },
    {
     "window": "W11150",
     "points": 23,
-    "max_m": 0.207,
-    "median_m": 0.121,
+    "max_m": 0.205,
+    "median_m": 0.103,
     "over": 0
    },
    {
     "window": "W11450",
     "points": 69,
     "max_m": 0.199,
-    "median_m": 0.063,
+    "median_m": 0.064,
     "over": 0
    },
    {
     "window": "C12_in",
     "points": 66,
-    "max_m": 0.295,
-    "median_m": 0.051,
+    "max_m": 0.259,
+    "median_m": 0.073,
     "over": 0
    },
    {
     "window": "C12_out",
     "points": 56,
-    "max_m": 0.278,
-    "median_m": 0.085,
+    "max_m": 0.363,
+    "median_m": 0.096,
     "over": 0
    },
    {
     "window": "C13_in",
     "points": 31,
-    "max_m": 0.61,
-    "median_m": 0.159,
+    "max_m": 0.395,
+    "median_m": 0.129,
     "over": 0
    },
    {
     "window": "C13_out",
     "points": 44,
-    "max_m": 0.317,
-    "median_m": 0.084,
+    "max_m": 0.721,
+    "median_m": 0.112,
     "over": 0
    }
   ],
@@ -337,8 +340,8 @@
   "step_fails": 0,
   "adjacent_fails": 0,
   "spacing_fails": 0,
-  "max_step_ratio": 0.982,
-  "max_adjacent_diff_deg": 1.184,
+  "max_step_ratio": 0.925,
+  "max_adjacent_diff_deg": 1.096,
   "spacing_m": [
    0.998,
    0.999
@@ -347,7 +350,7 @@
  },
  "c_topology": {
   "pass": true,
-  "max_step_deg": 71.67,
+  "max_step_deg": 12.88,
   "reversals": [],
   "short_segments": [],
   "self_intersections": []
@@ -361,10 +364,18 @@
    "limit_deg": 3.163,
    "adjacent_diff_deg": [
     0.146,
-    0.173
+    0.179
    ]
   },
   "seam_on_climb": true
+ },
+ "e_facets": {
+  "pass": true,
+  "points_off_climb": 7524,
+  "max_step_deg": 12.88,
+  "tightest_radius_m": 9.43,
+  "facets": 0,
+  "worst": []
  },
  "pass": true
 }

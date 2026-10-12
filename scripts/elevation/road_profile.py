@@ -138,20 +138,73 @@ def length_weights(st, lap, closed):
     return w
 
 
+def cells(st, lap, closed):
+    """Each vertex's stretch of road, ``(lo, hi)`` in station: half of each adjacent segment (wrapped on a closed
+    lap; mirrored at an open end). ``hi - lo`` is ``length_weights``."""
+    w_lohi = []
+    n = len(st)
+    seg = [st[i + 1] - st[i] for i in range(n - 1)]
+    close = (lap - st[-1] + st[0]) if closed else 0.0
+    for i in range(n):
+        left = seg[i - 1] if i > 0 else close
+        right = seg[i] if i < n - 1 else close
+        if not closed and i == 0:
+            left = right
+        if not closed and i == n - 1:
+            right = left
+        w_lohi.append((st[i] - left / 2.0, st[i] + right / 2.0))
+    return w_lohi
+
+
+def _overlap_windows(st, lap, half_m, closed):
+    """For each vertex i: [(j, w)] = every vertex whose CELL overlaps the window [st_i - half, st_i + half], with
+    w = the overlap in metres (wrapped on a closed lap).
+
+    A sample stands for its cell, so it counts for the part of its cell inside the window. Counting a whole
+    sample by its centre (``_window_iter``) is the same thing wherever the spacing is uniform and the window is a
+    whole number of cells (33 m / 9 m on 1 m or 3 m: identical results), but where 1 m spacing meets 3 m a 3 m
+    sample whose centre sits just outside the window is dropped whole, then enters whole one vertex later: the
+    window's mean or median jumps (measured 2026-10-12 on the Lariat, local st 11,577.8 on lower Paradise Rd: a
+    -16 % segment at the cap between -4 % ones, where 3DEP is a steady -8 to -11 %; drive_test's severe steps
+    on all six wheel paths there)."""
+    n = len(st)
+    cl = cells(st, lap, closed)
+    seg_max = max([st[i + 1] - st[i] for i in range(n - 1)] + [(lap - st[-1] + st[0]) if closed else 0.0, 0.0])
+    reach = half_m + seg_max + 1e-9
+    eps = 1e-9
+    for i, idx in enumerate(_window_iter(st, lap, reach, closed)):
+        lo_w, hi_w = st[i] - half_m, st[i] + half_m
+        out = []
+        for j in idx:
+            d = st[j] - st[i]
+            if closed:                                 # j's offset from i, wrapped to the near side
+                if d > lap / 2.0:
+                    d -= lap
+                elif d < -lap / 2.0:
+                    d += lap
+            lo = st[i] + d - (st[j] - cl[j][0])
+            hi = st[i] + d + (cl[j][1] - st[j])
+            w = min(hi, hi_w) - max(lo, lo_w)
+            if w > eps:
+                out.append((j, w))
+        yield out
+
+
 def station_median(z, st, lap, window_m, closed, weights=None):
     """Length-weighted median over +-window/2 of road: the first value (ascending) whose cumulative weight passes
-    half the window's. On uniform spacing that is ``sorted(window)[len // 2]``, heightfield's pick (the middle of
-    an odd window, the upper middle of an even one at a clamped open end)."""
-    wts = weights if weights is not None else length_weights(st, lap, closed)
+    half the window's. Each sample weighs the part of its cell inside the window (``_overlap_windows``); on
+    uniform spacing that is ``sorted(window)[len // 2]``, heightfield's pick (the middle of an odd window, the
+    upper middle of an even one at a clamped open end). ``weights`` is accepted for the old signature and ignored:
+    the cells carry the lengths."""
     out = []
-    for idx in _window_iter(st, lap, window_m / 2.0, closed):
-        pairs = sorted((z[k], wts[k]) for k in idx)
+    for win in _overlap_windows(st, lap, window_m / 2.0, closed):
+        pairs = sorted((z[k], w) for k, w in win)
         half = sum(w for _, w in pairs) / 2.0
         acc = 0.0
         val = pairs[-1][0]
         for v, w in pairs:
             acc += w
-            if acc > half * (1.0 + 1e-12):
+            if acc > half * (1.0 + 1e-9):
                 val = v
                 break
         out.append(val)
@@ -159,12 +212,12 @@ def station_median(z, st, lap, window_m, closed, weights=None):
 
 
 def station_mean(z, st, lap, window_m, closed, weights=None):
-    """Length-weighted mean over +-window/2 of road."""
-    wts = weights if weights is not None else length_weights(st, lap, closed)
+    """Length-weighted mean over +-window/2 of road, each sample weighted by the part of its cell inside the
+    window (``_overlap_windows``)."""
     out = []
-    for idx in _window_iter(st, lap, window_m / 2.0, closed):
-        sw = sum(wts[k] for k in idx)
-        out.append(sum(z[k] * wts[k] for k in idx) / sw)
+    for win in _overlap_windows(st, lap, window_m / 2.0, closed):
+        sw = sum(w for _, w in win)
+        out.append(sum(z[k] * w for k, w in win) / sw)
     return out
 
 
@@ -452,8 +505,8 @@ def build(project_dir, *, write=False, log=print) -> dict:
              "heightfield_vs_this_m": ({"p95": round(sorted(abs(a - b) for a, b in zip(hf, z_s))[19 * len(z_s) // 20], 3),
                                         "max": round(max(abs(a - b) for a, b in zip(hf, z_s)), 3)} if hf else None)}
     ej.setdefault("z_smooth_heightfield_m", ej.get("z_smooth_m"))
-    ej["z_smooth_m"] = [round(v, 2) for v in z_s]
-    ej["z_held_m"] = [round(v, 2) for v in z_held]
+    ej["z_smooth_m"] = [round(v, 3) for v in z_s]          # mm: 0.01 m on 1 m spacing quantises the grade to +-1 %-point
+    ej["z_held_m"] = [round(v, 3) for v in z_held]
     # the raw 3DEP samples in the LOCAL index space too (projection rotates the ring by k): z_raw_m is per geojson
     # vertex, centerline.local.json per local vertex; a gate pairing the two by index would compare points k apart
     if closed and k:

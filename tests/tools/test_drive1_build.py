@@ -99,13 +99,16 @@ def test_the_d4_variants_differ_only_in_the_edge_and_the_install():
 def test_ship_json_is_the_drive1_chain():
     s = spec_mod.load(SPEC, "lookout-lariat")
     st = s["steps"]
-    assert st["draft"][-1] == "underlay" and st["author"] == ["layout_dummies"]
+    assert st["draft"][-1] == "underlay" and st["author"] == ["layout_dummies", "overpass_decks"]
     allsteps = sum(st.values(), [])
     for n in ("race_bands", "race_planned_gate", "race_author", "race_verify", "export_race", "race_scenery_gate",
               "race_gates", "ai", "treefx", "drive_test_street"):
         assert n not in allsteps, n
     assert st["prep"] == ["prep", "split_street"]
-    assert st["ship"] == ["export_road", "spawn_kn5", "verify_kn5", "track_folder", "verify_inis", "make_map"]
+    # 2026-10-12: verify_kn5 / --inis keep their output as the reports the verdict reads; the built folder carries
+    # the installed names (ui_names) before the map is drawn
+    assert st["ship"] == ["export_road", "spawn_kn5", "verify_kn5_report", "track_folder", "verify_inis_report",
+                          "ui_names", "make_map"]
     g = st["gate"]
     # kn5_ground_check runs kn5-internal, before road_obj writes the gate OBJ it would otherwise read as a source OBJ
     assert g[:2] == ["kn5_ground_check", "road_obj"] and g[-1] == "drive1_verdict"
@@ -115,7 +118,8 @@ def test_ship_json_is_the_drive1_chain():
         assert n in st["draft"], n
     d3 = json.loads(SPEC.read_text(encoding="utf-8"))["_drive3_steps"]
     assert "race_author" in d3["author"] and "ai" in d3["ship"] and d3["gate_add"] == ["race_gates"]
-    for f in ("data/underlay.json", "data/kn5_ground_check.txt", "data/drive1_gates.json"):
+    for f in ("data/underlay.json", "data/kn5_ground_check.txt", "data/drive1_gates.json", "data/verify_kn5.txt",
+              "data/verify_inis.txt", "data/overpass_decks.json", "data/drive1_build.json"):
         assert f in s["sync_out"]["files"], f
 
 
@@ -128,7 +132,10 @@ def test_the_block_is_one_marked_block_after_the_drive1_gates():
     after = [n for n in names if i < TEXT.find(f"\n{n}() {{") and n != "is_data_step"
              and TEXT.find(f"\n{n}() {{") < _first("is_data_step() {")]
     assert after == ["prep_split_street", "gate_drive_test_drive1", "gate_kn5_ground_check", "gate_drive1_verdict",
-                     "d4_variant_check", "d4_variant_apply", "d4_variant_guard"], after
+                     "d4_variant_check", "d4_variant_apply", "d4_variant_guard",
+                     # the 2026-10-12 fixes block, appended after the build block
+                     "author_overpass_decks", "ship_verify_kn5_report", "ship_verify_inis_report", "ship_ui_names"], after
+    assert _first("# LARIAT DRIVE-1 FIXES") > _first("d4_variant_guard() {")
 
 
 def test_the_street_split_accepts_only_the_two_no_race_problems():
@@ -165,11 +172,27 @@ def test_the_drive1_steps():
     v = _body("gate_drive1_verdict")
     assert v.find('rm -f "$PROJ/data/drive1_gates.json"') < v.find('python tools/drive1_gates.py "$PROJ"')
     assert '[ "$rc" = 0 ] || D1_G=$rc' in v and "force_install_ok" in v
-    assert _first("D1_FORCE_OK=1") < _first('for n in ${GATE[@]+"${GATE[@]}"}; do "gate_$n"; done')
+    # 2026-10-12: a forced install needs the verdict; without it (a run whose road gates were red but which never
+    # reached drive1_verdict) the default refuses
+    assert "D1_FORCE_OK=1\n" not in TEXT
+    assert _first("D1_FORCE_OK=0") < _first('for n in ${GATE[@]+"${GATE[@]}"}; do "gate_$n"; done')
     # the verdict: a forced install is refused when the run is worse than July
     blk = TEXT[_first('echo "  Drive-1 road gates'):_first('if [ "$DT_S" != 0 ]')]
     assert blk.find('if [ "$FORCE" = 1 ] && [ "$D1_FORCE_OK" != 1 ]; then') < blk.find('elif [ "$FORCE" = 1 ]; then')
     assert "--force-install refused" in blk
+
+
+def test_the_fix_steps():
+    k = _body("ship_verify_kn5_report")
+    assert k.find('rm -f "$PROJ/data/verify_kn5.txt"') < k.find('python -m scripts.ac.verify_kn5 "$PROJ" >')
+    assert 'echo "exit $rc" >> "$PROJ/data/verify_kn5.txt"' in k and "exit 1; }" in k      # still hard
+    i = _body("ship_verify_inis_report")
+    assert '--inis > "$PROJ/data/verify_inis.txt"' in i and "exit 1; }" in i
+    u = _body("ship_ui_names")
+    assert '"$UI_PREFIX" "$VARIANT" "$INSTALL_FOLDER"' in u and "drive1_build.json" in u and "chr(8212)" in u
+    o = _body("author_overpass_decks")
+    assert 'python tools/overpass_decks.py "$PROJ"' in o and '--python "$AIROSO/tools/author_overpass_blend.py"' in o
+    assert "--python-exit-code 1" in o
 
 
 def test_the_variant_is_wired_at_each_point_of_the_chain():

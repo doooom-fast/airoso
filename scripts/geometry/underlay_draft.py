@@ -447,6 +447,46 @@ def terrain_mesh(inp: dict, pavement_meshes=()) -> dict:
             "refine": {"quads": len(refine), "factor": N, "sub_cell_m": round(cell / N, 2), **stats}}
 
 
+TERRAIN_EDGE_NAME = "1GRASS_terrain_edge"
+TERRAIN_GRID_NAME = "1GRASS_terrain"
+
+
+def terrain_cutfill_meshes(inp: dict, secs, closed) -> dict:
+    """GEN_terrain when the track opts in (``underlay.terrain`` = ``"cutfill"``; the Lookout Lariat): the real edge
+    (scripts/geometry/terrain_cutfill.py) — an edge-aligned strip from under the pavement past the verge (the
+    ROAD-CONSTRUCTION toe ditch / 1:1 cut / 1.5:1 fill on the real ground) and the 3DEP raster, re-heighted from the
+    near-native corridor samples and cut back from the strip. Two meshes, both 1GRASS."""
+    from scripts.geometry import terrain_cutfill as tcf
+    from scripts.geometry.build_mesh import project_grid, read_npy   # the engine's own functions
+    from scripts.geometry.projection import _meters_per_degree
+    proj, cfg, local, pts = inp["proj"], inp["cfg"], inp["local"], inp["pts"]
+    npy, meta_p = proj / "data" / "heightfield.npy", proj / "data" / "heightfield.meta.json"
+    for p_ in (npy, meta_p):
+        if not p_.is_file():
+            raise UnderlayError(f"missing {p_} (the elev step: scripts.elevation.heightfield)")
+    ucfg = cfg.get("underlay") or {}
+    up = int(ucfg.get("terrain_upsample", 2))
+    skirt = float(ucfg.get("terrain_skirt_m", 500.0))
+    grid = read_npy(npy)
+    meta = json.loads(meta_p.read_text(encoding="utf-8"))
+    grid, meta = ribbon.upsample_grid(grid, meta, up)
+    o = local["origin"]
+    origin = (float(o["lon"]), float(o["lat"]))
+    grid_xyz = project_grid(grid, meta, origin, float(o["elev_m"]), mirror_x=bool(cfg.get("mirror_x")))
+    corridor = tcf.load_corridor(proj, n_src=len(pts))
+    if corridor is None:
+        raise UnderlayError("underlay.terrain = cutfill needs data/corridor.elev.json sampled on this centreline "
+                            "(scripts.elevation.heightfield writes it; its n_src must equal the line's point count)")
+    out = tcf.build(pts, secs, closed, grid_xyz, float(meta["spacing_m"]), corridor, origin, float(o["elev_m"]),
+                    _meters_per_degree(origin[1]), mirror_x=bool(cfg.get("mirror_x")), skirt_m=skirt)
+    meshes = {}
+    for name, key in ((TERRAIN_EDGE_NAME, "edge"), (TERRAIN_GRID_NAME, "grid")):
+        verts = [to_blender(v) for v in out[key]["vertices"]]
+        meshes[name] = {"vertices": verts, "faces": face_up(verts, out[key]["tris"])}
+    return {"meshes": meshes, "report": {**out["report"], "cell_m": round(float(meta["spacing_m"]), 2),
+                                         "grid": [meta["nx"], meta["ny"]], "skirt_m": skirt}}
+
+
 # --- refs ---------------------------------------------------------------------------------------------------------
 
 def _nearest_index(st, s):
@@ -585,7 +625,14 @@ def build(proj, variant: str | None = None, *, with_terrain: bool = True) -> dic
     if vs:
         meshes["verge"] = {VERGE_NAME: verge_mesh(secs, closed)}
     terrain = None
-    if with_terrain:
+    cutfill = None
+    tmode = str((cfg.get("underlay") or {}).get("terrain", "placeholder"))
+    if tmode not in ("placeholder", "cutfill"):
+        raise UnderlayError(f"underlay.terrain must be 'placeholder' or 'cutfill', got {tmode!r}")
+    if with_terrain and tmode == "cutfill":
+        cutfill = terrain_cutfill_meshes(inp, secs, closed)
+        meshes["terrain"] = cutfill["meshes"]
+    elif with_terrain:
         terrain = terrain_mesh(inp, [road] + list(meshes.get("verge", {}).values()))
         meshes["terrain"] = {TERRAIN_NAME: {"vertices": terrain["vertices"], "faces": terrain["faces"]}}
     r = refs(inp, secs, closed)
@@ -604,7 +651,13 @@ def build(proj, variant: str | None = None, *, with_terrain: bool = True) -> dic
         "verge": ({"name": VERGE_NAME, **vs, "verts": len(meshes["verge"][VERGE_NAME]["vertices"]),
                    "digest": mesh_digest(meshes["verge"][VERGE_NAME])} if vs else
                   {"name": None, "mode": "none: road_profile.verge_m absent or 0"}),
-        "terrain": ({"name": TERRAIN_NAME, "placeholder": True,
+        "terrain": ({"names": sorted(cutfill["meshes"]), "placeholder": False, "mode": "cutfill",
+                     "replaced_by": "P3a's tiers (ledger 0046) for the far ground; this is the corridor + the real edge",
+                     "source": "data/corridor.elev.json (3DEP near-native corridor) + data/heightfield.npy (3DEP raster); "
+                               "the ROAD-CONSTRUCTION section at the edge (scripts/geometry/terrain_cutfill.py)",
+                     "verts": sum(len(m["vertices"]) for m in cutfill["meshes"].values()),
+                     **cutfill["report"]} if cutfill else
+                    {"name": TERRAIN_NAME, "placeholder": True,
                      "replaced_by": "P3a tiered terrain (scripts/geometry/terrain_tiers.py, ledger 0046)",
                      "source": "data/heightfield.npy (3DEP); pinned under the pavement on a refined corridor "
                                "(grass_terrain + build_mesh's contact pin), raw survey elsewhere",

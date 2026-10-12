@@ -14,11 +14,15 @@ Gating (P5):
                                  not gated (Drive 1 builds no edges); the per-layout verdict is this table's, not its.
   audit_mesh (street)            P5's hard classes A B D E G H I = 0 [std]; F (curb not flush) <= f_curb_max
                                  [invented]; J / K are race-mouth gates (Drive 3), recorded.
-  verify_kn5                     hard in the ship phase (the chain stops on red), so a build that reached the
-                                 gates passed it; recorded as such.
+  verify_kn5                     its own reports, data/verify_kn5.txt and data/verify_inis.txt (written by the
+                                 ship steps verify_kn5_report / verify_inis_report: the tool's output + "exit N"):
+                                 both present, exit 0 and the tool's "verification passed" line, or red.
   kn5_ground_check               its own verdict (road over ground p95 <= 0.10 m [std]) from
-                                 data/kn5_ground_check.txt; the lid: no step > lid_end_step_max_m at either end
-                                 [invented in 0048], read from drive_test's severe-step list within +/- 5 m.
+                                 data/kn5_ground_check.txt, AND floating furniture 0 [std: the existing count gate]:
+                                 every "<bucket> objects N: ... hovering>0.3m H" line it prints summed (a kn5 with no
+                                 furniture bucket prints none: 0, said so); the lid: no step > lid_end_step_max_m
+                                 [invented in 0048] over the deck or within LID_WINDOW_M past either end, read from
+                                 drive_test's severe-step list in each layout's own stations.
   one-way, hairpin/paint, roll rate   the draft's hard gates (data/oneway_check.json, data/aerial/paint_gate.json,
                                  data/crossfall_gate.json), re-read so the verdict carries them.
   road inventory, stacked legs   data/road_inventory.json, data/stacked_legs.json.
@@ -27,10 +31,16 @@ Gating (P5):
 Recorded, not gating: unguarded drop-offs, bumps/km, far ledges (drive_test), verify_edges, verify_signs, TreeFX,
 sightline_check (Drive 2: not built), every race gate (race layouts parked until Drive 3).
 
---force-install (P5, 0047's rule): a red street run may still install only if it is no worse than the July
-reference on every drive_test key it has (``gates.drive1.july_reference`` [measured on v0.46.0]) and obstruction,
-floating furniture and soft-top are 0. ``force_install_ok`` carries that; tools/ship_track.sh refuses a forced
-install when it is false.
+A key a present report does not carry, or carries as null, is red ("not reported"), never 0 (2026-10-12: a
+renamed or dropped drive_test key, or audit_mesh's G / H skipped as null, used to read as a pass).
+
+--force-install (P5, 0047's rule: "no worse than the July reference on every key in the active gate set"): a red
+street run may still install only if (a) every drive_test key with a July value (``gates.drive1.july_reference``
+[measured on v0.46.0]) is no worse than it, (b) obstruction, floating furniture and soft-top are 0, and (c) every
+other gating key and row is GREEN: a key with no July value (undrivable corners, daylight, replication) and every
+other gate (audit_mesh, verify_kn5, kn5_ground_check, the lid, one-way, paint, roll rate, road inventory, stacked
+legs) has no reference to be "no worse than", exactly as 0047 never forces a race layout red on its own gates.
+``force_install_ok`` carries that; tools/ship_track.sh refuses a forced install when it is false.
 
     python tools/drive1_gates.py <project-dir>          exit 0 green, 1 red, 2 input error
 """
@@ -45,7 +55,10 @@ ZERO_KEYS = ("soft_top_in_lane", "obstruction_stations", "floating_furniture", "
 ALWAYS_ZERO = ("obstruction_stations", "floating_furniture", "soft_top_in_lane")   # P5: red or not, forced or not
 AUDIT_HARD = ("A_supports_in_road", "B_terrain_poke", "D_wall_on_road", "E_wall_floating", "G_prop_floating",
               "H_ground_above_deck", "I_sidewalk_isolating")
-LID_WINDOW_M = 5.0      # a severe step counts as "at the lid's end" within this distance of it (display window)
+LID_WINDOW_M = 5.0      # [invented] a severe step counts as the lid's when it lies over the deck or within this past
+#                         either end (2026-10-12: it was +-5 m around each END only, which missed the reverse layout's
+#                         0.243 m step 5-8 m inside the east end)
+JULY_KEYS_ON_ROW = ("severe_steps", "kinks_per_km")   # drive_test gating keys that have a July value
 
 
 class InputError(Exception):
@@ -113,7 +126,10 @@ def judge(project_dir) -> dict:
                     replication_p95_m=rep.get("p95"), replication_median_m=rep.get("median"),
                     replication_max_m=rep.get("max"), kinks_per_km=r.get("kinks_per_km"),
                     kinks_per_km_max=kink_max, lap_m=r.get("lap_m"))
-        why = [k for k in ZERO_KEYS if (r.get(k) or 0) > 0]
+        why = [f"{k} not reported" for k in ZERO_KEYS + ("severe_steps",) if r.get(k) is None]
+        if kink_max is not None and r.get("kinks_per_km") is None:
+            why.append("kinks_per_km not reported")
+        why += [f"{k} {r.get(k)}" for k in ZERO_KEYS if (r.get(k) or 0) > 0]
         if (r.get("severe_steps") or 0) > severe_max:
             why.append(f"severe_steps {r.get('severe_steps')} > {severe_max}")
         if rep.get("p95") is None:
@@ -123,6 +139,11 @@ def judge(project_dir) -> dict:
         if kink_max is not None and (r.get("kinks_per_km") or 0) > float(kink_max):
             why.append(f"kinks {r.get('kinks_per_km')}/km > {kink_max}/km")
         rows.append(_row(name, "gating", not why, nums, "; ".join(why)))
+        # --force-install (c): a red key with no July value cannot be forced
+        no_ref = [w_ for w_ in why if not w_.startswith(tuple(k for k in JULY_KEYS_ON_ROW if k in july))
+                  and not w_.startswith(ALWAYS_ZERO)]
+        if no_ref:
+            force_why.append(f"{lid}: {'; '.join(no_ref)} (no July value to be no worse than)")
         rows.append(_row(f"drive_test {lid} (recorded)", "recorded", None,
                          {"excursion_drops": r.get("excursion_drops"), "excursion_far_ledges": r.get("excursion_far_ledges"),
                           "steps_per_km": r.get("steps_per_km"), "apron_steps": r.get("apron_steps"),
@@ -144,9 +165,11 @@ def judge(project_dir) -> dict:
         sev = (r.get("worst") or {}).get("severe_all") or []
         for a, b, did in lid_spans:
             ends = (a, b) if r.get("direction") != "reverse" else (lap - b, lap - a)
-            near = [abs(float(s[2])) for s in sev if any(abs(float(s[0]) - e) <= LID_WINDOW_M for e in ends)]
+            near = [abs(float(s[2])) for s in sev if ends[0] - LID_WINDOW_M <= float(s[0]) <= ends[1] + LID_WINDOW_M]
             lid_rows.append({"layout": lid, "deck": did, "ends_m": [round(e, 1) for e in ends],
-                             "worst_step_m": round(max(near), 3) if near else None, "severe_steps_at_ends": len(near)})
+                             "window_m": [round(ends[0] - LID_WINDOW_M, 1), round(ends[1] + LID_WINDOW_M, 1)],
+                             "worst_step_m": round(max(near), 3) if near else None, "severe_steps_on_lid": len(near),
+                             "severe_list_complete": len(sev) >= int(r.get("severe_steps") or 0)})
 
     # --- audit_mesh (street) ----------------------------------------------------------------------------------
     a = _load(data / "audit.json")
@@ -155,18 +178,29 @@ def judge(project_dir) -> dict:
     else:
         nums = {k: a.get(k) for k in AUDIT_HARD + ("F_curb_not_flush", "J_terrain_span", "K_kerb_in_carriageway",
                                                    "C_junction_crossings", "worst_poke_m", "worst_ground_cut_m")}
-        why = [f"{k} {a.get(k)}" for k in AUDIT_HARD if (a.get(k) or 0) > 0]
+        why = [f"{k} not computed (null)" for k in AUDIT_HARD + ("F_curb_not_flush",) if a.get(k) is None]
+        why += [f"{k} {a.get(k)}" for k in AUDIT_HARD if (a.get(k) or 0) > 0]
         if (a.get("F_curb_not_flush") or 0) > f_max:
             why.append(f"F_curb_not_flush {a.get('F_curb_not_flush')} > {f_max}")
         rows.append(_row("audit_mesh", "gating", not why, nums, "; ".join(why) or
                          "J / K gate at the race-turn mouths (Drive 3): recorded"))
 
     # --- verify_kn5 (hard in the ship phase) ------------------------------------------------------------------
-    slug = cfg.get("slug", "")
-    kn5 = proj / "build" / f"{slug}.kn5"
-    rows.append(_row("verify_kn5", "gating", kn5.is_file(), {"road_kn5": kn5.name, "exists": kn5.is_file()},
-                     "hard in the ship phase: tools/ship_track.sh stops on red before any gate runs, so a build that "
-                     "reached this verdict passed it" if kn5.is_file() else "no shipped road kn5"))
+    vk = {}
+    for tag, fn, ok_line in (("kn5", "verify_kn5.txt", "kn5 verification passed"),
+                             ("inis", "verify_inis.txt", "verification passed")):
+        fp = data / fn
+        if not fp.is_file():
+            vk[tag] = {"report": f"data/{fn}", "present": False, "pass": False}
+            continue
+        t = fp.read_text(encoding="utf-8", errors="replace")
+        ex = re.findall(r"^exit (\d+)\s*$", t, re.M)
+        vk[tag] = {"report": f"data/{fn}", "present": True, "exit": int(ex[-1]) if ex else None,
+                   "passed_line": ok_line in t,
+                   "pass": bool(ex) and ex[-1] == "0" and ok_line in t}
+    bad_vk = [f"{v['report']}: " + ("missing" if not v["present"] else f"exit {v.get('exit')}, passed line "
+                                     f"{'present' if v['passed_line'] else 'absent'}") for v in vk.values() if not v["pass"]]
+    rows.append(_row("verify_kn5", "gating", not bad_vk, {k: v.get("exit") for k, v in vk.items()}, "; ".join(bad_vk)))
 
     # --- kn5_ground_check + the lid's ends --------------------------------------------------------------------
     kp = data / "kn5_ground_check.txt"
@@ -184,12 +218,25 @@ def judge(project_dir) -> dict:
         dm = re.search(r"deck-vs-mountain \(tri-exact\): median ([+-][\d.]+)\s+p95 ([+-][\d.]+)\s+max ([+-][\d.]+)", t)
         if dm:
             nums.update(deck_vs_mountain_median_m=float(dm.group(1)), deck_vs_mountain_max_m=float(dm.group(3)))
-        ok = bool(v) and v.group(1) == "PASS" and (ex is None or ex.group(1) == "0")
-        rows.append(_row("kn5_ground_check", "gating", ok, nums, "" if ok else (nums["verdict"] or "no verdict line")))
+        furn = re.findall(r"^\s+(\S+)\s+objects\s+(\d+): .*?hovering>0\.3m (\d+)", t, re.M)
+        nums["floating_furniture"] = sum(int(h) for _b, _n, h in furn)
+        nums["furniture_buckets"] = {b: int(n) for b, n, _h in furn} or "none in the kn5 (Drive 1: road + ground)"
+        why_k = []
+        if not (v and v.group(1) == "PASS"):
+            why_k.append(nums["verdict"] or "no verdict line")
+        if ex is None or ex.group(1) != "0":
+            why_k.append(f"exit {ex.group(1) if ex else 'not recorded'}")
+        if m is None:
+            why_k.append("no road-over-ground line")
+        if nums["floating_furniture"]:
+            why_k.append(f"floating furniture {nums['floating_furniture']}")
+        rows.append(_row("kn5_ground_check", "gating", not why_k, nums, "; ".join(why_k)))
     if lid_spans:
         bad = [x for x in lid_rows if x["worst_step_m"] is not None and x["worst_step_m"] > lid_max]
-        rows.append(_row("lid ends (no step > %g m)" % lid_max, "gating", (not bad) and bool(lid_rows),
-                         {"decks": lid_rows}, "" if lid_rows else "no street drive_test to read the lid's ends from"))
+        rows.append(_row("lid (no step > %g m on it or 5 m past its ends)" % lid_max, "gating",
+                         (not bad) and bool(lid_rows), {"decks": lid_rows},
+                         ("" if lid_rows else "no street drive_test to read the lid from")
+                         + "; ".join(f"{x['layout']} {x['deck']}: {x['worst_step_m']} m" for x in bad)))
 
     # --- the draft's hard gates, re-read -----------------------------------------------------------------------
     o = _load(data / "oneway_check.json")
@@ -202,7 +249,8 @@ def judge(project_dir) -> dict:
     pg = _load(data / "aerial" / "paint_gate.json")
     rows.append(_missing("hairpin / paint centreline", "data/aerial/paint_gate.json") if pg is None else
                 _row("hairpin / paint centreline", "gating", bool(pg.get("pass")),
-                     {k: (pg.get(k) or {}).get("pass") for k in ("a_paint", "b_curvature", "c_topology", "d_closure")}))
+                     {k: (pg.get(k) or {}).get("pass") for k in ("a_paint", "b_curvature", "c_topology", "d_closure",
+                                                                  "e_facets")}))
     cg = _load(data / "crossfall_gate.json")
     if cg is None:
         rows.append(_missing("roll rate", "data/crossfall_gate.json"))
@@ -234,10 +282,12 @@ def judge(project_dir) -> dict:
     # --- tier seams (P3a) --------------------------------------------------------------------------------------
     u = _load(data / "underlay.json") or {}
     terr = u.get("terrain") or {}
-    rows.append(_row("tier seams", "n/a", None, {"terrain": terr.get("replaced_by") and "placeholder" or None,
-                                                  "replaced_by": terr.get("replaced_by")},
-                     "not applicable: GEN_terrain is the underlay's one-sheet placeholder until P3a's tiers land "
-                     "(V3-PLAN P3a); this is NOT a pass"))
+    mode = terr.get("mode") or ("placeholder" if terr.get("placeholder", True) else None)
+    rows.append(_row("tier seams", "n/a", None, {"terrain": mode, "replaced_by": terr.get("replaced_by")},
+                     "not applicable until P3a's tiers land (V3-PLAN P3a; ledger 0046's job): GEN_terrain is "
+                     + ("the cutfill corridor + the 3DEP raster, one tier (its edge strip sits BAND_DROP_M under the "
+                        "raster where they overlap, by construction, not by a seam check)" if mode == "cutfill"
+                        else "the underlay's one-sheet placeholder") + "; this is NOT a pass"))
 
     # --- recorded only -----------------------------------------------------------------------------------------
     for g, why in (("verify_edges", "Drive 2: no edges built"), ("verify_signs", "Drive 2: no signs built"),
@@ -249,6 +299,9 @@ def judge(project_dir) -> dict:
 
     gating = [x for x in rows if x["kind"] == "gating"]
     red = [x["gate"] for x in gating if not x["pass"]]
+    for x in gating:                      # (c): a red row other than drive_test has no July value at all
+        if not x["pass"] and not x["gate"].startswith("drive_test "):
+            force_why.append(f"{x['gate']} red (no July value to be no worse than)")
     return {
         "tool": "tools/drive1_gates.py", "plan": "V3-PLAN P5, the Drive-1 gate set (road + ground only)",
         "variant": u.get("variant"), "verge_m": (u.get("verge") or {}).get("width_m"),

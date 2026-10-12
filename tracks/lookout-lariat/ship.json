@@ -1,6 +1,6 @@
 {
-  "_doc": "Lookout Mountain Lariat V3 for tools/ship_track.sh (V3-PLAN P1; ledger 0048), wired for DRIVE 1 (2026-10-12): 'the road and the ground, nothing else', street_full + street_reverse (the race layouts are parked in track.config.json layouts_parked until Drive 3). The workshop lives OUTSIDE airoso (the sync rails require it). The draft order is plan P2 step 1 with the paint centreline wired in: gps (the OSM line; the paint line it overwrites is kept as data/centerline.previous.geojson first) -> paint_centreline (data/centerline.geojson becomes the paint line again) -> remap_config (--write: every vertex index and station in the config follows the line, by station matching) -> verify_centreline_paint (the hairpin / paint gate, hard) -> route_oneway_check (hard) -> elev (heightfield: the 3DEP samples) -> road_profile (the profile smoothed by station, the declared lid held straight, capture.bridges written) -> project -> widths (the mountain OSM table) -> measured_widths (aerial > published > OSM, local frame) -> crossfall (footprint, estimated) -> verify_crossfall (roll rate, hard), so no OSM geometry ever reaches elevation or projection. The draft ends with underlay (scripts/blender/underlay.py, P2 step 3): it builds or refreshes loop.blend's GEN_* layers (GEN_road 1ROAD_road, GEN_verge 1RUNOFF_verge, GEN_terrain 1GRASS_terrain_placeholder until P3a's tiers, GEN_refs) and never resets the scene or touches AUTH_*. The D4 edge is chosen per run: no SHIP_VARIANT = the config as written (a_real_edge, verge 0.4 m, installs lookout_lariat_v3); SHIP_VARIANT=b_verge = the 1.25 m firm gravel strip (installs lookout_lariat_v3_verge, never synced back). The prep, exporter and spawn builder run from airoso's scripts/ac (never engine-july: that is San Diego's alone). Gates (P5's Drive-1 set): the draft's hard gates above; verify_kn5 + verify_inis (hard, ship phase); then on the built road kn5_ground_check (hard, kn5-internal: it runs before road_obj writes the gate OBJ) -> road_obj -> drive_test_drive1 (per street layout) -> audit_street (hard) -> road_inventory (hard) -> stacked_legs (hard) -> drive1_verdict (tools/drive1_gates.py: the Drive-1 thresholds on every report, gating vs recorded, and the July reference that --force-install must not be worse than).",
-  "_owed": "Not in the Drive-1 chain, by design: the AI lines (ship step 'ai': Drive 3, A13, and then one in-game recording per layout); TreeFX ('treefx': Drive 2, and make_treefx still reads San Diego's zones); the race steps (_drive3_steps); the P3 authoring steps (seat_terrain with station matching, terrain_cutfill, the tiers, overpass_decks, mouths / stubs / the lid, hairpin_pads, edges, signs, lamps, buildings) are not listed at all yet. With them, 'drive_test_drive1' and 'drive1_verdict' stay; 'race_gates' and the race author steps come back when the race layouts are unparked.",
+  "_doc": "Lookout Mountain Lariat V3 for tools/ship_track.sh (V3-PLAN P1; ledger 0048), wired for DRIVE 1 (2026-10-12): 'the road and the ground, nothing else', street_full + street_reverse (the race layouts are parked in track.config.json layouts_parked until Drive 3). The workshop lives OUTSIDE airoso (the sync rails require it). The draft order is plan P2 step 1 with the paint centreline wired in: gps (the OSM line; the paint line it overwrites is kept as data/centerline.previous.geojson first) -> paint_centreline (data/centerline.geojson becomes the paint line again) -> remap_config (--write: every vertex index and station in the config follows the line, by station matching) -> verify_centreline_paint (the hairpin / paint gate, hard) -> route_oneway_check (hard) -> elev (heightfield: the 3DEP samples) -> road_profile (the profile smoothed by station, the declared lid held straight, capture.bridges written) -> project -> widths (the mountain OSM table) -> measured_widths (aerial > published > OSM, local frame) -> crossfall (footprint, estimated) -> verify_crossfall (roll rate, hard), so no OSM geometry ever reaches elevation or projection. The draft ends with underlay (scripts/blender/underlay.py, P2 step 3): it builds or refreshes loop.blend's GEN_* layers (GEN_road 1ROAD_road, GEN_verge 1RUNOFF_verge, GEN_terrain 1GRASS_terrain_edge + 1GRASS_terrain: the real edge, track.config.json underlay.terrain cutfill, until P3a's tiers replace the far ground; GEN_refs) and never resets the scene or touches AUTH_*. The D4 edge is chosen per run: no SHIP_VARIANT = the config as written (a_real_edge, verge 0.4 m, installs lookout_lariat_v3); SHIP_VARIANT=b_verge = the 1.25 m firm gravel strip (installs lookout_lariat_v3_verge, never synced back). The prep, exporter and spawn builder run from airoso's scripts/ac (never engine-july: that is San Diego's alone). Author (every ship): layout_dummies, then overpass_decks (the C-470 bridges, D5: tools/overpass_decks.py + tools/author_overpass_blend.py -> loop.blend AUTH_overpass_*, scenery only). Ship: verify_kn5_report + verify_inis_report (hard, their output kept in data/verify_kn5.txt / verify_inis.txt for the verdict) and ui_names (the installed names stamped into the built folder, data/drive1_build.json). Gates (P5's Drive-1 set): the draft's hard gates above; then on the built road kn5_ground_check (hard, kn5-internal: it runs before road_obj writes the gate OBJ) -> road_obj -> drive_test_drive1 (per street layout) -> audit_street (hard) -> road_inventory (hard) -> stacked_legs (hard) -> drive1_verdict (tools/drive1_gates.py: the Drive-1 thresholds on every report, gating vs recorded, and the July reference that --force-install must not be worse than).",
+  "_owed": "Not in the Drive-1 chain, by design: the AI lines (ship step 'ai': Drive 3, A13, and then one in-game recording per layout); TreeFX ('treefx': Drive 2, and make_treefx still reads San Diego's zones); the race steps (_drive3_steps). In since 2026-10-12: the real edge (underlay.terrain cutfill, in the underlay) and overpass_decks. Still owed and not listed: P3a's tiers (ledger 0046's job), P3b's mouths / stubs / the lid's own deck, hairpin_pads, edges, signs, lamps, buildings. With them, 'drive_test_drive1' and 'drive1_verdict' stay; 'race_gates' and the race author steps come back when the race layouts are unparked.",
   "track": "lookout-lariat",
   "workshop": "C:/Users/Owner/Documents/k10-workshops/lookout-lariat",
   "workshop_project": "project",
@@ -23,7 +23,8 @@
       "underlay"
     ],
     "author": [
-      "layout_dummies"
+      "layout_dummies",
+      "overpass_decks"
     ],
     "prep": [
       "prep",
@@ -32,9 +33,10 @@
     "ship": [
       "export_road",
       "spawn_kn5",
-      "verify_kn5",
+      "verify_kn5_report",
       "track_folder",
-      "verify_inis",
+      "verify_inis_report",
+      "ui_names",
       "make_map"
     ],
     "gate": [
@@ -48,7 +50,7 @@
     ]
   },
   "_drive3_steps": {
-    "_doc": "Drive 3 (A13): unpark the race layouts (track.config.json layouts_parked -> layouts[]) and restore these, in this order. Each still runs San Diego's shape (tools/barrier_bands.py exits 1 on this config on 2026-10-12: 'edge folds at v12858 and v12867 overlap — author this corner by hand'); P1 owes the config race block that replaces SD's hard-coded STREETS.",
+    "_doc": "Drive 3 (A13): unpark the race layouts (track.config.json layouts_parked -> layouts[]) and restore these, in this order. Each still runs San Diego's shape (tools/barrier_bands.py exits 1 on this config on 2026-10-12: 'edge folds at v12858 and v12867 overlap \u2014 author this corner by hand'); P1 owes the config race block that replaces SD's hard-coded STREETS.",
     "author": [
       "race_bands",
       "race_planned_gate",
@@ -82,7 +84,8 @@
     ],
     "optional": [
       "data/centerline.previous.geojson",
-      "data/osm.widths.cache.json"
+      "data/osm.widths.cache.json",
+      "data/overpass.elev.json"
     ],
     "dirs": [
       "data/aerial"
@@ -128,7 +131,12 @@
       "data/no_route.{race}.json",
       "data/no_route.{race}.planned.json",
       "data/audit.{race}.json",
-      "data/closure_{race}.kn5.json"
+      "data/closure_{race}.kn5.json",
+      "data/overpass_decks.json",
+      "data/overpass.elev.json",
+      "data/verify_kn5.txt",
+      "data/verify_inis.txt",
+      "data/drive1_build.json"
     ],
     "map": [
       [

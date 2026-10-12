@@ -131,6 +131,10 @@ def build(project_dir: str | Path) -> dict:
         origin = centroid(coords)
         elev0 = min(z)
     local = project_to_local(coords, z, origin, elev0)
+    # decimals of the written points: 2 (cm) unless a track opts in (``projection.decimals``). The Lookout Lariat
+    # (ledger 0048) takes 3: at its 1 m climb spacing, centimetre heights quantise every segment's grade to
+    # +-1 %-point, which drive_test reads as slope kinks (measured 2026-10-12, local st 24,858-24,861).
+    dp = int((cfg.raw.get("projection") or {}).get("decimals", 2))
 
     xs = [p[0] for p in local]
     ys = [p[1] for p in local]
@@ -143,7 +147,7 @@ def build(project_dir: str | Path) -> dict:
         "extent_z_m": round(max(zs) - min(zs), 1),
         "height_m": round(max(ys) - min(ys), 1),
         "point_count": len(local),
-        "points_xyz_m": [[round(x, 2), round(y, 2), round(zz, 2)] for x, y, zz in local],
+        "points_xyz_m": [[round(x, dp), round(y, dp), round(zz, dp)] for x, y, zz in local],
         "widths_m": widths,
     }
     (data / "centerline.local.json").write_text(json.dumps(out), encoding="utf-8")

@@ -6,9 +6,13 @@ gate reports whose truth is known:
 - each P5 threshold flips its own row: a severe step, replication p95 over 0.5 m, kinks over the declared ceiling,
   a zero-count key, an audit hard class, F over 15, a kn5_ground_check FAIL, a lid-end step over 0.10 m (stations
   mirrored for the reverse layout);
-- a missing report is red ("not run"), never a pass; tier seams are n/a, never a pass;
-- --force-install: worse than the July reference on any key, or any of obstruction / floating / soft-top > 0,
-  sets force_install_ok false; a red run that is no worse than July keeps it true;
+- a missing report is red ("not run"), never a pass; tier seams are n/a, never a pass; a key a present report
+  lacks or carries as null (a drive_test count, audit_mesh G / H) is red, never 0 (2026-10-12);
+- verify_kn5 is judged on its own reports (data/verify_kn5.txt / verify_inis.txt), not on the kn5 existing;
+  kn5_ground_check also counts floating furniture; the lid row covers the deck and 5 m past each end;
+- --force-install: worse than the July reference on any key, any of obstruction / floating / soft-top > 0, a red
+  key with no July value (undrivable corners) or any other red gating row sets force_install_ok false; a red run
+  that is no worse than July on its July keys and green elsewhere keeps it true;
 - a config without gates.drive1 is an input error (exit 2).
 Plain ``test_*`` for tests/run_tests.py.
 """
@@ -42,11 +46,13 @@ DT = {"lap_m": LAP, "soft_top_in_lane": 0, "obstruction_stations": 0, "floating_
       "excursion_far_ledges": 10, "steps_per_km": 5.0, "apron_steps": 0, "fail": True,
       "replication_vs_measured": {"median": 0.05, "p95": 0.2, "max": 0.6}, "worst": {"severe_all": []}}
 AUDIT = {"A_supports_in_road": 0, "B_terrain_poke": 0, "C_junction_crossings": 0, "D_wall_on_road": 0,
-         "E_wall_floating": 0, "F_curb_not_flush": 0, "G_prop_floating": None, "H_ground_above_deck": 0,
+         "E_wall_floating": 0, "F_curb_not_flush": 0, "G_prop_floating": 0, "H_ground_above_deck": 0,
          "I_sidewalk_isolating": 0, "J_terrain_span": 0, "K_kerb_in_carriageway": 0}
 KGC = ("KN5 FIDELITY toy.kn5  (yaw 0 deg)\n  deck-vs-mountain (tri-exact): median +0.010  p95 +0.040  max +0.300\n"
        "  road-over-ground: 12/3000 samples gap > 0.05 m (0.4%)  p95 +0.040 m (gate 0.1 m)\n"
        "  => PASS — kn5 matches the audited OBJs\nexit 0\n")
+VK = "  [fwd] heading: 17 facing nodes\n✓ kn5 verification passed (no dup meshes, ...)\nexit 0\n"
+VI = "✓ models_<id>.ini verification passed (each race layout loads ...)\nexit 0\n"
 
 
 def _proj(mut=None, skip=()):
@@ -78,6 +84,10 @@ def _proj(mut=None, skip=()):
         (p / rel).write_text(json.dumps(obj), encoding="utf-8")
     if "kgc" not in skip:
         (p / "data" / "kn5_ground_check.txt").write_text(files.get("kgc_text", KGC), encoding="utf-8")
+    if "vk" not in skip:
+        (p / "data" / "verify_kn5.txt").write_text(files.get("vk_text", VK), encoding="utf-8")
+    if "vi" not in skip:
+        (p / "data" / "verify_inis.txt").write_text(files.get("vi_text", VI), encoding="utf-8")
     return p
 
 
@@ -95,6 +105,8 @@ def test_all_green_passes_and_recorded_rows_never_gate():
         assert _row(rep, g)["kind"] == "recorded" and _row(rep, g)["pass"] is None, g
     k = _row(rep, "kn5_ground_check")
     assert k["pass"] is True and k["numbers"]["road_over_ground_p95_m"] == 0.04 and k["numbers"]["exit"] == 0
+    assert k["numbers"]["floating_furniture"] == 0 and "none in the kn5" in k["numbers"]["furniture_buckets"]
+    assert _row(rep, "verify_kn5")["pass"] is True and _row(rep, "verify_kn5")["numbers"] == {"kn5": 0, "inis": 0}
     assert d1.main([str(_proj())]) == 0
 
 
@@ -118,6 +130,23 @@ def test_each_threshold_flips_its_own_row():
         (lambda f: f["data/crossfall_gate.json"].__setitem__("fail", True), "roll rate", ""),
         (lambda f: f["data/aerial/paint_gate.json"].__setitem__("pass", False), "hairpin / paint centreline", ""),
         (lambda f: f["data/oneway_check.json"].update(verdict="FAIL", fails=["x"]), "one-way", ""),
+        # 2026-10-12: a key the report lacks / carries as null is red, never 0
+        (lambda f: f["data/drive_test.fwd.json"].pop("undrivable_corners"), "drive_test fwd",
+         "undrivable_corners not reported"),
+        (lambda f: f["data/drive_test.fwd.json"].pop("severe_steps"), "drive_test fwd", "severe_steps not reported"),
+        (lambda f: f["data/drive_test.fwd.json"].pop("kinks_per_km"), "drive_test fwd", "kinks_per_km not reported"),
+        (lambda f: f["data/audit.json"].__setitem__("H_ground_above_deck", None), "audit_mesh",
+         "H_ground_above_deck not computed"),
+        (lambda f: f["data/audit.json"].__setitem__("G_prop_floating", None), "audit_mesh",
+         "G_prop_floating not computed"),
+        # verify_kn5 from its own reports
+        (lambda f: f.__setitem__("vk_text", VK.replace("exit 0", "exit 1")), "verify_kn5", "exit 1"),
+        (lambda f: f.__setitem__("vi_text", "something else\nexit 0\n"), "verify_kn5", "passed line absent"),
+        # kn5_ground_check: floating furniture is its second number
+        (lambda f: f.__setitem__("kgc_text", KGC.replace(
+            "  road-over-ground", "  1WALL     objects     4: no-ground  0.0%  seat-gap median +0.01  p95 +0.40  "
+                                  "hovering>0.3m 1 (25.0%)\n  road-over-ground")), "kn5_ground_check",
+         "floating furniture 1"),
     ]
     for mut, gate, needle in cases:
         rep = d1.judge(_proj(mut))
@@ -125,21 +154,35 @@ def test_each_threshold_flips_its_own_row():
         assert needle in _row(rep, gate).get("note", ""), (gate, _row(rep, gate).get("note"))
 
 
+LID = "lid (no step > 0.1 m on it or 5 m past its ends)"
+
+
 def test_lid_end_steps_read_in_each_layouts_own_stations():
-    # the lid spans 380-420 m forward; reverse stations are lap - s: its ends are at 580 and 620 m there
+    # the lid spans 380-420 m forward; reverse stations are lap - s: it spans 580-620 m there
     def fwd_step(f):
         f["data/drive_test.fwd.json"]["worst"]["severe_all"] = [[381.0, 0.0, 0.12], [700.0, 0.0, 0.5]]
     rep = d1.judge(_proj(fwd_step))
-    lid = _row(rep, "lid ends (no step > 0.1 m)")
-    assert lid["pass"] is False and "lid ends (no step > 0.1 m)" in rep["red"]
+    lid = _row(rep, LID)
+    assert lid["pass"] is False and LID in rep["red"]
     worst = {x["layout"]: x["worst_step_m"] for x in lid["numbers"]["decks"]}
     assert worst == {"fwd": 0.12, "rev": None}, worst            # the 0.5 m step at 700 m is not at the lid
     def rev_step(f):
         f["data/drive_test.rev.json"]["worst"]["severe_all"] = [[618.0, 1.0, 0.08], [381.0, 0.0, 0.3]]
     rep = d1.judge(_proj(rev_step))
-    lid = _row(rep, "lid ends (no step > 0.1 m)")
-    assert lid["pass"] is True, lid                      # 0.08 at the reverse end (620 m) passes; 381 m is not an end
+    lid = _row(rep, LID)
+    assert lid["pass"] is True, lid                      # 0.08 at the reverse end (620 m) passes; 381 m is not the lid
     assert {x["layout"]: x["ends_m"] for x in lid["numbers"]["decks"]}["rev"] == [580.0, 620.0]
+
+
+def test_the_lid_row_reads_steps_inside_the_deck_not_only_at_its_ends():
+    # 2026-10-12 (the verifiers' drive lens): the reverse layout's 0.243 m step sat 5-8 m inside the lid's east end,
+    # outside the old +-5 m window around each end, so the row read 0.098 m
+    def inside(f):
+        f["data/drive_test.rev.json"]["worst"]["severe_all"] = [[587.5, 1.0, 0.243], [626.0, 0.0, 0.11],
+                                                                 [626.5, 0.0, 0.5]]
+    lid = _row(d1.judge(_proj(inside)), LID)
+    worst = {x["layout"]: x["worst_step_m"] for x in lid["numbers"]["decks"]}
+    assert lid["pass"] is False and worst["rev"] == 0.243, lid       # 626.5 is past the 5 m window (575-625)
 
 
 def test_a_missing_report_is_red_never_a_pass():
@@ -149,9 +192,9 @@ def test_a_missing_report_is_red_never_a_pass():
                       ("data/oneway_check.json", "one-way"), ("data/aerial/paint_gate.json", "hairpin / paint centreline")):
         rep = d1.judge(_proj(skip=(rel,)))
         assert gate in rep["red"] and "not run" in _row(rep, gate)["note"], (rel, rep["red"])
-    p = _proj()
-    (p / "build" / "toy.kn5").unlink()
-    assert "verify_kn5" in d1.judge(p)["red"]
+    for rel in ("vk", "vi"):                       # verify_kn5 is its reports, never "the kn5 exists"
+        rep = d1.judge(_proj(skip=(rel,)))
+        assert rep["red"] == ["verify_kn5"] and "missing" in _row(rep, "verify_kn5")["note"], rep["red"]
 
 
 def test_force_install_follows_the_july_reference():
@@ -170,6 +213,24 @@ def test_force_install_follows_the_july_reference():
             (key, rep["force_install_why_not"])
     rep = d1.judge(_proj(skip=("data/drive_test.fwd.json",)))
     assert rep["force_install_ok"] is False and "fwd: drive_test not run" in rep["force_install_why_not"]
+
+
+def test_force_install_never_covers_a_key_or_a_gate_with_no_july_value():
+    # (c), 2026-10-12: P5 forces only "no worse than the July reference on every key in the active gate set"; a key
+    # July has no value for (undrivable corners, daylight, replication) and every other gating row (road inventory,
+    # stacked legs, kn5_ground_check, the lid, ...) have no reference to be no worse than, so red there is never forced
+    cases = (
+        (lambda f: f["data/drive_test.fwd.json"].__setitem__("undrivable_corners", 83), "undrivable_corners 83"),
+        (lambda f: f["data/drive_test.rev.json"].__setitem__("daylight_gaps", 1), "daylight_gaps 1"),
+        (lambda f: f["data/road_inventory.json"].__setitem__("fail", True), "road inventory red"),
+        (lambda f: f["data/stacked_legs.json"].__setitem__("fail", True), "stacked legs red"),
+        (lambda f: f["data/audit.json"].__setitem__("H_ground_above_deck", None), "audit_mesh red"),
+        (lambda f: f.__setitem__("kgc_text", KGC.replace("PASS", "FAIL")), "kn5_ground_check red"),
+    )
+    for mut, needle in cases:
+        rep = d1.judge(_proj(mut))
+        assert rep["fail"] and rep["force_install_ok"] is False, needle
+        assert any(needle in w for w in rep["force_install_why_not"]), (needle, rep["force_install_why_not"])
 
 
 def test_input_errors_exit_2():

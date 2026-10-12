@@ -444,8 +444,9 @@ boxes marked, and the two C-470 crossings marked, before any geometry (L12, show
 >   6.01–7.21 m; US-40, Golden's arterials, US-6, the ramp, 19th St, the summit and back side still OSM.
 > - **Crossfall:** footprint pairs only, the standard where the measurement is weaker than 2 % or fails;
 >   46.7 % crown, 31.9 % 2 % toward the cut, 21.3 % measured; roll-rate PASS (worst 3.40 % / 30 m, 0 swings);
->   status **estimated**. The climb's benches read outsloped (0.9–1.7 % toward the drop): a question for the
->   lidar check.
+>   status **estimated**. The climb's cut-right benches read outsloped (1.7 % toward the drop); the cut-left ones do
+>   not reproduce on fresh 3DEP (+0.35 % on the climb, 0.32 % toward the cut lap-wide; corrected 2026-10-12): a
+>   question for the lidar check.
 > - **Spans:** the lid declared from the tunnel footprint, local st 24,349.4–24,387.6 (38.1 m), held straight at
 >   +3.44 % (3DEP already carries it: ≤ 0.11 m moved), written as `capture.bridges`; both July spans dropped; the
 >   L13 seam rule in both detectors (opt-in in `build_mesh`).

@@ -221,10 +221,16 @@ def test_deterministic():
 def test_opt_in_only_the_underlay_reaches_it():
     """Engine changes are opt-in per track: nothing existing imports the new module, and only the Lariat's ship.json
     names the underlay step, so every other track's output is byte-identical (no existing engine file was edited)."""
-    users = [p.relative_to(ROOT).as_posix() for p in (ROOT / "scripts").rglob("*.py")
-             if "underlay_draft" in p.read_text(encoding="utf-8", errors="replace")
-             and p.name != "underlay_draft.py"]
-    assert users == ["scripts/blender/underlay.py"], users
+    import re as _re
+
+    def importers(mod):
+        rx = _re.compile(r"^\s*(from scripts\.geometry import [^\n]*\b" + mod + r"\b|import [^\n]*\b" + mod
+                         + r"\b|from scripts\.geometry\." + mod + r" import)", _re.M)
+        return sorted(p.relative_to(ROOT).as_posix() for p in (ROOT / "scripts").rglob("*.py")
+                      if rx.search(p.read_text(encoding="utf-8", errors="replace")) and p.stem != mod)
+    assert importers("underlay_draft") == ["scripts/blender/underlay.py"], importers("underlay_draft")
+    # the real edge (2026-10-12): only the underlay's draft imports it, and only under underlay.terrain = cutfill
+    assert importers("terrain_cutfill") == ["scripts/geometry/underlay_draft.py"], importers("terrain_cutfill")
     steps = {}
     for sj in (ROOT / "tracks").glob("*/ship.json"):
         spec = json.loads(sj.read_text(encoding="utf-8"))

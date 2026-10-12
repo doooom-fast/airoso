@@ -1,20 +1,20 @@
 {
  "tool": "tools/remap_centreline_config.py",
  "old_line": {
-  "path": "data/centerline.osm.geojson",
-  "md5": "28dcc7b644510179fe366eb56d3911e5",
-  "points": 8302,
-  "length_m": 24905.69,
-  "projection_start_pick_geojson_v": 8300,
-  "local_index_is_geojson_index_plus": 1,
-  "local_station_of_geojson_v0_m": 2.152
- },
- "new_line": {
-  "path": "data/centerline.geojson",
+  "path": "data/centerline.previous.geojson",
   "md5": "ef44db97f9eb175d2a14510737f5ac83",
   "points": 14445,
   "length_m": 24914.24,
   "projection_start_pick_geojson_v": 14442,
+  "local_index_is_geojson_index_plus": 2,
+  "local_station_of_geojson_v0_m": 2.0
+ },
+ "new_line": {
+  "path": "data/centerline.geojson",
+  "md5": "6b8d84a4b549c203057f7c6aa6cd54cf",
+  "points": 14639,
+  "length_m": 24883.57,
+  "projection_start_pick_geojson_v": 14636,
   "local_index_is_geojson_index_plus": 2,
   "local_station_of_geojson_v0_m": 2.0
  },
@@ -25,19 +25,15 @@
   "not_remapped": "hairpin_fit.climb_st_m: defined on the OSM source line"
  },
  "method": "vertex -> the new vertex with the nearest OSM station; station -> linear interpolation along the new line; precision kept",
- "start_line_moved_m": 0.155,
+ "start_line_moved_m": 0.0,
  "grid_distance_behind_line_m": {
   "old": {
-   "street_full": 26.9,
-   "street_reverse": 26.1,
-   "race_acw": 26.9,
-   "race_cw": 26.1
+   "street_full": 27.0,
+   "street_reverse": 26.0
   },
   "new": {
    "street_full": 27.0,
-   "street_reverse": 26.0,
-   "race_acw": 27.0,
-   "race_cw": 26.0
+   "street_reverse": 26.0
   }
  },
  "layout_dummies_fails": {
@@ -54,74 +50,74 @@
   {
    "path": "hairpin_fit.corners[1].st_m",
    "frame": "geojson station",
-   "old": 1077,
+   "old": 1076,
    "new": 1076
   },
   {
    "path": "hairpin_fit.corners[2].st_m",
    "frame": "geojson station",
-   "old": 1401,
+   "old": 1400,
    "new": 1400
   },
   {
    "path": "hairpin_fit.corners[3].st_m",
    "frame": "geojson station",
-   "old": 2607,
+   "old": 2614,
    "new": 2614
   },
   {
    "path": "hairpin_fit.corners[4].st_m",
    "frame": "geojson station",
-   "old": 2845,
+   "old": 2858,
    "new": 2858
   },
   {
    "path": "hairpin_fit.corners[5].st_m",
    "frame": "geojson station",
-   "old": 3004,
+   "old": 3018,
    "new": 3018
   },
   {
    "path": "hairpin_fit.corners[6].st_m",
    "frame": "geojson station",
-   "old": 5424,
+   "old": 5435,
    "new": 5435
   },
   {
    "path": "hairpin_fit.corners[7].st_m",
    "frame": "geojson station",
-   "old": 5523,
+   "old": 5533,
    "new": 5533
   },
   {
    "path": "hairpin_fit.corners[8].st_m",
    "frame": "geojson station",
-   "old": 5624,
+   "old": 5633,
    "new": 5633
   },
   {
    "path": "hairpin_fit.corners[9].st_m",
    "frame": "geojson station",
-   "old": 5879,
+   "old": 5888,
    "new": 5888
   },
   {
    "path": "hairpin_fit.corners[10].st_m",
    "frame": "geojson station",
-   "old": 6479,
+   "old": 6489,
    "new": 6489
   },
   {
    "path": "hairpin_fit.corners[11].st_m",
    "frame": "geojson station",
-   "old": 9742,
-   "new": 9750
+   "old": 9750,
+   "new": 9747
   },
   {
    "path": "hairpin_fit.corners[12].st_m",
    "frame": "geojson station",
-   "old": 10611,
-   "new": 10622
+   "old": 10622,
+   "new": 10612
   },
   {
    "path": "width_overrides[0].st_m[0]",
@@ -132,203 +128,203 @@
   {
    "path": "width_overrides[0].st_m[1]",
    "frame": "local station",
-   "old": 1073,
+   "old": 1072,
    "new": 1072
   },
   {
    "path": "width_overrides[1].st_m[0]",
    "frame": "local station",
-   "old": 1073,
+   "old": 1072,
    "new": 1072
   },
   {
    "path": "width_overrides[1].st_m[1]",
    "frame": "local station",
-   "old": 7102,
+   "old": 7110,
    "new": 7110
   },
   {
    "path": "width_overrides[2].st_m[0]",
    "frame": "local station",
-   "old": 2500,
+   "old": 2499,
    "new": 2499
   },
   {
    "path": "width_overrides[2].st_m[1]",
    "frame": "local station",
-   "old": 3100,
+   "old": 3114,
    "new": 3114
   },
   {
    "path": "width_overrides[4].st_m[0]",
    "frame": "local station",
-   "old": 7102,
+   "old": 7110,
    "new": 7110
   },
   {
    "path": "width_overrides[4].st_m[1]",
    "frame": "local station",
-   "old": 7702,
+   "old": 7710,
    "new": 7710
   },
   {
    "path": "width_overrides[5].st_m[0]",
    "frame": "local station",
-   "old": 7702,
+   "old": 7710,
    "new": 7710
   },
   {
    "path": "width_overrides[5].st_m[1]",
    "frame": "local station",
-   "old": 9744,
-   "new": 9752
+   "old": 9752,
+   "new": 9749
   },
   {
    "path": "width_overrides[6].st_m[0]",
    "frame": "local station",
-   "old": 9744,
-   "new": 9752
+   "old": 9752,
+   "new": 9749
   },
   {
    "path": "width_overrides[6].st_m[1]",
    "frame": "local station",
-   "old": 11690,
-   "new": 11699
+   "old": 11699,
+   "new": 11684
   },
   {
    "path": "width_overrides[7].st_m[0]",
    "frame": "local station",
-   "old": 11690,
-   "new": 11699
+   "old": 11699,
+   "new": 11684
   },
   {
    "path": "width_overrides[7].st_m[1]",
    "frame": "local station",
-   "old": 16612,
-   "new": 16621
+   "old": 16621,
+   "new": 16603
   },
   {
    "path": "width_overrides[8].st_m[0]",
    "frame": "local station",
-   "old": 16612,
-   "new": 16621
+   "old": 16621,
+   "new": 16603
   },
   {
    "path": "width_overrides[8].st_m[1]",
    "frame": "local station",
-   "old": 20271,
-   "new": 20280
+   "old": 20280,
+   "new": 20257
   },
   {
    "path": "width_overrides[9].st_m[0]",
    "frame": "local station",
-   "old": 20286,
-   "new": 20295
+   "old": 20295,
+   "new": 20270
   },
   {
    "path": "width_overrides[9].st_m[1]",
    "frame": "local station",
-   "old": 23919,
-   "new": 23928
+   "old": 23928,
+   "new": 23901
   },
   {
    "path": "width_overrides[10].st_m[0]",
    "frame": "local station",
-   "old": 23919,
-   "new": 23928
+   "old": 23928,
+   "new": 23901
   },
   {
    "path": "width_overrides[10].st_m[1]",
    "frame": "local station",
-   "old": 24321,
-   "new": 24330
+   "old": 24330,
+   "new": 24302
   },
   {
    "path": "width_overrides[11].st_m[0]",
    "frame": "local station",
-   "old": 24321,
-   "new": 24330
+   "old": 24330,
+   "new": 24302
   },
   {
    "path": "width_overrides[11].st_m[1]",
    "frame": "local station",
-   "old": 24906,
-   "new": 24915
+   "old": 24915,
+   "new": 24884
   },
   {
    "path": "divided.stretches[0].st_m[0]",
    "frame": "local station",
-   "old": 16612.3,
-   "new": 16621.1
+   "old": 16621.1,
+   "new": 16602.8
   },
   {
    "path": "divided.stretches[0].st_m[1]",
    "frame": "local station",
-   "old": 16698.5,
-   "new": 16707.3
+   "old": 16707.3,
+   "new": 16686.6
   },
   {
    "path": "divided.stretches[1].st_m[0]",
    "frame": "local station",
-   "old": 19959.5,
-   "new": 19968.2
+   "old": 19968.2,
+   "new": 19947.4
   },
   {
    "path": "divided.stretches[1].st_m[1]",
    "frame": "local station",
-   "old": 20271.1,
-   "new": 20279.8
+   "old": 20279.8,
+   "new": 20257.1
   },
   {
    "path": "divided.stretches[2].st_m[0]",
    "frame": "local station",
-   "old": 20285.6,
-   "new": 20294.3
+   "old": 20294.3,
+   "new": 20269.0
   },
   {
    "path": "divided.stretches[2].st_m[1]",
    "frame": "local station",
-   "old": 24320.7,
-   "new": 24329.2
+   "old": 24329.2,
+   "new": 24301.2
   },
   {
    "path": "divided.stretches[3].st_m[0]",
    "frame": "local station",
-   "old": 24320.7,
-   "new": 24329.2
+   "old": 24329.2,
+   "new": 24301.2
   },
   {
    "path": "divided.stretches[3].st_m[1]",
    "frame": "local station",
-   "old": 24374.3,
-   "new": 24382.8
+   "old": 24382.8,
+   "new": 24352.9
   },
   {
    "path": "layouts[0].start.line_vertex",
    "frame": "local index",
    "old": 0,
    "new": 0,
-   "moved_m": 0.15
+   "moved_m": 0.0
   },
   {
    "path": "layouts[0].start.grid_vertex",
    "frame": "local index",
-   "old": 8292,
-   "new": 14417,
-   "moved_m": 0.05
+   "old": 14417,
+   "new": 14611,
+   "moved_m": 0.0
   },
   {
    "path": "layouts[0].start.sector_vertices[0]",
    "frame": "local index",
-   "old": 2394,
+   "old": 7185,
    "new": 7185,
    "moved_m": 0.0
   },
   {
    "path": "layouts[0].start.sector_vertices[1]",
    "frame": "local index",
-   "old": 5518,
-   "new": 11623,
+   "old": 11623,
+   "new": 11647,
    "moved_m": 0.0
   },
   {
@@ -336,82 +332,82 @@
    "frame": "local index",
    "old": 0,
    "new": 0,
-   "moved_m": 0.15
+   "moved_m": 0.0
   },
   {
    "path": "layouts[1].start.grid_vertex",
    "frame": "local index",
-   "old": 9,
+   "old": 26,
    "new": 26,
-   "moved_m": 0.01
+   "moved_m": 0.0
   },
   {
    "path": "layouts[1].start.sector_vertices[0]",
    "frame": "local index",
-   "old": 5518,
-   "new": 11623,
+   "old": 11623,
+   "new": 11647,
    "moved_m": 0.0
   },
   {
    "path": "layouts[1].start.sector_vertices[1]",
    "frame": "local index",
-   "old": 2394,
+   "old": 7185,
    "new": 7185,
    "moved_m": 0.0
   },
   {
-   "path": "layouts[2].start.line_vertex",
+   "path": "layouts_parked[0].start.line_vertex",
    "frame": "local index",
    "old": 0,
    "new": 0,
-   "moved_m": 0.15
+   "moved_m": 0.0
   },
   {
-   "path": "layouts[2].start.grid_vertex",
+   "path": "layouts_parked[0].start.grid_vertex",
    "frame": "local index",
-   "old": 8292,
-   "new": 14417,
-   "moved_m": 0.05
+   "old": 14417,
+   "new": 14611,
+   "moved_m": 0.0
   },
   {
-   "path": "layouts[2].start.sector_vertices[0]",
+   "path": "layouts_parked[0].start.sector_vertices[0]",
    "frame": "local index",
-   "old": 2394,
+   "old": 7185,
    "new": 7185,
    "moved_m": 0.0
   },
   {
-   "path": "layouts[2].start.sector_vertices[1]",
+   "path": "layouts_parked[0].start.sector_vertices[1]",
    "frame": "local index",
-   "old": 5518,
-   "new": 11623,
+   "old": 11623,
+   "new": 11647,
    "moved_m": 0.0
   },
   {
-   "path": "layouts[3].start.line_vertex",
+   "path": "layouts_parked[1].start.line_vertex",
    "frame": "local index",
    "old": 0,
    "new": 0,
-   "moved_m": 0.15
+   "moved_m": 0.0
   },
   {
-   "path": "layouts[3].start.grid_vertex",
+   "path": "layouts_parked[1].start.grid_vertex",
    "frame": "local index",
-   "old": 9,
+   "old": 26,
    "new": 26,
-   "moved_m": 0.01
-  },
-  {
-   "path": "layouts[3].start.sector_vertices[0]",
-   "frame": "local index",
-   "old": 5518,
-   "new": 11623,
    "moved_m": 0.0
   },
   {
-   "path": "layouts[3].start.sector_vertices[1]",
+   "path": "layouts_parked[1].start.sector_vertices[0]",
    "frame": "local index",
-   "old": 2394,
+   "old": 11623,
+   "new": 11647,
+   "moved_m": 0.0
+  },
+  {
+   "path": "layouts_parked[1].start.sector_vertices[1]",
+   "frame": "local index",
+   "old": 7185,
    "new": 7185,
    "moved_m": 0.0
   },
@@ -424,281 +420,281 @@
   {
    "path": "race.segments[0].st_m[1]",
    "frame": "local station",
-   "old": 1073,
+   "old": 1072,
    "new": 1072
   },
   {
    "path": "race.segments[1].st_m[0]",
    "frame": "local station",
-   "old": 1073,
+   "old": 1072,
    "new": 1072
   },
   {
    "path": "race.segments[1].st_m[1]",
    "frame": "local station",
-   "old": 7102,
+   "old": 7110,
    "new": 7110
   },
   {
    "path": "race.segments[2].st_m[0]",
    "frame": "local station",
-   "old": 7102,
+   "old": 7110,
    "new": 7110
   },
   {
    "path": "race.segments[2].st_m[1]",
    "frame": "local station",
-   "old": 9744,
-   "new": 9752
+   "old": 9752,
+   "new": 9749
   },
   {
    "path": "race.segments[3].st_m[0]",
    "frame": "local station",
-   "old": 9744,
-   "new": 9752
+   "old": 9752,
+   "new": 9749
   },
   {
    "path": "race.segments[3].st_m[1]",
    "frame": "local station",
-   "old": 11690,
-   "new": 11699
+   "old": 11699,
+   "new": 11684
   },
   {
    "path": "race.segments[4].st_m[0]",
    "frame": "local station",
-   "old": 11690,
-   "new": 11699
+   "old": 11699,
+   "new": 11684
   },
   {
    "path": "race.segments[4].st_m[1]",
    "frame": "local station",
-   "old": 16612,
-   "new": 16621
+   "old": 16621,
+   "new": 16603
   },
   {
    "path": "race.segments[5].st_m[0]",
    "frame": "local station",
-   "old": 16612,
-   "new": 16621
+   "old": 16621,
+   "new": 16603
   },
   {
    "path": "race.segments[5].st_m[1]",
    "frame": "local station",
-   "old": 18418,
-   "new": 18427
+   "old": 18427,
+   "new": 18406
   },
   {
    "path": "race.segments[6].st_m[0]",
    "frame": "local station",
-   "old": 18418,
-   "new": 18427
+   "old": 18427,
+   "new": 18406
   },
   {
    "path": "race.segments[6].st_m[1]",
    "frame": "local station",
-   "old": 20271,
-   "new": 20280
+   "old": 20280,
+   "new": 20257
   },
   {
    "path": "race.segments[7].st_m[0]",
    "frame": "local station",
-   "old": 20286,
-   "new": 20295
+   "old": 20295,
+   "new": 20270
   },
   {
    "path": "race.segments[7].st_m[1]",
    "frame": "local station",
-   "old": 23919,
-   "new": 23928
+   "old": 23928,
+   "new": 23901
   },
   {
    "path": "race.segments[8].st_m[0]",
    "frame": "local station",
-   "old": 23919,
-   "new": 23928
+   "old": 23928,
+   "new": 23901
   },
   {
    "path": "race.segments[8].st_m[1]",
    "frame": "local station",
-   "old": 24321,
-   "new": 24330
+   "old": 24330,
+   "new": 24302
   },
   {
    "path": "race.segments[9].st_m[0]",
    "frame": "local station",
-   "old": 24321,
-   "new": 24330
+   "old": 24330,
+   "new": 24302
   },
   {
    "path": "race.segments[9].st_m[1]",
    "frame": "local station",
-   "old": 24906,
-   "new": 24915
+   "old": 24915,
+   "new": 24884
   },
   {
    "path": "race.corridor.boxes[0].apex",
    "frame": "local index",
-   "old": 3249,
-   "new": 8134,
-   "moved_m": 0.73
+   "old": 8134,
+   "new": 8132,
+   "moved_m": 4.96
   },
   {
    "path": "race.corridor.boxes[0].i",
    "frame": "local index",
-   "old": 3241,
+   "old": 8110,
    "new": 8110,
-   "moved_m": 1.19
+   "moved_m": 0.13
   },
   {
    "path": "race.corridor.boxes[0].j",
    "frame": "local index",
-   "old": 3257,
-   "new": 8159,
-   "moved_m": 0.61
+   "old": 8159,
+   "new": 8154,
+   "moved_m": 0.2
   },
   {
    "path": "race.corridor.boxes[0].st_m[0]",
    "frame": "local station",
-   "old": 9720.6,
-   "new": 9728.0
+   "old": 9728.0,
+   "new": 9727.6
   },
   {
    "path": "race.corridor.boxes[0].st_m[1]",
    "frame": "local station",
-   "old": 9768.1,
-   "new": 9776.6
+   "old": 9776.6,
+   "new": 9771.3
   },
   {
    "path": "race.corridor.boxes[1].apex",
    "frame": "local index",
-   "old": 3898,
-   "new": 10003,
-   "moved_m": 0.0
+   "old": 10003,
+   "new": 10009,
+   "moved_m": 3.26
   },
   {
    "path": "race.corridor.boxes[1].i",
    "frame": "local index",
-   "old": 3890,
-   "new": 9995,
-   "moved_m": 0.0
+   "old": 9995,
+   "new": 9986,
+   "moved_m": 0.03
   },
   {
    "path": "race.corridor.boxes[1].j",
    "frame": "local index",
-   "old": 3906,
-   "new": 10011,
-   "moved_m": 0.0
+   "old": 10011,
+   "new": 10031,
+   "moved_m": 0.08
   },
   {
    "path": "race.corridor.boxes[1].st_m[0]",
    "frame": "local station",
-   "old": 11665.6,
-   "new": 11674.7
+   "old": 11674.7,
+   "new": 11661.6
   },
   {
    "path": "race.corridor.boxes[1].st_m[1]",
    "frame": "local station",
-   "old": 11712.9,
-   "new": 11722.0
+   "old": 11722.0,
+   "new": 11706.0
   },
   {
    "path": "race.corridor.boxes[2].apex",
    "frame": "local index",
-   "old": 5537,
-   "new": 11642,
-   "moved_m": 0.0
+   "old": 11642,
+   "new": 11684,
+   "moved_m": 4.52
   },
   {
    "path": "race.corridor.boxes[2].i",
    "frame": "local index",
-   "old": 5529,
-   "new": 11634,
-   "moved_m": 0.0
+   "old": 11634,
+   "new": 11662,
+   "moved_m": 0.06
   },
   {
    "path": "race.corridor.boxes[2].j",
    "frame": "local index",
-   "old": 5545,
-   "new": 11650,
-   "moved_m": 0.0
+   "old": 11650,
+   "new": 11705,
+   "moved_m": 0.03
   },
   {
    "path": "race.corridor.boxes[2].st_m[0]",
    "frame": "local station",
-   "old": 16588.2,
-   "new": 16597.0
+   "old": 16597.0,
+   "new": 16581.0
   },
   {
    "path": "race.corridor.boxes[2].st_m[1]",
    "frame": "local station",
-   "old": 16635.6,
-   "new": 16644.4
+   "old": 16644.4,
+   "new": 16623.7
   },
   {
    "path": "race.corridor.boxes[3].apex",
    "frame": "local index",
-   "old": 6762,
-   "new": 12867,
-   "moved_m": 0.0
+   "old": 12867,
+   "new": 12978,
+   "moved_m": 2.83
   },
   {
    "path": "race.corridor.boxes[3].i",
    "frame": "local index",
-   "old": 6749,
-   "new": 12854,
-   "moved_m": 0.0
+   "old": 12854,
+   "new": 12945,
+   "moved_m": 0.04
   },
   {
    "path": "race.corridor.boxes[3].j",
    "frame": "local index",
-   "old": 6770,
-   "new": 12875,
-   "moved_m": 0.0
+   "old": 12875,
+   "new": 13001,
+   "moved_m": 0.01
   },
   {
    "path": "race.corridor.boxes[3].st_m[0]",
    "frame": "local station",
-   "old": 20247.7,
-   "new": 20256.4
+   "old": 20256.4,
+   "new": 20235.6
   },
   {
    "path": "race.corridor.boxes[3].st_m[1]",
    "frame": "local station",
-   "old": 20309.6,
-   "new": 20318.3
+   "old": 20318.3,
+   "new": 20291.6
   },
   {
    "path": "race.corridor.boxes[4].apex",
    "frame": "local index",
-   "old": 8106,
-   "new": 14211,
-   "moved_m": 0.0
+   "old": 14211,
+   "new": 14356,
+   "moved_m": 2.72
   },
   {
    "path": "race.corridor.boxes[4].i",
    "frame": "local index",
-   "old": 8098,
-   "new": 14203,
-   "moved_m": 0.0
+   "old": 14203,
+   "new": 14333,
+   "moved_m": 0.01
   },
   {
    "path": "race.corridor.boxes[4].j",
    "frame": "local index",
-   "old": 8114,
-   "new": 14219,
-   "moved_m": 0.0
+   "old": 14219,
+   "new": 14378,
+   "moved_m": 0.48
   },
   {
    "path": "race.corridor.boxes[4].st_m[0]",
    "frame": "local station",
-   "old": 24296.7,
-   "new": 24305.2
+   "old": 24305.2,
+   "new": 24278.5
   },
   {
    "path": "race.corridor.boxes[4].st_m[1]",
    "frame": "local station",
-   "old": 24344.5,
-   "new": 24353.0
+   "old": 24353.0,
+   "new": 24323.8
   },
   {
    "path": "scenery.treefx.zones[0].st_m[0][0]",
@@ -709,152 +705,152 @@
   {
    "path": "scenery.treefx.zones[0].st_m[0][1]",
    "frame": "local station",
-   "old": 1073,
+   "old": 1072,
    "new": 1072
   },
   {
    "path": "scenery.treefx.zones[0].st_m[1][0]",
    "frame": "local station",
-   "old": 16612,
-   "new": 16621
+   "old": 16621,
+   "new": 16603
   },
   {
    "path": "scenery.treefx.zones[0].st_m[1][1]",
    "frame": "local station",
-   "old": 24906,
-   "new": 24915
+   "old": 24915,
+   "new": 24884
   },
   {
    "path": "scenery.treefx.zones[1].st_m[0][0]",
    "frame": "local station",
-   "old": 1073,
+   "old": 1072,
    "new": 1072
   },
   {
    "path": "scenery.treefx.zones[1].st_m[0][1]",
    "frame": "local station",
-   "old": 2500,
+   "old": 2499,
    "new": 2499
   },
   {
    "path": "scenery.treefx.zones[2].st_m[0][0]",
    "frame": "local station",
-   "old": 2500,
+   "old": 2499,
    "new": 2499
   },
   {
    "path": "scenery.treefx.zones[2].st_m[0][1]",
    "frame": "local station",
-   "old": 4950,
+   "old": 4961,
    "new": 4961
   },
   {
    "path": "scenery.treefx.zones[3].st_m[0][0]",
    "frame": "local station",
-   "old": 4950,
+   "old": 4961,
    "new": 4961
   },
   {
    "path": "scenery.treefx.zones[3].st_m[0][1]",
    "frame": "local station",
-   "old": 6500,
+   "old": 6509,
    "new": 6509
   },
   {
    "path": "scenery.treefx.zones[4].st_m[0][0]",
    "frame": "local station",
-   "old": 6500,
+   "old": 6509,
    "new": 6509
   },
   {
    "path": "scenery.treefx.zones[4].st_m[0][1]",
    "frame": "local station",
-   "old": 9744,
-   "new": 9752
+   "old": 9752,
+   "new": 9749
   },
   {
    "path": "scenery.treefx.zones[5].st_m[0][0]",
    "frame": "local station",
-   "old": 9744,
-   "new": 9752
+   "old": 9752,
+   "new": 9749
   },
   {
    "path": "scenery.treefx.zones[5].st_m[0][1]",
    "frame": "local station",
-   "old": 16612,
-   "new": 16621
+   "old": 16621,
+   "new": 16603
   },
   {
    "path": "scenery.lamps.stretches[0].st_m[0][0]",
    "frame": "local station",
-   "old": 500,
+   "old": 499,
    "new": 499
   },
   {
    "path": "scenery.lamps.stretches[0].st_m[0][1]",
    "frame": "local station",
-   "old": 1000,
+   "old": 999,
    "new": 999
   },
   {
    "path": "scenery.lamps.stretches[1].st_m[0][0]",
    "frame": "local station",
-   "old": 6500,
+   "old": 6509,
    "new": 6509
   },
   {
    "path": "scenery.lamps.stretches[1].st_m[0][1]",
    "frame": "local station",
-   "old": 7000,
+   "old": 7007,
    "new": 7007
   },
   {
    "path": "scenery.lamps.stretches[2].st_m[0][0]",
    "frame": "local station",
-   "old": 15500,
-   "new": 15509
+   "old": 15509,
+   "new": 15493
   },
   {
    "path": "scenery.lamps.stretches[2].st_m[0][1]",
    "frame": "local station",
-   "old": 16500,
-   "new": 16509
+   "old": 16509,
+   "new": 16493
   },
   {
    "path": "scenery.lamps.stretches[3].st_m[0][0]",
    "frame": "local station",
-   "old": 19020,
-   "new": 19029
+   "old": 19029,
+   "new": 19008
   },
   {
    "path": "scenery.lamps.stretches[3].st_m[0][1]",
    "frame": "local station",
-   "old": 19520,
-   "new": 19529
+   "old": 19529,
+   "new": 19508
   },
   {
    "path": "scenery.lamps.stretches[4].st_m[0][0]",
    "frame": "local station",
-   "old": 20920,
-   "new": 20929
+   "old": 20929,
+   "new": 20902
   },
   {
    "path": "scenery.lamps.stretches[4].st_m[0][1]",
    "frame": "local station",
-   "old": 21120,
-   "new": 21129
+   "old": 21129,
+   "new": 21102
   },
   {
    "path": "scenery.lamps.stretches[5].st_m[0][0]",
    "frame": "local station",
-   "old": 23020,
-   "new": 23029
+   "old": 23029,
+   "new": 23002
   },
   {
    "path": "scenery.lamps.stretches[5].st_m[0][1]",
    "frame": "local station",
-   "old": 24450,
-   "new": 24459
+   "old": 24459,
+   "new": 24428
   },
   {
    "path": "scenery.edges.stone_works[0].st_m",
@@ -865,56 +861,56 @@
   {
    "path": "scenery.edges.stone_works[2].st_m",
    "frame": "local station",
-   "old": 6450,
+   "old": 6460,
    "new": 6460
   },
   {
    "path": "scenery.edges.stone_works[3].st_m",
    "frame": "local station",
-   "old": 2225,
+   "old": 2224,
    "new": 2224
   },
   {
    "path": "scenery.edges.stone_works[4].st_m[0]",
    "frame": "local station",
-   "old": 4920,
+   "old": 4931,
    "new": 4931
   },
   {
    "path": "scenery.edges.stone_works[4].st_m[1]",
    "frame": "local station",
-   "old": 4965,
+   "old": 4976,
    "new": 4976
   },
   {
    "path": "scenery.structures.c470_bridges.crossings[0].st_m[0]",
    "frame": "local station",
-   "old": 19340,
-   "new": 19349
+   "old": 19349,
+   "new": 19328
   },
   {
    "path": "scenery.structures.c470_bridges.crossings[0].st_m[1]",
    "frame": "local station",
-   "old": 19369,
-   "new": 19378
+   "old": 19378,
+   "new": 19357
   },
   {
    "path": "scenery.structures.c470_bridges.crossings[1].st_m",
    "frame": "local station",
-   "old": 21140,
-   "new": 21149
+   "old": 21149,
+   "new": 21122
   },
   {
    "path": "scenery.structures.lid.crosses_st_m[0]",
    "frame": "local station",
-   "old": 24353,
-   "new": 24362
+   "old": 24362,
+   "new": 24333
   },
   {
    "path": "scenery.structures.lid.crosses_st_m[1]",
    "frame": "local station",
-   "old": 24366,
-   "new": 24375
+   "old": 24375,
+   "new": 24346
   },
   {
    "path": "_history.route.wide_corners[0].station_m",
@@ -926,23 +922,13 @@
  "doc_changes": [
   {
    "path": "layouts[0]._start_doc",
-   "old": "Ledger 0047's declared start, as vertices into data/centerline.local.json (its own index space: local v0 = the pylons). line_vertex 0 = AC_TIME_0 at the pylons. Forward grid v8292 = 26.9 m behind the line on 19th St; reverse grid v9 = 26.1 m behind it on Lookout Mountain Rd (layout_dummies: 0 < d <= 35 m). Sectors on straight vertices (kink < 1 deg over +/-6 vertices): v2394 near the summit (st 7179.7) and v5518 on US-40 just before exit 259 (st 16555.2), so the three sectors are the climb, the top + canyon, and Golden. Validated 2026-10-11 by tools/layout_dummies.py on a plan-only projection of this centreline; re-run on the real centerline.local.json in P4. offset_right_m 1.6 = the right-hand lane's centre on a ~6.5 m two-lane road, PROVISIONAL: the width at the pylons is not measured (dossier 12). With layout_dummies' +/-1.0 m grid stagger the outer column's car edge sits 3.55 m right of centre, past the edge of a 6.5 m road; re-set it from the aerial width (or single-file the grid) in P4.",
-   "new": "Ledger 0047's declared start, as vertices into data/centerline.local.json (its own index space: local v0 = the pylons). line_vertex 0 = AC_TIME_0 at the pylons. Forward grid v14417 = 27.0 m behind the line on 19th St; reverse grid v26 = 26.0 m behind it on Lookout Mountain Rd (layout_dummies: 0 < d <= 35 m). Sectors on straight vertices (kink < 1 deg over +/-6 vertices): v7185 near the summit (st 7187.3) and v11623 on US-40 just before exit 259 (st 16564.0), so the three sectors are the climb, the top + canyon, and Golden. Validated 2026-10-11 by tools/layout_dummies.py on a plan-only projection of this centreline; re-run on the real centerline.local.json in P4. offset_right_m 1.6 = the right-hand lane's centre on a ~6.5 m two-lane road, PROVISIONAL: the width at the pylons is not measured (dossier 12). With layout_dummies' +/-1.0 m grid stagger the outer column's car edge sits 3.55 m right of centre, past the edge of a 6.5 m road; re-set it from the aerial width (or single-file the grid) in P4."
-  },
-  {
-   "path": "layouts[1]._start_doc",
-   "old": "As street_full's _start_doc, mirrored: grid v9 on Lookout Mountain Rd, 26 m behind the line in reverse travel, sectors in reverse driving order. Reverse has its OWN grid facing its own way (July's Reverse shared Full's grid and spawned facing forward). offset_right_m is provisional, as on street_full.",
-   "new": "As street_full's _start_doc, mirrored: grid v26 on Lookout Mountain Rd, 26 m behind the line in reverse travel, sectors in reverse driving order. Reverse has its OWN grid facing its own way (July's Reverse shared Full's grid and spawned facing forward). offset_right_m is provisional, as on street_full."
-  },
-  {
-   "path": "layouts[3]._start_doc",
-   "old": "As street_reverse's (grid v9, sectors reversed); offset_right_m 0.0: centred grid on the whole one-way road.",
-   "new": "As street_reverse's (grid v26, sectors reversed); offset_right_m 0.0: centred grid on the whole one-way road."
+   "old": "Ledger 0047's declared start, as vertices into data/centerline.local.json (its own index space: local v0 = the pylons). line_vertex 0 = AC_TIME_0 at the pylons. Forward grid v14417 = 27.0 m behind the line on 19th St; reverse grid v26 = 26.0 m behind it on Lookout Mountain Rd (layout_dummies: 0 < d <= 35 m). Sectors on straight vertices (kink < 1 deg over +/-6 vertices): v7185 near the summit (st 7187.3) and v11623 on US-40 just before exit 259 (st 16564.0), so the three sectors are the climb, the top + canyon, and Golden. Validated 2026-10-11 by tools/layout_dummies.py on a plan-only projection of this centreline; re-run on the real centerline.local.json in P4. offset_right_m 1.6 = the right-hand lane's centre on a ~6.5 m two-lane road, PROVISIONAL: the width at the pylons is not measured (dossier 12). With layout_dummies' +/-1.0 m grid stagger the outer column's car edge sits 3.55 m right of centre, past the edge of a 6.5 m road; re-set it from the aerial width (or single-file the grid) in P4.",
+   "new": "Ledger 0047's declared start, as vertices into data/centerline.local.json (its own index space: local v0 = the pylons). line_vertex 0 = AC_TIME_0 at the pylons. Forward grid v14611 = 27.0 m behind the line on 19th St; reverse grid v26 = 26.0 m behind it on Lookout Mountain Rd (layout_dummies: 0 < d <= 35 m). Sectors on straight vertices (kink < 1 deg over +/-6 vertices): v7185 near the summit (st 7186.9) and v11647 on US-40 just before exit 259 (st 16548.0), so the three sectors are the climb, the top + canyon, and Golden. Validated 2026-10-11 by tools/layout_dummies.py on a plan-only projection of this centreline; re-run on the real centerline.local.json in P4. offset_right_m 1.6 = the right-hand lane's centre on a ~6.5 m two-lane road, PROVISIONAL: the width at the pylons is not measured (dossier 12). With layout_dummies' +/-1.0 m grid stagger the outer column's car edge sits 3.55 m right of centre, past the edge of a 6.5 m road; re-set it from the aerial width (or single-file the grid) in P4."
   },
   {
    "path": "race.corridor._boxes_doc",
-   "old": "Kevin's 'Corners the race turns at': the full intersection drivable, the legs the race doesn't take sealed at the box edge; the clockwise race uses the same boxes turned the other way. apex = the corner vertex on the V3 centreline (centerline.local.json index); i / j = apex +/- 8 vertices (~24 m), PROVISIONAL until P3b authors the junction mouths and the box edges come from their footprint. C16 spans both junction nodes (v6757, v6762). C17 (the US-6 diverge) is a gore, not a box.",
-   "new": "Kevin's 'Corners the race turns at': the full intersection drivable, the legs the race doesn't take sealed at the box edge; the clockwise race uses the same boxes turned the other way. apex = the corner vertex on the V3 centreline (centerline.local.json index); i / j = apex +/- 8 vertices (~24 m), PROVISIONAL until P3b authors the junction mouths and the box edges come from their footprint. C16 spans both junction nodes (v12862, v12867). C17 (the US-6 diverge) is a gore, not a box."
+   "old": "Kevin's 'Corners the race turns at': the full intersection drivable, the legs the race doesn't take sealed at the box edge; the clockwise race uses the same boxes turned the other way. apex = the corner vertex on the V3 centreline (centerline.local.json index); i / j = apex -/+ ~24 m (8 vertices on the 3 m OSM line; re-derived by station onto the paint centreline, where C12 sits on 1 m points and its i / j are 24-25 vertices out), PROVISIONAL until P3b authors the junction mouths and the box edges come from their footprint. C16 spans both junction nodes (v12862, v12867). C17 (the US-6 diverge) is a gore, not a box.",
+   "new": "Kevin's 'Corners the race turns at': the full intersection drivable, the legs the race doesn't take sealed at the box edge; the clockwise race uses the same boxes turned the other way. apex = the corner vertex on the V3 centreline (centerline.local.json index); i / j = apex -/+ ~24 m (8 vertices on the 3 m OSM line; re-derived by station onto the paint centreline, where C12 sits on 1 m points and its i / j are 24-25 vertices out), PROVISIONAL until P3b authors the junction mouths and the box edges come from their footprint. C16 spans both junction nodes (v12966, v12978). C17 (the US-6 diverge) is a gore, not a box."
   }
  ]
 }

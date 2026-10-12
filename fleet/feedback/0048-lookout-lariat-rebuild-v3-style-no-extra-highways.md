@@ -752,7 +752,14 @@ construction standard. **For Kevin / the lidar check:** on the climb's bench sec
 tilting AWAY from the cut, toward the drop, by a median 0.9 % (cut on the left) and 1.7 % (cut on the right), the
 opposite sign to the construction standard's 2 % toward the cut ditch. Per station the noise (|p50| 2.7 %) is
 larger than that signal, so the file uses the standard; if the lidar sample confirms an outslope, the standard's
-sign is what changes.
+sign is what changes. *(Corrected 2026-10-12 by the verifiers' truth lens, re-measured on fresh 3DEP: only the
+cut-RIGHT benches reproduce, 1.7 % away from the cut. The cut-left benches read +0.35 % (measured) / +0.64 % (raw)
+away on the climb, not 0.9 %, and over the whole lap they tilt 0.32 % TOWARD the cut (856 of 1,590 stations);
+fresh 3DEP every 30 m: bench_left −0.17 % (toward), bench_right −1.07 % (away). So "the opposite sign on both
+sides" holds for cut-right benches only. Also for Kevin: the construction standard that fills 78.7 % of stations
+disagrees with fresh 3DEP half-planes by p50 1.6-2.0 %-points (sign agreement 68-70 %); on crown stations 3DEP
+reads −5.2 / +0.1 / +3.4 % (p10 / p50 / p90), not a 2 % crown. That is what "estimated" means here, and why the
+lidar sample is still owed.)*
 
 **Bridge spans.** The 19th St lid, declared from the US-6 tunnel footprint (ways 533503591 + 533679737, crossed at
 77.5° and 69.6°): local st **24,349.4-24,387.6** (38.1 m: 22.1 m over the two carriageways + 8 m abutments each

@@ -88,7 +88,7 @@ def _mpd(lat0):
 
 
 def detect_bridge_spans(pts_xyz, origin_lonlat, bridge_ways, *, mirror_x=False,
-                        match_m=BRIDGE_MATCH_M, pad_m=BRIDGE_PAD_M):
+                        match_m=BRIDGE_MATCH_M, pad_m=BRIDGE_PAD_M, seam_rule=False):
     """Station ranges [(a_m, b_m), ...] where the loop rides an OSM-declared bridge (its own deck —
     motorway/motorway_link ways are excluded so a freeway bridge crossing OVER the loop can't mark a
     phantom span on the road below). Pure function (no bpy) so it is unit-testable.
@@ -137,7 +137,9 @@ def detect_bridge_spans(pts_xyz, origin_lonlat, bridge_ways, *, mirror_x=False,
     # continues from vertex 0 (the same point is near the same bridge). The pads must wrap the same way: a pad past
     # either end of the lap continues on the other side of the seam, never past the lap's length or below 0
     # (before: the last span ran pad_m past the lap and the first span's pad was cut off at 0). Open roads unchanged.
-    closed = (len(pts_xyz) > 2 and abs(pts_xyz[0][0] - pts_xyz[-1][0]) < 1e-6
+    # OPT-IN per track (``seam_rule``, from track.config.json ``bridges.l13_seam_rule``; 2026-10-12): every other
+    # track's spans stay exactly as before.
+    closed = seam_rule and (len(pts_xyz) > 2 and abs(pts_xyz[0][0] - pts_xyz[-1][0]) < 1e-6
               and abs(pts_xyz[0][2] - pts_xyz[-1][2]) < 1e-6)
     if closed and spans:
         lap = st
@@ -177,7 +179,8 @@ def declare_bridge_spans(proj: Path) -> list[tuple[float, float]]:
     spans = []
     if ways and "lon" in o:
         spans = detect_bridge_spans(pts, (o["lon"], o["lat"]), ways,
-                                    mirror_x=bool(cfg.get("mirror_x", False)))
+                                    mirror_x=bool(cfg.get("mirror_x", False)),
+                                    seam_rule=bool((cfg.get("bridges") or {}).get("l13_seam_rule", False)))
     (proj / "data" / "bridge.spans.auto.json").write_text(
         json.dumps([[round(a, 1), round(b, 1)] for a, b in spans]), encoding="utf-8")
     (proj / "data" / "finished_centerline.json").write_text(json.dumps({
@@ -647,20 +650,34 @@ def _conform_and_reseat(proj: Path, spans):
                if ob.type == "MESH" and ob.name.upper().startswith("1GRASS")]
     old_grass_bvh = _bvh(_world_tris(lambda n: n.startswith("1GRASS")))   # pre-pin ground, for deltas
 
+    # PER-TRACK conform (track.config.json ``prep.terrain_conform``; 2026-10-12, ledger 0048): a track whose ground is
+    # already seated edge-aligned by its underlay (the Lookout Lariat: scripts/geometry/terrain_cutfill.py, ground
+    # under the pavement 2 cm below it, the D4 verge's outer edge welded to the ground, a real ditch / cut / fill
+    # beyond) sets band_m / feather_m 0 and subdivide false, so the prep does not flatten a BAND_M shelf at road
+    # height beyond the edge (measured on the Drive-1 build: ground within +-0.2 m of the road 1 m past the verge on
+    # ~100 % of the lap, i.e. no real edge) nor print its edge-height targets into grass triangles that straddle a
+    # crossfalling edge (the millimetre soft-top). Every other track: the constants, exactly as before.
+    _tc = (json.loads((proj / "track.config.json").read_text()).get("prep") or {}).get("terrain_conform") or {}
+    band_m = float(_tc.get("band_m", BAND_M))
+    feather_m = float(_tc.get("feather_m", FEATHER_M))
+    subdivide = bool(_tc.get("subdivide", True))
+    if _tc:
+        print(f"[build_kn5_loop] terrain conform per track: band {band_m} m, feather {feather_m} m, "
+              f"subdivide {subdivide}")
     import bmesh
     n_pin = n_feather = n_sub = 0
     for ob in terrain:
         me = ob.data
         bm = bmesh.new(); bm.from_mesh(me)
         # 1. corridor subdivision (repeat: each round halves qualifying edges)
-        for _round in range(4):
+        for _round in range(4 if subdivide else 0):
             todo = []
             for e in bm.edges:
                 if e.calc_length() <= CORRIDOR_EDGE_M:
                     continue
                 mx = (e.verts[0].co + e.verts[1].co) / 2
                 d2d, _rz = _near2d(mx.x, mx.y)
-                if d2d is not None and d2d <= FEATHER_M + 10.0:
+                if d2d is not None and d2d <= feather_m + 10.0:
                     todo.append(e)
             if not todo:
                 break
@@ -671,7 +688,7 @@ def _conform_and_reseat(proj: Path, spans):
         for v in bm.verts:
             x, y, z = v.co.x, v.co.y, v.co.z
             d2d, _rz = _near2d(x, y)
-            if d2d is None or d2d > FEATHER_M + 10.0:
+            if d2d is None or d2d > feather_m + 10.0:
                 continue
             vleg = legs.locate(x, y)                   # the vertex's own leg + station (L4: station matching)
             if vleg is None:
@@ -696,10 +713,10 @@ def _conform_and_reseat(proj: Path, spans):
                 # full-contact BAND (CO's "gentle shelf"): every triangle covering pavement has all
                 # verts within ~2.6 m of the edge, so holding the first 3 m at contact height makes
                 # the surface under the deck edge gate-proof; then smoothstep back to natural.
-                if d_own <= BAND_M:
+                if d_own <= band_m:
                     w = 1.0
-                elif d_own < BAND_M + FEATHER_M:
-                    w = 1.0 - (d_own - BAND_M) / FEATHER_M
+                elif d_own < band_m + feather_m:
+                    w = 1.0 - (d_own - band_m) / feather_m
                     w = w * w * (3 - 2 * w)
                 else:
                     continue

@@ -22,7 +22,8 @@ Inputs:
 Method (all in the plan frame of the OSM line: local ENU metres about its centroid, as
 scripts/geometry/projection.py; stations from its v0):
 1. **Targets.** Each window's reference, cut to its supported stretches; an unsupported gap shorter than
-   ``GAP_BRIDGE_M`` is bridged by the reference itself ("ref_gap" points), a longer one ends the stretch. At a
+   ``GAP_BRIDGE_M`` is bridged ("ref_gap" points) by a cubic Hermite between the supported points either side on
+   their own directions (2026-10-12; it was the reference's own unsupported guess), a longer one ends the stretch. At a
    hairpin whose yellow circle is good (>= 45 % of the core traced, rms <= 0.35 m) the reference points over
    the core (within ``CORE_CAPTURE_M`` of the circle) are moved radially onto it. Two windows tracing the
    same leg are crossfaded (smootherstep) across their overlap.
@@ -85,6 +86,7 @@ from scripts.gps.centerline import polyline_length  # noqa: E402
 
 DEG = 180.0 / math.pi
 GAP_BRIDGE_M = 15.0
+GAP_ARM_PTS = 4
 GAP_INTERP_M = 400.0
 TAPER_M = 80.0
 TANGENT_M = 25.0
@@ -104,10 +106,26 @@ ADAPT_PAINT_STEP_M = 0.05
 TOL_FREE_MAX_M = 1.5
 TOL_PAINT_MAX_M = 0.4
 CORE_CAPTURE_M = 4.0
+# junction fillets (2026-10-12, ledger 0048 "P2 fixed"): off the climb, a corner OSM draws as one node or a few
+# facets becomes an arc tangent to both arms, before the smoothing
+FILLET_STEP_DEG = 20.0
+FILLET_R_FACET_M = 6.0
+FILLET_CLUSTER_M = 15.0
+FILLET_ARM_M = 10.0
+FILLET_R_M = 12.0
+FILLET_R_MIN_M = 4.0
+FILLET_DEPART_M = 3.0
+FILLET_ON_ARM_M = 0.5
+FILLET_MIN_TURN_DEG = 15.0
+FILLET_MATCH_M = 40.0
+FILLET_PAINT_M = 0.5
 PARAMS = {k: globals()[k] for k in ("GAP_BRIDGE_M", "GAP_INTERP_M", "TAPER_M", "TANGENT_M", "SPACING_M", "LAM", "TOL_PAINT_M",
                                      "TOL_FREE_M", "SEAM_PAD_M", "CLIMB_PAD_M", "REGION_PAD_M", "KINK_DEG",
                                      "KINK_PIN_M", "CORE_CAPTURE_M", "ADAPT_ROUNDS", "ADAPT_REACH",
-                                     "ADAPT_FREE_STEP_M", "ADAPT_PAINT_STEP_M", "TOL_FREE_MAX_M", "TOL_PAINT_MAX_M")}
+                                     "ADAPT_FREE_STEP_M", "ADAPT_PAINT_STEP_M", "TOL_FREE_MAX_M", "TOL_PAINT_MAX_M",
+                                     "FILLET_STEP_DEG", "FILLET_R_FACET_M", "FILLET_CLUSTER_M", "FILLET_ARM_M",
+                                     "FILLET_R_M", "FILLET_R_MIN_M", "FILLET_DEPART_M", "FILLET_ON_ARM_M",
+                                     "FILLET_MIN_TURN_DEG", "FILLET_MATCH_M", "FILLET_PAINT_M")}
 
 
 # --------------------------------------------------------------------------------------------------
@@ -336,9 +354,46 @@ def _finish(T, P, st):
     return T
 
 
+def _bridge_gaps(R, sup, a, b, arm=GAP_ARM_PTS):
+    """Every unsupported run inside R[a..b] (shorter than GAP_BRIDGE_M: the caller split at longer ones) is
+    replaced IN PLACE by a cubic Hermite between the supported points either side, on their own directions
+    (each over ``arm`` supported points). The reference's own points in a gap are the tracer's guess where it
+    lost the paint (unsupported), not evidence: 2026-10-12 at C13's approach (OSM st 10,580-10,589) the guess
+    jogged ~2 m sideways over 9 m (heading -12 -> -27 -> -1 -> -13 deg), and the smoothing, holding ref_gap
+    points to TOL_PAINT_M, kept it: R 3.7-5 m on a straight, grass over the full lane width in the built road."""
+    k = a
+    while k <= b:
+        if sup[k]:
+            k += 1
+            continue
+        u0 = k
+        while k <= b and not sup[k]:
+            k += 1
+        u1 = k - 1
+        i0, i1 = u0 - 1, u1 + 1
+        if i0 < a or i1 > b:
+            continue
+        p0, p1 = R[i0], R[i1]
+        j0 = max(a, i0 - arm)
+        while j0 < i0 and not sup[j0]:
+            j0 += 1
+        j1 = min(b, i1 + arm)
+        while j1 > i1 and not sup[j1]:
+            j1 -= 1
+        chord = math.dist(p0, p1)
+        t0 = _unit((p0[0] - R[j0][0], p0[1] - R[j0][1])) if j0 < i0 else _unit((p1[0] - p0[0], p1[1] - p0[1]))
+        t1 = _unit((R[j1][0] - p1[0], R[j1][1] - p1[1])) if j1 > i1 else _unit((p1[0] - p0[0], p1[1] - p0[1]))
+        m = i1 - i0
+        for q in range(1, m):
+            t = q / m
+            h00, h10, h01, h11 = 2 * t ** 3 - 3 * t ** 2 + 1, t ** 3 - 2 * t ** 2 + t, -2 * t ** 3 + 3 * t ** 2, t ** 3 - t ** 2
+            R[i0 + q] = (h00 * p0[0] + h10 * chord * t0[0] + h01 * p1[0] + h11 * chord * t1[0],
+                         h00 * p0[1] + h10 * chord * t0[1] + h01 * p1[1] + h11 * chord * t1[1])
+
+
 def load_targets(traces, F, P, st):
     """The paint as targets, in the base plan frame and travel order: per window, its reference's
-    supported stretches (gaps shorter than GAP_BRIDGE_M bridged by the reference itself), the core moved
+    supported stretches (gaps shorter than GAP_BRIDGE_M bridged by a Hermite curve, ``_bridge_gaps``), the core moved
     onto a good yellow circle; windows tracing the same leg crossfaded. Sorted by s_a."""
     fr = traces["frame"]
     lon0, lat0 = fr["origin_lonlat"]
@@ -390,6 +445,7 @@ def load_targets(traces, F, P, st):
             i = last + 1
             if b <= a:
                 continue
+            _bridge_gaps(R, sup, a, b)
             ref_st = ref["lap_st_m"]
             sa_est = next((ref_st[k] for k in range(a, b + 1) if ref_st[k] is not None), None)
             sb_est = next((ref_st[k] for k in range(b, a - 1, -1) if ref_st[k] is not None), None)
@@ -633,7 +689,167 @@ def smooth_region(Q, srcs, pinned, tol, kinds, bounds, judged):
                                  round(max(math.dist(X[i], X[i + 1]) for i in range(len(X) - 1)), 4)]}
 
 
-def build(osm_path, traces, climb_st, log=print):
+class _Poly:
+    """A polyline with geometric stations, for the fillet pass."""
+
+    def __init__(self, P):
+        self.P = P
+        self.g = fh.stations(P)
+
+    def at(self, g):
+        return point_at(self.P, self.g, min(max(g, 0.0), self.g[-1]))
+
+    def nearest(self, p, g0, g1):
+        """(distance, station) of the nearest point on the stretch [g0, g1]."""
+        i0 = max(0, idx_at(self.g, max(g0, 0.0)))
+        i1 = min(len(self.P) - 1, idx_at(self.g, min(g1, self.g[-1])) + 1)
+        best = project(p, self.P, self.g, i0, i1)
+        return (best[0], best[1]) if best else (float("inf"), g0)
+
+
+def junction_fillets(seq, climb, corners, lap, closed=True):
+    """Off the climb, every corner OSM draws as one junction node or a few facets (C12, C13, C14 Paradise ->
+    US-40, C15 exit 259, C16 Colfax -> US-6, C18 the ramp -> 19th St, and the few jogs beside them) becomes an
+    arc tangent to both arms, so the smoothing that follows has a curve to smooth instead of a chevron.
+
+    Measured 2026-10-12 on the built Drive-1 road (ledger 0048 "P2 integrated", the drive lens): C12 / C13 were
+    single-vertex chevrons of 70.8 / 71.7 deg (built R 3.4 / 3.3 m against the aerial's 14.9 / 16.08 m, inner
+    edge R 0.3 / 0.1 m: the ribbon folded, a 0.61 m step and grass across half the lane at C13), and US-40 at
+    exit 259, C14, the lid's east end and the Colfax turn-back turned 37-72 deg at single vertices.
+
+    A **facet** is a vertex off the climb (``climb_st_m``; its smoothing pads included) that turns more than
+    ``FILLET_STEP_DEG`` or tighter than ``FILLET_R_FACET_M`` over its own spacing; facets within
+    ``FILLET_CLUSTER_M`` of each other are one corner. Its arms are the lines through the first / last facet along
+    the ``FILLET_ARM_M`` of line before / after it. The arc's radius is the corner's measured ``radius_m``
+    (hairpin_fit.corners, matched within ``FILLET_MATCH_M``: C12 and C13); elsewhere ``FILLET_R_M``, reduced in
+    0.25 m steps (not below ``FILLET_R_MIN_M``) until the arc stays within ``FILLET_DEPART_M`` of the OSM line
+    (a junction box's pavement). Either way both tangent points must lie on their arms (within
+    ``FILLET_ON_ARM_M``) and clear of the neighbouring corners, and every traced paint point the arc replaces
+    stays within ``FILLET_PAINT_M`` of it (the paint outranks a radius: a measured radius is reduced, and reported
+    so, until the arc keeps the painted arms). Returns (seq with each corner's stretch replaced
+    by arc points, kind ``fillet``; the regions to resample + smooth; the per-corner report)."""
+    P = [e[0] for e in seq]
+    S = [e[1] for e in seq]
+    poly = _Poly(P)
+    g = poly.g
+    steps = fh.signed_steps(P)
+    c0, c1 = climb
+
+    def free(s):            # off the JUDGED climb (its pads and the seam pad are judged by the gate's (e) too)
+        return not (c0 <= s <= c1) and S[0] + FILLET_ARM_M < s < S[-1] - FILLET_ARM_M
+
+    facets = []
+    for i in range(1, len(P) - 1):
+        if not free(S[i]):
+            continue
+        sp = 0.5 * (g[i + 1] - g[i - 1])
+        a = abs(steps[i])
+        if a * DEG > FILLET_STEP_DEG or (a * DEG > 3.0 and sp / a < FILLET_R_FACET_M):
+            facets.append(i)
+    clusters = []
+    for i in facets:
+        if clusters and g[i] - g[clusters[-1][-1]] <= FILLET_CLUSTER_M:
+            clusters[-1].append(i)
+        else:
+            clusters.append([i])
+    reps, cuts = [], []        # cuts: (gA, gB, arc points, sA, sB)
+    for k, cl in enumerate(clusters):
+        ia, ib = cl[0], cl[-1]
+        ga, gb = g[ia], g[ib]
+        s_mid = 0.5 * (S[ia] + S[ib])
+        pa, pb = P[ia], P[ib]
+        qa, qb = poly.at(ga - FILLET_ARM_M), poly.at(gb + FILLET_ARM_M)
+        ua = _unit((pa[0] - qa[0], pa[1] - qa[1]))
+        ub = _unit((qb[0] - pb[0], qb[1] - pb[1]))
+        delta = fh._wrap(math.atan2(ub[1], ub[0]) - math.atan2(ua[1], ua[0]))
+        rep = {"osm_st_m": [round(S[ia], 1), round(S[ib], 1)], "facets": len(cl),
+               "facet_steps_deg": [round(steps[i] * DEG, 1) for i in cl], "turn_deg": round(delta * DEG, 1)}
+        if abs(delta) * DEG < FILLET_MIN_TURN_DEG:
+            reps.append({**rep, "result": "skipped: turns less than FILLET_MIN_TURN_DEG"})
+            continue
+        den = ua[0] * ub[1] - ua[1] * ub[0]
+        if abs(den) < 1e-9:
+            reps.append({**rep, "result": "FAILED: parallel arms"})
+            continue
+        t = ((pb[0] - pa[0]) * ub[1] - (pb[1] - pa[1]) * ub[0]) / den
+        X = (pa[0] + t * ua[0], pa[1] + t * ua[1])
+        meas = None
+        for c in corners or []:
+            if c.get("radius_m") and c.get("st_m") is not None and abs(float(c["st_m"]) - s_mid) <= FILLET_MATCH_M:
+                meas = c
+        r_list = [float(meas["radius_m"])] if meas else []
+        r = FILLET_R_M if not meas else float(meas["radius_m"]) - 0.25
+        while r >= FILLET_R_MIN_M - 1e-9:
+            r_list.append(round(r, 2))
+            r -= 0.25
+        g_prev = cuts[-1][1] + 1.0 if cuts else g[0] + 1.0
+        g_next = g[clusters[k + 1][0]] - 1.0 if k + 1 < len(clusters) else g[-1] - 1.0
+        sign = 1.0 if delta > 0 else -1.0
+        got = None
+        tried = []
+        for R in r_list:
+            T = R * math.tan(abs(delta) / 2.0)
+            A = (X[0] - T * ua[0], X[1] - T * ua[1])
+            B = (X[0] + T * ub[0], X[1] + T * ub[1])
+            dA, gA = poly.nearest(A, ga - T - 3 * FILLET_ARM_M, ga + FILLET_ARM_M)
+            dB, gB = poly.nearest(B, gb - FILLET_ARM_M, gb + T + 3 * FILLET_ARM_M)
+            why = []
+            if dA > FILLET_ON_ARM_M or dB > FILLET_ON_ARM_M:
+                why.append(f"tangent point off its arm ({dA:.2f} / {dB:.2f} m)")
+            if gA <= g_prev or gB >= g_next or not (free(S[idx_at(g, gA)]) and free(S[idx_at(g, gB)])):
+                why.append("tangent point past a neighbouring corner, the climb or the seam")
+            Cc = (A[0] - sign * R * ua[1], A[1] + sign * R * ua[0])
+            a0 = math.atan2(A[1] - Cc[1], A[0] - Cc[0])
+            n = max(2, math.ceil(abs(delta) * R / SPACING_M))
+            arc = [(Cc[0] + R * math.cos(a0 + delta * j / n), Cc[1] + R * math.sin(a0 + delta * j / n)) for j in range(n + 1)]
+            dep = max(poly.nearest(q, gA - 1.0, gB + 1.0)[0] for q in arc) if not why else None
+            if dep is not None and not meas and dep > FILLET_DEPART_M:
+                why.append(f"leaves the OSM line by {dep:.2f} m")
+            if not why:                     # traced paint the arc replaces stays on it: the paint outranks a radius
+                arc_poly = _Poly(arc)
+                off = [arc_poly.nearest(P[j], 0.0, arc_poly.g[-1])[0] for j in range(len(P))
+                       if seq[j][2] == "paint" and gA < g[j] < gB]
+                if off and max(off) > FILLET_PAINT_M:
+                    why.append(f"cuts the traced paint by {max(off):.2f} m")
+            tried.append(R)
+            if not why:
+                got = (R, T, gA, gB, arc, dep)
+                break
+            if meas and R == r_list[0]:
+                rep["measured_radius_failed"] = "; ".join(why)
+        if got is None:
+            reps.append({**rep, "result": "FAILED: no radius fits", "radii_tried_m": [tried[0], tried[-1]] if tried else []})
+            continue
+        R, T, gA, gB, arc, dep = got
+        sA = S[idx_at(g, gA)] + (gA - g[idx_at(g, gA)])
+        sB = S[idx_at(g, gB)] + (gB - g[idx_at(g, gB)])
+        cuts.append((gA, gB, arc, sA, sB))
+        reps.append({**rep, "result": "filleted", "radius_m": R,
+                     "radius_from": (f"measured ({meas['id']})" if meas and R == float(meas["radius_m"]) else
+                                     "measured, reduced to keep the arms / the paint" if meas else
+                                     "FILLET_R_M, reduced to fit" if R < FILLET_R_M else "FILLET_R_M"),
+                     "corner": meas["id"] if meas else None, "tangent_m": round(T, 2),
+                     "replaced_osm_st_m": [round(sA, 1), round(sB, 1)], "arc_points": len(arc),
+                     "max_departure_from_osm_m": round(dep, 2)})
+    if not cuts:
+        return seq, [], reps
+    out, regions = [], []
+    j = 0
+    for gA, gB, arc, sA, sB in cuts:
+        while j < len(seq) and g[j] < gA - 1e-6:
+            out.append(seq[j])
+            j += 1
+        n = len(arc) - 1
+        for m, q in enumerate(arc):
+            out.append((q, sA + (sB - sA) * m / n, "fillet", None))
+        while j < len(seq) and g[j] <= gB + 1e-6:
+            j += 1
+        regions.append(("fillet", sA - REGION_PAD_M, sB + REGION_PAD_M))
+    out.extend(seq[j:])
+    return out, regions, reps
+
+
+def build(osm_path, traces, climb_st, log=print, corners=None):
     """The paint centreline as a GeoJSON dict (the OSM file's schema) + an info dict."""
     gj = json.loads(Path(osm_path).read_text(encoding="utf-8"))
     feats = gj["features"]
@@ -651,12 +867,16 @@ def build(osm_path, traces, climb_st, log=print):
     targets = load_targets(traces, F, P, st)
     comp = composite(P, st, targets, closed)
     seq = _unwrap_seq(comp, lap) if closed else comp
+    seq, fillet_regions, fillet_reports = junction_fillets(seq, climb_st, corners, lap, closed)
+    for fr in fillet_reports:
+        log(f"[paint] junction fillet at OSM st {fr['osm_st_m']}: {fr['result']}"
+            + (f", R {fr['radius_m']} m ({fr['radius_from']})" if fr.get("radius_m") else ""))
     c0, c1 = climb_st
     wrap = closed and c0 <= 1.0
     regions = [("climb", (c0 - SEAM_PAD_M) if wrap else max(0.0, c0 - CLIMB_PAD_M), min(c1 + CLIMB_PAD_M, lap - SEAM_PAD_M - 2.0))]
     run = None
     for e in seq:
-        if e[2] == "osm":
+        if e[2] in ("osm", "fillet"):
             continue
         if run is not None and e[1] - run[1] <= 2 * REGION_PAD_M:
             run[1] = e[1]
@@ -666,7 +886,7 @@ def build(osm_path, traces, climb_st, log=print):
             run = [e[1], e[1]]
     if run is not None:
         regions.append(("moved", run[0] - REGION_PAD_M, run[1] + REGION_PAD_M))
-    regions = _merge_regions(regions)
+    regions = _merge_regions(regions + fillet_regions)
     out = []  # (point, osm station, kind, raw index or None)
     region_reports = []
     pos = 0
@@ -737,7 +957,8 @@ def build(osm_path, traces, climb_st, log=print):
     info = {"targets": [{"id": t["id"], "window": t["window"], "kind": t["kind"], "osm_st_m": [round(t["s_a"], 1), round(t["s_b"], 1)],
                          "points": len(t["pts"]), "offset_at_ends_m": [round(math.hypot(*t["D_a"]), 2), round(math.hypot(*t["D_b"]), 2)],
                          "core_points_on_yellow_circle": t["n_core_on_circle"]} for t in targets],
-            "regions": region_reports, "frame": {"origin_lonlat": [F.lon0, F.lat0]}, "kinds": kinds}
+            "regions": region_reports, "junction_fillets": fillet_reports,
+            "frame": {"origin_lonlat": [F.lon0, F.lat0]}, "kinds": kinds}
     return out_gj, info
 
 
@@ -833,7 +1054,7 @@ def run(project_dir, osm=None, traces_path=None, out=None, report_path=None, log
     traces = json.loads(traces_path.read_text(encoding="utf-8"))
     climb = (cfg.get("hairpin_fit") or {}).get("climb_st_m") or [0, 0]
     radii = {c["id"]: c.get("radius_m") for c in (cfg.get("hairpin_fit") or {}).get("corners") or []}
-    gj, info = build(osm_path, traces, climb, log)
+    gj, info = build(osm_path, traces, climb, log, corners=(cfg.get("hairpin_fit") or {}).get("corners") or [])
     feat = next(f for f in gj["features"] if (f.get("properties") or {}).get("kind") == "full")
     md5 = text_md5(osm_path)
     feat["properties"]["paint_centreline"] = {
@@ -864,7 +1085,8 @@ def run(project_dir, osm=None, traces_path=None, out=None, report_path=None, log
             "osm_source_md5": md5, "out": _rel(out_path, project_dir), "out_md5": text_md5(out_path),
             "points": feat["properties"]["point_count"], "length_m": feat["properties"]["length_m"],
             "osm_points": len(json.loads(osm_path.read_text(encoding="utf-8"))["features"][0]["geometry"]["coordinates"]),
-            "params": PARAMS, "targets": info["targets"], "regions": info["regions"], **rep}
+            "params": PARAMS, "targets": info["targets"], "regions": info["regions"],
+            "junction_fillets": info["junction_fillets"], **rep}
     rep_path.parent.mkdir(parents=True, exist_ok=True)
     rep_path.write_text(json.dumps(full, indent=1), encoding="utf-8", newline="\n")
     log(f"[paint] wrote {out_path} ({full['points']} points, {full['length_m']} m) and {rep_path}")

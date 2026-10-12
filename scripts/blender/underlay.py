@@ -383,8 +383,11 @@ def main() -> None:
         coll = collection(ud.COLLECTIONS[role])
         for name, mesh in draft["meshes"][role].items():
             props = {"underlay_digest": ud.mesh_digest(mesh)}
-            if role == "terrain":
+            if role == "terrain" and (rep.get("terrain") or {}).get("placeholder", True):
                 props["underlay_placeholder"] = "P3a tiered terrain replaces this (engine heightfield; pinned under the pavement, raw survey elsewhere)"
+            elif role == "terrain":
+                props["underlay_terrain"] = ("cutfill: the real edge (scripts/geometry/terrain_cutfill.py); P3a's tiers "
+                                             "replace the far ground")
             if role == "verge":
                 props["underlay_verge_m"] = draft["verge"]["width_m"]
                 props["underlay_verge_mode"] = draft["verge"]["mode"]
@@ -438,7 +441,13 @@ def main() -> None:
     rep_p.write_text(json.dumps(rep, indent=1), encoding="utf-8")
     log(f"road: {rep['road']['verts']} verts, widths {rep['road']['width_m']}; crossfall: {rep['road']['crossfall']}")
     log(f"verge: {rep['verge']['mode']}")
-    if rep.get("terrain"):
+    if rep.get("terrain") and not rep["terrain"].get("placeholder", True):
+        t = rep["terrain"]
+        log(f"terrain CUTFILL (the real edge): {t['grid'][0]}x{t['grid'][1]} @ {t['cell_m']} m, {t['refined_quads']} quads "
+            f"refined x{t['refine_factor']}, {t['grid_tris_removed_under_strip']} grid triangles cut back under the edge "
+            f"strip ({t['edge_verts']} verts, {t['sparse_stations']} sections, {t['rows_clipped']} clipped at a stacked "
+            f"midline or a hairpin centre); sections {t['section_counts']}; {t['verts']} verts in all")
+    elif rep.get("terrain"):
         t = rep["terrain"]
         rf_ = t["refine"]
         log(f"terrain PLACEHOLDER: {t['grid'][0]}x{t['grid'][1]} @ {t['cell_m']} m, corridor {rf_['quads']} quads at "

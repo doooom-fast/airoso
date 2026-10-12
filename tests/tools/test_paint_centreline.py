@@ -6,8 +6,11 @@ with two OSM-like errors on the climb (the first half): 1.8 m sideways on a stre
 first semicircle faceted with 6 m chords 2 m inside the paint, as OSM cuts the Lariat's C4. The paint traces
 are the true road in two windows (one with a good yellow circle over the hairpin's core) and, outside the
 climb, a window on each arm of the junction. Pinned: the result follows the paint within the gate's 0.75 m
-and passes all four checks of tools/verify_centreline_paint.py; untouched OSM vertices are byte-for-byte; the
-junction node stays a node; the seam is closed exactly and smooth (L13); widths and osm_station_m are carried;
+and passes all five checks of tools/verify_centreline_paint.py; untouched OSM vertices are byte-for-byte; the
+junction nodes become arcs tangent to both arms (2026-10-12, the junction fillets: the integrated Drive-1 build kept
+C12 / C13 as 70-72 deg single-vertex chevrons and the ribbon folded there), never cutting the traced arm paint; a
+measured radius is used where the config declares one; the seam is closed exactly and smooth (L13); widths and
+osm_station_m are carried;
 a fresh gps output becomes the source file and a replaced paint line is kept for the remap. Plus the real
 Lariat: the committed centreline is exactly what the tool makes from the committed inputs.
 """
@@ -165,12 +168,28 @@ def traces(osm_pts):
             "registration": {"osm_minus_imagery_EN_m": [0.0, 0.0]}, "windows": ws, "_origin_offset": [ox, oy]}
 
 
-def built(tmp, widths=None):
+def _run(proj):
+    keep = pc.SEAM_PAD_M
+    pc.SEAM_PAD_M = 40.0
+    try:
+        return pc.run(proj, log=lambda *a: None)
+    finally:
+        pc.SEAM_PAD_M = keep
+
+
+def built(tmp, widths=None, corners=None):
     osm = osm_like()
     proj = write_project(tmp, osm, widths)
+    if corners is not None:
+        cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
+        cfg["hairpin_fit"]["corners"] = corners
+        (proj / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
     tr = traces(osm)
     (proj / "data" / "aerial" / "paint_traces.json").write_text(json.dumps(tr), encoding="utf-8")
-    rep = pc.run(proj, log=lambda *a: None)
+    # this toy lap's second junction corner sits 65 m before the seam, i.e. ON the unwrap cut the real
+    # SEAM_PAD_M (60 m) makes; a corner straddling the cut is not filleted (and the gate's (e) fails it loudly).
+    # The real Lariat has no corner within 100 m of its seam; the toy uses a 40 m pad.
+    rep = _run(proj)
     gj = json.loads((proj / "data" / "centerline.geojson").read_text(encoding="utf-8"))
     return proj, osm, tr, rep, gj
 
@@ -180,7 +199,7 @@ def test_follows_the_paint_and_passes_the_gate():
         proj, osm, tr, rep, gj = built(Path(td))
         line = vp.Line.from_geojson(gj)
         res = vp.gate(line, tr, [0, 470], loop=True)
-        assert res["pass"], {k: res[k]["pass"] for k in ("a_paint", "b_curvature", "c_topology", "d_closure")}
+        assert res["pass"], {k: res[k]["pass"] for k in ("a_paint", "b_curvature", "c_topology", "d_closure", "e_facets")}
         assert res["a_paint"]["max_m"] <= 0.3
         # the OSM line misses the same paint by its injected errors
         osm_line = vp.Line.from_geojson(json.loads((proj / "data" / "centerline.osm.geojson").read_text(encoding="utf-8")))
@@ -217,13 +236,51 @@ def _osm_kept(td):
         # the far straight between x = 200 and 100 (nothing moved it): every OSM vertex there copied exactly
         far = [c for c in src if abs((c[1] - LAT0) * MLAT - 2 * R) < 0.01 and 100 <= (c[0] - LON0) * MLON <= 150]
         assert far and all(tuple(c) in {tuple(x) for x in coords} for c in far)
-        # the junction node at (-60, 2R) is pinned (outside the climb) and still turns ~90 deg at one point
+        # the junction nodes at (-60, 2R) and (-60, 0) are arcs now (outside the climb): no point within 15 m of
+        # either turns more than the gate's 20 deg, both turn the full 90 deg, and nothing is pinned as a kink
         line = vp.Line.from_geojson(gj)
         S = line.steps()
-        node = min(range(line.n), key=lambda i: math.dist(line.lonlat[i], tuple(ll((-60.0, 2 * R)))))
-        assert abs(S[node]) * 180 / math.pi > 60
-        assert rep["regions"][-1]["pinned_kinks_osm_st_m"]
+        for nd in ((-60.0, 2 * R), (-60.0, 0.0)):
+            q = ll(nd)
+            near = [i for i in range(line.n) if math.dist(line.P[i], line.xy(*q)) < 15.0]
+            assert near and max(abs(S[i]) for i in near) * 180 / math.pi < pc.FILLET_STEP_DEG, nd
+            assert abs(sum(S[i] for i in near)) * 180 / math.pi > 80, nd
+        fil = [f for f in rep["junction_fillets"] if f["result"] == "filleted"]
+        assert len(fil) == 2 and all(pc.FILLET_R_MIN_M <= f["radius_m"] <= pc.FILLET_R_M for f in fil), fil
+        assert all(f["max_departure_from_osm_m"] <= pc.FILLET_DEPART_M for f in fil), fil
+        assert not any(r["pinned_kinks_osm_st_m"] for r in rep["regions"])
         assert len(srcset) > 0
+
+
+def test_a_measured_junction_radius_is_used_when_the_arms_allow_it():
+    # the config's radius_m for a corner whose st_m matches the junction (within FILLET_MATCH_M): the arc takes it,
+    # and FILLET_DEPART_M (the unmeasured junction-box limit) does not apply to a measured radius
+    with tempfile.TemporaryDirectory() as td:
+        proj, osm, tr, rep, gj = built(Path(td), corners=[{"id": "J1", "st_m": 780.0, "radius_m": 9.0}])
+        f = next(x for x in rep["junction_fillets"] if x.get("corner") == "J1")
+        assert f["result"] == "filleted" and f["radius_m"] == 9.0 and f["radius_from"] == "measured (J1)", f
+        res = vp.gate(vp.Line.from_geojson(gj), tr, [0, 470], loop=True)
+        assert res["pass"] and res["e_facets"]["pass"], res["e_facets"]
+    # a measured radius whose arc would cut the traced arm paint is reduced until it keeps it, and says so
+    with tempfile.TemporaryDirectory() as td:
+        proj, osm, tr, rep, gj = built(Path(td), corners=[{"id": "J1", "st_m": 780.0, "radius_m": 30.0}])
+        f = next(x for x in rep["junction_fillets"] if x.get("corner") == "J1")
+        assert f["result"] == "filleted" and f["radius_m"] < 30.0 and "reduced" in f["radius_from"], f
+        assert "measured_radius_failed" in f
+        res = vp.gate(vp.Line.from_geojson(gj), tr, [0, 470], loop=True)
+        assert res["a_paint"]["pass"], res["a_paint"]["worst"][:3]
+
+
+def test_an_unsupported_gap_is_bridged_smoothly_not_by_the_tracers_guess():
+    # 2026-10-12, C13's approach: the reference's own points in an unsupported gap jogged ~2 m sideways and the
+    # smoothing kept them (R 3.7-5 m on a straight). The gap is now a Hermite curve between the supported ends.
+    R_ = [(float(i), 0.0) for i in range(30)]
+    sup = [True] * 30
+    for i in range(10, 20):
+        R_[i] = (float(i), 2.0 if i % 2 else -2.0)          # the tracer's wild guess
+        sup[i] = False
+    pc._bridge_gaps(R_, sup, 0, 29)
+    assert all(abs(y) < 1e-9 for _x, y in R_), R_           # a straight between two straight supported runs
 
 
 def test_closure_widths_and_stations():
@@ -254,21 +311,21 @@ def test_source_file_handling_and_previous_line():
         data = proj / "data"
         first = (data / "centerline.geojson").read_bytes()
         # same inputs again: the same bytes, nothing kept as previous
-        pc.run(proj, log=lambda *a: None)
+        _run(proj)
         assert (data / "centerline.geojson").read_bytes() == first
         assert not (data / "centerline.previous.geojson").exists()
         # changed traces: the replaced paint line is kept for the config remap
         tr2 = json.loads((data / "aerial" / "paint_traces.json").read_text(encoding="utf-8"))
         tr2["windows"] = tr2["windows"][1:]
         (data / "aerial" / "paint_traces.json").write_text(json.dumps(tr2), encoding="utf-8")
-        pc.run(proj, log=lambda *a: None)
+        _run(proj)
         assert (data / "centerline.previous.geojson").read_bytes() == first
         # a fresh gps run (a plain OSM file at data/centerline.geojson) becomes the source
         osm2 = [(x, y + (0.01 if x < 10 else 0.0)) for x, y in osm]
         fresh = write_project(Path(td) / "b", osm2)
         (fresh / "data" / "aerial" / "paint_traces.json").write_text(json.dumps(traces(osm2)), encoding="utf-8")
         raw = (fresh / "data" / "centerline.geojson").read_bytes()
-        pc.run(fresh, log=lambda *a: None)
+        _run(fresh)
         assert (fresh / "data" / "centerline.osm.geojson").read_bytes() == raw
         assert "paint_centreline" in json.loads((fresh / "data" / "centerline.geojson").read_text(encoding="utf-8"))["features"][0]["properties"]
         # usage errors
@@ -319,7 +376,8 @@ def test_real_lariat_is_reproducible():
     if not (osm.exists() and tp.exists() and cl.exists()):
         return
     cfg = json.loads((LARIAT / "track.config.json").read_text(encoding="utf-8"))
-    gj, info = pc.build(osm, json.loads(tp.read_text(encoding="utf-8")), cfg["hairpin_fit"]["climb_st_m"], log=lambda *a: None)
+    gj, info = pc.build(osm, json.loads(tp.read_text(encoding="utf-8")), cfg["hairpin_fit"]["climb_st_m"],
+                        log=lambda *a: None, corners=cfg["hairpin_fit"].get("corners") or [])
     committed = json.loads(cl.read_text(encoding="utf-8"))
     f, g = gj["features"][0], committed["features"][0]
     assert f["geometry"]["coordinates"] == g["geometry"]["coordinates"]

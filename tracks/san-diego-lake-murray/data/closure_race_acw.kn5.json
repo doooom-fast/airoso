@@ -1,0 +1,271 @@
+{
+ "file": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\build\\san_diego_lake_murray_closure_race_acw.kn5",
+ "version": 5,
+ "file_bytes": 5432722,
+ "textures": [
+  {
+   "name": "concrete_barrier_diffuse.png",
+   "bytes": 2368008
+  },
+  {
+   "name": "concrete_barrier_normal.png",
+   "bytes": 63035
+  }
+ ],
+ "materials": [
+  {
+   "name": "1WALL_race_close_acw_college_777_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_close_acw_jackson_2328_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_close_acw_jackson_2328_1_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_close_acw_lakemurray_3304_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_close_acw_lakemurray_3304_1_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_close_acw_navajo_1521_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  }
+ ],
+ "meshes": [
+  {
+   "name": "1WALL_race_close_acw_college_777_0",
+   "verts": 11700,
+   "tris": 14596,
+   "matid": 0,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 963.7,
+   "area_m2": 7337.9,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.996,
+   "edge_p90_m": 3.074,
+   "grid_m": 1.003,
+   "bbox_m": [
+    543.7,
+    54.2,
+    1848.9
+   ]
+  },
+  {
+   "name": "1WALL_race_close_acw_jackson_2328_0",
+   "verts": 7722,
+   "tris": 9628,
+   "matid": 1,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 695.4,
+   "area_m2": 4850.6,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 3.003,
+   "edge_p90_m": 3.057,
+   "grid_m": 1.004,
+   "bbox_m": [
+    1202.5,
+    36.3,
+    698.5
+   ]
+  },
+  {
+   "name": "1WALL_race_close_acw_jackson_2328_1",
+   "verts": 7706,
+   "tris": 9608,
+   "matid": 2,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 711.5,
+   "area_m2": 4810.6,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 3.003,
+   "edge_p90_m": 3.056,
+   "grid_m": 1.001,
+   "bbox_m": [
+    1339.7,
+    9.7,
+    480.3
+   ]
+  },
+  {
+   "name": "1WALL_race_close_acw_lakemurray_3304_0",
+   "verts": 9226,
+   "tris": 11508,
+   "matid": 3,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 839.5,
+   "area_m2": 5761.1,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.991,
+   "edge_p90_m": 3.05,
+   "grid_m": 1.001,
+   "bbox_m": [
+    1124.6,
+    26.8,
+    1247.1
+   ]
+  },
+  {
+   "name": "1WALL_race_close_acw_lakemurray_3304_1",
+   "verts": 9226,
+   "tris": 11508,
+   "matid": 4,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 810.5,
+   "area_m2": 5780.7,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.998,
+   "edge_p90_m": 3.063,
+   "grid_m": 1.002,
+   "bbox_m": [
+    1404.2,
+    43.4,
+    809.5
+   ]
+  },
+  {
+   "name": "1WALL_race_close_acw_navajo_1521_0",
+   "verts": 12676,
+   "tris": 15816,
+   "matid": 5,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 1141.5,
+   "area_m2": 7950.5,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 3.003,
+   "edge_p90_m": 3.06,
+   "grid_m": 1.003,
+   "bbox_m": [
+    1996.0,
+    85.1,
+    1106.2
+   ]
+  }
+ ],
+ "nodes": [
+  "BlenderFile"
+ ],
+ "summary": {
+  "meshes": 6,
+  "verts": 58256,
+  "tris": 72664,
+  "textures": 2,
+  "texture_bytes": 2431043,
+  "materials": 6,
+  "surfaces": {
+   "WALL": {
+    "meshes": 6,
+    "verts": 58256,
+    "tris": 72664,
+    "area_m2": 36491.4,
+    "invisible": 0,
+    "edge_med_m": 2.999,
+    "grid_m": 1.002
+   }
+  },
+  "shaders_by_tris": {
+   "ksPerPixelMultiMap": {
+    "meshes": 6,
+    "tris": 72664
+   }
+  },
+  "near_vert_cap": [],
+  "non_pot_textures": []
+ }
+}

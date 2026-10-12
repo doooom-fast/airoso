@@ -4,19 +4,148 @@
  "warnings": [
   "F: race_cw: author-time: minimum spawn clearance 0.48 m at AC_START_1 v289 (edge-strip face 5.68 m) (hard floor 0.30 m)",
   "F: race_acw: author-time: minimum spawn clearance 0.48 m at AC_START_1 v312 (edge-strip face 5.68 m) (hard floor 0.30 m)",
-  "7 rings have another ROAD sheet > 0.15 m above the strip base (max 0.539 m) \u2014 a fold / mouth defect for the ribbon's owner, e.g. [0.539, '1WALL_race_edge_L_college_903_0', 1081]",
+  "4 rings have another ROAD sheet > 0.15 m above the strip base (max 0.539 m) \u2014 a fold / mouth defect for the ribbon's owner, e.g. [0.539, '1WALL_race_edge_L_college_770_0', 1081]",
   "built deck vs data height, worst 0.194 m"
  ],
  "counts": {
-  "rings_total": 14723,
+  "by_layout": {
+   "race_acw": {
+    "token": "acw",
+    "closure_objects": 6,
+    "closure_runs": 4,
+    "closure_rings": 3636,
+    "closure_off_curve_max_m": 0.007,
+    "pins": [
+     {
+      "object": "1WALL_race_close_acw_lakemurray_3304_0",
+      "end": "start",
+      "vertex": 3304,
+      "ring_vertex": 3304,
+      "far_line_m": 0.005
+     },
+     {
+      "object": "1WALL_race_close_acw_lakemurray_3304_1",
+      "end": "end",
+      "vertex": 4454,
+      "ring_vertex": 4454,
+      "far_line_m": 0.001
+     },
+     {
+      "object": "1WALL_race_close_acw_jackson_2328_0",
+      "end": "start",
+      "vertex": 2328,
+      "ring_vertex": 2328,
+      "far_line_m": 0.003
+     },
+     {
+      "object": "1WALL_race_close_acw_jackson_2328_1",
+      "end": "end",
+      "vertex": 3289,
+      "ring_vertex": 3289,
+      "far_line_m": 0.004
+     },
+     {
+      "object": "1WALL_race_close_acw_navajo_1521_0",
+      "end": "start",
+      "vertex": 1521,
+      "ring_vertex": 1521,
+      "far_line_m": 0.002
+     },
+     {
+      "object": "1WALL_race_close_acw_navajo_1521_0",
+      "end": "end",
+      "vertex": 2311,
+      "ring_vertex": 2311,
+      "far_line_m": 0.001
+     },
+     {
+      "object": "1WALL_race_close_acw_college_777_0",
+      "end": "start",
+      "vertex": 777,
+      "ring_vertex": 777,
+      "far_line_m": 0.001
+     },
+     {
+      "object": "1WALL_race_close_acw_college_777_0",
+      "end": "end",
+      "vertex": 1506,
+      "ring_vertex": 1506,
+      "far_line_m": 0.001
+     }
+    ]
+   },
+   "race_cw": {
+    "token": "cw",
+    "closure_objects": 6,
+    "closure_runs": 4,
+    "closure_rings": 3637,
+    "closure_off_curve_max_m": 0.007,
+    "pins": [
+     {
+      "object": "1WALL_race_close_cw_college_777_0",
+      "end": "start",
+      "vertex": 777,
+      "ring_vertex": 777,
+      "far_line_m": 0.001
+     },
+     {
+      "object": "1WALL_race_close_cw_college_777_0",
+      "end": "end",
+      "vertex": 1506,
+      "ring_vertex": 1506,
+      "far_line_m": 0.001
+     },
+     {
+      "object": "1WALL_race_close_cw_navajo_1521_0",
+      "end": "start",
+      "vertex": 1521,
+      "ring_vertex": 1521,
+      "far_line_m": 0.006
+     },
+     {
+      "object": "1WALL_race_close_cw_navajo_1521_0",
+      "end": "end",
+      "vertex": 2311,
+      "ring_vertex": 2311,
+      "far_line_m": 0.004
+     },
+     {
+      "object": "1WALL_race_close_cw_jackson_2328_0",
+      "end": "start",
+      "vertex": 2328,
+      "ring_vertex": 2328,
+      "far_line_m": 0.0
+     },
+     {
+      "object": "1WALL_race_close_cw_jackson_2328_1",
+      "end": "end",
+      "vertex": 3289,
+      "ring_vertex": 3289,
+      "far_line_m": 0.006
+     },
+     {
+      "object": "1WALL_race_close_cw_lakemurray_3304_0",
+      "end": "start",
+      "vertex": 3304,
+      "ring_vertex": 3304,
+      "far_line_m": 0.003
+     },
+     {
+      "object": "1WALL_race_close_cw_lakemurray_3304_1",
+      "end": "end",
+      "vertex": 4454,
+      "ring_vertex": 4454,
+      "far_line_m": 0.001
+     }
+    ]
+   }
+  },
+  "rings_total": 17499,
   "interpolated": 1,
-  "objects": 36,
-  "chain_objects": 8,
-  "chain_runs": 6,
-  "chain_gap_worst_m": 3.16,
-  "chain_rings": 2853,
-  "edge_objects": 21,
-  "edge_declared_vertices": 4392,
+  "objects": 35,
+  "kbar_objects": 0,
+  "edge_objects": 15,
+  "edge_declared_vertices": 4498,
   "edge_missing": {
    "L": 0,
    "R": 30
@@ -87,25 +216,138 @@
    "R": 41
   },
   "edge_gap_worst_m": 3.503,
-  "edge_rings": 8842,
-  "kerb_objects": 7,
+  "edge_rings": 9054,
+  "free_ends": 0,
+  "pins": 16,
+  "pin_gap_max_m": 0.0,
+  "bridge_seating": {
+   "hit": 328,
+   "near": 0,
+   "interpolated": 0
+  },
+  "kerb_objects": 8,
   "corners": 5,
-  "kerb_fold_dropped": 98,
+  "kerbs_dropped": [
+   [
+    1514,
+    "inside"
+   ],
+   [
+    2319,
+    "inside"
+   ]
+  ],
+  "kerb_under_road": {
+   "1KERB_race_770_out": 0,
+   "1KERB_race_770_in": 0,
+   "1KERB_race_1514_out": 0,
+   "1KERB_race_2319_out": 0,
+   "1KERB_race_3297_out": 0,
+   "1KERB_race_3297_in": 0,
+   "1KERB_race_0_out": 0,
+   "1KERB_race_0_in": 0
+  },
+  "kerb_fold_dropped": 73,
+  "kerb_closure_clear_m": {
+   "1KERB_race_770_out": [
+    2.953,
+    "race_cw"
+   ],
+   "1KERB_race_770_in": [
+    null,
+    "race_acw"
+   ],
+   "1KERB_race_1514_out": [
+    3.059,
+    "race_cw"
+   ],
+   "1KERB_race_2319_out": [
+    2.482,
+    "race_cw"
+   ],
+   "1KERB_race_3297_out": [
+    2.753,
+    "race_cw"
+   ],
+   "1KERB_race_3297_in": [
+    5.193,
+    "race_acw"
+   ],
+   "1KERB_race_0_out": [
+    null,
+    "race_acw"
+   ],
+   "1KERB_race_0_in": [
+    null,
+    "race_acw"
+   ]
+  },
+  "kerb_clips": {
+   "1KERB_race_770_out": [
+    0,
+    0
+   ],
+   "1KERB_race_770_in": [
+    0,
+    0
+   ],
+   "1KERB_race_1514_out": [
+    0,
+    0
+   ],
+   "1KERB_race_2319_out": [
+    0,
+    0
+   ],
+   "1KERB_race_3297_out": [
+    0,
+    0
+   ],
+   "1KERB_race_3297_in": [
+    0,
+    0
+   ],
+   "1KERB_race_0_out": [
+    0,
+    0
+   ],
+   "1KERB_race_0_in": [
+    0,
+    0
+   ]
+  },
+  "mouths": [
+   {
+    "host_vertex": 1085,
+    "side": "L",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 1086,
+    "side": "R",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 4424,
+    "side": "R",
+    "strip_off_m": 0.005
+   }
+  ],
   "inside_out_spans": 0,
   "inside_out_by_object": {},
   "inside_out_unmeasured": 0,
   "chord_max_m": 0.0428,
   "chord_worst": {
    "chord_m": 0.0428,
-   "object": "1WALL_race_edge_L_alvarado_620_0",
-   "ring": 163,
+   "object": "1WALL_race_edge_L_alvarado_0_0",
+   "ring": 787,
    "at_xz": [
     -2000.55,
     -1286.07
    ]
   },
   "chord_fail_m": 0.15,
-  "chord_spans_measured": 11666,
+  "chord_spans_measured": 16300,
   "chord_spans_fold": 0,
   "chord_spans_unmeasured": 0,
   "chord_spans_over": 0,
@@ -124,7 +366,12 @@
      "lat_m": 3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_PIT_0",
@@ -132,7 +379,12 @@
      "lat_m": 3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_PIT_1",
@@ -140,7 +392,12 @@
      "lat_m": 3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_PIT_2",
@@ -148,7 +405,12 @@
      "lat_m": 3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_PIT_3",
@@ -156,7 +418,12 @@
      "lat_m": 3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_PIT_4",
@@ -164,7 +431,12 @@
      "lat_m": 3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_PIT_5",
@@ -172,7 +444,12 @@
      "lat_m": 3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_PIT_6",
@@ -180,7 +457,12 @@
      "lat_m": 3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_PIT_7",
@@ -188,7 +470,12 @@
      "lat_m": 3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_START_0",
@@ -196,7 +483,12 @@
      "lat_m": 3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_START_1",
@@ -204,7 +496,12 @@
      "lat_m": 4.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 0.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 0.48
     },
     {
      "name": "AC_START_2",
@@ -212,7 +509,12 @@
      "lat_m": 2.249,
      "edge_face_m": 5.68,
      "clear_edge_m": 2.481,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 2.481
     },
     {
      "name": "AC_START_3",
@@ -220,7 +522,12 @@
      "lat_m": 4.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 0.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 0.48
     },
     {
      "name": "AC_START_4",
@@ -228,7 +535,12 @@
      "lat_m": 2.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 2.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 2.48
     },
     {
      "name": "AC_START_5",
@@ -236,7 +548,12 @@
      "lat_m": 4.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 0.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 0.48
     },
     {
      "name": "AC_START_6",
@@ -244,7 +561,12 @@
      "lat_m": 2.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 2.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 2.48
     },
     {
      "name": "AC_START_7",
@@ -252,7 +574,12 @@
      "lat_m": 4.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 0.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 0.48
     }
    ],
    "race_cw": [
@@ -262,7 +589,12 @@
      "lat_m": -3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_PIT_0",
@@ -270,7 +602,12 @@
      "lat_m": -3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_PIT_1",
@@ -278,7 +615,12 @@
      "lat_m": -3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_PIT_2",
@@ -286,7 +628,12 @@
      "lat_m": -3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_PIT_3",
@@ -294,7 +641,12 @@
      "lat_m": -3.251,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.479,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.479
     },
     {
      "name": "AC_PIT_4",
@@ -302,7 +654,12 @@
      "lat_m": -3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_PIT_5",
@@ -310,7 +667,12 @@
      "lat_m": -3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_PIT_6",
@@ -318,7 +680,12 @@
      "lat_m": -3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_PIT_7",
@@ -326,7 +693,12 @@
      "lat_m": -3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_START_0",
@@ -334,7 +706,12 @@
      "lat_m": -3.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 1.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
     },
     {
      "name": "AC_START_1",
@@ -342,7 +719,12 @@
      "lat_m": -4.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 0.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 0.48
     },
     {
      "name": "AC_START_2",
@@ -350,7 +732,12 @@
      "lat_m": -2.249,
      "edge_face_m": 5.68,
      "clear_edge_m": 2.481,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 2.481
     },
     {
      "name": "AC_START_3",
@@ -358,7 +745,12 @@
      "lat_m": -4.249,
      "edge_face_m": 5.68,
      "clear_edge_m": 0.481,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 0.481
     },
     {
      "name": "AC_START_4",
@@ -366,7 +758,12 @@
      "lat_m": -2.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 2.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 2.48
     },
     {
      "name": "AC_START_5",
@@ -374,7 +771,12 @@
      "lat_m": -4.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 0.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 0.48
     },
     {
      "name": "AC_START_6",
@@ -382,7 +784,12 @@
      "lat_m": -2.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 2.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 2.48
     },
     {
      "name": "AC_START_7",
@@ -390,12 +797,17 @@
      "lat_m": -4.25,
      "edge_face_m": 5.68,
      "clear_edge_m": 0.48,
-     "clear_centre_m": null
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 0.48
     }
    ]
   },
   "lamps": 239,
-  "lamps_checked": 238,
+  "lamps_checked": 239,
   "lamp_arm_m": 1.8,
   "lamp_post_h_m": 11.5,
   "mast_r_m": 0.585,
@@ -410,8 +822,63 @@
    ],
    "against": "edge",
    "margin_m": 2.364,
-   "fallback": false
+   "fallback": false,
+   "closure": null,
+   "closure_margin_m": null
   },
-  "lamps_inside": 0
+  "lamps_inside": 0,
+  "lamp_min_vs_closure": {
+   "lamp": 174,
+   "vertex": 3304,
+   "lat_m": -17.8,
+   "base_xz": [
+    2591.97,
+    509.85
+   ],
+   "against": "edge",
+   "margin_m": 2.365,
+   "fallback": false,
+   "closure": "closure_race_acw",
+   "closure_margin_m": 2.365
+  },
+  "scenery_source": "trees: tools/make_treefx.py plan (every species); signs: data/signs.local.json",
+  "scenery_items": {
+   "tree": 15261,
+   "sign": 18
+  },
+  "scenery_beside": 394,
+  "scenery_hits": 0,
+  "scenery_min": {
+   "race_cw": {
+    "layout": "race_cw",
+    "kind": "tree",
+    "id": "Bush.bin@median_planting#2462",
+    "vertex": 1196,
+    "lat_m": -2.695,
+    "xz": [
+     -1562.44,
+     -243.06
+    ],
+    "against": "closure",
+    "margin_m": 0.655
+   },
+   "race_acw": {
+    "layout": "race_acw",
+    "kind": "tree",
+    "id": "Sage.bin@median_planting#2403",
+    "vertex": 1054,
+    "lat_m": 2.688,
+    "xz": [
+     -1463.38,
+     -635.14
+    ],
+    "against": "closure",
+    "margin_m": 0.662
+   }
+  },
+  "scenery_r_m": {
+   "tree": 0.3,
+   "sign": 0.03
+  }
  }
 }

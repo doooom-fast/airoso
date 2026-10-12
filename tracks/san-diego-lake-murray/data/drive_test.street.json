@@ -5,6 +5,7 @@
  "kind": "street",
  "race_furniture": false,
  "obj": "track.obj",
+ "lane": "full width / island",
  "barrier_stations": 0,
  "barrier_missing": 0,
  "barrier_missing_runs": [],

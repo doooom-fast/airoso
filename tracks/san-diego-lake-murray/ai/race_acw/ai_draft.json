@@ -5,157 +5,54 @@
  "race_furniture": true,
  "lane_offset": true,
  "frame": "kn5 frame (median dist to centerline.local: engine 50.0 m / kn5 0.0 m)",
- "points": 9013,
+ "points": 8964,
  "spacing_m": 1.5,
- "lap_m": 13519.2,
- "lap_s_est": 350.2,
- "offset_points": 7442,
- "offset_max_m": 9.458,
+ "lap_m": 13446.3,
+ "lap_s_est": 281.3,
+ "offset_points": 7538,
+ "offset_max_m": 12.432,
  "clearance": {
-  "points": 9013,
+  "points": 8964,
   "unmatched": 0,
-  "divider_stations": 7342,
-  "right_side": 7342,
+  "divider_stations": 0,
+  "right_side": 0,
   "island_hits": 0,
   "divider_hits": 0,
   "divider_too_close": 0,
   "edge_too_close": 0,
-  "min_divider_clear_m": 3.38779425390097,
-  "min_edge_clear_m": 3.607963136729137,
-  "max_lat_m": 9.457984305908639,
-  "right_side_frac": 1.0,
+  "min_divider_clear_m": null,
+  "min_edge_clear_m": 0.9220849423535613,
+  "max_lat_m": 12.432152131474119,
+  "right_side_frac": null,
   "ok": true
  },
  "geometry": {
-  "ramps": [
-   {
-    "kind": "joint",
-    "station": 4392,
-    "from_m": 6.28,
-    "to_m": 6.64,
-    "len_m": 40.5
-   },
-   {
-    "kind": "joint",
-    "station": 5511,
-    "from_m": 4.84,
-    "to_m": 5.51,
-    "len_m": 40.5
-   },
-   {
-    "kind": "joint",
-    "station": 5914,
-    "from_m": 7.28,
-    "to_m": 6.3,
-    "len_m": 40.5
-   },
-   {
-    "kind": "joint",
-    "station": 6014,
-    "from_m": 7.33,
-    "to_m": 8.91,
-    "len_m": 40.5
-   },
-   {
-    "kind": "joint",
-    "station": 6246,
-    "from_m": 8.9,
-    "to_m": 7.34,
-    "len_m": 40.5
-   },
-   {
-    "kind": "joint",
-    "station": 6475,
-    "from_m": 7.78,
-    "to_m": 9.36,
-    "len_m": 40.5
-   },
-   {
-    "kind": "joint",
-    "station": 6806,
-    "from_m": 7.69,
-    "to_m": 6.58,
-    "len_m": 40.5
-   },
-   {
-    "kind": "joint",
-    "station": 6849,
-    "from_m": 6.72,
-    "to_m": 8.31,
-    "len_m": 40.5
-   },
-   {
-    "kind": "joint",
-    "station": 7196,
-    "from_m": 6.32,
-    "to_m": 6.71,
-    "len_m": 40.5
-   },
-   {
-    "kind": "joint",
-    "station": 7288,
-    "from_m": 6.34,
-    "to_m": 5.99,
-    "len_m": 40.5
-   },
-   {
-    "kind": "joint",
-    "station": 7310,
-    "from_m": 6.45,
-    "to_m": 5.31,
-    "len_m": 40.5
-   },
-   {
-    "kind": "leave",
-    "station": 7442,
-    "from_m": 7.26,
-    "to_m": 0.0,
-    "len_m": 73.5
-   },
-   {
-    "kind": "enter",
-    "station": 111,
-    "from_m": 0.0,
-    "to_m": 5.78,
-    "len_m": 58.5
-   }
-  ],
+  "ramps": [],
   "ramp_clamped": 0,
   "corner_approach": [],
   "folds": [],
   "fillets": [
    {
     "xz": [
-     -1993.13,
-     -1280.14
+     -1958.13,
+     -1278.18
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": 45.9
+   },
+   {
+    "xz": [
+     -1991.12,
+     -1274.48
     ],
     "radius_m": 12.6,
     "floor_m": 7.22,
     "lane": "comfort",
-    "window_pts": 14,
-    "turn_deg": 85.3
-   },
-   {
-    "xz": [
-     -1981.72,
-     599.48
-    ],
-    "radius_m": 12.6,
-    "floor_m": 8.13,
-    "lane": "comfort",
-    "window_pts": 12,
-    "turn_deg": 73.2
-   },
-   {
-    "xz": [
-     5.31,
-     -1662.42
-    ],
-    "radius_m": 12.6,
-    "floor_m": 9.98,
-    "lane": "comfort",
-    "window_pts": 13,
-    "turn_deg": 76.6
+    "window_pts": 17,
+    "turn_deg": 98.7
    }
   ],
   "smoothing": [
@@ -184,16 +81,201 @@
     -761.98,
     -1276.1
    ],
-   "source": "dummies_race_acw.json AC_TIME_0 midpoint"
+   "source": "dummies_race_acw.json AC_TIME_0 midpoint",
+   "index": 0,
+   "grid_index": 8944,
+   "grid_behind_line_m": 30.0,
+   "grid_off_line_m": 3.25
   },
-  "min_radius_m": 10.3,
-  "min_radius_at": 3003,
+  "corridor_offsets": {
+   "mu_m": 25.0,
+   "sweeps": 171,
+   "omega": 1.887,
+   "last_change_m": 9.921505641052875e-06,
+   "max_lateral_slope": 0.1089,
+   "stations_at_lane_limit": 0
+  },
+  "box_approach": [
+   {
+    "apex_vertex": 0,
+    "side": "outside-right",
+    "hold_m": 105.0,
+    "ramp_in_m": 40.5,
+    "ramp_out_m": 105.0,
+    "stations_eased_off_the_edge": 36
+   },
+   {
+    "apex_vertex": 1514,
+    "side": "outside-right",
+    "hold_m": 100.5,
+    "ramp_in_m": 40.5,
+    "ramp_out_m": 61.5,
+    "stations_eased_off_the_edge": 64
+   },
+   {
+    "apex_vertex": 2319,
+    "side": "outside-right",
+    "hold_m": 106.5,
+    "ramp_in_m": 58.5,
+    "ramp_out_m": 81.0,
+    "stations_eased_off_the_edge": 0
+   },
+   {
+    "apex_vertex": 3297,
+    "side": "outside-right",
+    "hold_m": 100.5,
+    "ramp_in_m": 76.5,
+    "ramp_out_m": 67.5,
+    "stations_eased_off_the_edge": 44
+   }
+  ],
+  "box_arcs": [
+   {
+    "apex_vertex": 0,
+    "zone": "whole",
+    "turn_deg": 115.8,
+    "radius_m": 47.49,
+    "lane": "comfort",
+    "radius_before_m": 8.25,
+    "window_m": 127.5,
+    "entry_m": 42.0,
+    "exit_m": 31.5,
+    "path_clear_min_m": 1.5,
+    "points_on_arc": 26,
+    "min_speed_kmh": 98.3,
+    "approach_min_speed_kmh": 83.2
+   },
+   {
+    "apex_vertex": 1514,
+    "zone": "box",
+    "turn_deg": 106.6,
+    "radius_m": 52.27,
+    "lane": "comfort",
+    "radius_before_m": 9.85,
+    "window_m": 130.5,
+    "entry_m": 42.0,
+    "exit_m": 31.5,
+    "path_clear_min_m": 1.73,
+    "points_on_arc": 19,
+    "min_speed_kmh": 103.1,
+    "approach_min_speed_kmh": 95.9
+   },
+   {
+    "apex_vertex": 2319,
+    "zone": "box",
+    "turn_deg": 93.7,
+    "radius_m": 52.32,
+    "lane": "comfort",
+    "radius_before_m": 7.29,
+    "window_m": 148.5,
+    "entry_m": 54.0,
+    "exit_m": 31.5,
+    "path_clear_min_m": 1.5,
+    "points_on_arc": 25,
+    "min_speed_kmh": 103.2,
+    "approach_min_speed_kmh": 103.2
+   },
+   {
+    "apex_vertex": 3297,
+    "zone": "box",
+    "turn_deg": 112.8,
+    "radius_m": 58.54,
+    "lane": "comfort",
+    "radius_before_m": 12.18,
+    "window_m": 193.5,
+    "entry_m": 42.0,
+    "exit_m": 99.0,
+    "path_clear_min_m": 1.51,
+    "points_on_arc": 21,
+    "min_speed_kmh": 109.1,
+    "approach_min_speed_kmh": 109.1
+   }
+  ],
+  "min_radius_m": 12.54,
+  "min_radius_at": 8023,
   "radius_below_floor": 0,
-  "max_turn_deg": 8.3,
+  "max_turn_deg": 6.8,
   "turns_over_limit": 0,
   "turns_over_limit_road_tight": 0,
-  "max_lateral_jump_m": 0.291,
+  "max_lateral_jump_m": 1.106,
   "backward_steps": 0,
-  "self_crossings": 0
+  "self_crossings": 0,
+  "corridor": {
+   "points_in_open_box": 64,
+   "points_whole_street": 1646,
+   "points_in_closure_lane": 7254
+  },
+  "min_speed_kmh": 50.5,
+  "min_speed_at": 8021
+ },
+ "corridor": {
+  "declaration": "barrier_bands.json corridors.race_acw (token acw)",
+  "zones": {
+   "whole": 820,
+   "pin": 8,
+   "closure": 2806,
+   "island": 820,
+   "box": 44
+  },
+  "check": {
+   "points": 8964,
+   "probes": 54611,
+   "outside": 0,
+   "too_close": 0,
+   "min_clear_m": 1.486,
+   "min_clear_at": 592,
+   "min_clear_face": "y_lo (forward-right)",
+   "island_hits": 0,
+   "island_too_close": 0,
+   "island_min_m": 3.154,
+   "mouth_min_m": 5.723,
+   "mouth_hits": 0,
+   "ok": true
+  },
+  "open_corners": [
+   {
+    "apex_vertex": 0,
+    "zone": "whole",
+    "D_deg": -85.81
+   },
+   {
+    "apex_vertex": 1514,
+    "zone": "box",
+    "D_deg": -91.7
+   },
+   {
+    "apex_vertex": 2319,
+    "zone": "box",
+    "D_deg": -105.72
+   },
+   {
+    "apex_vertex": 3297,
+    "zone": "box",
+    "D_deg": -84.27
+   }
+  ],
+  "corners_on_the_floor_fillet": [
+   {
+    "apex_vertex": 770,
+    "zone": "whole",
+    "D_deg": -177.54,
+    "why": "turns > 170 deg"
+   }
+  ],
+  "face_folds_trimmed": {
+   "hi": [],
+   "lo": [
+    "extend",
+    "loop",
+    "extend",
+    "loop",
+    "extend"
+   ]
+  },
+  "min_radius_m": 12.54,
+  "min_speed_kmh": 50.5,
+  "wall_clear_min_m": 1.486,
+  "points_in_open_box": 64,
+  "start_index": 0
  }
 }

@@ -4,16 +4,17 @@
  "direction": "forward",
  "kind": "race",
  "race_furniture": true,
- "obj": "track.race.obj",
- "barrier_stations": 34833,
+ "obj": "track.race_cw.obj",
+ "lane": "barrier_bands.json corridors.race_cw",
+ "barrier_stations": 37869,
  "barrier_missing": 0,
  "barrier_missing_runs": [],
- "soft_top_in_lane": 67,
+ "soft_top_in_lane": 44,
  "off_pavement_stations": 0,
  "severe_steps": 0,
  "severe_per_km": 0.0,
- "steps_per_km": 0.0,
- "kinks_per_km": 5.27,
+ "steps_per_km": 0.37,
+ "kinks_per_km": 1.48,
  "obstruction_stations": 0,
  "daylight_gaps": 0,
  "replication_vs_measured": {
@@ -23,9 +24,9 @@
  },
  "undrivable_corners": 0,
  "floating_furniture": 391,
- "apron_steps": 42,
- "excursion_drops": 4,
- "excursion_far_ledges": 176,
+ "apron_steps": 1,
+ "excursion_drops": 1,
+ "excursion_far_ledges": 179,
  "worst_excursions": [
   [
    2552.6,
@@ -37,7 +38,7 @@
    13350.6,
    -11.0,
    1.26,
-   true
+   false
   ],
   [
    2402.7,
@@ -101,24 +102,6 @@
   ]
  ],
  "worst_gated_excursions": [
-  [
-   13350.6,
-   -11.0,
-   1.26,
-   true
-  ],
-  [
-   13350.6,
-   10.5,
-   0.14,
-   true
-  ],
-  [
-   13350.6,
-   -10.5,
-   0.14,
-   true
-  ],
   [
    2.3,
    -12.5,
@@ -186,7 +169,7 @@
    ],
    [
     4535.0,
-    -8.96,
+    -6.0,
     "1GRASS_0"
    ]
   ],
@@ -194,64 +177,64 @@
   "severe_all": [],
   "kinks": [
    [
-    6951.0,
-    -7.94,
-    48.3
-   ],
-   [
-    6952.0,
-    -7.93,
-    45.89
-   ],
-   [
-    6950.0,
-    -7.94,
-    25.43
-   ],
-   [
-    6952.0,
-    -6.51,
-    20.59
-   ],
-   [
-    6952.0,
-    -6.43,
-    20.34
-   ],
-   [
-    6953.0,
-    -7.93,
-    19.09
-   ],
-   [
-    6957.0,
-    -6.51,
-    12.13
-   ],
-   [
-    6957.0,
-    -6.43,
-    12.0
-   ],
-   [
     6956.0,
-    -6.51,
-    11.85
-   ],
-   [
-    6956.0,
-    -6.43,
-    11.73
-   ],
-   [
-    6959.0,
-    -7.93,
-    11.12
+    -4.09,
+    6.23
    ],
    [
     6955.0,
-    -6.51,
-    11.04
+    -4.09,
+    5.82
+   ],
+   [
+    6954.0,
+    -4.09,
+    5.79
+   ],
+   [
+    2302.0,
+    -5.09,
+    5.72
+   ],
+   [
+    2303.0,
+    -5.09,
+    5.58
+   ],
+   [
+    6957.0,
+    -4.09,
+    5.46
+   ],
+   [
+    6958.0,
+    -4.09,
+    5.21
+   ],
+   [
+    2301.0,
+    -5.09,
+    4.64
+   ],
+   [
+    2304.0,
+    -5.09,
+    4.57
+   ],
+   [
+    6952.0,
+    -4.09,
+    4.44
+   ],
+   [
+    6956.0,
+    -2.59,
+    4.0
+   ],
+   [
+    6955.0,
+    -2.59,
+    3.71
    ]
   ],
   "obstructions": []

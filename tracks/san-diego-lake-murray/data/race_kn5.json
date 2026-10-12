@@ -1,0 +1,885 @@
+{
+ "file": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\build\\san_diego_lake_murray_race.kn5",
+ "version": 5,
+ "file_bytes": 10253588,
+ "textures": [
+  {
+   "name": "kerb_diffuse.png",
+   "bytes": 771
+  },
+  {
+   "name": "concrete_barrier_diffuse.png",
+   "bytes": 2368008
+  },
+  {
+   "name": "concrete_barrier_normal.png",
+   "bytes": 63035
+  }
+ ],
+ "materials": [
+  {
+   "name": "1KERB_race_0_in_mat",
+   "shader": "ksPerPixel",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "kerb_diffuse.png"
+    ]
+   ]
+  },
+  {
+   "name": "1KERB_race_0_out_mat",
+   "shader": "ksPerPixel",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "kerb_diffuse.png"
+    ]
+   ]
+  },
+  {
+   "name": "1KERB_race_1514_out_mat",
+   "shader": "ksPerPixel",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "kerb_diffuse.png"
+    ]
+   ]
+  },
+  {
+   "name": "1KERB_race_2319_out_mat",
+   "shader": "ksPerPixel",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "kerb_diffuse.png"
+    ]
+   ]
+  },
+  {
+   "name": "1KERB_race_3297_in_mat",
+   "shader": "ksPerPixel",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "kerb_diffuse.png"
+    ]
+   ]
+  },
+  {
+   "name": "1KERB_race_3297_out_mat",
+   "shader": "ksPerPixel",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "kerb_diffuse.png"
+    ]
+   ]
+  },
+  {
+   "name": "1KERB_race_770_in_mat",
+   "shader": "ksPerPixel",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "kerb_diffuse.png"
+    ]
+   ]
+  },
+  {
+   "name": "1KERB_race_770_out_mat",
+   "shader": "ksPerPixel",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "kerb_diffuse.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_L_alvarado_0_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_L_college_770_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_L_jackson_2319_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_L_jackson_2319_1_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_L_lakemurray_3297_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_L_lakemurray_3297_1_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_L_navajo_1514_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_L_navajo_1514_1_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_R_alvarado_5_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_R_college_774_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_R_jackson_2324_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_R_jackson_2324_1_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_R_lakemurray_3300_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_R_lakemurray_3300_1_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_R_navajo_1517_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  }
+ ],
+ "meshes": [
+  {
+   "name": "1KERB_race_0_in",
+   "verts": 500,
+   "tris": 486,
+   "matid": 0,
+   "surface": "KERB",
+   "renderable": true,
+   "radius_m": 7.9,
+   "area_m2": 21.1,
+   "edge_p10_m": 0.05,
+   "edge_med_m": 0.235,
+   "edge_p90_m": 0.902,
+   "grid_m": 0.295,
+   "bbox_m": [
+    13.2,
+    0.6,
+    9.8
+   ]
+  },
+  {
+   "name": "1KERB_race_0_out",
+   "verts": 1710,
+   "tris": 1704,
+   "matid": 1,
+   "surface": "KERB",
+   "renderable": true,
+   "radius_m": 41.1,
+   "area_m2": 106.4,
+   "edge_p10_m": 0.05,
+   "edge_med_m": 0.318,
+   "edge_p90_m": 0.9,
+   "grid_m": 0.353,
+   "bbox_m": [
+    72.7,
+    2.2,
+    39.1
+   ]
+  },
+  {
+   "name": "1KERB_race_1514_out",
+   "verts": 678,
+   "tris": 672,
+   "matid": 2,
+   "surface": "KERB",
+   "renderable": true,
+   "radius_m": 24.0,
+   "area_m2": 58.5,
+   "edge_p10_m": 0.05,
+   "edge_med_m": 0.435,
+   "edge_p90_m": 0.907,
+   "grid_m": 0.417,
+   "bbox_m": [
+    17.6,
+    0.2,
+    45.0
+   ]
+  },
+  {
+   "name": "1KERB_race_2319_out",
+   "verts": 786,
+   "tris": 780,
+   "matid": 3,
+   "surface": "KERB",
+   "renderable": true,
+   "radius_m": 25.6,
+   "area_m2": 63.5,
+   "edge_p10_m": 0.05,
+   "edge_med_m": 0.427,
+   "edge_p90_m": 0.949,
+   "grid_m": 0.404,
+   "bbox_m": [
+    45.9,
+    0.9,
+    23.4
+   ]
+  },
+  {
+   "name": "1KERB_race_3297_in",
+   "verts": 282,
+   "tris": 270,
+   "matid": 4,
+   "surface": "KERB",
+   "renderable": true,
+   "radius_m": 5.1,
+   "area_m2": 11.7,
+   "edge_p10_m": 0.05,
+   "edge_med_m": 0.241,
+   "edge_p90_m": 0.9,
+   "grid_m": 0.295,
+   "bbox_m": [
+    5.9,
+    0.1,
+    9.2
+   ]
+  },
+  {
+   "name": "1KERB_race_3297_out",
+   "verts": 678,
+   "tris": 672,
+   "matid": 5,
+   "surface": "KERB",
+   "renderable": true,
+   "radius_m": 23.1,
+   "area_m2": 54.3,
+   "edge_p10_m": 0.05,
+   "edge_med_m": 0.401,
+   "edge_p90_m": 0.91,
+   "grid_m": 0.402,
+   "bbox_m": [
+    18.1,
+    0.1,
+    43.0
+   ]
+  },
+  {
+   "name": "1KERB_race_770_in",
+   "verts": 668,
+   "tris": 660,
+   "matid": 6,
+   "surface": "KERB",
+   "renderable": true,
+   "radius_m": 11.5,
+   "area_m2": 26.9,
+   "edge_p10_m": 0.05,
+   "edge_med_m": 0.231,
+   "edge_p90_m": 0.9,
+   "grid_m": 0.285,
+   "bbox_m": [
+    19.8,
+    1.0,
+    12.4
+   ]
+  },
+  {
+   "name": "1KERB_race_770_out",
+   "verts": 1746,
+   "tris": 1740,
+   "matid": 7,
+   "surface": "KERB",
+   "renderable": true,
+   "radius_m": 40.2,
+   "area_m2": 126.5,
+   "edge_p10_m": 0.05,
+   "edge_med_m": 0.371,
+   "edge_p90_m": 0.914,
+   "grid_m": 0.381,
+   "bbox_m": [
+    67.3,
+    2.0,
+    44.5
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_L_alvarado_0_0",
+   "verts": 12640,
+   "tris": 15780,
+   "matid": 8,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 1055.0,
+   "area_m2": 7765.8,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.971,
+   "edge_p90_m": 3.075,
+   "grid_m": 0.992,
+   "bbox_m": [
+    2013.9,
+    24.7,
+    632.7
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_L_college_770_0",
+   "verts": 12080,
+   "tris": 15080,
+   "matid": 9,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 982.4,
+   "area_m2": 7509.4,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.979,
+   "edge_p90_m": 3.066,
+   "grid_m": 0.998,
+   "bbox_m": [
+    564.2,
+    54.2,
+    1882.7
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_L_jackson_2319_0",
+   "verts": 7952,
+   "tris": 9920,
+   "matid": 10,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 701.9,
+   "area_m2": 4920.6,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.949,
+   "edge_p90_m": 3.069,
+   "grid_m": 0.996,
+   "bbox_m": [
+    1204.7,
+    36.3,
+    720.7
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_L_jackson_2319_1",
+   "verts": 7936,
+   "tris": 9900,
+   "matid": 11,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 728.8,
+   "area_m2": 4943.4,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 3.003,
+   "edge_p90_m": 3.081,
+   "grid_m": 0.999,
+   "bbox_m": [
+    1369.5,
+    9.7,
+    498.8
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_L_lakemurray_3297_0",
+   "verts": 9696,
+   "tris": 12100,
+   "matid": 12,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 883.3,
+   "area_m2": 6063.6,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.976,
+   "edge_p90_m": 3.11,
+   "grid_m": 1.001,
+   "bbox_m": [
+    1200.4,
+    28.7,
+    1295.8
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_L_lakemurray_3297_1",
+   "verts": 9700,
+   "tris": 12100,
+   "matid": 13,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 838.0,
+   "area_m2": 6040.1,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.973,
+   "edge_p90_m": 3.077,
+   "grid_m": 0.999,
+   "bbox_m": [
+    1418.4,
+    42.4,
+    892.7
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_L_navajo_1514_0",
+   "verts": 6544,
+   "tris": 8160,
+   "matid": 14,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 600.7,
+   "area_m2": 4088.5,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 3.0,
+   "edge_p90_m": 3.08,
+   "grid_m": 1.001,
+   "bbox_m": [
+    938.0,
+    44.2,
+    749.5
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_L_navajo_1514_1",
+   "verts": 6528,
+   "tris": 8140,
+   "matid": 15,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 586.7,
+   "area_m2": 4049.4,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.994,
+   "edge_p90_m": 3.058,
+   "grid_m": 0.997,
+   "bbox_m": [
+    1105.0,
+    47.5,
+    392.5
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_R_alvarado_5_0",
+   "verts": 12196,
+   "tris": 15200,
+   "matid": 16,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 1035.1,
+   "area_m2": 7605.5,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 3.004,
+   "edge_p90_m": 3.092,
+   "grid_m": 1.0,
+   "bbox_m": [
+    1973.1,
+    24.4,
+    627.6
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_R_college_774_0",
+   "verts": 12076,
+   "tris": 15060,
+   "matid": 17,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 972.8,
+   "area_m2": 7493.6,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.98,
+   "edge_p90_m": 3.222,
+   "grid_m": 0.998,
+   "bbox_m": [
+    561.0,
+    54.2,
+    1862.7
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_R_jackson_2324_0",
+   "verts": 7776,
+   "tris": 9700,
+   "matid": 18,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 699.8,
+   "area_m2": 4893.6,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 3.0,
+   "edge_p90_m": 3.103,
+   "grid_m": 1.004,
+   "bbox_m": [
+    1205.4,
+    36.3,
+    711.5
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_R_jackson_2324_1",
+   "verts": 7788,
+   "tris": 9700,
+   "matid": 19,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 715.7,
+   "area_m2": 4846.7,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 3.002,
+   "edge_p90_m": 3.071,
+   "grid_m": 1.0,
+   "bbox_m": [
+    1347.3,
+    9.7,
+    483.7
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_R_lakemurray_3300_0",
+   "verts": 9600,
+   "tris": 11980,
+   "matid": 20,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 871.5,
+   "area_m2": 5992.2,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.958,
+   "edge_p90_m": 3.09,
+   "grid_m": 1.0,
+   "bbox_m": [
+    1187.2,
+    28.8,
+    1276.5
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_R_lakemurray_3300_1",
+   "verts": 9612,
+   "tris": 11980,
+   "matid": 21,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 838.5,
+   "area_m2": 6019.1,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.995,
+   "edge_p90_m": 3.095,
+   "grid_m": 1.002,
+   "bbox_m": [
+    1418.4,
+    42.3,
+    894.8
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_R_navajo_1517_0",
+   "verts": 12812,
+   "tris": 15980,
+   "matid": 22,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 1151.6,
+   "area_m2": 8029.2,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 3.002,
+   "edge_p90_m": 3.08,
+   "grid_m": 1.002,
+   "bbox_m": [
+    2012.2,
+    86.2,
+    1118.5
+   ]
+  }
+ ],
+ "nodes": [
+  "BlenderFile"
+ ],
+ "summary": {
+  "meshes": 23,
+  "verts": 151984,
+  "tris": 187764,
+  "textures": 3,
+  "texture_bytes": 2431814,
+  "materials": 23,
+  "surfaces": {
+   "KERB": {
+    "meshes": 8,
+    "verts": 7048,
+    "tris": 6984,
+    "area_m2": 468.9,
+    "invisible": 0,
+    "edge_med_m": 0.346,
+    "grid_m": 0.364
+   },
+   "WALL": {
+    "meshes": 15,
+    "verts": 144936,
+    "tris": 180780,
+    "area_m2": 90260.7,
+    "invisible": 0,
+    "edge_med_m": 2.985,
+    "grid_m": 0.999
+   }
+  },
+  "shaders_by_tris": {
+   "ksPerPixelMultiMap": {
+    "meshes": 15,
+    "tris": 180780
+   },
+   "ksPerPixel": {
+    "meshes": 8,
+    "tris": 6984
+   }
+  },
+  "near_vert_cap": [],
+  "non_pot_textures": []
+ }
+}

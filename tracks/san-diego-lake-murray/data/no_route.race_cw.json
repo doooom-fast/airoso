@@ -1,0 +1,41 @@
+{
+ "layout": "race_cw",
+ "mode": "built",
+ "obj": "track.race_cw.obj",
+ "declaration": "v2 corridors.race_cw",
+ "bands_version": 2,
+ "params": {
+  "cell_m": 0.25,
+  "tile_m": 64.0,
+  "domain_pad_m": 25.0,
+  "probe_r_m": 0.5,
+  "tol_m": 0.75,
+  "wall_span_m": [
+   0.2,
+   0.9
+  ],
+  "deck": "centreline y + 0.10",
+  "barrier_half_m": 0.335
+ },
+ "seed": "AC_START_0",
+ "domain_m2": 936750,
+ "reached_m2": 139147,
+ "allowed_m2": 139147,
+ "leak_cells": 0,
+ "leak_m2": 0,
+ "escaped": false,
+ "wall_cells": 584532,
+ "wall_tris_in_band": 159074,
+ "door_clusters": 0,
+ "doors": [],
+ "doors_by_class": {},
+ "forbidden_probes": 406,
+ "forbidden_reached": [],
+ "lap_vertices": 4498,
+ "blocked": [],
+ "spawns_checked": 16,
+ "spawns_unreached": [],
+ "fail": false,
+ "fails": [],
+ "seconds": 13.5
+}

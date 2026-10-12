@@ -1,24 +1,24 @@
 {
  "slug": "san_diego_lake_murray",
- "obj": "track.race.obj",
+ "obj": "track.race_acw.obj",
  "race": true,
  "road_verts": 17978,
  "grass_verts": 76648,
  "piers": 0,
- "wall_verts": 223120,
- "curb_verts": 64358,
+ "wall_verts": 238880,
+ "curb_verts": 62316,
  "A_supports_in_road": 0,
  "B_terrain_poke": 0,
  "C_junction_crossings": 0,
- "D_wall_on_road": 512,
+ "D_wall_on_road": 0,
  "E_wall_floating": 0,
  "J_terrain_span": 0,
  "K_kerb_in_carriageway": 154,
  "worst_kerb_stand_m": 0.93,
  "worst_terrain_span_m": 0.0,
  "F_curb_not_flush": 15,
- "F_skirt_off_terrain": 2056,
- "F_side_faces_skipped": 1692,
+ "F_skirt_off_terrain": 1947,
+ "F_side_faces_skipped": 1620,
  "G_prop_floating": null,
  "H_ground_above_deck": null,
  "I_sidewalk_isolating": 145,
@@ -75,6 +75,9 @@
   "supports": [],
   "ground_cut": [],
   "poke": [],
-  "crossings": []
- }
+  "crossings": [],
+  "race_wall_clash": []
+ },
+ "layout": "race_acw",
+ "W_race_wall_clash": 0
 }

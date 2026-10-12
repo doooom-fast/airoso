@@ -794,3 +794,59 @@ cut at the legs' crossing, the hook's chord, a U-turn refused; the gap window's 
 the previous trim), `test_verify_race.py` (O: a 0.458 m and a 0.06 m ring fail, a 0.15 m author threshold fails),
 `test_ship_sd_chain.py` (the weld between the rebuild and the seat with the workshop on sys.path; verify_mouths after
 the street gate OBJ, hard; the AIROSO default). engine-july is not edited: no file `ship_sd.sh` runs from ENG changed.
+
+## 2026-10-11 — tiered terrain: the far ring's `verify_kn5` check, balanced terrain tiles, the far decimation retired, L3's clamp made distance-weighted (ledger 0046)
+
+Kevin, 2026-10-10: *"more terrain near the roads, and the I-8 trench and adjacent causeway cut out"*, *"I want to see
+cowles mountain"*. The ground is now one multi-resolution lattice sampled from USGS 3DEP **at every vertex**
+(`scripts/elevation/terrain_sample.py` + `scripts/geometry/terrain_tiers.py`, opt-in per track by a `terrain.tiers`
+list; every track without it is byte-identical). Lake Murray is the only consumer. Rehearsed in full on a scratch
+copy of the workshop (2026-10-12, `ship_sd.sh --no-install`, ENG = a scratch copy of engine-july): **every gate
+verdict file identical to v0.17.1 field for field** (drive_test street / race_cw / race_acw, audit street / race_cw /
+race_acw but `grass_verts`, no_route planned + built, verify_mouths, verify_race, verify_race scenery); race and
+closure kn5 vertex positions identical.
+
+### Gates and wiring
+
+| Item | Before | After | Flag |
+|---|---|---|---|
+| `verify_kn5` far ring (new, hard) | — | every mesh named `GRASS_FAR*` must carry **no digit prefix** (a `1GRASS_FAR` would be collided with, gated and GrassFX-listed) and stay ≤ 65,535 positions; prints the terrain tile count. A track without a far ring prints nothing and is judged as before | [std] the cap is AC's; the prefix rule is L6 |
+| engine-july `build_kn5_loop._split_large` (pending mirror) | `1GRASS` cut into `n // 60000 + 1` equal-width bands | `1GRASS*` / `GRASS_FAR*` tiled by recursive **median bisection** (palm.chunk_mesh's rule); every other mesh keeps the bands. 1GRASS 236,771 v → 4 tiles (max 59,692), GRASS_FAR 106,557 v → 2 (max 53,414) | wiring |
+| engine-july `build_kn5_loop` T-junction weld (new, pending mirror) | — | after the conform, a terrain face whose boundary edge carries another vertex (within 1 mm, in its line) is re-fanned through it from its centroid: in-plane, no vertex moves. 1,906 faces | wiring |
+| `GRASS_FAR` face-up | — | joins the face-up pass of `1GRASS` | wiring |
+| `tools/slim_far_terrain_blend.py` | `FAR_M 220`, `RATIO 0.35`: every TERRAIN vertex > 220 m from a road collapsed to 35 % so one uniform sheet fit two sub-65k tiles | **deleted** with its `ship_sd.sh` step. It existed to pay for the equal-width bands (the cap decided how much world there was) and it ate the deepest I-8 cut | ⚠ its 220 / 0.35 were invented; gone |
+| `tools/triangulate_terrain_blend.py` (new step after the seat) | the decimation also triangulated every TERRAIN face (BEAUTY) | the same BEAUTY triangulation, alone; no vertex moves (exit 1 if the count changes). The near-road ground the gates were tuned on is that triangulation's; without it the first rehearsal read +21 soft-top stations | wiring |
+| `make_treefx` `SURFACE_MATERIALS` | hard-coded `1GRASS_0_mat, 1GRASS_1_mat, 1ROAD_road_mat` | read off the built road kn5's gate OBJ (every `1GRASS*` material + the road); exit 1 without the OBJ. `GRASS_FAR` is not physical and is not listed | wiring |
+| road gate OBJ | written after the track folder | written **before** it (ext_config's GrassFX lists and make_treefx read the tile names off it) | wiring |
+| `ext_config` GrassFX | `GRASS_MESHES = 1GRASS_0, 1GRASS_1` | `1GRASS_0..3` (the `startswith(("1GRASS","1LAWN"))` rule, unchanged); `GRASS_FAR` never listed; `OCCLUDING_MESHES` unchanged | [std] the v0.12.x TDR rule |
+
+### The standard: L3 "Fake mountains" (Kevin's approval: D6(i) of the Lariat V3 plan, "Those changes are good")
+
+The ±`terrain_band_m` clamp (22 m) now holds in full only within `terrain.clamp_corridor_m` of a pavement and
+releases (smoothstep) to the raw DEM by `terrain.clamp_blend_m`; beyond, 3DEP stands uncapped. On the build:
+5,153 lattice vertices clamped (max lift 25.2 m, max cut 18.4 m), all within 250 m of a road; Del Cerro hilltop 258.1 m
+(was 163.7 / 168.4), Cowles 484.3 m (was absent; world max 220.0).
+
+### Invented numbers (⚠ every one; measured, none calibrated against a reference track)
+
+| Number | Value | Range the ledger gave / why |
+|---|---|---|
+| `clamp_corridor_m` | 80 m | 60–100 (corridor 20 + blend 16 + one cell … ~100) |
+| `clamp_blend_m` | 250 m | ~250 or the medium tier's edge |
+| `tiers` | 5 m (x-split) within 60 m of a pavement, 20 m (x-split) to 500 m, 40 m beyond | the ledger's own example; 5 m is the only nesting cell under criterion 5's 7 m (20/3 m would put 10.2 % of the fine tier's facets past 7 m in 3D on its slopes) |
+| `tier_options.keep_cells` | the graded 20 m grid's own cells within 18 m of a pavement | the seat moves ground ≤ 11.1 m past a pavement and subdivides ≤ 15.1 m; the prep pins ≤ 9 m and subdivides ≤ 16 m |
+| `keep_surface_m` / `keep_feather_m` | 20 / 16 m — from the pavement **and** (2026-10-12) from the nearest kept node | the conform corridor and blend. The kept-node feather removed 1,355 of the 1,404 ledges (> 100 % built slope, > 2× the data's) the pavement-only feather left at the kept cells' outer edge, with every gate identical |
+| `physical_within_m` | 250 m | drive_test sweeps ≤ 20 m off the road, TreeFX fills ≤ 200 m |
+| I-8 corridor | ±80 m at 5 m; floor every 10 m, 2 m sections every 25 m | the ledger asked 10 m cells; 10 m does not nest beside a kept 20 m cell (two levels) |
+| `include.cowles_mountain` | 20 m cells over the summit box | the ledger's 20 m |
+| `far_extent` | 32.755–32.822 N, 117.0895–116.998 W | the dossier's landmark box, widened so criterion 3's x ≤ −4000 / ≥ 4500 faces exist |
+| sightline thresholds (`tools/sightline_check.py`) | crest 9.0°, v2240 8.1°, v1640 5.1° | the crest's is the ledger's; the others take the same 0.35–0.4° allowance. Measured, not gated |
+
+### Verification criteria (ledger 0046 §Verification) — measured on the built gate OBJ against fresh 3DEP, NOT gated
+
+Results are in the ledger. Two read FAIL as written, with the cause measured: criterion 5's 15–60 m p90 is 9.05 m
+(the kept near-road cells and the prep's slivers of them reach ~46 m out; the 5 m tier itself passes), and criterion
+3's "no vertex below 100 m" is premised on a real low of ~121 m — fresh 3DEP puts the San Diego River side of the box
+at 20–100 m (20,622 vertices; a 1,684-vertex sample against fresh 3DEP: p95 0.005 m, and the 16 off by > 1 m are
+graded ground 13–42 m from a pavement or in the clamp's release band). Neither is loosened here:
+they are reported against their own wording.

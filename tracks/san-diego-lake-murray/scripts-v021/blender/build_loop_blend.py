@@ -241,8 +241,19 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
     legacy = _legacy_surface(grid_xyz)
 
     I, J, H, K = T["I"], T["J"], T["h"], T["keep"]
+    # the kept cells (the graded grid's own triangles) reach past keep_surface_m wherever a 20 m cell touches the
+    # within_m band, up to ~46 m out: feathering by pavement distance alone then leaves the cell's outer edge on the
+    # graded surface and the data one 5 m node away (a serrated step where the two disagree, e.g. the cut bank west
+    # of seam-alvarado). So the feather ALSO runs keep_feather_m out from the nearest kept node (ledger 0046).
+    kept_xz = [(fx0 + i * fux, fz0 + j * fuz) for i, j, kc in zip(I, J, K) if kc]
+    kd_keep = None
+    if kept_xz and keep_f > 0.0:
+        kd_keep = kdtree.KDTree(len(kept_xz))
+        for k, (x, z) in enumerate(kept_xz):
+            kd_keep.insert((x, z, 0.0), k)
+        kd_keep.balance()
     verts = []
-    n_keep = n_feather = n_clamped = n_cell = 0
+    n_keep = n_feather = n_clamped = n_cell = n_edge = 0
     max_lift = max_cut = 0.0
     for i, j, h, kc in zip(I, J, H, K):
         x, z = fx0 + i * fux, fz0 + j * fuz
@@ -266,6 +277,11 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
                 max_lift, max_cut = max(max_lift, y2 - y), max(max_cut, y - y2)
             y = y2
         wk = tt.keep_weight(d, keep_m, keep_f)
+        if kd_keep is not None and wk < 1.0:
+            we = tt.keep_weight(kd_keep.find((x, z, 0.0))[2], 0.0, keep_f)
+            if we > wk:
+                wk = we
+                n_edge += 1
         if wk > 0.0:
             L = legacy(x, z)
             if L is None:
@@ -296,7 +312,8 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
     ylo = min(v[1] for v in verts) + elev0
     yhi = max(v[1] for v in verts) + elev0
     rep = {"vertices": len(verts), "physical_v": len(terrain["vertices"]), "far_v": len(far_mesh["vertices"]),
-           "kept_cell_vertices": n_cell, "kept_surface": n_keep, "feathered": n_feather, "clamped": n_clamped,
+           "kept_cell_vertices": n_cell, "kept_surface": n_keep, "feathered": n_feather,
+           "feathered_from_kept_edge": n_edge, "clamped": n_clamped,
            "clamp_max_lift": round(max_lift, 2), "clamp_max_cut": round(max_cut, 2),
            "abs_min": round(ylo, 2), "abs_max": round(yhi, 2)}
     print(f"[blend] tiered terrain: {rep}")

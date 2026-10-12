@@ -1720,6 +1720,97 @@ stages" for the numbers. The roll-rate gate PASSES on the written file (worst 3.
 in-footprint measurement it would fail at 1,836 stations with 36 swings, and on the smoothed measurement at 1,030
 with 18: the measurement alone is not a road surface, which is why the file is "estimated" and mostly standard.
 
+## 2026-10-12 — Lariat Drive-1 gates that do not wait for the terrain: road inventory, stacked legs, the kink ceiling (ledger 0048)
+
+V3-PLAN P5's Drive-1 set, the three parts that do not depend on the tiered terrain (ledger 0046's job). All three
+judge the BUILT artifact (L5): the gate OBJ `scripts.modkit.kn5_to_gate_obj` writes from the shipped kn5, walked
+along drive_test's own line (`gate_centerline.json` > `finished_centerline.json` > `centerline.local.json`,
+`tools/gate_route.py`). None has run on a Lariat build yet: there is none (the underlay, P2 step 3, is not written).
+
+### Road inventory (new: `tools/verify_road_inventory.py`; a separate tool, not a `verify_kn5` section, while the terrain job holds `scripts/ac/verify_kn5.py`)
+
+| Check | Threshold | Flag |
+|---|---|---|
+| `HIGHWAY*` / `HWYSTRUCT*` / `MOUNTAINS*` groups, with or without a `<digits><KEY>_` prefix | 0 | [std: Kevin's "no extra highways", 0048; MOUNTAINS: L1 as 0046 applies it to the sine ridge] |
+| pavement off the route: every triangle of a pavement group (prefixes from the exemption file; the Lariat's `1ROAD`, `AUTH_OVERPASS`) at its 3 vertices and centroid, each within the route's lerped half-width **+ 2.0 m** or inside a declared exemption polygon | 0 triangles | ⚠ 2.0 m [invented] (the plan's number) |
+| exemptions: `tracks/lookout-lariat/pavement_exemptions.json`, each naming the `AUTH_*` object it covers; `footprint` or `name_and_footprint` (the C-470 decks); lon/lat or OBJ-frame polygons | an entry with no polygon exempts NOTHING (listed as unmeasured); `active: false` (D2 b's route: Kevin chose D2 a) exempts nothing | not a bypass: today all 19 active entries are unmeasured, so nothing off the route is exempt until its object is authored and its polygon drawn |
+| the pavement is the lap: each layout's line walked at 1 m, pavement under it within drive_test's deck window (±2.5 m, its existing `top_at` window), share of the lap paved | ≥ 99 % (within 1 %) | ⚠ 1 % [invented] (the plan's number) |
+
+Exit 1 on any fail, 2 on an input error (no OBJ, no line, a malformed exemption file: an object not `AUTH_*`, a
+duplicate id, an unknown match). Proof: `tests/tools/test_verify_road_inventory.py` (10): a clean road passes and is
+100 % paved; each forbidden name fails, prefixed or not, and look-alikes (`GRASS_mountain`, `AUTH_overpass_*`) do
+not; a slab 1.5 m past the edge passes and 2.5 m fails (beyond 0.5 m reported); a lot passes only inside its
+polygon (OBJ frame or lon/lat), a half-covering polygon still fails; unmeasured and inactive exemptions exempt
+nothing; `name_and_footprint` exempts only its own group; a 10 m hole in 200 m fails, a 1 m hole passes; the
+`--kn5` path decodes a real kn5 to the same answer; the Lariat file declares the plan's whole list.
+
+### Stacked legs (new: `tools/verify_stacked_legs.py`, rule L4)
+
+| Check | Threshold | Flag |
+|---|---|---|
+| pair: two lap points (1 m) < **40 m** apart in plan and > **150 m** apart along the lap (cyclic) | — | ⚠ both [invented] (the plan's numbers) |
+| a ground / edge / sign / closure vertex at a pair (its own leg = the plan-nearest lap point, which has a partner; the other leg = the nearest lap point > 150 m along, within 40 m of the vertex and of its own point) sits closer in height to the other leg's BUILT road (the highest 1ROAD within ±2.5 m of the line) than to its own | **0** | ⚠ [invented] (the plan's number) |
+| a stacked lap point with no built road under it (cannot be judged) | 0 | new, a failure, never a skip |
+| crossings: where two lap segments > 150 m apart along the lap intersect in plan, vertices whose own and other point are both within **40 m** (along the lap) of the crossing are not judged (plan-nearest names neither road there); counted (`crossing_skipped`) and the crossing listed | — | ⚠ 40 m [invented] 2026-10-12. On the Lariat's paint line there is **no crossing**, so it skips nothing |
+
+Classes are group-name prefixes (closure first, so a `1WALL_closure` is a closure; the road is never tested);
+`track.config.json gates.stacked_legs.classes` can override them. `--line-only` measures pairs on the line's own
+heights and never passes (exit 0, `fail: null`).
+
+Measured (the plan's "the count is re-measured and recorded on the V3 line"), on 1 m resamples, heights from July's
+3DEP corridor samples (`data/source-july/corridor.elev.json`, IDW): the **paint centreline** has **10,659 pairs on
+680 lap points** in 12 stacked runs (st 2,493–3,152, Tiers of Zion; st 5,305–5,996, the upper hairpins), nearest
+**21.3 m** in plan, vertical gap **6.49–14.90 m (median 9.98 m)**, no crossing. The same tool on the July line:
+10,614 pairs, nearest 20.48 m, 6.51–14.85 m (median 10.09 m), no crossing — the plan's July figures (1,188 pairs on
+its 3 m line ≈ 10,614 / 9; 6.5–14.7 m, median 10.1 m, nearest 20.5 m) reproduce, so the definition is the plan's.
+
+Proof: `tests/tools/test_verify_stacked_legs.py` (8), on a synthetic 850 m switchback (legs 25 m apart, 10 m
+apart in height) and a figure of eight on a 7 m bridge: vertices beside their own leg pass; one beside leg A at leg
+B's height fails in every class (ground, `GEN_terrain`, `AUTH_cut`, edge, sign, closure) with its two stations; a
+vertex outside the stacked stretch (46.9 < z < 353.1, derived in the test) is never judged; a 20 m hole in the road
+under a stacked stretch fails; line-only reports nearest 25 m and gap 10 m and never passes; the bridge is
+reported at st 150 / 750 and its 6 footprint vertices skipped; a config class override works; no road / no OBJ is
+exit 2.
+
+### The kink ceiling (drive_test, opt-in per track; the Lariat's value)
+
+| Threshold | Before | After | Flag |
+|---|---|---|---|
+| kinks/km (slope change > 3 %-points per 1 m on the six interior paths) | reported, never gating (every track) | gates only where `track.config.json gates.drive_test.kinks_per_km_max` is declared; the report then carries `kinks_per_km_max` | wiring |
+| the Lariat's ceiling | V3-PLAN P5: ≤ 5/km [invented: Lake Murray V3's own 4.97/km] | **≤ 19.49/km** | [std: measured on reference mountain roads] |
+
+The calibration (`tools/calibrate_kinks.py`; `fleet/reference/MEASURED.md` §8; raw rows
+`fleet/reference/raw/kinks_*.json`): drive_test itself, run on each reference's physics road (read only) along its
+AI line moved to the lane centre — simtraxx Pikes Peak pp100ahc **19.49/km** (20.0 km, a coarse 2.75 m physics
+mesh), la_canyons mt_wilson_hillclimb **0.73** (6.8 km), simtraxx Targa Florio stage 1 **0.49** (14.2 km),
+la_canyons angeles_crest_east **0.00** (40.9 km). The ceiling is the kinkiest reference: a looser bar than the
+plan's invented 5, and the reason is written down: the dense (scan-class) references read 0–0.73, the coarse one
+19.5, so the metric reads mesh creases as much as road. July read 68.3/km (v0.46.0) and 108.9/km (v0.66.3). The
+scan-class alternative (0.73/km, also [std]) is recorded in MEASURED §8 for after Drive 1.
+
+Every other track: byte-identical. No other config declares `gates`; the key is read once, after every existing
+gate decided, and adds to the report only when present. Proof: `tests/tools/test_calibrate_kinks.py::
+test_drive_test_kink_ceiling_is_opt_in_per_track` (no key: no ceiling key and kinks never fail the run; a tight
+ceiling fails it; a loose one passes with a report equal key for key to the no-key report but for the ceiling),
+and a one-off parity run of HEAD's (a0557e0) drive_test against this one on the suite's straight and wall fixtures,
+the kink fixture and the real mt_wilson reference project: `drive_test.json` md5-identical on all four.
+
+### `scripts/modkit/extract_kn5.parse(keep=, textures=)` (no threshold)
+
+Two keyword arguments, both defaulting to today's full decode: `keep` steps over the vertex and index bytes of a
+mesh it rejects; `textures=False` steps over the blobs. Parity: `parse()` of la_canyons `main_roads.kn5` (196
+meshes, 11 textures) and Targa Florio `wall.kn5` (160 meshes) equals HEAD's `parse()` exactly; `keep=` equals the
+full parse filtered; `tests/tools/test_calibrate_kinks.py::test_parse_keep_returns_exactly_the_kept_meshes`.
+
+### Wiring (`tools/ship_track.sh`, Lariat only)
+
+`gate_road_inventory` and `gate_stacked_legs`, one marked block after the existing vocabulary; the Lariat's
+`ship.json` runs them after `road_obj` (the built gate OBJ), syncs `pavement_exemptions.json` in and both reports
+out. Exits collect in `D1_G`; red stops the install, and `--force-install` passes it exactly as it passes a red
+street drive_test / audit (the caller asserts no metric is worse than the reference). San Diego's `ship.json`
+names neither. Proof: `tests/tools/test_ship_track_drive1_gates.py` (4); `tests/tools/test_ship_track_chain.py`
+(19) unchanged and passing.
+
 ## 2026-10-12 — `verify_signs` (k) direction coverage, (j) read from signs.json, race furniture never the signs' ground (ledger 0051)
 
 **Why.** Kevin, from the seat: "arrow signs are only placed for one direction of driving". All signs ship in the one

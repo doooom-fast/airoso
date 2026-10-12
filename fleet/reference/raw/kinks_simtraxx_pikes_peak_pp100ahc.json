@@ -1,0 +1,117 @@
+{
+ "_doc": "drive_test's kink metric on a reference road (tools/calibrate_kinks.py; Lookout Lariat V3-PLAN P5, ledger 0048). A measurement, not a gate: kinks = slope change > KINK_PCT %-points between consecutive 1 m steps on drive_test's six interior wheel paths, per km of the lane centre.",
+ "track": "simtraxx_pikes_peak_0.81",
+ "layout": "pp100ahc",
+ "ai_file": "pp100ahc\\ai\\_fast_lane.ai",
+ "kn5": [
+  "simtraxx_pikes_peak_0.81.kn5",
+  "layout_hc.kn5"
+ ],
+ "kn5_listed_but_absent": [],
+ "road_rx": "^ROAD",
+ "road": {
+  "kn5": [
+   {
+    "file": "simtraxx_pikes_peak_0.81.kn5",
+    "road_meshes": 3
+   },
+   {
+    "file": "layout_hc.kn5",
+    "road_meshes": 0
+   }
+  ],
+  "meshes": 3,
+  "tris_read": 44600,
+  "tris_kept": 44406
+ },
+ "lane": {
+  "ai_points": 12678,
+  "points_used": 12677,
+  "sign": -1,
+  "sign_votes": {
+   "+1": 2039,
+   "-1": 4065
+  },
+  "centre_on_road_frac": 1.0,
+  "width_m": {
+   "p05": 8.18,
+   "median": 8.21,
+   "p95": 8.42
+  }
+ },
+ "kink_pct": 3.0,
+ "step_m": 1.0,
+ "lap_m": 19958.7,
+ "kinks": 389,
+ "kinks_per_km": 19.49,
+ "worst_kinks": [
+  [
+   12729.0,
+   -3.49,
+   9.33
+  ],
+  [
+   18863.0,
+   -3.51,
+   8.43
+  ],
+  [
+   12730.0,
+   -3.49,
+   8.33
+  ],
+  [
+   12743.0,
+   -3.48,
+   8.12
+  ],
+  [
+   11621.0,
+   3.51,
+   7.85
+  ],
+  [
+   12736.0,
+   3.49,
+   7.85
+  ],
+  [
+   8932.0,
+   5.89,
+   7.74
+  ],
+  [
+   8932.0,
+   -5.89,
+   7.35
+  ],
+  [
+   12415.0,
+   -3.59,
+   7.31
+  ],
+  [
+   9883.0,
+   3.84,
+   7.24
+  ],
+  [
+   8227.0,
+   3.51,
+   7.2
+  ],
+  [
+   12400.0,
+   2.03,
+   7.16
+  ]
+ ],
+ "context": {
+  "steps_per_km": 27.76,
+  "severe_steps": 28,
+  "severe_per_km": 1.4,
+  "soft_top_in_lane": 0,
+  "off_pavement_stations": 0,
+  "daylight_gaps": 39705
+ }
+}

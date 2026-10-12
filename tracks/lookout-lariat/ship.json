@@ -13,10 +13,10 @@
     "author": [],
     "prep": ["prep", "split"],
     "ship": ["export_road", "ai", "verify_kn5", "road_obj", "track_folder", "verify_inis", "make_map"],
-    "gate": ["drive_test_street", "audit_street", "kn5_ground"]
+    "gate": ["drive_test_street", "audit_street", "road_inventory", "stacked_legs", "kn5_ground"]
   },
   "sync_in": {
-    "required": ["track.config.json", "data/centerline.geojson", "data/centerline.osm.geojson", "data/osm.cache.json"],
+    "required": ["track.config.json", "pavement_exemptions.json", "data/centerline.geojson", "data/centerline.osm.geojson", "data/osm.cache.json"],
     "optional": ["data/centerline.previous.geojson", "data/centerline.elevation.json", "data/heightfield.npy",
                  "data/heightfield.meta.json", "data/corridor.elev.json", "data/osm.widths.cache.json"],
     "dirs": ["data/aerial", "source"]
@@ -30,6 +30,7 @@
               "data/crossfall.json", "data/crossfall_gate.json", "data/centerline.local.json",
               "data/finished_centerline.json", "data/gate_centerline.json", "data/bridge.spans.auto.json",
               "data/dummies.json", "data/underlay.report.json", "data/drive_test.json", "data/audit.json",
+              "data/road_inventory.json", "data/stacked_legs.json",
               "data/kn5_ground_check.{id}.json", "data/drive_test.{id}.json"],
     "map": [["blender/split/split_manifest.json", "data/split_manifest.json"]],
     "dirs": ["ai/{id}"]

@@ -315,6 +315,16 @@
     "verge_m": 0.4,
     "_verge_doc": "D4 (Kevin 2026-10-11: build both, pick by driving). The strip beside the pavement: A = 0.4 m (real width, then the real edge: rock cut, ditch or drop; 0.3-0.5 m gravel); B = 1.25 m (a 1-1.5 m firm gravel strip you can put a wheel on). Both builds are in drive1_variants. Replaces July's 6.4 m drivable 'shoulder' per side (22.6 m drivable in all, against the real 6.1-6.7 m). No rumble lips in either."
   },
+  "gates": {
+    "_doc": "Per-track gate values for the Lariat's Drive-1 set (V3-PLAN P5, ledger 0048). Read by the gates themselves; every other track has no such block, so its gates run exactly as before. Each value carries its tag; fleet/GATES-CHANGELOG.md has the entry.",
+    "drive_test": {
+      "kinks_per_km_max": 19.49,
+      "_kinks_doc": "[std: measured on reference mountain roads] (fleet/reference/MEASURED.md section 8, 2026-10-12): drive_test's own kink metric (slope change > 3 %-points between consecutive 1 m steps, six interior wheel paths) run by tools/calibrate_kinks.py on four reference mountain roads on this machine: simtraxx Pikes Peak pp100ahc 19.49/km (20.0 km), la_canyons mt_wilson_hillclimb 0.73/km (6.8 km), simtraxx Targa Florio stage 1 0.49/km (14.2 km), la_canyons angeles_crest_east 0.00/km (40.9 km). The ceiling is the kinkiest of them: a Lariat that reads more is kinkier than every reference mountain road. It replaces the plan's 5/km [invented: Lake Murray V3's own 4.97/km]. Kinks gate nowhere else (scripts/geometry/drive_test.py reads this key only when a track declares it)."
+    },
+    "stacked_legs": {
+      "_doc": "tools/verify_stacked_legs.py's thresholds are module constants (pairs < 40 m in plan and > 150 m along the lap, 0 failures, all [invented]); a 'classes' map here would override which built groups count as ground / edge / sign / closure (none set: the tool's defaults). Measured on the paint centreline with July's 3DEP corridor samples (2026-10-12): 10,659 pairs at 1 m on 680 lap points in 12 stacked runs (st 2,493-3,152 Tiers of Zion, 5,305-5,996 the upper hairpins), nearest 21.3 m in plan, vertical gap 6.49-14.90 m (median 9.98 m); no crossing."
+    }
+  },
   "drive1_variants": {
     "_doc": "D4: two Drive-1 installs, identical apart from road_profile.verge_m. The chain reads road_profile.verge_m and install_folder from this file, so variant B is a second ship_track.sh run with those two values swapped in (verge_m 1.25, install_folder lookout_lariat_verge), never a second config file; the sync-back of the second run must not overwrite the first's data/ (run it with SHIP_PROJ, a scratch copy, and copy its gate files by hand).",
     "a_real_edge": {

@@ -18,6 +18,13 @@ The roads, in Kevin's order: **College Ave → Waring Rd → Princess View Dr �
 **Jackson Dr extended from the loop down to Mission Gorge Rd**. "Add to the network map": the drivable San Diego
 network grows; this is the first of several Lake Murray phases (the Lariat, ledger 0048, waits for "a few phases").
 
+
+> "the new loop will connect to the old one" (Kevin, 2026-10-12, right after)
+
+So the expansion is **one network with the existing loop, not a second track**: the new northern loop shares the
+College/Navajo corner (Waring straight on) and the Navajo/Jackson corner (Jackson north). Both corners become real
+four-way junctions you can drive through in every direction in the street version.
+
 ## First read (from the cached OSM, `data/osm.json`, fetched 2026-08-10, bbox 32.760-32.808 N — preliminary)
 
 - College Ave's north end (32.7938 N, −117.068) is where **Waring Rd** begins westward and **Navajo Rd** begins

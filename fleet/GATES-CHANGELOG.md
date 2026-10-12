@@ -870,7 +870,7 @@ no_route input error). New in the chain:
 Proof: `tests/tools/test_ship_track_chain.py` (19). San Diego parity at airoso 8a2f076: the step headers
 `tracks/san-diego-lake-murray/ship.json` selects equal `ship_sd.sh`'s, every branch, in order (static), and a real
 `--skip-blend --dry-run` of both scripts on the same scratch copy of the workshop printed identical step headers
-(7) and wrote an md5-identical `split_manifest.json` (`37e960f0cf9edaade61060ca4f65c412`). The Lariat's route draft
+(7) and wrote an md5-identical `split_manifest.json` (`37e960f0…` on that scratch path; the manifest embeds absolute paths, so the hash is per-path — the independent verify got `d8c5c490…` for BOTH scripts on another path). The Lariat's route draft
 rehearsed with `--draft-only` on a scratch project reproduces `data/centerline.geojson`, `data/centerline.osm.geojson`
 and `track.config.json` byte for byte, paint gate and one-way check PASS.
 
@@ -892,3 +892,11 @@ engine-july's copy (`ship_sd.sh`, and `ship_track.sh` keeps that for SD), the Co
 Sand Creek build through `scripts/build.sh` -> `scripts/ac/build_kn5.py` (the OBJ program, its own
 `_split_over_cap`, untouched), and the only `loop.blend` in the fleet is San Diego's. The first kn5 this prep
 writes will be the Lariat's.
+
+**Post-merge fix (independent verify finding).** `LegIndex.neighbour_keys` on a closed lap returned (k−1, k, k+1);
+the last chunk is short whenever the lap is not a multiple of `STATION_WIN_M`, so near the seam a point's 40 m window
+reached a chunk that set missed (1,010 m lap: station 5 is same-leg with 985, chunk 24, outside (25, 0, 1)). It now
+collects every chunk the station interval [start − 40, end + 40] touches round the lap.
+`tests/ac/test_build_kn5_loop_prep.py::test_seam_chunks_hold_every_same_leg_station_when_the_last_chunk_is_short`
+walks every station pair within the window on such a lap; it fails on the merged code, passes on the fix. No
+threshold changed.

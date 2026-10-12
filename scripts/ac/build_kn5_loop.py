@@ -276,11 +276,25 @@ class LegIndex:
         return (leg[0], k)
 
     def neighbour_keys(self, key):
+        """Every chunk holding a station within ``win`` of some point of chunk ``key``. On an open leg that is
+        k-1, k, k+1. On a closed lap the last chunk is usually SHORTER than ``win`` (lap length not a multiple of
+        it), so near the seam the window reaches two chunks back across it: on a 1,010 m lap a point at station 5
+        is same-leg with station 985 (chunk 24), which (25, 0, 1) would miss. So the closed case walks the
+        station interval [start - win, end + win] round the lap and collects every chunk it touches."""
         lid, k = key
-        if self.closed.get(lid):
-            n = max(1, int(math.ceil(self.length[lid] / self.win)))
-            return sorted({(lid, (k - 1) % n), (lid, k), (lid, (k + 1) % n)})
-        return [(lid, k - 1), (lid, k), (lid, k + 1)]
+        if not self.closed.get(lid):
+            return [(lid, k - 1), (lid, k), (lid, k + 1)]
+        L, w = self.length[lid], self.win
+        n = max(1, int(math.ceil(L / w)))
+        if L <= 3 * w:
+            return [(lid, j) for j in range(n)]
+        lo, hi = k * w - w, min((k + 1) * w, L) + w
+        keys = set()
+        for period in (-1, 0, 1):                       # the interval crosses the seam at most once each way
+            a, b = max(lo - period * L, 0.0), min(hi - period * L, L)
+            if a < b:
+                keys.update(range(int(a // w), min(int((b - 1e-9) // w), n - 1) + 1))
+        return sorted((lid, j) for j in keys)
 
 
 def pick_same_leg(hits, leg, legs):

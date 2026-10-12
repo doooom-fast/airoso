@@ -666,7 +666,7 @@ elevation, kn5 or Blender build of the Lariat; nothing installed. Status stays `
   the selected steps' headers equal `ship_sd.sh`'s in every branch; on one scratch copy of the workshop
   (`k10-sd-v021/project` minus build/ and blender/), `--skip-blend --dry-run` of both scripts printed the same
   7 step headers and identical tool output, and wrote an md5-identical `split_manifest.json`
-  (`37e960f0cf9edaade61060ca4f65c412`). **The concurrent job is changing `ship_sd.sh`; SD's ship.json and the
+  (`37e960f0…` on that scratch path; per-path, since the manifest embeds absolute paths — both scripts agreed on a second path too). **The concurrent job is changing `ship_sd.sh`; SD's ship.json and the
   vocabulary must be re-synced after that merge** (the parity test fails until they are).
 - **The Lariat:** workshop `C:/Users/Owner/Documents/k10-workshops/lookout-lariat/project` (outside airoso,
   created empty). `ship_track.sh lookout-lariat --dry-run` stops cleanly at "no blend yet": no `loop.blend`,

@@ -185,6 +185,27 @@ def test_station_window_is_cyclic_on_a_closed_lap():
     assert legs.same_leg(a, b), "the seam is one stretch of road (L13)"
 
 
+
+def test_seam_chunks_hold_every_same_leg_station_when_the_last_chunk_is_short():
+    """A lap whose length is not a multiple of STATION_WIN_M ends in a short chunk, so near the seam a point's
+    40 m window reaches two chunks back across it (verify finding, 2026-10-11: on a 1,010 m lap a point at
+    station 5 is same-leg with station 985, chunk 24, which the old (25, 0, 1) neighbour set missed)."""
+    r = 1010.0 / (2 * math.pi)
+    ring = [(r * math.cos(2 * math.pi * k / 2020), 0.0, r * math.sin(2 * math.pi * k / 2020)) for k in range(2020)]
+    legs = bk.LegIndex([("main", ring, True)])
+    L, w = legs.length["main"], legs.win
+    assert L % w > 1.0, (L, w)                            # the last chunk really is short
+    missed = []
+    sa = 0.0
+    while sa < L:
+        held = set(legs.neighbour_keys(legs.chunk_key(("main", sa))))
+        for d in range(-int(w), int(w) + 1):
+            sb = (sa + d) % L
+            if legs.same_leg(("main", sa), ("main", sb)) and legs.chunk_key(("main", sb)) not in held:
+                missed.append((round(sa, 1), round(sb, 1)))
+        sa += 1.0
+    assert not missed, missed[:10]
+
 def test_connectors_are_their_own_legs():
     pts = [(0.0, 0.0, float(i)) for i in range(301)]
     con = [(1.0 + i, 0.0, 150.0) for i in range(40)]

@@ -263,7 +263,7 @@ race.corridor declared, a race layout whose `build/<slug>_closure_<id>.kn5` is m
 declared layout loads is removed before packing. A track without race.corridor keeps the 0047 shape
 ([road, `_race`, spawn]).
 
-**The packages (`tools/pack_release.py`).** By default the CC0 variant is the Street Loop only: it drops the
+**The packages (`tools/pack_release.py`).** By default the CC0 variant is Lake Murray Free Roam only: it drops the
 race layouts, `<slug>_race.kn5` and EVERY `<slug>_closure_*.kn5` (by name, so a stale one goes too);
 `--with-race` keeps all three layouts in it (and renders the release texts' `[[with-race]]` blocks: the K-rail
 credit on every race kn5, the three-version README). The split is a tool, not a rule — which package goes

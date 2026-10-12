@@ -25,6 +25,18 @@ So the expansion is **one network with the existing loop, not a second track**: 
 College/Navajo corner (Waring straight on) and the Navajo/Jackson corner (Jackson north). Both corners become real
 four-way junctions you can drive through in every direction in the street version.
 
+
+> "this will be called lake murray free roam vs the lake murray speedways (clockwise is normal, counterclockwise is
+> reverse)" — "we may add mission gorge speedway etc" (Kevin, 2026-10-12)
+
+**Names.** `<Area> Free Roam` is the open network; `<Area> Speedway` is a race layout, clockwise the normal direction,
+anticlockwise `<Area> Speedway Reverse`. Applied 2026-10-12: street → **Lake Murray Free Roam**, race_cw → **Lake
+Murray Speedway**, race_acw → **Lake Murray Speedway Reverse** (config `layouts[].name` / `ui_description`, the
+release READMEs, and the installed v0.17.1 `ui/<id>/ui_track.json`, originals in
+`D:/k10-track-archive/2026-10-12_ui_names_before_rename/`). Layout ids stay (folder names: saved setups and records
+survive). With the expansion, Free Roam is the whole connected network; a **Mission Gorge Speedway** (+ Reverse) on
+the new roads is a candidate for a later phase.
+
 ## First read (from the cached OSM, `data/osm.json`, fetched 2026-08-10, bbox 32.760-32.808 N — preliminary)
 
 - College Ave's north end (32.7938 N, −117.068) is where **Waring Rd** begins westward and **Navajo Rd** begins

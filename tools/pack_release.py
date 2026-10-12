@@ -11,7 +11,7 @@ The procedure docs/PUBLISHING.md describes, as one deterministic command, so a c
                              stripped, the [TREES] lines commented out with a bring-your-own README,
                              the two mined texture pairs swapped for CC0 bytes under the same names
                              (tools/repack_kn5_textures.py), CC0 credits/licences. By default it is
-                             the Street Loop only; --with-race keeps the two race layouts, their
+                             Lake Murray Free Roam only; --with-race keeps the two race layouts, their
                              _race / _closure_* kn5s and the K-rail credit in it
   <freeway>_v0.5.0.zip       the freeway network, unchanged since v0.21.0, re-zipped from its
                              installed folder because only the latest release's assets show on the site
@@ -178,7 +178,7 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--out", type=Path, default=GH / "k10-sd-v021/project/build/release")
     ap.add_argument("--with-race", action="store_true",
                     help="keep the race layouts (and their _race / _closure_* kn5s, K-rail credit) in the CC0 package "
-                         "too; default: the CC0 package is the Street Loop only. Kevin decides at publish time")
+                         "too; default: the CC0 package is Lake Murray Free Roam only. Kevin decides at publish time")
     return ap
 
 

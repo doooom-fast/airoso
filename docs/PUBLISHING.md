@@ -60,7 +60,7 @@ So two zips exist per release, built from the same track folder:
   `models_race_cw.ini` + `models_race_acw.ini`, `san_diego_lake_murray_race.kn5` (both curb walls + kerbs) and,
   since 0049, one `san_diego_lake_murray_closure_<id>.kn5` per race direction. The barriers sweep Kevin's owned
   K-rail pack (4 m jersey module; its licence terms are not recorded in `assets/licenses.json` — a fact, not a
-  blocker). By default the CC0 zip is the Street Loop only (`strip_race_layouts` drops the race kn5s, the two
+  blocker). By default the CC0 zip is Lake Murray Free Roam only (`strip_race_layouts` drops the race kn5s, the two
   race `models_*.ini`, their `ui/<id>/` and `<id>/` dirs and their spawn kn5s); **`--with-race`** keeps all
   three layouts in it and renders the `[[with-race]]` blocks of the CC0 release texts (the K-rail credit, the
   three-version README). The default stays street-only for now only because prodrive-server's catalog
@@ -75,7 +75,7 @@ So two zips exist per release, built from the same track folder:
 ## Packing — one command
 
 ```bash
-python tools/pack_release.py --version 0.23.0              # CC0 zip = the Street Loop only (default)
+python tools/pack_release.py --version 0.23.0              # CC0 zip = Lake Murray Free Roam only (default)
 python tools/pack_release.py --version 0.24.0 --with-race  # CC0 zip keeps the two race layouts too
 ```
 

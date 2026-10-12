@@ -104,10 +104,11 @@
     "_doc": "network_walls: the merged freeway's 1WALL_fw barriers read as cast concrete (the network look), not Kevin's 4 m portable barrier modules. The loop itself has no plain 1WALL_ meshes (its rail is 1WALL_guard -> 1WALL_GUARD entry), so this only affects the combined build.",
     "network_walls": true
   },
+  "_layout_names_doc": "Kevin 2026-10-12: \"this will be called lake murray free roam vs the lake murray speedways (clockwise is normal, counterclockwise is reverse)\" and \"we may add mission gorge speedway etc\". Scheme: <Area> Free Roam = the open network; <Area> Speedway = a race layout, clockwise the normal direction, anticlockwise <Area> Speedway Reverse. Layout ids (street / race_cw / race_acw) are folder names and stay, so saved setups and lap records survive.",
   "layouts": [
     {
       "id": "street",
-      "name": "Street Loop",
+      "name": "Lake Murray Free Roam",
       "kind": "street",
       "direction": "forward",
       "race_furniture": false,
@@ -122,13 +123,13 @@
         "per_issue": "start_positions.json"
       },
       "run": "open two-way street; lap clockwise: Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest",
-      "ui_description": "Street Loop \u2014 Lake Murray as it is: the open two-way 13.5 km loop of Alvarado Road, College Avenue, Navajo Road, Jackson Drive and Lake Murray Boulevard around the reservoir (Kevin's childhood neighbourhood), from OpenStreetMap at real USGS 3DEP elevation. Raised landscaped medians on College and Navajo, the side streets left open, no race furniture; lap clockwise from the line on Alvarado. The AI line is a generated draft, not an in-game recording.",
+      "ui_description": "Lake Murray Free Roam \u2014 Lake Murray as it is: the open two-way 13.5 km loop of Alvarado Road, College Avenue, Navajo Road, Jackson Drive and Lake Murray Boulevard around the reservoir (Kevin's childhood neighbourhood), from OpenStreetMap at real USGS 3DEP elevation. Raised landscaped medians on College and Navajo, the side streets left open, no race furniture; lap clockwise from the line on Alvarado. The AI line is a generated draft, not an in-game recording.",
       "ai": "ai/street",
       "_doc": "Version 1 = today's loop: main kn5 only, open mouths, full width, no race furniture. Only its spawn moves (ledger 0047 Q3): grid A on Alvarado, line v300. start_positions.json `active` still moves START/HOTLAP/PIT for THIS layout only (Kevin 2026-08-20 per-issue spawns) via tools/layout_dummies.py --issue-spawn, never AC_TIME, never the race layouts."
     },
     {
       "id": "race_cw",
-      "name": "Race \u2014 Clockwise",
+      "name": "Lake Murray Speedway",
       "kind": "race",
       "direction": "forward",
       "race_furniture": true,
@@ -143,12 +144,12 @@
         ]
       },
       "run": "clockwise, one-way: Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest \u2014 your own side of every road (an Alvarado-wide lane), the whole street on Alvarado and the I-8 bridge, the full intersection open at the five corners",
-      "ui_description": "Race \u2014 Clockwise: the same 13.5 km of real Lake Murray roads as a one-way race track, run clockwise \u2014 Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest \u2014 on an Alvarado-wide lane on your own side of every road: concrete barriers along your curb and a second line closing off the opposite lanes (along the medians where there is one); the whole street on Alvarado and the I-8 bridge; the full intersection open at the five corners; side streets sealed; red/white kerbs at the corners. The AI line is a generated draft, not an in-game recording.",
+      "ui_description": "Lake Murray Speedway (clockwise, the normal direction): the same 13.5 km of real Lake Murray roads as a one-way race track, run clockwise \u2014 Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest \u2014 on an Alvarado-wide lane on your own side of every road: concrete barriers along your curb and a second line closing off the opposite lanes (along the medians where there is one); the whole street on Alvarado and the I-8 bridge; the full intersection open at the five corners; side streets sealed; red/white kerbs at the corners. The AI line is a generated draft, not an in-game recording.",
       "ai": "ai/race_cw"
     },
     {
       "id": "race_acw",
-      "name": "Race \u2014 Anticlockwise",
+      "name": "Lake Murray Speedway Reverse",
       "kind": "race",
       "direction": "reverse",
       "race_furniture": true,
@@ -163,7 +164,7 @@
         ]
       },
       "run": "anticlockwise, one-way: Alvarado eastbound, Lake Murray Blvd northeast, Jackson north, Navajo westbound, College southbound \u2014 your own side of every road (an Alvarado-wide lane), the whole street on Alvarado and the I-8 bridge, the full intersection open at the five corners",
-      "ui_description": "Race \u2014 Anticlockwise: the same 13.5 km of real Lake Murray roads as a one-way race track, run anticlockwise \u2014 Alvarado eastbound, Lake Murray Blvd northeast, Jackson north, Navajo westbound, College southbound \u2014 on an Alvarado-wide lane on your own side of every road: concrete barriers along your curb and a second line closing off the opposite lanes (along the medians where there is one); the whole street on Alvarado and the I-8 bridge; the full intersection open at the five corners; side streets sealed; red/white kerbs at the corners. The AI line is a generated draft, not an in-game recording.",
+      "ui_description": "Lake Murray Speedway Reverse (anticlockwise): the same 13.5 km of real Lake Murray roads as a one-way race track, run anticlockwise \u2014 Alvarado eastbound, Lake Murray Blvd northeast, Jackson north, Navajo westbound, College southbound \u2014 on an Alvarado-wide lane on your own side of every road: concrete barriers along your curb and a second line closing off the opposite lanes (along the medians where there is one); the whole street on Alvarado and the I-8 bridge; the full intersection open at the five corners; side streets sealed; red/white kerbs at the corners. The AI line is a generated draft, not an in-game recording.",
       "ai": "ai/race_acw"
     }
   ],
@@ -360,7 +361,7 @@
     "tree_pct": 38,
     "scrub_pct": 24
   },
-  "ui_description": "Lake Murray, San Diego (Kevin's childhood neighbourhood): the real 13.5 km loop of Alvarado Road, College Avenue, Navajo Road, Jackson Drive and Lake Murray Boulevard around the reservoir, from OpenStreetMap at real USGS 3DEP elevation. Three versions: the open Street Loop and two one-way race layouts.",
+  "ui_description": "Lake Murray, San Diego (Kevin's childhood neighbourhood): the real 13.5 km loop of Alvarado Road, College Avenue, Navajo Road, Jackson Drive and Lake Murray Boulevard around the reservoir, from OpenStreetMap at real USGS 3DEP elevation. Three layouts: Lake Murray Free Roam (the open streets) and the Lake Murray Speedway, normal (clockwise) and Reverse (anticlockwise).",
   "_ui_description_doc": "Ledger 0047 fix round (2026-10-11): the CM description is per layout (layouts[].ui_description, read first by scripts/ac/track_folder.ui_track_json); this track-level text is the fallback. The old one described the V3 C1 build (split carriageways deleted, 'no phantom opposing lanes') and a Del Cerro sub-loop, even on the race layouts that seal every side street.",
   "ui_tags": [
     "street",

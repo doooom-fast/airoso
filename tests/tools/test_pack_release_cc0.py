@@ -1,4 +1,4 @@
-"""tools/pack_release.py — the CC0 package's race layouts. By default it is the Street Loop only (strip_race_layouts:
+"""tools/pack_release.py — the CC0 package's race layouts. By default it is Lake Murray Free Roam only (strip_race_layouts:
 san_diego_lake_murray_race.kn5, every san_diego_lake_murray_closure_<id>.kn5 (ledger 0049) and the two race layouts
 leave it); --with-race keeps them. The split is a tool, not a licence verdict: which package goes public is
 Kevin's call at publish time (Kevin 2026-10-11). The release texts carry [[street-only]] / [[with-race]]
@@ -128,8 +128,8 @@ def test_cc0_texts_render_street_only_by_default_and_with_race_on_request():
             assert "K-rail" not in street, f                                   # the default package has no race layout
             assert "K-rail" in race and all(k in race for k in kn5s), f        # --with-race credits every race kn5
         else:
-            assert "not part of this download" in street and "Race — Clockwise" not in street
-            assert "Race — Clockwise" in race and "Race — Anticlockwise" in race and "not part of this download" not in race
+            assert "not part of this download" in street and "Lake Murray Speedway Reverse —" not in street
+            assert "Lake Murray Speedway Reverse —" in race and "Lake Murray Free Roam " in race and "not part of this download" not in race
         for t in (street, race):
             assert "licence is not recorded yet" not in t, "a licence blocker in a public README"
     assert pr.render_variant("a\r\n[[with-race]]\r\nb\r\n[[/with-race]]\r\nc\r\n", False) == "a\r\nc\r\n"   # CRLF kept

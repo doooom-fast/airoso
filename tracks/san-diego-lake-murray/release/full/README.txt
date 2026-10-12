@@ -24,21 +24,21 @@ WHAT IT IS
   behaviour is unverified.
 
 VERSIONS (pick one in Content Manager)
-  Street Loop          — Lake Murray as it is: the open two-way streets, raised landscaped medians
-                         on College and Navajo, the side streets open, no race furniture. Lap
-                         clockwise from the line on Alvarado Rd.
-  Race — Clockwise     — the same 13.5 km as a one-way race track: Alvarado westbound, College
-                         northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest.
-                         You race an Alvarado-wide lane (about 11.4 m) on your own side of every
-                         road: concrete K-rail along your curb and a second line closing off the
-                         opposite lanes, running along the medians where there is one. The whole
-                         street is yours on Alvarado and on the I-8 bridge deck; the full
-                         intersection is open at the three corners the race turns at
-                         (College/Navajo, Navajo/Jackson, Jackson/Lake Murray Blvd); side streets
-                         are sealed; red/white kerbs at the corners. Grid and pits on Alvarado.
-  Race — Anticlockwise — the same track the other way round: Alvarado eastbound, Lake Murray Blvd
-                         northeast, Jackson north, Navajo westbound, College southbound, on your
-                         own side again (its closing line stands in the other lanes).
+  Lake Murray Free Roam        — Lake Murray as it is: the open two-way streets, raised landscaped medians
+                               on College and Navajo, the side streets open, no race furniture. Lap
+                               clockwise from the line on Alvarado Rd.
+  Lake Murray Speedway         — the same 13.5 km as a one-way race track: Alvarado westbound, College
+                               northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest.
+                               You race an Alvarado-wide lane (about 11.4 m) on your own side of every
+                               road: concrete K-rail along your curb and a second line closing off the
+                               opposite lanes, running along the medians where there is one. The whole
+                               street is yours on Alvarado and on the I-8 bridge deck; the full
+                               intersection is open at the three corners the race turns at
+                               (College/Navajo, Navajo/Jackson, Jackson/Lake Murray Blvd); side streets
+                               are sealed; red/white kerbs at the corners. Grid and pits on Alvarado.
+  Lake Murray Speedway Reverse — the same track the other way round: Alvarado eastbound, Lake Murray Blvd
+                               northeast, Jackson north, Navajo westbound, College southbound, on your
+                               own side again (its closing line stands in the other lanes).
 
 KNOWN
   - Side-street terrain still floats a little (under 0.6 m) in a couple of Del Cerro spots.

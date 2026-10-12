@@ -1011,3 +1011,7 @@ Closed by it: closure / curb-strip flicker (none seen), load time and FPS (great
 the Navajo/Jackson steps (the fold-fan steps the mouth weld named, now a driver-felt defect) → 0050; arrows for one
 direction only (0044 shipped `both_directions_mainline: false`) → 0051; AI races crash and slow down → 0052; race
 kerbs tyre-worn / textured → 0053.
+
+Asked about the "steep exit funnels" (where the closing wall angles in at the exit of each open box): *"what steep
+exits? i didn't notice anything off other than jackson/navajo"* — closed: the funnels (cw v1521, acw v2311 / v1506,
+the acw 1:10 off the I-8 deck) drew nothing in the seat. Of everything driven, only Navajo/Jackson (0050) is open.

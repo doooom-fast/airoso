@@ -79,8 +79,13 @@ def _xform(m: list[float], x: float, y: float, z: float) -> tuple[float, float, 
             x * m[2] + y * m[6] + z * m[10] + m[14])
 
 
-def parse(path: Path) -> dict:
-    """Parse a kn5 into {version, textures{name:blob}, materials[], meshes[]}."""
+def parse(path: Path, *, keep=None, textures: bool = True) -> dict:
+    """Parse a kn5 into {version, textures{name:blob}, materials[], meshes[]}.
+
+    ``keep`` (optional, a ``name -> bool`` predicate): a static mesh it rejects is stepped over without
+    decoding its vertices or indices and is not returned (the kink calibration reads only the physics road
+    of a 450 MB reference kn5 this way, tools/calibrate_kinks.py). ``textures=False`` steps over the texture
+    blobs (``textures`` comes back empty). Both defaults decode everything, exactly as before."""
     d = Path(path).read_bytes()
     if d[:6] != b"sc6969":
         raise ValueError(f"not a kn5 (bad magic {d[:6]!r})")
@@ -90,10 +95,15 @@ def parse(path: Path) -> dict:
     if version > 5:
         r.i32()  # extra header field present in v6+ (untested until a real v6 file)
 
+    want_textures = textures
     textures: dict[str, bytes] = {}
     for _ in range(r.i32()):
         r.i32()                       # active flag
         name = r.string()
+        if not want_textures:
+            size = r.u32()            # (read first: `r.o += r.u32()` would lose the u32's own 4 bytes)
+            r.o += size               # step over the blob
+            continue
         blob = r.blob(r.u32())
         textures[name] = blob
 
@@ -121,6 +131,15 @@ def parse(path: Path) -> dict:
         elif ncls == 2:                                 # static mesh
             r.boolean(); r.boolean(); r.boolean()       # castShadows, visible, transparent
             vcount = r.u32()
+            if keep is not None and not keep(name):     # step over: 44 B per vertex, 2 B per index
+                r.o += vcount * 44
+                icount = r.u32()
+                r.o += icount * 2
+                r.u32(); r.u32(); r.f32(); r.f32()
+                r.blob(16); r.boolean()
+                for _ in range(child_count):
+                    read_node(parent)
+                return
             verts = []
             for _ in range(vcount):
                 px, py, pz = r.f32(), r.f32(), r.f32()

@@ -371,6 +371,30 @@ gate_race_gates() {
   done
 }
 
+# =============================================================================================================
+# LARIAT DRIVE-1 GATES (V3-PLAN P5, ledger 0048; 2026-10-12). One block, kept apart from the vocabulary above:
+# the new road-and-ground gates that judge the BUILT road (data/track.obj, written by gate_road_obj from the
+# shipped kn5 — list them after road_obj). Their exits collect in D1_G, which the verdict reads beside the street
+# drive_test / audit exits: red stops the install, and --force-install covers it exactly as it covers those (the
+# caller asserts no metric is worse than the reference). The stale verdict file is removed first, so a gate that
+# dies reads as red, never as last run's pass.
+# =============================================================================================================
+D1_G=0
+gate_road_inventory() {
+  local rc
+  step "gate: road inventory on the built road (tools/verify_road_inventory.py: no HIGHWAY*/HWYSTRUCT*/MOUNTAINS*, every pavement triangle on the route or in a declared exemption, the pavement is the lap — hard)"
+  rm -f "$PROJ/data/road_inventory.json"
+  rc=0; (cd "$AIROSO" && python tools/verify_road_inventory.py "$PROJ" 2>&1 | tail -24) || rc=$?
+  [ "$rc" = 0 ] || D1_G=$rc
+}
+gate_stacked_legs() {
+  local rc
+  step "gate: stacked legs on the built road (tools/verify_stacked_legs.py, L4: nothing between stacked legs seated to the other leg — hard)"
+  rm -f "$PROJ/data/stacked_legs.json"
+  rc=0; (cd "$AIROSO" && python tools/verify_stacked_legs.py "$PROJ" 2>&1 | tail -16) || rc=$?
+  [ "$rc" = 0 ] || D1_G=$rc
+}
+
 # a draft step that needs no Blender (what --draft-only runs)
 is_data_step() {
   case "$1" in
@@ -603,6 +627,15 @@ if [ -n "$RACE_RED" ]; then
   echo "  NOT INSTALLED: race layout(s) $RACE_RED fail on their own gates (drive_test barrier_missing / obstruction,"
   echo "  the BUILT no_route containment fill) — no reference exists to be 'no worse than', so --force-install does not"
   echo "  apply (data/drive_test.<id>.json, data/no_route.<id>.json)"; exit 1
+fi
+# the Lariat Drive-1 road gates (the block above gate_road_inventory): red stops the install unless forced
+echo "  Drive-1 road gates (road inventory, stacked legs): exit $D1_G"
+if [ "$D1_G" != 0 ]; then
+  if [ "$FORCE" = 1 ]; then
+    echo "  --force-install: past the Drive-1 road gates RED (caller asserts no metric is worse than the reference)"
+  else
+    echo "  NOT INSTALLED (Kevin never loads a build the machine failed): Drive-1 road gates red (data/road_inventory.json, data/stacked_legs.json)"; exit 1
+  fi
 fi
 if [ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ] || [ "$NR_R" != 0 ]; then
   if [ "$NR_R" != 0 ]; then

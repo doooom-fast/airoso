@@ -1,0 +1,7017 @@
+{
+ "schema": "airoso lariat aerial pass v1 (2026-10-11): measurements only, no geometry was changed",
+ "ledger": "fleet/feedback/0048 (Lookout Lariat V3), V3-PLAN dossier section 12 'aerial owed'",
+ "source": {
+  "imagery": "USDA NAIP (National Agriculture Imagery Program), Colorado 2019, 4-band (R, G, B, NIR), 0.6 m ground sample distance",
+  "service": "USGS The National Map, USGSNAIPImagery ImageServer (https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer), exportImage, ArcGIS 11.3",
+  "year_note": "2019 is the only Colorado NAIP year this service (and its NAIP Plus sibling) carries over the lap; the catalog query returns 2019 rasters at every window. USDA's APFO NAIP service (which carries later years) refused the connection from this machine, so no newer flight was used.",
+  "rasters": [
+   {
+    "Name": "m_3910515_sw_13_060_20190919",
+    "Year": 2019,
+    "State": "CO",
+    "resolution_value": 0.6,
+    "projection_zone": "13N",
+    "datum": "NAD83",
+    "vendor": "USDA-FSA-APFO",
+    "acquisition_date_utc": "2019-09-19"
+   },
+   {
+    "Name": "m_3910522_ne_13_060_20190913",
+    "Year": 2019,
+    "State": "CO",
+    "resolution_value": 0.6,
+    "projection_zone": "13N",
+    "datum": "NAD83",
+    "vendor": "USDA-FSA-APFO",
+    "acquisition_date_utc": "2019-09-13"
+   },
+   {
+    "Name": "m_3910523_nw_13_060_20190919",
+    "Year": 2019,
+    "State": "CO",
+    "resolution_value": 0.6,
+    "projection_zone": "13N",
+    "datum": "NAD83",
+    "vendor": "USDA-FSA-APFO",
+    "acquisition_date_utc": "2019-09-19"
+   }
+  ],
+  "licence": "public domain (US federal government work; USDA FSA NAIP distributed by USGS). Credit line requested by the service: 'USGS, USDA, The National Map: Orthoimagery'.",
+  "request": "each window requested twice (bandIds 0,1,2 = true colour; 3,0,1 = colour infrared, NIR first) in EPSG:26913 (NAD83 / UTM zone 13N, the DOQQs' own projection, so the server does not reproject), bboxSR = imageSR = 26913, PNG, bilinear, 0.3 m pixels (the service's own pixel; the source is 0.6 m, so the effective resolution is 0.6 m)",
+  "cache": "raw windows (PNG + per-window JSON with bbox, URL, raster names) are in session scratch only: C:/Users/Owner/AppData/Local/Temp/claude/C--Users-Owner-Documents-GitHub-airoso/59395b0b-e098-4e22-9ea8-1346efc0cf70/scratchpad/lariat2/naip/; nothing raw is in the repo",
+  "tls": "fetched with certificate verification on (scripts/tls.https_context, the OS verifier)",
+  "georeferencing": "none applied by hand: the exportImage bbox is the georeference (pixel centre = xmin + (i + 0.5) * 0.3, ymax - (j + 0.5) * 0.3). OSM lon/lat (WGS84) was put on the same grid with the GRS80 transverse-Mercator series and NO datum shift, then the remaining offset was measured (registration below).",
+  "registration_vs_osm": {
+   "method": "the traced double-yellow centre line vs the raw OSM way geometry in data/osm.cache.json, on straight stretches only (radius > 120 m over 12 m; OSM chords cut hairpins), model d = n . v per point, solved per window and overall with each window weighted equally",
+   "osm_minus_imagery_EN_m": [
+    -1.2,
+    0.56
+   ],
+   "magnitude_m": 1.33,
+   "bearing_deg": 294.8,
+   "points": 862,
+   "windows": 31,
+   "residual_rms_m": 0.74,
+   "residual_p90_abs_m": 1.35,
+   "explained_by_datum": "The NGS 14-parameter ITRF2008 -> NAD83(2011) transformation (Pearson & Snay 2013) predicts ITRF/WGS84 minus NAD83(2011) = -1.23 m E, +0.56 m N (1.35 m) here at epoch 2019.7. The measured OSM-minus-imagery offset is -1.20 m E, +0.56 m N. So the whole systematic offset is the NAD83 vs WGS84 datum, not mapping; OSM's own placement scatters 0.74 m rms around the painted centre line on straight road.",
+   "per_window_median_cross_offset_m": {
+    "C1": -0.59,
+    "C10": 0.85,
+    "C11": -1.19,
+    "C2": 1.54,
+    "C3": 1.5,
+    "C4": -1.07,
+    "C5": 0.28,
+    "C6": 0.54,
+    "C7": 1.28,
+    "C8": 1.08,
+    "C9": -1.13,
+    "W00150": -1.59,
+    "W00700": -0.11,
+    "W01600": 0.68,
+    "W01900": 1.66,
+    "W02050": 0.45,
+    "W03150": 0.33,
+    "W03250": 2.85,
+    "W03800": -1.63,
+    "W04350": -1.19,
+    "W04600": -0.35,
+    "W04850": -0.76,
+    "W05150": -1.71,
+    "W05300": -1.06,
+    "W06100": -1.48,
+    "W06200": -0.47,
+    "W09850": -1.07,
+    "W10150": 0.3,
+    "W10850": 0.09,
+    "W11150": -0.79,
+    "W11450": -0.9
+   },
+   "how_coordinates_here_are_given": "utm13n_nad83 = imagery frame (as measured). lonlat_wgs84 = the same point moved by the measured offset (+v) and converted, i.e. directly comparable with OSM, data/centerline.geojson and track.config.json."
+  },
+  "local_frame_note": "lap stations (st, metres from geojson v0 in the plan frame, as tools/fit_hairpins.py) are the same stations the corner table, the dossier and hairpin_fit use"
+ },
+ "methods": {
+  "hairpins_C1_C10": "1) trace the lap through the corner window with profiles every 0.5 m normal to a reference that starts as the OSM line and is moved onto the traced double-yellow line (3 passes); 2) entry and exit headings from the traced legs give the turn; the core is headings 20-80 % of the turn, as tools/fit_hairpins.py; 3) rays from a centre (seeded three ways, iterated on the yellow paint) every 0.5 deg over the core: yellow line, both white edge lines, both pavement edges on each ray; 4) one centre + two radii fitted to the inner and outer edge sets (pavement edges, then painted edge lines), robust trimming at max(0.3 m, 2.5 rms); 5) radius_m = mean of the pavement-edge pair when it is clean (both sides traced on >= 40 % of the core rays, rms <= 0.35 m) and within 1.0 m of the painted estimates, else the mean of the painted edge-line pair, else the yellow line; confidence from the agreement of the independent estimates.",
+  "junctions_C12_C13": "the arms' inside pavement edges as straight lines, the kerb return as an arc tangent to both (one parameter, scanned 3-33 m then 0.1 m), fitted to the inside-corner edge found by walking rays out of the grass until the surface matches this window's asphalt; lap-centreline radius = R_fillet + the arms' inside half-width.",
+  "thresholds_invented": {
+   "asphalt_match_z": 3.0,
+   "edge_run_m": 0.45,
+   "edge_search_beyond_line_m": 8.0,
+   "shadow_mean_rgb": 45,
+   "pair_min_core_coverage": 0.4,
+   "pair_max_rms_m": 0.35,
+   "pavement_vs_painted_max_m": 1.0,
+   "high_conf_spread_m": 0.75,
+   "medium_conf_spread_m": 1.5,
+   "_doc": "all [invented] for this pass; none is a gate. They decide which estimate is reported, and the overlays show every traced point so a reader can disagree."
+  }
+ },
+ "windows": [
+  {
+   "id": "C1",
+   "purpose": "corner C1",
+   "bbox_utm13n_nad83": [
+    480442.41,
+    4398869.6,
+    480562.41,
+    4398989.6
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2282546,
+    39.739498,
+    -105.2268576,
+    39.740582
+   ],
+   "size_px": [
+    400,
+    400
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-11T21:16:16Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=480442.41%2C4398869.6%2C480562.41%2C4398989.6&bboxSR=26913&imageSR=26913&size=400%2C400&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 210814,
+   "bytes_cir": 216493
+  },
+  {
+   "id": "C10",
+   "purpose": "corner C10",
+   "bbox_utm13n_nad83": [
+    478894.62,
+    4398357.17,
+    479014.62,
+    4398477.17
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2463021,
+    39.734844,
+    -105.2449055,
+    39.7359282
+   ],
+   "size_px": [
+    400,
+    400
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-11T21:21:33Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=478894.62%2C4398357.17%2C479014.62%2C4398477.17&bboxSR=26913&imageSR=26913&size=400%2C400&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 192323,
+   "bytes_cir": 212681
+  },
+  {
+   "id": "C11",
+   "purpose": "corner C11",
+   "bbox_utm13n_nad83": [
+    479095.26,
+    4397922.24,
+    479215.26,
+    4398042.24
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2439468,
+    39.7309302,
+    -105.2425503,
+    39.7320143
+   ],
+   "size_px": [
+    400,
+    400
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-11T21:21:44Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479095.26%2C4397922.24%2C479215.26%2C4398042.24&bboxSR=26913&imageSR=26913&size=400%2C400&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 190333,
+   "bytes_cir": 225802
+  },
+  {
+   "id": "C12",
+   "purpose": "corner C12",
+   "bbox_utm13n_nad83": [
+    478332.15,
+    4396333.66,
+    478452.15,
+    4396453.66
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2527995,
+    39.7165978,
+    -105.2514034,
+    39.717682
+   ],
+   "size_px": [
+    400,
+    400
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910522_ne_13_060_20190913",
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-11T21:21:58Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=478332.15%2C4396333.66%2C478452.15%2C4396453.66&bboxSR=26913&imageSR=26913&size=400%2C400&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 178791,
+   "bytes_cir": 195072
+  },
+  {
+   "id": "C13",
+   "purpose": "corner C13",
+   "bbox_utm13n_nad83": [
+    478769.83,
+    4395824.39,
+    478889.83,
+    4395944.39
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2476768,
+    39.7120202,
+    -105.2462807,
+    39.7131044
+   ],
+   "size_px": [
+    400,
+    400
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-11T21:22:12Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=478769.83%2C4395824.39%2C478889.83%2C4395944.39&bboxSR=26913&imageSR=26913&size=400%2C400&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 207277,
+   "bytes_cir": 226203
+  },
+  {
+   "id": "C2",
+   "purpose": "corner C2",
+   "bbox_utm13n_nad83": [
+    479819.67,
+    4399176.96,
+    479939.67,
+    4399296.96
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2355319,
+    39.7422528,
+    -105.234135,
+    39.7433369
+   ],
+   "size_px": [
+    400,
+    400
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-11T21:16:42Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479819.67%2C4399176.96%2C479939.67%2C4399296.96&bboxSR=26913&imageSR=26913&size=400%2C400&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 209159,
+   "bytes_cir": 222710
+  },
+  {
+   "id": "C3",
+   "purpose": "corner C3",
+   "bbox_utm13n_nad83": [
+    479690.94,
+    4399364.86,
+    479810.94,
+    4399484.86
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2370401,
+    39.7439428,
+    -105.2356432,
+    39.7450268
+   ],
+   "size_px": [
+    400,
+    400
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-11T21:17:37Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479690.94%2C4399364.86%2C479810.94%2C4399484.86&bboxSR=26913&imageSR=26913&size=400%2C400&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 210935,
+   "bytes_cir": 218522
+  },
+  {
+   "id": "C4",
+   "purpose": "corner C4",
+   "bbox_utm13n_nad83": [
+    478978.04,
+    4399844.08,
+    479098.04,
+    4399964.08
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2453761,
+    39.7482433,
+    -105.2439792,
+    39.7493275
+   ],
+   "size_px": [
+    400,
+    400
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910515_sw_13_060_20190919",
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-11T21:19:17Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=478978.04%2C4399844.08%2C479098.04%2C4399964.08&bboxSR=26913&imageSR=26913&size=400%2C400&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 197530,
+   "bytes_cir": 210193
+  },
+  {
+   "id": "C5",
+   "purpose": "corner C5",
+   "bbox_utm13n_nad83": [
+    479181.32,
+    4399761.06,
+    479301.32,
+    4399881.06
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2430007,
+    39.7475003,
+    -105.2416039,
+    39.7485844
+   ],
+   "size_px": [
+    400,
+    400
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-11T21:20:06Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479181.32%2C4399761.06%2C479301.32%2C4399881.06&bboxSR=26913&imageSR=26913&size=400%2C400&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 223013,
+   "bytes_cir": 237071
+  },
+  {
+   "id": "C6",
+   "purpose": "corner C6",
+   "bbox_utm13n_nad83": [
+    479019.55,
+    4399754.74,
+    479139.55,
+    4399874.74
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2448887,
+    39.7474394,
+    -105.2434919,
+    39.7485235
+   ],
+   "size_px": [
+    400,
+    400
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-11T21:20:25Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479019.55%2C4399754.74%2C479139.55%2C4399874.74&bboxSR=26913&imageSR=26913&size=400%2C400&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 238938,
+   "bytes_cir": 246910
+  },
+  {
+   "id": "C7",
+   "purpose": "corner C7",
+   "bbox_utm13n_nad83": [
+    478979.35,
+    4398109.65,
+    479099.35,
+    4398229.65
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2453054,
+    39.7326159,
+    -105.2439089,
+    39.7337001
+   ],
+   "size_px": [
+    400,
+    400
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-11T21:20:46Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=478979.35%2C4398109.65%2C479099.35%2C4398229.65&bboxSR=26913&imageSR=26913&size=400%2C400&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 186527,
+   "bytes_cir": 216556
+  },
+  {
+   "id": "C8",
+   "purpose": "corner C8",
+   "bbox_utm13n_nad83": [
+    478951.4,
+    4398196.9,
+    479071.4,
+    4398316.9
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2456344,
+    39.7334014,
+    -105.2442378,
+    39.7344855
+   ],
+   "size_px": [
+    400,
+    400
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-11T21:20:59Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=478951.4%2C4398196.9%2C479071.4%2C4398316.9&bboxSR=26913&imageSR=26913&size=400%2C400&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 218283,
+   "bytes_cir": 228131
+  },
+  {
+   "id": "C9",
+   "purpose": "corner C9",
+   "bbox_utm13n_nad83": [
+    478929.51,
+    4398116.08,
+    479049.51,
+    4398236.08
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2458872,
+    39.7326726,
+    -105.2444907,
+    39.7337568
+   ],
+   "size_px": [
+    400,
+    400
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-11T21:21:16Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=478929.51%2C4398116.08%2C479049.51%2C4398236.08&bboxSR=26913&imageSR=26913&size=400%2C400&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 205415,
+   "bytes_cir": 227138
+  },
+  {
+   "id": "W00150",
+   "purpose": "width station st 150",
+   "bbox_utm13n_nad83": [
+    480436.81,
+    4399021.15,
+    480486.91,
+    4399071.25
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2283245,
+    39.7408633,
+    -105.2277412,
+    39.7413159
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:47:22Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=480436.81%2C4399021.15%2C480486.91%2C4399071.25&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 37600,
+   "bytes_cir": 38363
+  },
+  {
+   "id": "W00700",
+   "purpose": "width station st 700",
+   "bbox_utm13n_nad83": [
+    480123.72,
+    4399029.49,
+    480173.82,
+    4399079.59
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2319788,
+    39.7409312,
+    -105.2313956,
+    39.7413838
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:47:55Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=480123.72%2C4399029.49%2C480173.82%2C4399079.59&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 37999,
+   "bytes_cir": 40875
+  },
+  {
+   "id": "W01250",
+   "purpose": "width station st 1250",
+   "bbox_utm13n_nad83": [
+    479870.49,
+    4399384.03,
+    479920.59,
+    4399434.13
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2349451,
+    39.7441198,
+    -105.2343619,
+    39.7445723
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:48:22Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479870.49%2C4399384.03%2C479920.59%2C4399434.13&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 39089,
+   "bytes_cir": 40750
+  },
+  {
+   "id": "W01600",
+   "purpose": "width station st 1600",
+   "bbox_utm13n_nad83": [
+    479726.69,
+    4399577.28,
+    479776.79,
+    4399627.38
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2366294,
+    39.7458576,
+    -105.2360462,
+    39.7463102
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:48:44Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479726.69%2C4399577.28%2C479776.79%2C4399627.38&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 39658,
+   "bytes_cir": 41592
+  },
+  {
+   "id": "W01900",
+   "purpose": "width station st 1900",
+   "bbox_utm13n_nad83": [
+    479567.15,
+    4399784.9,
+    479617.25,
+    4399835.0
+   ],
+   "bbox_lonlat_nad83": [
+    -105.238498,
+    39.7477244,
+    -105.2379148,
+    39.748177
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:49:04Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479567.15%2C4399784.9%2C479617.25%2C4399835.0&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 34304,
+   "bytes_cir": 35894
+  },
+  {
+   "id": "W02050",
+   "purpose": "width station st 2050",
+   "bbox_utm13n_nad83": [
+    479514.14,
+    4399912.19,
+    479564.24,
+    4399962.29
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2391207,
+    39.74887,
+    -105.2385375,
+    39.7493227
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910515_sw_13_060_20190919",
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:58:46Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479514.14%2C4399912.19%2C479564.24%2C4399962.29&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 40764,
+   "bytes_cir": 42488
+  },
+  {
+   "id": "W02150",
+   "purpose": "width station st 2150",
+   "bbox_utm13n_nad83": [
+    479424.18,
+    4399943.28,
+    479474.28,
+    4399993.38
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2401717,
+    39.749148,
+    -105.2395885,
+    39.7496006
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910515_sw_13_060_20190919",
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:49:26Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479424.18%2C4399943.28%2C479474.28%2C4399993.38&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 32781,
+   "bytes_cir": 36349
+  },
+  {
+   "id": "W02250",
+   "purpose": "width station st 2250",
+   "bbox_utm13n_nad83": [
+    479340.77,
+    4399897.3,
+    479390.87,
+    4399947.4
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2411439,
+    39.7487317,
+    -105.2405607,
+    39.7491843
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910515_sw_13_060_20190919",
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:59:14Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479340.77%2C4399897.3%2C479390.87%2C4399947.4&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 25255,
+   "bytes_cir": 29155
+  },
+  {
+   "id": "W02400",
+   "purpose": "width station st 2400",
+   "bbox_utm13n_nad83": [
+    479201.64,
+    4399850.49,
+    479251.74,
+    4399900.59
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2427664,
+    39.7483066,
+    -105.2421832,
+    39.7487592
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910515_sw_13_060_20190919",
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:49:39Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479201.64%2C4399850.49%2C479251.74%2C4399900.59&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 40200,
+   "bytes_cir": 43502
+  },
+  {
+   "id": "W03150",
+   "purpose": "width station st 3150",
+   "bbox_utm13n_nad83": [
+    479182.7,
+    4399739.76,
+    479232.8,
+    4399789.86
+   ],
+   "bbox_lonlat_nad83": [
+    -105.242984,
+    39.7473084,
+    -105.2424008,
+    39.747761
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:59:41Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479182.7%2C4399739.76%2C479232.8%2C4399789.86&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 38504,
+   "bytes_cir": 41349
+  },
+  {
+   "id": "W03250",
+   "purpose": "width station st 3250",
+   "bbox_utm13n_nad83": [
+    479274.1,
+    4399760.97,
+    479324.2,
+    4399811.07
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2419178,
+    39.7475017,
+    -105.2413346,
+    39.7479544
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:49:50Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479274.1%2C4399760.97%2C479324.2%2C4399811.07&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 41098,
+   "bytes_cir": 42428
+  },
+  {
+   "id": "W03550",
+   "purpose": "width station st 3550",
+   "bbox_utm13n_nad83": [
+    479444.7,
+    4399643.18,
+    479494.8,
+    4399693.28
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2399228,
+    39.7464446,
+    -105.2393396,
+    39.7468972
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:50:01Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479444.7%2C4399643.18%2C479494.8%2C4399693.28&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 37450,
+   "bytes_cir": 38784
+  },
+  {
+   "id": "W03800",
+   "purpose": "width station st 3800",
+   "bbox_utm13n_nad83": [
+    479486.66,
+    4399410.36,
+    479536.76,
+    4399460.46
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2394258,
+    39.7443478,
+    -105.2388426,
+    39.7448004
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:50:16Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479486.66%2C4399410.36%2C479536.76%2C4399460.46&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 29591,
+   "bytes_cir": 30078
+  },
+  {
+   "id": "W04100",
+   "purpose": "width station st 4100",
+   "bbox_utm13n_nad83": [
+    479476.19,
+    4399158.4,
+    479526.29,
+    4399208.5
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2395402,
+    39.7420774,
+    -105.238957,
+    39.74253
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:50:48Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479476.19%2C4399158.4%2C479526.29%2C4399208.5&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 37276,
+   "bytes_cir": 38494
+  },
+  {
+   "id": "W04350",
+   "purpose": "width station st 4350",
+   "bbox_utm13n_nad83": [
+    479323.21,
+    4398988.39,
+    479373.31,
+    4399038.49
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2413203,
+    39.7405419,
+    -105.2407371,
+    39.7409945
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:51:07Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479323.21%2C4398988.39%2C479373.31%2C4399038.49&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 35185,
+   "bytes_cir": 36709
+  },
+  {
+   "id": "W04600",
+   "purpose": "width station st 4600",
+   "bbox_utm13n_nad83": [
+    479163.45,
+    4398825.77,
+    479213.55,
+    4398875.87
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2431797,
+    39.7390728,
+    -105.2425966,
+    39.7395254
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:51:42Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479163.45%2C4398825.77%2C479213.55%2C4398875.87&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 33912,
+   "bytes_cir": 35334
+  },
+  {
+   "id": "W04850",
+   "purpose": "width station st 4850",
+   "bbox_utm13n_nad83": [
+    479037.39,
+    4398633.75,
+    479087.49,
+    4398683.85
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2446448,
+    39.7373396,
+    -105.2440617,
+    39.7377922
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:52:16Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479037.39%2C4398633.75%2C479087.49%2C4398683.85&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 35538,
+   "bytes_cir": 36846
+  },
+  {
+   "id": "W05150",
+   "purpose": "width station st 5150",
+   "bbox_utm13n_nad83": [
+    479035.36,
+    4398401.12,
+    479085.46,
+    4398451.22
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2446611,
+    39.7352435,
+    -105.244078,
+    39.7356961
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:52:31Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479035.36%2C4398401.12%2C479085.46%2C4398451.22&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 38323,
+   "bytes_cir": 39498
+  },
+  {
+   "id": "W05300",
+   "purpose": "width station st 5300",
+   "bbox_utm13n_nad83": [
+    479019.59,
+    4398252.16,
+    479069.69,
+    4398302.26
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2448404,
+    39.7339009,
+    -105.2442573,
+    39.7343536
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:52:48Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479019.59%2C4398252.16%2C479069.69%2C4398302.26&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 35608,
+   "bytes_cir": 37389
+  },
+  {
+   "id": "W06100",
+   "purpose": "width station st 6100",
+   "bbox_utm13n_nad83": [
+    478879.09,
+    4398181.76,
+    478929.19,
+    4398231.86
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2464777,
+    39.7332632,
+    -105.2458947,
+    39.7337158
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:53:07Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=478879.09%2C4398181.76%2C478929.19%2C4398231.86&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 37830,
+   "bytes_cir": 40033
+  },
+  {
+   "id": "W06200",
+   "purpose": "width station st 6200",
+   "bbox_utm13n_nad83": [
+    478924.64,
+    4398094.68,
+    478974.74,
+    4398144.78
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2459434,
+    39.7324797,
+    -105.2453603,
+    39.7329323
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T01:00:06Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=478924.64%2C4398094.68%2C478974.74%2C4398144.78&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 38969,
+   "bytes_cir": 43921
+  },
+  {
+   "id": "W06300",
+   "purpose": "width station st 6300",
+   "bbox_utm13n_nad83": [
+    478997.05,
+    4398030.03,
+    479047.15,
+    4398080.13
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2450963,
+    39.731899,
+    -105.2445133,
+    39.7323516
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:53:31Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=478997.05%2C4398030.03%2C479047.15%2C4398080.13&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 33162,
+   "bytes_cir": 39823
+  },
+  {
+   "id": "W06600",
+   "purpose": "width station st 6600",
+   "bbox_utm13n_nad83": [
+    479203.66,
+    4398066.23,
+    479253.76,
+    4398116.33
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2426864,
+    39.7322302,
+    -105.2421034,
+    39.7326828
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T01:00:59Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479203.66%2C4398066.23%2C479253.76%2C4398116.33&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 24845,
+   "bytes_cir": 31765
+  },
+  {
+   "id": "W06700",
+   "purpose": "width station st 6700",
+   "bbox_utm13n_nad83": [
+    479284.62,
+    4398102.17,
+    479334.72,
+    4398152.27
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2417428,
+    39.732556,
+    -105.2411597,
+    39.7330086
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:53:41Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479284.62%2C4398102.17%2C479334.72%2C4398152.27&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 31551,
+   "bytes_cir": 38118
+  },
+  {
+   "id": "W06800",
+   "purpose": "width station st 6800",
+   "bbox_utm13n_nad83": [
+    479375.38,
+    4398090.17,
+    479425.48,
+    4398140.27
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2406833,
+    39.7324501,
+    -105.2401002,
+    39.7329027
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T01:01:25Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479375.38%2C4398090.17%2C479425.48%2C4398140.27&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 37539,
+   "bytes_cir": 41598
+  },
+  {
+   "id": "W06900",
+   "purpose": "width station st 6900",
+   "bbox_utm13n_nad83": [
+    479420.39,
+    4398175.78,
+    479470.49,
+    4398225.88
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2401607,
+    39.7332225,
+    -105.2395776,
+    39.7336751
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:54:09Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479420.39%2C4398175.78%2C479470.49%2C4398225.88&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 35831,
+   "bytes_cir": 40492
+  },
+  {
+   "id": "W06980",
+   "purpose": "width station st 6980",
+   "bbox_utm13n_nad83": [
+    479448.05,
+    4398242.53,
+    479498.15,
+    4398292.63
+   ],
+   "bbox_lonlat_nad83": [
+    -105.23984,
+    39.7338246,
+    -105.2392569,
+    39.7342772
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T01:02:17Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479448.05%2C4398242.53%2C479498.15%2C4398292.63&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 41395,
+   "bytes_cir": 43908
+  },
+  {
+   "id": "W07050",
+   "purpose": "width station st 7050",
+   "bbox_utm13n_nad83": [
+    479516.66,
+    4398230.28,
+    479566.76,
+    4398280.38
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2390389,
+    39.7337159,
+    -105.2384558,
+    39.7341685
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:54:44Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=479516.66%2C4398230.28%2C479566.76%2C4398280.38&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 38364,
+   "bytes_cir": 42467
+  },
+  {
+   "id": "W09850",
+   "purpose": "width station st 9850",
+   "bbox_utm13n_nad83": [
+    478445.66,
+    4396294.63,
+    478495.76,
+    4396344.73
+   ],
+   "bbox_lonlat_nad83": [
+    -105.251474,
+    39.716249,
+    -105.2508911,
+    39.7167017
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910522_ne_13_060_20190913",
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:55:20Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=478445.66%2C4396294.63%2C478495.76%2C4396344.73&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 39284,
+   "bytes_cir": 41951
+  },
+  {
+   "id": "W10150",
+   "purpose": "width station st 10150",
+   "bbox_utm13n_nad83": [
+    478625.39,
+    4396163.88,
+    478675.49,
+    4396213.98
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2493728,
+    39.7150754,
+    -105.2487899,
+    39.7155281
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910522_ne_13_060_20190913",
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:55:44Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=478625.39%2C4396163.88%2C478675.49%2C4396213.98&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 39556,
+   "bytes_cir": 42016
+  },
+  {
+   "id": "W10400",
+   "purpose": "width station st 10400",
+   "bbox_utm13n_nad83": [
+    478612.2,
+    4395942.28,
+    478662.3,
+    4395992.38
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2495195,
+    39.7130785,
+    -105.2489367,
+    39.7135311
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910522_ne_13_060_20190913",
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:56:14Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=478612.2%2C4395942.28%2C478662.3%2C4395992.38&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 38371,
+   "bytes_cir": 40493
+  },
+  {
+   "id": "W10850",
+   "purpose": "width station st 10850",
+   "bbox_utm13n_nad83": [
+    478694.92,
+    4395653.51,
+    478745.02,
+    4395703.61
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2485451,
+    39.7104787,
+    -105.2479623,
+    39.7109313
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910522_ne_13_060_20190913",
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:57:20Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=478694.92%2C4395653.51%2C478745.02%2C4395703.61&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 31949,
+   "bytes_cir": 32838
+  },
+  {
+   "id": "W11150",
+   "purpose": "width station st 11150",
+   "bbox_utm13n_nad83": [
+    478453.27,
+    4395569.61,
+    478503.37,
+    4395619.71
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2513615,
+    39.7097166,
+    -105.2507786,
+    39.7101693
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910522_ne_13_060_20190913",
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T00:57:42Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=478453.27%2C4395569.61%2C478503.37%2C4395619.71&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 36395,
+   "bytes_cir": 38431
+  },
+  {
+   "id": "W11450",
+   "purpose": "width station st 11450",
+   "bbox_utm13n_nad83": [
+    478308.78,
+    4395328.03,
+    478358.88,
+    4395378.13
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2530391,
+    39.7075363,
+    -105.2524563,
+    39.707989
+   ],
+   "size_px": [
+    167,
+    167
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910522_ne_13_060_20190913"
+   ],
+   "fetched_utc": "2026-10-12T00:58:01Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=478308.78%2C4395328.03%2C478358.88%2C4395378.13&bboxSR=26913&imageSR=26913&size=167%2C167&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 35592,
+   "bytes_cir": 37419
+  },
+  {
+   "id": "X19340",
+   "purpose": "C-470 crossing over West Colfax (lap st ~19,345)",
+   "bbox_utm13n_nad83": [
+    482914.0,
+    4396745.0,
+    483064.0,
+    4396895.0
+   ],
+   "bbox_lonlat_nad83": [
+    -105.199354,
+    39.7204081,
+    -105.1976077,
+    39.7217626
+   ],
+   "size_px": [
+    500,
+    500
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T01:04:35Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=482914.0%2C4396745.0%2C483064.0%2C4396895.0&bboxSR=26913&imageSR=26913&size=500%2C500&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 264552,
+   "bytes_cir": 290109
+  },
+  {
+   "id": "X21138",
+   "purpose": "C-470 crossing over US-6 (lap st ~21,138)",
+   "bbox_utm13n_nad83": [
+    482850.5,
+    4397200.5,
+    483000.5,
+    4397350.5
+   ],
+   "bbox_lonlat_nad83": [
+    -105.2001067,
+    39.724511,
+    -105.1983603,
+    39.7258655
+   ],
+   "size_px": [
+    500,
+    500
+   ],
+   "px_m": 0.3,
+   "rasters": [
+    "m_3910523_nw_13_060_20190919"
+   ],
+   "fetched_utc": "2026-10-12T01:05:06Z",
+   "request_rgb": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=482850.5%2C4397200.5%2C483000.5%2C4397350.5&bboxSR=26913&imageSR=26913&size=500%2C500&format=png&pixelType=U8&interpolation=RSP_BilinearInterpolation&noData=&f=image&bandIds=0%2C1%2C2",
+   "bytes_rgb": 286518,
+   "bytes_cir": 303596
+  }
+ ],
+ "corners": [
+  {
+   "id": "C1",
+   "name": "Base hairpin",
+   "dossier": "~164 deg, R~12 m (OSM line)",
+   "apex_lap_st_m": 278.6,
+   "turn_deg_aerial": -167.9,
+   "direction": "right",
+   "radius_m": 11.33,
+   "radius_method": "yellow centre line circle (edge pairs not usable)",
+   "uncertainty_m": 0.5,
+   "confidence": "medium",
+   "centre": {
+    "utm13n_nad83": [
+     480496.44,
+     4398937.84
+    ],
+    "lonlat_wgs84": [
+     -105.2276401,
+     39.7401191
+    ]
+   },
+   "core": {
+    "definition": "headings 20-80 % of the turn between the traced entry and exit legs (tools/fit_hairpins.py's core)",
+    "polar_deg_from_east": [
+     2.6,
+     -97.9
+    ],
+    "arc_deg": 100.7,
+    "rays": 202
+   },
+   "estimates": {
+    "pavement_edges": {
+     "R_inner": 6.64,
+     "R_outer": 21.69,
+     "R_mean": 14.16,
+     "rms_inner_m": 0.241,
+     "rms_outer_m": 0.546,
+     "coverage_inner": 1.0,
+     "coverage_outer": 0.54,
+     "centre_utm13n_nad83": [
+      480494.1,
+      4398939.01
+     ],
+     "good": false,
+     "why_not_good": "outer rms 0.55 m"
+    },
+    "painted_edge_lines": {
+     "R_inner": 7.03,
+     "R_outer": 16.55,
+     "R_mean": 11.79,
+     "rms_inner_m": 0.043,
+     "rms_outer_m": 0.184,
+     "coverage_inner": 1.0,
+     "coverage_outer": 0.33,
+     "centre_utm13n_nad83": [
+      480496.13,
+      4398937.87
+     ],
+     "good": false,
+     "why_not_good": "outer edge line traced on 33% of the core rays"
+    },
+    "yellow_centre_line": {
+     "R": 11.33,
+     "rms_m": 0.073,
+     "coverage": 0.99,
+     "arc_deg": 99.9,
+     "centre_utm13n_nad83": [
+      480496.44,
+      4398937.84
+     ],
+     "good": true
+    },
+    "yellow_ridge_search": {
+     "R": 10.78,
+     "sunlit_fraction": 1.0,
+     "centre_utm13n_nad83": [
+      480496.89,
+      4398937.47
+     ],
+     "note": "grid search for the circle that maximises yellow-paint ridge strength over the core; biased where yellowish dry soil borders the pavement, so it is a check, not an estimate, except where the apex is shadowed"
+    }
+   },
+   "estimates_spread_m": null,
+   "supporting_partial_estimates": [
+    11.79
+   ],
+   "apex_cross_section": {
+    "pavement_width": {
+     "median": 15.07,
+     "p10": 13.99,
+     "p90": 16.2,
+     "n": 109
+    },
+    "edge_line_width": {
+     "median": 9.55,
+     "p10": 9.23,
+     "p90": 9.78,
+     "n": 67
+    },
+    "lane_inner": {
+     "median": 4.61,
+     "p10": 4.52,
+     "p90": 4.71,
+     "n": 67
+    },
+    "lane_outer": {
+     "median": 4.95,
+     "p10": 4.59,
+     "p90": 5.19,
+     "n": 67
+    }
+   },
+   "osm_vs_paint_core": {
+    "median_m": 0.08,
+    "max_m": 0.36,
+    "note": "distance from the traced yellow line to the OSM lap line after removing the 1.3 m datum shift"
+   },
+   "fitter_osm": {
+    "radius_measured_m": 11.952,
+    "radius_fit_m": 11.95,
+    "status": "PASS"
+   },
+   "radius_profile_yellow_10m": [
+    [
+     232.5,
+     195.88
+    ],
+    [
+     234.5,
+     -108.24
+    ],
+    [
+     236.5,
+     -81.4
+    ],
+    [
+     238.5,
+     -78.21
+    ],
+    [
+     240.5,
+     -65.09
+    ],
+    [
+     246.5,
+     74.94
+    ],
+    [
+     248.5,
+     103.29
+    ],
+    [
+     252.5,
+     82.94
+    ],
+    [
+     254.5,
+     58.8
+    ],
+    [
+     256.5,
+     119.3
+    ],
+    [
+     258.5,
+     44.06
+    ],
+    [
+     260.5,
+     26.15
+    ],
+    [
+     262.5,
+     22.15
+    ],
+    [
+     264.5,
+     25.05
+    ],
+    [
+     266.5,
+     27.13
+    ],
+    [
+     268.5,
+     15.93
+    ],
+    [
+     270.5,
+     13.75
+    ],
+    [
+     272.5,
+     11.97
+    ],
+    [
+     274.5,
+     12.14
+    ],
+    [
+     276.5,
+     10.75
+    ],
+    [
+     278.5,
+     11.86
+    ],
+    [
+     280.5,
+     12.21
+    ],
+    [
+     282.5,
+     10.99
+    ],
+    [
+     284.5,
+     10.83
+    ],
+    [
+     286.5,
+     12.83
+    ],
+    [
+     288.5,
+     14.29
+    ],
+    [
+     290.5,
+     13.34
+    ],
+    [
+     292.5,
+     14.05
+    ],
+    [
+     294.5,
+     18.35
+    ],
+    [
+     296.5,
+     19.57
+    ],
+    [
+     298.5,
+     27.66
+    ],
+    [
+     300.5,
+     28.68
+    ],
+    [
+     302.5,
+     118.26
+    ],
+    [
+     310.5,
+     -109.58
+    ]
+   ],
+   "notes": [
+    "pavement-edge pair: outer rms 0.55 m (aprons, pull-offs, gravel margins and tree shadow make the pavement edge irregular at this hairpin; the painted edge lines are circular to ~0.1-0.2 m)"
+   ],
+   "overlay": "overlays/C1.png",
+   "edge_appearance_core": {
+    "inner": {
+     "edge_ok_frac": 1.0,
+     "shadow_frac": 0.0,
+     "open_frac": 0.0,
+     "outside_ndvi_med": -0.02,
+     "outside_chroma_med": 0.35,
+     "narrow_dark_band_beyond_edge_frac": 0.0,
+     "edge_line_to_pavement_edge_m_med": 2.52
+    },
+    "outer": {
+     "edge_ok_frac": 0.54,
+     "shadow_frac": 0.25,
+     "open_frac": 0.03,
+     "outside_ndvi_med": -0.07,
+     "outside_chroma_med": 0.2,
+     "narrow_dark_band_beyond_edge_frac": 0.3,
+     "edge_line_to_pavement_edge_m_med": 2.51
+    }
+   }
+  },
+  {
+   "id": "C2",
+   "name": "Chimney Gulch",
+   "dossier": "138 deg",
+   "apex_lap_st_m": 1065.1,
+   "turn_deg_aerial": -133.0,
+   "direction": "right",
+   "radius_m": 23.8,
+   "radius_method": "painted edge lines: one centre, two radii (concentric fit), mean of inner and outer",
+   "uncertainty_m": 0.4,
+   "confidence": "high",
+   "centre": {
+    "utm13n_nad83": [
+     479896.2,
+     4399254.8
+    ],
+    "lonlat_wgs84": [
+     -105.2346551,
+     39.742961
+    ]
+   },
+   "core": {
+    "definition": "headings 20-80 % of the turn between the traced entry and exit legs (tools/fit_hairpins.py's core)",
+    "polar_deg_from_east": [
+     -98.4,
+     -177.9
+    ],
+    "arc_deg": 79.8,
+    "rays": 160
+   },
+   "estimates": {
+    "pavement_edges": {
+     "R_inner": 21.52,
+     "R_outer": 31.53,
+     "R_mean": 26.53,
+     "rms_inner_m": 0.121,
+     "rms_outer_m": 0.288,
+     "coverage_inner": 0.84,
+     "coverage_outer": 0.4,
+     "centre_utm13n_nad83": [
+      479898.51,
+      4399256.2
+     ],
+     "good": true,
+     "why_not_good": null
+    },
+    "painted_edge_lines": {
+     "R_inner": 20.05,
+     "R_outer": 27.56,
+     "R_mean": 23.8,
+     "rms_inner_m": 0.126,
+     "rms_outer_m": 0.13,
+     "coverage_inner": 1.0,
+     "coverage_outer": 1.0,
+     "centre_utm13n_nad83": [
+      479896.2,
+      4399254.8
+     ],
+     "good": true,
+     "why_not_good": null
+    },
+    "yellow_centre_line": {
+     "R": 23.33,
+     "rms_m": 0.08,
+     "coverage": 1.0,
+     "arc_deg": 79.6,
+     "centre_utm13n_nad83": [
+      479895.85,
+      4399254.63
+     ],
+     "good": true
+    },
+    "yellow_ridge_search": {
+     "R": 23.26,
+     "sunlit_fraction": 1.0,
+     "centre_utm13n_nad83": [
+      479895.77,
+      4399254.64
+     ],
+     "note": "grid search for the circle that maximises yellow-paint ridge strength over the core; biased where yellowish dry soil borders the pavement, so it is a check, not an estimate, except where the apex is shadowed"
+    }
+   },
+   "estimates_spread_m": 0.47,
+   "supporting_partial_estimates": [],
+   "apex_cross_section": {
+    "pavement_width": {
+     "median": 9.89,
+     "p10": 7.13,
+     "p90": 10.58,
+     "n": 85
+    },
+    "edge_line_width": {
+     "median": 7.59,
+     "p10": 7.21,
+     "p90": 7.79,
+     "n": 160
+    },
+    "lane_inner": {
+     "median": 3.64,
+     "p10": 3.41,
+     "p90": 3.83,
+     "n": 160
+    },
+    "lane_outer": {
+     "median": 3.89,
+     "p10": 3.69,
+     "p90": 4.06,
+     "n": 160
+    }
+   },
+   "osm_vs_paint_core": {
+    "median_m": 0.3,
+    "max_m": 0.65,
+    "note": "distance from the traced yellow line to the OSM lap line after removing the 1.3 m datum shift"
+   },
+   "fitter_osm": {
+    "radius_measured_m": 24.418,
+    "radius_fit_m": 24.42,
+    "status": "PASS"
+   },
+   "radius_profile_yellow_10m": [
+    [
+     1040.7,
+     10.91
+    ],
+    [
+     1042.7,
+     37.56
+    ],
+    [
+     1044.7,
+     27.82
+    ],
+    [
+     1046.7,
+     31.43
+    ],
+    [
+     1048.7,
+     29.36
+    ],
+    [
+     1050.7,
+     22.53
+    ],
+    [
+     1052.7,
+     23.42
+    ],
+    [
+     1054.7,
+     21.67
+    ],
+    [
+     1056.7,
+     32.94
+    ],
+    [
+     1058.7,
+     28.78
+    ],
+    [
+     1060.7,
+     24.95
+    ],
+    [
+     1062.7,
+     20.55
+    ],
+    [
+     1064.7,
+     22.31
+    ],
+    [
+     1066.7,
+     26.13
+    ],
+    [
+     1068.7,
+     22.32
+    ],
+    [
+     1070.7,
+     23.23
+    ],
+    [
+     1072.7,
+     25.0
+    ],
+    [
+     1074.7,
+     28.32
+    ],
+    [
+     1076.7,
+     23.47
+    ],
+    [
+     1078.7,
+     20.56
+    ],
+    [
+     1080.7,
+     18.13
+    ],
+    [
+     1082.7,
+     20.97
+    ],
+    [
+     1084.7,
+     33.56
+    ],
+    [
+     1086.7,
+     43.34
+    ],
+    [
+     1088.7,
+     30.48
+    ],
+    [
+     1090.7,
+     26.84
+    ],
+    [
+     1092.7,
+     27.15
+    ],
+    [
+     1094.7,
+     30.45
+    ],
+    [
+     1096.7,
+     57.12
+    ],
+    [
+     1098.7,
+     95.41
+    ],
+    [
+     1100.7,
+     71.56
+    ],
+    [
+     1102.7,
+     54.54
+    ],
+    [
+     1104.7,
+     81.01
+    ],
+    [
+     1108.7,
+     196.9
+    ],
+    [
+     1110.7,
+     101.75
+    ],
+    [
+     1114.7,
+     197.32
+    ],
+    [
+     1118.7,
+     80.0
+    ]
+   ],
+   "notes": [
+    "pavement-edge pair fits (mean 26.53 m) but sits 3.0 m off the painted estimates: the outer pavement edge here includes an apron or pull-off, so the painted edges stand in for the edges"
+   ],
+   "overlay": "overlays/C2.png",
+   "edge_appearance_core": {
+    "inner": {
+     "edge_ok_frac": 0.99,
+     "shadow_frac": 0.0,
+     "open_frac": 0.0,
+     "outside_ndvi_med": 0.13,
+     "outside_chroma_med": 0.33,
+     "narrow_dark_band_beyond_edge_frac": 0.0,
+     "edge_line_to_pavement_edge_m_med": 1.1
+    },
+    "outer": {
+     "edge_ok_frac": 0.53,
+     "shadow_frac": 0.0,
+     "open_frac": 0.0,
+     "outside_ndvi_med": -0.08,
+     "outside_chroma_med": 0.29,
+     "narrow_dark_band_beyond_edge_frac": 0.0,
+     "edge_line_to_pavement_edge_m_med": 1.42
+    }
+   }
+  },
+  {
+   "id": "C3",
+   "name": "Below Lookout Mountain Crag",
+   "dossier": "133 deg",
+   "apex_lap_st_m": 1407.1,
+   "turn_deg_aerial": -134.0,
+   "direction": "right",
+   "radius_m": 15.6,
+   "radius_method": "painted edge lines: one centre, two radii (concentric fit), mean of inner and outer",
+   "uncertainty_m": 0.3,
+   "confidence": "high",
+   "centre": {
+    "utm13n_nad83": [
+     479765.0,
+     4399432.85
+    ],
+    "lonlat_wgs84": [
+     -105.2361919,
+     39.7445621
+    ]
+   },
+   "core": {
+    "definition": "headings 20-80 % of the turn between the traced entry and exit legs (tools/fit_hairpins.py's core)",
+    "polar_deg_from_east": [
+     -100.3,
+     -180.3
+    ],
+    "arc_deg": 80.4,
+    "rays": 161
+   },
+   "estimates": {
+    "pavement_edges": {
+     "R_inner": 9.34,
+     "R_outer": 18.34,
+     "R_mean": 13.84,
+     "rms_inner_m": 0.432,
+     "rms_outer_m": 0.537,
+     "coverage_inner": 0.77,
+     "coverage_outer": 0.68,
+     "centre_utm13n_nad83": [
+      479763.59,
+      4399430.93
+     ],
+     "good": false,
+     "why_not_good": "inner rms 0.43 m; outer rms 0.54 m"
+    },
+    "painted_edge_lines": {
+     "R_inner": 12.39,
+     "R_outer": 18.82,
+     "R_mean": 15.6,
+     "rms_inner_m": 0.337,
+     "rms_outer_m": 0.17,
+     "coverage_inner": 0.73,
+     "coverage_outer": 1.0,
+     "centre_utm13n_nad83": [
+      479765.0,
+      4399432.85
+     ],
+     "good": true,
+     "why_not_good": null
+    },
+    "yellow_centre_line": {
+     "R": 15.89,
+     "rms_m": 0.079,
+     "coverage": 1.0,
+     "arc_deg": 80.1,
+     "centre_utm13n_nad83": [
+      479765.73,
+      4399433.25
+     ],
+     "good": true
+    },
+    "yellow_ridge_search": {
+     "R": 17.08,
+     "sunlit_fraction": 1.0,
+     "centre_utm13n_nad83": [
+      479766.64,
+      4399434.16
+     ],
+     "note": "grid search for the circle that maximises yellow-paint ridge strength over the core; biased where yellowish dry soil borders the pavement, so it is a check, not an estimate, except where the apex is shadowed"
+    }
+   },
+   "estimates_spread_m": 0.29,
+   "supporting_partial_estimates": [],
+   "apex_cross_section": {
+    "pavement_width": {
+     "median": 8.43,
+     "p10": 8.03,
+     "p90": 10.0,
+     "n": 82
+    },
+    "edge_line_width": {
+     "median": 6.67,
+     "p10": 5.57,
+     "p90": 6.86,
+     "n": 119
+    },
+    "lane_inner": {
+     "median": 2.88,
+     "p10": 2.07,
+     "p90": 3.11,
+     "n": 119
+    },
+    "lane_outer": {
+     "median": 3.74,
+     "p10": 3.46,
+     "p90": 3.89,
+     "n": 119
+    }
+   },
+   "osm_vs_paint_core": {
+    "median_m": 0.16,
+    "max_m": 0.38,
+    "note": "distance from the traced yellow line to the OSM lap line after removing the 1.3 m datum shift"
+   },
+   "fitter_osm": {
+    "radius_measured_m": 16.116,
+    "radius_fit_m": 16.12,
+    "status": "PASS"
+   },
+   "radius_profile_yellow_10m": [
+    [
+     1378.1,
+     -55.05
+    ],
+    [
+     1380.1,
+     70.62
+    ],
+    [
+     1382.1,
+     39.81
+    ],
+    [
+     1384.1,
+     34.61
+    ],
+    [
+     1386.1,
+     35.82
+    ],
+    [
+     1388.1,
+     38.43
+    ],
+    [
+     1390.1,
+     28.96
+    ],
+    [
+     1392.1,
+     24.73
+    ],
+    [
+     1394.1,
+     22.19
+    ],
+    [
+     1396.1,
+     22.31
+    ],
+    [
+     1398.1,
+     18.38
+    ],
+    [
+     1400.1,
+     17.55
+    ],
+    [
+     1402.1,
+     17.36
+    ],
+    [
+     1404.1,
+     17.11
+    ],
+    [
+     1406.1,
+     17.37
+    ],
+    [
+     1408.1,
+     14.16
+    ],
+    [
+     1410.1,
+     13.81
+    ],
+    [
+     1412.1,
+     15.01
+    ],
+    [
+     1414.1,
+     19.4
+    ],
+    [
+     1416.1,
+     21.69
+    ],
+    [
+     1418.1,
+     24.18
+    ],
+    [
+     1420.1,
+     21.18
+    ],
+    [
+     1422.1,
+     27.35
+    ],
+    [
+     1424.1,
+     40.55
+    ],
+    [
+     1426.1,
+     47.04
+    ],
+    [
+     1428.1,
+     48.4
+    ],
+    [
+     1430.1,
+     54.0
+    ],
+    [
+     1432.1,
+     55.46
+    ],
+    [
+     1434.1,
+     76.95
+    ],
+    [
+     1436.1,
+     -191.4
+    ],
+    [
+     1440.1,
+     96.46
+    ],
+    [
+     1442.1,
+     119.74
+    ],
+    [
+     1446.1,
+     -170.31
+    ]
+   ],
+   "notes": [
+    "pavement-edge pair: inner rms 0.43 m; outer rms 0.54 m (aprons, pull-offs, gravel margins and tree shadow make the pavement edge irregular at this hairpin; the painted edge lines are circular to ~0.1-0.2 m)"
+   ],
+   "overlay": "overlays/C3.png",
+   "edge_appearance_core": {
+    "inner": {
+     "edge_ok_frac": 0.77,
+     "shadow_frac": 0.23,
+     "open_frac": 0.0,
+     "outside_ndvi_med": -0.06,
+     "outside_chroma_med": 0.35,
+     "narrow_dark_band_beyond_edge_frac": 0.0,
+     "edge_line_to_pavement_edge_m_med": 1.07
+    },
+    "outer": {
+     "edge_ok_frac": 0.71,
+     "shadow_frac": 0.29,
+     "open_frac": 0.0,
+     "outside_ndvi_med": -0.04,
+     "outside_chroma_med": 0.32,
+     "narrow_dark_band_beyond_edge_frac": 0.0,
+     "edge_line_to_pavement_edge_m_med": 1.33
+    }
+   }
+  },
+  {
+   "id": "C4",
+   "name": "Lower hairpin 1",
+   "dossier": "178-189 deg, R~12-14 m",
+   "apex_lap_st_m": 2598.5,
+   "turn_deg_aerial": 174.5,
+   "direction": "left",
+   "radius_m": 10.25,
+   "radius_method": "painted edge lines: one centre, two radii (concentric fit), mean of inner and outer",
+   "uncertainty_m": 0.5,
+   "confidence": "high",
+   "centre": {
+    "utm13n_nad83": [
+     479042.27,
+     4399901.01
+    ],
+    "lonlat_wgs84": [
+     -105.2446422,
+     39.7487629
+    ]
+   },
+   "core": {
+    "definition": "headings 20-80 % of the turn between the traced entry and exit legs (tools/fit_hairpins.py's core)",
+    "polar_deg_from_east": [
+     112.7,
+     217.2
+    ],
+    "arc_deg": 104.7,
+    "rays": 210
+   },
+   "estimates": {
+    "pavement_edges": {
+     "R_inner": 1.22,
+     "R_outer": 15.91,
+     "R_mean": 8.57,
+     "rms_inner_m": 0.58,
+     "rms_outer_m": 0.859,
+     "coverage_inner": 0.83,
+     "coverage_outer": 0.87,
+     "centre_utm13n_nad83": [
+      479040.3,
+      4399901.28
+     ],
+     "good": false,
+     "why_not_good": "inner rms 0.58 m; outer rms 0.86 m"
+    },
+    "painted_edge_lines": {
+     "R_inner": 6.37,
+     "R_outer": 14.13,
+     "R_mean": 10.25,
+     "rms_inner_m": 0.207,
+     "rms_outer_m": 0.178,
+     "coverage_inner": 0.94,
+     "coverage_outer": 1.0,
+     "centre_utm13n_nad83": [
+      479042.27,
+      4399901.01
+     ],
+     "good": true,
+     "why_not_good": null
+    },
+    "yellow_centre_line": {
+     "R": 10.83,
+     "rms_m": 0.059,
+     "coverage": 0.7,
+     "arc_deg": 72.9,
+     "centre_utm13n_nad83": [
+      479042.18,
+      4399900.74
+     ],
+     "good": true
+    },
+    "yellow_ridge_search": {
+     "R": 9.86,
+     "sunlit_fraction": 1.0,
+     "centre_utm13n_nad83": [
+      479041.17,
+      4399901.1
+     ],
+     "note": "grid search for the circle that maximises yellow-paint ridge strength over the core; biased where yellowish dry soil borders the pavement, so it is a check, not an estimate, except where the apex is shadowed"
+    }
+   },
+   "estimates_spread_m": 0.58,
+   "supporting_partial_estimates": [],
+   "apex_cross_section": {
+    "pavement_width": {
+     "median": 15.16,
+     "p10": 12.23,
+     "p90": 16.53,
+     "n": 174
+    },
+    "edge_line_width": {
+     "median": 7.77,
+     "p10": 7.23,
+     "p90": 8.26,
+     "n": 197
+    },
+    "lane_inner": {
+     "median": 4.56,
+     "p10": 3.94,
+     "p90": 4.76,
+     "n": 147
+    },
+    "lane_outer": {
+     "median": 3.37,
+     "p10": 3.24,
+     "p90": 3.6,
+     "n": 147
+    }
+   },
+   "osm_vs_paint_core": {
+    "median_m": 7.02,
+    "max_m": 7.56,
+    "note": "distance from the traced yellow line to the OSM lap line after removing the 1.3 m datum shift"
+   },
+   "fitter_osm": {
+    "radius_measured_m": 12.801,
+    "radius_fit_m": 12.8,
+    "status": "PASS"
+   },
+   "radius_profile_yellow_10m": [
+    [
+     2558.3,
+     -65.42
+    ],
+    [
+     2562.3,
+     151.33
+    ],
+    [
+     2568.3,
+     -198.72
+    ],
+    [
+     2572.3,
+     151.13
+    ],
+    [
+     2576.3,
+     71.98
+    ],
+    [
+     2578.3,
+     83.04
+    ],
+    [
+     2580.3,
+     60.5
+    ],
+    [
+     2582.3,
+     48.44
+    ],
+    [
+     2584.3,
+     58.91
+    ],
+    [
+     2586.3,
+     27.89
+    ],
+    [
+     2588.3,
+     21.39
+    ],
+    [
+     2590.3,
+     17.38
+    ],
+    [
+     2592.3,
+     15.95
+    ],
+    [
+     2594.3,
+     15.74
+    ],
+    [
+     2596.3,
+     4.64
+    ],
+    [
+     2598.3,
+     5.52
+    ],
+    [
+     2600.3,
+     -42.43
+    ],
+    [
+     2614.3,
+     17.69
+    ],
+    [
+     2616.3,
+     20.99
+    ],
+    [
+     2618.3,
+     20.78
+    ],
+    [
+     2620.3,
+     26.51
+    ],
+    [
+     2622.3,
+     35.35
+    ],
+    [
+     2624.3,
+     44.38
+    ],
+    [
+     2626.3,
+     62.62
+    ],
+    [
+     2628.3,
+     94.43
+    ]
+   ],
+   "notes": [
+    "pavement-edge pair: inner rms 0.58 m; outer rms 0.86 m (aprons, pull-offs, gravel margins and tree shadow make the pavement edge irregular at this hairpin; the painted edge lines are circular to ~0.1-0.2 m)",
+    "the OSM lap line runs 7.0 m (median) / 7.6 m (max) from the painted centre line through the core, after the datum shift: OSM cuts the hairpin short (its apex sits ~7 m inside the painted apex) here. tools/fit_hairpins.py measures its 1.5 m sideways limit against OSM, so feeding this radius alone cannot put the curve on the road; anchor the arc on centre.lonlat_wgs84 instead"
+   ],
+   "overlay": "overlays/C4.png",
+   "edge_appearance_core": {
+    "inner": {
+     "edge_ok_frac": 0.96,
+     "shadow_frac": 0.0,
+     "open_frac": 0.0,
+     "outside_ndvi_med": -0.09,
+     "outside_chroma_med": 0.2,
+     "narrow_dark_band_beyond_edge_frac": 0.0,
+     "edge_line_to_pavement_edge_m_med": 3.49
+    },
+    "outer": {
+     "edge_ok_frac": 0.87,
+     "shadow_frac": 0.12,
+     "open_frac": 0.0,
+     "outside_ndvi_med": -0.1,
+     "outside_chroma_med": 0.33,
+     "narrow_dark_band_beyond_edge_frac": 0.0,
+     "edge_line_to_pavement_edge_m_med": 3.41
+    }
+   }
+  },
+  {
+   "id": "C5",
+   "name": "Lower hairpin 2",
+   "dossier": "178-189 deg, R~12-14 m",
+   "apex_lap_st_m": 2829.7,
+   "turn_deg_aerial": -177.1,
+   "direction": "right",
+   "radius_m": 10.02,
+   "radius_method": "painted edge lines: one centre, two radii (concentric fit), mean of inner and outer",
+   "uncertainty_m": 0.3,
+   "confidence": "high",
+   "centre": {
+    "utm13n_nad83": [
+     479234.05,
+     4399821.08
+    ],
+    "lonlat_wgs84": [
+     -105.2424012,
+     39.7480474
+    ]
+   },
+   "core": {
+    "definition": "headings 20-80 % of the turn between the traced entry and exit legs (tools/fit_hairpins.py's core)",
+    "polar_deg_from_east": [
+     53.6,
+     -52.4
+    ],
+    "arc_deg": 106.3,
+    "rays": 213
+   },
+   "estimates": {
+    "pavement_edges": {
+     "R_inner": 5.73,
+     "R_outer": 9.56,
+     "R_mean": 7.64,
+     "rms_inner_m": 0.428,
+     "rms_outer_m": 0.371,
+     "coverage_inner": 0.17,
+     "coverage_outer": 0.52,
+     "centre_utm13n_nad83": [
+      479241.86,
+      4399822.22
+     ],
+     "good": false,
+     "why_not_good": "inner pavement edge traced on 17% of the core rays; inner rms 0.43 m; outer rms 0.37 m"
+    },
+    "painted_edge_lines": {
+     "R_inner": 6.33,
+     "R_outer": 13.72,
+     "R_mean": 10.02,
+     "rms_inner_m": 0.173,
+     "rms_outer_m": 0.15,
+     "coverage_inner": 0.69,
+     "coverage_outer": 0.89,
+     "centre_utm13n_nad83": [
+      479234.05,
+      4399821.08
+     ],
+     "good": true,
+     "why_not_good": null
+    },
+    "yellow_centre_line": {
+     "R": 10.27,
+     "rms_m": 0.039,
+     "coverage": 0.82,
+     "arc_deg": 87.1,
+     "centre_utm13n_nad83": [
+      479232.79,
+      4399820.89
+     ],
+     "good": true
+    },
+    "yellow_ridge_search": {
+     "R": 10.71,
+     "sunlit_fraction": 0.87,
+     "centre_utm13n_nad83": [
+      479232.28,
+      4399820.89
+     ],
+     "note": "grid search for the circle that maximises yellow-paint ridge strength over the core; biased where yellowish dry soil borders the pavement, so it is a check, not an estimate, except where the apex is shadowed"
+    }
+   },
+   "estimates_spread_m": 0.25,
+   "supporting_partial_estimates": [],
+   "apex_cross_section": {
+    "pavement_width": {
+     "median": 9.22,
+     "p10": 8.47,
+     "p90": 10.47,
+     "n": 39
+    },
+    "edge_line_width": {
+     "median": 7.52,
+     "p10": 7.0,
+     "p90": 7.83,
+     "n": 159
+    },
+    "lane_inner": {
+     "median": 2.82,
+     "p10": 2.71,
+     "p90": 3.0,
+     "n": 159
+    },
+    "lane_outer": {
+     "median": 4.66,
+     "p10": 4.28,
+     "p90": 4.9,
+     "n": 159
+    }
+   },
+   "osm_vs_paint_core": {
+    "median_m": 0.79,
+    "max_m": 0.96,
+    "note": "distance from the traced yellow line to the OSM lap line after removing the 1.3 m datum shift"
+   },
+   "fitter_osm": {
+    "radius_measured_m": 10.545,
+    "radius_fit_m": 10.54,
+    "status": "PASS"
+   },
+   "radius_profile_yellow_10m": [
+    [
+     2786.0,
+     -187.63
+    ],
+    [
+     2788.0,
+     -102.81
+    ],
+    [
+     2790.0,
+     -181.38
+    ],
+    [
+     2806.0,
+     98.21
+    ],
+    [
+     2808.0,
+     42.44
+    ],
+    [
+     2810.0,
+     35.69
+    ],
+    [
+     2812.0,
+     27.19
+    ],
+    [
+     2814.0,
+     22.99
+    ],
+    [
+     2816.0,
+     21.67
+    ],
+    [
+     2818.0,
+     17.59
+    ],
+    [
+     2820.0,
+     15.58
+    ],
+    [
+     2822.0,
+     13.24
+    ],
+    [
+     2824.0,
+     12.59
+    ],
+    [
+     2826.0,
+     11.4
+    ],
+    [
+     2828.0,
+     10.06
+    ],
+    [
+     2830.0,
+     9.81
+    ],
+    [
+     2832.0,
+     10.21
+    ],
+    [
+     2834.0,
+     11.2
+    ],
+    [
+     2836.0,
+     10.63
+    ],
+    [
+     2850.0,
+     46.67
+    ],
+    [
+     2852.0,
+     36.24
+    ],
+    [
+     2854.0,
+     45.29
+    ],
+    [
+     2856.0,
+     128.27
+    ],
+    [
+     2860.0,
+     59.76
+    ]
+   ],
+   "notes": [
+    "pavement-edge pair: inner pavement edge traced on 17% of the core rays; inner rms 0.43 m; outer rms 0.37 m (aprons, pull-offs, gravel margins and tree shadow make the pavement edge irregular at this hairpin; the painted edge lines are circular to ~0.1-0.2 m)"
+   ],
+   "overlay": "overlays/C5.png",
+   "edge_appearance_core": {
+    "inner": {
+     "edge_ok_frac": 0.18,
+     "shadow_frac": 0.72,
+     "open_frac": 0.0,
+     "outside_ndvi_med": -0.06,
+     "outside_chroma_med": 0.4,
+     "narrow_dark_band_beyond_edge_frac": 0.0,
+     "edge_line_to_pavement_edge_m_med": 1.66
+    },
+    "outer": {
+     "edge_ok_frac": 0.57,
+     "shadow_frac": 0.31,
+     "open_frac": 0.0,
+     "outside_ndvi_med": 0.05,
+     "outside_chroma_med": 0.3,
+     "narrow_dark_band_beyond_edge_frac": 0.0,
+     "edge_line_to_pavement_edge_m_med": 1.04
+    }
+   }
+  },
+  {
+   "id": "C6",
+   "name": "Lower hairpin 3",
+   "dossier": "178-189 deg, R~12-14 m",
+   "apex_lap_st_m": 3003.9,
+   "turn_deg_aerial": 188.5,
+   "direction": "left",
+   "radius_m": 13.26,
+   "radius_method": "painted edge lines: one centre, two radii (concentric fit), mean of inner and outer",
+   "uncertainty_m": 0.3,
+   "confidence": "high",
+   "centre": {
+    "utm13n_nad83": [
+     479092.6,
+     4399809.75
+    ],
+    "lonlat_wgs84": [
+     -105.2440519,
+     39.7479418
+    ]
+   },
+   "core": {
+    "definition": "headings 20-80 % of the turn between the traced entry and exit legs (tools/fit_hairpins.py's core)",
+    "polar_deg_from_east": [
+     113.8,
+     226.8
+    ],
+    "arc_deg": 113.1,
+    "rays": 227
+   },
+   "estimates": {
+    "pavement_edges": {
+     "R_inner": 8.06,
+     "R_outer": 18.8,
+     "R_mean": 13.43,
+     "rms_inner_m": 0.651,
+     "rms_outer_m": 0.681,
+     "coverage_inner": 0.5,
+     "coverage_outer": 0.9,
+     "centre_utm13n_nad83": [
+      479092.16,
+      4399811.58
+     ],
+     "good": false,
+     "why_not_good": "inner rms 0.65 m; outer rms 0.68 m"
+    },
+    "painted_edge_lines": {
+     "R_inner": 9.79,
+     "R_outer": 16.73,
+     "R_mean": 13.26,
+     "rms_inner_m": 0.086,
+     "rms_outer_m": 0.082,
+     "coverage_inner": 1.0,
+     "coverage_outer": 0.99,
+     "centre_utm13n_nad83": [
+      479092.6,
+      4399809.75
+     ],
+     "good": true,
+     "why_not_good": null
+    },
+    "yellow_centre_line": {
+     "R": 13.25,
+     "rms_m": 0.089,
+     "coverage": 1.0,
+     "arc_deg": 113.0,
+     "centre_utm13n_nad83": [
+      479092.5,
+      4399809.64
+     ],
+     "good": true
+    },
+    "yellow_ridge_search": {
+     "R": 13.19,
+     "sunlit_fraction": 1.0,
+     "centre_utm13n_nad83": [
+      479092.5,
+      4399809.64
+     ],
+     "note": "grid search for the circle that maximises yellow-paint ridge strength over the core; biased where yellowish dry soil borders the pavement, so it is a check, not an estimate, except where the apex is shadowed"
+    }
+   },
+   "estimates_spread_m": 0.01,
+   "supporting_partial_estimates": [],
+   "apex_cross_section": {
+    "pavement_width": {
+     "median": 10.08,
+     "p10": 9.7,
+     "p90": 12.12,
+     "n": 96
+    },
+    "edge_line_width": {
+     "median": 6.93,
+     "p10": 6.81,
+     "p90": 7.09,
+     "n": 227
+    },
+    "lane_inner": {
+     "median": 3.54,
+     "p10": 3.41,
+     "p90": 3.62,
+     "n": 227
+    },
+    "lane_outer": {
+     "median": 3.41,
+     "p10": 3.26,
+     "p90": 3.62,
+     "n": 227
+    }
+   },
+   "osm_vs_paint_core": {
+    "median_m": 0.64,
+    "max_m": 1.11,
+    "note": "distance from the traced yellow line to the OSM lap line after removing the 1.3 m datum shift"
+   },
+   "fitter_osm": {
+    "radius_measured_m": 14.208,
+    "radius_fit_m": 14.21,
+    "status": "PASS"
+   },
+   "radius_profile_yellow_10m": [
+    [
+     2960.7,
+     185.82
+    ],
+    [
+     2972.7,
+     169.92
+    ],
+    [
+     2974.7,
+     63.15
+    ],
+    [
+     2976.7,
+     76.44
+    ],
+    [
+     2978.7,
+     42.47
+    ],
+    [
+     2980.7,
+     34.49
+    ],
+    [
+     2982.7,
+     27.94
+    ],
+    [
+     2984.7,
+     22.53
+    ],
+    [
+     2986.7,
+     20.28
+    ],
+    [
+     2988.7,
+     17.46
+    ],
+    [
+     2990.7,
+     17.03
+    ],
+    [
+     2992.7,
+     17.9
+    ],
+    [
+     2994.7,
+     16.15
+    ],
+    [
+     2996.7,
+     16.08
+    ],
+    [
+     2998.7,
+     14.71
+    ],
+    [
+     3000.7,
+     13.28
+    ],
+    [
+     3002.7,
+     13.94
+    ],
+    [
+     3004.7,
+     14.37
+    ],
+    [
+     3006.7,
+     14.14
+    ],
+    [
+     3008.7,
+     12.17
+    ],
+    [
+     3010.7,
+     12.42
+    ],
+    [
+     3012.7,
+     11.77
+    ],
+    [
+     3014.7,
+     12.11
+    ],
+    [
+     3016.7,
+     14.81
+    ],
+    [
+     3018.7,
+     16.81
+    ],
+    [
+     3020.7,
+     16.36
+    ],
+    [
+     3022.7,
+     15.7
+    ],
+    [
+     3024.7,
+     16.61
+    ],
+    [
+     3026.7,
+     20.29
+    ],
+    [
+     3028.7,
+     25.75
+    ],
+    [
+     3030.7,
+     58.35
+    ],
+    [
+     3032.7,
+     92.95
+    ],
+    [
+     3034.7,
+     132.91
+    ],
+    [
+     3036.7,
+     112.84
+    ],
+    [
+     3042.7,
+     121.15
+    ],
+    [
+     3046.7,
+     -164.23
+    ],
+    [
+     3048.7,
+     -115.92
+    ]
+   ],
+   "notes": [
+    "pavement-edge pair: inner rms 0.65 m; outer rms 0.68 m (aprons, pull-offs, gravel margins and tree shadow make the pavement edge irregular at this hairpin; the painted edge lines are circular to ~0.1-0.2 m)"
+   ],
+   "overlay": "overlays/C6.png",
+   "edge_appearance_core": {
+    "inner": {
+     "edge_ok_frac": 0.5,
+     "shadow_frac": 0.48,
+     "open_frac": 0.0,
+     "outside_ndvi_med": -0.18,
+     "outside_chroma_med": 0.3,
+     "narrow_dark_band_beyond_edge_frac": 0.07,
+     "edge_line_to_pavement_edge_m_med": 1.91
+    },
+    "outer": {
+     "edge_ok_frac": 0.9,
+     "shadow_frac": 0.03,
+     "open_frac": 0.0,
+     "outside_ndvi_med": 0.03,
+     "outside_chroma_med": 0.42,
+     "narrow_dark_band_beyond_edge_frac": 0.0,
+     "edge_line_to_pavement_edge_m_med": 2.98
+    }
+   }
+  },
+  {
+   "id": "C7",
+   "name": "Upper hairpin 1",
+   "dossier": "181-199 deg, R~12-14 m",
+   "apex_lap_st_m": 5415.1,
+   "turn_deg_aerial": -205.1,
+   "direction": "right",
+   "radius_m": 12.62,
+   "radius_method": "yellow-paint ridge search (apex mostly in shadow)",
+   "uncertainty_m": 1.0,
+   "confidence": "low",
+   "centre": {
+    "utm13n_nad83": [
+     479040.0,
+     4398182.5
+    ],
+    "lonlat_wgs84": [
+     -105.244614,
+     39.7332788
+    ]
+   },
+   "core": {
+    "definition": "headings 20-80 % of the turn between the traced entry and exit legs (tools/fit_hairpins.py's core)",
+    "polar_deg_from_east": [
+     -31.3,
+     -154.3
+    ],
+    "arc_deg": 123.0,
+    "rays": 247
+   },
+   "estimates": {
+    "pavement_edges": {
+     "R_inner": 20.87,
+     "R_outer": 30.11,
+     "R_mean": 25.49,
+     "rms_inner_m": 0.621,
+     "rms_outer_m": 0.705,
+     "coverage_inner": 0.47,
+     "coverage_outer": 0.2,
+     "centre_utm13n_nad83": [
+      479042.41,
+      4398198.18
+     ],
+     "good": false,
+     "why_not_good": "outer pavement edge traced on 20% of the core rays; inner rms 0.62 m; outer rms 0.70 m"
+    },
+    "painted_edge_lines": {
+     "R_inner": 8.94,
+     "R_outer": 17.16,
+     "R_mean": 13.05,
+     "rms_inner_m": 0.158,
+     "rms_outer_m": 0.211,
+     "coverage_inner": 0.44,
+     "coverage_outer": 0.37,
+     "centre_utm13n_nad83": [
+      479039.61,
+      4398184.03
+     ],
+     "good": false,
+     "why_not_good": "outer edge line traced on 37% of the core rays"
+    },
+    "yellow_centre_line": {
+     "R": 15.91,
+     "rms_m": 0.045,
+     "coverage": 0.2,
+     "arc_deg": 19.4,
+     "centre_utm13n_nad83": [
+      479041.26,
+      4398185.86
+     ],
+     "good": false
+    },
+    "yellow_ridge_search": {
+     "R": 12.62,
+     "sunlit_fraction": 0.34,
+     "centre_utm13n_nad83": [
+      479040.0,
+      4398182.5
+     ],
+     "note": "grid search for the circle that maximises yellow-paint ridge strength over the core; biased where yellowish dry soil borders the pavement, so it is a check, not an estimate, except where the apex is shadowed"
+    }
+   },
+   "estimates_spread_m": null,
+   "supporting_partial_estimates": [
+    13.05
+   ],
+   "apex_cross_section": {
+    "pavement_width": {
+     "median": 9.64,
+     "p10": 8.91,
+     "p90": 10.72,
+     "n": 50
+    },
+    "edge_line_width": {
+     "median": 8.2,
+     "p10": 7.8,
+     "p90": 8.83,
+     "n": 85
+    },
+    "lane_inner": {
+     "median": 4.47,
+     "p10": 4.17,
+     "p90": 4.68,
+     "n": 49
+    },
+    "lane_outer": {
+     "median": 3.58,
+     "p10": 3.5,
+     "p90": 3.67,
+     "n": 49
+    }
+   },
+   "osm_vs_paint_core": {
+    "median_m": 0.3,
+    "max_m": 0.45,
+    "note": "distance from the traced yellow line to the OSM lap line after removing the 1.3 m datum shift"
+   },
+   "fitter_osm": {
+    "radius_measured_m": 15.855,
+    "radius_fit_m": 12.1,
+    "status": "PASS"
+   },
+   "radius_profile_yellow_10m": [
+    [
+     5375.8,
+     7.98
+    ],
+    [
+     5377.8,
+     -13.15
+    ],
+    [
+     5379.8,
+     -5.44
+    ],
+    [
+     5381.8,
+     -5.84
+    ],
+    [
+     5423.8,
+     20.62
+    ],
+    [
+     5425.8,
+     30.2
+    ],
+    [
+     5427.8,
+     31.13
+    ],
+    [
+     5429.8,
+     33.5
+    ],
+    [
+     5431.8,
+     25.27
+    ],
+    [
+     5433.8,
+     29.03
+    ],
+    [
+     5435.8,
+     31.93
+    ],
+    [
+     5437.8,
+     31.39
+    ],
+    [
+     5439.8,
+     30.36
+    ],
+    [
+     5441.8,
+     44.13
+    ],
+    [
+     5443.8,
+     44.13
+    ],
+    [
+     5453.8,
+     166.74
+    ],
+    [
+     5455.8,
+     46.04
+    ],
+    [
+     5457.8,
+     42.62
+    ],
+    [
+     5459.8,
+     50.9
+    ],
+    [
+     5461.8,
+     74.46
+    ],
+    [
+     5467.8,
+     149.41
+    ],
+    [
+     5471.8,
+     127.48
+    ],
+    [
+     5473.8,
+     156.29
+    ],
+    [
+     5477.8,
+     115.19
+    ]
+   ],
+   "notes": [
+    "the apex is in tree shadow (only ~1/3 of the core arc sunlit); the radius comes from the circle that best follows the sunlit yellow paint, and the partial edge-line pair (mean 13.05 m) agrees within 0.4 m",
+    "pavement-edge pair: outer pavement edge traced on 20% of the core rays; inner rms 0.62 m; outer rms 0.70 m (aprons, pull-offs, gravel margins and tree shadow make the pavement edge irregular at this hairpin; the painted edge lines are circular to ~0.1-0.2 m)"
+   ],
+   "overlay": "overlays/C7.png",
+   "edge_appearance_core": {
+    "inner": {
+     "edge_ok_frac": 0.51,
+     "shadow_frac": 0.16,
+     "open_frac": 0.0,
+     "outside_ndvi_med": -0.11,
+     "outside_chroma_med": 0.32,
+     "narrow_dark_band_beyond_edge_frac": 0.02,
+     "edge_line_to_pavement_edge_m_med": 2.13
+    },
+    "outer": {
+     "edge_ok_frac": 0.2,
+     "shadow_frac": 0.36,
+     "open_frac": 0.0,
+     "outside_ndvi_med": 0.22,
+     "outside_chroma_med": 0.34,
+     "narrow_dark_band_beyond_edge_frac": 0.0,
+     "edge_line_to_pavement_edge_m_med": 0.2
+    }
+   }
+  },
+  {
+   "id": "C8",
+   "name": "Upper hairpin 2",
+   "dossier": "181-199 deg, R~12-14 m",
+   "apex_lap_st_m": 5519.9,
+   "turn_deg_aerial": 191.3,
+   "direction": "left",
+   "radius_m": 10.49,
+   "radius_method": "painted edge lines: one centre, two radii (concentric fit), mean of inner and outer",
+   "uncertainty_m": 0.3,
+   "confidence": "high",
+   "centre": {
+    "utm13n_nad83": [
+     479013.55,
+     4398245.18
+    ],
+    "lonlat_wgs84": [
+     -105.2449246,
+     39.7338429
+    ]
+   },
+   "core": {
+    "definition": "headings 20-80 % of the turn between the traced entry and exit legs (tools/fit_hairpins.py's core)",
+    "polar_deg_from_east": [
+     28.7,
+     143.2
+    ],
+    "arc_deg": 114.8,
+    "rays": 230
+   },
+   "estimates": {
+    "pavement_edges": {
+     "R_inner": 4.13,
+     "R_outer": 13.09,
+     "R_mean": 8.61,
+     "rms_inner_m": 0.823,
+     "rms_outer_m": 0.231,
+     "coverage_inner": 0.28,
+     "coverage_outer": 0.65,
+     "centre_utm13n_nad83": [
+      479013.28,
+      4398251.17
+     ],
+     "good": false,
+     "why_not_good": "inner pavement edge traced on 28% of the core rays; inner rms 0.82 m"
+    },
+    "painted_edge_lines": {
+     "R_inner": 7.01,
+     "R_outer": 13.98,
+     "R_mean": 10.49,
+     "rms_inner_m": 0.082,
+     "rms_outer_m": 0.096,
+     "coverage_inner": 1.0,
+     "coverage_outer": 1.0,
+     "centre_utm13n_nad83": [
+      479013.55,
+      4398245.18
+     ],
+     "good": true,
+     "why_not_good": null
+    },
+    "yellow_centre_line": {
+     "R": 10.55,
+     "rms_m": 0.054,
+     "coverage": 1.0,
+     "arc_deg": 114.5,
+     "centre_utm13n_nad83": [
+      479013.45,
+      4398245.64
+     ],
+     "good": true
+    },
+    "yellow_ridge_search": {
+     "R": 10.81,
+     "sunlit_fraction": 1.0,
+     "centre_utm13n_nad83": [
+      479013.45,
+      4398245.24
+     ],
+     "note": "grid search for the circle that maximises yellow-paint ridge strength over the core; biased where yellowish dry soil borders the pavement, so it is a check, not an estimate, except where the apex is shadowed"
+    }
+   },
+   "estimates_spread_m": 0.06,
+   "supporting_partial_estimates": [],
+   "apex_cross_section": {
+    "pavement_width": {
+     "median": 11.18,
+     "p10": 10.12,
+     "p90": 12.7,
+     "n": 64
+    },
+    "edge_line_width": {
+     "median": 7.0,
+     "p10": 6.74,
+     "p90": 7.16,
+     "n": 230
+    },
+    "lane_inner": {
+     "median": 3.97,
+     "p10": 3.65,
+     "p90": 4.1,
+     "n": 230
+    },
+    "lane_outer": {
+     "median": 3.05,
+     "p10": 2.95,
+     "p90": 3.16,
+     "n": 230
+    }
+   },
+   "osm_vs_paint_core": {
+    "median_m": 0.11,
+    "max_m": 0.44,
+    "note": "distance from the traced yellow line to the OSM lap line after removing the 1.3 m datum shift"
+   },
+   "fitter_osm": {
+    "radius_measured_m": 11.802,
+    "radius_fit_m": 11.8,
+    "status": "PASS"
+   },
+   "radius_profile_yellow_10m": [
+    [
+     5471.5,
+     -188.91
+    ],
+    [
+     5473.5,
+     -183.87
+    ],
+    [
+     5477.5,
+     123.47
+    ],
+    [
+     5485.5,
+     61.66
+    ],
+    [
+     5487.5,
+     98.26
+    ],
+    [
+     5489.5,
+     105.1
+    ],
+    [
+     5491.5,
+     80.02
+    ],
+    [
+     5493.5,
+     60.59
+    ],
+    [
+     5495.5,
+     57.15
+    ],
+    [
+     5497.5,
+     44.47
+    ],
+    [
+     5499.5,
+     25.27
+    ],
+    [
+     5501.5,
+     18.23
+    ],
+    [
+     5503.5,
+     15.95
+    ],
+    [
+     5505.5,
+     17.05
+    ],
+    [
+     5507.5,
+     14.61
+    ],
+    [
+     5509.5,
+     13.82
+    ],
+    [
+     5511.5,
+     12.27
+    ],
+    [
+     5513.5,
+     10.55
+    ],
+    [
+     5515.5,
+     9.95
+    ],
+    [
+     5517.5,
+     10.34
+    ],
+    [
+     5519.5,
+     10.86
+    ],
+    [
+     5521.5,
+     10.54
+    ],
+    [
+     5523.5,
+     10.96
+    ],
+    [
+     5525.5,
+     11.24
+    ],
+    [
+     5527.5,
+     12.13
+    ],
+    [
+     5529.5,
+     12.87
+    ],
+    [
+     5531.5,
+     17.07
+    ],
+    [
+     5533.5,
+     21.67
+    ],
+    [
+     5535.5,
+     27.18
+    ],
+    [
+     5537.5,
+     24.09
+    ],
+    [
+     5539.5,
+     29.67
+    ],
+    [
+     5541.5,
+     49.52
+    ],
+    [
+     5543.5,
+     -104.01
+    ],
+    [
+     5545.5,
+     -99.22
+    ],
+    [
+     5547.5,
+     49.52
+    ],
+    [
+     5549.5,
+     55.41
+    ],
+    [
+     5551.5,
+     142.13
+    ],
+    [
+     5557.5,
+     -178.35
+    ]
+   ],
+   "notes": [
+    "pavement-edge pair: inner pavement edge traced on 28% of the core rays; inner rms 0.82 m (aprons, pull-offs, gravel margins and tree shadow make the pavement edge irregular at this hairpin; the painted edge lines are circular to ~0.1-0.2 m)"
+   ],
+   "overlay": "overlays/C8.png",
+   "edge_appearance_core": {
+    "inner": {
+     "edge_ok_frac": 0.28,
+     "shadow_frac": 0.71,
+     "open_frac": 0.0,
+     "outside_ndvi_med": 0.0,
+     "outside_chroma_med": 0.35,
+     "narrow_dark_band_beyond_edge_frac": 0.0,
+     "edge_line_to_pavement_edge_m_med": 1.91
+    },
+    "outer": {
+     "edge_ok_frac": 0.74,
+     "shadow_frac": 0.0,
+     "open_frac": 0.0,
+     "outside_ndvi_med": -0.04,
+     "outside_chroma_med": 0.33,
+     "narrow_dark_band_beyond_edge_frac": 0.02,
+     "edge_line_to_pavement_edge_m_med": 3.33
+    }
+   }
+  },
+  {
+   "id": "C9",
+   "name": "Upper hairpin 3",
+   "dossier": "181-199 deg, R~12-14 m",
+   "apex_lap_st_m": 5612.5,
+   "turn_deg_aerial": -196.7,
+   "direction": "right",
+   "radius_m": 11.31,
+   "radius_method": "painted edge lines: one centre, two radii (concentric fit), mean of inner and outer",
+   "uncertainty_m": 0.4,
+   "confidence": "high",
+   "centre": {
+    "utm13n_nad83": [
+     478990.21,
+     4398186.37
+    ],
+    "lonlat_wgs84": [
+     -105.2451951,
+     39.7333125
+    ]
+   },
+   "core": {
+    "definition": "headings 20-80 % of the turn between the traced entry and exit legs (tools/fit_hairpins.py's core)",
+    "polar_deg_from_east": [
+     -37.0,
+     -155.0
+    ],
+    "arc_deg": 118.0,
+    "rays": 237
+   },
+   "estimates": {
+    "pavement_edges": {
+     "R_inner": 5.5,
+     "R_outer": 16.73,
+     "R_mean": 11.12,
+     "rms_inner_m": 0.604,
+     "rms_outer_m": 2.021,
+     "coverage_inner": 1.0,
+     "coverage_outer": 0.21,
+     "centre_utm13n_nad83": [
+      478990.84,
+      4398185.76
+     ],
+     "good": false,
+     "why_not_good": "outer pavement edge traced on 21% of the core rays; inner rms 0.60 m; outer rms 2.02 m"
+    },
+    "painted_edge_lines": {
+     "R_inner": 7.8,
+     "R_outer": 14.82,
+     "R_mean": 11.31,
+     "rms_inner_m": 0.096,
+     "rms_outer_m": 0.219,
+     "coverage_inner": 0.96,
+     "coverage_outer": 1.0,
+     "centre_utm13n_nad83": [
+      478990.21,
+      4398186.37
+     ],
+     "good": true,
+     "why_not_good": null
+    },
+    "yellow_centre_line": {
+     "R": 10.9,
+     "rms_m": 0.112,
+     "coverage": 0.97,
+     "arc_deg": 115.3,
+     "centre_utm13n_nad83": [
+      478990.04,
+      4398186.36
+     ],
+     "good": true
+    },
+    "yellow_ridge_search": {
+     "R": 11.02,
+     "sunlit_fraction": 1.0,
+     "centre_utm13n_nad83": [
+      478990.03,
+      4398186.52
+     ],
+     "note": "grid search for the circle that maximises yellow-paint ridge strength over the core; biased where yellowish dry soil borders the pavement, so it is a check, not an estimate, except where the apex is shadowed"
+    }
+   },
+   "estimates_spread_m": 0.41,
+   "supporting_partial_estimates": [],
+   "apex_cross_section": {
+    "pavement_width": {
+     "median": 12.6,
+     "p10": 7.68,
+     "p90": 13.67,
+     "n": 50
+    },
+    "edge_line_width": {
+     "median": 7.0,
+     "p10": 6.78,
+     "p90": 7.25,
+     "n": 237
+    },
+    "lane_inner": {
+     "median": 3.14,
+     "p10": 2.98,
+     "p90": 3.23,
+     "n": 237
+    },
+    "lane_outer": {
+     "median": 3.92,
+     "p10": 3.64,
+     "p90": 4.14,
+     "n": 237
+    }
+   },
+   "osm_vs_paint_core": {
+    "median_m": 0.17,
+    "max_m": 0.36,
+    "note": "distance from the traced yellow line to the OSM lap line after removing the 1.3 m datum shift"
+   },
+   "fitter_osm": {
+    "radius_measured_m": 12.031,
+    "radius_fit_m": 11.78,
+    "status": "FAIL"
+   },
+   "radius_profile_yellow_10m": [
+    [
+     5570.7,
+     -109.78
+    ],
+    [
+     5572.7,
+     -139.78
+    ],
+    [
+     5576.7,
+     126.2
+    ],
+    [
+     5578.7,
+     161.39
+    ],
+    [
+     5600.7,
+     17.79
+    ],
+    [
+     5602.7,
+     14.56
+    ],
+    [
+     5604.7,
+     13.0
+    ],
+    [
+     5606.7,
+     11.98
+    ],
+    [
+     5608.7,
+     11.19
+    ],
+    [
+     5610.7,
+     10.65
+    ],
+    [
+     5612.7,
+     9.7
+    ],
+    [
+     5614.7,
+     9.5
+    ],
+    [
+     5616.7,
+     10.42
+    ],
+    [
+     5618.7,
+     11.34
+    ],
+    [
+     5620.7,
+     12.93
+    ],
+    [
+     5622.7,
+     14.87
+    ],
+    [
+     5624.7,
+     16.15
+    ],
+    [
+     5626.7,
+     19.07
+    ],
+    [
+     5628.7,
+     22.43
+    ],
+    [
+     5630.7,
+     29.72
+    ],
+    [
+     5632.7,
+     31.62
+    ],
+    [
+     5634.7,
+     30.44
+    ],
+    [
+     5636.7,
+     36.44
+    ],
+    [
+     5638.7,
+     52.35
+    ],
+    [
+     5640.7,
+     54.57
+    ],
+    [
+     5642.7,
+     42.01
+    ],
+    [
+     5644.7,
+     45.55
+    ],
+    [
+     5646.7,
+     49.45
+    ],
+    [
+     5648.7,
+     58.55
+    ],
+    [
+     5650.7,
+     48.89
+    ],
+    [
+     5652.7,
+     78.52
+    ],
+    [
+     5654.7,
+     107.64
+    ],
+    [
+     5656.7,
+     86.5
+    ],
+    [
+     5658.7,
+     51.74
+    ],
+    [
+     5660.7,
+     65.4
+    ],
+    [
+     5662.7,
+     107.57
+    ],
+    [
+     5664.7,
+     175.43
+    ],
+    [
+     5666.7,
+     102.96
+    ],
+    [
+     5668.7,
+     108.8
+    ],
+    [
+     5670.7,
+     97.85
+    ],
+    [
+     5672.7,
+     52.12
+    ],
+    [
+     5674.7,
+     80.64
+    ]
+   ],
+   "notes": [
+    "pavement-edge pair: outer pavement edge traced on 21% of the core rays; inner rms 0.60 m; outer rms 2.02 m (aprons, pull-offs, gravel margins and tree shadow make the pavement edge irregular at this hairpin; the painted edge lines are circular to ~0.1-0.2 m)",
+    "shape: the yellow line tightens to R ~9.5 m at the apex (10 m sliding circles), the core (20-80 % of the turn) fits R 10.9 m (yellow) / 11.3 m (edge lines), then the exit eases out smoothly over ~40 m: R ~15 m at st ~5,622, ~30 m at ~5,630, ~50 m at ~5,640-5,650, > 100 m by ~5,655, with no step. So OSM's 'uneven 45 deg tail with a 10 deg step' is mapping facets on a long spiral-like exit, not a second arc; the OSM line is within 0.36 m of the paint through the core. A core arc of R ~11.3 m with a long exit transition (~40-50 m) matches the road; the fitter's single-radius + short-spiral attempts fail its 1.5 m limit on that exit"
+   ],
+   "overlay": "overlays/C9.png",
+   "edge_appearance_core": {
+    "inner": {
+     "edge_ok_frac": 1.0,
+     "shadow_frac": 0.0,
+     "open_frac": 0.0,
+     "outside_ndvi_med": 0.01,
+     "outside_chroma_med": 0.37,
+     "narrow_dark_band_beyond_edge_frac": 0.0,
+     "edge_line_to_pavement_edge_m_med": 1.86
+    },
+    "outer": {
+     "edge_ok_frac": 0.21,
+     "shadow_frac": 0.68,
+     "open_frac": 0.0,
+     "outside_ndvi_med": -0.11,
+     "outside_chroma_med": 0.29,
+     "narrow_dark_band_beyond_edge_frac": 0.0,
+     "edge_line_to_pavement_edge_m_med": 2.92
+    }
+   }
+  },
+  {
+   "id": "C10",
+   "name": "Upper hairpin 4",
+   "dossier": "181-199 deg, R~12-14 m",
+   "apex_lap_st_m": 5872.9,
+   "turn_deg_aerial": 185.1,
+   "direction": "left",
+   "radius_m": 15.02,
+   "radius_method": "painted edge lines: one centre, two radii (concentric fit), mean of inner and outer",
+   "uncertainty_m": 0.4,
+   "confidence": "high",
+   "centre": {
+    "utm13n_nad83": [
+     478952.05,
+     4398401.74
+    ],
+    "lonlat_wgs84": [
+     -105.2456473,
+     39.735252
+    ]
+   },
+   "core": {
+    "definition": "headings 20-80 % of the turn between the traced entry and exit legs (tools/fit_hairpins.py's core)",
+    "polar_deg_from_east": [
+     43.5,
+     154.5
+    ],
+    "arc_deg": 111.0,
+    "rays": 223
+   },
+   "estimates": {
+    "pavement_edges": {
+     "R_inner": 8.28,
+     "R_outer": 20.42,
+     "R_mean": 14.35,
+     "rms_inner_m": 0.145,
+     "rms_outer_m": 0.394,
+     "coverage_inner": 0.41,
+     "coverage_outer": 0.58,
+     "centre_utm13n_nad83": [
+      478953.31,
+      4398404.14
+     ],
+     "good": false,
+     "why_not_good": "outer rms 0.39 m"
+    },
+    "painted_edge_lines": {
+     "R_inner": 11.61,
+     "R_outer": 18.44,
+     "R_mean": 15.02,
+     "rms_inner_m": 0.094,
+     "rms_outer_m": 0.094,
+     "coverage_inner": 0.56,
+     "coverage_outer": 1.0,
+     "centre_utm13n_nad83": [
+      478952.05,
+      4398401.74
+     ],
+     "good": true,
+     "why_not_good": null
+    },
+    "yellow_centre_line": {
+     "R": 15.38,
+     "rms_m": 0.065,
+     "coverage": 0.85,
+     "arc_deg": 111.2,
+     "centre_utm13n_nad83": [
+      478952.11,
+      4398401.35
+     ],
+     "good": true
+    },
+    "yellow_ridge_search": {
+     "R": 15.31,
+     "sunlit_fraction": 0.98,
+     "centre_utm13n_nad83": [
+      478952.1,
+      4398401.51
+     ],
+     "note": "grid search for the circle that maximises yellow-paint ridge strength over the core; biased where yellowish dry soil borders the pavement, so it is a check, not an estimate, except where the apex is shadowed"
+    }
+   },
+   "estimates_spread_m": 0.36,
+   "supporting_partial_estimates": [],
+   "apex_cross_section": {
+    "pavement_width": {
+     "median": 12.24,
+     "p10": 11.66,
+     "p90": 12.63,
+     "n": 91
+    },
+    "edge_line_width": {
+     "median": 6.86,
+     "p10": 6.58,
+     "p90": 6.97,
+     "n": 140
+    },
+    "lane_inner": {
+     "median": 3.45,
+     "p10": 3.15,
+     "p90": 3.56,
+     "n": 140
+    },
+    "lane_outer": {
+     "median": 3.41,
+     "p10": 3.29,
+     "p90": 3.58,
+     "n": 140
+    }
+   },
+   "osm_vs_paint_core": {
+    "median_m": 2.12,
+    "max_m": 4.73,
+    "note": "distance from the traced yellow line to the OSM lap line after removing the 1.3 m datum shift"
+   },
+   "fitter_osm": {
+    "radius_measured_m": 14.795,
+    "radius_fit_m": 14.8,
+    "status": "PASS"
+   },
+   "radius_profile_yellow_10m": [
+    [
+     5838.6,
+     117.42
+    ],
+    [
+     5840.6,
+     138.46
+    ],
+    [
+     5842.6,
+     -150.16
+    ],
+    [
+     5844.6,
+     86.39
+    ],
+    [
+     5846.6,
+     53.83
+    ],
+    [
+     5848.6,
+     48.37
+    ],
+    [
+     5850.6,
+     33.99
+    ],
+    [
+     5852.6,
+     24.96
+    ],
+    [
+     5854.6,
+     20.67
+    ],
+    [
+     5856.6,
+     21.28
+    ],
+    [
+     5858.6,
+     19.28
+    ],
+    [
+     5860.6,
+     16.44
+    ],
+    [
+     5862.6,
+     14.49
+    ],
+    [
+     5864.6,
+     14.14
+    ],
+    [
+     5866.6,
+     15.54
+    ],
+    [
+     5868.6,
+     14.77
+    ],
+    [
+     5870.6,
+     14.03
+    ],
+    [
+     5872.6,
+     15.81
+    ],
+    [
+     5874.6,
+     15.99
+    ],
+    [
+     5876.6,
+     16.25
+    ],
+    [
+     5878.6,
+     16.16
+    ],
+    [
+     5880.6,
+     15.15
+    ],
+    [
+     5882.6,
+     14.51
+    ],
+    [
+     5884.6,
+     12.9
+    ],
+    [
+     5886.6,
+     16.19
+    ],
+    [
+     5888.6,
+     21.7
+    ],
+    [
+     5890.6,
+     20.41
+    ],
+    [
+     5892.6,
+     22.52
+    ],
+    [
+     5894.6,
+     19.44
+    ],
+    [
+     5896.6,
+     20.47
+    ],
+    [
+     5898.6,
+     27.22
+    ],
+    [
+     5900.6,
+     41.27
+    ],
+    [
+     5902.6,
+     36.33
+    ],
+    [
+     5904.6,
+     40.99
+    ],
+    [
+     5906.6,
+     49.75
+    ],
+    [
+     5908.6,
+     169.63
+    ],
+    [
+     5912.6,
+     120.12
+    ],
+    [
+     5924.6,
+     152.9
+    ],
+    [
+     5926.6,
+     -139.68
+    ]
+   ],
+   "notes": [
+    "pavement-edge pair: outer rms 0.39 m (aprons, pull-offs, gravel margins and tree shadow make the pavement edge irregular at this hairpin; the painted edge lines are circular to ~0.1-0.2 m)",
+    "the OSM lap line runs 2.1 m (median) / 4.7 m (max) from the painted centre line through the core, after the datum shift: OSM sits inside the painted curve here. tools/fit_hairpins.py measures its 1.5 m sideways limit against OSM, so feeding this radius alone cannot put the curve on the road; anchor the arc on centre.lonlat_wgs84 instead"
+   ],
+   "overlay": "overlays/C10.png",
+   "edge_appearance_core": {
+    "inner": {
+     "edge_ok_frac": 0.41,
+     "shadow_frac": 0.49,
+     "open_frac": 0.0,
+     "outside_ndvi_med": -0.11,
+     "outside_chroma_med": 0.35,
+     "narrow_dark_band_beyond_edge_frac": 0.0,
+     "edge_line_to_pavement_edge_m_med": 0.73
+    },
+    "outer": {
+     "edge_ok_frac": 0.58,
+     "shadow_frac": 0.42,
+     "open_frac": 0.0,
+     "outside_ndvi_med": -0.07,
+     "outside_chroma_med": 0.32,
+     "narrow_dark_band_beyond_edge_frac": 0.0,
+     "edge_line_to_pavement_edge_m_med": 4.32
+    }
+   }
+  },
+  {
+   "id": "C11",
+   "name": "Wildcat Point bend",
+   "dossier": "121-123 deg",
+   "apex_lap_st_m": 6463.6,
+   "radius_m": null,
+   "confidence": "none",
+   "uncertainty_m": null,
+   "radius_method": "not measurable on this flight",
+   "notes": [
+    "The bend sits on a north-facing slope under a closed conifer canopy; at the 2019-09-19 mid-morning acquisition the whole apex and exit are in deep tree shadow (mean RGB ~25-30 on the road). Only the north-west entry leg is sunlit (about 25 m, edge lines ~7.5 m apart). A gamma-stretched colour-infrared view shows the road only as a faint low-NIR band under the trees, not sharp enough to place edges or paint. The fitter's OSM-derived R 18.16 m is unconfirmed by the aerial; a leaf-off or different-sun-angle image, or Street View, is needed."
+   ],
+   "overlay": null
+  },
+  {
+   "id": "C12",
+   "name": "Paradise Rd tee",
+   "dossier": "90 deg left, R~13 m",
+   "apex_lap_st_m": 9742.0,
+   "turn_deg_osm": 88.9,
+   "inside_edge_lines_angle_deg": 87.4,
+   "radius_m": 14.9,
+   "uncertainty_m": 1.4,
+   "confidence": "medium",
+   "radius_method": "junction: the lap turns through an intersection, so no painted arc exists. Inside kerb-return fillet fitted as an arc tangent to both arms' inside pavement edges (line-arc-line, one parameter), then the lap-centreline arc concentric with it: R = R_fillet + mean inside half-width (arm centre line to inside pavement edge)",
+   "R_fillet_inside_m": 9.1,
+   "fillet_fit_scan_band_m": [
+    8.4,
+    9.6
+   ],
+   "fillet_free_circle_check": {
+    "R": 5.35,
+    "rms": 0.259,
+    "n": 51,
+    "centre_gap_m": 4.21
+   },
+   "inside_half_width_m": {
+    "in": 6.51,
+    "out": 5.1
+   },
+   "centre": {
+    "utm13n_nad83": [
+     478413.32,
+     4396394.31
+    ],
+    "lonlat_wgs84": [
+     -105.2518685,
+     39.7171513
+    ]
+   },
+   "arms": {
+    "in": {
+     "width_med": 14.07,
+     "n_width": 58,
+     "width_p10_p90": [
+      13.75,
+      14.46
+     ],
+     "edge_lines_width_med": 7.21,
+     "centre_from": "yellow",
+     "n_yellow": 70,
+     "edge_in_rms": 0.221,
+     "edge_in_n": 57
+    },
+    "out": {
+     "width_med": 11.25,
+     "n_width": 5,
+     "width_p10_p90": [
+      10.75,
+      11.72
+     ],
+     "edge_lines_width_med": 6.85,
+     "centre_from": "yellow",
+     "n_yellow": 62,
+     "edge_in_rms": 0.272,
+     "edge_in_n": 51
+    }
+   },
+   "notes": [
+    "an unconstrained circle through the same core points gives R 5.35 m with its centre 4.2 m away; over a ~52 deg arc with a shrub notch in the kerb line that fit is poorly conditioned, so the tangent-constrained value is kept",
+    "Lookout Mountain Rd arm (arriving) is ~14 m of pavement with ~7.2 m between its painted edge lines (wide paved shoulders), so its inside half-width (6.5 m) is larger than Paradise Rd's (5.1 m); with the dossier's 6.7 m ribbon centred on the lap, R ~ R_fillet + 3.35 = 12.4 m would put the ribbon's inside edge on the kerb return"
+   ],
+   "radius_if_ribbon_6p7m_inside_edge_on_fillet_m": 12.45,
+   "overlay": "overlays/C12.png"
+  },
+  {
+   "id": "C13",
+   "name": "Paradise Rd bend",
+   "dossier": "R~12 m",
+   "apex_lap_st_m": 10610.9,
+   "turn_deg_osm": -81.7,
+   "inside_edge_lines_angle_deg": -100.4,
+   "radius_m": 16.08,
+   "uncertainty_m": 1.2,
+   "confidence": "medium",
+   "radius_method": "junction: the lap turns through an intersection, so no painted arc exists. Inside kerb-return fillet fitted as an arc tangent to both arms' inside pavement edges (line-arc-line, one parameter), then the lap-centreline arc concentric with it: R = R_fillet + mean inside half-width (arm centre line to inside pavement edge)",
+   "R_fillet_inside_m": 11.4,
+   "fillet_fit_scan_band_m": [
+    11.1,
+    11.8
+   ],
+   "fillet_free_circle_check": {
+    "R": 13.11,
+    "rms": 0.093,
+    "n": 60,
+    "centre_gap_m": 1.86
+   },
+   "inside_half_width_m": {
+    "in": 4.38,
+    "out": 4.98
+   },
+   "centre": {
+    "utm13n_nad83": [
+     478808.08,
+     4395875.65
+    ],
+    "lonlat_wgs84": [
+     -105.2472462,
+     39.712488
+    ]
+   },
+   "arms": {
+    "in": {
+     "width_med": 7.62,
+     "n_width": 55,
+     "width_p10_p90": [
+      6.99,
+      9.8
+     ],
+     "edge_lines_width_med": 5.54,
+     "centre_from": "yellow",
+     "n_yellow": 48,
+     "edge_in_rms": 0.268,
+     "edge_in_n": 64
+    },
+    "out": {
+     "width_med": 9.11,
+     "n_width": 54,
+     "width_p10_p90": [
+      8.72,
+      11.33
+     ],
+     "edge_lines_width_med": 6.97,
+     "centre_from": "yellow",
+     "n_yellow": 59,
+     "edge_in_rms": 0.324,
+     "edge_in_n": 64
+    }
+   },
+   "notes": [
+    "an unconstrained circle through the same core points gives R 13.11 m with its centre 1.9 m away; over a ~60 deg arc with a slightly flattened kerb line that fit is poorly conditioned, so the tangent-constrained value is kept",
+    "the outside of this bend is the mouth of the road continuing east, so there is no outer edge to pair; with a 6.7 m ribbon centred on the lap, R ~ R_fillet + 3.35 = 14.8 m puts its inside edge on the kerb return"
+   ],
+   "radius_if_ribbon_6p7m_inside_edge_on_fillet_m": 14.75,
+   "overlay": "overlays/C13.png"
+  }
+ ],
+ "corner_summary": [
+  {
+   "id": "C1",
+   "name": "Base hairpin",
+   "radius_m": 11.33,
+   "uncertainty_m": 0.5,
+   "confidence": "medium",
+   "method": "yellow centre line circle (edge pairs not usable)",
+   "turn_deg_aerial": -167.9,
+   "osm_fitter_radius_m": 11.95
+  },
+  {
+   "id": "C2",
+   "name": "Chimney Gulch",
+   "radius_m": 23.8,
+   "uncertainty_m": 0.4,
+   "confidence": "high",
+   "method": "painted edge lines",
+   "turn_deg_aerial": -133.0,
+   "osm_fitter_radius_m": 24.42
+  },
+  {
+   "id": "C3",
+   "name": "Below Lookout Mountain Crag",
+   "radius_m": 15.6,
+   "uncertainty_m": 0.3,
+   "confidence": "high",
+   "method": "painted edge lines",
+   "turn_deg_aerial": -134.0,
+   "osm_fitter_radius_m": 16.12
+  },
+  {
+   "id": "C4",
+   "name": "Lower hairpin 1",
+   "radius_m": 10.25,
+   "uncertainty_m": 0.5,
+   "confidence": "high",
+   "method": "painted edge lines",
+   "turn_deg_aerial": 174.5,
+   "osm_fitter_radius_m": 12.8
+  },
+  {
+   "id": "C5",
+   "name": "Lower hairpin 2",
+   "radius_m": 10.02,
+   "uncertainty_m": 0.3,
+   "confidence": "high",
+   "method": "painted edge lines",
+   "turn_deg_aerial": -177.1,
+   "osm_fitter_radius_m": 10.54
+  },
+  {
+   "id": "C6",
+   "name": "Lower hairpin 3",
+   "radius_m": 13.26,
+   "uncertainty_m": 0.3,
+   "confidence": "high",
+   "method": "painted edge lines",
+   "turn_deg_aerial": 188.5,
+   "osm_fitter_radius_m": 14.21
+  },
+  {
+   "id": "C7",
+   "name": "Upper hairpin 1",
+   "radius_m": 12.62,
+   "uncertainty_m": 1.0,
+   "confidence": "low",
+   "method": "yellow-paint ridge search (apex mostly in shadow)",
+   "turn_deg_aerial": -205.1,
+   "osm_fitter_radius_m": 12.1
+  },
+  {
+   "id": "C8",
+   "name": "Upper hairpin 2",
+   "radius_m": 10.49,
+   "uncertainty_m": 0.3,
+   "confidence": "high",
+   "method": "painted edge lines",
+   "turn_deg_aerial": 191.3,
+   "osm_fitter_radius_m": 11.8
+  },
+  {
+   "id": "C9",
+   "name": "Upper hairpin 3",
+   "radius_m": 11.31,
+   "uncertainty_m": 0.4,
+   "confidence": "high",
+   "method": "painted edge lines",
+   "turn_deg_aerial": -196.7,
+   "osm_fitter_radius_m": 11.78
+  },
+  {
+   "id": "C10",
+   "name": "Upper hairpin 4",
+   "radius_m": 15.02,
+   "uncertainty_m": 0.4,
+   "confidence": "high",
+   "method": "painted edge lines",
+   "turn_deg_aerial": 185.1,
+   "osm_fitter_radius_m": 14.8
+  },
+  {
+   "id": "C11",
+   "name": "Wildcat Point bend",
+   "radius_m": null,
+   "uncertainty_m": null,
+   "confidence": "none",
+   "method": "not measurable on this flight",
+   "turn_deg_aerial": null,
+   "osm_fitter_radius_m": null
+  },
+  {
+   "id": "C12",
+   "name": "Paradise Rd tee",
+   "radius_m": 14.9,
+   "uncertainty_m": 1.4,
+   "confidence": "medium",
+   "method": "junction",
+   "turn_deg_aerial": null,
+   "osm_fitter_radius_m": null
+  },
+  {
+   "id": "C13",
+   "name": "Paradise Rd bend",
+   "radius_m": 16.08,
+   "uncertainty_m": 1.2,
+   "confidence": "medium",
+   "method": "junction",
+   "turn_deg_aerial": null,
+   "osm_fitter_radius_m": null
+  }
+ ],
+ "widths": {
+  "method": "Profiles every 0.5 m across +-18 m of road at each station (and through every corner window). On each profile: the double-yellow centre line (yellow-paint peak with asphalt both sides), the two white edge lines (brightness ridges 2.0-5.2 m either side of it), and the two pavement edges (walking outward from each edge line until the surface stops matching this window's own asphalt in NDVI, chroma and brightness for >= 0.45 m; z = 3). Values are medians over the profiles; p10/p90 show the spread. Profiles whose edge borders tree shadow are dropped.",
+  "two_widths_why": "'edge_line_width' is centre-to-centre of the painted white edge lines (the travelled way). 'pavement_width' is the surfaced width to where the surface stops looking like asphalt; at 0.6 m GSD gravel shoulders, dirt pull-offs and old patching can read as asphalt, so it is an upper bound on the paved width, not a survey of it.",
+  "summary": {
+   "lariat_climb_edge_lines": {
+    "median_of_stations": 6.42,
+    "min": 5.94,
+    "max": 6.76,
+    "stations": 18
+   },
+   "lariat_climb_pavement": {
+    "median_of_stations": 7.96,
+    "min": 6.87,
+    "max": 9.21,
+    "stations": 15
+   },
+   "lariat_hairpin_legs_edge_lines": {
+    "median": 6.56,
+    "min": 6.1,
+    "max": 7.41,
+    "legs": 18
+   },
+   "paradise_rd_edge_lines": {
+    "median_of_stations": 6.46,
+    "min": 5.91,
+    "max": 6.92,
+    "stations": 4
+   },
+   "paradise_rd_pavement": {
+    "median_of_stations": 8.0,
+    "min": 7.02,
+    "max": 9.1,
+    "stations": 3
+   },
+   "versus_dossier": "Dossier: 2 lanes averaging 3.35 m (6.7 m paved), as narrow as 6.1 m, lanes 2.74 m at the Tiers of Zion switchbacks (st ~2,500-3,100). Aerial: the painted travelled way on the climb is 5.9-6.8 m between edge-line centres (median of stations ~6.4 m), lanes 2.9-3.4 m; it is narrowest on the upper climb (5.9-6.1 m at st 5,150-6,200). The hairpin legs at the Tiers of Zion (C4-C6) carry 6.4-6.9 m between edge lines with ~3.2-3.4 m lanes: the aerial does NOT show 2.74 m lanes there; at the apexes the inner lane widens to 2.8-4.6 m (see each corner's apex_cross_section). Surfaced width including the margin beyond the edge lines is typically 7.0-9.2 m (0.2-1.8 m beyond each edge line), so 'no paved shoulder' is consistent with a narrow strip of asphalt or gravel outside the stripe that NAIP cannot separate."
+  },
+  "stations": [
+   {
+    "station_m": 150,
+    "segment": "Golden (Lookout Mountain Rd, st 0-1,070)",
+    "lonlat_wgs84": [
+     -105.2280469,
+     39.7410946
+    ],
+    "window": "W00150",
+    "edge_line_width_m": null,
+    "pavement_width_m": {
+     "median": 12.46,
+     "p10": 8.96,
+     "p90": 12.79,
+     "n": 35
+    },
+    "lane_right_m": {
+     "median": 2.97,
+     "p10": 2.83,
+     "p90": 4.8,
+     "n": 6
+    },
+    "lane_left_m": {
+     "median": 3.36,
+     "p10": 2.96,
+     "p90": 4.73,
+     "n": 28
+    },
+    "beyond_edge_line_right_m": {
+     "median": 3.65,
+     "p10": 3.54,
+     "p90": 4.72,
+     "n": 6
+    },
+    "beyond_edge_line_left_m": {
+     "median": 2.57,
+     "p10": 1.85,
+     "p90": 2.76,
+     "n": 14
+    },
+    "profiles": 90,
+    "shadow_fraction": 0.19,
+    "usable": true,
+    "note": "Golden street: no painted edge lines; the pavement run includes the parking/gutter strip"
+   },
+   {
+    "station_m": 700,
+    "segment": "Golden (Lookout Mountain Rd, st 0-1,070)",
+    "lonlat_wgs84": [
+     -105.2317012,
+     39.7411626
+    ],
+    "window": "W00700",
+    "edge_line_width_m": {
+     "median": 6.51,
+     "p10": 6.35,
+     "p90": 6.6,
+     "n": 60
+    },
+    "pavement_width_m": {
+     "median": 6.88,
+     "p10": 6.47,
+     "p90": 8.83,
+     "n": 34
+    },
+    "lane_right_m": {
+     "median": 3.33,
+     "p10": 3.21,
+     "p90": 3.52,
+     "n": 69
+    },
+    "lane_left_m": {
+     "median": 3.12,
+     "p10": 2.94,
+     "p90": 3.28,
+     "n": 60
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.21,
+     "p10": -0.0,
+     "p90": 1.65,
+     "n": 69
+    },
+    "beyond_edge_line_left_m": {
+     "median": 0.18,
+     "p10": 0.06,
+     "p90": 0.31,
+     "n": 30
+    },
+    "profiles": 82,
+    "shadow_fraction": 0.33,
+    "usable": true,
+    "note": null
+   },
+   {
+    "station_m": 1250,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2346675,
+     39.7443511
+    ],
+    "window": "W01250",
+    "edge_line_width_m": {
+     "median": 6.5,
+     "p10": 6.39,
+     "p90": 6.63,
+     "n": 89
+    },
+    "pavement_width_m": {
+     "median": 8.74,
+     "p10": 8.39,
+     "p90": 9.88,
+     "n": 80
+    },
+    "lane_right_m": {
+     "median": 3.22,
+     "p10": 3.06,
+     "p90": 3.34,
+     "n": 89
+    },
+    "lane_left_m": {
+     "median": 3.29,
+     "p10": 3.17,
+     "p90": 3.4,
+     "n": 89
+    },
+    "beyond_edge_line_right_m": {
+     "median": 1.42,
+     "p10": 1.08,
+     "p90": 1.95,
+     "n": 80
+    },
+    "beyond_edge_line_left_m": {
+     "median": 0.95,
+     "p10": 0.54,
+     "p90": 1.22,
+     "n": 89
+    },
+    "profiles": 89,
+    "shadow_fraction": 0.09,
+    "usable": true,
+    "note": null
+   },
+   {
+    "station_m": 1600,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2363518,
+     39.7460889
+    ],
+    "window": "W01600",
+    "edge_line_width_m": {
+     "median": 6.52,
+     "p10": 6.37,
+     "p90": 6.64,
+     "n": 82
+    },
+    "pavement_width_m": {
+     "median": 7.96,
+     "p10": 7.48,
+     "p90": 8.38,
+     "n": 77
+    },
+    "lane_right_m": {
+     "median": 3.3,
+     "p10": 3.18,
+     "p90": 3.42,
+     "n": 82
+    },
+    "lane_left_m": {
+     "median": 3.2,
+     "p10": 3.1,
+     "p90": 3.31,
+     "n": 82
+    },
+    "beyond_edge_line_right_m": {
+     "median": 1.11,
+     "p10": 0.91,
+     "p90": 1.4,
+     "n": 82
+    },
+    "beyond_edge_line_left_m": {
+     "median": 0.28,
+     "p10": -0.08,
+     "p90": 0.63,
+     "n": 77
+    },
+    "profiles": 82,
+    "shadow_fraction": 0.0,
+    "usable": true,
+    "note": null
+   },
+   {
+    "station_m": 1900,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2382204,
+     39.7479557
+    ],
+    "window": "W01900",
+    "edge_line_width_m": {
+     "median": 6.43,
+     "p10": 6.27,
+     "p90": 6.51,
+     "n": 82
+    },
+    "pavement_width_m": {
+     "median": 8.15,
+     "p10": 7.92,
+     "p90": 8.34,
+     "n": 70
+    },
+    "lane_right_m": {
+     "median": 3.23,
+     "p10": 3.11,
+     "p90": 3.37,
+     "n": 82
+    },
+    "lane_left_m": {
+     "median": 3.15,
+     "p10": 3.1,
+     "p90": 3.25,
+     "n": 82
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.82,
+     "p10": 0.69,
+     "p90": 1.0,
+     "n": 82
+    },
+    "beyond_edge_line_left_m": {
+     "median": 0.99,
+     "p10": 0.66,
+     "p90": 1.16,
+     "n": 70
+    },
+    "profiles": 82,
+    "shadow_fraction": 0.0,
+    "usable": true,
+    "note": null
+   },
+   {
+    "station_m": 2050.0,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2388431,
+     39.7491014
+    ],
+    "window": "W02050",
+    "edge_line_width_m": {
+     "median": 6.3,
+     "p10": 6.22,
+     "p90": 6.37,
+     "n": 82
+    },
+    "pavement_width_m": {
+     "median": 8.04,
+     "p10": 7.54,
+     "p90": 8.95,
+     "n": 73
+    },
+    "lane_right_m": {
+     "median": 3.05,
+     "p10": 2.8,
+     "p90": 3.19,
+     "n": 82
+    },
+    "lane_left_m": {
+     "median": 3.23,
+     "p10": 3.12,
+     "p90": 3.5,
+     "n": 82
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.75,
+     "p10": 0.32,
+     "p90": 1.22,
+     "n": 75
+    },
+    "beyond_edge_line_left_m": {
+     "median": 1.08,
+     "p10": 0.51,
+     "p90": 1.47,
+     "n": 80
+    },
+    "profiles": 82,
+    "shadow_fraction": 0.09,
+    "usable": true,
+    "note": null
+   },
+   {
+    "station_m": 2150,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2398942,
+     39.7493793
+    ],
+    "window": "W02150",
+    "edge_line_width_m": null,
+    "pavement_width_m": null,
+    "lane_right_m": {
+     "median": 3.48,
+     "p10": 3.35,
+     "p90": 3.54,
+     "n": 12
+    },
+    "lane_left_m": null,
+    "beyond_edge_line_right_m": null,
+    "beyond_edge_line_left_m": null,
+    "profiles": 97,
+    "shadow_fraction": 0.99,
+    "usable": false,
+    "note": "tree shadow over the road; not measurable"
+   },
+   {
+    "station_m": 2250.0,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2408663,
+     39.748963
+    ],
+    "window": "W02250",
+    "edge_line_width_m": null,
+    "pavement_width_m": null,
+    "lane_right_m": null,
+    "lane_left_m": null,
+    "beyond_edge_line_right_m": null,
+    "beyond_edge_line_left_m": null,
+    "profiles": 96,
+    "shadow_fraction": 0.41,
+    "usable": false,
+    "note": null
+   },
+   {
+    "station_m": 2400,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2424888,
+     39.7485379
+    ],
+    "window": "W02400",
+    "edge_line_width_m": {
+     "median": 6.19,
+     "p10": 5.9,
+     "p90": 6.42,
+     "n": 14
+    },
+    "pavement_width_m": {
+     "median": 6.41,
+     "p10": 6.25,
+     "p90": 6.94,
+     "n": 9
+    },
+    "lane_right_m": {
+     "median": 3.19,
+     "p10": 3.04,
+     "p90": 3.29,
+     "n": 35
+    },
+    "lane_left_m": {
+     "median": 3.07,
+     "p10": 2.62,
+     "p90": 3.24,
+     "n": 14
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.03,
+     "p10": -0.22,
+     "p90": 0.22,
+     "n": 35
+    },
+    "beyond_edge_line_left_m": null,
+    "profiles": 89,
+    "shadow_fraction": 0.7,
+    "usable": true,
+    "note": "partly in tree shadow; fewer profiles"
+   },
+   {
+    "station_m": 3150.0,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2427064,
+     39.7475397
+    ],
+    "window": "W03150",
+    "edge_line_width_m": {
+     "median": 6.48,
+     "p10": 6.27,
+     "p90": 6.62,
+     "n": 68
+    },
+    "pavement_width_m": {
+     "median": 7.0,
+     "p10": 6.73,
+     "p90": 7.35,
+     "n": 65
+    },
+    "lane_right_m": {
+     "median": 3.29,
+     "p10": 3.08,
+     "p90": 3.43,
+     "n": 83
+    },
+    "lane_left_m": {
+     "median": 3.18,
+     "p10": 3.08,
+     "p90": 3.31,
+     "n": 68
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.66,
+     "p10": 0.24,
+     "p90": 0.77,
+     "n": 68
+    },
+    "beyond_edge_line_left_m": {
+     "median": 0.04,
+     "p10": -0.27,
+     "p90": 0.36,
+     "n": 63
+    },
+    "profiles": 83,
+    "shadow_fraction": 0.22,
+    "usable": true,
+    "note": null
+   },
+   {
+    "station_m": 3250,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2416402,
+     39.7477331
+    ],
+    "window": "W03250",
+    "edge_line_width_m": {
+     "median": 6.76,
+     "p10": 6.44,
+     "p90": 6.95,
+     "n": 29
+    },
+    "pavement_width_m": null,
+    "lane_right_m": {
+     "median": 3.37,
+     "p10": 3.16,
+     "p90": 3.5,
+     "n": 29
+    },
+    "lane_left_m": {
+     "median": 3.36,
+     "p10": 3.24,
+     "p90": 3.46,
+     "n": 88
+    },
+    "beyond_edge_line_right_m": null,
+    "beyond_edge_line_left_m": {
+     "median": 0.05,
+     "p10": -0.26,
+     "p90": 0.59,
+     "n": 74
+    },
+    "profiles": 88,
+    "shadow_fraction": 0.85,
+    "usable": true,
+    "note": "partly in tree shadow; fewer profiles"
+   },
+   {
+    "station_m": 3550,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2396453,
+     39.7466759
+    ],
+    "window": "W03550",
+    "edge_line_width_m": {
+     "median": 6.55,
+     "p10": 6.46,
+     "p90": 6.67,
+     "n": 89
+    },
+    "pavement_width_m": {
+     "median": 9.21,
+     "p10": 7.46,
+     "p90": 9.77,
+     "n": 88
+    },
+    "lane_right_m": {
+     "median": 3.3,
+     "p10": 3.09,
+     "p90": 3.64,
+     "n": 89
+    },
+    "lane_left_m": {
+     "median": 3.31,
+     "p10": 2.95,
+     "p90": 3.41,
+     "n": 89
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.77,
+     "p10": 0.36,
+     "p90": 0.94,
+     "n": 89
+    },
+    "beyond_edge_line_left_m": {
+     "median": 1.81,
+     "p10": 0.76,
+     "p90": 2.31,
+     "n": 88
+    },
+    "profiles": 89,
+    "shadow_fraction": 0.0,
+    "usable": true,
+    "note": null
+   },
+   {
+    "station_m": 3800,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2391483,
+     39.7445792
+    ],
+    "window": "W03800",
+    "edge_line_width_m": {
+     "median": 6.43,
+     "p10": 6.29,
+     "p90": 6.49,
+     "n": 82
+    },
+    "pavement_width_m": {
+     "median": 8.73,
+     "p10": 7.61,
+     "p90": 9.04,
+     "n": 76
+    },
+    "lane_right_m": {
+     "median": 3.3,
+     "p10": 3.18,
+     "p90": 3.39,
+     "n": 82
+    },
+    "lane_left_m": {
+     "median": 3.11,
+     "p10": 2.99,
+     "p90": 3.24,
+     "n": 82
+    },
+    "beyond_edge_line_right_m": {
+     "median": 1.47,
+     "p10": 0.9,
+     "p90": 1.73,
+     "n": 82
+    },
+    "beyond_edge_line_left_m": {
+     "median": 0.8,
+     "p10": 0.28,
+     "p90": 1.02,
+     "n": 76
+    },
+    "profiles": 82,
+    "shadow_fraction": 0.0,
+    "usable": true,
+    "note": null
+   },
+   {
+    "station_m": 4100,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2392626,
+     39.7423087
+    ],
+    "window": "W04100",
+    "edge_line_width_m": {
+     "median": 6.73,
+     "p10": 6.66,
+     "p90": 6.98,
+     "n": 82
+    },
+    "pavement_width_m": {
+     "median": 11.27,
+     "p10": 10.28,
+     "p90": 15.05,
+     "n": 67
+    },
+    "lane_right_m": {
+     "median": 3.55,
+     "p10": 3.38,
+     "p90": 3.66,
+     "n": 82
+    },
+    "lane_left_m": {
+     "median": 3.23,
+     "p10": 3.05,
+     "p90": 3.5,
+     "n": 85
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.54,
+     "p10": 0.25,
+     "p90": 0.86,
+     "n": 82
+    },
+    "beyond_edge_line_left_m": {
+     "median": 4.21,
+     "p10": 3.29,
+     "p90": 7.46,
+     "n": 67
+    },
+    "profiles": 85,
+    "shadow_fraction": 0.0,
+    "usable": true,
+    "note": "outside of the st ~4,100 bend is a paved/gravel pull-off; the pavement width includes it"
+   },
+   {
+    "station_m": 4350,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2410427,
+     39.7407732
+    ],
+    "window": "W04350",
+    "edge_line_width_m": {
+     "median": 6.24,
+     "p10": 6.17,
+     "p90": 6.35,
+     "n": 89
+    },
+    "pavement_width_m": {
+     "median": 7.46,
+     "p10": 7.15,
+     "p90": 7.73,
+     "n": 89
+    },
+    "lane_right_m": {
+     "median": 3.34,
+     "p10": 3.23,
+     "p90": 3.52,
+     "n": 89
+    },
+    "lane_left_m": {
+     "median": 2.91,
+     "p10": 2.73,
+     "p90": 2.99,
+     "n": 89
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.57,
+     "p10": 0.32,
+     "p90": 0.82,
+     "n": 89
+    },
+    "beyond_edge_line_left_m": {
+     "median": 0.64,
+     "p10": 0.43,
+     "p90": 0.87,
+     "n": 89
+    },
+    "profiles": 89,
+    "shadow_fraction": 0.0,
+    "usable": true,
+    "note": null
+   },
+   {
+    "station_m": 4600,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2429022,
+     39.7393041
+    ],
+    "window": "W04600",
+    "edge_line_width_m": {
+     "median": 6.41,
+     "p10": 6.24,
+     "p90": 6.63,
+     "n": 87
+    },
+    "pavement_width_m": {
+     "median": 7.96,
+     "p10": 6.5,
+     "p90": 8.5,
+     "n": 55
+    },
+    "lane_right_m": {
+     "median": 3.24,
+     "p10": 3.16,
+     "p90": 3.4,
+     "n": 87
+    },
+    "lane_left_m": {
+     "median": 3.14,
+     "p10": 2.99,
+     "p90": 3.41,
+     "n": 87
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.83,
+     "p10": -0.15,
+     "p90": 1.1,
+     "n": 66
+    },
+    "beyond_edge_line_left_m": {
+     "median": 0.62,
+     "p10": 0.41,
+     "p90": 0.98,
+     "n": 74
+    },
+    "profiles": 87,
+    "shadow_fraction": 0.07,
+    "usable": true,
+    "note": null
+   },
+   {
+    "station_m": 4850,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2443673,
+     39.7375709
+    ],
+    "window": "W04850",
+    "edge_line_width_m": {
+     "median": 6.43,
+     "p10": 6.23,
+     "p90": 6.55,
+     "n": 80
+    },
+    "pavement_width_m": {
+     "median": 7.82,
+     "p10": 7.51,
+     "p90": 8.16,
+     "n": 78
+    },
+    "lane_right_m": {
+     "median": 3.34,
+     "p10": 3.19,
+     "p90": 3.44,
+     "n": 83
+    },
+    "lane_left_m": {
+     "median": 3.09,
+     "p10": 2.94,
+     "p90": 3.26,
+     "n": 80
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.82,
+     "p10": 0.56,
+     "p90": 0.99,
+     "n": 79
+    },
+    "beyond_edge_line_left_m": {
+     "median": 0.63,
+     "p10": 0.41,
+     "p90": 0.85,
+     "n": 79
+    },
+    "profiles": 83,
+    "shadow_fraction": 0.01,
+    "usable": true,
+    "note": null
+   },
+   {
+    "station_m": 5150,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2443836,
+     39.7354748
+    ],
+    "window": "W05150",
+    "edge_line_width_m": {
+     "median": 5.99,
+     "p10": 5.93,
+     "p90": 6.1,
+     "n": 17
+    },
+    "pavement_width_m": {
+     "median": 7.21,
+     "p10": 6.76,
+     "p90": 7.77,
+     "n": 53
+    },
+    "lane_right_m": {
+     "median": 3.14,
+     "p10": 2.96,
+     "p90": 3.24,
+     "n": 55
+    },
+    "lane_left_m": {
+     "median": 3.02,
+     "p10": 2.84,
+     "p90": 3.16,
+     "n": 18
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.78,
+     "p10": 0.68,
+     "p90": 0.98,
+     "n": 55
+    },
+    "beyond_edge_line_left_m": {
+     "median": 0.7,
+     "p10": 0.47,
+     "p90": 0.94,
+     "n": 17
+    },
+    "profiles": 82,
+    "shadow_fraction": 0.0,
+    "usable": true,
+    "note": null
+   },
+   {
+    "station_m": 5300,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2445629,
+     39.7341323
+    ],
+    "window": "W05300",
+    "edge_line_width_m": {
+     "median": 6.14,
+     "p10": 6.03,
+     "p90": 6.28,
+     "n": 81
+    },
+    "pavement_width_m": {
+     "median": 6.87,
+     "p10": 6.22,
+     "p90": 7.29,
+     "n": 66
+    },
+    "lane_right_m": {
+     "median": 3.06,
+     "p10": 3.0,
+     "p90": 3.15,
+     "n": 81
+    },
+    "lane_left_m": {
+     "median": 3.07,
+     "p10": 2.92,
+     "p90": 3.25,
+     "n": 81
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.08,
+     "p10": -0.17,
+     "p90": 0.55,
+     "n": 75
+    },
+    "beyond_edge_line_left_m": {
+     "median": 0.47,
+     "p10": 0.17,
+     "p90": 0.95,
+     "n": 70
+    },
+    "profiles": 81,
+    "shadow_fraction": 0.04,
+    "usable": true,
+    "note": null
+   },
+   {
+    "station_m": 6100,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2462002,
+     39.7334945
+    ],
+    "window": "W06100",
+    "edge_line_width_m": {
+     "median": 6.06,
+     "p10": 5.88,
+     "p90": 6.36,
+     "n": 73
+    },
+    "pavement_width_m": {
+     "median": 7.17,
+     "p10": 6.73,
+     "p90": 7.67,
+     "n": 41
+    },
+    "lane_right_m": {
+     "median": 3.07,
+     "p10": 2.99,
+     "p90": 3.38,
+     "n": 86
+    },
+    "lane_left_m": {
+     "median": 2.95,
+     "p10": 2.87,
+     "p90": 3.06,
+     "n": 73
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.51,
+     "p10": 0.33,
+     "p90": 0.78,
+     "n": 86
+    },
+    "beyond_edge_line_left_m": {
+     "median": 0.43,
+     "p10": 0.31,
+     "p90": 0.63,
+     "n": 41
+    },
+    "profiles": 86,
+    "shadow_fraction": 0.45,
+    "usable": true,
+    "note": null
+   },
+   {
+    "station_m": 6200.0,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2456659,
+     39.732711
+    ],
+    "window": "W06200",
+    "edge_line_width_m": {
+     "median": 5.94,
+     "p10": 5.8,
+     "p90": 6.06,
+     "n": 87
+    },
+    "pavement_width_m": {
+     "median": 7.19,
+     "p10": 6.73,
+     "p90": 7.63,
+     "n": 47
+    },
+    "lane_right_m": {
+     "median": 3.0,
+     "p10": 2.87,
+     "p90": 3.1,
+     "n": 87
+    },
+    "lane_left_m": {
+     "median": 2.96,
+     "p10": 2.85,
+     "p90": 3.04,
+     "n": 88
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.39,
+     "p10": 0.14,
+     "p90": 0.76,
+     "n": 65
+    },
+    "beyond_edge_line_left_m": {
+     "median": 0.73,
+     "p10": 0.53,
+     "p90": 1.04,
+     "n": 69
+    },
+    "profiles": 88,
+    "shadow_fraction": 0.47,
+    "usable": true,
+    "note": null
+   },
+   {
+    "station_m": 6300,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2448188,
+     39.7321303
+    ],
+    "window": "W06300",
+    "edge_line_width_m": null,
+    "pavement_width_m": null,
+    "lane_right_m": null,
+    "lane_left_m": null,
+    "beyond_edge_line_right_m": null,
+    "beyond_edge_line_left_m": null,
+    "profiles": 91,
+    "shadow_fraction": 0.67,
+    "usable": false,
+    "note": "tree shadow over the road; not measurable"
+   },
+   {
+    "station_m": 6600.0,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2424089,
+     39.7324615
+    ],
+    "window": "W06600",
+    "edge_line_width_m": null,
+    "pavement_width_m": null,
+    "lane_right_m": null,
+    "lane_left_m": null,
+    "beyond_edge_line_right_m": null,
+    "beyond_edge_line_left_m": null,
+    "profiles": 90,
+    "shadow_fraction": 0.7,
+    "usable": false,
+    "note": "tree shadow over the road; not measurable"
+   },
+   {
+    "station_m": 6700,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2414653,
+     39.7327873
+    ],
+    "window": "W06700",
+    "edge_line_width_m": null,
+    "pavement_width_m": null,
+    "lane_right_m": null,
+    "lane_left_m": null,
+    "beyond_edge_line_right_m": null,
+    "beyond_edge_line_left_m": null,
+    "profiles": 97,
+    "shadow_fraction": 0.54,
+    "usable": false,
+    "note": "partly in tree shadow; fewer profiles"
+   },
+   {
+    "station_m": 6800.0,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2404057,
+     39.7326814
+    ],
+    "window": "W06800",
+    "edge_line_width_m": {
+     "median": 6.53,
+     "p10": 6.37,
+     "p90": 6.77,
+     "n": 33
+    },
+    "pavement_width_m": null,
+    "lane_right_m": {
+     "median": 3.16,
+     "p10": 2.99,
+     "p90": 3.37,
+     "n": 37
+    },
+    "lane_left_m": {
+     "median": 3.4,
+     "p10": 3.29,
+     "p90": 3.59,
+     "n": 37
+    },
+    "beyond_edge_line_right_m": null,
+    "beyond_edge_line_left_m": {
+     "median": 1.22,
+     "p10": 1.09,
+     "p90": 1.52,
+     "n": 16
+    },
+    "profiles": 89,
+    "shadow_fraction": 0.73,
+    "usable": true,
+    "note": "partly in tree shadow; fewer profiles"
+   },
+   {
+    "station_m": 6900,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2398832,
+     39.7334538
+    ],
+    "window": "W06900",
+    "edge_line_width_m": {
+     "median": 6.43,
+     "p10": 6.22,
+     "p90": 7.61,
+     "n": 5
+    },
+    "pavement_width_m": null,
+    "lane_right_m": {
+     "median": 3.07,
+     "p10": 2.91,
+     "p90": 3.19,
+     "n": 18
+    },
+    "lane_left_m": {
+     "median": 3.39,
+     "p10": 3.2,
+     "p90": 4.08,
+     "n": 9
+    },
+    "beyond_edge_line_right_m": null,
+    "beyond_edge_line_left_m": null,
+    "profiles": 89,
+    "shadow_fraction": 0.72,
+    "usable": false,
+    "note": "tree shadow over the road; not measurable"
+   },
+   {
+    "station_m": 6980.0,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2395625,
+     39.7340559
+    ],
+    "window": "W06980",
+    "edge_line_width_m": {
+     "median": 7.49,
+     "p10": 7.23,
+     "p90": 7.62,
+     "n": 17
+    },
+    "pavement_width_m": {
+     "median": 6.05,
+     "p10": 5.78,
+     "p90": 11.47,
+     "n": 5
+    },
+    "lane_right_m": {
+     "median": 3.64,
+     "p10": 3.04,
+     "p90": 3.87,
+     "n": 19
+    },
+    "lane_left_m": {
+     "median": 4.04,
+     "p10": 3.44,
+     "p90": 4.4,
+     "n": 28
+    },
+    "beyond_edge_line_right_m": {
+     "median": 1.0,
+     "p10": 0.99,
+     "p90": 1.03,
+     "n": 6
+    },
+    "beyond_edge_line_left_m": {
+     "median": 2.13,
+     "p10": 1.8,
+     "p90": 2.32,
+     "n": 22
+    },
+    "profiles": 83,
+    "shadow_fraction": 0.55,
+    "usable": true,
+    "note": "few profiles; near the summit, edge lines may be a turn-lane taper"
+   },
+   {
+    "station_m": 7050,
+    "segment": "Lariat Trail climb (st 1,070-7,100)",
+    "lonlat_wgs84": [
+     -105.2387614,
+     39.7339472
+    ],
+    "window": "W07050",
+    "edge_line_width_m": {
+     "median": 6.22,
+     "p10": 6.08,
+     "p90": 6.51,
+     "n": 65
+    },
+    "pavement_width_m": {
+     "median": 8.09,
+     "p10": 7.31,
+     "p90": 8.28,
+     "n": 15
+    },
+    "lane_right_m": {
+     "median": 2.97,
+     "p10": 2.79,
+     "p90": 3.27,
+     "n": 68
+    },
+    "lane_left_m": {
+     "median": 3.27,
+     "p10": 3.16,
+     "p90": 3.38,
+     "n": 72
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.39,
+     "p10": 0.1,
+     "p90": 0.58,
+     "n": 47
+    },
+    "beyond_edge_line_left_m": {
+     "median": 1.05,
+     "p10": 0.83,
+     "p90": 1.28,
+     "n": 29
+    },
+    "profiles": 85,
+    "shadow_fraction": 0.81,
+    "usable": true,
+    "note": "partly in tree shadow; fewer profiles"
+   },
+   {
+    "station_m": 9850,
+    "segment": "Paradise Rd (st 9,710-11,652)",
+    "lonlat_wgs84": [
+     -105.2511965,
+     39.7164803
+    ],
+    "window": "W09850",
+    "edge_line_width_m": {
+     "median": 6.08,
+     "p10": 5.86,
+     "p90": 7.03,
+     "n": 30
+    },
+    "pavement_width_m": {
+     "median": 7.02,
+     "p10": 5.93,
+     "p90": 7.63,
+     "n": 17
+    },
+    "lane_right_m": {
+     "median": 2.95,
+     "p10": 2.52,
+     "p90": 4.09,
+     "n": 56
+    },
+    "lane_left_m": {
+     "median": 3.29,
+     "p10": 2.93,
+     "p90": 3.6,
+     "n": 38
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.35,
+     "p10": 0.08,
+     "p90": 0.68,
+     "n": 38
+    },
+    "beyond_edge_line_left_m": {
+     "median": 0.56,
+     "p10": -0.05,
+     "p90": 0.7,
+     "n": 25
+    },
+    "profiles": 88,
+    "shadow_fraction": 0.58,
+    "usable": true,
+    "note": "partly in tree shadow; fewer profiles"
+   },
+   {
+    "station_m": 10150,
+    "segment": "Paradise Rd (st 9,710-11,652)",
+    "lonlat_wgs84": [
+     -105.2490954,
+     39.7153068
+    ],
+    "window": "W10150",
+    "edge_line_width_m": {
+     "median": 6.85,
+     "p10": 5.93,
+     "p90": 7.24,
+     "n": 14
+    },
+    "pavement_width_m": null,
+    "lane_right_m": {
+     "median": 3.3,
+     "p10": 3.1,
+     "p90": 4.76,
+     "n": 40
+    },
+    "lane_left_m": {
+     "median": 3.25,
+     "p10": 2.16,
+     "p90": 4.53,
+     "n": 15
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.99,
+     "p10": 0.82,
+     "p90": 1.23,
+     "n": 40
+    },
+    "beyond_edge_line_left_m": null,
+    "profiles": 89,
+    "shadow_fraction": 0.4,
+    "usable": true,
+    "note": null
+   },
+   {
+    "station_m": 10400,
+    "segment": "Paradise Rd (st 9,710-11,652)",
+    "lonlat_wgs84": [
+     -105.2492421,
+     39.7133098
+    ],
+    "window": "W10400",
+    "edge_line_width_m": null,
+    "pavement_width_m": {
+     "median": 5.9,
+     "p10": 4.4,
+     "p90": 11.54,
+     "n": 19
+    },
+    "lane_right_m": {
+     "median": 3.39,
+     "p10": 3.3,
+     "p90": 3.56,
+     "n": 13
+    },
+    "lane_left_m": null,
+    "beyond_edge_line_right_m": {
+     "median": 0.33,
+     "p10": 0.24,
+     "p90": 0.63,
+     "n": 12
+    },
+    "beyond_edge_line_left_m": null,
+    "profiles": 84,
+    "shadow_fraction": 0.5,
+    "usable": true,
+    "note": "junction/driveway area, few profiles"
+   },
+   {
+    "station_m": 10850.0,
+    "segment": "Paradise Rd (st 9,710-11,652)",
+    "lonlat_wgs84": [
+     -105.2482677,
+     39.71071
+    ],
+    "window": "W10850",
+    "edge_line_width_m": {
+     "median": 5.91,
+     "p10": 5.21,
+     "p90": 6.43,
+     "n": 29
+    },
+    "pavement_width_m": {
+     "median": 8.0,
+     "p10": 7.68,
+     "p90": 8.26,
+     "n": 78
+    },
+    "lane_right_m": {
+     "median": 3.16,
+     "p10": 2.98,
+     "p90": 3.32,
+     "n": 77
+    },
+    "lane_left_m": {
+     "median": 2.72,
+     "p10": 2.14,
+     "p90": 3.05,
+     "n": 29
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.77,
+     "p10": 0.5,
+     "p90": 1.07,
+     "n": 71
+    },
+    "beyond_edge_line_left_m": {
+     "median": 1.44,
+     "p10": 0.46,
+     "p90": 1.91,
+     "n": 29
+    },
+    "profiles": 87,
+    "shadow_fraction": 0.0,
+    "usable": true,
+    "note": null
+   },
+   {
+    "station_m": 11150.0,
+    "segment": "Paradise Rd (st 9,710-11,652)",
+    "lonlat_wgs84": [
+     -105.2510841,
+     39.709948
+    ],
+    "window": "W11150",
+    "edge_line_width_m": {
+     "median": 7.11,
+     "p10": 6.82,
+     "p90": 7.91,
+     "n": 18
+    },
+    "pavement_width_m": {
+     "median": 11.94,
+     "p10": 10.62,
+     "p90": 14.33,
+     "n": 40
+    },
+    "lane_right_m": {
+     "median": 3.93,
+     "p10": 3.46,
+     "p90": 4.86,
+     "n": 23
+    },
+    "lane_left_m": {
+     "median": 3.26,
+     "p10": 3.09,
+     "p90": 3.55,
+     "n": 35
+    },
+    "beyond_edge_line_right_m": {
+     "median": 0.84,
+     "p10": 0.02,
+     "p90": 1.17,
+     "n": 21
+    },
+    "beyond_edge_line_left_m": {
+     "median": 3.75,
+     "p10": 3.03,
+     "p90": 5.04,
+     "n": 31
+    },
+    "profiles": 96,
+    "shadow_fraction": 0.23,
+    "usable": true,
+    "note": "at a junction mouth / Park-n-Ride side; pavement includes the junction"
+   },
+   {
+    "station_m": 11450.0,
+    "segment": "Paradise Rd (st 9,710-11,652)",
+    "lonlat_wgs84": [
+     -105.2527617,
+     39.7077677
+    ],
+    "window": "W11450",
+    "edge_line_width_m": {
+     "median": 6.92,
+     "p10": 6.65,
+     "p90": 7.1,
+     "n": 62
+    },
+    "pavement_width_m": {
+     "median": 9.1,
+     "p10": 8.85,
+     "p90": 11.11,
+     "n": 44
+    },
+    "lane_right_m": {
+     "median": 3.49,
+     "p10": 3.25,
+     "p90": 3.63,
+     "n": 69
+    },
+    "lane_left_m": {
+     "median": 3.47,
+     "p10": 3.24,
+     "p90": 3.6,
+     "n": 62
+    },
+    "beyond_edge_line_right_m": {
+     "median": 1.23,
+     "p10": 0.79,
+     "p90": 1.68,
+     "n": 69
+    },
+    "beyond_edge_line_left_m": {
+     "median": 1.23,
+     "p10": 0.6,
+     "p90": 2.71,
+     "n": 44
+    },
+    "profiles": 88,
+    "shadow_fraction": 0.23,
+    "usable": true,
+    "note": null
+   }
+  ],
+  "hairpin_legs": {
+   "C1": {
+    "entry": {
+     "lap_st_range": [
+      224,
+      244
+     ],
+     "edge_line_width_median": 7.22,
+     "p10": 6.82,
+     "p90": 7.36,
+     "n": 14
+    },
+    "exit": {
+     "lap_st_range": [
+      300,
+      325
+     ],
+     "edge_line_width_median": 7.41,
+     "p10": 6.86,
+     "p90": 8.39,
+     "n": 51
+    }
+   },
+   "C2": {
+    "exit": {
+     "lap_st_range": [
+      1106,
+      1131
+     ],
+     "edge_line_width_median": 6.57,
+     "p10": 6.52,
+     "p90": 6.71,
+     "n": 51
+    }
+   },
+   "C3": {
+    "exit": {
+     "lap_st_range": [
+      1443,
+      1467
+     ],
+     "edge_line_width_median": 6.27,
+     "p10": 6.16,
+     "p90": 6.35,
+     "n": 48
+    }
+   },
+   "C4": {
+    "entry": {
+     "lap_st_range": [
+      2542,
+      2565
+     ],
+     "edge_line_width_median": 6.81,
+     "p10": 6.74,
+     "p90": 6.91,
+     "n": 46
+    },
+    "exit": {
+     "lap_st_range": [
+      2623,
+      2654
+     ],
+     "edge_line_width_median": 6.55,
+     "p10": 6.48,
+     "p90": 6.64,
+     "n": 62
+    }
+   },
+   "C5": {
+    "entry": {
+     "lap_st_range": [
+      2776,
+      2798
+     ],
+     "edge_line_width_median": 6.43,
+     "p10": 6.22,
+     "p90": 6.52,
+     "n": 42
+    },
+    "exit": {
+     "lap_st_range": [
+      2874,
+      2890
+     ],
+     "edge_line_width_median": 6.54,
+     "p10": 6.49,
+     "p90": 6.64,
+     "n": 32
+    }
+   },
+   "C6": {
+    "entry": {
+     "lap_st_range": [
+      2951,
+      2973
+     ],
+     "edge_line_width_median": 6.67,
+     "p10": 6.48,
+     "p90": 6.99,
+     "n": 46
+    },
+    "exit": {
+     "lap_st_range": [
+      3037,
+      3059
+     ],
+     "edge_line_width_median": 6.93,
+     "p10": 6.78,
+     "p90": 7.07,
+     "n": 45
+    }
+   },
+   "C7": {
+    "entry": {
+     "lap_st_range": [
+      5366,
+      5386
+     ],
+     "edge_line_width_median": 6.93,
+     "p10": 6.73,
+     "p90": 7.19,
+     "n": 29
+    },
+    "exit": {
+     "lap_st_range": [
+      5472,
+      5479
+     ],
+     "edge_line_width_median": 6.1,
+     "p10": 5.25,
+     "p90": 6.21,
+     "n": 14
+    }
+   },
+   "C8": {
+    "entry": {
+     "lap_st_range": [
+      5462,
+      5482
+     ],
+     "edge_line_width_median": 6.29,
+     "p10": 6.12,
+     "p90": 6.57,
+     "n": 32
+    },
+    "exit": {
+     "lap_st_range": [
+      5552,
+      5574
+     ],
+     "edge_line_width_median": 6.46,
+     "p10": 6.32,
+     "p90": 6.57,
+     "n": 46
+    }
+   },
+   "C9": {
+    "entry": {
+     "lap_st_range": [
+      5561,
+      5583
+     ],
+     "edge_line_width_median": 6.37,
+     "p10": 6.11,
+     "p90": 6.52,
+     "n": 46
+    },
+    "exit": {
+     "lap_st_range": [
+      5664,
+      5683
+     ],
+     "edge_line_width_median": 6.4,
+     "p10": 6.31,
+     "p90": 6.46,
+     "n": 39
+    }
+   },
+   "C10": {
+    "entry": {
+     "lap_st_range": [
+      5823,
+      5845
+     ],
+     "edge_line_width_median": 6.84,
+     "p10": 6.56,
+     "p90": 7.12,
+     "n": 46
+    },
+    "exit": {
+     "lap_st_range": [
+      5916,
+      5941
+     ],
+     "edge_line_width_median": 6.81,
+     "p10": 6.72,
+     "p90": 6.94,
+     "n": 51
+    }
+   }
+  },
+  "corner_apexes": {
+   "C1": {
+    "pavement_width": {
+     "median": 15.07,
+     "p10": 13.99,
+     "p90": 16.2,
+     "n": 109
+    },
+    "edge_line_width": {
+     "median": 9.55,
+     "p10": 9.23,
+     "p90": 9.78,
+     "n": 67
+    },
+    "lane_inner": {
+     "median": 4.61,
+     "p10": 4.52,
+     "p90": 4.71,
+     "n": 67
+    },
+    "lane_outer": {
+     "median": 4.95,
+     "p10": 4.59,
+     "p90": 5.19,
+     "n": 67
+    }
+   },
+   "C2": {
+    "pavement_width": {
+     "median": 9.89,
+     "p10": 7.13,
+     "p90": 10.58,
+     "n": 85
+    },
+    "edge_line_width": {
+     "median": 7.59,
+     "p10": 7.21,
+     "p90": 7.79,
+     "n": 160
+    },
+    "lane_inner": {
+     "median": 3.64,
+     "p10": 3.41,
+     "p90": 3.83,
+     "n": 160
+    },
+    "lane_outer": {
+     "median": 3.89,
+     "p10": 3.69,
+     "p90": 4.06,
+     "n": 160
+    }
+   },
+   "C3": {
+    "pavement_width": {
+     "median": 8.43,
+     "p10": 8.03,
+     "p90": 10.0,
+     "n": 82
+    },
+    "edge_line_width": {
+     "median": 6.67,
+     "p10": 5.57,
+     "p90": 6.86,
+     "n": 119
+    },
+    "lane_inner": {
+     "median": 2.88,
+     "p10": 2.07,
+     "p90": 3.11,
+     "n": 119
+    },
+    "lane_outer": {
+     "median": 3.74,
+     "p10": 3.46,
+     "p90": 3.89,
+     "n": 119
+    }
+   },
+   "C4": {
+    "pavement_width": {
+     "median": 15.16,
+     "p10": 12.23,
+     "p90": 16.53,
+     "n": 174
+    },
+    "edge_line_width": {
+     "median": 7.77,
+     "p10": 7.23,
+     "p90": 8.26,
+     "n": 197
+    },
+    "lane_inner": {
+     "median": 4.56,
+     "p10": 3.94,
+     "p90": 4.76,
+     "n": 147
+    },
+    "lane_outer": {
+     "median": 3.37,
+     "p10": 3.24,
+     "p90": 3.6,
+     "n": 147
+    }
+   },
+   "C5": {
+    "pavement_width": {
+     "median": 9.22,
+     "p10": 8.47,
+     "p90": 10.47,
+     "n": 39
+    },
+    "edge_line_width": {
+     "median": 7.52,
+     "p10": 7.0,
+     "p90": 7.83,
+     "n": 159
+    },
+    "lane_inner": {
+     "median": 2.82,
+     "p10": 2.71,
+     "p90": 3.0,
+     "n": 159
+    },
+    "lane_outer": {
+     "median": 4.66,
+     "p10": 4.28,
+     "p90": 4.9,
+     "n": 159
+    }
+   },
+   "C6": {
+    "pavement_width": {
+     "median": 10.08,
+     "p10": 9.7,
+     "p90": 12.12,
+     "n": 96
+    },
+    "edge_line_width": {
+     "median": 6.93,
+     "p10": 6.81,
+     "p90": 7.09,
+     "n": 227
+    },
+    "lane_inner": {
+     "median": 3.54,
+     "p10": 3.41,
+     "p90": 3.62,
+     "n": 227
+    },
+    "lane_outer": {
+     "median": 3.41,
+     "p10": 3.26,
+     "p90": 3.62,
+     "n": 227
+    }
+   },
+   "C7": {
+    "pavement_width": {
+     "median": 9.64,
+     "p10": 8.91,
+     "p90": 10.72,
+     "n": 50
+    },
+    "edge_line_width": {
+     "median": 8.2,
+     "p10": 7.8,
+     "p90": 8.83,
+     "n": 85
+    },
+    "lane_inner": {
+     "median": 4.47,
+     "p10": 4.17,
+     "p90": 4.68,
+     "n": 49
+    },
+    "lane_outer": {
+     "median": 3.58,
+     "p10": 3.5,
+     "p90": 3.67,
+     "n": 49
+    }
+   },
+   "C8": {
+    "pavement_width": {
+     "median": 11.18,
+     "p10": 10.12,
+     "p90": 12.7,
+     "n": 64
+    },
+    "edge_line_width": {
+     "median": 7.0,
+     "p10": 6.74,
+     "p90": 7.16,
+     "n": 230
+    },
+    "lane_inner": {
+     "median": 3.97,
+     "p10": 3.65,
+     "p90": 4.1,
+     "n": 230
+    },
+    "lane_outer": {
+     "median": 3.05,
+     "p10": 2.95,
+     "p90": 3.16,
+     "n": 230
+    }
+   },
+   "C9": {
+    "pavement_width": {
+     "median": 12.6,
+     "p10": 7.68,
+     "p90": 13.67,
+     "n": 50
+    },
+    "edge_line_width": {
+     "median": 7.0,
+     "p10": 6.78,
+     "p90": 7.25,
+     "n": 237
+    },
+    "lane_inner": {
+     "median": 3.14,
+     "p10": 2.98,
+     "p90": 3.23,
+     "n": 237
+    },
+    "lane_outer": {
+     "median": 3.92,
+     "p10": 3.64,
+     "p90": 4.14,
+     "n": 237
+    }
+   },
+   "C10": {
+    "pavement_width": {
+     "median": 12.24,
+     "p10": 11.66,
+     "p90": 12.63,
+     "n": 91
+    },
+    "edge_line_width": {
+     "median": 6.86,
+     "p10": 6.58,
+     "p90": 6.97,
+     "n": 140
+    },
+    "lane_inner": {
+     "median": 3.45,
+     "p10": 3.15,
+     "p90": 3.56,
+     "n": 140
+    },
+    "lane_outer": {
+     "median": 3.41,
+     "p10": 3.29,
+     "p90": 3.58,
+     "n": 140
+    }
+   }
+  },
+  "junction_arms": {
+   "C12": {
+    "in": {
+     "width_med": 14.07,
+     "n_width": 58,
+     "width_p10_p90": [
+      13.75,
+      14.46
+     ],
+     "edge_lines_width_med": 7.21,
+     "centre_from": "yellow",
+     "n_yellow": 70,
+     "edge_in_rms": 0.221,
+     "edge_in_n": 57
+    },
+    "out": {
+     "width_med": 11.25,
+     "n_width": 5,
+     "width_p10_p90": [
+      10.75,
+      11.72
+     ],
+     "edge_lines_width_med": 6.85,
+     "centre_from": "yellow",
+     "n_yellow": 62,
+     "edge_in_rms": 0.272,
+     "edge_in_n": 51
+    }
+   },
+   "C13": {
+    "in": {
+     "width_med": 7.62,
+     "n_width": 55,
+     "width_p10_p90": [
+      6.99,
+      9.8
+     ],
+     "edge_lines_width_med": 5.54,
+     "centre_from": "yellow",
+     "n_yellow": 48,
+     "edge_in_rms": 0.268,
+     "edge_in_n": 64
+    },
+    "out": {
+     "width_med": 9.11,
+     "n_width": 54,
+     "width_p10_p90": [
+      8.72,
+      11.33
+     ],
+     "edge_lines_width_med": 6.97,
+     "centre_from": "yellow",
+     "n_yellow": 59,
+     "edge_in_rms": 0.324,
+     "edge_in_n": 64
+    }
+   }
+  }
+ },
+ "edges": {
+  "what_an_aerial_can_and_cannot_show": "At 0.6 m GSD, top-down, mid-morning sun from the ESE (shadows fall WNW): a continuous thin dark line beside the pavement means something stands or drops there (a W-beam rail, a low stone or concrete wall, a kerb, or the lip of a steep fill slope); a row of separate dark marks at a regular 2-3 m spacing means posts or separate blocks. Neither tells stone from steel from concrete, nor its height, nor how deep a drop is. Stone vs W-beam needs Street View or a site visit; drop heights need 3DEP. Statements below say what is visible, not what it is.",
+  "per_corner": {
+   "C1": "Outer (east to south) edge: a continuous thin dark line ~0.5 m beyond the pavement for ~35-40 m from the north leg round to the apex (30 % of core rays show a narrow dark band right outside the edge): consistent with a barrier or an edge drop. South-west of the apex, outside the hairpin: a broad bare-dirt pull-off adjoining the pavement (the outer pavement-edge fit swings out across it). Inside: dry grass/dirt, flush. Lanes at the apex 4.6 m (inner) and 4.9 m (outer).",
+   "C2": "Wide clean apron on the outside; inside the bend a gravel/dirt area and a dirt track leaving south from the apex (the Chimney Gulch trail crossing / pull-off). No continuous barrier line visible.",
+   "C3": "Inside of the apex: a row of small dark/reddish marks at ~2-3 m spacing along the pavement edge (posts or separate blocks) and a large dirt pull-off behind them. Outside (south-east): the ground falls into dense shrubs and tree shadow; no edge line visible there.",
+   "C4": "Outside of the apex (west): a broad gravel apron reaching ~3.4 m beyond the edge line, with small dark marks along its outer rim. Inside: bare dirt; a car stood at the apex on the inner lane on the flight day (it masks part of the inner edge).",
+   "C5": "Outside of the apex (east): light-grey apron/pull-off. Inside: shrubs and their shadows right at the edge (inner pavement edge traced on only 17 % of the core). No barrier line visible.",
+   "C6": "Inside: a gravel pull-off between the legs (a car parked on it, ~15 x 10 m). Outside apex (west): light apron, scattered shrubs. No barrier line visible.",
+   "C7": "A row of separate dark marks at ~2-3 m spacing along the west side of the east leg (inside the hairpin) running toward the apex; the apex and its outside are in conifer shadow.",
+   "C8": "A row of separate dark marks ~1.5-2 m beyond the outer pavement edge around the apex (spacing ~3 m) and along the inside of the east leg; outside the apex a triangular dirt pull-off.",
+   "C9": "Inside: bare soil, flush. Outside of the apex: conifer shadow (outer pavement edge traced on 21 % of the core). Along the outer side of the east leg a thin bluish-grey line, which could be galvanized W-beam, unconfirmed.",
+   "C10": "Outside of the apex (north): light apron; dense conifers to the west. Inside: dirt with shrubs. No barrier line visible in the sunlit part.",
+   "C11": "Not visible: the bend is in deep conifer shadow.",
+   "C12": "Junction of Lookout Mountain Rd and Paradise Rd: the inside (east) corner is a dirt/grass triangle with a shrub on the kerb return; Lookout Mountain Rd carries wide paved shoulders (~14 m pavement, 7.2 m between edge lines).",
+   "C13": "Inside (south-west) corner: a smooth kerb return onto open grass with a small structure inside; the outside of the bend is the mouth of the road continuing east."
+  },
+  "along_the_climb": [
+   "st ~1,900 (Lariat Scenic View / Tiers of Zion area): a continuous thin dark line along the east edge for the whole 50 m window (39 % of profiles show a narrow dark band right outside the pavement): a barrier-like line; the dossier maps a metal rail near st 1,651 and concrete at Sensation Point (~2,225).",
+   "st ~4,100 (the undeclared ~90 deg bend): a paved or gravel pull-off on the outside of the bend, ~4 m wide beyond the edge line, with a dotted dark rim (posts or blocks).",
+   "st ~4,600: a continuous dark line along the east (outer) side of the curve (46 % of profiles), barrier-like.",
+   "Upper climb st ~6,200-7,000 (north-facing): mostly in conifer shadow; edges not readable except in sunlit gaps.",
+   "No dark line, flush dirt/grass edges: st ~1,250, 1,600, 2,050, 3,150, 3,550, 3,800, 4,350, 4,850, 5,150, 5,300 (the painted edge lines sit 0.2-1.8 m inside where the surface turns to soil or grass)."
+  ],
+  "stone_vs_w_beam": "Not determinable from NAIP. The rows of separate marks (C3, C7, C8, st ~4,100) are at least consistent with the dossier's gapped stone guardrails or with post-mounted rails; the continuous lines (C1, st ~1,900, ~4,600) with W-beam or a low wall. Street View is needed before any of these is authored as stone.",
+  "pullouts_seen": [
+   "C1 outside (south-west), large dirt",
+   "C2 inside, gravel + trail",
+   "C3 inside, dirt",
+   "C4 outside apron, gravel",
+   "C5 outside, light apron",
+   "C6 inside, gravel (car parked)",
+   "C8 outside the apex, dirt triangle",
+   "st ~4,100 outside the bend"
+  ]
+ },
+ "c470": {
+  "how": "Profiles every 1 m across the deck axis (the OSM C-470 way, moved into the imagery frame), +-45 m along it; the deck is the bright low-NDVI concrete run through the axis, its edges at the 50 % brightness crossing; sections within +-15 m of the lap kept, merged ones (> 1.5 m over the median) dropped; straight lines fitted to each edge; the lap line (moved into the imagery frame) intersected with them.",
+  "osm_source": "C-470 is not in the V3 route snapshot (data/osm.cache.json); its bridge ways come from the restored July Overpass payload data/source-july/osm.widths.cache.json (fetched 2026-07-27, fingerprint 253170f584109f60), read only",
+  "osm_crossings": [
+   {
+    "way": 84720904,
+    "lap_st": 19356.0,
+    "utm": [
+     482992.95,
+     4396821.76
+    ],
+    "lonlat": [
+     -105.1984347,
+     39.7211014
+    ],
+    "angle_deg": 65.4,
+    "lap_heading_deg_from_N": 60.3,
+    "bridge_heading_deg_from_N": 354.9,
+    "bridge_way_len_m": 110.4,
+    "crossing_at_m_along_way": 60.8,
+    "tags": {
+     "name": "C-470",
+     "highway": "motorway",
+     "lanes": "2",
+     "layer": "1",
+     "oneway": "yes",
+     "destination:ref": "US 6 West"
+    }
+   },
+   {
+    "way": 84720905,
+    "lap_st": 21137.6,
+    "utm": [
+     482925.51,
+     4397275.47
+    ],
+    "lonlat": [
+     -105.1992335,
+     39.7251879
+    ],
+    "angle_deg": 42.6,
+    "lap_heading_deg_from_N": 276.3,
+    "bridge_heading_deg_from_N": 318.9,
+    "bridge_way_len_m": 462.4,
+    "crossing_at_m_along_way": 419.3,
+    "tags": {
+     "name": "C-470",
+     "highway": "motorway",
+     "lanes": "2",
+     "layer": "1",
+     "oneway": "yes",
+     "destination:ref": "US 6 West"
+    }
+   },
+   {
+    "way": 84720931,
+    "lap_st": 19345.2,
+    "utm": [
+     482983.61,
+     4396816.44
+    ],
+    "lonlat": [
+     -105.1985436,
+     39.7210532
+    ],
+    "angle_deg": 65.3,
+    "lap_heading_deg_from_N": 60.3,
+    "bridge_heading_deg_from_N": 175.0,
+    "bridge_way_len_m": 463.8,
+    "crossing_at_m_along_way": 384.4,
+    "tags": {
+     "name": "C-470",
+     "highway": "motorway",
+     "lanes": "2",
+     "layer": "1",
+     "oneway": "yes",
+     "destination:ref": "CO 470"
+    }
+   },
+   {
+    "way": 84721006,
+    "lap_st": 19337.5,
+    "utm": [
+     482976.85,
+     4396812.59
+    ],
+    "lonlat": [
+     -105.1986224,
+     39.7210183
+    ],
+    "angle_deg": 67.5,
+    "lap_heading_deg_from_N": 60.3,
+    "bridge_heading_deg_from_N": 172.8,
+    "bridge_way_len_m": 337.5,
+    "crossing_at_m_along_way": 261.4,
+    "tags": {
+     "name": null,
+     "highway": "motorway_link",
+     "lanes": "1",
+     "layer": "1",
+     "oneway": "yes",
+     "destination:ref": "CO 470 East"
+    }
+   },
+   {
+    "way": 1459465701,
+    "lap_st": 19366.4,
+    "utm": [
+     483001.97,
+     4396826.9
+    ],
+    "lonlat": [
+     -105.1983297,
+     39.7211478
+    ],
+    "angle_deg": 60.9,
+    "lap_heading_deg_from_N": 60.3,
+    "bridge_heading_deg_from_N": 359.4,
+    "bridge_way_len_m": 194.6,
+    "crossing_at_m_along_way": 65.2,
+    "tags": {
+     "name": null,
+     "highway": "motorway_link",
+     "lanes": "1",
+     "layer": "1",
+     "oneway": "yes",
+     "destination:ref": "US 6 East"
+    }
+   }
+  ],
+  "crossings": [
+   {
+    "name": "C-470 over West Colfax Ave",
+    "window": "X19340",
+    "osm_ways_over_lap": [
+     84720931,
+     84720904
+    ],
+    "osm_ways_all_on_structure": [
+     84721006,
+     84720931,
+     84720904,
+     1459465701
+    ],
+    "lap_stations_under_deck_m": [
+     19334.0,
+     19373.9
+    ],
+    "lap_length_under_deck_m": 39.9,
+    "deck_width_m": {
+     "median": 35.71,
+     "p10": 34.57,
+     "p90": 36.49,
+     "n_sections": 31,
+     "how": "bright-concrete run across the deck axis, 50 % brightness crossing each side, sections within +-15 m of the lap"
+    },
+    "deck_axis_heading_deg_from_N": 175.0,
+    "crossing_angle_deg": 65.3,
+    "deck_edges_near_lap": {
+     "side_a": {
+      "utm13n_nad83": [
+       [
+        482971.5,
+        4396834.7
+       ],
+       [
+        482976.97,
+        4396785.0
+       ]
+      ],
+      "lonlat_wgs84": [
+       [
+        -105.1986994,
+        39.7212225
+       ],
+       [
+        -105.1986343,
+        39.7207748
+       ]
+      ],
+      "fit_rms_m": 0.05,
+      "n": 31
+     },
+     "side_b": {
+      "utm13n_nad83": [
+       [
+        483008.18,
+        4396854.59
+       ],
+       [
+        483009.57,
+        4396804.61
+       ]
+      ],
+      "lonlat_wgs84": [
+       [
+        -105.198272,
+        39.7214024
+       ],
+       [
+        -105.1982544,
+        39.7209521
+       ]
+      ],
+      "fit_rms_m": 0.15,
+      "n": 31
+     }
+    },
+    "longitudinal_dark_lines_m_from_axis": [
+     4.5,
+     4.6,
+     4.8
+    ],
+    "paved_opening_along_sunlit_edge_m": 81.3,
+    "paved_opening_note": "length, along the deck edge 2 m outside the deck on its sunlit side, of the continuous paved/sidewalk surface (NDVI < 0) the lap's corridor makes under the structure; the span must clear at least this; abutment faces themselves are not visible from above"
+   },
+   {
+    "name": "C-470 (northbound, to US 6 West) over US-6",
+    "window": "X21138",
+    "osm_ways_over_lap": [
+     84720905
+    ],
+    "osm_ways_all_on_structure": [
+     84720905
+    ],
+    "lap_stations_under_deck_m": [
+     21125.9,
+     21145.6
+    ],
+    "lap_length_under_deck_m": 19.7,
+    "deck_width_m": {
+     "median": 13.21,
+     "p10": 12.88,
+     "p90": 13.4,
+     "n_sections": 22,
+     "how": "bright-concrete run across the deck axis, 50 % brightness crossing each side, sections within +-15 m of the lap"
+    },
+    "deck_axis_heading_deg_from_N": 138.9,
+    "crossing_angle_deg": 42.6,
+    "deck_edges_near_lap": {
+     "side_a": {
+      "utm13n_nad83": [
+       [
+        482922.37,
+        4397292.46
+       ],
+       [
+        482955.13,
+        4397254.69
+       ]
+      ],
+      "lonlat_wgs84": [
+       [
+        -105.1992846,
+        39.725346
+       ],
+       [
+        -105.1989012,
+        39.7250064
+       ]
+      ],
+      "fit_rms_m": 0.16,
+      "n": 22
+     },
+     "side_b": {
+      "utm13n_nad83": [
+       [
+        482902.4,
+        4397294.51
+       ],
+       [
+        482935.9,
+        4397257.39
+       ]
+      ],
+      "lonlat_wgs84": [
+       [
+        -105.1995176,
+        39.7253641
+       ],
+       [
+        -105.1991257,
+        39.7250303
+       ]
+      ],
+      "fit_rms_m": 0.15,
+      "n": 22
+     }
+    },
+    "longitudinal_dark_lines_m_from_axis": [],
+    "paved_opening_along_sunlit_edge_m": 2.1,
+    "paved_opening_note": "length, along the deck edge 2 m outside the deck on its sunlit side, of the continuous paved/sidewalk surface (NDVI < 0) the lap's corridor makes under the structure; the span must clear at least this; abutment faces themselves are not visible from above"
+   }
+  ],
+  "lap_corridor_paved_width_m_near_deck": {
+   "X19340_19295": [
+    -14.7,
+    14.4,
+    29.1
+   ],
+   "X19340_19305": [
+    -14.7,
+    13.2,
+    27.9
+   ],
+   "X19340_19315": [
+    -12.6,
+    10.8,
+    23.4
+   ],
+   "X19340_19380": [
+    -5.7,
+    24.3,
+    30.0
+   ],
+   "X19340_19390": [
+    -9.6,
+    12.0,
+    21.6
+   ],
+   "X19340_19400": [
+    -10.2,
+    11.7,
+    21.9
+   ],
+   "X21138_21100": [
+    -35.1,
+    35.1,
+    70.2
+   ],
+   "X21138_21110": [
+    -9.3,
+    35.1,
+    44.4
+   ],
+   "X21138_21165": [
+    -7.8,
+    7.5,
+    15.3
+   ],
+   "X21138_21175": [
+    -9.0,
+    7.2,
+    16.2
+   ]
+  },
+  "per_crossing_notes": {
+   "X19340": "C-470 over West Colfax at lap st 19,334-19,374. One continuous concrete surface 35.7 m wide (p10-p90 34.6-36.5) carries four OSM roadways: both C-470 carriageways (84720931 south-bound, 84720904 north-bound) and both links (84721006, 1459465701). One dark longitudinal line runs ~4.5 m east of the south-bound axis (a median barrier or a joint between parallel decks; not resolvable). Crossing angle 65.3 deg; the lap runs ~40 m in its shadow line-of-sight. Colfax's paved corridor (roadway + median + sidewalks) is ~22-29 m wide across its own axis near the deck, so the structure must open at least ~24-32 m along the C-470 axis; the abutment faces are not visible from above. A continuous dark band along the deck's west side is its shadow and/or exposed west face.",
+   "X21138": "C-470 north-bound (way 84720905, to US 6 West) over US-6 at lap st 21,126-21,146. A single curved deck 13.2 m wide (p10-p90 12.9-13.4) crossing at 42.6 deg; the lap runs ~20 m under it. OSM tags the whole 462 m way as bridge: it is a long curved viaduct, so there are no abutments near the lap; piers are hidden under the deck and in its shadow. The deck's shadow band on its south-west side is continuous.",
+   "relief_displacement": "NAIP is orthorectified to bare earth, so anything standing above the ground (a deck ~6-8 m up) is displaced radially away from the image nadir by up to a few metres. Deck widths and angles are reliable; the deck footprint's absolute position carries ~+-2-4 m (not correctable without the flight's nadir/camera data). Ground-level features (the lap road, hairpins) are not affected.",
+   "clearance": "Not measurable from a vertical photo; Street View or CDOT bridge records are needed."
+  }
+ },
+ "files": {
+  "overlays": [
+   "C1.png",
+   "C10.png",
+   "C12.png",
+   "C13.png",
+   "C2.png",
+   "C3.png",
+   "C4.png",
+   "C5.png",
+   "C6.png",
+   "C7.png",
+   "C8.png",
+   "C9.png",
+   "X19340.png",
+   "X21138.png"
+  ],
+  "overlay_dir": "overlays/",
+  "provenance": "PROVENANCE.md"
+ }
+}

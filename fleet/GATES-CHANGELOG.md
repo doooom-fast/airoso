@@ -682,3 +682,102 @@ refusal; neither/both declared-and-dropped), `test_verify_race.py` (E under-road
 scenery: lane, curb strip, closure, open box, the far tree uncounted; trees.txt frame; the `--scenery-only` CLI),
 `test_race_furniture.py` (a dropped kerb leaves its corner), `test_make_treefx_plan.py` (`plan()` is what
 `build()` writes), `test_ship_sd_chain.py` (the re-check after `make_treefx`, hard; the install guard).
+
+## 2026-10-11 — side-street mouths: the weld, `verify_mouths`, `verify_race` O hard, the race step check on the whole lane
+
+**Why.** The read-only mouth diagnosis (2026-10-11) on the installed build: `del_cerro_blvd#0` (the W leg, College
+v1085, 76.9°, College grade 4.56 %) ended as a LEVEL ribbon square to Del Cerro, so its south corner stood up to
++0.51 m over College 3.4 m inside College's pavement (2.33 m past the race_acw lane face) and its north corner left a
+grass notch 0.3-0.6 m below; its sidewalk ran 2.78 m further in at +0.67..+0.75; the prep then pinned a grass
+triangle up through College by +0.07..+0.37. Mechanisms: `trim_connectors` took the cut height from the host's
+NEAREST vertex; its 30 m blend pulled only the centreline, and never ran when the cut was a piece's START
+(`del_cerro_blvd#1` dropped 0.58 m in 2.1 m, `medium#2+0#0#0` 0.33 m in 3.3 m); the assembler sweeps connectors with no
+cross-fall; `seat_terrain`'s clamp made a cut end a 14.6 m disc of "connector"; `gap_mouths` sized the sidewalk gap as
+if square. None of it failed a gate: the race author listed "another deck above the strip" (0.539 m at v1081) as a
+WARNING. The same list carried 0.458 m at Navajo v2314 — not a mouth: the mainline ribbon folding on the inside of the
+Navajo / Jackson corner (half-width 12 m round a 7.4 m centreline radius), one of five such folds on the lap.
+
+**Change — gates.**
+
+| Gate / rail | Before | After |
+|---|---|---|
+| `tools/verify_mouths.py` (NEW; in `ship_sd.sh` hard, right after the street gate OBJ; its stale `data/verify_mouths.json` removed first) | — | every `data/mouths.json` record judged on the BUILT road (`data/track.obj`), heights from its triangles only; HD = the host's lowest 1ROAD sheet ON its centreline, level across. MOUTH LINE: every 1ROAD sheet on the host edge − 0.2 m across the connector's span (where its two edges cross that line, corners 0.75 m in) within **0.05 m** of HD. HOST LANE: over the span ± 3 m, centre to half-width − **0.45 m** on the mouth side (the island excluded), no 1ROAD / 1KERB top > HD + **0.02 m**, no 1GRASS ≥ HD − 0.005 m. NOTCH: at half-width + 0.15 m across the span the top sheet is 1ROAD within 0.05 m of HD. APPROACH: along the connector's centreline and both wheel lines (half-width − 1 m), −3..30 m, the grade over a 2.5 m wheelbase changes ≤ **3 %/m** (the 1 m figure reported beside it), and no 1GRASS within 0.005 m of the road from 0.5 m out (samples of a wheel line folding round a tight corner — plan step off ±40 % — not measured). SIDE: mouths.json's side = the side the piece approaches from. Exit 1 on any FAIL, 2 on an input error |
+| `verify_race` O (+ `author_race_furniture_blend.OTHER_DECK_M`) | reported only, at 0.15 m | **HARD**: any strip / kerb ring with another ROAD sheet > **0.05 m** over its base fails; the author records `other_deck_threshold_m`, and an authored file measured looser (or that does not say) fails |
+| `drive_test` race-corridor step check | ten wheel paths clamped to ±6 m about the lane middle; the lane-edge paths excluded from steps / kinks; a step at `w ≥ 9.5 and |off| > 3.5` (off the CENTRELINE) reported as an exempt "apron" step — most of a race lane | the WHOLE declared lane, face to face: no 6 m cap, the edge paths gate, no apron exemption inside a declared race lane. Street layout and single-layout tracks unchanged |
+| `tools/ship_sd.sh` | `AIROSO` hard-coded | `AIROSO="${AIROSO:-<main checkout>}"` (rehearse a worktree's tools); the weld step; verify_mouths; `mouth_welds.json` + `verify_mouths.json` synced back; the street audit floor re-stated (below) |
+
+⚠ Invented: verify_mouths' 0.05 / 0.02 / 0.45 m are the diagnosis's own numbers; mine are the 0.005 m "grass at the
+deck" (the prep pins grass 0.02 m under a deck at its vertices; between them it rose to 0.009 m under College's edge on
+the welded mouths), the 0.15 m notch reach, the 0.75 m corner inset, the 2.5 m wheelbase (a 1 m difference on a 3 m-row
+triangulated deck reads every row crease as a kink) and the 3 %/m approach limit. O's 0.05 m is the task's.
+
+**Change — geometry** (no gate reads these differently; they are why the gates move). `trim_connectors`: the cut height
+interpolated along the host segment; the blend walks FROM the cut whichever end it is; an earlier pass's cut is frozen;
+the side is the approach's (`medium#2+0#0` at `del_cerro_blvd#1` v82 was recorded +1 while arriving from −1, so
+gap_mouths gapped the far sidewalk and the near one stood across the mouth); mouths.json gains host_seg / host_t /
+angle_deg / host_grade / piece / end. `weld_mouths_blend` + `mouth_weld` (NEW, after the trimmed rebuild, before the
+seat): refuses unless every connector block equals the assembler's own sweep vertex for vertex; mends every ribbon line
+that runs backwards (a swallowtail cut at its self-intersection, the apex at the higher leg's height; a hook replaced by
+the cheapest forward chord); mitres each connector end onto the host edge − 0.4 m (road) / the edge (curb); warps road
++ curb + paint by (host deck − level end) × smoothstep(1 − s / 30 m); turns twisted quads to their ridge diagonal;
+self-checks before saving. `seat_terrain`: the deck read off the welded ROAD; a cut end no longer seats its host's
+pavement; terrain densified to 1.5 m under the welded approaches (0.75 m under a connector corner tighter than 3 ×
+its half-width), 0.6 m along the host edge at each mouth, and cleared from under the inside half of each mended
+mainline fold (its fan is no plane a 4.5 m grass facet can lie under; densifying it instead put the prep's western
+1GRASS tile at 80,362 positions and the prep refused). `gap_mouths`: half-width / sin(angle) + 3 m by arc from the cut's
+station, plus the first station past each end.
+
+**Measured — the full scratch rehearsal** (a fresh copy of the workshop minus `build/`, `AIROSO=<worktree>
+SHIP_PROJ=<copy> bash tools/ship_sd.sh --no-install`, no `--skip-blend`: median → build → route → divide → trim →
+rebuild → WELD → seat → … → gates; 20:27-20:35 on the last run; the workshop `loop.blend` md5 `fbf091e3…` before and
+after; nothing installed). Baseline = the installed build of 18:26 (same config, same inputs).
+
+| Gate | installed | this build |
+|---|---|---|
+| verify_mouths `del_cerro_blvd#0` (W) | FAIL: mouth line 0.534 m, host lane +0.752 m road/curb + 124 grass samples at/above (+0.371), notch 94 / 95 (0.539), approach 19.4 %/m, 11 grass on the approach | PASS: 0.015 / 0.0 (grass −0.006) / notch 0.020 / 1.13 %/m |
+| verify_mouths `del_cerro_blvd#1` (E) | FAIL: 0.680, notch 72 / 78 (0.739), approach 33.2 %/m, 25 grass | PASS: 0.016 / 0.0 (−0.009) / 0.016 / 0.98 %/m |
+| verify_mouths `medium#2+0#0#0` start (Lake Murray Blvd v4424) | FAIL: host lane +0.124, notch 1 / 34 | PASS: 0.003 / 0.0 / 0.005 / 1.82 %/m |
+| verify_mouths `medium#2+0#0#0` end (`del_cerro_blvd#1` v82) | FAIL: SIDE (+1 recorded, −1 real), host lane +0.147, notch 40 / 42 (the host's sidewalk +0.14 across the mouth) | PASS: 0.004 / 0.0 / 0.010 / 0.97 %/m |
+| verify_race O (other deck over the strip) | 4 rings, max 0.539 m (v1081-1083 W mouth, v2314 Navajo fold) — then a warning | **0 rings** at 0.05 m; verify_race OK, both layouts |
+| race author seating | 17,498 hit / 1 interpolated (the seam) | 17,499 hit / 0 interpolated; deck vs data max 0.463 m (was 0.194: strip rings on the mended fold fans) |
+| no_route BUILT race_cw / race_acw | PASS / PASS | **PASS / PASS** (0 leaks, 0 / 406 probes, lap complete, spawns reached) |
+| RACE_RED | none | **none** |
+| street drive_test soft top / severe / kinks/km / excursions / floating / daylight | 82 / 0 / 4.97 / 101 / 391 / 0 | **42** / 0 / 3.86 / 100 / 391 / 0 (apron steps 22 → 7) |
+| street audit D / K / I / F | 512 / 154 / 145 / 15 (826 total) | **512 / 20 / 20 / 13** (565) |
+| race_cw drive_test soft top / severe / bumps/km / kinks/km | 44 / 0 / 0.37 / 1.48 | 23 / 31 / 7.42 / 6.45 |
+| race_acw drive_test soft top / severe / bumps/km / kinks/km | 40 / 0 / 0.30 / 1.34 | 22 / 28 / 10.24 / 7.57 |
+| race audits D / K / I / F, W | 0 / 154 / 145 / 15, 0 | 0 / 20 / 20 / 13, 0 (both layouts) |
+
+**The street audit floor, re-stated** (`ship_sd.sh`'s audit step now says D 512 / K 20 / I 20 / F 13): every K and I
+sample was located (scratchpad `classify_ki.py` on both builds). Installed K 154 = 81 at the five mainline folds
+(hairpin v763-773 31, Navajo / Jackson 23, v3292-3297 17, the seam 5, College / Navajo 5: the inside sidewalk folded
+back over the road), 20 at the mouths (12 at the medium end — the host sidewalk left standing across it —, 6 at the W
+mouth, 2 at v4424) and 53 where the connectors' own ribbons fold (the Del Cerro hilltop loop rows 65-85 and 145, the
+medium route rows 200-207, `del_cerro_blvd#1` row 240). This build: 0 at the mainline folds, 2 per mouth (the curb
+return at each corner, 8) and 12 on the hilltop loop (its outer curb line at rows 72-74 overlaps itself across a
+hairpin narrower than the ribbon: the weld reports it "left as built") + `del_cerro_blvd#1` row 240. I 145 → 20 the
+same way (81 → 0 at the folds, 19 → 8 at the mouths, 45 → 12 on the connectors). F 15 → 13: two fewer not-flush curb
+verts (counted, not located). D 512 untouched (the road kn5's own guard rails, as before).
+
+**Named, not exempted.** The race drive_test moves for two reasons, separated by running each code on each build:
+(a) the step check now covers the whole declared lane — the NEW check on the INSTALLED race_acw OBJ finds 94 severe
+steps (the W mouth's floating corner at s 10249-10250 up to 0.60 m, the seam, the Navajo fold up to 0.70 m, the hairpin
+33, …) where the old one found 0; (b) the geometry — the OLD check on THIS build's race_acw OBJ finds soft top 11
+(was 40), severe 2. What the new check still finds on this build (31 / 28) stands on the inside of three mended mainline
+folds: the Navajo / Jackson fan (v2310-2329: up to 0.40 m where the low leg's slivers rise to the apex — the legs meet
+there 0.5 m apart, which the fold used to hide as a 0.46 m sheet edge), the hairpin fan (v760s) and the seam (v0 /
+v4490s); race_acw's 22 soft tops are all on the hairpin (11) and College / Navajo (11) fans. A re-grade of the fan's inside line over
+8 rows each side was tried and REJECTED: soft top fell to 6 / 11 but severe rose to 46 / 44, and it lifted the strip
+rings 0.69 m off the centreline height no_route bands walls against — 3 doors, 316,424 m² leaked. The fold fans are the
+next owner's (ledger 0033 / 0046 class); race severe/km 2.3 / 2.1 stays under drive_test's 12/km.
+
+**Teeth.** verify_mouths on the installed build: all four mouths FAIL, each where the diagnosis put it.
+`tests/tools/test_verify_mouths.py` (a synthetic built road: the assembler's square level end fails mouth line / host
+lane / notch, the welded one passes; a wrong side, an approach step, grass in the lane, grass on the approach, the host
+sidewalk left across the mouth each fail), `test_mouth_weld.py` (the defect reproduced then mended: every line on the
+host edge at the deck, nothing over the host, no fold, the approach under 3 %/m, rows past 30 m untouched; the swallowtail
+cut at the legs' crossing, the hook's chord, a U-turn refused; the gap window's skew and its end stations),
+`test_trim_connectors.py` (interpolated cut height, the START blend, the frozen cut, the approach side — each fails on
+the previous trim), `test_verify_race.py` (O: a 0.458 m and a 0.06 m ring fail, a 0.15 m author threshold fails),
+`test_ship_sd_chain.py` (the weld between the rebuild and the seat with the workshop on sys.path; verify_mouths after
+the street gate OBJ, hard; the AIROSO default). engine-july is not edited: no file `ship_sd.sh` runs from ENG changed.

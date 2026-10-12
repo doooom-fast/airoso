@@ -55,6 +55,9 @@ so anything of them inside it is an obstruction. ``barrier_missing`` probes both
 (bridge spans included: no gaps since 0049) and the layout's ``closure`` at its declared line (the lerp of the
 two declared ring centres). The race OBJ defaults to ``data/track.<id>.obj`` (road kn5 + common race kn5 + that
 layout's closure kn5); a version-1 file keeps the 0047 lane (chain / island face) and ``track.race.obj``.
+The STEP CHECK covers the whole declared lane (2026-10-11): the ten wheel paths reach both lane faces (no 6 m
+travel-swath cap), the lane-edge paths gate steps like the interior ones, and no step inside a declared race
+lane is an exempt "apron" step — the street layout and every single-layout track are unchanged.
 """
 
 from __future__ import annotations
@@ -660,7 +663,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
             mid = (lo + hi) / 2.0
             third = (hi - lo) / 3.0
             lines = (-hi, -(mid + third / 2), -mid, -(mid - third / 2), -lo)
-            _clamp_c, _clamp_r = -mid, min((hi - lo) / 2.0, 6.0)
+            # a declared race corridor (0049) is swept to its faces: the 6 m travel-swath cap is the street's
+            # junction-box rule, and on the Alvarado-wide race lanes it left the outer 1-4 m of the lane unswept
+            _clamp_c, _clamp_r = -mid, ((hi - lo) / 2.0 if _corr else min((hi - lo) / 2.0, 6.0))
         _lane_key = (round(_lane[2], 3), round(_lane[3], 3)) if _lane is not None else None
         if ((_lane_key is None) != (_prev_lane is None)) or (
                 _lane_key is not None and _prev_lane is not None
@@ -672,7 +677,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
         _prev_lane = _lane_key
         # edge paths (|line| = w/2-0.5) DETECT holes/ground-through at the pavement lip;
         # smoothness (steps/kinks) gates only on INTERIOR paths — nobody laps on the hinge
-        edge_line = {0, len(lines) - 1}
+        # RACE CORRIDOR (2026-10-11): the declared lane IS the race surface face to face (each face already
+        # DIVIDER_CLEAR_M inside its strip) — its edge paths gate steps too, and no step in it is an "apron"
+        edge_line = set() if _corr else {0, len(lines) - 1}
         paths = [off + d for off in lines for d in (-WHEEL_HALF_TRACK, WHEEL_HALF_TRACK)]
         # OFF THE END OF THE PAVEMENT. A point-to-point stage's finished_centerline can overhang
         # the built ribbon: on Dragon Tail its first point sits 30 m before the road starts, over
@@ -717,7 +724,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                         # flared-apron texture: on widened corner pavement (w >= 11) the OUTER
                         # offsets ride taper fans with rolled crossfall breaks — real aprons
                         # have them and the driving line doesn't touch them. Report, don't gate.
-                        if w >= 9.5 and abs(off) > 3.5 and not _in_flat_zone(px, pz):
+                        if not _corr and w >= 9.5 and abs(off) > 3.5 and not _in_flat_zone(px, pz):
                             problems.setdefault("apron_steps", []).append(
                                 (round(s, 1), round(off, 2), round(step, 3)))
                         else:
@@ -725,7 +732,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                             # no exemptions (Kevin: "how do your tests pass this")
                             problems["severe_steps"].append((round(s, 1), round(off, 2), round(step, 3)))
                     elif step > STEP_BUMP_M:
-                        if w >= 9.5 and abs(off) > 3.5 and not _in_flat_zone(px, pz):
+                        if not _corr and w >= 9.5 and abs(off) > 3.5 and not _in_flat_zone(px, pz):
                             problems.setdefault("apron_bumps", []).append(
                                 (round(s, 1), round(off, 2), round(step, 3)))
                         else:

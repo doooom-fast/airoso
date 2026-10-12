@@ -431,3 +431,28 @@ def test_planned_no_route_read_back_stops_the_chain_before_blender():
         r = run(files)
         assert r.returncode != 0, (files, r.stdout)
         assert msg in r.stderr, (msg, r.stderr[-300:])
+
+
+def test_mouth_weld_and_its_gate_are_wired():
+    """2026-10-11 side-street mouths: the weld runs right after the trimmed-connector rebuild and before the seat (the
+    seat reads the WELDED deck), with the workshop on sys.path (it rebuilds each connector block with the assembler's
+    own ribbon module) and the exit-code flag; verify_mouths judges the BUILT road right after its gate OBJ, hard
+    (set -e: no `|| rc`), its stale verdict removed first; both reports sync back; AIROSO is overridable for a
+    worktree rehearsal and defaults to the main checkout"""
+    assert 'AIROSO="${AIROSO:-C:/Users/Owner/Documents/GitHub/airoso}"' in TEXT
+    blb = [p for p, ln in _code_lines() if "build_loop_blend.py" in ln]
+    weld = [(p, ln) for p, ln in _code_lines() if "weld_mouths_blend.py" in ln]
+    assert len(weld) == 1, weld
+    wpos, wln = weld[0]
+    assert blb[1] < wpos < _first("tools/seat_terrain_blend.py"), "the weld sits between the rebuild and the seat"
+    for frag in ('--python-exit-code 1', '--python-expr "$WS_SYSPATH"', '--python "$AIROSO/tools/weld_mouths_blend.py" -- "$PROJ"'):
+        assert frag in wln, frag
+    skip = TEXT.find('if [ "$SKIP_BLEND" = 0 ]; then')
+    assert skip < wpos < TEXT.find("\nfi\n", skip), "the weld is a draft step (skipped with --skip-blend)"
+    vm = [(p, ln) for p, ln in _code_lines() if "tools/verify_mouths.py" in ln]
+    assert len(vm) == 1 and vm[0][1].strip() == '(cd "$AIROSO" && python tools/verify_mouths.py "$PROJ")', vm
+    vpos = vm[0][0]
+    assert _first('rm -f "$PROJ/data/verify_mouths.json"') < _first('kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")') \
+        < vpos < _first('drive_test "$PROJ" --layout street')
+    sync = TEXT[_first('step "sync outputs workshop -> airoso"\n'):_first("never synced.\nfi\n")]
+    assert "mouth_welds.json" in sync and "verify_mouths.json" in sync

@@ -59,9 +59,11 @@ kerbs) and on EACH race layout's closure (counts.by_layout).
      policy per layout (sealed_race_strip / sealed_far_strip / behind_closure), and where it is
      `behind_closure` that layout's own authored closure runs past the whole mouth, between lane and mouth
   N  retired — no `1WALL_race_kbar_*` object anywhere; centre_w_by_vertex all 0; no centre run
+  O  another deck — HARD since 2026-10-11 (was reported only): no strip / kerb ring with another ROAD sheet more
+     than OTHER_DECK_FAIL_M (0.05 m) over its base (a side-street mouth or a ribbon fold — the ribbon owner's
+     defect, 0033/0046 class), measured by the author at that threshold or tighter
 
-Reported, never gated: another ROAD sheet above a strip base (a fold / mouth defect for its owner,
-0033/0046 class), the worst deck-vs-data height, the minimum spawn clearance, the author's kerb clips.
+Reported, never gated: the worst deck-vs-data height, the minimum spawn clearance, the author's kerb clips.
 
     python tools/verify_race.py <project-dir> [--allow-standin] [--authored <file>] [--bands <file>]
                                 [--config <track.config.json>] [--pre-author | --scenery-only]
@@ -92,6 +94,7 @@ MAX_RINGS = 900
 MAX_POSITIONS = 60_000
 RENDER_VERT_CAP = 65_535
 SEAT_GAP_M = 0.05
+OTHER_DECK_FAIL_M = 0.05  # O: another ROAD sheet over a strip ring by more than this FAILS (author OTHER_DECK_M)
 INTERP_MAX_FRAC = 0.01
 JOIN_TOL_M = 0.05       # a `join` end and its neighbour's end are the SAME ring (split_plan shares boundary rings)
 CLOSE_TOL_M = 0.05      # C': every closure ring within this of the declared curve
@@ -1389,11 +1392,21 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
     if not sc:
         warns.append("F: no spawn_clearance recorded (no dummies_<id>.json at authoring time)")
 
-    # reported, not gated
+    # O. another deck over the strip (2026-10-11: HARD, was a warning). The author lists every ring where another
+    #    ROAD sheet — a connector's mouth, or the ribbon's own fold — stands more than its threshold over the strip
+    #    base. The Del Cerro W mouth stood +0.51 m over College 2.33 m past the race_acw lane face while this only
+    #    warned; a mouth / fold defect is the ribbon owner's to fix, and the race layout is never shipped over it.
     oda = authored.get("other_deck_above", []) or []
-    if oda:
-        warns.append(f"{len(oda)} rings have another ROAD sheet > 0.15 m above the strip base (max "
-                     f"{tot.get('other_deck_above_max_m')} m) — a fold / mouth defect for the ribbon's owner, e.g. {oda[0]}")
+    n_oda = int(tot.get("other_deck_above_rings", len(oda)) or 0)
+    thr = tot.get("other_deck_threshold_m")
+    if thr is None or float(thr) > OTHER_DECK_FAIL_M + 1e-9:
+        fails.append(f"O: the author measured 'another deck above the strip' at {thr!r} m, looser than the gate's "
+                     f"{OTHER_DECK_FAIL_M} m — re-run tools/author_race_furniture_blend.py")
+    if n_oda or oda:
+        fails.append(f"O: {max(n_oda, len(oda))} rings have another ROAD sheet > {OTHER_DECK_FAIL_M} m above the strip "
+                     f"base (max {tot.get('other_deck_above_max_m')} m) — a mouth / fold defect for the ribbon's owner, "
+                     f"e.g. {oda[:3]}")
+    counts["other_deck_above"] = max(n_oda, len(oda))
     if tot.get("deck_vs_data_max_m") is not None:
         warns.append(f"built deck vs data height, worst {tot.get('deck_vs_data_max_m')} m")
 

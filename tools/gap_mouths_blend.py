@@ -4,7 +4,17 @@ tools/trim_connectors.py cuts side streets at the pavement edge of the road they
 mainline or a divided trunk) and records each mouth in data/mouths.json. The host's own
 `curb_sidewalk` strip still runs unbroken across that mouth (the sweep has no concept of other
 roads, ledger 0036), so the side street butts into a raised sidewalk. This removes the strip's
-faces across each mouth on the connector's side: window = connector half-width + CORNER_M.
+faces across each mouth on the connector's side.
+
+WINDOW (2026-10-11): along the host, centred on the station the CUT projects onto (mouths.json host_seg +
+host_t), half-length = connector half-width / sin(junction angle) + CORNER_M — a connector meeting its host at
+76.9 deg spans 2.9 % more host than its width (it was sized as if square, in whole 3 m vertices around the
+host vertex nearest the first DROPPED point). Measured as arc length on the host, not a vertex count, and the
+first station past each end joins the set — a face goes only when both its stations are in it, so the gap used to
+stop at the last station INSIDE the window: on the Del Cerro W mouth College's raised sidewalk stood 0.8 m onto the
+connector's corner (tools/mouth_weld.gap_window). The SIDE is the approach's (tools/trim_connectors.py since
+2026-10-11: medium#2+0#0 at del_cerro_blvd#1 v82 had the wrong sidewalk gapped). A mouth record without host_seg
+(an older mouths.json) keeps the old vertex window.
 
 Runs INSIDE Blender, AFTER build_loop_blend + author_median_blend, BEFORE the kn5 prep:
 
@@ -27,7 +37,10 @@ from pathlib import Path
 import bmesh
 import bpy
 
-CORNER_M = 3.0
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import mouth_weld as mw  # noqa: E402
+
+CORNER_M = mw.GAP_CORNER_M
 P = 4
 
 
@@ -80,12 +93,17 @@ def main():
         if host not in blocks:
             print(f"[gap-mouths] WARNING: mouth host '{host}' not in the CURB block table — skipped")
             continue
-        _, mh, closed, _ = blocks[host]
-        k = int(mo["host_vertex"])
-        nv = int(math.ceil((mo["connector_width_m"] / 2.0 + CORNER_M) / 3.0))
+        _, mh, closed, hpts = blocks[host]
         s = gaps.setdefault((host, int(mo["side"])), set())
-        for q in range(k - nv, k + nv + 1):
-            s.add(q % mh if closed else max(0, min(mh - 1, q)))
+        if "host_seg" not in mo:
+            k = int(mo["host_vertex"])
+            nv = int(math.ceil((mo["connector_width_m"] / 2.0 + CORNER_M) / 3.0))
+            for q in range(k - nv, k + nv + 1):
+                s.add(q % mh if closed else max(0, min(mh - 1, q)))
+            continue
+        for q in mw.gap_window(hpts, mh, closed, int(mo["host_seg"]), float(mo["host_t"]),
+                              float(mo["connector_width_m"]), float(mo.get("angle_deg") or 90.0)):
+            s.add(q)
     print(f"[gap-mouths] {len(mouths)} mouths on {sorted({h for h, _ in gaps})}")
 
     bm = bmesh.new()

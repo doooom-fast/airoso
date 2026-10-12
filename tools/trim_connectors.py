@@ -6,9 +6,38 @@ after tools/divide_connectors.py), so a street joining the boulevard is cut and 
 one joining College (Kevin, 2026-10-08: side streets "not connecting correctly ... sidewalks
 blocking them"). Two passes: all connectors vs the mainline, then the non-host pieces vs the host
 trunks. For each cut: an endpoint OVERLAP_M inside the host's pavement edge (a hairline gap shows
-terrain; 0.4 m of overlap does not), a record in data/mouths.json {host, host_vertex, side,
-connector_width_m} for tools/gap_mouths_blend.py, and — when the host carries a median island —
+terrain; 0.4 m of overlap does not), a record in data/mouths.json for tools/gap_mouths_blend.py,
+tools/weld_mouths_blend.py and tools/verify_mouths.py, and — when the host carries a median island —
 the island zeroed within MOUTH_ISLAND_GAP_M of the cut (left-turn pocket) in median_bands.json.
+
+HEIGHT MATCH (Kevin 2026-10-09: "lots of hovering" at the side-street intersections). The cut lands
+on the host centreline height INTERPOLATED along the host segment the cut projects onto (it was the
+NEAREST host vertex's height: up to 3 m of a 4.56 % grade away — 0.14 m on College), and the piece's
+last BLEND_M are blended onto it with a smoothstep weight (no grade kink where the blend starts or
+at the mouth), walking FROM THE CUT END whichever end of the piece it is (a cut at a piece's START
+used to walk from the far end and never blend at all: del_cerro_blvd#1 dropped 0.58 m in its first
+2.1 m, medium#2+0#0#0 0.33 m in 3.3 m — diagnosis 2026-10-11). A divided connector's island
+(median_bands.json connector_islands, the trunk's own points) gets the SAME blend, so the island
+deck follows the trunk deck it stands on.
+
+mouths.json, one record per cut:
+  connector, host, host_vertex, side, connector_width_m, cut_xyz      (as before; host_vertex is the
+                                                                      host vertex nearest the first
+                                                                      dropped point — barrier_bands
+                                                                      keys on it; side is now the side
+                                                                      of the piece's last point OUTSIDE
+                                                                      the host, its approach: the first
+                                                                      point inside can lie past the host
+                                                                      centreline — medium#2+0#0 at
+                                                                      del_cerro_blvd#1 v82 read +1 while
+                                                                      arriving from -1, and gap_mouths
+                                                                      gapped the far sidewalk)
+  host_seg, host_t        the host segment + fraction the CUT projects onto (the cut height's source)
+  angle_deg               connector vs host direction at the cut, 0 < a <= 90
+  host_grade              the host's grade along that segment (rise / run)
+  piece, end              the FINAL connector piece whose endpoint is the cut and which end it is
+                          ("start" | "end") — resolved after both passes (a pass-1 piece re-cut in
+                          pass 2 is renamed <name>#<k>); null when the piece was dropped (< MIN_PIECE_M)
 
 Idempotent from data/connectors.local.json.pre-trim (written once per base). Run after divide,
 before build_loop_blend.
@@ -25,10 +54,18 @@ from pathlib import Path
 OVERLAP_M = 0.4
 MIN_PIECE_M = 15.0
 MOUTH_ISLAND_GAP_M = 18.0
+BLEND_M = 30.0
+REACH_M = 15.0
+END_MATCH_M = 1e-3        # a piece endpoint IS the cut when within this (cut_xyz is rounded to 1 mm)
 
 
-def _lateral(px, pz, line, widths):
-    """(distance, host half-width there, nearest vertex, side) vs a polyline"""
+def smoothstep(x: float) -> float:
+    x = 0.0 if x <= 0.0 else (1.0 if x >= 1.0 else x)
+    return x * x * (3.0 - 2.0 * x)
+
+
+def _project(px, pz, line):
+    """(distance, segment i, t) of the nearest point on the polyline in plan (x, z)"""
     best = (float("inf"), 0, 0.0)
     for i in range(len(line) - 1):
         ax, az, bx, bz = line[i][0], line[i][2], line[i + 1][0], line[i + 1][2]
@@ -38,7 +75,12 @@ def _lateral(px, pz, line, widths):
         d = math.hypot(px - (ax + t * dx), pz - (az + t * dz))
         if d < best[0]:
             best = (d, i, t)
-    d, i, t = best
+    return best
+
+
+def _lateral(px, pz, line, widths):
+    """(distance, host half-width there, nearest vertex, side) vs a polyline"""
+    d, i, t = _project(px, pz, line)
     n = len(line)
     half = (widths[i] * (1 - t) + widths[min(n - 1, i + 1)] * t) / 2.0
     k = i if t < 0.5 else min(n - 1, i + 1)
@@ -49,9 +91,60 @@ def _lateral(px, pz, line, widths):
     return d, half, k, (1 if s >= 0 else -1)
 
 
-def _trim_against(conns, hosts, mouths):
-    """conns: list of connector dicts to trim; hosts: list of (name, pts, widths). Returns new list."""
+def host_height(hpts, px, pz):
+    """(y, segment, t) — the host centreline height interpolated along the segment (px, pz) projects onto"""
+    _d, i, t = _project(px, pz, hpts)
+    j = min(len(hpts) - 1, i + 1)
+    return hpts[i][1] + (hpts[j][1] - hpts[i][1]) * t, i, t
+
+
+def junction_angle(cx, cz, ox, oz, hpts, seg):
+    """degrees in (0, 90]: the connector's approach (o -> cut) vs the host segment's direction"""
+    j = min(len(hpts) - 1, seg + 1)
+    hx, hz = hpts[j][0] - hpts[seg][0], hpts[j][2] - hpts[seg][2]
+    ax, az = cx - ox, cz - oz
+    la, lh = math.hypot(ax, az), math.hypot(hx, hz)
+    if la < 1e-9 or lh < 1e-9:
+        return 90.0
+    c = abs(ax * hx + az * hz) / (la * lh)
+    return math.degrees(math.acos(max(-1.0, min(1.0, c))))
+
+
+def host_grade(hpts, seg):
+    j = min(len(hpts) - 1, seg + 1)
+    run = math.hypot(hpts[j][0] - hpts[seg][0], hpts[j][2] - hpts[seg][2])
+    return 0.0 if run < 1e-9 else (hpts[j][1] - hpts[seg][1]) / run
+
+
+def blend_from_cut(piece, cut, host_y, at_start, blend_m=BLEND_M, frozen=()):
+    """Blend the piece's heights onto host_y over the blend_m nearest the cut, walking FROM the cut end
+    (the cut is not yet in `piece`). Weight smoothstep(1 - s / blend_m): 1 at the cut, 0 at blend_m, flat at
+    both ends. The walk stops at a point in `frozen` ((x, z) rounded to 1 mm: an earlier pass's cut — a short
+    piece cut at both ends never drags its other mouth off its host). Returns [(x, z, dy)] for every point moved
+    (the island follows the same deltas)."""
+    order = range(len(piece)) if at_start else range(len(piece) - 1, -1, -1)
+    moved = []
+    acc = 0.0
+    prev = cut
+    for q in order:
+        p = piece[q]
+        acc += math.hypot(p[0] - prev[0], p[2] - prev[2])
+        if acc >= blend_m or (round(p[0], 3), round(p[2], 3)) in frozen:
+            break
+        w = smoothstep(1.0 - acc / blend_m)
+        ny = p[1] + (host_y - p[1]) * w
+        moved.append((p[0], p[2], ny - p[1]))
+        piece[q] = (p[0], ny, p[2])
+        prev = p
+    return moved
+
+
+def _trim_against(conns, hosts, mouths, deltas=None):
+    """conns: list of connector dicts to trim; hosts: list of (name, pts, widths). Returns new list.
+    `deltas` (optional dict connector name -> [(x, z, dy)]) collects every blended point's height change."""
     out = []
+    host_pts = {hn: hp for hn, hp, _ in hosts}
+    host_w = {hn: hw for hn, _, hw in hosts}
     for c in conns:
         pts = [tuple(p) for p in c["points_xyz_m"]]
         w = list(c["widths_m"])
@@ -59,7 +152,6 @@ def _trim_against(conns, hosts, mouths):
         # on the host's carriageway, but a divided trunk's centre is the carriageway midpoint, so
         # the end lands outside half-width) is extended to the host's centreline so the cut below
         # butts it to the edge. Only ends within REACH_M of a host are extended.
-        REACH_M = 15.0
         for end in (0, -1):
             x, y, z = pts[end]
             best = None
@@ -100,38 +192,41 @@ def _trim_against(conns, hosts, mouths):
             pw = list(w[i:j])
             for (edge_idx, nbr) in ((i - 1, i), (j, j - 1)):
                 if 0 <= edge_idx < m and inside[edge_idx]:
+                    at_start = edge_idx < i
                     po, pi_ = pts[nbr], pts[edge_idx]
                     do, ho, _, _, _ = info[nbr]
-                    di, hi, k_in, side, hname = info[edge_idx]
+                    di, hi, k_in, _side_in, hname = info[edge_idx]
+                    # the SIDE the piece approaches from: its first point OUTSIDE the host (po). The first point
+                    # inside can sit on or past the host's centreline (a route node on the far carriageway of a
+                    # divided trunk, or the REACH extension above): medium#2+0#0 at del_cerro_blvd#1 v82 was
+                    # recorded on side +1 while it arrives from -1, and gap_mouths gapped the wrong sidewalk
+                    side = _lateral(po[0], po[2], host_pts[hname], host_w[hname])[3]
                     target = hi - OVERLAP_M
                     f = 0.0 if do == di else max(0.0, min(1.0, (do - target) / (do - di)))
-                    # HEIGHT MATCH (Kevin 2026-10-09: "lots of hovering" at the side-street
-                    # intersections — measured 0.10-0.91 m between a side street's end and the host's
-                    # deck): the cut lands on the host's own centreline height, and the piece's last
-                    # BLEND_M blend linearly onto it so the mouth is a grade change, not a step
-                    host_y = next(hp[k_in][1] for hn, hp, _ in hosts if hn == hname)
-                    cut = (po[0] + (pi_[0] - po[0]) * f, host_y, po[2] + (pi_[2] - po[2]) * f)
-                    BLEND_M = 30.0
-                    seq = list(range(len(piece))) if edge_idx >= i else list(range(len(piece) - 1, -1, -1))
-                    # walk back from the cut end accumulating distance; blend y toward the cut height
-                    acc = 0.0
-                    prev = cut
-                    for q in (seq[::-1] if edge_idx >= i else seq):
-                        p = piece[q]
-                        acc += math.hypot(p[0] - prev[0], p[2] - prev[2])
-                        if acc >= BLEND_M:
-                            break
-                        t = 1.0 - acc / BLEND_M
-                        piece[q] = (p[0], p[1] + (host_y - p[1]) * t, p[2])
-                        prev = p
-                    if edge_idx < i:
+                    cx, cz = po[0] + (pi_[0] - po[0]) * f, po[2] + (pi_[2] - po[2]) * f
+                    hpts = host_pts[hname]
+                    host_y, hseg, ht = host_height(hpts, cx, cz)
+                    cut = (cx, host_y, cz)
+                    # the approach direction: from the piece's point next to the cut (po unless the cut IS po)
+                    ox, oz = po[0], po[2]
+                    if math.hypot(cx - ox, cz - oz) < 0.05 and len(piece) >= 2:
+                        o2 = piece[1] if at_start else piece[-2]
+                        ox, oz = o2[0], o2[2]
+                    frozen = {(round(mo["cut_xyz"][0], 3), round(mo["cut_xyz"][2], 3)) for mo in mouths}
+                    moved = blend_from_cut(piece, cut, host_y, at_start, frozen=frozen)
+                    if deltas is not None:
+                        deltas.setdefault(c["name"], []).extend(moved)
+                    if at_start:
                         piece.insert(0, cut)
                         pw.insert(0, w[nbr])
                     else:
                         piece.append(cut)
                         pw.append(w[nbr])
                     mouths.append({"connector": c["name"], "host": hname, "host_vertex": k_in, "side": side,
-                                   "connector_width_m": float(w[nbr]), "cut_xyz": [round(v, 3) for v in cut]})
+                                   "connector_width_m": float(w[nbr]), "cut_xyz": [round(v, 3) for v in cut],
+                                   "host_seg": hseg, "host_t": round(ht, 4),
+                                   "angle_deg": round(junction_angle(cx, cz, ox, oz, hpts, hseg), 2),
+                                   "host_grade": round(host_grade(hpts, hseg), 5)})
             plen = sum(math.hypot(piece[q][0] - piece[q - 1][0], piece[q][2] - piece[q - 1][2])
                        for q in range(1, len(piece)))
             if plen >= MIN_PIECE_M and len(piece) >= 2:
@@ -146,6 +241,52 @@ def _trim_against(conns, hosts, mouths):
         if any(inside):
             print(f"[trim] {c['name']}: {len(pieces)} piece(s), {sum(inside)} pt(s) inside a host dropped")
     return out
+
+
+def resolve_pieces(mouths, pieces):
+    """stamp every mouth with the FINAL piece whose endpoint is its cut, and which end"""
+    for mo in mouths:
+        cx, _, cz = mo["cut_xyz"]
+        hit = None
+        for c in pieces:
+            p = c["points_xyz_m"]
+            for end, q in (("start", p[0]), ("end", p[-1])):
+                if math.hypot(q[0] - cx, q[2] - cz) <= END_MATCH_M:
+                    hit = (c["name"], end)
+                    break
+            if hit:
+                break
+        mo["piece"], mo["end"] = (hit if hit else (None, None))
+    return mouths
+
+
+def apply_island_deltas(bands, deltas, tol=0.01):
+    """add each blended trunk point's height change to the connector island point at the same plan position
+    (the island's points are the trunk's own pre-trim points). Returns the number of island points moved."""
+    moved = 0
+    for ci in bands.get("connector_islands", []):
+        dl = [d for name, ds in deltas.items()
+              if name == ci["name"] or name.startswith(ci["name"] + "#") for d in ds]
+        if not dl:
+            continue
+        cell = {}
+        for x, z, dy in dl:
+            cell.setdefault((round(x), round(z)), []).append((x, z, dy))
+        pts = ci["points_xyz_m"]
+        for q, p in enumerate(pts):
+            # every blend that moved this point (a short piece blended from both ends moved it twice; the
+            # second delta is relative to the first result, so they add)
+            dy_sum, hit = 0.0, False
+            for gx in (-1, 0, 1):
+                for gz in (-1, 0, 1):
+                    for x, z, dy in cell.get((round(p[0]) + gx, round(p[2]) + gz), ()):
+                        if math.hypot(x - p[0], z - p[2]) <= tol:
+                            dy_sum += dy
+                            hit = True
+            if hit and dy_sum != 0.0:
+                pts[q] = [p[0], round(p[1] + dy_sum, 4), p[2]]
+                moved += 1
+    return moved
 
 
 def build(project_dir):
@@ -163,9 +304,10 @@ def build(project_dir):
     local = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
     main = [tuple(p) for p in local["points_xyz_m"]]
     mouths = []
+    deltas = {}
 
     # pass 1: everything vs the mainline
-    first = _trim_against(conns.get("connectors", []), [("MAINLINE", main, local["widths_m"])], mouths)
+    first = _trim_against(conns.get("connectors", []), [("MAINLINE", main, local["widths_m"])], mouths, deltas)
     # pass 2: non-host pieces vs the divided trunks (host = any piece of a divided connector, not its _loop)
     def is_host(c):
         return any(c["name"] == d or c["name"].startswith(d + "#") for d in divided)
@@ -173,10 +315,14 @@ def build(project_dir):
     hosts_set = {h[0] for h in hosts}
     rest = [c for c in first if c["name"] not in hosts_set and not any(c["name"].startswith(d + "_loop") for d in divided)]
     loops = [c for c in first if any(c["name"].startswith(d + "_loop") for d in divided)]
-    second = _trim_against(rest, hosts, mouths) if hosts else rest
+    second = _trim_against(rest, hosts, mouths, deltas) if hosts else rest
     out = [c for c in first if c["name"] in hosts_set] + loops + second
+    resolve_pieces(mouths, out)
+    unresolved = [f"{mo['connector']}@{mo['host']}:{mo['host_vertex']}" for mo in mouths if mo["piece"] is None]
+    if unresolved:
+        print(f"[trim] WARNING: {len(unresolved)} mouth(s) whose piece was dropped (< {MIN_PIECE_M} m): {unresolved}")
 
-    # island gaps on trunk hosts at every mouth
+    # island gaps on trunk hosts at every mouth; the trunk's blend applied to its island's heights
     bands_path = data / "median_bands.json"
     if bands_path.exists():
         bands = json.loads(bands_path.read_text(encoding="utf-8"))
@@ -191,9 +337,12 @@ def build(project_dir):
                     if ci["island_w_by_point"][q] > 0 and math.hypot(p[0] - cx, p[2] - cz) <= MOUTH_ISLAND_GAP_M:
                         ci["island_w_by_point"][q] = 0.0
                         gapped += 1
+        lifted = apply_island_deltas(bands, deltas)
         bands_path.write_text(json.dumps(bands), encoding="utf-8")
         if gapped:
             print(f"[trim] trunk island gapped on {gapped} point(s) at connector mouths")
+        if lifted:
+            print(f"[trim] trunk island heights blended with the trunk deck on {lifted} point(s)")
 
     payload = dict(conns)
     payload["connectors"] = out
@@ -201,6 +350,10 @@ def build(project_dir):
     (data / "mouths.json").write_text(json.dumps({"mouths": mouths}, indent=1), encoding="utf-8")
     hosts_hit = sorted({mo["host"] for mo in mouths})
     print(f"[trim] {len(out)} connector piece(s), {len(mouths)} mouth cut(s) on {hosts_hit} -> connectors.local.json + mouths.json")
+    for mo in mouths:
+        print(f"[trim] mouth {mo['piece']} ({mo['end']}) -> {mo['host']} seg {mo['host_seg']}+{mo['host_t']:.2f} "
+              f"side {mo['side']:+d}: angle {mo['angle_deg']:.1f} deg, host grade {100 * mo['host_grade']:+.2f} %, "
+              f"cut y {mo['cut_xyz'][1]:.3f}")
 
 
 if __name__ == "__main__":

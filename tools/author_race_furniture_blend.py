@@ -34,8 +34,9 @@ LOWEST sheet where the ribbon folds on itself, a +-0.4 m probe when the ring cen
 wedge, and linear interpolation from the run's seated neighbours for the handful that still miss. Every one of
 those is counted in race_authored.json (and, since 0049, separately for the rings inside the declared bridge
 spans: `bridge_seating` — verify_race L fails any interpolated ring there); a run with no seated ring at all
-fails. Where ANOTHER deck (a connector's) stands more than 0.15 m above the strip base the ring is listed under
-`other_deck_above` — a junction defect (0033/0046 class) for its owner, not a seating choice. Every race kerb
+fails. Where ANOTHER deck (a connector's, or the ribbon's own fold) stands more than OTHER_DECK_M (0.05 m since
+2026-10-11, was 0.15) above the strip base the ring is listed under `other_deck_above` — a junction defect (0033/0046
+class) for its owner, not a seating choice; verify_race O FAILS any (it was reported, never gated). Every race kerb
 also records `under_road` (ledger 0049 fix round): the stations where a second ROAD sheet stands over the kerb's
 TOP at its lip, mid-line or outer edge — a kerb laid across a ribbon fold, invisible from the seat. verify_race E
 fails any; the fix is the declaration's (track.config.json race.kerbs.trims pulls the run back or drops it).
@@ -75,7 +76,8 @@ RAY_DOWN_M = 4.0           # the lowest-sheet up-cast starts this far under the 
 RAY_LEN_M = 60.0
 KERB_SINK_M = 0.01
 PROBE_M = 0.4
-OTHER_DECK_M = 0.15
+OTHER_DECK_M = 0.05         # another ROAD sheet this far over a seated ring is listed (verify_race O fails any;
+                            # was 0.15 and only reported, until the Del Cerro mouth stood +0.51 m over College)
 KERB_SHEET_TOL_M = 0.02    # two ROAD hits under one point further apart than this are two sheets (a ribbon fold)
 KERB_UNDER_TOL_M = 0.005   # ... and the upper one stands over the kerb's TOP by more than this: the kerb is under it
 KERB_FOLD_REACH_M = 1.5    # only sheets within this above the lowest count (a fold, not a deck overhead)
@@ -611,6 +613,7 @@ def main():
                    "seated_near": strips.near + kerbs.near + (walk.near if walk is not strips else 0),
                    "seated_interpolated": n_interp,
                    "deck_vs_data_max_m": round(abs(all_devs[0][0]), 3) if all_devs else 0.0,
+                   "other_deck_threshold_m": OTHER_DECK_M,
                    "other_deck_above_rings": len(all_other),
                    "other_deck_above_max_m": all_other[0][0] if all_other else 0.0},
         "layouts": per_layout,

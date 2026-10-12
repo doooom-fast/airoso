@@ -900,3 +900,47 @@ collects every chunk the station interval [start − 40, end + 40] touches round
 `tests/ac/test_build_kn5_loop_prep.py::test_seam_chunks_hold_every_same_leg_station_when_the_last_chunk_is_short`
 walks every station pair within the window on such a lap; it fails on the merged code, passes on the fix. No
 threshold changed.
+
+## 2026-10-12 — worn race kerbs: the atlas wrap, the no-black-slot guard, the opt-in wheel kerb effect (ledger 0053)
+
+Kevin, from the seat on v0.17.1: "i'd like the race curbs to be tire-worn/textured". The eight `1KERB_race_*` kerbs
+keep every vertex, face and hard edge (scratch rehearsal: `race_authored.json` ring centres and frames identical for
+all 35 objects, 167,958 positions before and after), so no driving-surface gate moves: `drive_test`, `audit_mesh`
+(K 154), `verify_race`, `kn5_ground_check` judge the same geometry. What changes is the picture, the wrap and one
+guard. Every number below is **[invented]** unless it says measured.
+
+| Value | Where | Number | Flag |
+|---|---|---|---|
+| atlas repeat along the kerb | `race_furniture.KERB_ATLAS_V_M` | 8.0 m (2,048 px at 256 px/m) | ⚠ invented |
+| red / white block | `KERB_BLOCK_M` | 1.0 m (the 0047 stripe was 0.5 m + 0.5 m) | ⚠ invented |
+| rubber levels | `KERB_ATLAS_COLUMNS`, `kerb_wear` | 4 columns; level = min(3, int(4 w)), bins of 0.25 | ⚠ invented |
+| inside-kerb lobes | `KERB_WEAR_IN_*` | each direction's late apex PC + 0.6 arc / PT − 0.6 arc; sigma max(5 m, 0.15 arc); floor 0.15 | ⚠ invented |
+| outside-kerb lobes | `KERB_WEAR_OUT_*` | each direction's track-out PT + 0.2 E / PC − 0.2 E; sigma 6 m; floor 0.10 | ⚠ invented |
+| joint snap | `KERB_JOINT_SNAP_MAX_M` | a whole metre of the kerb's own mid-line becomes a joint station only if a station lies within 0.25 m; v is warped so every joint station sits on a whole metre; a block takes the highest raw level of its stations; the column changes only there | ⚠ invented |
+| column pad | `KERB_ATLAS_PAD_PX` | 8 px each side of a 256 px column (mip level 3 stays inside its column) | ⚠ invented |
+| wrap handedness | `KERB_V_SIGN` | L −1, R +1: every kerb's (T × B) · N = +1 in the Blender frame, the sign of the prep's `planar_uv` road wrap (a kn5 tangent has no handedness sign). Not a threshold: derived and tested | measured (tests) |
+| kerb material | `pbr.KS_PROPS["1KERB_RACE"]` | ksAmbient 0.40 / ksDiffuse 0.40 (the add-on default every neighbouring race material ships at, measured) ; ksSpecular 0.10, ksSpecularEXP 20 (Kunos Laguna `red_curb` measured at 0.35 / 20, technique only) | ⚠ 0.10 invented |
+| the picture | `tools/make_kerb_texture.py` | colours (RAL 3020 / 9016 weathered), `RUBBER_COVER` 0 / 0.12 / 0.30 / 0.55, `RUBBER_OPACITY` 0 / 0.55 / 0.70 / 0.82, `RUBBER_HAZE` 0 / 0.12 / 0.28 / 0.46, `CHIP_COVER` 0.035, `NORMAL_STRENGTH` 2.2, JPEG q90 4:4:4 | ⚠ invented, tuned by eye on Blender stills |
+| texture budget | `make_kerb_texture.MAX_BYTES` | ≤ 2,000,000 B per file (painted: 567,921 + 979,777) | ⚠ invented |
+| render-vertex cost of a seam | `render_vertex_count(..., face_uvs)` | each column seam splits the 6 render vertices of its station row: ≤ +6 per seam (the diagnosis said 4; the exporter measured 6) | measured: pure 7,050 → 7,356 for 51 seams = the built kn5's KERB count exactly |
+
+**New gate — `tools/check_race_kn5.py` `black_slots` (hard, both roles, every race kn5).** Every texture the
+`pbr.TEXTURES` race rows bind for the meshes present must be embedded with > 0 bytes, and (when the parse carries
+materials) each race mesh's material must bind exactly its row's `txDiffuse` / `txNormal` and nothing unembedded.
+Why: `ship_sd.sh` exports from engine-july, which stages textures from ITS `assets/textures`; a file that is only in
+airoso is skipped with a WARNING and the slot renders black (LAWS L7) — the old role checks passed such a kn5. Proof:
+the installed v0.17.1 race kn5's parse now FAILS (`kerb_diffuse.png` outside the race set, the worn pair not
+embedded, 16 bindings disagree); the rehearsed kn5 PASSES. `tests/tools/test_check_race_kn5.py::test_ledger_0053_no_black_kerb_slot`.
+
+**Opt-in — `track_folder.surfaces_ini(kerb_ff_effect=0)`.** `FF_EFFECT=<n>` on the KERB block only, read from
+`track.config.json` `kerb_ff_effect` (absent = 0). The default output is byte-identical (md5 pinned for tarmac /
+gravel × wall, `tests/ac/test_road_surface.py`); opt-in changes exactly one line. 1 is the Kunos convention
+(measured FF_EFFECT=1 on Vallelunga, Silverstone, Laguna Seca, Brands Hatch, Red Bull Ring, Barcelona, Imola, Mugello;
+0 on Zandvoort; absent on Highlands). Caveat recorded: KEY=KERB also covers the street `1KERB_sidewalk` (114,081 m²
+in the main kn5), so an opted-in track's sidewalks get the wheel effect too. No track opts in in this commit
+(Lake Murray's config is the integration run's, Kevin's call).
+
+Rehearsal (scratch copy of the v0.17.1 workshop + a scratch engine-july carrying this pbr.py and the two textures):
+author → `verify_race` OK → prep → split → `<slug>_race.kn5` **10,253,676 → 11,815,506 B (+1,561,830 B, +15.2 %)**
+(the textures embedded are the bytes packed at the prep — see ledger 0053 "Integration"), `check_race_kn5 --role
+common` OK, all 8 kerb materials `ksPerPixelMultiMap` txDiffuse + txNormal, ksSpecular 0.1, KERB 7,356 render verts.

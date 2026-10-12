@@ -24,12 +24,14 @@ TEXTURES = {
     # concrete_diffuse.jpg has no provenance entry in its licenses.json, so it stays out of the engine.
     "1KERB_SIDEWALK": ("building_diffuse.jpg", "building_normal.jpg", 0.75, (0.66, 0.66, 0.64, 1), 0.0, False),
     # 1KERB_RACE BEFORE 1KERB (ledger 0047): the race layouts' flat rumble kerbs
-    # (tools/author_race_furniture_blend.py) bind the red/white stripe by their OWN row. They carry
-    # their own UVs (u across the 1.0 m profile, v = arc / 1 m — race_furniture.kerb_mesh, KERB_TILE_M),
-    # kept by the prep's planar_uv skip, and kerb_diffuse.png alternates red/white along v: one
-    # 0.5 m red + 0.5 m white pair per metre. Same texture and parameters as 1KERB, but no later
-    # change to the generic row (or an override keyed "1KERB") can reach them.
-    "1KERB_RACE": ("kerb_diffuse.png",  None,                 0.55, (0.62, 0.10, 0.08, 1), 0.0, False),
+    # (tools/author_race_furniture_blend.py) bind by their OWN row, so no change to the generic 1KERB
+    # row (or an override keyed "1KERB") can reach them. Ledger 0053 (Kevin: "i'd like the race curbs
+    # to be tire-worn/textured"): the worn atlas from tools/make_kerb_texture.py (CC0) — 4 columns of
+    # tyre-rubber level x 8 m of 1 m red/white blocks — plus its normal map, so the exporter picks
+    # ksPerPixelMultiMap (diffuse + normal, the path 1WALL_RACE already renders through in game). The
+    # kerbs carry their own per-face-corner UVs (race_furniture.kerb_atlas_face_uvs: the column by
+    # wear, v along the kerb's real length), kept by the prep's planar_uv skip.
+    "1KERB_RACE": ("kerb_race_worn_diffuse.jpg", "kerb_race_worn_normal.jpg", 0.55, (0.62, 0.10, 0.08, 1), 0.0, False),
     "1KERB":   ("kerb_diffuse.png",    None,                 0.55, (0.62, 0.10, 0.08, 1), 0.0, False),
     "CURB":    ("building_diffuse.jpg", "building_normal.jpg", 0.70, (0.64, 0.64, 0.66, 1), 0.0, False),   # concrete street curb (fallback if a loop mesh keeps this name)
     "SIDEWALK": ("building_diffuse.jpg", "building_normal.jpg", 0.75, (0.68, 0.68, 0.66, 1), 0.0, False),  # concrete sidewalk slab
@@ -132,6 +134,9 @@ KS_PROPS = {
     "1GRASS":   {"ksAmbient": 0.50, "ksDiffuse": 0.22, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
     "POLE":     {"ksAmbient": 0.40, "ksDiffuse": 0.15, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
     "SIGNPOST": {"ksAmbient": 0.40, "ksDiffuse": 0.25, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
+    # ledger 0053: the worn race kerbs — ambient / diffuse at the 0.4 / 0.4 every neighbouring material ships at
+    # (the add-on default), a faint paint sheen well under Kunos red_curb's 0.35 [invented]
+    "1KERB_RACE": {"ksAmbient": 0.40, "ksDiffuse": 0.40, "ksSpecular": 0.10, "ksSpecularEXP": 20.0},
 }
 
 

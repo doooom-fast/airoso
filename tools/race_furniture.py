@@ -122,7 +122,27 @@ KERB_H = 0.05            # flat low kerb: below audit K's KERB_STAND_M 0.10 and 
 KERB_RAMP_W = 0.10       # rideable lane-side ramp
 KERB_CLEAR_M = 0.05      # kerb outer edge 0.05 m clear of the edge strip's road-side face
 KERB_STEP_M = 0.3
-KERB_TILE_M = 1.0        # kerb_diffuse.png stripes: one tile per metre along
+KERB_TILE_M = 1.0        # kerb_diffuse.png stripes: one tile per metre along (the wear=None path, unchanged)
+# ledger 0053 — the worn race-kerb ATLAS (tools/make_kerb_texture.py paints it, kerb_atlas_face_uvs wraps it).
+# kerb_race_worn_{diffuse,normal}.jpg: KERB_ATLAS_COLUMNS columns of KERB_ATLAS_COL_PX px = tyre-rubber level
+# 0..3 (identical paint, chips and joints; level c's rubber a superset of level c-1's), each padded
+# KERB_ATLAS_PAD_PX px per side against mip bleed; along v KERB_ATLAS_V_M metres of kerb at KERB_ATLAS_PX_M px/m,
+# KERB_BLOCK_M red / white blocks with a grime joint at every block end. All [invented] (GATES-CHANGELOG 0053).
+KERB_ATLAS_COLUMNS = 4
+KERB_ATLAS_COL_PX = 256
+KERB_ATLAS_PAD_PX = 8
+KERB_ATLAS_V_M = 8.0
+KERB_ATLAS_PX_M = 256
+KERB_BLOCK_M = 1.0
+# wear placement (kerb_wear): both race directions drive every kerb (barrier_bands: whole/box at every kerb vertex)
+KERB_WEAR_IN_LATE = 0.6          # inside kerb: each direction's late apex at PC + 0.6 arc (increasing) / PT - 0.6 arc
+KERB_WEAR_IN_SIGMA_MIN_M = 5.0   # ... lobe sigma max(5 m, 0.15 arc)
+KERB_WEAR_IN_SIGMA_FRAC = 0.15
+KERB_WEAR_IN_FLOOR = 0.15        # ... everywhere else on an inside kerb: light wear
+KERB_WEAR_OUT_D_FRAC = 0.2       # outside kerb: each direction's track-out at PT + 0.2 E (increasing) / PC - 0.2 E
+KERB_WEAR_OUT_SIGMA_M = 6.0
+KERB_WEAR_OUT_FLOOR = 0.10
+KERB_JOINT_SNAP_MAX_M = 0.25     # a whole metre becomes a joint station only if a station lies within this of it
 KERB_TAPER_STATIONS = 3
 KERB_DEFL_MIN_DEG = 45.0
 KERB_EXT_MIN_M, KERB_EXT_MAX_M = 10.0, 30.0   # outside kerb symmetric extension E = clamp(2 R_apex, 10, 30)
@@ -412,10 +432,11 @@ def kerb_outline_edges(n_stations):
     return out
 
 
-def render_vertex_count(n_verts, faces, sharp):
+def render_vertex_count(n_verts, faces, sharp, face_uvs=None):
     """what the exporter emits for a smooth-shaded mesh with per-vertex UVs: one vertex per (position,
     smooth fan) — the faces round a vertex joined across its non-sharp manifold edges. (A flat-shaded
-    triangulated mesh is 3 per triangle.)"""
+    triangulated mesh is 3 per triangle.) With `face_uvs` (per face, per corner — ledger 0053's kerb atlas) two
+    faces are joined at a vertex only where they also carry the same UV there: a column seam splits the row."""
     sharp = {(a, b) if a < b else (b, a) for a, b in sharp}
     ef = edge_faces(faces)
     by_vertex = [[] for _ in range(n_verts)]
@@ -440,6 +461,9 @@ def render_vertex_count(n_verts, faces, sharp):
                 e = (v, w) if v < w else (w, v)
                 fe = ef.get(e, [])
                 if len(fe) == 2 and e not in sharp:          # both faces hold v, so both are in `parent`
+                    if face_uvs is not None and (face_uvs[fe[0]][faces[fe[0]].index(v)]
+                                                 != face_uvs[fe[1]][faces[fe[1]].index(v)]):
+                        continue
                     a, b = find(fe[0]), find(fe[1])
                     if a != b:
                         parent[a] = b
@@ -449,6 +473,165 @@ def render_vertex_count(n_verts, faces, sharp):
 
 def triangle_count(faces):
     return sum(len(f) - 2 for f in faces)
+
+
+# ---------------------------------------------------------------------------------------------
+# ledger 0053: the worn race-kerb atlas — WHERE the tyre rubber goes and how the kerb is wrapped onto it (pure).
+# Kevin 2026-10-12, from the seat: "i'd like the race curbs to be tire-worn/textured". The geometry is untouched:
+# kerb_mesh is called exactly as before; only the per-face-corner UVs below are new.
+#
+# Handedness: a kn5 vertex carries a tangent but no bitangent sign, so AC assumes ONE wrap handedness. The prep's
+# planar_uv (u = x, v = y in Blender, the road / grass / sidewalk wrap) is right-handed seen from above in the
+# Blender frame; kerb_mesh's L and R kerbs were mirror images of each other. KERB_V_SIGN runs v along the kerb so
+# BOTH sides match the planar wrap (tests pin it in the Blender frame) — the normal map's joints then read as
+# grooves on every kerb, the way the asphalt's cracks already read.
+KERB_V_SIGN = {"L": -1.0, "R": 1.0}
+
+
+def kerb_profile_u():
+    """u across the kerb profile by real surface length — lane lip 0 -> ramp top -> outer top -> outer base 1
+    (ramp hypot(0.10, 0.05) + top 0.90 + outer face 0.05 = 1.062 m); kerb_mesh's 4 profile vertices"""
+    seg = (math.hypot(KERB_RAMP_W, KERB_H), KERB_W - KERB_RAMP_W, KERB_H)
+    tot = sum(seg)
+    return (0.0, seg[0] / tot, (seg[0] + seg[1]) / tot, 1.0)
+
+
+def kerb_atlas_u(level, u_prof):
+    """atlas u of profile coordinate u_prof (0..1) in rubber column `level`, inside the column's pad"""
+    width = KERB_ATLAS_COLUMNS * KERB_ATLAS_COL_PX
+    inner = KERB_ATLAS_COL_PX - 2 * KERB_ATLAS_PAD_PX
+    return (int(level) * KERB_ATLAS_COL_PX + KERB_ATLAS_PAD_PX + u_prof * inner) / width
+
+
+def kerb_arcs(sts, sgn):
+    """cumulative plan length (m) along the kerb's OWN mid-line from its first station: the real length the 1 m
+    blocks are laid on (a station's `arc` is the centreline's — on the hairpin the inside kerb is far shorter)"""
+    out = [0.0]
+    for a, b in zip(sts, sts[1:]):
+        out.append(out[-1] + math.dist(kerb_mid_xz(a, sgn), kerb_mid_xz(b, sgn)))
+    return out
+
+
+def _signed_gap(a, b, lap):
+    """a - b along a closed lap of length `lap` (the shorter way round, L13); plain difference when lap is 0"""
+    if not lap:
+        return a - b
+    d = (a - b) % lap
+    return d - lap if d > lap / 2.0 else d
+
+
+def kerb_wear_centres(plan, corner):
+    """(lobe centres in ribbon metres, sigma m, floor) of a kerb's rubber — [invented], GATES-CHANGELOG 0053.
+    Both race directions drive every kerb (race_cw increasing, race_acw decreasing): an INSIDE kerb is worn at each
+    direction's late apex (PC + 0.6 arc, PT - 0.6 arc), an OUTSIDE kerb where each direction runs out wide on exit
+    (PT + 0.2 E, PC - 0.2 E). The AI drafts cannot say where tyres run: they stay >= 1.04 m off every edge."""
+    pc, pt = float(corner["PC"]), float(corner["PT"])
+    lap = float(plan.get("lap_m") or 0.0)
+    arc = (pt - pc) % lap if lap else pt - pc
+    if plan["sub"] == "in":
+        sig = max(KERB_WEAR_IN_SIGMA_MIN_M, KERB_WEAR_IN_SIGMA_FRAC * arc)
+        return (pc + KERB_WEAR_IN_LATE * arc, pt - KERB_WEAR_IN_LATE * arc), sig, KERB_WEAR_IN_FLOOR
+    d = KERB_WEAR_OUT_D_FRAC * float(corner["E_m"])
+    return (pt + d, pc - d), KERB_WEAR_OUT_SIGMA_M, KERB_WEAR_OUT_FLOOR
+
+
+def kerb_wear(plan, corner):
+    """Per-span rubber level of one (seated or planned) kerb, and the v the atlas is wrapped with.
+
+    raw level per station = min(3, int(4 w)), w = max(floor, Gaussian lobes at kerb_wear_centres). The column may
+    only change AT a block joint: the station nearest each whole metre of the kerb's own mid-line length is a JOINT
+    station, and v is warped piecewise-linearly so every joint station lands exactly on a whole metre (a block end in
+    the atlas, inside its grime line) — blocks stay 1 m to within half a station spacing. Each block takes the
+    highest raw level of its stations. Returns {levels: per span, v_m: per station, joints: [station idx],
+    seams, m_by_level, heavy_spans_m_from_apex, arcs_m}."""
+    sts = plan["stations"]
+    sgn = 1.0 if plan["side"] == "L" else -1.0
+    lap = float(plan.get("lap_m") or 0.0)
+    centres, sig, floor = kerb_wear_centres(plan, corner)
+    raw = []
+    for s in sts:
+        w = max([floor] + [math.exp(-0.5 * (_signed_gap(s["s"], c, lap) / sig) ** 2) for c in centres])
+        raw.append(min(KERB_ATLAS_COLUMNS - 1, int(KERB_ATLAS_COLUMNS * w)))
+    a = kerb_arcs(sts, sgn)
+    n = len(sts)
+    joints, metres = [], []
+    for j in range(0, int(math.floor(a[-1] / KERB_BLOCK_M + 0.5)) + 1):
+        q = min(range(n), key=lambda i: abs(a[i] - j * KERB_BLOCK_M))
+        if (joints and q <= joints[-1]) or abs(a[q] - j * KERB_BLOCK_M) > KERB_JOINT_SNAP_MAX_M:
+            continue                      # no station near this whole metre (a trimmed fold's long span): no joint here
+        joints.append(q)
+        metres.append(j * KERB_BLOCK_M)
+    v_m = [0.0] * n
+    for k, q in enumerate(joints):
+        q1 = joints[k + 1] if k + 1 < len(joints) else n
+        for i in range(q, q1):
+            if k + 1 < len(joints):
+                f = (a[i] - a[q]) / max(1e-9, a[q1] - a[q])
+                v_m[i] = metres[k] + f * (metres[k + 1] - metres[k])
+            else:
+                v_m[i] = metres[k] + (a[i] - a[q])
+    for i in range(joints[0]):            # never: station 0 is nearest metre 0
+        v_m[i] = a[i] - a[joints[0]] + metres[0]
+    levels = [0] * max(0, n - 1)
+    for k, q in enumerate(joints):
+        q1 = joints[k + 1] if k + 1 < len(joints) else n - 1
+        if q1 <= q:
+            continue
+        lv = max(raw[q:q1])
+        for i in range(q, q1):
+            levels[i] = lv
+    seams = sum(1 for i in range(1, len(levels)) if levels[i] != levels[i - 1])
+    m_by = [0.0] * KERB_ATLAS_COLUMNS
+    for i, lv in enumerate(levels):
+        m_by[lv] += a[i + 1] - a[i]
+    apex = float(plan.get("apex_station", corner.get("apex_station", 0.0)))
+    heavy, run = [], None
+    top = KERB_ATLAS_COLUMNS - 1
+    for i, lv in enumerate(levels + [None]):
+        if lv == top and run is None:
+            run = i
+        elif lv != top and run is not None:
+            heavy.append([round(_signed_gap(sts[run]["s"], apex, lap), 1), round(_signed_gap(sts[i]["s"], apex, lap), 1)])
+            run = None
+    return {"levels": levels, "v_m": v_m, "joints": joints, "raw": raw, "seams": seams,
+            "m_by_level": [round(x, 1) for x in m_by], "heavy_spans_m_from_apex": heavy, "arcs_m": a}
+
+
+def kerb_atlas_face_uvs(n_stations, side, wear):
+    """per-face, per-corner UVs for kerb_mesh(stations, side)'s faces (same order, same corner order): u in the
+    span's rubber column (kerb_profile_u across, inside the pad), v = KERB_V_SIGN[side] x warped metres / 8 m —
+    continuous along the whole kerb; a column change splits only the joint station's row"""
+    pu = kerb_profile_u()
+    vs = KERB_V_SIGN["L" if side > 0 else "R"]
+    out = []
+    for q in range(n_stations - 1):
+        lv = wear["levels"][q]
+        a, b = 4 * q, 4 * (q + 1)
+        for i in range(3):
+            f = (a + i, a + i + 1, b + i + 1, b + i)
+            if side <= 0:
+                f = (f[0], f[3], f[2], f[1])
+            out.append([(kerb_atlas_u(lv, pu[v % 4]), vs * wear["v_m"][v // 4] / KERB_ATLAS_V_M) for v in f])
+    return out
+
+
+def uv_handedness(verts, face, uvs):
+    """+1 / -1: the sign of (T x B) . N for one face (first three corners) — T, B the directions of increasing u,
+    v on the surface, N the winding normal. Same sign on every face = one wrap handedness."""
+    p0, p1, p2 = (verts[i] for i in face[:3])
+    (u0, v0), (u1, v1), (u2, v2) = uvs[0], uvs[1], uvs[2]
+    e1 = [p1[k] - p0[k] for k in range(3)]
+    e2 = [p2[k] - p0[k] for k in range(3)]
+    du1, dv1, du2, dv2 = u1 - u0, v1 - v0, u2 - u0, v2 - v0
+    det = du1 * dv2 - du2 * dv1
+    if abs(det) < 1e-15:
+        return 0
+    T = [(e1[k] * dv2 - e2[k] * dv1) / det for k in range(3)]
+    B = [(e2[k] * du1 - e1[k] * du2) / det for k in range(3)]
+    N = [e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0]]
+    C = [T[1] * B[2] - T[2] * B[1], T[2] * B[0] - T[0] * B[2], T[0] * B[1] - T[1] * B[0]]
+    d = sum(C[k] * N[k] for k in range(3))
+    return 1 if d > 0 else -1 if d < 0 else 0
 
 
 # ---------------------------------------------------------------------------------------------

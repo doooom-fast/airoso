@@ -15,12 +15,32 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools"))
 import check_race_kn5 as ck  # noqa: E402
 
-ALLOWED = {"kerb_diffuse.png", "concrete_barrier_diffuse.png", "concrete_barrier_normal.png"}
+ALLOWED = {"kerb_race_worn_diffuse.jpg", "kerb_race_worn_normal.jpg", "concrete_barrier_diffuse.png",
+           "concrete_barrier_normal.png"}
+KERB_TEX = ("kerb_race_worn_diffuse.jpg", "kerb_race_worn_normal.jpg")
+WALL_TEX = ("concrete_barrier_diffuse.png", "concrete_barrier_normal.png")
 
 
-def _parse(names, textures=("concrete_barrier_diffuse.png", "concrete_barrier_normal.png"), size=9_000_000):
+def _parse(names, textures=None, size=9_000_000):
+    """inspect_kn5-shaped: by default it embeds exactly the textures the race rows bind for `names`"""
+    if textures is None:
+        textures = (KERB_TEX if any(n.upper().startswith("1KERB_RACE") for n in names) else ()) + WALL_TEX
     return {"file_bytes": size, "nodes": ["BlenderFile"], "textures": [{"name": t} for t in textures],
             "meshes": [{"name": n, "verts": 1000, "tris": 1200} for n in names]}
+
+
+def _with_materials(parsed, kerb_slots=(("txDiffuse", KERB_TEX[0]), ("txNormal", KERB_TEX[1])), nbytes=None):
+    """the same parse with materials (one per mesh, bound like the exporter does) and texture byte counts"""
+    out = dict(parsed)
+    mats, meshes = [], []
+    for i, m in enumerate(parsed["meshes"]):
+        kerb = m["name"].upper().startswith("1KERB_RACE")
+        slots = list(kerb_slots) if kerb else [("txDiffuse", WALL_TEX[0]), ("txNormal", WALL_TEX[1])]
+        mats.append({"name": m["name"] + "_mat", "shader": "ksPerPixelMultiMap", "props": {}, "textures": slots})
+        meshes.append(dict(m, matid=i))
+    out["materials"], out["meshes"] = mats, meshes
+    out["textures"] = [dict(t, bytes=(nbytes or {}).get(t["name"], 1000)) for t in parsed["textures"]]
+    return out
 
 
 COMMON = ["1WALL_race_edge_L_alvarado_0_0", "1WALL_race_edge_R_alvarado_5_0", "1KERB_race_770_in", "1KERB_race_770_out"]
@@ -85,3 +105,38 @@ def test_cli_roles_and_the_kerb_count_from_the_declaration():
         assert "usage" in str(e)
     else:
         raise AssertionError("an unknown role must be a usage error")
+
+
+def test_ledger_0053_no_black_kerb_slot():
+    """the worn kerb atlas only reaches the kn5 if it was in engine-july/assets/textures when the export ran (it
+    stages from there; a missing file is skipped with a WARNING and the slot renders BLACK, LAWS L7). The guard
+    fails a common kn5 whose kerbs' textures are absent, empty, or bound to the wrong slot — and the v0.17.1 shape
+    (the old 771-byte stripe, no normal map) — while a closure kn5 (no kerb) needs only the K-rail pair."""
+    assert ck.race_texture_set() == ALLOWED                        # read from pbr.py, never restated in the guard
+    assert ck.expected_slots("1KERB_race_770_in") == {"txDiffuse": KERB_TEX[0], "txNormal": KERB_TEX[1]}
+    assert ck.expected_slots("1WALL_race_close_cw_college_777_0") == {"txDiffuse": WALL_TEX[0], "txNormal": WALL_TEX[1]}
+    assert ck.expected_slots("1ROAD_road") == {} and ck.expected_slots("1KERB_sidewalk") == {}
+    good = _with_materials(_parse(COMMON))
+    r = ck.check(good, ALLOWED, role="common", expect_kerbs=2)
+    assert r["ok"], r["fails"]
+    cases = [
+        (_with_materials(_parse(COMMON, textures=WALL_TEX + (KERB_TEX[0],))), "NOT embedded"),          # normal never staged
+        (_with_materials(_parse(COMMON), nbytes={KERB_TEX[1]: 0}), "0 bytes"),
+        (_with_materials(_parse(COMMON), kerb_slots=(("txDiffuse", KERB_TEX[0]),)), "txNormal=None"),
+        (_with_materials(_parse(COMMON), kerb_slots=(("txDiffuse", KERB_TEX[1]), ("txNormal", KERB_TEX[0]))),
+         "the pbr row says"),
+        (_parse(COMMON, textures=WALL_TEX), "NOT embedded"),                                          # no materials in the parse
+    ]
+    for parsed, msg in cases:
+        r = ck.check(parsed, ALLOWED, role="common", expect_kerbs=2)
+        assert not r["ok"] and any(msg in f for f in r["fails"]), (msg, r["fails"])
+    # the installed v0.17.1 race kn5's shape: the old stripe, no normal map -> FAILS (alien + missing + bindings)
+    old = _with_materials(_parse(COMMON, textures=("kerb_diffuse.png",) + WALL_TEX),
+                          kerb_slots=(("txDiffuse", "kerb_diffuse.png"),))
+    r = ck.check(old, ALLOWED, role="common", expect_kerbs=2)
+    assert not r["ok"] and any("outside the race set" in f for f in r["fails"]) and         any("NOT embedded" in f for f in r["fails"]), r["fails"]
+    # a closure kn5 carries no kerb: the K-rail pair is all it needs
+    r = ck.check(_with_materials(_parse(CLOSE_CW)), ALLOWED, role="closure", owner="cw")
+    assert r["ok"], r["fails"]
+    r = ck.check(_with_materials(_parse(CLOSE_CW, textures=(WALL_TEX[0],))), ALLOWED, role="closure", owner="cw")
+    assert not r["ok"] and any("NOT embedded" in f for f in r["fails"]), r["fails"]

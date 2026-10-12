@@ -45,6 +45,12 @@ SHADING (2026-10-11): every strip and kerb is smooth-shaded (Mesh.shade_smooth) 
 (MeshEdge.use_edge_sharp) only where race_furniture.sharp_edges finds faces meeting at > 30 deg plus the kerb
 outline — the flat-shaded strips made the exporter emit one vertex per triangle corner (a 35.6 MB race kn5).
 
+KERB ATLAS (ledger 0053, Kevin: "i'd like the race curbs to be tire-worn/textured"): every race kerb is wrapped onto
+kerb_race_worn_{diffuse,normal}.jpg with per-face-corner UVs (race_furniture.kerb_wear + kerb_atlas_face_uvs): the
+rubber column per span from the corner's geometry, v along the kerb's own length with every column switch on a block
+joint, one wrap handedness on both sides. Positions, faces and hard edges are exactly what they were; each kerb
+records `wear` {m_by_level, seams, heavy_spans_m_from_apex} and the report a `kerb_atlas` census.
+
 race_authored.json carries, per object: owner (the closure token, None for the common furniture), kind
 (edge | close | kerb), collection, run, ends [{kind, vertex, joins, gap_m, h, ls}] (a closure's true ends: kind
 `pin`, joins edge_L / edge_R, gap_m = the end ring's centre to the authored far strip's centre polyline), the ring
@@ -194,18 +200,32 @@ def _remove_existing():
     return n
 
 
-def _mk(name, verts, faces, uvs, col, sharp=None):
+def _mk(name, verts, faces, uvs, col, sharp=None, face_uvs=None):
     """the mesh object, SMOOTH-shaded with `sharp` (vertex-index pairs) as its only hard edges (Blender
     4.2: Mesh.shade_smooth + MeshEdge.use_edge_sharp; no auto-smooth). UVs are per VERTEX — one UV per
     position, no seam — so the exporter's weld (position + normal + UV + tangent) is blocked only where
-    an edge is hard."""
+    an edge is hard. `face_uvs` (ledger 0053, the race kerbs' worn atlas): per face, per corner, in the order
+    of `faces` as passed here — each loop takes its face's UV for its vertex, so a column switch at a joint row
+    is a UV seam the exporter splits (and nothing else is)."""
     me = bpy.data.meshes.new(name)
     me.from_pydata(verts, [], faces)
     me.validate()
     uvl = me.uv_layers.new(name="UVMap")
-    for poly in me.polygons:
-        for li in poly.loop_indices:
-            uvl.data[li].uv = uvs[me.loops[li].vertex_index]
+    if face_uvs is not None:
+        if len(me.polygons) != len(faces) or len(face_uvs) != len(faces):
+            raise SystemExit(f"[race] FATAL {name}: validate() changed the faces ({len(me.polygons)} polygons, "
+                             f"{len(faces)} faces, {len(face_uvs)} face UV rows) — the per-corner UVs would land on the "
+                             f"wrong faces")
+        for poly in me.polygons:
+            by_vertex = dict(zip(faces[poly.index], face_uvs[poly.index]))
+            if set(poly.vertices) != set(by_vertex):
+                raise SystemExit(f"[race] FATAL {name}: polygon {poly.index} is not face {poly.index} after validate()")
+            for li in poly.loop_indices:
+                uvl.data[li].uv = by_vertex[me.loops[li].vertex_index]
+    else:
+        for poly in me.polygons:
+            for li in poly.loop_indices:
+                uvl.data[li].uv = uvs[me.loops[li].vertex_index]
     if sharp is not None:
         me.shade_smooth()
         key = {(a, b) if a < b else (b, a) for a, b in sharp}
@@ -403,7 +423,9 @@ def main():
               "by_span": [{"span_m": list(s), "hit": 0, "near": 0, "interpolated": 0} for s in spans], "by_object": {}}
     plan_of = {}
     failed_runs = []
+    corner_of = {c["apex_vertex"]: c for c in corners}
     for plan in plans:
+        face_uvs = None
         name = rf.object_name(plan)
         kind = plan["kind"]
         owner = plan.get("token") if kind == "close" else None
@@ -469,6 +491,13 @@ def main():
                 failed_runs.append(name)
                 continue
             verts, faces, uvs = rf.kerb_mesh(plan["stations"], sgn, rf.KERB_TILE_M)
+            # ledger 0053: the worn atlas — rubber column per span from the corner's geometry, v along the
+            # kerb's own length (joints on whole metres), one wrap handedness on both sides
+            corner = corner_of.get(plan["apex"])
+            if corner is None:
+                raise SystemExit(f"[race] FATAL {name}: no detected corner at apex v{plan['apex']} to place its wear")
+            wear = rf.kerb_wear(plan, corner)
+            face_uvs = rf.kerb_atlas_face_uvs(len(plan["stations"]), sgn, wear)
             sharp = sorted(set(rf.sharp_edges(verts, faces)) | set(rf.kerb_outline_edges(len(plan["stations"]))))
             klen = sum(math.dist(xz(p), xz(q)) for p, q in zip(plan["stations"], plan["stations"][1:]))
             tot["kerb_len"] += klen
@@ -483,14 +512,19 @@ def main():
                                                                rf.KERB_W / 2.0)),
                    "seated": {"hit": kerbs.hit - h0, "near": kerbs.near - n0, "interpolated": kerbs.interp - i0},
                    "seat_gap_max_m": 0.0,
-                   "under_road": _kerb_under_road(road_any, plan["stations"], sgn)}
+                   "under_road": _kerb_under_road(road_any, plan["stations"], sgn),
+                   "wear": {"m_by_level": wear["m_by_level"], "seams": wear["seams"],
+                            "heavy_spans_m_from_apex": wear["heavy_spans_m_from_apex"],
+                            "joints": len(wear["joints"]), "real_length_m": round(wear["arcs_m"][-1], 2),
+                            "v_sign": rf.KERB_V_SIGN[plan["side"]]}}
             centres[name] = [[round(x, 2), round(s["y"], 2), round(z, 2)] for s in plan["stations"] for (x, z) in (xz(s),)]
             frames[name] = [[round(s["tx"], 5), round(s["tz"], 5), round(s.get("ls", 1.0), 4)] for s in plan["stations"]]
         bverts, bfaces = rf.to_blender(verts, faces)
         if len(bverts) >= 60000:
             raise SystemExit(f"[race] FATAL {name}: {len(bverts)} positions (>= 60,000) — lower MAX_RINGS_PER_OBJECT")
-        ob, me = _mk(name, bverts, bfaces, uvs, col, sharp=sharp)     # the reflection keeps every dihedral
-        rv = rf.render_vertex_count(len(verts), faces, sharp)
+        bface_uvs = [list(reversed(fu)) for fu in face_uvs] if face_uvs is not None else None   # faces reversed too
+        ob, me = _mk(name, bverts, bfaces, uvs, col, sharp=sharp, face_uvs=bface_uvs)   # the reflection keeps every dihedral
+        rv = rf.render_vertex_count(len(verts), faces, sharp, face_uvs)
         tris = rf.triangle_count(faces)
         rec.update({"positions": len(me.vertices), "faces": len(me.polygons), "loops": len(me.loops),
                     "smooth": True, "sharp_edges": len(sharp), "triangles": tris, "render_verts_est": rv})
@@ -622,6 +656,14 @@ def main():
                      "i": kb["i"], "j": kb["j"], "declared": bool(kb.get("declared"))} for kb in c["kerbs"]]} for c in corners],
         "kerbs_declared_unmatched": unmatched_kerbs,
         "kerb_clips": {o["name"]: o["clip"] for o in objects if o["kind"] == "kerb"},
+        "kerb_atlas": {"_doc": "ledger 0053: the race kerbs wrap kerb_race_worn_{diffuse,normal}.jpg (tools/make_kerb_texture.py) — "
+                               "column = tyre-rubber level 0..3 per span (race_furniture.kerb_wear), v along the kerb's own "
+                               "mid-line length warped so every joint station sits on a whole metre",
+                       "columns": rf.KERB_ATLAS_COLUMNS, "v_m": rf.KERB_ATLAS_V_M, "block_m": rf.KERB_BLOCK_M,
+                       "seams": sum(o["wear"]["seams"] for o in objects if o["kind"] == "kerb"),
+                       "m_by_level": [round(sum(o["wear"]["m_by_level"][lv] for o in objects if o["kind"] == "kerb"), 1)
+                                      for lv in range(rf.KERB_ATLAS_COLUMNS)],
+                       "render_verts_est": sum(o["render_verts_est"] for o in objects if o["kind"] == "kerb")},
         "street_table": rf.street_table(bands),
         "spawn_clearance": clearance,
         "failed_runs": failed_runs,
@@ -657,6 +699,14 @@ def main():
         if ur:
             print(f"[race] kerb {o['name']} run v{o['run'][0]}-v{o['run'][1]}: {ur['stations']} stations under another "
                   f"ROAD sheet" + (f" (max {ur['max_m']} m over its top, at v{ur['vertices']})" if ur['stations'] else ""))
+    for o in objects:
+        if o["kind"] == "kerb":
+            wr = o["wear"]
+            print(f"[race] kerb {o['name']} wear (ledger 0053): {wr['real_length_m']} m, metres at rubber level 0..3 "
+                  f"{wr['m_by_level']}, {wr['seams']} column seams, heavy rubber at {wr['heavy_spans_m_from_apex']} m from the apex")
+    ka = report["kerb_atlas"]
+    print(f"[race] kerb atlas: {ka['seams']} column seams, metres at level 0..3 {ka['m_by_level']}, "
+          f"~{ka['render_verts_est']} kerb render verts")
     for name, clip in report["kerb_clips"].items():
         if clip and clip.get("stations_removed") != [0, 0]:
             print(f"[race] kerb {name} clipped by {clip['by']}: {clip['stations_removed']} stations (start, end) removed, "

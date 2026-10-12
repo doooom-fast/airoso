@@ -1,15 +1,27 @@
 # `data/aerial/`: the Lariat's aerial measurements
 
-**Written 2026-10-11, the V3 aerial pass (ledger 0048, dossier section 12 "aerial owed").**
-These are measurements only: no geometry, no Blender, no kn5 and no config change. Nothing in a
-build reads these files yet. P2 decides what goes into `hairpin_fit.corners[].radius_m`, the width
-table and the C-470 decks.
+**Written 2026-10-11, the V3 aerial pass (ledger 0048, dossier section 12 "aerial owed"); the
+measurement was ported into the repo the same day (`tools/aerial_measure.py` + `tools/aerial/`) and
+re-run from it, and the paint it traced now places the centreline (P2).** The measurements change no
+geometry themselves. `paint_traces.json` is what `tools/paint_centreline.py` follows to write
+`../centerline.geojson`, and what `tools/verify_centreline_paint.py` judges it against. No Blender, no
+kn5.
 
 ## Files
 
+Bytes and md5 of the text files are of their content with LF line ends, as git stores it (a Windows
+checkout with `core.autocrlf` has CRLF bytes; the tools hash text with line ends normalized). The aerial
+pass's own figure for `aerial_measurements.json` (163,190 bytes, `13dfaf0f...`) was of its CRLF copy;
+its committed LF content hashes `cd22b9e5775be25d338286e31fc5097f`.
+
 | File | What it is | Bytes | md5 |
 |---|---|---:|---|
-| `aerial_measurements.json` | sources, the 49 windows, per-corner radius + method + confidence (C1-C13), widths (34 stations, 28 usable, + hairpin legs + apexes + junction arms), edge observations, the two C-470 crossings, OSM registration | 163,190 | `13dfaf0f458221552dddd877fa0b542a` |
+| `aerial_measurements.json` | sources, the 49 windows, per-corner radius + method + confidence (C1-C13), widths (34 stations, 28 usable, + hairpin legs + apexes + junction arms), edge observations, the two C-470 crossings, OSM registration. Written by `tools/aerial_measure.py` | 156,158 | `d2cc238254d680206a8d8eda019759f3` |
+| `aerial_spec.json` | the measurement plan the tool runs (which windows, centred where; each corner's traced stretch from the P0 fitter run; the manual seed and turn rule per corner; the width stations; the crossings) and the observations written by eye (shadows, pull-offs, barrier lines, the dossier's figures) that it carries into the JSON verbatim | 33,018 | `7c2540b4e6c0f34f9dd932945467dc60` |
+| `paint_traces.json` | the traced paint of every window (49: 11 corners, 34 width stations, a few with nothing traced in tree shadow, 4 junction arms) in the engine plan frame (xz about the OSM line's centroid, the origin recorded), each point with its lap station, direction of travel and confidence (high / medium / low); per window the paint centre as one continuous `reference`, and at each hairpin its core's yellow-line and edge-line circles | 1,058,937 | `e149f86f608de7dcf24ffb7c485eaa81` |
+| `paint_centreline.json` | `tools/paint_centreline.py`'s report: the paint stretches it followed, the smoothed regions, per window the worst distance from the paint (new line vs OSM), per hairpin the tightest radius vs the measured one | 20,284 | `7dacb13637f9d9172992e2024ce6a67e` |
+| `paint_gate.json` | `tools/verify_centreline_paint.py` on `../centerline.geojson`: PASS on all four checks | 6,096 | `e4d444fb373b5c107a565f170b159e3d` |
+| `overlays/paint_C4.png`, `paint_C9.png`, `paint_C10.png`, `paint_climb.png` | for Kevin: before (the OSM line, grey) and after (the paint centreline, yellow) over the painted edge lines, at C4, C9, C10 and the whole climb (`tools/paint_pictures.py`) | 69-816 KB | listed below |
 | `overlays/C1.png` ... `C10.png`, `C12.png`, `C13.png` | per-corner overlay: imagery crop, OSM lap line and nodes (datum-shifted), traced pavement edges, edge lines and centre line, fitted circles, the result in magenta, the core wedge | 74-128 KB each | listed below |
 | `overlays/X19340.png`, `X21138.png` | the two C-470 decks over the lap: traced deck edges, OSM bridge ways, the lap | 123-126 KB | listed below |
 
@@ -21,7 +33,11 @@ C5 `a80b6593ec4f633fba218edb05733096`, C6 `7643f17a9dd4e642789eef42b6121ff3`,
 C7 `8c30b9d89a94813dc53cbd4491e43674`, C8 `77a19c5d354ff798e5ef339528fae35d`,
 C9 `20d2c19393911fdafbf46f4f6112610f`, C10 `936738179b5f43ba2414d8b6abafd732`,
 C12 `4dad36177ba63c6ce5e1884b583e192e`, C13 `08b0f37d0de6d990b8b217e5ed69cd67`,
-X19340 `325eef3c3fb7ca2c0b3577c8f5defc40`, X21138 `baf8f0c6119317a04389216ddb2d188a`.
+X19340 `325eef3c3fb7ca2c0b3577c8f5defc40`, X21138 `baf8f0c6119317a04389216ddb2d188a`. All 14 are
+byte-identical when the ported tool re-draws them.
+Paint pictures: paint_C4 `c716af1e94913a2af7f5c327302c3c8e`, paint_C9 `9ba99e159a44de8281ac19fb7c5c365f`,
+paint_C10 `17ca53945a23203834776446b93088fb`, paint_climb `0dab3aa764079b27ae6c934df1b65f1e` (its NAIP
+window is 1.6 m per pixel, fetched once with TLS verification on).
 
 ## The imagery
 
@@ -35,12 +51,14 @@ X19340 `325eef3c3fb7ca2c0b3577c8f5defc40`, X21138 `baf8f0c6119317a04389216ddb2d1
   used.
 - **Licence:** public domain (a US federal work: USDA FSA imagery distributed by USGS). The service
   asks for the credit "USGS, USDA, The National Map: Orthoimagery".
-- **What is in the repo:** only the overlay crops above. They are small (about 25-55 m across,
-  palette PNG) and public domain.
-- **What is not:** the raw windows. They stay in session scratch,
-  `C:/Users/Owner/AppData/Local/Temp/claude/C--Users-Owner-Documents-GitHub-airoso/59395b0b-e098-4e22-9ea8-1346efc0cf70/scratchpad/lariat2/naip/`.
-  Each window there has a JSON beside its PNGs with the bbox, the exact request URL, the raster
-  names and the fetch time; `aerial_measurements.json` repeats that list under `windows`.
+- **What is in the repo:** only the overlay pictures above (palette PNG, public domain).
+- **What is not:** the raw windows. They live in a window cache outside the repo: the aerial pass's
+  `.../scratchpad/lariat2/naip/`, copied for the port to `.../scratchpad/paint/naip_cache/` (session
+  scratch, `C:/Users/Owner/AppData/Local/Temp/claude/C--Users-Owner-Documents-GitHub-airoso/59395b0b-e098-4e22-9ea8-1346efc0cf70/`);
+  the tool's default cache is `%LOCALAPPDATA%/airoso/naip` (or `$AIROSO_NAIP_CACHE`). Each window has
+  a JSON beside its PNGs with the bbox, the exact request URL, the raster names and the fetch time;
+  `aerial_measurements.json` repeats that list under `windows`. A missing window is fetched again: the
+  service serves identical pixels (checked on C4, 2026-10-11).
 - **How it was fetched:**
   - TLS verification was on (`scripts/tls.https_context`).
   - Each window was requested twice: true colour (bands 0,1,2) and colour-infrared (bands 3,0,1).
@@ -110,16 +128,47 @@ X19340 `325eef3c3fb7ca2c0b3577c8f5defc40`, X21138 `baf8f0c6119317a04389216ddb2d1
 
 ## Reproducing
 
-The scripts are session-scratch helpers, not engine code:
-`.../scratchpad/lariat2/v2/` (`aer.py`, `aer2.py`, `core.py`, `corners.py`, `hough.py`,
-`junction.py`, `widths.py`, `reg.py`, `datum.py`, `xmeasure.py`, `xfinal.py`, `finalize.py`,
-`build_json.py`), plus `../lib/` (`geo.py`, `lap.py`, `naip.py`, `img.py`). They need only Pillow.
-To re-run them:
+    PYTHONUTF8=1 python tools/aerial_measure.py tracks/lookout-lariat --cache <window cache> [--no-fetch]
 
-1. `widths.py fetch` (and `lib/naip.window` for the corner and crossing windows) re-fetch into the
-   cache.
-2. `core.py` and `junction.py` measure the corners.
-3. `widths.py measure` measures the stations.
-4. `reg.py` measures the registration.
-5. `xfinal.py` measures the crossings.
-6. `finalize.py` and then `build_json.py` write these files.
+It writes `aerial_measurements.json`, the 14 measurement overlays and `paint_traces.json` here (about a
+minute, pure Python + Pillow). Run on the aerial pass's own windows it reproduces the aerial pass's
+JSON exactly but for two things, neither a measurement:
+- `source.cache` names the window cache actually used (it named the scratch directory);
+- ten width stations' `station_m` are written as integers (`2050`) where the pass wrote floats
+  (`2050.0`): those stations had been re-run with float arguments.
+Every overlay is byte-identical. How the pass's two versions of its corner script are kept: the pass
+measured C4 and C7 with the turn taken from the traced legs and the other hairpins with the turn of the
+integrated reference heading (it changed the rule after the first batch); `aerial_spec.json`'s
+`turn_rule` records that per corner, so the committed numbers reproduce. The scratch scripts of the pass
+(`.../lariat2/v2/`, `.../lariat2/lib/`) are superseded by the tool.
+
+## `paint_traces.json`: the paint the centreline follows
+
+- **One record per window** (`kind` corner, width_station or junction_arm): `yellow` (the double-yellow
+  centre line), `edge_left` / `edge_right` (the white edge lines, left / right of Full travel), each a
+  set of parallel arrays: `xz_m`, `lap_st_m`, `heading_deg`, `confidence`, `source` (`profile`, or
+  `core_ray` for the polar rays over a hairpin's core); `reference` (the paint centre as one polyline
+  every 0.5 m, `supported` where a medium+ yellow point is within 0.35 m); `core` at a hairpin.
+- **Frame:** `frame.origin_lonlat` + `frame.m_per_deg` turn `xz_m` back into WGS84 lon/lat exactly;
+  the imagery points were first moved by the measured OSM-minus-imagery offset (-1.20 m E, +0.56 m N),
+  so they sit in the OSM / centreline frame. `lap_st_m` are stations on `../centerline.osm.geojson`.
+- **Confidence** (every threshold [invented], listed in `tools/aerial/traces.py`): a point is medium when
+  it belongs to a run of >= 4 consecutive profiles, lies within 0.3 m of its +-4 m neighbours, has a
+  yellow prominence of at least half the window's own median, and runs along the road (<= 0.15 m
+  sideways per metre); high adds a run of >= 8, prominence >= 15 and both edge lines at 2.4-5.0 m. A
+  profile point inside a good core circle's sector but off it is low; a width station the measurement
+  itself found unusable (W06900) contributes low points only. 5,813 yellow points are medium or high.
+
+## The paint centreline (`paint_centreline.json`, `paint_gate.json`, the `paint_*.png` pictures)
+
+`tools/paint_centreline.py` moved the OSM line onto the traced paint and resampled the climb at 1 m as
+one curvature-continuous line; it is `../centerline.geojson` (the OSM line is kept as
+`../centerline.osm.geojson`). `tools/verify_centreline_paint.py` passes it on all four checks:
+- (a) all 5,813 medium+ paint points within 0.75 m of it, worst 0.61 m (C13's in-arm); OSM misses 1,320
+  of them, worst 7.56 m (C4);
+- (b) 7,114 climb points at 0.998-0.999 m: no step and no neighbour failure (OSM: 444 and 971);
+- (c) no reversal, no self-intersection; the largest single step is 71.7 deg, the C13 junction node,
+  kept as a node (an arc at the measured junction radius does not fit between the ends of the traced arm
+  paint: that is P3b's junction mouth);
+- (d) closed exactly, and the seam is smooth across the wrap (2.2 deg step, limit 3.2; OSM's 4.9 deg
+  facet there failed the neighbour rule).

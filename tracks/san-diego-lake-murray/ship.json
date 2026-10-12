@@ -1,0 +1,40 @@
+{
+  "_doc": "San Diego's chain as data for tools/ship_track.sh (V3-PLAN P1, Lariat plan). tools/ship_sd.sh stays the chain of record and byte-identical; this file reproduces its step sequence at airoso 8a2f076 (tests/tools/test_ship_track_chain.py diffs the step headers; the --skip-blend --dry-run split_manifest.json was md5-identical on a scratch copy, 2026-10-11). RE-SYNC NEEDED when ship_sd.sh changes: the concurrent terrain job is changing it (ENG override, slim_far_terrain removed, terrain steps); until this file and the vocabulary follow, the parity test fails on purpose. engine-july runs the prep / exporter / spawn builder for this track only (tools/ship_track.sh decides that from the track name; no key here can).",
+  "track": "san-diego-lake-murray",
+  "workshop": "C:/Users/Owner/Documents/GitHub/k10-sd-v021",
+  "workshop_project": "project",
+  "require_race_layout": true,
+  "ui_name_prefix": "K10 - San Diego (V3)",
+  "street_ai_july": "D:/k10-track-archive/2026-10-11/san_diego_lake_murray/ai",
+  "audit_note": "the regression floor — D 512 / K 20 / I 20 / F 13 since the 2026-10-11 mouth weld + fold mend, was 512 / 154 / 145 / 15",
+  "steps": {
+    "draft": ["median_envelope", "build_loop_blend", "route_connectors", "divide_connectors", "trim_connectors",
+              "rebuild_loop_blend", "weld_mouths", "seat_terrain", "slim_far_terrain", "median", "gap_mouths",
+              "scatter_strip", "lamps", "signs"],
+    "author": ["race_bands", "race_planned_gate", "layout_dummies", "race_author", "race_verify"],
+    "prep": ["prep", "split"],
+    "ship": ["export_road", "export_race", "spawn_kn5", "ai", "verify_kn5", "track_folder", "verify_inis",
+             "make_map", "treefx", "race_scenery_gate"],
+    "gate": ["road_obj", "verify_mouths", "drive_test_street", "audit_street", "race_gates"]
+  },
+  "sync_in": {
+    "required": ["track.config.json", "start_positions.json"],
+    "optional": ["data/centerline.raw.local.json.pre-median", "data/connectors.local.json.pre-trim"],
+    "globs": ["source/trees/*.bin"]
+  },
+  "sync_out": {
+    "required": ["loop.blend"],
+    "files": ["data/centerline.local.json", "data/centerline.raw.local.json", "data/median_bands.json", "data/dummies.json",
+              "data/finished_centerline.json", "data/gate_centerline.json", "data/lights.local.json", "data/connectors.local.json",
+              "data/mouths.json", "data/mouth_welds.json", "data/verify_mouths.json", "data/signs.local.json",
+              "data/signs_preview.svg", "data/signs_measured.json", "data/drive_test.json", "data/audit.json",
+              "data/barrier_bands.json", "data/race_authored.json", "data/race_verify.json", "data/race_verify.scenery.json",
+              "data/race_kn5.json",
+              "data/dummies_{id}.json", "data/drive_test.{id}.json",
+              "data/no_route.{race}.json", "data/no_route.{race}.planned.json", "data/audit.{race}.json",
+              "data/closure_{race}.kn5.json"],
+    "map": [["blender/split/split_manifest.json", "data/split_manifest.json"]],
+    "dirs": ["ai/{id}", "data/signs_plots", "data/race_plots"],
+    "remove": ["data/audit.race.json"]
+  }
+}

@@ -1,0 +1,651 @@
+#!/usr/bin/env bash
+# The ship chain for any track — draft -> author -> ship -> gate -> install, one command, exits nonzero on any gate.
+#
+#   bash tools/ship_track.sh <track> [--no-install] [--skip-blend] [--force-install] [--dry-run] [--draft-only]
+#
+# V3-PLAN P1 (tracks/lookout-lariat/V3-PLAN.md, "a ship chain that isn't San Diego"). tools/ship_sd.sh stays
+# San Diego's chain of record, byte-identical (test_ship_sd_chain.py / test_engine_july_snapshot.py pin it);
+# this is the same chain with the track taken out of the script and put in tracks/<track>/ship.json.
+#
+# THE CLOSED VOCABULARY. ship.json (read and validated by tools/ship_track_spec.py) names WHICH steps run and
+# in what order, per phase; it never says HOW. Every step name is a function written below, named
+# <phase>_<step>; a name with no function exits 2 before any file is touched. Nothing from ship.json is ever
+# executed: values reach this script as plain key<TAB>value lines (strict patterns, no eval, no bash -c, no
+# command substitution on a value), and are used only as step names, relative paths and printed text.
+#   draft  : steps --skip-blend skips (the engine draft and the scripted authoring that edit loop.blend)
+#   author : steps every ship runs (layout dummies; the race furniture, idempotent — only when a layout
+#            declares race_furniture; a config that declares one and a ship.json without the race author
+#            step exits 2)
+#   prep   : exactly prep, split (the --dry-run stop is right after the split)
+#   ship   : exports, AI, packer, map, trees
+#   gate   : the gates on the BUILT kn5 (every per-layout verdict file is removed first)
+#
+# Copied verbatim from tools/ship_sd.sh: set -euo pipefail; --python-exit-code 1 on every Blender call (a Python
+# exception inside --python otherwise exits 0 and the chain ships what the last run left); absolute paths only;
+# scratch isolation (SHIP_PROJ: a scratch project never syncs back and never installs); refusal to work inside
+# airoso; --dry-run / --skip-blend / --force-install; the race layouts' own gates are never forced; refusal to
+# install while Assetto Corsa or Content Manager runs; the previous install parked in $ARCHIVE/<stamp>/ (never a
+# _prev beside it in content/tracks).
+#
+# Per track, from data, never from this script:
+#   tracks/<track>/ship.json        workshop root + project folder, the steps, what syncs in and out, the
+#                                   installed name prefix (tools/ship_track_spec.py has the schema)
+#   track.config.json slug          every file name inside (<slug>.kn5, <slug>_race.kn5, ...)
+#   track.config.json install_folder  the folder the install writes under content/tracks (plan A11)
+#   track.config.json layouts[]     every per-layout step; race stages run only for race_furniture layouts
+#
+# THE ENGINE. The prep / exporter / spawn builder run from engine-july (SD's build of record, pinned by
+# tracks/san-diego-lake-murray/engine-july-snapshot) ONLY when the track is san-diego-lake-murray; every other
+# track runs airoso's own scripts/ac/. ship.json cannot name an engine (no such key).
+#
+# --skip-blend    resume from the authored loop.blend (skips the draft phase; the author phase still runs).
+# --dry-run       stop right after the prep + split: nothing exported, synced back or installed. Pair with
+#                 SHIP_PROJ=<scratch copy>. With no loop.blend and no draft step that can build one (or with
+#                 --skip-blend), the chain stops before anything runs: "no blend yet" (exit 0 on a dry run,
+#                 1 on a real one).
+# --draft-only    sync the inputs and run the draft phase's DATA steps (route, paint centreline, config remap,
+#                 their gates, elevation, projection, widths), stopping at the first step that needs Blender;
+#                 nothing synced back, nothing installed.
+# --force-install as tools/ship_sd.sh: install RED when the caller asserts no gate metric is worse than the
+#                 reference; never covers a race layout red on its own gates or a no_route input error.
+# SHIP_PROJ=<dir> run against a scratch copy of the workshop project (ABSOLUTE, outside airoso): builds, exports
+#                 and gates into it, then SKIPS the sync-back and the install.
+# SHIP_SPEC=<f>   use another ship.json (tests, rehearsals): the run is then a rehearsal — never synced back,
+#                 never installed, whatever SHIP_PROJ says.
+# AIROSO=<dir>    the airoso checkout whose tools/ and scripts/ run (default: the main checkout).
+# STREET_AI=draft|july  the street layouts' AI line; july needs ship.json street_ai_july (SD only).
+set -euo pipefail
+export PYTHONUTF8=1
+AIROSO="${AIROSO:-C:/Users/Owner/Documents/GitHub/airoso}"
+AIROSO_MAIN="C:/Users/Owner/Documents/GitHub/airoso"   # never a workshop, whatever AIROSO points at
+BL="C:/Program Files/Blender Foundation/Blender 4.2/blender.exe"
+AC="D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks"
+ARCHIVE="D:/k10-track-archive"   # old installs live here, never in content/tracks (Kevin 2026-10-11: "clear old versions")
+STREET_AI="${STREET_AI:-draft}"
+case "$STREET_AI" in draft|july) ;; *) echo "STREET_AI must be draft or july, got '$STREET_AI'"; exit 2;; esac
+TRACK=""; INSTALL=1; SKIP_BLEND=0; FORCE=0; DRY=0; DRAFT_ONLY=0
+for a in "$@"; do case "$a" in
+  --no-install) INSTALL=0;; --skip-blend) SKIP_BLEND=1;; --force-install) FORCE=1;; --dry-run) DRY=1;;
+  --draft-only) DRAFT_ONLY=1;;
+  -*) echo "unknown flag: $a"; exit 2;;
+  *) if [ -z "$TRACK" ]; then TRACK="$a"; else echo "one track per run (got '$TRACK' and '$a')"; exit 2; fi;;
+esac; done
+[ -n "$TRACK" ] || { echo "usage: bash tools/ship_track.sh <track> [--no-install] [--skip-blend] [--force-install] [--dry-run] [--draft-only]"; exit 2; }
+case "$TRACK" in ""|-*|*[!a-z0-9-]*) echo "track '$TRACK' is not a track folder name"; exit 2;; esac
+if [ "$DRAFT_ONLY" = 1 ] && [ "$SKIP_BLEND" = 1 ]; then echo "--draft-only runs the draft; --skip-blend skips it"; exit 2; fi
+if [ "$DRY" = 1 ] || [ "$DRAFT_ONLY" = 1 ]; then INSTALL=0; fi
+SRC="$AIROSO/tracks/$TRACK"
+[ -d "$SRC" ] || { echo "no track folder $SRC"; exit 2; }
+SPEC="${SHIP_SPEC:-$SRC/ship.json}"
+if [ -n "${SHIP_SPEC:-}" ]; then REHEARSAL=1; else REHEARSAL=0; fi
+[ -f "$SPEC" ] || { echo "no ship.json for $TRACK ($SPEC)"; exit 2; }
+# the engine the prep / exporter / spawn builder run from: engine-july is San Diego's alone
+if [ "$TRACK" = "san-diego-lake-murray" ]; then
+  ENGINE="C:/Users/Owner/Documents/GitHub/engine-july"
+else
+  ENGINE="$AIROSO"
+fi
+
+step() { echo; echo "=================== $1"; }
+pyq() { (cd "$AIROSO" && python -c "$@"); }
+no_race() { echo; echo "(no race layout declared: $1 skipped)"; }
+
+# =============================================================================================================
+# THE VOCABULARY. One function per step name; ship.json picks from these and nothing else.
+# =============================================================================================================
+
+# --- draft: the route data (Lariat P2; tools run from airoso on "$PROJ") -------------------------------------
+draft_gps() {
+  step "draft: route centreline from the OSM snapshot (scripts.gps.centerline -> data/centerline.geojson, the OSM line)"
+  # the gps stage overwrites data/centerline.geojson with the OSM line. A paint centreline there is the line the
+  # config's vertex indices and stations point into (track.config.json centerline_frame): keep it as
+  # data/centerline.previous.geojson first, so tools/remap_centreline_config.py can map the config from it
+  if pyq "import json,sys
+f=next(f for f in json.load(open(sys.argv[1],encoding='utf-8'))['features'] if (f.get('properties') or {}).get('kind')=='full')
+sys.exit(0 if 'paint_centreline' in (f.get('properties') or {}) else 1)" "$PROJ/data/centerline.geojson" 2>/dev/null; then
+    cp "$PROJ/data/centerline.geojson" "$PROJ/data/centerline.previous.geojson"
+    echo "kept the paint centreline as data/centerline.previous.geojson (the config's frame)"
+  fi
+  (cd "$AIROSO" && python -m scripts.gps.centerline "$PROJ")
+}
+draft_paint_centreline() {
+  step "draft: paint centreline (tools/paint_centreline.py: the OSM line moved onto the traced paint, the climb at 1 m)"
+  (cd "$AIROSO" && python tools/paint_centreline.py "$PROJ")
+}
+draft_remap_config() {
+  step "draft: re-derive the config's vertices and stations onto the new line (tools/remap_centreline_config.py --write)"
+  (cd "$AIROSO" && python tools/remap_centreline_config.py "$PROJ" --write)
+}
+draft_verify_centreline_paint() {
+  step "gate: the centreline against the paint (tools/verify_centreline_paint.py: paint, curvature, topology, seam — hard)"
+  (cd "$AIROSO" && python tools/verify_centreline_paint.py "$PROJ")
+}
+draft_route_oneway_check() {
+  step "gate: no layout drives a one-way against its arrows outside its declared stretches (tools/route_oneway_check.py, hard)"
+  (cd "$AIROSO" && python tools/route_oneway_check.py "$PROJ")
+}
+draft_elev() {
+  step "draft: corridor elevation (scripts.elevation.heightfield, USGS 3DEP)"
+  (cd "$AIROSO" && python -m scripts.elevation.heightfield "$PROJ")
+}
+draft_project() {
+  step "draft: projection into the loop frame (scripts.geometry.projection)"
+  (cd "$AIROSO" && python -m scripts.geometry.projection "$PROJ")
+}
+draft_widths() {
+  step "draft: per-vertex OSM widths (scripts.gps.widths_from_osm)"
+  (cd "$AIROSO" && python -m scripts.gps.widths_from_osm "$PROJ")
+}
+draft_underlay() {
+  step "draft: underlay -> loop.blend (scripts/blender/underlay.py: GEN_* only, never AUTH_*, never a scene reset)"
+  [ -f "$AIROSO/scripts/blender/underlay.py" ] || { echo "no blend yet: scripts/blender/underlay.py (V3-PLAN P2 step 3) is not written"; exit 1; }
+  "$BL" --background --python-exit-code 1 --python "$AIROSO/scripts/blender/underlay.py" -- "$PROJ" 2>&1 | grep "^\[underlay\]\|Error\|Traceback"
+}
+
+# --- draft: San Diego's assembler + scripted authoring (the workshop's build_loop_blend; tools from airoso) ---
+draft_median_envelope() {
+  step "draft: median envelope (self-gated)"
+  (cd "$AIROSO" && python tools/median_envelope.py "$PROJ")
+}
+draft_build_loop_blend() {
+  step "draft: build loop.blend (scene regen — GEN layer)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$WS_SYSPATH" --python scripts/blender/build_loop_blend.py -- "$PROJ" 2>&1 | grep "^\[blend\]" | tail -4)
+}
+draft_route_connectors() {
+  step "draft: side streets from Kevin's routes (airoso data/routes.json)"
+  (cd "$AIROSO" && python tools/route_connectors.py "$PROJ")
+}
+draft_divide_connectors() {
+  step "draft: divided side streets -> one trunk + island (Del Cerro)"
+  (cd "$AIROSO" && python tools/divide_connectors.py "$PROJ")
+}
+draft_trim_connectors() {
+  step "draft: trim connectors at the mainline edge"
+  (cd "$AIROSO" && python tools/trim_connectors.py "$PROJ")
+}
+draft_rebuild_loop_blend() {
+  step "draft: rebuild loop.blend with trimmed connectors"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$WS_SYSPATH" --python scripts/blender/build_loop_blend.py -- "$PROJ" 2>&1 | grep "^\[blend\]" | tail -3)
+}
+draft_weld_mouths() {
+  step "draft: weld every side-street mouth onto its host (mitre + warp: road, curb/sidewalk, markings; self-checked)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$WS_SYSPATH" --python "$AIROSO/tools/weld_mouths_blend.py" -- "$PROJ" 2>&1 | grep "^\[weld\]\|Error\|Traceback" )
+}
+draft_seat_terrain() {
+  step "author: seat the terrain under every road (verge finer than the road)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/seat_terrain_blend.py" -- "$PROJ" 2>&1 | grep "^\[seat\]\|Error\|Traceback" )
+}
+draft_slim_far_terrain() {
+  step "author: thin the far terrain (headroom for the prep's grass tiles)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/slim_far_terrain_blend.py" -- "$PROJ" 2>&1 | grep "^\[slim\]\|Error\|Traceback" )
+}
+draft_median() {
+  step "author: median island"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_blend.py" -- "$PROJ" 2>&1 | grep "^\[median" )
+}
+draft_gap_mouths() {
+  step "author: gap the mainline sidewalk at every mouth"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/gap_mouths_blend.py" -- "$PROJ" 2>&1 | grep "^\[gap" )
+}
+draft_scatter_strip() {
+  step "author: export scatter positions, strip procedural vegetation (TreeFX replaces it)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/export_scatter_blend.py" -- "$PROJ" 2>&1 | grep "^\[scatter" )
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/strip_scenery_blend.py" -- "$PROJ" 2>&1 | grep "^\[strip" | cut -c1-160 )
+}
+draft_lamps() {
+  step "author: Kevin's lamp model at every streetlight (LIGHTPOST + LIGHTS lens)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_lamps_blend.py" -- "$PROJ" 2>&1 | grep "^\[lamps\]\|Error\|Traceback" )
+}
+draft_signs() {
+  step "author: W1-6 large-arrow signs at every tight corner (SIGNPLATE + SIGNARROW + SIGNPOST)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_signs_blend.py" -- "$PROJ" 2>&1 | grep "^\[signs\]\|Error\|Traceback" )
+  (cd "$AIROSO" && python tools/verify_signs.py "$PROJ" --blend "$PROJ/loop.blend" --blender "$BL" | tail -8)
+  (cd "$AIROSO" && PYTHONUTF8=1 python tools/plot_signs.py "$PROJ")
+}
+
+# --- author: every ship (idempotent) ------------------------------------------------------------------------
+author_race_bands() {
+  [ -n "$RACE_IDS" ] || { no_race race_bands; return 0; }
+  local lid
+  # the planned and built containment verdicts of an earlier run are never read as this run's: removed first
+  for lid in $RACE_IDS; do rm -f "$PROJ/data/no_route.$lid.planned.json" "$PROJ/data/no_route.$lid.json"; done
+  step "author: race-corridor declaration v2 (tools/barrier_bands.py: corridor solve + self-gates + PLANNED no_route per race layout, hard)"
+  (cd "$AIROSO" && python tools/barrier_bands.py "$PROJ")
+}
+author_race_planned_gate() {
+  [ -n "$RACE_IDS" ] || { no_race race_planned_gate; return 0; }
+  step "gate: PLANNED no_route per race layout (the declared walls contain the lane — read back, hard)"
+  # a declaration that skipped or lost its planned fill cannot reach Blender.
+  pyq "import json,os,sys
+data=sys.argv[1]; bad=[]
+for lid in sys.argv[2:]:
+    p=os.path.join(data,'no_route.%s.planned.json'%lid)
+    if not os.path.exists(p):
+        bad.append(lid+': no planned verdict (data/no_route.%s.planned.json missing)'%lid); continue
+    r=json.load(open(p,encoding='utf-8'))
+    if not isinstance(r,dict):
+        bad.append(lid+': the planned verdict is not a no_route report'); continue
+    print('  %-9s planned: %s  leak_cells %s  blocked %s  forbidden_reached %s  spawns_unreached %s  reached %s m2'%(lid,
+          'FAIL' if r.get('fail') else 'PASS', r.get('leak_cells'), len(r.get('blocked') or []),
+          len(r.get('forbidden_reached') or []), len(r.get('spawns_unreached') or []), r.get('reached_m2')))
+    if r.get('fail') is not False or (r.get('leak_cells') or 0)>0 or r.get('blocked') or r.get('forbidden_reached') or r.get('spawns_unreached'):
+        bad.append(lid+': planned no_route FAIL')
+if bad: raise SystemExit('PLANNED no_route: '+'; '.join(bad))" "$PROJ/data" $RACE_IDS
+}
+author_layout_dummies() {
+  (cd "$AIROSO" && python tools/layout_dummies.py "$PROJ")         # data/dummies_<id>.json per layout; exit 1 on validation
+}
+author_race_author() {
+  [ -n "$RACE_IDS" ] || { no_race race_author; return 0; }
+  step "author: race furniture -> loop.blend: RACE (curb strips + kerbs, common) + RACE_CLOSE_<TOKEN> (one closure per race layout)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_race_furniture_blend.py" -- "$PROJ" 2>&1 | grep "^\[race\]\|Error\|Traceback" )
+}
+author_race_verify() {
+  [ -n "$RACE_IDS" ] || { no_race race_verify; return 0; }
+  step "author: verify the authored furniture against its declaration (tools/verify_race.py, hard: common set + each layout)"
+  (cd "$AIROSO" && python tools/verify_race.py "$PROJ")            # data/race_verify.json; exit 1
+  (cd "$AIROSO" && python tools/plot_race_furniture.py "$PROJ" | tail -3)   # data/race_plots/*.png
+}
+
+# --- prep: exactly these two, in this order ------------------------------------------------------------------
+prep_prep() {
+  step "ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)"
+  "$BL" --background --python-exit-code 1 --python "$ENGINE/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS\|multi-layout" | cut -c1-160
+}
+prep_split() {
+  local lid
+  step "ship: split the prepped scene -> road / common race / closure per race layout / spawn scenes (tools/split_exports_blend.py)"
+  "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/split_exports_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" --out-dir "$PROJ/blender/split" 2>&1 | grep "^\[split\]"
+  for lid in $RACE_IDS; do
+    [ -f "$PROJ/blender/split/loop_closure_$lid.blend" ] || { echo "split wrote no loop_closure_$lid.blend — race layout $lid would load no closure"; exit 1; }
+  done
+}
+
+# --- ship ----------------------------------------------------------------------------------------------------
+ship_export_road() {
+  step "ship: export road kn5 (shared by all layouts, spawn-free)"
+  "$BL" --background --python-exit-code 1 --python "$ENGINE/scripts/ac/export_kn5_addon.py" -- "$PROJ" --blend "$PROJ/blender/split/loop_main.blend" 2>&1 | grep "KN5 EXISTS\|INI materials"
+}
+ship_export_race() {
+  [ -n "$RACE_IDS" ] || { no_race export_race; return 0; }
+  local lid tok
+  step "ship: export the COMMON race-furniture kn5 (curb strips + kerbs; loaded by every race layout)"
+  "$BL" --background --python-exit-code 1 --python "$ENGINE/scripts/ac/export_kn5_addon.py" -- "$PROJ" --blend "$PROJ/blender/split/loop_race.blend" --out "${SLUG}_race.kn5" 2>&1 | grep "KN5 EXISTS\|INI materials"
+  # content guard: every mesh 1WALL_RACE* / 1KERB_RACE*, the race textures only, no AC_* node — exit 1 otherwise
+  (cd "$AIROSO" && python -m scripts.modkit.inspect_kn5 "$PROJ/build/${SLUG}_race.kn5" --json "$PROJ/data/race_kn5.json" >/dev/null)
+  (cd "$AIROSO" && python tools/check_race_kn5.py "$PROJ/data/race_kn5.json" --role common --bands "$PROJ/data/barrier_bands.json")
+  for lid in $RACE_IDS; do
+    # the owner token is the declaration's (barrier_bands.json corridors.<id>.token, from layouts[].closure_token)
+    tok=$(pyq "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8'))['corridors'][sys.argv[2]]['token'])" "$PROJ/data/barrier_bands.json" "$lid")
+    tok="${tok%$'\r'}"
+    step "ship: export the $lid CLOSURE kn5 (1WALL_RACE_CLOSE_${tok^^}_* only; loaded by $lid alone)"
+    "$BL" --background --python-exit-code 1 --python "$ENGINE/scripts/ac/export_kn5_addon.py" -- "$PROJ" --blend "$PROJ/blender/split/loop_closure_$lid.blend" --out "${SLUG}_closure_$lid.kn5" 2>&1 | grep "KN5 EXISTS\|INI materials"
+    (cd "$AIROSO" && python -m scripts.modkit.inspect_kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --json "$PROJ/data/closure_$lid.kn5.json" >/dev/null)
+    (cd "$AIROSO" && python tools/check_race_kn5.py "$PROJ/data/closure_$lid.kn5.json" --role closure --owner "$tok")
+  done
+}
+ship_spawn_kn5() {
+  step "ship: spawn kn5 per layout (nodes only: AC_START/PIT/HOTLAP/TIME from data/dummies_<id>.json)"
+  "$BL" --background --python-exit-code 1 --python "$ENGINE/scripts/ac/build_spawn_kn5.py" -- "$PROJ" 2>&1 | grep "^\[spawn_kn5\]"
+}
+ship_ai() {
+  local lid
+  step "ship: AI lines per layout (race: V3 lane-offset drafts — GENERATED, ledger 0023; street: $STREET_AI)"
+  for lid in $RACE_IDS; do
+    (cd "$AIROSO" && python -m scripts.ac.write_ai_line "$PROJ" --layout "$lid" | grep -v "^  v\|^frame")
+  done
+  for lid in $STREET_IDS; do
+    rm -rf "$PROJ/ai/$lid"; mkdir -p "$PROJ/ai/$lid"     # never leave a stale ai_draft.json beside a copied line
+    if [ "$STREET_AI" = july ]; then
+      cp "$JULY_AI/fast_lane.ai" "$JULY_AI/pit_lane.ai" "$JULY_AI/side_l.csv" "$JULY_AI/side_r.csv" "$PROJ/ai/$lid/"
+      echo "ai/$lid/: STREET_AI=july — the July write_ai_line DRAFT copied from $JULY_AI/ (generated, not an"
+      echo "  in-game recording; ledger 0047 Notes)"
+    else
+      (cd "$AIROSO" && python -m scripts.ac.write_ai_line "$PROJ" --layout "$lid" | grep -v "^  v\|^frame")
+    fi
+  done
+}
+ship_verify_kn5() {
+  step "ship: verify_kn5 (hard — spawn-free road, common race kn5 + one closure kn5 per race layout (its token only), one spawn kn5 per layout, facing, side, lane, sectors)"
+  (cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ")
+}
+ship_track_folder() {
+  step "ship: track folder (models_<id>.ini per layout, ui/<id>/, <id>/{map,data,ai}; a race layout without its closure kn5 is a HARD error)"
+  (cd "$AIROSO" && python -m scripts.ac.track_folder "$PROJ") | grep -E "wrote|length_m|n_pits|layouts packed|removed stale|models|WARNING|ai/"
+  cp "$PROJ/build/$SLUG.kn5" "$PROJ/build/$SLUG/"          # the race, closure + spawn kn5s are copied by track_folder itself
+}
+ship_verify_inis() {
+  step "ship: verify_kn5 --inis (hard — each race ini lists exactly road + common race + ITS closure + its spawns; none lists another layout's closure)"
+  (cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ" --inis)   # after the road-kn5 copy: every listed kn5 must be in the folder
+}
+ship_make_map() {
+  step "ship: minimap in the KN5 frame, per layout (tools/make_map.py)"
+  (cd "$AIROSO" && python tools/make_map.py "$PROJ")
+}
+ship_treefx() {
+  step "ship: TreeFX palms / street trees / scrub (tools/make_treefx.py)"
+  (cd "$AIROSO" && python tools/make_treefx.py "$PROJ")
+}
+ship_race_scenery_gate() {
+  [ -n "$RACE_IDS" ] || { no_race race_scenery_gate; return 0; }
+  step "gate: scenery vs the race lanes and walls, on the WRITTEN trees.txt (tools/verify_race.py --scenery-only, hard)"
+  (cd "$AIROSO" && python tools/verify_race.py "$PROJ" --scenery-only --trees "$PROJ/build/$SLUG/extension/trees/trees.txt")
+}
+
+# --- gate (exit codes collected; the verdict below decides the install) --------------------------------------
+gate_road_obj() {
+  step "gate: road kn5 -> gate OBJ (engine frame) + gate centreline"
+  (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")
+}
+gate_verify_mouths() {
+  step "gate: verify_mouths on the built road (every side-street mouth: mouth line, host lane, notch, approach — hard)"
+  (cd "$AIROSO" && python tools/verify_mouths.py "$PROJ")
+}
+gate_drive_test_street() {
+  local lid rc
+  step "gate: drive_test, street layout (hard)"
+  for lid in $STREET_IDS; do
+    rc=0; (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --layout "$lid" 2>&1 | grep -v "drive-time\] sweep" | tail -30) || rc=$?
+    [ "$rc" = 0 ] || DT_S=$rc
+  done
+}
+gate_audit_street() {
+  if [ -n "$AUDIT_NOTE" ]; then step "gate: audit_mesh, street (hard total; $AUDIT_NOTE)"; else step "gate: audit_mesh, street (hard total)"; fi
+  AU_S=0; (cd "$AIROSO" && python -m scripts.geometry.audit_mesh "$PROJ" 2>&1 | tail -16) || AU_S=$?
+}
+gate_race_gates() {
+  [ -n "$RACE_IDS" ] || { no_race race_gates; return 0; }
+  local lid rc
+  for lid in $RACE_IDS; do
+    step "gate: $lid — road + common race + ITS closure kn5 -> ONE gate OBJ (the kn5 set $lid loads) — data/track.$lid.obj"
+    (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --kn5 "$PROJ/build/${SLUG}_race.kn5" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --out "$PROJ/data/track.$lid.obj")
+    step "gate: drive_test --layout $lid (hard; the declared corridor lane — barrier_missing and obstruction_stations must be 0)"
+    rc=0; (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --layout "$lid" 2>&1 | grep -v "drive-time\] sweep" | tail -40) || rc=$?
+    [ "$rc" = 0 ] || DT_R=$rc
+    step "gate: audit_mesh --layout $lid (D exempt on THIS layout's bands only; W: no race strip through another wall)"
+    rc=0; (cd "$AIROSO" && python -m scripts.geometry.audit_mesh "$PROJ" --layout "$lid" 2>&1 | tail -18) || rc=$?
+    [ "$rc" = 0 ] || AU_R=$rc
+    step "gate: no_route --layout $lid, BUILT (hard; flood fill from AC_START_0 on data/track.$lid.obj — 0 leaks, lap complete, every spawn reached)"
+    rc=0; (cd "$AIROSO" && python tools/no_route.py "$PROJ" --layout "$lid" 2>&1 | tail -30) || rc=$?
+    [ "$rc" = 0 ] || NR_R=$rc
+  done
+}
+
+# a draft step that needs no Blender (what --draft-only runs)
+is_data_step() {
+  case "$1" in
+    gps|paint_centreline|remap_config|verify_centreline_paint|route_oneway_check|elev|project|widths) return 0;;
+    median_envelope|route_connectors|divide_connectors|trim_connectors) return 0;;
+    *) return 1;;
+  esac
+}
+
+# =============================================================================================================
+# ship.json -> variables (tools/ship_track_spec.py validates; nothing read here is ever executed)
+# =============================================================================================================
+SPEC_LINES=$(cd "$AIROSO" && python tools/ship_track_spec.py "$SPEC" "$TRACK") || { echo "ship.json refused (above): $SPEC"; exit 2; }
+WS=""; WS_SUB=""; REQUIRE_RACE=0; UI_PREFIX=""; AUDIT_NOTE=""; JULY_AI=""
+DRAFT=(); AUTHOR=(); PREP=(); SHIP=(); GATE=()
+IN_REQ=(); IN_OPT=(); IN_GLOB=(); IN_DIR=()
+OUT_REQ=(); OUT_FILE=(); OUT_DIR=(); OUT_RM=(); OUT_MAP_FROM=(); OUT_MAP_TO=()
+while IFS=$'\t' read -r k v w; do
+  v="${v%$'\r'}"; w="${w%$'\r'}"
+  case "$k" in
+    workshop) WS="$v";;
+    workshop_project) WS_SUB="$v";;
+    require_race_layout) REQUIRE_RACE="$v";;
+    ui_name_prefix) UI_PREFIX="$v";;
+    audit_note) AUDIT_NOTE="$v";;
+    street_ai_july) JULY_AI="$v";;
+    step.draft) DRAFT+=("$v");;
+    step.author) AUTHOR+=("$v");;
+    step.prep) PREP+=("$v");;
+    step.ship) SHIP+=("$v");;
+    step.gate) GATE+=("$v");;
+    in.required) IN_REQ+=("$v");;
+    in.optional) IN_OPT+=("$v");;
+    in.globs) IN_GLOB+=("$v");;
+    in.dirs) IN_DIR+=("$v");;
+    out.required) OUT_REQ+=("$v");;
+    out.files) OUT_FILE+=("$v");;
+    out.dirs) OUT_DIR+=("$v");;
+    out.remove) OUT_RM+=("$v");;
+    out.map) OUT_MAP_FROM+=("$v"); OUT_MAP_TO+=("$w");;
+    "") ;;
+    *) echo "tools/ship_track_spec.py wrote an unknown key '$k'"; exit 2;;
+  esac
+done <<< "$SPEC_LINES"
+# the closed vocabulary: every name is a function above, or the chain stops here (exit 2, nothing touched)
+for n in ${DRAFT[@]+"${DRAFT[@]}"}; do declare -F "draft_$n" >/dev/null || { echo "ship.json steps.draft: unknown step '$n' (no draft_$n in tools/ship_track.sh)"; exit 2; }; done
+for n in ${AUTHOR[@]+"${AUTHOR[@]}"}; do declare -F "author_$n" >/dev/null || { echo "ship.json steps.author: unknown step '$n' (no author_$n in tools/ship_track.sh)"; exit 2; }; done
+for n in ${PREP[@]+"${PREP[@]}"}; do declare -F "prep_$n" >/dev/null || { echo "ship.json steps.prep: unknown step '$n' (no prep_$n in tools/ship_track.sh)"; exit 2; }; done
+for n in ${SHIP[@]+"${SHIP[@]}"}; do declare -F "ship_$n" >/dev/null || { echo "ship.json steps.ship: unknown step '$n' (no ship_$n in tools/ship_track.sh)"; exit 2; }; done
+for n in ${GATE[@]+"${GATE[@]}"}; do declare -F "gate_$n" >/dev/null || { echo "ship.json steps.gate: unknown step '$n' (no gate_$n in tools/ship_track.sh)"; exit 2; }; done
+if [ "$STREET_AI" = july ] && [ -z "$JULY_AI" ]; then echo "STREET_AI=july: ship.json names no street_ai_july for $TRACK"; exit 2; fi
+
+# =============================================================================================================
+# the rails: absolute paths, nothing inside airoso, scratch derived from the workshop path — all before any copy
+# =============================================================================================================
+WS_PROJ="$WS/$WS_SUB"        # the real workshop's project folder (ship.json workshop + workshop_project)
+PROJ="${SHIP_PROJ:-$WS_PROJ}"
+case "$PROJ" in
+  /*|[A-Za-z]:/*|[A-Za-z]:\\*) ;;
+  *) echo "SHIP_PROJ must be an absolute path, got '$PROJ'"; exit 2;;
+esac
+# compare paths the way Windows does: one spelling (cygpath -m: C:/...), forward slashes, any case
+norm() { local p; p=$(cygpath -m "$1" 2>/dev/null || printf '%s' "$1"); p="${p//\\//}"; p="${p%/}"; printf '%s' "${p,,}"; }
+for root in "$AIROSO" "$AIROSO_MAIN"; do
+  case "$(norm "$PROJ")" in
+    "$(norm "$root")"|"$(norm "$root")"/*) echo "SHIP_PROJ '$PROJ' is inside airoso — use a scratch copy outside the repo"; exit 2;;
+  esac
+  case "$(norm "$WS")" in
+    "$(norm "$root")"|"$(norm "$root")"/*) echo "ship.json workshop '$WS' is inside airoso — a workshop lives outside the repo"; exit 2;;
+  esac
+done
+if [ "$REHEARSAL" = 0 ] && [ "$(norm "$PROJ")" = "$(norm "$WS_PROJ")" ]; then SCRATCH=0; else SCRATCH=1; fi
+# the workshop's build_loop_blend.py / weld do `from scripts.geometry import ...` with only the PROJECT'S PARENT
+# on sys.path: the workshop root goes on sys.path first, and a scratch project whose parent holds a scripts/
+# package would shadow it
+WS_SYSPATH="import sys; sys.path.insert(0, r'$WS')"
+USES_WS_SYSPATH=0
+for n in ${DRAFT[@]+"${DRAFT[@]}"}; do case "$n" in build_loop_blend|rebuild_loop_blend|weld_mouths) USES_WS_SYSPATH=1;; esac; done
+if [ "$SCRATCH" = 1 ] && [ "$SKIP_BLEND" = 0 ] && [ "$USES_WS_SYSPATH" = 1 ] && [ -d "$(dirname "$PROJ")/scripts" ]; then
+  echo "SHIP_PROJ '$PROJ': its parent holds a scripts/ package that would shadow the workshop's — copy the project elsewhere"; exit 2
+fi
+echo "track: $TRACK   workshop project: $PROJ$( [ "$SCRATCH" = 1 ] && printf ' (scratch: no sync-back, no install)')"
+echo "engine (prep / export / spawn): $ENGINE"
+
+# no blend and nothing in this run that can build one: stop before anything runs (V3-PLAN P1 done-when)
+blend_builder_ready() {
+  local n
+  [ "$SKIP_BLEND" = 0 ] || return 1
+  for n in ${DRAFT[@]+"${DRAFT[@]}"}; do case "$n" in
+    build_loop_blend) [ -f "$WS/scripts/blender/build_loop_blend.py" ] && return 0;;
+    underlay) [ -f "$AIROSO/scripts/blender/underlay.py" ] && return 0;;
+  esac; done
+  return 1
+}
+if [ "$DRAFT_ONLY" = 0 ] && [ ! -f "$PROJ/loop.blend" ] && ! blend_builder_ready; then
+  echo; echo "no blend yet: $PROJ/loop.blend does not exist and nothing in this run can build it"
+  if [ "$SKIP_BLEND" = 1 ]; then echo "  (--skip-blend resumes from an authored loop.blend)"
+  else echo "  (draft steps: ${DRAFT[*]:-none}; the blend builder is build_loop_blend (the workshop's) or underlay (scripts/blender/underlay.py, V3-PLAN P2 step 3, not written yet))"; fi
+  echo "  --draft-only runs the draft's data steps. Nothing synced in, nothing run, nothing installed."
+  if [ "$DRY" = 1 ]; then echo "DRY RUN: stopped cleanly at 'no blend yet'."; exit 0; fi
+  exit 1
+fi
+
+# =============================================================================================================
+# the chain
+# =============================================================================================================
+step "sync inputs airoso -> workshop ($PROJ)"
+mkdir -p "$PROJ/data"
+for f in ${IN_REQ[@]+"${IN_REQ[@]}"}; do mkdir -p "$(dirname "$PROJ/$f")"; cp "$SRC/$f" "$PROJ/$f"; done
+for f in ${IN_OPT[@]+"${IN_OPT[@]}"}; do
+  [ -f "$SRC/$f" ] && { mkdir -p "$(dirname "$PROJ/$f")"; cp "$SRC/$f" "$PROJ/$f"; }
+done
+for g in ${IN_GLOB[@]+"${IN_GLOB[@]}"}; do      # e.g. the TreeFX models (gitignored, personal use)
+  d="$(dirname "$g")"; mkdir -p "$PROJ/$d"
+  for f in "$SRC"/$g; do [ -f "$f" ] && cp "$f" "$PROJ/$d/"; done
+done
+for d in ${IN_DIR[@]+"${IN_DIR[@]}"}; do
+  [ -d "$SRC/$d" ] && { mkdir -p "$PROJ/$d"; cp -r "$SRC/$d/." "$PROJ/$d/"; }
+done
+# the declared layouts drive every per-layout step below (never a hand-typed list)
+LAYOUT_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts']))" "$PROJ/track.config.json")
+RACE_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts'] if l.get('race_furniture')))" "$PROJ/track.config.json")
+STREET_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts'] if not l.get('race_furniture')))" "$PROJ/track.config.json")
+SLUG=$(pyq "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8'))['slug'])" "$PROJ/track.config.json")
+INSTALL_FOLDER=$(pyq "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8')).get('install_folder') or '')" "$PROJ/track.config.json")
+LAYOUT_IDS="${LAYOUT_IDS%$'\r'}"; RACE_IDS="${RACE_IDS%$'\r'}"; STREET_IDS="${STREET_IDS%$'\r'}"; SLUG="${SLUG%$'\r'}"; INSTALL_FOLDER="${INSTALL_FOLDER%$'\r'}"
+case "$SLUG" in ""|*[!a-z0-9_]*) echo "track.config.json slug '$SLUG' is not a file-name slug"; exit 2;; esac
+case "$INSTALL_FOLDER" in ""|*[!A-Za-z0-9_]*) echo "track.config.json install_folder '$INSTALL_FOLDER' missing or not a folder name (plan A11)"; exit 2;; esac
+echo "layouts: $LAYOUT_IDS   (race furniture: $RACE_IDS; street: $STREET_IDS; street AI = $STREET_AI)"
+if [ "$REQUIRE_RACE" = 1 ] && [ -z "$RACE_IDS" ]; then echo "no race layout declared — ship.json says this chain is the three-version chain (ledger 0047)"; exit 2; fi
+if [ -n "$RACE_IDS" ]; then
+  case " ${AUTHOR[*]:-} " in *" race_author "*) ;; *) echo "layouts $RACE_IDS declare race_furniture but ship.json steps.author has no race_author — they would ship without it"; exit 2;; esac
+fi
+
+if [ "$SKIP_BLEND" = 0 ]; then
+  for n in ${DRAFT[@]+"${DRAFT[@]}"}; do
+    if [ "$DRAFT_ONLY" = 1 ] && ! is_data_step "$n"; then
+      echo; echo "DRAFT ONLY: stopping before '$n' (the first draft step that needs Blender). Nothing synced back, nothing installed ($PROJ)."
+      exit 0
+    fi
+    "draft_$n"
+  done
+fi
+if [ "$DRAFT_ONLY" = 1 ]; then
+  echo; echo "DRAFT ONLY: the draft's data steps ran. Nothing synced back, nothing installed ($PROJ)."
+  exit 0
+fi
+
+for n in ${AUTHOR[@]+"${AUTHOR[@]}"}; do "author_$n"; done
+for n in "${PREP[@]}"; do "prep_$n"; done
+
+if [ "$DRY" = 1 ]; then
+  echo; echo "DRY RUN: stopping before the kn5 exports. Would now run, in order:"
+  echo "  ship: ${SHIP[*]:-none}"
+  echo "  gate: ${GATE[*]:-none}"
+  echo "  -> sync outputs -> install ($AC/$INSTALL_FOLDER; layouts $LAYOUT_IDS)."
+  echo "  Nothing exported, nothing synced back, nothing installed ($PROJ)."
+  exit 0
+fi
+
+for n in ${SHIP[@]+"${SHIP[@]}"}; do "ship_$n"; done
+
+# A verdict from an earlier run is not this run's verdict: every per-layout gate file is removed before the gates
+# run, so a gate that does not run reads as "not run" (red), never as last time's pass.
+for lid in $LAYOUT_IDS; do rm -f "$PROJ/data/drive_test.$lid.json"; done
+rm -f "$PROJ/data/verify_mouths.json"
+for lid in $RACE_IDS; do rm -f "$PROJ/data/audit.$lid.json" "$PROJ/data/no_route.$lid.json" "$PROJ/data/track.$lid.obj"; done
+rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"
+DT_S=0; AU_S=0; DT_R=0; AU_R=0; NR_R=0
+for n in ${GATE[@]+"${GATE[@]}"}; do "gate_$n"; done
+# a race layout red on its OWN gates is never installed, --force-install or not
+RACE_RED=$(pyq "import json,os,sys
+d=json.load(open(sys.argv[1],encoding='utf-8')) if os.path.exists(sys.argv[1]) else {}; rows=d.get('layouts') or {}; bad=[]
+for lid in sys.argv[3:]:
+    r=rows.get(lid) or {}; why=[]
+    if r.get('fail') is None: why.append('drive_test not run')
+    if (r.get('barrier_missing') or 0)>0: why.append('barrier_missing %s'%r.get('barrier_missing'))
+    if (r.get('obstruction_stations') or 0)>0: why.append('obstruction_stations %s'%r.get('obstruction_stations'))
+    p=os.path.join(sys.argv[2],'no_route.%s.json'%lid)
+    if not os.path.exists(p): why.append('no_route not run')
+    else:
+        n=json.load(open(p,encoding='utf-8'))
+        if n.get('fail') is not False or (n.get('leak_cells') or 0)>0 or n.get('blocked') or n.get('forbidden_reached') or n.get('spawns_unreached'):
+            why.append('no_route FAIL (leak_cells %s, blocked %s, forbidden_reached %s, spawns_unreached %s)'%(n.get('leak_cells'),
+                       len(n.get('blocked') or []), len(n.get('forbidden_reached') or []), len(n.get('spawns_unreached') or [])))
+    if why: bad.append(lid+'['+'; '.join(why)+']')
+print(' '.join(bad))" "$PROJ/data/drive_test.json" "$PROJ/data" $RACE_IDS)
+RACE_RED="${RACE_RED%$'\r'}"
+
+# expand {id} / {race} in a ship.json sync_out path: one path per line
+expand() {
+  local p="$1" lid
+  case "$p" in
+    *"{id}"*) for lid in $LAYOUT_IDS; do printf '%s\n' "${p//"{id}"/$lid}"; done;;
+    *"{race}"*) for lid in $RACE_IDS; do printf '%s\n' "${p//"{race}"/$lid}"; done;;
+    *) printf '%s\n' "$p";;
+  esac
+}
+if [ "$SCRATCH" = 1 ]; then
+  step "sync outputs workshop -> airoso: SKIPPED"
+  echo "the project is a scratch copy or a rehearsal ($PROJ; ship.json $SPEC), not the workshop ($WS_PROJ): its outputs"
+  echo "stay in the scratch copy — only the workshop feeds $SRC."
+else
+step "sync outputs workshop -> airoso"
+for p in ${OUT_REQ[@]+"${OUT_REQ[@]}"}; do
+  while IFS= read -r q; do mkdir -p "$(dirname "$SRC/$q")"; cp "$PROJ/$q" "$SRC/$q"; done < <(expand "$p")
+done
+for p in ${OUT_FILE[@]+"${OUT_FILE[@]}"}; do
+  while IFS= read -r q; do
+    if [ -f "$PROJ/$q" ]; then mkdir -p "$(dirname "$SRC/$q")"; cp "$PROJ/$q" "$SRC/$q"; fi
+  done < <(expand "$p")
+done
+for i in ${OUT_MAP_FROM[@]+"${!OUT_MAP_FROM[@]}"}; do
+  if [ -f "$PROJ/${OUT_MAP_FROM[$i]}" ]; then mkdir -p "$(dirname "$SRC/${OUT_MAP_TO[$i]}")"; cp "$PROJ/${OUT_MAP_FROM[$i]}" "$SRC/${OUT_MAP_TO[$i]}"; fi
+done
+for p in ${OUT_DIR[@]+"${OUT_DIR[@]}"}; do
+  while IFS= read -r q; do
+    if [ -d "$PROJ/$q" ]; then rm -rf "$SRC/$q"; mkdir -p "$(dirname "$SRC/$q")"; cp -r "$PROJ/$q" "$SRC/$q"; fi
+  done < <(expand "$p")
+done
+for p in ${OUT_RM[@]+"${OUT_RM[@]}"}; do
+  while IFS= read -r q; do rm -f "$SRC/$q"; done < <(expand "$p")
+done
+# gate OBJs (66-78 MB each, regenerable from the kn5s) are never in a sync_out list
+fi
+
+echo; echo "GATES: street drive_test exit $DT_S, street audit exit $AU_S, race drive_test exit $DT_R, race audit exit $AU_R, race no_route exit $NR_R"
+echo "  race layouts red on their own gates: ${RACE_RED:-none}"
+if [ -n "$RACE_RED" ]; then
+  echo "  NOT INSTALLED: race layout(s) $RACE_RED fail on their own gates (drive_test barrier_missing / obstruction,"
+  echo "  the BUILT no_route containment fill) — no reference exists to be 'no worse than', so --force-install does not"
+  echo "  apply (data/drive_test.<id>.json, data/no_route.<id>.json)"; exit 1
+fi
+if [ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ] || [ "$NR_R" != 0 ]; then
+  if [ "$NR_R" != 0 ]; then
+    echo "  NOT INSTALLED: no_route exited $NR_R (2 = an input error: the containment verdict could not be computed)"; exit 1
+  elif [ "$FORCE" = 1 ]; then
+    echo "  --force-install: installing RED (caller asserts no metric is worse than the reference)"
+  else
+    echo "  NOT INSTALLED (Kevin never loads a build the machine failed)"; exit 1
+  fi
+fi
+if [ "$INSTALL" = 1 ] && [ "$SCRATCH" = 1 ]; then
+  step "install: SKIPPED"
+  echo "the project is a scratch copy or a rehearsal ($PROJ): never installed — only $WS_PROJ reaches $AC. The built"
+  echo "folder is $PROJ/build/$SLUG (load it by hand if you mean to)."
+elif [ "$INSTALL" = 1 ]; then
+  step "install: $AC/$INSTALL_FOLDER (layouts $LAYOUT_IDS; previous build parked in $ARCHIVE/<stamp>/)"
+  # Assetto Corsa or Content Manager holding the folder makes the park (mv) fail half-way: refuse while either runs
+  if command -v tasklist >/dev/null 2>&1; then
+    RUNNING=$(tasklist //FO CSV //NH 2>/dev/null | grep -i -E '^"(acs[.]exe|acs_x86[.]exe|Content Manager[^"]*[.]exe)"' | cut -d, -f1 | tr '\n' ' ' || true)
+    if [ -n "$RUNNING" ]; then echo "NOT INSTALLED: close $RUNNING first (Assetto Corsa / Content Manager hold the track folder)"; exit 1; fi
+  else
+    echo "(tasklist not found — make sure Assetto Corsa and Content Manager are closed)"
+  fi
+  B="$PROJ/build/$SLUG"
+  for lid in $LAYOUT_IDS; do [ -f "$B/models_$lid.ini" ] || { echo "missing $B/models_$lid.ini"; exit 1; }; done
+  STAMP=$(date +%Y-%m-%d_%H%M%S)
+  for old in "$INSTALL_FOLDER" "${INSTALL_FOLDER}_prev"; do
+    if [ -d "$AC/$old" ]; then mkdir -p "$ARCHIVE/$STAMP"; mv "$AC/$old" "$ARCHIVE/$STAMP/$old"; echo "parked $old in $ARCHIVE/$STAMP/"; fi
+  done
+  cp -r "$B" "$AC/$INSTALL_FOLDER"
+  # the installed name: <ship.json ui_name_prefix> + an em dash + the layout's name (prefix passed as an argument)
+  pyq "import json,glob,os,sys
+cfg=json.load(open(sys.argv[1],encoding='utf-8'))
+names={str(lo['id']): lo.get('name', lo['id']) for lo in cfg['layouts']}
+seen=[]
+for p in sorted(glob.glob(os.path.join(sys.argv[2],'ui','*','ui_track.json'))):
+    lid=os.path.basename(os.path.dirname(p))
+    d=json.load(open(p,encoding='utf-8'))
+    d['name']=sys.argv[3]+' '+chr(8212)+' '+names[lid]
+    json.dump(d,open(p,'w',encoding='utf-8'),indent=2,ensure_ascii=False)
+    seen.append(lid)
+    print('installed:',d['name'],d.get('version'))
+missing=sorted(set(names)-set(seen))
+if missing: raise SystemExit('installed folder lacks ui/<id>/ui_track.json for %s'%missing)" "$PROJ/track.config.json" "$AC/$INSTALL_FOLDER" "$UI_PREFIX"
+fi
+echo; echo "SHIP OK"

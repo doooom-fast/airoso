@@ -795,6 +795,112 @@ the previous trim), `test_verify_race.py` (O: a 0.458 m and a 0.06 m ring fail, 
 `test_ship_sd_chain.py` (the weld between the rebuild and the seat with the workshop on sys.path; verify_mouths after
 the street gate OBJ, hard; the AIROSO default). engine-july is not edited: no file `ship_sd.sh` runs from ENG changed.
 
+## 2026-10-11 — Lookout Lariat P0: `route_oneway_check`, the OSM staleness guard (ledger 0048)
+
+Both landed in 324ec41 / 0e96423 without an entry here; recorded now.
+
+**`tools/route_oneway_check.py` (NEW; not yet wired into a ship chain — the Lariat's P1 chain will run it
+before any geometry).** The July route list drove the Lariat's lap ~100 m the wrong way up a one-way at the
+US-6 ramp end and 84 m at I-70 exit 259, and no gate could see it: every gate measures the built road, none
+asks which way the real road runs. This asks it of the route itself. Per **street** layout (race layouts are
+closed roads, not checked), each centreline segment is matched to the OSM way it runs along in the route
+stage's own Overpass snapshot (`data/osm.cache.json`); runs against a `oneway=yes|-1` or roundabout way must
+lie on a stretch the layout declares (`layouts[].against_oneway` → `divided.stretches[].ways`), every
+declared stretch must actually be driven against (a stale declaration FAILs), and a layout that declares
+nothing must drive against nothing. Exit 1 on any FAIL, 2 on a usage/config error; `data/oneway_check.json`.
+
+| Item | Value | Flag |
+|---|---|---|
+| verdict | the real road's direction, from its OSM `oneway` / `junction` tags; `reversible` / `alternating` listed, never judged | [std] |
+| `SNAP_M` | 3.0 m — both segment ends within this of the way | ⚠ invented (a matching parameter, not a threshold) |
+| `MIN_COS` | 0.7 — \|cos\| between the segment and the way's local direction (~45°) | ⚠ invented (matching parameter) |
+| unmatched segments | a segment straddling a junction corner matches no single way: reported as a junction gap, never as a run | |
+
+Proven on the P0 line: Full 0 m against; Reverse 4,486.5 m against on the four declared divided stretches
+(D2 (a), Kevin's call), 0 undeclared.
+
+**OSM staleness guard (`scripts/gps/widths_from_osm.py` `OSM_MAX_AGE_DAYS`; also `overpass.py`,
+`centerline.py`).** 2026-10-11: overpass.kumi.systems served OSM as of 2026-07-28 while overpass-api.de was
+minutes old, and the width/route stages fell back to it without a word. A live Overpass answer whose
+`osm3s.timestamp_osm_base` is older than the limit (or carries none) is never written to a snapshot: the stage
+stops, naming the mirror and its data date. Per track `route.osm_max_age_days`; one-off `--allow-stale-osm`.
+A snapshot already on disk is never judged by age (pinning old data on purpose is what a snapshot is for).
+
+| Item | Value | Flag |
+|---|---|---|
+| `OSM_MAX_AGE_DAYS` | 7.0 days — healthy mirrors lag minutes to hours; a week behind means the copying stopped | ⚠ invented |
+| without a cache path | warns only | |
+
+## 2026-10-11 — paint gate: `tools/verify_centreline_paint.py` replaces the fitter's 1.5 m-from-OSM ceiling (ledger 0048, Lariat P2)
+
+The aerial pass (NAIP 2019, airoso e82ff8c) traced the Lariat's painted centre line. It found the OSM line, which the fitter's position check measured against, 7.6 m off the paint at C4 and 4.8 m at C10. OSM cuts those hairpins. So the ceiling passed fits that missed the real road and failed C9, where OSM was within 0.60 m of the paint. Position is now judged against the paint.
+
+| Gate | Before | After | Flag |
+|---|---|---|---|
+| `tools/fit_hairpins.py` `max_move_m` | a fitted corner FAILS beyond 1.5 m from the OSM line, both ways; the radius scan picks the nearest radius inside it | **removed**. Status = the step gate only. `lateral_move_m` is reported with `judged_by: tools/verify_centreline_paint.py`. The radius scan picks the nearest radius that passes the step gate. `hairpin_fit.gate.max_move_m` is deleted from the Lariat config | the 1.5 m was ⚠ invented. Measured against the paint, it passed C4 at 7.25 m and C10 at 4.35 m, and failed C9 (2.06 m from OSM, OSM 0.60 m from the paint) |
+| `verify_centreline_paint` (a) paint (new) | — | every high/medium yellow point of `data/aerial/paint_traces.json` within **0.75 m**, measured to the nearest segment running the same way (\|angle\| < 60°) | ⚠ invented. Context: OSM scatters 0.74 m rms / 1.35 m p90 about the paint on straight road (862 points). The judged point set depends on the confidence rules in `tools/aerial/traces.py`, all ⚠ invented: a run of >= 4 profiles, within 0.3 m over ±4 m, prominence >= 0.5 × the window's median, drift <= 0.15 m/m; unusable width stations count as low |
+| (b) curvature on the climb (new) | the fitter's two rules, on fitted spans only | over `hairpin_fit.climb_st_m` (stations on the OSM source line, via `osm_station_m`): step <= spacing × \|k_local\| × 57.3 + **1°**, where k_local is the line's turn over **±5 m** divided by that window's length; neighbouring steps differ by <= **1.5°**; climb spacing **0.95-1.05 m** | all ⚠ invented. The spacing band exists because the neighbour rule depends on spacing (at 3 m it fails real spirals, denser makes it trivial) |
+| (c) topology (new) | — | no vertex turning >= **120°**, no segment < **1 mm**, no crossing of non-adjacent segments | ⚠ invented. The OSM line's largest single step is 78.5°, a junction node |
+| (d) closure (new) | — | `coords[0] == coords[-1]` exactly, and the seam vertex passes (b) across the wrap, v[-2] -> v0 -> v1 (L13) | [std: L13] |
+
+Proof:
+- `tests/tools/test_verify_centreline_paint.py` (5): 0.3 m passes and 1.0 m fails; a lost leg is not rescued by the stacked opposite leg; facets, curvature jumps and 3 m spacing fail while a 1 m clothoid passes; a figure that crosses itself and a fold both fail; an open seam and a seam kink fail while a smooth lap passes.
+- `tests/tools/test_fit_hairpins.py`: a kink with a radius now PASSes and is spliced, its >1.5 m move reported.
+- On the Lariat, the OSM line fails: (a) 1,320 points over 0.75 m, worst 7.56 m; (b) 444 step + 971 neighbour + 2,367 spacing fails; (d) the seam neighbour rule, at 1.84°.
+- The paint centreline (`tools/paint_centreline.py`) passes all four: worst 0.61 m; 0 / 0 / 0 on 7,114 climb points; seam 2.20° against a limit of 3.16°.
+
+Wiring: not in build.sh or any ship chain yet. It runs by hand after `tools/paint_centreline.py` (Lariat build order: gps -> paint_centreline -> remap_centreline_config --write -> elev). Exit 1 on any fail. Output goes to `data/aerial/paint_gate.json`.
+
+## 2026-10-11 — Lariat P1: a ship chain that isn't San Diego, and the loop prep's three preconditions (ledger 0048)
+
+### The ship chain (`tools/ship_track.sh <track>`, driven by `tracks/<track>/ship.json`)
+
+Wiring only; no threshold moves. `tools/ship_sd.sh` is untouched (byte-identical) and stays San Diego's chain
+of record. `ship_track.sh` carries every gate `ship_sd.sh` runs, with the same exit semantics (set -e on the hard
+ones; drive_test / audit exits collected; `--force-install` never covers a race layout red on its own gates or a
+no_route input error). New in the chain:
+
+| Gate | Where | Exit |
+|---|---|---|
+| ship.json vocabulary | a step name with no `<phase>_<name>` function in the script, or a value outside `tools/ship_track_spec.py`'s patterns (unknown key, `..`, absolute or shell-shaped path, unknown phase, `prep` other than exactly `[prep, split]`) | 2, before any file operation |
+| race furniture declared but not authored | a layout declares `race_furniture` and `steps.author` has no `race_author` | 2 |
+| `no blend yet` | no `loop.blend` in the project and nothing in the run can build one (`--skip-blend`, or no available blend builder) | 0 on `--dry-run`, 1 otherwise; nothing synced in |
+| Lariat draft: `verify_centreline_paint` + `route_oneway_check` | after `gps -> paint_centreline -> remap_config --write`, before `elev` (the paint gate's "wiring: not in any ship chain yet" above is now wired, for the Lariat) | 1 on FAIL |
+
+Proof: `tests/tools/test_ship_track_chain.py` (19). San Diego parity at airoso 8a2f076: the step headers
+`tracks/san-diego-lake-murray/ship.json` selects equal `ship_sd.sh`'s, every branch, in order (static), and a real
+`--skip-blend --dry-run` of both scripts on the same scratch copy of the workshop printed identical step headers
+(7) and wrote an md5-identical `split_manifest.json` (`37e960f0…` on that scratch path; the manifest embeds absolute paths, so the hash is per-path — the independent verify got `d8c5c490…` for BOTH scripts on another path). The Lariat's route draft
+rehearsed with `--draft-only` on a scratch project reproduces `data/centerline.geojson`, `data/centerline.osm.geojson`
+and `track.config.json` byte for byte, paint gate and one-way check PASS.
+
+### The loop prep (`scripts/ac/build_kn5_loop.py`, airoso's copy only; engine-july's and the snapshot untouched)
+
+| Gate / guard | Before | After | Flag |
+|---|---|---|---|
+| 0020 corridor discipline (`_corridor_hash`: kerb faces carved out of carriageways, trunks and canopies cleared from the driving envelope) | built from `data/finished_centerline.json` (KN5 frame, north negated) and queried in Blender's frame: the mainline corridor stood at the north-south mirror image of the road; connectors (local frame) were right | the mainline is un-negated before hashing; mainline, connectors and queries share Blender's (east, north) | a frame bug, no number. `tests/ac/test_build_kn5_loop_prep.py` fails on the old function: a point on the road read 1e9 m from any carriageway, its mirror image read inside one |
+| over-cap tiling (`_split_large`) | > 60,000 positions -> K = n // 60,000 + 1 equal-width bands along the longer axis; a band holding a switchback knot overflowed (the FATAL `assert_under_cap` then stopped the build) | > `PIECE_CAP` **50,000** positions -> `balanced_tiles`: halve at the median face centre along the longer side until every piece is <= 50,000 positions | ⚠ 50,000 is invented (the plan's number; 15,535 of headroom under AC's hard 65,535 for the weld and smooth-shading after the split). Proven: a strip + dense knot whose equal bands overflow a 2,000 cap tiles under it by halving |
+| terrain seat on stacked legs (L4) | the deck under a ground vertex = the highest road within `LAYER_WIN` 30 m vertically; the contact-band target = the nearest road point in 3D (any leg); the band weight from the nearest road vertex in plan (any leg) | **station matching**: every ground vertex carries the leg + station of the nearest centreline / connector segment in plan (`LegIndex`); it seats only on road triangles of that leg within `STATION_WIN_M` **40 m** of its station (cyclic on a closed lap); the band weight is the plan distance to that leg's footprint. `LAYER_WIN` is gone | ⚠ 40 m is invented. Bounds: a same-leg seat can be off by at most 0.115 × 40 = 4.6 m of grade (the lap's steepest 20 m, -11.5 %), under the smallest stacked gap (6.5 m); on the Lariat's paint centreline every pair of distinct stretches within 30 m in plan is >= **79.9 m** apart in station (closest in plan 19.4 m, station gap 113.9 m at st 5,472 / 5,586). Blender proof on a synthetic switchback (legs 20.5 m apart, 6.5 m road, leg B on a fill): ground vertices 0.3-9 m outside a leg's edge more than 0.5 m off a seat on their own leg: HEAD prep **459 of 3,509, worst 21.11 m**; this prep **28 of 3,509, worst 0.63 m** (the residue is the footprint-distance approximation of the check itself) |
+
+Not changed (no stacked-leg exposure on a road whose legs never overlap in plan): the anti-poke clamp (lowest
+drivable sheet within ±20 m, push-down only), the corridor query's 3.5 m / 7 m deck windows (bridges), the props'
+terrain-delta ride (±40 m).
+
+Which kn5s these change: only kn5s prepped by airoso's `scripts/ac/build_kn5_loop.py` (`scripts/build_loop.sh`,
+and `tools/ship_track.sh` for every track but San Diego). Today that is **none that ships**: San Diego preps with
+engine-july's copy (`ship_sd.sh`, and `ship_track.sh` keeps that for SD), the Colorado circuits, rally stages and
+Sand Creek build through `scripts/build.sh` -> `scripts/ac/build_kn5.py` (the OBJ program, its own
+`_split_over_cap`, untouched), and the only `loop.blend` in the fleet is San Diego's. The first kn5 this prep
+writes will be the Lariat's.
+
+**Post-merge fix (independent verify finding).** `LegIndex.neighbour_keys` on a closed lap returned (k−1, k, k+1);
+the last chunk is short whenever the lap is not a multiple of `STATION_WIN_M`, so near the seam a point's 40 m window
+reached a chunk that set missed (1,010 m lap: station 5 is same-leg with 985, chunk 24, outside (25, 0, 1)). It now
+collects every chunk the station interval [start − 40, end + 40] touches round the lap.
+`tests/ac/test_build_kn5_loop_prep.py::test_seam_chunks_hold_every_same_leg_station_when_the_last_chunk_is_short`
+walks every station pair within the window on such a lap; it fails on the merged code, passes on the fix. No
+threshold changed.
+
 ## 2026-10-11 — tiered terrain: the far ring's `verify_kn5` check, balanced terrain tiles, the far decimation retired, L3's clamp made distance-weighted (ledger 0046)
 
 Kevin, 2026-10-10: *"more terrain near the roads, and the I-8 trench and adjacent causeway cut out"*, *"I want to see

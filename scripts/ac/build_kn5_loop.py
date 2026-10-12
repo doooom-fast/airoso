@@ -43,11 +43,13 @@ AC_NAME = {
 }
 UV_TILE = 4.0  # metres per texture tile (top-down planar projection)
 
-# AC/ksEditor hard per-mesh vertex cap (16-bit indices). Meshes are split under SPLIT_CAP; anything
-# STILL over VERT_CAP after split+weld is FATAL — AC silently drops over-cap meshes, and a dropped
-# PHYSICAL mesh means the car falls through (the invisible-forest / fall-through bug class).
+# AC/ksEditor hard per-mesh vertex cap (16-bit indices). Meshes over PIECE_CAP positions are tiled by
+# balanced halving (balanced_tiles); anything STILL over VERT_CAP after split+weld is FATAL — AC silently
+# drops over-cap meshes, and a dropped PHYSICAL mesh means the car falls through (the invisible-forest /
+# fall-through bug class). PIECE_CAP (V3-PLAN P1, Lariat; [invented]) leaves 15,535 of headroom under the
+# hard cap for the weld / smooth-shading changes after the split.
 VERT_CAP = 65535
-SPLIT_CAP = 60000
+PIECE_CAP = 50000
 
 # freeway groups whose winding must not matter: after the loop's local->Blender reflection their
 # faces would point inward, so double-side them (append reversed faces) — a barrier/structure must
@@ -66,7 +68,15 @@ GROUND_CLEAR = 0.02        # m below the deck (the ground gate's ceiling is 0.05
 BAND_M = 3.0               # full-contact shelf past the pavement edge (CO grade_embankment's band)
 FEATHER_M = 6.0            # smoothstep blend band beyond the shelf
 CORRIDOR_EDGE_M = 4.5      # subdivide terrain edges near the road down to about this length
-LAYER_WIN = 30.0           # deck sampling window (no stacked loop legs, but stay safe)
+# STACKED LEGS (fleet/LAWS.md L4; V3-PLAN P1 precondition 3). The deck a ground point seats on is found by
+# STATION MATCHING, not by a vertical window: every point carries the arc station of the road leg it belongs
+# to (LegIndex.locate: the nearest centreline / connector segment in plan) and seats only on road triangles of
+# that leg within STATION_WIN_M of its own station. On the Lariat's switchbacks the stacked legs stand 6.5-14.7 m
+# apart vertically and 20.5 m apart in plan at the closest: a vertical window under 6 m leaves under 1 m of
+# margin and misreads ground on a ~30 % side slope. With the lap's steepest 20 m at -11.5 %, a same-leg seat can
+# be off by at most 0.115 x 40 = 4.6 m of grade, under the smallest stacked gap, and stacked legs differ by at
+# least 6.5 / 0.115 = 57 m of station; a hairpin's own arc (pi x R <= 38 m for R <= 12 m) stays one stretch.
+STATION_WIN_M = 40.0       # [invented] same-leg station window (cyclic on a closed lap)
 BRIDGE_MATCH_M = 14.0      # centerline pt within this of an OSM bridge way = on the span
 BRIDGE_PAD_M = 8.0         # widen each detected span a touch onto the abutments
 
@@ -154,6 +164,148 @@ def declare_bridge_spans(proj: Path) -> list[tuple[float, float]]:
     return spans
 
 
+def balanced_tiles(centres, faces, cap=PIECE_CAP):
+    """Tile a mesh by BALANCED HALVING: a face set over ``cap`` positions (distinct vertices) is cut at the
+    median face centre along the longer horizontal side of its bounding box, and each half again, until every
+    piece holds <= ``cap`` positions. Equal-width bands (the old split) put a whole switchback knot into one
+    band and overflowed; halving at the median follows the faces wherever they bunch. Pure function (no bpy):
+    ``centres`` = face centres (x, y, z), ``faces`` = vertex-index tuples; returns face-index lists, sorted,
+    in a deterministic order (low half first)."""
+    out = []
+
+    def rec(idx):
+        if len(idx) < 2 or len({v for i in idx for v in faces[i]}) <= cap:
+            out.append(sorted(idx))
+            return
+        xs = [centres[i][0] for i in idx]
+        ys = [centres[i][1] for i in idx]
+        ax = 0 if (max(xs) - min(xs)) >= (max(ys) - min(ys)) else 1
+        s = sorted(idx, key=lambda i: (centres[i][ax], centres[i][1 - ax], i))
+        h = len(s) // 2
+        rec(s[:h])
+        rec(s[h:])
+
+    rec(list(range(len(faces))))
+    return out
+
+
+class LegIndex:
+    """Station matching for stacked legs (fleet/LAWS.md L4; V3-PLAN P1 precondition 3). Every road polyline is a
+    LEG with its own arc stations: the mainline (``data/centerline.local.json``, closed when the track is a loop)
+    and each connector (``data/connectors.local.json``). ``locate(east, north)`` gives a plan point the leg and
+    station of the nearest segment; two located points (or a point and a road triangle) are on the same stretch
+    of road when ``same_leg`` holds: the same leg and stations within ``STATION_WIN_M`` (cyclic on a closed leg).
+    Pure Python (no bpy). Input points are local (east, up, north); queries are plan (east, north), which is
+    Blender's (x, y)."""
+
+    def __init__(self, lines, cell=8.0, win=STATION_WIN_M):
+        self.cell = float(cell)
+        self.win = float(win)
+        self.length = {}
+        self.closed = {}
+        self.grid = {}
+        c = self.cell
+        for lid, pts, closed in lines:
+            pts = [(float(p[0]), float(p[2])) for p in pts]
+            if closed and len(pts) > 2 and pts[0] != pts[-1]:
+                pts.append(pts[0])
+            s = 0.0
+            for i in range(len(pts) - 1):
+                (ax, ay), (bx, by) = pts[i], pts[i + 1]
+                L = math.hypot(bx - ax, by - ay)
+                if L <= 1e-9:
+                    continue
+                seg = (lid, ax, ay, bx, by, s, L)
+                for gx in range(int(math.floor(min(ax, bx) / c)), int(math.floor(max(ax, bx) / c)) + 1):
+                    for gy in range(int(math.floor(min(ay, by) / c)), int(math.floor(max(ay, by) / c)) + 1):
+                        self.grid.setdefault((gx, gy), []).append(seg)
+                s += L
+            self.length[lid] = s
+            self.closed[lid] = bool(closed)
+
+    @classmethod
+    def from_project(cls, proj: Path, closed=None):
+        local = json.loads((proj / "data" / "centerline.local.json").read_text())
+        if closed is None:
+            cfg_p = proj / "track.config.json"
+            cfg = json.loads(cfg_p.read_text()) if cfg_p.exists() else {}
+            closed = bool(cfg.get("loop", True))
+        lines = [("main", local["points_xyz_m"], closed)]
+        cj = proj / "data" / "connectors.local.json"
+        if cj.exists():
+            for k, con in enumerate(json.loads(cj.read_text()).get("connectors", [])):
+                if con.get("points_xyz_m"):
+                    lines.append((f"c{k}", con["points_xyz_m"], False))
+        return cls(lines)
+
+    def locate(self, x, y, max_m=250.0):
+        """(leg id, station m, plan distance m) of the nearest road segment to plan point (x, y), or None."""
+        c = self.cell
+        ix, iy = int(math.floor(x / c)), int(math.floor(y / c))
+        best = None
+        r = 0
+        while r * c <= max_m:
+            cells = [(ix + dx, iy + dy) for dx in range(-r, r + 1) for dy in range(-r, r + 1)
+                     if max(abs(dx), abs(dy)) == r]
+            for key in cells:
+                for lid, ax, ay, bx, by, s0, L in self.grid.get(key, ()):
+                    t = max(0.0, min(1.0, ((x - ax) * (bx - ax) + (y - ay) * (by - ay)) / (L * L)))
+                    d = math.hypot(x - (ax + t * (bx - ax)), y - (ay + t * (by - ay)))
+                    if best is None or d < best[2] - 1e-12:
+                        best = (lid, s0 + t * L, d)
+            if best is not None and best[2] <= r * c:
+                break                          # every unseen segment is at least r cells away
+            r += 1
+        return best
+
+    def station_gap(self, a, b):
+        ds = abs(a[1] - b[1])
+        if self.closed.get(a[0]):
+            ds = min(ds, self.length[a[0]] - ds)
+        return ds
+
+    def same_leg(self, a, b):
+        return a is not None and b is not None and a[0] == b[0] and self.station_gap(a, b) <= self.win
+
+    def chunk_key(self, leg):
+        """the station chunk (STATION_WIN_M long) a located point falls in; the prep builds one BVH per chunk and
+        its two neighbours, which holds every same-leg triangle of any point in the chunk"""
+        k = int(leg[1] // self.win)
+        if self.closed.get(leg[0]):
+            k %= max(1, int(math.ceil(self.length[leg[0]] / self.win)))
+        return (leg[0], k)
+
+    def neighbour_keys(self, key):
+        """Every chunk holding a station within ``win`` of some point of chunk ``key``. On an open leg that is
+        k-1, k, k+1. On a closed lap the last chunk is usually SHORTER than ``win`` (lap length not a multiple of
+        it), so near the seam the window reaches two chunks back across it: on a 1,010 m lap a point at station 5
+        is same-leg with station 985 (chunk 24), which (25, 0, 1) would miss. So the closed case walks the
+        station interval [start - win, end + win] round the lap and collects every chunk it touches."""
+        lid, k = key
+        if not self.closed.get(lid):
+            return [(lid, k - 1), (lid, k), (lid, k + 1)]
+        L, w = self.length[lid], self.win
+        n = max(1, int(math.ceil(L / w)))
+        if L <= 3 * w:
+            return [(lid, j) for j in range(n)]
+        lo, hi = k * w - w, min((k + 1) * w, L) + w
+        keys = set()
+        for period in (-1, 0, 1):                       # the interval crosses the seam at most once each way
+            a, b = max(lo - period * L, 0.0), min(hi - period * L, L)
+            if a < b:
+                keys.update(range(int(a // w), min(int((b - 1e-9) // w), n - 1) + 1))
+        return sorted((lid, j) for j in keys)
+
+
+def pick_same_leg(hits, leg, legs):
+    """The deck a point seats on: the first of ``hits`` (``(z, hit_leg)`` in ray order, highest first) whose leg is
+    the point's own stretch of road (``legs.same_leg``); None when no hit is — never another leg's deck."""
+    for z, hl in hits:
+        if legs.same_leg(hl, leg):
+            return z
+    return None
+
+
 def _project_dir(argv):
     if "--" not in argv:
         raise SystemExit("usage: blender --background --python build_kn5_loop.py -- <project-dir>")
@@ -173,25 +325,22 @@ def assert_under_cap(name: str, nverts: int) -> None:
                          f"Raise the split factor or slim the source mesh. Refusing to export.")
 
 
-def _split_large(ob, cap=SPLIT_CAP):
-    """Split a mesh over AC's 65,535-vertex cap into UNIQUELY-named spatial tiles (base_0, base_1,
-    ...). The exporter otherwise auto-splits into DUPLICATE-named meshes, and AC drops dup-named
-    PHYSICAL meshes from collision -> the car falls through (a 46 km freeway terrain is ~268k
-    verts). Partitions faces into bands along the longest axis; pbr/surfaces still key off the
-    shared name prefix (1GRASS_0 -> GRASS)."""
+def _split_large(ob, cap=PIECE_CAP):
+    """Split a mesh over ``cap`` positions into UNIQUELY-named spatial tiles (base_0, base_1, ...). The
+    exporter otherwise auto-splits into DUPLICATE-named meshes, and AC drops dup-named PHYSICAL meshes
+    from collision -> the car falls through (a 46 km freeway terrain is ~268k verts). Tiles come from
+    balanced_tiles (halving at the median face centre until every piece is <= cap positions; equal-width
+    bands overflowed where switchbacks bunch); pbr/surfaces still key off the shared name prefix
+    (1GRASS_0 -> GRASS)."""
     import bpy
 
     me = ob.data
     if len(me.vertices) <= cap:
         return
-    K = len(me.vertices) // cap + 1
     co = [(v.co.x, v.co.y, v.co.z) for v in me.vertices]
-    ax = 0 if (max(c[0] for c in co) - min(c[0] for c in co)) >= \
-             (max(c[1] for c in co) - min(c[1] for c in co)) else 1
-    lo = min(c[ax] for c in co); span = (max(c[ax] for c in co) - lo) or 1.0
-    bands = [[] for _ in range(K)]
-    for p in me.polygons:
-        bands[min(K - 1, int((p.center[ax] - lo) / span * K))].append(p)
+    polys = list(me.polygons)
+    tiles = balanced_tiles([tuple(p.center) for p in polys], [tuple(p.vertices) for p in polys], cap)
+    bands = [[polys[i] for i in t] for t in tiles]
     base = ob.name
     mat = me.materials[0] if me.materials else None
     # carry authored per-vertex UVs across the split (palm cards etc. are single UV per vertex) —
@@ -222,7 +371,7 @@ def _split_large(ob, cap=SPLIT_CAP):
         if mat:
             nm.materials.append(mat)
         bpy.context.scene.collection.objects.link(bpy.data.objects.new(f"{base}_{k}", nm))
-    print(f"[build_kn5_loop] split {base} ({len(me.vertices)} verts) -> {K} tiles under {cap}")
+    print(f"[build_kn5_loop] split {base} ({len(me.vertices)} verts) -> {len(tiles)} balanced tiles of <= {cap} positions")
     bpy.data.objects.remove(ob, do_unlink=True)
 
 
@@ -326,15 +475,17 @@ def _conform_and_reseat(proj: Path, spans):
         return BVHTree.FromPolygons([v for t in tris for v in t],
                                     [(3 * i, 3 * i + 1, 3 * i + 2) for i in range(len(tris))]) if tris else None
 
-    def _surf_z(bvh, x, y, zref=None, win=LAYER_WIN):
-        """Highest surface z at (x, y) via a downward ray from far above (Blender z = up)."""
+    def _surf_z(bvh, x, y, zref=None, win=None):
+        """Highest surface z at (x, y) via a downward ray from far above (Blender z = up); with zref and win,
+        None when that surface is more than win off zref (the props' terrain-delta ride only — the road seat
+        is station-matched, never windowed)."""
         if bvh is None:
             return None
         hit = bvh.ray_cast((x, y, 4000.0), (0.0, 0.0, -1.0))
         if hit[0] is None:
             return None
         z = hit[0].z
-        if zref is not None and abs(z - zref) > win:
+        if zref is not None and win is not None and abs(z - zref) > win:
             return None
         return z
 
@@ -393,6 +544,48 @@ def _conform_and_reseat(proj: Path, spans):
     def _near2d(x, y):
         co, idx, d = road_kd.find((x, y, 0.0))
         return (d, _rverts[idx][2]) if co is not None else (None, None)
+
+    # STATION MATCHING (L4; STATION_WIN_M above): every road triangle carries the leg + station of its centroid,
+    # every ground vertex the leg + station of its own plan position, and a vertex seats only on triangles of its
+    # own stretch. One BVH per station chunk and its two neighbours (built on first use) holds every candidate.
+    legs = LegIndex.from_project(proj)
+    tri_leg = [legs.locate((a[0] + b[0] + c[0]) / 3.0, (a[1] + b[1] + c[1]) / 3.0) for a, b, c in road_tris]
+    _chunks: dict = {}
+    for _i, _lg in enumerate(tri_leg):
+        if _lg is not None:
+            _chunks.setdefault(legs.chunk_key(_lg), []).append(_i)
+    _leg_bvhs: dict = {}
+
+    def _leg_bvh(vleg):
+        key = legs.chunk_key(vleg)
+        if key not in _leg_bvhs:
+            idx = [i for kk in legs.neighbour_keys(key) for i in _chunks.get(kk, ())]
+            _leg_bvhs[key] = (_bvh([road_tris[i] for i in idx]), idx)
+        return _leg_bvhs[key]
+
+    def _deck_same_leg(x, y, vleg, max_hits=6):
+        """the deck of the vertex's OWN leg straight above / below it (multi-hit ray walk, highest first), or None"""
+        bvh, idx = _leg_bvh(vleg)
+        if bvh is None:
+            return None
+        hits, z0 = [], 4000.0
+        for _ in range(max_hits):
+            h = bvh.ray_cast((x, y, z0), (0.0, 0.0, -1.0))
+            if h[0] is None:
+                break
+            hits.append((h[0].z, tri_leg[idx[h[2]]]))
+            z0 = h[0].z - 0.01
+        return pick_same_leg(hits, vleg, legs)
+
+    def _near_same_leg(x, y, z, vleg):
+        """the closest footprint point of the vertex's OWN leg, or None"""
+        bvh, idx = _leg_bvh(vleg)
+        if bvh is None:
+            return None
+        co, _n, i, _d = bvh.find_nearest((x, y, z))
+        if co is None or not legs.same_leg(tri_leg[idx[i]], vleg):
+            return None
+        return co
 
     def _lowest_surf(bvh, x, y, zref, win=20.0):
         """LOWEST drivable surface at (x, y) within ±win of zref — multi-hit downward ray walk
@@ -453,11 +646,14 @@ def _conform_and_reseat(proj: Path, spans):
         # 2. pin + feather (all distances HORIZONTAL — bench-cut ground is legitimately metres low)
         for v in bm.verts:
             x, y, z = v.co.x, v.co.y, v.co.z
-            d2d, rz = _near2d(x, y)
+            d2d, _rz = _near2d(x, y)
             if d2d is None or d2d > FEATHER_M + 10.0:
                 continue
-            deck = _surf_z(road_bvh, x, y, zref=z)
-            if deck is not None:                       # under the pavement footprint
+            vleg = legs.locate(x, y)                   # the vertex's own leg + station (L4: station matching)
+            if vleg is None:
+                continue
+            deck = _deck_same_leg(x, y, vleg)
+            if deck is not None:                       # under its own leg's pavement footprint
                 tgt = deck - GROUND_CLEAR
                 if on_span(x, y):
                     if z > tgt:
@@ -465,21 +661,25 @@ def _conform_and_reseat(proj: Path, spans):
                 else:
                     v.co.z = tgt; n_pin += 1
             else:                                      # contact band + feather past the edge
+                # target = deck at the CLOSEST FOOTPRINT POINT OF ITS OWN LEG (BVH), not the nearest road
+                # VERT's height — on a 7% grade the vert-snap target was ±0.3 off between stations and
+                # printed that error into the contact band (the 0.05–0.35 residual tail) — and never the
+                # stacked leg above or below (L4), however close it is in 3D.
+                near3 = _near_same_leg(x, y, z, vleg)
+                if near3 is None:
+                    continue
+                d_own = math.hypot(near3.x - x, near3.y - y)
                 # full-contact BAND (CO's "gentle shelf"): every triangle covering pavement has all
                 # verts within ~2.6 m of the edge, so holding the first 3 m at contact height makes
                 # the surface under the deck edge gate-proof; then smoothstep back to natural.
-                if d2d <= BAND_M:
+                if d_own <= BAND_M:
                     w = 1.0
-                elif d2d < BAND_M + FEATHER_M:
-                    w = 1.0 - (d2d - BAND_M) / FEATHER_M
+                elif d_own < BAND_M + FEATHER_M:
+                    w = 1.0 - (d_own - BAND_M) / FEATHER_M
                     w = w * w * (3 - 2 * w)
                 else:
                     continue
-                # target = deck at the CLOSEST FOOTPRINT POINT (BVH), not the nearest road VERT's
-                # height — on a 7% grade the vert-snap target was ±0.3 off between stations and
-                # printed that error into the contact band (the 0.05–0.35 residual tail).
-                near3 = road_bvh.find_nearest((x, y, z))
-                tgt = (near3[0].z if near3[0] is not None else rz) - GROUND_CLEAR
+                tgt = near3.z - GROUND_CLEAR
                 nz = tgt * w + z * (1.0 - w)
                 if on_span(x, y) and nz > z:
                     continue
@@ -585,7 +785,13 @@ def _corridor_hash(proj):
     """0020's corridor discipline needs 'is this point inside ANY carriageway, and how high is the
     deck there' answered ~200k times. Spatial hash over every road polyline (mainline + the
     connectors from connectors.local.json), sampled ~2 m, cell 8 m. Engine frame is x=E, y=up,
-    z=N; the .blend is (x, z, y) — so hash keys are (east, north) and deck height is Blender z."""
+    z=N; the .blend is (x, z, y) — so hash keys are (east, north) and deck height is Blender z.
+
+    FRAME (V3-PLAN P1 precondition 1, 2026-10-11): data/finished_centerline.json is the KN5 frame
+    (x, y, -north; declare_bridge_spans writes it that way for kn5_ground_check), so its points are
+    un-negated here before hashing. Until then the mainline was hashed north-south mirrored while the
+    queries (and the connectors, local frame) were not: the 0020 cull ran at the mirror image of the
+    road and the real mainline had no corridor (tests/ac/test_build_kn5_loop_prep.py)."""
     cell = 8.0
     grid = {}
     def add_line(pts, widths):
@@ -603,7 +809,7 @@ def _corridor_hash(proj):
                     grid.setdefault(key, []).append((q[0], q[2], q[1], w / 2.0))
             prev = p
     fc = json.loads((proj / "data" / "finished_centerline.json").read_text())
-    add_line(fc["points_xyz_m"], fc["widths_m"])
+    add_line([(p[0], p[1], -p[2]) for p in fc["points_xyz_m"]], fc["widths_m"])   # KN5 frame -> local (E, up, N)
     cj = proj / "data" / "connectors.local.json"
     if cj.exists():
         for c in json.loads(cj.read_text()).get("connectors", []):

@@ -607,3 +607,105 @@ artifact. Status stays `open` and the tier stays T0: there is no geometry, kn5 o
 - the GATES-CHANGELOG entry for the one-way gate (that file belongs to the race-corridor run);
 - C9's hairpin fit, at 2.04 m against the invented 1.5 m limit;
 - P1 onward.
+
+## P2, the centreline: the paint, not OSM (2026-10-11)
+
+The aerial pass (airoso e82ff8c) measured the painted road on public-domain NAIP 2019 and found OSM
+off it by ~7 m at C4 and 2-5 m at C10, so the fitter's 1.5 m-from-OSM limit was judging against the
+wrong line. This step makes the paint the reference. On disk, uncommitted; no elevation, mesh, kn5 or
+Blender. Status stays `open`, tier T0.
+- **The aerial measurement is a repo tool now:** `tools/aerial_measure.py` + `tools/aerial/` (NAIP
+  fetch with TLS verification on, registration, paint and edge tracing, concentric fits, widths, edge
+  marks, junctions, the C-470 decks). Re-run on the pass's own windows it reproduces
+  `data/aerial/aerial_measurements.json` exactly, except the cache path sentence and ten stations
+  written as `2050` instead of `2050.0`; all 14 overlays are byte-identical. The plan and the
+  observations written by eye live in `data/aerial/aerial_spec.json`.
+- **The paint it traced** is `data/aerial/paint_traces.json`: 49 windows, 5,813 yellow points of
+  medium or high confidence, in the engine frame.
+- **The centreline** (`tools/paint_centreline.py`): the OSM line moved onto that paint, OSM kept in
+  shadow (C7's apex, C11, the upper climb), blended between, and the climb resampled at 1 m as one
+  curvature-continuous line, the seam included. It is `data/centerline.geojson`, 14,445 points; the
+  OSM line is kept as `data/centerline.osm.geojson`. It moved up to 7.6 m at C4, 4.8 m at C10, 3.9 m
+  at the undeclared bend at st ~6,809, and 1-2.6 m on straights.
+- **The gate** (`tools/verify_centreline_paint.py`) passes it on all four checks: every medium+ paint
+  point within 0.75 m (worst 0.61 m; OSM's worst 7.56 m); no curvature failure on 7,114 climb points
+  at 1 m (OSM: 444 step + 971 neighbour failures); no reversal or self-crossing; the seam closed exactly
+  and smooth. `tools/fit_hairpins.py` no longer judges position: its 1.5 m ceiling is gone, so C9's
+  "2.04 m" item above is closed (the line is 0.29 m from C9's paint).
+- **The config follows the line** (`tools/remap_centreline_config.py`): 141 values re-derived by
+  station (31 vertex indices: starts, sectors, race boxes; stations, the history station, the
+  hairpin_fit stations), recorded in `data/centerline_remap.json`, with the line's md5 now in the
+  config (`centerline_frame`). `tools/layout_dummies.py` still validates every layout. The timing line
+  moved 0.155 m.
+- **The one-way check** still passes: Full 0 m; Reverse 4,486.3 m, only on the four declared stretches.
+- **Kevin sees** `data/aerial/overlays/paint_C4.png`, `paint_C9.png`, `paint_C10.png` and
+  `paint_climb.png`: OSM in grey, the new line in yellow, the painted edge lines in white.
+- **Tests:** `tests/run_tests.py` 519 passed, 0 failed (22 new).
+
+**Still owed:**
+- the GATES-CHANGELOG entry for the paint gate and the fitter change (that file is the concurrent
+  run's; the text is in this step's report);
+- C12 and C13 stay junction nodes: an arc at the measured radius needs ~12.5 m tangents, but the
+  traced arm paint runs to within 9-15 m of the node. P3b's junction mouth decides;
+- C11's apex and most of st ~6,200-6,800 have no paint (shadow): another image or Street View;
+- elevation and everything after it (P2 steps 1, 3-7).
+
+## P1, the ship chain (2026-10-11)
+
+V3-PLAN P1, the part that does not touch the files a concurrent San Diego terrain job holds. No geometry,
+elevation, kn5 or Blender build of the Lariat; nothing installed. Status stays `open`, tier T0.
+- **`tools/ship_track.sh <track>`**, driven by `tracks/<track>/ship.json` (schema and validator:
+  `tools/ship_track_spec.py`). ship.json picks steps from a closed vocabulary, one function per name in the
+  script; an unknown name exits 2 before any file is touched, and no value from ship.json is executed. Copied
+  from `ship_sd.sh`: `set -euo pipefail`, `--python-exit-code 1` on every Blender call, absolute paths, scratch
+  isolation, refusal to work inside airoso, `--dry-run` / `--skip-blend` / `--force-install`, refusal to install
+  while AC or Content Manager runs, the old install parked in `D:/k10-track-archive/<stamp>/`. Race stages run
+  only for `race_furniture` layouts; the install folder is the config's `install_folder`; engine-july runs the
+  prep / exporter / spawn builder only for `san-diego-lake-murray`.
+- **SD parity** (`tracks/san-diego-lake-murray/ship.json`, against `ship_sd.sh` at 8a2f076, which is unchanged):
+  the selected steps' headers equal `ship_sd.sh`'s in every branch; on one scratch copy of the workshop
+  (`k10-sd-v021/project` minus build/ and blender/), `--skip-blend --dry-run` of both scripts printed the same
+  7 step headers and identical tool output, and wrote an md5-identical `split_manifest.json`
+  (`37e960f0…` on that scratch path; per-path, since the manifest embeds absolute paths — both scripts agreed on a second path too). **The concurrent job is changing `ship_sd.sh`; SD's ship.json and the
+  vocabulary must be re-synced after that merge** (the parity test fails until they are).
+- **The Lariat:** workshop `C:/Users/Owner/Documents/k10-workshops/lookout-lariat/project` (outside airoso,
+  created empty). `ship_track.sh lookout-lariat --dry-run` stops cleanly at "no blend yet": no `loop.blend`,
+  and its builder `underlay` (P2 step 3) is not written.
+- **The paint centreline is in the draft order**, so a gps rerun can no longer carry OSM geometry into elevation:
+  gps (keeps the paint line it overwrites as `data/centerline.previous.geojson`, the config's frame) →
+  paint_centreline → remap_config `--write` → verify_centreline_paint → route_oneway_check → elev → project →
+  widths → underlay. `scripts/build.sh` is unchanged. A `--draft-only` rehearsal of the route half on a scratch
+  copy reproduced `data/centerline.geojson`, `data/centerline.osm.geojson` and `track.config.json` byte for byte;
+  paint gate PASS, one-way check PASS (Full 0 m; Reverse 4,486 m, declared).
+- **`tools/fit_hairpins.py`** read `hairpin_fit.climb_st_m` (OSM-line stations) as stations on the 1 m paint
+  line; it now maps them through `osm_station_m` ([0, 7100] → [0, 7107.4] m, 7,114 vertices instead of 7,106).
+- **The loop prep's three preconditions** (airoso `scripts/ac/build_kn5_loop.py`; engine-july and its snapshot
+  untouched):
+  1. `_corridor_hash` hashed the mainline from `finished_centerline.json` in the KN5 frame (north negated) and was
+     queried in Blender's: a point on the road read 1e9 m from any carriageway (the failing test,
+     `tests/ac/test_build_kn5_loop_prep.py`). Fixed by un-negating north.
+  2. Over-cap meshes are tiled by balanced halving at ≤ 50,000 positions (`PIECE_CAP`, invented); equal-width
+     bands overflowed on a bunched knot.
+  3. Stacked legs, station matching only: every ground vertex seats on its own leg within 40 m of station
+     (`STATION_WIN_M`, invented; `LAYER_WIN` retired). On the paint line, distinct stretches within 30 m in plan
+     are ≥ 79.9 m apart in station. On a synthetic switchback in Blender the HEAD prep left 459 of 3,509 band
+     vertices > 0.5 m off their own leg (worst 21.1 m); this one 28 (worst 0.63 m).
+  These change no shipped kn5: no track in the fleet preps with this file today (San Diego uses engine-july's,
+  every other built track `build.sh` → `build_kn5.py`). The first kn5 it writes will be the Lariat's.
+- **Tests:** `tests/run_tests.py` 548 passed, 2 failed (31 new: 19 chain, 10 prep, 2 fitter). The two failures
+  are the same two as before this change (517 passed, 2 failed on the untouched worktree):
+  `test_export_kn5_addon_args::test_engine_july_mirror_is_byte_identical` and
+  `test_engine_july_snapshot::test_snapshot_copies_match_their_manifest_and_stay_small`. Both are the worktree's
+  CRLF checkout (`core.autocrlf=true`) of md5-pinned files: the committed bytes of `export_kn5_addon.py` (both
+  copies) match engine-july's md5 `1bdc2628…`.
+
+**Still owed:**
+- re-sync SD's ship.json and the vocabulary after the terrain job's `ship_sd.sh` merges; only then may
+  `ship_sd.sh` become a shim (optional);
+- the race tools from Lake Murray (`STREETS` → a config `race` block); the Lariat's ship.json lists the race
+  steps, still SD-shaped;
+- P1's other adapted tools: `split_exports_blend` (far-terrain scene), `pack_release --slug`, `make_treefx` (zones,
+  species, ground tiles from config), `place_signs` (both directions, more plate types, layer-aware tests),
+  `author_lamps_blend` (positions file);
+- station matching in `seat_terrain_blend`, `place_signs` and the edge and closure authoring;
+- the underlay (P2 step 3), which ends "no blend yet"; the draft sync-back is exercised only once it exists.

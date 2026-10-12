@@ -304,16 +304,19 @@ def test_kink_stays_pending_until_it_has_a_radius():
         assert r["status"] == "PENDING" and rep["status"] == "PENDING"
         assert r["measured"]["kind"] == "kink" and r["measured"]["biggest_share"] > 0.5
         assert fh.main([str(proj), "--out-dir", str(tmp / "out2"), "--detect-deg", "0"]) == 3
-        # with a radius it is fitted, and the lateral-move ceiling says how far a fillet leaves the
-        # OSM line through a junction node
+        # with a radius it is fitted and spliced. A fillet leaves the junction node by more than 1.5 m;
+        # that move is REPORTED, never judged: where a line runs is tools/verify_centreline_paint.py's
+        # call, against the painted road (the former 1.5 m-from-OSM ceiling, removed 2026-10-11)
         rep = fh.run(proj, tmp / "out3", radius_cli={"K1": 10.0}, detect_deg=None)
         r = rep["corners"][0]
         assert r["radius_fit_m"] == 10.0 and r["gate"] == "PASS"
-        assert r["lateral_move_m"]["max"] > 1.5 and r["status"] == "FAIL" and not r["spliced"]
+        assert r["lateral_move_m"]["max"] > 1.5 and r["status"] == "PASS" and r["spliced"]
+        assert "verify_centreline_paint" in r["lateral_move_m"]["judged_by"] and "ceiling" not in r["lateral_move_m"]
+        assert "max_move_m" not in rep["params"]
         fitted = json.loads((tmp / "out3" / "centerline.fitted.geojson").read_text())
-        assert fitted["features"][0]["properties"]["point_count"] == len(line)  # a FAIL is never spliced
+        assert fitted["features"][0]["properties"]["point_count"] != len(line)  # spliced
         assert fh.main([str(proj), "--out-dir", str(tmp / "out4"), "--radius", "K1=10",
-                        "--detect-deg", "0"]) == 1
+                        "--detect-deg", "0"]) == 0
 
 
 def test_refusals():
@@ -347,9 +350,12 @@ def test_refusals():
 
 
 def test_lariat_base_hairpin():
-    """The real C1 on the current V3 centreline: 25 deg facets in, a smooth R ~12 m curve out."""
+    """The real C1 on the V3 OSM centreline (data/centerline.osm.geojson, the gps stage's line kept as a
+    source file; data/centerline.geojson is the paint centreline since 2026-10-11): 25 deg facets in, a
+    smooth R ~12 m curve out."""
     with tempfile.TemporaryDirectory() as td:
-        rep = fh.run(LARIAT, Path(td), only=["C1"], detect_deg=None)
+        rep = fh.run(LARIAT, Path(td), centerline=LARIAT / "data" / "centerline.osm.geojson", only=["C1"],
+                     detect_deg=None)
         (r,) = rep["corners"]
         assert r["id"] == "C1" and r["status"] == "PASS"
         assert r["before"]["max_step_deg"] >= 24.0  # dossier 4: the base hairpin's 25 deg step
@@ -358,3 +364,53 @@ def test_lariat_base_hairpin():
         assert r["after"]["max_adjacent_diff_deg"] <= 1.5 and r["after"]["spacing_m"] <= 1.0
         assert r["lateral_move_m"]["max"] <= 1.5
         assert 245.0 <= r["span"]["st_m"][0] < r["apex_st_m"] < r["span"]["st_m"][1] <= 310.0
+
+
+def test_climb_range_is_mapped_through_osm_station_m():
+    """hairpin_fit.climb_st_m is on the OSM source line; on a paint centreline (which carries each vertex's OSM
+    station as osm_station_m) the tool must count the climb over the vertices whose OSM station is in the range,
+    not over its own stations (the paint line is resampled at 1 m and moved onto the paint, so its own stations
+    and the OSM line's part company along the lap)."""
+    assert fh.climb_on_line(None, [0.0, 1.0]) is None
+    assert fh.climb_on_line([0, 50], [0.0, 10.0, 20.0]) == [0.0, 50.0]          # the OSM line itself: as declared
+    st = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]
+    osm = [300.0, 303.0, 306.0, 309.0, 312.0, 315.0]
+    assert fh.climb_on_line([303, 310], st, osm) == [1.0, 3.0]
+    try:
+        fh.climb_on_line([0, 100], st, osm)
+    except SystemExit as e:
+        assert "maps into" in str(e)
+    else:
+        raise AssertionError("a climb no vertex maps into must refuse")
+    pieces, apex_st = hairpin_pieces(R=12.0, turn_deg=180.0)
+    line = osm_like(trace(pieces))
+    with tempfile.TemporaryDirectory() as td:
+        tmp = Path(td)
+        # the OSM line had 300 m of road before this stretch: OSM stations = own stations + 300
+        proj = write_project(tmp, line, [{"id": "H1", "st_m": apex_st}], climb_st_m=[300.0, 300.0 + 2 * apex_st])
+        gp = proj / "data" / "centerline.geojson"
+        gj = json.loads(gp.read_text(encoding="utf-8"))
+        own = fh.stations(local(gj["features"][0]["geometry"]["coordinates"]))
+        gj["features"][0]["properties"]["osm_station_m"] = [s + 300.0 for s in own]
+        gp.write_text(json.dumps(gj), encoding="utf-8")
+        rep = fh.run(proj, tmp / "out", detect_deg=None)
+        c = rep["climb"]
+        assert c["climb_st_m_osm_line"] == [300.0, 300.0 + 2 * apex_st]
+        assert c["range_st_m"][0] == 0.0 and abs(c["range_st_m"][1] - 2 * apex_st) < 3.0, c["range_st_m"]
+        assert "osm_station_m" in c["range_frame"]
+        # the faceted hairpin is inside the mapped range, so its >= 10 deg facets are counted (read as own
+        # stations, [300, ...] lies past the end of this ~200 m line and counted nothing)
+        assert c["before"]["points_step_ge_10deg"] > 0, c["before"]
+
+
+def test_lariat_climb_on_the_paint_line_maps_to_its_own_stations():
+    gj = json.loads((LARIAT / "data" / "centerline.geojson").read_text(encoding="utf-8"))
+    f = next(f for f in gj["features"] if (f.get("properties") or {}).get("kind") == "full")
+    cfg = json.loads((LARIAT / "track.config.json").read_text(encoding="utf-8"))
+    climb = cfg["hairpin_fit"]["climb_st_m"]
+    st = fh.stations(local(f["geometry"]["coordinates"]))
+    osm = f["properties"]["osm_station_m"]
+    lo, hi = fh.climb_on_line(climb, st, osm)
+    n = sum(1 for s in osm if climb[0] <= s <= climb[1])
+    assert lo == 0.0 and n > 7000, (lo, n)                 # the climb starts at the pylons, v0, on both lines
+    assert abs(hi - climb[1]) > 1.0, (hi, climb)           # the two station scales differ: the mapping matters

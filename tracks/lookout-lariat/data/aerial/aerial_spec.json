@@ -1,0 +1,978 @@
+{
+ "schema": "airoso aerial measurement spec v1: the plan tools/aerial_measure.py runs and the observations an aerial cannot compute",
+ "_doc": "Read by tools/aerial_measure.py (ledger 0048). Two kinds of content. (1) The measurement plan: which NAIP windows, centred where; each corner's traced stretch (corner_plan, the P0 fitter run, so the measurement never depends on its own result); manual seeds; the width stations; the bridge crossings. (2) Authored observations: text written by eye off the imagery (what a shadow, a pull-off or a barrier line looks like), the dossier's figures for comparison and the reasons behind a choice. The tool computes every number; the text here is carried into aerial_measurements.json verbatim, with computed values filled where a template has {fields}. Written 2026-10-11 from the aerial pass's scratch scripts (lariat2/v2) when they were ported.",
+ "lap_centerline": "data/centerline.osm.geojson",
+ "_lap_centerline_doc": "The OSM centreline the windows were laid along (the gps stage's output, md5 28dcc7b644510179fe366eb56d3911e5); kept as a source file when data/centerline.geojson became the paint centreline.",
+ "osm_snapshot": "data/osm.cache.json",
+ "bridge_snapshot": "data/source-july/osm.widths.cache.json",
+ "imagery": {
+  "service": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer",
+  "epsg": 26913,
+  "utm_zone": 13,
+  "px_m": 0.3
+ },
+ "corner_plan": {
+  "source": "tools/fit_hairpins.py measured mode (every radius_m null) on the OSM centreline md5 28dcc7b644510179fe366eb56d3911e5, the P0 run of 2026-10-11 (scratch lariat/hairpins/hairpin_fit.json)",
+  "_doc": "apex_v / apex_st_m: the corner's apex vertex and station on the OSM line (geojson frame); span: the stretch the P0 fit replaced (the corner window is traced from 25 m before it to 25 m after); measured: the OSM line's own turn, core vertices and core-circle radius; radius_fit_m / status: the P0 fit, recorded as fitter_osm in the measurements.",
+  "corners": [
+   {
+    "id": "C1",
+    "apex_v": 93,
+    "apex_st_m": 278.6,
+    "measured": {
+     "turn_deg": -138.4,
+     "core_v": [
+      90,
+      95
+     ],
+     "radius_m": 11.952
+    },
+    "radius_fit_m": 11.95,
+    "status": "PASS",
+    "span": {
+     "v": [
+      83,
+      99
+     ],
+     "st_m": [
+      247.5,
+      297.8
+     ]
+    }
+   },
+   {
+    "id": "C2",
+    "apex_v": 355,
+    "apex_st_m": 1065.1,
+    "measured": {
+     "turn_deg": -131.8,
+     "core_v": [
+      350,
+      362
+     ],
+     "radius_m": 24.418
+    },
+    "radius_fit_m": 24.42,
+    "status": "PASS",
+    "span": {
+     "v": [
+      344,
+      368
+     ],
+     "st_m": [
+      1031.7,
+      1104.0
+     ]
+    }
+   },
+   {
+    "id": "C3",
+    "apex_v": 469,
+    "apex_st_m": 1407.1,
+    "measured": {
+     "turn_deg": -129.5,
+     "core_v": [
+      465,
+      473
+     ],
+     "radius_m": 16.116
+    },
+    "radius_fit_m": 16.12,
+    "status": "PASS",
+    "span": {
+     "v": [
+      459,
+      480
+     ],
+     "st_m": [
+      1377.1,
+      1440.7
+     ]
+    }
+   },
+   {
+    "id": "C4",
+    "apex_v": 866,
+    "apex_st_m": 2598.5,
+    "measured": {
+     "turn_deg": 173.4,
+     "core_v": [
+      862,
+      870
+     ],
+     "radius_m": 12.801
+    },
+    "radius_fit_m": 12.8,
+    "status": "PASS",
+    "span": {
+     "v": [
+      856,
+      873
+     ],
+     "st_m": [
+      2567.3,
+      2620.9
+     ]
+    }
+   },
+   {
+    "id": "C5",
+    "apex_v": 943,
+    "apex_st_m": 2829.7,
+    "measured": {
+     "turn_deg": -174.6,
+     "core_v": [
+      940,
+      947
+     ],
+     "radius_m": 10.545
+    },
+    "radius_fit_m": 10.54,
+    "status": "PASS",
+    "span": {
+     "v": [
+      934,
+      953
+     ],
+     "st_m": [
+      2801.0,
+      2859.8
+     ]
+    }
+   },
+   {
+    "id": "C6",
+    "apex_v": 1001,
+    "apex_st_m": 3003.9,
+    "measured": {
+     "turn_deg": 179.0,
+     "core_v": [
+      997,
+      1006
+     ],
+     "radius_m": 14.208
+    },
+    "radius_fit_m": 14.21,
+    "status": "PASS",
+    "span": {
+     "v": [
+      992,
+      1011
+     ],
+     "st_m": [
+      2975.7,
+      3034.2
+     ]
+    }
+   },
+   {
+    "id": "C7",
+    "apex_v": 1805,
+    "apex_st_m": 5415.1,
+    "measured": {
+     "turn_deg": -193.3,
+     "core_v": [
+      1801,
+      1812
+     ],
+     "radius_m": 15.855
+    },
+    "radius_fit_m": 12.1,
+    "status": "PASS",
+    "span": {
+     "v": [
+      1797,
+      1823
+     ],
+     "st_m": [
+      5390.8,
+      5469.3
+     ]
+    }
+   },
+   {
+    "id": "C8",
+    "apex_v": 1840,
+    "apex_st_m": 5519.9,
+    "measured": {
+     "turn_deg": 193.6,
+     "core_v": [
+      1835,
+      1844
+     ],
+     "radius_m": 11.802
+    },
+    "radius_fit_m": 11.8,
+    "status": "PASS",
+    "span": {
+     "v": [
+      1829,
+      1849
+     ],
+     "st_m": [
+      5486.5,
+      5549.2
+     ]
+    }
+   },
+   {
+    "id": "C9",
+    "apex_v": 1871,
+    "apex_st_m": 5612.5,
+    "measured": {
+     "turn_deg": -194.4,
+     "core_v": [
+      1868,
+      1876
+     ],
+     "radius_m": 12.031
+    },
+    "radius_fit_m": 11.78,
+    "status": "FAIL",
+    "span": {
+     "v": [
+      1862,
+      1887
+     ],
+     "st_m": [
+      5585.7,
+      5662.1
+     ]
+    }
+   },
+   {
+    "id": "C10",
+    "apex_v": 1958,
+    "apex_st_m": 5872.9,
+    "measured": {
+     "turn_deg": 177.7,
+     "core_v": [
+      1954,
+      1963
+     ],
+     "radius_m": 14.795
+    },
+    "radius_fit_m": 14.8,
+    "status": "PASS",
+    "span": {
+     "v": [
+      1950,
+      1971
+     ],
+     "st_m": [
+      5847.6,
+      5913.8
+     ]
+    }
+   },
+   {
+    "id": "C11",
+    "apex_v": 2155,
+    "apex_st_m": 6463.6,
+    "measured": {
+     "turn_deg": 99.6,
+     "core_v": [
+      2154,
+      2160
+     ],
+     "radius_m": 18.158
+    },
+    "radius_fit_m": 18.16,
+    "status": "PASS",
+    "span": {
+     "v": [
+      2147,
+      2164
+     ],
+     "st_m": [
+      6437.4,
+      6493.3
+     ]
+    }
+   },
+   {
+    "id": "C12",
+    "apex_v": 3248,
+    "apex_st_m": 9742.0,
+    "measured": {
+     "turn_deg": 88.9,
+     "core_v": [
+      3248,
+      3248
+     ],
+     "radius_m": null
+    },
+    "radius_fit_m": null,
+    "status": "PENDING"
+   },
+   {
+    "id": "C13",
+    "apex_v": 3538,
+    "apex_st_m": 10610.9,
+    "measured": {
+     "turn_deg": -81.7,
+     "core_v": [
+      3537,
+      3538
+     ],
+     "radius_m": null
+    },
+    "radius_fit_m": null,
+    "status": "PENDING"
+   }
+  ]
+ },
+ "hairpins": [
+  "C1",
+  "C2",
+  "C3",
+  "C4",
+  "C5",
+  "C6",
+  "C7",
+  "C8",
+  "C9",
+  "C10"
+ ],
+ "traced_unmeasured": [
+  "C11"
+ ],
+ "junctions": [
+  "C12",
+  "C13"
+ ],
+ "manual_seeds": {
+  "C7": [
+   479037.0,
+   4398180.0,
+   11.5
+  ]
+ },
+ "_manual_seeds_doc": "imagery-frame centre E, N and radius read off the zoomed C7 window (its apex is in shadow): an extra seed for the centre search and the seed of the ridge search",
+ "force_ridge": [
+  "C7"
+ ],
+ "turn_rule": {
+  "_default": "reference",
+  "C4": "legs",
+  "C7": "legs"
+ },
+ "_turn_rule_doc": "How each hairpin's turn (and so its core, the middle 60 % of the turn) is taken. 'reference': the heading of the paint-anchored trace reference integrated over the stretch; 'legs': the traced entry and exit legs (8 m each), unwrapped toward the OSM turn. The aerial pass measured C4 (a car parked on the apex) and C7 (apex in conifer shadow, where the integrated heading reads 164 deg for a 205 deg turn) with 'legs' and the rest with 'reference'; this keeps aerial_measurements.json reproducible. Switching a sunlit corner to 'legs' moves its core by a degree or two and its radius by a few cm.",
+ "width_stations": [
+  150,
+  700,
+  1250,
+  1600,
+  1900,
+  2050,
+  2150,
+  2250,
+  2400,
+  3150,
+  3250,
+  3550,
+  3800,
+  4100,
+  4350,
+  4600,
+  4850,
+  5150,
+  5300,
+  6100,
+  6200,
+  6300,
+  6600,
+  6700,
+  6800,
+  6900,
+  6980,
+  7050,
+  9850,
+  10150,
+  10400,
+  10850,
+  11150,
+  11450
+ ],
+ "windows": [
+  {
+   "id": "C1",
+   "kind": "corner",
+   "purpose": "corner C1",
+   "corner_apex_v": 93,
+   "half_m": 60.0
+  },
+  {
+   "id": "C10",
+   "kind": "corner",
+   "purpose": "corner C10",
+   "corner_apex_v": 1958,
+   "half_m": 60.0
+  },
+  {
+   "id": "C11",
+   "kind": "corner",
+   "purpose": "corner C11",
+   "corner_apex_v": 2155,
+   "half_m": 60.0
+  },
+  {
+   "id": "C12",
+   "kind": "corner",
+   "purpose": "corner C12",
+   "corner_apex_v": 3248,
+   "half_m": 60.0
+  },
+  {
+   "id": "C13",
+   "kind": "corner",
+   "purpose": "corner C13",
+   "corner_apex_v": 3538,
+   "half_m": 60.0
+  },
+  {
+   "id": "C2",
+   "kind": "corner",
+   "purpose": "corner C2",
+   "corner_apex_v": 355,
+   "half_m": 60.0
+  },
+  {
+   "id": "C3",
+   "kind": "corner",
+   "purpose": "corner C3",
+   "corner_apex_v": 469,
+   "half_m": 60.0
+  },
+  {
+   "id": "C4",
+   "kind": "corner",
+   "purpose": "corner C4",
+   "corner_apex_v": 866,
+   "half_m": 60.0
+  },
+  {
+   "id": "C5",
+   "kind": "corner",
+   "purpose": "corner C5",
+   "corner_apex_v": 943,
+   "half_m": 60.0
+  },
+  {
+   "id": "C6",
+   "kind": "corner",
+   "purpose": "corner C6",
+   "corner_apex_v": 1001,
+   "half_m": 60.0
+  },
+  {
+   "id": "C7",
+   "kind": "corner",
+   "purpose": "corner C7",
+   "corner_apex_v": 1805,
+   "half_m": 60.0
+  },
+  {
+   "id": "C8",
+   "kind": "corner",
+   "purpose": "corner C8",
+   "corner_apex_v": 1840,
+   "half_m": 60.0
+  },
+  {
+   "id": "C9",
+   "kind": "corner",
+   "purpose": "corner C9",
+   "corner_apex_v": 1871,
+   "half_m": 60.0
+  },
+  {
+   "id": "W00150",
+   "kind": "width",
+   "purpose": "width station st 150",
+   "station_m": 150,
+   "half_m": 25.05
+  },
+  {
+   "id": "W00700",
+   "kind": "width",
+   "purpose": "width station st 700",
+   "station_m": 700,
+   "half_m": 25.05
+  },
+  {
+   "id": "W01250",
+   "kind": "width",
+   "purpose": "width station st 1250",
+   "station_m": 1250,
+   "half_m": 25.05
+  },
+  {
+   "id": "W01600",
+   "kind": "width",
+   "purpose": "width station st 1600",
+   "station_m": 1600,
+   "half_m": 25.05
+  },
+  {
+   "id": "W01900",
+   "kind": "width",
+   "purpose": "width station st 1900",
+   "station_m": 1900,
+   "half_m": 25.05
+  },
+  {
+   "id": "W02050",
+   "kind": "width",
+   "purpose": "width station st 2050",
+   "station_m": 2050,
+   "half_m": 25.05
+  },
+  {
+   "id": "W02150",
+   "kind": "width",
+   "purpose": "width station st 2150",
+   "station_m": 2150,
+   "half_m": 25.05
+  },
+  {
+   "id": "W02250",
+   "kind": "width",
+   "purpose": "width station st 2250",
+   "station_m": 2250,
+   "half_m": 25.05
+  },
+  {
+   "id": "W02400",
+   "kind": "width",
+   "purpose": "width station st 2400",
+   "station_m": 2400,
+   "half_m": 25.05
+  },
+  {
+   "id": "W03150",
+   "kind": "width",
+   "purpose": "width station st 3150",
+   "station_m": 3150,
+   "half_m": 25.05
+  },
+  {
+   "id": "W03250",
+   "kind": "width",
+   "purpose": "width station st 3250",
+   "station_m": 3250,
+   "half_m": 25.05
+  },
+  {
+   "id": "W03550",
+   "kind": "width",
+   "purpose": "width station st 3550",
+   "station_m": 3550,
+   "half_m": 25.05
+  },
+  {
+   "id": "W03800",
+   "kind": "width",
+   "purpose": "width station st 3800",
+   "station_m": 3800,
+   "half_m": 25.05
+  },
+  {
+   "id": "W04100",
+   "kind": "width",
+   "purpose": "width station st 4100",
+   "station_m": 4100,
+   "half_m": 25.05
+  },
+  {
+   "id": "W04350",
+   "kind": "width",
+   "purpose": "width station st 4350",
+   "station_m": 4350,
+   "half_m": 25.05
+  },
+  {
+   "id": "W04600",
+   "kind": "width",
+   "purpose": "width station st 4600",
+   "station_m": 4600,
+   "half_m": 25.05
+  },
+  {
+   "id": "W04850",
+   "kind": "width",
+   "purpose": "width station st 4850",
+   "station_m": 4850,
+   "half_m": 25.05
+  },
+  {
+   "id": "W05150",
+   "kind": "width",
+   "purpose": "width station st 5150",
+   "station_m": 5150,
+   "half_m": 25.05
+  },
+  {
+   "id": "W05300",
+   "kind": "width",
+   "purpose": "width station st 5300",
+   "station_m": 5300,
+   "half_m": 25.05
+  },
+  {
+   "id": "W06100",
+   "kind": "width",
+   "purpose": "width station st 6100",
+   "station_m": 6100,
+   "half_m": 25.05
+  },
+  {
+   "id": "W06200",
+   "kind": "width",
+   "purpose": "width station st 6200",
+   "station_m": 6200,
+   "half_m": 25.05
+  },
+  {
+   "id": "W06300",
+   "kind": "width",
+   "purpose": "width station st 6300",
+   "station_m": 6300,
+   "half_m": 25.05
+  },
+  {
+   "id": "W06600",
+   "kind": "width",
+   "purpose": "width station st 6600",
+   "station_m": 6600,
+   "half_m": 25.05
+  },
+  {
+   "id": "W06700",
+   "kind": "width",
+   "purpose": "width station st 6700",
+   "station_m": 6700,
+   "half_m": 25.05
+  },
+  {
+   "id": "W06800",
+   "kind": "width",
+   "purpose": "width station st 6800",
+   "station_m": 6800,
+   "half_m": 25.05
+  },
+  {
+   "id": "W06900",
+   "kind": "width",
+   "purpose": "width station st 6900",
+   "station_m": 6900,
+   "half_m": 25.05
+  },
+  {
+   "id": "W06980",
+   "kind": "width",
+   "purpose": "width station st 6980",
+   "station_m": 6980,
+   "half_m": 25.05
+  },
+  {
+   "id": "W07050",
+   "kind": "width",
+   "purpose": "width station st 7050",
+   "station_m": 7050,
+   "half_m": 25.05
+  },
+  {
+   "id": "W09850",
+   "kind": "width",
+   "purpose": "width station st 9850",
+   "station_m": 9850,
+   "half_m": 25.05
+  },
+  {
+   "id": "W10150",
+   "kind": "width",
+   "purpose": "width station st 10150",
+   "station_m": 10150,
+   "half_m": 25.05
+  },
+  {
+   "id": "W10400",
+   "kind": "width",
+   "purpose": "width station st 10400",
+   "station_m": 10400,
+   "half_m": 25.05
+  },
+  {
+   "id": "W10850",
+   "kind": "width",
+   "purpose": "width station st 10850",
+   "station_m": 10850,
+   "half_m": 25.05
+  },
+  {
+   "id": "W11150",
+   "kind": "width",
+   "purpose": "width station st 11150",
+   "station_m": 11150,
+   "half_m": 25.05
+  },
+  {
+   "id": "W11450",
+   "kind": "width",
+   "purpose": "width station st 11450",
+   "station_m": 11450,
+   "half_m": 25.05
+  },
+  {
+   "id": "X19340",
+   "kind": "crossing",
+   "purpose": "C-470 crossing over West Colfax (lap st ~19,345)",
+   "centre_utm13n": [
+    482989.0,
+    4396820.0
+   ],
+   "half_m": 75.0
+  },
+  {
+   "id": "X21138",
+   "kind": "crossing",
+   "purpose": "C-470 crossing over US-6 (lap st ~21,138)",
+   "centre_utm13n": [
+    482925.5,
+    4397275.5
+   ],
+   "half_m": 75.0
+  }
+ ],
+ "crossings": [
+  {
+   "id": "X19340",
+   "name": "C-470 over West Colfax Ave",
+   "axis_ways": [
+    84720931,
+    84720904
+   ],
+   "lap_st_m": 19345.2,
+   "ways_on_structure": [
+    84721006,
+    84720931,
+    84720904,
+    1459465701
+   ],
+   "draw_ways": [
+    84721006,
+    84720931,
+    84720904,
+    1459465701
+   ],
+   "sunlit_side": "hi",
+   "corridor_stations": [
+    19295,
+    19305,
+    19315,
+    19380,
+    19390,
+    19400
+   ]
+  },
+  {
+   "id": "X21138",
+   "name": "C-470 (northbound, to US 6 West) over US-6",
+   "axis_ways": [
+    84720905
+   ],
+   "lap_st_m": 21137.6,
+   "ways_on_structure": [
+    84720905
+   ],
+   "draw_ways": [
+    84720905
+   ],
+   "sunlit_side": "hi",
+   "corridor_stations": [
+    21100,
+    21110,
+    21165,
+    21175
+   ]
+  }
+ ],
+ "bridge_way_ids": [
+  84720931,
+  84720904,
+  84721006,
+  1459465701,
+  84720905
+ ],
+ "datum_check": {
+  "lat": 39.733,
+  "lon": -105.245,
+  "h_m": 2000.0,
+  "epoch": 2019.7,
+  "_doc": "where the NGS 14-parameter ITRF2008 -> NAD83(2011) shift is evaluated for the registration's explanation"
+ },
+ "segments": [
+  {
+   "name": "Golden (Lookout Mountain Rd, st 0-1,070)",
+   "below_m": 1070
+  },
+  {
+   "name": "Lariat Trail climb (st 1,070-7,100)",
+   "up_to_m": 7100
+  },
+  {
+   "name": "Paradise Rd (st 9,710-11,652)"
+  }
+ ],
+ "summary_ranges": {
+  "climb_m": [
+   1070,
+   7100
+  ],
+  "paradise_from_m": 9700
+ },
+ "text": {
+  "schema": "airoso lariat aerial pass v1 (2026-10-11): measurements only, no geometry was changed",
+  "ledger": "fleet/feedback/0048 (Lookout Lariat V3), V3-PLAN dossier section 12 'aerial owed'",
+  "source": {
+   "imagery": "USDA NAIP (National Agriculture Imagery Program), Colorado 2019, 4-band (R, G, B, NIR), 0.6 m ground sample distance",
+   "service": "USGS The National Map, USGSNAIPImagery ImageServer (https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer), exportImage, ArcGIS 11.3",
+   "year_note": "2019 is the only Colorado NAIP year this service (and its NAIP Plus sibling) carries over the lap; the catalog query returns 2019 rasters at every window. USDA's APFO NAIP service (which carries later years) refused the connection from this machine, so no newer flight was used.",
+   "licence": "public domain (US federal government work; USDA FSA NAIP distributed by USGS). Credit line requested by the service: 'USGS, USDA, The National Map: Orthoimagery'.",
+   "request": "each window requested twice (bandIds 0,1,2 = true colour; 3,0,1 = colour infrared, NIR first) in EPSG:26913 (NAD83 / UTM zone 13N, the DOQQs' own projection, so the server does not reproject), bboxSR = imageSR = 26913, PNG, bilinear, 0.3 m pixels (the service's own pixel; the source is 0.6 m, so the effective resolution is 0.6 m)",
+   "tls": "fetched with certificate verification on (scripts/tls.https_context, the OS verifier)",
+   "georeferencing": "none applied by hand: the exportImage bbox is the georeference (pixel centre = xmin + (i + 0.5) * 0.3, ymax - (j + 0.5) * 0.3). OSM lon/lat (WGS84) was put on the same grid with the GRS80 transverse-Mercator series and NO datum shift, then the remaining offset was measured (registration below)."
+  },
+  "registration_method": "the traced double-yellow centre line vs the raw OSM way geometry in data/osm.cache.json, on straight stretches only (radius > 120 m over 12 m; OSM chords cut hairpins), model d = n . v per point, solved per window and overall with each window weighted equally",
+  "registration_explained_by_datum": "The NGS 14-parameter ITRF2008 -> NAD83(2011) transformation (Pearson & Snay 2013) predicts ITRF/WGS84 minus NAD83(2011) = {pred_e:+.2f} m E, {pred_n:+.2f} m N ({pred_mag:.2f} m) here at epoch {epoch}. The measured OSM-minus-imagery offset is {meas_e:+.2f} m E, {meas_n:+.2f} m N. So the whole systematic offset is the NAD83 vs WGS84 datum, not mapping; OSM's own placement scatters {rms:.2f} m rms around the painted centre line on straight road.",
+  "registration_how_coordinates": "utm13n_nad83 = imagery frame (as measured). lonlat_wgs84 = the same point moved by the measured offset (+v) and converted, i.e. directly comparable with OSM, data/centerline.geojson and track.config.json.",
+  "local_frame_note": "lap stations (st, metres from geojson v0 in the plan frame, as tools/fit_hairpins.py) are the same stations the corner table, the dossier and hairpin_fit use",
+  "methods": {
+   "hairpins_C1_C10": "1) trace the lap through the corner window with profiles every 0.5 m normal to a reference that starts as the OSM line and is moved onto the traced double-yellow line (3 passes); 2) entry and exit headings from the traced legs give the turn; the core is headings 20-80 % of the turn, as tools/fit_hairpins.py; 3) rays from a centre (seeded three ways, iterated on the yellow paint) every 0.5 deg over the core: yellow line, both white edge lines, both pavement edges on each ray; 4) one centre + two radii fitted to the inner and outer edge sets (pavement edges, then painted edge lines), robust trimming at max(0.3 m, 2.5 rms); 5) radius_m = mean of the pavement-edge pair when it is clean (both sides traced on >= 40 % of the core rays, rms <= 0.35 m) and within 1.0 m of the painted estimates, else the mean of the painted edge-line pair, else the yellow line; confidence from the agreement of the independent estimates.",
+   "junctions_C12_C13": "the arms' inside pavement edges as straight lines, the kerb return as an arc tangent to both (one parameter, scanned 3-33 m then 0.1 m), fitted to the inside-corner edge found by walking rays out of the grass until the surface matches this window's asphalt; lap-centreline radius = R_fillet + the arms' inside half-width."
+  },
+  "thresholds_doc": "all [invented] for this pass; none is a gate. They decide which estimate is reported, and the overlays show every traced point so a reader can disagree.",
+  "widths": {
+   "method": "Profiles every 0.5 m across +-18 m of road at each station (and through every corner window). On each profile: the double-yellow centre line (yellow-paint peak with asphalt both sides), the two white edge lines (brightness ridges 2.0-5.2 m either side of it), and the two pavement edges (walking outward from each edge line until the surface stops matching this window's own asphalt in NDVI, chroma and brightness for >= 0.45 m; z = 3). Values are medians over the profiles; p10/p90 show the spread. Profiles whose edge borders tree shadow are dropped.",
+   "two_widths_why": "'edge_line_width' is centre-to-centre of the painted white edge lines (the travelled way). 'pavement_width' is the surfaced width to where the surface stops looking like asphalt; at 0.6 m GSD gravel shoulders, dirt pull-offs and old patching can read as asphalt, so it is an upper bound on the paved width, not a survey of it."
+  },
+  "widths_versus_dossier": "Dossier: 2 lanes averaging 3.35 m (6.7 m paved), as narrow as 6.1 m, lanes 2.74 m at the Tiers of Zion switchbacks (st ~2,500-3,100). Aerial: the painted travelled way on the climb is 5.9-6.8 m between edge-line centres (median of stations ~6.4 m), lanes 2.9-3.4 m; it is narrowest on the upper climb (5.9-6.1 m at st 5,150-6,200). The hairpin legs at the Tiers of Zion (C4-C6) carry 6.4-6.9 m between edge lines with ~3.2-3.4 m lanes: the aerial does NOT show 2.74 m lanes there; at the apexes the inner lane widens to 2.8-4.6 m (see each corner's apex_cross_section). Surfaced width including the margin beyond the edge lines is typically 7.0-9.2 m (0.2-1.8 m beyond each edge line), so 'no paved shoulder' is consistent with a narrow strip of asphalt or gravel outside the stripe that NAIP cannot separate.",
+  "station_notes": {
+   "150": "Golden street: no painted edge lines; the pavement run includes the parking/gutter strip",
+   "4100": "outside of the st ~4,100 bend is a paved/gravel pull-off; the pavement width includes it",
+   "6980": "few profiles; near the summit, edge lines may be a turn-lane taper",
+   "10400": "junction/driveway area, few profiles",
+   "11150": "at a junction mouth / Park-n-Ride side; pavement includes the junction"
+  },
+  "edges": {
+   "what_an_aerial_can_and_cannot_show": "At 0.6 m GSD, top-down, mid-morning sun from the ESE (shadows fall WNW): a continuous thin dark line beside the pavement means something stands or drops there (a W-beam rail, a low stone or concrete wall, a kerb, or the lip of a steep fill slope); a row of separate dark marks at a regular 2-3 m spacing means posts or separate blocks. Neither tells stone from steel from concrete, nor its height, nor how deep a drop is. Stone vs W-beam needs Street View or a site visit; drop heights need 3DEP. Statements below say what is visible, not what it is.",
+   "per_corner": {
+    "C1": "Outer (east to south) edge: a continuous thin dark line ~0.5 m beyond the pavement for ~35-40 m from the north leg round to the apex (30 % of core rays show a narrow dark band right outside the edge): consistent with a barrier or an edge drop. South-west of the apex, outside the hairpin: a broad bare-dirt pull-off adjoining the pavement (the outer pavement-edge fit swings out across it). Inside: dry grass/dirt, flush. Lanes at the apex 4.6 m (inner) and 4.9 m (outer).",
+    "C2": "Wide clean apron on the outside; inside the bend a gravel/dirt area and a dirt track leaving south from the apex (the Chimney Gulch trail crossing / pull-off). No continuous barrier line visible.",
+    "C3": "Inside of the apex: a row of small dark/reddish marks at ~2-3 m spacing along the pavement edge (posts or separate blocks) and a large dirt pull-off behind them. Outside (south-east): the ground falls into dense shrubs and tree shadow; no edge line visible there.",
+    "C4": "Outside of the apex (west): a broad gravel apron reaching ~3.4 m beyond the edge line, with small dark marks along its outer rim. Inside: bare dirt; a car stood at the apex on the inner lane on the flight day (it masks part of the inner edge).",
+    "C5": "Outside of the apex (east): light-grey apron/pull-off. Inside: shrubs and their shadows right at the edge (inner pavement edge traced on only 17 % of the core). No barrier line visible.",
+    "C6": "Inside: a gravel pull-off between the legs (a car parked on it, ~15 x 10 m). Outside apex (west): light apron, scattered shrubs. No barrier line visible.",
+    "C7": "A row of separate dark marks at ~2-3 m spacing along the west side of the east leg (inside the hairpin) running toward the apex; the apex and its outside are in conifer shadow.",
+    "C8": "A row of separate dark marks ~1.5-2 m beyond the outer pavement edge around the apex (spacing ~3 m) and along the inside of the east leg; outside the apex a triangular dirt pull-off.",
+    "C9": "Inside: bare soil, flush. Outside of the apex: conifer shadow (outer pavement edge traced on 21 % of the core). Along the outer side of the east leg a thin bluish-grey line, which could be galvanized W-beam, unconfirmed.",
+    "C10": "Outside of the apex (north): light apron; dense conifers to the west. Inside: dirt with shrubs. No barrier line visible in the sunlit part.",
+    "C11": "Not visible: the bend is in deep conifer shadow.",
+    "C12": "Junction of Lookout Mountain Rd and Paradise Rd: the inside (east) corner is a dirt/grass triangle with a shrub on the kerb return; Lookout Mountain Rd carries wide paved shoulders (~14 m pavement, 7.2 m between edge lines).",
+    "C13": "Inside (south-west) corner: a smooth kerb return onto open grass with a small structure inside; the outside of the bend is the mouth of the road continuing east."
+   },
+   "along_the_climb": [
+    "st ~1,900 (Lariat Scenic View / Tiers of Zion area): a continuous thin dark line along the east edge for the whole 50 m window (39 % of profiles show a narrow dark band right outside the pavement): a barrier-like line; the dossier maps a metal rail near st 1,651 and concrete at Sensation Point (~2,225).",
+    "st ~4,100 (the undeclared ~90 deg bend): a paved or gravel pull-off on the outside of the bend, ~4 m wide beyond the edge line, with a dotted dark rim (posts or blocks).",
+    "st ~4,600: a continuous dark line along the east (outer) side of the curve (46 % of profiles), barrier-like.",
+    "Upper climb st ~6,200-7,000 (north-facing): mostly in conifer shadow; edges not readable except in sunlit gaps.",
+    "No dark line, flush dirt/grass edges: st ~1,250, 1,600, 2,050, 3,150, 3,550, 3,800, 4,350, 4,850, 5,150, 5,300 (the painted edge lines sit 0.2-1.8 m inside where the surface turns to soil or grass)."
+   ],
+   "stone_vs_w_beam": "Not determinable from NAIP. The rows of separate marks (C3, C7, C8, st ~4,100) are at least consistent with the dossier's gapped stone guardrails or with post-mounted rails; the continuous lines (C1, st ~1,900, ~4,600) with W-beam or a low wall. Street View is needed before any of these is authored as stone.",
+   "pullouts_seen": [
+    "C1 outside (south-west), large dirt",
+    "C2 inside, gravel + trail",
+    "C3 inside, dirt",
+    "C4 outside apron, gravel",
+    "C5 outside, light apron",
+    "C6 inside, gravel (car parked)",
+    "C8 outside the apex, dirt triangle",
+    "st ~4,100 outside the bend"
+   ]
+  },
+  "c470_how": "Profiles every 1 m across the deck axis (the OSM C-470 way, moved into the imagery frame), +-45 m along it; the deck is the bright low-NDVI concrete run through the axis, its edges at the 50 % brightness crossing; sections within +-15 m of the lap kept, merged ones (> 1.5 m over the median) dropped; straight lines fitted to each edge; the lap line (moved into the imagery frame) intersected with them.",
+  "c470_osm_source": "C-470 is not in the V3 route snapshot (data/osm.cache.json); its bridge ways come from the restored July Overpass payload data/source-july/osm.widths.cache.json (fetched 2026-07-27, fingerprint 253170f584109f60), read only",
+  "c470_per_crossing_notes": {
+   "X19340": "C-470 over West Colfax at lap st 19,334-19,374. One continuous concrete surface 35.7 m wide (p10-p90 34.6-36.5) carries four OSM roadways: both C-470 carriageways (84720931 south-bound, 84720904 north-bound) and both links (84721006, 1459465701). One dark longitudinal line runs ~4.5 m east of the south-bound axis (a median barrier or a joint between parallel decks; not resolvable). Crossing angle 65.3 deg; the lap runs ~40 m in its shadow line-of-sight. Colfax's paved corridor (roadway + median + sidewalks) is ~22-29 m wide across its own axis near the deck, so the structure must open at least ~24-32 m along the C-470 axis; the abutment faces are not visible from above. A continuous dark band along the deck's west side is its shadow and/or exposed west face.",
+   "X21138": "C-470 north-bound (way 84720905, to US 6 West) over US-6 at lap st 21,126-21,146. A single curved deck 13.2 m wide (p10-p90 12.9-13.4) crossing at 42.6 deg; the lap runs ~20 m under it. OSM tags the whole 462 m way as bridge: it is a long curved viaduct, so there are no abutments near the lap; piers are hidden under the deck and in its shadow. The deck's shadow band on its south-west side is continuous.",
+   "relief_displacement": "NAIP is orthorectified to bare earth, so anything standing above the ground (a deck ~6-8 m up) is displaced radially away from the image nadir by up to a few metres. Deck widths and angles are reliable; the deck footprint's absolute position carries ~+-2-4 m (not correctable without the flight's nadir/camera data). Ground-level features (the lap road, hairpins) are not affected.",
+   "clearance": "Not measurable from a vertical photo; Street View or CDOT bridge records are needed."
+  },
+  "corners": {
+   "C1": {
+    "dossier": "~164 deg, R~12 m (OSM line)"
+   },
+   "C2": {
+    "dossier": "138 deg"
+   },
+   "C3": {
+    "dossier": "133 deg"
+   },
+   "C4": {
+    "dossier": "178-189 deg, R~12-14 m"
+   },
+   "C5": {
+    "dossier": "178-189 deg, R~12-14 m"
+   },
+   "C6": {
+    "dossier": "178-189 deg, R~12-14 m"
+   },
+   "C7": {
+    "dossier": "181-199 deg, R~12-14 m"
+   },
+   "C8": {
+    "dossier": "181-199 deg, R~12-14 m"
+   },
+   "C9": {
+    "dossier": "181-199 deg, R~12-14 m"
+   },
+   "C10": {
+    "dossier": "181-199 deg, R~12-14 m"
+   },
+   "C11": {
+    "dossier": "121-123 deg"
+   },
+   "C12": {
+    "dossier": "90 deg left, R~13 m"
+   },
+   "C13": {
+    "dossier": "R~12 m"
+   }
+  },
+  "corner_osm_offset_phrase": {
+   "C4": "cuts the hairpin short (its apex sits ~7 m inside the painted apex)",
+   "_default": "sits inside the painted curve"
+  },
+  "corner_osm_offset_note": "the OSM lap line runs {median:.1f} m (median) / {max:.1f} m (max) from the painted centre line through the core, after the datum shift: OSM {phrase} here. tools/fit_hairpins.py measures its 1.5 m sideways limit against OSM, so feeding this radius alone cannot put the curve on the road; anchor the arc on centre.lonlat_wgs84 instead",
+  "corner_shape_notes": {
+   "C9": "shape: the yellow line tightens to R ~9.5 m at the apex (10 m sliding circles), the core (20-80 % of the turn) fits R 10.9 m (yellow) / 11.3 m (edge lines), then the exit eases out smoothly over ~40 m: R ~15 m at st ~5,622, ~30 m at ~5,630, ~50 m at ~5,640-5,650, > 100 m by ~5,655, with no step. So OSM's 'uneven 45 deg tail with a 10 deg step' is mapping facets on a long spiral-like exit, not a second arc; the OSM line is within {osm_max:.2f} m of the paint through the core. A core arc of R ~11.3 m with a long exit transition (~40-50 m) matches the road; the fitter's single-radius + short-spiral attempts fail its 1.5 m limit on that exit"
+  },
+  "unmeasured": {
+   "C11": {
+    "radius_method": "not measurable on this flight",
+    "notes": [
+     "The bend sits on a north-facing slope under a closed conifer canopy; at the 2019-09-19 mid-morning acquisition the whole apex and exit are in deep tree shadow (mean RGB ~25-30 on the road). Only the north-west entry leg is sunlit (about 25 m, edge lines ~7.5 m apart). A gamma-stretched colour-infrared view shows the road only as a faint low-NIR band under the trees, not sharp enough to place edges or paint. The fitter's OSM-derived R 18.16 m is unconfirmed by the aerial; a leaf-off or different-sun-angle image, or Street View, is needed."
+    ]
+   }
+  },
+  "junction_free_fit_phrase": {
+   "C12": "a shrub notch in the kerb line",
+   "C13": "a slightly flattened kerb line"
+  },
+  "junction_notes": {
+   "C12": "Lookout Mountain Rd arm (arriving) is ~14 m of pavement with ~7.2 m between its painted edge lines (wide paved shoulders), so its inside half-width (6.5 m) is larger than Paradise Rd's (5.1 m); with the dossier's 6.7 m ribbon centred on the lap, R ~ R_fillet + 3.35 = {ribbon_R:.1f} m would put the ribbon's inside edge on the kerb return",
+   "C13": "the outside of this bend is the mouth of the road continuing east, so there is no outer edge to pair; with a 6.7 m ribbon centred on the lap, R ~ R_fillet + 3.35 = {ribbon_R:.1f} m puts its inside edge on the kerb return"
+  }
+ }
+}

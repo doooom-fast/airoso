@@ -2,13 +2,13 @@
  "tool": "tools/route_oneway_check.py",
  "frame": "input lon/lat (WGS84); matching in local ENU metres (x=E, y=N) about the centreline's own centroid, WGS84 metres-per-degree series; stations = metres along the centreline in increasing-vertex (forward) order from v0",
  "centerline": {
-  "path": "C:\\Users\\Owner\\Documents\\GitHub\\airoso\\tracks\\lookout-lariat\\data\\centerline.geojson",
-  "points": 8302,
-  "length_m": 24905.7,
+  "path": "tracks\\lookout-lariat\\data\\centerline.geojson",
+  "points": 14445,
+  "length_m": 24914.2,
   "closed": true
  },
  "snapshot": {
-  "path": "C:\\Users\\Owner\\Documents\\GitHub\\airoso\\tracks\\lookout-lariat\\data\\osm.cache.json",
+  "path": "tracks\\lookout-lariat\\data\\osm.cache.json",
   "query_fingerprint": "93e1c28d8828c2f2",
   "fetched_utc": "2026-10-11T19:29:58Z",
   "osm_base": "2026-10-11T19:28:01Z",
@@ -18,17 +18,47 @@
   "snap_m": 3.0,
   "min_cos": 0.7
  },
- "matched_m": 24891.2,
- "unmatched_m": 14.5,
+ "matched_m": 24822.0,
+ "unmatched_m": 92.5,
  "unmatched_runs": [
+  {
+   "segments": 32,
+   "length_m": 32.0,
+   "vertex_from": 2593,
+   "vertex_to": 2625,
+   "st_from_m": 2591.0,
+   "st_to_m": 2622.9,
+   "drive_st_from_m": 2591.0,
+   "matched": false
+  },
+  {
+   "segments": 12,
+   "length_m": 12.0,
+   "vertex_from": 5862,
+   "vertex_to": 5874,
+   "st_from_m": 5857.3,
+   "st_to_m": 5869.3,
+   "drive_st_from_m": 5857.3,
+   "matched": false
+  },
+  {
+   "segments": 34,
+   "length_m": 34.0,
+   "vertex_from": 5892,
+   "vertex_to": 5926,
+   "st_from_m": 5887.3,
+   "st_to_m": 5921.3,
+   "drive_st_from_m": 5887.3,
+   "matched": false
+  },
   {
    "segments": 5,
    "length_m": 14.5,
-   "vertex_from": 6756,
-   "vertex_to": 6761,
-   "st_from_m": 20268.9,
-   "st_to_m": 20283.4,
-   "drive_st_from_m": 20268.9,
+   "vertex_from": 12860,
+   "vertex_to": 12865,
+   "st_from_m": 20277.8,
+   "st_to_m": 20292.3,
+   "drive_st_from_m": 20277.8,
    "matched": false
   }
  ],
@@ -42,8 +72,8 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 47.9,
-   "first_st_m": 6.0,
+   "length_m": 46.0,
+   "first_st_m": 7.0,
    "travel_vs_nodes": 1
   },
   {
@@ -55,8 +85,8 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 164.8,
-   "first_st_m": 53.9,
+   "length_m": 164.9,
+   "first_st_m": 53.0,
    "travel_vs_nodes": 1
   },
   {
@@ -68,8 +98,8 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 149.9,
-   "first_st_m": 218.7,
+   "length_m": 150.9,
+   "first_st_m": 217.8,
    "travel_vs_nodes": 1
   },
   {
@@ -81,8 +111,8 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 444.4,
-   "first_st_m": 368.6,
+   "length_m": 444.7,
+   "first_st_m": 368.7,
    "travel_vs_nodes": 1
   },
   {
@@ -94,8 +124,8 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 249.1,
-   "first_st_m": 813.0,
+   "length_m": 248.8,
+   "first_st_m": 813.4,
    "travel_vs_nodes": 1
   },
   {
@@ -107,7 +137,7 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 1485.3,
+   "length_m": 1484.8,
    "first_st_m": 1062.2,
    "travel_vs_nodes": 1
   },
@@ -120,8 +150,8 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 129.0,
-   "first_st_m": 2547.5,
+   "length_m": 108.9,
+   "first_st_m": 2547.0,
    "travel_vs_nodes": 1
   },
   {
@@ -133,8 +163,8 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 108.2,
-   "first_st_m": 2676.5,
+   "length_m": 108.9,
+   "first_st_m": 2687.9,
    "travel_vs_nodes": 1
   },
   {
@@ -146,8 +176,8 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 114.0,
-   "first_st_m": 2784.8,
+   "length_m": 114.9,
+   "first_st_m": 2796.8,
    "travel_vs_nodes": 1
   },
   {
@@ -159,8 +189,8 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 75.2,
-   "first_st_m": 2898.7,
+   "length_m": 73.9,
+   "first_st_m": 2911.7,
    "travel_vs_nodes": 1
   },
   {
@@ -172,8 +202,8 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 98.9,
-   "first_st_m": 2973.9,
+   "length_m": 101.9,
+   "first_st_m": 2985.6,
    "travel_vs_nodes": 1
   },
   {
@@ -185,8 +215,8 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 2399.2,
-   "first_st_m": 3072.8,
+   "length_m": 2396.1,
+   "first_st_m": 3087.5,
    "travel_vs_nodes": 1
   },
   {
@@ -198,8 +228,8 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 83.7,
-   "first_st_m": 5472.0,
+   "length_m": 80.9,
+   "first_st_m": 5483.7,
    "travel_vs_nodes": 1
   },
   {
@@ -211,8 +241,8 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 30.0,
-   "first_st_m": 5555.7,
+   "length_m": 31.0,
+   "first_st_m": 5564.6,
    "travel_vs_nodes": 1
   },
   {
@@ -224,8 +254,8 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 71.7,
-   "first_st_m": 5585.7,
+   "length_m": 69.9,
+   "first_st_m": 5595.6,
    "travel_vs_nodes": 1
   },
   {
@@ -237,8 +267,8 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 170.7,
-   "first_st_m": 5657.3,
+   "length_m": 169.9,
+   "first_st_m": 5665.5,
    "travel_vs_nodes": 1
   },
   {
@@ -250,8 +280,8 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 80.7,
-   "first_st_m": 5828.1,
+   "length_m": 40.0,
+   "first_st_m": 5835.4,
    "travel_vs_nodes": 1
   },
   {
@@ -263,8 +293,8 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 1433.5,
-   "first_st_m": 5908.8,
+   "length_m": 1428.8,
+   "first_st_m": 5921.3,
    "travel_vs_nodes": 1
   },
   {
@@ -277,7 +307,7 @@
     "lanes": "2"
    },
    "length_m": 213.4,
-   "first_st_m": 7342.3,
+   "first_st_m": 7350.1,
    "travel_vs_nodes": -1
   },
   {
@@ -290,7 +320,7 @@
     "lanes": "2"
    },
    "length_m": 1550.8,
-   "first_st_m": 7555.7,
+   "first_st_m": 7563.5,
    "travel_vs_nodes": -1
   },
   {
@@ -301,8 +331,8 @@
     "ref": "CR 68",
     "lanes": "2"
    },
-   "length_m": 635.4,
-   "first_st_m": 9106.5,
+   "length_m": 635.8,
+   "first_st_m": 9114.2,
    "travel_vs_nodes": 1
   },
   {
@@ -311,8 +341,8 @@
     "highway": "residential",
     "name": "Paradise Road"
    },
-   "length_m": 381.0,
-   "first_st_m": 9742.0,
+   "length_m": 381.4,
+   "first_st_m": 9750.0,
    "travel_vs_nodes": 1
   },
   {
@@ -321,8 +351,8 @@
     "highway": "residential",
     "name": "Paradise Road"
    },
-   "length_m": 290.4,
-   "first_st_m": 10122.9,
+   "length_m": 291.5,
+   "first_st_m": 10131.4,
    "travel_vs_nodes": 1
   },
   {
@@ -331,8 +361,8 @@
     "highway": "residential",
     "name": "Paradise Road"
    },
-   "length_m": 197.6,
-   "first_st_m": 10413.3,
+   "length_m": 198.7,
+   "first_st_m": 10422.9,
    "travel_vs_nodes": 1
   },
   {
@@ -341,8 +371,8 @@
     "highway": "residential",
     "name": "Paradise Road"
    },
-   "length_m": 1001.6,
-   "first_st_m": 10610.9,
+   "length_m": 1000.2,
+   "first_st_m": 10621.5,
    "travel_vs_nodes": 1
   },
   {
@@ -352,7 +382,7 @@
     "name": "Paradise Road"
    },
    "length_m": 74.9,
-   "first_st_m": 11612.5,
+   "first_st_m": 11621.7,
    "travel_vs_nodes": 1
   },
   {
@@ -364,7 +394,7 @@
     "lanes": "3"
    },
    "length_m": 74.5,
-   "first_st_m": 11687.4,
+   "first_st_m": 11696.6,
    "travel_vs_nodes": 1
   },
   {
@@ -375,8 +405,8 @@
     "oneway": "no",
     "lanes": "3"
    },
-   "length_m": 4092.5,
-   "first_st_m": 11761.9,
+   "length_m": 4092.2,
+   "first_st_m": 11771.1,
    "travel_vs_nodes": 1
   },
   {
@@ -388,7 +418,7 @@
     "lanes": "3"
    },
    "length_m": 63.0,
-   "first_st_m": 15854.4,
+   "first_st_m": 15863.3,
    "travel_vs_nodes": 1
   },
   {
@@ -400,7 +430,7 @@
     "lanes": "3"
    },
    "length_m": 60.0,
-   "first_st_m": 15917.3,
+   "first_st_m": 15926.3,
    "travel_vs_nodes": 1
   },
   {
@@ -412,7 +442,7 @@
     "lanes": "3"
    },
    "length_m": 63.0,
-   "first_st_m": 15977.3,
+   "first_st_m": 15986.3,
    "travel_vs_nodes": 1
   },
   {
@@ -424,7 +454,7 @@
     "lanes": "4"
    },
    "length_m": 107.9,
-   "first_st_m": 16040.3,
+   "first_st_m": 16049.3,
    "travel_vs_nodes": 1
   },
   {
@@ -436,7 +466,7 @@
     "lanes": "3"
    },
    "length_m": 9.0,
-   "first_st_m": 16148.2,
+   "first_st_m": 16157.2,
    "travel_vs_nodes": 1
   },
   {
@@ -448,7 +478,7 @@
     "lanes": "3"
    },
    "length_m": 134.8,
-   "first_st_m": 16157.2,
+   "first_st_m": 16166.2,
    "travel_vs_nodes": 1
   },
   {
@@ -460,7 +490,7 @@
     "lanes": "3"
    },
    "length_m": 71.9,
-   "first_st_m": 16292.0,
+   "first_st_m": 16301.0,
    "travel_vs_nodes": 1
   },
   {
@@ -472,7 +502,7 @@
     "lanes": "3"
    },
    "length_m": 174.1,
-   "first_st_m": 16363.9,
+   "first_st_m": 16372.9,
    "travel_vs_nodes": 1
   },
   {
@@ -484,7 +514,7 @@
     "lanes": "4"
    },
    "length_m": 57.1,
-   "first_st_m": 16538.0,
+   "first_st_m": 16547.0,
    "travel_vs_nodes": 1
   },
   {
@@ -495,7 +525,7 @@
     "lanes": "2"
    },
    "length_m": 15.0,
-   "first_st_m": 16595.1,
+   "first_st_m": 16604.1,
    "travel_vs_nodes": 1
   },
   {
@@ -507,7 +537,7 @@
     "lanes": "2"
    },
    "length_m": 86.2,
-   "first_st_m": 16610.1,
+   "first_st_m": 16619.1,
    "travel_vs_nodes": 1
   },
   {
@@ -518,7 +548,7 @@
     "lanes": "5"
    },
    "length_m": 80.9,
-   "first_st_m": 16696.3,
+   "first_st_m": 16705.3,
    "travel_vs_nodes": 1
   },
   {
@@ -529,7 +559,7 @@
     "lanes": "3"
    },
    "length_m": 74.9,
-   "first_st_m": 16777.2,
+   "first_st_m": 16786.2,
    "travel_vs_nodes": 1
   },
   {
@@ -540,7 +570,7 @@
     "lanes": "3"
    },
    "length_m": 6.0,
-   "first_st_m": 16852.1,
+   "first_st_m": 16861.1,
    "travel_vs_nodes": 1
   },
   {
@@ -551,7 +581,7 @@
     "lanes": "3"
    },
    "length_m": 284.6,
-   "first_st_m": 16858.1,
+   "first_st_m": 16867.0,
    "travel_vs_nodes": 1
   },
   {
@@ -562,7 +592,7 @@
     "lanes": "3"
    },
    "length_m": 638.2,
-   "first_st_m": 17142.7,
+   "first_st_m": 17151.6,
    "travel_vs_nodes": 1
   },
   {
@@ -573,7 +603,7 @@
     "lanes": "4"
    },
    "length_m": 203.9,
-   "first_st_m": 17780.8,
+   "first_st_m": 17789.8,
    "travel_vs_nodes": 1
   },
   {
@@ -584,7 +614,7 @@
     "lanes": "3"
    },
    "length_m": 239.8,
-   "first_st_m": 17984.7,
+   "first_st_m": 17993.7,
    "travel_vs_nodes": 1
   },
   {
@@ -595,7 +625,7 @@
     "lanes": "4"
    },
    "length_m": 191.7,
-   "first_st_m": 18224.5,
+   "first_st_m": 18233.4,
    "travel_vs_nodes": 1
   },
   {
@@ -607,7 +637,7 @@
     "lanes": "3"
    },
    "length_m": 122.9,
-   "first_st_m": 18416.2,
+   "first_st_m": 18425.1,
    "travel_vs_nodes": 1
   },
   {
@@ -619,7 +649,7 @@
     "lanes": "3"
    },
    "length_m": 135.1,
-   "first_st_m": 18539.1,
+   "first_st_m": 18548.0,
    "travel_vs_nodes": 1
   },
   {
@@ -631,7 +661,7 @@
     "lanes": "4"
    },
    "length_m": 84.1,
-   "first_st_m": 18674.2,
+   "first_st_m": 18683.1,
    "travel_vs_nodes": 1
   },
   {
@@ -643,7 +673,7 @@
     "lanes": "5"
    },
    "length_m": 96.2,
-   "first_st_m": 18758.3,
+   "first_st_m": 18767.3,
    "travel_vs_nodes": 1
   },
   {
@@ -655,7 +685,7 @@
     "lanes": "3"
    },
    "length_m": 324.6,
-   "first_st_m": 18854.5,
+   "first_st_m": 18863.4,
    "travel_vs_nodes": 1
   },
   {
@@ -667,7 +697,7 @@
     "lanes": "5"
    },
    "length_m": 33.1,
-   "first_st_m": 19179.1,
+   "first_st_m": 19188.1,
    "travel_vs_nodes": 1
   },
   {
@@ -679,7 +709,7 @@
     "lanes": "6"
    },
    "length_m": 45.1,
-   "first_st_m": 19212.2,
+   "first_st_m": 19221.1,
    "travel_vs_nodes": 1
   },
   {
@@ -691,7 +721,7 @@
     "lanes": "6"
    },
    "length_m": 27.0,
-   "first_st_m": 19257.3,
+   "first_st_m": 19266.2,
    "travel_vs_nodes": 1
   },
   {
@@ -703,7 +733,7 @@
     "lanes": "3"
    },
    "length_m": 306.4,
-   "first_st_m": 19284.3,
+   "first_st_m": 19293.2,
    "travel_vs_nodes": 1
   },
   {
@@ -715,7 +745,7 @@
     "lanes": "5"
    },
    "length_m": 12.0,
-   "first_st_m": 19590.8,
+   "first_st_m": 19599.7,
    "travel_vs_nodes": 1
   },
   {
@@ -727,7 +757,7 @@
     "lanes": "6"
    },
    "length_m": 48.1,
-   "first_st_m": 19602.8,
+   "first_st_m": 19611.7,
    "travel_vs_nodes": 1
   },
   {
@@ -739,7 +769,7 @@
     "lanes": "3"
    },
    "length_m": 51.1,
-   "first_st_m": 19650.9,
+   "first_st_m": 19659.7,
    "travel_vs_nodes": 1
   },
   {
@@ -751,7 +781,7 @@
     "lanes": "4"
    },
    "length_m": 153.2,
-   "first_st_m": 19701.9,
+   "first_st_m": 19710.8,
    "travel_vs_nodes": -1
   },
   {
@@ -762,8 +792,8 @@
     "ref": "I 70 BUS;US 40",
     "lanes": "6"
    },
-   "length_m": 102.2,
-   "first_st_m": 19855.2,
+   "length_m": 102.1,
+   "first_st_m": 19864.0,
    "travel_vs_nodes": -1
   },
   {
@@ -776,7 +806,7 @@
     "lanes": "2"
    },
    "length_m": 35.9,
-   "first_st_m": 19957.3,
+   "first_st_m": 19966.2,
    "travel_vs_nodes": 1
   },
   {
@@ -790,7 +820,7 @@
     "turn:lanes": "||slight_right"
    },
    "length_m": 147.2,
-   "first_st_m": 19993.2,
+   "first_st_m": 20002.1,
    "travel_vs_nodes": 1
   },
   {
@@ -804,7 +834,7 @@
     "turn:lanes": "left|left||"
    },
    "length_m": 128.5,
-   "first_st_m": 20140.4,
+   "first_st_m": 20149.3,
    "travel_vs_nodes": 1
   },
   {
@@ -817,7 +847,7 @@
     "lanes": "2"
    },
    "length_m": 210.5,
-   "first_st_m": 20283.4,
+   "first_st_m": 20292.3,
    "travel_vs_nodes": 1
   },
   {
@@ -830,7 +860,7 @@
     "lanes": "3"
    },
    "length_m": 81.2,
-   "first_st_m": 20493.9,
+   "first_st_m": 20502.8,
    "travel_vs_nodes": 1
   },
   {
@@ -844,7 +874,7 @@
     "turn:lanes": "none|none|none|right"
    },
    "length_m": 90.2,
-   "first_st_m": 20575.1,
+   "first_st_m": 20584.0,
    "travel_vs_nodes": 1
   },
   {
@@ -857,7 +887,7 @@
     "lanes": "3"
    },
    "length_m": 81.2,
-   "first_st_m": 20665.4,
+   "first_st_m": 20674.2,
    "travel_vs_nodes": 1
   },
   {
@@ -870,7 +900,7 @@
     "lanes": "4"
    },
    "length_m": 57.1,
-   "first_st_m": 20746.6,
+   "first_st_m": 20755.4,
    "travel_vs_nodes": 1
   },
   {
@@ -884,7 +914,7 @@
     "turn:lanes": "none|none|right"
    },
    "length_m": 174.4,
-   "first_st_m": 20803.7,
+   "first_st_m": 20812.5,
    "travel_vs_nodes": 1
   },
   {
@@ -898,7 +928,7 @@
     "turn:lanes": "||right"
    },
    "length_m": 15.0,
-   "first_st_m": 20978.1,
+   "first_st_m": 20986.9,
    "travel_vs_nodes": 1
   },
   {
@@ -912,7 +942,7 @@
     "turn:lanes": "reverse;left|left|none|none|right"
    },
    "length_m": 78.2,
-   "first_st_m": 20993.2,
+   "first_st_m": 21002.0,
    "travel_vs_nodes": 1
   },
   {
@@ -925,7 +955,7 @@
     "lanes": "2"
    },
    "length_m": 15.0,
-   "first_st_m": 21071.4,
+   "first_st_m": 21080.2,
    "travel_vs_nodes": 1
   },
   {
@@ -937,8 +967,8 @@
     "oneway": "yes",
     "lanes": "2"
    },
-   "length_m": 414.6,
-   "first_st_m": 21086.4,
+   "length_m": 414.5,
+   "first_st_m": 21095.2,
    "travel_vs_nodes": 1
   },
   {
@@ -952,7 +982,7 @@
     "turn:lanes": "||merge_to_left"
    },
    "length_m": 186.0,
-   "first_st_m": 21501.0,
+   "first_st_m": 21509.7,
    "travel_vs_nodes": 1
   },
   {
@@ -964,8 +994,8 @@
     "oneway": "yes",
     "lanes": "2"
    },
-   "length_m": 309.5,
-   "first_st_m": 21687.0,
+   "length_m": 309.4,
+   "first_st_m": 21695.7,
    "travel_vs_nodes": 1
   },
   {
@@ -978,7 +1008,7 @@
     "lanes": "2"
    },
    "length_m": 72.2,
-   "first_st_m": 21996.4,
+   "first_st_m": 22005.2,
    "travel_vs_nodes": 1
   },
   {
@@ -992,7 +1022,7 @@
     "turn:lanes": "left;through|through;slight_right"
    },
    "length_m": 27.1,
-   "first_st_m": 22068.6,
+   "first_st_m": 22077.3,
    "travel_vs_nodes": 1
   },
   {
@@ -1007,7 +1037,7 @@
     "turn:lanes": "left|||right"
    },
    "length_m": 60.1,
-   "first_st_m": 22095.6,
+   "first_st_m": 22104.4,
    "travel_vs_nodes": 1
   },
   {
@@ -1022,7 +1052,7 @@
     "turn:lanes": "left||"
    },
    "length_m": 27.1,
-   "first_st_m": 22155.8,
+   "first_st_m": 22164.5,
    "travel_vs_nodes": 1
   },
   {
@@ -1035,7 +1065,7 @@
     "turn:lanes": "left||"
    },
    "length_m": 12.0,
-   "first_st_m": 22182.8,
+   "first_st_m": 22191.6,
    "travel_vs_nodes": 1
   },
   {
@@ -1047,7 +1077,7 @@
     "lanes": "2"
    },
    "length_m": 279.2,
-   "first_st_m": 22194.8,
+   "first_st_m": 22203.6,
    "travel_vs_nodes": 1
   },
   {
@@ -1059,7 +1089,7 @@
     "lanes": "2"
    },
    "length_m": 515.9,
-   "first_st_m": 22474.1,
+   "first_st_m": 22482.8,
    "travel_vs_nodes": 1
   },
   {
@@ -1071,7 +1101,7 @@
     "lanes": "2"
    },
    "length_m": 623.9,
-   "first_st_m": 22990.0,
+   "first_st_m": 22998.7,
    "travel_vs_nodes": 1
   },
   {
@@ -1083,7 +1113,7 @@
     "lanes": "2"
    },
    "length_m": 36.0,
-   "first_st_m": 23613.8,
+   "first_st_m": 23622.5,
    "travel_vs_nodes": 1
   },
   {
@@ -1095,7 +1125,7 @@
     "lanes": "2"
    },
    "length_m": 266.9,
-   "first_st_m": 23649.8,
+   "first_st_m": 23658.5,
    "travel_vs_nodes": 1
   },
   {
@@ -1107,7 +1137,7 @@
     "destination": "19th Street;Lookout Mountain Road"
    },
    "length_m": 278.8,
-   "first_st_m": 23916.8,
+   "first_st_m": 23925.5,
    "travel_vs_nodes": 1
   },
   {
@@ -1118,7 +1148,7 @@
     "lanes": "2"
    },
    "length_m": 21.0,
-   "first_st_m": 24195.6,
+   "first_st_m": 24204.3,
    "travel_vs_nodes": 1
   },
   {
@@ -1130,7 +1160,7 @@
     "turn:lanes": "left|right"
    },
    "length_m": 24.0,
-   "first_st_m": 24216.6,
+   "first_st_m": 24225.3,
    "travel_vs_nodes": 1
   },
   {
@@ -1143,7 +1173,7 @@
     "turn:lanes": "left"
    },
    "length_m": 72.0,
-   "first_st_m": 24240.6,
+   "first_st_m": 24249.3,
    "travel_vs_nodes": 1
   },
   {
@@ -1156,7 +1186,7 @@
     "turn:lanes": "left"
    },
    "length_m": 6.0,
-   "first_st_m": 24312.6,
+   "first_st_m": 24321.3,
    "travel_vs_nodes": 1
   },
   {
@@ -1168,7 +1198,7 @@
     "lanes": "1"
    },
    "length_m": 23.8,
-   "first_st_m": 24318.5,
+   "first_st_m": 24327.2,
    "travel_vs_nodes": 1
   },
   {
@@ -1180,7 +1210,7 @@
     "lanes": "1"
    },
    "length_m": 29.8,
-   "first_st_m": 24342.4,
+   "first_st_m": 24351.1,
    "travel_vs_nodes": 1
   },
   {
@@ -1192,7 +1222,7 @@
     "lanes": "3"
    },
    "length_m": 39.1,
-   "first_st_m": 24372.1,
+   "first_st_m": 24380.8,
    "travel_vs_nodes": 1
   },
   {
@@ -1204,7 +1234,7 @@
     "lanes": "2"
    },
    "length_m": 38.9,
-   "first_st_m": 24411.2,
+   "first_st_m": 24419.9,
    "travel_vs_nodes": 1
   },
   {
@@ -1216,7 +1246,7 @@
     "lanes": "2"
    },
    "length_m": 27.0,
-   "first_st_m": 24450.2,
+   "first_st_m": 24458.8,
    "travel_vs_nodes": 1
   },
   {
@@ -1228,7 +1258,7 @@
     "lanes": "2"
    },
    "length_m": 18.0,
-   "first_st_m": 24477.2,
+   "first_st_m": 24485.9,
    "travel_vs_nodes": 1
   },
   {
@@ -1239,8 +1269,8 @@
     "oneway": "no",
     "lanes": "2"
    },
-   "length_m": 416.5,
-   "first_st_m": 24495.2,
+   "length_m": 417.3,
+   "first_st_m": 24503.9,
    "travel_vs_nodes": 1
   }
  ],
@@ -1260,11 +1290,11 @@
     {
      "segments": 29,
      "length_m": 86.2,
-     "vertex_from": 5536,
-     "vertex_to": 5565,
-     "st_from_m": 16610.1,
-     "st_to_m": 16696.3,
-     "drive_st_from_m": 16610.1,
+     "vertex_from": 11640,
+     "vertex_to": 11669,
+     "st_from_m": 16619.1,
+     "st_to_m": 16705.3,
+     "drive_st_from_m": 16619.1,
      "matched": true,
      "way": 119006778,
      "tags": {
@@ -1282,11 +1312,11 @@
     {
      "segments": 12,
      "length_m": 35.9,
-     "vertex_from": 6652,
-     "vertex_to": 6664,
-     "st_from_m": 19957.3,
-     "st_to_m": 19993.2,
-     "drive_st_from_m": 19957.3,
+     "vertex_from": 12756,
+     "vertex_to": 12768,
+     "st_from_m": 19966.2,
+     "st_to_m": 20002.1,
+     "drive_st_from_m": 19966.2,
      "matched": true,
      "way": 998316318,
      "tags": {
@@ -1305,11 +1335,11 @@
     {
      "segments": 49,
      "length_m": 147.2,
-     "vertex_from": 6664,
-     "vertex_to": 6713,
-     "st_from_m": 19993.2,
-     "st_to_m": 20140.4,
-     "drive_st_from_m": 19993.2,
+     "vertex_from": 12768,
+     "vertex_to": 12817,
+     "st_from_m": 20002.1,
+     "st_to_m": 20149.3,
+     "drive_st_from_m": 20002.1,
      "matched": true,
      "way": 427877837,
      "tags": {
@@ -1329,11 +1359,11 @@
     {
      "segments": 43,
      "length_m": 128.5,
-     "vertex_from": 6713,
-     "vertex_to": 6756,
-     "st_from_m": 20140.4,
-     "st_to_m": 20268.9,
-     "drive_st_from_m": 20140.4,
+     "vertex_from": 12817,
+     "vertex_to": 12860,
+     "st_from_m": 20149.3,
+     "st_to_m": 20277.8,
+     "drive_st_from_m": 20149.3,
      "matched": true,
      "way": 427877838,
      "tags": {
@@ -1353,11 +1383,11 @@
     {
      "segments": 70,
      "length_m": 210.5,
-     "vertex_from": 6761,
-     "vertex_to": 6831,
-     "st_from_m": 20283.4,
-     "st_to_m": 20493.9,
-     "drive_st_from_m": 20283.4,
+     "vertex_from": 12865,
+     "vertex_to": 12935,
+     "st_from_m": 20292.3,
+     "st_to_m": 20502.8,
+     "drive_st_from_m": 20292.3,
      "matched": true,
      "way": 1491101458,
      "tags": {
@@ -1376,11 +1406,11 @@
     {
      "segments": 27,
      "length_m": 81.2,
-     "vertex_from": 6831,
-     "vertex_to": 6858,
-     "st_from_m": 20493.9,
-     "st_to_m": 20575.1,
-     "drive_st_from_m": 20493.9,
+     "vertex_from": 12935,
+     "vertex_to": 12962,
+     "st_from_m": 20502.8,
+     "st_to_m": 20584.0,
+     "drive_st_from_m": 20502.8,
      "matched": true,
      "way": 1068495781,
      "tags": {
@@ -1399,11 +1429,11 @@
     {
      "segments": 30,
      "length_m": 90.2,
-     "vertex_from": 6858,
-     "vertex_to": 6888,
-     "st_from_m": 20575.1,
-     "st_to_m": 20665.4,
-     "drive_st_from_m": 20575.1,
+     "vertex_from": 12962,
+     "vertex_to": 12992,
+     "st_from_m": 20584.0,
+     "st_to_m": 20674.2,
+     "drive_st_from_m": 20584.0,
      "matched": true,
      "way": 1068495780,
      "tags": {
@@ -1423,11 +1453,11 @@
     {
      "segments": 27,
      "length_m": 81.2,
-     "vertex_from": 6888,
-     "vertex_to": 6915,
-     "st_from_m": 20665.4,
-     "st_to_m": 20746.6,
-     "drive_st_from_m": 20665.4,
+     "vertex_from": 12992,
+     "vertex_to": 13019,
+     "st_from_m": 20674.2,
+     "st_to_m": 20755.4,
+     "drive_st_from_m": 20674.2,
      "matched": true,
      "way": 1068495782,
      "tags": {
@@ -1446,11 +1476,11 @@
     {
      "segments": 19,
      "length_m": 57.1,
-     "vertex_from": 6915,
-     "vertex_to": 6934,
-     "st_from_m": 20746.6,
-     "st_to_m": 20803.7,
-     "drive_st_from_m": 20746.6,
+     "vertex_from": 13019,
+     "vertex_to": 13038,
+     "st_from_m": 20755.4,
+     "st_to_m": 20812.5,
+     "drive_st_from_m": 20755.4,
      "matched": true,
      "way": 1068495783,
      "tags": {
@@ -1469,11 +1499,11 @@
     {
      "segments": 58,
      "length_m": 174.4,
-     "vertex_from": 6934,
-     "vertex_to": 6992,
-     "st_from_m": 20803.7,
-     "st_to_m": 20978.1,
-     "drive_st_from_m": 20803.7,
+     "vertex_from": 13038,
+     "vertex_to": 13096,
+     "st_from_m": 20812.5,
+     "st_to_m": 20986.9,
+     "drive_st_from_m": 20812.5,
      "matched": true,
      "way": 17088051,
      "tags": {
@@ -1493,11 +1523,11 @@
     {
      "segments": 5,
      "length_m": 15.0,
-     "vertex_from": 6992,
-     "vertex_to": 6997,
-     "st_from_m": 20978.1,
-     "st_to_m": 20993.2,
-     "drive_st_from_m": 20978.1,
+     "vertex_from": 13096,
+     "vertex_to": 13101,
+     "st_from_m": 20986.9,
+     "st_to_m": 21002.0,
+     "drive_st_from_m": 20986.9,
      "matched": true,
      "way": 427696018,
      "tags": {
@@ -1517,11 +1547,11 @@
     {
      "segments": 26,
      "length_m": 78.2,
-     "vertex_from": 6997,
-     "vertex_to": 7023,
-     "st_from_m": 20993.2,
-     "st_to_m": 21071.4,
-     "drive_st_from_m": 20993.2,
+     "vertex_from": 13101,
+     "vertex_to": 13127,
+     "st_from_m": 21002.0,
+     "st_to_m": 21080.2,
+     "drive_st_from_m": 21002.0,
      "matched": true,
      "way": 427696019,
      "tags": {
@@ -1541,11 +1571,11 @@
     {
      "segments": 5,
      "length_m": 15.0,
-     "vertex_from": 7023,
-     "vertex_to": 7028,
-     "st_from_m": 21071.4,
-     "st_to_m": 21086.4,
-     "drive_st_from_m": 21071.4,
+     "vertex_from": 13127,
+     "vertex_to": 13132,
+     "st_from_m": 21080.2,
+     "st_to_m": 21095.2,
+     "drive_st_from_m": 21080.2,
      "matched": true,
      "way": 37551870,
      "tags": {
@@ -1563,12 +1593,12 @@
     },
     {
      "segments": 138,
-     "length_m": 414.6,
-     "vertex_from": 7028,
-     "vertex_to": 7166,
-     "st_from_m": 21086.4,
-     "st_to_m": 21501.0,
-     "drive_st_from_m": 21086.4,
+     "length_m": 414.5,
+     "vertex_from": 13132,
+     "vertex_to": 13270,
+     "st_from_m": 21095.2,
+     "st_to_m": 21509.7,
+     "drive_st_from_m": 21095.2,
      "matched": true,
      "way": 962597802,
      "tags": {
@@ -1587,11 +1617,11 @@
     {
      "segments": 62,
      "length_m": 186.0,
-     "vertex_from": 7166,
-     "vertex_to": 7228,
-     "st_from_m": 21501.0,
-     "st_to_m": 21687.0,
-     "drive_st_from_m": 21501.0,
+     "vertex_from": 13270,
+     "vertex_to": 13332,
+     "st_from_m": 21509.7,
+     "st_to_m": 21695.7,
+     "drive_st_from_m": 21509.7,
      "matched": true,
      "way": 1412921019,
      "tags": {
@@ -1610,12 +1640,12 @@
     },
     {
      "segments": 103,
-     "length_m": 309.5,
-     "vertex_from": 7228,
-     "vertex_to": 7331,
-     "st_from_m": 21687.0,
-     "st_to_m": 21996.4,
-     "drive_st_from_m": 21687.0,
+     "length_m": 309.4,
+     "vertex_from": 13332,
+     "vertex_to": 13435,
+     "st_from_m": 21695.7,
+     "st_to_m": 22005.2,
+     "drive_st_from_m": 21695.7,
      "matched": true,
      "way": 484287795,
      "tags": {
@@ -1634,11 +1664,11 @@
     {
      "segments": 24,
      "length_m": 72.2,
-     "vertex_from": 7331,
-     "vertex_to": 7355,
-     "st_from_m": 21996.4,
-     "st_to_m": 22068.6,
-     "drive_st_from_m": 21996.4,
+     "vertex_from": 13435,
+     "vertex_to": 13459,
+     "st_from_m": 22005.2,
+     "st_to_m": 22077.3,
+     "drive_st_from_m": 22005.2,
      "matched": true,
      "way": 492253010,
      "tags": {
@@ -1657,11 +1687,11 @@
     {
      "segments": 9,
      "length_m": 27.1,
-     "vertex_from": 7355,
-     "vertex_to": 7364,
-     "st_from_m": 22068.6,
-     "st_to_m": 22095.6,
-     "drive_st_from_m": 22068.6,
+     "vertex_from": 13459,
+     "vertex_to": 13468,
+     "st_from_m": 22077.3,
+     "st_to_m": 22104.4,
+     "drive_st_from_m": 22077.3,
      "matched": true,
      "way": 427838688,
      "tags": {
@@ -1681,11 +1711,11 @@
     {
      "segments": 20,
      "length_m": 60.1,
-     "vertex_from": 7364,
-     "vertex_to": 7384,
-     "st_from_m": 22095.6,
-     "st_to_m": 22155.8,
-     "drive_st_from_m": 22095.6,
+     "vertex_from": 13468,
+     "vertex_to": 13488,
+     "st_from_m": 22104.4,
+     "st_to_m": 22164.5,
+     "drive_st_from_m": 22104.4,
      "matched": true,
      "way": 427838687,
      "tags": {
@@ -1706,11 +1736,11 @@
     {
      "segments": 9,
      "length_m": 27.1,
-     "vertex_from": 7384,
-     "vertex_to": 7393,
-     "st_from_m": 22155.8,
-     "st_to_m": 22182.8,
-     "drive_st_from_m": 22155.8,
+     "vertex_from": 13488,
+     "vertex_to": 13497,
+     "st_from_m": 22164.5,
+     "st_to_m": 22191.6,
+     "drive_st_from_m": 22164.5,
      "matched": true,
      "way": 1459465702,
      "tags": {
@@ -1731,11 +1761,11 @@
     {
      "segments": 4,
      "length_m": 12.0,
-     "vertex_from": 7393,
-     "vertex_to": 7397,
-     "st_from_m": 22182.8,
-     "st_to_m": 22194.8,
-     "drive_st_from_m": 22182.8,
+     "vertex_from": 13497,
+     "vertex_to": 13501,
+     "st_from_m": 22191.6,
+     "st_to_m": 22203.6,
+     "drive_st_from_m": 22191.6,
      "matched": true,
      "way": 427838686,
      "tags": {
@@ -1754,11 +1784,11 @@
     {
      "segments": 93,
      "length_m": 279.2,
-     "vertex_from": 7397,
-     "vertex_to": 7490,
-     "st_from_m": 22194.8,
-     "st_to_m": 22474.1,
-     "drive_st_from_m": 22194.8,
+     "vertex_from": 13501,
+     "vertex_to": 13594,
+     "st_from_m": 22203.6,
+     "st_to_m": 22482.8,
+     "drive_st_from_m": 22203.6,
      "matched": true,
      "way": 492253011,
      "tags": {
@@ -1776,11 +1806,11 @@
     {
      "segments": 172,
      "length_m": 515.9,
-     "vertex_from": 7490,
-     "vertex_to": 7662,
-     "st_from_m": 22474.1,
-     "st_to_m": 22990.0,
-     "drive_st_from_m": 22474.1,
+     "vertex_from": 13594,
+     "vertex_to": 13766,
+     "st_from_m": 22482.8,
+     "st_to_m": 22998.7,
+     "drive_st_from_m": 22482.8,
      "matched": true,
      "way": 37551855,
      "tags": {
@@ -1798,11 +1828,11 @@
     {
      "segments": 208,
      "length_m": 623.9,
-     "vertex_from": 7662,
-     "vertex_to": 7870,
-     "st_from_m": 22990.0,
-     "st_to_m": 23613.8,
-     "drive_st_from_m": 22990.0,
+     "vertex_from": 13766,
+     "vertex_to": 13974,
+     "st_from_m": 22998.7,
+     "st_to_m": 23622.5,
+     "drive_st_from_m": 22998.7,
      "matched": true,
      "way": 923692719,
      "tags": {
@@ -1820,11 +1850,11 @@
     {
      "segments": 12,
      "length_m": 36.0,
-     "vertex_from": 7870,
-     "vertex_to": 7882,
-     "st_from_m": 23613.8,
-     "st_to_m": 23649.8,
-     "drive_st_from_m": 23613.8,
+     "vertex_from": 13974,
+     "vertex_to": 13986,
+     "st_from_m": 23622.5,
+     "st_to_m": 23658.5,
+     "drive_st_from_m": 23622.5,
      "matched": true,
      "way": 923692718,
      "tags": {
@@ -1842,11 +1872,11 @@
     {
      "segments": 89,
      "length_m": 266.9,
-     "vertex_from": 7882,
-     "vertex_to": 7971,
-     "st_from_m": 23649.8,
-     "st_to_m": 23916.8,
-     "drive_st_from_m": 23649.8,
+     "vertex_from": 13986,
+     "vertex_to": 14075,
+     "st_from_m": 23658.5,
+     "st_to_m": 23925.5,
+     "drive_st_from_m": 23658.5,
      "matched": true,
      "way": 914977542,
      "tags": {
@@ -1864,11 +1894,11 @@
     {
      "segments": 93,
      "length_m": 278.8,
-     "vertex_from": 7971,
-     "vertex_to": 8064,
-     "st_from_m": 23916.8,
-     "st_to_m": 24195.6,
-     "drive_st_from_m": 23916.8,
+     "vertex_from": 14075,
+     "vertex_to": 14168,
+     "st_from_m": 23925.5,
+     "st_to_m": 24204.3,
+     "drive_st_from_m": 23925.5,
      "matched": true,
      "way": 484287799,
      "tags": {
@@ -1886,11 +1916,11 @@
     {
      "segments": 7,
      "length_m": 21.0,
-     "vertex_from": 8064,
-     "vertex_to": 8071,
-     "st_from_m": 24195.6,
-     "st_to_m": 24216.6,
-     "drive_st_from_m": 24195.6,
+     "vertex_from": 14168,
+     "vertex_to": 14175,
+     "st_from_m": 24204.3,
+     "st_to_m": 24225.3,
+     "drive_st_from_m": 24204.3,
      "matched": true,
      "way": 1351773584,
      "tags": {
@@ -1907,11 +1937,11 @@
     {
      "segments": 8,
      "length_m": 24.0,
-     "vertex_from": 8071,
-     "vertex_to": 8079,
-     "st_from_m": 24216.6,
-     "st_to_m": 24240.6,
-     "drive_st_from_m": 24216.6,
+     "vertex_from": 14175,
+     "vertex_to": 14183,
+     "st_from_m": 24225.3,
+     "st_to_m": 24249.3,
+     "drive_st_from_m": 24225.3,
      "matched": true,
      "way": 533503588,
      "tags": {
@@ -1929,11 +1959,11 @@
     {
      "segments": 24,
      "length_m": 72.0,
-     "vertex_from": 8079,
-     "vertex_to": 8103,
-     "st_from_m": 24240.6,
-     "st_to_m": 24312.6,
-     "drive_st_from_m": 24240.6,
+     "vertex_from": 14183,
+     "vertex_to": 14207,
+     "st_from_m": 24249.3,
+     "st_to_m": 24321.3,
+     "drive_st_from_m": 24249.3,
      "matched": true,
      "way": 533503210,
      "tags": {
@@ -1952,11 +1982,11 @@
     {
      "segments": 2,
      "length_m": 6.0,
-     "vertex_from": 8103,
-     "vertex_to": 8105,
-     "st_from_m": 24312.6,
-     "st_to_m": 24318.5,
-     "drive_st_from_m": 24312.6,
+     "vertex_from": 14207,
+     "vertex_to": 14209,
+     "st_from_m": 24321.3,
+     "st_to_m": 24327.2,
+     "drive_st_from_m": 24321.3,
      "matched": true,
      "way": 1283267904,
      "tags": {
@@ -1975,11 +2005,11 @@
     {
      "segments": 8,
      "length_m": 23.8,
-     "vertex_from": 8105,
-     "vertex_to": 8113,
-     "st_from_m": 24318.5,
-     "st_to_m": 24342.4,
-     "drive_st_from_m": 24318.5,
+     "vertex_from": 14209,
+     "vertex_to": 14217,
+     "st_from_m": 24327.2,
+     "st_to_m": 24351.1,
+     "drive_st_from_m": 24327.2,
      "matched": true,
      "way": 1106864351,
      "tags": {
@@ -1997,11 +2027,11 @@
     {
      "segments": 10,
      "length_m": 29.8,
-     "vertex_from": 8113,
-     "vertex_to": 8123,
-     "st_from_m": 24342.4,
-     "st_to_m": 24372.1,
-     "drive_st_from_m": 24342.4,
+     "vertex_from": 14217,
+     "vertex_to": 14227,
+     "st_from_m": 24351.1,
+     "st_to_m": 24380.8,
+     "drive_st_from_m": 24351.1,
      "matched": true,
      "way": 533504135,
      "tags": {
@@ -2035,11 +2065,11 @@
     {
      "segments": 10,
      "length_m": 29.8,
-     "vertex_from": 8123,
-     "vertex_to": 8113,
-     "st_from_m": 24372.1,
-     "st_to_m": 24342.4,
-     "drive_st_from_m": 533.6,
+     "vertex_from": 14227,
+     "vertex_to": 14217,
+     "st_from_m": 24380.8,
+     "st_to_m": 24351.1,
+     "drive_st_from_m": 533.4,
      "matched": true,
      "way": 533504135,
      "tags": {
@@ -2057,11 +2087,11 @@
     {
      "segments": 8,
      "length_m": 23.8,
-     "vertex_from": 8113,
-     "vertex_to": 8105,
-     "st_from_m": 24342.4,
-     "st_to_m": 24318.5,
-     "drive_st_from_m": 563.3,
+     "vertex_from": 14217,
+     "vertex_to": 14209,
+     "st_from_m": 24351.1,
+     "st_to_m": 24327.2,
+     "drive_st_from_m": 563.2,
      "matched": true,
      "way": 1106864351,
      "tags": {
@@ -2079,11 +2109,11 @@
     {
      "segments": 2,
      "length_m": 6.0,
-     "vertex_from": 8105,
-     "vertex_to": 8103,
-     "st_from_m": 24318.5,
-     "st_to_m": 24312.6,
-     "drive_st_from_m": 587.2,
+     "vertex_from": 14209,
+     "vertex_to": 14207,
+     "st_from_m": 24327.2,
+     "st_to_m": 24321.3,
+     "drive_st_from_m": 587.0,
      "matched": true,
      "way": 1283267904,
      "tags": {
@@ -2102,11 +2132,11 @@
     {
      "segments": 24,
      "length_m": 72.0,
-     "vertex_from": 8103,
-     "vertex_to": 8079,
-     "st_from_m": 24312.6,
-     "st_to_m": 24240.6,
-     "drive_st_from_m": 593.1,
+     "vertex_from": 14207,
+     "vertex_to": 14183,
+     "st_from_m": 24321.3,
+     "st_to_m": 24249.3,
+     "drive_st_from_m": 593.0,
      "matched": true,
      "way": 533503210,
      "tags": {
@@ -2125,11 +2155,11 @@
     {
      "segments": 8,
      "length_m": 24.0,
-     "vertex_from": 8079,
-     "vertex_to": 8071,
-     "st_from_m": 24240.6,
-     "st_to_m": 24216.6,
-     "drive_st_from_m": 665.1,
+     "vertex_from": 14183,
+     "vertex_to": 14175,
+     "st_from_m": 24249.3,
+     "st_to_m": 24225.3,
+     "drive_st_from_m": 665.0,
      "matched": true,
      "way": 533503588,
      "tags": {
@@ -2147,11 +2177,11 @@
     {
      "segments": 7,
      "length_m": 21.0,
-     "vertex_from": 8071,
-     "vertex_to": 8064,
-     "st_from_m": 24216.6,
-     "st_to_m": 24195.6,
-     "drive_st_from_m": 689.1,
+     "vertex_from": 14175,
+     "vertex_to": 14168,
+     "st_from_m": 24225.3,
+     "st_to_m": 24204.3,
+     "drive_st_from_m": 689.0,
      "matched": true,
      "way": 1351773584,
      "tags": {
@@ -2168,11 +2198,11 @@
     {
      "segments": 93,
      "length_m": 278.8,
-     "vertex_from": 8064,
-     "vertex_to": 7971,
-     "st_from_m": 24195.6,
-     "st_to_m": 23916.8,
-     "drive_st_from_m": 710.1,
+     "vertex_from": 14168,
+     "vertex_to": 14075,
+     "st_from_m": 24204.3,
+     "st_to_m": 23925.5,
+     "drive_st_from_m": 710.0,
      "matched": true,
      "way": 484287799,
      "tags": {
@@ -2190,11 +2220,11 @@
     {
      "segments": 89,
      "length_m": 266.9,
-     "vertex_from": 7971,
-     "vertex_to": 7882,
-     "st_from_m": 23916.8,
-     "st_to_m": 23649.8,
-     "drive_st_from_m": 988.9,
+     "vertex_from": 14075,
+     "vertex_to": 13986,
+     "st_from_m": 23925.5,
+     "st_to_m": 23658.5,
+     "drive_st_from_m": 988.8,
      "matched": true,
      "way": 914977542,
      "tags": {
@@ -2212,11 +2242,11 @@
     {
      "segments": 12,
      "length_m": 36.0,
-     "vertex_from": 7882,
-     "vertex_to": 7870,
-     "st_from_m": 23649.8,
-     "st_to_m": 23613.8,
-     "drive_st_from_m": 1255.9,
+     "vertex_from": 13986,
+     "vertex_to": 13974,
+     "st_from_m": 23658.5,
+     "st_to_m": 23622.5,
+     "drive_st_from_m": 1255.7,
      "matched": true,
      "way": 923692718,
      "tags": {
@@ -2234,11 +2264,11 @@
     {
      "segments": 208,
      "length_m": 623.9,
-     "vertex_from": 7870,
-     "vertex_to": 7662,
-     "st_from_m": 23613.8,
-     "st_to_m": 22990.0,
-     "drive_st_from_m": 1291.9,
+     "vertex_from": 13974,
+     "vertex_to": 13766,
+     "st_from_m": 23622.5,
+     "st_to_m": 22998.7,
+     "drive_st_from_m": 1291.7,
      "matched": true,
      "way": 923692719,
      "tags": {
@@ -2256,11 +2286,11 @@
     {
      "segments": 172,
      "length_m": 515.9,
-     "vertex_from": 7662,
-     "vertex_to": 7490,
-     "st_from_m": 22990.0,
-     "st_to_m": 22474.1,
-     "drive_st_from_m": 1915.7,
+     "vertex_from": 13766,
+     "vertex_to": 13594,
+     "st_from_m": 22998.7,
+     "st_to_m": 22482.8,
+     "drive_st_from_m": 1915.6,
      "matched": true,
      "way": 37551855,
      "tags": {
@@ -2278,11 +2308,11 @@
     {
      "segments": 93,
      "length_m": 279.2,
-     "vertex_from": 7490,
-     "vertex_to": 7397,
-     "st_from_m": 22474.1,
-     "st_to_m": 22194.8,
-     "drive_st_from_m": 2431.6,
+     "vertex_from": 13594,
+     "vertex_to": 13501,
+     "st_from_m": 22482.8,
+     "st_to_m": 22203.6,
+     "drive_st_from_m": 2431.4,
      "matched": true,
      "way": 492253011,
      "tags": {
@@ -2300,11 +2330,11 @@
     {
      "segments": 4,
      "length_m": 12.0,
-     "vertex_from": 7397,
-     "vertex_to": 7393,
-     "st_from_m": 22194.8,
-     "st_to_m": 22182.8,
-     "drive_st_from_m": 2710.9,
+     "vertex_from": 13501,
+     "vertex_to": 13497,
+     "st_from_m": 22203.6,
+     "st_to_m": 22191.6,
+     "drive_st_from_m": 2710.7,
      "matched": true,
      "way": 427838686,
      "tags": {
@@ -2323,11 +2353,11 @@
     {
      "segments": 9,
      "length_m": 27.1,
-     "vertex_from": 7393,
-     "vertex_to": 7384,
-     "st_from_m": 22182.8,
-     "st_to_m": 22155.8,
-     "drive_st_from_m": 2722.9,
+     "vertex_from": 13497,
+     "vertex_to": 13488,
+     "st_from_m": 22191.6,
+     "st_to_m": 22164.5,
+     "drive_st_from_m": 2722.7,
      "matched": true,
      "way": 1459465702,
      "tags": {
@@ -2348,11 +2378,11 @@
     {
      "segments": 20,
      "length_m": 60.1,
-     "vertex_from": 7384,
-     "vertex_to": 7364,
-     "st_from_m": 22155.8,
-     "st_to_m": 22095.6,
-     "drive_st_from_m": 2749.9,
+     "vertex_from": 13488,
+     "vertex_to": 13468,
+     "st_from_m": 22164.5,
+     "st_to_m": 22104.4,
+     "drive_st_from_m": 2749.7,
      "matched": true,
      "way": 427838687,
      "tags": {
@@ -2373,11 +2403,11 @@
     {
      "segments": 9,
      "length_m": 27.1,
-     "vertex_from": 7364,
-     "vertex_to": 7355,
-     "st_from_m": 22095.6,
-     "st_to_m": 22068.6,
-     "drive_st_from_m": 2810.1,
+     "vertex_from": 13468,
+     "vertex_to": 13459,
+     "st_from_m": 22104.4,
+     "st_to_m": 22077.3,
+     "drive_st_from_m": 2809.9,
      "matched": true,
      "way": 427838688,
      "tags": {
@@ -2397,11 +2427,11 @@
     {
      "segments": 24,
      "length_m": 72.2,
-     "vertex_from": 7355,
-     "vertex_to": 7331,
-     "st_from_m": 22068.6,
-     "st_to_m": 21996.4,
-     "drive_st_from_m": 2837.1,
+     "vertex_from": 13459,
+     "vertex_to": 13435,
+     "st_from_m": 22077.3,
+     "st_to_m": 22005.2,
+     "drive_st_from_m": 2836.9,
      "matched": true,
      "way": 492253010,
      "tags": {
@@ -2419,12 +2449,12 @@
     },
     {
      "segments": 103,
-     "length_m": 309.5,
-     "vertex_from": 7331,
-     "vertex_to": 7228,
-     "st_from_m": 21996.4,
-     "st_to_m": 21687.0,
-     "drive_st_from_m": 2909.3,
+     "length_m": 309.4,
+     "vertex_from": 13435,
+     "vertex_to": 13332,
+     "st_from_m": 22005.2,
+     "st_to_m": 21695.7,
+     "drive_st_from_m": 2909.1,
      "matched": true,
      "way": 484287795,
      "tags": {
@@ -2443,11 +2473,11 @@
     {
      "segments": 62,
      "length_m": 186.0,
-     "vertex_from": 7228,
-     "vertex_to": 7166,
-     "st_from_m": 21687.0,
-     "st_to_m": 21501.0,
-     "drive_st_from_m": 3218.7,
+     "vertex_from": 13332,
+     "vertex_to": 13270,
+     "st_from_m": 21695.7,
+     "st_to_m": 21509.7,
+     "drive_st_from_m": 3218.5,
      "matched": true,
      "way": 1412921019,
      "tags": {
@@ -2466,12 +2496,12 @@
     },
     {
      "segments": 138,
-     "length_m": 414.6,
-     "vertex_from": 7166,
-     "vertex_to": 7028,
-     "st_from_m": 21501.0,
-     "st_to_m": 21086.4,
-     "drive_st_from_m": 3404.7,
+     "length_m": 414.5,
+     "vertex_from": 13270,
+     "vertex_to": 13132,
+     "st_from_m": 21509.7,
+     "st_to_m": 21095.2,
+     "drive_st_from_m": 3404.5,
      "matched": true,
      "way": 962597802,
      "tags": {
@@ -2490,11 +2520,11 @@
     {
      "segments": 5,
      "length_m": 15.0,
-     "vertex_from": 7028,
-     "vertex_to": 7023,
-     "st_from_m": 21086.4,
-     "st_to_m": 21071.4,
-     "drive_st_from_m": 3819.3,
+     "vertex_from": 13132,
+     "vertex_to": 13127,
+     "st_from_m": 21095.2,
+     "st_to_m": 21080.2,
+     "drive_st_from_m": 3819.0,
      "matched": true,
      "way": 37551870,
      "tags": {
@@ -2513,11 +2543,11 @@
     {
      "segments": 26,
      "length_m": 78.2,
-     "vertex_from": 7023,
-     "vertex_to": 6997,
-     "st_from_m": 21071.4,
-     "st_to_m": 20993.2,
-     "drive_st_from_m": 3834.3,
+     "vertex_from": 13127,
+     "vertex_to": 13101,
+     "st_from_m": 21080.2,
+     "st_to_m": 21002.0,
+     "drive_st_from_m": 3834.1,
      "matched": true,
      "way": 427696019,
      "tags": {
@@ -2537,11 +2567,11 @@
     {
      "segments": 5,
      "length_m": 15.0,
-     "vertex_from": 6997,
-     "vertex_to": 6992,
-     "st_from_m": 20993.2,
-     "st_to_m": 20978.1,
-     "drive_st_from_m": 3912.5,
+     "vertex_from": 13101,
+     "vertex_to": 13096,
+     "st_from_m": 21002.0,
+     "st_to_m": 20986.9,
+     "drive_st_from_m": 3912.3,
      "matched": true,
      "way": 427696018,
      "tags": {
@@ -2561,11 +2591,11 @@
     {
      "segments": 58,
      "length_m": 174.4,
-     "vertex_from": 6992,
-     "vertex_to": 6934,
-     "st_from_m": 20978.1,
-     "st_to_m": 20803.7,
-     "drive_st_from_m": 3927.6,
+     "vertex_from": 13096,
+     "vertex_to": 13038,
+     "st_from_m": 20986.9,
+     "st_to_m": 20812.5,
+     "drive_st_from_m": 3927.3,
      "matched": true,
      "way": 17088051,
      "tags": {
@@ -2585,11 +2615,11 @@
     {
      "segments": 19,
      "length_m": 57.1,
-     "vertex_from": 6934,
-     "vertex_to": 6915,
-     "st_from_m": 20803.7,
-     "st_to_m": 20746.6,
-     "drive_st_from_m": 4102.0,
+     "vertex_from": 13038,
+     "vertex_to": 13019,
+     "st_from_m": 20812.5,
+     "st_to_m": 20755.4,
+     "drive_st_from_m": 4101.7,
      "matched": true,
      "way": 1068495783,
      "tags": {
@@ -2608,11 +2638,11 @@
     {
      "segments": 27,
      "length_m": 81.2,
-     "vertex_from": 6915,
-     "vertex_to": 6888,
-     "st_from_m": 20746.6,
-     "st_to_m": 20665.4,
-     "drive_st_from_m": 4159.1,
+     "vertex_from": 13019,
+     "vertex_to": 12992,
+     "st_from_m": 20755.4,
+     "st_to_m": 20674.2,
+     "drive_st_from_m": 4158.9,
      "matched": true,
      "way": 1068495782,
      "tags": {
@@ -2631,11 +2661,11 @@
     {
      "segments": 30,
      "length_m": 90.2,
-     "vertex_from": 6888,
-     "vertex_to": 6858,
-     "st_from_m": 20665.4,
-     "st_to_m": 20575.1,
-     "drive_st_from_m": 4240.3,
+     "vertex_from": 12992,
+     "vertex_to": 12962,
+     "st_from_m": 20674.2,
+     "st_to_m": 20584.0,
+     "drive_st_from_m": 4240.1,
      "matched": true,
      "way": 1068495780,
      "tags": {
@@ -2655,11 +2685,11 @@
     {
      "segments": 27,
      "length_m": 81.2,
-     "vertex_from": 6858,
-     "vertex_to": 6831,
-     "st_from_m": 20575.1,
-     "st_to_m": 20493.9,
-     "drive_st_from_m": 4330.6,
+     "vertex_from": 12962,
+     "vertex_to": 12935,
+     "st_from_m": 20584.0,
+     "st_to_m": 20502.8,
+     "drive_st_from_m": 4330.3,
      "matched": true,
      "way": 1068495781,
      "tags": {
@@ -2678,11 +2708,11 @@
     {
      "segments": 70,
      "length_m": 210.5,
-     "vertex_from": 6831,
-     "vertex_to": 6761,
-     "st_from_m": 20493.9,
-     "st_to_m": 20283.4,
-     "drive_st_from_m": 4411.8,
+     "vertex_from": 12935,
+     "vertex_to": 12865,
+     "st_from_m": 20502.8,
+     "st_to_m": 20292.3,
+     "drive_st_from_m": 4411.5,
      "matched": true,
      "way": 1491101458,
      "tags": {
@@ -2701,11 +2731,11 @@
     {
      "segments": 43,
      "length_m": 128.5,
-     "vertex_from": 6756,
-     "vertex_to": 6713,
-     "st_from_m": 20268.9,
-     "st_to_m": 20140.4,
-     "drive_st_from_m": 4636.8,
+     "vertex_from": 12860,
+     "vertex_to": 12817,
+     "st_from_m": 20277.8,
+     "st_to_m": 20149.3,
+     "drive_st_from_m": 4636.5,
      "matched": true,
      "way": 427877838,
      "tags": {
@@ -2725,11 +2755,11 @@
     {
      "segments": 49,
      "length_m": 147.2,
-     "vertex_from": 6713,
-     "vertex_to": 6664,
-     "st_from_m": 20140.4,
-     "st_to_m": 19993.2,
-     "drive_st_from_m": 4765.3,
+     "vertex_from": 12817,
+     "vertex_to": 12768,
+     "st_from_m": 20149.3,
+     "st_to_m": 20002.1,
+     "drive_st_from_m": 4765.0,
      "matched": true,
      "way": 427877837,
      "tags": {
@@ -2749,11 +2779,11 @@
     {
      "segments": 12,
      "length_m": 35.9,
-     "vertex_from": 6664,
-     "vertex_to": 6652,
-     "st_from_m": 19993.2,
-     "st_to_m": 19957.3,
-     "drive_st_from_m": 4912.5,
+     "vertex_from": 12768,
+     "vertex_to": 12756,
+     "st_from_m": 20002.1,
+     "st_to_m": 19966.2,
+     "drive_st_from_m": 4912.2,
      "matched": true,
      "way": 998316318,
      "tags": {
@@ -2772,11 +2802,11 @@
     {
      "segments": 29,
      "length_m": 86.2,
-     "vertex_from": 5565,
-     "vertex_to": 5536,
-     "st_from_m": 16696.3,
-     "st_to_m": 16610.1,
-     "drive_st_from_m": 8209.4,
+     "vertex_from": 11669,
+     "vertex_to": 11640,
+     "st_from_m": 16705.3,
+     "st_to_m": 16619.1,
+     "drive_st_from_m": 8209.0,
      "matched": true,
      "way": 119006778,
      "tags": {
@@ -2792,12 +2822,12 @@
      "unjudged": false
     }
    ],
-   "against_total_m": 4486.5,
+   "against_total_m": 4486.3,
    "against_by_stretch_m": {
     "colfax": 311.6,
     "exit259": 86.2,
     "nineteenth": 53.6,
-    "us6_offramp": 4035.1
+    "us6_offramp": 4034.9
    },
    "undeclared_against_m": 0,
    "with_arrows_runs": [],

@@ -997,3 +997,17 @@ model is the one the Lariat's race version (0048 D3 a, Drive 3) adapts.
 acw v2311 / v1506, the acw 1:10 funnel off the I-8 deck), a wall hit at speed (the K-rail foot), closure / curb-strip
 flicker, the race_acw fold-fan steps the mouth weld named (Navajo/Jackson up to 0.40 m), an AI race with 7
 opponents, load time and FPS. Anything he reports there becomes its own entry.
+
+**Verdict 1, continued (2026-10-12, Kevin, verbatim):**
+
+> "the small steps are a problem at jackson/navajo and arrow signs are only placed for one direction of driving.
+> no flickers at all that i can see, load time and frame rate are great"
+>
+> "ai races need tuning, they tend to crash and slow down weirdlu"
+>
+> "i'd like the race curbs to be tire-worn/textured"
+
+Closed by it: closure / curb-strip flicker (none seen), load time and FPS (great). Opened by it, each its own entry:
+the Navajo/Jackson steps (the fold-fan steps the mouth weld named, now a driver-felt defect) → 0050; arrows for one
+direction only (0044 shipped `both_directions_mainline: false`) → 0051; AI races crash and slow down → 0052; race
+kerbs tyre-worn / textured → 0053.

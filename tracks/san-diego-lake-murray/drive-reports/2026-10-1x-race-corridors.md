@@ -11,6 +11,10 @@
 - **2026-10-12, build 0.17.1** (race corridors + mouth weld): *"is tracked with and race track layouts are
   incredible"* — read as "the track width and race track layouts are incredible" (dictation). Filed in ledger
   0049 "Drive verdict 1". The questions below are still open.
+- **2026-10-12, later:** *"the small steps are a problem at jackson/navajo and arrow signs are only placed for one
+  direction of driving. no flickers at all that i can see, load time and frame rate are great"*; *"ai races need
+  tuning, they tend to crash and slow down weirdlu"*; *"i'd like the race curbs to be tire-worn/textured"*. Flicker,
+  load time and FPS: answered (none / great). The rest → ledger 0050-0053.
 
 ## What you are driving (and what changed since the last install)
 

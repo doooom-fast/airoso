@@ -325,6 +325,37 @@ boxes marked, and the two C-470 crossings marked, before any geometry (L12, show
 - a Lariat dry-run stops cleanly at "no blend yet";
 - every existing test still passes.
 
+> **2026-10-11, what landed (ledger 0048 "P1, the ship chain"):**
+> - `tools/ship_track.sh` + `tools/ship_track_spec.py` (ship.json schema and validator),
+>   `tracks/san-diego-lake-murray/ship.json`, `tracks/lookout-lariat/ship.json`,
+>   `tests/tools/test_ship_track_chain.py`. Phases `draft` (skipped by `--skip-blend`), `author`, `prep`
+>   (exactly prep, split), `ship`, `gate`; plus `--draft-only` (the draft's data steps, stopping at the first
+>   Blender step) and `SHIP_SPEC` (a rehearsal: never synced back or installed).
+> - **SD parity, against `ship_sd.sh` as it is at airoso 8a2f076:** identical step headers (all branches,
+>   static) and, on one scratch copy of the workshop with `--skip-blend --dry-run`, identical executed headers
+>   and an md5-identical `split_manifest.json`. `ship_sd.sh` is untouched and is not a shim. **The concurrent
+>   terrain job is changing `ship_sd.sh` (ENG override, `slim_far_terrain` removed, terrain steps): after it
+>   merges, SD's `ship.json` and the vocabulary must be re-synced; the parity test fails until they are.**
+> - **The Lariat dry-run** stops at "no blend yet" (exit 0, nothing synced in). The workshop is
+>   `C:/Users/Owner/Documents/k10-workshops/lookout-lariat/project` (created, empty).
+> - **Paint centreline in the draft (P2 step 1):** gps (the paint line it overwrites is kept first as
+>   `data/centerline.previous.geojson`) → paint_centreline → remap_config `--write` → verify_centreline_paint →
+>   route_oneway_check → elev → project → widths → underlay. Rehearsed with `--draft-only` on a scratch copy:
+>   the line, the OSM source and the config come back byte-identical; both gates pass. `scripts/build.sh` is
+>   unchanged for every other track. `tools/fit_hairpins.py` now maps `climb_st_m` (OSM-line stations) onto the
+>   line it reads through `osm_station_m` ([0, 7100] → [0, 7107.4] on the paint line).
+> - **The three prep preconditions** (airoso's `scripts/ac/build_kn5_loop.py` only): the `_corridor_hash` frame
+>   bug proven by a failing test and fixed; balanced-halving tiles at ≤ 50,000 positions; station matching for the
+>   terrain seat (`LegIndex`, `STATION_WIN_M` 40 m [invented], `LAYER_WIN` retired). No shipped kn5 changes:
+>   no track in the fleet preps with this file today (fleet/GATES-CHANGELOG.md 2026-10-11 "Lariat P1").
+>
+> **Owed from P1:** the race tools adapted from Lake Murray (`STREETS` → a config `race` block; the Lariat's
+> ship.json lists the race steps, which still run SD's shape); the "other adapted tools" (`split_exports_blend`
+> far-terrain scene, `pack_release --slug`, `make_treefx` from config, `place_signs` both directions + plate types,
+> `author_lamps_blend` positions file); station matching in `seat_terrain_blend`, `place_signs` and the edge and
+> closure authoring (all out of this change's reach: a concurrent job holds those files); the underlay
+> (P2 step 3), which is what ends "no blend yet".
+
 ### P2 — Draft, route-only
 
 1. **Engine phases 1–3** on the re-derived route:

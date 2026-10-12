@@ -850,3 +850,45 @@ Proof:
 - The paint centreline (`tools/paint_centreline.py`) passes all four: worst 0.61 m; 0 / 0 / 0 on 7,114 climb points; seam 2.20° against a limit of 3.16°.
 
 Wiring: not in build.sh or any ship chain yet. It runs by hand after `tools/paint_centreline.py` (Lariat build order: gps -> paint_centreline -> remap_centreline_config --write -> elev). Exit 1 on any fail. Output goes to `data/aerial/paint_gate.json`.
+
+## 2026-10-11 — Lariat P1: a ship chain that isn't San Diego, and the loop prep's three preconditions (ledger 0048)
+
+### The ship chain (`tools/ship_track.sh <track>`, driven by `tracks/<track>/ship.json`)
+
+Wiring only; no threshold moves. `tools/ship_sd.sh` is untouched (byte-identical) and stays San Diego's chain
+of record. `ship_track.sh` carries every gate `ship_sd.sh` runs, with the same exit semantics (set -e on the hard
+ones; drive_test / audit exits collected; `--force-install` never covers a race layout red on its own gates or a
+no_route input error). New in the chain:
+
+| Gate | Where | Exit |
+|---|---|---|
+| ship.json vocabulary | a step name with no `<phase>_<name>` function in the script, or a value outside `tools/ship_track_spec.py`'s patterns (unknown key, `..`, absolute or shell-shaped path, unknown phase, `prep` other than exactly `[prep, split]`) | 2, before any file operation |
+| race furniture declared but not authored | a layout declares `race_furniture` and `steps.author` has no `race_author` | 2 |
+| `no blend yet` | no `loop.blend` in the project and nothing in the run can build one (`--skip-blend`, or no available blend builder) | 0 on `--dry-run`, 1 otherwise; nothing synced in |
+| Lariat draft: `verify_centreline_paint` + `route_oneway_check` | after `gps -> paint_centreline -> remap_config --write`, before `elev` (the paint gate's "wiring: not in any ship chain yet" above is now wired, for the Lariat) | 1 on FAIL |
+
+Proof: `tests/tools/test_ship_track_chain.py` (19). San Diego parity at airoso 8a2f076: the step headers
+`tracks/san-diego-lake-murray/ship.json` selects equal `ship_sd.sh`'s, every branch, in order (static), and a real
+`--skip-blend --dry-run` of both scripts on the same scratch copy of the workshop printed identical step headers
+(7) and wrote an md5-identical `split_manifest.json` (`37e960f0cf9edaade61060ca4f65c412`). The Lariat's route draft
+rehearsed with `--draft-only` on a scratch project reproduces `data/centerline.geojson`, `data/centerline.osm.geojson`
+and `track.config.json` byte for byte, paint gate and one-way check PASS.
+
+### The loop prep (`scripts/ac/build_kn5_loop.py`, airoso's copy only; engine-july's and the snapshot untouched)
+
+| Gate / guard | Before | After | Flag |
+|---|---|---|---|
+| 0020 corridor discipline (`_corridor_hash`: kerb faces carved out of carriageways, trunks and canopies cleared from the driving envelope) | built from `data/finished_centerline.json` (KN5 frame, north negated) and queried in Blender's frame: the mainline corridor stood at the north-south mirror image of the road; connectors (local frame) were right | the mainline is un-negated before hashing; mainline, connectors and queries share Blender's (east, north) | a frame bug, no number. `tests/ac/test_build_kn5_loop_prep.py` fails on the old function: a point on the road read 1e9 m from any carriageway, its mirror image read inside one |
+| over-cap tiling (`_split_large`) | > 60,000 positions -> K = n // 60,000 + 1 equal-width bands along the longer axis; a band holding a switchback knot overflowed (the FATAL `assert_under_cap` then stopped the build) | > `PIECE_CAP` **50,000** positions -> `balanced_tiles`: halve at the median face centre along the longer side until every piece is <= 50,000 positions | ⚠ 50,000 is invented (the plan's number; 15,535 of headroom under AC's hard 65,535 for the weld and smooth-shading after the split). Proven: a strip + dense knot whose equal bands overflow a 2,000 cap tiles under it by halving |
+| terrain seat on stacked legs (L4) | the deck under a ground vertex = the highest road within `LAYER_WIN` 30 m vertically; the contact-band target = the nearest road point in 3D (any leg); the band weight from the nearest road vertex in plan (any leg) | **station matching**: every ground vertex carries the leg + station of the nearest centreline / connector segment in plan (`LegIndex`); it seats only on road triangles of that leg within `STATION_WIN_M` **40 m** of its station (cyclic on a closed lap); the band weight is the plan distance to that leg's footprint. `LAYER_WIN` is gone | ⚠ 40 m is invented. Bounds: a same-leg seat can be off by at most 0.115 × 40 = 4.6 m of grade (the lap's steepest 20 m, -11.5 %), under the smallest stacked gap (6.5 m); on the Lariat's paint centreline every pair of distinct stretches within 30 m in plan is >= **79.9 m** apart in station (closest in plan 19.4 m, station gap 113.9 m at st 5,472 / 5,586). Blender proof on a synthetic switchback (legs 20.5 m apart, 6.5 m road, leg B on a fill): ground vertices 0.3-9 m outside a leg's edge more than 0.5 m off a seat on their own leg: HEAD prep **459 of 3,509, worst 21.11 m**; this prep **28 of 3,509, worst 0.63 m** (the residue is the footprint-distance approximation of the check itself) |
+
+Not changed (no stacked-leg exposure on a road whose legs never overlap in plan): the anti-poke clamp (lowest
+drivable sheet within ±20 m, push-down only), the corridor query's 3.5 m / 7 m deck windows (bridges), the props'
+terrain-delta ride (±40 m).
+
+Which kn5s these change: only kn5s prepped by airoso's `scripts/ac/build_kn5_loop.py` (`scripts/build_loop.sh`,
+and `tools/ship_track.sh` for every track but San Diego). Today that is **none that ships**: San Diego preps with
+engine-july's copy (`ship_sd.sh`, and `ship_track.sh` keeps that for SD), the Colorado circuits, rally stages and
+Sand Creek build through `scripts/build.sh` -> `scripts/ac/build_kn5.py` (the OBJ program, its own
+`_split_over_cap`, untouched), and the only `loop.blend` in the fleet is San Diego's. The first kn5 this prep
+writes will be the Lariat's.

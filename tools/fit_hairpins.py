@@ -775,6 +775,25 @@ def load_feature(path: Path) -> tuple[dict, dict, int]:
     return gj, feats[idx], idx
 
 
+def climb_on_line(climb, st, osm_st=None):
+    """``hairpin_fit.climb_st_m`` is defined on the OSM source line (data/centerline.osm.geojson). A paint
+    centreline (tools/paint_centreline.py) carries each vertex's OSM station as ``osm_station_m``; its own
+    stations differ (the climb is resampled at 1 m and moved onto the paint), so the range is mapped by station
+    matching: [own station of the first, of the last] vertex whose OSM station lies in the range. A line without
+    ``osm_station_m`` IS the OSM line and the range is used as it stands. None when no climb is declared."""
+    if not climb:
+        return None
+    c0, c1 = float(climb[0]), float(climb[1])
+    if not osm_st:
+        return [c0, c1]
+    if len(osm_st) != len(st):
+        raise SystemExit(f"[hairpins] osm_station_m has {len(osm_st)} entries for {len(st)} vertices")
+    on = [st[i] for i, s in enumerate(osm_st) if c0 <= s <= c1]
+    if not on:
+        raise SystemExit(f"[hairpins] no vertex of the centreline maps into climb_st_m {climb} (osm_station_m)")
+    return [min(on), max(on)]
+
+
 def corners_from_config(cfg: dict) -> tuple[list[dict], dict]:
     block = cfg.get("hairpin_fit") or {}
     prm = dict(DEFAULTS)
@@ -911,8 +930,9 @@ def run(project_dir: Path, out_dir: Path, centerline: Path | None = None, only: 
             r["status"] = "FAIL"
             r["why"] = f"the joined line fails the gate ({len(g['fails'])} point(s)) although spliced"
 
-    # climb-wide counts before / after
-    climb = prm.get("climb_st_m")
+    # climb-wide counts before / after. climb_st_m is on the OSM source line; mapped onto this line's own
+    # stations through osm_station_m when the line is a paint centreline (it is never remapped in the config)
+    climb = climb_on_line(prm.get("climb_st_m"), st, (feat.get("properties") or {}).get("osm_station_m"))
     S2 = signed_steps(out_P)
     st2 = stations(out_P)
 
@@ -936,7 +956,10 @@ def run(project_dir: Path, out_dir: Path, centerline: Path | None = None, only: 
         return [st2[new_of[lo_v]], st2[new_of[hi_v]]]
 
     summary = {"before": counts(S, st, climb), "after": counts(S2, st2, climb_range_after(), src_index),
-               "range_st_m": climb}
+               "range_st_m": climb, "climb_st_m_osm_line": prm.get("climb_st_m"),
+               "range_frame": ("this line's own stations, mapped from climb_st_m (OSM line) through osm_station_m"
+                               if (feat.get("properties") or {}).get("osm_station_m") else
+                               "this line's own stations (the line is the OSM line: climb_st_m as declared)")}
 
     undeclared = []
     if detect_deg:

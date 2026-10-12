@@ -794,3 +794,39 @@ cut at the legs' crossing, the hook's chord, a U-turn refused; the gap window's 
 the previous trim), `test_verify_race.py` (O: a 0.458 m and a 0.06 m ring fail, a 0.15 m author threshold fails),
 `test_ship_sd_chain.py` (the weld between the rebuild and the seat with the workshop on sys.path; verify_mouths after
 the street gate OBJ, hard; the AIROSO default). engine-july is not edited: no file `ship_sd.sh` runs from ENG changed.
+
+## 2026-10-11 — Lookout Lariat P0: `route_oneway_check`, the OSM staleness guard (ledger 0048)
+
+Both landed in 324ec41 / 0e96423 without an entry here; recorded now.
+
+**`tools/route_oneway_check.py` (NEW; not yet wired into a ship chain — the Lariat's P1 chain will run it
+before any geometry).** The July route list drove the Lariat's lap ~100 m the wrong way up a one-way at the
+US-6 ramp end and 84 m at I-70 exit 259, and no gate could see it: every gate measures the built road, none
+asks which way the real road runs. This asks it of the route itself. Per **street** layout (race layouts are
+closed roads, not checked), each centreline segment is matched to the OSM way it runs along in the route
+stage's own Overpass snapshot (`data/osm.cache.json`); runs against a `oneway=yes|-1` or roundabout way must
+lie on a stretch the layout declares (`layouts[].against_oneway` → `divided.stretches[].ways`), every
+declared stretch must actually be driven against (a stale declaration FAILs), and a layout that declares
+nothing must drive against nothing. Exit 1 on any FAIL, 2 on a usage/config error; `data/oneway_check.json`.
+
+| Item | Value | Flag |
+|---|---|---|
+| verdict | the real road's direction, from its OSM `oneway` / `junction` tags; `reversible` / `alternating` listed, never judged | [std] |
+| `SNAP_M` | 3.0 m — both segment ends within this of the way | ⚠ invented (a matching parameter, not a threshold) |
+| `MIN_COS` | 0.7 — \|cos\| between the segment and the way's local direction (~45°) | ⚠ invented (matching parameter) |
+| unmatched segments | a segment straddling a junction corner matches no single way: reported as a junction gap, never as a run | |
+
+Proven on the P0 line: Full 0 m against; Reverse 4,486.5 m against on the four declared divided stretches
+(D2 (a), Kevin's call), 0 undeclared.
+
+**OSM staleness guard (`scripts/gps/widths_from_osm.py` `OSM_MAX_AGE_DAYS`; also `overpass.py`,
+`centerline.py`).** 2026-10-11: overpass.kumi.systems served OSM as of 2026-07-28 while overpass-api.de was
+minutes old, and the width/route stages fell back to it without a word. A live Overpass answer whose
+`osm3s.timestamp_osm_base` is older than the limit (or carries none) is never written to a snapshot: the stage
+stops, naming the mirror and its data date. Per track `route.osm_max_age_days`; one-off `--allow-stale-osm`.
+A snapshot already on disk is never judged by age (pinning old data on purpose is what a snapshot is for).
+
+| Item | Value | Flag |
+|---|---|---|
+| `OSM_MAX_AGE_DAYS` | 7.0 days — healthy mirrors lag minutes to hours; a week behind means the copying stopped | ⚠ invented |
+| without a cache path | warns only | |

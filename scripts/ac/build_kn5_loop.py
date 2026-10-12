@@ -135,6 +135,30 @@ def detect_bridge_spans(pts_xyz, origin_lonlat, bridge_ways, *, mirror_x=False,
             open_a = None
     if open_a is not None:
         spans.append((max(0.0, open_a - pad_m), open_b + pad_m))
+    # L13 (V3-PLAN P2 step 5): on a CLOSED lap the closing vertex is vertex 0, so a span reaching it always
+    # continues from vertex 0 (the same point is near the same bridge). The pads must wrap the same way: a pad past
+    # either end of the lap continues on the other side of the seam, never past the lap's length or below 0
+    # (before: the last span ran pad_m past the lap and the first span's pad was cut off at 0). Open roads unchanged.
+    closed = (len(pts_xyz) > 2 and abs(pts_xyz[0][0] - pts_xyz[-1][0]) < 1e-6
+              and abs(pts_xyz[0][2] - pts_xyz[-1][2]) < 1e-6)
+    if closed and spans:
+        lap = st
+        pieces = list(spans)
+        if near_bridge(pts_xyz[0][0], pts_xyz[0][2]) and pieces[0][0] <= 0.0:
+            pieces.append((lap - pad_m, lap))             # vertex 0's pad, continued before the seam
+        wrapped = []
+        for a, b in pieces:
+            if b > lap:
+                wrapped += [(a, lap), (0.0, b - lap)]
+            else:
+                wrapped.append((a, b))
+        wrapped.sort()
+        spans = []
+        for a, b in wrapped:
+            if spans and a <= spans[-1][1]:
+                spans[-1] = (spans[-1][0], max(spans[-1][1], b))
+            else:
+                spans.append((a, b))
     return spans
 
 

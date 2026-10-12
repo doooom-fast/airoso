@@ -1291,6 +1291,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
     if ep.exists() and line is None:
         try:
             ej = json.loads(ep.read_text())
+            # z_raw_m is per geojson vertex; in_local_order below maps it into centerline.local.json's order by the
+            # permutation projection recorded (ledger 0060). scripts.elevation.road_profile's z_raw_local_m (branch
+            # 307a3b7, 2026-10-12) is that same mapping done at write time; it is not read here, so the one mapping runs once
             zr = ej.get("z_raw_m") or []
             e0 = 0.0
             _lc9 = data / "centerline.local.json"

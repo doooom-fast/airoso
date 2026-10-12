@@ -607,10 +607,32 @@ gate_kn5_ground() {
   done
 }
 
+# =============================================================================================================
+# --- draft: the Lariat's data stages (V3-PLAN P2 steps 1, 4, 5; ledger 0048). One block, appended: the steps
+# above are untouched. Tools run from airoso on "$PROJ"; none needs Blender (is_data_step lists them).
+# =============================================================================================================
+draft_road_profile() {
+  step "draft: road profile by station + declared decks held straight (scripts.elevation.road_profile --write: capture.bridges)"
+  (cd "$AIROSO" && python -m scripts.elevation.road_profile "$PROJ" --write)
+}
+draft_measured_widths() {
+  step "draft: measured widths over the OSM table, local frame (scripts.gps.measured_widths: aerial > published > OSM)"
+  (cd "$AIROSO" && python -m scripts.gps.measured_widths "$PROJ")
+}
+draft_crossfall() {
+  step "draft: crossfall inside the real-width footprint, construction-standard fill (scripts.elevation.crossfall, estimated)"
+  (cd "$AIROSO" && python -m scripts.elevation.crossfall "$PROJ")
+}
+draft_verify_crossfall() {
+  step "gate: crossfall roll rate (tools/verify_crossfall.py: <= 4 % per 30 m, no +-3 % swing within 30 m — hard)"
+  (cd "$AIROSO" && python tools/verify_crossfall.py "$PROJ")
+}
+
 # a draft step that needs no Blender (what --draft-only runs)
 is_data_step() {
   case "$1" in
     gps|aerial|paint_centreline|remap_config|verify_centreline_paint|route_oneway_check|elev|project|widths|mesh) return 0;;
+    road_profile|measured_widths|crossfall|verify_crossfall) return 0;;
     net|classify|network_elev|network_mesh) return 0;;
     deck_datum|median_envelope|route_connectors|divide_connectors|trim_connectors|terrain_sample|terrain_resample) return 0;;
     *) return 1;;

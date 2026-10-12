@@ -56,6 +56,13 @@
       533500102
     ],
     "_exclude_ids_doc": "Opt-in route key (scripts/gps/overpass.fetch_ways), applied when the payload is parsed: the query, its fingerprint and the snapshot are unchanged, and the snapshot keeps both ways for tools/route_oneway_check.py. Each id is the WRONG side of a divided piece that the stitcher keeps because it is shorter. 42005706 = exit 259's 4-lane south-west-bound side (A1: the July lap drove it 84 m against its arrows; the lap now takes the north-east-bound 119006778). 533500102 = 19th St's eastbound one-way side at the ramp terminal: with A1's ids alone the 19th St path still ran on it and the lap drove 59.6 m against its arrows (found by tools/route_oneway_check.py on 2026-10-11); dropping it puts the left turn on 1283267904 -> 1106864351 -> 533504135, the westbound side, as A1 intends. An id that is no longer in the snapshot (OSM re-split) fails the stage.",
+    "measured_widths": {
+      "aerial": "data/aerial/aerial_measurements.json",
+      "town_segments": [
+        "Golden"
+      ]
+    },
+    "_measured_widths_doc": "P2 step 1 (scripts/gps/measured_widths.py, after scripts.gps.widths_from_osm): the aerial pass's MEASURED widths (NAIP 2019: width stations, hairpin legs, hairpin apexes) override the published width_overrides, which override the 'mountain' OSM table, per top-level width_overrides stretch; a measured width is the painted travelled way (edge-line centre to centre + one 0.10 m stripe); in a town_segments stretch with no edge lines, the curb-to-curb pavement. widths_from_osm's junction flares, hard-corner flares and 10 m fold floors are not laid (not measurements; A2 keeps hairpin widening off, P3b authors the mouths). The record is data/widths.measured.json.",
     "connectors": {}
   },
   "hairpin_fit": {
@@ -301,6 +308,8 @@
     "crossfall": {
       "status": "estimated",
       "banking": false,
+      "method": "footprint",
+      "_method_doc": "scripts/elevation/crossfall.py build_footprint (P2 step 4): 3DEP pairs inside the real-width footprint only (the outermost 1.0 m inside each edge), ground beside the road used only to classify bench vs crown; the construction standard (2 % crown, or 2 % toward the cut ditch on a bench) everywhere the measurement is weaker than 2 %, over 6 %, banked into a curve, on a declared deck, or fails the roll-rate gate (tools/verify_crossfall.py: <= 4 % change per 30 m, no +3 % to -3 % swing within 30 m, both [invented]). data/crossfall.json carries status 'estimated'.",
       "_doc": "A6: the road is not tilted into the hairpins, because the real one isn't (L10; ledger 0003 stays open). July's data/crossfall.json was DEM-estimated, not measured (~10 % of stations sat at its 6 % cap, 19 % on US-40; 9 swings of >= 3 % each way within 30 m), and is not reused. P2 re-measures inside the real-width footprint with a roll-rate gate; until a 3DEP source-lidar sample agrees it is 'estimated', and failing stretches take the construction standard: 2 % crown, or 2 % toward the cut ditch on bench sections."
     },
     "verge_m": 0.4,
@@ -446,6 +455,39 @@
         "other_side_ways": [
           533500102
         ]
+      }
+    ]
+  },
+  "bridges": {
+    "_doc": "P2 step 5 (V3-PLAN; ledger 0048). Decks on the lap are DECLARED from evidence, never left to a detector. scripts/elevation/road_profile.py finds each declared deck's stretch of the lap over its footprint ways (each OSM way's centreline buffered by half its pavement width, route.width_profile), adds abutment_m each side, holds the road straight across it in the raw 3DEP profile before smoothing, writes data/bridge.spans.json, and with --write records it as capture.bridges (local stations), the engine's declared-span key.",
+    "l13_seam_rule": true,
+    "_l13_seam_rule_doc": "Opt-in for scripts/geometry/build_mesh.py's height detector (_bridge_detector, the one that minted July's [24,278-24,803]): on a closed lap a run that reaches the closing vertex while vertex 0 is not on a span is a wrap artefact (L13) and is dropped. Other tracks keep the detector as it was. The V3 Lariat does not run build_mesh; the prep's OSM-way detector (scripts/ac/build_kn5_loop.py detect_bridge_spans) gets the same rule unconditionally.",
+    "declared": [
+      {
+        "id": "lid_19th_us6",
+        "kind": "lid",
+        "footprint_ways": [
+          533503591,
+          533679737
+        ],
+        "abutment_m": 8.0,
+        "_doc": "The 19th St lid over the US-6 tunnel (OSM ways 533503591 + 533679737, tunnel=yes, layer -1, 2 lanes each): the lap's stretch over the two tunnel footprints plus 8 m of abutment each side [invented: the prep's BRIDGE_PAD_M], held straight. ~550 m before the pylons, clear of the seam (L13)."
+      }
+    ],
+    "dropped": [
+      {
+        "july_span_m": [
+          24278,
+          24803
+        ],
+        "why": "July auto span (engine v0.46.0 build_mesh height detector, 24,802.6 m built frame): 525 m ending on the lap's last vertex without continuing from vertex 0, a wrap artefact (L13); holding it level would erase 19th St's real +5.7 % climb. The only structure in that stretch is the lid, declared above from its footprint. No V3 lap way there carries bridge=yes (data/bridge.spans.json lap_osm_bridge_ways)."
+      },
+      {
+        "july_span_m": [
+          20742,
+          21166
+        ],
+        "why": "July auto span containing the C-470 crossing on US-6 (aerial: C-470 way 84720905 crosses OVER the lap at OSM-line st 21,137.6, its deck measured across the lap in data/aerial/aerial_measurements.json c470): the lap passes UNDER a bridge there, not over one. No V3 lap way there carries bridge=yes."
       }
     ]
   },
@@ -1515,5 +1557,15 @@
       "Paradise Rd '-14.5 %' (1 m 3DEP: -10.3 % over 100 m)",
       "installed ui: run 'clockwise' (Full is anticlockwise), tag 'fictional', author prodrive-ac-builder"
     ]
+  },
+  "capture": {
+    "bridges": [
+      {
+        "id": "lid_19th_us6",
+        "center_m": 24368.5,
+        "len_m": 38.1
+      }
+    ],
+    "_bridges_doc": "Written by scripts/elevation/road_profile.py --write from bridges.declared (local stations; data/bridge.spans.json has the footprint, the frames and the hold). The engine's declared-span key: drive_test's replication / obstruction exemptions and kn5_ground_check's railing feet read it. Do not edit by hand."
   }
 }

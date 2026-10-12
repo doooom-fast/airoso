@@ -10,7 +10,8 @@ and on guard-only runs (bash exits before the first file operation; nothing is b
 - engine-july only when the slug is san-diego-lake-murray;
 - San Diego parity: the step headers tracks/san-diego-lake-murray/ship.json selects are tools/ship_sd.sh's, in
   its order (ship_sd.sh at airoso 8a2f076; it must be re-synced when ship_sd.sh changes);
-- the Lariat: the paint centreline wired into the draft order; its dry run stops cleanly at "no blend yet".
+- the Lariat: the paint centreline wired into the draft order; with --skip-blend and no loop.blend its dry run
+  stops cleanly at "no blend yet" (without it, the underlay can now build the blend, so the draft would run).
 """
 from __future__ import annotations
 
@@ -339,19 +340,26 @@ def test_engine_july_only_for_san_diego():
 
 
 def test_engine_rule_and_no_blend_yet_on_guard_runs():
-    """The Lariat's dry run stops cleanly at 'no blend yet' with airoso's engine; SD's spec, rehearsed on an empty
-    scratch project with --skip-blend, names engine-july and stops the same way. Neither touches the project."""
+    """The Lariat's --skip-blend dry run (no loop.blend) stops cleanly at 'no blend yet' with airoso's engine; SD's
+    spec, rehearsed on an empty scratch project with --skip-blend, names engine-july and stops the same way. Neither
+    touches the project."""
     if not shutil.which("bash"):
         print("  (no bash on PATH — skipped)")
         return
     tmp = Path(tempfile.mkdtemp())
     proj = tmp / "lariat_scratch"
-    r = _run(["lookout-lariat", "--dry-run"], {"SHIP_PROJ": proj.as_posix()})
+    # scripts/blender/underlay.py exists (P2 step 3), so the Lariat's draft CAN build a loop.blend: without
+    # --skip-blend the chain no longer stops (it would run the whole draft, network included). The guard is
+    # exercised with --skip-blend, which leaves nothing in this run able to build the missing blend.
+    assert (ROOT / "scripts" / "blender" / "underlay.py").is_file()
+    assert '    underlay) [ -f "$AIROSO/scripts/blender/underlay.py" ] && return 0;;' in TEXT
+    r = _run(["lookout-lariat", "--skip-blend", "--dry-run"], {"SHIP_PROJ": proj.as_posix()})
     assert r.returncode == 0, (r.stdout[-600:], r.stderr[-400:])
     assert f"engine (prep / export / spawn): {ROOT.as_posix()}" in r.stdout, r.stdout
     assert "no blend yet" in r.stdout and "DRY RUN: stopped cleanly at 'no blend yet'." in r.stdout
-    assert "underlay" in r.stdout and "sync inputs" not in r.stdout and not proj.exists()
-    r = _run(["lookout-lariat"], {"SHIP_PROJ": proj.as_posix()})            # a real run with no blend is a failure
+    assert "--skip-blend resumes from an authored loop.blend" in r.stdout
+    assert "sync inputs" not in r.stdout and not proj.exists()
+    r = _run(["lookout-lariat", "--skip-blend"], {"SHIP_PROJ": proj.as_posix()})   # a real run with no blend fails
     assert r.returncode == 1 and "no blend yet" in r.stdout and not proj.exists()
     sd = tmp / "sd_scratch"
     r = _run(["san-diego-lake-murray", "--skip-blend", "--dry-run"],

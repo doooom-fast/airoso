@@ -2,66 +2,66 @@
  "slug": "san_diego_lake_murray",
  "obj": "track.obj",
  "race": false,
- "road_verts": 17978,
- "grass_verts": 76648,
+ "road_verts": 17868,
+ "grass_verts": 87278,
  "piers": 0,
  "wall_verts": 35688,
- "curb_verts": 55268,
+ "curb_verts": 55021,
  "A_supports_in_road": 0,
  "B_terrain_poke": 0,
  "C_junction_crossings": 0,
  "D_wall_on_road": 512,
  "E_wall_floating": 0,
  "J_terrain_span": 0,
- "K_kerb_in_carriageway": 154,
+ "K_kerb_in_carriageway": 20,
  "worst_kerb_stand_m": 0.93,
  "worst_terrain_span_m": 0.0,
- "F_curb_not_flush": 15,
- "F_skirt_off_terrain": 1687,
- "F_side_faces_skipped": 1611,
+ "F_curb_not_flush": 13,
+ "F_skirt_off_terrain": 1678,
+ "F_side_faces_skipped": 1582,
  "G_prop_floating": null,
  "H_ground_above_deck": null,
- "I_sidewalk_isolating": 145,
+ "I_sidewalk_isolating": 20,
  "I_samples": [
   [
-   3.4,
-   -1654.0,
+   -1444.7,
+   -531.1,
    0.14
   ],
   [
-   2.8,
-   -1652.3,
-   0.15
+   -1446.9,
+   -556.3,
+   0.14
   ],
   [
-   1.7,
-   -1652.7,
-   0.12
+   -1415.8,
+   -532.2,
+   0.14
   ],
   [
-   -1976.2,
-   -1269.7,
-   0.19
+   -1418.2,
+   -555.7,
+   0.14
   ],
   [
-   -1975.9,
-   -1267.9,
-   0.24
+   -766.9,
+   -843.7,
+   0.16
   ],
   [
-   -1978.3,
-   -1268.5,
-   0.25
+   -754.0,
+   -852.4,
+   0.93
   ],
   [
-   -1978.3,
-   -1268.6,
-   0.1
+   -579.8,
+   -885.8,
+   0.68
   ],
   [
-   -1977.9,
-   -1266.8,
-   0.3
+   -576.9,
+   -886.1,
+   0.59
   ]
  ],
  "worst_ground_cut_m": 0.0,

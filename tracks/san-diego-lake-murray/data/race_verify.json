@@ -4,8 +4,7 @@
  "warnings": [
   "F: race_cw: author-time: minimum spawn clearance 0.48 m at AC_START_1 v289 (edge-strip face 5.68 m) (hard floor 0.30 m)",
   "F: race_acw: author-time: minimum spawn clearance 0.48 m at AC_START_1 v312 (edge-strip face 5.68 m) (hard floor 0.30 m)",
-  "4 rings have another ROAD sheet > 0.15 m above the strip base (max 0.539 m) \u2014 a fold / mouth defect for the ribbon's owner, e.g. [0.539, '1WALL_race_edge_L_college_770_0', 1081]",
-  "built deck vs data height, worst 0.194 m"
+  "built deck vs data height, worst 0.463 m"
  ],
  "counts": {
   "by_layout": {
@@ -141,7 +140,7 @@
    }
   },
   "rings_total": 17499,
-  "interpolated": 1,
+  "interpolated": 0,
   "objects": 35,
   "kbar_objects": 0,
   "edge_objects": 15,
@@ -333,6 +332,7 @@
     "strip_off_m": 0.005
    }
   ],
+  "other_deck_above": 0,
   "inside_out_spans": 0,
   "inside_out_by_object": {},
   "inside_out_unmeasured": 0,

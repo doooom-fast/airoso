@@ -250,7 +250,7 @@ def test_argument_guards_exit_2_before_any_file_operation():
              ({"SHIP_PROJ": inside}, "is inside airoso"),
              ({"SHIP_PROJ": inside.upper().replace("/", "\\")}, "is inside airoso")]   # any spelling of it
     for extra, msg in cases:
-        env = dict(os.environ, **extra)
+        env = dict(os.environ, AIROSO=ROOT.as_posix(), **extra)   # the guard compares against this checkout, wherever it lives
         r = subprocess.run([bash, str(SH), "--dry-run", "--no-install"], capture_output=True, text=True,
                            encoding="utf-8", errors="replace", env=env, cwd=cwd, timeout=60)
         assert r.returncode == 2, (extra, r.returncode, r.stdout[-400:], r.stderr[-400:])

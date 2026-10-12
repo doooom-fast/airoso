@@ -1,7 +1,7 @@
 {
  "file": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\build\\san_diego_lake_murray_race.kn5",
  "version": 5,
- "file_bytes": 10253588,
+ "file_bytes": 10253676,
  "textures": [
   {
    "name": "kerb_diffuse.png",
@@ -403,7 +403,7 @@
  "meshes": [
   {
    "name": "1KERB_race_0_in",
-   "verts": 500,
+   "verts": 502,
    "tris": 486,
    "matid": 0,
    "surface": "KERB",
@@ -827,14 +827,14 @@
    "surface": "WALL",
    "renderable": true,
    "radius_m": 1151.6,
-   "area_m2": 8029.2,
+   "area_m2": 8029.1,
    "edge_p10_m": 0.12,
    "edge_med_m": 3.002,
    "edge_p90_m": 3.08,
    "grid_m": 1.002,
    "bbox_m": [
     2012.2,
-    86.2,
+    86.1,
     1118.5
    ]
   }
@@ -844,7 +844,7 @@
  ],
  "summary": {
   "meshes": 23,
-  "verts": 151984,
+  "verts": 151986,
   "tris": 187764,
   "textures": 3,
   "texture_bytes": 2431814,
@@ -852,7 +852,7 @@
   "surfaces": {
    "KERB": {
     "meshes": 8,
-    "verts": 7048,
+    "verts": 7050,
     "tris": 6984,
     "area_m2": 468.9,
     "invisible": 0,
@@ -863,7 +863,7 @@
     "meshes": 15,
     "verts": 144936,
     "tris": 180780,
-    "area_m2": 90260.7,
+    "area_m2": 90260.6,
     "invisible": 0,
     "edge_med_m": 2.985,
     "grid_m": 0.999

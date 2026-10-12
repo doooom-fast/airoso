@@ -3250,9 +3250,9 @@
    "y_road_at_sC": 25.517,
    "y_base": {
     "analytic": 25.757,
-    "raycast": 25.813,
+    "raycast": 25.81,
     "source": "raycast",
-    "value": 25.813,
+    "value": 25.81,
     "road_hit": null,
     "pushed_on_road_m": 0.0
    },
@@ -3574,98 +3574,98 @@
    "blender": {
     "base_xyz_engine": [
      85.328,
-     25.813,
+     25.81,
      -1451.455
     ],
     "base_xyz_blender": [
      85.328,
      -1451.455,
-     25.813
+     25.81
     ],
-    "plate_bottom_y": 27.943,
-    "plate_top_y": 28.553,
-    "post_base_y": 25.513,
-    "post_top_y": 28.603,
+    "plate_bottom_y": 27.94,
+    "plate_top_y": 28.55,
+    "post_base_y": 25.51,
+    "post_top_y": 28.6,
     "plates": [
      {
       "front_xyz": [
        [
         85.0564,
-        27.9427,
+        27.9401,
         -1452.0014
        ],
        [
         85.652,
-        27.9427,
+        27.9401,
         -1450.9379
        ],
        [
         85.652,
-        28.5527,
+        28.5501,
         -1450.9379
        ],
        [
         85.0564,
-        28.5527,
+        28.5501,
         -1452.0014
        ]
       ],
       "back_xyz": [
        [
         85.0538,
-        27.9427,
+        27.9401,
         -1452.0
        ],
        [
         85.6494,
-        27.9427,
+        27.9401,
         -1450.9364
        ],
        [
         85.6494,
-        28.5527,
+        28.5501,
         -1450.9364
        ],
        [
         85.0538,
-        28.5527,
+        28.5501,
         -1452.0
        ]
       ],
       "arrow_xyz": [
        [
         85.5997,
-        28.2475,
+        28.2449,
         -1451.0395
        ],
        [
         85.4247,
-        28.4761,
+        28.4735,
         -1451.3519
        ],
        [
         85.4321,
-        28.3321,
+        28.3294,
         -1451.3386
        ],
        [
         85.1157,
-        28.3321,
+        28.3294,
         -1451.9038
        ],
        [
         85.1157,
-        28.163,
+        28.1603,
         -1451.9038
        ],
        [
         85.4321,
-        28.163,
+        28.1603,
         -1451.3386
        ],
        [
         85.4247,
-        28.0189,
+        28.0163,
         -1451.3519
        ]
       ]
@@ -3675,26 +3675,26 @@
      "post_base_xyz": [
       [
        85.3184,
-       25.5127,
+       25.5101,
        -1451.421
       ],
       [
        85.362,
-       25.5127,
+       25.5101,
        -1451.4454
       ],
       [
        85.3376,
-       25.5127,
+       25.5101,
        -1451.489
       ],
       [
        85.294,
-       25.5127,
+       25.5101,
        -1451.4646
       ]
      ],
-     "post_top_y": 28.6027
+     "post_top_y": 28.6001
     },
     "meshes": {
      "SIGNPLATE": "SIGNPLATE_0",
@@ -9031,27 +9031,27 @@
      -1459.95
     ],
     "len_mesh_m": 10.1,
-    "back_of_walk_m": 12.65,
-    "walk_run_m": 2.55,
-    "s_S_walk_m": 12.25,
-    "s_S_mesh_m": 12.25,
-    "marched_m": 0.0,
-    "beyond_walk": false
+    "back_of_walk_m": 12.15,
+    "walk_run_m": 2.05,
+    "s_S_walk_m": 11.83,
+    "s_S_mesh_m": 12.23,
+    "marched_m": 0.4,
+    "beyond_walk": true
    },
    "base_xz": [
-    88.695,
-    -1462.093
+    88.696,
+    -1462.073
    ],
    "curb_dir_xz": [
     0.7088,
     -0.7054
    ],
-   "y_road_at_sC": 25.355,
+   "y_road_at_sC": 25.346,
    "y_base": {
-    "analytic": 25.595,
-    "raycast": 25.551,
-    "source": "raycast",
-    "value": 25.551,
+    "analytic": 25.586,
+    "raycast": 25.501,
+    "source": "raycast (terrain behind the walk, -0.09 m vs the walk's analytic height)",
+    "value": 25.501,
     "road_hit": null,
     "pushed_on_road_m": 0.0
    },
@@ -9072,27 +9072,28 @@
    "om1_3": true,
    "checks": {
     "outside_cross": 4.67,
-    "edge_clear_m": 0.14,
-    "lamp_m": 50.26,
-    "plant_m": 17.63,
+    "edge_clear_m": 0.12,
+    "lamp_m": 50.28,
+    "plant_m": 17.65,
     "plant_zone": "trees",
     "pushed_m": 1.4,
     "slid_m": 0.0,
     "lateral_step_m": 0.0,
-    "gate_margin_m": -0.08,
-    "gate_margin_gated_m": 34.8,
+    "gate_margin_m": -0.1,
+    "gate_margin_gated_m": 34.81,
     "gate_ribbons": "MAINLINE",
     "mouth_m": 28.6,
     "spawn_m": 743.0,
     "spawn": "AC_PIT_7@race_cw",
     "warnings": [
-     "plate footprint 0.08 m inside the obstacle disc of a connector centreline (medium#2+0#0#0): not gated, drive_test sweeps the mainline only; the post stays at the back of the walk (REALISM)"
+     "post stands 0.08 m behind the back of the modelled walk (marched for the built clearance); ground = terrain ray-cast",
+     "plate footprint 0.10 m inside the obstacle disc of a connector centreline (medium#2+0#0#0): not gated, drive_test sweeps the mainline only; the post stays at the back of the walk (REALISM)"
     ],
     "slid_polyline_m": 0.0,
-    "mesh_clear_m": 1.34,
+    "mesh_clear_m": 1.33,
     "mesh_clear_bearing_deg": 35,
-    "mesh_shift_m": 1.4,
-    "walk_behind_m": -0.4
+    "mesh_shift_m": 1.42,
+    "walk_behind_m": 0.08
    },
    "old_rule": {
     "rev1_xz": [
@@ -9114,15 +9115,15 @@
     -1463.493
    ],
    "base_xz_mesh": [
-    88.695,
-    -1462.093
+    88.696,
+    -1462.073
    ],
-   "base_source": "mesh (walk fraction start, marched 0.00 m along the ray, slid 0.00 m along the curb)",
+   "base_source": "mesh (walk fraction start, marched 0.40 m along the ray, slid 0.00 m along the curb)",
    "built": {
     "outside_edge_xz": [
      [
-      113.1,
-      -1476.33
+      103.65,
+      -1490.34
      ],
      [
       111.45,
@@ -9243,8 +9244,8 @@
     ],
     "back_of_walk_xz": [
      [
-      112.15,
-      -1477.74
+      101.47,
+      -1493.57
      ],
      [
       110.49,
@@ -9366,100 +9367,100 @@
    },
    "blender": {
     "base_xyz_engine": [
-     88.695,
-     25.551,
-     -1462.093
+     88.696,
+     25.501,
+     -1462.073
     ],
     "base_xyz_blender": [
-     88.695,
-     -1462.093,
-     25.551
+     88.696,
+     -1462.073,
+     25.501
     ],
-    "plate_bottom_y": 27.681,
-    "plate_top_y": 28.291,
-    "post_base_y": 25.251,
-    "post_top_y": 28.341,
+    "plate_bottom_y": 27.631,
+    "plate_top_y": 28.241,
+    "post_base_y": 25.201,
+    "post_top_y": 28.291,
     "plates": [
      {
       "front_xyz": [
        [
-        89.3051,
-        27.6813,
-        -1462.1031
+        89.3061,
+        27.631,
+        -1462.0831
        ],
        [
-        88.0888,
-        27.6813,
-        -1462.023
+        88.0898,
+        27.631,
+        -1462.003
        ],
        [
-        88.0888,
-        28.2913,
-        -1462.023
+        88.0898,
+        28.241,
+        -1462.003
        ],
        [
-        89.3051,
-        28.2913,
-        -1462.1031
+        89.3061,
+        28.241,
+        -1462.0831
        ]
       ],
       "back_xyz": [
        [
-        89.3049,
-        27.6813,
-        -1462.1061
+        89.3059,
+        27.631,
+        -1462.0861
        ],
        [
-        88.0886,
-        27.6813,
-        -1462.026
+        88.0896,
+        27.631,
+        -1462.006
        ],
        [
-        88.0886,
-        28.2913,
-        -1462.026
+        88.0896,
+        28.241,
+        -1462.006
        ],
        [
-        89.3049,
-        28.2913,
-        -1462.1061
+        89.3059,
+        28.241,
+        -1462.0861
        ]
       ],
       "arrow_xyz": [
        [
-        89.1914,
-        27.9861,
-        -1462.0916
+        89.1924,
+        27.9358,
+        -1462.0716
        ],
        [
-        88.8341,
-        28.2147,
-        -1462.0681
+        88.8351,
+        28.1644,
+        -1462.0481
        ],
        [
-        88.8493,
-        28.0707,
-        -1462.0691
+        88.8503,
+        28.0204,
+        -1462.0491
        ],
        [
-        88.203,
-        28.0707,
-        -1462.0265
+        88.204,
+        28.0204,
+        -1462.0065
        ],
        [
-        88.203,
-        27.9015,
-        -1462.0265
+        88.204,
+        27.8512,
+        -1462.0065
        ],
        [
-        88.8493,
-        27.9015,
-        -1462.0691
+        88.8503,
+        27.8512,
+        -1462.0491
        ],
        [
-        88.8341,
-        27.7575,
-        -1462.0681
+        88.8351,
+        27.7072,
+        -1462.0481
        ]
       ]
      }
@@ -9467,27 +9468,27 @@
     "post": {
      "post_base_xyz": [
       [
-       88.6684,
-       25.2513,
-       -1462.1163
+       88.6694,
+       25.201,
+       -1462.0963
       ],
       [
-       88.6717,
-       25.2513,
-       -1462.0664
+       88.6727,
+       25.201,
+       -1462.0464
       ],
       [
-       88.7216,
-       25.2513,
-       -1462.0697
+       88.7226,
+       25.201,
+       -1462.0497
       ],
       [
-       88.7183,
-       25.2513,
-       -1462.1196
+       88.7193,
+       25.201,
+       -1462.0996
       ]
      ],
-     "post_top_y": 28.3413
+     "post_top_y": 28.291
     },
     "meshes": {
      "SIGNPLATE": "SIGNPLATE_0",

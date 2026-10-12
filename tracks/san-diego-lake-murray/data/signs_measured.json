@@ -109,7 +109,7 @@
    "clear_m": 1.55,
    "bearing_deg": 0,
    "on_road": false,
-   "ground_y": 25.8127,
+   "ground_y": 25.8101,
    "walk_behind_m": -0.2,
    "plate_normals_xz": [
     [
@@ -118,8 +118,8 @@
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 27.9427,
-   "post_base_y": 25.5127
+   "plate_bottom_y": 27.9401,
+   "post_base_y": 25.5101
   },
   "MED-6-fwd": {
    "clear_m": 1.341,
@@ -282,10 +282,10 @@
    "post_base_y": 60.201
   },
   "MED-1-rev": {
-   "clear_m": 1.345,
+   "clear_m": 1.333,
    "bearing_deg": 35,
    "on_road": false,
-   "ground_y": 25.5513,
+   "ground_y": 25.501,
    "walk_behind_m": -0.4,
    "plate_normals_xz": [
     [
@@ -294,8 +294,8 @@
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 27.6813,
-   "post_base_y": 25.2513
+   "plate_bottom_y": 27.631,
+   "post_base_y": 25.201
   }
  }
 }

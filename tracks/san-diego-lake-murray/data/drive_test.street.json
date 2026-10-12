@@ -9,12 +9,12 @@
  "barrier_stations": 0,
  "barrier_missing": 0,
  "barrier_missing_runs": [],
- "soft_top_in_lane": 82,
+ "soft_top_in_lane": 42,
  "off_pavement_stations": 0,
  "severe_steps": 0,
  "severe_per_km": 0.0,
- "steps_per_km": 0.0,
- "kinks_per_km": 4.97,
+ "steps_per_km": 0.15,
+ "kinks_per_km": 3.86,
  "obstruction_stations": 0,
  "daylight_gaps": 0,
  "replication_vs_measured": {
@@ -24,8 +24,8 @@
  },
  "undrivable_corners": 0,
  "floating_furniture": 391,
- "apron_steps": 22,
- "excursion_drops": 101,
+ "apron_steps": 7,
+ "excursion_drops": 100,
  "excursion_far_ledges": 79,
  "worst_excursions": [
   [
@@ -90,13 +90,13 @@
   ],
   [
    2.3,
-   -12.5,
-   0.17,
+   11.0,
+   0.14,
    true
   ],
   [
-   2.3,
-   11.0,
+   302.6,
+   -9.0,
    0.14,
    true
   ]
@@ -118,12 +118,6 @@
    2402.7,
    15.0,
    0.2,
-   true
-  ],
-  [
-   2.3,
-   -12.5,
-   0.17,
    true
   ],
   [
@@ -221,6 +215,12 @@
    9.0,
    0.14,
    true
+  ],
+  [
+   1650.2,
+   -9.0,
+   0.14,
+   true
   ]
  ],
  "obstruction_by_mesh": {},
@@ -291,64 +291,64 @@
   "severe_all": [],
   "kinks": [
    [
-    6957.0,
+    6946.0,
     -6.0,
-    11.27
+    23.7
    ],
    [
-    6957.0,
+    6946.0,
     -6.0,
-    11.27
+    23.7
    ],
    [
-    6952.0,
+    6947.0,
     -6.0,
-    11.11
+    23.62
    ],
    [
-    6952.0,
+    6947.0,
     -6.0,
-    11.11
+    23.62
    ],
    [
-    6956.0,
+    12.0,
     -6.0,
-    11.05
+    7.11
    ],
    [
-    6956.0,
+    13.0,
     -6.0,
-    11.05
+    6.45
    ],
    [
-    2302.0,
-    -6.0,
-    8.29
+    12.0,
+    -4.92,
+    6.05
    ],
    [
-    2302.0,
-    -6.0,
-    8.29
+    13.0,
+    -4.92,
+    5.39
    ],
    [
-    6954.0,
-    -6.0,
-    8.04
+    2268.0,
+    -5.25,
+    5.12
    ],
    [
-    6954.0,
+    11.0,
     -6.0,
-    8.04
+    4.79
    ],
    [
-    6958.0,
+    6959.0,
     -6.0,
-    7.46
+    4.53
    ],
    [
-    6958.0,
+    6959.0,
     -6.0,
-    7.46
+    4.53
    ]
   ],
   "obstructions": []

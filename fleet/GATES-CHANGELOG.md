@@ -771,6 +771,19 @@ v4490s); race_acw's 22 soft tops are all on the hairpin (11) and College / Navaj
 rings 0.69 m off the centreline height no_route bands walls against — 3 doors, 316,424 m² leaked. The fold fans are the
 next owner's (ledger 0033 / 0046 class); race severe/km 2.3 / 2.1 stays under drive_test's 12/km.
 
+**Found by the independent verify, not in the rows above.** (1) Street drive_test worst slope kink 11.3 % → **23.7 %**
+at s 6946 (v2315, the Navajo fold mend: the overlapping sheet became a crease; new kinks also at the seam, s 11-13) and
+bumps/km 0 → 0.15; kinks/km overall still fell 4.97 → 3.86. (2) The OLD race step check on this build's race_acw OBJ
+finds 2 new 0.10 m severe steps at s 6535-6536, offset 2.6 m (the Navajo fold) where the installed build had 0 — a
+small regression inside the swath that was checked before, against the installed build's hidden 0.70 m fold edge
+there. (3) `medium#2+0#0#0` start: a triangle crease on the inside of the connector's own 64° corner, 25-29 m from the
+Lake Murray Blvd mouth (slope 5 → 16 %, installed 3 → 11.6 %); verify_mouths leaves a wheel line folding round a tight
+corner unmeasured (21 samples on each ±4 m line), so APPROACH does not see the inside of tight corners. (4) HOST LANE
+stops 0.45 m inside the host edge and the weld puts the connector's end row at edge − 0.4 m: a raised end row is caught
+by MOUTH LINE / NOTCH / APPROACH (all three fired on the verifier's planted defect), not by HOST LANE. **Shipped anyway
+(2026-10-11, v0.17.1):** every one is smaller than what it replaced, all are under drive_test's thresholds, and the
+drive is the judge; the Navajo fold fan is the next owner's.
+
 **Teeth.** verify_mouths on the installed build: all four mouths FAIL, each where the diagnosis put it.
 `tests/tools/test_verify_mouths.py` (a synthetic built road: the assembler's square level end fails mouth line / host
 lane / notch, the welded one passes; a wrong side, an approach step, grass in the lane, grass on the approach, the host

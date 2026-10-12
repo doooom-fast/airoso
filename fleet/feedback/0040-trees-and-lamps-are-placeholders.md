@@ -115,3 +115,13 @@ jacaranda, coral tree, Canary Island / Torrey pine, Brazilian pepper, carrotwood
 palm — each from an owned model or self-made, species zones by street. Verification: Kevin's seat ("those are
 eucalyptus"), plus the existing TreeFX checks (no `;` lines, every species file present, nothing within half-width
 + 1 m of a centreline, no "Failed to load trees" in the CSP log) and verify_race's scenery gate on the race layouts.
+
+> "Maybe flower bushes then" (Kevin, 2026-10-12, same request)
+
+Adds **flowering shrubs** to the later pass. Today's shrub layer is all unflowered (Sage, Bush, Bush3, Yucca, Agave:
+10,516 of 15,261 instances). The ones a San Diego street of this age actually shows: **bougainvillea** (magenta /
+orange, on walls, fences and garage fronts), **oleander** (pink / white, yards and the median plantings), **hibiscus**,
+**lantana**, **bird of paradise**, **India hawthorn**, roses and rosemary in front yards, and **ice plant** (pink /
+yellow carpet) on the cut slopes and the I-8 embankments — the last one is ground cover, so it may belong to GrassFX /
+the ground texture rather than TreeFX. Placement by where each really grows (yards and walls on the residential
+stretches, medians, slopes), never a uniform mix; models owned or self-made; the same verification as above.

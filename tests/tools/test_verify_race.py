@@ -151,7 +151,8 @@ def _authored(pts=None, bands=None):
             "race_prefixes": ["1WALL_RACE", "1KERB_RACE"], "max_rings_per_object": 800,
             "tokens": {"race_cw": "cw", "race_acw": "acw"},
             "totals": {"objects": len(objects), "rings": rings, "kerb_stations": len(kerb["stations"]),
-                       "seated_interpolated": 0, "deck_vs_data_max_m": 0.02, "other_deck_above_max_m": 0.0},
+                       "seated_interpolated": 0, "deck_vs_data_max_m": 0.02, "other_deck_above_max_m": 0.0,
+                       "other_deck_threshold_m": 0.05, "other_deck_above_rings": 0},
             "corners": [], "kerbs_declared_unmatched": [], "failed_runs": [],
             "spawn_clearance": {"race_cw": {"hard": [], "notes": [], "synthesised": False}},
             "bridge_seating": bridge, "other_deck_above": [], "objects": objects, "ring_centres": centres,
@@ -587,3 +588,32 @@ def test_cli_scenery_only_judges_the_written_trees_txt():
     assert vr.main([str(d), "--scenery-only", "--trees", str(trees)]) == 1
     rep = json.loads((d / "data" / "race_verify.scenery.json").read_text(encoding="utf-8"))
     assert any(f.startswith("G: scenery: race_cw: tree PalmV2.bin#1") for f in rep["fails"]), rep["fails"]
+
+
+def test_o_another_deck_over_the_strip_fails_hard():
+    """2026-10-11: 'another ROAD sheet above the strip base' was a warning while the Del Cerro W mouth stood +0.51 m
+    over College at v1081-1083 and the Navajo / Jackson fold +0.458 m over the R strip at v2314 — now O fails"""
+    a, b = _fixture()
+    r = _run(a, b)
+    assert not _has(r, "O:"), r["fails"]
+    assert r["counts"].get("other_deck_above") == 0
+    bad = copy.deepcopy(a)
+    bad["other_deck_above"] = [[0.458, "1WALL_race_edge_R_navajo_1517_0", 2314]]
+    bad["totals"]["other_deck_above_rings"] = 1
+    bad["totals"]["other_deck_above_max_m"] = 0.458
+    assert _has(_run(bad, b), "O:", "1 rings", "0.458")
+    # a ring just over the 0.05 m threshold is listed by the author and fails too
+    small = copy.deepcopy(a)
+    small["other_deck_above"] = [[0.06, "1WALL_race_edge_L_college_770_0", 1081]]
+    small["totals"]["other_deck_above_rings"] = 1
+    assert _has(_run(small, b), "O:")
+
+
+def test_o_an_author_run_at_the_old_looser_threshold_fails():
+    a, b = _fixture()
+    old = copy.deepcopy(a)
+    old["totals"]["other_deck_threshold_m"] = 0.15          # the pre-2026-10-11 author: 0.06-0.15 m never listed
+    assert _has(_run(old, b), "O:", "looser")
+    gone = copy.deepcopy(a)
+    del gone["totals"]["other_deck_threshold_m"]
+    assert _has(_run(gone, b), "O:", "looser")

@@ -24,7 +24,8 @@
 # (fleet/LAWS.md L8 as amended — the wording is in ledger 0047 pending Kevin's sign-off, Q9.)
 #
 # Stages (V3-PLAN §Phase 1 "the ONE pipeline"):
-#   draft  : median_envelope → trim_connectors → build_loop_blend              (GEN layer, regenerable)
+#   draft  : median_envelope → trim_connectors → build_loop_blend → weld_mouths (GEN layer, regenerable;
+#            the weld mitres + warps every side-street end onto its host, self-checked — 2026-10-11)
 #   author : seat_terrain → median → gap_mouths → lamps → signs                 (scripted authoring)
 #            → barrier_bands v2 (corridor solve + self-gates + PLANNED no_route per race layout, hard)
 #            → layout_dummies → author_race_furniture (RACE + RACE_CLOSE_<TOKEN>) → verify_race (idempotent)
@@ -32,7 +33,8 @@
 #            → export road / race / closure x race layouts (each content-checked) / spawn kn5s
 #            → AI per layout → verify_kn5 → track_folder (three layouts) → verify_kn5 --inis
 #            → make_map → make_treefx → verify_race --scenery-only on the written trees.txt (hard)
-#   gate   : street: kn5_to_gate_obj (road) → drive_test --layout street → audit_mesh
+#   gate   : street: kn5_to_gate_obj (road) → verify_mouths (every side-street mouth on the BUILT road, hard)
+#            → drive_test --layout street → audit_mesh
 #            per race layout: kn5_to_gate_obj (road + race + ITS closure → data/track.<id>.obj)
 #            → drive_test --layout <id> → audit_mesh --layout <id> → no_route --layout <id> (BUILT)
 #   install: copy to AC as san_diego_lake_murray_v3; the previous build is parked in $ARCHIVE/<stamp>/
@@ -62,13 +64,16 @@
 #                 to run for real (no --dry-run): it builds, exports and gates into the scratch copy,
 #                 then SKIPS the sync-back to airoso and the install (it prints why) — only the real
 #                 workshop ($WS_PROJ) feeds tracks/san-diego-lake-murray/ and the AC folder.
+# AIROSO=<dir>    the airoso checkout whose tools/ and scripts/ the chain runs (default: the main checkout). Point
+#                 it at a worktree to rehearse that worktree's tools; pair with SHIP_PROJ (the guards below still
+#                 refuse a project inside it). ENG (engine-july) is not overridable.
 # STREET_AI=draft|july  the street layout's AI line (Q8). Default `draft` = the V3 right-hand-lane draft
 #                 (scripts/ac/write_ai_line.py --layout street). `july` (explicit opt-in) copies the
 #                 installed July line — a July write_ai_line DRAFT, never an in-game recording, and
 #                 measured in the ONCOMING carriageway on every divided run (ledger 0047 Notes).
 set -euo pipefail
 export PYTHONUTF8=1
-AIROSO="C:/Users/Owner/Documents/GitHub/airoso"
+AIROSO="${AIROSO:-C:/Users/Owner/Documents/GitHub/airoso}"
 WS="C:/Users/Owner/Documents/GitHub/k10-sd-v021"
 WS_PROJ="$WS/project"        # the real workshop project: the ONLY spelling of it in this script
 PROJ="${SHIP_PROJ:-$WS_PROJ}"
@@ -144,6 +149,11 @@ if [ "$SKIP_BLEND" = 0 ]; then
   (cd "$AIROSO" && python tools/trim_connectors.py "$PROJ")
   step "draft: rebuild loop.blend with trimmed connectors"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$WS_SYSPATH" --python scripts/blender/build_loop_blend.py -- "$PROJ" 2>&1 | grep "^\[blend\]" | tail -3)
+  step "draft: weld every side-street mouth onto its host (mitre + warp: road, curb/sidewalk, markings; self-checked)"
+  # tools/weld_mouths_blend.py rebuilds each connector block with the workshop's own ribbon module (WS_SYSPATH) and
+  # refuses to move a vertex unless the mesh matches it; exit 1 on its self-check (end row off the host deck, a
+  # connector vertex over the host's pavement, a folded quad) — loop.blend is then NOT saved
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$WS_SYSPATH" --python "$AIROSO/tools/weld_mouths_blend.py" -- "$PROJ" 2>&1 | grep "^\[weld\]\|Error\|Traceback" )
   step "author: seat the terrain under every road (verge finer than the road)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/seat_terrain_blend.py" -- "$PROJ" 2>&1 | grep "^\[seat\]\|Error\|Traceback" )
   step "author: thin the far terrain (headroom for the prep's grass tiles)"
@@ -275,13 +285,18 @@ step "gate: scenery vs the race lanes and walls, on the WRITTEN trees.txt (tools
 # shared race gate OBJ / audit (road + the retired centre chain) are retired: each race layout is judged on
 # its own kn5 set (ledger 0049).
 for lid in $LAYOUT_IDS; do rm -f "$PROJ/data/drive_test.$lid.json"; done
+rm -f "$PROJ/data/verify_mouths.json"
 for lid in $RACE_IDS; do rm -f "$PROJ/data/audit.$lid.json" "$PROJ/data/no_route.$lid.json" "$PROJ/data/track.$lid.obj"; done
 rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"
 step "gate: road kn5 -> gate OBJ (engine frame) + gate centreline"
 (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")
+step "gate: verify_mouths on the built road (every side-street mouth: mouth line, host lane, notch, approach — hard)"
+# tools/verify_mouths.py reads data/track.obj (the shipped road kn5) at every data/mouths.json record; exit 1 stops
+# the chain (data/verify_mouths.json) — a mouth floating over its host or notched below it never reaches a gate run
+(cd "$AIROSO" && python tools/verify_mouths.py "$PROJ")
 step "gate: drive_test, street layout (hard)"
 DT_S=0; (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --layout street 2>&1 | grep -v "drive-time\] sweep" | tail -30) || DT_S=$?
-step "gate: audit_mesh, street (hard total; the regression floor — must equal today's D 512 / K 154 / I 145 / F 15)"
+step "gate: audit_mesh, street (hard total; the regression floor — D 512 / K 20 / I 20 / F 13 since the 2026-10-11 mouth weld + fold mend, was 512 / 154 / 145 / 15)"
 AU_S=0; (cd "$AIROSO" && python -m scripts.geometry.audit_mesh "$PROJ" 2>&1 | tail -16) || AU_S=$?
 DT_R=0; AU_R=0; NR_R=0
 for lid in $RACE_IDS; do
@@ -327,7 +342,8 @@ step "sync outputs workshop -> airoso"
 cp "$PROJ/loop.blend" "$SRC/loop.blend"
 for f in centerline.local.json centerline.raw.local.json median_bands.json dummies.json \
          finished_centerline.json gate_centerline.json lights.local.json connectors.local.json \
-         mouths.json signs.local.json signs_preview.svg signs_measured.json drive_test.json audit.json \
+         mouths.json mouth_welds.json verify_mouths.json signs.local.json signs_preview.svg signs_measured.json \
+         drive_test.json audit.json \
          barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json; do
   [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
 done

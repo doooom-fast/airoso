@@ -79,7 +79,8 @@ corner. And no gate read which directions are driven.
 
 **In plain terms, for Kevin.** An arrow sign is a flat board that you can only read from the side it faces. Every
 board was turned toward cars going clockwise. Going anticlockwise, you reach each corner from the other street, so
-you see the board's thin edge, or nothing at all.
+the board is turned away from you: at most corners you see its thin edge. At Jackson/Navajo and at the hairpin you see
+it at a steep slant, a squeezed RIGHT arrow meant for the clockwise drivers, while you are turning left.
 
 The fix stands a second board at each of the five main corners. It goes on the far curb as you arrive from the
 other street, faces you, and points left.
@@ -99,6 +100,8 @@ other street, faces you, and points left.
    - A pin key (`base_xz`, `face_bearing_deg`, `slide_along_curb_m`) at the top level of a corner signed both ways
      is a `SignsConfigError`. It must go into `fwd` or `rev`. No SD entry has one.
    - An explicit `--signs` path that does not exist is an error.
+   - A `skip` with no non-empty reason (its own or the entry's) is a `SignsConfigError` at load: a skip removes a
+     driver's arrow, so it always says why.
    - `DEFAULTS` is unchanged (false), so the change is opt-in per track.
 3. **`tools/signs_mesh.py`**
    - Race furniture is never ground or road. That covers names starting `1KERB_RACE` / `1WALL_RACE`, and the members
@@ -107,18 +110,24 @@ other street, faces you, and points left.
    - `tools/author_signs_blend.py` prints the left-out count. It records `blender.race_excluded` only when the list
      is non-empty, so a track with no race furniture keeps its bytes.
 4. **`tools/verify_signs.py`**
-   - New check (k), direction coverage.
+   - New check (k), direction coverage. A missing approach is covered only by the rule finding no arrow corner
+     there (R / D / mouth flare / where the ray lands) or by a signs.json skip with a reason that signs.json still
+     makes. A failed placement, an expect_arrow skip or a reasonless skip FAILs.
+   - `parse_id` tells a hairpin's second arrow (`M2-fwd-2`) from a corner named `…-2` (`DCL-2`) by the record.
    - (j) is re-read from signs.json and mirrored for -rev.
    - FAIL when race furniture appears in the authoring pass's or the scan's ground / road lists.
    - Section appended at the end of `fleet/GATES-CHANGELOG.md`. It adds no number.
 5. **`tools/plot_signs.py`**
    - Each picture says who the plate is for, e.g. "drivers going anticlockwise — race_acw".
    - The overview counts the plates per direction and rings the -rev posts.
-6. **Tests**: `tests/tools/test_place_signs.py` +5. Covered:
+6. **Tests**: `tests/tools/test_place_signs.py` +8. Covered:
    - a synthetic clockwise square signed both ways;
    - the mirror;
    - the expect_arrow trap firing (k);
-   - a per-approach skip counting as coverage;
+   - a per-approach skip counting as coverage only with its reason (a reasonless one refused at load, and FAILing
+     (k) as a record);
+   - every rule reason covering, every placement failure FAILing;
+   - a corner named `…-2` vs a hairpin's second arrow;
    - pins;
    - a missing `--signs`;
    - the race-name filter;
@@ -170,6 +179,11 @@ None is under 2.0 m, so no pair merges.
 - (j) FAILs on a -rev plate given a right arrow.
 - (k) FAILs with M3-rev removed.
 - (k) FAILs when M5-rev is skipped by expect_arrow.
+- After review: `place_signs` exits 1 on `"M4": {"rev": {"skip": true}}` (no reason) and on a blank reason; (k)
+  FAILs on an M4-rev skip recorded as `signs.json skip: (no reason given)`, `sign base is ON pavement`,
+  `OUTSIDE ASSERTION FAILED`, or a signs.json skip signs.json does not make. A reasoned M4 rev skip places 22 and
+  PASSes. Logs in `scratchpad/round2/signs/fix2/teeth2_*.log`. The re-run of the full rehearsal on a fresh copy of
+  the workshop `loop.blend` gave the same 23 posts, 0.0000 m from the first run, same facings, arrows and skips.
 
 **Seat-height stills, race_acw.** These were rendered with `scratchpad/stills/work/render_stills.py` on a copy of
 the v0.17.1 split road scene with the new SIGN meshes swapped in, plus the race and closure scenes. The files are
@@ -178,8 +192,13 @@ in `scratchpad/round2/signs/stills/`. The camera sits on the race_acw AI line, 1
 | still | what it shows (0° = square to the camera, 90° = edge-on) |
 |---|---|
 | `acw_M1rev_70thSt_close` | 35 m before the first corner. M1-rev's LEFT arrow is 43 m out, 9° right of the nose, 1° off square. M1-fwd is 84° off square, so only its edge shows. |
-| `acw_M4rev_JacksonNavajo_close` | Kevin's corner. M4-rev's LEFT arrow is 47 m out, 6° off square. M4-fwd's right arrow is 72° off square, a narrow sliver beside it. |
-| `acw_M2rev_hairpin_close` | College into the hairpin. M2-rev's LEFT arrow is 54 m out, 6° off square. M2-fwd-2's right arrow is 61° off square. In the wider still (`acw_M2rev_hairpin`), M2-fwd's right arrow for the other leg shows across the bend. |
+| `acw_M4rev_JacksonNavajo_close` | Kevin's corner. M4-rev's LEFT arrow is 47 m out, 6° off square. M4-fwd's board is 72° off square: its yellow face shows at about a third of its width, and its RIGHT arrow is still readable beside the new LEFT one. |
+| `acw_M2rev_hairpin_close` | College into the hairpin. M2-rev's LEFT arrow is 54 m out, 6° off square. M2-fwd-2's board is 61° off square and its RIGHT arrow is readable. In the wider still (`acw_M2rev_hairpin`), M2-fwd's right arrow for the other leg shows across the bend. |
+
+So at Jackson/Navajo and at the hairpin, an anticlockwise driver sees **both** arrows: his own LEFT board almost
+square on, and the clockwise drivers' RIGHT board beside it, squeezed but readable. At 70th St only the edge of the
+clockwise board shows. Whether the squeezed right arrow reads as noise or as a contradiction is Kevin's call from the
+seat (item 7 below).
 
 The three `…` stills without `_close` are the same corners from 55–60 m.
 
@@ -229,7 +248,10 @@ After 0050 lands, re-check that M4-fwd and M4-rev:
      should see a LEFT arrow straight ahead, just past the far curb, as he reaches the turn.
    - Then Lake Murray Blvd → Jackson (4.5 km), Jackson → Navajo (7.4 km), Navajo → College (9.8 km), and the
      College → Alvarado hairpin (12.1 km).
-   - In street and race_cw, the new boards should read as thin edges.
-   - At the hairpin he judges the cross-view. If it reads wrong, add `"rev": {"skip": true, "reason": "<his
-     words>"}` to M2 in signs.json (one line, no code), or use the deferred W1-8 chevrons.
+   - At Jackson/Navajo and the hairpin he will see both arrows going anticlockwise: his LEFT board nearly square
+     on and the clockwise RIGHT board beside it at a slant, about a third of its width but readable. In street and
+     race_cw the mirror image is likely (a squeezed LEFT board beside his RIGHT one); that view was not rendered.
+   - He judges those cross-views. If one reads wrong, the fix is a per-approach skip with his words, e.g.
+     `"rev": {"skip": true, "reason": "<his words>"}` on M2 (one line, no code; a skip without a reason is refused),
+     or the deferred W1-8 chevrons.
    - A wrong corner is a per-approach override with his reason. A wrong pattern reopens this entry.

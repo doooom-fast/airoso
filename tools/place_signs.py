@@ -68,6 +68,7 @@ Overrides: tracks/<slug>/signs.json {defaults{...}, corners{<id>: {ribbon, verte
 slide_along_curb_m, base_xz, face_bearing_deg, plate, arrow, expect_arrow, height_m, om1_3,
 second_arrow, force, fwd{...}, rev{...}}}} — arrow / expect_arrow name the FORWARD approach's arrow
 (mirrored on a reversed scan); fwd / rev hold keys for one approach only (e.g. rev: {skip, reason}).
+A skip with no non-empty reason (its own or the entry's) is refused at load.
 An explicit --signs path that does not exist is an error, never "no overrides". defaults.kappa_window_m / hysteresis_stations drive the detector (12 m /
 6 stations). An entry whose vertex has no detected corner within 30 m is refused with a WARN
 (stale after a centreline regen). `plate` selects the geometry; only W1-6 exists (PLATE_GEOMETRY)
@@ -600,6 +601,13 @@ def validate_overrides(cfg, corners, src="signs.json"):
                 bad.append("%s.arrow = %r (left|right)" % (where, o["arrow"]))
             if o.get("expect_arrow") is not None and o["expect_arrow"] not in ("left", "right"):
                 bad.append("%s.expect_arrow = %r (left|right)" % (where, o["expect_arrow"]))
+        # a skip removes a driver's arrow: it carries its reason (the entry's own, or its approach
+        # sub-object's), never a silent drop (ledger 0051: a bare rev skip at M4 once passed verify_signs
+        # (k) with race_acw's Jackson/Navajo arrow gone)
+        for dk in DIRECTION_KEYS if all(isinstance(ov.get(k), (dict, type(None))) for k in DIRECTION_KEYS) else ():
+            eff = effective_override(ov, dk == "rev")
+            if eff.get("skip") and not (isinstance(eff.get("reason"), str) and eff["reason"].strip()):
+                bad.append("corners.%s skips the %s approach with no reason (add \"reason\": \"<why>\" beside the skip)" % (cid, dk))
     if bad:
         raise SignsConfigError("%s: %s" % (src, "; ".join(bad)))
 
@@ -1107,7 +1115,7 @@ def place_all(proj, cfg=None, corners_cfg=None, signs_path=None, log=print, merg
                     "arc_m": c["arc_m"], "apex_xz": [round(v, 1) for v in rb.xz(c["apex"])]}
             reasons = []
             if ov.get("skip"):
-                reasons.append("signs.json skip: %s" % ov.get("reason", "(no reason given)"))
+                reasons.append("signs.json skip: %s" % ov["reason"].strip())      # validate_overrides refused a bare skip
             if not ov.get("force"):
                 if c["R_apex_m"] > cfg["r_sign_max_m"]:
                     reasons.append("R_apex %.1f > %.0f m" % (c["R_apex_m"], cfg["r_sign_max_m"]))

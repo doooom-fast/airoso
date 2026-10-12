@@ -52,10 +52,15 @@ Per sign (a paired post is checked once per plate where a plate matters):
   (k) direction coverage (ledger 0051), MAINLINE: the driven directions are read from
       <project>/track.config.json layouts[].direction (forward -> fwd, reverse -> rev; no layouts =
       forward only). Every mainline corner with a plate in one driven direction has a plate in every
-      other, or a skip record in that direction whose reasons are the rule's own (R / D / ray / mouth /
-      hairpin spacing / clearance) or a signs.json skip with its reason. A skip caused by expect_arrow
-      is never coverage, and neither is a direction with no record at all (v0.17.1: race_acw drove the
-      lap anticlockwise past six plates that all faced the clockwise approach, and every check passed).
+      other, or a skip record in that direction EVERY one of whose reasons is either the rule finding no
+      arrow corner on that approach (RULE_SKIP_RES: R_apex / |D| / mouth flare / the ray never leaving
+      pavement, leaving it out of range, ending at a T, or landing outside [PC, PT] — the corner's own
+      geometry, as place_signs words it) or a signs.json skip with a non-empty reason that signs.json
+      itself (when read) still makes for that approach. Never coverage: a skip caused by expect_arrow,
+      a placement that failed (OUTSIDE ASSERTION, base ON pavement, obstacle disc, lamp clearance — the
+      rule wanted an arrow there), a reasonless signs.json skip, a hairpin's second arrow, and a
+      direction with no record at all (v0.17.1: race_acw drove the lap anticlockwise past six plates
+      that all faced the clockwise approach, and every check passed).
   plus blender.normal_mismatches == 0, and no race furniture (1KERB_RACE / 1WALL_RACE) among the
   authoring pass's or the scan's ground / road objects (ledger 0051: the signs ship in the road kn5 the
   street layout loads, the race kerbs do not; measuring a post against one moved approved posts up to
@@ -102,6 +107,7 @@ HALF_WIN = 6                    # the rule's 12 m curvature window
 NORMAL_CLUSTER_DEG = 2.0
 LAYOUT_DIRECTION = {"forward": "fwd", "reverse": "rev"}
 ID_RE = re.compile(r"^(?P<base>.+?)(?:-(?P<dir>fwd|rev))?(?P<second>-2)?$")
+DIR_RE = re.compile(r"^(?P<base>.+?)(?:-(?P<dir>fwd|rev))?$")
 
 
 # --- geometry, own code (never place_signs') ------------------------------------------------------
@@ -471,11 +477,71 @@ def run_blender_measure(proj, blend, exe):
 
 
 # --- (j) and (k): what signs.json and track.config.json say, read here ------------------------------------
-def parse_id(cid):
+def parse_id(cid, second=None):
     """(corner base id, direction suffix or None, second-arrow flag): M2-fwd-2 -> (M2, fwd, True);
-    M2-2 -> (M2, None, True); MED-6-rev -> (MED-6, rev, False); M-c5 -> (M-c5, None, False)"""
+    M2-2 -> (M2, None, True); MED-6-rev -> (MED-6, rev, False); M-c5 -> (M-c5, None, False).
+    A bare trailing "-2" is ambiguous (M2-2 = M2's hairpin second arrow, DCL-2 = a merged connector
+    post): pass `second` (the record's corner.second_arrow, or for a skip whether the id minus "-2"
+    was placed) and only a real second arrow loses its "-2". second=None = the id's shape alone."""
+    if second is not None:
+        core = cid[:-2] if second and cid.endswith("-2") else cid
+        m = DIR_RE.match(core)
+        return m.group("base"), m.group("dir"), bool(second)
     m = ID_RE.match(cid)
     return m.group("base"), m.group("dir"), bool(m.group("second"))
+
+
+def plate_second(p, s=None):
+    """a placed plate's own second-arrow flag (None when the record predates it)"""
+    v = (p.get("corner") or (s or {}).get("corner") or {}).get("second_arrow")
+    return None if v is None else bool(v)
+
+
+# (k): the reasons that mean the RULE found no arrow corner on this approach — the corner's own
+# geometry (R / D / mouth flare / where the ray lands), not a placement that failed. Worded as
+# tools/place_signs.py words them; any other reason (expect_arrow, OUTSIDE ASSERTION, ON pavement,
+# obstacle disc, lamp clearance, a hairpin's second arrow) is never coverage.
+RULE_SKIP_RES = tuple(re.compile(r) for r in (
+    r"^R_apex [\d.]+ > [\d.]+ m$",
+    r"^\|D\| [\d.]+ < [\d.]+ deg$",
+    r"^apex \d+ m from .+ \(< \d+ m: mouth-flare geometry\)$",
+    r"^ray never leaves pavement within \d+ m \(through leg / junction\)$",
+    r"^ray exits pavement at [\d.]+ m \(want \d+-\d+\)$",
+    r"^T-end: ray re-enters .+ within 3 m of the curb \(W1-7 candidate, second pass\)$",
+    r"^ray foot at station PC[+-]\d+ is outside \[PC, PT\+\d+\] \(a curve, not a turn\)$",
+))
+SIGNS_JSON_SKIP_RE = re.compile(r"^signs\.json skip: (?P<reason>.*)$")
+
+
+def entry_skip_reason(entry, direction):
+    """the reason signs.json gives for skipping ONE approach (its sub-object over the entry), or None
+    when that approach is not skipped there or the skip carries no reason"""
+    if not entry:
+        return None
+    sub = entry.get(direction or "fwd") or {}
+    skip = sub["skip"] if "skip" in sub else entry.get("skip")
+    reason = sub["reason"] if "reason" in sub else entry.get("reason")
+    if not skip or not isinstance(reason, str) or not reason.strip() or reason.strip() == "(no reason given)":
+        return None
+    return reason.strip()
+
+
+def coverage_reason(r, entry, direction):
+    """(counts as coverage, why not). A rule reason, or a signs.json skip that carries a real reason —
+    and, when signs.json was read, one that signs.json itself still makes for this approach."""
+    if any(rx.match(r) for rx in RULE_SKIP_RES):
+        return True, None
+    m = SIGNS_JSON_SKIP_RE.match(r)
+    if m:
+        why = m.group("reason").strip()
+        if not why or why == "(no reason given)":
+            return False, "a signs.json skip with no reason"
+        if entry is not False and entry_skip_reason(entry, direction) is None:
+            return False, "a signs.json skip that signs.json does not make (with a reason) for this approach"
+        return True, None
+    if "expect_arrow" in r:
+        return False, "skipped by expect_arrow, not by the rule"
+    return False, "a placement that failed, not the rule finding no corner"
 
 
 def mirror(a):
@@ -534,21 +600,24 @@ def driven_directions(proj):
     return out or {"fwd": ["(no layouts: forward)"]}
 
 
-def direction_coverage(d, driven, ribbon="MAINLINE"):
-    """check (k): -> (fails, rows). See the module doc."""
+def direction_coverage(d, driven, ribbon="MAINLINE", entries=None):
+    """check (k): -> (fails, rows). See the module doc. entries = signs.json's corners as read by
+    this gate (None: not read; a "signs.json skip" then counts only on its non-empty reason)."""
     fails, rows = [], []
     dirs = sorted(driven)
     plates, skips = {}, {}
+    placed = {s["id"] for s in d["signs"]} | {p["id"] for s in d["signs"] for p in (s.get("plates") or []) if "id" in p}
     for s in d["signs"]:
         if s["ribbon"] != ribbon:
             continue
         for p in s.get("plates") or [s]:
-            base, _, _ = parse_id(p["id"])
+            base, _, _ = parse_id(p["id"], plate_second(p, s))
             plates.setdefault(base, {}).setdefault(p["direction"], []).append(p["id"])
     for sk in d["skipped"]:
         if sk["ribbon"].split("(")[0] != ribbon:
             continue
-        base, _, second = parse_id(sk["id"])
+        # a skipped hairpin second arrow is "<placed id>-2"; any other trailing -2 is the corner's own name
+        base, _, second = parse_id(sk["id"], sk["id"].endswith("-2") and sk["id"][:-2] in placed)
         if second:
             continue                        # a hairpin's second arrow is the rule's extra, never coverage
         direction = "rev" if sk["ribbon"].endswith("(rev)") else "fwd"
@@ -567,11 +636,15 @@ def direction_coverage(d, driven, ribbon="MAINLINE"):
             if rs is None:
                 fails.append("k_direction_coverage: %s corner %s has a plate %s but no record at all for %s — that "
                              "approach was never signed" % (ribbon, base, got, who(want)))
-            elif any("expect_arrow" in r for r in rs):
-                fails.append("k_direction_coverage: %s corner %s: the %s approach was skipped by expect_arrow (%s), "
-                             "not by the rule" % (ribbon, base, who(want), "; ".join(r for r in rs if "expect_arrow" in r)))
+                continue
+            entry = False if entries is None else entries.get(base)
+            judged = [(r,) + coverage_reason(r, entry, want) for r in rs]
+            bad = ["%s (%s)" % (r, why) for r, ok, why in judged if not ok]
+            if not rs or bad:
+                fails.append("k_direction_coverage: %s corner %s has a plate %s but the %s approach was skipped by "
+                             "reasons that are not the rule's own: %s" % (ribbon, base, got, who(want), "; ".join(bad) or "(no reasons)"))
             else:
-                rows.append("(k) %s %s: no plate for %s — the rule's own skip: %s" % (ribbon, base, who(want), "; ".join(rs)))
+                rows.append("(k) %s %s: no plate for %s — covered by its skip: %s" % (ribbon, base, who(want), "; ".join(rs)))
     n = {dr: sum(len(v.get(dr, [])) for v in plates.values()) for dr in dirs}
     rows.append("(k) %s plates by approach: %s; %d corners signed" % (ribbon, ", ".join("%d %s" % (n[dr], who(dr)) for dr in dirs), len(plates)))
     return fails, rows
@@ -656,7 +729,7 @@ def check_sign(s, field, measured, ids, skipped_ids, warns, entries=None):
             if p.get("expect_arrow") in ("left", "right") and p["expect_arrow"] != p["arrow"]:
                 expect_ok = False
         else:
-            base, _, _ = parse_id(p.get("id", s["id"]))
+            base, _, _ = parse_id(p.get("id", s["id"]), plate_second(p, s))
             exp = expected_arrow(entries.get(base), p["direction"])
             if exp is not None and exp != p["arrow"]:
                 expect_ok = False
@@ -778,7 +851,7 @@ def main():
     # (k) every driven direction signed
     try:
         driven = driven_directions(proj)
-        k_fails, k_rows = direction_coverage(d, driven)
+        k_fails, k_rows = direction_coverage(d, driven, entries=entries if sj is not None else None)
     except ValueError as e:
         k_fails, k_rows = ["k_direction_coverage: %s" % e], []
     fails += k_fails

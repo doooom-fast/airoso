@@ -417,3 +417,76 @@ def test_verifier_ids_expectations_and_directions():
         raise AssertionError("an unknown direction word was guessed")
     (d / "track.config.json").write_text("{}")
     assert list(vs.driven_directions(d)) == ["fwd"]
+
+
+def test_a_skip_without_a_reason_is_refused_at_load():
+    # the verifier's plant: M4 "rev": {"skip": true} with no reason dropped race_acw's Jackson/Navajo arrow silently
+    for bad in ({"M4": {"ribbon": "MAINLINE", "vertex": 2320, "rev": {"skip": True}}},
+                {"M4": {"ribbon": "MAINLINE", "vertex": 2320, "skip": True}},
+                {"M4": {"ribbon": "MAINLINE", "vertex": 2320, "skip": True, "reason": "   "}},
+                {"M4": {"ribbon": "MAINLINE", "vertex": 2320, "fwd": {"skip": True, "reason": ""}}}):
+        try:
+            ps.validate_overrides({}, bad)
+        except ps.SignsConfigError as e:
+            assert "M4" in str(e) and "no reason" in str(e)
+        else:
+            raise AssertionError("accepted a reasonless skip %r" % bad)
+    ps.validate_overrides({}, {"M4": {"vertex": 0, "rev": {"skip": True, "reason": "Kevin: reads wrong"}}})
+    ps.validate_overrides({}, {"M4": {"vertex": 0, "reason": "the entry's own", "rev": {"skip": True}}})
+    ps.validate_overrides({}, {"M4": {"vertex": 0, "reason": "prose, no skip"}})
+
+
+def test_direction_coverage_counts_only_the_rules_own_skips():
+    def rec(reasons):
+        return {"signs": [{"id": "M4-fwd", "ribbon": "MAINLINE", "direction": "fwd", "corner": {"second_arrow": False}}],
+                "skipped": [{"id": "M4-rev", "ribbon": "MAINLINE(rev)", "reasons": reasons}]}
+    both = {"fwd": ["street", "race_cw"], "rev": ["race_acw"]}
+    fail = lambda reasons, entries=None: vs.direction_coverage(rec(reasons), both, entries=entries)[0]
+    # the rule finding no arrow corner on that approach: coverage
+    for ok in (["R_apex 42.1 > 30 m", "|D| 16.3 < 45 deg"], ["apex 12 m from medium#2 (< 25 m: mouth-flare geometry)"],
+               ["ray exits pavement at 3.1 m (want 6-40)"], ["ray never leaves pavement within 40 m (through leg / junction)"],
+               ["T-end: ray re-enters DCL within 3 m of the curb (W1-7 candidate, second pass)"],
+               ["ray foot at station PC-14 is outside [PC, PT+10] (a curve, not a turn)"]):
+        assert fail(ok) == [], ok
+    # never coverage: no reason, a failed placement, expect_arrow, nothing at all
+    for bad in (["signs.json skip: (no reason given)"], ["signs.json skip:   "], [],
+                ["sign base is ON pavement (edge clearance -0.20)"],
+                ["OUTSIDE ASSERTION FAILED: C is on the inside of the bend (cross 0.40)"],
+                ["plate footprint inside drive_test's obstacle disc by 0.12 m"],
+                ["lamp post base 1.1 m from the sign (< 2.0, lamps are never moved; no slide <= 6.0 m clears it)"],
+                ["expect_arrow=right (rev) but the rule computed left (D 88.0 deg) — not relocated, see signs.json"],
+                ["R_apex 42.1 > 30 m", "sign base is ON pavement (edge clearance -0.20)"]):
+        f = fail(bad)
+        assert len(f) == 1 and "M4" in f[0] and "race_acw" in f[0], (bad, f)
+    # a signs.json skip with its reason: coverage — and, when this gate read signs.json, only if signs.json makes it
+    kev = ["signs.json skip: Kevin: the cross-view reads wrong"]
+    assert fail(kev) == []
+    assert fail(kev, {"M4": {"vertex": 0, "rev": {"skip": True, "reason": "Kevin: the cross-view reads wrong"}}}) == []
+    assert fail(kev, {"M4": {"vertex": 0, "skip": True, "reason": "both ways"}}) == []
+    assert len(fail(kev, {})) == 1 and len(fail(kev, {"M4": {"vertex": 0, "rev": {"skip": True}}})) == 1
+    assert len(fail(kev, {"M4": {"vertex": 0, "fwd": {"skip": True, "reason": "x"}}})) == 1   # skips the other approach
+    # no record at all for the reverse approach
+    r = rec([])
+    r["skipped"] = []
+    f = vs.direction_coverage(r, both)[0]
+    assert len(f) == 1 and "never signed" in f[0]
+
+
+def test_parse_id_tells_a_second_arrow_from_a_corner_named_dash_two():
+    assert vs.parse_id("DC0-2", False) == ("DC0-2", None, False) and vs.parse_id("DCL-2", False) == ("DCL-2", None, False)
+    assert vs.parse_id("DCL-2-rev", False) == ("DCL-2", "rev", False) and vs.parse_id("M2-2", True) == ("M2", None, True)
+    assert vs.parse_id("M2-fwd-2", True) == ("M2", "fwd", True) and vs.parse_id("M1-rev", False) == ("M1", "rev", False)
+    assert vs.plate_second({"corner": {"second_arrow": True}}) is True and vs.plate_second({}, {"corner": {}}) is None
+    assert vs.plate_second({"id": "DC0-2"}, {"corner": {"second_arrow": False}}) is False
+    # (k): a skipped "X-2" whose X was placed is X's hairpin extra (never coverage, never a corner of its own) ...
+    both = {"fwd": ["a"], "rev": ["b"]}
+    d = {"signs": [{"id": "M2-fwd", "ribbon": "MAINLINE", "direction": "fwd", "corner": {"second_arrow": False}},
+                   {"id": "M2-rev", "ribbon": "MAINLINE", "direction": "rev", "corner": {"second_arrow": False}}],
+         "skipped": [{"id": "M2-rev-2", "ribbon": "MAINLINE(rev)", "reasons": ["second arrow 1.1 m from the first (< 12)"]}]}
+    assert vs.direction_coverage(d, both)[0] == []
+    # ... but a forward-only corner NAMED "MX-2" (knob off, X never placed) is its own corner
+    d = {"signs": [{"id": "MX-2", "ribbon": "MAINLINE", "direction": "fwd", "corner": {"second_arrow": False}}],
+         "skipped": [{"id": "MX-2", "ribbon": "MAINLINE(rev)", "reasons": ["R_apex 42.1 > 30 m"]}]}
+    f, rows = vs.direction_coverage(d, both)
+    assert f == [] and any("MX-2: no plate for rev" in r for r in rows), (f, rows)
+

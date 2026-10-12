@@ -911,7 +911,7 @@ No numeric threshold is added or moved. Every number below is an existing rule c
 
 | Check | Before | After | Flag |
 |---|---|---|---|
-| (k) direction coverage (new) | — | Driven directions come from `<project>/track.config.json` `layouts[].direction` (forward → fwd, reverse → rev; absent or null = forward; any other word FAILs). Every MAINLINE corner with a plate in one driven direction needs, in every other driven direction, either a plate or a skip record with the rule's own reasons, or a signs.json skip that carries its reason. A skip caused by `expect_arrow` FAILs. So does a direction with no record at all. | no number |
+| (k) direction coverage (new) | — | Driven directions come from `<project>/track.config.json` `layouts[].direction` (forward → fwd, reverse → rev; absent or null = forward; any other word FAILs). Every MAINLINE corner with a plate in one driven direction needs, in every other driven direction, either a plate or a skip record EVERY one of whose reasons is the rule finding no arrow corner on that approach (`RULE_SKIP_RES`: R_apex, \|D\|, mouth flare, or the ray never leaving pavement / leaving it out of range / ending at a T / landing outside [PC, PT]) or a signs.json skip with a non-empty reason that signs.json itself still makes for that approach. FAIL: a skip caused by `expect_arrow`; a placement that failed (OUTSIDE ASSERTION, base ON pavement, obstacle disc, lamp clearance: the rule wanted an arrow there); a reasonless signs.json skip; a direction with no record at all. `place_signs` also refuses a signs.json `skip` with no reason at load. | no number |
 | (j) expect_arrow | compared the record's own `expect_arrow` with its arrow | Re-read from signs.json here (`--signs`, else `tracks/<slug>/signs.json`). The entry names the FORWARD approach, so a -rev plate expects the mirror image unless the entry's `rev` sub-object names its own. A record whose `expect_arrow` disagrees with signs.json FAILs. An explicit `--signs` that does not exist FAILs. | no number |
 | race furniture as ground (new) | `tools/signs_mesh.py` counted `1KERB` (race kerbs included) as ground | `load_bvhs` leaves race furniture out of ground and road: 1KERB_RACE / 1WALL_RACE names, and the RACE / RACE_CLOSE_* collections. `verify_signs` FAILs if the authoring record or its own scan lists one. | no number |
 
@@ -921,6 +921,13 @@ No numeric threshold is added or moved. Every number below is an existing rule c
 - The race-ground check FAILs on the diagnosis's unfiltered authoring run: 8 × `1KERB_race_*`.
 - (j) FAILs on a -rev plate given a right arrow.
 - (k) FAILs with one -rev plate removed, and again with a -rev skip whose reason is `expect_arrow`.
+- Added after review (the reviewer planted `"M4": {"rev": {"skip": true}}` with no reason and the first cut of (k)
+  PASSed with race_acw's Jackson/Navajo arrow gone). `place_signs` now exits 1 on that signs.json, and on a blank
+  reason. (k) FAILs on records whose M4-rev skip reads `signs.json skip: (no reason given)`, `sign base is ON
+  pavement`, `OUTSIDE ASSERTION FAILED`, or a signs.json skip that signs.json does not make. A reasoned
+  `"rev": {"skip": true, "reason": "…"}` still places 22 and PASSes. Logs: `scratchpad/round2/signs/fix2/teeth2_*.log`.
+- `parse_id` no longer reads a corner named `…-2` (e.g. a merged `DCL-2` post) as a hairpin's second arrow: the
+  record's `corner.second_arrow` decides, and for a skip, whether the id minus `-2` was placed.
 - The 0051 record PASSes.
 - `tests/tools/test_place_signs.py` covers each case on a synthetic square loop.
 

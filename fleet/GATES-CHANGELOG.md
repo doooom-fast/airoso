@@ -937,3 +937,48 @@ On the Lariat (clean scratch run, 3DEP and Overpass fetched live, TLS verified):
 stages" for the numbers. The roll-rate gate PASSES on the written file (worst 3.4 % / 30 m, 0 swings); on the raw
 in-footprint measurement it would fail at 1,836 stations with 36 swings, and on the smoothed measurement at 1,030
 with 18: the measurement alone is not a road surface, which is why the file is "estimated" and mostly standard.
+
+## 2026-10-12 — Lariat P2 step 3: the underlay (`scripts/blender/underlay.py`, ledger 0048)
+
+New tool, opt-in: only `tracks/lookout-lariat/ship.json` names the `underlay` draft step, and no existing module
+imports `scripts/geometry/underlay_draft.py` (`tests/geometry/test_underlay_draft.py::test_opt_in_only_the_underlay_reaches_it`),
+so every other track's output is byte-identical: no existing engine file was edited. It writes `GEN_road`
+(`1ROAD_road`), `GEN_verge` (`1RUNOFF_verge`), `GEN_terrain` (`1GRASS_terrain_placeholder`) and `GEN_refs` into
+`<project>/loop.blend`, never resets the scene and never touches `AUTH_*`. Its refusals (exit 1, nothing saved) and
+the constants that shape what it writes:
+
+| Value | What | Flag |
+|---|---|---|
+| crown **2 %** | the section's crown where `data/crossfall.json` gives no tilt (or is absent) | [std: `docs/ROAD-CONSTRUCTION.md` "Crown 2%"] |
+| D4 A **0.3–0.5 m**, D4 B **1.0–1.5 m** | `road_profile.verge_m` must fall in one of them on a track that declares `drive1_variants`, else refusal | [std: ROAD-CONSTRUCTION "verge 0.3–0.5 m gravel"; Kevin's D4 B answer "1–1.5 m"] |
+| verge **> 3.0 m** | refused on any track ("not a verge": D4 removes July's 6.4 m drivable shoulder) | ⚠ invented |
+| verge cross-slope **0** (flush and level with the pavement edge) | no lip; level keeps it above the ground the prep pins to edge − 0.02 m within its 3 m band (the prep's anti-poke does not see `1RUNOFF`) | [std: Kevin's July "undriveable slop" for lips]; the 0 is a construction choice, not measured |
+| ground **0.02 m** under the pavement | the placeholder terrain's contact pin | [std: the prep's `GROUND_CLEAR`, under the ground gate's 0.05 m] |
+| pavement layer window **20 m** | a pavement point more than 20 m off the node's survey height is not "its" pavement | copied from `build_mesh._pav_at_point` (⚠ invented there) |
+| corridor sub-cell **2.5 m** (20 m grid ÷ 8) | `ribbon.grass_terrain` refinement of every quad the pavement touches, plus a ring | ⚠ invented, inside V3-PLAN P3a's corridor tier "≤ 3 m" (L3b: smaller than the 6.1 m road) |
+| edge hold **one sub-cell diagonal (3.54 m)** | an off-pavement node that close is held no higher than the lowest pavement vertex near it − 0.02 m, so no triangle rises over the edge | geometry, not a choice: every triangle touching the pavement lies within one sub-cell diagonal of it |
+| stacked-leg pair **< 40 m** plan, **> 150 m** along | `GEN_refs` only (`REF_stacked_legs`), read from `terrain.stacked_legs`; display, not a gate | ⚠ invented (V3-PLAN P5, already tagged there) |
+
+Proof:
+- `tests/geometry/test_underlay_draft.py` (10, no Blender): the edges ARE `ribbon.road_ribbon`'s when flat (and
+  with its `bank_at`); crown and crossfall composition, `mirror_x`; the D4 switch, flush and level, the config
+  never written; every face wound up; no ground above every 3rd road / verge face centre (a mutation that drops either
+  the pin or the edge hold fails it); far ground byte-equal to the engine path without pavement; refs; refusals;
+  deterministic.
+- `tests/tools/test_underlay_blend.py` (4, Blender 4.2 headless): AUTH_* (named, in an AUTH_ collection, inside
+  GEN_road, parented to `1ROAD_road`, a GEN station marker adopted into an AUTH_ collection) fingerprint-equal
+  after two runs; a plain user object and a scene setting survive; re-runs give identical GEN data and datablock
+  counts, no ".001"; D4 B changes only the verge and the ground pinned under it, and A restores both; a foreign
+  `1ROAD_road` is refused with the file unchanged; an AUTH promotion supersedes its role.
+- On the Lariat (committed paint centreline -> `heightfield` -> `projection` -> `widths_from_osm` in scratch; no
+  `crossfall.json` yet): 14,444 sections, road 43,332 verts, verge 57,776, terrain placeholder 435,080 (289 × 313
+  at 20 m, 5,256 corridor quads at 2.5 m); 221 stacked-leg pairs sampling every 3rd vertex (~5 m mean),
+  nearest 21.53 m in plan, |dy| 6.59–14.22 m (the dossier's July line: 20.5 m, 6.5–14.7 m). Ground over a face centre, in `loop.blend`:
+  road **0**, verge **13** (max 0.175 m, all at > 9 m junction-flare stations). After airoso's prep
+  (`build_kn5_loop.py`, unchanged): road 54 (max 0.19 m), verge 310 (max 1.14 m) — the prep's own conform; with the
+  raw (unpinned) placeholder the same prep left road 4,884 (max 1.12 m) and verge 16,498 (max 2.95 m).
+
+Wiring: `tools/ship_track.sh`'s existing `draft_underlay` step (unchanged) now finds the script; the Lariat's
+`--dry-run` therefore no longer stops at "no blend yet" (that guard is exercised with `--skip-blend`,
+`tests/tools/test_ship_track_chain.py`). `--variant <drive1_variants id>` builds the D4 B blend; the chain does not
+pass it yet.

@@ -1,0 +1,43 @@
+---
+id: 0054
+title: "Expand College down Waring to Princess View, Princess View to Mission Gorge, Mission Gorge to Jackson, then extend Jackson down to Mission Gorge" — the Lake Murray network grows north, phase 1
+status: open
+scope: tracks/san-diego-lake-murray (routes, connectors / network, terrain extent, layouts); the SD ship chain; engine where the plan says so
+layer: project + engine
+train: -
+---
+
+## Request (Kevin, 2026-10-12)
+
+> "i have another plan instead of the lariat rebuild so let's shelve that for now. we're going to expand college down
+> waring to princess. view, princess view to mission gorge, and mission gorge to jackson, then extend jackson down to
+> mission gorge. we'll add to the network map instead of building the lariat. save the plan for the lariat for after
+> we've built a few phases of lake murray"
+
+The roads, in Kevin's order: **College Ave → Waring Rd → Princess View Dr → Mission Gorge Rd → Jackson Dr**, and
+**Jackson Dr extended from the loop down to Mission Gorge Rd**. "Add to the network map": the drivable San Diego
+network grows; this is the first of several Lake Murray phases (the Lariat, ledger 0048, waits for "a few phases").
+
+## First read (from the cached OSM, `data/osm.json`, fetched 2026-08-10, bbox 32.760-32.808 N — preliminary)
+
+- College Ave's north end (32.7938 N, −117.068) is where **Waring Rd** begins westward and **Navajo Rd** begins
+  eastward: the loop's existing College/Navajo corner (open race box v1506-1521). "College down Waring" = carry on
+  through that corner onto Waring instead of turning onto Navajo.
+- Waring Rd in the cache: 32.7938-32.7980 N, −117.0759..−117.0676 (it runs on north-west past the cache).
+- **Princess View Dr is outside the cache**; Mission Gorge Rd appears only at its edge (32.807-32.808 N,
+  −117.077..−117.071); Jackson Dr runs to 32.812 N in the cache. A fresh Overpass fetch (TLS on, staleness guard) is
+  the first step.
+- "Extend Jackson down to Mission Gorge" starts at the loop's Navajo/Jackson corner (open race box v2311-2328) and
+  runs north, downhill to the river valley.
+
+## Status
+
+**Open — research and plan first** (dossier-style: routes, junctions with the loop, elevation and the gorge,
+widths and medians off the aerial, terrain extent, layouts, budget, gates), then the build after v0.18.x lands
+(terrain 0046 + the seat fixes 0050-0053), because it shares every file those touch. Diagnosis n/a (a request).
+
+## Verification
+
+Decided in the plan, before geometry. At minimum: the new roads match OSM + aerial in plan (paint where visible),
+3DEP in profile (L5, on the built road), every new mouth on the loop passes `verify_mouths`, the race layouts stay
+sealed (`no_route` PASS) with the new mouths closed, the existing three layouts' gates no worse, and Kevin's seat.

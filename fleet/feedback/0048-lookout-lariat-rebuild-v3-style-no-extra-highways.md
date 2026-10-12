@@ -7,6 +7,24 @@ layer: project
 train: -
 ---
 
+## SHELVED (Kevin, 2026-10-12)
+
+> "i have another plan instead of the lariat rebuild so let's shelve that for now. we're going to expand college down waring to princess. view, princess view to mission gorge, and mission gorge to jackson, then extend jackson down to mission gorge. we'll add to the network map instead of building the lariat. save the plan for the lariat for after we've built a few phases of lake murray"
+
+Shelved until after a few phases of the Lake Murray network expansion (ledger 0054). The plan
+(`tracks/lookout-lariat/V3-PLAN.md`, approved 2026-10-11) is kept as the plan of record. On main: P0, the aerial
+pass, the paint centreline, P1 (`ship_track.sh`, the prep fixes). Unmerged P2 / Drive-1 work, kept on branches:
+
+| Branch | Commit | What |
+|---|---|---|
+| `worktree-wf_0b6149fb-898-1` | `e9ec8a9` | P2 data stages: profile by station, measured widths, footprint crossfall + roll-rate gate, the declared lid, L13 for the span detectors |
+| `worktree-wf_0b6149fb-898-2` | `34da757` | P2 step 3: `scripts/blender/underlay.py`, the GEN_* draft builder |
+| `worktree-wf_0b6149fb-898-3` | `6671619` | Drive-1 gates: road inventory, stacked legs (L4), kink ceiling measured on reference mountain roads |
+| `worktree-wf_0b6149fb-898-4` | `888ffa5` → `d5aea9f` | Drive-1 integration (the three merged, built twice, gated red, not installed) → WIP of a repair round cut off mid-way: **unverified, do not merge as-is** |
+
+To resume: merge the three part branches after re-checking them against main (the San Diego terrain engine, ledger
+0046, will have landed — the plan's P3a uses it), then redo the Drive-1 integration from `888ffa5`, not the WIP.
+
 ## Status
 
 **Open, queued after San Diego** (2026-10-10). Nothing built, nothing committed, no `.blend` touched.

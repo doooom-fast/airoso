@@ -1,5 +1,10 @@
 # Lookout Mountain Lariat — V3 build plan
 
+> **SHELVED 2026-10-12 (Kevin):** "i have another plan instead of the lariat rebuild so let's shelve that for now. we're going to expand college down waring to princess. view, princess view to mission gorge, and mission gorge to jackson, then extend jackson down to mission gorge. we'll add to the network map instead of building the lariat. save the plan for the lariat for after we've built a few phases of lake murray"
+> This plan stays the plan of record for when the Lariat resumes. Unmerged P2 / Drive-1 branches and how to resume:
+> ledger 0048 "SHELVED".
+
+
 > **2026-10-11, revised twice the same day after review. This is a plan only: nothing is built
 > and nothing is committed.**
 > - The facts behind it are in [`DOSSIER.md`](DOSSIER.md); the ledger entry is

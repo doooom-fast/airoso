@@ -118,6 +118,27 @@ refuses):
     the grid's index behind it. Still GENERATED DRAFTS: ledger 0023 stays open, no tier is claimed,
     pit_lane.ai stays a copy, the street layout's line is unchanged.
 
+AC'S PAYLOAD, OFF THE K-RAIL, NO PHANTOM BENDS (ledger 0052, 2026-10-12 — Kevin: "ai races need tuning, they tend
+to crash and slow down weirdlu"). OPT-IN per track and layout: ``track.config.json`` ``ai`` (load_ai_opts; absent,
+or the layout not in ``ai.layouts`` = every line above, byte for byte — tests/ac/test_write_ai_line_payload.py):
+  * ``payload: "kunos"`` — the per-point extras mean what they mean on every Kunos / third-party line on this PC
+    (186 measured): ``length`` = the 3D segment from the previous point (not the lap distance), ``direction`` = +-1
+    (-sign of the heading change over +-DIRECTION_WINDOW_PTS, kn5 frame; never 0), ``camber`` / ``normal`` = the
+    BUILT road's tilt under the point, ``radius`` = the plain 3-point circumradius of the float32 points; header
+    lapTime = sampleCount = 0 (kunos_payload, write_ai). The point record keeps the cumulative lap distance.
+  * ``wall_clear_m`` — a corridor line's comfort clearance (box approach, box arcs, floor fillets) instead of
+    FILLET_COMFORT_CLEAR_M 1.5: the v0.17.1 lines passed 1.50 m from the K-rail three times per box.
+  * ``fair`` — fair_line on the final line: least change of curvature plus a minimum-curvature pull, every point moved
+    only along its normal, inside bounds that keep it wall_clear + FAIR_CLEAR_EXTRA_M off every face (never closer
+    than it stood), then a light polish. The approach S-wiggles, the straight-to-arc steps and the resample's point
+    jitter were the 160 / 875 places the AI was told to brake for a bend the line does not have.
+  * ``surface: "gate_obj"`` (or ``--surface-obj``) — the layout's BUILT gate OBJ (data/track.<layout>.obj,
+    scripts.ac.ai_built): every point seated on the 1ROAD surface (its height and normal), and sideLeft / sideRight
+    clamped at the first built 1WALL a perpendicular ray meets, minus the margin. A missing OBJ, or one older than a
+    kn5 its header names, refuses the line.
+The written line is then judged by tools/verify_ai_line.py against the same BUILT OBJ (L5). Still a GENERATED DRAFT
+(0023): an in-game recording replaces it file-for-file.
+
 L13 applies: a closed lap repeats its first vertex — detect, drop the duplicate, and wrap every
 neighbour/distance computation; an open stage wraps nothing.
 """
@@ -194,6 +215,24 @@ BOX_WINDOW_PTS = (3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 92, 108)   # fillet 
                                                                        # after the corner's arc, independently
 BOX_PAD = 2                 # the corner's arc = the declared corner PC - 2 .. PT + 2 (the spec's box rule)
 OPEN_ZONES = ("whole", "box", "pin")   # zone_by_vertex values where the lane is the whole street
+# --- ledger 0052 (opt-in per track: track.config.json "ai"; absent = every line above, byte for byte) ------
+FAIR_W = 1e-6               # INVENTED: fair_line's hold on the input line (swept on SD race_cw: 1e-4 kept every
+                            # gentle road S — 1.49 bend flips / km; 1e-5 alone left 15 spurious dips)
+FAIR_ALPHA = 1e-2           # INVENTED: fair_line's weight on curvature itself — a minimum-curvature pull inside the
+                            # bounds (swept: 1e-3 left 0.82 flips / km; 3e-2 pressed the line onto its bounds, 32 dips)
+FAIR_U_MAX_M = 3.0          # INVENTED: fair_line never moves a point further than this along its normal
+FAIR_PAD_PTS = 120          # a closed lap is faired as an open chain padded this far round the seam each way
+FAIR_PIN_W = 1e6            # a point held at its bound (the active set) is held with this weight
+FAIR_ACTIVE_ITERS = 60      # active-set iterations per solve
+FAIR_RADIUS_ROUNDS = 12     # re-solves after pulling back the bounds around a radius the fairing tightened
+FAIR_PROBE_M = 0.25         # a point's bound along its normal: marched at this step, then bisected ...
+FAIR_BOUND_SMOOTH_PTS = 4   # ... then made a smooth conservative envelope over +-this many points (min, mean, x2)
+FAIR_POLISH_W = 1e-4        # INVENTED: the polish after the fairing (point-scale only: wiggles under ~30 m) ...
+FAIR_POLISH_U_M = 0.3       # ... on a 0.3 m leash
+FAIR_CLEAR_EXTRA_M = 0.5    # INVENTED: the fairing keeps wall_clear + this off every face (it never moves a point
+                            # closer than that unless it already was): the band the gate counts stays empty
+DIRECTION_WINDOW_PTS = 10   # payload direction = -sign(heading change over +-10 points, +-15 m) — MEASURED: the
+DIRECTION_MIN_DEG = 0.5     # Kunos lines agree on 99.0-99.5 % of points turning more than 0.5 deg there
 
 
 # --- resampling ----------------------------------------------------------------
@@ -1019,6 +1058,228 @@ def bound_curvature(P, closed: bool, st: _Stations, *, pinned=(), max_iter: int 
     return P, rep
 
 
+# --- fairing (ledger 0052 F3: no bends that are not there) ------------------------------------------------
+
+def _band_solve(A: list[list[float]], b: list[float]) -> list[float]:
+    """Solve the symmetric positive-definite system with half-bandwidth 3 (``A[i][d]`` = a(i, i + d), d = 0..3)
+    by banded Cholesky — O(n), pure python."""
+    m = len(b)
+    L = [[0.0, 0.0, 0.0, 0.0] for _ in range(m)]        # L[i][t] = l(i, i - 3 + t)
+    for i in range(m):
+        for j in range(max(0, i - 3), i + 1):
+            s = A[j][i - j] if i - j <= 3 else 0.0
+            for t in range(max(0, i - 3, j - 3), j):
+                s -= L[i][t - i + 3] * L[j][t - j + 3]
+            if j == i:
+                L[i][3] = math.sqrt(max(s, 1e-18))
+            else:
+                L[i][j - i + 3] = s / L[j][3]
+    y = [0.0] * m
+    for i in range(m):
+        s = b[i]
+        for j in range(max(0, i - 3), i):
+            s -= L[i][j - i + 3] * y[j]
+        y[i] = s / L[i][3]
+    x = [0.0] * m
+    for i in range(m - 1, -1, -1):
+        s = y[i]
+        for j in range(i + 1, min(m, i + 4)):
+            s -= L[j][i - j + 3] * x[j]
+        x[i] = s / L[i][3]
+    return x
+
+
+def _band_matvec(A: list[list[float]], x: list[float]) -> list[float]:
+    """y = A x for the symmetric half-bandwidth-3 storage of _band_solve."""
+    m = len(x)
+    y = [0.0] * m
+    for i in range(m):
+        row = A[i]
+        y[i] += row[0] * x[i]
+        for d in range(1, 4):
+            j = i + d
+            if j < m and row[d]:
+                y[i] += row[d] * x[j]
+                y[j] += row[d] * x[i]
+    return y
+
+
+def fair_line(P, closed: bool, ok, *, w: float | None = None, u_max: float | None = None,
+              alpha: float | None = None, pad: int | None = None) -> tuple[list[list[float]], dict]:
+    """Fair the line: no wiggle, kink or S the road does not make the car drive (ledger 0052, F3).
+
+    The v0.17.1 race drafts braked 60-100 m before every box for bends that were not there: a slope-limited
+    piecewise-linear approach envelope joined straight-arc-straight left kinks and S-wiggles that
+    bound_curvature (a radius FLOOR) never sees, and a resample across two 1.5 m grids left curvature noise at
+    the point scale. Each point moves along its own normal by u (metres, right of travel), minimising
+
+        sum_j |X[j+2] - 3 X[j+1] + 3 X[j] - X[j-1]|^2  +  w sum_i u_i^2,     X_i = P_i + u_i n_i
+
+    — the third difference is the change of curvature along the line: a curvature STEP (a straight meeting an
+    arc) becomes a transition, a wiggle shorter than ~2 pi / (2 asin(w^(1/6) / 2)) points is taken out, and a
+    long bend is kept (the u term holds the line where it is). Bounds: each point may move only as far along its
+    normal as ``ok(i, x, z)`` allows (its clearance from the walls — bisected per point, monotone along the
+    normal) and never more than ``u_max``; the bounded problem is solved by a primal-dual active set over the
+    banded system (O(n) per solve). A radius tighter than min(RADIUS_FLOOR_M, the input's own) through three
+    faired points halves the bounds of the five points around it and re-solves. A closed lap is solved as an
+    open chain padded ``pad`` points round the seam each way; the middle is the lap. y is untouched (the
+    caller seats the line). Returns (points, report)."""
+    w = FAIR_W if w is None else w
+    u_max = FAIR_U_MAX_M if u_max is None else u_max
+    alpha = FAIR_ALPHA if alpha is None else alpha
+    n = len(P)
+    rep = {"w": w, "alpha": alpha, "u_max_m": u_max, "solves": 0, "active_at_bound": 0, "radius_rounds": 0, "refused_after": 0}
+    if n < 12:
+        return [list(p) for p in P], rep
+    pad = (FAIR_PAD_PTS if pad is None else pad) if closed else 0
+    pad = min(pad, n)
+    wrap = (lambda i: i % n) if closed else (lambda i: min(max(i, 0), n - 1))
+    nrm = []
+    for i in range(n):
+        a, b = P[wrap(i - 2)], P[wrap(i + 2)]
+        tx, tz = _unit_xz(b[0] - a[0], b[2] - a[2])
+        nrm.append((tz, -tx))                                 # right of travel
+
+    def at(i: int, ui: float) -> list[float]:
+        return [P[i][0] + nrm[i][0] * ui, P[i][1], P[i][2] + nrm[i][1] * ui]
+
+    # per-point bounds along the normal: the farthest move ok() allows each way (coarse march, then bisection)
+    lo_b, hi_b = [0.0] * n, [0.0] * n
+    for i in range(n):
+        for sgn, store in ((1.0, hi_b), (-1.0, lo_b)):
+            good, t = 0.0, 0.0
+            bad_t = None
+            while t < u_max - 1e-9:
+                t = min(u_max, t + FAIR_PROBE_M)
+                q = at(i, sgn * t)
+                if ok(i, q[0], q[2]):
+                    good = t
+                else:
+                    bad_t = t
+                    break
+            if bad_t is not None:
+                a_t, b_t = good, bad_t
+                for _ in range(8):
+                    mid = 0.5 * (a_t + b_t)
+                    q = at(i, sgn * mid)
+                    if ok(i, q[0], q[2]):
+                        a_t = mid
+                    else:
+                        b_t = mid
+                good = a_t
+            store[i] = sgn * good
+    # the bounds as a SMOOTH conservative envelope: a min filter then a box mean over the same +-k never exceeds
+    # a point's own bound (every value averaged is a minimum over a window holding that point), twice — so a
+    # line pressed against them follows a curve, not the millimetre steps of a per-point bisection
+    k = FAIR_BOUND_SMOOTH_PTS
+
+    def smooth_room(room: list[float]) -> list[float]:
+        for _ in range(2):
+            mn = [min(room[wrap(i + d)] for d in range(-k, k + 1)) for i in range(n)]
+            room = [sum(mn[wrap(i + d)] for d in range(-k, k + 1)) / (2 * k + 1) for i in range(n)]
+        return room
+
+    hi_b = smooth_room(hi_b)
+    lo_b = [-r for r in smooth_room([-x for x in lo_b])]
+    m = n + 2 * pad
+    pt = [(k - pad) % n if closed else k for k in range(m)]   # chain variable -> line point
+    A0 = [[0.0, 0.0, 0.0, 0.0] for _ in range(m)]
+    b0 = [0.0] * m
+    # third differences (change of curvature) at weight 1, second differences (curvature) at weight ``alpha``
+    for C, wt in (((-1.0, 3.0, -3.0, 1.0), 1.0), ((1.0, -2.0, 1.0), alpha)):
+        if wt <= 0.0:
+            continue
+        L = len(C)
+        for j in range(1, m - L + 2):
+            q = tuple(j - 1 + t for t in range(L))
+            ax = sum(C[t] * P[pt[q[t]]][0] for t in range(L))
+            az = sum(C[t] * P[pt[q[t]]][2] for t in range(L))
+            for t1 in range(L):
+                p1 = q[t1]
+                n1 = nrm[pt[p1]]
+                b0[p1] -= wt * C[t1] * (n1[0] * ax + n1[1] * az)
+                for t2 in range(t1, L):
+                    n2 = nrm[pt[q[t2]]]
+                    A0[p1][t2 - t1] += wt * C[t1] * C[t2] * (n1[0] * n2[0] + n1[1] * n2[1])
+    for k in range(m):
+        A0[k][0] += w
+
+    def rad(Q, i: int) -> float:
+        if not closed and (i == 0 or i == n - 1):
+            return 10000.0
+        return _circumradius(Q[wrap(i - 1)], Q[i], Q[wrap(i + 1)])
+
+    r_in = [rad(P, i) for i in range(n)]
+    active: dict[int, float] = {}                             # chain variable -> the bound it is held at
+    u = [0.0] * m
+    for rr in range(FAIR_RADIUS_ROUNDS + 1):
+        rep["radius_rounds"] = rr
+        it = 0
+        while True:
+            A = [row[:] for row in A0]
+            bb = b0[:]
+            for k, v in active.items():
+                A[k][0] += FAIR_PIN_W
+                bb[k] += FAIR_PIN_W * v
+            u = _band_solve(A, bb)
+            rep["solves"] += 1
+            it += 1
+            g = _band_matvec(A0, u)                           # the objective's gradient (without the holds)
+            releasing = it <= FAIR_ACTIVE_ITERS               # after that only holds are added: it terminates
+            changed = False
+            for k in range(m):
+                i = pt[k]
+                lo, hi = lo_b[i], hi_b[i]
+                if k in active:
+                    held = active[k]
+                    if not lo - 1e-12 <= held <= hi + 1e-12:  # a bound pulled in by a radius round
+                        active[k] = min(max(held, lo), hi)
+                        changed = True
+                    # release a hold the objective no longer pushes against (KKT sign of the gradient)
+                    elif releasing and ((held <= lo + 1e-12 and g[k] - b0[k] < -1e-9)
+                                        or (held >= hi - 1e-12 and g[k] - b0[k] > 1e-9)):
+                        del active[k]
+                        changed = True
+                elif u[k] < lo - 1e-6:
+                    active[k] = lo
+                    changed = True
+                elif u[k] > hi + 1e-6:
+                    active[k] = hi
+                    changed = True
+            if not changed or it > FAIR_ACTIVE_ITERS + m:
+                break
+        for k, v in list(active.items()):                     # a held variable sits exactly on its bound
+            u[k] = v
+        for k in range(m):
+            i = pt[k]
+            u[k] = min(max(u[k], lo_b[i]), hi_b[i])
+        Q = [at(i, u[pad + i]) for i in range(n)]
+        tight = [i for i in range(n) if rad(Q, i) < min(RADIUS_FLOOR_M, r_in[i]) * (1.0 - 1e-3)]
+        if not tight:
+            break
+        for i in tight:                                       # pull the move back around a radius it tightened
+            for d in range(-2, 3):
+                j = wrap(i + d)
+                lo_b[j] *= 0.5
+                hi_b[j] *= 0.5
+        for k in list(active):
+            i = pt[k]
+            active[k] = min(max(active[k], lo_b[i]), hi_b[i])
+    out = []
+    refused = 0
+    for i in range(n):
+        q = at(i, u[pad + i])
+        if not ok(i, q[0], q[2]):                             # never ship a refused move: keep the input point
+            refused += 1
+            q = [P[i][0], P[i][1], P[i][2]]
+        out.append(q)
+    us = [abs(u[pad + i]) for i in range(n)]
+    rep.update(active_at_bound=len([k for k in active if pad <= k < pad + n]), refused_after=refused,
+               max_move_m=round(max(us), 3), mean_move_m=round(sum(us) / n, 4),
+               tight_after=sum(1 for i in range(n) if rad(out, i) < min(RADIUS_FLOOR_M, r_in[i]) * (1.0 - 1e-3)))
+    return out, rep
+
+
 def _rotate_to(P, x: float, z: float) -> tuple[list[list[float]], dict]:
     """The closed polyline re-started at its point nearest (x, z) — the start/finish line's midpoint
     projected onto the line (finding C). Returns (points, info)."""
@@ -1577,7 +1838,7 @@ def _path_radius_min(P, i0: int, i1: int, closed: bool) -> float:
 
 
 def box_fillets(P, closed: bool, st: _Stations, faces: CorridorFaces, corners: list[dict],
-                ds: float) -> tuple[list, list[dict]]:
+                ds: float, comfort_m: float = FILLET_COMFORT_CLEAR_M) -> tuple[list, list[dict]]:
     """The largest circular arc each open corner allows (ledger 0049 spec §12: "the fillet targets the
     largest radius that keeps FILLET_COMFORT_CLEAR_M off every face").
 
@@ -1590,7 +1851,8 @@ def box_fillets(P, closed: bool, st: _Stations, faces: CorridorFaces, corners: l
     CHECK_CLEAR_M + CORRIDOR_TOL_M. The smallest window that fits the largest radius is taken. A window
     never reaches into another corner's arc, nor into a window already replaced (corners closer than two
     windows apart share the straight between them). A corner nothing fits is left to fillet_corners
-    (reported). Returns (points, report)."""
+    (reported). ``comfort_m`` replaces FILLET_COMFORT_CLEAR_M as the comfort clearance (ledger 0052's
+    ``ai.wall_clear_m``: 2.5 m off the K-rail; absent = 1.5 m, today's arcs). Returns (points, report)."""
     rep: list[dict] = []
     P = [list(p) for p in P]
     claimed = {id(c): (c["a_st"], c["b_st"]) for c in corners}      # station ranges, per corner
@@ -1681,7 +1943,7 @@ def box_fillets(P, closed: bool, st: _Stations, faces: CorridorFaces, corners: l
             ladder.append(R)
             R *= BOX_R_LADDER
         ladder.append(r_floor)
-        for lane, need in (("comfort", FILLET_COMFORT_CLEAR_M), ("hard", CHECK_CLEAR_M + CORRIDOR_TOL_M)):
+        for lane, need in (("comfort", comfort_m), ("hard", CHECK_CLEAR_M + CORRIDOR_TOL_M)):
             above, got = None, None
             for R in ladder:                               # the largest rung that fits ...
                 got = fits(R, need)
@@ -1791,7 +2053,7 @@ def build_line(pts, widths, *, closed: bool, spacing: float, lat_g: float, decel
                accel_g: float, vmax_kmh: float, margin_m: float,
                dh: list[float] | None = None, inset: list[float] | None = None,
                lane_offset: bool = True, start_xz: tuple[float, float] | None = None,
-               corridor: dict | None = None) -> dict:
+               corridor: dict | None = None, opts: dict | None = None, built: dict | None = None) -> dict:
     """Build the line in the ENGINE frame (x=E, y=up, z=N; right of travel = (tz, −tx)).
 
     ``dh``/``inset`` are per-vertex channels aligned with ``pts`` (divider half-width, kerb-line
@@ -1809,7 +2071,18 @@ def build_line(pts, widths, *, closed: bool, spacing: float, lat_g: float, decel
     the open corners (travel-order vertex indices), ``faces`` = the CorridorFaces the line is judged
     against. Then: lane-centre target (corridor_offsets) -> outside approach at every open corner
     (box_targets) -> offset polyline -> loop trim -> the largest arc each corner allows (box_fillets) ->
-    floor fillets + curvature bound as above; sideLeft/sideRight are the distances to the faces."""
+    floor fillets + curvature bound as above; sideLeft/sideRight are the distances to the faces.
+
+    ``opts`` (ledger 0052, the track's ``ai`` block for this layout — see load_ai_opts; None = today's line,
+    byte for byte): ``wall_clear_m`` is the comfort clearance of a corridor line (box approach, box arcs,
+    floor fillets: 2.5 m off the K-rail instead of FILLET_COMFORT_CLEAR_M); ``fair`` runs fair_line on the
+    final line (no bends that are not there); ``payload == "kunos"`` makes the radius field the plain 3-point
+    circumradius (no min-of-neighbours window). ``built`` (``{"surface": RoadSurface, "walls": WallIndex}``
+    from the layout's gate OBJ, scripts.ac.ai_built): every point is seated on the BUILT 1ROAD surface (its y
+    and the surface normal, for the payload's normal / camber) and sideLeft / sideRight never reach past the
+    first BUILT wall a perpendicular ray meets, minus the margin."""
+    opts = dict(opts or {})
+    comfort = float(opts.get("wall_clear_m", FILLET_COMFORT_CLEAR_M)) if corridor is not None else FILLET_COMFORT_CLEAR_M
     n_in = len(pts)
     dh = list(dh) if dh is not None else [0.0] * n_in
     inset = list(inset) if inset is not None else [0.0] * n_in
@@ -1829,7 +2102,7 @@ def build_line(pts, widths, *, closed: bool, spacing: float, lat_g: float, decel
     tan_xz = [_unit_xz(t[0], t[2]) for t in _tangents(base, closed, ds0, span=TANGENT_SPAN)]
     if corridor is not None:
         lo, hi = _faces_lane(clo_s, chi_s, CHECK_CLEAR_M + CORRIDOR_TOL_M)
-        lo_c, hi_c = _faces_lane(clo_s, chi_s, FILLET_COMFORT_CLEAR_M)
+        lo_c, hi_c = _faces_lane(clo_s, chi_s, comfort)
     else:
         lo, hi = lane_corridor(widths_s, dh_s, inset_s, CHECK_CLEAR_M + CORRIDOR_TOL_M)
         lo_c, hi_c = lane_corridor(widths_s, dh_s, inset_s, FILLET_COMFORT_CLEAR_M)
@@ -1847,7 +2120,7 @@ def build_line(pts, widths, *, closed: bool, spacing: float, lat_g: float, decel
         first = (P[0][0], P[0][2])
         P, geo["folds"] = trim_loops(P, tan_xz, closed, ds0)
         P, _, _ = _resample(P, [0.0] * len(P), ds0, closed)
-        P, geo["box_arcs"] = box_fillets(P, closed, st, corridor["faces"], corners_st, ds0)
+        P, geo["box_arcs"] = box_fillets(P, closed, st, corridor["faces"], corners_st, ds0, comfort_m=comfort)
         P, _, _ = _resample(P, [0.0] * len(P), ds0, closed)
         P, geo["fillets"] = fillet_corners(P, closed, st, ds0)
         P, _, _ = _resample(P, [0.0] * len(P), ds0, closed)
@@ -1880,12 +2153,45 @@ def build_line(pts, widths, *, closed: bool, spacing: float, lat_g: float, decel
     if lane_offset:
         P, rep = bound_curvature(P, closed, st, tol=RADIUS_TOL_FINAL, normal_only=True)
         geo["smoothing"].append(rep)
+    if lane_offset and opts.get("fair"):
+        def make_ok(Q):
+            """A moved point is fine when it stands >= min(wall_clear + FAIR_CLEAR_EXTRA_M, where it stood) off
+            every corridor face (island outlines included) — never closer to a wall than the line it fairs — or,
+            with no corridor, inside its station's hard lane."""
+            if corridor is not None:
+                faces = corridor["faces"]
+                need = [min(comfort + FAIR_CLEAR_EXTRA_M, faces.clearance(p[0], p[2])) - 1e-3 for p in Q]
+                return lambda i, x, z: faces.clearance(x, z) >= need[i]
+            a0 = st.associate(Q)
+
+            def ok(i, x, z):
+                k = st.nearest_near(x, z, a0[i], 20, 20)
+                return st.lo[k] <= st.lat(x, z, k) <= st.hi[k]
+            return ok
+        # the fairing proper (minimum change of curvature + a minimum-curvature pull, inside the bounds), then a
+        # light polish (no curvature pull, a short leash) that takes out what an active bound left at the point scale
+        P, geo["fairing"] = fair_line(P, closed, make_ok(P), w=opts.get("fair_w"), u_max=opts.get("fair_u_max_m"),
+                                       alpha=opts.get("fair_alpha"))
+        P, geo["fairing_polish"] = fair_line(P, closed, make_ok(P), w=FAIR_POLISH_W, u_max=FAIR_POLISH_U_M, alpha=0.0)
     n = len(P)
     idx = (lambda i: i % n) if closed else (lambda i: min(max(i, 0), n - 1))
     assoc = st.associate(P)
     if lane_offset:
         for i, p in enumerate(P):
             p[1] = st.y_at(p[0], p[2], assoc[i])
+    normal = None
+    if built and built.get("surface") is not None:
+        # seated on the BUILT road (ledger 0052 F1): its height, and its normal for the payload's normal / camber
+        surf, normal, off_road = built["surface"], [], 0
+        for p in P:
+            s = surf.sample(p[0], p[1], p[2])
+            if s is None:
+                off_road += 1
+                normal.append([0.0, 1.0, 0.0])
+                continue
+            p[1] = s[0]
+            normal.append(list(s[1]))
+        geo["seated"] = {"points": n, "off_road": off_road}
     pts = P
     off = [st.lat(p[0], p[2], assoc[i]) for i, p in enumerate(P)] if lane_offset else [0.0] * n
     widths = [widths_s[k] for k in assoc]
@@ -1894,8 +2200,11 @@ def build_line(pts, widths, *, closed: bool, spacing: float, lat_g: float, decel
     geo.update(line_geometry(P, closed, st, assoc, off, ds))
 
     radius = [_circumradius(pts[idx(i - 1)], pts[i], pts[idx(i + 1)]) for i in range(n)]
-    for _ in range(2):                                     # light smooth: min of neighbours window
-        radius = [min(radius[idx(i - 1)], radius[i], radius[idx(i + 1)]) for i in range(n)]
+    kunos = opts.get("payload") == "kunos"
+    if not kunos:
+        for _ in range(2):                                 # light smooth: min of neighbours window
+            radius = [min(radius[idx(i - 1)], radius[i], radius[idx(i + 1)]) for i in range(n)]
+    # (kunos: the plain 3-point circumradius, as every reference line on this PC carries — ledger 0052)
 
     vmax = vmax_kmh / 3.6
     v = [min(vmax, math.sqrt(lat_g * G * r)) for r in radius]
@@ -1909,7 +2218,12 @@ def build_line(pts, widths, *, closed: bool, spacing: float, lat_g: float, decel
             vp = v[idx(i - 1)] if (closed or i > 0) else v[i]
             v[i] = min(v[i], math.sqrt(vp * vp + 2 * accel_g * G * ds))
 
-    length = [i * ds for i in range(n)]
+    if kunos:                                              # cumulative along the line as it now stands (3D)
+        length = [0.0]
+        for i in range(1, n):
+            length.append(length[-1] + math.dist(pts[i - 1], pts[i]))
+    else:
+        length = [i * ds for i in range(n)]
     lap_s = sum(ds / max(v[i], 1.0) for i in range(n if closed else n - 1))
 
     fwd = _tangents(pts, closed, ds)
@@ -1947,6 +2261,9 @@ def build_line(pts, widths, *, closed: bool, spacing: float, lat_g: float, decel
             on = [i for i in range(n) if ((assoc[i] - a) % n0 if closed else assoc[i] - a) <= span
                   and (closed or assoc[i] >= a)]
             arc["points_on_arc"] = len(on)
+            if opts:                                       # ledger 0052: the arc as finally written (faired)
+                arc["line_radius_min_m"] = round(min(_circumradius(pts[idx(i - 4)], pts[i], pts[idx(i + 4)])
+                                                     for i in on), 2) if on else None
             arc["min_speed_kmh"] = round(min(v[i] for i in on) * 3.6, 1) if on else None
             # the slowest point within 150 m either side of the arc: an approach that dips below the
             # corner's own speed (a flick before it) shows here
@@ -1961,25 +2278,106 @@ def build_line(pts, widths, *, closed: bool, spacing: float, lat_g: float, decel
             right_b = w / 2.0 - s
             side_l.append(max(0.5, (o - left_b) - margin_m))
             side_r.append(max(0.5, (right_b - o) - margin_m))
+    if built and built.get("walls") is not None:
+        # never past the first BUILT wall a perpendicular ray meets (ledger 0052 F4), minus the margin
+        walls, cut = built["walls"], []
+        for i, p in enumerate(pts):
+            tx, tz = _unit_xz(fwd[i][0], fwd[i][2])
+            rx, rz = tz, -tx                               # right of travel, ENGINE frame
+            for sides, sx, sz in ((side_l, -rx, -rz), (side_r, rx, rz)):
+                hit = walls.ray(p[0], p[1], p[2], sx, sz, sides[i] + margin_m)
+                if hit - margin_m < sides[i]:
+                    new = max(0.5, hit - margin_m)
+                    cut.append(sides[i] - new)
+                    sides[i] = new
+        cut.sort()
+        geo["sides_clamped_at_built_walls"] = {"sides": len(cut), "median_cut_m": round(cut[len(cut) // 2], 3) if cut else 0.0,
+                                               "max_cut_m": round(cut[-1], 3) if cut else 0.0}
     geo["min_speed_kmh"] = round(min(v) * 3.6, 1) if v else None
     geo["min_speed_at"] = min(range(n), key=lambda i: v[i]) if v else None
     return {"pts": pts, "v": v, "length": length, "radius": radius, "fwd": fwd, "grade": grade,
             "gas": gas, "brake": brake, "side_l": side_l, "side_r": side_r, "off": off,
             "base": [base[k] for k in assoc], "station": assoc, "dh": dh, "inset": inset, "widths": widths,
-            "ds": ds, "lap_s": lap_s, "closed": closed, "geometry": geo}
+            "ds": ds, "lap_s": lap_s, "closed": closed, "geometry": geo,
+            **({"payload": "kunos", "normal": normal or [[0.0, 1.0, 0.0] for _ in range(n)]} if kunos else {})}
+
+
+def kunos_payload(line: dict) -> dict:
+    """The payload fields AC's own lines carry (ledger 0052 F1, measured on 186 Kunos / third-party lines on
+    this PC), on a line ALREADY in the kn5 frame: per point the 3D distance to the previous point (point 0: the
+    seam segment of a closed lap), the side the bend turns toward as +-1 (-sign of the heading change over
+    +-DIRECTION_WINDOW_PTS points, heading = atan2(fz, fx) in the kn5 frame; a straight holds the last bend's
+    sign, never 0), and the camber asin(normal . right) of the surface normal under it (right = (-fz, 0, fx),
+    the driver's right in the kn5 frame — write_sides). Returns the measured summary."""
+    P, closed = line["pts"], line["closed"]
+    n = len(P)
+    # the points as AC will read them (float32): the radius field is the 3-point circumradius OF THOSE — on a
+    # near-straight at x ~ 2 km a float32 step (0.12 mm) is a fifth of a 1.5 m chord's sagitta at R 2 km
+    P = [list(struct.unpack("<3f", struct.pack("<3f", *p))) for p in P]
+    wrap = (lambda i: i % n) if closed else (lambda i: min(max(i, 0), n - 1))
+    line["radius"] = [10000.0 if (not closed and i in (0, n - 1)) else
+                      _circumradius(P[wrap(i - 1)], P[i], P[wrap(i + 1)]) for i in range(n)]
+    seg = [math.dist(P[i], P[i - 1]) if (closed or i > 0) else (math.dist(P[1], P[0]) if n > 1 else 0.0)
+           for i in range(n)]
+    h = []
+    for i in range(n):
+        j = (i + 1) % n if closed else min(i + 1, n - 1)
+        a, b = (P[i], P[j]) if j != i else (P[i - 1], P[i])
+        h.append(math.atan2(b[2] - a[2], b[0] - a[0]))
+    t = [0.0] + [((h[i] - h[i - 1] + math.pi) % (2.0 * math.pi)) - math.pi for i in range(1, n)]
+    if closed:
+        t[0] = ((h[0] - h[-1] + math.pi) % (2.0 * math.pi)) - math.pi
+    k = DIRECTION_WINDOW_PTS
+    tk = [sum(t[(i + d) % n] if closed else t[min(max(i + d, 0), n - 1)] for d in range(-k, k + 1))
+          for i in range(n)]
+    thr = math.radians(DIRECTION_MIN_DEG)
+    first = next((i for i in range(n) if abs(tk[i]) > thr), None)
+    direction = [1.0] * n
+    if first is not None:
+        last = -math.copysign(1.0, tk[first])
+        order = [(first + q) % n for q in range(n)] if closed else list(range(n))
+        if not closed:
+            for i in range(first):
+                direction[i] = last
+        for i in order:
+            if abs(tk[i]) > thr:
+                last = -math.copysign(1.0, tk[i])
+            direction[i] = last
+    camber = []
+    for i in range(n):
+        nx, ny, nz = line["normal"][i]
+        f = line["fwd"][i]
+        rl = math.hypot(f[0], f[2]) or 1.0
+        camber.append(math.asin(max(-1.0, min(1.0, (nx * -f[2] + nz * f[0]) / rl))))
+    line["seglen"], line["direction"], line["camber"] = seg, direction, camber
+    return {"camber_min_rad": round(min(camber), 4) if camber else None,
+            "camber_max_rad": round(max(camber), 4) if camber else None,
+            "direction_plus_pts": sum(1 for d in direction if d > 0), "seg_max_m": round(max(seg), 3) if seg else None}
 
 
 def write_ai(line: dict, out: Path) -> None:
+    """The v7 binary. A ``payload == "kunos"`` line (ledger 0052; kunos_payload() run on it in the kn5 frame)
+    carries what AC's own lines carry: header lapTime = sampleCount = 0 (actools: "usually zeroes"), the
+    per-point extras ``length`` = the segment to the previous point (not the lap distance), ``direction`` +-1,
+    the built surface's ``camber`` and ``normal``. Any other line: today's bytes."""
     n = len(line["pts"])
     side_l = line.get("side_l") or line["side"]
     side_r = line.get("side_r") or line["side"]
+    kunos = line.get("payload") == "kunos"
     buf = bytearray()
-    buf += struct.pack("<4i", 7, n, int(line["lap_s"] * 1000), n)
+    buf += struct.pack("<4i", 7, n, 0, 0) if kunos else struct.pack("<4i", 7, n, int(line["lap_s"] * 1000), n)
     for i, p in enumerate(line["pts"]):
         buf += struct.pack("<4fi", p[0], p[1], p[2], line["length"][i], i)
     buf += struct.pack("<i", n)
     for i in range(n):
         f = line["fwd"][i]
+        if kunos:
+            nm = line["normal"][i]
+            buf += struct.pack("<18f", line["v"][i], line["gas"][i], line["brake"][i], 0.0,
+                               line["radius"][i], side_l[i], side_r[i],
+                               line["camber"][i], line["direction"][i], nm[0], nm[1], nm[2],
+                               line["seglen"][i], f[0], f[1], f[2], 0.0, line["grade"][i])
+            continue
         buf += struct.pack(
             "<18f",
             line["v"][i], line["gas"][i], line["brake"][i], 0.0,
@@ -2204,7 +2602,8 @@ def verify(path: Path) -> str:
     last = struct.unpack_from("<f", d, 16 + (count - 1) * 20 + 12)[0]
     sp = (last - first) / (count - 1) if count > 1 else 0
     return (f"{path.name}: v{ver}, {count:,} pts, {sp:.2f} m spacing over {last - first:,.0f} m, "
-            f"lap {lap / 1000:.1f} s, extras={'yes' if len(d) > 16 + count * 20 + 4 else 'NO'}")
+            + (f"lap {lap / 1000:.1f} s, " if lap else "header lap 0 (as Kunos), ")
+            + f"extras={'yes' if len(d) > 16 + count * 20 + 4 else 'NO'}")
 
 
 # --- per-vertex channels ---------------------------------------------------------------
@@ -2223,6 +2622,53 @@ def _channel(path: Path, key: str, n: int, label: str) -> list[float] | None:
         print(f"  [{label}] {path.name} {key}: {len(vals)} values vs {n} vertices — DISABLED")
         return None
     return [float(v) for v in vals[:n]]
+
+
+AI_OPT_KEYS = {"layouts", "payload", "wall_clear_m", "fair", "fair_w", "fair_alpha", "fair_u_max_m", "surface", "verify"}
+
+
+def load_ai_opts(cfg: dict, layout_id: str | None) -> dict | None:
+    """The track's ledger-0052 opt-in for this line: ``track.config.json`` ``ai`` (keys starting ``_`` are notes),
+    limited to ``ai.layouts`` when that is given. None — no block, or this layout not listed — writes today's
+    line byte for byte. ``payload: "kunos"`` (the payload fields AC's own lines carry), ``wall_clear_m`` (the
+    corridor line's comfort clearance), ``fair`` (+ ``fair_w``), ``surface: "gate_obj"`` (seat on / clamp at the
+    layout's BUILT gate OBJ, data/track.<layout>.obj), ``verify`` (tools/verify_ai_line.py's thresholds)."""
+    block = cfg.get("ai")
+    if not block:
+        return None
+    opts = {k: v for k, v in block.items() if not str(k).startswith("_")}
+    unknown = sorted(set(opts) - AI_OPT_KEYS)
+    if unknown:
+        raise SystemExit(f"track.config.json ai: unknown key(s) {unknown} (known: {sorted(AI_OPT_KEYS)})")
+    if opts.get("payload") not in (None, "kunos"):
+        raise SystemExit(f"track.config.json ai.payload {opts['payload']!r}: only \"kunos\"")
+    if opts.get("surface") not in (None, "gate_obj"):
+        raise SystemExit(f"track.config.json ai.surface {opts['surface']!r}: only \"gate_obj\"")
+    lays = opts.pop("layouts", None)
+    if lays is not None and layout_id not in lays:
+        return None
+    return opts
+
+
+def stale_gate_obj(obj: Path, build_dir: Path) -> list[str]:
+    """The kn5s a gate OBJ's header names (kn5_to_gate_obj: "gate OBJ extracted from a.kn5 + b.kn5 ...") that
+    exist in ``build_dir`` and are NEWER than the OBJ: a line seated on it would be seated on the last ship's
+    world. Empty when nothing is newer (or the header names nothing found)."""
+    try:
+        with open(obj, "r", encoding="utf-8", errors="replace") as f:
+            head = f.readline()
+    except OSError:
+        return []
+    if "extracted from" not in head:
+        return []
+    names = head.split("extracted from", 1)[1].split("(", 1)[0]
+    t = obj.stat().st_mtime
+    out = []
+    for nm in (s.strip() for s in names.split("+")):
+        p = build_dir / nm
+        if nm and p.exists() and p.stat().st_mtime > t:
+            out.append(nm)
+    return out
 
 
 def load_layout(project: Path, layout_id: str) -> dict | None:
@@ -2258,6 +2704,9 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--race-furniture", choices=("auto", "on", "off"), default="auto",
                     help="consult data/barrier_bands.json: auto = layouts[].race_furniture")
     ap.add_argument("--bands", type=Path, help="barrier bands file (default data/barrier_bands.json)")
+    ap.add_argument("--surface-obj", type=Path,
+                    help="the layout's BUILT gate OBJ to seat the line on and clamp its sides at (ledger 0052; "
+                         "default with ai.surface = \"gate_obj\": data/track.<layout>.obj)")
     args = ap.parse_args(argv)
 
     project = args.src if args.src.is_dir() else None
@@ -2378,10 +2827,36 @@ def main(argv: list[str] | None = None) -> None:
                 break
         if start_xz is None:
             print("  start: no AC_TIME_0_L/R in the dummies — point 0 stays at the first station (lap seam)")
+    # Ledger 0052 (opt-in per track / layout; None = today's bytes): payload semantics, wall clearance, fairing,
+    # and the BUILT gate OBJ the line is seated on and its sides clamped at.
+    opts = load_ai_opts(cfg, args.layout) if cfg else None
+    built, built_src = None, None
+    if opts is not None or args.surface_obj:
+        opts = opts or {}
+        objp = args.surface_obj or ((data_dir / f"track.{args.layout}.obj") if opts.get("surface") == "gate_obj"
+                                    and args.layout else None)
+        if objp is not None:
+            if not objp.exists():
+                raise SystemExit(f"ai.surface: the BUILT gate OBJ {objp} is missing — run scripts.modkit.kn5_to_gate_obj "
+                                 f"for this layout before writing its line (ledger 0052)")
+            stale = stale_gate_obj(objp, (project / "build") if project else objp.parent)
+            if stale:
+                raise SystemExit(f"ai.surface: {objp.name} is older than {stale} — a line seated on it would be "
+                                 f"seated on the last ship's world; re-extract it first")
+            from .ai_built import RoadSurface, WallIndex, read_gate_obj
+            ob = read_gate_obj(objp)
+            built = {"surface": RoadSurface(ob), "walls": WallIndex(ob.wall_segs)}
+            built_src = {"obj": objp.name, "header": ob.header, "wall_segments": len(ob.wall_segs),
+                         "road_tris": len(ob.road_tris)}
+        print(f"  ai (ledger 0052): {json.dumps({k: v for k, v in opts.items() if k != 'verify'})}"
+              + (f"; built surface + walls from {objp.name} ({len(ob.road_tris):,} road tris, "
+                 f"{len(ob.wall_segs):,} wall segments)" if built else "; no built OBJ"))
+        if opts.get("payload") == "kunos" and built is None:
+            print("  WARNING ai.payload kunos without a built surface: normal (0,1,0) and camber 0 on every point")
     line = build_line(pts, widths, closed=closed, spacing=args.spacing, lat_g=args.lat_g,
                       decel_g=args.decel_g, accel_g=args.accel_g, vmax_kmh=args.vmax_kmh,
                       margin_m=args.margin_m, dh=dh, inset=inset, lane_offset=use_offset,
-                      start_xz=start_xz, corridor=corridor)
+                      start_xz=start_xz, corridor=corridor, opts=opts, built=built)
     geo = line["geometry"]
     if geo.get("start") is not None:
         geo["start"]["source"] = start_src or "first station (no AC_TIME_0 declared)"
@@ -2455,6 +2930,11 @@ def main(argv: list[str] | None = None) -> None:
         p[2] = -p[2]
     for f in line["fwd"]:
         f[2] = -f[2]
+    payload = None
+    if line.get("payload") == "kunos":
+        for nm in line["normal"]:
+            nm[2] = -nm[2]
+        payload = kunos_payload(line)
 
     if args.out:
         out = args.out
@@ -2479,6 +2959,9 @@ def main(argv: list[str] | None = None) -> None:
         "clearance": chk,
         "geometry": geo,
     }
+    if opts is not None:
+        report["ai_0052"] = {"opts": {k: v for k, v in opts.items() if k != "verify"}, "built": built_src,
+                             "payload": payload}
     if corridor is not None:
         report["corridor"] = {
             "declaration": f"{bands_path.name} corridors.{args.layout} (token {corridor['token']})",

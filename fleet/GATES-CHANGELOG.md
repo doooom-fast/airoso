@@ -900,3 +900,73 @@ collects every chunk the station interval [start − 40, end + 40] touches round
 `tests/ac/test_build_kn5_loop_prep.py::test_seam_chunks_hold_every_same_leg_station_when_the_last_chunk_is_short`
 walks every station pair within the window on such a lap; it fails on the merged code, passes on the fix. No
 threshold changed.
+
+## 2026-10-12 — the AI line gate: `tools/verify_ai_line.py`, and the writer's opt-in (ledger 0052)
+
+Kevin, from the seat, after a 7-AI race on the installed v0.17.1 race layouts: "ai races need tuning, they tend to
+crash and slow down weirdlu". Nothing measured a written `fast_lane.ai` against the walls the car hits:
+`ai_draft.json` judges the line against the writer's own CorridorFaces declaration, at 0.6 m.
+
+### The gate (`tools/verify_ai_line.py <project> --layout <id>`, new)
+
+It reads the line AS WRITTEN (`<project>/ai/<id>/fast_lane.ai`, kn5 frame) and the BUILT gate OBJ
+(`data/track.<id>.obj`: road + race + that layout's closure kn5, engine frame). It writes
+`data/ai_verify.<id>.json` and exits 1 on any FAIL. Thresholds can be overridden per track in
+`track.config.json` `ai.verify`. The "MEASURED" references are the 217 AI lines installed on this PC, measured in
+the 0052 diagnosis. Kunos walls were read from their `NNWALL` physics meshes through `scripts/modkit`'s kn5
+reader.
+
+| Check | Threshold | Flag | v0.17.1 race_cw / race_acw | 0052 lines (scratch) |
+|---|---|---|---|---|
+| V1 `length` = the 3D distance to the previous point | median error < **0.01 m** | MEASURED (Kunos 0.0001-0.001 m; 0 of 186 reference lines cumulative) | 6,732 / 6,721 m | 0.0 / 0.0 |
+| V1 `direction` | ±1 on every point; = −sign(heading change over ±10 points) on ≥ **99 %** of points turning > 0.5° | MEASURED (Kunos 99.0-99.5 %) | 0 everywhere | 100 % / 100 % |
+| V1 header lapTime / sampleCount | **0 / 0** | MEASURED (every Kunos line; actools "usually zeroes") | 281085/8979, 281338/8964 | 0/0 |
+| V1 `radius` = the 3-point circumradius | median \|ln\| error < **0.01** | MEASURED (Kunos 0.0006-0.0025) | 0.194 / 0.242 | 0.0 / 0.0 |
+| V1 `camber` = asin(normal · right) of the BUILT 1ROAD under the point | median ratio **0.9-1.1** where the road tilts > 0.01 rad, else median \|diff\| < 0.005 rad; normal not (0,1,0) everywhere | MEASURED (Kunos ratio 0.94-0.99) | ratio 0 (camber 0, normal up) | 1.0 / 1.0 |
+| V2 wall clearance: the line's centre to the nearest BUILT 1WALL footprint (horizontal, layer band −2/+4 m, L4) | min ≥ **2.0 m** | MEASURED (ks_monza66 1.981, ks_black_cat_county 2.066) | 1.506 / 1.504 m | 2.517 / 2.387 m |
+| V2 lap within 2.5 m of a built wall | ≤ **1.0 %** | ⚠ INVENTED (BCC 0.58 %, Monza66 3.2 %) | 1.38 % / 1.77 % | 0.00 % / 0.04 % |
+| V3 spurious dips (defined below) | **0** points | MEASURED (0 on ks_black_cat_county, ks_vallelunga, ks_highlands) | 160 / 875 | 0 / 0 |
+| V3 bend flips: car-scale curvature (turn over ±4 points) with \|k\| > 1/300 changing sign within 30 m | ≤ **0.75 per km** | MEASURED (BCC 0.72) | 1.71 / 0.97 | 0.67 / 0.52 |
+| V4 sides: sideLeft / sideRight past the first BUILT wall a horizontal ray PERPENDICULAR to the line meets | **0** points | — (geometry) | 0 / 0 | 0 / 0 |
+| V5 the line's own 3-point radius | ≥ **11.4 m** | the writer's RADIUS_FLOOR_M 12 × RADIUS_CHECK 0.95 | 12.56 / 12.55 m | 13.78 / 14.33 m |
+
+**The spurious-dip definition (V3).** Two physics speed profiles are built from the same line:
+- the same settings for both: μ 1.0, 0.9 g braking (backward pass), 0.35 g acceleration (forward pass),
+  69.4 m/s cap, two passes each round the closed lap;
+- one profile uses the payload's radius field; the other uses the line's car-scale radius (the circumradius
+  through the points ±4 = ±6 m).
+
+A point where the payload profile is more than **10 %** slower than the car-scale profile is a spurious dip. In
+plain terms: the file tells the AI to slow for a bend the car-sized line does not have.
+
+**V4 corrects the diagnosis.** The diagnosis counted 23 race_acw points with `sideLeft` "past a built wall". That
+used the nearest wall on the left half-plane in any direction. Every one of the 23 was a wall 16-18 m BEHIND the
+point, 0.1-0.9 m to its side (probe at idx 2965-2977, 4919-4923, 6519-6525). On a perpendicular ray, the
+v0.17.1 sides stop exactly 1.2 m (the margin) short of the wall, median, with 0 overreach. The gate uses the ray.
+
+Wiring: not in a ship chain yet — `tools/ship_sd.sh` and `tools/ship_track.sh` are held by concurrent jobs this
+round. Ledger 0052 "Held files" gives the exact change. Note that the AI step there runs BEFORE the race gate OBJs
+are extracted (`ship_sd.sh`: write_ai_line at :251, `kn5_to_gate_obj` at :304, after the `rm` at :289), so the
+extraction has to move ahead of the AI step for the gate and the writer's `ai.surface` to see this run's world.
+
+### The writer (`scripts/ac/write_ai_line.py`, opt-in `track.config.json` `ai`; absent = today's bytes)
+
+| Knob | Value | Flag |
+|---|---|---|
+| `ai.wall_clear_m`: a corridor line's comfort clearance (box approach, box arcs, floor fillets) | **2.5 m** (FILLET_COMFORT_CLEAR_M 1.5 stays the default) | ⚠ INVENTED (a 1.9 m car's half-width + 1.55 m; the 6.86 m narrowest corridor fits 2.5 m each side with 1.86 m to spare) |
+| fair_line hold on the input line `FAIR_W` / curvature weight `FAIR_ALPHA` / leash `FAIR_U_MAX_M` | **1e-6 / 1e-2 / 3.0 m** | ⚠ INVENTED, swept on SD race_cw: w 1e-4 kept every gentle road S (1.49 flips / km); α 1e-3 left 0.82 / km; α 3e-2 pressed the line onto its bounds (32 dips) |
+| polish after the fairing `FAIR_POLISH_W` / `FAIR_POLISH_U_M` | **1e-4 / 0.3 m** | ⚠ INVENTED. Without it, nearby settings left 9-77 dips where an active bound met the line; with it, 0 in every setting swept |
+| the fairing's own wall margin `FAIR_CLEAR_EXTRA_M` | **+0.5 m** over wall_clear (never closer than where the point stood) | ⚠ INVENTED (0 and 0.25 also passed; 0.5 keeps the 2.5 m band empty on race_cw) |
+| bound envelope `FAIR_BOUND_SMOOTH_PTS` | **±4 points**, min then mean, twice (conservative by construction) | ⚠ INVENTED |
+| payload `direction` window | **±10 points, 0.5°** | MEASURED (the window the Kunos agreement was measured over) |
+| `ai.surface: gate_obj`: seat on the BUILT 1ROAD within **3 m** of the point's height; the walls' layer band **−2 / +4 m** | — | ⚠ INVENTED bands (the diagnosis' filter); the writer refuses a missing gate OBJ, or one older than a kn5 its header names |
+
+Proof:
+- `tests/ac/test_write_ai_line_payload.py` (9 tests).
+  - Byte identity: golden md5s of all 25 files of the two end-to-end fixtures, HEAD 5ccf20b's writer.
+  - On a synthetic built world: the payload's meaning, the wall clearance, the gate passing the opted-in line and
+    failing the legacy one.
+  - The banded solver, fair_line's bounds, the OBJ reader's layer filter and rays, the stale-OBJ guard.
+- Byte identity on the real workshop (scratch copy, no `ai` block): `race_cw` `8d4696a4…`, `race_acw`
+  `c234c87c…` and `street` `93a09e5a…` are md5-identical to the installed / HEAD files. The same holds for every
+  `side_*.csv` and `ai_draft.json`.

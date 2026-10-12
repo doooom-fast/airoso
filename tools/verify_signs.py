@@ -45,10 +45,26 @@ Per sign (a paired post is checked once per plate where a plate matters):
   (h) exactly one record per id, none at a skipped id, no -fwd/-rev twin of a paired post, every
       plate a known geometry (W1-6)
   (i) base spacing: no two posts closer than 2.0 m
-  (j) signs.json expect_arrow, where given, equals the placed arrow (never relocate silently)
-  plus blender.normal_mismatches == 0.
+  (j) signs.json expect_arrow, where given, equals the placed arrow (never relocate silently) — read
+      from signs.json HERE (not from the record), for the plate's own approach: an entry speaks for
+      the forward approach, so on a -rev plate its expect_arrow is mirrored (right <-> left) unless the
+      entry's "rev" sub-object names one; a record whose own expect_arrow disagrees fails too
+  (k) direction coverage (ledger 0051), MAINLINE: the driven directions are read from
+      <project>/track.config.json layouts[].direction (forward -> fwd, reverse -> rev; no layouts =
+      forward only). Every mainline corner with a plate in one driven direction has a plate in every
+      other, or a skip record in that direction whose reasons are the rule's own (R / D / ray / mouth /
+      hairpin spacing / clearance) or a signs.json skip with its reason. A skip caused by expect_arrow
+      is never coverage, and neither is a direction with no record at all (v0.17.1: race_acw drove the
+      lap anticlockwise past six plates that all faced the clockwise approach, and every check passed).
+  plus blender.normal_mismatches == 0, and no race furniture (1KERB_RACE / 1WALL_RACE) among the
+  authoring pass's or the scan's ground / road objects (ledger 0051: the signs ship in the road kn5 the
+  street layout loads, the race kerbs do not; measuring a post against one moved approved posts up to
+  0.319 m with this gate still green).
 
-    python tools/verify_signs.py <project-dir> [--blend PATH] [--blender EXE]
+    python tools/verify_signs.py <project-dir> [--blend PATH] [--blender EXE] [--signs PATH]
+
+--signs PATH names the signs.json (j) reads; default tracks/<slug>/signs.json beside this file (the
+place_signs convention). An explicit path that does not exist is a FAIL.
 
 --blend PATH runs the independent scan on that blend (READ ONLY: never saved) by launching Blender
 (--blender, else $BLENDER, else the BL= line of tools/ship_sd.sh) on this very file with
@@ -84,6 +100,8 @@ KNOWN_PLATES = ("W1-6",)
 STRAIGHT_RAD_PER_M = 1.0 / 60.0
 HALF_WIN = 6                    # the rule's 12 m curvature window
 NORMAL_CLUSTER_DEG = 2.0
+LAYOUT_DIRECTION = {"forward": "fwd", "reverse": "rev"}
+ID_RE = re.compile(r"^(?P<base>.+?)(?:-(?P<dir>fwd|rev))?(?P<second>-2)?$")
 
 
 # --- geometry, own code (never place_signs') ------------------------------------------------------
@@ -379,6 +397,7 @@ def measure_in_blender(proj, blend, out_path):
     import signs_mesh as sm
     bpy.ops.wm.open_mainfile(filepath=str(blend))
     road, ground, road_names, ground_names = sm.load_bvhs(skip_prefixes=("SIGN",))
+    race_names = list(getattr(sm.load_bvhs, "last_race", []))
     d = json.loads((Path(proj) / "data" / "signs.local.json").read_text(encoding="utf-8"))
     # every SIGNPLATE polygon (centre, normal) and every SIGNPLATE / SIGNPOST vertex, world space,
     # in the engine frame (x, y up, z) = Blender (x, z, y)
@@ -400,7 +419,7 @@ def measure_in_blender(proj, blend, out_path):
                 plate_polys.append(((c.x, c.z, c.y), (n.x, n.z, n.y)))
         else:
             post_verts += [(v.x, v.z, v.y) for v in vs]
-    res = {"blend": str(blend), "road_objects": road_names, "ground_objects": ground_names,
+    res = {"blend": str(blend), "road_objects": road_names, "ground_objects": ground_names, "race_excluded": race_names,
            "scan": "5-degree polar, 0.25 m steps, bisected; ROAD top vs CURB/SIDEWALK/TERRAIN top; "
                    "ground = top hit at the base (SIGN* excluded); plate normals = Mesh.polygons[].normal of "
                    "the vertical SIGNPLATE faces within 1.2 m of the post; plate bottom = lowest SIGNPLATE vertex "
@@ -451,8 +470,126 @@ def run_blender_measure(proj, blend, exe):
     return json.loads(out_path.read_text(encoding="utf-8")), " | ".join(tail[-1:])
 
 
+# --- (j) and (k): what signs.json and track.config.json say, read here ------------------------------------
+def parse_id(cid):
+    """(corner base id, direction suffix or None, second-arrow flag): M2-fwd-2 -> (M2, fwd, True);
+    M2-2 -> (M2, None, True); MED-6-rev -> (MED-6, rev, False); M-c5 -> (M-c5, None, False)"""
+    m = ID_RE.match(cid)
+    return m.group("base"), m.group("dir"), bool(m.group("second"))
+
+
+def mirror(a):
+    return {"left": "right", "right": "left"}.get(a, a)
+
+
+def signs_json_path(proj, explicit=None):
+    """the signs.json (j) reads: --signs, else tracks/<slug>/signs.json (dashed slug first) beside
+    this file; None when the track has none"""
+    if explicit:
+        return Path(explicit)
+    try:
+        slug = json.loads((Path(proj) / "track.config.json").read_text(encoding="utf-8")).get("slug", "")
+    except Exception:
+        slug = ""
+    for cand in (slug.replace("_", "-"), slug):
+        if cand and (AIROSO / "tracks" / cand / "signs.json").exists():
+            return AIROSO / "tracks" / cand / "signs.json"
+    return None
+
+
+def load_entries(path):
+    if path is None:
+        return {}
+    d = json.loads(Path(path).read_text(encoding="utf-8"))
+    return {k: v for k, v in (d.get("corners") or {}).items() if not k.startswith("_") and isinstance(v, dict)}
+
+
+def expected_arrow(entry, direction):
+    """the arrow signs.json demands of ONE approach: the entry's per-approach sub-object first,
+    else its expect_arrow — which names the FORWARD approach, so a -rev plate expects the mirror"""
+    if not entry:
+        return None
+    sub = entry.get(direction or "fwd") or {}
+    if sub.get("expect_arrow") in ("left", "right"):
+        return sub["expect_arrow"]
+    e = entry.get("expect_arrow")
+    if e not in ("left", "right"):
+        return None
+    return mirror(e) if direction == "rev" else e
+
+
+def driven_directions(proj):
+    """{"fwd": [layout ids], "rev": [...]} from <proj>/track.config.json layouts[].direction; no
+    layouts = forward only. An unknown direction word raises ValueError (a FAIL, never a guess)."""
+    try:
+        cfg = json.loads((Path(proj) / "track.config.json").read_text(encoding="utf-8"))
+    except Exception:
+        cfg = {}
+    out = {}
+    for lay in cfg.get("layouts") or []:
+        word = str(lay.get("direction") or "forward").lower()       # absent / null = forward (the older configs)
+        if word not in LAYOUT_DIRECTION:
+            raise ValueError("layout %s: direction %r is not forward / reverse" % (lay.get("id"), lay.get("direction")))
+        out.setdefault(LAYOUT_DIRECTION[word], []).append(str(lay.get("id")))
+    return out or {"fwd": ["(no layouts: forward)"]}
+
+
+def direction_coverage(d, driven, ribbon="MAINLINE"):
+    """check (k): -> (fails, rows). See the module doc."""
+    fails, rows = [], []
+    dirs = sorted(driven)
+    plates, skips = {}, {}
+    for s in d["signs"]:
+        if s["ribbon"] != ribbon:
+            continue
+        for p in s.get("plates") or [s]:
+            base, _, _ = parse_id(p["id"])
+            plates.setdefault(base, {}).setdefault(p["direction"], []).append(p["id"])
+    for sk in d["skipped"]:
+        if sk["ribbon"].split("(")[0] != ribbon:
+            continue
+        base, _, second = parse_id(sk["id"])
+        if second:
+            continue                        # a hairpin's second arrow is the rule's extra, never coverage
+        direction = "rev" if sk["ribbon"].endswith("(rev)") else "fwd"
+        skips.setdefault(base, {}).setdefault(direction, []).extend(sk["reasons"])
+    who = lambda dr: "%s (%s)" % (dr, ", ".join(driven.get(dr, [])))
+    if len(dirs) < 2:
+        rows.append("(k) one driven direction, %s: nothing to cover" % who(dirs[0]))
+        return fails, rows
+    for base in sorted(plates):
+        have = plates[base]
+        for want in dirs:
+            if want in have:
+                continue
+            rs = skips.get(base, {}).get(want)
+            got = "/".join("%s %s" % (dr, ",".join(have[dr])) for dr in sorted(have))
+            if rs is None:
+                fails.append("k_direction_coverage: %s corner %s has a plate %s but no record at all for %s — that "
+                             "approach was never signed" % (ribbon, base, got, who(want)))
+            elif any("expect_arrow" in r for r in rs):
+                fails.append("k_direction_coverage: %s corner %s: the %s approach was skipped by expect_arrow (%s), "
+                             "not by the rule" % (ribbon, base, who(want), "; ".join(r for r in rs if "expect_arrow" in r)))
+            else:
+                rows.append("(k) %s %s: no plate for %s — the rule's own skip: %s" % (ribbon, base, who(want), "; ".join(rs)))
+    n = {dr: sum(len(v.get(dr, [])) for v in plates.values()) for dr in dirs}
+    rows.append("(k) %s plates by approach: %s; %d corners signed" % (ribbon, ", ".join("%d %s" % (n[dr], who(dr)) for dr in dirs), len(plates)))
+    return fails, rows
+
+
+def race_ground(d, measured):
+    """names of race furniture the authoring pass or the scan measured as ground / road (must be none)"""
+    sys.path.insert(0, str(AIROSO / "tools"))
+    import signs_mesh as sm
+    bad = []
+    for src, rec in (("authoring", d.get("blender") or {}), ("scan", measured or {})):
+        for key in ("ground_objects", "road_objects"):
+            bad += ["%s %s: %s" % (src, key, n) for n in rec.get(key, []) if sm.is_race_furniture(n)]
+    return bad
+
+
 # --- the gate ------------------------------------------------------------------------------------------
-def check_sign(s, field, measured, ids, skipped_ids, warns):
+def check_sign(s, field, measured, ids, skipped_ids, warns, entries=None):
     """-> (checks dict, row string, fails list)"""
     plates = s.get("plates") or [s]
     S = tuple(s["base_xz"])
@@ -515,8 +652,18 @@ def check_sign(s, field, measured, ids, skipped_ids, warns):
             if derived != p["arrow"] and not any(a.startswith("arrow=") for a in p.get("overrides_applied", s.get("overrides_applied", []))):
                 turn_ok = False
                 notes.append("turn derived %s (apex %d, %.0f deg/12 m) but the plate carries a %s arrow" % (derived, apex, dh, p["arrow"]))
-        if p.get("expect_arrow") in ("left", "right") and p["expect_arrow"] != p["arrow"]:
-            expect_ok = False
+        if entries is None:                 # no signs.json read: the record's own claim (old behaviour)
+            if p.get("expect_arrow") in ("left", "right") and p["expect_arrow"] != p["arrow"]:
+                expect_ok = False
+        else:
+            base, _, _ = parse_id(p.get("id", s["id"]))
+            exp = expected_arrow(entries.get(base), p["direction"])
+            if exp is not None and exp != p["arrow"]:
+                expect_ok = False
+                notes.append("signs.json %s expects a %s arrow on the %s approach, the plate carries %s" % (base, exp, p["direction"], p["arrow"]))
+            if (p.get("expect_arrow") or None) != exp:
+                expect_ok = False
+                notes.append("the record's expect_arrow %s != signs.json's %s for %s" % (p.get("expect_arrow"), exp, p["direction"]))
     # (c) measured two ways
     edge = (s.get("built") or {}).get("outside_edge_xz")
     clear_poly = poly_dist(S, edge) if edge else None
@@ -596,18 +743,25 @@ def main():
         measure_in_blender(proj, blend, argv[argv.index("--measure-out") + 1])
         return
     d = json.loads((proj / "data" / "signs.local.json").read_text(encoding="utf-8"))
+    pre_fails = []
+    sj = signs_json_path(proj, argv[argv.index("--signs") + 1] if "--signs" in argv else None)
+    entries = {}
+    if sj is not None and not sj.exists():
+        pre_fails.append("--signs %s: no such file" % sj)
+    elif sj is not None:
+        entries = load_entries(sj)
     measured, note = None, ""
     if blend:
         measured, note = run_blender_measure(proj, blend, blender_exe(argv[argv.index("--blender") + 1] if "--blender" in argv else None))
     field = Field(proj)
-    fails, rows, warns = [], [], []
+    fails, rows, warns = list(pre_fails), [], []
     signs = d["signs"]
     ids = [s["id"] for s in signs]
     skipped_ids = {s["id"] for s in d["skipped"]}
     if blend and measured is None:
         fails.append("blender measurement did not run (%s)" % note)
     for s in signs:
-        _, row, fl, _ = check_sign(s, field, measured, ids, skipped_ids, warns)
+        _, row, fl, _ = check_sign(s, field, measured, ids, skipped_ids, warns, entries)
         rows.append(row)
         fails += fl
     # (i) spacing across every pair of posts
@@ -621,6 +775,17 @@ def main():
         fails.append("skipped ids repeat: %s" % ", ".join(dup_skipped))
     if "blender" in d and d["blender"].get("normal_mismatches"):
         fails.append("blender: %d polygon normals do not face as intended" % d["blender"]["normal_mismatches"])
+    # (k) every driven direction signed
+    try:
+        driven = driven_directions(proj)
+        k_fails, k_rows = direction_coverage(d, driven)
+    except ValueError as e:
+        k_fails, k_rows = ["k_direction_coverage: %s" % e], []
+    fails += k_fails
+    rows += ["[verify-signs] " + r for r in k_rows]
+    # race furniture is never the signs' ground or road
+    for n in race_ground(d, measured):
+        fails.append("race furniture measured as the signs' surface (%s) — the street layout has no such kerb" % n)
     for r in rows:
         print(r)
     if measured:
@@ -629,6 +794,7 @@ def main():
         print("[verify-signs] WARN", w)
     for fl in fails:
         print("[verify-signs] FAIL", fl)
+    print("[verify-signs] signs.json for (j): %s" % (sj if sj is not None else "(none: the track has no overrides)"))
     print("[verify-signs] %d posts (%d plates), %d skipped, %s%s" % (
         len(signs), sum(len(s.get("plates") or [s]) for s in signs), len(d["skipped"]),
         "FAIL" if fails else ("PASS" if blend else "PASS polyline-only (not authoritative)"),

@@ -33,7 +33,9 @@ re-places every post on the BUILT mesh and is authoritative for the base:
            post with both plates (place_signs.merge_pairs) — DCL-2's two points met at 0.44 m.
   ground   a BVH ray-cast straight down onto CURB + SIDEWALK + TERRAIN at the final base; the
            analytic expectation is y_road(sC) + 0.24 (lift 0.10 + curb 0.14); more than 0.30 m
-           apart = WARN + analytic.
+           apart = WARN + analytic. Race furniture (1KERB_RACE / 1WALL_RACE, the RACE / RACE_CLOSE_*
+           collections) is neither ground nor road for any of this (tools/signs_mesh.py, ledger
+           0051): the signs ship in the road kn5 the street layout loads, the race kerbs do not.
   meshes   SIGNPLATE_k (yellow: plate + OM1-3 diamond), SIGNARROW_k (black: arrow + border),
            SIGNPOST_k (grey: 2 in post, sunk 0.30 m, + the plates' back faces on their own verts
            3 mm behind — Mesh.validate() deletes a reversed duplicate on shared verts). No
@@ -330,6 +332,9 @@ def main():
             bpy.data.objects.remove(ob, do_unlink=True)
             removed += 1
     road, ground, road_names, ground_names = sm.load_bvhs()
+    race_excluded = list(sm.load_bvhs.last_race)     # ledger 0051: race furniture is never the signs' ground
+    print("[signs] ground %s; road %s; race furniture left out of both: %d object%s"
+          % ("+".join(ground_names) or "nothing", "+".join(road_names) or "nothing", len(race_excluded), "" if len(race_excluded) == 1 else "s"))
 
     # 1) every plate on the built mesh; a plate that cannot be placed cleanly is skipped, loudly
     kept = []
@@ -455,6 +460,7 @@ def main():
     bpy.ops.wm.save_mainfile(filepath=str(blend))
 
     out["blender"] = {"blend": str(blend), "ground_objects": ground_names, "road_objects": road_names,
+                      **({"race_excluded": race_excluded} if race_excluded else {}),   # absent = none (a track with no race furniture keeps its bytes)
                       "removed_existing": removed, "meshes": {k: ["%s_%d" % (k, i) for i in range(len(batches[k]))] for k in PREFIXES},
                       "vertices": nverts, "faces": nfaces, "normal_mismatches": bad, "ground_warnings": n_warn,
                       "base_rule": "built mesh authoritative: walk-fraction start, marched along the ray to polar clearance >= lateral_offset and disc footprint >= 0"}

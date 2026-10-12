@@ -130,6 +130,31 @@ class Canvas:
             self.d.line([b, (b[0] + head * math.cos(ang + da), b[1] + head * math.sin(ang + da))], fill=col, width=width)
 
 
+DIRECTION_WORDS = {"fwd": "clockwise (increasing vertex index)", "rev": "anticlockwise (decreasing vertex index)"}
+
+
+def driven_layouts(proj):
+    """{"fwd": [layout ids], "rev": [...]} from <proj>/track.config.json layouts[].direction"""
+    try:
+        cfg = json.loads((Path(proj) / "track.config.json").read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+    out = {}
+    for lay in cfg.get("layouts") or []:
+        d = {"forward": "fwd", "reverse": "rev"}.get(str(lay.get("direction") or "forward").lower())
+        if d:
+            out.setdefault(d, []).append(str(lay.get("id")))
+    return out
+
+
+def serves(p, ribbon, driven):
+    """which drivers a plate is for, in words (ledger 0051: the mainline is signed both ways)"""
+    if ribbon != "MAINLINE":
+        return "%s approach of a two-way street (every layout)" % ("forward" if p["direction"] == "fwd" else "reverse")
+    lays = driven.get(p["direction"], [])
+    return "drivers going %s%s" % (DIRECTION_WORDS[p["direction"]].split(" (")[0], (" — " + ", ".join(lays)) if lays else " — no layout drives this way")
+
+
 def load(proj):
     data = Path(proj) / "data"
     signs = json.loads((data / "signs.local.json").read_text(encoding="utf-8"))
@@ -170,7 +195,7 @@ def draw_ribbons(cv, ribbons, island, detail=True):
                     cv.d.line([pa, pb], fill=COL["lane"], width=1)
 
 
-def header(cv, s, plates):
+def header(cv, s, plates, driven=None):
     c = s["checks"]
     disc = "disc margin %+.2f m" % c["gate_margin_m"]
     if c.get("gate_ribbons", "all") != "all":
@@ -179,7 +204,11 @@ def header(cv, s, plates):
         disc += " (every centreline, gated)"
     wb = c.get("walk_behind_m")
     rows = [
-        ("%s   %s   %s%s" % (s["id"], s["kind"], s.get("where", ""), "   (one post, two plates)" if s.get("pair") else ""), 18, True, None),
+        ("%s   %s   %s%s%s" % (s["id"], s["kind"], s.get("where", ""),
+                               # signs.json's prose names the FORWARD approach (ledger 0051)
+                               "  [named for the forward approach; this plate is for the reverse one]"
+                               if s.get("where") and all(p["direction"] == "rev" for p in plates) else "",
+                               "   (one post, two plates)" if s.get("pair") else ""), 18, True, None),
         ("corner: R %.0f m at the apex, turns %.0f deg %s   |   approach heading %s deg, plate faces %s deg"
          % (s["corner"]["R_apex_m"], abs(s["corner"]["D_deg"]), s["corner"]["turn"],
             "/".join("%.0f" % p["approach"]["bearing_deg"] for p in plates), "/".join("%.0f" % p["face_bearing_deg"] for p in plates)), 13, False, None),
@@ -189,19 +218,21 @@ def header(cv, s, plates):
             "" if wb is None else (", %.2f m %s the back of the walk" % (abs(wb), "behind" if wb > 0 else "inside")), s["height_m"]), 13, False, None),
         ("lamp %.1f m, plant %.1f m, drive_test %s" % (c["lamp_m"], c["plant_m"], disc), 13, False, None),
     ]
+    if driven is not None:
+        rows.insert(1, ("for " + " / ".join(serves(p, s["ribbon"], driven) for p in plates), 14, True, COL["sign"]))
     if c.get("warnings"):
         rows.append(("WARN: " + "; ".join(c["warnings"]), 12, False, COL["warn"]))
     return cv.lines(8, rows)
 
 
-def plot_sign(s, ribbons, island, out_dir):
+def plot_sign(s, ribbons, island, out_dir, driven=None):
     cx, cz = s["base_xz"]
     cv = Canvas(cx, cz, WIN_M, PX_PER_M)
     draw_ribbons(cv, ribbons, island)
     plates = s.get("plates") or [s]
     W = cv.W
     # furniture first, so every caption keeps off it: header, footer, north arrow, scale bar
-    header(cv, s, plates)
+    header(cv, s, plates, driven)
     cv.lines(W - 44, [("yellow = the new W1-6 (post, plate, facing)   grey filled = old rule rev1: warning ~52 m BEFORE the bend", 12, False, None),
                       ("grey hollow = old rule rev2: at the apex, side flipped (= inside)   light blue = the built curb from the mesh", 12, False, None)])
     cv.arrow((W - 40, 110), (W - 40, 60), COL["text"], width=3, head=12)
@@ -297,7 +328,7 @@ def plot_sign(s, ribbons, island, out_dir):
     return p
 
 
-def plot_overview(signs, ribbons, out_dir, max_px=2200):
+def plot_overview(signs, ribbons, out_dir, max_px=2200, driven=None):
     xs = [p[0] for _, P, _, _ in ribbons for p in P]
     zs = [p[2] for _, P, _, _ in ribbons for p in P]
     x0, x1, z0, z1 = min(xs) - 100, max(xs) + 100, min(zs) - 100, max(zs) + 100
@@ -305,8 +336,17 @@ def plot_overview(signs, ribbons, out_dir, max_px=2200):
     s = max_px / span
     cv = Canvas((x0 + x1) / 2, (z0 + z1) / 2, span, s)
     draw_ribbons(cv, ribbons, [], detail=False)
+    driven = driven or {}
+    nd = {"fwd": 0, "rev": 0}
+    for sg in signs["signs"]:
+        if sg["ribbon"] == "MAINLINE":
+            for p in sg.get("plates") or [sg]:
+                nd[p["direction"]] += 1
+    dir_line = ("loop plates: %d for drivers going clockwise (%s), %d anticlockwise (%s, orange ring)"
+                % (nd["fwd"], ", ".join(driven.get("fwd", [])) or "-", nd["rev"], ", ".join(driven.get("rev", [])) or "-")) \
+        if nd["rev"] or driven.get("rev") else "driving direction on the loop: clockwise (increasing vertex index)"
     cv.lines(10, [("W1-6 Large Arrow signs — %d placed (yellow, arrow = which way the plate faces); hollow grey = detected but skipped" % len(signs["signs"]), 20, True, None),
-                  ("driving direction on the loop: clockwise (increasing vertex index)", 15, False, None)])
+                  (dir_line, 15, False, None)])
     W = cv.W
     cv.arrow((W - 50, 130), (W - 50, 60), COL["text"], width=4, head=14)
     cv.text((W - 60, 134), "N", 20, bold=True)
@@ -319,6 +359,8 @@ def plot_overview(signs, ribbons, out_dir, max_px=2200):
         f = sg["face_dir_xz"]
         cv.arrow(b, cv.px((sg["base_xz"][0] + f[0] * 60, sg["base_xz"][1] + f[1] * 60)), COL["sign"], width=3, head=10)
         cv.d.ellipse([b[0] - 7, b[1] - 7, b[0] + 7, b[1] + 7], fill=COL["sign"], outline=COL["post"], width=2)
+        if any(p["direction"] == "rev" for p in sg.get("plates") or [sg]) and sg["ribbon"] == "MAINLINE":
+            cv.d.ellipse([b[0] - 11, b[1] - 11, b[0] + 11, b[1] + 11], outline=COL["warn"], width=3)
         cv.reserve((b[0] - 9, b[1] - 9, b[0] + 9, b[1] + 9))
     for sk in signs.get("skipped", []):
         if sk.get("would_be"):
@@ -339,9 +381,10 @@ def main():
     out_dir = Path(argv[argv.index("--out") + 1]) if "--out" in argv else proj / "data" / "signs_plots"
     out_dir.mkdir(parents=True, exist_ok=True)
     signs, ribbons, island = load(proj)
-    paths = [plot_overview(signs, ribbons, out_dir)]
+    driven = driven_layouts(proj)
+    paths = [plot_overview(signs, ribbons, out_dir, driven=driven)]
     for s in signs["signs"]:
-        paths.append(plot_sign(s, ribbons, island, out_dir))
+        paths.append(plot_sign(s, ribbons, island, out_dir, driven))
     print("[plot-signs] %d PNGs -> %s" % (len(paths), out_dir))
     for p in paths:
         print("[plot-signs]  ", p)

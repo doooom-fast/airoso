@@ -1,7 +1,7 @@
 ---
 id: 0049
 title: "We need full intersections available for turning. And the entire other lane blocked off from access" — the race versions as an Alvarado-wide corridor per direction, open boxes at the corners, nothing reachable on the other side
-status: open
+status: shipped
 scope: tracks/san-diego-lake-murray (proof: race.corridor, race.kerbs.trims, layouts[].closure_token); tools/{barrier_bands,race_corridor,no_route}.py (declaration v2 + the containment gate), tools/{race_furniture,author_race_furniture_blend,split_exports_blend,verify_race,check_race_kn5,plot_race_furniture}.py, tools/{ship_sd.sh,make_treefx.py}, scripts/geometry/{median_zone,drive_test,audit_mesh}.py, scripts/ac/{verify_kn5,track_folder,write_ai_line}.py, tools/pack_release.py
 layer: project + engine
 train: -
@@ -10,7 +10,12 @@ supersedes: 0047's shared centre K-rail chain (0047 Q2 and Q7 moot; Q1 stays ans
 
 ## Status
 
-**Open — committed at `c0361f7`, fix round applied (2026-10-11), built and gated end to end on a SCRATCH copy
+**Shipped and installed; Kevin's first drive verdict is positive (2026-10-12, "Drive verdict 1" at the end).**
+Installed as v0.17.0 (`da3fe9b`, 2026-10-11 18:26) and again as v0.17.1 with the mouth weld (`b14abb9`, 21:12).
+No tier is claimed: T3 needs the full drive report (three clean laps per layout), which is still blank. The
+history below is kept as written.
+
+**(History) Open — committed at `c0361f7`, fix round applied (2026-10-11), built and gated end to end on a SCRATCH copy
 only; NOT shipped from the workshop, NOT installed.** The fix round (the critic's findings on `c0361f7`): no kerb
 under a road sheet any more (the 1514 / 2319 inside kerbs dropped, the hairpin's pulled back — race audit K back
 to **154**, the installed build's), a new scenery gate (TreeFX trunks and sign posts out of every race lane and
@@ -971,3 +976,24 @@ Each of these is one knob, changed only after Kevin has driven the build:
 | Kerbs | per-owner parts plus exit and pocket kerbs; common and clipped | common, clipped | one kerb set, no ownership splitting; exit kerbs can come later |
 | no_route wall rule | overlap [0.15, 1.0]; drop floating objects; span [0.20, 0.90] | span [0.20, 0.90] | a beam-only island must fail the gate |
 | I-8 end / hairpin start | v4451 / v4453 / v4454; v777 / v782 / v797 | v4454 / v777 | the solved line's pins |
+
+---
+
+## Drive verdict 1 (2026-10-12)
+
+Kevin, after driving the installed build (v0.17.1: the race corridors plus the mouth weld), verbatim from dictation:
+
+> "is tracked with and race track layouts are incredible"
+
+Read as **"the track width and race track layouts are incredible"** (voice dictation; "tracked with" ≈ "track
+width"). What it confirms, in his seat: the per-direction corridor at Alvarado's width (11.36 m clear, wall face to
+wall face, spec §1), the whole-street Alvarado + I-8 deck, the open boxes at the corners the race turns at, the
+closures on the other side, and the three-layout split (0047). **Consequences:** the post-drive tuning knobs
+("Tune after the drive, not before": `clear_width_m`, `island_mode`, a centred grid) stay as built; the corridor
+model is the one the Lariat's race version (0048 D3 a, Drive 3) adapts.
+
+**Not covered by the verdict** (no comment either way, so still open in
+`tracks/san-diego-lake-murray/drive-reports/2026-10-1x-race-corridors.md`): the steep exit funnels (cw v1521,
+acw v2311 / v1506, the acw 1:10 funnel off the I-8 deck), a wall hit at speed (the K-rail foot), closure / curb-strip
+flicker, the race_acw fold-fan steps the mouth weld named (Navajo/Jackson up to 0.40 m), an AI race with 7
+opponents, load time and FPS. Anything he reports there becomes its own entry.

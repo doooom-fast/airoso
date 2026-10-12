@@ -6,6 +6,12 @@
 >
 > Findings become ledger entries via the `track-feedback` skill. Nothing here claims a tier.
 
+## Kevin's verdict so far
+
+- **2026-10-12, build 0.17.1** (race corridors + mouth weld): *"is tracked with and race track layouts are
+  incredible"* — read as "the track width and race track layouts are incredible" (dictation). Filed in ledger
+  0049 "Drive verdict 1". The questions below are still open.
+
 ## What you are driving (and what changed since the last install)
 
 The last install (0047, `8fbfa0e`) split the wide roads with ONE shared concrete wall down the middle, used by

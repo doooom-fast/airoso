@@ -572,6 +572,28 @@ def verify_inis(project_dir: str | Path, folder: str | Path | None = None) -> li
     return fails
 
 
+FAR_RING = "GRASS_FAR"
+
+
+def far_ring_checks(meshes) -> list[str]:
+    """Ledger 0046 E3 — a tiered terrain's far ring is VISUAL ONLY: every mesh whose name carries GRASS_FAR
+    is under the vertex cap too (AC drops an over-cap mesh from render as well as collision) and none carries the
+    physical digit prefix (a '1GRASS_FAR' would be collided with, gated and GrassFX-listed). Prints the terrain
+    tile count. A track without a far ring prints nothing and is judged exactly as before."""
+    fails = []
+    far = [m for m in meshes if FAR_RING in m["name"].upper()]
+    for m in far:
+        if m["name"][:1].isdigit():
+            fails.append(f"FAR RING '{m['name']}' carries a physical digit prefix — the far ring is visual-only")
+        if m["nverts"] > VERT_CAP:
+            fails.append(f"OVER-CAP far ring '{m['name']}' {m['nverts']} v > {VERT_CAP} — AC drops it")
+    if far:
+        grass = [m for m in meshes if m["name"].upper().startswith("1GRASS")]
+        print(f"  terrain tiles: 1GRASS x{len(grass)} (max {max((m['nverts'] for m in grass), default=0)} v), "
+              f"{FAR_RING} x{len(far)} (max {max(m['nverts'] for m in far)} v)")
+    return fails
+
+
 def verify(project_dir: str | Path) -> list[str]:
     project = Path(project_dir)
     cfg = json.loads((project / "track.config.json").read_text(encoding="utf-8"))
@@ -597,6 +619,8 @@ def verify(project_dir: str | Path) -> list[str]:
             fails.append(f"FACE-DOWN drivable '{m['name']}' ({m['up']} up / {m['dn']} dn) — car falls through")
         if m["nverts"] > VERT_CAP:
             fails.append(f"OVER-CAP '{m['name']}' {m['nverts']} v > {VERT_CAP} — will split into dup meshes")
+
+    fails += far_ring_checks(meshes)
 
     road = [v for m in meshes if m["name"].upper().startswith("1ROAD") for v in m["P"]]
     layouts = [lo for lo in (cfg.get("layouts") or []) if isinstance(lo, dict) and lo.get("id")]

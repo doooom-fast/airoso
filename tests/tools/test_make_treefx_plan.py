@@ -28,7 +28,32 @@ def _project(bins=("PalmV1.bin",)):
              {"x": 140.0, "y": 0.5, "z": 30.0}]
     (d / "data" / "scatter_positions.json").write_text(json.dumps({"palms": palms, "trees": [], "scrub": [],
                                                                    "median_planting": []}))
+    _gate_obj(d, ["1GRASS_0", "1ROAD_road"])
     return d
+
+
+def _gate_obj(d, groups):
+    """a stand-in gate OBJ: only the o / usemtl lines make_treefx reads"""
+    (d / "data" / "track.obj").write_text("".join(f"o {g}\nusemtl {g}_mat\nv 0 0 0\n" for g in groups), encoding="utf-8")
+
+
+def test_surface_materials_list_every_physical_tile_off_the_gate_obj():
+    """ledger 0046: the tiered terrain tiles 1GRASS into as many tiles as it needs; TreeFX snaps onto every one of
+    them (natural order) + the road, never onto the visual-only far ring, and never from a hard-coded pair"""
+    d = _project()
+    _gate_obj(d, ["1GRASS_10", "1GRASS_2", "GRASS_FAR_0", "1GRASS_0", "1ROAD_road", "1GRASS_1", "GRASS_FAR_1", "1KERB_sidewalk"])
+    assert mt.surface_materials(d) == "1GRASS_0_mat, 1GRASS_1_mat, 1GRASS_2_mat, 1GRASS_10_mat, 1ROAD_road_mat"
+    mt.build(d)
+    ini = (d / "build" / "tiny" / "extension" / "ext_config.ini").read_text(encoding="utf-8")
+    assert "SURFACE_MATERIALS = 1GRASS_0_mat, 1GRASS_1_mat, 1GRASS_2_mat, 1GRASS_10_mat, 1ROAD_road_mat" in ini
+    assert "GRASS_FAR" not in ini
+    (d / "data" / "track.obj").unlink()
+    try:
+        mt.surface_materials(d)
+    except SystemExit as e:
+        assert "track.obj" in str(e)
+    else:
+        raise AssertionError("no gate OBJ must stop the TreeFX writer, not fall back to a guessed tile list")
 
 
 def test_plan_is_what_build_writes():

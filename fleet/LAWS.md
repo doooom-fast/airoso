@@ -44,10 +44,20 @@ nothing launches or floats. Then the terrain is built to meet the road — never
 
 The three specific ways this breaks, all seen:
 
-- **Fake mountains.** A raw DEM carries real peaks that tower over a neighbourhood loop (Cowles
-  ~500 m over Lake Murray). Clamp terrain to within a band of the nearest road height
-  (`terrain.terrain_band_m`, 22 m in SD). *Roads keep their real elevation* — Jackson/Navajo really
-  do climb to ~213 m.
+- **Fake mountains — near-road relief is clamped, far relief is data** (amended 2026-10-11, ledger
+  0046; Kevin approved it as D6(i) of the Lariat V3 plan: "Those changes are good"). The failure that
+  bought the clamp was real: a coarse terrain grid aliased the DEM's relief *into the road corridor*
+  and the road sampled the wrong datum — v0.9.1 `b4e5555` (DEM slopes as collidable walls), v0.9.3
+  `50dc934` ("no more Cowles 'mountain' the road climbs"), the neighbourhood "a mountain the road
+  climbs". That is a road-datum and grid-aliasing defect (bullet 3 below, ledger 0002), so the band
+  holds **only near the road**: within `terrain.clamp_corridor_m` of a pavement the ground stays
+  within `terrain.terrain_band_m` of the nearest road height (22 m in SD), and the clamp releases
+  smoothly to the raw DEM by `terrain.clamp_blend_m`. Beyond that, 3DEP stands uncapped. The old
+  wording named the real mountain as the fake one and clamped *everywhere*: Del Cerro was shaved
+  38 m, Cowles' foot 56 m, and Cowles Mountain itself — 483 m, 1.6 km off Navajo, 9° above Kevin's
+  eye from his father's street — could never exist. Cowles is the example of relief that must
+  **survive**. Far relief is never invented either: no sine-wave `scenery.mountains` where a 3DEP
+  sample exists (L1). *Roads keep their real elevation* — Jackson/Navajo really do climb to ~213 m.
 - **Bridges dip.** Bare-earth DEMs contain no bridge decks, so a road crossing a freeway samples the
   trench underneath. Hold each real OSM bridge deck level between its abutments, after projection,
   before mesh.

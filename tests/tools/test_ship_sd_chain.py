@@ -46,14 +46,15 @@ def test_stage_order():
         "scripts/ac/build_spawn_kn5.py",
         "scripts.ac.write_ai_line",
         '(cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ")',
+        'rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"',
+        'kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")',
         "scripts.ac.track_folder",
         'cp "$PROJ/build/$SLUG.kn5" "$PROJ/build/$SLUG/"',
         '(cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ" --inis)',
         "tools/make_map.py",
         "tools/make_treefx.py",
         'tools/verify_race.py "$PROJ" --scenery-only --trees "$PROJ/build/$SLUG/extension/trees/trees.txt"',
-        'rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"',
-        'kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")',
+        'tools/verify_mouths.py "$PROJ"',
         'drive_test "$PROJ" --layout street',
         'audit_mesh "$PROJ" 2>&1',
         '--kn5 "$PROJ/build/${SLUG}_race.kn5" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --out "$PROJ/data/track.$lid.obj"',
@@ -177,17 +178,17 @@ def test_every_step_runs_on_the_absolute_project():
     assert len(steps) >= 30, len(steps)
     for ln in steps:
         assert '"$PROJ' in ln, ln
-    # the workshop's build_loop_blend imports scripts.geometry from the project's PARENT: the WS root goes on sys.path
-    blb = [ln for _, ln in code if "build_loop_blend.py" in ln]
+    # the assembler of record is airoso's scripts-v021, its `scripts` package registered by V021_SHIM (ledger 0046)
+    blb = [ln for _, ln in code if "build_loop_blend.py" in ln and '"$BL"' in ln]
     assert len(blb) == 2, blb
     for ln in blb:
-        assert '--python-expr "$WS_SYSPATH" --python scripts/blender/build_loop_blend.py -- "$PROJ"' in ln, ln
-    assert "WS_SYSPATH=\"import sys; sys.path.insert(0, r'$WS')\"" in TEXT
+        assert '--python-expr "$V021_SHIM" --python "$V021/blender/build_loop_blend.py" -- "$PROJ"' in ln, ln
+    assert 'V021="$SRC/scripts-v021"' in TEXT and "WS_SYSPATH" not in TEXT
     # the guards: absolute, outside airoso, scratch derived from the workshop path, all before the first copy
     assert "/*|[A-Za-z]:/*|" in TEXT and '"$(norm "$AIROSO")"|"$(norm "$AIROSO")"/*)' in TEXT
     assert 'if [ "$(norm "$PROJ")" = "$(norm "$WS_PROJ")" ]; then SCRATCH=0; else SCRATCH=1; fi' in TEXT
     first_copy = _first('cp "$SRC/track.config.json" "$PROJ/track.config.json"')
-    for g in ("must be an absolute path", "is inside airoso", "SCRATCH=1; fi", "would shadow the workshop's"):
+    for g in ("must be an absolute path", "is inside airoso", "SCRATCH=1; fi", "no assembler at"):
         assert _first(g) < first_copy, g
 
 
@@ -310,7 +311,7 @@ def test_scenery_gate_judges_the_written_trees_and_is_hard():
     assert '--trees "$PROJ/build/$SLUG/extension/trees/trees.txt"' in line
     assert "|| true" not in line and "|| rc" not in line and "tail" not in line, line
     assert (_first('python tools/make_treefx.py "$PROJ"') < _first('python tools/verify_race.py "$PROJ" --scenery-only')
-            < _first('kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")'))
+            < _first('tools/verify_mouths.py "$PROJ"'))
 
 
 def test_install_refuses_while_ac_or_content_manager_runs():
@@ -440,12 +441,12 @@ def test_mouth_weld_and_its_gate_are_wired():
     (set -e: no `|| rc`), its stale verdict removed first; both reports sync back; AIROSO is overridable for a
     worktree rehearsal and defaults to the main checkout"""
     assert 'AIROSO="${AIROSO:-C:/Users/Owner/Documents/GitHub/airoso}"' in TEXT
-    blb = [p for p, ln in _code_lines() if "build_loop_blend.py" in ln]
+    blb = [p for p, ln in _code_lines() if "build_loop_blend.py" in ln and '"$BL"' in ln]
     weld = [(p, ln) for p, ln in _code_lines() if "weld_mouths_blend.py" in ln]
     assert len(weld) == 1, weld
     wpos, wln = weld[0]
     assert blb[1] < wpos < _first("tools/seat_terrain_blend.py"), "the weld sits between the rebuild and the seat"
-    for frag in ('--python-exit-code 1', '--python-expr "$WS_SYSPATH"', '--python "$AIROSO/tools/weld_mouths_blend.py" -- "$PROJ"'):
+    for frag in ('--python-exit-code 1', '--python-expr "$V021_SHIM"', '--python "$AIROSO/tools/weld_mouths_blend.py" -- "$PROJ"'):
         assert frag in wln, frag
     skip = TEXT.find('if [ "$SKIP_BLEND" = 0 ]; then')
     assert skip < wpos < TEXT.find("\nfi\n", skip), "the weld is a draft step (skipped with --skip-blend)"
@@ -456,3 +457,48 @@ def test_mouth_weld_and_its_gate_are_wired():
         < vpos < _first('drive_test "$PROJ" --layout street')
     sync = TEXT[_first('step "sync outputs workshop -> airoso"\n'):_first("never synced.\nfi\n")]
     assert "mouth_welds.json" in sync and "verify_mouths.json" in sync
+
+
+def test_tiered_terrain_chain_ledger_0046():
+    """ledger 0046: the sampler plans + fetches before EACH assembler run (the trimmed connectors re-plan the verge),
+    the far-terrain decimation is gone, the 3DEP cache and the I-8 corridor ride the sync both ways (data with
+    provenance, L2), ENG is overridable for a scratch rehearsal, and the road gate OBJ exists before the track folder
+    reads its mesh names (GrassFX lists, TreeFX SURFACE_MATERIALS)"""
+    code = _code_lines()
+    blb = [p for p, ln in code if "build_loop_blend.py" in ln and '"$BL"' in ln]
+    samp = [p for p, ln in code if 'python -m scripts.elevation.terrain_sample "$PROJ"' in ln]
+    assert len(samp) == 2 and samp[0] < blb[0] < samp[1] < blb[1], (samp, blb)
+    assert _first("tools/trim_connectors.py") < samp[1]
+    assert "slim_far_terrain_blend" not in TEXT and not (ROOT / "tools" / "slim_far_terrain_blend.py").exists()
+    # ...but the triangulation it applied to every terrain face stays, at the same point (after the seat, before
+    # the median island joins TERRAIN): the near-road ground every gate was tuned on is that triangulation's
+    tri = _first('--python "$AIROSO/tools/triangulate_terrain_blend.py" -- "$PROJ"')
+    assert _first("tools/seat_terrain_blend.py") < tri < _first("tools/author_median_blend.py")
+    src = (ROOT / "tools" / "triangulate_terrain_blend.py").read_text(encoding="utf-8")
+    assert 'quad_method="BEAUTY"' in src and "vertex count changed" in src
+    assert 'ENG="${ENG:-C:/Users/Owner/Documents/GitHub/engine-july}"' in TEXT
+    assert 'TERRAIN_DATA="terrain.samples.json.gz corridor.i8.json i8.local.json i8.legacy.local.json"' in TEXT
+    down = TEXT[_first('step "sync inputs airoso -> workshop'):_first("LAYOUT_IDS=$(pyq")]
+    assert "for f in $TERRAIN_DATA; do" in down and 'cp "$SRC/data/$f" "$PROJ/data/$f"' in down
+    sync = TEXT[_first('step "sync outputs workshop -> airoso"\n'):_first("never synced.\nfi\n")]
+    assert "$TERRAIN_DATA terrain.tiers.report.json" in sync and "terrain.tiers.json.gz" not in sync
+    assert _first('kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")') < _first("scripts.ac.track_folder") \
+        < _first("tools/make_treefx.py")
+
+
+def test_v021_shim_resolves_the_assembler_package_not_the_engine():
+    """the --python-expr V021_SHIM, run by plain Python: `scripts` becomes tracks/san-diego-lake-murray/scripts-v021, so
+    the assembler's `from scripts.geometry import ribbon` (and weld_mouths_blend's) can only load that copy"""
+    import re
+    import subprocess
+    import sys as _sys
+    m = re.search(r'^V021_SHIM="(.*)"$', TEXT, re.M)
+    assert m, "V021_SHIM definition"
+    v021 = (ROOT / "tracks" / "san-diego-lake-murray" / "scripts-v021").as_posix()
+    shim = m.group(1).replace("$V021", v021)
+    prog = shim + "; import sys; sys.path.insert(0, r'" + ROOT.as_posix() + "'); from scripts.geometry import ribbon, smooth; " \
+        "print(ribbon.__file__); print(smooth.__file__); print(sys.modules['scripts'].__file__)"
+    r = subprocess.run([_sys.executable, "-c", prog], capture_output=True, text=True, cwd=str(ROOT))
+    assert r.returncode == 0, r.stderr
+    for ln in r.stdout.split():
+        assert Path(ln).resolve().as_posix().startswith(Path(v021).resolve().as_posix()), ln

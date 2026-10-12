@@ -38,6 +38,11 @@ TEXTURES = {
     "ROADTEXT": ("roadtext_atlas.png", None, 0.5, (0.92, 0.92, 0.90, 1), 0.0, False),  # painted street-name decals (alpha cutout)
     "1LAWN":   ("grass_diffuse.jpg", "grass_normal.jpg",     0.90, (0.30, 0.42, 0.20, 1), 0.0, False),  # irrigated suburban green turf (SoCal neighbourhood tiles)
     "1GRASS":  ("ground_dry_diffuse.jpg", None,              0.95, (0.42, 0.38, 0.29, 1), 0.0, False),  # dry dirt/chaparral (canyon/hill/freeway-cut tiles)
+    # GRASS_FAR: the visual-only far ring of a tiered terrain (ledger 0046 E3; Cowles, the valley walls). No digit
+    # prefix = no physics, never a gate / GrassFX / occluder mesh. TEXTURED dry chaparral — never the MOUNTAINS
+    # slot, whose texture-less material renders black in-engine (fleet/LAWS.md L7). A config override keyed
+    # "1GRASS" (Lake Murray's green turf) does not reach it: overrides bind by the matched key.
+    "GRASS_FAR": ("ground_dry_diffuse.jpg", None,            0.95, (0.42, 0.38, 0.29, 1), 0.0, False),
     "SHOULDERUND": ("ground_dry_diffuse.jpg", None, 0.95, (0.36, 0.32, 0.25, 1), 0.0, False),  # embankment/cut mass seen from BELOW (visual underside of the shoulder strip)
     "ROCKCUT":  ("rock_granite_red.png", None, 0.92, (0.45, 0.30, 0.24, 1), 0.0, False),  # blasted red granite cut faces (Kevin's stone-wall asset harvest) — task #17 consumer
     "RETWALL":  ("stone_tan.png", None, 0.85, (0.55, 0.48, 0.38, 1), 0.0, False),           # retaining wall body — task #17 consumer
@@ -130,6 +135,7 @@ KS_PROPS = {
     "PALMFROND": {"ksAmbient": 0.55, "ksDiffuse": 0.10, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
     "FENCEWOOD": {"ksAmbient": 0.45, "ksDiffuse": 0.35, "ksSpecular": 0.05, "ksSpecularEXP": 8.0},
     "1GRASS":   {"ksAmbient": 0.50, "ksDiffuse": 0.22, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
+    "GRASS_FAR": {"ksAmbient": 0.50, "ksDiffuse": 0.22, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
     "POLE":     {"ksAmbient": 0.40, "ksDiffuse": 0.15, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
     "SIGNPOST": {"ksAmbient": 0.40, "ksDiffuse": 0.25, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
 }

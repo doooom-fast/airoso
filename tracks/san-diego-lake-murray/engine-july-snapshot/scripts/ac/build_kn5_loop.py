@@ -48,6 +48,11 @@ UV_TILE = 4.0  # metres per texture tile (top-down planar projection)
 # PHYSICAL mesh means the car falls through (the invisible-forest / fall-through bug class).
 VERT_CAP = 65535
 SPLIT_CAP = 60000
+# TERRAIN meshes tile by BALANCED BISECTION (ledger 0046): the tiered terrain is fine along the roads and coarse
+# far out, so equal-width bands put most of the vertices into whichever band holds the most road (the western
+# one already held ~60k of the cap before the tiers); a recursive median split lands every tile under SPLIT_CAP
+# whatever the density. GRASS_FAR is the visual-only far ring (no digit prefix: no physics, no gates, no GrassFX).
+TERRAIN_TILES = ("1GRASS", "GRASS_FAR")
 
 # freeway groups whose winding must not matter: after the loop's local->Blender reflection their
 # faces would point inward, so double-side them (append reversed faces) — a barrier/structure must
@@ -173,25 +178,156 @@ def assert_under_cap(name: str, nverts: int) -> None:
                          f"Raise the split factor or slim the source mesh. Refusing to export.")
 
 
+def balanced_face_tiles(centers, face_verts, cap=SPLIT_CAP):
+    """Pure (no bpy): face-index groups, each touching at most ``cap`` unique vertices, by recursive
+    MEDIAN bisection of the face centres along the group's longer horizontal extent (palm.chunk_mesh's
+    rule). Deterministic: ties broken by the other axis, then the face index."""
+    out = []
+
+    def nverts(fs):
+        return len({v for f in fs for v in face_verts[f]})
+
+    def rec(fs):
+        if len(fs) < 2 or nverts(fs) <= cap:
+            out.append(fs)
+            return
+        xs = [centers[f][0] for f in fs]
+        ys = [centers[f][1] for f in fs]
+        ax = 0 if (max(xs) - min(xs)) >= (max(ys) - min(ys)) else 1
+        order = sorted(fs, key=lambda f: (centers[f][ax], centers[f][1 - ax], f))
+        h = len(order) // 2
+        rec(order[:h])
+        rec(order[h:])
+
+    rec(list(range(len(face_verts))))
+    return out
+
+
+def t_junctions(co, boundary_edges, tol=0.001, cell=5.0):
+    """Pure (no bpy): [(edge_index, vert_index, t)] for every vertex lying on the INTERIOR of a boundary edge
+    (within ``tol`` in 3D, 0 < t < 1 along it) — a T-junction. ``co`` = [(x, y, z)], ``boundary_edges`` =
+    [(a, b)] vertex-index pairs; only vertices that are themselves on a boundary edge are candidates, and only
+    when the T is real: one of the vertex's own boundary edges runs ALONG the long edge (to its end or to another
+    vertex on it). A vertex that merely sits on the line of an edge across a hole (the cleared fold fans, a mouth)
+    is not a T and is left alone."""
+    nbr = {}
+    for a, b in boundary_edges:
+        nbr.setdefault(a, set()).add(b)
+        nbr.setdefault(b, set()).add(a)
+    raw = _t_candidates(co, boundary_edges, tol, cell)
+    on_edge = {}
+    for ei, v, _t in raw:
+        on_edge.setdefault(ei, set()).add(v)
+    out = []
+    for ei, v, t in raw:
+        a, b = boundary_edges[ei]
+        ok = on_edge[ei] | {a, b}
+        if any(w in ok for w in nbr.get(v, ())):
+            out.append((ei, v, t))
+    return out
+
+
+def _t_candidates(co, boundary_edges, tol, cell):
+    bverts = sorted({v for e in boundary_edges for v in e})
+    buck = {}
+    for v in bverts:
+        buck.setdefault((int(co[v][0] // cell), int(co[v][1] // cell)), []).append(v)
+    out = []
+    for ei, (a, b) in enumerate(boundary_edges):
+        A, B = co[a], co[b]
+        d = (B[0] - A[0], B[1] - A[1], B[2] - A[2])
+        L2 = d[0] * d[0] + d[1] * d[1] + d[2] * d[2]
+        if L2 < 4 * tol * tol:
+            continue
+        seen = set()
+        for i in range(int(min(A[0], B[0]) // cell) - 1, int(max(A[0], B[0]) // cell) + 2):
+            for j in range(int(min(A[1], B[1]) // cell) - 1, int(max(A[1], B[1]) // cell) + 2):
+                for v in buck.get((i, j), ()):
+                    if v in (a, b) or v in seen:
+                        continue
+                    seen.add(v)
+                    P = co[v]
+                    t = ((P[0] - A[0]) * d[0] + (P[1] - A[1]) * d[1] + (P[2] - A[2]) * d[2]) / L2
+                    if t <= 1e-6 or t >= 1.0 - 1e-6:
+                        continue
+                    q = (A[0] + d[0] * t - P[0], A[1] + d[1] * t - P[1], A[2] + d[2] * t - P[2])
+                    if q[0] * q[0] + q[1] * q[1] + q[2] * q[2] <= tol * tol:
+                        out.append((ei, v, t))
+    return out
+
+
+def _weld_t_junctions(bm, tol=0.001):
+    """Close every T-junction in a terrain bmesh WITHOUT moving the surface: a face whose boundary edge carries
+    other vertices is replaced by a fan from its centroid through all of them (every fan triangle lies in the old
+    face's plane). Ledger 0046: a tiered terrain keeps the graded grid's own triangles under and beside the roads
+    (so the seat and this prep reshape exactly the ground they always reshaped) and its finer neighbours leave
+    their nodes ON those kept edges; this runs after the conform, when nothing else will move them. Returns the
+    number of faces re-fanned (0 on a terrain without T-junctions: nothing touched)."""
+    import bmesh  # noqa: F401
+    bm.verts.ensure_lookup_table()
+    bm.edges.ensure_lookup_table()
+    bedges = [e for e in bm.edges if len(e.link_faces) == 1]
+    if not bedges:
+        return 0
+    vobj = list(bm.verts)
+    co = [(v.co.x, v.co.y, v.co.z) for v in vobj]
+    hits = t_junctions(co, [(e.verts[0].index, e.verts[1].index) for e in bedges], tol)
+    if not hits:
+        return 0
+    by_face = {}
+    for ei, vi, t in hits:
+        e = bedges[ei]
+        by_face.setdefault(e.link_faces[0], []).append((e, vi, t))
+    dead_edges = []
+    for f, lst in by_face.items():
+        ring = []
+        for loop in f.loops:
+            ring.append(loop.vert)
+            on = [(t if e.verts[0] == loop.vert else 1.0 - t, vobj[vi]) for e, vi, t in lst if e == loop.edge]
+            ring += [v for _t, v in sorted(on, key=lambda p: p[0])]
+            if on:
+                dead_edges.append(loop.edge)
+        n = len(f.verts)
+        c = bm.verts.new((sum(v.co.x for v in f.verts) / n, sum(v.co.y for v in f.verts) / n,
+                          sum(v.co.z for v in f.verts) / n))
+        mat, smooth = f.material_index, f.smooth
+        bm.faces.remove(f)
+        for k in range(len(ring)):
+            nf = bm.faces.new((c, ring[k], ring[(k + 1) % len(ring)]))
+            nf.material_index, nf.smooth = mat, smooth
+    for e in dead_edges:
+        if e.is_valid and not e.link_faces:
+            bm.edges.remove(e)
+    return len(by_face)
+
+
 def _split_large(ob, cap=SPLIT_CAP):
     """Split a mesh over AC's 65,535-vertex cap into UNIQUELY-named spatial tiles (base_0, base_1,
     ...). The exporter otherwise auto-splits into DUPLICATE-named meshes, and AC drops dup-named
     PHYSICAL meshes from collision -> the car falls through (a 46 km freeway terrain is ~268k
-    verts). Partitions faces into bands along the longest axis; pbr/surfaces still key off the
-    shared name prefix (1GRASS_0 -> GRASS)."""
+    verts). Terrain (TERRAIN_TILES) is tiled by balanced bisection; every other mesh keeps the
+    equal-width bands along the longest axis; pbr/surfaces still key off the shared name prefix
+    (1GRASS_0 -> GRASS)."""
     import bpy
 
     me = ob.data
     if len(me.vertices) <= cap:
         return
-    K = len(me.vertices) // cap + 1
     co = [(v.co.x, v.co.y, v.co.z) for v in me.vertices]
-    ax = 0 if (max(c[0] for c in co) - min(c[0] for c in co)) >= \
-             (max(c[1] for c in co) - min(c[1] for c in co)) else 1
-    lo = min(c[ax] for c in co); span = (max(c[ax] for c in co) - lo) or 1.0
-    bands = [[] for _ in range(K)]
-    for p in me.polygons:
-        bands[min(K - 1, int((p.center[ax] - lo) / span * K))].append(p)
+    if ob.name.upper().startswith(TERRAIN_TILES):
+        polys = list(me.polygons)
+        groups = balanced_face_tiles([(p.center[0], p.center[1]) for p in polys],
+                                     [tuple(p.vertices) for p in polys], cap)
+        bands = [[polys[i] for i in g] for g in groups]
+        K = len(bands)
+    else:
+        K = len(me.vertices) // cap + 1
+        ax = 0 if (max(c[0] for c in co) - min(c[0] for c in co)) >= \
+                 (max(c[1] for c in co) - min(c[1] for c in co)) else 1
+        lo = min(c[ax] for c in co); span = (max(c[ax] for c in co) - lo) or 1.0
+        bands = [[] for _ in range(K)]
+        for p in me.polygons:
+            bands[min(K - 1, int((p.center[ax] - lo) / span * K))].append(p)
     base = ob.name
     mat = me.materials[0] if me.materials else None
     # carry authored per-vertex UVs across the split (palm cards etc. are single UV per vertex) —
@@ -222,7 +358,8 @@ def _split_large(ob, cap=SPLIT_CAP):
         if mat:
             nm.materials.append(mat)
         bpy.context.scene.collection.objects.link(bpy.data.objects.new(f"{base}_{k}", nm))
-    print(f"[build_kn5_loop] split {base} ({len(me.vertices)} verts) -> {K} tiles under {cap}")
+    how = "balanced bisection" if base.upper().startswith(TERRAIN_TILES) else "equal-width bands"
+    print(f"[build_kn5_loop] split {base} ({len(me.vertices)} verts) -> {K} tiles under {cap} ({how})")
     bpy.data.objects.remove(ob, do_unlink=True)
 
 
@@ -496,6 +633,11 @@ def _conform_and_reseat(proj: Path, spans):
                 v.co.z = low - GROUND_CLEAR; n_anti += 1
         if n_anti:
             print(f"[build_kn5_loop] anti-poke: {n_anti} verts clamped under the lowest drivable sheet")
+        # 2d. T-junctions (a tiered terrain's finer cells beside its kept grid cells, ledger 0046): re-fan the
+        # kept face through the nodes on its edge — after every pass that moves ground, so nothing moves
+        n_tj = _weld_t_junctions(bm)
+        if n_tj:
+            print(f"[build_kn5_loop] T-junctions: {n_tj} terrain faces re-fanned through the nodes on their edges")
         bm.to_mesh(me); bm.free(); me.update()
     print(f"[build_kn5_loop] terrain conform: {n_sub} corridor edges split, "
           f"{n_pin} verts pinned to deck-{GROUND_CLEAR}, {n_feather} feathered")
@@ -640,7 +782,7 @@ def main():
         # terrain); for a near-horizontal drivable surface "up" is unambiguous, so this can't guess
         # wrong or split the mesh. ...plus flat painted markings (MARKINGS/YLINE) — decals that
         # must face up to be seen from the car.
-        if ob.name.upper().startswith(("1ROAD", "1GRASS", "1KERB", "MARKINGS", "YLINE")):
+        if ob.name.upper().startswith(("1ROAD", "1GRASS", "1KERB", "MARKINGS", "YLINE", "GRASS_FAR")):
             bm.normal_update()
             down = [f for f in bm.faces if f.normal.z < 0]
             if down:
@@ -654,6 +796,13 @@ def main():
         # loop-path over-cap guard: FATAL (the OBJ program guards in build_kn5.py; this path is its
         # own program and needs its own gate — a WARNING here shipped over-cap meshes before).
         assert_under_cap(ob.name, len(me.vertices))
+    tiles = {}
+    for o in bpy.data.objects:
+        if o.type == "MESH" and o.name.upper().startswith(TERRAIN_TILES):
+            k = "1GRASS" if o.name.upper().startswith("1GRASS") else "GRASS_FAR"
+            tiles.setdefault(k, []).append(len(o.data.vertices))
+    print("[build_kn5_loop] terrain tiles: " + ", ".join(
+        f"{k} x{len(v)} (max {max(v)} v, total {sum(v)} v)" for k, v in sorted(tiles.items())))
 
     # 3. AC dummies from the real centreline (local frame x=E,y=up,z=N -> Blender x=E,y=N,z=up = (x,z,y))
     #    MULTI-LAYOUT (ledger 0047; fleet/LAWS.md L8 as amended): with more than one layouts[] entry

@@ -17,7 +17,12 @@ salvage (the vanished k10-san-diego repo's Windows snapshot; raw copy preserved 
   the installed reference track (engine pin **v0.24.3**, kn5 built on Kevin's Mac Jul 26).
   Build tooling of record, NOT part of the live engine — it forks old engine modules
   (extra_lines, ribbon, build_loop_blend, build_kn5_win.sh). Consult it to understand the
-  installed build; don't extend it.
+  installed build; don't extend it. **Since 2026-10-11 (ledger 0046) it is also what runs:**
+  `tools/ship_sd.sh` executes `scripts-v021/blender/build_loop_blend.py` from here (V021_SHIM registers
+  this folder as the `scripts` package inside Blender) instead of the retired workshop's copy, which it
+  matched byte for byte when switched. Its one change is opt-in: with `terrain.tiers` in the config the
+  TERRAIN comes from the tiered 3DEP lattice (`scripts/geometry/terrain_tiers.py`, loaded by path; the
+  graded 20 m grid kept under and beside the roads) plus the visual-only far ring `GRASS_FAR`.
 
 ## Not imported (in the salvage copy only)
 

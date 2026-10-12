@@ -95,3 +95,23 @@ Density fill from the terrain grid (yards 6–40 m / slopes 40–120 m / far gro
 lake-basin skip, corridor guard, uniform thinning): **15,261 TreeFX entries** installed
 (892 palms, 412 + 3,441 trees, 994 + 8,919 bushes, 603 median plants), 14 species (+ Oak3).
 Median planting size 0.35–0.6 → 0.24–0.40 (Bush) / 0.34–0.52 (Sage).
+
+---
+
+## Request, for later (Kevin, 2026-10-12)
+
+> "Small request for later at some point: inclusion of eucalyptus and other trees in San Diego"
+
+Not started (Kevin: "for later"). **Measured on the installed v0.17.1 `extension/trees/trees.txt`:** 15,261 TreeFX
+instances in 14 species — Sage 4,074, Bush 2,662, Yucca 1,617, Bush3 1,327, **Gum (eucalyptus, Algarve) 1,128**,
+Agave 836, Pine_Aleppo 768, Oak3 701, PalmV1 678, PepperV1 620, SycamoreV1 407, PalmV2 274, PalmV3 102, SycamoreV2 67.
+So eucalyptus is already there (7 % of instances) but did not read as eucalyptus from the seat. The work is
+therefore: (1) find where the 1,128 Gum stand and at what size (fill bands far from the road vs. the real groves);
+(2) whether the Algarve Gum model reads as a California blue gum (tall, straggly, pale peeling trunk, drooping
+grey-green canopy) — if not, a better model from the owned library or a self-made one; (3) place eucalyptus where it
+really stands (the groves along Lake Murray Blvd, the Del Cerro canyons, the park edges — from the aerial / OSM
+`natural=wood` / Street View, not a uniform mix); (4) the "other trees" a San Diego street actually shows:
+jacaranda, coral tree, Canary Island / Torrey pine, Brazilian pepper, carrotwood, ficus, Italian cypress, queen
+palm — each from an owned model or self-made, species zones by street. Verification: Kevin's seat ("those are
+eucalyptus"), plus the existing TreeFX checks (no `;` lines, every species file present, nothing within half-width
++ 1 m of a centreline, no "Failed to load trees" in the CSP log) and verify_race's scenery gate on the race layouts.

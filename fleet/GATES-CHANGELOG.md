@@ -956,3 +956,15 @@ Results are in the ledger. Two read FAIL as written, with the cause measured: cr
 at 20–100 m (20,622 vertices; a 1,684-vertex sample against fresh 3DEP: p95 0.005 m, and the 16 off by > 1 m are
 graded ground 13–42 m from a pavement or in the clamp's release band). Neither is loosened here:
 they are reported against their own wording.
+
+### `tools/ship_track.sh` re-synced to the new `ship_sd.sh` (after the merge of main a0557e0, 2026-10-12)
+
+Wiring only, no threshold moves. The Lariat P1 section above recorded `ship_sd.sh` as byte-identical; ledger 0046
+changed it, so `ship_track.sh`'s vocabulary and `tracks/san-diego-lake-murray/ship.json` follow (the SD header parity
+in `tests/tools/test_ship_track_chain.py` passes before and after the dry stop): `draft_terrain_sample` /
+`draft_terrain_resample` around the trim, `draft_triangulate_terrain` after the seat, `draft_slim_far_terrain`
+deleted; the assembler and the weld through `V021_SHIM` from `tracks/<track>/scripts-v021` (the workshop-on-sys.path
+and its shadowing guard are gone, as in `ship_sd.sh`; a draft naming the assembler without one exits 2); the road
+gate OBJ is `ship_road_obj`, before the track folder, for San Diego and the Lariat alike (`gate_road_obj` removed);
+San Diego's engine honours `ENG=<dir>` as `ship_sd.sh` does (no other track can name an engine); the 3DEP cache and
+the I-8 corridor files cross in and out. `ship_sd.sh` stays San Diego's chain of record, not a shim.

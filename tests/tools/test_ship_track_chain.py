@@ -9,7 +9,8 @@ and on guard-only runs (bash exits before the first file operation; nothing is b
   folder from config, the install refusing while AC / Content Manager runs, the old build parked in the archive;
 - engine-july only when the slug is san-diego-lake-murray;
 - San Diego parity: the step headers tracks/san-diego-lake-murray/ship.json selects are tools/ship_sd.sh's, in
-  its order (ship_sd.sh at airoso 8a2f076; it must be re-synced when ship_sd.sh changes);
+  its order (re-synced 2026-10-12 to ship_sd.sh after ledger 0046's tiered terrain; it must be re-synced whenever
+  ship_sd.sh changes);
 - the Lariat: the paint centreline wired into the draft order; its dry run stops cleanly at "no blend yet".
 """
 from __future__ import annotations
@@ -242,7 +243,7 @@ def test_every_step_runs_on_the_absolute_project():
     # nothing inside airoso: the project AND the workshop, against AIROSO and the main checkout
     assert 'for root in "$AIROSO" "$AIROSO_MAIN"; do' in TEXT and "workshop '$WS' is inside airoso" in TEXT
     first_copy = _first('mkdir -p "$PROJ/data"')
-    for g in ("must be an absolute path", "is inside airoso", "SCRATCH=1; fi", "would shadow the workshop's",
+    for g in ("must be an absolute path", "is inside airoso", "SCRATCH=1; fi", "but there is no assembler at",
               "no blend yet: $PROJ/loop.blend"):
         assert _first(g) < first_copy, g
 
@@ -324,7 +325,8 @@ def test_engine_july_only_for_san_diego():
     hits = [(p, ln) for p, ln in _code_lines() if "engine-july" in ln]
     assert len(hits) == 1, hits
     pos, ln = hits[0]
-    assert ln.strip() == 'ENGINE="C:/Users/Owner/Documents/GitHub/engine-july"', ln
+    # ENG=<dir> overrides it for San Diego alone (a scratch copy of engine-july, as in tools/ship_sd.sh)
+    assert ln.strip() == 'ENGINE="${ENG:-C:/Users/Owner/Documents/GitHub/engine-july}"', ln
     cond = TEXT.rfind('if [ "$TRACK" = "san-diego-lake-murray" ]; then\n', 0, pos)
     assert cond >= 0 and TEXT[cond:pos].count("\n") == 1, "the engine-july line is the SD branch's only line"
     assert 'else\n  ENGINE="$AIROSO"\nfi' in TEXT[pos:pos + 160]
@@ -368,10 +370,11 @@ def _sd_headers(text, start, end):
 
 
 def test_sd_spec_reproduces_ship_sd_step_sequence_before_the_dry_stop():
-    """tools/ship_sd.sh at airoso 8a2f076 (byte-identical, pinned by test_ship_sd_chain.py): its step headers up to
-    the --dry-run stop, every branch, in text order == the headers of the steps tracks/san-diego-lake-murray/ship.json
-    selects, in its order. RE-SYNC when ship_sd.sh changes (the concurrent terrain job's ENG override, slim_far
-    removed, terrain steps): this test fails on purpose until ship.json and the vocabulary follow."""
+    """tools/ship_sd.sh (pinned on its text by test_ship_sd_chain.py): its step headers up to the --dry-run stop,
+    every branch, in text order == the headers of the steps tracks/san-diego-lake-murray/ship.json selects, in its
+    order. Re-synced 2026-10-12 after ledger 0046 (terrain_sample / terrain_resample, triangulate_terrain,
+    slim_far_terrain retired, the ENG override); RE-SYNC whenever ship_sd.sh changes — this test fails until
+    ship.json and the vocabulary follow."""
     sd = _sd_headers(SD_TEXT, 0, _first("DRY RUN: stopping before the kn5 exports", SD_TEXT))
     s = spec_mod.load(SD_SPEC, "san-diego-lake-murray")
     fns = _functions()
@@ -422,6 +425,30 @@ def test_sd_spec_carries_ship_sds_sync_lists_and_names():
     assert set(s["sync_out"]["dirs"]) == {"ai/{id}", "data/signs_plots", "data/race_plots"}
     assert s["sync_in"]["required"] == ["track.config.json", "start_positions.json"]
     assert s["sync_in"]["globs"] == ["source/trees/*.bin"]
+    # ledger 0046: the 3DEP cache and the I-8 corridor cross both ways, as ship_sd.sh's TERRAIN_DATA
+    m = re.search(r'^TERRAIN_DATA="([^"]*)"', SD_TEXT, re.M)
+    assert m, "ship_sd.sh declares TERRAIN_DATA"
+    for f in m.group(1).split():
+        assert f"data/{f}" in s["sync_in"]["optional"] and f"data/{f}" in s["sync_out"]["files"], f
+    assert "terrain.tiers.report.json" in sync and "data/terrain.tiers.report.json" in s["sync_out"]["files"]
+
+
+def test_sd_assembler_runs_through_the_v021_shim_as_in_ship_sd():
+    """ship_sd.sh runs the loop assembler and the weld from airoso's tracks/<track>/scripts-v021, registered as the
+    `scripts` package (V021_SHIM) — ship_track.sh carries the same shim, byte for byte, and no workshop sys.path"""
+    shim = re.search(r'^V021_SHIM="([^\n]*)"$', SD_TEXT, re.M).group(1)
+    assert f'V021_SHIM="{shim}"' in TEXT
+    assert 'V021="$SRC/scripts-v021"' in TEXT and "WS_SYSPATH" not in TEXT
+    fns = _functions()
+    for name in ("draft_build_loop_blend", "draft_rebuild_loop_blend", "draft_weld_mouths"):
+        assert '--python-expr "$V021_SHIM"' in fns[name], name
+    assert '"$V021/blender/build_loop_blend.py"' in fns["draft_build_loop_blend"]
+    assert "slim_far" not in TEXT
+    # the road gate OBJ is a ship step before the track folder (make_treefx / ext_config read tile names off it)
+    for spec in (SD_SPEC, LARIAT_SPEC):
+        sh = _spec(spec)["steps"]["ship"]
+        assert sh.index("road_obj") < sh.index("track_folder") < sh.index("treefx"), spec
+        assert "road_obj" not in _spec(spec)["steps"]["gate"], spec
 
 
 # --- the Lariat --------------------------------------------------------------------------------------------------

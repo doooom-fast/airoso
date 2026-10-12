@@ -247,7 +247,11 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
     # of seam-alvarado). So the feather ALSO runs keep_feather_m out from the nearest kept node (ledger 0046).
     kept_xz = [(fx0 + i * fux, fz0 + j * fuz) for i, j, kc in zip(I, J, K) if kc]
     kd_keep = None
-    if kept_xz and keep_f > 0.0:
+    RF = T.get("refine")
+    # with keep_cells.refine the kept cells themselves take the data past move_beyond_m once the prep has reshaped the
+    # near-road ground (build_kn5_loop._refine_kept_terrain): their outer edge is then no longer the graded surface,
+    # and the feather is the pavement one alone — the same field on both sides of the kept edge
+    if kept_xz and keep_f > 0.0 and RF is None:
         kd_keep = kdtree.KDTree(len(kept_xz))
         for k, (x, z) in enumerate(kept_xz):
             kd_keep.insert((x, z, 0.0), k)
@@ -296,6 +300,37 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
     tris = T["tris"]
     tri3 = [(tris[3 * k], tris[3 * k + 1], tris[3 * k + 2]) for k in range(len(tris) // 3)]
     phys, far = tt.split_mesh(tri3, [bool(p) for p in T["phys"]])
+    n_refine = 0
+    if RF is not None:
+        # the data the prep's kept-cell refinement needs at the kept cells' x-split sub-lattice: D = 3DEP under the
+        # same distance-weighted clamp as every lattice vertex, d = pavement distance (the feather's argument)
+        prm = RF["params"]
+        nD, nd = [], []
+        for i, j, h in zip(RF["I"], RF["J"], RF["h"]):
+            x, z = fx0 + i * fux, fz0 + j * fuz
+            y = h - elev0
+            _co, k, dist = kd.find((x, z, 0.0))
+            d = dist - hws[k]
+            w = tt.clamp_weight(d, c_full, c_rel)
+            if w > 0.0:
+                y = tt.band_clamp_value(y, ys[k], band, w)
+            nD.append(round(y, 3)); nd.append(round(d, 3))
+        n_refine = len(nD)
+        refine = {"_provenance": {"what": "ledger 0046 kept-cell refinement data for the kn5 prep "
+                                          "(build_kn5_loop._refine_kept_terrain): x-split sub-lattice of every kept "
+                                          "cell reaching past refine.beyond_m; D = 3DEP (terrain.samples.json.gz) under "
+                                          "the L3 clamp, local y; d = pavement distance, m",
+                                  "tiers": "terrain.tiers.json.gz"},
+                  "frame": T["frame"], "keep_r": RF["keep_r"], "cell_r": RF["cell_r"],
+                  "kept_cells": RF["kept_cells"], "cells": RF["cells"],
+                  "I": RF["I"], "J": RF["J"], "D": nD, "d": nd,
+                  "keep_m": keep_m, "keep_feather_m": keep_f,
+                  "edge_m": float(prm["edge_m"]), "move_beyond_m": float(prm["move_beyond_m"]),
+                  "min_face_d_m": float(prm["min_face_d_m"])}
+        (data / "terrain.refine.json.gz").write_bytes(
+            gzip.compress(json.dumps(refine, separators=(",", ":")).encode("utf-8"), 6, mtime=0))
+    else:
+        (data / "terrain.refine.json.gz").unlink(missing_ok=True)
 
     def mesh(sel):
         used, nv, nt = {}, [], []
@@ -313,7 +348,7 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
     yhi = max(v[1] for v in verts) + elev0
     rep = {"vertices": len(verts), "physical_v": len(terrain["vertices"]), "far_v": len(far_mesh["vertices"]),
            "kept_cell_vertices": n_cell, "kept_surface": n_keep, "feathered": n_feather,
-           "feathered_from_kept_edge": n_edge, "clamped": n_clamped,
+           "feathered_from_kept_edge": n_edge, "refine_nodes": n_refine, "clamped": n_clamped,
            "clamp_max_lift": round(max_lift, 2), "clamp_max_cut": round(max_cut, 2),
            "abs_min": round(ylo, 2), "abs_max": round(yhi, 2)}
     print(f"[blend] tiered terrain: {rep}")

@@ -392,7 +392,8 @@ def run(proj: Path, offline: bool = False) -> dict | None:
           f"(physical {st['physical_vertices']} v / far {st['far_vertices']} v), leaves {st['leaves_by_cell_m']} "
           f"({time.time() - t0:.0f} s)", flush=True)
     cache = SampleCache(data / SAMPLES, spec, frame)
-    miss = cache.missing(topo.vkeys)
+    rkeys = topo.refine_keys()                      # the kept cells' x-split sub-lattice (refine: the prep's data)
+    miss = cache.missing(sorted(set(topo.vkeys) | set(rkeys)) if rkeys else topo.vkeys)
     if miss and offline:
         raise SystemExit(f"[terrain] --offline: {len(miss)} vertices have no cached 3DEP sample")
     if miss:
@@ -411,6 +412,12 @@ def run(proj: Path, offline: bool = False) -> dict | None:
            "I": [k[0] for k in topo.vkeys], "J": [k[1] for k in topo.vkeys], "h": hs,
            "keep": [1 if k else 0 for k in topo.vkeep],
            "tris": [v for t in topo.tris for v in t], "phys": [1 if p else 0 for p in topo.tri_phys]}
+    if rkeys:
+        out["refine"] = {"keep_r": topo.r[topo.keep_level], "cell_r": topo.r[topo.refine_level],
+                         "kept_cells": sorted([i, j] for i, j in topo.keep),
+                         "cells": [list(k) for k in topo.refine_cells],
+                         "I": [k[0] for k in rkeys], "J": [k[1] for k in rkeys], "h": [cache.h[k] for k in rkeys],
+                         "params": dict(spec.refine)}
     (data / TIERS).write_bytes(gzip.compress(json.dumps(out, separators=(",", ":")).encode("utf-8"), 6, mtime=0))
     print(f"[terrain] wrote {TIERS}: {len(hs)} vertices, 3DEP {min(hs):.1f}..{max(hs):.1f} m "
           f"({time.time() - t0:.0f} s total)")

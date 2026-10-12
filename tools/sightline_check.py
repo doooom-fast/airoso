@@ -11,8 +11,15 @@ steps and reports the elevation angle of the ground at every step.
     python tools/sightline_check.py <project> --from 62,1713 --bearing 192 --range 5000
     python tools/sightline_check.py <project> --from-vertex 2240 --to 1380,2700
 
-A TARGET ray passes when the angle at the target (the highest within TARGET_WIN_M of it) is >= --min-deg AND
-exceeds every intermediate angle (nothing nearer stands in front of the summit). A BEARING ray reports the
+A TARGET ray is aimed at the summit's TOP: the highest built terrain vertex within SUMMIT_R_M of the nominal
+coordinate (criterion 1's 60 m — the nominal (1380, 2700) is a 20 m-lattice 3DEP probe, ~14 m off the real top,
+which fresh 3DEP puts at (1390, 2710)). The summit as seen is the cone's highest elevation angle along the ray (the
+top, or its shoulder where the ground near the top is flatter than the sight line). It passes when that is >= --min-deg
+AND above every profile step more than SUMMIT_R_M short of the top — nothing in front of the summit cone stands
+higher. Steps inside the cone are the summit's own shoulder (the ledger's Evidence: the 3DEP profile's highest intervening
+sample, +9.37 deg at 1,638 m, "is the summit's own shoulder"): near the top the ground is flatter than the sight
+line, so a point a few metres short of it always reads a hair higher in angle, in the world as in the build. The
+nominal point's own angle and the shoulder's maximum are reported beside the verdict, never hidden. A BEARING ray reports the
 profile and the first step with no built surface under it (criterion 3: "a built surface to >= 5 km").
 Frame: local, x = E, y = up (metres above the origin's elev_m), z = N. Exit 1 when any target ray fails.
 """
@@ -26,7 +33,7 @@ from pathlib import Path
 
 EYE_M = 1.2
 STEP_M = 10.0
-TARGET_WIN_M = 40.0
+SUMMIT_R_M = 60.0         # the summit cone: criterion 1's radius about the nominal coordinate
 CORRIDOR_M = 60.0          # triangles kept for the march: centroid within this of the ray
 TERRAIN = ("1GRASS", "GRASS_FAR")
 COWLES = (1380.0, 2700.0)  # 3DEP summit 483.2 m, 32.81277 N 117.03192 W (ledger 0046 Evidence)
@@ -78,6 +85,23 @@ class Surface:
                                 self.b.setdefault((i, j), []).append(tri)
         self.n = n
 
+    def top_near(self, x, z, r):
+        """(x, z, y) of the highest vertex of these triangles within ``r`` (plan) of (x, z), or None"""
+        best = None
+        V = self.V
+        seen = set()
+        for i in range(int((x - r) // self.cell), int((x + r) // self.cell) + 1):
+            for j in range(int((z - r) // self.cell), int((z + r) // self.cell) + 1):
+                for tri in self.b.get((i, j), ()):
+                    for v in tri:
+                        if v in seen:
+                            continue
+                        seen.add(v)
+                        vx, vy, vz = V[3 * v], V[3 * v + 1], V[3 * v + 2]
+                        if math.hypot(vx - x, vz - z) <= r and (best is None or vy > best[2]):
+                            best = (vx, vz, vy)
+        return best
+
     def height(self, x, z):
         best = None
         V = self.V
@@ -100,7 +124,7 @@ class Surface:
 
 
 def march(terrain: Surface, road: Surface, start, end, step=STEP_M, eye=EYE_M):
-    """profile [(distance, ground_y | None, angle_deg | None)] from start toward end"""
+    """profile [(distance, ground_y | None, angle_deg | None)] from start toward end, every ``step`` m and at the end"""
     sx, sz = start
     ex, ez = end
     L = math.hypot(ex - sx, ez - sz)
@@ -118,16 +142,28 @@ def march(terrain: Surface, road: Surface, start, end, step=STEP_M, eye=EYE_M):
         prof.append((round(d, 1), None if y is None else round(y, 3),
                      None if y is None else round(math.degrees(math.atan2(y - eye_y, d)), 3)))
         k += 1
+    if not prof or abs(prof[-1][0] - L) > 1e-6:                  # the end itself (the summit top) is always a step
+        y = terrain.height(ex, ez)
+        prof.append((L, None if y is None else round(y, 3),
+                     None if y is None else round(math.degrees(math.atan2(y - eye_y, L)), 3)))
     return eye_y, prof
 
 
-def judge_target(prof, dist, min_deg):
-    near = [a for d, _y, a in prof if a is not None and abs(d - dist) <= TARGET_WIN_M]
-    before = [a for d, _y, a in prof if a is not None and d < dist - TARGET_WIN_M]
-    at = max(near) if near else None
+def judge_target(prof, dist, min_deg, cone=SUMMIT_R_M):
+    """``prof`` marches to the summit top at ``dist`` (its last step is the top itself). The summit as seen is the summit
+    cone's highest elevation angle (``target_deg``: the top, or its own shoulder where the ground near the top is
+    flatter than the sight line); it must reach ``min_deg`` and stand above every step outside the cone. The top's own
+    angle and the shoulder's are reported beside it."""
+    top = [a for d, _y, a in prof if a is not None and abs(d - dist) < 1e-6]
+    before = [a for d, _y, a in prof if a is not None and d < dist - cone]
+    shoulder = [a for d, _y, a in prof if a is not None and dist - cone <= d < dist - 1e-6]
+    at_top = top[0] if top else None
+    in_cone = top + shoulder
+    at = max(in_cone) if in_cone else None
     mid = max(before) if before else None
-    ok = at is not None and at >= min_deg and (mid is None or at > mid)
-    return {"target_deg": at, "max_intermediate_deg": mid, "min_deg": min_deg, "pass": ok}
+    ok = at_top is not None and at >= min_deg and (mid is None or at > mid)
+    return {"target_deg": at, "top_deg": at_top, "max_shoulder_deg": max(shoulder) if shoulder else None,
+            "max_intermediate_deg": mid, "min_deg": min_deg, "pass": ok}
 
 
 def run(project, rays, obj=None, out=None):
@@ -148,6 +184,12 @@ def run(project, rays, obj=None, out=None):
     road = Surface(obj, [(s[0], s[1], s[0], s[1]) for s in segs], ("1ROAD",), reach=12.0)
     report, bad = [], 0
     for r in rays:
+        nominal = None
+        if "bearing" not in r:
+            top = terrain.top_near(r["to"][0], r["to"][1], SUMMIT_R_M)
+            if top is not None:
+                nominal = r["to"]
+                r = dict(r, to=(top[0], top[1]))
         eye_y, prof = march(terrain, road, r["from"], r["to"])
         row = {"name": r.get("name"), "from": [round(c, 1) for c in r["from"]], "to": [round(c, 1) for c in r["to"]],
                "eye_abs_m": round(eye_y + elev0, 2), "steps": len(prof),
@@ -165,6 +207,12 @@ def run(project, rays, obj=None, out=None):
             dist = math.hypot(r["to"][0] - r["from"][0], r["to"][1] - r["from"][1])
             row["target_dist_m"] = round(dist, 1)
             row.update(judge_target(prof, dist, float(r.get("min_deg", 0.0))))
+            if nominal is not None:
+                row["nominal"] = [round(c, 1) for c in nominal]
+                row["top_abs_m"] = round(prof[-1][1] + elev0, 2) if prof[-1][1] is not None else None
+                ny = terrain.height(*nominal)
+                nd = math.hypot(nominal[0] - r["from"][0], nominal[1] - r["from"][1])
+                row["nominal_deg"] = None if ny is None else round(math.degrees(math.atan2(ny - eye_y, nd)), 3)
             bad += 0 if row["pass"] else 1
         row["profile_abs"] = [(d, None if y is None else round(y + elev0, 2), a) for d, y, a in prof]
         report.append(row)

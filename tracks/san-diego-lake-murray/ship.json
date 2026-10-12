@@ -20,7 +20,8 @@
   "sync_in": {
     "required": ["track.config.json", "start_positions.json"],
     "optional": ["data/centerline.raw.local.json.pre-median", "data/connectors.local.json.pre-trim",
-                 "data/terrain.samples.json.gz", "data/corridor.i8.json", "data/i8.local.json", "data/i8.legacy.local.json"],
+                 "data/terrain.samples.json.gz", "data/corridor.i8.json", "data/i8.local.json", "data/i8.legacy.local.json",
+                 "textures/chaparral_far_diffuse.jpg"],
     "globs": ["source/trees/*.bin"]
   },
   "sync_out": {

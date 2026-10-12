@@ -301,6 +301,221 @@ def _weld_t_junctions(bm, tol=0.001):
     return len(by_face)
 
 
+def xsplit_interp(u, v, sw, se, ne, nw, c):
+    """Pure (no bpy): the value at (u, v) in [0, 1]^2 of a cell split in four around its centre — linear on the
+    S (sw, se, c), E (se, ne, c), N (ne, nw, c) or W (nw, sw, c) triangle holding the point. The same surface the
+    tiered lattice's x-split cells mesh (airoso scripts/geometry/terrain_tiers.xsplit_interp, ledger 0046)."""
+    if v <= u and v <= 1.0 - u:
+        return (1.0 - u - v) * sw + (u - v) * se + 2.0 * v * c
+    if u >= v and u >= 1.0 - v:
+        return (u - v) * se + (u + v - 1.0) * ne + 2.0 * (1.0 - u) * c
+    if v >= u and v >= 1.0 - u:
+        return (u + v - 1.0) * ne + (v - u) * nw + 2.0 * (1.0 - v) * c
+    return (v - u) * nw + (1.0 - u - v) * sw + 2.0 * u * c
+
+
+def keep_weight(d, keep_m, feather_m):
+    """Pure: weight of the kept (graded) surface at pavement distance ``d`` — 1 within ``keep_m``, smoothstep to 0 at
+    ``keep_m + feather_m`` (the tiered assembler's own feather, terrain_tiers.keep_weight)."""
+    if d <= keep_m:
+        return 1.0
+    if feather_m <= 0.0 or d >= keep_m + feather_m:
+        return 0.0
+    t = (d - keep_m) / feather_m
+    return 1.0 - t * t * (3.0 - 2.0 * t)
+
+
+class RefineField:
+    """Pure (no bpy): the kept-cell refinement data (data/terrain.refine.json.gz, written by the tiered assembler):
+    which 20 m cells were kept, and on their x-split sub-lattice the clamped 3DEP height ``D`` and the pavement
+    distance ``d``. Blender (x, y) = local (x = E, z = N)."""
+
+    def __init__(self, R):
+        self.x0, self.z0, self.ux, self.uz = R["frame"]
+        self.kr, self.cr = int(R["keep_r"]), int(R["cell_r"])
+        self.kept = {tuple(c) for c in R["kept_cells"]}
+        self.cells = {tuple(c) for c in R["cells"]}
+        self.D = {(i, j): v for i, j, v in zip(R["I"], R["J"], R["D"])}
+        self.d = {(i, j): v for i, j, v in zip(R["I"], R["J"], R["d"])}
+        self.keep_m, self.feather_m = float(R["keep_m"]), float(R["keep_feather_m"])
+        self.edge_m, self.move_m, self.face_m = float(R["edge_m"]), float(R["move_beyond_m"]), float(R["min_face_d_m"])
+
+    def in_kept(self, x, y):
+        return (math.floor((x - self.x0) / self.ux / self.kr), math.floor((y - self.z0) / self.uz / self.kr)) in self.kept
+
+    def at(self, x, y, tab, eps=1e-4):
+        """``tab`` (self.D / self.d) interpolated at (x, y); None outside every refine sub-cell. A point on a sub-cell
+        edge (float32 coordinates) is looked up in whichever listed neighbour holds it: the corner values are shared,
+        so the edge reads the same from both sides."""
+        fi, fj = (x - self.x0) / self.ux / self.cr, (y - self.z0) / self.uz / self.cr
+        ci, cj = math.floor(fi), math.floor(fj)
+        u, v = fi - ci, fj - cj
+        for di in ((0, -1) if u < eps else ((0, 1) if u > 1 - eps else (0,))):
+            for dj in ((0, -1) if v < eps else ((0, 1) if v > 1 - eps else (0,))):
+                k = (ci + di, cj + dj)
+                if k not in self.cells:
+                    continue
+                uu, vv = min(1.0, max(0.0, u - di)), min(1.0, max(0.0, v - dj))
+                r, h = self.cr, self.cr // 2
+                bx, bz = k[0] * r, k[1] * r
+                return xsplit_interp(uu, vv, tab[(bx, bz)], tab[(bx + r, bz)], tab[(bx + r, bz + r)], tab[(bx, bz + r)],
+                                     tab[(bx + h, bz + h)])
+        return None
+
+    def target(self, x, y, z, d_built=None):
+        """the refined height of a kept-cell vertex now at height ``z``: None (unchanged) within move_beyond_m of a
+        pavement or off the data, else the data feathered toward ``z`` exactly as the lattice beside the kept cell is.
+        ``d_built``: the distance to the BUILT pavement, when known — the nearer of the two is the one that counts"""
+        d = self.at(x, y, self.d)
+        if d is not None and d_built is not None:
+            d = min(d, d_built)
+        if d is None or d <= self.move_m:
+            return None
+        D = self.at(x, y, self.D)
+        return D + keep_weight(d, self.keep_m, self.feather_m) * (z - D)
+
+
+def _clip_ears(f):
+    """triangulate a convex (coplanar) n-gon by ear clipping: of the ears that are not flat in plan (a run of collinear
+    vertices — edge midpoints — must never become a zero-area triangle), the one with the SHORTEST new diagonal first
+    (the midpoint-to-midpoint cut a tri pattern makes). Returns the number of triangles cut off."""
+    import bmesh
+    n_cut = 0
+    while f is not None and f.is_valid and len(f.verts) > 3:
+        vs = [l.vert for l in f.loops]
+        n = len(vs)
+        best = None
+        amax = 0.0
+        ears = []
+        for i in range(n):
+            a, b, c = vs[i - 1].co, vs[i].co, vs[(i + 1) % n].co
+            ar = abs((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y))
+            amax = max(amax, ar)
+            ears.append((ar, (a - c).length, i))
+        for ar, diag, i in ears:
+            if ar > 1e-3 * amax and (best is None or diag < best[0]):
+                best = (diag, i)
+        if best is None:
+            break
+        i = best[1]
+        nf, _l = bmesh.utils.face_split(f, vs[i - 1], vs[(i + 1) % n])
+        n_cut += 1
+        f = nf if len(nf.verts) > 3 else (f if len(f.verts) > 3 else None)
+    return n_cut
+
+
+def _refine_kept_terrain(proj, bm, near2d=None):
+    """Ledger 0046 fix round — the kept cells' outer half, AFTER every pass that reshapes near-road ground. A tiered
+    terrain keeps the graded grid's own 20 m cells within ~18 m of a pavement so the seat and this prep reshape exactly
+    the ground they always reshaped; but those cells reach ~46 m out, and past this prep's reach they stayed 20 m
+    graded facets (criterion 5's long triangles 15-35 m from a road, the I-8 terrace walls beside Alvarado smoothed
+    away). Two moves, opt-in by data/terrain.refine.json.gz (absent on every other track: nothing touched):
+
+      1. COPLANAR refinement: every edge longer than edge_m of a kept-cell face that reaches past move_beyond_m (or
+         whose centre is past min_face_d_m) is halved until none is — on the 20 m grid the halving lands on the 5 m
+         x-split sub-lattice; nothing moves, so the surface the gates read is unchanged.
+      2. DATA past move_beyond_m: each kept-cell vertex there takes the 3DEP sub-lattice (under the L3 clamp) feathered
+         toward its graded height exactly as the tiered lattice beside the cell is (keep_m / keep_feather_m), so the
+         field is one surface across the kept edge. Within move_beyond_m nothing moves.
+    Returns a report dict, or None when the track has no refinement data."""
+    import gzip
+    import bmesh
+    p = proj / "data" / "terrain.refine.json.gz"
+    if not p.exists():
+        return None
+    F = RefineField(json.loads(gzip.decompress(p.read_bytes()).decode("utf-8")))
+    # coincident vertices first (within 1 mm: the same point, so nothing moves): where this prep's corridor subdivision
+    # put a midpoint exactly on a finer neighbour's node, the two stay separate vertices until the 5 cm weld after the
+    # split — and a move of the kept one alone would open a crack under a vertical fin
+    n_merged = len(bm.verts)
+    bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=0.001)
+    n_merged -= len(bm.verts)
+
+    def cand(f):
+        c = f.calc_center_median()
+        if not F.in_kept(c.x, c.y):
+            return False
+        if abs(f.normal.z) < 0.05:
+            # a (near-)vertical or zero-area face — a step the graded surface already had: every piece of it would
+            # be vertical too, so halving it only multiplies it (round on round). Left as it is.
+            return False
+        dc = F.at(c.x, c.y, F.d)
+        if dc is not None and dc >= F.face_m:
+            return True
+        for v in f.verts:
+            dv = F.at(v.co.x, v.co.y, F.d)
+            if dv is not None and dv > F.move_m:
+                return True
+        return False
+
+    n_split = n_poke = 0
+    for _round in range(8):
+        todo = set()
+        for f in bm.faces:
+            if cand(f):
+                for e in f.edges:
+                    if e.calc_length() > F.edge_m:
+                        todo.add(e)
+        if not todo:
+            break
+        # one cut edge -> tri_1edge (the midpoint joined to the opposite corner), three -> tri_3edge (four triangles).
+        # bmesh has no pattern for two: it leaves a pentagon with two straight-angle vertices, and a generic
+        # triangulation of that can be a zero-area cap — invisible while coplanar, but the data move below would stand
+        # it up as a vertical fin over a crack. Those are clipped ear by ear (_clip_ears): no new vertex, never a
+        # zero-area triangle.
+        bmesh.ops.subdivide_edges(bm, edges=list(todo), cuts=1, use_single_edge=True)
+        for f in [f for f in bm.faces if len(f.verts) > 3]:
+            n_poke += _clip_ears(f)
+        n_split += len(todo)
+    # a halving can land exactly on a finer neighbour's node that was never welded to the kept edge (a T-junction the
+    # prep's own subdivision hid): merge what now coincides, then weld what is still a T — so every node ON a kept
+    # cell's edge belongs to a kept face and moves with it (a node left behind would open a crack under a fin)
+    n_v = len(bm.verts)
+    bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=0.001)
+    n_merged += n_v - len(bm.verts)
+    n_tj = _weld_t_junctions(bm)
+    kept_v = set()
+    for f in bm.faces:
+        c = f.calc_center_median()
+        if F.in_kept(c.x, c.y):
+            kept_v.update(f.verts)
+    n_move, dmax = 0, 0.0
+    moved = set()
+    z0 = {}
+    for v in kept_v:
+        # the pavement distance is the data's (centreline - half width) or the BUILT road's, whichever is nearer: a
+        # mouth weld or a flare widens the pavement past its centreline width, and nothing within move_beyond_m of
+        # what was built may move (criterion 7)
+        d_built = near2d(v.co.x, v.co.y)[0] if near2d is not None else None
+        t = F.target(v.co.x, v.co.y, v.co.z, d_built)
+        if t is not None and abs(t - v.co.z) > 1e-6:
+            dmax = max(dmax, abs(t - v.co.z))
+            z0[v] = v.co.z
+            v.co.z = t
+            n_move += 1
+            moved.add(v)
+    # a face flat in plan with a moved vertex that is not flat in 3D now stands vertical (a fin over a crack): counted,
+    # and those that were already vertical before the move (the graded surface's own steps) counted apart
+    fins = fins_pre = 0
+    for f in {f for v in moved for f in v.link_faces}:
+        a, b, c = [v.co for v in f.verts][:3]
+        if abs((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y)) < 2e-4 and f.calc_area() > 1e-3:
+            zs = [(v, z0.get(v, v.co.z)) for v in f.verts]
+            pa = [v.co.copy() for v in f.verts]
+            for k, (v, z) in enumerate(zs):
+                pa[k].z = z
+            if ((pa[1] - pa[0]).cross(pa[2] - pa[0])).length > 2e-3:
+                fins_pre += 1
+            else:
+                fins += 1
+    if fins:
+        raise SystemExit(f"[build_kn5_loop] FATAL: the kept-cell refinement stood {fins} plan-flat faces up as vertical "
+                         f"fins (a moved vertex beside an unmoved one at the same point: a crack). Refusing to export.")
+    return {"merged": n_merged, "t_junctions": n_tj, "edges_split": n_split, "ears_clipped": n_poke,
+            "kept_vertices": len(kept_v), "moved": n_move, "max_move_m": round(dmax, 2), "fins": fins,
+            "vertical_before": fins_pre}
+
+
 def _split_large(ob, cap=SPLIT_CAP):
     """Split a mesh over AC's 65,535-vertex cap into UNIQUELY-named spatial tiles (base_0, base_1,
     ...). The exporter otherwise auto-splits into DUPLICATE-named meshes, and AC drops dup-named
@@ -638,6 +853,11 @@ def _conform_and_reseat(proj: Path, spans):
         n_tj = _weld_t_junctions(bm)
         if n_tj:
             print(f"[build_kn5_loop] T-junctions: {n_tj} terrain faces re-fanned through the nodes on their edges")
+        # 2e. the kept cells' outer half (ledger 0046 fix round): refined, and the data past the near-road band — after
+        # every pass above, before the re-seat below (so the props ride this delta too)
+        rf = _refine_kept_terrain(proj, bm, _near2d)
+        if rf is not None:
+            print(f"[build_kn5_loop] kept-cell refinement: {rf}")
         bm.to_mesh(me); bm.free(); me.update()
     print(f"[build_kn5_loop] terrain conform: {n_sub} corridor edges split, "
           f"{n_pin} verts pinned to deck-{GROUND_CLEAR}, {n_feather} feathered")

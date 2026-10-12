@@ -1,7 +1,7 @@
 ---
 id: 0046
 title: "More terrain near the roads, the I-8 trench and adjacent causeway cut out" — and see Cowles Mountain from Navajo
-status: in-progress — built and rehearsed 2026-10-12 (every gate identical to v0.17.1); criteria 1-7 measured below; awaiting the install and Kevin's seat (criterion 8)
+status: in-progress — built and rehearsed 2026-10-12, fix round after two refuting verifiers (every gate identical to v0.17.1); criteria 1-7 measured below; awaiting the engine-july mirror, the install and Kevin's seat (criterion 8)
 scope: tracks/san-diego-lake-murray (proof, street_port); engine scripts/elevation/heightfield.py HF_MARGIN_M + scripts/geometry/ribbon.py grass_terrain skirt + terrain tiering (every track, opt-in; Lookout Lariat next consumer); fleet/LAWS.md L3 "Fake mountains" (standard)
 layer: standard + engine + project
 train: -
@@ -12,13 +12,19 @@ train: -
 **Built and rehearsed, not installed** (2026-10-12, airoso branch `worktree-wf_b291cd05-e2e-1`). Full
 `ship_sd.sh --no-install` rehearsals on a scratch copy of the workshop: every gate verdict file is identical to
 v0.17.1's field for field (street + race_cw + race_acw drive_test, audit, no_route planned and built, verify_mouths,
-verify_race, verify_signs). Results against the criteria are under **Results (2026-10-12)** at the end. 1, 6 and 7
-pass. 3 passes but for one clause, 4 passes away from the roads, and 2 passes from the crest and v2240; from v1640 the
-build agrees with the real world, where Cowles is behind a nearer hill. 5 fails at 15-60 m (9.05 m against 7 m), for
-the reason given there. The L3 amendment is in `fleet/LAWS.md` (Kevin approved it as D6(i) of the Lariat plan).
-Criterion 8, Kevin's seat, is what closes this. Not in here: I-8 as drivable pavement or as a visual ribbon (Kevin:
-extra highways "look like wavy ribbons"), scrub on the new ground (0040), the summit antenna farm (authored prop).
-Filed three times concurrently (0046/0046/0047); merged here, nothing dropped.
+verify_race, verify_signs). Two independent verifiers then refuted the first rehearsed build (criterion 5's long facets
+15–35 m from the roads, 19 I-8 sections, the I-8 not reading from the seat, a grey far ring); the fix round refined the
+kept near-road cells past 20 m onto the 3DEP sub-lattice, inside the prep, after everything that shapes the near-road
+ground — gates still identical — and gave the far ring a chaparral texture. Results are under **Results (2026-10-12)**
+at the end: 1, 5, 6 and 7 pass; 2 passes from the crest and v2240, and from v1640 the world itself hides Cowles behind a
+nearer hill; 3 passes but for "no vertex below 100 m", whose premise the landmark box contradicts (the San Diego River
+gorge is 20–100 m in 3DEP); 4 passes on 162 of 171 sections, the 9 being sections on a pavement's own verge (criterion 7
+holds that ground) or features narrower than a 5 m cell. The L3 amendment is in `fleet/LAWS.md` (Kevin approved it as
+D6(i) of the Lariat plan). Criterion 8, Kevin's seat, is what closes this — frame rate first (`1GRASS` is now ~670k
+triangles in 8 tiles). Before the install: mirror the two engine-july files (`engine-july-snapshot/PENDING-MIRROR.md5`)
+and merge the branch. Not in here: I-8 as drivable pavement or as a visual ribbon (Kevin: extra highways "look like wavy
+ribbons"), scrub on the new ground (0040), the summit antenna farm (authored prop). Filed three times concurrently
+(0046/0046/0047); merged here, nothing dropped.
 
 ## Symptom (Kevin, seat, 2026-10-10, installed `san_diego_lake_murray_v3`)
 
@@ -343,52 +349,71 @@ On the gate OBJ / kn5 (L5) against independent 3DEP, before anything is installe
 ## Results (2026-10-12) — measured on the built gate OBJ against fresh 3DEP (L5), before any install
 
 **What was built.** The ground is one multi-resolution lattice. USGS 3DEP is sampled **at every vertex**
-(`scripts/elevation/terrain_sample.py`, cached with its provenance in `data/terrain.samples.json.gz`: 268,234
-samples, 597 requests; the I-8 corridor in `data/corridor.i8.json`: 893 floor samples every 10 m and 358 cross-sections
-of 81 points at 2 m, ~67 requests). The cells are 5 m within 60 m of a pavement, 20 m to 500 m and 40 m beyond. The I-8
-corridor (±80 m about the median of the two OSM carriageway chains) is 5 m and the Cowles cone is 20 m. The extent is
-the dossier's landmark box, 32.755–32.822 N by 117.0895–116.998 W (8.6 × 7.4 km). Under and beside the roads, the
-graded v0.17.1 grid's own cells within 18 m of a pavement are kept triangle for triangle, so the seat and the prep reshape the
-same ground they always did. The kept surface feathers into the data over 16 m, measured from the pavement and from the
-nearest kept node. The band clamp follows L3 as amended: in full within 80 m of a pavement, released by 250 m, 3DEP
-beyond. Ground within 250 m of a road is physical `1GRASS`; the rest is `GRASS_FAR`, which is visual only, textured
-dry chaparral, and never gated, GrassFX-listed or an occluder. `slim_far_terrain_blend.py` and the 500 m skirt
-are gone. No I-8 pavement. Every number marked invented is in `fleet/GATES-CHANGELOG.md` (2026-10-11, tiered terrain).
+(`scripts/elevation/terrain_sample.py`, cached with its provenance in `data/terrain.samples.json.gz`: 335,112
+samples; the I-8 corridor in `data/corridor.i8.json`: 893 floor samples every 10 m and 358 cross-sections of 81
+points at 2 m). The cells are 5 m within 60 m of a pavement, 20 m to 500 m and 40 m beyond. The I-8 corridor (±80 m
+about the median of the two OSM carriageway chains) is 5 m and the Cowles cone is 20 m. The extent is the dossier's
+landmark box, 32.755–32.822 N by 117.0895–116.998 W (8.6 × 7.4 km). Under and beside the roads, the graded v0.17.1
+grid's own 20 m cells within 18 m of a pavement are kept triangle for triangle, so the seat and the kn5 prep reshape
+the same ground they always did. **Then** (fix round, after the verifiers) the prep refines those kept cells: every
+edge over 5.5 m of a kept face reaching past 20 m is halved (coplanar — the halving lands on the 5 m x-split
+sub-lattice), and every kept vertex more than 20 m from the pavement (the data's or the built road's, whichever is
+nearer) takes the 3DEP sub-lattice feathered from the graded height over 16 m, exactly as the lattice beside it does.
+Within 20 m of a pavement nothing moved. The band clamp follows L3 as amended: in full within 80 m of a pavement,
+released by 250 m, 3DEP beyond. Ground within 250 m of a road is physical `1GRASS`; the rest is `GRASS_FAR`: visual
+only, never gated, GrassFX-listed or an occluder, and now textured as grey-olive chaparral over tan soil
+(`tracks/san-diego-lake-murray/textures/`; it was pbr's stock grey gravel). `slim_far_terrain_blend.py` and the 500 m
+skirt are gone. No I-8 pavement. Every number marked invented is in `fleet/GATES-CHANGELOG.md` (2026-10-11, tiered
+terrain, and its 2026-10-12 fix round).
+
+Measured on the final full rehearsal (ship9: `ship_sd.sh --no-install`, full chain, scratch workshop, ENG = the
+scratch engine-july; gate OBJ md5 6b8ee0caede11064c846a5843997091a) with two independent sets of code: the
+implementer's (`tools/sightline_check.py`, measure scripts) and the truth verifier's own (its OBJ parser, its own
+OSM-median I-8 centreline and 171 stations, 18,377 fresh 3DEP points fetched 2026-10-12 with TLS on).
 
 | # | criterion | v0.17.1 | now | verdict |
 |---|---|---|---|---|
-| 1 | max terrain within 60 m of the summit (1380, 2700) ≥ 470 m | no vertex (world max 220.0 m) | **484.3 m**; surface at the summit 482.5 m (3DEP 483.2) | PASS |
-| 2 | crest (62, 1713) → summit ≥ 9.0°, summit above every intermediate | 1.10°, no surface past 210 m | **9.36°** (3DEP line of sight 9.35°); highest intermediate 9.27° (the summit's own shoulder) | PASS |
-| 2 | v2240 → summit (real 8.5°) | 2.54°, no surface past 460 m | **8.50°** (3DEP 8.50°); intermediate max 8.44° | PASS |
-| 2 | v1640 → summit (real 5.5°) | 6.41°, no surface past 2,350 m | summit **5.48°** (3DEP 5.48°), but a hill 340 m off stands at 6.60° | FAIL as written. The world agrees: fresh 3DEP has that hill at **7.22° at 350 m**, so Cowles is hidden from v1640 in reality too. |
-| 3 | bearing 192° from the crest: a built surface to ≥ 5 km | void past 4.05 km | surface to **5.2 km** (the only gap is the 10 m step over the road itself); 170 m at 1.46 km, 244–250 m at 1.94 km, 112 m at the I-8 floor (3.0 km) | PASS |
-| 3 | Del Cerro hilltop (−418, −200) ≥ 250 m | 168.4 m | **258.1 m** (3DEP 258.3) | PASS |
-| 3 | valley wall 3.4–4.9 km out, 130–145 m | void | **133.2–142.4 m** | PASS |
-| 3 | I-8 south bank max (z −1838..−1938, x 160 ± 30), 150–170 m | no vertex (the skirt ramp) | **165.6 m** | PASS |
-| 3 | faces at z ≤ −2500, x ≤ −4000, x ≥ 4500 | 0 / 0 / 0 | 6,696 / 188 / 886 vertices | PASS |
-| 3 | no terrain vertex below 100 m abs | 107 (the skirt floor at 69 m) | **20,622** below 100 m (1,936 physical), all west of x −539. The lowest is 19.7 m at (−2627, 2717), and 3DEP there reads 19.7 m. | FAIL as written. The clause assumed the real low was ~121 m (trench / Mission Valley). The box's west side reaches the San Diego River side, 20–100 m in 3DEP. A sample of 1,684 of these vertices (including the 200 lowest) against fresh 3DEP: median 0.002 m, p95 0.005 m. The 16 that are off by more than 1 m are graded ground beside College / I-8, 13–42 m from a pavement, plus two at 178–194 m in the clamp's release band. Nothing here is a pit: the 500 m skirt is gone. |
-| 4 | I-8 sections every 50 m: floor ±1 m, rims at ±60 m ±2 m of the 2 m 3DEP section, vertices within 12 m, fills stand up | 132 of 179 sections had no vertex within 12 m | 178 of 179 have vertices within 12 m. The odd one, s 8900, is 20 m past the far box's east edge: the corridor line is clipped to the box + 50 m. All **135 of 135** sections whose centre and both rims are > 56 m from a pavement pass. 17 fail where a rim or the centre lies on or beside Alvarado's verge or an overcrossing approach (Lake Murray Blvd s 2000–2250, College s 4000–4050). There the v0.17.1 graded surface is kept, with its legacy 1 m-deep trench, and feathered. Floor median 0.046 m, p95 1.12 m, max 3.05 m. The one 3DEP-confirmed fill (s 8250, 5.11 m above its flanks) is built at 5.05 m. | PASS away from the roads. FAIL on 17 near-road sections (above). |
-| 5 | facet longest edge 15–60 m from a road, p90 ≤ 7 m | 28.6 m | **9.05 m** (median 5.0) | FAIL. 89 % of the triangles 15–20 m out and 32 % at 25–30 m are long. They are the kept v0.17.1 cells (20 m, reaching ~46 m out) and the prep's corridor subdivision slivering them. Beyond the kept cells it is the 5 m tier. Earlier rehearsals that changed the near-road topology moved the gates (rehearsal 1: excursions 105 against 100; rehearsals 2–3: verify_mouths FAILED). |
+| 1 | max terrain within 60 m of the summit (1380, 2700) ≥ 470 m | no vertex (world max 220.0 m) | **484.34 m**; surface at the nominal point 482.5 m (3DEP 482.56); fresh 3DEP's top is 484.08 m at (1390, 2710), ~14 m off the nominal | PASS |
+| 2 | crest (62, 1713) → summit ≥ 9.0°, summit above every intermediate | 1.10°, no surface past 210 m | aimed at the built top (484.34 m, inside the 60 m cone): the summit as seen **9.345°** (the top 9.318°, the nominal point 9.35°); highest step outside the cone 9.24°. 3DEP: 9.375° against 9.127° | PASS, reading "the summit" as its cone (the ledger's own Evidence calls the profile's last samples "the summit's own shoulder"). Read against the single nominal point, every intermediate including the shoulder, it fails in the build (9.350 vs 9.358 at 1,640 m) **and in 3DEP** (9.355 vs 9.375 at 1,630 m) |
+| 2 | v2240 → summit (real 8.5°) | 2.54°, no surface past 460 m | **8.487°** (top 8.481°); outside the cone 8.35°. 3DEP 8.512° against 8.31° | PASS (same reading; the strict point reading fails in 3DEP too: 8.500 vs 8.512) |
+| 2 | v1640 → summit (real 5.5°) | 6.41°, no surface past 2,350 m | summit **5.49°**, but a hill 340 m off stands at 6.60° | FAIL as written — **and in the world**: fresh 3DEP has that hill at **7.23° at 350 m**, the summit at 5.49°. Cowles is hidden from v1640. The built hill is 3–4.6 m below 3DEP there (85–121 m from a road: the L3 clamp's release band), so the build hides it a little less than the world does |
+| 3 | bearing 192° from the crest: a built surface to ≥ 5 km | void past 4.05 km | surface to the far box's edge at **5,550 m**, 0 holes in a 25 m probe lattice over the whole box (101,871 rays); built vs 3DEP at 1,460 / 1,940 / 3,000 / 4,000 / 5,000 m: 171.4/169.9, 243.9/244.5, 113.0/112.9, 138.8/138.9, 141.8/141.5 m | PASS |
+| 3 | Del Cerro hilltop (−418, −200) ≥ 250 m | 168.4 m | **258.11 m** (3DEP 258.15) | PASS |
+| 3 | valley wall 3.4–4.9 km out, 130–145 m | void | **133.15–142.36 m** (3DEP 132.37–142.59) | PASS |
+| 3 | I-8 south bank max (z −1838..−1938, x 160 ± 30), 150–170 m | no vertex (the skirt ramp) | **165.62 m** (3DEP 165.64) | PASS |
+| 3 | faces at z ≤ −2500, x ≤ −4000, x ≥ 4500 | 0 / 0 / 0 | 13,054 / 374 / 1,501 faces (6,696 / 188 / 886 vertices) | PASS |
+| 3 | no terrain vertex below 100 m abs | 107 (the skirt floor at 69 m) | **21,272** below 100 m (2,586 physical), all west of x −539; the lowest 19.67 m at (−2627, 2717), where 3DEP reads 19.67 m | FAIL as written — the clause's premise is false. It assumed the real low was ~121 m (trench / Mission Valley); the landmark box this ledger asked for reaches the San Diego River gorge, 20–100 m in 3DEP. 985 of these vertices (the 400 lowest + random) against fresh 3DEP: median 0.003 m, p95 0.005 m; the 18 off by > 1 m are graded ground beside College Ave / I-8 (x −1891..−1745, up to 6.6 m) and one at (−1543, 1358). No pit: the skirt is gone. Kept as data (L1, L3 as amended) |
+| 4 | I-8 sections every 50 m: floor ±1 m, rims at ±60 m ±2 m of the 2 m 3DEP section, vertices within 12 m, fills stand up | 132 of 179 sections had no vertex within 12 m | **162 of 171** (the truth lens's centreline; 152 before the fix round). Floor error median 0.034 m, p95 0.37 m (was 1.23). Every section has vertices within 12 m. All six 3DEP-confirmed fills (s 7100–7900, rises 2.3–6.4 m) are built within 0.58 m. On the implementer's corridor (179 sections): 0 floors off by > 1 m, 7 rims off by > 2 m, the s 8250 fill 5.05 m against 5.11 | FAIL on 9. **7** sit on or beside a pavement, where criterion 7 holds the ground to v0.17.1: s 1700's centre is under the College Ave deck (the v0.17.1 approach grass at the deck, 109.0 m, over a 104.0 m floor); s 1800–1950's north rims are 1–10 m from Alvarado's pavement; s 3700 is on Lake Murray Blvd; s 3750's south rim is 20 m from it. **2** are away from roads: s 750 (3DEP steps 4 m within 2 m) and s 7250 (a 2–4 m-wide median hump; the vertex on it matches 3DEP to 0.01 m) — features narrower than the 5 m cells. Neither kind is a build defect; the first is criterion 4 against criterion 7, the second the cell size |
+| 5 | facet longest edge 15–60 m from a road, p90 ≤ 7 m | 28.6 m | **5.27 m** (median 5.0; 0.07 % over 7 m), measured to `1ROAD` and to all pavement alike (was 9.02 / 5.68) | PASS |
 | 5 | 60–500 m, p90 ≤ 28.3 m | 28.9 m (60–220); 921 m (220–500) | **20.2 m** (60–500); 20.5 m (220–500) | PASS |
-| 6 | far ring within 1 m of 3DEP | — | 2,000 random far vertices outside the I-8 corridor against fresh 3DEP: max **0.005 m** | PASS |
+| 6 | far ring within 1 m of 3DEP | — | 3,000 random far vertices against fresh 3DEP: max **0.005 m** | PASS (between vertices, linear over 40 m cells: p95 1.5 m, max 17.8 m on the steepest slopes) |
 | 6 | no far horizontal edge longer than two of its own cells | — | longest 56.65 m (a 40 m cell's diagonal; two cells = 80 m) | PASS |
-| 7 | gates unchanged | street soft-top 42 / severe 0 / kinks 3.86 /km / bumps 0.15 /km / excursions 100 / floating 391 / obstruction 0 / daylight 0, replication p95 0.42; audit D 512 K 20 I 20 F 13 (565); race_cw / race_acw severe 31 / 28, audit 53 each, no_route PASS, barrier_missing 0 | **identical, field for field** (only `grass_verts` 87,278 → 236,899 differs); verify_mouths PASS × 4 with identical numbers; verify_kn5 + `--inis` OK; verify_signs PASS; check_race_kn5 OK | PASS |
-| 7 | `1GRASS` within 20 m of a road vs v0.17.1 | — | 73,883 vertices, 3D distance to the v0.17.1 surface **0.000 m** (max). A vertical ray reads 41 of them > 0.05 m, all at the College Ave bridge over I-8, where two grass layers stack. | PASS |
-| 7 | the tiles | `1GRASS` × 2 | `1GRASS` × 4 (max 59,692 v), `GRASS_FAR` × 2 (max 53,414 v), every mesh ≤ 65,535, no far mesh with a digit prefix; `GRASS_MESHES` = `1GRASS_0..3` only; `OCCLUDING_MESHES` unchanged; every `[LIGHT_*]` and `trees.txt` byte-identical | PASS |
+| 7 | gates unchanged | street soft-top 42 / severe 0 / kinks 3.86 /km / bumps 0.15 /km / excursions 100 / floating 391 / obstruction 0 / daylight 0, replication p95 0.42; audit D 512 K 20 I 20 F 13 (565); race_cw / race_acw severe 31 / 28, audit 53 each, no_route PASS, barrier_missing 0 | **identical, field for field** (only `grass_verts` 87,278 → 335,165 and no_route timing differ); verify_mouths PASS × 4 with identical numbers; verify_kn5 + `--inis` OK; verify_signs PASS; check_race_kn5 OK | PASS |
+| 7 | `1GRASS` within 20 m of a road vs v0.17.1 | — | 118,319 vertices, 3D distance to the v0.17.1 surface **0.000 m** (max). A vertical ray reads 42 of them > 0.05 m, all within 3 m of the College Ave bridge over I-8, where two grass layers stack (v0.17.1's own) | PASS |
+| 7 | the tiles | `1GRASS` × 2 | `1GRASS` × 8 (max 42,411 v), `GRASS_FAR` × 2 (max 53,414 v); no far mesh with a digit prefix; `GRASS_MESHES` = `1GRASS_0..7` only; `OCCLUDING_MESHES` unchanged; all 244 `[LIGHT_*]` sections and `trees.txt` byte-identical | PASS |
 
-**The budget, honestly.** The ledger estimated ~131k terrain vertices and +~3 MB of kn5. Built: **343,328**
-(236,771 physical in 4 tiles + 106,557 far in 2), against 87,278 in v0.17.1. The road kn5 went **92.5 → 107.3 MB
-(+14.75 MB)**. Where it goes: the 5 m tier within 60 m of every pavement and the 5 m I-8 corridor (106,832 5 m
-leaves). The prep's corridor subdivision then adds 62,060 more near the mainline (173,711 → 235,766), as it always
-did, but on finer ground. The masters ship more: Mulholland's `la_terrain_background.kn5` is 466,903 vertices in
-35 meshes, and PCH's `terrain.kn5` is 934,769 in 43. Theirs are 13–22k per mesh; ours are 53–60k, so culling is
-coarser (a follow-up, not a defect). **Not thinned.** The only coarser cell that nests is 20/3 m, and on its own
-slopes it would push 10.2 % of the fine tier's facets past 7 m in 3D, failing criterion 5 where it now passes.
-**GrassFX at session load.** The v0.12.x freeze came from a far backdrop enrolled as an occluder. That cannot happen
-here: `GRASS_FAR` is in no list, and the occluders are unchanged. `GRASS_MESHES` grows from 2 to 4 meshes and from
-171k to 468k triangles. Its bounding volume shrinks from 4.21 to 3.74 km³ (the skirt is gone: plan 27.9 → 20.5 km²).
-There is no in-game frame-time measurement on this machine: criterion 8's "frame rate no worse" is Kevin's.
+**The budget, honestly.** The ledger estimated ~131k terrain vertices and +~3 MB of kn5. Built: physical `1GRASS`
+**335,165** vertices (8 tiles, ~670k triangles) + `GRASS_FAR` 106,557 (2 tiles), against 87,278 in v0.17.1. The road
+kn5 went **92.5 → 112.6 MB (+20.1 MB)**. Where it goes: the 5 m tier (x-split: criterion 5's 7 m is under a plain 5 m
+cell's 7.1 m diagonal, so every 5 m cell carries a centre vertex) within 60 m of every pavement, the 5 m I-8 corridor,
+the prep's own corridor subdivision near the road (as it always did), and the fix round's refinement of the kept cells'
+outer half (+~98k: the same density as the 5 m tier around them). The masters ship more terrain: Mulholland's
+`la_terrain_background.kn5` is 466,903 vertices in 35 meshes, PCH's `terrain.kn5` 934,769 in 43, at 13–22k per mesh;
+ours are 42k per physical tile. **GrassFX at session load.** The v0.12.x freeze came from a far backdrop enrolled as an
+occluder; that cannot happen here (`GRASS_FAR` is in no list; the occluders are unchanged). `GRASS_MESHES` grows from 2
+meshes / 171k triangles to 8 / ~670k over a smaller bounding volume (the skirt is gone). There is no in-game
+frame-time measurement on this machine: criterion 8's "frame rate no worse" is Kevin's, and it is the first thing to
+check from the seat.
 
-**Stills** (Workbench, eye 1.2 m above the road, shaded as the kn5 ships): the crest facing 046° (Cowles), the crest
-facing 192°, and seam-alvarado along the cut, before and after. Facing 192° from the crest, the houses across the
-street fill the frame in both builds; the profile numbers above are that view.
+**What the stills show** (Workbench, backface culling on as in AC, each mesh coloured by its kn5 texture's mean; before
+= the v0.17.1 gate OBJ, after = ship9's): from the crest facing 046° Cowles stands on the skyline with its shoulder
+ridges where v0.17.1 had a flat green floor; facing 192° the houses across the street fill the frame in both builds
+(Del Cerro is 1.2–1.4° above the eye behind them; the valley wall is below the eye and behind Del Cerro, as in the
+world). From `seam-alvarado` the I-8 is 108 m north behind the verge in both builds — in the world too — so the cut is
+shown from the College Ave and Lake Murray Blvd decks (3 m up, over the rail) and from 120 m above: past 20 m of the
+roads the corridor's walls and the far cuts are now the 3DEP's, and it reads as a valley; with no I-8 pavement (Kevin's
+call) the two overcrossings stand over grass. Remaining, measured and not fixed here: the material seam where green
+`1GRASS` meets the chaparral far ring 250 m out (now close in tone: mean 68/92/40 against 93/93/66, was 139/132/122);
+Alvarado Creek near College aliased by the 5 m cells into a saw-toothed ditch; the far box's own edge on the horizon
+facing 225–000° (smaller than v0.17.1's void); 7 non-manifold edges in `1GRASS`, the same 7 v0.17.1 has, within the
+near-road ground criterion 7 holds.

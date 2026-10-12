@@ -344,3 +344,131 @@ def test_t_junction_finder_is_exact():
     hits = bkl.t_junctions(co, [(0, 1), (0, 2), (2, 3), (3, 4), (5, 6), (8, 7), (7, 9)], tol=0.01)
     assert sorted((e, v, round(t, 3)) for e, v, t in hits) == [(0, 2, 0.25), (0, 3, 0.5), (0, 4, 0.75)]
     # vertex 7 sits exactly on edge 0's line but its own boundary runs ACROSS it (a hole's rim, not a T): left alone
+
+
+def _refine_spec(**refine):
+    r = {"cell_m": 5.0, "beyond_m": 10.0, "edge_m": 5.5, "move_beyond_m": 20.0, "min_face_d_m": 12.0}
+    r.update(refine)
+    s = _kept_spec()
+    t = {"terrain_band_m": 22.0, "tiers": s.tiers,
+         "tier_options": {"physical_within_m": 150.0, "frame": {"kind": "heightfield", "upsample": 2},
+                          "keep_cells": {"cell_m": 20.0, "within_m": 18.0, "refine": r}},
+         "far_extent": {"bbox_swne": _box()}}
+    return tt.TierSpec(t, ORIGIN)
+
+
+def _bkl(tag):
+    p = ROOT / "tracks" / "san-diego-lake-murray" / "engine-july-snapshot" / "scripts" / "ac" / "build_kn5_loop.py"
+    sp_ = importlib.util.spec_from_file_location(tag, p)
+    m = importlib.util.module_from_spec(sp_)
+    sp_.loader.exec_module(m)
+    return m
+
+
+def test_kept_cell_refine_plan_is_opt_in_and_leaves_the_mesh_alone():
+    """ledger 0046 fix round: keep_cells.refine plans the kept cells' 5 m x-split sub-lattice (data for the prep) and
+    nothing else — the topology the assembler meshes is the same vertex for vertex, triangle for triangle"""
+    meta = _meta()
+    plain = tt.Topology(_kept_spec(), ROAD, (), closed_first=False, frame=_kept_spec().frame(meta))
+    spec = _refine_spec()
+    fr = spec.frame(meta)
+    topo = tt.Topology(spec, ROAD, (), closed_first=False, frame=fr)
+    assert plain.refine_cells == [] and plain.refine_keys() == [] and "refine_cells" not in plain.stats()
+    assert topo.vkeys == plain.vkeys and topo.tris == plain.tris and topo.vkeep == plain.vkeep
+    assert topo.refine_cells and topo.stats()["refine_nodes"] == len(topo.refine_keys())
+    fac = topo.r[topo.keep_level] // topo.r[topo.refine_level]
+    assert fac == 4 and topo.r[topo.refine_level] == 2
+    kept = topo.keep
+    r = topo.r[topo.refine_level]
+    for i, j in topo.refine_cells:
+        assert (i // fac, j // fac) in kept, "a refine sub-cell lies inside a kept cell"
+    # a kept sub-cell left out is wholly within beyond_m of the pavement (it never moves: no data needed); every one
+    # reaching past it — where the prep refines faces and moves vertices — has its data
+    have = set(topo.refine_cells)
+    n_out = 0
+    for ci, cj in kept:
+        for a in range(fac):
+            for b in range(fac):
+                i, j = ci * fac + a, cj * fac + b
+                corners = [(fr.x0 + (i + u) * r * fr.ux, fr.z0 + (j + v) * r * fr.uz) for u in (0, 1) for v in (0, 1)]
+                far = max(_pav(x, z) for x, z in corners)
+                if (i, j) not in have:
+                    n_out += 1
+                    assert far <= 10.0 + 1e-6, (i, j, far)
+                if far > 10.0 + 1e-6:
+                    assert (i, j) in have
+    assert n_out, "the sub-cells under and beside the road need no data"
+    keys = set(topo.refine_keys())
+    for i, j in topo.refine_cells:
+        assert {(i * r, j * r), ((i + 1) * r, (j + 1) * r), (i * r + r // 2, j * r + r // 2)} <= keys
+    try:
+        _refine_spec(cell_m=20.0)
+        tt.Topology(_refine_spec(cell_m=20.0), ROAD, (), closed_first=False, frame=fr)
+    except ValueError as err:
+        assert "finer" in str(err)
+    else:
+        raise AssertionError("a refine cell no finer than the kept cell is refused")
+
+
+def test_xsplit_interp_is_the_x_split_cell_surface_and_the_prep_carries_the_same():
+    bkl = _bkl("_bkl_snapshot4")
+    vals = (1.0, 3.0, 7.0, 2.0, 11.0)          # sw, se, ne, nw, centre
+    corners = {(0, 0): 1.0, (1, 0): 3.0, (1, 1): 7.0, (0, 1): 2.0, (0.5, 0.5): 11.0}
+    for (u, v), want in corners.items():
+        assert abs(tt.xsplit_interp(u, v, *vals) - want) < 1e-12
+    # linear along each of the four triangles: midpoints of the spokes and of the sides
+    assert abs(tt.xsplit_interp(0.5, 0.0, *vals) - 2.0) < 1e-12
+    assert abs(tt.xsplit_interp(0.25, 0.25, *vals) - 6.0) < 1e-12
+    assert abs(tt.xsplit_interp(0.75, 0.75, *vals) - 9.0) < 1e-12
+    for k in range(400):
+        u, v = (k * 0.6180339) % 1.0, (k * 0.4142135) % 1.0
+        assert abs(tt.xsplit_interp(u, v, *vals) - bkl.xsplit_interp(u, v, *vals)) < 1e-12
+    for d in (0.0, 20.0, 24.0, 36.0, 50.0):
+        assert abs(tt.keep_weight(d, 20.0, 16.0) - bkl.keep_weight(d, 20.0, 16.0)) < 1e-12
+
+
+def test_refine_field_reads_one_surface_across_sub_cell_edges_and_moves_nothing_near_the_road():
+    bkl = _bkl("_bkl_snapshot5")
+    # two listed sub-cells side by side (cell_r 2 base units, base 2.5 m), one kept 20 m cell (keep_r 8)
+    nodes = {}
+    for i in range(0, 5):
+        for j in range(0, 3):
+            nodes[(i, j)] = (10.0 + i + 0.5 * j, 15.0 + 2.5 * i)          # (D, d) on the base lattice
+    R = {"frame": [0.0, 0.0, 2.5, 2.5], "keep_r": 8, "cell_r": 2, "kept_cells": [[0, 0]], "cells": [[0, 0], [1, 0]],
+         "I": [k[0] for k in nodes], "J": [k[1] for k in nodes], "D": [v[0] for v in nodes.values()],
+         "d": [v[1] for v in nodes.values()], "keep_m": 20.0, "keep_feather_m": 16.0, "edge_m": 5.5,
+         "move_beyond_m": 20.0, "min_face_d_m": 12.0}
+    F = bkl.RefineField(R)
+    assert F.in_kept(3.0, 3.0) and not F.in_kept(21.0, 3.0)
+    # on the shared edge x = 5 m both cells give the corner-linear value, and float32 noise either side agrees
+    for y in (0.0, 1.0, 2.5, 4.0, 5.0):
+        a, b, c = F.at(5.0, y, F.D), F.at(5.0 - 2e-5, y, F.D), F.at(5.0 + 2e-5, y, F.D)
+        assert abs(a - b) < 1e-3 and abs(a - c) < 1e-3
+    assert F.at(12.0, 1.0, F.D) is None, "off the listed sub-cells: no data, nothing moves"
+    # nodes reproduce exactly
+    assert abs(F.at(5.0, 5.0, F.D) - nodes[(2, 2)][0]) < 1e-9 and abs(F.at(7.5, 2.5, F.d) - nodes[(3, 1)][1]) < 1e-9
+    # within move_beyond_m of a pavement nothing moves; past it the data feathered toward the graded height
+    assert F.target(0.5, 0.5, 99.0) is None                         # d ~ 15.5 m
+    x = 9.0                                                         # d = 15 + 2.5 * 3.6 = 24 m
+    d, D = F.at(x, 1.0, F.d), F.at(x, 1.0, F.D)
+    w = bkl.keep_weight(d, 20.0, 16.0)
+    assert d > 20.0 and 0.0 < w < 1.0
+    assert abs(F.target(x, 1.0, 50.0) - (D + w * (50.0 - D))) < 1e-9
+    # the BUILT pavement counts when it is nearer (a mouth weld / flare wider than the centreline width): nothing within
+    # move_beyond_m of what was built moves
+    assert F.target(x, 1.0, 50.0, d_built=19.0) is None
+    assert abs(F.target(x, 1.0, 50.0, d_built=40.0) - (D + w * (50.0 - D))) < 1e-9
+
+
+def test_clip_ears_never_cuts_a_zero_area_triangle():
+    """the prep's pentagon triangulation (a triangle with two halved edges): pure parts only — the ear choice. The
+    widest-ear rule it replaced cut long medians that the next round halved again (no convergence); a generic
+    triangulation can cut the zero-area cap (A, M_ab, B) that a later data move stands up as a fin"""
+    import inspect
+    bkl = _bkl("_bkl_snapshot6")
+    src = inspect.getsource(bkl._clip_ears)
+    assert "1e-3 * amax" in src and "diag < best[0]" in src
+    src = inspect.getsource(bkl._refine_kept_terrain)
+    for must in ("use_single_edge=True", "_clip_ears(f)", "remove_doubles", "_weld_t_junctions(bm)", "abs(f.normal.z) < 0.05",
+                 "raise SystemExit"):
+        assert must in src, must

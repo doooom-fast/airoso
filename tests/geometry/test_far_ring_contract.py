@@ -88,3 +88,27 @@ def test_untiered_tracks_are_untouched():
     before = sorted(p.name for p in (d / "data").iterdir())
     assert terrain_sample.run(d) is None
     assert sorted(p.name for p in (d / "data").iterdir()) == before, "an untiered track gets no terrain files"
+
+
+def test_lake_murray_far_ring_wears_its_chaparral_and_the_chain_carries_it():
+    """ledger 0046 fix round (visual verify): the stock far row is a neutral grey gravel; Lake Murray binds its own
+    grey-olive chaparral through texture_overrides (project-relative), and both ship chains carry the file in"""
+    sd = ROOT / "tracks" / "san-diego-lake-murray"
+    cfg = json.loads((sd / "track.config.json").read_text(encoding="utf-8"))
+    rel = cfg["texture_overrides"]["GRASS_FAR"]["diffuse"]
+    assert rel == "textures/chaparral_far_diffuse.jpg" and (sd / rel).is_file()
+    with tempfile.TemporaryDirectory() as d:
+        proj = Path(d)
+        (proj / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
+        (proj / "textures").mkdir()
+        (proj / rel).write_bytes((sd / rel).read_bytes())
+        ov = pbr.load_overrides(proj)
+        assert Path(ov["GRASS_FAR"]["diffuse"]) == proj / rel
+        r = pbr.resolve("GRASS_FAR_1", overrides=ov)
+        assert r["key"] == "GRASS_FAR" and r["overridden"] is True
+        # 1GRASS keeps its own turf: the two keys never cross
+        assert Path(ov["1GRASS"]["diffuse"]).name == "grass_diffuse.jpg"
+    ship_sd = (ROOT / "tools" / "ship_sd.sh").read_text(encoding="utf-8")
+    assert 'TRACK_TEXTURES="textures/chaparral_far_diffuse.jpg"' in ship_sd
+    spec = json.loads((sd / "ship.json").read_text(encoding="utf-8"))
+    assert rel in spec["sync_in"]["optional"]

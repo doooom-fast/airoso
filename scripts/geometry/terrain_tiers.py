@@ -80,6 +80,19 @@ def keep_weight(d: float, keep_m: float, feather_m: float) -> float:
     return 1.0 - smoothstep((d - keep_m) / feather_m)
 
 
+def xsplit_interp(u: float, v: float, sw: float, se: float, ne: float, nw: float, c: float) -> float:
+    """the value at (u, v) in [0, 1]^2 of a cell split in four around its centre (``x_split``): linear on the
+    S (sw, se, c), E (se, ne, c), N (ne, nw, c) or W (nw, sw, c) triangle that holds the point — exactly the
+    surface the lattice's x-split cells mesh"""
+    if v <= u and v <= 1.0 - u:          # S: c weight 2v
+        return (1.0 - u - v) * sw + (u - v) * se + 2.0 * v * c
+    if u >= v and u >= 1.0 - v:          # E: c weight 2(1-u)
+        return (u - v) * se + (u + v - 1.0) * ne + 2.0 * (1.0 - u) * c
+    if v >= u and v >= 1.0 - u:          # N: c weight 2(1-v)
+        return (u + v - 1.0) * ne + (v - u) * nw + 2.0 * (1.0 - v) * c
+    return (v - u) * nw + (1.0 - u - v) * sw + 2.0 * u * c   # W: c weight 2u
+
+
 def meters_per_degree(lat0: float) -> tuple[float, float]:
     """(m per deg lon, m per deg lat) — the projection every Lake Murray grid already uses."""
     m_lat = 111_132.92 - 559.82 * math.cos(2 * math.radians(lat0))
@@ -109,6 +122,12 @@ class TierSpec:
         kc = opt.get("keep_cells") or {}
         self.keep_cell_m = float(kc["cell_m"]) if kc else None
         self.keep_within_m = float(kc.get("within_m", 0.0)) if kc else 0.0
+        rf = kc.get("refine") or {}
+        self.refine = dict(rf) if (rf and self.keep_cell_m) else None
+        if self.refine is not None:
+            for k in ("cell_m", "beyond_m", "edge_m", "move_beyond_m", "min_face_d_m"):
+                if k not in self.refine:
+                    raise ValueError(f"terrain.tier_options.keep_cells.refine needs {k}")
         self.physical_m = float(opt.get("physical_within_m", 250.0))
         self.keep_m = float(opt.get("keep_surface_m", 0.0))
         self.keep_feather_m = float(opt.get("keep_feather_m", 0.0))
@@ -126,6 +145,8 @@ class TierSpec:
         cells |= {float(c["cell_m"]) for c in self.includes}
         if self.keep_cell_m:
             cells.add(self.keep_cell_m)
+        if self.refine is not None:
+            cells.add(float(self.refine["cell_m"]))
         self.levels = sorted(cells, reverse=True)                 # coarse -> fine (nominal metres)
         self.ratios = []
         for a, b in zip(self.levels, self.levels[1:]):
@@ -328,6 +349,30 @@ class Topology:
             self.keep = mark(pts(2.0), spec.keep_within_m, self.keep_level)
             if self.keep_level > 0:
                 marks.append((self.keep_level, self.keep, self.keep_level))
+        # REFINE (ledger 0046 fix round): the kept cells reach ~46 m out, and past the prep's reach they stay the graded
+        # grid's 20 m triangles (criterion 5's long facets 15-35 m from a road; the I-8 terrace walls beside Alvarado
+        # smoothed away). The prep refines them AFTER it has reshaped the near-road ground (build_kn5_loop
+        # _refine_kept_terrain): coplanar to <= edge_m, then every vertex past move_beyond_m takes the data with the
+        # same feather as the lattice beside it. It needs the data at a cell_m x-split sub-lattice of every kept cell
+        # that reaches past beyond_m: those sub-cells (refine level) and their corner + centre nodes are planned here
+        # (sampled like any vertex; the topology the assembler meshes is unchanged).
+        self.refine_level = None
+        self.refine_cells = []
+        if spec.refine is not None and self.keep:
+            Lr = spec.level_of(spec.refine["cell_m"])
+            if Lr <= self.keep_level:
+                raise ValueError("keep_cells.refine.cell_m must be finer than keep_cells.cell_m")
+            self.refine_level = Lr
+            fac = self.r[self.keep_level] // self.r[Lr]
+            cx, cz = csz(Lr)
+            near_m = float(spec.refine["beyond_m"]) - math.hypot(cx, cz)
+            near = mark(pts(2.0), near_m, Lr) if near_m > 0 else set()   # wholly within beyond_m: never moved
+            for i, j in sorted(self.keep):
+                for a in range(fac):
+                    for b in range(fac):
+                        k = (i * fac + a, j * fac + b)
+                        if k not in near:
+                            self.refine_cells.append(k)
         # physical marks at the finest tier level that is not the coarse ground's
         self.phys_level = min(1, nlev - 1)
         self.phys = mark(pts(5.0), spec.physical_m, self.phys_level)
@@ -534,6 +579,18 @@ class Topology:
                     out.add(nb)
         return out
 
+    def refine_keys(self) -> list:
+        """base keys of every refine sub-cell's corners and centre (sorted, unique) — the data the prep's
+        kept-cell refinement interpolates (x-split, like the lattice beside it)"""
+        if not self.refine_cells:
+            return []
+        r = self.r[self.refine_level]
+        out = set()
+        for i, j in self.refine_cells:
+            x0, z0 = i * r, j * r
+            out.update(((x0, z0), (x0 + r, z0), (x0 + r, z0 + r), (x0, z0 + r), (x0 + r // 2, z0 + r // 2)))
+        return sorted(out)
+
     # --- convenience -----------------------------------------------------------------------------
     def xz(self, n: int) -> tuple[float, float]:
         I, J = self.vkeys[n]
@@ -549,6 +606,8 @@ class Topology:
         return {"vertices": len(self.vkeys), "triangles": len(self.tris),
                 "leaves_by_cell_m": {str(k): v for k, v in sorted(by.items())},
                 "kept_cells": sum(1 for k in self.leaves if self.is_keep(k)), "kept_vertices": sum(self.vkeep),
+                **({"refine_cells": len(self.refine_cells), "refine_nodes": len(self.refine_keys())}
+                   if self.refine_cells else {}),
                 "physical_vertices": len(used_p), "far_vertices": len(used_f),
                 "physical_triangles": sum(1 for p in self.tri_phys if p),
                 "far_triangles": sum(1 for p in self.tri_phys if not p)}

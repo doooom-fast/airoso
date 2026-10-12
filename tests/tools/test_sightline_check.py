@@ -77,3 +77,18 @@ def test_bearing_reports_where_the_ground_ends_and_ignores_other_groups():
     r = rep[0]
     assert 2990.0 <= r["built_to_m"] <= 3000.0 and 3000.0 <= r["first_gap_m"] <= 3010.0, r
     assert r["max_ground_abs_m"] == 90.0
+
+
+def test_the_target_is_the_summit_top_and_the_nominal_point_is_reported():
+    """ledger 0046 fix round: the nominal (1380, 2700) is ~14 m off the real top. The ray is aimed at the highest built
+    vertex within the summit cone (criterion 1's 60 m); the shoulder inside the cone is reported, not judged, and the
+    nominal point's own angle is printed beside the verdict"""
+    g = []
+    _grid(g, "1ROAD_road", -20, 20, -20, 20, 10, lambda x, z: 0.0)
+    _grid(g, "GRASS_FAR_0", -1000, 1000, 300, 2600, 25, lambda x, z: _peak(x, z, cx=25.0, cz=1675.0))
+    rep, bad = sc.run(_obj(g), [{"name": "crest", "from": (0.0, 0.0), "to": (0.0, 1650.0), "min_deg": 9.0}])
+    r = rep[0]
+    assert bad == 0 and r["pass"] and r["nominal"] == [0.0, 1650.0], r
+    assert abs(r["top_abs_m"] - 370.0) < 1e-6 and abs(r["target_dist_m"] - math.hypot(25.0, 1675.0)) < 0.1
+    assert r["nominal_deg"] < r["target_deg"], "the nominal point sits on the flank, below the top"
+    assert r["max_shoulder_deg"] is not None and r["max_intermediate_deg"] < r["target_deg"]

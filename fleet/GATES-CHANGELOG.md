@@ -941,7 +941,7 @@ releases (smoothstep) to the raw DEM by `terrain.clamp_blend_m`; beyond, 3DEP st
 | `clamp_blend_m` | 250 m | ~250 or the medium tier's edge |
 | `tiers` | 5 m (x-split) within 60 m of a pavement, 20 m (x-split) to 500 m, 40 m beyond | the ledger's own example; 5 m is the only nesting cell under criterion 5's 7 m (20/3 m would put 10.2 % of the fine tier's facets past 7 m in 3D on its slopes) |
 | `tier_options.keep_cells` | the graded 20 m grid's own cells within 18 m of a pavement | the seat moves ground ≤ 11.1 m past a pavement and subdivides ≤ 15.1 m; the prep pins ≤ 9 m and subdivides ≤ 16 m |
-| `keep_surface_m` / `keep_feather_m` | 20 / 16 m — from the pavement **and** (2026-10-12) from the nearest kept node | the conform corridor and blend. The kept-node feather removed 1,355 of the 1,404 ledges (> 100 % built slope, > 2× the data's) the pavement-only feather left at the kept cells' outer edge, with every gate identical |
+| `keep_surface_m` / `keep_feather_m` | 20 / 16 m — from the pavement **and** (2026-10-12) from the nearest kept node (the kept-node feather retired by the fix round below, where the kept cells themselves take the pavement feather past 20 m) | the conform corridor and blend. The kept-node feather removed 1,355 of the 1,404 ledges (> 100 % built slope, > 2× the data's) the pavement-only feather left at the kept cells' outer edge, with every gate identical |
 | `physical_within_m` | 250 m | drive_test sweeps ≤ 20 m off the road, TreeFX fills ≤ 200 m |
 | I-8 corridor | ±80 m at 5 m; floor every 10 m, 2 m sections every 25 m | the ledger asked 10 m cells; 10 m does not nest beside a kept 20 m cell (two levels) |
 | `include.cowles_mountain` | 20 m cells over the summit box | the ledger's 20 m |
@@ -950,8 +950,9 @@ releases (smoothstep) to the raw DEM by `terrain.clamp_blend_m`; beyond, 3DEP st
 
 ### Verification criteria (ledger 0046 §Verification) — measured on the built gate OBJ against fresh 3DEP, NOT gated
 
-Results are in the ledger. Two read FAIL as written, with the cause measured: criterion 5's 15–60 m p90 is 9.05 m
-(the kept near-road cells and the prep's slivers of them reach ~46 m out; the 5 m tier itself passes), and criterion
+Results are in the ledger. As first rehearsed two read FAIL as written, with the cause measured: criterion 5's 15–60 m p90
+was 9.05 m (the kept near-road cells and the prep's slivers of them reach ~46 m out; fixed at that cause by the fix
+round below: 5.27 m), and criterion
 3's "no vertex below 100 m" is premised on a real low of ~121 m — fresh 3DEP puts the San Diego River side of the box
 at 20–100 m (20,622 vertices; a 1,684-vertex sample against fresh 3DEP: p95 0.005 m, and the 16 off by > 1 m are
 graded ground 13–42 m from a pavement or in the clamp's release band). Neither is loosened here:
@@ -968,3 +969,38 @@ and its shadowing guard are gone, as in `ship_sd.sh`; a draft naming the assembl
 gate OBJ is `ship_road_obj`, before the track folder, for San Diego and the Lariat alike (`gate_road_obj` removed);
 San Diego's engine honours `ENG=<dir>` as `ship_sd.sh` does (no other track can name an engine); the 3DEP cache and
 the I-8 corridor files cross in and out. `ship_sd.sh` stays San Diego's chain of record, not a shim.
+
+
+### Fix round (2026-10-12, after the truth + visual verify): the kept cells refined past 20 m, a prep fin check, the far ring's chaparral, the summit cone
+
+Two independent verifiers refuted the rehearsed build on criterion 5 (15–60 m facet p90 9.02 m), criterion 4 (19 of
+171 I-8 sections) and the I-8's look from the seat, and found the far ring wearing a grey gravel tile. The cause of the
+first three was one thing: the kept v0.17.1 20 m cells reach ~46 m out, and past the prep's reach they stayed 20 m
+graded facets (the legacy 1 m trench and clamp included). Rehearsed in full again (ship9, `ship_sd.sh --no-install`,
+ENG = the scratch engine-july): **every gate verdict file identical to v0.17.1 field for field** (`grass_verts` and
+no_route timing aside), race and closure kn5 unchanged in size.
+
+| Item | Before | After | Flag |
+|---|---|---|---|
+| engine-july `build_kn5_loop._refine_kept_terrain` (new, pending mirror; opt-in by `data/terrain.refine.json.gz`, absent on every other track) | the kept cells stayed the graded grid's 20 m triangles out to ~46 m | after the conform and the T-junction weld, before the re-seat: (1) coincident vertices merged at 1 mm; (2) every edge > `edge_m` of a kept-cell face reaching past `move_beyond_m` (or centred past `min_face_d_m`) halved until none is — coplanar, nothing moves; one cut = `tri_1edge`, three = `tri_3edge`, the two-cut pentagon ear-clipped (never a zero-area cap); near-vertical faces (\|n_z\| < 0.05, the graded surface's own steps) never halved; (3) merge + weld again; (4) every kept-cell vertex past `move_beyond_m` — by the data's pavement distance or the BUILT road's, whichever is nearer — takes the 3DEP sub-lattice under the L3 clamp, feathered toward its graded height exactly as the lattice beside it (`keep_surface_m` / `keep_feather_m`). On the build: 97,637 edges halved, 63,193 vertices moved (max 8.23 m), 0 fins | wiring |
+| the same, fin check (new, **FATAL**) | — | a plan-flat face with a moved vertex that is not flat in 3D (a vertical fin over a crack) refuses the export. 0 on the build. The first cut of this pass (bmesh's generic triangulation of the two-cut pentagon, and halving vertical faces) stood ~7,300 such fins up; the gate OBJ now has 199 face-down 1GRASS triangles (v0.17.1: 209, zero-area or near it) and the same 7 non-manifold edges as v0.17.1 | [std] 0 is not invented: a fin is a crack |
+| `terrain_tiers` `keep_cells.refine` (new, opt-in) + `terrain_sample` | — | plans the 5 m x-split sub-lattice of every kept 20 m sub-cell not wholly within `beyond_m` of a pavement (34,036 sub-cells, 76,926 nodes; 66,878 new 3DEP samples, 149 requests, cached in `terrain.samples.json.gz`); the topology the assembler meshes is unchanged vertex for vertex | wiring |
+| the assembler's kept-node feather (2026-10-12, ship6) | non-kept vertices feathered from the nearest kept node too | **retired** when `refine` is on: the kept cells now follow the same pavement feather past 20 m, so the field is one surface across the kept edge (its 1,355 ledges cannot recur — the kept edge is no longer the graded surface) | wiring |
+| `tools/sightline_check.py` | target = the nominal (1380, 2700), "the highest within 40 m" | target = the summit's TOP (the highest built vertex within 60 m, criterion 1's radius); the summit as seen = the cone's highest angle; judged against every step outside the cone; the top's, the shoulder's and the nominal point's angles all printed. The nominal is a 20 m-lattice probe ~14 m off the real top; the ledger's own Evidence calls the profile's last 10 m "the summit's own shoulder" | measured, not gated |
+| `track.config.json` `texture_overrides.GRASS_FAR` | pbr's stock `ground_dry_diffuse.jpg` (mean RGB 139/132/122, a grey gravel) | `tracks/san-diego-lake-murray/textures/chaparral_far_diffuse.jpg`, grey-olive sage scrub over tan soil (mean 93/93/66), derived reproducibly from the stock grass + ground_dry tiles (`make_chaparral_far.py`); synced by `ship_sd.sh` `TRACK_TEXTURES` and `ship.json` | look only |
+| prep log grep (`ship_sd.sh`, `ship_track.sh`) | — | `kept-cell refinement` line shown | wiring |
+
+| Invented number (⚠) | Value | Why |
+|---|---|---|
+| `keep_cells.refine.cell_m` | 5 m | the near-road tier's own cell (x-split) |
+| `refine.beyond_m` | 10 m | sub-cells wholly within it never move and need no data (the prep pins ≤ 9 m) |
+| `refine.edge_m` | 5.5 m | halves a 20.07 m edge to 5.02 m and a 28.4 m diagonal to 3.55 m — the x-split sub-lattice; criterion 5's 7 m |
+| `refine.move_beyond_m` | 20 m | criterion 7's band (ground within 20 m of a pavement \|Δy\| ≤ 0.05 m); equal to `keep_surface_m`, so the feather starts at weight 1 |
+| `refine.min_face_d_m` | 12 m | past the excursion sweep (≤ 9 m past the edge): refining there is coplanar, so the number only bounds the vertex cost |
+
+Measured (ledger 0046 Results, ship9 gate OBJ against fresh 3DEP, the truth lens's own code): criterion 5 15–60 m
+p90 **5.27 m** (was 9.02), 60–500 m 20.2 m; criterion 4 162 of 171 (was 152): the 7 near-road failures are sections
+whose rim or centre lies on a pavement or within 20 m of one (criterion 7 holds that ground to v0.17.1), the 2 away are
+2–4 m-wide 3DEP features (a 4 m step within 2 m; a median berm) under 5 m cells; criterion 7 within 20 m: 3D distance to
+the v0.17.1 surface 0.000 m max. The cost: physical `1GRASS` 236,771 → 335,070 vertices in 8 balanced tiles (max
+42,411), road kn5 107.3 → 112.6 MB. Neither criterion is loosened here.

@@ -607,3 +607,45 @@ artifact. Status stays `open` and the tier stays T0: there is no geometry, kn5 o
 - the GATES-CHANGELOG entry for the one-way gate (that file belongs to the race-corridor run);
 - C9's hairpin fit, at 2.04 m against the invented 1.5 m limit;
 - P1 onward.
+
+## P2, the centreline: the paint, not OSM (2026-10-11)
+
+The aerial pass (airoso e82ff8c) measured the painted road on public-domain NAIP 2019 and found OSM
+off it by ~7 m at C4 and 2-5 m at C10, so the fitter's 1.5 m-from-OSM limit was judging against the
+wrong line. This step makes the paint the reference. On disk, uncommitted; no elevation, mesh, kn5 or
+Blender. Status stays `open`, tier T0.
+- **The aerial measurement is a repo tool now:** `tools/aerial_measure.py` + `tools/aerial/` (NAIP
+  fetch with TLS verification on, registration, paint and edge tracing, concentric fits, widths, edge
+  marks, junctions, the C-470 decks). Re-run on the pass's own windows it reproduces
+  `data/aerial/aerial_measurements.json` exactly, except the cache path sentence and ten stations
+  written as `2050` instead of `2050.0`; all 14 overlays are byte-identical. The plan and the
+  observations written by eye live in `data/aerial/aerial_spec.json`.
+- **The paint it traced** is `data/aerial/paint_traces.json`: 49 windows, 5,813 yellow points of
+  medium or high confidence, in the engine frame.
+- **The centreline** (`tools/paint_centreline.py`): the OSM line moved onto that paint, OSM kept in
+  shadow (C7's apex, C11, the upper climb), blended between, and the climb resampled at 1 m as one
+  curvature-continuous line, the seam included. It is `data/centerline.geojson`, 14,445 points; the
+  OSM line is kept as `data/centerline.osm.geojson`. It moved up to 7.6 m at C4, 4.8 m at C10, 3.9 m
+  at the undeclared bend at st ~6,809, and 1-2.6 m on straights.
+- **The gate** (`tools/verify_centreline_paint.py`) passes it on all four checks: every medium+ paint
+  point within 0.75 m (worst 0.61 m; OSM's worst 7.56 m); no curvature failure on 7,114 climb points
+  at 1 m (OSM: 444 step + 971 neighbour failures); no reversal or self-crossing; the seam closed exactly
+  and smooth. `tools/fit_hairpins.py` no longer judges position: its 1.5 m ceiling is gone, so C9's
+  "2.04 m" item above is closed (the line is 0.29 m from C9's paint).
+- **The config follows the line** (`tools/remap_centreline_config.py`): 141 values re-derived by
+  station (31 vertex indices: starts, sectors, race boxes; stations, the history station, the
+  hairpin_fit stations), recorded in `data/centerline_remap.json`, with the line's md5 now in the
+  config (`centerline_frame`). `tools/layout_dummies.py` still validates every layout. The timing line
+  moved 0.155 m.
+- **The one-way check** still passes: Full 0 m; Reverse 4,486.3 m, only on the four declared stretches.
+- **Kevin sees** `data/aerial/overlays/paint_C4.png`, `paint_C9.png`, `paint_C10.png` and
+  `paint_climb.png`: OSM in grey, the new line in yellow, the painted edge lines in white.
+- **Tests:** `tests/run_tests.py` 519 passed, 0 failed (22 new).
+
+**Still owed:**
+- the GATES-CHANGELOG entry for the paint gate and the fitter change (that file is the concurrent
+  run's; the text is in this step's report);
+- C12 and C13 stay junction nodes: an arc at the measured radius needs ~12.5 m tangents, but the
+  traced arm paint runs to within 9-15 m of the node. P3b's junction mouth decides;
+- C11's apex and most of st ~6,200-6,800 have no paint (shadow): another image or Street View;
+- elevation and everything after it (P2 steps 1, 3-7).

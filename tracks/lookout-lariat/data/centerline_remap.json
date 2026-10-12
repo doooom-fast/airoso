@@ -1,0 +1,948 @@
+{
+ "tool": "tools/remap_centreline_config.py",
+ "old_line": {
+  "path": "data/centerline.osm.geojson",
+  "md5": "28dcc7b644510179fe366eb56d3911e5",
+  "points": 8302,
+  "length_m": 24905.69,
+  "projection_start_pick_geojson_v": 8300,
+  "local_index_is_geojson_index_plus": 1,
+  "local_station_of_geojson_v0_m": 2.152
+ },
+ "new_line": {
+  "path": "data/centerline.geojson",
+  "md5": "ef44db97f9eb175d2a14510737f5ac83",
+  "points": 14445,
+  "length_m": 24914.24,
+  "projection_start_pick_geojson_v": 14442,
+  "local_index_is_geojson_index_plus": 2,
+  "local_station_of_geojson_v0_m": 2.0
+ },
+ "frames": {
+  "local": "centerline.local.json's index space and plan stations: the ring rotated by projection.py's route.start_at pick (emulated, plan only)",
+  "geojson": "data/centerline.geojson's own index space and plan stations from its v0 (tools/fit_hairpins.py)",
+  "osm": "stations on data/centerline.osm.geojson, the key both lines share (osm_station_m on the paint centreline)",
+  "not_remapped": "hairpin_fit.climb_st_m: defined on the OSM source line"
+ },
+ "method": "vertex -> the new vertex with the nearest OSM station; station -> linear interpolation along the new line; precision kept",
+ "start_line_moved_m": 0.155,
+ "grid_distance_behind_line_m": {
+  "old": {
+   "street_full": 26.9,
+   "street_reverse": 26.1,
+   "race_acw": 26.9,
+   "race_cw": 26.1
+  },
+  "new": {
+   "street_full": 27.0,
+   "street_reverse": 26.0,
+   "race_acw": 27.0,
+   "race_cw": 26.0
+  }
+ },
+ "layout_dummies_fails": {
+  "old": [],
+  "new": []
+ },
+ "changes": [
+  {
+   "path": "hairpin_fit.corners[0].st_m",
+   "frame": "geojson station",
+   "old": 276,
+   "new": 276
+  },
+  {
+   "path": "hairpin_fit.corners[1].st_m",
+   "frame": "geojson station",
+   "old": 1077,
+   "new": 1076
+  },
+  {
+   "path": "hairpin_fit.corners[2].st_m",
+   "frame": "geojson station",
+   "old": 1401,
+   "new": 1400
+  },
+  {
+   "path": "hairpin_fit.corners[3].st_m",
+   "frame": "geojson station",
+   "old": 2607,
+   "new": 2614
+  },
+  {
+   "path": "hairpin_fit.corners[4].st_m",
+   "frame": "geojson station",
+   "old": 2845,
+   "new": 2858
+  },
+  {
+   "path": "hairpin_fit.corners[5].st_m",
+   "frame": "geojson station",
+   "old": 3004,
+   "new": 3018
+  },
+  {
+   "path": "hairpin_fit.corners[6].st_m",
+   "frame": "geojson station",
+   "old": 5424,
+   "new": 5435
+  },
+  {
+   "path": "hairpin_fit.corners[7].st_m",
+   "frame": "geojson station",
+   "old": 5523,
+   "new": 5533
+  },
+  {
+   "path": "hairpin_fit.corners[8].st_m",
+   "frame": "geojson station",
+   "old": 5624,
+   "new": 5633
+  },
+  {
+   "path": "hairpin_fit.corners[9].st_m",
+   "frame": "geojson station",
+   "old": 5879,
+   "new": 5888
+  },
+  {
+   "path": "hairpin_fit.corners[10].st_m",
+   "frame": "geojson station",
+   "old": 6479,
+   "new": 6489
+  },
+  {
+   "path": "hairpin_fit.corners[11].st_m",
+   "frame": "geojson station",
+   "old": 9742,
+   "new": 9750
+  },
+  {
+   "path": "hairpin_fit.corners[12].st_m",
+   "frame": "geojson station",
+   "old": 10611,
+   "new": 10622
+  },
+  {
+   "path": "width_overrides[0].st_m[0]",
+   "frame": "local station",
+   "old": 0,
+   "new": 0
+  },
+  {
+   "path": "width_overrides[0].st_m[1]",
+   "frame": "local station",
+   "old": 1073,
+   "new": 1072
+  },
+  {
+   "path": "width_overrides[1].st_m[0]",
+   "frame": "local station",
+   "old": 1073,
+   "new": 1072
+  },
+  {
+   "path": "width_overrides[1].st_m[1]",
+   "frame": "local station",
+   "old": 7102,
+   "new": 7110
+  },
+  {
+   "path": "width_overrides[2].st_m[0]",
+   "frame": "local station",
+   "old": 2500,
+   "new": 2499
+  },
+  {
+   "path": "width_overrides[2].st_m[1]",
+   "frame": "local station",
+   "old": 3100,
+   "new": 3114
+  },
+  {
+   "path": "width_overrides[4].st_m[0]",
+   "frame": "local station",
+   "old": 7102,
+   "new": 7110
+  },
+  {
+   "path": "width_overrides[4].st_m[1]",
+   "frame": "local station",
+   "old": 7702,
+   "new": 7710
+  },
+  {
+   "path": "width_overrides[5].st_m[0]",
+   "frame": "local station",
+   "old": 7702,
+   "new": 7710
+  },
+  {
+   "path": "width_overrides[5].st_m[1]",
+   "frame": "local station",
+   "old": 9744,
+   "new": 9752
+  },
+  {
+   "path": "width_overrides[6].st_m[0]",
+   "frame": "local station",
+   "old": 9744,
+   "new": 9752
+  },
+  {
+   "path": "width_overrides[6].st_m[1]",
+   "frame": "local station",
+   "old": 11690,
+   "new": 11699
+  },
+  {
+   "path": "width_overrides[7].st_m[0]",
+   "frame": "local station",
+   "old": 11690,
+   "new": 11699
+  },
+  {
+   "path": "width_overrides[7].st_m[1]",
+   "frame": "local station",
+   "old": 16612,
+   "new": 16621
+  },
+  {
+   "path": "width_overrides[8].st_m[0]",
+   "frame": "local station",
+   "old": 16612,
+   "new": 16621
+  },
+  {
+   "path": "width_overrides[8].st_m[1]",
+   "frame": "local station",
+   "old": 20271,
+   "new": 20280
+  },
+  {
+   "path": "width_overrides[9].st_m[0]",
+   "frame": "local station",
+   "old": 20286,
+   "new": 20295
+  },
+  {
+   "path": "width_overrides[9].st_m[1]",
+   "frame": "local station",
+   "old": 23919,
+   "new": 23928
+  },
+  {
+   "path": "width_overrides[10].st_m[0]",
+   "frame": "local station",
+   "old": 23919,
+   "new": 23928
+  },
+  {
+   "path": "width_overrides[10].st_m[1]",
+   "frame": "local station",
+   "old": 24321,
+   "new": 24330
+  },
+  {
+   "path": "width_overrides[11].st_m[0]",
+   "frame": "local station",
+   "old": 24321,
+   "new": 24330
+  },
+  {
+   "path": "width_overrides[11].st_m[1]",
+   "frame": "local station",
+   "old": 24906,
+   "new": 24915
+  },
+  {
+   "path": "divided.stretches[0].st_m[0]",
+   "frame": "local station",
+   "old": 16612.3,
+   "new": 16621.1
+  },
+  {
+   "path": "divided.stretches[0].st_m[1]",
+   "frame": "local station",
+   "old": 16698.5,
+   "new": 16707.3
+  },
+  {
+   "path": "divided.stretches[1].st_m[0]",
+   "frame": "local station",
+   "old": 19959.5,
+   "new": 19968.2
+  },
+  {
+   "path": "divided.stretches[1].st_m[1]",
+   "frame": "local station",
+   "old": 20271.1,
+   "new": 20279.8
+  },
+  {
+   "path": "divided.stretches[2].st_m[0]",
+   "frame": "local station",
+   "old": 20285.6,
+   "new": 20294.3
+  },
+  {
+   "path": "divided.stretches[2].st_m[1]",
+   "frame": "local station",
+   "old": 24320.7,
+   "new": 24329.2
+  },
+  {
+   "path": "divided.stretches[3].st_m[0]",
+   "frame": "local station",
+   "old": 24320.7,
+   "new": 24329.2
+  },
+  {
+   "path": "divided.stretches[3].st_m[1]",
+   "frame": "local station",
+   "old": 24374.3,
+   "new": 24382.8
+  },
+  {
+   "path": "layouts[0].start.line_vertex",
+   "frame": "local index",
+   "old": 0,
+   "new": 0,
+   "moved_m": 0.15
+  },
+  {
+   "path": "layouts[0].start.grid_vertex",
+   "frame": "local index",
+   "old": 8292,
+   "new": 14417,
+   "moved_m": 0.05
+  },
+  {
+   "path": "layouts[0].start.sector_vertices[0]",
+   "frame": "local index",
+   "old": 2394,
+   "new": 7185,
+   "moved_m": 0.0
+  },
+  {
+   "path": "layouts[0].start.sector_vertices[1]",
+   "frame": "local index",
+   "old": 5518,
+   "new": 11623,
+   "moved_m": 0.0
+  },
+  {
+   "path": "layouts[1].start.line_vertex",
+   "frame": "local index",
+   "old": 0,
+   "new": 0,
+   "moved_m": 0.15
+  },
+  {
+   "path": "layouts[1].start.grid_vertex",
+   "frame": "local index",
+   "old": 9,
+   "new": 26,
+   "moved_m": 0.01
+  },
+  {
+   "path": "layouts[1].start.sector_vertices[0]",
+   "frame": "local index",
+   "old": 5518,
+   "new": 11623,
+   "moved_m": 0.0
+  },
+  {
+   "path": "layouts[1].start.sector_vertices[1]",
+   "frame": "local index",
+   "old": 2394,
+   "new": 7185,
+   "moved_m": 0.0
+  },
+  {
+   "path": "layouts[2].start.line_vertex",
+   "frame": "local index",
+   "old": 0,
+   "new": 0,
+   "moved_m": 0.15
+  },
+  {
+   "path": "layouts[2].start.grid_vertex",
+   "frame": "local index",
+   "old": 8292,
+   "new": 14417,
+   "moved_m": 0.05
+  },
+  {
+   "path": "layouts[2].start.sector_vertices[0]",
+   "frame": "local index",
+   "old": 2394,
+   "new": 7185,
+   "moved_m": 0.0
+  },
+  {
+   "path": "layouts[2].start.sector_vertices[1]",
+   "frame": "local index",
+   "old": 5518,
+   "new": 11623,
+   "moved_m": 0.0
+  },
+  {
+   "path": "layouts[3].start.line_vertex",
+   "frame": "local index",
+   "old": 0,
+   "new": 0,
+   "moved_m": 0.15
+  },
+  {
+   "path": "layouts[3].start.grid_vertex",
+   "frame": "local index",
+   "old": 9,
+   "new": 26,
+   "moved_m": 0.01
+  },
+  {
+   "path": "layouts[3].start.sector_vertices[0]",
+   "frame": "local index",
+   "old": 5518,
+   "new": 11623,
+   "moved_m": 0.0
+  },
+  {
+   "path": "layouts[3].start.sector_vertices[1]",
+   "frame": "local index",
+   "old": 2394,
+   "new": 7185,
+   "moved_m": 0.0
+  },
+  {
+   "path": "race.segments[0].st_m[0]",
+   "frame": "local station",
+   "old": 0,
+   "new": 0
+  },
+  {
+   "path": "race.segments[0].st_m[1]",
+   "frame": "local station",
+   "old": 1073,
+   "new": 1072
+  },
+  {
+   "path": "race.segments[1].st_m[0]",
+   "frame": "local station",
+   "old": 1073,
+   "new": 1072
+  },
+  {
+   "path": "race.segments[1].st_m[1]",
+   "frame": "local station",
+   "old": 7102,
+   "new": 7110
+  },
+  {
+   "path": "race.segments[2].st_m[0]",
+   "frame": "local station",
+   "old": 7102,
+   "new": 7110
+  },
+  {
+   "path": "race.segments[2].st_m[1]",
+   "frame": "local station",
+   "old": 9744,
+   "new": 9752
+  },
+  {
+   "path": "race.segments[3].st_m[0]",
+   "frame": "local station",
+   "old": 9744,
+   "new": 9752
+  },
+  {
+   "path": "race.segments[3].st_m[1]",
+   "frame": "local station",
+   "old": 11690,
+   "new": 11699
+  },
+  {
+   "path": "race.segments[4].st_m[0]",
+   "frame": "local station",
+   "old": 11690,
+   "new": 11699
+  },
+  {
+   "path": "race.segments[4].st_m[1]",
+   "frame": "local station",
+   "old": 16612,
+   "new": 16621
+  },
+  {
+   "path": "race.segments[5].st_m[0]",
+   "frame": "local station",
+   "old": 16612,
+   "new": 16621
+  },
+  {
+   "path": "race.segments[5].st_m[1]",
+   "frame": "local station",
+   "old": 18418,
+   "new": 18427
+  },
+  {
+   "path": "race.segments[6].st_m[0]",
+   "frame": "local station",
+   "old": 18418,
+   "new": 18427
+  },
+  {
+   "path": "race.segments[6].st_m[1]",
+   "frame": "local station",
+   "old": 20271,
+   "new": 20280
+  },
+  {
+   "path": "race.segments[7].st_m[0]",
+   "frame": "local station",
+   "old": 20286,
+   "new": 20295
+  },
+  {
+   "path": "race.segments[7].st_m[1]",
+   "frame": "local station",
+   "old": 23919,
+   "new": 23928
+  },
+  {
+   "path": "race.segments[8].st_m[0]",
+   "frame": "local station",
+   "old": 23919,
+   "new": 23928
+  },
+  {
+   "path": "race.segments[8].st_m[1]",
+   "frame": "local station",
+   "old": 24321,
+   "new": 24330
+  },
+  {
+   "path": "race.segments[9].st_m[0]",
+   "frame": "local station",
+   "old": 24321,
+   "new": 24330
+  },
+  {
+   "path": "race.segments[9].st_m[1]",
+   "frame": "local station",
+   "old": 24906,
+   "new": 24915
+  },
+  {
+   "path": "race.corridor.boxes[0].apex",
+   "frame": "local index",
+   "old": 3249,
+   "new": 8134,
+   "moved_m": 0.73
+  },
+  {
+   "path": "race.corridor.boxes[0].i",
+   "frame": "local index",
+   "old": 3241,
+   "new": 8110,
+   "moved_m": 1.19
+  },
+  {
+   "path": "race.corridor.boxes[0].j",
+   "frame": "local index",
+   "old": 3257,
+   "new": 8159,
+   "moved_m": 0.61
+  },
+  {
+   "path": "race.corridor.boxes[0].st_m[0]",
+   "frame": "local station",
+   "old": 9720.6,
+   "new": 9728.0
+  },
+  {
+   "path": "race.corridor.boxes[0].st_m[1]",
+   "frame": "local station",
+   "old": 9768.1,
+   "new": 9776.6
+  },
+  {
+   "path": "race.corridor.boxes[1].apex",
+   "frame": "local index",
+   "old": 3898,
+   "new": 10003,
+   "moved_m": 0.0
+  },
+  {
+   "path": "race.corridor.boxes[1].i",
+   "frame": "local index",
+   "old": 3890,
+   "new": 9995,
+   "moved_m": 0.0
+  },
+  {
+   "path": "race.corridor.boxes[1].j",
+   "frame": "local index",
+   "old": 3906,
+   "new": 10011,
+   "moved_m": 0.0
+  },
+  {
+   "path": "race.corridor.boxes[1].st_m[0]",
+   "frame": "local station",
+   "old": 11665.6,
+   "new": 11674.7
+  },
+  {
+   "path": "race.corridor.boxes[1].st_m[1]",
+   "frame": "local station",
+   "old": 11712.9,
+   "new": 11722.0
+  },
+  {
+   "path": "race.corridor.boxes[2].apex",
+   "frame": "local index",
+   "old": 5537,
+   "new": 11642,
+   "moved_m": 0.0
+  },
+  {
+   "path": "race.corridor.boxes[2].i",
+   "frame": "local index",
+   "old": 5529,
+   "new": 11634,
+   "moved_m": 0.0
+  },
+  {
+   "path": "race.corridor.boxes[2].j",
+   "frame": "local index",
+   "old": 5545,
+   "new": 11650,
+   "moved_m": 0.0
+  },
+  {
+   "path": "race.corridor.boxes[2].st_m[0]",
+   "frame": "local station",
+   "old": 16588.2,
+   "new": 16597.0
+  },
+  {
+   "path": "race.corridor.boxes[2].st_m[1]",
+   "frame": "local station",
+   "old": 16635.6,
+   "new": 16644.4
+  },
+  {
+   "path": "race.corridor.boxes[3].apex",
+   "frame": "local index",
+   "old": 6762,
+   "new": 12867,
+   "moved_m": 0.0
+  },
+  {
+   "path": "race.corridor.boxes[3].i",
+   "frame": "local index",
+   "old": 6749,
+   "new": 12854,
+   "moved_m": 0.0
+  },
+  {
+   "path": "race.corridor.boxes[3].j",
+   "frame": "local index",
+   "old": 6770,
+   "new": 12875,
+   "moved_m": 0.0
+  },
+  {
+   "path": "race.corridor.boxes[3].st_m[0]",
+   "frame": "local station",
+   "old": 20247.7,
+   "new": 20256.4
+  },
+  {
+   "path": "race.corridor.boxes[3].st_m[1]",
+   "frame": "local station",
+   "old": 20309.6,
+   "new": 20318.3
+  },
+  {
+   "path": "race.corridor.boxes[4].apex",
+   "frame": "local index",
+   "old": 8106,
+   "new": 14211,
+   "moved_m": 0.0
+  },
+  {
+   "path": "race.corridor.boxes[4].i",
+   "frame": "local index",
+   "old": 8098,
+   "new": 14203,
+   "moved_m": 0.0
+  },
+  {
+   "path": "race.corridor.boxes[4].j",
+   "frame": "local index",
+   "old": 8114,
+   "new": 14219,
+   "moved_m": 0.0
+  },
+  {
+   "path": "race.corridor.boxes[4].st_m[0]",
+   "frame": "local station",
+   "old": 24296.7,
+   "new": 24305.2
+  },
+  {
+   "path": "race.corridor.boxes[4].st_m[1]",
+   "frame": "local station",
+   "old": 24344.5,
+   "new": 24353.0
+  },
+  {
+   "path": "scenery.treefx.zones[0].st_m[0][0]",
+   "frame": "local station",
+   "old": 0,
+   "new": 0
+  },
+  {
+   "path": "scenery.treefx.zones[0].st_m[0][1]",
+   "frame": "local station",
+   "old": 1073,
+   "new": 1072
+  },
+  {
+   "path": "scenery.treefx.zones[0].st_m[1][0]",
+   "frame": "local station",
+   "old": 16612,
+   "new": 16621
+  },
+  {
+   "path": "scenery.treefx.zones[0].st_m[1][1]",
+   "frame": "local station",
+   "old": 24906,
+   "new": 24915
+  },
+  {
+   "path": "scenery.treefx.zones[1].st_m[0][0]",
+   "frame": "local station",
+   "old": 1073,
+   "new": 1072
+  },
+  {
+   "path": "scenery.treefx.zones[1].st_m[0][1]",
+   "frame": "local station",
+   "old": 2500,
+   "new": 2499
+  },
+  {
+   "path": "scenery.treefx.zones[2].st_m[0][0]",
+   "frame": "local station",
+   "old": 2500,
+   "new": 2499
+  },
+  {
+   "path": "scenery.treefx.zones[2].st_m[0][1]",
+   "frame": "local station",
+   "old": 4950,
+   "new": 4961
+  },
+  {
+   "path": "scenery.treefx.zones[3].st_m[0][0]",
+   "frame": "local station",
+   "old": 4950,
+   "new": 4961
+  },
+  {
+   "path": "scenery.treefx.zones[3].st_m[0][1]",
+   "frame": "local station",
+   "old": 6500,
+   "new": 6509
+  },
+  {
+   "path": "scenery.treefx.zones[4].st_m[0][0]",
+   "frame": "local station",
+   "old": 6500,
+   "new": 6509
+  },
+  {
+   "path": "scenery.treefx.zones[4].st_m[0][1]",
+   "frame": "local station",
+   "old": 9744,
+   "new": 9752
+  },
+  {
+   "path": "scenery.treefx.zones[5].st_m[0][0]",
+   "frame": "local station",
+   "old": 9744,
+   "new": 9752
+  },
+  {
+   "path": "scenery.treefx.zones[5].st_m[0][1]",
+   "frame": "local station",
+   "old": 16612,
+   "new": 16621
+  },
+  {
+   "path": "scenery.lamps.stretches[0].st_m[0][0]",
+   "frame": "local station",
+   "old": 500,
+   "new": 499
+  },
+  {
+   "path": "scenery.lamps.stretches[0].st_m[0][1]",
+   "frame": "local station",
+   "old": 1000,
+   "new": 999
+  },
+  {
+   "path": "scenery.lamps.stretches[1].st_m[0][0]",
+   "frame": "local station",
+   "old": 6500,
+   "new": 6509
+  },
+  {
+   "path": "scenery.lamps.stretches[1].st_m[0][1]",
+   "frame": "local station",
+   "old": 7000,
+   "new": 7007
+  },
+  {
+   "path": "scenery.lamps.stretches[2].st_m[0][0]",
+   "frame": "local station",
+   "old": 15500,
+   "new": 15509
+  },
+  {
+   "path": "scenery.lamps.stretches[2].st_m[0][1]",
+   "frame": "local station",
+   "old": 16500,
+   "new": 16509
+  },
+  {
+   "path": "scenery.lamps.stretches[3].st_m[0][0]",
+   "frame": "local station",
+   "old": 19020,
+   "new": 19029
+  },
+  {
+   "path": "scenery.lamps.stretches[3].st_m[0][1]",
+   "frame": "local station",
+   "old": 19520,
+   "new": 19529
+  },
+  {
+   "path": "scenery.lamps.stretches[4].st_m[0][0]",
+   "frame": "local station",
+   "old": 20920,
+   "new": 20929
+  },
+  {
+   "path": "scenery.lamps.stretches[4].st_m[0][1]",
+   "frame": "local station",
+   "old": 21120,
+   "new": 21129
+  },
+  {
+   "path": "scenery.lamps.stretches[5].st_m[0][0]",
+   "frame": "local station",
+   "old": 23020,
+   "new": 23029
+  },
+  {
+   "path": "scenery.lamps.stretches[5].st_m[0][1]",
+   "frame": "local station",
+   "old": 24450,
+   "new": 24459
+  },
+  {
+   "path": "scenery.edges.stone_works[0].st_m",
+   "frame": "local station",
+   "old": 0,
+   "new": 0
+  },
+  {
+   "path": "scenery.edges.stone_works[2].st_m",
+   "frame": "local station",
+   "old": 6450,
+   "new": 6460
+  },
+  {
+   "path": "scenery.edges.stone_works[3].st_m",
+   "frame": "local station",
+   "old": 2225,
+   "new": 2224
+  },
+  {
+   "path": "scenery.edges.stone_works[4].st_m[0]",
+   "frame": "local station",
+   "old": 4920,
+   "new": 4931
+  },
+  {
+   "path": "scenery.edges.stone_works[4].st_m[1]",
+   "frame": "local station",
+   "old": 4965,
+   "new": 4976
+  },
+  {
+   "path": "scenery.structures.c470_bridges.crossings[0].st_m[0]",
+   "frame": "local station",
+   "old": 19340,
+   "new": 19349
+  },
+  {
+   "path": "scenery.structures.c470_bridges.crossings[0].st_m[1]",
+   "frame": "local station",
+   "old": 19369,
+   "new": 19378
+  },
+  {
+   "path": "scenery.structures.c470_bridges.crossings[1].st_m",
+   "frame": "local station",
+   "old": 21140,
+   "new": 21149
+  },
+  {
+   "path": "scenery.structures.lid.crosses_st_m[0]",
+   "frame": "local station",
+   "old": 24353,
+   "new": 24362
+  },
+  {
+   "path": "scenery.structures.lid.crosses_st_m[1]",
+   "frame": "local station",
+   "old": 24366,
+   "new": 24375
+  },
+  {
+   "path": "_history.route.wide_corners[0].station_m",
+   "frame": "local station",
+   "old": 262,
+   "new": 262
+  }
+ ],
+ "doc_changes": [
+  {
+   "path": "layouts[0]._start_doc",
+   "old": "Ledger 0047's declared start, as vertices into data/centerline.local.json (its own index space: local v0 = the pylons). line_vertex 0 = AC_TIME_0 at the pylons. Forward grid v8292 = 26.9 m behind the line on 19th St; reverse grid v9 = 26.1 m behind it on Lookout Mountain Rd (layout_dummies: 0 < d <= 35 m). Sectors on straight vertices (kink < 1 deg over +/-6 vertices): v2394 near the summit (st 7179.7) and v5518 on US-40 just before exit 259 (st 16555.2), so the three sectors are the climb, the top + canyon, and Golden. Validated 2026-10-11 by tools/layout_dummies.py on a plan-only projection of this centreline; re-run on the real centerline.local.json in P4. offset_right_m 1.6 = the right-hand lane's centre on a ~6.5 m two-lane road, PROVISIONAL: the width at the pylons is not measured (dossier 12). With layout_dummies' +/-1.0 m grid stagger the outer column's car edge sits 3.55 m right of centre, past the edge of a 6.5 m road; re-set it from the aerial width (or single-file the grid) in P4.",
+   "new": "Ledger 0047's declared start, as vertices into data/centerline.local.json (its own index space: local v0 = the pylons). line_vertex 0 = AC_TIME_0 at the pylons. Forward grid v14417 = 27.0 m behind the line on 19th St; reverse grid v26 = 26.0 m behind it on Lookout Mountain Rd (layout_dummies: 0 < d <= 35 m). Sectors on straight vertices (kink < 1 deg over +/-6 vertices): v7185 near the summit (st 7187.3) and v11623 on US-40 just before exit 259 (st 16564.0), so the three sectors are the climb, the top + canyon, and Golden. Validated 2026-10-11 by tools/layout_dummies.py on a plan-only projection of this centreline; re-run on the real centerline.local.json in P4. offset_right_m 1.6 = the right-hand lane's centre on a ~6.5 m two-lane road, PROVISIONAL: the width at the pylons is not measured (dossier 12). With layout_dummies' +/-1.0 m grid stagger the outer column's car edge sits 3.55 m right of centre, past the edge of a 6.5 m road; re-set it from the aerial width (or single-file the grid) in P4."
+  },
+  {
+   "path": "layouts[1]._start_doc",
+   "old": "As street_full's _start_doc, mirrored: grid v9 on Lookout Mountain Rd, 26 m behind the line in reverse travel, sectors in reverse driving order. Reverse has its OWN grid facing its own way (July's Reverse shared Full's grid and spawned facing forward). offset_right_m is provisional, as on street_full.",
+   "new": "As street_full's _start_doc, mirrored: grid v26 on Lookout Mountain Rd, 26 m behind the line in reverse travel, sectors in reverse driving order. Reverse has its OWN grid facing its own way (July's Reverse shared Full's grid and spawned facing forward). offset_right_m is provisional, as on street_full."
+  },
+  {
+   "path": "layouts[3]._start_doc",
+   "old": "As street_reverse's (grid v9, sectors reversed); offset_right_m 0.0: centred grid on the whole one-way road.",
+   "new": "As street_reverse's (grid v26, sectors reversed); offset_right_m 0.0: centred grid on the whole one-way road."
+  },
+  {
+   "path": "race.corridor._boxes_doc",
+   "old": "Kevin's 'Corners the race turns at': the full intersection drivable, the legs the race doesn't take sealed at the box edge; the clockwise race uses the same boxes turned the other way. apex = the corner vertex on the V3 centreline (centerline.local.json index); i / j = apex +/- 8 vertices (~24 m), PROVISIONAL until P3b authors the junction mouths and the box edges come from their footprint. C16 spans both junction nodes (v6757, v6762). C17 (the US-6 diverge) is a gore, not a box.",
+   "new": "Kevin's 'Corners the race turns at': the full intersection drivable, the legs the race doesn't take sealed at the box edge; the clockwise race uses the same boxes turned the other way. apex = the corner vertex on the V3 centreline (centerline.local.json index); i / j = apex +/- 8 vertices (~24 m), PROVISIONAL until P3b authors the junction mouths and the box edges come from their footprint. C16 spans both junction nodes (v12862, v12867). C17 (the US-6 diverge) is a gore, not a box."
+  }
+ ]
+}

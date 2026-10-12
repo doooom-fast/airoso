@@ -39,7 +39,7 @@
   ],
   "licence": "public domain (US federal government work; USDA FSA NAIP distributed by USGS). Credit line requested by the service: 'USGS, USDA, The National Map: Orthoimagery'.",
   "request": "each window requested twice (bandIds 0,1,2 = true colour; 3,0,1 = colour infrared, NIR first) in EPSG:26913 (NAD83 / UTM zone 13N, the DOQQs' own projection, so the server does not reproject), bboxSR = imageSR = 26913, PNG, bilinear, 0.3 m pixels (the service's own pixel; the source is 0.6 m, so the effective resolution is 0.6 m)",
-  "cache": "raw windows (PNG + per-window JSON with bbox, URL, raster names) are in session scratch only: C:/Users/Owner/AppData/Local/Temp/claude/C--Users-Owner-Documents-GitHub-airoso/59395b0b-e098-4e22-9ea8-1346efc0cf70/scratchpad/lariat2/naip/; nothing raw is in the repo",
+  "cache": "raw windows (PNG + per-window JSON with bbox, URL, raster names) are in the window cache only: C:/Users/Owner/AppData/Local/Temp/claude/C--Users-Owner-Documents-GitHub-airoso/59395b0b-e098-4e22-9ea8-1346efc0cf70/scratchpad/paint/naip_cache; nothing raw is in the repo",
   "tls": "fetched with certificate verification on (scripts/tls.https_context, the OS verifier)",
   "georeferencing": "none applied by hand: the exportImage bbox is the georeference (pixel centre = xmin + (i + 0.5) * 0.3, ymax - (j + 0.5) * 0.3). OSM lon/lat (WGS84) was put on the same grid with the GRS80 transverse-Mercator series and NO datum shift, then the remaining offset was measured (registration below).",
   "registration_vs_osm": {
@@ -4871,7 +4871,7 @@
     "note": null
    },
    {
-    "station_m": 2050.0,
+    "station_m": 2050,
     "segment": "Lariat Trail climb (st 1,070-7,100)",
     "lonlat_wgs84": [
      -105.2388431,
@@ -4944,7 +4944,7 @@
     "note": "tree shadow over the road; not measurable"
    },
    {
-    "station_m": 2250.0,
+    "station_m": 2250,
     "segment": "Lariat Trail climb (st 1,070-7,100)",
     "lonlat_wgs84": [
      -105.2408663,
@@ -5007,7 +5007,7 @@
     "note": "partly in tree shadow; fewer profiles"
    },
    {
-    "station_m": 3150.0,
+    "station_m": 3150,
     "segment": "Lariat Trail climb (st 1,070-7,100)",
     "lonlat_wgs84": [
      -105.2427064,
@@ -5536,7 +5536,7 @@
     "note": null
    },
    {
-    "station_m": 6200.0,
+    "station_m": 6200,
     "segment": "Lariat Trail climb (st 1,070-7,100)",
     "lonlat_wgs84": [
      -105.2456659,
@@ -5604,7 +5604,7 @@
     "note": "tree shadow over the road; not measurable"
    },
    {
-    "station_m": 6600.0,
+    "station_m": 6600,
     "segment": "Lariat Trail climb (st 1,070-7,100)",
     "lonlat_wgs84": [
      -105.2424089,
@@ -5642,7 +5642,7 @@
     "note": "partly in tree shadow; fewer profiles"
    },
    {
-    "station_m": 6800.0,
+    "station_m": 6800,
     "segment": "Lariat Trail climb (st 1,070-7,100)",
     "lonlat_wgs84": [
      -105.2404057,
@@ -5715,7 +5715,7 @@
     "note": "tree shadow over the road; not measurable"
    },
    {
-    "station_m": 6980.0,
+    "station_m": 6980,
     "segment": "Lariat Trail climb (st 1,070-7,100)",
     "lonlat_wgs84": [
      -105.2395625,
@@ -5935,7 +5935,7 @@
     "note": "junction/driveway area, few profiles"
    },
    {
-    "station_m": 10850.0,
+    "station_m": 10850,
     "segment": "Paradise Rd (st 9,710-11,652)",
     "lonlat_wgs84": [
      -105.2482677,
@@ -5984,7 +5984,7 @@
     "note": null
    },
    {
-    "station_m": 11150.0,
+    "station_m": 11150,
     "segment": "Paradise Rd (st 9,710-11,652)",
     "lonlat_wgs84": [
      -105.2510841,
@@ -6033,7 +6033,7 @@
     "note": "at a junction mouth / Park-n-Ride side; pavement includes the junction"
    },
    {
-    "station_m": 11450.0,
+    "station_m": 11450,
     "segment": "Paradise Rd (st 9,710-11,652)",
     "lonlat_wgs84": [
      -105.2527617,

@@ -15,10 +15,9 @@ What it does, per declared corner (``hairpin_fit.corners`` in ``track.config.jso
    more than ``reach_m`` from its apex, so stacked hairpins never share a vertex.
 2. **Measure the radius** from the centreline's own geometry: a least-squares circle (algebraic start,
    geometric refinement) through the vertices of the corner's core, the stretch between ``core[0]`` and
-   ``core[1]`` of its cumulative turn. When an arc at that radius cannot pass the gate within
-   ``max_move_m`` (a compound corner: a tight core with a long gentle tail pulls the circle open), the
-   nearest radius that can is used, scanned outward in ``radius_step_m`` steps within ``radius_search``
-   x the measurement; failing that, the best attempt is written and the corner FAILS. A corner whose turn
+   ``core[1]`` of its cumulative turn. When no arc at that radius passes the step gate, the nearest
+   radius that does is used, scanned outward in ``radius_step_m`` steps within ``radius_search`` x the
+   measurement; failing that, the best attempt is written and the corner FAILS. A corner whose turn
    is concentrated at one vertex (a single vertex holds more than ``kink_share`` of it, or the core has
    fewer than 4 vertices) is a **kink**: the centreline has no radius there (a junction node, or one OSM
    facet), so it is left alone and reported as pending until the config gives it a radius.
@@ -42,8 +41,13 @@ What it does, per declared corner (``hairpin_fit.corners`` in ``track.config.jso
      own turn per point, the slack is [invented]);
    - adjacent heading changes differ by <= ``adjacent_step_deg`` [invented].
    The lateral move from the original line (both ways: fitted points to the original polyline, original
-   vertices to the fitted polyline) is reported per corner against ``max_move_m`` [invented], the OSM
-   line's tolerance.
+   vertices to the fitted polyline) is REPORTED per corner and judges nothing. Where a line runs is judged
+   against the road's painted centre line by ``tools/verify_centreline_paint.py`` (2026-10-11, ledger 0048):
+   the former ``max_move_m`` 1.5 m-from-OSM ceiling [invented] passed fits 7.3 m and 4.4 m off the paint at
+   C4 and C10 (OSM itself cuts those hairpins) and failed C9, where OSM was right. The Lariat's centreline
+   is now built by ``tools/paint_centreline.py``; this tool remains the clothoid-arc-clothoid library
+   (``Curve``, ``solve_transitions``, ``gate``, ``stations``, ``signed_steps``) and a corner-by-corner
+   radius check.
 
 Outputs (``--out-dir``, required; this prototype refuses to write into the track's ``data/``):
 ``centerline.fitted.geojson`` (the whole lap, the same schema as ``data/centerline.geojson``, with the
@@ -53,7 +57,7 @@ radius, transitions, max step after, lateral move, gate verdict; the climb-wide 
 after; the vertex-index shift the fitted line would cause), and ``<ID>.svg`` (a before/after plot per
 corner: plan view and turn-rate profile).
 
-Exit: 0 every declared corner fitted and passing; 1 any corner FAILS (gate or move ceiling);
+Exit: 0 every declared corner fitted and passing; 1 any corner FAILS (the step gate);
 2 usage/config error; 3 nothing failed but some corner is pending a radius (a kink).
 
     python tools/fit_hairpins.py <project-dir> --out-dir <dir> [--centerline <geojson>]
@@ -79,12 +83,14 @@ from scripts.gps.centerline import polyline_length  # noqa: E402  (read-only: th
 
 DEG = 180.0 / math.pi
 
+JUDGE = ("tools/verify_centreline_paint.py: the line's position is judged against the road's traced paint, "
+         "not against OSM (the 1.5 m-from-OSM ceiling was removed 2026-10-11, ledger 0048)")
+
 DEFAULTS = {
     "max_spacing_m": 1.0,       # plan P2 step 2: resampled at <= 1 m through the corner
     "step_slack_deg": 1.0,      # [invented] plan P2 step 2 gate: the + 1 deg of slack
     "adjacent_step_deg": 1.5,   # [invented] plan P2 step 2 gate
     "join_margin": 2,           # [invented] untouched original vertices each side that the gate also checks
-    "max_move_m": 1.5,          # [invented] the OSM line's lateral tolerance the fit must stay within
     "window_m": 60.0,           # [invented] apex finder: turn summed over this window
     "search_m": 40.0,           # [invented] apex searched within this of the declared station
     "reach_m": 60.0,            # [invented] an anchor sits at most this far (along the line) from the apex
@@ -648,7 +654,7 @@ def fit_corner(P, st, S, corner: dict, lim: tuple[int, int], prm: dict) -> dict:
         return tried[R][0]
 
     def ok(f):
-        return f is not None and f.gate["pass"] and f.move <= prm["max_move_m"]
+        return f is not None and f.gate["pass"]
 
     if fixed is not None:
         R_best = round(float(fixed), 2)
@@ -656,10 +662,9 @@ def fit_corner(P, st, S, corner: dict, lim: tuple[int, int], prm: dict) -> dict:
         res["radius_source"] = corner.get("_radius_src", "config: hairpin_fit.corners[].radius_m")
         res["radius_kind"] = "override"
     else:
-        # The radius measured from the centreline: the circle through the core of the turn. When an
-        # arc of that radius cannot pass the gate within the lateral-move ceiling (a compound corner:
-        # a tight core with a long gentle tail pulls the circle open), the nearest radius that can is
-        # used instead, scanned outward from the measurement; failing that, the best attempt.
+        # The radius measured from the centreline: the circle through the core of the turn. When no
+        # arc of that radius passes the step gate, the nearest radius that does is used instead,
+        # scanned outward from the measurement; failing that, the best attempt.
         Rc = round(meas["radius_m"], 2)
         f0, f1 = prm["radius_search"]
         step = float(prm["radius_step_m"])
@@ -676,7 +681,7 @@ def fit_corner(P, st, S, corner: dict, lim: tuple[int, int], prm: dict) -> dict:
                 R_best, best = hit, at_radius(hit)
                 kind = "adjusted"
                 how = (f"adjusted from the measured {Rc:.2f} m (core circle fit) to the nearest radius "
-                       f"that passes within the {prm['max_move_m']} m ceiling")
+                       f"that passes the step gate")
             else:
                 pool = [(R, at_radius(R)) for R in [Rc] + scan]
                 pool = [(R, f) for R, f in pool if f is not None]
@@ -685,7 +690,7 @@ def fit_corner(P, st, S, corner: dict, lim: tuple[int, int], prm: dict) -> dict:
                                                              abs(rf[0] - Rc)))
                     kind = "best-attempt"
                     how = (f"best attempt: no radius within {f0:g}-{f1:g} x the measured {Rc:.2f} m "
-                           f"passes within the {prm['max_move_m']} m ceiling; smallest move shown")
+                           f"passes the step gate; smallest move shown")
         res["radius_source"] = how
         res["radius_kind"] = kind
         res["radius_search"] = {"measured_core_circle_m": Rc, "radii_tried": len(tried),
@@ -728,16 +733,13 @@ def fit_corner(P, st, S, corner: dict, lim: tuple[int, int], prm: dict) -> dict:
                   "max_turn_rate_deg_per_m": round(DEG / R, 2),
                   "max_adjacent_diff_deg": round(g["max_adjacent_diff_deg"], 2),
                   "gate_fails": g["fails"]},
-        "lateral_move_m": {"max": round(best.move, 2), "at": best.where, "ceiling": prm["max_move_m"]},
+        "lateral_move_m": {"max": round(best.move, 2), "at": best.where, "judged_by": JUDGE},
         "_fit": best,
     })
-    ok_move = best.move <= prm["max_move_m"]
     res["gate"] = "PASS" if g["pass"] else "FAIL"
-    res["status"] = "PASS" if (g["pass"] and ok_move) else "FAIL"
+    res["status"] = "PASS" if g["pass"] else "FAIL"
     if not g["pass"]:
         res["why"] = f"{len(g['fails'])} gate failure(s) at the best anchors"
-    elif not ok_move:
-        res["why"] = f"lateral move {best.move:.2f} m > ceiling {prm['max_move_m']} m"
     return res
 
 
@@ -780,7 +782,7 @@ def corners_from_config(cfg: dict) -> tuple[list[dict], dict]:
         if k in block:
             prm[k] = block[k]
     for k, v in (block.get("gate") or {}).items():
-        if k in ("step_slack_deg", "adjacent_step_deg", "max_move_m"):
+        if k in ("step_slack_deg", "adjacent_step_deg"):
             prm[k] = v
     corners = [dict(c) for c in block.get("corners") or []]
     for c in corners:
@@ -1153,7 +1155,7 @@ def write_svg(path: Path, r: dict, P, st, S, prm) -> None:
         f"Curve: {r['transitions_m']['L1']:.1f} m easing in, {r['transitions_m']['arc']:.1f} m at "
         f"R {r['radius_fit_m']:.1f} m, {r['transitions_m']['L2']:.1f} m easing out "
         f"({r['radius_kind']} radius).",
-        f"Largest sideways move from the OSM line: {lm['max']:.2f} m (ceiling {lm['ceiling']} m). "
+        f"Largest sideways move from the OSM line: {lm['max']:.2f} m (reported; the paint judges position). "
         f"Gate: {r['gate']}.",
     ]
     lines.insert(1, "Facet steps before, deg (A to B): " + ", ".join(f"{abs(x):.0f}" for x in bf["steps_deg"]))

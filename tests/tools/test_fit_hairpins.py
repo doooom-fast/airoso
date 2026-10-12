@@ -304,16 +304,19 @@ def test_kink_stays_pending_until_it_has_a_radius():
         assert r["status"] == "PENDING" and rep["status"] == "PENDING"
         assert r["measured"]["kind"] == "kink" and r["measured"]["biggest_share"] > 0.5
         assert fh.main([str(proj), "--out-dir", str(tmp / "out2"), "--detect-deg", "0"]) == 3
-        # with a radius it is fitted, and the lateral-move ceiling says how far a fillet leaves the
-        # OSM line through a junction node
+        # with a radius it is fitted and spliced. A fillet leaves the junction node by more than 1.5 m;
+        # that move is REPORTED, never judged: where a line runs is tools/verify_centreline_paint.py's
+        # call, against the painted road (the former 1.5 m-from-OSM ceiling, removed 2026-10-11)
         rep = fh.run(proj, tmp / "out3", radius_cli={"K1": 10.0}, detect_deg=None)
         r = rep["corners"][0]
         assert r["radius_fit_m"] == 10.0 and r["gate"] == "PASS"
-        assert r["lateral_move_m"]["max"] > 1.5 and r["status"] == "FAIL" and not r["spliced"]
+        assert r["lateral_move_m"]["max"] > 1.5 and r["status"] == "PASS" and r["spliced"]
+        assert "verify_centreline_paint" in r["lateral_move_m"]["judged_by"] and "ceiling" not in r["lateral_move_m"]
+        assert "max_move_m" not in rep["params"]
         fitted = json.loads((tmp / "out3" / "centerline.fitted.geojson").read_text())
-        assert fitted["features"][0]["properties"]["point_count"] == len(line)  # a FAIL is never spliced
+        assert fitted["features"][0]["properties"]["point_count"] != len(line)  # spliced
         assert fh.main([str(proj), "--out-dir", str(tmp / "out4"), "--radius", "K1=10",
-                        "--detect-deg", "0"]) == 1
+                        "--detect-deg", "0"]) == 0
 
 
 def test_refusals():
@@ -347,9 +350,12 @@ def test_refusals():
 
 
 def test_lariat_base_hairpin():
-    """The real C1 on the current V3 centreline: 25 deg facets in, a smooth R ~12 m curve out."""
+    """The real C1 on the V3 OSM centreline (data/centerline.osm.geojson, the gps stage's line kept as a
+    source file; data/centerline.geojson is the paint centreline since 2026-10-11): 25 deg facets in, a
+    smooth R ~12 m curve out."""
     with tempfile.TemporaryDirectory() as td:
-        rep = fh.run(LARIAT, Path(td), only=["C1"], detect_deg=None)
+        rep = fh.run(LARIAT, Path(td), centerline=LARIAT / "data" / "centerline.osm.geojson", only=["C1"],
+                     detect_deg=None)
         (r,) = rep["corners"]
         assert r["id"] == "C1" and r["status"] == "PASS"
         assert r["before"]["max_step_deg"] >= 24.0  # dossier 4: the base hairpin's 25 deg step

@@ -830,3 +830,23 @@ A snapshot already on disk is never judged by age (pinning old data on purpose i
 |---|---|---|
 | `OSM_MAX_AGE_DAYS` | 7.0 days — healthy mirrors lag minutes to hours; a week behind means the copying stopped | ⚠ invented |
 | without a cache path | warns only | |
+
+## 2026-10-11 — paint gate: `tools/verify_centreline_paint.py` replaces the fitter's 1.5 m-from-OSM ceiling (ledger 0048, Lariat P2)
+
+The aerial pass (NAIP 2019, airoso e82ff8c) traced the Lariat's painted centre line. It found the OSM line, which the fitter's position check measured against, 7.6 m off the paint at C4 and 4.8 m at C10. OSM cuts those hairpins. So the ceiling passed fits that missed the real road and failed C9, where OSM was within 0.60 m of the paint. Position is now judged against the paint.
+
+| Gate | Before | After | Flag |
+|---|---|---|---|
+| `tools/fit_hairpins.py` `max_move_m` | a fitted corner FAILS beyond 1.5 m from the OSM line, both ways; the radius scan picks the nearest radius inside it | **removed**. Status = the step gate only. `lateral_move_m` is reported with `judged_by: tools/verify_centreline_paint.py`. The radius scan picks the nearest radius that passes the step gate. `hairpin_fit.gate.max_move_m` is deleted from the Lariat config | the 1.5 m was ⚠ invented. Measured against the paint, it passed C4 at 7.25 m and C10 at 4.35 m, and failed C9 (2.06 m from OSM, OSM 0.60 m from the paint) |
+| `verify_centreline_paint` (a) paint (new) | — | every high/medium yellow point of `data/aerial/paint_traces.json` within **0.75 m**, measured to the nearest segment running the same way (\|angle\| < 60°) | ⚠ invented. Context: OSM scatters 0.74 m rms / 1.35 m p90 about the paint on straight road (862 points). The judged point set depends on the confidence rules in `tools/aerial/traces.py`, all ⚠ invented: a run of >= 4 profiles, within 0.3 m over ±4 m, prominence >= 0.5 × the window's median, drift <= 0.15 m/m; unusable width stations count as low |
+| (b) curvature on the climb (new) | the fitter's two rules, on fitted spans only | over `hairpin_fit.climb_st_m` (stations on the OSM source line, via `osm_station_m`): step <= spacing × \|k_local\| × 57.3 + **1°**, where k_local is the line's turn over **±5 m** divided by that window's length; neighbouring steps differ by <= **1.5°**; climb spacing **0.95-1.05 m** | all ⚠ invented. The spacing band exists because the neighbour rule depends on spacing (at 3 m it fails real spirals, denser makes it trivial) |
+| (c) topology (new) | — | no vertex turning >= **120°**, no segment < **1 mm**, no crossing of non-adjacent segments | ⚠ invented. The OSM line's largest single step is 78.5°, a junction node |
+| (d) closure (new) | — | `coords[0] == coords[-1]` exactly, and the seam vertex passes (b) across the wrap, v[-2] -> v0 -> v1 (L13) | [std: L13] |
+
+Proof:
+- `tests/tools/test_verify_centreline_paint.py` (5): 0.3 m passes and 1.0 m fails; a lost leg is not rescued by the stacked opposite leg; facets, curvature jumps and 3 m spacing fail while a 1 m clothoid passes; a figure that crosses itself and a fold both fail; an open seam and a seam kink fail while a smooth lap passes.
+- `tests/tools/test_fit_hairpins.py`: a kink with a radius now PASSes and is spliced, its >1.5 m move reported.
+- On the Lariat, the OSM line fails: (a) 1,320 points over 0.75 m, worst 7.56 m; (b) 444 step + 971 neighbour + 2,367 spacing fails; (d) the seam neighbour rule, at 1.84°.
+- The paint centreline (`tools/paint_centreline.py`) passes all four: worst 0.61 m; 0 / 0 / 0 on 7,114 climb points; seam 2.20° against a limit of 3.16°.
+
+Wiring: not in build.sh or any ship chain yet. It runs by hand after `tools/paint_centreline.py` (Lariat build order: gps -> paint_centreline -> remap_centreline_config --write -> elev). Exit 1 on any fail. Output goes to `data/aerial/paint_gate.json`.

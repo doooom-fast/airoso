@@ -351,6 +351,18 @@ boxes marked, and the two C-470 crossings marked, before any geometry (L12, show
      - adjacent steps differ by ≤ 1.5° [invented];
      - 0 points fail on the climb [invented].
    - The 14 m widening at C1 (A2) is decided only after Drive 1 on the fitted curve.
+   - **Changed 2026-10-11 (ledger 0048, "P2, the centreline"):** the aerial pass showed OSM off the
+     painted road by ~7 m at C4 and 2-5 m at C10, so a fit held within 1.5 m of OSM missed the road.
+     The centreline is now `tools/paint_centreline.py`'s: the OSM line moved onto the paint traced on
+     NAIP 2019, OSM kept where the paint is in shadow, the climb resampled at 1 m as one
+     curvature-continuous line. It is judged by `tools/verify_centreline_paint.py`: (a) every medium+
+     paint point within 0.75 m [invented]; (b) the two step rules above over the whole climb at 1 m,
+     with the line's own local radius in place of R_fit, so "0 points fail on the climb" is now a
+     measured fact (7,114 points, 0 failures); (c) no reversal or self-crossing; (d) the seam closed
+     and smooth. `tools/fit_hairpins.py` keeps its step gate but no longer judges position; C12 / C13
+     stay junction nodes for P3b (no arc at the measured radius fits between the ends of the traced
+     arm paint). Every vertex and station in the config was re-derived onto the new line
+     (`tools/remap_centreline_config.py`).
 3. **New `scripts/blender/underlay.py`** (REALISM §4, the generalised draft builder). It writes these
    objects into `tracks/lookout-lariat/loop.blend`:
    - `GEN_road`: the engine ribbon on the fitted line, at real width.

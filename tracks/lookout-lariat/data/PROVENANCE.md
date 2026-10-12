@@ -1,22 +1,29 @@
 # `data/`: the V3 Lariat's regenerated route data
 
-**Written 2026-10-11, V3-PLAN P0 steps 7 and 8 (ledger 0048).** Nothing here is geometry: no
-elevation, no mesh, no kn5. `source-july/` holds the restored July reference files and has its own
-`PROVENANCE.md`; nothing in it is read by a stage.
+**Written 2026-10-11, V3-PLAN P0 steps 7 and 8 (ledger 0048); the same day P2 replaced the centreline
+with the paint centreline (see below).** Still no elevation, no mesh, no kn5. `source-july/` holds the
+restored July reference files and has its own `PROVENANCE.md`; nothing in it is read by a stage.
+`aerial/` holds the NAIP measurements, the traced paint and the paint gate; it has its own
+`PROVENANCE.md`.
 
 ## Frames
 
 | Frame | What it is | Used by |
 |---|---|---|
-| **WGS84 lon/lat** | GeoJSON's own frame (RFC 7946), longitude first | `centerline.geojson`, `osm.cache.json` |
+| **WGS84 lon/lat** | GeoJSON's own frame (RFC 7946), longitude first | `centerline.geojson`, `centerline.osm.geojson`, `osm.cache.json` |
 | **V3 loop frame** | local ENU metres about the centreline centroid, x = east, y = up, z = north; `mirror_x` false, true north 0 (`scripts/geometry/projection.py`) | `centerline.local.json` (P2, not written yet) and every vertex/station in `track.config.json` |
 
 - **Geojson v0 vs local v0.** The gps stage rotates the ring so v0 is the raw OSM node nearest
   `route.start_at` (the pylons, 2.78 m away). `projection.py` re-applies `start_at` with its own
-  metric and picks geojson v8300, 2.15 m before v0 along the lap. So **local index = geojson
-  index + 1** (mod 8,301), and local stations = geojson stations + 2.15 m. Every vertex the config
-  declares (layout starts, sectors, race boxes) is in the local index space. This was checked by running
-  `projection.py` on a scratch copy with zeroed elevation (plan only).
+  metric. On the OSM line it picked geojson v8300, 2.15 m before v0 (local index = geojson index + 1,
+  mod 8,301). On the paint centreline, whose seam is at 1 m points, it picks geojson v14442, 2.0 m
+  before v0: **local index = geojson index + 2** (mod 14,444), local stations = geojson stations +
+  2.0 m, and the timing line moved 0.155 m. Every vertex the config declares (layout starts, sectors,
+  race boxes) is in the local index space; `tools/remap_centreline_config.py` emulates this rotation
+  (a test pins it against `projection.build` itself).
+- **OSM stations:** the paint centreline carries `osm_station_m`, every vertex's station on
+  `centerline.osm.geojson`. It is the key the config remap and the paint gate use, and
+  `hairpin_fit.climb_st_m` is defined on it.
 - **Stations** in `oneway_check.json` are metres from geojson v0, measured in the plan frame.
 
 ## Files
@@ -24,9 +31,11 @@ elevation, no mesh, no kn5. `source-july/` holds the restored July reference fil
 | File | Written by | Frame | Bytes | md5 |
 |---|---|---|---:|---|
 | `osm.cache.json` | `python -m scripts.gps.centerline` (live fetch, TLS verified) | lon/lat | 223,955 | `ea0af589b09dca74afdee541c5a6ea61` |
-| `centerline.geojson` | the same stage, re-run offline from the cache above | lon/lat | 390,779 | `28dcc7b644510179fe366eb56d3911e5` |
+| `centerline.osm.geojson` | the gps stage's output, kept as the source file: the same stage, re-run offline from the cache above (byte-identical to what it writes) | lon/lat | 390,779 | `28dcc7b644510179fe366eb56d3911e5` |
+| `centerline.geojson` | **the paint centreline**: `python tools/paint_centreline.py tracks/lookout-lariat` from `centerline.osm.geojson` + `aerial/paint_traces.json`; the file every later stage reads | lon/lat | 734,217 | `ef44db97f9eb175d2a14510737f5ac83` |
+| `centerline_remap.json` | `python tools/remap_centreline_config.py tracks/lookout-lariat --write`: every vertex index and station of `../track.config.json`, old and new, with its frame | report | 22,388 | `958a03289799e1ab16bba2f05b1cf40a` |
 | `centerline_preview.svg` | the same stage | screen (north up) | 105,919 | `2894e729d4e78879251efa5de9a9b34b` |
-| `oneway_check.json` | `python tools/route_oneway_check.py <project>` | report (see its `frame` key) | 60,972 | `8338197ce598a4237db13d6d35eb8a26` |
+| `oneway_check.json` | `python tools/route_oneway_check.py <project>`, re-run on the paint centreline | report (see its `frame` key) | 58,767 | `eccdf205e9f26493d049eb412209715e` |
 | `route_map.png` | session-scratch drawing script (Pillow), from the files above | plan, north up | 1,932,217 | `31a0c8f51fc16908c14c4223d68b907b` |
 | `route_map_switchbacks.png` | the same script | plan, north up | 762,974 | `c1b6ad9782ac62ffba95e5a732676136` |
 
@@ -47,7 +56,29 @@ elevation, no mesh, no kn5. `source-july/` holds the restored July reference fil
 - **To refresh:** delete the file. Any change to `route.roads` or `route.bbox` changes the
   fingerprint, which also forces a live re-fetch.
 
-### `centerline.geojson`: the V3 centreline
+### `centerline.geojson`: the paint centreline (P2, 2026-10-11)
+
+- **What it is.** The OSM line below, moved onto the paint traced on NAIP 2019 where the paint is
+  traced (`aerial/paint_traces.json`), kept as OSM where it is not (shadow: C7's apex, C11, the upper
+  climb st ~6,200-6,800), blended in position and direction between, and resampled at 1 m as one
+  curvature-continuous line over the climb (st 0-7,100 on the OSM line, wrapping 60 m back across the
+  seam) and over Paradise Rd (st ~9,600-11,570). Everywhere else the OSM vertices are copied byte for
+  byte. 14,445 points, 24,900.2 m along the great circle (8.5 m longer than OSM in the plan frame), closed
+  exactly. `widths_m` are carried from the OSM line by station.
+- **Where it moved.** Up to 7.6 m at C4 and 4.8 m at C10 (OSM cuts those hairpins), 3.9 m at the
+  undeclared bend at st ~6,809, 1-2.6 m on straight road (st ~3,250, Paradise Rd), and onto the paint at
+  the C12 / C13 junction arms; the two junction nodes are kept as nodes (P3b's junction mouths).
+- **Judged by** `tools/verify_centreline_paint.py`: PASS (`aerial/paint_gate.json`).
+- **Build order now:** `gps` -> `tools/paint_centreline.py` -> `tools/remap_centreline_config.py --write`
+  -> `elev` and on. A fresh gps output (no `paint_centreline` property) is taken as the new
+  `centerline.osm.geojson`; a paint line it replaces is kept as `centerline.previous.geojson` so the
+  config can be remapped from it.
+- **The one-way check** on it: Full 0 m against the arrows; Reverse 4,486.3 m in 33 runs, all on the
+  four declared stretches. Unmatched rises from 14.5 m (the Colfax junction gap) to 92.5 m: the line now
+  runs on the paint at C4 and C10, more than the 3 m snap from OSM's own way there; unmatched is never a
+  run.
+
+### `centerline.osm.geojson`: the V3 OSM centreline (the gps stage's output)
 
 - **The lap.**
   - 24,890.8 m along the great circle, 8,302 points, closed (the closing vertex equals v0 exactly).
@@ -97,7 +128,7 @@ stage reads them.
 - **The switchbacks image** is a crop drawn at 2× the main map's scale. It adds two 6× panels of
   the stacked hairpins, with the closest legs measured on the V3 line (C7–C10 20.5 m, C4–C6
   27.0 m).
-- **Inputs, all read-only:** `centerline.geojson`, `osm.cache.json`, `../track.config.json`, and
+- **Inputs, all read-only:** `centerline.geojson` as it then was (the OSM line, now `centerline.osm.geojson`), `osm.cache.json`, `../track.config.json`, and
   `source-july/centerline.geojson` + `source-july/osm.widths.cache.json` (the July line and the grey
   context roads).
 - **Stations** printed on the maps are in the config's local frame (geojson station + 2.151 m).

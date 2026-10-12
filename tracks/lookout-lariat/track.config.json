@@ -7,7 +7,7 @@
   "author": "k10-motorsports",
   "year": 2026,
   "ui_series": "K10 Colorado",
-  "_about": "V3 rebuild of the Lariat (ledger 0048; tracks/lookout-lariat/V3-PLAN.md and DOSSIER.md). Kevin approved the plan's defaults on 2026-10-11 ('Those changes are good'): D1 keep the Colfax double-back; D2 (a) one slab per divided stretch, Reverse drives them against the arrows and says so; D3 (a) a race version on the real narrow road (four layouts); D4 build both edge widths for Drive 1; D5 static C-470 bridges; D6 real relief beyond ~50-100 m (the L3 amendment shared with ledger 0046) and a Denver skyline after Drive 2; D7 all five July calls reversed; A1-A13 as written. The engine drafts route-only, Claude authors in Blender, the gates judge the built file, Kevin's drive decides. P0 only so far: no geometry, no kn5, nothing installed. Stations below are metres along the V3 centreline in centerline.local.json's frame from local v0 = the pylons (scripts/geometry/projection.py; local index = data/centerline.geojson index + 1, because projection's own start_at pick lands one vertex earlier). Dossier stations before exit 259 carry over within 2 m; later ones shift up to +20 m (the A1 fixes).",
+  "_about": "V3 rebuild of the Lariat (ledger 0048; tracks/lookout-lariat/V3-PLAN.md and DOSSIER.md). Kevin approved the plan's defaults on 2026-10-11 ('Those changes are good'): D1 keep the Colfax double-back; D2 (a) one slab per divided stretch, Reverse drives them against the arrows and says so; D3 (a) a race version on the real narrow road (four layouts); D4 build both edge widths for Drive 1; D5 static C-470 bridges; D6 real relief beyond ~50-100 m (the L3 amendment shared with ledger 0046) and a Denver skyline after Drive 2; D7 all five July calls reversed; A1-A13 as written. The engine drafts route-only, Claude authors in Blender, the gates judge the built file, Kevin's drive decides. P0 is done; P2 has the centreline only: data/centerline.geojson is the paint centreline (tools/paint_centreline.py, 2026-10-11; the gps stage's OSM line is kept as data/centerline.osm.geojson). No elevation, mesh, kn5 or install yet. Stations below are metres along the V3 centreline in centerline.local.json's frame from local v0 = the pylons (scripts/geometry/projection.py; on the paint centreline local index = data/centerline.geojson index + 2, because projection's own start_at pick lands two 1 m vertices before geojson v0; it was + 1 on the OSM line). Every vertex index and station here was re-derived onto the paint centreline by station matching (tools/remap_centreline_config.py; data/centerline_remap.json lists each old and new value). The paint centreline is 8.5 m longer than the OSM line, so against the dossier its stations read -1 to +14 m (most of it from C4-C6, where OSM cut the hairpins short) up to exit 259, and up to a further +20 m after it (the A1 fixes).",
   "location": {
     "lat": 39.727,
     "lon": -105.225,
@@ -18,6 +18,15 @@
   "source": {
     "type": "osm",
     "_doc": "The whole lap lives on the OSM road network, fetched by route.roads (named, 'ref:' and 'id:' entries) into data/osm.cache.json (query fingerprint 93e1c28d8828c2f2, fetched 2026-10-11T19:29:58Z, OSM base 2026-10-11T19:28:01Z, 197 ways). 'ref:' entries exclude motorways, so US-40 / US-6 never drag I-70 in; route.exclude_ids then drops the wrong side of two divided pieces when the payload is parsed. No KML."
+  },
+  "centerline_frame": {
+    "file": "data/centerline.geojson",
+    "md5": "ef44db97f9eb175d2a14510737f5ac83",
+    "osm_source": "data/centerline.osm.geojson",
+    "osm_source_md5": "28dcc7b644510179fe366eb56d3911e5",
+    "remapped_from_md5": "28dcc7b644510179fe366eb56d3911e5",
+    "remapped_by": "tools/remap_centreline_config.py (data/centerline_remap.json)",
+    "_doc": "The centreline every vertex index and station in this config refers to (its md5). tools/remap_centreline_config.py re-derives them by station matching whenever data/centerline.geojson changes, and refuses a line it cannot match to this record."
   },
   "route": {
     "width_profile": "mountain",
@@ -50,12 +59,11 @@
     "connectors": {}
   },
   "hairpin_fit": {
-    "_doc": "A2 / P2 step 2 (tools/fit_hairpins.py): each declared corner's OSM facets are replaced by a clothoid-arc-clothoid (curvature 0 -> 1/R -> 0) resampled at <= max_spacing_m, before any ribbon exists. st_m = the corner's apex station on data/centerline.geojson (metres from v0, the pylons), re-found within 40 m, so a small route edit does not orphan it. radius_m null = measured from the centreline (a circle through the core of the turn; when an arc at that radius cannot pass the gate within max_move_m, the nearest radius that can, scanned 0.7-1.3 x the measurement). A number overrides it: the aerial pass (dossier 12; NAIP 2019, data/aerial/aerial_measurements.json, 2026-10-11) filled it for C1-C6, C8-C10, C12 and C13. C7 (low aerial confidence) and C11 (not measurable on that flight) keep the centreline-derived radius; each corner's _doc says which source it uses and why. Optional span_st_m [from, to] pins the replaced stretch. C12 and C13 are kinks (one OSM node holds most of the turn), so the centreline has no radius there; their radius_m is the aerial junction measurement (P3b's junction mouth may refine it). The ~90-111 deg bends at st ~1,752 / 4,102 / 4,960 / 6,809 / 6,982 are not in the dossier's corner table and are not declared here (the tool lists them). PROTOTYPE: the fitted line goes to a scratch --out-dir only; when it replaces data/centerline.geojson, every vertex index this config declares after C1 shifts (starts, sectors, race boxes), so P2 re-derives them in the same step.",
+    "_doc": "A2 / P2 step 2. WHERE the line runs is judged by tools/verify_centreline_paint.py against the paint traced on NAIP 2019 (data/aerial/paint_traces.json), not against OSM: the fitter's former 1.5 m-from-OSM ceiling (max_move_m) passed fits 7.3 m and 4.4 m off the paint at C4 and C10, where OSM itself cuts the hairpins, and failed C9, where OSM was right; it was removed on 2026-10-11. The Lariat's centreline is tools/paint_centreline.py's: the OSM line (data/centerline.osm.geojson) moved onto the traced paint, OSM kept where the paint is in shadow (C7's apex, C11, the upper climb), blended between, the climb resampled at 1 m as one curvature-continuous line; it is data/centerline.geojson, the file every later stage reads. tools/fit_hairpins.py stays as the clothoid-arc-clothoid library and a per-corner radius check (its step gate only). st_m = each corner's apex station on data/centerline.geojson (metres from v0, the pylons), re-found within 40 m; re-derived onto the paint centreline by station matching on 2026-10-11 (tools/remap_centreline_config.py). climb_st_m is on the OSM source line: the paint tools map it through each vertex's osm_station_m, so it is never remapped. radius_m: the aerial pass (dossier 12; NAIP 2019, data/aerial/aerial_measurements.json, reproduced by tools/aerial_measure.py) for C1-C6, C8-C10, C12 and C13; null = centreline-derived (C7: low aerial confidence; C11: not measurable on that flight); each corner's _doc says which and why. The paint centreline follows the paint, whose yellow-line circle carries each hairpin's radius; data/aerial/paint_centreline.json compares the line's tightest radius with radius_m per corner. C12 and C13 are junction nodes (one OSM node holds most of the turn); their radius_m is the aerial junction measurement, for P3b's junction mouth: an arc at that radius needs ~12.5 m tangents, but the traced arm paint (the double yellow up to the stop line) runs to within 9-15 m of the node, so the paint centreline keeps the node, on the paint-anchored arms. The ~90-111 deg bends at OSM-line st ~1,752 / 4,102 / 4,960 / 6,809 / 6,982 are not in the dossier's corner table and are not declared; the paint centreline follows their paint where it is traced (st ~6,809: OSM was 3.9 m off).",
     "gate": {
       "step_slack_deg": 1.0,
       "adjacent_step_deg": 1.5,
-      "max_move_m": 1.5,
-      "_doc": "Checked on each fitted span plus join_margin untouched points either side: every heading change between consecutive points <= (spacing / R_fit) x 57.3 deg + step_slack_deg (spacing = the mean of the two segments at the point; the first term is the fitted arc's own turn per point); adjacent heading changes differ by <= adjacent_step_deg; the fitted line stays within max_move_m of the OSM line, both ways. All three numbers [invented] (plan P2 step 2; max_move_m stands for 'the OSM way's lateral tolerance', which nobody publishes). The GATES-CHANGELOG.md entry is owed."
+      "_doc": "tools/fit_hairpins.py's step gate, on each fitted span plus join_margin untouched points either side: every heading change between consecutive points <= (spacing / R_fit) x 57.3 deg + step_slack_deg (spacing = the mean of the two segments at the point; the first term is the fitted arc's own turn per point), and adjacent heading changes differ by <= adjacent_step_deg. Both [invented] (plan P2 step 2). The same two rules, with the line's own local radius in place of R_fit, are check (b) of tools/verify_centreline_paint.py over the whole climb at 1 m. The former max_move_m (1.5 m from the OSM line) is gone: position is judged against the paint, check (a) of the same gate (0.75 m [invented]). See fleet/GATES-CHANGELOG.md, 2026-10-11 paint gate."
     },
     "max_spacing_m": 1.0,
     "join_margin": 2,
@@ -74,84 +82,84 @@
       {
         "id": "C2",
         "name": "Chimney Gulch",
-        "st_m": 1077,
+        "st_m": 1076,
         "radius_m": 23.8,
         "_doc": "radius_m: aerial, 23.8 m +-0.4 (high): painted edge lines, one centre, mean of inner 20.05 / outer 27.56. Centreline-derived was 24.42."
       },
       {
         "id": "C3",
         "name": "Below Lookout Mountain Crag",
-        "st_m": 1401,
+        "st_m": 1400,
         "radius_m": 15.6,
         "_doc": "radius_m: aerial, 15.6 m +-0.3 (high): painted edge lines. Centreline-derived was 16.12."
       },
       {
         "id": "C4",
         "name": "Lower hairpin 1",
-        "st_m": 2607,
+        "st_m": 2614,
         "radius_m": 10.25,
-        "_doc": "radius_m: aerial, 10.25 m +-0.5 (high): painted edge lines, inner 6.37 / outer 14.13. Centreline-derived was 12.80. OSM cuts this hairpin short (its apex passes 3.5 m from the painted centre, ~7 m inside the painted apex), so an arc fitted to the OSM line misses the real road here at any radius: P2 anchors it on the aerial centre (aerial_measurements.json corners C4 centre.lonlat_wgs84), not on the OSM apex."
+        "_doc": "radius_m: aerial, 10.25 m +-0.5 (high): painted edge lines, inner 6.37 / outer 14.13. Centreline-derived was 12.80. OSM cuts this hairpin short (its apex passes 3.5 m from the painted centre, ~7 m inside the painted apex), so an arc fitted to the OSM line misses the real road here at any radius. The paint centreline follows the traced paint instead: worst 0.32 m from it, where OSM is 7.56 m off."
       },
       {
         "id": "C5",
         "name": "Lower hairpin 2",
-        "st_m": 2845,
+        "st_m": 2858,
         "radius_m": 10.02,
         "_doc": "radius_m: aerial, 10.02 m +-0.3 (high): painted edge lines. Centreline-derived was 10.54."
       },
       {
         "id": "C6",
         "name": "Lower hairpin 3",
-        "st_m": 3004,
+        "st_m": 3018,
         "radius_m": 13.26,
         "_doc": "radius_m: aerial, 13.26 m +-0.3 (high): painted edge lines. Centreline-derived was 14.21."
       },
       {
         "id": "C7",
         "name": "Upper hairpin 1",
-        "st_m": 5424,
+        "st_m": 5435,
         "radius_m": null,
         "_doc": "radius_m stays null: centreline-derived (core circle 15.86 m, which the tool adjusts to 12.10 m to pass). The aerial's 12.62 m is LOW confidence (+-1.0 m: two-thirds of the core arc is in conifer shadow, so it comes from a yellow-paint ridge search), so it does not override; the two agree within that +-1.0 m."
       },
       {
         "id": "C8",
         "name": "Upper hairpin 2",
-        "st_m": 5523,
+        "st_m": 5533,
         "radius_m": 10.49,
         "_doc": "radius_m: aerial, 10.49 m +-0.3 (high): painted edge lines. Centreline-derived was 11.80."
       },
       {
         "id": "C9",
         "name": "Upper hairpin 3",
-        "st_m": 5624,
+        "st_m": 5633,
         "radius_m": 11.31,
         "_doc": "radius_m: aerial, 11.31 m +-0.4 (high): painted edge lines, inner 7.80 / outer 14.82. Centreline-derived was 12.03. The paint tightens to R ~9.5 at the apex and eases out over ~40-50 m with no step: OSM's uneven tail is facets on that long exit, not a second arc."
       },
       {
         "id": "C10",
         "name": "Upper hairpin 4",
-        "st_m": 5879,
+        "st_m": 5888,
         "radius_m": 15.02,
-        "_doc": "radius_m: aerial, 15.02 m +-0.4 (high): painted edge lines. Centreline-derived was 14.80. OSM sits inside the painted curve (2.1 m median, 4.7 m max), so as at C4 the arc belongs on the aerial centre."
+        "_doc": "radius_m: aerial, 15.02 m +-0.4 (high): painted edge lines. Centreline-derived was 14.80. OSM sits inside the painted curve (2.1 m median, 4.7 m max), so as at C4 the paint centreline follows the traced paint instead: worst 0.21 m from it, where OSM is 4.77 m off."
       },
       {
         "id": "C11",
         "name": "Wildcat Point bend",
-        "st_m": 6479,
+        "st_m": 6489,
         "radius_m": null,
         "_doc": "radius_m stays null: centreline-derived (18.16 m), unconfirmed. Not measurable on NAIP 2019: the apex and exit are in deep conifer shadow on a north-facing slope. Needs another image, Street View or a visit."
       },
       {
         "id": "C12",
         "name": "Paradise Rd tee",
-        "st_m": 9742,
+        "st_m": 9750,
         "radius_m": 14.9,
         "_doc": "kink: a junction node turns 78.5 deg, so the centreline has no radius here. radius_m: aerial, 14.9 m +-1.4 (medium): the inside kerb return is R 9.1 m (an arc tangent to both arms' inside pavement edges), and the lap arc is concentric with it at the arms' mean inside half-width (6.51 m on Lookout Mtn Rd with its wide shoulders, 5.10 m on Paradise Rd). With the 6.7 m ribbon centred on the lap, R 12.45 m would put the ribbon's inside edge on the kerb return. The dossier's 'R~13 m' depends on how far apart its three measuring points sit."
       },
       {
         "id": "C13",
         "name": "Paradise Rd bend",
-        "st_m": 10611,
+        "st_m": 10622,
         "radius_m": 16.08,
         "_doc": "kink: one OSM node turns 76.4 deg, so the centreline has no radius here. radius_m: aerial, 16.08 m +-1.2 (medium): the inside (SW) kerb return is R 11.4 m (tangent-constrained), plus the arms' mean inside half-width (4.38 / 4.98 m). With the 6.7 m ribbon, R 14.75 m would put its inside edge on the kerb return."
       }
@@ -171,7 +179,7 @@
       "road": "Lookout Mountain Rd in Golden (Beverly Heights)",
       "st_m": [
         0,
-        1073
+        1072
       ],
       "width_m": null,
       "status": "measure on the aerial (dossier 12)"
@@ -179,8 +187,8 @@
     {
       "road": "The Lariat Trail (National Register district, CR 68)",
       "st_m": [
-        1073,
-        7102
+        1072,
+        7110
       ],
       "width_m": 6.7,
       "min_width_m": 6.1,
@@ -190,8 +198,8 @@
     {
       "road": "The Lariat Trail at the Tiers of Zion switchbacks",
       "st_m": [
-        2500,
-        3100
+        2499,
+        3114
       ],
       "width_m": 5.48,
       "status": "published",
@@ -205,8 +213,8 @@
     {
       "road": "Summit, Buffalo Bill lot (Lookout Mountain Park)",
       "st_m": [
-        7102,
-        7702
+        7110,
+        7710
       ],
       "width_m": null,
       "status": "measure on the aerial"
@@ -214,8 +222,8 @@
     {
       "road": "Lookout Mountain Rd, back side",
       "st_m": [
-        7702,
-        9744
+        7710,
+        9752
       ],
       "width_m": null,
       "status": "measure on the aerial (2 lanes)"
@@ -223,8 +231,8 @@
     {
       "road": "Paradise Rd",
       "st_m": [
-        9744,
-        11690
+        9752,
+        11699
       ],
       "width_m": null,
       "status": "measure on the aerial (no OSM lane or width tags)"
@@ -232,8 +240,8 @@
     {
       "road": "US-40, Mt Vernon Canyon",
       "st_m": [
-        11690,
-        16612
+        11699,
+        16621
       ],
       "width_m": null,
       "lanes": 3,
@@ -242,8 +250,8 @@
     {
       "road": "I-70 Business / US-40 and West Colfax (Golden)",
       "st_m": [
-        16612,
-        20271
+        16621,
+        20280
       ],
       "width_m": null,
       "status": "OSM lanes (2-6) until measured; the race narrows the wide stretches to about Alvarado's width (race.corridor)"
@@ -251,8 +259,8 @@
     {
       "road": "US-6, one carriageway",
       "st_m": [
-        20286,
-        23919
+        20295,
+        23928
       ],
       "width_m": null,
       "lanes": 2,
@@ -261,8 +269,8 @@
     {
       "road": "US-6 off-ramp to 19th St",
       "st_m": [
-        23919,
-        24321
+        23928,
+        24330
       ],
       "width_m": null,
       "lanes": "1 (2 at the split)",
@@ -271,8 +279,8 @@
     {
       "road": "19th St (bike lanes with flex posts; the lid)",
       "st_m": [
-        24321,
-        24906
+        24330,
+        24915
       ],
       "width_m": null,
       "status": "measure on the aerial"
@@ -335,8 +343,8 @@
         "id": "exit259",
         "name": "I-70 Business at exit 259: the 2-lane north-east-bound side (A1)",
         "st_m": [
-          16612.3,
-          16698.5
+          16621.1,
+          16707.3
         ],
         "length_m": 86.2,
         "ways": [
@@ -350,8 +358,8 @@
         "id": "colfax",
         "name": "West Colfax Ave: its one-way piece before the US-6 signal",
         "st_m": [
-          19959.5,
-          20271.1
+          19968.2,
+          20279.8
         ],
         "length_m": 311.6,
         "ways": [
@@ -367,8 +375,8 @@
         "id": "us6_offramp",
         "name": "US-6, the Golden-bound carriageway, plus its off-ramp and the left-turn branch onto 19th St",
         "st_m": [
-          20285.6,
-          24320.7
+          20294.3,
+          24329.2
         ],
         "length_m": 4035.1,
         "ways": [
@@ -427,8 +435,8 @@
         "id": "nineteenth",
         "name": "19th St at the ramp terminal: the westbound side",
         "st_m": [
-          24320.7,
-          24374.3
+          24329.2,
+          24382.8
         ],
         "length_m": 53.6,
         "ways": [
@@ -450,14 +458,14 @@
       "race_furniture": false,
       "start": {
         "line_vertex": 0,
-        "grid_vertex": 8292,
+        "grid_vertex": 14417,
         "offset_right_m": 1.6,
         "sector_vertices": [
-          2394,
-          5518
+          7185,
+          11623
         ]
       },
-      "_start_doc": "Ledger 0047's declared start, as vertices into data/centerline.local.json (its own index space: local v0 = the pylons). line_vertex 0 = AC_TIME_0 at the pylons. Forward grid v8292 = 26.9 m behind the line on 19th St; reverse grid v9 = 26.1 m behind it on Lookout Mountain Rd (layout_dummies: 0 < d <= 35 m). Sectors on straight vertices (kink < 1 deg over +/-6 vertices): v2394 near the summit (st 7179.7) and v5518 on US-40 just before exit 259 (st 16555.2), so the three sectors are the climb, the top + canyon, and Golden. Validated 2026-10-11 by tools/layout_dummies.py on a plan-only projection of this centreline; re-run on the real centerline.local.json in P4. offset_right_m 1.6 = the right-hand lane's centre on a ~6.5 m two-lane road, PROVISIONAL: the width at the pylons is not measured (dossier 12). With layout_dummies' +/-1.0 m grid stagger the outer column's car edge sits 3.55 m right of centre, past the edge of a 6.5 m road; re-set it from the aerial width (or single-file the grid) in P4.",
+      "_start_doc": "Ledger 0047's declared start, as vertices into data/centerline.local.json (its own index space: local v0 = the pylons). line_vertex 0 = AC_TIME_0 at the pylons. Forward grid v14417 = 27.0 m behind the line on 19th St; reverse grid v26 = 26.0 m behind it on Lookout Mountain Rd (layout_dummies: 0 < d <= 35 m). Sectors on straight vertices (kink < 1 deg over +/-6 vertices): v7185 near the summit (st 7187.3) and v11623 on US-40 just before exit 259 (st 16564.0), so the three sectors are the climb, the top + canyon, and Golden. Validated 2026-10-11 by tools/layout_dummies.py on a plan-only projection of this centreline; re-run on the real centerline.local.json in P4. offset_right_m 1.6 = the right-hand lane's centre on a ~6.5 m two-lane road, PROVISIONAL: the width at the pylons is not measured (dossier 12). With layout_dummies' +/-1.0 m grid stagger the outer column's car edge sits 3.55 m right of centre, past the edge of a 6.5 m road; re-set it from the aerial width (or single-file the grid) in P4.",
       "against_oneway": [],
       "run": "anticlockwise: from the pylons up the Lariat Trail, over the top past Buffalo Bill, Paradise Rd, down Mt Vernon Canyon on US-40, home through Golden on I-70 Business, Colfax, US-6 and 19th St",
       "ui_description": "Street \u2014 Full: 24.9 km of open two-way roads, anticlockwise seen from above. From the 1917 stone pylons on 19th St up the 1913 Lariat Trail's stacked hairpins (20 mph, double yellow, about 6.5 m wide), over Lookout Mountain past Buffalo Bill's grave, down Paradise Rd and Mt Vernon Canyon on US-40, and home through Golden on I-70 Business, Colfax, US-6 and its 19th St ramp, every one-way with its arrows. At the US-6/Colfax signal the lap turns back on itself (152 deg); whether that turn is legal there is unverified. Real roads from OpenStreetMap at real USGS 3DEP elevation; nothing closed. The AI line is a generated draft, not an in-game recording.",
@@ -472,14 +480,14 @@
       "race_furniture": false,
       "start": {
         "line_vertex": 0,
-        "grid_vertex": 9,
+        "grid_vertex": 26,
         "offset_right_m": 1.6,
         "sector_vertices": [
-          5518,
-          2394
+          11623,
+          7185
         ]
       },
-      "_start_doc": "As street_full's _start_doc, mirrored: grid v9 on Lookout Mountain Rd, 26 m behind the line in reverse travel, sectors in reverse driving order. Reverse has its OWN grid facing its own way (July's Reverse shared Full's grid and spawned facing forward). offset_right_m is provisional, as on street_full.",
+      "_start_doc": "As street_full's _start_doc, mirrored: grid v26 on Lookout Mountain Rd, 26 m behind the line in reverse travel, sectors in reverse driving order. Reverse has its OWN grid facing its own way (July's Reverse shared Full's grid and spawned facing forward). offset_right_m is provisional, as on street_full.",
       "against_oneway": [
         "exit259",
         "colfax",
@@ -500,11 +508,11 @@
       "closure_token": "acw",
       "start": {
         "line_vertex": 0,
-        "grid_vertex": 8292,
+        "grid_vertex": 14417,
         "offset_right_m": 0.0,
         "sector_vertices": [
-          2394,
-          5518
+          7185,
+          11623
         ]
       },
       "_start_doc": "As street_full's _start_doc. offset_right_m 0.0: a one-way race uses the whole road, so the grid is centred (columns at +/-1.0 m, car edges 1.95 m from centre, inside a 6.1 m road).",
@@ -521,14 +529,14 @@
       "closure_token": "cw",
       "start": {
         "line_vertex": 0,
-        "grid_vertex": 9,
+        "grid_vertex": 26,
         "offset_right_m": 0.0,
         "sector_vertices": [
-          5518,
-          2394
+          11623,
+          7185
         ]
       },
-      "_start_doc": "As street_reverse's (grid v9, sectors reversed); offset_right_m 0.0: centred grid on the whole one-way road.",
+      "_start_doc": "As street_reverse's (grid v26, sectors reversed); offset_right_m 0.0: centred grid on the whole one-way road.",
       "run": "clockwise, one-way: 19th St, US-6, Colfax, up Mt Vernon Canyon, Paradise Rd, over the top and down the Lariat Trail; the whole mountain road edge to edge",
       "ui_description": "Race \u2014 Clockwise: the Reverse direction as a closed one-way race on the real roads, the same closures and open boxes turned the other way. The whole mountain road is yours edge to edge (about half Alvarado's width on the descent), with its real stone, steel and open edges and nothing added in it or along it. Every side road is barriered at its edge; the full intersection is open at the five corners where the race turns; Golden's multi-lane streets are narrowed to about Alvarado's width; on each divided road you race one side and the other is closed off. One-way rules do not apply on a closed road. The AI line is a generated draft, not an in-game recording.",
       "ai": "ai/race_cw"
@@ -546,7 +554,7 @@
         "road": "Lookout Mountain Rd in Golden",
         "st_m": [
           0,
-          1073
+          1072
         ],
         "real_width": "2 lanes, to measure",
         "corridor": "whole road, one-way",
@@ -555,8 +563,8 @@
       {
         "road": "The Lariat Trail",
         "st_m": [
-          1073,
-          7102
+          1072,
+          7110
         ],
         "real_width": "6.1-6.7 m",
         "corridor": "whole road, one-way (the main deviation: about half Alvarado)",
@@ -565,8 +573,8 @@
       {
         "road": "Summit + back side",
         "st_m": [
-          7102,
-          9744
+          7110,
+          9752
         ],
         "real_width": "2 lanes, to measure",
         "corridor": "whole road",
@@ -575,8 +583,8 @@
       {
         "road": "Paradise Rd",
         "st_m": [
-          9744,
-          11690
+          9752,
+          11699
         ],
         "real_width": "to measure",
         "corridor": "whole road",
@@ -585,8 +593,8 @@
       {
         "road": "US-40, Mt Vernon Canyon",
         "st_m": [
-          11690,
-          16612
+          11699,
+          16621
         ],
         "real_width": "3 lanes, to measure",
         "corridor": "whole road (about Alvarado if 3 lanes)",
@@ -595,8 +603,8 @@
       {
         "road": "I-70 Business / US-40",
         "st_m": [
-          16612,
-          18418
+          16621,
+          18427
         ],
         "real_width": "3-5 lanes; at exit 259 an 86 m divided pair",
         "corridor": "about 13 m on the race side, a lane-closure barrier closing the rest (leading up to medians, never on them); at exit 259 the 2-lane side (119006778)",
@@ -605,8 +613,8 @@
       {
         "road": "West Colfax Ave",
         "st_m": [
-          18418,
-          20271
+          18427,
+          20280
         ],
         "real_width": "2-6 lanes",
         "corridor": "about 13 m; the whole road where it is 2 lanes; its one-way piece (divided.colfax) is its own carriageway",
@@ -615,8 +623,8 @@
       {
         "road": "US-6",
         "st_m": [
-          20286,
-          23919
+          20295,
+          23928
         ],
         "real_width": "one 2-lane carriageway",
         "corridor": "that carriageway",
@@ -625,8 +633,8 @@
       {
         "road": "US-6 off-ramp",
         "st_m": [
-          23919,
-          24321
+          23928,
+          24330
         ],
         "real_width": "1 lane (2 at the split)",
         "corridor": "the ramp",
@@ -635,8 +643,8 @@
       {
         "road": "19th St",
         "st_m": [
-          24321,
-          24906
+          24330,
+          24915
         ],
         "real_width": "2 lanes + bike lanes",
         "corridor": "whole road",
@@ -652,12 +660,12 @@
         {
           "corner": "C12",
           "name": "Paradise Rd tee (Lookout Mountain Rd onto Paradise Rd, 90 deg left)",
-          "apex": 3249,
-          "i": 3241,
-          "j": 3257,
+          "apex": 8134,
+          "i": 8110,
+          "j": 8159,
           "st_m": [
-            9720.6,
-            9768.1
+            9728.0,
+            9776.6
           ],
           "legs_raced": [
             "Lookout Mountain Rd from the north",
@@ -670,12 +678,12 @@
         {
           "corner": "C14",
           "name": "Paradise Rd onto US-40 (stop signs; the RTD Park-n-Ride, exit 256)",
-          "apex": 3898,
-          "i": 3890,
-          "j": 3906,
+          "apex": 10003,
+          "i": 9995,
+          "j": 10011,
           "st_m": [
-            11665.6,
-            11712.9
+            11674.7,
+            11722.0
           ],
           "legs_raced": [
             "Paradise Rd",
@@ -689,12 +697,12 @@
         {
           "corner": "C15",
           "name": "Exit 259 signals (US-40 onto I-70 Business)",
-          "apex": 5537,
-          "i": 5529,
-          "j": 5545,
+          "apex": 11642,
+          "i": 11634,
+          "j": 11650,
           "st_m": [
-            16588.2,
-            16635.6
+            16597.0,
+            16644.4
           ],
           "legs_raced": [
             "US-40 from the canyon",
@@ -709,12 +717,12 @@
         {
           "corner": "C16",
           "name": "Colfax onto US-6 (the 152 deg double-back, D1)",
-          "apex": 6762,
-          "i": 6749,
-          "j": 6770,
+          "apex": 12867,
+          "i": 12854,
+          "j": 12875,
           "st_m": [
-            20247.7,
-            20309.6
+            20256.4,
+            20318.3
           ],
           "legs_raced": [
             "West Colfax",
@@ -727,12 +735,12 @@
         {
           "corner": "C18",
           "name": "The ramp onto 19th St west (A1's ordinary left)",
-          "apex": 8106,
-          "i": 8098,
-          "j": 8114,
+          "apex": 14211,
+          "i": 14203,
+          "j": 14219,
           "st_m": [
-            24296.7,
-            24344.5
+            24305.2,
+            24353.0
           ],
           "legs_raced": [
             "the US-6 off-ramp's left branch",
@@ -744,7 +752,7 @@
           ]
         }
       ],
-      "_boxes_doc": "Kevin's 'Corners the race turns at': the full intersection drivable, the legs the race doesn't take sealed at the box edge; the clockwise race uses the same boxes turned the other way. apex = the corner vertex on the V3 centreline (centerline.local.json index); i / j = apex +/- 8 vertices (~24 m), PROVISIONAL until P3b authors the junction mouths and the box edges come from their footprint. C16 spans both junction nodes (v6757, v6762). C17 (the US-6 diverge) is a gore, not a box.",
+      "_boxes_doc": "Kevin's 'Corners the race turns at': the full intersection drivable, the legs the race doesn't take sealed at the box edge; the clockwise race uses the same boxes turned the other way. apex = the corner vertex on the V3 centreline (centerline.local.json index); i / j = apex -/+ ~24 m (8 vertices on the 3 m OSM line; re-derived by station onto the paint centreline, where C12 sits on 1 m points and its i / j are 24-25 vertices out), PROVISIONAL until P3b authors the junction mouths and the box edges come from their footprint. C16 spans both junction nodes (v12862, v12867). C17 (the US-6 diverge) is a gore, not a box.",
       "closure_runs_pending": {
         "where": [
           "I-70 Business / US-40",
@@ -1042,11 +1050,11 @@
           "st_m": [
             [
               0,
-              1073
+              1072
             ],
             [
-              16612,
-              24906
+              16621,
+              24915
             ]
           ],
           "elev_m": [
@@ -1068,8 +1076,8 @@
           "name": "lower_lariat",
           "st_m": [
             [
-              1073,
-              2500
+              1072,
+              2499
             ]
           ],
           "elev_m": [
@@ -1092,8 +1100,8 @@
           "name": "lower_hairpins_windy_saddle",
           "st_m": [
             [
-              2500,
-              4950
+              2499,
+              4961
             ]
           ],
           "elev_m": [
@@ -1116,8 +1124,8 @@
           "name": "upper_hairpins_north",
           "st_m": [
             [
-              4950,
-              6500
+              4961,
+              6509
             ]
           ],
           "elev_m": [
@@ -1139,8 +1147,8 @@
           "name": "summit_back_side",
           "st_m": [
             [
-              6500,
-              9744
+              6509,
+              9752
             ]
           ],
           "elev_m": [
@@ -1161,8 +1169,8 @@
           "name": "paradise_canyon",
           "st_m": [
             [
-              9744,
-              16612
+              9752,
+              16621
             ]
           ],
           "elev_m": [
@@ -1201,8 +1209,8 @@
           "where": "Golden part of Lookout Mountain Rd, plus near the pylons",
           "st_m": [
             [
-              500,
-              1000
+              499,
+              999
             ]
           ],
           "mapped": 3
@@ -1211,8 +1219,8 @@
           "where": "Buffalo Bill complex",
           "st_m": [
             [
-              6500,
-              7000
+              6509,
+              7007
             ]
           ],
           "mapped": 1
@@ -1221,8 +1229,8 @@
           "where": "Exit 259",
           "st_m": [
             [
-              15500,
-              16500
+              15509,
+              16509
             ]
           ],
           "mapped": 8
@@ -1231,8 +1239,8 @@
           "where": "Heritage / Colfax (incomplete: every junction has signals)",
           "st_m": [
             [
-              19020,
-              19520
+              19029,
+              19529
             ]
           ],
           "mapped": 1
@@ -1241,8 +1249,8 @@
           "where": "US-6 at Johnson Rd (the rest of US-6 is lit=no; the wildlife crossing's 'lit' is its strobes)",
           "st_m": [
             [
-              20920,
-              21120
+              20929,
+              21129
             ]
           ],
           "mapped": 3
@@ -1251,8 +1259,8 @@
           "where": "19th St interchange, ramp, lid and 19th St",
           "st_m": [
             [
-              23020,
-              24450
+              23029,
+              24459
             ]
           ],
           "mapped": 23
@@ -1343,17 +1351,17 @@
         },
         {
           "what": "Wildcat Point's 2 sloping stone retaining walls",
-          "st_m": 6450
+          "st_m": 6460
         },
         {
           "what": "Sensation Point's concrete overlook wall with its pipe rail, rising out of the rock",
-          "st_m": 2225
+          "st_m": 2224
         },
         {
           "what": "the Windy Saddle dry-stone walls (1-2 m)",
           "st_m": [
-            4920,
-            4965
+            4931,
+            4976
           ]
         },
         {
@@ -1384,8 +1392,8 @@
           {
             "on": "West Colfax",
             "st_m": [
-              19340,
-              19369
+              19349,
+              19378
             ],
             "ways": [
               84721006,
@@ -1396,7 +1404,7 @@
           },
           {
             "on": "US-6",
-            "st_m": 21140,
+            "st_m": 21149,
             "ways": [
               84720905
             ]
@@ -1413,8 +1421,8 @@
           533679737
         ],
         "crosses_st_m": [
-          24353,
-          24366
+          24362,
+          24375
         ],
         "footprint": "measure on the aerial"
       }

@@ -900,3 +900,40 @@ collects every chunk the station interval [start − 40, end + 40] touches round
 `tests/ac/test_build_kn5_loop_prep.py::test_seam_chunks_hold_every_same_leg_station_when_the_last_chunk_is_short`
 walks every station pair within the window on such a lap; it fails on the merged code, passes on the fix. No
 threshold changed.
+
+## 2026-10-12 — Lariat P2 data stages: the roll-rate gate, footprint crossfall, measured widths, the profile by station, the declared lid, L13 for the span detectors (ledger 0048)
+
+The Lariat's draft now runs `elev -> road_profile -> project -> widths -> measured_widths -> crossfall ->
+verify_crossfall` (`tracks/lookout-lariat/ship.json`, one appended block of step functions in
+`tools/ship_track.sh`). Every engine change is opt-in or provably inert for other tracks (proof list below).
+
+| Gate / guard | Before | After | Flag |
+|---|---|---|---|
+| **roll rate (a)** (new, `tools/verify_crossfall.py`, hard in the Lariat draft) | — | on EACH half of the section (`left_pct`, `right_pct`; a legacy file is read as one plane), the tilt changes by **<= 4 %** between any two stations within **30 m**, the seam wrapped (L13) | ⚠ invented (V3-PLAN P5) |
+| **roll rate (b)** (new) | — | no swing from **>= +3 %** to **<= -3 %** (or back) within **30 m**: 0 | ⚠ invented (V3-PLAN P5) |
+| crossfall file honesty (new, same tool) | — | a `status` (`estimated` until a 3DEP source-lidar sample agrees), stations ascending in [0, lap), no gap over two steps, the seam included | a record check, no number |
+| crossfall method (`scripts/elevation/crossfall.py`, opt-in `road_profile.crossfall.method = "footprint"`) | `build`: a 3DEP pair 0.6 m inside each pavement edge every 2nd vertex (geojson stations), deadband 1.5 %, cap 6 %, median 9 + mean 5 vertices | `build_footprint` (local stations): 5 samples across the real-width footprint, the outermost **1.0 m** inside each edge (one 3DEP cell), every **3 m**; plane tilt by least squares; ground at **2 / 5 / 8 m** beyond each edge only to classify **bench** (one side rises **>= 1.0 m** above the road centre while the other rises **< 0.5 m**) vs crown, runs under **30 m** joined; measurement smoothed by a **30 m** median + **15 m** mean (length-weighted); kept only where **>= 2 %**, **<= 6 %**, not tilting INTO a curve tighter than **R 100 m** by more than 2 %, off a declared deck, outside **+-30 m** of a roll-rate failure of the measured series itself, and in a kept run **>= 30 m**; everything else the construction standard (**2 %** crown, or **2 %** toward the cut ditch on a bench); every change ramped at **0.12 % per metre** (the mean of the Lipschitz minorant and majorant: 3.6 % per 30 m, so the file passes (a) and (b) by construction) | 2 % is [std: docs/ROAD-CONSTRUCTION.md "Drainage"]; 6 % is the legacy cap's value; every other number ⚠ invented. `build` is byte-identical for every track that does not opt in (no track in airoso has a `crossfall.json`) |
+| measured widths (`scripts/gps/measured_widths.py`, new, opt-in by the ship step) | `widths_from_osm`: OSM lanes table, junction flares, hard-corner flares (>= 14 m), a **10 m** floor on every fold over 110°; geojson-indexed widths written 1:1 into the local ring | measured (aerial) > published (`width_overrides.width_m`) > OSM table, per top-level `width_overrides` stretch (touching measured stretches interpolate as one), measured = edge-line centre-to-centre **+ 0.10 m** (one stripe) or, on a town street with no edge lines, curb-to-curb; no flares, no fold floor; rotated into the local frame; changes rate-limited at **0.25 m/m** round the closed lap | 0.10 m [std: MUTCD 3A.05 normal line 4-6 in]; 0.25 m/m is `projection.slew_limit_widths`'s existing rate, now applied cyclically (L13). `widths_from_osm` itself is untouched |
+| road profile (`scripts/elevation/road_profile.py`, new, after heightfield) | heightfield's windows counted in vertices, sized for 3 m (on the Lariat's 1 m climb: an 11 m median, a 3 m mean, a 48 %-per-metre effective grade cap) | the same 33 m median, 9 m mean and cut-only grade cap, in METRES: windows by station, filters weighted by each vertex's length of road, the cap per real segment (L3) | no threshold moves. Proven equal to `heightfield.snap_to_ground` on uniform 3 m lines (open and closed); `heightfield.py` untouched |
+| declared deck (`bridges.declared`, new) | July: the height detector's spans | the 19th St lid from its OSM tunnel footprint (ways 533503591 + 533679737, each buffered by half its pavement width) plus **8 m** abutments each side, held straight in the raw profile before smoothing; recorded as `capture.bridges` (local stations) | 8 m ⚠ invented (copies the prep's `BRIDGE_PAD_M`) |
+| span seam rule, `build_mesh._bridge_detector` | a run of high stations reaching the closing vertex became a span (July's 525 m [24,278-24,803]) | opt-in `bridges.l13_seam_rule`: on a closed lap such a run is dropped unless vertex 0 is also high (it continues from vertex 0) | [std: L13]. Off by default: every other track's detector output is unchanged |
+| span seam rule, `build_kn5_loop.detect_bridge_spans` (the prep) | the last span ran `pad_m` past the lap's end; vertex 0's pad was cut at 0 | spans and pads wrap at the seam, clamped to [0, lap]; a span reaching the closing vertex always continues from vertex 0; open roads unchanged | [std: L13]. No shipping track preps with this file |
+| drive_test replication | `z_raw_m` (per geojson vertex) paired by index with the local ring | `z_raw_local_m` when present (written by `road_profile`: the same samples in the local index space), else `z_raw_m` as before | a frame fix, no number. On the Lariat the ring is rotated by 2 vertices (2-6 m along a climb of up to 10 %) |
+
+Proof:
+- `tests/elevation/test_road_profile.py` (10): equal to heightfield on uniform 3 m lines (open, closed); windows of
+  33 / 9 samples at 1 m; mixed 1 m / 3 m spacing leaves an 8 % ramp within 0.13 m (by vertex count: > 0.5 m off);
+  a closed lap's filters are rotation-invariant; the cap per real segment; a deck from a footprint, held straight
+  over a 6 m trench; a deck across the seam refused; `build --write` writes `capture.bridges` in local stations and
+  `z_raw_local_m` rotated by projection's k.
+- `tests/elevation/test_crossfall_footprint.py` (6): legacy `build` output byte-identical to airoso a0557e0's file;
+  CLI dispatch; the two roll-rate rules incl. across the seam; plane / crown fit; on a synthetic lap a flat road on
+  a bench takes -2 / -2 toward the cut (raw tilt < 0.01 %: the beside-the-road samples never enter a tilt), an
+  outsloped 4 % road keeps its measurement, flat ground the crown, a deck the standard, and the result passes.
+- `tests/gps/test_measured_widths.py` (4), `tests/geometry/test_bridge_seam.py` (6),
+  `tests/geometry/test_drive_test_raw_local.py` (1), `tests/tools/test_ship_track_chain.py` (+1).
+
+On the Lariat (clean scratch run, 3DEP and Overpass fetched live, TLS verified): see ledger 0048 "P2, the data
+stages" for the numbers. The roll-rate gate PASSES on the written file (worst 3.4 % / 30 m, 0 swings); on the raw
+in-footprint measurement it would fail at 1,836 stations with 36 swings, and on the smoothed measurement at 1,030
+with 18: the measurement alone is not a road surface, which is why the file is "estimated" and mostly standard.

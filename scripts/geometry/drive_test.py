@@ -1028,7 +1028,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     if ep.exists():
         try:
             ej = json.loads(ep.read_text())
-            zr = ej.get("z_raw_m") or []
+            # z_raw_local_m (scripts.elevation.road_profile, opt-in) is z_raw_m in centerline.local.json's index
+            # space; z_raw_m is per geojson vertex, k vertices off a ring that projection rotated to route.start_at
+            zr = ej.get("z_raw_local_m") or ej.get("z_raw_m") or []
             if reverse:
                 zr = zr[::-1]
             e0 = 0.0

@@ -709,3 +709,69 @@ elevation, kn5 or Blender build of the Lariat; nothing installed. Status stays `
   `author_lamps_blend` (positions file);
 - station matching in `seat_terrain_blend`, `place_signs` and the edge and closure authoring;
 - the underlay (P2 step 3), which ends "no blend yet"; the draft sync-back is exercised only once it exists.
+
+## P2, the data stages (2026-10-12)
+
+Plan P2 steps 1, 4 and 5: the draft's data on the paint centreline. The Lariat draft is now gps -> paint_centreline
+-> remap_config -> verify_centreline_paint -> route_oneway_check -> elev -> **road_profile** -> project -> widths ->
+**measured_widths** -> **crossfall** -> **verify_crossfall** -> underlay (one appended block in `tools/ship_track.sh`;
+`tracks/lookout-lariat/ship.json`). A clean `--draft-only` run into a scratch project (3DEP and Overpass fetched
+live, TLS verified; nothing synced back or installed) passed every gate. Thresholds: `fleet/GATES-CHANGELOG.md`
+2026-10-12.
+
+**Elevation** (`scripts/elevation/road_profile.py`, new). heightfield's windows are counted in vertices and sized
+for 3 m; on the 1 m climb they shrank to an 11 m median and a 3 m mean, and its grade cap loosened to 48 % per
+metre. The profile is now re-smoothed from heightfield's own 3DEP samples with the same 33 m / 9 m / cut-only cap
+in metres, length-weighted (a count-weighted window lifted the road 0.70 m and invented a -12.3 % at the 1 m / 3 m
+change on Paradise Rd; weighted: 0.27 m max). The samples are on the painted centre line, never beside the road
+(L3b). On the 24,914 m lap: 1,782.7-2,288.6 m (505.9 m of relief), 558.8 m of climbing; steepest 20 m **+9.9 %**
+(raw 3DEP +10.1 %, the climb at C7, local st 5,410) and **-11.4 %** (raw -11.5 %, Paradise Rd); |smoothed - raw|
+p95 0.04 m, max 0.27 m; one 1 m segment touches the 16 % cap (A7: it still does not bind anywhere that matters).
+Per stretch, steepest 20 m: Lariat Trail +9.9 %, back side +8.3 / -5.4 %, Paradise Rd -11.3 %, US-40 -7.7 %,
+Colfax -6.3 %, US-6 +5.4 / -6.2 %, 19th St +8.5 %. Equal to heightfield on uniform 3 m lines (tests).
+
+**Widths** (`scripts/gps/measured_widths.py`, new, after the `mountain` table). Two defects in what
+`widths_from_osm` hands on, both undone here: its widths are per geojson vertex but written 1:1 into the local
+ring, which projection rotated by 2 vertices; and it lays 14 hard-corner flares (14-29.7 m), 102 junction flares
+and a 10 m floor on all ten hairpin folds, none of them measured (84 merged runs, listed in `data/widths.measured.json`
+for P3b). Now: measured (55 aerial points: width stations, hairpin legs, apexes; edge-line centre to centre + one
+0.10 m stripe; Golden's st 150 curb to curb) > published > OSM. Golden to the Lariat start 6.61-12.46 m (median
+7.30; the base hairpin C1 widens 7.3 -> **9.65** -> 7.5 m at its apex), the Lariat Trail 6.04-8.29 m (median
+6.57; apexes C2-C10 6.96-8.30 m), Paradise Rd 6.01-7.21 m (median 6.65). Still OSM, not measured: the summit and
+back side (6.5 m), US-40 (7.6-15.0, median 12.0), Colfax (9-21), US-6 (7.2-18), the ramp (5.0) and 19th St
+(5.6-12). The published 5.48 m at the Tiers of Zion loses to the aerial's 6.4-6.9 m edge lines there. Seven
+stations refused (six in tree shadow, W10400 pavement-only at a junction).
+
+**Crossfall** (`scripts/elevation/crossfall.py` footprint mode, opt-in; the legacy `build` is byte-identical).
+8,305 stations every 3 m: crown 46.7 %, 2 % toward a cut ditch 31.9 % (bench left 15.0, right 16.9), measured
+21.3 % (mostly US-6, Colfax, US-40 and 19th St; 5 % of the climb), the lid 0.2 %. Final max plane 5.97 %, worst
+change 3.40 % / 30 m, 0 swings, 0 stations banked into a curve: **roll-rate gate PASS**. Status **estimated**: no
+source-lidar sample has been compared. The raw in-footprint measurement alone would fail the gate at 1,836
+stations with 36 swings (|tilt| p50 2.2 %, p95 7.9 %, 11.9 % of stations >= 6 %), so most of the lap takes the
+construction standard. **For Kevin / the lidar check:** on the climb's bench sections the footprint reads the road
+tilting AWAY from the cut, toward the drop, by a median 0.9 % (cut on the left) and 1.7 % (cut on the right), the
+opposite sign to the construction standard's 2 % toward the cut ditch. Per station the noise (|p50| 2.7 %) is
+larger than that signal, so the file uses the standard; if the lidar sample confirms an outslope, the standard's
+sign is what changes.
+
+**Bridge spans.** The 19th St lid, declared from the US-6 tunnel footprint (ways 533503591 + 533679737, crossed at
+77.5° and 69.6°): local st **24,349.4-24,387.6** (38.1 m: 22.1 m over the two carriageways + 8 m abutments each
+side), held straight at +3.44 %. 3DEP already carries the lid (no trench under it): holding it moved the raw
+profile by at most 0.11 m. Recorded as `capture.bridges` [{center 24,368.5, len 38.1}] for drive_test and
+kn5_ground_check. No other lap way carries `bridge=yes`. Both July auto spans are dropped (config
+`bridges.dropped`): [24,278-24,803] ended on the closing vertex (L13) and [20,742-21,166] holds the C-470 crossing,
+where the lap passes UNDER the bridge (aerial). The L13 seam rule: `build_mesh._bridge_detector` (the detector
+that minted the 525 m span) drops a run that ends on the closing vertex without continuing from vertex 0, opt-in
+`bridges.l13_seam_rule` (other tracks unchanged); the prep's `detect_bridge_spans` wraps spans and pads at the
+seam (no shipping track preps with it).
+
+**Also:** `drive_test`'s replication paired `z_raw_m` (geojson index) with the local ring by index, 2 vertices
+off on the Lariat (2-6 m along a 10 % climb, ~0.2-0.3 m of false error against a p95 <= 0.5 m gate). `road_profile`
+now writes `z_raw_local_m` and drive_test prefers it; tracks without it are unchanged.
+
+**Tests:** `tests/run_tests.py` 576 passed, 2 failed: the same 2 engine-july CRLF failures as before (549 + 27 new).
+
+**Still owed from these steps:** the source-lidar sample that would turn "estimated" into "measured"; the
+roll-rate rules on the BUILT sections (P5's Drive-1 set) once the underlay exists; aerial widths for the summit,
+back side, US-40, Colfax, US-6, the ramp and 19th St; build_mesh's own raw-ground frame (same rotation bug as
+drive_test's, in a stage V3 does not run).

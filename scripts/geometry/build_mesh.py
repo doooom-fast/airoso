@@ -221,9 +221,29 @@ BRIDGE_MIN_H_M = 3.5       # road must ride this far above bare earth to earn a 
 BRIDGE_MIN_SPAN_M = 12.0   # ...over at least this long a run (a real span, not a one-vertex bump)
 
 
+def seam_rule_spans(spans: list[tuple[float, float]], st: list[float], high: list[bool],
+                    closed: bool) -> tuple[list[tuple[float, float]], list[tuple[float, float]]]:
+    """L13 for a detected span list: on a CLOSED lap a span may not end on the closing vertex unless it continues
+    from vertex 0. The closing vertex IS vertex 0, so a run that reaches it while vertex 0 is not high means the
+    predicate disagrees with itself at one physical point: two frames or two profiles met at the seam (the July
+    Lariat's 525 m [24,278-24,803] span, ledger 0048). Such a run is dropped. Returns (kept, dropped). Open roads
+    and spans that do continue from vertex 0 are kept as they are."""
+    if not closed or not spans or not st:
+        return list(spans), []
+    end = st[-1]
+    kept, dropped = [], []
+    for a, b in spans:
+        if abs(b - end) < 1e-9 and not high[0]:
+            dropped.append((a, b))
+        else:
+            kept.append((a, b))
+    return kept, dropped
+
+
 def _bridge_detector(centerline_m: list[Vertex], natural_grid: list[list[Vertex]],
                      raw_ground: tuple[list[float], list[float]] | None = None,
-                     paved_zones: list[tuple[float, float, float, float]] | None = None):
+                     paved_zones: list[tuple[float, float, float, float]] | None = None,
+                     seam_rule: bool = False):
     """Return ``bridge_of(station_m) -> bool``: True where the road rides a sustained height above the
     bare earth (a real gap to span — Sand Creek's creek). Those stations get NO embankment fill (the
     valley stays open under the deck) and a bridge structure instead. Returns a no-op if there are none.
@@ -274,6 +294,13 @@ def _bridge_detector(centerline_m: list[Vertex], natural_grid: list[list[Vertex]
         if st[j - 1] - st[i] >= BRIDGE_MIN_SPAN_M:
             spans.append((st[i], st[j - 1]))
         i = j
+    if seam_rule:   # opt-in per track (bridges.l13_seam_rule): every other track keeps the detector as it was
+        _closed = (len(centerline_m) > 2 and abs(centerline_m[0][0] - centerline_m[-1][0]) < 1e-6
+                   and abs(centerline_m[0][2] - centerline_m[-1][2]) < 1e-6)
+        spans, _dropped = seam_rule_spans(spans, st, high, _closed)
+        for a, b in _dropped:
+            print(f"  bridge spans: DROPPED {a:.0f}-{b:.0f}m — ends on the closing vertex without continuing "
+                  f"from vertex 0 (L13 wrap artefact)")
     if not spans:
         # A never-true predicate, NOT None. Six call sites below ask `bridge_of(station)` and only
         # one guarded it, so every bridgeless track crashed in build_mesh — which is every flat
@@ -921,7 +948,8 @@ def build(project_dir: str | Path) -> dict:
                 _gst.append(_gst[-1] + math.hypot(raw_pts[i][0] - raw_pts[i - 1][0],
                                                   raw_pts[i][2] - raw_pts[i - 1][2]))
             raw_ground = (_gst, [z - elev0 for z in _ej["z_raw_m"]])
-    bridge_of = _bridge_detector(centerline, natural_grid, raw_ground=raw_ground, paved_zones=_fillet_zones)
+    bridge_of = _bridge_detector(centerline, natural_grid, raw_ground=raw_ground, paved_zones=_fillet_zones,
+                                 seam_rule=bool((cfg_raw.get("bridges") or {}).get("l13_seam_rule", False)))
     # persist AUTO-detected spans for the kn5 gate: the builder exempts them from fill/pins,
     # so the gate must exempt the same stations (declared-only exemption read auto bridge
     # valleys as 7 m of 'road hover' and wrecked the deck-vs-mountain metric).

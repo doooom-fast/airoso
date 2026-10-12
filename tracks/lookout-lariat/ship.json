@@ -1,5 +1,5 @@
 {
-  "_doc": "Lookout Mountain Lariat V3 for tools/ship_track.sh (V3-PLAN P1; ledger 0048). The workshop lives OUTSIDE airoso (the sync rails require it). The draft order is plan P2 step 1 with the paint centreline wired in: gps (the OSM line; the paint line it overwrites is kept as data/centerline.previous.geojson first) -> paint_centreline (data/centerline.geojson becomes the paint line again) -> remap_config (--write: every vertex index and station in the config follows the line, by station matching) -> verify_centreline_paint (hard) -> route_oneway_check (hard) -> elev -> project -> widths, so no OSM geometry ever reaches elevation or projection. The prep, exporter and spawn builder run from airoso's scripts/ac (never engine-july: that is San Diego's alone). Today the chain stops at 'no blend yet': there is no loop.blend and its builder, underlay (scripts/blender/underlay.py, P2 step 3), is not written.",
+  "_doc": "Lookout Mountain Lariat V3 for tools/ship_track.sh (V3-PLAN P1; ledger 0048). The workshop lives OUTSIDE airoso (the sync rails require it). The draft order is plan P2 step 1 with the paint centreline wired in: gps (the OSM line; the paint line it overwrites is kept as data/centerline.previous.geojson first) -> paint_centreline (data/centerline.geojson becomes the paint line again) -> remap_config (--write: every vertex index and station in the config follows the line, by station matching) -> verify_centreline_paint (hard) -> route_oneway_check (hard) -> elev (heightfield: the 3DEP samples) -> road_profile (the profile smoothed by station, the declared lid held straight, capture.bridges written) -> project -> widths (the mountain OSM table) -> measured_widths (aerial > published > OSM, local frame) -> crossfall (footprint, estimated) -> verify_crossfall (roll rate, hard), so no OSM geometry ever reaches elevation or projection. The prep, exporter and spawn builder run from airoso's scripts/ac (never engine-july: that is San Diego's alone). Today the chain stops at 'no blend yet': there is no loop.blend and its builder, underlay (scripts/blender/underlay.py, P2 step 3), is not written.",
   "_owed": "Listed here as the plan's chain, not yet adapted for the Lariat (each still runs San Diego's shape and would fail or mis-build if reached; the chain cannot reach them before underlay exists): the race steps (race_bands / race_author / race_verify / race_scenery_gate / race_gates: SD's hard-coded STREETS become a config race block, P1 'race tools come from Lake Murray'); treefx (make_treefx reads zones, species and ground tiles from config); the P3 authoring steps (seat_terrain with station matching, cut/fill, edges, signs, lamps, buildings) are not listed at all yet.",
   "track": "lookout-lariat",
   "workshop": "C:/Users/Owner/Documents/k10-workshops/lookout-lariat",
@@ -8,7 +8,8 @@
   "ui_name_prefix": "K10 - Lookout Lariat (V3)",
   "steps": {
     "draft": ["gps", "paint_centreline", "remap_config", "verify_centreline_paint", "route_oneway_check",
-              "elev", "project", "widths", "underlay"],
+              "elev", "road_profile", "project", "widths", "measured_widths", "crossfall", "verify_crossfall",
+              "underlay"],
     "author": ["race_bands", "race_planned_gate", "layout_dummies", "race_author", "race_verify"],
     "prep": ["prep", "split"],
     "ship": ["export_road", "export_race", "spawn_kn5", "ai", "verify_kn5", "track_folder", "verify_inis",
@@ -17,7 +18,7 @@
   },
   "sync_in": {
     "required": ["track.config.json", "data/centerline.geojson", "data/centerline.osm.geojson", "data/osm.cache.json"],
-    "optional": ["data/centerline.previous.geojson"],
+    "optional": ["data/centerline.previous.geojson", "data/osm.widths.cache.json"],
     "dirs": ["data/aerial"]
   },
   "sync_out": {
@@ -25,6 +26,8 @@
     "files": ["track.config.json", "data/centerline.geojson", "data/centerline.osm.geojson", "data/centerline.previous.geojson",
               "data/centerline_remap.json", "data/aerial/paint_centreline.json", "data/aerial/paint_gate.json",
               "data/oneway_check.json", "data/centerline.local.json", "data/finished_centerline.json",
+              "data/osm.widths.cache.json", "data/widths.measured.json", "data/bridge.spans.json",
+              "data/crossfall.json", "data/crossfall_gate.json",
               "data/gate_centerline.json", "data/bridge.spans.auto.json", "data/dummies.json", "data/drive_test.json",
               "data/audit.json", "data/barrier_bands.json", "data/race_authored.json", "data/race_verify.json",
               "data/race_verify.scenery.json", "data/race_kn5.json",

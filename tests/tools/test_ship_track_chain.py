@@ -452,6 +452,30 @@ def test_lariat_draft_wires_the_paint_centreline_before_any_elevation():
         assert re.search(rf"\b{n}\b", TEXT[_first("is_data_step() {"):_first("SPEC_LINES=$(")]), n
 
 
+def test_lariat_draft_runs_its_data_stages_in_order():
+    """P2 steps 1, 4, 5: the profile by station (decks held, capture.bridges written) before projection; the measured
+    widths after the OSM table; the crossfall on the real-width footprint after them; its roll-rate gate hard."""
+    d = spec_mod.load(LARIAT_SPEC, "lookout-lariat")["steps"]["draft"]
+    order = ["elev", "road_profile", "project", "widths", "measured_widths", "crossfall", "verify_crossfall", "underlay"]
+    assert [n for n in d if n in order] == order, d
+    fns = _functions()
+    assert "python -m scripts.elevation.road_profile \"$PROJ\" --write" in fns["draft_road_profile"]
+    assert "python -m scripts.gps.measured_widths \"$PROJ\"" in fns["draft_measured_widths"]
+    assert "python -m scripts.elevation.crossfall \"$PROJ\"" in fns["draft_crossfall"]
+    assert "python tools/verify_crossfall.py \"$PROJ\"" in fns["draft_verify_crossfall"]
+    for n in ("draft_road_profile", "draft_measured_widths", "draft_crossfall", "draft_verify_crossfall"):
+        assert "|| " not in fns[n], f"{n}: a failing stage must stop the chain (set -e)"
+    # the new block sits after every existing function (appended, nothing above it reordered)
+    assert _first("draft_road_profile() {") > _first("gate_race_gates() {")
+    cfg = json.loads((ROOT / "tracks" / "lookout-lariat" / "track.config.json").read_text(encoding="utf-8"))
+    assert cfg["road_profile"]["crossfall"]["method"] == "footprint"
+    assert cfg["bridges"]["declared"][0]["footprint_ways"] == [533503591, 533679737]
+    s = spec_mod.load(LARIAT_SPEC, "lookout-lariat")
+    for f in ("data/widths.measured.json", "data/bridge.spans.json", "data/crossfall.json", "data/crossfall_gate.json",
+              "data/osm.widths.cache.json"):
+        assert f in s["sync_out"]["files"], f
+
+
 def test_ship_sd_is_untouched_by_this_chain():
     """ship_sd.sh stays San Diego's chain of record (not a shim): ship_track.sh never calls it"""
     assert "ship_sd.sh" not in "\n".join(ln for _, ln in _code_lines())

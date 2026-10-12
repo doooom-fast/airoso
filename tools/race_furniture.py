@@ -134,6 +134,13 @@ KERB_ATLAS_PAD_PX = 8
 KERB_ATLAS_V_M = 8.0
 KERB_ATLAS_PX_M = 256
 KERB_BLOCK_M = 1.0
+# the 5 cm OUTER face (the kerb's back, facing away from the lane) always wraps column 0: no column carries rubber
+# past 60 % of the profile (the outer face is 95..100 %), so the pixels are the same in every column, and the face's
+# two row vertices never split at a column seam — a seam costs 4 render vertices (lip, ramp top x 2, top's outer
+# edge), not 6, which keeps Lake Murray's kerbs inside the diagnosis's pre-registered KERB <= 7,300 render vertices
+# (ledger 0053 V2; tests/tools/test_kerb_wear.py).
+KERB_OUTER_FACE_COLUMN = 0
+KERB_SEAM_RENDER_VERTS = 4
 # wear placement (kerb_wear): both race directions drive every kerb (barrier_bands: whole/box at every kerb vertex)
 KERB_WEAR_IN_LATE = 0.6          # inside kerb: each direction's late apex at PC + 0.6 arc (increasing) / PT - 0.6 arc
 KERB_WEAR_IN_SIGMA_MIN_M = 5.0   # ... lobe sigma max(5 m, 0.15 arc)
@@ -600,7 +607,8 @@ def kerb_wear(plan, corner):
 def kerb_atlas_face_uvs(n_stations, side, wear):
     """per-face, per-corner UVs for kerb_mesh(stations, side)'s faces (same order, same corner order): u in the
     span's rubber column (kerb_profile_u across, inside the pad), v = KERB_V_SIGN[side] x warped metres / 8 m —
-    continuous along the whole kerb; a column change splits only the joint station's row"""
+    continuous along the whole kerb; a column change splits only the joint station's row, and only its ramp and top
+    faces' corners: the outer face (i = 2) always wraps KERB_OUTER_FACE_COLUMN (the same pixels in every column)"""
     pu = kerb_profile_u()
     vs = KERB_V_SIGN["L" if side > 0 else "R"]
     out = []
@@ -608,10 +616,11 @@ def kerb_atlas_face_uvs(n_stations, side, wear):
         lv = wear["levels"][q]
         a, b = 4 * q, 4 * (q + 1)
         for i in range(3):
+            col = KERB_OUTER_FACE_COLUMN if i == 2 else lv
             f = (a + i, a + i + 1, b + i + 1, b + i)
             if side <= 0:
                 f = (f[0], f[3], f[2], f[1])
-            out.append([(kerb_atlas_u(lv, pu[v % 4]), vs * wear["v_m"][v // 4] / KERB_ATLAS_V_M) for v in f])
+            out.append([(kerb_atlas_u(col, pu[v % 4]), vs * wear["v_m"][v // 4] / KERB_ATLAS_V_M) for v in f])
     return out
 
 

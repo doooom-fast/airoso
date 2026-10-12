@@ -63,13 +63,17 @@ The geometry does not move by a millimetre: every kerb vertex, face and hard edg
 race_authored ring centres + frames identical for all 35 objects). Only the picture and the wrap change.
 
 1. **The picture** — `tools/make_kerb_texture.py` (Pillow only, seeded, deterministic; CC0, assets/licenses.json
-   "Worn race kerb (generated)"): `kerb_race_worn_diffuse.jpg` (567,921 B) + `kerb_race_worn_normal.jpg` (979,777 B),
+   "Worn race kerb (generated)"): `kerb_race_worn_diffuse.jpg` (567,921 B) + `kerb_race_worn_normal.jpg` (980,349 B),
    1024×2048. Four 256 px columns = rubber level 0..3 (8 px pad each side); down the image 8 m of kerb at 256 px/m —
    eight 1 m blocks, weathered red / white, a grime-filled joint at every block end, chips to the grey concrete on
    the lane-side ramp and beside the joints, dirt on the outer edge, rubber streaks drawn out along the kerb in the
    band tyres ride. Every column shares the same paint, chips and joints; level c's rubber is a superset of level
    c−1's, so a column switch only ever adds marks. Seamless along the kerb. Normal map in OpenGL convention like
    every other in assets/textures: joints are grooves, chips slightly lower, fine grain, rubber fills the grain.
+   (A normal map is a picture that tells the lighting which way each speck of the flat plate faces, so a 1.5 cm
+   joint can look cut in without moving any geometry. "OpenGL" means its green channel says "this speck leans
+   toward the top of the picture"; the other common convention flips green, and a flipped map turns every groove
+   into a raised ridge.) The first cut WAS flipped (see "Verify round 1"): fixed, and pinned by a pixel test.
 2. **The binding** — `pbr.py` `"1KERB_RACE": ("kerb_race_worn_diffuse.jpg", "kerb_race_worn_normal.jpg", 0.55, …)`
    + `KS_PROPS["1KERB_RACE"]` (0.40 / 0.40, specular 0.10, EXP 20). With a normal present the exporter picks
    ksPerPixelMultiMap with diffuse + normal — the path the race K-rail already renders through in game; no exporter
@@ -78,7 +82,9 @@ race_authored ring centres + frames identical for all 35 objects). Only the pict
    at PC + 0.6 arc and PT − 0.6 arc; outside: PT + 0.2 E and PC − 0.2 E); v runs along the kerb's **own** mid-line
    length (the hairpin's outside kerb is 119.9 m against 87.0 m of centreline — the old v used the centreline and
    squeezed or stretched the stripes), warped so every joint station sits exactly on a whole metre, and the column
-   only changes there, inside the joint's grime line. u across the profile by real surface length. `KERB_V_SIGN`
+   only changes there, inside the joint's grime line. u across the profile by real surface length; the 5 cm outer
+   face (the kerb's back, which no tyre touches and no column paints differently) always wraps column 0, so a
+   column change re-cuts only the ramp and the top. `KERB_V_SIGN`
    runs v backwards on the L kerbs so all eight share the prep's planar road wrap's handedness (tested in the Blender
    frame). `kerb_mesh` itself is unchanged (md5-pinned against HEAD). `author_race_furniture_blend._mk` writes the
    per-face-corner UVs (asserting validate() kept the faces) and race_authored.json records per kerb `wear`
@@ -104,17 +110,38 @@ Where the rubber lands on Lake Murray (metres of kerb at level 0 / 1 / 2 / 3; he
 | 0_out (seam, L) | 102.7 / 85.2 | 57.7 / 13.0 / 11.1 / 20.9 | 12 | −21.7…−12.1, +19.1…+29.3 |
 | 0_in (R) | 22.5 / 29.2 | 6.5 / 1.8 / 2.0 / 12.3 | 4 | −8.1…+11.1 |
 
-51 column seams; KERB render vertices 7,050 → 7,356 (6 per seam: each seam splits its station row).
+51 column seams; KERB render vertices 7,050 → 7,254 (4 per seam: the lip, the ramp-top edge on both its faces and
+the top's outer edge; the outer face never changes column), inside the pre-registered ≤ 7,300.
 
 Not done, by design: no kerb geometry change (L9 seat, audit K 154, drive_test unchanged); no txMaps / txDetail (the
 exporter is held and would need new slots); no alpha rubber decal (a non-physical prefix the split and the content
 guard refuse).
 
+## Verify round 1 (2026-10-12): two findings, both fixed at their cause
+
+1. **The normal map's green was flipped (DirectX, not OpenGL).** The verifier measured G ≈ 223 just above every
+   joint and ≈ 33 just below: the lighting would have read each joint as a raised ridge, the opposite of the
+   asphalt's cracks on the road beside it. Cause: Pillow's `ImageFilter.Kernel` flips a kernel upside down before
+   applying it (its documented behaviour), and the vertical Sobel kernel was written as if it did not; the
+   horizontal one is symmetric top-to-bottom, so red came out right by luck. Fix: `make_kerb_texture.normal_rg`
+   with `SOBEL_GY` written for the flip; the normal map regenerated (980,349 B, md5 `8f4b343a…`; now G ≈ 36 just
+   above a joint, ≈ 220 just below). The diffuse is byte-identical (`f599d4a7…`). New tests: a synthetic height
+   ramp pins the convention, and every joint of every column is checked to be a groove in the render and in the
+   committed JPEG (the first cut's file fails it).
+2. **KERB render vertices 7,356 broke the diagnosis's pre-registered ≤ 7,300.** The first cut moved the line to
+   "7,050 + 6 × seams" after measuring. Cause: a column change re-cut all 6 render vertices of its station row,
+   including the two on the kerb's 5 cm outer face, a face no column paints differently (rubber stops at 60 % of
+   the profile; the outer face is 95–100 %). Fix: the outer face always wraps column 0 (`KERB_OUTER_FACE_COLUMN`,
+   pixel-identical, tested), so a seam costs 4 (`KERB_SEAM_RENDER_VERTS`): 7,050 + 4 × 51 = **7,254**, measured in
+   the rehearsed kn5. The rubber placement, the 51 seams and every wear number above are unchanged; the test is
+   back on the pre-registered 7,300.
+
 ## Integration (held files — the merge run does these; nothing here edited them)
 
 1. **engine-july** (it runs the prep and the export): `cp` airoso `scripts/ac/pbr.py` → `ENG/scripts/ac/pbr.py`
    (md5 `dc3f92527866bfb869e6c3670f08104f`, the CRLF working copy, same convention as today's `d3bbe940…`), and
-   `assets/textures/kerb_race_worn_{diffuse,normal}.jpg` → `ENG/assets/textures/` (or
+   `assets/textures/kerb_race_worn_{diffuse,normal}.jpg` (md5 `f599d4a7…` / `8f4b343a…`; the normal map is the
+   verify-round-1 regeneration, NOT the first cut's `38f2527a…`) → `ENG/assets/textures/` (or
    `python tools/make_kerb_texture.py --out-dir C:/Users/Owner/Documents/GitHub/engine-july/assets/textures`).
    **Before the prep**, not only before the export: the prep packs the images into `blender/<slug>.blend` and the
    add-on embeds the packed bytes — a re-export from a stale split shipped the old pixels in this rehearsal.
@@ -146,14 +173,19 @@ KS_PROPS row matches only `1KERB_RACE*` names. Proof corners: the 770 hairpin an
    continuous, u inside its column's pad, every level change on a whole-metre joint, blocks within 0.25 m of real
    length, one handedness (+1, the planar road wrap's) on all eight; every outside kerb heavy on both sides of the
    apex and never within ±5 m of it; 770_in and 0_in ≥ 10 m (centreline) of level 3 (15.6 / 19.2); 51 seams ≤ 60;
-   render verts ≤ 7,050 + 6 × seams; textures 1024×2048, ≤ 2 MB, deterministic, columns equal wherever level 3 has
-   no rubber, committed files = the generator's; pbr rows; surfaces_ini default md5 and the one-line opt-in; the
-   guard fails a missing / empty / mis-bound kerb texture.
+   **KERB render verts ≤ 7,300** (the threshold fixed here before the fix: 7,254 = 7,050 + 4 × 51, exactly 4 per
+   seam); textures 1024×2048, ≤ 2 MB, deterministic, columns equal wherever level 3 has no rubber, the outer face
+   identical in every column, **the normal map OpenGL (a synthetic ramp) and every joint a groove (G < 128 just
+   above it, > 128 just below, render and committed JPEG)**, committed files = the generator's; pbr rows;
+   surfaces_ini default md5 and the one-line opt-in; the guard fails a missing / empty / mis-bound kerb texture.
 2. **Rehearsal** (scratch) — author: positions identical; `verify_race` OK (kerb under_road 0). Prep → split →
-   `<slug>_race.kn5`: **10,253,676 → 11,815,506 B (+1,561,830 B, +15.2 %; ≤ 13 MB)**; `check_race_kn5 --role common`
-   OK with exactly {kerb_race_worn_diffuse.jpg 567,921 B, kerb_race_worn_normal.jpg 979,777 B,
-   concrete_barrier_diffuse.png, concrete_barrier_normal.png}; all 8 kerb materials ksPerPixelMultiMap, txDiffuse +
-   txNormal, ksSpecular 0.1 / EXP 20; KERB 7,356 render verts (the pure estimate exactly). Not run here (the
+   `<slug>_race.kn5`: **10,253,676 → 11,811,590 B (+1,557,914 B, +15.2 %; ≤ 13 MB)**; `check_race_kn5 --role common`
+   OK with exactly {kerb_race_worn_diffuse.jpg 567,921 B, kerb_race_worn_normal.jpg 980,349 B (md5 = the committed
+   file), concrete_barrier_diffuse.png, concrete_barrier_normal.png}; all 8 kerb materials ksPerPixelMultiMap,
+   txDiffuse + txNormal, ksSpecular 0.1 / EXP 20; KERB 7,254 render verts (the pure estimate exactly, ≤ 7,300); in
+   the kn5 every column split sits on a whole-metre joint, every outer-face vertex is in column 0, all 8 kerbs one
+   wrap handedness; kerb positions + triangles identical to installed v0.17.1, walls identical but for tangents
+   (≤ 1.8e-7). Not run here (the
    integration run's full rehearsal): drive_test / audit / kn5_ground_check on the built race OBJs — no input of
    theirs changed.
 3. **Eyeball** — Blender 4.2 Cycles stills at driver height (scratch/round2/kerbs/stills/): the 770 hairpin outside

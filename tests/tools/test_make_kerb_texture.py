@@ -87,6 +87,58 @@ def test_joints_at_every_block_end_and_seamless_along_the_kerb():
     assert abs(wrap - interior) < 25, (wrap, interior)
 
 
+def test_outer_face_is_the_same_in_every_column():
+    """the wrap pins the 5 cm outer face to column 0 (race_furniture.KERB_OUTER_FACE_COLUMN, a seam then costs 4
+    render vertices, not 6): that is only invisible if every column paints the outer face identically — colour AND
+    relief"""
+    assert rf.KERB_OUTER_FACE_COLUMN == 0
+    r = mk.render(0.5)
+    w, pad = r["column_px"], r["pad_px"]
+    u0 = rf.kerb_profile_u()[2]                                          # outer top edge: the face is u0..1
+    x0 = int(pad + u0 * (w - 2 * pad)) - 2
+    for im in (r["diffuse"], r["normal"]):
+        cols = _cols(im, w)
+        ref = cols[0].crop((x0, 0, w - pad, im.size[1]))
+        for c in cols[1:]:
+            assert ImageChops.difference(ref, c.crop((x0, 0, w - pad, im.size[1]))).getbbox() is None
+
+
+def test_normal_map_is_opengl_green_up():
+    """OpenGL like every map in assets/textures (SOURCES.txt): a surface rising toward the BOTTOM of the image tilts
+    its normal up the image (G > 128); rising to the right tilts it left (R < 128). Pins PIL's vertical kernel flip,
+    which made the first cut DirectX (ledger 0053 verifier: G ~223 above each joint, ~33 below)."""
+    down = Image.new("L", (16, 16))
+    down.putdata([128 + 4 * (y - 8) for y in range(16) for x in range(16)])
+    right = Image.new("L", (16, 16))
+    right.putdata([128 + 4 * (x - 8) for y in range(16) for x in range(16)])
+    r, g = mk.normal_rg(down, 1.0)
+    assert g.getpixel((8, 8)) > 150 and abs(r.getpixel((8, 8)) - 128) <= 1, (r.getpixel((8, 8)), g.getpixel((8, 8)))
+    r, g = mk.normal_rg(right, 1.0)
+    assert r.getpixel((8, 8)) < 106 and abs(g.getpixel((8, 8)) - 128) <= 1, (r.getpixel((8, 8)), g.getpixel((8, 8)))
+
+
+def test_joints_are_grooves_in_the_normal_map():
+    """a joint is a groove: just ABOVE it (smaller row) the surface falls toward the joint, so the normal tilts down
+    the image (G < 128); just BELOW it the normal tilts up (G > 128). Checked on the generator's render and on the
+    committed JPEG, every column, every joint."""
+    r = mk.render(0.25)
+    w = r["column_px"]
+    h = r["normal"].size[1]
+    block = h // int(rf.KERB_ATLAS_V_M / rf.KERB_BLOCK_M)
+    committed = Image.open(ROOT / "assets" / "textures" / mk.NORMAL_NAME).convert("RGB")
+    for im, cw, blk in ((r["normal"], w, block), (committed, rf.KERB_ATLAS_COL_PX, committed.size[1] // 8)):
+        g = im.getchannel("G")
+        hh = im.size[1]
+        for c in range(rf.KERB_ATLAS_COLUMNS):
+            x0, x1 = c * cw + cw // 3, c * cw + cw // 2           # the flat top, in the tyre band
+            for b in range(8):
+                y = b * blk
+                k = max(1, round(3 * blk / 256))                  # ~1.2 cm: the groove's flanks
+                above = ImageStat.Stat(g.crop((x0, (y - k) % hh, x1, (y - k) % hh + k))).mean[0]
+                below = ImageStat.Stat(g.crop((x0, y + 1, x1, y + 1 + k))).mean[0]
+                assert above < 110 and below > 146, (im.size, c, b, above, below)
+
+
 def test_noise_is_periodic_and_seeded():
     a = mk._noise(random.Random(7), 8, 16, 32, 128, blur=1.0)
     b = mk._noise(random.Random(7), 8, 16, 32, 128, blur=1.0)

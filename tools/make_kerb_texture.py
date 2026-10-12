@@ -89,6 +89,24 @@ def _wrap(im, f):
     return _mid(f(_tall(im)))
 
 
+# OpenGL tangent-space normal from a height picture (h bright = high): R = 128 + k * -dh/dx (x right), G = 128 + k *
+# +dh/drow — green points UP the image, so a pixel whose surface rises toward the top of the image (dh/drow < 0)
+# tilts its normal DOWN the image and gets G < 128. PIL's ImageFilter.Kernel FLIPS the kernel vertically before it
+# applies it (its docs; pinned by tests/tools/test_make_kerb_texture.py on a synthetic ramp), so the rows below are
+# written upside down from the correlation they perform: SOBEL_GY's top row [1, 2, 1] lands on the row BELOW the
+# pixel. Ledger 0053: the first cut wrote it the right way up and shipped a DirectX green (joints read as ridges
+# against the asphalt's grooves) — caught by the verifier measuring G across the joints.
+SOBEL_GX = (1, 0, -1, 2, 0, -2, 1, 0, -1)       # vertically symmetric: correlation left - right = -dh/dx
+SOBEL_GY = (1, 2, 1, 0, 0, 0, -1, -2, -1)       # after PIL's flip: correlation below - above = +dh/drow
+
+
+def normal_rg(hgt, strength=NORMAL_STRENGTH):
+    """(R, G) channels of the OpenGL normal map of height picture `hgt`, seamless along v"""
+    kx = ImageFilter.Kernel((3, 3), SOBEL_GX, scale=strength, offset=128)
+    ky = ImageFilter.Kernel((3, 3), SOBEL_GY, scale=strength, offset=128)
+    return _wrap(hgt, lambda im: im.filter(kx)), _wrap(hgt, lambda im: im.filter(ky))
+
+
 def _noise(rng, cells_u, cells_v, w, h, blur=0.0):
     """smooth value noise: a cells_u x cells_v grid of seeded bytes, upscaled bicubic to w x h, periodic along v"""
     lo = Image.frombytes("L", (cells_u, cells_v), rng.randbytes(cells_u * cells_v))
@@ -221,9 +239,6 @@ def render(scale=1.0, seed=SEED):
     rel = ImageChops.subtract(rel, joints.point(lambda p: p * 60 // 255))
     rel = ImageChops.subtract(rel, chips.point(lambda p: p * 14 // 255))
     rel_smooth = _wrap(rel, lambda im: im.filter(ImageFilter.GaussianBlur(1.5 * s + 0.5)))
-    # GL: R = -dh/du (x right), G = +dh/drow (green points UP the image = +v_gl)
-    kx = ImageFilter.Kernel((3, 3), [1, 0, -1, 2, 0, -2, 1, 0, -1], scale=NORMAL_STRENGTH, offset=128)
-    ky = ImageFilter.Kernel((3, 3), [-1, -2, -1, 0, 0, 0, 1, 2, 1], scale=NORMAL_STRENGTH, offset=128)
     blue = Image.new("L", size, 250)
     width = w * rf.KERB_ATLAS_COLUMNS
     diffuse = Image.new("RGB", (width, h))
@@ -232,8 +247,7 @@ def render(scale=1.0, seed=SEED):
         col = Image.composite(_rgb(RUBBER, size), base, alphas[lv])
         diffuse.paste(col, (lv * w, 0))
         hgt = Image.composite(rel_smooth, rel, alphas[lv].point(lambda p: min(255, p * 3 // 2)))
-        nx = _wrap(hgt, lambda im: im.filter(kx))
-        ny = _wrap(hgt, lambda im: im.filter(ky))
+        nx, ny = normal_rg(hgt)
         normal.paste(Image.merge("RGB", (nx, ny, blue)), (lv * w, 0))
     return {"diffuse": diffuse, "normal": normal, "alphas": alphas, "joints": joints, "chips": chips,
             "column_px": w, "pad_px": pad}

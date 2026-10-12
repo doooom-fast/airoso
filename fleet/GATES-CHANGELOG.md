@@ -921,8 +921,10 @@ guard. Every number below is **[invented]** unless it says measured.
 | wrap handedness | `KERB_V_SIGN` | L −1, R +1: every kerb's (T × B) · N = +1 in the Blender frame, the sign of the prep's `planar_uv` road wrap (a kn5 tangent has no handedness sign). Not a threshold: derived and tested | measured (tests) |
 | kerb material | `pbr.KS_PROPS["1KERB_RACE"]` | ksAmbient 0.40 / ksDiffuse 0.40 (the add-on default every neighbouring race material ships at, measured) ; ksSpecular 0.10, ksSpecularEXP 20 (Kunos Laguna `red_curb` measured at 0.35 / 20, technique only) | ⚠ 0.10 invented |
 | the picture | `tools/make_kerb_texture.py` | colours (RAL 3020 / 9016 weathered), `RUBBER_COVER` 0 / 0.12 / 0.30 / 0.55, `RUBBER_OPACITY` 0 / 0.55 / 0.70 / 0.82, `RUBBER_HAZE` 0 / 0.12 / 0.28 / 0.46, `CHIP_COVER` 0.035, `NORMAL_STRENGTH` 2.2, JPEG q90 4:4:4 | ⚠ invented, tuned by eye on Blender stills |
-| texture budget | `make_kerb_texture.MAX_BYTES` | ≤ 2,000,000 B per file (painted: 567,921 + 979,777) | ⚠ invented |
-| render-vertex cost of a seam | `render_vertex_count(..., face_uvs)` | each column seam splits the 6 render vertices of its station row: ≤ +6 per seam (the diagnosis said 4; the exporter measured 6) | measured: pure 7,050 → 7,356 for 51 seams = the built kn5's KERB count exactly |
+| texture budget | `make_kerb_texture.MAX_BYTES` | ≤ 2,000,000 B per file (painted: 567,921 + 980,349) | ⚠ invented |
+| render-vertex cost of a seam | `render_vertex_count(..., face_uvs)`, `KERB_SEAM_RENDER_VERTS` | exactly +4 per seam: the 5 cm outer face always wraps column 0 (`KERB_OUTER_FACE_COLUMN`, pixel-identical in every column), so a seam re-cuts the lip, both faces at the ramp-top edge and the top's outer edge, not the outer face's two (the first cut re-cut all 6: 7,356) | measured: pure 7,050 → 7,254 for 51 seams = the built kn5's KERB count exactly |
+| Lake Murray kerb render budget | `tests/tools/test_kerb_wear.py` `SD_KERB_RENDER_VERTS_MAX` | KERB ≤ 7,300 render vertices (installed v0.17.1: 7,050), pre-registered in the diagnosis before the fix; held, not moved (verify round 1) | ⚠ invented (pre-registered) |
+| normal-map convention | `make_kerb_texture.normal_rg`; `test_normal_map_is_opengl_green_up`, `test_joints_are_grooves_in_the_normal_map` | OpenGL like every map in assets/textures: a synthetic ramp rising down the image gives G > 128; every joint is a groove (G < 110 just above, > 146 just below; measured ≈ 36 / ≈ 220). Pillow flips kernels vertically; the first cut was DirectX (≈ 223 / ≈ 33) | test thresholds ⚠ invented; convention measured |
 
 **New gate — `tools/check_race_kn5.py` `black_slots` (hard, both roles, every race kn5).** Every texture the
 `pbr.TEXTURES` race rows bind for the meshes present must be embedded with > 0 bytes, and (when the parse carries
@@ -943,4 +945,8 @@ in the main kn5), so an opted-in track's sidewalks get the wheel effect too. No 
 Rehearsal (scratch copy of the v0.17.1 workshop + a scratch engine-july carrying this pbr.py and the two textures):
 author → `verify_race` OK → prep → split → `<slug>_race.kn5` **10,253,676 → 11,815,506 B (+1,561,830 B, +15.2 %)**
 (the textures embedded are the bytes packed at the prep — see ledger 0053 "Integration"), `check_race_kn5 --role
-common` OK, all 8 kerb materials `ksPerPixelMultiMap` txDiffuse + txNormal, ksSpecular 0.1, KERB 7,356 render verts.
+common` OK, all 8 kerb materials `ksPerPixelMultiMap` txDiffuse + txNormal, ksSpecular 0.1. Re-run after verify
+round 1 (the OpenGL normal map and the 4-per-seam wrap): `<slug>_race.kn5` 10,253,676 → **11,811,590 B (+1,557,914 B,
++15.2 %)**, the embedded normal map 980,349 B with the committed file's md5, KERB **7,254** render verts (≤ 7,300),
+every column split on a whole-metre joint, every outer-face vertex in column 0, kerb positions and triangles
+identical to installed v0.17.1.

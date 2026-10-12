@@ -8,8 +8,9 @@ the fix (fleet/feedback/0053, Verification 1):
       column change on a joint station whose v is a whole metre, one wrap handedness on all eight kerbs — the same as
       the prep's planar road wrap in the Blender frame (a kn5 tangent carries no handedness sign);
   (c) the rubber where tyres run: every outside kerb worn on BOTH exits and never within 5 m of its apex, the hairpin
-      and seam inside kerbs carrying >= 10 m (centreline) of the heaviest level, <= 60 seams in all; the exporter's
-      render vertices rise by at most 6 per seam.
+      and seam inside kerbs carrying >= 10 m (centreline) of the heaviest level, <= 60 seams in all; a seam costs
+      exactly 4 render vertices (the outer face never changes column) and the eight kerbs stay inside the
+      pre-registered KERB <= 7,300 render vertices (installed v0.17.1: 7,050).
 Plain ``test_*`` functions for tests/run_tests.py (no pytest, no bpy).
 """
 from __future__ import annotations
@@ -27,6 +28,8 @@ sys.path.insert(0, str(ROOT / "tools"))
 import race_furniture as rf  # noqa: E402
 
 TRACK = ROOT / "tracks" / "san-diego-lake-murray"
+SD_KERB_RENDER_VERTS = 7050       # the installed v0.17.1 race kn5's KERB render vertices (inspect_kn5)
+SD_KERB_RENDER_VERTS_MAX = 7300   # pre-registered in the diagnosis (ledger 0053 Verification 2), before the fix
 
 
 def _arc_stations(n=30, radius=12.0, lip=4.63, corner_at=15):
@@ -66,9 +69,11 @@ def _check_wrap(plan, wear, face_uvs, n):
     for q in range(n - 1):
         lv = wear["levels"][q]
         assert 0 <= lv < cols
-        for corner_uvs, f in zip(face_uvs[3 * q:3 * q + 3], rf.kerb_mesh(plan["stations"], side)[1][3 * q:3 * q + 3]):
+        for i, (corner_uvs, f) in enumerate(zip(face_uvs[3 * q:3 * q + 3],
+                                                rf.kerb_mesh(plan["stations"], side)[1][3 * q:3 * q + 3])):
+            col = rf.KERB_OUTER_FACE_COLUMN if i == 2 else lv              # the outer face: one column always
             for (u, v), vi in zip(corner_uvs, f):
-                assert lv / cols + pad - 1e-12 <= u <= (lv + 1) / cols - pad + 1e-12, (u, lv)
+                assert col / cols + pad - 1e-12 <= u <= (col + 1) / cols - pad + 1e-12, (u, col, i)
                 st = vi // 4
                 assert abs(v - vs * v_m[st] / rf.KERB_ATLAS_V_M) < 1e-12
                 v_at.setdefault(st, set()).add(round(v, 12))
@@ -115,7 +120,8 @@ def test_synthetic_kerbs_wrap_with_one_handedness_and_seams_only_at_joints():
 
 def test_wear_levels_and_render_vertex_split():
     """the level rule ([invented], GATES-CHANGELOG 0053) on a symmetric outside kerb: floor away from the lobes,
-    the heaviest column at both track-outs, a superset climb in between; a seam costs at most 6 render verts"""
+    the heaviest column at both track-outs, a superset climb in between; a seam costs exactly 4 render verts (6
+    before the outer face was pinned to one column: lip, ramp top x 2, outer top x 2, outer base)"""
     sts = _arc_stations(n=200, lip=4.63, corner_at=-1)
     plan = {"stations": sts, "side": "L", "sub": "out", "lap_m": 0.0, "apex_station": 30.0}
     corner = {"PC": 20.0, "PT": 40.0, "E_m": 20.0, "apex_station": 30.0}
@@ -133,7 +139,8 @@ def test_wear_levels_and_render_vertex_split():
     sharp = sorted(set(rf.sharp_edges(v, f)) | set(rf.kerb_outline_edges(len(sts))))
     base = rf.render_vertex_count(len(v), f, sharp)
     assert base == 6 * len(sts)
-    assert rf.render_vertex_count(len(v), f, sharp, fu) == base + 6 * wear["seams"]
+    assert rf.KERB_SEAM_RENDER_VERTS == 4
+    assert rf.render_vertex_count(len(v), f, sharp, fu) == base + rf.KERB_SEAM_RENDER_VERTS * wear["seams"]
 
 
 def _sd_plans():
@@ -172,7 +179,7 @@ def test_real_lake_murray_kerbs_are_worn_where_tyres_run():
         v, f, _ = rf.kerb_mesh(p["stations"], side)
         sharp = sorted(set(rf.sharp_edges(v, f)) | set(rf.kerb_outline_edges(len(p["stations"]))))
         a, b = rf.render_vertex_count(len(v), f, sharp), rf.render_vertex_count(len(v), f, sharp, fu)
-        assert b - a <= 6 * wear["seams"], (name, a, b, wear["seams"])
+        assert b - a == rf.KERB_SEAM_RENDER_VERTS * wear["seams"], (name, a, b, wear["seams"])
         rv0, rv1 = rv0 + a, rv1 + b
         heavy = wear["heavy_spans_m_from_apex"]
         if p["sub"] == "out":
@@ -182,6 +189,7 @@ def test_real_lake_murray_kerbs_are_worn_where_tyres_run():
             assert sum(e - s_ for s_, e in heavy) >= 10.0, (name, heavy)       # centreline metres of the heaviest level
     assert hands == {1}, hands
     assert seams <= 60, seams
-    assert rv0 == 7050, rv0                      # the installed v0.17.1 race kn5's KERB verts (inspect_kn5)
-    assert rv1 <= rv0 + 6 * seams, (rv1, seams)
+    assert rv0 == SD_KERB_RENDER_VERTS, rv0
+    assert rv1 == rv0 + rf.KERB_SEAM_RENDER_VERTS * seams, (rv1, seams)
+    assert rv1 <= SD_KERB_RENDER_VERTS_MAX, rv1
     print(f"  Lake Murray kerbs: {seams} column seams, render verts {rv0} -> {rv1}")

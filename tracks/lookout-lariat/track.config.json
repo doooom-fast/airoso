@@ -323,17 +323,47 @@
     },
     "stacked_legs": {
       "_doc": "tools/verify_stacked_legs.py's thresholds are module constants (pairs < 40 m in plan and > 150 m along the lap, 0 failures, all [invented]); a 'classes' map here would override which built groups count as ground / edge / sign / closure (none set: the tool's defaults). Measured on the paint centreline with July's 3DEP corridor samples (2026-10-12): 10,659 pairs at 1 m on 680 lap points in 12 stacked runs (st 2,493-3,152 Tiers of Zion, 5,305-5,996 the upper hairpins), nearest 21.3 m in plan, vertical gap 6.49-14.90 m (median 9.98 m); no crossing."
+    },
+    "drive1": {
+      "_doc": "tools/drive1_gates.py: V3-PLAN P5's Drive-1 gate set, judged on the gate reports of one build (data/drive1_gates.json; gating vs recorded rows). Every value is P5's, tagged as P5 tags it; fleet/GATES-CHANGELOG.md 2026-10-12 'Drive-1 verdict'. The kink ceiling is gates.drive_test.kinks_per_km_max.",
+      "drive_test": {
+        "severe_steps_max": 0,
+        "_severe_doc": "[invented] P5: severe steps (>= 6 cm, drive_test's own STEP_SEVERE_M, itself a flagged value) 0 per street layout; drive_test's own line is > 12/km.",
+        "replication_p95_max_m": 0.5,
+        "_replication_doc": "[invented in 0048] P5: the built road against the raw 3DEP profile, p95 <= 0.5 m.",
+        "_zero_doc": "soft-top in lane, obstruction, floating furniture, undrivable corners, daylight gaps: 0 each [std: drive_test's existing count gates] (constants in the tool, not values here)."
+      },
+      "audit": {
+        "f_curb_max": 15,
+        "_doc": "P5: hard classes A B D E G H I = 0 [std: audit_mesh's existing hard total]; F (curb not flush) <= 15 [invented: Lake Murray V3's own count]. J / K at the race-turn mouths are Drive 3. The street audit's own exit (hard total, F at 0) also gates in tools/ship_track.sh."
+      },
+      "kn5_ground_check": {
+        "lid_end_step_max_m": 0.1,
+        "_doc": "P5: road over ground p95 <= 0.10 m [std: the existing gate] (kn5_ground_check's own verdict); the lid: no step > 0.10 m at either end [invented in 0048], read from drive_test's severe-step list within 5 m of each end of capture.bridges."
+      },
+      "july_reference": {
+        "severe_steps": 253,
+        "kinks_per_km": 68.3,
+        "excursion_drops": 738,
+        "excursion_far_ledges": 382,
+        "obstruction_stations": 0,
+        "floating_furniture": 0,
+        "soft_top_in_lane": 0,
+        "_doc": "[measured on the installed July v0.46.0 build] (V3-PLAN P5 '--force-install rule', 0047): a red street run may still install with --force-install only if no worse than these on every key; obstruction, floating furniture and soft-top are always 0. tools/ship_track.sh refuses a forced install when data/drive1_gates.json force_install_ok is false."
+      }
     }
   },
   "drive1_variants": {
-    "_doc": "D4: two Drive-1 installs, identical apart from road_profile.verge_m. P1's ship chain (tools/ship_track.sh) builds each into its own folder.",
+    "_doc": "D4: two Drive-1 installs, identical apart from road_profile.verge_m. tools/ship_track.sh builds one per run: SHIP_VARIANT=<id> (unset = this config as written, i.e. a_real_edge) passes --variant to scripts/blender/underlay.py (the edge strip, in memory: the config file is never rewritten), installs into the variant's install_folder under its ui_name_prefix, refuses to prep a loop.blend whose GEN_verge (data/underlay.json) is the other variant's, and never syncs a variant run's outputs back into airoso.",
     "a_real_edge": {
       "road_profile.verge_m": 0.4,
-      "install_folder": "lookout_lariat_v3"
+      "install_folder": "lookout_lariat_v3",
+      "ui_name_prefix": "K10 - Lookout Lariat (V3)"
     },
     "b_verge": {
       "road_profile.verge_m": 1.25,
-      "install_folder": "lookout_lariat_v3_verge"
+      "install_folder": "lookout_lariat_v3_verge",
+      "ui_name_prefix": "K10 - Lookout Lariat (V3, verge)"
     }
   },
   "road_text": {
@@ -550,7 +580,9 @@
       "run": "clockwise: 19th St, the US-6 off-ramp and US-6, Colfax, I-70 Business, up Mt Vernon Canyon on US-40, Paradise Rd, over the top and down the Lariat Trail to the pylons",
       "ui_description": "Street \u2014 Reverse: the same 24.9 km driven the other way, clockwise seen from above: 19th St, the US-6 off-ramp and US-6, Colfax, I-70 Business, up Mt Vernon Canyon on US-40, Paradise Rd, over the top and down the Lariat Trail's hairpins to the pylons. It drives four one-way pieces of divided road against their arrows, about 4.5 km in all: the US-6 carriageway with its off-ramp (4.0 km), 312 m of West Colfax, 54 m of 19th St at the ramp and 86 m at I-70 exit 259; the other side of each is beside you, not driven. At the US-6/Colfax signal the lap turns back on itself (152 deg); whether that turn is legal there is unverified. Real roads from OpenStreetMap at real USGS 3DEP elevation. The AI line is a generated draft, not an in-game recording.",
       "ai": "ai/street_reverse"
-    },
+    }
+  ],
+  "layouts_parked": [
     {
       "id": "race_acw",
       "name": "Race \u2014 Anticlockwise",
@@ -594,6 +626,7 @@
       "ai": "ai/race_cw"
     }
   ],
+  "_layouts_parked_doc": "Drive 1 is road + ground only (V3-PLAN '-> Drive 1'; A13: the race layouts arrive in Drive 3). The two race layouts (D3 a) are PARKED here, moved out of layouts[] whole, not deleted: every tool that builds, packs or gates reads layouts[] only (tools/ship_track.sh derives its race stages from layouts[] race_furniture), so the Drive-1 build carries street_full + street_reverse and runs no race step, no race kn5, no closure and no race gate. tools/remap_centreline_config.py walks the whole config, so a parked layout's start vertices keep following the centreline (tests/tools/test_drive1_build.py). The race block below stays declared. Drive 3: move both back into layouts[] (after street_reverse) and put the race steps back in ship.json (its _drive3_steps lists them).",
   "race": {
     "_doc": "D3 (a), Kevin 2026-10-11: a race version on the real narrow road (dossier 4c), on the corridor rules of ledgers 0047 / 0049 (Lake Murray) adapted to this road: Kevin's brief asks for 'more or less an Alvarado's width for the entire track with deviances in various areas'; on the Lariat the deviation is most of the lap, because every layout drives the same road surface (L8) and the mountain road is 6.1-6.7 m. Read by the race tools AFTER P1 adapts them (SD's hard-coded STREETS become this block, SD byte-identical). Today's tools/barrier_bands.py is Lake Murray's and refuses this block loudly (no single 'whole' interval, no pinned closure_runs, clear_width_source is not a street in route.roads).",
     "rules": [

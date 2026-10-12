@@ -1073,3 +1073,79 @@ out. Exits collect in `D1_G`; red stops the install, and `--force-install` passe
 street drive_test / audit (the caller asserts no metric is worse than the reference). San Diego's `ship.json`
 names neither. Proof: `tests/tools/test_ship_track_drive1_gates.py` (4); `tests/tools/test_ship_track_chain.py`
 (19) unchanged and passing.
+
+## 2026-10-12 — Lariat Drive-1 build: the Drive-1 verdict, kn5_ground_check kn5-internal, the street-only split, the D4 variant per run (ledger 0048)
+
+The integration of the three P2 parts (data stages, underlay, Drive-1 gates) into one Drive-1 chain
+(`tracks/lookout-lariat/ship.json`). Every value below is P5's own, carried with P5's tag; the one new value is the
+lid-end window. San Diego's chain is untouched: none of these steps is in its ship.json, the D4 helpers are no-ops
+without `SHIP_VARIANT` or `drive1_variants`, and `tests/tools/test_ship_track_chain.py`'s SD parity tests pass.
+
+### The Drive-1 verdict (new: `tools/drive1_gates.py`, step `drive1_verdict`, thresholds in `track.config.json gates.drive1`)
+
+| Row | Threshold | Flag |
+|---|---|---|
+| drive_test per street layout: soft-top in lane, obstruction, floating furniture, undrivable corners, daylight gaps | 0 each | [std: drive_test's existing count gates] |
+| drive_test: severe steps (≥ 6 cm) | **0** per layout | ⚠ [invented] (P5; drive_test's own line is > 12/km) |
+| drive_test: replication of the built road vs raw 3DEP | p95 ≤ **0.5 m**; not measured = red | ⚠ [invented in 0048] |
+| drive_test: kinks/km | ≤ `gates.drive_test.kinks_per_km_max` (19.49) | [std: MEASURED §8] (the gates part's entry above) |
+| drive_test: unguarded drops, far ledges, bumps/km, drive_test's own `fail` | recorded, not gating | P5 "recorded, not gating" (Drive 1 builds no edges) |
+| audit_mesh (street): A B D E G H I | 0 each | [std: audit_mesh's existing hard total] |
+| audit_mesh: F (curb not flush) | ≤ **15** | ⚠ [invented: Lake Murray V3's own count] (the street audit's own exit still gates F at 0 in ship_track.sh) |
+| kn5_ground_check | its own verdict (road over ground p95 ≤ 0.10 m [std]) | existing |
+| the lid: a severe step within **5 m** of either end of `capture.bridges` (each layout's own stations; reverse = lap − s) | ≤ **0.10 m** | 0.10 m ⚠ [invented in 0048]; the 5 m window ⚠ [invented] 2026-10-12 |
+| one-way, hairpin / paint, roll rate | the draft's own hard verdicts, re-read | existing (P0, P2) |
+| road inventory, stacked legs | their own verdicts | the gates part's entry above |
+| tier seams | n/a until P3a's tiers (GEN_terrain is the one-sheet placeholder) — never a pass | — |
+| verify_edges, verify_signs, TreeFX, sightline_check, race gates | recorded: Drive 2 / Drive 3 | P5 |
+
+A gating row whose report is missing is red ("not run"), never a pass. `--force-install` (P5, 0047): the verdict's
+`force_install_ok` is false when any street layout is worse than the July reference on any key
+(`gates.drive1.july_reference`: severe 253, kinks 68.3/km, drops 738, far ledges 382 [measured on v0.46.0]) or not 0
+on obstruction / floating furniture / soft-top; `tools/ship_track.sh` then refuses the forced install (before, the
+Drive-1 road gates passed `--force-install` on the caller's word alone).
+
+Proof: `tests/tools/test_drive1_gates.py` (7): all-green passes and the recorded rows never gate (drive_test's own
+`fail` from drops does not make its Drive-1 row red); each threshold flips exactly its own row (severe 1, p95 0.51,
+p95 absent, kinks 19.5 > 19.49, daylight, undrivable, B 3, F 16, kn5_ground_check FAIL, road inventory, stacked legs,
+roll rate, paint, one-way); the lid's ends in forward and reverse stations; every missing report is red; the July
+comparison key by key and the always-0 trio; input errors exit 2; the Lariat's declared values.
+
+### kn5_ground_check, kn5-internal (step `kn5_ground_check`, before `road_obj`)
+
+A Blender-first track has no generated OBJs. In the ship chain the only `data/track.obj` is the gate OBJ written
+FROM the kn5 (engine frame, z mirrored), which kn5_ground_check's fidelity half reads as a source OBJ: on the
+rehearsal build it reported "1ROAD unalignable" and 100 % displaced on every bucket while its road-over-ground
+p95 was 0.045 m. The step therefore runs before `road_obj` and removes last run's gate OBJ first, so the check runs
+kn5-internal, as `scripts/build_loop.sh` already runs it; an `environment.obj` in the project stops the chain. No
+threshold changed; `scripts/ac/kn5_ground_check.py` is unchanged.
+
+### The street-only split (step `split_street`; `tools/ship_track_spec.py` accepts prep = [prep, split] or [prep, split_street])
+
+`tools/split_exports_blend.py` (unchanged; the terrain job holds it) is the race layouts' splitter. With no race
+layout it writes `loop_main.blend` and one spawn scene per layout, and exits 1 on exactly two race-furniture
+PROBLEMs ("input: no race furniture", "race: no curb strip"). `split_street` accepts those two and nothing else, and
+only when no layout races, no race object exists in any output, no closure token is declared, and every expected
+output is on disk. Not a threshold: a closed list of two messages.
+
+### The D4 variant per run (`SHIP_VARIANT`)
+
+`SHIP_VARIANT=<drive1_variants id>`: checked before anything is touched (exit 2), passed to the underlay as
+`--variant`, applied to the install folder and installed name (`drive1_variants.<id>.install_folder` /
+`ui_name_prefix`), guarded before the prep (a `loop.blend` whose `data/underlay.json` verge is not this run's is
+refused), and never synced back. No threshold.
+
+### Measured on the first Drive-1 build (scratch, not installed; ledger 0048 "P2 integrated")
+
+D4 A / D4 B, Full / Reverse:
+- **Green:** kn5_ground_check p95 0.038 m; audit CLEAN; road inventory PASS (0 forbidden meshes, 0 of 57,776
+  pavement triangles off the route, 100.0 % paved); replication p95 0.04 m; kinks 6.8-7.0 /km; roll rate, paint and
+  one-way PASS.
+- **Red:**
+  - severe steps 40-53 (all at C12 / C13 / C14 / C18 / the lid's east end);
+  - soft-top 395-412 (ground above the lane: p50 5 mm, max 0.21 m at C13);
+  - undrivable corners 83, i.e. the real hairpins C4-C10 and C13 at their measured 6.8-8.3 m;
+  - the lid's east end 0.17 m;
+  - stacked legs 137 / 144 (placeholder ground).
+- `force_install_ok` is false (far ledges 923-947 > July 382; soft-top must be 0). No threshold was moved to change
+  any of this.

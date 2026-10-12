@@ -16,7 +16,7 @@
 #   author : steps every ship runs (layout dummies; the race furniture, idempotent — only when a layout
 #            declares race_furniture; a config that declares one and a ship.json without the race author
 #            step exits 2)
-#   prep   : exactly prep, split (the --dry-run stop is right after the split)
+#   prep   : exactly prep, split — or prep, split_street when no layout races (the --dry-run stop is right after the split)
 #   ship   : exports, AI, packer, map, trees
 #   gate   : the gates on the BUILT kn5 (every per-layout verdict file is removed first)
 #
@@ -54,6 +54,10 @@
 #                 never installed, whatever SHIP_PROJ says.
 # AIROSO=<dir>    the airoso checkout whose tools/ and scripts/ run (default: the main checkout).
 # STREET_AI=draft|july  the street layouts' AI line; july needs ship.json street_ai_july (SD only).
+# SHIP_VARIANT=<id>  one of track.config.json drive1_variants (the Lariat's D4 builds; unset = the config as written):
+#                 underlay gets --variant, the install goes to the variant's install_folder / ui_name_prefix, a blend
+#                 drafted for the other variant is refused, and the run never syncs back (the block at the end of the
+#                 vocabulary, "LARIAT DRIVE-1 BUILD").
 set -euo pipefail
 export PYTHONUTF8=1
 AIROSO="${AIROSO:-C:/Users/Owner/Documents/GitHub/airoso}"
@@ -63,6 +67,7 @@ AC="D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks"
 ARCHIVE="D:/k10-track-archive"   # old installs live here, never in content/tracks (Kevin 2026-10-11: "clear old versions")
 STREET_AI="${STREET_AI:-draft}"
 case "$STREET_AI" in draft|july) ;; *) echo "STREET_AI must be draft or july, got '$STREET_AI'"; exit 2;; esac
+VARIANT="${SHIP_VARIANT:-}"
 TRACK=""; INSTALL=1; SKIP_BLEND=0; FORCE=0; DRY=0; DRAFT_ONLY=0
 for a in "$@"; do case "$a" in
   --no-install) INSTALL=0;; --skip-blend) SKIP_BLEND=1;; --force-install) FORCE=1;; --dry-run) DRY=1;;
@@ -139,7 +144,7 @@ draft_widths() {
 draft_underlay() {
   step "draft: underlay -> loop.blend (scripts/blender/underlay.py: GEN_* only, never AUTH_*, never a scene reset)"
   [ -f "$AIROSO/scripts/blender/underlay.py" ] || { echo "no blend yet: scripts/blender/underlay.py (V3-PLAN P2 step 3) is not written"; exit 1; }
-  "$BL" --background --python-exit-code 1 --python "$AIROSO/scripts/blender/underlay.py" -- "$PROJ" 2>&1 | grep "^\[underlay\]\|Error\|Traceback"
+  "$BL" --background --python-exit-code 1 --python "$AIROSO/scripts/blender/underlay.py" -- "$PROJ" ${VARIANT:+--variant "$VARIANT"} 2>&1 | grep "^\[underlay\]\|Error\|Traceback"
 }
 
 # --- draft: San Diego's assembler + scripted authoring (the workshop's build_loop_blend; tools from airoso) ---
@@ -416,6 +421,111 @@ gate_stacked_legs() {
   [ "$rc" = 0 ] || D1_G=$rc
 }
 
+# =============================================================================================================
+# LARIAT DRIVE-1 BUILD (V3-PLAN "-> Drive 1" + P5's Drive-1 gate set; ledger 0048; 2026-10-12). One block, kept
+# apart from the vocabulary above. The steps: the street drive_test judged by the Drive-1 set (not by drive_test's
+# own pass line, which also counts the unguarded drops P5 records but does not gate in Drive 1), kn5_ground_check on
+# the shipped road kn5, and the Drive-1 verdict (tools/drive1_gates.py) whose exit joins D1_G and whose
+# force_install_ok decides whether --force-install may cover a red run. The D4 helpers (not steps; called from the
+# chain): SHIP_VARIANT checked before anything is touched, applied to the install folder / name, and guarded before
+# the prep so a blend drafted for the other edge never ships under this one's name.
+# =============================================================================================================
+D1_FORCE_OK=1
+prep_split_street() {
+  local rc
+  step "ship: split the prepped scene -> road + spawn scenes, street layouts only (tools/split_exports_blend.py; its two no-race-furniture PROBLEMs accepted, nothing else)"
+  [ -z "$RACE_IDS" ] || { echo "prep split_street: layouts $RACE_IDS declare race_furniture — their closures need steps.prep split"; exit 1; }
+  rm -f "$PROJ/blender/split/split_manifest.json"
+  rc=0; "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/split_exports_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" --out-dir "$PROJ/blender/split" 2>&1 | grep "^\[split\]" || rc=$?
+  # split_exports_blend.py is the race layouts' splitter: with no race layout it still writes loop_main + one spawn
+  # scene per layout, and exits 1 on exactly two race-furniture PROBLEMs. Those two are accepted, and only when the
+  # input held no race object at all; any other PROBLEM, a missing output or a race object anywhere stops the chain.
+  pyq "import json,os,sys
+p=sys.argv[1]
+if not os.path.exists(p): sys.exit('split_street: no split_manifest.json (the split died, exit %s)'%sys.argv[2])
+m=json.load(open(p,encoding='utf-8'))
+ok={'input: no race furniture (run author_race_furniture_blend first)','race: no curb strip (1WALL_race_edge_*) in loop_race.blend'}
+bad=[q for q in m.get('problems') or [] if q not in ok]
+outs=m.get('outputs') or {}
+need=['loop_main.blend']+['loop_spawn_%s.blend'%lid for lid in sys.argv[3:]]
+miss=[n for n in need if n not in outs or not os.path.exists(os.path.join(os.path.dirname(p),n))]
+race=[n for k,c in outs.items() for n in (c.get('race_objects') or [])]
+if bad or miss or race or m.get('tokens'):
+    sys.exit('split_street: problems %s; missing %s; race objects %s; tokens %s'%(bad,miss,race[:4],m.get('tokens')))
+print('[split] street-only: loop_main + %d spawn scene(s); race-furniture PROBLEMs accepted (no race layout, no race object): %d'%(len(need)-1,len(m.get('problems') or [])))" "$PROJ/blender/split/split_manifest.json" "$rc" $STREET_IDS
+}
+gate_drive_test_drive1() {
+  local lid rc
+  step "gate: drive_test, street layouts — judged by the Drive-1 set (drive1_verdict), not by drive_test's own pass line"
+  for lid in $STREET_IDS; do
+    rc=0; (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --layout "$lid" 2>&1 | grep -v "drive-time\] sweep" | tail -30) || rc=$?
+    echo "  (drive_test --layout $lid exit $rc: its own line counts unguarded drops, recorded not gating in Drive 1;"
+    echo "   data/drive_test.$lid.json is judged by gate_drive1_verdict — a missing file reads red)"
+  done
+}
+gate_kn5_ground_check() {
+  local rc
+  step "gate: kn5_ground_check on the shipped road kn5, kn5-internal (road over ground p95 <= 0.10 m — hard; data/kn5_ground_check.txt)"
+  # A Blender-first track has no source OBJs: kn5_ground_check's OBJ-fidelity half compares the kn5 with
+  # data/track.obj + data/environment.obj, and here the only track.obj is the gate OBJ written FROM the kn5 (engine
+  # frame, z mirrored), which reads "unalignable". This step therefore runs BEFORE road_obj and removes last run's
+  # gate OBJ first (road_obj writes it again next), so the check runs kn5-internal, as scripts/build_loop.sh's does.
+  rm -f "$PROJ/data/kn5_ground_check.txt" "$PROJ/data/track.obj"
+  [ ! -f "$PROJ/data/environment.obj" ] || { echo "kn5_ground_check: $PROJ/data/environment.obj exists, but a Blender-first build has no generated OBJs (scripts/build_loop.sh)"; exit 1; }
+  rc=0; (cd "$AIROSO" && python -m scripts.ac.kn5_ground_check "$PROJ" > "$PROJ/data/kn5_ground_check.txt" 2>&1) || rc=$?
+  echo "exit $rc" >> "$PROJ/data/kn5_ground_check.txt"
+  tail -12 "$PROJ/data/kn5_ground_check.txt"
+  [ "$rc" = 0 ] || D1_G=$rc
+}
+gate_drive1_verdict() {
+  local rc
+  step "gate: the Drive-1 verdict (tools/drive1_gates.py: P5's Drive-1 set, gating vs recorded rows; the July reference for --force-install)"
+  rm -f "$PROJ/data/drive1_gates.json"
+  rc=0; (cd "$AIROSO" && python tools/drive1_gates.py "$PROJ") || rc=$?
+  [ "$rc" = 0 ] || D1_G=$rc
+  D1_FORCE_OK=$(pyq "import json,os,sys
+p=sys.argv[1]
+print(1 if os.path.exists(p) and json.load(open(p,encoding='utf-8')).get('force_install_ok') is True else 0)" "$PROJ/data/drive1_gates.json")
+  D1_FORCE_OK="${D1_FORCE_OK%$'\r'}"
+}
+d4_variant_check() {
+  [ -n "$VARIANT" ] || return 0
+  case "$VARIANT" in *[!a-z0-9_]*) echo "SHIP_VARIANT '$VARIANT' is not a variant id"; exit 2;; esac
+  pyq "import json,sys
+t=json.load(open(sys.argv[1],encoding='utf-8')).get('drive1_variants') or {}
+known=sorted(k for k in t if not k.startswith('_'))
+if sys.argv[2] not in known: sys.exit('SHIP_VARIANT %r is not in track.config.json drive1_variants (known: %s)'%(sys.argv[2],known))" "$SRC/track.config.json" "$VARIANT" || exit 2
+}
+d4_variant_apply() {
+  [ -n "$VARIANT" ] || return 0
+  local lines k v
+  lines=$(pyq "import json,re,sys
+v=json.load(open(sys.argv[1],encoding='utf-8'))['drive1_variants'][sys.argv[2]]
+for k in ('install_folder','ui_name_prefix'):
+    s=str(v.get(k) or '')
+    if not re.fullmatch(r'[^\t\r\n\x00-\x1f]{0,240}',s): sys.exit('drive1_variants.%s.%s is not one line of text'%(sys.argv[2],k))
+    print(k+'\t'+s)" "$PROJ/track.config.json" "$VARIANT") || exit 2
+  while IFS=$'\t' read -r k v; do
+    v="${v%$'\r'}"
+    case "$k" in install_folder) [ -z "$v" ] || INSTALL_FOLDER="$v";; ui_name_prefix) [ -z "$v" ] || UI_PREFIX="$v";; esac
+  done <<< "$lines"
+  echo "D4 variant $VARIANT: install folder $INSTALL_FOLDER, installed as '$UI_PREFIX — <layout>'"
+}
+d4_variant_guard() {
+  pyq "import json,os,sys
+cfg=json.load(open(sys.argv[1],encoding='utf-8')); tab=cfg.get('drive1_variants') or {}
+if not tab: sys.exit(0)
+var=sys.argv[3] or None
+want=(cfg.get('road_profile') or {}).get('verge_m')
+if var: want=tab[var].get('road_profile.verge_m',want)
+if not os.path.exists(sys.argv[2]):
+    sys.exit('D4: %s is missing, so nothing says which edge loop.blend carries: run the draft (underlay%s)'%(sys.argv[2],' --variant '+var if var else ''))
+u=json.load(open(sys.argv[2],encoding='utf-8')); got=(u.get('verge') or {}).get('width_m')
+if got is None or want is None or abs(float(got)-float(want))>1e-6:
+    sys.exit('D4: loop.blend carries a %s m verge (underlay variant %s) but this run builds %s m (%s): re-run the draft, or set SHIP_VARIANT to match'%(got,u.get('variant'),want,var or 'the config as written'))
+print('D4: loop.blend carries the %s m verge this run builds (%s)'%(got,var or 'the config as written'))" "$PROJ/track.config.json" "$PROJ/data/underlay.json" "$VARIANT"
+}
+
 # a draft step that needs no Blender (what --draft-only runs)
 is_data_step() {
   case "$1" in
@@ -468,6 +578,7 @@ for n in ${PREP[@]+"${PREP[@]}"}; do declare -F "prep_$n" >/dev/null || { echo "
 for n in ${SHIP[@]+"${SHIP[@]}"}; do declare -F "ship_$n" >/dev/null || { echo "ship.json steps.ship: unknown step '$n' (no ship_$n in tools/ship_track.sh)"; exit 2; }; done
 for n in ${GATE[@]+"${GATE[@]}"}; do declare -F "gate_$n" >/dev/null || { echo "ship.json steps.gate: unknown step '$n' (no gate_$n in tools/ship_track.sh)"; exit 2; }; done
 if [ "$STREET_AI" = july ] && [ -z "$JULY_AI" ]; then echo "STREET_AI=july: ship.json names no street_ai_july for $TRACK"; exit 2; fi
+d4_variant_check        # SHIP_VARIANT must be one of the track's drive1_variants (exit 2, nothing touched)
 
 # =============================================================================================================
 # the rails: absolute paths, nothing inside airoso, scratch derived from the workshop path — all before any copy
@@ -514,7 +625,7 @@ blend_builder_ready() {
 if [ "$DRAFT_ONLY" = 0 ] && [ ! -f "$PROJ/loop.blend" ] && ! blend_builder_ready; then
   echo; echo "no blend yet: $PROJ/loop.blend does not exist and nothing in this run can build it"
   if [ "$SKIP_BLEND" = 1 ]; then echo "  (--skip-blend resumes from an authored loop.blend)"
-  else echo "  (draft steps: ${DRAFT[*]:-none}; the blend builder is build_loop_blend (the workshop's) or underlay (scripts/blender/underlay.py, V3-PLAN P2 step 3, not written yet))"; fi
+  else echo "  (draft steps: ${DRAFT[*]:-none}; the blend builder is build_loop_blend (the workshop's) or underlay (scripts/blender/underlay.py, V3-PLAN P2 step 3))"; fi
   echo "  --draft-only runs the draft's data steps. Nothing synced in, nothing run, nothing installed."
   if [ "$DRY" = 1 ]; then echo "DRY RUN: stopped cleanly at 'no blend yet'."; exit 0; fi
   exit 1
@@ -543,6 +654,7 @@ STREET_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8'
 SLUG=$(pyq "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8'))['slug'])" "$PROJ/track.config.json")
 INSTALL_FOLDER=$(pyq "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8')).get('install_folder') or '')" "$PROJ/track.config.json")
 LAYOUT_IDS="${LAYOUT_IDS%$'\r'}"; RACE_IDS="${RACE_IDS%$'\r'}"; STREET_IDS="${STREET_IDS%$'\r'}"; SLUG="${SLUG%$'\r'}"; INSTALL_FOLDER="${INSTALL_FOLDER%$'\r'}"
+d4_variant_apply        # a SHIP_VARIANT run installs under the variant's own folder and name
 case "$SLUG" in ""|*[!a-z0-9_]*) echo "track.config.json slug '$SLUG' is not a file-name slug"; exit 2;; esac
 case "$INSTALL_FOLDER" in ""|*[!A-Za-z0-9_]*) echo "track.config.json install_folder '$INSTALL_FOLDER' missing or not a folder name (plan A11)"; exit 2;; esac
 echo "layouts: $LAYOUT_IDS   (race furniture: $RACE_IDS; street: $STREET_IDS; street AI = $STREET_AI)"
@@ -566,6 +678,7 @@ if [ "$DRAFT_ONLY" = 1 ]; then
 fi
 
 for n in ${AUTHOR[@]+"${AUTHOR[@]}"}; do "author_$n"; done
+d4_variant_guard        # never prep a loop.blend whose GEN_verge is the other D4 variant's
 for n in "${PREP[@]}"; do "prep_$n"; done
 
 if [ "$DRY" = 1 ]; then
@@ -615,10 +728,15 @@ expand() {
     *) printf '%s\n' "$p";;
   esac
 }
-if [ "$SCRATCH" = 1 ]; then
+if [ "$SCRATCH" = 1 ] || [ -n "$VARIANT" ]; then
   step "sync outputs workshop -> airoso: SKIPPED"
+  if [ "$SCRATCH" = 1 ]; then
   echo "the project is a scratch copy or a rehearsal ($PROJ; ship.json $SPEC), not the workshop ($WS_PROJ): its outputs"
   echo "stay in the scratch copy — only the workshop feeds $SRC."
+  else
+  echo "SHIP_VARIANT=$VARIANT: a D4 variant's build stays in the workshop ($PROJ) — only the config's own build"
+  echo "(no SHIP_VARIANT) feeds $SRC."
+  fi
 else
 step "sync outputs workshop -> airoso"
 for p in ${OUT_REQ[@]+"${OUT_REQ[@]}"}; do
@@ -651,12 +769,15 @@ if [ -n "$RACE_RED" ]; then
   echo "  apply (data/drive_test.<id>.json, data/no_route.<id>.json)"; exit 1
 fi
 # the Lariat Drive-1 road gates (the block above gate_road_inventory): red stops the install unless forced
-echo "  Drive-1 road gates (road inventory, stacked legs): exit $D1_G"
+echo "  Drive-1 road gates (road inventory, stacked legs, kn5_ground_check, the Drive-1 verdict): exit $D1_G"
 if [ "$D1_G" != 0 ]; then
-  if [ "$FORCE" = 1 ]; then
+  if [ "$FORCE" = 1 ] && [ "$D1_FORCE_OK" != 1 ]; then
+    echo "  NOT INSTALLED: --force-install refused — the street run is worse than the July reference on a key, or not 0 on"
+    echo "  obstruction / floating furniture / soft-top (V3-PLAN P5; data/drive1_gates.json force_install_why_not)"; exit 1
+  elif [ "$FORCE" = 1 ]; then
     echo "  --force-install: past the Drive-1 road gates RED (caller asserts no metric is worse than the reference)"
   else
-    echo "  NOT INSTALLED (Kevin never loads a build the machine failed): Drive-1 road gates red (data/road_inventory.json, data/stacked_legs.json)"; exit 1
+    echo "  NOT INSTALLED (Kevin never loads a build the machine failed): Drive-1 road gates red (data/drive1_gates.json, data/road_inventory.json, data/stacked_legs.json)"; exit 1
   fi
 fi
 if [ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ] || [ "$NR_R" != 0 ]; then

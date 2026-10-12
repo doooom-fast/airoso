@@ -20,7 +20,7 @@ Schema (unknown keys are refused, so a typo is never silently ignored):
 - ``steps`` (required): ``{"draft": [...], "author": [...], "prep": ["prep", "split"], "ship": [...],
   "gate": [...]}``. ``draft`` = the steps ``--skip-blend`` skips (the engine draft and the scripted
   authoring that edit loop.blend); ``author`` = the steps every ship runs (layout dummies + the race
-  furniture, idempotent); ``prep`` = exactly prep then split (the ``--dry-run`` stop comes after split);
+  furniture, idempotent); ``prep`` = exactly prep then split, or prep then split_street when no layout races (the ``--dry-run`` stop comes after the split);
   ``ship`` = exports, AI, packer, map, trees; ``gate`` = the gates on the built kn5.
 - ``sync_in`` : ``{"required": [...], "optional": [...], "globs": [...], "dirs": [...]}`` paths relative to
   ``tracks/<track>/`` copied into the workshop project before the chain runs.
@@ -41,6 +41,9 @@ import sys
 from pathlib import Path
 
 PHASES = ("draft", "author", "prep", "ship", "gate")
+# the prep phase: the loop prep, then ONE split. split_street is the street-only split (no layout races: the Lariat's
+# Drive 1, its race layouts parked) — tools/ship_track.sh's LARIAT DRIVE-1 BUILD block.
+PREP_FORMS = (["prep", "split"], ["prep", "split_street"])
 STEP_RE = re.compile(r"^[a-z][a-z0-9_]{0,40}$")
 NAME_RE = re.compile(r"^[A-Za-z0-9_.-]{1,64}$")
 TRACK_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
@@ -131,9 +134,9 @@ def load(path, track: str) -> dict:
                 raise SpecError(f"steps.{ph}: {n!r} is not a step name (closed vocabulary: lower_snake names "
                                 "of functions in tools/ship_track.sh)")
         out["steps"][ph] = names
-    if out["steps"]["prep"] != ["prep", "split"]:
-        raise SpecError(f"steps.prep must be exactly [\"prep\", \"split\"] (the --dry-run stop follows the "
-                        f"split), got {out['steps']['prep']}")
+    if out["steps"]["prep"] not in PREP_FORMS:
+        raise SpecError(f"steps.prep must be exactly [\"prep\", \"split\"] or [\"prep\", \"split_street\"] (the "
+                        f"--dry-run stop follows the split), got {out['steps']['prep']}")
     si = spec.get("sync_in") or {}
     so = spec.get("sync_out") or {}
     for d, known, what in ((si, SYNC_IN, "sync_in"), (so, SYNC_OUT, "sync_out")):

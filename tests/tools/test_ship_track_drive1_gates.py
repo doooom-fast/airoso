@@ -35,9 +35,12 @@ def test_the_block_is_one_marked_block_after_the_existing_vocabulary():
     assert TEXT.find("gate_race_gates() {") < i < TEXT.find("is_data_step() {")
     for fn in ("gate_road_inventory", "gate_stacked_legs"):
         assert i < TEXT.find(f"{fn}() {{") < TEXT.find("is_data_step() {"), fn
-    # every other vocabulary function still precedes the block
+    # every other vocabulary function still precedes the block; only the Drive-1 BUILD block (the integrator's,
+    # tests/tools/test_drive1_build.py) follows it
     names = re.findall(r"^((?:draft|author|prep|ship|gate)_[a-z0-9_]+)\(\) \{", TEXT, re.M)
-    after = [n for n in names if TEXT.find(f"{n}() {{") > i]
+    j = TEXT.find("# LARIAT DRIVE-1 BUILD")
+    assert j > i
+    after = [n for n in names if i < TEXT.find(f"{n}() {{") < j]
     assert after == ["gate_road_inventory", "gate_stacked_legs"], after
 
 

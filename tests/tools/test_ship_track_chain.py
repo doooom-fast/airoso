@@ -252,7 +252,8 @@ def test_sync_back_and_install_are_unreachable_from_a_scratch_project():
     skip_sync = _first('step "sync outputs workshop -> airoso: SKIPPED"')
     else_sync = _first('else\nstep "sync outputs workshop -> airoso"\n')
     end_sync = _first("# gate OBJs (66-78 MB each, regenerable from the kn5s) are never in a sync_out list\nfi\n")
-    guard = TEXT.rfind('if [ "$SCRATCH" = 1 ]; then\n', 0, skip_sync)
+    # a scratch project, or a D4 variant run (SHIP_VARIANT: tests/tools/test_drive1_build.py), never syncs back
+    guard = TEXT.rfind('if [ "$SCRATCH" = 1 ] || [ -n "$VARIANT" ]; then\n', 0, skip_sync)
     assert guard >= 0 and skip_sync < else_sync < end_sync
     n_src = 0
     for pos, ln in _code_lines():

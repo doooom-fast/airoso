@@ -450,6 +450,28 @@ boxes marked, and the two C-470 crossings marked, before any geometry (L12, show
 >   +3.44 % (3DEP already carries it: ≤ 0.11 m moved), written as `capture.bridges`; both July spans dropped; the
 >   L13 seam rule in both detectors (opt-in in `build_mesh`).
 
+> **2026-10-12, integrated: the Drive-1 chain, built twice, gated, not installed** (ledger 0048 "P2 integrated").
+> - Landed: the underlay (step 3), the data stages (steps 1, 4, 5), the road-inventory, stacked-leg and kink gates,
+>   and the Drive-1 chain in `ship.json`. The chain is draft -> underlay -> airoso prep -> `split_street` -> road and
+>   spawn kn5s -> `kn5_ground_check` -> gate OBJ -> drive_test per street layout -> audit -> road inventory ->
+>   stacked legs -> the Drive-1 verdict (`tools/drive1_gates.py`).
+> - Street layouts only: the race layouts are parked in `layouts_parked` for Drive 3.
+> - D4 per run: no `SHIP_VARIANT` builds `lookout_lariat_v3`; `SHIP_VARIANT=b_verge` builds `lookout_lariat_v3_verge`.
+> - **Done-when:** road inventory PASS on the draft, the hairpin / paint gate PASS, and the drive_test baseline
+>   recorded. For D4 A, Full / Reverse: replication p95 0.04 m, kinks 7.0 / 6.8 per km, severe 42 / 52, soft-top
+>   400 / 395, undrivable 83 / 83.
+> - **Red, so not installed:**
+>   - drive_test: the real hairpins C4-C10 and C13 trip its own corner rule (turn over 110° at under 9 m wide), and
+>     there are severe steps and soft-top at C13 / C14 / C18 / the lid end;
+>   - the lid's east end (0.17 m);
+>   - stacked legs (137 placeholder ground vertices between legs).
+> - **Owed for Drive 1:**
+>   - P3a: tiers, the station-matched seat, `terrain_cutfill`, `overpass_decks`, the view tier;
+>   - P3b: the mouths, with C12/C13 smoothed; stubs; the lid with flat ends; the exemption polygons;
+>   - P3c: hairpin pads;
+>   - the prep's edge band (millimetre soft-top at lane edges);
+>   - Kevin's call on the corner rule at the real hairpins.
+
 6. **Not run:** `build_env` (no highways, no sine-wave mountains, no baked forest, no lamps).
 7. **Optional engine courtesy, off the critical path:** a `scenery.highways.enabled` key in
    `build_env`, defaulting on, so Sand Creek stays byte-identical and the switch exists for anyone
@@ -691,6 +713,19 @@ Invented values are logged as such in `fleet/GATES-CHANGELOG.md` in the same com
   - the one-way, hairpin, roll-rate, road-inventory, stacked-leg and tier-seam checks.
 - **Recorded, not gating:** unguarded drop-offs, `verify_edges`, `verify_signs`, TreeFX,
   `sightline_check` (the far tiers arrive for Drive 2), and every race gate.
+
+> **2026-10-12, as built:**
+> - The road inventory is a separate tool (`tools/verify_road_inventory.py`), not a section of `verify_kn5` (the
+>   terrain job holds that file).
+> - The kink ceiling is **19.49/km** [std, measured on reference mountain roads, MEASURED §8], replacing 5/km
+>   [invented].
+> - The Drive-1 set is judged by `tools/drive1_gates.py`, with its thresholds in `track.config.json gates.drive1`.
+>   drive_test's own pass line also counts unguarded drops, so its own `fail` is recorded rather than gating, as
+>   this section says.
+> - `kn5_ground_check` runs kn5-internal, before the gate OBJ is written.
+> - Tier seams read n/a until P3a.
+> - `--force-install` is refused when a street layout is worse than the July reference, or when obstruction,
+>   floating or soft-top is not 0 (`force_install_ok`).
 
 **`--force-install` rule (0047).**
 - **When it applies:** a red street-layout run may still install only if it is no worse than the

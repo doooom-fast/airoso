@@ -63,7 +63,9 @@ CROWN_PCT_STD = 2.0          # docs/ROAD-CONSTRUCTION.md: "Crown 2%" [std]
 # B = "1-1.5 m firm gravel strip" [std: Kevin's D4 B answer]. Ranges, not thresholds: they name the variant.
 D4_A = (0.3, 0.5)
 D4_B = (1.0, 1.5)
-VERGE_MAX_M = 3.0            # anything wider is not a verge (July's 6.4 m drivable shoulder is what D4 removes)
+# drive1_variants keys read by tools/ship_track.sh (the install), never applied to the underlay's config
+SHIP_CHAIN_KEYS = ("install_folder", "ui_name_prefix")
+VERGE_MAX_M = 3.0           # anything wider is not a verge (July's 6.4 m drivable shoulder is what D4 removes)
 
 # refs (display only, never a gate)
 STATION_STEP_M = 100.0
@@ -98,8 +100,8 @@ def _set_dotted(d: dict, key: str, value) -> None:
 
 
 def apply_variant(cfg: dict, variant: str | None) -> dict:
-    """``drive1_variants[variant]`` applied IN MEMORY (dotted keys; ``install_folder`` is the ship chain's, not the
-    underlay's, and is ignored). The config file is never written."""
+    """``drive1_variants[variant]`` applied IN MEMORY (dotted keys; ``install_folder`` and ``ui_name_prefix`` are the
+    ship chain's, not the underlay's, and are ignored). The config file is never written."""
     if not variant:
         return cfg
     table = cfg.get("drive1_variants") or {}
@@ -108,7 +110,7 @@ def apply_variant(cfg: dict, variant: str | None) -> dict:
         raise UnderlayError(f"variant '{variant}' is not in track.config.json drive1_variants (known: {known})")
     out = copy.deepcopy(cfg)
     for k, v in table[variant].items():
-        if k.startswith("_") or k == "install_folder":
+        if k.startswith("_") or k in SHIP_CHAIN_KEYS:
             continue
         _set_dotted(out, k, v)
     return out

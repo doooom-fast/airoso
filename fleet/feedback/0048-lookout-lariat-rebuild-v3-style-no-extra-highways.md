@@ -775,3 +775,127 @@ now writes `z_raw_local_m` and drive_test prefers it; tracks without it are unch
 roll-rate rules on the BUILT sections (P5's Drive-1 set) once the underlay exists; aerial widths for the summit,
 back side, US-40, Colfax, US-6, the ramp and 19th St; build_mesh's own raw-ground frame (same rotation bug as
 drive_test's, in a stage V3 does not run).
+
+## P2 integrated: the Drive-1 chain, built twice, gated (2026-10-12)
+
+Kevin today: *"install them"* / *"do the work then"*. This entry records the first Drive-1 build. **Nothing is
+installed:** both builds failed the Drive-1 gate set, and the chain refuses to install a red build, forced or not
+(the numbers are below). Nothing was synced back into airoso.
+
+**What landed (one branch: the three P2 parts merged, plus the integration):**
+- **The data stages** (the entry above).
+- **The underlay**, `scripts/blender/underlay.py` + `scripts/geometry/underlay_draft.py` (P2 step 3). It writes only
+  `GEN_road` (`1ROAD_road`), `GEN_verge` (`1RUNOFF_verge`), `GEN_terrain` (`1GRASS_terrain_placeholder`: the
+  3DEP heightfield, pinned under the pavement, raw survey everywhere else, until P3a) and `GEN_refs`. It never
+  resets the scene and never touches `AUTH_*`.
+- **The Drive-1 gates that do not wait for the terrain:** road inventory, stacked legs (L4), and the kink ceiling
+  19.49/km [std, measured on reference mountain roads, `fleet/reference/MEASURED.md` §8].
+- **The Drive-1 chain** (`tracks/lookout-lariat/ship.json`):
+  - draft: the data stages, then the underlay;
+  - author: `layout_dummies` only;
+  - prep: the airoso prep, then `split_street`;
+  - ship: road kn5, spawn kn5s, `verify_kn5`, the track folder, `verify_inis`, the map;
+  - gates: `kn5_ground_check` (kn5-internal) -> gate OBJ -> drive_test per street layout -> `audit_mesh` -> road
+    inventory -> stacked legs -> the Drive-1 verdict (`tools/drive1_gates.py`).
+
+  The verdict reads every report and judges P5's Drive-1 thresholds (`track.config.json gates.drive1`), marking
+  each gating or recorded. It also checks the July reference, which `--force-install` may not be worse than.
+- **Street layouts only:** `race_acw` / `race_cw` are moved whole into `track.config.json layouts_parked`, not
+  deleted. The race block stays declared. The remap still moves their vertices. ship.json's `_drive3_steps` lists
+  the race steps for Drive 3. No AI line and no TreeFX are built: those come in Drive 3 and Drive 2 (A13).
+- **The two installs:** `SHIP_VARIANT=b_verge` builds `lookout_lariat_v3_verge` ("K10 - Lookout Lariat (V3,
+  verge)"); no variant builds `lookout_lariat_v3`. A blend drafted for the other edge is refused before the prep,
+  and a variant run never syncs back. Thresholds and proofs: `fleet/GATES-CHANGELOG.md` 2026-10-12
+  "Lariat Drive-1 build".
+
+**The run.** Both builds went into scratch copies of the (empty) workshop project, with `--no-install`.
+- **D4 A:** the whole chain for real: OSM snapshot, paint line, 3DEP live with TLS on. 1,068 s end to end.
+- **D4 B:** the A draft plus `underlay --variant b_verge`, then `SHIP_VARIANT=b_verge --skip-blend`. 170 s.
+- **Each build:**
+  - a road kn5 (34.8 MB for A, 35.2 MB for B) and two 2 KB spawn kn5s;
+  - a 34-35 MB track folder;
+  - lap 24,914.3 m, widths 5.0-21.0 m (median 6.75 m);
+  - crossfall: the data stage's file, 10,290 of 14,445 stations tilted (max 6.0 %), roll rate PASS.
+
+| Gate (P5 Drive-1 set) | D4 A (verge 0.4 m) | D4 B (verge 1.25 m) |
+|---|---|---|
+| one-way / hairpin-paint / roll rate (the draft's own gates) | PASS / PASS / PASS (worst 3.40 % per 30 m, 0 swings) | same data |
+| `verify_kn5`, `verify_inis` | PASS (17 facing nodes per layout, all along travel) | PASS |
+| `kn5_ground_check` (kn5-internal) | PASS: road over ground p95 **0.038 m**, max 0.060 m; 0 double-sheet cells | PASS, same |
+| `audit_mesh` (street) | CLEAN (every class 0) | CLEAN |
+| road inventory | **PASS**: 0 HIGHWAY / HWYSTRUCT / MOUNTAINS meshes; 57,776 pavement triangles, 0 off the route; both layouts 100.0 % paved | PASS |
+| drive_test, Full / Reverse: replication vs raw 3DEP | p50 0.01 m, **p95 0.04 m**, max 0.27 m (gate 0.5) | same |
+| drive_test: kinks | **7.02 / 6.78 per km** (ceiling 19.49; July 68.3) | 6.86 / 6.82 |
+| drive_test: severe steps (gate 0) | **42 / 52** (1.69 / 2.09 per km; July 253) — RED | 40 / 53 — RED |
+| drive_test: soft-top in lane (gate 0) | **400 / 395** — RED | 408 / 412 — RED |
+| drive_test: undrivable corners (gate 0) | **83 / 83** — RED | 83 / 83 — RED |
+| drive_test: obstruction, floating, daylight | 0, 0, 0 | 0, 0, 0 |
+| the lid's ends (no step > 0.10 m) | east end **0.17 m** (Full), 0.098 m (Reverse) — RED | same |
+| stacked legs | 10,659 pairs on 680 lap points; nearest 21.31 m; vertical gap 6.47-14.70 m (median 9.99 m); **137** of 2,992 ground vertices closer to the other leg — RED | 144 of 3,008 — RED |
+| recorded: unguarded drops / far ledges / bumps | 47 / 925 / 6.7 per km (Full); 44 / 947 / 5.66 (Reverse) | 49 / 923; 47 / 932 |
+| tier seams | n/a: placeholder terrain | n/a |
+| `--force-install` | **refused**: far ledges 925 > July 382, and soft-top must always be 0 | refused |
+
+**The drive_test baseline** (P2's done-when: "drive_test has been run once on the draft as a baseline (recorded,
+not gating)"): the drive_test rows above, `data/drive_test.street_{full,reverse}.json` of each build. P2's other two
+done-when items: road inventory **passes** on the draft, and the hairpin / paint gate **passes**.
+
+**What is red, and why** (measured on the A build):
+- **Undrivable corners (83 stations, 8 corners).** C4, C5, C6, C7, C8, C9, C10 and C13 trip drive_test's own
+  corner rule: a turn over 110° within ±15 m with the road under 9 m wide.
+  - Their measured widths are 6.8-8.3 m and the turns are 116-145°: this is the real road, not a build defect.
+  - C1 escapes only because its measured apex is 9.65 m.
+  - This rule is the one behind July's widening ("the turn on the mountain route is impossible"). P5 gates it at
+    0, so the real hairpins keep Drive 1 red by P5's own definition.
+  - **For Kevin:** drive the real width (the D4 question), or switch the July widening on (A2: one switch away).
+    The gate is not loosened here.
+- **Severe steps (42 / 52), clustered:**
+  - **C13, Paradise Rd bend (st 10,593-10,629):** 0.61 m, at most 18 stations. The OSM line turns 71.7° at one
+    vertex (v9007). C12 and C13 stay junction nodes for P3b, so nothing has smoothed that corner, and the ribbon
+    folds there.
+  - **C14, Paradise -> US-40 (st 11,698-11,702):** 0.18 m.
+  - **The lid's east end (st 24,383):** 0.17 m. The OSM width jumps 8.7 -> 10 m within 3 m there.
+  - **C18, ramp -> 19th St (st 24,330):** 0.11 m.
+  - **Elsewhere:** st 11,576 (0.09 m, a measured −3.6 % tilt), st 24,857 (Reverse only, 0.08 m, a crown change),
+    and C12 at st 9,753 (0.06 m).
+
+  All are junction, corner or deck-end geometry: P3b and P3c work.
+- **Soft-top (about 400 per layout).** On the built OBJ, 372 lane samples (every 0.25 m across) have ground above
+  the road: p50 5 mm, p95 4.6 cm, max 0.21 m.
+  - The large ones are the same places: C13 (0.21 m and 0.13 m), the lid's east end (0.04 m), C14 (0.03 m) and
+    st 11,566-11,578 (0.035 m).
+  - The rest are millimetres at the lane edges, where the road falls across the section (up to 4.8 %). A 2.5 m
+    grass triangle runs from a vertex pinned under the road to a vertex outside it, which the prep's contact band
+    holds at edge height − 0.02 m (`scripts/ac/build_kn5_loop.py` `_conform_and_reseat`). Its chord ends up a few
+    millimetres above a road that is still falling.
+  - Owed: a triangle-level anti-poke in the airoso prep, or a band that follows the section's outward fall.
+- **Stacked legs (137).** Every failure is placeholder ground between legs (e.g. at C7, st 5,436-5,437 against
+  5,618-5,619, 14-16 m above its own leg and 3-5 m from the other's). The placeholder is raw survey, and
+  `terrain_cutfill` + the station-matched seat (P3a) are what close it.
+- **The lid's ends:** the east-end step above. The lid as an authored object is P3b.
+
+**Stills** (Workbench, geometry only, from each build's gate OBJ; the 500 m border skirt is left out):
+`c1_base_hairpin_{a,verge}.png`, `c4_hairpin_{a,verge}.png`, `climb_stacked_legs_{a,verge}.png` in the session
+scratchpad `p2/integrate/stills/`. The stacked view is st 5,549 / 5,705 (21.5 m apart in plan, 9.5 m vertically).
+It shows the placeholder's sawtooth between the legs: 2.5 m corridor quads meeting 20 m ground.
+
+**Owed for Drive 1** (V3-PLAN "-> Drive 1"):
+- **P3a ground:**
+  - the tiered terrain (ledger 0046's job, merging after this);
+  - the seat with station matching;
+  - `terrain_cutfill` between stacked legs (A3), which is what turns the stacked-leg gate green;
+  - `overpass_decks` (D5, the C-470 bridges);
+  - the view tier.
+- **P3b junctions:**
+  - the five mouths (C12, C14, C15, C16, C18), with C12/C13 smoothed;
+  - side-road stubs;
+  - the lid, authored, with flat ends;
+  - each one's polygon drawn into `pavement_exemptions.json`, since all 19 are still unmeasured.
+- **P3c:** hairpin pads where the measured width calls for one. C1's 14 m pad is authored but hidden.
+- **The prep's edge band** (the millimetre soft-top above).
+- **Kevin's call on the corner rule** at the real hairpins (above).
+- **Verge look:** the 1RUNOFF verge renders with the asphalt_cracked tile (pbr binds 1RUNOFF to it). A gravel look
+  needs a `texture_overrides` entry once the terrain job releases `scripts/ac/pbr.py`.
+- **Then:** a real (non-scratch) run in the workshop, which syncs the draft's data into airoso; then
+  `bash tools/ship_track.sh lookout-lariat` and `SHIP_VARIANT=b_verge bash tools/ship_track.sh lookout-lariat`.
+  Each installs only when green.

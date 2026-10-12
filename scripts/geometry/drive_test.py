@@ -1135,6 +1135,13 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
             or report["barrier_missing"] > 0
             or severe_per_km > 12.0
             or report["steps_per_km"] > _bump_limit)
+    # PER-TRACK KINK CEILING (opt-in, 2026-10-12; Lookout Lariat V3-PLAN P5). Kinks gate nowhere by default
+    # (see above); a track that declares track.config.json gates.drive_test.kinks_per_km_max gates on it. Only
+    # then does the report carry the ceiling, so every track without the key writes today's file byte for byte.
+    _kink_max = ((cfg.get("gates") or {}).get("drive_test") or {}).get("kinks_per_km_max")
+    if _kink_max is not None:
+        report["kinks_per_km_max"] = float(_kink_max)
+        fail = fail or report["kinks_per_km"] > float(_kink_max)
     report["fail"] = fail
     (data / out_name).write_text(json.dumps(report, indent=1), encoding="utf-8")
     print(f"DRIVE TEST {cfg['slug']}{(' [' + lid + ' ' + direction + ' ' + kind + ']') if lid else ''}  "
@@ -1148,7 +1155,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     print(f"  severe steps (>{STEP_SEVERE_M*100:.0f} cm)  : {report['severe_steps']}")
     print(f"  bumps >{STEP_BUMP_M*100:.1f} cm /km      : {report['steps_per_km']} "
           f"(limit {_bump_limit:.0f} for {_surface})")
-    print(f"  slope kinks >{KINK_PCT}%% /km   : {report['kinks_per_km']}")
+    print(f"  slope kinks >{KINK_PCT}%% /km   : {report['kinks_per_km']}"
+          + (f"  (ceiling {report['kinks_per_km_max']} /km: gates.drive_test.kinks_per_km_max)"
+             if "kinks_per_km_max" in report else ""))
     print(f"  daylight gaps at edges : {report['daylight_gaps']}")
     if report.get("replication_vs_measured"):
         _rp = report["replication_vs_measured"]

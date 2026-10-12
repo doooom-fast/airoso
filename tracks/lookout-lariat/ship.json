@@ -14,10 +14,10 @@
     "prep": ["prep", "split"],
     "ship": ["export_road", "export_race", "spawn_kn5", "ai", "verify_kn5", "track_folder", "verify_inis",
              "make_map", "treefx", "race_scenery_gate"],
-    "gate": ["road_obj", "drive_test_street", "audit_street", "race_gates"]
+    "gate": ["road_obj", "drive_test_street", "audit_street", "road_inventory", "stacked_legs", "race_gates"]
   },
   "sync_in": {
-    "required": ["track.config.json", "data/centerline.geojson", "data/centerline.osm.geojson", "data/osm.cache.json"],
+    "required": ["track.config.json", "pavement_exemptions.json", "data/centerline.geojson", "data/centerline.osm.geojson", "data/osm.cache.json"],
     "optional": ["data/centerline.previous.geojson", "data/osm.widths.cache.json"],
     "dirs": ["data/aerial"]
   },
@@ -29,6 +29,7 @@
               "data/osm.widths.cache.json", "data/widths.measured.json", "data/bridge.spans.json",
               "data/crossfall.json", "data/crossfall_gate.json",
               "data/gate_centerline.json", "data/bridge.spans.auto.json", "data/dummies.json", "data/drive_test.json",
+              "data/road_inventory.json", "data/stacked_legs.json",
               "data/audit.json", "data/barrier_bands.json", "data/race_authored.json", "data/race_verify.json",
               "data/race_verify.scenery.json", "data/race_kn5.json",
               "data/dummies_{id}.json", "data/drive_test.{id}.json",

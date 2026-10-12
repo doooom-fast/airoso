@@ -151,3 +151,52 @@ as core content (Kunos ships 41–1080).
   to RESEARCH B3 targets.
 - **R5 (floor):** VAO patch + ≥20 cameras + grass_fx everywhere + SurfacesFX gravel on rally +
   per-archetype `surfaces.ini` palette. Lint the floor (REALISM §6).
+
+## 8. Kinks on reference mountain roads — drive_test's own ruler (2026-10-12)
+
+*Lookout Lariat V3-PLAN P5 (ledger 0048): "Before Drive 1 the kink metric runs on la_canyons and simtraxx Pikes
+Peak (both on this machine); a ceiling re-set from those reference mountain roads becomes [std]." Measured with
+`tools/calibrate_kinks.py`, which does not re-implement the metric: it writes the reference road as a gate
+project in scratch and runs `scripts.geometry.drive_test.run` on it, exactly as on our builds (1 m stations, the
+six interior wheel paths, a kink = slope change > 3 %-points between consecutive 1 m steps). Raw rows:
+`fleet/reference/raw/kinks_*.json`. File measurements, read only; nothing here is an in-game claim.*
+
+**What is measured.** The layout's physics road only: every mesh AC reads as physical (`<digits><KEY>…`) whose
+surfaces.ini KEY is the road (`^ROAD`; Targa Florio's `^ASPH`), from the kn5s its `models_<layout>.ini` loads,
+decoded with `scripts.modkit.extract_kn5.parse(keep=…)`. The line is the layout's own `fast_lane.ai` moved to the
+middle of the valid road its sideLeft / sideRight record (smoothed over ±10 points), so the wheel paths sit where
+ours do: on the lane, not on a racing line that cuts every apex.
+
+| Reference | Layout | Physics road | Lane (m, median) | Length | Kinks | **Kinks/km** | Bumps/km |
+|---|---|---|---|---|---|---|---|
+| simtraxx Pikes Peak 0.81 (archived copy, `Dropbox/simracing/mods archive/`; not installed) | pp100ahc (hill climb), `_fast_lane.ai` | `ROAD`, 3 meshes, 44.4k tris, grid 2.75 m | 8.21 | 19.96 km | 389 | **19.49** | 27.8 |
+| la_canyons | mt_wilson_hillclimb | `ROAD*` (13 keys), 387 meshes, invisible physics at ~0.72 m | 8.86 | 6.84 km | 5 | **0.73** | 4.1 |
+| simtraxx Targa Florio | stage_1 | `ASPH-TARG` | 7.89 | 14.22 km | 7 | **0.49** | 0.5 |
+| la_canyons | angeles_crest_east | as mt_wilson | 8.37 | 40.86 km | 0 | **0.00** | 0.0 |
+
+Notes on the rows:
+- Pikes Peak's kinks are where its coarse mesh creases: 263 of ~390 are on the two OUTER interior wheel paths
+  (±3.5 m on an 8.2 m road, 0.66 m inside the mesh edge), 24 on the centre pair; magnitudes p50 3.8, p90 5.8,
+  max 9.3 %-points (an independent re-count by wheel path, 19.74/km). Its mesh is 8.3 m wide where the AI sides
+  say 8.2 m, so the paths are on the road, not off its edge.
+- Mt Wilson's 5 kinks are one feature (st 1,511–1,517); Targa Florio's worst are at the start (st 2–4).
+- Every row also "fails" drive_test on daylight gaps and excursions: only the road was extracted (no ground
+  beside it), so those two counts mean nothing here. Kinks, bumps and severe steps are road-only and stand.
+- Pikes Peak is the plan's named reference and the only Colorado mountain road on the shelf. It is not installed
+  under `content/tracks`; it was read from the archived copy in Kevin's mods archive, read only.
+
+**The proposed ceiling: kinks ≤ 19.49 /km on the Lariat [std: measured on reference mountain roads].** The
+kinkiest of the four: a Lariat that reads more is kinkier than every reference mountain road on the machine. It
+replaces V3-PLAN's 5/km, which was [invented] (Lake Murray V3's own 4.97/km). It is a per-track value
+(`track.config.json gates.drive_test.kinks_per_km_max`); drive_test gates kinks for no other track.
+
+What the band says beyond the ceiling:
+- The references split into two classes: densely meshed physics roads (la_canyons' invisible 0.7 m road,
+  Targa Florio) read **0.0–0.73/km**; a coarse 2.75 m physics road (Pikes Peak) reads **19.5/km**. The metric
+  measures mesh creases as much as the road. A V3 Lariat reading between ~1 and 19.5/km is inside the band but
+  meshed coarser than a scanned road; below ~1/km it is scan-class.
+- For scale, the installed July Lariat read **68.3/km** (v0.46.0) and the v0.66.3 run **108.9/km**: 3.5–5.6×
+  the ceiling.
+- If Kevin wants the scan-class bar after Drive 1, the same rows give it as [std] too: 0.73/km (the kinkiest
+  dense reference). It is not proposed for Drive 1: the draft road's physics mesh density is not decided yet,
+  and the plan wants Drive 1 judged, not red by design.

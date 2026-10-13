@@ -132,7 +132,7 @@ if [ "$(norm "$PROJ")" = "$(norm "$WS_PROJ")" ]; then SCRATCH=0; else SCRATCH=1;
 V021_SHIM="import sys, importlib.util as u; s=u.spec_from_file_location('scripts', r'$V021/__init__.py', submodule_search_locations=[r'$V021']); m=u.module_from_spec(s); sys.modules['scripts']=m; s.loader.exec_module(m)"
 [ -f "$V021/blender/build_loop_blend.py" ] || { echo "no assembler at $V021/blender/build_loop_blend.py"; exit 2; }
 
-TERRAIN_DATA="terrain.samples.json.gz corridor.i8.json i8.local.json i8.legacy.local.json"
+TERRAIN_DATA="terrain.samples.json.gz corridor.i8.json i8.local.json i8.legacy.local.json deck_datum.samples.json ground_release.samples.json.gz"
 # the track's own textures (track.config.json texture_overrides with a project-relative path: the far ring's chaparral)
 TRACK_TEXTURES="textures/chaparral_far_diffuse.jpg"
 step() { echo; echo "=================== $1"; }
@@ -160,6 +160,11 @@ echo "layouts: $LAYOUT_IDS   (race furniture: $RACE_IDS; street: $STREET_IDS; st
 [ -n "$RACE_IDS" ] || { echo "no race layout declared — this chain is the three-version chain (ledger 0047)"; exit 2; }
 
 if [ "$SKIP_BLEND" = 0 ]; then
+  step "draft: real bridge decks between their real abutments (tools/deck_datum.py; LAWS L3, 3DEP cached)"
+  # ledger 0046 v0.18.0 integration fix round: College Ave's deck over I-8 was laid 25 m past its real north abutment
+  # from a height read off the slope under the bridge (the road 2-3 m low for 60 m); track.config.json road_datum.decks
+  # holds each deck straight between the abutments 3DEP shows, at the road's real height (y only, idempotent)
+  (cd "$AIROSO" && python tools/deck_datum.py "$PROJ")
   step "draft: median envelope (self-gated)"
   (cd "$AIROSO" && python tools/median_envelope.py "$PROJ")
   step "draft: tiered terrain plan + 3DEP samples (cached; ledger 0046)"
@@ -188,6 +193,14 @@ if [ "$SKIP_BLEND" = 0 ]; then
   #  terrain face here, and the near-road ground the gates were tuned on is that triangulation's: kept, alone.)
   step "author: triangulate the terrain (BEAUTY, what the retired decimation did to every face; no vertex moves)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/triangulate_terrain_blend.py" -- "$PROJ" 2>&1 | grep "^\[tri\]\|Error\|Traceback" )
+  step "author: release the near-road ground to the real earth in the declared zones + a rail on every new drop (self-checked)"
+  # ledger 0046 v0.18.0 integration fix round (criterion 4's near-road rims): inside track.config.json
+  # terrain.ground_release.zones (Alvarado Creek's bank, College Ave's south embankment, Alvarado Creek under Lake Murray
+  # Blvd) the ground is 3DEP (data/ground_release.json, cached), never above a deck; a concrete rail stands on the curb
+  # wherever the new ground drops within drive_test's excursion band. Before the bridge bodies (they read this ground);
+  # the kn5 prep then leaves it alone (no contact feather, no kept-cell refinement). Exit 1 = loop.blend not saved
+  (cd "$AIROSO" && python tools/ground_release.py "$PROJ")
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/ground_release_blend.py" -- "$PROJ" 2>&1 | grep "^\[release\]\|Error\|Traceback" )
   step "author: median island"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_blend.py" -- "$PROJ" 2>&1 | grep "^\[median" )
   step "author: gap the mainline sidewalk at every mouth"
@@ -243,6 +256,14 @@ step "author: verify the authored furniture against its declaration (tools/verif
 
 step "ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)"
 "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS\|split GRASS_FAR\|terrain tiles\|terrain conform\|T-junctions\|kept-cell refinement\|house seat\|multi-layout\|Error\|Traceback" | cut -c1-200
+step "ship: the I-8's own pavement, lane lines and median barrier on the final ground (visual only; self-checked)"
+# ledger 0046 v0.18.0 integration fix round (the view lens): track.config.json scenery.freeway — tools/freeway_i8.py
+# plans both carriageways from the OSM ways the corridor was cut from, tools/author_freeway_blend.py drapes them on the
+# PREPPED scene's final ground (the prep still moves it) and binds engine-july's pbr rows; no digit prefix, no gate
+(cd "$AIROSO" && python tools/freeway_i8.py "$PROJ")
+if [ -f "$PROJ/data/freeway_i8.json" ]; then
+  "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_freeway_blend.py" -- "$PROJ" --eng "$ENG" 2>&1 | grep "^\[freeway\]\|Error\|Traceback"
+fi
 step "ship: split the prepped scene -> road / common race / closure per race layout / spawn scenes (tools/split_exports_blend.py)"
 "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/split_exports_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" --out-dir "$PROJ/blender/split" 2>&1 | grep "^\[split\]"
 # the split asserts: loop_main.blend holds 0 AC_* and 0 RACE objects/materials; loop_race.blend only the
@@ -407,7 +428,7 @@ for f in centerline.local.json centerline.raw.local.json median_bands.json dummi
          mouths.json mouth_welds.json verify_mouths.json verify_fold_fans.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
          drive_test.json audit.json \
          barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json \
-         $TERRAIN_DATA terrain.tiers.report.json bridges.authored.json; do
+         $TERRAIN_DATA terrain.tiers.report.json bridges.authored.json          deck_datum.json ground_release.json ground_release.report.json freeway_i8.json freeway_i8.report.json; do
   [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
 done
 rm -f "$SRC/data/audit.race.json"   # 0047's shared race audit: retired (ledger 0049 audits each race layout on its own OBJ)

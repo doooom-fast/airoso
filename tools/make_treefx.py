@@ -15,7 +15,8 @@ kn5 world (x, y, -z of the engine frame), trees snap vertically onto SURFACE_MAT
 NO comment lines: CSP parses a non-directive first line as a manifest filename (2026-10-08).
 
 Corridor guard: TreeFX trees are invisible to drive_test/audit, so every entry is rejected if it
-stands within (half-width + 1 m) of the mainline or any connector centreline.
+stands within (half-width + 1 m) of the mainline or any connector centreline — or of an I-8 carriageway
+(data/freeway_i8.json, the visual freeway pavement: ledger 0046 v0.18.0 integration fix round).
 
     python tools/make_treefx.py <project-dir>
 """
@@ -176,6 +177,23 @@ def plan(project_dir, all_species=False, verbose=False):
         for c in json.loads(cp.read_text(encoding="utf-8")).get("connectors", []):
             lines.append(([tuple(p) for p in c["points_xyz_m"]], [w / 2.0 for w in c["widths_m"]]))
     field = RoadField(lines, cell=60.0)
+    # the I-8's own carriageways (tools/freeway_i8.py, ledger 0046 v0.18.0 integration fix round): visual pavement, but
+    # a tree standing on a freeway lane is as wrong as one on the loop's — the same guard, a field of its own (the fill
+    # bands and the basin rule above stay measured from the LOOP's roads)
+    fwy = None
+    fp = data / "freeway_i8.json"
+    if fp.exists():
+        flines = []
+        for ch in json.loads(fp.read_text(encoding="utf-8")).get("chains", []):
+            run = []
+            for st in ch + [None]:
+                if st is None:
+                    if len(run) >= 2:
+                        flines.append(([(r["x"], 0.0, r["z"]) for r in run], [max(r["wl"], r["wr"]) for r in run]))
+                    run = []
+                else:
+                    run.append(st)
+        fwy = RoadField(flines, cell=60.0) if flines else None
 
     out = []
     entries_out = []
@@ -195,7 +213,8 @@ def plan(project_dir, all_species=False, verbose=False):
         for i, e in enumerate(entries, start=idx_base):
             if (zone_key, i - idx_base) in excluded:
                 continue
-            if guard and field.query(e["x"], e["z"])[0] < 1.0:
+            if guard and (field.query(e["x"], e["z"])[0] < 1.0
+                          or (fwy is not None and fwy.query(e["x"], e["z"])[0] < 1.0)):
                 rejected += 1
                 continue
             s = _pick(species, i)

@@ -482,13 +482,36 @@ def test_tiered_terrain_chain_ledger_0046():
     src = (ROOT / "tools" / "triangulate_terrain_blend.py").read_text(encoding="utf-8")
     assert 'quad_method="BEAUTY"' in src and "vertex count changed" in src
     assert 'ENG="${ENG:-C:/Users/Owner/Documents/GitHub/engine-july}"' in TEXT
-    assert 'TERRAIN_DATA="terrain.samples.json.gz corridor.i8.json i8.local.json i8.legacy.local.json"' in TEXT
+    assert ('TERRAIN_DATA="terrain.samples.json.gz corridor.i8.json i8.local.json i8.legacy.local.json '
+            'deck_datum.samples.json ground_release.samples.json.gz"') in TEXT
     down = TEXT[_first('step "sync inputs airoso -> workshop'):_first("LAYOUT_IDS=$(pyq")]
     assert "for f in $TERRAIN_DATA; do" in down and 'cp "$SRC/data/$f" "$PROJ/data/$f"' in down
     sync = TEXT[_first('step "sync outputs workshop -> airoso"\n'):_first("never synced.\nfi\n")]
     assert "$TERRAIN_DATA terrain.tiers.report.json" in sync and "terrain.tiers.json.gz" not in sync
     assert _first('kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")') < _first("scripts.ac.track_folder") \
         < _first("tools/make_treefx.py")
+
+
+def test_deck_datum_ground_release_and_freeway_chain_0046_integration():
+    """ledger 0046 v0.18.0 integration fix round: the deck datum edits the pre-median centreline before median_envelope
+    re-derives from it; the near-road ground is released (python plan, then Blender) after the BEAUTY triangulation and
+    before the median island and the bridge bodies that read it; the I-8 pavement is draped on the PREPPED scene, after
+    the prep and before the split, binding engine-july's pbr through --eng; their 3DEP caches cross the sync both ways"""
+    dd = _first('(cd "$AIROSO" && python tools/deck_datum.py "$PROJ")')
+    assert dd < _first('(cd "$AIROSO" && python tools/median_envelope.py "$PROJ")')
+    assert _first('step "sync inputs airoso -> workshop') < dd
+    gr = _first('(cd "$AIROSO" && python tools/ground_release.py "$PROJ")')
+    grb = _first('--python "$AIROSO/tools/ground_release_blend.py" -- "$PROJ"')
+    assert _first('--python "$AIROSO/tools/triangulate_terrain_blend.py" -- "$PROJ"') < gr < grb \
+        < _first("tools/author_median_blend.py") < _first("tools/author_bridges_blend.py")
+    fw = _first('(cd "$AIROSO" && python tools/freeway_i8.py "$PROJ")')
+    fwb = _first('--python "$AIROSO/tools/author_freeway_blend.py" -- "$PROJ" --eng "$ENG"')
+    assert _first('--python "$ENG/scripts/ac/build_kn5_loop.py"') < fw < fwb < _first("tools/split_exports_blend.py")
+    assert fwb < _first('echo; echo "DRY RUN: stopping before the kn5 exports')
+    sync = TEXT[_first('step "sync outputs workshop -> airoso"\n'):_first("never synced.\nfi\n")]
+    for f in ("deck_datum.json", "ground_release.json", "ground_release.report.json", "freeway_i8.json",
+              "freeway_i8.report.json"):
+        assert f in sync, f
 
 
 def test_v021_shim_resolves_the_assembler_package_not_the_engine():

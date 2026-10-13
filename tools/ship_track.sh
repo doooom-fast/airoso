@@ -152,6 +152,11 @@ draft_underlay() {
 }
 
 # --- draft: San Diego's assembler (tracks/<track>/scripts-v021 via V021_SHIM) + scripted authoring (airoso tools) ---
+draft_deck_datum() {
+  step "draft: real bridge decks between their real abutments (tools/deck_datum.py; LAWS L3, 3DEP cached)"
+  # ledger 0046 v0.18.0 integration fix round: track.config.json road_datum.decks (y only, idempotent; no block = no-op)
+  (cd "$AIROSO" && python tools/deck_datum.py "$PROJ")
+}
 draft_median_envelope() {
   step "draft: median envelope (self-gated)"
   (cd "$AIROSO" && python tools/median_envelope.py "$PROJ")
@@ -195,6 +200,13 @@ draft_seat_terrain() {
 draft_triangulate_terrain() {
   step "author: triangulate the terrain (BEAUTY, what the retired decimation did to every face; no vertex moves)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/triangulate_terrain_blend.py" -- "$PROJ" 2>&1 | grep "^\[tri\]\|Error\|Traceback" )
+}
+draft_ground_release() {
+  step "author: release the near-road ground to the real earth in the declared zones + a rail on every new drop (self-checked)"
+  # ledger 0046 v0.18.0 integration fix round: track.config.json terrain.ground_release.zones -> data/ground_release.json
+  # (3DEP, cached), applied to TERRAIN before the bridge bodies; a rail on the curb at every new drop. No zones = no-op
+  (cd "$AIROSO" && python tools/ground_release.py "$PROJ")
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/ground_release_blend.py" -- "$PROJ" 2>&1 | grep "^\[release\]\|Error\|Traceback" )
 }
 draft_median() {
   step "author: median island"
@@ -272,6 +284,13 @@ author_race_verify() {
 prep_prep() {
   step "ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)"
   "$BL" --background --python-exit-code 1 --python "$ENGINE/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS\|split GRASS_FAR\|terrain tiles\|terrain conform\|T-junctions\|kept-cell refinement\|house seat\|multi-layout\|Error\|Traceback" | cut -c1-200
+  # ledger 0046 v0.18.0 integration fix round: the I-8's own pavement on the PREPPED scene's final ground (scenery.freeway;
+  # off = no data/freeway_i8.json = nothing runs). Part of prep: the split follows it (steps.prep stays prep, split)
+  step "ship: the I-8's own pavement, lane lines and median barrier on the final ground (visual only; self-checked)"
+  (cd "$AIROSO" && python tools/freeway_i8.py "$PROJ")
+  if [ -f "$PROJ/data/freeway_i8.json" ]; then
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_freeway_blend.py" -- "$PROJ" --eng "$ENGINE" 2>&1 | grep "^\[freeway\]\|Error\|Traceback"
+  fi
 }
 prep_split() {
   local lid
@@ -429,7 +448,7 @@ gate_fold_fans() {
 is_data_step() {
   case "$1" in
     gps|paint_centreline|remap_config|verify_centreline_paint|route_oneway_check|elev|project|widths) return 0;;
-    median_envelope|route_connectors|divide_connectors|trim_connectors|terrain_sample|terrain_resample) return 0;;
+    deck_datum|median_envelope|route_connectors|divide_connectors|trim_connectors|terrain_sample|terrain_resample) return 0;;
     *) return 1;;
   esac
 }

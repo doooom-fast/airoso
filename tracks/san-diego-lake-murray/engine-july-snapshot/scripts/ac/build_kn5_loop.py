@@ -421,6 +421,76 @@ class RefineField:
         return D + keep_weight(d, self.keep_m, f) * (z - D)
 
 
+class ReleaseZones:
+    """Pure (no bpy): the near-road ground the author stage released to the bare earth (ledger 0046, v0.18.0
+    integration fix round: tools/ground_release.py plans data/ground_release.json, tools/ground_release_blend.py applies
+    it to TERRAIN). The same membership rule as tools/ground_release.Zones: the nearest centreline vertex (within
+    LOCATE_M), the point's station on its tangent and its signed lateral offset (+ = left of travel); in a zone when the
+    station is inside [a, b] and the offset on one of its sides lies between half-width - inner_m and half-width +
+    reach_m (a span zone from the centreline out: the ground under the deck too). This prep leaves that ground alone: no contact feather, no kept-cell refinement (it pins under the
+    pavement as before). Absent file = no zone = nothing changes (every other track)."""
+    LOCATE_M = 80.0
+    CELL = 20.0
+
+    def __init__(self, pts, widths, zones, inner_m=0.5):
+        n = len(pts)
+        self.P = [(p[0], p[2]) for p in pts]
+        self.W = list(widths)
+        closed = n > 2 and abs(pts[0][0] - pts[-1][0]) < 1e-6 and abs(pts[0][2] - pts[-1][2]) < 1e-6
+        self.s = [0.0]
+        for a, b in zip(self.P, self.P[1:]):
+            self.s.append(self.s[-1] + math.hypot(b[0] - a[0], b[1] - a[1]))
+        self.T = []
+        for i in range(n):
+            a = self.P[n - 2] if (closed and i == 0) else self.P[max(0, i - 1)]
+            b = self.P[1] if (closed and i == n - 1) else self.P[min(n - 1, i + 1)]
+            L = math.hypot(b[0] - a[0], b[1] - a[1]) or 1.0
+            self.T.append(((b[0] - a[0]) / L, (b[1] - a[1]) / L))
+        self.inner = float(inner_m)
+        self.zones = [(float(z["s_m"][0]), float(z["s_m"][1]), [int(v) for v in z["sides"]], float(z["reach_m"]),
+                       z.get("kind") == "span") for z in zones]
+        self.grid = {}
+        for i, (x, z) in enumerate(self.P):
+            if any(a - self.LOCATE_M <= self.s[i] <= b + self.LOCATE_M for a, b, _sd, _r, _k in self.zones):
+                self.grid.setdefault((int(x // self.CELL), int(z // self.CELL)), []).append(i)
+
+    def contains(self, x, z):
+        ci, cj = int(x // self.CELL), int(z // self.CELL)
+        r = int(math.ceil(self.LOCATE_M / self.CELL))
+        best = None
+        for di in range(-r, r + 1):
+            for dj in range(-r, r + 1):
+                for i in self.grid.get((ci + di, cj + dj), ()):
+                    d2 = (self.P[i][0] - x) ** 2 + (self.P[i][1] - z) ** 2
+                    if best is None or d2 < best[0]:
+                        best = (d2, i)
+        if best is None or best[0] > self.LOCATE_M * self.LOCATE_M:
+            return False
+        i = best[1]
+        tx, tz = self.T[i]
+        dx, dz = x - self.P[i][0], z - self.P[i][1]
+        s, lat = self.s[i] + dx * tx + dz * tz, -dx * tz + dz * tx
+        hw = self.W[i] / 2.0
+        for a, b, sides, reach, span in self.zones:
+            inner = -1e-9 if span else hw - self.inner          # a span zone holds the ground under the deck too
+            if a <= s <= b and any(inner <= sd * lat <= hw + reach for sd in sides):
+                return True
+        return False
+
+
+def _release_zones(proj):
+    """ReleaseZones from data/ground_release.json + data/centerline.local.json, or None (no file: nothing released)"""
+    p = proj / "data" / "ground_release.json"
+    if not p.exists():
+        return None
+    R = json.loads(p.read_text(encoding="utf-8"))
+    if not R.get("zones"):
+        return None
+    local = json.loads((proj / "data" / "centerline.local.json").read_text(encoding="utf-8"))
+    return ReleaseZones([tuple(q) for q in local["points_xyz_m"]], local.get("widths_m") or [7.0] * len(
+        local["points_xyz_m"]), R["zones"], inner_m=float(R.get("inner_m", 0.5)))
+
+
 def _clip_ears(f):
     """triangulate a convex (coplanar) n-gon by ear clipping: of the ears that are not flat in plan (a run of collinear
     vertices — edge midpoints — must never become a zero-area triangle), the one with the SHORTEST new diagonal first
@@ -450,7 +520,7 @@ def _clip_ears(f):
     return n_cut
 
 
-def _refine_kept_terrain(proj, bm, near2d=None):
+def _refine_kept_terrain(proj, bm, near2d=None, skip=None):
     """Ledger 0046 fix round — the kept cells' outer half, AFTER every pass that reshapes near-road ground. A tiered
     terrain keeps the graded grid's own 20 m cells within ~18 m of a pavement so the seat and this prep reshape exactly
     the ground they always reshaped; but those cells reach ~46 m out, and past this prep's reach they stayed 20 m
@@ -529,7 +599,11 @@ def _refine_kept_terrain(proj, bm, near2d=None):
     moved = set()
     z0 = {}
     tgt = {}
+    n_skip = 0
     for v in kept_v:
+        if skip is not None and skip(v.co.x, v.co.y):
+            n_skip += 1          # released to the bare earth by the author stage (ground_release): left alone
+            continue
         # the pavement distance is the data's (centreline - half width) or the BUILT road's, whichever is nearer: a
         # mouth weld or a flare widens the pavement past its centreline width, and nothing within move_beyond_m of
         # what was built may move (criterion 7)
@@ -589,7 +663,7 @@ def _refine_kept_terrain(proj, bm, near2d=None):
                          f"fins (a moved vertex beside an unmoved one at the same point: a crack). Refusing to export.")
     return {"merged": n_merged, "t_junctions": n_tj, "edges_split": n_split, "ears_clipped": n_poke,
             "kept_vertices": len(kept_v), "moved": n_move, "max_move_m": round(dmax, 2), "fins": fins,
-            "held_on_zero_area_faces": n_held,
+            "held_on_zero_area_faces": n_held, "released_left_alone": n_skip,
             "vertical_before": fins_pre}
 
 
@@ -855,6 +929,11 @@ def _conform_and_reseat(proj: Path, spans):
     def on_span(x, y):
         return any((x - sx) ** 2 + (y - sy) ** 2 <= r * r for sx, sy, r in span_pts)
 
+    # released ground (ledger 0046 v0.18.0 integration fix round): the author stage set it to the bare earth inside the
+    # declared zones (tools/ground_release_blend.py); the contact feather and the kept-cell refinement leave it alone
+    rel = _release_zones(proj)
+    n_rel_zone = 0
+
     terrain = [ob for ob in bpy.data.objects
                if ob.type == "MESH" and ob.name.upper().startswith("1GRASS")]
     old_grass_bvh = _bvh(_world_tris(lambda n: n.startswith("1GRASS")))   # pre-pin ground, for deltas
@@ -894,6 +973,9 @@ def _conform_and_reseat(proj: Path, spans):
                 else:
                     v.co.z = tgt; n_pin += 1
             else:                                      # contact band + feather past the edge
+                if rel is not None and rel.contains(x, y):
+                    n_rel_zone += 1
+                    continue
                 # full-contact BAND (CO's "gentle shelf"): every triangle covering pavement has all
                 # verts within ~2.6 m of the edge, so holding the first 3 m at contact height makes
                 # the surface under the deck edge gate-proof; then smoothstep back to natural.
@@ -932,12 +1014,13 @@ def _conform_and_reseat(proj: Path, spans):
             print(f"[build_kn5_loop] T-junctions: {n_tj} terrain faces re-fanned through the nodes on their edges")
         # 2e. the kept cells' outer half (ledger 0046 fix round): refined, and the data past the near-road band — after
         # every pass above, before the re-seat below (so the props ride this delta too)
-        rf = _refine_kept_terrain(proj, bm, _near2d)
+        rf = _refine_kept_terrain(proj, bm, _near2d, skip=(rel.contains if rel is not None else None))
         if rf is not None:
             print(f"[build_kn5_loop] kept-cell refinement: {rf}")
         bm.to_mesh(me); bm.free(); me.update()
     print(f"[build_kn5_loop] terrain conform: {n_sub} corridor edges split, "
-          f"{n_pin} verts pinned to deck-{GROUND_CLEAR}, {n_feather} feathered")
+          f"{n_pin} verts pinned to deck-{GROUND_CLEAR}, {n_feather} feathered"
+          + (f", {n_rel_zone} released verts left unfeathered" if rel is not None else ""))
 
     # 3. prop re-seat on the moved ground
     ground_bvh = _bvh(_world_tris(lambda n: n.startswith(("1GRASS", "1ROAD", "1KERB"))))

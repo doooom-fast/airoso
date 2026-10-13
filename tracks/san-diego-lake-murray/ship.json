@@ -1,5 +1,5 @@
 {
-  "_doc": "San Diego's chain as data for tools/ship_track.sh (V3-PLAN P1, Lariat plan). tools/ship_sd.sh stays the chain of record (not a shim); this file reproduces its step sequence, re-synced 2026-10-13 to ship_sd.sh after ledger 0046 and v0.18.0 (0052: the race gate OBJ extracted before the AI writer + verify_ai_line; 0050: verify_fold_fans after the race gates) (tiered terrain: terrain_sample / terrain_resample around the trim, triangulate_terrain after the seat, slim_far_terrain retired, the road gate OBJ before the track folder, the 3DEP cache + I-8 corridor synced in and out); tests/tools/test_ship_track_chain.py diffs the step headers. The assembler runs from tracks/san-diego-lake-murray/scripts-v021 through V021_SHIM, as in ship_sd.sh. engine-july runs the prep / exporter / spawn builder for this track only (tools/ship_track.sh decides that from the track name; ENG=<dir> points it at a scratch copy, as in ship_sd.sh; no key here can).",
+  "_doc": "San Diego's chain as data for tools/ship_track.sh (V3-PLAN P1, Lariat plan). tools/ship_sd.sh stays the chain of record (not a shim); this file reproduces its step sequence, re-synced 2026-10-13 to ship_sd.sh after ledger 0046 and v0.18.0 (0052: the race gate OBJ extracted before the AI writer + verify_ai_line; 0050: verify_fold_fans after the race gates; 0046 integration fix round: deck_datum first, ground_release after the triangulation, the I-8 pavement inside prep_prep before the split) (tiered terrain: terrain_sample / terrain_resample around the trim, triangulate_terrain after the seat, slim_far_terrain retired, the road gate OBJ before the track folder, the 3DEP cache + I-8 corridor synced in and out); tests/tools/test_ship_track_chain.py diffs the step headers. The assembler runs from tracks/san-diego-lake-murray/scripts-v021 through V021_SHIM, as in ship_sd.sh. engine-july runs the prep / exporter / spawn builder for this track only (tools/ship_track.sh decides that from the track name; ENG=<dir> points it at a scratch copy, as in ship_sd.sh; no key here can).",
   "track": "san-diego-lake-murray",
   "workshop": "C:/Users/Owner/Documents/GitHub/k10-sd-v021",
   "workshop_project": "project",
@@ -8,9 +8,9 @@
   "street_ai_july": "D:/k10-track-archive/2026-10-11/san_diego_lake_murray/ai",
   "audit_note": "the regression floor — D 512 / K 20 / I 20 / F 13 since the 2026-10-11 mouth weld + fold mend, was 512 / 154 / 145 / 15",
   "steps": {
-    "draft": ["median_envelope", "terrain_sample", "build_loop_blend", "route_connectors", "divide_connectors",
+    "draft": ["deck_datum", "median_envelope", "terrain_sample", "build_loop_blend", "route_connectors", "divide_connectors",
               "trim_connectors", "terrain_resample", "rebuild_loop_blend", "weld_mouths", "seat_terrain",
-              "triangulate_terrain", "median", "gap_mouths", "bridges", "scatter_strip", "lamps", "signs"],
+              "triangulate_terrain", "ground_release", "median", "gap_mouths", "bridges", "scatter_strip", "lamps", "signs"],
     "author": ["race_bands", "race_planned_gate", "layout_dummies", "race_author", "race_verify"],
     "prep": ["prep", "split"],
     "ship": ["export_road", "export_race", "spawn_kn5", "ai", "verify_kn5", "road_obj", "track_folder", "verify_inis",
@@ -21,6 +21,7 @@
     "required": ["track.config.json", "start_positions.json"],
     "optional": ["data/centerline.raw.local.json.pre-median", "data/connectors.local.json.pre-trim",
                  "data/terrain.samples.json.gz", "data/corridor.i8.json", "data/i8.local.json", "data/i8.legacy.local.json",
+                 "data/deck_datum.samples.json", "data/ground_release.samples.json.gz",
                  "textures/chaparral_far_diffuse.jpg"],
     "globs": ["source/trees/*.bin"]
   },
@@ -34,6 +35,8 @@
               "data/race_kn5.json",
               "data/terrain.samples.json.gz", "data/corridor.i8.json", "data/i8.local.json", "data/i8.legacy.local.json",
               "data/terrain.tiers.report.json", "data/bridges.authored.json",
+              "data/deck_datum.samples.json", "data/ground_release.samples.json.gz", "data/deck_datum.json",
+              "data/ground_release.json", "data/ground_release.report.json", "data/freeway_i8.json", "data/freeway_i8.report.json",
               "data/dummies_{id}.json", "data/drive_test.{id}.json",
               "data/no_route.{race}.json", "data/no_route.{race}.planned.json", "data/audit.{race}.json",
               "data/closure_{race}.kn5.json", "data/ai_verify.{race}.json"],

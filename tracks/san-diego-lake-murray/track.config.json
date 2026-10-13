@@ -345,6 +345,52 @@
   },
   "terrain": {
     "_doc": "Ledger 0046 (Kevin 2026-10-10: 'more terrain near the roads, and the I-8 trench and adjacent causeway cut out'; 'I want to see cowles mountain at least and maybe more of the i8 corridor when I'm up on Navajo'). fleet/LAWS.md L3 as amended 2026-10-11: near-road relief is clamped, far relief is data. The ground is ONE multi-resolution lattice sampled from USGS 3DEP AT every vertex (scripts/elevation/terrain_sample.py, cached in data/terrain.samples.json.gz), anchored on the 20 m grid the assembler grades (tier_options.frame): 5 m cells (split in four) within 60 m of a pavement, 20 m (split in four) to 500 m, 40 m beyond, the I-8 corridor at 5 m and Cowles' cone at 20 m, over the dossier's landmark box (far_extent). Under and beside the roads (keep_cells: the graded grid's own 20 m cells wherever a pavement is within 18 m) the ground is the v0.17.1 graded surface, triangle for triangle, so the seat and the kn5 prep reshape exactly what they always reshaped; past 20 m the kept cells themselves are refined to the 5 m sub-lattice and take the data, feathered by 36 m (keep_cells.refine, applied by the kn5 prep after it has reshaped the near-road ground). Within 250 m of a pavement (and every pocket that encloses) the ground is physical 1GRASS; the rest is the visual-only far ring GRASS_FAR (no physics, no gates, no GrassFX). The band clamp (+-terrain_band_m of the nearest road) holds in full only within clamp_corridor_m of a pavement and releases to the raw DEM by clamp_blend_m: Cowles, the Del Cerro hilltop and the valley walls are 3DEP, uncapped.",
+    "ground_release": {
+      "_doc": "Ledger 0046 v0.18.0 integration fix round (the truth lens's criterion 4: seven rims within 20 m of a pavement, each on ground criterion 7 held to v0.17.1 and 2-9 m from the real earth). Inside each zone the near-road ground is the bare-earth 3DEP surface (tools/ground_release.py plans a 2 m lattice and reads 3DEP at every node, cached in data/ground_release.samples.json.gz; tools/ground_release_blend.py applies it to TERRAIN in the author stage, after the seat and before the bridge bodies, and puts a concrete rail on the kerb wherever the new ground drops within reach of a car, by drive_test's own excursion rule). A 'bank' zone releases the ground beside the road only (never under the pavement); a 'span' zone also releases it under the deck, never above the deck (min(3DEP, deck - 0.02)), and beside the deck never above the road edge. Stations s_m are on data/centerline.local.json; sides: left / right of the lap's travel (the street layout's direction); reach_m past the nominal pavement edge (40 m: past the kept cells' refinement band, 20 + 16 m, which the kn5 prep then leaves alone inside a zone, as it leaves its contact feather). Measured 2026-10-13 on fresh 3DEP 1 m: alvarado_creek_bank \u2014 Alvarado Creek and its bank drop 2-8 m within 2-20 m of Alvarado Road's south kerb (s 1752-1995), a bank rises 2 m 4-10 m off it (s 1632-1680); college_south_approach \u2014 the real road rides an earth embankment at road height to its abutment (s 2586), and the ground under the approach stood 6 m under the road; lmb_alvarado_creek \u2014 Lake Murray Blvd crosses Alvarado Creek on a bridge (bare earth 115.8-117.5 m under a 124 m road, s 13435-13457) that the build had filled solid.",
+      "zones": [
+        {
+          "name": "alvarado_creek_bank",
+          "kind": "bank",
+          "s_m": [
+            1620.0,
+            1995.0
+          ],
+          "sides": [
+            "left"
+          ],
+          "reach_m": 40.0,
+          "why": "criterion 4 sections 2150/2200/2250 (creek bank 2.2-9.6 m from the pavement) and 2400 (a 2 m rise 9.7 m from it)"
+        },
+        {
+          "name": "college_south_approach",
+          "kind": "span",
+          "s_m": [
+            2540.0,
+            2600.0
+          ],
+          "sides": [
+            "left",
+            "right"
+          ],
+          "reach_m": 40.0,
+          "why": "criterion 4 section 2000: the ground under College Ave's south approach 6.2 m under the road where 3DEP has the embankment at road height"
+        },
+        {
+          "name": "lmb_alvarado_creek",
+          "kind": "span",
+          "s_m": [
+            13428.0,
+            13464.0
+          ],
+          "sides": [
+            "left",
+            "right"
+          ],
+          "reach_m": 40.0,
+          "why": "criterion 4 section 4050: solid fill under Lake Murray Blvd where 3DEP has Alvarado Creek 8 m under the deck"
+        }
+      ]
+    },
     "terrain_band_m": 22.0,
     "clamp_corridor_m": 20.0,
     "clamp_blend_m": 40.0,
@@ -432,7 +478,39 @@
       }
     ]
   },
+  "road_datum": {
+    "_doc": "LAWS L3 'Bridges dip': a deck is held straight between its REAL abutments at the road's REAL height (tools/deck_datum.py, the first draft step: it edits data/centerline.raw.local.json.pre-median in the build project, y only, before median_envelope). Stations are on that pre-median centreline. Abutments measured 2026-10-13 from fresh 3DEP 1 m along the centreline (data/deck_datum.samples.json): College Ave over I-8 rides its south embankment to s 2586 (108.65 m) and its north embankment from s 2683 (~112.5 m); the pre-0046 deck ran 2568-2697 from an approach height read off the slope under the bridge, leaving the road 2.0-3.0 m low for 60 m north of it and a ~10 % climb to catch up (ledger 0046, v0.18.0 integration fix round: criterion 4's section 2050 north rim). Lake Murray Blvd's deck over I-8 and Alvarado Creek reads 1-2 m low too (3DEP) and is NOT corrected here: it runs into the lap seam (L13) and criterion 4 does not need it; recorded in ledger 0046 for Kevin.",
+    "decks": [
+      {
+        "name": "college_ave_over_i8",
+        "deck_m": [
+          2586.0,
+          2683.0
+        ],
+        "window_m": [
+          2548.0,
+          2742.0
+        ],
+        "why": "fresh 3DEP 1 m: south embankment at road height to s 2586 (108.65 m), open span 2587-2682 (bare earth 102.7-104.3 m under it), north embankment from s 2683 (112.4-113.4 m); the old deck ended at s 2697 at 110.22 m"
+      }
+    ]
+  },
   "scenery": {
+    "freeway": {
+      "_doc": "Ledger 0046 v0.18.0 integration fix round (the view lens, twice: from the College Ave and Lake Murray Blvd decks the I-8 cut read as 'a shallow grassy valley ... no freeway'). 0046 left the freeway itself out as Kevin's call (E4: 'a visual-only I-8 pavement ribbon along the floor so more of the corridor reads as a freeway'); this is that ribbon, ON by default and one switch to remove (enabled: false). tools/freeway_i8.py plans both carriageways from the OSM ways the corridor was cut from (data/corridor.i8.json provenance: lanes per way from the OSM lanes tag, 4-6 here; OSM bridge ways left out), tools/author_freeway_blend.py drapes them on the FINAL ground of the prepped scene lift_m above it (no z-fight with the grass, nothing to drive on: no digit prefix, no physics, no gate reads it) with dashed lane lines, edge lines (yellow on the median side) and a concrete median barrier wherever the carriageways run within barrier_gap_max_m. Within the 1ROAD extent the pavement (HIGHWAY_I8_NEAR) and its lines (MARKINGS_I8) are GrassFX occluders so no grass grows through them; beyond it (HIGHWAY_I8_FAR, no lines) it is plain scenery. tools/make_treefx.py keeps every tree off it. lane_m 3.66 (12 ft, the US interstate lane); the shoulders, the lift, the dash and the step are [invented] (GATES-CHANGELOG 0046 v0.18.0 integration).",
+      "enabled": true,
+      "corridor": "i8",
+      "lane_m": 3.66,
+      "outer_shoulder_m": 3.0,
+      "inner_shoulder_m": 1.2,
+      "default_lanes": 4,
+      "step_m": 4.0,
+      "lift_m": 0.15,
+      "line_w_m": 0.15,
+      "dash_m": 3.0,
+      "dash_period_m": 12.0,
+      "barrier_gap_max_m": 40.0
+    },
     "_doc": "palm_roads: names (matching route.roads / OSM) whose verges get tall Mexican fan palms, dropped every palm_spacing_m on both sides. Now the whole loop (all 5 roads) after the Lake Murray Blvd test strip was approved.",
     "palm_roads": [
       "Alvarado Road",

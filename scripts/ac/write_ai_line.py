@@ -226,7 +226,10 @@ FAIR_U_MAX_M = 3.0          # INVENTED: fair_line never moves a point further th
 FAIR_PAD_PTS = 120          # a closed lap is faired as an open chain padded this far round the seam each way
 FAIR_PIN_W = 1e6            # a point held at its bound (the active set) is held with this weight
 FAIR_ACTIVE_ITERS = 60      # active-set iterations per solve
-FAIR_RADIUS_ROUNDS = 12     # re-solves after pulling back the bounds around a radius the fairing tightened
+FAIR_RADIUS_ROUNDS = 24     # re-solves after pulling back the bounds around a radius the fairing tightened. INVENTED;
+                            # was 12, which v0.18.0's race_acw outran (ledger 0046 integration fix round: 12 rounds left 9
+                            # box points tightened, the polish 4, and a 5-point kink at the v1514 box exit that
+                            # verify_ai_line V3 filed as a 12.9 % phantom dip); it converges at 18. race_cw: 5 rounds
 FAIR_PROBE_M = 0.25         # a point's bound along its normal: marched at this step, then bisected ...
 FAIR_BOUND_SMOOTH_PTS = 4   # ... then made a smooth conservative envelope over +-this many points (min, mean, x2)
 FAIR_POLISH_W = 1e-4        # INVENTED: the polish after the fairing (point-scale only: wiggles under ~30 m) ...

@@ -60,3 +60,16 @@ widths and medians off the aerial, terrain extent, layouts, budget, gates), then
 Decided in the plan, before geometry. At minimum: the new roads match OSM + aerial in plan (paint where visible),
 3DEP in profile (L5, on the built road), every new mouth on the loop passes `verify_mouths`, the race layouts stay
 sealed (`no_route` PASS) with the new mouths closed, the existing three layouts' gates no worse, and Kevin's seat.
+
+## Kevin's answers to the plan (2026-10-13)
+
+> "Why are wec changing ridges? Defaults to the rest"
+
+- **D1, D2, D4: defaults** — no Mission Gorge Speedway in phase 1; the far ring grows north to 32.850 / west to
+  −117.108 with the Cowles patch to 32.828; lamps everywhere except Jackson's open canyon (~90).
+- **D3: keep the real ridges.** The 24.3 m / 11.6 m figures in the plan were what the 0046 rule *as written* (80 m full,
+  250 m release) would do beside the two hillside roads; the plan's default (the iron reaches 40 m from the pavement,
+  3DEP beyond) moves **0** of 4,050 transect points on them. Kevin's question is the principle: **real ridges are not
+  changed.** Taken as the yes to D3's default, and as the direction for the loop too — the v0.18 terrain still irons
+  the loop's hills 80-250 m out (the 0046 truth lens: up to 13.7 m low 92-119 m from Navajo's pavement), so the same
+  40 m reach is measured on the loop next and applied there unless it breaks a gate.

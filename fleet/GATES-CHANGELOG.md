@@ -1209,6 +1209,53 @@ merged branch, before 0050): every drive / audit / no_route / mouths verdict ide
 (152 buildings, 0 floating / sunken / buried); terrain tiles unchanged (`1GRASS` × 8, max 42,426 v; `GRASS_FAR` × 2,
 max 55,750 v).
 
+### Integration fix round (2026-10-13, v0.18.0, after the truth + view lenses refuted the integration): the near-road ground released where the real earth is not a verge, College Ave's deck on its real abutments, the I-8's own pavement
+
+No gate threshold changed and no criterion was re-worded. Criterion 4 (I-8 sections, first wording) failed on 7 rims within
+20 m of a pavement, each on ground criterion 7 held to v0.17.1 and 2–9 m from fresh 3DEP. They were fixed at their causes
+(fresh 3DEP 1 m, 2026-10-13): Alvarado Creek's bank flattened into a road-height shelf beside Alvarado Road (s 2150 / 2200 /
+2250, and a 2 m rise at s 2400); 6 m of air under College Ave's south approach where the real road rides an embankment
+(s 2000); College Ave's north approach built 2.0–3.0 m under the real road because the old deck interpolation ran 25 m
+past the real abutment from a height read off the slope under the bridge (s 2050); solid fill under Lake Murray Blvd where
+it really bridges Alvarado Creek 8 m up (s 4050). Measured with the truth lens's own code on the rehearsal's gate OBJ:
+**172 of 172** (was 165 of 172). The view lens's I-8 refutation ("a shallow grassy valley ... no freeway") is fixed by the
+freeway's own pavement (0046 E4, "Kevin's call", now on by default with one switch to remove).
+
+| Number | Value | Where | Why |
+|---|---|---|---|
+| `tools/deck_datum.SMOOTH_M` | 3 m [invented] | the approaches | one-sided moving average of the 1 m 3DEP road surface, never read across an abutment |
+| `tools/deck_datum.BLEND_M` | 8 m [invented] | window ends | the corrected profile joins the old one without a step (the assembler's sigma 5-point smoothing runs on top) |
+| `road_datum.decks[college_ave_over_i8]` | deck 2586–2683 m, window 2548–2742 m | measured | fresh 3DEP: embankment to 2586 (108.65 m), open span, embankment from 2683 (112.4–113.4 m) |
+| `tools/ground_release.CELL_M` | 2 m [invented] | released ground | the creek channel is 7–16 m wide |
+| `tools/ground_release.RAMP_M` | 4 m [invented] | zone ends / outer edge | smoothstep back to the built ground |
+| `tools/ground_release.INNER_M` | 0.5 m [invented] | bank zones | a bank zone starts this far inside the nominal kerb line (a span zone covers the whole deck) |
+| `terrain.ground_release.zones[*].reach_m` | 40 m [invented] | all three | past the kept cells' refinement band (20 + 16 m), which the prep then leaves alone inside a zone |
+| `tools/ground_release_blend.SUBDIV_M` | 2.5 m [invented] | zone terrain edges | halved down to this |
+| `tools/ground_release_blend.EDGE_CAP_M` | 1 m [invented] | bank zones | ground within this of the pavement never rises above its edge - 0.02 m |
+| rail rule | drive_test's own: a fall over 0.12 m between two points 0.5 m apart within the 4 m band past the built edge, read every 0.125 m [invented] from 0.5 m inside the nominal edge; or the ground more than `RAIL_FALL_M` 0.5 m [invented] under the edge | rails | every new drop a car could reach is guarded, so `drive_test`'s gated excursions stay at 100 (v0.17.1: 100) |
+| rail geometry | Jersey profile 0.60 m foot / 0.20 m top / 0.81 m tall, foot 0.30 m into the curb, centre 0.30 m inside the curb's outer lip; runs padded 3 m [invented], merged under 4 m [invented], none under 6 m [invented], none within 2 m [invented] of an existing GUARDRAIL vertex | `GUARDRAIL` -> `1WALL_guard` | a 0.6 m foot so drive_test's 0.5 m lateral probe cannot step over it |
+| `freeway.lane_m` | 3.66 m | measured standard | the US interstate lane (12 ft); lanes per carriageway from the OSM `lanes` tag (4–6) |
+| `freeway.outer_shoulder_m` / `inner_shoulder_m` | 3.0 / 1.2 m [invented] | carriageway edges | the inner edge never past the median line less the barrier's half-foot 0.30 m |
+| `freeway.lift_m` | 0.15 m [invented] | pavement over the final ground | no z-fight with the grass; checked, not assumed: every vertex, edge midpoint and centroid stands >= 0.03 m [invented] over the ground, raised up to 0.5 m [invented], else the face is left out |
+| `freeway.step_m` / `dash_m` / `dash_period_m` / `line_w_m` | 4 / 3 / 12 / 0.15 m [invented] | geometry | stations; dashed lane lines; line width |
+| `freeway.barrier_gap_max_m` | 40 m [invented] | median barrier | a Jersey barrier midway between the carriageways wherever they run this close |
+| `author_freeway_blend.DECK_CLEAR` | 2.0 m [invented] | under a loop deck's abutment | a station with a loop deck this close over its pavement is left out (the abutment earth, never the embankment top) |
+| GrassFX occluder prefix `HIGHWAY_I8_NEAR` | — | `scripts/ac/ext_config.py` | the pavement inside the 1ROAD extent occludes grass; `HIGHWAY_I8_FAR` and the bare `HIGHWAY` prefix stay out (the TDR lesson) |
+
+Wiring: `tools/deck_datum.py` first in the draft (before `median_envelope`); `tools/ground_release.py` +
+`tools/ground_release_blend.py` after the BEAUTY triangulation, before the median island and the bridge bodies;
+engine-july's prep (`build_kn5_loop.ReleaseZones`, pending mirror) skips its contact feather and its kept-cell
+refinement inside a zone (it still pins under the pavement); `tools/freeway_i8.py` + `tools/author_freeway_blend.py`
+on the prepped scene before the split; `tools/make_treefx.py` keeps trees off the carriageways (348 dropped). The two
+3DEP caches (`data/deck_datum.samples.json`, `data/ground_release.samples.json.gz`) ride TERRAIN_DATA both ways.
+
+Measured on the full rehearsal (v0.18.0 integration -> this round): street drive_test soft top 41 -> 41, severe 0, bumps
+0.0, kinks 3.41, gated excursions 100 -> 100 (far ledges 79 -> 98: the creek and the College embankment past the 4 m band),
+floating 391, obstruction 0; street audit D 512 -> 514 (the same 90 plan / 180 3D positions, all the loop's I-8 bridge
+rails: two more duplicate vertex records at College where the deck now stands at its real height), K 20, I 20, F 13;
+race layouts identical (severe 22 / 20, soft top 9 / 9, audits 53 / 53, no_route PASS, barrier_missing 0);
+`rib_check` / `house_seat_check` / `verify_mouths` / `verify_fold_fans` / `verify_signs` PASS; road kn5 113.3 -> 126.3 MB.
+
 ## 2026-10-12 — `verify_signs` (k) direction coverage, (j) read from signs.json, race furniture never the signs' ground (ledger 0051)
 
 **Why.** Kevin, from the seat: "arrow signs are only placed for one direction of driving". All signs ship in the one
@@ -1461,6 +1508,14 @@ Measured on the v0.18.0 rehearsal (the 0046 terrain, 0050's levelled fans, 0053'
 race_acw PASS (2.387 m, 0.00045 of the lap within 2.5 m, flips 0.521 /km, 14.33 m, 272.7 s); the box rule held on the
 written line (cw 38.8/45.13, 24.65/28.68, 28.19/32.78, 38.37/44.52 m; acw 41.88/47.49, 46.36/52.27, 45.4/52.32,
 51.1/58.54 m). race_cw's flips keep their thin margin (0.007 /km).
+
+### Integration fix round (2026-10-13, v0.18.0): the writer's fairing round cap
+
+`scripts/ac/write_ai_line.FAIR_RADIUS_ROUNDS` 12 -> **24** [invented]. On the integration fix round's world (College Ave's
+deck on its real abutments, the released ground, the rails) race_acw's fairing ran out of rounds with 9 box points still
+tightened (the polish 4) and left a 5-point kink at the v1514 box exit, which `verify_ai_line` V3 filed as a 12.9 % phantom
+speed dip (61 vs 70 km/h) — the gate was right, the solve was unconverged. With 24 it converges at 18 rounds (box points
+left tightened 0), V3 0 dips; race_cw converges at 5 either way (unchanged). No threshold of the gate changed.
 
 ## 2026-10-13 — 0050 levelled fold pinches + `tools/verify_fold_fans.py`; drive_test's in-fan severe steps (ledger 0050)
 

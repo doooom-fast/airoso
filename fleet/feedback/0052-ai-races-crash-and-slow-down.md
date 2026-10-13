@@ -317,3 +317,11 @@ race_acw 2.387 m, 0.045 % within 2.5 m, flips 0.521 /km, 14.33 m, 272.7 s; the b
 The lines differ in bytes from the AI branch's (race_cw 740d6f03, race_acw 6f6494b6, against 88a9da4c / 985da589 on
 the pre-0050 world: the writer seats each point on the levelled deck). Still GENERATED drafts (0023): Kevin's 7-AI,
 3-lap race on both race layouts judges it.
+
+**Integration fix round (v0.18.0, 2026-10-13).** On the round's world (College Ave's deck on its real abutments, the
+released creek banks and their barriers) race_acw's fairing ran out of rounds (`FAIR_RADIUS_ROUNDS` 12) with box points
+still tightened, and left a 5-point kink at the College -> Navajo box exit that `verify_ai_line` V3 caught as a 12.9 %
+phantom dip (61 vs 70 km/h): the gate was right. The cap is now 24 [invented]; race_acw converges at 18 rounds (0 points
+left tightened), race_cw at 5 as before. Both PASS: race_cw wall min 2.544 m, flips 0.743 /km, lap est 280.2 s; race_acw
+2.386 m, dips 0, flips 0.521 /km, 272.8 s.
+

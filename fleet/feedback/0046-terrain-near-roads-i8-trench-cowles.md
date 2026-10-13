@@ -731,3 +731,27 @@ under the College deck's north end, beyond its abutment, where the ground under 
 (+0.7 MB); `1GRASS` × 8 (max 42,426 v), `GRASS_FAR` × 2 (max 55,750 v); race and closure kn5 unchanged. 3DEP cache:
 +108,738 half-metre edge samples (243 requests; 19,818 of them from a rejected 0.20 m-screen trial, kept as cache).
 Frame rate and load time are still Kevin's first check (criterion 8).
+
+## Integration (v0.18.0, 2026-10-13): merged, 0054's clamp reach applied, re-measured — not installed
+
+Merged with 0050-0053 into v0.18.0. Ledger 0054 D3 (Kevin: "why are we changing ridges?") is applied here, as that
+entry asked: `terrain.clamp_corridor_m` 80 → **20**, `terrain.clamp_blend_m` 250 → **40** (LAWS L3 and GATES-CHANGELOG
+amended). Against round 4's build it moves 3,363 terrain vertices by more than 1 m (max 25.24 m: the canyon fill north
+of west Navajo removed, the ridges back to the data); within 20 m of a road nothing moved, and every drive / audit /
+no_route / mouths verdict on the pre-0050 v0.18.0 build was identical to v0.17.1 (`rib_check` PASS 75 / 100, 33 / 100,
+step jogs 4 / 5; `house_seat_check` PASS).
+
+Criteria re-measured with the truth lens's own round-4 code on the v0.18.0 gate OBJ (fresh 3DEP: its round-4 fetch
+reused at 134,363 identical positions, 38 new points fetched 2026-10-13, TLS verified):
+1 PASS 484.34 m; 2 PASS — crest 9.369° vs 9.239°, v2240 8.513° vs 8.348°, v1640 the summit 5.489° hidden behind a hill
+350 m out at **7.157°** (round 4: 6.600°, 3-4.6 m low in the old release band; 3DEP 7.231°); 3 as round 4 (192° built to
+5,550 m, the only "hole" the Navajo pavement 10 m out; Del Cerro 258.16; south bank 165.62; box-edge faces; no vertex
+below 15.52 m; pit clause 0 vertices > 3 m under 3DEP); 4 **166 / 173**, the same 7 rims within 17.5 m of a pavement
+that criterion 7 holds to v0.17.1 — FAIL as worded, Kevin's call (unchanged); 5 PASS 5.279 / 20.24 m; 6 PASS max 0.855 m
+over 110,904 far positions, 0 over 1 m (the row 6 claim about 3DEP's repeatability is corrected above).
+
+Still open from the round-4 lenses (not touched by the integration): the visual lens's washboard on the Alvarado Creek
+channel wall SE of the Lake Murray Blvd overcrossing (round 4's break lines fold it cell by cell at the 5 m rhythm) and
+the toothed bench risers west of College; the small wedge of sky under the College deck's north end. Kevin's seat
+(criterion 8, frame rate first) remains the verdict.
+

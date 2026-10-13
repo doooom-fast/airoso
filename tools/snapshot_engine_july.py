@@ -147,15 +147,22 @@ def read_pending(path: Path | None = None) -> dict[str, tuple[str, str]]:
     return out
 
 
-def _write_pending(rows) -> None:
+def _write_pending(rows, refs=()) -> None:
     """after a refresh from ENG: every snapshotted file whose md5 differs from the REAL engine-july's is a change
-    still to mirror; none -> no PENDING file"""
+    still to mirror — and every referenced texture the real engine-july lacks or holds at another md5 (ledger 0053's
+    worn kerb atlas, v0.18.0: old md5 "-" = not there yet); none -> no PENDING file"""
     p = OUT / PENDING
     lines = []
     if ENG.resolve() != DEFAULT_ENG.resolve() and DEFAULT_ENG.is_dir():
         for h, r in rows:
             live = DEFAULT_ENG / r if not r.startswith(APPDATA_PREFIX) else live_path(r)
             if live.is_file() and md5(live) != h:
+                lines.append(f"{md5(live)}  {h}  {r}\n")
+        for h, _n, r in refs:
+            live = DEFAULT_ENG / r
+            if not live.is_file():
+                lines.append(f"-  {h}  {r}\n")
+            elif md5(live) != h:
                 lines.append(f"{md5(live)}  {h}  {r}\n")
     if lines:
         p.write_text("# old md5 (still live in " + DEFAULT_ENG.as_posix() + ")  new md5 (this snapshot)  path —\n"
@@ -195,6 +202,12 @@ def build(check_only: bool = False) -> int:
             print(f"[snapshot] PENDING MIRROR {r} (live {pend[r][0]}, snapshot {pend[r][1]})")
         refm = dict((r, h) for h, r in read_manifest(OUT / REFERENCED))
         drift += [r for h, _, r in refs if refm.get(r) != h]
+        for r, rh in refm.items():          # a referenced texture still to mirror: pending, not drift
+            if r not in dict((r2, h2) for h2, _n2, r2 in refs):
+                if pend.get(r) == ("-", rh):
+                    print(f"[snapshot] PENDING MIRROR {r} (not in ENG yet, snapshot {rh})")
+                else:
+                    drift.append(r)
         for r in drift:
             print(f"[snapshot] DRIFT {r}")
         print(f"[snapshot] {'OK' if not drift else 'DRIFT'}: {len(rows)} copied files, {len(refs)} referenced textures checked")
@@ -223,7 +236,7 @@ def build(check_only: bool = False) -> int:
         "# md5  bytes  path — files of the snapshotted add-on folders deliberately NOT copied: the kn5->FBX\n"
         "# IMPORT helpers (never loaded by an export). Recorded so the omission is visible, not silent.\n" +
         "".join(f"{h}  {n:>9}  {r}\n" for h, n, r in excl), encoding="utf-8")
-    _write_pending(rows)
+    _write_pending(rows, refs)
     total = sum(p.stat().st_size for p in OUT.rglob("*") if p.is_file())
     print(f"[snapshot] {len(rows)} files copied, {len(refs)} referenced textures, {len(excl)} excluded binaries; "
           f"snapshot {total / 1e6:.2f} MB -> {OUT}")

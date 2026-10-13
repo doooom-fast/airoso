@@ -73,9 +73,15 @@ def test_live_engine_july_has_not_drifted_from_the_snapshot():
     for h, rel in _manifest(snap.REFERENCED):
         live = snap.ENG / rel
         if not live.is_file():
-            drift.append(f"{rel}: gone from ENG")
+            if pend.get(rel) == ("-", h):
+                pending.append(rel)            # a referenced texture recorded as still to mirror (not in ENG yet)
+            else:
+                drift.append(f"{rel}: gone from ENG")
         elif snap.md5(live) != h:
-            drift.append(f"{rel}: live {snap.md5(live)} != recorded {h}")
+            if pend.get(rel) == (snap.md5(live), h):
+                pending.append(rel)
+            else:
+                drift.append(f"{rel}: live {snap.md5(live)} != recorded {h}")
     assert not drift, ("engine-july drifted from tracks/san-diego-lake-murray/engine-july-snapshot — refresh it on "
                        "purpose (python tools/snapshot_engine_july.py) or undo the change: " + "; ".join(drift[:8]))
     if skipped:
@@ -88,8 +94,9 @@ def test_pending_mirror_lines_name_the_snapshot_copies():
     """every PENDING-MIRROR line's NEW md5 is the snapshot's own (so the mirror copies exactly what was rehearsed),
     its old md5 differs, and it names a manifest path"""
     man = dict((rel, h) for h, rel in _manifest(snap.MANIFEST))
+    man.update((rel, h) for h, rel in _manifest(snap.REFERENCED))      # a referenced texture may be pending too
     for rel, (old, new) in snap.read_pending().items():
-        assert rel in man, f"PENDING names {rel}, which the manifest does not list"
+        assert rel in man, f"PENDING names {rel}, which neither manifest lists"
         assert man[rel] == new, f"PENDING {rel}: new {new} != manifest {man[rel]}"
         assert old != new, rel
 

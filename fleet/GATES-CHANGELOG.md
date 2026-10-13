@@ -1315,6 +1315,14 @@ round 1 (the OpenGL normal map and the 4-per-seam wrap): `<slug>_race.kn5` 10,25
 every column split on a whole-metre joint, every outer-face vertex in column 0, kerb positions and triangles
 identical to installed v0.17.1.
 
+### Integration (2026-10-13, v0.18.0): the textures ride the pending-mirror record
+
+`tools/snapshot_engine_july.py` now also writes a referenced texture the real engine-july lacks (old md5 "-") or holds at
+another md5 into `PENDING-MIRROR.md5`, and `test_live_engine_july_has_not_drifted_from_the_snapshot` / `--check` read
+such a line as pending, not drift — so the worn kerb atlas (`kerb_race_worn_diffuse.jpg` f599d4a7…, `_normal.jpg`
+8f4b343a…) is on the mirror list beside `pbr.py` (now both the BRIDGESTRUCT and the worn 1KERB_RACE rows, CRLF md5
+48617c1e…) instead of failing the suite until the install. No threshold changed.
+
 ## 2026-10-12 — the AI line gate: `tools/verify_ai_line.py`, and the writer's opt-in (ledger 0052)
 
 Kevin, from the seat, after a 7-AI race on the installed v0.17.1 race layouts: "ai races need tuning, they tend to
@@ -1438,3 +1446,75 @@ the plain-asin camber (race_acw), a 0.8 m bump toward the K-rail, 0.25 m / 30 m 
 jitter, a 1.5 m kink, sides +3 m, one length 0.5 m off its segment. The same line re-expressed in the WINDOW family
 PASSES (scratch `v018/ai/planted/plant.txt`). Tests: `tests/ac/test_write_ai_line_payload.py` 12 (adds: the
 WINDOW family accepted and a cumulative length judged as SEGMENT; the writer's box-rule refusal).
+
+### Integration (2026-10-13, v0.18.0): the chain order the opt-in needs
+
+`track.config.json` `"ai"` (race_cw, race_acw; kunos payload, 2.5 m off the K-rail, faired, seated on the gate OBJ) is
+set, so the writer refuses a missing or stale gate OBJ. `tools/ship_sd.sh` (and `ship_track.sh`'s `ship_ai`, for a track
+whose config names the layout) now extracts each race layout's gate OBJ (road + common race + ITS closure kn5) right
+before `write_ai_line`, after every export, and runs `tools/verify_ai_line.py --layout <id>` straight after it, hard
+under `set -e` (no `--baseline`: the writer holds the box rule itself). The gate stage re-extracts the same file from the
+same kn5s. `data/ai_verify.<id>.json` is synced back. No threshold changed.
+
+Measured on the v0.18.0 rehearsal (the 0046 terrain, 0050's levelled fans, 0053's kerbs): race_cw PASS (wall min
+2.549 m, 0 m within 2.5 m, dips 0, flips 0.743 /km against the [invented] 0.75, min radius 13.78 m, lap est 279.4 s);
+race_acw PASS (2.387 m, 0.00045 of the lap within 2.5 m, flips 0.521 /km, 14.33 m, 272.7 s); the box rule held on the
+written line (cw 38.8/45.13, 24.65/28.68, 28.19/32.78, 38.37/44.52 m; acw 41.88/47.49, 46.36/52.27, 45.4/52.32,
+51.1/58.54 m). race_cw's flips keep their thin margin (0.007 /km).
+
+## 2026-10-13 — 0050 levelled fold pinches + `tools/verify_fold_fans.py`; drive_test's in-fan severe steps (ledger 0050)
+
+**Why.** Kevin, from the seat: "the small steps are a problem at jackson/navajo". The 2026-10-11 weld pinched the
+Navajo/Jackson inside edge at its HIGHER leg and left the lower leg's last row 6 cm away: a 901 % road triangle, a lip
+0.13 m tall 3 m from the centre line and 0.47 m at the kerb. drive_test filed the street's 0.24 m of it as an exempt
+"apron step" (w ≥ 9.5, |off| > 3.5), and the race layouts' severe 31 / 28 was shipped as "the next owner's"
+(2026-10-11, "Named, not exempted").
+
+### The weld (`tools/mouth_weld.unfold_line`, `level` follows `strict`: the weld's MAINLINE only)
+
+| Number | Value | Why |
+|---|---|---|
+| `FOLD_LEVEL_ROWS` | 8 rows each leg [invented] | the diagnosis: 6 rows → 1 m second difference 0.031 m, 12 → < 0.025 |
+| `FOLD_HALF_JUMP_MAX_M` | 0.28 m — ROAD edges and curb p0 / p1 only; p2 / p3 uncapped | derived: a 1.20 m K-rail buried 0.05 m covers no_route's [0.20, 0.90] band only within ±0.30 m of its reference, less a 0.02 m margin [invented]. Not the seal guarantee (the reference is the projected centre line, not the leg): no_route and verify_fold_fans (7) are. Measured at Navajo/Jackson: ROAD / p0 0.248, p1 0.251, p2 0.317, p3 0.359 m — capped, p2 / p3 stopped the build (the review's BLOCKER 1) |
+| `FOLD_LEVEL_XFALL_MAX` | 4 % [invented] | an eased row's height change over its plan distance to the centre row (Navajo/Jackson: ~2 %) |
+| overlap refusal | a leg window over another cut (or its windows) on the line | the result never depends on the order the cuts are found |
+
+### The gate (`tools/verify_fold_fans.py <project>`, new; hard in `ship_sd.sh` / `ship_track.sh` after the race gates; `--force-install` does not cover it)
+
+Per levelled pinch (`data/mouth_welds.json` `folds.MAINLINE.levelled`; a pre-0050 file: re-found on the ROAD edge rebuilt
+from the gate centreline), per layout, on the BUILT gate OBJ, in the driven lane (street ±(w/2 − 0.5) less the median
+island + 0.4 m; race `lane_by_vertex`), on wheel paths cut at their own self-intersection:
+
+| Check | Threshold | Status |
+|---|---|---|
+| window | rows k − 8 − 4 … l + 1 + 8 + 4 (`WINDOW_PAD_ROWS` 4) | [invented] |
+| paths | every 0.25 m across the lane, sampled every 0.05 m | [invented] |
+| (1) FINE step | rise over 0.10 m beyond the previous metre's grade ≥ 0.02 m | 0.02 m = the diagnosis' step a tyre hits; 0.10 m window [invented] |
+| race kerb lip allowance | ≤ 0.055 m when a `1KERB_race` kerb is on one side | the authored 0.05 m kerb + 5 mm sampling [invented] |
+| (2) DT | 1 m second difference > 0.06 m, unless the metre touches a race kerb | drive_test `STEP_SEVERE_M`, reused |
+| (3) road jump | two 1ROAD vertices ≤ 0.10 m apart in plan, heights ≥ 0.02 + 0.25 × distance apart | 0.10 m [invented] |
+| (4) grass in the lane | > 0.02 m over the pavement beneath, on the rows the leveller moves (k − 7 … l + 8) | 0.02 m = (1)'s [invented]; the prep pins grass 0.02 m under the deck at its vertices, so facets graze the deck by millimetres between them (v0.17.1: up to 0.030 m at the hairpin's row 755, a row the leveller does not move) |
+| (5) steep road triangle | plan area ≥ 0.01 m² and slope > 25 % | both [invented]; the installed riser was 901 % |
+| (6) the pinch at its midpoint | every road vertex within 0.02 m of X within 0.01 m of (y_k + y_l) / 2 | 0.01 m [invented] |
+| (7) race walls | 0.5 m cells, base = 3×3 minimum, within 25 m of X; base + 0.05 − (no_route reference + 0.10) within ±0.28 m | 25 m [invented]; ±0.28 m derived as above; the 3×3 aggregation is the 0050 review's |
+
+Calibration (the review's BLOCKER 2: as first specified the gate failed the FIXED build): scoped by the driven lane, not
+by exempting curbs (the street median curb is outside the lane); to the levelled pinches (the chord mends' pre-existing
+0.07-0.08 m race DT stay drive_test's); grass by depth on the moved rows. Teeth on the installed v0.17.1 OBJs: FAIL at
+Navajo/Jackson on (1) (2) (3) (4) (5) (6) (7) — 45 / 44 / 44 paths, FINE 0.422, DT 0.481 / 0.465, the 901 % triangle,
+0.499 m between two vertices 0.055 m apart, grass 0.192 m over the road, X 109.310 vs 109.061, walls +0.498 — and at the
+hairpin and College/Navajo on (6) only. On v0.18.0: PASS, 3 pinches × 3 layouts (ledger 0050 Results).
+
+### drive_test (engine; opt-in by `data/mouth_welds.json`, every other track byte-identical)
+
+| | Before | After |
+|---|---|---|
+| a severe step (> 6 cm) inside a levelled fold fan | "apron step" on pavement ≥ 9.5 m wide past 3.5 m (exempt) | severe (fan = rows k − B … l + 1 + B of each levelled ROAD pinch, discs of half-width + 0.5 m [invented]; a pre-0050 file: every ROAD cut) |
+| a bump (2.5-6 cm) there | apron bump | unchanged: measured, the fixed-station paths read 56 street "bumps" in the two fans from their own changing spacing round corners tighter than the offset (2.5-4.7 cm on a 2-3 % grade) where verify_fold_fans' real paths read ≤ 0.025 m |
+| the seam's 0.06-0.07 m street step (s 12-13, a chord mend) | apron step | unchanged (race_cw already counts it); not 0050's |
+
+A weld that records a different row count from the gate centreline is refused (SystemExit).
+
+**Measured** (v0.18.0 full rehearsal): street severe 0, bumps 0.15 → 0.0 /km, kinks 3.86 → 3.41, soft top 42 → 41;
+race_cw severe 31 → 22, soft top 23 → 9; race_acw 28 → 20, 22 → 9; no_route BUILT PASS both (walls' worst offset near X
++0.263 m); audits unchanged; verify_mouths byte-identical to v0.17.1.

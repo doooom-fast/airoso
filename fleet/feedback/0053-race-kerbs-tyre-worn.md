@@ -1,7 +1,7 @@
 ---
 id: 0053
 title: "i'd like the race curbs to be tire-worn/textured" — the race kerbs were a 771-byte, two-colour picture with no grain, wear or bump map; now a generated worn atlas with rubber where tyres run, and an opt-in wheel kerb effect
-status: diagnosed
+status: in-progress — built, integrated in v0.18.0 and rehearsed (2026-10-13), not installed; the textures await the engine-july mirror; Kevin's drive closes it
 scope: tracks/san-diego-lake-murray (race_cw, race_acw: the 8 common 1KERB_race_* kerbs in <slug>_race.kn5); tools/{race_furniture,author_race_furniture_blend,check_race_kn5,make_kerb_texture}.py; scripts/ac/pbr.py (the 1KERB_RACE row + its KS_PROPS row only; airoso + the engine-july snapshot, engine-july itself at integration); scripts/ac/track_folder.py (opt-in kerb_ff_effect, default byte-identical fleet-wide); assets/textures/kerb_race_worn_{diffuse,normal}.jpg + assets/licenses.json
 layer: project + engine
 train: -
@@ -200,3 +200,15 @@ KS_PROPS row matches only `1KERB_RACE*` names. Proof corners: the 770 hairpin an
 - **Q1:** the wheel kerb effect (`kerb_ff_effect: 1`): on, knowing the street sidewalks share the KERB surface and
   would rumble in the wheel too?
 - **Q2:** how dirty — the four rubber levels and how dark level 3 is are a guess; the stills go to him first.
+
+## Integration (v0.18.0, 2026-10-13)
+
+The held edits are made: `scripts/ac/pbr.py`'s worn 1KERB_RACE row merged with 0046's BRIDGESTRUCT row (both rows, one
+file; snapshot CRLF md5 48617c1e…), the two test literals, and the snapshot refreshed from the rehearsal's ENG.
+`kerb_ff_effect` is NOT set (Kevin's Q1 is unanswered). The two textures are recorded in `PENDING-MIRROR.md5` with old md5
+"-" (not in engine-july yet) — `tools/snapshot_engine_july.py` now records missing referenced textures there, so the live
+drift test reads them as pending, not drift. v0.18.0 integration rehearsal (2026-10-13): a full `ship_sd.sh --no-install` (no `--skip-blend`) of the merged branch on a fresh scratch copy of the workshop, ENG a fresh copy of engine-july plus the snapshot's pending files; nothing installed: `san_diego_lake_murray_race.kn5` 11,811,590 B (v0.17.1 10,253,676),
+`check_race_kn5` OK on the common kn5 and both closures (closure kn5s byte-sized as v0.17.1, 5,433,534 / 5,432,722 B),
+embedded `kerb_race_worn_diffuse.jpg` / `kerb_race_worn_normal.jpg`. Kerb close-ups at the hairpin (770_out) and at
+College/Navajo (1514_out), rendered from the shipped race kn5's own UVs, are in the integration report (Workbench, not
+AC). Before the install the textures must be copied into engine-july/assets/textures (the mirror list).

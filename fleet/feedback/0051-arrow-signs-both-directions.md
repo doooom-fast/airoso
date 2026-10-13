@@ -1,7 +1,7 @@
 ---
 id: 0051
 title: "Arrow signs are only placed for one direction of driving" — race_acw drives the lap anticlockwise and had no arrows; the 0044 rule, run for the reverse approach too, adds five W1-6L at M1–M5
-status: in-progress
+status: in-progress — integrated in v0.18.0 (2026-10-13), 23 posts, (l) added; not installed; Kevin's race_acw drive closes it
 scope: tracks/san-diego-lake-murray (signs.json both_directions_mainline; the road kn5's SIGN* meshes, all three layouts); tools/{place_signs,signs_mesh,author_signs_blend,verify_signs,plot_signs}.py
 layer: project + engine
 train: -
@@ -255,3 +255,17 @@ After 0050 lands, re-check that M4-fwd and M4-rev:
      `"rev": {"skip": true, "reason": "<his words>"}` on M2 (one line, no code; a skip without a reason is refused),
      or the deferred W1-8 chevrons.
    - A wrong corner is a per-approach override with his reason. A wrong pattern reopens this entry.
+
+## Integration (v0.18.0, 2026-10-13)
+
+v0.18.0 integration rehearsal (2026-10-13): a full `ship_sd.sh --no-install` (no `--skip-blend`) of the merged branch on a fresh scratch copy of the workshop, ENG a fresh copy of engine-july plus the snapshot's pending files; nothing installed. 23 posts placed (11 W1-6L, 12 W1-6R; mainline 6 fwd / 5 rev), `verify_signs --blend` PASS; one SIGNPLATE /
+SIGNARROW / SIGNPOST mesh in the road kn5 (1,357 verts), none in the race, closure or spawn kn5s; `verify_race`
+`--scenery-only` OK. After 0050 reshaped the Navajo/Jackson inside edge, M4-fwd and M4-rev (on the corner's outside)
+are both placed and clear the race curb strip by +1.853 / +1.762 m (verify_race G's own margin), the owed +1.0 m.
+
+**The verifier's gap is closed** (`verify_signs` (l), GATES-CHANGELOG): (k) judged only corners that still had a plate
+somewhere, so both M4 plates lost passed. Now every corner `signs.json` names and does not skip outright must keep a
+plate; a MAINLINE one in every driven direction unless `signs.json` skips that approach with a reason. On v0.18.0:
+"(l) 11 named corners checked: every one signed". Still owed: Kevin's race_acw drive (the cross-view at M2 / M4) and
+the street / race_cw mirror view, never rendered; stills of M4-rev / M1-rev / M2-rev from the race_acw driver's eye are
+in the integration report (Workbench, not AC).

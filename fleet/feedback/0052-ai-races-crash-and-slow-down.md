@@ -1,7 +1,7 @@
 ---
 id: 0052
 title: "ai races need tuning, they tend to crash and slow down weirdlu" — the generated race lines aim at the K-rail, brake for bends that aren't there, and carry five payload fields in the wrong meaning
-status: in-progress — fix built and gated on a scratch copy (branch worktree-wf_b86dbf3d-dfa-7); not installed; Kevin's race is the judge
+status: in-progress — integrated in v0.18.0 (2026-10-13): the ship chain writes and gates the race lines on the BUILT walls; not installed; Kevin's race is the judge
 scope: tracks/san-diego-lake-murray race_cw + race_acw (proof); scripts/ac/write_ai_line.py (opt-in `ai` block; every k10 generated line has the old payload — 15 of 15 installed); new scripts/ac/ai_built.py, tools/verify_ai_line.py
 layer: engine (opt-in per track) + project (config opt-in, ship-chain gate)
 train: -
@@ -305,3 +305,15 @@ recorded line replaces the draft.
      PASSES.
 3. **The box rule on the written line.** See "The cost, plainly" above: 0.860-0.877 × on the line as written, held
    by the fairing (a 0.86 floor at each box) and enforced by a writer refusal at 0.85.
+
+## Integration (v0.18.0, 2026-10-13)
+
+`track.config.json` `"ai"` is set (race_cw, race_acw) and the ship chain now extracts each race layout's gate OBJ before
+the writer and runs `tools/verify_ai_line.py` straight after it, hard (`tools/ship_sd.sh`, `ship_track.sh` `ship_ai`;
+GATES-CHANGELOG 0052 "Integration"). v0.18.0 integration rehearsal (2026-10-13): a full `ship_sd.sh --no-install` (no `--skip-blend`) of the merged branch on a fresh scratch copy of the workshop, ENG a fresh copy of engine-july plus the snapshot's pending files; nothing installed. On the v0.18.0 world (0046 terrain, 0050's levelled fans, 0053's kerbs) the
+writer did not refuse and the gate PASSes both layouts with the same numbers as on v0.17.1's world: race_cw wall min
+2.549 m, 0 m within 2.5 m, dips 0, flips 0.743 /km (against the [invented] 0.75), min radius 13.78 m, lap est 279.4 s;
+race_acw 2.387 m, 0.045 % within 2.5 m, flips 0.521 /km, 14.33 m, 272.7 s; the box rule held on the written line.
+The lines differ in bytes from the AI branch's (race_cw 740d6f03, race_acw 6f6494b6, against 88a9da4c / 985da589 on
+the pre-0050 world: the writer seats each point on the levelled deck). Still GENERATED drafts (0023): Kevin's 7-AI,
+3-lap race on both race layouts judges it.

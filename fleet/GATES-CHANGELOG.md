@@ -1187,3 +1187,43 @@ verdict file identical to v0.17.1 field for field (only `grass_verts` 87,278 →
 `rib_check` PASS — nyquist 75 / 100, folds 33 / 100, **step jogs: densest 75 m 4 / 5** (round 3: 7, FAIL; the lens's
 box (−3060..−2850, −1020..−970): 8 jogs → 0); `house_seat_check` PASS; road kn5 112,609,136 → 113,313,134 B; race and
 closure kn5 unchanged; terrain tiles `1GRASS` × 8 (max 42,426 v), `GRASS_FAR` × 2 (max 55,750 v).
+
+## 2026-10-12 — `verify_signs` (k) direction coverage, (j) read from signs.json, race furniture never the signs' ground (ledger 0051)
+
+**Why.** Kevin, from the seat: "arrow signs are only placed for one direction of driving". All signs ship in the one
+road kn5 that all three layouts load, and every mainline plate faced the clockwise approach. race_acw drives the lap
+anticlockwise, and `verify_signs` passed v0.17.1 anyway, because no check read which directions are driven.
+
+No numeric threshold is added or moved. Every number below is an existing rule constant.
+
+| Check | Before | After | Flag |
+|---|---|---|---|
+| (k) direction coverage (new) | — | Driven directions come from `<project>/track.config.json` `layouts[].direction` (forward → fwd, reverse → rev; absent or null = forward; any other word FAILs). Every MAINLINE corner with a plate in one driven direction needs, in every other driven direction, either a plate or a skip record EVERY one of whose reasons is the rule finding no arrow corner on that approach (`RULE_SKIP_RES`: R_apex, \|D\|, mouth flare, or the ray never leaving pavement / leaving it out of range / ending at a T / landing outside [PC, PT]) or a signs.json skip with a non-empty reason that signs.json itself still makes for that approach. FAIL: a skip caused by `expect_arrow`; a placement that failed (OUTSIDE ASSERTION, base ON pavement, obstacle disc, lamp clearance: the rule wanted an arrow there); a reasonless signs.json skip; a direction with no record at all. `place_signs` also refuses a signs.json `skip` with no reason at load. | no number |
+| (j) expect_arrow | compared the record's own `expect_arrow` with its arrow | Re-read from signs.json here (`--signs`, else `tracks/<slug>/signs.json`). The entry names the FORWARD approach, so a -rev plate expects the mirror image unless the entry's `rev` sub-object names its own. A record whose `expect_arrow` disagrees with signs.json FAILs. An explicit `--signs` that does not exist FAILs. | no number |
+| race furniture as ground (new) | `tools/signs_mesh.py` counted `1KERB` (race kerbs included) as ground | `load_bvhs` leaves race furniture out of ground and road: 1KERB_RACE / 1WALL_RACE names, and the RACE / RACE_CLOSE_* collections. `verify_signs` FAILs if the authoring record or its own scan lists one. | no number |
+
+**Proof that the checks bite.** All runs were record-level, on a scratch copy, logs in
+`scratchpad/round2/signs/teeth_*.log`.
+- (k) FAILs on v0.17.1's record: 5 corners with "no record at all for rev (race_acw)".
+- The race-ground check FAILs on the diagnosis's unfiltered authoring run: 8 × `1KERB_race_*`.
+- (j) FAILs on a -rev plate given a right arrow.
+- (k) FAILs with one -rev plate removed, and again with a -rev skip whose reason is `expect_arrow`.
+- Added after review (the reviewer planted `"M4": {"rev": {"skip": true}}` with no reason and the first cut of (k)
+  PASSed with race_acw's Jackson/Navajo arrow gone). `place_signs` now exits 1 on that signs.json, and on a blank
+  reason. (k) FAILs on records whose M4-rev skip reads `signs.json skip: (no reason given)`, `sign base is ON
+  pavement`, `OUTSIDE ASSERTION FAILED`, or a signs.json skip that signs.json does not make. A reasoned
+  `"rev": {"skip": true, "reason": "…"}` still places 22 and PASSes. Logs: `scratchpad/round2/signs/fix2/teeth2_*.log`.
+- `parse_id` no longer reads a corner named `…-2` (e.g. a merged `DCL-2` post) as a hairpin's second arrow: the
+  record's `corner.second_arrow` decides, and for a skip, whether the id minus `-2` was placed.
+- The 0051 record PASSes.
+- `tests/tools/test_place_signs.py` covers each case on a synthetic square loop.
+
+**Rehearsal.** On a scratch copy of the workshop's `loop.blend` as it is, with 35 race objects present.
+- `verify_signs --blend` PASS: 23 posts, 23 plates.
+- The 18 v0.17.1 posts moved 0.000 m. Ground was CURB + TERRAIN, with no race kerb in it.
+
+**Who else this reaches.**
+- The Lookout Lariat's config declares reverse layouts (street_reverse, race_cw). When its chain gains the signs
+  step, (k) will FAIL until its own signs.json sets `both_directions_mainline: true`.
+- `place_signs.DEFAULTS` is unchanged (false), so a track with no signs.json still writes the same bytes. This
+  was checked on SD with the knob off: the output was byte-identical to HEAD's.

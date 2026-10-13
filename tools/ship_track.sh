@@ -267,7 +267,7 @@ author_race_verify() {
 # --- prep: exactly these two, in this order ------------------------------------------------------------------
 prep_prep() {
   step "ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)"
-  "$BL" --background --python-exit-code 1 --python "$ENGINE/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS\|split GRASS_FAR\|terrain tiles\|terrain conform\|T-junctions\|kept-cell refinement\|multi-layout\|Error\|Traceback" | cut -c1-200
+  "$BL" --background --python-exit-code 1 --python "$ENGINE/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS\|split GRASS_FAR\|terrain tiles\|terrain conform\|T-junctions\|kept-cell refinement\|house seat\|multi-layout\|Error\|Traceback" | cut -c1-200
 }
 prep_split() {
   local lid
@@ -363,6 +363,10 @@ gate_verify_mouths() {
 gate_rib_check() {
   step "gate: terrain ribbing on the built ground (tools/rib_check.py: sub-cell features folded into staircases — hard)"
   (cd "$AIROSO" && python tools/rib_check.py "$PROJ" --json "$PROJ/data/rib_check.json")
+}
+gate_house_seat() {
+  step "gate: houses on the built ground (tools/house_seat_check.py: floating, sunken or buried buildings — hard)"
+  (cd "$AIROSO" && python tools/house_seat_check.py "$PROJ" --json "$PROJ/data/house_seat_check.json")
 }
 gate_drive_test_street() {
   local lid rc
@@ -558,7 +562,7 @@ for n in ${SHIP[@]+"${SHIP[@]}"}; do "ship_$n"; done
 # A verdict from an earlier run is not this run's verdict: every per-layout gate file is removed before the gates
 # run, so a gate that does not run reads as "not run" (red), never as last time's pass.
 for lid in $LAYOUT_IDS; do rm -f "$PROJ/data/drive_test.$lid.json"; done
-rm -f "$PROJ/data/verify_mouths.json" "$PROJ/data/rib_check.json"
+rm -f "$PROJ/data/verify_mouths.json" "$PROJ/data/rib_check.json" "$PROJ/data/house_seat_check.json"
 for lid in $RACE_IDS; do rm -f "$PROJ/data/audit.$lid.json" "$PROJ/data/no_route.$lid.json" "$PROJ/data/track.$lid.obj"; done
 rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"
 DT_S=0; AU_S=0; DT_R=0; AU_R=0; NR_R=0

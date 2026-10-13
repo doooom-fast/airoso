@@ -236,7 +236,7 @@ step "author: verify the authored furniture against its declaration (tools/verif
 (cd "$AIROSO" && python tools/plot_race_furniture.py "$PROJ" | tail -3)   # data/race_plots/*.png
 
 step "ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)"
-"$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS\|split GRASS_FAR\|terrain tiles\|terrain conform\|T-junctions\|kept-cell refinement\|multi-layout\|Error\|Traceback" | cut -c1-200
+"$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS\|split GRASS_FAR\|terrain tiles\|terrain conform\|T-junctions\|kept-cell refinement\|house seat\|multi-layout\|Error\|Traceback" | cut -c1-200
 step "ship: split the prepped scene -> road / common race / closure per race layout / spawn scenes (tools/split_exports_blend.py)"
 "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/split_exports_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" --out-dir "$PROJ/blender/split" 2>&1 | grep "^\[split\]"
 # the split asserts: loop_main.blend holds 0 AC_* and 0 RACE objects/materials; loop_race.blend only the
@@ -300,7 +300,7 @@ step "ship: verify_kn5 (hard — spawn-free road, common race kn5 + one closure 
 # shared race gate OBJ / audit (road + the retired centre chain) are retired: each race layout is judged on
 # its own kn5 set (ledger 0049).
 for lid in $LAYOUT_IDS; do rm -f "$PROJ/data/drive_test.$lid.json"; done
-rm -f "$PROJ/data/verify_mouths.json" "$PROJ/data/rib_check.json"
+rm -f "$PROJ/data/verify_mouths.json" "$PROJ/data/rib_check.json" "$PROJ/data/house_seat_check.json"
 for lid in $RACE_IDS; do rm -f "$PROJ/data/audit.$lid.json" "$PROJ/data/no_route.$lid.json" "$PROJ/data/track.$lid.obj"; done
 rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"
 # the road gate OBJ is written BEFORE the track folder (ledger 0046): ext_config's GrassFX lists and make_treefx's
@@ -331,6 +331,11 @@ step "gate: terrain ribbing on the built ground (tools/rib_check.py: sub-cell fe
 # sampled every 5 m and folded across its grain shows as washboard ribs; exit 1 (data/rib_check.json) past the
 # GATES-CHANGELOG 2026-10-13 limits, beyond 20 m of a pavement (the near-road ground is the drive gates')
 (cd "$AIROSO" && python tools/rib_check.py "$PROJ" --json "$PROJ/data/rib_check.json")
+step "gate: houses on the built ground (tools/house_seat_check.py: floating, sunken or buried buildings — hard)"
+# ledger 0046 fix round 3: every OSM house / building stands on the ground that ships — its bottom touches the
+# lowest ground under its walls (not above it, not a metre below it) and its roof clears the highest; exit 1
+# (data/house_seat_check.json) past the GATES-CHANGELOG 2026-10-13 fix round 3 limits
+(cd "$AIROSO" && python tools/house_seat_check.py "$PROJ" --json "$PROJ/data/house_seat_check.json")
 step "gate: drive_test, street layout (hard)"
 DT_S=0; (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --layout street 2>&1 | grep -v "drive-time\] sweep" | tail -30) || DT_S=$?
 step "gate: audit_mesh, street (hard total; the regression floor — D 512 / K 20 / I 20 / F 13 since the 2026-10-11 mouth weld + fold mend, was 512 / 154 / 145 / 15)"
@@ -379,7 +384,7 @@ step "sync outputs workshop -> airoso"
 cp "$PROJ/loop.blend" "$SRC/loop.blend"
 for f in centerline.local.json centerline.raw.local.json median_bands.json dummies.json \
          finished_centerline.json gate_centerline.json lights.local.json connectors.local.json \
-         mouths.json mouth_welds.json verify_mouths.json rib_check.json signs.local.json signs_preview.svg signs_measured.json \
+         mouths.json mouth_welds.json verify_mouths.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
          drive_test.json audit.json \
          barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json \
          $TERRAIN_DATA terrain.tiers.report.json; do

@@ -1032,7 +1032,7 @@ confirms it.
 | Invented number (⚠) | Value | Why |
 |---|---|---|
 | `antialias` kernel | tent of half-width one 5 m cell, 9 taps on the base lattice | the linear-interpolation kernel the mesh itself reconstructs with; on the 1 m grids a 1 m and a 2.5 m tap spacing gave the same surface (2.5 m costs one sample per 6.25 m², not 25) |
-| `antialias.far_max_move_m` | 0.95 m | criterion 6's 1 m less 5 cm for the cache's centimetre rounding: at 1.0 a fresh re-sample read 3 of 3,000 far vertices 1.003–1.005 m off. Unbounded, 285 far nodes moved more than 1 m (benches, median walls) |
+| `antialias.far_max_move_m` | 0.95 m (0.85 m since fix round 3, below) | criterion 6's 1 m less 5 cm for the cache's centimetre rounding: at 1.0 a fresh re-sample read 3 of 3,000 far vertices 1.003–1.005 m off. Unbounded, 285 far nodes moved more than 1 m (benches, median walls) |
 | `diagonals.beyond_m` | 20 m | criterion 7's band: the ground the drive gates were tuned on keeps its triangles |
 | `rib_check` `RIB_M` / `MAX_RIBS` | 2.0 m / 100 staircase rib nodes | calibrated on the 2026-10-12 build (ship9, the ribbed one): 331 over 2 m; this build 56 (spot 1: 7 → 0, spot 2: 2 → 0). A first cut, 4.0 m / 150 on every alternating node, could not tell the two apart (ship9 455, an unbounded-filter build 64, the far-bounded one 158 — real straight walls and benches along the freeway in the far ring) and was replaced, before any build shipped, by the straight / staircase split above |
 | `rib_check` `FOLD_M` / `MAX_FOLDS` | 1.0 m / 100 cells | ship9 15,856 cross-grain cells over 1 m; this build 33 (cells with a corner inside the 20 m band) |
@@ -1076,3 +1076,66 @@ build). Only where the world fails the original wording too:
   loosened; the 7 near-road ones are criterion 4 against criterion 7 and stay Kevin's call.
 - Criteria 1, 5 and 6 unchanged and PASS: Cowles 484.34 m; 15–60 m facet p90 5.255 m, 60–500 m 20.23 m; far vertices
   against fresh 3DEP max 0.955 m (3,000 random), 0 over 1 m; longest far horizontal edge 56.65 m.
+
+
+### Fix round 3 (2026-10-13, after the visual lens found sunken houses and the truth lens criterion 4): buildings seated on the final ground, `tools/house_seat_check.py`; criterion 3's low corrected + a pit clause, criterion 4's rim read across 3DEP's own wall edges, the far filter bound 0.85 m
+
+**Sunken houses — cause.** The draft (`build_loop_blend.build_buildings`) sits each OSM footprint at the ground under
+its centroid less 0.4 m. The engine-july prep (`build_kn5_loop._conform_and_reseat`) then reshapes the ground: conform,
+pin, feather, the tiered terrain's kept-cell refinement past 20 m. After that, every HOUSE / BUILDING island rode the
+change in ground height under its **lowest vertex**, which is one corner. Where the ground moved differently under the
+rest of the footprint, the house was buried or lifted. Examples: (−249, 1461) was lowered 3.4 m onto unchanged ground;
+the (−1613, −693) row stayed put while the ground rose 3.3 m. v0.17.1 has the same weakness: 118 of its 152 buildings
+float more than 0.1 m over the lowest ground under their walls, by up to 8.36 m.
+
+| Item | Before | After | Flag |
+|---|---|---|---|
+| engine-july prep `_conform_and_reseat` (snapshot; pending mirror) + pure helpers `house_seat`, `footprint_samples` | HOUSE / BUILDING islands ride the ground delta under their lowest vertex | After every pass that moves ground, each building reads the final ground (1GRASS / 1ROAD / 1KERB top, within 40 m of its bottom: L4) at its corners, its centroid and every `HOUSE_EDGE_STEP_M` along its walls. Floor = mean of corners + centroid less `HOUSE_SINK_M` 0.4, the draft's own rule, raised where needed so that `HOUSE_SHOW` of its height stands above the highest ground under its walls. The bottom ring goes down to the floor or to `HOUSE_FOOT_M` under the lowest wall ground, whichever is lower (a foundation on a slope). On level ground the house is the draft's. Palms, scrub and lights still ride the delta. Prep log: "house seat: 152 buildings …, 135 with a foundation …, deepest 9.54 m" (grep'd in both chains) | wiring |
+| `tools/house_seat_check.py` (new, **hard**; `ship_sd.sh` after `rib_check`, `ship_track.sh` `gate_house_seat`, `ship.json` gate list; writes `data/house_seat_check.json`, synced) | — | On the BUILT gate OBJ, every HOUSE / BUILDING (faces re-joined by position) against the top of 1GRASS / 1ROAD / 1KERB under its wall bottoms, read every `STEP_M`. Fails a building that is **floating** (bottom more than `FLOAT_M` over the lowest ground), **sunken** (bottom more than `SUNK_M` under it) or **buried** (roof less than `MIN_SHOW_M` over the highest ground) | thresholds below [invented] |
+
+| Invented number (⚠) | Value | Why |
+|---|---|---|
+| `HOUSE_FOOT_M` | 0.15 m | a foundation reaches just into the lowest ground: no daylight under a wall, nothing visible below grade |
+| `HOUSE_EDGE_STEP_M` / `STEP_M` | 1.5 m | the gate and the prep read the same spacing; a 5 m terrain cell is crossed by at least three reads |
+| `HOUSE_SHOW` | 0.5 | a footprint over more drop than half its height (the I-8 south rim at (1369, −908): 7.4 m under a 5.5 m house) still shows half of itself uphill; triggers on 1 building of 152 |
+| `FLOAT_M` / `SUNK_M` / `MIN_SHOW_M` | 0.10 / 1.0 / 1.0 m | the prep's rule puts the bottom 0.15–0.40 m under the lowest ground and the roof ≥ 1.5 m over the highest (the shortest draft building is 3 m); the limits leave 0.25–0.6 m for the export and the gate's own reads |
+| `MAX_FLOATING` / `MAX_SUNKEN` / `MAX_BURIED` | 0 / 0 / 0 | measured: v0.17.1 118 / 0 / 4, fix round 2 96 / 1 / 4, this build 0 / 0 / 0 |
+
+**Criteria (ledger 0046 §Verification), re-worded only where fresh 3DEP fails them too:**
+
+- **3 — the number, and a pit clause.** Round 2 named 19.67 m as "the box's real low". That was 3DEP at the built
+  minimum vertex. A fresh-3DEP search went from the truth lens's 60 m box lattice (every node under 35 m), to a 10 m
+  lattice, then 2 m, then 0.5 m: 14,493 points in 38 requests, 2026-10-13T16:50Z. It puts the low at **15.52 m at
+  (−2618, 2752)**, in the river channel 34 m from the built minimum. "Not below the box's low" alone would catch only a
+  pit deeper than the gorge. So: no terrain vertex below 15.52 m, and none more than **3 m [invented]** under fresh
+  3DEP at its own position where the first wording guarded it — every vertex below 100 m — and in the far ring,
+  which criterion 6 holds to 1 m. Three metres is above the anti-alias filter's largest move (2.34 m, on ridges) and
+  far below the old skirt's pit. Measured on all 21,260 vertices below 100 m: minimum 19.67 m; worst 1.19 m under
+  3DEP. PASS.
+- **4 — the rim at walls.** Fresh 3DEP fails the rim reading against itself. At 35 of the truth lens's 171 stations
+  (39 of the build corridor's 179), 3DEP's own rim-to-floor at ±60 m changes by more than the criterion's 2 m when read
+  one section step (2 m) nearer or farther. A wall, bench or retaining wall stands at the rim. Two OSM-derived
+  centrelines 0.2–0.6 m apart read the same rim up to 2.18 m differently. This is why round 2's failing list moved
+  between centrelines: s 7250 on one, s 700 on the other. 22,750 points in 58 requests, 2026-10-13T16:51Z.
+  Re-worded: *where 3DEP's rim-to-floor at ±58 / ±60 / ±62 m spans more than 2 m, the built rim passes within 2 m of
+  that span; every other rim keeps ±2 m of 3DEP at ±60 m; sections inside the landmark box.* s 700 passes: the build
+  reads 90.81 m between 3DEP's 92.68 m at −60 and 87.60 m at −58.
+  **Not re-worded — the 7 near-road failures** (164 of 171 pass on the truth lens's centreline; 171 of 178 on the
+  build's; the same 7 places). Each failing rim point is 0.4–9.5 m from a pavement. Criterion 7 holds that ground to
+  the 2026-10-09 build within 5 cm, and there that ground is 2.2–8.8 m from 3DEP, so no build passes both. The world
+  there: an embankment under College Ave's south approach, where the built span leaves 6 m of air; College Ave north
+  of I-8 2.6 m higher than built; Alvarado's creek bank dropping 4–5 m within 4–8 m of the kerb, where v0.17.1 has a
+  flat shelf; ground north of I-8 2.2 m higher; a bridge over Alvarado Creek on Lake Murray Blvd, where v0.17.1 has
+  fill. That is road, verge and bridge work (ledger 0002) against the drive gates: Kevin's call.
+- **6 — margin.** `antialias.far_max_move_m` 0.95 → **0.85 m [invented]** (395 far nodes held). Fresh 3DEP at all
+  106,544 far vertices, not 3,000: max 0.995 m, 0 over 1 m. The vertices nearest 1 m are 3DEP's own 1 m pixel edges.
+  The 0.995 m node (2151, 3596) is a 40 m node whose cached sample reappears in fresh 3DEP 0.5 m away (243.02–244.08 m
+  within half a metre). 24 of the far nodes read more than 0.5 m differently between the cache and a fresh fetch whose
+  positions differ by millimetres; median 0.002 m. Every other vertex over 0.85 m is a filter move held at the bound.
+  Not re-worded.
+
+**Measured** (final full rehearsal, a fresh scratch workshop, ENG = a fresh engine-july plus the snapshot's two pending
+files; gate OBJ md5 e4a8343c6030737c6c907992ffa6c0da, its ground identical to the round-3 measurement build's): every
+gate verdict file identical to v0.17.1 field for field (only `grass_verts`, no_route timing). `rib_check` PASS: 60
+staircase ribs over 2 m (round 2 56; the tighter far bound), 33 folds. `house_seat_check` PASS: contact −0.32..−0.15
+m, lowest roof over the uphill ground 1.60 m. Road kn5 112,609,136 B. Tiles unchanged.

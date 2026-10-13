@@ -1,7 +1,7 @@
 ---
 id: 0046
 title: "More terrain near the roads, the I-8 trench and adjacent causeway cut out" — and see Cowles Mountain from Navajo
-status: in-progress — built and rehearsed 2026-10-12; fix round 2 (2026-10-13) after the truth + visual lenses refuted the fix round: washboard ribs fixed at their cause (anti-aliased 5 m tier, data-chosen diagonals, tools/rib_check.py gate), criteria 2 and 3 re-worded where fresh 3DEP fails them too; every gate identical to v0.17.1; awaiting the engine-july mirror, the merge, the install and Kevin's seat (criterion 8)
+status: in-progress — built and rehearsed 2026-10-12; fix round 2 (2026-10-13) after the truth + visual lenses refuted the fix round: washboard ribs fixed at their cause (anti-aliased 5 m tier, data-chosen diagonals, tools/rib_check.py gate), criteria 2 and 3 re-worded where fresh 3DEP fails them too; fix round 3 (2026-10-13) after the visual lens found sunken houses and the truth lens criterion 4: every house and building seated on the final ground (tools/house_seat_check.py gate), criterion 4's rim read across 3DEP's own wall edges, criterion 3's box low corrected and given a pit clause, the far filter bound 0.85 m; every gate identical to v0.17.1; criterion 4 fails on 7 near-road sections no build can pass while criterion 7 holds (Kevin's call); awaiting the engine-july mirror, the merge, the install and Kevin's seat (criterion 8)
 scope: tracks/san-diego-lake-murray (proof, street_port); engine scripts/elevation/heightfield.py HF_MARGIN_M + scripts/geometry/ribbon.py grass_terrain skirt + terrain tiering (every track, opt-in; Lookout Lariat next consumer); fleet/LAWS.md L3 "Fake mountains" (standard)
 layer: standard + engine + project
 train: -
@@ -34,6 +34,15 @@ own cell; each plain cell splits along the ground's grain) and gated (`tools/rib
 reading and its v1640 station, and criterion 3's "below 100 m" clause, are re-worded because fresh 3DEP fails them as
 first written; criterion 4's 8 failures are not (7 are the near-road ground criterion 7 holds, 1 a 2 m wall no 5 m cell
 can follow). Every gate still identical to v0.17.1. See **Results — fix round 2 (2026-10-13)** at the end.
+
+**Fix round 3 (2026-10-13)**, after the visual lens found houses half under the ground and the truth lens criterion 4
+still failing: every house and building is now seated on the ground that ships, under its own walls (it used to ride
+one corner's change in height), and `tools/house_seat_check.py` gates it on the built track; criterion 4's rim is read
+across the wall edges where 3DEP itself jumps more than the criterion's 2 m within one 2 m step (the one far failure,
+s 700, is such a wall); criterion 3's "real low" is corrected to 15.52 m and gains a pit clause; the far ring's filter
+bound is 0.85 m. Criterion 4 still fails on 7 sections beside the roads: there criterion 7 requires the 2026-10-09
+ground within 5 cm and criterion 4 requires 3DEP within 2 m, and the two differ by 2.2–8.8 m, so no build can pass
+both — Kevin chooses. See **Results — fix round 3** at the end.
 
 ## Symptom (Kevin, seat, 2026-10-10, installed `san_diego_lake_murray_v3`)
 
@@ -340,10 +349,24 @@ On the gate OBJ / kn5 (L5) against independent 3DEP, before anything is installe
    *Re-worded 2026-10-13, where fresh 3DEP fails the first wording too:* the landmark box reaches the San Diego River
    gorge, whose fresh-3DEP low is 19.67 m at (−2627, 2717) — so: no terrain vertex below the box's real low in fresh
    3DEP (19.67 m). The pit, not the gorge, is the failure.
+   *Corrected 2026-10-13 (fix round 3):* 19.67 m was 3DEP at the built minimum vertex, not the box's low. A search of
+   fresh 3DEP down to 0.5 m spacing puts the box's low at **15.52 m at (−2618, 2752)**, in the river channel 34 m from
+   the built minimum. And because "not below the box's low" alone would only catch a pit deeper than the gorge, the
+   pit gets its own clause. The clause: no terrain vertex below 15.52 m, and no terrain vertex lower than fresh 3DEP at
+   its own position by more than 3 m [invented] where the first wording guarded it. That is every vertex below 100 m,
+   plus the far ring, which criterion 6 already holds to 1 m. Three metres is above the anti-alias filter's largest
+   move (2.34 m, on ridge tops) and far below the old skirt's pit (tens of metres).
 4. **I-8 cut and fill:** cross-sections every 50 m along the OSM I-8 centreline through the built
    terrain: floor within ±1.0 m of 3DEP; rim-to-floor at ±60 m within ±2.0 m of the 2 m 3DEP section;
    every section has vertices within 12 m (today none east of x 1100); any fill section 3DEP confirms
    stands above its flanking ground by the 3DEP amount ±2 m.
+   *Re-worded 2026-10-13 (fix round 3), where fresh 3DEP fails the rim reading against itself:* at 35 of the truth
+   lens's 171 stations (39 of the build corridor's 179), fresh 3DEP's own rim-to-floor at ±60 m changes by more than
+   2 m when the rim is read one section step (2 m) nearer or farther. There a wall, bench edge or retaining wall stands
+   at the rim. Two OSM-derived centrelines lie 0.2–0.6 m apart, and their 3DEP readings of the same rim differ by up to
+   2.18 m. The reference itself is not defined to ±2 m there. So at exactly those rims, where 3DEP's rim-to-floor at
+   ±58 / ±60 / ±62 m spans more than 2 m, the built rim passes when it is within 2 m of that span. Every other rim keeps
+   the first wording: within ±2 m of 3DEP at ±60 m. Sections are taken inside the landmark box.
 5. **Near the roads:** facet longest edge 15–60 m from any road p90 ≤ **7 m** (today 28.3); 60–500 m
    p90 ≤ 28.3 m (today 346–777 m beyond 220 m).
 6. **The far ring is the data:** every far cell within 1 m of 3DEP (nothing between may clamp it); no far
@@ -503,3 +526,105 @@ build failed it too.
 **Cost.** 384,009 more 3DEP point samples in the cache (854 requests; the filter's taps), no new vertices, no new
 triangles, road kn5 112,594,352 B (was 112,596,112). Nothing in engine-july changed in this round: the mirror is the
 same two files as before (`engine-july-snapshot/PENDING-MIRROR.md5`).
+
+## Results — fix round 3 (2026-10-13), after the visual lens found sunken houses and the truth lens criterion 4
+
+Measured on the final full rehearsal: `ship_sd.sh --no-install`, without `--skip-blend`, on a fresh scratch copy of the
+workshop, with ENG a fresh copy of engine-july plus the snapshot's two pending files. Gate OBJ md5
+e4a8343c6030737c6c907992ffa6c0da. Its ground and roads are identical, vertex for vertex, to the build the criteria were
+measured on (the houses are the only thing that differs).
+
+**The sunken houses, in plain terms.** Every OSM house is a box with a flat bottom, walls and a flat roof. The draft
+set each box on the ground at its centre, 0.4 m into it. The kn5 prep then reshapes that ground: it fits it to the
+road, smooths the edges, and lays the 3DEP hillside back over the old graded cells past 20 m. A house then moved by
+however much the ground changed under **one** of its corners. Where the ground changed differently under the rest of
+the house, the house ended up half under the hill. That happened at (−249, 1461), where the house was lowered 3.4 m
+onto unchanged ground, and at (−1278, −1180). Elsewhere the house was left hanging in the air.
+
+v0.17.1 had the same weakness in the other direction. **118 of its 152 buildings float** more than 10 cm above the
+lowest ground under their walls, by up to 8.4 m on the downhill side.
+
+The fix sits in the prep, after every step that moves ground:
+- Each building reads the ground that ships under its own walls: every corner, every ~1.5 m along each wall, and the
+  centre.
+- Its floor goes at the average of that ground less 0.4 m, which is the draft's own rule. On level ground the house
+  is exactly as before.
+- On a slope its walls reach down to just below the lowest ground under them, like a real hillside house's
+  foundation, instead of hanging in the air.
+- Where a footprint straddles more drop than half its own height (a house on the edge of the I-8 cut at (1369, −908)
+  has 7.4 m under it), it is raised until at least half of it stands above the uphill ground.
+
+| measure (152 buildings) | v0.17.1 | fix round 2 | fix round 3 |
+|---|---|---|---|
+| floating > 0.1 m over the lowest ground under the walls | 118 (max 8.36 m) | 96 (max 7.35 m) | **0** (bottom 0.15–0.32 m into the ground) |
+| sunk > 1 m below that ground | 0 | 1 ((−249, 1461), −1.67 m) | **0** |
+| roof less than 1 m above the highest ground under the walls | 4 (one roof 0.88 m under it) | 4 | **0** (lowest 1.60 m) |
+| height standing above the mean ground (the eye's "how much house") | min 2.14, p05 4.33 m | min 2.18, p05 4.29 m | min 2.78, p05 5.02 m: every building its own height less 0.4 m |
+
+The cited houses, standing height above the mean ground under their walls (v0.17.1 → round 2 → round 3):
+- (−249, 1461): 5.10 → 2.56 → 4.97 m.
+- (−1278, −1180): 5.26 → 3.53 → 5.01 m.
+- The (−1613, −693) row: 7.29 → 4.47 → 5.18 m. In v0.17.1 it stood 8.4 m in the air on its downhill side.
+
+135 buildings now have some foundation showing below the floor on their downhill side; the deepest is 9.5 m, under a
+school at (−2097, −1303) that sits on 11 m of slope.
+
+The visual lens's own measure counts a foundation below the uphill ground as "buried". It is the share of each
+exported face's height under the mean ground, so by it 56 face pieces within 80 m are newly over 30 %. These are the
+uphill sides of houses on slopes, where the wall's foundation is underground, as a real hillside house's is. The seat
+stills show the houses standing, from the road and from the air: `housepair_road_hA/hA2/hD/hE.png` and
+`housepair_hA_180.png`, `housepair_hB_180.png`.
+
+From the College Ave road at (−1592, −729), the (−1613, −693) row is behind a hill in both round 2 and round 3
+(`housepair_road_hB.png`). v0.17.1's graded ground there was 3–4 m lower than the 3DEP hill.
+
+**The gate.** `tools/house_seat_check.py` is a hard step of the ship chain, run on the built gate OBJ. For every
+building it reads the ground under its walls and fails it in three cases:
+- floating: the bottom is more than 0.1 m above the lowest ground under the walls;
+- sunken: the bottom is more than 1 m below that ground;
+- buried: the roof is less than 1 m above the highest ground under the walls.
+
+The limits are 0 / 0 / 0, every number invented (GATES-CHANGELOG). It fails v0.17.1 (118 floating, 4 buried) and
+round 2 (96 / 1 / 4), and passes this build.
+
+**Criteria, re-measured** (fresh 3DEP 2026-10-13T16:50–17:08Z, 165,101 points, TLS on; criteria 1 and 2 by
+`sightline_check`):
+
+| # | criterion | now | verdict |
+|---|---|---|---|
+| 1 | Cowles ≥ 470 m | 484.34 m | PASS |
+| 2 | crest / v2240 / v1640 (re-worded in round 2) | 9.343° vs 9.239°; 8.487° vs 8.347°; 5.489° behind a 6.600° hill (hidden, as in 3DEP) | PASS |
+| 3 | surface to 5,550 m on 192°; Del Cerro 258.16; valley wall; south bank; box-edge faces | as in round 2 (terrain unchanged) | PASS |
+| 3 | no vertex below the box's real low **15.52 m** (corrected); none more than 3 m under fresh 3DEP below 100 m or in the far ring | minimum 19.67 m. All 21,260 vertices below 100 m against fresh 3DEP: median 0.019 m; 562 more than 1 m **above** it (graded ground and the filter in hollows), 2 more than 1 m below (−1.19, −1.08 m, 244–262 m from a road: the filter on a ridge), none more than 3 m below. Far ring: criterion 6 | PASS |
+| 4 | I-8 sections, rims re-worded at 3DEP's own wall edges | truth lens's centreline **164 of 171**; the build corridor's 171 of 178 inside the box. Floor error median 0.043 m, p95 0.31 m. All 6 3DEP-confirmed fills pass. s 700's rim sits on a 5 m wall (3DEP 92.68 m at −60, 87.60 m at −58); the build's 90.81 m lies between, so it passes | **FAIL on 7**: the same 7 places on both centrelines, all beside a road (below) |
+| 5 | facets | 5.255 m; 20.23 m (unchanged) | PASS |
+| 6 | every far vertex within 1 m of fresh 3DEP | all 106,544: median 0.0041 m, p95 0.219, p99 0.485. Max 0.995 m, at a 40 m node (2151, 3596) whose cached sample is fresh 3DEP 0.5 m away: 3DEP itself spans 243.02–244.08 m within half a metre there, a 1 m pixel edge on a steep slope. Every other vertex over 0.85 m is a filter move held at the new 0.85 m bound. 0 over 1 m | PASS |
+| 7 | gates identical to v0.17.1 | every verdict file field for field (only `grass_verts`, no_route timing) | PASS |
+
+**Why criterion 4 cannot pass at its 7 near-road sections while criterion 7 holds.** Each failing rim point is 0.4–9.5 m
+from a pavement, inside the ground criterion 7 holds to the 2026-10-09 build. (As written, criterion 7 holds all ground
+within 150 m within 5 cm; the build holds 20 m, the reading the drive gates need.) At each of them that ground is
+2.2–8.8 m from fresh 3DEP, so no build can be within 5 cm of one and within 2 m of the other. What the world has there,
+from fresh 3DEP 2 m sections:
+
+| place | what the world has | what v0.17.1 (and this build) has |
+|---|---|---|
+| College Ave south approach (s 1650 L) | an earth embankment at road height up to the bridge | 6 m of air under the road: the declared bridge span starts ~25 m too far south |
+| College Ave north of I-8 (s 1700 R) | the road 2.6 m higher | the built road and the ground pinned to it 2.6 m low (road datum, ledger 0002) |
+| Alvarado's south side, s 1800–1900 L | the creek bank dropping 4–5 m within 4–8 m of the kerb | a flat shelf at road height to ~10 m |
+| north of I-8 near (−1313, −1023), s 2200 R | ground 2.2 m higher | v0.17.1's graded ground |
+| Lake Murray Blvd over Alvarado Creek (s 3700 L) | a bridge, with the creek channel 8 m below the road | solid fill under the road |
+
+Closing them means moving the road, its verge or its bridges. That is the ground every drive gate was tuned on and
+the road Kevin called "incredible". So it is his call, and nothing here was changed. Either criterion 4 is limited to
+ground past criterion 7's band, or these become road and bridge work under ledger 0002.
+
+**Corrections to round 2's write-up:**
+- Criterion 3's "box low 19.67 m" was 3DEP at the built minimum; the box's low is 15.52 m.
+- Criterion 4's failing station list depends on the centreline. Round 2's "s 7250 is the eighth" was one centreline's
+  sub-cell wall; on the truth lens's centreline it is s 700.
+- Criterion 6's "max 0.955 m over 3,000 random" understated it: over all far vertices it was 0.995 m.
+
+**Cost.** No new vertices or triangles. Road kn5 112,594,352 → 112,609,136 B. `rib_check` still passes: 60 staircase
+ribs over 2 m (was 56; the tighter far bound keeps a little more sub-cell relief) and 33 folds. The engine-july prep
+changed (the house seat), so the mirror's `build_kn5_loop.py` md5 is new (`PENDING-MIRROR.md5`).

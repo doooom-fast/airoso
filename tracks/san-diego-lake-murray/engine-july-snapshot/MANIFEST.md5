@@ -3,7 +3,7 @@
 # %APPDATA%/Blender Foundation/Blender/4.2/scripts/addons/<x>. Written by tools/snapshot_engine_july.py.
 39fee084b8bbe62df9ae02087a22dea0  scripts/__init__.py
 d18df0c60356b2264adc0a2949e60a68  scripts/ac/__init__.py
-aebdfe90f1c69139d7c1515fc016b4de  scripts/ac/build_kn5_loop.py
+261103e1842f963eb2449d1971fac1d7  scripts/ac/build_kn5_loop.py
 1bdc2628253532045f5ba6d490e7da4f  scripts/ac/export_kn5_addon.py
 1a725cd07bb0a9a4647f00e20080b371  scripts/ac/build_spawn_kn5.py
 bbec9db6fe63c6a884ecf72dc0e6de08  scripts/ac/pbr.py

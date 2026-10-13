@@ -74,6 +74,15 @@ CORRIDOR_EDGE_M = 4.5      # subdivide terrain edges near the road down to about
 LAYER_WIN = 30.0           # deck sampling window (no stacked loop legs, but stay safe)
 BRIDGE_MATCH_M = 14.0      # centerline pt within this of an OSM bridge way = on the span
 BRIDGE_PAD_M = 8.0         # widen each detected span a touch onto the abutments
+# --- house / building seat (ledger 0046 fix round 3) -------------------------------------------------------------
+# The draft sits each OSM footprint on the ground it can see (its centroid, less HOUSE_SINK_M) and this prep then
+# reshapes that ground (conform, pin, feather, the tiered terrain's kept-cell refinement), so a house that rode one
+# corner's delta could end up half under a hill whose ground moved under its other corners. Buildings are
+# therefore seated on the FINAL ground under their own footprint, after every pass that moves it.
+HOUSE_SINK_M = 0.4         # the draft's own sink: build_loop_blend.build_buildings sits a footprint at ground - 0.4
+HOUSE_FOOT_M = 0.15        # [invented] the foundation reaches this far below the lowest ground under the footprint
+HOUSE_EDGE_STEP_M = 1.5    # [invented] ground is read at the corners, the centroid and every ~1.5 m along each wall
+HOUSE_SHOW = 0.5           # [invented] at least this share of a building's height stands above the highest ground under its walls
 
 
 def _mpd(lat0):
@@ -312,6 +321,39 @@ def xsplit_interp(u, v, sw, se, ne, nw, c):
     if v >= u and v >= 1.0 - u:
         return (u + v - 1.0) * ne + (v - u) * nw + 2.0 * (1.0 - v) * c
     return (v - u) * nw + (1.0 - u - v) * sw + 2.0 * u * c
+
+
+def house_seat(g_level, g_low, g_high=None, height=None, sink=HOUSE_SINK_M, foot=HOUSE_FOOT_M, show=HOUSE_SHOW):
+    """Pure (no bpy): where a building stands on the final ground. Returns ``(floor, base)``: ``floor`` is where its
+    walls' visible height starts — the mean ground under the footprint less ``sink`` (the draft's rule, now read on
+    the ground that ships), raised where needed so that at least ``show`` of its ``height`` stands above the highest
+    ground under its walls (a footprint straddling a cut edge is not buried on its uphill side); ``base`` is the bottom
+    of its foundation — never above ``floor`` and never above the lowest ground under its walls less ``foot``, so on a
+    slope the downhill wall reaches down into the ground instead of hanging in the air, and on level ground
+    ``base == floor`` (the house is exactly the draft's)."""
+    floor = g_level - sink
+    if g_high is not None and height is not None:
+        floor = max(floor, g_high - (1.0 - show) * height)
+    return floor, min(floor, g_low - foot)
+
+
+def footprint_samples(ring, step=HOUSE_EDGE_STEP_M):
+    """Pure: the points a footprint's ground is read at — ``(level_pts, low_pts)``. ``ring`` is the base ring in order
+    [(x, y), ...]. The level is the mean of the corners and the centroid (the draft's centroid read, made robust to
+    one odd corner); the low point walks the walls only (the corners and every ~``step`` between them, so a dip
+    between two corners counts) — the ground the walls stand on, not a hollow under the floor."""
+    n = len(ring)
+    cx = sum(p[0] for p in ring) / n
+    cy = sum(p[1] for p in ring) / n
+    level = list(ring) + [(cx, cy)]
+    low = list(ring)
+    for k in range(n):
+        (ax, ay), (bx, by) = ring[k], ring[(k + 1) % n]
+        m = int(math.hypot(bx - ax, by - ay) // step)
+        for j in range(1, m + 1):
+            t = j / (m + 1)
+            low.append((ax + (bx - ax) * t, ay + (by - ay) * t))
+    return level, low
 
 
 def keep_weight(d, keep_m, feather_m):
@@ -922,13 +964,55 @@ def _conform_and_reseat(proj: Path, spans):
             if best is not None and best[0] < 16.0 and abs(best[1]) > 0.0:
                 _shift(ob, isl, best[1])
         me.update()
-    # palms / scrub / buildings / lights ride the terrain delta (their seats were already green)
+    # houses / buildings: seated on the FINAL ground under their own footprint (house_seat; ledger 0046 fix round 3)
+    n_seat = n_found = 0
+    max_found = 0.0
+    seated = set()
+    for ob in bpy.data.objects:
+        if ob.type != "MESH" or not ob.name.upper().startswith(("BUILDING", "HOUSE")):
+            continue
+        if not ob.matrix_world.is_identity:
+            continue                                  # not the draft's own mesh: left to the delta ride below
+        me = ob.data
+        for isl in _islands(ob):
+            zmin = min(me.vertices[i].co.z for i in isl)
+            base = [i for i in isl if me.vertices[i].co.z < zmin + 0.05]
+            top = [i for i in isl if me.vertices[i].co.z >= zmin + 0.05]
+            if len(base) < 3 or not top:
+                continue
+            ring = [(me.vertices[i].co.x, me.vertices[i].co.y) for i in sorted(base)]   # the draft's ring order
+            level_pts, low_pts = footprint_samples(ring)
+            gl = [_surf_z(ground_bvh, x, y, zref=zmin, win=40.0) for x, y in level_pts]
+            gw = [_surf_z(ground_bvh, x, y, zref=zmin, win=40.0) for x, y in low_pts]
+            gl = [g for g in gl if g is not None]
+            gw = [g for g in gw if g is not None]
+            if len(gl) < 3:
+                continue
+            ztop = max(me.vertices[i].co.z for i in top)
+            floor, bottom = house_seat(sum(gl) / len(gl), min(gw) if gw else min(gl),
+                                       max(gw + gl), ztop - zmin)
+            dz = floor - zmin
+            for i in top:
+                me.vertices[i].co.z += dz
+            for i in base:
+                me.vertices[i].co.z = bottom
+            n_seat += 1
+            if floor - bottom > 0.005:
+                n_found += 1
+                max_found = max(max_found, floor - bottom)
+            seated.add((ob.name, min(isl)))
+        me.update()
+    print(f"[build_kn5_loop] house seat: {n_seat} buildings seated on the final ground under their footprints, "
+          f"{n_found} with a foundation reaching down a slope (deepest {max_found:.2f} m)")
+    # palms / scrub / lights (and any building not seated above) ride the terrain delta (their seats were green)
     for ob in bpy.data.objects:
         if ob.type != "MESH" or not ob.name.upper().startswith(
                 ("PALMTRUNK", "PALMFROND", "SCRUB", "BUILDING", "HOUSE", "LIGHTS")):
             continue
         me = ob.data
         for isl in _islands(ob):
+            if (ob.name, min(isl)) in seated:
+                continue
             fi = min(isl, key=lambda i: me.vertices[i].co.z)
             f = ob.matrix_world @ me.vertices[fi].co
             zo = _surf_z(old_grass_bvh, f.x, f.y, zref=f.z, win=40.0)

@@ -80,6 +80,19 @@ def keep_weight(d: float, keep_m: float, feather_m: float) -> float:
     return 1.0 - smoothstep((d - keep_m) / feather_m)
 
 
+def feather_len(delta: float, feather_m: float, batter: float | None, min_m: float) -> float:
+    """The kept surface's feather length where it meets the data ``delta`` metres off it (ledger 0046 fix round 4):
+    a fixed ``feather_m`` when ``batter`` is None (as before); else an earth batter — ``batter`` metres of run per metre
+    of height on average — held between ``min_m`` and ``feather_m``. Lake Murray: 3.5, 8 and 16 m. The smoothstep's
+    steepest slope is 1.5 x delta / length, so the batter never draws the blend steeper than 1.5 / 3.5 = 0.43 (23
+    degrees), and never steeper than the fixed 16 m blend did where the gap is over 4.6 m; where the graded ground sits
+    3.9 m off 3DEP (the truth lens's s 3800 south rim, 29 m from the pavement) the blend ends 13.7 m past the band
+    instead of 16 m, and the ground there is the data within criterion 4's 2 m."""
+    if batter is None:
+        return feather_m
+    return max(min_m, min(feather_m, batter * abs(delta)))
+
+
 def xsplit_interp(u: float, v: float, sw: float, se: float, ne: float, nw: float, c: float) -> float:
     """the value at (u, v) in [0, 1]^2 of a cell split in four around its centre (``x_split``): linear on the
     S (sw, se, c), E (se, ne, c), N (ne, nw, c) or W (nw, sw, c) triangle that holds the point — exactly the
@@ -133,9 +146,23 @@ class TierSpec:
         self.aa_far_max_move_m = float(aa["far_max_move_m"]) if aa and "far_max_move_m" in aa else None
         if aa and aa.get("kernel", "tent") != "tent":
             raise ValueError(f"terrain.tier_options.antialias.kernel {aa.get('kernel')!r}: only 'tent'")
+        bk = opt.get("breaks") or {}
+        self.breaks = None
+        if bk:
+            need = ("beyond_m", "screen_m", "tol_m", "max_per_edge", "min_spacing_m")
+            miss = [k for k in need if k not in bk]
+            if miss:
+                raise ValueError(f"terrain.tier_options.breaks needs {miss}")
+            self.breaks = {k: float(bk[k]) for k in need}
+            self.breaks["max_per_edge"] = int(bk["max_per_edge"])
+            self.breaks["corners"] = str(bk.get("corners", "point"))
+            if self.breaks["corners"] not in ("point", "filtered"):
+                raise ValueError("terrain.tier_options.breaks.corners: 'point' or 'filtered'")
         self.physical_m = float(opt.get("physical_within_m", 250.0))
         self.keep_m = float(opt.get("keep_surface_m", 0.0))
         self.keep_feather_m = float(opt.get("keep_feather_m", 0.0))
+        self.keep_batter = float(opt["keep_batter"]) if "keep_batter" in opt else None
+        self.keep_feather_min_m = float(opt.get("keep_feather_min_m", 0.0))
         self.band_m = float(t.get("terrain_band_m", 22.0))
         self.clamp_full_m = float(t.get("clamp_corridor_m", 80.0))
         self.clamp_release_m = float(t.get("clamp_blend_m", 250.0))
@@ -507,38 +534,52 @@ class Topology:
         frame: n_y > 0), per-triangle physical flag, per-vertex kept flag"""
         leaves = sorted(self.leaves)
         phys_leaf = self._physical(leaves)
-        tri_keys, tri_phys = [], []
+        tri_keys, tri_phys, tri_leaf = [], [], []
         keep_keys = set()
         for key in leaves:
-            L, i, j = key
-            r = self.r[L]
-            sw, se, ne, nw = (i * r, j * r), ((i + 1) * r, j * r), ((i + 1) * r, (j + 1) * r), (i * r, (j + 1) * r)
-            ph = key in phys_leaf
-            if self.is_keep(key):
-                # the graded grid's own triangles (ribbon.grass_terrain): a = NW, b = NE, c = SE, d = SW,
-                # (a, b, c) + (a, c, d) — a finer neighbour's nodes on these edges stay T-junctions
-                for t in ((nw, ne, se), (nw, se, sw)):
-                    tri_keys.append(_face_up(*t)); tri_phys.append(ph)
-                keep_keys.update((sw, se, ne, nw))
-                for d in "SENW":
-                    keep_keys.update(self._hanging(L, i, j, d))
-                continue
-            ring = [sw] + self._hanging(L, i, j, "S") + [se] + self._hanging(L, i, j, "E") + [ne] \
-                + self._hanging(L, i, j, "N") + [nw] + self._hanging(L, i, j, "W")
-            if len(ring) == 4 and not self._xsplit(L, i, j):
-                for t in ((sw, se, ne), (sw, ne, nw)):
-                    tri_keys.append(_face_up(*t)); tri_phys.append(ph)
-            else:
-                c = (i * r + r // 2, j * r + r // 2)
-                for a in range(len(ring)):
-                    tri_keys.append(_face_up(c, ring[a], ring[(a + 1) % len(ring)])); tri_phys.append(ph)
+            n0 = len(tri_keys)
+            self._tri_one(key, phys_leaf, tri_keys, tri_phys, keep_keys)
+            tri_leaf.extend([key] * (len(tri_keys) - n0))
         keys = sorted({k for t in tri_keys for k in t})
         index = {k: n for n, k in enumerate(keys)}
         self.vkeys = keys
         self.tris = [(index[a], index[b], index[c]) for a, b, c in tri_keys]
         self.tri_phys = tri_phys
+        self.tri_leaf = tri_leaf
         self.phys_leaves = phys_leaf
         self.vkeep = [k in keep_keys for k in keys]
+
+    def _tri_one(self, key, phys_leaf, tri_keys, tri_phys, keep_keys):
+        """the triangles of one leaf (base keys), appended to ``tri_keys`` / ``tri_phys``"""
+        L, i, j = key
+        r = self.r[L]
+        sw, se, ne, nw = (i * r, j * r), ((i + 1) * r, j * r), ((i + 1) * r, (j + 1) * r), (i * r, (j + 1) * r)
+        ph = key in phys_leaf
+        if self.is_keep(key):
+            # the graded grid's own triangles (ribbon.grass_terrain): a = NW, b = NE, c = SE, d = SW,
+            # (a, b, c) + (a, c, d) — a finer neighbour's nodes on these edges stay T-junctions
+            for t in ((nw, ne, se), (nw, se, sw)):
+                tri_keys.append(_face_up(*t)); tri_phys.append(ph)
+            keep_keys.update((sw, se, ne, nw))
+            for d in "SENW":
+                keep_keys.update(self._hanging(L, i, j, d))
+            return
+        ring = [sw] + self._hanging(L, i, j, "S") + [se] + self._hanging(L, i, j, "E") + [ne]             + self._hanging(L, i, j, "N") + [nw] + self._hanging(L, i, j, "W")
+        if len(ring) == 4 and not self._xsplit(L, i, j):
+            for t in ((sw, se, ne), (sw, ne, nw)):
+                tri_keys.append(_face_up(*t)); tri_phys.append(ph)
+        else:
+            c = (i * r + r // 2, j * r + r // 2)
+            for a in range(len(ring)):
+                tri_keys.append(_face_up(c, ring[a], ring[(a + 1) % len(ring)])); tri_phys.append(ph)
+
+    def plain_finest(self, key) -> bool:
+        """a finest-level leaf meshed as a plain square (two triangles: no hanging node, no x-split centre, not
+        kept) — the only cells the break-line pass may re-triangulate"""
+        L, i, j = key
+        if L != self.nlev - 1 or key not in self.leaves or self.is_keep(key) or self._xsplit(L, i, j):
+            return False
+        return not any(self._hanging(L, i, j, d) for d in "SENW")
 
     def _physical(self, leaves):
         """physical = leaves whose phys-level ancestor is marked, plus every pocket of other leaves
@@ -750,3 +791,176 @@ def balanced_tiles(tris, xz, cap: int):
 
     rec(list(tris))
     return out
+
+
+# --- break lines (ledger 0046 fix round 4) -----------------------------------------------------------
+# The anti-aliasing above softens a feature narrower than a cell; it cannot draw a SHARP one. A cut-slope bench or a
+# drainage ledge is a riser 4-6 m tall and ~1.5 m wide in 3DEP: whatever the node heights, a lattice can only put
+# that riser BETWEEN two rows of nodes, so where it runs at a shallow slant to the grid (west of College it runs ~8
+# degrees off the lattice x axis) it sits between rows j and j+1 for ~35 m, then jumps a whole row: the staircase the
+# visual lens saw from the College Ave deck (ledger 0046 fix round 4). In the far ring criterion 6 also holds every
+# vertex within 1 m of its own 3DEP point, so the tent there may move a node at most 0.85 m: a 5 m riser keeps its
+# full height in one cell.
+# The fix is the surveyor's one: a BREAK LINE. Along every edge of a plain finest cell that a riser crosses, 3DEP is
+# read every half metre and the points where the profile bends are inserted as vertices ON the edge (1-D
+# Douglas-Peucker on the lightly smoothed profile); the cell is then triangulated through them (the triangulation of
+# its boundary polygon that best fits the data inside it), so the riser's top and bottom run as straight lines
+# through the cell instead of folding across it. Every new vertex is 3DEP at its own position; no lattice vertex
+# moves sideways and a cell no riser crosses keeps its two triangles. Both cells beside an edge get its points (no
+# crack), and only edges whose two cells are plain finest cells are eligible (no hanging node, no x-split fan, no
+# kept cell).
+BREAK_FINE = 5                  # fine units per base unit along a lattice line (0.5 m on the 2.5 m base lattice)
+
+
+def cell_edges(key, r):
+    """the four edges of leaf ``key`` (L, i, j) with side ``r`` base units, each as (a, b) base keys, a the S/W end"""
+    _L, i, j = key
+    sw, se, ne, nw = (i * r, j * r), ((i + 1) * r, j * r), ((i + 1) * r, (j + 1) * r), (i * r, (j + 1) * r)
+    return {"S": (sw, se), "E": (se, ne), "N": (nw, ne), "W": (sw, nw)}
+
+
+def break_edge_set(cells, r):
+    """edges shared by TWO cells of ``cells`` (an edge on the set's border would leave the cell outside a T-junction)"""
+    cnt = {}
+    for c in cells:
+        for e in cell_edges(c, r).values():
+            cnt[e] = cnt.get(e, 0) + 1
+    return sorted(e for e, n in cnt.items() if n == 2)
+
+
+def edge_fine_keys(a, b, fine=BREAK_FINE):
+    """the fine keys (units of base / ``fine``) strictly inside lattice edge a -> b, in order from a"""
+    dI, dJ = (b[0] - a[0]) * fine, (b[1] - a[1]) * fine
+    m = max(abs(dI), abs(dJ))
+    return [(a[0] * fine + k * dI // m, a[1] * fine + k * dJ // m) for k in range(1, m)]
+
+
+def edge_screen(h, a, b, screen_m, u=(1.0, 1.0)):
+    """True when lattice edge a -> b (two base units long) needs its 3DEP profile read: its base-lattice midpoint
+    departs from the straight line between its ends by ``screen_m`` or more, AND the ground falls along the edge at
+    least as steeply as across it (a riser is crossed by the edges that run up it; an edge running ALONG a riser reads
+    it obliquely, and its profile points would not pair with the cell's other points: the slivers this gate removes).
+    Missing base samples: False (never guessed). ``u`` = (base unit along x, along z) in metres."""
+    mid = ((a[0] + b[0]) // 2, (a[1] + b[1]) // 2)
+    try:
+        if abs(h[mid] - 0.5 * (h[a] + h[b])) < screen_m:
+            return False
+        gx = abs(h[(mid[0] + 1, mid[1])] - h[(mid[0] - 1, mid[1])]) / u[0]
+        gz = abs(h[(mid[0], mid[1] + 1)] - h[(mid[0], mid[1] - 1)]) / u[1]
+    except KeyError:
+        return False
+    along, across = (gx, gz) if a[1] == b[1] else (gz, gx)
+    return along >= across
+
+
+def edge_breaks(prof, h0, h1, length_m, tol_m, max_n, min_sp_m):
+    """the break points of one edge: ``prof`` = 3DEP at the fine points strictly inside it (in order), ``h0`` / ``h1``
+    its end heights. The profile is smoothed (1/4 1/2 1/4: one 3DEP pixel's noise, not a riser) and points are added
+    where it departs most from the polyline so far (Douglas-Peucker), while that departure is ``tol_m`` or more, up to
+    ``max_n`` points, none nearer than ``min_sp_m`` to another or to an end. Returns [(k, height)], k = the 1-based
+    index into ``prof`` (its fine key), height = the smoothed profile there; sorted by k."""
+    n = len(prof) + 1                        # fine steps along the edge
+    raw = [h0] + list(prof) + [h1]
+    sm = [raw[0]] + [0.25 * raw[k - 1] + 0.5 * raw[k] + 0.25 * raw[k + 1] for k in range(1, n)] + [raw[n]]
+    step = length_m / n
+    pts = [(0, h0), (n, h1)]
+    out = []
+    while len(out) < max_n:
+        best = None
+        for k in range(1, n):
+            if min(abs(k - q[0]) for q in pts) * step < min_sp_m - 1e-9:
+                continue
+            hv = None
+            for a in range(len(pts) - 1):
+                if pts[a][0] <= k <= pts[a + 1][0]:
+                    ka, ha = pts[a]
+                    kb, hb = pts[a + 1]
+                    hv = ha + (hb - ha) * (k - ka) / (kb - ka)
+                    break
+            d = abs(sm[k] - hv)
+            if best is None or d > best[0] + 1e-12:
+                best = (d, k)
+        if best is None or best[0] < tol_m:
+            break
+        pts.append((best[1], sm[best[1]]))
+        pts.sort()
+        out.append((best[1], sm[best[1]]))
+    return sorted(out)
+
+
+def _plane_err(a, b, c, samples):
+    (ax, az, ay), (bx, bz, by), (cx, cz, cy) = a, b, c
+    area2 = abs((bx - ax) * (cz - az) - (cx - ax) * (bz - az))
+    if area2 < 1e-4:                          # collinear (two points on one cell edge + a third): never a triangle
+        return float("inf")
+    det = (bz - cz) * (ax - cx) + (cx - bx) * (az - cz)
+    e = 0.0
+    for x, z, y in samples:
+        l1 = ((bz - cz) * (x - cx) + (cx - bx) * (z - cz)) / det
+        l2 = ((cz - az) * (x - cx) + (ax - cx) * (z - cz)) / det
+        l3 = 1.0 - l1 - l2
+        if l1 >= -1e-9 and l2 >= -1e-9 and l3 >= -1e-9:
+            e += (l1 * ay + l2 * by + l3 * cy - y) ** 2
+    return e
+
+
+def triangulate_cell(poly, samples):
+    """the triangulation of the convex boundary polygon ``poly`` [(x, z, y)] (a cell with points on its edges) that
+    fits ``samples`` [(x, z, y)] best: the least summed squared height error, by the classic O(n^3) dynamic programme
+    over a convex polygon; a triangle on three collinear points is never chosen. Returns [(i, k, j)] into ``poly``,
+    sorted; ties keep the lowest split index (deterministic). Raises ValueError when no proper triangulation exists."""
+    n = len(poly)
+    inf = float("inf")
+    C = [[0.0] * n for _ in range(n)]
+    K = [[-1] * n for _ in range(n)]
+    for gap in range(2, n):
+        for i in range(n - gap):
+            j = i + gap
+            best, bk = inf, -1
+            for k in range(i + 1, j):
+                if C[i][k] == inf or C[k][j] == inf:
+                    continue
+                c = C[i][k] + C[k][j] + _plane_err(poly[i], poly[k], poly[j], samples)
+                if c < best - 1e-12:
+                    best, bk = c, k
+            C[i][j], K[i][j] = best, bk
+    if C[0][n - 1] == inf:
+        raise ValueError("no proper triangulation of the cell polygon")
+    out = []
+    stack = [(0, n - 1)]
+    while stack:
+        i, j = stack.pop()
+        if j - i < 2:
+            continue
+        k = K[i][j]
+        out.append((i, k, j))
+        stack.append((i, k))
+        stack.append((k, j))
+    return sorted(out)
+
+
+def face_up_xz(p, a, b, c):
+    """(a, b, c) ordered face-up (n_y > 0 in the left-handed local frame) from their (x, z) in ``p``"""
+    dx1, dz1 = p[b][0] - p[a][0], p[b][1] - p[a][1]
+    dx2, dz2 = p[c][0] - p[a][0], p[c][1] - p[a][1]
+    return (a, b, c) if dz1 * dx2 - dx1 * dz2 > 0 else (a, c, b)
+
+
+def apply_breaks(topo, cell_tris, extra_keys):
+    """replace the triangles of every break cell: ``cell_tris`` {leaf key: [(v0, v1, v2)]} index the lattice vertices
+    (< len(topo.vkeys)) and the extras (len(topo.vkeys) + k for ``extra_keys[k]``, fine keys). Order stays
+    deterministic: a cell's new triangles take the place of its old ones. Sets topo.extra_keys."""
+    tris, phys, leaf = [], [], []
+    done = set()
+    for t, p, lk in zip(topo.tris, topo.tri_phys, topo.tri_leaf):
+        if lk in cell_tris:
+            if lk in done:
+                continue
+            done.add(lk)
+            for nt in cell_tris[lk]:
+                tris.append(tuple(nt)); phys.append(p); leaf.append(lk)
+            continue
+        tris.append(t); phys.append(p); leaf.append(lk)
+    topo.tris, topo.tri_phys, topo.tri_leaf = tris, phys, leaf
+    topo.extra_keys = list(extra_keys)
+    return topo

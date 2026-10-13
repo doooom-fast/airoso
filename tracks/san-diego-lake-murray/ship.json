@@ -10,7 +10,7 @@
   "steps": {
     "draft": ["median_envelope", "terrain_sample", "build_loop_blend", "route_connectors", "divide_connectors",
               "trim_connectors", "terrain_resample", "rebuild_loop_blend", "weld_mouths", "seat_terrain",
-              "triangulate_terrain", "median", "gap_mouths", "scatter_strip", "lamps", "signs"],
+              "triangulate_terrain", "median", "gap_mouths", "bridges", "scatter_strip", "lamps", "signs"],
     "author": ["race_bands", "race_planned_gate", "layout_dummies", "race_author", "race_verify"],
     "prep": ["prep", "split"],
     "ship": ["export_road", "export_race", "spawn_kn5", "ai", "verify_kn5", "road_obj", "track_folder", "verify_inis",
@@ -33,7 +33,7 @@
               "data/barrier_bands.json", "data/race_authored.json", "data/race_verify.json", "data/race_verify.scenery.json",
               "data/race_kn5.json",
               "data/terrain.samples.json.gz", "data/corridor.i8.json", "data/i8.local.json", "data/i8.legacy.local.json",
-              "data/terrain.tiers.report.json",
+              "data/terrain.tiers.report.json", "data/bridges.authored.json",
               "data/dummies_{id}.json", "data/drive_test.{id}.json",
               "data/no_route.{race}.json", "data/no_route.{race}.planned.json", "data/audit.{race}.json",
               "data/closure_{race}.kn5.json"],

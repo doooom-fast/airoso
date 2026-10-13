@@ -30,6 +30,14 @@ pavement (1ROAD / 1KERB vertices) is counted apart: it is the graded near-road s
 and the drive gates measure. Exit 1 when more than MAX_RIBS 5 m staircase rib nodes over RIB_M, or more than MAX_FOLDS
 cross-grain cells over FOLD_M, lie beyond NEAR_M (fleet/GATES-CHANGELOG.md 2026-10-13; all four numbers invented,
 measured on the 2026-10-12 build that showed the ribs and on the fix).
+A third measure (ledger 0046 fix round 4) reads BETWEEN the nodes: STEP JOGS. A sharp riser (a cut-slope bench, a
+drainage ledge, 4-6 m tall and ~1.5 m wide in 3DEP) crossing the 5 m lattice at a slant cannot be drawn by the lattice:
+it sits between the same two rows of nodes for several cells, then jumps a whole row. The lattice-node measures above
+read it as a straight ridge with an occasional staircase node, so round 3 passed a washboard the visual lens could see
+from the College Ave deck. Scan lines a quarter cell off every 5 m lattice line cut the BUILT finest-tier triangles;
+each riser crossing (a run as steep as JOG_SLOPE, dropping JOG_DROP_M within JOG_RUN_MAX_M) is followed from line to
+line, and a JOG is a step between consecutive crossings that outruns the riser's own pace by JOG_M. A washboard is a
+neighbourhood of them: exit 1 when more than MAX_JOG_CLUSTER jogs beyond NEAR_M lie within JOG_CLUSTER_M of one jog.
 Frame: local, x = E, y = up, z = N; the lattice frame is data/terrain.tiers.json.gz "frame".
 """
 from __future__ import annotations
@@ -51,6 +59,20 @@ MAX_RIBS = 100              # staircase rib nodes allowed beyond NEAR_M [invente
 FOLD_M = 1.0                # cross-grain fold: the chosen diagonal's height difference exceeds the other's by this [invented]
 MAX_FOLDS = 100             # cross-grain cells allowed beyond NEAR_M [invented]; ship9 15,856, the fix 33
 NEAR_M = 20.0               # criterion 7's near-road band (ledger 0046)
+# STEP JOGS (ledger 0046 fix round 4): a sharp riser at a slant, drawn as a staircase. Read on the BUILT surface itself
+# (scan lines through the triangles), so a riser drawn through break-line vertices between the lattice nodes is seen
+# as drawn — the lattice-node measures above cannot see between the nodes. All [invented]:
+JOG_CELL_MAX_M = 7.6        # finest-tier triangles only (a 5 m cell's diagonal is 7.1 m; 20 m cells are 20+ m)
+JOG_SLOPE = 0.7             # a riser segment is at least this steep (35 degrees)
+JOG_DROP_M = 2.0            # ... and the riser drops at least this much (RIB_M's scale)
+JOG_RUN_MAX_M = 8.0         # ... within this far along the line (a riser, not a hillside)
+JOG_LINK_M = 8.0            # the same riser on the next line lies within this along it
+JOG_DY_M = 3.0              # ... and within this in height at its half-drop
+JOG_M = 2.0                 # a jog: a step between consecutive crossings beyond the riser's own pace by this
+                            # (a row is 5 m; a straight riser at any angle steps exactly at its pace)
+JOG_CLUSTER_M = 75.0        # a WASHBOARD: the jogs within this radius of one another...
+MAX_JOG_CLUSTER = 5         # ... more than this many of them (the lens saw 6-10 parallel steps; the round-3 build
+                            # holds 7 within 75 m at two places, the break-line build 4)
 ON_LATTICE = 0.01           # a vertex is a lattice node when its (I, J) is within this of an integer
 AMPS = (0.5, 1.0, 2.0, 4.0)
 
@@ -83,20 +105,42 @@ def read_obj(path: Path):
             [(xs[i], zs[i]) for i in sorted(pav)])
 
 
-def lattice(verts, frame):
+def lattice(verts, frame, on_lines=None):
     """({(I, J): y} for every terrain vertex on the base lattice (first one wins at a tile seam), [key or None] per
-    vertex)"""
+    vertex). ``on_lines`` (a dict, filled when given): every vertex that lies ON a lattice line between nodes — a
+    break-line vertex (ledger 0046 fix round 4) — as {(axis, line): [position along it, base units]}, axis 0 = a row
+    of constant J (positions in I), 1 = a column of constant I"""
     x0, z0, ux, uz = frame
     out, keys = {}, []
     for x, y, z in verts:
         fi, fj = (x - x0) / ux, (z - z0) / uz
         I, J = round(fi), round(fj)
-        if abs(fi - I) < ON_LATTICE and abs(fj - J) < ON_LATTICE:
+        on_i, on_j = abs(fi - I) < ON_LATTICE, abs(fj - J) < ON_LATTICE
+        if on_i and on_j:
             out.setdefault((I, J), y)
             keys.append((I, J))
         else:
             keys.append(None)
+            if on_lines is not None and (on_i or on_j):
+                if on_j:
+                    on_lines.setdefault((0, J), []).append(fi)
+                else:
+                    on_lines.setdefault((1, I), []).append(fj)
+    if on_lines is not None:
+        for k in on_lines:
+            on_lines[k].sort()
     return out, keys
+
+
+def _drawn_between(on_lines, ax, line, a, b):
+    """True when a break-line vertex lies on lattice line ``line`` strictly between positions a < b: the surface
+    there is drawn through it, not the straight line the two nodes imply"""
+    import bisect
+    v = on_lines.get((ax, line)) if on_lines else None
+    if not v:
+        return False
+    k = bisect.bisect_right(v, a + 1e-6)
+    return k < len(v) and v[k] < b - 1e-6
 
 
 def cross_grain(tris, keys, H, amp_min=0.0):
@@ -130,9 +174,11 @@ def cross_grain(tris, keys, H, amp_min=0.0):
     return out
 
 
-def ribs(H, steps=STEPS, amp_min=min(AMPS)):
+def ribs(H, steps=STEPS, amp_min=min(AMPS), on_lines=None):
     """[(I, J, axis, step, amplitude)] for every rib node: d2 alternates sign between k and k+1 along a row/column
-    of nodes ``step`` base units apart with no finer node between, both |d2| over ``amp_min``"""
+    of nodes ``step`` base units apart with no finer node between, both |d2| over ``amp_min``. A row whose surface
+    between those nodes is drawn through break-line vertices (``on_lines``) is not the nodes' straight line and is
+    left to the step-jog measure"""
     out = []
     for (I, J), h0 in H.items():
         for ax in (0, 1):
@@ -149,6 +195,10 @@ def ribs(H, steps=STEPS, amp_min=min(AMPS)):
                 mid3 = (I + r + r // 2, J) if ax == 0 else (I, J + r + r // 2)
                 if mid2 in H or mid3 in H:
                     continue
+                if on_lines:
+                    line, pos = (J, I) if ax == 0 else (I, J)
+                    if _drawn_between(on_lines, ax, line, pos - r, pos + 2 * r):
+                        continue
                 a = hm - 2.0 * h0 + h1
                 b = h0 - 2.0 * h1 + h2
                 if a * b < 0.0:
@@ -168,6 +218,140 @@ def staircase(rows):
     for I, J, ax, r, _a in rows:
         nb = ((I, J - r, ax, r), (I, J + r, ax, r)) if ax == 0 else ((I - r, J, ax, r), (I + r, J, ax, r))
         out.append(not any(k in have for k in nb))
+    return out
+
+
+def scan_profiles(verts, tris, frame, max_extent_m=JOG_CELL_MAX_M):
+    """the BUILT surface cut along scan lines a quarter cell off every 5 m lattice line, both ways: {(axis, m):
+    [(s0, y0, s1, y1)]} sorted by s, where axis 0 = lines of constant x (profile along z), 1 = constant z (along x),
+    m = the line's index (consecutive lines are one 5 m cell apart). Only triangles of the finest tier (horizontal
+    extent <= ``max_extent_m``): the staircase is a finest-tier artifact. Exact: each triangle contributes the
+    segment where the plane of the line cuts it."""
+    x0, z0, ux, uz = frame
+    out = {}
+    for t in tris:
+        P = [verts[v] for v in t]
+        xs = [p[0] for p in P]
+        zs = [p[2] for p in P]
+        if max(xs) - min(xs) > max_extent_m or max(zs) - min(zs) > max_extent_m:
+            continue
+        for axis, (c0, u, lo, hi) in enumerate(((x0, ux, min(xs), max(xs)), (z0, uz, min(zs), max(zs)))):
+            # line m sits at c0 + (2 m + 0.5) u
+            m0 = math.ceil(((lo - c0) / u - 0.5) / 2.0)
+            m1 = math.floor(((hi - c0) / u - 0.5) / 2.0)
+            for m in range(m0, m1 + 1):
+                c = c0 + (2 * m + 0.5) * u
+                hits = []
+                for a in range(3):
+                    p, q = P[a], P[(a + 1) % 3]
+                    pc, qc = (p[0], q[0]) if axis == 0 else (p[2], q[2])
+                    if (pc - c) * (qc - c) < 0.0:
+                        f = (c - pc) / (qc - pc)
+                        s = (p[2] + f * (q[2] - p[2])) if axis == 0 else (p[0] + f * (q[0] - p[0]))
+                        hits.append((s, p[1] + f * (q[1] - p[1])))
+                if len(hits) == 2:
+                    (sa, ya), (sb, yb) = sorted(hits)
+                    if sb - sa > 1e-6:
+                        out.setdefault((axis, m), []).append((round(sa, 4), ya, round(sb, 4), yb))
+    for k in out:
+        out[k] = sorted(set(out[k]))
+    return out
+
+
+def step_events(segs, slope_min=JOG_SLOPE, drop_min=JOG_DROP_M, run_max=JOG_RUN_MAX_M):
+    """riser crossings on one scan profile: maximal runs of contiguous segments as steep as ``slope_min`` the same way,
+    no longer than ``run_max`` (a riser, not a hillside), dropping ``drop_min`` or more. Returns [(s, y, sign)]: where
+    the run has made half its drop, the height there, +1 rising with s / -1 falling"""
+    ev = []
+    run = []
+
+    def close():
+        if not run:
+            return
+        s0, s1 = run[0][0], run[-1][2]
+        drop = run[-1][3] - run[0][1]
+        if abs(drop) >= drop_min and s1 - s0 <= run_max:
+            half = run[0][1] + drop / 2.0
+            for a, ya, b, yb in run:
+                if (yb - half) * (ya - half) <= 0.0 and yb != ya:
+                    s = a + (half - ya) / (yb - ya) * (b - a)
+                    ev.append((s, half, 1 if drop > 0 else -1))
+                    break
+        run.clear()
+
+    prev_end = None
+    for a, ya, b, yb in segs:
+        if b - a < 1e-3:
+            continue
+        sl = (yb - ya) / (b - a)
+        sign = 1 if sl > 0 else -1
+        steep = abs(sl) >= slope_min
+        if run and (not steep or sign != (1 if run[-1][3] > run[-1][1] else -1) or prev_end is None
+                    or abs(a - prev_end) > 0.05):
+            close()
+        if steep:
+            run.append((a, ya, b, yb))
+        prev_end = b
+    close()
+    return ev
+
+
+def step_jogs(profiles, frame, link_m=JOG_LINK_M, dy_m=JOG_DY_M, jog_m=JOG_M):
+    """a riser drawn as a STAIRCASE. Each riser crossing is followed from one scan line to the next (same sign,
+    within ``link_m`` along the line and ``dy_m`` in height at its half-drop; up to two lines may be skipped, at that
+    multiple of the reach: the line where an aliased riser changes rows often shows no single crossing). A real bench
+    or channel drifts along the lines at its own steady pace (a straight one at tan(angle) x 5 m per line, a 50 m
+    radius bends that by ~0.5 m per line); an aliased one sits between the same two node rows for several cells and
+    then jumps a whole 5 m row. So a JOG is a step between two consecutive crossings that moves more than the
+    riser's pace over the three lines either side would by ``jog_m`` or more. Returns [(x, z, excess)]."""
+    x0, z0, ux, uz = frame
+    ev = {k: step_events(v) for k, v in profiles.items()}
+    out = []
+    used = set()
+
+    def link(e, cand, reach):
+        best = None
+        for n, c in enumerate(cand):
+            if c[2] == e[2] and abs(c[0] - e[0]) <= reach and abs(c[1] - e[1]) <= dy_m:
+                d = abs(c[0] - e[0])
+                if best is None or d < best[0]:
+                    best = (d, n)
+        return None if best is None else best[1]
+
+    for axis, m0 in sorted(ev):
+        for n0 in range(len(ev[(axis, m0)])):
+            if (axis, m0, n0) in used:
+                continue
+            chain = [(m0, ev[(axis, m0)][n0])]
+            used.add((axis, m0, n0))
+            m, e = m0, ev[(axis, m0)][n0]
+            while True:
+                nxt = None
+                for step in (1, 2, 3):
+                    cand = ev.get((axis, m + step), [])
+                    k = link(e, cand, link_m * step)
+                    if k is not None and (axis, m + step, k) not in used:
+                        nxt = (m + step, k)
+                        break
+                if nxt is None:
+                    break
+                m, k = nxt
+                e = ev[(axis, m)][k]
+                used.add((axis, m, k))
+                chain.append((m, e))
+            if len(chain) < 3:
+                continue
+            for q in range(1, len(chain)):
+                (ma, ea), (mb, eb) = chain[q - 1], chain[q]
+                win = [c for c in chain if ma - 3 <= c[0] <= mb + 3]
+                span = win[-1][0] - win[0][0]
+                if span < 3:
+                    continue
+                pace = abs(win[-1][1][0] - win[0][1][0]) / span      # the riser's own drift, m per line
+                excess = abs(eb[0] - ea[0]) - pace * (mb - ma)
+                if excess >= jog_m:
+                    c = (x0 if axis == 0 else z0) + (2 * mb + 0.5) * (ux if axis == 0 else uz)
+                    out.append((c, eb[0], excess) if axis == 0 else (eb[0], c, excess))
     return out
 
 
@@ -213,14 +397,25 @@ def _summ(rows, amps, boxes, gate_amp):
     return rep
 
 
+def jog_cluster(rows, radius=JOG_CLUSTER_M):
+    """(the most jogs within ``radius`` of one jog, its (x, z)) over [(x, z, ...)]"""
+    best = (0, None)
+    for a in rows:
+        n = sum(1 for b in rows if math.hypot(a[0] - b[0], a[1] - b[1]) <= radius)
+        if n > best[0]:
+            best = (n, (round(a[0], 1), round(a[1], 1)))
+    return best
+
+
 def run(proj: Path, obj: Path | None = None, boxes=(), rib_m=RIB_M, max_ribs=MAX_RIBS, fold_m=FOLD_M,
-        max_folds=MAX_FOLDS):
+        max_folds=MAX_FOLDS, max_cluster=MAX_JOG_CLUSTER):
     proj = Path(proj)
     T = json.loads(gzip.decompress((proj / "data" / "terrain.tiers.json.gz").read_bytes()).decode("utf-8"))
     frame = T["frame"]
     obj = obj or proj / "data" / "track.obj"
     verts, tris, pav = read_obj(obj)
-    H, keys = lattice(verts, frame)
+    on_lines = {}
+    H, keys = lattice(verts, frame, on_lines)
     P = Pavement(pav)
     x0, z0, ux, uz = frame
     dcache = {}
@@ -231,7 +426,7 @@ def run(proj: Path, obj: Path | None = None, boxes=(), rib_m=RIB_M, max_ribs=MAX
             dcache[k] = P.dist(x, z)
         return dcache[k]
 
-    nyq = [w for w in ribs(H, amp_min=min(AMPS))]
+    nyq = [w for w in ribs(H, amp_min=min(AMPS), on_lines=on_lines)]
     fine_all = [w for w in nyq if w[3] == STEPS[0]]
     st = staircase(fine_all)
     fine = [(x0 + I * ux, z0 + J * uz, amp) for (I, J, ax, r, amp), s_ in zip(fine_all, st) if s_]
@@ -256,7 +451,15 @@ def run(proj: Path, obj: Path | None = None, boxes=(), rib_m=RIB_M, max_ribs=MAX
     n2 = sum(1 for w in rows_c if w[2] > fold_m and w[3] > NEAR_M)
     rep["nyquist"]["gated"] = n1
     rep["cross_grain"]["gated"] = n2
-    rep["verdict"] = "PASS" if (n1 <= max_ribs and n2 <= max_folds) else "FAIL"
+    # step jogs on the built surface (ledger 0046 fix round 4)
+    jogs = step_jogs(scan_profiles(verts, tris, frame), frame)
+    rows_j = [(x, z, j, dist(x, z)) for x, z, j in jogs]
+    far_j = [w for w in rows_j if w[3] > NEAR_M]
+    n3, at = jog_cluster(far_j)
+    rep["step_jogs"] = {"jog_m": JOG_M, "cluster_m": JOG_CLUSTER_M, "max": max_cluster,
+                        **_summ(rows_j, (JOG_M,), boxes, JOG_M - 1e-9), "jogs_beyond_near": len(far_j),
+                        "gated": n3, "densest_at": at}
+    rep["verdict"] = "PASS" if (n1 <= max_ribs and n2 <= max_folds and n3 <= max_cluster) else "FAIL"
     return rep
 
 
@@ -284,6 +487,14 @@ def main(argv=None):
             print(f"[ribs] {m:11s} box {n}: {b}")
         print(f"[ribs] {m:11s} gate: {r['gated']} over {lim_m:g} m beyond "
               f"{NEAR_M:g} m (limit {lim_n})")
+    j = rep["step_jogs"]
+    for h in j["hotspots"][:5]:
+        print(f"[ribs] step_jogs   hotspot ({h['x']}, {h['z']}): {h['n']}, max {h['max_m']} m")
+    for n, b in j["boxes"].items():
+        print(f"[ribs] step_jogs   box {n}: {b}")
+    print(f"[ribs] step_jogs   gate: {j['jogs_beyond_near']} riser jogs (a row jump {JOG_M:g} m past the riser's own "
+          f"pace) beyond {NEAR_M:g} m; the densest {JOG_CLUSTER_M:g} m: {j['gated']} at {j['densest_at']} (limit "
+          f"{j['max']}) — a sharp bench or channel drawn as a staircase, read on the built surface")
     print(f"[ribs] nyquist straight (along a lattice axis, a ridge not a staircase; not gated): "
           f"{ {k: v['beyond_near'] for k, v in rep['nyquist']['straight_info'].items()} }")
     print(f"[ribs] nyquist at 20/40 m cells (> {RIB_M:g} m; natural hill roughness at that scale, not gated): "

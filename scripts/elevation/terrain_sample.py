@@ -93,6 +93,7 @@ class SampleCache:
         self.spec = spec
         self.frame = frame
         self.h: dict[tuple[int, int], float] = {}
+        self.fine: dict[tuple[int, int], float] = {}     # break-line profiles: key in units of base / BREAK_FINE
         self.prov = {"source": "USGS 3DEP 1 m bare earth, ImageServer getSamples (returnFirstValueOnly)",
                      "endpoint": usgs_3dep.GET_SAMPLES, "units": "metres above NAVD88",
                      "lattice_frame": frame.to_json(), "origin": {k: spec.origin[k] for k in ("lon", "lat")},
@@ -113,15 +114,21 @@ class SampleCache:
             self.prov = p
             for i, j, c in zip(d["I"], d["J"], d["h_cm"]):
                 self.h[(i, j)] = c / 100.0
+            fd = d.get("fine") or {}
+            for i, j, c in zip(fd.get("I", []), fd.get("J", []), fd.get("h_cm", [])):
+                self.fine[(i, j)] = c / 100.0
 
     def missing(self, keys):
         return [k for k in keys if k not in self.h]
 
-    def fetch(self, keys, label: str):
+    def fetch(self, keys, label: str, fine: bool = False):
+        """fetch 3DEP at base keys (or, ``fine``, at fine keys: units of base / terrain_tiers.BREAK_FINE)"""
         if not keys:
             return 0
         f = self.frame
-        lonlat = [self.spec.to_lonlat(f.x0 + i * f.ux, f.z0 + j * f.uz) for i, j in keys]
+        q = float(tt.BREAK_FINE) if fine else 1.0
+        dest = self.fine if fine else self.h
+        lonlat = [self.spec.to_lonlat(f.x0 + i / q * f.ux, f.z0 + j / q * f.uz) for i, j in keys]
         chunks = [list(range(a, min(a + CHUNK, len(keys)))) for a in range(0, len(keys), CHUNK)]
         t0 = time.time()
 
@@ -136,7 +143,7 @@ class SampleCache:
                     if v is None:
                         none.append(keys[k])
                     else:
-                        self.h[keys[k]] = round(float(v), 2)
+                        dest[keys[k]] = round(float(v), 2)
                 done += 1
                 if done % 50 == 0:
                     print(f"  [terrain] {label}: {done}/{len(chunks)} requests ({time.time() - t0:.0f} s)", flush=True)
@@ -150,6 +157,11 @@ class SampleCache:
         ks = sorted(self.h)
         d = {"_provenance": self.prov, "I": [k[0] for k in ks], "J": [k[1] for k in ks],
              "h_cm": [int(round(self.h[k] * 100)) for k in ks]}
+        if self.fine:
+            fs = sorted(self.fine)
+            d["fine"] = {"_unit": f"base / {tt.BREAK_FINE} along lattice lines (break-line profiles, ledger 0046 "
+                                  f"fix round 4)", "I": [k[0] for k in fs], "J": [k[1] for k in fs],
+                         "h_cm": [int(round(self.fine[k] * 100)) for k in fs]}
         self.path.write_bytes(gzip.compress(json.dumps(d, separators=(",", ":")).encode("utf-8"), 9, mtime=0))
 
 
@@ -368,6 +380,141 @@ def write_polyline(proj: Path, c: dict, cor: dict, elev0: float):
 # --- main -----------------------------------------------------------------------------------------
 
 
+# --- break lines (ledger 0046 fix round 4; terrain_tiers "break lines") ------------------------------
+
+
+class _Pave:
+    """pavement-edge distance (centreline distance less the half-width) from the planning road lines"""
+
+    def __init__(self, lines, closed_first, cell=20.0):
+        self.cell = cell
+        self.b = {}
+        for x, z, hw in tt.densify(lines, 2.0, closed_first):
+            self.b.setdefault((math.floor(x / cell), math.floor(z / cell)), []).append((x, z, hw))
+
+    def dist(self, x, z, reach=80.0):
+        c = self.cell
+        n = int(math.ceil(reach / c))
+        i0, j0 = math.floor(x / c), math.floor(z / c)
+        best = reach
+        for i in range(i0 - n, i0 + n + 1):
+            for j in range(j0 - n, j0 + n + 1):
+                for px, pz, hw in self.b.get((i, j), ()):
+                    d = math.hypot(px - x, pz - z) - hw
+                    if d < best:
+                        best = d
+        return best
+
+
+def plan_breaks(topo, spec, frame, lines, closed_first, h):
+    """(eligible cells, edges whose 3DEP profile is read): plain finest cells whose four corners are more than
+    breaks.beyond_m from a pavement, their shared edges, screened by terrain_tiers.edge_screen on the point samples"""
+    bk = spec.breaks
+    pv = _Pave(lines, closed_first)
+    L = topo.nlev - 1
+    r = topo.r[L]
+    cells = []
+    dcache = {}
+
+    def far_enough(k):
+        if k not in dcache:
+            dcache[k] = pv.dist(frame.x0 + k[0] * frame.ux, frame.z0 + k[1] * frame.uz) > bk["beyond_m"]
+        return dcache[k]
+
+    for key in sorted(topo.leaves):
+        if key[0] != L or not topo.plain_finest(key):
+            continue
+        corners = {p for e in tt.cell_edges(key, r).values() for p in e}
+        if all(far_enough(k) for k in corners):
+            cells.append(key)
+    edges = [e for e in tt.break_edge_set(cells, r)
+             if tt.edge_screen(h, e[0], e[1], bk["screen_m"], (frame.ux, frame.uz))]
+    return cells, edges
+
+
+def build_breaks(topo, spec, frame, cells, edges, h, fine, bound_far, corner_h=None):
+    """the break points of every screened edge, the cells they fall in re-triangulated through them. ``h`` / ``fine``:
+    point samples at base / fine keys; ``bound_far(leaf, h_point, h_smooth)`` -> the height an extra vertex takes.
+    Returns (cell_tris {leaf: [(v, v, v)]}, extra fine keys, extra heights, corner base keys that take the point
+    sample, report)"""
+    bk = spec.breaks
+    L = topo.nlev - 1
+    r = topo.r[L]
+    F = tt.BREAK_FINE
+    eidx = {}
+    edge_pts = {}
+    for a, b in edges:
+        fk = tt.edge_fine_keys(a, b)
+        length = math.hypot((b[0] - a[0]) * frame.ux, (b[1] - a[1]) * frame.uz)
+        prof = [fine[k] for k in fk]
+        br = tt.edge_breaks(prof, h[a], h[b], length, bk["tol_m"], bk["max_per_edge"], bk["min_spacing_m"])
+        raw = [h[a]] + prof + [h[b]]
+        sm = [0.25 * raw[k - 1] + 0.5 * raw[k] + 0.25 * raw[k + 1] for k in range(1, len(raw) - 1)]
+        edge_pts[(a, b)] = ([(fk[k - 1], hh) for k, hh in br], list(zip(fk, sm)))
+    vindex = {k: n for n, k in enumerate(topo.vkeys)}
+    n0 = len(topo.vkeys)
+    extras, ex_h, ex_index = [], [], {}
+    cell_tris = {}
+    corners = set()
+    leaf_of = {}
+
+    def xz_base(k):
+        return frame.x0 + k[0] * frame.ux, frame.z0 + k[1] * frame.uz
+
+    def xz_fine(k):
+        return frame.x0 + k[0] / F * frame.ux, frame.z0 + k[1] / F * frame.uz
+
+    n_tri = 0
+    for key in cells:
+        ed = tt.cell_edges(key, r)
+        pts = {s: edge_pts.get(e, ([], []))[0] for s, e in ed.items()}
+        if not any(pts.values()):
+            continue
+        sw, se = ed["S"]
+        nw, ne = ed["N"]
+        ring = [("b", sw)] + [("f", k, y) for k, y in pts["S"]] + [("b", se)] + [("f", k, y) for k, y in pts["E"]] \
+            + [("b", ne)] + [("f", k, y) for k, y in reversed(pts["N"])] + [("b", nw)] \
+            + [("f", k, y) for k, y in reversed(pts["W"])]
+        poly, vid = [], []
+        for it in ring:
+            if it[0] == "b":
+                x, z = xz_base(it[1])
+                poly.append((x, z, h[it[1]] if corner_h is None else corner_h(it[1])))
+                vid.append(vindex[it[1]])
+                corners.add(it[1])
+            else:
+                fk, ys = it[1], it[2]
+                if fk not in ex_index:
+                    ex_index[fk] = len(extras)
+                    extras.append(fk)
+                    ex_h.append(None)
+                    leaf_of[fk] = []
+                leaf_of[fk].append(key)
+                x, z = xz_fine(fk)
+                poly.append((x, z, ys))
+                vid.append(n0 + ex_index[fk])
+        samples = []
+        for a in range(r + 1):
+            for b in range(r + 1):
+                k = (sw[0] + a, sw[1] + b)
+                if k in h:
+                    samples.append((*xz_base(k), h[k]))
+        for e in ed.values():
+            for fk, ys in edge_pts.get(e, ([], []))[1]:
+                samples.append((*xz_fine(fk), ys))
+        tri = tt.triangulate_cell(poly, samples)
+        p2 = [(q[0], q[1]) for q in poly]
+        cell_tris[key] = [tuple(vid[v] for v in tt.face_up_xz(p2, *t)) for t in tri]
+        n_tri += len(tri)
+    for (a, b), (bp, _sm) in edge_pts.items():
+        for fk, ys in bp:
+            if fk in ex_index:
+                ex_h[ex_index[fk]] = bound_far(leaf_of[fk], fine[fk], ys)
+    rep = {"cells_eligible": len(cells), "edges_read": len(edges), "break_cells": len(cell_tris),
+           "extra_vertices": len(extras), "triangles": n_tri, "corner_nodes": len(corners)}
+    return cell_tris, extras, ex_h, corners, rep
+
+
 def run(proj: Path, offline: bool = False) -> dict | None:
     proj = Path(proj).resolve()
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
@@ -417,7 +564,7 @@ def run(proj: Path, offline: bool = False) -> dict | None:
                 far_keys.update(topo.vkeys[v] for v in t)
     bound = spec.aa_far_max_move_m
 
-    def height(k):
+    def height_aa(k):
         if k not in aaset:
             return cache.h[k]
         h = tt.aa_value(cache.h, k)
@@ -425,6 +572,45 @@ def run(proj: Path, offline: bool = False) -> dict | None:
             p = cache.h[k]
             h = p + max(-bound, min(bound, h - p))
         return round(h, 3)
+
+    # BREAK LINES (tier_options.breaks, ledger 0046 fix round 4): sharp risers re-drawn through points on the cell
+    # edges they cross, 3DEP read every half metre along those edges (cached as fine samples)
+    brk_corners, brk = set(), None
+    if spec.breaks is not None:
+        cells, bedges = plan_breaks(topo, spec, frame, lines, bool(cfg.get("loop", True)), cache.h)
+        fneed = sorted({k for a, b in bedges for k in tt.edge_fine_keys(a, b)})
+        fmiss = [k for k in fneed if k not in cache.fine]
+        if fmiss and offline:
+            raise SystemExit(f"[terrain] --offline: {len(fmiss)} break-line profile points have no cached 3DEP sample")
+        if fmiss:
+            print(f"[terrain] fetching {len(fmiss)} break-line profile samples ({math.ceil(len(fmiss) / CHUNK)} "
+                  f"requests)", flush=True)
+            cache.fetch(fmiss, "break-line edge profiles (0.5 m)", fine=True)
+            cache.save()
+
+        def bound_far(leaves, p, ys):
+            if bound is not None and any(lf not in topo.phys_leaves for lf in leaves):
+                ys = p + max(-bound, min(bound, ys - p))
+            return round(ys, 3)
+
+        point_corners = spec.breaks.get("corners", "point") == "point"
+        cell_tris, extras, ex_h, brk_corners, brep = build_breaks(topo, spec, frame, cells, bedges, cache.h,
+                                                                  cache.fine, bound_far,
+                                                                  None if point_corners else height_aa)
+        brep["corners"] = "point" if point_corners else "filtered"
+        if not point_corners:
+            # the corners keep the anti-aliased height the cells beside them use: the break points draw the riser
+            # between them, and a point-sampled corner on a ditch lip would zig-zag the node rows instead
+            brk_corners = set()
+        tt.apply_breaks(topo, cell_tris, extras)
+        brk = {"fine": tt.BREAK_FINE, "I5": [k[0] for k in extras], "J5": [k[1] for k in extras], "h": ex_h,
+               "params": dict(spec.breaks), **brep}
+        print(f"[terrain] break lines: {brep}", flush=True)
+
+    def height(k):
+        if k in brk_corners:
+            return cache.h[k]                       # a break cell's corner: the 3DEP point its break points pair with
+        return height_aa(k)
 
     hs = [height(k) for k in topo.vkeys]
     if aakeys:
@@ -450,6 +636,11 @@ def run(proj: Path, offline: bool = False) -> dict | None:
                          "cells": [list(k) for k in topo.refine_cells],
                          "I": [k[0] for k in rkeys], "J": [k[1] for k in rkeys], "h": [height(k) for k in rkeys],
                          "params": dict(spec.refine)}
+    if brk is not None:
+        out["break"] = brk
+        out["stats"] = dict(out["stats"], break_extra_vertices=len(brk["h"]), triangles=len(topo.tris),
+                            physical_triangles=sum(1 for p in topo.tri_phys if p),
+                            far_triangles=sum(1 for p in topo.tri_phys if not p))
     if aakeys:
         out["antialias"] = {"cell_m": spec.aa_cell_m, "kernel": "tent", "taps": [list(t) for t in tt.AA_TAPS],
                             "nodes": len(aakeys), "far_max_move_m": bound,

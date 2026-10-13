@@ -36,7 +36,7 @@
 #   draft  : median_envelope → terrain_sample → build_loop_blend → trim_connectors → terrain_sample →
 #            build_loop_blend → weld_mouths (GEN layer, regenerable; the weld mitres + warps every side-street
 #            end onto its host, self-checked — 2026-10-11; terrain_sample = the ledger-0046 tiered 3DEP plan)
-#   author : seat_terrain → median → gap_mouths → lamps → signs                 (scripted authoring)
+#   author : seat_terrain → median → gap_mouths → bridges → lamps → signs                 (scripted authoring)
 #            → barrier_bands v2 (corridor solve + self-gates + PLANNED no_route per race layout, hard)
 #            → layout_dummies → author_race_furniture (RACE + RACE_CLOSE_<TOKEN>) → verify_race (idempotent)
 #   ship   : build_kn5_loop prep → split_exports (road / common race / closure per race layout / spawns)
@@ -192,6 +192,12 @@ if [ "$SKIP_BLEND" = 0 ]; then
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_blend.py" -- "$PROJ" 2>&1 | grep "^\[median" )
   step "author: gap the mainline sidewalk at every mouth"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/gap_mouths_blend.py" -- "$PROJ" 2>&1 | grep "^\[gap" )
+  step "author: bridge bodies under the overcrossings (soffit, fascia, abutments, pier bents; visual only, self-checked)"
+  # ledger 0046 fix round 4: with the I-8 cut out of the ground the two decks stood over it as paper-thin ribbons with
+  # sky under them (AC culls back faces). tools/author_bridges_blend.py builds BRIDGESTRUCT_<span> under every declared
+  # span that opens over the ground, all of it below the deck; exit 1 (loop.blend not saved) on a road under it or a
+  # vertex over the deck
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_bridges_blend.py" -- "$PROJ" 2>&1 | grep "^\[bridges\]\|Error\|Traceback" )
   step "author: export scatter positions, strip procedural vegetation (TreeFX replaces it)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/export_scatter_blend.py" -- "$PROJ" 2>&1 | grep "^\[scatter" )
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/strip_scenery_blend.py" -- "$PROJ" 2>&1 | grep "^\[strip" | cut -c1-160 )
@@ -387,7 +393,7 @@ for f in centerline.local.json centerline.raw.local.json median_bands.json dummi
          mouths.json mouth_welds.json verify_mouths.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
          drive_test.json audit.json \
          barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json \
-         $TERRAIN_DATA terrain.tiers.report.json; do
+         $TERRAIN_DATA terrain.tiers.report.json bridges.authored.json; do
   [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
 done
 rm -f "$SRC/data/audit.race.json"   # 0047's shared race audit: retired (ledger 0049 audits each race layout on its own OBJ)

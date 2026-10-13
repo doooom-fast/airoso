@@ -380,6 +380,9 @@ class RefineField:
         self.D = {(i, j): v for i, j, v in zip(R["I"], R["J"], R["D"])}
         self.d = {(i, j): v for i, j, v in zip(R["I"], R["J"], R["d"])}
         self.keep_m, self.feather_m = float(R["keep_m"]), float(R["keep_feather_m"])
+        # the feather LENGTH per node (ledger 0046 fix round 4, keep_batter: an earth batter's run of the gap between the
+        # graded ground and the data, computed by the assembler at each node); absent = the fixed keep_feather_m
+        self.L = {(i, j): v for i, j, v in zip(R["I"], R["J"], R["L"])} if "L" in R else None
         self.edge_m, self.move_m, self.face_m = float(R["edge_m"]), float(R["move_beyond_m"]), float(R["min_face_d_m"])
 
     def in_kept(self, x, y):
@@ -414,7 +417,8 @@ class RefineField:
         if d is None or d <= self.move_m:
             return None
         D = self.at(x, y, self.D)
-        return D + keep_weight(d, self.keep_m, self.feather_m) * (z - D)
+        f = self.at(x, y, self.L) if self.L is not None else self.feather_m
+        return D + keep_weight(d, self.keep_m, f) * (z - D)
 
 
 def _clip_ears(f):
@@ -524,6 +528,7 @@ def _refine_kept_terrain(proj, bm, near2d=None):
     n_move, dmax = 0, 0.0
     moved = set()
     z0 = {}
+    tgt = {}
     for v in kept_v:
         # the pavement distance is the data's (centreline - half width) or the BUILT road's, whichever is nearer: a
         # mouth weld or a flare widens the pavement past its centreline width, and nothing within move_beyond_m of
@@ -531,11 +536,40 @@ def _refine_kept_terrain(proj, bm, near2d=None):
         d_built = near2d(v.co.x, v.co.y)[0] if near2d is not None else None
         t = F.target(v.co.x, v.co.y, v.co.z, d_built)
         if t is not None and abs(t - v.co.z) > 1e-6:
-            dmax = max(dmax, abs(t - v.co.z))
-            z0[v] = v.co.z
-            v.co.z = t
-            n_move += 1
-            moved.add(v)
+            tgt[v] = t
+    # a ZERO-AREA face (three points on one straight line, flat in plan and in 3D: the triangulation before this pass
+    # can leave one where a quad had a point on its edge) has no surface; moving one of its points and not the others
+    # would stand it up as a vertical fin. Its moved points are held where they are (ledger 0046 fix round 4: the
+    # height-dependent BEAUTY split met the batter feather's new heights at one such face) — repeated until none is
+    # left; the FATAL check below still guards everything else.
+    def _flat(pts):
+        a, b, c = pts[:3]
+        return abs((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y)) < 2e-4
+
+    n_held = 0
+    for _r in range(16):
+        held = set()
+        for f in {f for v in tgt for f in v.link_faces}:
+            pts = [v.co.copy() for v in f.verts]
+            if not _flat(pts) or f.calc_area() > 1e-3:
+                continue
+            post = [v.co.copy() for v in f.verts]
+            for k, v in enumerate(f.verts):
+                if v in tgt:
+                    post[k].z = tgt[v]
+            if ((post[1] - post[0]).cross(post[2] - post[0])).length > 2e-3:
+                held.update(v for v in f.verts if v in tgt)
+        if not held:
+            break
+        for v in held:
+            del tgt[v]
+        n_held += len(held)
+    for v, t in tgt.items():
+        dmax = max(dmax, abs(t - v.co.z))
+        z0[v] = v.co.z
+        v.co.z = t
+        n_move += 1
+        moved.add(v)
     # a face flat in plan with a moved vertex that is not flat in 3D now stands vertical (a fin over a crack): counted,
     # and those that were already vertical before the move (the graded surface's own steps) counted apart
     fins = fins_pre = 0
@@ -555,6 +589,7 @@ def _refine_kept_terrain(proj, bm, near2d=None):
                          f"fins (a moved vertex beside an unmoved one at the same point: a crack). Refusing to export.")
     return {"merged": n_merged, "t_junctions": n_tj, "edges_split": n_split, "ears_clipped": n_poke,
             "kept_vertices": len(kept_v), "moved": n_move, "max_move_m": round(dmax, 2), "fins": fins,
+            "held_on_zero_area_faces": n_held,
             "vertical_before": fins_pre}
 
 
@@ -1069,7 +1104,7 @@ def main():
         # ...and the race furniture (ledger 0047): the strips carry u = arc / 4.04 m along the
         # vertical faces and the kerbs v = arc / 1 m — a top-down projection would smear them
         if not ob.name.upper().startswith(("PALM", "TREE", "SCRUB", "BUSHES", "CHAINLINK", "ROADTEXT",
-                                           "1WALL_RACE", "1KERB_RACE")):
+                                           "1WALL_RACE", "1KERB_RACE", "BRIDGESTRUCT")):
             planar_uv(me)
         bm = bmesh.new(); bm.from_mesh(me)
         bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-4)

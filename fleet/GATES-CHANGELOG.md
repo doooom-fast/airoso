@@ -1112,7 +1112,7 @@ float more than 0.1 m over the lowest ground under their walls, by up to 8.36 m.
   which criterion 6 holds to 1 m. Three metres is above the anti-alias filter's largest move (2.34 m, on ridges) and
   far below the old skirt's pit. Measured on all 21,260 vertices below 100 m: minimum 19.67 m; worst 1.19 m under
   3DEP. PASS.
-- **4 — the rim at walls.** Fresh 3DEP fails the rim reading against itself. At 35 of the truth lens's 171 stations
+- **4 — the rim at walls.** *(Withdrawn in fix round 4, below: the truth lens could not reproduce the sub-metre instability, and a build-against-3DEP comparison is not something the world can fail. Round 4's break lines pass s 700 on the first wording.)* Fresh 3DEP fails the rim reading against itself. At 35 of the truth lens's 171 stations
   (39 of the build corridor's 179), 3DEP's own rim-to-floor at ±60 m changes by more than the criterion's 2 m when read
   one section step (2 m) nearer or farther. A wall, bench or retaining wall stands at the rim. Two OSM-derived
   centrelines 0.2–0.6 m apart read the same rim up to 2.18 m differently. This is why round 2's failing list moved
@@ -1139,3 +1139,51 @@ files; gate OBJ md5 e4a8343c6030737c6c907992ffa6c0da, its ground identical to th
 gate verdict file identical to v0.17.1 field for field (only `grass_verts`, no_route timing). `rib_check` PASS: 60
 staircase ribs over 2 m (round 2 56; the tighter far bound), 33 folds. `house_seat_check` PASS: contact −0.32..−0.15
 m, lowest roof over the uphill ground 1.60 m. Road kn5 112,609,136 B. Tiles unchanged.
+
+
+### Fix round 4 (2026-10-13, after the truth + visual lenses refuted fix round 3): break lines on the 5 m cells, `rib_check` reads between the nodes (step jogs), the near-road feather as an earth batter, bridge bodies under the two overcrossings, criterion 4's round-3 re-wording withdrawn
+
+**The washboard that was left — cause.** West of College at (−2860..−3050, −977..−1013) the I-8 cut slope carries
+two drainage benches: risers 4–6 m tall and ~1.5 m wide in 3DEP, running ~8° off the lattice x axis (fresh 3DEP at 1 m
+over a 320 × 120 m box, 38,841 points, TLS on, 2026-10-13; a 1 m mesh of it shows both benches as continuous ledges with
+fine vertical rills on their faces). It is **not** the round-2 aliasing of a narrow channel, which the tent filter fixes:
+whatever height the nodes carry, a lattice can only put a sharp riser **between** two rows of nodes, so a riser at a
+shallow slant sits between rows j and j+1 for ~35 m and then jumps a whole row — the staircase. In the far ring
+criterion 6 also holds the tent to 0.85 m of each node's own point, so a 5 m riser keeps nearly its whole height inside
+one cell. `rib_check` passed it because its lattice-node measure reads such a riser as a "straight ridge" along the
+axis (reported, not gated) with only a staircase node at each jump: 60 of 100 allowed, while the eye saw 6–10
+parallel steps.
+
+| Item | Before | After | Flag |
+|---|---|---|---|
+| `terrain_tiers` break-line helpers + `terrain_sample` (`tier_options.breaks`, opt-in) | each plain 5 m cell = two triangles between its four nodes | on every edge shared by two **plain** finest cells (no x-split centre, no hanging node, not kept, all corners beyond `beyond_m` of a pavement) whose base-lattice midpoint departs from its ends' line by `screen_m`, and which climbs the ground at least as steeply as it crosses it, 3DEP is read every 0.5 m (fine keys, cached in `terrain.samples.json.gz` under `fine`: 108,738 points in 243 requests, with provenance); up to `max_per_edge` points where the 1/4-1/2-1/4-smoothed profile departs most from the polyline so far (Douglas-Peucker, `tol_m`, `min_spacing_m`) become vertices ON the edge, both cells beside it take them (no crack), and each such cell is re-triangulated through them (the least-squares triangulation of its boundary polygon against its 9 base points and its edge profiles, an O(n³) dynamic programme, never a collinear triangle). Corners keep their anti-aliased height (`corners: "filtered"`; point-sampled corners zig-zagged the node rows on the ditch lips). In the far ring a break vertex is held to `far_max_move_m` of its own point. Lake Murray: 9,880 edges read, 6,370 cells, **+4,978 vertices** | wiring |
+| the assembler (`build_tiered_terrain`) | lattice vertices only | places the break vertices (`T["break"]`, fine keys) through the same clamp and feather; refuses one inside `keep_surface_m` | wiring |
+| `tools/rib_check.py` **step jogs** (new, gated) | — | scan lines a quarter cell off every 5 m lattice line cut the **built** finest-tier triangles; each riser crossing (a run as steep as `JOG_SLOPE`, dropping `JOG_DROP_M` within `JOG_RUN_MAX_M`) is chained line to line (`JOG_LINK_M`, `JOG_DY_M`, up to two lines skipped), and a JOG is a step between consecutive crossings that outruns the riser's own pace over three lines either side by `JOG_M`. A washboard is a neighbourhood of jogs: **exit 1 when more than `MAX_JOG_CLUSTER` lie within `JOG_CLUSTER_M` of one jog** beyond 20 m | thresholds below [invented] |
+| `rib_check` nyquist rows | every lattice row | a row whose surface between its nodes is drawn through break-line vertices is skipped (it is not the straight line the nodes imply; the step-jog measure reads it) | wiring |
+| the near-road feather (`tier_options.keep_batter`, `keep_feather_min_m`; the assembler + the engine-july prep, pending mirror) | the graded surface blends into 3DEP over a fixed 16 m past 20 m | over an **earth batter's run** of the gap between them: 3.5 m per metre of gap, held to 8–16 m. The assembler computes it at every lattice vertex and at every refine node (written as `L` into `terrain.refine.json.gz`); the prep interpolates it like D and d (computing it per vertex from the vertex's own height stood one zero-area face up as a fin: FATAL). A 2:1 batter was tried first and **refuted by the step-jog gate**: its 0.75 peak slope drew a riser beside every road where the graded ground sits 4+ m off 3DEP (jogs in the 20–40 m band 11 → 54) | thresholds below [invented] |
+| engine-july prep `_refine_kept_terrain` (pending mirror) | a moved vertex on a zero-area face stands it up as a fin (FATAL) | the moved points of a zero-area face (three points on one line, flat in plan **and** in 3D) are held where they are, repeated until none is; the FATAL fin check still guards everything else. 1 vertex held on the build | [std] zero area has no surface |
+| `tools/author_bridges_blend.py` (new author step after the mouths gap, both chains; `ship.json` `bridges`; `data/bridges.authored.json`) | from the cut floor both overcrossings were paper-thin ribbons with sky under them (AC culls back faces; no soffit, fascia, abutment or pier) | `BRIDGESTRUCT_<span>` under every declared span of every drivable line that opens over the ground (a station is open where the ground under ANY part of the deck is `OPEN_MIN_M` under the soffit; a column reading through the hole the terrain leaves under a road is no evidence): soffit `DECK_T_M` under the deck, fascia on both edges, an abutment wall at each end of each opening, pier bents (cap beam + columns) at the I-8 median and outside each carriageway, never in one, never by an abutment. Visual only: no digit prefix, not HWYSTRUCT, in no gate, GrassFX or occluder list; concrete by its own pbr row (`BRIDGESTRUCT`, both engines; engine-july's `pbr.py` pending mirror), its box UVs kept by the prep. Self-checked (exit 1, loop.blend not saved): no structure vertex over a ROAD / CURB surface or above the deck. College Ave: opening 2553.6–2655.6 m, walls at 2553.6 / 2648.1, a bent at 2597.9 (4,036 v); Lake Murray Blvd: opening 13353.2–13402.7, walls 13357.7 / 13399.7, bents 13372.1 / 13395.5 (2,168 v). First drafted in an unverified round-2 attempt (branch `wip-0046-fixround2-prior`) | thresholds below [invented] |
+| criterion 4 (ledger 0046 §Verification) | round 3 re-worded the rim at 3DEP wall edges (±58/60/62 m span) | **withdrawn** — the truth lens showed fresh 3DEP does not move by more than 2 m under 0.5 m shifts (0 of 344 rims), and a build-against-3DEP comparison is not something the world can fail. Sections are taken inside the landmark box (the terrain's extent; the truth lens's own code does the same) | re-word withdrawn |
+
+| Invented number (⚠) | Value | Why |
+|---|---|---|
+| `breaks.beyond_m` | 20 m | criterion 7's band (in practice every plain cell is ≥ ~55 m out: within 60 m of a pavement the 5 m tier is x-split) |
+| `breaks.screen_m` | 0.25 m | a 2.5 m midpoint off its ends' line by this is a bend worth reading (0.20 read 22 % more edges and drew more jogs, 57 against 36 on the bare lattice) |
+| `breaks.tol_m` / `max_per_edge` / `min_spacing_m` | 0.4 m / 3 / 0.75 m | a riser's top and foot plus a ditch lip; 0.75 m keeps two points off one 3DEP pixel |
+| fine spacing | 0.5 m (base / 5) | half a 3DEP pixel |
+| profile smoothing | 1/4 1/2 1/4 at 0.5 m | one pixel's noise, not a riser |
+| `JOG_CELL_MAX_M` | 7.6 m | finest-tier triangles (a 5 m cell's diagonal is 7.1 m) |
+| `JOG_SLOPE` / `JOG_DROP_M` / `JOG_RUN_MAX_M` | 0.7 / 2.0 m / 8 m | a riser, not a hillside; `RIB_M`'s scale |
+| `JOG_LINK_M` / `JOG_DY_M` | 8 m / 3 m | the same riser on the next line |
+| `JOG_M` | 2.0 m | a row is 5 m; a straight riser at any angle steps exactly at its own pace |
+| `JOG_CLUSTER_M` / `MAX_JOG_CLUSTER` | 75 m / 5 | the lens saw 6–10 parallel steps. Measured: ship9 (the first ribbed build) 11, fix round 3 **7 (FAIL)**, this build **4** |
+| `keep_batter` / `keep_feather_min_m` | 3.5 / 8 m | steepest 1.5 / 3.5 = 0.43, under the step-jog riser slope (0.7) everywhere and never steeper than the 16 m blend where the gap exceeds 4.6 m; 2.0 (steepest 0.75) failed the gate |
+| `STEP_M`, `DECK_T_M`, `FASCIA_LIP_M`, `OPEN_MIN_M`, `ABUT_MIN_M`, `BURY_M`, `BUILD_PAD_M` | 1.5, 1.4, 0.25, 0.5, 1.5, 1.0, 6 m | a typical box-girder overcrossing's depth under the decks' own width; the walls start where the clearance first passes 1.5 m |
+| `LANE_M`, `SHOULDER_M`, `PIER_CLEAR_M`, `COL_SPACING_M`, `COL_R_M`, `CAP_D_M`, `CAP_H_M`, `EDGE_INSET_M` | 3.7, 3.0, 4, 7, 0.6, 1.6, 1.0, 1.5 m | the bent geometry; OSM lanes per carriageway |
+
+**Measured** (final full rehearsal, `ship_sd.sh --no-install` on a fresh scratch copy of the workshop, ENG = a fresh
+copy of engine-july plus the snapshot's two pending files; numbers in ledger 0046 Results — fix round 4): every gate
+verdict file identical to v0.17.1 field for field (only `grass_verts` 87,278 → 335,447 and no_route timing);
+`rib_check` PASS — nyquist 75 / 100, folds 33 / 100, **step jogs: densest 75 m 4 / 5** (round 3: 7, FAIL; the lens's
+box (−3060..−2850, −1020..−970): 8 jogs → 0); `house_seat_check` PASS; road kn5 112,609,136 → 113,313,134 B; race and
+closure kn5 unchanged; terrain tiles `1GRASS` × 8 (max 42,426 v), `GRASS_FAR` × 2 (max 55,750 v).

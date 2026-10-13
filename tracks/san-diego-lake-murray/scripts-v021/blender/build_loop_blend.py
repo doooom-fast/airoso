@@ -219,6 +219,10 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
     band = float(tcfg.get("terrain_band_m", 22.0))
     c_full, c_rel = float(tcfg.get("clamp_corridor_m", 80.0)), float(tcfg.get("clamp_blend_m", 250.0))
     keep_m, keep_f = float(opt.get("keep_surface_m", 0.0)), float(opt.get("keep_feather_m", 0.0))
+    # the feather as an earth batter (ledger 0046 fix round 4; opt-in): its length follows how far the graded ground
+    # sits off the data, between keep_feather_min_m and keep_feather_m
+    batter = float(opt["keep_batter"]) if "keep_batter" in opt else None
+    keep_fmin = float(opt.get("keep_feather_min_m", 0.0))
     fx0, fz0, fux, fuz = T["frame"]                     # base-lattice key (I, J) -> (x0 + I*ux, z0 + J*uz)
 
     # pavement distance + nearest road height: the FINAL lines (smoothed, narrowed) at <= 1 m
@@ -260,18 +264,11 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
     vdist = []                                          # pavement distance per vertex (None = a kept-cell node)
     n_keep = n_feather = n_clamped = n_cell = n_edge = 0
     max_lift = max_cut = 0.0
-    for i, j, h, kc in zip(I, J, H, K):
-        x, z = fx0 + i * fux, fz0 + j * fuz
-        if kc:
-            # a KEPT cell's corner or a node on its edge: the graded grid itself (the seat and the kn5 prep then
-            # reshape exactly the ground they always reshaped; a finer neighbour's node lies ON the kept edge)
-            L = legacy(x, z)
-            if L is None:
-                raise SystemExit(f"[blend] tiered terrain: kept vertex ({x:.1f}, {z:.1f}) outside the 40 m grid")
-            verts.append((x, L, z))
-            vdist.append(None)
-            n_cell += 1
-            continue
+
+    def ground(x, z, h):
+        """(local y, pavement distance) of a non-kept vertex: 3DEP under the distance-weighted band clamp, then the
+        kept graded surface feathered in near the roads"""
+        nonlocal n_keep, n_feather, n_clamped, n_edge, max_lift, max_cut
         y = h - elev0
         _co, k, dist = kd.find((x, z, 0.0))
         d = dist - hws[k]
@@ -282,7 +279,13 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
                 n_clamped += 1
                 max_lift, max_cut = max(max_lift, y2 - y), max(max_cut, y - y2)
             y = y2
-        wk = tt.keep_weight(d, keep_m, keep_f)
+        Lg = None
+        if batter is not None and keep_m < d < keep_m + keep_f:
+            Lg = legacy(x, z)
+            wk = tt.keep_weight(d, keep_m, tt.feather_len((Lg - y) if Lg is not None else keep_f, keep_f, batter,
+                                                           keep_fmin))
+        else:
+            wk = tt.keep_weight(d, keep_m, keep_f)
         if kd_keep is not None and wk < 1.0:
             we = tt.keep_weight(kd_keep.find((x, z, 0.0))[2], 0.0, keep_f)
             if we > wk:
@@ -298,8 +301,39 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
                 n_keep += 1
             else:
                 n_feather += 1
+        return y, d
+    for i, j, h, kc in zip(I, J, H, K):
+        x, z = fx0 + i * fux, fz0 + j * fuz
+        if kc:
+            # a KEPT cell's corner or a node on its edge: the graded grid itself (the seat and the kn5 prep then
+            # reshape exactly the ground they always reshaped; a finer neighbour's node lies ON the kept edge)
+            L = legacy(x, z)
+            if L is None:
+                raise SystemExit(f"[blend] tiered terrain: kept vertex ({x:.1f}, {z:.1f}) outside the 40 m grid")
+            verts.append((x, L, z))
+            vdist.append(None)
+            n_cell += 1
+            continue
+        y, d = ground(x, z, h)
         verts.append((x, y, z))
         vdist.append(d)
+    # BREAK LINES (ledger 0046 fix round 4, terrain_sample.build_breaks): vertices ON the edges of plain 5 m cells
+    # where a sharp riser crosses them, at fine keys (units of base / break.fine); the same clamp and feather as any
+    # vertex. They are never kept-cell nodes and never move a lattice vertex.
+    BK = T.get("break")
+    n_lat = len(verts)
+    Ib, Jb = list(I), list(J)
+    if BK:
+        q = float(BK["fine"])
+        for i5, j5, h in zip(BK["I5"], BK["J5"], BK["h"]):
+            x, z = fx0 + i5 / q * fux, fz0 + j5 / q * fuz
+            y, d = ground(x, z, h)
+            if d <= keep_m:
+                raise SystemExit(f"[blend] tiered terrain: break-line vertex ({x:.1f}, {z:.1f}) is {d:.1f} m from a "
+                                 f"pavement, inside keep_surface_m {keep_m} (the planning roads moved?)")
+            verts.append((x, y, z))
+            vdist.append(d)
+            Ib.append(i5 / q); Jb.append(j5 / q)
     tris = T["tris"]
     tri3 = [(tris[3 * k], tris[3 * k + 1], tris[3 * k + 2]) for k in range(len(tris) // 3)]
     # DATA DIAGONALS (ledger 0046 fix round 2): every plain square cell is split along the diagonal its data
@@ -311,15 +345,15 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
         if dg.get("rule", "min_dh") != "min_dh":
             raise SystemExit(f"[blend] terrain.tier_options.diagonals.rule {dg.get('rule')!r}: only 'min_dh'")
         beyond = float(dg.get("beyond_m", 20.0))
-        elig = [dd is not None and dd > beyond for dd in vdist]
-        tri3, n_diag = tt.data_diagonals(tri3, I, J, [v[1] for v in verts], elig)
+        elig = [dd is not None and dd > beyond and n < n_lat for n, dd in enumerate(vdist)]
+        tri3, n_diag = tt.data_diagonals(tri3, Ib, Jb, [v[1] for v in verts], elig)
     phys, far = tt.split_mesh(tri3, [bool(p) for p in T["phys"]])
     n_refine = 0
     if RF is not None:
         # the data the prep's kept-cell refinement needs at the kept cells' x-split sub-lattice: D = 3DEP under the
         # same distance-weighted clamp as every lattice vertex, d = pavement distance (the feather's argument)
         prm = RF["params"]
-        nD, nd = [], []
+        nD, nd, nL = [], [], []
         for i, j, h in zip(RF["I"], RF["J"], RF["h"]):
             x, z = fx0 + i * fux, fz0 + j * fuz
             y = h - elev0
@@ -329,6 +363,11 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
             if w > 0.0:
                 y = tt.band_clamp_value(y, ys[k], band, w)
             nD.append(round(y, 3)); nd.append(round(d, 3))
+            if batter is not None:
+                # the feather length at this node, from the graded surface it blends away from (ledger 0046 fix
+                # round 4): interpolated by the prep like D and d, so a straight run of vertices stays straight
+                Lg = legacy(x, z)
+                nL.append(round(tt.feather_len((Lg - y) if Lg is not None else keep_f, keep_f, batter, keep_fmin), 3))
         n_refine = len(nD)
         refine = {"_provenance": {"what": "ledger 0046 kept-cell refinement data for the kn5 prep "
                                           "(build_kn5_loop._refine_kept_terrain): x-split sub-lattice of every kept "
@@ -339,6 +378,7 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
                   "kept_cells": RF["kept_cells"], "cells": RF["cells"],
                   "I": RF["I"], "J": RF["J"], "D": nD, "d": nd,
                   "keep_m": keep_m, "keep_feather_m": keep_f,
+                  **({"keep_batter": batter, "keep_feather_min_m": keep_fmin, "L": nL} if batter is not None else {}),
                   "edge_m": float(prm["edge_m"]), "move_beyond_m": float(prm["move_beyond_m"]),
                   "min_face_d_m": float(prm["min_face_d_m"])}
         (data / "terrain.refine.json.gz").write_bytes(
@@ -364,6 +404,7 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
            "kept_cell_vertices": n_cell, "kept_surface": n_keep, "feathered": n_feather,
            "feathered_from_kept_edge": n_edge, "refine_nodes": n_refine, "clamped": n_clamped,
            **({"data_diagonals_flipped": n_diag} if dg else {}),
+           **({"break_vertices": len(verts) - n_lat, "break_cells": BK.get("break_cells")} if BK else {}),
            "clamp_max_lift": round(max_lift, 2), "clamp_max_cut": round(max_cut, 2),
            "abs_min": round(ylo, 2), "abs_max": round(yhi, 2)}
     print(f"[blend] tiered terrain: {rep}")

@@ -5,10 +5,11 @@ tools/mouth_weld.py; this is the Blender half.
 Runs INSIDE Blender, right after build_loop_blend rebuilt loop.blend with the trimmed connectors and BEFORE
 seat_terrain (which seats the terrain under the WELDED deck) / median / gap_mouths:
 
-    blender --background --python-exit-code 1 --python-expr "import sys; sys.path.insert(0, r'<workshop>')" \\
+    blender --background --python-exit-code 1 --python-expr "$V021_SHIM" \\
         --python tools/weld_mouths_blend.py -- <project-dir>
 
-The workshop root must be on sys.path (as for build_loop_blend): the assembler's own ribbon + smooth modules
+The assembler's package must be importable as `scripts` (tools/ship_sd.sh's V021_SHIM registers airoso's
+tracks/san-diego-lake-murray/scripts-v021 under that name, as for build_loop_blend): its own ribbon + smooth modules
 rebuild every connector's ROAD / CURB / MARKINGS / YLINE block, and the mesh must match them vertex for vertex
 before anything moves — the assembler's vertex order is the contract (as gap_mouths_blend relies on for CURB).
 Any mismatch stops loudly: never weld a mesh whose layout we only assume.
@@ -111,10 +112,10 @@ def main():
     proj = Path(argv[0])
     data = proj / "data"
     try:
-        from scripts.geometry import ribbon as wr, smooth as ws   # the workshop's (put on sys.path by the caller)
+        from scripts.geometry import ribbon as wr, smooth as ws   # the assembler's (registered by the caller)
     except ImportError as e:
-        raise SystemExit(f"[weld] FATAL: the workshop's scripts.geometry is not importable ({e}) — run with "
-                         "--python-expr \"import sys; sys.path.insert(0, r'<workshop root>')\"")
+        raise SystemExit(f"[weld] FATAL: the assembler's scripts.geometry is not importable ({e}) — run with "
+                         "tools/ship_sd.sh's --python-expr \"$V021_SHIM\"")
     mouths = json.loads((data / "mouths.json").read_text(encoding="utf-8"))["mouths"]
     local = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
     conns = json.loads((data / "connectors.local.json").read_text(encoding="utf-8"))["connectors"]

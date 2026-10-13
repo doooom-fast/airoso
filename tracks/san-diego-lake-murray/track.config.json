@@ -98,6 +98,10 @@
     "1GRASS": {
       "diffuse": "assets/textures/grass_diffuse.jpg",
       "normal": "assets/textures/grass_normal.jpg"
+    },
+    "GRASS_FAR": {
+      "diffuse": "textures/chaparral_far_diffuse.jpg",
+      "_doc": "Ledger 0046 fix round (visual verify, 2026-10-12): the far ring wore pbr's stock ground_dry tile, a neutral grey gravel (mean RGB 139/132/122) - Cowles read as bare rock beside the green turf. This is grey-olive sage scrub over tan soil (mean 93/93/66), derived from the owned grass + ground_dry tiles (tracks/san-diego-lake-murray/textures/README.md); project-relative, synced into the workshop by tools/ship_sd.sh (TRACK_TEXTURES)."
     }
   },
   "pbr": {
@@ -340,10 +344,93 @@
     }
   },
   "terrain": {
-    "_doc": "Lessons carried over from the prior build. Roads and kerbs stay TIGHT to their real sampled elevation. The grass terrain is clamped so the raw DEM's Cowles-area peaks can't tower over a neighborhood loop where there are none.",
+    "_doc": "Ledger 0046 (Kevin 2026-10-10: 'more terrain near the roads, and the I-8 trench and adjacent causeway cut out'; 'I want to see cowles mountain at least and maybe more of the i8 corridor when I'm up on Navajo'). fleet/LAWS.md L3 as amended 2026-10-11: near-road relief is clamped, far relief is data. The ground is ONE multi-resolution lattice sampled from USGS 3DEP AT every vertex (scripts/elevation/terrain_sample.py, cached in data/terrain.samples.json.gz), anchored on the 20 m grid the assembler grades (tier_options.frame): 5 m cells (split in four) within 60 m of a pavement, 20 m (split in four) to 500 m, 40 m beyond, the I-8 corridor at 5 m and Cowles' cone at 20 m, over the dossier's landmark box (far_extent). Under and beside the roads (keep_cells: the graded grid's own 20 m cells wherever a pavement is within 18 m) the ground is the v0.17.1 graded surface, triangle for triangle, so the seat and the kn5 prep reshape exactly what they always reshaped; past 20 m the kept cells themselves are refined to the 5 m sub-lattice and take the data, feathered by 36 m (keep_cells.refine, applied by the kn5 prep after it has reshaped the near-road ground). Within 250 m of a pavement (and every pocket that encloses) the ground is physical 1GRASS; the rest is the visual-only far ring GRASS_FAR (no physics, no gates, no GrassFX). The band clamp (+-terrain_band_m of the nearest road) holds in full only within clamp_corridor_m of a pavement and releases to the raw DEM by clamp_blend_m: Cowles, the Del Cerro hilltop and the valley walls are 3DEP, uncapped.",
     "terrain_band_m": 22.0,
+    "clamp_corridor_m": 80.0,
+    "clamp_blend_m": 250.0,
+    "_clamp_doc": "GATES-CHANGELOG 2026-10-11 (ledger 0046): 80 / 250 m are invented within the ledger's ranges (60-100 / ~250).",
     "terrain_max_grade": 0.35,
-    "elevation_scale": 1.0
+    "elevation_scale": 1.0,
+    "tiers": [
+      {
+        "within_m": 60.0,
+        "cell_m": 5.0,
+        "x_split": true
+      },
+      {
+        "within_m": 500.0,
+        "cell_m": 20.0,
+        "x_split": true
+      },
+      {
+        "cell_m": 40.0
+      }
+    ],
+    "tier_options": {
+      "frame": {
+        "kind": "heightfield",
+        "upsample": 2
+      },
+      "keep_cells": {
+        "cell_m": 20.0,
+        "within_m": 18.0,
+        "refine": {
+          "cell_m": 5.0,
+          "beyond_m": 10.0,
+          "edge_m": 5.5,
+          "move_beyond_m": 20.0,
+          "min_face_d_m": 12.0
+        }
+      },
+      "physical_within_m": 250.0,
+      "keep_surface_m": 20.0,
+      "keep_feather_m": 16.0,
+      "keep_batter": 3.5,
+      "keep_feather_min_m": 8.0,
+      "antialias": {"cell_m": 5.0, "kernel": "tent", "far_max_move_m": 0.85},
+      "diagonals": {"rule": "min_dh", "beyond_m": 20.0},
+      "breaks": {"beyond_m": 20.0, "screen_m": 0.25, "tol_m": 0.4, "max_per_edge": 3, "min_spacing_m": 0.75, "corners": "filtered"},
+      "_doc": "frame: the lattice is anchored on data/heightfield.meta.json upsampled x2 (the assembler's graded 20 m grid; ~20.07 x 19.98 m at Lake Murray), so cell_m 40 / 20 / 5 are 2, 1 and 1/4 of its cells. keep_cells: every grid cell within 18 m of a pavement keeps its own two triangles and graded heights (the seat moves ground <= 11.1 m past a connector's pavement and subdivides <= 15.1 m; the prep pins <= 9 m and subdivides <= 16 m of a road vertex), so near-road ground and every near-road gate are exactly v0.17.1's. x_split: a centre vertex, longest edge = the cell side (5.0 m, 20.1 m) \u2014 criterion 5's 7 m / 28.3 m. physical_within_m: the 1GRASS extent (drive_test sweeps <= 20 m off the road; TreeFX fills <= 200 m). keep_surface_m / keep_feather_m: the graded surface is kept to 20 m (the conform corridor) and feathered into the data over 16 m (the conform blend), by pavement distance. keep_cells.refine (ledger 0046 fix round, 2026-10-12): a kept 20 m cell reaches ~46 m out, so past the prep's reach it stayed 20 m graded facets (criterion 5) and smoothed the I-8 terrace walls beside Alvarado away; once the seat and the prep have reshaped the near-road ground, the prep (build_kn5_loop._refine_kept_terrain) halves every kept-cell edge over edge_m 5.5 m on faces reaching past move_beyond_m 20 m or centred past min_face_d_m 12 m (coplanar: on the 20 m grid the halving lands on the 5 m x-split sub-lattice), then moves every kept-cell vertex past 20 m onto the 3DEP sub-lattice (planned for every kept cell's 5 m sub-cells not wholly within beyond_m 10 m, sampled like any vertex, under the L3 clamp) feathered exactly as the lattice beside it \u2014 one field across the kept edge, so the kept-node feather of 2026-10-12 (which held the kept cells' outer edge on the graded surface) is retired. Within 20 m of a pavement nothing moves (criterion 7). antialias + diagonals (ledger 0046 fix round 2, 2026-10-13): the visual lens's washboard ribs (the concrete Alvarado Creek channel SE of the LMB overcrossing, ~7 m wide and 6 m deep, and a ~3 m ditch on the cut slope west of College) are real 3DEP features narrower than two 5 m cells, point-sampled every 5 m and folded by a fixed diagonal into a staircase. antialias: every 5 m-level vertex (and refine node) takes the tent-filtered 3DEP of the 2.5 m base lattice around it (weights 1/4 1/2 1/4 per axis, terrain_tiers.AA_TAPS) instead of one point — exact on a plane, it only moves vertices where the ground bends inside a cell; in the far ring the move is held to far_max_move_m 0.85 m of the vertex's own 3DEP point (criterion 6's 1 m less a 0.15 m margin, three times the 0.045 m a fresh 3DEP fetch drifts from the cache on steep far slopes: at 0.95 the truth lens read all 106,544 far vertices against fresh 3DEP at max 0.995 m, 152 over 0.95; at 1.0 a re-sample read 3 of 3,000 at 1.003-1.005 m). diagonals: every plain square cell more than beyond_m 20 m from a pavement is split along the diagonal whose corners differ least in height (terrain_tiers.data_diagonals); no vertex moves, kept cells and x-split fans are untouched. Measured by tools/rib_check.py. GATES-CHANGELOG 2026-10-11 / 2026-10-12 / 2026-10-13: 18 / 250 / 20 / 16, 10 / 5.5 / 20 / 12, the tent kernel, far_max_move_m 0.85 and 20 are invented within the ledger's ranges. breaks + keep_batter (ledger 0046 fix round 4, 2026-10-13): the visual lens still saw a washboard west of College — cut-slope benches, risers 4-6 m tall and ~1.5 m wide, running ~8 degrees off the lattice axis: a lattice can only put a riser BETWEEN two rows of nodes, so it sat between rows j and j+1 for ~35 m and then jumped a row (and in the far ring criterion 6 holds the tent to 0.85 m). breaks: on every edge of a plain 5 m cell (no x-split, no hanging node, not kept, all corners more than beyond_m 20 m from a pavement) whose base-lattice midpoint departs from its ends' line by screen_m 0.25 m and which climbs the ground at least as steeply as it crosses it, 3DEP is read every 0.5 m (cached as fine samples); up to max_per_edge 3 points where the lightly smoothed profile departs most from the polyline (tol_m 0.4 m, min_spacing_m 0.75 m) become vertices ON the edge, and the cell is triangulated through them (the least-squares triangulation of its boundary polygon) — the riser runs straight through the cell. corners filtered: the cell corners keep their anti-aliased height. Measured by tools/rib_check.py step_jogs. keep_batter 3.5 / keep_feather_min_m 8: past 20 m the graded surface returns to 3DEP within an earth batter's run of the gap between them (3.5 m per metre, held to 8-16 m; steepest 0.43, never steeper than the 16 m blend where the gap exceeds 4.6 m), so ground 29 m from the LMB approach is the data within criterion 4's 2 m (truth lens s 3800); per node, interpolated by the prep like D and d. All numbers invented, GATES-CHANGELOG 2026-10-13 fix round 4."
+    },
+    "far_extent": {
+      "bbox_swne": [
+        32.755,
+        -117.0895,
+        32.822,
+        -116.998
+      ],
+      "_doc": "The dossier's landmark box (ledger 0046 Project): Cowles summit + ~1 km north (32.822), the valley wall south of I-8 (32.755), the Cowles ridge east and the San Diego River gorge west; widened from the ledger's -117.085 / -117.00 to -117.0895 / -116.998 so criterion 3's faces at x <= -4000 and x >= 4500 exist (8.6 x 7.4 km). Note: the gorge floor is 3DEP 27-100 m abs (probe 2026-10-11) \u2014 real ground below the ledger's 'no vertex below 100 m' line, kept as data."
+    },
+    "include": [
+      {
+        "name": "cowles_mountain",
+        "bbox_swne": [
+          32.8055,
+          -117.0425,
+          32.82,
+          -117.0215
+        ],
+        "cell_m": 20.0,
+        "_doc": "the summit cone (3DEP 483.2 m at 32.81277 N 117.03192 W, ledger 0046) at 20 m: its real shape, 9 deg up from Navajo"
+      }
+    ],
+    "corridors": [
+      {
+        "name": "i8",
+        "ref": "I 8",
+        "highway": "motorway",
+        "osm_cache": "data/osm.json",
+        "half_width_m": 80.0,
+        "cell_m": 5.0,
+        "floor_step_m": 10.0,
+        "section_step_m": 25.0,
+        "section_res_m": 2.0,
+        "section_half_m": 80.0,
+        "polyline_out": "data/i8.local.json",
+        "legacy_copy": "data/i8.legacy.local.json",
+        "_doc": "Ledger 0046 E4. Centreline = the median of the two I-8 carriageway chains in airoso data/osm.json (osm_cache is relative to the airoso root); the corridor is refined to 5 m cells within 80 m of it and every vertex is 3DEP, so the cut walls AND the fills come from the data (raising as well as lowering). The floor every 10 m becomes data/i8.local.json over the whole far box; 2 m cross-sections every 25 m record where 3DEP says the freeway is in cut / on fill. TERRAIN ONLY: no I-8 pavement ribbon (Kevin, the Lariat build: extra highways 'look like wavy ribbons'). The original 64-point i8.local.json (provenance unrecorded) is kept as i8.legacy.local.json: the legacy trench, guardrails and streetlight skips near the loop were built on it."
+      }
+    ]
   },
   "scenery": {
     "_doc": "palm_roads: names (matching route.roads / OSM) whose verges get tall Mexican fan palms, dropped every palm_spacing_m on both sides. Now the whole loop (all 5 roads) after the Lake Murray Blvd test strip was approved.",

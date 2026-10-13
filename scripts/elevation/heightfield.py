@@ -48,7 +48,14 @@ MEDIAN_WINDOW_M = 33.0       # median de-spike window (removes DEM notches: unde
 SMOOTH_WINDOW_M = 39.0       # mean smoothing window — narrow on purpose: removes ±0.2 m DEM surface
 SMOOTH_PASSES = 2            # noise but PRESERVES real drops (a wider window flattens them; see notes)
 HF_SPACING_M = 40.0          # terrain grid resolution
-HF_MARGIN_M = 150.0          # grid margin around the loop
+HF_MARGIN_M = 150.0          # grid margin around the loop (default of terrain.margin_m)
+
+
+def hf_margin_m(cfg: dict) -> float:
+    """The grid margin: ``terrain.margin_m`` when a track declares it (ledger 0046 E1 — extent is a dossier
+    decision, not a constant), else HF_MARGIN_M, so every track that does not declare it samples exactly the
+    grid it always did. (A tiered track's far relief comes from scripts.elevation.terrain_sample instead.)"""
+    return float(((cfg or {}).get("terrain") or {}).get("margin_m", HF_MARGIN_M))
 
 
 # --- smoothing -----------------------------------------------------------------
@@ -352,7 +359,7 @@ def build(project_dir: str | Path) -> dict:
     except Exception as e:
         print(f"[heightfield] connector-extent widening skipped: {e}")
 
-    grid, meta = build_heightfield(bbox_coords, HF_SPACING_M, HF_MARGIN_M, elev_source=src)
+    grid, meta = build_heightfield(bbox_coords, HF_SPACING_M, hf_margin_m(_cfgj), elev_source=src)
     write_npy(data / "heightfield.npy", grid)
     (data / "heightfield.meta.json").write_text(json.dumps(meta), encoding="utf-8")
 

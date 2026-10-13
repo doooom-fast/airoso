@@ -48,6 +48,11 @@ UV_TILE = 4.0  # metres per texture tile (top-down planar projection)
 # PHYSICAL mesh means the car falls through (the invisible-forest / fall-through bug class).
 VERT_CAP = 65535
 SPLIT_CAP = 60000
+# TERRAIN meshes tile by BALANCED BISECTION (ledger 0046): the tiered terrain is fine along the roads and coarse
+# far out, so equal-width bands put most of the vertices into whichever band holds the most road (the western
+# one already held ~60k of the cap before the tiers); a recursive median split lands every tile under SPLIT_CAP
+# whatever the density. GRASS_FAR is the visual-only far ring (no digit prefix: no physics, no gates, no GrassFX).
+TERRAIN_TILES = ("1GRASS", "GRASS_FAR")
 
 # freeway groups whose winding must not matter: after the loop's local->Blender reflection their
 # faces would point inward, so double-side them (append reversed faces) — a barrier/structure must
@@ -69,6 +74,15 @@ CORRIDOR_EDGE_M = 4.5      # subdivide terrain edges near the road down to about
 LAYER_WIN = 30.0           # deck sampling window (no stacked loop legs, but stay safe)
 BRIDGE_MATCH_M = 14.0      # centerline pt within this of an OSM bridge way = on the span
 BRIDGE_PAD_M = 8.0         # widen each detected span a touch onto the abutments
+# --- house / building seat (ledger 0046 fix round 3) -------------------------------------------------------------
+# The draft sits each OSM footprint on the ground it can see (its centroid, less HOUSE_SINK_M) and this prep then
+# reshapes that ground (conform, pin, feather, the tiered terrain's kept-cell refinement), so a house that rode one
+# corner's delta could end up half under a hill whose ground moved under its other corners. Buildings are
+# therefore seated on the FINAL ground under their own footprint, after every pass that moves it.
+HOUSE_SINK_M = 0.4         # the draft's own sink: build_loop_blend.build_buildings sits a footprint at ground - 0.4
+HOUSE_FOOT_M = 0.15        # [invented] the foundation reaches this far below the lowest ground under the footprint
+HOUSE_EDGE_STEP_M = 1.5    # [invented] ground is read at the corners, the centroid and every ~1.5 m along each wall
+HOUSE_SHOW = 0.5           # [invented] at least this share of a building's height stands above the highest ground under its walls
 
 
 def _mpd(lat0):
@@ -173,25 +187,439 @@ def assert_under_cap(name: str, nverts: int) -> None:
                          f"Raise the split factor or slim the source mesh. Refusing to export.")
 
 
+def balanced_face_tiles(centers, face_verts, cap=SPLIT_CAP):
+    """Pure (no bpy): face-index groups, each touching at most ``cap`` unique vertices, by recursive
+    MEDIAN bisection of the face centres along the group's longer horizontal extent (palm.chunk_mesh's
+    rule). Deterministic: ties broken by the other axis, then the face index."""
+    out = []
+
+    def nverts(fs):
+        return len({v for f in fs for v in face_verts[f]})
+
+    def rec(fs):
+        if len(fs) < 2 or nverts(fs) <= cap:
+            out.append(fs)
+            return
+        xs = [centers[f][0] for f in fs]
+        ys = [centers[f][1] for f in fs]
+        ax = 0 if (max(xs) - min(xs)) >= (max(ys) - min(ys)) else 1
+        order = sorted(fs, key=lambda f: (centers[f][ax], centers[f][1 - ax], f))
+        h = len(order) // 2
+        rec(order[:h])
+        rec(order[h:])
+
+    rec(list(range(len(face_verts))))
+    return out
+
+
+def t_junctions(co, boundary_edges, tol=0.001, cell=5.0):
+    """Pure (no bpy): [(edge_index, vert_index, t)] for every vertex lying on the INTERIOR of a boundary edge
+    (within ``tol`` in 3D, 0 < t < 1 along it) — a T-junction. ``co`` = [(x, y, z)], ``boundary_edges`` =
+    [(a, b)] vertex-index pairs; only vertices that are themselves on a boundary edge are candidates, and only
+    when the T is real: one of the vertex's own boundary edges runs ALONG the long edge (to its end or to another
+    vertex on it). A vertex that merely sits on the line of an edge across a hole (the cleared fold fans, a mouth)
+    is not a T and is left alone."""
+    nbr = {}
+    for a, b in boundary_edges:
+        nbr.setdefault(a, set()).add(b)
+        nbr.setdefault(b, set()).add(a)
+    raw = _t_candidates(co, boundary_edges, tol, cell)
+    on_edge = {}
+    for ei, v, _t in raw:
+        on_edge.setdefault(ei, set()).add(v)
+    out = []
+    for ei, v, t in raw:
+        a, b = boundary_edges[ei]
+        ok = on_edge[ei] | {a, b}
+        if any(w in ok for w in nbr.get(v, ())):
+            out.append((ei, v, t))
+    return out
+
+
+def _t_candidates(co, boundary_edges, tol, cell):
+    bverts = sorted({v for e in boundary_edges for v in e})
+    buck = {}
+    for v in bverts:
+        buck.setdefault((int(co[v][0] // cell), int(co[v][1] // cell)), []).append(v)
+    out = []
+    for ei, (a, b) in enumerate(boundary_edges):
+        A, B = co[a], co[b]
+        d = (B[0] - A[0], B[1] - A[1], B[2] - A[2])
+        L2 = d[0] * d[0] + d[1] * d[1] + d[2] * d[2]
+        if L2 < 4 * tol * tol:
+            continue
+        seen = set()
+        for i in range(int(min(A[0], B[0]) // cell) - 1, int(max(A[0], B[0]) // cell) + 2):
+            for j in range(int(min(A[1], B[1]) // cell) - 1, int(max(A[1], B[1]) // cell) + 2):
+                for v in buck.get((i, j), ()):
+                    if v in (a, b) or v in seen:
+                        continue
+                    seen.add(v)
+                    P = co[v]
+                    t = ((P[0] - A[0]) * d[0] + (P[1] - A[1]) * d[1] + (P[2] - A[2]) * d[2]) / L2
+                    if t <= 1e-6 or t >= 1.0 - 1e-6:
+                        continue
+                    q = (A[0] + d[0] * t - P[0], A[1] + d[1] * t - P[1], A[2] + d[2] * t - P[2])
+                    if q[0] * q[0] + q[1] * q[1] + q[2] * q[2] <= tol * tol:
+                        out.append((ei, v, t))
+    return out
+
+
+def _weld_t_junctions(bm, tol=0.001):
+    """Close every T-junction in a terrain bmesh WITHOUT moving the surface: a face whose boundary edge carries
+    other vertices is replaced by a fan from its centroid through all of them (every fan triangle lies in the old
+    face's plane). Ledger 0046: a tiered terrain keeps the graded grid's own triangles under and beside the roads
+    (so the seat and this prep reshape exactly the ground they always reshaped) and its finer neighbours leave
+    their nodes ON those kept edges; this runs after the conform, when nothing else will move them. Returns the
+    number of faces re-fanned (0 on a terrain without T-junctions: nothing touched)."""
+    import bmesh  # noqa: F401
+    bm.verts.ensure_lookup_table()
+    bm.edges.ensure_lookup_table()
+    bedges = [e for e in bm.edges if len(e.link_faces) == 1]
+    if not bedges:
+        return 0
+    vobj = list(bm.verts)
+    co = [(v.co.x, v.co.y, v.co.z) for v in vobj]
+    hits = t_junctions(co, [(e.verts[0].index, e.verts[1].index) for e in bedges], tol)
+    if not hits:
+        return 0
+    by_face = {}
+    for ei, vi, t in hits:
+        e = bedges[ei]
+        by_face.setdefault(e.link_faces[0], []).append((e, vi, t))
+    dead_edges = []
+    for f, lst in by_face.items():
+        ring = []
+        for loop in f.loops:
+            ring.append(loop.vert)
+            on = [(t if e.verts[0] == loop.vert else 1.0 - t, vobj[vi]) for e, vi, t in lst if e == loop.edge]
+            ring += [v for _t, v in sorted(on, key=lambda p: p[0])]
+            if on:
+                dead_edges.append(loop.edge)
+        n = len(f.verts)
+        c = bm.verts.new((sum(v.co.x for v in f.verts) / n, sum(v.co.y for v in f.verts) / n,
+                          sum(v.co.z for v in f.verts) / n))
+        mat, smooth = f.material_index, f.smooth
+        bm.faces.remove(f)
+        for k in range(len(ring)):
+            nf = bm.faces.new((c, ring[k], ring[(k + 1) % len(ring)]))
+            nf.material_index, nf.smooth = mat, smooth
+    for e in dead_edges:
+        if e.is_valid and not e.link_faces:
+            bm.edges.remove(e)
+    return len(by_face)
+
+
+def xsplit_interp(u, v, sw, se, ne, nw, c):
+    """Pure (no bpy): the value at (u, v) in [0, 1]^2 of a cell split in four around its centre — linear on the
+    S (sw, se, c), E (se, ne, c), N (ne, nw, c) or W (nw, sw, c) triangle holding the point. The same surface the
+    tiered lattice's x-split cells mesh (airoso scripts/geometry/terrain_tiers.xsplit_interp, ledger 0046)."""
+    if v <= u and v <= 1.0 - u:
+        return (1.0 - u - v) * sw + (u - v) * se + 2.0 * v * c
+    if u >= v and u >= 1.0 - v:
+        return (u - v) * se + (u + v - 1.0) * ne + 2.0 * (1.0 - u) * c
+    if v >= u and v >= 1.0 - u:
+        return (u + v - 1.0) * ne + (v - u) * nw + 2.0 * (1.0 - v) * c
+    return (v - u) * nw + (1.0 - u - v) * sw + 2.0 * u * c
+
+
+def house_seat(g_level, g_low, g_high=None, height=None, sink=HOUSE_SINK_M, foot=HOUSE_FOOT_M, show=HOUSE_SHOW):
+    """Pure (no bpy): where a building stands on the final ground. Returns ``(floor, base)``: ``floor`` is where its
+    walls' visible height starts — the mean ground under the footprint less ``sink`` (the draft's rule, now read on
+    the ground that ships), raised where needed so that at least ``show`` of its ``height`` stands above the highest
+    ground under its walls (a footprint straddling a cut edge is not buried on its uphill side); ``base`` is the bottom
+    of its foundation — never above ``floor`` and never above the lowest ground under its walls less ``foot``, so on a
+    slope the downhill wall reaches down into the ground instead of hanging in the air, and on level ground
+    ``base == floor`` (the house is exactly the draft's)."""
+    floor = g_level - sink
+    if g_high is not None and height is not None:
+        floor = max(floor, g_high - (1.0 - show) * height)
+    return floor, min(floor, g_low - foot)
+
+
+def footprint_samples(ring, step=HOUSE_EDGE_STEP_M):
+    """Pure: the points a footprint's ground is read at — ``(level_pts, low_pts)``. ``ring`` is the base ring in order
+    [(x, y), ...]. The level is the mean of the corners and the centroid (the draft's centroid read, made robust to
+    one odd corner); the low point walks the walls only (the corners and every ~``step`` between them, so a dip
+    between two corners counts) — the ground the walls stand on, not a hollow under the floor."""
+    n = len(ring)
+    cx = sum(p[0] for p in ring) / n
+    cy = sum(p[1] for p in ring) / n
+    level = list(ring) + [(cx, cy)]
+    low = list(ring)
+    for k in range(n):
+        (ax, ay), (bx, by) = ring[k], ring[(k + 1) % n]
+        m = int(math.hypot(bx - ax, by - ay) // step)
+        for j in range(1, m + 1):
+            t = j / (m + 1)
+            low.append((ax + (bx - ax) * t, ay + (by - ay) * t))
+    return level, low
+
+
+def keep_weight(d, keep_m, feather_m):
+    """Pure: weight of the kept (graded) surface at pavement distance ``d`` — 1 within ``keep_m``, smoothstep to 0 at
+    ``keep_m + feather_m`` (the tiered assembler's own feather, terrain_tiers.keep_weight)."""
+    if d <= keep_m:
+        return 1.0
+    if feather_m <= 0.0 or d >= keep_m + feather_m:
+        return 0.0
+    t = (d - keep_m) / feather_m
+    return 1.0 - t * t * (3.0 - 2.0 * t)
+
+
+class RefineField:
+    """Pure (no bpy): the kept-cell refinement data (data/terrain.refine.json.gz, written by the tiered assembler):
+    which 20 m cells were kept, and on their x-split sub-lattice the clamped 3DEP height ``D`` and the pavement
+    distance ``d``. Blender (x, y) = local (x = E, z = N)."""
+
+    def __init__(self, R):
+        self.x0, self.z0, self.ux, self.uz = R["frame"]
+        self.kr, self.cr = int(R["keep_r"]), int(R["cell_r"])
+        self.kept = {tuple(c) for c in R["kept_cells"]}
+        self.cells = {tuple(c) for c in R["cells"]}
+        self.D = {(i, j): v for i, j, v in zip(R["I"], R["J"], R["D"])}
+        self.d = {(i, j): v for i, j, v in zip(R["I"], R["J"], R["d"])}
+        self.keep_m, self.feather_m = float(R["keep_m"]), float(R["keep_feather_m"])
+        # the feather LENGTH per node (ledger 0046 fix round 4, keep_batter: an earth batter's run of the gap between the
+        # graded ground and the data, computed by the assembler at each node); absent = the fixed keep_feather_m
+        self.L = {(i, j): v for i, j, v in zip(R["I"], R["J"], R["L"])} if "L" in R else None
+        self.edge_m, self.move_m, self.face_m = float(R["edge_m"]), float(R["move_beyond_m"]), float(R["min_face_d_m"])
+
+    def in_kept(self, x, y):
+        return (math.floor((x - self.x0) / self.ux / self.kr), math.floor((y - self.z0) / self.uz / self.kr)) in self.kept
+
+    def at(self, x, y, tab, eps=1e-4):
+        """``tab`` (self.D / self.d) interpolated at (x, y); None outside every refine sub-cell. A point on a sub-cell
+        edge (float32 coordinates) is looked up in whichever listed neighbour holds it: the corner values are shared,
+        so the edge reads the same from both sides."""
+        fi, fj = (x - self.x0) / self.ux / self.cr, (y - self.z0) / self.uz / self.cr
+        ci, cj = math.floor(fi), math.floor(fj)
+        u, v = fi - ci, fj - cj
+        for di in ((0, -1) if u < eps else ((0, 1) if u > 1 - eps else (0,))):
+            for dj in ((0, -1) if v < eps else ((0, 1) if v > 1 - eps else (0,))):
+                k = (ci + di, cj + dj)
+                if k not in self.cells:
+                    continue
+                uu, vv = min(1.0, max(0.0, u - di)), min(1.0, max(0.0, v - dj))
+                r, h = self.cr, self.cr // 2
+                bx, bz = k[0] * r, k[1] * r
+                return xsplit_interp(uu, vv, tab[(bx, bz)], tab[(bx + r, bz)], tab[(bx + r, bz + r)], tab[(bx, bz + r)],
+                                     tab[(bx + h, bz + h)])
+        return None
+
+    def target(self, x, y, z, d_built=None):
+        """the refined height of a kept-cell vertex now at height ``z``: None (unchanged) within move_beyond_m of a
+        pavement or off the data, else the data feathered toward ``z`` exactly as the lattice beside the kept cell is.
+        ``d_built``: the distance to the BUILT pavement, when known — the nearer of the two is the one that counts"""
+        d = self.at(x, y, self.d)
+        if d is not None and d_built is not None:
+            d = min(d, d_built)
+        if d is None or d <= self.move_m:
+            return None
+        D = self.at(x, y, self.D)
+        f = self.at(x, y, self.L) if self.L is not None else self.feather_m
+        return D + keep_weight(d, self.keep_m, f) * (z - D)
+
+
+def _clip_ears(f):
+    """triangulate a convex (coplanar) n-gon by ear clipping: of the ears that are not flat in plan (a run of collinear
+    vertices — edge midpoints — must never become a zero-area triangle), the one with the SHORTEST new diagonal first
+    (the midpoint-to-midpoint cut a tri pattern makes). Returns the number of triangles cut off."""
+    import bmesh
+    n_cut = 0
+    while f is not None and f.is_valid and len(f.verts) > 3:
+        vs = [l.vert for l in f.loops]
+        n = len(vs)
+        best = None
+        amax = 0.0
+        ears = []
+        for i in range(n):
+            a, b, c = vs[i - 1].co, vs[i].co, vs[(i + 1) % n].co
+            ar = abs((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y))
+            amax = max(amax, ar)
+            ears.append((ar, (a - c).length, i))
+        for ar, diag, i in ears:
+            if ar > 1e-3 * amax and (best is None or diag < best[0]):
+                best = (diag, i)
+        if best is None:
+            break
+        i = best[1]
+        nf, _l = bmesh.utils.face_split(f, vs[i - 1], vs[(i + 1) % n])
+        n_cut += 1
+        f = nf if len(nf.verts) > 3 else (f if len(f.verts) > 3 else None)
+    return n_cut
+
+
+def _refine_kept_terrain(proj, bm, near2d=None):
+    """Ledger 0046 fix round — the kept cells' outer half, AFTER every pass that reshapes near-road ground. A tiered
+    terrain keeps the graded grid's own 20 m cells within ~18 m of a pavement so the seat and this prep reshape exactly
+    the ground they always reshaped; but those cells reach ~46 m out, and past this prep's reach they stayed 20 m
+    graded facets (criterion 5's long triangles 15-35 m from a road, the I-8 terrace walls beside Alvarado smoothed
+    away). Two moves, opt-in by data/terrain.refine.json.gz (absent on every other track: nothing touched):
+
+      1. COPLANAR refinement: every edge longer than edge_m of a kept-cell face that reaches past move_beyond_m (or
+         whose centre is past min_face_d_m) is halved until none is — on the 20 m grid the halving lands on the 5 m
+         x-split sub-lattice; nothing moves, so the surface the gates read is unchanged.
+      2. DATA past move_beyond_m: each kept-cell vertex there takes the 3DEP sub-lattice (under the L3 clamp) feathered
+         toward its graded height exactly as the tiered lattice beside the cell is (keep_m / keep_feather_m), so the
+         field is one surface across the kept edge. Within move_beyond_m nothing moves.
+    Returns a report dict, or None when the track has no refinement data."""
+    import gzip
+    import bmesh
+    p = proj / "data" / "terrain.refine.json.gz"
+    if not p.exists():
+        return None
+    F = RefineField(json.loads(gzip.decompress(p.read_bytes()).decode("utf-8")))
+    # coincident vertices first (within 1 mm: the same point, so nothing moves): where this prep's corridor subdivision
+    # put a midpoint exactly on a finer neighbour's node, the two stay separate vertices until the 5 cm weld after the
+    # split — and a move of the kept one alone would open a crack under a vertical fin
+    n_merged = len(bm.verts)
+    bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=0.001)
+    n_merged -= len(bm.verts)
+
+    def cand(f):
+        c = f.calc_center_median()
+        if not F.in_kept(c.x, c.y):
+            return False
+        if abs(f.normal.z) < 0.05:
+            # a (near-)vertical or zero-area face — a step the graded surface already had: every piece of it would
+            # be vertical too, so halving it only multiplies it (round on round). Left as it is.
+            return False
+        dc = F.at(c.x, c.y, F.d)
+        if dc is not None and dc >= F.face_m:
+            return True
+        for v in f.verts:
+            dv = F.at(v.co.x, v.co.y, F.d)
+            if dv is not None and dv > F.move_m:
+                return True
+        return False
+
+    n_split = n_poke = 0
+    for _round in range(8):
+        todo = set()
+        for f in bm.faces:
+            if cand(f):
+                for e in f.edges:
+                    if e.calc_length() > F.edge_m:
+                        todo.add(e)
+        if not todo:
+            break
+        # one cut edge -> tri_1edge (the midpoint joined to the opposite corner), three -> tri_3edge (four triangles).
+        # bmesh has no pattern for two: it leaves a pentagon with two straight-angle vertices, and a generic
+        # triangulation of that can be a zero-area cap — invisible while coplanar, but the data move below would stand
+        # it up as a vertical fin over a crack. Those are clipped ear by ear (_clip_ears): no new vertex, never a
+        # zero-area triangle.
+        bmesh.ops.subdivide_edges(bm, edges=list(todo), cuts=1, use_single_edge=True)
+        for f in [f for f in bm.faces if len(f.verts) > 3]:
+            n_poke += _clip_ears(f)
+        n_split += len(todo)
+    # a halving can land exactly on a finer neighbour's node that was never welded to the kept edge (a T-junction the
+    # prep's own subdivision hid): merge what now coincides, then weld what is still a T — so every node ON a kept
+    # cell's edge belongs to a kept face and moves with it (a node left behind would open a crack under a fin)
+    n_v = len(bm.verts)
+    bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=0.001)
+    n_merged += n_v - len(bm.verts)
+    n_tj = _weld_t_junctions(bm)
+    kept_v = set()
+    for f in bm.faces:
+        c = f.calc_center_median()
+        if F.in_kept(c.x, c.y):
+            kept_v.update(f.verts)
+    n_move, dmax = 0, 0.0
+    moved = set()
+    z0 = {}
+    tgt = {}
+    for v in kept_v:
+        # the pavement distance is the data's (centreline - half width) or the BUILT road's, whichever is nearer: a
+        # mouth weld or a flare widens the pavement past its centreline width, and nothing within move_beyond_m of
+        # what was built may move (criterion 7)
+        d_built = near2d(v.co.x, v.co.y)[0] if near2d is not None else None
+        t = F.target(v.co.x, v.co.y, v.co.z, d_built)
+        if t is not None and abs(t - v.co.z) > 1e-6:
+            tgt[v] = t
+    # a ZERO-AREA face (three points on one straight line, flat in plan and in 3D: the triangulation before this pass
+    # can leave one where a quad had a point on its edge) has no surface; moving one of its points and not the others
+    # would stand it up as a vertical fin. Its moved points are held where they are (ledger 0046 fix round 4: the
+    # height-dependent BEAUTY split met the batter feather's new heights at one such face) — repeated until none is
+    # left; the FATAL check below still guards everything else.
+    def _flat(pts):
+        a, b, c = pts[:3]
+        return abs((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y)) < 2e-4
+
+    n_held = 0
+    for _r in range(16):
+        held = set()
+        for f in {f for v in tgt for f in v.link_faces}:
+            pts = [v.co.copy() for v in f.verts]
+            if not _flat(pts) or f.calc_area() > 1e-3:
+                continue
+            post = [v.co.copy() for v in f.verts]
+            for k, v in enumerate(f.verts):
+                if v in tgt:
+                    post[k].z = tgt[v]
+            if ((post[1] - post[0]).cross(post[2] - post[0])).length > 2e-3:
+                held.update(v for v in f.verts if v in tgt)
+        if not held:
+            break
+        for v in held:
+            del tgt[v]
+        n_held += len(held)
+    for v, t in tgt.items():
+        dmax = max(dmax, abs(t - v.co.z))
+        z0[v] = v.co.z
+        v.co.z = t
+        n_move += 1
+        moved.add(v)
+    # a face flat in plan with a moved vertex that is not flat in 3D now stands vertical (a fin over a crack): counted,
+    # and those that were already vertical before the move (the graded surface's own steps) counted apart
+    fins = fins_pre = 0
+    for f in {f for v in moved for f in v.link_faces}:
+        a, b, c = [v.co for v in f.verts][:3]
+        if abs((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y)) < 2e-4 and f.calc_area() > 1e-3:
+            zs = [(v, z0.get(v, v.co.z)) for v in f.verts]
+            pa = [v.co.copy() for v in f.verts]
+            for k, (v, z) in enumerate(zs):
+                pa[k].z = z
+            if ((pa[1] - pa[0]).cross(pa[2] - pa[0])).length > 2e-3:
+                fins_pre += 1
+            else:
+                fins += 1
+    if fins:
+        raise SystemExit(f"[build_kn5_loop] FATAL: the kept-cell refinement stood {fins} plan-flat faces up as vertical "
+                         f"fins (a moved vertex beside an unmoved one at the same point: a crack). Refusing to export.")
+    return {"merged": n_merged, "t_junctions": n_tj, "edges_split": n_split, "ears_clipped": n_poke,
+            "kept_vertices": len(kept_v), "moved": n_move, "max_move_m": round(dmax, 2), "fins": fins,
+            "held_on_zero_area_faces": n_held,
+            "vertical_before": fins_pre}
+
+
 def _split_large(ob, cap=SPLIT_CAP):
     """Split a mesh over AC's 65,535-vertex cap into UNIQUELY-named spatial tiles (base_0, base_1,
     ...). The exporter otherwise auto-splits into DUPLICATE-named meshes, and AC drops dup-named
     PHYSICAL meshes from collision -> the car falls through (a 46 km freeway terrain is ~268k
-    verts). Partitions faces into bands along the longest axis; pbr/surfaces still key off the
-    shared name prefix (1GRASS_0 -> GRASS)."""
+    verts). Terrain (TERRAIN_TILES) is tiled by balanced bisection; every other mesh keeps the
+    equal-width bands along the longest axis; pbr/surfaces still key off the shared name prefix
+    (1GRASS_0 -> GRASS)."""
     import bpy
 
     me = ob.data
     if len(me.vertices) <= cap:
         return
-    K = len(me.vertices) // cap + 1
     co = [(v.co.x, v.co.y, v.co.z) for v in me.vertices]
-    ax = 0 if (max(c[0] for c in co) - min(c[0] for c in co)) >= \
-             (max(c[1] for c in co) - min(c[1] for c in co)) else 1
-    lo = min(c[ax] for c in co); span = (max(c[ax] for c in co) - lo) or 1.0
-    bands = [[] for _ in range(K)]
-    for p in me.polygons:
-        bands[min(K - 1, int((p.center[ax] - lo) / span * K))].append(p)
+    if ob.name.upper().startswith(TERRAIN_TILES):
+        polys = list(me.polygons)
+        groups = balanced_face_tiles([(p.center[0], p.center[1]) for p in polys],
+                                     [tuple(p.vertices) for p in polys], cap)
+        bands = [[polys[i] for i in g] for g in groups]
+        K = len(bands)
+    else:
+        K = len(me.vertices) // cap + 1
+        ax = 0 if (max(c[0] for c in co) - min(c[0] for c in co)) >= \
+                 (max(c[1] for c in co) - min(c[1] for c in co)) else 1
+        lo = min(c[ax] for c in co); span = (max(c[ax] for c in co) - lo) or 1.0
+        bands = [[] for _ in range(K)]
+        for p in me.polygons:
+            bands[min(K - 1, int((p.center[ax] - lo) / span * K))].append(p)
     base = ob.name
     mat = me.materials[0] if me.materials else None
     # carry authored per-vertex UVs across the split (palm cards etc. are single UV per vertex) —
@@ -222,7 +650,8 @@ def _split_large(ob, cap=SPLIT_CAP):
         if mat:
             nm.materials.append(mat)
         bpy.context.scene.collection.objects.link(bpy.data.objects.new(f"{base}_{k}", nm))
-    print(f"[build_kn5_loop] split {base} ({len(me.vertices)} verts) -> {K} tiles under {cap}")
+    how = "balanced bisection" if base.upper().startswith(TERRAIN_TILES) else "equal-width bands"
+    print(f"[build_kn5_loop] split {base} ({len(me.vertices)} verts) -> {K} tiles under {cap} ({how})")
     bpy.data.objects.remove(ob, do_unlink=True)
 
 
@@ -496,6 +925,16 @@ def _conform_and_reseat(proj: Path, spans):
                 v.co.z = low - GROUND_CLEAR; n_anti += 1
         if n_anti:
             print(f"[build_kn5_loop] anti-poke: {n_anti} verts clamped under the lowest drivable sheet")
+        # 2d. T-junctions (a tiered terrain's finer cells beside its kept grid cells, ledger 0046): re-fan the
+        # kept face through the nodes on its edge — after every pass that moves ground, so nothing moves
+        n_tj = _weld_t_junctions(bm)
+        if n_tj:
+            print(f"[build_kn5_loop] T-junctions: {n_tj} terrain faces re-fanned through the nodes on their edges")
+        # 2e. the kept cells' outer half (ledger 0046 fix round): refined, and the data past the near-road band — after
+        # every pass above, before the re-seat below (so the props ride this delta too)
+        rf = _refine_kept_terrain(proj, bm, _near2d)
+        if rf is not None:
+            print(f"[build_kn5_loop] kept-cell refinement: {rf}")
         bm.to_mesh(me); bm.free(); me.update()
     print(f"[build_kn5_loop] terrain conform: {n_sub} corridor edges split, "
           f"{n_pin} verts pinned to deck-{GROUND_CLEAR}, {n_feather} feathered")
@@ -560,13 +999,55 @@ def _conform_and_reseat(proj: Path, spans):
             if best is not None and best[0] < 16.0 and abs(best[1]) > 0.0:
                 _shift(ob, isl, best[1])
         me.update()
-    # palms / scrub / buildings / lights ride the terrain delta (their seats were already green)
+    # houses / buildings: seated on the FINAL ground under their own footprint (house_seat; ledger 0046 fix round 3)
+    n_seat = n_found = 0
+    max_found = 0.0
+    seated = set()
+    for ob in bpy.data.objects:
+        if ob.type != "MESH" or not ob.name.upper().startswith(("BUILDING", "HOUSE")):
+            continue
+        if not ob.matrix_world.is_identity:
+            continue                                  # not the draft's own mesh: left to the delta ride below
+        me = ob.data
+        for isl in _islands(ob):
+            zmin = min(me.vertices[i].co.z for i in isl)
+            base = [i for i in isl if me.vertices[i].co.z < zmin + 0.05]
+            top = [i for i in isl if me.vertices[i].co.z >= zmin + 0.05]
+            if len(base) < 3 or not top:
+                continue
+            ring = [(me.vertices[i].co.x, me.vertices[i].co.y) for i in sorted(base)]   # the draft's ring order
+            level_pts, low_pts = footprint_samples(ring)
+            gl = [_surf_z(ground_bvh, x, y, zref=zmin, win=40.0) for x, y in level_pts]
+            gw = [_surf_z(ground_bvh, x, y, zref=zmin, win=40.0) for x, y in low_pts]
+            gl = [g for g in gl if g is not None]
+            gw = [g for g in gw if g is not None]
+            if len(gl) < 3:
+                continue
+            ztop = max(me.vertices[i].co.z for i in top)
+            floor, bottom = house_seat(sum(gl) / len(gl), min(gw) if gw else min(gl),
+                                       max(gw + gl), ztop - zmin)
+            dz = floor - zmin
+            for i in top:
+                me.vertices[i].co.z += dz
+            for i in base:
+                me.vertices[i].co.z = bottom
+            n_seat += 1
+            if floor - bottom > 0.005:
+                n_found += 1
+                max_found = max(max_found, floor - bottom)
+            seated.add((ob.name, min(isl)))
+        me.update()
+    print(f"[build_kn5_loop] house seat: {n_seat} buildings seated on the final ground under their footprints, "
+          f"{n_found} with a foundation reaching down a slope (deepest {max_found:.2f} m)")
+    # palms / scrub / lights (and any building not seated above) ride the terrain delta (their seats were green)
     for ob in bpy.data.objects:
         if ob.type != "MESH" or not ob.name.upper().startswith(
                 ("PALMTRUNK", "PALMFROND", "SCRUB", "BUILDING", "HOUSE", "LIGHTS")):
             continue
         me = ob.data
         for isl in _islands(ob):
+            if (ob.name, min(isl)) in seated:
+                continue
             fi = min(isl, key=lambda i: me.vertices[i].co.z)
             f = ob.matrix_world @ me.vertices[fi].co
             zo = _surf_z(old_grass_bvh, f.x, f.y, zref=f.z, win=40.0)
@@ -623,7 +1104,7 @@ def main():
         # ...and the race furniture (ledger 0047): the strips carry u = arc / 4.04 m along the
         # vertical faces and the kerbs v = arc / 1 m — a top-down projection would smear them
         if not ob.name.upper().startswith(("PALM", "TREE", "SCRUB", "BUSHES", "CHAINLINK", "ROADTEXT",
-                                           "1WALL_RACE", "1KERB_RACE")):
+                                           "1WALL_RACE", "1KERB_RACE", "BRIDGESTRUCT")):
             planar_uv(me)
         bm = bmesh.new(); bm.from_mesh(me)
         bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-4)
@@ -640,7 +1121,7 @@ def main():
         # terrain); for a near-horizontal drivable surface "up" is unambiguous, so this can't guess
         # wrong or split the mesh. ...plus flat painted markings (MARKINGS/YLINE) — decals that
         # must face up to be seen from the car.
-        if ob.name.upper().startswith(("1ROAD", "1GRASS", "1KERB", "MARKINGS", "YLINE")):
+        if ob.name.upper().startswith(("1ROAD", "1GRASS", "1KERB", "MARKINGS", "YLINE", "GRASS_FAR")):
             bm.normal_update()
             down = [f for f in bm.faces if f.normal.z < 0]
             if down:
@@ -654,6 +1135,13 @@ def main():
         # loop-path over-cap guard: FATAL (the OBJ program guards in build_kn5.py; this path is its
         # own program and needs its own gate — a WARNING here shipped over-cap meshes before).
         assert_under_cap(ob.name, len(me.vertices))
+    tiles = {}
+    for o in bpy.data.objects:
+        if o.type == "MESH" and o.name.upper().startswith(TERRAIN_TILES):
+            k = "1GRASS" if o.name.upper().startswith("1GRASS") else "GRASS_FAR"
+            tiles.setdefault(k, []).append(len(o.data.vertices))
+    print("[build_kn5_loop] terrain tiles: " + ", ".join(
+        f"{k} x{len(v)} (max {max(v)} v, total {sum(v)} v)" for k, v in sorted(tiles.items())))
 
     # 3. AC dummies from the real centreline (local frame x=E,y=up,z=N -> Blender x=E,y=N,z=up = (x,z,y))
     #    MULTI-LAYOUT (ledger 0047; fleet/LAWS.md L8 as amended): with more than one layouts[] entry

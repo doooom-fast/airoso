@@ -490,3 +490,47 @@ def test_parse_id_tells_a_second_arrow_from_a_corner_named_dash_two():
     f, rows = vs.direction_coverage(d, both)
     assert f == [] and any("MX-2: no plate for rev" in r for r in rows), (f, rows)
 
+
+def test_a_named_corner_that_lost_every_plate_fails_l():
+    """the 0051 verifier's gap (v0.18.0 integration): (k) judges only corners with a plate somewhere, so BOTH M4
+    plates lost (failed mesh placement, or both records gone) passed every check. (l) fails it; the escape hatches
+    (signs.json skipping the corner, or one approach WITH a reason) still work."""
+    both = {"fwd": ["street", "race_cw"], "rev": ["race_acw"]}
+    entries = {"M4": {"ribbon": "MAINLINE", "vertex": 2319, "plate": "W1-6", "where": "Navajo Rd -> Jackson Dr"},
+               "MED-6": {"ribbon": "medium#2+0#0#0", "vertex": 205, "plate": "W1-6"},
+               "DCL-2": {"ribbon": "del_cerro_blvd_loop", "vertex": 75, "skip": True, "reason": "Kevin: cul-de-sac"}}
+    p = lambda i, rib, dr: {"id": i, "ribbon": rib, "direction": dr, "corner": {"second_arrow": False}}
+    full = [p("M4-fwd", "MAINLINE", "fwd"), p("M4-rev", "MAINLINE", "rev"),
+            p("MED-6-fwd", "medium#2+0#0#0", "fwd"), p("MED-6-rev", "medium#2+0#0#0", "rev")]
+    ok = {"signs": full, "skipped": [{"id": "DCL-2-fwd", "ribbon": "del_cerro_blvd_loop", "reasons": ["signs.json skip: Kevin: cul-de-sac"]}]}
+    f, rows = vs.named_coverage(ok, both, entries)
+    assert f == [] and any("2 named corners" in r for r in rows), (f, rows)
+    # both M4 plates failed placement: (k) is blind (no plate anywhere), (l) fails
+    lost = {"signs": full[2:], "skipped": [
+        {"id": "M4-fwd", "ribbon": "MAINLINE", "reasons": ["sign base is ON pavement (edge clearance -0.20)"]},
+        {"id": "M4-rev", "ribbon": "MAINLINE(rev)", "reasons": ["sign base is ON pavement (edge clearance -0.31)"]}]}
+    assert vs.direction_coverage(lost, both, entries=entries)[0] == []
+    f = vs.named_coverage(lost, both, entries)[0]
+    assert len(f) == 1 and "M4" in f[0] and "NO plate" in f[0] and "ON pavement" in f[0], f
+    # both records vanished
+    gone = {"signs": full[2:], "skipped": []}
+    f = vs.named_coverage(gone, both, entries)[0]
+    assert len(f) == 1 and "no record at all" in f[0], f
+    # one approach lost to a rule reason: (k) counts it, (l) does not for a corner Kevin named
+    rule = {"signs": [full[0]] + full[2:], "skipped": [{"id": "M4-rev", "ribbon": "MAINLINE(rev)", "reasons": ["R_apex 42.1 > 30 m"]}]}
+    assert vs.direction_coverage(rule, both, entries=entries)[0] == []
+    f = vs.named_coverage(rule, both, entries)[0]
+    assert len(f) == 1 and "M4" in f[0] and "race_acw" in f[0], f
+    # ... unless signs.json skips that approach with a reason (Kevin's escape hatch)
+    hatch = dict(entries, M4=dict(entries["M4"], rev={"skip": True, "reason": "Kevin: the cross-view reads wrong"}))
+    assert vs.named_coverage(rule, both, hatch)[0] == []
+    # a named side-street corner lost one approach to a failed placement: FAIL; to the rule: covered
+    med = {"signs": full[:3], "skipped": [{"id": "MED-6-rev", "ribbon": "medium#2+0#0#0(rev)", "reasons": ["OUTSIDE ASSERTION FAILED: x"]}]}
+    f = vs.named_coverage(med, both, entries)[0]
+    assert len(f) == 1 and "MED-6" in f[0], f
+    med["skipped"][0]["reasons"] = ["R_apex 31.0 > 30 m"]
+    assert vs.named_coverage(med, both, entries)[0] == []
+    # signs.json not read: said so, nothing failed
+    f, rows = vs.named_coverage(lost, both, None)
+    assert f == [] and "not read" in rows[0]
+

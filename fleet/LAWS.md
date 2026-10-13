@@ -52,7 +52,12 @@ The three specific ways this breaks, all seen:
   climbs". That is a road-datum and grid-aliasing defect (bullet 3 below, ledger 0002), so the band
   holds **only near the road**: within `terrain.clamp_corridor_m` of a pavement the ground stays
   within `terrain.terrain_band_m` of the nearest road height (22 m in SD), and the clamp releases
-  smoothly to the raw DEM by `terrain.clamp_blend_m`. Beyond that, 3DEP stands uncapped. The old
+  smoothly to the raw DEM by `terrain.clamp_blend_m`. Beyond that, 3DEP stands uncapped. **"Near" is
+  the conform corridor, not a guess** (amended 2026-10-13, ledger 0054 D3 — Kevin: "why are we changing
+  ridges?"): SD holds the band in full within 20 m and releases it by 40 m — the conform corridor (20 m)
+  and its 16 m blend already shape 0–36 m. 0046's 80 / 250 m filled the canyon north of west Navajo by
+  up to 25 m and planed real ridges 12–18 m; 20 / 40 moves 0 of 41,486 fresh 3DEP transect points by
+  more than 1 m. The old
   wording named the real mountain as the fake one and clamped *everywhere*: Del Cerro was shaved
   38 m, Cowles' foot 56 m, and Cowles Mountain itself — 483 m, 1.6 km off Navajo, 9° above Kevin's
   eye from his father's street — could never exist. Cowles is the example of relief that must
@@ -64,6 +69,14 @@ The three specific ways this breaks, all seen:
 - **Interchange aliasing.** A coarse terrain grid aliases a flat road up into an embankment (70th St
   read a 57% cliff). Sample that road's elevation directly from 3DEP at its own points, not off the
   grid.
+
+**Corollary — a road surface is a function of PLAN position** (ledger 0050, Kevin from the seat: "the small
+steps are a problem at jackson/navajo"). Where a swept ribbon is wider than twice its corner's radius, the
+inside corner is ONE point with ONE height — the midpoint of the legs that meet there, the only height inside
+every race wall's containment band on both sides of the medial axis — and both legs are eased to it. v0.17.1
+pinched Navajo/Jackson's inside edge at the higher leg and left the lower leg's last row 6 cm away: a 901 %
+triangle, a lip 0.13 m tall 3 m from the centre line and 0.47 m at the kerb, which drive_test filed as an exempt
+"apron step" on the street layout.
 
 > **Open work:** L3 governs *terrain* elevation. Road elevation should follow the **road surface**,
 > not bare earth — cuts, fills, embankments and engineered grades are the road's own datum. See

@@ -512,24 +512,60 @@ def _forward_chord(E, C, closed, ja, jb, window, nseg):
     return best[1], best[2], best[3]
 
 
-def unfold_line(E, C, closed, window=FOLD_WINDOW, strict=True):
+# --- ledger 0050: the levelled swallowtail -------------------------------------------------------------------------
+# Navajo / Jackson (Kevin, from the seat: "the small steps are a problem at jackson/navajo"): the road is a 24 m
+# ribbon swung round a 7.4 m corner, so its inside edge folds back over itself and the weld pinches it to one point
+# X. The two legs that meet at X come from road ~19 m apart along a 2.7 % climb: 108.81 and 109.31 m. Until 0050 X
+# took the higher leg and the last row of the low leg stayed 6 cm from it at 108.81, so the triangle C2315-R2315-X
+# stood at 901 % — a lip across the whole inside half of the road, 13 cm 3 m in from the centre line, 47 cm at the
+# kerb (race_cw / race_acw drive_test severe 31 / 28, most of it this one riser). Now X takes the MIDPOINT of its
+# legs and each leg's last FOLD_LEVEL_ROWS rows tilt (heights only, smoothstep) to meet it.
+FOLD_LEVEL_ROWS = 8            # [invented] rows each leg eases over (the diagnosis: 6 -> 1 m second difference 0.031, 12 -> < 0.025)
+# [derived + invented margin] a race wall spans [base - 0.05, base + 1.15] (1.20 m K-rail buried 0.05) and no_route
+# needs it to cover [0.20, 0.90] over its reference (the projected centre line + 0.10): |base offset| < 0.30, less
+# a 0.02 margin. The pinch moves each leg by half the jump, so a half-jump past this cannot keep the inside walls
+# sealed on both sides of the medial axis. NOT the seal guarantee: the reference is the projected centre line, not
+# the leg, so the built offset can exceed the half-jump by ~0.02 (ledger 0050: -0.268 against a 0.248 half-jump);
+# no_route and verify_fold_fans (7) are the backstop. Applied to the ROAD edges and the curb lines that carry walls
+# and the curb face (p0 lane edge, p1 curb top); the sidewalk back / grass meet (p2 / p3) level uncapped (measured
+# at Navajo / Jackson: p1 0.251, p2 0.317, p3 0.359 — the cap on them stopped the build, the 0050 review's BLOCKER 1)
+FOLD_HALF_JUMP_MAX_M = 0.28
+FOLD_LEVEL_XFALL_MAX = 0.04    # [invented] an eased row's height change over its plan distance to the centre row
+
+
+def _wrap_rows(lo, hi, m, closed):
+    """row indices lo..hi (inclusive), wrapped on a closed line, clipped on an open one"""
+    return [r % m for r in range(lo, hi + 1) if closed or 0 <= r < m]
+
+
+def unfold_line(E, C, closed, window=FOLD_WINDOW, strict=True, level=None, half_jump_max=FOLD_HALF_JUMP_MAX_M,
+                rows=FOLD_LEVEL_ROWS, report=None):
     """A ribbon never overlaps itself. Where a lateral line E (one edge / curb / paint line, a point per row)
     runs AGAINST its centre line C — the inside of a corner tighter than the offset (Navajo / Jackson v2317-2320:
     half-width 12 m round a 7.4 m centreline radius) — the swallowtail is cut at the self-intersection X of the
-    line before and after the fold, and every row between moves to X (height: the higher of the line's two heights
-    at X — the fan rises to its apex). What stays inside the corner (a kerb or strip on a smaller offset) stays on the fan (C rows to X).
+    line before and after the fold, and every row between moves to X. What stays inside the corner (a kerb or strip
+    on a smaller offset) stays on the fan (C rows to X).
+    X's height (ledger 0050): `level` (default: follows `strict`, so only the weld's MAINLINE calls level) puts X
+    at the MIDPOINT of the line's two heights there and eases each leg's last `rows` rows to it (smoothstep, heights
+    only: nothing moves in plan); refused (WeldError) when half the jump exceeds `half_jump_max` (None = no cap),
+    when an eased row would tilt more than FOLD_LEVEL_XFALL_MAX over its distance to the centre row, or when a leg's
+    window overlaps another cut on the same line (the result would depend on the order the cuts are found).
+    level False: X takes the higher of the two heights and nothing else moves (the 2026-10-11 rule, kept bit for
+    bit for connectors and the paint lines).
     A fold with no self-intersection (a hook) is replaced by the cheapest forward chord instead (X = None).
     Returns (new points, [(k, l, X or None)]: rows k+1..l (mod the row count on a closed line) moved, [(ja, jb)]:
     the runs left as they were). strict: a fold with neither raises WeldError; otherwise it is left and listed (a
-    connector's hairpin whose legs stand closer than its width overlaps ITSELF, not a fold a cut can mend)."""
+    connector's hairpin whose legs stand closer than its width overlaps ITSELF, not a fold a cut can mend).
+    report: a list that receives one dict per levelled pinch (k, l, X, y_k, y_l, h, half_jump, eased rows)."""
+    level = strict if level is None else level
     m = len(E)
     E = [tuple(p) for p in E]
     nseg = m if closed else m - 1
-    done, left, skip = [], [], set()
+    done, left, skip, pinches = [], [], set(), []
     for _round in range(64):
         back = [j for j in backward_segments(E, C, closed) if j not in skip]
         if not back:
-            return E, done, left
+            break
         ja = back[0]
         jb = ja
         while (jb + 1) % m in back and (closed or jb + 1 < nseg) and (jb + 1 - ja) < nseg:
@@ -570,13 +606,105 @@ def unfold_line(E, C, closed, window=FOLD_WINDOW, strict=True):
         _span, k, l, (t, u) = best
         a, b = E[k % m], E[(k + 1) % m]
         c, d = E[l % m], E[(l + 1) % m]
-        # the apex takes the HIGHER of the line's two heights there: on a climbing corner the legs meet up to 0.5 m
-        # apart (Navajo / Jackson), and with the apex on the high leg the fan is a cone rising to it — every crease
-        # from a centre row to the apex a ridge. At their mean it was a saddle whose valleys let the prep's grass
-        # facets (pinned 0.02 m under the deck at their vertices) stand 0.04-0.22 m over the race lane's inside edge.
-        y = max(a[1] + (b[1] - a[1]) * t, c[1] + (d[1] - c[1]) * u)
+        y_k = a[1] + (b[1] - a[1]) * t           # the leg arriving from row k, at X
+        y_l = c[1] + (d[1] - c[1]) * u           # the leg leaving to row l + 1, at X
+        if level:
+            # ledger 0050: the midpoint — the only height inside every race wall's containment band on BOTH sides of
+            # the medial axis (no_route measures each wall against the nearest centre-line point, and at the pinch
+            # "nearest" flips between the legs; the rejected 2026-10-11 re-grade leaked exactly there). The legs are
+            # eased to it below, once every cut of the line is known.
+            y = 0.5 * (y_k + y_l)
+        else:
+            # the 2026-10-11 rule: the HIGHER leg, nothing eased. With the legs left where they were, a mean apex made
+            # the fan a saddle whose valleys let the prep's grass (pinned 0.02 m under the deck at its vertices) stand
+            # 0.04-0.22 m over the race lane's inside edge; the higher leg made it a cone — and left the low leg's
+            # last row 0.5 m under X at Navajo / Jackson (the 0050 riser). seat_terrain now clears the fan's inside
+            # half and the legs meet the apex, so the levelled branch above is the MAINLINE rule.
+            y = max(y_k, y_l)
         X = (a[0] + (b[0] - a[0]) * t, y, a[2] + (b[2] - a[2]) * t)
         for r in range(k + 1, l + 1):
             E[r % m] = X
         done.append((k, l, X))             # raw: on a closed line k may be < 0 or l >= m (use % m)
-    raise WeldError("unfold did not converge in 64 rounds")
+        if level:
+            pinches.append((k, l, X, y_k, y_l))
+    else:
+        raise WeldError("unfold did not converge in 64 rounds")
+    if pinches:
+        E = _level_pinches(E, C, closed, done, pinches, rows, half_jump_max, report)
+    return E, done, left
+
+
+def _level_pinches(E, C, closed, done, pinches, B, half_jump_max, report):
+    m = len(E)
+    E = list(E)
+    S = smoothstep
+    for k, l, X, y_k, y_l in pinches:
+        half = 0.5 * abs(y_l - y_k)
+        if half_jump_max is not None and half > half_jump_max + 1e-9:
+            raise WeldError(f"the fold pinch at rows {k}..{l + 1} joins legs {y_k:.3f} / {y_l:.3f} m: half the jump, "
+                            f"{half:.3f} m, is over {half_jump_max:.2f} m — levelling it would move this line's walls "
+                            f"out of no_route's band (ledger 0050); author the junction pad instead")
+        win_k = _wrap_rows(k - B, k, m, closed)
+        win_l = _wrap_rows(l + 1, l + 1 + B, m, closed)
+        own = set(_wrap_rows(k + 1, l, m, closed))
+        for k2, l2, X2 in done:
+            if (k2, l2) == (k, l):
+                continue
+            other = set(_wrap_rows(k2, l2 + 1, m, closed))
+            if X2 is not None:
+                other |= set(_wrap_rows(k2 - B, l2 + 1 + B, m, closed))
+            hit = sorted(other & (set(win_k) | set(win_l) | own))
+            if hit:
+                raise WeldError(f"the levelling windows of the fold pinch at rows {k}..{l + 1} overlap another cut "
+                                f"(rows {k2}..{l2 + 1}) at rows {hit[:6]} — the result would depend on the order the "
+                                f"cuts are found (ledger 0050)")
+        h = X[1]
+        eased = []
+        # leg k: rows k-B..k, weight 1 at row k (the row whose segment carries X) easing to 0 at k-B;
+        # leg l: rows l+1..l+1+B, weight 1 at l+1, 0 at l+1+B. Each row keeps its plan position.
+        for r in range(k - B, k + 1):
+            if closed or 0 <= r < m:
+                eased.append((r % m, (h - y_k) * S(1.0 - (k - r) / B)))
+        for r in range(l + 1, l + 2 + B):
+            if closed or 0 <= r < m:
+                eased.append((r % m, (h - y_l) * S(1.0 - (r - l - 1) / B)))
+        for j, dy in eased:
+            if dy == 0.0:
+                continue
+            e, c = E[j], C[j]
+            dist = math.hypot(e[0] - c[0], e[2] - c[2])
+            if dist > 1e-6 and abs(dy) / dist > FOLD_LEVEL_XFALL_MAX + 1e-12:
+                raise WeldError(f"easing row {j} by {dy:+.3f} m tilts it {abs(dy) / dist:.1%} over its {dist:.2f} m "
+                                f"to the centre row (> {FOLD_LEVEL_XFALL_MAX:.0%}; ledger 0050)")
+            E[j] = (e[0], e[1] + dy, e[2])
+        if report is not None:
+            report.append({"k": k, "l": l, "X": X, "y_k": y_k, "y_l": y_l, "h": h, "half_jump": half,
+                           "eased": [(j, dy) for j, dy in eased if dy != 0.0]})
+    return E
+
+
+def check_levelled(E_before, E_after, C, closed, cuts, B=FOLD_LEVEL_ROWS):
+    """ledger 0050's self-check on one unfolded line -> a list of problems (empty: OK). cuts = unfold_line's
+    [(k, l, X or None)]. (1) every plan point several vertices share carries ONE height (spread <= 1e-6 m);
+    (2) no segment still runs against the centre line; (3) every vertex outside the cut rows and the levelled legs'
+    windows is bit-identical to before."""
+    m = len(E_after)
+    bad = []
+    groups = {}
+    for p in E_after:
+        groups.setdefault((round(p[0], 6), round(p[2], 6)), []).append(p[1])
+    for key, ys in groups.items():
+        if len(ys) > 1 and max(ys) - min(ys) > 1e-6:
+            bad.append(f"plan point {key} carries {len(ys)} heights {min(ys):.4f}..{max(ys):.4f}")
+    back = backward_segments(E_after, C, closed)
+    if back:
+        bad.append(f"segments still run backwards: {back[:8]}")
+    touched = set()
+    for k, l, X in cuts:
+        touched |= set(_wrap_rows(k + 1, l, m, closed))
+        if X is not None:
+            touched |= set(_wrap_rows(k - B, l + 1 + B, m, closed))
+    moved = [r for r in range(m) if r not in touched and tuple(E_after[r]) != tuple(E_before[r])]
+    if moved:
+        bad.append(f"rows outside the cuts and their windows moved: {moved[:8]}")
+    return bad

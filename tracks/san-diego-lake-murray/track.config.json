@@ -4,7 +4,7 @@
   "ui_series": "",
   "_ui_series_doc": "Engine track_folder prefixes the CM display name with ui_series (default 'K10 Colorado'); empty = use the track name as-is (SD names already carry the K10 - San Diego branding).",
   "slug": "san_diego_lake_murray",
-  "version": "0.17.1",
+  "version": "0.18.0",
   "author": "k10-san-diego",
   "year": 2026,
   "_about": "A single drivable LOOP around Lake Murray (Kevin's childhood neighborhood). This repo is the standalone, Blender-first home for the track: the loop is mapped from the REAL roads (OpenStreetMap) at REAL elevation (USGS 3DEP), imported into Blender, and shaped there interactively (Kevin designs, Claude operates) BEFORE any kn5 export. Start point = just the 5-road main loop; everything else is added deliberately, in Blender.",
@@ -346,9 +346,9 @@
   "terrain": {
     "_doc": "Ledger 0046 (Kevin 2026-10-10: 'more terrain near the roads, and the I-8 trench and adjacent causeway cut out'; 'I want to see cowles mountain at least and maybe more of the i8 corridor when I'm up on Navajo'). fleet/LAWS.md L3 as amended 2026-10-11: near-road relief is clamped, far relief is data. The ground is ONE multi-resolution lattice sampled from USGS 3DEP AT every vertex (scripts/elevation/terrain_sample.py, cached in data/terrain.samples.json.gz), anchored on the 20 m grid the assembler grades (tier_options.frame): 5 m cells (split in four) within 60 m of a pavement, 20 m (split in four) to 500 m, 40 m beyond, the I-8 corridor at 5 m and Cowles' cone at 20 m, over the dossier's landmark box (far_extent). Under and beside the roads (keep_cells: the graded grid's own 20 m cells wherever a pavement is within 18 m) the ground is the v0.17.1 graded surface, triangle for triangle, so the seat and the kn5 prep reshape exactly what they always reshaped; past 20 m the kept cells themselves are refined to the 5 m sub-lattice and take the data, feathered by 36 m (keep_cells.refine, applied by the kn5 prep after it has reshaped the near-road ground). Within 250 m of a pavement (and every pocket that encloses) the ground is physical 1GRASS; the rest is the visual-only far ring GRASS_FAR (no physics, no gates, no GrassFX). The band clamp (+-terrain_band_m of the nearest road) holds in full only within clamp_corridor_m of a pavement and releases to the raw DEM by clamp_blend_m: Cowles, the Del Cerro hilltop and the valley walls are 3DEP, uncapped.",
     "terrain_band_m": 22.0,
-    "clamp_corridor_m": 80.0,
-    "clamp_blend_m": 250.0,
-    "_clamp_doc": "GATES-CHANGELOG 2026-10-11 (ledger 0046): 80 / 250 m are invented within the ledger's ranges (60-100 / ~250).",
+    "clamp_corridor_m": 20.0,
+    "clamp_blend_m": 40.0,
+    "_clamp_doc": "Ledger 0054 D3 (Kevin 2026-10-12: 'why are we changing ridges?' - keep the real ridges), applied in v0.18.0: the band clamp holds in full within 20 m of a pavement and eases out by 40 m, the conform corridor (20 m) plus its 16 m blend, which already shape 0-36 m. Measured 2026-10-13 on fresh 3DEP transects (41,486 points, loop + every expansion road): 20 / 40 moves 0 real points by more than 1 m; 0046's 80 / 250 (GATES-CHANGELOG 2026-10-11, invented) filled the canyon north of west Navajo by up to 25 m and planed the Navajo-side ridge and the ridge west of College by 12-18 m. A hard 40 / 40 cut leaves a 2.2-2.4 m step beside Alvarado. GATES-CHANGELOG 2026-10-13 (0054): 20 / 40 [invented, measured].",
     "terrain_max_grade": 0.35,
     "elevation_scale": 1.0,
     "tiers": [
@@ -456,6 +456,14 @@
     "real-roads"
   ],
   "_ui_tags_doc": "Real public roads: never 'fictional' (the engine default before the 0047 fix round). track_folder prepends 'circuit' on every closed loop \u2014 Content Manager refuses Race / Track Day sessions without it, on the street layout as much as the race ones. CM's width is the narrowest declared width of the lap (Alvarado, 13.0 m), measured by track_folder from data/centerline.local.json.",
+  "ai": {
+    "_note": "ledger 0052: Kunos payload semantics, 2.5 m off the K-rail, faired, seated on and clamped at the BUILT gate OBJ; still GENERATED drafts (0023)",
+    "layouts": ["race_cw", "race_acw"],
+    "payload": "kunos",
+    "wall_clear_m": 2.5,
+    "fair": true,
+    "surface": "gate_obj"
+  },
   "install_folder": "san_diego_lake_murray_v3",
   "_install_folder_doc": "The folder under content/tracks this track installs as. tools/ship_sd.sh spells it \"${SLUG}_v3\"; track_folder names it in the root README.txt; tests/tools/test_ship_sd_chain.py pins the two together."
 }

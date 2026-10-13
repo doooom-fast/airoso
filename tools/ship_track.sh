@@ -309,11 +309,27 @@ ship_spawn_kn5() {
   step "ship: spawn kn5 per layout (nodes only: AC_START/PIT/HOTLAP/TIME from data/dummies_<id>.json)"
   "$BL" --background --python-exit-code 1 --python "$ENGINE/scripts/ac/build_spawn_kn5.py" -- "$PROJ" 2>&1 | grep "^\[spawn_kn5\]"
 }
+# ledger 0052: is this race layout named in track.config.json "ai".layouts (the writer's opt-in)?
+ai_layout() {
+  local r
+  r=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(1 if sys.argv[2] in ((d.get('ai') or {}).get('layouts') or []) else 0)" "$PROJ/track.config.json" "$1")
+  [ "${r%$'\r'}" = 1 ]
+}
 ship_ai() {
   local lid
   step "ship: AI lines per layout (race: V3 lane-offset drafts — GENERATED, ledger 0023; street: $STREET_AI)"
   for lid in $RACE_IDS; do
+    # ledger 0052: a layout named in track.config.json "ai" is written on, and clamped to, the BUILT walls and road of
+    # the kn5 set it loads (data/track.<id>.obj, extracted here: the writer refuses a missing or stale one) and is
+    # judged at once against them. A track without the block writes the old draft, unjudged (as ship_sd.sh did).
+    if ai_layout "$lid"; then
+      (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --kn5 "$PROJ/build/${SLUG}_race.kn5" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --out "$PROJ/data/track.$lid.obj")
+    fi
     (cd "$AIROSO" && python -m scripts.ac.write_ai_line "$PROJ" --layout "$lid" | grep -v "^  v\|^frame")
+    if ai_layout "$lid"; then
+      step "gate: verify_ai_line --layout $lid (hard; ledger 0052 - the written line vs the BUILT walls and road)"
+      (cd "$AIROSO" && python tools/verify_ai_line.py "$PROJ" --layout "$lid")
+    fi
   done
   for lid in $STREET_IDS; do
     rm -rf "$PROJ/ai/$lid"; mkdir -p "$PROJ/ai/$lid"     # never leave a stale ai_draft.json beside a copied line
@@ -400,6 +416,13 @@ gate_race_gates() {
     rc=0; (cd "$AIROSO" && python tools/no_route.py "$PROJ" --layout "$lid" 2>&1 | tail -30) || rc=$?
     [ "$rc" = 0 ] || NR_R=$rc
   done
+}
+gate_fold_fans() {
+  # ledger 0050: every levelled mainline fold pinch, read on every layout's BUILT gate OBJ (after race_gates wrote them);
+  # hard — exit 1 stops the chain, --force-install does not cover it
+  step "gate: verify_fold_fans (every levelled mainline fold pinch, all layouts, on the BUILT gate OBJs — hard)"
+  rm -f "$PROJ/data/verify_fold_fans.json"
+  (cd "$AIROSO" && python tools/verify_fold_fans.py "$PROJ")
 }
 
 # a draft step that needs no Blender (what --draft-only runs)

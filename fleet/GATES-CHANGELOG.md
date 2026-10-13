@@ -1057,7 +1057,7 @@ build). Only where the world fails the original wording too:
   outside it.* Built: crest 9.343° against 9.239°, v2240 8.487° against 8.347°; 3DEP 9.375° against 9.127°, 8.512°
   against 8.31°.
 - **2 from v1640**: fresh 3DEP hides Cowles there — a hill 350 m out stands at 7.231° in front of the 5.486° summit.
-  Re-worded: *from v1640 the build agrees with the world: the summit cone at ≥ 5.1° and a nearer rise at least as high*
+  Re-worded: *from v1640 the build agrees with the world: the summit cone at ≥ 5.1° [invented: the ledger's 5.5° less the 0.4° allowance the crest's 9.0° takes against the real 9.35°; marked at integration, v0.18.0, after the truth lens found it unmarked — it decides nothing today: built 5.489° hidden behind 6.600°, 3DEP 5.501° behind 7.215°] and a nearer rise at least as high*
   (`sightline_check` `"hidden": true`). Built: summit 5.489°, the hill 340 m out 6.600° — hidden, PASS. The built hill
   is 0.6° lower than the world's (the L3 clamp's release band), which this reading allows.
 - **3, "no terrain vertex below 100 m abs"**: the landmark box the ledger asked for takes in the San Diego River gorge,
@@ -1188,6 +1188,27 @@ verdict file identical to v0.17.1 field for field (only `grass_verts` 87,278 →
 box (−3060..−2850, −1020..−970): 8 jogs → 0); `house_seat_check` PASS; road kn5 112,609,136 → 113,313,134 B; race and
 closure kn5 unchanged; terrain tiles `1GRASS` × 8 (max 42,426 v), `GRASS_FAR` × 2 (max 55,750 v).
 
+### Amended at integration (2026-10-13, v0.18.0, ledger 0054 D3): the clamp's reach is the conform corridor
+
+Kevin, on 0054's D3 ("why are we changing ridges?"): keep the real ridges. Measured read-only on fresh 3DEP transects
+every 50 m along the loop and all four connectors, 5–300 m each side (41,486 points; ledger 0054): 0046's clamp as
+written above (80 m full / 250 m release) moves 2,035 points by more than 1 m, every one 40–250 m from a road — it filled
+the canyon north of west Navajo by up to 25 m and planed the Navajo-side ridge and the ridge west of College by 12–18 m.
+Inside 40 m it moves nothing: the conform corridor (20 m) and its 16 m blend already shape 0–36 m. A reach that eases out
+between 20 and 40 m moves 0 points by more than 1 m on the loop and on every expansion road (largest 0.01 m). A hard
+40 / 40 cut leaves a 2.2–2.4 m step beside Alvarado, so the release keeps its smoothstep.
+
+| Number | Was | Now | Why |
+|---|---|---|---|
+| `terrain.clamp_corridor_m` | 80 m [invented] | **20 m** [invented, measured] | the conform corridor; nothing real is moved inside it (0 of 41,486 points by > 1 m) |
+| `terrain.clamp_blend_m` | 250 m [invented] | **40 m** [invented, measured] | corridor 20 + the 16 m blend + a 4 m margin; 0 points by > 1 m |
+
+L3 amended in the same commit (fleet/LAWS.md: "Near" is the conform corridor). Measured on the v0.18.0 rehearsal (the
+merged branch, before 0050): every drive / audit / no_route / mouths verdict identical to v0.17.1; `rib_check` PASS
+(nyquist 75 / 100 over 2 m beyond 20 m, cross-grain 33 / 100, step jogs densest 75 m 4 / 5); `house_seat_check` PASS
+(152 buildings, 0 floating / sunken / buried); terrain tiles unchanged (`1GRASS` × 8, max 42,426 v; `GRASS_FAR` × 2,
+max 55,750 v).
+
 ## 2026-10-12 — `verify_signs` (k) direction coverage, (j) read from signs.json, race furniture never the signs' ground (ledger 0051)
 
 **Why.** Kevin, from the seat: "arrow signs are only placed for one direction of driving". All signs ship in the one
@@ -1227,6 +1248,22 @@ No numeric threshold is added or moved. Every number below is an existing rule c
   step, (k) will FAIL until its own signs.json sets `both_directions_mainline: true`.
 - `place_signs.DEFAULTS` is unchanged (false), so a track with no signs.json still writes the same bytes. This
   was checked on SD with the knob off: the output was byte-identical to HEAD's.
+
+### Integration (2026-10-13, v0.18.0): (l) named corners stay signed — the verifier's gap closed
+
+The 0051 verifier planted M4-fwd and M4-rev both lost (as "ON pavement" skip records, or gone) and `verify_signs` passed:
+(k) only judges a corner that still has a plate in some direction, and `author_signs_blend` exits 0 on mesh-stage skips —
+so 0050 reshaping the Navajo/Jackson curb could have cost every layout its Jackson/Navajo arrows with every gate green.
+
+| Check | Rule | Threshold |
+|---|---|---|
+| (l) named corners | every corner `signs.json` names and does not skip outright keeps at least one plate; a MAINLINE one a plate in every driven direction (`layouts[].direction`) unless `signs.json` skips THAT approach with a reason — a rule reason (R_apex, \|D\|, …) does not cover a corner Kevin named; a side-street one a plate in each approach, or a skip there that (k) counts as coverage | none (structural) |
+
+Teeth (tests/tools/test_place_signs.py::test_a_named_corner_that_lost_every_plate_fails_l): both M4 plates as
+"ON pavement" skips (k blind) → FAIL; both records gone → FAIL; M4-rev lost to a rule reason → FAIL (k passes it); the
+same with `"rev": {"skip": true, "reason": ...}` → PASS; MED-6-rev lost to OUTSIDE ASSERTION → FAIL, to R_apex → PASS.
+On the v0.18.0 build: 23 posts, 11 named corners (M1–M5, MED-1/6/7/8/10/13) all signed, M4-fwd / M4-rev clear the race
+curb strip by +1.853 / +1.762 m (verify_race G's own margin).
 
 ## 2026-10-12 — worn race kerbs: the atlas wrap, the no-black-slot guard, the opt-in wheel kerb effect (ledger 0053)
 

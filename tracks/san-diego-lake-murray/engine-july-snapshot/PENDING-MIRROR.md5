@@ -2,4 +2,4 @@
 # changes rehearsed on a scratch ENG copy, to mirror into the real engine-july (cp, then check the
 # md5). Written by tools/snapshot_engine_july.py; tests accept the old md5 until then.
 2dcc8e8b9d4024ec9a9ee3fadb1236b8  596d11d8479848863f8b030c870bdf2e  scripts/ac/build_kn5_loop.py
-d3bbe9401615a815f6f5c863c8e97d79  cdb4322136aac5c220625758fee0fd9d  scripts/ac/pbr.py
+d3bbe9401615a815f6f5c863c8e97d79  48617c1eb5456d00d1b4ea7ceb3aa6bd  scripts/ac/pbr.py

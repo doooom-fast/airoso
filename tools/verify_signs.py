@@ -61,6 +61,13 @@ Per sign (a paired post is checked once per plate where a plate matters):
       rule wanted an arrow there), a reasonless signs.json skip, a hairpin's second arrow, and a
       direction with no record at all (v0.17.1: race_acw drove the lap anticlockwise past six plates
       that all faced the clockwise approach, and every check passed).
+  (l) named corners stay signed (v0.18.0 integration; the 0051 verifier's gap): (k) only judges a corner
+      that still has a plate somewhere, so a corner that lost EVERY plate (both M4 plates failing mesh
+      placement after 0050 reshaped the Navajo/Jackson curb, or both records gone) passed. Every corner
+      signs.json names and does not skip outright must keep at least one plate; a MAINLINE one a plate in
+      every driven direction unless signs.json skips that approach with a reason (a rule reason does not
+      cover a named corner); a side-street one a plate in each approach or a skip there that (k) would
+      count as coverage.
   plus blender.normal_mismatches == 0, and no race furniture (1KERB_RACE / 1WALL_RACE) among the
   authoring pass's or the scan's ground / road objects (ledger 0051: the signs ship in the road kn5 the
   street layout loads, the race kerbs do not; measuring a post against one moved approved posts up to
@@ -650,6 +657,78 @@ def direction_coverage(d, driven, ribbon="MAINLINE", entries=None):
     return fails, rows
 
 
+def named_coverage(d, driven, entries):
+    """check (l) (0051 verify finding, integration v0.18.0): every corner signs.json NAMES and does not skip outright
+    stays signed. (k) only judges corners that still have a plate in some direction, so a geometry change that cost
+    a corner EVERY plate (0050's reshaped Navajo/Jackson curb dropping M4-fwd and M4-rev as 'ON pavement', or both
+    records vanishing) passed with every gate green. Here, per named corner:
+      - at least one plate, always;
+      - MAINLINE: a plate in every DRIVEN direction (track.config.json layouts[].direction), or a signs.json skip of
+        that approach with a reason — a rule reason does not cover a corner Kevin named (the rule losing it is
+        exactly the silent loss this check exists for);
+      - any other ribbon (two-way side streets, both approaches signed): a plate in each approach, or a skip record
+        there whose every reason is coverage as (k) words it (coverage_reason).
+    -> (fails, rows). entries None (signs.json not read) -> nothing to check, said so."""
+    fails, rows = [], []
+    if entries is None:
+        rows.append("(l) signs.json not read: named corners not checked")
+        return fails, rows
+    placed = {s["id"] for s in d["signs"]} | {p["id"] for s in d["signs"] for p in (s.get("plates") or []) if "id" in p}
+    plates, skips = {}, {}
+    for s in d["signs"]:
+        for p in s.get("plates") or [s]:
+            base, _, _ = parse_id(p["id"], plate_second(p, s))
+            plates.setdefault(base, {}).setdefault(p.get("direction") or "fwd", []).append(p["id"])
+    for sk in d["skipped"]:
+        base, _, second = parse_id(sk["id"], sk["id"].endswith("-2") and sk["id"][:-2] in placed)
+        if second:
+            continue
+        direction = "rev" if sk["ribbon"].endswith("(rev)") else "fwd"
+        skips.setdefault(base, {}).setdefault(direction, []).extend(sk.get("reasons") or [])
+    mainline_dirs = sorted(driven)
+    checked = 0
+    for base in sorted(entries):
+        e = entries[base]
+        if e.get("skip"):
+            continue                        # skipped outright by signs.json (place_signs refuses one without a reason)
+        checked += 1
+        have = plates.get(base, {})
+        ribbon = str(e.get("ribbon") or "")
+        if not have:
+            why = "; ".join("%s: %s" % (dr, ", ".join(rs) or "(no reasons)") for dr, rs in sorted(skips.get(base, {}).items()))
+            fails.append("l_named_corner: signs.json names %s (%s%s) and does not skip it, but it has NO plate in any "
+                         "direction — %s" % (base, ribbon, (", " + e["where"]) if e.get("where") else "",
+                                              ("skipped: " + why) if why else "no record at all"))
+            continue
+        want = mainline_dirs if ribbon == "MAINLINE" else ["fwd", "rev"]
+        for dr in want:
+            if dr in have:
+                continue
+            if ribbon == "MAINLINE":
+                if entry_skip_reason(e, dr) is not None:
+                    rows.append("(l) %s: no %s plate — signs.json skips that approach: %s" % (base, dr, entry_skip_reason(e, dr)))
+                else:
+                    rs = skips.get(base, {}).get(dr)
+                    fails.append("l_named_corner: MAINLINE corner %s (named in signs.json) has no plate for %s (%s) — %s"
+                                 % (base, dr, ", ".join(driven.get(dr, [])),
+                                    ("skipped: " + "; ".join(rs)) if rs else "no record at all"))
+                continue
+            rs = skips.get(base, {}).get(dr)
+            if rs is None:
+                fails.append("l_named_corner: %s corner %s (named in signs.json) has no %s plate and no record for that "
+                             "approach" % (ribbon, base, dr))
+                continue
+            bad = ["%s (%s)" % (r, why) for r in rs for ok, why in [coverage_reason(r, e, dr)] if not ok]
+            if not rs or bad:
+                fails.append("l_named_corner: %s corner %s (named in signs.json): the %s approach was skipped by reasons "
+                             "that are not the rule's own: %s" % (ribbon, base, dr, "; ".join(bad) or "(no reasons)"))
+            else:
+                rows.append("(l) %s: no %s plate — covered by its skip: %s" % (base, dr, "; ".join(rs)))
+    rows.append("(l) %d named corners (signs.json, not skipped) checked: every one signed" % checked
+                if not fails else "(l) %d named corners checked" % checked)
+    return fails, rows
+
+
 def race_ground(d, measured):
     """names of race furniture the authoring pass or the scan measured as ground / road (must be none)"""
     sys.path.insert(0, str(AIROSO / "tools"))
@@ -852,10 +931,12 @@ def main():
     try:
         driven = driven_directions(proj)
         k_fails, k_rows = direction_coverage(d, driven, entries=entries if sj is not None else None)
+        l_fails, l_rows = named_coverage(d, driven, entries if sj is not None else None)
     except ValueError as e:
         k_fails, k_rows = ["k_direction_coverage: %s" % e], []
-    fails += k_fails
-    rows += ["[verify-signs] " + r for r in k_rows]
+        l_fails, l_rows = [], []
+    fails += k_fails + l_fails
+    rows += ["[verify-signs] " + r for r in k_rows + l_rows]
     # race furniture is never the signs' ground or road
     for n in race_ground(d, measured):
         fails.append("race furniture measured as the signs' surface (%s) — the street layout has no such kerb" % n)

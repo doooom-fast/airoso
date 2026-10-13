@@ -105,6 +105,6 @@ def test_the_race_rows_ship_in_the_snapshotted_pbr():
     """the 2026-10-11 texture-binding fix is in the build-of-record copy, not only in airoso's"""
     text = (SNAP / "scripts" / "ac" / "pbr.py").read_text(encoding="utf-8")
     assert '"1WALL_RACE": ("concrete_barrier_diffuse.png", "concrete_barrier_normal.png"' in text
-    assert '"1KERB_RACE": ("kerb_diffuse.png"' in text
+    assert '"1KERB_RACE": ("kerb_race_worn_diffuse.jpg", "kerb_race_worn_normal.jpg"' in text
     airoso = (ROOT / "scripts" / "ac" / "pbr.py").read_bytes()
     assert (SNAP / "scripts" / "ac" / "pbr.py").read_bytes() == airoso, "ENG's pbr.py and airoso's must stay byte-identical"

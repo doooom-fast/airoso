@@ -208,11 +208,37 @@ def main():
         rows = rows_of(name)
         Crow = [r[1] for r in rows]
         closed = b["closed"]
-        cols, left = [], []
+        cols, left, levelled = [], [], []
         strict = name == "MAINLINE"      # the race strips + kerbs sit on it: every mainline fold must be mended
+        # ledger 0050: the MAINLINE's swallowtail pinches are LEVELLED — X at the midpoint of its legs, each leg's last
+        # mw.FOLD_LEVEL_ROWS rows eased to it (heights only). Connectors keep the 2026-10-11 rule (higher leg, nothing
+        # eased). The half-jump cap (no_route's wall band) applies to the lines that carry walls and the curb face:
+        # the ROAD edges and curb p0 (lane edge) / p1 (curb top); p2 (sidewalk back) / p3 (grass meet) level uncapped
+        # (measured at Navajo / Jackson 0.317 / 0.359 > 0.28 — capped, they stopped the build: the review's BLOCKER 1)
+        level = name == "MAINLINE"
+
+        def _unfold(E, cap, tag):
+            rep = []
+            newE, col, lf = mw.unfold_line(E, Crow, closed, strict=strict, level=level,
+                                           half_jump_max=mw.FOLD_HALF_JUMP_MAX_M if cap else None, report=rep)
+            if level:
+                bad = mw.check_levelled(E, newE, Crow, closed, col)
+                if bad:
+                    raise SystemExit(f"[weld] FATAL: {name} {tag}: the levelled fold fails its self-check: {bad[:3]}")
+            for q in rep:
+                levelled.append({"line": list(tag), "k": q["k"], "l": q["l"],
+                                 "X": [round(float(c_), 4) for c_ in q["X"]], "y_k": round(q["y_k"], 4),
+                                 "y_l": round(q["y_l"], 4), "half_jump": round(q["half_jump"], 4), "capped": bool(cap),
+                                 "max_ease_m": round(max((abs(d) for _j, d in q["eased"]), default=0.0), 4)})
+                print(f"[weld] LEVEL {name} {tag[0]} {' '.join(str(x) for x in tag[1:])}: pinch rows {q['k'] % b['rows']}.."
+                      f"{(q['l'] + 1) % b['rows']} legs {q['y_k']:.3f} / {q['y_l']:.3f} -> X {q['h']:.3f} "
+                      f"(half-jump {q['half_jump']:.3f}{'' if cap else ', uncapped'}; {len(q['eased'])} rows eased, "
+                      f"max {max((abs(d) for _j, d in q['eased']), default=0.0):.3f} m)")
+            return newE, col, lf
+
         for lane in (0, 2):
             E = [r[lane] for r in rows]
-            newE, col, lf = mw.unfold_line(E, Crow, closed, strict=strict)
+            newE, col, lf = _unfold(E, True, ("road", lane))
             left += [("road", lane, a, b_) for a, b_ in lf]
             for r in range(b["rows"]):
                 if newE[r] != E[r]:
@@ -222,7 +248,7 @@ def main():
             for p in range(mw.CURB_P):
                 ids = [mw.curb_index(lay, name, r, s, p) for r in range(b["rows"])]
                 E = [tuple(V["CURB"][i]) for i in ids]
-                newE, col, lf = mw.unfold_line(E, Crow, closed, strict=strict)
+                newE, col, lf = _unfold(E, p <= 1, ("curb", s, p))
                 left += [("curb", s, p, a, b_) for a, b_ in lf]
                 for r, i in enumerate(ids):
                     if newE[r] != E[r]:
@@ -306,7 +332,10 @@ def main():
                 raise SystemExit(f"[weld] FATAL: {name} ROAD lane {lane} still folds after the unfold at segments "
                                  f"{[j for j in still if j not in known][:8]}")
         fold_report[name] = {"cuts": [list(c) for c in cols], "left": [list(x) for x in left],
-                             "paint_verts_moved": moved_paint}
+                             "paint_verts_moved": moved_paint,
+                             # ledger 0050: one record per levelled pinch (line, k, l, X, legs, half-jump, cap)
+                             "levelled": levelled, "level_rows": mw.FOLD_LEVEL_ROWS if level else 0,
+                             "rows": b["rows"]}
         print(f"[weld] FOLDS {name}: {len(cols)} line cut(s) at rows "
               f"{sorted({(c[-2] % b['rows'], c[-1] % b['rows']) for c in cols if c[0] == 'road'})} (ROAD) + CURB; "
               f"{moved_paint} paint verts")

@@ -44,7 +44,10 @@ def test_stage_order():
         'inspect_kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --json "$PROJ/data/closure_$lid.kn5.json"',
         'tools/check_race_kn5.py "$PROJ/data/closure_$lid.kn5.json" --role closure --owner "$tok"',
         "scripts/ac/build_spawn_kn5.py",
+        'step "ship: AI lines per layout',
+        'kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --kn5 "$PROJ/build/${SLUG}_race.kn5"',
         "scripts.ac.write_ai_line",
+        'tools/verify_ai_line.py "$PROJ" --layout "$lid"',
         '(cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ")',
         'rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"',
         'kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")',
@@ -57,10 +60,12 @@ def test_stage_order():
         'tools/verify_mouths.py "$PROJ"',
         'drive_test "$PROJ" --layout street',
         'audit_mesh "$PROJ" 2>&1',
-        '--kn5 "$PROJ/build/${SLUG}_race.kn5" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --out "$PROJ/data/track.$lid.obj"',
+        'step "gate: $lid — road + common race + ITS closure kn5 -> ONE gate OBJ',
         'drive_test "$PROJ" --layout "$lid"',
         'audit_mesh "$PROJ" --layout "$lid"',
         'tools/no_route.py "$PROJ" --layout "$lid"',
+        'rm -f "$PROJ/data/verify_fold_fans.json"',
+        'tools/verify_fold_fans.py "$PROJ"',
         "RACE_RED=$(pyq",
         "sync outputs workshop -> airoso",
         "NOT INSTALLED: race layout(s)",
@@ -279,7 +284,7 @@ def test_race_kn5_guard_is_a_content_check():
     sys.path.insert(0, str(ROOT))
     from scripts.ac import pbr
     allowed = ck.race_texture_set()
-    assert allowed == {"kerb_diffuse.png", "concrete_barrier_diffuse.png", "concrete_barrier_normal.png"}
+    assert allowed == {"kerb_race_worn_diffuse.jpg", "kerb_race_worn_normal.jpg", "concrete_barrier_diffuse.png", "concrete_barrier_normal.png"}
     assert allowed == {f for k, row in pbr.TEXTURES.items() if k.startswith(("1WALL_RACE", "1KERB_RACE")) for f in row[:2] if f}
     assert ck.race_texture_set({"1WALL_RACE": ("a.png", "b.png"), "1WALL": ("c.png", None), "1KERB_RACE": ("d.png", None)}) == {"a.png", "b.png", "d.png"}
     clean = {"file_bytes": 35_553_024, "nodes": ["BlenderFile"],
@@ -502,3 +507,35 @@ def test_v021_shim_resolves_the_assembler_package_not_the_engine():
     assert r.returncode == 0, r.stderr
     for ln in r.stdout.split():
         assert Path(ln).resolve().as_posix().startswith(Path(v021).resolve().as_posix()), ln
+
+
+def test_ai_writer_reads_the_built_race_obj_ledger_0052():
+    """ledger 0052: the race writer (track.config.json "ai") seats the line on the BUILT walls and road of the kn5 set
+    the layout loads and refuses a missing or stale OBJ — so each race layout's gate OBJ is extracted from road + common
+    race + ITS closure kn5 right before the writer, after every export, and verify_ai_line judges the written line at
+    once (hard, under set -e; no --baseline: the writer holds the box rule itself)"""
+    ai = TEXT[_first('step "ship: AI lines per layout'):_first("for lid in $STREET_IDS; do\n  rm -rf")]
+    obj = ai.index('(cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" '
+                   '--kn5 "$PROJ/build/${SLUG}_race.kn5" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" '
+                   '--out "$PROJ/data/track.$lid.obj")')
+    assert obj < ai.index("scripts.ac.write_ai_line") < ai.index('python tools/verify_ai_line.py "$PROJ" --layout "$lid")')
+    assert "for lid in $RACE_IDS; do" in ai and "--baseline" not in ai and "|| " not in ai.split("verify_ai_line.py")[1][:60]
+    assert _first("scripts/ac/build_spawn_kn5.py") < _first('step "ship: AI lines per layout')
+    sync = TEXT[_first('step "sync outputs workshop -> airoso"\n'):_first("never synced.\nfi\n")]
+    assert '"ai_verify.$lid.json"' in sync
+    import json
+    cfg = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
+    assert cfg["ai"]["layouts"] == ["race_cw", "race_acw"] and cfg["ai"]["surface"] == "gate_obj"
+
+
+def test_fold_fans_gate_ledger_0050():
+    """ledger 0050: verify_fold_fans reads every layout's BUILT gate OBJ, so it runs after the race gates wrote them,
+    its stale verdict is removed first, it is hard (set -e: no `|| rc`), it comes before the install decision and its
+    verdict is synced back"""
+    i = _first('tools/verify_fold_fans.py "$PROJ"')
+    assert _first('tools/no_route.py "$PROJ" --layout "$lid"') < _first('rm -f "$PROJ/data/verify_fold_fans.json"') < i \
+        < _first("RACE_RED=$(pyq") < _first('elif [ "$FORCE" = 1 ]; then')
+    line = TEXT[i:TEXT.index("\n", i)]
+    assert "||" not in line, line
+    sync = TEXT[_first('step "sync outputs workshop -> airoso"\n'):_first("never synced.\nfi\n")]
+    assert "verify_fold_fans.json" in sync

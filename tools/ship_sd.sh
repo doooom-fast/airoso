@@ -285,8 +285,15 @@ step "ship: spawn kn5 per layout (nodes only: AC_START/PIT/HOTLAP/TIME from data
 "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/build_spawn_kn5.py" -- "$PROJ" 2>&1 | grep "^\[spawn_kn5\]"
 
 step "ship: AI lines per layout (race: V3 lane-offset drafts — GENERATED, ledger 0023; street: $STREET_AI)"
+# ledger 0052: with track.config.json "ai" the race writer seats the line on, and clamps it to, the BUILT walls and
+# road of the kn5 set the layout loads (data/track.<id>.obj) and refuses a missing or stale OBJ — so that OBJ is
+# extracted here, before the writer (the gate stage below re-extracts the same file from the same kn5s), and the
+# written line is judged at once against it
 for lid in $RACE_IDS; do
+  (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --kn5 "$PROJ/build/${SLUG}_race.kn5" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --out "$PROJ/data/track.$lid.obj")
   (cd "$AIROSO" && python -m scripts.ac.write_ai_line "$PROJ" --layout "$lid" | grep -v "^  v\|^frame")
+  step "gate: verify_ai_line --layout $lid (hard; ledger 0052 - the written line vs the BUILT walls and road)"
+  (cd "$AIROSO" && python tools/verify_ai_line.py "$PROJ" --layout "$lid")
 done
 for lid in $STREET_IDS; do
   rm -rf "$PROJ/ai/$lid"; mkdir -p "$PROJ/ai/$lid"     # never leave a stale ai_draft.json beside a copied line
@@ -360,6 +367,13 @@ for lid in $RACE_IDS; do
   rc=0; (cd "$AIROSO" && python tools/no_route.py "$PROJ" --layout "$lid" 2>&1 | tail -30) || rc=$?
   [ "$rc" = 0 ] || NR_R=$rc
 done
+step "gate: verify_fold_fans (every levelled mainline fold pinch, all layouts, on the BUILT gate OBJs — hard)"
+# ledger 0050: where the road ribbon is wider than twice its corner's radius the weld pinches the inside edge to one
+# point at ONE height (the midpoint of its legs, both legs eased to it). This reads the three built gate OBJs at every
+# such pinch: no road-on-road step, no grass on top in the lane, the pinch at its midpoint, the race walls inside
+# no_route's band; exit 1 (data/verify_fold_fans.json) stops the chain, --force-install does not cover it
+rm -f "$PROJ/data/verify_fold_fans.json"
+(cd "$AIROSO" && python tools/verify_fold_fans.py "$PROJ")
 # a race layout red on its OWN gates is never installed, --force-install or not: drive_test barrier_missing /
 # obstruction_stations / not run, or the BUILT no_route verdict missing or failing (a leak, a blocked lap, a
 # reached forbidden probe, an unreached spawn). check_race_kn5 / verify_kn5 / verify_kn5 --inis already
@@ -390,7 +404,7 @@ step "sync outputs workshop -> airoso"
 cp "$PROJ/loop.blend" "$SRC/loop.blend"
 for f in centerline.local.json centerline.raw.local.json median_bands.json dummies.json \
          finished_centerline.json gate_centerline.json lights.local.json connectors.local.json \
-         mouths.json mouth_welds.json verify_mouths.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
+         mouths.json mouth_welds.json verify_mouths.json verify_fold_fans.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
          drive_test.json audit.json \
          barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json \
          $TERRAIN_DATA terrain.tiers.report.json bridges.authored.json; do
@@ -402,7 +416,7 @@ for lid in $LAYOUT_IDS; do
   if [ -d "$PROJ/ai/$lid" ]; then rm -rf "$SRC/ai/$lid"; mkdir -p "$SRC/ai"; cp -r "$PROJ/ai/$lid" "$SRC/ai/$lid"; fi   # track_folder is reproducible from the repo
 done
 for lid in $RACE_IDS; do
-  for f in "no_route.$lid.json" "no_route.$lid.planned.json" "audit.$lid.json" "closure_$lid.kn5.json"; do
+  for f in "no_route.$lid.json" "no_route.$lid.planned.json" "audit.$lid.json" "closure_$lid.kn5.json" "ai_verify.$lid.json"; do
     [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
   done
 done

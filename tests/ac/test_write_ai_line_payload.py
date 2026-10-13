@@ -5,9 +5,14 @@ payload fields in a meaning no reference line uses. Pinned here:
   byte-identical to the writer before ledger 0052 (golden md5s of the two end-to-end fixtures of
   test_ai_corridor / test_write_ai_line_layouts, computed with HEAD 5ccf20b's writer);
 * with the opt-in, on a synthetic BUILT gate OBJ (walls standing on the corridor faces, a tilted road): the
-  payload carries AC's meaning (segment length, direction +-1, the built camber and normal, the plain 3-point
-  radius, a 0/0 header), the line keeps wall_clear off the built walls, has no spurious speed dips, its sides
-  never reach past a built wall, and tools/verify_ai_line.py passes it while it fails the legacy line;
+  payload carries AC's meaning (segment length, direction +-1 from the LOCAL turn, the built normal, the camber
+  measured toward the bend = -direction x asin(normal . right), the plain 3-point radius, a 0/0 header), the
+  line keeps wall_clear off the built walls, has no spurious speed dips, its sides never reach past a built wall,
+  every box keeps >= 0.85 x the arc the v0.17.1 rule lays there, and tools/verify_ai_line.py passes it (with the
+  legacy line as --baseline) while it fails the legacy line;
+* the gate's V1 accepts what AC's own lines carry (the recorder's seam point, a spacing gap) and refuses the
+  plain-asin camber sign, a one-point length error and a direction window wider than the local turn; V6 refuses
+  a corner tightened below 0.85 x the baseline's;
 * the pieces: the banded solver, fair_line (takes a wiggle out, never crosses a bound), the gate OBJ reader
   (wall footprints, layer filter, rays, the road surface), load_ai_opts' refusals, the stale-OBJ guard.
 
@@ -172,12 +177,12 @@ def test_opt_in_payload_carries_acs_meaning():
             for i in range(n):
                 assert abs(ai["length"][i] - math.dist(P[i], P[i - 1])) < 2e-3, (i, ai["length"][i])
             assert max(ai["length"]) < 2.0 and ai["point_length"][-1] > 1000.0      # the point record stays cumulative
-            # direction +-1 everywhere; = -sign(heading change over +-10 points) wherever it turns > 0.5 deg
+            # direction +-1 everywhere; = -sign(the LOCAL heading change, +-1 point) wherever it turns > 0.5 deg
             assert all(x in (-1.0, 1.0) for x in ai["direction"])
-            tk = gate.window_sum(gate.turns(P), 10)
+            tk = gate.window_sum(gate.turns(P), 1)
             bend = [i for i in range(n) if abs(tk[i]) > math.radians(0.5)]
             agree = sum(1 for i in bend if ai["direction"][i] == -math.copysign(1.0, tk[i]))
-            assert bend and agree >= 0.99 * len(bend), (agree, len(bend))   # float32 points vs the float64 line
+            assert bend and agree == len(bend), (agree, len(bend))         # computed from the float32 points
             # radius = the plain 3-point circumradius of the points as written
             for i in range(0, n, 7):
                 r = w._circumradius(P[i - 1], P[i], P[(i + 1) % n])
@@ -191,7 +196,8 @@ def test_opt_in_payload_carries_acs_meaning():
                 assert all(abs(a - b) < 1e-5 for a, b in zip((ai["nx"][i], ai["ny"][i], ai["nz"][i]), nk))
                 fx, fz = ai["fx"][i], ai["fz"][i]
                 tilt = math.asin((nk[0] * -fz + nk[2] * fx) / math.hypot(fx, fz))
-                assert abs(ai["camber"][i] - tilt) < 1e-4, (i, ai["camber"][i], tilt)
+                # AC's sign rule: the tilt measured toward the bend (every reference line, 0.95-1.00 of tilted points)
+                assert abs(ai["camber"][i] - -ai["direction"][i] * tilt) < 1e-4, (i, ai["camber"][i], tilt)
             rep = json.loads((d / "ai" / lid / "ai_draft.json").read_text())
             assert rep["ai_0052"]["opts"]["payload"] == "kunos" and rep["ai_0052"]["built"]["road_tris"] == 2
             assert rep["geometry"]["seated"]["off_road"] == 0 and "GENERATED DRAFT" in rep["status"]
@@ -208,7 +214,9 @@ def test_opt_in_line_keeps_off_the_built_walls_and_passes_the_gate_the_legacy_li
         # the legacy line (no ai block) aims at the comfort 1.5 m: under the gate's 2.0 m, and its payload fails V1
         _set_ai(d, None)
         _quiet(w.main, [str(d), "--layout", lid])
-        legacy = gate.measure(ab.read_ai(d / "ai" / lid / "fast_lane.ai"), walls=walls, road=road, th=th)
+        base = Path(td) / "legacy_fast_lane.ai"
+        base.write_bytes((d / "ai" / lid / "fast_lane.ai").read_bytes())
+        legacy = gate.measure(ab.read_ai(base), walls=walls, road=road, th=th)
         fails = gate.judge(legacy, th)
         assert legacy["v2"]["min_m"] < 2.0 and any(f.startswith("V1 length") for f in fails), (legacy["v2"], fails)
         assert _quiet(gate.main, [str(d), "--layout", lid]) == 1
@@ -219,12 +227,29 @@ def test_opt_in_line_keeps_off_the_built_walls_and_passes_the_gate_the_legacy_li
         assert m["v2"]["min_m"] >= 2.5 - 0.05, m["v2"]
         assert m["v3"]["dip_pts"] == 0 and m["v4"]["overreach_pts"] == 0, (m["v3"], m["v4"])
         assert gate.judge(m, th) == [], gate.judge(m, th)
-        assert _quiet(gate.main, [str(d), "--layout", lid]) == 0
+        assert _quiet(gate.main, [str(d), "--layout", lid, "--baseline", str(base)]) == 0
         rep = json.loads((d / "data" / f"ai_verify.{lid}.json").read_text())
         assert rep["ok"] and rep["measured"]["v1"]["direction_agree"] == 1.0
+        # the fixture's road tilts <= 0.0067 rad (under the gate's 0.01 "tilted" bar): the flat-road rule judges it
+        assert rep["measured"]["v1"]["camber_med_abs_err_rad"] < 1e-4, rep["measured"]["v1"]
+        v6 = rep["measured"]["v6"]
+        assert len(v6["corners"]) == 4 and v6["min_ratio"] >= 0.85, v6       # the fixture's four corners
         draft = json.loads((d / "ai" / lid / "ai_draft.json").read_text())
         assert draft["corridor"]["check"]["ok"] and all("radius_m" in a for a in draft["geometry"]["box_arcs"])
         assert draft["geometry"]["fairing"]["refused_after"] == 0
+        # the box rule as written: every box's car-scale minimum >= 0.85 x the arc the v0.17.1 rule lays there
+        for a in draft["geometry"]["box_arcs"]:
+            assert a["line_radius_min_m"] >= 0.85 * a["radius_v0171_rule_m"], a
+        # with the "tilted" bar under this road's tilt, the ratio rule: AC's sign gives 1.0 ...
+        th_t = dict(th, camber_tilt_min_rad=0.004)
+        good = ab.read_ai(d / "ai" / lid / "fast_lane.ai")
+        mg = gate.measure(good, walls=walls, road=road, th=th_t)
+        assert mg["v1"]["camber_tilted_points"] > 0 and 0.99 <= mg["v1"]["camber_ratio_med"] <= 1.01, mg["v1"]
+        assert not any(f.startswith("V1") for f in gate.judge(mg, th_t))
+        # ... and the plain-asin camber sign (no reference line uses it) fails V1 on the same built road
+        bad = ab.read_ai(d / "ai" / lid / "fast_lane.ai")
+        bad["camber"] = [-bad["direction"][i] * c for i, c in enumerate(bad["camber"])]
+        assert any(f.startswith("V1 camber") for f in gate.judge(gate.measure(bad, walls=walls, road=road, th=th_t), th_t))
 
 
 def test_opt_in_refuses_a_missing_or_stale_gate_obj():
@@ -252,6 +277,27 @@ def test_opt_in_refuses_a_missing_or_stale_gate_obj():
             assert "missing" in str(e.code), e.code
         else:
             raise AssertionError("ai.surface gate_obj without the OBJ must refuse")
+
+
+def test_opt_in_refuses_a_box_tighter_than_the_declared_rule():
+    # the 0052 box rule (each box >= 0.85 x the arc the v0.17.1 rule lays there) is enforced on the line AS WRITTEN:
+    # demand more than the fixture's boxes can keep (0.995 x, while 2.5 m off the walls) and the writer refuses
+    with tempfile.TemporaryDirectory() as td:
+        d = _opt_in_project(Path(td))
+        keep = w.BOX_RULE_KEEP
+        try:
+            w.BOX_RULE_KEEP = 0.995
+            try:
+                _quiet(w.main, [str(d), "--layout", "race_cw"])
+            except SystemExit as e:
+                assert "box corner is tighter" in str(e.code), e.code
+            else:
+                raise AssertionError("a box under the declared rule must refuse")
+        finally:
+            w.BOX_RULE_KEEP = keep
+        _quiet(w.main, [str(d), "--layout", "race_cw"])             # at 0.85 the same world writes
+        draft = json.loads((d / "ai" / "race_cw" / "ai_draft.json").read_text())
+        assert all(a["line_radius_min_m"] >= 0.85 * a["radius_v0171_rule_m"] for a in draft["geometry"]["box_arcs"])
 
 
 def test_load_ai_opts_scopes_and_refusals():
@@ -344,3 +390,103 @@ def test_gate_counts_sides_past_a_wall_on_a_perpendicular_ray():
     ai["side_left"] = [6.0] * n
     m = gate.measure(ai, walls=walls, road=None, th=dict(gate.DEFAULTS))
     assert m["v4"]["overreach_pts"] == n and m["v4"]["per_side"]["left"] == n and abs(m["v4"]["worst_m"] - 1.0) < 1e-6
+
+
+def _rounded_square(half: float, r: float, ds: float = 1.5) -> list[tuple[float, float, float]]:
+    """A closed rounded square (kn5 frame, y = 0): straights of 2 (half - r) joined by quarter arcs of radius r,
+    anticlockwise in (x, z), sampled every ~ds metres along it."""
+    c = half - r
+    legs = []                                                  # (length, point_at(t in 0..length))
+    for k, (cx, cz) in enumerate(((c, c), (-c, c), (-c, -c), (c, -c))):
+        a0 = k * math.pi / 2
+        sx, sz = cx + r * math.cos(a0) , cz + r * math.sin(a0)
+        dx, dz = -math.sin(a0), math.cos(a0)                   # the straight runs along the arc's start tangent ...
+        legs.append((2 * c, lambda t, sx=sx, sz=sz, dx=dx, dz=dz: (sx - dx * 2 * c + dx * t, sz - dz * 2 * c + dz * t)))
+        legs.append((r * math.pi / 2, lambda t, cx=cx, cz=cz, a0=a0: (cx + r * math.cos(a0 + t / r),
+                                                                      cz + r * math.sin(a0 + t / r))))
+    total = sum(L for L, _ in legs)
+    m = int(round(total / ds))
+    pts = []
+    for j in range(m):
+        s_ = total * j / m
+        for L, f in legs:
+            if s_ <= L:
+                x, z = f(s_)
+                break
+            s_ -= L
+        pts.append((x, 0.0, z))
+    return pts
+
+
+def _line_dict(pos) -> dict:
+    """A decoded line carrying AC's payload for points ``pos`` (flat road): what read_ai returns."""
+    n = len(pos)
+    seg = [math.dist(pos[i], pos[i - 1]) for i in range(n)]
+    tk = gate.window_sum(gate.turns(pos), 1)
+    d, last = [], 1.0
+    for i in range(n):
+        if abs(tk[i]) > math.radians(0.5):
+            last = -math.copysign(1.0, tk[i])
+        d.append(last)
+    fx = [pos[(i + 1) % n][0] - pos[i - 1][0] for i in range(n)]
+    fz = [pos[(i + 1) % n][2] - pos[i - 1][2] for i in range(n)]
+    return {"pos": pos, "lap_ms": 0, "sample_count": 0, "has_grid": 0, "length": seg, "direction": d,
+            "radius": [gate._circum_xz(pos[i - 1], pos[i], pos[(i + 1) % n]) for i in range(n)],
+            "camber": [0.0] * n, "nx": [0.0] * n, "ny": [1.0] * n, "nz": [0.0] * n, "fx": fx, "fy": [0.0] * n,
+            "fz": fz, "side_left": [3.0] * n, "side_right": [3.0] * n}
+
+
+def test_gate_v1_reads_acs_own_conventions():
+    th = dict(gate.DEFAULTS)
+    ai = _line_dict(_rounded_square(100.0, 40.0))
+    n = len(ai["pos"])
+
+    def v1_fails(a):
+        return [f for f in gate.judge(gate.measure(a, walls=None, road=None, th=th), th) if f.startswith("V1")
+                and "not judged" not in f]
+    assert v1_fails(ai) == [], v1_fails(ai)
+    # what AC's recorder leaves at the seam (every Kunos line: ~5 x the spacing and direction 0.1 on the last point)
+    # and a spacing gap whose length field matches it (every Kunos line, near point 25): still AC's meaning
+    k = dict(ai, length=ai["length"][:-1] + [7.5], direction=ai["direction"][:-1] + [0.1])
+    assert v1_fails(k) == [], v1_fails(k)
+    pos = ai["pos"][:25] + ai["pos"][28:]                      # a 4-segment gap
+    g = _line_dict(pos)
+    assert v1_fails(g) == [] and gate.measure(g, walls=None, road=None, th=th)["v1"]["spacing_gaps_over_3x"] == 1
+    # one point's length 0.5 m off its own segment: refused (the median alone never saw it)
+    L = list(ai["length"])
+    L[n // 2] += 0.5
+    assert any("off their own segment" in f for f in v1_fails(dict(ai, length=L)))
+    # direction toward the wrong side: refused
+    wrong = [-1.0 * x for x in ai["direction"]]
+    assert any(f.startswith("V1 direction agrees") for f in v1_fails(dict(ai, direction=wrong)))
+    # AC's WINDOW family (ks_silverstone/international and 33 third-party lines on this PC): length = the last 5
+    # segments, radius through the points +-5, a direction ramp over the 10 points at each end, the normal up
+    P = ai["pos"]
+    seg = ai["length"]
+    ramp = list(ai["direction"])
+    for j in range(10):
+        ramp[j] *= j / 10.0
+        ramp[n - 1 - j] *= j / 10.0
+    win = dict(ai, length=[sum(seg[i - j] for j in range(5)) for i in range(n)], direction=ramp,
+               radius=[gate._circum_xz(P[(i - 5) % n], P[i], P[(i + 5) % n]) for i in range(n)])
+    mw = gate.measure(win, walls=None, road=None, th=th)
+    assert mw["v1"]["family"] == "window" and v1_fails(win) == [], v1_fails(win)
+    # a cumulative length (the v0.17.1 drafts) matches neither family and is judged, and refused, as a segment line
+    cum = [sum(seg[1:i + 1]) for i in range(n)]
+    mc = gate.measure(dict(ai, length=cum), walls=None, road=None, th=th)
+    assert mc["v1"]["family"] == "segment" and any(f.startswith("V1 length is not") for f in v1_fails(dict(ai, length=cum)))
+
+
+def test_gate_v6_refuses_a_corner_tightened_below_the_baseline():
+    th = dict(gate.DEFAULTS)
+    base = _line_dict(_rounded_square(100.0, 40.0))
+    near = _line_dict(_rounded_square(100.0, 36.0))           # 0.9 x: kept
+    tight = _line_dict(_rounded_square(100.0, 30.0))          # 0.75 x: refused
+    v6 = gate.corners_vs_baseline(near, base, th)
+    assert len(v6["corners"]) == 4 and 0.85 <= v6["min_ratio"] < 0.95, v6
+    m = gate.measure(near, walls=None, road=None, th=th)
+    m["v6"] = v6
+    assert not any(f.startswith("V6") for f in gate.judge(m, th))
+    m = gate.measure(tight, walls=None, road=None, th=th)
+    m["v6"] = gate.corners_vs_baseline(tight, base, th)
+    assert sum(1 for f in gate.judge(m, th) if f.startswith("V6")) == 4, gate.judge(m, th)

@@ -10,9 +10,11 @@ relates: 0023 (generated AI never proven to lap — stays open; this settles its
 
 ## Status
 
-The fix is built and committed on its branch. On a scratch copy of the workshop it regenerates both race lines from
-the v0.17.1 gate OBJs, and `tools/verify_ai_line.py` passes both (it fails the installed v0.17.1 lines on 12 counts
-each). Nothing is installed.
+The fix is built and committed on its branch, and was repaired on 2026-10-13 after an independent check refuted
+three things in it (see **Repair** below: the camber sign, the gate's MEASURED labels, the box rule on the line as
+written). On a fresh scratch copy of the workshop it regenerates both race lines from the v0.17.1 gate OBJs, and
+`tools/verify_ai_line.py` passes both (it fails the installed v0.17.1 lines on 10 counts each). Nothing is
+installed.
 
 Three changes in held files remain: `track.config.json`, `ship_sd.sh` / `ship_track.sh`, and the chain test. They
 are written out exactly under **Held files** and the integration run applies them. Ledger 0023 stays open: these are
@@ -41,7 +43,7 @@ position (actools `AiPointExtra`).
 |---|---|---|
 | `length` | distance to the previous point (1.5 m; newer files a 5-segment window, ~7.5 m) | **cumulative lap distance, 0 → 13,467 m** (`:1912`, written at `:1989`); none of 186 reference files does this |
 | `direction` | ±1, the side the bend turns toward (= −sign of the heading change in the kn5 frame on 99.0-99.5 % of bending points) | **0 everywhere** |
-| `camber`, `normal` | the road surface's real tilt (camber = asin(normal·right), ratio 0.94-0.99) | **0 and (0,1,0)** |
+| `camber`, `normal` | the road surface's real tilt, measured toward the bend: camber = −direction × asin(normal·right) (sign agrees on 0.95-1.00 of tilted points, every reference line; corrected 2026-10-13) | **0 and (0,1,0)** |
 | `radius` | the plain 3-point circumradius | min of a 5-point window (`:1896-1898`), biased low |
 | header lapTime / sampleCount | 0 / 0 | 281085 / 8979 |
 
@@ -104,9 +106,12 @@ writer produces today's bytes, proven below.
 - **Payload (`ai.payload: "kunos"`).** In the file the AI reads:
   - `length` = the 3D distance to the previous point (point 0 gets the seam segment, L13); the point record keeps the
     cumulative lap distance;
-  - `direction` = ±1, the side the bend turns toward; a straight keeps the last bend's sign, never 0;
-  - `normal` / `camber` = the BUILT road surface's tilt under the point, and the point's height is seated on that
-    surface;
+  - `direction` = ±1, the side the bend turns toward, read from the LOCAL turn (±1 point, as Kunos); a straight
+    keeps the last bend's sign, never 0;
+  - `normal` = the BUILT road surface's normal under the point, and the point's height is seated on that surface;
+  - `camber` = that surface's tilt measured toward the bend: −direction × asin(normal·right). In plain terms: a
+    positive number means the road leans into the corner (like a banked turn), negative means it leans away. Every
+    reference line on this PC stores it that way;
   - `radius` = the plain 3-point circumradius of the points as AC reads them (float32);
   - header lapTime = sampleCount = 0; hasGrid stays 0, as in three working third-party lines.
 - **Off the K-rail (`ai.wall_clear_m: 2.5`).** A corridor line's comfort clearance (box approach, box arcs, floor
@@ -120,6 +125,9 @@ writer produces today's bytes, proven below.
     the wheel, instead of switching from straight to full lock in one step.
   - A light polish pass (0.3 m leash) takes out the last millimetre steps where the line touched its bounds.
   - It never makes a radius tighter than min(12 m, what was there).
+  - At each box corner it never makes the car-scale radius tighter than 0.86 × the arc the v0.17.1 rule (1.5 m
+    comfort) lays at that corner in the same world. The writer then REFUSES the line if any box ends under
+    0.85 × that arc — the box rule the diagnosis declared before the fix, held on the line as written.
 - **Sides.** Each side is clamped at the first BUILT wall a perpendicular ray meets, minus the 1.2 m margin. On SD
   this cuts at most 9 mm: the declared faces and the built K-rail feet differ by millimetres.
 - **The gate, `tools/verify_ai_line.py`.** It checks the written line against the BUILT gate OBJ, with the
@@ -133,44 +141,56 @@ Not done, and why:
 - `ai_hints.ini` is a tuning lever for after the race, not a fix for a bad line.
 - `--lat-g` is unchanged, because the payload speed isn't the AI's target.
 
-### Measured on the regenerated lines (scratch copy, v0.17.1 gate OBJs; `tools/verify_ai_line.py`)
+### Measured on the regenerated lines (fresh scratch copy, v0.17.1 gate OBJs; `tools/verify_ai_line.py`)
+
+Repaired writer, 2026-10-13. Lines: race_cw `88a9da4c…`, race_acw `985da589…` (deterministic: a second run gives
+the same md5s). The baseline is the installed v0.17.1 pair.
 
 | | race_cw before → after | race_acw before → after |
 |---|---|---|
-| closest approach to a built wall | 1.506 → **2.517 m** | 1.504 → **2.387 m** |
-| lap within 2.5 m of a wall | 186 m (1.38 %) → **0 m** | 239 m (1.77 %) → **6 m (0.04 %)** |
+| closest approach to a built wall (car centre) | 1.506 → **2.549 m** | 1.504 → **2.387 m** |
+| lap within 2.0 m / 2.5 m of a wall | 114 / 186 m (1.38 %) → **0 / 0 m** | 177 / 239 m (1.77 %) → **0 / 6 m (0.04 %)** |
 | side widths past a built wall (perpendicular ray) | 0 → 0 | 0 → 0 |
 | spurious speed dips (> 10 % slower than the car-scale line) | 160 → **0** | 875 → **0** |
-| bend flips within 30 m | 1.71 → **0.67 / km** | 0.97 → **0.52 / km** |
-| payload semantics (length / direction / header / radius / camber) | all 5 FAIL → **all PASS** | all 5 FAIL → **all PASS** |
+| bend flips within 30 m | 1.71 → **0.74 / km** | 0.97 → **0.52 / km** |
+| payload: length / direction / header / radius / camber | all FAIL → **all PASS** (camber: 34 tilted points, ratio 1.00) | all FAIL → **all PASS** (62 tilted points, ratio 1.00; all 62 now carry AC's sign) |
 | line's min radius | 12.56 → 13.78 m | 12.55 → 14.33 m |
-| lap estimate, μ 1.0 physics profile on the car-scale line | 328.0 → **279.2 s** | 321.0 → **272.4 s** |
-| the same profile on the payload's radius (what the AI is told) | 337.8 → **280.0 s** | 338.0 → **273.3 s** |
-| writer's own estimate (lat-g 1.6) | 281.1 → 242.1 s | 281.3 → 235.5 s |
-| gate | **FAIL (12)** → **PASS** | **FAIL (12)** → **PASS** |
+| every box ≥ 0.85 × today's (V6, car-scale minimum within ±60 points) | — → **0.860 / 0.860 / 0.861 / 0.863** | — → **0.876 / 0.877 / 0.860 / 0.873** |
+| lap estimate, μ 1.0 physics profile on the car-scale line | 328.0 → **279.4 s** | 321.0 → **272.7 s** |
+| the same profile on the payload's radius (what the AI is told) | 337.8 → **280.1 s** | 338.0 → **273.6 s** |
+| writer's own estimate (lat-g 1.6) | 281.1 → 242.2 s | 281.3 → 235.9 s |
+| gate | **FAIL (10)** → **PASS** | **FAIL (10)** → **PASS** |
 
-The lap gets 42-49 s quicker on paper because the phantom brake points are gone, not because any corner got faster.
+An independent measurement (the diagnosis' numpy `wallclear.py`) agrees: wall min 2.549 / 2.387 m, 0 points under
+2.0 m, no side past a wall. The lap gets ~48 s quicker on paper because the phantom brake points are gone, not because
+any corner got faster.
 
 Per corner (car-scale radius / μ 1.0 corner speed), before → after:
 
 | corner | race_cw | race_acw |
 |---|---|---|
-| Lake Murray / Alvarado (seam box) | R 45.1 m, 76 km/h → R 37.3 m, 69 km/h | R 47.5 m, 78 → R 39.0 m, 70 |
+| Lake Murray / Alvarado (seam box) | R 45.1 m, 76 km/h → R 38.8 m, 70 km/h | R 47.5 m, 78 → R 41.6 m, 73 |
 | College hairpin (floor fillet) | R 12.6, 40 → R 14.0, 42 | R 12.6, 40 → R 14.6, 43 |
-| College → Navajo | R 28.7, 60 → R 24.2, 56 | R 52.3, 82 → R 44.1, 75 |
-| Navajo / Jackson | R 32.8, 65 → R 26.9, 58 | R 52.3, 82 → R 41.4, 73 |
-| Jackson / Lake Murray | R 44.5, 75 → R 37.0, 69 | R 58.5, 86 → R 51.1, 81 |
+| College → Navajo | R 28.7, 60 → R 24.7, 56 | R 52.3, 82 → R 45.8, 76 |
+| Navajo / Jackson | R 32.8, 65 → R 28.2, 60 | R 52.3, 82 → R 45.0, 76 |
+| Jackson / Lake Murray | R 44.5, 75 → R 38.4, 70 | R 58.5, 86 → R 51.1, 81 |
 
-The cost is honest: each box's tightest point is 4-9 km/h slower on paper. There are two reasons.
-- The arc now keeps 2.5 m off the apex K-rail instead of 1.5 m. That alone takes R 28.7 → 26.1 m at College→Navajo,
-  and every box arc is still ≥ 0.885 × today's, which meets the diagnosis' 0.85 rule.
-- The fairing replaces "straight, then instantly full lock" with a progressive turn-in. That puts the tightest
-  radius in the middle: 0.79-0.87 × today's peak, measured on the line.
+**The cost, plainly (Kevin's call).** Each box's tightest point is now 4-6 km/h slower on paper than v0.17.1's. The
+diagnosis declared, before the fix, that no box may drop below 0.85 × today's radius; on the line as written every
+box is 0.860-0.877 ×, so the rule holds. (The first version reached it only on the pre-fairing arcs and was
+0.79-0.87 × on the written line — that was a redefinition after the fact. It is fixed in the line, not reworded.)
+Two reasons the corners are tighter at all:
+- The arc keeps 2.5 m off the apex K-rail instead of 1.5 m. That alone takes R 28.7 → 26.1 m at College→Navajo.
+- The fairing replaces "straight, then instantly full lock" with a progressive turn-in, which puts the tightest
+  radius mid-corner. No car could take the old instant-lock arc at its paper speed anyway.
 
-No car could take the old instant-lock arc at its paper speed. The hairpin gets faster (14.0 / 14.6 m vs 12.6).
+If the AI now race clean but feel slow through the boxes, the lever is `ai.wall_clear_m` (for example 2.0 m), or
+`ai_hints.ini` after the drive. The hairpin gets faster (14.0 / 14.6 m vs 12.6).
 
 0050 interlock: race_acw's Navajo/Jackson exit passes next to the fold-fan steps. The new line is ≥ 2.39 m from every
-built wall, but the steps are a road-surface defect, so AI crashes there should be judged only after 0050 lands.
+built wall, but the steps are a road-surface defect, so AI crashes there should be judged only after 0050 lands. The
+v0.18.0 world (0046 terrain, 0050 steps, 0053 kerbs) is a different built world: the writer re-reads it and the gate
+re-judges at ship time. These numbers are the v0.17.1 world's.
 
 ### Held files (another job owns them this round; the integration run applies these)
 
@@ -208,7 +228,12 @@ built wall, but the steps are a road-surface defect, so AI crashes there should 
    - The later `rm` (`:289`) and re-extraction (`:304`) can stay; they rebuild the identical file from the same kn5s.
    - Optionally drop `track.$lid.obj` from the `:289` rm and skip the `:304` call.
    - Add `ai_verify.$lid.json` to the data files synced back (the `:346` list) if Kevin wants the verdict in the repo.
-   - Each race layout adds ~25 s for extraction, ~35 s more in the writer (OBJ read + fairing) and ~10 s for the gate.
+   - Each race layout adds ~25 s for extraction, ~60-100 s more in the writer (OBJ read + fairing with the box
+     floor) and ~10 s for the gate.
+   - The chain does not pass `--baseline` (V6): the writer itself refuses a box under the declared rule. `--baseline`
+     is for a one-off comparison against a previous line, as done here.
+   - This is MANDATORY with the config block, not optional: without the reorder the writer's missing/stale-OBJ
+     guard stops the chain at the AI step (fail-closed).
 
 3. **`tools/ship_track.sh`**, `ship_ai()` (`:291-296`): the same three lines per race layout. `gate_race_gates`
    (`:361`) keeps its extraction. A track without `ai` keeps today's behaviour. The gate is still worth running on
@@ -243,8 +268,40 @@ Byte identity (no `ai` block):
   together with every `side_*.csv` and `ai_draft.json`.
 - The test fixtures: 25 golden md5s in `tests/ac/test_write_ai_line_payload.py`.
 
-`tests/run_tests.py`: all green, including the 9 new tests.
+`tests/run_tests.py`: 561 passed, 2 failed. The two failures are the engine-july seam tests
+(`test_engine_july_mirror_is_byte_identical`, `test_snapshot_copies_match_their_manifest_and_stay_small`). They fail
+identically on the base 5ccf20b, and this branch touches neither file. The 12 tests of
+`tests/ac/test_write_ai_line_payload.py` and every other AI test file (44 tests) pass.
 
 The judge (rule 0, Kevin): a 7-AI, 3-lap race on race_cw and on race_acw after this and 0050's step fix are
 installed. This entry closes on "no repeated wall crashes at the corners and no weird slowdowns", or when an in-game
 recorded line replaces the draft.
+
+## Repair, 2026-10-13 (the independent check's three refutations)
+
+1. **Camber sign.** The first version stored plain asin(normal·right). Every reference line on this PC (33 Kunos,
+   ~90 third-party) stores −direction × asin(normal·right): the tilt measured toward the bend (sign agreement
+   0.95-1.00, against ~0.5 for the plain form). On race_acw all 62 tilted points had the opposite sign. Fixed in the
+   writer, the gate and the test; the plain form now FAILS the gate on race_acw. The tilts are small (≤ 0.021 rad,
+   about 1.2°).
+2. **The gate's MEASURED labels.** A threshold may say MEASURED only if every Kunos line it cites passes it. Re-run on
+   all 34 Kunos lines installed (scratch `v018/ai/kunos/kunos_v1.txt`):
+   - V1 now passes **34 of 34**. Direction is read from the local turn (±1 point: Kunos 0.9977-1.0; the first
+     version's ±10 window gave 0.968-0.995, 23 of 33 under its own 0.99). The last point (AC's recorder seam:
+     ~5 × spacing, direction 0.1) is not judged; a spacing gap is reported, not gated.
+   - AC's lines come in two families, told apart by the length field: SEGMENT (33 Kunos lines and ours: one
+     segment, 3-point radius) and WINDOW (ks_silverstone/international and 33 third-party lines: 5 segments summed,
+     radius through ±5 points, a direction ramp over 10 points at each end, normal stored up). The gate judges each
+     by its own family, so an in-game recording of either kind passes V1. Window-family camber is not judged (no
+     Kunos reference shows what it is measured from).
+   - Relabelled INVENTED: wall min 2.0 m (ks_monza66 measures 1.981, so 2.0 is a choice between the two walled
+     references, not a measurement both pass); spurious dips = 0 (14 of 34 Kunos lines have 5-885); bend flips
+     ≤ 0.75 / km (Kunos 0-1.24); sides 0; radius 11.4 m; the box rule 0.85.
+   - Every v0.17.1 defect still fails: V1 length / direction / header / radius, V2 min and the 2.5 m band, V3 dips
+     and flips (10 FAILs per layout). Planted defects on the new lines (scratch `v018/ai/planted/plant.txt`):
+     cumulative length, direction 0 / flipped, header set, min-of-5 radius, camber 0, camber sign flipped, the
+     plain-asin camber (race_acw), a 0.8 m bump toward the K-rail, 0.25 m and 0.6 m S-wiggles, 3 cm jitter, a 1.5 m
+     kink, sides +3 m, and one length 0.5 m off — every one FAILS. The same line re-expressed in the window family
+     PASSES.
+3. **The box rule on the written line.** See "The cost, plainly" above: 0.860-0.877 × on the line as written, held
+   by the fairing (a 0.86 floor at each box) and enforced by a writer refusal at 0.85.

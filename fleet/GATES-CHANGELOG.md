@@ -970,3 +970,57 @@ Proof:
 - Byte identity on the real workshop (scratch copy, no `ai` block): `race_cw` `8d4696a4…`, `race_acw`
   `c234c87c…` and `street` `93a09e5a…` are md5-identical to the installed / HEAD files. The same holds for every
   `side_*.csv` and `ai_draft.json`.
+
+### Repair, 2026-10-13 — labels re-measured, camber sign, the box rule on the written line (ledger 0052)
+
+An independent check refuted three things above. The rule applied here: a threshold says MEASURED only if every
+Kunos line it cites passes it; anything else is ⚠ INVENTED, with the references it was chosen against. The rows in
+the tables above stand as the record of what was first claimed; **this subsection supersedes their flags and
+values.** Evidence: the gate's own `measure()` / `judge()` run on all 34 Kunos lines installed on this PC, each
+line's own stored normal standing in for the built road (scratch `v018/ai/kunos/kunos_v1.txt`).
+
+| Check | Threshold now | Flag now | Kunos (34 lines) | v0.17.1 race_cw / race_acw | repaired lines |
+|---|---|---|---|---|---|
+| V1 line family | SEGMENT (length = one segment, 3-point radius) or WINDOW (length = 5 segments summed, radius through ±5 points, direction ramp over **10** points per end) — the length field decides; a line that matches neither is judged as SEGMENT | MEASURED (33 SEGMENT; ks_silverstone/international WINDOW, as are 33 third-party lines) | 34 / 34 classified | SEGMENT (matches neither) | SEGMENT |
+| V1 `length` | median error < **0.01 m** against the family's reference; SEGMENT also ≤ **0.1 m** on every point but the last | MEASURED (median 0.0000-0.0016 m; SEGMENT point max 0.056 m; the last point carries ~5 × spacing on every Kunos line, so it is not judged) | pass 34 / 34 | 6,732 / 6,721 m | 0.0 / 0.0 |
+| V1 `direction` | ±1 on every point but the last (WINDOW: but the seam ramps); = −sign(LOCAL heading change, ±**1** point) on ≥ **99 %** of points turning > 0.5° | MEASURED (0.9977-1.0 at ±1 point; the first version's ±10 window gave 0.968-0.995, 23 of 33 under 0.99) | pass 34 / 34 | 0 % | 100 % / 100 % |
+| V1 `radius` | the family's circumradius, median \|ln\| error < **0.01** | MEASURED (0.0001-0.0035) | pass 34 / 34 | 0.194 / 0.242 | 0.0 / 0.0 |
+| V1 `camber` (SEGMENT) | = **−direction × asin(normal · right)** of the BUILT road (the tilt measured toward the bend), median ratio 0.9-1.1 where it tilts > 0.01 rad | MEASURED (ratio 0.998-1.001; the sign rule holds on 0.95-1.00 of tilted points on every reference line, plain asin(normal · right) on ~0.5) | pass 33 / 33 | ratio 0 | 1.00 (34 / 62 tilted points) |
+| V1 `camber` (WINDOW) | not judged | — (Kunos' own stores the normal as (0,1,0) beside a real camber, so nothing shows what it is measured from) | — | — | — |
+| V1 camber on a flat road | median \|difference\| < **0.005 rad** | ⚠ INVENTED (passes every SEGMENT Kunos line) | | | |
+| V1 measuring parameters: a bend = turn > **0.5°**; a tilted road = > **0.01 rad** | — | ⚠ INVENTED | | | |
+| V2 wall clearance min | ≥ **2.0 m** | ⚠ INVENTED — was "MEASURED", but ks_monza66 measures **1.981 m**, so 2.0 is a choice between the two walled Kunos references (BCC 2.066), not a value both pass | — | 1.506 / 1.504 m | 2.549 / 2.387 m |
+| V3 spurious dips | **0** | ⚠ INVENTED — was "MEASURED (0 on BCC, Vallelunga, Highlands)", but ks_highlands/layout_int has 422 by the gate's own code; 20 of 34 Kunos lines have 0, 14 have 5-885 (recorded lines carry them) | 0 on 20 / 34 | 160 / 875 | 0 / 0 |
+| V3 bend flips within 30 m | ≤ **0.75 / km** | ⚠ INVENTED — was "MEASURED (BCC 0.72)"; Kunos 0-1.24 / km, ≤ 0.75 on 17 of 34 | 0-1.24 | 1.71 / 0.97 | 0.74 / 0.52 |
+| V4 sides past a built wall | **0** | ⚠ INVENTED (geometry rule) | | 0 / 0 | 0 / 0 |
+| V5 the line's 3-point radius | ≥ **11.4 m** | ⚠ INVENTED (the writer's RADIUS_FLOOR_M 12 × RADIUS_CHECK 0.95, both invented) | | 12.56 / 12.55 m | 13.78 / 14.33 m |
+| V6 (new, `--baseline <line>`): every baseline corner (car-scale minimum under 80 m within ±60 points) keeps ≥ **0.85 ×** its radius | | ⚠ INVENTED (the 0052 diagnosis' pre-declared box rule) | | — | 0.860-0.863 / 0.860-0.877 |
+
+The payload `direction` window in the writer is now **±1 point** (MEASURED, as above), replacing the ±10 points
+recorded in the writer table above.
+
+Writer additions (`scripts/ac/write_ai_line.py`, opt-in `ai.fair` only; no change without the `ai` block):
+
+| Knob | Value | Flag |
+|---|---|---|
+| `FAIR_BOX_KEEP`: the fairing never takes a box corner's car-scale radius (points ±4) under this × the arc the v0.17.1 rule (comfort 1.5 m) lays at that corner in the same world, within the corner's stations ± `FAIR_BOX_GUARD_PTS` | **0.86**, ± **20 points** | ⚠ INVENTED (the 0.85 rule + 1 % margin; 20 points = 30 m) |
+| `BOX_RULE_KEEP`: the writer REFUSES a faired line whose box corner ends under this × that arc | **0.85** | ⚠ INVENTED (the diagnosis' rule, declared before the fix) |
+
+What the first version got wrong, and what changed:
+- **Camber sign.** It stored plain asin(normal · right). race_acw carried all 62 tilted points at the opposite sign
+  from every reference line (race_cw agreed only because its tilted points all carry direction −1). Writer, gate and
+  test now use −direction × asin(normal · right); the plain form FAILS the gate on race_acw.
+- **The box rule.** The diagnosis declared each box ≥ 0.85 × today's radius before the fix. The first version met it
+  on the arcs before fairing (0.885-0.935) and missed it on the written line (cw 0.819-0.845, acw 0.79-0.87). The
+  written line now keeps 0.860-0.877, and the writer refuses under 0.85. Each box apex is 4-6 km/h slower on paper
+  than v0.17.1 (it was 4-9 km/h in the first version).
+- **Kunos lines failing the gate.** Every Kunos line failed the first version's V1 (direction window, the last
+  point's length, the recorder's seam). V1 now passes all 34, and either family of in-game recording.
+
+Proof: still failing every v0.17.1 defect (10 FAILs per layout: V1 length, length per point, direction ±1, direction
+agreement, header, radius; V2 min, V2 band; V3 dips, V3 flips). Planted on the repaired lines, each of these FAILS:
+cumulative length, direction 0 / flipped, header set, min-of-5 radius, camber 0 with normal up, camber sign flipped,
+the plain-asin camber (race_acw), a 0.8 m bump toward the K-rail, 0.25 m / 30 m and 0.6 m / 60 m S-wiggles, 3 cm
+jitter, a 1.5 m kink, sides +3 m, one length 0.5 m off its segment. The same line re-expressed in the WINDOW family
+PASSES (scratch `v018/ai/planted/plant.txt`). Tests: `tests/ac/test_write_ai_line_payload.py` 12 (adds: the
+WINDOW family accepted and a cumulative length judged as SEGMENT; the writer's box-rule refusal).

@@ -9,28 +9,50 @@ does, on the line AS WRITTEN (``fast_lane.ai``, kn5 frame) and the BUILT gate OB
 engine frame: the road + race + that layout's closure kn5) — L5.
 
     python tools/verify_ai_line.py <project> --layout race_cw [--ai <fast_lane.ai>] [--obj <gate.obj>] [--out <json>]
+                                   [--baseline <the line it replaces>]
 
 Exit 1 on FAIL. Writes ``data/ai_verify.<layout>.json`` (default). Thresholds (fleet/GATES-CHANGELOG.md, the
 ledger-0052 section; overridable per track in ``track.config.json`` ``ai.verify``):
 
-  V1 payload semantics (MEASURED on 186 Kunos / third-party lines installed on this PC)
-     length       median |length - 3D distance to the previous point| < 0.01 m
-     direction    +-1 on every point; = -sign(heading change over +-10 points) on >= 99% of points turning > 0.5 deg
+  V1 payload semantics: what AC's own lines carry. MEASURED = V1 passes on every one of the 34 Kunos lines
+     installed on this PC (the sign rules also on ~90 third-party lines) — ledger 0052, scratch kunos_v1.txt.
+     AC's lines come in two FAMILIES, told apart by the length field: the SEGMENT family (33 of the 34 Kunos lines,
+     and what write_ai_line writes) and the WINDOW family (ks_silverstone/international and 33 third-party lines:
+     length = the last 5 segments summed, radius through the points +-5, a direction ramp 0 ... 0.9 over the 10
+     points at each end of the lap, the normal stored as (0,1,0)). A line is judged by its own family's rules.
+     length       median |length - the family's reference| < 0.01 m; segment family also <= 0.1 m on every point
+                  but the last (Kunos: max 0.056 m; the last point carries ~5 x the spacing on every Kunos line).
+                  A spacing GAP is not a payload error (most Kunos lines have a ~4.6 m one, its length field
+                  matching it): reported, not gated.
+     direction    +-1 on every point but the last (segment family: 0.1 there on 13 of 33, the recorder's seam
+                  point) / but the seam ramps (window family); = -sign(LOCAL heading change, +-1 point) on >= 99 %
+                  of points turning > 0.5 deg (Kunos 99.77-100 %; at +-10 points only 96.8-99.5 %)
      header       lapTime = sampleCount = 0
-     radius       = the 3-point circumradius: median |ln(field / circumradius)| < 0.01
-     camber       = asin(normal . right) of the BUILT 1ROAD surface under the point: median ratio 0.9-1.1 where the
-                  road tilts > 0.01 rad (else median |difference| < 0.005 rad); the normal is not (0,1,0) everywhere
+     radius       = the family's circumradius (3-point / +-5 points): median |ln(field / circumradius)| < 0.01
+     camber       segment family: = the BUILT 1ROAD surface's tilt under the point measured toward the bend,
+                  -direction x asin(normal . right) (the sign rule of every reference line: 0.95-1.00 of tilted
+                  points; plain asin(normal . right) agrees on ~0.5): median ratio 0.9-1.1 where the road tilts
+                  > 0.01 rad (else median |difference| < 0.005 rad [INVENTED]); the normal is not (0,1,0)
+                  everywhere. Window family: not judged (Kunos' own stores the normal up beside a real camber).
   V2 wall clearance: the line's centre to the nearest BUILT 1WALL face (horizontal, layer band -2/+4 m)
-     min >= 2.0 m [MEASURED: ks_monza66 1.981, ks_black_cat_county 2.066]; lap under 2.5 m <= 1.0 % [INVENTED]
+     min >= 2.0 m [INVENTED: the two walled Kunos references measured are ks_monza66 1.981 and
+     ks_black_cat_county 2.066, so 2.0 is a choice between them]; lap under 2.5 m <= 1.0 % [INVENTED]
   V3 no phantom corners (the SPURIOUS-DIP definition): a physics speed profile (mu 1.0, braking 0.9 g, accel
      0.35 g, 250 km/h cap) from the payload radius field vs the same profile from the line's car-scale radius
      (circumradius through the points +-4 = +-6 m). A point where the payload profile is > 10 % slower is a
-     spurious dip: 0 allowed [MEASURED: 0 on ks_black_cat_county, ks_vallelunga, ks_highlands]. Bend flips
-     (car-scale curvature |k| > 1/300 changing sign within 30 m) <= 0.75 / km [MEASURED: BCC 0.72].
+     spurious dip: 0 allowed [INVENTED for a GENERATED line: 20 of the 34 Kunos lines have 0, the other 14 have
+     5-885 — AC's own recorder leaves them, so a dip is the defect class the 0052 drafts showed (160 / 875 of
+     them), not a proof that the AI brakes there]. Bend flips (car-scale curvature |k| > 1/300 changing sign
+     within 30 m) <= 0.75 / km [INVENTED: Kunos 0-1.24 / km].
   V4 sides: 0 points whose sideLeft / sideRight reaches past the first BUILT wall a horizontal ray meets on that
-     side (perpendicular to the line).
-  V5 the line's own 3-point radius >= 11.4 m (the writer's RADIUS_FLOOR_M 12 x its RADIUS_CHECK 0.95).
+     side (perpendicular to the line) [INVENTED].
+  V5 the line's own 3-point radius >= 11.4 m [INVENTED: the writer's RADIUS_FLOOR_M 12 x its RADIUS_CHECK 0.95].
+  V6 (with --baseline = the line this one replaces) every corner the baseline has (a car-scale radius that is the
+     minimum within +-60 points and under 80 m) keeps >= 0.85 x that radius on this line: its car-scale minimum
+     over +-60 points round its nearest point [INVENTED: the 0052 diagnosis' pre-declared box rule].
 
+A CSP recording is not put through this gate by the ship chain (it replaces the draft file-for-file, ledger 0023).
+Run on one, V1 is a check every Kunos line passes (either family); V2-V6 are standards set for a GENERATED line.
 Reported, not gated: the lap-time estimate of both profiles, where each check is worst. The judge is still the
 race (rule 0): a GENERATED draft stays a draft under ledger 0023 however green this is.
 """
@@ -50,27 +72,35 @@ from scripts.ac.ai_built import RoadSurface, WallIndex, read_ai, read_gate_obj  
 
 G = 9.81
 DEFAULTS = {
-    "length_med_err_max_m": 0.01,        # MEASURED (Kunos 0.0001-0.001)
-    "direction_agree_min": 0.99,         # MEASURED (Kunos 0.990-0.995)
-    "direction_window_pts": 10,          # +-10 points (+-15 m), the window the agreement was measured over
-    "direction_turn_min_deg": 0.5,
-    "radius_med_log_err_max": 0.01,      # MEASURED (Kunos 0.0006-0.0025)
-    "camber_ratio_lo": 0.9,              # MEASURED (Kunos 0.94-0.99)
+    # V1 — MEASURED = passes every one of the 34 Kunos lines installed on this PC (scratch kunos/kunos_v1.txt)
+    "length_med_err_max_m": 0.01,        # MEASURED (Kunos 0.0000-0.0016 segment family, 0.0009 window family)
+    "length_pt_err_max_m": 0.1,          # MEASURED (Kunos segment family max 0.056 m, every point but the last)
+    "window_family_pts": 5,              # MEASURED (the window family: length = 5 segments, radius through +-5)
+    "seam_ramp_pts": 10,                 # MEASURED (window family: direction 0, 0.1 ... 0.9 over 10 points per end)
+    "direction_agree_min": 0.99,         # MEASURED (Kunos 0.9977-1.0 at +-1 point)
+    "direction_window_pts": 1,           # +-1 point: the local turn (Kunos' definition; at +-10: 0.968-0.995)
+    "direction_turn_min_deg": 0.5,       # INVENTED measuring parameter (a bend, not float noise)
+    "radius_med_log_err_max": 0.01,      # MEASURED (Kunos 0.0001-0.0034)
+    "camber_ratio_lo": 0.9,              # MEASURED (Kunos segment family median ratio 0.998-1.001)
     "camber_ratio_hi": 1.1,
-    "camber_tilt_min_rad": 0.01,
-    "camber_flat_med_err_max_rad": 0.005,
-    "wall_min_m": 2.0,                   # MEASURED (ks_monza66 1.981, ks_black_cat_county 2.066)
+    "camber_tilt_min_rad": 0.01,         # INVENTED measuring parameter (a tilted road, ~0.6 deg)
+    "camber_flat_med_err_max_rad": 0.005,  # INVENTED (on a flat road: passes every Kunos segment-family line)
+    # V2-V6 — INVENTED: chosen against the references named, not met by every one of them
+    "wall_min_m": 2.0,                   # INVENTED (Kunos walled references: ks_monza66 1.981, ks_black_cat_county 2.066)
     "wall_band_m": 2.5,
     "under_band_max_frac": 0.01,         # INVENTED (BCC 0.58 %, Monza66 3.2 %)
     "dip_frac": 0.10,                    # a payload-profile point > 10 % slower than the car-scale profile ...
-    "dip_pts_max": 0,                    # ... MEASURED: 0 on BCC / Vallelunga / Highlands
+    "dip_pts_max": 0,                    # ... INVENTED for a generated line (Kunos: 0 on 20 of 34, 5-885 on 14)
     "car_scale_pts": 4,                  # +-4 points = +-6 m at 1.5 m spacing
-    "mu": 1.0, "decel_g": 0.9, "accel_g": 0.35, "vmax_ms": 69.4,
+    "mu": 1.0, "decel_g": 0.9, "accel_g": 0.35, "vmax_ms": 69.4,   # INVENTED profile model (reported lap estimates)
     "flip_k_min": 1.0 / 300.0,
     "flip_window_m": 30.0,
-    "flips_per_km_max": 0.75,            # MEASURED (BCC 0.72 / km)
-    "side_overreach_pts_max": 0,
-    "radius_min_m": 11.4,                # write_ai_line RADIUS_FLOOR_M 12 x RADIUS_CHECK 0.95
+    "flips_per_km_max": 0.75,            # INVENTED (Kunos 0-1.24 / km)
+    "side_overreach_pts_max": 0,         # INVENTED (geometry: a side past a built wall points the AI at it)
+    "radius_min_m": 11.4,                # INVENTED (write_ai_line RADIUS_FLOOR_M 12 x RADIUS_CHECK 0.95)
+    "box_keep_min": 0.85,                # INVENTED (the 0052 diagnosis' box rule): V6, with --baseline only
+    "box_corner_r_max_m": 80.0,          # V6: a baseline corner = a +-box_window_pts car-scale radius minimum under this
+    "box_window_pts": 60,
 }
 
 
@@ -159,20 +189,46 @@ def measure(ai: dict, *, walls: WallIndex | None, road: RoadSurface | None, th: 
         m["v1"] = v1
         return m
     L = ai["length"]
-    v1["length_med_err_m"] = round(_median([abs(L[i] - seg[i]) for i in range(n)]), 5)
+    # AC's lines come in two families (every line on this PC is one or the other): the SEGMENT family (33 of the
+    # 34 Kunos lines; what write_ai_line writes) stores length = the point's own segment and radius = the 3-point
+    # circumradius; the WINDOW family (ks_silverstone/international and 33 third-party lines) stores length = the
+    # last window_family_pts segments summed and radius = the circumradius through the points +-that many, with a
+    # direction ramp (0, 0.1 ... 0.9) over the seam_ramp_pts first / last points. The length field says which.
+    kw = int(th["window_family_pts"])
+    segw = [sum(seg[i - j] for j in range(kw)) for i in range(n)]
+    e_seg = _median([abs(L[i] - seg[i]) for i in range(n)])
+    e_win = _median([abs(L[i] - segw[i]) for i in range(n)])
+    window = e_win < e_seg and e_win < th["length_med_err_max_m"]     # matches neither: judged as a segment line
+    v1["family"] = "window" if window else "segment"
+    ref = segw if window else seg
+    v1["length_med_err_m"] = round(e_win if window else e_seg, 5)
     v1["length_max_m"] = round(max(L), 3)
-    v1["length_over_3x_spacing_pts"] = sum(1 for i in range(1, n) if L[i] > 3.0 * ds)
+    # every point but the last (AC's own lines carry ~5 x the spacing there): length = that point's own segment.
+    # The window family is not judged point by point (Kunos' own carries up to 1.48 m away from its seam)
+    lerr = [abs(L[i] - ref[i]) for i in range(n - 1)]
+    v1["length_off_segment_pts"] = 0 if window else sum(1 for e in lerr if e > th["length_pt_err_max_m"])
+    v1["length_pt_err_max_m"] = round(max(lerr), 4) if lerr else None
+    v1["spacing_gaps_over_3x"] = sum(1 for i in range(1, n) if seg[i] > 3.0 * ds)   # reported (Kunos: one each)
     d = ai["direction"]
-    v1["direction_not_unit_pts"] = sum(1 for x in d if abs(abs(x) - 1.0) > 1e-6)
+    # every point but the last (segment family: AC carries 0.1 there, the recorder's seam point); the window
+    # family's seam ramp (seam_ramp_pts each end) is not judged either
+    ramp = int(th["seam_ramp_pts"]) if window else 0
+    judged = range(ramp, n - max(1, ramp))
+    v1["direction_not_unit_pts"] = sum(1 for i in judged if abs(abs(d[i]) - 1.0) > 1e-6)
     tk = window_sum(turns(P), int(th["direction_window_pts"]))
-    big = [i for i in range(n) if abs(tk[i]) > math.radians(th["direction_turn_min_deg"])]
+    big = [i for i in judged if abs(tk[i]) > math.radians(th["direction_turn_min_deg"])]
     agree = sum(1 for i in big if d[i] == -math.copysign(1.0, tk[i]))
     v1["direction_agree"] = round(agree / len(big), 4) if big else None
     R1 = [_circum_xz(P[i - 1], P[i], P[(i + 1) % n]) for i in range(n)]
+    Rf = R1 if not window else [_circum_xz(P[(i - kw) % n], P[i], P[(i + kw) % n]) for i in range(n)]
     rf = ai["radius"]
-    errs = [abs(math.log(rf[i]) - math.log(min(max(R1[i], 1.0), 1e9))) for i in range(n) if 1.0 < rf[i] < 3000.0 and R1[i] < 1e8]
+    errs = [abs(math.log(rf[i]) - math.log(min(max(Rf[i], 1.0), 1e9))) for i in range(n) if 1.0 < rf[i] < 3000.0 and Rf[i] < 1e8]
     v1["radius_med_log_err"] = round(_median(errs), 5) if errs else None
-    # camber vs the BUILT surface: the normal under the point (engine frame -> kn5: z negated), right = (-fz, 0, fx)
+    # camber vs the BUILT surface: the normal under the point (engine frame -> kn5: z negated), right = (-fz, 0, fx).
+    # The window family's camber is not judged: Kunos' own (ks_silverstone/international) stores the normal as
+    # (0,1,0) beside a non-zero camber, so no reference shows what it is measured from
+    if window:
+        v1["camber_not_judged"] = "window family: no Kunos reference to measure its camber against"
     if road is not None:
         tilts, cams, missing = [], [], 0
         for i in range(n):
@@ -184,7 +240,8 @@ def measure(ai: dict, *, walls: WallIndex | None, road: RoadSurface | None, th: 
             nx, ny, nz = s[1][0], s[1][1], -s[1][2]
             fx, fz = ai["fx"][i], ai["fz"][i]
             rl = math.hypot(fx, fz) or 1.0
-            tilts.append(math.asin(max(-1.0, min(1.0, (nx * -fz + nz * fx) / rl))))
+            # the tilt measured toward the bend, -direction x asin(n . right): AC's sign rule
+            tilts.append(-ai["direction"][i] * math.asin(max(-1.0, min(1.0, (nx * -fz + nz * fx) / rl))))
             cams.append(ai["camber"][i])
         v1["camber_points_off_road"] = missing
         tilted = [(c, t) for c, t in zip(cams, tilts) if abs(t) > th["camber_tilt_min_rad"]]
@@ -270,9 +327,11 @@ def judge(m: dict, th: dict) -> list[str]:
     if "error" in v1:
         return [f"V1 {v1['error']}"]
     if v1["length_med_err_m"] >= th["length_med_err_max_m"]:
-        f.append(f"V1 length is not the segment length (median error {v1['length_med_err_m']} m)")
-    if v1["length_over_3x_spacing_pts"]:
-        f.append(f"V1 {v1['length_over_3x_spacing_pts']} points carry a length > 3x the spacing")
+        f.append(f"V1 length is not the segment length, nor AC's {th['window_family_pts']}-segment window (median error "
+                 f"{v1['length_med_err_m']} m)")
+    if v1["length_off_segment_pts"]:
+        f.append(f"V1 {v1['length_off_segment_pts']} points carry a length > {th['length_pt_err_max_m']} m off their own "
+                 f"segment (worst {v1['length_pt_err_max_m']} m)")
     if v1["direction_not_unit_pts"]:
         f.append(f"V1 direction is not +-1 on {v1['direction_not_unit_pts']} points")
     if v1["direction_agree"] is not None and v1["direction_agree"] < th["direction_agree_min"]:
@@ -280,8 +339,10 @@ def judge(m: dict, th: dict) -> list[str]:
     if v1["header_lap_ms"] != 0 or v1["header_sample_count"] != 0:
         f.append(f"V1 header lapTime/sampleCount {v1['header_lap_ms']}/{v1['header_sample_count']} (Kunos: 0/0)")
     if v1["radius_med_log_err"] is None or v1["radius_med_log_err"] >= th["radius_med_log_err_max"]:
-        f.append(f"V1 radius field is not the 3-point circumradius (median |ln| error {v1['radius_med_log_err']})")
-    if "camber_med_abs_err_rad" not in v1:
+        f.append(f"V1 radius field is not the {v1['family']} family's circumradius (median |ln| error {v1['radius_med_log_err']})")
+    if "camber_not_judged" in v1:
+        pass
+    elif "camber_med_abs_err_rad" not in v1:
         f.append("V1 camber not judged: no built 1ROAD surface")
     elif v1["camber_tilted_points"]:
         r = v1["camber_ratio_med"]
@@ -310,7 +371,36 @@ def judge(m: dict, th: dict) -> list[str]:
         f.append(f"V4 {m['v4']['overreach_pts']} side widths reach past a built wall (worst {m['v4']['worst_m']} m at {m['v4']['worst_at']})")
     if m["v5"]["min_radius_m"] < th["radius_min_m"]:
         f.append(f"V5 the line's radius {m['v5']['min_radius_m']} m < {th['radius_min_m']} m at point {m['v5']['min_radius_at']}")
+    for c in (m.get("v6") or {}).get("corners", []):
+        if c["ratio"] < th["box_keep_min"]:
+            f.append(f"V6 the corner at baseline point {c['baseline_at']} keeps {c['ratio']} x its radius "
+                     f"({c['baseline_r_m']} -> {c['r_m']} m; min {th['box_keep_min']})")
     return f
+
+
+def corners_vs_baseline(ai: dict, base: dict, th: dict) -> dict:
+    """V6: every corner of ``base`` (a car-scale radius that is the minimum within +-box_window_pts and under
+    box_corner_r_max_m) against this line's car-scale minimum over the same window round its nearest point."""
+    k, wpts = int(th["car_scale_pts"]), int(th["box_window_pts"])
+
+    def r_car(P):
+        n = len(P)
+        return [_circum_xz(P[(i - k) % n], P[i], P[(i + k) % n]) for i in range(n)]
+    P, B = ai["pos"], base["pos"]
+    rp, rb = r_car(P), r_car(B)
+    nb, n = len(B), len(P)
+    out = []
+    for i in range(nb):
+        if rb[i] >= th["box_corner_r_max_m"]:
+            continue
+        # the first point of the lowest radius within the window (ties go to the earliest)
+        if any(rb[(i + d) % nb] < rb[i] or (rb[(i + d) % nb] == rb[i] and d < 0) for d in range(-wpts, wpts + 1) if d):
+            continue
+        j = min(range(n), key=lambda q: (P[q][0] - B[i][0]) ** 2 + (P[q][2] - B[i][2]) ** 2)
+        r_new = min(rp[(j + d) % n] for d in range(-wpts, wpts + 1))
+        out.append({"baseline_at": i, "at": j, "baseline_r_m": round(rb[i], 2), "r_m": round(r_new, 2),
+                    "ratio": round(r_new / rb[i], 3)})
+    return {"corners": out, "min_ratio": min((c["ratio"] for c in out), default=None)}
 
 
 def thresholds(project: Path | None, overrides: dict | None = None) -> dict:
@@ -329,6 +419,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--ai", type=Path, help="default <project>/ai/<layout>/fast_lane.ai")
     ap.add_argument("--obj", type=Path, help="default <project>/data/track.<layout>.obj")
     ap.add_argument("--out", type=Path, help="default <project>/data/ai_verify.<layout>.json")
+    ap.add_argument("--baseline", type=Path, help="the line this one replaces: V6, every corner keeps >= box_keep_min "
+                                                    "x its radius")
     a = ap.parse_args(argv)
     aip = a.ai or a.project / "ai" / a.layout / "fast_lane.ai"
     objp = a.obj or a.project / "data" / f"track.{a.layout}.obj"
@@ -343,6 +435,8 @@ def main(argv: list[str] | None = None) -> int:
     else:
         built = {"obj": str(objp), "missing": True}
     m = measure(ai, walls=walls, road=road, th=th)
+    if a.baseline is not None:
+        m["v6"] = dict(corners_vs_baseline(ai, read_ai(a.baseline), th), baseline=str(a.baseline))
     fails = judge(m, th)
     rep = {"gate": "verify_ai_line (ledger 0052)", "layout": a.layout, "ai": str(aip), "built": built,
            "thresholds": th, "measured": m, "fail": fails, "ok": not fails}
@@ -351,7 +445,9 @@ def main(argv: list[str] | None = None) -> int:
     v2, v3, v4 = m.get("v2", {}), m["v3"], m.get("v4", {})
     print(f"verify_ai_line {a.layout}: wall min {v2.get('min_m')} m, under {th['wall_band_m']} m {v2.get('under_band_frac')}; "
           f"spurious dips {v3['dip_pts']}, flips {v3['flips_per_km']}/km; sides past a wall {v4.get('overreach_pts')}; "
-          f"min radius {m['v5']['min_radius_m']} m; lap est {v3['lap_s_car_scale']} s (mu 1.0) -> {outp}")
+          f"min radius {m['v5']['min_radius_m']} m; "
+          + (f"corners keep >= {m['v6']['min_ratio']} x the baseline's; " if "v6" in m else "")
+          + f"lap est {v3['lap_s_car_scale']} s (mu 1.0) -> {outp}")
     for r in fails:
         print(f"  FAIL {r}")
     print("  PASS" if not fails else f"  FAIL ({len(fails)})")

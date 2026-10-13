@@ -123,9 +123,11 @@ to crash and slow down weirdlu"). OPT-IN per track and layout: ``track.config.js
 or the layout not in ``ai.layouts`` = every line above, byte for byte — tests/ac/test_write_ai_line_payload.py):
   * ``payload: "kunos"`` — the per-point extras mean what they mean on every Kunos / third-party line on this PC
     (186 measured): ``length`` = the 3D segment from the previous point (not the lap distance), ``direction`` = +-1
-    (-sign of the heading change over +-DIRECTION_WINDOW_PTS, kn5 frame; never 0), ``camber`` / ``normal`` = the
-    BUILT road's tilt under the point, ``radius`` = the plain 3-point circumradius of the float32 points; header
-    lapTime = sampleCount = 0 (kunos_payload, write_ai). The point record keeps the cumulative lap distance.
+    (-sign of the LOCAL heading change, +-DIRECTION_WINDOW_PTS = 1 point, kn5 frame; never 0), ``normal`` = the
+    BUILT road's normal under the point, ``camber`` = its tilt measured toward the bend: -direction x
+    asin(normal . right) (the sign rule every reference line follows, 0.95-1.00 of tilted points), ``radius`` = the
+    plain 3-point circumradius of the float32 points; header lapTime = sampleCount = 0 (kunos_payload, write_ai).
+    The point record keeps the cumulative lap distance.
   * ``wall_clear_m`` — a corridor line's comfort clearance (box approach, box arcs, floor fillets) instead of
     FILLET_COMFORT_CLEAR_M 1.5: the v0.17.1 lines passed 1.50 m from the K-rail three times per box.
   * ``fair`` — fair_line on the final line: least change of curvature plus a minimum-curvature pull, every point moved
@@ -231,8 +233,14 @@ FAIR_POLISH_W = 1e-4        # INVENTED: the polish after the fairing (point-scal
 FAIR_POLISH_U_M = 0.3       # ... on a 0.3 m leash
 FAIR_CLEAR_EXTRA_M = 0.5    # INVENTED: the fairing keeps wall_clear + this off every face (it never moves a point
                             # closer than that unless it already was): the band the gate counts stays empty
-DIRECTION_WINDOW_PTS = 10   # payload direction = -sign(heading change over +-10 points, +-15 m) — MEASURED: the
-DIRECTION_MIN_DEG = 0.5     # Kunos lines agree on 99.0-99.5 % of points turning more than 0.5 deg there
+BOX_RULE_KEEP = 0.85        # INVENTED (the 0052 diagnosis' pre-declared box rule): the writer REFUSES a faired line
+                            # whose box corner falls under this x the v0.17.1-rule arc (FAIR_BOX_KEEP is the target)
+FAIR_BOX_KEEP = 0.86        # INVENTED (the 0052 diagnosis' box rule, 0.85, + 1 % margin): every point within a box
+                            # corner's stations +- FAIR_BOX_GUARD_PTS (30 m) keeps its car-scale radius (through the
+FAIR_BOX_GUARD_PTS = 20     # points +- FAIR_CAR_PTS, +-6 m) >= this x the arc the v0.17.1 rule (comfort
+FAIR_CAR_PTS = 4            # FILLET_COMFORT_CLEAR_M) lays at that corner (or the faired line's own, if already tighter)
+DIRECTION_WINDOW_PTS = 1    # payload direction = -sign(heading change over +-1 point) — MEASURED: the 33 Kunos lines
+DIRECTION_MIN_DEG = 0.5     # agree on 99.77-100 % of points turning > 0.5 deg there (at +-10 only 96.8-99.5 %)
 
 
 # --- resampling ----------------------------------------------------------------
@@ -1105,7 +1113,8 @@ def _band_matvec(A: list[list[float]], x: list[float]) -> list[float]:
 
 
 def fair_line(P, closed: bool, ok, *, w: float | None = None, u_max: float | None = None,
-              alpha: float | None = None, pad: int | None = None) -> tuple[list[list[float]], dict]:
+              alpha: float | None = None, pad: int | None = None,
+              floor_car: list[float] | None = None) -> tuple[list[list[float]], dict]:
     """Fair the line: no wiggle, kink or S the road does not make the car drive (ledger 0052, F3).
 
     The v0.17.1 race drafts braked 60-100 m before every box for bends that were not there: a slope-limited
@@ -1121,7 +1130,10 @@ def fair_line(P, closed: bool, ok, *, w: float | None = None, u_max: float | Non
     normal as ``ok(i, x, z)`` allows (its clearance from the walls — bisected per point, monotone along the
     normal) and never more than ``u_max``; the bounded problem is solved by a primal-dual active set over the
     banded system (O(n) per solve). A radius tighter than min(RADIUS_FLOOR_M, the input's own) through three
-    faired points halves the bounds of the five points around it and re-solves. A closed lap is solved as an
+    faired points halves the bounds of the five points around it and re-solves; so does a car-scale radius
+    (through the points +-FAIR_CAR_PTS) tighter than min(``floor_car[i]``, the input's own) — a box arc is not
+    tightened by its transitions (``floor_car`` 0 = no floor; the points +-FAIR_CAR_PTS + 2 are pulled back).
+    A closed lap is solved as an
     open chain padded ``pad`` points round the seam each way; the middle is the lap. y is untouched (the
     caller seats the line). Returns (points, report)."""
     w = FAIR_W if w is None else w
@@ -1129,6 +1141,8 @@ def fair_line(P, closed: bool, ok, *, w: float | None = None, u_max: float | Non
     alpha = FAIR_ALPHA if alpha is None else alpha
     n = len(P)
     rep = {"w": w, "alpha": alpha, "u_max_m": u_max, "solves": 0, "active_at_bound": 0, "radius_rounds": 0, "refused_after": 0}
+    if floor_car is not None:
+        rep["box_floor_pts"] = sum(1 for f in floor_car if f > 0.0)
     if n < 12:
         return [list(p) for p in P], rep
     pad = (FAIR_PAD_PTS if pad is None else pad) if closed else 0
@@ -1210,6 +1224,20 @@ def fair_line(P, closed: bool, ok, *, w: float | None = None, u_max: float | Non
         return _circumradius(Q[wrap(i - 1)], Q[i], Q[wrap(i + 1)])
 
     r_in = [rad(P, i) for i in range(n)]
+    kc = FAIR_CAR_PTS
+
+    def rad_car(Q, i: int) -> float:
+        if not closed and (i < kc or i > n - 1 - kc):
+            return 10000.0
+        return _circumradius(Q[wrap(i - kc)], Q[i], Q[wrap(i + kc)])
+
+    fl = [f if f > 0.0 else 0.0 for f in floor_car] if floor_car is not None else [0.0] * n
+    r_car_in = [rad_car(P, i) if fl[i] else 0.0 for i in range(n)]
+
+    def tight_points(Q) -> tuple[list[int], list[int]]:
+        t3 = [i for i in range(n) if rad(Q, i) < min(RADIUS_FLOOR_M, r_in[i]) * (1.0 - 1e-3)]
+        tc = [i for i in range(n) if fl[i] and rad_car(Q, i) < min(fl[i], r_car_in[i]) * (1.0 - 1e-3)]
+        return t3, tc
     active: dict[int, float] = {}                             # chain variable -> the bound it is held at
     u = [0.0] * m
     for rr in range(FAIR_RADIUS_ROUNDS + 1):
@@ -1254,14 +1282,17 @@ def fair_line(P, closed: bool, ok, *, w: float | None = None, u_max: float | Non
             i = pt[k]
             u[k] = min(max(u[k], lo_b[i]), hi_b[i])
         Q = [at(i, u[pad + i]) for i in range(n)]
-        tight = [i for i in range(n) if rad(Q, i) < min(RADIUS_FLOOR_M, r_in[i]) * (1.0 - 1e-3)]
-        if not tight:
+        tight, tight_car = tight_points(Q)
+        if not tight and not tight_car:
             break
+        pull = set()
         for i in tight:                                       # pull the move back around a radius it tightened
-            for d in range(-2, 3):
-                j = wrap(i + d)
-                lo_b[j] *= 0.5
-                hi_b[j] *= 0.5
+            pull.update(wrap(i + d) for d in range(-2, 3))
+        for i in tight_car:                                   # ... and around a box arc it tightened
+            pull.update(wrap(i + d) for d in range(-kc - 2, kc + 3))
+        for j in sorted(pull):
+            lo_b[j] *= 0.5
+            hi_b[j] *= 0.5
         for k in list(active):
             i = pt[k]
             active[k] = min(max(active[k], lo_b[i]), hi_b[i])
@@ -1277,6 +1308,8 @@ def fair_line(P, closed: bool, ok, *, w: float | None = None, u_max: float | Non
     rep.update(active_at_bound=len([k for k in active if pad <= k < pad + n]), refused_after=refused,
                max_move_m=round(max(us), 3), mean_move_m=round(sum(us) / n, 4),
                tight_after=sum(1 for i in range(n) if rad(out, i) < min(RADIUS_FLOOR_M, r_in[i]) * (1.0 - 1e-3)))
+    if floor_car is not None:
+        rep["box_tight_after"] = len(tight_points(out)[1])
     return out, rep
 
 
@@ -2113,14 +2146,29 @@ def build_line(pts, widths, *, closed: bool, spacing: float, lat_g: float, decel
         if corridor is not None else []
 
     if lane_offset and corridor is not None:
-        off0, geo["corridor_offsets"] = corridor_offsets(clo_s, chi_s, ds0, closed)
-        off0, geo["box_approach"] = box_targets(off0, lo_c, hi_c, corners_st, ds0, closed)
+        off_raw, geo["corridor_offsets"] = corridor_offsets(clo_s, chi_s, ds0, closed)
+        off0, geo["box_approach"] = box_targets(off_raw, lo_c, hi_c, corners_st, ds0, closed)
         P = [[base[i][0] + tan_xz[i][1] * off0[i], base[i][1], base[i][2] - tan_xz[i][0] * off0[i]]
              for i in range(n0)]
         first = (P[0][0], P[0][2])
         P, geo["folds"] = trim_loops(P, tan_xz, closed, ds0)
         P, _, _ = _resample(P, [0.0] * len(P), ds0, closed)
         P, geo["box_arcs"] = box_fillets(P, closed, st, corridor["faces"], corners_st, ds0, comfort_m=comfort)
+        if opts.get("fair"):
+            # ledger 0052: the arcs the v0.17.1 rule (comfort FILLET_COMFORT_CLEAR_M) lays at these corners — the
+            # fairing keeps every box >= FAIR_BOX_KEEP x them (the box rule the 0052 diagnosis declared)
+            lo_c1, hi_c1 = _faces_lane(clo_s, chi_s, FILLET_COMFORT_CLEAR_M)
+            off1, _ = box_targets(list(off_raw), lo_c1, hi_c1, corners_st, ds0, closed)
+            P1 = [[base[i][0] + tan_xz[i][1] * off1[i], base[i][1], base[i][2] - tan_xz[i][0] * off1[i]]
+                  for i in range(n0)]
+            P1, _ = trim_loops(P1, tan_xz, closed, ds0)
+            P1, _, _ = _resample(P1, [0.0] * len(P1), ds0, closed)
+            _, arcs1 = box_fillets(P1, closed, st, corridor["faces"], corners_st, ds0)
+            r1 = {a["apex_vertex"]: a["radius_m"] for a in arcs1 if "radius_m" in a}
+            for arc in geo["box_arcs"]:
+                if arc["apex_vertex"] in r1:
+                    arc["radius_v0171_rule_m"] = r1[arc["apex_vertex"]]
+                    arc["keep_floor_m"] = round(FAIR_BOX_KEEP * r1[arc["apex_vertex"]], 2)
         P, _, _ = _resample(P, [0.0] * len(P), ds0, closed)
         P, geo["fillets"] = fillet_corners(P, closed, st, ds0)
         P, _, _ = _resample(P, [0.0] * len(P), ds0, closed)
@@ -2168,11 +2216,30 @@ def build_line(pts, widths, *, closed: bool, spacing: float, lat_g: float, decel
                 k = st.nearest_near(x, z, a0[i], 20, 20)
                 return st.lo[k] <= st.lat(x, z, k) <= st.hi[k]
             return ok
+        def box_floor(Q):
+            """Per point: FAIR_BOX_KEEP x the v0.17.1-rule arc of the box corner it belongs to (the corner's stations
+            +- FAIR_BOX_GUARD_PTS), else 0 — the fairing rounds a box's entry and exit, never below that."""
+            if corridor is None or not geo.get("box_arcs"):
+                return None
+            aq = st.associate(Q)
+            fl = [0.0] * len(Q)
+            for arc in geo["box_arcs"]:
+                c = next((c for c in corners_st if c["apex_vertex"] == arc["apex_vertex"]), None)
+                if c is None or "keep_floor_m" not in arc:
+                    continue
+                a = c["a_st"] - FAIR_BOX_GUARD_PTS
+                span = ((c["b_st"] - c["a_st"]) % n0 if closed else c["b_st"] - c["a_st"]) + 2 * FAIR_BOX_GUARD_PTS
+                for i in range(len(Q)):
+                    d = (aq[i] - a) % n0 if closed else aq[i] - a
+                    if 0 <= d <= span:
+                        fl[i] = max(fl[i], float(arc["keep_floor_m"]))
+            return fl
         # the fairing proper (minimum change of curvature + a minimum-curvature pull, inside the bounds), then a
         # light polish (no curvature pull, a short leash) that takes out what an active bound left at the point scale
         P, geo["fairing"] = fair_line(P, closed, make_ok(P), w=opts.get("fair_w"), u_max=opts.get("fair_u_max_m"),
-                                       alpha=opts.get("fair_alpha"))
-        P, geo["fairing_polish"] = fair_line(P, closed, make_ok(P), w=FAIR_POLISH_W, u_max=FAIR_POLISH_U_M, alpha=0.0)
+                                       alpha=opts.get("fair_alpha"), floor_car=box_floor(P))
+        P, geo["fairing_polish"] = fair_line(P, closed, make_ok(P), w=FAIR_POLISH_W, u_max=FAIR_POLISH_U_M, alpha=0.0,
+                                             floor_car=box_floor(P))
     n = len(P)
     idx = (lambda i: i % n) if closed else (lambda i: min(max(i, 0), n - 1))
     assoc = st.associate(P)
@@ -2307,8 +2374,10 @@ def kunos_payload(line: dict) -> dict:
     this PC), on a line ALREADY in the kn5 frame: per point the 3D distance to the previous point (point 0: the
     seam segment of a closed lap), the side the bend turns toward as +-1 (-sign of the heading change over
     +-DIRECTION_WINDOW_PTS points, heading = atan2(fz, fx) in the kn5 frame; a straight holds the last bend's
-    sign, never 0), and the camber asin(normal . right) of the surface normal under it (right = (-fz, 0, fx),
-    the driver's right in the kn5 frame — write_sides). Returns the measured summary."""
+    sign, never 0), and the camber of the surface under it measured toward the bend: -direction x
+    asin(normal . right) (right = (-fz, 0, fx), the driver's right in the kn5 frame — write_sides). That sign
+    rule is AC's: on every reference line on this PC camber = -direction x asin(normal . right) on 0.95-1.00 of
+    the tilted points, plain asin(normal . right) on ~0.5 (a coin toss). Returns the measured summary."""
     P, closed = line["pts"], line["closed"]
     n = len(P)
     # the points as AC will read them (float32): the radius field is the 3-point circumradius OF THOSE — on a
@@ -2348,7 +2417,7 @@ def kunos_payload(line: dict) -> dict:
         nx, ny, nz = line["normal"][i]
         f = line["fwd"][i]
         rl = math.hypot(f[0], f[2]) or 1.0
-        camber.append(math.asin(max(-1.0, min(1.0, (nx * -f[2] + nz * f[0]) / rl))))
+        camber.append(-direction[i] * math.asin(max(-1.0, min(1.0, (nx * -f[2] + nz * f[0]) / rl))))
     line["seglen"], line["direction"], line["camber"] = seg, direction, camber
     return {"camber_min_rad": round(min(camber), 4) if camber else None,
             "camber_max_rad": round(max(camber), 4) if camber else None,
@@ -2922,6 +2991,19 @@ def main(argv: list[str] | None = None) -> None:
     if use_offset and (geo["turns_over_limit"] or geo["radius_below_floor"]):
         raise SystemExit(f"REFUSED: the line turns more than {TURN_MAX_DEG:g} deg in a step where the road does "
                          f"not, or runs under its radius floor — see the geometry line above")
+    # ledger 0052, the box rule the diagnosis declared BEFORE the fix, on the line AS WRITTEN: every box corner's
+    # car-scale minimum >= BOX_RULE_KEEP x the arc the v0.17.1 rule lays at that corner in this same world
+    short = [a for a in geo.get("box_arcs", []) if a.get("line_radius_min_m") is not None
+             and a.get("radius_v0171_rule_m") and a["line_radius_min_m"] < BOX_RULE_KEEP * a["radius_v0171_rule_m"]]
+    if opts and opts.get("fair"):
+        print("  box rule (ledger 0052, >= %.2f x the v0.17.1-rule arc): " % BOX_RULE_KEEP
+              + ", ".join(f"v{a['apex_vertex']} {a.get('line_radius_min_m')}/{a.get('radius_v0171_rule_m')} m"
+                          for a in geo.get("box_arcs", [])))
+    if short:
+        raise SystemExit("REFUSED: a box corner is tighter than %.2f x the arc the v0.17.1 rule lays there (ledger "
+                         "0052's declared box rule): %s" % (BOX_RULE_KEEP, ", ".join(
+                             f"v{a['apex_vertex']} {a['line_radius_min_m']} < {BOX_RULE_KEEP} x {a['radius_v0171_rule_m']} m"
+                             for a in short)))
 
     # The kn5/AC world is z-MIRRORED relative to the engine local frame (verified against the
     # installed dummies: kn5 z = -engine z). An unflipped line sends the AI down a ghost mirror

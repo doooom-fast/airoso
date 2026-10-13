@@ -1227,3 +1227,53 @@ No numeric threshold is added or moved. Every number below is an existing rule c
   step, (k) will FAIL until its own signs.json sets `both_directions_mainline: true`.
 - `place_signs.DEFAULTS` is unchanged (false), so a track with no signs.json still writes the same bytes. This
   was checked on SD with the knob off: the output was byte-identical to HEAD's.
+
+## 2026-10-12 — worn race kerbs: the atlas wrap, the no-black-slot guard, the opt-in wheel kerb effect (ledger 0053)
+
+Kevin, from the seat on v0.17.1: "i'd like the race curbs to be tire-worn/textured". The eight `1KERB_race_*` kerbs
+keep every vertex, face and hard edge (scratch rehearsal: `race_authored.json` ring centres and frames identical for
+all 35 objects, 167,958 positions before and after), so no driving-surface gate moves: `drive_test`, `audit_mesh`
+(K 154), `verify_race`, `kn5_ground_check` judge the same geometry. What changes is the picture, the wrap and one
+guard. Every number below is **[invented]** unless it says measured.
+
+| Value | Where | Number | Flag |
+|---|---|---|---|
+| atlas repeat along the kerb | `race_furniture.KERB_ATLAS_V_M` | 8.0 m (2,048 px at 256 px/m) | ⚠ invented |
+| red / white block | `KERB_BLOCK_M` | 1.0 m (the 0047 stripe was 0.5 m + 0.5 m) | ⚠ invented |
+| rubber levels | `KERB_ATLAS_COLUMNS`, `kerb_wear` | 4 columns; level = min(3, int(4 w)), bins of 0.25 | ⚠ invented |
+| inside-kerb lobes | `KERB_WEAR_IN_*` | each direction's late apex PC + 0.6 arc / PT − 0.6 arc; sigma max(5 m, 0.15 arc); floor 0.15 | ⚠ invented |
+| outside-kerb lobes | `KERB_WEAR_OUT_*` | each direction's track-out PT + 0.2 E / PC − 0.2 E; sigma 6 m; floor 0.10 | ⚠ invented |
+| joint snap | `KERB_JOINT_SNAP_MAX_M` | a whole metre of the kerb's own mid-line becomes a joint station only if a station lies within 0.25 m; v is warped so every joint station sits on a whole metre; a block takes the highest raw level of its stations; the column changes only there | ⚠ invented |
+| column pad | `KERB_ATLAS_PAD_PX` | 8 px each side of a 256 px column (mip level 3 stays inside its column) | ⚠ invented |
+| wrap handedness | `KERB_V_SIGN` | L −1, R +1: every kerb's (T × B) · N = +1 in the Blender frame, the sign of the prep's `planar_uv` road wrap (a kn5 tangent has no handedness sign). Not a threshold: derived and tested | measured (tests) |
+| kerb material | `pbr.KS_PROPS["1KERB_RACE"]` | ksAmbient 0.40 / ksDiffuse 0.40 (the add-on default every neighbouring race material ships at, measured) ; ksSpecular 0.10, ksSpecularEXP 20 (Kunos Laguna `red_curb` measured at 0.35 / 20, technique only) | ⚠ 0.10 invented |
+| the picture | `tools/make_kerb_texture.py` | colours (RAL 3020 / 9016 weathered), `RUBBER_COVER` 0 / 0.12 / 0.30 / 0.55, `RUBBER_OPACITY` 0 / 0.55 / 0.70 / 0.82, `RUBBER_HAZE` 0 / 0.12 / 0.28 / 0.46, `CHIP_COVER` 0.035, `NORMAL_STRENGTH` 2.2, JPEG q90 4:4:4 | ⚠ invented, tuned by eye on Blender stills |
+| texture budget | `make_kerb_texture.MAX_BYTES` | ≤ 2,000,000 B per file (painted: 567,921 + 980,349) | ⚠ invented |
+| render-vertex cost of a seam | `render_vertex_count(..., face_uvs)`, `KERB_SEAM_RENDER_VERTS` | exactly +4 per seam: the 5 cm outer face always wraps column 0 (`KERB_OUTER_FACE_COLUMN`, pixel-identical in every column), so a seam re-cuts the lip, both faces at the ramp-top edge and the top's outer edge, not the outer face's two (the first cut re-cut all 6: 7,356) | measured: pure 7,050 → 7,254 for 51 seams = the built kn5's KERB count exactly |
+| Lake Murray kerb render budget | `tests/tools/test_kerb_wear.py` `SD_KERB_RENDER_VERTS_MAX` | KERB ≤ 7,300 render vertices (installed v0.17.1: 7,050), pre-registered in the diagnosis before the fix; held, not moved (verify round 1) | ⚠ invented (pre-registered) |
+| normal-map convention | `make_kerb_texture.normal_rg`; `test_normal_map_is_opengl_green_up`, `test_joints_are_grooves_in_the_normal_map` | OpenGL like every map in assets/textures: a synthetic ramp rising down the image gives G > 128; every joint is a groove (G < 110 just above, > 146 just below; measured ≈ 36 / ≈ 220). Pillow flips kernels vertically; the first cut was DirectX (≈ 223 / ≈ 33) | test thresholds ⚠ invented; convention measured |
+
+**New gate — `tools/check_race_kn5.py` `black_slots` (hard, both roles, every race kn5).** Every texture the
+`pbr.TEXTURES` race rows bind for the meshes present must be embedded with > 0 bytes, and (when the parse carries
+materials) each race mesh's material must bind exactly its row's `txDiffuse` / `txNormal` and nothing unembedded.
+Why: `ship_sd.sh` exports from engine-july, which stages textures from ITS `assets/textures`; a file that is only in
+airoso is skipped with a WARNING and the slot renders black (LAWS L7) — the old role checks passed such a kn5. Proof:
+the installed v0.17.1 race kn5's parse now FAILS (`kerb_diffuse.png` outside the race set, the worn pair not
+embedded, 16 bindings disagree); the rehearsed kn5 PASSES. `tests/tools/test_check_race_kn5.py::test_ledger_0053_no_black_kerb_slot`.
+
+**Opt-in — `track_folder.surfaces_ini(kerb_ff_effect=0)`.** `FF_EFFECT=<n>` on the KERB block only, read from
+`track.config.json` `kerb_ff_effect` (absent = 0). The default output is byte-identical (md5 pinned for tarmac /
+gravel × wall, `tests/ac/test_road_surface.py`); opt-in changes exactly one line. 1 is the Kunos convention
+(measured FF_EFFECT=1 on Vallelunga, Silverstone, Laguna Seca, Brands Hatch, Red Bull Ring, Barcelona, Imola, Mugello;
+0 on Zandvoort; absent on Highlands). Caveat recorded: KEY=KERB also covers the street `1KERB_sidewalk` (114,081 m²
+in the main kn5), so an opted-in track's sidewalks get the wheel effect too. No track opts in in this commit
+(Lake Murray's config is the integration run's, Kevin's call).
+
+Rehearsal (scratch copy of the v0.17.1 workshop + a scratch engine-july carrying this pbr.py and the two textures):
+author → `verify_race` OK → prep → split → `<slug>_race.kn5` **10,253,676 → 11,815,506 B (+1,561,830 B, +15.2 %)**
+(the textures embedded are the bytes packed at the prep — see ledger 0053 "Integration"), `check_race_kn5 --role
+common` OK, all 8 kerb materials `ksPerPixelMultiMap` txDiffuse + txNormal, ksSpecular 0.1. Re-run after verify
+round 1 (the OpenGL normal map and the 4-per-seam wrap): `<slug>_race.kn5` 10,253,676 → **11,811,590 B (+1,557,914 B,
++15.2 %)**, the embedded normal map 980,349 B with the committed file's md5, KERB **7,254** render verts (≤ 7,300),
+every column split on a whole-metre joint, every outer-face vertex in column 0, kerb positions and triangles
+identical to installed v0.17.1.

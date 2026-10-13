@@ -68,17 +68,25 @@ ROAD_SURFACES: dict = {
 }
 
 
-def surfaces_ini(*, wall: bool = False, road_surface: str = "tarmac") -> str:
+def surfaces_ini(*, wall: bool = False, road_surface: str = "tarmac", kerb_ff_effect: int = 0) -> str:
     """data/surfaces.ini — physical surfaces keyed to the 1ROAD/1KERB/1RUNOFF/1GRASS mesh prefixes.
     WAV= names a STOCK AC sound resolved from the player's own content/sfx (FMOD GUIDs.txt) — NOTHING
     is bundled or redistributed. ROAD is intentionally silent on tarmac (tyre-roll covers it); KERB
-    rumbles, RUNOFF/GRASS scrub. The kerb mesh is already 3D-ridged, so SIN_HEIGHT stays 0 (no double
-    bump). ``wall=True`` (network tracks) adds the WALL surface for the swept 1WALL_* freeway barriers.
-    ``road_surface`` selects the ROAD physics from :data:`ROAD_SURFACES` — ``"gravel"`` is what makes a
-    rally stage drive like dirt instead of asphalt."""
+    rumbles, RUNOFF/GRASS scrub. SIN_HEIGHT stays 0: no invented bump on top of the mesh (the race kerbs
+    are a flat 5 cm plate with a 10 cm ramp — tools/race_furniture.py KERB_H / KERB_RAMP_W — not a
+    ridged sausage; the rumble is the VIBRATION + WAV). ``wall=True`` (network tracks) adds the WALL
+    surface for the swept 1WALL_* freeway barriers. ``road_surface`` selects the ROAD physics from
+    :data:`ROAD_SURFACES` — ``"gravel"`` is what makes a rally stage drive like dirt instead of asphalt.
+    ``kerb_ff_effect`` (ledger 0053, opt-in per track via track.config.json ``kerb_ff_effect``) writes
+    FF_EFFECT=<n> on the KERB block ONLY — 1 is the Kunos convention (measured: Vallelunga, Silverstone,
+    Laguna Seca, Brands Hatch, Red Bull Ring, Barcelona, Imola, Mugello) and puts the kerb in the wheel.
+    KEY=KERB also covers every street curb/sidewalk (1KERB_sidewalk), so they get it too. Default 0:
+    the output is byte-identical to before for every track that does not opt in."""
     if road_surface not in ROAD_SURFACES:
         raise ValueError(f"unknown road_surface {road_surface!r} "
                          f"(expected one of {', '.join(sorted(ROAD_SURFACES))})")
+    if int(kerb_ff_effect) not in (0, 1):
+        raise ValueError(f"kerb_ff_effect must be 0 or 1, got {kerb_ff_effect!r}")
     road_params, road_wav, road_pitch = ROAD_SURFACES[road_surface]
     # KEY, params, stock WAV (referenced by name), WAV_PITCH
     blocks = [
@@ -107,7 +115,8 @@ def surfaces_ini(*, wall: bool = False, road_surface: str = "tarmac") -> str:
              "", 0))
     out = []
     for i, (key, p, wav, pitch) in enumerate(blocks):
-        lines = [f"[SURFACE_{i}]", f"KEY={key}", f"WAV={wav}", f"WAV_PITCH={pitch}", "FF_EFFECT=0",
+        ff = int(kerb_ff_effect) if key == "KERB" else 0
+        lines = [f"[SURFACE_{i}]", f"KEY={key}", f"WAV={wav}", f"WAV_PITCH={pitch}", f"FF_EFFECT={ff}",
                  "SIN_HEIGHT=0", "SIN_LENGTH=0", "BLACK_FLAG_TIME=0"]
         lines += [f"{k}={v}" for k, v in p.items()]
         out.append("\n".join(lines))
@@ -610,11 +619,13 @@ def generate(project_dir: str | Path, kn5_name: str | None = None, *, strict_kn5
     # Gravel vs tarmac: the ROAD physics fork. Set once in config (road_surface) so the whole variant
     # is reproducible from track.config.json — the geometry above is identical either way.
     road_surface = str(cfg.raw.get("road_surface", "tarmac"))
+    # ledger 0053: the wheel's kerb effect, opt-in per track (absent = 0 = byte-identical surfaces.ini)
+    kerb_ff = int(cfg.raw.get("kerb_ff_effect", 0) or 0)
 
     out = project_dir / "build" / cfg.slug
     (out / "data").mkdir(parents=True, exist_ok=True)
     (out / "data" / "surfaces.ini").write_text(
-        surfaces_ini(wall=wall_surface, road_surface=road_surface), encoding="utf-8")
+        surfaces_ini(wall=wall_surface, road_surface=road_surface, kerb_ff_effect=kerb_ff), encoding="utf-8")
 
     params, geom = _map_params(xz)
     (out / "data" / "map.ini").write_text(map_ini(params), encoding="utf-8")
@@ -698,7 +709,7 @@ def generate(project_dir: str | Path, kn5_name: str | None = None, *, strict_kn5
             _lroot = out / layout
             (_lroot / "data").mkdir(parents=True, exist_ok=True)
             (_lroot / "data" / "surfaces.ini").write_text(
-                surfaces_ini(wall=wall_surface, road_surface=road_surface), encoding="utf-8")
+                surfaces_ini(wall=wall_surface, road_surface=road_surface, kerb_ff_effect=kerb_ff), encoding="utf-8")
             (_lroot / "data" / "map.ini").write_text(map_ini(params), encoding="utf-8")
             _draw_track_png(xz, geom, _lroot / "map.png", stroke=(255, 255, 255, 255),
                             width=params["DRAWING_SIZE"], flip_y=False, multi=multi)

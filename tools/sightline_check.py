@@ -43,7 +43,10 @@ COWLES = (1380.0, 2700.0)  # 3DEP summit 483.2 m, 32.81277 N 117.03192 W (ledger
 DEFAULT_SET = [
     {"name": "navajo_crest", "from": (62.0, 1713.0), "to": COWLES, "min_deg": 9.0},
     {"name": "v2240_0033_navajo_jackson", "from_vertex": 2240, "to": COWLES, "min_deg": 8.1},
-    {"name": "v1640_0037_navajo_north", "from_vertex": 1640, "to": COWLES, "min_deg": 5.1},
+    # criterion 2 re-worded for v1640 (ledger 0046, 2026-10-13): fresh 3DEP itself hides Cowles from here — a hill 350 m
+    # out stands at 7.23 deg in front of the 5.49 deg summit — so the build must agree with the world: the summit cone
+    # at >= min_deg AND something nearer standing at least as high ("hidden": the world's verdict, measured)
+    {"name": "v1640_0037_navajo_north", "from_vertex": 1640, "to": COWLES, "min_deg": 5.1, "hidden": True},
 ]
 
 
@@ -149,11 +152,13 @@ def march(terrain: Surface, road: Surface, start, end, step=STEP_M, eye=EYE_M):
     return eye_y, prof
 
 
-def judge_target(prof, dist, min_deg, cone=SUMMIT_R_M):
+def judge_target(prof, dist, min_deg, cone=SUMMIT_R_M, hidden=False):
     """``prof`` marches to the summit top at ``dist`` (its last step is the top itself). The summit as seen is the summit
     cone's highest elevation angle (``target_deg``: the top, or its own shoulder where the ground near the top is
     flatter than the sight line); it must reach ``min_deg`` and stand above every step outside the cone. The top's own
-    angle and the shoulder's are reported beside it."""
+    angle and the shoulder's are reported beside it. ``hidden``: a station from which the WORLD hides the summit behind a
+    nearer rise (fresh 3DEP, recorded in the ledger) passes when the build agrees — the summit cone reaches ``min_deg``
+    and a step outside the cone stands at least as high."""
     top = [a for d, _y, a in prof if a is not None and abs(d - dist) < 1e-6]
     before = [a for d, _y, a in prof if a is not None and d < dist - cone]
     shoulder = [a for d, _y, a in prof if a is not None and dist - cone <= d < dist - 1e-6]
@@ -161,9 +166,12 @@ def judge_target(prof, dist, min_deg, cone=SUMMIT_R_M):
     in_cone = top + shoulder
     at = max(in_cone) if in_cone else None
     mid = max(before) if before else None
-    ok = at_top is not None and at >= min_deg and (mid is None or at > mid)
+    if hidden:
+        ok = at_top is not None and at >= min_deg and mid is not None and mid >= at
+    else:
+        ok = at_top is not None and at >= min_deg and (mid is None or at > mid)
     return {"target_deg": at, "top_deg": at_top, "max_shoulder_deg": max(shoulder) if shoulder else None,
-            "max_intermediate_deg": mid, "min_deg": min_deg, "pass": ok}
+            "max_intermediate_deg": mid, "min_deg": min_deg, **({"expect": "hidden"} if hidden else {}), "pass": ok}
 
 
 def run(project, rays, obj=None, out=None):
@@ -206,7 +214,7 @@ def run(project, rays, obj=None, out=None):
         else:
             dist = math.hypot(r["to"][0] - r["from"][0], r["to"][1] - r["from"][1])
             row["target_dist_m"] = round(dist, 1)
-            row.update(judge_target(prof, dist, float(r.get("min_deg", 0.0))))
+            row.update(judge_target(prof, dist, float(r.get("min_deg", 0.0)), hidden=bool(r.get("hidden"))))
             if nominal is not None:
                 row["nominal"] = [round(c, 1) for c in nominal]
                 row["top_abs_m"] = round(prof[-1][1] + elev0, 2) if prof[-1][1] is not None else None

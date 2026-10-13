@@ -128,6 +128,11 @@ class TierSpec:
             for k in ("cell_m", "beyond_m", "edge_m", "move_beyond_m", "min_face_d_m"):
                 if k not in self.refine:
                     raise ValueError(f"terrain.tier_options.keep_cells.refine needs {k}")
+        aa = opt.get("antialias") or {}
+        self.aa_cell_m = float(aa["cell_m"]) if aa else None
+        self.aa_far_max_move_m = float(aa["far_max_move_m"]) if aa and "far_max_move_m" in aa else None
+        if aa and aa.get("kernel", "tent") != "tent":
+            raise ValueError(f"terrain.tier_options.antialias.kernel {aa.get('kernel')!r}: only 'tent'")
         self.physical_m = float(opt.get("physical_within_m", 250.0))
         self.keep_m = float(opt.get("keep_surface_m", 0.0))
         self.keep_feather_m = float(opt.get("keep_feather_m", 0.0))
@@ -148,6 +153,9 @@ class TierSpec:
         if self.refine is not None:
             cells.add(float(self.refine["cell_m"]))
         self.levels = sorted(cells, reverse=True)                 # coarse -> fine (nominal metres)
+        if self.aa_cell_m is not None and abs(self.aa_cell_m - self.levels[-1]) > 1e-6:
+            raise ValueError(f"terrain.tier_options.antialias.cell_m {self.aa_cell_m} must be the finest cell "
+                             f"{self.levels[-1]} (its taps are the base lattice, half a cell apart)")
         self.ratios = []
         for a, b in zip(self.levels, self.levels[1:]):
             r = a / b
@@ -591,6 +599,24 @@ class Topology:
             out.update(((x0, z0), (x0 + r, z0), (x0 + r, z0 + r), (x0, z0 + r), (x0 + r // 2, z0 + r // 2)))
         return sorted(out)
 
+    def aa_keys(self) -> list:
+        """base keys whose height is ANTI-ALIASED (``tier_options.antialias``): every corner and centre of a
+        leaf at the finest level that is a mesh vertex, plus every refine node (the kept cells' finest
+        sub-lattice) — sorted. Empty when antialias is not declared."""
+        if self.spec.aa_cell_m is None:
+            return []
+        L = self.nlev - 1
+        r = self.r[L]
+        want = set()
+        for lev, i, j in self.leaves:
+            if lev != L:
+                continue
+            x0, z0 = i * r, j * r
+            want.update(((x0, z0), (x0 + r, z0), (x0 + r, z0 + r), (x0, z0 + r), (x0 + r // 2, z0 + r // 2)))
+        out = want & set(self.vkeys)
+        out.update(self.refine_keys())
+        return sorted(out)
+
     # --- convenience -----------------------------------------------------------------------------
     def xz(self, n: int) -> tuple[float, float]:
         I, J = self.vkeys[n]
@@ -621,6 +647,72 @@ def _face_up(a, b, c):
     dx1, dz1 = b[0] - a[0], b[1] - a[1]
     dx2, dz2 = c[0] - a[0], c[1] - a[1]
     return (a, b, c) if dz1 * dx2 - dx1 * dz2 > 0 else (a, c, b)
+
+
+# --- anti-aliased sampling (ledger 0046 fix round 2) ------------------------------------------------
+# A finest-level vertex stands for its cell, not for one point: 3DEP is a 1 m raster, and a feature narrower than
+# two cells (the concrete Alvarado Creek channel, ~7 m wide and 6 m deep, crossing the 5 m lattice at a slant)
+# point-sampled every 5 m lands in some nodes and misses their neighbours, so the triangles between them fold into
+# a staircase of parallel ribs. The fix is the textbook one: low-pass the data before sampling it. The kernel is
+# the tent (the linear-interpolation kernel the mesh itself reconstructs with) of half-width one cell, separable,
+# evaluated at the base lattice (taps half a cell apart): weights 1/4, 1/2, 1/4 per axis. On a plane it returns
+# the point value exactly; it moves a vertex only where the ground bends within a cell.
+AA_TAPS = tuple((a, b, (0.5 if a == 0 else 0.25) * (0.5 if b == 0 else 0.25))
+                for b in (-1, 0, 1) for a in (-1, 0, 1))
+
+
+def aa_taps(keys) -> list:
+    """every base key the anti-aliased value of ``keys`` reads (sorted, unique)"""
+    return sorted({(i + a, j + b) for i, j in keys for a, b, _w in AA_TAPS})
+
+
+def aa_value(h, key) -> float:
+    """the tent-filtered height at base key ``key`` from point samples ``h`` (a mapping key -> metres)"""
+    i, j = key
+    return sum(w * h[(i + a, j + b)] for a, b, w in AA_TAPS)
+
+
+def data_diagonals(tris, I, J, y, eligible, eps: float = 1e-6):
+    """Re-choose the diagonal of every PLAIN square cell (the two consecutive triangles ``_triangulate`` emits
+    for a 4-node leaf) from the DATA: split along the diagonal whose two corners differ least in height
+    (``|y_a - y_c|``), so a channel, bank or ridge that crosses the lattice at a slant runs ALONG triangle
+    edges instead of being folded across them every cell (the fixed SW->NE diagonal folded the Alvarado Creek
+    channel into a staircase — ledger 0046 fix round 2, the visual lens; paired with the anti-aliased sampling
+    above). Vertices, the vertex count and every triangle's physical flag are unchanged; only cells whose four
+    corners are all ``eligible`` are touched (the assembler: not a kept-cell node and more than
+    ``tier_options.diagonals.beyond_m`` from a pavement), so the near-road ground and the kept cells' own
+    NW->SE triangles stay the ones the gates were tuned on. A tie keeps the planned diagonal (deterministic).
+    x-split fans are never pairs of this shape (their centre is a third column). Returns (new triangle list, number of cells flipped)."""
+    out = list(tris)
+    n = 0
+    k = 0
+    while k + 1 < len(out):
+        a, b = out[k], out[k + 1]
+        sa, sb = set(a), set(b)
+        shared = sa & sb
+        quad = sa | sb
+        if len(shared) != 2 or len(quad) != 4:
+            k += 1
+            continue
+        Is = {I[v] for v in quad}
+        Js = {J[v] for v in quad}
+        u, v = sorted(shared)
+        if (len(Is) != 2 or len(Js) != 2 or I[u] == I[v] or J[u] == J[v]
+                or (max(Is) - min(Is)) != (max(Js) - min(Js))):
+            k += 1
+            continue
+        p, q = sorted(quad - shared)
+        if all(eligible[w] for w in quad) and abs(y[p] - y[q]) + eps < abs(y[u] - y[v]):
+            def up(t):
+                (a0, a1, a2) = t
+                dx1, dz1 = I[a1] - I[a0], J[a1] - J[a0]
+                dx2, dz2 = I[a2] - I[a0], J[a2] - J[a0]
+                return t if dz1 * dx2 - dx1 * dz2 > 0 else (a0, a2, a1)
+            out[k] = up((p, q, u))
+            out[k + 1] = up((p, q, v))
+            n += 1
+        k += 2
+    return out, n
 
 
 def split_mesh(tris, tri_flags):

@@ -360,6 +360,10 @@ gate_verify_mouths() {
   step "gate: verify_mouths on the built road (every side-street mouth: mouth line, host lane, notch, approach — hard)"
   (cd "$AIROSO" && python tools/verify_mouths.py "$PROJ")
 }
+gate_rib_check() {
+  step "gate: terrain ribbing on the built ground (tools/rib_check.py: sub-cell features folded into staircases — hard)"
+  (cd "$AIROSO" && python tools/rib_check.py "$PROJ" --json "$PROJ/data/rib_check.json")
+}
 gate_drive_test_street() {
   local lid rc
   step "gate: drive_test, street layout (hard)"
@@ -554,7 +558,7 @@ for n in ${SHIP[@]+"${SHIP[@]}"}; do "ship_$n"; done
 # A verdict from an earlier run is not this run's verdict: every per-layout gate file is removed before the gates
 # run, so a gate that does not run reads as "not run" (red), never as last time's pass.
 for lid in $LAYOUT_IDS; do rm -f "$PROJ/data/drive_test.$lid.json"; done
-rm -f "$PROJ/data/verify_mouths.json"
+rm -f "$PROJ/data/verify_mouths.json" "$PROJ/data/rib_check.json"
 for lid in $RACE_IDS; do rm -f "$PROJ/data/audit.$lid.json" "$PROJ/data/no_route.$lid.json" "$PROJ/data/track.$lid.obj"; done
 rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"
 DT_S=0; AU_S=0; DT_R=0; AU_R=0; NR_R=0

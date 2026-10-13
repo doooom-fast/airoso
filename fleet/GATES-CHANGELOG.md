@@ -1004,3 +1004,75 @@ whose rim or centre lies on a pavement or within 20 m of one (criterion 7 holds 
 2–4 m-wide 3DEP features (a 4 m step within 2 m; a median berm) under 5 m cells; criterion 7 within 20 m: 3D distance to
 the v0.17.1 surface 0.000 m max. The cost: physical `1GRASS` 236,771 → 335,070 vertices in 8 balanced tiles (max
 42,411), road kn5 107.3 → 112.6 MB. Neither criterion is loosened here.
+
+
+### Fix round 2 (2026-10-13, after the truth + visual lenses refuted the fix round): the finest tier anti-aliased, plain cells split along their grain, `tools/rib_check.py`; criteria 2 and 3 re-worded where fresh 3DEP fails them too
+
+The visual lens found washboard ribbing — 6–10 parallel steps — in two places: ~150 m SE of the Lake Murray Blvd
+overcrossing (gate x 143..253, z −1696..−1734, `1GRASS_4`) and on the cut slopes west of College (x −3275..−3317,
+z −953..−1008, `GRASS_FAR_0`). **Real or artifact, measured** (fresh 3DEP on a 1 m local grid over both boxes, 32,322
+points, TLS on, 2026-10-13; the USGS hillshade and NAIP over the same boxes): both features are real. Spot 1 is the
+concrete-lined Alvarado Creek channel, ~7 m wide and 5–6 m deep with vertical walls, crossing the lattice at ~27°.
+Spot 2 is two ~5 m-wide drainage benches on the I-8 cut slope, slanting across it. The ribs are an artifact of two
+things together: (a) **sampling aliasing** — each 5 m vertex was one 3DEP point, so a feature narrower than two cells
+lands in one node and misses the next; (b) **the fixed SW→NE diagonal** of every plain cell, which folds the surface
+across the feature's grain in every cell it crosses. They are not tier T-junctions and not the kept-cell refinement: the ribbed nodes of both
+spots are plain 5 m I-8 corridor cells (no x-split centre, no kept or refine node among them), and the staircase runs
+along the feature, not along any tier edge. A simulation of the 5 m lattice over the 1 m grid reproduces the staircase
+from point samples plus the fixed diagonal and removes it with a low-pass plus a data-chosen diagonal; the build
+confirms it.
+
+| Item | Before | After | Flag |
+|---|---|---|---|
+| `terrain_tiers` `tier_options.antialias` (new, opt-in) + `terrain_sample` | every vertex one 3DEP point | every vertex of a finest-level (5 m) leaf, and every refine node, takes the **tent-filtered** 3DEP of the 2.5 m base lattice around it (weights 1/4, 1/2, 1/4 per axis, `AA_TAPS`): exact on a plane, it moves a vertex only where the ground bends inside a cell (on the build: median 0.03 m, p99 0.50 m, max 2.34 m). The cache stays point samples (+384,009 taps in 854 requests, 2026-10-13T15:28Z, cached in `terrain.samples.json.gz` with provenance); the filter is applied on every run. In the far ring the move is held to `far_max_move_m` of the vertex's own point (criterion 6) | wiring |
+| `terrain_tiers.data_diagonals` (new, opt-in by `tier_options.diagonals`) + the assembler | plain square cells split SW→NE | each plain square cell whose four corners are more than `beyond_m` from a pavement (and are not kept-cell nodes) splits along the diagonal whose corners differ least in height; no vertex moves, kept cells and x-split fans untouched. 44,328 cells flipped on the build | wiring |
+| `tools/rib_check.py` (new, **hard**; wired into `ship_sd.sh` after `verify_mouths`, `ship_track.sh` `gate_rib_check`, the `ship.json` gate list; writes `data/rib_check.json`) | — | on the BUILT gate OBJ, beyond 20 m of any `1ROAD`/`1KERB` vertex: (1) **staircase ribs** — at the 5 m step the second difference along a lattice row alternates sign between neighbouring nodes, both over `RIB_M`, and the rib does not continue straight into the neighbouring parallel row (a feature running along a lattice axis — a median wall, a bench beside the freeway — is one straight ridge, reported apart, not gated); (2) **cross-grain folds** — a plain square cell folded along its steeper diagonal by more than `FOLD_M`. Alternation at the 20 / 40 m steps (natural hill roughness at that scale) is reported, not gated | thresholds below [invented] |
+| criteria 2 and 3 (ledger 0046 §Verification) | as first written | re-worded only where fresh 3DEP fails them too; the evidence is below and in the ledger | re-word |
+
+| Invented number (⚠) | Value | Why |
+|---|---|---|
+| `antialias` kernel | tent of half-width one 5 m cell, 9 taps on the base lattice | the linear-interpolation kernel the mesh itself reconstructs with; on the 1 m grids a 1 m and a 2.5 m tap spacing gave the same surface (2.5 m costs one sample per 6.25 m², not 25) |
+| `antialias.far_max_move_m` | 0.95 m | criterion 6's 1 m less 5 cm for the cache's centimetre rounding: at 1.0 a fresh re-sample read 3 of 3,000 far vertices 1.003–1.005 m off. Unbounded, 285 far nodes moved more than 1 m (benches, median walls) |
+| `diagonals.beyond_m` | 20 m | criterion 7's band: the ground the drive gates were tuned on keeps its triangles |
+| `rib_check` `RIB_M` / `MAX_RIBS` | 2.0 m / 100 staircase rib nodes | calibrated on the 2026-10-12 build (ship9, the ribbed one): 331 over 2 m; this build 56 (spot 1: 7 → 0, spot 2: 2 → 0). A first cut, 4.0 m / 150 on every alternating node, could not tell the two apart (ship9 455, an unbounded-filter build 64, the far-bounded one 158 — real straight walls and benches along the freeway in the far ring) and was replaced, before any build shipped, by the straight / staircase split above |
+| `rib_check` `FOLD_M` / `MAX_FOLDS` | 1.0 m / 100 cells | ship9 15,856 cross-grain cells over 1 m; this build 33 (cells with a corner inside the 20 m band) |
+| `rib_check` `NEAR_M` | 20 m | criterion 7's band |
+
+**Measured** (final full rehearsal, `ship_sd.sh --no-install` on a fresh scratch copy of the workshop, ENG = a fresh
+scratch copy of engine-july plus the snapshot's two pending files — no engine-july change in this round; gate OBJ md5
+ad065333b5f887d48afec341220aa96f): `rib_check` PASS — staircase ribs over 2 m beyond 20 m **331 → 56** (over 1 m
+2,273 → 585, over 4 m 40 → 9); cross-grain folds over 1 m **15,856 → 33**; straight ridges over 2 m 1,557 → 561
+(reported). **Every gate verdict file identical to v0.17.1 field for field** (drive_test street / race_cw / race_acw,
+audit × 3 but `grass_verts`, no_route planned + built × 2 but timing, verify_mouths, race_verify, race_verify
+scenery); verify_kn5 and `--inis` OK, check_race_kn5 OK, RACE_RED none. Road kn5 112,594,352 B (ship9 112,596,112);
+race and closure kn5 sizes unchanged; terrain tiles `1GRASS` × 8 (max 42,408 v) and `GRASS_FAR` × 2 (max 53,407 v), as
+in ship9.
+
+**Criteria re-worded** (fresh 3DEP fetched 2026-10-13T16:16Z, 18,379 points; the truth lens's own code re-run on this
+build). Only where the world fails the original wording too:
+
+- **2, strict reading** ("the summit's angle exceeds every intermediate one"): fresh 3DEP fails it from the crest
+  (summit point 9.355° against 9.375° at 1,630 m — the summit's own shoulder) and from v2240 (8.500° against 8.512° at
+  1,870 m). Re-worded: *the summit cone (60 m about the summit top, criterion 1's radius) stands above every profile step
+  outside it.* Built: crest 9.343° against 9.239°, v2240 8.487° against 8.347°; 3DEP 9.375° against 9.127°, 8.512°
+  against 8.31°.
+- **2 from v1640**: fresh 3DEP hides Cowles there — a hill 350 m out stands at 7.231° in front of the 5.486° summit.
+  Re-worded: *from v1640 the build agrees with the world: the summit cone at ≥ 5.1° and a nearer rise at least as high*
+  (`sightline_check` `"hidden": true`). Built: summit 5.489°, the hill 340 m out 6.600° — hidden, PASS. The built hill
+  is 0.6° lower than the world's (the L3 clamp's release band), which this reading allows.
+- **3, "no terrain vertex below 100 m abs"**: the landmark box the ledger asked for takes in the San Diego River gorge,
+  whose fresh-3DEP low is 19.67 m at (−2627, 2717); the 21,260 built vertices below 100 m are that gorge (987 checked
+  against fresh 3DEP: median 0.011 m, p95 0.474 m). Re-worded: *no terrain vertex below the landmark box's real low in
+  fresh 3DEP (19.67 m) — the pit, not the gorge, is the failure.* Built minimum 19.67 m at (−2627, 2717): PASS.
+- **Not re-worded — criterion 4** (the world cannot fail it: it compares the build with 3DEP). 163 of 171 sections pass.
+  The 8 failures, each measured against fresh 3DEP at its own point and at the nearest built pavement: s 1700 and
+  s 3700 are under the College Ave and Lake Murray Blvd decks, where bare-earth 3DEP has no deck (the decks are built
+  5.2 m and 4.8–6.9 m above it, held level per L3 "Bridges dip") and v0.17.1's approach grass rises to the deck;
+  s 1800–1950's north rims are 1–10 m from Alvarado, whose built pavement sits 1.5–2.8 m above bare-earth 3DEP there
+  (the road datum, ledger 0002); s 3750's south rim is 20 m from the LMB approach (built 3.0 m above 3DEP). All 7 equal
+  v0.17.1's ground within 0.3 m — the ground criterion 7 and every drive gate hold. s 7250 (1.7 km from any road) is a
+  1.5 m-tall, ~2 m-wide wall 2 m beside the section centre (fresh 3DEP 179.83 m at −2 m, 175.91 m at the centre); no
+  5 m cell can follow it (L3b), and the 2026-10-12 build failed it too (177.52 m there then, 177.23 m now). None is
+  loosened; the 7 near-road ones are criterion 4 against criterion 7 and stay Kevin's call.
+- Criteria 1, 5 and 6 unchanged and PASS: Cowles 484.34 m; 15–60 m facet p90 5.255 m, 60–500 m 20.23 m; far vertices
+  against fresh 3DEP max 0.955 m (3,000 random), 0 over 1 m; longest far horizontal edge 56.65 m.

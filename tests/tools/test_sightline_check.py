@@ -65,6 +65,12 @@ def test_summit_angle_and_the_blocker():
     _grid(g2, "1GRASS_1", -50, 50, 180, 220, 10, lambda x, z: 60.0 if abs(z - 200) < 15 else 0.0)
     rep2, bad2 = sc.run(_obj(g2), [dict(rays[0])])
     assert bad2 == 1 and rep2[0]["max_intermediate_deg"] > rep2[0]["target_deg"] and rep2[0]["pass"] is False
+    # a station the world hides the summit from (v1640, ledger 0046 2026-10-13): "hidden" passes only when the build
+    # hides it too — the ridge in front passes, the open view fails
+    rep3, bad3 = sc.run(_obj(g2), [dict(rays[0], hidden=True)])
+    assert bad3 == 0 and rep3[0]["pass"] and rep3[0]["expect"] == "hidden"
+    rep4, bad4 = sc.run(d, [dict(rays[0], hidden=True)])
+    assert bad4 == 1 and rep4[0]["pass"] is False
 
 
 def test_bearing_reports_where_the_ground_ends_and_ignores_other_groups():

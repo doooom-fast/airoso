@@ -393,14 +393,46 @@ def run(proj: Path, offline: bool = False) -> dict | None:
           f"({time.time() - t0:.0f} s)", flush=True)
     cache = SampleCache(data / SAMPLES, spec, frame)
     rkeys = topo.refine_keys()                      # the kept cells' x-split sub-lattice (refine: the prep's data)
-    miss = cache.missing(sorted(set(topo.vkeys) | set(rkeys)) if rkeys else topo.vkeys)
+    # ANTI-ALIASED finest level (tier_options.antialias, ledger 0046 fix round 2): those nodes take the tent-filtered
+    # 3DEP of the base lattice around them (terrain_tiers.AA_TAPS), so the cache also needs every tap. The cache
+    # itself stays point samples; the filter is applied here, deterministically, on every run.
+    aakeys = topo.aa_keys()
+    aaset = set(aakeys)
+    need = set(topo.vkeys) | set(rkeys) | set(tt.aa_taps(aakeys))
+    miss = cache.missing(sorted(need)) if (rkeys or aakeys) else cache.missing(topo.vkeys)
     if miss and offline:
         raise SystemExit(f"[terrain] --offline: {len(miss)} vertices have no cached 3DEP sample")
     if miss:
         print(f"[terrain] fetching {len(miss)} missing 3DEP samples ({math.ceil(len(miss) / CHUNK)} requests)", flush=True)
-        cache.fetch(miss, "tier vertices")
+        cache.fetch(miss, "tier vertices" + (" + anti-alias taps" if aakeys else ""))
         cache.save()
-    hs = [cache.h[k] for k in topo.vkeys]
+
+    # the far ring is held to its own 3DEP points within criterion 6's 1 m (ledger 0046): there the filter may move a
+    # vertex at most antialias.far_max_move_m; the physical ground carries no such clause (the L3 clamp already
+    # departs from the points near the roads) and takes the full filter
+    far_keys = set()
+    if aakeys and spec.aa_far_max_move_m is not None:
+        for t, ph in zip(topo.tris, topo.tri_phys):
+            if not ph:
+                far_keys.update(topo.vkeys[v] for v in t)
+    bound = spec.aa_far_max_move_m
+
+    def height(k):
+        if k not in aaset:
+            return cache.h[k]
+        h = tt.aa_value(cache.h, k)
+        if k in far_keys:
+            p = cache.h[k]
+            h = p + max(-bound, min(bound, h - p))
+        return round(h, 3)
+
+    hs = [height(k) for k in topo.vkeys]
+    if aakeys:
+        moved = [abs(height(k) - cache.h[k]) for k in aakeys]
+        moved.sort()
+        print(f"[terrain] anti-aliased {len(aakeys)} finest-level nodes (tent, 9 taps): |filtered - point| median "
+              f"{moved[len(moved) // 2]:.3f} m, p99 {moved[int(len(moved) * 0.99)]:.2f} m, max {moved[-1]:.2f} m",
+              flush=True)
     out = {"_provenance": {"what": "tiered terrain topology + 3DEP height at every vertex (ledger 0046)",
                            "samples": SAMPLES, "written_utc": _now()},
            "inputs_md5": inputs_md5(files),
@@ -416,8 +448,13 @@ def run(proj: Path, offline: bool = False) -> dict | None:
         out["refine"] = {"keep_r": topo.r[topo.keep_level], "cell_r": topo.r[topo.refine_level],
                          "kept_cells": sorted([i, j] for i, j in topo.keep),
                          "cells": [list(k) for k in topo.refine_cells],
-                         "I": [k[0] for k in rkeys], "J": [k[1] for k in rkeys], "h": [cache.h[k] for k in rkeys],
+                         "I": [k[0] for k in rkeys], "J": [k[1] for k in rkeys], "h": [height(k) for k in rkeys],
                          "params": dict(spec.refine)}
+    if aakeys:
+        out["antialias"] = {"cell_m": spec.aa_cell_m, "kernel": "tent", "taps": [list(t) for t in tt.AA_TAPS],
+                            "nodes": len(aakeys), "far_max_move_m": bound,
+                            "far_nodes_bounded": sum(1 for k in aakeys if k in far_keys
+                                                     and abs(tt.aa_value(cache.h, k) - cache.h[k]) > bound)}
     (data / TIERS).write_bytes(gzip.compress(json.dumps(out, separators=(",", ":")).encode("utf-8"), 6, mtime=0))
     print(f"[terrain] wrote {TIERS}: {len(hs)} vertices, 3DEP {min(hs):.1f}..{max(hs):.1f} m "
           f"({time.time() - t0:.0f} s total)")

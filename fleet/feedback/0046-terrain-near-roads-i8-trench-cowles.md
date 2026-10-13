@@ -1,7 +1,7 @@
 ---
 id: 0046
 title: "More terrain near the roads, the I-8 trench and adjacent causeway cut out" — and see Cowles Mountain from Navajo
-status: in-progress — built and rehearsed 2026-10-12, fix round after two refuting verifiers (every gate identical to v0.17.1); criteria 1-7 measured below; awaiting the engine-july mirror, the install and Kevin's seat (criterion 8)
+status: in-progress — built and rehearsed 2026-10-12; fix round 2 (2026-10-13) after the truth + visual lenses refuted the fix round: washboard ribs fixed at their cause (anti-aliased 5 m tier, data-chosen diagonals, tools/rib_check.py gate), criteria 2 and 3 re-worded where fresh 3DEP fails them too; every gate identical to v0.17.1; awaiting the engine-july mirror, the merge, the install and Kevin's seat (criterion 8)
 scope: tracks/san-diego-lake-murray (proof, street_port); engine scripts/elevation/heightfield.py HF_MARGIN_M + scripts/geometry/ribbon.py grass_terrain skirt + terrain tiering (every track, opt-in; Lookout Lariat next consumer); fleet/LAWS.md L3 "Fake mountains" (standard)
 layer: standard + engine + project
 train: -
@@ -25,6 +25,15 @@ triangles in 8 tiles). Before the install: mirror the two engine-july files (`en
 and merge the branch. Not in here: I-8 as drivable pavement or as a visual ribbon (Kevin: extra highways "look like wavy
 ribbons"), scrub on the new ground (0040), the summit antenna farm (authored prop). Filed three times concurrently
 (0046/0046/0047); merged here, nothing dropped.
+
+**Fix round 2 (2026-10-13)**, after the truth and visual lenses refuted the fix round: the "washboard" ribs (6–10
+parallel steps SE of the Lake Murray Blvd overcrossing and on the cut slopes west of College) are real 3DEP features — a
+7 m concrete creek channel, 5 m drainage benches — drawn badly: sampled at single points every 5 m and folded across
+their grain by a fixed triangle diagonal. Fixed at that cause (each 5 m vertex now carries the 3DEP averaged over its
+own cell; each plain cell splits along the ground's grain) and gated (`tools/rib_check.py`, hard). Criterion 2's strict
+reading and its v1640 station, and criterion 3's "below 100 m" clause, are re-worded because fresh 3DEP fails them as
+first written; criterion 4's 8 failures are not (7 are the near-road ground criterion 7 holds, 1 a 2 m wall no 5 m cell
+can follow). Every gate still identical to v0.17.1. See **Results — fix round 2 (2026-10-13)** at the end.
 
 ## Symptom (Kevin, seat, 2026-10-10, installed `san_diego_lake_murray_v3`)
 
@@ -318,11 +327,19 @@ On the gate OBJ / kn5 (L5) against independent 3DEP, before anything is installe
    terrain from (62, 1713) + 1.2 m eye toward the summit at 10 m steps; the profile reaches **≥ 9.0°** at
    ~1,650 m (real 9.35°, built today 0.27°) and the summit's angle exceeds every intermediate one;
    repeated from v2240 (8.5°) and v1640 (5.5°).
+   *Re-worded 2026-10-13, where fresh 3DEP fails the first wording too (evidence: Results — fix round 2):* "the summit"
+   is its cone — 60 m about the summit top, criterion 1's radius — and it must stand above every profile step outside
+   the cone (3DEP's own profile has the summit's shoulder 0.02° above the summit point from the crest and from v2240).
+   From v1640 the world hides Cowles (3DEP: a hill 350 m out at 7.23° in front of the 5.49° summit), so there the build
+   must agree with the world: the summit cone at ≥ 5.1° and a nearer rise at least as high.
 3. **South, and the far ring exists:** on bearing 192° a built surface to **≥ 5 km** (no `None`); the Del
    Cerro hilltop (−418, −200) ≥ **250 m** (real 258.3); the valley wall at 3.4–4.9 km 130–145 m; the I-8
    south-bank max in z −1838..−1938 at x ≈ 160 is 150–170 m (3DEP 155–163; today 146 then the ramp);
    terrain faces at z ≤ −2500 and x ≤ −4000 / x ≥ 4500; **no terrain vertex below 100 m abs** anywhere
    (the pit is gone; the real low is the trench ~121 m / Mission Valley ~123 m).
+   *Re-worded 2026-10-13, where fresh 3DEP fails the first wording too:* the landmark box reaches the San Diego River
+   gorge, whose fresh-3DEP low is 19.67 m at (−2627, 2717) — so: no terrain vertex below the box's real low in fresh
+   3DEP (19.67 m). The pit, not the gorge, is the failure.
 4. **I-8 cut and fill:** cross-sections every 50 m along the OSM I-8 centreline through the built
    terrain: floor within ±1.0 m of 3DEP; rim-to-floor at ±60 m within ±2.0 m of the 2 m 3DEP section;
    every section has vertices within 12 m (today none east of x 1100); any fill section 3DEP confirms
@@ -417,3 +434,72 @@ call) the two overcrossings stand over grass. Remaining, measured and not fixed 
 Alvarado Creek near College aliased by the 5 m cells into a saw-toothed ditch; the far box's own edge on the horizon
 facing 225–000° (smaller than v0.17.1's void); 7 non-manifold edges in `1GRASS`, the same 7 v0.17.1 has, within the
 near-road ground criterion 7 holds.
+
+## Results — fix round 2 (2026-10-13), after the truth and visual lenses refuted the fix round
+
+**The washboard, in plain terms.** The ground is a sheet of triangles whose corners sit on a grid every 5 m. Each
+corner's height used to be read from one spot of the USGS map. Two real things near the I-8 are narrower than two grid
+squares: the concrete Alvarado Creek channel SE of the Lake Murray Blvd overcrossing (about 7 m wide, 5–6 m deep, with
+straight walls) and two 5 m-wide drainage benches cut into the slope west of College. Fresh 3DEP at 1 m spacing, the
+USGS shaded-relief image and the NAIP aerial photo all show them, so they are real. Running at a slant across the grid,
+each one landed on some corners and missed the next, and every square was folded along the same diagonal whatever the
+ground did. The result was a staircase of 6–10 parallel steps where the world has one straight channel or ledge. The
+fix does two things. Each 5 m corner now takes the map's height **averaged over its own square** (a tent-weighted mean of
+the 2.5 m points around it), not one spot: on a flat or evenly sloping hillside nothing moves, and a channel narrower
+than a square becomes a soft trough that runs straight. And each square now folds along the diagonal **the ground runs
+along**, not a fixed one. The channel and the benches now read as single straight features
+(`ribpair_ribA_air.png`, `ribpair_college_W_zoom.png`). Within 20 m of a road nothing changed.
+
+**The measurement that catches it again** — `tools/rib_check.py`, a hard step of the ship chain, on the built gate OBJ.
+A staircase shows as heights that go up-down-up from one grid corner to the next and shift sideways from row to row; a
+cross-grain fold shows as a square folded along its steeper diagonal. 2026-10-12 build → this build, beyond 20 m of a
+road: staircase ribs over 2 m **331 → 56** (channel spot 7 → 0, bench spot 2 → 0), cross-grain folds over 1 m
+**15,856 → 33**. Thresholds and their calibration are in `fleet/GATES-CHANGELOG.md` (2026-10-13, all invented).
+
+**Where the I-8 cut can be seen, and how deep it really is.** From `seam-alvarado` the freeway is 108 m north behind
+the verge, in the world as in both builds, so the cut is shown from where it is visible. Fresh 3DEP 2 m cross-sections
+(`data/corridor.i8.json`) say:
+- **Under the two overcrossings it is shallow.** The College Ave deck stands ~5.2 m above the freeway floor (floor
+  104.0 m), and the Lake Murray Blvd deck ~4.8 m above it (floor 120.1 m). From either deck, looking along the freeway,
+  the real view is a broad valley with gentle grassy sides, not a trench (`pair_college_E/W.png`, `pair_lmb_E/W.png`,
+  3 m above the deck over the rail).
+- **Beside Alvarado it is a half-cut on a shelf**: west of the College overcrossing the freeway runs 3–11 m below the
+  ground to its north and 8–11 m above Alvarado Creek to its south (3DEP sections s 1800–1950).
+- **The deepest real cut is ~1.9 km east of the Lake Murray Blvd / 70th St overcrossing**, at x 1,860–2,000: about
+  **12 m deep on both sides** (floor 144–147 m, north rim 158–161 m, south rim 155–158 m). The build matches it within
+  0.3 m (the truth lens's sections there: rim errors −0.16 to +0.32 m). East of 70th St at x 1,100–1,450 the south wall
+  rises ~20 m above the floor while the north side is level: a one-sided cut into the hill.
+- Stills: `pair_deep_air.png` (60 m up, 250 m back, looking along the deepest cut) and `pair_deep_floor.png` (standing
+  on the freeway floor in it). v0.17.1 had no ground there at all.
+
+**The criteria, re-measured on this build** (gate OBJ md5 ad065333b5f887d48afec341220aa96f; fresh 3DEP fetched
+2026-10-13T16:16Z, 18,379 points; the truth lens's own code re-run):
+
+| # | criterion (re-worded where marked) | now | verdict |
+|---|---|---|---|
+| 1 | max terrain within 60 m of (1380, 2700) ≥ 470 m | 484.34 m | PASS |
+| 2 | crest → the summit cone ≥ 9.0°, above every step outside the cone *(re-worded)* | 9.343° against 9.239° (3DEP 9.375° against 9.127°) | PASS |
+| 2 | v2240, same reading *(re-worded)* | 8.487° against 8.347° (3DEP 8.512° against 8.31°) | PASS |
+| 2 | v1640: the build agrees with the world that Cowles is hidden — summit cone ≥ 5.1° and a nearer rise at least as high *(re-worded)* | summit 5.489°, the hill 340 m out 6.600° (3DEP: 5.486° behind 7.231° at 350 m) | PASS |
+| 3 | bearing 192°: built surface to ≥ 5 km; Del Cerro ≥ 250 m; valley wall 130–145 m; south bank 150–170 m; faces at the box edges | to 5,550 m, 0 holes in 101,871 probes; 258.16 m; 133.13–142.36 m; 165.62 m; 13,054 / 374 / 1,501 | PASS |
+| 3 | no terrain vertex below the box's real low in fresh 3DEP, 19.67 m *(re-worded; was "below 100 m")* | minimum 19.67 m at (−2627, 2717); the 21,260 vertices under 100 m are the San Diego River gorge (987 against 3DEP: median 0.011 m, p95 0.474 m) | PASS |
+| 4 | I-8 sections: floor ±1 m, rims ±2 m, vertices within 12 m, fills | **163 of 171**; floor error median 0.037 m, p95 0.30 m; all 6 fills within 0.43 m | FAIL on 8 — not re-worded (below) |
+| 5 | facets 15–60 m p90 ≤ 7 m; 60–500 m ≤ 28.3 m | 5.255 m; 20.23 m | PASS |
+| 6 | far vertices within 1 m of 3DEP; far edges ≤ two cells | max 0.955 m over 3,000, 0 over 1 m; 56.65 m | PASS |
+| 7 | gates identical to v0.17.1 | every verdict file field for field (only `grass_verts`, no_route timing) | PASS |
+
+**Criterion 4's eight, with the world measured at each.** The world cannot fail this criterion — it compares the build
+with 3DEP — so nothing is re-worded. Seven fail beside a road, where criterion 7 and every drive gate hold v0.17.1's
+ground (each equals it within 0.3 m): s 1700 and s 3700 sit under the College Ave and Lake Murray Blvd decks, where the
+bare-earth map has no bridge (the decks stand 5.2 m and 4.8–6.9 m above it) and v0.17.1's approach grass rises to deck
+height; s 1800–1950's north rims are 1–10 m from Alvarado, whose built pavement sits 1.5–2.8 m above the bare-earth map
+there (the road's own datum, ledger 0002); s 3750's south rim is 20 m from the Lake Murray Blvd approach, built 3.0 m
+above the map. Fixing them means moving the ground the gates were tuned on and opening the gap under the two decks
+(which would then need bridge bodies — a prior attempt is parked on branch `wip-0046-fixround2-prior`, unverified):
+Kevin's call, not done here. The eighth, s 7250 (1.7 km from any road), is a 1.5 m-tall, 2 m-wide wall 2 m beside the
+section centre (3DEP 179.83 m at −2 m, 175.91 m at the centre); a 5 m cell cannot follow it (L3b), and the 2026-10-12
+build failed it too.
+
+**Cost.** 384,009 more 3DEP point samples in the cache (854 requests; the filter's taps), no new vertices, no new
+triangles, road kn5 112,594,352 B (was 112,596,112). Nothing in engine-july changed in this round: the mirror is the
+same two files as before (`engine-july-snapshot/PENDING-MIRROR.md5`).

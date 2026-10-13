@@ -300,7 +300,7 @@ step "ship: verify_kn5 (hard — spawn-free road, common race kn5 + one closure 
 # shared race gate OBJ / audit (road + the retired centre chain) are retired: each race layout is judged on
 # its own kn5 set (ledger 0049).
 for lid in $LAYOUT_IDS; do rm -f "$PROJ/data/drive_test.$lid.json"; done
-rm -f "$PROJ/data/verify_mouths.json"
+rm -f "$PROJ/data/verify_mouths.json" "$PROJ/data/rib_check.json"
 for lid in $RACE_IDS; do rm -f "$PROJ/data/audit.$lid.json" "$PROJ/data/no_route.$lid.json" "$PROJ/data/track.$lid.obj"; done
 rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"
 # the road gate OBJ is written BEFORE the track folder (ledger 0046): ext_config's GrassFX lists and make_treefx's
@@ -326,6 +326,11 @@ step "gate: verify_mouths on the built road (every side-street mouth: mouth line
 # tools/verify_mouths.py reads data/track.obj (the shipped road kn5) at every data/mouths.json record; exit 1 stops
 # the chain (data/verify_mouths.json) — a mouth floating over its host or notched below it never reaches a gate run
 (cd "$AIROSO" && python tools/verify_mouths.py "$PROJ")
+step "gate: terrain ribbing on the built ground (tools/rib_check.py: sub-cell features folded into staircases — hard)"
+# ledger 0046 fix round 2: a feature narrower than two terrain cells (a concrete channel, a cut-slope bench) point-
+# sampled every 5 m and folded across its grain shows as washboard ribs; exit 1 (data/rib_check.json) past the
+# GATES-CHANGELOG 2026-10-13 limits, beyond 20 m of a pavement (the near-road ground is the drive gates')
+(cd "$AIROSO" && python tools/rib_check.py "$PROJ" --json "$PROJ/data/rib_check.json")
 step "gate: drive_test, street layout (hard)"
 DT_S=0; (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --layout street 2>&1 | grep -v "drive-time\] sweep" | tail -30) || DT_S=$?
 step "gate: audit_mesh, street (hard total; the regression floor — D 512 / K 20 / I 20 / F 13 since the 2026-10-11 mouth weld + fold mend, was 512 / 154 / 145 / 15)"
@@ -374,7 +379,7 @@ step "sync outputs workshop -> airoso"
 cp "$PROJ/loop.blend" "$SRC/loop.blend"
 for f in centerline.local.json centerline.raw.local.json median_bands.json dummies.json \
          finished_centerline.json gate_centerline.json lights.local.json connectors.local.json \
-         mouths.json mouth_welds.json verify_mouths.json signs.local.json signs_preview.svg signs_measured.json \
+         mouths.json mouth_welds.json verify_mouths.json rib_check.json signs.local.json signs_preview.svg signs_measured.json \
          drive_test.json audit.json \
          barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json \
          $TERRAIN_DATA terrain.tiers.report.json; do

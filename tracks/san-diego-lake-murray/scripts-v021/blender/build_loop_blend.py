@@ -257,6 +257,7 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
             kd_keep.insert((x, z, 0.0), k)
         kd_keep.balance()
     verts = []
+    vdist = []                                          # pavement distance per vertex (None = a kept-cell node)
     n_keep = n_feather = n_clamped = n_cell = n_edge = 0
     max_lift = max_cut = 0.0
     for i, j, h, kc in zip(I, J, H, K):
@@ -268,6 +269,7 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
             if L is None:
                 raise SystemExit(f"[blend] tiered terrain: kept vertex ({x:.1f}, {z:.1f}) outside the 40 m grid")
             verts.append((x, L, z))
+            vdist.append(None)
             n_cell += 1
             continue
         y = h - elev0
@@ -297,8 +299,20 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
             else:
                 n_feather += 1
         verts.append((x, y, z))
+        vdist.append(d)
     tris = T["tris"]
     tri3 = [(tris[3 * k], tris[3 * k + 1], tris[3 * k + 2]) for k in range(len(tris) // 3)]
+    # DATA DIAGONALS (ledger 0046 fix round 2): every plain square cell is split along the diagonal its data
+    # agrees with (terrain_tiers.data_diagonals), past diagonals.beyond_m of a pavement only — the fixed
+    # diagonal aliased slanting 3DEP channels and cut benches into parallel ribs. Opt-in; no vertex moves.
+    n_diag = 0
+    dg = opt.get("diagonals")
+    if dg:
+        if dg.get("rule", "min_dh") != "min_dh":
+            raise SystemExit(f"[blend] terrain.tier_options.diagonals.rule {dg.get('rule')!r}: only 'min_dh'")
+        beyond = float(dg.get("beyond_m", 20.0))
+        elig = [dd is not None and dd > beyond for dd in vdist]
+        tri3, n_diag = tt.data_diagonals(tri3, I, J, [v[1] for v in verts], elig)
     phys, far = tt.split_mesh(tri3, [bool(p) for p in T["phys"]])
     n_refine = 0
     if RF is not None:
@@ -349,6 +363,7 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
     rep = {"vertices": len(verts), "physical_v": len(terrain["vertices"]), "far_v": len(far_mesh["vertices"]),
            "kept_cell_vertices": n_cell, "kept_surface": n_keep, "feathered": n_feather,
            "feathered_from_kept_edge": n_edge, "refine_nodes": n_refine, "clamped": n_clamped,
+           **({"data_diagonals_flipped": n_diag} if dg else {}),
            "clamp_max_lift": round(max_lift, 2), "clamp_max_cut": round(max_cut, 2),
            "abs_min": round(ylo, 2), "abs_max": round(yhi, 2)}
     print(f"[blend] tiered terrain: {rep}")

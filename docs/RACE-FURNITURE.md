@@ -570,3 +570,55 @@ per-vertex declaration (not the writer's faces) found 0 violations, the nearest 
 centre) away. The street draft is byte-identical to today's. These are still **GENERATED DRAFTS**: ledger
 0023 stays open, no tier is claimed, `pit_lane.ai` is still a copy, and whether the AI laps is decided in
 game.
+
+## 12. Laps — a race layout on its own line (ledger 0054, phase 2 groundwork)
+
+Mission Gorge Speedway (phase 2) runs partly on the loop and partly on the expansion roads. Every tool above used to
+read ONE lap line — `data/centerline.local.json` — and count along it by vertex number. A race layout may now name its
+own lap (opt-in; a track whose layouts name none builds byte-identical — proven on the full v0.18.0 chain):
+
+```json
+"race": { "laps": { "<lap>": {
+    "pieces":   [{"line": "MAINLINE", "from": 1086, "to": 4424},          // a ring walks forward (wrapping)
+                 {"line": "<connector name>", "from": 0, "to": 851},       //   unless "reverse": true;
+                 {"line": "<connector name>", "from": 82, "to": 0}],       // an open line: from > to = backwards
+    "corridor": { ... race.corridor's schema, every vertex the LAP's ... },
+    "kerbs":    {"trims": [ ... ]},                                         // the rest of race.kerbs is inherited
+    "roads":    ["street names in driving order from the lap's v0"] } } }
+"layouts": [ { "id": "race_mg", "kind": "race", "race_furniture": true, "closure_token": "mg", "lap": "<lap>",
+               "start": { ... line / grid / sector vertices of the LAP ... } } ]
+```
+
+**The lap** (`scripts/geometry/race_lap.py`, written to `data/lap.<lap>.json` by `tools/barrier_bands.py` or
+`python -m scripts.geometry.race_lap <project>`): the pieces' source vertices VERBATIM (a shared mainline vertex is the
+mainline vertex — the furniture lands where the loop's own would), each junction gap (a trimmed connector starts at
+its host's curb, not its centreline) bridged by points resampled on the straight join at the pieces' median spacing,
+closed (the last point repeats v0), `source_by_vertex[k]` = `[line, vertex]` or `["join", j]`. Its island widths come
+from `median_bands.json` through the map; its mouths are its pieces' side streets (a side street of a piece walked
+backwards changes side) — never its own junctions — plus the **branch** it abandons at each junction (the rest of the
+mainline at a turn-off): sealed by the curb strips like any mouth, probed at an `xz` point ON the branch, 10 m past
+the lap's curb.
+
+**One group per line.** Everything per-vertex is per group: the mainline's race layouts and each lap's.
+
+| | mainline (as before) | lap `<lap>` |
+|---|---|---|
+| declaration | `data/barrier_bands.json` | `data/barrier_bands.<lap>.json` (+ `data/lap.<lap>.json`) |
+| common set (curb strips + kerbs) | `1WALL_race_edge_<L/R>_*`, `1KERB_race_<apex>_*` in `RACE` | `1WALL_race_edge_lap<lap>_*`, `1KERB_race_lap<lap>_*` in `RACE_LAP_<LAP>` |
+| closures | `1WALL_race_close_<token>_*` in `RACE_CLOSE_<TOKEN>` (one per layout, either group) | same |
+| authored report / verify | `race_authored.json`, `verify_race.py` → `race_verify.json` | `race_authored.<lap>.json`, `verify_race.py --lap <lap>` → `race_verify.<lap>.json` |
+| split → kn5 | `loop_race.blend` → `<slug>_race.kn5` | `loop_race_<lap>.blend` → `<slug>_race_<lap>.kn5` (`check_race_kn5 --role common --lap <lap>`) |
+| `models_<id>.ini` | road + `<slug>_race.kn5` + its closure + its spawns | road + `<slug>_race_<lap>.kn5` + its closure + its spawns |
+
+`race_furniture.race_lap(name)` reads the lap back from a common object's name (a mainline strip's first field is its
+side, a kerb's its apex — never `lap…`); the split, `check_race_kn5`, `verify_race` K and `verify_kn5` (f) route and
+check on it. The author seats a lap's furniture on every ROAD face (connectors are merged into ROAD after the
+mainline rows). `layout_dummies`, `no_route`, `write_ai_line`, `drive_test` / `median_zone` / `audit_mesh --layout`,
+`verify_kn5` (spawn heading / lane / line), `track_folder` (ui length + outline) and `plot_race_furniture` all read the
+layout's lap; `verify_fold_fans` judges a mainline pinch for a lap layout only where its lap runs over it.
+`tools/ship_sd.sh` reads the laps and, per race layout, its common kn5 (`RK`) and declaration (`BB`) from
+`race_lap.py`, and adds the per-lap steps (verify, export, inspect + check, scenery, sync).
+
+A stitched junction is a zero-radius corner: its inside kerb has no fold corner to be trimmed to (`race_furniture`
+stops with "author this corner by hand") — declare it dropped in `race.laps.<lap>.kerbs.trims`, with its why.
+The synthetic second lap every tool is tested on: `tests/tools/lap_world.py`, `tests/tools/test_race_lap.py`.

@@ -2699,6 +2699,9 @@ def _channel(path: Path, key: str, n: int, label: str) -> list[float] | None:
 AI_OPT_KEYS = {"layouts", "payload", "wall_clear_m", "fair", "fair_w", "fair_alpha", "fair_u_max_m", "surface", "verify"}
 
 
+# LAPS (ledger 0054): with --layout naming a race layout that names a lap (layouts[].lap), the line is drafted on
+# data/lap.<lap>.json (engine frame) against data/barrier_bands.<lap>.json — scripts/geometry/race_lap.py; every other
+# layout reads data/finished_centerline.json exactly as before.
 def load_ai_opts(cfg: dict, layout_id: str | None) -> dict | None:
     """The track's ledger-0052 opt-in for this line: ``track.config.json`` ``ai`` (keys starting ``_`` are notes),
     limited to ``ai.layouts`` when that is given. None — no block, or this layout not listed — writes today's
@@ -2782,7 +2785,18 @@ def main(argv: list[str] | None = None) -> None:
     args = ap.parse_args(argv)
 
     project = args.src if args.src.is_dir() else None
-    src = args.src / "data" / "finished_centerline.json" if args.src.is_dir() else args.src
+    # ledger 0054: a race layout that names a LAP (layouts[].lap) drafts its line on that lap — data/lap.<lap>.json
+    # (engine frame, the stitched line its corridor declaration indexes) instead of the mainline's finished line
+    from scripts.geometry import race_lap as _race_lap
+    _lap = (_race_lap.lap_of_layout(json.loads((project / "track.config.json").read_text(encoding="utf-8")),
+                                    args.layout) if (project and args.layout
+                                                      and (project / "track.config.json").exists()) else None)
+    if _lap:
+        src = project / "data" / _race_lap.lap_file(_lap)
+        if not src.exists():
+            raise SystemExit(f"layout {args.layout}: lap {_lap!r} but no data/{src.name} (tools/barrier_bands.py writes it)")
+    else:
+        src = args.src / "data" / "finished_centerline.json" if args.src.is_dir() else args.src
     data_dir = src.parent
     j = json.loads(src.read_text(encoding="utf-8"))
     pts, widths = j["points_xyz_m"], j["widths_m"]
@@ -2792,8 +2806,12 @@ def main(argv: list[str] | None = None) -> None:
     n = len(pts)
 
     cfg = json.loads((project / "track.config.json").read_text(encoding="utf-8")) if project else {}
-    pts, how_frame = _to_engine_frame(pts, project, bool(cfg.get("mirror_x", False)))
-    print(f"frame: finished_centerline read as {how_frame}")
+    if _lap:
+        pts, how_frame = [list(p) for p in pts], f"engine frame (the lap line data/{src.name}, ledger 0054)"
+        print(f"frame: {how_frame}")
+    else:
+        pts, how_frame = _to_engine_frame(pts, project, bool(cfg.get("mirror_x", False)))
+        print(f"frame: finished_centerline read as {how_frame}")
 
     # Layout (0047): direction + furniture from the config; an undeclared id needs explicit flags.
     layout = load_layout(project, args.layout) if (project and args.layout) else None
@@ -2853,8 +2871,8 @@ def main(argv: list[str] | None = None) -> None:
 
     # Per-vertex divider channels, ENGINE frame, index-aligned with the forward vertex order.
     zeros = [0.0] * n
-    island = _channel(data_dir / "median_bands.json", "island_w_by_vertex", n, "island") or zeros
-    bands_path = args.bands or (data_dir / "barrier_bands.json")
+    island = _channel(src if _lap else data_dir / "median_bands.json", "island_w_by_vertex", n, "island") or zeros
+    bands_path = args.bands or (data_dir / _race_lap.bands_file(_lap))
     centre_w = inset = zeros
     corridor = None
     if race:

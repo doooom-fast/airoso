@@ -394,6 +394,39 @@ def survey_pinch(pin, B, P, W, N, closed, lane_of, surf, paved, tris, names, isl
     return fails, info
 
 
+def _lap_lane(data: Path, lap: str, lid: str, n: int):
+    """(lane_of(row, W), covered rows) for a race layout on a LAP (ledger 0054): mainline row r -> the lap vertex
+    standing on it (data/lap.<lap>.json source_by_vertex) and that layout's lane there
+    (data/barrier_bands.<lap>.json), turned into the MAINLINE's forward-left frame when the lap runs the row
+    backwards; a row the lap does not cover gets the full road (it is never surveyed: covered decides)"""
+    rec = _load(data / f"lap.{lap}.json")
+    bp = data / f"barrier_bands.{lap}.json"
+    lbv = ((((json.loads(bp.read_text(encoding="utf-8")) if bp.exists() else {}).get("corridors") or {}).get(lid) or {})
+           .get("lane_by_vertex"))
+    if not lbv:
+        raise InputError(f"barrier_bands.{lap}.json has no corridors.{lid}.lane_by_vertex")
+    src = rec["source_by_vertex"]
+    m = len(src) - 1
+    at = {}
+    for k in range(m):
+        sv, nx = src[k], src[(k + 1) % m]
+        if sv[0] != "MAINLINE":
+            continue
+        r = int(sv[1]) % n
+        fwd = nx[0] == "MAINLINE" and int(nx[1]) % n == (r + 1) % n
+        bwd = nx[0] == "MAINLINE" and int(nx[1]) % n == (r - 1) % n
+        at.setdefault(r, (k, 1.0 if fwd or not bwd else -1.0))
+
+    def lane_of(r, W):
+        hit = at.get(r % n)
+        if hit is None:
+            return (-(W[r] / 2.0 - 0.5), W[r] / 2.0 - 0.5)
+        k, sgn = hit
+        lo, hi = float(lbv[k][0]), float(lbv[k][1])
+        return (lo, hi) if sgn > 0 else (-hi, -lo)
+    return lane_of, set(at)
+
+
 # ----------------------------------------------------------------------------------------------- main
 def run(project: Path, layouts=None, out: Path | None = None) -> dict:
     data = project / "data"
@@ -428,7 +461,7 @@ def run(project: Path, layouts=None, out: Path | None = None) -> dict:
         p = gate_obj(data, lid, race)
         if not p.exists():
             raise InputError(f"layout {lid}: no gate OBJ {p.name} (the gates write it)")
-        lays.append((lid, race, p))
+        lays.append((lid, race, p, lo.get("lap") or None))
     rep = {"pinches": [{k: (list(v) if isinstance(v, tuple) else v) for k, v in p.items()} for p in pins],
            "level_rows": B, "layouts": {}, "fails": []}
     if not pins:
@@ -441,21 +474,32 @@ def run(project: Path, layouts=None, out: Path | None = None) -> dict:
             zs = [P[r][2] for r in rs]
             pad = max(W[r] for r in rs) / 2.0 + WALL_RADIUS_M + 2.0
             boxes.append((min(xs) - pad, min(zs) - pad, max(xs) + pad, max(zs) + pad))
-        for lid, race, path in lays:
+        for lid, race, path, lap in lays:
+            if lap:
+                # ledger 0054: a race layout on a LAP — the pinches are MAINLINE rows; the ones its lap does not run
+                # over stand behind its walls (not its lane), the others take the lap's lane mapped back to the row
+                lane_lap, covered = _lap_lane(data, lap, lid, n)
+                todo = [pin for pin in pins if all((r % n) in covered for r in range(pin["k"] - B, pin["l"] + 2 + B))]
+                rep["layouts"][lid] = [{"k": pin["k"] % n, "l": pin["l"] % n, "lane": pin["lane"], "fails": [],
+                                        "skipped": f"not on lap {lap} (behind its walls)"} for pin in pins if pin not in todo]
+            else:
+                todo = pins
             tris, names = read_obj_region(path, boxes)
             upper = [g.upper() for g in names]
             phys = [t for t in tris if t[3] >= 0 and upper[t[3]].startswith(("1ROAD", "1KERB", "1GRASS"))]
             surf = Surface(phys)
             paved = Surface([t for t in phys if upper[t[3]].startswith(("1ROAD", "1KERB"))])
-            if race:
+            if race and lap:
+                lane_of = lambda r, ll=lane_lap: ll(r, W)
+            elif race:
                 lbv = (((bands.get("corridors") or {}).get(lid) or {}).get("lane_by_vertex"))
                 if not lbv:
                     raise InputError(f"barrier_bands.json has no corridors.{lid}.lane_by_vertex")
                 lane_of = lambda r, lbv=lbv: (float(lbv[r][0]), float(lbv[r][1]))
             else:
                 lane_of = lambda r: (-(W[r] / 2.0 - 0.5), W[r] / 2.0 - 0.5)
-            res = []
-            for pin in pins:
+            res = rep["layouts"].get(lid, []) if lap else []
+            for pin in todo:
                 f, info = survey_pinch(pin, B, P, W, N, closed, lane_of, surf, paved, tris, names, island, race, cl_line)
                 res.append({"k": pin["k"] % n, "l": pin["l"] % n, "lane": pin["lane"], "fails": f, **info})
                 rep["fails"] += [f"{lid} pinch {pin['k'] % n}..{(pin['l'] + 1) % n}: {x}" for x in f]

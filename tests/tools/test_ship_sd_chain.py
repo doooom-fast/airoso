@@ -45,7 +45,7 @@ def test_stage_order():
         'tools/check_race_kn5.py "$PROJ/data/closure_$lid.kn5.json" --role closure --owner "$tok"',
         "scripts/ac/build_spawn_kn5.py",
         'step "ship: AI lines per layout',
-        'kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --kn5 "$PROJ/build/${SLUG}_race.kn5"',
+        'kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --kn5 "$PROJ/build/${RK[$lid]}"',
         "scripts.ac.write_ai_line",
         'tools/verify_ai_line.py "$PROJ" --layout "$lid"',
         '(cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ")',
@@ -539,7 +539,7 @@ def test_ai_writer_reads_the_built_race_obj_ledger_0052():
     once (hard, under set -e; no --baseline: the writer holds the box rule itself)"""
     ai = TEXT[_first('step "ship: AI lines per layout'):_first("for lid in $STREET_IDS; do\n  rm -rf")]
     obj = ai.index('(cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" '
-                   '--kn5 "$PROJ/build/${SLUG}_race.kn5" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" '
+                   '--kn5 "$PROJ/build/${RK[$lid]}" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" '
                    '--out "$PROJ/data/track.$lid.obj")')
     assert obj < ai.index("scripts.ac.write_ai_line") < ai.index('python tools/verify_ai_line.py "$PROJ" --layout "$lid")')
     assert "for lid in $RACE_IDS; do" in ai and "--baseline" not in ai and "|| " not in ai.split("verify_ai_line.py")[1][:60]
@@ -562,3 +562,48 @@ def test_fold_fans_gate_ledger_0050():
     assert "||" not in line, line
     sync = TEXT[_first('step "sync outputs workshop -> airoso"\n'):_first("never synced.\nfi\n")]
     assert "verify_fold_fans.json" in sync
+
+
+def test_lap_groups_are_wired_and_inert_without_a_lap_ledger_0054():
+    """ledger 0054 (phase 2 groundwork): a race layout may name its own LAP. The chain reads the laps and, per race
+    layout, its common race kn5 (RK) and its declaration (BB) from scripts/geometry/race_lap.py — never a hand list;
+    every per-layout step uses them; each lap's group is verified (--lap), exported (loop_race_<lap>.blend ->
+    <slug>_race_<lap>.kn5), content-checked (--role common --lap) and synced. The mainline's steps run when a race
+    layout still drives the mainline (HAS_MAIN) — on Lake Murray today: always, so the chain is the old one."""
+    for frag in ("LAP_IDS=$(pyq", "L.lap_ids(", "HAS_MAIN=$(pyq", "L.groups(", "declare -A RK BB",
+                 "L.bands_file(lap)", "'_race.kn5' if not lap else '_race_%s.kn5'%lap"):
+        assert frag in TEXT, frag
+    # every race gate OBJ (the AI writer's and the gate stage's) is road + RK + ITS closure
+    assert TEXT.count('--kn5 "$PROJ/build/${RK[$lid]}" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5"') == 2
+    assert '--kn5 "$PROJ/build/${SLUG}_race.kn5" --kn5' not in TEXT
+    # the closure token comes from the layout's OWN declaration
+    assert "['corridors'][sys.argv[2]]['token'])\" \"$PROJ/data/${BB[$lid]}\" \"$lid\")" in TEXT
+    # the lap groups: verify_race --lap (authored + scenery), the lap's split blend, export, inspect, check, sync
+    for frag in ('tools/verify_race.py "$PROJ" --lap "$lap"',
+                 'tools/verify_race.py "$PROJ" --scenery-only --lap "$lap" --trees',
+                 '[ -f "$PROJ/blender/split/loop_race_$lap.blend" ] ||',
+                 '--blend "$PROJ/blender/split/loop_race_$lap.blend" --out "${SLUG}_race_$lap.kn5"',
+                 'inspect_kn5 "$PROJ/build/${SLUG}_race_$lap.kn5" --json "$PROJ/data/race_$lap.kn5.json"',
+                 'check_race_kn5.py "$PROJ/data/race_$lap.kn5.json" --role common --lap "$lap" --bands "$PROJ/data/barrier_bands.$lap.json"',
+                 'rm -f "$PROJ/build/${SLUG}_race_"*.kn5',
+                 '"lap.$lap.json" "barrier_bands.$lap.json" "race_authored.$lap.json" "race_verify.$lap.json"'):
+        assert frag in TEXT, frag
+    # the mainline's own common kn5 + verify_race run under HAS_MAIN, in the old order
+    assert _first('if [ "$HAS_MAIN" = 1 ]; then\n(cd "$AIROSO" && python tools/verify_race.py "$PROJ")') < \
+        _first('tools/verify_race.py "$PROJ" --lap "$lap"')
+    assert _first('if [ "$HAS_MAIN" = 1 ]; then\nstep "ship: export the COMMON race-furniture kn5') < \
+        _first('--blend "$PROJ/blender/split/loop_race_$lap.blend"') < _first("for lid in $RACE_IDS; do\n  # the owner token")
+    # the pyq programs, run on the real Lake Murray config: no lap, the mainline drives every race layout
+    import json
+    import subprocess
+    import sys as _sys
+    cfgp = ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json"
+    code = ("import json,sys\nfrom scripts.geometry import race_lap as L\nd=json.load(open(sys.argv[1],encoding='utf-8'))\n"
+            "print(' '.join(L.lap_ids(d)), '|', 1 if None in L.groups(d) else 0)\n"
+            "for lo in d['layouts']:\n    if lo.get('race_furniture'):\n        lap=L.lap_of(lo); "
+            "print(lo['id'], d['slug']+('_race.kn5' if not lap else '_race_%s.kn5'%lap), L.bands_file(lap))")
+    out = subprocess.run([_sys.executable, "-c", code, str(cfgp)], cwd=ROOT, capture_output=True, text=True, check=True)
+    lines = out.stdout.strip().splitlines()
+    assert lines[0].split() == ["|", "1"], lines
+    slug = json.loads(cfgp.read_text(encoding="utf-8"))["slug"]
+    assert lines[1:] == [f"race_cw {slug}_race.kn5 barrier_bands.json", f"race_acw {slug}_race.kn5 barrier_bands.json"]

@@ -45,6 +45,9 @@ rule, not modelled. It assumes no terrain ramp lifts a car over a 1.2 m wall.
 Pure Python (no numpy; the system interpreter has none): 64 m tiles of bytearrays, created only where the
 domain is, span fills and big-int masks for the per-tile set algebra.
 
+LAPS (ledger 0054): a layout that names a lap (layouts[].lap) is filled on that lap — its line data/lap.<lap>.json,
+its declaration data/barrier_bands.<lap>.json; a probe that carries `xz` (a lap's abandoned branch) stands there.
+
 Run:  python tools/no_route.py <project> --layout <id> [--planned] [--obj track.<id>.obj]
                                [--bands data/barrier_bands.json] [--out no_route.<id>.json]
 Writes data/no_route.<id>.json (data/no_route.<id>.planned.json with --planned); exit 1 on any leak, a
@@ -159,10 +162,14 @@ class Corridor:
             self.zone = list((cor.get("zone_by_vertex") or ["whole"] * n)[:m])
             nr = cor.get("no_route") or {}
             self.probes = [(int(p["vertex"]), float(p["y"]), str(p.get("why", ""))) for p in nr.get("forbidden_probes", [])]
+            # a lap's branch probe stands ON the abandoned line (barrier_bands: "xz"), not at a lateral of its vertex
+            self.probe_xz = {q: (float(p["xz"][0]), float(p["xz"][1]))
+                             for q, p in enumerate(nr.get("forbidden_probes", [])) if p.get("xz") is not None}
             self.semantics = "v2 corridors." + self.lid
         else:
             self.lane, self.closure_y, self.zone = self._lanes_v1()
             self.probes = []
+            self.probe_xz = {}
             self.semantics = "v1 (centre chain / islands, the 0047 install)"
 
     # the 0047 corridor: race-side curb face .. chain face / island face; whole street elsewhere
@@ -564,6 +571,19 @@ class Line:
 
 
 # ---------------------------------------------------------------------------------------------
+def _load_lap_module():
+    """scripts/geometry/race_lap.py by file (pure; this tool is itself loaded by file path from barrier_bands)"""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("_race_lap_nr", Path(__file__).resolve().parents[1] / "scripts"
+                                                  / "geometry" / "race_lap.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_LAP = _load_lap_module()
+
+
 def _read_obj_walls(path: Path, mirror: float):
     """(verts as flat array 'd' x,y,z, [(name, [(i,j,k)])]) — only 1WALL* faces are kept"""
     xs = array("d")
@@ -600,23 +620,33 @@ def _load_layout(cfg: dict, lid: str) -> dict:
 
 def run(project_dir, layout_id: str, *, planned: bool = False, obj: str | None = None, bands: dict | None = None,
         bands_path=None, out_name: str | None = None, cell: float = CELL_M, write: bool = True,
-        cfg: dict | None = None, verbose: bool = True) -> dict:
+        cfg: dict | None = None, verbose: bool = True, line=None) -> dict:
+    """``line`` = (pts, widths, island_w) of the layout's lap in memory (tools/barrier_bands.py's planned fill on a lap
+    whose file is not written yet); default: the line the layout counts along (scripts/geometry/race_lap.line_for:
+    data/centerline.local.json + median_bands.json, or data/lap.<id>.json for a layout that names a lap)."""
     t0 = time.time()
     proj = Path(project_dir)
     data = proj / "data"
     cfg = cfg if cfg is not None else json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     lo = _load_layout(cfg, layout_id)
     mirror = bool(cfg.get("mirror_x", False))
+    lap = _LAP.lap_of(lo)
     if bands is None:
-        bp = Path(bands_path) if bands_path else data / "barrier_bands.json"
+        bp = Path(bands_path) if bands_path else data / _LAP.bands_file(lap)
         if not bp.exists():
             raise SystemExit(f"[no_route] {bp} does not exist (tools/barrier_bands.py)")
         bands = json.loads(bp.read_text(encoding="utf-8"))
-    cl = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
-    pts = [tuple(p) for p in cl["points_xyz_m"]]
-    widths = [float(w) for w in cl["widths_m"]]
-    mb = data / "median_bands.json"
-    iw = json.loads(mb.read_text(encoding="utf-8")).get("island_w_by_vertex", []) if mb.exists() else []
+    if line is not None:
+        pts, widths, iw = [tuple(p) for p in line[0]], [float(w) for w in line[1]], list(line[2] or [])
+    elif lap is None:
+        cl = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
+        pts = [tuple(p) for p in cl["points_xyz_m"]]
+        widths = [float(w) for w in cl["widths_m"]]
+        mb = data / "median_bands.json"
+        iw = json.loads(mb.read_text(encoding="utf-8")).get("island_w_by_vertex", []) if mb.exists() else []
+    else:
+        ln = _LAP.line_for(proj, cfg, layout_id)
+        pts, widths, iw = ln["pts"], ln["widths"], ln["island_w"]
     corr = Corridor(pts, widths, lo, bands, iw, mirror)
     if len(corr.lane) != corr.m:
         raise SystemExit(f"[no_route] lane_by_vertex ({len(corr.lane)}) vs centreline ({corr.m}) length mismatch")
@@ -707,8 +737,8 @@ def run(project_dir, layout_id: str, *, planned: bool = False, obj: str | None =
     res = _analyse(R, corr, layout_id)
     # 7. probes
     forbidden = []
-    for (k, y, why) in corr.probes:
-        px, pz = corr.at(k, y)
+    for q, (k, y, why) in enumerate(corr.probes):
+        px, pz = corr.probe_xz[q] if q in corr.probe_xz else corr.at(k, y)
         if _reached(R, *R.ij(px, pz)):
             forbidden.append({"vertex": k, "y": round(y, 2), "why": why})
     # 8. lap complete

@@ -198,14 +198,31 @@ class MedianZone:
         data = project / "data"
         bands = data / "median_bands.json"
         bbands = data / "barrier_bands.json"
-        if not bands.exists() and not bbands.exists():
+        # ledger 0054: a race layout that names a LAP (layouts[].lap) is zoned on that lap — its line
+        # (data/lap.<lap>.json), its island widths and its declaration (data/barrier_bands.<lap>.json), every index
+        # the lap's own vertex. Any other layout (and every track without race.laps) reads exactly what it did.
+        lap_rec = None
+        if layout is not None:
+            from scripts.geometry import race_lap as _rl
+            _cp = project / "track.config.json"
+            cfg = json.loads(_cp.read_text(encoding="utf-8")) if _cp.exists() else {}
+            lap = _rl.lap_of_layout(cfg, layout)
+            if lap:
+                lap_rec = _rl.load(project, lap)
+                bbands = data / _rl.bands_file(lap)
+        if not bands.exists() and not bbands.exists() and lap_rec is None:
             return None
-        pts, widths = _load_pts(project)
+        if lap_rec is not None:
+            mirror = -1.0 if cfg.get("mirror_x", False) else 1.0
+            pts = [(mirror * p[0], p[1], p[2]) for p in lap_rec["points_xyz_m"]]
+            widths = [float(w) for w in lap_rec["widths_m"]]
+        else:
+            pts, widths = _load_pts(project)
         iw: list = []
         extra = []
         if bands.exists():
             mj = json.loads(bands.read_text(encoding="utf-8"))
-            iw = mj.get("island_w_by_vertex", [])
+            iw = mj.get("island_w_by_vertex", []) if lap_rec is None else list(lap_rec["island_w_by_vertex"])
             if len(iw) != len(pts):
                 print(f"  [median-zone] bands ({len(iw)}) vs centreline ({len(pts)}) length mismatch "
                       f"— island exemption DISABLED")
@@ -216,6 +233,8 @@ class MedianZone:
                 # from finished_centerline (kn5 frame) they would disagree, hence gate_centerline first.
                 for ci in mj.get("connector_islands", []):
                     extra.append(([tuple(p) for p in ci["points_xyz_m"]], ci["island_w_by_point"]))
+        elif lap_rec is not None:
+            iw = list(lap_rec["island_w_by_vertex"])
         kw: dict = {}
         if bbands.exists():
             bj = json.loads(bbands.read_text(encoding="utf-8"))

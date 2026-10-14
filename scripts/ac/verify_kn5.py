@@ -49,6 +49,10 @@ Coast Hwy). On such a track check 4/5 become:
       material RACE-named (an un-purged material table or a swapped .ini ships the whole road's materials), no
       mesh over the cap, no spawn node, file under RACE_KN5_MAX_B; no duplicate 1-prefixed name across the set
       a race layout loads (road + common + its closure: AC drops dup-named meshes from collision);
+  LAPS (ledger 0054, scripts/geometry/race_lap.py): a race layout that names a lap (layouts[].lap) loads that
+      lap's own common kn5 ``<slug>_race_<lap>.kn5`` (its curb strips + kerbs, every one named lap<lap>) in
+      place of ``<slug>_race.kn5``; its spawns are judged on the LAP (data/lap.<lap>.json in the kn5 frame) against
+      ITS declaration (data/barrier_bands.<lap>.json); the (g) ini of such a layout lists the lap's kn5.
   (g) INIs (``--inis``, after scripts/ac/track_folder.py has packed build/<slug>/): each race layout's
       ``models_<id>.ini`` lists exactly [road, ``<slug>_race.kn5``, ``<slug>_closure_<id>.kn5``,
       ``<slug>__<id>.kn5``] in that order, every other layout's exactly [road, ``<slug>__<id>.kn5``]; NO ini
@@ -252,11 +256,29 @@ def _furniture_kn5(p: Path, tag: str, fails: list) -> tuple[list, list, list]:
     return rnodes, rmeshes, rmats
 
 
-def _verify_race_kn5(race_p: Path, main_meshes: list, fails: list) -> list:
-    """(f) the COMMON race kn5: curb strips + kerbs, no closure, no retired centre chain"""
+def _lap_field(name: str):
+    """the lap token of a lap's common furniture name (1WALL_RACE_EDGE_LAP<tok>_* / 1KERB_RACE_LAP<tok>_*), else None —
+    tools/race_furniture.race_lap, restated (this verifier reads only the binaries + the declarations)"""
+    u = str(name).upper()
+    for tag in (EDGE_TAG, "1KERB_RACE_"):
+        if u.startswith(tag):
+            field = u[len(tag):].split("_", 1)[0]
+            tok = field[3:].lower() if field.startswith("LAP") else ""
+            return tok if tok.isalnum() and tok.isascii() else None
+    return None
+
+
+def _verify_race_kn5(race_p: Path, main_meshes: list, fails: list, lap: str | None = None) -> list:
+    """(f) the COMMON race kn5: curb strips + kerbs, no closure, no retired centre chain (with ``lap``: that LAP's
+    common kn5, every curb strip and kerb carrying its token — never another group's)"""
     tag = f"RACE kn5 '{race_p.name}'"
     _n, rmeshes, _m = _furniture_kn5(race_p, tag, fails)
     up = [m["name"].upper() for m in rmeshes]
+    stray = [m["name"] for m in rmeshes if _lap_field(m["name"]) != (lap or None)
+             and m["name"].upper().startswith((EDGE_TAG, "1KERB_RACE_"))]
+    if stray:
+        fails.append(f"{tag} carries {len(stray)} curb strip / kerb mesh(es) of {'another group' if lap else 'a LAP'} "
+                     f"{stray[:3]} — each lap's common set rides in its own <slug>_race_<lap>.kn5 (ledger 0054)")
     if not any(u.startswith("1WALL_RACE") for u in up):
         fails.append(f"{tag} has no 1WALL_RACE* mesh (no kerb-line strip)")
     elif not any(u.startswith(EDGE_TAG) for u in up):
@@ -424,18 +446,29 @@ def _verify_spawn_kn5(lo: dict, spk: Path, dummies_p: Path, road: list, line: _L
         prev = a
 
 
+def _bands_name(lo: dict) -> str:
+    """barrier_bands.json, or barrier_bands.<lap>.json for a layout that names a lap (ledger 0054)"""
+    return "barrier_bands.json" if not lo.get("lap") else f"barrier_bands.{lo['lap']}.json"
+
+
+def race_kn5_name(slug: str, lo: dict) -> str:
+    """<slug>_race.kn5, or <slug>_race_<lap>.kn5 for a race layout that names a lap (ledger 0054)"""
+    return f"{slug}_race.kn5" if not lo.get("lap") else f"{slug}_race_{lo['lap']}.kn5"
+
+
 def closure_tokens(project: Path, cfg: dict, layouts: list) -> dict:
-    """{race layout id: its closure owner token} — barrier_bands.json corridors.<id>.token (the declaration), else
-    layouts[].closure_token; '' where neither declares one"""
-    bands = {}
-    bb = project / "data" / "barrier_bands.json"
-    if bb.exists():
-        bands = json.loads(bb.read_text(encoding="utf-8"))
-    cors = bands.get("corridors") or {}
+    """{race layout id: its closure owner token} — barrier_bands.json corridors.<id>.token (the declaration; a lap
+    layout's barrier_bands.<lap>.json), else layouts[].closure_token; '' where neither declares one"""
+    cache: dict = {}
     out = {}
     for lo in layouts:
         if not lo.get("race_furniture"):
             continue
+        name = _bands_name(lo)
+        if name not in cache:
+            bb = project / "data" / name
+            cache[name] = json.loads(bb.read_text(encoding="utf-8")) if bb.exists() else {}
+        cors = cache[name].get("corridors") or {}
         lid = str(lo["id"])
         out[lid] = str((cors.get(lid) or {}).get("token") or lo.get("closure_token") or "").lower()
     return out
@@ -455,13 +488,22 @@ def _verify_layouts(project: Path, cfg: dict, slug: str, layouts: list, kn5_dir:
         fails.append(f"MULTI-LAYOUT road kn5 carries {len(spawn_in_main)} spawn/timing node(s) e.g. "
                      f"{spawn_in_main[:4]} — every layout's set rides in build/{slug}__<id>.kn5 (L8); the prep's "
                      f"multi-layout guard did not run")
-    # (f) the race-furniture kn5s: the common one + one closure kn5 per race layout
-    race_p = kn5_dir / f"{slug}_race.kn5"
+    # (f) the race-furniture kn5s: the common one (per lap group, ledger 0054) + one closure kn5 per race layout
     need_race = [lid for lid, lo in zip(ids, layouts) if lo.get("race_furniture")]
-    if need_race and not race_p.exists():
-        fails.append(f"layout(s) {need_race} declare race_furniture but build/{race_p.name} does not exist")
-    common = _verify_race_kn5(race_p, main_meshes, fails) if race_p.exists() else []
-    loaded = {m["name"] for m in list(main_meshes) + list(common) if m["name"].startswith("1")}
+    lo_of = dict(zip(ids, layouts))
+    loaded_of: dict = {}
+    for rname in sorted({race_kn5_name(slug, lo_of[lid]) for lid in need_race}):
+        users = [lid for lid in need_race if race_kn5_name(slug, lo_of[lid]) == rname]
+        race_p = kn5_dir / rname
+        if not race_p.exists():
+            fails.append(f"layout(s) {users} declare race_furniture but build/{race_p.name} does not exist")
+        common = _verify_race_kn5(race_p, main_meshes, fails, lap=lo_of[users[0]].get("lap")) if race_p.exists() else []
+        loaded_of[rname] = {m["name"] for m in list(main_meshes) + list(common) if m["name"].startswith("1")}
+    if not need_race and (kn5_dir / f"{slug}_race.kn5").exists():   # (as before: a race kn5 with no race layout)
+        _verify_race_kn5(kn5_dir / f"{slug}_race.kn5", main_meshes, fails)
+    for stray_p in sorted(kn5_dir.glob(f"{slug}_race_*.kn5")):
+        if stray_p.name not in loaded_of:
+            fails.append(f"stray lap race kn5 build/{stray_p.name} — no race layout names that lap")
     tokens = closure_tokens(project, cfg, layouts)
     seen_tok = {}
     for lid in need_race:
@@ -477,7 +519,7 @@ def _verify_layouts(project: Path, cfg: dict, slug: str, layouts: list, kn5_dir:
         if not cp.exists():
             fails.append(f"race layout {lid} has no build/{cp.name} — its lane is not closed off (ledger 0049)")
             continue
-        _verify_closure_kn5(cp, lid, tok, loaded, fails)
+        _verify_closure_kn5(cp, lid, tok, loaded_of.get(race_kn5_name(slug, lo_of[lid]), set()), fails)
     stray = sorted(p.name for p in kn5_dir.glob(f"{slug}_closure_*.kn5")
                    if p.name not in {closure_kn5_name(slug, lid) for lid in need_race})
     for name in stray:
@@ -509,11 +551,33 @@ def _verify_layouts(project: Path, cfg: dict, slug: str, layouts: list, kn5_dir:
                              f"{len(line.pts)} — the lane check cannot run")
                 continue
             lanes[lid] = lane
+    # ledger 0054: a layout that names a LAP is judged on the lap (kn5 frame: z = -engine z, x mirrored with
+    # mirror_x like the prep) against ITS declaration
+    lap_lines: dict = {}
+    for lid, lo in zip(ids, layouts):
+        lap = lo.get("lap")
+        if not lap or lap in lap_lines:
+            continue
+        lp = project / "data" / f"lap.{lap}.json"
+        if not lp.exists():
+            fails.append(f"layout {lid}: lap {lap!r} but no data/{lp.name} — its spawns cannot be judged")
+            continue
+        lj = json.loads(lp.read_text(encoding="utf-8"))
+        sx = -1.0 if cfg.get("mirror_x", False) else 1.0
+        lap_lines[lap] = _Line([(sx * q[0], q[1], -q[2]) for q in lj["points_xyz_m"]], closed=True)
+        lb = project / "data" / f"barrier_bands.{lap}.json"
+        if lb.exists():
+            for llid, c in (json.loads(lb.read_text(encoding="utf-8")).get("corridors") or {}).items():
+                if c.get("lane_by_vertex"):
+                    lanes[llid] = c["lane_by_vertex"]
     for lid, lo in zip(ids, layouts):
         spk = kn5_dir / f"{slug}__{lid}.kn5"
         if not spk.exists():
             continue
-        _verify_spawn_kn5(lo, spk, project / "data" / f"dummies_{lid}.json", road, line,
+        if lo.get("lap") and lo["lap"] not in lap_lines:
+            continue
+        _verify_spawn_kn5(lo, spk, project / "data" / f"dummies_{lid}.json", road,
+                          lap_lines[lo["lap"]] if lo.get("lap") else line,
                           lanes.get(lid) if lo.get("race_furniture") else None, fails)
     return fails
 
@@ -557,7 +621,7 @@ def verify_inis(project_dir: str | Path, folder: str | Path | None = None) -> li
             continue
         got = _ini_files(ini.read_text(encoding="utf-8"))
         if lo.get("race_furniture"):
-            want = [f"{slug}.kn5", f"{slug}_race.kn5", closure_kn5_name(slug, lid), f"{slug}__{lid}.kn5"]
+            want = [f"{slug}.kn5", race_kn5_name(slug, lo), closure_kn5_name(slug, lid), f"{slug}__{lid}.kn5"]
         else:
             want = [f"{slug}.kn5", f"{slug}__{lid}.kn5"]
         others = [f for f in got if f in closures and closures[f] != lid]

@@ -54,6 +54,14 @@ plan radius >= 20 m; mouths per policy; spawns >= 0.30 m off every face; every d
 dropped (2 per corner), each declared one clear of every closure; strips on every vertex; the Alvarado
 re-measure; the planned no-route.
 
+LAPS (ledger 0054, phase 2 groundwork; scripts/geometry/race_lap.py): a race layout may name its own lap
+(layouts[].lap = <lap id>, declared in race.laps.<lap id>: pieces of the mainline and of connectors, its own
+corridor / kerbs / roads keyed on the LAP's vertices). The writer then declares one GROUP per line: the mainline's
+race layouts -> data/barrier_bands.json (exactly as before; with no lap declared nothing else changes), and each lap's
+-> data/barrier_bands.<lap>.json, every vertex number in it the lap's own, from the stitched line it writes to
+data/lap.<lap>.json. A lap's mouths are its pieces' side streets plus the BRANCH it abandons at every junction (sealed
+by the curb strips like any side street, probed by an `xz` point ON the branch, BRANCH_PROBE_M past the curb).
+
 Inputs (read-only; loop.blend is never opened):
   track.config.json            race.* (+ race.corridor) and layouts[] (closure_token, direction, start)
   data/centerline.local.json   points_xyz_m (engine frame x=E, y=up, z=N) + widths_m
@@ -95,6 +103,17 @@ _LD = _load_tool("layout_dummies", "_layout_dummies_ro")
 # computation (the same plan + trim/clip the author sweeps), read-only: the declaration IS the authored line
 _RF = _load_tool("race_furniture", "_race_furniture_ro")
 _RC = _load_tool("race_corridor", "_race_corridor_ro")
+
+
+def _load_lap_module():
+    """scripts/geometry/race_lap.py by file (pure; no sys.path side effects)"""
+    spec = importlib.util.spec_from_file_location("_race_lap_ro", AIROSO / "scripts" / "geometry" / "race_lap.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_LAP = _load_lap_module()
 FOLD_APEX_MAX_VERTICES = 15  # a trimmed fold farther than this from every inside corner apex is a data defect
 GRID_STAGGER_M = _LD.GRID_STAGGER_M
 GRID_PITCH_M = _LD.GRID_PITCH_M
@@ -216,10 +235,22 @@ def _median(vals):
 
 # ---------------------------------------------------------------------------------------------
 def build(project_dir, out_name: str | None = None, config_path=None, *, planned_no_route: bool = True,
-          no_route_cell: float | None = None, write: bool = True) -> dict:
+          no_route_cell: float | None = None, write: bool = True, lap: str | None = None) -> dict:
+    """The declaration of ONE lap group: lap None = the mainline (data/centerline.local.json, the race layouts that
+    name no lap -> data/barrier_bands.json, byte-identical to before when no layout names a lap); lap <id> = the
+    stitched line of race.laps.<id> (scripts/geometry/race_lap.py, written to data/lap.<id>.json) and the race
+    layouts on it -> data/barrier_bands.<id>.json, every vertex number in it the LAP's own."""
     proj = Path(project_dir)
     data = proj / "data"
-    cfg = json.loads(Path(config_path or (proj / "track.config.json")).read_text(encoding="utf-8"))
+    lap_id = lap                    # (`lap` below is the lap LENGTH, as it always was)
+    cfg_all = json.loads(Path(config_path or (proj / "track.config.json")).read_text(encoding="utf-8"))
+    lap_probs = _LAP.validate(cfg_all)
+    if lap_probs:
+        raise SystemExit("[bands] race.laps / layouts[].lap: " + " | ".join(lap_probs))
+    cfg = _LAP.config_view(cfg_all, lap_id)
+    lap_rec = _LAP.stitch(proj, cfg_all, lap_id) if lap_id else None
+    if lap_rec is not None and write:
+        _LAP.write(proj, lap_rec)
     race = cfg.get("race") or {}
     fails: list[str] = []
     if race.get("centre_runs"):
@@ -230,7 +261,7 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
     if not isinstance(cor_cfg, dict):
         raise SystemExit("[bands] track.config.json has no race.corridor — nothing to declare (ledger 0049; the "
                          "v1 centre-chain declaration is retired)")
-    cl = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
+    cl = lap_rec if lap_rec is not None else json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
     pts = [tuple(p) for p in cl["points_xyz_m"]]
     widths = [float(w) for w in cl["widths_m"]]
     n = len(pts)
@@ -240,15 +271,22 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
     W = widths[:m]                                 # ring widths (the duplicate carries the last street's width)
     st = _stations(pts)
     lap = st[-1]
-    mb = data / "median_bands.json"
-    island_w = json.loads(mb.read_text(encoding="utf-8")).get("island_w_by_vertex", []) if mb.exists() else [0.0] * n
-    if len(island_w) != n:
-        raise SystemExit(f"[bands] median_bands.json ({len(island_w)}) vs centreline ({n}) length mismatch")
-    bsp = data / "bridge.spans.auto.json"
-    spans = [tuple(map(float, s)) for s in json.loads(bsp.read_text(encoding="utf-8"))] if bsp.exists() else []
-    mp = data / "mouths.json"
-    mouths = [mo for mo in (json.loads(mp.read_text(encoding="utf-8")).get("mouths", []) if mp.exists() else [])
-              if mo.get("host") == "MAINLINE"]
+    if lap_rec is not None:
+        # the lap's own channels: island widths, bridge spans (lap stations) and mouths (its pieces' side streets +
+        # the abandoned branch at every junction) mapped through its source map by race_lap.stitch
+        island_w = [float(w) for w in lap_rec["island_w_by_vertex"]]
+        spans = [tuple(map(float, s)) for s in lap_rec.get("bridge_spans_m") or []]
+        mouths = [dict(mo) for mo in lap_rec.get("mouths") or []]
+    else:
+        mb = data / "median_bands.json"
+        island_w = json.loads(mb.read_text(encoding="utf-8")).get("island_w_by_vertex", []) if mb.exists() else [0.0] * n
+        if len(island_w) != n:
+            raise SystemExit(f"[bands] median_bands.json ({len(island_w)}) vs centreline ({n}) length mismatch")
+        bsp = data / "bridge.spans.auto.json"
+        spans = [tuple(map(float, s)) for s in json.loads(bsp.read_text(encoding="utf-8"))] if bsp.exists() else []
+        mp = data / "mouths.json"
+        mouths = [mo for mo in (json.loads(mp.read_text(encoding="utf-8")).get("mouths", []) if mp.exists() else [])
+                  if mo.get("host") == "MAINLINE"]
 
     edge_mode = str(race.get("edge_mode", "road"))
     if edge_mode != "road":
@@ -380,14 +418,21 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
             nx, nz = nrm[v]
             off = sgn * (widths[v] / 2.0 + EDGE_CENTRE_FROM_LIP[edge_mode])
             poly.append([round(pts[v][0] + nx * off, 3), round(pts[v][1], 3), round(pts[v][2] + nz * off, 3)])
-        closed.append({"connector": mo["connector"], "host_vertex": h, "side": side,
-                       "connector_width_m": mo.get("connector_width_m"), "vertex_from": lo_, "vertex_to": hi_,
-                       "policy": "sealed: both curb strips run straight across the mouth line (Q1); per layout see "
-                                 "corridors.<id>.mouths",
-                       "polyline_xyz_m": poly})
+        rec = {"connector": mo["connector"], "host_vertex": h, "side": side,
+               "connector_width_m": mo.get("connector_width_m"), "vertex_from": lo_, "vertex_to": hi_,
+               "policy": "sealed: both curb strips run straight across the mouth line (Q1); per layout see "
+                         "corridors.<id>.mouths",
+               "polyline_xyz_m": poly}
+        if lap_rec is not None:
+            # a lap's mouth (race_lap.stitch): a side street of one of its pieces, or the BRANCH it abandons at a
+            # junction — probed at the point BRANCH_PROBE_M past the lap's curb ALONG the abandoned line
+            rec["kind"] = mo.get("kind", "side_street")
+            if mo.get("probe_xz") is not None:
+                rec["probe_xz"] = [float(mo["probe_xz"][0]), float(mo["probe_xz"][1])]
+        closed.append(rec)
     for lid, c in corridors.items():
         c["mouths"] = _mouth_policies(closed, c, m, widths, nrm, pts)
-        c["no_route"]["forbidden_probes"] += _mouth_probes(closed, widths, m)
+        c["no_route"]["forbidden_probes"] += _mouth_probes(closed, widths, m, pts, nrm)
 
     # ---- grid / pit zones ----------------------------------------------------------------------------
     no_gap = []
@@ -462,6 +507,12 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
         "summary": {},
         "fails": [],
     }
+    if lap_rec is not None:
+        out["lap"] = {"id": lap_id, "line": f"data/{_LAP.lap_file(lap_id)}", "pieces": lap_rec["pieces"],
+                      "joins": lap_rec["joins"], "mouths_skipped": lap_rec.get("mouths_skipped", []),
+                      "_doc": "every vertex number in this file is the LAP's own (data/lap.<id>.json, "
+                              "source_by_vertex maps it back to its source line); the race layouts on it: "
+                              + ", ".join(str(lo.get("id")) for lo in race_layouts)}
     vctx = {"pts": pts, "widths": widths, "island_w": island_w, "half_auth": half_auth, "m": m, "n": n, "st": st,
             "params": P, "free": free, "whole": whole, "boxes": boxes, "pinned": pinned, "corners": corners,
             "corner_by_apex": corner_by_apex, "removed": removed, "layouts": race_layouts, "cfg": cfg,
@@ -473,6 +524,8 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
         nr = _load_tool("no_route", "_no_route_ro")
         for lid in corridors:
             kw = {"cell": no_route_cell} if no_route_cell else {}
+            if lap_rec is not None:
+                kw["line"] = (pts, widths, island_w)          # the lap, in memory (its file may not be written)
             r = nr.run(proj, lid, planned=True, bands=out, cfg=cfg, write=write, verbose=False, **kw)
             planned[lid] = {k: r[k] for k in ("fail", "leak_m2", "reached_m2", "door_clusters", "blocked",
                                               "forbidden_reached", "seconds")}
@@ -488,7 +541,7 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
     out.pop("_st", None)
     out["fails"] = fails
     if write:
-        out_path = data / (out_name or "barrier_bands.json")
+        out_path = data / (out_name or _LAP.bands_file(lap_id))
         out_path.write_text(json.dumps(out), encoding="utf-8")
         out["_path"] = str(out_path)
     _report(proj, out, fails)
@@ -819,10 +872,18 @@ def _mouth_policies(closed, cor, m, widths, nrm, pts):
     return rows
 
 
-def _mouth_probes(closed, widths, m):
+def _mouth_probes(closed, widths, m, pts=None, nrm=None):
     out = []
     for mo in closed:
         h = int(mo["host_vertex"]) % m
+        if mo.get("probe_xz") is not None and pts is not None and nrm is not None:
+            # a lap's abandoned branch: the probe stands ON the branch (xz), y is its lateral at the junction
+            # vertex for the report; tools/no_route.py reads the xz
+            px, pz = mo["probe_xz"]
+            y = (px - pts[h][0]) * nrm[h][0] + (pz - pts[h][2]) * nrm[h][1]
+            out.append({"vertex": h, "y": round(y, 3), "xz": [round(px, 3), round(pz, 3)],
+                        "why": f"{mo.get('kind', 'branch')} {mo['connector']}"})
+            continue
         sgn = 1.0 if mo["side"] == "L" else -1.0
         out.append({"vertex": h, "y": round(sgn * (widths[h] / 2.0 + MOUTH_PROBE_M), 3),
                     "why": f"side_street {mo['connector']}"})
@@ -1171,7 +1232,8 @@ def _summary(out, corridors, kerbs, edge_corners, corners, island_w, planned):
 
 def _report(proj, out, fails):
     s = out["summary"]
-    print(f"[bands] {proj.name}: v2 corridors for {sorted(out['corridors'])}; strips on {s['edge_verts']}/{out['n']} "
+    print(f"[bands] {proj.name}{(' lap ' + out['lap']['id']) if out.get('lap') else ''}: v2 corridors for "
+          f"{sorted(out['corridors'])}; strips on {s['edge_verts']}/{out['n']} "
           f"verts (closed loops, {s['edge_corners']} trimmed corners); {s['kerbs']} kerbs at {s['corners']} corners; "
           f"{len(out['closed_mouths'])} sealed mouths; clear width {out['params']['corridor']['clear_width_m']} m "
           f"(measured {out['params']['corridor']['clear_width_measured_m']})")
@@ -1233,8 +1295,14 @@ def main(argv=None):
     if "--no-planned-route" in argv:
         argv.remove("--no-planned-route")
         planned = False
-    out = build(argv[0], out_name, config_path, planned_no_route=planned)
-    return 1 if out["fails"] else 0
+    # one declaration per lap group (scripts/geometry/race_lap.groups): the mainline's race layouts ->
+    # data/barrier_bands.json (exactly as before when no layout names a lap), each race.laps.<id> -> its own file
+    cfg = json.loads(Path(config_path or (Path(argv[0]) / "track.config.json")).read_text(encoding="utf-8"))
+    bad = 0
+    for lap in _LAP.groups(cfg):
+        out = build(argv[0], out_name if lap is None else None, config_path, planned_no_route=planned, lap=lap)
+        bad += 1 if out["fails"] else 0
+    return 1 if bad else 0
 
 
 if __name__ == "__main__":

@@ -46,6 +46,10 @@ continuity wrapped across the seam of a closed lap. Each layout writes
 ``data/drive_test.<id>.json``; ``data/drive_test.json`` becomes the per-layout summary. A
 single-layout track is byte-for-byte today's gate.
 
+LAPS (ledger 0054). A race layout that names a lap (layouts[].lap, scripts/geometry/race_lap.py) walks THAT line
+(data/lap.<lap>.json) against its own declaration (data/barrier_bands.<lap>.json, via MedianZone.load); the fold-fan
+discs stay on the mainline rows the weld indexes. Every other layout is driven exactly as before.
+
 CORRIDORS (ledger 0049, 2026-10-11). A version-2 declaration gives every race layout its own lane:
 ``corridors.<id>.lane_by_vertex`` (the corridor FACES — the race-side curb strip face and the layout's closure
 face, full width in the open boxes and the whole-street zone), read through
@@ -366,10 +370,15 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     reverse = direction == "reverse"
     race = bool(_lo.get("race_furniture")) if _lo else False
     kind = str(_lo.get("kind", "race" if race else "street")) if _lo else "street"
+    # ledger 0054: a race layout that names a LAP drives the lap (data/lap.<lap>.json) against its declaration
+    # (data/barrier_bands.<lap>.json); every other layout walks the gate centreline exactly as before
+    from scripts.geometry import race_lap as _race_lap
+    _lap = _race_lap.lap_of(_lo) if _lo else None
+    _bands_name = _race_lap.bands_file(_lap)
     _corridor_decl = False
-    if race and (data / "barrier_bands.json").exists():
+    if race and (data / _bands_name).exists():
         try:
-            _corridor_decl = bool((json.loads((data / "barrier_bands.json").read_text(encoding="utf-8"))
+            _corridor_decl = bool((json.loads((data / _bands_name).read_text(encoding="utf-8"))
                                    .get("corridors") or {}))
         except (json.JSONDecodeError, OSError):
             _corridor_decl = False
@@ -400,6 +409,13 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
         lc = json.loads((data / "centerline.local.json").read_text())
         pts = [(mirror * p[0], p[1], p[2]) for p in lc["points_xyz_m"]]
     widths = list(lc["widths_m"])
+    _main_pts, _main_w = list(pts), list(widths)    # the MAINLINE gate line: the weld's fold-fan rows index it
+    _lap_rec = None
+    if _lap:
+        _lap_rec = _race_lap.load(project, _lap)
+        _mx = -1.0 if cfg.get("mirror_x", False) else 1.0
+        pts = [(_mx * p[0], p[1], p[2]) for p in _lap_rec["points_xyz_m"]]
+        widths = [float(w) for w in _lap_rec["widths_m"]]
     # LANE WIDTHS (race layouts, 2026-10-11). The lane a race layout drives is bounded by the declared
     # strips, and the declaration lerps the road width between vertices; `widths[i]` (the vertex AHEAD
     # of a station) made the lane up to 1.36 m too wide on a mouth flare (0.55-1.50 m per 3 m vertex),
@@ -409,7 +425,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     # vertex 0 (it carried the LAST street's width: 27.5 m on SD vs Alvarado's 17.0 m — median_zone's
     # rule). The street layout and every single-layout track keep `widths` and are unchanged.
     _closed_lap = (len(pts) > 2 and abs(pts[0][0] - pts[-1][0]) < 1e-6 and abs(pts[0][2] - pts[-1][2]) < 1e-6)
-    _fan_pts, _fan_w = list(pts), list(widths)      # forward order: the weld's row indices (ledger 0050 fan discs)
+    _fan_pts, _fan_w = _main_pts, _main_w           # forward order: the weld's MAINLINE row indices (ledger 0050 fan discs)
     _wl = list(widths)
     if _closed_lap:
         _wl[-1] = _wl[0]
@@ -1133,6 +1149,10 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
         try:
             ej = json.loads(ep.read_text())
             zr = ej.get("z_raw_m") or []
+            if _lap_rec is not None:
+                # the lap's mainline vertices take the mainline's measured height; connector / join vertices have none
+                zr = [(zr[sv[1]] if sv[0] == _race_lap.MAINLINE and sv[1] < len(zr) else None)
+                      for sv in _lap_rec["source_by_vertex"]]
             if reverse:
                 zr = zr[::-1]
             e0 = 0.0
@@ -1144,7 +1164,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                 stq = 0.0
                 for i in range(1, m2):
                     stq += math.hypot(pts[i][0] - pts[i - 1][0], pts[i][2] - pts[i - 1][2])
-                    if any(a <= stq <= b for a, b in spans):
+                    if any(a <= stq <= b for a, b in spans) or zr[i] is None:
                         continue
                     rep.append(abs(pts[i][1] - (zr[i] - e0)))
         except Exception:
@@ -1171,7 +1191,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
         "kind": kind,
         "race_furniture": race,
         "obj": obj_name,
-        "lane": (f"barrier_bands.json corridors.{lid}" if _corr else
+        "lane": (f"{_bands_name} corridors.{lid}" if _corr else
                  ("barrier_bands.json v1 (chain / island face)" if race else "full width / island")),
         "barrier_stations": problems["barrier_stations"],
         "barrier_missing": len(barrier_missing),

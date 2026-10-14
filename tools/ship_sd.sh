@@ -30,6 +30,12 @@
 #                                 Each race layout loads ONLY its own (the clockwise closure stands in the
 #                                 anticlockwise lane); a race layout without its closure kn5 never packs
 #   <slug>__<id>.kn5              nodes-only SPAWN kn5, one per layout
+#   <slug>_race_<lap>.kn5         LAPS (ledger 0054, opt-in: layouts[].lap + race.laps.<lap>, scripts/geometry/race_lap.py):
+#                                 a race layout that names a lap loads THAT lap's common set (its curb strips + kerbs
+#                                 on its own stitched line) instead of <slug>_race.kn5; its declaration is
+#                                 data/barrier_bands.<lap>.json, its authored report race_authored.<lap>.json. Every
+#                                 per-layout step below picks the right one (RK / BB per layout); with no lap declared
+#                                 the chain is exactly the mainline one.
 # (fleet/LAWS.md L8 as amended — the wording is in ledger 0047 pending Kevin's sign-off, Q9.)
 #
 # Stages (V3-PLAN §Phase 1 "the ONE pipeline"):
@@ -158,6 +164,18 @@ RACE_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8'))
 STREET_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts'] if not l.get('race_furniture')))" "$PROJ/track.config.json")
 echo "layouts: $LAYOUT_IDS   (race furniture: $RACE_IDS; street: $STREET_IDS; street AI = $STREET_AI)"
 [ -n "$RACE_IDS" ] || { echo "no race layout declared — this chain is the three-version chain (ledger 0047)"; exit 2; }
+# ledger 0054 LAPS: the laps the race layouts name (empty on every track today), whether any race layout still drives
+# the mainline, and per race layout its COMMON race kn5 (RK) and its declaration (BB) — scripts/geometry/race_lap.py
+LAP_IDS=$(pyq "import json,sys; from scripts.geometry import race_lap as L; print(' '.join(L.lap_ids(json.load(open(sys.argv[1],encoding='utf-8')))))" "$PROJ/track.config.json")
+HAS_MAIN=$(pyq "import json,sys; from scripts.geometry import race_lap as L; print(1 if None in L.groups(json.load(open(sys.argv[1],encoding='utf-8'))) else 0)" "$PROJ/track.config.json")
+declare -A RK BB
+while read -r lid rk bb; do [ -n "$lid" ] && RK[$lid]=$rk && BB[$lid]=$bb; done < <(pyq "import json,sys
+from scripts.geometry import race_lap as L
+d=json.load(open(sys.argv[1],encoding='utf-8'))
+for lo in d['layouts']:
+    if lo.get('race_furniture'):
+        lap=L.lap_of(lo); print(lo['id'], d['slug']+('_race.kn5' if not lap else '_race_%s.kn5'%lap), L.bands_file(lap))" "$PROJ/track.config.json" | tr -d '\r')   # (Windows python prints CRLF into the pipe; read keeps the CR)
+if [ -n "$LAP_IDS" ]; then echo "laps: $LAP_IDS (mainline race layouts: $HAS_MAIN) — $(for lid in $RACE_IDS; do printf '%s->%s ' "$lid" "${RK[$lid]}"; done)"; fi
 
 if [ "$SKIP_BLEND" = 0 ]; then
   step "draft: real bridge decks between their real abutments (tools/deck_datum.py; LAWS L3, 3DEP cached)"
@@ -251,7 +269,12 @@ if bad: raise SystemExit('PLANNED no_route: '+'; '.join(bad))" "$PROJ/data" $RAC
 step "author: race furniture -> loop.blend: RACE (curb strips + kerbs, common) + RACE_CLOSE_<TOKEN> (one closure per race layout)"
 (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_race_furniture_blend.py" -- "$PROJ" 2>&1 | grep "^\[race\]\|Error\|Traceback" )
 step "author: verify the authored furniture against its declaration (tools/verify_race.py, hard: common set + each layout)"
+if [ "$HAS_MAIN" = 1 ]; then
 (cd "$AIROSO" && python tools/verify_race.py "$PROJ")            # data/race_verify.json; exit 1
+fi
+for lap in $LAP_IDS; do                                          # ledger 0054: each lap's group on its own line
+  (cd "$AIROSO" && python tools/verify_race.py "$PROJ" --lap "$lap")   # data/race_verify.<lap>.json; exit 1
+done
 (cd "$AIROSO" && python tools/plot_race_furniture.py "$PROJ" | tail -3)   # data/race_plots/*.png
 
 step "ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)"
@@ -274,10 +297,14 @@ step "ship: split the prepped scene -> road / common race / closure per race lay
 for lid in $RACE_IDS; do
   [ -f "$PROJ/blender/split/loop_closure_$lid.blend" ] || { echo "split wrote no loop_closure_$lid.blend — race layout $lid would load no closure"; exit 1; }
 done
+for lap in $LAP_IDS; do
+  [ -f "$PROJ/blender/split/loop_race_$lap.blend" ] || { echo "split wrote no loop_race_$lap.blend — lap $lap would load no curb strip"; exit 1; }
+done
 
 if [ "$DRY" = 1 ]; then
   echo; echo "DRY RUN: stopping before the kn5 exports. Would now: export $SLUG.kn5 (road) + ${SLUG}_race.kn5 (common) +"
   echo "  $(for lid in $RACE_IDS; do printf '%s ' "${SLUG}_closure_$lid.kn5"; done)(one closure per race layout, each content-checked) +"
+  if [ -n "$LAP_IDS" ]; then echo "  $(for lap in $LAP_IDS; do printf '%s ' "${SLUG}_race_$lap.kn5"; done)(one common set per lap, ledger 0054) +"; fi
   echo "  ${SLUG}__{$(echo $LAYOUT_IDS | tr ' ' ',')}.kn5 (spawns) -> AI per layout -> verify_kn5 -> track_folder -> verify_kn5 --inis"
   echo "  -> make_map -> make_treefx -> gates (street on track.obj; each race layout on its own track.<id>.obj:"
   echo "  drive_test, audit_mesh --layout, no_route BUILT) -> sync outputs -> install."
@@ -287,6 +314,8 @@ fi
 
 step "ship: export road kn5 (shared by all layouts, spawn-free)"
 "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/export_kn5_addon.py" -- "$PROJ" --blend "$PROJ/blender/split/loop_main.blend" 2>&1 | grep "KN5 EXISTS\|INI materials"
+rm -f "$PROJ/build/${SLUG}_race_"*.kn5      # a retired lap's common kn5 never rides along (ledger 0054)
+if [ "$HAS_MAIN" = 1 ]; then
 step "ship: export the COMMON race-furniture kn5 (curb strips + kerbs; loaded by every race layout)"
 "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/export_kn5_addon.py" -- "$PROJ" --blend "$PROJ/blender/split/loop_race.blend" --out "${SLUG}_race.kn5" 2>&1 | grep "KN5 EXISTS\|INI materials"
 # content guard (was a 20 MB size cap, which fired on a clean but flat-shaded 35.6 MB kn5): every mesh
@@ -294,9 +323,20 @@ step "ship: export the COMMON race-furniture kn5 (curb strips + kerbs; loaded by
 # from pbr.py's race rows, no AC_* node — exit 1 otherwise. The size is printed (WARN above 20 MB), never the gate.
 (cd "$AIROSO" && python -m scripts.modkit.inspect_kn5 "$PROJ/build/${SLUG}_race.kn5" --json "$PROJ/data/race_kn5.json" >/dev/null)
 (cd "$AIROSO" && python tools/check_race_kn5.py "$PROJ/data/race_kn5.json" --role common --bands "$PROJ/data/barrier_bands.json")
+fi
+for lap in $LAP_IDS; do
+  # (an echo, not a `step`: the general chain's San Diego spec, tracks/san-diego-lake-murray/ship.json, reproduces this
+  #  chain's step headers for the track as it is — no lap; the lap export joins that vocabulary when a spec first
+  #  declares a lap)
+  echo; echo "=================== ship: export lap $lap's COMMON race-furniture kn5 (its curb strips + kerbs; loaded by the race layouts on lap $lap)"
+  "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/export_kn5_addon.py" -- "$PROJ" --blend "$PROJ/blender/split/loop_race_$lap.blend" --out "${SLUG}_race_$lap.kn5" 2>&1 | grep "KN5 EXISTS\|INI materials"
+  (cd "$AIROSO" && python -m scripts.modkit.inspect_kn5 "$PROJ/build/${SLUG}_race_$lap.kn5" --json "$PROJ/data/race_$lap.kn5.json" >/dev/null)
+  (cd "$AIROSO" && python tools/check_race_kn5.py "$PROJ/data/race_$lap.kn5.json" --role common --lap "$lap" --bands "$PROJ/data/barrier_bands.$lap.json")
+done
 for lid in $RACE_IDS; do
-  # the owner token is the declaration's (barrier_bands.json corridors.<id>.token, from layouts[].closure_token)
-  tok=$(pyq "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8'))['corridors'][sys.argv[2]]['token'])" "$PROJ/data/barrier_bands.json" "$lid")
+  # the owner token is the declaration's (barrier_bands.json corridors.<id>.token, from layouts[].closure_token;
+  # a layout on a lap: its barrier_bands.<lap>.json — BB)
+  tok=$(pyq "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8'))['corridors'][sys.argv[2]]['token'])" "$PROJ/data/${BB[$lid]}" "$lid")
   step "ship: export the $lid CLOSURE kn5 (1WALL_RACE_CLOSE_${tok^^}_* only; loaded by $lid alone)"
   "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/export_kn5_addon.py" -- "$PROJ" --blend "$PROJ/blender/split/loop_closure_$lid.blend" --out "${SLUG}_closure_$lid.kn5" 2>&1 | grep "KN5 EXISTS\|INI materials"
   (cd "$AIROSO" && python -m scripts.modkit.inspect_kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --json "$PROJ/data/closure_$lid.kn5.json" >/dev/null)
@@ -311,7 +351,7 @@ step "ship: AI lines per layout (race: V3 lane-offset drafts — GENERATED, ledg
 # extracted here, before the writer (the gate stage below re-extracts the same file from the same kn5s), and the
 # written line is judged at once against it
 for lid in $RACE_IDS; do
-  (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --kn5 "$PROJ/build/${SLUG}_race.kn5" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --out "$PROJ/data/track.$lid.obj")
+  (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --kn5 "$PROJ/build/${RK[$lid]}" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --out "$PROJ/data/track.$lid.obj")
   (cd "$AIROSO" && python -m scripts.ac.write_ai_line "$PROJ" --layout "$lid" | grep -v "^  v\|^frame")
   step "gate: verify_ai_line --layout $lid (hard; ledger 0052 - the written line vs the BUILT walls and road)"
   (cd "$AIROSO" && python tools/verify_ai_line.py "$PROJ" --layout "$lid")
@@ -354,7 +394,12 @@ step "gate: scenery vs the race lanes and walls, on the WRITTEN trees.txt (tools
 # TreeFX trunks and sign posts are not physical in AC: one standing in a race lane or inside a wall is a car
 # driving through a palm. verify_race G already judged make_treefx's PLAN before Blender; this judges the file
 # that ships (data/race_verify.scenery.json; exit 1 on any trunk / post in a lane or a wall — ledger 0049 fix round).
+if [ "$HAS_MAIN" = 1 ]; then
 (cd "$AIROSO" && python tools/verify_race.py "$PROJ" --scenery-only --trees "$PROJ/build/$SLUG/extension/trees/trees.txt")
+fi
+for lap in $LAP_IDS; do
+  (cd "$AIROSO" && python tools/verify_race.py "$PROJ" --scenery-only --lap "$lap" --trees "$PROJ/build/$SLUG/extension/trees/trees.txt")
+done
 
 step "gate: verify_mouths on the built road (every side-street mouth: mouth line, host lane, notch, approach — hard)"
 # tools/verify_mouths.py reads data/track.obj (the shipped road kn5) at every data/mouths.json record; exit 1 stops
@@ -377,7 +422,7 @@ AU_S=0; (cd "$AIROSO" && python -m scripts.geometry.audit_mesh "$PROJ" 2>&1 | ta
 DT_R=0; AU_R=0; NR_R=0
 for lid in $RACE_IDS; do
   step "gate: $lid — road + common race + ITS closure kn5 -> ONE gate OBJ (the kn5 set $lid loads) — data/track.$lid.obj"
-  (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --kn5 "$PROJ/build/${SLUG}_race.kn5" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --out "$PROJ/data/track.$lid.obj")
+  (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --kn5 "$PROJ/build/${RK[$lid]}" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --out "$PROJ/data/track.$lid.obj")
   step "gate: drive_test --layout $lid (hard; the declared corridor lane — barrier_missing and obstruction_stations must be 0)"
   rc=0; (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --layout "$lid" 2>&1 | grep -v "drive-time\] sweep" | tail -40) || rc=$?
   [ "$rc" = 0 ] || DT_R=$rc
@@ -438,6 +483,12 @@ for lid in $LAYOUT_IDS; do
 done
 for lid in $RACE_IDS; do
   for f in "no_route.$lid.json" "no_route.$lid.planned.json" "audit.$lid.json" "closure_$lid.kn5.json" "ai_verify.$lid.json"; do
+    [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
+  done
+done
+for lap in $LAP_IDS; do                                         # ledger 0054: each lap's line, declaration and reports
+  for f in "lap.$lap.json" "barrier_bands.$lap.json" "race_authored.$lap.json" "race_verify.$lap.json" \
+           "race_verify.scenery.$lap.json" "race_$lap.kn5.json"; do
     [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
   done
 done

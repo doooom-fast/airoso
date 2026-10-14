@@ -44,8 +44,11 @@ nothing launches or floats. Then the terrain is built to meet the road — never
 
 The three specific ways this breaks, all seen:
 
-- **Fake mountains — near-road relief is clamped, far relief is data** (amended 2026-10-11, ledger
-  0046; Kevin approved it as D6(i) of the Lariat V3 plan: "Those changes are good"). The failure that
+- **Fake mountains — near-road relief is shaped to the road within the road's own construction zone,
+  ~20–40 m; real relief beyond is never reshaped** (amended 2026-10-11, ledger 0046, and 2026-10-13, ledger
+  0054 D3 — Kevin: "why are we changing ridges?"; first worded "near-road relief is clamped, far relief is
+  data" with an 80 / 250 m reach that planed real ridges; the distance-weighted clamp itself Kevin approved
+  as D6(i) of the Lariat V3 plan: "Those changes are good"). The failure that
   bought the clamp was real: a coarse terrain grid aliased the DEM's relief *into the road corridor*
   and the road sampled the wrong datum — v0.9.1 `b4e5555` (DEM slopes as collidable walls), v0.9.3
   `50dc934` ("no more Cowles 'mountain' the road climbs"), the neighbourhood "a mountain the road

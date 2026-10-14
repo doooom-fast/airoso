@@ -266,3 +266,40 @@ def test_fix_round_2_guards_are_in_the_blender_steps():
               "freeway vertices over a loop deck", "BRIDGESTRUCT"):
         assert k in fw_src, k
     assert "h + lift - 0.05" not in fw_src                     # the old deck ray, started over the ground at the deck
+
+
+def test_freeway_is_off_for_lake_murray_and_off_builds_nothing():
+    """Kevin's call (v0.18.0, ledger 0046): 'terrain only, NO I-8 pavement ribbon' stands — the freeway is OFF by config,
+    and OFF means tools/freeway_i8.py writes no plan (a stale one is removed), so tools/author_freeway_blend.py never
+    runs and no terrain is cut for a slab. The tool and its tests stay; enabled: true is the whole switch."""
+    cfg = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
+    assert cfg["scenery"]["freeway"]["enabled"] is False
+    d = Path(tempfile.mkdtemp())
+    (d / "data").mkdir()
+    (d / "data" / "freeway_i8.json").write_text(json.dumps({"chains": [], "barrier": []}))       # a stale plan
+    (d / "track.config.json").write_text(json.dumps({"scenery": {"freeway": dict(cfg["scenery"]["freeway"])}}))
+    fw.build(d, offline=True)
+    assert not (d / "data" / "freeway_i8.json").exists()
+
+
+def test_release_rails_are_one_line_per_side_over_the_union_of_zones():
+    """the view lens (v0.18.0): overlapping / abutting zones (College's approach foot, south approach and I-8 span; Lake
+    Murray Blvd's I-8 span and creek) each drew a rail over the shared stations — two prisms 3 cm apart, end caps
+    standing up as white teeth. Stations are read per side over the union of the zones (source pin: bpy-only half)."""
+    gr_src = (ROOT / "tools" / "ground_release_blend.py").read_text(encoding="utf-8")
+    for k in ("by_side = {}", "seen = by_side.setdefault(side, {})", "if key in seen:", "for side, seen in by_side.items():",
+              "for st in blocks:", "RAIL_TAPER_M", "RAIL_END_H_M + (h - RAIL_END_H_M) * hk"):
+        assert k in gr_src, k
+
+
+def test_release_fill_eases_with_the_gap_and_the_ramp_meets_the_prep():
+    """the view lens (v0.18.0): grass teeth beside College's south abutment (the fill batter switched on and off face by
+    face where the approach leaves its embankment) and a comb west of the north approach (the zone's ramp blended
+    toward the graded ground the prep then refines away outside the zone). Source pins (bpy-only half) + the
+    snapshot's RefineField the ramp reads is the one the prep runs."""
+    gr_src = (ROOT / "tools" / "ground_release_blend.py").read_text(encoding="utf-8")
+    for k in ("FILL_EASE_M", "def fill_top(fi):", "fill_top(fi) - BATTER_FILL * d", "RF = _refine_field(proj)",
+              "RF.target(x, y, z, d_built=", "zo + w * (t - zo)"):
+        assert k in gr_src, k
+    m = _snapshot()
+    assert hasattr(m, "RefineField") and hasattr(m.RefineField, "target") and hasattr(m.RefineField, "in_kept")

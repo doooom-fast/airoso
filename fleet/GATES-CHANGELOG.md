@@ -937,8 +937,8 @@ releases (smoothstep) to the raw DEM by `terrain.clamp_blend_m`; beyond, 3DEP st
 
 | Number | Value | Range the ledger gave / why |
 |---|---|---|
-| `clamp_corridor_m` | 80 m | 60–100 (corridor 20 + blend 16 + one cell … ~100) |
-| `clamp_blend_m` | 250 m | ~250 or the medium tier's edge |
+| `clamp_corridor_m` | 80 m — **superseded 2026-10-13 by 20 m** (ledger 0054 D3, below: 80 filled a real canyon by 25 m and planed real ridges 12–18 m) | 60–100 (corridor 20 + blend 16 + one cell … ~100) |
+| `clamp_blend_m` | 250 m — **superseded 2026-10-13 by 40 m** (ledger 0054 D3, below) | ~250 or the medium tier's edge |
 | `tiers` | 5 m (x-split) within 60 m of a pavement, 20 m (x-split) to 500 m, 40 m beyond | the ledger's own example; 5 m is the only nesting cell under criterion 5's 7 m (20/3 m would put 10.2 % of the fine tier's facets past 7 m in 3D on its slopes) |
 | `tier_options.keep_cells` | the graded 20 m grid's own cells within 18 m of a pavement | the seat moves ground ≤ 11.1 m past a pavement and subdivides ≤ 15.1 m; the prep pins ≤ 9 m and subdivides ≤ 16 m |
 | `keep_surface_m` / `keep_feather_m` | 20 / 16 m — from the pavement **and** (2026-10-12) from the nearest kept node (the kept-node feather retired by the fix round below, where the kept cells themselves take the pavement feather past 20 m) | the conform corridor and blend. The kept-node feather removed 1,355 of the 1,404 ledges (> 100 % built slope, > 2× the data's) the pavement-only feather left at the kept cells' outer edge, with every gate identical |

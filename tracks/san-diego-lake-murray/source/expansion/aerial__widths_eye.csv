@@ -1,0 +1,59 @@
+label,lat,lon,eye_curb_to_curb_m,eye_conf_m,median_m,median_kind,cw_left_m,cw_right_m,auto_total_m,lo_p,hi_p,note
+A st 40,32.793907,-117.067934,27.0,1.0,1.5,raised nose,14.5,11.0,26.1,-5.0,22.0,"J1 approach; SE-bound cwy 14.5 m (turn lanes), NW-bound 11 m; contiguous sidewalks both sides; crosswalk"
+A st 250,32.795283,-117.06947,26.5,1.0,4.5,raised planted,12.0,10.0,25.2,-7.0,19.5,sidewalk both sides; residential frontage (Del Cerro / Allied Gardens edge)
+A st 500,32.796861,-117.071378,27.5,1.0,6.0,"raised planted, trees",11.5,10.0,27.9,-7.0,20.5,Eldridge St signal at st 432-446
+A st 750,32.797869,-117.073681,24.5,1.0,2.5,"raised, one tree",12.5,9.5,20.1,-7.0,17.5,Birchwood St; sidewalk both
+A st 936,32.797464,-117.075582,24.0,1.0,2.0,raised,9.3,12.7,23.7,-6.8,17.2,J2 approach; NW-bound cwy 12.7 m (turn lanes)
+B st 40,32.797545,-117.076217,22.5,1.0,0.0,none,,,22.2,-10.0,12.5,yellow school ladder crosswalk (Lewis Middle School); signals st 22-102
+B st 250,32.799108,-117.077402,23.0,1.0,0.0,none,,,23.1,-11.0,12.0,parking lanes both sides; painted centre
+B st 500,32.8013,-117.077885,24.0,1.0,3.0,raised nose begins / turn pocket,11.5,9.5,12.6,-11.5,12.5,Fontaine St at st 557
+B st 750,32.803368,-117.078941,24.0,1.0,1.0,double yellow,14.0,9.0,13.2,-11.5,12.5,two lanes each way
+B st 1000,32.805611,-117.078894,27.0,1.0,1.0,double yellow,15.0,11.0,24.0,-12.5,14.5,Grantville industrial frontage; parking right; planted strip beyond right curb
+B st 1078,32.806321,-117.078897,28.0,1.0,1.0,double yellow,11.5,15.5,26.4,-13.5,14.5,vacant dry-grass lot left; parked cars right; J3 approach
+C st 40,32.806916,-117.078797,32.0,1.5,0.0,none,,,36.0,-9.0,23.0,J3 mouth; ladder crosswalks; 6-7 lanes
+C st 250,32.807563,-117.076691,29.0,1.0,2.0,terracotta raised,14.5,12.5,28.8,-6.5,22.5,bike lanes; tree canopy over left edge
+C st 500,32.80803,-117.074083,28.5,1.5,5.0,terracotta raised,10.5,13.0,29.4,-6.0,22.5,left edge under canopy
+C st 750,32.80826,-117.071427,27.5,1.0,4.0,"terracotta raised, trees",12.5,11.0,26.4,-6.5,21.0,scrub/riparian left (river side)
+C st 1000,32.809023,-117.068937,27.5,1.0,4.5,terracotta raised,10.5,12.5,22.2,-6.0,21.5,bike lane stripe left; mobile homes / riverbank left
+C st 1250,32.810592,-117.067054,33.0,1.5,5.5,terracotta raised,15.0,12.5,31.2,-8.5,24.5,Margerum Ave (st 1108) turn pockets; red-painted curb; sidewalk left
+C st 1500,32.812509,-117.065648,31.5,1.0,5.0,terracotta raised,15.0,11.5,26.7,-8.0,23.5,sidewalk left; residential behind wall
+C st 1750,32.81442,-117.06423,30.0,1.0,6.5,terracotta raised,14.0,9.5,24.9,-7.0,23.0,
+C st 2000,32.816026,-117.062372,31.5,1.0,8.0,terracotta raised,13.5,10.0,25.2,-6.5,25.0,Deerfield Cres (st 2031); bike lane right
+C st 2248,32.817018,-117.06,30.5,1.0,1.5,terracotta nose,12.5,16.5,25.8,-6.0,24.5,J4 approach; tree row right
+D st 40,32.81686,-117.059326,26.0,1.5,4.0,painted hatch,12.5,9.5,26.4,-7.5,18.5,J4 mouth; crosswalks
+D st 250,32.81599,-117.057369,20.5,1.0,3.0,painted (double-double yellow),7.0,10.5,13.2,-12.0,8.5,buffered bike lanes both sides; open scrub right
+D st 500,32.814888,-117.055109,17.0,1.5,1.0,double yellow,7.0,9.0,14.7,-11.0,6.0,Hemingway Dr mouth; painted median tapers to a double yellow: the leg's narrowest section (re-read on a 90 m zoom)
+D st 750,32.812998,-117.053661,24.0,1.0,4.0,"painted, opens to turn pocket",11.0,9.0,20.1,-15.0,9.0,Tuxedo Rd (st 800) left-turn pocket
+D st 1000,32.811117,-117.05223,21.0,1.0,4.5,painted (double-double yellow),8.0,8.5,16.8,-12.5,8.5,"canyon: scrub both sides, curb + narrow walk"
+D st 1250,32.809194,-117.050883,20.5,1.5,4.5,painted,7.0,9.0,11.1,-11.5,9.0,tree shadow over left half
+D st 1500,32.807516,-117.049136,20.5,1.0,1.5,double yellow,11.0,8.0,13.2,-12.5,8.0,"houses right (pool), scrub left"
+D st 1750,32.805528,-117.047878,25.5,1.0,4.0,"painted, turn pocket",11.0,10.5,24.0,-12.0,13.5,Park Ridge Blvd (st 1635) / Birchcreek Rd (st 1814)
+D st 1971,32.804091,-117.046244,26.0,1.5,0.0,none,,,23.4,-13.0,13.0,J5 approach (Navajo); crosswalks
+J1 arm Navajo Road brg 059,32.794112,-117.067095,29.0,1.0,2.5,raised planted,16.0,10.5,27.3,-14.0,15.0,existing loop arm
+J1 arm College Avenue brg 156,32.79336,-117.067385,27.5,1.0,5.5,"raised planted, trees",10.5,11.5,30.6,-13.0,14.5,existing loop arm
+J1 arm Waring Road brg 312,32.794207,-117.068108,26.5,1.0,1.5,raised planted,13.0,12.0,26.1,-13.0,13.5,new arm
+J2 arm Waring Road brg 052,32.797597,-117.075435,27.0,1.0,4.0,"raised planted, trees",11.5,11.5,26.4,-12.5,14.5,
+J2 arm Mound Avenue brg 140,32.796854,-117.07553,11.0,1.0,0.0,none,,,15.9,-5.0,6.0,residential side street; curb returns R~7-8 m; parkway sidewalks
+J2 arm Waring Road brg 228,32.796914,-117.07642,23.0,1.5,0.0,none,,,23.1,-11.0,12.0,Waring continues SW (off route); left under canopy
+J2 arm Princess View Drive brg 319,32.797683,-117.076353,22.5,1.0,0.0,none,,,21.9,-10.0,12.5,yellow school crosswalk at the mouth
+J3 arm Mission Gorge Road brg 057,32.806957,-117.078449,33.0,1.0,1.0,narrow terracotta,17.0,15.0,52.5,-17.0,16.0,turn lanes; parking lot left
+J3 arm Princess View Drive brg 170,32.806139,-117.078875,27.0,1.0,1.0,double yellow,14.0,12.0,26.4,-13.0,14.0,
+J3 arm Mission Gorge Road brg 252,32.806516,-117.079583,28.0,1.5,0.0,none,,,51.6,-16.0,12.0,MGR west toward Mission Valley (off route)
+J3 arm Tierrasanta Boulevard (Proposed) brg 342,32.807187,-117.07918,12.0,2.0,0.0,none,,,39.3,-3.0,9.0,industrial access into the quarry/yard; OSM name is a never-built proposal
+J4 arm Mission Gorge Road brg 080,32.817211,-117.058971,31.0,1.0,3.0,terracotta raised,16.5,11.5,36.3,-16.5,14.5,MGR east = the gorge (context)
+J4 arm Jackson Drive brg 144,32.816692,-117.059218,28.5,1.0,3.0,"painted, left-turn pocket",16.0,9.5,27.6,-15.0,13.5,
+J4 arm Mission Gorge Road brg 244,32.816894,-117.060157,29.0,1.0,2.0,terracotta raised,16.0,11.0,28.8,-15.0,14.0,
+J5 arm Navajo Road brg 050,32.804149,-117.045499,30.0,1.0,2.0,raised planted,20.0,8.0,28.2,-17.0,13.0,existing loop arm
+J5 arm Jackson Drive brg 144,32.803367,-117.045616,34.0,1.5,0.0,none,,,33.3,-17.5,16.5,existing loop arm (Jackson south of Navajo); turn lanes
+J5 arm Navajo Road brg 247,32.803603,-117.04657,28.0,1.0,2.5,raised,13.5,12.0,28.5,-12.0,16.0,existing loop arm
+J5 arm Jackson Drive brg 321,32.804228,-117.046383,24.0,1.0,0.0,none,,,22.8,-12.0,12.0,new arm (Jackson north)
+G st 250,32.817613,-117.057233,29.5,1.0,4.5,terracotta raised,14.0,11.0,28.8,-14.0,15.5,curbs both sides; lawn right
+G st 750,32.817338,-117.052019,25.5,1.5,2.5,terracotta,11.0,12.0,24.9,-7.5,18.0,left: asphalt edge into trees (no curb); right: curb + sidewalk
+G st 1250,32.818078,-117.047119,30.0,1.5,0.0,none,,,30.0,-13.5,16.5,"signalised intersection, ladder crosswalks"
+G st 1500,32.819753,-117.04566,29.0,1.5,1.5,double-double yellow,14.0,13.5,27.3,-14.0,15.0,"GORGE: no curb, no sidewalk, asphalt edge to scrub"
+G st 1750,32.821798,-117.044544,25.0,1.5,1.5,double-double yellow,11.0,12.5,24.6,-6.5,18.5,GORGE: no curb
+G st 2000,32.823731,-117.043322,20.5,2.5,1.0,double yellow,12.0,7.5,24.0,-14.0,6.5,"GORGE: pale rock cut / dirt shoulder NW side; SE edge in deep shadow, a faint edge line at ~+9 says it may be up to 3 m wider"
+G st 2250,32.825751,-117.04225,20.5,2.5,1.5,double-double yellow,15.0,4.0,16.2,-15.0,5.5,GORGE narrows: rock cut NW; SE edge in deep shadow (may be up to 3 m wider)
+G st 3000,32.831508,-117.03808,24.0,1.5,2.0,double yellow,15.0,7.0,27.3,-18.0,6.0,right-turn flare; white edge (curb or AC dike) right
+G st 3250,32.833187,-117.036417,32.0,1.5,3.0,painted,15.0,14.0,28.5,-13.0,19.0,back into town (Santee edge); curb right
+G st 3500,32.834826,-117.034715,31.0,1.5,3.5,raised planted,14.0,13.5,22.8,-15.0,16.0,Santee

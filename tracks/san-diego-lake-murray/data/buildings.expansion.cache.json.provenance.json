@@ -1,0 +1,33 @@
+{
+ "what": "OSM way[building] footprints, scripts-v021 build_loop_blend buildings-cache schema (building, levels = building:levels, height, geom [lon, lat])",
+ "tool": "tools/fetch_buildings_cache.py (ledger 0054 P0 step 7)",
+ "fetched_utc": "2026-10-14T10:36:12Z",
+ "source": "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+ "osm_base": "2026-10-14T10:32:05Z",
+ "osm_age_days": 0.002862575162037037,
+ "max_age_days": 7.0,
+ "tls": "verified (scripts.tls.https_context via scripts.gps.widths_from_osm._overpass)",
+ "bbox_swne": [
+  32.755,
+  -117.115,
+  32.85,
+  -116.985
+ ],
+ "query": "[out:json][timeout:240];way[\"building\"](32.755,-117.115,32.85,-116.985);out geom;",
+ "query_fingerprint": "4c91dcf5f0f6a628",
+ "count": 20631,
+ "cache_md5": "63e41c4b08ad509328014b43338811b3",
+ "compare": {
+  "old_cache": "buildings.cache.json",
+  "old_count": 3929,
+  "old_extent_swne": [
+   32.7597878,
+   -117.0761432,
+   32.808219,
+   -116.9973213
+  ],
+  "old_still_exact": 3636,
+  "new_inside_old_extent": 4172,
+  "new_inside_old_extent_not_in_old": 536
+ }
+}

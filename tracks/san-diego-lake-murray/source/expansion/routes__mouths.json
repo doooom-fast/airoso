@@ -1,0 +1,1223 @@
+{
+ "mouths": {
+  "W": [
+   {
+    "station_fwd_m": 0.0,
+    "way": 436315944,
+    "name": "College Avenue",
+    "highway": "primary",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": "yes",
+    "leaves_toward": "SE",
+    "control": "signal",
+    "node": 304728588,
+    "at": [
+     -117.0676356,
+     32.7938468
+    ]
+   },
+   {
+    "station_fwd_m": 0.0,
+    "way": 436315946,
+    "name": "Navajo Road",
+    "highway": "primary",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": "yes",
+    "leaves_toward": "NE",
+    "control": "signal",
+    "node": 304728588,
+    "at": [
+     -117.0676356,
+     32.7938468
+    ]
+   },
+   {
+    "station_fwd_m": 0.0,
+    "way": 436315947,
+    "name": "Navajo Road",
+    "highway": "primary",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": "yes",
+    "leaves_toward": "SW",
+    "control": "signal",
+    "node": 304728588,
+    "at": [
+     -117.0676356,
+     32.7938468
+    ]
+   },
+   {
+    "station_fwd_m": 0.0,
+    "way": 1074514299,
+    "name": "College Avenue",
+    "highway": "primary",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": "yes",
+    "leaves_toward": "SE",
+    "control": "signal",
+    "node": 49082495,
+    "at": [
+     -117.0677968,
+     32.7937508
+    ]
+   },
+   {
+    "station_fwd_m": 122.0,
+    "way": 5984405,
+    "name": "Galewood Street",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": null,
+    "leaves_toward": "crosses",
+    "control": "stop/give_way",
+    "node": 1713352274,
+    "at": [
+     -117.068524,
+     32.7946543
+    ]
+   },
+   {
+    "station_fwd_m": 415.0,
+    "way": 6013754,
+    "name": "Eldridge Street",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": null,
+    "leaves_toward": "crosses",
+    "control": "signal",
+    "node": 1713352276,
+    "at": [
+     -117.0707546,
+     32.7965186
+    ]
+   },
+   {
+    "station_fwd_m": 687.0,
+    "way": 5958459,
+    "name": "Birchwood Street",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": null,
+    "leaves_toward": "S",
+    "control": "-",
+    "node": 1713352297,
+    "at": [
+     -117.0730848,
+     32.7979164
+    ]
+   },
+   {
+    "station_fwd_m": 687.0,
+    "way": 1370375341,
+    "name": "Birchwood Street",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "NE",
+    "control": "-",
+    "node": 1713352297,
+    "at": [
+     -117.0730848,
+     32.7979164
+    ]
+   },
+   {
+    "station_fwd_m": 978.0,
+    "way": 1463034234,
+    "name": "Mound Avenue",
+    "highway": "tertiary",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": null,
+    "leaves_toward": "SE",
+    "control": "signal",
+    "node": 49333080,
+    "at": [
+     -117.0759414,
+     32.7972692
+    ]
+   }
+  ],
+  "P": [
+   {
+    "station_fwd_m": 0.0,
+    "way": 1463034234,
+    "name": "Mound Avenue",
+    "highway": "tertiary",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": null,
+    "leaves_toward": "SE",
+    "control": "signal",
+    "node": 49333080,
+    "at": [
+     -117.0759414,
+     32.7972692
+    ]
+   },
+   {
+    "station_fwd_m": 79.0,
+    "way": 663868618,
+    "name": "Glenroy Street",
+    "highway": "tertiary",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "SW",
+    "control": "signal",
+    "node": 49082539,
+    "at": [
+     -117.076553,
+     32.797886
+    ]
+   },
+   {
+    "station_fwd_m": 79.0,
+    "way": 663868622,
+    "name": "Glenroy Street",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "NE",
+    "control": "signal",
+    "node": 49082539,
+    "at": [
+     -117.076553,
+     32.797886
+    ]
+   },
+   {
+    "station_fwd_m": 175.0,
+    "way": 5998286,
+    "name": "Princess View Court",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "NE",
+    "control": "stop/give_way",
+    "node": 49425764,
+    "at": [
+     -117.077202,
+     32.798557
+    ]
+   },
+   {
+    "station_fwd_m": 315.0,
+    "way": 5998259,
+    "name": "Princess View Place",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "E",
+    "control": "stop/give_way",
+    "node": 49425611,
+    "at": [
+     -117.077461,
+     32.799789
+    ]
+   },
+   {
+    "station_fwd_m": 384.0,
+    "way": 6018734,
+    "name": "Princess View Way",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "E",
+    "control": "stop/give_way",
+    "node": 49561835,
+    "at": [
+     -117.077507,
+     32.800415
+    ]
+   },
+   {
+    "station_fwd_m": 545.0,
+    "way": 5986946,
+    "name": "Fontaine Street",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": null,
+    "leaves_toward": "crosses",
+    "control": "stop/give_way",
+    "node": 49336331,
+    "at": [
+     -117.0781342,
+     32.8017652
+    ]
+   },
+   {
+    "station_fwd_m": 714.0,
+    "way": 6042836,
+    "name": "Laura Street",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "E",
+    "control": "stop/give_way",
+    "node": 49614636,
+    "at": [
+     -117.078873,
+     32.803154
+    ]
+   },
+   {
+    "station_fwd_m": 816.0,
+    "way": 576889885,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "W",
+    "control": "-",
+    "node": 49614643,
+    "at": [
+     -117.079033,
+     32.804062
+    ]
+   },
+   {
+    "station_fwd_m": 880.0,
+    "way": 576889897,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "N",
+    "control": "-",
+    "node": 5531917326,
+    "at": [
+     -117.0789735,
+     32.8046398
+    ]
+   },
+   {
+    "station_fwd_m": 1015.0,
+    "way": 576889898,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "E",
+    "control": "-",
+    "node": 49614649,
+    "at": [
+     -117.078873,
+     32.805862
+    ]
+   },
+   {
+    "station_fwd_m": 1029.0,
+    "way": 576889900,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "NE",
+    "control": "-",
+    "node": 5531917334,
+    "at": [
+     -117.078873,
+     32.805986
+    ]
+   },
+   {
+    "station_fwd_m": 1106.0,
+    "way": 683943070,
+    "name": "Tierrasanta Boulevard (Proposed)",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "NW",
+    "control": "signal",
+    "node": 1484501883,
+    "at": [
+     -117.0790063,
+     32.8068387
+    ]
+   }
+  ],
+  "M": [
+   {
+    "station_fwd_m": 0.0,
+    "way": 683943070,
+    "name": "Tierrasanta Boulevard (Proposed)",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "NW",
+    "control": "signal",
+    "node": 1484501883,
+    "at": [
+     -117.0790063,
+     32.8068387
+    ]
+   },
+   {
+    "station_fwd_m": 45.0,
+    "way": 576889906,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "E",
+    "control": "signal",
+    "node": 5531917352,
+    "at": [
+     -117.0785458,
+     32.8068364
+    ]
+   },
+   {
+    "station_fwd_m": 116.0,
+    "way": 745284422,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "N",
+    "control": "-",
+    "node": 6976455367,
+    "at": [
+     -117.0781077,
+     32.8071506
+    ]
+   },
+   {
+    "station_fwd_m": 174.0,
+    "way": 436567844,
+    "name": null,
+    "highway": "primary_link",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": "yes",
+    "leaves_toward": "NE",
+    "control": "-",
+    "node": 4344536931,
+    "at": [
+     -117.0772666,
+     32.8072666
+    ]
+   },
+   {
+    "station_fwd_m": 185.0,
+    "way": 567651095,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "N",
+    "control": "-",
+    "node": 4343153809,
+    "at": [
+     -117.0771441,
+     32.8074409
+    ]
+   },
+   {
+    "station_fwd_m": 202.0,
+    "way": 436567842,
+    "name": null,
+    "highway": "primary_link",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": "yes",
+    "leaves_toward": "NE",
+    "control": "-",
+    "node": 4343153807,
+    "at": [
+     -117.0769849,
+     32.8073477
+    ]
+   },
+   {
+    "station_fwd_m": 202.0,
+    "way": 576889892,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": "yes",
+    "leaves_toward": "E",
+    "control": "-",
+    "node": 4343153807,
+    "at": [
+     -117.0769849,
+     32.8073477
+    ]
+   },
+   {
+    "station_fwd_m": 251.0,
+    "way": 576889890,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": "yes",
+    "leaves_toward": "E",
+    "control": "-",
+    "node": 5531917300,
+    "at": [
+     -117.0764777,
+     32.8074787
+    ]
+   },
+   {
+    "station_fwd_m": 309.0,
+    "way": 576889889,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": "yes",
+    "leaves_toward": "S",
+    "control": "-",
+    "node": 5531917299,
+    "at": [
+     -117.0758874,
+     32.8076211
+    ]
+   },
+   {
+    "station_fwd_m": 367.0,
+    "way": 576889888,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": "yes",
+    "leaves_toward": "SW",
+    "control": "-",
+    "node": 5531917295,
+    "at": [
+     -117.0752772,
+     32.8077248
+    ]
+   },
+   {
+    "station_fwd_m": 384.0,
+    "way": 576889887,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "E",
+    "control": "-",
+    "node": 5531917294,
+    "at": [
+     -117.0751014,
+     32.8077562
+    ]
+   },
+   {
+    "station_fwd_m": 429.0,
+    "way": 6042936,
+    "name": "Conestoga Way",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "S",
+    "control": "stop/give_way",
+    "node": 49317095,
+    "at": [
+     -117.07463,
+     32.8078343
+    ]
+   },
+   {
+    "station_fwd_m": 867.0,
+    "way": 1013051647,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": "private",
+    "surface": null,
+    "oneway": "yes",
+    "leaves_toward": "SE",
+    "control": "-",
+    "node": 3253177692,
+    "at": [
+     -117.0700212,
+     32.8084288
+    ]
+   },
+   {
+    "station_fwd_m": 875.0,
+    "way": 1013051648,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": "private",
+    "surface": null,
+    "oneway": "yes",
+    "leaves_toward": "S",
+    "control": "-",
+    "node": 9346275299,
+    "at": [
+     -117.0699314,
+     32.8084572
+    ]
+   },
+   {
+    "station_fwd_m": 1099.0,
+    "way": 135149732,
+    "name": "Margerum Avenue",
+    "highway": "tertiary",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": null,
+    "leaves_toward": "crosses",
+    "control": "-",
+    "node": 1484501786,
+    "at": [
+     -117.0679143,
+     32.8095136
+    ]
+   },
+   {
+    "station_fwd_m": 1250.0,
+    "way": 318915680,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "SE",
+    "control": "-",
+    "node": 1484501790,
+    "at": [
+     -117.0668721,
+     32.8105544
+    ]
+   },
+   {
+    "station_fwd_m": 1335.0,
+    "way": 318915571,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "SE",
+    "control": "-",
+    "node": 3253176130,
+    "at": [
+     -117.0663973,
+     32.8112014
+    ]
+   },
+   {
+    "station_fwd_m": 1381.0,
+    "way": 5988290,
+    "name": "Mission Montana Drive",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": null,
+    "leaves_toward": "NW",
+    "control": "stop/give_way",
+    "node": 49317121,
+    "at": [
+     -117.0661327,
+     32.8118551
+    ]
+   },
+   {
+    "station_fwd_m": 1673.0,
+    "way": 5977531,
+    "name": "Mission Vista Drive",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": null,
+    "leaves_toward": "SW",
+    "control": "stop/give_way",
+    "node": 49257909,
+    "at": [
+     -117.0645633,
+     32.8139951
+    ]
+   },
+   {
+    "station_fwd_m": 2018.0,
+    "way": 6055959,
+    "name": "Deerfield Street",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "SE",
+    "control": "stop/give_way",
+    "node": 49317131,
+    "at": [
+     -117.061993,
+     32.8160638
+    ]
+   },
+   {
+    "station_fwd_m": 2018.0,
+    "way": 638144640,
+    "name": "Deerfield Crescent",
+    "highway": "unclassified",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": null,
+    "leaves_toward": "NW",
+    "control": "stop/give_way",
+    "node": 1484501847,
+    "at": [
+     -117.0621013,
+     32.8161846
+    ]
+   },
+   {
+    "station_fwd_m": 2176.0,
+    "way": 577444270,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "SW",
+    "control": "-",
+    "node": 5535679007,
+    "at": [
+     -117.0604903,
+     32.8167157
+    ]
+   },
+   {
+    "station_fwd_m": 2272.0,
+    "way": 60516202,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "NW",
+    "control": "signal",
+    "node": 49317137,
+    "at": [
+     -117.0595924,
+     32.8171267
+    ]
+   }
+  ],
+  "J": [
+   {
+    "station_fwd_m": 0.0,
+    "way": 60516202,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "NW",
+    "control": "signal",
+    "node": 49317137,
+    "at": [
+     -117.0595924,
+     32.8171267
+    ]
+   },
+   {
+    "station_fwd_m": 51.0,
+    "way": 577444269,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "W",
+    "control": "-",
+    "node": 4343058468,
+    "at": [
+     -117.0592289,
+     32.8166215
+    ]
+   },
+   {
+    "station_fwd_m": 51.0,
+    "way": 577444268,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "NE",
+    "control": "-",
+    "node": 4343058469,
+    "at": [
+     -117.0591181,
+     32.8166896
+    ]
+   },
+   {
+    "station_fwd_m": 100.0,
+    "way": 577444267,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "NE",
+    "control": "-",
+    "node": 5535679001,
+    "at": [
+     -117.0587645,
+     32.8165049
+    ]
+   },
+   {
+    "station_fwd_m": 179.0,
+    "way": 5955946,
+    "name": "Doreen Road",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "SW",
+    "control": "stop/give_way",
+    "node": 49048052,
+    "at": [
+     -117.058006,
+     32.816143
+    ]
+   },
+   {
+    "station_fwd_m": 239.0,
+    "way": 401663247,
+    "name": "SDCWA service road",
+    "highway": "service",
+    "service": "emergency_access",
+    "access": "no",
+    "surface": "unpaved",
+    "oneway": null,
+    "leaves_toward": "SE",
+    "control": "-",
+    "node": 6493853738,
+    "at": [
+     -117.0573859,
+     32.8159938
+    ]
+   },
+   {
+    "station_fwd_m": 503.0,
+    "way": 6045093,
+    "name": "Hemingway Drive",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "SW",
+    "control": "-",
+    "node": 49489139,
+    "at": [
+     -117.055023,
+     32.8148
+    ]
+   },
+   {
+    "station_fwd_m": 646.0,
+    "way": 5968105,
+    "name": "Winding Creek Drive",
+    "highway": "tertiary",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "NE",
+    "control": "stop/give_way",
+    "node": 49166460,
+    "at": [
+     -117.054207,
+     32.813709
+    ]
+   },
+   {
+    "station_fwd_m": 790.0,
+    "way": 6051501,
+    "name": "Tuxedo Road",
+    "highway": "tertiary",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "E",
+    "control": "stop/give_way",
+    "node": 49489131,
+    "at": [
+     -117.0533263,
+     32.8126443
+    ]
+   },
+   {
+    "station_fwd_m": 1623.0,
+    "way": 1224664714,
+    "name": "Park Ridge Boulevard",
+    "highway": "secondary",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": null,
+    "leaves_toward": "SW",
+    "control": "signal",
+    "node": 49489108,
+    "at": [
+     -117.0484716,
+     32.8064379
+    ]
+   },
+   {
+    "station_fwd_m": 1644.0,
+    "way": 851357844,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "SW",
+    "control": "signal",
+    "node": 7940756820,
+    "at": [
+     -117.0483685,
+     32.8062738
+    ]
+   },
+   {
+    "station_fwd_m": 1802.0,
+    "way": 6024742,
+    "name": "Birchcreek Road",
+    "highway": "residential",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": null,
+    "leaves_toward": "E",
+    "control": "stop/give_way",
+    "node": 49489103,
+    "at": [
+     -117.04744,
+     32.805088
+    ]
+   },
+   {
+    "station_fwd_m": 1810.0,
+    "way": 577444237,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "S",
+    "control": "stop/give_way",
+    "node": 5535678928,
+    "at": [
+     -117.0473769,
+     32.805037
+    ]
+   },
+   {
+    "station_fwd_m": 1899.0,
+    "way": 577444241,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "S",
+    "control": "-",
+    "node": 5535678941,
+    "at": [
+     -117.046691,
+     32.8044827
+    ]
+   },
+   {
+    "station_fwd_m": 1918.0,
+    "way": 577444239,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": "yes",
+    "leaves_toward": "SW",
+    "control": "-",
+    "node": 5535678933,
+    "at": [
+     -117.0465434,
+     32.8043634
+    ]
+   },
+   {
+    "station_fwd_m": 1929.0,
+    "way": 577444238,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "SW",
+    "control": "-",
+    "node": 2713391786,
+    "at": [
+     -117.0464562,
+     32.8042932
+    ]
+   },
+   {
+    "station_fwd_m": 1941.0,
+    "way": 577444242,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": null,
+    "leaves_toward": "E",
+    "control": "signal",
+    "node": 2713389867,
+    "at": [
+     -117.0463686,
+     32.8042153
+    ]
+   },
+   {
+    "station_fwd_m": 1981.0,
+    "way": 436270256,
+    "name": "Navajo Road",
+    "highway": "primary",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": "yes",
+    "leaves_toward": "NE",
+    "control": "signal",
+    "node": 49082469,
+    "at": [
+     -117.0460988,
+     32.8039364
+    ]
+   },
+   {
+    "station_fwd_m": 1981.0,
+    "way": 436270255,
+    "name": "Navajo Road",
+    "highway": "primary",
+    "service": null,
+    "access": null,
+    "surface": null,
+    "oneway": "yes",
+    "leaves_toward": "SW",
+    "control": "signal",
+    "node": 49082469,
+    "at": [
+     -117.0460988,
+     32.8039364
+    ]
+   },
+   {
+    "station_fwd_m": 1999.0,
+    "way": 436270248,
+    "name": "Navajo Road",
+    "highway": "primary",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": "yes",
+    "leaves_toward": "E",
+    "control": "signal",
+    "node": 1713415645,
+    "at": [
+     -117.0459842,
+     32.8038046
+    ]
+   },
+   {
+    "station_fwd_m": 1999.0,
+    "way": 436270254,
+    "name": "Navajo Road",
+    "highway": "primary",
+    "service": null,
+    "access": null,
+    "surface": "asphalt",
+    "oneway": "yes",
+    "leaves_toward": "SW",
+    "control": "signal",
+    "node": 1713415645,
+    "at": [
+     -117.0459842,
+     32.8038046
+    ]
+   }
+  ]
+ },
+ "lengths": {
+  "installed_loop_m": 13489.7,
+  "navajo_box_to_box_on_centreline_m": 2413.1,
+  "expansion_box_to_box_fwd_m": 6355.4,
+  "expansion_box_to_box_rev_m": 6367.4,
+  "north_loop_fwd_m(expansion fwd + Navajo westbound)": 8723.4,
+  "grand_loop_m(installed loop with Navajo replaced by expansion)": 17432.0,
+  "per_leg_fwd": {
+   "College Avenue": 14.1,
+   "Waring Road": 977.8,
+   "Princess View Drive": 1106.2,
+   "Mission Gorge Road": 2272.1,
+   "Jackson Drive": 1999.3
+  },
+  "per_leg_rev": {
+   "Jackson Drive": 2008.2,
+   "Mission Gorge Road": 2267.7,
+   "Princess View Drive": 1134.9,
+   "Waring Road": 956.6,
+   "College Avenue": 14.1
+  }
+ },
+ "near": {
+  "College Avenue": {
+   "san_diego_river_min_m": 1930.0,
+   "at": [
+    -117.0676356,
+    32.7938468
+   ],
+   "CA 125_min_m": 5715.0,
+   "CA 52_min_m": 5709.0,
+   "CA 15_min_m": 4463.0,
+   "I 8_min_m": 1581.0,
+   "I 15_min_m": 4200.0,
+   "I 15;US 395 Hist_min_m": 4137.0
+  },
+  "Waring Road": {
+   "san_diego_river_min_m": 1231.0,
+   "at": [
+    -117.075592,
+    32.7975795
+   ],
+   "CA 125_min_m": 5724.0,
+   "CA 52_min_m": 5121.0,
+   "CA 15_min_m": 3799.0,
+   "I 8_min_m": 1592.0,
+   "I 15_min_m": 3404.0,
+   "I 15;US 395 Hist_min_m": 3363.0
+  },
+  "Princess View Drive": {
+   "san_diego_river_min_m": 264.0,
+   "at": [
+    -117.0789846,
+    32.8066715
+   ],
+   "CA 125_min_m": 6536.0,
+   "CA 52_min_m": 4077.0,
+   "CA 15_min_m": 3739.0,
+   "I 8_min_m": 1925.0,
+   "I 15_min_m": 3193.0,
+   "I 15;US 395 Hist_min_m": 3153.0
+  },
+  "Mission Gorge Road": {
+   "san_diego_river_min_m": 264.0,
+   "at": [
+    -117.0789846,
+    32.8066715
+   ],
+   "CA 125_min_m": 5136.0,
+   "CA 52_min_m": 3634.0,
+   "CA 15_min_m": 4009.0,
+   "I 8_min_m": 2882.0,
+   "I 15_min_m": 3195.0,
+   "I 15;US 395 Hist_min_m": 3184.0
+  },
+  "Jackson Drive": {
+   "san_diego_river_min_m": 531.0,
+   "at": [
+    -117.0595201,
+    32.8169866
+   ],
+   "CA 125_min_m": 3772.0,
+   "CA 52_min_m": 3664.0,
+   "CA 15_min_m": 6150.0,
+   "I 8_min_m": 3028.0,
+   "I 15_min_m": 5133.0,
+   "I 15;US 395 Hist_min_m": 5162.0
+  }
+ }
+}

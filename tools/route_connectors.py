@@ -139,7 +139,19 @@ def build(project_dir):
         usgs_3dep = None
 
     pieces = []
+    # ledger 0054 (P0, 2026-10-14): a route named in route_connectors.authored_routes is NOT drawn here as constant
+    # WIDTH_M pieces. Its roads are 17-33 m divided boulevards whose geometry is the readable intermediate Claude
+    # authors (EXPANSION-PLAN P1, data/expansion.<name>.json) and route_connectors takes it over in P3; until then the
+    # route is HELD — listed in routes so the plan of record is visible, contributing no connector. Absent key: as before.
+    authored = dict(rc.get("authored_routes") or {})
     for rname in rc.get("routes", ["medium", "short"]):
+        if rname in authored:
+            ap = Path(str(authored[rname]))
+            ap = ap if ap.is_absolute() else proj / ap
+            print(f"[route-conn] {rname}: HELD - an authored route (route_connectors.authored_routes -> "
+                  f"{authored[rname]}, {'present' if ap.exists() else 'not written yet'}); no connector drawn "
+                  f"from it here (ledger 0054: its pieces come from the authored intermediate, P3)")
+            continue
         coords = routes[rname]["coords"]
         pts = [((lo - lon0) * m_lon, (la - lat0) * m_lat) for lo, la in coords]
         on = [on_road(x, z) for x, z in pts]

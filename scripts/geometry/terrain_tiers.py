@@ -226,7 +226,7 @@ class TierSpec:
         if self.sx < 0:
             raise ValueError("a heightfield frame on a mirror_x track is not supported")
         return Frame.heightfield(heightfield_meta, self.origin, int(self.frame_cfg.get("upsample", 1)),
-                                 self.levels, self.base_m)
+                                 self.levels, self.base_m, pin=self.frame_cfg.get("pin"))
 
 
 class Frame:
@@ -236,11 +236,31 @@ class Frame:
         self.x0, self.z0, self.ux, self.uz = float(x0), float(z0), float(ux), float(uz)
 
     @classmethod
-    def heightfield(cls, meta, origin, upsample, levels, base_m):
+    def heightfield(cls, meta, origin, upsample, levels, base_m, pin=None):
         """the frame whose nominal-``sp`` cells are the heightfield grid's own cells, exactly as the v021
         assembler projects it (build_loop_blend.project_grid): node (row j, col i) at
-        x = (w + i*gx - lon0) * m_lon, z = (n - j*gy - lat0) * m_lat, gx/gy from the grid's mid latitude"""
-        s, w, n, e = meta["bbox_swne"]
+        x = (w + i*gx - lon0) * m_lon, z = (n - j*gy - lat0) * m_lat, gx/gy from the grid's mid latitude
+
+        ``pin`` (``tier_options.frame.pin``, opt-in; ledger 0054 P0 step 6): the frame is computed from the PINNED
+        anchor - the installed meta's rounded ``bbox_swne`` (and its ``spacing_m``) - shifted by whole heightfield
+        cells ``rows_n`` north / ``cols_w`` west, so neither growing the grid nor re-rounding a regrown meta can
+        move it. The shift is a whole number of base units, so every lattice key keeps its position up to float
+        rounding and the 3DEP cache is re-keyed by exactly that number (tools/remap_sample_cache.py). The meta must
+        agree: its recorded ``grid_grow`` (absent = 0) is the pin's offsets and its anchor is the pinned one to
+        1e-6 deg (a rounded meta), else ValueError. With offsets 0 on the installed meta the frame is today's,
+        bit for bit (the same expression on the same numbers)."""
+        if pin:
+            g = meta.get("grid_grow") or {}
+            for k in ("rows_n", "cols_w"):
+                if int(g.get(k, 0)) != int(pin.get(k, 0)):
+                    raise ValueError(f"tier_options.frame.pin.{k} {pin.get(k, 0)} != the heightfield meta's grid_grow."
+                                     f"{k} {g.get(k, 0)}: the frame pin and data/heightfield.meta.json disagree")
+            if abs(float(pin.get("spacing_m", meta["spacing_m"])) - float(meta["spacing_m"])) > 1e-9:
+                raise ValueError(f"tier_options.frame.pin.spacing_m {pin.get('spacing_m')} != the meta's "
+                                 f"{meta['spacing_m']}")
+            s, w, n, e = (float(v) for v in pin["bbox_swne"])
+        else:
+            s, w, n, e = meta["bbox_swne"]
         sp = float(meta["spacing_m"]) / max(1, upsample)
         midlat = (s + n) / 2
         gy = sp / 111_000.0
@@ -251,10 +271,37 @@ class Frame:
             raise ValueError(f"the heightfield's {sp} m cell must be one of the tier cells {levels}")
         per = int(round(per))
         # row 0 is NORTH and rows run south: lattice J = -per * row so J grows northward
-        return cls((w - origin["lon"]) * m_lon, (n - origin["lat"]) * m_lat, gx * m_lon / per, gy * m_lat / per)
+        f = cls((w - origin["lon"]) * m_lon, (n - origin["lat"]) * m_lat, gx * m_lon / per, gy * m_lat / per)
+        if pin:
+            kx, kz = pin_key_shift(pin, upsample, per)
+            if kx or kz:
+                f = cls(f.x0 - kx * f.ux, f.z0 + kz * f.uz, f.ux, f.uz)
+            # the meta's own anchor (rounded or full precision) is the pinned one shifted by the same whole cells
+            hf_gx, hf_gy = gx * max(1, upsample), gy * max(1, upsample)
+            ms, mw, mn, me = meta["bbox_swne"]
+            dw = abs(mw - (w - int(pin.get("cols_w", 0)) * hf_gx))
+            dn = abs(mn - (n + int(pin.get("rows_n", 0)) * hf_gy))
+            if dw > 1.000001e-6 or dn > 1.000001e-6:
+                raise ValueError(f"data/heightfield.meta.json's anchor (w {mw}, n {mn}) is {max(dw, dn):.3g} deg from "
+                                 f"the frame pin's {pin['bbox_swne']} grown by {pin.get('rows_n', 0)} rows N / "
+                                 f"{pin.get('cols_w', 0)} cols W: the grid was not grown by whole cells of the pin")
+        return f
 
     def to_json(self):
         return [self.x0, self.z0, self.ux, self.uz]
+
+
+def pin_key_shift(pin: dict | None, upsample: int, per: int) -> tuple[int, int]:
+    """the whole-cell growth of a frame pin in BASE units: (kx, kz). A lattice key (I, J) of the unpinned frame is
+    key (I + kx, J - kz) of the pinned one (the anchor moved kx units west and kz units north); ``per`` is base
+    units per frame cell (Frame.heightfield's), a heightfield cell is ``upsample`` frame cells"""
+    if not pin:
+        return 0, 0
+    u = max(1, int(upsample)) * int(per)
+    rows_n, cols_w = int(pin.get("rows_n", 0)), int(pin.get("cols_w", 0))
+    if rows_n < 0 or cols_w < 0:
+        raise ValueError(f"tier_options.frame.pin rows_n / cols_w must be >= 0, got {rows_n} / {cols_w}")
+    return cols_w * u, rows_n * u
 
 
 def load_heightfield_meta(project_dir) -> dict | None:

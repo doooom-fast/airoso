@@ -1,0 +1,29 @@
+{
+ "_doc": "Ledger 0054 P0 (2026-10-14): the proofs behind P0 step 6 and the terrain-plan rehearsal, run on scratch copies (never the workshop, never AC). Scripts are kept as the method of record; their paths are arguments.",
+ "files": {
+  "remap_sample_cache.proof.json": {
+   "sha256": "52ff0ee1e2e2d7a9f5b49ac9529f29cbc4e6370ad5e2ee1d7b6c2db17149cffe",
+   "what": "tools/remap_sample_cache.py on the installed v0.18.0 cache (scratch copy), --rows-n 37 --cols-w 26: every key's position, h_cm byte identity, 1,000 random nodes (seed 54)."
+  },
+  "heightfield_grow.proof.json": {
+   "sha256": "c75761e2a64801d8e628dea2b058bfa571c7282b5d77b922a5e79061e6b1a78e",
+   "what": "p0_heightfield_proof.py: A grid_grow absent reproduces the installed npy/meta byte for byte; B HEAD vs new heightfield.py byte-identical under a bit-keyed sampler; C grid_grow 37/37/26 old nodes bit-identical + frame pin = remap frame; D the north route's kept cells inside the grown grid."
+  },
+  "terrain_plan_rehearsal.json": {
+   "sha256": "ec505f91a12e5c243fc92a7f20423287f623f591f40cda176a55d13b6f2c6b8d",
+   "what": "rehearse_terrain.py, offline on a scratch copy of the workshop data: A HEAD config and B the P0 config without D2 reproduce the installed terrain.tiers arrays; C with D2 needs the I-8 corridor rebuilt online (see plan_c.py)."
+  },
+  "p0_heightfield_proof.py": {
+   "sha256": "28d606a2541d4d64476218d25239f5a279648bb1a238e2c27882e3c45ad7d8cf",
+   "what": "the script behind heightfield_grow.proof.json"
+  },
+  "rehearse_terrain.py": {
+   "sha256": "53c40cc4d8b3d8e27ca0d9c2880a444c05c8b1ba423e1fd6947dad0263538f44",
+   "what": "the script behind terrain_plan_rehearsal.json"
+  },
+  "plan_c.py": {
+   "sha256": "abff654c64261527a4b414d97163ce3cfa2b01f929f1bbdeec17ea6bcb0609c3",
+   "what": "the D2 lattice offline: 301,500 vertices (far 139,483), 34,852 3DEP samples missing (78 requests)"
+  }
+ }
+}

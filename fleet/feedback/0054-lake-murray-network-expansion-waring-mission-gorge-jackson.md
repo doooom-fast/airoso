@@ -51,7 +51,9 @@ the new roads is a candidate for a later phase.
 
 ## Status
 
-**Open — planned 2026-10-13** (`tracks/san-diego-lake-murray/EXPANSION-PLAN.md`, revision 2 after an independent critic; place facts in `DOSSIER-EXPANSION-NORTH.md`). Kevin's answers to D1-D4 pending (D3 amends law L3: needs his explicit yes). Was: **Open — research and plan first** (dossier-style: routes, junctions with the loop, elevation and the gorge,
+**Open — P0 (data, no geometry) done on a branch 2026-10-14** (see "P0" at the end: guarded OSM + buildings, `north`
+appended with full/medium/short byte-identical, config per D2, `grid_grow` + frame pin + cache remap proven; the grown
+grid, the pin's offsets and the re-keyed cache land together in P2). Next: P1, the readable intermediate. Was: **Open — planned 2026-10-13** (`tracks/san-diego-lake-murray/EXPANSION-PLAN.md`, revision 2 after an independent critic; place facts in `DOSSIER-EXPANSION-NORTH.md`). Kevin's answers to D1-D4 pending (D3 amends law L3: needs his explicit yes). Was: **Open — research and plan first** (dossier-style: routes, junctions with the loop, elevation and the gorge,
 widths and medians off the aerial, terrain extent, layouts, budget, gates), then the build after v0.18.x lands
 (terrain 0046 + the seat fixes 0050-0053), because it shares every file those touch. Diagnosis n/a (a request).
 
@@ -92,3 +94,89 @@ vertices moved by more than 1 m against the pre-change v0.18 build (max 25.24 m)
 drive / audit / no_route verdict identical to v0.17.1 before 0050; `rib_check` PASS; from v1640 the hill in front of
 Cowles now stands at 7.157° (3DEP 7.231°; it was 6.600°). Details in ledger 0046 "Integration (v0.18.0)". Integration fix round 3 (2026-10-13): kept at 20 / 40 with the freeway off; LAWS L3's bullet now reads Kevin's principle (near-road relief is shaped to the road within the road's own construction zone, ~20-40 m; real relief beyond is never reshaped); from v1640 the hill reads 7.157° against fresh 3DEP's 7.215° (ledger 0046 "Integration fix round 3").
 
+
+## P0 — preconditions and data (2026-10-14; branch `worktree-wf_c6ab4b42-146-1` off 4a9e66f, not merged, nothing installed)
+
+EXPANSION-PLAN P0 steps 2-7. No geometry: nothing in the installed v0.18.0 build changed, and every new engine key is
+opt-in (GATES-CHANGELOG 2026-10-14). Steps 1 and 8: v0.18.0 is installed (4a9e66f); Kevin's D1-D4 answers above are
+the addendum's approval. Still owed to step 1: Kevin's seat on the 0050 Navajo/Jackson steps before P3.
+
+- **Step 2 — chain parity.** `tests/tools/test_ship_track_chain.py` (the ship_sd / ship_track parity, 20 tests) and
+  `test_ship_sd_chain.py` are green on 4a9e66f and after this branch. The full suite on 4a9e66f in this worktree:
+  691 passed, 2 failed. With P0: 715 passed, 2 failed (the same two). Both failures are the engine-july md5 checks, and
+  both come from this worktree's CRLF checkout of `scripts/ac/export_kn5_addon.py`: md5 3e7a73a0 against the
+  manifest's 1bdc2628. No P0 file is involved.
+- **Step 3 — fresh OSM, guarded.**
+  - `tools/fetch_osm.py` now fetches through `widths_from_osm._overpass`, with the 7-day guard and TLS verified, and
+    refuses a stale answer. It also takes `--bbox` / `--out` / `--service`, and writes node tags and provenance.
+  - The fetch for S 32.755 / W -117.115 / N 32.850 / E -116.985 went like this:
+    - overpass-api.de returned 504 twice;
+    - kumi.systems returned 504, then answered with **OSM as of 2026-07-28 (78.3 days old)**, and the guard passed it
+      over;
+    - maps.mail.ru answered fresh: OSM as of 2026-10-14T10:13:39Z.
+  - Result: 21,464 ways, 80,423 nodes, service ways included, in `tracks/san-diego-lake-murray/data/osm.expansion.json`
+    (8.4 MB, with provenance).
+- **Step 4 — `north` appended to airoso `data/routes.json`** (new `tools/route_append.py`).
+  - The spec is `data/route.north.spec.json`, taken from the routes lens's way lists. Each leg is routed over its own
+    ways only, with one-way tags respected. Every leg equals the lens's path node for node, and no edge runs against a
+    one-way.
+  - **fwd** (J1 → Waring → Princess View → Mission Gorge → Jackson → J5): 6.384 km, 184 nodes.
+  - **rev**: 6.396 km, 184 nodes.
+  - **full / medium / short are byte-identical**: md5 10d26665, the v0.18.0 file, and the old file is a byte prefix of
+    the new one.
+  - Regenerating would not have been safe. The fresh OSM has lost one full/short node (4724145674) and moved six others
+    by up to 5.6 m. `tools/route_tracks.py` now refuses to rewrite routes.json.
+- **Step 5 — config** (`track.config.json`).
+  - `route.bbox` grows to [32.76, -117.082, 32.82, -116.998].
+  - `route_connectors.routes` gains `north`. A new opt-in, `authored_routes`, **holds** it: route_connectors draws no
+    10 m connector from it (plan A3). Its pieces come from P1's intermediate, which P3 wires in. With `north` held, the
+    connectors are byte-identical to the [medium, short] set.
+  - `far_extent` becomes [32.755, -117.108, 32.850, -116.998] (D2), and the `cowles_mountain` include's north edge
+    becomes 32.828 (D2).
+  - **No per-road clamp**: D3 is settled by v0.18.0's global 20 / 40.
+- **Step 6 — the 40 m heightfield grows without moving a stake.**
+  - `terrain.grid_grow` (opt-in, scripts-v021 `heightfield.py`) is set to 37 N / 37 S / 26 W / 0 E: 149 x 167 = 24,883
+    nodes over [32.758650, -117.080708, 32.818620, -117.017103].
+    - With `grid_grow` absent, the new heightfield.py writes the installed `heightfield.npy` + `.meta.json` byte for
+      byte, and HEAD's and the new code write byte-identical outputs.
+    - With it set, all 11,439 old nodes are sampled at their bit-identical positions and land within 1.4e-14 deg of
+      where every consumer put them.
+    - The north route's kept near-road cells number 1,617. The farthest is at 32.8175 N / -117.0794 W, 119.9 m inside
+      the grown north edge and 120.5 m inside the west edge, so no extra rows are needed.
+  - `tier_options.frame.pin` is live with offsets 0, which gives today's frame bit for bit.
+  - New `tools/remap_sample_cache.py`. On the installed cache it moved 723,527 keys and 111,708 fine keys by
+    [+416, -592]. Max position change was 1.4e-14 deg, the samples are byte-identical, and 1,000 / 1,000 random nodes
+    are identical.
+  - **Held for P2, in one change:**
+    - run the grown heightfield (13,444 new nodes to fetch);
+    - set pin rows_n 37 / cols_w 26;
+    - run the remap with `--in-place`.
+
+    Until all three happen, the pin refuses a grown meta.
+- **Step 7 — buildings refetched** (new `tools/fetch_buildings_cache.py`, the same guard).
+  - kumi.systems answered with OSM 161 days old and was passed over. maps.mail.ru answered fresh.
+  - Result: 20,631 footprints in `data/buildings.expansion.cache.json`, with provenance beside it.
+  - 3,636 of the installed cache's 3,929 footprints are unchanged, and 536 inside its extent are new or edited. So
+    `buildings.cache.json`, which v0.18.0 reads, is **left as it is**. P4 switches the assembler and the ship sync to the
+    new file.
+- **The research is copied into the track.** The parts the build reads (routes, the aerial width readings, 3DEP
+  measures, mouths, lamps, views) are now in `tracks/san-diego-lake-murray/source/expansion/`, with
+  `provenance.json` (sha256 per file). The scratchpad was temporary.
+
+**Measured for P2, offline on a scratch copy of the workshop.**
+- With the committed config minus D2's two boxes, the terrain plan is v0.18.0's array for array.
+- With D2, the far ring plans **139,483 vertices**, up from 106,959 (+32.5k, the plan's +33k). Physical ground is
+  unchanged until the north roads exist. **34,852 3DEP samples are missing** (78 requests).
+- The I-8 corridor file is keyed on the far box, so the next `terrain_sample` rebuilds it online. `data/osm.i8.json`'s
+  ways already reach -117.1146, past the new west edge.
+- D2 is live in the config. **The next ship from this branch fetches and builds the grown far ring**, so it is not a
+  branch for a v0.18.x hotfix ship.
+
+Tests (new):
+- `tests/tools/test_fetch_osm_guard.py`
+- `test_route_append.py`
+- `test_route_connectors_held.py`
+- `test_remap_sample_cache.py`
+- `test_fetch_buildings_cache.py`
+- `tests/geometry/test_terrain_frame_pin.py`
+- `tests/elevation/test_v021_heightfield_grow.py`

@@ -22,10 +22,11 @@
   "route": {
     "bbox": [
       32.76,
-      -117.075,
-      32.808,
+      -117.082,
+      32.82,
       -116.998
     ],
+    "_bbox_doc": "Ledger 0054 P0 step 5 (2026-10-14): grown from [32.76, -117.075, 32.808, -116.998] to take the north loop (Waring, Princess View, Mission Gorge, Jackson north: J3 at -117.0790, J4 at 32.8171 N; EXPANSION-PLAN 'at least N 32.820 / W -117.082'). South and east unchanged. Read only by the centreline stage (scripts-v021/gps/centerline.py) and the buildings/zones fetchers' default box; no SD ship step reads it. The expansion's own OSM snapshot is data/osm.expansion.json (bbox 32.755 / -117.115 / 32.850 / -116.985, tools/fetch_osm.py, 7-day guard).",
     "roads": [
       "Alvarado Road",
       "College Avenue",
@@ -72,8 +73,13 @@
     "route_connectors": {
       "routes": [
         "medium",
-        "short"
+        "short",
+        "north"
       ],
+      "authored_routes": {
+        "north": "data/expansion.north.json"
+      },
+      "_authored_routes_doc": "Ledger 0054 P0 step 5 (2026-10-14; Kevin 2026-10-12: 'the new loop will connect to the old one'). north = airoso data/routes.json 'north' (tools/route_append.py from data/route.north.spec.json on data/osm.expansion.json): J1 (College/Waring) -> Waring -> Princess View -> Mission Gorge -> Jackson north -> J5 (Navajo/Jackson), both directions, one-way tags respected. Its roads are 17-33 m divided boulevards, so route_connectors does NOT draw it as constant connector_width_m pieces (EXPANSION-PLAN A3): an authored route is HELD (listed, no connector drawn) until P1 writes the readable intermediate (data/expansion.north.json, tools/author_expansion.py) and P3 has route_connectors take it over. Held = the connectors this tool writes are byte-identical to the [medium, short] set (tests/tools/test_route_connectors_held.py).",
       "keep": [
         "del_cerro_blvd"
       ],
@@ -465,6 +471,13 @@
     "_clamp_doc": "Ledger 0054 D3 (Kevin 2026-10-12: 'why are we changing ridges?' - keep the real ridges), applied in v0.18.0: the band clamp holds in full within 20 m of a pavement and eases out by 40 m, the conform corridor (20 m) plus its 16 m blend, which already shape 0-36 m. Measured 2026-10-13 on fresh 3DEP transects (41,486 points, loop + every expansion road): 20 / 40 moves 0 real points by more than 1 m; 0046's 80 / 250 (GATES-CHANGELOG 2026-10-11, invented) filled the canyon north of west Navajo by up to 25 m and planed the Navajo-side ridge and the ridge west of College by 12-18 m. A hard 40 / 40 cut leaves a 2.2-2.4 m step beside Alvarado. GATES-CHANGELOG 2026-10-13 (0054): 20 / 40 [invented, measured].",
     "terrain_max_grade": 0.35,
     "elevation_scale": 1.0,
+    "grid_grow": {
+      "rows_n": 37,
+      "rows_s": 37,
+      "cols_w": 26,
+      "cols_e": 0,
+      "_doc": "Ledger 0054 P0 step 6 (2026-10-14; EXPANSION-PLAN 'grow the 40 m heightfield without moving a single old stake'). Read ONLY by scripts-v021 elevation/heightfield.py, which no ship step runs: the 40 m grid (123 x 93 over the loop's bbox + 150 m) grows by whole cells to 149 x 167 = 24,883 nodes, [32.758650, -117.080708, 32.818620, -117.017103]. Every old node is sampled at its bit-identical position and every consumer projects it where it always did (the grown meta's bbox is the rounded loop bbox shifted by whole cells, written at full precision; 1.4e-14 deg max over all 11,439 old nodes). rows_n = rows_s keeps the meta's mid-latitude (heightfield.py refuses otherwise). Sized by the north route's kept near-road cells (20 m cells within 18 m of a pavement at the aerial's widest per road): 1,617 cells, the furthest 32.8175 N (J4) and -117.0794 W (J3), 119.9 m inside the grown north edge and 120.5 m inside the west one, so no extra rows. Applied in P2 together with tier_options.frame.pin rows_n 37 / cols_w 26 and the re-keyed 3DEP cache (until then the installed heightfield stays: the frame pin refuses a grown meta with offsets 0)."
+    },
     "tiers": [
       {
         "within_m": 60.0,
@@ -483,7 +496,19 @@
     "tier_options": {
       "frame": {
         "kind": "heightfield",
-        "upsample": 2
+        "upsample": 2,
+        "pin": {
+          "bbox_swne": [
+            32.771983,
+            -117.069563,
+            32.805287,
+            -117.017103
+          ],
+          "spacing_m": 40.0,
+          "rows_n": 0,
+          "cols_w": 0,
+          "_doc": "Ledger 0054 P0 step 6 (2026-10-14). The lattice frame is computed from THIS anchor - the installed v0.18.0 data/heightfield.meta.json's rounded bbox_swne (40 m grid, 123 x 93) - shifted by rows_n rows north / cols_w columns west of whole 40 m cells, never from a regrown meta's own (re-rounded) anchor, so growing the grid cannot move a lattice node (terrain_tiers.Frame.heightfield; the meta's recorded grid_grow must equal these offsets and its anchor must be this one shifted, else ValueError). Offsets 0 on the installed meta = today's frame, bit for bit. P2 sets rows_n 37 / cols_w 26 in the SAME change that writes the grown heightfield (terrain.grid_grow, scripts-v021 heightfield.py) and the re-keyed 3DEP cache (tools/remap_sample_cache.py --rows-n 37 --cols-w 26: keys shift by [+416, -592] base units, the identity proof is the tool's)."
+        }
       },
       "keep_cells": {
         "cell_m": 20.0,
@@ -509,8 +534,8 @@
     "far_extent": {
       "bbox_swne": [
         32.755,
-        -117.0895,
-        32.822,
+        -117.108,
+        32.85,
         -116.998
       ],
       "_doc": "The dossier's landmark box (ledger 0046 Project): Cowles summit + ~1 km north (32.822), the valley wall south of I-8 (32.755), the Cowles ridge east and the San Diego River gorge west; widened from the ledger's -117.085 / -117.00 to -117.0895 / -116.998 so criterion 3's faces at x <= -4000 and x >= 4500 exist (8.6 x 7.4 km). Note: the gorge floor is 3DEP 27-100 m abs (probe 2026-10-11) \u2014 real ground below the ledger's 'no vertex below 100 m' line, kept as data."
@@ -521,7 +546,7 @@
         "bbox_swne": [
           32.8055,
           -117.0425,
-          32.82,
+          32.828,
           -117.0215
         ],
         "cell_m": 20.0,

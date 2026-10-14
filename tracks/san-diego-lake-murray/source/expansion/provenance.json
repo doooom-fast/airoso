@@ -1,0 +1,83 @@
+{
+ "_doc": "Ledger 0054 P0 (2026-10-14): the expansion research (session scratchpad expansion/, research run 2026-10-12/13, read-only on the repo, the workshop and the AC folder) is temporary; the parts the build reads are copied here unchanged, with where each came from and its sha256. EXPANSION-PLAN.md 'Research' row and P0.",
+ "files": {
+  "routes__routes_analysis.json": {
+   "from": "scratchpad expansion/routes/routes_analysis.json",
+   "sha256": "9ecccc3b3b3f3a399f7038c90e16bfc5a8ad44517b77691f4b12b0f1666c2efd",
+   "bytes": 127161,
+   "what": "routes lens: fresh OSM (2026-10-12T18:03Z, overpass-api.de, TLS verified) - both directions J1..J5, legs, way lists, one-way-aware paths, controls, junction bearings. Source of data/route.north.spec.json (P0 step 4)."
+  },
+  "routes__mouths.json": {
+   "from": "scratchpad expansion/routes/mouths.json",
+   "sha256": "b6af0e09de75ec0ec14a52df7daccedba6fc2dd1547af2bd7e2867991a99bf3c",
+   "bytes": 24787,
+   "what": "routes lens: every side street / driveway mouth along the north legs (A1: curb runs straight past)."
+  },
+  "routes__legs.geojson": {
+   "from": "scratchpad expansion/routes/legs.geojson",
+   "sha256": "8a8f975b2e63ab71d738cb888a3b60cc6f45e140d829b2ed43dd7f157d4f21af",
+   "bytes": 15941,
+   "what": "routes lens: the legs as GeoJSON (both directions)."
+  },
+  "routes__profile_3dep.json": {
+   "from": "scratchpad expansion/routes/profile_3dep.json",
+   "sha256": "0f5ffe52e1ffcbadba3ce6ae9a15d4ad5df2e003494514cce7fe5dbeefb807ea",
+   "bytes": 10163,
+   "what": "routes lens: 3DEP profile along the legs (stations from each junction node)."
+  },
+  "aerial__widths_eye.csv": {
+   "from": "scratchpad expansion/aerial/widths_eye.csv",
+   "sha256": "bbd784557d051548aa6d73573cc03c277d767ae516ab703c98dac91bf68567a2",
+   "bytes": 7734,
+   "what": "aerial lens: curb-to-curb widths and medians read by eye at 30 stations on NAIP 2022-04-25 0.6 m (0.3 m zooms, 10 m grid); EXPANSION-PLAN A3 / V1. P1 interpolates the per-station curb offsets from it."
+  },
+  "aerial__veg_bins.json": {
+   "from": "scratchpad expansion/aerial/veg_bins.json",
+   "sha256": "9684f55b8ce02f1b25e5f816c1ec6319fbfa779e5cd93320f0418752250c6a3b",
+   "bytes": 1972,
+   "what": "aerial lens: vegetation zones along the legs (A9)."
+  },
+  "revise__measure.json": {
+   "from": "scratchpad expansion/revise/measure.json",
+   "sha256": "72cf872e145f81fa427bf4939889af0a70a20b05cebda3c1a0b5a8b059b78ad6",
+   "bytes": 8798,
+   "what": "revise pass: node-to-node 3DEP 1 m profiles, junction heights J1..J5, the Mission Gorge crest, max grades (A6 / V2)."
+  },
+  "revise__mouth_sides.py": {
+   "from": "scratchpad expansion/revise/mouth_sides.py",
+   "sha256": "56bd49ac1528598f8851af8ff5e820f2e84422592e7a3dbbff09886ae28948ff",
+   "bytes": 2692,
+   "what": "revise pass: how the J1 / J5 openings on the loop's outer curb were measured (A5) - kept as the method of record."
+  },
+  "revise__clamp_options.py": {
+   "from": "scratchpad expansion/revise/clamp_options.py",
+   "sha256": "b48a70ea04ffc85da42ba300f2f00a602f4553a40240635389df587f8a524e7b",
+   "bytes": 1770,
+   "what": "revise pass: the clamp re-simulation behind D3 (settled by the global 20 / 40 in v0.18.0)."
+  },
+  "pipeline__mouth_geometry.json": {
+   "from": "scratchpad expansion/pipeline/mouth_geometry.json",
+   "sha256": "7130741461b4c6310e22fe68f1ab54d5eb11f29540b936d5086e2ddcf626ff8d",
+   "bytes": 3382,
+   "what": "pipeline lens: the J1 / J5 mouth geometry against the race boxes (A5 / A7)."
+  },
+  "pipeline__osm_lamps_signals.json": {
+   "from": "scratchpad expansion/pipeline/osm_lamps_signals.json",
+   "sha256": "96827dcdbe6f5b7e6d3016feb6a487ff68a370d99f73a5762c7d29b938eadd9a",
+   "bytes": 68759,
+   "what": "pipeline lens: OSM street lamps and signals near the new roads (D4, A8)."
+  },
+  "terrain__out__views.json": {
+   "from": "scratchpad expansion/terrain/out/views.json",
+   "sha256": "03034738dde12d64a75d73e25f23bec19f5e13a9222bad49efa28b7e4ac6b1b2",
+   "bytes": 68886,
+   "what": "terrain lens: sightlines from the new roads (V7 stations: Cowles, Kwaay Paay, Pyles)."
+  },
+  "terrain__out__los_fine.json": {
+   "from": "scratchpad expansion/terrain/out/los_fine.json",
+   "sha256": "614eed8a9b35f94ab4ee50b09a43701b4eda4eda6f4566fd8375b8d505f498f4",
+   "bytes": 15277,
+   "what": "terrain lens: fine line-of-sight checks behind V7."
+  }
+ }
+}

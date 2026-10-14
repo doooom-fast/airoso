@@ -1,0 +1,224 @@
+{
+ "origin": {
+  "lon": -117.04666413020487,
+  "lat": 32.78835571285328,
+  "elev_m": 100.8
+ },
+ "boxes": [
+  {
+   "apex": 1514,
+   "i": 1506,
+   "j": 1521
+  },
+  {
+   "apex": 2319,
+   "i": 2311,
+   "j": 2328
+  },
+  {
+   "apex": 3297,
+   "i": 3289,
+   "j": 3304
+  }
+ ],
+ "mouths": [
+  {
+   "leg": "W-fwd",
+   "walk": "from the loop outward",
+   "junction_node_xz": [
+    -1960.39,
+    610.58
+   ],
+   "junction_node_off_centreline_m": 0.99,
+   "junction_nearest_v": 1521,
+   "first_outside_pavement_after_m": 16,
+   "cut_xz": [
+    -1970.95,
+    622.66
+   ],
+   "host_vertex": 1520,
+   "host_width_m": 30.0,
+   "angle_deg_vs_host": 81.7,
+   "side": "L",
+   "in_box": {
+    "apex": 1514,
+    "i": 1506,
+    "j": 1521
+   }
+  },
+  {
+   "leg": "W-rev",
+   "walk": "from the loop outward",
+   "junction_node_xz": [
+    -1975.46,
+    599.91
+   ],
+   "junction_node_off_centreline_m": 1.54,
+   "junction_nearest_v": 1515,
+   "first_outside_pavement_after_m": 14,
+   "cut_xz": [
+    -1984.25,
+    611.79
+   ],
+   "host_vertex": 1516,
+   "host_width_m": 30.0,
+   "angle_deg_vs_host": 75.6,
+   "side": "L",
+   "in_box": {
+    "apex": 1514,
+    "i": 1506,
+    "j": 1521
+   }
+  },
+  {
+   "leg": "J-fwd",
+   "walk": "from the loop outward",
+   "junction_node_xz": [
+    63.56,
+    1717.84
+   ],
+   "junction_node_off_centreline_m": 3.69,
+   "junction_nearest_v": 2324,
+   "first_outside_pavement_after_m": 22,
+   "cut_xz": [
+    50.43,
+    1735.75
+   ],
+   "host_vertex": 2318,
+   "host_width_m": 24.0,
+   "angle_deg_vs_host": 57.8,
+   "side": "L",
+   "in_box": {
+    "apex": 2319,
+    "i": 2311,
+    "j": 2328
+   }
+  },
+  {
+   "leg": "J-rev",
+   "walk": "from the loop outward",
+   "junction_node_xz": [
+    63.56,
+    1717.84
+   ],
+   "junction_node_off_centreline_m": 3.69,
+   "junction_nearest_v": 2324,
+   "first_outside_pavement_after_m": 22,
+   "cut_xz": [
+    50.43,
+    1735.75
+   ],
+   "host_vertex": 2318,
+   "host_width_m": 24.0,
+   "angle_deg_vs_host": 57.8,
+   "side": "L",
+   "in_box": {
+    "apex": 2319,
+    "i": 2311,
+    "j": 2328
+   }
+  }
+ ],
+ "obstacles_vs_new_legs": [
+  {
+   "what": "M3",
+   "leg": "W-fwd",
+   "d_m": 18.8
+  },
+  {
+   "what": "nearest 3 lamp heads",
+   "leg": "W-fwd",
+   "d_m": [
+    [
+     8.8,
+     77
+    ],
+    [
+     30.6,
+     76
+    ],
+    [
+     65.3,
+     78
+    ]
+   ]
+  },
+  {
+   "what": "M4",
+   "leg": "J-fwd",
+   "d_m": 9.5
+  },
+  {
+   "what": "nearest 3 lamp heads",
+   "leg": "J-fwd",
+   "d_m": [
+    [
+     22.2,
+     121
+    ],
+    [
+     28.8,
+     120
+    ],
+    [
+     76.8,
+     122
+    ]
+   ]
+  },
+  {
+   "what": "M4",
+   "leg": "J-rev",
+   "d_m": 9.5
+  },
+  {
+   "what": "nearest 3 lamp heads",
+   "leg": "J-rev",
+   "d_m": [
+    [
+     22.2,
+     121
+    ],
+    [
+     28.8,
+     120
+    ],
+    [
+     76.8,
+     122
+    ]
+   ]
+  },
+  {
+   "what": "M3",
+   "leg": "W-rev",
+   "d_m": 1.7
+  },
+  {
+   "what": "nearest 3 lamp heads",
+   "leg": "W-rev",
+   "d_m": [
+    [
+     26.0,
+     77
+    ],
+    [
+     30.0,
+     76
+    ],
+    [
+     83.3,
+     78
+    ]
+   ]
+  }
+ ],
+ "expansion_fwd_m": 6370.1,
+ "expansion_outside_heightfield_m": 5882.4,
+ "heightfield_local_box": [
+  -2141,
+  -1821,
+  2763,
+  1883
+ ]
+}

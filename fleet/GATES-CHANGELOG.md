@@ -1765,3 +1765,42 @@ A weld that records a different row count from the gate centreline is refused (S
 **Measured** (v0.18.0 full rehearsal): street severe 0, bumps 0.15 → 0.0 /km, kinks 3.86 → 3.41, soft top 42 → 41;
 race_cw severe 31 → 22, soft top 23 → 9; race_acw 28 → 20, 22 → 9; no_route BUILT PASS both (walls' worst offset near X
 +0.263 m); audits unchanged; verify_mouths byte-identical to v0.17.1.
+
+## 2026-10-14 — Lake Murray expansion P0: `fetch_osm` freshness guard, `route_append`, held authored routes, `grid_grow`, the frame pin, `remap_sample_cache` (ledger 0054)
+
+No gate threshold moves. These are the data-side guards and identity proofs the expansion's geometry phases stand on;
+every opt-in is absent on every other track, and on Lake Murray every new key is either inert (read by nothing in the
+ship chain) or proven bit-identical to v0.18.0 (below).
+
+| Item | Value | Flag |
+|---|---|---|
+| `tools/fetch_osm.py` freshness | through `widths_from_osm._overpass` + `OSM_MAX_AGE_DAYS` 7.0 (2026-10-11 entry above): an answer older than 7 days, or without `osm3s.timestamp_osm_base`, is refused, nothing written; `--allow-stale-osm` writes it with `stale_allowed: true`. Was: three servers in turn (TLS verified), no staleness check | the 7.0 is the 2026-10-11 ⚠ invented value, reused |
+| `tools/fetch_buildings_cache.py` (new) freshness | the same guard and limit | reused |
+| `tools/route_append.py` (new) | append only: the existing routes must re-serialise byte-identically and stay a byte prefix of the new file; a leg's routed path must equal the spec's `path_nodes`; every edge checked against its way's `oneway` (`yes`/`true`/`1` along, `-1`/`reverse` against, `junction=roundabout` implied) | std (the real road's direction, OSM tags); the equality checks are exact |
+| `tools/route_tracks.py` | refuses to rewrite an existing `data/routes.json` that differs (`--overwrite` to discard on purpose) | wiring |
+| `route.route_connectors.authored_routes` (new, opt-in) | a listed route is HELD: no constant-width connector is drawn from it (`north`, until P1's intermediate + P3) | wiring; proven byte-identical (`tests/tools/test_route_connectors_held.py`) |
+| `terrain.grid_grow` (new, opt-in; scripts-v021 `heightfield.py`) | whole cells; `rows_n` must equal `rows_s` (the meta's mid-latitude sets every consumer's column spacing); old nodes sampled by the same float expression | exact; the 37 / 37 / 26 / 0 sizes are the plan's, checked against the north route's kept cells (119.9 m / 120.5 m to spare) |
+| `tier_options.frame.pin` (new, opt-in; `terrain_tiers.Frame.heightfield`) | the meta's recorded `grid_grow` must equal the pin's offsets; the meta's anchor within **1e-6 deg** (+1e-12) of the pinned anchor shifted by whole cells | 1e-6 deg derived: a meta bbox rounded to 6 decimals is within 5e-7 deg of the full-precision value; the margin is the rounding's, not a tuning |
+| `tools/remap_sample_cache.py` (new) identity proof | every cached key at the same lon/lat within **1e-9 deg**; `h_cm` lists byte-identical; 1,000 random old nodes (seed 54) identical sample + position; the re-keyed cache loads under the pinned frame (SampleCache's own 1e-9 m frame check) | 1e-9 deg ⚠ invented (EXPANSION-PLAN P0 step 6; ~0.1 mm, measured float error 1.4e-14) |
+
+**Proven (2026-10-14, all on v0.18.0's installed data, 4a9e66f):**
+
+- `data/routes.json`: `full` / `medium` / `short` re-serialise to md5 `10d26665…` (the v0.18.0 file) and the old
+  file minus its closing brace is a prefix of the new one; `north` re-derives from `tracks/san-diego-lake-murray/data/
+  route.north.spec.json` on `data/osm.expansion.json` (every leg equal to the routes lens's path, 0 edges against a
+  one-way).
+- `heightfield.py`, `grid_grow` absent: fed the installed grid's own values it writes `heightfield.npy` +
+  `heightfield.meta.json` byte for byte; HEAD's and the new `heightfield.py`, fed a sampler keyed on each point's exact
+  float bits, write byte-identical `centerline.elevation.json`, `heightfield.npy`, `heightfield.meta.json`,
+  `elevation_profile.svg`.
+- `heightfield.py`, `grid_grow` 37 / 37 / 26 / 0: 149 x 167 = 24,883 nodes; all 11,439 old nodes sampled at their
+  bit-identical positions (the old block IS the installed grid) and projected by the consumers' formula within
+  1.4e-14 deg of where they were; 13,444 new nodes to fetch.
+- The frame: pin with offsets 0 on the installed meta = today's frame, bit for bit; the pinned frame on the grown meta =
+  the remap tool's new frame, bit for bit (unpinned it would sit 4e-10 m off; re-rounded, up to ~5 cm).
+- `remap_sample_cache` on the installed cache: 723,527 keys + 111,708 fine keys shifted by [+416, −592] (fine [+2080,
+  −2960]); max position change 1.42e-14 deg (all keys), 7.1e-15 deg (fine); `h_cm` byte-identical; 1,000 / 1,000 random
+  nodes identical.
+- `terrain_sample` (offline, scratch copy of the workshop): with the committed config minus D2's two boxes (frame pin 0,
+  `grid_grow`, `route.bbox`, the held `north`) the plan's I / J / h / keep / tris / phys / refine / break arrays equal the
+  installed v0.18.0 `terrain.tiers.json.gz`.

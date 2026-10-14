@@ -1,6 +1,6 @@
 # Lake Murray network expansion: Phase 1 build plan
 
-> **2026-10-13, revision 2. This is a plan only. Nothing is built yet** (committed as the plan of record; Kevin's answers to D1-D4 pending).
+> **2026-10-13, revision 2. This is a plan only. Nothing is built yet** (committed as the plan of record). Kevin answered D1–D4 on 2026-10-13 (ledger 0054). P0, the data with no geometry, was done on a branch on 2026-10-14 (see P0).
 > - The ledger entry is [0054](../../fleet/feedback/0054-lake-murray-network-expansion-waring-mission-gorge-jackson.md). The place facts are in the dossier addendum, [`DOSSIER-EXPANSION-NORTH.md`](DOSSIER-EXPANSION-NORTH.md).
 > - The research ran on 2026-10-12/13 and was read-only on the repo, the workshop and the AC folder. It lives in the session scratchpad `expansion/`, in four lenses plus a revise pass:
 >   - **routes:** fresh OSM, as of 2026-10-12T18:03Z, from the primary Overpass server with TLS verified;
@@ -207,6 +207,20 @@ Each tool is marked **reused** (as-is), **adapted** (opt-in; the existing loop's
 
 ### P0 — Preconditions and data (no geometry)
 
+> **2026-10-14: steps 2–7 done on branch `worktree-wf_c6ab4b42-146-1` (off 4a9e66f, v0.18.0 installed). Not merged. Details and numbers are in ledger 0054, "P0".**
+> - **Step 2:** the parity tests are green.
+> - **Step 3:** `osm.expansion.json` was fetched under the 7-day guard. The guard passed over a mirror that was 78 days stale.
+> - **Step 4:** `north` is appended to routes.json. `full` / `medium` / `short` are byte-identical.
+> - **Step 5:** the config changes are made. `north` is *held* through `route_connectors.authored_routes`, so no 10 m connector is drawn from it before P1/P3.
+> - **Step 6:** `grid_grow` 37/37/26, the frame pin (offsets 0, live) and `tools/remap_sample_cache.py` are proven, and no extra rows are needed. The grown heightfield, the pin's 37/26 and the re-keyed cache are **held for P2, to land in one change**.
+> - **Step 7:** buildings were refetched into `buildings.expansion.cache.json`. The installed `buildings.cache.json` is untouched.
+> - **Research:** copied into `source/expansion/` with provenance.
+> - **New for P2:**
+>   - the D2 far ring plans 139,483 vertices;
+>   - 34,852 3DEP samples are missing;
+>   - the I-8 corridor file is rebuilt online, because it is keyed on the far box.
+> - **Still owed:** step 1, your seat on 0050.
+
 Steps 2–8 can start now on a branch off the 0046 branch, and get rebased after the merge. Only P3 waits for step 1.
 
 1. **v0.18.x is merged and installed, and the 0050 Navajo/Jackson steps are confirmed fixed in your seat.** Jackson north's opening lands in that box, so the expansion must start from the fixed box.
@@ -222,7 +236,7 @@ Steps 2–8 can start now on a branch off the 0046 branch, and get rebased after
    - `route.route_connectors.routes` gains `north`;
    - the terrain `far_extent` becomes [32.755, −117.108, 32.850, −116.998] (D2);
    - the `cowles_mountain` include's north edge moves to 32.828 (D2);
-   - the sidehill clamp is set per road, written in but held until D3 is answered.
+   - ~~the sidehill clamp is set per road, written in but held until D3 is answered.~~ Not needed. D3 was settled by v0.18.0's global `clamp_corridor_m` 20 / `clamp_blend_m` 40, which moves 0 real points on every expansion road (ledger 0054).
 6. **Grow the 40 m heightfield without moving a single old stake.** Think of the ground as survey stakes 40 m apart. Growing it must add stakes on the same spacing; if the grid's anchor moves, every old stake shifts.
    - **adapted `scripts-v021/elevation/heightfield.py`.** Today `build_heightfield` sizes the grid from the loop's own bbox plus 150 m (`:98-115`). No code anywhere reads an extent key: the only mention is the comment at `:189-192`. The change is a new opt-in `terrain.grid_grow` key (`{rows_n, rows_s, cols_w, cols_e}`, whole cells).
    - **How the new grid is laid out.**

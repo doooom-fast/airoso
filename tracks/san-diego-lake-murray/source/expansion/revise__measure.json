@@ -1,0 +1,583 @@
+{
+ "mainline_abs_z": {
+  "1504": 125.43,
+  "1505": 125.36,
+  "1506": 125.3,
+  "1507": 125.25,
+  "1508": 125.2,
+  "1509": 125.16,
+  "1510": 125.12,
+  "1511": 125.1,
+  "1512": 125.08,
+  "1513": 125.07,
+  "1514": 125.07,
+  "1515": 125.08,
+  "1516": 125.1,
+  "1517": 125.13,
+  "1518": 125.16,
+  "1519": 125.21,
+  "1520": 125.26,
+  "1521": 125.32,
+  "1522": 125.39,
+  "1523": 125.46,
+  "2309": 209.09,
+  "2310": 209.17,
+  "2311": 209.24,
+  "2312": 209.31,
+  "2313": 209.38,
+  "2314": 209.44,
+  "2315": 209.51,
+  "2316": 209.58,
+  "2317": 209.64,
+  "2318": 209.7,
+  "2319": 209.76,
+  "2320": 209.82,
+  "2321": 209.87,
+  "2322": 209.93,
+  "2323": 209.98,
+  "2324": 210.03,
+  "2325": 210.08,
+  "2326": 210.13,
+  "2327": 210.18,
+  "2328": 210.22,
+  "2329": 210.27
+ },
+ "profiles": {
+  "W.fwd": {
+   "length_m": 980,
+   "z_start": 125.0,
+   "z_end": 103.9,
+   "z_max": [
+    125.0,
+    0,
+    [
+     -117.06764,
+     32.79385
+    ]
+   ],
+   "z_min": [
+    103.9,
+    980
+   ],
+   "max_grade_pct": [
+    -6.9,
+    70
+   ],
+   "max_grade_first100_pct": -6.9,
+   "max_grade_last100_pct": -1.8,
+   "sustained100_pct": -6.5,
+   "first5": [
+    125.0,
+    124.7,
+    124.5,
+    124.3,
+    124.0
+   ],
+   "last5": [
+    104.1,
+    104.0,
+    104.0,
+    103.9,
+    103.9
+   ]
+  },
+  "P.fwd": {
+   "length_m": 1110,
+   "z_start": 103.9,
+   "z_end": 33.4,
+   "z_max": [
+    103.9,
+    0,
+    [
+     -117.07601,
+     32.79734
+    ]
+   ],
+   "z_min": [
+    33.4,
+    1100
+   ],
+   "max_grade_pct": [
+    -10.2,
+    480
+   ],
+   "max_grade_first100_pct": -3.7,
+   "max_grade_last100_pct": -0.9,
+   "sustained100_pct": -10.0,
+   "first5": [
+    103.9,
+    103.8,
+    103.7,
+    103.6,
+    103.4
+   ],
+   "last5": [
+    33.5,
+    33.4,
+    33.4,
+    33.4,
+    33.4
+   ]
+  },
+  "M.fwd": {
+   "length_m": 2280,
+   "z_start": 33.4,
+   "z_end": 92.4,
+   "z_max": [
+    114.3,
+    1460,
+    [
+     -117.0657,
+     32.81214
+    ]
+   ],
+   "z_min": [
+    33.4,
+    0
+   ],
+   "max_grade_pct": [
+    7.4,
+    365
+   ],
+   "max_grade_first100_pct": 2.6,
+   "max_grade_last100_pct": -1.0,
+   "sustained100_pct": 7.2,
+   "first5": [
+    33.4,
+    33.5,
+    33.5,
+    33.6,
+    33.6
+   ],
+   "last5": [
+    92.4,
+    92.4,
+    92.4,
+    92.3,
+    92.4
+   ]
+  },
+  "J.fwd": {
+   "length_m": 2005,
+   "z_start": 92.4,
+   "z_end": 210.1,
+   "z_max": [
+    210.1,
+    2005,
+    [
+     -117.04598,
+     32.8038
+    ]
+   ],
+   "z_min": [
+    92.2,
+    10
+   ],
+   "max_grade_pct": [
+    7.9,
+    975
+   ],
+   "max_grade_first100_pct": 7.5,
+   "max_grade_last100_pct": 4.2,
+   "sustained100_pct": 7.8,
+   "first5": [
+    92.4,
+    92.3,
+    92.2,
+    92.3,
+    92.4
+   ],
+   "last5": [
+    209.9,
+    209.9,
+    210.0,
+    210.1,
+    210.1
+   ]
+  },
+  "J.rev": {
+   "length_m": 2015,
+   "z_start": 210.1,
+   "z_end": 92.6,
+   "z_max": [
+    210.1,
+    0,
+    [
+     -117.04598,
+     32.8038
+    ]
+   ],
+   "z_min": [
+    92.2,
+    1985
+   ],
+   "max_grade_pct": [
+    -9.2,
+    1830
+   ],
+   "max_grade_first100_pct": -4.3,
+   "max_grade_last100_pct": -7.2,
+   "sustained100_pct": -8.0,
+   "first5": [
+    210.1,
+    210.1,
+    210.0,
+    210.0,
+    209.9
+   ],
+   "last5": [
+    92.4,
+    92.5,
+    92.5,
+    92.5,
+    92.6
+   ]
+  },
+  "M.rev": {
+   "length_m": 2275,
+   "z_start": 92.6,
+   "z_end": 33.7,
+   "z_max": [
+    114.3,
+    830,
+    [
+     -117.06588,
+     32.8122
+    ]
+   ],
+   "z_min": [
+    33.7,
+    2275
+   ],
+   "max_grade_pct": [
+    -7.4,
+    1500
+   ],
+   "max_grade_first100_pct": 1.2,
+   "max_grade_last100_pct": -2.5,
+   "sustained100_pct": -7.2,
+   "first5": [
+    92.6,
+    92.6,
+    92.6,
+    92.6,
+    92.6
+   ],
+   "last5": [
+    33.9,
+    33.8,
+    33.8,
+    33.7,
+    33.7
+   ]
+  },
+  "P.rev": {
+   "length_m": 1140,
+   "z_start": 33.7,
+   "z_end": 103.9,
+   "z_max": [
+    103.9,
+    1135,
+    [
+     -117.07596,
+     32.79729
+    ]
+   ],
+   "z_min": [
+    33.4,
+    30
+   ],
+   "max_grade_pct": [
+    10.4,
+    645
+   ],
+   "max_grade_first100_pct": -0.8,
+   "max_grade_last100_pct": 2.6,
+   "sustained100_pct": 10.0,
+   "first5": [
+    33.7,
+    33.6,
+    33.5,
+    33.5,
+    33.4
+   ],
+   "last5": [
+    103.7,
+    103.8,
+    103.9,
+    103.9,
+    103.9
+   ]
+  },
+  "W.rev": {
+   "length_m": 960,
+   "z_start": 103.9,
+   "z_end": 124.1,
+   "z_max": [
+    124.1,
+    960,
+    [
+     -117.0678,
+     32.79375
+    ]
+   ],
+   "z_min": [
+    103.9,
+    0
+   ],
+   "max_grade_pct": [
+    6.0,
+    820
+   ],
+   "max_grade_first100_pct": 1.8,
+   "max_grade_last100_pct": 5.8,
+   "sustained100_pct": 5.8,
+   "first5": [
+    103.9,
+    104.0,
+    104.0,
+    104.0,
+    104.1
+   ],
+   "last5": [
+    123.1,
+    123.4,
+    123.7,
+    124.0,
+    124.1
+   ]
+  }
+ },
+ "junction_3dep_m": {
+  "J1": 124.9,
+  "J2": 103.9,
+  "J3": 33.4,
+  "J4": 92.4,
+  "J5": 209.9
+ },
+ "terrain_frame_offsets": {
+  "waring.fwd": {
+   "start_offset_m": 95,
+   "start_miss_m": 0.4,
+   "end_short_m": 75,
+   "terrain_len": 812.8,
+   "node_len": 980
+  },
+  "waring.rev": {
+   "start_offset_m": 70,
+   "start_miss_m": 2.1,
+   "end_short_m": 95,
+   "terrain_len": 797.0,
+   "node_len": 960
+  },
+  "princess_view.fwd": {
+   "start_offset_m": 80,
+   "start_miss_m": 0.9,
+   "end_short_m": 80,
+   "terrain_len": 952.8,
+   "node_len": 1110
+  },
+  "princess_view.rev": {
+   "start_offset_m": 95,
+   "start_miss_m": 0.9,
+   "end_short_m": 90,
+   "terrain_len": 952.8,
+   "node_len": 1140
+  },
+  "mission_gorge.fwd": {
+   "start_offset_m": 65,
+   "start_miss_m": 0.1,
+   "end_short_m": 90,
+   "terrain_len": 2127.0,
+   "node_len": 2280
+  },
+  "mission_gorge.rev": {
+   "start_offset_m": 70,
+   "start_miss_m": 2.1,
+   "end_short_m": 65,
+   "terrain_len": 2138.6,
+   "node_len": 2275
+  },
+  "jackson_north.fwd": {
+   "start_offset_m": 50,
+   "start_miss_m": 1.6,
+   "end_short_m": 85,
+   "terrain_len": 1870.8,
+   "node_len": 2005
+  },
+  "jackson_north.rev": {
+   "start_offset_m": 80,
+   "start_miss_m": 1.3,
+   "end_short_m": 70,
+   "terrain_len": 1864.1,
+   "node_len": 2015
+  }
+ },
+ "mouths": {
+  "waring_J1": {
+   "waring_heading_deg": 320.9,
+   "NE(right)@13.25": {
+    "vertex": 1520.55,
+    "xz": [
+     -1970.4,
+     622.6
+    ]
+   },
+   "SW(left)@13.25": {
+    "vertex": 1514.23,
+    "xz": [
+     -1988.8,
+     603.2
+    ]
+   },
+   "NE(right)@13.5": {
+    "vertex": 1520.63,
+    "xz": [
+     -1970.2,
+     622.7
+    ]
+   },
+   "SW(left)@13.5": {
+    "vertex": 1514.18,
+    "xz": [
+     -1988.9,
+     602.9
+    ]
+   },
+   "NE_corner_angle_deg": 98.8,
+   "NE_return_R20": {
+    "tangent_m": 17.1,
+    "ends_at_vertex": 1525.65
+   },
+   "NE_return_R30": {
+    "tangent_m": 25.7,
+    "ends_at_vertex": 1528.46
+   },
+   "NE_return_R40": {
+    "tangent_m": 34.3,
+    "ends_at_vertex": 1531.58
+   },
+   "edge_spacing_m_1506_1525": [
+    3.44,
+    3.44,
+    3.49,
+    3.65,
+    4.0,
+    4.62,
+    5.48,
+    6.15,
+    5.98,
+    5.22,
+    4.47,
+    3.96,
+    3.66,
+    3.51,
+    3.45,
+    3.42,
+    3.4,
+    3.36,
+    3.3
+   ]
+  },
+  "jackson_J5": {
+   "jackson_heading_deg": 321.5,
+   "right": null,
+   "left": {
+    "vertex": 2314.81,
+    "xz": [
+     35.7,
+     1729.8
+    ],
+    "corner_angle_deg": 93.9,
+    "return_R8": {
+     "tangent_m": 7.5,
+     "ends_at_vertex": 2316.67
+    },
+    "return_R12": {
+     "tangent_m": 11.2,
+     "ends_at_vertex": 2317.47
+    }
+   },
+   "centre_hits_edge_at_vertex": 2317.73,
+   "edge_spacing_m_2311_2328": [
+    3.18,
+    3.28,
+    3.42,
+    3.61,
+    3.9,
+    4.33,
+    4.92,
+    5.44,
+    5.49,
+    5.06,
+    4.55,
+    4.18,
+    3.94,
+    3.73,
+    3.47,
+    3.14,
+    2.79
+   ]
+  }
+ },
+ "kerbs_L": [
+  {
+   "apex": 1514,
+   "side": "L",
+   "kind": "outside",
+   "i": 1507,
+   "j": 1520,
+   "wraps": false,
+   "R_apex_m": 10.47,
+   "D_deg": -91.7,
+   "extension_m": 20.9,
+   "clipped_from": [
+    1501,
+    1526
+   ],
+   "clip": {
+    "by": [
+     "race_cw"
+    ],
+    "stations_removed": [
+     52,
+     51
+    ]
+   }
+  },
+  {
+   "apex": 2319,
+   "side": "L",
+   "kind": "outside",
+   "i": 2312,
+   "j": 2327,
+   "wraps": false,
+   "R_apex_m": 9.76,
+   "D_deg": -105.72,
+   "extension_m": 19.5,
+   "clipped_from": [
+    2306,
+    2333
+   ],
+   "clip": {
+    "by": [
+     "race_cw"
+    ],
+    "stations_removed": [
+     52,
+     49
+    ]
+   }
+  }
+ ],
+ "pins": [
+  777,
+  1506,
+  1521,
+  2311,
+  2328,
+  3289,
+  3304,
+  4454
+ ]
+}

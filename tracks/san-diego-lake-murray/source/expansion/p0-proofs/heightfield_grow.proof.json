@@ -1,0 +1,98 @@
+{
+ "A_grid_grow_absent_reproduces_installed": {
+  "npy_byte_identical": true,
+  "meta_byte_identical": true,
+  "nx": 123,
+  "ny": 93
+ },
+ "B_head_vs_new_bit_positions": {
+  "centerline.elevation.json": true,
+  "heightfield.npy": true,
+  "heightfield.meta.json": true,
+  "elevation_profile.svg": true
+ },
+ "C_grid_grow_37_37_26": {
+  "meta": {
+   "bbox_swne": [
+    32.75864966666666,
+    -117.08070806805426,
+    32.818620333333335,
+    -117.017103
+   ],
+   "nx": 149,
+   "ny": 167,
+   "grid_grow": {
+    "rows_n": 37,
+    "rows_s": 37,
+    "cols_w": 26,
+    "cols_e": 0
+   },
+   "base_bbox_swne": [
+    32.771983,
+    -117.069563,
+    32.805287,
+    -117.017103
+   ]
+  },
+  "nodes": 24883,
+  "old_block_equals_installed_npy": true,
+  "old_nodes_missing_their_position": 0,
+  "new_nodes_to_fetch": 13444,
+  "random_1000_old_nodes_max_projected_diff_deg": 1.4210854715202004e-14,
+  "all_old_nodes_max_projected_diff_deg": 1.4210854715202004e-14,
+  "frame_today": [
+   -2145.069457044939,
+   1877.7042725040178,
+   2.5096704987920786,
+   2.4977803755637766
+  ],
+  "frame_pin_offsets0_installed_meta": [
+   -2145.069457044939,
+   1877.7042725040178,
+   2.5096704987920786,
+   2.4977803755637766
+  ],
+  "pin0_equals_today_bitwise": true,
+  "frame_grown_pinned": [
+   -3189.092384542444,
+   3356.3902548377737,
+   2.5096704987920786,
+   2.4977803755637766
+  ],
+  "remap_new_frame": [
+   -3189.092384542444,
+   3356.3902548377737,
+   2.5096704987920786,
+   2.4977803755637766
+  ],
+  "pinned_grown_equals_remap_frame": true,
+  "frame_grown_unpinned_minus_pinned_m": [
+   4.192770575173199e-10,
+   2.3101165425032377e-10,
+   0.0,
+   0.0
+  ]
+ },
+ "D_north_route_kept_cells": {
+  "kept_cells": 1617,
+  "outside_grown_grid": 0,
+  "margins_m": {
+   "north_margin_m": 119.9,
+   "south_margin_m": 3816.6,
+   "west_margin_m": 120.5,
+   "east_margin_m": 2650.2
+  },
+  "furthest_north_lat": 32.81753925225225,
+  "furthest_west_lon": -117.07942209866339,
+  "half_widths_m": {
+   "Waring Road": 13.75,
+   "Princess View Drive": 14.0,
+   "Mission Gorge Road": 16.5,
+   "Jackson Drive": 13.0,
+   "College Avenue": 15.0
+  },
+  "within_m": 18.0,
+  "keep_cell_m": 20.0
+ },
+ "PASS": true
+}

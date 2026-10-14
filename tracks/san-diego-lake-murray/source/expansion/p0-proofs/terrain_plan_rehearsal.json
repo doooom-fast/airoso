@@ -1,0 +1,95 @@
+{
+ "A_head_config": {
+  "rc": 0,
+  "log_tail": [
+   "[terrain] topology: 268976 vertices, 530521 triangles (physical 163104 v / far 106959 v), leaves {'5.0': 107568, '20.0': 40645, '40.0': 28176} (4 s)",
+   "[terrain] break lines: {'cells_eligible': 53072, 'edges_read': 10036, 'break_cells': 6570, 'extra_vertices': 5157, 'triangles': 23454, 'corner_nodes': 13159, 'corners': 'filtered'}",
+   "[terrain] anti-aliased 240144 finest-level nodes (tent, 9 taps): |filtered - point| median 0.030 m, p99 0.50 m, max 2.34 m",
+   "[terrain] wrote terrain.tiers.json.gz: 268976 vertices, 3DEP 19.7..484.3 m (13 s total)"
+  ],
+  "same_as_workshop_v018": {
+   "I": true,
+   "J": true,
+   "h": true,
+   "keep": true,
+   "tris": true,
+   "phys": true
+  },
+  "refine_same": true,
+  "break_same": true,
+  "frame": [
+   -2145.069457044939,
+   1877.7042725040178,
+   2.5096704987920786,
+   2.4977803755637766
+  ],
+  "stats": {
+   "vertices": 268976,
+   "triangles": 540835,
+   "leaves_by_cell_m": {
+    "5.0": 107568,
+    "20.0": 40645,
+    "40.0": 28176
+   },
+   "kept_cells": 3499,
+   "kept_vertices": 11148,
+   "refine_cells": 34036,
+   "refine_nodes": 76926,
+   "physical_vertices": 163104,
+   "far_vertices": 106959,
+   "physical_triangles": 319152,
+   "far_triangles": 221683,
+   "break_extra_vertices": 5157
+  }
+ },
+ "B_new_config_without_D2": {
+  "rc": 0,
+  "log_tail": [
+   "[terrain] topology: 268976 vertices, 530521 triangles (physical 163104 v / far 106959 v), leaves {'5.0': 107568, '20.0': 40645, '40.0': 28176} (4 s)",
+   "[terrain] break lines: {'cells_eligible': 53072, 'edges_read': 10036, 'break_cells': 6570, 'extra_vertices': 5157, 'triangles': 23454, 'corner_nodes': 13159, 'corners': 'filtered'}",
+   "[terrain] anti-aliased 240144 finest-level nodes (tent, 9 taps): |filtered - point| median 0.030 m, p99 0.50 m, max 2.34 m",
+   "[terrain] wrote terrain.tiers.json.gz: 268976 vertices, 3DEP 19.7..484.3 m (13 s total)"
+  ],
+  "same_as_workshop_v018": {
+   "I": true,
+   "J": true,
+   "h": true,
+   "keep": true,
+   "tris": true,
+   "phys": true
+  },
+  "refine_same": true,
+  "break_same": true,
+  "frame": [
+   -2145.069457044939,
+   1877.7042725040178,
+   2.5096704987920786,
+   2.4977803755637766
+  ],
+  "stats": {
+   "vertices": 268976,
+   "triangles": 540835,
+   "leaves_by_cell_m": {
+    "5.0": 107568,
+    "20.0": 40645,
+    "40.0": 28176
+   },
+   "kept_cells": 3499,
+   "kept_vertices": 11148,
+   "refine_cells": 34036,
+   "refine_nodes": 76926,
+   "physical_vertices": 163104,
+   "far_vertices": 106959,
+   "physical_triangles": 319152,
+   "far_triangles": 221683,
+   "break_extra_vertices": 5157
+  }
+ },
+ "C_new_config_offline": {
+  "rc": 1,
+  "log_tail": [
+   "[terrain] --offline: corridor.i8.json missing or stale (inputs changed)"
+  ]
+ },
+ "samples_cache_untouched": true
+}

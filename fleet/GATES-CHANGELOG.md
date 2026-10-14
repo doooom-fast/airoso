@@ -1870,3 +1870,39 @@ J5 still reads 8 samples of the host's OWN sheet "over" it (v0.18.0 without a mo
 other sheet. Every drive_test / audit key of the three existing layouts equal to v0.18.0's (street soft top 33, severe 0,
 kinks 3.41; audits 53 / 53 / 53), severe under v0.18.0's rule 22 / 20 unchanged; no_route BUILT PASS both Speedways
 (0 / 434 probes); verify_fold_fans PASS. Details: ledger 0054 "P1 fix round", `p1-proofs/rehearsal_result_fixround.json`.
+
+## 2026-10-14 — Lake Murray expansion P2: the grown heightfield in one change, `planned_pavement`, 0046 criterion 3 restated, the cut-wall and V7 measures (ledger 0054)
+
+No gate threshold is loosened. One criterion is restated (the plan's step 5) by adding a guard while keeping the old
+ones. One V7 row is re-worded, because fresh 3DEP fails its first wording too. Every new key is opt-in. With the keys
+absent every output is the old one, byte for byte (tests).
+
+| Item | Value | Flag |
+|---|---|---|
+| `tools/grow_heightfield.py` (new) | `build_heightfield`'s own layout. Every old node is looked up at its EXACT float position in the installed grid. The ungrown layout must re-derive the installed meta, else it refuses. New nodes come from `usgs_3dep._sample_batch` (TLS, 4 tries; a no-data point aborts, never filled). Also refuses: no `grid_grow`, an already-grown meta, `elevation_scale` ≠ 1, any fetch under `--offline` | exact; no tolerance |
+| `tier_options.frame.pin` | rows_n **37** / cols_w **26**, the same change as the grown grid and the re-keyed cache (P0's held step) | the plan's sizes (P0) |
+| `terrain.tier_options.planned_pavement` (new, opt-in; `terrain_tiers.Topology(plan_lines=)`, `terrain_sample.planned_inputs`) | an authored intermediate's pieces (half-width = the WIDER curb offset), pad outlines and stub pavements (rings of zero width) mark the tiers and the physical ground (pockets included) like built pavement. Never keep_cells / refine / break lines / clamp / feather. Its file joins the plan's `inputs_md5` (planner and assembler) | the wider curb: never under-marks [invented choice, conservative] |
+| `scenery.scatter(index_offset=)` (scripts-v021; build_loop_blend passes 2 × the meta's `grid_grow` rows_n / cols_w) | each node's jitter and pick hashed on its UNGROWN (row, col) | exact; (0, 0) = today's |
+| `make_treefx` density fill on a grown grid | the loop's own cells only, numbered as the ungrown grid numbered them; the added cells plant nothing until P4 / A9 | wiring; rehearsal `trees.txt` = v0.18.0's, md5 b476f62e |
+| ship chain sync-in | airoso's `data/heightfield.npy` + `.meta.json` into the workshop (ship_sd.sh with `expansion.north.json`; ship.json `sync_in.optional`) | wiring |
+| **0046 criterion 3, restated** (ledger 0046 "Criterion 3's low clause restated") | (i) NEW: no terrain vertex more than **2 m** under the 3DEP value at its own position (its point sample, or a finest-level vertex's anti-aliasing tent), beyond the graded near-road band (**36 m** of a built pavement = keep_surface_m 20 + keep_feather_m 16, and the ground_release zones); (ii) KEPT: below 100 m abs, none more than 3 m under the 3DEP point; the far ring within 1 m (criterion 6); (iii) KEPT: none below 15.52 m | 2 m: EXPANSION-PLAN P2 step 5 ⚠ invented; 36 m: criterion 7's own band; the tent reference is fix round 2's filter. Not loosened: (i) adds a guard, (ii) and (iii) unchanged. The plan's "2 m everywhere" fails on v0.18.0 itself, by design: 21,189 graded near-road vertices, worst 16.3 m; one ridge vertex anti-aliased 2.34 m under its point |
+| V7 "Kwaay Paay from Jackson s 550: visible, 8.0 ± 0.5°", **re-worded** | the summit judged as a **150 m** cone (nothing more than 150 m short of the top stands higher) instead of sightline_check's 60 m (Cowles') | 150 m ⚠ invented. Fresh 3DEP fails the 60 m wording too: the dome's own shoulder, 90 m short of the top, reads 8.075° over the cone's 8.046° |
+| V7 cut walls (EXPANSION-PLAN step 3 / V7) | 12-20 m from the centreline every 5 m, against fresh 3DEP: a real wall ≥ 3 m is LOST when the built (P3-projected graded) ground keeps under **half** of it; ≥ 50 m of lost wall = a hand-authored cut slope | 3 m / 50 m: the plan's; "under half" ⚠ invented |
+| P2's "loop ground unchanged" | every v0.18.0 1GRASS vertex within 150 m of a road, and back: |Δy| ≤ **0.05 m** except beside the two weld mouths (the plan's named exception) | 0.05 m: the plan's (invented there) |
+
+**Proven (2026-10-14; ledger 0054 "P2", `tracks/san-diego-lake-murray/source/expansion/p2-proofs/`):**
+- The planner on v0.18.0's config reproduces the installed plan array for array: 268,976 + 5,157 break-line vertices.
+- On the grown grid and the re-keyed cache, without D2 and `planned_pavement`, the plan is v0.18.0's with every key
+  shifted by (+416, −592) and every value identical (positions within 1e-12 m).
+- The committed grid's old block, written back, is v0.18.0's grid, md5 35ce2b92 / 1e14cf9c.
+- The full `ship_sd.sh --no-install` rehearsal, on a fresh scratch workshop and a fresh engine-july copy:
+  - the three existing layouts' drive_test, verify_mouths, verify_fold_fans, no_route, barrier_bands and race_verify
+    files are byte-identical to v0.18.0's. Street: soft top 33, severe 0, kinks 3.41 /km, audit 53. Race: severe
+    22 / 20, barrier_missing 0, audits 53 / 53;
+  - rib_check and house_seat PASS;
+  - the loop's ground within 150 m is |Δy| 0.000 m except beside J1 / J5: 37 + 1,429 vertices, max 1.68 m, all within
+    85 m of the planned pavement;
+  - 1GRASS is 8 tiles (max 58,612) and GRASS_FAR 4 (max 40,314); 0 open tier seams; the far ring is ≤ 0.85 m off 3DEP;
+  - V7 passes, with Kwaay Paay as re-worded; facets 20-60 m from the planned pavement have p90 5.02 m;
+  - criterion 3 as restated has 0 offenders on both v0.18.0 and the rehearsal;
+  - the road kn5 is 125.0 MB.

@@ -278,13 +278,23 @@ def plan(project_dir, all_species=False, verbose=False):
         sub = int(sp // FILL_STEP_M)
         fill = {z: [] for z in ("fill_yard_trees", "fill_yard_bushes", "fill_slope_trees", "fill_slope_bushes")}
         n_tree = n_bush = 0
-        k = 0
+        # a grid grown by whole cells (heightfield grid_grow, ledger 0054 P2) fills the loop's OWN cells only, numbered
+        # exactly as the ungrown grid numbered them: every hash - jitter, pick, thinning - and the candidate count the
+        # caps thin by are the ones they always were, so the loop's trees do not move. The added cells get their planting
+        # with the north roads (EXPANSION-PLAN P4 / A9: zones, caps scaled by area). No grid_grow: today's loop, bit for bit.
+        gg = meta.get("grid_grow") or {}
+        rn, cw = int(gg.get("rows_n", 0)), int(gg.get("cols_w", 0))
+        ny0, nx0 = ny - rn - int(gg.get("rows_s", 0)), nx - cw - int(gg.get("cols_e", 0))
         for j in range(ny - 1):
             for i in range(nx - 1):
+                jb, ib = j - rn, i - cw
+                if not (0 <= jb < ny0 - 1 and 0 <= ib < nx0 - 1):
+                    continue
+                cell_no = jb * (nx0 - 1) + ib
                 p00, p10, p01, p11 = grid_xyz(j, i), grid_xyz(j, i + 1), grid_xyz(j + 1, i), grid_xyz(j + 1, i + 1)
                 for a in range(sub):
                     for b in range(sub):
-                        k += 1
+                        k = cell_no * sub * sub + a * sub + b + 1
                         u = (a + 0.2 + 0.6 * _hash(k, 5)) / sub
                         v = (b + 0.2 + 0.6 * _hash(k, 6)) / sub
                         x = p00[0] + (p10[0] - p00[0]) * u + (p01[0] - p00[0]) * v

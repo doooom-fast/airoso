@@ -142,8 +142,10 @@ step "sync inputs airoso -> workshop ($PROJ)"
 cp "$SRC/track.config.json" "$PROJ/track.config.json"
 cp "$SRC/start_positions.json" "$PROJ/start_positions.json"
 # ledger 0054 P1: the authored intermediate of the north network (tools/author_expansion.py) — route_connectors reads it
-# through route_connectors.authored_routes / authored_take
-for f in centerline.raw.local.json.pre-median connectors.local.json.pre-trim expansion.north.json; do
+# through route_connectors.authored_routes / authored_take; P2: terrain_sample plans the tiers + physical ground over it
+# (terrain.tier_options.planned_pavement). P2 also grew the 40 m heightfield by whole cells (tools/grow_heightfield.py,
+# terrain.grid_grow + tier_options.frame.pin): airoso's heightfield.npy + .meta.json are the source of truth, synced in
+for f in centerline.raw.local.json.pre-median connectors.local.json.pre-trim expansion.north.json heightfield.npy heightfield.meta.json; do
   [ -f "$SRC/data/$f" ] && cp "$SRC/data/$f" "$PROJ/data/$f"
 done
 # ledger 0046: the 3DEP cache + the I-8 corridor (data with provenance, L2) — a fresh workshop never re-fetches them

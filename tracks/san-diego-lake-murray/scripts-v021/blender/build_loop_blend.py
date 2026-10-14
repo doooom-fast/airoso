@@ -210,6 +210,10 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
         files.append(data / "connectors.local.json")
     if (data / "heightfield.meta.json").exists():
         files.append(data / "heightfield.meta.json")
+    # ledger 0054 P2: tier_options.planned_pavement's intermediates planned the tiers + physical ground too (never the
+    # kept cells, the clamp or the feather below: those follow the built roads in road_lines)
+    for rel in ((cfg.get("terrain") or {}).get("tier_options") or {}).get("planned_pavement", {}).get("files", []):
+        files.append(proj / rel)
     now = {f.name: hashlib.md5(f.read_bytes()).hexdigest() for f in files}
     if now != T["inputs_md5"]:
         raise SystemExit(f"[blend] data/terrain.tiers.json.gz was planned on other road inputs ({T['inputs_md5']} "
@@ -983,7 +987,9 @@ def main():
     #     and buries the ribbon), then clamp to ±band so there are no fake mountains ---
     grid = read_npy(data / "heightfield.npy")
     meta = json.loads((data / "heightfield.meta.json").read_text())
+    _grow = meta.get("grid_grow") or {}                                 # ledger 0054: whole cells added N / W
     grid, meta = ribbon.upsample_grid(grid, meta, 2)                      # 40 m -> 20 m facets
+    _grow_rc = (2 * int(_grow.get("rows_n", 0)), 2 * int(_grow.get("cols_w", 0)))   # in 20 m rows / cols
     grid_xyz = project_grid(grid, meta, lon0, lat0, elev0)
     # connectors climb the Del Cerro hill (~40 m above the loop) — the terrain MUST conform + clamp to them
     # too, or the hill ground is clamped down to the loop grade and the connector ribbon floats over a void.
@@ -1058,7 +1064,8 @@ def main():
         scen, ntree, nscrub = scenery.scatter(
             grid_xyz, centerline, widths,
             tree_pct=int(_scn.get("tree_pct", 40)) if _scn.get("scatter_trees") else 0,
-            scrub_pct=int(_scn.get("scrub_pct", 26)) if _scn.get("scatter_scrub") else 0)
+            scrub_pct=int(_scn.get("scrub_pct", 26)) if _scn.get("scatter_scrub") else 0,
+            index_offset=_grow_rc)     # a grown grid keeps every old node's jitter and pick (ledger 0054 P2)
         print(f"[blend] scenery: {ntree} shade trees + {nscrub} scrub (all placed off-road)")
 
     # --- fresh scene ---

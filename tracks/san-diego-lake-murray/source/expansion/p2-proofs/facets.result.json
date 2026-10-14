@@ -1,0 +1,16 @@
+{
+ "planned_pavement_20_60m": {
+  "triangles": 80427,
+  "p50": 5.0,
+  "p90": 5.02,
+  "max": 5.02
+ },
+ "loop_roads_20_60m": {
+  "triangles": 154675,
+  "p50": 5.02,
+  "p90": 5.02,
+  "max": 28.33
+ },
+ "threshold_p90_m": 7.0,
+ "pass": true
+}

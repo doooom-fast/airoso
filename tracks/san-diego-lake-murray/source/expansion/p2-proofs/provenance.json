@@ -1,0 +1,95 @@
+{
+ "ledger": "0054 P2",
+ "date": "2026-10-14",
+ "rehearsal": "tools/ship_sd.sh --no-install on a fresh scratch copy of the v021 workshop (SHIP_PROJ), AIROSO = branch worktree-wf_c6ab4b42-146-1, ENG = a fresh engine-july copy; v0.18.0 references: the installed workshop's data/track*.obj and tracks/san-diego-lake-murray/data/*.json at 4a9e66f",
+ "files": {
+  "baseline.py": {
+   "sha256": "d7ae8a79d4c1f554b7b1ab8f009056806ad62d565596ef3284bf71d970452d92",
+   "what": "step 1: the planner, offline, on v0.18.0's config (and the branch's minus D2) reproduces the installed plan"
+  },
+  "baseline.result.json": {
+   "sha256": "00a01399696a78b32740af59dfbc3bf8f205d35432281b4af040456e0c10276f",
+   "what": "result of the script of the same stem, on the 2026-10-14 P2 rehearsal (scratch workshop copy, full ship_sd.sh --no-install)"
+  },
+  "compare_gates.result.json": {
+   "sha256": "3a60a90e9d61631a09a5ae3889c70e8590f63a3e3d834831f3839b2f3eb5795c",
+   "what": "result of the script of the same stem, on the 2026-10-14 P2 rehearsal (scratch workshop copy, full ship_sd.sh --no-install)"
+  },
+  "cut_walls.py": {
+   "sha256": "b0110d43495649360f59248dc0104ef06b50d1840237fb49ebe9ca0b5a7accaa",
+   "what": "step 3: walls 12-20 m off Mission Gorge s 1115-J4 and Jackson north, P3's graded ground vs fresh 3DEP"
+  },
+  "cut_walls.result.json": {
+   "sha256": "8a0b9ffad590fcbb4281764c19207d720108866bcf70301c9d41d0af2dae0e65",
+   "what": "result of the script of the same stem, on the 2026-10-14 P2 rehearsal (scratch workshop copy, full ship_sd.sh --no-install)"
+  },
+  "cut_walls.samples.json.gz": {
+   "sha256": "f9b995256001694befe8c1c7fcf427237fcec333c4a37ab7916d27929668762a",
+   "what": "fresh 3DEP at the cut-wall transects (TLS), cache of cut_walls.py"
+  },
+  "facets.result.json": {
+   "sha256": "ac05b2eaf3b563258471e905706c494243e11b5ff624cb125df1293851c4dfdf",
+   "what": "result of the script of the same stem, on the 2026-10-14 P2 rehearsal (scratch workshop copy, full ship_sd.sh --no-install)"
+  },
+  "facets_check.py": {
+   "sha256": "bcec1c20a3fb91c7a437e055bd839f55a6aa7de0046ddf8affddd75f2ea10a29",
+   "what": "V7 facets 20-60 m from the planned pavement (planned lattice)"
+  },
+  "heightfield.grow.proof.json": {
+   "sha256": "f040e8c8af502f55abce190bac0f2b9c8ad0e05204478ce139555832fc548597",
+   "what": "tools/grow_heightfield.py's proof (old block = installed, 13,444 new nodes from 3DEP)"
+  },
+  "low_clause.py": {
+   "sha256": "9907fcf6b8ae7a263f7f9d90b138d36a6f552ace3e2d1de0d1abbe5b87c44c49",
+   "what": "step 5: 0046 criterion 3 as restated, on a built gate OBJ (fresh 3DEP at vertices without a sample)"
+  },
+  "low_rehearsal.result.json": {
+   "sha256": "9bb4b866249ae5fa06556a54c27fcc95e977555312231fd885ca063e93f94c86",
+   "what": "result of the script of the same stem, on the 2026-10-14 P2 rehearsal (scratch workshop copy, full ship_sd.sh --no-install)"
+  },
+  "low_v018.result.json": {
+   "sha256": "9e01a4e09708c58049dae51f14002206b9388754cc3941cd1e54b3375b921eb5",
+   "what": "result of the script of the same stem, on the 2026-10-14 P2 rehearsal (scratch workshop copy, full ship_sd.sh --no-install)"
+  },
+  "measure_ground.py": {
+   "sha256": "4b15ffd7e3394d4f16567ff12e2221d64a726db450e2157c2c90e7b22d636907",
+   "what": "Blender: the loop's ground within 150 m vs v0.18.0, open tier seams, far ring vs 3DEP, tiles"
+  },
+  "measure_ground.result.json": {
+   "sha256": "c79f24674b3f00599ae0ce14e72408b2e9b18b73779689c47d71ff103b9f392f",
+   "what": "result of the script of the same stem, on the 2026-10-14 P2 rehearsal (scratch workshop copy, full ship_sd.sh --no-install)"
+  },
+  "measure_v7.py": {
+   "sha256": "c89c768c93978a999c9c65df3dd611e05f8b9e0a0f6e20caf12f7aebab287f39",
+   "what": "V7 sightlines on the built terrain and on fresh 3DEP along the same rays"
+  },
+  "plan_check.py": {
+   "sha256": "d4f10741a70cbbe9b93c3e4349e930489c84ca1bdbb15558f5e9a049453e1323",
+   "what": "after the one change: without D2 / planned_pavement the grown plan is v0.18.0's shifted by whole cells; the P2 topology"
+  },
+  "plan_check.result.json": {
+   "sha256": "78148b938ff594ca57785727121186b538b678d3a1a99c07cba433cf77605e56",
+   "what": "result of the script of the same stem, on the 2026-10-14 P2 rehearsal (scratch workshop copy, full ship_sd.sh --no-install)"
+  },
+  "remap_sample_cache.proof.json": {
+   "sha256": "709be0bc139b19202da8e9cd66f6c3c0c346e1af2ada42bcabc3f6970d0b239f",
+   "what": "tools/remap_sample_cache.py's identity proof (rows_n 37 / cols_w 26)"
+  },
+  "render_views.py": {
+   "sha256": "f8cc51e3664c12bfcd1ed636e2f14bfa609cc68df49a5c1b91fc532be8448615",
+   "what": "step 6: the four preview stills on the built gate OBJ"
+  },
+  "stills_views.jpg": {
+   "sha256": "e9a6e7773af2010c8867e57d09582f53260f90b7eb779e055b96a86bf39812fa",
+   "what": "step 6: the four stills (contact sheet)"
+  },
+  "v7.result.json": {
+   "sha256": "ed751e1ef4c0281bc8ee70dc086e2d8990bbceb938fdebe42da224442d88eb69",
+   "what": "result of the script of the same stem, on the 2026-10-14 P2 rehearsal (scratch workshop copy, full ship_sd.sh --no-install)"
+  },
+  "v7_world.samples.json.gz": {
+   "sha256": "38524ad0a036c4cd909849bf727de9baddbd04383e7da9ae6ad9c8d75fed7f83",
+   "what": "fresh 3DEP along the V7 rays (TLS), cache of measure_v7.py"
+  }
+ }
+}

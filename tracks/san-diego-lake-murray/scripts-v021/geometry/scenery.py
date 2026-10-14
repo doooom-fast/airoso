@@ -79,10 +79,14 @@ def _add_blob(cx, cy, cz, r, mesh, *, squash=1.0, seed=0, rings=4, seg=7):
 
 def scatter(grid_xyz, centerline, widths, *, tree_pct=40, scrub_pct=26,
             tree_band=(6.0, 22.0), scrub_band=(24.0, 95.0),
-            tree_cap=450, scrub_cap=1000):
+            tree_cap=450, scrub_cap=1000, index_offset=(0, 0)):
     """Walk the terrain grid; for each cell (jittered) place a shade tree in the near off-road ring or a
     scrub bush further out, gated by distance past the road edge. Returns
-    ({'TREETRUNK':..,'TREECANOPY':..,'SCRUB':..}, n_trees, n_scrub)."""
+    ({'TREETRUNK':..,'TREECANOPY':..,'SCRUB':..}, n_trees, n_scrub).
+
+    ``index_offset`` (rows, cols; ledger 0054 P2): a grid grown by whole cells (heightfield ``grid_grow``) passes the
+    rows / columns it added north / west, so every node keeps the jitter and pick it had in the loop's own grid (its
+    hash is taken on the ungrown indices) and the scatter near the loop stays put. (0, 0): today's, bit for bit."""
     nearest = _road_dist_fn(centerline, widths)
     trunk = {"vertices": [], "tris": [], "uvs": []}
     canopy = {"vertices": [], "tris": [], "uvs": []}
@@ -92,7 +96,7 @@ def scatter(grid_xyz, centerline, widths, *, tree_pct=40, scrub_pct=26,
     for r in range(ny):
         for c in range(nx):
             x, y, z = grid_xyz[r][c]
-            hh = (r * 9277 + c * 2953) % 1000
+            hh = ((r - index_offset[0]) * 9277 + (c - index_offset[1]) * 2953) % 1000
             px = x + ((hh % 7) - 3) * 1.4
             pz = z + (((hh // 7) % 7) - 3) * 1.4
             off = nearest(px, pz)[0] - nearest(px, pz)[1]

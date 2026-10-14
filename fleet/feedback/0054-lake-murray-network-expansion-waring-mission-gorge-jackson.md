@@ -51,7 +51,7 @@ the new roads is a candidate for a later phase.
 
 ## Status
 
-**Open — P1 done on a branch 2026-10-14, after a fix round** (see "P1 fix round" at the end: both new mouths pass verify_mouths, J1's R 30 return is built as apron AP1 to v1526.3, no road lies over another at either mouth, no step over 6 cm at J5 in any layout on the real wheel paths, both Speedways sealed; the existing three layouts equal to v0.18.0 key for key). Was: **Open — P1 (the readable intermediate, the numbered map, the J1 / J5 weld rehearsal) done on a branch 2026-10-14** (refuted: J5 failed verify_mouths, drive_test still read 6-8 cm steps at J5). Was: **Open — P0 (data, no geometry) done on a branch 2026-10-14** (see "P0" at the end: guarded OSM + buildings, `north`
+**Open — P2 (the ground over the expansion) done on a branch 2026-10-14** (see "P2" at the end: the grown heightfield, the pin's 37 / 26 and the re-keyed cache in one change; the tiers planned over the held north network; 3DEP fetched; the existing three layouts byte-identical to v0.18.0 on every drive, mouth and route gate; the loop's ground within 150 m unchanged except beside the two weld mouths; six cut-wall stretches listed for P3's hand authoring; the low clause restated). Was: **Open — P1 done on a branch 2026-10-14, after a fix round** (see "P1 fix round" at the end: both new mouths pass verify_mouths, J1's R 30 return is built as apron AP1 to v1526.3, no road lies over another at either mouth, no step over 6 cm at J5 in any layout on the real wheel paths, both Speedways sealed; the existing three layouts equal to v0.18.0 key for key). Was: **Open — P1 (the readable intermediate, the numbered map, the J1 / J5 weld rehearsal) done on a branch 2026-10-14** (refuted: J5 failed verify_mouths, drive_test still read 6-8 cm steps at J5). Was: **Open — P0 (data, no geometry) done on a branch 2026-10-14** (see "P0" at the end: guarded OSM + buildings, `north`
 appended with full/medium/short byte-identical, config per D2, `grid_grow` + frame pin + cache remap proven; the grown
 grid, the pin's offsets and the re-keyed cache land together in P2). Next: P1, the readable intermediate. Was: **Open — planned 2026-10-13** (`tracks/san-diego-lake-murray/EXPANSION-PLAN.md`, revision 2 after an independent critic; place facts in `DOSSIER-EXPANSION-NORTH.md`). Kevin's answers to D1-D4 pending (D3 amends law L3: needs his explicit yes). Was: **Open — research and plan first** (dossier-style: routes, junctions with the loop, elevation and the gorge,
 widths and medians off the aerial, terrain extent, layouts, budget, gates), then the build after v0.18.x lands
@@ -313,3 +313,125 @@ the loop). Numbers: `p1-proofs/rehearsal_result_fixround.json`. GATES-CHANGELOG 
 **Left for P3 / P4 (named, not hidden):** the 92 grass graze samples inside the College/Navajo fold fan (lat −10 to −11,
 the far side from the mouth, up to +9 mm) are v0.18.0's, identical, and verify_fold_fans' own (it fails only above
 2 cm); M3 / M4 into the race files (P4); the loop at J1 stands 1.44 m over 3DEP (Waring's 70 m blend carries it).
+
+## P2 — the ground over the expansion (2026-10-14; branch `worktree-wf_c6ab4b42-146-1`, not merged, nothing installed)
+
+EXPANSION-PLAN P2. The north route stays HELD: no new road geometry. The point is the ground, the far ring and the
+tiles. Step 2 (a per-road D3 clamp) is obsolete: v0.18.0's global 20 / 40 clamp covers every road and moves no real
+point on the expansion roads (above). Proofs and scripts: `tracks/san-diego-lake-murray/source/expansion/p2-proofs/`.
+
+- **Step 1, the baseline first.** The planner, offline, on v0.18.0's own config (4a9e66f) and on this branch's config
+  with D2's two boxes put back reproduces the installed `terrain.tiers.json.gz` array for array (I, J, h, keep, tris,
+  phys, refine, break, frame, inputs): **268,976 lattice vertices + 5,157 break-line vertices**, physical 163,104 / far
+  106,959 (the plan's 268,234 was an earlier rehearsal's count). `baseline.py`.
+- **The held growth, in one change.** `tools/grow_heightfield.py` (new) runs scripts-v021 `build_heightfield`'s own
+  layout for `terrain.grid_grow` 37 / 37 / 26 / 0 and takes every old node from the installed grid: 11,439 old nodes
+  byte for byte (the committed grid's old block, written back, is v0.18.0's `heightfield.npy` + `.meta.json`, md5
+  35ce2b92 / 1e14cf9c), 13,444 new nodes from 3DEP 1 m (30 requests, TLS). In the same change: `tier_options.frame.pin`
+  rows_n 37 / cols_w 26, and `tools/remap_sample_cache.py` on the cache (723,527 + 111,708 fine keys shifted by
+  [+416, −592], max position change 1.42e-14 deg, `h_cm` byte-identical, 1,000 / 1,000 random nodes, PASS). The pinned
+  frame on the real grown meta is the remap's frame, bit for bit. Proof that the growth moved nothing: with D2 and the
+  planned pavement taken out again, the plan on the grown grid and the re-keyed cache is v0.18.0's plan with every key
+  shifted by (+416, −592) and every h / keep / tri / phys / refine / break value identical (positions within 1e-12 m).
+  `plan_check.py`. The ship chain now syncs airoso's `heightfield.npy` + `.meta.json` into the workshop (ship_sd.sh and
+  ship.json, both chains).
+- **What growing the grid would otherwise have moved, fixed at the source.** The assembler's procedural scatter and
+  make_treefx's density fill hash every node by its grid index; a grid grown north and west renumbers every node, and
+  every tree on the loop would move. `scenery.scatter(index_offset=)` (scripts-v021, passed by build_loop_blend from
+  the meta's `grid_grow`) and make_treefx (the loop's own cells only, numbered as before; the added cells get their
+  planting with the roads, P4 / A9) keep them: the rehearsal's scatter counts and `trees.txt` are v0.18.0's, byte for
+  byte.
+- **The tiers over the expansion.** New opt-in `terrain.tier_options.planned_pavement` (files: `data/expansion.north.json`):
+  the intermediate's four pieces (at the wider curb), the J2-J4 pads and the six stubs mark the tiers and the physical
+  ground like built pavement — 5 m within 60 m, 20 m to 500 m, physical within 250 m, and the 4.07 km² pocket the new
+  loop encloses — but never kept cells, their refinement, break lines, the clamp or the feather (those follow the built
+  roads, P3). The rehearsed plan: **421,917 lattice vertices** (physical 269,657 / far 153,613; was 163,104 / 106,959)
+  + 6,201 break-line vertices; leaves 5 m 163,648 / 20 m 57,160 / 40 m 51,258.
+- **3DEP fetched (TLS):** 287,705 lattice + anti-alias samples (640 requests) and 20,502 break-line profile samples (46);
+  the I-8 corridor re-fetched over the D2 box. The cache (`terrain.samples.json.gz`: 1,011,232 + 132,210 fine keys),
+  `corridor.i8.json` and `i8.local.json` are committed: the committed data plans the rehearsal's terrain offline, array
+  for array. 3DEP in the box: 16.5–484.3 m.
+- **The rehearsal** — `tools/ship_sd.sh --no-install` on a fresh scratch copy of the workshop, AIROSO = this worktree,
+  ENG = a fresh engine-july copy, the full chain run to its end (08:28–08:51):
+  - **The three existing layouts equal v0.18.0, key for key.** street soft top 33, severe 0, kinks 3.41 /km, audit 53;
+    race_cw / race_acw severe 22 / 20, barrier_missing 0, audits 53 / 53, no_route BUILT PASS on both (0 / 406
+    probes); verify_mouths PASS ×4; verify_fold_fans PASS. `drive_test.{street,race_cw,race_acw}.json`,
+    `verify_mouths.json`, `verify_fold_fans.json`, `no_route.*.json`, `barrier_bands.json`, `race_verify.json`,
+    `lights.local.json`, `mouths.json` and `mouth_welds.json` are **byte-identical** to v0.18.0's. rib_check PASS
+    (Nyquist gated 76 → 85, cross-grain 33 → 43, step jogs 59 → 62: the new ones are on the new ground, the I-8 corridor's extension west to the D2 box edge and the pocket 770 m north of J1; every v0.18.0 hot spot reads the same, and the ones that drop off the top-10 lists do so only because new ones rank above them), house_seat PASS
+    (2 houses near J5 moved 2-8 cm with their ground, below).
+  - **The loop's ground within 150 m of its roads** (every v0.18.0 1GRASS vertex against the rehearsal's ground and
+    back; a vertex at the same xz is compared directly, otherwise the nearest surface): 326,765 of the 326,781 v0.18.0
+    vertices are still there. **|Δy| is 0.000 m everywhere except beside the two weld mouths**: 37 v0.18.0 vertices
+    (max 0.42 m) and 1,429 new 5 m nodes (max 1.68 m), all within 85 m of the planned north pavement and 216 m of J1 /
+    J5. That is the 5 m tier along the first 200 m of Waring and Jackson north resolving 3DEP where v0.18.0 had 20 m
+    facets: the plan's named exception, where the nearest road changes. `measure_ground.py`.
+  - **Tiles.** 1GRASS 464,108 positions in **8 tiles (max 58,612)**, GRASS_FAR 160,497 in **4 (max 40,314)**; v0.18.0
+    had 357,262 in 8 and 112,183 in 2. Every mesh ≤ 65,535. The balanced tiling is in the pinned engine-july prep
+    (`balanced_face_tiles`; build_kn5_loop.py's md5 is the snapshot's): checked, not built. GRASS_MESHES lists the 8
+    1GRASS tiles only. **Road kn5 125.0 MB** (v0.18.0: 116.3).
+  - **Tier seams:** 0 open edges away from the roads and the domain border (v0.18.0: 0). The 2,822 within 30 m of a road
+    are v0.18.0's own (the seat's road seams), unchanged.
+  - **V7, on the built terrain and on fresh 3DEP along the same rays** (`measure_v7.py`): Cowles from Jackson s
+    550-1550 9.58-9.91° (≥ 9.0; 3DEP 9.58-9.94); from Mission Gorge s 1865 7.39° (7.4 ± 0.5; 3DEP 7.39); hidden from
+    Mission Gorge s 565-1465 (all ten; the world agrees); Kwaay Paay hidden from s 2190 behind the knoll (8.65° vs
+    8.26°; 3DEP 8.95° vs 8.28°); Pyles from s 2190 8.52° (8.5 ± 0.5; 3DEP 8.52). **Kwaay Paay from Jackson s 550 is
+    re-worded**: fresh 3DEP fails the 60 m summit cone too (its broad dome's own shoulder, 90 m short of the top, reads
+    8.075° over the cone's 8.046°). Judged as a 150 m cone [invented]: 8.07° built, 8.08° 3DEP, nothing nearer
+    higher: PASS. Far ring within 0.85 m of its own 3DEP (0 over 1 m). Facets 20-60 m from the planned pavement: p90
+    5.02 m (≤ 7). Sidehill clamp: no north road yet, so nothing is clamped there (0054's own measurement: 0.01 m at
+    most on these roads).
+- **Step 3, the cut walls** (`cut_walls.py`). P2's own ground there is the 3DEP lattice and keeps every wall. P3's
+  will be the graded near-road surface (criterion 7). It is simulated with the assembler's own conform (20 m + 16 m)
+  and band clamp on the grown grid, with the pieces at their profile. 12-20 m from the centreline, against fresh 3DEP
+  (634 stations × 2 sides): real walls ≥ 3 m at 215 station-sides, 213 of them lost (under half left) [invented].
+  **Six stretches of 50 m or more need a hand-authored cut slope in Blender in P3** (REALISM; nothing authored now):
+
+  | Road | Side (drive direction) | Stations | Length | Real wall | Graded ground keeps |
+  |---|---|---|---|---|---|
+  | Mission Gorge Rd | right (south, the Cowles side), J3 → J4 | s 1475-1560 | 90 m | up to 5.1 m | ≤ 0.9 m |
+  | Jackson Dr north | right (south-west), J4 → J5 | s 95-165 | 75 m | up to 5.8 m | 0.0 m |
+  | Jackson Dr north | right | s 320-485 | 170 m | up to 6.7 m | 0.0 m |
+  | Jackson Dr north | right | s 555-630 | 80 m | up to 4.4 m | 0.0 m |
+  | Jackson Dr north | right | s 1005-1120 | 120 m | up to 5.5 m | 0.3 m |
+  | Jackson Dr north | right | s 1225-1525 | 305 m | up to 7.2 m | 0.2 m |
+
+  Jackson's left side drops ≥ 3 m into the canyon over four stretches (s 125-335, 940-1015, 1095-1210, 1625-1740; up
+  to 4.9 m). These are fills, recorded for the same authoring pass.
+- **Step 5, 0046 criterion 3's low clause restated** (ledger 0046; GATES-CHANGELOG). The network now reaches 33.4 m
+  (J3), so the box's real low no longer bounds the network. As restated:
+  - (i) **no terrain vertex more than 2 m below the 3DEP value at its own position** — its point sample, or for a
+    finest-level vertex the anti-aliasing tent of the 2.5 m samples it is built from (0046 fix round 2) — beyond the
+    graded near-road band (36 m of a built pavement, criterion 7) and the ground_release zones. Inside those, a road cut
+    is graded to the road by design, and the cut-wall check judges what is lost there;
+  - (ii) kept: none below 100 m more than 3 m under the 3DEP point, and the far ring within 1 m (criterion 6);
+  - (iii) kept: none below 15.52 m.
+
+  Measured (`low_clause.py`; the 16,306 vertices with no sample at their own position read from fresh 3DEP):
+  - (i): 0 on the rehearsal and 0 on v0.18.0. The point-only reading has 6 on both, ≤ 2.44 m: 5 inside College's
+    I-8 release zones, and 1 a ridge vertex built exactly at its tent (2.34 m);
+  - (ii): 0 / 0, worst 1.995 m;
+  - (iii): min 16.54 m (v0.18.0 19.67).
+
+  Within the near-road band, v0.18.0 has 21,189 vertices more than 2 m under 3DEP (worst 16.3 m: the loop's own graded
+  cuts); the rehearsal has 21,188.
+- **Step 6, the preview stills** (`render_views.py`, `stills_views.jpg`): J3 looking north over the valley at the north
+  wall; Mission Gorge s 1865 at Cowles; Jackson s 1050 at Cowles; the J4 approach at Pyles. They are rendered on the
+  built gate OBJ, with the eye 1.2 m over the built ground (3DEP's own road surface) and the planned curbs drawn as pale
+  strips.
+
+**Budget, for P3 / P4.** The terrain is heavier than the plan estimated: physical +107k positions over v0.18.0 (the
+plan said +62.9k planned) and far +48k; the road kn5 is 125.0 MB with the terrain alone. With P3's roads (+3-4.5 MB)
+and P4's lamps at the D4 default (+18.2 MB), the road kn5 lands at about 146-148 MB, over the plan's 145 MB ceiling
+[invented]. Either the decimated lamp (the Budget's own fallback) is needed in P4, or P3's kept cells (fewer vertices
+than the 5 m lattice they replace within 18 m of the pavement) recover some of it. Measured, not decided.
+
+Tests (new / changed): `tests/geometry/test_terrain_planned_pavement.py`, `tests/tools/test_grow_heightfield.py`,
+`tests/geometry/test_v021_scenery_grid_grow.py`, `test_make_treefx_plan.py` (a grown grid fills the loop's cells as
+before), `test_terrain_frame_pin.py` (the committed pin is 37 / 26 on the grown meta), `test_v021_heightfield_grow.py`
+(the v0.18.0 grid is the committed grid's old block, md5-checked). Suite: 769 passed, 2 failed (the same two
+engine-july md5 checks of this worktree's CRLF checkout of `scripts/ac/export_kn5_addon.py`). GATES-CHANGELOG 2026-10-14
+"P2".
+
+**Still owed before P3:** Kevin's seat on 0050 (P0 step 1). P3 then wires the pieces in (route_connectors) and retires
+`planned_pavement`.

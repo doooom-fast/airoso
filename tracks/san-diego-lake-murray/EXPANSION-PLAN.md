@@ -1,6 +1,6 @@
 # Lake Murray network expansion: Phase 1 build plan
 
-> **2026-10-13, revision 2. This is a plan only. Nothing is built yet** (committed as the plan of record). Kevin answered D1–D4 on 2026-10-13 (ledger 0054). P0, the data with no geometry, was done on a branch on 2026-10-14 (see P0). P1, the readable intermediate, the numbered map and the J1 / J5 weld rehearsal, followed the same day (see P1).
+> **2026-10-13, revision 2. This is a plan only. Nothing is built yet** (committed as the plan of record). Kevin answered D1–D4 on 2026-10-13 (ledger 0054). P0, the data with no geometry, was done on a branch on 2026-10-14 (see P0). P1, the readable intermediate, the numbered map and the J1 / J5 weld rehearsal, followed the same day (see P1), and P2, the ground over the expansion (see P2).
 > - The ledger entry is [0054](../../fleet/feedback/0054-lake-murray-network-expansion-waring-mission-gorge-jackson.md). The place facts are in the dossier addendum, [`DOSSIER-EXPANSION-NORTH.md`](DOSSIER-EXPANSION-NORTH.md).
 > - The research ran on 2026-10-12/13 and was read-only on the repo, the workshop and the AC folder. It lives in the session scratchpad `expansion/`, in four lenses plus a revise pass:
 >   - **routes:** fresh OSM, as of 2026-10-12T18:03Z, from the primary Overpass server with TLS verified;
@@ -311,17 +311,42 @@ Steps 2–8 can start now on a branch off the 0046 branch, and get rebased after
 
 ### P2 — Terrain over the expansion (0046's tiers, extended)
 
+> **2026-10-14: done on branch `worktree-wf_c6ab4b42-146-1`, the north route still HELD (no road geometry). Not merged.
+> Details and numbers in ledger 0054, "P2"; proofs in `source/expansion/p2-proofs/`.**
+> - **Step 1:** the baseline reproduces v0.18.0's plan exactly: 268,976 lattice + 5,157 break-line vertices (the 268,234
+>   below was an earlier rehearsal's). The grown heightfield (`tools/grow_heightfield.py`: the installed nodes byte for
+>   byte, 13,444 new from 3DEP), the pin's 37 / 26 and the re-keyed cache landed in one change; without D2 and the
+>   planned pavement the plan is v0.18.0's, every key shifted by whole cells.
+> - **The tiers over the expansion** come from `tier_options.planned_pavement` (the intermediate marks the tiers and the
+>   physical ground, pocket included, never the kept cells): 421,917 lattice vertices, physical 269,657 / far 153,613.
+>   287,705 + 20,502 samples fetched (TLS), committed with the I-8 corridor.
+> - **Step 2 is obsolete:** v0.18.0's global 20 / 40 clamp moves no real point on the expansion roads.
+> - **Rehearsal** (`ship_sd.sh --no-install`, fresh scratch copy): the three layouts' drive_test / verify_mouths /
+>   verify_fold_fans / no_route files byte-identical to v0.18.0's; the loop's ground within 150 m |Δy| 0.000 m except
+>   beside J1 / J5 (≤ 1.68 m, within 85 m of the new pavement); 1GRASS 8 tiles (max 58,612), GRASS_FAR 4 (max 40,314);
+>   0 open tier seams; V7 passes (Kwaay Paay from Jackson re-worded: fresh 3DEP fails the 60 m cone too); road kn5
+>   125.0 MB.
+> - **Step 3:** six stretches of 50 m or more lose a real wall of 3 m or more under P3's graded ground: Mission Gorge
+>   s 1475-1560 (right) and Jackson north s 95-165, 320-485, 555-630, 1005-1120, 1225-1525 (right). They are P3's
+>   hand-authored cut slopes; nothing is authored yet.
+> - **Step 4:** the balanced tiling is in the pinned engine-july prep (checked).
+> - **Step 5:** restated in ledger 0046 (below). **Step 6:** `p2-proofs/stills_views.jpg`.
+> - **Budget:** the terrain alone takes the road kn5 to 125.0 MB; with P3's roads and the D4 lamps it lands near 146-148
+>   MB, over the 145 MB ceiling. See ledger 0054 "Budget, for P3 / P4".
+
 1. **reused `scripts/geometry/terrain_tiers.py`** (0046), run over the pinned frame:
    - physical ground within 250 m of every new pavement. That includes the 4.07 km² pocket the new loop encloses, which the planner's pocket rule makes physical.
    - the see-only far ring over the D2 box.
 
    First, the planner's baseline must reproduce 268,234 points exactly.
-2. **The D3 clamp** (adapted, opt-in per road; the loop's own roads stay 80/250). This step builds only after your yes.
+2. ~~**The D3 clamp** (adapted, opt-in per road; the loop's own roads stay 80/250). This step builds only after your yes.~~ Obsolete: v0.18.0's global `clamp_corridor_m` 20 / `clamp_blend_m` 40 covers every road (ledger 0054).
 3. **Cut walls beside the sidehill roads.** Within 20 m of a pavement, the ground is the graded near-road surface by design (0046 criterion 7). Past 20 m, 0046's `keep_cells.refine` already puts the kept cells onto 3DEP at 5 m.
    - **P2 measures** how well the built ground keeps the real cut walls. On Mission Gorge s 1115 → J4 and on all of Jackson north, it compares built ground against 3DEP between 12 and 20 m from the centreline.
    - If a wall of 3 m or more is lost for 50 m or more of road, that stretch gets a hand-authored cut slope in Blender (REALISM: lean in, never eject). It is not an engine change.
 4. **Tiling.** v0.18.x's balanced tiling must be in the pinned engine-july prep. It already is on the 0046 branch, so this is checked, not built. AC's 65,535-point limit is fatal.
 5. **Restate 0046's "no terrain vertex below 100 m" clause.** The network itself now reaches 33.4 m at J3. New wording: *no terrain vertex more than 2 m below the 3DEP value at its own position.*
+   - As applied (2026-10-14, ledger 0046): the value is the vertex's point sample, or a finest-level vertex's anti-aliasing tent. The clause holds beyond the graded near-road band (36 m of a built pavement, and the ground_release zones), where a road cut is graded to the road by design.
+   - 0046's 3 m guard below 100 m and the 15.52 m floor are kept. As a single "everywhere" sentence it would fail v0.18.0 itself (graded cuts up to 16.3 m), so nothing is loosened.
 6. **Preview stills from four fixed camera stations:**
    - J3, looking north at the valley and the north wall;
    - Mission Gorge s 1865, looking at Cowles;
@@ -534,14 +559,14 @@ Everything runs on the **built** file (L5), against data that did not place it: 
 | **V7 Terrain** | Cowles from Jackson s 550–1550 (eye 1.2 m) | ≥ 9.0° (real 9.6–9.8°) |
 | | Cowles from Mission Gorge s 1865 | 7.4 ± 0.5° |
 | | Cowles from Mission Gorge s 565–1465 | blocked by built terrain (real: blockers at +6.3 to +15°) |
-| | Kwaay Paay from Jackson s 550 | visible, 8.0 ± 0.5° |
+| | Kwaay Paay from Jackson s 550 | visible, 8.0 ± 0.5°, judged as a 150 m summit cone [invented; P2: fresh 3DEP fails the 60 m cone too, the dome's own shoulder 90 m short of the top] |
 | | Kwaay Paay from Mission Gorge s 2190 | **hidden** behind the +8.85° knoll 321 m away |
 | | Pyles from Mission Gorge s 2190 | 8.5 ± 0.5° |
 | | Far cells | within 1 m of 3DEP |
 | | Sidehill clamp | moves no point on Jackson north or Mission Gorge by more than 1 m |
 | | Cut walls 12–20 m off Jackson north and Mission Gorge s 1115→J4 | no stretch of 50 m or more where a real wall of 3 m or more is lost |
 | | Facets 20–60 m from a new road | longest edge p90 ≤ 7 m [0046 criterion 5] |
-| | Pit clause (restated) | no vertex more than 2 m below its own 3DEP |
+| | Pit clause (restated) | no vertex more than 2 m below its own 3DEP (its point, or a finest-level vertex's tent) beyond the graded near-road band; 0046's 3 m below 100 m and 15.52 m floor kept |
 | | Tier seams | 0 open edges |
 | **V8 Format** | Every mesh | ≤ 65,535 positions [std: AC] |
 | | Far meshes | no `1` prefix |

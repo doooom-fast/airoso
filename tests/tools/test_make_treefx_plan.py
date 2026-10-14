@@ -90,3 +90,56 @@ def test_nothing_is_planted_on_a_corner_apron():
     after = {(round(e["x"], 1), round(e["z"], 1)) for e in mt.plan(d)["entries"]}
     assert (60.0, 20.0) not in after and (60.0, 25.6) not in after       # on it, and 0.6 m off its edge
     assert (60.0, 28.0) in after and before - after == {(60.0, 20.0), (60.0, 25.6)}
+
+
+def _fill_project(grow=None, tag=True):
+    """a straight 400 m road with a 40 m heightfield under it (the density fill's grid); ``grow`` = (rows_n, rows_s,
+    cols_w): the same grid grown by whole cells, the old block value for value, its meta recording grid_grow (``tag``)"""
+    import math
+    import struct
+    d = Path(tempfile.mkdtemp())
+    (d / "data").mkdir()
+    (d / "source" / "trees").mkdir(parents=True)
+    (d / "track.config.json").write_text(json.dumps({"slug": "tiny"}), encoding="utf-8")
+    o = {"lon": -117.0, "lat": 32.8, "elev_m": 100.0}
+    pts = [[float(x), 0.0, 0.0] for x in range(0, 401, 5)]
+    (d / "data" / "centerline.local.json").write_text(json.dumps({"points_xyz_m": pts, "widths_m": [10.0] * len(pts),
+                                                                  "origin": o}))
+    (d / "data" / "scatter_positions.json").write_text(json.dumps({"palms": [], "trees": [], "scrub": [],
+                                                                   "median_planting": []}))
+    _gate_obj(d, ["1GRASS_0", "1ROAD_road"])
+    sp = 40.0
+    s, w, n = 32.7982, -117.0021, 32.8018
+    ny, nx = 11, 16
+    gy, gx = sp / 111_000.0, sp / (111_000.0 * math.cos(math.radians((s + n) / 2)))
+    grid = [[100.0 + 0.3 * i + 0.2 * j for i in range(nx)] for j in range(ny)]
+    meta = {"bbox_swne": [s, w, n, w + (nx - 1) * gx], "nx": nx, "ny": ny, "spacing_m": sp}
+    if grow:
+        rn, rs, cw = grow
+        grid = [[(grid[j - rn][i - cw] if 0 <= j - rn < ny and 0 <= i - cw < nx else 90.0) for i in range(nx + cw)]
+                for j in range(ny + rn + rs)]
+        meta = {"bbox_swne": [s - rs * gy, w - cw * gx, n + rn * gy, meta["bbox_swne"][3]], "nx": nx + cw,
+                "ny": ny + rn + rs, "spacing_m": sp}
+        if tag:
+            meta["grid_grow"] = {"rows_n": rn, "rows_s": rs, "cols_w": cw, "cols_e": 0}
+    NY, NX = len(grid), len(grid[0])
+    hdr = "{'descr': '<f8', 'fortran_order': False, 'shape': (%d, %d), }" % (NY, NX)
+    hdr += " " * ((64 - (10 + len(hdr) + 1) % 64) % 64) + "\n"
+    buf = b"\x93NUMPY\x01\x00" + struct.pack("<H", len(hdr)) + hdr.encode("latin1")
+    buf += b"".join(struct.pack("<d", v) for row in grid for v in row)
+    (d / "data" / "heightfield.npy").write_bytes(buf)
+    (d / "data" / "heightfield.meta.json").write_text(json.dumps(meta), encoding="utf-8")
+    return d
+
+
+def test_a_grown_grid_fills_the_loops_own_cells_exactly_as_before():
+    """ledger 0054 P2: the heightfield grown by whole cells (grid_grow) must not move one fill tree near the loop - the
+    loop's own cells keep their numbering (every hash: jitter, pick, thinning) and the added cells plant nothing
+    until P4 (A9). Without the grid_grow record the same grown grid renumbers every cell: the trees move."""
+    def fill(d):
+        return sorted((e["zone"], e["model"], round(e["x"], 2), round(e["z"], 2))
+                      for e in mt.plan(d, all_species=True)["entries"] if e["zone"].startswith("fill_"))
+    before = fill(_fill_project())
+    assert len(before) > 50
+    assert fill(_fill_project(grow=(2, 2, 3))) == before
+    assert fill(_fill_project(grow=(2, 2, 3), tag=False)) != before

@@ -3,8 +3,9 @@
 Run in a subprocess with `scripts` registered as the scripts-v021 package (ship_sd.sh's V021_SHIM), so this process's
 `scripts` (airoso's engine) is never shadowed. 3DEP is stubbed; no network.
 
-- grid_grow ABSENT: fed the installed grid's own 3DEP values, build() writes the committed heightfield.npy and
-  heightfield.meta.json byte for byte (the v0.18.0 grid, 123 x 93);
+- grid_grow ABSENT: fed the installed grid's own 3DEP values, build() writes the v0.18.0 heightfield.npy and
+  heightfield.meta.json byte for byte (123 x 93; since P2 the committed grid is the grown one, and the v0.18.0 grid is
+  its old block - md5-checked against v0.18.0's files);
 - grid_grow 37/37/26/0 (the committed config's): every old node is sampled at its bit-identical position (the stub
   answers by exact float position, so the old block IS the installed grid), 149 x 167 = 24,883 nodes, every old node
   projected (project_grid's formula) within 1e-9 deg of where it was, and the frame pin on the grown meta re-keys by
@@ -34,12 +35,31 @@ ts_ = importlib.util.spec_from_file_location("tt_air", ROOT / "scripts" / "geome
 tt = importlib.util.module_from_spec(ts_); ts_.loader.exec_module(tt)
 meta0 = json.loads((TRACK / "data" / "heightfield.meta.json").read_text())
 npy0 = (TRACK / "data" / "heightfield.npy").read_bytes()
+res = {}
+if meta0.get("grid_grow"):
+    # ledger 0054 P2: the committed grid IS grown (tools/grow_heightfield.py); the installed v0.18.0 grid is its old
+    # block, written back with heightfield.py's own writer and meta - md5-checked against v0.18.0's files below
+    g0 = meta0["grid_grow"]
+    hlg = struct.unpack("<H", npy0[8:10])[0]
+    NXg, NYg = meta0["nx"], meta0["ny"]
+    vg0 = struct.unpack("<%dd" % (NXg * NYg), npy0[10 + hlg:])
+    NX0, NY0 = meta0["base_nx"], meta0["base_ny"]
+    block = [[vg0[(j + g0["rows_n"]) * NXg + i + g0["cols_w"]] for i in range(NX0)] for j in range(NY0)]
+    tmp = OUT / "installed"; tmp.mkdir(parents=True)
+    hf.write_npy(tmp / "heightfield.npy", block)
+    npy0 = (tmp / "heightfield.npy").read_bytes()
+    meta0 = {"bbox_swne": meta0["base_bbox_swne"], "nx": NX0, "ny": NY0, "spacing_m": meta0["spacing_m"],
+             "margin_m": meta0["margin_m"], "row0": meta0["row0"]}
+    meta0_bytes = json.dumps(meta0).encode("utf-8")
+else:
+    meta0_bytes = (TRACK / "data" / "heightfield.meta.json").read_bytes()
+import hashlib
+res["installed_md5"] = [hashlib.md5(npy0).hexdigest(), hashlib.md5(meta0_bytes).hexdigest()]
 hl = struct.unpack("<H", npy0[8:10])[0]
 NX0, NY0 = meta0["nx"], meta0["ny"]
 vals0 = list(struct.unpack("<%dd" % (NX0 * NY0), npy0[10 + hl:]))
 cfg = json.loads((TRACK / "track.config.json").read_text(encoding="utf-8"))
 grow_cfg = cfg["terrain"].get("grid_grow")
-res = {}
 
 def proj(name, c):
     p = OUT / name
@@ -57,7 +77,7 @@ usgs_3dep.sample_points = first
 c0 = json.loads(json.dumps(cfg)); c0["terrain"].pop("grid_grow", None)
 pa = proj("absent", c0); hf.build(pa)
 res["absent_npy"] = (pa / "data" / "heightfield.npy").read_bytes() == npy0
-res["absent_meta"] = (pa / "data" / "heightfield.meta.json").read_bytes() == (TRACK / "data" / "heightfield.meta.json").read_bytes()
+res["absent_meta"] = (pa / "data" / "heightfield.meta.json").read_bytes() == meta0_bytes
 
 look = dict(zip(cap["pts"], vals0))
 usgs_3dep.sample_points = lambda pts, **k: ([look.get(p, -9999.0) for p in pts] if len(pts) > 20000 else [100.0] * len(pts))
@@ -107,6 +127,8 @@ def test_grid_grow_keeps_every_old_stake_and_absent_writes_todays_grid():
         assert r.returncode == 0, r.stderr[-2000:]
         res = json.loads(r.stdout.strip().splitlines()[-1])
     assert res["absent_npy"] and res["absent_meta"], res
+    # the v0.18.0 installed grid, byte for byte (taken from the committed grown grid's old block since P2)
+    assert res["installed_md5"] == ["35ce2b9230fe6cd27a3779d25403b1c4", "1e14cf9c8ec1b6c949947b1e8e628265"], res
     assert res["grow"] == {"rows_n": 37, "rows_s": 37, "cols_w": 26, "cols_e": 0}
     assert (res["nx"], res["ny"]) == (149, 167) and res["nx"] * res["ny"] == 24883
     assert res["old_block"] and res["new_nodes"] == 24883 - 123 * 93

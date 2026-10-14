@@ -6,8 +6,8 @@ heightfield cells, never from a regrown meta's own anchor:
 - pin with offsets on a meta grown by those cells: every old lattice key lands, re-keyed by pin_key_shift, on the
   same ground (float rounding only), and the pinned frame does not depend on how the grown meta was rounded;
 - a meta whose recorded growth or anchor disagrees with the pin, or a spacing mismatch, is a ValueError;
-- the committed San Diego config pins the installed v0.18.0 meta with offsets 0 (P2 moves them, with the grown grid
-  and the re-keyed cache, in one change).
+- the committed San Diego config pins the grown meta with rows_n 37 / cols_w 26 (P2: the grown grid, the offsets and
+  the re-keyed cache in one change; was offsets 0 on the installed v0.18.0 meta).
 """
 from __future__ import annotations
 
@@ -106,18 +106,29 @@ def test_tierspec_passes_the_pin_through_and_other_tracks_are_untouched():
     assert origin_framed.frame(None).to_json() == [0.0, 0.0, origin_framed.base_m, origin_framed.base_m]
 
 
-def test_committed_config_pins_the_installed_meta_with_zero_offsets():
+def test_committed_config_pins_the_grown_meta_37_26():
+    """ledger 0054 P2: the grown heightfield (tools/grow_heightfield.py), the pin's 37 / 26 and the re-keyed cache
+    landed in one change: the pinned frame on the grown meta is the v0.18.0 frame moved by whole cells, every v0.18.0
+    lattice key lands on the same ground, and the cache was re-keyed onto exactly this frame"""
     cfg = json.loads((TRACK / "track.config.json").read_text(encoding="utf-8"))
     meta = json.loads((TRACK / "data" / "heightfield.meta.json").read_text(encoding="utf-8"))
     pin = cfg["terrain"]["tier_options"]["frame"]["pin"]
-    assert pin["bbox_swne"] == meta["bbox_swne"] == [32.771983, -117.069563, 32.805287, -117.017103]
-    assert pin["spacing_m"] == meta["spacing_m"] and pin["rows_n"] == 0 and pin["cols_w"] == 0
-    assert "grid_grow" not in meta                       # the installed grid: P2 grows it with the pin and the cache
+    assert pin["bbox_swne"] == meta["base_bbox_swne"] == [32.771983, -117.069563, 32.805287, -117.017103]
+    assert pin["spacing_m"] == meta["spacing_m"] and pin["rows_n"] == 37 and pin["cols_w"] == 26
+    assert meta["grid_grow"] == {k: cfg["terrain"]["grid_grow"][k] for k in ("rows_n", "rows_s", "cols_w", "cols_e")}
+    assert (meta["nx"], meta["ny"], meta["base_nx"], meta["base_ny"]) == (149, 167, 123, 93)
     origin = json.loads((TRACK / "data" / "centerline.local.json").read_text(encoding="utf-8"))["origin"]
     spec = tt.TierSpec(cfg["terrain"], origin)
-    unpinned = tt.Frame.heightfield(meta, origin, 2, spec.levels, spec.base_m)
-    assert spec.frame(meta).to_json() == unpinned.to_json()
-    # the cached 3DEP samples were taken on exactly this frame
+    v018 = {"bbox_swne": meta["base_bbox_swne"], "nx": 123, "ny": 93, "spacing_m": 40.0, "margin_m": 150.0,
+            "row0": "north"}
+    old = tt.Frame.heightfield(v018, origin, 2, spec.levels, spec.base_m)
+    new = spec.frame(meta)
+    kx, kz = tt.pin_key_shift(pin, 2, 8)
+    assert (kx, kz) == (416, 592)
+    for I, J in ((0, 0), (-1000, 400), (2000, -1500), (-416, 592)):
+        assert abs(old.x0 + I * old.ux - (new.x0 + (I + kx) * new.ux)) < 1e-9
+        assert abs(old.z0 + J * old.uz - (new.z0 + (J - kz) * new.uz)) < 1e-9
     import gzip
     prov = json.loads(gzip.decompress((TRACK / "data" / "terrain.samples.json.gz").read_bytes()))["_provenance"]
-    assert all(abs(a - b) < 1e-9 for a, b in zip(prov["lattice_frame"], spec.frame(meta).to_json()))
+    assert all(abs(a - b) < 1e-9 for a, b in zip(prov["lattice_frame"], new.to_json()))
+    assert prov["remaps"][-1]["rows_n"] == 37 and prov["remaps"][-1]["cols_w"] == 26

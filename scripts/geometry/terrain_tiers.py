@@ -37,6 +37,10 @@ kept surface); the kn5 prep welds them after those passes (``build_kn5_loop._wel
 PHYSICAL vs FAR. Cells within ``physical_within_m`` of a pavement (and any pocket of other cells
 enclosed by them) are physical ground (``1GRASS``); everything else is the FAR RING: visual-only,
 named without a digit prefix, never scanned by the gates, never listed for GrassFX or occlusion.
+
+PLANNED PAVEMENT (``tier_options.planned_pavement``, ledger 0054 P2): road a later phase builds, read from an
+authored intermediate, marks the tiers and the physical ground (pockets included) like a built pavement, so the
+ground over it is planned, sampled and tiled before the road exists; it never marks kept cells or their refinement.
 """
 from __future__ import annotations
 
@@ -158,6 +162,15 @@ class TierSpec:
             self.breaks["corners"] = str(bk.get("corners", "point"))
             if self.breaks["corners"] not in ("point", "filtered"):
                 raise ValueError("terrain.tier_options.breaks.corners: 'point' or 'filtered'")
+        # PLANNED PAVEMENT (ledger 0054 P2, opt-in): road a later phase will build, described by an authored
+        # intermediate (e.g. data/expansion.north.json). It marks the TIERS and the PHYSICAL ground (with its pockets)
+        # exactly as a built pavement does, so the ground under and around it is planned, sampled and tiled before the
+        # road exists; it never marks keep_cells / refine and never counts as pavement for the break lines or the
+        # assembler's clamp and feather: those follow BUILT pavement only. Absent = every output byte-identical.
+        pp = opt.get("planned_pavement") or {}
+        self.planned_files = [str(f) for f in (pp.get("files") or [])]
+        if pp and not self.planned_files:
+            raise ValueError("terrain.tier_options.planned_pavement needs files (authored intermediates)")
         self.physical_m = float(opt.get("physical_within_m", 250.0))
         self.keep_m = float(opt.get("keep_surface_m", 0.0))
         self.keep_feather_m = float(opt.get("keep_feather_m", 0.0))
@@ -375,7 +388,11 @@ class Topology:
     """Leaves, vertices (base-lattice keys), triangles and the physical/far split. Deterministic:
     the same inputs give the same vertex order and triangle list, byte for byte."""
 
-    def __init__(self, spec: TierSpec, road_lines, corridor_lines=(), *, closed_first=True, frame: Frame | None = None):
+    def __init__(self, spec: TierSpec, road_lines, corridor_lines=(), *, closed_first=True, frame: Frame | None = None,
+                 plan_lines=()):
+        """``plan_lines`` (``tier_options.planned_pavement``, ledger 0054 P2): [(pts_xyz, widths)] of pavement not
+        built yet - open lines appended after the road lines for the TIER and PHYSICAL marks only (never keep /
+        refine). Empty: the topology is the one the road lines alone give, byte for byte."""
         self.spec = spec
         self.f = frame or spec.frame(None)
         self.r = spec.r
@@ -399,13 +416,25 @@ class Topology:
                 pts_cache[sp] = densify(road_lines, sp, closed_first)
             return pts_cache[sp]
 
+        plan_lines = [ln for ln in (plan_lines or ()) if len(ln[0]) >= 1]
+        ppts_cache = {}
+
+        def ppts(sp):
+            """the road points + the planned pavement's (tier and physical marks)"""
+            if not plan_lines:
+                return pts(sp)
+            if sp not in ppts_cache:
+                ppts_cache[sp] = pts(sp) + densify(plan_lines, sp, False)
+            return ppts_cache[sp]
+
+        self.n_plan_lines = len(plan_lines)
         for t in spec.tiers[:-1]:
             L = spec.level_of(t["cell_m"])
             if L == 0:
                 continue
             W = float(t["within_m"])
             sp = max(2.0, min(10.0, W / 50.0))
-            cells = mark(pts(sp), W, L - 1)
+            cells = mark(ppts(sp), W, L - 1)
             marks.append((L - 1, cells, L))
             if t.get("x_split"):
                 self.xsplit.setdefault(L, set()).update(cells)
@@ -457,7 +486,7 @@ class Topology:
                             self.refine_cells.append(k)
         # physical marks at the finest tier level that is not the coarse ground's
         self.phys_level = min(1, nlev - 1)
-        self.phys = mark(pts(5.0), spec.physical_m, self.phys_level)
+        self.phys = mark(ppts(5.0), spec.physical_m, self.phys_level)
 
         # ancestors of every mark (a coarse cell wants to split when any descendant is marked)
         self._marks = []

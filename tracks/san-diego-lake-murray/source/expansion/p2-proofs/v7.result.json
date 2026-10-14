@@ -1,0 +1,1771 @@
+{
+ "peaks_local": {
+  "cowles": [
+   1380.0,
+   2700.0
+  ],
+  "kwaay_paay": [
+   48.7,
+   4395.9
+  ],
+  "pyles": [
+   792.9,
+   3848.7
+  ]
+ },
+ "checks": [
+  {
+   "v7": "Cowles from Jackson s 550-1550 (eye 1.2 m) >= 9.0 deg (real 9.6-9.8)",
+   "rays": [
+    "cowles_from_jackson_s550",
+    "cowles_from_jackson_s650",
+    "cowles_from_jackson_s750",
+    "cowles_from_jackson_s850",
+    "cowles_from_jackson_s950",
+    "cowles_from_jackson_s1050",
+    "cowles_from_jackson_s1150",
+    "cowles_from_jackson_s1250",
+    "cowles_from_jackson_s1350",
+    "cowles_from_jackson_s1450",
+    "cowles_from_jackson_s1550"
+   ],
+   "rule": "min",
+   "deg": 9.0,
+   "readings": [
+    {
+     "name": "cowles_from_jackson_s550",
+     "target_deg": 9.577,
+     "top_deg": 9.577,
+     "max_intermediate_deg": 9.446,
+     "target_dist_m": 2152.6,
+     "eye_abs_m": 121.14,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 62.6,
+     "world": {
+      "eye_abs_m": 121.11,
+      "target_deg": 9.583,
+      "top_deg": 9.578,
+      "max_shoulder_deg": 9.583,
+      "max_intermediate_deg": 9.462,
+      "min_deg": 9.0,
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 62.6
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_jackson_s650",
+     "target_deg": 9.661,
+     "top_deg": 9.661,
+     "max_intermediate_deg": 9.51,
+     "target_dist_m": 2095.8,
+     "eye_abs_m": 127.55,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 65.8,
+     "world": {
+      "eye_abs_m": 127.55,
+      "target_deg": 9.676,
+      "top_deg": 9.661,
+      "max_shoulder_deg": 9.676,
+      "max_intermediate_deg": 9.513,
+      "min_deg": 9.0,
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 65.8
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_jackson_s750",
+     "target_deg": 9.733,
+     "top_deg": 9.733,
+     "max_intermediate_deg": 9.564,
+     "target_dist_m": 2038.7,
+     "eye_abs_m": 134.63,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 68.7,
+     "world": {
+      "eye_abs_m": 134.65,
+      "target_deg": 9.751,
+      "top_deg": 9.733,
+      "max_shoulder_deg": 9.751,
+      "max_intermediate_deg": 9.571,
+      "min_deg": 9.0,
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 68.7
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_jackson_s850",
+     "target_deg": 9.882,
+     "top_deg": 9.882,
+     "max_intermediate_deg": 9.73,
+     "target_dist_m": 1974.8,
+     "eye_abs_m": 140.32,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 64.8,
+     "world": {
+      "eye_abs_m": 140.35,
+      "target_deg": 9.891,
+      "top_deg": 9.881,
+      "max_shoulder_deg": 9.891,
+      "max_intermediate_deg": 9.731,
+      "min_deg": 9.0,
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 64.8
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_jackson_s950",
+     "target_deg": 9.878,
+     "top_deg": 9.878,
+     "max_intermediate_deg": 9.732,
+     "target_dist_m": 1933.1,
+     "eye_abs_m": 147.73,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 63.1,
+     "world": {
+      "eye_abs_m": 147.73,
+      "target_deg": 9.886,
+      "top_deg": 9.878,
+      "max_shoulder_deg": 9.886,
+      "max_intermediate_deg": 9.736,
+      "min_deg": 9.0,
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 63.1
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_jackson_s1050",
+     "target_deg": 9.812,
+     "top_deg": 9.812,
+     "max_intermediate_deg": 9.668,
+     "target_dist_m": 1902.1,
+     "eye_abs_m": 155.36,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 62.1,
+     "world": {
+      "eye_abs_m": 155.34,
+      "target_deg": 9.83,
+      "top_deg": 9.813,
+      "max_shoulder_deg": 9.83,
+      "max_intermediate_deg": 9.669,
+      "min_deg": 9.0,
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 62.1
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_jackson_s1150",
+     "target_deg": 9.778,
+     "top_deg": 9.778,
+     "max_intermediate_deg": 9.632,
+     "target_dist_m": 1872.7,
+     "eye_abs_m": 161.61,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 62.7,
+     "world": {
+      "eye_abs_m": 161.57,
+      "target_deg": 9.792,
+      "top_deg": 9.779,
+      "max_shoulder_deg": 9.792,
+      "max_intermediate_deg": 9.63,
+      "min_deg": 9.0,
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 62.7
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_jackson_s1250",
+     "target_deg": 9.818,
+     "top_deg": 9.818,
+     "max_intermediate_deg": 9.664,
+     "target_dist_m": 1824.8,
+     "eye_abs_m": 168.56,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 64.8,
+     "world": {
+      "eye_abs_m": 168.55,
+      "target_deg": 9.835,
+      "top_deg": 9.818,
+      "max_shoulder_deg": 9.835,
+      "max_intermediate_deg": 9.663,
+      "min_deg": 9.0,
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 64.8
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_jackson_s1350",
+     "target_deg": 9.909,
+     "top_deg": 9.909,
+     "max_intermediate_deg": 9.735,
+     "target_dist_m": 1769.6,
+     "eye_abs_m": 175.22,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 69.6,
+     "world": {
+      "eye_abs_m": 175.21,
+      "target_deg": 9.944,
+      "top_deg": 9.909,
+      "max_shoulder_deg": 9.944,
+      "max_intermediate_deg": 9.718,
+      "min_deg": 9.0,
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 69.6
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_jackson_s1450",
+     "target_deg": 9.891,
+     "top_deg": 9.891,
+     "max_intermediate_deg": 9.768,
+     "target_dist_m": 1731.2,
+     "eye_abs_m": 182.49,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 61.2,
+     "world": {
+      "eye_abs_m": 182.49,
+      "target_deg": 9.917,
+      "top_deg": 9.891,
+      "max_shoulder_deg": 9.917,
+      "max_intermediate_deg": 9.769,
+      "min_deg": 9.0,
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 61.2
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_jackson_s1550",
+     "target_deg": 9.766,
+     "top_deg": 9.766,
+     "max_intermediate_deg": 9.606,
+     "target_dist_m": 1718.6,
+     "eye_abs_m": 188.53,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 68.6,
+     "world": {
+      "eye_abs_m": 188.54,
+      "target_deg": 9.803,
+      "top_deg": 9.766,
+      "max_shoulder_deg": 9.803,
+      "max_intermediate_deg": 9.592,
+      "min_deg": 9.0,
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 68.6
+     },
+     "cone_m": null,
+     "cone60": null
+    }
+   ],
+   "world_pass": true,
+   "pass": true
+  },
+  {
+   "v7": "Cowles from Mission Gorge s 1865: 7.4 +- 0.5 deg",
+   "rays": [
+    "cowles_from_mg_s1865"
+   ],
+   "rule": "band",
+   "deg": [
+    6.9,
+    7.9
+   ],
+   "readings": [
+    {
+     "name": "cowles_from_mg_s1865",
+     "target_deg": 7.387,
+     "top_deg": 7.387,
+     "max_intermediate_deg": 7.248,
+     "target_dist_m": 2961.8,
+     "eye_abs_m": 100.32,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 61.8,
+     "world": {
+      "eye_abs_m": 100.37,
+      "target_deg": 7.391,
+      "top_deg": 7.386,
+      "max_shoulder_deg": 7.391,
+      "max_intermediate_deg": 7.252,
+      "min_deg": 6.9,
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 61.8
+     },
+     "cone_m": null,
+     "cone60": null
+    }
+   ],
+   "world_pass": true,
+   "pass": true
+  },
+  {
+   "v7": "Cowles from Mission Gorge s 565-1465: blocked by built terrain",
+   "rays": [
+    "cowles_from_mg_s565",
+    "cowles_from_mg_s665",
+    "cowles_from_mg_s765",
+    "cowles_from_mg_s865",
+    "cowles_from_mg_s965",
+    "cowles_from_mg_s1065",
+    "cowles_from_mg_s1165",
+    "cowles_from_mg_s1265",
+    "cowles_from_mg_s1365",
+    "cowles_from_mg_s1465"
+   ],
+   "rule": "hidden",
+   "readings": [
+    {
+     "name": "cowles_from_mg_s565",
+     "target_deg": 6.132,
+     "top_deg": 6.132,
+     "max_intermediate_deg": 6.26,
+     "target_dist_m": 3910.8,
+     "eye_abs_m": 64.22,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 2870.8,
+     "world": {
+      "eye_abs_m": 64.32,
+      "target_deg": 6.132,
+      "top_deg": 6.13,
+      "max_shoulder_deg": 6.132,
+      "max_intermediate_deg": 6.309,
+      "min_deg": 0.0,
+      "expect": "hidden",
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 2880.8
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_mg_s665",
+     "target_deg": 6.185,
+     "top_deg": 6.185,
+     "max_intermediate_deg": 6.492,
+     "target_dist_m": 3810.8,
+     "eye_abs_m": 71.36,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 2870.8,
+     "world": {
+      "eye_abs_m": 71.42,
+      "target_deg": 6.186,
+      "top_deg": 6.184,
+      "max_shoulder_deg": 6.186,
+      "max_intermediate_deg": 6.564,
+      "min_deg": 0.0,
+      "expect": "hidden",
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 2880.8
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_mg_s765",
+     "target_deg": 6.241,
+     "top_deg": 6.241,
+     "max_intermediate_deg": 6.783,
+     "target_dist_m": 3711.7,
+     "eye_abs_m": 78.43,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 2871.7,
+     "world": {
+      "eye_abs_m": 78.49,
+      "target_deg": 6.243,
+      "top_deg": 6.24,
+      "max_shoulder_deg": 6.243,
+      "max_intermediate_deg": 6.848,
+      "min_deg": 0.0,
+      "expect": "hidden",
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 2881.7
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_mg_s865",
+     "target_deg": 6.301,
+     "top_deg": 6.301,
+     "max_intermediate_deg": 7.167,
+     "target_dist_m": 3614.2,
+     "eye_abs_m": 85.24,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 2874.2,
+     "world": {
+      "eye_abs_m": 85.26,
+      "target_deg": 6.303,
+      "top_deg": 6.301,
+      "max_shoulder_deg": 6.303,
+      "max_intermediate_deg": 7.174,
+      "min_deg": 0.0,
+      "expect": "hidden",
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 2874.2
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_mg_s965",
+     "target_deg": 6.356,
+     "top_deg": 6.356,
+     "max_intermediate_deg": 7.571,
+     "target_dist_m": 3520.0,
+     "eye_abs_m": 92.22,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 2870.0,
+     "world": {
+      "eye_abs_m": 92.26,
+      "target_deg": 6.359,
+      "top_deg": 6.356,
+      "max_shoulder_deg": 6.359,
+      "max_intermediate_deg": 7.574,
+      "min_deg": 0.0,
+      "expect": "hidden",
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 2870.0
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_mg_s1065",
+     "target_deg": 6.405,
+     "top_deg": 6.405,
+     "max_intermediate_deg": 8.655,
+     "target_dist_m": 3433.1,
+     "eye_abs_m": 98.92,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 3363.1,
+     "world": {
+      "eye_abs_m": 98.88,
+      "target_deg": 6.41,
+      "top_deg": 6.406,
+      "max_shoulder_deg": 6.41,
+      "max_intermediate_deg": 8.875,
+      "min_deg": 0.0,
+      "expect": "hidden",
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 3363.1
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_mg_s1165",
+     "target_deg": 6.437,
+     "top_deg": 6.437,
+     "max_intermediate_deg": 8.945,
+     "target_dist_m": 3354.3,
+     "eye_abs_m": 105.89,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 2884.3,
+     "world": {
+      "eye_abs_m": 105.94,
+      "target_deg": 6.439,
+      "top_deg": 6.436,
+      "max_shoulder_deg": 6.439,
+      "max_intermediate_deg": 8.974,
+      "min_deg": 0.0,
+      "expect": "hidden",
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 2884.3
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_mg_s1265",
+     "target_deg": 6.466,
+     "top_deg": 6.466,
+     "max_intermediate_deg": 10.014,
+     "target_dist_m": 3290.7,
+     "eye_abs_m": 111.4,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 2900.7,
+     "world": {
+      "eye_abs_m": 111.47,
+      "target_deg": 6.467,
+      "top_deg": 6.465,
+      "max_shoulder_deg": 6.467,
+      "max_intermediate_deg": 10.087,
+      "min_deg": 0.0,
+      "expect": "hidden",
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 2910.7
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_mg_s1365",
+     "target_deg": 6.524,
+     "top_deg": 6.524,
+     "max_intermediate_deg": 10.953,
+     "target_dist_m": 3233.0,
+     "eye_abs_m": 114.61,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 2913.0,
+     "world": {
+      "eye_abs_m": 114.71,
+      "target_deg": 6.524,
+      "top_deg": 6.522,
+      "max_shoulder_deg": 6.524,
+      "max_intermediate_deg": 11.144,
+      "min_deg": 0.0,
+      "expect": "hidden",
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 2903.0
+     },
+     "cone_m": null,
+     "cone60": null
+    },
+    {
+     "name": "cowles_from_mg_s1465",
+     "target_deg": 6.62,
+     "top_deg": 6.62,
+     "max_intermediate_deg": 14.826,
+     "target_dist_m": 3176.9,
+     "eye_abs_m": 115.65,
+     "top_abs_m": 484.34,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 3136.9,
+     "world": {
+      "eye_abs_m": 115.74,
+      "target_deg": 6.624,
+      "top_deg": 6.618,
+      "max_shoulder_deg": 6.624,
+      "max_intermediate_deg": 14.778,
+      "min_deg": 0.0,
+      "expect": "hidden",
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 3136.9
+     },
+     "cone_m": null,
+     "cone60": null
+    }
+   ],
+   "world_pass": true,
+   "pass": true
+  },
+  {
+   "v7": "Kwaay Paay from Jackson s 550: visible (summit cone 150 m), 8.0 +- 0.5 deg",
+   "rays": [
+    "kwaay_paay_from_jackson_s550"
+   ],
+   "rule": "band",
+   "deg": [
+    7.5,
+    8.5
+   ],
+   "readings": [
+    {
+     "name": "kwaay_paay_from_jackson_s550",
+     "target_deg": 8.07,
+     "top_deg": 7.88,
+     "max_intermediate_deg": 7.913,
+     "target_dist_m": 1709.9,
+     "eye_abs_m": 121.14,
+     "top_abs_m": 357.79,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 89.9,
+     "world": {
+      "eye_abs_m": 121.11,
+      "target_deg": 8.075,
+      "top_deg": 7.881,
+      "max_shoulder_deg": 8.075,
+      "max_intermediate_deg": 7.95,
+      "min_deg": 7.5,
+      "pass": true,
+      "cone60": {
+       "target_deg": 8.046,
+       "max_intermediate_deg": 8.075,
+       "pass": false
+      },
+      "max_outside_cone_short_of_top_m": 89.9
+     },
+     "cone_m": 150.0,
+     "cone60": {
+      "target_deg": 7.983,
+      "max_intermediate_deg": 8.07,
+      "pass": false
+     }
+    }
+   ],
+   "world_pass": true,
+   "pass": true
+  },
+  {
+   "v7": "Kwaay Paay from Mission Gorge s 2190: hidden behind the +8.85 deg knoll 321 m away",
+   "rays": [
+    "kwaay_paay_from_mg_s2190"
+   ],
+   "rule": "hidden",
+   "readings": [
+    {
+     "name": "kwaay_paay_from_mg_s2190",
+     "target_deg": 8.263,
+     "top_deg": 8.175,
+     "max_intermediate_deg": 8.647,
+     "target_dist_m": 1834.0,
+     "eye_abs_m": 94.31,
+     "top_abs_m": 357.79,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 1514.0,
+     "world": {
+      "eye_abs_m": 94.32,
+      "target_deg": 8.275,
+      "top_deg": 8.175,
+      "max_shoulder_deg": 8.275,
+      "max_intermediate_deg": 8.949,
+      "min_deg": 0.0,
+      "expect": "hidden",
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 1514.0
+     },
+     "cone_m": null,
+     "cone60": null
+    }
+   ],
+   "world_pass": true,
+   "pass": true
+  },
+  {
+   "v7": "Pyles from Mission Gorge s 2190: 8.5 +- 0.5 deg",
+   "rays": [
+    "pyles_from_mg_s2190"
+   ],
+   "rule": "band",
+   "deg": [
+    8.0,
+    9.0
+   ],
+   "readings": [
+    {
+     "name": "pyles_from_mg_s2190",
+     "target_deg": 8.516,
+     "top_deg": 8.516,
+     "max_intermediate_deg": 8.334,
+     "target_dist_m": 2164.4,
+     "eye_abs_m": 94.31,
+     "top_abs_m": 418.41,
+     "pass": true,
+     "max_outside_cone_short_of_top_m": 64.4,
+     "world": {
+      "eye_abs_m": 94.32,
+      "target_deg": 8.516,
+      "top_deg": 8.515,
+      "max_shoulder_deg": 8.516,
+      "max_intermediate_deg": 8.344,
+      "min_deg": 8.0,
+      "pass": true,
+      "max_outside_cone_short_of_top_m": 64.4
+     },
+     "cone_m": null,
+     "cone60": null
+    }
+   ],
+   "world_pass": true,
+   "pass": true
+  }
+ ],
+ "rays": [
+  {
+   "name": "cowles_from_jackson_s550",
+   "from": [
+    -756.7,
+    2895.1
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 121.14,
+   "steps": 216,
+   "first_gap_m": null,
+   "max_deg": 9.577,
+   "max_at_m": 2152.585653678062,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 2152.6,
+   "target_deg": 9.577,
+   "top_deg": 9.577,
+   "max_shoulder_deg": 9.572,
+   "max_intermediate_deg": 9.446,
+   "min_deg": 9.0,
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 9.56,
+   "world": {
+    "eye_abs_m": 121.11,
+    "target_deg": 9.583,
+    "top_deg": 9.578,
+    "max_shoulder_deg": 9.583,
+    "max_intermediate_deg": 9.462,
+    "min_deg": 9.0,
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 62.6
+   },
+   "max_outside_cone_short_of_top_m": 62.6
+  },
+  {
+   "name": "cowles_from_jackson_s650",
+   "from": [
+    -705.2,
+    2809.4
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 127.55,
+   "steps": 210,
+   "first_gap_m": null,
+   "max_deg": 9.661,
+   "max_at_m": 2095.806010337314,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 2095.8,
+   "target_deg": 9.661,
+   "top_deg": 9.661,
+   "max_shoulder_deg": 9.651,
+   "max_intermediate_deg": 9.51,
+   "min_deg": 9.0,
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 9.647,
+   "world": {
+    "eye_abs_m": 127.55,
+    "target_deg": 9.676,
+    "top_deg": 9.661,
+    "max_shoulder_deg": 9.676,
+    "max_intermediate_deg": 9.513,
+    "min_deg": 9.0,
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 65.8
+   },
+   "max_outside_cone_short_of_top_m": 65.8
+  },
+  {
+   "name": "cowles_from_jackson_s750",
+   "from": [
+    -650.1,
+    2726.2
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 134.63,
+   "steps": 204,
+   "first_gap_m": null,
+   "max_deg": 9.733,
+   "max_at_m": 2038.7176094623328,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 2038.7,
+   "target_deg": 9.733,
+   "top_deg": 9.733,
+   "max_shoulder_deg": 9.72,
+   "max_intermediate_deg": 9.564,
+   "min_deg": 9.0,
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 9.722,
+   "world": {
+    "eye_abs_m": 134.65,
+    "target_deg": 9.751,
+    "top_deg": 9.733,
+    "max_shoulder_deg": 9.751,
+    "max_intermediate_deg": 9.571,
+    "min_deg": 9.0,
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 68.7
+   },
+   "max_outside_cone_short_of_top_m": 68.7
+  },
+  {
+   "name": "cowles_from_jackson_s850",
+   "from": [
+    -585.1,
+    2650.3
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 140.32,
+   "steps": 198,
+   "first_gap_m": null,
+   "max_deg": 9.882,
+   "max_at_m": 1974.7969364643063,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 1974.8,
+   "target_deg": 9.882,
+   "top_deg": 9.882,
+   "max_shoulder_deg": 9.875,
+   "max_intermediate_deg": 9.73,
+   "min_deg": 9.0,
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 9.874,
+   "world": {
+    "eye_abs_m": 140.35,
+    "target_deg": 9.891,
+    "top_deg": 9.881,
+    "max_shoulder_deg": 9.891,
+    "max_intermediate_deg": 9.731,
+    "min_deg": 9.0,
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 64.8
+   },
+   "max_outside_cone_short_of_top_m": 64.8
+  },
+  {
+   "name": "cowles_from_jackson_s950",
+   "from": [
+    -538.3,
+    2562.2
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 147.73,
+   "steps": 194,
+   "first_gap_m": null,
+   "max_deg": 9.878,
+   "max_at_m": 1933.0540958542804,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 1933.1,
+   "target_deg": 9.878,
+   "top_deg": 9.878,
+   "max_shoulder_deg": 9.874,
+   "max_intermediate_deg": 9.732,
+   "min_deg": 9.0,
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 9.874,
+   "world": {
+    "eye_abs_m": 147.73,
+    "target_deg": 9.886,
+    "top_deg": 9.878,
+    "max_shoulder_deg": 9.886,
+    "max_intermediate_deg": 9.736,
+    "min_deg": 9.0,
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 63.1
+   },
+   "max_outside_cone_short_of_top_m": 63.1
+  },
+  {
+   "name": "cowles_from_jackson_s1050",
+   "from": [
+    -497.6,
+    2470.9
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 155.36,
+   "steps": 191,
+   "first_gap_m": null,
+   "max_deg": 9.812,
+   "max_at_m": 1902.1284914231767,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 1902.1,
+   "target_deg": 9.812,
+   "top_deg": 9.812,
+   "max_shoulder_deg": 9.81,
+   "max_intermediate_deg": 9.668,
+   "min_deg": 9.0,
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 9.812,
+   "world": {
+    "eye_abs_m": 155.34,
+    "target_deg": 9.83,
+    "top_deg": 9.813,
+    "max_shoulder_deg": 9.83,
+    "max_intermediate_deg": 9.669,
+    "min_deg": 9.0,
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 62.1
+   },
+   "max_outside_cone_short_of_top_m": 62.1
+  },
+  {
+   "name": "cowles_from_jackson_s1150",
+   "from": [
+    -453.8,
+    2381.1
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 161.61,
+   "steps": 188,
+   "first_gap_m": null,
+   "max_deg": 9.778,
+   "max_at_m": 1872.7010095620203,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 1872.7,
+   "target_deg": 9.778,
+   "top_deg": 9.778,
+   "max_shoulder_deg": 9.775,
+   "max_intermediate_deg": 9.632,
+   "min_deg": 9.0,
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 9.782,
+   "world": {
+    "eye_abs_m": 161.57,
+    "target_deg": 9.792,
+    "top_deg": 9.779,
+    "max_shoulder_deg": 9.792,
+    "max_intermediate_deg": 9.63,
+    "min_deg": 9.0,
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 62.7
+   },
+   "max_outside_cone_short_of_top_m": 62.7
+  },
+  {
+   "name": "cowles_from_jackson_s1250",
+   "from": [
+    -389.2,
+    2305.4
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 168.56,
+   "steps": 183,
+   "first_gap_m": null,
+   "max_deg": 9.818,
+   "max_at_m": 1824.781712571016,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 1824.8,
+   "target_deg": 9.818,
+   "top_deg": 9.818,
+   "max_shoulder_deg": 9.813,
+   "max_intermediate_deg": 9.664,
+   "min_deg": 9.0,
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 9.825,
+   "world": {
+    "eye_abs_m": 168.55,
+    "target_deg": 9.835,
+    "top_deg": 9.818,
+    "max_shoulder_deg": 9.835,
+    "max_intermediate_deg": 9.663,
+    "min_deg": 9.0,
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 64.8
+   },
+   "max_outside_cone_short_of_top_m": 64.8
+  },
+  {
+   "name": "cowles_from_jackson_s1350",
+   "from": [
+    -315.1,
+    2238.2
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 175.22,
+   "steps": 177,
+   "first_gap_m": null,
+   "max_deg": 9.909,
+   "max_at_m": 1769.61683563409,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 1769.6,
+   "target_deg": 9.909,
+   "top_deg": 9.909,
+   "max_shoulder_deg": 9.901,
+   "max_intermediate_deg": 9.735,
+   "min_deg": 9.0,
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 9.921,
+   "world": {
+    "eye_abs_m": 175.21,
+    "target_deg": 9.944,
+    "top_deg": 9.909,
+    "max_shoulder_deg": 9.944,
+    "max_intermediate_deg": 9.718,
+    "min_deg": 9.0,
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 69.6
+   },
+   "max_outside_cone_short_of_top_m": 69.6
+  },
+  {
+   "name": "cowles_from_jackson_s1450",
+   "from": [
+    -251.2,
+    2161.9
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 182.49,
+   "steps": 174,
+   "first_gap_m": null,
+   "max_deg": 9.891,
+   "max_at_m": 1731.155703425781,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 1731.2,
+   "target_deg": 9.891,
+   "top_deg": 9.891,
+   "max_shoulder_deg": 9.89,
+   "max_intermediate_deg": 9.768,
+   "min_deg": 9.0,
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 9.907,
+   "world": {
+    "eye_abs_m": 182.49,
+    "target_deg": 9.917,
+    "top_deg": 9.891,
+    "max_shoulder_deg": 9.917,
+    "max_intermediate_deg": 9.769,
+    "min_deg": 9.0,
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 61.2
+   },
+   "max_outside_cone_short_of_top_m": 61.2
+  },
+  {
+   "name": "cowles_from_jackson_s1550",
+   "from": [
+    -204.9,
+    2073.3
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 188.53,
+   "steps": 172,
+   "first_gap_m": null,
+   "max_deg": 9.766,
+   "max_at_m": 1718.5616815389578,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 1718.6,
+   "target_deg": 9.766,
+   "top_deg": 9.766,
+   "max_shoulder_deg": 9.763,
+   "max_intermediate_deg": 9.606,
+   "min_deg": 9.0,
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 9.786,
+   "world": {
+    "eye_abs_m": 188.54,
+    "target_deg": 9.803,
+    "top_deg": 9.766,
+    "max_shoulder_deg": 9.803,
+    "max_intermediate_deg": 9.592,
+    "min_deg": 9.0,
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 68.6
+   },
+   "max_outside_cone_short_of_top_m": 68.6
+  },
+  {
+   "name": "cowles_from_mg_s1865",
+   "from": [
+    -1561.7,
+    2978.2
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 100.32,
+   "steps": 297,
+   "first_gap_m": null,
+   "max_deg": 7.387,
+   "max_at_m": 2961.841459959599,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 2961.8,
+   "target_deg": 7.387,
+   "top_deg": 7.387,
+   "max_shoulder_deg": 7.384,
+   "max_intermediate_deg": 7.248,
+   "min_deg": 6.9,
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 7.37,
+   "world": {
+    "eye_abs_m": 100.37,
+    "target_deg": 7.391,
+    "top_deg": 7.386,
+    "max_shoulder_deg": 7.391,
+    "max_intermediate_deg": 7.252,
+    "min_deg": 6.9,
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 61.8
+   },
+   "max_outside_cone_short_of_top_m": 61.8
+  },
+  {
+   "name": "cowles_from_mg_s565",
+   "from": [
+    -2485.8,
+    2184.1
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 64.22,
+   "steps": 392,
+   "first_gap_m": null,
+   "max_deg": 6.26,
+   "max_at_m": 1040.0,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 3910.8,
+   "target_deg": 6.132,
+   "top_deg": 6.132,
+   "max_shoulder_deg": 6.13,
+   "max_intermediate_deg": 6.26,
+   "min_deg": 0.0,
+   "expect": "hidden",
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 6.122,
+   "world": {
+    "eye_abs_m": 64.32,
+    "target_deg": 6.132,
+    "top_deg": 6.13,
+    "max_shoulder_deg": 6.132,
+    "max_intermediate_deg": 6.309,
+    "min_deg": 0.0,
+    "expect": "hidden",
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 2880.8
+   },
+   "max_outside_cone_short_of_top_m": 2870.8
+  },
+  {
+   "name": "cowles_from_mg_s665",
+   "from": [
+    -2386.1,
+    2193.4
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 71.36,
+   "steps": 382,
+   "first_gap_m": null,
+   "max_deg": 6.492,
+   "max_at_m": 940.0,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 3810.8,
+   "target_deg": 6.185,
+   "top_deg": 6.185,
+   "max_shoulder_deg": 6.184,
+   "max_intermediate_deg": 6.492,
+   "min_deg": 0.0,
+   "expect": "hidden",
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 6.175,
+   "world": {
+    "eye_abs_m": 71.42,
+    "target_deg": 6.186,
+    "top_deg": 6.184,
+    "max_shoulder_deg": 6.186,
+    "max_intermediate_deg": 6.564,
+    "min_deg": 0.0,
+    "expect": "hidden",
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 2880.8
+   },
+   "max_outside_cone_short_of_top_m": 2870.8
+  },
+  {
+   "name": "cowles_from_mg_s765",
+   "from": [
+    -2287.6,
+    2204.2
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 78.43,
+   "steps": 372,
+   "first_gap_m": null,
+   "max_deg": 6.783,
+   "max_at_m": 840.0,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 3711.7,
+   "target_deg": 6.241,
+   "top_deg": 6.241,
+   "max_shoulder_deg": 6.238,
+   "max_intermediate_deg": 6.783,
+   "min_deg": 0.0,
+   "expect": "hidden",
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 6.231,
+   "world": {
+    "eye_abs_m": 78.49,
+    "target_deg": 6.243,
+    "top_deg": 6.24,
+    "max_shoulder_deg": 6.243,
+    "max_intermediate_deg": 6.848,
+    "min_deg": 0.0,
+    "expect": "hidden",
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 2881.7
+   },
+   "max_outside_cone_short_of_top_m": 2871.7
+  },
+  {
+   "name": "cowles_from_mg_s865",
+   "from": [
+    -2193.0,
+    2232.0
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 85.24,
+   "steps": 362,
+   "first_gap_m": null,
+   "max_deg": 7.167,
+   "max_at_m": 740.0,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 3614.2,
+   "target_deg": 6.301,
+   "top_deg": 6.301,
+   "max_shoulder_deg": 6.295,
+   "max_intermediate_deg": 7.167,
+   "min_deg": 0.0,
+   "expect": "hidden",
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 6.291,
+   "world": {
+    "eye_abs_m": 85.26,
+    "target_deg": 6.303,
+    "top_deg": 6.301,
+    "max_shoulder_deg": 6.303,
+    "max_intermediate_deg": 7.174,
+    "min_deg": 0.0,
+    "expect": "hidden",
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 2874.2
+   },
+   "max_outside_cone_short_of_top_m": 2874.2
+  },
+  {
+   "name": "cowles_from_mg_s965",
+   "from": [
+    -2103.4,
+    2273.5
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 92.22,
+   "steps": 352,
+   "first_gap_m": null,
+   "max_deg": 7.571,
+   "max_at_m": 650.0,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 3520.0,
+   "target_deg": 6.356,
+   "top_deg": 6.356,
+   "max_shoulder_deg": 6.34,
+   "max_intermediate_deg": 7.571,
+   "min_deg": 0.0,
+   "expect": "hidden",
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 6.346,
+   "world": {
+    "eye_abs_m": 92.26,
+    "target_deg": 6.359,
+    "top_deg": 6.356,
+    "max_shoulder_deg": 6.359,
+    "max_intermediate_deg": 7.574,
+    "min_deg": 0.0,
+    "expect": "hidden",
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 2870.0
+   },
+   "max_outside_cone_short_of_top_m": 2870.0
+  },
+  {
+   "name": "cowles_from_mg_s1065",
+   "from": [
+    -2022.7,
+    2330.3
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 98.92,
+   "steps": 344,
+   "first_gap_m": null,
+   "max_deg": 8.655,
+   "max_at_m": 70.0,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 3433.1,
+   "target_deg": 6.405,
+   "top_deg": 6.405,
+   "max_shoulder_deg": 6.4,
+   "max_intermediate_deg": 8.655,
+   "min_deg": 0.0,
+   "expect": "hidden",
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 6.394,
+   "world": {
+    "eye_abs_m": 98.88,
+    "target_deg": 6.41,
+    "top_deg": 6.406,
+    "max_shoulder_deg": 6.41,
+    "max_intermediate_deg": 8.875,
+    "min_deg": 0.0,
+    "expect": "hidden",
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 3363.1
+   },
+   "max_outside_cone_short_of_top_m": 3363.1
+  },
+  {
+   "name": "cowles_from_mg_s1165",
+   "from": [
+    -1950.5,
+    2397.1
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 105.89,
+   "steps": 336,
+   "first_gap_m": null,
+   "max_deg": 8.945,
+   "max_at_m": 470.0,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 3354.3,
+   "target_deg": 6.437,
+   "top_deg": 6.437,
+   "max_shoulder_deg": 6.429,
+   "max_intermediate_deg": 8.945,
+   "min_deg": 0.0,
+   "expect": "hidden",
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 6.425,
+   "world": {
+    "eye_abs_m": 105.94,
+    "target_deg": 6.439,
+    "top_deg": 6.436,
+    "max_shoulder_deg": 6.439,
+    "max_intermediate_deg": 8.974,
+    "min_deg": 0.0,
+    "expect": "hidden",
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 2884.3
+   },
+   "max_outside_cone_short_of_top_m": 2884.3
+  },
+  {
+   "name": "cowles_from_mg_s1265",
+   "from": [
+    -1893.4,
+    2477.2
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 111.4,
+   "steps": 330,
+   "first_gap_m": null,
+   "max_deg": 10.014,
+   "max_at_m": 390.0,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 3290.7,
+   "target_deg": 6.466,
+   "top_deg": 6.466,
+   "max_shoulder_deg": 6.465,
+   "max_intermediate_deg": 10.014,
+   "min_deg": 0.0,
+   "expect": "hidden",
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 6.453,
+   "world": {
+    "eye_abs_m": 111.47,
+    "target_deg": 6.467,
+    "top_deg": 6.465,
+    "max_shoulder_deg": 6.467,
+    "max_intermediate_deg": 10.087,
+    "min_deg": 0.0,
+    "expect": "hidden",
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 2910.7
+   },
+   "max_outside_cone_short_of_top_m": 2900.7
+  },
+  {
+   "name": "cowles_from_mg_s1365",
+   "from": [
+    -1840.8,
+    2562.3
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 114.61,
+   "steps": 324,
+   "first_gap_m": null,
+   "max_deg": 10.953,
+   "max_at_m": 320.0,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 3233.0,
+   "target_deg": 6.524,
+   "top_deg": 6.524,
+   "max_shoulder_deg": 6.518,
+   "max_intermediate_deg": 10.953,
+   "min_deg": 0.0,
+   "expect": "hidden",
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 6.51,
+   "world": {
+    "eye_abs_m": 114.71,
+    "target_deg": 6.524,
+    "top_deg": 6.522,
+    "max_shoulder_deg": 6.524,
+    "max_intermediate_deg": 11.144,
+    "min_deg": 0.0,
+    "expect": "hidden",
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 2903.0
+   },
+   "max_outside_cone_short_of_top_m": 2913.0
+  },
+  {
+   "name": "cowles_from_mg_s1465",
+   "from": [
+    -1787.6,
+    2647.1
+   ],
+   "to": [
+    1388.5,
+    2717.0
+   ],
+   "eye_abs_m": 115.65,
+   "steps": 318,
+   "first_gap_m": null,
+   "max_deg": 14.826,
+   "max_at_m": 40.0,
+   "max_ground_abs_m": 484.34,
+   "target_dist_m": 3176.9,
+   "target_deg": 6.62,
+   "top_deg": 6.62,
+   "max_shoulder_deg": 6.606,
+   "max_intermediate_deg": 14.826,
+   "min_deg": 0.0,
+   "expect": "hidden",
+   "pass": true,
+   "nominal": [
+    1380.0,
+    2700.0
+   ],
+   "top_abs_m": 484.34,
+   "nominal_deg": 6.605,
+   "world": {
+    "eye_abs_m": 115.74,
+    "target_deg": 6.624,
+    "top_deg": 6.618,
+    "max_shoulder_deg": 6.624,
+    "max_intermediate_deg": 14.778,
+    "min_deg": 0.0,
+    "expect": "hidden",
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 3136.9
+   },
+   "max_outside_cone_short_of_top_m": 3136.9
+  },
+  {
+   "name": "kwaay_paay_from_jackson_s550",
+   "from": [
+    -756.7,
+    2895.1
+   ],
+   "to": [
+    63.4,
+    4395.5
+   ],
+   "eye_abs_m": 121.14,
+   "steps": 171,
+   "first_gap_m": null,
+   "max_deg": 8.07,
+   "max_at_m": 1620.0,
+   "max_ground_abs_m": 357.79,
+   "target_dist_m": 1709.9,
+   "target_deg": 8.07,
+   "top_deg": 7.88,
+   "max_shoulder_deg": 8.07,
+   "max_intermediate_deg": 7.913,
+   "min_deg": 7.5,
+   "pass": true,
+   "nominal": [
+    48.7,
+    4395.9
+   ],
+   "top_abs_m": 357.79,
+   "nominal_deg": 7.877,
+   "cone60": {
+    "target_deg": 7.983,
+    "max_intermediate_deg": 8.07,
+    "pass": false
+   },
+   "cone_m": 150.0,
+   "world": {
+    "eye_abs_m": 121.11,
+    "target_deg": 8.075,
+    "top_deg": 7.881,
+    "max_shoulder_deg": 8.075,
+    "max_intermediate_deg": 7.95,
+    "min_deg": 7.5,
+    "pass": true,
+    "cone60": {
+     "target_deg": 8.046,
+     "max_intermediate_deg": 8.075,
+     "pass": false
+    },
+    "max_outside_cone_short_of_top_m": 89.9
+   },
+   "max_outside_cone_short_of_top_m": 89.9
+  },
+  {
+   "name": "kwaay_paay_from_mg_s2190",
+   "from": [
+    -1288.8,
+    3156.5
+   ],
+   "to": [
+    63.4,
+    4395.5
+   ],
+   "eye_abs_m": 94.31,
+   "steps": 184,
+   "first_gap_m": null,
+   "max_deg": 8.647,
+   "max_at_m": 320.0,
+   "max_ground_abs_m": 357.79,
+   "target_dist_m": 1834.0,
+   "target_deg": 8.263,
+   "top_deg": 8.175,
+   "max_shoulder_deg": 8.263,
+   "max_intermediate_deg": 8.647,
+   "min_deg": 0.0,
+   "expect": "hidden",
+   "pass": true,
+   "nominal": [
+    48.7,
+    4395.9
+   ],
+   "top_abs_m": 357.79,
+   "nominal_deg": 8.191,
+   "world": {
+    "eye_abs_m": 94.32,
+    "target_deg": 8.275,
+    "top_deg": 8.175,
+    "max_shoulder_deg": 8.275,
+    "max_intermediate_deg": 8.949,
+    "min_deg": 0.0,
+    "expect": "hidden",
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 1514.0
+   },
+   "max_outside_cone_short_of_top_m": 1514.0
+  },
+  {
+   "name": "pyles_from_mg_s2190",
+   "from": [
+    -1288.8,
+    3156.5
+   ],
+   "to": [
+    766.1,
+    3836.0
+   ],
+   "eye_abs_m": 94.31,
+   "steps": 217,
+   "first_gap_m": null,
+   "max_deg": 8.516,
+   "max_at_m": 2164.380904836877,
+   "max_ground_abs_m": 418.41,
+   "target_dist_m": 2164.4,
+   "target_deg": 8.516,
+   "top_deg": 8.516,
+   "max_shoulder_deg": 8.503,
+   "max_intermediate_deg": 8.334,
+   "min_deg": 8.0,
+   "pass": true,
+   "nominal": [
+    792.9,
+    3848.7
+   ],
+   "top_abs_m": 418.41,
+   "nominal_deg": 8.382,
+   "world": {
+    "eye_abs_m": 94.32,
+    "target_deg": 8.516,
+    "top_deg": 8.515,
+    "max_shoulder_deg": 8.516,
+    "max_intermediate_deg": 8.344,
+    "min_deg": 8.0,
+    "pass": true,
+    "max_outside_cone_short_of_top_m": 64.4
+   },
+   "max_outside_cone_short_of_top_m": 64.4
+  }
+ ]
+}

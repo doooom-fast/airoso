@@ -1317,6 +1317,46 @@ over by an unreleased corner, each within 2.4 cm, reported); the freeway's 0 ver
 over a driven lane only at v0.17.1's own five places; criterion 6 within 8 m of the freeway max 0.850 m (17,812 far
 vertices, fresh 3DEP); road kn5 126.3 -> 128.3 MB.
 
+### Integration fix round 3 (2026-10-13, v0.18.0, Kevin's decisions + the view lens's three defects): the freeway OFF, the clamp's reach confirmed, the release's teeth and rail caps fixed at their causes
+
+No gate threshold changed and no criterion was re-worded. **Kevin's decisions:** (a) the I-8 freeway that fix round 1 drew
+(`tools/author_freeway_blend.py`) is OFF — `scenery.freeway.enabled: false`, his stated default ("terrain only, NO I-8
+pavement ribbon"; on the Lariat extra highways "look like wavy ribbons"). Off means `tools/freeway_i8.py` writes no plan
+and removes a stale one, so the author step never runs: no slab bed, no batter cut / fill, no held-verge batter; the
+I-8 cut is the 3DEP-shaped terrain cut again. Every `freeway_i8` / `author_freeway_blend` row in the fix round 2 table
+above is now inert (kept with the tool, its tests and its 3DEP cache; `enabled: true` is the whole switch). (b) The
+clamp's reach stays 20 / 40 m (the 0054 D3 subsection above; the two 80 / 250 rows in the 2026-10-11 table are marked
+superseded) and LAWS L3's bullet now reads Kevin's principle: near-road relief is shaped to the road within the road's
+own construction zone, ~20-40 m; real relief beyond is never reshaped.
+
+**The view lens's three defects, with the freeway gone** (re-rendered from its own viewpoints first): (1) the shark-fin
+bank along Alvarado's I-8 side was the freeway's 45 deg batter cut into 5 m facets — gone with it, nothing else needed.
+(2) and (3) survived and are fixed in `tools/ground_release_blend.py` / `tools/ground_release.py`:
+
+| Number / rule | Value | Where | Why |
+|---|---|---|---|
+| span-zone fill read at the nearest pavement point | rule | release batter (2b), span zones only | the grass teeth beside College's south abutment wall: the fill batter's "pavement on the ground" was tested at each sidewalk FACE's centroid, and a 3.5 m face whose centroid stood over the embankment held a vertex 0.8-1.9 m over 3DEP beside a corner of it already 2 m in the air. In a span zone the ground under the pavement is the released real earth, so the gap is now read at the point of the face nearest the vertex (linear over the face, each corner read `GAP_INSET_M` inside it). Bank zones keep the face test: there the ground under the pavement is held (the prep pins it), and a pointwise read over the released creek bank switched the curtain-closing fill off (steep faces in the four 50 m cells beside Alvarado's creek bank 38 -> 367 in a trial) |
+| `tools/ground_release_blend.GAP_INSET_M` | 0.4 m [invented] | the span-zone gap | a corner on the pavement's outer edge sits over the released ground beyond it |
+| `tools/ground_release_blend.FILL_EASE_M` | 0.25 m [invented] (with `ON_GROUND_M` 1.0) | span-zone fill | the fill starts at the pavement while the gap is under 0.25 m and eases (smoothstep) to the ground under it at 1.0 m, so it fades with the ground where the approach leaves its embankment instead of switching off |
+| zone ramp toward the prep's ground | rule | release step 2 | the comb west of College's north approach: the kn5 prep refines a kept cell past 20 m to the data but leaves every zone vertex alone, so a ramp blended toward the graded ground before the prep froze a band 2-4 m over 3DEP between two pieces of 3DEP. A ramp vertex in a kept cell now blends toward the prep's own refined height (engine-july `build_kn5_loop.RefineField`, read from the snapshot; no bytecode written into it) |
+| no ramp at a shared station | rule | `ground_release.Zones.weight` | an end that lies inside another zone on the same side does not ramp: Lake Murray Blvd's I-8 span and creek (s 13428) and College's approach foot / south approach / I-8 span each ramped to nothing at the shared station, a dip back toward the built ground between two released pieces |
+| release rails per side over the union of the zones | rule | release rails (3) | overlapping zones each drew their own rail over the shared stations: two prisms 3 cm apart whose end caps stood up as white teeth on the parapet (College approach, Lake Murray Blvd creek). One rail per contiguous run of stations now (10 rails, the zone names joined) |
+| `tools/ground_release_blend.RAIL_TAPER_M` / `RAIL_END_H_M` | 2.0 m / 0.05 m [invented] | release rails | a free-standing end slopes down over its last 2 m to 5 cm (a sloped end treatment) instead of standing its square Jersey profile up as a pointed white tooth (the College approach rail ending beside the bridge parapet) |
+
+Tried and dropped (measured, not shipped): a zone ramp lengthened to an earth batter's run of its step (3.5 m per m,
+4-16 m) raised the constructed bumps beside Alvarado's creek bank (49 -> 62 over 0.6 m) and under Lake Murray Blvd.
+
+Measured on the full rehearsal (fresh scratch workshop, fresh scratch engine-july, no `--skip-blend`), v0.17.1 -> this
+build: street drive_test soft top 42 -> 41, severe 0, kinks 3.86 -> 3.41 /km, bumps 0.15 -> 0.0 /km, gated excursions
+100 -> 99, floating 391, obstruction 0, daylight 0; street audit D 512 -> 514 (the release rails, as in fix rounds 1-2),
+K 20, I 20, F 13; race_cw / race_acw severe 31 / 28 -> 22 / 20, soft top 9 / 9, audits D 0 K 20 I 20 F 13 W 0, no_route
+PASS planned and built (leak 0, 0 / 406), barrier_missing 0, obstruction 0; verify_mouths PASS x4, verify_fold_fans PASS,
+verify_ai_line PASS (2.544 / 2.386 m), verify_kn5 + --inis, check_race_kn5, verify_race, verify_signs (23 posts),
+rib_check, house_seat_check PASS. Release: batter cut 412 / fill 446; steep faces (> 60 deg, > 0.5 m) within 12 m of a
+pavement 786 -> 549 (439 -> 329 not under a deck). Teeth (a terrain vertex > 0.6 m over the mean of its neighbours and
+not 3DEP's own): within 20 m of College's south abutment 5 -> 0; within 25 m of the comb west of the north approach 18 -> 7 (the refuted build -> this one). Road kn5 92,502,895 B
+(v0.17.1) -> 116,011,770 B (128,277,872 with the freeway).
+
 ## 2026-10-12 — `verify_signs` (k) direction coverage, (j) read from signs.json, race furniture never the signs' ground (ledger 0051)
 
 **Why.** Kevin, from the seat: "arrow signs are only placed for one direction of driving". All signs ship in the one

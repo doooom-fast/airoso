@@ -1,7 +1,7 @@
 ---
 id: 0046
 title: "More terrain near the roads, the I-8 trench and adjacent causeway cut out" — and see Cowles Mountain from Navajo
-status: in-progress — built and rehearsed 2026-10-12; fix round 2 (2026-10-13) after the truth + visual lenses refuted the fix round: washboard ribs fixed at their cause (anti-aliased 5 m tier, data-chosen diagonals, tools/rib_check.py gate), criteria 2 and 3 re-worded where fresh 3DEP fails them too; fix round 3 (2026-10-13) after the visual lens found sunken houses and the truth lens criterion 4: every house and building seated on the final ground (tools/house_seat_check.py gate), criterion 4's rim read across 3DEP's own wall edges, criterion 3's box low corrected and given a pit clause, the far filter bound 0.85 m; every gate identical to v0.17.1; fix round 4 (2026-10-13) after both lenses refuted round 3: the cut-slope benches west of College drawn through break lines (tools/rib_check.py now reads the built surface between the grid points: step jogs), the near-road feather an earth batter (s 3800), bridge bodies under both overcrossings, criterion 4's round-3 re-wording withdrawn; every gate identical to v0.17.1; criterion 4 fails only on rims within 16 m of a pavement that criterion 7 holds to v0.17.1 (Kevin's call); awaiting the engine-july mirror, the merge, the install and Kevin's seat (criterion 8); integration fix round (v0.18.0, 2026-10-13) after the truth + view lenses refuted the integration: the near-road ground released to the real earth in three declared zones (Alvarado Creek's bank, College Ave's south embankment, Alvarado Creek under Lake Murray Blvd) with a rail on every new drop, College Ave's deck held between its real abutments at the road's real height, and the I-8's own pavement in its cut; criterion 4 172 / 172 on the truth lens's centreline, every drive / race gate as before; integration fix round 2 (v0.18.0, 2026-10-13) after both lenses refuted that: the I-8 laid at its real height with the ground meeting it (nothing of it through College's deck, no hump under either bridge), both overcrossings' whole real spans and the Alvarado / College terrace released, the release capped face by face (no grass through Lake Murray Blvd's lane) and held to an earth batter (no curtains), the corridor carried to the box's west edge; criterion 4 180 / 181 as first written, its s 250 rim re-worded where fresh 3DEP fails it too (a 6.18 m pixel step 0.12 m from the point); every drive / race gate as before
+status: in-progress — built and rehearsed 2026-10-12; fix round 2 (2026-10-13) after the truth + visual lenses refuted the fix round: washboard ribs fixed at their cause (anti-aliased 5 m tier, data-chosen diagonals, tools/rib_check.py gate), criteria 2 and 3 re-worded where fresh 3DEP fails them too; fix round 3 (2026-10-13) after the visual lens found sunken houses and the truth lens criterion 4: every house and building seated on the final ground (tools/house_seat_check.py gate), criterion 4's rim read across 3DEP's own wall edges, criterion 3's box low corrected and given a pit clause, the far filter bound 0.85 m; every gate identical to v0.17.1; fix round 4 (2026-10-13) after both lenses refuted round 3: the cut-slope benches west of College drawn through break lines (tools/rib_check.py now reads the built surface between the grid points: step jogs), the near-road feather an earth batter (s 3800), bridge bodies under both overcrossings, criterion 4's round-3 re-wording withdrawn; every gate identical to v0.17.1; criterion 4 fails only on rims within 16 m of a pavement that criterion 7 holds to v0.17.1 (Kevin's call); awaiting the engine-july mirror, the merge, the install and Kevin's seat (criterion 8); integration fix round (v0.18.0, 2026-10-13) after the truth + view lenses refuted the integration: the near-road ground released to the real earth in three declared zones (Alvarado Creek's bank, College Ave's south embankment, Alvarado Creek under Lake Murray Blvd) with a rail on every new drop, College Ave's deck held between its real abutments at the road's real height, and the I-8's own pavement in its cut; criterion 4 172 / 172 on the truth lens's centreline, every drive / race gate as before; integration fix round 2 (v0.18.0, 2026-10-13) after both lenses refuted that: the I-8 laid at its real height with the ground meeting it (nothing of it through College's deck, no hump under either bridge), both overcrossings' whole real spans and the Alvarado / College terrace released, the release capped face by face (no grass through Lake Murray Blvd's lane) and held to an earth batter (no curtains), the corridor carried to the box's west edge; criterion 4 180 / 181 as first written, its s 250 rim re-worded where fresh 3DEP fails it too (a 6.18 m pixel step 0.12 m from the point); every drive / race gate as before; integration fix round 3 (v0.18.0, 2026-10-13): Kevin's decisions applied — the I-8 freeway OFF by config (his call: terrain only) with every terrain change it forced gone, the clamp 20 / 40 and L3 in his words (real relief beyond the road's construction zone is never reshaped); the view lens's shark-fin bank (the freeway's batter) gone with it, the College abutment teeth, the release rails' overlapping end caps and a ramp comb fixed at their causes; C2 v1640 shows the real hill (7.157 deg vs 3DEP 7.215); every gate as before; not installed
 scope: tracks/san-diego-lake-murray (proof, street_port); engine scripts/elevation/heightfield.py HF_MARGIN_M + scripts/geometry/ribbon.py grass_terrain skirt + terrain tiering (every track, opt-in; Lookout Lariat next consumer); fleet/LAWS.md L3 "Fake mountains" (standard)
 layer: standard + engine + project
 train: -
@@ -868,3 +868,65 @@ and Kevin's call, like the zones before it. Lake Murray Blvd's own deck still re
 rate and load time (criterion 8): the road kn5 is 128.3 MB (126.3 before this round, 113.3 in v0.17.1); the far ring is
 uncut and the near terrain has about 11k more vertices. Every number invented here is in GATES-CHANGELOG (0046,
 integration fix round 2).
+
+## Integration fix round 3 (v0.18.0, 2026-10-13): Kevin's decisions applied, the view lens's three defects fixed — not installed
+
+Gates, runtime and truth lenses passed fix round 2; the view lens refuted it on three things: (1) Alvarado's I-8-side bank
+read from the seat as shark-fin grass teeth for hundreds of metres, over the race_cw wall too; (2) grass teeth and a
+hanging grass blade at College's south abutment (-1877, -1032), (-1853, -1016); (3) guard-rail runs overlapping ~3 cm with
+their triangular end caps standing up (College approach (-1876.4, -1033), (-1870.9, -1023); the Lake Murray Blvd creek).
+
+**Kevin's decisions.**
+
+- **The I-8 freeway is OFF (Kevin's call).** Fix round 1 drew the I-8 itself (slab, lanes, median barrier;
+  `tools/author_freeway_blend.py`) against this entry's own scope ("terrain only, NO I-8 pavement ribbon" — on the
+  Lariat extra highways "look like wavy ribbons"). Kevin was asked with a still of the drawn freeway; the stated default
+  stands: out for v0.18.0. `track.config.json` `scenery.freeway.enabled: false` — `tools/freeway_i8.py` then writes no plan
+  (and removes a stale one) and the author step never runs, so every terrain change it forced is gone with it: its slab
+  bed, its batter cut / fill, the held-verge batter into its 45 deg slope. The I-8 cut is the 3DEP-shaped terrain cut
+  again. The tool, its tests and its 3DEP cache stay; `enabled: true` is the whole switch.
+- **Real ridges are never reshaped.** `terrain.clamp_corridor_m` 20 / `clamp_blend_m` 40 (ledger 0054 D3, measured: 0
+  real ground moved by more than 1 m anywhere on the loop or the expansion roads; within 20 m nothing moves; a hard
+  40 / 40 would leave a 2.2-2.4 m step beside Alvarado). fleet/LAWS.md L3 now says it in Kevin's terms: near-road relief
+  is shaped to the road within the road's own construction zone, ~20-40 m; real relief beyond is never reshaped.
+  GATES-CHANGELOG's 80 / 250 rows are marked superseded.
+
+**The three defects, re-rendered first from the view lens's own viewpoints on the no-freeway build:**
+
+| found | cause | fix |
+|---|---|---|
+| (1) shark-fin bank along Alvarado's I-8 side, s ~700-1900 | the freeway's 45 deg batter cut into coarse 5 m facets | gone with the freeway (stills: the bank reads as the smooth verge v0.17.1 had) |
+| (2) grass teeth against College's south abutment wall, 6.2-7.3 m under a 7.8 m deck | the release's fill batter tested "pavement on the ground" at each sidewalk FACE's centroid: a 3.5 m face whose centroid stood over the embankment held a vertex 0.8-1.9 m over 3DEP beside a corner of the same face already 2 m in the air | in a span zone the fill now reads the ground gap at the point of the face nearest the vertex, and eases from the pavement (gap under 0.25 m) to the ground under it (1.0 m); bank zones keep the face test (their ground under the pavement is held, and the pointwise read switched the curtain-closing fill off beside Alvarado's creek in a trial) |
+| (2) the hanging blade beside a pier (-1853, -1016) | the freeway's slab bed | gone with the freeway |
+| (2b, found here) a comb of short teeth 37 m west of College's north approach (the "dark spiky clump" from the deck) | the span zone's ramp blended toward the graded ground BEFORE the prep, which then refined the same cells outside the zone to the data and left the zone alone: a band 2-4 m over 3DEP frozen between two pieces of 3DEP | a ramp vertex in a kept cell blends toward the prep's own refined height (engine-july `RefineField`, read from the snapshot) |
+| (2c, found here) a dip at the station two zones share (Lake Murray Blvd's I-8 span / creek, s 13428; College's approach zones) | each zone ramped to nothing at its own end | an end lying inside another zone on the same side does not ramp |
+| (3) rail runs 3 cm apart with their end caps up | each overlapping zone drew its own rail over the same stations | the rail stations are read per side over the union of the zones: one rail per run (10) |
+| (3) the white end cap where the College approach rail stops beside the bridge parapet | a free-standing Jersey end shows its pointed profile | every release rail end slopes down over its last 2 m to 5 cm (a sloped end treatment) |
+
+**Measured on the final rehearsal** (fresh scratch workshop + fresh scratch engine-july, no `--skip-blend`; the gate
+JSONs on disk are the chain's own, md5s recorded at the chain's exit; no debug script wrote into the rehearsal project):
+
+- every gate vs v0.17.1: street soft top 42 -> 41, severe 0, kinks 3.86 -> 3.41 /km, bumps 0.15 -> 0.0, excursions
+  100 -> 99, floating 391, obstruction 0; audit D 512 -> 514 (the release rails), K 20, I 20, F 13; verify_mouths x4;
+  race severe 22 / 20 (v0.17.1 31 / 28), soft top 9 / 9, audits D 0 K 20 I 20 F 13 W 0, no_route planned + built PASS
+  both, barrier_missing 0, obstruction 0; verify_race, verify_fold_fans, verify_ai_line (2.544 / 2.386 m), verify_kn5 +
+  --inis, check_race_kn5, verify_signs (23 posts), rib_check, house_seat_check: PASS. The same as fix round 2;
+- teeth (a terrain vertex more than 0.6 m over the mean of its neighbours and not 3DEP's own; refuted build -> this):
+  within 20 m of College's south abutment 5 -> 0; within 25 m of the comb west of the north approach 18 -> 7. Steep faces
+  (over 60 deg, over 0.5 m) within 12 m of a pavement in the release zones 786 -> 549;
+- criteria against fresh 3DEP (the truth lenses' own code, 3DEP reused where read before, 4,539 new points fetched, TLS
+  verified): **C2 v1640 now shows the real hill** — the summit (5.49 deg) is hidden behind the hill 350 m out, built at
+  7.157 deg against 3DEP's 7.215 deg (6.600 deg under the old 80 / 250 clamp); crest 9.369 and v2240 8.513 PASS;
+  C1 484.34 m; C3 Del Cerro 258.16 m (the 192 deg ray's only "hole" is still the Navajo pavement 10 m out, as at
+  integration); **C4** 180 / 181 on the truth lens's fresh-OSM centreline as first written (floor median 0.041 m, p95
+  0.349, max 0.619; s 250 passes only under its recorded pixel-step reading); 171 / 173 on the round-4 centreline (s 1850
+  north rim 2.04 m, 4 cm past, on the sidewalk's edge; s 3800 south rim under Lake Murray Blvd's deck, where 3DEP reads a
+  fill the span zone releases); **C5** 5.24 / 20.24 m PASS; **C6** max 0.855 m, 0 over 1 m;
+- road kn5 92.5 MB (v0.17.1) -> 116.0 MB (128.3 MB with the freeway); race kn5 11.8 MB (the kerb textures); closures
+  unchanged.
+
+**Not done, for Kevin.** Seven short teeth remain 37 m west of College's north approach, where the I-8 span zone's north
+end (s 2690) meets the near-road verge criterion 7 holds to v0.17.1 — fresh 3DEP reads that verge 1.3-3.3 m over the
+real earth at s 2680-2720, 20-35 m out. Releasing it (carry the span zone north, or let criterion 7 give up that verge)
+is the cause-level fix and changes ground within 20 m of the road: Kevin's call. A ramp lengthened to the step was tried
+and dropped (it raised bumps beside Alvarado's creek bank). Frame rate and load time (criterion 8) remain Kevin's seat.

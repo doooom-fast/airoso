@@ -143,3 +143,10 @@ ramps at X8/X9/X10; Mission Gorge south through Grantville incl. Friars Rd; at W
 apart), place facts in `DOSSIER-EXPANSION-WEST.md`. Revision 2 after an independent critic (11 errors fixed). Decisions
 with defaults pending Kevin; the big one is the **lamp weight**: Phase 4 projects to 161-174 MB of road kn5 without a
 lighter streetlight model.
+
+**Lamp weight, measured on the installed v0.18.0 road kn5 (116.3 MB; 42 meshes, 1,697,179 verts, 2,026,253 tris;
+`scripts.modkit.inspect_kn5 --json`):** LIGHTPOST = 17 meshes, **966,725 verts (57.0 %) and 899,835 tris (44.4 %)** for
+243 lamps (~4,000 points each; six LIGHTPOST meshes sit at the 65,535 cap). All drivable ground (1GRASS) is 357,262
+verts (21.1 %). A lamp ~10x lighter would remove ~870k verts — the single biggest load-time lever, and the precondition
+both expansion plans name before more lamps. The lamp is Kevin's own model ("Kevin's lamp model at every
+streetlight"), so a lighter version is his call.

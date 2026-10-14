@@ -356,9 +356,9 @@ def main():
             # I-8 span zone meets the near-road verge criterion 7 holds 2-3 m over the real earth: a 3 m step closed in
             # 4 m on 2.5 m facets alternates low and high corners along the zone's edge — teeth). Never under a deck
             # (there the release is the real span, never eased back toward the draft's fill)
-            L = min(RAMP_MAX_M, max(GR.RAMP_M, RAMP_BATTER * abs(t - zo)))
-            if L > GR.RAMP_M + 1e-6:
-                w2, z2 = Z.weight(x, y, ramp_m=L)
+            ramp_len = min(RAMP_MAX_M, max(GR.RAMP_M, RAMP_BATTER * abs(t - zo)))
+            if ramp_len > GR.RAMP_M + 1e-6:
+                w2, z2 = Z.weight(x, y, ramp_m=ramp_len)
                 if z2 is not None:
                     w = w2
                     n_ramp_long += 1

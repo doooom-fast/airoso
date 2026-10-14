@@ -300,7 +300,7 @@ def test_release_fill_eases_with_the_gap_and_the_ramp_meets_the_prep():
     gr_src = (ROOT / "tools" / "ground_release_blend.py").read_text(encoding="utf-8")
     for k in ("FILL_EASE_M", "def fill_top(fi, qx, qy):", "def pave_gap(i):", "fill_top(fi, q[0], q[1])",
               "RF = _refine_field(proj)", "RF.target(x, y, z, d_built=", "zo + w * (t - zo)",
-              "RAMP_BATTER * abs(t - zo)", "Z.weight(x, y, ramp_m=L)"):
+              "RAMP_BATTER * abs(t - zo)", "Z.weight(x, y, ramp_m=ramp_len)"):
         assert k in gr_src, k
     m = _snapshot()
     assert hasattr(m, "RefineField") and hasattr(m.RefineField, "target") and hasattr(m.RefineField, "in_kept")

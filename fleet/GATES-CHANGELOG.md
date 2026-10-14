@@ -1904,3 +1904,14 @@ verify_race (+ scenery), verify_ai_line (both), rib_check, house_seat_check PASS
 Proven by `tests/tools/test_profile_datum.py` (a crest in a synthetic hairpin's fold fan is carried, the fan within
 `dt_max_m`, drive_test's street paths no worse, nothing outside `fit_m` moved, the cache re-used to the same bytes; the
 refusals; Lake Murray's declaration and its committed cache).
+
+**Round 3 (same day, after the second refutation): no threshold, constant or config changed.** The truth lens refuted on
+stops at s 2305-2309, which lie inside the intersection box: College's southbound signal is at s 2312.3 and Alvarado's at
+s 2273.2. I re-ran the fit offline with each limit relaxed in turn, to find the bound; the table is in ledger 0057 round 3.
+- `dt_max_m` 0.05 -> 0.057: no change. The fan settles at 0.047 either way, so it is not the binding limit.
+- drive_test's kink cap round the hairpin is the binding limit. Freeing it buys ~1 point at s 2305-2308. The cost is
+  street kinks/km past v0.18.0 (2.97 -> ~4.2, against 3.41) and race kinks ~2.5x at the corner.
+- No gate at all: a level slab still misses s 2305 by 0.8 points on 15 m. That needs crossfall, which the race-wall band
+  (`WALL_BAND_M` 0.28 about the centre line, no_route BUILT) forbids above ~2 %.
+
+None of these variants shipped, and `FAN_DT_MAX_M` stays 0.05.

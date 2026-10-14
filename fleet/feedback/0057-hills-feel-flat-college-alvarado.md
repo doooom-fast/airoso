@@ -1,7 +1,7 @@
 ---
 id: 0057
 title: "Coming down college toward 8 should be pretty steep and doesn't feel that way, same with heading down Alvarado from 70th"
-status: in-progress — fixed, refuted, fixed again (fold-fan fit) and rehearsed (2026-10-14, full scratch ship, not installed); closes on Kevin's drive
+status: in-progress — fixed, refuted, fixed again (fold-fan fit) and rehearsed (2026-10-14, full scratch ship, not installed); round 3 bounded the junction box (no in-gate change carries s 2305-2309; the stop line is s 2312.3); closes on Kevin's drive
 scope: tracks/san-diego-lake-murray mainline profile — the College -> Alvarado signal approach (pre-median s 2200-2530) and Lake Murray Blvd's two decks + 70th St + Alvarado's pitch (13280 -> seam -> 230); tools/deck_datum.py (road_datum.profiles + fold_fan_fit), scripts-v021/geometry/smooth.py + blender/build_loop_blend.py (opt-in per-window sigma_y)
 layer: project (+ the quarantined assembler of record, opt-in)
 train: -
@@ -27,8 +27,9 @@ Stations s are metres along data/centerline.local.json unless marked pre-median.
 - **College's main descent (Del Cerro -> I-8) is built at its real grade** — 100 m real -8.70 % / built -8.60 %, 200 m
   -8.43 / -7.93. That one is perception (the onboard camera pitches with the car, a 36 deg vertical FOV on a 21:9
   screen, no freeway below to judge the drop against). No fix.
-- **Flattened: the College -> Alvarado signal** (stop line s 2313, OSM node 49123188 at s 2312.3; s 2305-2320 all say
-  the same): last 30 m real **+5.93 %** on the lane, built **+3.52 %**; the junction 0.8-1.2 m under the real pavement
+- **Flattened: the College -> Alvarado signal** (stop line s 2313, OSM node 49123188 at s 2312.3; v0.18.0 is equally
+  flat for any stop from s 2305 to 2320, but a car waits only at s >= 2312.3: s 2273-2312 is the intersection box,
+  see round 3): last 30 m real **+5.93 %** on the lane, built **+3.52 %**; the junction 0.8-1.2 m under the real pavement
   (s 2300 lane: real 112.07, built 110.83 m). The real junction is a hump (crest ~111.8 m at the road centre) that also
   tilts 4-7 % across, west side higher; the build is a level slab.
 - **Flattened: Alvarado / 70th**: westbound 100 m (s 16-116) real -7.69 % / built -6.08 %; the eastbound uphill wait at
@@ -215,7 +216,7 @@ fix round.
 | LMB over I-8 abutments (centre s 13333 / 13416) | 126.22 / 126.19 m | 125.19 / 124.23 | 126.23 / 126.23 | 126.23 / 126.23 |
 | LMB over Alvarado Creek, s 13449 / 13475 | 125.57 / 125.15 m | 124.16 / 124.51 | 125.66 / 125.26 | 125.66 / 125.26 |
 | College main descent 25 / 50 / 100 / 200 m (S/B lane) | -9.01 / -8.82 / -8.75 / -8.44 | -8.79 / -8.66 / -8.59 / -7.93 | same | **same as v0.18.0** |
-| max change vs v0.18.0 on the lens's rows outside the windows | — | — | — | 0.004 m |
+| max change vs v0.18.0 on the road outside the windows | — | — | — | 0.020 m at the window ends (s 228, s 2520), under 0.004 m 25 m on (corrected in round 3) |
 
 What that table says:
 
@@ -234,8 +235,9 @@ What that table says:
 - **Alvarado s 0-25.** Unchanged since round 1: -2.92 % against -3.70 % on the lane and -2.80 % on the road centre. The
   70th junction is level for ~12 m and then drops, and the window's 1.5-point assembler sigma rounds that knee. Sigma
   1.0 there was the variant that pushed street kinks over v0.18.0 in round 1.
-- **"Byte-identical outside", stated precisely.** The road and the centreline outside the two windows are unchanged to
-  0.004 m. The terrace scenery between the hairpin legs (ground_release `alvarado_college_terrace`) re-seats onto the
+- **"Byte-identical outside", stated precisely.** The road and the centreline outside the two windows move by at most
+  0.020 m just past each window end (s 228, s 2520: the tail of the assembler Gaussian), falling under 0.004 m within
+  ~25 m; no grade outside moves by more than 0.03 points (corrected in round 3; this line first said 0.004 m). The terrace scenery between the hairpin legs (ground_release `alvarado_college_terrace`) re-seats onto the
   raised College leg, by up to 0.23 m (one grass vertex 0.43 m). That is the release doing its job.
 
 **Gates vs v0.18.0** (rehearsal 7; every one run on the BUILT artifacts):
@@ -261,6 +263,65 @@ refused on soft tops) and rehearsal7.log (shipped config).
 **What would carry the rest.** That needs the junction authored as a pad (JUNCTIONS §2.0 B), heighted and tilted from
 3DEP. It also needs gates that judge a pad on its own wheel paths rather than on a ribbon's fixed offsets, with the
 race walls measured against the local deck. That is a gate change, so it is Kevin's call.
+
+## Round 3 (2026-10-14, after the second refutation): the bound, and no build change
+
+**Refuted on.** The truth lens confirmed every fix-round number to ~0.05 and refuted on its own stop-line range: for a car
+stopped at s 2305-2309 on the southbound lane, the last 15 m is built +3.9-5.2 % against a real +6.6-7.0 %, and the last
+30 m is 0.6-1.25 points short. It passed s 2310-2320. Two minor items: the "0.004 m outside the windows" line was low (now
+corrected above: 0.020 m tails at the window ends), and Alvarado s 0-25 is still -2.9 % against a real -3.6 % (disclosed).
+
+**Where a car waits.** OSM's two signal nodes on this junction, projected onto the lap
+(D:/k10-scratch/gradesfix/r3/signals_near.py, the diagnosis' fresh Overpass cache):
+
+| Node | Tags | Lap s | Off the line |
+|---|---|---|---|
+| 49123188 | traffic_signals, direction=forward (College southbound) | 2312.3 | 0.5 m |
+| 11352113569 | traffic_signals, direction=backward (Alvarado, the other side of the box) | 2273.2 | 1.7 m |
+
+A signal node with a direction is mapped at the stop line, so College's stop line is s 2312.3 and s 2273-2312 is the
+intersection box. A car at s 2305-2309 is 3-7 m past College's stop line and inside the intersection. It is not waiting at
+the light Kevin named. The diagnosis line above that read "s 2305-2320 all say the same" is reworded: v0.18.0 was equally
+flat for any stop in that range, but the stop line is s >= 2312.3.
+
+**The bound: what any change could reach inside the box.** I re-ran the fold-fan fit offline with each limit relaxed in
+turn (D:/k10-scratch/gradesfix/r3/variant.py; same solver and committed inputs). Each result is read on the assembler's
+own predicted heights, which matched the built centreline to 5e-5 m in the fix round, against the same fresh 3DEP on the
+southbound lane.
+
+| Variant | Fan DT (gate 0.06) | drive_test wheel paths at the fit: street kinks (v0.18.0 12) / race kinks cw, acw (22 / 20) | Last 15 m to s 2305 / 2308 / 2310 / 2313 | Last 30 m to s 2305 / 2308 / 2313 | Crest s 2300 |
+|---|---|---|---|---|---|
+| **real, southbound lane** | — | — | **7.16 / 6.76 / 6.43 / 6.11** | **6.47 / 6.29 / 5.93** | **112.12** (centre 111.47) |
+| shipped (fit to DT 0.05) | 0.047 | 8 / 22, 20 | 3.95 / 4.93 / 5.52 / 6.16 | 5.18 / 5.54 / 5.87 | 111.27 |
+| fan allowed to 0.057 | 0.047 | 8 / 22, 20 | 3.97 / 4.95 / 5.52 / 6.15 | 5.18 / 5.54 / 5.87 | 111.27 |
+| fan 0.059, race kinks free | 0.051 | 12 / **47, 46** | 4.35 / 5.23 / 5.70 / 6.05 | 5.06 / 5.42 / 5.73 | 111.29 |
+| fan 0.059, every kink free | 0.056 | **24** / **55, 57** | 4.91 / 5.97 / 6.50 / 6.79 | 5.47 / 5.83 / 6.09 | 111.40 |
+| no fit at all: the 3DEP target, the best any level slab can do | **0.076 (FAIL)** | 34 / 81, 88, race severe 13 / 12 | 6.36 / 6.25 / 6.16 / 6.04 | 6.08 / 5.98 / 5.76 | 111.73 |
+
+What the table says:
+
+- **The fan limit is not what binds.** Raising it to 0.057 changes nothing; the fit settles at 0.047 either way.
+- **What binds is drive_test's kinks round the hairpin.** Freeing them buys about 1 point on the 15 m at s 2305-2308.
+  The price is the corner's kinks doubling on the street (+16 over the lap takes street kinks/km 2.97 -> ~4.2, past
+  v0.18.0's 3.41) and rising 2.5x in the race (cw 6.68 -> ~8.5 /km). Those are real slope breaks on the paths a wheel
+  takes round that hairpin, so I did not ship that trade.
+- **Even with no gate at all, a level slab misses s 2305.** The 15 m comes out at 6.36 against 7.16, and s 2308 at 6.25
+  against 6.76. The southbound lane sits 0.65 m above the road centre at s 2300 because the junction tilts 4-8 % across;
+  a level road gives each lane the centre's grade. That variant also fails verify_fold_fans (DT 0.076) and adds 13 / 12
+  race severe steps.
+- **What would carry it.** Inside the box the lane's grade needs crossfall. The race walls are judged within +-0.28 m of
+  the centre line (no_route BUILT, verify_fold_fans (7)), and the walls stand ~14 m out, so a tilt over ~2 % fails both.
+  The fold-fan ribbon and its levelled pinch would also have to tilt. That is the junction authored as a pad (JUNCTIONS
+  2.0 B) plus gates that judge walls against the local deck: gate changes and a ribbon change outside this job's two
+  windows (it would also collide with ledger 0055's College work). That is Kevin's call. No gate was loosened to try it.
+
+**Decision: no build change this round.** The shipped fit (rehearsal 7) is the in-gate optimum at the stop line Kevin
+named: s 2313 is +5.88 / +6.17 % on 30 / 15 m against a real +5.93 / +6.11. Every committed input is unchanged, so
+rehearsal 7 and every gate number above stand.
+
+Plot: D:/k10-scratch/gradesfix/profile_junction_bound.png. It shows the real southbound lane, the real carriageway mean,
+the real northbound lane, the shipped build and the no-gate level slab across the junction, with both signals and the
+intersection box marked, and the last-15 m grade to each stop.
 
 ## Kevin's drive (the only verdict that closes it)
 

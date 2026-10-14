@@ -620,7 +620,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
             d1, i1 = _divider_at(k); dh = max(dh, d1); ins = max(ins, i1); k += 1
         return dh, ins
 
-    _bm_hits: dict = {"centre": [], "edge_L": [], "edge_R": [], "closure": []}   # (station, hit) per declared band
+    _bm_hits: dict = {"centre": [], "edge_L": [], "edge_R": [], "closure": [], "chicane": []}   # (station, hit) per band
 
     def _corr_lane(k, u):
         """the declared corridor lane (scan + wheel bands, right of travel) at fraction u of segment k-1 -> k"""
@@ -935,6 +935,13 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                     _qx, _qz = _qa[0] + (_qb[0] - _qa[0]) * t, _qa[2] + (_qb[2] - _qa[2]) * t
                     _ql = math.hypot(_qb[0] - _qa[0], _qb[2] - _qa[2]) or 1e-9
                     _bm_probe("closure", s, _qx, _qz, -(_qb[2] - _qa[2]) / _ql, (_qb[0] - _qa[0]) / _ql, 0.0, deck_c)
+                # a declared chicane's race-side wall (ledger 0055): the same probe on its declared line
+                if _corr and _zone.race_wall_at(i) is not None and _zone.race_wall_at(i - 1) is not None:
+                    _qa = _zone._band_point("chicane", i - 1)
+                    _qb = _zone._band_point("chicane", i)
+                    _qx, _qz = _qa[0] + (_qb[0] - _qa[0]) * t, _qa[2] + (_qb[2] - _qa[2]) * t
+                    _ql = math.hypot(_qb[0] - _qa[0], _qb[2] - _qa[2]) or 1e-9
+                    _bm_probe("chicane", s, _qx, _qz, -(_qb[2] - _qa[2]) / _ql, (_qb[0] - _qa[0]) / _ql, 0.0, deck_c)
         s += STEP_M
 
     # BARRIER CONTINUITY: a declared station is MISSING when no 1WALL hit lies within half a

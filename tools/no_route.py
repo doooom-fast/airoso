@@ -159,6 +159,8 @@ class Corridor:
             cy = cor.get("closure_y_by_vertex") or [None] * n
             self.lane = [(float(a), float(b)) for a, b in lane[:m]]
             self.closure_y = [None if v is None else float(v) for v in cy[:m]]
+            ry = cor.get("race_wall_y_by_vertex") or [None] * n
+            self.race_wall_y = [None if v is None else float(v) for v in ry[:m]]
             self.zone = list((cor.get("zone_by_vertex") or ["whole"] * n)[:m])
             nr = cor.get("no_route") or {}
             self.probes = [(int(p["vertex"]), float(p["y"]), str(p.get("why", ""))) for p in nr.get("forbidden_probes", [])]
@@ -168,6 +170,7 @@ class Corridor:
             self.semantics = "v2 corridors." + self.lid
         else:
             self.lane, self.closure_y, self.zone = self._lanes_v1()
+            self.race_wall_y = [None] * m
             self.probes = []
             self.probe_xz = {}
             self.semantics = "v1 (centre chain / islands, the 0047 install)"
@@ -238,6 +241,12 @@ class Corridor:
             k1 = (k + 1) % m
             if cy[k] is not None and cy[k1] is not None and (self.closed or k1 != 0):
                 out.append(("closure", [self.at(k, cy[k]), self.at(k1, cy[k1])]))
+        # ledger 0055: each declared chicane's race-side wall (corridors.<id>.race_wall_y_by_vertex), the same strip
+        yw = self.race_wall_y
+        for k in range(m):
+            k1 = (k + 1) % m
+            if yw[k] is not None and yw[k1] is not None and (self.closed or k1 != 0):
+                out.append(("chicane", [self.at(k, yw[k]), self.at(k1, yw[k1])]))
         cw = [float(v) for v in (self.bands.get("centre_w_by_vertex") or [])[:m]]
         if len(cw) == m and any(v > 0 for v in cw):          # a v1 declaration's centre chain, on the centreline
             for k in range(m):
@@ -582,6 +591,19 @@ def _load_lap_module():
 
 
 _LAP = _load_lap_module()
+_CHICANE = []
+
+
+def _race_chicane():
+    """scripts/geometry/race_chicane.py by file, once (ledger 0055: the race island)"""
+    if not _CHICANE:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("_race_chicane_nr", Path(__file__).resolve().parents[1] / "scripts"
+                                                      / "geometry" / "race_chicane.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        _CHICANE.append(mod)
+    return _CHICANE[0]
 
 
 def _read_obj_walls(path: Path, mirror: float):
@@ -644,6 +666,7 @@ def run(project_dir, layout_id: str, *, planned: bool = False, obj: str | None =
         widths = [float(w) for w in cl["widths_m"]]
         mb = data / "median_bands.json"
         iw = json.loads(mb.read_text(encoding="utf-8")).get("island_w_by_vertex", []) if mb.exists() else []
+        iw = _race_chicane().race_island_w(iw, cfg)       # ledger 0055: a street-only island is not in a race lane
     else:
         ln = _LAP.line_for(proj, cfg, layout_id)
         pts, widths, iw = ln["pts"], ln["widths"], ln["island_w"]

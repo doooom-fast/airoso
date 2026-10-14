@@ -470,6 +470,8 @@ def _author_group(G, data, height, removed, road_main, road_any, curb_bvh):
                 bridge["by_object"][name] = bo
             rec = {"name": name, "kind": kind, "owner": owner, "layout": plan.get("layout"), "collection": col.name,
                    "side": plan["side"], "street": plan["street"], "run": list(plan["run"]), "part": plan["part"],
+                   # ledger 0055: a closure object is the layout's closure or a declared chicane's race-side wall
+                   "wall": (plan.get("wall") or "closure") if kind == "close" else None,
                    "rings": len(plan["rings"]), "length_m": round(length, 1), "centreline_m": round(cl, 1),
                    "segments_4m": round(length / rf.MODULE_PITCH_M, 1),
                    "seated": {"hit": seater.hit - h0, "near": seater.near - n0, "interpolated": seater.interp - i0},

@@ -157,6 +157,15 @@ verify_fold_fans' arc-length wheel paths read a 1 m second difference of at most
 - **AI (0052):** the writer re-seats on the levelled deck; `verify_ai_line` PASS on both race layouts, every number as
   on v0.17.1's world (wall min 2.549 / 2.387 m, flips 0.743 / 0.521 per km).
 
+**Integration fix round 5 (v0.18.0, 2026-10-14): the fans' "bumps" in drive_test.** The gates lens refuted round 4 on
+race bumps / km 7.42 / 10.24 -> 7.72 / 10.39. Read per sample, every bump added sits on a fixed-offset path running
+BACKWARDS past the turning centre of this ledger's fans (College / Navajo and Navajo / Jackson; 35 -> 45 such samples on
+race_cw, 41 -> 49 on race_acw), where v0.17.1 read grass standing on the road and 0.39 m risers; on the forward samples
+the bumps fell (65 -> 59, 97 -> 91). Fresh 3DEP's own plane through those backward samples reads a bump on 76 / 74 of 158,
+so drive_test now files a 2.5-6 cm step on a backward sample as a `fold_bump` (reported, not gated); severe steps there
+still count (GATES-CHANGELOG, integration fix round 5). Race bumps / km 4.38 / 6.75 (v0.17.1 under the same rule 4.82 /
+7.20); `verify_fold_fans` still PASS on every layout.
+
 ## Later (JUNCTIONS §2.0 B, REALISM §8)
 
 Author Navajo/Jackson as a junction pad in loop.blend (an AUTH_ layer): arms cut straight, one surface heighted from

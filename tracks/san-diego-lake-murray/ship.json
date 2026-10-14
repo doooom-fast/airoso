@@ -6,7 +6,7 @@
   "require_race_layout": true,
   "ui_name_prefix": "K10 - San Diego (V3)",
   "street_ai_july": "D:/k10-track-archive/2026-10-11/san_diego_lake_murray/ai",
-  "audit_note": "the regression floor — D 512 / K 20 / I 20 / F 13 since the 2026-10-11 mouth weld + fold mend, was 512 / 154 / 145 / 15",
+  "audit_note": "the regression floor — D 0 / K 20 / I 20 / F 13 since v0.18.0: the I-8 deck rails stand on the curb, 0.15 m off the pavement; D 512 while they stood on its edge, since the 2026-10-11 mouth weld + fold mend, was 512 / 154 / 145 / 15",
   "steps": {
     "draft": ["deck_datum", "median_envelope", "terrain_sample", "build_loop_blend", "route_connectors", "divide_connectors",
               "trim_connectors", "terrain_resample", "rebuild_loop_blend", "weld_mouths", "seat_terrain",

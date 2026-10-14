@@ -499,9 +499,18 @@ def _level_i8_decks(centerline, i8, *, near=30.0, pad=4):
     return [tuple(p) for p in pts]
 
 
-def build_guardrails(centerline, widths, i8, *, h=0.95, over=22.0, pad=3):
+GUARDRAIL_SET_M = 0.15   # [invented] v0.18.0: each panel stands this far OUTSIDE the pavement edge, on the curb
+
+
+def build_guardrails(centerline, widths, i8, *, h=0.95, over=22.0, pad=3, set_m=GUARDRAIL_SET_M):
     """Vertical guardrail panels along BOTH road edges wherever the loop is over the I-8 cut (perp dist to
-    I-8 < ``over``). Extends ``pad`` points onto each approach so the rail starts before the gap."""
+    I-8 < ``over``). Extends ``pad`` points onto each approach so the rail starts before the gap.
+
+    Each panel stands ``set_m`` outside the pavement's edge (v0.18.0, the gates lens): placed ON the edge line
+    (``hw``) every panel vertex lay on the carriageway's own boundary, so audit_mesh D read all 90 of them as a wall
+    standing on the road (512 kn5 vertex records in v0.17.1, 514 once College's deck rose to its real height and the
+    exporter's exact-normal dedup split two more). A bridge barrier stands on the curb behind the gutter line, not
+    on the pavement; 0.15 m puts it on the curb's top, its foot still inside the curb."""
     verts, tris = [], []
     if not i8:
         return {"vertices": verts, "uvs": [], "tris": tris}
@@ -526,7 +535,7 @@ def build_guardrails(centerline, widths, i8, *, h=0.95, over=22.0, pad=3):
             base = len(verts)
             for k in range(a, b + 1):
                 x, y, z = centerline[k]; px, pz = perp(k); hw = widths[k] / 2
-                ex, ez = x + px * side * hw, z + pz * side * hw
+                ex, ez = x + px * side * (hw + set_m), z + pz * side * (hw + set_m)
                 verts.append((ex, y, ez))        # bottom (deck level)
                 verts.append((ex, y + h, ez))    # top
             for m in range(b - a):

@@ -1385,7 +1385,7 @@ wrong — the release rails add 0 D (fixed in the round 3 text above).
 | the release rails are their own physical mesh `1WALL_guard_release` | rule | release rails | found on this round's first rehearsal: appended to GUARDRAIL, the longer rails took the prep's 1WALL_guard past the kn5 exporter's 65,536-vertex mesh cap; the exporter wrote two meshes of one name and verify_kn5 stopped the chain ("DUPLICATE physical mesh '1WALL_guard' x2 — AC drops dup-named meshes from collision"). The name keeps the 1WALL_GUARD material row and the WALL surface (prefix match) |
 | `tools/ground_release_blend.RAIL_CHUNK_TRIS` | 18,000 [invented] | release rails | triangles per rail mesh before a second one (`1WALL_guard_release_<k>`): 3 exporter vertices per triangle at worst stays under the cap |
 
-**Not changed, named instead (both still worse than v0.17.1 on paper; `--force-install` would assert otherwise).**
+**Not changed, named instead (both still worse than v0.17.1 on paper; `--force-install` would assert otherwise). Both fixed in round 5 below.**
 (a) Street audit D 512 -> 514: the same 90 `1WALL_guard` positions as v0.17.1; at two of them on College's deck, now
 1.6 m higher at its real height, the kn5 exporter writes one more duplicate vertex record each (it dedups corners by
 exact float normal equality, and the slope changed the rounding). No wall moved onto the road. (b) race bumps / km
@@ -1408,6 +1408,45 @@ house_seat_check PASS. Release: 327 pits under the pavement lifted, batter cut 4
 10 rails, 0 rail vertices on a road, College's approach foot railed from s 2388 (the stations past a zone end: 19 over a
 drop). Steep faces (over 60 deg, over 0.5 m) within 12 m of a pavement in the zones 549 -> 849: the two zones added and
 the straight banks (a 60-70 deg bank where the two sidewalks stand 2-3 m apart) — counted, not hidden.
+
+### Integration fix round 5 (2026-10-14, v0.18.0, after the gates lens refuted round 4): the deck rails off the pavement, drive_test's fold bumps
+
+The gates lens refuted round 4 on two metrics worse than v0.17.1: street audit D 512 -> 514 (over the floor `ship_sd.sh`
+prints) and race bumps / km 7.42 / 10.24 -> 7.72 / 10.39. Both are now fixed at their causes; every other gate is as in
+round 4.
+
+| Change | Value | Where | Why |
+|---|---|---|---|
+| the I-8 deck guardrails stand 0.15 m outside the pavement edge | `GUARDRAIL_SET_M` 0.15 m [invented] | `tracks/san-diego-lake-murray/scripts-v021/blender/build_loop_blend.build_guardrails` | D counts a 1WALL vertex lying on a carriageway triangle within 1.2 m of it. Every one of the 90 panel positions on College Ave's and Lake Murray Blvd's decks was built ON the road's edge line (`hw`), so all of them lay on the road's own boundary: v0.17.1's 512 was those 90 positions x 5-6 kn5 vertex records, and round 4's 514 was the same 90 with two more exporter duplicates where College's deck now has its real slope (the exporter dedups corners by exact float normal). A bridge barrier stands on the curb behind the gutter line, not on the pavement: 0.15 m puts each panel on the curb top, its foot still inside the curb. Street D 514 -> **0**; E 0 (the foot is in the curb); the release rails' "already held" test (a GUARDRAIL between the lane and the lip) reads the same |
+| the street audit's printed regression floor | D 512 -> **0** (K 20 / I 20 / F 13 unchanged) | `tools/ship_sd.sh` step header, `tracks/san-diego-lake-murray/ship.json` `audit_note` | tightened to what the build now measures |
+| FOLD BUMPS: a 2.5-6 cm second difference over a metre where the fixed-offset wheel-path point runs backwards is reported (`fold_bumps`), not counted in `steps_per_km` | rule; `_advance` < 0 on the metre or the metre before it | `scripts/geometry/drive_test.py` (every track, every layout) | criterion re-worded where fresh 3DEP fails it too (evidence below). drive_test's wheel paths are fixed lateral offsets; round a corner tighter than the offset (Lake Murray's fold fans: centre radii 7-8 m under race lanes 9-13 m wide) the point lies past the turning centre and hops 1-2.5 m to and fro across the fan, so its 1 m second difference re-traces the plan, not a step under a tyre. A SEVERE step (> 6 cm) on such a sample still counts (ledger 0050's 0.37 m Navajo / Jackson lip was read on one); kinks are unchanged; the levelled fans' real wheel paths stay judged by `tools/verify_fold_fans.py` |
+
+**Evidence for the re-wording (fresh USGS 3DEP 1 m, TLS verified through `scripts.tls`, 10,125 points on 45 x 45 m grids
+round the five Lake Murray fans: the hairpin, College / Navajo, Navajo / Jackson, the seam, the east corner at (2603,
+516)).** The least-squares plane of the real ground within 15 m of each fan (grades 7.0 / 5.5 / 3.0 / 1.4 / 3.2 %), the
+smoothest surface the real corner can have, read through drive_test's OWN sample positions (the race_cw and race_acw
+paths, logged from the build): of 158 backward samples per layout, 76 / 74 read a bump and 34 / 35 a severe step — the
+real ground's plane fails the bump rule there half the time. The raw 3DEP reads 62 / 60 bumps on them. (Forward samples
+also read some bumps on the plane — 163 of 2,742 — from the stations' changing spacing round a corner; those are not
+exempted: the rule is only the backwards case.)
+
+**The same rule on both builds** (drive_test re-run read-only on v0.17.1's installed gate OBJs, `k10-sd-v021/project`,
+output redirected; nothing written there): race_cw bumps 100 -> 65 counted + 35 fold (v0.17.1), 104 -> 59 + 45 (this
+build); race_acw 138 -> 97 + 41, 140 -> 91 + 49; street 2 + 20, 0 + 20. On the samples a wheel can drive, this build has
+fewer bumps than v0.17.1 on every layout (65 -> 59, 97 -> 91, 2 -> 0); all of round 4's increase was in backward samples
+(35 -> 45, 41 -> 49), the College / Navajo and Navajo / Jackson fans whose grass-over-road and 0.39 m risers this
+branch removed.
+
+Measured on this round's full rehearsal (fresh scratch workshop, fresh scratch engine-july with the pending prep files,
+no `--skip-blend`, `ship_r5.log`), v0.17.1 (as gated then) -> this build: street drive_test soft top 42 -> 33, severe 0,
+bumps 0.15 -> 0.0 /km (fold 20), kinks 3.86 -> 3.41, excursions 100 -> 98, floating 391, obstruction 0, daylight 0;
+street audit **D 512 -> 0**, K 20, I 20, F 13, E 0; race_cw / race_acw severe 31 / 28 -> 22 / 20, soft top 23 / 22 -> 9 /
+9, **bumps 7.42 / 10.24 -> 4.38 / 6.75 /km** (fold 45 / 49; v0.17.1 under the same rule 4.82 / 7.20), kinks 6.45 / 7.57
+-> 6.23 / 7.05, barrier_missing 0, obstruction 0; race audits D 0 K 20 I 20 F 13 W 0; no_route planned 139,130 / 138,826
+m2 and built 139,148 / 138,847 m2 PASS (leak 0, 0 / 406); verify_mouths x4, verify_fold_fans (3 x 3), verify_ai_line
+(2.544 / 2.386 m), verify_kn5 + --inis, check_race_kn5, verify_race (+ scenery), verify_signs (23 posts), rib_check,
+house_seat_check PASS. The terrain is round 4's but for 344 of 928,435 triangles beside the two decks, moved at most
+0.024 m.
 
 ## 2026-10-12 — `verify_signs` (k) direction coverage, (j) read from signs.json, race furniture never the signs' ground (ledger 0051)
 

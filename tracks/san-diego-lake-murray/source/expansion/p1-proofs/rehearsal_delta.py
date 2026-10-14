@@ -13,8 +13,26 @@ The delta (the committed config keeps `north` HELD until P3; this is what P3 tur
   route.weld_exact_deck ["north_"]                                the weld reads the loop deck off its triangles
                                                                   (the J1 corner's fanned outer edge)
   race.kerbs.trims += apex 1514 / 2319 outside, drop             A7: the two outside kerbs inside the openings
-  signs.json corners M3 / M4 skip                                 A7: both arrows stand in the new openings; P4
-                                                                  moves them into the Speedways' race files
+  signs.json corners M3 / M4 skip                                 A7: both arrows stand in the new openings. Until P4
+                                                                  (adapted author_signs_blend writes plates into the
+                                                                  race files) a sign can only ship in the road kn5
+                                                                  every layout loads, so the rehearsal has them in
+                                                                  NONE of the three layouts (not "Free Roam only")
+P1 fix round (2026-10-14):
+  route.aprons {"AP1": "data/expansion.north.json"}               J1's R 30 return as an authored apron
+                                                                  (tools/author_aprons_blend.py): the opening now runs
+                                                                  to v1527, the A5 extent
+  route.trim_blend_grade_cap ["north_"]                           the two stubs' blends onto the loop deck lengthened
+                                                                  until they stay within route_connectors' 11 % cap
+                                                                  (A6; Waring fell 14.8 % in 30 m: the loop stands
+                                                                  1.44 m over 3DEP at J1)
+  route.mouth_fill ["north_"]                                     the two stubs' strips over the loop's pavement
+                                                                  replaced by one piece from the loop's own edge (no
+                                                                  road sheet within 2 cm over another; J5 overlapped
+                                                                  the loop's outer lane by up to 2.55 m)
+  drive_test.fold_fan_severe "verify_fold_fans"                   a severe reading on a fixed-offset path running
+                                                                  backwards inside a levelled fan is judged by
+                                                                  verify_fold_fans' real wheel paths (drive_test doc)
 """
 import json
 import shutil
@@ -23,6 +41,10 @@ from pathlib import Path
 
 DELTA = {
     "authored_take": {"north": ["W1", "W5"]},
+    "aprons": {"AP1": "data/expansion.north.json"},
+    "trim_blend_grade_cap": ["north_"],
+    "mouth_fill": ["north_"],
+    "drive_test": {"fold_fan_severe": "verify_fold_fans"},
     "swept_mouths": ["north_"],
     "weld_exact_deck": ["north_"],
     "kerb_drops": [
@@ -36,9 +58,11 @@ DELTA = {
     ],
     "sign_skips": {
         "M3": "Ledger 0054 A7: M3-fwd / M3-rev stand inside the new J1 Waring opening (straight on is now a real "
-              "road in Free Roam); P4 moves them into the Speedways' race files.",
-        "M4": "Ledger 0054 A7: M4-fwd / M4-rev stand inside the new J5 Jackson-north opening; P4 moves them into the "
-              "Speedways' race files.",
+              "road in Free Roam). A sign ships only in the road kn5 all three layouts load, so until P4's adapted "
+              "author_signs_blend writes plates into the race files this skips it in EVERY layout.",
+        "M4": "Ledger 0054 A7: M4-fwd / M4-rev stand inside the new J5 Jackson-north opening. A sign ships only in the "
+              "road kn5 all three layouts load, so until P4's adapted author_signs_blend writes plates into the race "
+              "files this skips it in EVERY layout.",
     },
 }
 
@@ -58,6 +82,10 @@ def main():
         cfg["route"]["route_connectors"]["authored_take"] = DELTA["authored_take"]
         cfg["race"]["swept_mouths"] = DELTA["swept_mouths"]
         cfg["route"]["weld_exact_deck"] = DELTA["weld_exact_deck"]
+        cfg["route"]["aprons"] = DELTA["aprons"]
+        cfg["route"]["trim_blend_grade_cap"] = DELTA["trim_blend_grade_cap"]
+        cfg["route"]["mouth_fill"] = DELTA["mouth_fill"]
+        cfg["drive_test"] = DELTA["drive_test"]
         cfg["race"]["kerbs"]["trims"] = list(cfg["race"]["kerbs"]["trims"]) + DELTA["kerb_drops"]
         (track / "track.config.json").write_text(json.dumps(cfg, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         sg = json.loads((track / "signs.json").read_text(encoding="utf-8"))

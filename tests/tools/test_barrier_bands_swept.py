@@ -179,3 +179,47 @@ def test_a_split_row_with_the_wrong_policy_fails_self_gate_7():
             r["policy"] = "sealed_far_strip"
     fails = bb.validate(bad, out["_ctx"])
     assert any("north_J1_waring" in f and "needs behind_closure" in f for f in fails), fails
+
+
+# --- the J1 corner apron (route.aprons, ledger 0054 P1 fix round) ---------------------------------------------------
+
+APRON = {"id": "AP1", "piece": "north_J1_waring#0", "host": "MAINLINE", "side": 1, "E_vertex": 1526.3,
+         "host_rows_opened": [1520, 1527]}
+
+
+def _apron_decl():
+    if "apron" not in _C:
+        proj = _project()
+        cfgp = _cfg(proj, True)
+        cfg = json.loads(cfgp.read_text(encoding="utf-8"))
+        cfg.setdefault("route", {})["aprons"] = {"AP1": "data/expansion.north.json"}
+        cfgp.write_text(json.dumps(cfg), encoding="utf-8")
+        with contextlib.redirect_stdout(io.StringIO()):
+            _C["apron_missing"] = bb.build(proj, config_path=cfgp, planned_no_route=False, write=False)
+        (proj / "data" / "aprons.json").write_text(json.dumps({"aprons": [APRON]}), encoding="utf-8")
+        with contextlib.redirect_stdout(io.StringIO()):
+            _C["apron"] = bb.build(proj, config_path=cfgp, planned_no_route=True, write=False)
+    return _C["apron"], _C["apron_missing"]
+
+
+def test_an_apron_carries_the_j1_opening_to_its_return_and_race_cw_splits_there():
+    d, missing = _apron_decl()
+    assert any("data/aprons.json is missing" in f for f in missing["fails"]), missing["fails"]
+    assert d["fails"] == [], d["fails"]
+    sw = next(m for m in d["closed_mouths"] if m["connector"] == "north_J1_waring")["swept"]
+    assert sw["apron"] == "AP1" and sw["edge_vertex_to"] >= 1526.3 and sw["vertex_to"] >= 1527, sw
+    cw = _rows(d, "race_cw", "north_J1_waring")
+    assert [r["policy"] for r in cw] == ["sealed_far_strip", "behind_closure"], cw
+    assert cw[0]["vertex_to"] == 1521 and cw[1]["vertex_to"] >= 1527, cw
+    acw = _rows(d, "race_acw", "north_J1_waring")
+    assert [r["policy"] for r in acw] == ["sealed_race_strip"] and acw[0]["vertex_to"] >= 1527, acw
+    for lid in ("race_cw", "race_acw"):
+        pr = d["corridors"][lid]["no_route"]["planned"]
+        assert pr["fail"] is False and pr["leak_m2"] == 0 and not pr["forbidden_reached"], (lid, pr)
+        probes = [p for p in d["corridors"][lid]["no_route"]["forbidden_probes"] if "north_J1_waring" in p["why"]]
+        assert any(p["vertex"] >= 1525 for p in probes), (lid, probes)
+    # nothing else moved: the other mouths' rows are the swept build's
+    s = _decl()["swept"]
+    for lid in ("race_cw", "race_acw"):
+        assert [r for r in d["corridors"][lid]["mouths"] if not r["connector"].startswith("north_J1")] == \
+               [r for r in s["corridors"][lid]["mouths"] if not r["connector"].startswith("north_J1")]

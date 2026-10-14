@@ -74,3 +74,19 @@ def test_all_species_plans_positions_even_without_the_models():
     assert mt.plan(d)["entries"] == []                              # no .bin: build() would write no palm at all
     e = mt.plan(d, all_species=True)["entries"]
     assert [(x["x"], x["z"]) for x in e] == [(20.0, 9.0), (60.0, -12.0), (140.0, 30.0)] and all(x["zone"] == "palms" for x in e)
+
+
+def test_nothing_is_planted_on_a_corner_apron():
+    """ledger 0054 P1 fix round: data/aprons.json (tools/author_aprons_blend.py) marks pavement no connector centreline
+    describes; a palm on it, or within APRON_PLANT_CLEAR_M of its outline, is dropped — absent the file, kept"""
+    d = _project()
+    pos = json.loads((d / "data" / "scatter_positions.json").read_text())
+    pos["palms"] += [{"x": 60.0, "y": 0.0, "z": 20.0}, {"x": 60.0, "y": 0.0, "z": 25.6}, {"x": 60.0, "y": 0.0, "z": 28.0}]
+    (d / "data" / "scatter_positions.json").write_text(json.dumps(pos))
+    before = {(round(e["x"], 1), round(e["z"], 1)) for e in mt.plan(d)["entries"]}
+    assert {(60.0, 20.0), (60.0, 25.6), (60.0, 28.0)} <= before
+    (d / "data" / "aprons.json").write_text(json.dumps({"aprons": [{"id": "AP1", "outline_xz": [
+        [50.0, 15.0], [70.0, 15.0], [70.0, 25.0], [50.0, 25.0]]}]}))
+    after = {(round(e["x"], 1), round(e["z"], 1)) for e in mt.plan(d)["entries"]}
+    assert (60.0, 20.0) not in after and (60.0, 25.6) not in after       # on it, and 0.6 m off its edge
+    assert (60.0, 28.0) in after and before - after == {(60.0, 20.0), (60.0, 25.6)}

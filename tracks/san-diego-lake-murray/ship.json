@@ -9,7 +9,7 @@
   "audit_note": "the regression floor — D 0 / K 20 / I 20 / F 13 since v0.18.0: the I-8 deck rails stand on the curb, 0.15 m off the pavement; D 512 while they stood on its edge, since the 2026-10-11 mouth weld + fold mend, was 512 / 154 / 145 / 15",
   "steps": {
     "draft": ["deck_datum", "median_envelope", "terrain_sample", "build_loop_blend", "route_connectors", "divide_connectors",
-              "trim_connectors", "terrain_resample", "rebuild_loop_blend", "weld_mouths", "seat_terrain",
+              "trim_connectors", "terrain_resample", "rebuild_loop_blend", "weld_mouths", "seat_terrain", "aprons",
               "triangulate_terrain", "ground_release", "median", "gap_mouths", "bridges", "scatter_strip", "lamps", "signs"],
     "author": ["race_bands", "race_planned_gate", "layout_dummies", "race_author", "race_verify"],
     "prep": ["prep", "split"],
@@ -29,7 +29,7 @@
     "required": ["loop.blend"],
     "files": ["data/centerline.local.json", "data/centerline.raw.local.json", "data/median_bands.json", "data/dummies.json",
               "data/finished_centerline.json", "data/gate_centerline.json", "data/lights.local.json", "data/connectors.local.json",
-              "data/mouths.json", "data/mouth_welds.json", "data/verify_mouths.json", "data/verify_fold_fans.json", "data/rib_check.json", "data/house_seat_check.json", "data/signs.local.json",
+              "data/mouths.json", "data/mouth_welds.json", "data/aprons.json", "data/aprons.lamps.json", "data/verify_mouths.json", "data/verify_fold_fans.json", "data/rib_check.json", "data/house_seat_check.json", "data/signs.local.json",
               "data/signs_preview.svg", "data/signs_measured.json", "data/drive_test.json", "data/audit.json",
               "data/barrier_bands.json", "data/race_authored.json", "data/race_verify.json", "data/race_verify.scenery.json",
               "data/race_kn5.json",

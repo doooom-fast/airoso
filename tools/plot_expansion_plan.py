@@ -254,12 +254,12 @@ def draw_labels(cv: Canvas, overview: bool):
         o = w["opening"]
         e = p.edge_at((o["vertex_from"] + o["vertex_to"]) / 2)
         cv.label(e[0], e[1] - (10 if w["id"] == "W1" else -10),
-                 f"{w['id']} opening v{o['vertex_from']:.1f}-v{o['vertex_to']:.1f}", col=(255, 90, 90, 255),
+                 f"{w['id']} curb opening v{o['vertex_from']:.1f}-v{o['vertex_to']:.1f}", col=(255, 90, 90, 255),
                  size=14 if overview else 17)
         if not overview:
             for ap in w.get("aprons", []):
                 q = ap["polygon_xz"][len(ap["polygon_xz"]) // 2]
-                cv.label(q[0], q[1], f"{ap['id']} apron (P3) v{ap['loop_edge_vertices'][0]:.1f}-"
+                cv.label(q[0], q[1], f"{ap['id']} apron v{ap['loop_edge_vertices'][0]:.1f}-"
                                      f"{ap['loop_edge_vertices'][1]:.1f}", col=(255, 170, 60, 255), size=15, anchor="lm")
 
 
@@ -416,9 +416,9 @@ def legend(dr, x0, y0):
     f = font(17)
     items = [((255, 150, 30), "A Waring"), ((255, 225, 40), "B Princess View"), ((40, 210, 255), "C Mission Gorge"),
              ((255, 80, 200), "D Jackson north"), ((255, 255, 255), "pad outline / arm cut (J2-J4)"),
-             ((255, 30, 30), "W1 / W5 opening on the loop edge; S# stub wall"), ((60, 200, 70), "MD planted median"),
+             ((255, 30, 30), "W1 / W5: where the curb opens on the loop edge (the road edges cross inside it); S# stub wall"), ((60, 200, 70), "MD planted median"),
              ((200, 90, 50), "MD terracotta median"), ((255, 230, 0), "MD painted / hatched median"),
-             ((255, 255, 0), "1-38 aerial width station"), ((255, 140, 0), "AP1 apron: the J1 return P3 authors"),
+             ((255, 255, 0), "1-38 aerial width station"), ((255, 140, 0), "AP1 apron: the J1 R 30 return (rehearsed in P1)"),
              ((230, 230, 230), "existing loop")]
     x = x0
     for col, txt in items:
@@ -483,16 +483,16 @@ def render_svg(plan: Plan, out: Path):
     for w in x["welds"]:
         for ap in w.get("aprons", []):
             el.append(f'<path d="{path([tuple(q) for q in ap["polygon_xz"]], True)}" fill="rgba(255,140,0,0.5)" '
-                      f'stroke="#c60" stroke-width="0.6"><title>{ap["id"]} apron (P3): {ap["why"]}</title></path>')
+                      f'stroke="#c60" stroke-width="0.6"><title>{ap["id"]} apron: {ap["why"]}</title></path>')
         for side in ("left", "right"):
             el.append(f'<path d="{path([tuple(q) for q in w["edges_xz"][side]])}" fill="none" stroke="#000" stroke-width="0.8"/>')
         o = w["opening"]
         n = max(2, int((o["vertex_to"] - o["vertex_from"]) * 4))
         ed = [plan.edge_at(o["vertex_from"] + (o["vertex_to"] - o["vertex_from"]) * i / n) for i in range(n + 1)]
-        el.append(f'<path d="{path(ed)}" fill="none" stroke="#e00" stroke-width="2.5"><title>{w["id"]} opening '
+        el.append(f'<path d="{path(ed)}" fill="none" stroke="#e00" stroke-width="2.5"><title>{w["id"]} curb opening '
                   f'v{o["vertex_from"]}-v{o["vertex_to"]} ({o["length_m"]} m; A5 {o["a5"]})</title></path>')
         e = ed[len(ed) // 2]
-        el.append(f'<text x="{e[0] - minx:.1f}" y="{maxz - e[1]:.1f}" class="mid" fill="#e00">{w["id"]} '
+        el.append(f'<text x="{e[0] - minx:.1f}" y="{maxz - e[1]:.1f}" class="mid" fill="#e00">{w["id"]} curb '
                   f'v{o["vertex_from"]:.1f}-v{o["vertex_to"]:.1f}</text>')
         el.append(f'<path d="{path([(q[0], q[2]) for q in w["connector"]["points_xyz_m"]])}" fill="none" stroke="#0aa" '
                   f'stroke-width="0.5" stroke-dasharray="2,2"/>')

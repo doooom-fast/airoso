@@ -12,6 +12,8 @@ the BUILT road (a ray down onto the 1ROAD sheets) at a driver's 1.2 m. Shots:
   j5_navajo_eb    Free Roam: eastbound on Navajo at v2307 (3 m right of the centre), looking into Jackson north (W5)
   j5_jackson_sb   on the Jackson-north stub 45 m out, looking back down at the Navajo/Jackson corner
   j5_race         race OBJ: the Navajo approach, the strip sealing the Jackson-north opening
+  j1_return       (P1 fix round) Free Roam: on the loop's outer lane at v1535 looking back at the J1 R 30 return (apron
+                  AP1, its curb + walk, lamp 77 behind it, the ground beyond)
 """
 import bpy, sys, math, json
 from mathutils import Vector
@@ -188,6 +190,8 @@ for s in SHOTS:
         shoot(s, at(2307, -3.0), 1.2, stub_at("north_J5", 12.0), 80.0)
     elif s == "j5_jackson_sb":
         shoot(s, stub_at("north_J5", 45.0, 6.0), 1.2, at(2320, 4.0), 75.0)
+    elif s == "j1_return":
+        shoot(s, at(1535, 6.0), 1.2, at(1521, 17.0), 75.0)
     elif s == "j5_race":
         shoot(s, at(2307, -3.0), 1.2, stub_at("north_J5", 12.0), 80.0)
     else:

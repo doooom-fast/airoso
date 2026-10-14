@@ -79,6 +79,7 @@ FILL_BANDS = [   # (off_min, off_max, tree zone, p_tree, bush zone, p_bush) per 
 ]
 FILL_STEP_M = 10.0
 LAKE_DROP_M = 8.0
+APRON_PLANT_CLEAR_M = 1.0   # [invented] ledger 0054 P1 fix round: no plant within this of a corner apron's outline
 CAP_TREES, CAP_BUSHES = 3500, 9000
 MARK_BEGIN, MARK_END = "; --- V3 TREEFX BEGIN (tools/make_treefx.py) ---", "; --- V3 TREEFX END ---"
 
@@ -177,6 +178,30 @@ def plan(project_dir, all_species=False, verbose=False):
         for c in json.loads(cp.read_text(encoding="utf-8")).get("connectors", []):
             lines.append(([tuple(p) for p in c["points_xyz_m"]], [w / 2.0 for w in c["widths_m"]]))
     field = RoadField(lines, cell=60.0)
+    # ledger 0054 P1 fix round (opt-in: data/aprons.json, tools/author_aprons_blend.py): a corner apron is pavement the
+    # connector centrelines above do not describe — nothing planted on it or within APRON_PLANT_CLEAR_M of its outline
+    apron_polys = []
+    app = data / "aprons.json"
+    if app.exists():
+        apron_polys = [[tuple(q) for q in a["outline_xz"]] for a in json.loads(app.read_text(encoding="utf-8")).get("aprons", [])]
+
+    def on_apron(x, z):
+        for poly in apron_polys:
+            inside = False
+            for i in range(len(poly)):
+                a, b = poly[i], poly[(i + 1) % len(poly)]
+                if (a[1] > z) != (b[1] > z) and x < a[0] + (z - a[1]) * (b[0] - a[0]) / (b[1] - a[1]):
+                    inside = not inside
+            if inside:
+                return True
+            for i in range(len(poly)):
+                a, b = poly[i], poly[(i + 1) % len(poly)]
+                dx, dz = b[0] - a[0], b[1] - a[1]
+                L2 = dx * dx + dz * dz
+                t = 0.0 if L2 < 1e-12 else max(0.0, min(1.0, ((x - a[0]) * dx + (z - a[1]) * dz) / L2))
+                if math.hypot(x - (a[0] + t * dx), z - (a[1] + t * dz)) < APRON_PLANT_CLEAR_M:
+                    return True
+        return False
     # the I-8's own carriageways (tools/freeway_i8.py, ledger 0046 v0.18.0 integration fix round): visual pavement, but
     # a tree standing on a freeway lane is as wrong as one on the loop's — the same guard, a field of its own (the fill
     # bands and the basin rule above stay measured from the LOOP's roads)
@@ -215,6 +240,9 @@ def plan(project_dir, all_species=False, verbose=False):
                 continue
             if guard and (field.query(e["x"], e["z"])[0] < 1.0
                           or (fwy is not None and fwy.query(e["x"], e["z"])[0] < 1.0)):
+                rejected += 1
+                continue
+            if apron_polys and on_apron(e["x"], e["z"]):
                 rejected += 1
                 continue
             s = _pick(species, i)

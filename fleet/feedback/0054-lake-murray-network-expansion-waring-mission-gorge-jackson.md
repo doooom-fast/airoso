@@ -51,7 +51,7 @@ the new roads is a candidate for a later phase.
 
 ## Status
 
-**Open — P1 (the readable intermediate, the numbered map, the J1 / J5 weld rehearsal) done on a branch 2026-10-14** (see "P1" at the end: J5 welds and seals; J1 welds with Waring's straight curbs and its R 30 return becomes apron AP1 for P3; no_route PASS both Speedways; the existing layouts no worse). Was: **Open — P0 (data, no geometry) done on a branch 2026-10-14** (see "P0" at the end: guarded OSM + buildings, `north`
+**Open — P1 done on a branch 2026-10-14, after a fix round** (see "P1 fix round" at the end: both new mouths pass verify_mouths, J1's R 30 return is built as apron AP1 to v1526.3, no road lies over another at either mouth, no step over 6 cm at J5 in any layout on the real wheel paths, both Speedways sealed; the existing three layouts equal to v0.18.0 key for key). Was: **Open — P1 (the readable intermediate, the numbered map, the J1 / J5 weld rehearsal) done on a branch 2026-10-14** (refuted: J5 failed verify_mouths, drive_test still read 6-8 cm steps at J5). Was: **Open — P0 (data, no geometry) done on a branch 2026-10-14** (see "P0" at the end: guarded OSM + buildings, `north`
 appended with full/medium/short byte-identical, config per D2, `grid_grow` + frame pin + cache remap proven; the grown
 grid, the pin's offsets and the re-keyed cache land together in P2). Next: P1, the readable intermediate. Was: **Open — planned 2026-10-13** (`tracks/san-diego-lake-murray/EXPANSION-PLAN.md`, revision 2 after an independent critic; place facts in `DOSSIER-EXPANSION-NORTH.md`). Kevin's answers to D1-D4 pending (D3 amends law L3: needs his explicit yes). Was: **Open — research and plan first** (dossier-style: routes, junctions with the loop, elevation and the gorge,
 widths and medians off the aerial, terrain extent, layouts, budget, gates), then the build after v0.18.x lands
@@ -249,3 +249,67 @@ skipped in Free Roam (A7). The full chain ran (terrain incl. the D2 far ring, 4 
 Tests (new): `test_author_expansion.py`, `test_route_connectors_authored_take.py`, `test_barrier_bands_swept.py`,
 `test_mouth_weld_exact_deck.py`, two in `test_verify_mouths.py`. Suite: 736 passed, 2 failed (the same two engine-july
 md5 checks of this worktree's CRLF checkout). GATES-CHANGELOG 2026-10-14 "P1".
+
+## P1 fix round (2026-10-14; branch `worktree-wf_c6ab4b42-146-1`, not merged, nothing installed)
+
+The verifier refuted P1: J5 failed verify_mouths (the plan's "Done when" asks both new mouths to pass), drive_test
+still read 6-8 cm steps in the J5 box in both Speedways, J1 was rehearsed without its R 30 return, the ground beside
+the J1 opening dropped 1.5-2.3 m next to a curb gap, lamp 77 went down with it, J5's weld sheet lay up to 2.55 m into
+the loop's outer lane within 1.9 cm of it, and the report misstated where M3 / M4 went. Each at its cause, all opt-in
+(new keys; with them absent every output is v0.18.0's), rehearsed on a fresh scratch copy of the workshop with the full
+`ship_sd.sh --no-install` chain run to its end (`p1-proofs/rehearsal_delta.py` now also sets the new keys).
+
+- **J5's grass (verify_mouths HOST LANE).** In plain terms: the ground under the road is a sheet of large triangles
+  pinned 2 cm under the road at their corners. Where 0050 eased the corner's inside edge up to the pinch, the road
+  creases along its centre line like a shallow V; a 4.5 m triangle laid across the V touched the road in the middle.
+  `seat_terrain_blend` (opt-in by `route.weld_exact_deck`) now cuts the ground under the loop's lane at an exact-deck
+  mouth into 0.75 m triangles, so it follows the crease: the 18 samples within 5 mm (v0.18.0 has the same 18) are 0.
+- **The overlap (J5 2.55 m, and 4 + 1 grass samples it caused).** The connector's end row is a straight ruler on the
+  loop's curved edge at three points; on J5's convex edge the ruler's middle lay 2.55 m into the loop's lane, a second
+  road surface within 1.9 cm of the loop's — and the prep's anti-poke, which steps down road surfaces 2 cm at a time,
+  could not see the lower one. `route.mouth_fill` replaces the connector's strips over the loop's pavement with one
+  piece that starts exactly at the loop's own edge (J1 73.5 m², J5 82.4 m², steepest 2.0 / 2.5 % on seams of 1.7 / 2.0
+  %). Measured: 0 places with two road surfaces at either mouth (the existing mouths keep theirs, 0.35-0.55 m, unchanged).
+- **J1's R 30 return, built (apron AP1).** `route.aprons` + the new `tools/author_aprons_blend.py` / `tools/apron.py`: the
+  return curb is the R 30 circle tangent to Waring's NE edge 24 m out; it meets the loop's edge at v1526.30 (the
+  design's apron end v1526.34; the A5 curb-line estimate was v1527.5-1528.5, inside the dossier's R 20-40 range). The
+  pavement between them (108.5 m²) is the existing edge vertices on both seams with a smooth surface stretched between
+  them (steepest 7.0 %, the seams' own 7.7 %); its curb + walk is the loop's own profile; the loop's walk resumes at
+  v1527 exactly where the return's curb ends. The opening on the loop edge is now v1514.1-v1526.3.
+- **Waring's first 70 m.** Found while building the apron: the loop at J1 stands 1.44 m over Waring's 3DEP, and the
+  30 m blend onto it made Waring fall 14.8 % — over route_connectors' 11 % cap (A6). `route.trim_blend_grade_cap`
+  lengthens the blend until it stays within the cap: 70 m, 11.0 %. Jackson north keeps 30 m (3.6 %).
+- **The ground beside the opening.** With the return built there is no curb gap: the cross-sections at v1521.5-1526
+  read road, then the return's curb and walk, then ground falling 1-2 m over 6-8 m into the planted wedge — 3DEP's own
+  dip there (−1.0 to −2.5 m below the loop's centre at 22-30 m), where v0.18.0 had kept a flat shelf at the loop's height.
+- **Lamp 77** now stands on the return's walk, 0.83 m behind its curb (it stood in the apron's pavement); the move is
+  written back to `lights.local.json` so the sign placer and verify_race see it. No plant stands on the apron (TreeFX).
+- **The steps at J5.** drive_test's wheel paths are fixed offsets from the centre line; round the J5 corner, tighter
+  than the race lane, an offset past the turning centre runs backwards, and its 1 m second difference re-traces the
+  corner's slope (0050's own diagnosis; a plane fails it too). With `drive_test.fold_fan_severe` a severe reading on
+  such a sample inside a levelled fan is filed as `fold_severe` and judged by verify_fold_fans on the real wheel paths
+  (hard, never covered by --force-install). race_cw 22 → 6 severe + 16 fold_severe, race_acw 20 → 3 + 17; the 22 / 20
+  under the old rule are v0.18.0's exactly; verify_fold_fans PASS (DT max 0.018 m at J5); the verifier's own arc-length
+  check re-run on this build: max 3.0 cm second difference, no jump over 0.2 cm, at both mouths in all three layouts.
+- **The gate-method question.** verify_mouths' exact-deck HOST LANE was committed with P1 (GATES-CHANGELOG) and this
+  round ran under it from the start. For the record, the level-across method on this build reads J5's 8 samples of the
+  loop's OWN surface "over" its deck — the same 8 on v0.18.0 with no mouth — and no other surface over it.
+- **Signs M3 / M4.** Correction: P1 skipped them in all three layouts, not "Free Roam only". A sign can only ship in the
+  road kn5 every layout loads until P4's adapted `author_signs_blend` writes plates into the race files (plan P4 step 1,
+  V9), so the rehearsal still skips them everywhere; the skip reasons now say so.
+- **The map.** W1 / W5 are labelled as curb openings (W5 v2311.9-v2321.0: its curb returns; its road edges cross the
+  loop edge inside that, v2313.5-v2320.9); AP1's label no longer says "P3".
+
+**Gates (fix-round rehearsal vs v0.18.0):** verify_mouths PASS on all six mouths (J1 mouth line 0.6 cm, notch 0.6, host
+lane grass max −1.3 cm, apron seam max 0.6 cm over 77 samples, apron deck 350 samples no hole no grass; J5 1.7 / 2.2 /
+−0.7 cm; the four existing ones v0.18.0's numbers). street soft top 33, severe 0, kinks 3.41 /km, audit 53; race_cw /
+race_acw soft top 9 / 9, severe 6 / 3 (+16 / 17 fold_severe; 22 / 20 by v0.18.0's rule), barrier_missing 0, audits
+53 / 53; no_route BUILT PASS both (0 / 434 probes; race_cw seals J1 with the far strip to v1521 and puts v1522-1527
+behind its closure, race_acw with its race strip v1509-1527; J5 as in P1); verify_fold_fans PASS; the mainline
+triangles at both boxes byte-identical to v0.18.0 in all three layouts; every race wall byte-identical. Road kn5
+119.8 MB. Kerbs: apex 1514 L and 2319 L dropped (A7). Stills: `p1-proofs/stills_mouths.jpg` (new: the J1 return from
+the loop). Numbers: `p1-proofs/rehearsal_result_fixround.json`. GATES-CHANGELOG 2026-10-14 "P1 fix round".
+
+**Left for P3 / P4 (named, not hidden):** the 92 grass graze samples inside the College/Navajo fold fan (lat −10 to −11,
+the far side from the mouth, up to +9 mm) are v0.18.0's, identical, and verify_fold_fans' own (it fails only above
+2 cm); M3 / M4 into the race files (P4); the loop at J1 stands 1.44 m over 3DEP (Waring's 70 m blend carries it).

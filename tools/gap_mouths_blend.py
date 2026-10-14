@@ -104,7 +104,24 @@ def main():
         for q in mw.gap_window(hpts, mh, closed, int(mo["host_seg"]), float(mo["host_t"]),
                               float(mo["connector_width_m"]), float(mo.get("angle_deg") or 90.0)):
             s.add(q)
-    print(f"[gap-mouths] {len(mouths)} mouths on {sorted({h for h, _ in gaps})}")
+    # ledger 0054 P1 fix round (opt-in: data/aprons.json, written by tools/author_aprons_blend.py only when
+    # track.config.json route.aprons declares one): a corner apron opens the host's walk from P0's row to the row its
+    # return curb meets (E_row) — the host's own curb resumes exactly there, at the return curb's last station
+    n_apron = 0
+    ap_path = data / "aprons.json"
+    if ap_path.exists():
+        for ap in json.loads(ap_path.read_text(encoding="utf-8")).get("aprons", []):
+            host = ap["host"]
+            if host not in blocks:
+                raise SystemExit(f"[gap-mouths] apron {ap['id']}: host {host!r} not in the CURB block table")
+            _, mh, closed, _hp = blocks[host]
+            lo, hi = int(ap["host_rows_opened"][0]), int(ap["host_rows_opened"][1])
+            s = gaps.setdefault((host, int(ap["side"])), set())
+            for q in range(lo, hi + 1):
+                s.add(q % mh if closed else max(0, min(mh - 1, q)))
+            n_apron += 1
+    print(f"[gap-mouths] {len(mouths)} mouths on {sorted({h for h, _ in gaps})}"
+          + (f"; {n_apron} apron(s) open the host's walk to their return curb" if n_apron else ""))
 
     bm = bmesh.new()
     bm.from_mesh(me)

@@ -69,7 +69,17 @@ fresh USGS 3DEP 1 m (TLS verified) round five Lake Murray fans, the least-square
 or previous metre runs backwards (``_advance`` < 0) is filed under ``fold_bumps`` (reported, not gated); a SEVERE step
 (> 6 cm) there still counts — the 0.37 m Navajo/Jackson lip of ledger 0050 was read on such a sample too. Real wheel
 paths through the levelled fans are judged by tools/verify_fold_fans.py.
-"""
+
+FOLD SEVERE (opt-in, ledger 0054 P1 fix round: track.config.json ``drive_test.fold_fan_severe = "verify_fold_fans"``).
+Inside a levelled mainline fold fan (data/mouth_welds.json, the 0050 zones) a SEVERE reading on a sample whose metre or
+previous metre runs backwards is the same re-traced plan at a larger hop: on v0.18.0 every severe step left at the
+Navajo / Jackson box (race_cw s 6954-6959 lat -9.3 / -10, race_acw s 6523-6529 lat +9.3 / +10, 6.1-7.9 cm) sits on
+such a sample, where tools/verify_fold_fans.py's arc-length wheel paths through the same fan read a 1 m second
+difference of at most 0.025 m (and an independent 5 cm arc-length sweep at most 0.030 m). With the key, such a sample
+is filed under ``fold_severe`` (reported, not gated here) and judged where a wheel can be: verify_fold_fans gates a
+fine step >= 0.02 m and a 1 m second difference > 0.06 m on the real wheel paths of every levelled pinch (rows
+k - 12 ... l + 13 cover these zones), hard in the chain, never covered by --force-install — the 0050 lip read 0.42 /
+0.48 m there. Outside a levelled fan, on a forward sample, or without the key: severe as before."""
 
 from __future__ import annotations
 
@@ -532,6 +542,10 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     def _in_fan(px, pz):
         return any((px - a) ** 2 + (pz - b) ** 2 < d * d for a, b, c, d in _fan_zones)
 
+    # FOLD SEVERE (opt-in; module doc): a severe reading on a folded sample inside a levelled fan is judged by
+    # tools/verify_fold_fans.py on the real wheel paths, not here
+    _fold_severe_defer = bool(_fan_zones) and         str((cfg.get("drive_test") or {}).get("fold_fan_severe") or "") == "verify_fold_fans"
+
     def _in_flat_zone(px, pz):
         return any((px - a) ** 2 + (pz - b) ** 2 < d * d for a, b, c, d in _fzones)
 
@@ -825,6 +839,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                         if not _corr and w >= 9.5 and abs(off) > 3.5 and not _in_flat_zone(px, pz) \
                                 and not _in_fan(px, pz):
                             problems.setdefault("apron_steps", []).append(
+                                (round(s, 1), round(off, 2), round(step, 3)))
+                        elif _fold_severe_defer and folded and _in_fan(px, pz):
+                            problems.setdefault("fold_severe", []).append(
                                 (round(s, 1), round(off, 2), round(step, 3)))
                         else:
                             # inside a junction flat zone the WHOLE pad is driving surface —
@@ -1203,6 +1220,11 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
             "obstructions": problems["obstructions"][:16],
         },
     }
+    if _fold_severe_defer:
+        # opt-in only (absent the key the report is byte-identical): the severe readings handed to verify_fold_fans
+        report["fold_severe"] = len(problems.get("fold_severe", []))
+        report["fold_severe_judge"] = "tools/verify_fold_fans.py (real wheel paths, hard)"
+        report["worst"]["fold_severe"] = sorted(problems.get("fold_severe", []), key=lambda r: -r[2])[:200]
     out_name = f"drive_test.{lid}.json" if lid else "drive_test.json"
 
     # Gate philosophy: ABSOLUTE ZERO for the things no driver tolerates (ground through the lane,
@@ -1254,6 +1276,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     if report["fold_bumps"]:
         print(f"  fold bumps (2.5-6 cm where a fixed-offset path runs backwards; reported, not gated): "
               f"{report['fold_bumps']}")
+    if _fold_severe_defer:
+        print(f"  fold severe (> 6 cm where a fixed-offset path runs backwards inside a levelled fan; judged by "
+              f"tools/verify_fold_fans.py on the real wheel paths): {report['fold_severe']}")
     print(f"  slope kinks >{KINK_PCT}%% /km   : {report['kinks_per_km']}")
     print(f"  daylight gaps at edges : {report['daylight_gaps']}")
     if report.get("replication_vs_measured"):

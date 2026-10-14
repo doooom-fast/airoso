@@ -27,6 +27,12 @@ never reaches the centre), extended level across the host. Then:
                under it came through a valley crease
   SIDE         the side the piece approaches from (its centreline 10 m out) is mouths.json's side — gap_mouths and
                barrier_bands act on that side
+  APRON        (opt-in, ledger 0054 P1 fix round: a corner apron in data/aprons.json, tools/author_aprons_blend.py, on
+               this mouth's piece) the NOTCH runs on along the host past the stub's own span to where the return curb
+               comes within NOTCH_OUT_M + APRON_CURB_CLEAR_M of the host edge, and the HOST LANE window to the
+               apron's end + LANE_PAD_M; the apron's seam with the stub (APRON_SEAM_OUT_M either side of the stub's
+               edge, from P0 to where the return stands clear of the stub): the apron's road within NOTCH_TOL_M of the stub's; its deck (every APRON_GRID_M,
+               APRON_GRID_CLEAR_M inside its outline): a road sheet there, no 1GRASS at or above it (GRASS_AT_M)
 
 Writes data/verify_mouths.json; exit 1 on any FAIL, 2 on an input error (no mouths.json / no OBJ / a mouth whose
 piece cannot be found).
@@ -61,6 +67,13 @@ STEP_LANE_M = 0.5
 KEEP_M = 70.0
 CELL = 2.0
 CLASSES = (("ROAD", "1ROAD"), ("KERB", "1KERB"), ("GRASS", "1GRASS"))
+APRON_CURB_CLEAR_M = 0.18         # the return curb's face (0.08 m batter) + 0.10 m: the notch runs while the return's
+                                  # pavement edge stands this far past the notch line
+APRON_SEAM_OUT_M = 0.15           # the stub seam is read this far either side of the stub's edge (as NOTCH_OUT_M)
+#                                   ... from CORNER_INSET_M past P0 to where the return (tangent at T, radius R) stands
+#                                   APRON_SEAM_OUT_M + APRON_CURB_CLEAR_M off the stub's edge: sqrt(2 R (that)) short of T
+APRON_GRID_M = 0.5
+APRON_GRID_CLEAR_M = 0.3
 
 
 def load_obj(path: Path, centres, keep=KEEP_M):
@@ -215,7 +228,27 @@ def _island_half(mo, host_path, data, s):
     return 0.0
 
 
-def check_mouth(mo, field, host_path, piece_path, piece_end, data, exact_deck: bool = False) -> dict:
+def _pip(poly, x, z):
+    inside = False
+    for i in range(len(poly)):
+        a, b = poly[i], poly[(i + 1) % len(poly)]
+        if (a[1] > z) != (b[1] > z) and x < a[0] + (z - a[1]) * (b[0] - a[0]) / (b[1] - a[1]):
+            inside = not inside
+    return inside
+
+
+def _d_outline(poly, x, z):
+    best = float("inf")
+    for i in range(len(poly)):
+        a, b = poly[i], poly[(i + 1) % len(poly)]
+        dx, dz = b[0] - a[0], b[1] - a[1]
+        L2 = dx * dx + dz * dz
+        t = 0.0 if L2 < 1e-12 else max(0.0, min(1.0, ((x - a[0]) * dx + (z - a[1]) * dz) / L2))
+        best = min(best, math.hypot(x - (a[0] + t * dx), z - (a[1] + t * dz)))
+    return best
+
+
+def check_mouth(mo, field, host_path, piece_path, piece_end, data, exact_deck: bool = False, apron=None) -> dict:
     fails = []
     cx, _cy, cz = mo["cut_xyz"]
     _d, c, _lat = host_path.project(cx, cz)
@@ -266,6 +299,26 @@ def check_mouth(mo, field, host_path, piece_path, piece_end, data, exact_deck: b
     ml_lo, ml_hi = span_at(-MOUTH_INSET_M)
     nt_lo, nt_hi = span_at(NOTCH_OUT_M)
     lo_s, hi_s = ml_lo + CORNER_INSET_M, ml_hi - CORNER_INSET_M
+    lane_lo, lane_hi = c - hw - LANE_PAD_M, c + hw + LANE_PAD_M
+    ap_rec = None
+    if apron is not None:
+        # the notch runs on over the apron while the return's pavement edge stands clear of the notch line; the host
+        # lane window to the apron's far end
+        run = []
+        for q in apron["arc_xyz"]:
+            _dd, sq, lq = host_path.project(q[0], q[2])
+            off = side * lq - host_path.frame(sq)[3] / 2.0
+            run.append((sq, off))
+        clear = [sq for sq, off in run if off >= NOTCH_OUT_M + APRON_CURB_CLEAR_M]
+        s_end = [sq for sq, _o in run][-1]
+        if clear:
+            if s_end >= c:
+                nt_hi = max(nt_hi, max(clear) + CORNER_INSET_M)
+            else:
+                nt_lo = min(nt_lo, min(clear) - CORNER_INSET_M)
+        lane_lo, lane_hi = min(lane_lo, s_end - LANE_PAD_M), max(lane_hi, s_end + LANE_PAD_M)
+        ap_rec = {"id": apron["id"], "notch_span_m": [round(nt_lo - c, 2), round(nt_hi - c, 2)],
+                  "lane_span_m": [round(lane_lo - c, 2), round(lane_hi - c, 2)]}
 
     def HD(s):
         x, z = host_path.point(s, 0.0)
@@ -301,7 +354,7 @@ def check_mouth(mo, field, host_path, piece_path, piece_end, data, exact_deck: b
     # HOST LANE
     hl = {"samples": 0, "road_kerb_above": 0, "grass_at_or_above": 0, "max_above_m": 0.0, "max_grass_m": None,
           "worst": []}
-    for s in steps(c - hw - LANE_PAD_M, c + hw + LANE_PAD_M, STEP_LANE_M):
+    for s in steps(lane_lo, lane_hi, STEP_LANE_M):
         hd_s = HD(s)
         if hd_s is None:
             continue
@@ -359,6 +412,72 @@ def check_mouth(mo, field, host_path, piece_path, piece_end, data, exact_deck: b
     if nt["fail"]:
         fails.append(f"NOTCH: {nt['fail']} / {nt['samples']} samples just outside the host edge are not the connector's "
                      f"road at the host deck (+-{NOTCH_TOL_M} m), e.g. [s, road-HD, curb/grass-HD] {nt['worst'][:3]}")
+    # APRON: the seam with the stub and the deck itself
+    if apron is not None:
+        seam = [tuple(q) for q in apron["seam_stub_xyz"]]          # P0 .. T along the stub's apron-side edge
+        Ls = [0.0]
+        for i in range(1, len(seam)):
+            Ls.append(Ls[-1] + math.hypot(seam[i][0] - seam[i - 1][0], seam[i][2] - seam[i - 1][2]))
+        out_dir = apron["outline_xz"]
+        sm = {"samples": 0, "fail": 0, "max_dev_m": 0.0, "worst": []}
+        u = CORNER_INSET_M
+        seam_inset = math.sqrt(2.0 * float(apron["R_m"]) * (APRON_SEAM_OUT_M + APRON_CURB_CLEAR_M))
+        while u <= Ls[-1] - seam_inset + 1e-9:
+            i = max(k for k in range(len(seam) - 1) if Ls[k] <= u + 1e-12) if u > 0 else 0
+            i = min(i, len(seam) - 2)
+            t = (u - Ls[i]) / max(Ls[i + 1] - Ls[i], 1e-9)
+            x = seam[i][0] + (seam[i + 1][0] - seam[i][0]) * t
+            z = seam[i][2] + (seam[i + 1][2] - seam[i][2]) * t
+            tx, tz = seam[i + 1][0] - seam[i][0], seam[i + 1][2] - seam[i][2]
+            Lt = math.hypot(tx, tz) or 1.0
+            nx, nz = -tz / Lt, tx / Lt
+            if not _pip(out_dir, x + nx * 0.5, z + nz * 0.5):
+                nx, nz = -nx, -nz                                   # +n into the apron
+            hi_ = field.heights(x + nx * APRON_SEAM_OUT_M, z + nz * APRON_SEAM_OUT_M)
+            lo_ = field.heights(x - nx * APRON_SEAM_OUT_M, z - nz * APRON_SEAM_OUT_M)
+            sm["samples"] += 1
+            ra, rs = max(hi_["ROAD"], default=None), max(lo_["ROAD"], default=None)
+            other = max(hi_["KERB"] + hi_["GRASS"], default=None)
+            bad = ra is None or rs is None or abs(ra - rs) > NOTCH_TOL_M or (other is not None and other > ra - 0.005)
+            if ra is not None and rs is not None:
+                sm["max_dev_m"] = max(sm["max_dev_m"], round(abs(ra - rs), 3))
+            if bad:
+                sm["fail"] += 1
+                if len(sm["worst"]) < 8:
+                    sm["worst"].append([round(u, 2), None if ra is None else round(ra, 3), None if rs is None else round(rs, 3),
+                                        None if other is None else round(other, 3)])
+            u += STEP_ALONG_M
+        dk = {"samples": 0, "holes": 0, "grass_at_or_above": 0, "max_grass_m": None, "worst": []}
+        xs = [q[0] for q in out_dir]
+        zs = [q[1] for q in out_dir]
+        x = math.floor(min(xs) / APRON_GRID_M) * APRON_GRID_M
+        while x <= max(xs):
+            z = math.floor(min(zs) / APRON_GRID_M) * APRON_GRID_M
+            while z <= max(zs):
+                if _pip(out_dir, x, z) and _d_outline(out_dir, x, z) >= APRON_GRID_CLEAR_M:
+                    h = field.heights(x, z)
+                    dk["samples"] += 1
+                    if not h["ROAD"]:
+                        dk["holes"] += 1
+                        if len(dk["worst"]) < 8:
+                            dk["worst"].append(["hole", round(x, 2), round(z, 2)])
+                    elif h["GRASS"]:
+                        g = max(h["GRASS"]) - min(h["ROAD"])
+                        dk["max_grass_m"] = round(g, 3) if dk["max_grass_m"] is None else max(dk["max_grass_m"], round(g, 3))
+                        if g >= -GRASS_AT_M:
+                            dk["grass_at_or_above"] += 1
+                            if len(dk["worst"]) < 8:
+                                dk["worst"].append(["grass", round(x, 2), round(z, 2), round(g, 3)])
+                z += APRON_GRID_M
+            x += APRON_GRID_M
+        ap_rec.update({"stub_seam": sm, "deck": dk})
+        if sm["fail"]:
+            fails.append(f"APRON {apron['id']}: {sm['fail']} / {sm['samples']} samples across the stub seam are not road "
+                         f"on both sides within {NOTCH_TOL_M} m (or a curb / grass stands on the apron side), e.g. "
+                         f"[u, apron, stub, curb/grass] {sm['worst'][:3]}")
+        if dk["holes"] or dk["grass_at_or_above"] or not dk["samples"]:
+            fails.append(f"APRON {apron['id']}: deck {dk['samples']} samples, {dk['holes']} without road, "
+                         f"{dk['grass_at_or_above']} with grass at/above it")
     # APPROACH
     ap = {"lines": {}, "max_dg_per_m": 0.0, "max_dg_per_m_1m": 0.0, "wheelbase_m": WHEELBASE_M}
     nb = int(round(WHEELBASE_M / 2.0 / SAMPLE_M))           # half a wheelbase, in samples
@@ -438,6 +557,7 @@ def check_mouth(mo, field, host_path, piece_path, piece_end, data, exact_deck: b
             "host_half_m": round(half, 2), "mouth_line": ml, "host_lane": hl, "notch": nt, "approach": ap,
             **({"host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)"}
                if exact_deck else {}),
+            **({"apron": ap_rec} if ap_rec is not None else {}),
             "fails": fails, "fail": bool(fails)}
 
 
@@ -468,6 +588,8 @@ def verify(project: Path, obj: Path | None = None) -> dict:
         raise FileNotFoundError(f"no {obj}")
     local = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
     conns = json.loads((data / "connectors.local.json").read_text(encoding="utf-8")).get("connectors", [])
+    ap_path = data / "aprons.json"
+    aprons = json.loads(ap_path.read_text(encoding="utf-8")).get("aprons", []) if ap_path.exists() else []
     tris = load_obj(obj, [(mo["cut_xyz"][0], mo["cut_xyz"][2]) for mo in mouths])
     cfgp = project / "track.config.json"
     exact_prefixes = [str(x) for x in ((json.loads(cfgp.read_text(encoding="utf-8")).get("route", {})
@@ -487,7 +609,9 @@ def verify(project: Path, obj: Path | None = None) -> dict:
             hp = Path2(hc["points_xyz_m"], hc["widths_m"])
         pp = Path2(smooth_xz([tuple(q) for q in piece["points_xyz_m"]]), piece["widths_m"])
         rows.append(check_mouth(mo, field, hp, pp, end, data,
-                                exact_deck=any(str(mo["connector"]).startswith(px) for px in exact_prefixes)))
+                                exact_deck=any(str(mo["connector"]).startswith(px) for px in exact_prefixes),
+                                apron=next((a for a in aprons if a.get("piece") == mo.get("piece")
+                                            and a.get("host") == mo["host"]), None)))
     return {"obj": obj.name, "mouths": rows, "fail": any(r["fail"] for r in rows),
             "thresholds": {"mouth_tol_m": MOUTH_TOL_M, "lane_tol_m": LANE_TOL_M, "lane_edge_m": LANE_EDGE_M,
                            "grass_at_m": GRASS_AT_M, "notch_out_m": NOTCH_OUT_M, "notch_tol_m": NOTCH_TOL_M,

@@ -190,6 +190,11 @@ if [ "$SKIP_BLEND" = 0 ]; then
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$V021_SHIM" --python "$AIROSO/tools/weld_mouths_blend.py" -- "$PROJ" 2>&1 | grep "^\[weld\]\|Error\|Traceback" )
   step "author: seat the terrain under every road (verge finer than the road)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/seat_terrain_blend.py" -- "$PROJ" 2>&1 | grep "^\[seat\]\|Error\|Traceback" )
+  step "author: corner aprons (route.aprons: the return pavement, its curb + walk, the ground under it; self-checked; none declared = no-op)"
+  # ledger 0054 P1 fix round: J1's R 30 return (tools/author_aprons_blend.py, opt-in by track.config.json route.aprons):
+  # 1ROAD_apron_<id> + 1KERB_sidewalk_ap<id>, the stub's curb on it removed, the ground seated; data/aprons.json for
+  # gap_mouths / barrier_bands / verify_mouths / make_treefx / author_lamps. Exit 1 = loop.blend not saved
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_aprons_blend.py" -- "$PROJ" 2>&1 | grep "^\[apron\]\|Error\|Traceback" )
   # (the far-terrain decimation that paid for the prep's equal-width grass bands is gone — ledger 0046: the
   #  terrain is tiered at the source and the prep tiles 1GRASS by balanced bisection. It also triangulated every
   #  terrain face here, and the near-road ground the gates were tuned on is that triangulation's: kept, alone.)
@@ -427,7 +432,7 @@ step "sync outputs workshop -> airoso"
 cp "$PROJ/loop.blend" "$SRC/loop.blend"
 for f in centerline.local.json centerline.raw.local.json median_bands.json dummies.json \
          finished_centerline.json gate_centerline.json lights.local.json connectors.local.json \
-         mouths.json mouth_welds.json verify_mouths.json verify_fold_fans.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
+         mouths.json mouth_welds.json aprons.json aprons.lamps.json verify_mouths.json verify_fold_fans.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
          drive_test.json audit.json \
          barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json \
          $TERRAIN_DATA terrain.tiers.report.json bridges.authored.json          deck_datum.json ground_release.json ground_release.report.json freeway_i8.json freeway_i8.report.json; do

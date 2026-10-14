@@ -39,6 +39,14 @@ mouths.json, one record per cut:
                           ("start" | "end") — resolved after both passes (a pass-1 piece re-cut in
                           pass 2 is renamed <name>#<k>); null when the piece was dropped (< MIN_PIECE_M)
 
+GRADE-CAPPED BLEND (opt-in, ledger 0054 P1 fix round: track.config.json route.trim_blend_grade_cap = [connector-name
+prefixes]). The blend's smoothstep adds 1.5 x (host - piece) / BLEND_M to the piece's own grade at its steepest. At J1
+the loop's deck stands 1.44 m over Waring's 3DEP at the cut and Waring itself falls ~5.5 % from it, so 30 m of blend
+made the stub fall 14.8 % (rows 5-9 of the rehearsal's weld) — over route_connectors' 11 % cap (EXPANSION-PLAN A6: the
+cap stays, and binds nowhere). For a listed connector the blend runs over the SHORTEST length of BLEND_M, BLEND_M + 5,
+... BLEND_CAP_MAX_M whose blended grade stays within route_connectors.MAX_GRADE (else the least steep, with a
+warning); its mouths.json record carries blend_m and blend_max_grade. Every other connector: BLEND_M, as before.
+
 Idempotent from data/connectors.local.json.pre-trim (written once per base). Run after divide,
 before build_loop_blend.
 
@@ -55,6 +63,9 @@ OVERLAP_M = 0.4
 MIN_PIECE_M = 15.0
 MOUTH_ISLAND_GAP_M = 18.0
 BLEND_M = 30.0
+BLEND_CAP_STEP_M = 5.0     # [invented] grade-capped blend (opt-in): lengths tried, BLEND_M upward in this step ...
+BLEND_CAP_MAX_M = 90.0     # [invented] ... to at most this
+GRADE_CAP = 0.11           # tools/route_connectors.py MAX_GRADE (EXPANSION-PLAN A6: the 11 % cap stays)
 REACH_M = 15.0
 END_MATCH_M = 1e-3        # a piece endpoint IS the cut when within this (cut_xyz is rounded to 1 mm)
 
@@ -139,9 +150,43 @@ def blend_from_cut(piece, cut, host_y, at_start, blend_m=BLEND_M, frozen=()):
     return moved
 
 
-def _trim_against(conns, hosts, mouths, deltas=None):
+def blended_grade(piece, cut, at_start, reach):
+    """the steepest |grade| between consecutive points from the cut out to `reach` of arc along a blended piece"""
+    order = list(range(len(piece))) if at_start else list(range(len(piece) - 1, -1, -1))
+    g, acc, prev = 0.0, 0.0, cut
+    for q in order:
+        p = piece[q]
+        L = math.hypot(p[0] - prev[0], p[2] - prev[2])
+        if L > 1e-6:
+            g = max(g, abs(p[1] - prev[1]) / L)
+        acc += L
+        if acc >= reach:
+            break
+        prev = p
+    return g
+
+
+def capped_blend_length(piece, cut, host_y, at_start, frozen=(), cap=GRADE_CAP):
+    """(blend_m, its max grade): the shortest BLEND_M + k * BLEND_CAP_STEP_M <= BLEND_CAP_MAX_M whose blended piece
+    stays within `cap` over the blend (+ one step), else the least steep of them"""
+    best = None
+    L = BLEND_M
+    while L <= BLEND_CAP_MAX_M + 1e-9:
+        trial = list(piece)
+        blend_from_cut(trial, cut, host_y, at_start, blend_m=L, frozen=frozen)
+        g = blended_grade(trial, cut, at_start, L + BLEND_CAP_STEP_M)
+        if g <= cap:
+            return L, g
+        if best is None or g < best[1]:
+            best = (L, g)
+        L += BLEND_CAP_STEP_M
+    return best
+
+
+def _trim_against(conns, hosts, mouths, deltas=None, capped=()):
     """conns: list of connector dicts to trim; hosts: list of (name, pts, widths). Returns new list.
-    `deltas` (optional dict connector name -> [(x, z, dy)]) collects every blended point's height change."""
+    `deltas` (optional dict connector name -> [(x, z, dy)]) collects every blended point's height change.
+    `capped`: connector-name prefixes whose blends are grade-capped (module doc, GRADE-CAPPED BLEND)."""
     out = []
     host_pts = {hn: hp for hn, hp, _ in hosts}
     host_w = {hn: hw for hn, _, hw in hosts}
@@ -213,7 +258,16 @@ def _trim_against(conns, hosts, mouths, deltas=None):
                         o2 = piece[1] if at_start else piece[-2]
                         ox, oz = o2[0], o2[2]
                     frozen = {(round(mo["cut_xyz"][0], 3), round(mo["cut_xyz"][2], 3)) for mo in mouths}
-                    moved = blend_from_cut(piece, cut, host_y, at_start, frozen=frozen)
+                    cap_rec = None
+                    if capped and any(str(c["name"]).startswith(px) for px in capped):
+                        bl, bg = capped_blend_length(piece, cut, host_y, at_start, frozen=frozen)
+                        cap_rec = {"blend_m": bl, "blend_max_grade": round(bg, 4)}
+                        if bg > GRADE_CAP:
+                            print(f"[trim] WARNING: {c['name']}: no blend up to {BLEND_CAP_MAX_M:.0f} m keeps the "
+                                  f"grade within {100 * GRADE_CAP:.0f} % (least: {100 * bg:.1f} % at {bl:.0f} m)")
+                        moved = blend_from_cut(piece, cut, host_y, at_start, blend_m=bl, frozen=frozen)
+                    else:
+                        moved = blend_from_cut(piece, cut, host_y, at_start, frozen=frozen)
                     if deltas is not None:
                         deltas.setdefault(c["name"], []).extend(moved)
                     if at_start:
@@ -226,7 +280,7 @@ def _trim_against(conns, hosts, mouths, deltas=None):
                                    "connector_width_m": float(w[nbr]), "cut_xyz": [round(v, 3) for v in cut],
                                    "host_seg": hseg, "host_t": round(ht, 4),
                                    "angle_deg": round(junction_angle(cx, cz, ox, oz, hpts, hseg), 2),
-                                   "host_grade": round(host_grade(hpts, hseg), 5)})
+                                   "host_grade": round(host_grade(hpts, hseg), 5), **(cap_rec or {})})
             plen = sum(math.hypot(piece[q][0] - piece[q - 1][0], piece[q][2] - piece[q - 1][2])
                        for q in range(1, len(piece)))
             if plen >= MIN_PIECE_M and len(piece) >= 2:
@@ -307,7 +361,9 @@ def build(project_dir):
     deltas = {}
 
     # pass 1: everything vs the mainline
-    first = _trim_against(conns.get("connectors", []), [("MAINLINE", main, local["widths_m"])], mouths, deltas)
+    capped = [str(x) for x in (cfg.get("route", {}).get("trim_blend_grade_cap") or [])]
+    first = _trim_against(conns.get("connectors", []), [("MAINLINE", main, local["widths_m"])], mouths, deltas,
+                          capped=capped)
     # pass 2: non-host pieces vs the divided trunks (host = any piece of a divided connector, not its _loop)
     def is_host(c):
         return any(c["name"] == d or c["name"].startswith(d + "#") for d in divided)
@@ -315,7 +371,7 @@ def build(project_dir):
     hosts_set = {h[0] for h in hosts}
     rest = [c for c in first if c["name"] not in hosts_set and not any(c["name"].startswith(d + "_loop") for d in divided)]
     loops = [c for c in first if any(c["name"].startswith(d + "_loop") for d in divided)]
-    second = _trim_against(rest, hosts, mouths, deltas) if hosts else rest
+    second = _trim_against(rest, hosts, mouths, deltas, capped=capped) if hosts else rest
     out = [c for c in first if c["name"] in hosts_set] + loops + second
     resolve_pieces(mouths, out)
     unresolved = [f"{mo['connector']}@{mo['host']}:{mo['host_vertex']}" for mo in mouths if mo["piece"] is None]
@@ -353,7 +409,9 @@ def build(project_dir):
     for mo in mouths:
         print(f"[trim] mouth {mo['piece']} ({mo['end']}) -> {mo['host']} seg {mo['host_seg']}+{mo['host_t']:.2f} "
               f"side {mo['side']:+d}: angle {mo['angle_deg']:.1f} deg, host grade {100 * mo['host_grade']:+.2f} %, "
-              f"cut y {mo['cut_xyz'][1]:.3f}")
+              f"cut y {mo['cut_xyz'][1]:.3f}"
+              + (f"; blend {mo['blend_m']:.0f} m, max grade {100 * mo['blend_max_grade']:.1f} % (grade-capped)"
+                 if "blend_m" in mo else ""))
 
 
 if __name__ == "__main__":

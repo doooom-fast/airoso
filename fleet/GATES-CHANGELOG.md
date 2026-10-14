@@ -1834,3 +1834,39 @@ the v0.18.0 road carries identically (0 road above the host, MOUTH LINE 3.5 cm, 
 drive_test / audit / fold fans on all three layouts equal to v0.18.0 key for key (street soft top 33, severe 0, kinks
 3.41 /km, audit 53; race severe 22 / 20, barrier_missing 0). Details: ledger 0054 "P1",
 `p1-proofs/rehearsal_result.json`.
+
+### P1 fix round (2026-10-14, after the verifier refuted P1): J5's grass and steps at their causes, J1's R 30 return built (apron AP1), the mouths' overlap removed (ledger 0054)
+
+The refutation's two failing checks and their causes: (1) verify_mouths J5 HOST LANE, 11 grass samples within 5 mm
+under the loop's road at v2311-2313 (v0.18.0 carries them identically): the kn5 prep pins grass 2 cm under the road at
+its vertices and leaves a 4.5 m plane between them, and the 0050 fan's eased inside edge creases the deck along the
+centre line; then 4-5 more at the loop's edge, from the weld's end-row chords lying within 2 cm over / under the host's
+own sheet (the prep's anti-poke steps down road sheets 2 cm at a time and cannot see the lower one). (2) drive_test
+severe steps at the J5 box in both Speedways (race_cw s 6954-6959, race_acw s 6523-6529, 6.1-7.9 cm; v0.18.0's): every
+one on a fixed-offset path running BACKWARDS past the fan's turning centre, where verify_fold_fans' and the verifier's
+own arc-length wheel paths read at most 2.5 / 3.0 cm. Every change below is opt-in by a new key; absent, every output is
+v0.18.0's (the existing tests; `test_drive_test_fold_bumps`, `test_trim_connectors`, `test_verify_mouths`,
+`test_barrier_bands_swept`, `test_make_treefx_plan` gain the opt-in cases; `test_apron.py` is new).
+
+| Item | Value | Flag |
+|---|---|---|
+| `tools/seat_terrain_blend.py` HOST LANE refinement (opt-in: `route.weld_exact_deck`) | terrain edges under the host's lane on the mouth side, over the mouth's span + **4.0 m** each way, from **1.0 m** across the centre line to the edge + 0.5 m, halved to **0.75 m** (the prep then pins the grass every 0.75 m; a 2 % crease lifts a facet ~4 mm, not 2.2 cm) | 0.75 m / 4.0 m / 1.0 m ⚠ invented (span + 4 m covers verify_mouths' span + 3 m) |
+| `route.mouth_fill` (new, opt-in; `tools/apron.mouth_fill`, `tools/author_aprons_blend.py`) | the connector's ROAD strips from its end out to its first row wholly outside the host (every point and both chords **0.05 m** past the host edge) replaced by one piece whose outline is the host's own edge between the connector's two edge crossings, those edges and that row; heights: the outline's existing vertices (points inserted ON the straight 3-D seams every **1.0 m**), inside the cotangent-Laplace film | 0.05 m and 1.0 m ⚠ invented; measured: J5 multi-sheet samples 0 (P1: the weld sheet 2.55 m into the lane, within 1.9 cm of it) |
+| `route.aprons` (new, opt-in; `tools/apron.py`, `tools/author_aprons_blend.py`) | J1's NE return: the circle of the design's **R 30 m** (dossier 20-40) tangent to the stub's edge at the edge vertex within **3 m** of the design tangent point, to where it meets the loop edge (within 1 vertex of the design's apron end); deck = the existing seam vertices + the film (arc points within **1.0 m** of a seam take its run-on; interior grid **1.0 m**, none within **0.35 m** of the outline; arc points every **0.75 m**); the return curb + walk is build_loop_blend's curb_sidewalk profile; the stub's curb on the apron removed (faces only); terrain under it and its walk seated by seat_terrain's verge rule (edges ≤ 1.5 m) | 3 m / 1.0 m / 0.35 m / 0.75 m ⚠ invented; R 30 m and 20-40 m the dossier's |
+| apron / fill self-check | no well-shaped triangle (smallest altitude ≥ **0.25 m**) steeper than the steeper seam it joins + **2 %**; no apron vertex over the host deck by > 0.01 m within 0.5 m of its edge; the CDT covers the outline (2 % + 0.5 m²); the curb's lane edges on the road edges at T / E_row (2 mm) | 0.25 m and 2 % ⚠ invented |
+| `gap_mouths_blend` (opt-in: `data/aprons.json`) | the host's walk opened from P0's row to the row the return curb meets (E_row) | wiring |
+| `barrier_bands` swept mouth (opt-in: `route.aprons` + `data/aprons.json`; refuses the key without the file) | the opening runs to the apron's end on the loop edge; the sidewalk gap to E_row | wiring; the 6 m / 3 m probes as in P1 |
+| `verify_mouths` APRON (opt-in: `data/aprons.json`) | NOTCH runs on along the host while the return's pavement edge stands ≥ NOTCH_OUT_M + **0.18 m** past the notch line; HOST LANE window to the apron's end + 3 m; the stub seam (**0.15 m** either side, from 0.75 m past P0 to sqrt(2 R · 0.33) short of T): road on both sides within NOTCH_TOL_M (5 cm), nothing over the apron side; the deck every **0.5 m**, **0.3 m** inside its outline: road present, no grass at/above it (GRASS_AT_M) | 0.18 / 0.15 / 0.5 / 0.3 m ⚠ invented; the tolerances are the existing ones |
+| `route.trim_blend_grade_cap` (new, opt-in; `tools/trim_connectors.py`) | a listed connector's blend onto its host lengthened from 30 m in **5 m** steps to at most **90 m** until the blended grade stays within route_connectors' 11 % (A6); measured: Waring at J1 fell **14.8 %** in 30 m (the loop stands 1.44 m over 3DEP there) -> **70 m, 11.0 %**; Jackson north keeps 30 m (3.6 %) | 5 m / 90 m ⚠ invented; 11 % is route_connectors' MAX_GRADE |
+| `author_lamps_blend` (opt-in: `data/aprons.json`) | a post whose base stands in an apron (or within **0.5 m** of it) moves behind the return curb, **0.83 m** (the walk's middle), base on the walk top; `lights.local.json` rewritten so every later reader sees it | 0.5 m ⚠ invented; 0.83 m = curb face 0.08 + 0.75 |
+| `make_treefx` (opt-in: `data/aprons.json`) | no plant on an apron or within **1.0 m** of it | 1.0 m ⚠ invented |
+| `drive_test.fold_fan_severe = "verify_fold_fans"` (new, opt-in; `scripts/geometry/drive_test.py`) | a SEVERE reading (> 6 cm) on a sample whose metre or previous metre runs backwards INSIDE a levelled fan (the 0050 zones) is filed as `fold_severe` (reported, not gated here); `tools/verify_fold_fans.py` judges the same fans on the real wheel paths (fine steps ≥ 2 cm, 1 m second differences > 6 cm; rows k − 12 … l + 13 ⊇ these zones; hard, never covered by --force-install). A forward sample, or one outside a levelled fan: severe as before | no threshold moves; measured: race_cw 22 -> 6 + 16 fold_severe, race_acw 20 -> 3 + 17 (the 22 / 20 under the old rule are v0.18.0's exactly); every one in the J5 box and at the hairpin, verify_fold_fans PASS with DT max 0.018-0.025 m there |
+
+**Proven (2026-10-14, the fix-round rehearsal: full `ship_sd.sh --no-install` on a fresh scratch workshop copy, the
+chain run to its end):** verify_mouths PASS on all six mouths (J1 mouth line 0.6 cm / notch 0.6 / grass max −1.3 cm,
+apron seam 77 samples max 0.6 cm, deck 350 samples no hole, no grass; J5 mouth line 1.7 / notch 2.2 / grass max −0.7
+cm; the four existing mouths byte-for-byte v0.18.0's numbers). Under the level-across HOST LANE method (for the record)
+J5 still reads 8 samples of the host's OWN sheet "over" it (v0.18.0 without a mouth: the same 8, max 2.2 cm) and no
+other sheet. Every drive_test / audit key of the three existing layouts equal to v0.18.0's (street soft top 33, severe 0,
+kinks 3.41; audits 53 / 53 / 53), severe under v0.18.0's rule 22 / 20 unchanged; no_route BUILT PASS both Speedways
+(0 / 434 probes); verify_fold_fans PASS. Details: ledger 0054 "P1 fix round", `p1-proofs/rehearsal_result_fixround.json`.

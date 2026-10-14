@@ -270,6 +270,19 @@ Steps 2–8 can start now on a branch off the 0046 branch, and get rebased after
 >   - **J1** welds with Waring's straight curbs (opening v1514.1-v1520.4). **The R ≈ 30 m free-flow return cannot be welded by a connector ribbon** (its end would stand 2.9-4 cm proud of the loop; the gates allow 2 cm): it is **apron AP1** (v1520.4-v1526.3, 118 m²), authored in P3. A4 / A5 stand otherwise.
 >   - **A7's split happened** (race_cw: far strip to the pin v1521, behind the closure past it). `no_route` PASS on both Speedways, planned and built, with probes past v1521.
 >   - **The existing three layouts are no worse, key for key.**
+>
+> **2026-10-14, P1 fix round** (the verifier refuted P1; ledger 0054 "P1 fix round"): every failing check fixed at its
+> cause, opt-in, and the full chain re-run on a fresh scratch copy to its end.
+> - **Both new mouths pass verify_mouths.** J5's grass was the ground's 4.5 m triangles across the 0050 fan's crease
+>   (now 0.75 m under an exact-deck mouth's lane) and a second road surface within 2 cm of the loop's: `route.mouth_fill`
+>   now starts each new road exactly at the loop's own edge (0 overlapping surfaces; J5 had 2.55 m).
+> - **J1's R 30 return is built: apron AP1** (`route.aprons`, `tools/author_aprons_blend.py`), to v1526.3 with its own
+>   curb and walk; the loop's walk resumes at v1527; lamp 77 behind the new curb; no curb gap, no shelf-edge cliff.
+>   Waring's first 70 m now stay within the 11 % cap (`route.trim_blend_grade_cap`; it fell 14.8 % in 30 m).
+> - **No step over 6 cm at J5 in any layout** on the real wheel paths; drive_test's backwards fixed-offset readings
+>   inside the levelled fans go to verify_fold_fans (`drive_test.fold_fan_severe`). Severe by v0.18.0's rule: 22 / 20,
+>   unchanged.
+> - M3 / M4 are skipped in all three layouts until P4 (correcting P1's "Free Roam only").
 
 1. **new `tools/author_expansion.py`** writes `data/expansion.north.json`, a plain-text description of the new network:
    - **four road pieces** (Waring, Princess View, Mission Gorge, Jackson north), each a centreline at 2–3 m spacing. On the divided stretches the centreline is the midline between the two OSM carriageways.

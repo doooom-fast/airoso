@@ -14,6 +14,8 @@ from pathlib import Path
 
 KEYS = ["soft_top_in_lane", "severe_steps", "severe_per_km", "steps_per_km", "kinks_per_km", "obstruction_stations",
         "barrier_missing", "excursion_drops", "daylight_gaps", "undrivable_corners", "floating_furniture"]
+# P1 fix round: with drive_test.fold_fan_severe the severe readings on folded fan samples are filed as fold_severe;
+# severe_steps + fold_severe is the count under v0.18.0's rule, compared key for key below as "severe_old_rule"
 BOXES = {"J1": (1506, 1521), "J5": (2311, 2328)}
 
 
@@ -57,11 +59,16 @@ def main():
         new = load(proj / "data" / f"drive_test.{lid}.json") or {}
         old = load(track / "data" / f"drive_test.{lid}.json") or {}
         rows = {k: [old.get(k), new.get(k)] for k in KEYS}
+        rows["fold_severe"] = [old.get("fold_severe"), new.get("fold_severe")]
+        rows["severe_old_rule"] = [old.get("severe_steps"), (new.get("severe_steps") or 0) + (new.get("fold_severe") or 0)]
         worse = [k for k in KEYS if isinstance(old.get(k), (int, float)) and isinstance(new.get(k), (int, float))
                  and new[k] > old[k] + 1e-9 and k not in ("floating_furniture",)]
+        if rows["severe_old_rule"][1] > (old.get("severe_steps") or 0):
+            worse.append("severe_old_rule")
         rep["layouts"][lid] = {"v0.18.0 -> rehearsal": rows, "worse": worse,
                                "box_samples": box_samples(new, st), "box_samples_v0.18.0": box_samples(old, st)}
-        print(f"{lid:9} " + "  ".join(f"{k} {old.get(k)}->{new.get(k)}" for k in KEYS) + f"   WORSE: {worse or 'none'}")
+        print(f"{lid:9} " + "  ".join(f"{k} {old.get(k)}->{new.get(k)}" for k in KEYS)
+              + f"  fold_severe {new.get('fold_severe')}  severe(old rule) {rows['severe_old_rule']}   WORSE: {worse or 'none'}")
     for name, fn in (("street", "audit.json"), ("race_cw", "audit.race_cw.json"), ("race_acw", "audit.race_acw.json")):
         a, b = load(track / "data" / fn), load(proj / "data" / fn)
         def tot(d):

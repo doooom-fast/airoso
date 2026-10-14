@@ -371,6 +371,16 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
     nrm = _normals(pts, m)
     swept_prefixes = [str(x) for x in (race.get("swept_mouths") or [])]
     swept_conns = None
+    # ledger 0054 P1 fix round (opt-in, track.config.json route.aprons): a corner apron (tools/author_aprons_blend.py ->
+    # data/aprons.json, the apron as built) widens its weld mouth's opening on the loop edge to where its return curb
+    # meets it (E) and the host's walk resumes (E_row)
+    aprons = []
+    if (cfg.get("route") or {}).get("aprons"):
+        ap_path = data / "aprons.json"
+        if not ap_path.exists():
+            fails.append("route.aprons is declared but data/aprons.json is missing (run tools/author_aprons_blend.py)")
+        else:
+            aprons = json.loads(ap_path.read_text(encoding="utf-8")).get("aprons", [])
     for mo in mouths:
         h = int(mo["host_vertex"]) % m
         half_m = float(mo.get("connector_width_m", 10.0)) / 2.0 + MOUTH_CORNER_M
@@ -384,7 +394,7 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
             if swept_conns is None:
                 cp = data / "connectors.local.json"
                 swept_conns = json.loads(cp.read_text(encoding="utf-8")).get("connectors", []) if cp.exists() else []
-            swept = _swept_opening(mo, swept_conns, pts, widths, m, nrm, st)
+            swept = _swept_opening(mo, swept_conns, pts, widths, m, nrm, st, aprons)
             if swept is None:
                 fails.append(f"mouths: {mo.get('connector')} is a swept mouth (race.swept_mouths) but its piece's "
                              f"swept edges do not reach the host edge within {SWEPT_EXTEND_MAX_M} m")
@@ -910,7 +920,7 @@ def _swept_probes(closed, widths, m, st):
     return out
 
 
-def _swept_opening(mo, conns, pts, widths, m, nrm, st):
+def _swept_opening(mo, conns, pts, widths, m, nrm, st, aprons=()):
     """where the mouth's piece really opens the host edge: its centre smoothed as the assembler sweeps it, each road
     edge (+- width / 2, centred tangent) walked from the outer end toward the cut, its first crossing of the host edge
     line on the mouth's side (an edge short of it run on along its last direction up to SWEPT_EXTEND_MAX_M, as the
@@ -955,6 +965,10 @@ def _swept_opening(mo, conns, pts, widths, m, nrm, st):
             return None
         hits.append(hit)
     a_, b_ = min(hits), max(hits)
+    # a corner apron on this piece (data/aprons.json): the opening runs on to where its return meets the loop edge
+    apr = next((a for a in aprons if a.get("piece") == mo.get("piece") and a.get("host") == "MAINLINE"), None)
+    if apr is not None:
+        a_, b_ = min(a_, float(apr["E_vertex"])), max(b_, float(apr["E_vertex"]))
 
     def arc_of(vf):
         v = int(math.floor(vf))
@@ -969,10 +983,13 @@ def _swept_opening(mo, conns, pts, widths, m, nrm, st):
     gap = sorted(_MW.gap_window(pts, m, True, int(mo["host_seg"]), float(mo["host_t"]),
                                 float(mo.get("connector_width_m", 10.0)), float(mo.get("angle_deg") or 90.0))) \
         if "host_seg" in mo else []
+    if apr is not None:
+        gap = sorted(set(gap) | set(range(int(apr["host_rows_opened"][0]), int(apr["host_rows_opened"][1]) + 1)))
     if gap and gap[-1] - gap[0] < m // 2:
         lo_, hi_ = min(lo_, gap[0]), max(hi_, gap[-1])
     return {"edge_vertex_from": round(a_, 2), "edge_vertex_to": round(b_, 2), "vertex_from": lo_, "vertex_to": hi_,
             "sidewalk_gap": [gap[0], gap[-1]] if gap else None,
+            **({"apron": apr["id"], "apron_end_vertex": round(float(apr["E_vertex"]), 2)} if apr is not None else {}),
             "how": "the piece's swept road edges (assembler smoothing) crossing the host edge, + MOUTH_CORNER_M of arc, "
                    "and the host sidewalk gap (mouth_weld.gap_window) (race.swept_mouths, ledger 0054 P1)"}
 

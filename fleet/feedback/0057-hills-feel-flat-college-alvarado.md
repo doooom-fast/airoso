@@ -1,8 +1,8 @@
 ---
 id: 0057
 title: "Coming down college toward 8 should be pretty steep and doesn't feel that way, same with heading down Alvarado from 70th"
-status: in-progress — fixed and rehearsed (2026-10-14, full scratch ship, not installed); closes on Kevin's drive
-scope: tracks/san-diego-lake-murray mainline profile — the College -> Alvarado signal approach (pre-median s 2200-2530) and Lake Murray Blvd's two decks + 70th St + Alvarado's pitch (13280 -> seam -> 230); tools/deck_datum.py (road_datum.profiles), scripts-v021/geometry/smooth.py + blender/build_loop_blend.py (opt-in per-window sigma_y)
+status: in-progress — fixed, refuted, fixed again (fold-fan fit) and rehearsed (2026-10-14, full scratch ship, not installed); closes on Kevin's drive
+scope: tracks/san-diego-lake-murray mainline profile — the College -> Alvarado signal approach (pre-median s 2200-2530) and Lake Murray Blvd's two decks + 70th St + Alvarado's pitch (13280 -> seam -> 230); tools/deck_datum.py (road_datum.profiles + fold_fan_fit), scripts-v021/geometry/smooth.py + blender/build_loop_blend.py (opt-in per-window sigma_y)
 layer: project (+ the quarantined assembler of record, opt-in)
 train: -
 ---
@@ -63,23 +63,27 @@ blended over 30 m at both ends. Cached with provenance in data/deck_datum.sample
   every window is byte-identical to the sigma_y 5 result, no declared window = the old call. The College main descent is
   identical to v0.18.0 (max |dy| 0.000 m on pre-median s 3200-3520); the largest change outside both windows is 0.02 m
   (the sigma 5 kernel's reach).
-- **The hairpin's junction box is held straight** (`hold_straight_m` [2289, 2323], new): the first full rehearsal put
+- **Round 1 (retired by the fix round below): the hairpin's junction box held straight** (`hold_straight_m` [2289,
+  2323]): the first full rehearsal put
   the real hump inside the College/Alvarado hairpin's levelled fold fan (rows 763-774, ledger 0050), whose inside edge is
   pinched to one height — `verify_fold_fans` FAILED on all three layouts (DT 0.087 m on the inside paths) and race severe
   steps went 22/20 -> 39/37, all at the hump. Held straight between the real road at its two edges (like a deck span),
   the fan passes again. Price: the crest inside the box stays as low as v0.18.0 built it, and the College approach eases
   in its last few metres before the stop line (the box's edge), so the 30 m approach reads +5.44 % instead of +5.9 %.
-- **Crossfall: left level** (chosen). The real junction tilts 4-7 % across, west side higher; the build carries no
-  mainline bank, and the junction box, fold fan, mouth weld, median, race corridor and their gates all assume level
-  cross-sections. Carrying it would be a ribbon change far beyond these windows (and would collide with ledger 0055's
-  College work). The datum reads both carriageway centres instead, so a level slab sits midway: on College the lanes
-  match each other within 0.1 points, so a level slab gives the southbound lane its real grade.
+- **Crossfall: left level** (chosen). The real junction tilts 4-8 % across, west side higher (fresh 3DEP at s 2300: the
+  southbound lane 112.12 m, the centre 111.47, the northbound lane 110.81 — 1.3 m across 15 m). The race layouts run
+  the full 28 m width here, and the race walls' containment is judged against the centre line (no_route BUILT and
+  verify_fold_fans (7): a K-rail base within +-0.28 m of the centre line + 0.10); an 8 % tilt puts the walls 14 m out
+  1.1 m off it, so a tilted slab fails both gates. Carrying it would also be a ribbon change far beyond these windows
+  (and would collide with ledger 0055's College work). The datum reads both carriageway centres instead, so the level
+  slab sits midway: on College's approach the lanes match within 0.1 points, so the slab gives the southbound lane its
+  real grade there; at the junction itself it cannot (see the fix round).
 
 Sigmas, rehearsed (each a full `ship_sd.sh --no-install`): 1.5 / 1.5 -> College +5.23 %, every listed gate no worse;
 1.0 / 1.0 -> +5.44 % but street kinks 3.41 -> 3.56 /km (refused); **1.0 / 1.5 shipped**. Every invented number is in
 fleet/GATES-CHANGELOG.md (2026-10-14, ledger 0057). No gate threshold changed.
 
-## Results (rehearsal 4, 2026-10-14: full chain on a fresh scratch copy of the workshop, ENG a fresh copy of engine-july, not installed)
+## Results, round 1 (rehearsal 4, 2026-10-14: full chain on a fresh scratch copy of the workshop, ENG a fresh copy of engine-july, not installed)
 
 Same lane points, same fresh 3DEP and same definitions as the diagnosis (real / v0.18.0 built / fixed):
 
@@ -128,12 +132,143 @@ profile_college_alvarado_signal.png, profile_alvarado_70th.png, profile_lmb_70th
 decks), profile_college_descent.png (unchanged). Rehearsals: D:/k10-scratch/gradesfix/rehearsal{1..4}.log (1 = no hold,
 fold fans FAIL; 2 = hold, 1.5/1.5; 3 = 1.0/1.0, street kinks over; 4 = shipped).
 
+## Fix round (2026-10-14, after the refutation)
+
+**Refuted on.** The truth lens confirmed every round-1 number and refuted the result. The held box (`hold_straight_m`,
+pre-median 2289-2323 = local s 2283-2313) kept the junction flat. That had three effects:
+
+- A car stopped a few metres into it got a much shallower hill than the real road. Last 15 m on the southbound lane:
+  stop at s 2305 built +2.92 % against a real +7.16 %; stop at s 2313 built +5.42 % against +6.11 % (0.69 short).
+- The crest stayed 1.15 m under the real southbound lane and 0.55 m under the real road centre (s 2300).
+- The level slab sat ~0.2 m under the southbound lane at s 2318-2348.
+
+The lens also flagged two disclosed items: Alvarado s 0-25 slightly flatter than v0.18.0, and terrace scenery
+re-seated outside the windows.
+
+**Cause (measured).** Two gates judge this hairpin on paths its tight turn bends.
+
+1. **verify_fold_fans.** The levelled fold fan (rows 763-774) pinches the ribbon's inside edge to one point. Every
+   wheel path inside folds too, is cut at its own self-intersection, and turns sharply on the corner's medial axis.
+   Its grade jumps there by the surface's slope along that axis.
+2. **drive_test.** Its fixed-offset wheel paths jump sideways each time the segment normal turns. On a 5-6 % slope
+   that is a severe step and a kink.
+
+The real crest inside the fan fails both. Rehearsal 5 fitted the fan alone and was refused: street severe steps 0 -> 10,
+street kinks 3.41 -> 5.86 /km, race severe 22 / 20 -> 27 / 26, all at s 2296-2304. The box passed both gates only by
+removing the crest.
+
+To work this out I built models of both gates on the ribbon the build carries, and checked them against the built
+gates:
+
+- The fan model read 0.0868 / 0.0342 m where `verify_fold_fans` read 0.087 / 0.034 on rehearsals 1 / 4.
+- The drive_test replica found rehearsal 5's 10 street severe steps at the same stations, heights within 1 mm.
+- The assembler prediction matched the built centreline to 5e-5 m.
+
+**Fix: `fold_fan_fit`, replacing the box** (tools/deck_datum.py; config `road_datum.profiles[0].fold_fan_fit`
+`{fit_m: [2250, 2340], dt_max_m: 0.05}` and `road_datum.assembler_smooth`; `hold_straight_m` removed from code and
+config).
+
+- **What it does.** Inside `fit_m` the profile takes the change with the smallest misfit to the 3DEP target (heights,
+  grades and grade changes, on the heights the assembler will build), subject to two limits:
+  - every fan pinch stays within 0.05 m on `verify_fold_fans`' own survey (the gate allows 0.06);
+  - drive_test's wheel paths over `fit_m` (street, plus a race lane in both directions) have no severe step and no more
+    kinks than v0.18.0 built here.
+- **What it reads.** Both limits are read on the ribbon the build will carry. Inside `fit_m`, the 3DEP is read on the
+  plan the assembler builds: its smoothing moves the hairpin's line up to 3.6 m, and the junction tilts 8 % across, so
+  round 1 read the road 0.1-0.3 m off.
+- **What it leaves alone.** Outside `fit_m` nothing moves.
+- **Determinism and cache.** The solve is deterministic. It is cached in data/deck_datum.samples.json `fold_fan_fits`,
+  keyed by everything it reads; a fresh solve reproduces the cached output byte for byte.
+- **Refusals.** It refuses, rather than ships, a fit that cannot meet both limits or that moves a height more than
+  0.25 m. The message says "author the junction as a pad".
+- **Why `fit_m` stops at 2340.** Rehearsal 6 ran it to 2360. The fit then steepened College's flank into a sag at
+  s 2328-2346, where the seated ground's 10 m facets rose through the road by up to 9 mm. Soft tops went street
+  33 -> 39 and race 9 -> 21 / 19, so that version was refused.
+
+**Crossfall: still level, now with a measured reason.** The race layouts run the junction's full 28 m width, and
+both no_route and verify_fold_fans (7) judge the race walls within +-0.28 m of the centre line. The real 8 % tilt
+puts them 1.1 m off it 14 m out. A tilted slab fails both gates.
+
+**Results (rehearsal 7, 2026-10-14):** full `ship_sd.sh --no-install` on fresh scratch copies (project7,
+engine-july7), not installed. Measured with the truth lens's own method (D:/k10-scratch/gradesfix/verify5/grades.py):
+the built 1ROAD at the lens's points against fresh 3DEP (TLS on), 6 m means. Columns are real / v0.18.0 / round 1 /
+fix round.
+
+| Spot | Real | v0.18.0 | Round 1 | **Fix round** |
+|---|---|---|---|---|
+| College -> Alvarado, last 30 m, stop s 2313 (S/B lane) | +5.93 % | +3.52 | +5.45 | **+5.88** |
+| same, last 15 m, stop s 2313 | +6.11 % | +3.06 | +5.42 | **+6.17** |
+| last 30 m / 15 m, stop s 2316 | +5.72 / +5.92 | +3.68 / +3.29 | +5.48 / +5.70 | +5.88 / +6.48 |
+| last 30 m / 15 m, stop s 2320 | +5.45 / +5.77 | +3.86 / +3.56 | +5.30 / +5.74 | +5.63 / +6.39 |
+| last 30 m / 15 m, stop s 2310 | +6.12 / +6.43 | +3.32 / +2.80 | +5.20 / +4.77 | +5.72 / +5.52 |
+| last 30 m / 15 m, stop s 2308 | +6.29 / +6.76 | +3.18 / +2.62 | +4.90 / +4.11 | +5.53 / +4.94 |
+| last 30 m / 15 m, stop s 2305 | +6.47 / +7.16 | +2.96 / +2.37 | +4.33 / +2.92 | +5.19 / +3.98 |
+| same on the road centre, stop s 2310 / 2313, last 15 m | +5.64 / +5.63 | +2.79 / +3.05 | — | +5.52 / +6.16 |
+| junction height s 2300, road centre | 111.48 m | 110.83 | 110.93 | **111.27** |
+| junction height s 2300, S/B lane | 112.08 m | 110.83 | 110.93 | 111.27 |
+| height s 2310 / s 2313, road centre | 111.14 / 110.98 | 110.68 / 110.61 | — | 111.14 / 111.04 |
+| Alvarado W/B 100 m (s 16-116) | -7.68 % | -6.08 | -7.54 | -7.54 |
+| Alvarado W/B s 0-25 / 0-50 (lane) | -3.70 / -6.10 | -3.40 / -4.97 | -2.92 / -5.49 | -2.92 / -5.49 |
+| Alvarado s 0-25 / 0-50 (road centre) | -2.80 / -5.49 | -3.40 / -4.96 | — | -2.92 / -5.49 |
+| 70th E/B wait, last 30 m to s 12: E/B lane / centre / W/B lane | +6.77 / +7.44 / +8.20 | +5.58 | +6.97 | +6.97 |
+| 70th junction s 0 / s 12 (centre) | 125.17 / 125.23 m | 124.52 / 124.26 | 125.26 / 125.22 | 125.26 / 125.22 |
+| LMB over I-8 abutments (centre s 13333 / 13416) | 126.22 / 126.19 m | 125.19 / 124.23 | 126.23 / 126.23 | 126.23 / 126.23 |
+| LMB over Alvarado Creek, s 13449 / 13475 | 125.57 / 125.15 m | 124.16 / 124.51 | 125.66 / 125.26 | 125.66 / 125.26 |
+| College main descent 25 / 50 / 100 / 200 m (S/B lane) | -9.01 / -8.82 / -8.75 / -8.44 | -8.79 / -8.66 / -8.59 / -7.93 | same | **same as v0.18.0** |
+| max change vs v0.18.0 on the lens's rows outside the windows | — | — | — | 0.004 m |
+
+What that table says:
+
+- **The real stop line (s >= 2313; signal node 49123188 at s 2312.3).** Both the 30 m and the 15 m approach are now
+  within 0.06 points of the real southbound lane. Round 1 was 0.69 short on the 15 m.
+- **s 2310 and s 2316-2320.** The 30 m approaches are within 0.5 points. The 15 m ones are 0.9 points short at s 2310
+  and 0.6 points steep at s 2316-2320, because the slab follows the mean of both carriageway centres.
+- **Inside the box (s 2305-2308).** Against the real southbound lane the car gets 1.3 / 3.2 points less at s 2305
+  (30 / 15 m) and 0.8 / 1.8 less at s 2308. On the road centre the 30 m approaches match (5.18 against 5.30, 5.54
+  against 5.36), and the 15 m ones are 1.3 / 0.6 points short. These stations are inside the fan, and that is all the
+  two gates allow there.
+- **The crest.** It is now 0.21 m under the real road centre (round 1: 0.55). It is 0.81 m under the real southbound
+  lane: that lane sits 0.6 m above the centre on the tilt the level slab cannot carry.
+- **The 70th wait.** It was read on the wrong lane in round 1. On the eastbound lane, where the car actually waits,
+  real is +6.77 % and built +6.97 %. The road centre is +7.44 % real.
+- **Alvarado s 0-25.** Unchanged since round 1: -2.92 % against -3.70 % on the lane and -2.80 % on the road centre. The
+  70th junction is level for ~12 m and then drops, and the window's 1.5-point assembler sigma rounds that knee. Sigma
+  1.0 there was the variant that pushed street kinks over v0.18.0 in round 1.
+- **"Byte-identical outside", stated precisely.** The road and the centreline outside the two windows are unchanged to
+  0.004 m. The terrace scenery between the hairpin legs (ground_release `alvarado_college_terrace`) re-seats onto the
+  raised College leg, by up to 0.23 m (one grass vertex 0.43 m). That is the release doing its job.
+
+**Gates vs v0.18.0** (rehearsal 7; every one run on the BUILT artifacts):
+
+| Gate | v0.18.0 | Round 1 | Fix round |
+|---|---|---|---|
+| street drive_test soft top / severe / kinks per km | 33 / 0 / 3.41 | 31 / 0 / 3.34 | **9 / 0 / 2.97** |
+| street audit D / K / I / F | 0 / 20 / 20 / 13 | same | same |
+| race severe steps cw / acw | 22 / 20 | 17 / 17 | 17 / 18 |
+| race soft top cw / acw | 9 / 9 | 9 / 8 | 8 / 7 |
+| race barrier_missing, obstruction | 0, 0 | 0, 0 | 0, 0 |
+| no_route BUILT cw / acw | PASS | PASS | PASS (0 leaks, 0 / 406 probes) |
+| verify_fold_fans (3 pinches x 3 layouts) | PASS | PASS | PASS (hairpin DT 0.047 / 0.044, grass-on-top 0) |
+| verify_mouths (4), verify_signs, verify_race (+ scenery), verify_ai_line x2, rib_check, house_seat_check | PASS | PASS | PASS |
+| race kinks per km (not a listed gate) | 6.23 / 7.05 | 6.45 / 6.38 | 6.68 / 6.82 |
+
+**Plots** (real / v0.18.0 / fix round): D:/k10-scratch/gradesfix/profile_college_alvarado_signal.png,
+profile_alvarado_70th.png, profile_lmb_70th_alvarado.png and profile_college_descent.png.
+
+**Rehearsals:** D:/k10-scratch/gradesfix/rehearsal5.log (the fan alone, refused), rehearsal6.log (`fit_m` to 2360,
+refused on soft tops) and rehearsal7.log (shipped config).
+
+**What would carry the rest.** That needs the junction authored as a pad (JUNCTIONS §2.0 B), heighted and tilted from
+3DEP. It also needs gates that judge a pad on its own wheel paths rather than on a ribbon's fixed offsets, with the
+race walls measured against the local deck. That is a gate change, so it is Kevin's call.
+
 ## Kevin's drive (the only verdict that closes it)
 
-- Street (Lake Murray Free Roam): College southbound down past I-8, stop at the Alvarado light in a manual car, clutch
-  in, no brake: the car should roll back now (built +5.4 % over the last 30 m, was +3.5 %). Then Alvarado up to 70th,
-  stop facing uphill: +7 % (was +5.6 %).
+- Street (Lake Murray Free Roam): drive College southbound past I-8 and stop at the Alvarado light in a manual car,
+  clutch in, no brake. The car should roll back: the last 30 m are built at +5.9 % (real +5.9 %, v0.18.0 +3.5 %). Then
+  climb Alvarado to 70th and stop facing uphill: +7.0 % (v0.18.0 +5.6 %).
 - Westbound down Alvarado from 70th: the drop should read steeper right off the junction.
-- Ask: does the College light feel right, or does the flat box at the hairpin (held straight for the fold fan; the real
-  crest is ~1 m higher) still read wrong? If so, the next step is authoring that junction as a pad (JUNCTIONS §2.0 B),
-  not more smoothing changes.
+- Ask: does the hump at the College light feel right now? It is 0.2 m under the real road centre, and the junction is
+  still a level slab. If a car stopped inside the junction, or the tilt, still reads wrong, the next step is authoring
+  that junction as a pad (JUNCTIONS §2.0 B), with gates that judge a pad on its own wheel paths. That is a gate change,
+  so it is Kevin's call. More smoothing changes are not the next step.

@@ -1,7 +1,8 @@
 """Ledger 0057 (Kevin 2026-10-14: "my cars with clutches would roll back from stoplights there"): road_datum profile
 windows (tools/deck_datum.py) re-base a short stretch of the frozen pre-median profile on fresh 3DEP at both carriageway
 centres, holding every deck span inside straight; the assembler (scripts-v021) smooths those windows with their own
-sigma and leaves every other vertex exactly as before."""
+sigma and leaves every other vertex exactly as before. Fix round: a window's fold-fan fit carries the real crest through
+a levelled fold fan (ledger 0050) as close as the fan's own gate allows, instead of holding a box straight."""
 from __future__ import annotations
 
 import importlib.util
@@ -180,7 +181,9 @@ def test_lake_murray_declares_both_windows_and_the_lmb_decks():
     assert a["window_m"][1] < rd["decks"][0]["window_m"][0]              # short of the College deck window
     assert b["window_m"][0] > b["window_m"][1]                            # through the lap seam
     assert a["assembler_sigma_y_pts"] == 1.0 and b["assembler_sigma_y_pts"] == 1.5     # rehearsed (ledger 0057)
-    assert a["hold_straight_m"] == [[2289.0, 2323.0]] and not b.get("hold_straight_m")
+    assert not a.get("hold_straight_m") and not b.get("hold_straight_m")       # the box is retired (fix round)
+    assert a["fold_fan_fit"] == {"fit_m": [2250.0, 2340.0], "dt_max_m": 0.05} and not b.get("fold_fan_fit")
+    assert (ROOT / rd["assembler_smooth"]).exists()
     pre = json.loads((SRC / "data" / dd.SRC_NAME).read_text(encoding="utf-8"))["points_xyz_m"]
     L = dd.stations(pre)[-1]
     spans = dd.window_spans(rd["decks"], *dd.unwrap_window(b["window_m"], L), L)
@@ -212,36 +215,19 @@ def test_lake_murray_profiles_run_offline_from_the_committed_cache_and_restore_t
         return _lin(st, ys, t % L)
     # College southbound into the signal (pre-median s 2356 -> 2326; local s 2343 -> 2313): real +5.9 %
     assert (y(2326.0) - y(2356.0)) / 30.0 > 0.055
-    # the hairpin's fold fan (2289-2323) held straight: no hump inside the box
-    box = [(s, yy) for s, yy in zip(st, ys) if 2290.0 <= s <= 2322.0]
-    gb = [(y1 - y0) / (s1 - s0) for (s0, y0), (s1, y1) in zip(box, box[1:])]
-    assert max(gb) - min(gb) < 0.002
+    # the hairpin's fold fan carries the junction's crest (real ~111.5 m at the road centre, pre-median s ~2306),
+    # no longer a straight box ~0.5 m under it; the fit came from the committed cache and met its target
+    assert max(y(s) for s in range(2295, 2320)) + 100.8 > 111.1
+    rec = json.loads((d / "data" / "deck_datum.json").read_text())["profiles"][0]["fold_fan_fit"]
+    assert rec["cached"] and rec["dt_after_m"] <= 0.05 and rec["dt_before_m"] > 0.06
+    # drive_test's wheel paths (street + both race directions): no severe step, no more kinks than v0.18.0 built here
+    wp = rec["wheel_paths"]
+    for run, (k, sev, _kx, _sx) in wp["fitted"].items():
+        assert sev == 0 and k <= wp["frozen_profile_v0180"][run][0], (run, wp)
     # Alvarado westbound s 17 -> 117 from 70th: real -7.7 %
     assert (y(L + 117.0) - y(L + 17.0)) / 100.0 < -0.074
     # the 70th junction back at the real pavement (125.1 m), not 0.7 m under it
     assert abs(y(0.0) + 100.8 - 125.1) < 0.15
-
-
-def test_a_hold_span_holds_a_junction_box_straight_and_must_sit_inside_the_window():
-    d, pts, st = _project([{"name": "p", "window_m": [1150.0, 140.0], "blend_m": 30.0,
-                            "hold_straight_m": [[1240.0, 20.0]]}])
-    r = dd.run(d, offline=True)
-    assert [h["deck"] for h in r["profiles"][0]["spans_held"]] == ["hold:p#0"]
-    ys = [p[1] for p in json.loads((d / "data" / dd.SRC_NAME).read_text())["points_xyz_m"]]
-    L = st[-1]
-    on = sorted(((s if s > 600 else s + L), y) for s, y in zip(st[:-1], ys[:-1]) if s > L - 15 or s < 12)
-    g = [(y1 - y0) / (s1 - s0) for (s0, y0), (s1, y1) in zip(on, on[1:])]
-    assert max(g) - min(g) < 0.01                  # straight across the seam, where the hump's crest was
-    assert max(y for _s, y in on) <= max(on[0][1], on[-1][1]) + 1e-6 < 2.95   # the hump's top is not in the box
-    bad = [{"name": "p", "window_m": [1150.0, 140.0], "blend_m": 30.0, "hold_straight_m": [[1160.0, 20.0]]}]
-    (d / "track.config.json").write_text(json.dumps({"road_datum": {"decks": [], "profiles": bad}}))
-    (d / "data" / "deck_datum.json").unlink()
-    try:
-        dd.run(d, offline=True)
-    except SystemExit as e:
-        assert "hold_straight_m" in str(e)
-    else:
-        raise AssertionError("a hold inside the window's blend must be refused")
 
 
 def _lin(st, ys, t):
@@ -250,3 +236,163 @@ def _lin(st, ys, t):
             u = (t - st[i]) / ((st[i + 1] - st[i]) or 1e-9)
             return ys[i] + (ys[i + 1] - ys[i]) * u
     return ys[-1]
+
+
+# --- the fold-fan fit (ledger 0057 fix round) ------------------------------------------------------------------------
+def _square(side=600.0, r=6.0, step=3.0):
+    """a closed square loop with corners of radius ``r`` (a 24 m road round them folds its inside edge: a levelled
+    fold fan at every corner), ~``step`` m per vertex, starting mid-way along the bottom side; v0 == v[-1]. Returns
+    (points, the apex vertex of the third corner)"""
+    corners = [(side - r, r), (side - r, side - r), (r, side - r), (r, r)]      # arc centres, counter-clockwise
+    pts, apex = [], None
+    n_s = int((side - 2 * r) / step)
+    n_c = 6
+    starts = [(r, 0.0), (side, r), (side - r, side), (0.0, side - r)]
+    dirs = [(1, 0), (0, 1), (-1, 0), (0, -1)]
+    for c in range(4):
+        (sx, sz), (dx, dz) = starts[c], dirs[c]
+        ks = range(n_s // 2, n_s) if c == 0 else range(n_s)
+        for k in ks:
+            pts.append([sx + dx * k * step * (side - 2 * r) / (n_s * step), 0.0,
+                        sz + dz * k * step * (side - 2 * r) / (n_s * step)])
+        cx, cz = corners[c]
+        a0 = -math.pi / 2 + c * math.pi / 2
+        for k in range(n_c):
+            a = a0 + (math.pi / 2) * k / n_c
+            if c == 2 and k == n_c // 2:
+                apex = len(pts)
+            pts.append([cx + r * math.cos(a), 0.0, cz + r * math.sin(a)])
+    for k in range(0, n_s // 2):
+        pts.append([r + k * (side - 2 * r) / n_s, 0.0, 0.0])
+    return pts + [list(pts[0])], apex
+
+
+ORIGIN = {"lon": -117.0, "lat": 32.8, "elev_m": 100.0}
+
+
+def _fake_3dep(monkey_store, at, crest=0.9, radius=14.0):
+    """a stand-in for scripts.elevation.terrain_sample.sample_lonlat: flat at the origin's height, a crest of
+    ``crest`` m centred on ``at`` (a corner's apex) — inside its fold fan"""
+    from scripts.elevation import terrain_sample as ts_mod
+    from scripts.geometry import terrain_tiers as tt
+    m_lon, m_lat = tt.meters_per_degree(ORIGIN["lat"])
+
+    def sample(ll, label):
+        out = []
+        for lon, lat in ll:
+            x, z = (lon - ORIGIN["lon"]) * m_lon, (lat - ORIGIN["lat"]) * m_lat
+            d = math.hypot(x - at[0], z - at[1])
+            out.append(round(ORIGIN["elev_m"] + crest * math.exp(-(d / radius) ** 2), 2))
+        monkey_store.append(len(ll))
+        return out
+    monkey_store.append(ts_mod.sample_lonlat)
+    ts_mod.sample_lonlat = sample
+    return ts_mod
+
+
+def _fan_project(fit=True, dt_max=0.05, smooth=True):
+    d = Path(tempfile.mkdtemp())
+    (d / "data").mkdir()
+    pts, apex = _square()
+    st = dd.stations(pts)
+    sa = st[apex]
+    prof = {"name": "hairpin", "window_m": [sa - 110.0, sa + 110.0], "blend_m": 30.0, "assembler_sigma_y_pts": 1.0}
+    if fit:
+        prof["fold_fan_fit"] = {"fit_m": [sa - 55.0, sa + 55.0], "dt_max_m": dt_max}
+    raw = {"origin": ORIGIN, "points_xyz_m": pts, "widths_m": [24.0] * len(pts)}
+    (d / "data" / dd.SRC_NAME).write_text(json.dumps(raw))
+    rd = {"decks": [], "profiles": [prof]}
+    if smooth:
+        rd["assembler_smooth"] = "tracks/san-diego-lake-murray/scripts-v021/geometry/smooth.py"
+    cfg = {"route": {"smooth_sigma_pts": 2.0, "smooth_passes": 2, "smooth_sigma_y_pts": 5.0}, "road_datum": rd}
+    (d / "track.config.json").write_text(json.dumps(cfg))
+    (d / "data" / "deck_datum.samples.json").write_text(json.dumps({"_provenance": {"fetches": []}, "points": {}}))
+    return d, pts, st, sa
+
+
+def _run_fake(d, store):
+    pts = json.loads((d / "data" / dd.SRC_NAME).read_text())["points_xyz_m"]
+    _p, apex = _square()
+    ts_mod = _fake_3dep(store, (pts[apex][0], pts[apex][2]))
+    try:
+        return dd.run(d, offline=False)
+    finally:
+        ts_mod.sample_lonlat = store[0]
+
+
+def test_fold_fan_fit_carries_a_crest_through_a_levelled_fan_and_moves_nothing_outside_fit_m():
+    store = []
+    d0, pts, st, sa = _fan_project(fit=False)
+    _run_fake(d0, store)                          # the plain profile: the crest straight into the fan
+    plain = [p[1] for p in json.loads((d0 / "data" / dd.SRC_NAME).read_text())["points_xyz_m"]]
+    d, _pts, _st, _sa = _fan_project(fit=True)
+    names = ("FAN_STEP_MIN_M", "FAN_STEP0_M", "FAN_BUMP_SPACING_M", "FAN_BUMP_SIGMA_M", "FAN_SOLVE_DO_M",
+             "FAN_SOLVE_DS_M", "FAN_COARSE_MARGIN_M")
+    old = [getattr(dd, k) for k in names]
+    for k, v in zip(names, (0.04, 0.08, 12.0, 8.0, 0.5, 0.2, 0.004)):     # a coarser descent keeps the test quick
+        setattr(dd, k, v)
+    try:
+        r = _run_fake(d, store)
+        fit = r["profiles"][0]["fold_fan_fit"]
+        # the cache: a fresh project whose samples file carries the solve re-uses it (no descent), builds the same
+        d2, _p, _s, _a = _fan_project(fit=True)
+        (d2 / "data" / "deck_datum.samples.json").write_text((d / "data" / "deck_datum.samples.json").read_text())
+        r2 = dd.run(d2, offline=True)
+    finally:
+        for k, v in zip(names, old):
+            setattr(dd, k, v)
+    assert fit["pinches_before"] and fit["pinches"]                             # the hairpin's inside edge folds
+    assert fit["dt_before_m"] > 0.06                                             # the crest would fail the gate
+    assert fit["dt_after_m"] <= 0.05 and fit["dt_after_solver_m"] <= fit["dt_solve_m"]
+    wp = fit["wheel_paths"]
+    assert set(wp["fitted"]) == {"street"}                                     # no race layout declared here
+    assert wp["fitted"]["street"][1] == 0 and wp["fitted"]["street"][0] <= wp["frozen_profile_v0180"]["street"][0]
+    out = [p[1] for p in json.loads((d / "data" / dd.SRC_NAME).read_text())["points_xyz_m"]]
+    f0, f1 = fit["fit_m"]
+    for s, y0, y1 in zip(st, plain, out):
+        if s < f0 - 1e-6 or s > f1 + 1e-6:
+            assert y1 == y0                                                      # outside fit_m: untouched
+    top = max(y for s, y in zip(st, out) if abs(s - sa) < 30)
+    assert top > 0.5                                                             # the crest is carried, not boxed
+    fit2 = r2["profiles"][0]["fold_fan_fit"]
+    assert fit2["cached"] and fit2["evals"] == 1 and fit2["cache_key"] == fit["cache_key"]
+    assert json.loads((d2 / "data" / dd.SRC_NAME).read_text()) == json.loads((d / "data" / dd.SRC_NAME).read_text())
+
+
+def test_fold_fan_fit_refusals():
+    store = []
+    d, _pts, _st, _sa = _fan_project(fit=True, smooth=False)
+    try:
+        _run_fake(d, store)
+    except SystemExit as e:
+        assert "assembler_smooth" in str(e)
+    else:
+        raise AssertionError("a fold-fan fit without the assembler's smoothing module must be refused")
+    d, _pts, _st, _sa = _fan_project(fit=True, dt_max=0.004)
+    old = dd.FAN_MAX_EVALS
+    dd.FAN_MAX_EVALS = 3
+    try:
+        _run_fake(d, store)
+    except SystemExit as e:
+        assert "cannot carry the profile" in str(e) and "pad" in str(e)
+    else:
+        raise AssertionError("a fit that cannot reach dt_max_m must be refused, never shipped")
+    finally:
+        dd.FAN_MAX_EVALS = old
+    cfg = json.loads((d / "track.config.json").read_text())
+    cfg["road_datum"]["profiles"][0]["fold_fan_fit"]["fit_m"] = [cfg["road_datum"]["profiles"][0]["window_m"][0] + 5,
+                                                                 cfg["road_datum"]["profiles"][0]["window_m"][1] - 50]
+    cfg["road_datum"]["profiles"][0]["fold_fan_fit"]["dt_max_m"] = 0.05
+    (d / "track.config.json").write_text(json.dumps(cfg))
+    try:
+        _run_fake(d, store)
+    except SystemExit as e:
+        assert "fit_m" in str(e) and "blend" in str(e)
+    else:
+        raise AssertionError("fit_m inside the window's blend must be refused")
+
+
+def test_fan_taper_is_one_inside_and_zero_outside():
+    assert dd.fan_taper(50.0, 0.0, 100.0) == 1.0
+    assert dd.fan_taper(-1.0, 0.0, 100.0) == 0.0 and dd.fan_taper(101.0, 0.0, 100.0) == 0.0
+    assert 0.0 < dd.fan_taper(dd.FAN_TAPER_M / 2, 0.0, 100.0) < 1.0

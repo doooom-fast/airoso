@@ -595,13 +595,14 @@
         ],
         "blend_m": 30.0,
         "assembler_sigma_y_pts": 1.0,
-        "hold_straight_m": [
-          [
-            2289.0,
-            2323.0
-          ]
-        ],
-        "_hold_doc": "the College/Alvarado hairpin's levelled fold fan (mainline rows 763-774, ledger 0050): its inside edge is pinched to ONE point at the midpoint of its legs, so the fan cannot carry the real hump's crest (~111.8 m at s ~2310) — the first rehearsal with the hump in it failed verify_fold_fans (DT 0.087 m on the inside paths) and doubled drive_test's severe steps there. The box is held straight between the real road at its two edges (one-sided reads), like a deck span: the College approach climbs at its real grade to within a few metres of the stop line at the box's edge (rehearsed: +5.44 % over the last 30 m against a real +5.93 %, v0.18.0 +3.52 %), the crest inside the box stays as low as v0.18.0 built it (~1.1 m under the real lane). assembler_sigma_y_pts 1.0 here (1.5 rehearsed +5.23 %; 1.0 on both windows put street kinks at 3.56 /km, over v0.18.0's 3.41)",
+        "fold_fan_fit": {
+          "fit_m": [
+            2250.0,
+            2340.0
+          ],
+          "dt_max_m": 0.05
+        },
+        "_fold_fan_fit_doc": "Ledger 0057 fix round (2026-10-14; replaces round 1's hold_straight_m box). Two gates judge the College/Alvarado hairpin on paths its tight turn bends: verify_fold_fans' pinch paths (the levelled fold fan, rows 763-774, ledger 0050, pinches its inside edge to ONE point; every path inside folds and turns sharply on the corner's medial axis) and drive_test's fixed-offset wheel paths (each metre's sample jumps sideways where the segment normal turns). The junction's real crest fails both (fan DT 0.076-0.087 m; rehearsal 5: street severe 0 -> 10, race 22 / 20 -> 27 / 26). Round 1's box passed by removing the crest: 0.55 m under the real road centre, the stop line's last metres flat. tools/deck_datum.py fold_fan_fit: inside fit_m (pre-median s 2250-2340: the fan's rows, their eased legs and College's last 15 m to the stop line) the profile takes the change with the smallest misfit to the 3DEP target (heights, grades, grade changes) that keeps the fan within dt_max_m 0.05 m (the gate: 0.06) and drive_test's wheel paths there (street, a race lane both ways) at no severe step and no more kinks than v0.18.0 built here - all read on the ribbon the assembler and the weld will build; inside fit_m the 3DEP is read on the plan the assembler builds (its smoothing moves the hairpin's line up to 3.6 m; the junction tilts 8 % across). Solved: fan DT 0.076 -> 0.047 m; wheel paths street 8 kinks / 0 severe (v0.18.0 here: 12 / 0), race 22 / 0 and 20 / 0 (22 / 6, 20 / 6); the built profile within +0.16 / -0.21 m of the target; the crest 111.27 m against a real 111.48 m on the road centre (round 1: 110.93). fit_m stops at 2340: reaching 2360 the fit steepened College's flank into a sag where the seated ground's 10 m facets rose through the road by up to 9 mm (soft tops street 33 -> 39, race 9 -> 21; rehearsal 6). The solve is cached in data/deck_datum.samples.json fold_fan_fits (keyed by everything it reads; a fresh solve reproduces it byte for byte). The road stays a level slab: the race walls' containment band (no_route, verify_fold_fans (7): +-0.28 m about the centre line) cannot hold the junction's 8 % tilt at 14 m from the line.",
         "why": "ledger 0057, Kevin 2026-10-14: 'my cars with clutches would roll back from stoplights there ... Stoplight would be heading onto Alvarado from college'. The junction is a real hump (fresh 3DEP 1 m: crest ~111.8 m at s ~2310; College southbound climbs into it at +5.8 % on both lanes over the last 30 m before the stop line, s 2356 -> 2326 here = local s 2343 -> 2313) that the August heightfield smoothing and the assembler's sigma_y 5 had cut to +3.5 % and 0.8-1.2 m low. From Alvarado's climb to the junction (s 2200) to the bottom of College by the I-8 ramps (s 2530), short of the College deck window (2548)"
       },
       {
@@ -614,7 +615,9 @@
         "assembler_sigma_y_pts": 1.5,
         "why": "ledger 0057, Kevin 2026-10-14: 'same with heading down Alvarado from 70th'. Alvarado's pitch from the 70th St junction (v0) to s ~112 is real -7.7 % over 100 m (built -6.1 %), and the eastbound wait at 70th faces +8.3 % uphill (built +5.6 %). Through the lap seam (L13): from Lake Murray Blvd north of its I-8 deck (s 13280) over both of its decks (held straight, lmb_over_i8 / lmb_over_alvarado_creek) and the junction to Alvarado at s 230, where the road runs at ~1 % to College"
       }
-    ]
+    ],
+    "assembler_smooth": "tracks/san-diego-lake-murray/scripts-v021/geometry/smooth.py",
+    "_assembler_smooth_doc": "the assembler of record's smoothing module, read by tools/deck_datum.py's fold-fan fit to predict the centreline build_loop_blend will build (plan smoothing + per-window sigma_y): the fit judges the ribbon the build will carry, not the pre-median line (ledger 0057 fix round)"
   },
   "scenery": {
     "freeway": {

@@ -298,24 +298,20 @@ def test_release_fill_eases_with_the_gap_and_the_ramp_meets_the_prep():
     toward the graded ground the prep then refines away outside the zone). Source pins (bpy-only half) + the
     snapshot's RefineField the ramp reads is the one the prep runs."""
     gr_src = (ROOT / "tools" / "ground_release_blend.py").read_text(encoding="utf-8")
-    for k in ("FILL_EASE_M", "def fill_top(fi, qx, qy):", "def pave_gap(i):", "fill_top(fi, q[0], q[1])",
+    for k in ("FILL_EASE_M", "def fill_top(fi, qx, qy):", "def pave_gap(fi, i):", "fill_top(fi, q[0], q[1])",
               "RF = _refine_field(proj)", "RF.target(x, y, z, d_built=", "zo + w * (t - zo)",
-              "RAMP_BATTER * abs(t - zo)", "Z.weight(x, y, ramp_m=ramp_len)"):
+              'zone_kind.get(zname) == "span"', "def grounded(fi):"):
         assert k in gr_src, k
     m = _snapshot()
     assert hasattr(m, "RefineField") and hasattr(m.RefineField, "target") and hasattr(m.RefineField, "in_kept")
 
 
-def test_abutting_zones_do_not_ramp_at_their_shared_end_and_the_ramp_can_lengthen():
+def test_abutting_zones_do_not_ramp_at_their_shared_end():
     """the view lens (v0.18.0): two zones meeting at one station (Lake Murray Blvd's I-8 span and creek) each ramped to
-    nothing there — a dip back to the built ground between two released pieces; and a 3 m step closed in RAMP_M read as
-    teeth, so the blend may ask for a longer ramp (ramp_m) where the step is large"""
+    nothing there — a dip back to the built ground between two released pieces"""
     pts, w = _line()
     Z = gr.Zones(pts, w, [{"name": "a", "kind": "span", "s_m": [100.0, 200.0], "sides": [1, -1], "reach_m": 20.0},
                           {"name": "b", "kind": "span", "s_m": [200.0, 260.0], "sides": [1, -1], "reach_m": 20.0}])
     for s in (196.0, 199.0, 200.0, 201.0, 204.0):
         assert Z.weight(s, 6.0)[0] == 1.0, s                      # no dip at the shared station
     assert 0.0 < Z.weight(101.0, 6.0)[0] < 1.0 and 0.0 < Z.weight(259.0, 6.0)[0] < 1.0   # the free ends still ramp
-    one = gr.Zones(pts, w, [{"name": "a", "kind": "bank", "s_m": [100.0, 200.0], "sides": [1], "reach_m": 20.0}])
-    assert one.weight(108.0, 12.0)[0] == 1.0 and 0.0 < one.weight(108.0, 12.0, ramp_m=12.0)[0] < 1.0
-    assert one.weight(150.0, 12.0, ramp_m=12.0)[0] == 1.0

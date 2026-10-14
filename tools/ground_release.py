@@ -118,11 +118,10 @@ class Zones:
         dx, dz = x - self.P[i][0], z - self.P[i][1]
         return i, self.s[i] + dx * tx + dz * tz, -dx * tz + dz * tx
 
-    def weight(self, x, z, ramp_m=None):
-        """(w, zone) — w in [0, 1] (1 inside, smoothstep to 0 over ``ramp_m`` (default RAMP_M) at the zone's ends and
-        outer edge; no ramp at an end lying inside another zone on that side), the zone with the largest weight;
-        (0.0, None) outside every zone"""
-        rm = RAMP_M if ramp_m is None else float(ramp_m)
+    def weight(self, x, z):
+        """(w, zone) — w in [0, 1] (1 inside, smoothstep to 0 over RAMP_M at the zone's ends and outer edge; no ramp at
+        an end lying inside another zone on that side), the zone with the largest weight; (0.0, None) outside every zone"""
+        rm = RAMP_M
         if not any(b[0] <= x <= b[1] and b[2] <= z <= b[3] for b in self.boxes):
             return 0.0, None
         loc = self.locate(x, z)

@@ -17,6 +17,11 @@ This tool does the data half:
      "opposing" geometry is the CROSS street and the raw vector drags the road along its own axis
      (the Navajo jank, 2026-08-20: an 11.24 m sideways step at vert 1501). The upper bound was the
      raw line's offset until ledger 0055 (College Ave's split section, see `trusted`);
+  2b. REGISTRATION (ledger 0055 round 2, route.median_registration): where the divided road's real carriageways
+     are measured on independent ground truth (USGS 3DEP lidar benches + NAIP on its served extent), a declared
+     lateral correction moves the finished road onto them — OSM draws College's two ways 2-4 m east of their
+     pavement, and this tool's own OSM projection (_meters_per_degree, a sphere) adds 1.3-2.1 m more there (see
+     `trusted` and `registration`);
   3. shifts the RAW centerline by the smoothed signed lateral/2 toward the true middle and widens
      the ribbon to span both carriageways, tapered over ~36 m at run ends — never a step;
   4. trims runs of DIFFERENT roads that meet at a shared corner back to a neutral buffer (real
@@ -50,6 +55,7 @@ CORNER_BUFFER = 10    # neutral verts kept between two different roads' runs at 
 ISLAND_MIN_W, ISLAND_MAX_W = 1.5, 7.0
 ISLAND_PULLBACK = 5
 GAP_HALF = 6          # island gap half-length (verts, ~18 m) around each connector mouth
+REG_MAX_M = 6.0       # [invented] a declared registration moves the road at most this far sideways (College: 5.5 m)
 CLIP_REACH = 45.0
 MAX_STEP_M = 1.2      # self-gate: max allowed displacement change between consecutive verts
 
@@ -121,15 +127,56 @@ def trusted(vlat, valong, rlat, rdist):
     The lower bound and the lateral test read the raw centreline's offset to the opposing way (as before): a
     vertex less than MIN_SEP from it rides no median, and an offset that is mostly ALONG the road is a cross
     street near a corner. The UPPER bound reads what it means — the two CARRIAGEWAYS' separation (opposing
-    lateral minus ridden lateral), not the raw line's distance to the far one. On College Ave the raw line sits on
-    the aerial's southbound carriageway while OSM draws both ways ~3.5 m east of their pavement, so the raw-line
-    offset read 24.1-24.7 m over v1282-1350 where the carriageways are 20.5-21.2 m apart: the run split in two,
-    each end tapered, and the road swerved off the northbound carriageway onto the southbound one and back
-    (Kevin: "one of the lanes swerves into where the other lane should be"). The ridden way must be within
-    RIDDEN_MAX_M of the vertex (the bound that picked it as the ridden chain), else the separation is unknown."""
+    lateral minus ridden lateral), not the raw line's distance to the far one, so a uniform offset between the
+    OSM ways and the line cannot open a hole in a run. That offset is real on College Ave: the raw line is built
+    from the southbound OSM way with the engine's WGS84-series projection (scripts/geometry/projection.py), but
+    this tool projects OSM on a sphere (_meters_per_degree: 93,479 m per degree of longitude against 93,676), which
+    at x ~ -1730 m puts BOTH ways 3.6 m east of the line's own way. The raw-line offset to the northbound way then
+    read 24.1-24.7 m over v1282-1350 where the two ways are 20.5-21.2 m apart: the run split in two, each end
+    tapered, and the road swerved off the northbound carriageway onto the southbound one and back (Kevin: "one of
+    the lanes swerves into where the other lane should be"). The ridden way must be within RIDDEN_MAX_M of the
+    vertex (the bound that picked it as the ridden chain), else the separation is unknown.
+
+    The projection itself is NOT changed here: on the WGS84 series every separation shrinks by the same error, and
+    a replay (2026-10-14) drops College v825-980's island (true separation 7-11 m, under MIN_SEP) and adds a Navajo
+    run at v2037-2161 — two medians Kevin drives every lap, outside ledger 0055. It is filed as its own follow-up."""
     s = abs(vlat)
     return (MIN_SEP <= s and abs(vlat - rlat) <= SEP_TRUST and abs(valong) <= 0.5 * s
             and rdist <= RIDDEN_MAX_M)
+
+
+def registration(n, entries):
+    """Per raw vertex, the declared lateral correction (metres, + = LEFT of the vertex order) from
+    route.median_registration (ledger 0055 round 2). Each entry: {"road", "points": [[vertex, lateral_m], ...]}, the
+    vertices strictly increasing, the first and last lateral 0 (the ramps are declared, never implied), |lateral|
+    <= REG_MAX_M; between two points the lateral follows a cosine (zero slope at every point: no kink where two
+    pieces meet). Returns (lateral per vertex, problems)."""
+    lat, bad = [0.0] * n, []
+    for e in entries or []:
+        pts = e.get("points") or []
+        name = e.get("road", "?")
+        if len(pts) < 2:
+            bad.append(f"{name}: fewer than two points")
+            continue
+        vs = [int(p[0]) for p in pts]
+        ls = [float(p[1]) for p in pts]
+        if any(b <= a for a, b in zip(vs, vs[1:])):
+            bad.append(f"{name}: vertices not strictly increasing")
+            continue
+        if vs[0] < 0 or vs[-1] >= n:
+            bad.append(f"{name}: vertices outside 0..{n - 1}")
+            continue
+        if ls[0] != 0.0 or ls[-1] != 0.0:
+            bad.append(f"{name}: the first and last lateral must be 0 (declare the ramps)")
+            continue
+        if max(abs(x) for x in ls) > REG_MAX_M:
+            bad.append(f"{name}: |lateral| {max(abs(x) for x in ls):.2f} m > REG_MAX_M {REG_MAX_M}")
+            continue
+        for (v0, l0), (v1, l1) in zip(zip(vs, ls), zip(vs[1:], ls[1:])):
+            for k in range(v0, v1 + 1):
+                t = (k - v0) / (v1 - v0)
+                lat[k] = l0 + (l1 - l0) * (0.5 - 0.5 * math.cos(math.pi * t))
+    return lat, bad
 
 
 def _median_filter(v, half=2):
@@ -345,6 +392,28 @@ def build(project_dir):
             for m in range(lo, hi):
                 island_w[m] = 0.0
             i = j
+
+    # REGISTRATION (ledger 0055 round 2): the declared lateral correction onto the measured real carriageways — only
+    # inside one divided run of the road it names (it corrects where that road's median sits, nothing else)
+    regs = cfg.get("route", {}).get("median_registration") or []
+    reg_lat, bad = registration(n, regs)
+    for e in regs:
+        vs = [int(p[0]) for p in e.get("points") or []]
+        if vs and not any(r == e.get("road") and i <= vs[0] and vs[-1] < j for r, i, j in road_runs):
+            bad.append(f"{e.get('road')}: points {vs[0]}-{vs[-1]} are not inside one of its divided runs "
+                       f"{[(i, j) for r, i, j in road_runs if r == e.get('road')]}")
+    if bad:
+        raw_path.write_text(bak.read_text(encoding="utf-8"), encoding="utf-8")
+        print(f"[median] FAIL: route.median_registration: {'; '.join(bad)} — raw restored, nothing shipped")
+        sys.exit(1)
+    for k in range(n):
+        if reg_lat[k]:
+            tx, tz = _tangent(k)
+            shift[k] = (shift[k][0] - tz * reg_lat[k], shift[k][1] + tx * reg_lat[k])
+    if any(reg_lat):
+        moved = [k for k in range(n) if reg_lat[k]]
+        print(f"[median] registration: {len(moved)} verts ({moved[0]}-{moved[-1]}), lateral "
+              f"{min(reg_lat):+.2f}..{max(reg_lat):+.2f} m (+ = left of the vertex order)")
 
     for k in range(n):
         pts[k][0] += shift[k][0]

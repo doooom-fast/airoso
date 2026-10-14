@@ -869,14 +869,16 @@ def _chicane_record(c, walls, chicanes, direction, pts, widths, n, m, st, inset,
                      "closure_rate": [_ratio(k) for k in w["rate_closure"]],
                      "wall_rate": [_ratio(k) for k in w["rate_wall"]],
                      "hold_m": round(abs(st[w["back_leg"][0]] - st[w["out_leg"][1]]), 1)})
-        # the pocket behind the race-side wall (toward the race-side curb strip)
-        next_s = -1.0
+        # the pocket behind the race-side wall (toward the race-side curb strip): a probe every PROBE_STEP_M of
+        # TRAVEL — |st - st at the last probe|, since vs runs backward along the stations on a reverse layout (the
+        # gates lens, 0055 round 2: race_acw got 1 pocket probe where race_cw got 12)
+        last_s = None
         for v, gv in zip(vs[1:-1], g[1:-1]):
             face = widths[v] / 2.0 - inset
             lo_g, hi_g = gv + bhalf, face
-            if hi_g - lo_g >= pocket_min and st[v] >= next_s:
+            if hi_g - lo_g >= pocket_min and (last_s is None or abs(st[v] - last_s) >= PROBE_STEP_M):
                 probes.append({"vertex": v, "y": round(e * 0.5 * (lo_g + hi_g), 3), "why": "chicane_pocket"})
-                next_s = st[v] + PROBE_STEP_M
+                last_s = st[v]
     c["race_wall_y_by_vertex"] = yw
     c["chicane_walls"] = recs
     c["chicanes"] = summ

@@ -145,7 +145,10 @@ def test_plan_nodes_cover_every_zone_cell():
 
 def test_lake_murray_zones_are_declared_and_resolve():
     cfg = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
-    zs = gr.resolve_zones(cfg)
+    # the vertex-declared zones (ledger 0055 round 2) resolve on the pinned v0.18.0 centreline to the stations they were
+    # measured at there
+    cl = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "data" / "centerline.local.json").read_text(encoding="utf-8"))
+    zs = gr.resolve_zones(cfg, [tuple(p) for p in cl["points_xyz_m"]])
     assert [z["name"] for z in zs] == ["alvarado_creek_bank", "college_south_approach", "lmb_alvarado_creek",
                                        "college_i8_span", "lmb_i8_span", "alvarado_college_terrace",
                                        "college_approach_foot", "college_north_approach", "college_split_cut"]
@@ -162,12 +165,34 @@ def test_lake_murray_zones_are_declared_and_resolve():
     spans = {z["name"]: z["s_m"] for z in zs}
     assert spans["college_i8_span"][0] <= 2576.0 and spans["college_i8_span"][1] >= 2676.0
     assert spans["lmb_i8_span"][0] <= 13334.0 and spans["lmb_i8_span"][1] >= 13411.0
+    assert abs(spans["lmb_i8_span"][0] - 13330.0) < 0.05 and abs(spans["lmb_i8_span"][1] - 13428.0) < 0.05
+    assert spans["lmb_alvarado_creek"][0] == spans["lmb_i8_span"][1]                    # still abutting: no ramp between
+    assert abs(spans["lmb_alvarado_creek"][1] - 13464.0) < 0.05
     # fix round 4 (the view lens): the approach foot covers the whole College-over-Alvarado embankment edge, and the
     # north approach abuts the I-8 span (no ramp between them: the row of fins at s 2660-2700)
     assert spans["college_approach_foot"][0] <= 2410.0
     assert spans["college_north_approach"][0] == spans["college_i8_span"][1]
     rd = cfg["road_datum"]["decks"]
     assert rd[0]["name"] == "college_ave_over_i8" and rd[0]["deck_m"] == [2586.0, 2683.0]
+
+
+def test_a_zone_declared_by_vertex_stays_on_its_place_when_the_road_before_it_changes_length():
+    # ledger 0055 round 2: College's realignment shortened the lap 6.6 m; a station-declared zone past it slid 6.6 m
+    pts = [(0.0, 0.0, 3.0 * k) for k in range(200)]
+    base = {"name": "z", "kind": "span", "sides": ["left"], "reach_m": 40.0}
+    (z,) = gr.resolve_zones({"terrain": {"ground_release": {"zones": [dict(base, v=[150.5, 170.0])]}}}, pts)
+    assert z["s_m"] == [451.5, 510.0] and z["v"] == [150.5, 170.0]
+    shorter = [(0.0, 0.0, 3.0 * k) if k <= 50 else (0.0, 0.0, 3.0 * k - 2.0) for k in range(200)]   # 2 m gone at v50
+    (z2,) = gr.resolve_zones({"terrain": {"ground_release": {"zones": [dict(base, v=[150.5, 170.0])]}}}, shorter)
+    assert abs(z2["s_m"][0] - (451.5 - 2.0)) < 1e-6 and abs(z2["s_m"][1] - (510.0 - 2.0)) < 1e-6   # the same place
+    assert gr.station_at_vertex(pts, 0.0) == 0.0 and abs(gr.station_at_vertex(pts, 199.0) - 597.0) < 1e-9
+    for bad, P in ((dict(base, v=[150.0, 170.0], s_m=[1.0, 2.0]), pts), (dict(base), pts), (dict(base, v=[170.0, 150.0]), pts),
+                   (dict(base, v=[150.0, 170.0]), None), (dict(base, v=[150.0, 250.0]), pts)):
+        try:
+            gr.resolve_zones({"terrain": {"ground_release": {"zones": [bad]}}}, P)
+        except SystemExit:
+            continue
+        raise AssertionError(f"accepted {bad}")
 
 
 # --- the I-8 pavement ----------------------------------------------------------------------------------------

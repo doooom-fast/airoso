@@ -1430,7 +1430,7 @@ def self_crossings(pts, closed: bool, window: int = 200) -> int:
 # --- race corridors (ledger 0049) ------------------------------------------------------------------
 
 def corridor_offsets(lo: list[float], hi: list[float], ds: float, closed: bool,
-                     mu_m: float = CORRIDOR_MU_M) -> tuple[list[float], dict]:
+                     mu_m: float = CORRIDOR_MU_M, clear: list[float] | None = None) -> tuple[list[float], dict]:
     """The race line's lane target inside a declared corridor (ledger 0049): the lane CENTRE between the
     two wall faces ``lo`` / ``hi`` (metres right of travel), with every change of it a taper, never a step.
 
@@ -1439,12 +1439,16 @@ def corridor_offsets(lo: list[float], hi: list[float], ds: float, closed: bool,
     that placed the walls). Where the lane centre moves — a funnel out of a box, a convergence onto an
     island face, the whole street (centre 0) meeting a closure run (centre ~2 m right on a 17 m road) —
     the line moves over a few mu_m; only a wall that moves faster drags it, because the bound is hard. A
-    lane narrower than both clearances holds its midpoint. Returns (offsets, report)."""
+    lane narrower than both clearances holds its midpoint. ``clear`` (per station, default LINE_MIN_CLEAR_M everywhere):
+    the hard clearance off both faces — a declared chicane's walled S holds the comfort clearance (ledger 0055 round 2:
+    with 1 m the smoothed target cut each bend of the S toward its inside wall, 2.17 m off it on race_acw, every new
+    V2 under-band run of the lap). Returns (offsets, report)."""
     n = len(lo)
     alo, ahi, t = [], [], []
-    for a, b in zip(lo, hi):
+    for i, (a, b) in enumerate(zip(lo, hi)):
         c = (a + b) / 2.0
-        x, y = a + LINE_MIN_CLEAR_M, b - LINE_MIN_CLEAR_M
+        h = LINE_MIN_CLEAR_M if clear is None else float(clear[i])
+        x, y = a + h, b - h
         if x > y:
             x = y = c
         alo.append(x)
@@ -1751,6 +1755,7 @@ def corridor_for_layout(bands: dict, layout_id: str, pts_fwd, *, reverse: bool, 
     if unknown:
         raise SystemExit(f"corridors.{layout_id}: unknown zone(s) {unknown}")
     zcode = [float(codes[z]) for z in zone[:m]]
+    chic = [1.0 if z == "chicane" else 0.0 for z in zone[:m]]
     ih = authored_island_half(list(island_w[:m])) if island_w else [0.0] * m
     faces = CorridorFaces(pts_fwd, lane, closed, island_half=ih)
     # the lane in the forward frame, stopped at an authored island's outline (a no-op in pavement mode,
@@ -1767,6 +1772,7 @@ def corridor_for_layout(bands: dict, layout_id: str, pts_fwd, *, reverse: bool, 
         lo = [lane_c[m - 1 - j][0] for j in range(m)]        # r = +y for the reverse travel
         hi = [lane_c[m - 1 - j][1] for j in range(m)]
         zc = [zcode[m - 1 - j] for j in range(m)]
+        chic = chic[::-1]
     else:
         lo = [-lane_c[j][1] for j in range(m)]               # r = −y
         hi = [-lane_c[j][0] for j in range(m)]
@@ -1789,7 +1795,7 @@ def corridor_for_layout(bands: dict, layout_id: str, pts_fwd, *, reverse: bool, 
     for z in zone[:m]:
         zcount[z] = zcount.get(z, 0) + 1
     mouths = [[(p[0], p[2]) for p in mo.get("polyline_xyz_m") or []] for mo in bands.get("closed_mouths") or []]
-    return {"lo": lo, "hi": hi, "zone": zc, "corners": corners, "corners_skipped": skipped, "faces": faces,
+    return {"lo": lo, "hi": hi, "zone": zc, "chicane": chic, "corners": corners, "corners_skipped": skipped, "faces": faces,
             "forward": not reverse, "token": cor.get("token"), "zones": zcount, "mouths": [p for p in mouths if p],
             "face_folds": {k: [f["kind"] for f in v] for k, v in faces.folds.items()},
             "islands": len(faces.island_loops), "lane_vertices_island_clipped": island_clipped}
@@ -2129,12 +2135,15 @@ def build_line(pts, widths, *, closed: bool, spacing: float, lat_g: float, decel
         for key in ("lo", "hi", "zone"):
             if len(corridor[key]) != n_in:
                 raise ValueError(f"corridor {key}: {len(corridor[key])} values vs {n_in} vertices")
-        base, widths_s, ds0, (dh_s, inset_s, clo_s, chi_s, zone_s) = _resample(
-            pts, widths, spacing, closed, extra=[dh, inset, corridor["lo"], corridor["hi"], corridor["zone"]],
+        chic = corridor.get("chicane") or [0.0] * n_in
+        if len(chic) != n_in:
+            raise ValueError(f"corridor chicane: {len(chic)} values vs {n_in} vertices")
+        base, widths_s, ds0, (dh_s, inset_s, clo_s, chi_s, zone_s, chic_s) = _resample(
+            pts, widths, spacing, closed, extra=[dh, inset, corridor["lo"], corridor["hi"], corridor["zone"], chic],
             lerp_extra=(2, 3))
     else:
         base, widths_s, ds0, (dh_s, inset_s) = _resample(pts, widths, spacing, closed, extra=[dh, inset])
-        clo_s = chi_s = zone_s = None
+        clo_s = chi_s = zone_s = chic_s = None
     n0 = len(base)
     tan_xz = [_unit_xz(t[0], t[2]) for t in _tangents(base, closed, ds0, span=TANGENT_SPAN)]
     if corridor is not None:
@@ -2150,7 +2159,14 @@ def build_line(pts, widths, *, closed: bool, spacing: float, lat_g: float, decel
         if corridor is not None else []
 
     if lane_offset and corridor is not None:
-        off_raw, geo["corridor_offsets"] = corridor_offsets(clo_s, chi_s, ds0, closed)
+        hold = None
+        if chic_s is not None and any(c > 0.5 for c in chic_s):
+            # a declared chicane (ledger 0055 round 2): the lane-centre target holds the fairing's own clearance off both
+            # walls through the S (comfort + FAIR_CLEAR_EXTRA_M: what fair_line keeps a moved point off every face)
+            hold = [comfort + FAIR_CLEAR_EXTRA_M if c > 0.5 else LINE_MIN_CLEAR_M for c in chic_s]
+            geo["chicane_hold"] = {"clear_m": round(comfort + FAIR_CLEAR_EXTRA_M, 3),
+                                   "stations": sum(1 for c in chic_s if c > 0.5)}
+        off_raw, geo["corridor_offsets"] = corridor_offsets(clo_s, chi_s, ds0, closed, clear=hold)
         off0, geo["box_approach"] = box_targets(off_raw, lo_c, hi_c, corners_st, ds0, closed)
         P = [[base[i][0] + tan_xz[i][1] * off0[i], base[i][1], base[i][2] - tan_xz[i][0] * off0[i]]
              for i in range(n0)]

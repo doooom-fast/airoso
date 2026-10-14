@@ -249,7 +249,24 @@ class Lattice:
         return (a * (1 - u) + b * u) * (1 - v) + (c * (1 - u) + d * u) * v
 
 
-def resolve_zones(cfg: dict) -> list[dict]:
+def station_at_vertex(pts, v: float) -> float:
+    """the station (plan metres from vertex 0) of a fractional centreline vertex v on the polyline pts"""
+    n = len(pts)
+    if not 0.0 <= v <= n - 1:
+        raise SystemExit(f"[release] vertex {v} outside the centreline (0..{n - 1})")
+    i = min(int(math.floor(v)), n - 2)
+    s = 0.0
+    for a, b in zip(pts[:i], pts[1:i + 1]):
+        s += math.hypot(b[0] - a[0], b[2] - a[2])
+    return s + (v - i) * math.hypot(pts[i + 1][0] - pts[i][0], pts[i + 1][2] - pts[i][2])
+
+
+def resolve_zones(cfg: dict, pts=None) -> list[dict]:
+    """The declared zones with their stations on THIS centreline (pts = data/centerline.local.json points). A zone
+    names its extent either by station (s_m) or by centreline VERTEX (v: [from, to], fractional) — ledger 0055 round 2:
+    a station is a place only while every metre of road before it keeps its length; College's realignment shortened
+    the lap 6.6 m and slid Lake Murray Blvd's I-8 span zone 6.6 m off its abutment (a 4.9 m unguarded drop at the deck
+    edge, street drive_test). Vertices past a change stay where they are; a v zone resolves to s_m here."""
     gr = ((cfg.get("terrain") or {}).get("ground_release") or {})
     out = []
     for z in gr.get("zones") or []:
@@ -258,8 +275,21 @@ def resolve_zones(cfg: dict) -> list[dict]:
             sides.append(1 if str(s) in ("left", "1", "+1") else -1 if str(s) in ("right", "-1") else None)
         if None in sides or z.get("kind") not in ("bank", "span"):
             raise SystemExit(f"[release] zone {z.get('name')}: kind must be bank|span, sides left|right")
-        rec = {"name": z["name"], "kind": z["kind"], "s_m": [float(v) for v in z["s_m"]], "sides": sides,
+        if ("v" in z) == ("s_m" in z):
+            raise SystemExit(f"[release] zone {z.get('name')}: declare its extent by s_m OR by v (centreline vertices)")
+        if "v" in z:
+            if pts is None:
+                raise SystemExit(f"[release] zone {z['name']}: a v zone needs the centreline to resolve its stations")
+            va, vb = float(z["v"][0]), float(z["v"][1])
+            if not va < vb:
+                raise SystemExit(f"[release] zone {z['name']}: v {z['v']} must increase")
+            s_m = [round(station_at_vertex(pts, va), 3), round(station_at_vertex(pts, vb), 3)]
+        else:
+            s_m = [float(v) for v in z["s_m"]]
+        rec = {"name": z["name"], "kind": z["kind"], "s_m": s_m, "sides": sides,
                "reach_m": float(z["reach_m"]), "why": z.get("why", "")}
+        if "v" in z:
+            rec["v"] = [float(z["v"][0]), float(z["v"][1])]
         # ledger 0055 (College Ave's cut face): a zone may carry its own cut reach (the batter's plan reach from the
         # pavement edge, ground_release_blend.BATTER_REACH_M otherwise) and a rounded cut top (round_m, the plan width
         # of the rounding where the cut plane meets the real ground). Neither may reach past the zone itself.
@@ -312,15 +342,15 @@ def plan_nodes(Z: Zones, cell=CELL_M):
 def run(proj: Path, offline: bool = False) -> dict | None:
     data = proj / "data"
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
-    zones = resolve_zones(cfg)
+    cl = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
+    pts = [tuple(p) for p in cl["points_xyz_m"]]
+    zones = resolve_zones(cfg, pts)
     out_p = data / "ground_release.json"
     if not zones:
         if out_p.exists():
             out_p.unlink()
         print("[release] no terrain.ground_release.zones declared — nothing to do")
         return None
-    cl = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
-    pts = [tuple(p) for p in cl["points_xyz_m"]]
     o = cl["origin"]
     elev0 = float(o["elev_m"])
     Z = Zones(pts, cl["widths_m"], zones)

@@ -3,8 +3,10 @@ lane should be ... I think we should just cut into the hillside the way Californ
 versions, I do like the chicane that kind of goes from one side of the road across to the other and back").
 
   * tools/median_envelope.py: the trust test's upper bound is the CARRIAGEWAYS' separation, not the raw line's offset
-    to the far one — a raw line 3.5 m outboard of its own carriageway with the carriageways 21 m apart is ONE divided
-    run, no taper inside it (v0.18.0 split College's run at v1280-1352 and the road swerved);
+    to the far one — OSM ways offset 3.5 m from the line (on College: the tool's sphere projection of OSM against the
+    line's WGS84 series) with the carriageways 21 m apart is ONE divided run, no taper inside it (v0.18.0 split
+    College's run at v1280-1352 and the road swerved); and the declared registration (round 2) moves the finished
+    road sideways onto the measured carriageways, cosine between its points, only inside a run of its road;
   * scripts/geometry/race_chicane.py: the S of a leg, the declaration's guards, the race island, the island pieces;
   * tools/barrier_bands.py: a declared chicane carries a race layout's lane across the road and back — the closure
     into the far strip and a race-side wall from the race strip, both pinned, every self-gate and the planned fill
@@ -33,7 +35,8 @@ SD = ROOT / "tracks" / "san-diego-lake-murray"
 # --- the median trust test ------------------------------------------------------------------------------------
 def _median_project(sep=21.0, outboard=3.5, length=900.0):
     """a straight divided road: the raw line `outboard` m west of its own carriageway's OSM way, the opposing way
-    `sep` m east of that way (the College geometry: raw on the aerial's carriageway, OSM drawn ~3.5 m east)"""
+    `sep` m east of that way (the College geometry as median_envelope reads it: its sphere projection of OSM puts
+    both ways ~3.6 m east of the line the WGS84 series built from the southbound one)"""
     d = Path(tempfile.mkdtemp())
     (d / "data").mkdir()
     lat0, lon0 = 32.79, -117.06
@@ -85,6 +88,42 @@ def test_the_trust_test_reads_the_carriageway_separation_and_keeps_its_other_bou
     assert len(json.loads((d / "data" / "median_bands.json").read_text(encoding="utf-8"))["runs"]) == 1
 
 
+def test_registration_is_a_cosine_between_declared_points_and_guards_its_declaration():
+    lat, bad = me.registration(400, [{"road": "r", "points": [[100, 0.0], [150, 4.0], [250, 4.0], [300, 0.0]]}])
+    assert bad == [] and lat[99] == 0.0 and lat[100] == 0.0 and lat[300] == 0.0 and lat[301] == 0.0
+    assert abs(lat[125] - 2.0) < 1e-9 and all(abs(lat[k] - 4.0) < 1e-9 for k in range(150, 251))
+    steps = [abs(b - a) for a, b in zip(lat, lat[1:])]
+    assert max(steps) <= math.pi / 2 * 4.0 / 50 + 1e-9           # the cosine's steepest step, nothing sharper
+    assert steps[100] < 0.01 and steps[149] < 0.01               # zero slope at each declared point: no kink
+    for pts, what in (([[100, 1.0], [200, 0.0]], "first and last"), ([[100, 0.0], [90, 1.0], [200, 0.0]], "increasing"),
+                      ([[100, 0.0], [150, 6.5], [200, 0.0]], "REG_MAX_M"), ([[100, 0.0], [500, 0.0]], "outside"),
+                      ([[100, 0.0]], "fewer")):
+        assert any(what in b for b in me.registration(400, [{"road": "r", "points": pts}])[1]), what
+
+
+def test_a_declared_registration_moves_the_finished_road_inside_its_run_only():
+    d = _median_project(sep=21.0, outboard=0.0)
+    cfg = json.loads((d / "track.config.json").read_text(encoding="utf-8"))
+    cfg["route"]["median_registration"] = [{"road": "College Avenue", "points": [[80, 0.0], [120, 3.0], [200, 3.0], [240, 0.0]]}]
+    (d / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
+    me.build(d)
+    raw = json.loads((d / "data" / "centerline.raw.local.json").read_text(encoding="utf-8"))["points_xyz_m"]
+    pre = json.loads((d / "data" / "centerline.raw.local.json.pre-median").read_text(encoding="utf-8"))["points_xyz_m"]
+    sx = [p[0] - q[0] for p, q in zip(raw, pre)]
+    assert abs(sx[60] - 10.5) < 1e-3 and abs(sx[160] - (10.5 - 3.0)) < 1e-3   # + = left of travel north = west (-x)
+    assert all(abs(p[2] - q[2]) < 1e-9 for p, q in zip(raw, pre))              # a straight road: sideways only
+    assert max(abs(b - a) for a, b in zip(sx[60:260], sx[61:261])) < 0.2
+    cfg["route"]["median_registration"] = [{"road": "College Avenue", "points": [[80, 0.0], [120, 3.0], [400, 0.0]]}]
+    (d / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
+    try:
+        me.build(d)
+        raise AssertionError("a registration past its run must exit 1")
+    except SystemExit as e:
+        assert e.code == 1
+    restored = json.loads((d / "data" / "centerline.raw.local.json").read_text(encoding="utf-8"))["points_xyz_m"]
+    assert restored == pre                                                       # raw restored: nothing shipped
+
+
 # --- race_chicane -----------------------------------------------------------------------------------------------
 def test_the_leg_is_an_eased_s_with_a_bounded_slope():
     f = rc.slope_shape
@@ -133,6 +172,11 @@ def _project(chicanes):
     (d / "data").mkdir()
     cfg = json.loads((SD / "track.config.json").read_text(encoding="utf-8"))
     cfg["race"]["chicanes"] = chicanes
+    # the data pinned here is v0.18.0's centreline, where the detector reads the Jackson / Lake Murray Blvd apex at v3297
+    # (the rebuilt road, 0.45 m shorter on College, reads v3296 — the config's box; see its _boxes_apex_doc)
+    for b in cfg["race"]["corridor"]["boxes"]:
+        if b["apex"] == 3296:
+            b["apex"] = 3297
     (d / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
     for f in ("centerline.local.json", "median_bands.json", "mouths.json", "bridge.spans.auto.json"):
         shutil.copyfile(SD / "data" / f, d / "data" / f)
@@ -172,8 +216,12 @@ def test_a_declared_chicane_carries_each_speedway_across_and_back_every_gate_hol
         assert rs * mid[0] > 0 and rs * mid[1] < 0 and rs * mid[2] > 0       # own side -> far side -> own side
         # two runs where College had one: the closure ends in the far strip at the out leg and restarts after
         assert {(r["i"], r["j"]) for r in c["runs"]} >= {(777, 930), (990, 1506)}
-    # the planned fill's probes include the race-side pocket behind each wall
-    assert any(p["why"] == "chicane_pocket" for p in out["corridors"]["race_cw"]["no_route"]["forbidden_probes"])
+    # the planned fill's probes include the race-side pocket behind each wall — spaced by TRAVEL on both layouts (the
+    # gates lens, 0055 round 2: the reverse layout walks the stations backward and got ONE pocket probe)
+    pocket = {lid: [p for p in out["corridors"][lid]["no_route"]["forbidden_probes"] if p["why"] == "chicane_pocket"]
+              for lid in ("race_cw", "race_acw")}
+    counts = {k: len(v) for k, v in pocket.items()}
+    assert counts["race_cw"] >= 5 and abs(counts["race_acw"] - counts["race_cw"]) <= 2, counts
 
 
 def test_the_chicane_self_gates_fire():

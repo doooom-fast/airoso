@@ -146,8 +146,15 @@ def test_plan_nodes_cover_every_zone_cell():
 def test_lake_murray_zones_are_declared_and_resolve():
     cfg = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
     zs = gr.resolve_zones(cfg)
-    assert [z["name"] for z in zs] == ["alvarado_creek_bank", "college_south_approach", "lmb_alvarado_creek"]
-    assert [z["kind"] for z in zs] == ["bank", "span", "span"] and all(z["reach_m"] >= 36.0 for z in zs)
+    assert [z["name"] for z in zs] == ["alvarado_creek_bank", "college_south_approach", "lmb_alvarado_creek",
+                                       "college_i8_span", "lmb_i8_span", "alvarado_college_terrace",
+                                       "college_approach_foot"]
+    assert [z["kind"] for z in zs] == ["bank", "span", "span", "span", "span", "bank", "bank"]
+    assert all(z["reach_m"] >= 36.0 for z in zs)
+    # fix round 2: each I-8 overcrossing's whole real span (fresh 3DEP abutments ~2580 / ~2670 and ~13338 / ~13407)
+    spans = {z["name"]: z["s_m"] for z in zs}
+    assert spans["college_i8_span"][0] <= 2576.0 and spans["college_i8_span"][1] >= 2676.0
+    assert spans["lmb_i8_span"][0] <= 13334.0 and spans["lmb_i8_span"][1] >= 13411.0
     rd = cfg["road_datum"]["decks"]
     assert rd[0]["name"] == "college_ave_over_i8" and rd[0]["deck_m"] == [2586.0, 2683.0]
 
@@ -170,6 +177,44 @@ def test_freeway_carriageways_never_overlap_and_leave_room_for_the_barrier():
     lines = fw.barrier_lines(ch, other, 40.0)
     assert len(lines) == 1 and all(abs(p[1] - 9.5) < 1e-6 for p in lines[0])
     assert fw.barrier_lines(ch, far, 40.0) == []
+
+
+def test_freeway_slab_heights_hold_the_cross_slope_and_interpolate_across():
+    """fix round 2: the slab's height is 3DEP at its edges and centre, an edge caught on a cut wall held to XSLOPE_MAX"""
+    hr, hc, hl = fw.edge_heights(5.0, 1.0, 1.1, 10.0, 8.0)          # the right edge read 4 m up a wall
+    assert abs(hr - (1.0 + fw.XSLOPE_MAX * 10.0)) < 1e-9 and hc == 1.0 and abs(hl - 1.1) < 1e-9
+    assert fw.edge_heights(1.05, 1.0, 0.95, 10.0, 8.0) == (1.05, 1.0, 0.95)      # a real crown is kept
+    st = {"h": [0.8, 1.0, 1.4], "wr": 10.0, "wl": 8.0}
+    assert abs(fw.height_at(st, 0.0) - 1.0) < 1e-12 and abs(fw.height_at(st, -10.0) - 0.8) < 1e-12
+    assert abs(fw.height_at(st, 8.0) - 1.4) < 1e-12 and abs(fw.height_at(st, 4.0) - 1.2) < 1e-12
+    assert abs(fw.height_at(st, -5.0) - 0.9) < 1e-12
+    sm = fw.smooth_series([0.0, 0.0, 1.0, 0.0, 0.0], passes=1)
+    assert sm == [0.0, 0.25, 0.5, 0.25, 0.0]
+    assert fw.smooth_series([3.0, 4.0]) == [3.0, 4.0]                  # too short: kept
+
+
+def test_freeway_heights_are_cached_3dep_and_offline_refuses_a_gap():
+    d = Path(tempfile.mkdtemp())
+    (d / "data").mkdir()
+    o = {"lon": -117.0, "lat": 32.8, "elev_m": 100.0}
+    osm = {"nodes": {"1": [-117.0, 32.8], "2": [-116.999, 32.8], "3": [-117.0, 32.8002], "4": [-116.999, 32.8002]},
+           "ways": [{"id": 10, "nodes": [1, 2], "tags": {"lanes": "4"}}, {"id": 20, "nodes": [4, 3], "tags": {"lanes": "4"}}]}
+    osm_p = d / "osm.json"
+    osm_p.write_text(json.dumps(osm))
+    (d / "data" / "corridor.i8.json").write_text(json.dumps({"_provenance": {
+        "source": "test", "osm_cache": str(osm_p), "chain_a_way_ids": [10], "chain_b_way_ids": [20]}}))
+    (d / "data" / "centerline.local.json").write_text(json.dumps({"origin": o, "points_xyz_m": [[0, 0, 0], [1, 0, 0]],
+                                                                  "widths_m": [10, 10]}))
+    P = {"enabled": True, "corridor": "i8", "lane_m": 3.66, "outer_shoulder_m": 3.0, "inner_shoulder_m": 1.2,
+         "default_lanes": 4, "step_m": 4.0, "lift_m": 0.15, "line_w_m": 0.15, "dash_m": 3.0, "dash_period_m": 12.0,
+         "barrier_gap_max_m": 40.0}
+    (d / "track.config.json").write_text(json.dumps({"scenery": {"freeway": P}}))
+    try:
+        fw.build(d, offline=True)
+    except SystemExit as e:
+        assert "not cached and --offline" in str(e)
+    else:
+        raise AssertionError("no cache + --offline must refuse (no silent fill, L2)")
 
 
 def test_freeway_occludes_grass_near_only():
@@ -205,3 +250,19 @@ def test_treefx_keeps_trees_off_the_freeway_lanes():
     (d / "data" / "freeway_i8.json").write_text(json.dumps({"chains": [st + [None] + st[:1]], "barrier": []}))
     e = mt.plan(d)["entries"]
     assert [(p["x"], p["z"]) for p in e] == [(100.0, 90.0)]       # the palm on the lane is gone, the other stays
+
+
+def test_fix_round_2_guards_are_in_the_blender_steps():
+    """fix round 2 (both lenses): the release caps each FACE under the pavement (not the nearest pavement vertex), reins
+    banks in with a batter, smooths its rails; the freeway lays its slab at the 3DEP height, sees a deck from UNDER the
+    slab, makes the ground meet the slab, and refuses a vertex over a deck. Source pins: the halves are bpy-only."""
+    gr_src = (ROOT / "tools" / "ground_release_blend.py").read_text(encoding="utf-8")
+    assert "near_pave" not in gr_src and "EDGE_CAP_M" not in gr_src
+    for k in ("def face_samples(", "face_low_pave(f)", "released faces over a ROAD / CURB surface", "BATTER_CUT * d", "BATTER_FILL * d",
+              "smooth_offsets(", "RAIL_JUMP_M", "RAIL_HELD_M", "RAIL_BURY_M", "TOP_NZ"):
+        assert k in gr_src, k
+    fw_src = (ROOT / "tools" / "author_freeway_blend.py").read_text(encoding="utf-8")
+    for k in ("FW.height_at(st, o)", "Vector((x, y, z - DECK_UNDER))", "def conform_ground(", "def split_oversize(",
+              "freeway vertices over a loop deck", "BRIDGESTRUCT"):
+        assert k in fw_src, k
+    assert "h + lift - 0.05" not in fw_src                     # the old deck ray, started over the ground at the deck

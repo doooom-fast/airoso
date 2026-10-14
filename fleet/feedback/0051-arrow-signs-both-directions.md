@@ -192,7 +192,7 @@ in `scratchpad/round2/signs/stills/`. The camera sits on the race_acw AI line, 1
 | still | what it shows (0° = square to the camera, 90° = edge-on) |
 |---|---|
 | `acw_M1rev_70thSt_close` | 35 m before the first corner. M1-rev's LEFT arrow is 43 m out, 9° right of the nose, 1° off square. M1-fwd is 84° off square, so only its edge shows. |
-| `acw_M4rev_JacksonNavajo_close` | Kevin's corner. M4-rev's LEFT arrow is 47 m out, 6° off square. M4-fwd's board is 72° off square: its yellow face shows at about a third of its width, and its RIGHT arrow is still readable beside the new LEFT one. |
+| `acw_M4rev_JacksonNavajo_close` | Kevin's corner. M4-rev's LEFT arrow is 47 m out, 6° off square. M4-fwd's board is 72° off square: its yellow face shows at about a third of its width from there, and its RIGHT arrow is still readable beside the new LEFT one. Closer in it widens: 83 % of the LEFT board's width at 25 m (see "The cross-view, measured" at the end). |
 | `acw_M2rev_hairpin_close` | College into the hairpin. M2-rev's LEFT arrow is 54 m out, 6° off square. M2-fwd-2's board is 61° off square and its RIGHT arrow is readable. In the wider still (`acw_M2rev_hairpin`), M2-fwd's right arrow for the other leg shows across the bend. |
 
 So at Jackson/Navajo and at the hairpin, an anticlockwise driver sees **both** arrows: his own LEFT board almost
@@ -248,9 +248,10 @@ After 0050 lands, re-check that M4-fwd and M4-rev:
      should see a LEFT arrow straight ahead, just past the far curb, as he reaches the turn.
    - Then Lake Murray Blvd → Jackson (4.5 km), Jackson → Navajo (7.4 km), Navajo → College (9.8 km), and the
      College → Alvarado hairpin (12.1 km).
-   - At Jackson/Navajo and the hairpin he will see both arrows going anticlockwise: his LEFT board nearly square
-     on and the clockwise RIGHT board beside it at a slant, about a third of its width but readable. In street and
-     race_cw the mirror image is likely (a squeezed LEFT board beside his RIGHT one); that view was not rendered.
+   - At Jackson/Navajo, the hairpin, Navajo/College and Lake Murray Blvd/Jackson he will see both arrows going
+     anticlockwise: his LEFT board square on and the clockwise RIGHT board beside it, face on to him and nearly as
+     wide (measured below, "The cross-view, measured"). In street and race_cw the mirror image is likely (a LEFT board
+     beside his RIGHT one); that view was not rendered.
    - He judges those cross-views. If one reads wrong, the fix is a per-approach skip with his words, e.g.
      `"rev": {"skip": true, "reason": "<his words>"}` on M2 (one line, no code; a skip without a reason is refused),
      or the deferred W1-8 chevrons.
@@ -269,3 +270,28 @@ plate; a MAINLINE one in every driven direction unless `signs.json` skips that a
 "(l) 11 named corners checked: every one signed". Still owed: Kevin's race_acw drive (the cross-view at M2 / M4) and
 the street / race_cw mirror view, never rendered; stills of M4-rev / M1-rev / M2-rev from the race_acw driver's eye are
 in the integration report (Workbench, not AC).
+
+## The cross-view, measured (v0.18.0 integration fix round 2, 2026-10-13)
+
+The integration's view lens found the text above understated: at Jackson/Navajo, 25 m out on the anticlockwise
+approach, the clockwise RIGHT board shows about 88 % of the width of the LEFT board beside it, not "a third"; at M1, M3
+and M5 the anticlockwise driver also sees both boards. Measured here from the built boards themselves
+(`data/signs.local.json`, each plate's front corners; the cameras are the lens's own, 25 m and 55 m out in front of
+each reverse board, 1.2 m up), as the angle each plate's face spans at the eye, and which side of it faces him:
+
+| corner | at 25 m: clockwise board / his board | at 55 m |
+|---|---|---|
+| M1 70th St / Alvarado | 48 % (face on) | 22 % |
+| M2 the College hairpin (M2-fwd-2 / M2-fwd) | 99 % / 28 % | 56 % / 78 % |
+| M3 Navajo / College | 96 % | 50 % |
+| M4 Jackson / Navajo (Kevin's corner) | 83 % | 55 % |
+| M5 Lake Murray Blvd / Jackson | 94 % | 33 % |
+
+**In plain terms, for Kevin.** Coming into Jackson/Navajo the wrong way round (race_acw), the board meant for you (a
+yellow board with a LEFT arrow) and the board meant for the clockwise drivers (a RIGHT arrow) stand close together on the
+far side of the corner, and from 25 m both face you at almost the same size: you will read "turn left" and "turn right"
+side by side. The same holds at the hairpin, at Navajo/College and at Lake Murray Blvd/Jackson; at 70th St the clockwise
+board is half as wide. Nothing was changed: whether the pair reads as one instruction or as a contradiction is still
+your call from the seat (item 7). If it reads wrong, the fix is one line per corner in `signs.json`
+(`"rev": {"skip": true, "reason": "<your words>"}` drops the reverse board; the same on `fwd` drops the clockwise one, in
+every layout, since the boards live in the one road model all three layouts load), or the deferred W1-8 chevrons.

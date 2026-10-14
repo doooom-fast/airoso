@@ -132,7 +132,7 @@ if [ "$(norm "$PROJ")" = "$(norm "$WS_PROJ")" ]; then SCRATCH=0; else SCRATCH=1;
 V021_SHIM="import sys, importlib.util as u; s=u.spec_from_file_location('scripts', r'$V021/__init__.py', submodule_search_locations=[r'$V021']); m=u.module_from_spec(s); sys.modules['scripts']=m; s.loader.exec_module(m)"
 [ -f "$V021/blender/build_loop_blend.py" ] || { echo "no assembler at $V021/blender/build_loop_blend.py"; exit 2; }
 
-TERRAIN_DATA="terrain.samples.json.gz corridor.i8.json i8.local.json i8.legacy.local.json deck_datum.samples.json ground_release.samples.json.gz"
+TERRAIN_DATA="terrain.samples.json.gz corridor.i8.json i8.local.json i8.legacy.local.json deck_datum.samples.json ground_release.samples.json.gz freeway_i8.samples.json.gz"
 # the track's own textures (track.config.json texture_overrides with a project-relative path: the far ring's chaparral)
 TRACK_TEXTURES="textures/chaparral_far_diffuse.jpg"
 step() { echo; echo "=================== $1"; }

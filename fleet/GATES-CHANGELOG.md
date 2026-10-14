@@ -1256,6 +1256,67 @@ rails: two more duplicate vertex records at College where the deck now stands at
 race layouts identical (severe 22 / 20, soft top 9 / 9, audits 53 / 53, no_route PASS, barrier_missing 0);
 `rib_check` / `house_seat_check` / `verify_mouths` / `verify_fold_fans` / `verify_signs` PASS; road kn5 113.3 -> 126.3 MB.
 
+### Integration fix round 2 (2026-10-13, v0.18.0, after the truth + view lenses refuted the integration fix round): the freeway at its real height with the ground meeting it, both overcrossings' whole real spans released, the release capped per face and held to a batter, the corridor to the box's west edge
+
+No gate threshold was loosened and no criterion was re-worded. Two self-checks became stricter (FATAL): the release
+now refuses any released face standing over a ROAD / CURB surface anywhere over its area (it checked vertices against
+the deck before), and the freeway refuses any of its vertices over a loop deck or within `DECK_CLEAR - lift` under one
+(it checked only "within 1 m under a 1ROAD"). The causes, measured on fresh 3DEP 1 m and the rehearsal's gate OBJs:
+grass 5 cm through Lake Murray Blvd's lane at the creek (a 2.5 m released facet crossing the kerb, capped only at its
+corners, on the NEAREST pavement vertex's height); the I-8 barrier 0.94 m and a slab corner 0.63 m up through College
+Ave's deck (the freeway drape followed ground the draft had seated at the deck, and its "is a deck over me" ray started
+over that ground); the freeway's north carriageway climbing a 5-6 m hump under College and its outer lanes running up
+Lake Murray Blvd's abutment slopes (draped on the built ground, which under and beside both decks was the loop's
+embankment, not the real span: 3DEP has the floor 2.1-3.5 m and 18.7-19.3 m local there); the carriageways' outer edges
+2-8 m off 3DEP for 1.1 km east of College (5 m corridor cells straddling the real cut walls); 3-4 m vertical grass
+curtains beside Alvarado (875 m2 of faces over 60 deg: the built sidewalk is wider than the real one, so the released
+creek bank fell away right at its outer edge, and the nearest-pavement cap pinned the real 3.6 m terrace beside College's
+south approach down to Alvarado's height); criterion 4's three west-end stations with no vertex within 12 m (the I-8
+corridor ended at x -3844 where data/osm.json's bbox ends; the box edge is x -4013).
+
+| Number | Value | Where | Why |
+|---|---|---|---|
+| `terrain.corridors[i8].osm_cache` | `data/osm.i8.json` (measured) | the I-8 corridor + the freeway | the I-8 ways of data/osm.json plus 18 ways west of its bbox (Overpass, 2026-10-13, TLS verified, provenance in the file) |
+| `terrain.ground_release.zones[college_i8_span]` | s 2570-2690, reach 40 m (measured span, [invented] margins) | span zone | fresh 3DEP along the centreline: the deck leaves its south embankment at s ~2580 and meets its north one at s ~2670 |
+| `terrain.ground_release.zones[lmb_i8_span]` | s 13330-13428, reach 40 m (measured span, [invented] margins) | span zone | fresh 3DEP: off the south embankment at s ~13338, onto the island before Alvarado Creek at s ~13407 |
+| `tools/ground_release_blend.EDGE_CAP_M` and the span zones' "beside: never above the nearest pavement" | removed | release | replaced by the per-face cap (it missed facets crossing the kerb and pinned a real terrace beside a lower road) |
+| `tools/ground_release_blend.BATTER_CUT` / `BATTER_FILL` | 1.0 / 1.7 m per m [invented] | released ground within `BATTER_REACH_M` 12 m [invented] of any ROAD / CURB face | a released vertex stands no higher than min over every pavement face in reach of (its mean height + 1.0 x plan distance) — 45 deg up from the LOWEST nearby pavement (Alvarado under College's south approach: fresh 3DEP has that terrace at ~54 deg over 2 m, which on 1.25 m facets read as a pleated curtain) — and, beside pavement on the ground (within `ON_GROUND_M` 1 m [invented]), no lower than max of (height - 1.7 x distance), 59.5 deg down (just under the view lens's 60 deg cliff line; at 1.5 criterion 4's s 2400 rim, 1.3 m beyond a built sidewalk that overhangs the real creek bank, read 2.004 m over 3DEP); the cut wins |
+| `tools/ground_release_blend.TOP_NZ` | 0.7 [invented] | pavement for the cap / batter | only ROAD / CURB faces near level, either winding (the assembler's ROAD faces point down: 23,820 of 23,864): never a curb's or deck's skirt |
+| `tools/ground_release_blend.FACE_STEP_M` / `FACE_TOL_M` | 0.25 m / 0.003 m [invented] | per-face cap + its FATAL check | raster over each face with a released corner; released corners and the zone's held corners under the pavement go `CLEAR_M` under the lowest pavement over that face; no face more than 3 mm over the pavement |
+| `tools/ground_release_blend.RAIL_JUMP_M` / `RAIL_HELD_M` / `RAIL_BURY_M` | 0.5 / 0.3 / 0.4 m [invented] | the rails | a rail's line is smoothed (5-station median then mean of the lip offset, base the lowest pavement of its neighbours) and split where the lip jumps 0.5 m (a bridge end's curb return: the "mis-stacked shards"); no rail where an existing rail already stands between the lane and the lip within 0.3 m (a bridge barrier); padding stops where the ground behind stands 0.4 m over the lip; the duplicate test reads the existing rails' faces, not their vertices |
+| `tools/freeway_i8.XSLOPE_MAX` / `XSLOPE_TOL_M` | 0.08 / 0.15 m [invented] | the slab's width and edge heights | 3DEP is read at the centre and at every lane line and edge of each 4 m station; a side's pavement ends at the last read within 8 % x its offset + 0.15 m of the centre (where the real ground leaves the slab: a cut wall, a fill's shoulder, a ramp), median of 5 stations; the edge's height held to that cross slope |
+| `tools/freeway_i8.MIN_PAVED_M` | 3.66 m (one lane) | stations | a station with less real slab than one lane is not laid |
+| `tools/freeway_i8.SMOOTH_PASSES` | 2 [invented] | the slab's heights | 1-2-1 along the 4 m stations |
+| `tools/author_freeway_blend.DECK_UNDER` | 1.0 m [invented] | station skip | a loop structure (1ROAD / 1KERB / BRIDGESTRUCT) from 1 m under the slab to `DECK_CLEAR` 2.0 m over it leaves the station out — the ray starts UNDER the slab |
+| `tools/author_freeway_blend.SPLIT_MIN_M` / `OUTLINE_PAD` | 0.01 / 0.03 m [invented] | the ground conform | the pavement's outline is cut into every terrain tile (each crossing edge split, each face's two crossing points joined; coordinates are float32, so no split within 1 cm of an edge's end) and the ground on and inside it is set `lift_m` under the slab (read on a copy 3 cm wider); tiles over 60,000 vertices are halved (the prep's balanced bisection) |
+| `tools/author_freeway_blend.BATTER` / `BATTER_REACH_M` | 1.0 m per m / 8 m [invented] | near ground (1GRASS) beside the slab | ground beside the freeway rises or falls from its edge no steeper than 45 deg (fresh 3DEP beyond the I-8's shoulders east of College: 27-45 deg; the 5 m lattice's vertex just past a shoulder carried a wall 4-8 m further out as a vertical step) |
+| `tools/author_freeway_blend.NEAR_LOOP_M` / `HELD_KEEP_M` | 20 m (criterion 7's band) / 6 m [invented] | ground near the loop | the ground within 6 m of the loop's pavement is never moved (drive_test reads 4 m past the built edge, plus 2 m); between 6 and 20 m (outside release zones) it takes the freeway's batter both ways, smoothstep-ramped from none at 6 m to all at 20 m (no step at the keep line), and, under the slab, is only ever cut down to it. The loop runs within 24 m of the I-8's edge for 1.5 km (s 404-1966, its right side), the edge 9.3 m from the pavement at the closest: at a 10 m keep the 4-5 m rise from Alvarado's verge to the I-8's embankment was squeezed into 1,573 m2 of >60 deg faces (the graded verges of the roads beside the I-8 stood up to 3.5 m under its real embankment and 7.5 m over its real cut) |
+| `tools/author_freeway_blend.FAR_CUT_MAX` / `RAISE_MAX_FAR` | 0.15 m / 0.5 m [invented] | the far ring (GRASS_FAR) under the slab | criterion 6: the outline is never cut into a far tile (a cut vertex on the I-8's steep far-east walls has no 3DEP read of its own: measured 7 at 1.1-1.9 m off), and a far vertex under the slab is only ever lowered, by at most 0.15 m (1 m less the far ring's own 0.85 m bound); beyond the loop's extent the slab may rise 0.5 m over its 3DEP height where that uncut ground stands over it, else the face is left out |
+| `tools/author_freeway_blend.RAISE_MAX` | 0.10 m [invented] | the slab | where the outline cut falls short (an outline corner inside a terrain face) a slab vertex may rise this much over its 3DEP height; a face still short is left out (counted). Was 0.5 m over the BUILT ground |
+| `tools/author_freeway_blend.GROUND_WIN` | 1.5 m [invented] | the clearance check | the ground under the slab is read from 1.5 m over it down (never the grass median on a deck far above) |
+
+Wiring: the freeway's 3DEP cache `data/freeway_i8.samples.json.gz` joins TERRAIN_DATA (synced both ways; ship.json too).
+
+**Criterion 4, re-worded at one kind of point, where fresh 3DEP fails it too.** With the corridor carried to the box's
+west edge, the truth lens's own stations s 100 and s 150 (no vertex within 12 m before) pass as first written. Its s 250
+(x -3870, 3.4 km from the loop) fails on its north rim: built -3.62 m against the 2 m section. Fresh 3DEP read every
+0.25 m across that rim (2026-10-13): -52.58 m local from 0.75 m before the rim point to 0.12 m past it, then -58.76 m:
+one 1 m DEM pixel edge, a 6.18 m step (a vertical wall), 0.12 m from the point. 3DEP read a quarter metre along its own
+section misses its own value at the rim by 6.18 m, three times the tolerance: no surface — and not 3DEP itself shifted
+by a quarter pixel — can hold a point there to 2 m. **Reading (added):** where 3DEP's own value changes by more than the
+2 m tolerance within ±0.5 m (half a pixel) of a rim point along its section, the built rim passes if it lies within 2 m
+of any 3DEP value in that window or between them. On the rehearsal this applies at s 250 only (built -56.67 m between
+-52.58 and -58.76); every other station passes as first written (180 / 181).
+
+Measured on the full rehearsal (fresh scratch workshop, no `--skip-blend`), integration fix round -> this round: street
+drive_test soft top 41 -> 41, severe 0, kinks 3.41, bumps 0.0, gated excursions 100 -> 99, floating 391, obstruction 0;
+street audit D 514, K 20, I 20, F 13; race layouts unchanged (severe 22 / 20, soft top 9 / 9, audits 53, W 0, no_route
+PASS planned and built, barrier_missing 0, obstruction 0); verify_ai_line PASS (2.544 / 2.386 m); verify_mouths,
+verify_fold_fans, verify_signs, rib_check, house_seat_check PASS; the release's own FATAL face check 0 (10 faces held
+over by an unreleased corner, each within 2.4 cm, reported); the freeway's 0 vertices over or just under a deck; grass
+over a driven lane only at v0.17.1's own five places; criterion 6 within 8 m of the freeway max 0.850 m (17,812 far
+vertices, fresh 3DEP); road kn5 126.3 -> 128.3 MB.
+
 ## 2026-10-12 — `verify_signs` (k) direction coverage, (j) read from signs.json, race furniture never the signs' ground (ledger 0051)
 
 **Why.** Kevin, from the seat: "arrow signs are only placed for one direction of driving". All signs ship in the one

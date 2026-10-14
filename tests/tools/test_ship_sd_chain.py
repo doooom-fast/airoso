@@ -483,7 +483,7 @@ def test_tiered_terrain_chain_ledger_0046():
     assert 'quad_method="BEAUTY"' in src and "vertex count changed" in src
     assert 'ENG="${ENG:-C:/Users/Owner/Documents/GitHub/engine-july}"' in TEXT
     assert ('TERRAIN_DATA="terrain.samples.json.gz corridor.i8.json i8.local.json i8.legacy.local.json '
-            'deck_datum.samples.json ground_release.samples.json.gz"') in TEXT
+            'deck_datum.samples.json ground_release.samples.json.gz freeway_i8.samples.json.gz"') in TEXT
     down = TEXT[_first('step "sync inputs airoso -> workshop'):_first("LAYOUT_IDS=$(pyq")]
     assert "for f in $TERRAIN_DATA; do" in down and 'cp "$SRC/data/$f" "$PROJ/data/$f"' in down
     sync = TEXT[_first('step "sync outputs workshop -> airoso"\n'):_first("never synced.\nfi\n")]

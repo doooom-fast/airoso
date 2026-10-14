@@ -1809,3 +1809,46 @@ green, the mainline's declaration byte-identical with or without the lap, the se
 gap across a branch caught (forbidden probe + leak), spawns on the lap, the AI line inside its corridor and green on
 `verify_ai_line`, drive_test's lane = the lap's (barrier_missing 0; a missing closure → `closure` missing), the lap's
 ini loading its own common kn5.
+
+
+## 2026-10-14 — road_datum PROFILE WINDOWS + Lake Murray Blvd's decks + the assembler's per-window sigma_y (ledger 0057)
+
+Kevin (v0.18.0): "my cars with clutches would roll back from stoplights there ... Stoplight would be heading onto Alvarado
+from college." The diagnosis (ledger 0057) measured the two uphill waits flattened by two stacked smoothings of the frozen
+pre-median profile (the August heightfield's 33 m median + 2 x 39 m box means + lap-seam blend, then the assembler's
+sigma_y 5 Gaussian, ledger 0042): College southbound into the Alvarado signal +3.5 % built against +5.9 % real, Alvarado
+from 70th -6.1 % against -7.7 %, the 70th junction 0.7 m low behind Lake Murray Blvd's 1.2-2.1 m-low decks. **No gate
+threshold, bypass or exclusion changed.** This is a datum change, opt-in per declared window; outside every window the
+assembler's profile is byte-identical to its sigma_y 5 result on the same input (and on the College main descent
+identical to v0.18.0).
+
+| What | Value | Flag | Why |
+|---|---|---|---|
+| `tools/deck_datum.PROFILE_SIGMA_M` | 3 m | [invented] | Gaussian on the 1 m 3DEP profile inside a window (= 1 centreline vertex): rounds the DEM's +-10 cm sample noise. Swept 2 / 3 / 4 / 6 m (simulated on both windows, ledger 0057 Fix): 6 m (the diagnosis' "sigma ~2 points") cost the two stop-line approaches another 0.07 / 0.21 points and bought nothing the gates need |
+| `tools/deck_datum.PROFILE_BLEND_M` | 30 m | [invented] | default blend into the old profile at each window end (`road_datum.profiles[].blend_m`); both window ends sit where old and fresh agree within ~0.2 m |
+| profile reference | mean of 3DEP at both carriageway centres (+-width/4 off the line) | measured choice | the line itself reads the crown: on College's approach the centre line runs +5.3 % where both lanes run +5.8-5.9 %; the mean of the two carriageway centres reads the lanes |
+| deck spans inside a window | held straight between abutments, one-sided `SMOOTH_M` reads (the deck rule) | reused | a profile never reads the I-8 trench or Alvarado Creek |
+| `road_datum.profiles[].hold_straight_m` (new key) | College/Alvarado: pre-median s 2289-2323 | measured (rehearsal 1) | the hairpin's levelled fold fan (rows 763-774, ledger 0050) pinches its inside edge to ONE height and cannot carry the real hump: with the hump in it the first full rehearsal failed `verify_fold_fans` (DT 0.087 m > 0.06 on the inside paths, all three layouts) and doubled drive_test's severe steps there (race 22/20 -> 39/37). Held straight like a deck span it passes (DT 0.028-0.034) |
+| `road_datum.profiles[].assembler_sigma_y_pts` | 1.0 pts College/Alvarado, 1.5 pts 70th/Alvarado | [invented], rehearsed | inside a window the input is already fresh 3DEP smoothed at 3 m, which is what 0042's sigma 5 was written for. Rehearsed: 1.5 / 1.5 -> College stop line +5.23 %, every listed gate no worse than v0.18.0; 1.0 / 1.0 -> +5.44 % but street kinks 3.41 -> 3.56 /km (refused); 1.0 / 1.5 -> +5.44 %, street kinks 3.34 /km, every listed gate no worse (shipped) |
+| `road_datum.profiles` (Lake Murray) | `college_alvarado_junction` pre-median s 2200-2530; `seventieth_alvarado` 13280 -> seam -> 230 | measured | fresh 3DEP 1 m, 2026-10-14 (data/deck_datum.samples.json, TLS on) |
+| `road_datum.decks` (Lake Murray, added) | `lmb_over_i8` 13347-13424 (126.2 -> 126.2 m), `lmb_over_alvarado_creek` 13432-13457 (126.2 -> 125.6 m) | measured | the item ledger 0046 deferred: fresh 3DEP abutments at both carriageway centres; both lie inside `seventieth_alvarado`, which holds them (their own window pass is skipped and reported `re_derived_by_profile`) |
+
+Refusals (SystemExit, no silent fallback): a profile window cutting a deck span; a hold inside the window's blend; a
+window shorter than twice its blend or not shorter than the lap; a seam window on an open line; an uncached 3DEP sample
+under `--offline` (L2). The closing duplicate vertex is v0's height, never a second vertex (L13). `smooth_centerline`
+refuses a weight list that is not one per unique vertex.
+
+Wiring: none new — `tools/deck_datum.py` is already the first draft step (ship_sd.sh / ship_track.sh) and its cache
+already rides TERRAIN_DATA; `scripts-v021/blender/build_loop_blend.py` reads the same `road_datum.profiles` (stations on
+the pre-median file, index-aligned with raw.local) and passes `y_sigma_windows` only when one is declared.
+
+Gates on the shipped config (full `ship_sd.sh --no-install` rehearsal, v0.18.0 -> this): street soft top 33 -> 31,
+severe 0 -> 0, kinks 3.41 -> 3.34 /km, audit D/K/I/F 0/20/20/13 unchanged; race severe 22 -> 17 / 20 -> 17,
+barrier_missing 0, no_route BUILT PASS both; verify_fold_fans, verify_mouths (4), verify_signs, verify_race,
+verify_ai_line (both), rib_check, house_seat_check PASS. Not on the list and slightly up: race_cw kinks 6.23 -> 6.45 /km
+(race_acw 7.05 -> 6.38) — reported, not gated.
+
+Proven by `tests/tools/test_profile_datum.py` (a seam window on a closed ring moves both sides, keeps v0 closed, leaves the
+rest untouched, is idempotent; a deck inside a profile is held by it; a hold is straight and refused inside the blend;
+offline refuses a gap; the assembler's windows are exact outside and keep a crest inside; Lake Murray's declaration
+resolves and runs offline from the committed cache to the real grades) and the rehearsal in ledger 0057 Results.

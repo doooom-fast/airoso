@@ -34,8 +34,9 @@ bodies (which read the ground under each deck):
      from the centreline) and the NEW ground over the next EXC_BAND_M are read exactly as drive_test's excursion sweep
      reads them; where it would file an unguarded drop (a > EXC_DROP_M fall between 0.5 m samples, or the ground more
      than RAIL_FALL_M under the pavement edge) a concrete barrier (a Jersey profile, RAIL_BASE_M wide at the foot,
-     RAIL_H_M tall) stands on the outer lip of the curb, padded RAIL_PAD_M past each run. It is appended to GUARDRAIL
-     (the prep's 1WALL_guard: physical, double-sided, the loop's own I-8 bridge rail material), never where GUARDRAIL
+     RAIL_H_M tall) stands on the outer lip of the curb, padded RAIL_PAD_M past each run. It is its own physical mesh,
+     RAIL_OBJECT (1WALL_guard_release: the prep's 1WALL_GUARD material row, double-sided, the loop's own I-8 bridge
+     rail material; fix round 4 — appended to GUARDRAIL it split past the kn5 vertex cap), never where GUARDRAIL
      already stands within RAIL_DUP_M.
      The rail's line is smoothed along its run (a 5-station median, then a 5-station mean of the curb lip's offset, its
      base the lowest pavement of its neighbours) and split where the lip jumps more than RAIL_JUMP_M (a bridge end's
@@ -68,6 +69,8 @@ AIROSO = Path(__file__).resolve().parents[1]
 
 SUBDIV_M = 2.5        # [invented] zone terrain edges are halved down to this
 CLEAR_M = 0.02        # build_kn5_loop.GROUND_CLEAR: ground stands this far under the deck
+HELD_PIT_M = 1.0      # [invented] a bank zone's ground under the pavement more than this under its sheet is a pit (fix round 4:
+#                       College's south approach, 6 m under its sidewalk) and is lifted to the sheet; shallower stands
 BATTER_CUT = 1.0      # [invented] steepest released bank RISING from a pavement edge: 1 m per metre (45 deg). Fresh 3DEP has
 #                       the terrace beside Alvarado / College's south approach at ~54 deg over 2 m; on 1.25 m facets a
 #                       steeper bound reads as a pleated green curtain from the road (the view lens), so the bank is
@@ -111,7 +114,13 @@ RAIL_TOP_M = 0.20     # ...top width
 RAIL_H_M = 0.81       # ...height above its base (the standard 32 in)
 RAIL_SINK_M = 0.30    # ...and its foot runs this far into the curb
 RAIL_TAPER_M = 2.0    # [invented] a rail's top slopes down over this much of each end (a sloped end treatment)...
-RAIL_END_H_M = 0.05   # ...to this height over its base: no square end standing up
+RAIL_END_H_M = 0.05   # ...to this height over its base: no square end standing up — only over padding past every
+#                       station that needs the rail (ground_release.rail_heights; fix round 4)
+RAIL_OBJECT = "1WALL_guard_release"   # the release rails' own physical mesh(es) (never appended to GUARDRAIL)
+RAIL_CHUNK_TRIS = 18000  # [invented] triangles per rail mesh: 3 kn5 vertices each at worst stays under the 65,536 cap
+RAIL_EXT_FALL_M = 1.0  # [invented] ...and only while the ground falls more than this under the pavement edge, steeply
+RAIL_EXT_MAX_M = 120.0  # [invented] a rail follows a drop this far past a zone's end at most (College's approach foot:
+#                       the embankment edge runs ~100 m back from the zone to s ~2401)
 
 
 def _release_module():
@@ -260,9 +269,12 @@ def main():
     for _round in range(6):
         todo = []
         for e in bm.edges:
-            if e.calc_length() <= SUBDIV_M:
-                continue
             a, b = e.verts[0].co, e.verts[1].co
+            # PLAN length (v0.18.0 fix round 4, the runtime lens's zero-length normals): a vertical edge of the seat's
+            # curtain (two vertices on one plan point) halved round after round stacked up to 31 coincident faces on
+            # one plan point, back to back — the lattice is a plan resolution
+            if math.hypot(a.x - b.x, a.y - b.y) <= SUBDIV_M:
+                continue
             if Z.weight((a.x + b.x) / 2, (a.y + b.y) / 2)[0] > 0.0 or Z.weight(a.x, a.y)[0] > 0.0 \
                     or Z.weight(b.x, b.y)[0] > 0.0:
                 todo.append(e)
@@ -290,9 +302,9 @@ def main():
     for _round in range(4):
         todo = []
         for e in bm.edges:
-            if e.calc_length() <= EDGE_SUBDIV_M:
-                continue
             a, b = e.verts[0].co, e.verts[1].co
+            if math.hypot(a.x - b.x, a.y - b.y) <= EDGE_SUBDIV_M:
+                continue
             if Z.weight((a.x + b.x) / 2, (a.y + b.y) / 2)[0] <= 0.0:
                 continue
             if under_top(a) != under_top(b):
@@ -306,6 +318,27 @@ def main():
         if faces:
             bmesh.ops.triangulate(bm, faces=faces, quad_method="BEAUTY", ngon_method="BEAUTY")
     n_sub += n_edge
+    # coincident faces (one vertex set, either winding) left by the halving: a sliver group goes (it covers no ground),
+    # a real face keeps one copy (v0.18.0 fix round 4: 448 such sets in round 3, up to 31 faces deep, back to back)
+    bm.verts.index_update()
+    groups = {}
+    for f in bm.faces:
+        groups.setdefault(frozenset(v.index for v in f.verts), []).append(f)
+    kill = []
+    for g in groups.values():
+        if len(g) > 1:
+            kill += g if max(f.calc_area() for f in g) < 0.01 else g[1:]
+    n_coinc = len(kill)
+    if kill:
+        touched = {v for f in kill for v in f.verts}
+        bmesh.ops.delete(bm, geom=kill, context="FACES_ONLY")
+        loose = [v for v in touched if v.is_valid and not v.link_faces]
+        if loose:
+            bmesh.ops.delete(bm, geom=loose, context="VERTS")
+    bm.verts.index_update()
+    bm.faces.index_update()
+    bm.verts.ensure_lookup_table()
+    bm.faces.ensure_lookup_table()
     # 2. released heights
     per_zone = {z["name"]: {"moved": 0, "max_down_m": 0.0, "max_up_m": 0.0, "under_deck": 0} for z in R["zones"]}
     bad_poke = []
@@ -319,6 +352,8 @@ def main():
     # 2-4 m over 3DEP between two pieces of 3DEP — sawn into teeth by the 1.25 m lattice)
     RF = _refine_field(proj)
     n_ramp_ref = 0
+    n_held_pin = 0
+    pits = set()
     for v in bm.verts:
         x, y, z = v.co.x, v.co.y, v.co.z
         w, zone = Z.weight(x, y)
@@ -332,7 +367,21 @@ def main():
         under = bool(hs)
         if zone["kind"] == "bank":
             if under:
-                held[v.index] = z    # in the zone, under the pavement: kept (the prep pins it, as in v0.17.1)
+                # in the zone, under the pavement: held CLEAR_M under its LOWEST upward sheet, here. The prep pins the
+                # ground under a deck only to a sheet within its window of the vertex's own height, and leaves every
+                # zone vertex alone otherwise (v0.18.0 fix round 4, the view lens's stepped curtain under College Ave's
+                # south approach: the draft seats that ground at Alvarado's level, 6 m under College's sidewalk, so
+                # it stayed a pit under the sidewalk, sawn against the released bank beside it)
+                # Only a PIT is lifted (more than HELD_PIT_M under the sheet): elsewhere the seat's height under the
+                # pavement stands, as in v0.17.1 (lifting every held vertex to its own sheet put the ground under a curb
+                # top 0.13 m over the gutter beside it: soft top 42 -> 211 at Alvarado's lane edge, this round's first
+                # rehearsal). A lifted pit is then capped with the released ground, face by face (2c)
+                ht = _hits(top, x, y, 10000.0, -1000.0)
+                if ht and z < min(ht) - CLEAR_M - HELD_PIT_M:
+                    v.co.z = min(ht) - CLEAR_M
+                    pits.add(v.index)
+                    n_held_pin += 1
+                held[v.index] = z
                 continue
             t = D
         else:
@@ -434,7 +483,7 @@ def main():
         u = 0.0 if ON_GROUND_M <= FILL_EASE_M else min(1.0, max(0.0, (gap - FILL_EASE_M) / (ON_GROUND_M - FILL_EASE_M)))
         return h - CLEAR_M - gap * u * u * (3.0 - 2.0 * u)
 
-    n_cut = n_fill = 0
+    n_cut = n_fill = n_bank = 0
     for vi, (under, zname, z0) in released.items():
         if under:
             continue
@@ -442,25 +491,32 @@ def main():
         near = flat.find_nearest_range((v.co.x, v.co.y, 0.0), BATTER_REACH_M)
         if not near:
             continue
-        hi = min(face_h[fi] - CLEAR_M + BATTER_CUT * d for _q, _n, fi, d in near)
+        # (limit, the pavement height it starts from, its plan distance): the lowest cut, the highest fill
+        cut = min((face_h[fi] - CLEAR_M + BATTER_CUT * d, face_h[fi] - CLEAR_M, d) for _q, _n, fi, d in near)
         if zone_kind.get(zname) == "span":
             # SPAN zones: the ground under the pavement is the released real earth (a deck may stand over it), so the fill
             # starts where the pavement actually sits on it — read at the nearest point, eased by the gap (fill_top)
-            los = [ft - BATTER_FILL * d for ft, d in ((fill_top(fi, q[0], q[1]), d) for q, _n, fi, d in near)
-                   if ft is not None]
+            fills = [(ft - BATTER_FILL * d, ft, d) for ft, d in ((fill_top(fi, q[0], q[1]), d) for q, _n, fi, d in near)
+                     if ft is not None]
         else:
-            los = [face_h[fi] - CLEAR_M - BATTER_FILL * d for _q, _n, fi, d in near if grounded(fi)]
-        nz = v.co.z
-        if los and nz < max(los):
-            nz = max(los)
+            fills = [(face_h[fi] - CLEAR_M - BATTER_FILL * d, face_h[fi] - CLEAR_M, d) for _q, _n, fi, d in near
+                     if grounded(fi)]
+        fill = max(fills) if fills else None
+        z_in = v.co.z
+        nz = GR.batter_z(z_in, cut, fill)
+        if fill is not None and z_in < fill[0]:
             n_fill += 1
-        if nz > hi:
-            nz = hi
+        if nz < max(z_in, fill[0] if fill is not None else z_in) - 1e-9:
             n_cut += 1
+        if fill is not None and fill[0] > cut[0] and fill[1] - cut[1] > GR.STRAIGHT_BANK_MIN_M:
+            n_bank += 1
         v.co.z = nz
 
     # 2c. per-face cap: no face with a released vertex stands over a ROAD / CURB surface anywhere over its area
-    rel_faces = {f for vi in released for f in bm.verts[vi].link_faces}
+    # ...and every face with a lifted PIT corner (step 2): lifted to the sheet over it, its faces may reach over a lower
+    # sheet beside it (College's sidewalk over its gutter), so it is lowered with the released corners
+    lowerable = set(released) | pits
+    rel_faces = {f for vi in lowerable for f in bm.verts[vi].link_faces}
 
     def face_low_pave(f):
         co = [tuple(v.co) for v in f.verts]
@@ -487,7 +543,7 @@ def main():
             # a released corner only: a corner under the pavement (held) is the prep's to pin and anti-poke under its
             # own sheet, as in v0.17.1 (capping it to a face's lowest point dropped the ground under a sidewalk's back
             # edge 0.5 m to a curb apron's foot)
-            if v.index in released and v.co.z > low - CLEAR_M:
+            if v.index in lowerable and v.co.z > low - CLEAR_M:
                 v.co.z = low - CLEAR_M
                 n_capped += 1
     # the check reads each face as the prep will leave it: an unreleased corner under the pavement is held under its
@@ -499,7 +555,7 @@ def main():
         unrel_high = False
         for v in f.verts:
             z = v.co.z
-            if v.index not in released:
+            if v.index not in lowerable:
                 pv_ = pave_at(v.co.x, v.co.y)
                 if pv_ is not None:
                     z = min(z, pv_ - CLEAR_M)
@@ -536,6 +592,18 @@ def main():
         rec["moved"] += 1
         rec["max_down_m"] = round(max(rec["max_down_m"], -dz), 3)
         rec["max_up_m"] = round(max(rec["max_up_m"], dz), 3)
+    # the seat's vertical curtains (two vertices on one plan point) collapse where both ends take the same released
+    # height: those coincident vertices are welded, so no zero-area face is left behind (v0.18.0 fix round 4, the runtime
+    # lens: back-to-back slivers whose shading normals cancel)
+    zone_v = set(released) | set(held)
+    weld = list({v for vi in zone_v for f in bm.verts[vi].link_faces for v in f.verts})
+    n_weld0 = len(bm.verts)
+    bmesh.ops.remove_doubles(bm, verts=weld, dist=1e-4)
+    n_weld = n_weld0 - len(bm.verts)
+    degen = [f for f in bm.faces if f.calc_area() < 1e-8 and any(v.index in zone_v for v in f.verts)]
+    n_degen = len(degen)
+    if degen:
+        bmesh.ops.dissolve_degenerate(bm, dist=1e-4, edges=list({e for f in degen for e in f.edges}))
     bm.to_mesh(me)
     bm.free()
     me.update()
@@ -566,6 +634,71 @@ def main():
     # overlap or abut — College's approach foot / south approach / I-8 span, Lake Murray Blvd's I-8 span / creek — each
     # zone drew its own rail over the shared stations, two prisms 3 cm apart whose end caps stood up as white teeth on
     # the parapet). A station depends only on its s and side, so one shared station list gives one continuous rail.
+    def station(s, side, zname):
+        """one rail station: the built pavement's outer edge at s on this side and whether drive_test would file a drop
+        there (or the ground falls RAIL_FALL_M under the edge) with no rail already holding the car"""
+        nonlocal n_rail_held
+        k = max(0, min(len(Z.s) - 2, next((i for i in range(len(Z.s) - 1) if Z.s[i + 1] >= s), len(Z.s) - 2)))
+        u = (s - Z.s[k]) / max(1e-9, Z.s[k + 1] - Z.s[k])
+        cx = Z.P[k][0] + (Z.P[k + 1][0] - Z.P[k][0]) * u
+        cy = Z.P[k][1] + (Z.P[k + 1][1] - Z.P[k][1]) * u
+        cz = pts[k][1] + (pts[k + 1][1] - pts[k][1]) * u
+        tx, ty = Z.T[k]
+        nx, ny = -ty * side, tx * side
+        hw = Z.W[k] / 2.0
+        o, e, ye, ylast = 0.0, None, None, cz
+        ended = False
+        while o < hw + XS_MAX_M:
+            o += XS_STEP_M
+            yh = deck_at(cx + nx * o, cy + ny * o, ylast)
+            if yh is None:
+                if o > hw:
+                    ended = True
+                    break
+                continue
+            e, ye, ylast = o, yh, yh
+        if not ended:
+            e = None                 # still on pavement XS_MAX_M past the half-width (a junction): no edge here
+        need = steep = False
+        fall = 0.0
+        if e is not None:
+            # drive_test's excursion rule, read finer than it reads it (it steps 0.5 m from its own centreline,
+            # this every EXC_SCAN_M from this one, any 0.5 m pair): the highest surface (pavement or the NEW
+            # ground), a fall of more than EXC_DROP_M between two points 0.5 m apart from the nominal edge
+            # less 0.5 m out to EXC_BAND_M past the built edge, or the ground RAIL_FALL_M under the edge
+            prof = []
+            off = max(0.0, hw - 0.5)
+            while off <= e + EXC_BAND_M + 0.5 + 1e-6:
+                x, y = cx + nx * off, cy + ny * off
+                d = deck_at(x, y, ye) if off <= e + 1e-6 else None
+                g = ground_at(x, y, ye + 30.0)
+                top = max(v for v in (d, g, ye - 50.0) if v is not None)
+                prof.append((off, top))
+                off += EXC_SCAN_M
+            k = int(round(EXC_STEP_M / EXC_SCAN_M))
+            for j in range(len(prof) - k):
+                if prof[j][0] <= e + EXC_BAND_M and prof[j][1] - prof[j + k][1] > EXC_DROP_M:
+                    steep = True
+                    break
+            gs = [t for o2, t in prof if o2 > e]
+            fall = ye - min(gs) if gs else 0.0
+            need = steep or fall > RAIL_FALL_M
+        if need and e is not None and gflat is not None:
+            # a rail already stands between the lane and the lip (a bridge's own barrier between the road and
+            # its sidewalk): no car reaches the drop, so no second rail
+            o2 = hw - 0.5
+            while o2 <= e + 1e-6:
+                if gflat.find_nearest((cx + nx * o2, cy + ny * o2, 0.0), RAIL_HELD_M)[0] is not None:
+                    need = False
+                    n_rail_held += 1
+                    break
+                o2 += XS_STEP_M
+        return {"s": s, "c": (cx, cy), "n": (nx, ny), "t": (tx * side, ty * side), "e": e, "ye": ye,
+                "need": need and e is not None, "zones": {zname},
+                # past a zone's end only a real embankment edge carries the rail on: a steep fall AND the ground more
+                # than RAIL_EXT_FALL_M under the edge (a street's ordinary 1:8 verge is not a hazard to fence)
+                "need_ext": need and e is not None and steep and fall > RAIL_EXT_FALL_M}
+
     by_side = {}
     for zone in R["zones"]:
         a, b = float(zone["s_m"][0]), float(zone["s_m"][1])
@@ -576,65 +709,43 @@ def main():
                 key = round(s, 3)
                 if key in seen:
                     seen[key]["zones"].add(zone["name"])
-                    s += RAIL_STEP_M
-                    continue
-                k = max(0, min(len(Z.s) - 2, next((i for i in range(len(Z.s) - 1) if Z.s[i + 1] >= s), len(Z.s) - 2)))
-                u = (s - Z.s[k]) / max(1e-9, Z.s[k + 1] - Z.s[k])
-                cx = Z.P[k][0] + (Z.P[k + 1][0] - Z.P[k][0]) * u
-                cy = Z.P[k][1] + (Z.P[k + 1][1] - Z.P[k][1]) * u
-                cz = pts[k][1] + (pts[k + 1][1] - pts[k][1]) * u
-                tx, ty = Z.T[k]
-                nx, ny = -ty * side, tx * side
-                hw = Z.W[k] / 2.0
-                o, e, ye, ylast = 0.0, None, None, cz
-                ended = False
-                while o < hw + XS_MAX_M:
-                    o += XS_STEP_M
-                    yh = deck_at(cx + nx * o, cy + ny * o, ylast)
-                    if yh is None:
-                        if o > hw:
-                            ended = True
-                            break
-                        continue
-                    e, ye, ylast = o, yh, yh
-                if not ended:
-                    e = None                 # still on pavement XS_MAX_M past the half-width (a junction): no edge here
-                need = False
-                if e is not None:
-                    # drive_test's excursion rule, read finer than it reads it (it steps 0.5 m from its own centreline,
-                    # this every EXC_SCAN_M from this one, any 0.5 m pair): the highest surface (pavement or the NEW
-                    # ground), a fall of more than EXC_DROP_M between two points 0.5 m apart from the nominal edge
-                    # less 0.5 m out to EXC_BAND_M past the built edge, or the ground RAIL_FALL_M under the edge
-                    prof = []
-                    off = max(0.0, hw - 0.5)
-                    while off <= e + EXC_BAND_M + 0.5 + 1e-6:
-                        x, y = cx + nx * off, cy + ny * off
-                        d = deck_at(x, y, ye) if off <= e + 1e-6 else None
-                        g = ground_at(x, y, ye + 30.0)
-                        top = max(v for v in (d, g, ye - 50.0) if v is not None)
-                        prof.append((off, top))
-                        off += EXC_SCAN_M
-                    k = int(round(EXC_STEP_M / EXC_SCAN_M))
-                    for j in range(len(prof) - k):
-                        if prof[j][0] <= e + EXC_BAND_M and prof[j][1] - prof[j + k][1] > EXC_DROP_M:
-                            need = True
-                            break
-                    gs = [t for o2, t in prof if o2 > e]
-                    if gs and ye - min(gs) > RAIL_FALL_M:
-                        need = True
-                if need and e is not None and gflat is not None:
-                    # a rail already stands between the lane and the lip (a bridge's own barrier between the road and
-                    # its sidewalk): no car reaches the drop, so no second rail
-                    o2 = hw - 0.5
-                    while o2 <= e + 1e-6:
-                        if gflat.find_nearest((cx + nx * o2, cy + ny * o2, 0.0), RAIL_HELD_M)[0] is not None:
-                            need = False
-                            n_rail_held += 1
-                            break
-                        o2 += XS_STEP_M
-                seen[key] = {"s": s, "c": (cx, cy), "n": (nx, ny), "t": (tx * side, ty * side), "e": e, "ye": ye,
-                             "need": need and e is not None, "zones": {zone["name"]}}
+                else:
+                    seen[key] = station(s, side, zone["name"])
                 s += RAIL_STEP_M
+    # a drop that runs on past a zone's end keeps its rail (v0.18.0 fix round 4, the gates lens: College Ave's approach
+    # foot, s 2496-2500, a 3-5 m curtain off the sidewalk with no rail because the stations stopped at the zone's start;
+    # the same embankment edge runs back to s ~2401, unguarded since v0.17.1): from every zone end that is not inside
+    # another zone on that side, stations continue outward while the drop does (gaps up to RAIL_GAP_M), at most
+    # RAIL_EXT_MAX_M, plus RAIL_PAD_M of padding stations past the last one that needs a rail
+    n_ext = 0
+    for zone in R["zones"]:
+        a, b = float(zone["s_m"][0]), float(zone["s_m"][1])
+        for side in zone["sides"]:
+            seen = by_side[side]
+            for s0, step, open_end in ((a, -RAIL_STEP_M, side in Z.zones[R["zones"].index(zone)].get("open_a", ())),
+                                       (b, RAIL_STEP_M, side in Z.zones[R["zones"].index(zone)].get("open_b", ()))):
+                if open_end:
+                    continue
+                last_need, ext = s0, []
+                s = s0 + step
+                while abs(s - s0) <= RAIL_EXT_MAX_M + 1e-6:
+                    key = round(s, 3)
+                    if key in seen or not (Z.s[0] <= s <= Z.s[-1]):
+                        break
+                    r = station(s, side, zone["name"] + "+ext")
+                    if r["e"] is None:
+                        break
+                    r["need"] = r["need_ext"]
+                    ext.append(r)
+                    if r["need"]:
+                        last_need = s
+                    elif abs(s - last_need) > max(RAIL_GAP_M, RAIL_PAD_M):
+                        break
+                    s += step
+                for r in ext:
+                    if abs(r["s"] - last_need) <= RAIL_PAD_M + 1e-6 or abs(r["s"] - s0) <= abs(last_need - s0):
+                        seen[round(r["s"], 3)] = r
+                        n_ext += r["need"]
     for side, seen in by_side.items():
         # contiguous blocks of stations (zones that neither overlap nor abut stay separate rails)
         blocks = []
@@ -700,15 +811,26 @@ def main():
                                           "rows": [dict(q, o=o) for q, o in zip(pc, sm)]})
                     cur = []
 
-    bmr = bmesh.new()
-    if grd is not None:
-        bmr.from_mesh(grd.data)
-    n_rail_v0 = len(bmr.verts)
+    # the release rails are their OWN object, 1WALL_guard_release (fix round 4: appended to GUARDRAIL, the rails of fix
+    # round 4 took the prep's double-sided 1WALL_guard past the kn5 exporter's 65,535-vertex mesh cap, and the exporter
+    # split it into two meshes of one name — verify_kn5: "DUPLICATE physical mesh '1WALL_guard' x2", a mesh AC drops
+    # from collision). The name keeps the prep's 1WALL_GUARD material row and the WALL surface (prefix match)
+    chunks, chunk_tris = [bmesh.new()], [0]
+    bmr = chunks[0]
+    n_rail_v0 = 0
     prof = [(-RAIL_BASE_M / 2, -RAIL_SINK_M), (-RAIL_BASE_M / 2, 0.0), (-RAIL_TOP_M / 2, RAIL_H_M),
             (RAIL_TOP_M / 2, RAIL_H_M), (RAIL_BASE_M / 2, 0.0), (RAIL_BASE_M / 2, -RAIL_SINK_M)]
     bad_rail = []
     rail_rep = []
     for rl in rails:
+        # one physical mesh per RAIL_CHUNK_TRIS triangles: the exporter writes each triangle corner with its own
+        # normal / tangent, and a mesh past 65,536 vertices comes out as two meshes of one name
+        est = 10 * (len(rl["rows"]) - 1) + 4
+        if chunk_tris[-1] and chunk_tris[-1] + est > RAIL_CHUNK_TRIS:
+            chunks.append(bmesh.new())
+            chunk_tris.append(0)
+            bmr = chunks[-1]
+        chunk_tris[-1] += est
         rings = []
         foot = []
         nrms = []
@@ -722,12 +844,13 @@ def main():
         # profile as a white pointed tooth on the parapet): the top falls to RAIL_END_H_M over the last RAIL_TAPER_M,
         # as a concrete barrier's sloped end treatment does
         ss = [r["s"] for r in rl["rows"]]
+        hks = GR.rail_heights(ss, [bool(r["need"]) for r in rl["rows"]], RAIL_TAPER_M)
         for k in range(len(foot)):
             nx, ny = nrms[k]
             bx, by, _b = foot[k]
             # the lowest pavement of its neighbours: the base never steps up and down with the curb's own facets
             base = min(f[2] for f in foot[max(0, k - 1):k + 2]) - 0.05
-            hk = min(1.0, (ss[k] - ss[0]) / RAIL_TAPER_M, (ss[-1] - ss[k]) / RAIL_TAPER_M)
+            hk = hks[k]
             ring = []
             for lat, h in prof:
                 hh = h if h <= 0.0 else RAIL_END_H_M + (h - RAIL_END_H_M) * hk
@@ -746,41 +869,56 @@ def main():
                         bad_rail.append((round(v.co.x, 1), round(v.co.y, 1)))
         rail_rep.append({"zone": rl["zone"], "side": "left" if rl["side"] > 0 else "right",
                          "s_m": [round(rl["rows"][0]["s"], 1), round(rl["rows"][-1]["s"], 1)],
-                         "length_m": round(rl["rows"][-1]["s"] - rl["rows"][0]["s"], 1)})
+                         "length_m": round(rl["rows"][-1]["s"] - rl["rows"][0]["s"], 1),
+                         "ends_full_height": [hks[0] >= 1.0, hks[-1] >= 1.0]})
     if bad_rail:
-        bmr.free()
+        for b in chunks:
+            b.free()
         raise SystemExit(f"[release] FATAL: {len(bad_rail)} rail vertices over a ROAD surface {bad_rail[:4]} — "
                          f"loop.blend NOT saved")
+    for o in [o for o in bpy.data.objects if o.name.startswith(RAIL_OBJECT)]:
+        bpy.data.objects.remove(o, do_unlink=True)
+    rail_objects = []
     if rails:
-        if grd is None:
-            gme = bpy.data.meshes.new("GUARDRAIL")
-            grd = bpy.data.objects.new("GUARDRAIL", gme)
-            bpy.context.scene.collection.objects.link(grd)
-        bmr.normal_update()
-        bmr.to_mesh(grd.data)
-        grd.data.update()
-    bmr.free()
+        for k, b in enumerate(chunks):
+            name = RAIL_OBJECT if len(chunks) == 1 else f"{RAIL_OBJECT}_{k}"
+            rme = bpy.data.meshes.new(name)
+            rob = bpy.data.objects.new(name, rme)
+            bpy.context.scene.collection.objects.link(rob)
+            b.normal_update()
+            b.to_mesh(rme)
+            if grd is not None and grd.data.materials:
+                rme.materials.append(grd.data.materials[0])
+            rme.update()
+            rail_objects.append([rob.name, len(rme.vertices), chunk_tris[k]])
+    for b in chunks:
+        b.free()
     rep = {"_doc": "tools/ground_release_blend.py (ledger 0046 v0.18.0 integration fix round)",
            "terrain_vertices": [v0, len(me.vertices)], "edges_halved": n_sub, "no_data_vertices": n_nodata,
            "ramp_toward_the_prep_refinement": n_ramp_ref,
-           "zones": per_zone, "batter": {"cut_m_per_m": BATTER_CUT, "fill_m_per_m": BATTER_FILL, "reach_m": BATTER_REACH_M, "cut": n_cut, "fill": n_fill},
+           "zones": per_zone, "batter": {"cut_m_per_m": BATTER_CUT, "fill_m_per_m": BATTER_FILL, "reach_m": BATTER_REACH_M, "cut": n_cut, "fill": n_fill,
+                      "straight_bank_between_two_pavements": n_bank, "straight_bank_min_m": GR.STRAIGHT_BANK_MIN_M},
+           "held_pits_lifted_under_the_pavement": n_held_pin, "coincident_faces_removed": n_coinc,
+           "coincident_vertices_welded": n_weld, "zero_area_faces_dissolved": n_degen,
            "face_cap": {"vertices_lowered": n_capped, "faces_over_pavement": len(low_of),
                         "faces_still_over_by_an_unreleased_corner": len(pre_face), "those": pre_face[:20]},
            "steep_faces_within_reach": n_steep, "steep_faces_within_reach_in_the_open": len(steep_open),
            "steep_open_sample": steep_open[:40],
            "rail_rows": {"padding_stopped_at_a_rising_bank": n_rail_bury, "split_at_a_lip_jump": n_rail_jump,
-                         "already_behind_a_rail": n_rail_held},
-           "rails": rail_rep}
+                         "already_behind_a_rail": n_rail_held, "stations_past_a_zone_end_over_a_drop": n_ext},
+           "rails": rail_rep, "rail_objects": rail_objects}
     (data / "ground_release.report.json").write_text(json.dumps(rep, indent=1), encoding="utf-8")
     bpy.ops.wm.save_mainfile(filepath=str(proj / "loop.blend"))
     print(f"[release] TERRAIN {v0} -> {len(me.vertices)} verts ({n_sub} edges halved in the zones); " + "; ".join(
         f"{n}: {r['moved']} moved (down <= {r['max_down_m']} m, up <= {r['max_up_m']} m, {r['under_deck']} under a deck)"
-        for n, r in per_zone.items()) + f"; batter cut {n_cut} / fill {n_fill}, per-face cap lowered {n_capped} "
+        for n, r in per_zone.items()) + f"; {n_held_pin} pits under the pavement lifted to it; batter cut {n_cut} / fill {n_fill} / straight bank "
+        f"{n_bank}, per-face cap lowered {n_capped} "
         f"vertices on {len(low_of)} faces over the pavement ({len(pre_face)} held over it by an unreleased corner "
         f"{pre_face[:3]}), {n_steep} steep faces within {BATTER_REACH_M} m "
         f"({len(steep_open)} not under a deck); "
-        f"{n_ramp_ref} ramp vertices blended toward the prep's refined ground; {len(rail_rep)} rail(s) (sloped ends) "
-        f"{[(r['zone'], r['side'], r['s_m']) for r in rail_rep]} on the curb lip; saved loop.blend")
+        f"{n_ramp_ref} ramp vertices blended toward the prep's refined ground; {len(rail_rep)} rail(s) "
+        f"{[(r['zone'], r['side'], r['s_m'], r['ends_full_height']) for r in rail_rep]} on the curb lip ({n_ext} stations "
+        f"past a zone's end over a drop); saved loop.blend")
 
 
 main()

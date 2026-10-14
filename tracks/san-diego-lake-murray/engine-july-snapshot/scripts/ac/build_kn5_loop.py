@@ -1122,10 +1122,13 @@ def _conform_and_reseat(proj: Path, spans):
         me.update()
     print(f"[build_kn5_loop] house seat: {n_seat} buildings seated on the final ground under their footprints, "
           f"{n_found} with a foundation reaching down a slope (deepest {max_found:.2f} m)")
-    # palms / scrub / lights (and any building not seated above) ride the terrain delta (their seats were green)
+    # palms / scrub (and any building not seated above) ride the terrain delta (their seats were green). NOT the
+    # LIGHTS lens markers (v0.18.0, the runtime lens): each sits at its LIGHTPOST's luminaire (tools/author_lamps_blend.py),
+    # and the post never rides, so a lens moved by the ground change under the arm left its own lamp head (LIGHT_123 on
+    # Lake Murray Blvd's I-8 deck rose 1.22 m, 0.68 m over its plate) and the head shadowed its own pool at night
     for ob in bpy.data.objects:
         if ob.type != "MESH" or not ob.name.upper().startswith(
-                ("PALMTRUNK", "PALMFROND", "SCRUB", "BUILDING", "HOUSE", "LIGHTS")):
+                ("PALMTRUNK", "PALMFROND", "SCRUB", "BUILDING", "HOUSE")):
             continue
         me = ob.data
         for isl in _islands(ob):

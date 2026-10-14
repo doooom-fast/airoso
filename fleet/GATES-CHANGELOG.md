@@ -1348,7 +1348,9 @@ Tried and dropped (measured, not shipped): a zone ramp lengthened to an earth ba
 
 Measured on the full rehearsal (fresh scratch workshop, fresh scratch engine-july, no `--skip-blend`), v0.17.1 -> this
 build: street drive_test soft top 42 -> 41, severe 0, kinks 3.86 -> 3.41 /km, bumps 0.15 -> 0.0 /km, gated excursions
-100 -> 99, floating 391, obstruction 0, daylight 0; street audit D 512 -> 514 (the release rails, as in fix rounds 1-2),
+100 -> 99, floating 391, obstruction 0, daylight 0; street audit D 512 -> 514 (corrected in fix round 4: NOT the release rails, which add 0 D — the same 90 `1WALL_guard`
+positions as v0.17.1, two of them on College's deck, now 1.6 m higher at its real height, written as one more duplicate
+vertex record each by the kn5 exporter, as the first integration fix round's entry above says),
 K 20, I 20, F 13; race_cw / race_acw severe 31 / 28 -> 22 / 20, soft top 9 / 9, audits D 0 K 20 I 20 F 13 W 0, no_route
 PASS planned and built (leak 0, 0 / 406), barrier_missing 0, obstruction 0; verify_mouths PASS x4, verify_fold_fans PASS,
 verify_ai_line PASS (2.544 / 2.386 m), verify_kn5 + --inis, check_race_kn5, verify_race, verify_signs (23 posts),
@@ -1356,6 +1358,56 @@ rib_check, house_seat_check PASS. Release: batter cut 412 / fill 446; steep face
 pavement 786 -> 549 (439 -> 329 not under a deck). Teeth (a terrain vertex > 0.6 m over the mean of its neighbours and
 not 3DEP's own): within 20 m of College's south abutment 5 -> 0; within 25 m of the comb west of the north approach 18 -> 7 (the refuted build -> this one). Road kn5 92,502,895 B
 (v0.17.1) -> 116,011,770 B (128,277,872 with the freeway).
+
+### Integration fix round 4 (2026-10-14, v0.18.0, after the gates, runtime and view lenses refuted round 3): rails over every drop, the pit under College's sidewalk lifted, the straight bank, coincident faces, the lamp lenses
+
+No gate threshold changed and no criterion was re-worded. **Corrected:** round 3's "D 512 -> 514 (the release rails)" was
+wrong — the release rails add 0 D (fixed in the round 3 text above).
+
+| Number / rule | Value | Where | Why |
+|---|---|---|---|
+| a rail stands full height over every station that needs it | rule (`tools/ground_release.rail_heights`) | release rails | the gates lens: round 3's sloped ends (to 5 cm over 2 m) stood over live drops wherever a run's padding was clipped by a zone or block end — College Ave's approach foot, s 2500-2502, 4.9 m down; beside College's deck; Lake Murray Blvd. drive_test credits any 1WALL as a guard whatever its height, so the gates could not see it. A slope is built only over padding past the last station over a drop |
+| `tools/ground_release.RAIL_HOLD_M` | 1.0 m [invented] | release rails | full height at least this far past the first / last station over a drop |
+| `tools/ground_release.RAIL_TAPER_MIN_M` | 0.5 m [invented] | release rails | a sloped end shorter than this is not built: the end stays square |
+| rail stations past a zone's end | rule | release rails | the gates lens: at College's approach foot (s 2496-2500) a 3-5 m curtain off the sidewalk had no rail because the stations stopped at the zone; the same embankment edge, College 4-6 m over Alvarado, ran unguarded back to s ~2401 since v0.17.1. From every zone end not inside another zone on that side, stations continue outward while the drop does |
+| `tools/ground_release_blend.RAIL_EXT_FALL_M` | 1.0 m [invented] | the outward stations | past a zone only a real embankment edge carries the rail on: a steep fall (drive_test's 0.12 m per 0.5 m) AND the ground more than this under the edge (the zone rule's 0.5 m fall alone fenced ordinary street verges, 120 m runs in a trial) |
+| `tools/ground_release_blend.RAIL_EXT_MAX_M` | 120 m [invented] | the outward stations | at most this far past a zone end |
+| a pit under the pavement in a bank zone lifted to it | rule | release step 2 + the per-face cap | the view lens's stepped curtain under College's south approach: the draft seats that ground at Alvarado's level, 6 m under College's sidewalk; the prep pins ground under a deck only to a sheet within its window of the vertex's own height and leaves zone vertices alone otherwise, so it stayed a pit under the sidewalk, sawn against the released bank beside it. A held vertex more than `HELD_PIT_M` under its lowest upward ROAD / CURB sheet is lifted to it, and its faces are capped with the released ones (a lifted corner under a curb top must not stand over the gutter beside it). Lifting EVERY held vertex was tried on this round's second rehearsal and dropped: the ground under a curb top stood 0.13 m over the gutter, street soft top 42 -> 211 |
+| `tools/ground_release_blend.HELD_PIT_M` | 1.0 m [invented] | release step 2 | deeper than this under its sheet is a pit; shallower, the seat's height under the pavement stands, as in v0.17.1 |
+| the straight bank between two pavements | rule (`tools/ground_release.batter_z`) | release batter (2b) | where a fill from a high pavement and a cut from a low one cannot both hold (College's sidewalk 5-6 m over Alvarado's, 2-3 m apart) "the cut wins" left a vertical curtain under the high one. There the ground is the straight bank between the two edges, by distance |
+| `tools/ground_release.STRAIGHT_BANK_MIN_M` | 1.0 m [invented] | the straight bank | only between pavements this far apart in height; below it (one road's own grade) the cut still wins |
+| zone `college_approach_foot` from s 2410 (was 2500) | config | track.config.json | the embankment edge first falls over 1 m at s 2410; the old start at s 2500 put the boundary between released and held ground in the middle of the curtain the view lens saw from Alvarado (209 3DEP nodes fetched, TLS verified, cached with provenance) |
+| zone `college_north_approach` s 2690-2745, bank, both sides | config | track.config.json | the view lens's fins 20-50 m west of College's north approach: `college_i8_span` ended at s 2690 and ramped over 4 m back to a verge fresh 3DEP reads 1.3-3.3 m over the real earth; the 1.25 m lattice sampled the ramp as teeth. The zones abut (no ramp at s 2690); 1,266 3DEP nodes fetched |
+| release halving by PLAN length | rule | release step 1 | the runtime lens's zero-length normals: a vertical edge of the seat's curtain (two vertices on one plan point) was halved round after round, stacking up to 31 coincident faces back to back |
+| coincident faces / vertices removed | rule | release; `tools/triangulate_terrain_blend.SLIVER_M2` 0.01 m2 [invented] | faces on one vertex set: a sliver group goes, a real face keeps one copy; coincident vertices welded (1e-4 m) after the release. In the triangulation, a quad with a T-vertex on its diagonal split into a zero-area sliver, its neighbour into the same sliver reversed: groups under 0.01 m2 removed, with a vertex left with no face (no vertex moves) |
+| engine-july prep: LIGHTS do not ride the terrain delta | rule (snapshot `build_kn5_loop.py`, pending mirror) | kn5 prep re-seat | the runtime lens: a lamp's lens marker moved by the ground change under its arm while its LIGHTPOST stayed (LIGHT_123 on Lake Murray Blvd's I-8 deck 0.68 m over its own plate, LIGHT_122 0.15 m) — the head shadowed its own pool |
+| `scripts/ac/ext_config.py` GRASS_NIGHT includes `GRASS_FAR` | rule | ext_config | the far ring kept its day ksDiffuse 0.22 at night beside the near grass's 0.14 |
+| the release rails are their own physical mesh `1WALL_guard_release` | rule | release rails | found on this round's first rehearsal: appended to GUARDRAIL, the longer rails took the prep's 1WALL_guard past the kn5 exporter's 65,536-vertex mesh cap; the exporter wrote two meshes of one name and verify_kn5 stopped the chain ("DUPLICATE physical mesh '1WALL_guard' x2 — AC drops dup-named meshes from collision"). The name keeps the 1WALL_GUARD material row and the WALL surface (prefix match) |
+| `tools/ground_release_blend.RAIL_CHUNK_TRIS` | 18,000 [invented] | release rails | triangles per rail mesh before a second one (`1WALL_guard_release_<k>`): 3 exporter vertices per triangle at worst stays under the cap |
+
+**Not changed, named instead (both still worse than v0.17.1 on paper; `--force-install` would assert otherwise).**
+(a) Street audit D 512 -> 514: the same 90 `1WALL_guard` positions as v0.17.1; at two of them on College's deck, now
+1.6 m higher at its real height, the kn5 exporter writes one more duplicate vertex record each (it dedups corners by
+exact float normal equality, and the slope changed the rounding). No wall moved onto the road. (b) race bumps / km
+7.42 / 10.24 -> 7.72 / 10.39: drive_test's own per-station steps (re-run read-only) put the net +4 / +2 at two places —
+cw s 4539-4549 (acw s 8933-8943), the inside of the levelled fold pinch at (-1961, 593) (ledger 0050, rows 1508-1516),
+where v0.17.1 had grass standing on the road in the lane (12 / 11 of its 23 / 22 soft-top hits are those stations): the
+wheel paths now read the pinch's road fan, 2.5-6 cm second differences; and cw s 6946-6969, the Navajo / Jackson riser
+ledger 0050 levelled, its 0.39 m severe steps now 3-6 cm bumps. Steps over 2.5 cm in all (bumps + severe): 131 -> 126
+(cw), 166 -> 160 (acw).
+
+Measured on the final rehearsal (fresh scratch workshop, fresh scratch engine-july with the pending prep change, no
+`--skip-blend`), v0.17.1 -> this build: street drive_test soft top 42 -> 33, severe 0, kinks 3.86 -> 3.41 /km, bumps
+0.15 -> 0.0, excursions 100 -> 98, floating 391, obstruction 0, daylight 0; street audit D 512 -> 514 (above), K 20, I 20,
+F 13; race_cw / race_acw severe 31 / 28 -> 22 / 20, soft top 23 / 22 -> 9 / 9, kinks 6.45 / 7.57 -> 6.23 / 7.05, bumps
+(above), audits D 0 K 20 I 20 F 13 W 0, no_route planned 139,130 / 138,826 m2 and built 139,148 / 138,847 m2 PASS
+(leak 0, 0 / 406), barrier_missing 0, obstruction 0; verify_mouths x4, verify_fold_fans, verify_ai_line (2.544 /
+2.386 m), verify_kn5 + --inis, check_race_kn5, verify_race (+ scenery), verify_signs (23 posts), rib_check,
+house_seat_check PASS. Release: 327 pits under the pavement lifted, batter cut 460 / fill 604 / straight bank 115,
+2,732 coincident faces removed and 961 coincident vertices welded (0 coincident face sets left in TERRAIN, round 3 448);
+10 rails, 0 rail vertices on a road, College's approach foot railed from s 2388 (the stations past a zone end: 19 over a
+drop). Steep faces (over 60 deg, over 0.5 m) within 12 m of a pavement in the zones 549 -> 849: the two zones added and
+the straight banks (a 60-70 deg bank where the two sidewalks stand 2-3 m apart) — counted, not hidden.
 
 ## 2026-10-12 — `verify_signs` (k) direction coverage, (j) read from signs.json, race furniture never the signs' ground (ledger 0051)
 

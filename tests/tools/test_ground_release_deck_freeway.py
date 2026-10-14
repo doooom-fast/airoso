@@ -148,13 +148,17 @@ def test_lake_murray_zones_are_declared_and_resolve():
     zs = gr.resolve_zones(cfg)
     assert [z["name"] for z in zs] == ["alvarado_creek_bank", "college_south_approach", "lmb_alvarado_creek",
                                        "college_i8_span", "lmb_i8_span", "alvarado_college_terrace",
-                                       "college_approach_foot"]
-    assert [z["kind"] for z in zs] == ["bank", "span", "span", "span", "span", "bank", "bank"]
+                                       "college_approach_foot", "college_north_approach"]
+    assert [z["kind"] for z in zs] == ["bank", "span", "span", "span", "span", "bank", "bank", "bank"]
     assert all(z["reach_m"] >= 36.0 for z in zs)
     # fix round 2: each I-8 overcrossing's whole real span (fresh 3DEP abutments ~2580 / ~2670 and ~13338 / ~13407)
     spans = {z["name"]: z["s_m"] for z in zs}
     assert spans["college_i8_span"][0] <= 2576.0 and spans["college_i8_span"][1] >= 2676.0
     assert spans["lmb_i8_span"][0] <= 13334.0 and spans["lmb_i8_span"][1] >= 13411.0
+    # fix round 4 (the view lens): the approach foot covers the whole College-over-Alvarado embankment edge, and the
+    # north approach abuts the I-8 span (no ramp between them: the row of fins at s 2660-2700)
+    assert spans["college_approach_foot"][0] <= 2410.0
+    assert spans["college_north_approach"][0] == spans["college_i8_span"][1]
     rd = cfg["road_datum"]["decks"]
     assert rd[0]["name"] == "college_ave_over_i8" and rd[0]["deck_m"] == [2586.0, 2683.0]
 
@@ -315,3 +319,71 @@ def test_abutting_zones_do_not_ramp_at_their_shared_end():
     for s in (196.0, 199.0, 200.0, 201.0, 204.0):
         assert Z.weight(s, 6.0)[0] == 1.0, s                      # no dip at the shared station
     assert 0.0 < Z.weight(101.0, 6.0)[0] < 1.0 and 0.0 < Z.weight(259.0, 6.0)[0] < 1.0   # the free ends still ramp
+
+
+# --- v0.18.0 integration fix round 4 (the gates, runtime and view lenses) -------------------------------------
+def test_rail_stands_full_height_over_every_drop_and_slopes_only_over_padding():
+    """the gates lens: sloped ends (to 5 cm) stood over live drops wherever a run's padding was clipped — College
+    Ave's approach foot, s 2500-2502, 4.9 m down. rail_heights: 1 over every station that needs the rail and for
+    RAIL_HOLD_M past it; a slope only over the padding beyond, never shorter than RAIL_TAPER_MIN_M (else square)."""
+    ss = [float(s) for s in range(0, 21)]
+    need = [False] * 3 + [True] * 15 + [False] * 3          # 3 m padding each side
+    h = gr.rail_heights(ss, need, taper=2.0)
+    assert all(h[k] == 1.0 for k in range(len(ss)) if need[k])
+    assert h[2] == 1.0 and h[18] == 1.0                    # the hold: full height 1 m past the first / last drop
+    assert h[0] == 0.0 and h[-1] == 0.0                    # the sloped ends, over padding only
+    # padding clipped (a zone end, a bridge rail's end): a station over a drop at the very end -> a square end
+    h = gr.rail_heights(ss, [True] * 18 + [False] * 3, taper=2.0)
+    assert h[0] == 1.0 and h[-1] == 0.0
+    h = gr.rail_heights(ss, [False] + [True] * 20, taper=2.0)   # 1 m of padding is all hold: square
+    assert h[0] == 1.0 and h[-1] == 1.0
+    # a piece of padding with no drop: slopes at both ends over at most half its length
+    h = gr.rail_heights([0.0, 1.0, 2.0], [False, False, False], taper=2.0)
+    assert h == [0.0, 1.0, 0.0]
+
+
+def test_batter_is_the_straight_bank_where_two_pavements_leave_no_room():
+    """the view lens: College's south approach stands 5-6 m over Alvarado with 2-3 m of ground between the sidewalks —
+    the fill from College and the cut from Alvarado cannot both hold, and 'the cut wins' left a vertical curtain under
+    College's sidewalk. There the ground is the straight bank between the two edges; elsewhere nothing changes."""
+    # no conflict: the fill lifts, the cut caps (as before)
+    assert gr.batter_z(0.0, (5.0, 4.0, 1.0), (2.0, 3.0, 0.6)) == 2.0
+    assert gr.batter_z(9.0, (5.0, 4.0, 1.0), None) == 5.0
+    # conflict between two pavements 5.25 m apart: the straight line between the edges, by distance
+    cut = (0.85 + 1.0 * 1.0, 0.85, 1.0)                    # Alvarado's sidewalk 1 m away
+    fill = (6.1 - 1.7 * 2.0, 6.1, 2.0)                     # College's sidewalk 2 m away
+    z = gr.batter_z(0.05, cut, fill)
+    assert abs(z - (0.85 + (6.1 - 0.85) * 1.0 / 3.0)) < 1e-9
+    assert cut[0] < z < fill[0]
+    # a conflict on one road's own grade (less than STRAIGHT_BANK_MIN_M between the two faces): the cut still wins
+    assert gr.batter_z(0.0, (1.2, 1.0, 0.2), (1.5, 1.6, 0.05)) == 1.2
+
+
+def test_round_4_release_holds_the_ground_under_the_pavement_and_leaves_no_coincident_faces():
+    """the view lens's curtain under College's sidewalk (the prep pins under a deck only within its window of the
+    vertex's own height, and leaves zone vertices alone, so ground the draft seated at Alvarado's level stayed a pit),
+    and the runtime lens's zero-length normals (vertical curtain edges halved round after round stacked up to 31
+    coincident faces; triangulated T-vertex quads left back-to-back slivers). Source pins: bpy-only halves."""
+    src = (ROOT / "tools" / "ground_release_blend.py").read_text(encoding="utf-8")
+    for k in ("v.co.z = min(ht) - CLEAR_M", "z < min(ht) - CLEAR_M - HELD_PIT_M", "lowerable = set(released) | pits", "math.hypot(a.x - b.x, a.y - b.y) <= SUBDIV_M",
+              "math.hypot(a.x - b.x, a.y - b.y) <= EDGE_SUBDIV_M", "bmesh.ops.remove_doubles(bm, verts=weld, dist=1e-4)",
+              "GR.batter_z(z_in, cut, fill)", "GR.rail_heights(ss,", "RAIL_EXT_MAX_M", 'r["need"] = r["need_ext"]',
+              '"coincident_faces_removed": n_coinc', 'RAIL_OBJECT = "1WALL_guard_release"', "RAIL_CHUNK_TRIS"):
+        assert k in src, k
+    assert "e.calc_length()" not in src                     # every halving is by plan length
+    # the rails never join GUARDRAIL (it split past the exporter's vertex cap: two '1WALL_guard' meshes, verify_kn5)
+    assert "bmr.from_mesh(grd.data)" not in src and "bmr.to_mesh(grd.data)" not in src
+    tri = (ROOT / "tools" / "triangulate_terrain_blend.py").read_text(encoding="utf-8")
+    assert "def remove_coincident_slivers(bm):" in tri and "SLIVER_M2" in tri
+
+
+def test_lamp_lenses_never_ride_the_terrain_delta_and_the_far_ring_dims_at_night():
+    """the runtime lens: the prep moved each LIGHTS lens by the ground change under its arm while its LIGHTPOST stayed
+    (LIGHT_123 on Lake Murray Blvd's I-8 deck 0.68 m over its own plate, its head shadowing its pool); and the far ring
+    kept its day ksDiffuse at night beside the dimmed near grass."""
+    src = SNAP.read_text(encoding="utf-8")
+    i = src.index("# palms / scrub")
+    ride = src[i:src.index("_shift(ob, isl, dz)", i)]
+    assert '"LIGHTS"' not in ride and '"PALMTRUNK"' in ride
+    ext = (ROOT / "scripts" / "ac" / "ext_config.py").read_text(encoding="utf-8")
+    assert '("1GRASS", "1LAWN", "GRASS_FAR")' in ext

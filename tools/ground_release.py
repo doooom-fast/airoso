@@ -51,6 +51,64 @@ def smoothstep(t: float) -> float:
     return t * t * (3.0 - 2.0 * t)
 
 
+# --- v0.18.0 integration fix round 4 (the gates + view lenses), pure so the tests run them --------------------------
+STRAIGHT_BANK_MIN_M = 1.0   # [invented] two pavements this much apart in height, too close for both batters, get the
+#                             straight bank between their edges (below it the cut wins, as before)
+RAIL_HOLD_M = 1.0           # [invented] a rail stands full height at least this far past its last station over a drop
+RAIL_TAPER_MIN_M = 0.5      # [invented] a sloped end shorter than this is not built: the end stays square (full height)
+
+
+def batter_z(z: float, cut: tuple | None, fill: tuple | None) -> float:
+    """The released height of a vertex beside the pavement (ground_release_blend step 2b). cut = (limit, h_c, d_c): the
+    lowest 'no higher than' bound (an earth cut rising from a pavement face at h_c, d_c away); fill = (limit, h_f, d_f):
+    the highest 'no lower than' bound (a fill falling from a grounded pavement face at h_f). Normally the fill lifts and
+    the cut wins. Where they conflict (fill limit over cut limit) between two pavements more than STRAIGHT_BANK_MIN_M
+    apart in height — College Ave's south approach 5-6 m over Alvarado Rd with 2-3 m of ground between their sidewalks
+    (v0.18.0, the view lens's stepped curtain) — neither bank fits: the ground is the straight bank between the two
+    edges, so no cliff stands on either side."""
+    nz = z
+    if fill is not None and nz < fill[0]:
+        nz = fill[0]
+    if cut is not None and nz > cut[0]:
+        if fill is not None and fill[0] > cut[0] and fill[1] - cut[1] > STRAIGHT_BANK_MIN_M:
+            lim_c, h_c, d_c = cut
+            lim_f, h_f, d_f = fill
+            t = d_c / max(1e-9, d_c + d_f)
+            return h_c + (h_f - h_c) * t
+        nz = cut[0]
+    return nz
+
+
+def rail_heights(ss: list, need: list, taper: float, hold: float = RAIL_HOLD_M,
+                 min_taper: float = RAIL_TAPER_MIN_M) -> list:
+    """Per rail row, the fraction of the full barrier height (1 = full). A rail stands full height over every station
+    that needs it and for `hold` past the first / last one; a sloped end (to 0, scaled by the caller to its end height)
+    is built only over the padding beyond that, at most `taper` long, and not at all when less than `min_taper` is left
+    (v0.18.0, the gates lens: ends sloped to 5 cm over live drops where a run's padding was clipped by a zone or a
+    block end — College Ave's approach foot, s 2500-2502, 4.9 m down). A piece with no station that needs it (a split
+    piece of padding) slopes at both ends over at most half its length."""
+    n = len(ss)
+    if n == 0:
+        return []
+    idx = [k for k in range(n) if need[k]]
+    if idx:
+        t0 = min(taper, ss[idx[0]] - ss[0] - hold)
+        t1 = min(taper, ss[-1] - ss[idx[-1]] - hold)
+    else:
+        t0 = t1 = min(taper, 0.5 * (ss[-1] - ss[0]))
+    t0 = t0 if t0 >= min_taper else 0.0
+    t1 = t1 if t1 >= min_taper else 0.0
+    out = []
+    for k in range(n):
+        h = 1.0
+        if t0 > 0.0:
+            h = min(h, (ss[k] - ss[0]) / t0)
+        if t1 > 0.0:
+            h = min(h, (ss[-1] - ss[k]) / t1)
+        out.append(max(0.0, min(1.0, h)))
+    return out
+
+
 class Zones:
     """Pure (no bpy): which points lie in a declared release zone, and how strongly. Local frame (x = E, z = N); the
     loop's centreline vertices ``pts`` (x, y, z) with ``widths``; a zone = {name, kind: bank|span, s_m: [a, b],

@@ -298,7 +298,9 @@ def generate(project_dir: str | Path) -> Path:
         # instead of floodlit neon foliage ("Floodlights", v0.7.8).
         veg_mats = ", ".join(f"{g}_mat" for g in groups
                              if g.upper().startswith(("CONIFER", "TREES", "BUSHES", "PALMS")))
-        grass_mats2 = ", ".join(f"{g}_mat" for g in groups if g.upper().startswith(("1GRASS", "1LAWN")))
+        # the far ring (GRASS_FAR_*, visual only, ledger 0046) is grass too: without it the ring stayed at its day
+        # ksDiffuse 0.22 at night while the near 1GRASS dropped to 0.14, a bright band at the seam (v0.18.0 runtime lens)
+        grass_mats2 = ", ".join(f"{g}_mat" for g in groups if g.upper().startswith(("1GRASS", "1LAWN", "GRASS_FAR")))
         if veg_mats:
             out += ["[MATERIAL_ADJUSTMENT_VEG_NIGHT]",
                     f"MATERIALS = {veg_mats}",

@@ -434,14 +434,28 @@
           "name": "college_approach_foot",
           "kind": "bank",
           "s_m": [
-            2500.0,
+            2410.0,
             2545.0
           ],
           "sides": [
             "right"
           ],
           "reach_m": 40.0,
-          "why": "the same curtain's other end: College Ave's south approach from s 2500, where it meets Alvarado; a bank zone (beside the road only: 3DEP has the road on the ground here, 0.5 m under it at s 2545, so a span would open air under it)"
+          "why": "the same curtain's other end: College Ave's south approach, where it runs beside Alvarado 5-6 m over it; a bank zone (beside the road only: 3DEP has the road on the ground here, 0.5 m under it at s 2545, so a span would open air under it). Fix round 4 (the view lens: a stepped curtain of vertical slivers seen from Alvarado, worst at this zone's old start, s 2500): from s 2410, where the embankment edge first falls over 1 m (1.0 m at s 2410, 3.4 m by s 2470, 4.9 m at s 2500 in v0.17.1 and since, unguarded); the ground under College's sidewalk is held under it, and between the two sidewalks (2-3 m apart, too close for both batters) the ground is the straight bank between their edges"
+        },
+        {
+          "name": "college_north_approach",
+          "kind": "bank",
+          "s_m": [
+            2690.0,
+            2745.0
+          ],
+          "sides": [
+            "left",
+            "right"
+          ],
+          "reach_m": 40.0,
+          "why": "fix round 4 (the view lens: short grass fins 20-50 m west of College Ave's north approach, s 2660-2700, seen over the parapet from the seat; worse than v0.17.1): college_i8_span ended at s 2690 and ramped back over 4 m to the near-road verge the build holds, which fresh 3DEP reads 1.3-3.3 m above the real earth 20-35 m out at s 2680-2720; the 1.25 m lattice sampled that 4 m ramp as a row of teeth. Beside the road only (the approach sits on its embankment, on the ground), from the span's north end (no ramp there: the zones abut) to s 2745"
         }
       ]
     },

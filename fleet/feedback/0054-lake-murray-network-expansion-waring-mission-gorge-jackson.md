@@ -92,3 +92,19 @@ vertices moved by more than 1 m against the pre-change v0.18 build (max 25.24 m)
 drive / audit / no_route verdict identical to v0.17.1 before 0050; `rib_check` PASS; from v1640 the hill in front of
 Cowles now stands at 7.157° (3DEP 7.231°; it was 6.600°). Details in ledger 0046 "Integration (v0.18.0)". Integration fix round 3 (2026-10-13): kept at 20 / 40 with the freeway off; LAWS L3's bullet now reads Kevin's principle (near-road relief is shaped to the road within the road's own construction zone, ~20-40 m; real relief beyond is never reshaped); from v1640 the hill reads 7.157° against fresh 3DEP's 7.215° (ledger 0046 "Integration fix round 3").
 
+## The roadmap of Lake Murray phases (Kevin, 2026-10-14)
+
+> "Phase 3 will be waring to Zion, Zion to mission gorge"
+
+- **Phase 1** (this entry, building): Waring (J1→J2), Princess View (J2→J3), Mission Gorge (J3→J4), Jackson north
+  (J4→J5). Free Roam only.
+- **Phase 2:** not named by Kevin; the plan's D1 default puts **Mission Gorge Speedway** (+ Reverse) here — assumed
+  until he says otherwise.
+- **Phase 3 (Kevin):** **Waring from J2 south-west to Zion Ave (~0.6 km), Zion Ave west to Mission Gorge Rd
+  (~1.6 km, 32.7927-32.7930 N, from Waring at −117.0807 to Mission Gorge at −117.0976, fresh OSM 2026-10-14),** and
+  Mission Gorge Rd from Zion back up to J3 (~2.3 km) so it joins the network. A western loop J2 → Waring → Zion →
+  Mission Gorge → J3 → Princess View → J2; Princess View stays. Terrain: Zion's west end lies inside the D2 far box
+  (west −117.108) but ~1.6 km west of phase 1's grown physical grid edge (−117.0807), so phase 3 grows the grid
+  again with the same whole-cell pin + `tools/remap_sample_cache.py` (no old node moves).
+
+(Naming: the plan's build steps P0-P7 are *steps*; "Phase N" is Kevin's expansion phase.)

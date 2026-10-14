@@ -1765,3 +1765,47 @@ A weld that records a different row count from the gate centreline is refused (S
 **Measured** (v0.18.0 full rehearsal): street severe 0, bumps 0.15 → 0.0 /km, kinks 3.86 → 3.41, soft top 42 → 41;
 race_cw severe 31 → 22, soft top 23 → 9; race_acw 28 → 20, 22 → 9; no_route BUILT PASS both (walls' worst offset near X
 +0.263 m); audits unchanged; verify_mouths byte-identical to v0.17.1.
+
+## 2026-10-14 — race layouts on their own LAP: every race gate counts along the layout's line (ledger 0054 phase 2 groundwork)
+
+Phase 2 (Mission Gorge Speedway) needs a race lap that runs partly on the loop and partly on the expansion roads.
+Every race tool read exactly one lap line — the mainline centreline — and counted along it by vertex number. Opt-in
+now: `layouts[].lap = <lap id>` on a race layout, `race.laps.<lap id>` = `{pieces, corridor, kerbs, roads}`
+(`scripts/geometry/race_lap.py`: the pieces stitched VERBATIM, junction gaps bridged by points resampled on the
+straight join at the pieces' median spacing, closed, with `source_by_vertex` back to (line, vertex)). **No threshold
+changed**: every gate below runs the same rule on the lap's own line and declaration
+(`data/lap.<lap>.json`, `data/barrier_bands.<lap>.json`, `race_authored.<lap>.json`). A track whose layouts name no
+lap runs byte-identical (the identity proof: the full v0.18.0 chain with main's tools and with these, md5 of every
+output — the report of this change).
+
+| Gate / tool | On a lap layout |
+|---|---|
+| `tools/barrier_bands.py` self-gates 1-12 + PLANNED no_route | one declaration per group (the mainline's race layouts → `barrier_bands.json`, each lap's → `barrier_bands.<lap>.json`); the lap's mouths = its pieces' side streets (a side street of a piece walked backwards flips side) + the BRANCH it abandons at each junction |
+| `tools/no_route.py` | the lap's line + declaration; a probe carrying `xz` (a branch) is tested at that point |
+| `tools/verify_race.py --lap <lap>` | A-O + F + G on the lap group; K now also fails a common object whose name carries the wrong group's lap token (or none) — the split routes on it |
+| `tools/check_race_kn5.py --role common --lap <lap>` | `<slug>_race_<lap>.kn5`: every strip / kerb named `lap<lap>`; without `--lap` none may be (new check, same FAIL wording class) |
+| `scripts/ac/verify_kn5.py` (f) / (g) | each lap's common kn5 checked like `<slug>_race.kn5` (+ the lap-token routing), stray `<slug>_race_*.kn5` fails; a lap layout's spawns judged on the lap (kn5 frame) against its own lane; its ini lists `<slug>_race_<lap>.kn5` |
+| `scripts/geometry/drive_test.py`, `median_zone.py`, `audit_mesh.py --layout` | the lap's line + declaration (the fold-fan discs stay on the mainline rows the weld indexes) |
+| `tools/verify_fold_fans.py` | a pinch the lap does not run over is skipped for that layout (behind its walls); the others take the lap's lane mapped back to the mainline row |
+| `scripts/ac/write_ai_line.py` + `tools/verify_ai_line.py` | the line is drafted on `data/lap.<lap>.json`; the gate reads only the line and the BUILT OBJ (unchanged) |
+
+New constants (all in `scripts/geometry/race_lap.py`):
+
+| Constant | Value | Flag |
+|---|---|---|
+| `DEDUPE_M` — consecutive piece ends this close are one point (no join) | 0.25 m | [invented] |
+| `BRANCH_PROBE_M` — a branch probe stands this far past the lap's curb along the abandoned line | 10 m | = `barrier_bands.MOUTH_PROBE_M` (the side-street probe), reused |
+| `BRANCH_ON_LAP_PAD_M` — a "branch" whose probe lies within half-width + this of the lap is the lap itself | 1.0 m | [invented] |
+| `CONNECTOR_ISLAND_SNAP_M` — a connector vertex takes the island width of the nearest `connector_islands` point within this | 1.0 m | [invented] |
+| join spacing | the pieces' median vertex spacing (`race.laps.<lap>.join_spacing_m` overrides) | measured per lap |
+
+A stitched junction is a zero-radius corner: its inside offset never crosses itself, so `race_furniture`'s fold trim
+has no corner to trim the inside kerb to (it stops with "author this corner by hand"). That is DECLARED, not derived:
+`race.laps.<lap>.kerbs.trims` drops it with its why (tests/tools/lap_world.py does exactly that).
+
+Proven by `tests/tools/test_race_lap.py` on a synthetic world (a 2.4 km rounded-rectangle mainline, a connector up
+its middle, a 1.6 km lap = the west half + the connector): the lap declared with every self-gate and the planned fill
+green, the mainline's declaration byte-identical with or without the lap, the seal holding planned and BUILT and a
+gap across a branch caught (forbidden probe + leak), spawns on the lap, the AI line inside its corridor and green on
+`verify_ai_line`, drive_test's lane = the lap's (barrier_missing 0; a missing closure → `closure` missing), the lap's
+ini loading its own common kn5.

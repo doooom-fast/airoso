@@ -4,6 +4,7 @@ race export, on scripts/modkit/inspect_kn5.py's --json of the file:
     python -m scripts.modkit.inspect_kn5 <kn5> --json <file>                     (the parse)
     python tools/check_race_kn5.py <file> --role common                          (<slug>_race.kn5)
     python tools/check_race_kn5.py <file> --role closure --owner <token>         (<slug>_closure_<layout>.kn5)
+    python tools/check_race_kn5.py <file> --role common --lap <lap>              (<slug>_race_<lap>.kn5, ledger 0054)
         [--bands <barrier_bands.json>] [--expect-kerbs N]                        (exit 1 on a FAIL)
 
 Since ledger 0049 the race layouts load TWO furniture kn5s each: the COMMON <slug>_race.kn5 (both curb strips as
@@ -16,6 +17,9 @@ direction's closure). Which file a mesh belongs in is decided by its name (race_
                   len(kerbs) of --bands, else of the barrier_bands.json beside the parse when there is one — 10 on SD)
   --role closure  every mesh is 1WALL_RACE_CLOSE_<OWNER>_* (no kerb, no curb strip, no other layout's closure);
                   at least one
+  --lap <lap>     (with --role common, ledger 0054) the common set of a LAP (<slug>_race_<lap>.kn5): every curb strip
+                  and kerb carries lap<lap> as its first name field (1WALL_RACE_EDGE_LAP<LAP>_*, 1KERB_RACE_LAP<LAP>_*);
+                  without --lap NONE may carry a lap token (a lap's strip in the mainline's kn5 is a wall on its lap)
   both roles      every texture is one of the race set (the diffuse / normal files of scripts/ac/pbr.py's TEXTURES
                   rows whose key starts with 1WALL_RACE or 1KERB_RACE — read from the table, never restated); no node
                   named AC_* (spawns ride in the per-layout spawn kn5s, L8 as amended); and (ledger 0053) no BLACK
@@ -40,6 +44,19 @@ EDGE_TAG, CLOSE_TAG, KBAR_TAG, KERB_TAG = "1WALL_RACE_EDGE_", "1WALL_RACE_CLOSE_
 SIZE_WARN_B = 20_000_000
 AC_PREFIX = "AC_"
 ROLES = ("common", "closure")
+LAP_FIELD = "lap"
+
+
+def race_lap(name):
+    """the lap token of a lap's common furniture name (1WALL_RACE_EDGE_LAP<tok>_* / 1KERB_RACE_LAP<tok>_*), else None —
+    race_furniture.race_lap, restated (this guard reads only the parse)"""
+    u = str(name).upper()
+    for tag in (EDGE_TAG, KERB_TAG):
+        if u.startswith(tag):
+            field = str(name)[len(tag):].split("_", 1)[0].lower()
+            tok = field[len(LAP_FIELD):] if field.startswith(LAP_FIELD) else ""
+            return tok if tok.isalnum() and tok == tok.lower() and tok.isascii() else None
+    return None
 
 
 def _pbr_textures() -> dict:
@@ -117,7 +134,8 @@ def black_slots(parsed: dict, textures: dict | None = None) -> list[str]:
 
 
 def check(parsed: dict, allowed: set[str], size_warn_b: int = SIZE_WARN_B, *, role: str | None = None,
-          owner: str | None = None, expect_kerbs: int | None = None, textures: dict | None = None) -> dict:
+          owner: str | None = None, expect_kerbs: int | None = None, textures: dict | None = None,
+          lap: str | None = None) -> dict:
     """{ok, fails, warns, summary} for one inspect_kn5 parse of a race-furniture kn5 (see the module doc for the roles)"""
     fails, warns = [], []
     if role is not None and role not in ROLES:
@@ -158,6 +176,11 @@ def check(parsed: dict, allowed: set[str], size_warn_b: int = SIZE_WARN_B, *, ro
                 fails.append("no race kerb (1KERB_RACE_*) in the common kn5")
         elif len(kerbs) != int(expect_kerbs):
             fails.append(f"{len(kerbs)} race kerbs (1KERB_RACE_*), the declaration has {int(expect_kerbs)}")
+        # ledger 0054: which lap's common set this is rides in the names (race_furniture.race_lap)
+        stray = [n for n in edges + kerbs if race_lap(n) != (str(lap).lower() if lap else None)]
+        if stray:
+            fails.append(f"{len(stray)} curb strips / kerbs of {'another lap or the mainline' if lap else 'a LAP'} in the "
+                         f"{'lap ' + repr(lap) if lap else 'mainline'} common kn5 (race_furniture.race_lap): {stray[:4]}")
     elif role == "closure":
         tok = str(owner or "").lower()
         if not tok:
@@ -179,19 +202,21 @@ def check(parsed: dict, allowed: set[str], size_warn_b: int = SIZE_WARN_B, *, ro
                "verts_per_tri": round(verts / max(1, tris), 3), "textures": tex, "nodes": list(parsed.get("nodes") or []),
                "max_mesh_verts": max([int(m.get("verts", 0)) for m in meshes] or [0]),
                "role": role, "owner": owner, "edges": len(edges), "kerbs": len(kerbs), "closures": len(closes)}
+    if lap:
+        summary["lap"] = lap
     return {"ok": not fails, "fails": fails, "warns": warns, "summary": summary}
 
 
 def main(argv=None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     usage = ("usage: python tools/check_race_kn5.py <inspect_kn5 --json output> [--role common|closure] "
-             "[--owner <token>] [--bands <barrier_bands.json>] [--expect-kerbs N]")
-    role, owner, bands_p, expect = "common", None, None, None
+             "[--owner <token>] [--lap <lap>] [--bands <barrier_bands.json>] [--expect-kerbs N]")
+    role, owner, bands_p, expect, lap = "common", None, None, None, None
     rest = []
     i = 0
     while i < len(argv):
         a = argv[i]
-        if a in ("--role", "--owner", "--bands", "--expect-kerbs") and i + 1 >= len(argv):
+        if a in ("--role", "--owner", "--bands", "--expect-kerbs", "--lap") and i + 1 >= len(argv):
             raise SystemExit(usage)
         if a == "--role":
             role = argv[i + 1]; i += 2
@@ -201,6 +226,8 @@ def main(argv=None) -> int:
             bands_p = Path(argv[i + 1]); i += 2
         elif a == "--expect-kerbs":
             expect = int(argv[i + 1]); i += 2
+        elif a == "--lap":
+            lap = argv[i + 1]; i += 2
         else:
             rest.append(a); i += 1
     if len(rest) != 1 or role not in ROLES:
@@ -208,13 +235,13 @@ def main(argv=None) -> int:
     p = Path(rest[0])
     parsed = json.loads(p.read_text(encoding="utf-8"))
     if role == "common" and expect is None:
-        bp = bands_p or (p.parent / "barrier_bands.json")
+        bp = bands_p or (p.parent / ("barrier_bands.json" if not lap else f"barrier_bands.{lap}.json"))
         if bp.exists():
             expect = len(json.loads(bp.read_text(encoding="utf-8")).get("kerbs") or [])
     allowed = race_texture_set()
-    r = check(parsed, allowed, role=role, owner=owner, expect_kerbs=expect)
+    r = check(parsed, allowed, role=role, owner=owner, expect_kerbs=expect, lap=lap)
     s = r["summary"]
-    what = "COMMON" if role == "common" else f"CLOSURE {owner!r}"
+    what = ("COMMON" if not lap else f"COMMON lap {lap!r}") if role == "common" else f"CLOSURE {owner!r}"
     print(f"[race-kn5] {Path(parsed.get('file', p)).name} ({what}): {s['file_bytes']:,} B; {s['meshes']} meshes "
           f"({s['edges']} curb strips, {s['kerbs']} kerbs, {s['closures']} closure; max {s['max_mesh_verts']:,} v), "
           f"{s['verts']:,} v / {s['tris']:,} tri = {s['verts_per_tri']} per triangle; textures {s['textures']}; nodes {s['nodes']}")

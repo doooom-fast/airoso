@@ -28,7 +28,8 @@ never rotated. Tangent from pts[k-1] -> pts[k+1] at the dummy's OWN nearest vert
 Schema = the dict track_folder counts pits from ({name: [x, y, z]}, engine frame x=E, y=up, z=N —
 the frame dummies.json / finished_centerline.json / write_ai_line.grid_alignment share) plus
 UNDERSCORE keys every consumer must skip: `_layout`, `_direction`, `_frame`, `_yaw_deg`,
-`_vertex`, `_station_m`, `_right_of_travel_m`, `_line`, `_issue_spawn`.
+`_vertex`, `_station_m`, `_right_of_travel_m`, `_line`, `_issue_spawn` (and `_lap` on a layout that names a lap:
+then every vertex in the start block and in `_vertex` / `_line` is the LAP's own — data/lap.<id>.json, ledger 0054).
 
 Per-issue spawns (Kevin 2026-08-20) survive for the STREET layout only:
     python tools/layout_dummies.py <project> --issue-spawn <key>
@@ -65,6 +66,19 @@ DIRECTIONS = ("forward", "reverse")
 KINDS = ("street", "race")
 UNDERSCORE_DOC = ("underscore keys are metadata — consumers (build_spawn_kn5, track_folder, write_ai_line, "
                   "verify_kn5) must skip every key starting with '_'")
+
+
+def _load_lap_module():
+    """scripts/geometry/race_lap.py by file (pure; no sys.path side effects on the tools that load this one)"""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("_race_lap_ld", Path(__file__).resolve().parents[1] / "scripts"
+                                                  / "geometry" / "race_lap.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_LAP = _load_lap_module()
 
 
 def yaw_deg(ux: float, uz: float) -> float:
@@ -329,6 +343,7 @@ def write_all(project_dir, config_path=None, only=None, issue_spawn=None) -> int
         else:
             override = {"key": issue_spawn, "vertex": pos["vertex"], "offset_right_m": pos["offset_right_m"]}
     written = []
+    laps: dict = {}           # ledger 0054: a race layout that names a LAP places its set on the lap's own vertices
     for lo in layouts:
         lid = lo.get("id")
         if only and lid not in only:
@@ -336,7 +351,15 @@ def write_all(project_dir, config_path=None, only=None, issue_spawn=None) -> int
         ov = override if (override and lo.get("kind", "street") == "street") else None
         if override and ov is None and lo.get("kind") == "race":
             print(f"[dummies] {lid}: race layout — issue spawn ignored (declared grid kept)")
-        d, lf = layout_dummies(line, lo, race, island_w, ov)
+        lap = _LAP.lap_of(lo)
+        if lap is None:
+            d, lf = layout_dummies(line, lo, race, island_w, ov)
+        else:
+            if lap not in laps:
+                rec = _LAP.load(proj, lap)
+                laps[lap] = (Line(rec["points_xyz_m"], rec["widths_m"]), rec["island_w_by_vertex"])
+            d, lf = layout_dummies(laps[lap][0], lo, race, laps[lap][1], ov)
+            d["_lap"] = lap
         fails.extend(lf)
         out = data / f"dummies_{lid}.json"
         out.write_text(json.dumps(d, indent=1), encoding="utf-8")

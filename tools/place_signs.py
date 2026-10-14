@@ -31,7 +31,17 @@ THE RULE (all maths in the engine frame x = E, y = up, z = N of data/centerline.
   facing    plate normal f = -t exactly; arrow head toward +nR for D < 0 (W1-6R), -nR for D > 0.
   hairpin   |D| >= 135 AND arc >= 50 m -> a SECOND W1-6 from PC2 = the R = 20 m crossing, kept if
             the two bases are >= 12 m apart.
-  mainline  driven direction only (increasing index = clockwise lap); connectors both approaches.
+  mainline  the forward approach (increasing index = clockwise lap) always; the REVERSE approach too
+            when signs.json defaults.both_directions_mainline is true (ledger 0051: a layout drives the
+            lap anticlockwise, and the signs ship in the one road kn5 every layout loads). Connectors
+            are always scanned in both approaches (two-way streets).
+  mirror    a signs.json entry names the corner once, for its FORWARD approach: on a reversed scan its
+            arrow / expect_arrow are mirrored (right <-> left; the same bend driven the other way turns
+            the other way) and the record carries the mirrored value. A per-approach sub-object
+            ("fwd": {...} / "rev": {...}) adds or replaces keys for that approach only and is never
+            mirrored; on a corner scanned both ways a pin key (base_xz, face_bearing_deg,
+            slide_along_curb_m) must sit inside one of them (SignsConfigError otherwise: one pin cannot
+            serve two plates that face opposite approaches).
   slide     lamps (>= 3.0 m) and plants (>= 2.5 m) are cleared by sliding S along the local curb
             direction u (station sC), the smallest |slide| first, 0.25 m steps, capped at 1.0 m;
             beyond the cap the sign stays on the ray and the plant is excluded from TreeFX
@@ -56,7 +66,10 @@ THE RULE (all maths in the engine frame x = E, y = up, z = N of data/centerline.
 
 Overrides: tracks/<slug>/signs.json {defaults{...}, corners{<id>: {ribbon, vertex, skip, reason,
 slide_along_curb_m, base_xz, face_bearing_deg, plate, arrow, expect_arrow, height_m, om1_3,
-second_arrow, force}}}. defaults.kappa_window_m / hysteresis_stations drive the detector (12 m /
+second_arrow, force, fwd{...}, rev{...}}}} — arrow / expect_arrow name the FORWARD approach's arrow
+(mirrored on a reversed scan); fwd / rev hold keys for one approach only (e.g. rev: {skip, reason}).
+A skip with no non-empty reason (its own or the entry's) is refused at load.
+An explicit --signs path that does not exist is an error, never "no overrides". defaults.kappa_window_m / hysteresis_stations drive the detector (12 m /
 6 stations). An entry whose vertex has no detected corner within 30 m is refused with a WARN
 (stale after a centreline regen). `plate` selects the geometry; only W1-6 exists (PLATE_GEOMETRY)
 and any other value is a loud failure at load (never a silent W1-6). Every key in DEFAULTS is
@@ -153,7 +166,10 @@ DEFAULTS = {
 PLATE_GEOMETRY = ("W1-6",)      # the plates sign_polygons can build; W1-7 / W1-8 are second-pass devices
 CORNER_KEYS = ("ribbon", "vertex", "skip", "reason", "slide_along_curb_m", "base_xz", "face_bearing_deg",
                "plate", "arrow", "expect_arrow", "height_m", "om1_3", "second_arrow", "force",
-               "where", "ship", "note")      # where/ship/note are prose for the pictures and for Kevin
+               "where", "ship", "note",      # where/ship/note are prose for the pictures and for Kevin
+               "fwd", "rev")                 # per-approach sub-objects (ledger 0051), see the module doc
+DIRECTION_KEYS = ("fwd", "rev")
+PIN_KEYS = ("base_xz", "face_bearing_deg", "slide_along_curb_m")   # one approach only (ledger 0051)
 GATED_RIBBONS = ("MAINLINE",)   # the centrelines drive_test sweeps: its disc is the only one a gate enforces
 RIBBON_PREFIX = {"MAINLINE": "M", "del_cerro_blvd#0": "DC0", "del_cerro_blvd#1": "DC1",
                  "del_cerro_blvd_loop": "DCL", "medium#2+0#0#0": "MED"}
@@ -565,19 +581,89 @@ def validate_overrides(cfg, corners, src="signs.json"):
         for k in ov:
             if not k.startswith("_") and k not in CORNER_KEYS:
                 bad.append("corners.%s.%s is not a key any tool reads (known: %s)" % (cid, k, ", ".join(CORNER_KEYS)))
-        plate = ov.get("plate", PLATE_GEOMETRY[0])
-        if plate not in PLATE_GEOMETRY:
-            bad.append("corners.%s.plate = %r: no geometry for it (sign_polygons builds %s only)" % (cid, plate, "/".join(PLATE_GEOMETRY)))
-        if ov.get("arrow") is not None and ov["arrow"] not in ("left", "right"):
-            bad.append("corners.%s.arrow = %r (left|right)" % (cid, ov["arrow"]))
-        if ov.get("expect_arrow") is not None and ov["expect_arrow"] not in ("left", "right"):
-            bad.append("corners.%s.expect_arrow = %r (left|right)" % (cid, ov["expect_arrow"]))
+        subs = [("corners.%s" % cid, ov)]
+        for dk in DIRECTION_KEYS:
+            sub = ov.get(dk)
+            if sub is None:
+                continue
+            if not isinstance(sub, dict):
+                bad.append("corners.%s.%s is not an object" % (cid, dk))
+                continue
+            for k in sub:
+                if not k.startswith("_") and (k not in CORNER_KEYS or k in DIRECTION_KEYS + ("ribbon", "vertex")):
+                    bad.append("corners.%s.%s.%s is not a per-approach key (ribbon / vertex / fwd / rev name the corner, once)" % (cid, dk, k))
+            subs.append(("corners.%s.%s" % (cid, dk), sub))
+        for where, o in subs:
+            plate = o.get("plate", PLATE_GEOMETRY[0])
+            if plate not in PLATE_GEOMETRY:
+                bad.append("%s.plate = %r: no geometry for it (sign_polygons builds %s only)" % (where, plate, "/".join(PLATE_GEOMETRY)))
+            if o.get("arrow") is not None and o["arrow"] not in ("left", "right"):
+                bad.append("%s.arrow = %r (left|right)" % (where, o["arrow"]))
+            if o.get("expect_arrow") is not None and o["expect_arrow"] not in ("left", "right"):
+                bad.append("%s.expect_arrow = %r (left|right)" % (where, o["expect_arrow"]))
+        # a skip removes a driver's arrow: it carries its reason (the entry's own, or its approach
+        # sub-object's), never a silent drop (ledger 0051: a bare rev skip at M4 once passed verify_signs
+        # (k) with race_acw's Jackson/Navajo arrow gone)
+        for dk in DIRECTION_KEYS if all(isinstance(ov.get(k), (dict, type(None))) for k in DIRECTION_KEYS) else ():
+            eff = effective_override(ov, dk == "rev")
+            if eff.get("skip") and not (isinstance(eff.get("reason"), str) and eff["reason"].strip()):
+                bad.append("corners.%s skips the %s approach with no reason (add \"reason\": \"<why>\" beside the skip)" % (cid, dk))
     if bad:
         raise SignsConfigError("%s: %s" % (src, "; ".join(bad)))
 
 
+def check_pins(cfg, corners, src="signs.json"):
+    """a pin key at the top level of an entry whose corner is scanned in BOTH approaches (every
+    connector entry; a mainline entry when both_directions_mainline) would put two plates facing
+    opposite approaches on one pin -> SignsConfigError naming the per-approach sub-object to use"""
+    bad = []
+    for cid, ov in corners.items():
+        both = ov.get("ribbon", "MAINLINE") != "MAINLINE" or bool(cfg.get("both_directions_mainline"))
+        pins = [k for k in PIN_KEYS if ov.get(k) not in (None, 0, 0.0, [], "")]
+        if both and pins:
+            bad.append("corners.%s: %s pins ONE approach but this corner is signed in both; move it into "
+                       "corners.%s.fwd or corners.%s.rev" % (cid, "/".join(pins), cid, cid))
+    if bad:
+        raise SignsConfigError("%s: %s" % (src, "; ".join(bad)))
+
+
+def mirror_arrow(a):
+    return {"left": "right", "right": "left"}.get(a, a)
+
+
+def effective_override(ov, reverse):
+    """the keys one approach of a named corner sees: the entry's own keys (arrow / expect_arrow
+    mirrored on a reversed scan — the entry speaks for the FORWARD approach) with that approach's
+    sub-object laid over them unmirrored (ledger 0051). Two bookkeeping keys ride along:
+    _mirrored (the keys that were flipped) and _direction_keys (the keys the sub-object set)."""
+    if not ov:
+        return {}
+    eff = {k: v for k, v in ov.items() if k not in DIRECTION_KEYS}
+    mirrored = []
+    if reverse:
+        for k in ("arrow", "expect_arrow"):
+            if eff.get(k) in ("left", "right"):
+                eff[k] = mirror_arrow(eff[k])
+                mirrored.append(k)
+    sub = ov.get("rev" if reverse else "fwd") or {}
+    for k, v in sub.items():
+        if k.startswith("_"):
+            continue
+        eff[k] = v
+        if k in mirrored:
+            mirrored.remove(k)
+    eff["_mirrored"] = mirrored
+    eff["_direction_keys"] = sorted(k for k in sub if not k.startswith("_"))
+    return eff
+
+
 def load_overrides(proj, signs_path=None):
+    """(cfg, corners, path). An EXPLICIT signs_path that does not exist is an error (ledger 0051: a
+    mis-pathed --signs once ran with no overrides and placed DCL-2's pair against Kevin's 'keep the
+    cul-de-sac sign off'); the default path missing means DEFAULTS (a track with no signs.json)."""
     p = Path(signs_path) if signs_path else AIROSO / "tracks" / track_dir_name(proj) / "signs.json"
+    if signs_path and not p.exists():
+        raise SignsConfigError("--signs %s: no such file (refusing to run with no overrides)" % p)
     cfg = dict(DEFAULTS)
     corners = {}
     if p.exists():
@@ -586,6 +672,7 @@ def load_overrides(proj, signs_path=None):
         corners = {k: v for k, v in (d.get("corners") or {}).items() if not k.startswith("_")}
         validate_overrides(given, corners, str(p))
         cfg.update(given)
+        check_pins(cfg, corners, str(p))
     return cfg, corners, p
 
 
@@ -746,7 +833,12 @@ def place_corner(ctx, rb, corner, cid, ov, cfg, second=False):
         applied.append("arrow=%s" % arrow)
     expect = ov.get("expect_arrow")
     if expect in ("left", "right") and expect != arrow:
-        reasons.append("expect_arrow=%s but the rule computed %s (D %.1f deg) — not relocated, see signs.json" % (expect, arrow, D))
+        reasons.append("expect_arrow=%s%s but the rule computed %s (D %.1f deg) — not relocated, see signs.json"
+                       % (expect, " (mirrored for the reverse approach)" if "expect_arrow" in ov.get("_mirrored", ()) else "", arrow, D))
+    for k in ov.get("_mirrored", ()):
+        applied.append("%s mirrored for the reverse approach (%s -> %s)" % (k, mirror_arrow(ov[k]), ov[k]))
+    for k in ov.get("_direction_keys", ()):
+        applied.append("%s.%s" % ("rev" if rb.reverse else "fwd", k))
     # 7) clearances: lamps never move; plants are excluded from TreeFX; the sign may slide along
     #    the curb (u at sC), <= SLIDE_MAX_M, the smallest move first — the only lateral deviation
     u = unit((rb.xz(sC + 1)[0] - rb.xz(sC - 1)[0], rb.xz(sC + 1)[1] - rb.xz(sC - 1)[1]))
@@ -1010,6 +1102,7 @@ def place_all(proj, cfg=None, corners_cfg=None, signs_path=None, log=print, merg
             # ribbon + direction under one id
             cid = cids[ci]
             ov_id, ov = named.get(ci, (None, {}))
+            ov = effective_override(ov, rb.reverse)
             if ov_id:
                 cid = ov_id
                 seen_ids.add(ov_id)
@@ -1022,7 +1115,7 @@ def place_all(proj, cfg=None, corners_cfg=None, signs_path=None, log=print, merg
                     "arc_m": c["arc_m"], "apex_xz": [round(v, 1) for v in rb.xz(c["apex"])]}
             reasons = []
             if ov.get("skip"):
-                reasons.append("signs.json skip: %s" % ov.get("reason", "(no reason given)"))
+                reasons.append("signs.json skip: %s" % ov["reason"].strip())      # validate_overrides refused a bare skip
             if not ov.get("force"):
                 if c["R_apex_m"] > cfg["r_sign_max_m"]:
                     reasons.append("R_apex %.1f > %.0f m" % (c["R_apex_m"], cfg["r_sign_max_m"]))
@@ -1256,8 +1349,22 @@ def summary_line(out):
         for p in plates_of(s):
             kinds[p["kind"]] = kinds.get(p["kind"], 0) + 1
     pairs = sum(1 for s in out["signs"] if s.get("pair"))
-    return "%d placed (%s%s), %d skipped" % (len(out["signs"]), ", ".join("%d %s" % (v, k) for k, v in sorted(kinds.items())) or "-",
-                                             ("; %d paired post%s" % (pairs, "s" if pairs != 1 else "")) if pairs else "", len(out["skipped"]))
+    md = direction_counts(out)
+    main = ("; mainline plates %d fwd / %d rev" % (md["fwd"], md["rev"])) if md["rev"] else ""
+    return "%d placed (%s%s%s), %d skipped" % (len(out["signs"]), ", ".join("%d %s" % (v, k) for k, v in sorted(kinds.items())) or "-",
+                                               ("; %d paired post%s" % (pairs, "s" if pairs != 1 else "")) if pairs else "", main, len(out["skipped"]))
+
+
+def direction_counts(out):
+    """mainline plates per approach (fwd = increasing vertex index, rev = the other way) and posts
+    carrying a pair"""
+    c = {"fwd": 0, "rev": 0, "paired_posts": sum(1 for s in out["signs"] if s.get("pair"))}
+    for s in out["signs"]:
+        if s["ribbon"] != "MAINLINE":
+            continue
+        for p in plates_of(s):
+            c[p["direction"]] = c.get(p["direction"], 0) + 1
+    return c
 
 
 def main():

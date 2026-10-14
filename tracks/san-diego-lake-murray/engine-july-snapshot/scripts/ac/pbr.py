@@ -24,12 +24,14 @@ TEXTURES = {
     # concrete_diffuse.jpg has no provenance entry in its licenses.json, so it stays out of the engine.
     "1KERB_SIDEWALK": ("building_diffuse.jpg", "building_normal.jpg", 0.75, (0.66, 0.66, 0.64, 1), 0.0, False),
     # 1KERB_RACE BEFORE 1KERB (ledger 0047): the race layouts' flat rumble kerbs
-    # (tools/author_race_furniture_blend.py) bind the red/white stripe by their OWN row. They carry
-    # their own UVs (u across the 1.0 m profile, v = arc / 1 m — race_furniture.kerb_mesh, KERB_TILE_M),
-    # kept by the prep's planar_uv skip, and kerb_diffuse.png alternates red/white along v: one
-    # 0.5 m red + 0.5 m white pair per metre. Same texture and parameters as 1KERB, but no later
-    # change to the generic row (or an override keyed "1KERB") can reach them.
-    "1KERB_RACE": ("kerb_diffuse.png",  None,                 0.55, (0.62, 0.10, 0.08, 1), 0.0, False),
+    # (tools/author_race_furniture_blend.py) bind by their OWN row, so no change to the generic 1KERB
+    # row (or an override keyed "1KERB") can reach them. Ledger 0053 (Kevin: "i'd like the race curbs
+    # to be tire-worn/textured"): the worn atlas from tools/make_kerb_texture.py (CC0) — 4 columns of
+    # tyre-rubber level x 8 m of 1 m red/white blocks — plus its normal map, so the exporter picks
+    # ksPerPixelMultiMap (diffuse + normal, the path 1WALL_RACE already renders through in game). The
+    # kerbs carry their own per-face-corner UVs (race_furniture.kerb_atlas_face_uvs: the column by
+    # wear, v along the kerb's real length), kept by the prep's planar_uv skip.
+    "1KERB_RACE": ("kerb_race_worn_diffuse.jpg", "kerb_race_worn_normal.jpg", 0.55, (0.62, 0.10, 0.08, 1), 0.0, False),
     "1KERB":   ("kerb_diffuse.png",    None,                 0.55, (0.62, 0.10, 0.08, 1), 0.0, False),
     "CURB":    ("building_diffuse.jpg", "building_normal.jpg", 0.70, (0.64, 0.64, 0.66, 1), 0.0, False),   # concrete street curb (fallback if a loop mesh keeps this name)
     "SIDEWALK": ("building_diffuse.jpg", "building_normal.jpg", 0.75, (0.68, 0.68, 0.66, 1), 0.0, False),  # concrete sidewalk slab
@@ -38,6 +40,11 @@ TEXTURES = {
     "ROADTEXT": ("roadtext_atlas.png", None, 0.5, (0.92, 0.92, 0.90, 1), 0.0, False),  # painted street-name decals (alpha cutout)
     "1LAWN":   ("grass_diffuse.jpg", "grass_normal.jpg",     0.90, (0.30, 0.42, 0.20, 1), 0.0, False),  # irrigated suburban green turf (SoCal neighbourhood tiles)
     "1GRASS":  ("ground_dry_diffuse.jpg", None,              0.95, (0.42, 0.38, 0.29, 1), 0.0, False),  # dry dirt/chaparral (canyon/hill/freeway-cut tiles)
+    # GRASS_FAR: the visual-only far ring of a tiered terrain (ledger 0046 E3; Cowles, the valley walls). No digit
+    # prefix = no physics, never a gate / GrassFX / occluder mesh. TEXTURED dry chaparral — never the MOUNTAINS
+    # slot, whose texture-less material renders black in-engine (fleet/LAWS.md L7). A config override keyed
+    # "1GRASS" (Lake Murray's green turf) does not reach it: overrides bind by the matched key.
+    "GRASS_FAR": ("ground_dry_diffuse.jpg", None,            0.95, (0.42, 0.38, 0.29, 1), 0.0, False),
     "SHOULDERUND": ("ground_dry_diffuse.jpg", None, 0.95, (0.36, 0.32, 0.25, 1), 0.0, False),  # embankment/cut mass seen from BELOW (visual underside of the shoulder strip)
     "ROCKCUT":  ("rock_granite_red.png", None, 0.92, (0.45, 0.30, 0.24, 1), 0.0, False),  # blasted red granite cut faces (Kevin's stone-wall asset harvest) — task #17 consumer
     "RETWALL":  ("stone_tan.png", None, 0.85, (0.55, 0.48, 0.38, 1), 0.0, False),           # retaining wall body — task #17 consumer
@@ -61,6 +68,9 @@ TEXTURES = {
     "BUSHES":  ("bushes_atlas.png", None, 0.9, (0.36, 0.37, 0.24, 1), 0.0, False),  # dry scrub billboards (LA Canyons bo_bushes_11)
     "HIGHWAY": ("asphalt_cracked_diffuse.jpg", "asphalt_cracked_normal.jpg", 0.80, (0.30, 0.30, 0.32, 1), 0.0, False),  # I-70 deck
     "HWYSTRUCT": ("building_diffuse.jpg", "building_normal.jpg", 0.85, (0.68, 0.68, 0.66, 1), 0.0, False),  # concrete parapets/piers
+    # BRIDGESTRUCT: the loop's overcrossing bodies (soffit, fascia, abutment walls, pier bents; tools/author_bridges_blend.py,
+    # ledger 0046 fix round 4). Visual only (no digit prefix) and NOT HWYSTRUCT, which the gates read as structure.
+    "BRIDGESTRUCT": ("building_diffuse.jpg", "building_normal.jpg", 0.85, (0.66, 0.66, 0.63, 1), 0.0, False),
     "BUILDING": ("building_diffuse.jpg", "building_normal.jpg", 0.88, (0.60, 0.60, 0.58, 1), 0.0, False),  # tilt-up concrete (mined Hamburg)
     "WAREHOUSE": ("warehouse_diffuse.jpg", "warehouse_normal.jpg", 0.90, (0.56, 0.56, 0.54, 1), 0.0, False),  # weathered concrete warehouse walls (mined Hamburg)
     "WHMETAL":  ("warehouse_metal_diffuse.jpg", "warehouse_metal_normal.jpg", 0.65, (0.58, 0.60, 0.62, 1), 0.10, False),  # corrugated-metal warehouse (CC0 CorrugatedSteel) — warehouse variety
@@ -130,8 +140,12 @@ KS_PROPS = {
     "PALMFROND": {"ksAmbient": 0.55, "ksDiffuse": 0.10, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
     "FENCEWOOD": {"ksAmbient": 0.45, "ksDiffuse": 0.35, "ksSpecular": 0.05, "ksSpecularEXP": 8.0},
     "1GRASS":   {"ksAmbient": 0.50, "ksDiffuse": 0.22, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
+    "GRASS_FAR": {"ksAmbient": 0.50, "ksDiffuse": 0.22, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
     "POLE":     {"ksAmbient": 0.40, "ksDiffuse": 0.15, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
     "SIGNPOST": {"ksAmbient": 0.40, "ksDiffuse": 0.25, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
+    # ledger 0053: the worn race kerbs — ambient / diffuse at the 0.4 / 0.4 every neighbouring material ships at
+    # (the add-on default), a faint paint sheen well under Kunos red_curb's 0.35 [invented]
+    "1KERB_RACE": {"ksAmbient": 0.40, "ksDiffuse": 0.40, "ksSpecular": 0.10, "ksSpecularEXP": 20.0},
 }
 
 

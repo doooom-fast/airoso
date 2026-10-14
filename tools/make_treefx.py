@@ -15,7 +15,8 @@ kn5 world (x, y, -z of the engine frame), trees snap vertically onto SURFACE_MAT
 NO comment lines: CSP parses a non-directive first line as a manifest filename (2026-10-08).
 
 Corridor guard: TreeFX trees are invisible to drive_test/audit, so every entry is rejected if it
-stands within (half-width + 1 m) of the mainline or any connector centreline.
+stands within (half-width + 1 m) of the mainline or any connector centreline — or of an I-8 carriageway
+(data/freeway_i8.json, the visual freeway pavement: ledger 0046 v0.18.0 integration fix round).
 
     python tools/make_treefx.py <project-dir>
 """
@@ -29,7 +30,30 @@ import struct
 import sys
 from pathlib import Path
 
-SURFACE_MATERIALS = "1GRASS_0_mat, 1GRASS_1_mat, 1ROAD_road_mat"
+ROAD_SURFACE_MATERIAL = "1ROAD_road_mat"
+# Trees snap onto EVERY physical grass tile + the road. The tile count follows the terrain (ledger 0046: the
+# tiered ground tiles 1GRASS by balanced bisection into as many tiles as it needs), so the names are read off
+# the BUILT road kn5's gate OBJ (data/track.obj, written before the track folder) — never hard-coded (it was
+# "1GRASS_0_mat, 1GRASS_1_mat, 1ROAD_road_mat"). The far ring GRASS_FAR is not physical and is not listed.
+
+
+def surface_materials(project_dir) -> str:
+    obj = Path(project_dir) / "data" / "track.obj"
+    if not obj.exists():
+        raise SystemExit(f"[treefx] {obj} missing — the SURFACE_MATERIALS tile names come from the built road kn5's "
+                         f"gate OBJ (python -m scripts.modkit.kn5_to_gate_obj <project>)")
+    mats = set()
+    with open(obj, encoding="utf-8", errors="replace") as f:
+        for ln in f:
+            if ln.startswith("usemtl ") and ln[7:].strip().upper().startswith("1GRASS"):
+                mats.add(ln[7:].strip())
+    if not mats:
+        raise SystemExit(f"[treefx] {obj} holds no 1GRASS material — nothing for the trees to stand on")
+
+    def natural(m):
+        import re
+        return [int(t) if t.isdigit() else t for t in re.split(r"(\d+)", m)]
+    return ", ".join(sorted(mats, key=natural) + [ROAD_SURFACE_MATERIAL])
 # species, size multiplier range, weight — palms: nohesi V1 20 m / V2 25 m / V3 28 m native;
 # residential San Diego fan palms run 10-20 m, so they are scaled down
 ZONES = {
@@ -153,6 +177,23 @@ def plan(project_dir, all_species=False, verbose=False):
         for c in json.loads(cp.read_text(encoding="utf-8")).get("connectors", []):
             lines.append(([tuple(p) for p in c["points_xyz_m"]], [w / 2.0 for w in c["widths_m"]]))
     field = RoadField(lines, cell=60.0)
+    # the I-8's own carriageways (tools/freeway_i8.py, ledger 0046 v0.18.0 integration fix round): visual pavement, but
+    # a tree standing on a freeway lane is as wrong as one on the loop's — the same guard, a field of its own (the fill
+    # bands and the basin rule above stay measured from the LOOP's roads)
+    fwy = None
+    fp = data / "freeway_i8.json"
+    if fp.exists():
+        flines = []
+        for ch in json.loads(fp.read_text(encoding="utf-8")).get("chains", []):
+            run = []
+            for st in ch + [None]:
+                if st is None:
+                    if len(run) >= 2:
+                        flines.append(([(r["x"], 0.0, r["z"]) for r in run], [max(r["wl"], r["wr"]) for r in run]))
+                    run = []
+                else:
+                    run.append(st)
+        fwy = RoadField(flines, cell=60.0) if flines else None
 
     out = []
     entries_out = []
@@ -172,7 +213,8 @@ def plan(project_dir, all_species=False, verbose=False):
         for i, e in enumerate(entries, start=idx_base):
             if (zone_key, i - idx_base) in excluded:
                 continue
-            if guard and field.query(e["x"], e["z"])[0] < 1.0:
+            if guard and (field.query(e["x"], e["z"])[0] < 1.0
+                          or (fwy is not None and fwy.query(e["x"], e["z"])[0] < 1.0)):
                 rejected += 1
                 continue
             s = _pick(species, i)
@@ -271,7 +313,7 @@ def build(project_dir):
     ini = ini_path.read_text(encoding="utf-8") if ini_path.exists() else ""
     if MARK_BEGIN in ini:
         ini = ini[:ini.index(MARK_BEGIN)] + ini[ini.index(MARK_END) + len(MARK_END):]
-    block = (f"\n{MARK_BEGIN}\n[TREES]\nLIST_0 = trees/trees.txt\nSURFACE_MATERIALS = {SURFACE_MATERIALS}\n"
+    block = (f"\n{MARK_BEGIN}\n[TREES]\nLIST_0 = trees/trees.txt\nSURFACE_MATERIALS = {surface_materials(proj)}\n"
              f"; {total} trees, {len(used)} species, personal-use TreeFX models — never redistribute\n{MARK_END}\n")
     ini_path.write_text(ini.rstrip() + "\n" + block, encoding="utf-8")
     print(f"[treefx] {total} trees ({counts}), {rejected} rejected in the corridor, "

@@ -70,6 +70,16 @@
    "url": ""
   },
   {
+   "name": "Worn race kerb (generated)",
+   "files": [
+    "kerb_race_worn_diffuse.jpg",
+    "kerb_race_worn_normal.jpg"
+   ],
+   "source": "airoso tools/make_kerb_texture.py (generated from seeded noise and straight lines, Pillow only, seed 53; no photograph or third-party pixel; ledger 0053)",
+   "license": "CC0-1.0",
+   "url": ""
+  },
+  {
    "name": "Street-name sign atlas",
    "files": [
     "signs_atlas.png"

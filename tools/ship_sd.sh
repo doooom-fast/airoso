@@ -3,11 +3,20 @@
 #
 #   bash tools/ship_sd.sh [--no-install] [--skip-blend] [--force-install] [--dry-run]
 #
-# Runs in the v021 workshop (C:/Users/Owner/Documents/GitHub/k10-sd-v021) because the loop
-# assembler + prep/export live there at the pin that built the drive-feel reference; the V3 tools
-# (median, trim, gap, signs, race furniture, dummies, the packer and every gate) run from airoso.
-# Source of truth stays tracks/san-diego-lake-murray/ in airoso: edit there, this script syncs the
-# inputs down and the outputs back up.
+# Builds the v021 workshop PROJECT (C:/Users/Owner/Documents/GitHub/k10-sd-v021/project). The loop
+# assembler runs from airoso's tooling of record, tracks/san-diego-lake-murray/scripts-v021 (diff-identical
+# to the retired workshop's scripts/ when it was switched, 2026-10-11, ledger 0046 — never edit the workshop),
+# through V021_SHIM: inside Blender `scripts` is registered as THAT package, so its `from scripts.geometry
+# import ...` cannot resolve to airoso's engine or to anything beside the project. The prep/export run from
+# ENG (engine-july) at the pin that built the drive-feel reference; the V3 tools (median, trim, gap, signs,
+# race furniture, dummies, the packer and every gate) run from airoso. Source of truth stays
+# tracks/san-diego-lake-murray/ in airoso: edit there, this script syncs the inputs down and the outputs back up.
+#
+# TIERED TERRAIN (ledger 0046, Kevin 2026-10-10: "more terrain near the roads, and the I-8 trench and adjacent
+# causeway cut out"; "I want to see cowles mountain"): before each assembler run scripts.elevation.terrain_sample
+# plans the multi-resolution lattice on the current roads and fetches 3DEP at every vertex it lacks (cached in
+# data/terrain.samples.json.gz); the assembler meshes TERRAIN (physical, -> 1GRASS tiles by balanced bisection in
+# the prep) and GRASS_FAR (the visual-only far ring). The far-terrain decimation pass is gone.
 #
 # THREE VERSIONS (ledger 0047, Kevin 2026-10-10): `street` (the open two-way loop as today),
 # `race_cw` and `race_acw` (the loop as a one-way race track in each direction).
@@ -24,16 +33,18 @@
 # (fleet/LAWS.md L8 as amended — the wording is in ledger 0047 pending Kevin's sign-off, Q9.)
 #
 # Stages (V3-PLAN §Phase 1 "the ONE pipeline"):
-#   draft  : median_envelope → trim_connectors → build_loop_blend → weld_mouths (GEN layer, regenerable;
-#            the weld mitres + warps every side-street end onto its host, self-checked — 2026-10-11)
-#   author : seat_terrain → median → gap_mouths → lamps → signs                 (scripted authoring)
+#   draft  : median_envelope → terrain_sample → build_loop_blend → trim_connectors → terrain_sample →
+#            build_loop_blend → weld_mouths (GEN layer, regenerable; the weld mitres + warps every side-street
+#            end onto its host, self-checked — 2026-10-11; terrain_sample = the ledger-0046 tiered 3DEP plan)
+#   author : seat_terrain → median → gap_mouths → bridges → lamps → signs                 (scripted authoring)
 #            → barrier_bands v2 (corridor solve + self-gates + PLANNED no_route per race layout, hard)
 #            → layout_dummies → author_race_furniture (RACE + RACE_CLOSE_<TOKEN>) → verify_race (idempotent)
 #   ship   : build_kn5_loop prep → split_exports (road / common race / closure per race layout / spawns)
 #            → export road / race / closure x race layouts (each content-checked) / spawn kn5s
-#            → AI per layout → verify_kn5 → track_folder (three layouts) → verify_kn5 --inis
+#            → AI per layout → verify_kn5 → kn5_to_gate_obj (road; the track folder reads its mesh names)
+#            → track_folder (three layouts) → verify_kn5 --inis
 #            → make_map → make_treefx → verify_race --scenery-only on the written trees.txt (hard)
-#   gate   : street: kn5_to_gate_obj (road) → verify_mouths (every side-street mouth on the BUILT road, hard)
+#   gate   : street: verify_mouths (every side-street mouth on the BUILT road, hard)
 #            → drive_test --layout street → audit_mesh
 #            per race layout: kn5_to_gate_obj (road + race + ITS closure → data/track.<id>.obj)
 #            → drive_test --layout <id> → audit_mesh --layout <id> → no_route --layout <id> (BUILT)
@@ -66,7 +77,10 @@
 #                 workshop ($WS_PROJ) feeds tracks/san-diego-lake-murray/ and the AC folder.
 # AIROSO=<dir>    the airoso checkout whose tools/ and scripts/ the chain runs (default: the main checkout). Point
 #                 it at a worktree to rehearse that worktree's tools; pair with SHIP_PROJ (the guards below still
-#                 refuse a project inside it). ENG (engine-july) is not overridable.
+#                 refuse a project inside it).
+# ENG=<dir>       the engine-july tree the prep / exporter / spawn builder run from (default: the real one). Point
+#                 it at a scratch COPY to rehearse an engine-july change before it is mirrored (the change itself is
+#                 recorded in tracks/san-diego-lake-murray/engine-july-snapshot/, see its PENDING-MIRROR.md5).
 # STREET_AI=draft|july  the street layout's AI line (Q8). Default `draft` = the V3 right-hand-lane draft
 #                 (scripts/ac/write_ai_line.py --layout street). `july` (explicit opt-in) copies the
 #                 installed July line — a July write_ai_line DRAFT, never an in-game recording, and
@@ -78,7 +92,8 @@ WS="C:/Users/Owner/Documents/GitHub/k10-sd-v021"
 WS_PROJ="$WS/project"        # the real workshop project: the ONLY spelling of it in this script
 PROJ="${SHIP_PROJ:-$WS_PROJ}"
 SRC="$AIROSO/tracks/san-diego-lake-murray"
-ENG="C:/Users/Owner/Documents/GitHub/engine-july"
+V021="$SRC/scripts-v021"     # the loop assembler of record (build_loop_blend + its ribbon/smooth/palm/scenery modules)
+ENG="${ENG:-C:/Users/Owner/Documents/GitHub/engine-july}"
 BL="C:/Program Files/Blender Foundation/Blender 4.2/blender.exe"
 AC="D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks"
 ARCHIVE="D:/k10-track-archive"   # old installs live here, never in content/tracks (Kevin 2026-10-11: "clear old versions")
@@ -110,15 +125,16 @@ case "$(norm "$PROJ")" in
   "$(norm "$AIROSO")"|"$(norm "$AIROSO")"/*) echo "SHIP_PROJ '$PROJ' is inside airoso — use a scratch copy outside the repo"; exit 2;;
 esac
 if [ "$(norm "$PROJ")" = "$(norm "$WS_PROJ")" ]; then SCRATCH=0; else SCRATCH=1; fi
-# build_loop_blend.py (the workshop's) does `from scripts.geometry import ...` with only the PROJECT'S
-# PARENT on sys.path (Blender adds neither the cwd nor the script dir) — for a scratch PROJ that is not
-# $WS, so the workshop root is put on sys.path first (--python-expr runs before --python).
-WS_SYSPATH="import sys; sys.path.insert(0, r'$WS')"
-if [ "$SCRATCH" = 1 ] && [ "$SKIP_BLEND" = 0 ] && [ -d "$(dirname "$PROJ")/scripts" ]; then
-  # the workshop's build_loop_blend.py imports scripts.geometry from the PROJECT'S PARENT first
-  echo "SHIP_PROJ '$PROJ': its parent holds a scripts/ package that would shadow the workshop's — copy the project elsewhere"; exit 2
-fi
+# build_loop_blend.py does `from scripts.geometry import ...` after putting the PROJECT'S PARENT on sys.path.
+# V021_SHIM (--python-expr runs before --python) registers `scripts` as the scripts-v021 package FIRST, so every
+# `scripts.*` import inside the assembler (and in weld_mouths_blend, which rebuilds connector blocks with the
+# same ribbon module) resolves there — never to airoso's engine `scripts`, never to a scripts/ beside the project.
+V021_SHIM="import sys, importlib.util as u; s=u.spec_from_file_location('scripts', r'$V021/__init__.py', submodule_search_locations=[r'$V021']); m=u.module_from_spec(s); sys.modules['scripts']=m; s.loader.exec_module(m)"
+[ -f "$V021/blender/build_loop_blend.py" ] || { echo "no assembler at $V021/blender/build_loop_blend.py"; exit 2; }
 
+TERRAIN_DATA="terrain.samples.json.gz corridor.i8.json i8.local.json i8.legacy.local.json deck_datum.samples.json ground_release.samples.json.gz freeway_i8.samples.json.gz"
+# the track's own textures (track.config.json texture_overrides with a project-relative path: the far ring's chaparral)
+TRACK_TEXTURES="textures/chaparral_far_diffuse.jpg"
 step() { echo; echo "=================== $1"; }
 pyq() { (cd "$AIROSO" && python -c "$@"); }
 
@@ -127,6 +143,13 @@ cp "$SRC/track.config.json" "$PROJ/track.config.json"
 cp "$SRC/start_positions.json" "$PROJ/start_positions.json"
 for f in centerline.raw.local.json.pre-median connectors.local.json.pre-trim; do
   [ -f "$SRC/data/$f" ] && cp "$SRC/data/$f" "$PROJ/data/$f"
+done
+# ledger 0046: the 3DEP cache + the I-8 corridor (data with provenance, L2) — a fresh workshop never re-fetches them
+for f in $TERRAIN_DATA; do
+  [ -f "$SRC/data/$f" ] && cp "$SRC/data/$f" "$PROJ/data/$f"
+done
+for f in $TRACK_TEXTURES; do
+  [ -f "$SRC/$f" ] && { mkdir -p "$(dirname "$PROJ/$f")"; cp "$SRC/$f" "$PROJ/$f"; }
 done
 mkdir -p "$PROJ/source/trees" && cp "$SRC/source/trees/"*.bin "$PROJ/source/trees/" 2>/dev/null || true   # TreeFX models (gitignored, personal use)
 # the declared layouts drive every per-layout step below (never a hand-typed list)
@@ -137,31 +160,57 @@ echo "layouts: $LAYOUT_IDS   (race furniture: $RACE_IDS; street: $STREET_IDS; st
 [ -n "$RACE_IDS" ] || { echo "no race layout declared — this chain is the three-version chain (ledger 0047)"; exit 2; }
 
 if [ "$SKIP_BLEND" = 0 ]; then
+  step "draft: real bridge decks between their real abutments (tools/deck_datum.py; LAWS L3, 3DEP cached)"
+  # ledger 0046 v0.18.0 integration fix round: College Ave's deck over I-8 was laid 25 m past its real north abutment
+  # from a height read off the slope under the bridge (the road 2-3 m low for 60 m); track.config.json road_datum.decks
+  # holds each deck straight between the abutments 3DEP shows, at the road's real height (y only, idempotent)
+  (cd "$AIROSO" && python tools/deck_datum.py "$PROJ")
   step "draft: median envelope (self-gated)"
   (cd "$AIROSO" && python tools/median_envelope.py "$PROJ")
+  step "draft: tiered terrain plan + 3DEP samples (cached; ledger 0046)"
+  (cd "$AIROSO" && python -m scripts.elevation.terrain_sample "$PROJ")
   step "draft: build loop.blend (scene regen — GEN layer)"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$WS_SYSPATH" --python scripts/blender/build_loop_blend.py -- "$PROJ" 2>&1 | grep "^\[blend\]" | tail -4)
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$V021_SHIM" --python "$V021/blender/build_loop_blend.py" -- "$PROJ" 2>&1 | grep "^\[blend\]\|Error\|Traceback" | tail -6)
   step "draft: side streets from Kevin's routes (airoso data/routes.json)"
   (cd "$AIROSO" && python tools/route_connectors.py "$PROJ")
   step "draft: divided side streets -> one trunk + island (Del Cerro)"
   (cd "$AIROSO" && python tools/divide_connectors.py "$PROJ")
   step "draft: trim connectors at the mainline edge"
   (cd "$AIROSO" && python tools/trim_connectors.py "$PROJ")
+  step "draft: tiered terrain re-planned on the trimmed connectors (only new vertices fetched)"
+  (cd "$AIROSO" && python -m scripts.elevation.terrain_sample "$PROJ")
   step "draft: rebuild loop.blend with trimmed connectors"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$WS_SYSPATH" --python scripts/blender/build_loop_blend.py -- "$PROJ" 2>&1 | grep "^\[blend\]" | tail -3)
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$V021_SHIM" --python "$V021/blender/build_loop_blend.py" -- "$PROJ" 2>&1 | grep "^\[blend\]\|Error\|Traceback" | tail -6)
   step "draft: weld every side-street mouth onto its host (mitre + warp: road, curb/sidewalk, markings; self-checked)"
-  # tools/weld_mouths_blend.py rebuilds each connector block with the workshop's own ribbon module (WS_SYSPATH) and
+  # tools/weld_mouths_blend.py rebuilds each connector block with the assembler's own ribbon module (V021_SHIM) and
   # refuses to move a vertex unless the mesh matches it; exit 1 on its self-check (end row off the host deck, a
   # connector vertex over the host's pavement, a folded quad) — loop.blend is then NOT saved
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$WS_SYSPATH" --python "$AIROSO/tools/weld_mouths_blend.py" -- "$PROJ" 2>&1 | grep "^\[weld\]\|Error\|Traceback" )
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$V021_SHIM" --python "$AIROSO/tools/weld_mouths_blend.py" -- "$PROJ" 2>&1 | grep "^\[weld\]\|Error\|Traceback" )
   step "author: seat the terrain under every road (verge finer than the road)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/seat_terrain_blend.py" -- "$PROJ" 2>&1 | grep "^\[seat\]\|Error\|Traceback" )
-  step "author: thin the far terrain (headroom for the prep's grass tiles)"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/slim_far_terrain_blend.py" -- "$PROJ" 2>&1 | grep "^\[slim\]\|Error\|Traceback" )
+  # (the far-terrain decimation that paid for the prep's equal-width grass bands is gone — ledger 0046: the
+  #  terrain is tiered at the source and the prep tiles 1GRASS by balanced bisection. It also triangulated every
+  #  terrain face here, and the near-road ground the gates were tuned on is that triangulation's: kept, alone.)
+  step "author: triangulate the terrain (BEAUTY, what the retired decimation did to every face; no vertex moves)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/triangulate_terrain_blend.py" -- "$PROJ" 2>&1 | grep "^\[tri\]\|Error\|Traceback" )
+  step "author: release the near-road ground to the real earth in the declared zones + a rail on every new drop (self-checked)"
+  # ledger 0046 v0.18.0 integration fix round (criterion 4's near-road rims): inside track.config.json
+  # terrain.ground_release.zones (Alvarado Creek's bank, College Ave's south embankment, Alvarado Creek under Lake Murray
+  # Blvd) the ground is 3DEP (data/ground_release.json, cached), never above a deck; a concrete rail stands on the curb
+  # wherever the new ground drops within drive_test's excursion band. Before the bridge bodies (they read this ground);
+  # the kn5 prep then leaves it alone (no contact feather, no kept-cell refinement). Exit 1 = loop.blend not saved
+  (cd "$AIROSO" && python tools/ground_release.py "$PROJ")
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/ground_release_blend.py" -- "$PROJ" 2>&1 | grep "^\[release\]\|Error\|Traceback" )
   step "author: median island"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_blend.py" -- "$PROJ" 2>&1 | grep "^\[median" )
   step "author: gap the mainline sidewalk at every mouth"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/gap_mouths_blend.py" -- "$PROJ" 2>&1 | grep "^\[gap" )
+  step "author: bridge bodies under the overcrossings (soffit, fascia, abutments, pier bents; visual only, self-checked)"
+  # ledger 0046 fix round 4: with the I-8 cut out of the ground the two decks stood over it as paper-thin ribbons with
+  # sky under them (AC culls back faces). tools/author_bridges_blend.py builds BRIDGESTRUCT_<span> under every declared
+  # span that opens over the ground, all of it below the deck; exit 1 (loop.blend not saved) on a road under it or a
+  # vertex over the deck
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_bridges_blend.py" -- "$PROJ" 2>&1 | grep "^\[bridges\]\|Error\|Traceback" )
   step "author: export scatter positions, strip procedural vegetation (TreeFX replaces it)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/export_scatter_blend.py" -- "$PROJ" 2>&1 | grep "^\[scatter" )
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/strip_scenery_blend.py" -- "$PROJ" 2>&1 | grep "^\[strip" | cut -c1-160 )
@@ -206,7 +255,15 @@ step "author: verify the authored furniture against its declaration (tools/verif
 (cd "$AIROSO" && python tools/plot_race_furniture.py "$PROJ" | tail -3)   # data/race_plots/*.png
 
 step "ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)"
-"$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS\|multi-layout" | cut -c1-160
+"$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS\|split GRASS_FAR\|terrain tiles\|terrain conform\|T-junctions\|kept-cell refinement\|house seat\|multi-layout\|Error\|Traceback" | cut -c1-200
+step "ship: the I-8's own pavement, lane lines and median barrier on the final ground (visual only; self-checked)"
+# ledger 0046 v0.18.0 integration fix round (the view lens): track.config.json scenery.freeway — tools/freeway_i8.py
+# plans both carriageways from the OSM ways the corridor was cut from, tools/author_freeway_blend.py drapes them on the
+# PREPPED scene's final ground (the prep still moves it) and binds engine-july's pbr rows; no digit prefix, no gate
+(cd "$AIROSO" && python tools/freeway_i8.py "$PROJ")
+if [ -f "$PROJ/data/freeway_i8.json" ]; then
+  "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_freeway_blend.py" -- "$PROJ" --eng "$ENG" 2>&1 | grep "^\[freeway\]\|Error\|Traceback"
+fi
 step "ship: split the prepped scene -> road / common race / closure per race layout / spawn scenes (tools/split_exports_blend.py)"
 "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/split_exports_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" --out-dir "$PROJ/blender/split" 2>&1 | grep "^\[split\]"
 # the split asserts: loop_main.blend holds 0 AC_* and 0 RACE objects/materials; loop_race.blend only the
@@ -249,8 +306,15 @@ step "ship: spawn kn5 per layout (nodes only: AC_START/PIT/HOTLAP/TIME from data
 "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/build_spawn_kn5.py" -- "$PROJ" 2>&1 | grep "^\[spawn_kn5\]"
 
 step "ship: AI lines per layout (race: V3 lane-offset drafts — GENERATED, ledger 0023; street: $STREET_AI)"
+# ledger 0052: with track.config.json "ai" the race writer seats the line on, and clamps it to, the BUILT walls and
+# road of the kn5 set the layout loads (data/track.<id>.obj) and refuses a missing or stale OBJ — so that OBJ is
+# extracted here, before the writer (the gate stage below re-extracts the same file from the same kn5s), and the
+# written line is judged at once against it
 for lid in $RACE_IDS; do
+  (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --kn5 "$PROJ/build/${SLUG}_race.kn5" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --out "$PROJ/data/track.$lid.obj")
   (cd "$AIROSO" && python -m scripts.ac.write_ai_line "$PROJ" --layout "$lid" | grep -v "^  v\|^frame")
+  step "gate: verify_ai_line --layout $lid (hard; ledger 0052 - the written line vs the BUILT walls and road)"
+  (cd "$AIROSO" && python tools/verify_ai_line.py "$PROJ" --layout "$lid")
 done
 for lid in $STREET_IDS; do
   rm -rf "$PROJ/ai/$lid"; mkdir -p "$PROJ/ai/$lid"     # never leave a stale ai_draft.json beside a copied line
@@ -265,6 +329,18 @@ done
 
 step "ship: verify_kn5 (hard — spawn-free road, common race kn5 + one closure kn5 per race layout (its token only), one spawn kn5 per layout, facing, side, lane, sectors)"
 (cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ")
+# A verdict from an earlier run is not this run's verdict: every per-layout gate file is removed before its
+# gate runs, so a gate that does not run reads as "not run" (red), never as last time's pass. 0047's ONE
+# shared race gate OBJ / audit (road + the retired centre chain) are retired: each race layout is judged on
+# its own kn5 set (ledger 0049).
+for lid in $LAYOUT_IDS; do rm -f "$PROJ/data/drive_test.$lid.json"; done
+rm -f "$PROJ/data/verify_mouths.json" "$PROJ/data/rib_check.json" "$PROJ/data/house_seat_check.json"
+for lid in $RACE_IDS; do rm -f "$PROJ/data/audit.$lid.json" "$PROJ/data/no_route.$lid.json" "$PROJ/data/track.$lid.obj"; done
+rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"
+# the road gate OBJ is written BEFORE the track folder (ledger 0046): ext_config's GrassFX lists and make_treefx's
+# SURFACE_MATERIALS read the mesh names off it, and the 1GRASS tile count now follows the terrain
+step "gate: road kn5 -> gate OBJ (engine frame) + gate centreline"
+(cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")
 step "ship: track folder (models_<id>.ini x3, ui/<id>/, <id>/{map,data,ai}; a race layout without its closure kn5 is a HARD error)"
 (cd "$AIROSO" && python -m scripts.ac.track_folder "$PROJ") | grep -E "wrote|length_m|n_pits|layouts packed|removed stale|models|WARNING|ai/"
 cp "$PROJ/build/$SLUG.kn5" "$PROJ/build/$SLUG/"          # the race, closure + spawn kn5s are copied by track_folder itself
@@ -280,23 +356,23 @@ step "gate: scenery vs the race lanes and walls, on the WRITTEN trees.txt (tools
 # that ships (data/race_verify.scenery.json; exit 1 on any trunk / post in a lane or a wall — ledger 0049 fix round).
 (cd "$AIROSO" && python tools/verify_race.py "$PROJ" --scenery-only --trees "$PROJ/build/$SLUG/extension/trees/trees.txt")
 
-# A verdict from an earlier run is not this run's verdict: every per-layout gate file is removed before its
-# gate runs, so a gate that does not run reads as "not run" (red), never as last time's pass. 0047's ONE
-# shared race gate OBJ / audit (road + the retired centre chain) are retired: each race layout is judged on
-# its own kn5 set (ledger 0049).
-for lid in $LAYOUT_IDS; do rm -f "$PROJ/data/drive_test.$lid.json"; done
-rm -f "$PROJ/data/verify_mouths.json"
-for lid in $RACE_IDS; do rm -f "$PROJ/data/audit.$lid.json" "$PROJ/data/no_route.$lid.json" "$PROJ/data/track.$lid.obj"; done
-rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"
-step "gate: road kn5 -> gate OBJ (engine frame) + gate centreline"
-(cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")
 step "gate: verify_mouths on the built road (every side-street mouth: mouth line, host lane, notch, approach — hard)"
 # tools/verify_mouths.py reads data/track.obj (the shipped road kn5) at every data/mouths.json record; exit 1 stops
 # the chain (data/verify_mouths.json) — a mouth floating over its host or notched below it never reaches a gate run
 (cd "$AIROSO" && python tools/verify_mouths.py "$PROJ")
+step "gate: terrain ribbing on the built ground (tools/rib_check.py: sub-cell features folded into staircases — hard)"
+# ledger 0046 fix round 2: a feature narrower than two terrain cells (a concrete channel, a cut-slope bench) point-
+# sampled every 5 m and folded across its grain shows as washboard ribs; exit 1 (data/rib_check.json) past the
+# GATES-CHANGELOG 2026-10-13 limits, beyond 20 m of a pavement (the near-road ground is the drive gates')
+(cd "$AIROSO" && python tools/rib_check.py "$PROJ" --json "$PROJ/data/rib_check.json")
+step "gate: houses on the built ground (tools/house_seat_check.py: floating, sunken or buried buildings — hard)"
+# ledger 0046 fix round 3: every OSM house / building stands on the ground that ships — its bottom touches the
+# lowest ground under its walls (not above it, not a metre below it) and its roof clears the highest; exit 1
+# (data/house_seat_check.json) past the GATES-CHANGELOG 2026-10-13 fix round 3 limits
+(cd "$AIROSO" && python tools/house_seat_check.py "$PROJ" --json "$PROJ/data/house_seat_check.json")
 step "gate: drive_test, street layout (hard)"
 DT_S=0; (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --layout street 2>&1 | grep -v "drive-time\] sweep" | tail -30) || DT_S=$?
-step "gate: audit_mesh, street (hard total; the regression floor — D 512 / K 20 / I 20 / F 13 since the 2026-10-11 mouth weld + fold mend, was 512 / 154 / 145 / 15)"
+step "gate: audit_mesh, street (hard total; the regression floor — D 0 / K 20 / I 20 / F 13 since v0.18.0: the I-8 deck rails stand on the curb, 0.15 m off the pavement; D 512 while they stood on its edge, since the 2026-10-11 mouth weld + fold mend, was 512 / 154 / 145 / 15)"
 AU_S=0; (cd "$AIROSO" && python -m scripts.geometry.audit_mesh "$PROJ" 2>&1 | tail -16) || AU_S=$?
 DT_R=0; AU_R=0; NR_R=0
 for lid in $RACE_IDS; do
@@ -312,6 +388,13 @@ for lid in $RACE_IDS; do
   rc=0; (cd "$AIROSO" && python tools/no_route.py "$PROJ" --layout "$lid" 2>&1 | tail -30) || rc=$?
   [ "$rc" = 0 ] || NR_R=$rc
 done
+step "gate: verify_fold_fans (every levelled mainline fold pinch, all layouts, on the BUILT gate OBJs — hard)"
+# ledger 0050: where the road ribbon is wider than twice its corner's radius the weld pinches the inside edge to one
+# point at ONE height (the midpoint of its legs, both legs eased to it). This reads the three built gate OBJs at every
+# such pinch: no road-on-road step, no grass on top in the lane, the pinch at its midpoint, the race walls inside
+# no_route's band; exit 1 (data/verify_fold_fans.json) stops the chain, --force-install does not cover it
+rm -f "$PROJ/data/verify_fold_fans.json"
+(cd "$AIROSO" && python tools/verify_fold_fans.py "$PROJ")
 # a race layout red on its OWN gates is never installed, --force-install or not: drive_test barrier_missing /
 # obstruction_stations / not run, or the BUILT no_route verdict missing or failing (a leak, a blocked lap, a
 # reached forbidden probe, an unreached spawn). check_race_kn5 / verify_kn5 / verify_kn5 --inis already
@@ -342,9 +425,10 @@ step "sync outputs workshop -> airoso"
 cp "$PROJ/loop.blend" "$SRC/loop.blend"
 for f in centerline.local.json centerline.raw.local.json median_bands.json dummies.json \
          finished_centerline.json gate_centerline.json lights.local.json connectors.local.json \
-         mouths.json mouth_welds.json verify_mouths.json signs.local.json signs_preview.svg signs_measured.json \
+         mouths.json mouth_welds.json verify_mouths.json verify_fold_fans.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
          drive_test.json audit.json \
-         barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json; do
+         barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json \
+         $TERRAIN_DATA terrain.tiers.report.json bridges.authored.json          deck_datum.json ground_release.json ground_release.report.json freeway_i8.json freeway_i8.report.json; do
   [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
 done
 rm -f "$SRC/data/audit.race.json"   # 0047's shared race audit: retired (ledger 0049 audits each race layout on its own OBJ)
@@ -353,7 +437,7 @@ for lid in $LAYOUT_IDS; do
   if [ -d "$PROJ/ai/$lid" ]; then rm -rf "$SRC/ai/$lid"; mkdir -p "$SRC/ai"; cp -r "$PROJ/ai/$lid" "$SRC/ai/$lid"; fi   # track_folder is reproducible from the repo
 done
 for lid in $RACE_IDS; do
-  for f in "no_route.$lid.json" "no_route.$lid.planned.json" "audit.$lid.json" "closure_$lid.kn5.json"; do
+  for f in "no_route.$lid.json" "no_route.$lid.planned.json" "audit.$lid.json" "closure_$lid.kn5.json" "ai_verify.$lid.json"; do
     [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
   done
 done

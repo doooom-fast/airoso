@@ -75,9 +75,13 @@ def generate(project_dir: str | Path) -> Path:
     # footprints inside the lap (BUILDING 1.6k verts, HOUSE 10k verts, both within the 1ROAD extent), so
     # near-field by the criterion above. 'BUILDING' is a prefix, so Sand Creek's plural BUILDINGS and any
     # BUILDING_a.. split still match. WAREHOUSE does not start with HOUSE and is listed separately.
+    # HIGHWAY_I8_NEAR (ledger 0046 v0.18.0 integration fix round): Lake Murray's visual I-8 pavement INSIDE the 1ROAD
+    # extent (tools/author_freeway_blend.py clips it there; the rest is HIGHWAY_I8_FAR, never an occluder) — it lies
+    # 0.15 m over physical 1GRASS, so without it GrassFX grows grass up through the freeway lanes. The full HIGHWAY
+    # prefix stays OUT (elevated freeway decks, the TDR lesson above): only this near-field, ground-draped name is in.
     OCCLUDE_PREFIXES = ("1ROAD", "1KERB", "1RUNOFF", "MARKINGS", "ROADTEXT",
                         "BUILDING", "HOUSE", "BRICK", "STUCCO", "WAREHOUSE", "WHMETAL",
-                        "ROOFS", "RFMETAL", "WATER")
+                        "ROOFS", "RFMETAL", "WATER", "HIGHWAY_I8_NEAR")
     occluders = [g for g in groups if g.upper().startswith(OCCLUDE_PREFIXES)]
     # PREFIX matching everywhere, never exact: split_mesh_under_cap renames every over-cap mesh to
     # <name>_a.._n (LIGHTS -> LIGHTS_a..). v0.7.5 shipped BOTH street tracks with completely dead
@@ -294,7 +298,9 @@ def generate(project_dir: str | Path) -> Path:
         # instead of floodlit neon foliage ("Floodlights", v0.7.8).
         veg_mats = ", ".join(f"{g}_mat" for g in groups
                              if g.upper().startswith(("CONIFER", "TREES", "BUSHES", "PALMS")))
-        grass_mats2 = ", ".join(f"{g}_mat" for g in groups if g.upper().startswith(("1GRASS", "1LAWN")))
+        # the far ring (GRASS_FAR_*, visual only, ledger 0046) is grass too: without it the ring stayed at its day
+        # ksDiffuse 0.22 at night while the near 1GRASS dropped to 0.14, a bright band at the seam (v0.18.0 runtime lens)
+        grass_mats2 = ", ".join(f"{g}_mat" for g in groups if g.upper().startswith(("1GRASS", "1LAWN", "GRASS_FAR")))
         if veg_mats:
             out += ["[MATERIAL_ADJUSTMENT_VEG_NIGHT]",
                     f"MATERIALS = {veg_mats}",

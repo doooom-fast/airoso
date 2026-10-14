@@ -58,6 +58,17 @@ layout's closure kn5); a version-1 file keeps the 0047 lane (chain / island face
 The STEP CHECK covers the whole declared lane (2026-10-11): the ten wheel paths reach both lane faces (no 6 m
 travel-swath cap), the lane-edge paths gate steps like the interior ones, and no step inside a declared race
 lane is an exempt "apron" step — the street layout and every single-layout track are unchanged.
+
+FOLD BUMPS (v0.18.0, the gates lens). A wheel path here is a FIXED lateral offset from the centreline. Round a corner
+tighter than that offset (Lake Murray's fold fans: the hairpin, College/Navajo, Navajo/Jackson, the seam — centre radii
+of 7-8 m under race lanes 9-13 m wide) the offset point lies past the turning centre and runs BACKWARDS, hopping 1-2.5 m
+to and fro across the fan; its 1 m second difference is then a re-traced plan, not a step under a wheel. Measured on
+fresh USGS 3DEP 1 m (TLS verified) round five Lake Murray fans, the least-squares plane of the real ground (grades
+1.4-7.0 %) read through drive_test's own samples gives a 2.5-6 cm "bump" on 76 of 158 backward samples (a severe on 34)
+— a plane, the smoothest surface the real corner can have, fails the bump rule there. So a BUMP (2.5-6 cm) whose metre
+or previous metre runs backwards (``_advance`` < 0) is filed under ``fold_bumps`` (reported, not gated); a SEVERE step
+(> 6 cm) there still counts — the 0.37 m Navajo/Jackson lip of ledger 0050 was read on such a sample too. Real wheel
+paths through the levelled fans are judged by tools/verify_fold_fans.py.
 """
 
 from __future__ import annotations
@@ -89,6 +100,19 @@ OBST_HEIGHT_M = 1.8          # car-strike ceiling: AC cars are ~1.3 m tall; wall
 #                              level and still trip this, while legit overhead furniture (cobra-head
 #                              lamps arching the lane at 2.5 m+) clears it
 STEP_M = 1.0                 # sampling step along the lap
+
+
+def _advance(prev, px_pz, c):
+    """How far a fixed-offset wheel-path point moved along the lap over the last metre, as a share of the centre's own
+    move: 1 on a straight, 1 - off/R round a corner of radius R, NEGATIVE where the offset lies past the turning centre
+    (the point runs backwards — a fold). ``prev`` is (px, pz, cx, cz) of the previous sample; no centre move reads 1."""
+    if prev is None:
+        return 1.0
+    cx, cz = c[0] - prev[2], c[1] - prev[3]
+    n2 = cx * cx + cz * cz
+    if n2 < 1e-12:
+        return 1.0
+    return ((px_pz[0] - prev[0]) * cx + (px_pz[1] - prev[1]) * cz) / n2
 WHEEL_HALF_TRACK = 0.75      # wheel offset around each driving line
 CELL = 3.0                   # spatial hash cell (m)
 
@@ -278,6 +302,49 @@ def _lane_geometry(w: float, dh: float, inset: float):
     return lo_s, hi_s, lo_w, hi_w
 
 
+FAN_DISC_PAD_M = 0.5        # [invented] ledger 0050: a fan disc reaches the row's half-width + this
+FAN_LEVEL_ROWS = 8          # tools/mouth_weld.FOLD_LEVEL_ROWS, when mouth_welds.json predates its level_rows record
+
+
+def fold_fan_discs(welds: dict, pts, widths) -> list:
+    """ledger 0050: flat-zone discs (x, z, 0, radius) over every levelled MAINLINE fold fan in data/mouth_welds.json
+    (folds.MAINLINE.levelled; a file without it: every ROAD cut) —
+    one per centreline row from k - B to l + 1 + B of each ROAD pinch (B = the weld's level_rows), centred on the row,
+    radius = half its width + FAN_DISC_PAD_M. `pts` / `widths`: the gate centreline in FORWARD order (the weld's
+    row indices). Refuses (SystemExit) when the weld recorded a row count this centreline does not have."""
+    folds = ((welds or {}).get("folds") or {}).get("MAINLINE") or {}
+    cuts = [c for c in folds.get("cuts") or [] if c and c[0] == "road"]
+    # the weld's levelled pinches (0050) when it recorded them — the swallowtails whose legs it moved; the chord mends
+    # (Jackson / Lake Murray Blvd, the lap seam) keep today's rule: the seam's 0.06-0.07 m step at s 12-13 lat -5..-6
+    # is a pre-existing apron step the race layouts already count, not 0050's. A pre-0050 file: every road cut.
+    lev = [q for q in folds.get("levelled") or [] if isinstance(q, dict) and (q.get("line") or [None])[0] == "road"]
+    if lev:
+        cuts = [("road", q["line"][1], q["k"], q["l"]) for q in lev]
+    if not cuts:
+        return []
+    closed = len(pts) > 2 and abs(pts[0][0] - pts[-1][0]) < 1e-6 and abs(pts[0][2] - pts[-1][2]) < 1e-6
+    n = len(pts) - 1 if closed else len(pts)
+    rows = folds.get("rows")
+    if rows is not None and int(rows) != n:
+        raise SystemExit(f"drive_test: data/mouth_welds.json indexes {rows} mainline rows but the gate centreline has "
+                         f"{n} — the weld and this centreline disagree; refusing to place the fold-fan zones")
+    if not closed and any(c[-1] + 1 >= n or c[-2] < 0 for c in cuts):
+        raise SystemExit("drive_test: a mouth_welds.json fold cut lies outside this open centreline")
+    B = int(folds.get("level_rows") or FAN_LEVEL_ROWS)
+    out, seen = [], set()
+    for c in cuts:
+        k, l = int(c[-2]), int(c[-1])
+        for r in range(k - B, l + 2 + B):
+            if not closed and not 0 <= r < n:
+                continue
+            i = r % n
+            if i in seen:
+                continue
+            seen.add(i)
+            out.append((float(pts[i][0]), float(pts[i][2]), 0.0, float(widths[i]) / 2.0 + FAN_DISC_PAD_M))
+    return out
+
+
 def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     import time as _tmod
     _t0 = _tmod.time()
@@ -342,6 +409,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     # vertex 0 (it carried the LAST street's width: 27.5 m on SD vs Alvarado's 17.0 m — median_zone's
     # rule). The street layout and every single-layout track keep `widths` and are unchanged.
     _closed_lap = (len(pts) > 2 and abs(pts[0][0] - pts[-1][0]) < 1e-6 and abs(pts[0][2] - pts[-1][2]) < 1e-6)
+    _fan_pts, _fan_w = list(pts), list(widths)      # forward order: the weld's row indices (ledger 0050 fan discs)
     _wl = list(widths)
     if _closed_lap:
         _wl[-1] = _wl[0]
@@ -448,6 +516,21 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
 
     _fzp = project / "data" / "flat_zones.json"
     _fzones = json.loads(_fzp.read_text()) if _fzp.exists() else []
+    # ledger 0050 (opt-in: only a track whose weld wrote data/mouth_welds.json): inside a levelled mainline fold fan
+    # the WHOLE fan is driving surface, so no SEVERE step there is an "apron step". The 0.24 m Navajo / Jackson riser
+    # at s 6946 lat -6 was filed exactly so on the street layout and shipped green. Bumps (2.5-6 cm) keep the apron
+    # rule: round a corner tighter than the offset these fixed-station paths change their own spacing station to
+    # station (0.2 m on the inside of a 7.4 m corner at 6 m, 1.8 m outside), and on a 2-3 % grade that alone reads
+    # 2.5-4.7 cm — measured on v0.18.0: 54 such street "bumps" in the two fans, all apron bumps before, where
+    # tools/verify_fold_fans.py's arc-length wheel paths read a 1 m second difference of at most 0.025 m. Sub-6 cm
+    # judgement inside the fans is verify_fold_fans' (2 cm fine steps on real paths).
+    _fan_zones = []
+    _mwp = project / "data" / "mouth_welds.json"
+    if _mwp.exists():
+        _fan_zones = fold_fan_discs(json.loads(_mwp.read_text(encoding="utf-8")), _fan_pts, _fan_w)
+
+    def _in_fan(px, pz):
+        return any((px - a) ** 2 + (pz - b) ** 2 < d * d for a, b, c, d in _fan_zones)
 
     def _in_flat_zone(px, pz):
         return any((px - a) ** 2 + (pz - b) ** 2 < d * d for a, b, c, d in _fzones)
@@ -619,6 +702,10 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     _prev_lane = None
     prev_h = [None] * 10
     prev_slope = [None] * 10
+    # FOLDED SAMPLES (v0.18.0): each wheel path's last plan point, the centre it was read from, and the advance of
+    # the metre that ended there (see _advance) — reset with prev_h
+    prev_p = [None] * 10
+    prev_adv = [None] * 10
     off_pavement = 0
     obst_names = defaultdict(int)
     _phase("pre-sweep setup")
@@ -674,6 +761,8 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
             # the lateral re-seat is not a bump
             prev_h = [None] * 10
             prev_slope = [None] * 10
+            prev_p = [None] * 10
+            prev_adv = [None] * 10
         _prev_lane = _lane_key
         # edge paths (|line| = w/2-0.5) DETECT holes/ground-through at the pavement lip;
         # smoothness (steps/kinks) gates only on INTERIOR paths — nobody laps on the hinge
@@ -696,6 +785,8 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
             off_pavement += 1
             prev_h = [None] * 10
             prev_slope = [None] * 10
+            prev_p = [None] * 10
+            prev_adv = [None] * 10
             s += STEP_M          # MUST advance: `s += STEP_M` lives at the END of this body, so a
             continue             # bare `continue` here spins forever. That hung every rally build
                                  # from v0.25.1 on — the stages were never slow, they never finished.
@@ -709,12 +800,19 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
             if h is None:
                 prev_h[pi] = None
                 prev_slope[pi] = None
+                prev_p[pi] = None
+                prev_adv[pi] = None
                 continue
             if owner and owner.upper().startswith(SOFT):
                 problems["soft_top_in_lane"].append((round(s, 1), round(off, 2), owner))
+            adv = None
             if prev_h[pi] is not None:
                 dh = h - prev_h[pi]
                 slope = dh / STEP_M
+                adv = _advance(prev_p[pi], (px, pz), (x, z))
+                # a second difference that spans a metre this fixed-offset point ran BACKWARDS (offset past the turning
+                # centre of a corner tighter than the lane: a fold) is not a wheel's experience — see FOLD BUMPS
+                folded = adv < 0.0 or (prev_adv[pi] is not None and prev_adv[pi] < 0.0)
                 if prev_slope[pi] is not None and not is_edge:
                     kink = abs(slope - prev_slope[pi]) * 100
                     if kink > KINK_PCT:
@@ -724,7 +822,8 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                         # flared-apron texture: on widened corner pavement (w >= 11) the OUTER
                         # offsets ride taper fans with rolled crossfall breaks — real aprons
                         # have them and the driving line doesn't touch them. Report, don't gate.
-                        if not _corr and w >= 9.5 and abs(off) > 3.5 and not _in_flat_zone(px, pz):
+                        if not _corr and w >= 9.5 and abs(off) > 3.5 and not _in_flat_zone(px, pz) \
+                                and not _in_fan(px, pz):
                             problems.setdefault("apron_steps", []).append(
                                 (round(s, 1), round(off, 2), round(step, 3)))
                         else:
@@ -732,12 +831,17 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                             # no exemptions (Kevin: "how do your tests pass this")
                             problems["severe_steps"].append((round(s, 1), round(off, 2), round(step, 3)))
                     elif step > STEP_BUMP_M:
-                        if not _corr and w >= 9.5 and abs(off) > 3.5 and not _in_flat_zone(px, pz):
+                        if folded:
+                            problems.setdefault("fold_bumps", []).append(
+                                (round(s, 1), round(off, 2), round(step, 3)))
+                        elif not _corr and w >= 9.5 and abs(off) > 3.5 and not _in_flat_zone(px, pz):
                             problems.setdefault("apron_bumps", []).append(
                                 (round(s, 1), round(off, 2), round(step, 3)))
                         else:
                             problems["steps"].append((round(s, 1), round(off, 2), round(step, 3)))
                 prev_slope[pi] = slope
+            prev_adv[pi] = adv
+            prev_p[pi] = (px, pz, x, z)
             prev_h[pi] = h
         # daylight probe: just past each pavement edge, some surface must exist from deck level
         # down to 7 m below — a miss means a hole in the embankment skirt (sky under the road)
@@ -1084,6 +1188,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
         "undrivable_corners": len(problems["undrivable_corners"]),
         "floating_furniture": len(problems["floating_furniture"]),
         "apron_steps": len(problems.get("apron_steps", [])),
+        "fold_bumps": len(problems.get("fold_bumps", [])),
         "excursion_drops": sum(1 for r in problems["excursion_drops"] if r[3]),
         "excursion_far_ledges": sum(1 for r in problems["excursion_drops"] if not r[3]),
         "worst_excursions": sorted(problems["excursion_drops"], key=lambda r: -r[2])[:12],
@@ -1146,6 +1251,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     print(f"  severe steps (>{STEP_SEVERE_M*100:.0f} cm)  : {report['severe_steps']}")
     print(f"  bumps >{STEP_BUMP_M*100:.1f} cm /km      : {report['steps_per_km']} "
           f"(limit {_bump_limit:.0f} for {_surface})")
+    if report["fold_bumps"]:
+        print(f"  fold bumps (2.5-6 cm where a fixed-offset path runs backwards; reported, not gated): "
+              f"{report['fold_bumps']}")
     print(f"  slope kinks >{KINK_PCT}%% /km   : {report['kinks_per_km']}")
     print(f"  daylight gaps at edges : {report['daylight_gaps']}")
     if report.get("replication_vs_measured"):

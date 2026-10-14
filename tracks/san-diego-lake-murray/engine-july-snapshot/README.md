@@ -42,6 +42,24 @@ recorded md5. A silent edit to ENG (or to the Blender add-on, or to a staged tex
 until the snapshot is refreshed on purpose. Without ENG (another machine, CI) the live comparison is
 skipped and only the snapshot's own integrity is checked.
 
+## A change rehearsed before it is mirrored (`PENDING-MIRROR.md5`)
+
+ENG is never edited in place by an agent: a change is made on a scratch COPY of engine-july
+(`ENG=<copy> bash tools/ship_sd.sh ...` runs the chain on it) and recorded here first. Refreshing with
+`ENG=<copy> python tools/snapshot_engine_july.py` snapshots the copy and writes `PENDING-MIRROR.md5`:
+one line per changed file, `<md5 still live in the real engine-july>  <md5 of this snapshot>  <path>`.
+The live drift test accepts exactly that old md5 for exactly that path until someone mirrors it:
+
+```bash
+cp tracks/san-diego-lake-murray/engine-july-snapshot/<path> C:/Users/Owner/Documents/GitHub/engine-july/<path>
+md5sum C:/Users/Owner/Documents/GitHub/engine-july/<path>     # must equal the line's new md5
+PYTHONUTF8=1 python tools/snapshot_engine_july.py              # refresh from the real ENG: the PENDING file goes
+```
+
+Ledger 0046 (2026-10-11, tiered terrain) is the first such change: `scripts/ac/build_kn5_loop.py` (terrain
+tiles by balanced bisection, `GRASS_FAR` face-up, the T-junction weld) and `scripts/ac/pbr.py` (the textured
+`GRASS_FAR` row; airoso's `scripts/ac/pbr.py` carries the same bytes).
+
 ## Refresh (after a deliberate ENG change)
 
 ```bash

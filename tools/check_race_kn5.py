@@ -18,7 +18,11 @@ direction's closure). Which file a mesh belongs in is decided by its name (race_
                   at least one
   both roles      every texture is one of the race set (the diffuse / normal files of scripts/ac/pbr.py's TEXTURES
                   rows whose key starts with 1WALL_RACE or 1KERB_RACE — read from the table, never restated); no node
-                  named AC_* (spawns ride in the per-layout spawn kn5s, L8 as amended)
+                  named AC_* (spawns ride in the per-layout spawn kn5s, L8 as amended); and (ledger 0053) no BLACK
+                  slot: every file the race rows bind for the meshes present is embedded with > 0 bytes, and each
+                  race mesh's material binds exactly its row's txDiffuse / txNormal (black_slots) — the new worn kerb
+                  atlas only reaches the kn5 if it was copied into engine-july/assets/textures, where the export
+                  stages from
 
 The size is printed with the vertex / triangle totals and their ratio; above 20 MB it is a WARN (a
 lost-shading regression reads as ~3 verts per triangle again), never the gate. `check(parsed, allowed)` with no
@@ -38,13 +42,17 @@ AC_PREFIX = "AC_"
 ROLES = ("common", "closure")
 
 
+def _pbr_textures() -> dict:
+    if str(AIROSO) not in sys.path:
+        sys.path.insert(0, str(AIROSO))
+    from scripts.ac import pbr
+    return pbr.TEXTURES
+
+
 def race_texture_set(textures: dict | None = None) -> set[str]:
     """the texture files the race rows of scripts/ac/pbr.py TEXTURES bind (diffuse + normal, None skipped)"""
     if textures is None:
-        if str(AIROSO) not in sys.path:
-            sys.path.insert(0, str(AIROSO))
-        from scripts.ac import pbr
-        textures = pbr.TEXTURES
+        textures = _pbr_textures()
     out = set()
     for key, row in textures.items():
         if key.upper().startswith(RACE_PREFIXES):
@@ -52,8 +60,64 @@ def race_texture_set(textures: dict | None = None) -> set[str]:
     return out
 
 
+def expected_slots(name: str, textures: dict | None = None) -> dict[str, str]:
+    """{slot: file} a race mesh's material must bind — its matched pbr row (first prefix in dict order, the
+    exporter's own rule): txDiffuse = the row's diffuse, txNormal = its normal when it has one. {} for a name no
+    race row matches."""
+    textures = _pbr_textures() if textures is None else textures
+    up = str(name).upper()
+    key = next((k for k in textures if up.startswith(k)), None)
+    if key is None or not key.upper().startswith(RACE_PREFIXES):
+        return {}
+    diff, norm = textures[key][0], textures[key][1]
+    return {slot: f for slot, f in (("txDiffuse", diff), ("txNormal", norm)) if f}
+
+
+def black_slots(parsed: dict, textures: dict | None = None) -> list[str]:
+    """ledger 0053 — the L7 'renders BLACK' guard: every texture the race rows bind for the meshes PRESENT must be
+    embedded in the kn5 with > 0 bytes (a texture the exporter could not stage — 'texture source missing, not
+    staged' when engine-july's assets/textures lacks it — leaves the slot empty), and, when the parse carries its
+    materials, each race mesh's material must bind exactly its row's files in txDiffuse / txNormal and nothing the
+    kn5 does not embed. Returns the failure lines."""
+    textures = _pbr_textures() if textures is None else textures
+    fails = []
+    have = {t.get("name", ""): t.get("bytes") for t in parsed.get("textures") or []}
+    need = {}
+    for m in parsed.get("meshes") or []:
+        for slot, f in expected_slots(m.get("name", ""), textures).items():
+            need.setdefault(f, set()).add(slot)
+    missing = sorted(f for f in need if f not in have)
+    empty = sorted(f for f in need if f in have and have[f] is not None and int(have[f]) <= 0)
+    if missing:
+        fails.append(f"{len(missing)} textures the race rows bind are NOT embedded (the slot renders BLACK, LAWS L7 — "
+                     f"was the file copied into engine-july/assets/textures?): {missing}")
+    if empty:
+        fails.append(f"{len(empty)} embedded race textures are 0 bytes (renders BLACK): {empty}")
+    mats = parsed.get("materials")
+    if mats is not None:
+        wrong = []
+        for m in parsed.get("meshes") or []:
+            want = expected_slots(m.get("name", ""), textures)
+            if not want:
+                continue
+            mi = m.get("matid")
+            if mi is None or not (0 <= int(mi) < len(mats)):
+                wrong.append(f"{m.get('name')}: no material")
+                continue
+            got = dict((s, t) for s, t in mats[int(mi)].get("textures") or [])
+            for slot, f in want.items():
+                if got.get(slot) != f:
+                    wrong.append(f"{m.get('name')}: {slot}={got.get(slot)} (the pbr row says {f})")
+            for slot, t in got.items():
+                if t not in have or (have[t] is not None and int(have[t]) <= 0):
+                    wrong.append(f"{m.get('name')}: {slot}={t} is not embedded")
+        if wrong:
+            fails.append(f"{len(wrong)} race material bindings disagree with scripts/ac/pbr.py: {wrong[:6]}")
+    return fails
+
+
 def check(parsed: dict, allowed: set[str], size_warn_b: int = SIZE_WARN_B, *, role: str | None = None,
-          owner: str | None = None, expect_kerbs: int | None = None) -> dict:
+          owner: str | None = None, expect_kerbs: int | None = None, textures: dict | None = None) -> dict:
     """{ok, fails, warns, summary} for one inspect_kn5 parse of a race-furniture kn5 (see the module doc for the roles)"""
     fails, warns = [], []
     if role is not None and role not in ROLES:
@@ -70,6 +134,7 @@ def check(parsed: dict, allowed: set[str], size_warn_b: int = SIZE_WARN_B, *, ro
     alien = [t for t in tex if t not in allowed]
     if alien:
         fails.append(f"{len(alien)} textures outside the race set {sorted(allowed)}: {alien[:8]}")
+    fails += black_slots(parsed, textures)
     ac = sorted(n for n in list(parsed.get("nodes") or []) + names if n.startswith(AC_PREFIX))
     if ac:
         fails.append(f"{len(ac)} AC_* nodes (spawns belong in the per-layout spawn kn5s): {ac[:8]}")
@@ -161,7 +226,7 @@ def main(argv=None) -> int:
         print(f"[race-kn5] OK: {what} meshes only, textures {sorted(s['textures'])} all within the race set "
               f"{sorted(allowed)}, no AC_* node")
     else:
-        print(f"[race-kn5] FAILED — the split leaked into the {what} kn5")
+        print(f"[race-kn5] FAILED — the {what} kn5 does not hold what it should (see the FAIL lines above)")
     return 0 if r["ok"] else 1
 
 

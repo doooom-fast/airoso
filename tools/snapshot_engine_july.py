@@ -39,7 +39,12 @@ import sys
 from pathlib import Path
 
 AIROSO = Path(__file__).resolve().parents[1]
-ENG = AIROSO.parent / "engine-july"
+_SIBLING = AIROSO.parent / "engine-july"
+# the checkout's sibling, else tools/ship_sd.sh's own default (a git worktree's parent is not GitHub/)
+DEFAULT_ENG = _SIBLING if _SIBLING.is_dir() else Path("C:/Users/Owner/Documents/GitHub/engine-july")
+# ENG=<dir> (as in tools/ship_sd.sh): snapshot a scratch COPY of engine-july that carries a change not yet mirrored
+# into the real one; the refresh then records each changed file in PENDING-MIRROR.md5 (see build())
+ENG = Path(os.environ["ENG"]) if os.environ.get("ENG") else DEFAULT_ENG
 APPDATA_ADDONS = Path(os.environ.get("APPDATA") or "C:/Users/Owner/AppData/Roaming") / \
     "Blender Foundation" / "Blender" / "4.2" / "scripts" / "addons"
 OUT = AIROSO / "tracks" / "san-diego-lake-murray" / "engine-july-snapshot"
@@ -55,6 +60,11 @@ EXCLUDE_SUFFIXES = (".exe", ".dll", ".pyc", ".pyo")
 MANIFEST = "MANIFEST.md5"
 REFERENCED = "REFERENCED.md5"
 EXCLUDED = "EXCLUDED.md5"
+# "<live md5 in the real engine-july>  <snapshot md5>  <path>": a change made in the snapshot (and rehearsed on a
+# scratch ENG copy) that the real engine-july has not received yet. The live drift test accepts exactly that old md5
+# for exactly that path until the file is mirrored (cp + md5 check), after which the line is stale and the next
+# refresh drops it.
+PENDING = "PENDING-MIRROR.md5"
 SIZE_CAP = 5_000_000
 
 
@@ -124,6 +134,46 @@ def read_manifest(path: Path) -> list[tuple[str, str]]:
     return out
 
 
+def read_pending(path: Path | None = None) -> dict[str, tuple[str, str]]:
+    """{path: (old md5 still live in the real engine-july, new md5 in the snapshot)}"""
+    path = OUT / PENDING if path is None else path
+    out = {}
+    if path.exists():
+        for ln in path.read_text(encoding="utf-8").splitlines():
+            ln = ln.strip()
+            if ln and not ln.startswith("#"):
+                old, new, rel = ln.split()[:3]
+                out[rel] = (old, new)
+    return out
+
+
+def _write_pending(rows, refs=()) -> None:
+    """after a refresh from ENG: every snapshotted file whose md5 differs from the REAL engine-july's is a change
+    still to mirror — and every referenced texture the real engine-july lacks or holds at another md5 (ledger 0053's
+    worn kerb atlas, v0.18.0: old md5 "-" = not there yet); none -> no PENDING file"""
+    p = OUT / PENDING
+    lines = []
+    if ENG.resolve() != DEFAULT_ENG.resolve() and DEFAULT_ENG.is_dir():
+        for h, r in rows:
+            live = DEFAULT_ENG / r if not r.startswith(APPDATA_PREFIX) else live_path(r)
+            if live.is_file() and md5(live) != h:
+                lines.append(f"{md5(live)}  {h}  {r}\n")
+        for h, _n, r in refs:
+            live = DEFAULT_ENG / r
+            if not live.is_file():
+                lines.append(f"-  {h}  {r}\n")
+            elif md5(live) != h:
+                lines.append(f"{md5(live)}  {h}  {r}\n")
+    if lines:
+        p.write_text("# old md5 (still live in " + DEFAULT_ENG.as_posix() + ")  new md5 (this snapshot)  path —\n"
+                     "# changes rehearsed on a scratch ENG copy, to mirror into the real engine-july (cp, then check the\n"
+                     "# md5). Written by tools/snapshot_engine_july.py; tests accept the old md5 until then.\n"
+                     + "".join(lines), encoding="utf-8")
+        print(f"[snapshot] {len(lines)} file(s) pending a mirror into {DEFAULT_ENG} -> {p.name}")
+    elif p.exists() and ENG.resolve() == DEFAULT_ENG.resolve():
+        p.unlink()
+
+
 def build(check_only: bool = False) -> int:
     if not ENG.is_dir():
         print(f"[snapshot] {ENG} does not exist — nothing to snapshot")
@@ -145,16 +195,26 @@ def build(check_only: bool = False) -> int:
     excl = [(md5(live_path(r)), live_path(r).stat().st_size, r) for r in excluded]
     if check_only:
         man = dict((r, h) for h, r in read_manifest(OUT / MANIFEST))
-        drift = [r for h, r in rows if man.get(r) != h] + [r for r in man if r not in dict((r, h) for h, r in rows)]
+        pend = read_pending()
+        drift = [r for h, r in rows if man.get(r) != h and not (r in pend and pend[r] == (h, man.get(r)))] \
+            + [r for r in man if r not in dict((r, h) for h, r in rows)]
+        for r in sorted(set(pend) & {r for h, r in rows if man.get(r) != h}):
+            print(f"[snapshot] PENDING MIRROR {r} (live {pend[r][0]}, snapshot {pend[r][1]})")
         refm = dict((r, h) for h, r in read_manifest(OUT / REFERENCED))
         drift += [r for h, _, r in refs if refm.get(r) != h]
+        for r, rh in refm.items():          # a referenced texture still to mirror: pending, not drift
+            if r not in dict((r2, h2) for h2, _n2, r2 in refs):
+                if pend.get(r) == ("-", rh):
+                    print(f"[snapshot] PENDING MIRROR {r} (not in ENG yet, snapshot {rh})")
+                else:
+                    drift.append(r)
         for r in drift:
             print(f"[snapshot] DRIFT {r}")
         print(f"[snapshot] {'OK' if not drift else 'DRIFT'}: {len(rows)} copied files, {len(refs)} referenced textures checked")
         return 1 if drift else 0
     if OUT.exists():
         for p in sorted(OUT.rglob("*"), reverse=True):
-            if p.is_file() and p.name not in ("README.md",):
+            if p.is_file() and p.name not in ("README.md", PENDING):
                 p.unlink()
             elif p.is_dir() and not any(p.iterdir()):
                 p.rmdir()
@@ -176,6 +236,7 @@ def build(check_only: bool = False) -> int:
         "# md5  bytes  path — files of the snapshotted add-on folders deliberately NOT copied: the kn5->FBX\n"
         "# IMPORT helpers (never loaded by an export). Recorded so the omission is visible, not silent.\n" +
         "".join(f"{h}  {n:>9}  {r}\n" for h, n, r in excl), encoding="utf-8")
+    _write_pending(rows, refs)
     total = sum(p.stat().st_size for p in OUT.rglob("*") if p.is_file())
     print(f"[snapshot] {len(rows)} files copied, {len(refs)} referenced textures, {len(excl)} excluded binaries; "
           f"snapshot {total / 1e6:.2f} MB -> {OUT}")

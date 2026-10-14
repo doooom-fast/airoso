@@ -900,3 +900,868 @@ collects every chunk the station interval [start − 40, end + 40] touches round
 `tests/ac/test_build_kn5_loop_prep.py::test_seam_chunks_hold_every_same_leg_station_when_the_last_chunk_is_short`
 walks every station pair within the window on such a lap; it fails on the merged code, passes on the fix. No
 threshold changed.
+
+## 2026-10-11 — tiered terrain: the far ring's `verify_kn5` check, balanced terrain tiles, the far decimation retired, L3's clamp made distance-weighted (ledger 0046)
+
+Kevin, 2026-10-10: *"more terrain near the roads, and the I-8 trench and adjacent causeway cut out"*, *"I want to see
+cowles mountain"*. The ground is now one multi-resolution lattice sampled from USGS 3DEP **at every vertex**
+(`scripts/elevation/terrain_sample.py` + `scripts/geometry/terrain_tiers.py`, opt-in per track by a `terrain.tiers`
+list; every track without it is byte-identical). Lake Murray is the only consumer. Rehearsed in full on a scratch
+copy of the workshop (2026-10-12, `ship_sd.sh --no-install`, ENG = a scratch copy of engine-july): **every gate
+verdict file identical to v0.17.1 field for field** (drive_test street / race_cw / race_acw, audit street / race_cw /
+race_acw but `grass_verts`, no_route planned + built, verify_mouths, verify_race, verify_race scenery); race and
+closure kn5 vertex positions identical.
+
+### Gates and wiring
+
+| Item | Before | After | Flag |
+|---|---|---|---|
+| `verify_kn5` far ring (new, hard) | — | every mesh named `GRASS_FAR*` must carry **no digit prefix** (a `1GRASS_FAR` would be collided with, gated and GrassFX-listed) and stay ≤ 65,535 positions; prints the terrain tile count. A track without a far ring prints nothing and is judged as before | [std] the cap is AC's; the prefix rule is L6 |
+| engine-july `build_kn5_loop._split_large` (pending mirror) | `1GRASS` cut into `n // 60000 + 1` equal-width bands | `1GRASS*` / `GRASS_FAR*` tiled by recursive **median bisection** (palm.chunk_mesh's rule); every other mesh keeps the bands. 1GRASS 236,771 v → 4 tiles (max 59,692), GRASS_FAR 106,557 v → 2 (max 53,414) | wiring |
+| engine-july `build_kn5_loop` T-junction weld (new, pending mirror) | — | after the conform, a terrain face whose boundary edge carries another vertex (within 1 mm, in its line) is re-fanned through it from its centroid: in-plane, no vertex moves. 1,906 faces | wiring |
+| `GRASS_FAR` face-up | — | joins the face-up pass of `1GRASS` | wiring |
+| `tools/slim_far_terrain_blend.py` | `FAR_M 220`, `RATIO 0.35`: every TERRAIN vertex > 220 m from a road collapsed to 35 % so one uniform sheet fit two sub-65k tiles | **deleted** with its `ship_sd.sh` step. It existed to pay for the equal-width bands (the cap decided how much world there was) and it ate the deepest I-8 cut | ⚠ its 220 / 0.35 were invented; gone |
+| `tools/triangulate_terrain_blend.py` (new step after the seat) | the decimation also triangulated every TERRAIN face (BEAUTY) | the same BEAUTY triangulation, alone; no vertex moves (exit 1 if the count changes). The near-road ground the gates were tuned on is that triangulation's; without it the first rehearsal read +21 soft-top stations | wiring |
+| `make_treefx` `SURFACE_MATERIALS` | hard-coded `1GRASS_0_mat, 1GRASS_1_mat, 1ROAD_road_mat` | read off the built road kn5's gate OBJ (every `1GRASS*` material + the road); exit 1 without the OBJ. `GRASS_FAR` is not physical and is not listed | wiring |
+| road gate OBJ | written after the track folder | written **before** it (ext_config's GrassFX lists and make_treefx read the tile names off it) | wiring |
+| `ext_config` GrassFX | `GRASS_MESHES = 1GRASS_0, 1GRASS_1` | `1GRASS_0..3` (the `startswith(("1GRASS","1LAWN"))` rule, unchanged); `GRASS_FAR` never listed; `OCCLUDING_MESHES` unchanged | [std] the v0.12.x TDR rule |
+
+### The standard: L3 "Fake mountains" (Kevin's approval: D6(i) of the Lariat V3 plan, "Those changes are good")
+
+The ±`terrain_band_m` clamp (22 m) now holds in full only within `terrain.clamp_corridor_m` of a pavement and
+releases (smoothstep) to the raw DEM by `terrain.clamp_blend_m`; beyond, 3DEP stands uncapped. On the build:
+5,153 lattice vertices clamped (max lift 25.2 m, max cut 18.4 m), all within 250 m of a road; Del Cerro hilltop 258.1 m
+(was 163.7 / 168.4), Cowles 484.3 m (was absent; world max 220.0).
+
+### Invented numbers (⚠ every one; measured, none calibrated against a reference track)
+
+| Number | Value | Range the ledger gave / why |
+|---|---|---|
+| `clamp_corridor_m` | 80 m — **superseded 2026-10-13 by 20 m** (ledger 0054 D3, below: 80 filled a real canyon by 25 m and planed real ridges 12–18 m) | 60–100 (corridor 20 + blend 16 + one cell … ~100) |
+| `clamp_blend_m` | 250 m — **superseded 2026-10-13 by 40 m** (ledger 0054 D3, below) | ~250 or the medium tier's edge |
+| `tiers` | 5 m (x-split) within 60 m of a pavement, 20 m (x-split) to 500 m, 40 m beyond | the ledger's own example; 5 m is the only nesting cell under criterion 5's 7 m (20/3 m would put 10.2 % of the fine tier's facets past 7 m in 3D on its slopes) |
+| `tier_options.keep_cells` | the graded 20 m grid's own cells within 18 m of a pavement | the seat moves ground ≤ 11.1 m past a pavement and subdivides ≤ 15.1 m; the prep pins ≤ 9 m and subdivides ≤ 16 m |
+| `keep_surface_m` / `keep_feather_m` | 20 / 16 m — from the pavement **and** (2026-10-12) from the nearest kept node (the kept-node feather retired by the fix round below, where the kept cells themselves take the pavement feather past 20 m) | the conform corridor and blend. The kept-node feather removed 1,355 of the 1,404 ledges (> 100 % built slope, > 2× the data's) the pavement-only feather left at the kept cells' outer edge, with every gate identical |
+| `physical_within_m` | 250 m | drive_test sweeps ≤ 20 m off the road, TreeFX fills ≤ 200 m |
+| I-8 corridor | ±80 m at 5 m; floor every 10 m, 2 m sections every 25 m | the ledger asked 10 m cells; 10 m does not nest beside a kept 20 m cell (two levels) |
+| `include.cowles_mountain` | 20 m cells over the summit box | the ledger's 20 m |
+| `far_extent` | 32.755–32.822 N, 117.0895–116.998 W | the dossier's landmark box, widened so criterion 3's x ≤ −4000 / ≥ 4500 faces exist |
+| sightline thresholds (`tools/sightline_check.py`) | crest 9.0°, v2240 8.1°, v1640 5.1° | the crest's is the ledger's; the others take the same 0.35–0.4° allowance. Measured, not gated |
+
+### Verification criteria (ledger 0046 §Verification) — measured on the built gate OBJ against fresh 3DEP, NOT gated
+
+Results are in the ledger. As first rehearsed two read FAIL as written, with the cause measured: criterion 5's 15–60 m p90
+was 9.05 m (the kept near-road cells and the prep's slivers of them reach ~46 m out; fixed at that cause by the fix
+round below: 5.27 m), and criterion
+3's "no vertex below 100 m" is premised on a real low of ~121 m — fresh 3DEP puts the San Diego River side of the box
+at 20–100 m (20,622 vertices; a 1,684-vertex sample against fresh 3DEP: p95 0.005 m, and the 16 off by > 1 m are
+graded ground 13–42 m from a pavement or in the clamp's release band). Neither is loosened here:
+they are reported against their own wording.
+
+### `tools/ship_track.sh` re-synced to the new `ship_sd.sh` (after the merge of main a0557e0, 2026-10-12)
+
+Wiring only, no threshold moves. The Lariat P1 section above recorded `ship_sd.sh` as byte-identical; ledger 0046
+changed it, so `ship_track.sh`'s vocabulary and `tracks/san-diego-lake-murray/ship.json` follow (the SD header parity
+in `tests/tools/test_ship_track_chain.py` passes before and after the dry stop): `draft_terrain_sample` /
+`draft_terrain_resample` around the trim, `draft_triangulate_terrain` after the seat, `draft_slim_far_terrain`
+deleted; the assembler and the weld through `V021_SHIM` from `tracks/<track>/scripts-v021` (the workshop-on-sys.path
+and its shadowing guard are gone, as in `ship_sd.sh`; a draft naming the assembler without one exits 2); the road
+gate OBJ is `ship_road_obj`, before the track folder, for San Diego and the Lariat alike (`gate_road_obj` removed);
+San Diego's engine honours `ENG=<dir>` as `ship_sd.sh` does (no other track can name an engine); the 3DEP cache and
+the I-8 corridor files cross in and out. `ship_sd.sh` stays San Diego's chain of record, not a shim.
+
+
+### Fix round (2026-10-12, after the truth + visual verify): the kept cells refined past 20 m, a prep fin check, the far ring's chaparral, the summit cone
+
+Two independent verifiers refuted the rehearsed build on criterion 5 (15–60 m facet p90 9.02 m), criterion 4 (19 of
+171 I-8 sections) and the I-8's look from the seat, and found the far ring wearing a grey gravel tile. The cause of the
+first three was one thing: the kept v0.17.1 20 m cells reach ~46 m out, and past the prep's reach they stayed 20 m
+graded facets (the legacy 1 m trench and clamp included). Rehearsed in full again (ship9, `ship_sd.sh --no-install`,
+ENG = the scratch engine-july): **every gate verdict file identical to v0.17.1 field for field** (`grass_verts` and
+no_route timing aside), race and closure kn5 unchanged in size.
+
+| Item | Before | After | Flag |
+|---|---|---|---|
+| engine-july `build_kn5_loop._refine_kept_terrain` (new, pending mirror; opt-in by `data/terrain.refine.json.gz`, absent on every other track) | the kept cells stayed the graded grid's 20 m triangles out to ~46 m | after the conform and the T-junction weld, before the re-seat: (1) coincident vertices merged at 1 mm; (2) every edge > `edge_m` of a kept-cell face reaching past `move_beyond_m` (or centred past `min_face_d_m`) halved until none is — coplanar, nothing moves; one cut = `tri_1edge`, three = `tri_3edge`, the two-cut pentagon ear-clipped (never a zero-area cap); near-vertical faces (\|n_z\| < 0.05, the graded surface's own steps) never halved; (3) merge + weld again; (4) every kept-cell vertex past `move_beyond_m` — by the data's pavement distance or the BUILT road's, whichever is nearer — takes the 3DEP sub-lattice under the L3 clamp, feathered toward its graded height exactly as the lattice beside it (`keep_surface_m` / `keep_feather_m`). On the build: 97,637 edges halved, 63,193 vertices moved (max 8.23 m), 0 fins | wiring |
+| the same, fin check (new, **FATAL**) | — | a plan-flat face with a moved vertex that is not flat in 3D (a vertical fin over a crack) refuses the export. 0 on the build. The first cut of this pass (bmesh's generic triangulation of the two-cut pentagon, and halving vertical faces) stood ~7,300 such fins up; the gate OBJ now has 199 face-down 1GRASS triangles (v0.17.1: 209, zero-area or near it) and the same 7 non-manifold edges as v0.17.1 | [std] 0 is not invented: a fin is a crack |
+| `terrain_tiers` `keep_cells.refine` (new, opt-in) + `terrain_sample` | — | plans the 5 m x-split sub-lattice of every kept 20 m sub-cell not wholly within `beyond_m` of a pavement (34,036 sub-cells, 76,926 nodes; 66,878 new 3DEP samples, 149 requests, cached in `terrain.samples.json.gz`); the topology the assembler meshes is unchanged vertex for vertex | wiring |
+| the assembler's kept-node feather (2026-10-12, ship6) | non-kept vertices feathered from the nearest kept node too | **retired** when `refine` is on: the kept cells now follow the same pavement feather past 20 m, so the field is one surface across the kept edge (its 1,355 ledges cannot recur — the kept edge is no longer the graded surface) | wiring |
+| `tools/sightline_check.py` | target = the nominal (1380, 2700), "the highest within 40 m" | target = the summit's TOP (the highest built vertex within 60 m, criterion 1's radius); the summit as seen = the cone's highest angle; judged against every step outside the cone; the top's, the shoulder's and the nominal point's angles all printed. The nominal is a 20 m-lattice probe ~14 m off the real top; the ledger's own Evidence calls the profile's last 10 m "the summit's own shoulder" | measured, not gated |
+| `track.config.json` `texture_overrides.GRASS_FAR` | pbr's stock `ground_dry_diffuse.jpg` (mean RGB 139/132/122, a grey gravel) | `tracks/san-diego-lake-murray/textures/chaparral_far_diffuse.jpg`, grey-olive sage scrub over tan soil (mean 93/93/66), derived reproducibly from the stock grass + ground_dry tiles (`make_chaparral_far.py`); synced by `ship_sd.sh` `TRACK_TEXTURES` and `ship.json` | look only |
+| prep log grep (`ship_sd.sh`, `ship_track.sh`) | — | `kept-cell refinement` line shown | wiring |
+
+| Invented number (⚠) | Value | Why |
+|---|---|---|
+| `keep_cells.refine.cell_m` | 5 m | the near-road tier's own cell (x-split) |
+| `refine.beyond_m` | 10 m | sub-cells wholly within it never move and need no data (the prep pins ≤ 9 m) |
+| `refine.edge_m` | 5.5 m | halves a 20.07 m edge to 5.02 m and a 28.4 m diagonal to 3.55 m — the x-split sub-lattice; criterion 5's 7 m |
+| `refine.move_beyond_m` | 20 m | criterion 7's band (ground within 20 m of a pavement \|Δy\| ≤ 0.05 m); equal to `keep_surface_m`, so the feather starts at weight 1 |
+| `refine.min_face_d_m` | 12 m | past the excursion sweep (≤ 9 m past the edge): refining there is coplanar, so the number only bounds the vertex cost |
+
+Measured (ledger 0046 Results, ship9 gate OBJ against fresh 3DEP, the truth lens's own code): criterion 5 15–60 m
+p90 **5.27 m** (was 9.02), 60–500 m 20.2 m; criterion 4 162 of 171 (was 152): the 7 near-road failures are sections
+whose rim or centre lies on a pavement or within 20 m of one (criterion 7 holds that ground to v0.17.1), the 2 away are
+2–4 m-wide 3DEP features (a 4 m step within 2 m; a median berm) under 5 m cells; criterion 7 within 20 m: 3D distance to
+the v0.17.1 surface 0.000 m max. The cost: physical `1GRASS` 236,771 → 335,070 vertices in 8 balanced tiles (max
+42,411), road kn5 107.3 → 112.6 MB. Neither criterion is loosened here.
+
+
+### Fix round 2 (2026-10-13, after the truth + visual lenses refuted the fix round): the finest tier anti-aliased, plain cells split along their grain, `tools/rib_check.py`; criteria 2 and 3 re-worded where fresh 3DEP fails them too
+
+The visual lens found washboard ribbing — 6–10 parallel steps — in two places: ~150 m SE of the Lake Murray Blvd
+overcrossing (gate x 143..253, z −1696..−1734, `1GRASS_4`) and on the cut slopes west of College (x −3275..−3317,
+z −953..−1008, `GRASS_FAR_0`). **Real or artifact, measured** (fresh 3DEP on a 1 m local grid over both boxes, 32,322
+points, TLS on, 2026-10-13; the USGS hillshade and NAIP over the same boxes): both features are real. Spot 1 is the
+concrete-lined Alvarado Creek channel, ~7 m wide and 5–6 m deep with vertical walls, crossing the lattice at ~27°.
+Spot 2 is two ~5 m-wide drainage benches on the I-8 cut slope, slanting across it. The ribs are an artifact of two
+things together: (a) **sampling aliasing** — each 5 m vertex was one 3DEP point, so a feature narrower than two cells
+lands in one node and misses the next; (b) **the fixed SW→NE diagonal** of every plain cell, which folds the surface
+across the feature's grain in every cell it crosses. They are not tier T-junctions and not the kept-cell refinement: the ribbed nodes of both
+spots are plain 5 m I-8 corridor cells (no x-split centre, no kept or refine node among them), and the staircase runs
+along the feature, not along any tier edge. A simulation of the 5 m lattice over the 1 m grid reproduces the staircase
+from point samples plus the fixed diagonal and removes it with a low-pass plus a data-chosen diagonal; the build
+confirms it.
+
+| Item | Before | After | Flag |
+|---|---|---|---|
+| `terrain_tiers` `tier_options.antialias` (new, opt-in) + `terrain_sample` | every vertex one 3DEP point | every vertex of a finest-level (5 m) leaf, and every refine node, takes the **tent-filtered** 3DEP of the 2.5 m base lattice around it (weights 1/4, 1/2, 1/4 per axis, `AA_TAPS`): exact on a plane, it moves a vertex only where the ground bends inside a cell (on the build: median 0.03 m, p99 0.50 m, max 2.34 m). The cache stays point samples (+384,009 taps in 854 requests, 2026-10-13T15:28Z, cached in `terrain.samples.json.gz` with provenance); the filter is applied on every run. In the far ring the move is held to `far_max_move_m` of the vertex's own point (criterion 6) | wiring |
+| `terrain_tiers.data_diagonals` (new, opt-in by `tier_options.diagonals`) + the assembler | plain square cells split SW→NE | each plain square cell whose four corners are more than `beyond_m` from a pavement (and are not kept-cell nodes) splits along the diagonal whose corners differ least in height; no vertex moves, kept cells and x-split fans untouched. 44,328 cells flipped on the build | wiring |
+| `tools/rib_check.py` (new, **hard**; wired into `ship_sd.sh` after `verify_mouths`, `ship_track.sh` `gate_rib_check`, the `ship.json` gate list; writes `data/rib_check.json`) | — | on the BUILT gate OBJ, beyond 20 m of any `1ROAD`/`1KERB` vertex: (1) **staircase ribs** — at the 5 m step the second difference along a lattice row alternates sign between neighbouring nodes, both over `RIB_M`, and the rib does not continue straight into the neighbouring parallel row (a feature running along a lattice axis — a median wall, a bench beside the freeway — is one straight ridge, reported apart, not gated); (2) **cross-grain folds** — a plain square cell folded along its steeper diagonal by more than `FOLD_M`. Alternation at the 20 / 40 m steps (natural hill roughness at that scale) is reported, not gated | thresholds below [invented] |
+| criteria 2 and 3 (ledger 0046 §Verification) | as first written | re-worded only where fresh 3DEP fails them too; the evidence is below and in the ledger | re-word |
+
+| Invented number (⚠) | Value | Why |
+|---|---|---|
+| `antialias` kernel | tent of half-width one 5 m cell, 9 taps on the base lattice | the linear-interpolation kernel the mesh itself reconstructs with; on the 1 m grids a 1 m and a 2.5 m tap spacing gave the same surface (2.5 m costs one sample per 6.25 m², not 25) |
+| `antialias.far_max_move_m` | 0.95 m (0.85 m since fix round 3, below) | criterion 6's 1 m less 5 cm for the cache's centimetre rounding: at 1.0 a fresh re-sample read 3 of 3,000 far vertices 1.003–1.005 m off. Unbounded, 285 far nodes moved more than 1 m (benches, median walls) |
+| `diagonals.beyond_m` | 20 m | criterion 7's band: the ground the drive gates were tuned on keeps its triangles |
+| `rib_check` `RIB_M` / `MAX_RIBS` | 2.0 m / 100 staircase rib nodes | calibrated on the 2026-10-12 build (ship9, the ribbed one): 331 over 2 m; this build 56 (spot 1: 7 → 0, spot 2: 2 → 0). A first cut, 4.0 m / 150 on every alternating node, could not tell the two apart (ship9 455, an unbounded-filter build 64, the far-bounded one 158 — real straight walls and benches along the freeway in the far ring) and was replaced, before any build shipped, by the straight / staircase split above |
+| `rib_check` `FOLD_M` / `MAX_FOLDS` | 1.0 m / 100 cells | ship9 15,856 cross-grain cells over 1 m; this build 33 (cells with a corner inside the 20 m band) |
+| `rib_check` `NEAR_M` | 20 m | criterion 7's band |
+
+**Measured** (final full rehearsal, `ship_sd.sh --no-install` on a fresh scratch copy of the workshop, ENG = a fresh
+scratch copy of engine-july plus the snapshot's two pending files — no engine-july change in this round; gate OBJ md5
+ad065333b5f887d48afec341220aa96f): `rib_check` PASS — staircase ribs over 2 m beyond 20 m **331 → 56** (over 1 m
+2,273 → 585, over 4 m 40 → 9); cross-grain folds over 1 m **15,856 → 33**; straight ridges over 2 m 1,557 → 561
+(reported). **Every gate verdict file identical to v0.17.1 field for field** (drive_test street / race_cw / race_acw,
+audit × 3 but `grass_verts`, no_route planned + built × 2 but timing, verify_mouths, race_verify, race_verify
+scenery); verify_kn5 and `--inis` OK, check_race_kn5 OK, RACE_RED none. Road kn5 112,594,352 B (ship9 112,596,112);
+race and closure kn5 sizes unchanged; terrain tiles `1GRASS` × 8 (max 42,408 v) and `GRASS_FAR` × 2 (max 53,407 v), as
+in ship9.
+
+**Criteria re-worded** (fresh 3DEP fetched 2026-10-13T16:16Z, 18,379 points; the truth lens's own code re-run on this
+build). Only where the world fails the original wording too:
+
+- **2, strict reading** ("the summit's angle exceeds every intermediate one"): fresh 3DEP fails it from the crest
+  (summit point 9.355° against 9.375° at 1,630 m — the summit's own shoulder) and from v2240 (8.500° against 8.512° at
+  1,870 m). Re-worded: *the summit cone (60 m about the summit top, criterion 1's radius) stands above every profile step
+  outside it.* Built: crest 9.343° against 9.239°, v2240 8.487° against 8.347°; 3DEP 9.375° against 9.127°, 8.512°
+  against 8.31°.
+- **2 from v1640**: fresh 3DEP hides Cowles there — a hill 350 m out stands at 7.231° in front of the 5.486° summit.
+  Re-worded: *from v1640 the build agrees with the world: the summit cone at ≥ 5.1° [invented: the ledger's 5.5° less the 0.4° allowance the crest's 9.0° takes against the real 9.35°; marked at integration, v0.18.0, after the truth lens found it unmarked — it decides nothing today: built 5.489° hidden behind 6.600°, 3DEP 5.501° behind 7.215°] and a nearer rise at least as high*
+  (`sightline_check` `"hidden": true`). Built: summit 5.489°, the hill 340 m out 6.600° — hidden, PASS. The built hill
+  is 0.6° lower than the world's (the L3 clamp's release band), which this reading allows.
+- **3, "no terrain vertex below 100 m abs"**: the landmark box the ledger asked for takes in the San Diego River gorge,
+  whose fresh-3DEP low is 19.67 m at (−2627, 2717); the 21,260 built vertices below 100 m are that gorge (987 checked
+  against fresh 3DEP: median 0.011 m, p95 0.474 m). Re-worded: *no terrain vertex below the landmark box's real low in
+  fresh 3DEP (19.67 m) — the pit, not the gorge, is the failure.* Built minimum 19.67 m at (−2627, 2717): PASS.
+- **Not re-worded — criterion 4** (the world cannot fail it: it compares the build with 3DEP). 163 of 171 sections pass.
+  The 8 failures, each measured against fresh 3DEP at its own point and at the nearest built pavement: s 1700 and
+  s 3700 are under the College Ave and Lake Murray Blvd decks, where bare-earth 3DEP has no deck (the decks are built
+  5.2 m and 4.8–6.9 m above it, held level per L3 "Bridges dip") and v0.17.1's approach grass rises to the deck;
+  s 1800–1950's north rims are 1–10 m from Alvarado, whose built pavement sits 1.5–2.8 m above bare-earth 3DEP there
+  (the road datum, ledger 0002); s 3750's south rim is 20 m from the LMB approach (built 3.0 m above 3DEP). All 7 equal
+  v0.17.1's ground within 0.3 m — the ground criterion 7 and every drive gate hold. s 7250 (1.7 km from any road) is a
+  1.5 m-tall, ~2 m-wide wall 2 m beside the section centre (fresh 3DEP 179.83 m at −2 m, 175.91 m at the centre); no
+  5 m cell can follow it (L3b), and the 2026-10-12 build failed it too (177.52 m there then, 177.23 m now). None is
+  loosened; the 7 near-road ones are criterion 4 against criterion 7 and stay Kevin's call.
+- Criteria 1, 5 and 6 unchanged and PASS: Cowles 484.34 m; 15–60 m facet p90 5.255 m, 60–500 m 20.23 m; far vertices
+  against fresh 3DEP max 0.955 m (3,000 random), 0 over 1 m; longest far horizontal edge 56.65 m.
+
+
+### Fix round 3 (2026-10-13, after the visual lens found sunken houses and the truth lens criterion 4): buildings seated on the final ground, `tools/house_seat_check.py`; criterion 3's low corrected + a pit clause, criterion 4's rim read across 3DEP's own wall edges, the far filter bound 0.85 m
+
+**Sunken houses — cause.** The draft (`build_loop_blend.build_buildings`) sits each OSM footprint at the ground under
+its centroid less 0.4 m. The engine-july prep (`build_kn5_loop._conform_and_reseat`) then reshapes the ground: conform,
+pin, feather, the tiered terrain's kept-cell refinement past 20 m. After that, every HOUSE / BUILDING island rode the
+change in ground height under its **lowest vertex**, which is one corner. Where the ground moved differently under the
+rest of the footprint, the house was buried or lifted. Examples: (−249, 1461) was lowered 3.4 m onto unchanged ground;
+the (−1613, −693) row stayed put while the ground rose 3.3 m. v0.17.1 has the same weakness: 118 of its 152 buildings
+float more than 0.1 m over the lowest ground under their walls, by up to 8.36 m.
+
+| Item | Before | After | Flag |
+|---|---|---|---|
+| engine-july prep `_conform_and_reseat` (snapshot; pending mirror) + pure helpers `house_seat`, `footprint_samples` | HOUSE / BUILDING islands ride the ground delta under their lowest vertex | After every pass that moves ground, each building reads the final ground (1GRASS / 1ROAD / 1KERB top, within 40 m of its bottom: L4) at its corners, its centroid and every `HOUSE_EDGE_STEP_M` along its walls. Floor = mean of corners + centroid less `HOUSE_SINK_M` 0.4, the draft's own rule, raised where needed so that `HOUSE_SHOW` of its height stands above the highest ground under its walls. The bottom ring goes down to the floor or to `HOUSE_FOOT_M` under the lowest wall ground, whichever is lower (a foundation on a slope). On level ground the house is the draft's. Palms, scrub and lights still ride the delta. Prep log: "house seat: 152 buildings …, 135 with a foundation …, deepest 9.54 m" (grep'd in both chains) | wiring |
+| `tools/house_seat_check.py` (new, **hard**; `ship_sd.sh` after `rib_check`, `ship_track.sh` `gate_house_seat`, `ship.json` gate list; writes `data/house_seat_check.json`, synced) | — | On the BUILT gate OBJ, every HOUSE / BUILDING (faces re-joined by position) against the top of 1GRASS / 1ROAD / 1KERB under its wall bottoms, read every `STEP_M`. Fails a building that is **floating** (bottom more than `FLOAT_M` over the lowest ground), **sunken** (bottom more than `SUNK_M` under it) or **buried** (roof less than `MIN_SHOW_M` over the highest ground) | thresholds below [invented] |
+
+| Invented number (⚠) | Value | Why |
+|---|---|---|
+| `HOUSE_FOOT_M` | 0.15 m | a foundation reaches just into the lowest ground: no daylight under a wall, nothing visible below grade |
+| `HOUSE_EDGE_STEP_M` / `STEP_M` | 1.5 m | the gate and the prep read the same spacing; a 5 m terrain cell is crossed by at least three reads |
+| `HOUSE_SHOW` | 0.5 | a footprint over more drop than half its height (the I-8 south rim at (1369, −908): 7.4 m under a 5.5 m house) still shows half of itself uphill; triggers on 1 building of 152 |
+| `FLOAT_M` / `SUNK_M` / `MIN_SHOW_M` | 0.10 / 1.0 / 1.0 m | the prep's rule puts the bottom 0.15–0.40 m under the lowest ground and the roof ≥ 1.5 m over the highest (the shortest draft building is 3 m); the limits leave 0.25–0.6 m for the export and the gate's own reads |
+| `MAX_FLOATING` / `MAX_SUNKEN` / `MAX_BURIED` | 0 / 0 / 0 | measured: v0.17.1 118 / 0 / 4, fix round 2 96 / 1 / 4, this build 0 / 0 / 0 |
+
+**Criteria (ledger 0046 §Verification), re-worded only where fresh 3DEP fails them too:**
+
+- **3 — the number, and a pit clause.** Round 2 named 19.67 m as "the box's real low". That was 3DEP at the built
+  minimum vertex. A fresh-3DEP search went from the truth lens's 60 m box lattice (every node under 35 m), to a 10 m
+  lattice, then 2 m, then 0.5 m: 14,493 points in 38 requests, 2026-10-13T16:50Z. It puts the low at **15.52 m at
+  (−2618, 2752)**, in the river channel 34 m from the built minimum. "Not below the box's low" alone would catch only a
+  pit deeper than the gorge. So: no terrain vertex below 15.52 m, and none more than **3 m [invented]** under fresh
+  3DEP at its own position where the first wording guarded it — every vertex below 100 m — and in the far ring,
+  which criterion 6 holds to 1 m. Three metres is above the anti-alias filter's largest move (2.34 m, on ridges) and
+  far below the old skirt's pit. Measured on all 21,260 vertices below 100 m: minimum 19.67 m; worst 1.19 m under
+  3DEP. PASS.
+- **4 — the rim at walls.** *(Withdrawn in fix round 4, below: the truth lens could not reproduce the sub-metre instability, and a build-against-3DEP comparison is not something the world can fail. Round 4's break lines pass s 700 on the first wording.)* Fresh 3DEP fails the rim reading against itself. At 35 of the truth lens's 171 stations
+  (39 of the build corridor's 179), 3DEP's own rim-to-floor at ±60 m changes by more than the criterion's 2 m when read
+  one section step (2 m) nearer or farther. A wall, bench or retaining wall stands at the rim. Two OSM-derived
+  centrelines 0.2–0.6 m apart read the same rim up to 2.18 m differently. This is why round 2's failing list moved
+  between centrelines: s 7250 on one, s 700 on the other. 22,750 points in 58 requests, 2026-10-13T16:51Z.
+  Re-worded: *where 3DEP's rim-to-floor at ±58 / ±60 / ±62 m spans more than 2 m, the built rim passes within 2 m of
+  that span; every other rim keeps ±2 m of 3DEP at ±60 m; sections inside the landmark box.* s 700 passes: the build
+  reads 90.81 m between 3DEP's 92.68 m at −60 and 87.60 m at −58.
+  **Not re-worded — the 7 near-road failures** (164 of 171 pass on the truth lens's centreline; 171 of 178 on the
+  build's; the same 7 places). Each failing rim point is 0.4–9.5 m from a pavement. Criterion 7 holds that ground to
+  the 2026-10-09 build within 5 cm, and there that ground is 2.2–8.8 m from 3DEP, so no build passes both. The world
+  there: an embankment under College Ave's south approach, where the built span leaves 6 m of air; College Ave north
+  of I-8 2.6 m higher than built; Alvarado's creek bank dropping 4–5 m within 4–8 m of the kerb, where v0.17.1 has a
+  flat shelf; ground north of I-8 2.2 m higher; a bridge over Alvarado Creek on Lake Murray Blvd, where v0.17.1 has
+  fill. That is road, verge and bridge work (ledger 0002) against the drive gates: Kevin's call.
+- **6 — margin.** `antialias.far_max_move_m` 0.95 → **0.85 m [invented]** (395 far nodes held). Fresh 3DEP at all
+  106,544 far vertices, not 3,000: max 0.995 m, 0 over 1 m. The vertices nearest 1 m are 3DEP's own 1 m pixel edges.
+  The 0.995 m node (2151, 3596) is a 40 m node whose cached sample reappears in fresh 3DEP 0.5 m away (243.02–244.08 m
+  within half a metre). 24 of the far nodes read more than 0.5 m differently between the cache and a fresh fetch whose
+  positions differ by millimetres; median 0.002 m. Every other vertex over 0.85 m is a filter move held at the bound.
+  Not re-worded.
+
+**Measured** (final full rehearsal, a fresh scratch workshop, ENG = a fresh engine-july plus the snapshot's two pending
+files; gate OBJ md5 e4a8343c6030737c6c907992ffa6c0da, its ground identical to the round-3 measurement build's): every
+gate verdict file identical to v0.17.1 field for field (only `grass_verts`, no_route timing). `rib_check` PASS: 60
+staircase ribs over 2 m (round 2 56; the tighter far bound), 33 folds. `house_seat_check` PASS: contact −0.32..−0.15
+m, lowest roof over the uphill ground 1.60 m. Road kn5 112,609,136 B. Tiles unchanged.
+
+
+### Fix round 4 (2026-10-13, after the truth + visual lenses refuted fix round 3): break lines on the 5 m cells, `rib_check` reads between the nodes (step jogs), the near-road feather as an earth batter, bridge bodies under the two overcrossings, criterion 4's round-3 re-wording withdrawn
+
+**The washboard that was left — cause.** West of College at (−2860..−3050, −977..−1013) the I-8 cut slope carries
+two drainage benches: risers 4–6 m tall and ~1.5 m wide in 3DEP, running ~8° off the lattice x axis (fresh 3DEP at 1 m
+over a 320 × 120 m box, 38,841 points, TLS on, 2026-10-13; a 1 m mesh of it shows both benches as continuous ledges with
+fine vertical rills on their faces). It is **not** the round-2 aliasing of a narrow channel, which the tent filter fixes:
+whatever height the nodes carry, a lattice can only put a sharp riser **between** two rows of nodes, so a riser at a
+shallow slant sits between rows j and j+1 for ~35 m and then jumps a whole row — the staircase. In the far ring
+criterion 6 also holds the tent to 0.85 m of each node's own point, so a 5 m riser keeps nearly its whole height inside
+one cell. `rib_check` passed it because its lattice-node measure reads such a riser as a "straight ridge" along the
+axis (reported, not gated) with only a staircase node at each jump: 60 of 100 allowed, while the eye saw 6–10
+parallel steps.
+
+| Item | Before | After | Flag |
+|---|---|---|---|
+| `terrain_tiers` break-line helpers + `terrain_sample` (`tier_options.breaks`, opt-in) | each plain 5 m cell = two triangles between its four nodes | on every edge shared by two **plain** finest cells (no x-split centre, no hanging node, not kept, all corners beyond `beyond_m` of a pavement) whose base-lattice midpoint departs from its ends' line by `screen_m`, and which climbs the ground at least as steeply as it crosses it, 3DEP is read every 0.5 m (fine keys, cached in `terrain.samples.json.gz` under `fine`: 108,738 points in 243 requests, with provenance); up to `max_per_edge` points where the 1/4-1/2-1/4-smoothed profile departs most from the polyline so far (Douglas-Peucker, `tol_m`, `min_spacing_m`) become vertices ON the edge, both cells beside it take them (no crack), and each such cell is re-triangulated through them (the least-squares triangulation of its boundary polygon against its 9 base points and its edge profiles, an O(n³) dynamic programme, never a collinear triangle). Corners keep their anti-aliased height (`corners: "filtered"`; point-sampled corners zig-zagged the node rows on the ditch lips). In the far ring a break vertex is held to `far_max_move_m` of its own point. Lake Murray: 9,880 edges read, 6,370 cells, **+4,978 vertices** | wiring |
+| the assembler (`build_tiered_terrain`) | lattice vertices only | places the break vertices (`T["break"]`, fine keys) through the same clamp and feather; refuses one inside `keep_surface_m` | wiring |
+| `tools/rib_check.py` **step jogs** (new, gated) | — | scan lines a quarter cell off every 5 m lattice line cut the **built** finest-tier triangles; each riser crossing (a run as steep as `JOG_SLOPE`, dropping `JOG_DROP_M` within `JOG_RUN_MAX_M`) is chained line to line (`JOG_LINK_M`, `JOG_DY_M`, up to two lines skipped), and a JOG is a step between consecutive crossings that outruns the riser's own pace over three lines either side by `JOG_M`. A washboard is a neighbourhood of jogs: **exit 1 when more than `MAX_JOG_CLUSTER` lie within `JOG_CLUSTER_M` of one jog** beyond 20 m | thresholds below [invented] |
+| `rib_check` nyquist rows | every lattice row | a row whose surface between its nodes is drawn through break-line vertices is skipped (it is not the straight line the nodes imply; the step-jog measure reads it) | wiring |
+| the near-road feather (`tier_options.keep_batter`, `keep_feather_min_m`; the assembler + the engine-july prep, pending mirror) | the graded surface blends into 3DEP over a fixed 16 m past 20 m | over an **earth batter's run** of the gap between them: 3.5 m per metre of gap, held to 8–16 m. The assembler computes it at every lattice vertex and at every refine node (written as `L` into `terrain.refine.json.gz`); the prep interpolates it like D and d (computing it per vertex from the vertex's own height stood one zero-area face up as a fin: FATAL). A 2:1 batter was tried first and **refuted by the step-jog gate**: its 0.75 peak slope drew a riser beside every road where the graded ground sits 4+ m off 3DEP (jogs in the 20–40 m band 11 → 54) | thresholds below [invented] |
+| engine-july prep `_refine_kept_terrain` (pending mirror) | a moved vertex on a zero-area face stands it up as a fin (FATAL) | the moved points of a zero-area face (three points on one line, flat in plan **and** in 3D) are held where they are, repeated until none is; the FATAL fin check still guards everything else. 1 vertex held on the build | [std] zero area has no surface |
+| `tools/author_bridges_blend.py` (new author step after the mouths gap, both chains; `ship.json` `bridges`; `data/bridges.authored.json`) | from the cut floor both overcrossings were paper-thin ribbons with sky under them (AC culls back faces; no soffit, fascia, abutment or pier) | `BRIDGESTRUCT_<span>` under every declared span of every drivable line that opens over the ground (a station is open where the ground under ANY part of the deck is `OPEN_MIN_M` under the soffit; a column reading through the hole the terrain leaves under a road is no evidence): soffit `DECK_T_M` under the deck, fascia on both edges, an abutment wall at each end of each opening, pier bents (cap beam + columns) at the I-8 median and outside each carriageway, never in one, never by an abutment. Visual only: no digit prefix, not HWYSTRUCT, in no gate, GrassFX or occluder list; concrete by its own pbr row (`BRIDGESTRUCT`, both engines; engine-july's `pbr.py` pending mirror), its box UVs kept by the prep. Self-checked (exit 1, loop.blend not saved): no structure vertex over a ROAD / CURB surface or above the deck. College Ave: opening 2553.6–2655.6 m, walls at 2553.6 / 2648.1, a bent at 2597.9 (4,036 v); Lake Murray Blvd: opening 13353.2–13402.7, walls 13357.7 / 13399.7, bents 13372.1 / 13395.5 (2,168 v). First drafted in an unverified round-2 attempt (branch `wip-0046-fixround2-prior`) | thresholds below [invented] |
+| criterion 4 (ledger 0046 §Verification) | round 3 re-worded the rim at 3DEP wall edges (±58/60/62 m span) | **withdrawn** — the truth lens showed fresh 3DEP does not move by more than 2 m under 0.5 m shifts (0 of 344 rims), and a build-against-3DEP comparison is not something the world can fail. Sections are taken inside the landmark box (the terrain's extent; the truth lens's own code does the same) | re-word withdrawn |
+
+| Invented number (⚠) | Value | Why |
+|---|---|---|
+| `breaks.beyond_m` | 20 m | criterion 7's band (in practice every plain cell is ≥ ~55 m out: within 60 m of a pavement the 5 m tier is x-split) |
+| `breaks.screen_m` | 0.25 m | a 2.5 m midpoint off its ends' line by this is a bend worth reading (0.20 read 22 % more edges and drew more jogs, 57 against 36 on the bare lattice) |
+| `breaks.tol_m` / `max_per_edge` / `min_spacing_m` | 0.4 m / 3 / 0.75 m | a riser's top and foot plus a ditch lip; 0.75 m keeps two points off one 3DEP pixel |
+| fine spacing | 0.5 m (base / 5) | half a 3DEP pixel |
+| profile smoothing | 1/4 1/2 1/4 at 0.5 m | one pixel's noise, not a riser |
+| `JOG_CELL_MAX_M` | 7.6 m | finest-tier triangles (a 5 m cell's diagonal is 7.1 m) |
+| `JOG_SLOPE` / `JOG_DROP_M` / `JOG_RUN_MAX_M` | 0.7 / 2.0 m / 8 m | a riser, not a hillside; `RIB_M`'s scale |
+| `JOG_LINK_M` / `JOG_DY_M` | 8 m / 3 m | the same riser on the next line |
+| `JOG_M` | 2.0 m | a row is 5 m; a straight riser at any angle steps exactly at its own pace |
+| `JOG_CLUSTER_M` / `MAX_JOG_CLUSTER` | 75 m / 5 | the lens saw 6–10 parallel steps. Measured: ship9 (the first ribbed build) 11, fix round 3 **7 (FAIL)**, this build **4** |
+| `keep_batter` / `keep_feather_min_m` | 3.5 / 8 m | steepest 1.5 / 3.5 = 0.43, under the step-jog riser slope (0.7) everywhere and never steeper than the 16 m blend where the gap exceeds 4.6 m; 2.0 (steepest 0.75) failed the gate |
+| `STEP_M`, `DECK_T_M`, `FASCIA_LIP_M`, `OPEN_MIN_M`, `ABUT_MIN_M`, `BURY_M`, `BUILD_PAD_M` | 1.5, 1.4, 0.25, 0.5, 1.5, 1.0, 6 m | a typical box-girder overcrossing's depth under the decks' own width; the walls start where the clearance first passes 1.5 m |
+| `LANE_M`, `SHOULDER_M`, `PIER_CLEAR_M`, `COL_SPACING_M`, `COL_R_M`, `CAP_D_M`, `CAP_H_M`, `EDGE_INSET_M` | 3.7, 3.0, 4, 7, 0.6, 1.6, 1.0, 1.5 m | the bent geometry; OSM lanes per carriageway |
+
+**Measured** (final full rehearsal, `ship_sd.sh --no-install` on a fresh scratch copy of the workshop, ENG = a fresh
+copy of engine-july plus the snapshot's two pending files; numbers in ledger 0046 Results — fix round 4): every gate
+verdict file identical to v0.17.1 field for field (only `grass_verts` 87,278 → 335,447 and no_route timing);
+`rib_check` PASS — nyquist 75 / 100, folds 33 / 100, **step jogs: densest 75 m 4 / 5** (round 3: 7, FAIL; the lens's
+box (−3060..−2850, −1020..−970): 8 jogs → 0); `house_seat_check` PASS; road kn5 112,609,136 → 113,313,134 B; race and
+closure kn5 unchanged; terrain tiles `1GRASS` × 8 (max 42,426 v), `GRASS_FAR` × 2 (max 55,750 v).
+
+### Amended at integration (2026-10-13, v0.18.0, ledger 0054 D3): the clamp's reach is the conform corridor
+
+Kevin, on 0054's D3 ("why are we changing ridges?"): keep the real ridges. Measured read-only on fresh 3DEP transects
+every 50 m along the loop and all four connectors, 5–300 m each side (41,486 points; ledger 0054): 0046's clamp as
+written above (80 m full / 250 m release) moves 2,035 points by more than 1 m, every one 40–250 m from a road — it filled
+the canyon north of west Navajo by up to 25 m and planed the Navajo-side ridge and the ridge west of College by 12–18 m.
+Inside 40 m it moves nothing: the conform corridor (20 m) and its 16 m blend already shape 0–36 m. A reach that eases out
+between 20 and 40 m moves 0 points by more than 1 m on the loop and on every expansion road (largest 0.01 m). A hard
+40 / 40 cut leaves a 2.2–2.4 m step beside Alvarado, so the release keeps its smoothstep.
+
+| Number | Was | Now | Why |
+|---|---|---|---|
+| `terrain.clamp_corridor_m` | 80 m [invented] | **20 m** [invented, measured] | the conform corridor; nothing real is moved inside it (0 of 41,486 points by > 1 m) |
+| `terrain.clamp_blend_m` | 250 m [invented] | **40 m** [invented, measured] | corridor 20 + the 16 m blend + a 4 m margin; 0 points by > 1 m |
+
+L3 amended in the same commit (fleet/LAWS.md: "Near" is the conform corridor). Measured on the v0.18.0 rehearsal (the
+merged branch, before 0050): every drive / audit / no_route / mouths verdict identical to v0.17.1; `rib_check` PASS
+(nyquist 75 / 100 over 2 m beyond 20 m, cross-grain 33 / 100, step jogs densest 75 m 4 / 5); `house_seat_check` PASS
+(152 buildings, 0 floating / sunken / buried); terrain tiles unchanged (`1GRASS` × 8, max 42,426 v; `GRASS_FAR` × 2,
+max 55,750 v).
+
+### Integration fix round (2026-10-13, v0.18.0, after the truth + view lenses refuted the integration): the near-road ground released where the real earth is not a verge, College Ave's deck on its real abutments, the I-8's own pavement
+
+No gate threshold changed and no criterion was re-worded. Criterion 4 (I-8 sections, first wording) failed on 7 rims within
+20 m of a pavement, each on ground criterion 7 held to v0.17.1 and 2–9 m from fresh 3DEP. They were fixed at their causes
+(fresh 3DEP 1 m, 2026-10-13): Alvarado Creek's bank flattened into a road-height shelf beside Alvarado Road (s 2150 / 2200 /
+2250, and a 2 m rise at s 2400); 6 m of air under College Ave's south approach where the real road rides an embankment
+(s 2000); College Ave's north approach built 2.0–3.0 m under the real road because the old deck interpolation ran 25 m
+past the real abutment from a height read off the slope under the bridge (s 2050); solid fill under Lake Murray Blvd where
+it really bridges Alvarado Creek 8 m up (s 4050). Measured with the truth lens's own code on the rehearsal's gate OBJ:
+**172 of 172** (was 165 of 172). The view lens's I-8 refutation ("a shallow grassy valley ... no freeway") is fixed by the
+freeway's own pavement (0046 E4, "Kevin's call", now on by default with one switch to remove).
+
+| Number | Value | Where | Why |
+|---|---|---|---|
+| `tools/deck_datum.SMOOTH_M` | 3 m [invented] | the approaches | one-sided moving average of the 1 m 3DEP road surface, never read across an abutment |
+| `tools/deck_datum.BLEND_M` | 8 m [invented] | window ends | the corrected profile joins the old one without a step (the assembler's sigma 5-point smoothing runs on top) |
+| `road_datum.decks[college_ave_over_i8]` | deck 2586–2683 m, window 2548–2742 m | measured | fresh 3DEP: embankment to 2586 (108.65 m), open span, embankment from 2683 (112.4–113.4 m) |
+| `tools/ground_release.CELL_M` | 2 m [invented] | released ground | the creek channel is 7–16 m wide |
+| `tools/ground_release.RAMP_M` | 4 m [invented] | zone ends / outer edge | smoothstep back to the built ground |
+| `tools/ground_release.INNER_M` | 0.5 m [invented] | bank zones | a bank zone starts this far inside the nominal kerb line (a span zone covers the whole deck) |
+| `terrain.ground_release.zones[*].reach_m` | 40 m [invented] | all three | past the kept cells' refinement band (20 + 16 m), which the prep then leaves alone inside a zone |
+| `tools/ground_release_blend.SUBDIV_M` | 2.5 m [invented] | zone terrain edges | halved down to this |
+| `tools/ground_release_blend.EDGE_CAP_M` | 1 m [invented] | bank zones | ground within this of the pavement never rises above its edge - 0.02 m |
+| rail rule | drive_test's own: a fall over 0.12 m between two points 0.5 m apart within the 4 m band past the built edge, read every 0.125 m [invented] from 0.5 m inside the nominal edge; or the ground more than `RAIL_FALL_M` 0.5 m [invented] under the edge | rails | every new drop a car could reach is guarded, so `drive_test`'s gated excursions stay at 100 (v0.17.1: 100) |
+| rail geometry | Jersey profile 0.60 m foot / 0.20 m top / 0.81 m tall, foot 0.30 m into the curb, centre 0.30 m inside the curb's outer lip; runs padded 3 m [invented], merged under 4 m [invented], none under 6 m [invented], none within 2 m [invented] of an existing GUARDRAIL vertex | `GUARDRAIL` -> `1WALL_guard` | a 0.6 m foot so drive_test's 0.5 m lateral probe cannot step over it |
+| `freeway.lane_m` | 3.66 m | measured standard | the US interstate lane (12 ft); lanes per carriageway from the OSM `lanes` tag (4–6) |
+| `freeway.outer_shoulder_m` / `inner_shoulder_m` | 3.0 / 1.2 m [invented] | carriageway edges | the inner edge never past the median line less the barrier's half-foot 0.30 m |
+| `freeway.lift_m` | 0.15 m [invented] | pavement over the final ground | no z-fight with the grass; checked, not assumed: every vertex, edge midpoint and centroid stands >= 0.03 m [invented] over the ground, raised up to 0.5 m [invented], else the face is left out |
+| `freeway.step_m` / `dash_m` / `dash_period_m` / `line_w_m` | 4 / 3 / 12 / 0.15 m [invented] | geometry | stations; dashed lane lines; line width |
+| `freeway.barrier_gap_max_m` | 40 m [invented] | median barrier | a Jersey barrier midway between the carriageways wherever they run this close |
+| `author_freeway_blend.DECK_CLEAR` | 2.0 m [invented] | under a loop deck's abutment | a station with a loop deck this close over its pavement is left out (the abutment earth, never the embankment top) |
+| GrassFX occluder prefix `HIGHWAY_I8_NEAR` | — | `scripts/ac/ext_config.py` | the pavement inside the 1ROAD extent occludes grass; `HIGHWAY_I8_FAR` and the bare `HIGHWAY` prefix stay out (the TDR lesson) |
+
+Wiring: `tools/deck_datum.py` first in the draft (before `median_envelope`); `tools/ground_release.py` +
+`tools/ground_release_blend.py` after the BEAUTY triangulation, before the median island and the bridge bodies;
+engine-july's prep (`build_kn5_loop.ReleaseZones`, pending mirror) skips its contact feather and its kept-cell
+refinement inside a zone (it still pins under the pavement); `tools/freeway_i8.py` + `tools/author_freeway_blend.py`
+on the prepped scene before the split; `tools/make_treefx.py` keeps trees off the carriageways (348 dropped). The two
+3DEP caches (`data/deck_datum.samples.json`, `data/ground_release.samples.json.gz`) ride TERRAIN_DATA both ways.
+
+Measured on the full rehearsal (v0.18.0 integration -> this round): street drive_test soft top 41 -> 41, severe 0, bumps
+0.0, kinks 3.41, gated excursions 100 -> 100 (far ledges 79 -> 98: the creek and the College embankment past the 4 m band),
+floating 391, obstruction 0; street audit D 512 -> 514 (the same 90 plan / 180 3D positions, all the loop's I-8 bridge
+rails: two more duplicate vertex records at College where the deck now stands at its real height), K 20, I 20, F 13;
+race layouts identical (severe 22 / 20, soft top 9 / 9, audits 53 / 53, no_route PASS, barrier_missing 0);
+`rib_check` / `house_seat_check` / `verify_mouths` / `verify_fold_fans` / `verify_signs` PASS; road kn5 113.3 -> 126.3 MB.
+
+### Integration fix round 2 (2026-10-13, v0.18.0, after the truth + view lenses refuted the integration fix round): the freeway at its real height with the ground meeting it, both overcrossings' whole real spans released, the release capped per face and held to a batter, the corridor to the box's west edge
+
+No gate threshold was loosened and no criterion was re-worded. Two self-checks became stricter (FATAL): the release
+now refuses any released face standing over a ROAD / CURB surface anywhere over its area (it checked vertices against
+the deck before), and the freeway refuses any of its vertices over a loop deck or within `DECK_CLEAR - lift` under one
+(it checked only "within 1 m under a 1ROAD"). The causes, measured on fresh 3DEP 1 m and the rehearsal's gate OBJs:
+grass 5 cm through Lake Murray Blvd's lane at the creek (a 2.5 m released facet crossing the kerb, capped only at its
+corners, on the NEAREST pavement vertex's height); the I-8 barrier 0.94 m and a slab corner 0.63 m up through College
+Ave's deck (the freeway drape followed ground the draft had seated at the deck, and its "is a deck over me" ray started
+over that ground); the freeway's north carriageway climbing a 5-6 m hump under College and its outer lanes running up
+Lake Murray Blvd's abutment slopes (draped on the built ground, which under and beside both decks was the loop's
+embankment, not the real span: 3DEP has the floor 2.1-3.5 m and 18.7-19.3 m local there); the carriageways' outer edges
+2-8 m off 3DEP for 1.1 km east of College (5 m corridor cells straddling the real cut walls); 3-4 m vertical grass
+curtains beside Alvarado (875 m2 of faces over 60 deg: the built sidewalk is wider than the real one, so the released
+creek bank fell away right at its outer edge, and the nearest-pavement cap pinned the real 3.6 m terrace beside College's
+south approach down to Alvarado's height); criterion 4's three west-end stations with no vertex within 12 m (the I-8
+corridor ended at x -3844 where data/osm.json's bbox ends; the box edge is x -4013).
+
+| Number | Value | Where | Why |
+|---|---|---|---|
+| `terrain.corridors[i8].osm_cache` | `data/osm.i8.json` (measured) | the I-8 corridor + the freeway | the I-8 ways of data/osm.json plus 18 ways west of its bbox (Overpass, 2026-10-13, TLS verified, provenance in the file) |
+| `terrain.ground_release.zones[college_i8_span]` | s 2570-2690, reach 40 m (measured span, [invented] margins) | span zone | fresh 3DEP along the centreline: the deck leaves its south embankment at s ~2580 and meets its north one at s ~2670 |
+| `terrain.ground_release.zones[lmb_i8_span]` | s 13330-13428, reach 40 m (measured span, [invented] margins) | span zone | fresh 3DEP: off the south embankment at s ~13338, onto the island before Alvarado Creek at s ~13407 |
+| `tools/ground_release_blend.EDGE_CAP_M` and the span zones' "beside: never above the nearest pavement" | removed | release | replaced by the per-face cap (it missed facets crossing the kerb and pinned a real terrace beside a lower road) |
+| `tools/ground_release_blend.BATTER_CUT` / `BATTER_FILL` | 1.0 / 1.7 m per m [invented] | released ground within `BATTER_REACH_M` 12 m [invented] of any ROAD / CURB face | a released vertex stands no higher than min over every pavement face in reach of (its mean height + 1.0 x plan distance) — 45 deg up from the LOWEST nearby pavement (Alvarado under College's south approach: fresh 3DEP has that terrace at ~54 deg over 2 m, which on 1.25 m facets read as a pleated curtain) — and, beside pavement on the ground (within `ON_GROUND_M` 1 m [invented]), no lower than max of (height - 1.7 x distance), 59.5 deg down (just under the view lens's 60 deg cliff line; at 1.5 criterion 4's s 2400 rim, 1.3 m beyond a built sidewalk that overhangs the real creek bank, read 2.004 m over 3DEP); the cut wins |
+| `tools/ground_release_blend.TOP_NZ` | 0.7 [invented] | pavement for the cap / batter | only ROAD / CURB faces near level, either winding (the assembler's ROAD faces point down: 23,820 of 23,864): never a curb's or deck's skirt |
+| `tools/ground_release_blend.FACE_STEP_M` / `FACE_TOL_M` | 0.25 m / 0.003 m [invented] | per-face cap + its FATAL check | raster over each face with a released corner; released corners and the zone's held corners under the pavement go `CLEAR_M` under the lowest pavement over that face; no face more than 3 mm over the pavement |
+| `tools/ground_release_blend.RAIL_JUMP_M` / `RAIL_HELD_M` / `RAIL_BURY_M` | 0.5 / 0.3 / 0.4 m [invented] | the rails | a rail's line is smoothed (5-station median then mean of the lip offset, base the lowest pavement of its neighbours) and split where the lip jumps 0.5 m (a bridge end's curb return: the "mis-stacked shards"); no rail where an existing rail already stands between the lane and the lip within 0.3 m (a bridge barrier); padding stops where the ground behind stands 0.4 m over the lip; the duplicate test reads the existing rails' faces, not their vertices |
+| `tools/freeway_i8.XSLOPE_MAX` / `XSLOPE_TOL_M` | 0.08 / 0.15 m [invented] | the slab's width and edge heights | 3DEP is read at the centre and at every lane line and edge of each 4 m station; a side's pavement ends at the last read within 8 % x its offset + 0.15 m of the centre (where the real ground leaves the slab: a cut wall, a fill's shoulder, a ramp), median of 5 stations; the edge's height held to that cross slope |
+| `tools/freeway_i8.MIN_PAVED_M` | 3.66 m (one lane) | stations | a station with less real slab than one lane is not laid |
+| `tools/freeway_i8.SMOOTH_PASSES` | 2 [invented] | the slab's heights | 1-2-1 along the 4 m stations |
+| `tools/author_freeway_blend.DECK_UNDER` | 1.0 m [invented] | station skip | a loop structure (1ROAD / 1KERB / BRIDGESTRUCT) from 1 m under the slab to `DECK_CLEAR` 2.0 m over it leaves the station out — the ray starts UNDER the slab |
+| `tools/author_freeway_blend.SPLIT_MIN_M` / `OUTLINE_PAD` | 0.01 / 0.03 m [invented] | the ground conform | the pavement's outline is cut into every terrain tile (each crossing edge split, each face's two crossing points joined; coordinates are float32, so no split within 1 cm of an edge's end) and the ground on and inside it is set `lift_m` under the slab (read on a copy 3 cm wider); tiles over 60,000 vertices are halved (the prep's balanced bisection) |
+| `tools/author_freeway_blend.BATTER` / `BATTER_REACH_M` | 1.0 m per m / 8 m [invented] | near ground (1GRASS) beside the slab | ground beside the freeway rises or falls from its edge no steeper than 45 deg (fresh 3DEP beyond the I-8's shoulders east of College: 27-45 deg; the 5 m lattice's vertex just past a shoulder carried a wall 4-8 m further out as a vertical step) |
+| `tools/author_freeway_blend.NEAR_LOOP_M` / `HELD_KEEP_M` | 20 m (criterion 7's band) / 6 m [invented] | ground near the loop | the ground within 6 m of the loop's pavement is never moved (drive_test reads 4 m past the built edge, plus 2 m); between 6 and 20 m (outside release zones) it takes the freeway's batter both ways, smoothstep-ramped from none at 6 m to all at 20 m (no step at the keep line), and, under the slab, is only ever cut down to it. The loop runs within 24 m of the I-8's edge for 1.5 km (s 404-1966, its right side), the edge 9.3 m from the pavement at the closest: at a 10 m keep the 4-5 m rise from Alvarado's verge to the I-8's embankment was squeezed into 1,573 m2 of >60 deg faces (the graded verges of the roads beside the I-8 stood up to 3.5 m under its real embankment and 7.5 m over its real cut) |
+| `tools/author_freeway_blend.FAR_CUT_MAX` / `RAISE_MAX_FAR` | 0.15 m / 0.5 m [invented] | the far ring (GRASS_FAR) under the slab | criterion 6: the outline is never cut into a far tile (a cut vertex on the I-8's steep far-east walls has no 3DEP read of its own: measured 7 at 1.1-1.9 m off), and a far vertex under the slab is only ever lowered, by at most 0.15 m (1 m less the far ring's own 0.85 m bound); beyond the loop's extent the slab may rise 0.5 m over its 3DEP height where that uncut ground stands over it, else the face is left out |
+| `tools/author_freeway_blend.RAISE_MAX` | 0.10 m [invented] | the slab | where the outline cut falls short (an outline corner inside a terrain face) a slab vertex may rise this much over its 3DEP height; a face still short is left out (counted). Was 0.5 m over the BUILT ground |
+| `tools/author_freeway_blend.GROUND_WIN` | 1.5 m [invented] | the clearance check | the ground under the slab is read from 1.5 m over it down (never the grass median on a deck far above) |
+
+Wiring: the freeway's 3DEP cache `data/freeway_i8.samples.json.gz` joins TERRAIN_DATA (synced both ways; ship.json too).
+
+**Criterion 4, re-worded at one kind of point, where fresh 3DEP fails it too.** With the corridor carried to the box's
+west edge, the truth lens's own stations s 100 and s 150 (no vertex within 12 m before) pass as first written. Its s 250
+(x -3870, 3.4 km from the loop) fails on its north rim: built -3.62 m against the 2 m section. Fresh 3DEP read every
+0.25 m across that rim (2026-10-13): -52.58 m local from 0.75 m before the rim point to 0.12 m past it, then -58.76 m:
+one 1 m DEM pixel edge, a 6.18 m step (a vertical wall), 0.12 m from the point. 3DEP read a quarter metre along its own
+section misses its own value at the rim by 6.18 m, three times the tolerance: no surface — and not 3DEP itself shifted
+by a quarter pixel — can hold a point there to 2 m. **Reading (added):** where 3DEP's own value changes by more than the
+2 m tolerance within ±0.5 m (half a pixel) of a rim point along its section, the built rim passes if it lies within 2 m
+of any 3DEP value in that window or between them. On the rehearsal this applies at s 250 only (built -56.67 m between
+-52.58 and -58.76); every other station passes as first written (180 / 181).
+
+Measured on the full rehearsal (fresh scratch workshop, no `--skip-blend`), integration fix round -> this round: street
+drive_test soft top 41 -> 41, severe 0, kinks 3.41, bumps 0.0, gated excursions 100 -> 99, floating 391, obstruction 0;
+street audit D 514, K 20, I 20, F 13; race layouts unchanged (severe 22 / 20, soft top 9 / 9, audits 53, W 0, no_route
+PASS planned and built, barrier_missing 0, obstruction 0); verify_ai_line PASS (2.544 / 2.386 m); verify_mouths,
+verify_fold_fans, verify_signs, rib_check, house_seat_check PASS; the release's own FATAL face check 0 (10 faces held
+over by an unreleased corner, each within 2.4 cm, reported); the freeway's 0 vertices over or just under a deck; grass
+over a driven lane only at v0.17.1's own five places; criterion 6 within 8 m of the freeway max 0.850 m (17,812 far
+vertices, fresh 3DEP); road kn5 126.3 -> 128.3 MB.
+
+### Integration fix round 3 (2026-10-13, v0.18.0, Kevin's decisions + the view lens's three defects): the freeway OFF, the clamp's reach confirmed, the release's teeth and rail caps fixed at their causes
+
+No gate threshold changed and no criterion was re-worded. **Kevin's decisions:** (a) the I-8 freeway that fix round 1 drew
+(`tools/author_freeway_blend.py`) is OFF — `scenery.freeway.enabled: false`, his stated default ("terrain only, NO I-8
+pavement ribbon"; on the Lariat extra highways "look like wavy ribbons"). Off means `tools/freeway_i8.py` writes no plan
+and removes a stale one, so the author step never runs: no slab bed, no batter cut / fill, no held-verge batter; the
+I-8 cut is the 3DEP-shaped terrain cut again. Every `freeway_i8` / `author_freeway_blend` row in the fix round 2 table
+above is now inert (kept with the tool, its tests and its 3DEP cache; `enabled: true` is the whole switch). (b) The
+clamp's reach stays 20 / 40 m (the 0054 D3 subsection above; the two 80 / 250 rows in the 2026-10-11 table are marked
+superseded) and LAWS L3's bullet now reads Kevin's principle: near-road relief is shaped to the road within the road's
+own construction zone, ~20-40 m; real relief beyond is never reshaped.
+
+**The view lens's three defects, with the freeway gone** (re-rendered from its own viewpoints first): (1) the shark-fin
+bank along Alvarado's I-8 side was the freeway's 45 deg batter cut into 5 m facets — gone with it, nothing else needed.
+(2) and (3) survived and are fixed in `tools/ground_release_blend.py` / `tools/ground_release.py`:
+
+| Number / rule | Value | Where | Why |
+|---|---|---|---|
+| span-zone fill read at the nearest pavement point | rule | release batter (2b), span zones only | the grass teeth beside College's south abutment wall: the fill batter's "pavement on the ground" was tested at each sidewalk FACE's centroid, and a 3.5 m face whose centroid stood over the embankment held a vertex 0.8-1.9 m over 3DEP beside a corner of it already 2 m in the air. In a span zone the ground under the pavement is the released real earth, so the gap is now read at the point of the face nearest the vertex (linear over the face, each corner read `GAP_INSET_M` inside it). Bank zones keep the face test: there the ground under the pavement is held (the prep pins it), and a pointwise read over the released creek bank switched the curtain-closing fill off (steep faces in the four 50 m cells beside Alvarado's creek bank 38 -> 367 in a trial) |
+| `tools/ground_release_blend.GAP_INSET_M` | 0.4 m [invented] | the span-zone gap | a corner on the pavement's outer edge sits over the released ground beyond it |
+| `tools/ground_release_blend.FILL_EASE_M` | 0.25 m [invented] (with `ON_GROUND_M` 1.0) | span-zone fill | the fill starts at the pavement while the gap is under 0.25 m and eases (smoothstep) to the ground under it at 1.0 m, so it fades with the ground where the approach leaves its embankment instead of switching off |
+| zone ramp toward the prep's ground | rule | release step 2 | the comb west of College's north approach: the kn5 prep refines a kept cell past 20 m to the data but leaves every zone vertex alone, so a ramp blended toward the graded ground before the prep froze a band 2-4 m over 3DEP between two pieces of 3DEP. A ramp vertex in a kept cell now blends toward the prep's own refined height (engine-july `build_kn5_loop.RefineField`, read from the snapshot; no bytecode written into it) |
+| no ramp at a shared station | rule | `ground_release.Zones.weight` | an end that lies inside another zone on the same side does not ramp: Lake Murray Blvd's I-8 span and creek (s 13428) and College's approach foot / south approach / I-8 span each ramped to nothing at the shared station, a dip back toward the built ground between two released pieces |
+| release rails per side over the union of the zones | rule | release rails (3) | overlapping zones each drew their own rail over the shared stations: two prisms 3 cm apart whose end caps stood up as white teeth on the parapet (College approach, Lake Murray Blvd creek). One rail per contiguous run of stations now (10 rails, the zone names joined) |
+| `tools/ground_release_blend.RAIL_TAPER_M` / `RAIL_END_H_M` | 2.0 m / 0.05 m [invented] | release rails | a free-standing end slopes down over its last 2 m to 5 cm (a sloped end treatment) instead of standing its square Jersey profile up as a pointed white tooth (the College approach rail ending beside the bridge parapet) |
+
+Tried and dropped (measured, not shipped): a zone ramp lengthened to an earth batter's run of its step (3.5 m per m,
+4-16 m) raised the constructed bumps beside Alvarado's creek bank (49 -> 62 over 0.6 m) and under Lake Murray Blvd.
+
+Measured on the full rehearsal (fresh scratch workshop, fresh scratch engine-july, no `--skip-blend`), v0.17.1 -> this
+build: street drive_test soft top 42 -> 41, severe 0, kinks 3.86 -> 3.41 /km, bumps 0.15 -> 0.0 /km, gated excursions
+100 -> 99, floating 391, obstruction 0, daylight 0; street audit D 512 -> 514 (corrected in fix round 4: NOT the release rails, which add 0 D — the same 90 `1WALL_guard`
+positions as v0.17.1, two of them on College's deck, now 1.6 m higher at its real height, written as one more duplicate
+vertex record each by the kn5 exporter, as the first integration fix round's entry above says),
+K 20, I 20, F 13; race_cw / race_acw severe 31 / 28 -> 22 / 20, soft top 9 / 9, audits D 0 K 20 I 20 F 13 W 0, no_route
+PASS planned and built (leak 0, 0 / 406), barrier_missing 0, obstruction 0; verify_mouths PASS x4, verify_fold_fans PASS,
+verify_ai_line PASS (2.544 / 2.386 m), verify_kn5 + --inis, check_race_kn5, verify_race, verify_signs (23 posts),
+rib_check, house_seat_check PASS. Release: batter cut 412 / fill 446; steep faces (> 60 deg, > 0.5 m) within 12 m of a
+pavement 786 -> 549 (439 -> 329 not under a deck). Teeth (a terrain vertex > 0.6 m over the mean of its neighbours and
+not 3DEP's own): within 20 m of College's south abutment 5 -> 0; within 25 m of the comb west of the north approach 18 -> 7 (the refuted build -> this one). Road kn5 92,502,895 B
+(v0.17.1) -> 116,011,770 B (128,277,872 with the freeway).
+
+### Integration fix round 4 (2026-10-14, v0.18.0, after the gates, runtime and view lenses refuted round 3): rails over every drop, the pit under College's sidewalk lifted, the straight bank, coincident faces, the lamp lenses
+
+No gate threshold changed and no criterion was re-worded. **Corrected:** round 3's "D 512 -> 514 (the release rails)" was
+wrong — the release rails add 0 D (fixed in the round 3 text above).
+
+| Number / rule | Value | Where | Why |
+|---|---|---|---|
+| a rail stands full height over every station that needs it | rule (`tools/ground_release.rail_heights`) | release rails | the gates lens: round 3's sloped ends (to 5 cm over 2 m) stood over live drops wherever a run's padding was clipped by a zone or block end — College Ave's approach foot, s 2500-2502, 4.9 m down; beside College's deck; Lake Murray Blvd. drive_test credits any 1WALL as a guard whatever its height, so the gates could not see it. A slope is built only over padding past the last station over a drop |
+| `tools/ground_release.RAIL_HOLD_M` | 1.0 m [invented] | release rails | full height at least this far past the first / last station over a drop |
+| `tools/ground_release.RAIL_TAPER_MIN_M` | 0.5 m [invented] | release rails | a sloped end shorter than this is not built: the end stays square |
+| rail stations past a zone's end | rule | release rails | the gates lens: at College's approach foot (s 2496-2500) a 3-5 m curtain off the sidewalk had no rail because the stations stopped at the zone; the same embankment edge, College 4-6 m over Alvarado, ran unguarded back to s ~2401 since v0.17.1. From every zone end not inside another zone on that side, stations continue outward while the drop does |
+| `tools/ground_release_blend.RAIL_EXT_FALL_M` | 1.0 m [invented] | the outward stations | past a zone only a real embankment edge carries the rail on: a steep fall (drive_test's 0.12 m per 0.5 m) AND the ground more than this under the edge (the zone rule's 0.5 m fall alone fenced ordinary street verges, 120 m runs in a trial) |
+| `tools/ground_release_blend.RAIL_EXT_MAX_M` | 120 m [invented] | the outward stations | at most this far past a zone end |
+| a pit under the pavement in a bank zone lifted to it | rule | release step 2 + the per-face cap | the view lens's stepped curtain under College's south approach: the draft seats that ground at Alvarado's level, 6 m under College's sidewalk; the prep pins ground under a deck only to a sheet within its window of the vertex's own height and leaves zone vertices alone otherwise, so it stayed a pit under the sidewalk, sawn against the released bank beside it. A held vertex more than `HELD_PIT_M` under its lowest upward ROAD / CURB sheet is lifted to it, and its faces are capped with the released ones (a lifted corner under a curb top must not stand over the gutter beside it). Lifting EVERY held vertex was tried on this round's second rehearsal and dropped: the ground under a curb top stood 0.13 m over the gutter, street soft top 42 -> 211 |
+| `tools/ground_release_blend.HELD_PIT_M` | 1.0 m [invented] | release step 2 | deeper than this under its sheet is a pit; shallower, the seat's height under the pavement stands, as in v0.17.1 |
+| the straight bank between two pavements | rule (`tools/ground_release.batter_z`) | release batter (2b) | where a fill from a high pavement and a cut from a low one cannot both hold (College's sidewalk 5-6 m over Alvarado's, 2-3 m apart) "the cut wins" left a vertical curtain under the high one. There the ground is the straight bank between the two edges, by distance |
+| `tools/ground_release.STRAIGHT_BANK_MIN_M` | 1.0 m [invented] | the straight bank | only between pavements this far apart in height; below it (one road's own grade) the cut still wins |
+| zone `college_approach_foot` from s 2410 (was 2500) | config | track.config.json | the embankment edge first falls over 1 m at s 2410; the old start at s 2500 put the boundary between released and held ground in the middle of the curtain the view lens saw from Alvarado (209 3DEP nodes fetched, TLS verified, cached with provenance) |
+| zone `college_north_approach` s 2690-2745, bank, both sides | config | track.config.json | the view lens's fins 20-50 m west of College's north approach: `college_i8_span` ended at s 2690 and ramped over 4 m back to a verge fresh 3DEP reads 1.3-3.3 m over the real earth; the 1.25 m lattice sampled the ramp as teeth. The zones abut (no ramp at s 2690); 1,266 3DEP nodes fetched |
+| release halving by PLAN length | rule | release step 1 | the runtime lens's zero-length normals: a vertical edge of the seat's curtain (two vertices on one plan point) was halved round after round, stacking up to 31 coincident faces back to back |
+| coincident faces / vertices removed | rule | release; `tools/triangulate_terrain_blend.SLIVER_M2` 0.01 m2 [invented] | faces on one vertex set: a sliver group goes, a real face keeps one copy; coincident vertices welded (1e-4 m) after the release. In the triangulation, a quad with a T-vertex on its diagonal split into a zero-area sliver, its neighbour into the same sliver reversed: groups under 0.01 m2 removed, with a vertex left with no face (no vertex moves) |
+| engine-july prep: LIGHTS do not ride the terrain delta | rule (snapshot `build_kn5_loop.py`, pending mirror) | kn5 prep re-seat | the runtime lens: a lamp's lens marker moved by the ground change under its arm while its LIGHTPOST stayed (LIGHT_123 on Lake Murray Blvd's I-8 deck 0.68 m over its own plate, LIGHT_122 0.15 m) — the head shadowed its own pool |
+| `scripts/ac/ext_config.py` GRASS_NIGHT includes `GRASS_FAR` | rule | ext_config | the far ring kept its day ksDiffuse 0.22 at night beside the near grass's 0.14 |
+| the release rails are their own physical mesh `1WALL_guard_release` | rule | release rails | found on this round's first rehearsal: appended to GUARDRAIL, the longer rails took the prep's 1WALL_guard past the kn5 exporter's 65,536-vertex mesh cap; the exporter wrote two meshes of one name and verify_kn5 stopped the chain ("DUPLICATE physical mesh '1WALL_guard' x2 — AC drops dup-named meshes from collision"). The name keeps the 1WALL_GUARD material row and the WALL surface (prefix match) |
+| `tools/ground_release_blend.RAIL_CHUNK_TRIS` | 18,000 [invented] | release rails | triangles per rail mesh before a second one (`1WALL_guard_release_<k>`): 3 exporter vertices per triangle at worst stays under the cap |
+
+**Not changed, named instead (both still worse than v0.17.1 on paper; `--force-install` would assert otherwise). Both fixed in round 5 below.**
+(a) Street audit D 512 -> 514: the same 90 `1WALL_guard` positions as v0.17.1; at two of them on College's deck, now
+1.6 m higher at its real height, the kn5 exporter writes one more duplicate vertex record each (it dedups corners by
+exact float normal equality, and the slope changed the rounding). No wall moved onto the road. (b) race bumps / km
+7.42 / 10.24 -> 7.72 / 10.39: drive_test's own per-station steps (re-run read-only) put the net +4 / +2 at two places —
+cw s 4539-4549 (acw s 8933-8943), the inside of the levelled fold pinch at (-1961, 593) (ledger 0050, rows 1508-1516),
+where v0.17.1 had grass standing on the road in the lane (12 / 11 of its 23 / 22 soft-top hits are those stations): the
+wheel paths now read the pinch's road fan, 2.5-6 cm second differences; and cw s 6946-6969, the Navajo / Jackson riser
+ledger 0050 levelled, its 0.39 m severe steps now 3-6 cm bumps. Steps over 2.5 cm in all (bumps + severe): 131 -> 126
+(cw), 166 -> 160 (acw).
+
+Measured on the final rehearsal (fresh scratch workshop, fresh scratch engine-july with the pending prep change, no
+`--skip-blend`), v0.17.1 -> this build: street drive_test soft top 42 -> 33, severe 0, kinks 3.86 -> 3.41 /km, bumps
+0.15 -> 0.0, excursions 100 -> 98, floating 391, obstruction 0, daylight 0; street audit D 512 -> 514 (above), K 20, I 20,
+F 13; race_cw / race_acw severe 31 / 28 -> 22 / 20, soft top 23 / 22 -> 9 / 9, kinks 6.45 / 7.57 -> 6.23 / 7.05, bumps
+(above), audits D 0 K 20 I 20 F 13 W 0, no_route planned 139,130 / 138,826 m2 and built 139,148 / 138,847 m2 PASS
+(leak 0, 0 / 406), barrier_missing 0, obstruction 0; verify_mouths x4, verify_fold_fans, verify_ai_line (2.544 /
+2.386 m), verify_kn5 + --inis, check_race_kn5, verify_race (+ scenery), verify_signs (23 posts), rib_check,
+house_seat_check PASS. Release: 327 pits under the pavement lifted, batter cut 460 / fill 604 / straight bank 115,
+2,732 coincident faces removed and 961 coincident vertices welded (0 coincident face sets left in TERRAIN, round 3 448);
+10 rails, 0 rail vertices on a road, College's approach foot railed from s 2388 (the stations past a zone end: 19 over a
+drop). Steep faces (over 60 deg, over 0.5 m) within 12 m of a pavement in the zones 549 -> 849: the two zones added and
+the straight banks (a 60-70 deg bank where the two sidewalks stand 2-3 m apart) — counted, not hidden.
+
+### Integration fix round 5 (2026-10-14, v0.18.0, after the gates lens refuted round 4): the deck rails off the pavement, drive_test's fold bumps
+
+The gates lens refuted round 4 on two metrics worse than v0.17.1: street audit D 512 -> 514 (over the floor `ship_sd.sh`
+prints) and race bumps / km 7.42 / 10.24 -> 7.72 / 10.39. Both are now fixed at their causes; every other gate is as in
+round 4.
+
+| Change | Value | Where | Why |
+|---|---|---|---|
+| the I-8 deck guardrails stand 0.15 m outside the pavement edge | `GUARDRAIL_SET_M` 0.15 m [invented] | `tracks/san-diego-lake-murray/scripts-v021/blender/build_loop_blend.build_guardrails` | D counts a 1WALL vertex lying on a carriageway triangle within 1.2 m of it. Every one of the 90 panel positions on College Ave's and Lake Murray Blvd's decks was built ON the road's edge line (`hw`), so all of them lay on the road's own boundary: v0.17.1's 512 was those 90 positions x 5-6 kn5 vertex records, and round 4's 514 was the same 90 with two more exporter duplicates where College's deck now has its real slope (the exporter dedups corners by exact float normal). A bridge barrier stands on the curb behind the gutter line, not on the pavement: 0.15 m puts each panel on the curb top, its foot still inside the curb. Street D 514 -> **0**; E 0 (the foot is in the curb); the release rails' "already held" test (a GUARDRAIL between the lane and the lip) reads the same |
+| the street audit's printed regression floor | D 512 -> **0** (K 20 / I 20 / F 13 unchanged) | `tools/ship_sd.sh` step header, `tracks/san-diego-lake-murray/ship.json` `audit_note` | tightened to what the build now measures |
+| FOLD BUMPS: a 2.5-6 cm second difference over a metre where the fixed-offset wheel-path point runs backwards is reported (`fold_bumps`), not counted in `steps_per_km` | rule; `_advance` < 0 on the metre or the metre before it | `scripts/geometry/drive_test.py` (every track, every layout) | criterion re-worded where fresh 3DEP fails it too (evidence below). drive_test's wheel paths are fixed lateral offsets; round a corner tighter than the offset (Lake Murray's fold fans: centre radii 7-8 m under race lanes 9-13 m wide) the point lies past the turning centre and hops 1-2.5 m to and fro across the fan, so its 1 m second difference re-traces the plan, not a step under a tyre. A SEVERE step (> 6 cm) on such a sample still counts (ledger 0050's 0.37 m Navajo / Jackson lip was read on one); kinks are unchanged; the levelled fans' real wheel paths stay judged by `tools/verify_fold_fans.py` |
+
+**Evidence for the re-wording (fresh USGS 3DEP 1 m, TLS verified through `scripts.tls`, 10,125 points on 45 x 45 m grids
+round the five Lake Murray fans: the hairpin, College / Navajo, Navajo / Jackson, the seam, the east corner at (2603,
+516)).** The least-squares plane of the real ground within 15 m of each fan (grades 7.0 / 5.5 / 3.0 / 1.4 / 3.2 %), the
+smoothest surface the real corner can have, read through drive_test's OWN sample positions (the race_cw and race_acw
+paths, logged from the build): of 158 backward samples per layout, 76 / 74 read a bump and 34 / 35 a severe step — the
+real ground's plane fails the bump rule there half the time. The raw 3DEP reads 62 / 60 bumps on them. (Forward samples
+also read some bumps on the plane — 163 of 2,742 — from the stations' changing spacing round a corner; those are not
+exempted: the rule is only the backwards case.)
+
+**The same rule on both builds** (drive_test re-run read-only on v0.17.1's installed gate OBJs, `k10-sd-v021/project`,
+output redirected; nothing written there): race_cw bumps 100 -> 65 counted + 35 fold (v0.17.1), 104 -> 59 + 45 (this
+build); race_acw 138 -> 97 + 41, 140 -> 91 + 49; street 2 + 20, 0 + 20. On the samples a wheel can drive, this build has
+fewer bumps than v0.17.1 on every layout (65 -> 59, 97 -> 91, 2 -> 0); all of round 4's increase was in backward samples
+(35 -> 45, 41 -> 49), the College / Navajo and Navajo / Jackson fans whose grass-over-road and 0.39 m risers this
+branch removed.
+
+Measured on this round's full rehearsal (fresh scratch workshop, fresh scratch engine-july with the pending prep files,
+no `--skip-blend`, `ship_r5.log`), v0.17.1 (as gated then) -> this build: street drive_test soft top 42 -> 33, severe 0,
+bumps 0.15 -> 0.0 /km (fold 20), kinks 3.86 -> 3.41, excursions 100 -> 98, floating 391, obstruction 0, daylight 0;
+street audit **D 512 -> 0**, K 20, I 20, F 13, E 0; race_cw / race_acw severe 31 / 28 -> 22 / 20, soft top 23 / 22 -> 9 /
+9, **bumps 7.42 / 10.24 -> 4.38 / 6.75 /km** (fold 45 / 49; v0.17.1 under the same rule 4.82 / 7.20), kinks 6.45 / 7.57
+-> 6.23 / 7.05, barrier_missing 0, obstruction 0; race audits D 0 K 20 I 20 F 13 W 0; no_route planned 139,130 / 138,826
+m2 and built 139,148 / 138,847 m2 PASS (leak 0, 0 / 406); verify_mouths x4, verify_fold_fans (3 x 3), verify_ai_line
+(2.544 / 2.386 m), verify_kn5 + --inis, check_race_kn5, verify_race (+ scenery), verify_signs (23 posts), rib_check,
+house_seat_check PASS. The terrain is round 4's but for 344 of 928,435 triangles beside the two decks, moved at most
+0.024 m.
+
+## 2026-10-12 — `verify_signs` (k) direction coverage, (j) read from signs.json, race furniture never the signs' ground (ledger 0051)
+
+**Why.** Kevin, from the seat: "arrow signs are only placed for one direction of driving". All signs ship in the one
+road kn5 that all three layouts load, and every mainline plate faced the clockwise approach. race_acw drives the lap
+anticlockwise, and `verify_signs` passed v0.17.1 anyway, because no check read which directions are driven.
+
+No numeric threshold is added or moved. Every number below is an existing rule constant.
+
+| Check | Before | After | Flag |
+|---|---|---|---|
+| (k) direction coverage (new) | — | Driven directions come from `<project>/track.config.json` `layouts[].direction` (forward → fwd, reverse → rev; absent or null = forward; any other word FAILs). Every MAINLINE corner with a plate in one driven direction needs, in every other driven direction, either a plate or a skip record EVERY one of whose reasons is the rule finding no arrow corner on that approach (`RULE_SKIP_RES`: R_apex, \|D\|, mouth flare, or the ray never leaving pavement / leaving it out of range / ending at a T / landing outside [PC, PT]) or a signs.json skip with a non-empty reason that signs.json itself still makes for that approach. FAIL: a skip caused by `expect_arrow`; a placement that failed (OUTSIDE ASSERTION, base ON pavement, obstacle disc, lamp clearance: the rule wanted an arrow there); a reasonless signs.json skip; a direction with no record at all. `place_signs` also refuses a signs.json `skip` with no reason at load. | no number |
+| (j) expect_arrow | compared the record's own `expect_arrow` with its arrow | Re-read from signs.json here (`--signs`, else `tracks/<slug>/signs.json`). The entry names the FORWARD approach, so a -rev plate expects the mirror image unless the entry's `rev` sub-object names its own. A record whose `expect_arrow` disagrees with signs.json FAILs. An explicit `--signs` that does not exist FAILs. | no number |
+| race furniture as ground (new) | `tools/signs_mesh.py` counted `1KERB` (race kerbs included) as ground | `load_bvhs` leaves race furniture out of ground and road: 1KERB_RACE / 1WALL_RACE names, and the RACE / RACE_CLOSE_* collections. `verify_signs` FAILs if the authoring record or its own scan lists one. | no number |
+
+**Proof that the checks bite.** All runs were record-level, on a scratch copy, logs in
+`scratchpad/round2/signs/teeth_*.log`.
+- (k) FAILs on v0.17.1's record: 5 corners with "no record at all for rev (race_acw)".
+- The race-ground check FAILs on the diagnosis's unfiltered authoring run: 8 × `1KERB_race_*`.
+- (j) FAILs on a -rev plate given a right arrow.
+- (k) FAILs with one -rev plate removed, and again with a -rev skip whose reason is `expect_arrow`.
+- Added after review (the reviewer planted `"M4": {"rev": {"skip": true}}` with no reason and the first cut of (k)
+  PASSed with race_acw's Jackson/Navajo arrow gone). `place_signs` now exits 1 on that signs.json, and on a blank
+  reason. (k) FAILs on records whose M4-rev skip reads `signs.json skip: (no reason given)`, `sign base is ON
+  pavement`, `OUTSIDE ASSERTION FAILED`, or a signs.json skip that signs.json does not make. A reasoned
+  `"rev": {"skip": true, "reason": "…"}` still places 22 and PASSes. Logs: `scratchpad/round2/signs/fix2/teeth2_*.log`.
+- `parse_id` no longer reads a corner named `…-2` (e.g. a merged `DCL-2` post) as a hairpin's second arrow: the
+  record's `corner.second_arrow` decides, and for a skip, whether the id minus `-2` was placed.
+- The 0051 record PASSes.
+- `tests/tools/test_place_signs.py` covers each case on a synthetic square loop.
+
+**Rehearsal.** On a scratch copy of the workshop's `loop.blend` as it is, with 35 race objects present.
+- `verify_signs --blend` PASS: 23 posts, 23 plates.
+- The 18 v0.17.1 posts moved 0.000 m. Ground was CURB + TERRAIN, with no race kerb in it.
+
+**Who else this reaches.**
+- The Lookout Lariat's config declares reverse layouts (street_reverse, race_cw). When its chain gains the signs
+  step, (k) will FAIL until its own signs.json sets `both_directions_mainline: true`.
+- `place_signs.DEFAULTS` is unchanged (false), so a track with no signs.json still writes the same bytes. This
+  was checked on SD with the knob off: the output was byte-identical to HEAD's.
+
+### Integration (2026-10-13, v0.18.0): (l) named corners stay signed — the verifier's gap closed
+
+The 0051 verifier planted M4-fwd and M4-rev both lost (as "ON pavement" skip records, or gone) and `verify_signs` passed:
+(k) only judges a corner that still has a plate in some direction, and `author_signs_blend` exits 0 on mesh-stage skips —
+so 0050 reshaping the Navajo/Jackson curb could have cost every layout its Jackson/Navajo arrows with every gate green.
+
+| Check | Rule | Threshold |
+|---|---|---|
+| (l) named corners | every corner `signs.json` names and does not skip outright keeps at least one plate; a MAINLINE one a plate in every driven direction (`layouts[].direction`) unless `signs.json` skips THAT approach with a reason — a rule reason (R_apex, \|D\|, …) does not cover a corner Kevin named; a side-street one a plate in each approach, or a skip there that (k) counts as coverage | none (structural) |
+
+Teeth (tests/tools/test_place_signs.py::test_a_named_corner_that_lost_every_plate_fails_l): both M4 plates as
+"ON pavement" skips (k blind) → FAIL; both records gone → FAIL; M4-rev lost to a rule reason → FAIL (k passes it); the
+same with `"rev": {"skip": true, "reason": ...}` → PASS; MED-6-rev lost to OUTSIDE ASSERTION → FAIL, to R_apex → PASS.
+On the v0.18.0 build: 23 posts, 11 named corners (M1–M5, MED-1/6/7/8/10/13) all signed, M4-fwd / M4-rev clear the race
+curb strip by +1.853 / +1.762 m (verify_race G's own margin).
+
+## 2026-10-12 — worn race kerbs: the atlas wrap, the no-black-slot guard, the opt-in wheel kerb effect (ledger 0053)
+
+Kevin, from the seat on v0.17.1: "i'd like the race curbs to be tire-worn/textured". The eight `1KERB_race_*` kerbs
+keep every vertex, face and hard edge (scratch rehearsal: `race_authored.json` ring centres and frames identical for
+all 35 objects, 167,958 positions before and after), so no driving-surface gate moves: `drive_test`, `audit_mesh`
+(K 154), `verify_race`, `kn5_ground_check` judge the same geometry. What changes is the picture, the wrap and one
+guard. Every number below is **[invented]** unless it says measured.
+
+| Value | Where | Number | Flag |
+|---|---|---|---|
+| atlas repeat along the kerb | `race_furniture.KERB_ATLAS_V_M` | 8.0 m (2,048 px at 256 px/m) | ⚠ invented |
+| red / white block | `KERB_BLOCK_M` | 1.0 m (the 0047 stripe was 0.5 m + 0.5 m) | ⚠ invented |
+| rubber levels | `KERB_ATLAS_COLUMNS`, `kerb_wear` | 4 columns; level = min(3, int(4 w)), bins of 0.25 | ⚠ invented |
+| inside-kerb lobes | `KERB_WEAR_IN_*` | each direction's late apex PC + 0.6 arc / PT − 0.6 arc; sigma max(5 m, 0.15 arc); floor 0.15 | ⚠ invented |
+| outside-kerb lobes | `KERB_WEAR_OUT_*` | each direction's track-out PT + 0.2 E / PC − 0.2 E; sigma 6 m; floor 0.10 | ⚠ invented |
+| joint snap | `KERB_JOINT_SNAP_MAX_M` | a whole metre of the kerb's own mid-line becomes a joint station only if a station lies within 0.25 m; v is warped so every joint station sits on a whole metre; a block takes the highest raw level of its stations; the column changes only there | ⚠ invented |
+| column pad | `KERB_ATLAS_PAD_PX` | 8 px each side of a 256 px column (mip level 3 stays inside its column) | ⚠ invented |
+| wrap handedness | `KERB_V_SIGN` | L −1, R +1: every kerb's (T × B) · N = +1 in the Blender frame, the sign of the prep's `planar_uv` road wrap (a kn5 tangent has no handedness sign). Not a threshold: derived and tested | measured (tests) |
+| kerb material | `pbr.KS_PROPS["1KERB_RACE"]` | ksAmbient 0.40 / ksDiffuse 0.40 (the add-on default every neighbouring race material ships at, measured) ; ksSpecular 0.10, ksSpecularEXP 20 (Kunos Laguna `red_curb` measured at 0.35 / 20, technique only) | ⚠ 0.10 invented |
+| the picture | `tools/make_kerb_texture.py` | colours (RAL 3020 / 9016 weathered), `RUBBER_COVER` 0 / 0.12 / 0.30 / 0.55, `RUBBER_OPACITY` 0 / 0.55 / 0.70 / 0.82, `RUBBER_HAZE` 0 / 0.12 / 0.28 / 0.46, `CHIP_COVER` 0.035, `NORMAL_STRENGTH` 2.2, JPEG q90 4:4:4 | ⚠ invented, tuned by eye on Blender stills |
+| texture budget | `make_kerb_texture.MAX_BYTES` | ≤ 2,000,000 B per file (painted: 567,921 + 980,349) | ⚠ invented |
+| render-vertex cost of a seam | `render_vertex_count(..., face_uvs)`, `KERB_SEAM_RENDER_VERTS` | exactly +4 per seam: the 5 cm outer face always wraps column 0 (`KERB_OUTER_FACE_COLUMN`, pixel-identical in every column), so a seam re-cuts the lip, both faces at the ramp-top edge and the top's outer edge, not the outer face's two (the first cut re-cut all 6: 7,356) | measured: pure 7,050 → 7,254 for 51 seams = the built kn5's KERB count exactly |
+| Lake Murray kerb render budget | `tests/tools/test_kerb_wear.py` `SD_KERB_RENDER_VERTS_MAX` | KERB ≤ 7,300 render vertices (installed v0.17.1: 7,050), pre-registered in the diagnosis before the fix; held, not moved (verify round 1) | ⚠ invented (pre-registered) |
+| normal-map convention | `make_kerb_texture.normal_rg`; `test_normal_map_is_opengl_green_up`, `test_joints_are_grooves_in_the_normal_map` | OpenGL like every map in assets/textures: a synthetic ramp rising down the image gives G > 128; every joint is a groove (G < 110 just above, > 146 just below; measured ≈ 36 / ≈ 220). Pillow flips kernels vertically; the first cut was DirectX (≈ 223 / ≈ 33) | test thresholds ⚠ invented; convention measured |
+
+**New gate — `tools/check_race_kn5.py` `black_slots` (hard, both roles, every race kn5).** Every texture the
+`pbr.TEXTURES` race rows bind for the meshes present must be embedded with > 0 bytes, and (when the parse carries
+materials) each race mesh's material must bind exactly its row's `txDiffuse` / `txNormal` and nothing unembedded.
+Why: `ship_sd.sh` exports from engine-july, which stages textures from ITS `assets/textures`; a file that is only in
+airoso is skipped with a WARNING and the slot renders black (LAWS L7) — the old role checks passed such a kn5. Proof:
+the installed v0.17.1 race kn5's parse now FAILS (`kerb_diffuse.png` outside the race set, the worn pair not
+embedded, 16 bindings disagree); the rehearsed kn5 PASSES. `tests/tools/test_check_race_kn5.py::test_ledger_0053_no_black_kerb_slot`.
+
+**Opt-in — `track_folder.surfaces_ini(kerb_ff_effect=0)`.** `FF_EFFECT=<n>` on the KERB block only, read from
+`track.config.json` `kerb_ff_effect` (absent = 0). The default output is byte-identical (md5 pinned for tarmac /
+gravel × wall, `tests/ac/test_road_surface.py`); opt-in changes exactly one line. 1 is the Kunos convention
+(measured FF_EFFECT=1 on Vallelunga, Silverstone, Laguna Seca, Brands Hatch, Red Bull Ring, Barcelona, Imola, Mugello;
+0 on Zandvoort; absent on Highlands). Caveat recorded: KEY=KERB also covers the street `1KERB_sidewalk` (114,081 m²
+in the main kn5), so an opted-in track's sidewalks get the wheel effect too. No track opts in in this commit
+(Lake Murray's config is the integration run's, Kevin's call).
+
+Rehearsal (scratch copy of the v0.17.1 workshop + a scratch engine-july carrying this pbr.py and the two textures):
+author → `verify_race` OK → prep → split → `<slug>_race.kn5` **10,253,676 → 11,815,506 B (+1,561,830 B, +15.2 %)**
+(the textures embedded are the bytes packed at the prep — see ledger 0053 "Integration"), `check_race_kn5 --role
+common` OK, all 8 kerb materials `ksPerPixelMultiMap` txDiffuse + txNormal, ksSpecular 0.1. Re-run after verify
+round 1 (the OpenGL normal map and the 4-per-seam wrap): `<slug>_race.kn5` 10,253,676 → **11,811,590 B (+1,557,914 B,
++15.2 %)**, the embedded normal map 980,349 B with the committed file's md5, KERB **7,254** render verts (≤ 7,300),
+every column split on a whole-metre joint, every outer-face vertex in column 0, kerb positions and triangles
+identical to installed v0.17.1.
+
+### Integration (2026-10-13, v0.18.0): the textures ride the pending-mirror record
+
+`tools/snapshot_engine_july.py` now also writes a referenced texture the real engine-july lacks (old md5 "-") or holds at
+another md5 into `PENDING-MIRROR.md5`, and `test_live_engine_july_has_not_drifted_from_the_snapshot` / `--check` read
+such a line as pending, not drift — so the worn kerb atlas (`kerb_race_worn_diffuse.jpg` f599d4a7…, `_normal.jpg`
+8f4b343a…) is on the mirror list beside `pbr.py` (now both the BRIDGESTRUCT and the worn 1KERB_RACE rows, CRLF md5
+48617c1e…) instead of failing the suite until the install. No threshold changed.
+
+## 2026-10-12 — the AI line gate: `tools/verify_ai_line.py`, and the writer's opt-in (ledger 0052)
+
+Kevin, from the seat, after a 7-AI race on the installed v0.17.1 race layouts: "ai races need tuning, they tend to
+crash and slow down weirdlu". Nothing measured a written `fast_lane.ai` against the walls the car hits:
+`ai_draft.json` judges the line against the writer's own CorridorFaces declaration, at 0.6 m.
+
+### The gate (`tools/verify_ai_line.py <project> --layout <id>`, new)
+
+It reads the line AS WRITTEN (`<project>/ai/<id>/fast_lane.ai`, kn5 frame) and the BUILT gate OBJ
+(`data/track.<id>.obj`: road + race + that layout's closure kn5, engine frame). It writes
+`data/ai_verify.<id>.json` and exits 1 on any FAIL. Thresholds can be overridden per track in
+`track.config.json` `ai.verify`. The "MEASURED" references are the 217 AI lines installed on this PC, measured in
+the 0052 diagnosis. Kunos walls were read from their `NNWALL` physics meshes through `scripts/modkit`'s kn5
+reader.
+
+| Check | Threshold | Flag | v0.17.1 race_cw / race_acw | 0052 lines (scratch) |
+|---|---|---|---|---|
+| V1 `length` = the 3D distance to the previous point | median error < **0.01 m** | MEASURED (Kunos 0.0001-0.001 m; 0 of 186 reference lines cumulative) | 6,732 / 6,721 m | 0.0 / 0.0 |
+| V1 `direction` | ±1 on every point; = −sign(heading change over ±10 points) on ≥ **99 %** of points turning > 0.5° | MEASURED (Kunos 99.0-99.5 %) | 0 everywhere | 100 % / 100 % |
+| V1 header lapTime / sampleCount | **0 / 0** | MEASURED (every Kunos line; actools "usually zeroes") | 281085/8979, 281338/8964 | 0/0 |
+| V1 `radius` = the 3-point circumradius | median \|ln\| error < **0.01** | MEASURED (Kunos 0.0006-0.0025) | 0.194 / 0.242 | 0.0 / 0.0 |
+| V1 `camber` = asin(normal · right) of the BUILT 1ROAD under the point | median ratio **0.9-1.1** where the road tilts > 0.01 rad, else median \|diff\| < 0.005 rad; normal not (0,1,0) everywhere | MEASURED (Kunos ratio 0.94-0.99) | ratio 0 (camber 0, normal up) | 1.0 / 1.0 |
+| V2 wall clearance: the line's centre to the nearest BUILT 1WALL footprint (horizontal, layer band −2/+4 m, L4) | min ≥ **2.0 m** | MEASURED (ks_monza66 1.981, ks_black_cat_county 2.066) | 1.506 / 1.504 m | 2.517 / 2.387 m |
+| V2 lap within 2.5 m of a built wall | ≤ **1.0 %** | ⚠ INVENTED (BCC 0.58 %, Monza66 3.2 %) | 1.38 % / 1.77 % | 0.00 % / 0.04 % |
+| V3 spurious dips (defined below) | **0** points | MEASURED (0 on ks_black_cat_county, ks_vallelunga, ks_highlands) | 160 / 875 | 0 / 0 |
+| V3 bend flips: car-scale curvature (turn over ±4 points) with \|k\| > 1/300 changing sign within 30 m | ≤ **0.75 per km** | MEASURED (BCC 0.72) | 1.71 / 0.97 | 0.67 / 0.52 |
+| V4 sides: sideLeft / sideRight past the first BUILT wall a horizontal ray PERPENDICULAR to the line meets | **0** points | — (geometry) | 0 / 0 | 0 / 0 |
+| V5 the line's own 3-point radius | ≥ **11.4 m** | the writer's RADIUS_FLOOR_M 12 × RADIUS_CHECK 0.95 | 12.56 / 12.55 m | 13.78 / 14.33 m |
+
+**The spurious-dip definition (V3).** Two physics speed profiles are built from the same line:
+- the same settings for both: μ 1.0, 0.9 g braking (backward pass), 0.35 g acceleration (forward pass),
+  69.4 m/s cap, two passes each round the closed lap;
+- one profile uses the payload's radius field; the other uses the line's car-scale radius (the circumradius
+  through the points ±4 = ±6 m).
+
+A point where the payload profile is more than **10 %** slower than the car-scale profile is a spurious dip. In
+plain terms: the file tells the AI to slow for a bend the car-sized line does not have.
+
+**V4 corrects the diagnosis.** The diagnosis counted 23 race_acw points with `sideLeft` "past a built wall". That
+used the nearest wall on the left half-plane in any direction. Every one of the 23 was a wall 16-18 m BEHIND the
+point, 0.1-0.9 m to its side (probe at idx 2965-2977, 4919-4923, 6519-6525). On a perpendicular ray, the
+v0.17.1 sides stop exactly 1.2 m (the margin) short of the wall, median, with 0 overreach. The gate uses the ray.
+
+Wiring: not in a ship chain yet — `tools/ship_sd.sh` and `tools/ship_track.sh` are held by concurrent jobs this
+round. Ledger 0052 "Held files" gives the exact change. Note that the AI step there runs BEFORE the race gate OBJs
+are extracted (`ship_sd.sh`: write_ai_line at :251, `kn5_to_gate_obj` at :304, after the `rm` at :289), so the
+extraction has to move ahead of the AI step for the gate and the writer's `ai.surface` to see this run's world.
+
+### The writer (`scripts/ac/write_ai_line.py`, opt-in `track.config.json` `ai`; absent = today's bytes)
+
+| Knob | Value | Flag |
+|---|---|---|
+| `ai.wall_clear_m`: a corridor line's comfort clearance (box approach, box arcs, floor fillets) | **2.5 m** (FILLET_COMFORT_CLEAR_M 1.5 stays the default) | ⚠ INVENTED (a 1.9 m car's half-width + 1.55 m; the 6.86 m narrowest corridor fits 2.5 m each side with 1.86 m to spare) |
+| fair_line hold on the input line `FAIR_W` / curvature weight `FAIR_ALPHA` / leash `FAIR_U_MAX_M` | **1e-6 / 1e-2 / 3.0 m** | ⚠ INVENTED, swept on SD race_cw: w 1e-4 kept every gentle road S (1.49 flips / km); α 1e-3 left 0.82 / km; α 3e-2 pressed the line onto its bounds (32 dips) |
+| polish after the fairing `FAIR_POLISH_W` / `FAIR_POLISH_U_M` | **1e-4 / 0.3 m** | ⚠ INVENTED. Without it, nearby settings left 9-77 dips where an active bound met the line; with it, 0 in every setting swept |
+| the fairing's own wall margin `FAIR_CLEAR_EXTRA_M` | **+0.5 m** over wall_clear (never closer than where the point stood) | ⚠ INVENTED (0 and 0.25 also passed; 0.5 keeps the 2.5 m band empty on race_cw) |
+| bound envelope `FAIR_BOUND_SMOOTH_PTS` | **±4 points**, min then mean, twice (conservative by construction) | ⚠ INVENTED |
+| payload `direction` window | **±10 points, 0.5°** | MEASURED (the window the Kunos agreement was measured over) |
+| `ai.surface: gate_obj`: seat on the BUILT 1ROAD within **3 m** of the point's height; the walls' layer band **−2 / +4 m** | — | ⚠ INVENTED bands (the diagnosis' filter); the writer refuses a missing gate OBJ, or one older than a kn5 its header names |
+
+Proof:
+- `tests/ac/test_write_ai_line_payload.py` (9 tests).
+  - Byte identity: golden md5s of all 25 files of the two end-to-end fixtures, HEAD 5ccf20b's writer.
+  - On a synthetic built world: the payload's meaning, the wall clearance, the gate passing the opted-in line and
+    failing the legacy one.
+  - The banded solver, fair_line's bounds, the OBJ reader's layer filter and rays, the stale-OBJ guard.
+- Byte identity on the real workshop (scratch copy, no `ai` block): `race_cw` `8d4696a4…`, `race_acw`
+  `c234c87c…` and `street` `93a09e5a…` are md5-identical to the installed / HEAD files. The same holds for every
+  `side_*.csv` and `ai_draft.json`.
+
+### Repair, 2026-10-13 — labels re-measured, camber sign, the box rule on the written line (ledger 0052)
+
+An independent check refuted three things above. The rule applied here: a threshold says MEASURED only if every
+Kunos line it cites passes it; anything else is ⚠ INVENTED, with the references it was chosen against. The rows in
+the tables above stand as the record of what was first claimed; **this subsection supersedes their flags and
+values.** Evidence: the gate's own `measure()` / `judge()` run on all 34 Kunos lines installed on this PC, each
+line's own stored normal standing in for the built road (scratch `v018/ai/kunos/kunos_v1.txt`).
+
+| Check | Threshold now | Flag now | Kunos (34 lines) | v0.17.1 race_cw / race_acw | repaired lines |
+|---|---|---|---|---|---|
+| V1 line family | SEGMENT (length = one segment, 3-point radius) or WINDOW (length = 5 segments summed, radius through ±5 points, direction ramp over **10** points per end) — the length field decides; a line that matches neither is judged as SEGMENT | MEASURED (33 SEGMENT; ks_silverstone/international WINDOW, as are 33 third-party lines) | 34 / 34 classified | SEGMENT (matches neither) | SEGMENT |
+| V1 `length` | median error < **0.01 m** against the family's reference; SEGMENT also ≤ **0.1 m** on every point but the last | MEASURED (median 0.0000-0.0016 m; SEGMENT point max 0.056 m; the last point carries ~5 × spacing on every Kunos line, so it is not judged) | pass 34 / 34 | 6,732 / 6,721 m | 0.0 / 0.0 |
+| V1 `direction` | ±1 on every point but the last (WINDOW: but the seam ramps); = −sign(LOCAL heading change, ±**1** point) on ≥ **99 %** of points turning > 0.5° | MEASURED (0.9977-1.0 at ±1 point; the first version's ±10 window gave 0.968-0.995, 23 of 33 under 0.99) | pass 34 / 34 | 0 % | 100 % / 100 % |
+| V1 `radius` | the family's circumradius, median \|ln\| error < **0.01** | MEASURED (0.0001-0.0035) | pass 34 / 34 | 0.194 / 0.242 | 0.0 / 0.0 |
+| V1 `camber` (SEGMENT) | = **−direction × asin(normal · right)** of the BUILT road (the tilt measured toward the bend), median ratio 0.9-1.1 where it tilts > 0.01 rad | MEASURED (ratio 0.998-1.001; the sign rule holds on 0.95-1.00 of tilted points on every reference line, plain asin(normal · right) on ~0.5) | pass 33 / 33 | ratio 0 | 1.00 (34 / 62 tilted points) |
+| V1 `camber` (WINDOW) | not judged | — (Kunos' own stores the normal as (0,1,0) beside a real camber, so nothing shows what it is measured from) | — | — | — |
+| V1 camber on a flat road | median \|difference\| < **0.005 rad** | ⚠ INVENTED (passes every SEGMENT Kunos line) | | | |
+| V1 measuring parameters: a bend = turn > **0.5°**; a tilted road = > **0.01 rad** | — | ⚠ INVENTED | | | |
+| V2 wall clearance min | ≥ **2.0 m** | ⚠ INVENTED — was "MEASURED", but ks_monza66 measures **1.981 m**, so 2.0 is a choice between the two walled Kunos references (BCC 2.066), not a value both pass | — | 1.506 / 1.504 m | 2.549 / 2.387 m |
+| V3 spurious dips | **0** | ⚠ INVENTED — was "MEASURED (0 on BCC, Vallelunga, Highlands)", but ks_highlands/layout_int has 422 by the gate's own code; 20 of 34 Kunos lines have 0, 14 have 5-885 (recorded lines carry them) | 0 on 20 / 34 | 160 / 875 | 0 / 0 |
+| V3 bend flips within 30 m | ≤ **0.75 / km** | ⚠ INVENTED — was "MEASURED (BCC 0.72)"; Kunos 0-1.24 / km, ≤ 0.75 on 17 of 34 | 0-1.24 | 1.71 / 0.97 | 0.74 / 0.52 |
+| V4 sides past a built wall | **0** | ⚠ INVENTED (geometry rule) | | 0 / 0 | 0 / 0 |
+| V5 the line's 3-point radius | ≥ **11.4 m** | ⚠ INVENTED (the writer's RADIUS_FLOOR_M 12 × RADIUS_CHECK 0.95, both invented) | | 12.56 / 12.55 m | 13.78 / 14.33 m |
+| V6 (new, `--baseline <line>`): every baseline corner (car-scale minimum under 80 m within ±60 points) keeps ≥ **0.85 ×** its radius | | ⚠ INVENTED (the 0052 diagnosis' pre-declared box rule) | | — | 0.860-0.863 / 0.860-0.877 |
+
+The payload `direction` window in the writer is now **±1 point** (MEASURED, as above), replacing the ±10 points
+recorded in the writer table above.
+
+Writer additions (`scripts/ac/write_ai_line.py`, opt-in `ai.fair` only; no change without the `ai` block):
+
+| Knob | Value | Flag |
+|---|---|---|
+| `FAIR_BOX_KEEP`: the fairing never takes a box corner's car-scale radius (points ±4) under this × the arc the v0.17.1 rule (comfort 1.5 m) lays at that corner in the same world, within the corner's stations ± `FAIR_BOX_GUARD_PTS` | **0.86**, ± **20 points** | ⚠ INVENTED (the 0.85 rule + 1 % margin; 20 points = 30 m) |
+| `BOX_RULE_KEEP`: the writer REFUSES a faired line whose box corner ends under this × that arc | **0.85** | ⚠ INVENTED (the diagnosis' rule, declared before the fix) |
+
+What the first version got wrong, and what changed:
+- **Camber sign.** It stored plain asin(normal · right). race_acw carried all 62 tilted points at the opposite sign
+  from every reference line (race_cw agreed only because its tilted points all carry direction −1). Writer, gate and
+  test now use −direction × asin(normal · right); the plain form FAILS the gate on race_acw.
+- **The box rule.** The diagnosis declared each box ≥ 0.85 × today's radius before the fix. The first version met it
+  on the arcs before fairing (0.885-0.935) and missed it on the written line (cw 0.819-0.845, acw 0.79-0.87). The
+  written line now keeps 0.860-0.877, and the writer refuses under 0.85. Each box apex is 4-6 km/h slower on paper
+  than v0.17.1 (it was 4-9 km/h in the first version).
+- **Kunos lines failing the gate.** Every Kunos line failed the first version's V1 (direction window, the last
+  point's length, the recorder's seam). V1 now passes all 34, and either family of in-game recording.
+
+Proof: still failing every v0.17.1 defect (10 FAILs per layout: V1 length, length per point, direction ±1, direction
+agreement, header, radius; V2 min, V2 band; V3 dips, V3 flips). Planted on the repaired lines, each of these FAILS:
+cumulative length, direction 0 / flipped, header set, min-of-5 radius, camber 0 with normal up, camber sign flipped,
+the plain-asin camber (race_acw), a 0.8 m bump toward the K-rail, 0.25 m / 30 m and 0.6 m / 60 m S-wiggles, 3 cm
+jitter, a 1.5 m kink, sides +3 m, one length 0.5 m off its segment. The same line re-expressed in the WINDOW family
+PASSES (scratch `v018/ai/planted/plant.txt`). Tests: `tests/ac/test_write_ai_line_payload.py` 12 (adds: the
+WINDOW family accepted and a cumulative length judged as SEGMENT; the writer's box-rule refusal).
+
+### Integration (2026-10-13, v0.18.0): the chain order the opt-in needs
+
+`track.config.json` `"ai"` (race_cw, race_acw; kunos payload, 2.5 m off the K-rail, faired, seated on the gate OBJ) is
+set, so the writer refuses a missing or stale gate OBJ. `tools/ship_sd.sh` (and `ship_track.sh`'s `ship_ai`, for a track
+whose config names the layout) now extracts each race layout's gate OBJ (road + common race + ITS closure kn5) right
+before `write_ai_line`, after every export, and runs `tools/verify_ai_line.py --layout <id>` straight after it, hard
+under `set -e` (no `--baseline`: the writer holds the box rule itself). The gate stage re-extracts the same file from the
+same kn5s. `data/ai_verify.<id>.json` is synced back. No threshold changed.
+
+Measured on the v0.18.0 rehearsal (the 0046 terrain, 0050's levelled fans, 0053's kerbs): race_cw PASS (wall min
+2.549 m, 0 m within 2.5 m, dips 0, flips 0.743 /km against the [invented] 0.75, min radius 13.78 m, lap est 279.4 s);
+race_acw PASS (2.387 m, 0.00045 of the lap within 2.5 m, flips 0.521 /km, 14.33 m, 272.7 s); the box rule held on the
+written line (cw 38.8/45.13, 24.65/28.68, 28.19/32.78, 38.37/44.52 m; acw 41.88/47.49, 46.36/52.27, 45.4/52.32,
+51.1/58.54 m). race_cw's flips keep their thin margin (0.007 /km).
+
+### Integration fix round (2026-10-13, v0.18.0): the writer's fairing round cap
+
+`scripts/ac/write_ai_line.FAIR_RADIUS_ROUNDS` 12 -> **24** [invented]. On the integration fix round's world (College Ave's
+deck on its real abutments, the released ground, the rails) race_acw's fairing ran out of rounds with 9 box points still
+tightened (the polish 4) and left a 5-point kink at the v1514 box exit, which `verify_ai_line` V3 filed as a 12.9 % phantom
+speed dip (61 vs 70 km/h) — the gate was right, the solve was unconverged. With 24 it converges at 18 rounds (box points
+left tightened 0), V3 0 dips; race_cw converges at 5 either way (unchanged). No threshold of the gate changed.
+
+## 2026-10-13 — 0050 levelled fold pinches + `tools/verify_fold_fans.py`; drive_test's in-fan severe steps (ledger 0050)
+
+**Why.** Kevin, from the seat: "the small steps are a problem at jackson/navajo". The 2026-10-11 weld pinched the
+Navajo/Jackson inside edge at its HIGHER leg and left the lower leg's last row 6 cm away: a 901 % road triangle, a lip
+0.13 m tall 3 m from the centre line and 0.47 m at the kerb. drive_test filed the street's 0.24 m of it as an exempt
+"apron step" (w ≥ 9.5, |off| > 3.5), and the race layouts' severe 31 / 28 was shipped as "the next owner's"
+(2026-10-11, "Named, not exempted").
+
+### The weld (`tools/mouth_weld.unfold_line`, `level` follows `strict`: the weld's MAINLINE only)
+
+| Number | Value | Why |
+|---|---|---|
+| `FOLD_LEVEL_ROWS` | 8 rows each leg [invented] | the diagnosis: 6 rows → 1 m second difference 0.031 m, 12 → < 0.025 |
+| `FOLD_HALF_JUMP_MAX_M` | 0.28 m — ROAD edges and curb p0 / p1 only; p2 / p3 uncapped | derived: a 1.20 m K-rail buried 0.05 m covers no_route's [0.20, 0.90] band only within ±0.30 m of its reference, less a 0.02 m margin [invented]. Not the seal guarantee (the reference is the projected centre line, not the leg): no_route and verify_fold_fans (7) are. Measured at Navajo/Jackson: ROAD / p0 0.248, p1 0.251, p2 0.317, p3 0.359 m — capped, p2 / p3 stopped the build (the review's BLOCKER 1) |
+| `FOLD_LEVEL_XFALL_MAX` | 4 % [invented] | an eased row's height change over its plan distance to the centre row (Navajo/Jackson: ~2 %) |
+| overlap refusal | a leg window over another cut (or its windows) on the line | the result never depends on the order the cuts are found |
+
+### The gate (`tools/verify_fold_fans.py <project>`, new; hard in `ship_sd.sh` / `ship_track.sh` after the race gates; `--force-install` does not cover it)
+
+Per levelled pinch (`data/mouth_welds.json` `folds.MAINLINE.levelled`; a pre-0050 file: re-found on the ROAD edge rebuilt
+from the gate centreline), per layout, on the BUILT gate OBJ, in the driven lane (street ±(w/2 − 0.5) less the median
+island + 0.4 m; race `lane_by_vertex`), on wheel paths cut at their own self-intersection:
+
+| Check | Threshold | Status |
+|---|---|---|
+| window | rows k − 8 − 4 … l + 1 + 8 + 4 (`WINDOW_PAD_ROWS` 4) | [invented] |
+| paths | every 0.25 m across the lane, sampled every 0.05 m | [invented] |
+| (1) FINE step | rise over 0.10 m beyond the previous metre's grade ≥ 0.02 m | 0.02 m = the diagnosis' step a tyre hits; 0.10 m window [invented] |
+| race kerb lip allowance | ≤ 0.055 m when a `1KERB_race` kerb is on one side | the authored 0.05 m kerb + 5 mm sampling [invented] |
+| (2) DT | 1 m second difference > 0.06 m, unless the metre touches a race kerb | drive_test `STEP_SEVERE_M`, reused |
+| (3) road jump | two 1ROAD vertices ≤ 0.10 m apart in plan, heights ≥ 0.02 + 0.25 × distance apart | 0.10 m [invented] |
+| (4) grass in the lane | > 0.02 m over the pavement beneath, on the rows the leveller moves (k − 7 … l + 8) | 0.02 m = (1)'s [invented]; the prep pins grass 0.02 m under the deck at its vertices, so facets graze the deck by millimetres between them (v0.17.1: up to 0.030 m at the hairpin's row 755, a row the leveller does not move) |
+| (5) steep road triangle | plan area ≥ 0.01 m² and slope > 25 % | both [invented]; the installed riser was 901 % |
+| (6) the pinch at its midpoint | every road vertex within 0.02 m of X within 0.01 m of (y_k + y_l) / 2 | 0.01 m [invented] |
+| (7) race walls | 0.5 m cells, base = 3×3 minimum, within 25 m of X; base + 0.05 − (no_route reference + 0.10) within ±0.28 m | 25 m [invented]; ±0.28 m derived as above; the 3×3 aggregation is the 0050 review's |
+
+Calibration (the review's BLOCKER 2: as first specified the gate failed the FIXED build): scoped by the driven lane, not
+by exempting curbs (the street median curb is outside the lane); to the levelled pinches (the chord mends' pre-existing
+0.07-0.08 m race DT stay drive_test's); grass by depth on the moved rows. Teeth on the installed v0.17.1 OBJs: FAIL at
+Navajo/Jackson on (1) (2) (3) (4) (5) (6) (7) — 45 / 44 / 44 paths, FINE 0.422, DT 0.481 / 0.465, the 901 % triangle,
+0.499 m between two vertices 0.055 m apart, grass 0.192 m over the road, X 109.310 vs 109.061, walls +0.498 — and at the
+hairpin and College/Navajo on (6) only. On v0.18.0: PASS, 3 pinches × 3 layouts (ledger 0050 Results).
+
+### drive_test (engine; opt-in by `data/mouth_welds.json`, every other track byte-identical)
+
+| | Before | After |
+|---|---|---|
+| a severe step (> 6 cm) inside a levelled fold fan | "apron step" on pavement ≥ 9.5 m wide past 3.5 m (exempt) | severe (fan = rows k − B … l + 1 + B of each levelled ROAD pinch, discs of half-width + 0.5 m [invented]; a pre-0050 file: every ROAD cut) |
+| a bump (2.5-6 cm) there | apron bump | unchanged: measured, the fixed-station paths read 56 street "bumps" in the two fans from their own changing spacing round corners tighter than the offset (2.5-4.7 cm on a 2-3 % grade) where verify_fold_fans' real paths read ≤ 0.025 m |
+| the seam's 0.06-0.07 m street step (s 12-13, a chord mend) | apron step | unchanged (race_cw already counts it); not 0050's |
+
+A weld that records a different row count from the gate centreline is refused (SystemExit).
+
+**Measured** (v0.18.0 full rehearsal): street severe 0, bumps 0.15 → 0.0 /km, kinks 3.86 → 3.41, soft top 42 → 41;
+race_cw severe 31 → 22, soft top 23 → 9; race_acw 28 → 20, 22 → 9; no_route BUILT PASS both (walls' worst offset near X
++0.263 m); audits unchanged; verify_mouths byte-identical to v0.17.1.

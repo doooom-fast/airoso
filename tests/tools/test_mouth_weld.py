@@ -210,10 +210,171 @@ def test_unfold_cuts_a_swallowtail_at_its_self_intersection():
     k, l, X = done[0]
     assert abs(X[0] - (-4.0)) < 0.05 and abs(X[2] - (-10.0)) < 0.05, X   # the legs' inside lines cross at (-4, -10)
     assert all(newE[r] == X for r in range(k + 1, l + 1))
-    assert all(newE[r] == E[r] for r in range(len(E)) if r <= k or r > l)
+    B = mw.FOLD_LEVEL_ROWS
+    # ledger 0050: plan positions never move outside k+1..l; heights move only in the two legs' windows
+    assert all((newE[r][0], newE[r][2]) == (E[r][0], E[r][2]) for r in range(len(E)) if r <= k or r > l)
+    assert all(newE[r] == E[r] for r in range(len(E)) if r < k - B + 1 or r > l + B)
+    # _corner climbs 0.09 m, so the legs meet X at different heights: X is their midpoint
+    a, b, c, d = E[k], E[k + 1], E[l], E[l + 1]
+    t = math.hypot(X[0] - a[0], X[2] - a[2]) / math.hypot(b[0] - a[0], b[2] - a[2])
+    u = math.hypot(X[0] - c[0], X[2] - c[2]) / math.hypot(d[0] - c[0], d[2] - c[2])
+    y_k, y_l = a[1] + (b[1] - a[1]) * t, c[1] + (d[1] - c[1]) * u
+    assert abs(y_k - y_l) > 0.01 and abs(X[1] - 0.5 * (y_k + y_l)) < 1e-12
+    assert mw.check_levelled(E, newE, C, False, done) == []
     # a line on a smaller offset (no fold) is left alone
     E2 = _right_edge(C, 4.0)
     assert mw.unfold_line(E2, C, False)[1] == []
+
+
+def _climbing_corner(R=7.4, grade=0.018, spacing=2.0, n_arc=12, n_leg=30, y0=100.0):
+    """Navajo / Jackson in miniature: a straight, a right-hand arc of radius R through 110 deg, a straight; the centre
+    line climbs `grade` by arc length"""
+    pts = [(-spacing * (n_leg - i), 0.0) for i in range(n_leg)] + [(0.0, 0.0)]
+    tot = math.radians(110.0)
+    for k in range(1, n_arc + 1):
+        a = tot * k / n_arc
+        pts.append((R * math.sin(a), -R + R * math.cos(a)))
+    hx, hz = math.cos(-tot), math.sin(-tot)          # the exit heading (turned 110 deg right of +x)
+    ex, ez = pts[-1]
+    pts += [(ex + hx * spacing * i, ez + hz * spacing * i) for i in range(1, n_leg + 1)]
+    out, s = [], 0.0
+    for i, (x, z) in enumerate(pts):
+        if i:
+            s += math.hypot(x - pts[i - 1][0], z - pts[i - 1][1])
+        out.append((x, y0 + grade * s, z))
+    return out
+
+
+def test_unfold_levels_a_climbing_swallowtail_ledger_0050():
+    """(a) a 2.7 % climbing corner, half-width 12 m round 7.4 m: the legs arrive ~0.5 m apart at X. X takes their
+    midpoint, both legs meet it, no edge rises past grade by 2 cm in 0.1 m, the centre is untouched and everything
+    outside the windows is byte-identical"""
+    C = _climbing_corner()
+    E = _right_edge(C, 12.0)
+    rep = []
+    newE, done, left = mw.unfold_line(E, C, False, strict=True, report=rep)
+    assert not left and len(done) == 1 and len(rep) == 1
+    k, l, X = done[0]
+    p = rep[0]
+    assert 0.3 < abs(p["y_l"] - p["y_k"]) < 0.56, p          # the Navajo / Jackson class of jump
+    assert abs(X[1] - 0.5 * (p["y_k"] + p["y_l"])) < 1e-12 and p["half_jump"] <= mw.FOLD_HALF_JUMP_MAX_M
+    # both legs at X's height where they touch it: row k's segment and row l's segment carry X at h
+    t = math.hypot(X[0] - newE[k][0], X[2] - newE[k][2]) / math.hypot(E[k + 1][0] - E[k][0], E[k + 1][2] - E[k][2])
+    yk_new = newE[k][1] + (E[k + 1][1] + (p["h"] - p["y_k"]) - newE[k][1]) * t
+    assert abs(yk_new - X[1]) < 1e-3
+    # the edge walked row by row: its rise beyond the centre line's own grade stays small everywhere
+    for r in range(1, len(newE)):
+        if newE[r] == newE[r - 1]:
+            continue
+        rise = (newE[r][1] - newE[r - 1][1]) - (C[r][1] - C[r - 1][1])
+        run = math.hypot(newE[r][0] - newE[r - 1][0], newE[r][2] - newE[r - 1][2])
+        if run > 0.1:
+            assert abs(rise) / run < 0.2 * 1.0, (r, rise, run)       # <= 2 cm per 0.1 m beyond grade
+    assert mw.check_levelled(E, newE, C, False, done) == []
+    # (b) strict=False and level=False keep the 2026-10-11 rule bit for bit: the higher leg, nothing eased
+    for kw in ({"strict": False}, {"strict": True, "level": False}):
+        oldE, od, _ = mw.unfold_line(E, C, False, **kw)
+        kk, ll, OX = od[0]
+        assert abs(OX[1] - max(p["y_k"], p["y_l"])) < 1e-12
+        assert all(oldE[r] == E[r] for r in range(len(E)) if r <= kk or r > ll), kw
+
+
+def test_unfold_level_refusals_ledger_0050():
+    """(c) a half-jump over the cap, (f) a cross-fall over 4 %; the cap can be lifted per line (curb p2 / p3)"""
+    C = _climbing_corner(grade=0.03)
+    E = _right_edge(C, 12.0)
+    _, _, _ = mw.unfold_line(E, C, False, half_jump_max=None)          # uncapped: levels
+    try:
+        mw.unfold_line(E, C, False)                                   # the default cap, 0.28
+    except mw.WeldError as e:
+        assert "half the jump" in str(e)
+    else:
+        raise AssertionError("a half-jump over the cap was levelled")
+    try:
+        mw.unfold_line(_right_edge(_climbing_corner(grade=0.25), 12.0), _climbing_corner(grade=0.25), False,
+                       half_jump_max=None)
+    except mw.WeldError as e:
+        assert "tilts it" in str(e)
+    else:
+        raise AssertionError("a cross-fall over 4 % was levelled")
+
+
+def test_unfold_level_wraps_a_closed_lap_and_leaves_chords_alone_ledger_0050():
+    """(d) a fold straddling index 0 on a closed lap levels across the seam; (g) a chord mend is untouched"""
+    C = _climbing_corner(grade=0.0)
+    # close it: back along a wide loop far from the corner (no other fold)
+    last = C[-1]
+    far = [(last[0] + 60.0, 100.0, last[2] - 40.0), (-150.0, 100.0, -120.0), (-150.0, 100.0, 10.0), (-62.0, 100.0, 0.0)]
+    Cc = C + far
+    shift = 34                                    # rotate so the corner's fold straddles index 0
+    Cr = Cc[shift:] + Cc[:shift]
+    Cr = [(x, 100.0 + 0.002 * ((i - 4) % len(Cr)), z) for i, (x, _y, z) in enumerate(Cr)]
+    E = _right_edge(Cr, 12.0)
+    rep = []
+    newE, done, left = mw.unfold_line(E, Cr, True, report=rep)
+    sw = [d for d in done if d[2] is not None]
+    assert sw and rep, done
+    k, l, X = sw[0]
+    assert k < 0 or l >= len(E) or any(r % len(E) in (0, len(E) - 1) for r in range(k - 8, l + 10)), (k, l)
+    assert mw.check_levelled(E, newE, Cr, True, done) == []
+    # the hook (chord) from test_unfold_replaces_a_hook_with_a_forward_chord: no X, nothing levelled
+    Ch = [(float(i), 0.0, 0.0) for i in range(10)]
+    Eh = [(0.0, 0.0, -5.0), (1.0, 0.0, -5.0), (2.0, 0.0, -5.0), (3.0, 0.3, -5.0), (2.6, 0.5, -5.5), (2.4, 0.0, -6.0),
+          (4.0, 0.0, -6.5), (5.0, 0.0, -6.5), (6.0, 0.0, -6.5), (7.0, 0.0, -6.5)]
+    a = mw.unfold_line(Eh, Ch, False, strict=True)
+    b = mw.unfold_line(Eh, Ch, False, strict=True, level=False)
+    assert a == b and a[1][0][2] is None
+
+
+def test_unfold_level_refuses_overlapping_windows_ledger_0050():
+    """(e) two pinches whose easing windows overlap on one line are refused (order dependence)"""
+    C1 = _climbing_corner(n_leg=6)
+    # a second identical right-hander right after the first, so the windows (8 rows) must collide
+    last, prev = C1[-1], C1[-2]
+    hx, hz = last[0] - prev[0], last[2] - prev[2]
+    L = math.hypot(hx, hz); hx, hz = hx / L, hz / L
+    C2 = []
+    base = _climbing_corner(n_leg=6, y0=last[1])
+    # rotate base so its first heading matches the exit heading, then translate onto the end
+    b0, b1 = base[0], base[1]
+    bx, bz = b1[0] - b0[0], b1[2] - b0[2]
+    Lb = math.hypot(bx, bz); bx, bz = bx / Lb, bz / Lb
+    ca, sa = bx * hx + bz * hz, bx * hz - bz * hx
+    for x, y, z in base[1:]:
+        dx, dz = x - b0[0], z - b0[2]
+        C2.append((last[0] + ca * dx - sa * dz, y, last[2] + sa * dx + ca * dz))
+    C = C1 + C2
+    E = _right_edge(C, 12.0)
+    try:
+        mw.unfold_line(E, C, False, half_jump_max=None)
+    except mw.WeldError as e:
+        assert "overlap" in str(e) or "tilts" in str(e), e
+    else:
+        done = mw.unfold_line(E, C, False, level=False)[1]
+        sw = [d for d in done if d[2] is not None]
+        assert len(sw) < 2 or all(abs(a[0] - b[0]) > 2 * mw.FOLD_LEVEL_ROWS + 2 for a, b in zip(sw, sw[1:])), sw
+
+
+def test_unfold_level_keeps_a_curb_face_ledger_0050():
+    """(h) the curb lane edge p0 and the curb top p1 (0.08 m out, 0.14 m up) level on their own crossings and keep
+    the 0.14 m face within 0.03 m through the windows; p0 is the road edge's own result (curb-edge == road-edge)"""
+    C = _climbing_corner()
+    road = _right_edge(C, 12.0)
+    p0 = [(x, y + 0.10, z) for x, y, z in _right_edge(C, 12.0)]
+    p1 = [(x, y + 0.24, z) for x, y, z in _right_edge(C, 12.08)]
+    r_new = mw.unfold_line([(x, y + 0.10, z) for x, y, z in road], C, False)[0]
+    p0_new, d0, _ = mw.unfold_line(p0, C, False)
+    assert p0_new == r_new
+    p1_new, d1, _ = mw.unfold_line(p1, C, False)
+    # measure the face where both lines are on their own (un-collapsed) rows outside both cuts' moved rows
+    moved = set()
+    for k, l, _x in d0 + d1:
+        moved |= set(range(k + 1, l + 1))
+    for r in range(len(C)):
+        if r in moved:
+            continue
+        face = p1_new[r][1] - p0_new[r][1]
+        assert abs(face - 0.14) <= 0.03 + 1e-9, (r, face)
 
 
 def test_unfold_replaces_a_hook_with_a_forward_chord():

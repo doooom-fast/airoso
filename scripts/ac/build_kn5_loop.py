@@ -878,7 +878,7 @@ def main():
         # ...and the race furniture (ledger 0047): the strips carry u = arc / 4.04 m along the
         # vertical faces and the kerbs v = arc / 1 m — a top-down projection would smear them
         if not ob.name.upper().startswith(("PALM", "TREE", "SCRUB", "BUSHES", "CHAINLINK", "ROADTEXT",
-                                           "1WALL_RACE", "1KERB_RACE")):
+                                           "1WALL_RACE", "1KERB_RACE", "BRIDGESTRUCT")):
             planar_uv(me)
         bm = bmesh.new(); bm.from_mesh(me)
         # NEVER weld foliage/prop groups: their double-sided shells are duplicated face pairs at

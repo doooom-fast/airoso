@@ -6,8 +6,10 @@ creates, at REAL sampled elevation (metres, Blender Z-up, +Y = north):
 
   ROAD    — the drivable ribbon (1ROAD), swept ±width/2 along the centreline, tight to real elevation
   KERB    — corner kerbs, sitting right on the road edge (kept tight to the road, not floating)
-  TERRAIN — the grass ground, conformed to the road and CLAMPED to ±terrain_band_m of the nearest road
-            so the raw DEM's Cowles-area peaks can't tower over a neighbourhood loop with none
+  TERRAIN — the grass ground, conformed to the road and clamped to ±terrain_band_m of the nearest road.
+            With terrain.tiers declared (ledger 0046; fleet/LAWS.md L3 as amended 2026-10-11: near-road relief
+            is clamped, far relief is data) the clamp holds only near a pavement, the ground is the tiered 3DEP
+            lattice (fine at the verge), and the far ring past the physical extent is GRASS_FAR (visual only)
 
 Run headless:
   <blender> --background --python scripts/blender/build_loop_blend.py -- project
@@ -134,9 +136,292 @@ def band_clamp(grid_xyz, road_pts, band):
 
 # --- Blender mesh creation ------------------------------------------------------------------------
 
-def _load_i8(proj):
-    p = proj / "data" / "i8.local.json"
-    return [tuple(x) for x in json.loads(p.read_text())] if p.exists() else []
+def _load_i8(proj, legacy=False):
+    """The I-8 floor polyline [(x, y, z)]. ``legacy`` (tiered terrain, ledger 0046): the original 64-point
+    polyline kept as i8.legacy.local.json — the near-road trench, guardrails and streetlight skips were built
+    on it, and they must not move — while data/i8.local.json is the corridor floor re-fetched over the far
+    box (scripts/elevation/terrain_sample.py, a dict carrying its provenance)."""
+    d = proj / "data"
+    p = d / "i8.legacy.local.json" if legacy and (d / "i8.legacy.local.json").exists() else d / "i8.local.json"
+    if not p.exists():
+        return []
+    v = json.loads(p.read_text())
+    return [tuple(x) for x in (v["points_xyz_m"] if isinstance(v, dict) else v)]
+
+
+# --- tiered terrain (ledger 0046; opt-in: track.config.json terrain.tiers) ------------------------
+
+def _engine_terrain_tiers():
+    """airoso's scripts/geometry/terrain_tiers.py, loaded BY PATH: inside Blender `scripts` is this
+    track's own package (scripts-v021), so the engine module cannot be imported by name."""
+    import importlib.util
+    p = Path(__file__).resolve().parents[4] / "scripts" / "geometry" / "terrain_tiers.py"
+    if not p.exists():
+        raise SystemExit(f"[blend] terrain.tiers declared but the engine module is not at {p} — run this "
+                         f"assembler from airoso's tracks/san-diego-lake-murray/scripts-v021 (tools/ship_sd.sh)")
+    spec = importlib.util.spec_from_file_location("_airoso_terrain_tiers", p)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _legacy_surface(grid_xyz):
+    """height of the v0.17.1 TERRAIN surface at (x, z): the graded 20 m grid (conform, clamp, carve, trench)
+    triangulated EXACTLY as ribbon.grass_terrain does — quad (j,i)/(j,i+1)/(j+1,i+1)/(j+1,i) split on its
+    NW->SE diagonal — so a kept vertex lands on the old surface, not on a bilinear patch of it"""
+    ny = len(grid_xyz); nx = len(grid_xyz[0])
+    x0 = grid_xyz[0][0][0]; z0 = grid_xyz[0][0][2]
+    dxg = grid_xyz[0][1][0] - x0; dzg = z0 - grid_xyz[1][0][2]
+
+    def h(x, z):
+        fi = (x - x0) / dxg; fj = (z0 - z) / dzg
+        if fi < 0 or fj < 0 or fi > nx - 1 or fj > ny - 1:
+            return None
+        i0 = max(0, min(nx - 2, int(fi))); j0 = max(0, min(ny - 2, int(fj)))
+        ti = fi - i0; tj = fj - j0
+        a = grid_xyz[j0][i0][1]; b = grid_xyz[j0][i0 + 1][1]
+        c = grid_xyz[j0 + 1][i0 + 1][1]; d = grid_xyz[j0 + 1][i0][1]
+        if ti >= tj:                                    # triangle (a, b, c)
+            return a + (b - a) * ti + (c - b) * tj
+        return a + (c - d) * ti + (d - a) * tj           # triangle (a, c, d)
+    return h
+
+
+def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
+    """The ledger-0046 ground from data/terrain.tiers.json.gz (scripts/elevation/terrain_sample.py): every
+    vertex is 3DEP at that vertex; the band clamp holds only near a pavement (L3 as amended 2026-10-11) and
+    releases to the raw DEM by clamp_blend_m; within keep_surface_m of a pavement the v0.17.1 graded surface
+    is kept (the conform corridor, everything the drive gates were tuned on), feathered into the data over
+    keep_feather_m. Returns (TERRAIN mesh = physical, GRASS_FAR mesh = the visual-only far ring, report)."""
+    import gzip
+    import hashlib
+    from mathutils import kdtree
+    tt = _engine_terrain_tiers()
+    data = proj / "data"
+    tp = data / "terrain.tiers.json.gz"
+    if not tp.exists():
+        raise SystemExit("[blend] terrain.tiers declared but data/terrain.tiers.json.gz is missing — run "
+                         "python -m scripts.elevation.terrain_sample <project> first (tools/ship_sd.sh does)")
+    T = json.loads(gzip.decompress(tp.read_bytes()).decode("utf-8"))
+    # the topology was planned on these exact road inputs: a stale plan would mesh the wrong verges
+    raw = data / "centerline.raw.local.json"
+    files = [raw if raw.exists() else data / "centerline.local.json"]
+    if (data / "connectors.local.json").exists():
+        files.append(data / "connectors.local.json")
+    if (data / "heightfield.meta.json").exists():
+        files.append(data / "heightfield.meta.json")
+    now = {f.name: hashlib.md5(f.read_bytes()).hexdigest() for f in files}
+    if now != T["inputs_md5"]:
+        raise SystemExit(f"[blend] data/terrain.tiers.json.gz was planned on other road inputs ({T['inputs_md5']} "
+                         f"vs {now}) — rerun scripts.elevation.terrain_sample")
+    tcfg = cfg["terrain"]
+    opt = tcfg.get("tier_options") or {}
+    band = float(tcfg.get("terrain_band_m", 22.0))
+    c_full, c_rel = float(tcfg.get("clamp_corridor_m", 80.0)), float(tcfg.get("clamp_blend_m", 250.0))
+    keep_m, keep_f = float(opt.get("keep_surface_m", 0.0)), float(opt.get("keep_feather_m", 0.0))
+    # the feather as an earth batter (ledger 0046 fix round 4; opt-in): its length follows how far the graded ground
+    # sits off the data, between keep_feather_min_m and keep_feather_m
+    batter = float(opt["keep_batter"]) if "keep_batter" in opt else None
+    keep_fmin = float(opt.get("keep_feather_min_m", 0.0))
+    fx0, fz0, fux, fuz = T["frame"]                     # base-lattice key (I, J) -> (x0 + I*ux, z0 + J*uz)
+
+    # pavement distance + nearest road height: the FINAL lines (smoothed, narrowed) at <= 1 m
+    pts, hws, ys = [], [], []
+    for li, (lpts, lw) in enumerate(road_lines):
+        n = len(lpts)
+        segs = list(range(n - 1)) + ([n - 1] if li == 0 and n > 2 else [])     # line 0 = the closed loop
+        for k in segs:
+            a, b = lpts[k], lpts[(k + 1) % n]
+            wa, wb = lw[k] / 2.0, lw[(k + 1) % n] / 2.0
+            m = max(1, int(math.ceil(math.hypot(b[0] - a[0], b[2] - a[2]) / 1.0)))
+            for s in range(m):
+                t = s / m
+                pts.append((a[0] + (b[0] - a[0]) * t, a[2] + (b[2] - a[2]) * t))
+                hws.append(wa + (wb - wa) * t); ys.append(a[1] + (b[1] - a[1]) * t)
+    kd = kdtree.KDTree(len(pts))
+    for k, (x, z) in enumerate(pts):
+        kd.insert((x, z, 0.0), k)
+    kd.balance()
+    legacy = _legacy_surface(grid_xyz)
+
+    I, J, H, K = T["I"], T["J"], T["h"], T["keep"]
+    # the kept cells (the graded grid's own triangles) reach past keep_surface_m wherever a 20 m cell touches the
+    # within_m band, up to ~46 m out: feathering by pavement distance alone then leaves the cell's outer edge on the
+    # graded surface and the data one 5 m node away (a serrated step where the two disagree, e.g. the cut bank west
+    # of seam-alvarado). So the feather ALSO runs keep_feather_m out from the nearest kept node (ledger 0046).
+    kept_xz = [(fx0 + i * fux, fz0 + j * fuz) for i, j, kc in zip(I, J, K) if kc]
+    kd_keep = None
+    RF = T.get("refine")
+    # with keep_cells.refine the kept cells themselves take the data past move_beyond_m once the prep has reshaped the
+    # near-road ground (build_kn5_loop._refine_kept_terrain): their outer edge is then no longer the graded surface,
+    # and the feather is the pavement one alone — the same field on both sides of the kept edge
+    if kept_xz and keep_f > 0.0 and RF is None:
+        kd_keep = kdtree.KDTree(len(kept_xz))
+        for k, (x, z) in enumerate(kept_xz):
+            kd_keep.insert((x, z, 0.0), k)
+        kd_keep.balance()
+    verts = []
+    vdist = []                                          # pavement distance per vertex (None = a kept-cell node)
+    n_keep = n_feather = n_clamped = n_cell = n_edge = 0
+    max_lift = max_cut = 0.0
+
+    def ground(x, z, h):
+        """(local y, pavement distance) of a non-kept vertex: 3DEP under the distance-weighted band clamp, then the
+        kept graded surface feathered in near the roads"""
+        nonlocal n_keep, n_feather, n_clamped, n_edge, max_lift, max_cut
+        y = h - elev0
+        _co, k, dist = kd.find((x, z, 0.0))
+        d = dist - hws[k]
+        w = tt.clamp_weight(d, c_full, c_rel)
+        if w > 0.0:
+            y2 = tt.band_clamp_value(y, ys[k], band, w)
+            if abs(y2 - y) > 1e-9:
+                n_clamped += 1
+                max_lift, max_cut = max(max_lift, y2 - y), max(max_cut, y - y2)
+            y = y2
+        Lg = None
+        if batter is not None and keep_m < d < keep_m + keep_f:
+            Lg = legacy(x, z)
+            wk = tt.keep_weight(d, keep_m, tt.feather_len((Lg - y) if Lg is not None else keep_f, keep_f, batter,
+                                                           keep_fmin))
+        else:
+            wk = tt.keep_weight(d, keep_m, keep_f)
+        if kd_keep is not None and wk < 1.0:
+            we = tt.keep_weight(kd_keep.find((x, z, 0.0))[2], 0.0, keep_f)
+            if we > wk:
+                wk = we
+                n_edge += 1
+        if wk > 0.0:
+            L = legacy(x, z)
+            if L is None:
+                raise SystemExit(f"[blend] tiered terrain: vertex ({x:.1f}, {z:.1f}) {d:.1f} m from a pavement lies "
+                                 f"outside the 40 m grid the kept surface comes from")
+            y = y + wk * (L - y)
+            if wk >= 1.0:
+                n_keep += 1
+            else:
+                n_feather += 1
+        return y, d
+    for i, j, h, kc in zip(I, J, H, K):
+        x, z = fx0 + i * fux, fz0 + j * fuz
+        if kc:
+            # a KEPT cell's corner or a node on its edge: the graded grid itself (the seat and the kn5 prep then
+            # reshape exactly the ground they always reshaped; a finer neighbour's node lies ON the kept edge)
+            L = legacy(x, z)
+            if L is None:
+                raise SystemExit(f"[blend] tiered terrain: kept vertex ({x:.1f}, {z:.1f}) outside the 40 m grid")
+            verts.append((x, L, z))
+            vdist.append(None)
+            n_cell += 1
+            continue
+        y, d = ground(x, z, h)
+        verts.append((x, y, z))
+        vdist.append(d)
+    # BREAK LINES (ledger 0046 fix round 4, terrain_sample.build_breaks): vertices ON the edges of plain 5 m cells
+    # where a sharp riser crosses them, at fine keys (units of base / break.fine); the same clamp and feather as any
+    # vertex. They are never kept-cell nodes and never move a lattice vertex.
+    BK = T.get("break")
+    n_lat = len(verts)
+    Ib, Jb = list(I), list(J)
+    if BK:
+        q = float(BK["fine"])
+        for i5, j5, h in zip(BK["I5"], BK["J5"], BK["h"]):
+            x, z = fx0 + i5 / q * fux, fz0 + j5 / q * fuz
+            y, d = ground(x, z, h)
+            if d <= keep_m:
+                raise SystemExit(f"[blend] tiered terrain: break-line vertex ({x:.1f}, {z:.1f}) is {d:.1f} m from a "
+                                 f"pavement, inside keep_surface_m {keep_m} (the planning roads moved?)")
+            verts.append((x, y, z))
+            vdist.append(d)
+            Ib.append(i5 / q); Jb.append(j5 / q)
+    tris = T["tris"]
+    tri3 = [(tris[3 * k], tris[3 * k + 1], tris[3 * k + 2]) for k in range(len(tris) // 3)]
+    # DATA DIAGONALS (ledger 0046 fix round 2): every plain square cell is split along the diagonal its data
+    # agrees with (terrain_tiers.data_diagonals), past diagonals.beyond_m of a pavement only — the fixed
+    # diagonal aliased slanting 3DEP channels and cut benches into parallel ribs. Opt-in; no vertex moves.
+    n_diag = 0
+    dg = opt.get("diagonals")
+    if dg:
+        if dg.get("rule", "min_dh") != "min_dh":
+            raise SystemExit(f"[blend] terrain.tier_options.diagonals.rule {dg.get('rule')!r}: only 'min_dh'")
+        beyond = float(dg.get("beyond_m", 20.0))
+        elig = [dd is not None and dd > beyond and n < n_lat for n, dd in enumerate(vdist)]
+        tri3, n_diag = tt.data_diagonals(tri3, Ib, Jb, [v[1] for v in verts], elig)
+    phys, far = tt.split_mesh(tri3, [bool(p) for p in T["phys"]])
+    n_refine = 0
+    if RF is not None:
+        # the data the prep's kept-cell refinement needs at the kept cells' x-split sub-lattice: D = 3DEP under the
+        # same distance-weighted clamp as every lattice vertex, d = pavement distance (the feather's argument)
+        prm = RF["params"]
+        nD, nd, nL = [], [], []
+        for i, j, h in zip(RF["I"], RF["J"], RF["h"]):
+            x, z = fx0 + i * fux, fz0 + j * fuz
+            y = h - elev0
+            _co, k, dist = kd.find((x, z, 0.0))
+            d = dist - hws[k]
+            w = tt.clamp_weight(d, c_full, c_rel)
+            if w > 0.0:
+                y = tt.band_clamp_value(y, ys[k], band, w)
+            nD.append(round(y, 3)); nd.append(round(d, 3))
+            if batter is not None:
+                # the feather length at this node, from the graded surface it blends away from (ledger 0046 fix
+                # round 4): interpolated by the prep like D and d, so a straight run of vertices stays straight
+                Lg = legacy(x, z)
+                nL.append(round(tt.feather_len((Lg - y) if Lg is not None else keep_f, keep_f, batter, keep_fmin), 3))
+        n_refine = len(nD)
+        refine = {"_provenance": {"what": "ledger 0046 kept-cell refinement data for the kn5 prep "
+                                          "(build_kn5_loop._refine_kept_terrain): x-split sub-lattice of every kept "
+                                          "cell reaching past refine.beyond_m; D = 3DEP (terrain.samples.json.gz) under "
+                                          "the L3 clamp, local y; d = pavement distance, m",
+                                  "tiers": "terrain.tiers.json.gz"},
+                  "frame": T["frame"], "keep_r": RF["keep_r"], "cell_r": RF["cell_r"],
+                  "kept_cells": RF["kept_cells"], "cells": RF["cells"],
+                  "I": RF["I"], "J": RF["J"], "D": nD, "d": nd,
+                  "keep_m": keep_m, "keep_feather_m": keep_f,
+                  **({"keep_batter": batter, "keep_feather_min_m": keep_fmin, "L": nL} if batter is not None else {}),
+                  "edge_m": float(prm["edge_m"]), "move_beyond_m": float(prm["move_beyond_m"]),
+                  "min_face_d_m": float(prm["min_face_d_m"])}
+        (data / "terrain.refine.json.gz").write_bytes(
+            gzip.compress(json.dumps(refine, separators=(",", ":")).encode("utf-8"), 6, mtime=0))
+    else:
+        (data / "terrain.refine.json.gz").unlink(missing_ok=True)
+
+    def mesh(sel):
+        used, nv, nt = {}, [], []
+        for t in sel:
+            q = []
+            for v in t:
+                if v not in used:
+                    used[v] = len(nv); nv.append(verts[v])
+                q.append(used[v])
+            nt.append(tuple(q))
+        return {"vertices": nv, "uvs": [(v[0] / 6.0, v[2] / 6.0) for v in nv], "tris": nt}
+
+    terrain, far_mesh = mesh(phys), mesh(far)
+    ylo = min(v[1] for v in verts) + elev0
+    yhi = max(v[1] for v in verts) + elev0
+    rep = {"vertices": len(verts), "physical_v": len(terrain["vertices"]), "far_v": len(far_mesh["vertices"]),
+           "kept_cell_vertices": n_cell, "kept_surface": n_keep, "feathered": n_feather,
+           "feathered_from_kept_edge": n_edge, "refine_nodes": n_refine, "clamped": n_clamped,
+           **({"data_diagonals_flipped": n_diag} if dg else {}),
+           **({"break_vertices": len(verts) - n_lat, "break_cells": BK.get("break_cells")} if BK else {}),
+           "clamp_max_lift": round(max_lift, 2), "clamp_max_cut": round(max_cut, 2),
+           "abs_min": round(ylo, 2), "abs_max": round(yhi, 2)}
+    print(f"[blend] tiered terrain: {rep}")
+    (data / "terrain.tiers.report.json").write_text(json.dumps(rep, indent=1))
+    return terrain, far_mesh, rep
+
+
+def _surface_sampler(mesh_dict):
+    """(x, z) -> height of the highest face of a local-frame mesh under the point (BVH ray, Blender maths)"""
+    from mathutils.bvhtree import BVHTree
+    vb = [(x, z, y) for (x, y, z) in mesh_dict["vertices"]]
+    bvh = BVHTree.FromPolygons(vb, [tuple(t) for t in mesh_dict["tris"]])
+
+    def h(x, z):
+        hit = bvh.ray_cast((x, z, 9000.0), (0.0, 0.0, -1.0))
+        return hit[0].z if hit[0] is not None else None
+    return h
 
 
 def _i8_nearest(i8, x, z):
@@ -214,9 +499,18 @@ def _level_i8_decks(centerline, i8, *, near=30.0, pad=4):
     return [tuple(p) for p in pts]
 
 
-def build_guardrails(centerline, widths, i8, *, h=0.95, over=22.0, pad=3):
+GUARDRAIL_SET_M = 0.15   # [invented] v0.18.0: each panel stands this far OUTSIDE the pavement edge, on the curb
+
+
+def build_guardrails(centerline, widths, i8, *, h=0.95, over=22.0, pad=3, set_m=GUARDRAIL_SET_M):
     """Vertical guardrail panels along BOTH road edges wherever the loop is over the I-8 cut (perp dist to
-    I-8 < ``over``). Extends ``pad`` points onto each approach so the rail starts before the gap."""
+    I-8 < ``over``). Extends ``pad`` points onto each approach so the rail starts before the gap.
+
+    Each panel stands ``set_m`` outside the pavement's edge (v0.18.0, the gates lens): placed ON the edge line
+    (``hw``) every panel vertex lay on the carriageway's own boundary, so audit_mesh D read all 90 of them as a wall
+    standing on the road (512 kn5 vertex records in v0.17.1, 514 once College's deck rose to its real height and the
+    exporter's exact-normal dedup split two more). A bridge barrier stands on the curb behind the gutter line, not
+    on the pavement; 0.15 m puts it on the curb's top, its foot still inside the curb."""
     verts, tris = [], []
     if not i8:
         return {"vertices": verts, "uvs": [], "tris": tris}
@@ -241,7 +535,7 @@ def build_guardrails(centerline, widths, i8, *, h=0.95, over=22.0, pad=3):
             base = len(verts)
             for k in range(a, b + 1):
                 x, y, z = centerline[k]; px, pz = perp(k); hw = widths[k] / 2
-                ex, ez = x + px * side * hw, z + pz * side * hw
+                ex, ez = x + px * side * (hw + set_m), z + pz * side * (hw + set_m)
                 verts.append((ex, y, ez))        # bottom (deck level)
                 verts.append((ex, y + h, ez))    # top
             for m in range(b - a):
@@ -436,13 +730,14 @@ def _bld_height(b):
     return _H_DEFAULT.get(b.get("building"), 6.0)
 
 
-def build_buildings(centerline, widths, grid_xyz, cache, lon0, lat0, *, min_area=25.0, cap=None):
+def build_buildings(centerline, widths, grid_xyz, cache, lon0, lat0, *, min_area=25.0, cap=None, terr=None):
     """Extrude OSM building footprints near the loop (houses included — building=yes/house cover them).
     Sit each on the sampled terrain, skip any that crowd the road, split HOUSE vs BUILDING for material
     variety. ``cap`` keeps only the N largest near-road footprints (a 46 km urban loop has 60k+). Returns
-    {'HOUSE': mesh, 'BUILDING': mesh}."""
+    {'HOUSE': mesh, 'BUILDING': mesh}. ``terr``: the ground to sit on (default the graded grid; the tiered
+    terrain passes its own surface so a house 40-120 m out stands on the ground that ships)."""
     m_lon = 111320.0 * math.cos(math.radians(lat0)); m_lat = 110574.0
-    terr = _grid_sampler(grid_xyz)
+    terr = terr or _grid_sampler(grid_xyz)
     # bucket the road for fast nearest (centre pt -> half width)
     from collections import defaultdict
     B = 60.0
@@ -615,7 +910,8 @@ def main():
         raw_centerline, sigma_pts=float(route.get("smooth_sigma_pts", 2.0)),
         passes=int(route.get("smooth_passes", 2)),
         sigma_y_pts=float(route.get("smooth_sigma_y_pts", 1.5)))
-    i8 = _load_i8(proj)
+    tiers_on = bool((cfg.get("terrain") or {}).get("tiers"))
+    i8 = _load_i8(proj, legacy=tiers_on)
     print(f"[blend] smoothed curves: max kink {smoothmod.max_kink_deg(raw_centerline):.1f} -> "
           f"{smoothmod.max_kink_deg(centerline):.1f} deg")
 
@@ -700,7 +996,18 @@ def main():
     for _n, cpts, cw in connectors:
         carve_road_corridor(grid_xyz, cpts, cw, carve=0.2)
     cut_i8_trench(grid_xyz, i8)                                     # sink the I-8 corridor into a real cut (i8 loaded above)
-    terrain = ribbon.grass_terrain(grid_xyz)
+    terrain_far, bterr = None, None
+    if tiers_on:
+        # ledger 0046: the tiered 3DEP lattice; the graded grid above is kept within keep_surface_m of a pavement
+        terrain, terrain_far, _trep = build_tiered_terrain(
+            proj, cfg, grid_xyz, [(centerline, widths)] + [(cpts, cw) for _n, cpts, cw in connectors], elev0)
+        _new_ground, _old_ground = _surface_sampler(terrain), _grid_sampler(grid_xyz)
+
+        def bterr(x, z):
+            v = _new_ground(x, z)
+            return _old_ground(x, z) if v is None else v
+    else:
+        terrain = ribbon.grass_terrain(grid_xyz)
     guardrail = build_guardrails(centerline, widths, i8)           # rails where the loop bridges I-8
     lights, lampheads = build_streetlights(centerline, widths, i8, grid_xyz)  # collision-aware posts
     (data / "lights.local.json").write_text(json.dumps({"lampheads": lampheads}))  # -> CSP [LIGHT_N]
@@ -708,7 +1015,7 @@ def main():
     _scn = cfg.get("scenery", {})
     bmeshes = build_buildings(centerline, widths, grid_xyz, json.loads(bcache.read_text()), lon0, lat0,
                               min_area=float(_scn.get("building_min_area_m2", 25.0)),
-                              cap=_scn.get("building_cap")) \
+                              cap=_scn.get("building_cap"), terr=bterr) \
         if bcache.exists() else {"HOUSE": {"vertices": [], "uvs": [], "tris": []},
                                  "BUILDING": {"vertices": [], "uvs": [], "tris": []}}
     # Continuous sidewalks now come from curb_sidewalk (above); the sparse OSM footways would only z-fight it.
@@ -757,6 +1064,10 @@ def main():
     # --- fresh scene ---
     bpy.ops.wm.read_factory_settings(use_empty=True)
     make_mesh("TERRAIN", terrain, (0.30, 0.42, 0.20, 1.0))
+    if terrain_far is not None:
+        # the far ring (ledger 0046 E3): no digit prefix -> no physics, never scanned by the gates, never a
+        # GrassFX / occluder mesh; the prep binds pbr's textured GRASS_FAR row (dry chaparral), never MOUNTAINS
+        make_mesh("GRASS_FAR", terrain_far, (0.42, 0.38, 0.29, 1.0))
     make_mesh("ROAD", road, (0.09, 0.09, 0.10, 1.0))
     make_mesh("MARKINGS", marks["white"], (0.90, 0.90, 0.86, 1.0))   # white edge + dashed lane lines
     make_mesh("YLINE", marks["yellow"], (0.86, 0.68, 0.10, 1.0))     # double-yellow centreline

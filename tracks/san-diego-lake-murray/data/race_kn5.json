@@ -1,11 +1,15 @@
 {
  "file": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\build\\san_diego_lake_murray_race.kn5",
  "version": 5,
- "file_bytes": 10253676,
+ "file_bytes": 11811590,
  "textures": [
   {
-   "name": "kerb_diffuse.png",
-   "bytes": 771
+   "name": "kerb_race_worn_diffuse.jpg",
+   "bytes": 567921
+  },
+  {
+   "name": "kerb_race_worn_normal.jpg",
+   "bytes": 980349
   },
   {
    "name": "concrete_barrier_diffuse.png",
@@ -19,113 +23,161 @@
  "materials": [
   {
    "name": "1KERB_race_0_in_mat",
-   "shader": "ksPerPixel",
+   "shader": "ksPerPixelMultiMap",
    "props": {
+    "ksAmbient": 0.4,
     "ksDiffuse": 0.4,
-    "ksAmbient": 0.4
+    "ksSpecular": 0.1,
+    "ksSpecularEXP": 20.0
    },
    "textures": [
     [
      "txDiffuse",
-     "kerb_diffuse.png"
+     "kerb_race_worn_diffuse.jpg"
+    ],
+    [
+     "txNormal",
+     "kerb_race_worn_normal.jpg"
     ]
    ]
   },
   {
    "name": "1KERB_race_0_out_mat",
-   "shader": "ksPerPixel",
+   "shader": "ksPerPixelMultiMap",
    "props": {
+    "ksAmbient": 0.4,
     "ksDiffuse": 0.4,
-    "ksAmbient": 0.4
+    "ksSpecular": 0.1,
+    "ksSpecularEXP": 20.0
    },
    "textures": [
     [
      "txDiffuse",
-     "kerb_diffuse.png"
+     "kerb_race_worn_diffuse.jpg"
+    ],
+    [
+     "txNormal",
+     "kerb_race_worn_normal.jpg"
     ]
    ]
   },
   {
    "name": "1KERB_race_1514_out_mat",
-   "shader": "ksPerPixel",
+   "shader": "ksPerPixelMultiMap",
    "props": {
+    "ksAmbient": 0.4,
     "ksDiffuse": 0.4,
-    "ksAmbient": 0.4
+    "ksSpecular": 0.1,
+    "ksSpecularEXP": 20.0
    },
    "textures": [
     [
      "txDiffuse",
-     "kerb_diffuse.png"
+     "kerb_race_worn_diffuse.jpg"
+    ],
+    [
+     "txNormal",
+     "kerb_race_worn_normal.jpg"
     ]
    ]
   },
   {
    "name": "1KERB_race_2319_out_mat",
-   "shader": "ksPerPixel",
+   "shader": "ksPerPixelMultiMap",
    "props": {
+    "ksAmbient": 0.4,
     "ksDiffuse": 0.4,
-    "ksAmbient": 0.4
+    "ksSpecular": 0.1,
+    "ksSpecularEXP": 20.0
    },
    "textures": [
     [
      "txDiffuse",
-     "kerb_diffuse.png"
+     "kerb_race_worn_diffuse.jpg"
+    ],
+    [
+     "txNormal",
+     "kerb_race_worn_normal.jpg"
     ]
    ]
   },
   {
    "name": "1KERB_race_3297_in_mat",
-   "shader": "ksPerPixel",
+   "shader": "ksPerPixelMultiMap",
    "props": {
+    "ksAmbient": 0.4,
     "ksDiffuse": 0.4,
-    "ksAmbient": 0.4
+    "ksSpecular": 0.1,
+    "ksSpecularEXP": 20.0
    },
    "textures": [
     [
      "txDiffuse",
-     "kerb_diffuse.png"
+     "kerb_race_worn_diffuse.jpg"
+    ],
+    [
+     "txNormal",
+     "kerb_race_worn_normal.jpg"
     ]
    ]
   },
   {
    "name": "1KERB_race_3297_out_mat",
-   "shader": "ksPerPixel",
+   "shader": "ksPerPixelMultiMap",
    "props": {
+    "ksAmbient": 0.4,
     "ksDiffuse": 0.4,
-    "ksAmbient": 0.4
+    "ksSpecular": 0.1,
+    "ksSpecularEXP": 20.0
    },
    "textures": [
     [
      "txDiffuse",
-     "kerb_diffuse.png"
+     "kerb_race_worn_diffuse.jpg"
+    ],
+    [
+     "txNormal",
+     "kerb_race_worn_normal.jpg"
     ]
    ]
   },
   {
    "name": "1KERB_race_770_in_mat",
-   "shader": "ksPerPixel",
+   "shader": "ksPerPixelMultiMap",
    "props": {
+    "ksAmbient": 0.4,
     "ksDiffuse": 0.4,
-    "ksAmbient": 0.4
+    "ksSpecular": 0.1,
+    "ksSpecularEXP": 20.0
    },
    "textures": [
     [
      "txDiffuse",
-     "kerb_diffuse.png"
+     "kerb_race_worn_diffuse.jpg"
+    ],
+    [
+     "txNormal",
+     "kerb_race_worn_normal.jpg"
     ]
    ]
   },
   {
    "name": "1KERB_race_770_out_mat",
-   "shader": "ksPerPixel",
+   "shader": "ksPerPixelMultiMap",
    "props": {
+    "ksAmbient": 0.4,
     "ksDiffuse": 0.4,
-    "ksAmbient": 0.4
+    "ksSpecular": 0.1,
+    "ksSpecularEXP": 20.0
    },
    "textures": [
     [
      "txDiffuse",
-     "kerb_diffuse.png"
+     "kerb_race_worn_diffuse.jpg"
+    ],
+    [
+     "txNormal",
+     "kerb_race_worn_normal.jpg"
     ]
    ]
   },
@@ -403,7 +455,7 @@
  "meshes": [
   {
    "name": "1KERB_race_0_in",
-   "verts": 502,
+   "verts": 518,
    "tris": 486,
    "matid": 0,
    "surface": "KERB",
@@ -422,7 +474,7 @@
   },
   {
    "name": "1KERB_race_0_out",
-   "verts": 1710,
+   "verts": 1758,
    "tris": 1704,
    "matid": 1,
    "surface": "KERB",
@@ -441,7 +493,7 @@
   },
   {
    "name": "1KERB_race_1514_out",
-   "verts": 678,
+   "verts": 702,
    "tris": 672,
    "matid": 2,
    "surface": "KERB",
@@ -460,7 +512,7 @@
   },
   {
    "name": "1KERB_race_2319_out",
-   "verts": 786,
+   "verts": 810,
    "tris": 780,
    "matid": 3,
    "surface": "KERB",
@@ -479,7 +531,7 @@
   },
   {
    "name": "1KERB_race_3297_in",
-   "verts": 282,
+   "verts": 302,
    "tris": 270,
    "matid": 4,
    "surface": "KERB",
@@ -498,7 +550,7 @@
   },
   {
    "name": "1KERB_race_3297_out",
-   "verts": 678,
+   "verts": 702,
    "tris": 672,
    "matid": 5,
    "surface": "KERB",
@@ -517,7 +569,7 @@
   },
   {
    "name": "1KERB_race_770_in",
-   "verts": 668,
+   "verts": 680,
    "tris": 660,
    "matid": 6,
    "surface": "KERB",
@@ -536,7 +588,7 @@
   },
   {
    "name": "1KERB_race_770_out",
-   "verts": 1746,
+   "verts": 1782,
    "tris": 1740,
    "matid": 7,
    "surface": "KERB",
@@ -583,7 +635,7 @@
    "area_m2": 7509.4,
    "edge_p10_m": 0.12,
    "edge_med_m": 2.979,
-   "edge_p90_m": 3.066,
+   "edge_p90_m": 3.065,
    "grid_m": 0.998,
    "bbox_m": [
     564.2,
@@ -732,7 +784,7 @@
    "surface": "WALL",
    "renderable": true,
    "radius_m": 972.8,
-   "area_m2": 7493.6,
+   "area_m2": 7493.5,
    "edge_p10_m": 0.12,
    "edge_med_m": 2.98,
    "edge_p90_m": 3.222,
@@ -827,14 +879,14 @@
    "surface": "WALL",
    "renderable": true,
    "radius_m": 1151.6,
-   "area_m2": 8029.1,
+   "area_m2": 8029.0,
    "edge_p10_m": 0.12,
    "edge_med_m": 3.002,
    "edge_p90_m": 3.08,
    "grid_m": 1.002,
    "bbox_m": [
     2012.2,
-    86.1,
+    85.8,
     1118.5
    ]
   }
@@ -844,15 +896,15 @@
  ],
  "summary": {
   "meshes": 23,
-  "verts": 151986,
+  "verts": 152190,
   "tris": 187764,
-  "textures": 3,
-  "texture_bytes": 2431814,
+  "textures": 4,
+  "texture_bytes": 3979313,
   "materials": 23,
   "surfaces": {
    "KERB": {
     "meshes": 8,
-    "verts": 7050,
+    "verts": 7254,
     "tris": 6984,
     "area_m2": 468.9,
     "invisible": 0,
@@ -863,7 +915,7 @@
     "meshes": 15,
     "verts": 144936,
     "tris": 180780,
-    "area_m2": 90260.6,
+    "area_m2": 90260.4,
     "invisible": 0,
     "edge_med_m": 2.985,
     "grid_m": 0.999
@@ -871,12 +923,8 @@
   },
   "shaders_by_tris": {
    "ksPerPixelMultiMap": {
-    "meshes": 15,
-    "tris": 180780
-   },
-   "ksPerPixel": {
-    "meshes": 8,
-    "tris": 6984
+    "meshes": 23,
+    "tris": 187764
    }
   },
   "near_vert_cap": [],

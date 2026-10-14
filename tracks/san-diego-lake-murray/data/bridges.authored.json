@@ -1,0 +1,80 @@
+{
+ "_doc": "ledger 0046 fix round 4: the bridge body under each overcrossing (tools/author_bridges_blend.py)",
+ "spans": [
+  {
+   "line": "loop",
+   "span_m": [
+    1822.4,
+    1853.4
+   ],
+   "stations": 21,
+   "built": false,
+   "why": "the ground stands within 0.5 m of the deck's underside everywhere (an at-grade span)"
+  },
+  {
+   "line": "loop",
+   "span_m": [
+    2553.6,
+    2695.6
+   ],
+   "stations": 95,
+   "built": true,
+   "object": "BRIDGESTRUCT_1",
+   "vertices": 5032,
+   "faces": 1258,
+   "opening_m": [
+    2553.6,
+    2676.6
+   ],
+   "max_clearance_m": 8.16,
+   "abutment_walls_m": [
+    2573.1,
+    2675.1
+   ],
+   "carriageway_crossings_m": [
+    2611.12,
+    2633.08
+   ],
+   "bents_m": [
+    2597.9,
+    2646.3
+   ],
+   "road_under_structure": 0,
+   "above_the_deck": 0
+  },
+  {
+   "line": "loop",
+   "span_m": [
+    13318.7,
+    13463.4
+   ],
+   "stations": 97,
+   "built": true,
+   "object": "BRIDGESTRUCT_2",
+   "vertices": 4160,
+   "faces": 1040,
+   "opening_m": [
+    13339.7,
+    13444.7
+   ],
+   "max_clearance_m": 8.55,
+   "abutment_walls_m": [
+    13342.7,
+    13405.7,
+    13420.7,
+    13444.7
+   ],
+   "carriageway_crossings_m": [
+    13360.13,
+    13384.07
+   ],
+   "bents_m": [
+    13348.7,
+    13372.1,
+    13395.5
+   ],
+   "road_under_structure": 0,
+   "above_the_deck": 0
+  }
+ ]
+}

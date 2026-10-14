@@ -1,0 +1,130 @@
+{
+ "gate": "verify_ai_line (ledger 0052)",
+ "layout": "race_acw",
+ "ai": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\ai\\race_acw\\fast_lane.ai",
+ "built": {
+  "obj": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\data\\track.race_acw.obj",
+  "header": "gate OBJ extracted from san_diego_lake_murray.kn5 + san_diego_lake_murray_race.kn5 + san_diego_lake_murray_closure_race_acw.kn5 (kn5->engine frame, z mirrored, winding reversed)",
+  "wall_segments": 321505,
+  "road_tris": 23825
+ },
+ "thresholds": {
+  "length_med_err_max_m": 0.01,
+  "length_pt_err_max_m": 0.1,
+  "window_family_pts": 5,
+  "seam_ramp_pts": 10,
+  "direction_agree_min": 0.99,
+  "direction_window_pts": 1,
+  "direction_turn_min_deg": 0.5,
+  "radius_med_log_err_max": 0.01,
+  "camber_ratio_lo": 0.9,
+  "camber_ratio_hi": 1.1,
+  "camber_tilt_min_rad": 0.01,
+  "camber_flat_med_err_max_rad": 0.005,
+  "wall_min_m": 2.0,
+  "wall_band_m": 2.5,
+  "under_band_max_frac": 0.01,
+  "dip_frac": 0.1,
+  "dip_pts_max": 0,
+  "car_scale_pts": 4,
+  "mu": 1.0,
+  "decel_g": 0.9,
+  "accel_g": 0.35,
+  "vmax_ms": 69.4,
+  "flip_k_min": 0.0033333333333333335,
+  "flip_window_m": 30.0,
+  "flips_per_km_max": 0.75,
+  "side_overreach_pts_max": 0,
+  "radius_min_m": 11.4,
+  "box_keep_min": 0.85,
+  "box_corner_r_max_m": 80.0,
+  "box_window_pts": 60
+ },
+ "measured": {
+  "points": 8966,
+  "spacing_m": 1.5,
+  "lap_m": 13443.8,
+  "v1": {
+   "header_lap_ms": 0,
+   "header_sample_count": 0,
+   "has_grid": 0,
+   "family": "segment",
+   "length_med_err_m": 0.0,
+   "length_max_m": 1.558,
+   "length_off_segment_pts": 0,
+   "length_pt_err_max_m": 0.0,
+   "spacing_gaps_over_3x": 0,
+   "direction_not_unit_pts": 0,
+   "direction_agree": 1.0,
+   "radius_med_log_err": 0.0,
+   "camber_points_off_road": 0,
+   "camber_tilted_points": 45,
+   "camber_ratio_med": 1.0,
+   "camber_med_abs_err_rad": 0.0,
+   "built_tilt_max_rad": 0.0217,
+   "normal_ny_min": 0.995708
+  },
+  "v2": {
+   "min_m": 2.386,
+   "min_at": 7874,
+   "under_2m_m": 0,
+   "under_band_m": 6.0,
+   "under_band_frac": 0.00045,
+   "runs_under_band": [
+    {
+     "from": 2997,
+     "to": 2997,
+     "pts": 1,
+     "worst": 2997,
+     "value": 2.485
+    },
+    {
+     "from": 7872,
+     "to": 7874,
+     "pts": 3,
+     "worst": 7874,
+     "value": 2.386
+    }
+   ]
+  },
+  "v3": {
+   "dip_pts": 0,
+   "dip_pts_3pt_radius": 0,
+   "dip_runs": [],
+   "worst_dip_frac": 0.0252,
+   "flips": 7,
+   "flips_per_km": 0.521,
+   "flip_at": [
+    381,
+    557,
+    635,
+    6512,
+    6584,
+    6859,
+    8093
+   ],
+   "lap_s_car_scale": 272.8,
+   "lap_s_payload_radius": 273.7,
+   "vmin_kmh_car_scale": 43.0,
+   "vmin_kmh_payload": 42.7
+  },
+  "v4": {
+   "overreach_pts": 0,
+   "per_side": {
+    "left": 0,
+    "right": 0
+   },
+   "worst_m": 0.0,
+   "worst_at": null,
+   "side_max_m": 21.9,
+   "sides_with_a_wall_within_3m_beyond": 17834,
+   "median_gap_side_to_wall_m": 1.2
+  },
+  "v5": {
+   "min_radius_m": 14.33,
+   "min_radius_at": 8031
+  }
+ },
+ "fail": [],
+ "ok": true
+}

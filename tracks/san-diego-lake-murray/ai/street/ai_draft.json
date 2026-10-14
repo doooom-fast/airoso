@@ -7,10 +7,10 @@
  "frame": "kn5 frame (median dist to centerline.local: engine 50.0 m / kn5 0.0 m)",
  "points": 8994,
  "spacing_m": 1.5,
- "lap_m": 13490.4,
- "lap_s_est": 317.6,
- "offset_points": 2138,
- "offset_max_m": 11.709,
+ "lap_m": 13490.3,
+ "lap_s_est": 319.1,
+ "offset_points": 2139,
+ "offset_max_m": 11.746,
  "clearance": {
   "points": 8994,
   "unmatched": 0,
@@ -20,9 +20,9 @@
   "divider_hits": 0,
   "divider_too_close": 0,
   "edge_too_close": 0,
-  "min_divider_clear_m": 4.207280535824474,
-  "min_edge_clear_m": 0.8286155479143336,
-  "max_lat_m": 11.704835107145183,
+  "min_divider_clear_m": 4.206942288118883,
+  "min_edge_clear_m": 1.0041801645402515,
+  "max_lat_m": 11.742803785297632,
   "right_side_frac": 1.0,
   "ok": true
  },
@@ -89,67 +89,77 @@
   ],
   "ramp_clamped": 0,
   "corner_approach": [],
-  "folds": [],
+  "folds": [
+   {
+    "kind": "extend",
+    "xz": [
+     -1966.56,
+     596.21
+    ],
+    "removed": 7,
+    "corner_turn_deg": -71.0
+   }
+  ],
   "fillets": [
    {
     "xz": [
-     2614.32,
-     518.92
+     2614.34,
+     518.86
     ],
     "radius_m": 12.6,
-    "floor_m": 7.85,
+    "floor_m": 7.89,
     "lane": "comfort",
     "window_pts": 17,
     "turn_deg": -86.7
    },
    {
     "xz": [
-     51.02,
-     1722.9
+     51.1,
+     1722.91
     ],
     "radius_m": 12.6,
-    "floor_m": 7.97,
+    "floor_m": 7.96,
     "lane": "comfort",
     "window_pts": 21,
     "turn_deg": -117.4
    },
    {
     "xz": [
-     -1966.29,
-     595.76
+     -1966.37,
+     595.84
     ],
     "radius_m": 12.6,
-    "floor_m": 7.52,
+    "floor_m": 7.45,
     "lane": "hard",
     "window_pts": 27,
     "turn_deg": -110.5
    },
    {
     "xz": [
-     -1990.85,
-     -1274.65
+     -1990.86,
+     -1274.61
     ],
     "radius_m": 12.6,
-    "floor_m": 6.33,
+    "floor_m": 6.34,
     "lane": "comfort",
     "window_pts": 18,
     "turn_deg": -100.6
    },
    {
     "xz": [
-     -1962.96,
-     -1280.69
+     -1962.99,
+     -1280.7
     ],
     "radius_m": 12.6,
     "floor_m": 12.0,
     "lane": "comfort",
     "window_pts": 8,
-    "turn_deg": -45.2
+    "turn_deg": -45.1
    },
    {
     "xz": [
-     6.0,
-     -1662.2
+     5.95,
+     -1662.22
     ],
     "radius_m": 12.6,
     "floor_m": 8.87,
@@ -190,13 +200,13 @@
    "grid_behind_line_m": 27.0,
    "grid_off_line_m": 3.25
   },
-  "min_radius_m": 12.5,
+  "min_radius_m": 12.49,
   "min_radius_at": 2430,
   "radius_below_floor": 0,
   "max_turn_deg": 6.9,
   "turns_over_limit": 0,
   "turns_over_limit_road_tight": 0,
-  "max_lateral_jump_m": 0.859,
+  "max_lateral_jump_m": 0.857,
   "backward_steps": 0,
   "self_crossings": 0,
   "min_speed_kmh": 50.4,

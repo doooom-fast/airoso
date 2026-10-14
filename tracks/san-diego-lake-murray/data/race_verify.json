@@ -4,7 +4,7 @@
  "warnings": [
   "F: race_cw: author-time: minimum spawn clearance 0.48 m at AC_START_1 v289 (edge-strip face 5.68 m) (hard floor 0.30 m)",
   "F: race_acw: author-time: minimum spawn clearance 0.48 m at AC_START_1 v312 (edge-strip face 5.68 m) (hard floor 0.30 m)",
-  "built deck vs data height, worst 0.463 m"
+  "built deck vs data height, worst 0.238 m"
  ],
  "counts": {
   "by_layout": {
@@ -843,10 +843,10 @@
   },
   "scenery_source": "trees: tools/make_treefx.py plan (every species); signs: data/signs.local.json",
   "scenery_items": {
-   "tree": 15261,
-   "sign": 18
+   "tree": 15260,
+   "sign": 23
   },
-  "scenery_beside": 394,
+  "scenery_beside": 399,
   "scenery_hits": 0,
   "scenery_min": {
    "race_cw": {

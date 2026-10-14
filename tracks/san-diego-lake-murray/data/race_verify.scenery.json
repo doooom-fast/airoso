@@ -6,10 +6,10 @@
   "by_layout": {},
   "scenery_source": "trees: trees.txt (written); signs: data/signs.local.json",
   "scenery_items": {
-   "tree": 15261,
-   "sign": 18
+   "tree": 15260,
+   "sign": 23
   },
-  "scenery_beside": 394,
+  "scenery_beside": 399,
   "scenery_hits": 0,
   "scenery_min": {
    "race_cw": {

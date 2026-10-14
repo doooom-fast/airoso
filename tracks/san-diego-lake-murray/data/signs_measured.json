@@ -7,9 +7,10 @@
   "CURB",
   "TERRAIN"
  ],
+ "race_excluded": [],
  "scan": "5-degree polar, 0.25 m steps, bisected; ROAD top vs CURB/SIDEWALK/TERRAIN top; ground = top hit at the base (SIGN* excluded); plate normals = Mesh.polygons[].normal of the vertical SIGNPLATE faces within 1.2 m of the post; plate bottom = lowest SIGNPLATE vertex 0.5-0.75 m off the post axis; post base = lowest SIGNPOST vertex within 0.1 m of it; walk_behind_m = the ground profile from the base toward the nearest pavement (> 0 behind the walk, < 0 on it)",
  "signs": {
-  "M1": {
+  "M1-fwd": {
    "clear_m": 1.744,
    "bearing_deg": 85,
    "on_road": false,
@@ -25,7 +26,7 @@
    "plate_bottom_y": 25.9059,
    "post_base_y": 23.4759
   },
-  "M2": {
+  "M2-fwd": {
    "clear_m": 1.795,
    "bearing_deg": 120,
    "on_road": false,
@@ -41,7 +42,7 @@
    "plate_bottom_y": 11.8695,
    "post_base_y": 9.4395
   },
-  "M2-2": {
+  "M2-fwd-2": {
    "clear_m": 1.783,
    "bearing_deg": 0,
    "on_road": false,
@@ -57,7 +58,7 @@
    "plate_bottom_y": 12.2594,
    "post_base_y": 9.8294
   },
-  "M3": {
+  "M3-fwd": {
    "clear_m": 1.781,
    "bearing_deg": 325,
    "on_road": false,
@@ -73,7 +74,7 @@
    "plate_bottom_y": 26.6659,
    "post_base_y": 24.2359
   },
-  "M4": {
+  "M4-fwd": {
    "clear_m": 1.8,
    "bearing_deg": 225,
    "on_road": false,
@@ -89,7 +90,7 @@
    "plate_bottom_y": 111.4528,
    "post_base_y": 109.0228
   },
-  "M5": {
+  "M5-fwd": {
    "clear_m": 1.775,
    "bearing_deg": 160,
    "on_road": false,
@@ -104,6 +105,86 @@
    "n_plate_faces": 4,
    "plate_bottom_y": 94.2089,
    "post_base_y": 91.7789
+  },
+  "M5-rev": {
+   "clear_m": 1.747,
+   "bearing_deg": 195,
+   "on_road": false,
+   "ground_y": 92.0706,
+   "walk_behind_m": -0.25,
+   "plate_normals_xz": [
+    [
+     -0.58149,
+     -0.81355
+    ]
+   ],
+   "n_plate_faces": 4,
+   "plate_bottom_y": 94.2006,
+   "post_base_y": 91.7706
+  },
+  "M4-rev": {
+   "clear_m": 1.655,
+   "bearing_deg": 245,
+   "on_road": false,
+   "ground_y": 109.259,
+   "walk_behind_m": -0.4,
+   "plate_normals_xz": [
+    [
+     0.36325,
+     -0.93169
+    ]
+   ],
+   "n_plate_faces": 4,
+   "plate_bottom_y": 111.389,
+   "post_base_y": 108.959
+  },
+  "M3-rev": {
+   "clear_m": 1.653,
+   "bearing_deg": 350,
+   "on_road": false,
+   "ground_y": 24.5127,
+   "walk_behind_m": -0.35,
+   "plate_normals_xz": [
+    [
+     0.87001,
+     0.49304
+    ]
+   ],
+   "n_plate_faces": 4,
+   "plate_bottom_y": 26.6427,
+   "post_base_y": 24.2127
+  },
+  "M2-rev": {
+   "clear_m": 1.766,
+   "bearing_deg": 35,
+   "on_road": false,
+   "ground_y": 10.167,
+   "walk_behind_m": -0.25,
+   "plate_normals_xz": [
+    [
+     0.37225,
+     0.92813
+    ]
+   ],
+   "n_plate_faces": 4,
+   "plate_bottom_y": 12.297,
+   "post_base_y": 9.867
+  },
+  "M1-rev": {
+   "clear_m": 1.828,
+   "bearing_deg": 95,
+   "on_road": false,
+   "ground_y": 23.8284,
+   "walk_behind_m": -0.2,
+   "plate_normals_xz": [
+    [
+     -0.87323,
+     0.48732
+    ]
+   ],
+   "n_plate_faces": 4,
+   "plate_bottom_y": 25.9584,
+   "post_base_y": 23.5284
   },
   "MED-1-fwd": {
    "clear_m": 1.55,

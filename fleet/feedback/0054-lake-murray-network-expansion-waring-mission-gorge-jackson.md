@@ -107,4 +107,15 @@ Cowles now stands at 7.157° (3DEP 7.231°; it was 6.600°). Details in ledger 0
   (west −117.108) but ~1.6 km west of phase 1's grown physical grid edge (−117.0807), so phase 3 grows the grid
   again with the same whole-cell pin + `tools/remap_sample_cache.py` (no old node moves).
 
+- **Phase 4 (Kevin):** *"And then phase 4 will be waring to 8, and we'll start working on freeway ramps. 8 will then
+  go to college one way and mission gorge the other"* — Waring Rd south from Zion to its I-8 interchange (~−117.09),
+  the freeway ramps, and **I-8 itself drivable** east to the College Ave interchange (the loop's own College deck,
+  ~−117.06/−117.07) and west to the Mission Gorge Rd / Fairmount Ave interchange (~−117.10/−117.11): about 3.9 km each
+  way (fresh OSM 2026-10-14; 71 I-8 motorway ways in the box). This settles the I-8 question for the long run: the
+  freeway becomes real, drivable road in phase 4 (physics, ramps, decks over it), not the drawn see-only freeway the
+  v0.18.0 integration added and then switched off. Reusable: the SD freeway network track's data/tools (registry
+  `k10-san-diego` freeway), `tools/author_freeway_blend.py` (visual, OFF), the College/LMB bridge bodies from 0046.
+  Terrain: the Mission Gorge/Fairmount interchange is near the D2 far box's west edge (−117.108) — phase 4 grows the
+  physical grid west again (same pin + remap).
+
 (Naming: the plan's build steps P0-P7 are *steps*; "Phase N" is Kevin's expansion phase.)

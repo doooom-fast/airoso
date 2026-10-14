@@ -98,8 +98,8 @@ Cowles now stands at 7.157° (3DEP 7.231°; it was 6.600°). Details in ledger 0
 
 - **Phase 1** (this entry, building): Waring (J1→J2), Princess View (J2→J3), Mission Gorge (J3→J4), Jackson north
   (J4→J5). Free Roam only.
-- **Phase 2:** not named by Kevin; the plan's D1 default puts **Mission Gorge Speedway** (+ Reverse) here — assumed
-  until he says otherwise.
+- **Phase 2: Mission Gorge Speedway** (+ Reverse) — confirmed by Kevin 2026-10-14 ("Phase 2 is correct"); the plan's
+  D1 default. Needs the race tools generalised past one lap line first (every race tool counts along one lap by point number).
 - **Phase 3 (Kevin):** **Waring from J2 south-west to Zion Ave (~0.6 km), Zion Ave west to Mission Gorge Rd
   (~1.6 km, 32.7927-32.7930 N, from Waring at −117.0807 to Mission Gorge at −117.0976, fresh OSM 2026-10-14),** and
   Mission Gorge Rd from Zion back up to J3 (~2.3 km) so it joins the network. A western loop J2 → Waring → Zion →

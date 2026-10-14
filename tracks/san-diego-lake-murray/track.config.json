@@ -593,7 +593,7 @@
     ]
   },
   "road_datum": {
-    "_doc": "LAWS L3 'Bridges dip': a deck is held straight between its REAL abutments at the road's REAL height (tools/deck_datum.py, the first draft step: it edits data/centerline.raw.local.json.pre-median in the build project, y only, before median_envelope). Stations are on that pre-median centreline. Abutments measured 2026-10-13 from fresh 3DEP 1 m along the centreline (data/deck_datum.samples.json): College Ave over I-8 rides its south embankment to s 2586 (108.65 m) and its north embankment from s 2683 (~112.5 m); the pre-0046 deck ran 2568-2697 from an approach height read off the slope under the bridge, leaving the road 2.0-3.0 m low for 60 m north of it and a ~10 % climb to catch up (ledger 0046, v0.18.0 integration fix round: criterion 4's section 2050 north rim). Lake Murray Blvd's deck over I-8 and Alvarado Creek reads 1-2 m low too (3DEP) and is NOT corrected here: it runs into the lap seam (L13) and criterion 4 does not need it; recorded in ledger 0046 for Kevin.",
+    "_doc": "LAWS L3 'Bridges dip': a deck is held straight between its REAL abutments at the road's REAL height (tools/deck_datum.py, the first draft step: it edits data/centerline.raw.local.json.pre-median in the build project, y only, before median_envelope). Stations are on that pre-median centreline. Abutments measured 2026-10-13 from fresh 3DEP 1 m along the centreline (data/deck_datum.samples.json): College Ave over I-8 rides its south embankment to s 2586 (108.65 m) and its north embankment from s 2683 (~112.5 m); the pre-0046 deck ran 2568-2697 from an approach height read off the slope under the bridge, leaving the road 2.0-3.0 m low for 60 m north of it and a ~10 % climb to catch up (ledger 0046, v0.18.0 integration fix round: criterion 4's section 2050 north rim). Lake Murray Blvd's two decks (over I-8, and over Alvarado Creek just north of 70th St) read 1-2.6 m low (3DEP) and were deferred in ledger 0046 (they run into the lap seam, L13); ledger 0057 declares them here at their real abutments (fresh 3DEP 1 m, 2026-10-14), re-derived inside the 70th / Alvarado profile window, which crosses the seam. PROFILES (ledger 0057, tools/deck_datum.py PROFILE WINDOWS): inside each window the road is fresh 3DEP 1 m at both carriageway centres (mean), every deck span inside held straight, a Gaussian of 3 m, blended over blend_m at each end; the assembler smooths the window with assembler_sigma_y_pts instead of route.smooth_sigma_y_pts. A window whose start is past its end runs through the seam.",
     "decks": [
       {
         "name": "college_ave_over_i8",
@@ -606,8 +606,64 @@
           2742.0
         ],
         "why": "fresh 3DEP 1 m: south embankment at road height to s 2586 (108.65 m), open span 2587-2682 (bare earth 102.7-104.3 m under it), north embankment from s 2683 (112.4-113.4 m); the old deck ended at s 2697 at 110.22 m"
+      },
+      {
+        "name": "lmb_over_i8",
+        "deck_m": [
+          13347.0,
+          13424.0
+        ],
+        "window_m": [
+          13322.0,
+          13432.0
+        ],
+        "why": "ledger 0057 (deferred in 0046): fresh 3DEP 1 m at both carriageway centres, 2026-10-14: Lake Murray Blvd rides its north embankment at road height to s 13347 (126.2 m), the open span over I-8 13348-13423 (bare earth 119.3-120.1 m under it), the fill between the freeway and Alvarado Creek from s 13424 (126.2 m); the pre-median deck ran 125.0 -> 124.2 m, 1.2-2.0 m low"
+      },
+      {
+        "name": "lmb_over_alvarado_creek",
+        "deck_m": [
+          13432.0,
+          13457.0
+        ],
+        "window_m": [
+          13424.0,
+          13472.0
+        ],
+        "why": "ledger 0057 (deferred in 0046): fresh 3DEP 1 m, 2026-10-14: the fill between I-8 and the creek at road height to s 13432 (126.2 m), the open span over Alvarado Creek 13433-13456 (bare earth 115.7-117.9 m), the south embankment from s 13457 (125.6 m) down to the 70th St junction (125.1 m at v0); the pre-median deck ran 124.1 -> 123.8 m, 1.8-2.1 m low, then climbed ~7 % in 20 m to the junction (the 12-point crest the assembler's Gaussian rounded 0.7 m off)"
       }
-    ]
+    ],
+    "profiles": [
+      {
+        "name": "college_alvarado_junction",
+        "window_m": [
+          2200.0,
+          2530.0
+        ],
+        "blend_m": 30.0,
+        "assembler_sigma_y_pts": 1.0,
+        "fold_fan_fit": {
+          "fit_m": [
+            2250.0,
+            2340.0
+          ],
+          "dt_max_m": 0.05
+        },
+        "_fold_fan_fit_doc": "Ledger 0057 fix round (2026-10-14; replaces round 1's hold_straight_m box). Two gates judge the College/Alvarado hairpin on paths its tight turn bends: verify_fold_fans' pinch paths (the levelled fold fan, rows 763-774, ledger 0050, pinches its inside edge to ONE point; every path inside folds and turns sharply on the corner's medial axis) and drive_test's fixed-offset wheel paths (each metre's sample jumps sideways where the segment normal turns). The junction's real crest fails both (fan DT 0.076-0.087 m; rehearsal 5: street severe 0 -> 10, race 22 / 20 -> 27 / 26). Round 1's box passed by removing the crest: 0.55 m under the real road centre, the stop line's last metres flat. tools/deck_datum.py fold_fan_fit: inside fit_m (pre-median s 2250-2340: the fan's rows, their eased legs and College's last 15 m to the stop line) the profile takes the change with the smallest misfit to the 3DEP target (heights, grades, grade changes) that keeps the fan within dt_max_m 0.05 m (the gate: 0.06) and drive_test's wheel paths there (street, a race lane both ways) at no severe step and no more kinks than v0.18.0 built here - all read on the ribbon the assembler and the weld will build; inside fit_m the 3DEP is read on the plan the assembler builds (its smoothing moves the hairpin's line up to 3.6 m; the junction tilts 8 % across). Solved: fan DT 0.076 -> 0.047 m; wheel paths street 8 kinks / 0 severe (v0.18.0 here: 12 / 0), race 22 / 0 and 20 / 0 (22 / 6, 20 / 6); the built profile within +0.16 / -0.21 m of the target; the crest 111.27 m against a real 111.48 m on the road centre (round 1: 110.93). fit_m stops at 2340: reaching 2360 the fit steepened College's flank into a sag where the seated ground's 10 m facets rose through the road by up to 9 mm (soft tops street 33 -> 39, race 9 -> 21; rehearsal 6). The solve is cached in data/deck_datum.samples.json fold_fan_fits (keyed by everything it reads; a fresh solve reproduces it byte for byte). The road stays a level slab: the race walls' containment band (no_route, verify_fold_fans (7): +-0.28 m about the centre line) cannot hold the junction's 8 % tilt at 14 m from the line.",
+        "why": "ledger 0057, Kevin 2026-10-14: 'my cars with clutches would roll back from stoplights there ... Stoplight would be heading onto Alvarado from college'. The junction is a real hump (fresh 3DEP 1 m: crest ~111.8 m at s ~2310; College southbound climbs into it at +5.8 % on both lanes over the last 30 m before the stop line, s 2356 -> 2326 here = local s 2343 -> 2313) that the August heightfield smoothing and the assembler's sigma_y 5 had cut to +3.5 % and 0.8-1.2 m low. From Alvarado's climb to the junction (s 2200) to the bottom of College by the I-8 ramps (s 2530), short of the College deck window (2548)"
+      },
+      {
+        "name": "seventieth_alvarado",
+        "window_m": [
+          13280.0,
+          230.0
+        ],
+        "blend_m": 30.0,
+        "assembler_sigma_y_pts": 1.5,
+        "why": "ledger 0057, Kevin 2026-10-14: 'same with heading down Alvarado from 70th'. Alvarado's pitch from the 70th St junction (v0) to s ~112 is real -7.7 % over 100 m (built -6.1 %), and the eastbound wait at 70th faces +8.3 % uphill (built +5.6 %). Through the lap seam (L13): from Lake Murray Blvd north of its I-8 deck (s 13280) over both of its decks (held straight, lmb_over_i8 / lmb_over_alvarado_creek) and the junction to Alvarado at s 230, where the road runs at ~1 % to College"
+      }
+    ],
+    "assembler_smooth": "tracks/san-diego-lake-murray/scripts-v021/geometry/smooth.py",
+    "_assembler_smooth_doc": "the assembler of record's smoothing module, read by tools/deck_datum.py's fold-fan fit to predict the centreline build_loop_blend will build (plan smoothing + per-window sigma_y): the fit judges the ribbon the build will carry, not the pre-median line (ledger 0057 fix round)"
   },
   "scenery": {
     "freeway": {

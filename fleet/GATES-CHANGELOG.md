@@ -1940,3 +1940,109 @@ the pool flank 8–14 m from a lamp is 1.15× (quadratic) to 1.45× (linear) bri
 while the range sphere's ground radius shrinks 24.0 → ~22 m. Levers if the seat reads it as brighter: intensity 0.0091
 (quadratic) / 0.0078 (linear) matches the road average at the cost of the core under each lamp; `range_m` 26.7 restores
 the 24 m footprint.
+
+
+## 2026-10-14 — road_datum PROFILE WINDOWS + Lake Murray Blvd's decks + the assembler's per-window sigma_y (ledger 0057)
+
+Kevin (v0.18.0): "my cars with clutches would roll back from stoplights there ... Stoplight would be heading onto Alvarado
+from college." The diagnosis (ledger 0057) measured the two uphill waits flattened by two stacked smoothings of the frozen
+pre-median profile (the August heightfield's 33 m median + 2 x 39 m box means + lap-seam blend, then the assembler's
+sigma_y 5 Gaussian, ledger 0042): College southbound into the Alvarado signal +3.5 % built against +5.9 % real, Alvarado
+from 70th -6.1 % against -7.7 %, the 70th junction 0.7 m low behind Lake Murray Blvd's 1.2-2.1 m-low decks. **No gate
+threshold, bypass or exclusion changed.** This is a datum change, opt-in per declared window; outside every window the
+assembler's profile is byte-identical to its sigma_y 5 result on the same input (and on the College main descent
+identical to v0.18.0).
+
+| What | Value | Flag | Why |
+|---|---|---|---|
+| `tools/deck_datum.PROFILE_SIGMA_M` | 3 m | [invented] | Gaussian on the 1 m 3DEP profile inside a window (= 1 centreline vertex): rounds the DEM's +-10 cm sample noise. Swept 2 / 3 / 4 / 6 m (simulated on both windows, ledger 0057 Fix): 6 m (the diagnosis' "sigma ~2 points") cost the two stop-line approaches another 0.07 / 0.21 points and bought nothing the gates need |
+| `tools/deck_datum.PROFILE_BLEND_M` | 30 m | [invented] | default blend into the old profile at each window end (`road_datum.profiles[].blend_m`); both window ends sit where old and fresh agree within ~0.2 m |
+| profile reference | mean of 3DEP at both carriageway centres (+-width/4 off the line) | measured choice | the line itself reads the crown: on College's approach the centre line runs +5.3 % where both lanes run +5.8-5.9 %; the mean of the two carriageway centres reads the lanes |
+| deck spans inside a window | held straight between abutments, one-sided `SMOOTH_M` reads (the deck rule) | reused | a profile never reads the I-8 trench or Alvarado Creek |
+| `road_datum.profiles[].hold_straight_m` (new key) | College/Alvarado: pre-median s 2289-2323 | measured (rehearsal 1) | the hairpin's levelled fold fan (rows 763-774, ledger 0050) pinches its inside edge to ONE height and cannot carry the real hump: with the hump in it the first full rehearsal failed `verify_fold_fans` (DT 0.087 m > 0.06 on the inside paths, all three layouts) and doubled drive_test's severe steps there (race 22/20 -> 39/37). Held straight like a deck span it passes (DT 0.028-0.034) |
+| `road_datum.profiles[].assembler_sigma_y_pts` | 1.0 pts College/Alvarado, 1.5 pts 70th/Alvarado | [invented], rehearsed | inside a window the input is already fresh 3DEP smoothed at 3 m, which is what 0042's sigma 5 was written for. Rehearsed: 1.5 / 1.5 -> College stop line +5.23 %, every listed gate no worse than v0.18.0; 1.0 / 1.0 -> +5.44 % but street kinks 3.41 -> 3.56 /km (refused); 1.0 / 1.5 -> +5.44 %, street kinks 3.34 /km, every listed gate no worse (shipped) |
+| `road_datum.profiles` (Lake Murray) | `college_alvarado_junction` pre-median s 2200-2530; `seventieth_alvarado` 13280 -> seam -> 230 | measured | fresh 3DEP 1 m, 2026-10-14 (data/deck_datum.samples.json, TLS on) |
+| `road_datum.decks` (Lake Murray, added) | `lmb_over_i8` 13347-13424 (126.2 -> 126.2 m), `lmb_over_alvarado_creek` 13432-13457 (126.2 -> 125.6 m) | measured | the item ledger 0046 deferred: fresh 3DEP abutments at both carriageway centres; both lie inside `seventieth_alvarado`, which holds them (their own window pass is skipped and reported `re_derived_by_profile`) |
+
+Refusals (SystemExit, no silent fallback): a profile window cutting a deck span; a hold inside the window's blend; a
+window shorter than twice its blend or not shorter than the lap; a seam window on an open line; an uncached 3DEP sample
+under `--offline` (L2). The closing duplicate vertex is v0's height, never a second vertex (L13). `smooth_centerline`
+refuses a weight list that is not one per unique vertex.
+
+Wiring: none new — `tools/deck_datum.py` is already the first draft step (ship_sd.sh / ship_track.sh) and its cache
+already rides TERRAIN_DATA; `scripts-v021/blender/build_loop_blend.py` reads the same `road_datum.profiles` (stations on
+the pre-median file, index-aligned with raw.local) and passes `y_sigma_windows` only when one is declared.
+
+Gates on the shipped config (full `ship_sd.sh --no-install` rehearsal, v0.18.0 -> this): street soft top 33 -> 31,
+severe 0 -> 0, kinks 3.41 -> 3.34 /km, audit D/K/I/F 0/20/20/13 unchanged; race severe 22 -> 17 / 20 -> 17,
+barrier_missing 0, no_route BUILT PASS both; verify_fold_fans, verify_mouths (4), verify_signs, verify_race,
+verify_ai_line (both), rib_check, house_seat_check PASS. Not on the list and slightly up: race_cw kinks 6.23 -> 6.45 /km
+(race_acw 7.05 -> 6.38) — reported, not gated.
+
+Proven by `tests/tools/test_profile_datum.py` (a seam window on a closed ring moves both sides, keeps v0 closed, leaves the
+rest untouched, is idempotent; a deck inside a profile is held by it; a hold is straight and refused inside the blend;
+offline refuses a gap; the assembler's windows are exact outside and keep a crest inside; Lake Murray's declaration
+resolves and runs offline from the committed cache to the real grades) and the rehearsal in ledger 0057 Results.
+
+### Fix round (2026-10-14, after the refutation): the fold-fan fit replaces the held box
+
+The truth lens refuted round 1 on its own stop-line range: `hold_straight_m` held the College/Alvarado junction box
+(pre-median s 2289-2323) straight, so the crest sat 0.55 m under the real road centre (1.15 m under the southbound
+lane) and a car stopped a few metres into the box got a much shallower hill than real (last 15 m to s 2305: built
++2.92 % against a real +7.16 % on the lane). Cause, measured on a model of the ribbon that reproduces the built gates
+(the fan model read 0.0868 / 0.0342 m where `verify_fold_fans` read 0.087 / 0.034 on rehearsals 1 / 4; the
+drive_test replica read rehearsal 5's 10 street severe steps at the same stations and heights to 1 mm): two gates
+judge this corner on paths a tight hairpin bends out of shape. Every wheel path inside the fold fan folds and is cut at
+its own self-intersection, so it turns sharply at a point on the corner's medial axis and its grade jumps there by
+the surface's slope along the axis; and drive_test's fixed-offset wheel paths jump sideways where the segment normal
+turns. The real crest inside the fan fails both (fan DT 0.076-0.087 m; with the fan alone fitted, rehearsal 5: street
+severe 0 -> 10, kinks 3.41 -> 5.86 /km, race severe 22 / 20 -> 27 / 26). The box passed both by removing the crest.
+**No gate threshold, bypass or exclusion changed.**
+
+| What | Value | Flag | Why |
+|---|---|---|---|
+| `road_datum.profiles[].hold_straight_m` | removed (code and config) | — | replaced by `fold_fan_fit` |
+| `road_datum.profiles[].fold_fan_fit` (new key) | College/Alvarado: `fit_m` pre-median s 2250-2340, `dt_max_m` 0.05 | `fit_m` measured; `dt_max_m` [invented] | inside `fit_m` the profile takes the change with the smallest misfit to the 3DEP target (heights, grades, grade changes, on the heights the assembler will build) that keeps (1) every levelled fold pinch within `dt_max_m` on `verify_fold_fans`' own `survey_pinch` and (2) drive_test's wheel paths over `fit_m` +- 10 rows (street; a race lane both ways) at no severe step and no more kinks, nor kink excess, than the frozen profile had there as v0.18.0 built it — read on the ribbon the build will carry (the assembler's own smoothing: 5e-5 m from the built centreline; `mouth_weld.unfold_line` levelled; drive_test's own constants). Outside `fit_m` nothing moves. `fit_m` ends at 2340: a fit reaching 2360 steepened College's flank into a sag at s 2328-2346 where the seated ground's 10 m facets came up through the road by up to 9 mm (drive_test soft tops street 33 -> 39, race 9 -> 21 / 19; rehearsal 6) |
+| `tools/deck_datum.FAN_DT_MAX_M` | 0.05 m | [invented] | the gate's `DT_MAX_M` 0.06 less 0.01 for the model |
+| `FAN_COARSE_MARGIN_M` | 0.003 m | measured | the solver surveys the pinches at 0.5 / 0.1 m (the gate: 0.25 / 0.05); that read up to 0.0029 m under the full survey; it solves to 0.047 and the full survey of the result must meet 0.05 |
+| `FAN_BUMP_SPACING_M` / `FAN_BUMP_SIGMA_M` / `FAN_TAPER_M` | 6 / 4.5 / 12 m | [invented] | Gaussian bumps ~2 vertices apart, never one vertex; faded to zero at both ends of `fit_m` |
+| `FAN_GRADE_WEIGHT_M2` / `FAN_BEND_WEIGHT_M2` | 100 / 400 m^2 | [invented] | the misfit weighs a 1 % grade error like 0.1 m of height and a 1 % grade change between neighbouring vertices like 0.2 m: on heights alone the fit steepened College's last 15 m to the stop line 1-1.5 points past the target |
+| `FAN_WHEEL_PAD_ROWS` | 10 rows | [invented] | drive_test's wheel paths are walked over `fit_m`'s rows +- 10 (~30 m) |
+| race lane for the wheel paths | the full street between the edge strips, `w/2 - race.edge_inset_m` (0.82) each side | measured | the declared corridor is that box through the hairpin (barrier_bands `lane_by_vertex` +-14.18 at w 30); the declaration itself is authored later in the chain |
+| `FAN_STEP0_M` / `FAN_STEP_MIN_M` / `FAN_PENALTY` / `FAN_COUNT_PENALTY` / `FAN_MAX_EVALS` | 0.16 / 0.01 m / 1e7 / 1e3 / 2500 | [invented] | deterministic coordinate descent from zero, one step per coordinate per sweep, halved to 1 cm; every constraint a hard wall |
+| `FAN_MAX_MOVE_M` | 0.25 m | [invented] | a fit that moves a built height further than this from the 3DEP target is refused (a pattern-search variant of the descent settled 0.6 m off on Alvarado's leg; not shipped) |
+| 3DEP read position inside `fit_m` | the plan the assembler builds (its smoothing of the line), tapered over `FAN_TAPER_M` | measured | round the hairpin the assembler's plan smoothing moves the line up to 3.6 m and the junction tilts 8 % across: read on the pre-median plan, the slab sat 0.1-0.3 m off the real road under the built one. Outside `fit_m`: the pre-median plan, as before (median_envelope moves divided roads after this step; no median reaches a fold fan) |
+| `road_datum.assembler_smooth` (new key) | `tracks/san-diego-lake-murray/scripts-v021/geometry/smooth.py` | wiring | the module the fit predicts the build with; a `fold_fan_fit` without it is refused |
+| `fold_fan_fits` in data/deck_datum.samples.json | the solved bump amplitudes, keyed by the md5 of everything the solve reads | cache | a solve takes 3-5 min; a hit is re-surveyed in full like a fresh solve (rehearsals 5-7 hit it; a fresh solve reproduced the cached amplitudes and the pre-median output byte for byte); the file already rides TERRAIN_DATA |
+
+Refusals (SystemExit): `fit_m` inside the window's blend; no `assembler_smooth`; a fit that cannot meet the fan target
+(solver or full survey), a fine step on the pinch paths, a severe step or extra kinks on the wheel paths, a move past
+`FAN_MAX_MOVE_M`, a pinch reaching past the surveyed rows, a pinch the weld would refuse (half-jump, cross-fall) — each
+says "author the junction as a pad (JUNCTIONS 2.0 B)".
+
+Level slab, the reason now measured: the race layouts run the junction's full width and the race walls' containment
+is judged against the centre line (no_route BUILT, `verify_fold_fans` (7): +-0.28 m); the real 8 % tilt puts the walls
+1.1 m off it 14 m out.
+
+Gates on the shipped config (rehearsal 7, full `ship_sd.sh --no-install` on fresh scratch copies, v0.18.0 -> round 1 ->
+this): street soft top 33 -> 31 -> 9, severe 0 -> 0 -> 0, kinks 3.41 -> 3.34 -> 2.97 /km, audit D/K/I/F 0/20/20/13
+unchanged; race severe 22 / 20 -> 17 / 17 -> 17 / 18, soft top 9 / 9 -> 9 / 8 -> 8 / 7, barrier_missing 0, no_route BUILT
+PASS both; verify_fold_fans PASS (hairpin DT 0.047 street / 0.044 race, grass-on-top 0), verify_mouths (4), verify_signs,
+verify_race (+ scenery), verify_ai_line (both), rib_check, house_seat_check PASS. Not on the list: race kinks 6.23 /
+7.05 -> 6.68 / 6.82 /km. Rehearsals 5 (the fan alone: street severe 10, race 27 / 26) and 6 (`fit_m` to 2360: soft tops
+39 / 21 / 19) were refused by these same comparisons. The built profile against fresh 3DEP is in ledger 0057.
+
+Proven by `tests/tools/test_profile_datum.py` (a crest in a synthetic hairpin's fold fan is carried, the fan within
+`dt_max_m`, drive_test's street paths no worse, nothing outside `fit_m` moved, the cache re-used to the same bytes; the
+refusals; Lake Murray's declaration and its committed cache).
+
+**Round 3 (same day, after the second refutation): no threshold, constant or config changed.** The truth lens refuted on
+stops at s 2305-2309, which lie inside the intersection box: College's southbound signal is at s 2312.3 and Alvarado's at
+s 2273.2. I re-ran the fit offline with each limit relaxed in turn, to find the bound; the table is in ledger 0057 round 3.
+- `dt_max_m` 0.05 -> 0.057: no change. The fan settles at 0.047 either way, so it is not the binding limit.
+- drive_test's kink cap round the hairpin is the binding limit. Freeing it buys ~1 point at s 2305-2308. The cost is
+  street kinks/km past v0.18.0 (2.97 -> ~4.2, against 3.41) and race kinks ~2.5x at the corner.
+- No gate at all: a level slab still misses s 2305 by 0.8 points on 15 m. That needs crossfall, which the race-wall band
+  (`WALL_BAND_M` 0.28 about the centre line, no_route BUILT) forbids above ~2 %.
+
+None of these variants shipped, and `FAN_DT_MAX_M` stays 0.05.

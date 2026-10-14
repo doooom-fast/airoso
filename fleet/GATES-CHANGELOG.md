@@ -2046,3 +2046,55 @@ s 2273.2. I re-ran the fit offline with each limit relaxed in turn, to find the 
   (`WALL_BAND_M` 0.28 about the centre line, no_route BUILT) forbids above ~2 %.
 
 None of these variants shipped, and `FAN_DT_MAX_M` stays 0.05.
+
+
+## 2026-10-14 — v0.18.1 integration: 0055 + 0056 + 0057 on one build; named lamp relocations (ledgers 0055, 0056, 0057)
+
+Three branches merged (College 0055 `a4e2a81`, LED lamp 0056 `4992d16`, hills 0057 `ed6b98b`), `track.config.json`
+`version` 0.18.1. **No gate threshold changed.** One new authoring self-check, for the verifier-found lamp placements:
+
+| Change | Where | Before → after | Flag |
+|---|---|---|---|
+| named lamp relocations | `tools/author_lamps_blend.py` RELOCATIONS + `tools/streetlight_relocate.py` (pure, tested); `track.config.json` `scenery.streetlights.relocate` | every post where the draft put it → six named posts moved (lamp 53 off a junction carriageway onto the sidewalk; lamps 30 / 32 / 34 / 43 out of `1WALL_guard_release`; lamp 237 = 0057's LIGHTPOST_8 off the raised creek deck onto its embankment). `data/lights.local.json` keeps `lampheads_draft` + `relocated`; every downstream reader (place_signs, verify_race G, ext_config through the lens) sees the moved post | self-check, exit 1 and `loop.blend` not saved: the named post must exist, the new base must not be on a road surface, the pole must stand **≥ 0.5 m** from every wall / guardrail (`WALL_CLEAR_M`, the integration brief's number), the pole foot must be in the earth |
+| how a post is named | `MATCH_TOL_M` | — → **1.0 m** around the draft's base | [invented] lamps stand ≥ 25 m apart (build_streetlights), so 1 m names exactly one; a draft that moves a named lamp further fails the build loudly |
+| how far a relocation may go | `MAX_MOVE_M` | — → **15 m** | [invented] a nudge to the right spot, not a new lamp (used: 1.0 / 1.0 / 1.0 / 1.0 / 6.3 / 10.4 m) |
+| seat "ground" | `HEAD_OVER_GROUND_M` | — → **8.8 m** head over the ground under the post | sourced: build_loop_blend.build_streetlights' own rule (9.0 m post − 0.2 m) |
+| "on a road surface" / "foot in the earth" | `relocate()` | — → road top within **0.3 m** of the ground top under the base; earth ≥ foot + **0.05 m** | [invented] tolerances |
+| the barrier lamps' move | config | — → **1.0 m** straight away from the road, behind the rail, light height kept (`seat: keep`) | [invented] measured clearance after: 0.67–0.68 m (≥ 0.5 m) |
+
+**Gates, full rehearsal r2** (`ship_sd.sh --no-install`, fresh scratch copies D:/k10-scratch/v0181/r2/{project,
+engine-july}; no snapshot file differed) against v0.18.0 (the shipped workshop reports):
+
+| | v0.18.0 | v0.18.1 |
+|---|---|---|
+| street soft top / severe / kinks /km / bumps /km | 33 / 0 / 3.41 / 0.0 | **8 / 0 / 2.97 / 0.0** |
+| street excursions (gated) / floating / daylight / obstruction | 98 / 391 / 0 / 0 | **100** / 391 / 0 / 0 (below) |
+| audit street / race_cw / race_acw (D/K/I/F) | 53 / 53 / 53 (0/20/20/13) | 53 / 53 / 53 (0/20/20/13) |
+| race severe cw / acw | 22 / 20 | **15 / 20** |
+| race soft top cw / acw | 9 / 9 | 8 / 4 |
+| race barrier_missing / obstruction | 0 / 0 | 0 / 0 |
+| no_route BUILT + PLANNED, both | PASS, leak 0 | PASS, leak 0 (0/411 probes) |
+| verify_mouths ×4, verify_fold_fans, verify_ai_line ×2, verify_signs (23), verify_race + `--scenery-only`, rib_check, house_seat_check, verify_kn5 + `--inis`, check_race_kn5, check_street_kn5 | PASS | PASS |
+| not gated: race kinks /km cw / acw | 6.23 / 7.05 | 6.90 / 6.23 |
+
+**The one higher gated count — street excursions 100 vs 98 — explained place by place** (every gated excursion mapped to
+its centreline vertex on both builds; `drive_test` samples one crossing every 150 m from station 0, and 0055's registration
+re-stations everything downstream of College): −4 at College v1302 / v1352 (the 0055 fix; the island and lanes moved
+onto the real road); +4 at v1753 and v2755, +2 at v4457, −1 at v2103, −1 at v4306 — the same 0.13–0.14 m
+sidewalk-back ledges v0.18.0 has at those places, met or missed by the shifted stations (v0.18.0's own mesh sampled on
+this build's downstream stations reads 102, with all of these); +2 at v3806, where the mesh and widths are byte-identical
+(w = 18.91 m, a junction flare's taper) but `drive_test`'s flare exemption is `widths[i] > median(widths) + 1.5` and
+College's one continuous divided run raised the lap's median width 17.00 → 17.64 m (exemption 18.5 → 19.14 m). No
+geometry is worse; the number is. Installing needs `--force-install` with this note (v0.18.0 was installed red too).
+Race severe, place by place: cw −4 Alvarado v5, −4 College/Alvarado junction (0057), −1 Navajo v1514 (0055), +1 LMB
+v3300, +1 the 70th seam fold fan v4495–4497 (0057's raised deck); acw −2 Alvarado, −2 junction, +4 the 70th seam fold fan
+(0057, outermost fixed paths at ±11.8 m — flagged by 0057's gates lens for Kevin's Speedway drive).
+
+**What else changed with the merge** (not gates): College's registration shortens the lap 6.565 m, so the draft's 55 m
+lamp spacing re-stations every lamp after College (~6 m along) and the last post before the seam drops: **238** lamps /
+`[LIGHT_N]`, not 239 (0055's own build already had 238). verify_race G lamp margin 2.825 → **2.741 m** (lamp 120 vs
+`closure_race_acw`, re-stationed by 0055). Road kn5 **73.57 MB** (73,574,557 B; 834,667 v / 1,229,616 tri) against
+116.3 MB in v0.18.0 and 72.7 MB on the lamp branch alone (818,510 v there: LIGHTPOST 87,403 → 86,881 v with one
+lamp fewer, the other +16.7 k vertices are 0055 / 0057 geometry); LIGHTPOST 15 meshes, 365 render points per lamp, the
+largest mesh 5,923 v; LIGHTS_0 1,350 v. `[LIGHT_N]` 238, `COLOR = 255, 165, 30, 0.015` in every block; each light 0.146–0.155 m
+under its lens, the six moved lamps' lights moved with them and no other.

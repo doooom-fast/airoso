@@ -27,6 +27,16 @@ MOUNTING_HEIGHT over the road. The lens moves by a CONSTANT offset in each lamp'
 written to data/lights.local.json "provenance" (with every lens position), so ext_config's [LIGHT_N] move by exactly
 that offset and nothing else.
 
+RELOCATIONS (v0.18.1 integration, verifier-found): `scenery.streetlights.relocate` moves a NAMED post, nothing else.
+Each entry names the post by its base as the draft placed it (`from_base_xz`, local x/z, matched within MATCH_TOL_M —
+exactly one post, or exit 1) and gives the new base (`to_base_xz`, at most MAX_MOVE_M away) and how the lamp is seated
+(`seat`: "ground" = the road datum on the authored ground under the new base, the draft's own rule — head 8.8 m over the
+ground under the post; "keep" = the head height the draft gave it). The recorded head moves with the base (same arm, the
+road-ward direction re-read at the new spot), and data/lights.local.json `lampheads` is rewritten, so every reader
+downstream (place_signs, verify_race G, ext_config's [LIGHT_N] through the lens) sees the moved post. Self-checks per
+moved lamp, exit 1 (loop.blend NOT saved): the base is not over a road surface, the pole stands at least WALL_CLEAR_M
+from every wall / guardrail, and its foot (POLE_BURY_M under the datum) is in the ground — never hanging in the air.
+
 The local->Blender remap (x, z, y) is a reflection (LAWS L6), so face winding is reversed on import to keep the
 models' outward normals.
 
@@ -53,6 +63,14 @@ LED = "led_cobra"
 HEAD_ABOVE_ROAD_M = 8.944     # recorded head - road (ledger 0043: light 6.94 m over the road = head - 2.004 m)
 LAMPS_PER_MESH = 16           # LED LIGHTPOST batch: ~16 lamps (~0.9 km of loop) per mesh, so AC culls by stretch
 LIGHT_DROP_M = 0.15           # scripts/ac/ext_config.py writes POSITION = lens centroid - 0.15 m
+# relocations (v0.18.1): see the module doc and GATES-CHANGELOG 2026-10-14 v0.18.1
+HEAD_OVER_GROUND_M = 8.8      # build_loop_blend.build_streetlights: head = ground under the post + 9.0 m post - 0.2 m
+MATCH_TOL_M = 1.0             # [invented] a relocation names its post within this of the draft's base
+MAX_MOVE_M = 15.0             # [invented] a relocation is a nudge to the right spot, not a new lamp
+WALL_CLEAR_M = 0.5            # the integration brief: the pole >= 0.5 m clear of a barrier
+WALL_PREFIXES = ("1WALL", "GUARDRAIL", "WALL")
+ROAD_PREFIXES = ("ROAD", "1ROAD")
+GROUND_PREFIXES = ("TERRAIN", "CURB", "SIDEWALK", "1KERB", "1GRASS", "GRASS", "ROAD", "1ROAD", "BRIDGESTRUCT")
 
 
 def load_obj(path):
@@ -289,14 +307,104 @@ def author_led(heads, nearest_cl, arms):
     return n, batches, note, prov
 
 
+def _bvh(prefixes, exclude=()):
+    """one BVH over every mesh whose name starts with a prefix (world space, Blender frame); None when there is none"""
+    from mathutils import Vector
+    from mathutils.bvhtree import BVHTree
+    verts, polys = [], []
+    for o in bpy.data.objects:
+        u = o.name.upper()
+        if o.type != "MESH" or not u.startswith(prefixes) or (exclude and u.startswith(exclude)):
+            continue
+        mw = o.matrix_world
+        off = len(verts)
+        verts += [mw @ Vector(v.co) for v in o.data.vertices]
+        polys += [[off + i for i in p.vertices] for p in o.data.polygons]
+    return BVHTree.FromPolygons(verts, polys) if polys else None
+
+
+def _top(bvh, x, z):
+    """the highest surface of ``bvh`` under local (x, z): its height (local y), or None"""
+    from mathutils import Vector
+    if bvh is None:
+        return None
+    hit = bvh.ray_cast(Vector((x, z, 2000.0)), Vector((0.0, 0.0, -1.0)), 5000.0)
+    return None if hit[0] is None else float(hit[0].z)
+
+
+def relocate(heads, nearest_cl, cfg, model):
+    """apply scenery.streetlights.relocate to ``heads`` in place (module doc, RELOCATIONS); returns the provenance rows.
+    SystemExit on a bad entry or a failed self-check — before anything is saved"""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import streetlight_relocate as SR
+    try:
+        rows = SR.plan(heads, nearest_cl, SR.entries(cfg), ARM_M, MATCH_TOL_M, MAX_MOVE_M)
+    except ValueError as e:
+        raise SystemExit(f"[lamps] relocate: {e}")
+    if not rows:
+        return []
+    from mathutils import Vector
+    ground = _bvh(GROUND_PREFIXES, exclude=("GRASS_FAR",))
+    earth = _bvh(("TERRAIN", "1GRASS", "GRASS"), exclude=("GRASS_FAR",))
+    road = _bvh(ROAD_PREFIXES)
+    walls = _bvh(WALL_PREFIXES)
+    if model == LED:
+        spec = led_spec()
+        bury, pole_h, mast_r = float(spec.get("pole_bury_m", 2.5)), float(spec["pole_height_m"]), float(spec["mast_radius_m"])
+    else:
+        bury, pole_h, mast_r = 0.0, POST_H, 0.585
+    bad = []
+    for r in rows:
+        i = r["lamp"]
+        bx, bz = r["new_base"]
+        hx, hz = r["head_xz"]
+        g = _top(ground, bx, bz)
+        if g is None:
+            bad.append(f"{r['name']}: no ground under the new base ({bx}, {bz})")
+            continue
+        hy = (g + HEAD_OVER_GROUND_M) if r["seat"] == "ground" else float(heads[i][1])
+        yd = (hy - HEAD_ABOVE_ROAD_M) if model == LED else (hy + 0.1 - POST_H)
+        foot = yd - bury
+        rd = _top(road, bx, bz)
+        if rd is not None and abs(rd - g) < 0.3:
+            bad.append(f"{r['name']}: the new base ({bx}, {bz}) is on a road surface")
+        e = _top(earth, bx, bz)
+        if e is None or e < foot + 0.05:
+            bad.append(f"{r['name']}: the pole foot ({foot:.2f}) is not in the earth (earth {e if e is None else round(e, 2)})"
+                       " — it would hang in the air")
+        clear = float("inf")
+        if walls is not None:
+            for k in range(0, 23):
+                y = foot + (yd + pole_h - foot) * k / 22.0
+                hit = walls.find_nearest(Vector((bx, bz, y)), 10.0)
+                if hit[0] is not None:
+                    clear = min(clear, float(hit[3]) - mast_r)
+        if clear < WALL_CLEAR_M:
+            bad.append(f"{r['name']}: the pole stands {clear:.2f} m from a wall / guardrail (< {WALL_CLEAR_M} m)")
+        old = list(heads[i])
+        heads[i] = [round(hx, 3), round(hy, 3), round(hz, 3)]
+        r.update({"old_head": old, "new_head": heads[i], "ground_y": round(g, 3), "earth_y": None if e is None else round(e, 3),
+                  "foot_y": round(foot, 3), "wall_clear_m": None if clear == float("inf") else round(clear, 3)})
+        r.pop("head_xz", None)
+        print(f"[lamps] relocate {r['name']}: lamp {i} base ({r['old_base'][0]}, {r['old_base'][1]}) -> ({bx}, {bz}) "
+              f"{r['move_m']} m, seat {r['seat']}: head y {old[1]} -> {heads[i][1]}, ground {g:.2f}, foot {foot:.2f}, "
+              f"wall clear {r['wall_clear_m']}")
+    if bad:
+        raise SystemExit("[lamps] relocate self-check FAILED (loop.blend not saved): " + "; ".join(bad))
+    return rows
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:]
     proj = Path(argv[0])
     data = proj / "data"
     model, arms = lamp_config(proj)
+    cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     lights_p = data / "lights.local.json"
     lights = json.loads(lights_p.read_text(encoding="utf-8"))
     heads = lights["lampheads"]
+    if "lampheads_draft" in lights:
+        heads[:] = [list(h) for h in lights["lampheads_draft"]]   # idempotent: relocations start from the draft's posts
     cl = [tuple(p) for p in json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))["points_xyz_m"]]
     nearest_cl = _centreline_cells(cl)
 
@@ -306,6 +414,15 @@ def main():
         bpy.data.objects.remove(old, do_unlink=True)
     for ob in [o for o in bpy.data.objects if o.name.upper().startswith(("LIGHTPOST_", "LIGHTS_"))]:
         bpy.data.objects.remove(ob, do_unlink=True)          # idempotent: a re-run never stacks two lamp sets
+
+    draft = [list(h) for h in heads]
+    moved = relocate(heads, nearest_cl, cfg, model)
+    if moved:
+        lights["lampheads_draft"] = draft
+        lights["relocated"] = moved
+    else:
+        lights.pop("lampheads_draft", None)
+        lights.pop("relocated", None)
 
     if model == LED:
         n, batches, note, prov = author_led(heads, nearest_cl, arms)

@@ -108,3 +108,26 @@ v0.18.1 with 0055 and 0057; the seat (look at night, pool brightness, load time)
 
 Intensity 0.013 -> **0.015** (+15 %, the ladder's next step after 0043's 0.010 -> 0.013), committed on the lamp branch
 (4992d16); colour and pool shape unchanged. Seat-tune from there (config-only, no rebuild).
+
+
+## v0.18.1 integration (2026-10-14; merged with 0055 + 0057, rehearsed full chain r2, NOT installed)
+
+Intensity **0.015** in every `[LIGHT_N]` (Kevin: "They could be a little brighter"). **238** lamps / lights, not 239:
+0055's registration shortens the lap 6.565 m, so the draft's 55 m spacing re-stations every lamp after College (~6 m)
+and the last post before the seam drops. Road kn5 73.57 MB (v0.18.0 116.3 MB); LIGHTPOST 15 meshes, 86,881 v (365 per
+lamp).
+
+**The verifiers' placement findings, fixed** — `track.config.json` `scenery.streetlights.relocate` (tools/author_lamps_blend.py
+RELOCATIONS + tools/streetlight_relocate.py; self-checked: not on a road, pole >= 0.5 m from any wall, foot in the earth;
+GATES-CHANGELOG v0.18.1). Nothing else moved (r1 vs r2: exactly these six bases and their six lights differ).
+
+| lamp | was | now |
+|---|---|---|
+| 53 | on 1ROAD in the College Ave / Del Cerro Blvd mouth (v1085), 0.86 m from the yellow line | 10.4 m to the nearest sidewalk slab behind the curb, seated on it (datum +1.02 m) |
+| 30 / 32 / 34 / 43 (Alvarado v570 / 606 / 643, College v903) | pole through `1WALL_guard_release` (clearance −0.02 … 0.00 m) | 1.0 m straight back, behind the rail, light height kept: clearance 0.67–0.68 m |
+| 237 (= 0057 LIGHTPOST_8, v4480) | on the raised Alvarado Creek deck's sidewalk edge, through the rail, foot 7.6 m over the creek bank | 6.3 m back along the road onto the embankment by the abutment, behind the rail (1.17 m clear), foot buried |
+
+Audit of all 238 lamps on the BUILT split scenes (road + street-only + race + both closures): 0 bases over 1ROAD, 0 feet
+in the air, 0 poles < 0.5 m from a 1WALL; each light 0.146–0.155 m under its lens. Stills (before = r1, after = r2, same
+eye): D:/k10-scratch/v0181/stills/lamp53_*.png, lamp32_*.png, lamp237_lightpost8_*.png (+ `_low`, from under the bridge); night on Alvarado
+D:/k10-scratch/v0181/stills/freeroam_night_alvarado_*.png (Eevee approximation of the CSP lights, not a brightness measurement).

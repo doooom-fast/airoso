@@ -4,7 +4,7 @@
   "ui_series": "",
   "_ui_series_doc": "Engine track_folder prefixes the CM display name with ui_series (default 'K10 Colorado'); empty = use the track name as-is (SD names already carry the K10 - San Diego branding).",
   "slug": "san_diego_lake_murray",
-  "version": "0.18.0",
+  "version": "0.18.1",
   "author": "k10-san-diego",
   "year": 2026,
   "_about": "A single drivable LOOP around Lake Murray (Kevin's childhood neighborhood). This repo is the standalone, Blender-first home for the track: the loop is mapped from the REAL roads (OpenStreetMap) at REAL elevation (USGS 3DEP), imported into Blender, and shaped there interactively (Kevin designs, Claude operates) BEFORE any kn5 export. Start point = just the 5-road main loop; everything else is added deliberately, in Blender.",
@@ -698,6 +698,87 @@
     "streetlights": {
       "model": "led_cobra",
       "arms": 2,
+      "relocate": [
+        {
+          "name": "lamp_53_college_junction",
+          "from_base_xz": [
+            -1448.43,
+            -543.81
+          ],
+          "to_base_xz": [
+            -1450.13,
+            -533.51
+          ],
+          "seat": "ground",
+          "why": "the 0056 look verifier: lamp 53 stands on 1ROAD in a junction carriageway (0.86 m from the yellow line; its base is the draft's since v0.18.0, both 4 m arms over the road). Moved 10.4 m to the nearest sidewalk slab behind the curb (CURB top 42.21 m, 0.19 m over the earth), seated on it"
+        },
+        {
+          "name": "lamp_30_guard_release",
+          "from_base_xz": [
+            -1540.08,
+            -1058.22
+          ],
+          "to_base_xz": [
+            -1540.34,
+            -1059.19
+          ],
+          "seat": "keep",
+          "why": "the 0056 look verifier: the pole axis 0.11-0.12 m from 1WALL_guard_release (the rail on the sidewalk's back edge where ground_release drops the ground) - the pole through the rail. Moved 1.0 m straight away from the road, behind the rail (pole >= 0.5 m clear of it), the light at its height"
+        },
+        {
+          "name": "lamp_32_guard_release",
+          "from_base_xz": [
+            -1645.2,
+            -1043.51
+          ],
+          "to_base_xz": [
+            -1645.27,
+            -1044.51
+          ],
+          "seat": "keep",
+          "why": "as lamp 30 (pole through 1WALL_guard_release); 1.0 m straight back, behind the rail, on the released slope (ground 0.8 m under the datum, the pole foot 2.5 m under it)"
+        },
+        {
+          "name": "lamp_34_guard_release",
+          "from_base_xz": [
+            -1754.8,
+            -1048.36
+          ],
+          "to_base_xz": [
+            -1754.72,
+            -1049.36
+          ],
+          "seat": "keep",
+          "why": "as lamp 30 (pole through 1WALL_guard_release); 1.0 m straight back, behind the rail, on the released slope"
+        },
+        {
+          "name": "lamp_43_guard_release",
+          "from_base_xz": [
+            -1816.38,
+            -920.6
+          ],
+          "to_base_xz": [
+            -1817.24,
+            -920.09
+          ],
+          "seat": "keep",
+          "why": "as lamp 30 (pole through 1WALL_guard_release); 1.0 m straight back, behind the rail"
+        },
+        {
+          "name": "lamp_237_lmb_creek_deck",
+          "from_base_xz": [
+            40.86,
+            -1623.14
+          ],
+          "to_base_xz": [
+            44.86,
+            -1618.24
+          ],
+          "seat": "keep",
+          "why": "two findings on one post: the 0056 look verifier's lamp 237 (pole through 1WALL_guard_release) is the 0057 view verifier's LIGHTPOST_8 by the Lake Murray Blvd / Alvarado Creek deck, whose foot hung 0.28-1.07 m over the grass once 0057 raised the deck (combined build: on the deck's sidewalk edge, the earth 10 m below). Moved 6.3 m back along the road off the deck onto the embankment beside its abutment, behind the rail (1.2 m clear): ground 24.44 m, 0.49 m under the datum, the foot buried"
+        }
+      ],
+      "_relocate_doc": "v0.18.1 integration (2026-10-14): tools/author_lamps_blend.py RELOCATIONS (tools/streetlight_relocate.py) - each entry names ONE post by its base as the draft places it (local x/z, within 1.0 m) and stands it at to_base_xz; seat 'ground' = the draft's rule on the authored ground under the new base (head 8.8 m over it), 'keep' = the draft's head height. The tool exits 1 (loop.blend not saved) if a named post is missing, the new base is on a road, the pole is < 0.5 m from a wall / guardrail, or its foot is not in the earth. Every other lamp stands where the draft put it. Bases are those of the College (0055) lap: its registration shortened the lap 6.565 m and the draft's 55 m spacing re-stations every lamp after College (238 posts, was 239).",
       "_doc": "Ledger 0056 (Kevin 2026-10-14: 'make lighter lamp model' / 'more modern' / 'Taller too'). tools/author_lamps_blend.py stands this model at every post in data/lights.local.json (the post bases do not move). led_cobra = the modern San Diego arterial light from tools/make_streetlight_led.py (CC0): a 35 ft (10.67 m) galvanised tapered steel pole (Caltrans ES-6A Type 21), 12 ft (3.66 m) upswept mast arm, flat-bottom LED cobra head with a twist-lock photocell, flat LED lens at the 38'-9\" (11.81 m) ES-6A mounting height (the 2026-10 lamp's light stood 6.94 m over the road), 371 kn5 render points per lamp with its lens (rehearsal, 2026-10-14) against ~4,045. arms 2 = back-to-back heads, the configuration every 2026-10 lamp has (its lamp_post.obj is symmetric); only the road-ward head carries the emissive lens and the CSP light, as before; arms 1 = the single-arm cobra head. ROLLBACK (one key): model 'street_lamp_2026_10' = Kevin's decimated Street_Lamp (assets/models/lamp_post.obj, 11.5 m, 2 cm invisible lens marker) exactly as v0.18.0 shipped it. The light settings in lighting.streetlight are unchanged (see its _doc, 2026-10-14)."
     }
   },

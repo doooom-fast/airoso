@@ -349,3 +349,15 @@ intersection box marked, and the last-15 m grade to each stop.
   still a level slab. If a car stopped inside the junction, or the tilt, still reads wrong, the next step is authoring
   that junction as a pad (JUNCTIONS §2.0 B), with gates that judge a pad on its own wheel paths. That is a gate change,
   so it is Kevin's call. More smoothing changes are not the next step.
+
+
+## v0.18.1 integration (2026-10-14; merged with 0055 + 0056, full rehearsal r2, NOT installed)
+
+The lens's own points (real4.json, fresh 3DEP) sampled on the combined build give the same numbers as rehearsal 7, to
+the hundredth: College southbound into the Alvarado light, last 30 m to the stop line s 2313: built +5.87 % vs real
++5.93 % (v0.18.0 +3.51 %); last 15 m +6.16 vs +6.11; Alvarado westbound from 70th s 0-100: -6.83 vs real -6.95 (v0.18.0
+-5.69); 70th eastbound wait, last 30 m to s 12: +6.97 vs +6.77; LMB abutments within 0.02-0.09 m of 3DEP; College's
+main descent changed by at most 0.012 % in any 25-200 m window. The stops at s 2305-2309 inside the junction are as
+short as round 3 bounded (15 m: -3.14 on the +7.5 m lane at s 2305). LIGHTPOST_8 (the floating lamp by the creek deck) is
+0056's lamp 237 in the combined build: moved off the deck onto its embankment (0056 v0.18.1 section). Still:
+D:/k10-scratch/v0181/stills/freeroam_college_sb_*.png; lamp D:/k10-scratch/v0181/stills/lamp237_lightpost8_*_low.png.

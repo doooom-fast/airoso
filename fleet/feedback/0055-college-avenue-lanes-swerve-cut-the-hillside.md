@@ -151,3 +151,20 @@ up to about twice the real cut's height (Verification).
 
 Open: the install and Kevin's seat (the only verdict). Not addressed here: the relayed "morew modern" (likely 0056's
 streetlight).
+
+
+## v0.18.1 integration (2026-10-14; merged with 0056 + 0057, full rehearsal r2, NOT installed)
+
+College's plan in the combined build is the verified one: centreline x/z identical at all 4,499 vertices to this
+ledger's rehearsal (D:/k10-scratch/college/ship4), `median_bands.json` identical, widths identical; heights differ only
+inside 0057's windows (v0-83, v737-849, v4422-4498 — College's split run v1100-1506 untouched). Chicane walls on both
+Speedways: one declared, one object, off-curve max 0.006 m, pins 0.001-0.005 m from the race line at v1253 / v1379.
+
+**Race severe re-measured on the combined build: cw 15, acw 20 (v0.18.0 22 / 20)** — no longer above v0.18.0. Place by
+place (severe steps mapped to vertices on both builds): cw −4 Alvarado v5, −4 College/Alvarado junction (0057), −1
+Navajo v1514, +1 LMB v3300, +1 the 70th seam fold fan v4495-4497; acw −2 Alvarado, −2 junction, +4 the 70th seam fold
+fan (0057's raised deck, outermost fixed paths). **Street gated excursions 100 vs 98** stay one higher: −4 here
+(v1302 / v1352), sampling ±1-4 elsewhere (v0.18.0's own mesh on these stations reads 102), +2 at v3806 where the mesh is
+unchanged but drive_test's flare exemption follows the lap's median width, which this run's one divided College run
+raised 17.00 → 17.64 m (GATES-CHANGELOG v0.18.1). Stills: D:/k10-scratch/v0181/stills/freeroam_college_nb_*.png, D:/k10-scratch/v0181/stills/speedway_chicane/,
+D:/k10-scratch/v0181/stills/speedway_reverse_chicane/.

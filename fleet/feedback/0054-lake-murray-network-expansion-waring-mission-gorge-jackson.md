@@ -128,3 +128,9 @@ Cowles now stands at 7.157° (3DEP 7.231°; it was 6.600°). Details in ledger 0
   `no_route` probes), `verify_mouths`.
 
 (Naming: the plan's build steps P0-P7 are *steps*; "Phase N" is Kevin's expansion phase.)
+
+**Parallel work (Kevin, 2026-10-14: "Yes and a").** Started alongside Phase 1: the Phase 2 groundwork (race tools
+taught a second lap, proven byte-identical on both Lake Murray Speedways; the Mission Gorge Speedway design), the
+Phase 3 + Phase 4 plans (read-only research), and the Phase 5 barrier-stub tool — **option (a): Phase 1's ~24 public
+side streets get barrier stubs from the start**, not curved curbs later. Phase 5 proper (converting the old loop's
+side streets) keeps its place in the order.

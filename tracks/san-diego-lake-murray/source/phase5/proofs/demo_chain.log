@@ -1,0 +1,829 @@
+Wed Oct 14 10:42:13 MDT 2026
+
+=================== sync inputs airoso -> workshop (C:/Users/Owner/AppData/Local/Temp/claude/C--Users-Owner-Documents-GitHub-airoso/59395b0b-e098-4e22-9ea8-1346efc0cf70/scratchpad/p5/proj_demo4)
+phase-5 stubs: declared in C:/Users/Owner/Documents/GitHub/airoso/.claude/worktrees/wf_f07e8864-ebf-1/tracks/san-diego-lake-murray/source/phase5/stubs.demo.json
+layouts: street race_cw race_acw   (race furniture: race_cw race_acw; street: street; street AI = draft)
+
+=================== draft: real bridge decks between their real abutments (tools/deck_datum.py; LAWS L3, 3DEP cached)
+[deck] college_ave_over_i8: deck 2586-2683 m held straight 108.6 -> 112.72 m (4.24 %), 65 vertices moved (raise <= 3.012 m, lower <= 0.007 m), grade <= 4.67 %, grade change <= 3.08 % per vertex
+
+=================== draft: median envelope (self-gated)
+[median] 'College Avenue': 41 vert(s) excluded — widened ribbon would touch another part of the loop (self-adjacent stretch)
+[median] 'College Avenue': divided run verts 825-1280 (1361 m), lat min/med/max 11.9/16.4/23.7 m, side -
+[median] 'College Avenue': divided run verts 1353-1509 (464 m), lat min/med/max 19.4/20.3/23.7 m, side -
+[median] 'Navajo Road': divided run verts 1519-1761 (723 m), lat min/med/max 11.1/15.1/15.4 m, side -
+[median] 'Navajo Road': divided run verts 2162-2319 (468 m), lat min/med/max 11.2/13.9/14.5 m, side -
+[median] island gap at del_cerro_blvd#0 mouth (mainline verts 1074-1096)
+[median] shifted 1002 verts; island on 820 verts; 1 mouth gaps; worst step 1.13 m at vert 1271 — OK
+
+=================== draft: tiered terrain plan + 3DEP samples (cached; ledger 0046)
+[terrain] topology: 268976 vertices, 530521 triangles (physical 163104 v / far 106959 v), leaves {'5.0': 107568, '20.0': 40645, '40.0': 28176} (5 s)
+[terrain] break lines: {'cells_eligible': 53072, 'edges_read': 10036, 'break_cells': 6570, 'extra_vertices': 5157, 'triangles': 23454, 'corner_nodes': 13159, 'corners': 'filtered'}
+[terrain] anti-aliased 240144 finest-level nodes (tent, 9 taps): |filtered - point| median 0.030 m, p99 0.50 m, max 2.34 m
+[terrain] wrote terrain.tiers.json.gz: 268976 vertices, 3DEP 19.7..484.3 m (17 s total)
+
+=================== draft: build loop.blend (scene regen — GEN layer)
+[blend] TREETRUNK: 7434 verts, 19824 faces
+[blend] TREECANOPY: 14455 verts, 46256 faces
+[blend] SCRUB: 24000 verts, 72000 faces
+[blend] 239 streetlights placed (collision-checked)
+[blend] loop: 4499 pts, road elevation 0..112 m (rel origin 101 m)
+[blend] wrote C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\loop.blend
+
+=================== draft: side streets from Kevin's routes (airoso data/routes.json)
+[route-conn] medium#1: out-and-back spur (75 pts) — dropped
+[route-conn] short#1: out-and-back spur (75 pts) — dropped
+[route-conn] medium#2+0: 851 pts, 2550 m, y 10.7..61.8
+[route-conn] 2 connector(s): 1 kept + 1 route piece(s) (0 duplicate(s) dropped) -> connectors.local.json + .pre-divide
+
+=================== draft: divided side streets -> one trunk + island (Del Cerro)
+[divide] del_cerro_blvd: trunk 479 pts, width 19.7-24.3 m, island on 445 pts; loop 149 pts; legs A 0-478, B 626-1103
+[divide] 3 connector(s) written; 1 connector island(s) -> median_bands.json
+
+=================== draft: phase-5 side-road stubs -> short connectors at their real width, heading and 3DEP grade (tools/stub_roads.py)
+[stubs] STUB_reservoir_drive_6028810_L: Reservoir Drive (tertiary) off Alvarado Road side +1 at 88.9 deg, 9.6 m wide, barrier krail 15.0 m out; 3DEP grade -0.92 % (rmse 0.017 m), host along -0.01 %, vertical curve 4.0 m
+[stubs] STUB_lambda_drive_6021410_L: Lambda Drive (residential) off College Avenue side +1 at 63.48 deg, 10.0 m wide, barrier krail 15.0 m out; 3DEP grade +4.04 % (rmse 0.069 m), host along +3.87 %, vertical curve 4.0 m
+[stubs] STUB_saint_therese_way_27751389_R: Saint Therese Way (residential) off College Avenue side -1 at 89.16 deg, 10.0 m wide, barrier krail 15.0 m out; 3DEP grade +8.66 % (rmse 0.051 m), host along -0.02 %, vertical curve 8.68 m
+[stubs] STUB_camino_estrellado_5977723_R: Camino Estrellado (residential) off Navajo Road side -1 at 76.12 deg, 9.6 m wide, barrier krail 15.0 m out; 3DEP grade +3.20 % (rmse 0.02 m), host along -1.40 %, vertical curve 4.6 m
+[stubs] STUB_margerum_avenue_135149732_L: Margerum Avenue (tertiary) off Navajo Road side +1 at 66.28 deg, 9.6 m wide, barrier krail 15.0 m out; 3DEP grade +0.80 % (rmse 0.034 m), host along +2.35 %, vertical curve 4.0 m
+[stubs] STUB_hyde_park_drive_5962845_R: Hyde Park Drive (tertiary) off Jackson Drive side -1 at 88.5 deg, 12.0 m wide, barrier krail 15.0 m out; 3DEP grade -3.66 % (rmse 0.038 m), host along -0.00 %, vertical curve 4.0 m
+[stubs] 6 stub(s) appended to connectors.local.json (+ .pre-trim), 0 curb cut(s), 89 skipped; 3DEP 0 new sample(s) -> stubs.plan.json
+
+=================== draft: trim connectors at the mainline edge
+[trim] del_cerro_blvd: 2 piece(s), 10 pt(s) inside a host dropped
+[trim] medium#2+0: 1 piece(s), 1 pt(s) inside a host dropped
+[trim] STUB_reservoir_drive_6028810_L: 1 piece(s), 1 pt(s) inside a host dropped
+[trim] STUB_lambda_drive_6021410_L: 1 piece(s), 1 pt(s) inside a host dropped
+[trim] STUB_saint_therese_way_27751389_R: 1 piece(s), 1 pt(s) inside a host dropped
+[trim] STUB_camino_estrellado_5977723_R: 1 piece(s), 1 pt(s) inside a host dropped
+[trim] STUB_margerum_avenue_135149732_L: 1 piece(s), 1 pt(s) inside a host dropped
+[trim] STUB_hyde_park_drive_5962845_R: 1 piece(s), 1 pt(s) inside a host dropped
+[trim] medium#2+0#0: 1 piece(s), 1 pt(s) inside a host dropped
+[trim] trunk island gapped on 11 point(s) at connector mouths
+[trim] trunk island heights blended with the trunk deck on 20 point(s)
+[trim] 10 connector piece(s), 10 mouth cut(s) on ['MAINLINE', 'del_cerro_blvd#1'] -> connectors.local.json + mouths.json
+[trim] mouth del_cerro_blvd#0 (end) -> MAINLINE seg 1084+0.89 side +1: angle 76.9 deg, host grade +4.56 %, cut y 41.566
+[trim] mouth del_cerro_blvd#1 (start) -> MAINLINE seg 1086+0.14 side -1: angle 86.0 deg, host grade +5.07 %, cut y 41.752
+[trim] mouth medium#2+0#0#0 (start) -> MAINLINE seg 4423+0.84 side -1: angle 89.3 deg, host grade +0.42 %, cut y 24.411
+[trim] mouth STUB_reservoir_drive_6028810_L#0 (start) -> MAINLINE seg 344+0.11 side +1: angle 88.9 deg, host grade -0.64 %, cut y 7.743
+[trim] mouth STUB_lambda_drive_6021410_L#0 (start) -> MAINLINE seg 1131+0.83 side +1: angle 63.5 deg, host grade +8.67 %, cut y 52.959
+[trim] mouth STUB_saint_therese_way_27751389_R#0 (start) -> MAINLINE seg 1256+0.95 side -1: angle 89.2 deg, host grade +1.39 %, cut y 56.533
+[trim] mouth STUB_camino_estrellado_5977723_R#0 (start) -> MAINLINE seg 1659+0.16 side -1: angle 76.1 deg, host grade +5.85 %, cut y 39.225
+[trim] mouth STUB_margerum_avenue_135149732_L#0 (start) -> MAINLINE seg 1660+0.80 side +1: angle 66.3 deg, host grade +5.84 %, cut y 39.514
+[trim] mouth STUB_hyde_park_drive_5962845_R#0 (start) -> MAINLINE seg 2383+0.26 side -1: angle 88.5 deg, host grade +0.17 %, cut y 111.599
+[trim] mouth medium#2+0#0#0 (end) -> del_cerro_blvd#1 seg 82+0.20 side -1: angle 86.4 deg, host grade +0.33 %, cut y 39.252
+
+=================== draft: tiered terrain re-planned on the trimmed connectors (only new vertices fetched)
+[terrain] topology: 269281 vertices, 531131 triangles (physical 163413 v / far 106955 v), leaves {'5.0': 107712, '20.0': 40664, '40.0': 28169} (6 s)
+[terrain] fetching 1266 missing 3DEP samples (3 requests)
+[terrain] break lines: {'cells_eligible': 53072, 'edges_read': 10036, 'break_cells': 6570, 'extra_vertices': 5157, 'triangles': 23454, 'corner_nodes': 13159, 'corners': 'filtered'}
+[terrain] anti-aliased 240614 finest-level nodes (tent, 9 taps): |filtered - point| median 0.030 m, p99 0.50 m, max 2.34 m
+[terrain] wrote terrain.tiers.json.gz: 269281 vertices, 3DEP 19.7..484.3 m (24 s total)
+
+=================== draft: rebuild loop.blend with trimmed connectors
+[blend] TREETRUNK: 7434 verts, 19824 faces
+[blend] TREECANOPY: 14455 verts, 46256 faces
+[blend] SCRUB: 24000 verts, 72000 faces
+[blend] 239 streetlights placed (collision-checked)
+[blend] loop: 4499 pts, road elevation 0..112 m (rel origin 101 m)
+[blend] wrote C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\loop.blend
+
+=================== draft: weld every side-street mouth onto its host (mitre + warp: road, curb/sidewalk, markings; self-checked)
+[weld] layout contract holds: mainline 4498 rows + 10 connector blocks in ROAD / CURB / MARKINGS / YLINE
+[weld] LEVEL MAINLINE road 2: pinch rows 763..774 legs 9.934 / 9.891 -> X 9.912 (half-jump 0.021; 16 rows eased, max 0.021 m)
+[weld] LEVEL MAINLINE road 2: pinch rows 1508..1517 legs 24.471 / 24.418 -> X 24.445 (half-jump 0.027; 16 rows eased, max 0.027 m)
+[weld] LEVEL MAINLINE road 2: pinch rows 2315..2324 legs 108.813 / 109.310 -> X 109.062 (half-jump 0.248; 16 rows eased, max 0.248 m)
+[weld] LEVEL MAINLINE curb -1 0: pinch rows 763..774 legs 9.934 / 9.891 -> X 9.912 (half-jump 0.021; 16 rows eased, max 0.021 m)
+[weld] LEVEL MAINLINE curb -1 0: pinch rows 1508..1517 legs 24.471 / 24.418 -> X 24.445 (half-jump 0.027; 16 rows eased, max 0.027 m)
+[weld] LEVEL MAINLINE curb -1 0: pinch rows 2315..2324 legs 108.813 / 109.310 -> X 109.062 (half-jump 0.248; 16 rows eased, max 0.248 m)
+[weld] LEVEL MAINLINE curb -1 1: pinch rows 763..774 legs 10.072 / 10.029 -> X 10.051 (half-jump 0.021; 16 rows eased, max 0.021 m)
+[weld] LEVEL MAINLINE curb -1 1: pinch rows 1508..1517 legs 24.613 / 24.560 -> X 24.586 (half-jump 0.026; 16 rows eased, max 0.026 m)
+[weld] LEVEL MAINLINE curb -1 1: pinch rows 2314..2324 legs 108.950 / 109.453 -> X 109.201 (half-jump 0.251; 16 rows eased, max 0.251 m)
+[weld] LEVEL MAINLINE curb -1 2: pinch rows 763..775 legs 10.033 / 9.982 -> X 10.007 (half-jump 0.026, uncapped; 16 rows eased, max 0.026 m)
+[weld] LEVEL MAINLINE curb -1 2: pinch rows 1507..1518 legs 24.643 / 24.594 -> X 24.618 (half-jump 0.025, uncapped; 16 rows eased, max 0.025 m)
+[weld] LEVEL MAINLINE curb -1 2: pinch rows 2313..2325 legs 108.883 / 109.517 -> X 109.200 (half-jump 0.317, uncapped; 16 rows eased, max 0.317 m)
+[weld] LEVEL MAINLINE curb -1 2: pinch rows 3291..3300 legs 92.041 / 92.079 -> X 92.060 (half-jump 0.019, uncapped; 16 rows eased, max 0.019 m)
+[weld] LEVEL MAINLINE curb -1 3: pinch rows 762..775 legs 9.660 / 9.609 -> X 9.635 (half-jump 0.025, uncapped; 16 rows eased, max 0.025 m)
+[weld] LEVEL MAINLINE curb -1 3: pinch rows 1507..1519 legs 24.326 / 24.276 -> X 24.301 (half-jump 0.025, uncapped; 16 rows eased, max 0.025 m)
+[weld] LEVEL MAINLINE curb -1 3: pinch rows 2313..2326 legs 108.499 / 109.216 -> X 108.858 (half-jump 0.359, uncapped; 16 rows eased, max 0.359 m)
+[weld] LEVEL MAINLINE curb -1 3: pinch rows 3290..3301 legs 91.699 / 91.740 -> X 91.719 (half-jump 0.020, uncapped; 16 rows eased, max 0.020 m)
+[weld] FOLDS MAINLINE: 25 line cut(s) at rows [(763, 773), (1508, 1516), (2315, 2323), (3292, 3297), (4496, 4)] (ROAD) + CURB; 2432 paint verts
+[weld] FOLDS del_cerro_blvd_loop: 1 run(s) left as built (no cut mends them — the line overlaps itself across a hairpin narrower than the ribbon): [('curb', -1, 3, 72, 74)]
+[weld] FOLDS del_cerro_blvd_loop: 10 line cut(s) at rows [(66, 79), (147, 0)] (ROAD) + CURB; 912 paint verts
+[weld] FOLDS medium#2+0#0#0: 9 line cut(s) at rows [(202, 207)] (ROAD) + CURB; 898 paint verts
+[weld] del_cerro_blvd#0 (end) -> MAINLINE side +1: angle 76.94 deg, grade +4.56 %; road cut arcs L/C/R -2.43/-0.00/+2.87 m, curb ends -2.66/+4.10 m; 4 rows re-spread, 12 warped; end row L/C/R dy [0.636, 0.0, -0.535]; end vs host before [-0.0, 0.494] -> after max 0.0000 m; 232 marking verts
+[weld] del_cerro_blvd#1 (start) -> MAINLINE side -1: angle 85.96 deg, grade +5.07 %; road cut arcs L/C/R +0.59/+0.00/-1.24 m, curb ends +1.02/-1.25 m; 4 rows re-spread, 11 warped; end row L/C/R dy [0.573, -0.0, -0.466]; end vs host before [-0.571, 0.0] -> after max 0.0000 m; 232 marking verts
+[weld] medium#2+0#0#0 (start) -> MAINLINE side -1: angle 89.35 deg, grade +0.42 %; road cut arcs L/C/R +0.49/+0.00/-0.53 m, curb ends +1.15/-0.44 m; 3 rows re-spread, 14 warped; end row L/C/R dy [0.025, -0.0, -0.018]; end vs host before [-0.025, 0.0] -> after max 0.0000 m; 244 marking verts
+[weld] STUB_reservoir_drive_6028810_L#0 (start) -> MAINLINE side +1: angle 88.89 deg, grade -0.64 %; road cut arcs L/C/R -0.09/-0.00/+0.09 m, curb ends +0.26/+0.55 m; 7 rows re-spread, 18 warped; end row L/C/R dy [0.031, 0.0, -0.03]; end vs host before [-0.031, -0.0, 0.03] -> after max 0.0000 m; 320 marking verts
+[weld] STUB_lambda_drive_6021410_L#0 (start) -> MAINLINE side +1: angle 63.47 deg, grade +8.67 %; road cut arcs L/C/R -2.88/+0.03/+3.02 m, curb ends -4.00/+5.24 m; 12 rows re-spread, 18 warped; end row L/C/R dy [-0.519, 0.001, 0.528]; end vs host before [0.0, -0.407] -> after max 0.0000 m; 328 marking verts
+[weld] STUB_saint_therese_way_27751389_R#0 (start) -> MAINLINE side -1: angle 89.15 deg, grade +1.39 %; road cut arcs L/C/R +0.06/-0.00/+0.02 m, curb ends +0.51/+0.46 m; 7 rows re-spread, 18 warped; end row L/C/R dy [0.068, 0.0, -0.073]; end vs host before [-0.068, -0.0, 0.073] -> after max 0.0000 m; 320 marking verts
+[weld] STUB_camino_estrellado_5977723_R#0 (start) -> MAINLINE side -1: angle 76.14 deg, grade +5.85 %; road cut arcs L/C/R -0.95/-0.01/+0.92 m, curb ends -1.09/+1.87 m; 8 rows re-spread, 18 warped; end row L/C/R dy [0.286, 0.001, -0.284]; end vs host before [-0.0, 0.271] -> after max 0.0000 m; 328 marking verts
+[weld] STUB_margerum_avenue_135149732_L#0 (start) -> MAINLINE side +1: angle 66.27 deg, grade +5.84 %; road cut arcs L/C/R -2.37/+0.02/+2.42 m, curb ends -3.31/+4.25 m; 11 rows re-spread, 18 warped; end row L/C/R dy [-0.313, 0.001, 0.314]; end vs host before [-0.0, -0.257] -> after max 0.0000 m; 328 marking verts
+[weld] STUB_hyde_park_drive_5962845_R#0 (start) -> MAINLINE side -1: angle 88.5 deg, grade +0.17 %; road cut arcs L/C/R -0.47/+0.00/+0.64 m, curb ends -0.24/+1.28 m; 8 rows re-spread, 18 warped; end row L/C/R dy [0.006, -0.0, -0.017]; end vs host before [0.0, 0.017] -> after max 0.0000 m; 328 marking verts
+[weld] medium#2+0#0#0 (end) -> del_cerro_blvd#1 side -1: angle 86.41 deg, grade +0.33 %; road cut arcs L/C/R +0.49/+0.13/+0.46 m, curb ends +1.18/+1.02 m; 3 rows re-spread, 10 warped; end row L/C/R dy [-0.009, 0.0, 0.02]; end vs host before [0.009, -0.0, -0.02] -> after max 0.0000 m; 172 marking verts
+[weld] 97 of 298 warped ROAD quads turned to their ridge diagonal
+[weld] 10 mouth(s) welded, self-check clean; 19 connector-island point(s) follow the warped centre; saved loop.blend + data/mouth_welds.json
+
+=================== author: seat the terrain under every road (verge finer than the road)
+[seat] TERRAIN: 984 faces near roads subdivided (163713 -> 177013 verts); 10838 edges halved under the welded approaches + along the host edges; 1060 terrain faces cleared from under the mended mainline folds (1157 edges halved along their inside edge); 11298 verts seated to the verge (8103 under a connector's ROAD, deck read off the welded mesh); 10 cut end(s) stop at their host's pavement; saved loop.blend
+
+=================== author: triangulate the terrain (BEAUTY, what the retired decimation did to every face; no vertex moves)
+[tri] TERRAIN: 9460 quads/ngons triangulated (BEAUTY), 334925 -> 346015 faces (14 coincident back-to-back slivers removed, 7 vertices left with no face), no vertex moved; saved loop.blend
+
+=================== author: release the near-road ground to the real earth in the declared zones + a rail on every new drop (self-checked)
+[release] 8 zone(s) (alvarado_creek_bank, college_south_approach, lmb_alvarado_creek, college_i8_span, lmb_i8_span, alvarado_college_terrace, college_approach_foot, college_north_approach): 12860 lattice nodes at 2.0 m (0 fetched) -> data/ground_release.json
+[release] TERRAIN 177006 -> 202823 verts (27247 edges halved in the zones); alvarado_creek_bank: 6969 moved (down <= 8.283 m, up <= 2.548 m, 0 under a deck); college_south_approach: 2385 moved (down <= 4.183 m, up <= 8.042 m, 948 under a deck); lmb_alvarado_creek: 2041 moved (down <= 8.341 m, up <= 1.957 m, 609 under a deck); college_i8_span: 4562 moved (down <= 7.539 m, up <= 2.899 m, 1435 under a deck); lmb_i8_span: 5116 moved (down <= 8.625 m, up <= 2.087 m, 1259 under a deck); alvarado_college_terrace: 450 moved (down <= 0.384 m, up <= 6.4 m, 0 under a deck); college_approach_foot: 70 moved (down <= 0.0 m, up <= 6.473 m, 0 under a deck); college_north_approach: 2212 moved (down <= 3.787 m, up <= 6.324 m, 0 under a deck); 327 pits under the pavement lifted to it; batter cut 460 / fill 604 / straight bank 115, per-face cap lowered 3146 vertices on 12020 faces over the pavement (17 held over it by an unreleased corner [(-1763.6, -898.33, 0.04, [(-1763.6, -897.33, 14.95, False, 15.097), (-1763.6, -899.83, 14.851, True, None), (-1762.34, -899.83, 14.911, False, None)]), (-1785.19, -879.6, 0.082, [(-1786.19, -878.6, 15.261, False, None), (-1785.56, -879.53, 14.822, True, None), (-1784.93, -879.85, 14.842, False, 14.942)]), (-1802.0, -898.95, 0.022, [(-1802.5, -898.58, 13.773, True, None), (-1801.87, -899.2, 13.841, False, 13.87), (-1801.24, -898.58, 13.875, False, 13.933)])]), 849 steep faces within 12.0 m (437 not under a deck); 542 ramp vertices blended toward the prep's refined ground; 10 rail(s) [('alvarado_creek_bank+alvarado_creek_bank+ext', 'left', [1617.0, 1998.0], [False, False]), ('college_i8_span+college_south_approach+college_south_approach+ext', 'left', [2537.0, 2582.0], [False, False]), ('college_i8_span+college_north_approach', 'left', [2647.0, 2745.0], [False, True]), ('lmb_i8_span+lmb_i8_span+ext', 'left', [13327.0, 13353.0], [False, False]), ('lmb_alvarado_creek+lmb_alvarado_creek+ext+lmb_i8_span', 'left', [13408.0, 13467.0], [False, False]), ('alvarado_college_terrace+alvarado_college_terrace+ext', 'right', [1987.0, 2078.0], [False, False]), ('college_approach_foot+college_approach_foot+ext+college_i8_span+college_south_approach', 'right', [2388.0, 2582.0], [False, False]), ('college_i8_span+college_north_approach+college_north_approach+ext', 'right', [2647.0, 2748.0], [False, False]), ('lmb_i8_span+lmb_i8_span+ext', 'right', [13327.0, 13353.0], [False, False]), ('lmb_alvarado_creek+lmb_alvarado_creek+ext+lmb_i8_span', 'right', [13408.0, 13467.0], [False, False])] on the curb lip (19 stations past a zone's end over a drop); saved loop.blend
+
+=================== author: median island
+[median-blend] 8 island segment(s), 3751 m total; curb 7524v, deck 2508v, rail 8008v, shrubs 4824v
+[median-blend] CURB: 56140 verts
+[median-blend] TERRAIN: 205331 verts  <-- OVER 65,535 CAP
+[median-blend] GUARDRAIL: 8188 verts
+[median-blend] SCRUB: 28824 verts
+[median-blend] saved C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\loop.blend
+
+=================== author: phase-5 stubs — curb returns, corner pavement, K-rail barrier (tools/author_stubs_blend.py, self-checked)
+[stubs] STUB_reservoir_drive_6028810_L#0: returns R 4.648, 3.784 m (tangent 4.56, 3.862 m, wedge 91.09, 88.83 deg); barrier 1WALL_STUB_reservoir_drive_6028810_L 65 rings over 15.16 m at 15.40 m from the cut, max sink 0.028 m
+[stubs] STUB_lambda_drive_6021410_L#0: returns R 4.896, 1.726 m (tangent 2.847, 3.111 m, wedge 119.64, 58.05 deg); barrier 1WALL_STUB_lambda_drive_6021410_L 68 rings over 15.56 m at 15.45 m from the cut, max sink 0.0626 m
+[stubs] STUB_saint_therese_way_27751389_R#0: returns R 3.076, 3.059 m (tangent 3.128, 3.098 m, wedge 89.03, 89.27 deg); barrier 1WALL_STUB_saint_therese_way_27751389_R 66 rings over 15.56 m at 15.40 m from the cut, max sink 0.084 m
+[stubs] STUB_camino_estrellado_5977723_R#0: returns R 4.585, 3.741 m (tangent 3.768, 4.526 m, wedge 101.18, 79.15 deg); barrier 1WALL_STUB_camino_estrellado_5977723_R 64 rings over 15.159 m at 15.41 m from the cut, max sink 0.0637 m
+[stubs] STUB_margerum_avenue_135149732_L#0: returns R 5.2, 2.488 m (tangent 3.223, 4.02 m, wedge 116.41, 63.5 deg); barrier 1WALL_STUB_margerum_avenue_135149732_L 66 rings over 15.16 m at 15.44 m from the cut, max sink 0.0354 m
+[stubs] STUB_hyde_park_drive_5962845_R#0: returns R 6.095, 3.935 m (tangent 5.68, 4.279 m, wedge 94.03, 85.21 deg); barrier 1WALL_STUB_hyde_park_drive_5962845_R 75 rings over 17.56 m at 15.40 m from the cut, max sink 0.0466 m
+[stubs] author: 6 stub(s), 283 return stations, 245 corner pavement tris, 336 stub curb faces removed, 0 curb cut(s); ground: 7609 edges halved, 214 verts pinned; saved loop.blend
+
+=================== author: gap the mainline sidewalk at every mouth
+[gap-mouths] 10 mouths on ['MAINLINE', 'del_cerro_blvd#1']
+[gap-mouths] deleted 414 host curb/sidewalk faces across 10 mouths; saved loop.blend
+[stubs] tidy: 224 orphaned stub curb verts deleted; every return meets its host curb; saved loop.blend
+
+=================== author: bridge bodies under the overcrossings (soffit, fascia, abutments, pier bents; visual only, self-checked)
+[bridges] loop span 1822-1853 m: at grade, nothing built
+[bridges] loop span 2554-2696 m: opening [2553.6, 2676.6], clearance <= 8.16 m under the deck, walls at [2573.1, 2675.1], carriageways at [2611.12, 2633.08], bents at [2597.9, 2646.3] -> BRIDGESTRUCT_1 (5032 v)
+[bridges] loop span 13319-13463 m: opening [13339.7, 13444.7], clearance <= 8.55 m under the deck, walls at [13342.7, 13405.7, 13420.7, 13444.7], carriageways at [13360.13, 13384.07], bents at [13348.7, 13372.1, 13395.5] -> BRIDGESTRUCT_2 (4160 v)
+[bridges] 2 bridge bodies over 3 declared spans; data/bridges.authored.json; saved loop.blend
+
+=================== author: export scatter positions, strip procedural vegetation (TreeFX replaces it)
+[scatter] palms 900, trees 413, scrub 1000, median planting 603 -> data/scatter_positions.json
+[strip] removed 13 procedural scenery mesh(es): PALMFROND_A(31103v), PALMFROND_B(31127v), PALMFROND_C(31067v), PALMFROND_D(31077v), PALMFROND_E(31078v), PALMFRO
+
+=================== author: Kevin's lamp model at every streetlight (LIGHTPOST + LIGHTS lens)
+[lamps] 239 lamps from lights.local.json -> 9 LIGHTPOST + 1 LIGHTS mesh(es) (model 2060v + lens 994v each, fixture h 9.84 m); procedural LIGHTS removed; saved loop.blend
+
+=================== author: W1-6 large-arrow signs at every tight corner (SIGNPLATE + SIGNARROW + SIGNPOST)
+[signs] ground CURB+TERRAIN; road ROAD; race furniture left out of both: 0 objects
+[signs] M1-fwd      W1-6R        MAINLINE/fwd         base (    -0.3,  23.78,  -1673.3) faces 26.3 deg  built clear 1.74 m (shift 0.62, slid +0.00)  walk-behind -0.29  disc +3.69 (gated all +3.69)  y_base raycast
+[signs] M2-fwd      W1-6R        MAINLINE/fwd         base ( -1960.4,   9.74,  -1289.4) faces 16.5 deg  built clear 1.80 m (shift 0.09, slid +0.00)  walk-behind -0.40  disc +2.38 (gated all +2.38)  y_base raycast
+[signs] M2-fwd-2    W1-6R        MAINLINE/fwd         base ( -2008.1,  10.13,  -1272.9) faces 97.9 deg  built clear 1.78 m (shift 0.07, slid +0.00)  walk-behind -0.27  disc +10.30 (gated all +10.30)  y_base raycast  WARN approach heading: 10 m chord 277.9 deg vs PCA fit 283.6 deg (differ by 5.8 deg; the chord is used)
+[signs] M3-fwd      W1-6R        MAINLINE/fwd         base ( -1986.3,  24.54,    611.7) faces 139.0 deg  built clear 1.78 m (shift 0.09, slid +0.25)  walk-behind -0.28  disc +10.28 (gated all +10.28)  y_base raycast
+[signs] M4-fwd      W1-6R        MAINLINE/fwd         base (    65.1, 109.32,   1731.8) faces 228.8 deg  built clear 1.80 m (shift 0.13, slid +0.00)  walk-behind -0.27  disc +7.39 (gated all +7.39)  y_base raycast
+[signs] M5-fwd      W1-6R        MAINLINE/fwd         base (  2628.2,  92.08,    505.2) faces 306.0 deg  built clear 1.77 m (shift 0.06, slid +0.00)  walk-behind -0.28  disc +9.09 (gated all +9.09)  y_base raycast  WARN 35 m from AC_TIME_1_R@race_acw (< 200 m spawn/gate exclusion, placed anyway)
+[signs] M5-rev      W1-6L        MAINLINE/rev         base (  2629.1,  92.07,    518.5) faces 215.6 deg  built clear 1.75 m (shift 0.20, slid +0.00)  walk-behind -0.35  disc +7.58 (gated all +7.58)  y_base raycast  WARN 48 m from AC_TIME_1_R@race_acw (< 200 m spawn/gate exclusion, placed anyway)
+[signs] M4-rev      W1-6L        MAINLINE/rev         base (    59.8, 109.26,   1735.0) faces 158.7 deg  built clear 1.65 m (shift 0.02, slid +0.00)  walk-behind -0.41  disc +6.91 (gated all +6.91)  y_base raycast
+[signs] M3-rev      W1-6L        MAINLINE/rev         base ( -1990.9,  24.51,    602.1) faces 60.5 deg  built clear 1.65 m (shift 0.01, slid +0.00)  walk-behind -0.39  disc +9.92 (gated all +9.92)  y_base raycast
+[signs] M2-rev      W1-6L        MAINLINE/rev         base ( -2005.0,  10.17,  -1283.4) faces 21.9 deg  built clear 1.77 m (shift 0.05, slid +0.00)  walk-behind -0.33  disc +9.94 (gated all +9.94)  y_base raycast
+[signs] M1-rev      W1-6L        MAINLINE/rev         base (     4.7,  23.83,  -1673.1) faces 299.2 deg  built clear 1.83 m (shift 6.30, slid +0.00)  walk-behind -0.49  disc +3.49 (gated all +3.49)  y_base raycast
+[signs] MED-1-fwd   W1-6R        medium#2+0#0#0/fwd   base (    85.3,  25.81,  -1451.5) faces 119.3 deg  built clear 1.55 m (shift 0.01, slid +0.00)  walk-behind -0.32  disc +1.23 (gated MAINLINE +44.04)  y_base raycast
+[signs] MED-6-fwd   W1-6L        medium#2+0#0#0/fwd   base (   -69.4,  60.44,   -918.8) faces 196.0 deg  built clear 1.34 m (shift 3.79, slid +0.00)  walk-behind -0.26  disc -2.06 (gated MAINLINE +inf)  y_base raycast  WARN plate footprint 2.06 m inside the obstacle disc of a connector centreline (medium#2+0#0#0): not gated, drive_test sweeps the mainline only; the post stays at the back of the walk (REALISM)
+[signs] MED-7-fwd   W1-6L        medium#2+0#0#0/fwd   base (  -182.7,  56.89,   -976.9) faces 52.7 deg  built clear 1.32 m (shift 1.14, slid +0.00)  walk-behind +0.36  disc +0.19 (gated MAINLINE +inf)  y_base raycast (terrain behind the walk, -0.04 m vs the walk's analytic height)  WARN post stands 0.36 m behind the back of the modelled walk (marched for the built clearance); ground = terrain ray-cast
+[signs] MED-8-fwd   W1-6R        medium#2+0#0#0/fwd   base (  -188.9,  39.92,  -1188.2) faces 3.0 deg  built clear 1.40 m (shift 0.65, slid +0.00)  walk-behind -0.26  disc +0.76 (gated MAINLINE +inf)  y_base raycast
+[signs] MED-10-fwd  W1-6L        medium#2+0#0#0/fwd   base (  -402.9,  24.77,  -1126.2) faces 115.0 deg  built clear 1.32 m (shift 1.28, slid +0.00)  walk-behind +1.32  disc +0.07 (gated MAINLINE +inf)  y_base raycast (terrain behind the walk, -0.05 m vs the walk's analytic height)  WARN post stands 1.32 m behind the back of the modelled walk (marched for the built clearance); ground = terrain ray-cast
+[signs] MED-13-fwd  W1-6R        medium#2+0#0#0/fwd   base ( -1301.9,  13.57,  -1033.4) faces 107.6 deg  built clear 1.59 m (shift 0.68, slid +0.00)  walk-behind -0.40  disc +0.53 (gated MAINLINE +90.91)  y_base raycast
+[signs] MED-13-rev  W1-6L        medium#2+0#0#0/rev   base ( -1302.6,  13.86,  -1027.9) faces 24.7 deg  built clear 1.19 m (shift 1.61, slid +0.00)  walk-behind +1.50  disc +0.17 (gated MAINLINE +96.48)  y_base raycast (terrain behind the walk, -0.02 m vs the walk's analytic height)  WARN post stands 1.50 m behind the back of the modelled walk (marched for the built clearance); ground = terrain ray-cast; built-edge clearance 1.19 m (target 1.33) at the 1.5 m behind the modelled walk cap; passes the 1.0 m gate minimum
+[signs] MED-10-rev  W1-6R        medium#2+0#0#0/rev   base (  -392.0,  25.53,  -1126.9) faces 235.2 deg  built clear 1.77 m (shift 0.26, slid +0.00)  walk-behind -0.40  disc +1.35 (gated MAINLINE +inf)  y_base raycast
+[signs] MED-8-rev   W1-6L        medium#2+0#0#0/rev   base (  -183.1,  40.14,  -1185.2) faces 271.1 deg  built clear 1.51 m (shift 2.48, slid +0.00)  walk-behind -0.42  disc -1.06 (gated MAINLINE +inf)  y_base raycast  WARN plate footprint 1.06 m inside the obstacle disc of a connector centreline (medium#2+0#0#0): not gated, drive_test sweeps the mainline only; the post stays at the back of the walk (REALISM)
+[signs] MED-7-rev   W1-6R        medium#2+0#0#0/rev   base (  -174.4,  57.23,   -965.4) faces 182.3 deg  built clear 1.55 m (shift 0.26, slid +0.00)  walk-behind -0.40  disc +1.22 (gated MAINLINE +inf)  y_base raycast
+[signs] MED-6-rev   W1-6R        medium#2+0#0#0/rev   base (   -68.1,  60.50,   -921.4) faces 256.3 deg  built clear 1.40 m (shift 1.86, slid +0.00)  walk-behind -0.26  disc -0.52 (gated MAINLINE +inf)  y_base raycast  WARN plate footprint 0.52 m inside the obstacle disc of a connector centreline (medium#2+0#0#0): not gated, drive_test sweeps the mainline only; the post stays at the back of the walk (REALISM)
+[signs] MED-1-rev   W1-6L        medium#2+0#0#0/rev   base (    88.7,  25.50,  -1462.1) faces 3.8 deg  built clear 1.33 m (shift 1.42, slid +0.00)  walk-behind +0.08  disc -0.10 (gated MAINLINE +34.81)  y_base raycast (terrain behind the walk, -0.09 m vs the walk's analytic height)  WARN post stands 0.08 m behind the back of the modelled walk (marched for the built clearance); ground = terrain ray-cast; plate footprint 0.10 m inside the obstacle disc of a connector centreline (medium#2+0#0#0): not gated, drive_test sweeps the mainline only; the post stays at the back of the walk (REALISM)
+[signs] skip M-c5-fwd    MAINLINE             v3282  R_apex 42.4 > 30 m; |D| 16.3 < 45 deg
+[signs] skip M-c5-rev    MAINLINE(rev)        v3282  R_apex 42.1 > 30 m; |D| 16.3 < 45 deg
+[signs] skip M2-rev-2    MAINLINE(rev)        v770   second arrow 1.1 m from the first (< 12)
+[signs] skip DC0-c1-fwd  del_cerro_blvd#0     v5     R_apex 54.2 > 30 m; |D| 9.0 < 45 deg
+[signs] skip DC0-c2-fwd  del_cerro_blvd#0     v65    R_apex 43.9 > 30 m; |D| 11.3 < 45 deg
+[signs] skip DC0-c3-fwd  del_cerro_blvd#0     v164   R_apex 57.2 > 30 m; |D| 3.7 < 45 deg
+[signs] skip DC0-r1-rev  del_cerro_blvd#0(rev) v223   apex 0 m from mouth del_cerro_blvd@MAINLINE:1085 (< 15 m: mouth-flare geometry)
+[signs] skip DC0-c3-rev  del_cerro_blvd#0(rev) v164   R_apex 57.3 > 30 m; |D| 3.8 < 45 deg
+[signs] skip DC0-c2-rev  del_cerro_blvd#0(rev) v65    R_apex 44.6 > 30 m; |D| 12.1 < 45 deg
+[signs] skip DC0-c1-rev  del_cerro_blvd#0(rev) v6     R_apex 54.3 > 30 m; |D| 9.0 < 45 deg
+[signs] skip DC0-r2-rev  del_cerro_blvd#0(rev) v1     apex 4 m from del_cerro_blvd#0 start (< 15 m: mouth-flare geometry)
+[signs] skip DC1-c1-fwd  del_cerro_blvd#1     v245   R_apex 35.4 > 30 m; |D| 8.1 < 45 deg; apex 0 m from del_cerro_blvd#1 end (< 15 m: mouth-flare geometry)
+[signs] skip DC1-r1-rev  del_cerro_blvd#1(rev) v244   apex 3 m from del_cerro_blvd#1 end (< 15 m: mouth-flare geometry)
+[signs] skip DC1-r2-rev  del_cerro_blvd#1(rev) v2     apex 4 m from del_cerro_blvd#1 start (< 15 m: mouth-flare geometry)
+[signs] skip DCL-1-fwd   del_cerro_blvd_loop  v0     signs.json skip: junction with the del_cerro_blvd#1 trunk: the forward ray runs down the trunk and never leaves pavement; a W1-7 across the loop for traffic arriving on the trunk is a second-pass candidate; apex 4 m from del_cerro_blvd#1 end (< 15 m: mouth-flare geometry)
+[signs] skip DCL-2-fwd   del_cerro_blvd_loop  v75    signs.json skip: Kevin 2026-10-10: 'keep the cul-de-sac sign off' - a turnaround is not signed in reality; removing skip yields two posts 2.06 m apart (pair test)
+[signs] skip DCL-2-rev   del_cerro_blvd_loop(rev) v74    signs.json skip: Kevin 2026-10-10: 'keep the cul-de-sac sign off' - a turnaround is not signed in reality; removing skip yields two posts 2.06 m apart (pair test)
+[signs] skip DCL-1-rev   del_cerro_blvd_loop(rev) v0     signs.json skip: junction with the del_cerro_blvd#1 trunk: the forward ray runs down the trunk and never leaves pavement; a W1-7 across the loop for traffic arriving on the trunk is a second-pass candidate; apex 4 m from del_cerro_blvd#1 end (< 15 m: mouth-flare geometry)
+[signs] skip MED-c1-fwd  medium#2+0#0#0       v1     apex 4 m from medium#2+0#0#0 start (< 15 m: mouth-flare geometry)
+[signs] skip MED-c3-fwd  medium#2+0#0#0       v16    R_apex 41.4 > 30 m; |D| 18.2 < 45 deg
+[signs] skip MED-c4-fwd  medium#2+0#0#0       v34    R_apex 53.7 > 30 m; |D| 10.1 < 45 deg
+[signs] skip MED-c5-fwd  medium#2+0#0#0       v74    R_apex 38.3 > 30 m; |D| 15.5 < 45 deg
+[signs] skip MED-c6-fwd  medium#2+0#0#0       v99    R_apex 32.7 > 30 m; |D| 20.1 < 45 deg
+[signs] skip MED-c7-fwd  medium#2+0#0#0       v182   R_apex 53.5 > 30 m; |D| 11.1 < 45 deg
+[signs] skip MED-c11-fwd medium#2+0#0#0       v352   R_apex 54.9 > 30 m; |D| 10.1 < 45 deg
+[signs] skip MED-c13-fwd medium#2+0#0#0       v430   R_apex 39.0 > 30 m; |D| 14.1 < 45 deg
+[signs] skip MED-c14-fwd medium#2+0#0#0       v447   R_apex 48.5 > 30 m; |D| 13.4 < 45 deg
+[signs] skip MED-c16-fwd medium#2+0#0#0       v793   R_apex 53.8 > 30 m; |D| 3.9 < 45 deg
+[signs] skip MED-c17-fwd medium#2+0#0#0       v814   R_apex 39.4 > 30 m; |D| 17.6 < 45 deg
+[signs] skip MED-16-fwd  medium#2+0#0#0       v845   signs.json skip: the stem arriving at the Del Cerro Blvd / Madra Ave T: a W1-7 Two-Direction Large Arrow on Del Cerro's far (north) curb is the second-pass device, not a W1-6 on the stem; R_apex 52.5 > 30 m; |D| 10.1 < 45 deg
+[signs] skip MED-c19-fwd medium#2+0#0#0       v849   R_apex 43.1 > 30 m; |D| 7.4 < 45 deg; apex 8 m from medium#2+0#0#0 end (< 15 m: mouth-flare geometry)
+[signs] skip MED-c20-fwd medium#2+0#0#0       v851   |D| 21.8 < 45 deg; apex 0 m from medium#2+0#0#0 end (< 15 m: mouth-flare geometry)
+[signs] skip MED-c19-rev medium#2+0#0#0(rev)  v851   apex 1 m from medium#2+0#0#0 end (< 15 m: mouth-flare geometry)
+[signs] skip MED-16-rev  medium#2+0#0#0(rev)  v845   signs.json skip: the stem arriving at the Del Cerro Blvd / Madra Ave T: a W1-7 Two-Direction Large Arrow on Del Cerro's far (north) curb is the second-pass device, not a W1-6 on the stem; R_apex 52.4 > 30 m; |D| 10.1 < 45 deg
+[signs] skip MED-c17-rev medium#2+0#0#0(rev)  v814   R_apex 39.6 > 30 m; |D| 36.6 < 45 deg
+[signs] skip MED-c16-rev medium#2+0#0#0(rev)  v794   R_apex 54.4 > 30 m; |D| 3.9 < 45 deg
+[signs] skip MED-c14-rev medium#2+0#0#0(rev)  v447   R_apex 48.5 > 30 m; |D| 13.4 < 45 deg
+[signs] skip MED-c13-rev medium#2+0#0#0(rev)  v430   R_apex 39.0 > 30 m; |D| 13.5 < 45 deg
+[signs] skip MED-c11-rev medium#2+0#0#0(rev)  v352   R_apex 54.9 > 30 m; |D| 10.9 < 45 deg
+[signs] skip MED-c7-rev  medium#2+0#0#0(rev)  v182   R_apex 53.6 > 30 m; |D| 10.3 < 45 deg
+[signs] skip MED-c6-rev  medium#2+0#0#0(rev)  v99    R_apex 32.7 > 30 m; |D| 19.5 < 45 deg
+[signs] skip MED-c5-rev  medium#2+0#0#0(rev)  v74    R_apex 38.3 > 30 m; |D| 15.5 < 45 deg
+[signs] skip MED-c4-rev  medium#2+0#0#0(rev)  v34    R_apex 53.8 > 30 m; |D| 9.2 < 45 deg
+[signs] skip MED-c3-rev  medium#2+0#0#0(rev)  v16    R_apex 41.4 > 30 m; |D| 16.2 < 45 deg
+[signs] skip STUB_RESERVOIR_DRIVE_6028810_L_0-c1-fwd STUB_reservoir_drive_6028810_L#0 v4     |D| 42.5 < 45 deg; apex 4 m from STUB_reservoir_drive_6028810_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_RESERVOIR_DRIVE_6028810_L_0-c2-fwd STUB_reservoir_drive_6028810_L#0 v16    |D| 42.5 < 45 deg; apex 0 m from STUB_reservoir_drive_6028810_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_RESERVOIR_DRIVE_6028810_L_0-c1-rev STUB_reservoir_drive_6028810_L#0(rev) v14    |D| 32.5 < 45 deg; apex 2 m from STUB_reservoir_drive_6028810_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_RESERVOIR_DRIVE_6028810_L_0-c2-rev STUB_reservoir_drive_6028810_L#0(rev) v2     |D| 32.5 < 45 deg; apex 2 m from STUB_reservoir_drive_6028810_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_LAMBDA_DRIVE_6021410_L_0-c1-fwd STUB_lambda_drive_6021410_L#0 v0     apex 0 m from STUB_lambda_drive_6021410_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_LAMBDA_DRIVE_6021410_L_0-c2-fwd STUB_lambda_drive_6021410_L#0 v12    apex 4 m from STUB_lambda_drive_6021410_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_SAINT_THERESE_WAY_27751389_R_0-c1-fwd STUB_saint_therese_way_27751389_R#0 v0     |D| 13.4 < 45 deg; apex 0 m from STUB_saint_therese_way_27751389_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_SAINT_THERESE_WAY_27751389_R_0-c2-fwd STUB_saint_therese_way_27751389_R#0 v12    |D| 13.4 < 45 deg; apex 4 m from STUB_saint_therese_way_27751389_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_SAINT_THERESE_WAY_27751389_R_0-c1-rev STUB_saint_therese_way_27751389_R#0(rev) v14    apex 2 m from STUB_saint_therese_way_27751389_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_SAINT_THERESE_WAY_27751389_R_0-c2-rev STUB_saint_therese_way_27751389_R#0(rev) v2     apex 2 m from STUB_saint_therese_way_27751389_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_CAMINO_ESTRELLADO_5977723_R_0-c1-fwd STUB_camino_estrellado_5977723_R#0 v1     |D| 23.1 < 45 deg; apex 1 m from STUB_camino_estrellado_5977723_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_CAMINO_ESTRELLADO_5977723_R_0-c2-fwd STUB_camino_estrellado_5977723_R#0 v13    |D| 23.1 < 45 deg; apex 3 m from STUB_camino_estrellado_5977723_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_CAMINO_ESTRELLADO_5977723_R_0-c1-rev STUB_camino_estrellado_5977723_R#0(rev) v15    apex 1 m from STUB_camino_estrellado_5977723_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_CAMINO_ESTRELLADO_5977723_R_0-c2-rev STUB_camino_estrellado_5977723_R#0(rev) v3     apex 3 m from STUB_camino_estrellado_5977723_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MARGERUM_AVENUE_135149732_L_0-c1-fwd STUB_margerum_avenue_135149732_L#0 v4     apex 4 m from STUB_margerum_avenue_135149732_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MARGERUM_AVENUE_135149732_L_0-c2-fwd STUB_margerum_avenue_135149732_L#0 v16    apex 0 m from STUB_margerum_avenue_135149732_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MARGERUM_AVENUE_135149732_L_0-c1-rev STUB_margerum_avenue_135149732_L#0(rev) v14    |D| 27.2 < 45 deg; apex 2 m from STUB_margerum_avenue_135149732_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MARGERUM_AVENUE_135149732_L_0-c2-rev STUB_margerum_avenue_135149732_L#0(rev) v2     |D| 27.2 < 45 deg; apex 2 m from STUB_margerum_avenue_135149732_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_HYDE_PARK_DRIVE_5962845_R_0-c1-fwd STUB_hyde_park_drive_5962845_R#0 v1     apex 1 m from STUB_hyde_park_drive_5962845_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_HYDE_PARK_DRIVE_5962845_R_0-c2-fwd STUB_hyde_park_drive_5962845_R#0 v13    apex 3 m from STUB_hyde_park_drive_5962845_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_HYDE_PARK_DRIVE_5962845_R_0-c1-rev STUB_hyde_park_drive_5962845_R#0(rev) v17    |D| 16.2 < 45 deg; apex 0 m from STUB_hyde_park_drive_5962845_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_HYDE_PARK_DRIVE_5962845_R_0-c2-rev STUB_hyde_park_drive_5962845_R#0(rev) v4     |D| 16.2 < 45 deg; apex 4 m from STUB_hyde_park_drive_5962845_R#0 start (< 15 m: mouth-flare geometry)
+[signs] 23 placed (11 W1-6L, 12 W1-6R; mainline plates 6 fwd / 5 rev), 66 skipped -> 1 SIGNPLATE + 1 SIGNARROW + 1 SIGNPOST; 1357 verts, 713 faces; normals OK; ground from CURB+TERRAIN (ROAD rejects ROAD); removed 0 old; overrides C:\Users\Owner\Documents\GitHub\airoso\.claude\worktrees\wf_f07e8864-ebf-1\tracks\san-diego-lake-murray\signs.json; saved C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\loop.blend
+[verify-signs] independent scan: 5-degree polar, 0.25 m steps, bisected; ROAD top vs CURB/SIDEWALK/TERRAIN top; ground = top hit at the base (SIGN* excluded); plate normals = Mesh.polygons[].normal of the vertical SIGNPLATE faces within 1.2 m of the post; plate bottom = lowest SIGNPLATE vertex 0.5-0.75 m off the post axis; post base = lowest SIGNPOST vertex within 0.1 m of it; walk_behind_m = the ground profile from the base toward the nearest pavement (> 0 behind the walk, < 0 on it) ([verify-signs] measured 23 bases in Blender -> C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_measured.json)
+[verify-signs] WARN MED-6-fwd: plate footprint 2.06 m inside the obstacle disc of a connector centreline (not gated: drive_test sweeps the mainline only)
+[verify-signs] WARN MED-13-rev: built-edge clearance 1.19 m under the 1.33 m walk target (passes the 1.0 m gate minimum)
+[verify-signs] WARN MED-8-rev: plate footprint 1.06 m inside the obstacle disc of a connector centreline (not gated: drive_test sweeps the mainline only)
+[verify-signs] WARN MED-6-rev: plate footprint 0.52 m inside the obstacle disc of a connector centreline (not gated: drive_test sweeps the mainline only)
+[verify-signs] WARN MED-1-rev: plate footprint 0.10 m inside the obstacle disc of a connector centreline (not gated: drive_test sweeps the mainline only)
+[verify-signs] signs.json for (j): C:\Users\Owner\Documents\GitHub\airoso\.claude\worktrees\wf_f07e8864-ebf-1\tracks\san-diego-lake-murray\signs.json
+[verify-signs] 23 posts (23 plates), 66 skipped, PASS
+[plot-signs] 24 PNGs -> C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\signs_overview.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_M1-fwd.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_M2-fwd.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_M2-fwd-2.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_M3-fwd.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_M4-fwd.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_M5-fwd.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_M5-rev.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_M4-rev.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_M3-rev.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_M2-rev.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_M1-rev.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_MED-1-fwd.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_MED-6-fwd.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_MED-7-fwd.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_MED-8-fwd.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_MED-10-fwd.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_MED-13-fwd.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_MED-13-rev.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_MED-10-rev.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_MED-8-rev.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_MED-7-rev.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_MED-6-rev.png
+[plot-signs]   C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\signs_plots\sign_MED-1-rev.png
+
+=================== author: race-corridor declaration v2 (tools/barrier_bands.py: corridor solve + self-gates + PLANNED no_route per race layout, hard)
+[bands] proj_demo4: v2 corridors for ['race_acw', 'race_cw']; strips on 4499/4499 verts (closed loops, 5 trimmed corners); 8 kerbs at 5 corners; 9 sealed mouths; clear width 11.36 m (measured 11.36)
+[bands]   whole v4454->v777; boxes [(1506, 1521), (2311, 2328), (3289, 3304)]; closure runs [[777, 1506], [1521, 2311], [2328, 3289], [3304, 4454]]; openings [[1074, 1095]]
+[bands]   race_cw (token cw, race side R): 4 runs, 10907 m of closure, clear min 6.86 / median 11.36 m, min radius 22.4 m, 412 forbidden probes
+[bands]     v777->v1506 College Avenue          2200.6 m  pins 1:6.0 / 1:4.69  toward 1:12.0 away 1:6.0  clear 6.86 / 9.12  below floor [(823, 845, 'convergence'), (846, 1074, 'island'), (1093, 1255, 'island'), (1348, 1360, 'convergence')]
+[bands]     v1521->v2311 Navajo Road             2374.5 m  pins 1:3.56 / 1:3.29  toward 1:12.0 away 1:6.0  clear 6.86 / 11.25  below floor [(1540, 1739, 'island'), (1740, 1744, 'convergence'), (2168, 2171, 'convergence'), (2179, 2182, 'convergence')]
+[bands]     v2328->v3289 Jackson Drive           2883.8 m  pins 1:6.0 / 1:6.0  toward 1:20.59 away 1:17.38  clear 10.86 / 11.36  below floor []
+[bands]     v3304->v4454 Lake Murray Boulevard   3448.3 m  pins 1:6.0 / 1:10.0  toward 1:20.61 away 1:12.72  clear 10.86 / 11.51  below floor []
+[bands]     planned no_route: PASS — leak 0 m2, 0 doors, reached 139130 m2 (5.6 s)
+[bands]   race_acw (token acw, race side L): 4 runs, 10907 m of closure, clear min 6.86 / median 11.36 m, min radius 24.1 m, 412 forbidden probes
+[bands]     v4454->v3304 Lake Murray Boulevard   3448.3 m  pins 1:10.0 / 1:6.0  toward 1:12.72 away 1:20.61  clear 10.86 / 11.51  below floor []
+[bands]     v3289->v2328 Jackson Drive           2883.8 m  pins 1:6.0 / 1:6.0  toward 1:17.38 away 1:20.59  clear 10.86 / 11.36  below floor []
+[bands]     v2311->v1521 Navajo Road             2374.5 m  pins 1:3.29 / 1:3.56  toward 1:12.0 away 1:6.0  clear 6.86 / 11.28  below floor [(2295, 2183, 'island'), (2182, 2182, 'convergence'), (1758, 1740, 'convergence'), (1739, 1540, 'island')]
+[bands]     v1506->v777 College Avenue          2200.6 m  pins 1:4.69 / 1:6.0  toward 1:12.0 away 1:6.0  clear 6.86 / 9.12  below floor [(1485, 1468, 'island'), (1461, 1376, 'island'), (1284, 1272, 'convergence'), (1255, 1096, 'island')]
+[bands]     planned no_route: PASS — leak 0 m2, 0 doors, reached 138826 m2 (5.6 s)
+[bands]   mirror: max |y_cw + y_acw| 0.113 m on the running vertices (2.489 m incl. the convergences, which lead each island in each layout's own travel)
+[bands]   kerb apex v0 outside side L v4484-v16 (wraps)
+[bands]   kerb apex v0 inside  side R v4493-v7 (wraps)
+[bands]   kerb apex v770 outside side L v744-v776 clipped from [744, 782]
+[bands]   kerb apex v770 inside  side R v751-v763 pulled back from [751, 775] (race.kerbs.trims)
+[bands]   kerb apex v1514 outside side L v1507-v1520 clipped from [1501, 1526]
+[bands]   kerb apex v2319 outside side L v2312-v2327 clipped from [2306, 2333]
+[bands]   kerb apex v3297 outside side L v3290-v3303 clipped from [3283, 3310]
+[bands]   kerb apex v3297 inside  side R v3291-v3302
+[bands]   kerb apex v1514 inside  side R DROPPED (race.kerbs.trims; detected v1508-v1519): College/Navajo inside apex: only 18 of the kerb's 34 stations sit on one sheet - about 1.5 m at each end (v150
+[bands]   kerb apex v2319 inside  side R DROPPED (race.kerbs.trims; detected v2313-v2326): Navajo/Jackson inside apex (race_cw's AI line apexes 1.5 m off it): the ribbon folds into two sheets up to 0.4
+[bands]   edge corner R loop   v763->v774 10 vertices trimmed
+[bands]   edge corner R loop   v1508->v1517 8 vertices trimmed
+[bands]   edge corner R loop   v2314->v2324 9 vertices trimmed
+[bands]   edge corner R extend v3292->v3300 7 vertices trimmed
+[bands]   edge corner R extend v4495->v5 7 vertices trimmed
+[bands] wrote C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\barrier_bands.json
+
+=================== gate: PLANNED no_route per race layout (the declared walls contain the lane — read back, hard)
+  race_cw   planned: PASS  leak_cells 0  blocked 0  forbidden_reached 0  spawns_unreached 0  reached 139130 m2
+  race_acw  planned: PASS  leak_cells 0  blocked 0  forbidden_reached 0  spawns_unreached 0  reached 138826 m2
+[dummies] street: AC_TIME_1 v1803 at 4511 m (0.335 lap) from the line
+[dummies] street: AC_TIME_2 v3310 at 9024 m (0.669 lap) from the line
+[dummies] street    forward pole v291 (-734.79, 9.52, -1278.14) right +3.25 m yaw -101.6 deg; line v300 27.1 m ahead; pits v274..v257 -> dummies_street.json
+[dummies] race_cw: AC_TIME_1 v1803 at 4511 m (0.335 lap) from the line
+[dummies] race_cw: AC_TIME_2 v3310 at 9024 m (0.669 lap) from the line
+[dummies] race_cw   forward pole v291 (-734.79, 9.52, -1278.14) right +3.25 m yaw -101.6 deg; line v300 27.1 m ahead; pits v274..v257 -> dummies_race_cw.json
+[dummies] race_acw: AC_TIME_1 v3310 at 4456 m (0.331 lap) from the line
+[dummies] race_acw: AC_TIME_2 v1803 at 8969 m (0.665 lap) from the line
+[dummies] race_acw  reverse pole v310 (-792.10, 8.96, -1273.56) right +3.25 m yaw +79.0 deg; line v300 30.1 m ahead; pits v327..v344 -> dummies_race_acw.json
+[dummies] wrote 3 layout file(s)
+
+=================== author: race furniture -> loop.blend: RACE (curb strips + kerbs, common) + RACE_CLOSE_<TOKEN> (one closure per race layout)
+[race] spawn note race_cw: minimum spawn clearance 0.48 m at AC_START_1 v289 (edge-strip face 5.68 m) (hard floor 0.30 m)
+[race] spawn note race_acw: minimum spawn clearance 0.48 m at AC_START_1 v312 (edge-strip face 5.68 m) (hard floor 0.30 m)
+[race] deck vs data -0.238 m at 1WALL_race_edge_R_jackson_2324_0 v2324
+[race] deck vs data -0.238 m at 1WALL_race_edge_R_navajo_1517_0 v2324
+[race] deck vs data -0.228 m at 1WALL_race_edge_R_jackson_2324_0 v2325
+[race] deck vs data +0.228 m at 1WALL_race_edge_R_navajo_1517_0 v2314
+[race] deck vs data +0.228 m at 1WALL_race_edge_R_navajo_1517_0 v2314
+[race] COMMON (collection RACE): curb strips 26989.1 m / 9054 rings in 15 objects (closed loops, bridges included); kerbs 449.2 m / 1172 stations in 8 objects
+[race] race_cw closure (collection RACE_CLOSE_CW, token cw): 10927.5 m (centreline 10907.2 m) / 3637 rings / 2705 x 4.04 m in 6 objects, 36370 positions, ~58272 render verts
+[race] race_acw closure (collection RACE_CLOSE_ACW, token acw): 10909.9 m (centreline 10907.2 m) / 3636 rings / 2700 x 4.04 m in 6 objects, 36360 positions, ~58256 render verts
+[race] closure pins: 16, gap to the far curb strip max 0.000 m; free ends: 0
+[race] kerb 1KERB_race_770_out run v744-v776: 0 stations under another ROAD sheet
+[race] kerb 1KERB_race_770_in run v751-v763: 0 stations under another ROAD sheet
+[race] kerb 1KERB_race_1514_out run v1507-v1520: 0 stations under another ROAD sheet
+[race] kerb 1KERB_race_2319_out run v2312-v2327: 0 stations under another ROAD sheet
+[race] kerb 1KERB_race_3297_out run v3290-v3303: 0 stations under another ROAD sheet
+[race] kerb 1KERB_race_3297_in run v3291-v3302: 0 stations under another ROAD sheet
+[race] kerb 1KERB_race_0_out run v4484-v16: 0 stations under another ROAD sheet
+[race] kerb 1KERB_race_0_in run v4493-v7: 0 stations under another ROAD sheet
+[race] kerb 1KERB_race_770_out wear (ledger 0053): 119.86 m, metres at rubber level 0..3 [86.2, 10.1, 8.8, 14.8], 9 column seams, heavy rubber at [[-59.1, -49.8], [11.7, 15.9]] m from the apex
+[race] kerb 1KERB_race_770_in wear (ledger 0053): 26.04 m, metres at rubber level 0..3 [7.1, 4.0, 2.9, 12.1], 3 column seams, heavy rubber at [[-32.6, -17.0]] m from the apex
+[race] kerb 1KERB_race_1514_out wear (ledger 0053): 55.4 m, metres at rubber level 0..3 [34.2, 7.6, 6.9, 6.6], 6 column seams, heavy rubber at [[-17.6, -14.0], [13.9, 16.1]] m from the apex
+[race] kerb 1KERB_race_2319_out wear (ledger 0053): 59.83 m, metres at rubber level 0..3 [34.8, 8.0, 6.3, 10.7], 6 column seams, heavy rubber at [[-18.4, -13.0], [16.4, 20.8]] m from the apex
+[race] kerb 1KERB_race_3297_out wear (ledger 0053): 51.39 m, metres at rubber level 0..3 [28.4, 7.6, 4.8, 10.6], 6 column seams, heavy rubber at [[-17.5, -12.7], [11.3, 16.3]] m from the apex
+[race] kerb 1KERB_race_3297_in wear (ledger 0053): 11.43 m, metres at rubber level 0..3 [4.5, 5.1, 1.0, 0.9], 5 column seams, heavy rubber at [[3.7, 6.1]] m from the apex
+[race] kerb 1KERB_race_0_out wear (ledger 0053): 102.73 m, metres at rubber level 0..3 [57.7, 13.0, 11.1, 20.9], 12 column seams, heavy rubber at [[-21.7, -12.1], [19.1, 29.3]] m from the apex
+[race] kerb 1KERB_race_0_in wear (ledger 0053): 22.54 m, metres at rubber level 0..3 [6.5, 1.8, 2.0, 12.3], 4 column seams, heavy rubber at [[-8.1, 11.1]] m from the apex
+[race] kerb atlas: 51 column seams, metres at level 0..3 [259.4, 57.2, 43.8, 88.9], ~7254 kerb render verts
+[race] bridge spans: 328 rings hit / 0 near / 0 interpolated
+[race] 167958 positions in 35 objects; seated 17499 hit / 0 near / 0 interpolated; deck vs data max 0.238 m; other deck above 0 rings (max 0.0 m); removed 0 old; saved loop.blend (6.1 s)
+[race] trimmed fold 1WALL_race_edge_R_jackson_2324_1: extend corner at (2602.47, 517.36) turn -85.7 deg, mitre 1.364, 7 rings/stations removed
+[race] trimmed fold 1WALL_race_edge_R_lakemurray_3300_1: extend corner at (-2.92, -1654.50) turn -73.1 deg, mitre 1.245, 7 rings/stations removed
+[race] trimmed fold 1WALL_race_edge_R_alvarado_5_0: loop corner at (-1976.73, -1270.03) turn -74.9 deg, mitre 1.26, 10 rings/stations removed
+[race] trimmed fold 1WALL_race_edge_R_college_774_0: loop corner at (-1961.40, 592.81) turn -66.8 deg, mitre 1.198, 8 rings/stations removed
+[race] trimmed fold 1WALL_race_edge_R_navajo_1517_0: loop corner at (50.03, 1710.94) turn -92.8 deg, mitre 1.45, 9 rings/stations removed
+[race] trimmed fold 1KERB_race_3297_in: extend corner at (2603.41, 517.49) turn -68.7 deg, mitre 1.211, 48 rings/stations removed
+[race] trimmed fold 1KERB_race_0_in: extend corner at (0.96, -1650.72) turn +59.3 deg, mitre 1.151, 25 rings/stations removed
+[race] inside-out spans (author-time column test): 0
+[race] shading: smooth, hard edges > 30 deg + kerb outline; 333112 triangles -> ~268718 render verts (0.807 per triangle; flat-shaded was 3.0)
+[race] density: 85 rings inserted; ring spacing max 3.5 m (target 3.5), chord vs the declared curve max 0.0426 m (target 0.1)
+
+=================== author: verify the authored furniture against its declaration (tools/verify_race.py, hard: common set + each layout)
+[verify-race] 35 objects. COMMON: curb strips 15 objects / 9054 rings on all 4498 vertices x 2 sides (missing {'L': 0, 'R': 30}, declared trimmed {'L': 0, 'R': 41} at 5 corners, missing undeclared {'L': 0, 'R': 0}, worst gap 3.503 m); kerbs 8 at 5 corners; free ends 0; interpolated 0/17499; bridge seating {'hit': 328, 'near': 0, 'interpolated': 0}
+[verify-race] race_acw (token acw): closure 6 objects / 4 runs / 3636 rings, off the declared line max 0.007 m; pins vs the far strip line [0.005, 0.001, 0.003, 0.004, 0.002, 0.001, 0.001, 0.001]
+[verify-race] race_cw (token cw): closure 6 objects / 4 runs / 3637 rings, off the declared line max 0.007 m; pins vs the far strip line [0.001, 0.001, 0.006, 0.004, 0.0, 0.006, 0.003, 0.001]
+[verify-race] J pins 16 (gap to the authored far strip max 0.0 m); E kerb clearance to the closures {'1KERB_race_770_out': (2.953, 'race_cw'), '1KERB_race_770_in': (None, 'race_acw'), '1KERB_race_1514_out': (3.059, 'race_cw'), '1KERB_race_2319_out': (2.482, 'race_cw'), '1KERB_race_3297_out': (2.753, 'race_cw'), '1KERB_race_3297_in': (5.193, 'race_acw'), '1KERB_race_0_out': (None, 'race_acw'), '1KERB_race_0_in': (None, 'race_acw')}
+[verify-race] H density: 16300 spans vs the declared offset curve, chord max 0.0428 m at 1WALL_race_edge_L_alvarado_0_0 ring 787 (FAIL > 0.15 m, 0 over); ring spacing max 3.503 m (measured spans 3.503 m); 0 fold spans, 0 unmeasured
+[verify-race] I inside-out: 0 spans over every strip / closure / kerb object (0 objects unmeasured)
+[verify-race] F race_acw: min clearance 0.48 m (hard floor 0.3 m): HOTLAP_START_0 +1.48/lane+1.48, PIT_0 +1.48/lane+1.48, PIT_1 +1.48/lane+1.48, PIT_2 +1.48/lane+1.48, PIT_3 +1.48/lane+1.48, PIT_4 +1.48/lane+1.48, PIT_5 +1.48/lane+1.48, PIT_6 +1.48/lane+1.48, PIT_7 +1.48/lane+1.48, START_0 +1.48/lane+1.48, START_1 +0.48/lane+0.48, START_2 +2.48/lane+2.48, START_3 +0.48/lane+0.48, START_4 +2.48/lane+2.48, START_5 +0.48/lane+0.48, START_6 +2.48/lane+2.48, START_7 +0.48/lane+0.48
+[verify-race] F race_cw: min clearance 0.48 m (hard floor 0.3 m): HOTLAP_START_0 +1.48/lane+1.48, PIT_0 +1.48/lane+1.48, PIT_1 +1.48/lane+1.48, PIT_2 +1.48/lane+1.48, PIT_3 +1.48/lane+1.48, PIT_4 +1.48/lane+1.48, PIT_5 +1.48/lane+1.48, PIT_6 +1.48/lane+1.48, PIT_7 +1.48/lane+1.48, START_0 +1.48/lane+1.48, START_1 +0.48/lane+0.48, START_2 +2.48/lane+2.48, START_3 +0.48/lane+0.48, START_4 +2.48/lane+2.48, START_5 +0.48/lane+0.48, START_6 +2.48/lane+2.48, START_7 +0.48/lane+0.48
+[verify-race] G lamps: 239/239 masts beside a strip (arm 1.8 m, mast r 0.585 m); minimum margin 2.364 m at lamp 0 v20 lat +10.21 vs the edge strip; 0 inside; nearest to a closure 2.365 m (lamp 174 v3304, closure_race_acw)
+[verify-race] G scenery (trees: tools/make_treefx.py plan (every species); signs: data/signs.local.json): {'tree': 15260, 'sign': 23} items, 399 beside the race road; 0 in a lane or a wall (trunk r 0.3 m, post r 0.03 m); nearest per layout: race_acw 0.662 m (tree Sage.bin@median_planting#2402 v1054 vs the closure), race_cw 0.655 m (tree Bush.bin@median_planting#2461 v1196 vs the closure)
+[verify-race] note: F: race_cw: author-time: minimum spawn clearance 0.48 m at AC_START_1 v289 (edge-strip face 5.68 m) (hard floor 0.30 m)
+[verify-race] note: F: race_acw: author-time: minimum spawn clearance 0.48 m at AC_START_1 v312 (edge-strip face 5.68 m) (hard floor 0.30 m)
+[verify-race] note: built deck vs data height, worst 0.238 m
+[verify-race] OK -> C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\race_verify.json
+[plot-race] race_cw: 26 pictures -> C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\race_plots\race_cw (overview, 5 corners, Del Cerro, I-8 end, 10 noses, 8 pins)
+[plot-race] race_acw: 26 pictures -> C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\race_plots\race_acw (overview, 5 corners, Del Cerro, I-8 end, 10 noses, 8 pins)
+
+=================== ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)
+[build_kn5_loop] T-junctions: 1951 terrain faces re-fanned through the nodes on their edges
+[build_kn5_loop] kept-cell refinement: {'merged': 717, 't_junctions': 0, 'edges_split': 94876, 'ears_clipped': 91716, 'kept_vertices': 211864, 'moved': 61564, 'max_move_m': 8.05, 'fins': 0, 'held_on_z
+[build_kn5_loop] terrain conform: 58527 corridor edges split, 40059 verts pinned to deck-0.02, 27737 feathered, 11490 released verts left unfeathered
+[build_kn5_loop] house seat: 152 buildings seated on the final ground under their footprints, 131 with a foundation reaching down a slope (deepest 9.54 m)
+[build_kn5_loop] split 1GRASS (367577 verts) -> 8 tiles under 60000 (balanced bisection)
+[build_kn5_loop] split GRASS_FAR (111821 verts) -> 2 tiles under 60000 (balanced bisection)
+[build_kn5_loop] terrain tiles: 1GRASS x8 (max 46461 v, total 369137 v), GRASS_FAR x2 (max 56225 v, total 112173 v)
+[build_kn5_loop] multi-layout (3 layouts): spawns ride in per-layout kn5s — no AC_* empties in the road scene, data/dummies.json = {}
+[build_kn5_loop] prepped ['1GRASS_0', '1GRASS_1', '1GRASS_2', '1GRASS_3', '1GRASS_4', '1GRASS_5', '1GRASS_6', '1GRASS_7', '1KERB_race_0_in', '1KERB_race_0_out', '1KERB_race_1514_out', '1KERB_race_2319
+
+=================== ship: the I-8's own pavement, lane lines and median barrier on the final ground (visual only; self-checked)
+[freeway] scenery.freeway not enabled — nothing to do
+
+=================== ship: split the prepped scene -> road / common race / closure per race layout / spawn scenes (tools/split_exports_blend.py)
+[split] main: 40 meshes / 1147931 positions / 40 materials / 0 AC nodes / 0 race objects -> loop_main.blend
+[split] race (common): 23 meshes / 95228 positions (max 8000) / 23 materials / 0 AC nodes -> loop_race.blend
+[split] closure race_cw (token cw): 6 meshes / 36370 positions (max 7920) / 6 materials / 0 AC nodes -> loop_closure_race_cw.blend
+[split] closure race_acw (token acw): 6 meshes / 36360 positions (max 7910) / 6 materials / 0 AC nodes -> loop_closure_race_acw.blend
+[split] spawn street (forward): 23 AC_* empties, 0 meshes -> loop_spawn_street.blend
+[split] spawn race_cw (forward): 23 AC_* empties, 0 meshes -> loop_spawn_race_cw.blend
+[split] spawn race_acw (reverse): 23 AC_* empties, 0 meshes -> loop_spawn_race_acw.blend
+[split] manifest -> C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\blender\split\split_manifest.json; input untouched: C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\blender\san_diego_lake_murray.blend
+
+=================== ship: export road kn5 (shared by all layouts, spawn-free)
+INI materials=40 textures_staged=17
+KN5 EXISTS: True SIZE: 119928297 FILE: san_diego_lake_murray.kn5
+
+=================== ship: export the COMMON race-furniture kn5 (curb strips + kerbs; loaded by every race layout)
+INI materials=23 textures_staged=4
+KN5 EXISTS: True SIZE: 11811590 FILE: san_diego_lake_murray_race.kn5
+[race-kn5] san_diego_lake_murray_race.kn5 (COMMON): 11,811,590 B; 23 meshes (15 curb strips, 8 kerbs, 0 closure; max 12,812 v), 152,190 v / 187,764 tri = 0.811 per triangle; textures ['kerb_race_worn_diffuse.jpg', 'kerb_race_worn_normal.jpg', 'concrete_barrier_diffuse.png', 'concrete_barrier_normal.png']; nodes ['BlenderFile']
+[race-kn5] OK: COMMON meshes only, textures ['concrete_barrier_diffuse.png', 'concrete_barrier_normal.png', 'kerb_race_worn_diffuse.jpg', 'kerb_race_worn_normal.jpg'] all within the race set ['concrete_barrier_diffuse.png', 'concrete_barrier_normal.png', 'kerb_race_worn_diffuse.jpg', 'kerb_race_worn_normal.jpg'], no AC_* node
+
+=================== ship: export the race_cw CLOSURE kn5 (1WALL_RACE_CLOSE_CW_* only; loaded by race_cw alone)
+INI materials=6 textures_staged=2
+KN5 EXISTS: True SIZE: 5433534 FILE: san_diego_lake_murray_closure_race_cw.kn5
+[race-kn5] san_diego_lake_murray_closure_race_cw.kn5 (CLOSURE 'cw'): 5,433,534 B; 6 meshes (0 curb strips, 0 kerbs, 6 closure; max 12,692 v), 58,272 v / 72,684 tri = 0.802 per triangle; textures ['concrete_barrier_diffuse.png', 'concrete_barrier_normal.png']; nodes ['BlenderFile']
+[race-kn5] OK: CLOSURE 'cw' meshes only, textures ['concrete_barrier_diffuse.png', 'concrete_barrier_normal.png'] all within the race set ['concrete_barrier_diffuse.png', 'concrete_barrier_normal.png', 'kerb_race_worn_diffuse.jpg', 'kerb_race_worn_normal.jpg'], no AC_* node
+
+=================== ship: export the race_acw CLOSURE kn5 (1WALL_RACE_CLOSE_ACW_* only; loaded by race_acw alone)
+INI materials=6 textures_staged=2
+KN5 EXISTS: True SIZE: 5432722 FILE: san_diego_lake_murray_closure_race_acw.kn5
+[race-kn5] san_diego_lake_murray_closure_race_acw.kn5 (CLOSURE 'acw'): 5,432,722 B; 6 meshes (0 curb strips, 0 kerbs, 6 closure; max 12,676 v), 58,256 v / 72,664 tri = 0.802 per triangle; textures ['concrete_barrier_diffuse.png', 'concrete_barrier_normal.png']; nodes ['BlenderFile']
+[race-kn5] OK: CLOSURE 'acw' meshes only, textures ['concrete_barrier_diffuse.png', 'concrete_barrier_normal.png'] all within the race set ['concrete_barrier_diffuse.png', 'concrete_barrier_normal.png', 'kerb_race_worn_diffuse.jpg', 'kerb_race_worn_normal.jpg'], no AC_* node
+
+=================== ship: spawn kn5 per layout (nodes only: AC_START/PIT/HOTLAP/TIME from data/dummies_<id>.json)
+[spawn_kn5] exporter: exporter.kn5
+[spawn_kn5] yaw=0.0 layouts=['street', 'race_cw', 'race_acw']
+[spawn_kn5] street: kn5=True size=2104 dummies=23 shape=engine+yaw direction=forward
+[spawn_kn5] race_cw: kn5=True size=2104 dummies=23 shape=engine+yaw direction=forward
+[spawn_kn5] race_acw: kn5=True size=2104 dummies=23 shape=engine+yaw direction=reverse
+
+=================== ship: AI lines per layout (race: V3 lane-offset drafts — GENERATED, ledger 0023; street: draft)
+san_diego_lake_murray.kn5 + san_diego_lake_murray_race.kn5 + san_diego_lake_murray_closure_race_cw.kn5 -> C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\track.race_cw.obj  (77 groups, 1,929,765 v, 2,322,849 tri)
+  san_diego_lake_murray.kn5: 48 groups, 1,719,303 v, 2,062,401 tri (vertex offset 0)
+  san_diego_lake_murray_race.kn5: 23 groups, 152,190 v, 187,764 tri (vertex offset 1,719,303)
+  san_diego_lake_murray_closure_race_cw.kn5: 6 groups, 58,272 v, 72,684 tri (vertex offset 1,871,493)
+  gate centreline -> gate_centerline.json (finished_centerline, z un-mirrored to the OBJ frame)
+direction: FORWARD (layouts[race_cw].direction)
+  grid check: +0.99 (grid→timing chord over 27 m) -> FORWARD
+  corridor: race_cw (token cw) from barrier_bands.json v2 — zones {'whole': 820, 'pin': 8, 'closure': 2806, 'island': 820, 'box': 44}; open corners [0, 1514, 2319, 3297], kept on the floor fillet [770]; face folds trimmed {'hi': [], 'lo': ['extend', 'loop', 'extend', 'loop', 'extend']}
+  ai (ledger 0052): {"payload": "kunos", "wall_clear_m": 2.5, "fair": true, "surface": "gate_obj"}; built surface + walls from track.race_cw.obj (24,478 road tris, 331,189 wall segments)
+corridor: min clear 2.517 m off a wall face (point 2488, y_hi (forward-left)); outside 0, within 0.6 m 0; sealed mouths min 4.466 m; points in an open box 59; corner arcs v0 R 42.19 m (comfort, was 10.86), v1514 R 26.08 m (comfort, was 5.98), v2319 R 29.03 m (comfort, was 6.43), v3297 R 41.31 m (comfort, was 8.53); min speed 52.9 km/h
+lane: 8,514/8,982 pts offset into the right-hand carriageway (max 10.45 m); divider stations 0, on the correct side n/a; island hits 0, within 0.6 m of a divider face 0, of a kerb-line barrier face / pavement edge 0, edge 2.06 m
+geometry: 0 offset tapers (clamped 0), 0 inside corners taken from the lane's outside, 0 folds trimmed [], 1 corners filleted (R 12.6-12.6 m), smoothing 0+0 iterations moved 0+0 pts; min radius 13.78 m, max turn 5.5 deg, turns > 10 deg: 0 (+0 where the road is that tight), radius under the floor 0, max lateral jump 1.063 m, backward steps 0, self-crossings 0; start 0.0 m from the dummies_race_cw.json AC_TIME_0 midpoint
+  box rule (ledger 0052, >= 0.85 x the v0.17.1-rule arc): v0 38.8/45.13 m, v1514 24.63/28.66 m, v2319 28.17/32.78 m, v3297 38.22/44.45 m
+closed loop, 8,982 pts at 1.50 m over 13,465.0 m; est lap 242.8 s (250 km/h peak) -> C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\ai\race_cw
+  fast_lane.ai: v7, 8,982 pts, 1.50 m spacing over 13,464 m, header lap 0 (as Kunos), extras=yes
+
+=================== gate: verify_ai_line --layout race_cw (hard; ledger 0052 - the written line vs the BUILT walls and road)
+verify_ai_line race_cw: wall min 2.544 m, under 2.5 m 0.0; spurious dips 0, flips 0.743/km; sides past a wall 0; min radius 13.79 m; lap est 280.2 s (mu 1.0) -> C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\ai_verify.race_cw.json
+  PASS
+san_diego_lake_murray.kn5 + san_diego_lake_murray_race.kn5 + san_diego_lake_murray_closure_race_acw.kn5 -> C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\track.race_acw.obj  (77 groups, 1,929,749 v, 2,322,829 tri)
+  san_diego_lake_murray.kn5: 48 groups, 1,719,303 v, 2,062,401 tri (vertex offset 0)
+  san_diego_lake_murray_race.kn5: 23 groups, 152,190 v, 187,764 tri (vertex offset 1,719,303)
+  san_diego_lake_murray_closure_race_acw.kn5: 6 groups, 58,256 v, 72,664 tri (vertex offset 1,871,493)
+  gate centreline -> gate_centerline.json (finished_centerline, z un-mirrored to the OBJ frame)
+direction: REVERSE (layouts[race_acw].direction)
+  grid check: -0.99 (grid→timing chord over 30 m) -> REVERSE
+  corridor: race_acw (token acw) from barrier_bands.json v2 — zones {'whole': 820, 'pin': 8, 'closure': 2806, 'island': 820, 'box': 44}; open corners [0, 1514, 2319, 3297], kept on the floor fillet [770]; face folds trimmed {'hi': [], 'lo': ['extend', 'loop', 'extend', 'loop', 'extend']}
+  ai (ledger 0052): {"payload": "kunos", "wall_clear_m": 2.5, "fair": true, "surface": "gate_obj"}; built surface + walls from track.race_acw.obj (24,478 road tris, 331,165 wall segments)
+corridor: min clear 2.379 m off a wall face (point 7874, y_lo (forward-right)); outside 0, within 0.6 m 0; sealed mouths min 4.55 m; points in an open box 66; corner arcs v0 R 43.43 m (comfort, was 8.1), v1514 R 48.99 m (comfort, was 9.54), v2319 R 46.66 m (comfort, was 11.27), v3297 R 56.42 m (comfort, was 10.81); min speed 54.0 km/h
+lane: 8,479/8,966 pts offset into the right-hand carriageway (max 11.43 m); divider stations 0, on the correct side n/a; island hits 0, within 0.6 m of a divider face 0, of a kerb-line barrier face / pavement edge 0, edge 2.29 m
+geometry: 0 offset tapers (clamped 0), 0 inside corners taken from the lane's outside, 0 folds trimmed [], 2 corners filleted (R 12.6-12.6 m), smoothing 0+0 iterations moved 0+0 pts; min radius 14.33 m, max turn 5.4 deg, turns > 10 deg: 0 (+0 where the road is that tight), radius under the floor 0, max lateral jump 1.069 m, backward steps 0, self-crossings 0; start 0.0 m from the dummies_race_acw.json AC_TIME_0 midpoint
+  box rule (ledger 0052, >= 0.85 x the v0.17.1-rule arc): v0 41.8/47.49 m, v1514 47.39/52.24 m, v2319 45.31/52.31 m, v3297 51.1/58.54 m
+closed loop, 8,966 pts at 1.50 m over 13,443.8 m; est lap 235.9 s (250 km/h peak) -> C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\ai\race_acw
+  fast_lane.ai: v7, 8,966 pts, 1.50 m spacing over 13,442 m, header lap 0 (as Kunos), extras=yes
+
+=================== gate: verify_ai_line --layout race_acw (hard; ledger 0052 - the written line vs the BUILT walls and road)
+verify_ai_line race_acw: wall min 2.386 m, under 2.5 m 0.00045; spurious dips 0, flips 0.521/km; sides past a wall 0; min radius 14.33 m; lap est 272.8 s (mu 1.0) -> C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\ai_verify.race_acw.json
+  PASS
+direction: FORWARD (layouts[street].direction)
+  grid check: +0.99 (grid→timing chord over 27 m) -> FORWARD
+  race furniture OFF for this line: centre chain / kerb-line inset not applied
+lane: 2,139/8,994 pts offset into the right-hand carriageway (max 11.75 m); divider stations 1,669, on the correct side 1.0; island hits 0, within 0.6 m of a divider face 0, of a kerb-line barrier face / pavement edge 0; min clear divider 4.21 m, edge 1.00 m
+geometry: 8 offset tapers (clamped 0), 0 inside corners taken from the lane's outside, 1 folds trimmed ['extend'], 6 corners filleted (R 12.6-12.6 m), smoothing 0+0 iterations moved 0+0 pts; min radius 12.49 m, max turn 6.9 deg, turns > 10 deg: 0 (+0 where the road is that tight), radius under the floor 0, max lateral jump 0.857 m, backward steps 0, self-crossings 0; start 0.0 m from the dummies_street.json AC_TIME_0 midpoint
+closed loop, 8,994 pts at 1.50 m over 13,490.3 m; est lap 319.1 s (250 km/h peak) -> C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\ai\street
+  fast_lane.ai: v7, 8,994 pts, 1.50 m spacing over 13,489 m, lap 319.1 s, extras=yes
+
+=================== ship: verify_kn5 (hard — spawn-free road, common race kn5 + one closure kn5 per race layout (its token only), one spawn kn5 per layout, facing, side, lane, sectors)
+  terrain tiles: 1GRASS x8 (max 46542 v), GRASS_FAR x2 (max 56227 v)
+  [street] heading: 17 facing nodes, local +Z · travel min +1.00 (AC_START_2), AC_START_0 +1.00
+  [race_cw] heading: 17 facing nodes, local +Z · travel min +1.00 (AC_START_2), AC_START_0 +1.00
+  [race_cw] lane: 16 START/PIT cars inside the declared lane, nearest face +0.48 m (AC_START_1)
+  [race_acw] heading: 17 facing nodes, local +Z · travel min +1.00 (AC_PIT_4), AC_START_0 +1.00
+  [race_acw] lane: 16 START/PIT cars inside the declared lane, nearest face +0.48 m (AC_START_7)
+✓ kn5 verification passed (no dup meshes, drivable surfaces face-up, spawns on road, per-layout spawn kn5s facing their travel, race furniture split common / per-direction closure)
+
+=================== gate: road kn5 -> gate OBJ (engine frame) + gate centreline
+san_diego_lake_murray.kn5 -> C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\track.obj  (48 groups, 1,719,303 v, 2,062,401 tri)
+  gate centreline -> gate_centerline.json (finished_centerline, z un-mirrored to the OBJ frame)
+
+=================== ship: track folder (models_<id>.ini x3, ui/<id>/, <id>/{map,data,ai}; a race layout without its closure kn5 is a HARD error)
+[track_folder] street/ai/: shipped 4 file(s) from C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\ai\street
+[track_folder] race_cw/ai/: shipped 4 file(s) from C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\ai\race_cw
+[track_folder] race_acw/ai/: shipped 4 file(s) from C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\ai\race_acw
+[track_folder] layouts packed: ['street', 'race_cw', 'race_acw'] (models_street.ini, models_race_cw.ini, models_race_acw.ini)
+wrote track folder → C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\build\san_diego_lake_murray
+  length_m: 13489.7
+  n_pits: 0
+  models: {'street': ['san_diego_lake_murray.kn5', 'san_diego_lake_murray__street.kn5'], 'race_cw': ['san_diego_lake_murray.kn5', 'san_diego_lake_murray_race.kn5', 'san_diego_lake_murray_closure_race_cw.kn5', 'san_diego_lake_murray__race_cw.kn5'], 'race_acw': ['san_diego_lake_murray.kn5', 'san_diego_lake_murray_race.kn5', 'san_diego_lake_murray_closure_race_acw.kn5', 'san_diego_lake_murray__race_acw.kn5']}
+
+=================== ship: verify_kn5 --inis (hard — each race ini lists exactly road + common race + ITS closure + its spawns; none lists another layout's closure)
+✓ models_<id>.ini verification passed (each race layout loads road + common race + ITS closure + its spawns; no ini loads another layout's closure)
+
+=================== ship: minimap in the KN5 frame, per layout (tools/make_map.py)
+[map] wrote C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\build\san_diego_lake_murray\map.png + data/map.ini (kn5 frame, 11 line(s), 5.545 m/px)
+[map] wrote C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\build\san_diego_lake_murray\race_acw\map.png + data/map.ini (kn5 frame, 11 line(s), 5.545 m/px)
+[map] wrote C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\build\san_diego_lake_murray\race_cw\map.png + data/map.ini (kn5 frame, 11 line(s), 5.545 m/px)
+[map] wrote C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\build\san_diego_lake_murray\street\map.png + data/map.ini (kn5 frame, 11 line(s), 5.545 m/px)
+
+=================== ship: TreeFX palms / street trees / scrub (tools/make_treefx.py)
+[treefx] fill: 3440 trees + 8920 bushes from the terrain grid (4x4 sub-cells per 40 m)
+[treefx] 15260 trees ({'palms': 891, 'trees': 412, 'scrub': 994, 'median_planting': 603, 'fill_yard_trees': 1657, 'fill_yard_bushes': 1559, 'fill_slope_trees': 1783, 'fill_slope_bushes': 7361}), 16 rejected in the corridor, species ['Agave.bin', 'Bush.bin', 'Bush3.bin', 'Gum.bin', 'Oak3.bin', 'PalmV1.bin', 'PalmV2.bin', 'PalmV3.bin', 'PepperV1.bin', 'Pine_Aleppo.bin', 'Sage.bin', 'SycamoreV1.bin', 'SycamoreV2.bin', 'Yucca.bin'] -> C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\build\san_diego_lake_murray\extension\trees\trees.txt + [TREES] in ext_config.ini
+
+=================== gate: scenery vs the race lanes and walls, on the WRITTEN trees.txt (tools/verify_race.py --scenery-only, hard)
+[verify-race] G scenery (trees: trees.txt (written); signs: data/signs.local.json): {'tree': 15260, 'sign': 23} items, 399 beside the race road; 0 in a lane or a wall (trunk r 0.3 m, post r 0.03 m); nearest per layout: race_acw 0.656 m (tree Sage.bin#2402 v1054 vs the closure), race_cw 0.656 m (tree Sage.bin#2638 v1722 vs the closure)
+[verify-race] OK (scenery only: G trunks + posts) -> C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\race_verify.scenery.json
+
+=================== gate: verify_mouths on the built road (every side-street mouth: mouth line, host lane, notch, approach — hard)
+[verify_mouths] del_cerro_blvd#0 (end) -> MAINLINE side +1 angle 75.63 deg: mouth line max 0.015 m (95 samples); host lane road/curb above max 0.0 m, grass max -0.006 m (1705 samples); notch max 0.02 m; approach max 1.13 %/m over 2.5 m (1 m: 2.72) — PASS
+[verify_mouths] del_cerro_blvd#1 (start) -> MAINLINE side -1 angle 86.05 deg: mouth line max 0.016 m (78 samples); host lane road/curb above max 0.0 m, grass max -0.009 m (1621 samples); notch max 0.016 m; approach max 0.98 %/m over 2.5 m (1 m: 1.71) — PASS
+[verify_mouths] medium#2+0#0#0 (start) -> MAINLINE side -1 angle 88.88 deg: mouth line max 0.003 m (34 samples); host lane road/curb above max 0.0 m, grass max -0.015 m (903 samples); notch max 0.005 m; approach max 1.82 %/m over 2.5 m (1 m: 0.98) — PASS
+[verify_mouths] STUB_reservoir_drive_6028810_L#0 (start) -> MAINLINE side +1 angle 88.9 deg: mouth line max 0.0 m (33 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (416 samples); notch max 0.001 m; approach max 0.22 %/m over 2.5 m (1 m: 0.27) — PASS
+[verify_mouths] STUB_lambda_drive_6021410_L#0 (start) -> MAINLINE side +1 angle 63.48 deg: mouth line max 0.01 m (43 samples); host lane road/curb above max 0.0 m, grass max -0.011 m (686 samples); notch max 0.008 m; approach max 0.96 %/m over 2.5 m (1 m: 1.91) — PASS
+[verify_mouths] STUB_saint_therese_way_27751389_R#0 (start) -> MAINLINE side -1 angle 89.16 deg: mouth line max 0.002 m (37 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (832 samples); notch max 0.004 m; approach max 1.29 %/m over 2.5 m (1 m: 1.32) — PASS
+[verify_mouths] STUB_camino_estrellado_5977723_R#0 (start) -> MAINLINE side -1 angle 76.12 deg: mouth line max 0.003 m (34 samples); host lane road/curb above max 0.0 m, grass max -0.013 m (651 samples); notch max 0.009 m; approach max 1.23 %/m over 2.5 m (1 m: 1.49) — PASS
+[verify_mouths] STUB_margerum_avenue_135149732_L#0 (start) -> MAINLINE side +1 angle 66.28 deg: mouth line max 0.001 m (38 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (706 samples); notch max 0.005 m; approach max 0.56 %/m over 2.5 m (1 m: 1.12) — PASS
+[verify_mouths] STUB_hyde_park_drive_5962845_R#0 (start) -> MAINLINE side -1 angle 88.5 deg: mouth line max 0.003 m (41 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (648 samples); notch max 0.007 m; approach max 0.99 %/m over 2.5 m (1 m: 1.57) — PASS
+[verify_mouths] medium#2+0#0#0 (end) -> del_cerro_blvd#1 side -1 angle 87.77 deg: mouth line max 0.004 m (41 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (665 samples); notch max 0.01 m; approach max 0.97 %/m over 2.5 m (1 m: 2.42) — PASS
+[verify_mouths] 10 mouth(s) on track.obj: PASS -> verify_mouths.json
+
+=================== gate: verify_stubs on the built road (every declared stub: present, welded, drivable to its barrier, the barrier curb to curb and seated — hard)
+[verify_stubs] STUB_reservoir_drive_6028810_L#0: mouth ok (line 0.0 m, approach 0.22 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.003 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 0.028 m, 14.513 m off the host edge; returns 4.648, 3.784 m — PASS
+[verify_stubs] STUB_lambda_drive_6021410_L#0: mouth ok (line 0.01 m, approach 0.96 %/m); drivable 0.45-15.06 m (holes 0, worst step 0.018 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / sink 0.0626 m, 8.442 m off the host edge; returns 4.896, 1.726 m — PASS
+[verify_stubs] STUB_saint_therese_way_27751389_R#0: mouth ok (line 0.002 m, approach 1.29 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.023 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / sink 0.0839 m, 14.556 m off the host edge; returns 3.076, 3.059 m — PASS
+[verify_stubs] STUB_camino_estrellado_5977723_R#0: mouth ok (line 0.003 m, approach 1.23 %/m); drivable 0.41-15.03 m (holes 0, worst step 0.011 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 0.0638 m, 12.98 m off the host edge; returns 4.585, 3.741 m — PASS
+[verify_stubs] STUB_margerum_avenue_135149732_L#0: mouth ok (line 0.001 m, approach 0.56 %/m); drivable 0.44-15.05 m (holes 0, worst step 0.006 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 0.0377 m, 9.926 m off the host edge; returns 5.2, 2.488 m — PASS
+[verify_stubs] STUB_hyde_park_drive_5962845_R#0: mouth ok (line 0.003 m, approach 0.99 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.01 m, grass 0, obstructions 0); barrier span +-7.58 m short 0/304, seat float -0.02 / sink 0.0455 m, 13.815 m off the host edge; returns 6.095, 3.935 m — PASS
+[verify_stubs] 6 stub(s), 0 curb cut(s) on track.obj: PASS -> verify_stubs.json
+
+=================== gate: terrain ribbing on the built ground (tools/rib_check.py: sub-cell features folded into staircases — hard)
+[ribs] C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\track.obj: 364594 lattice nodes of 481595 terrain vertices
+[ribs] nyquist     >0.5m:   4186 beyond 20 m of a pavement,    517 within
+[ribs] nyquist       >1m:    812 beyond 20 m of a pavement,    198 within
+[ribs] nyquist       >2m:     77 beyond 20 m of a pavement,     28 within
+[ribs] nyquist       >4m:      4 beyond 20 m of a pavement,      0 within
+[ribs] nyquist     hotspot (75, -1325): 4, max 2.41 m
+[ribs] nyquist     hotspot (3625, -1425): 4, max 3.65 m
+[ribs] nyquist     hotspot (-3925, -875): 3, max 3.48 m
+[ribs] nyquist     hotspot (3925, -1225): 3, max 4.06 m
+[ribs] nyquist     hotspot (-4025, -875): 2, max 2.75 m
+[ribs] nyquist     gate: 77 over 2 m beyond 20 m (limit 100)
+[ribs] cross_grain >0.5m:     42 beyond 20 m of a pavement,     19 within
+[ribs] cross_grain   >1m:     33 beyond 20 m of a pavement,      5 within
+[ribs] cross_grain   >2m:     25 beyond 20 m of a pavement,      1 within
+[ribs] cross_grain   >4m:     10 beyond 20 m of a pavement,      0 within
+[ribs] cross_grain hotspot (-1675, -25): 1, max 3.86 m
+[ribs] cross_grain hotspot (-1625, -725): 1, max 4.13 m
+[ribs] cross_grain hotspot (-1625, -125): 1, max 4.88 m
+[ribs] cross_grain hotspot (-1625, -75): 1, max 3.51 m
+[ribs] cross_grain hotspot (-1575, -175): 1, max 4.19 m
+[ribs] cross_grain gate: 33 over 1 m beyond 20 m (limit 100)
+[ribs] step_jogs   hotspot (3925, -1225): 3, max 3.39 m
+[ribs] step_jogs   hotspot (-3775, -775): 2, max 5.82 m
+[ribs] step_jogs   hotspot (-2125, -925): 2, max 6.25 m
+[ribs] step_jogs   hotspot (-1575, 1025): 2, max 4.75 m
+[ribs] step_jogs   hotspot (2825, -1775): 2, max 2.53 m
+[ribs] step_jogs   gate: 59 riser jogs (a row jump 2 m past the riser's own pace) beyond 20 m; the densest 75 m: 4 at (2852.0, -1732.8) (limit 5) — a sharp bench or channel drawn as a staircase, read on the built surface
+[ribs] nyquist straight (along a lattice axis, a ridge not a staircase; not gated): {'>0.5m': 3462, '>1m': 1072, '>2m': 100, '>4m': 2}
+[ribs] nyquist at 20/40 m cells (> 2 m; natural hill roughness at that scale, not gated): {'20': 10942, '40': 10029}
+[ribs] PASS
+
+=================== gate: houses on the built ground (tools/house_seat_check.py: floating, sunken or buried buildings — hard)
+[houses] C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\track.obj: 152 buildings judged, 0 with no ground under them
+[houses] contact (bottom - lowest ground under the walls): min -0.322 m, max -0.148 m
+[houses] floating (> 0.1 m above): 0 (limit 0); sunken (> 1 m below): 0 (limit 0); buried (roof < 1 m over the highest ground under the walls): 0 (limit 0); lowest roof over that ground 1.598 m
+[houses] the visual lens's buried share (mean ground over the height, foundation included; not gated): {'over_30pct': 14, 'over_50pct': 0, 'p95': 0.321}
+[houses] PASS
+
+=================== gate: drive_test, street layout (hard)
+  layout street: direction forward, kind street, furniture none, OBJ data/track.obj
+  [drive-time] pre-sweep setup            0.0s
+  [drive-time] post-sweep passes          7.8s
+DRIVE TEST san_diego_lake_murray [street forward street]  lap 13.48 km  (10 wheel paths @ 1.0 m)
+  ground on top mid-lane : 33
+  floating furniture (walls/fences off support): 391 [(-2043.1, -500.1, 99.0), (-2040.4, -501.3, 99.0), (-2043.0, -499.9, 99.0)]
+  undrivable corners (>100deg @ <11m): 0 
+  severe steps (>6 cm)  : 0
+  bumps >2.5 cm /km      : 0.0 (limit 75 for tarmac)
+  fold bumps (2.5-6 cm where a fixed-offset path runs backwards; reported, not gated): 20
+  slope kinks >3.0%% /km   : 3.41
+  daylight gaps at edges : 0
+  replication vs measured road : median 0.05 m  p95 0.37 m  max 8.56 m
+  off-road excursion drops>20cm : 98  (far flare ledges, reported: 106)
+    worst excursion drop: (13350.6, -11.0, 5.17, False)
+    worst excursion drop: (13350.6, 11.0, 4.92, False)
+    worst excursion drop: (2552.6, -14.0, 3.03, False)
+    worst excursion drop: (2100.3, -13.0, 1.57, True)
+    worst excursion drop: (1800.4, 11.5, 0.86, False)
+    worst excursion drop: (1800.4, 10.5, 0.85, False)
+  obstructed stations    : 0
+    worst soft_top: (2173.0, -6.0, '1GRASS_0')
+    worst soft_top: (2173.0, -5.32, '1GRASS_0')
+    worst soft_top: (2174.0, -6.0, '1GRASS_0')
+    worst soft_top: (2175.0, -6.0, '1GRASS_0')
+    worst soft_top: (2176.0, -6.0, '1GRASS_0')
+    worst soft_top: (2177.0, -6.0, '1GRASS_0')
+  => FAIL   (data/drive_test.street.json)
+
+DRIVE TEST SUMMARY san_diego_lake_murray: street=FAIL race_cw=- race_acw=-   (data/drive_test.json)
+
+=================== gate: audit_mesh, street (hard total; the regression floor — D 0 / K 20 / I 20 / F 13 since v0.18.0: the I-8 deck rails stand on the curb, 0.15 m off the pavement; D 512 while they stood on its edge, since the 2026-10-11 mouth weld + fold mend, was 512 / 154 / 145 / 15)
+AUDIT san_diego_lake_murray   (roads 18461v, grass 369420v, walls 74774v, piers 0)
+  A. supports standing in a road : 0
+  B. terrain poking through road : 0  (worst +0.0 m)
+  C. at-grade junction crossings : 0  ({'ramp': 0, 'mainline': 0})
+  D. walls sitting on a road     : 0
+  E. walls floating over ground  : 0  (worst +0.0 m)
+  F. curbs not flush             : 13  (of 56612 curb verts,
+                                      edge-scoped, top-surface only;
+                                      1594 skirt verts off terrain (advisory), 1699 side faces skipped,
+                                      grounding is gated by drive_test + E/H)
+  G. plants floating over ground : (env not built)
+  H. ground cutting into road    : (no ground grid)  (worst +0.0 m)
+  I. sidewalk isolating pavement : 20  e.g. [(-1444.7, -531.1, 0.14), (-1446.9, -556.3, 0.14), (-1415.8, -532.2, 0.14)]
+  K. kerb/sidewalk in carriageway: 20  (worst +0.93 m above the road)
+  J. terrain triangles over road : 0
+  => 53 issues
+
+=================== gate: race_cw — road + common race + ITS closure kn5 -> ONE gate OBJ (the kn5 set race_cw loads) — data/track.race_cw.obj
+san_diego_lake_murray.kn5 + san_diego_lake_murray_race.kn5 + san_diego_lake_murray_closure_race_cw.kn5 -> C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\track.race_cw.obj  (77 groups, 1,929,765 v, 2,322,849 tri)
+  san_diego_lake_murray.kn5: 48 groups, 1,719,303 v, 2,062,401 tri (vertex offset 0)
+  san_diego_lake_murray_race.kn5: 23 groups, 152,190 v, 187,764 tri (vertex offset 1,719,303)
+  san_diego_lake_murray_closure_race_cw.kn5: 6 groups, 58,272 v, 72,684 tri (vertex offset 1,871,493)
+  gate centreline -> gate_centerline.json (finished_centerline, z un-mirrored to the OBJ frame)
+
+=================== gate: drive_test --layout race_cw (hard; the declared corridor lane — barrier_missing and obstruction_stations must be 0)
+  [drive] corridor cull: skipped 375540 triangles beyond 120 m
+  [drive-time] load + hash               10.1s
+  (median island on 1254 verts — wheel paths swept in the driven lane there; corridor race_cw: closure on 3634 verts, curb strips on 4499 verts — lane = the declared faces, presence gated)
+  layout race_cw: direction forward, kind race, furniture race, OBJ data/track.race_cw.obj
+  [drive-time] pre-sweep setup            0.0s
+  [drive-time] post-sweep passes         13.6s
+DRIVE TEST san_diego_lake_murray [race_cw forward race]  lap 13.48 km  (10 wheel paths @ 1.0 m)
+  ground on top mid-lane : 9
+  floating furniture (walls/fences off support): 391 [(-2043.1, -500.1, 99.0), (-2040.4, -501.3, 99.0), (-2043.0, -499.9, 99.0)]
+  undrivable corners (>100deg @ <11m): 0 
+  severe steps (>6 cm)  : 22
+  bumps >2.5 cm /km      : 4.38 (limit 75 for tarmac)
+  fold bumps (2.5-6 cm where a fixed-offset path runs backwards; reported, not gated): 45
+  slope kinks >3.0%% /km   : 6.23
+  daylight gaps at edges : 0
+  replication vs measured road : median 0.05 m  p95 0.37 m  max 8.56 m
+  off-road excursion drops>20cm : 0  (far flare ledges, reported: 204)
+    worst excursion drop: (13350.6, -11.0, 5.17, False)
+    worst excursion drop: (13350.6, 11.0, 4.92, False)
+    worst excursion drop: (2552.6, -14.0, 3.03, False)
+    worst excursion drop: (2100.3, -13.0, 1.57, False)
+    worst excursion drop: (1800.4, 11.5, 0.86, False)
+    worst excursion drop: (1800.4, 10.5, 0.85, False)
+  obstructed stations    : 0
+  declared barrier stations without a 1WALL : 0 (of 37869 probed; gap tolerance 4.04 m)
+    worst soft_top: (2257.0, -4.78, '1GRASS_0')
+    worst soft_top: (2257.0, -4.03, '1GRASS_0')
+    worst soft_top: (2258.0, -4.78, '1GRASS_0')
+    worst soft_top: (2258.0, -4.03, '1GRASS_0')
+    worst soft_top: (2259.0, -4.78, '1GRASS_0')
+    worst soft_top: (2259.0, -4.03, '1GRASS_0')
+    worst severe: (13475.0, -11.75, 0.08)
+    worst severe: (6956.0, -10.03, 0.079)
+    worst severe: (6957.0, -10.03, 0.079)
+    worst severe: (6956.0, -9.28, 0.073)
+    worst severe: (6957.0, -9.28, 0.073)
+    worst severe: (6958.0, -10.03, 0.073)
+  => FAIL   (data/drive_test.race_cw.json)
+
+DRIVE TEST SUMMARY san_diego_lake_murray: street=FAIL race_cw=FAIL race_acw=-   (data/drive_test.json)
+
+=================== gate: audit_mesh --layout race_cw (D exempt on THIS layout's bands only; W: no race strip through another wall)
+  (phase-5 stub barriers: 4040 1WALL_STUB verts on 398 declared footprint segments — D exempt there)
+AUDIT san_diego_lake_murray [race: track.race_cw.obj]   (roads 18461v, grass 369420v, walls 277982v, piers 0)
+  A. supports standing in a road : 0
+  B. terrain poking through road : 0  (worst +0.0 m)
+  C. at-grade junction crossings : 0  ({'ramp': 0, 'mainline': 0})
+  D. walls sitting on a road     : 0
+  E. walls floating over ground  : 0  (worst +0.0 m)
+  F. curbs not flush             : 13  (of 63866 curb verts,
+                                      edge-scoped, top-surface only;
+                                      1792 skirt verts off terrain (advisory), 1699 side faces skipped,
+                                      grounding is gated by drive_test + E/H)
+  G. plants floating over ground : (env not built)
+  H. ground cutting into road    : (no ground grid)  (worst +0.0 m)
+  I. sidewalk isolating pavement : 20  e.g. [(-1444.7, -531.1, 0.14), (-1446.9, -556.3, 0.14), (-1415.8, -532.2, 0.14)]
+  K. kerb/sidewalk in carriageway: 20  (worst +0.93 m above the road)
+  J. terrain triangles over road : 0
+  W. race strip through a wall   : 0
+  => 53 issues
+
+=================== gate: no_route --layout race_cw, BUILT (hard; flood fill from AC_START_0 on data/track.race_cw.obj — 0 leaks, lap complete, every spawn reached)
+[no_route] race_cw (built, v2 corridors.race_cw): domain 937 k m2 in 488 tiles of 64 m (2.5 s)
+[no_route] walls: 168940 -> 585858 wall cells, dilated 0.5 m (17.2 s)
+[no_route] reached 139.1 k m2 from AC_START_0 (17.3 s)
+[no_route] race_cw: PASS — leak 0 m2, 0 doors, 0/412 probes reached, 0 blocked spans, 0 spawns unreached (17.4 s)
+
+=================== gate: race_acw — road + common race + ITS closure kn5 -> ONE gate OBJ (the kn5 set race_acw loads) — data/track.race_acw.obj
+san_diego_lake_murray.kn5 + san_diego_lake_murray_race.kn5 + san_diego_lake_murray_closure_race_acw.kn5 -> C:\Users\Owner\AppData\Local\Temp\claude\C--Users-Owner-Documents-GitHub-airoso\59395b0b-e098-4e22-9ea8-1346efc0cf70\scratchpad\p5\proj_demo4\data\track.race_acw.obj  (77 groups, 1,929,749 v, 2,322,829 tri)
+  san_diego_lake_murray.kn5: 48 groups, 1,719,303 v, 2,062,401 tri (vertex offset 0)
+  san_diego_lake_murray_race.kn5: 23 groups, 152,190 v, 187,764 tri (vertex offset 1,719,303)
+  san_diego_lake_murray_closure_race_acw.kn5: 6 groups, 58,256 v, 72,664 tri (vertex offset 1,871,493)
+  gate centreline -> gate_centerline.json (finished_centerline, z un-mirrored to the OBJ frame)
+
+=================== gate: drive_test --layout race_acw (hard; the declared corridor lane — barrier_missing and obstruction_stations must be 0)
+  [drive] corridor cull: skipped 375540 triangles beyond 120 m
+  [drive-time] load + hash               10.0s
+  (median island on 1254 verts — wheel paths swept in the driven lane there; corridor race_acw: closure on 3634 verts, curb strips on 4499 verts — lane = the declared faces, presence gated)
+  layout race_acw: direction reverse, kind race, furniture race, OBJ data/track.race_acw.obj
+  [drive-time] pre-sweep setup            0.1s
+  [drive-time] post-sweep passes         13.6s
+DRIVE TEST san_diego_lake_murray [race_acw reverse race]  lap 13.48 km  (10 wheel paths @ 1.0 m)
+  ground on top mid-lane : 9
+  floating furniture (walls/fences off support): 391 [(-2043.1, -500.1, 99.0), (-2040.4, -501.3, 99.0), (-2043.0, -499.9, 99.0)]
+  undrivable corners (>100deg @ <11m): 0 
+  severe steps (>6 cm)  : 20
+  bumps >2.5 cm /km      : 6.75 (limit 75 for tarmac)
+  fold bumps (2.5-6 cm where a fixed-offset path runs backwards; reported, not gated): 49
+  slope kinks >3.0%% /km   : 7.05
+  daylight gaps at edges : 0
+  replication vs measured road : median 0.05 m  p95 0.37 m  max 8.56 m
+  off-road excursion drops>20cm : 0  (far flare ledges, reported: 221)
+    worst excursion drop: (10801.4, 14.5, 1.62, False)
+    worst excursion drop: (10951.3, 17.5, 0.89, False)
+    worst excursion drop: (10951.3, 17.0, 0.86, False)
+    worst excursion drop: (10951.3, 16.0, 0.84, False)
+    worst excursion drop: (10951.3, 16.5, 0.84, False)
+    worst excursion drop: (11700.8, -10.5, 0.82, False)
+  obstructed stations    : 0
+  declared barrier stations without a 1WALL : 0 (of 37870 probed; gap tolerance 4.04 m)
+    worst soft_top: (11218.0, 4.78, '1GRASS_0')
+    worst soft_top: (11219.0, 4.78, '1GRASS_0')
+    worst soft_top: (11220.0, 4.78, '1GRASS_0')
+    worst soft_top: (11221.0, 4.03, '1GRASS_0')
+    worst soft_top: (11221.0, 4.78, '1GRASS_0')
+    worst soft_top: (11222.0, 4.03, '1GRASS_0')
+    worst severe: (6525.0, 10.03, 0.079)
+    worst severe: (7.0, 11.61, 0.078)
+    worst severe: (6526.0, 10.03, 0.078)
+    worst severe: (6524.0, 10.03, 0.073)
+    worst severe: (6525.0, 9.28, 0.073)
+    worst severe: (6526.0, 9.28, 0.073)
+  => FAIL   (data/drive_test.race_acw.json)
+
+DRIVE TEST SUMMARY san_diego_lake_murray: street=FAIL race_cw=FAIL race_acw=FAIL   (data/drive_test.json)
+
+=================== gate: audit_mesh --layout race_acw (D exempt on THIS layout's bands only; W: no race strip through another wall)
+  (phase-5 stub barriers: 4040 1WALL_STUB verts on 398 declared footprint segments — D exempt there)
+AUDIT san_diego_lake_murray [race: track.race_acw.obj]   (roads 18461v, grass 369420v, walls 277966v, piers 0)
+  A. supports standing in a road : 0
+  B. terrain poking through road : 0  (worst +0.0 m)
+  C. at-grade junction crossings : 0  ({'ramp': 0, 'mainline': 0})
+  D. walls sitting on a road     : 0
+  E. walls floating over ground  : 0  (worst +0.0 m)
+  F. curbs not flush             : 13  (of 63866 curb verts,
+                                      edge-scoped, top-surface only;
+                                      1792 skirt verts off terrain (advisory), 1699 side faces skipped,
+                                      grounding is gated by drive_test + E/H)
+  G. plants floating over ground : (env not built)
+  H. ground cutting into road    : (no ground grid)  (worst +0.0 m)
+  I. sidewalk isolating pavement : 20  e.g. [(-1444.7, -531.1, 0.14), (-1446.9, -556.3, 0.14), (-1415.8, -532.2, 0.14)]
+  K. kerb/sidewalk in carriageway: 20  (worst +0.93 m above the road)
+  J. terrain triangles over road : 0
+  W. race strip through a wall   : 0
+  => 53 issues
+
+=================== gate: no_route --layout race_acw, BUILT (hard; flood fill from AC_START_0 on data/track.race_acw.obj — 0 leaks, lap complete, every spawn reached)
+[no_route] race_acw (built, v2 corridors.race_acw): domain 937 k m2 in 488 tiles of 64 m (2.6 s)
+[no_route] walls: 168928 -> 585637 wall cells, dilated 0.5 m (16.8 s)
+[no_route] reached 138.8 k m2 from AC_START_0 (16.9 s)
+[no_route] race_acw: PASS — leak 0 m2, 0 doors, 0/412 probes reached, 0 blocked spans, 0 spawns unreached (17.0 s)
+
+=================== gate: verify_fold_fans (every levelled mainline fold pinch, all layouts, on the BUILT gate OBJs — hard)
+[fold-fans] pinch rows 763..774 (ROAD lane 2): legs 9.934 / 9.891, midpoint 9.912 — mouth_welds.json levelled
+[fold-fans] pinch rows 1508..1517 (ROAD lane 2): legs 24.471 / 24.418, midpoint 24.445 — mouth_welds.json levelled
+[fold-fans] pinch rows 2315..2324 (ROAD lane 2): legs 108.813 / 109.310, midpoint 109.061 — mouth_welds.json levelled
+[fold-fans] street    rows 751..786: 117 paths, 0 with a step; fine max 0.000, DT max 0.025, race-kerb lip max 0.000, grass-on-top 79 (max 0.013 over), road jumps 0, steep road tris 0, X built [9.9125, 9.9125] vs midpoint 9.9125
+[fold-fans] street    rows 1496..1529: 117 paths, 0 with a step; fine max 0.000, DT max 0.021, race-kerb lip max 0.000, grass-on-top 56 (max 0.005 over), road jumps 0, steep road tris 0, X built [24.4447, 24.4447] vs midpoint 24.4446
+[fold-fans] street    rows 2303..2336: 101 paths, 0 with a step; fine max 0.000, DT max 0.018, race-kerb lip max 0.000, grass-on-top 19 (max 0.002 over), road jumps 0, steep road tris 0, X built [109.0615, 109.0615] vs midpoint 109.0615
+[fold-fans] race_cw   rows 751..786: 113 paths, 0 with a step; fine max 0.000, DT max 0.024, race-kerb lip max 0.025, grass-on-top 0 (max 0.000 over), road jumps 0, steep road tris 0, X built [9.9125, 9.9125] vs midpoint 9.9125, walls worst -0.116 m over 122 cells
+[fold-fans] race_cw   rows 1496..1529: 114 paths, 0 with a step; fine max 0.000, DT max 0.021, race-kerb lip max 0.000, grass-on-top 12 (max 0.003 over), road jumps 0, steep road tris 0, X built [24.4447, 24.4447] vs midpoint 24.4446, walls worst -0.032 m over 88 cells
+[fold-fans] race_cw   rows 2303..2336: 95 paths, 0 with a step; fine max 0.000, DT max 0.018, race-kerb lip max 0.041, grass-on-top 19 (max 0.002 over), road jumps 0, steep road tris 0, X built [109.0615, 109.0615] vs midpoint 109.0615, walls worst +0.263 m over 131 cells
+[fold-fans] race_acw  rows 751..786: 113 paths, 0 with a step; fine max 0.000, DT max 0.024, race-kerb lip max 0.025, grass-on-top 0 (max 0.000 over), road jumps 0, steep road tris 0, X built [9.9125, 9.9125] vs midpoint 9.9125, walls worst -0.116 m over 138 cells
+[fold-fans] race_acw  rows 1496..1529: 114 paths, 0 with a step; fine max 0.000, DT max 0.021, race-kerb lip max 0.000, grass-on-top 12 (max 0.003 over), road jumps 0, steep road tris 0, X built [24.4447, 24.4447] vs midpoint 24.4446, walls worst -0.032 m over 116 cells
+[fold-fans] race_acw  rows 2303..2336: 95 paths, 0 with a step; fine max 0.000, DT max 0.018, race-kerb lip max 0.041, grass-on-top 19 (max 0.002 over), road jumps 0, steep road tris 0, X built [109.0615, 109.0615] vs midpoint 109.0615, walls worst +0.263 m over 156 cells
+[fold-fans] PASS: 3 levelled pinch(es) x 3 layout(s)
+
+=================== sync outputs workshop -> airoso: SKIPPED
+SHIP_PROJ is a scratch project (C:/Users/Owner/AppData/Local/Temp/claude/C--Users-Owner-Documents-GitHub-airoso/59395b0b-e098-4e22-9ea8-1346efc0cf70/scratchpad/p5/proj_demo4), not the workshop (C:/Users/Owner/Documents/GitHub/k10-sd-v021/project): its outputs stay in the scratch copy —
+only the workshop feeds C:/Users/Owner/Documents/GitHub/airoso/.claude/worktrees/wf_f07e8864-ebf-1/tracks/san-diego-lake-murray (loop.blend, data/, ai/).
+
+GATES: street drive_test exit 1, street audit exit 1, race drive_test exit 1, race audit exit 1, race no_route exit 0
+  race layouts red on their own gates: none
+  NOT INSTALLED (Kevin never loads a build the machine failed)
+Wed Oct 14 11:03:03 MDT 2026
+EXIT 1

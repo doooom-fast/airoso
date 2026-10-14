@@ -1,0 +1,5 @@
+# old md5 (still live in C:/Users/Owner/Documents/GitHub/engine-july)  new md5 (this snapshot)  path —
+# changes rehearsed on a scratch ENG copy, to mirror into the real engine-july (cp, then check the
+# md5). Written by tools/snapshot_engine_july.py; tests accept the old md5 until then.
+83731ab7d6110b5f6535a4b5085e9a9b  6eb979058a6f760b8564d8a65306b2b9  scripts/ac/build_kn5_loop.py
+48617c1eb5456d00d1b4ea7ceb3aa6bd  92569ac86ae2fcadedc8878b28d8eda3  scripts/ac/pbr.py

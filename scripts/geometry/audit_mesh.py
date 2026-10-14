@@ -204,6 +204,14 @@ def _race_wall_clashes(objp: Path):
     return len(hits), hits[:12]
 
 
+def _xz_seg_dist(x, z, a, b):
+    """plan distance from (x, z) to the segment a-b, a / b = (x, z)"""
+    dx, dz = b[0] - a[0], b[1] - a[1]
+    L2 = dx * dx + dz * dz
+    t = 0.0 if L2 < 1e-12 else max(0.0, min(1.0, ((x - a[0]) * dx + (z - a[1]) * dz) / L2))
+    return math.hypot(x - (a[0] + dx * t), z - (a[1] + dz * t))
+
+
 def _xz_tri_dist(x, z, a, b, c):
     """plan distance from (x, z) to the triangle's XZ footprint (0 inside)"""
     d = (b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2])
@@ -383,9 +391,34 @@ def audit(project_dir: str | Path, *, race: bool = False, obj: str = "track.obj"
                  if race and _zone.has_barrier else "") + ")")
     if race and (_zone is None or not _zone.has_barrier):
         print("  (--race given but data/barrier_bands.json declares no band — nothing exempted)")
+    # PHASE 5 STUB BARRIERS (ledger 0054): the K-rail across an unbuilt side road's stub stands ON that stub's road by
+    # design (tools/author_stubs_blend.py). D exempts a vert of a 1WALL_STUB object standing inside its DECLARED
+    # footprint (data/stubs.built.json: the barrier's ring path +- its half base + STUB_D_MARGIN_M) — any other wall
+    # there, or a stub barrier vert off its footprint, still counts. Presence, curb-to-curb span, seating and the host
+    # lane are tools/verify_stubs.py's (hard, on the same built OBJ). No stubs.built.json: nothing read, nothing printed.
+    _stub_ok = lambda x, z: False   # noqa: E731
+    _sbp = data / "stubs.built.json"
+    if _sbp.exists():
+        STUB_D_MARGIN_M = 0.15
+        _segs = []
+        for _s in json.loads(_sbp.read_text(encoding="utf-8")).get("stubs", []):
+            _b = _s.get("barrier") or {}
+            _pp = _b.get("path_xz") or []
+            _r = float(_b.get("half_base_m", 0.335)) + STUB_D_MARGIN_M
+            _segs += [(_pp[i], _pp[i + 1], _r) for i in range(len(_pp) - 1)]
+        _stub_verts = {(round(x, 4), round(y, 4), round(z, 4)) for x, y, z in _obj_groups(objp, ("1WALL_STUB",))["1WALL_STUB"]}
+
+        def _stub_ok(x, z):   # noqa: F811
+            return any(_xz_seg_dist(x, z, a, b) <= r for a, b, r in _segs)
+        print(f"  (phase-5 stub barriers: {len(_stub_verts)} 1WALL_STUB verts on {len(_segs)} declared footprint segments "
+              f"— D exempt there)")
+    else:
+        _stub_verts = set()
     wall_on_road = 0
     for x, y, z in g["1WALL"]:
         if _in_band_D(x, z):
+            continue
+        if _stub_verts and (round(x, 4), round(y, 4), round(z, 4)) in _stub_verts and _stub_ok(x, z):
             continue
         ry = _surf_at(main_th, 8.0, x, z, y, dy_max=1.2)
         if ry is not None and abs(y - ry) < 1.2:

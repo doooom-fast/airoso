@@ -128,3 +128,43 @@ Cowles now stands at 7.157° (3DEP 7.231°; it was 6.600°). Details in ledger 0
   `no_route` probes), `verify_mouths`.
 
 (Naming: the plan's build steps P0-P7 are *steps*; "Phase N" is Kevin's expansion phase.)
+
+## Phase 5's tool, built now (Kevin 2026-10-14, option a: "build the tool now and use it for Phase 1's side streets")
+
+Not shipped on the loop (that is Phase 5 proper); demoed on a scratch copy. Opt-in end to end: no declaration, no change.
+
+- **Declaration** — `tools/stub_roads.py declare`: every junction of a public OSM way with a host (the built mainline, or
+  a connector piece — phase 1's expansion roads), one entry per branch: way id, junction node, name, class, host vertex,
+  station, side, angle, heading, width (OSM width > lanes > class default, `width_source` says which), length (15 m
+  [invented]), barrier (`krail`), treatment `stub` / `curb_cut` (service ways: driveways) / `skip` + reason (already
+  built, freeway ramp — phase 4, carriageway / slip). `--only`, `--merge` (hand edits listed in `hand` survive a
+  re-declare), `--mouths <file> --legs host=leg,...` (an expansion mouths file). On the old loop: 95 branches, 70 public
+  unbuilt side roads, 25 skipped (`source/phase5/stubs.demo.json`, 6 selected for the demo).
+- **Draft** — `stub_roads.py apply` (ship_sd after divide): each stub a short connector at its real width, heading and
+  3DEP grade (host grade at the mouth, the 3DEP grade through a vertical curve), so the whole side-street chain builds,
+  welds, seats and gaps it.
+- **Authoring** — `tools/author_stubs_blend.py` around gap_mouths: true circular curb returns from the host's gap ends
+  into the stub's curb (the curb continuous round both corners), the corner pavement under them, the ground refined
+  and seated, and `1WALL_STUB_<id>`: Kevin's K-rail module across the stub back of walk to back of walk, seated on it.
+- **Gate** — `tools/verify_stubs.py` (hard, BUILT road): present, welded (verify_mouths), drivable to the barrier, the
+  barrier ≥ 0.8 m over the stub everywhere across, seated, clear of the host lane, both returns real, driveway cuts low.
+- **Driveways** — no stub, no barrier: a curb cut (lip 0.03 m over the apron, 1.5 m flares). The old loop's OSM cache has
+  no service ways; phase 1's ~28 service mouths are where it first applies.
+- **Type III barricade** — offered as an option with a still (preview only; `apply` refuses `barrier: type3` until Kevin
+  picks it — no texture, no model shipped).
+- **Speedways** — unchanged policy: each stub mouth is sealed by the curb strips / behind the closure exactly as any
+  side street (barrier_bands reads mouths.json); the stub and its barrier stand behind the strip. Demo: planned + BUILT
+  no_route PASS both layouts.
+
+Demo result (fresh workshop copy, full chain, `--no-install`): verify_stubs 6/6 PASS, verify_mouths 10/10, every
+v0.18.0 gate number equal (street soft top 33 / severe 0 / kinks 3.41 / audit 53; race 9 / 22 / 6.23 and 9 / 20 / 7.05,
+barrier_missing 0, audits 53, no_route PASS, fold fans PASS). Identity with no declaration: 199 chain outputs
+byte-identical to the installed v0.18.0, the rest paths / timings / a sub-mm ground_release ordering
+(fleet/GATES-CHANGELOG.md 2026-10-14 phase 5).
+
+**Phase 1 hookup (P3 step 4, "Edges and stubs")**: once route_connectors has written the four expansion pieces, run
+`declare` against them with the expansion's mouths file (`--host <W piece>,<P piece>,<M piece>,<J piece> --mouths
+source/expansion/routes__mouths.json --legs <W piece>=W,... --osm data/osm.expansion.json --merge
+tracks/san-diego-lake-murray/stubs.json --out tracks/san-diego-lake-murray/stubs.json`), set by hand the entries that
+are the built pads / welds (J1-J5 legs, College / Navajo at station 0) to `skip`, and ship: ship_sd reads
+`tracks/<track>/stubs.json` by default. trim_connectors cuts a stub on a connector host against that host's pieces.

@@ -273,6 +273,16 @@ that proves it and the evidence behind it. "Zero" means zero — the pros' toler
     cap 2–6.5 m deep (edges 0.6–6 m), butt-jointed ≤10 mm, with the invisible wall detoured
     around the cap; (c) set-dressing mouth → **no physics at all**, wall straight across the
     mouth line, full visual curb returns behind it. *(union J1; macau A open vs A/B barriered.)*
+    **Amended 2026-10-14 (ledger 0054 phase 5, Kevin: "a road we are not completing gets a barrier, not a
+    curve"):** on the Lake Murray network (c) is replaced by (d) **the closed stub**: the mouth keeps its
+    real curb returns and the host sidewalk gap, a short stub of REAL road follows (physical 1ROAD at the
+    street's width, heading and 3DEP grade, with its paint, welded like any side street — 15 m from the
+    mouth line [invented]), and a **visible, physical barrier** stands across the stub (Kevin's 4.04 m
+    K-rail module swept as a strip, `1WALL_STUB_<id>`, back of walk to back of walk, seated on the stub)
+    — the car can drive into the street and stop at the barrier; nothing invisible. Driveways / service
+    ways get no stub: a curb cut (the host curb dropped to a 0.03 m lip over the apron). Tools:
+    `tools/stub_roads.py` (declare + draft), `tools/author_stubs_blend.py` (returns, corner pavement,
+    barrier), `tools/verify_stubs.py` (the gate on the built road).
 19. **The visual road kn5 carries zero physics keys.** Prefix `__` to kill an accidental
     surface-name match. Exception class: low-speed features (junction gutters, speed bumps, dirt
     roads) may be single-layer visible physics meshes (1KERB/1ROADD) in the scenery kn5.

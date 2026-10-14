@@ -8,14 +8,14 @@
   "street_ai_july": "D:/k10-track-archive/2026-10-11/san_diego_lake_murray/ai",
   "audit_note": "the regression floor — D 0 / K 20 / I 20 / F 13 since v0.18.0: the I-8 deck rails stand on the curb, 0.15 m off the pavement; D 512 while they stood on its edge, since the 2026-10-11 mouth weld + fold mend, was 512 / 154 / 145 / 15",
   "steps": {
-    "draft": ["deck_datum", "median_envelope", "terrain_sample", "build_loop_blend", "route_connectors", "divide_connectors",
+    "draft": ["deck_datum", "median_envelope", "terrain_sample", "build_loop_blend", "route_connectors", "divide_connectors", "stubs",
               "trim_connectors", "terrain_resample", "rebuild_loop_blend", "weld_mouths", "seat_terrain",
-              "triangulate_terrain", "ground_release", "median", "gap_mouths", "bridges", "scatter_strip", "lamps", "signs"],
+              "triangulate_terrain", "ground_release", "median", "stubs_author", "gap_mouths", "stubs_tidy", "bridges", "scatter_strip", "lamps", "signs"],
     "author": ["race_bands", "race_planned_gate", "layout_dummies", "race_author", "race_verify"],
     "prep": ["prep", "split"],
     "ship": ["export_road", "export_race", "spawn_kn5", "ai", "verify_kn5", "road_obj", "track_folder", "verify_inis",
              "make_map", "treefx", "race_scenery_gate"],
-    "gate": ["verify_mouths", "rib_check", "house_seat", "drive_test_street", "audit_street", "race_gates", "fold_fans"]
+    "gate": ["verify_mouths", "verify_stubs", "rib_check", "house_seat", "drive_test_street", "audit_street", "race_gates", "fold_fans"]
   },
   "sync_in": {
     "required": ["track.config.json", "start_positions.json"],
@@ -30,7 +30,8 @@
     "files": ["data/centerline.local.json", "data/centerline.raw.local.json", "data/median_bands.json", "data/dummies.json",
               "data/finished_centerline.json", "data/gate_centerline.json", "data/lights.local.json", "data/connectors.local.json",
               "data/mouths.json", "data/mouth_welds.json", "data/verify_mouths.json", "data/verify_fold_fans.json", "data/rib_check.json", "data/house_seat_check.json", "data/signs.local.json",
-              "data/signs_preview.svg", "data/signs_measured.json", "data/drive_test.json", "data/audit.json",
+              "data/signs_preview.svg", "data/signs_measured.json", "data/drive_test.json", "data/audit.json", "data/stubs.plan.json", "data/stubs.built.json",
+              "data/verify_stubs.json", "data/stubs.3dep.json",
               "data/barrier_bands.json", "data/race_authored.json", "data/race_verify.json", "data/race_verify.scenery.json",
               "data/race_kn5.json",
               "data/terrain.samples.json.gz", "data/corridor.i8.json", "data/i8.local.json", "data/i8.legacy.local.json",

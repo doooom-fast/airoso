@@ -134,3 +134,12 @@ taught a second lap, proven byte-identical on both Lake Murray Speedways; the Mi
 Phase 3 + Phase 4 plans (read-only research), and the Phase 5 barrier-stub tool — **option (a): Phase 1's ~24 public
 side streets get barrier stubs from the start**, not curved curbs later. Phase 5 proper (converting the old loop's
 side streets) keeps its place in the order.
+
+**Phase 3 and 4 plans (2026-10-14).** `tracks/san-diego-lake-murray/EXPANSION-PHASE3-PLAN.md` (Zion western loop:
+4.60 km of new road, loop 5.71 km, J6 Waring/Zion, J7 Zion/Mission Gorge, Zion drops 66 m at up to 10 %, Mission
+Gorge's 28.7 m sag becomes the network's low point, 35 barrier stubs) and `EXPANSION-PHASE4-PLAN.md` (Waring south
+1.59 km to I-8; I-8 EB 2.85 km Fairmount on-ramps -> College exit, WB 2.36 km College on-ramps -> Mission Gorge exit;
+ramps at X8/X9/X10; Mission Gorge south through Grantville incl. Friars Rd; at Waring I-8 is two levels up to 18.8 m
+apart), place facts in `DOSSIER-EXPANSION-WEST.md`. Revision 2 after an independent critic (11 errors fixed). Decisions
+with defaults pending Kevin; the big one is the **lamp weight**: Phase 4 projects to 161-174 MB of road kn5 without a
+lighter streetlight model.

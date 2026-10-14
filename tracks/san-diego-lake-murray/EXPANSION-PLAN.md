@@ -1,6 +1,6 @@
 # Lake Murray network expansion: Phase 1 build plan
 
-> **2026-10-13, revision 2. This is a plan only. Nothing is built yet** (committed as the plan of record). Kevin answered D1–D4 on 2026-10-13 (ledger 0054). P0, the data with no geometry, was done on a branch on 2026-10-14 (see P0).
+> **2026-10-13, revision 2. This is a plan only. Nothing is built yet** (committed as the plan of record). Kevin answered D1–D4 on 2026-10-13 (ledger 0054). P0, the data with no geometry, was done on a branch on 2026-10-14 (see P0). P1, the readable intermediate, the numbered map and the J1 / J5 weld rehearsal, followed the same day (see P1).
 > - The ledger entry is [0054](../../fleet/feedback/0054-lake-murray-network-expansion-waring-mission-gorge-jackson.md). The place facts are in the dossier addendum, [`DOSSIER-EXPANSION-NORTH.md`](DOSSIER-EXPANSION-NORTH.md).
 > - The research ran on 2026-10-12/13 and was read-only on the repo, the workshop and the AC folder. It lives in the session scratchpad `expansion/`, in four lenses plus a revise pass:
 >   - **routes:** fresh OSM, as of 2026-10-12T18:03Z, from the primary Overpass server with TLS verified;
@@ -261,6 +261,15 @@ Steps 2–8 can start now on a branch off the 0046 branch, and get rebased after
 - nothing in the installed build has changed.
 
 ### P1 — The readable intermediate (what Claude authors; no mesh yet)
+
+> **2026-10-14: done on branch `worktree-wf_c6ab4b42-146-1` (steps 1, 2, 4, 5; step 3 moves to P3). Not merged. Details in ledger 0054, "P1".**
+> - **The intermediate:** `data/expansion.north.json` (`tools/author_expansion.py`): 4 pieces within 0.11 m p95 of the OSM midline, 38 width stations at their eye widths, 9 median runs, pads J2-J4, stubs S1-S6, welds W1 / W5. The 11 % cap binds nowhere; Princess View -10.3 %, the crest 114.5 m at s 1460.
+> - **The map:** `data/expansion_plan.svg` + a PNG over NAIP 2022 (`tools/plot_expansion_plan.py`).
+> - **The rehearsal** (full chain, scratch copy, `p1-proofs/rehearsal_delta.py`):
+>   - **J5** welds and seals in both Speedways; opening v2313.5-v2320.9, inside the box. Its verify_mouths fails only on 11 grass samples under the loop's centreline at v2311-2313 that v0.18.0 already has (0050's corner ground): fix at the source in P3.
+>   - **J1** welds with Waring's straight curbs (opening v1514.1-v1520.4). **The R ≈ 30 m free-flow return cannot be welded by a connector ribbon** (its end would stand 2.9-4 cm proud of the loop; the gates allow 2 cm): it is **apron AP1** (v1520.4-v1526.3, 118 m²), authored in P3. A4 / A5 stand otherwise.
+>   - **A7's split happened** (race_cw: far strip to the pin v1521, behind the closure past it). `no_route` PASS on both Speedways, planned and built, with probes past v1521.
+>   - **The existing three layouts are no worse, key for key.**
 
 1. **new `tools/author_expansion.py`** writes `data/expansion.north.json`, a plain-text description of the new network:
    - **four road pieces** (Waring, Princess View, Mission Gorge, Jackson north), each a centreline at 2–3 m spacing. On the divided stretches the centreline is the midline between the two OSM carriageways.

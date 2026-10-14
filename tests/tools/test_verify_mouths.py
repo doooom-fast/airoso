@@ -203,3 +203,46 @@ def test_the_host_sidewalk_left_across_the_mouth_fails():
     with tempfile.TemporaryDirectory() as tmp:
         _r, m = _run(build(tmp, weld(lines), centre, gap=False))
     assert _fails(m, "NOTCH")
+
+
+# --- ledger 0054 P1: route.weld_exact_deck — HOST LANE read against the host's own sheet at each sample -----------
+
+def _exact(proj, on=True):
+    (proj / "track.config.json").write_text(json.dumps({"route": {"weld_exact_deck": ["c"] if on else []}}))
+    return proj
+
+
+def _raise_host_mouth_half(proj, dy=0.03):
+    """lift the host's own road on the mouth half (z > 0) by dy at its edge, linearly from the centre — the shape the
+    level-across HD(s) misreads on a corner's fanned outer half"""
+    p = proj / "data" / "track.obj"
+    out = []
+    for ln in p.read_text(encoding="ascii").splitlines():
+        if ln.startswith("v "):
+            x, y, z = (float(t) for t in ln.split()[1:4])
+            if 0.0 < z <= HALF_H + 1e-9 and -60.0 <= x <= 60.0 and abs(y - hy(x)) < 1e-6:
+                y += dy * z / HALF_H
+            ln = f"v {x} {y} {z}"
+        out.append(ln)
+    p.write_text("\n".join(out) + "\n", encoding="ascii")
+
+
+def test_exact_deck_reads_the_host_s_own_raised_half_as_the_deck():
+    lines, centre = conn_lines()
+    with tempfile.TemporaryDirectory() as tmp:
+        proj = build(tmp, weld(lines), centre)
+        _raise_host_mouth_half(proj)
+        _r, legacy = _run(_exact(proj, on=False))
+        _r, exact = _run(_exact(proj, on=True))
+    assert _fails(legacy, "HOST LANE") and legacy["host_lane"]["road_kerb_above"] > 0
+    assert not _fails(exact, "HOST LANE"), exact["fails"]
+    assert exact.get("host_lane_deck", "").startswith("exact") and "host_lane_deck" not in legacy
+
+
+def test_exact_deck_still_fails_a_sheet_over_the_host_and_grass_through_it():
+    lines, centre = conn_lines()
+    over = ("1ROAD_x", ((-6.0, hy(-6.0) + 0.05, 5.0), (-2.0, hy(-2.0) + 0.05, 5.0), (-4.0, hy(-4.0) + 0.05, 8.0)))
+    poke = ("1GRASS_1", ((6.0, hy(6.0) + 0.002, 5.0), (10.0, hy(10.0) + 0.002, 5.0), (8.0, hy(8.0) + 0.002, 8.0)))
+    with tempfile.TemporaryDirectory() as tmp:
+        _r, m = _run(_exact(build(tmp, weld(lines), centre, extra=[over, poke])))
+    assert _fails(m, "HOST LANE") and m["host_lane"]["road_kerb_above"] > 0 and m["host_lane"]["grass_at_or_above"] > 0

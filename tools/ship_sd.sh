@@ -141,7 +141,9 @@ pyq() { (cd "$AIROSO" && python -c "$@"); }
 step "sync inputs airoso -> workshop ($PROJ)"
 cp "$SRC/track.config.json" "$PROJ/track.config.json"
 cp "$SRC/start_positions.json" "$PROJ/start_positions.json"
-for f in centerline.raw.local.json.pre-median connectors.local.json.pre-trim; do
+# ledger 0054 P1: the authored intermediate of the north network (tools/author_expansion.py) — route_connectors reads it
+# through route_connectors.authored_routes / authored_take
+for f in centerline.raw.local.json.pre-median connectors.local.json.pre-trim expansion.north.json; do
   [ -f "$SRC/data/$f" ] && cp "$SRC/data/$f" "$PROJ/data/$f"
 done
 # ledger 0046: the 3DEP cache + the I-8 corridor (data with provenance, L2) — a fresh workshop never re-fetches them

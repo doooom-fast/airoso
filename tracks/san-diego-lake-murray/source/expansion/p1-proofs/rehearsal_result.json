@@ -1,0 +1,1468 @@
+{
+ "_doc": "Ledger 0054 P1 step 5: the J1 / J5 weld rehearsal (2026-10-14). tools/ship_sd.sh on a fresh scratch copy of the v021 workshop project (minus build/), AIROSO = branch worktree-wf_c6ab4b42-146-1, --no-install, with rehearsal_delta.py applied; run 2 (logs: ship_r2 draft..verify_race, ship_r2b --skip-blend from the authored loop.blend after the verify_race split fix), verify_mouths re-run after the exact-deck HOST LANE, then the chain's remaining gate commands by hand (gates_rest.sh) because verify_mouths stops the chain on J5's inherited grass. Nothing installed; the workshop and the AC folder untouched.",
+ "trim_mouths": [
+  {
+   "connector": "north_J1_waring",
+   "host": "MAINLINE",
+   "host_vertex": 1517,
+   "side": 1,
+   "connector_width_m": 26.761,
+   "cut_xyz": [
+    -1981.259,
+    24.328,
+    614.083
+   ],
+   "host_seg": 1516,
+   "host_t": 0.9793,
+   "angle_deg": 83.62,
+   "host_grade": 0.01085,
+   "piece": "north_J1_waring#0",
+   "end": "start"
+  },
+  {
+   "connector": "north_J5_jackson_north",
+   "host": "MAINLINE",
+   "host_vertex": 2317,
+   "side": 1,
+   "connector_width_m": 29.48,
+   "cut_xyz": [
+    45.125,
+    108.849,
+    1734.058
+   ],
+   "host_seg": 2317,
+   "host_t": 0.1602,
+   "angle_deg": 80.42,
+   "host_grade": 0.02665,
+   "piece": "north_J5_jackson_north#0",
+   "end": "start"
+  }
+ ],
+ "welds": [
+  {
+   "connector": "north_J1_waring",
+   "piece": "north_J1_waring#0",
+   "end": "start",
+   "host": "MAINLINE",
+   "side": 1,
+   "host_vertex": 1517,
+   "angle_deg": 83.62,
+   "host_grade": 0.01085,
+   "rows_respread": 3,
+   "rows_touched": 11,
+   "markings_moved": 240,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": -4.203,
+    "road+1": 0.0,
+    "road+2": -0.597,
+    "curb+1+0": -3.643,
+    "curb+1+1": -3.722,
+    "curb+1+2": -5.189,
+    "curb+1+3": -6.857,
+    "curb-1+0": -0.194,
+    "curb-1+1": -0.204,
+    "curb-1+2": -0.396,
+    "curb-1+3": -0.575
+   },
+   "end_dy_m": [
+    -0.055,
+    -0.005,
+    0.16
+   ],
+   "end_vs_host_before_m": [
+    0.005
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "north_J5_jackson_north",
+   "piece": "north_J5_jackson_north#0",
+   "end": "start",
+   "host": "MAINLINE",
+   "side": 1,
+   "host_vertex": 2317,
+   "angle_deg": 80.42,
+   "host_grade": 0.02665,
+   "rows_respread": 3,
+   "rows_touched": 12,
+   "markings_moved": 256,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": -0.844,
+    "road+1": -0.0,
+    "road+2": -11.05,
+    "curb+1+0": -0.436,
+    "curb+1+1": -0.452,
+    "curb+1+2": -0.754,
+    "curb+1+3": -1.03,
+    "curb-1+0": -10.294,
+    "curb-1+1": -10.423,
+    "curb-1+2": -14.26,
+    "curb-1+3": -19.496
+   },
+   "end_dy_m": [
+    -0.237,
+    0.01,
+    0.227
+   ],
+   "end_vs_host_before_m": [
+    -0.01
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  }
+ ],
+ "closed_mouths": [
+  {
+   "connector": "north_J1_waring",
+   "host_vertex": 1517,
+   "side": "L",
+   "connector_width_m": 26.761,
+   "vertex_from": 1509,
+   "vertex_to": 1523,
+   "policy": "sealed: both curb strips run straight across the mouth line (Q1); per layout see corridors.<id>.mouths",
+   "swept": {
+    "edge_vertex_from": 1514.1,
+    "edge_vertex_to": 1520.43,
+    "vertex_from": 1509,
+    "vertex_to": 1523,
+    "sidewalk_gap": [
+     1509,
+     1523
+    ],
+    "how": "the piece's swept road edges (assembler smoothing) crossing the host edge, + MOUTH_CORNER_M of arc, and the host sidewalk gap (mouth_weld.gap_window) (race.swept_mouths, ledger 0054 P1)"
+   }
+  },
+  {
+   "connector": "north_J5_jackson_north",
+   "host_vertex": 2317,
+   "side": "L",
+   "connector_width_m": 29.48,
+   "vertex_from": 2310,
+   "vertex_to": 2325,
+   "policy": "sealed: both curb strips run straight across the mouth line (Q1); per layout see corridors.<id>.mouths",
+   "swept": {
+    "edge_vertex_from": 2313.54,
+    "edge_vertex_to": 2320.91,
+    "vertex_from": 2310,
+    "vertex_to": 2325,
+    "sidewalk_gap": [
+     2310,
+     2325
+    ],
+    "how": "the piece's swept road edges (assembler smoothing) crossing the host edge, + MOUTH_CORNER_M of arc, and the host sidewalk gap (mouth_weld.gap_window) (race.swept_mouths, ledger 0054 P1)"
+   }
+  }
+ ],
+ "policies": {
+  "race_cw": [
+   {
+    "connector": "north_J1_waring",
+    "host_vertex": 1517,
+    "side": "L",
+    "policy": "sealed_far_strip",
+    "vertex_from": 1509,
+    "vertex_to": 1521,
+    "split": {
+     "part": 1,
+     "of": 2,
+     "why": "ledger 0054 A7: the opening crosses a zone boundary of this corridor; the policy is per vertex"
+    }
+   },
+   {
+    "connector": "north_J1_waring",
+    "host_vertex": 1517,
+    "side": "L",
+    "policy": "behind_closure",
+    "vertex_from": 1522,
+    "vertex_to": 1523,
+    "split": {
+     "part": 2,
+     "of": 2,
+     "why": "ledger 0054 A7: the opening crosses a zone boundary of this corridor; the policy is per vertex"
+    }
+   },
+   {
+    "connector": "north_J5_jackson_north",
+    "host_vertex": 2317,
+    "side": "L",
+    "policy": "behind_closure",
+    "vertex_from": 2310,
+    "vertex_to": 2310,
+    "split": {
+     "part": 1,
+     "of": 2,
+     "why": "ledger 0054 A7: the opening crosses a zone boundary of this corridor; the policy is per vertex"
+    }
+   },
+   {
+    "connector": "north_J5_jackson_north",
+    "host_vertex": 2317,
+    "side": "L",
+    "policy": "sealed_far_strip",
+    "vertex_from": 2311,
+    "vertex_to": 2325,
+    "split": {
+     "part": 2,
+     "of": 2,
+     "why": "ledger 0054 A7: the opening crosses a zone boundary of this corridor; the policy is per vertex"
+    }
+   }
+  ],
+  "race_acw": [
+   {
+    "connector": "north_J1_waring",
+    "host_vertex": 1517,
+    "side": "L",
+    "policy": "sealed_race_strip",
+    "vertex_from": 1509,
+    "vertex_to": 1523,
+    "split": {
+     "part": 1,
+     "of": 1,
+     "why": "swept mouth: judged on every vertex"
+    }
+   },
+   {
+    "connector": "north_J5_jackson_north",
+    "host_vertex": 2317,
+    "side": "L",
+    "policy": "sealed_race_strip",
+    "vertex_from": 2310,
+    "vertex_to": 2325,
+    "split": {
+     "part": 1,
+     "of": 1,
+     "why": "swept mouth: judged on every vertex"
+    }
+   }
+  ]
+ },
+ "probes": {
+  "race_cw": [
+   {
+    "vertex": 1517,
+    "y": 25.0,
+    "why": "side_street north_J1_waring"
+   },
+   {
+    "vertex": 2317,
+    "y": 22.01,
+    "why": "side_street north_J5_jackson_north"
+   },
+   {
+    "vertex": 1509,
+    "y": 15.045,
+    "why": "swept mouth north_J1_waring (v1509, 3 m in)"
+   },
+   {
+    "vertex": 1509,
+    "y": 22.045,
+    "why": "swept mouth north_J1_waring (v1509, 10 m in)"
+   },
+   {
+    "vertex": 1515,
+    "y": 18.0,
+    "why": "swept mouth north_J1_waring (v1515, 3 m in)"
+   },
+   {
+    "vertex": 1515,
+    "y": 25.0,
+    "why": "swept mouth north_J1_waring (v1515, 10 m in)"
+   },
+   {
+    "vertex": 1517,
+    "y": 18.0,
+    "why": "swept mouth north_J1_waring (v1517, 3 m in)"
+   },
+   {
+    "vertex": 1517,
+    "y": 25.0,
+    "why": "swept mouth north_J1_waring (v1517, 10 m in)"
+   },
+   {
+    "vertex": 1519,
+    "y": 18.0,
+    "why": "swept mouth north_J1_waring (v1519, 3 m in)"
+   },
+   {
+    "vertex": 1519,
+    "y": 25.0,
+    "why": "swept mouth north_J1_waring (v1519, 10 m in)"
+   },
+   {
+    "vertex": 1523,
+    "y": 18.02,
+    "why": "swept mouth north_J1_waring (v1523, 3 m in)"
+   },
+   {
+    "vertex": 1523,
+    "y": 25.02,
+    "why": "swept mouth north_J1_waring (v1523, 10 m in)"
+   },
+   {
+    "vertex": 2310,
+    "y": 15.45,
+    "why": "swept mouth north_J5_jackson_north (v2310, 3 m in)"
+   },
+   {
+    "vertex": 2310,
+    "y": 22.45,
+    "why": "swept mouth north_J5_jackson_north (v2310, 10 m in)"
+   },
+   {
+    "vertex": 2314,
+    "y": 15.13,
+    "why": "swept mouth north_J5_jackson_north (v2314, 3 m in)"
+   },
+   {
+    "vertex": 2314,
+    "y": 22.13,
+    "why": "swept mouth north_J5_jackson_north (v2314, 10 m in)"
+   },
+   {
+    "vertex": 2316,
+    "y": 15.035,
+    "why": "swept mouth north_J5_jackson_north (v2316, 3 m in)"
+   },
+   {
+    "vertex": 2316,
+    "y": 22.035,
+    "why": "swept mouth north_J5_jackson_north (v2316, 10 m in)"
+   },
+   {
+    "vertex": 2319,
+    "y": 15.0,
+    "why": "swept mouth north_J5_jackson_north (v2319, 3 m in)"
+   },
+   {
+    "vertex": 2319,
+    "y": 22.0,
+    "why": "swept mouth north_J5_jackson_north (v2319, 10 m in)"
+   },
+   {
+    "vertex": 2325,
+    "y": 15.0,
+    "why": "swept mouth north_J5_jackson_north (v2325, 3 m in)"
+   },
+   {
+    "vertex": 2325,
+    "y": 22.0,
+    "why": "swept mouth north_J5_jackson_north (v2325, 10 m in)"
+   }
+  ],
+  "race_acw": [
+   {
+    "vertex": 1517,
+    "y": 25.0,
+    "why": "side_street north_J1_waring"
+   },
+   {
+    "vertex": 2317,
+    "y": 22.01,
+    "why": "side_street north_J5_jackson_north"
+   },
+   {
+    "vertex": 1509,
+    "y": 15.045,
+    "why": "swept mouth north_J1_waring (v1509, 3 m in)"
+   },
+   {
+    "vertex": 1509,
+    "y": 22.045,
+    "why": "swept mouth north_J1_waring (v1509, 10 m in)"
+   },
+   {
+    "vertex": 1515,
+    "y": 18.0,
+    "why": "swept mouth north_J1_waring (v1515, 3 m in)"
+   },
+   {
+    "vertex": 1515,
+    "y": 25.0,
+    "why": "swept mouth north_J1_waring (v1515, 10 m in)"
+   },
+   {
+    "vertex": 1517,
+    "y": 18.0,
+    "why": "swept mouth north_J1_waring (v1517, 3 m in)"
+   },
+   {
+    "vertex": 1517,
+    "y": 25.0,
+    "why": "swept mouth north_J1_waring (v1517, 10 m in)"
+   },
+   {
+    "vertex": 1519,
+    "y": 18.0,
+    "why": "swept mouth north_J1_waring (v1519, 3 m in)"
+   },
+   {
+    "vertex": 1519,
+    "y": 25.0,
+    "why": "swept mouth north_J1_waring (v1519, 10 m in)"
+   },
+   {
+    "vertex": 1523,
+    "y": 18.02,
+    "why": "swept mouth north_J1_waring (v1523, 3 m in)"
+   },
+   {
+    "vertex": 1523,
+    "y": 25.02,
+    "why": "swept mouth north_J1_waring (v1523, 10 m in)"
+   },
+   {
+    "vertex": 2310,
+    "y": 15.45,
+    "why": "swept mouth north_J5_jackson_north (v2310, 3 m in)"
+   },
+   {
+    "vertex": 2310,
+    "y": 22.45,
+    "why": "swept mouth north_J5_jackson_north (v2310, 10 m in)"
+   },
+   {
+    "vertex": 2314,
+    "y": 15.13,
+    "why": "swept mouth north_J5_jackson_north (v2314, 3 m in)"
+   },
+   {
+    "vertex": 2314,
+    "y": 22.13,
+    "why": "swept mouth north_J5_jackson_north (v2314, 10 m in)"
+   },
+   {
+    "vertex": 2316,
+    "y": 15.035,
+    "why": "swept mouth north_J5_jackson_north (v2316, 3 m in)"
+   },
+   {
+    "vertex": 2316,
+    "y": 22.035,
+    "why": "swept mouth north_J5_jackson_north (v2316, 10 m in)"
+   },
+   {
+    "vertex": 2319,
+    "y": 15.0,
+    "why": "swept mouth north_J5_jackson_north (v2319, 3 m in)"
+   },
+   {
+    "vertex": 2319,
+    "y": 22.0,
+    "why": "swept mouth north_J5_jackson_north (v2319, 10 m in)"
+   },
+   {
+    "vertex": 2325,
+    "y": 15.0,
+    "why": "swept mouth north_J5_jackson_north (v2325, 3 m in)"
+   },
+   {
+    "vertex": 2325,
+    "y": 22.0,
+    "why": "swept mouth north_J5_jackson_north (v2325, 10 m in)"
+   }
+  ]
+ },
+ "kerbs_dropped": [
+  {
+   "apex": 1514,
+   "side": "R",
+   "kind": "inside",
+   "i": 1508,
+   "j": 1519,
+   "why": "College/Navajo inside apex: only 18 of the kerb's 34 stations sit on one sheet - about 1.5 m at each end (v1508-1509, v1518-1519); at v1517-1518 13 stations sit under the fold's upper sheet (up to 0.05 m) and 4 verts stand +0.13 m over the lower one (race audit K 158 vs the installed 154). No single-sheet stretch of useful length reaches the apex: dropped until the ribbon fold is one sheet."
+  },
+  {
+   "apex": 2319,
+   "side": "R",
+   "kind": "inside",
+   "i": 2313,
+   "j": 2326,
+   "why": "Navajo/Jackson inside apex (race_cw's AI line apexes 1.5 m off it): the ribbon folds into two sheets up to 0.46 m apart at v2315 and v2323-2324, and 8 of the kerb's 51 stations sit under the upper sheet by up to 0.42 m - a red/white kerb vanishing under the asphalt at the apex. The single-sheet pieces are 4.5 m on entry (v2313-2314) and about 5 m on exit (v2324-2326), neither at the apex: dropped until the ribbon fold is one sheet."
+  },
+  {
+   "apex": 1514,
+   "side": "L",
+   "kind": "outside",
+   "i": 1501,
+   "j": 1526,
+   "why": "Ledger 0054 A7: the J1 Waring opening (W1, v1514-v1526 on the outer curb) takes the whole outside of the College/Navajo corner the kerb ran along (v1507-1520); a kerb that ends at a road opening reads wrong. The inside kerb stays dropped for its own reason (above)."
+  },
+  {
+   "apex": 2319,
+   "side": "L",
+   "kind": "outside",
+   "i": 2306,
+   "j": 2333,
+   "why": "Ledger 0054 A7: the J5 Jackson-north opening (W5, v2312-v2322) covers the outside apex of the Navajo/Jackson corner (the kerb ran v2312-2327); only a 14 m exit stub would be left."
+  }
+ ],
+ "verify_mouths": [
+  {
+   "piece": "del_cerro_blvd#0",
+   "end": "end",
+   "angle_deg": 75.63,
+   "span_half_m": 11.82,
+   "span_mouth_line_m": [
+    -12.75,
+    12.27
+   ],
+   "fail": false,
+   "fails": [],
+   "mouth_line_max_m": 0.015,
+   "host_lane": {
+    "samples": 1705,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.006
+   },
+   "host_lane_deck": null,
+   "notch_max_m": 0.02,
+   "approach_max_dg_per_m": 0.0113
+  },
+  {
+   "piece": "del_cerro_blvd#1",
+   "end": "start",
+   "angle_deg": 86.05,
+   "span_half_m": 10.94,
+   "span_mouth_line_m": [
+    -10.18,
+    10.57
+   ],
+   "fail": false,
+   "fails": [],
+   "mouth_line_max_m": 0.016,
+   "host_lane": {
+    "samples": 1621,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.009
+   },
+   "host_lane_deck": null,
+   "notch_max_m": 0.016,
+   "approach_max_dg_per_m": 0.0098
+  },
+  {
+   "piece": "medium#2+0#0#0",
+   "end": "start",
+   "angle_deg": 88.88,
+   "span_half_m": 5.0,
+   "span_mouth_line_m": [
+    -4.95,
+    4.89
+   ],
+   "fail": false,
+   "fails": [],
+   "mouth_line_max_m": 0.003,
+   "host_lane": {
+    "samples": 903,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.015
+   },
+   "host_lane_deck": null,
+   "notch_max_m": 0.005,
+   "approach_max_dg_per_m": 0.0182
+  },
+  {
+   "piece": "north_J1_waring#0",
+   "end": "start",
+   "angle_deg": 83.62,
+   "span_half_m": 13.46,
+   "span_mouth_line_m": [
+    -7.0,
+    9.88
+   ],
+   "fail": false,
+   "fails": [],
+   "mouth_line_max_m": 0.012,
+   "host_lane": {
+    "samples": 1952,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.011
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "notch_max_m": 0.027,
+   "approach_max_dg_per_m": 0.0204
+  },
+  {
+   "piece": "north_J5_jackson_north#0",
+   "end": "start",
+   "angle_deg": 76.95,
+   "span_half_m": 15.13,
+   "span_mouth_line_m": [
+    -9.82,
+    8.47
+   ],
+   "fail": true,
+   "fails": [
+    "HOST LANE: 0 samples with road/curb > 0.02 m over the host deck (max 0.0 m), 11 with grass at/above it"
+   ],
+   "mouth_line_max_m": 0.035,
+   "host_lane": {
+    "samples": 1776,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 11,
+    "max_above_m": 0.0,
+    "max_grass_m": 0.002
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "notch_max_m": 0.038,
+   "approach_max_dg_per_m": 0.0045
+  },
+  {
+   "piece": "medium#2+0#0#0",
+   "end": "end",
+   "angle_deg": 87.77,
+   "span_half_m": 5.0,
+   "span_mouth_line_m": [
+    -5.92,
+    5.66
+   ],
+   "fail": false,
+   "fails": [],
+   "mouth_line_max_m": 0.004,
+   "host_lane": {
+    "samples": 665,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.019
+   },
+   "host_lane_deck": null,
+   "notch_max_m": 0.01,
+   "approach_max_dg_per_m": 0.0097
+  }
+ ],
+ "host_lane_vs_v0.18.0_road": {
+  "J5": {
+   "mouth": "north_J5",
+   "verify_mouths_record": {
+    "span_half_m": 15.13,
+    "host_half_m": 12.01,
+    "angle_deg": 76.95
+   },
+   "v0.18.0": {
+    "samples": 1752,
+    "own_sheet_above": 8,
+    "other_sheet_above": 0,
+    "grass_at_or_above": 21,
+    "max_own": 0.022,
+    "max_other": 0.0,
+    "max_grass": 0.001
+   },
+   "rehearsal": {
+    "samples": 1752,
+    "own_sheet_above": 8,
+    "other_sheet_above": 0,
+    "grass_at_or_above": 48,
+    "max_own": 0.022,
+    "max_other": 0.0,
+    "max_grass": 0.001
+   }
+  },
+  "J1": {
+   "mouth": "north_J1",
+   "verify_mouths_record": {
+    "span_half_m": 13.46,
+    "host_half_m": 15.0,
+    "angle_deg": 83.62
+   },
+   "v0.18.0": {
+    "samples": 1923,
+    "own_sheet_above": 0,
+    "other_sheet_above": 0,
+    "grass_at_or_above": 8,
+    "max_own": 0.0,
+    "max_other": 0.0,
+    "max_grass": -0.003
+   },
+   "rehearsal": {
+    "samples": 1923,
+    "own_sheet_above": 0,
+    "other_sheet_above": 0,
+    "grass_at_or_above": 0,
+    "max_own": 0.0,
+    "max_other": 0.0,
+    "max_grass": -0.007
+   }
+  }
+ },
+ "gates_vs_v0.18.0": {
+  "layouts": {
+   "street": {
+    "v0.18.0 -> rehearsal": {
+     "soft_top_in_lane": [
+      33,
+      33
+     ],
+     "severe_steps": [
+      0,
+      0
+     ],
+     "severe_per_km": [
+      0.0,
+      0.0
+     ],
+     "steps_per_km": [
+      0.0,
+      0.0
+     ],
+     "kinks_per_km": [
+      3.41,
+      3.41
+     ],
+     "obstruction_stations": [
+      0,
+      0
+     ],
+     "barrier_missing": [
+      0,
+      0
+     ],
+     "excursion_drops": [
+      98,
+      98
+     ],
+     "daylight_gaps": [
+      0,
+      0
+     ],
+     "undrivable_corners": [
+      0,
+      0
+     ],
+     "floating_furniture": [
+      391,
+      391
+     ]
+    },
+    "worse": [],
+    "box_samples": {
+     "J1": [],
+     "J5": [
+      [
+       "kinks",
+       6956.0,
+       -6.0,
+       4.73
+      ],
+      [
+       "kinks",
+       6956.0,
+       -6.0,
+       4.73
+      ],
+      [
+       "kinks",
+       6957.0,
+       -6.0,
+       4.73
+      ],
+      [
+       "kinks",
+       6957.0,
+       -6.0,
+       4.73
+      ]
+     ]
+    },
+    "box_samples_v0.18.0": {
+     "J1": [],
+     "J5": [
+      [
+       "kinks",
+       6956.0,
+       -6.0,
+       4.73
+      ],
+      [
+       "kinks",
+       6956.0,
+       -6.0,
+       4.73
+      ],
+      [
+       "kinks",
+       6957.0,
+       -6.0,
+       4.73
+      ],
+      [
+       "kinks",
+       6957.0,
+       -6.0,
+       4.73
+      ]
+     ]
+    }
+   },
+   "race_cw": {
+    "v0.18.0 -> rehearsal": {
+     "soft_top_in_lane": [
+      9,
+      9
+     ],
+     "severe_steps": [
+      22,
+      22
+     ],
+     "severe_per_km": [
+      1.63,
+      1.63
+     ],
+     "steps_per_km": [
+      4.38,
+      4.38
+     ],
+     "kinks_per_km": [
+      6.23,
+      6.23
+     ],
+     "obstruction_stations": [
+      0,
+      0
+     ],
+     "barrier_missing": [
+      0,
+      0
+     ],
+     "excursion_drops": [
+      0,
+      0
+     ],
+     "daylight_gaps": [
+      0,
+      0
+     ],
+     "undrivable_corners": [
+      0,
+      0
+     ],
+     "floating_furniture": [
+      391,
+      391
+     ]
+    },
+    "worse": [],
+    "box_samples": {
+     "J1": [
+      [
+       "severe_all",
+       4541.0,
+       -13.03,
+       0.06
+      ]
+     ],
+     "J5": [
+      [
+       "severe_steps",
+       6956.0,
+       -10.03,
+       0.079
+      ],
+      [
+       "severe_steps",
+       6957.0,
+       -10.03,
+       0.079
+      ],
+      [
+       "severe_steps",
+       6956.0,
+       -9.28,
+       0.073
+      ],
+      [
+       "severe_steps",
+       6957.0,
+       -9.28,
+       0.073
+      ],
+      [
+       "severe_steps",
+       6958.0,
+       -10.03,
+       0.073
+      ],
+      [
+       "severe_steps",
+       6959.0,
+       -10.03,
+       0.072
+      ],
+      [
+       "severe_steps",
+       6958.0,
+       -9.28,
+       0.067
+      ],
+      [
+       "severe_all",
+       6956.0,
+       -10.03,
+       0.079
+      ],
+      [
+       "severe_all",
+       6957.0,
+       -10.03,
+       0.079
+      ],
+      [
+       "severe_all",
+       6956.0,
+       -9.28,
+       0.073
+      ],
+      [
+       "severe_all",
+       6957.0,
+       -9.28,
+       0.073
+      ],
+      [
+       "severe_all",
+       6958.0,
+       -10.03,
+       0.073
+      ],
+      [
+       "severe_all",
+       6959.0,
+       -10.03,
+       0.072
+      ],
+      [
+       "severe_all",
+       6958.0,
+       -9.28,
+       0.067
+      ],
+      [
+       "severe_all",
+       6959.0,
+       -9.28,
+       0.066
+      ],
+      [
+       "severe_all",
+       6955.0,
+       -10.03,
+       0.065
+      ],
+      [
+       "severe_all",
+       6954.0,
+       -10.03,
+       0.063
+      ],
+      [
+       "severe_all",
+       6955.0,
+       -9.28,
+       0.061
+      ],
+      [
+       "kinks",
+       6957.0,
+       -10.03,
+       7.95
+      ],
+      [
+       "kinks",
+       6956.0,
+       -10.03,
+       7.86
+      ],
+      [
+       "kinks",
+       6957.0,
+       -9.28,
+       7.35
+      ],
+      [
+       "kinks",
+       6956.0,
+       -9.28,
+       7.28
+      ],
+      [
+       "kinks",
+       6958.0,
+       -10.03,
+       7.28
+      ],
+      [
+       "kinks",
+       6959.0,
+       -10.03,
+       7.19
+      ],
+      [
+       "kinks",
+       6958.0,
+       -9.28,
+       6.69
+      ]
+     ]
+    },
+    "box_samples_v0.18.0": {
+     "J1": [
+      [
+       "severe_all",
+       4541.0,
+       -13.03,
+       0.06
+      ]
+     ],
+     "J5": [
+      [
+       "severe_steps",
+       6956.0,
+       -10.03,
+       0.079
+      ],
+      [
+       "severe_steps",
+       6957.0,
+       -10.03,
+       0.079
+      ],
+      [
+       "severe_steps",
+       6956.0,
+       -9.28,
+       0.073
+      ],
+      [
+       "severe_steps",
+       6957.0,
+       -9.28,
+       0.073
+      ],
+      [
+       "severe_steps",
+       6958.0,
+       -10.03,
+       0.073
+      ],
+      [
+       "severe_steps",
+       6959.0,
+       -10.03,
+       0.072
+      ],
+      [
+       "severe_steps",
+       6958.0,
+       -9.28,
+       0.067
+      ],
+      [
+       "severe_all",
+       6956.0,
+       -10.03,
+       0.079
+      ],
+      [
+       "severe_all",
+       6957.0,
+       -10.03,
+       0.079
+      ],
+      [
+       "severe_all",
+       6956.0,
+       -9.28,
+       0.073
+      ],
+      [
+       "severe_all",
+       6957.0,
+       -9.28,
+       0.073
+      ],
+      [
+       "severe_all",
+       6958.0,
+       -10.03,
+       0.073
+      ],
+      [
+       "severe_all",
+       6959.0,
+       -10.03,
+       0.072
+      ],
+      [
+       "severe_all",
+       6958.0,
+       -9.28,
+       0.067
+      ],
+      [
+       "severe_all",
+       6959.0,
+       -9.28,
+       0.066
+      ],
+      [
+       "severe_all",
+       6955.0,
+       -10.03,
+       0.065
+      ],
+      [
+       "severe_all",
+       6954.0,
+       -10.03,
+       0.063
+      ],
+      [
+       "severe_all",
+       6955.0,
+       -9.28,
+       0.061
+      ],
+      [
+       "kinks",
+       6957.0,
+       -10.03,
+       7.95
+      ],
+      [
+       "kinks",
+       6956.0,
+       -10.03,
+       7.86
+      ],
+      [
+       "kinks",
+       6957.0,
+       -9.28,
+       7.35
+      ],
+      [
+       "kinks",
+       6956.0,
+       -9.28,
+       7.28
+      ],
+      [
+       "kinks",
+       6958.0,
+       -10.03,
+       7.28
+      ],
+      [
+       "kinks",
+       6959.0,
+       -10.03,
+       7.19
+      ],
+      [
+       "kinks",
+       6958.0,
+       -9.28,
+       6.69
+      ]
+     ]
+    }
+   },
+   "race_acw": {
+    "v0.18.0 -> rehearsal": {
+     "soft_top_in_lane": [
+      9,
+      9
+     ],
+     "severe_steps": [
+      20,
+      20
+     ],
+     "severe_per_km": [
+      1.48,
+      1.48
+     ],
+     "steps_per_km": [
+      6.75,
+      6.75
+     ],
+     "kinks_per_km": [
+      7.05,
+      7.05
+     ],
+     "obstruction_stations": [
+      0,
+      0
+     ],
+     "barrier_missing": [
+      0,
+      0
+     ],
+     "excursion_drops": [
+      0,
+      0
+     ],
+     "daylight_gaps": [
+      0,
+      0
+     ],
+     "undrivable_corners": [
+      0,
+      0
+     ],
+     "floating_furniture": [
+      391,
+      391
+     ]
+    },
+    "worse": [],
+    "box_samples": {
+     "J1": [],
+     "J5": []
+    },
+    "box_samples_v0.18.0": {
+     "J1": [],
+     "J5": []
+    }
+   }
+  },
+  "audit": {
+   "street": [
+    [
+     53,
+     {
+      "A_supports_in_road": 0,
+      "B_terrain_poke": 0,
+      "C_junction_crossings": 0,
+      "D_wall_on_road": 0,
+      "E_wall_floating": 0,
+      "J_terrain_span": 0,
+      "K_kerb_in_carriageway": 20,
+      "F_curb_not_flush": 13,
+      "I_sidewalk_isolating": 20
+     }
+    ],
+    [
+     53,
+     {
+      "A_supports_in_road": 0,
+      "B_terrain_poke": 0,
+      "C_junction_crossings": 0,
+      "D_wall_on_road": 0,
+      "E_wall_floating": 0,
+      "J_terrain_span": 0,
+      "K_kerb_in_carriageway": 20,
+      "F_curb_not_flush": 13,
+      "I_sidewalk_isolating": 20
+     }
+    ]
+   ],
+   "race_cw": [
+    [
+     53,
+     {
+      "A_supports_in_road": 0,
+      "B_terrain_poke": 0,
+      "C_junction_crossings": 0,
+      "D_wall_on_road": 0,
+      "E_wall_floating": 0,
+      "J_terrain_span": 0,
+      "K_kerb_in_carriageway": 20,
+      "F_curb_not_flush": 13,
+      "I_sidewalk_isolating": 20,
+      "W_race_wall_clash": 0
+     }
+    ],
+    [
+     53,
+     {
+      "A_supports_in_road": 0,
+      "B_terrain_poke": 0,
+      "C_junction_crossings": 0,
+      "D_wall_on_road": 0,
+      "E_wall_floating": 0,
+      "J_terrain_span": 0,
+      "K_kerb_in_carriageway": 20,
+      "F_curb_not_flush": 13,
+      "I_sidewalk_isolating": 20,
+      "W_race_wall_clash": 0
+     }
+    ]
+   ],
+   "race_acw": [
+    [
+     53,
+     {
+      "A_supports_in_road": 0,
+      "B_terrain_poke": 0,
+      "C_junction_crossings": 0,
+      "D_wall_on_road": 0,
+      "E_wall_floating": 0,
+      "J_terrain_span": 0,
+      "K_kerb_in_carriageway": 20,
+      "F_curb_not_flush": 13,
+      "I_sidewalk_isolating": 20,
+      "W_race_wall_clash": 0
+     }
+    ],
+    [
+     53,
+     {
+      "A_supports_in_road": 0,
+      "B_terrain_poke": 0,
+      "C_junction_crossings": 0,
+      "D_wall_on_road": 0,
+      "E_wall_floating": 0,
+      "J_terrain_span": 0,
+      "K_kerb_in_carriageway": 20,
+      "F_curb_not_flush": 13,
+      "I_sidewalk_isolating": 20,
+      "W_race_wall_clash": 0
+     }
+    ]
+   ]
+  },
+  "no_route": {
+   "race_cw": {
+    "fail": false,
+    "leak_m2": 0,
+    "leak_cells": 0,
+    "blocked": [],
+    "forbidden_reached": [],
+    "spawns_unreached": [],
+    "reached_m2": 139148,
+    "probes": null
+   },
+   "race_acw": {
+    "fail": false,
+    "leak_m2": 0,
+    "leak_cells": 0,
+    "blocked": [],
+    "forbidden_reached": [],
+    "spawns_unreached": [],
+    "reached_m2": 138847,
+    "probes": null
+   }
+  },
+  "verify_mouths": [
+   {
+    "piece": "del_cerro_blvd#0",
+    "end": "end",
+    "host_vertex": 1085,
+    "angle_deg": 75.63,
+    "fail": false,
+    "fails": [],
+    "span_mouth_line_m": [
+     -12.75,
+     12.27
+    ],
+    "mouth_line_max_m": 0.015,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.02,
+    "approach_max_dg_per_m": 0.0113
+   },
+   {
+    "piece": "del_cerro_blvd#1",
+    "end": "start",
+    "host_vertex": 1086,
+    "angle_deg": 86.05,
+    "fail": false,
+    "fails": [],
+    "span_mouth_line_m": [
+     -10.18,
+     10.57
+    ],
+    "mouth_line_max_m": 0.016,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.016,
+    "approach_max_dg_per_m": 0.0098
+   },
+   {
+    "piece": "medium#2+0#0#0",
+    "end": "start",
+    "host_vertex": 4424,
+    "angle_deg": 88.88,
+    "fail": false,
+    "fails": [],
+    "span_mouth_line_m": [
+     -4.95,
+     4.89
+    ],
+    "mouth_line_max_m": 0.003,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.005,
+    "approach_max_dg_per_m": 0.0182
+   },
+   {
+    "piece": "north_J1_waring#0",
+    "end": "start",
+    "host_vertex": 1517,
+    "angle_deg": 83.62,
+    "fail": false,
+    "fails": [],
+    "span_mouth_line_m": [
+     -7.0,
+     9.88
+    ],
+    "mouth_line_max_m": 0.012,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.027,
+    "approach_max_dg_per_m": 0.0204
+   },
+   {
+    "piece": "north_J5_jackson_north#0",
+    "end": "start",
+    "host_vertex": 2317,
+    "angle_deg": 76.95,
+    "fail": true,
+    "fails": [
+     "HOST LANE: 0 samples with road/curb > 0.02 m over the host deck (max 0.0 m), 11 with grass at/above it"
+    ],
+    "span_mouth_line_m": [
+     -9.82,
+     8.47
+    ],
+    "mouth_line_max_m": 0.035,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.038,
+    "approach_max_dg_per_m": 0.0045
+   },
+   {
+    "piece": "medium#2+0#0#0",
+    "end": "end",
+    "host_vertex": 82,
+    "angle_deg": 87.77,
+    "fail": false,
+    "fails": [],
+    "span_mouth_line_m": [
+     -5.92,
+     5.66
+    ],
+    "mouth_line_max_m": 0.004,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.01,
+    "approach_max_dg_per_m": 0.0097
+   }
+  ]
+ },
+ "kn5_bytes": {
+  "road": 119419007,
+  "road_v0.18.0": 116304573,
+  "race": 11735454,
+  "closure_race_cw": 5433534,
+  "closure_race_acw": 5432722
+ },
+ "terrain_tiles": "1GRASS x8 (max 46,079 v), GRASS_FAR x4 (max 40,073 v; the D2 far ring)"
+}

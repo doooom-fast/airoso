@@ -19,7 +19,7 @@
   },
   "sync_in": {
     "required": ["track.config.json", "start_positions.json"],
-    "optional": ["data/centerline.raw.local.json.pre-median", "data/connectors.local.json.pre-trim",
+    "optional": ["data/centerline.raw.local.json.pre-median", "data/connectors.local.json.pre-trim", "data/expansion.north.json",
                  "data/terrain.samples.json.gz", "data/corridor.i8.json", "data/i8.local.json", "data/i8.legacy.local.json",
                  "data/deck_datum.samples.json", "data/ground_release.samples.json.gz", "data/freeway_i8.samples.json.gz",
                  "textures/chaparral_far_diffuse.jpg"],

@@ -215,7 +215,7 @@ def _island_half(mo, host_path, data, s):
     return 0.0
 
 
-def check_mouth(mo, field, host_path, piece_path, piece_end, data) -> dict:
+def check_mouth(mo, field, host_path, piece_path, piece_end, data, exact_deck: bool = False) -> dict:
     fails = []
     cx, _cy, cz = mo["cut_xyz"]
     _d, c, _lat = host_path.project(cx, cz)
@@ -302,8 +302,8 @@ def check_mouth(mo, field, host_path, piece_path, piece_end, data) -> dict:
     hl = {"samples": 0, "road_kerb_above": 0, "grass_at_or_above": 0, "max_above_m": 0.0, "max_grass_m": None,
           "worst": []}
     for s in steps(c - hw - LANE_PAD_M, c + hw + LANE_PAD_M, STEP_LANE_M):
-        hd = HD(s)
-        if hd is None:
+        hd_s = HD(s)
+        if hd_s is None:
             continue
         hhalf = host_path.frame(s)[3] / 2.0
         isl = _island_half(mo, host_path, data, s)
@@ -312,6 +312,13 @@ def check_mouth(mo, field, host_path, piece_path, piece_end, data) -> dict:
             x, z = host_path.point(s, side * o)
             h = field.heights(x, z)
             hl["samples"] += 1
+            if exact_deck and h["ROAD"]:
+                # ledger 0054 P1 (route.weld_exact_deck): the host deck AT the sample, its lowest road sheet — on a
+                # corner's fanned outer half the level-across HD(s) reads the host's own triangles up to 2.2 cm
+                # "above themselves" (the v0.18.0 J5 corner with no mouth at all: 8 such samples, 21 grass ones)
+                hd = min(h["ROAD"])
+            else:
+                hd = hd_s
             top = max(h["ROAD"] + h["KERB"], default=None)
             if top is not None and top - hd > LANE_TOL_M:
                 hl["road_kerb_above"] += 1
@@ -429,6 +436,8 @@ def check_mouth(mo, field, host_path, piece_path, piece_end, data) -> dict:
             "span_mouth_line_m": [round(ml_lo - c, 2), round(ml_hi - c, 2)],
             "span_notch_m": [round(nt_lo - c, 2), round(nt_hi - c, 2)],
             "host_half_m": round(half, 2), "mouth_line": ml, "host_lane": hl, "notch": nt, "approach": ap,
+            **({"host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)"}
+               if exact_deck else {}),
             "fails": fails, "fail": bool(fails)}
 
 
@@ -460,6 +469,9 @@ def verify(project: Path, obj: Path | None = None) -> dict:
     local = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
     conns = json.loads((data / "connectors.local.json").read_text(encoding="utf-8")).get("connectors", [])
     tris = load_obj(obj, [(mo["cut_xyz"][0], mo["cut_xyz"][2]) for mo in mouths])
+    cfgp = project / "track.config.json"
+    exact_prefixes = [str(x) for x in ((json.loads(cfgp.read_text(encoding="utf-8")).get("route", {})
+                                        .get("weld_exact_deck") or []) if cfgp.exists() else [])]
     field = Field(tris)
     rows = []
     for mo in mouths:
@@ -474,7 +486,8 @@ def verify(project: Path, obj: Path | None = None) -> dict:
                 raise LookupError(f"mouth {mo['connector']}: host {mo['host']!r} not in connectors.local.json")
             hp = Path2(hc["points_xyz_m"], hc["widths_m"])
         pp = Path2(smooth_xz([tuple(q) for q in piece["points_xyz_m"]]), piece["widths_m"])
-        rows.append(check_mouth(mo, field, hp, pp, end, data))
+        rows.append(check_mouth(mo, field, hp, pp, end, data,
+                                exact_deck=any(str(mo["connector"]).startswith(px) for px in exact_prefixes)))
     return {"obj": obj.name, "mouths": rows, "fail": any(r["fail"] for r in rows),
             "thresholds": {"mouth_tol_m": MOUTH_TOL_M, "lane_tol_m": LANE_TOL_M, "lane_edge_m": LANE_EDGE_M,
                            "grass_at_m": GRASS_AT_M, "notch_out_m": NOTCH_OUT_M, "notch_tol_m": NOTCH_TOL_M,

@@ -1804,3 +1804,33 @@ ship chain) or proven bit-identical to v0.18.0 (below).
 - `terrain_sample` (offline, scratch copy of the workshop): with the committed config minus D2's two boxes (frame pin 0,
   `grid_grow`, `route.bbox`, the held `north`) the plan's I / J / h / keep / tris / phys / refine / break arrays equal the
   installed v0.18.0 `terrain.tiers.json.gz`.
+
+## 2026-10-14 — Lake Murray expansion P1: the weld rehearsal's opt-ins — `authored_take`, `swept_mouths` (A7 split), `weld_exact_deck` (weld + verify_mouths HOST LANE), `verify_race` M on split rows (ledger 0054)
+
+No threshold moves: every tolerance below is the one already in force (the weld's 2 cm `SELF_TOL_M`, verify_mouths'
+`LANE_TOL_M` 2 cm / `GRASS_AT_M` 5 mm, barrier_bands' `MOUTH_CORNER_M` 3 m / `MOUTH_PROBE_M` 10 m). What changes is
+*which surface* two gates measure against, and *how far* a mouth is declared, for the mouths a config key names. Every
+key is absent from the committed config (the north route stays HELD until P3); with the keys absent every output is the
+v0.18.0 one (the existing `test_barrier_bands`, `test_verify_mouths`, `test_route_connectors_held` and the new tests).
+
+| Item | Value | Flag |
+|---|---|---|
+| `route.route_connectors.authored_take` (new, opt-in; `tools/route_connectors.py`) | `{route: [weld id]}`: those weld stubs of `data/expansion.<route>.json` become connectors as authored (centre + width per point; the 3DEP height smoothed as every route piece's); refused when the file is missing, in another frame, or lacks the id | wiring |
+| `race.swept_mouths` (new, opt-in; `tools/barrier_bands.py`) | connector-name prefixes: the mouth is declared from the piece's swept road edges (assembler smoothing) crossing the host edge, + `MOUTH_CORNER_M` of arc, joined with gap_mouths' sidewalk gap (`mouth_weld.gap_window`); its policy is derived **per vertex** and split into runs (EXPANSION-PLAN A7: a far-side opening past a box pin is `sealed_far_strip` in the box, `behind_closure` in the funnel; at a pin the far strip is the seal); self-gate 7 judges a split row on every vertex of its run | wiring; the 3 m and 10 m are the existing constants |
+| swept-mouth probes | every **6 m** of host arc across the opening (1.5 m in from each edge crossing) and at both ends of the declared window, each **3 m** and 10 m past the host edge | 6 m and 3 m ⚠ invented (ledger 0054 P1: one probe per lane-width along a 30-50 m opening; 3 m = surely on the new road) |
+| `route.weld_exact_deck` (new, opt-in; `tools/mouth_weld.ExactHostDeck`, `weld_mouths_blend.py`) | connector-name prefixes whose weld reads the host deck off the host ribbon's own triangles on its pavement (the projection model off it): the warp target AND the self-check | no threshold; measured: the J1 3-line stub's end-row chord vs the projection deck 2.4 cm (fails the 2 cm self-check on its paint), vs the host's triangles 1.7 cm; on a straight host the two are equal to 1e-9 (`test_mouth_weld_exact_deck`) |
+| verify_mouths HOST LANE under `route.weld_exact_deck` | the deck at each sample is the host's lowest road sheet there (was HD(s), the centreline deck level across) | no threshold; measured on the v0.18.0 road with NO mouth at J5: the level-across HD reads the corner's own fanned / levelled deck as 8 samples up to 2.2 cm "above itself" and 21 grass samples "at" it (`p1-proofs/host_lane_baseline.py`) |
+| `verify_race` M | a split mouth row (`split` present) is judged on its own `vertex_from..vertex_to`; every other row on the closed mouth's window, as before | wiring |
+| `tools/author_expansion.py` (new) — `[authored]` numbers | `SMOOTH_SIGMA_M` 4, `DIVIDED_SEP_M` 3, `NOSE_M` 6, `NOSE_CLEAR_M` 6, `NOSE_W_M` 0.6, `CROSSOVER_W_M` 12, `PAD_CUT_PAD_M` 2, `STUB_LEN_M` 15, `WELD_STUB_OUT_M` 100, `ENTRY_MIN_DEG` 15, `ENTRY_EASE_M` 3, `EASE_ENTRY_DEG` 30; J3's two north corner radii 6 m, the visitor-centre arm 12 m wide | ⚠ invented (authoring choices, no measurement; listed in the file's `parameters`) |
+| `tests/tools/test_author_expansion.py` tolerances | swept edge vs authored curb ≤ 0.5 m; junction heights within 0.5 m of revise/measure.json; built width at an eye station within 0.02 m | 0.5 m ⚠ invented; V1's 1.5 m p95 and V2's ±1 m pads are the plan's (themselves ⚠ invented there) |
+
+**Proven (2026-10-14):** with the rehearsal delta (`tracks/san-diego-lake-murray/source/expansion/p1-proofs/
+rehearsal_delta.py`) on a fresh scratch copy of the workshop: both welds self-check clean (J1 straight-curb stub, J5 with
+its R 10 return and NE ease); planned and BUILT `no_route` PASS on both Speedways with 428 probes (22 new, past v1521
+included); the A7 split live in race_cw (J1 v1509-1521 `sealed_far_strip`, v1522-1523 `behind_closure`; J5 v2310
+`behind_closure`, v2311-2325 `sealed_far_strip`); verify_mouths PASS on J1 and on every existing mouth (byte-for-byte
+the v0.18.0 numbers); J5 verify_mouths FAILS on 11 grass-at-deck samples on the loop's centreline at v2311-2313 that
+the v0.18.0 road carries identically (0 road above the host, MOUTH LINE 3.5 cm, NOTCH 3.8 cm, APPROACH 0.45 %/m);
+drive_test / audit / fold fans on all three layouts equal to v0.18.0 key for key (street soft top 33, severe 0, kinks
+3.41 /km, audit 53; race severe 22 / 20, barrier_missing 0). Details: ledger 0054 "P1",
+`p1-proofs/rehearsal_result.json`.

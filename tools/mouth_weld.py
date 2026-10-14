@@ -176,6 +176,32 @@ class HostDeck:
         return abs(o) < half - margin
 
 
+class ExactHostDeck(HostDeck):
+    """HostDeck read off the host's TRIANGLES where the point lies on its pavement (ledger 0054 P1, opt-in per mouth:
+    track.config.json route.weld_exact_deck, connector-name prefixes). The projection model above interpolates a row
+    pair by the point's projection onto the CENTRE segment; on the outer edge of a tight corner the host's rows fan
+    (the College/Navajo corner: 2.2 m between centre points, 6.2 m between edge points), and there the ribbon's own
+    triangles (scripts-v021 geometry/ribbon.road_ribbon: (l0, c0, c1) + (l0, c1, l1) left, (c0, r0, r1) + (c0, r1, c1)
+    right) stand up to ~0.5 cm off it on a 1.3 % grade - the surface a car drives and verify_mouths measures is the
+    triangles. Off the pavement (past its edge) it is the projection model's level run-on, unchanged."""
+
+    def at(self, x, z) -> float:
+        for k in range(len(self.idx) - 1):
+            r0, r1 = self.rows[self.idx[k]], self.rows[self.idx[k + 1]]
+            l0, c0, q0 = r0
+            l1, c1, q1 = r1
+            for a, b_, c in ((l0, c0, c1), (l0, c1, l1), (c0, q0, q1), (c0, q1, c1)):
+                d = (b_[2] - c[2]) * (a[0] - c[0]) + (c[0] - b_[0]) * (a[2] - c[2])
+                if abs(d) < 1e-12:
+                    continue
+                w1 = ((b_[2] - c[2]) * (x - c[0]) + (c[0] - b_[0]) * (z - c[2])) / d
+                w2 = ((c[2] - a[2]) * (x - c[0]) + (a[0] - c[0]) * (z - c[2])) / d
+                w3 = 1.0 - w1 - w2
+                if min(w1, w2, w3) >= -1e-9:
+                    return w1 * a[1] + w2 * b_[1] + w3 * c[1]
+        return HostDeck.at(self, x, z)
+
+
 def host_window(rows, closed, x, z, reach=HOST_WINDOW_M):
     """row indices of the host within `reach` of arc from the row nearest (x, z), in order (wrapped if closed)"""
     m = len(rows)

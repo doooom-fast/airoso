@@ -1359,6 +1359,10 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
                 continue
             mo = cm.get((host, side)) or {}
             vf, vt = int(mo.get("vertex_from", host - 2)), int(mo.get("vertex_to", host + 2))
+            if x.get("split"):
+                # ledger 0054 A7 (tools/barrier_bands.py race.swept_mouths): a mouth whose policy is split per vertex
+                # is judged on each part's own vertices — its box part is sealed by the far strip, not the closure
+                vf, vt = int(x["vertex_from"]), int(x["vertex_to"])
             for k in _walk(vf % m, vt % m, m):
                 yy = y[k] if k < len(y) else None
                 if yy is None:

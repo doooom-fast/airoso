@@ -51,7 +51,7 @@ the new roads is a candidate for a later phase.
 
 ## Status
 
-**Open — P0 (data, no geometry) done on a branch 2026-10-14** (see "P0" at the end: guarded OSM + buildings, `north`
+**Open — P1 (the readable intermediate, the numbered map, the J1 / J5 weld rehearsal) done on a branch 2026-10-14** (see "P1" at the end: J5 welds and seals; J1 welds with Waring's straight curbs and its R 30 return becomes apron AP1 for P3; no_route PASS both Speedways; the existing layouts no worse). Was: **Open — P0 (data, no geometry) done on a branch 2026-10-14** (see "P0" at the end: guarded OSM + buildings, `north`
 appended with full/medium/short byte-identical, config per D2, `grid_grow` + frame pin + cache remap proven; the grown
 grid, the pin's offsets and the re-keyed cache land together in P2). Next: P1, the readable intermediate. Was: **Open — planned 2026-10-13** (`tracks/san-diego-lake-murray/EXPANSION-PLAN.md`, revision 2 after an independent critic; place facts in `DOSSIER-EXPANSION-NORTH.md`). Kevin's answers to D1-D4 pending (D3 amends law L3: needs his explicit yes). Was: **Open — research and plan first** (dossier-style: routes, junctions with the loop, elevation and the gorge,
 widths and medians off the aerial, terrain extent, layouts, budget, gates), then the build after v0.18.x lands
@@ -180,3 +180,72 @@ Tests (new):
 - `test_fetch_buildings_cache.py`
 - `tests/geometry/test_terrain_frame_pin.py`
 - `tests/elevation/test_v021_heightfield_grow.py`
+
+
+## P1 — the readable intermediate, the numbered map, the weld rehearsal (2026-10-14; branch `worktree-wf_c6ab4b42-146-1`, not merged, nothing installed)
+
+EXPANSION-PLAN P1 steps 1, 2, 4 and 5. Step 3 (median_envelope / author_median_blend reading the expansion islands) is
+not needed until the pieces are meshed and moves to P3; the islands are described in the intermediate.
+
+**The intermediate** — `tracks/san-diego-lake-murray/data/expansion.north.json`, written by the new
+`tools/author_expansion.py` (offline from its cached 3DEP, `data/expansion.north.samples.json.gz`; byte-reproducible,
+tested). Nothing in it is a mesh.
+- **Four pieces** (A Waring 980 m, B Princess View 1,110 m, C Mission Gorge 2,276 m, D Jackson north 2,004 m), a
+  centre every 2.5 m: the midline of the two OSM carriageways where the road is divided. Off the raw OSM midline by
+  p95 0.04-0.11 m (V1 asks ≤ 1.5 m). Per station: left / right curb (the 38 aerial eye readings interpolated; every
+  reading station built at its eye width), median width / type, lanes, 3DEP height.
+- **Profiles from 3DEP 1 m:** Princess View -10.3 % at s 472 (dossier 10.2), the Mission Gorge crest 114.5 m at s 1460
+  (114.3 ± 1 at s 1460), Jackson +7.9 %. The connector tool's 11 % cap binds nowhere (0.000 m on every piece). Junction
+  heights within 0.22 m of the research's. Cross-sections every 10 m over the first / last 100 m of every leg end (the
+  terrain lens had only the mid-legs).
+- **9 median runs** (MD1-MD9): Waring planted, Mission Gorge terracotta (open at the two crossovers, s 174 / 202),
+  Princess View only the Fontaine nose (s 500-555), Jackson flush only (hatched into J4 to s 172, painted, double
+  yellow where it narrows).
+- **Three pads** J2 / J3 / J4: one outline each, arms cut straight, corners true arcs at the dossier radii (J2 7 m; J3
+  SW 11, SE 5.5, the two north corners 6 [authored]; J4 south 9, north 6). Six see-only stubs S1-S6 with their walls.
+- **Two welds** W1 (J1) and W5 (J5), with the connector the chain builds and the opening it makes on the loop's outer
+  edge (below).
+
+**The numbered map** — `data/expansion_plan.svg` (vector, local metres) and a PNG over NAIP 2022 (the session
+scratchpad `exp/p1/plan_map.png`, 4382 x 2631; NAIP cached outside the repo by `tools/plot_expansion_plan.py`):
+every piece A-D, junction J1-J5 with its height, pad outline and arm cut, stub S1-S6, median MD1-MD9, the 38 width
+stations by number, the two weld openings W1 / W5 and the apron AP1, plus close-ups of J1 and J5 (loop vertex numbers,
+race box, pins, signs M3 / M4, lamp 77) and of the three pads.
+
+**The rehearsal** — `tools/ship_sd.sh` on a fresh scratch copy of the workshop (minus build/), `--no-install`, with
+`p1-proofs/rehearsal_delta.py` applied for the run and restored after: the two weld stubs taken as connectors
+(`route_connectors.authored_take`), the mouths declared where they really open (`race.swept_mouths`), the weld reading
+the loop's own triangles (`route.weld_exact_deck`), the two outside kerbs dropped (apex 1514 L, 2319 L) and M3 / M4
+skipped in Free Roam (A7). The full chain ran (terrain incl. the D2 far ring, 4 far tiles; road kn5 119.4 MB, was
+116.3).
+- **J5 (Jackson north, the 0050 box)** welds clean with its R 10 return and the NE curb eased onto the loop edge: the
+  opening runs v2313.5-v2320.9, all inside box 2311-2328 (A5: v2312-2322). Sealed in both Speedways
+  (`sealed_far_strip` race_cw, `sealed_race_strip` race_acw; the sidewalk gap's one vertex before the box pin sits
+  behind race_cw's closure). The weld puts no road above the loop. **verify_mouths fails it on 11 samples of grass
+  within 5 mm under the loop's road on its centreline at v2311-2313** — the same 11 samples are in the installed
+  v0.18.0 road (`p1-proofs/host_lane_baseline.py`): the 0050 corner's own ground, which no gate looked at before
+  because no mouth stood there. No step over 6 cm at J5 is new in any layout; race_cw's inside-half steps there (up
+  to 7.9 cm, stations 6954-6959) are v0.18.0's, unchanged — they belong to your seat check of 0050 (P0 step 1).
+- **J1 (Waring)**: with Waring's straight curbs it welds clean and passes verify_mouths (mouth line 1.2 cm, approach
+  2.0 %/m); opening v1514.1-v1520.4. **The R ≈ 30 m free-flow return cannot be welded this way.** In plain terms: the
+  new road's end is a straight ruler laid across the loop's curved, sloping edge at only three points; across the
+  return the ruler would stand 2.9-4 cm proud of the loop between those points wherever its middle point sits (the
+  weld and verify_mouths allow 2 cm), and the end would land at v1523 instead of v1527.5. That 118 m² of corner is
+  carried as **apron AP1** (v1520.4-v1526.3) for P3 to author as its own piece. The race machinery is proven on the
+  full return too (`tests/tools/test_barrier_bands_swept.py`).
+- **The A7 split happened**: race_cw seals J1 with the far strip up to the pin v1521 and puts v1522-1523 behind the
+  closure; race_acw seals it with its race strip. Probes cross both openings at 3 m and 10 m, past v1521 included.
+- **no_route PASS on both Speedways**, planned and BUILT (0 leaks, 0 of 428 probes reached). verify_race OK after its
+  M check learnt split rows.
+- **The existing three layouts are no worse, key for key**: street soft top 33, severe 0, kinks 3.41 /km, audit 53;
+  race_cw / race_acw severe 22 / 20, barrier_missing 0, audits 53; fold fans PASS with v0.18.0's numbers; the three
+  existing mouths' verify_mouths numbers are v0.18.0's exactly.
+- **Stills from a driver's eye** (`p1-proofs/stills_mouths.jpg`): College straight on into Waring, Waring back down
+  to J1, the race_cw strip across J1; Navajo into Jackson north, Jackson north down to J5, the race_cw strip across J5.
+
+**For P3 from this:** J1 needs its apron (or a pad); J5's inherited grass at v2311-2313 should be fixed at its source
+(0050's corner ground) before the mouth's gate can pass. Lamp 77 stands on the R 30 return (apron), as the plan said.
+
+Tests (new): `test_author_expansion.py`, `test_route_connectors_authored_take.py`, `test_barrier_bands_swept.py`,
+`test_mouth_weld_exact_deck.py`, two in `test_verify_mouths.py`. Suite: 736 passed, 2 failed (the same two engine-july
+md5 checks of this worktree's CRLF checkout). GATES-CHANGELOG 2026-10-14 "P1".

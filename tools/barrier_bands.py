@@ -95,6 +95,7 @@ _LD = _load_tool("layout_dummies", "_layout_dummies_ro")
 # computation (the same plan + trim/clip the author sweeps), read-only: the declaration IS the authored line
 _RF = _load_tool("race_furniture", "_race_furniture_ro")
 _RC = _load_tool("race_corridor", "_race_corridor_ro")
+_MW = _load_tool("mouth_weld", "_mouth_weld_ro")   # gap_window: where gap_mouths_blend opens the host's sidewalk
 FOLD_APEX_MAX_VERTICES = 15  # a trimmed fold farther than this from every inside corner apex is a data defect
 GRID_STAGGER_M = _LD.GRID_STAGGER_M
 GRID_PITCH_M = _LD.GRID_PITCH_M
@@ -119,6 +120,10 @@ PROBE_STEP_M = 25.0          # forbidden probes every 25 m (pockets, island tops
 MOUTH_PROBE_M = 10.0         # ... and 10 m into each mainline mouth
 ISLAND_PROBE_MIN_HALF_M = 0.5
 MIRROR_TRANSITION_M = 100.0  # the mirror statistic skips this far either side of an island / opening end (report only)
+SWEPT_EXTEND_MAX_M = 25.0    # tools/mouth_weld.py EXTEND_MAX_M: a swept edge short of the host edge is run on this far
+SWEPT_PROBE_EVERY_M = 6.0    # INVENTED (ledger 0054 P1): a swept mouth gets probes this often along its opening (and
+                             # at both ends of its declared window) ...
+SWEPT_PROBE_DEPTHS_M = (3.0, MOUTH_PROBE_M)   # ... each 3 m (surely on the new road) and 10 m past the host edge
 
 
 def _stations(pts):
@@ -364,30 +369,52 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
     # ---- sealed mouths (top-level, the 0047 shape; the per-layout policy is corridors.<id>.mouths) ----
     closed = []
     nrm = _normals(pts, m)
+    swept_prefixes = [str(x) for x in (race.get("swept_mouths") or [])]
+    swept_conns = None
     for mo in mouths:
         h = int(mo["host_vertex"]) % m
         half_m = float(mo.get("connector_width_m", 10.0)) / 2.0 + MOUTH_CORNER_M
         side = "L" if int(mo.get("side", 1)) > 0 else "R"
-        lo_ = h
-        while lo_ > 0 and st[h] - st[lo_ - 1] <= half_m:
-            lo_ -= 1
-        hi_ = h
-        while hi_ < m - 1 and st[hi_ + 1] - st[h] <= half_m:
-            hi_ += 1
+        swept = None
+        if any(str(mo.get("connector", "")).startswith(px) for px in swept_prefixes):
+            # ledger 0054 P1 (race.swept_mouths, opt-in): a wide FLARED weld mouth (the J1 / J5 openings, 35-38 m at
+            # the loop edge, the curb returns built into the connector) is declared where its two swept road edges
+            # really cross the loop edge (+ MOUTH_CORNER_M of arc each way), not as connector width / 2 + 3 m about
+            # host_vertex: at J5 that symmetric window ran out of a box the opening lies wholly inside
+            if swept_conns is None:
+                cp = data / "connectors.local.json"
+                swept_conns = json.loads(cp.read_text(encoding="utf-8")).get("connectors", []) if cp.exists() else []
+            swept = _swept_opening(mo, swept_conns, pts, widths, m, nrm, st)
+            if swept is None:
+                fails.append(f"mouths: {mo.get('connector')} is a swept mouth (race.swept_mouths) but its piece's "
+                             f"swept edges do not reach the host edge within {SWEPT_EXTEND_MAX_M} m")
+        if swept is not None:
+            lo_, hi_ = swept["vertex_from"], swept["vertex_to"]
+        else:
+            lo_ = h
+            while lo_ > 0 and st[h] - st[lo_ - 1] <= half_m:
+                lo_ -= 1
+            hi_ = h
+            while hi_ < m - 1 and st[hi_ + 1] - st[h] <= half_m:
+                hi_ += 1
         sgn = 1.0 if side == "L" else -1.0
         poly = []
         for v in range(lo_, hi_ + 1):
             nx, nz = nrm[v]
             off = sgn * (widths[v] / 2.0 + EDGE_CENTRE_FROM_LIP[edge_mode])
             poly.append([round(pts[v][0] + nx * off, 3), round(pts[v][1], 3), round(pts[v][2] + nz * off, 3)])
-        closed.append({"connector": mo["connector"], "host_vertex": h, "side": side,
-                       "connector_width_m": mo.get("connector_width_m"), "vertex_from": lo_, "vertex_to": hi_,
-                       "policy": "sealed: both curb strips run straight across the mouth line (Q1); per layout see "
-                                 "corridors.<id>.mouths",
-                       "polyline_xyz_m": poly})
+        row = {"connector": mo["connector"], "host_vertex": h, "side": side,
+               "connector_width_m": mo.get("connector_width_m"), "vertex_from": lo_, "vertex_to": hi_,
+               "policy": "sealed: both curb strips run straight across the mouth line (Q1); per layout see "
+                         "corridors.<id>.mouths",
+               "polyline_xyz_m": poly}
+        if swept is not None:
+            row["swept"] = swept
+        closed.append(row)
     for lid, c in corridors.items():
         c["mouths"] = _mouth_policies(closed, c, m, widths, nrm, pts)
         c["no_route"]["forbidden_probes"] += _mouth_probes(closed, widths, m)
+        c["no_route"]["forbidden_probes"] += _swept_probes(closed, widths, m, st)
 
     # ---- grid / pit zones ----------------------------------------------------------------------------
     no_gap = []
@@ -804,10 +831,43 @@ def _clip_kerbs(kerbs, partial, pts, widths, m, corridors, inset, bhalf, mode):
     return out, method
 
 
+def _vertex_policy(side, cor, v):
+    """the policy one host vertex of a mouth needs: the race-side strip seals the race side; on the far side a
+    closure standing there (closure / island zone) puts the mouth behind it, else (whole / box / pin) the far curb
+    strip seals it - at a PIN the closure is pinned ON the far strip, so the far strip is the seal"""
+    if side == cor["race_side"]:
+        return "sealed_race_strip"
+    if cor["closure_y_by_vertex"][v] is not None and cor["zone_by_vertex"][v] in ("closure", "island"):
+        return "behind_closure"
+    return "sealed_far_strip"
+
+
 def _mouth_policies(closed, cor, m, widths, nrm, pts):
     rows = []
     for mo in closed:
         h = int(mo["host_vertex"]) % m
+        if mo.get("swept"):
+            # ledger 0054 A7: a swept mouth gets its policy per host vertex, split into runs where it changes (the
+            # J1 opening runs past race_cw's box-end pin v1521 into the exit funnel: the box part stays
+            # sealed_far_strip, the funnel part is behind the closure)
+            vs = _RC.walk(mo["vertex_from"], mo["vertex_to"], m)
+            runs = []
+            for v in vs:
+                pol = _vertex_policy(mo["side"], cor, v)
+                if runs and runs[-1][0] == pol:
+                    runs[-1][2] = v
+                else:
+                    runs.append([pol, v, v])
+            for k, (pol, a, b) in enumerate(runs):
+                row = {"connector": mo["connector"], "host_vertex": h, "side": mo["side"], "policy": pol,
+                       "vertex_from": a, "vertex_to": b}
+                if len(runs) > 1:
+                    row["split"] = {"part": k + 1, "of": len(runs), "why": "ledger 0054 A7: the opening crosses a zone "
+                                    "boundary of this corridor; the policy is per vertex"}
+                else:
+                    row["split"] = {"part": 1, "of": 1, "why": "swept mouth: judged on every vertex"}
+                rows.append(row)
+            continue
         if mo["side"] == cor["race_side"]:
             pol = "sealed_race_strip"
         elif cor["closure_y_by_vertex"][h] is not None:
@@ -817,6 +877,137 @@ def _mouth_policies(closed, cor, m, widths, nrm, pts):
         rows.append({"connector": mo["connector"], "host_vertex": h, "side": mo["side"], "policy": pol,
                      "vertex_from": mo["vertex_from"], "vertex_to": mo["vertex_to"]})
     return rows
+
+
+def _swept_probes(closed, widths, m, st):
+    """ledger 0054 P1: a swept mouth is probed ACROSS its opening (every SWEPT_PROBE_EVERY_M of host arc, 1.5 m in from
+    each end, at 3 m and 10 m past the host edge) - the J1 opening's funnel part past v1521 included - besides the one
+    probe at host_vertex every mouth gets"""
+    out = []
+    for mo in closed:
+        sw = mo.get("swept")
+        if not sw:
+            continue
+        sgn = 1.0 if mo["side"] == "L" else -1.0
+        a_, b_ = float(sw["edge_vertex_from"]), float(sw["edge_vertex_to"])
+
+        def arc_of(vf):
+            v = int(math.floor(vf))
+            return st[v] + (st[min(v + 1, len(st) - 1)] - st[v]) * (vf - v)
+        s0, s1 = arc_of(a_) + 1.5, arc_of(b_) - 1.5
+        vs = []
+        k = 0
+        while s0 + k * SWEPT_PROBE_EVERY_M <= s1 + 1e-9:
+            s = s0 + k * SWEPT_PROBE_EVERY_M
+            vs.append(min(range(m), key=lambda q: abs(st[q] - s)))
+            k += 1
+        for v in [mo["vertex_from"]] + vs + [mo["vertex_to"]]:     # the declared window's two ends too
+            if any(p_["vertex"] == v and p_["why"].startswith(f"swept mouth {mo['connector']}") for p_ in out):
+                continue
+            for dpt in SWEPT_PROBE_DEPTHS_M:
+                out.append({"vertex": v, "y": round(sgn * (widths[v] / 2.0 + dpt), 3),
+                            "why": f"swept mouth {mo['connector']} (v{v}, {dpt:.0f} m in)"})
+    return out
+
+
+def _swept_opening(mo, conns, pts, widths, m, nrm, st):
+    """where the mouth's piece really opens the host edge: its centre smoothed as the assembler sweeps it, each road
+    edge (+- width / 2, centred tangent) walked from the outer end toward the cut, its first crossing of the host edge
+    line on the mouth's side (an edge short of it run on along its last direction up to SWEPT_EXTEND_MAX_M, as the
+    weld does); returns fractional edge vertices and the declared whole-vertex window (+ MOUTH_CORNER_M of arc)"""
+    piece = next((c for c in conns if c["name"] == mo.get("piece")), None)
+    if piece is None:
+        return None
+    P = [(float(p[0]), float(p[2])) for p in piece["points_xyz_m"]]
+    Wd = [float(w) for w in piece["widths_m"]]
+    if mo.get("end") == "start":
+        P, Wd = P[::-1], Wd[::-1]                  # walk from the outer end to the cut
+    sm = _assembler_smooth(P)
+    sgn = 1.0 if int(mo.get("side", 1)) > 0 else -1.0       # mouths.json: +1 = L (left of increasing vertex)
+    h = int(mo["host_vertex"]) % m
+    edge = []
+    for v in range(h - 40, h + 41):
+        q = v % m
+        nx, nz = nrm[q]
+        edge.append((pts[q][0] + nx * sgn * widths[q] / 2.0, pts[q][2] + nz * sgn * widths[q] / 2.0, v))
+    hits = []
+    for e_sgn in (1.0, -1.0):
+        line = []
+        for i in range(len(sm)):
+            a, b = sm[max(0, i - 1)], sm[min(len(sm) - 1, i + 1)]
+            tx, tz = b[0] - a[0], b[1] - a[1]
+            L = math.hypot(tx, tz) or 1.0
+            line.append((sm[i][0] - tz / L * e_sgn * Wd[i] / 2.0, sm[i][1] + tx / L * e_sgn * Wd[i] / 2.0))
+        a, b = line[-2], line[-1]
+        d = (b[0] - a[0], b[1] - a[1])
+        L = math.hypot(*d) or 1.0
+        line.append((b[0] + d[0] / L * SWEPT_EXTEND_MAX_M, b[1] + d[1] / L * SWEPT_EXTEND_MAX_M))
+        hit = None
+        for i in range(len(line) - 1):
+            for k in range(len(edge) - 1):
+                x = _seg_x(line[i], line[i + 1], edge[k][:2], edge[k + 1][:2])
+                if x is not None:
+                    hit = edge[k][2] + x
+                    break
+            if hit is not None:
+                break
+        if hit is None:
+            return None
+        hits.append(hit)
+    a_, b_ = min(hits), max(hits)
+
+    def arc_of(vf):
+        v = int(math.floor(vf))
+        return st[v] + (st[min(v + 1, len(st) - 1)] - st[v]) * (vf - v)
+    lo_ = int(math.floor(a_))
+    while lo_ > 0 and arc_of(a_) - st[lo_ - 1] <= MOUTH_CORNER_M:
+        lo_ -= 1
+    hi_ = int(math.ceil(b_))
+    while hi_ < m - 1 and st[hi_ + 1] - arc_of(b_) <= MOUTH_CORNER_M:
+        hi_ += 1
+    # ... and wherever gap_mouths_blend takes the host's curb + sidewalk away (no curb there either)
+    gap = sorted(_MW.gap_window(pts, m, True, int(mo["host_seg"]), float(mo["host_t"]),
+                                float(mo.get("connector_width_m", 10.0)), float(mo.get("angle_deg") or 90.0))) \
+        if "host_seg" in mo else []
+    if gap and gap[-1] - gap[0] < m // 2:
+        lo_, hi_ = min(lo_, gap[0]), max(hi_, gap[-1])
+    return {"edge_vertex_from": round(a_, 2), "edge_vertex_to": round(b_, 2), "vertex_from": lo_, "vertex_to": hi_,
+            "sidewalk_gap": [gap[0], gap[-1]] if gap else None,
+            "how": "the piece's swept road edges (assembler smoothing) crossing the host edge, + MOUTH_CORNER_M of arc, "
+                   "and the host sidewalk gap (mouth_weld.gap_window) (race.swept_mouths, ledger 0054 P1)"}
+
+
+def _assembler_smooth(P, sigma=1.5):
+    """scripts-v021/geometry/smooth.py smooth_centerline(sigma_pts=1.5, passes=1) in plan (endpoints pinned)"""
+    n = len(P)
+    if n < 5:
+        return list(P)
+    r = max(1, int(round(3.0 * sigma)))
+    ker = [math.exp(-(k * k) / (2.0 * sigma * sigma)) for k in range(-r, r + 1)]
+    sk = sum(ker)
+    ker = [k / sk for k in ker]
+    out = [P[0]]
+    for i in range(1, n - 1):
+        x = z = 0.0
+        for k in range(-r, r + 1):
+            j = min(n - 1, max(0, i + k))
+            x += ker[k + r] * P[j][0]
+            z += ker[k + r] * P[j][1]
+        out.append((x, z))
+    out.append(P[-1])
+    return out
+
+
+def _seg_x(a, b, c, d):
+    """fraction u along c->d where segments a->b and c->d cross, else None"""
+    r = (b[0] - a[0], b[1] - a[1])
+    q = (d[0] - c[0], d[1] - c[1])
+    den = r[0] * q[1] - r[1] * q[0]
+    if abs(den) < 1e-12:
+        return None
+    t = ((c[0] - a[0]) * q[1] - (c[1] - a[1]) * q[0]) / den
+    u = ((c[0] - a[0]) * r[1] - (c[1] - a[1]) * r[0]) / den
+    return u if (0.0 <= t <= 1.0 and 0.0 <= u <= 1.0) else None
 
 
 def _mouth_probes(closed, widths, m):
@@ -1037,6 +1228,17 @@ def validate(out: dict, ctx: dict) -> list[str]:
     for lid, c in corridors.items():
         for mo in c.get("mouths", []):
             h = mo["host_vertex"]
+            if mo.get("split"):
+                # ledger 0054 A7: a swept (split) row is judged on EVERY vertex of its run (its host_vertex may lie in
+                # another part); every other row keeps the host_vertex judgement below
+                rng = _RC.walk(mo["vertex_from"], mo["vertex_to"], m)
+                bad = [k for k in rng if _vertex_policy(mo["side"], c, k) != mo["policy"]]
+                if bad:
+                    fails.append(f"mouths {lid}: {mo['connector']} part {mo['split']['part']} declared {mo['policy']} "
+                                 f"but v{bad[0]} needs {_vertex_policy(mo['side'], c, bad[0])}")
+                if mo["policy"] == "sealed_race_strip" and any(not es[k] for k in rng if k < len(es)):
+                    fails.append(f"mouths {lid}: {mo['connector']} v{h}: the race-side strip is gapped across the mouth")
+                continue
             if mo["policy"] == "sealed_race_strip":
                 if mo["side"] != c["race_side"]:
                     fails.append(f"mouths {lid}: {mo['connector']} v{h} is on the far side but declared sealed by the race strip")

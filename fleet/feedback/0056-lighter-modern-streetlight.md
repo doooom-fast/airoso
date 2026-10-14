@@ -1,0 +1,31 @@
+---
+id: 0056
+title: "Make lighter lamp model" / "more modern" — the streetlight is 57 % of the track's vertices
+status: open
+scope: tracks/san-diego-lake-murray lamps (tools/author_lamps_blend.py, the lamp asset, LIGHTPOST / LIGHTS meshes, data/lights.local.json, ext_config [LIGHT_n]); every later lamp (expansion D4, phase 3/4)
+layer: project + asset
+train: -
+---
+
+## Request (Kevin, 2026-10-14)
+
+> "make lightr lamp moidel" — "morew modern"
+
+## Evidence
+
+Installed v0.18.0 road kn5 (116.3 MB; 1,697,179 verts / 2,026,253 tris): LIGHTPOST = 17 meshes, 966,725 verts (57.0 %),
+899,835 tris (44.4 %), for 243 lamps (~4,000 points each); six LIGHTPOST meshes at AC's 65,535 cap (ledger 0054).
+Both expansion plans make a lighter lamp the precondition for more lamps (Phase 4 projects 161-174 MB without it).
+
+## Fix (defaults)
+
+A modern street light (a contemporary LED cobra-head / shoebox fixture on a tapered steel pole with a mast arm, the
+kind San Diego streets carry now) at about a tenth of today's points, same positions and heights, same light: the 80s
+low-pressure-sodium colour, intensity and pool shape Kevin approved (ledger 0043) stay exactly as they are — only the
+fixture changes. CSP light sources stay at the lens.
+
+## Verification
+
+Per-lamp and total LIGHTPOST points; road kn5 size before/after; ext_config [LIGHT_n] positions unchanged (or moved with
+the lens by a recorded offset); lamps out of every lane (verify_race scenery gate, drive_test obstruction 0); day and
+night stills; Kevin's seat (look, load time, FPS).

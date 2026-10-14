@@ -38,3 +38,8 @@ on-road brightness Kevin approved is kept within ~±10 % by scaling the intensit
 (2ca5363): LED cobra head, Caltrans ES-6A Type 21 35 ft pole + 12 ft arms, 371 kn5 points per lamp (was 4,045), road
 kn5 116.3 -> 72.7 MB, light 11.33 m over the road, intensity unchanged (0.013), twin arms kept as shown. Ships in
 v0.18.1 with 0055 and 0057; the seat (look at night, pool brightness, load time) closes it.
+
+> "They could be a little brighter" (Kevin, same day, on the preview)
+
+Intensity 0.013 -> **0.015** (+15 %, the ladder's next step after 0043's 0.010 -> 0.013), committed on the lamp branch
+(4992d16); colour and pool shape unchanged. Seat-tune from there (config-only, no rebuild).

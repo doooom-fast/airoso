@@ -132,7 +132,11 @@ def _refine_field(proj):
         return None
     spec = importlib.util.spec_from_file_location("_airoso_prep_snapshot", PREP_SNAPSHOT)
     mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
+    dwb, sys.dont_write_bytecode = sys.dont_write_bytecode, True     # no __pycache__ inside the mirrored snapshot
+    try:
+        spec.loader.exec_module(mod)
+    finally:
+        sys.dont_write_bytecode = dwb
     return mod.RefineField(json.loads(gzip.decompress(p.read_bytes()).decode("utf-8")))
 
 

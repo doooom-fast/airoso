@@ -14,7 +14,10 @@ bodies (which read the ground under each deck):
      in the ramp the blend runs toward the ground the kn5 prep will leave just outside the zone — a kept-cell vertex's
      refined height (engine-july build_kn5_loop.RefineField, read from the snapshot), not its graded height before the
      prep: the prep never touches a zone vertex, so a ramp toward the graded ground froze a band 2-4 m over 3DEP between
-     two pieces of 3DEP (v0.18.0, the view lens's comb west of College's north approach);
+     two pieces of 3DEP (v0.18.0, the view lens's comb west of College's north approach); and beside the pavement (never
+     under a deck) the ramp is RAMP_BATTER metres per metre of the step it closes, RAMP_M to RAMP_MAX_M long — a 3 m
+     step to the held near-road verge closed in 4 m read as teeth along the zone's edge; an end lying inside another
+     zone on the same side does not ramp at all (ground_release.Zones);
   2b. BATTER (fix round 2, 2026-10-13: the view lens's 3-4 m vertical grass curtains beside Alvarado, where the built
      sidewalk is wider than the real one and the real bank falls away under its outer half, and where a real 3.6 m
      terrace climbs at ~54 deg from Alvarado to College's south approach): a released vertex beside the pavement stands
@@ -76,6 +79,9 @@ BATTER_FILL = 1.7     # [invented] steepest released bank FALLING from a pavemen
 #                       the sidewalk, stood 2.004 m over 3DEP)
 BATTER_REACH_M = 12.0 # [invented] the batter is read within this plan distance of the pavement edge
 ON_GROUND_M = 1.0     # [invented] a pavement point carries a fill batter where the ground under it is within this
+RAMP_BATTER = 3.5     # [invented] a zone's ramp runs this many metres per metre of the step it closes (the tiered terrain's
+#                       keep_batter, ledger 0046 fix round 4)...
+RAMP_MAX_M = 16.0     # [invented] ...at most this long (keep_feather_m), never shorter than ground_release.RAMP_M
 FILL_EASE_M = 0.25    # [invented] ...and the fill starts at the pavement only while that gap is under this; from here to
 #                       ON_GROUND_M it eases (smoothstep) down to the ground under the pavement, so where an approach
 #                       leaves its embankment for a bridge the fill fades out with the ground instead of switching off face
@@ -315,7 +321,7 @@ def main():
     # leaves every zone vertex alone, so a ramp blended toward the graded ground it had BEFORE the prep froze a 4 m band
     # 2-4 m over 3DEP between two pieces of 3DEP — sawn into teeth by the 1.25 m lattice)
     RF = _refine_field(proj)
-    n_ramp_ref = 0
+    n_ramp_ref = n_ramp_long = 0
     for v in bm.verts:
         x, y, z = v.co.x, v.co.y, v.co.z
         w, zone = Z.weight(x, y)
@@ -340,11 +346,23 @@ def main():
                 t = D
         released[v.index] = (under, zone["name"], z)
         zo = z
-        if w < 1.0 and RF is not None and RF.in_kept(x, y):
+        if not under and RF is not None and RF.in_kept(x, y):
             nb_ = flat.find_nearest((x, y, 0.0), 1.0e6)
             tg = RF.target(x, y, z, d_built=nb_[3] if nb_[0] is not None else None)
             if tg is not None:
                 zo = tg
+        if not under:
+            # the ramp is an earth batter's run of the step it closes (v0.18.0, the view lens's comb where College's
+            # I-8 span zone meets the near-road verge criterion 7 holds 2-3 m over the real earth: a 3 m step closed in
+            # 4 m on 2.5 m facets alternates low and high corners along the zone's edge — teeth). Never under a deck
+            # (there the release is the real span, never eased back toward the draft's fill)
+            L = min(RAMP_MAX_M, max(GR.RAMP_M, RAMP_BATTER * abs(t - zo)))
+            if L > GR.RAMP_M + 1e-6:
+                w2, z2 = Z.weight(x, y, ramp_m=L)
+                if z2 is not None:
+                    w = w2
+                    n_ramp_long += 1
+            if w < 1.0 and zo != z:
                 n_ramp_ref += 1
         v.co.z = zo + w * (t - zo)
         if under:                     # in a zone's ramp the blend may not leave the ground over the deck either
@@ -363,23 +381,47 @@ def main():
     # no lower than max(h_f - BATTER_FILL * d_f); h_f a face's mean height, d_f its plan distance. The cut wins.
     gr1 = BVHTree.FromBMesh(bm)
     face_h = [sum(dv[i][2] for i in f) / len(f) for f in dfaces]
-    on_ground = {}
+    vgap = {}
 
-    def grounded(fi):
-        if fi not in on_ground:
-            f = dfaces[fi]
-            cx = sum(dv[i][0] for i in f) / len(f)
-            cy = sum(dv[i][1] for i in f) / len(f)
-            g = gr1.ray_cast(Vector((cx, cy, face_h[fi] - 0.005)), Vector((0, 0, -1)), 500.0)[0]
-            on_ground[fi] = None if g is None or face_h[fi] - g.z > ON_GROUND_M else max(0.0, face_h[fi] - g.z)
-        return on_ground[fi]
+    def pave_gap(i):
+        """the ground's depth under pavement vertex i (after step 2), or None (no ground under it)"""
+        if i not in vgap:
+            x, y, z = dv[i]
+            g = gr1.ray_cast(Vector((x, y, z - 0.005)), Vector((0, 0, -1)), 500.0)[0]
+            vgap[i] = None if g is None else max(0.0, z - g.z)
+        return vgap[i]
 
-    def fill_top(fi):
-        """the height a fill batter starts from beside face fi: the pavement while the ground is within FILL_EASE_M under
-        it, the ground under it at ON_GROUND_M, smoothstep between — continuous in the gap (the abutment's teeth)"""
-        gap = on_ground[fi]
+    def fill_top(fi, qx, qy):
+        """the height a fill batter starts from at q, the point of face fi nearest the vertex (where its distance is
+        measured): the pavement while the ground under it is within FILL_EASE_M, the ground under it at ON_GROUND_M,
+        smoothstep between, none past that — read AT q, linear over the face, never at the face's centroid (v0.18.0, the
+        view lens's teeth at College's south abutment: a 3.5 m sidewalk face whose centroid stood over the embankment
+        held a vertex 0.8 m over 3DEP beside a corner of it already 2 m in the air), so the fill fades with the ground
+        where an approach leaves its embankment for a bridge"""
+        f = dfaces[fi]
+        w = None
+        for k in range(1, len(f) - 1):
+            bc = _bary(qx, qy, dv[f[0]], dv[f[k]], dv[f[k + 1]])
+            if bc is not None:
+                w = {f[0]: bc[0], f[k]: bc[1], f[k + 1]: bc[2]}
+                break
+        if w is None:                 # q on the face's outline, a hair outside every fan triangle: its nearest corner
+            i = min(f, key=lambda j: (dv[j][0] - qx) ** 2 + (dv[j][1] - qy) ** 2)
+            w = {i: 1.0}
+        gap = 0.0
+        h = 0.0
+        for i, wi in w.items():
+            gi = pave_gap(i)
+            if gi is None:
+                if wi > 1e-6:
+                    return None
+                continue
+            gap += wi * gi
+            h += wi * dv[i][2]
+        if gap > ON_GROUND_M:
+            return None
         u = min(1.0, max(0.0, (gap - FILL_EASE_M) / (ON_GROUND_M - FILL_EASE_M)))
-        return face_h[fi] - CLEAR_M - gap * u * u * (3.0 - 2.0 * u)
+        return h - CLEAR_M - gap * u * u * (3.0 - 2.0 * u)
 
     n_cut = n_fill = 0
     for vi, (under, zname, z0) in released.items():
@@ -390,7 +432,7 @@ def main():
         if not near:
             continue
         hi = min(face_h[fi] - CLEAR_M + BATTER_CUT * d for _q, _n, fi, d in near)
-        los = [fill_top(fi) - BATTER_FILL * d for _q, _n, fi, d in near if grounded(fi) is not None]
+        los = [ft - BATTER_FILL * d for ft, d in ((fill_top(fi, q[0], q[1]), d) for q, _n, fi, d in near) if ft is not None]
         nz = v.co.z
         if los and nz < max(los):
             nz = max(los)
@@ -703,7 +745,7 @@ def main():
     bmr.free()
     rep = {"_doc": "tools/ground_release_blend.py (ledger 0046 v0.18.0 integration fix round)",
            "terrain_vertices": [v0, len(me.vertices)], "edges_halved": n_sub, "no_data_vertices": n_nodata,
-           "ramp_toward_the_prep_refinement": n_ramp_ref,
+           "ramp_toward_the_prep_refinement": n_ramp_ref, "ramp_lengthened_by_the_step": n_ramp_long,
            "zones": per_zone, "batter": {"cut_m_per_m": BATTER_CUT, "fill_m_per_m": BATTER_FILL, "reach_m": BATTER_REACH_M, "cut": n_cut, "fill": n_fill},
            "face_cap": {"vertices_lowered": n_capped, "faces_over_pavement": len(low_of),
                         "faces_still_over_by_an_unreleased_corner": len(pre_face), "those": pre_face[:20]},
@@ -720,7 +762,7 @@ def main():
         f"vertices on {len(low_of)} faces over the pavement ({len(pre_face)} held over it by an unreleased corner "
         f"{pre_face[:3]}), {n_steep} steep faces within {BATTER_REACH_M} m "
         f"({len(steep_open)} not under a deck); "
-        f"{n_ramp_ref} ramp vertices blended toward the prep's refined ground; {len(rail_rep)} rail(s) (sloped ends) "
+        f"{n_ramp_ref} ramp vertices blended toward the prep's refined ground, {n_ramp_long} on a ramp lengthened to the step; {len(rail_rep)} rail(s) (sloped ends) "
         f"{[(r['zone'], r['side'], r['s_m']) for r in rail_rep]} on the curb lip; saved loop.blend")
 
 

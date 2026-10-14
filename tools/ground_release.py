@@ -76,6 +76,15 @@ class Zones:
             self.T.append(((b[0] - a[0]) / L, (b[1] - a[1]) / L))
         self.zones = [dict(z, a=float(z["s_m"][0]), b=float(z["s_m"][1]),
                            sides=[int(s) for s in z["sides"]], reach=float(z["reach_m"])) for z in zones]
+        # an end that lies inside another zone on the same side does not ramp there (v0.18.0, the view lens: two zones
+        # that overlap or abut — Lake Murray Blvd's I-8 span and creek at s 13428, College's approach foot / south
+        # approach / I-8 span — each ramped to nothing at the shared station, a dip back to the built ground between
+        # two released pieces)
+        for zz in self.zones:
+            zz["open_a"] = {sd for sd in zz["sides"] if any(o is not zz and sd in o["sides"] and o["a"] < zz["a"] <= o["b"] + 1e-6
+                                                         for o in self.zones)}
+            zz["open_b"] = {sd for sd in zz["sides"] if any(o is not zz and sd in o["sides"] and o["a"] - 1e-6 <= zz["b"] < o["b"]
+                                                         for o in self.zones)}
         # only vertices that can be in a zone are indexed
         self.cell = cell
         self.grid: dict[tuple[int, int], list[int]] = {}
@@ -109,9 +118,11 @@ class Zones:
         dx, dz = x - self.P[i][0], z - self.P[i][1]
         return i, self.s[i] + dx * tx + dz * tz, -dx * tz + dz * tx
 
-    def weight(self, x, z):
-        """(w, zone) — w in [0, 1] (1 inside, smoothstep to 0 over RAMP_M at the zone's ends and outer edge), the zone
-        with the largest weight; (0.0, None) outside every zone"""
+    def weight(self, x, z, ramp_m=None):
+        """(w, zone) — w in [0, 1] (1 inside, smoothstep to 0 over ``ramp_m`` (default RAMP_M) at the zone's ends and
+        outer edge; no ramp at an end lying inside another zone on that side), the zone with the largest weight;
+        (0.0, None) outside every zone"""
+        rm = RAMP_M if ramp_m is None else float(ramp_m)
         if not any(b[0] <= x <= b[1] and b[2] <= z <= b[3] for b in self.boxes):
             return 0.0, None
         loc = self.locate(x, z)
@@ -123,13 +134,14 @@ class Zones:
         for zz in self.zones:
             if not (zz["a"] <= s <= zz["b"]):
                 continue
-            ws = smoothstep(min((s - zz["a"]) / RAMP_M, (zz["b"] - s) / RAMP_M))
             # a bank zone starts at the kerb seam; a span zone takes the ground under the whole deck as well
             inner = -1e-9 if zz["kind"] == "span" else hw - INNER_M
             for side in zz["sides"]:
                 o = side * lat
                 if inner <= o <= hw + zz["reach"]:
-                    w = ws * smoothstep((hw + zz["reach"] - o) / RAMP_M)
+                    da = 1e9 if side in zz.get("open_a", ()) else s - zz["a"]
+                    db = 1e9 if side in zz.get("open_b", ()) else zz["b"] - s
+                    w = smoothstep(min(da, db) / rm) * smoothstep((hw + zz["reach"] - o) / rm)
                     if w > best[0]:
                         best = (w, zz)
         return best

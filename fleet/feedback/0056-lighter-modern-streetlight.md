@@ -9,7 +9,7 @@ train: -
 
 ## Request (Kevin, 2026-10-14)
 
-> "make lightr lamp moidel" — "morew modern"
+> "make lightr lamp moidel" — "morew modern" — "Taller too"
 
 ## Evidence
 
@@ -29,3 +29,7 @@ fixture changes. CSP light sources stay at the lens.
 Per-lamp and total LIGHTPOST points; road kn5 size before/after; ext_config [LIGHT_n] positions unchanged (or moved with
 the lens by a recorded offset); lamps out of every lane (verify_race scenery gate, drive_test obstruction 0); day and
 night stills; Kevin's seat (look, load time, FPS).
+
+**Taller (Kevin, same day: "Taller too").** Mounting height raised from today's 9 m to a modern San Diego arterial
+height (~11-12 m / 35-40 ft, justified and recorded), arm reach to match; the CSP light rises with the lens, and the
+on-road brightness Kevin approved is kept within ~±10 % by scaling the intensity only if needed (recorded).

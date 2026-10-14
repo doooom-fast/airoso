@@ -298,7 +298,8 @@ def _closure_side(c):
 def verify(authored: dict | None, bands: dict, pts: list, island_w: list, *, allow_standin: bool = False,
            widths: list | None = None, spawns: dict | None = None, lamps: list | None = None,
            pre_author: bool = False, lamp_arm_m: float | None = None, mast_r_m: float | None = None,
-           scenery: list | None = None, scenery_source: str | None = None, lap: str | None = None) -> dict:
+           scenery: list | None = None, scenery_source: str | None = None, lap: str | None = None,
+           lamp_model: dict | None = None) -> dict:
     """A-E and J-N (+ the author's own F record) on the authored file unless ``pre_author``; H and I too; F
     re-measured from ``spawns`` ({race layout id: dummies dict, or None when its file is missing}), G from
     ``lamps`` (lights.local.json heads) and G-scenery from ``scenery`` (TreeFX trunks + sign posts, scenery_items)
@@ -321,7 +322,9 @@ def verify(authored: dict | None, bands: dict, pts: list, island_w: list, *, all
     if spawns is not None and widths is not None:
         _verify_spawns(spawns, bands, pts, widths, grid, fails, warns, counts)
     if lamps is not None and widths is not None:
-        _verify_lamps(lamps, bands, pts, widths, grid, fails, warns, counts, lamp_arm_m, mast_r_m)
+        lm = lamp_model or {}
+        _verify_lamps(lamps, bands, pts, widths, grid, fails, warns, counts, lamp_arm_m,
+                      mast_r_m if mast_r_m is not None else lm.get("mast_r_m"), lm.get("post_h_m"), lm.get("model"))
     if scenery is not None and widths is not None:
         _verify_scenery(scenery, bands, pts, widths, grid, fails, warns, counts, scenery_source)
     return {"ok": not fails, "fails": fails, "warnings": warns, "counts": counts}
@@ -534,9 +537,25 @@ def lamp_margins(bases: list, pts: list, widths: list, bands: dict, mast_r: floa
     return rows
 
 
-def _verify_lamps(heads, bands, pts, widths, grid, fails, warns, counts, arm_m=None, mast_r=None):
+def lamp_model_info(cfg: dict | None) -> dict:
+    """the lamp model track.config.json scenery.streetlights.model selects (tools/author_lamps_blend.py): its name,
+    pole height and mast footprint radius. The 2026-10 lamp (the default) is lamp_post.obj scaled to POST_H; the
+    LED model (ledger 0056) reads its own spec, assets/models/streetlight_led.json"""
+    sl = (((cfg or {}).get("scenery") or {}).get("streetlights") or {})
+    model = str(sl.get("model", "street_lamp_2026_10"))
+    if model == "led_cobra":
+        try:
+            spec = json.loads((AIROSO / "assets" / "models" / "streetlight_led.json").read_text(encoding="utf-8"))
+            return {"model": model, "post_h_m": float(spec["pole_height_m"]), "mast_r_m": float(spec["mast_radius_m"])}
+        except (OSError, KeyError, ValueError):
+            return {"model": model, "post_h_m": None, "mast_r_m": MAST_R_FALLBACK_M}
+    return {"model": model, "post_h_m": None, "mast_r_m": None}
+
+
+def _verify_lamps(heads, bands, pts, widths, grid, fails, warns, counts, arm_m=None, mast_r=None, post_h=None,
+                  model=None):
     arm = arm_m if arm_m is not None else _author_lamps_constant("ARM_M", LAMP_ARM_FALLBACK_M)
-    post_h = _author_lamps_constant("POST_H", LAMP_POST_H_FALLBACK_M)
+    post_h = post_h if post_h is not None else _author_lamps_constant("POST_H", LAMP_POST_H_FALLBACK_M)
     r_m = mast_r if mast_r is not None else mast_radius_m(post_h)
     bases = lamp_bases(heads, pts, arm)
     rows = lamp_margins(bases, pts, widths, bands, r_m, grid)
@@ -553,6 +572,7 @@ def _verify_lamps(heads, bands, pts, widths, grid, fails, warns, counts, arm_m=N
                      f"author_lamps_blend aims those at vertex 0 (measured as authored)")
     closure_rows = [r for r in rows if r.get("closure_margin_m") is not None]
     counts.update({"lamps": len(bases), "lamps_checked": len(rows), "lamp_arm_m": arm, "lamp_post_h_m": post_h,
+                   "lamp_model": model or "street_lamp_2026_10",
                    "mast_r_m": round(r_m, 3), "lamp_min_margin_m": worst["margin_m"] if worst else None,
                    "lamp_min": worst, "lamps_inside": len(bad),
                    "lamp_min_vs_closure": min(closure_rows, key=lambda r: r["closure_margin_m"]) if closure_rows else None})
@@ -1549,7 +1569,8 @@ def main(argv=None) -> int:
         scenery += sign_items(json.loads(sgp.read_text(encoding="utf-8")))
         src_note.append("signs: data/signs.local.json")
     r = verify(authored, bands, pts, island_w, allow_standin=allow_standin, widths=widths, spawns=spawns,
-               lamps=lamps, pre_author=pre_author, scenery=scenery, scenery_source="; ".join(src_note), lap=lap)
+               lamps=lamps, pre_author=pre_author, scenery=scenery, scenery_source="; ".join(src_note), lap=lap,
+               lamp_model=lamp_model_info(cfg))
     if lamps is None and not scenery_only:
         r["warnings"].append("G: no data/lights.local.json — no lamps authored, nothing to check")
     c = r["counts"]

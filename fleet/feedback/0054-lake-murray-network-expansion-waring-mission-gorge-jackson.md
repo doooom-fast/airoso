@@ -118,4 +118,13 @@ Cowles now stands at 7.157° (3DEP 7.231°; it was 6.600°). Details in ledger 0
   Terrain: the Mission Gorge/Fairmount interchange is near the D2 far box's west edge (−117.108) — phase 4 grows the
   physical grid west again (same pin + remap).
 
+- **Phase 5 (Kevin):** *"We are going to change intersections, such that a road we are not completing gets a barrier,
+  not a curve. That's phase 5"* — every unbuilt side road keeps its mouth and a short stub, closed by a **barrier
+  across it**, instead of today's curb return that curves the curb round and erases the road. Network-wide (the old
+  loop's sealed side streets and every expansion mouth), all layouts. Until then, phase 1's new junctions and stubs are
+  built so phase 5 can swap the curb return for a barrier without rebuilding the road (the stub ribbon and mouth are
+  kept; only the closure object changes). Touches: `docs/JUNCTIONS.md` R18(c) (stub = curb returns + invisible wall),
+  `gap_mouths_blend` / the sealed-mouth curb sweep, the Speedways' sealed-mouth policy (`barrier_bands` mouths,
+  `no_route` probes), `verify_mouths`.
+
 (Naming: the plan's build steps P0-P7 are *steps*; "Phase N" is Kevin's expansion phase.)

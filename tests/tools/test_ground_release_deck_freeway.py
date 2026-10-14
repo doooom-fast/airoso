@@ -148,8 +148,15 @@ def test_lake_murray_zones_are_declared_and_resolve():
     zs = gr.resolve_zones(cfg)
     assert [z["name"] for z in zs] == ["alvarado_creek_bank", "college_south_approach", "lmb_alvarado_creek",
                                        "college_i8_span", "lmb_i8_span", "alvarado_college_terrace",
-                                       "college_approach_foot", "college_north_approach"]
-    assert [z["kind"] for z in zs] == ["bank", "span", "span", "span", "span", "bank", "bank", "bank"]
+                                       "college_approach_foot", "college_north_approach", "college_split_cut"]
+    assert [z["kind"] for z in zs] == ["bank", "span", "span", "span", "span", "bank", "bank", "bank", "bank"]
+    # ledger 0055: College's cut face — east of the northbound slab only, read out to the construction zone (20 m =
+    # terrain.clamp_corridor_m), its top rounded over 3 m (docs/ROAD-CONSTRUCTION.md 2-5 m), no rail (a cut has no drop)
+    cut = zs[-1]
+    assert cut["sides"] == [-1] and cut["cut_reach_m"] == 20.0 and cut["round_m"] == 3.0 and cut["rails"] is False
+    assert cut["cut_reach_m"] == cfg["terrain"]["clamp_corridor_m"]
+    assert cut["s_m"][0] <= 3600.0 and cut["s_m"][1] >= 4300.0
+    assert all("cut_reach_m" not in z and "rails" not in z for z in zs[:-1])          # every other zone as it was
     assert all(z["reach_m"] >= 36.0 for z in zs)
     # fix round 2: each I-8 overcrossing's whole real span (fresh 3DEP abutments ~2580 / ~2670 and ~13338 / ~13407)
     spans = {z["name"]: z["s_m"] for z in zs}
@@ -359,6 +366,41 @@ def test_batter_is_the_straight_bank_where_two_pavements_leave_no_room():
     assert gr.batter_z(0.0, (1.2, 1.0, 0.2), (1.5, 1.6, 0.05)) == 1.2
 
 
+def test_a_cut_zone_reads_its_own_reach_rounds_its_top_and_declares_no_rail():
+    """ledger 0055 (College Ave, Kevin: 'cut into the hillside the way California does'): a zone's cut_reach_m lets the
+    batter read the pavement farther than BATTER_REACH_M (the hill meets the cut 12-14 m out there), round_m rounds the
+    cut's top into the real ground (a smooth minimum, never above the cut or the ground), rails false only on a cut"""
+    # the rounding: far below the cut -> the ground; far above -> the cut; at the crease -> under both, by k / 4
+    k = gr.round_k(3.0, 1.0)
+    assert k == 1.5
+    cut = (5.0, 0.0, 5.0)                                   # a 45 deg cut from a pavement 5 m away: limit 5 m
+    assert gr.batter_z(1.0, cut, None, round_k=k) == 1.0    # the real ground well under the cut: untouched
+    assert gr.batter_z(12.0, cut, None, round_k=k) == 5.0   # the hill well over the cut: cut back to the plane
+    z = gr.batter_z(5.0, cut, None, round_k=k)
+    assert abs(z - (5.0 - k / 4.0)) < 1e-9                  # the crease, rounded
+    zs = [gr.batter_z(h, cut, None, round_k=k) for h in [3.0 + 0.1 * i for i in range(60)]]
+    assert all(b >= a - 1e-12 for a, b in zip(zs, zs[1:])) and max(zs) <= 5.0      # monotone, never over the cut
+    assert all(zr <= min(3.0 + 0.1 * i, 5.0) + 1e-12 for i, zr in enumerate(zs))    # never over the ground either
+    assert gr.batter_z(12.0, cut, None) == 5.0              # no round_k: exactly as before
+    # a fill below still lifts, and the straight bank between two pavements is untouched by the rounding
+    assert gr.batter_z(0.0, (5.0, 4.0, 1.0), (2.0, 3.0, 0.6), round_k=k) == 2.0
+    # the declaration's guards
+    base = {"name": "z", "kind": "bank", "s_m": [0, 10], "sides": ["right"], "reach_m": 40.0}
+    ok = gr.resolve_zones({"terrain": {"ground_release": {"zones": [dict(base, cut_reach_m=20.0, round_m=3.0, rails=False)]}}})
+    assert ok[0]["cut_reach_m"] == 20.0 and ok[0]["round_m"] == 3.0 and ok[0]["rails"] is False
+    for bad in (dict(base, cut_reach_m=50.0), dict(base, round_m=6.0), dict(base, rails=False),
+                dict(base, cut_reach_m=20.0, rails="no")):
+        try:
+            gr.resolve_zones({"terrain": {"ground_release": {"zones": [bad]}}})
+        except SystemExit:
+            continue
+        raise AssertionError(f"accepted {bad}")
+    src = (ROOT / "tools" / "ground_release_blend.py").read_text(encoding="utf-8")
+    for key in ('reach_c = max(BATTER_REACH_M, float(zr.get("cut_reach_m") or 0.0))', "near = [r for r in near_c if r[3] <= BATTER_REACH_M]",
+                'rail_zones = [z for z in R["zones"] if z.get("rails", True)]', "DEGEN_AREA_M2 = 1e-5"):
+        assert key in src, key
+
+
 def test_round_4_release_holds_the_ground_under_the_pavement_and_leaves_no_coincident_faces():
     """the view lens's curtain under College's sidewalk (the prep pins under a deck only within its window of the
     vertex's own height, and leaves zone vertices alone, so ground the draft seated at Alvarado's level stayed a pit),
@@ -367,7 +409,7 @@ def test_round_4_release_holds_the_ground_under_the_pavement_and_leaves_no_coinc
     src = (ROOT / "tools" / "ground_release_blend.py").read_text(encoding="utf-8")
     for k in ("v.co.z = min(ht) - CLEAR_M", "z < min(ht) - CLEAR_M - HELD_PIT_M", "lowerable = set(released) | pits", "math.hypot(a.x - b.x, a.y - b.y) <= SUBDIV_M",
               "math.hypot(a.x - b.x, a.y - b.y) <= EDGE_SUBDIV_M", "bmesh.ops.remove_doubles(bm, verts=weld, dist=1e-4)",
-              "GR.batter_z(z_in, cut, fill)", "GR.rail_heights(ss,", "RAIL_EXT_MAX_M", 'r["need"] = r["need_ext"]',
+              "GR.batter_z(z_in, cut, fill, round_k=rk)", "GR.rail_heights(ss,", "RAIL_EXT_MAX_M", 'r["need"] = r["need_ext"]',
               '"coincident_faces_removed": n_coinc', 'RAIL_OBJECT = "1WALL_guard_release"', "RAIL_CHUNK_TRIS"):
         assert k in src, k
     assert "e.calc_length()" not in src                     # every halving is by plan length

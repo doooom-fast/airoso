@@ -1809,3 +1809,67 @@ green, the mainline's declaration byte-identical with or without the lap, the se
 gap across a branch caught (forbidden probe + leak), spawns on the lap, the AI line inside its corridor and green on
 `verify_ai_line`, drive_test's lane = the lap's (barrier_missing 0; a missing closure → `closure` missing), the lap's
 ini loading its own common kn5.
+
+## 2026-10-14 — College Ave's split section: the median trust test, a cut face, the Speedway chicane (ledger 0055)
+
+Kevin (seat, v0.18.0): "one of the lanes swerves into where the other lane should be ... we should just cut into the
+hillside the way California does ... But for the racetrack versions, I do like the chicane". **No existing threshold
+was loosened.** One test was re-pointed (it measured the wrong line), one zone got its own reach, and three things are
+new: a cut zone's rounding, the declared race chicane (its own self-gate, 13), and the street-only island kn5.
+
+**`tools/median_envelope.py` trust test — the upper bound reads what it says.** `SEP_TRUST` 24 m (unchanged) was
+compared with the RAW line's offset to the opposing carriageway's OSM way; it is now compared with the two
+carriageways' separation (opposing way's lateral − the ridden way's lateral, the ridden way within the existing 8 m
+chain bound, now the named constant `RIDDEN_MAX_M`). The lower bound (`MIN_SEP` 11 m) and the along-the-road test
+still read the raw offset. Measured (diagnosis replay, the tool's own functions): over College v1282-1350 the raw line
+sits on the aerial's southbound carriageway while OSM draws both ways ~3.5 m east of their pavement, so the raw offset
+read 24.1-24.7 m (> 24: untrusted) where the carriageways are 20.5-21.2 m apart; the run split at v1280/v1353 and the
+two run-end tapers swung the road 12 m onto the southbound carriageway and back. Whole-loop replay: College becomes one
+run (825-1509), Navajo's two runs unchanged, no other run moves. Proven by `tests/tools/test_college_split_0055.py`
+(a raw line 3.5 m outboard of its way, carriageways 21 m apart: ONE run, flat inside; 25.5 m apart: none).
+
+**`tools/ground_release` — a CUT zone (`college_split_cut`).** Per-zone keys, absent on every other zone:
+
+| Key | Value | Flag |
+|---|---|---|
+| `cut_reach_m` — the batter's CUT reads pavement within this (`BATTER_REACH_M` 12 m otherwise; the fill keeps 12 m) | 20 m | = `terrain.clamp_corridor_m` (L3's construction zone), not invented: at v1279-1306 the hill stands 12-13.8 m over the deck 12-14 m out |
+| `round_m` — the cut's top is rounded into the real ground (a smooth minimum, never above the cut or the ground) | 3 m | [invented] inside docs/ROAD-CONSTRUCTION.md's researched 2-5 m |
+| `ROUND_MAX_M` — the largest `round_m` accepted | 5 m | the research's upper bound |
+| `rails: false` — no rail stations on a declared cut zone (only with `cut_reach_m`) | — | measured: the first rehearsal stood an 816 m jersey rail along the cut — the only fall a station read there is the sidewalk's own outer apron (0.14 m over 0.5 m), as on every street of the loop |
+| `DEGEN_AREA_M2` / `DEGEN_DIST_M` — zone faces under this area are slivers of the halving, dissolved (was 1e-8 m², zone vertices only) | 1e-5 m² / 1e-3 m | [invented]: the cut zone's 800 m of kerb seam left 22 collinear slivers; one on the terrain's open edge carried its own corner as a T-junction and stopped the kn5 prep's weld ("face already exists") |
+
+`BATTER_CUT` (1 m per metre) is the existing earth batter. The prep reads the same zones (unchanged: extra keys ignored).
+
+**Race chicanes (`race.chicanes`, `scripts/geometry/race_chicane.py`, `tools/barrier_bands.py` self-gate 13).** A
+declared chicane carries a race layout's lane across the road and back: the closure sweeps into the far curb strip
+(pinned, the run split there) while a RACE-SIDE wall (`corridors.<id>.chicane_walls`, `race_wall_y_by_vertex`) sweeps
+in parallel from the race-side strip (pinned), holds the far carriageway, and both return. Gate 13 FAILS on: declared ≠
+driven; a zone other than `chicane` in the span; a race island inside it (past the modelled noses); the wall missing a
+vertex (a door) or not pinned on the race strip centre (`PIN_TOL_M` 0.01, existing); the closure standing between the
+legs or missing on a leg, or its chicane pins off the far strip centre; the lane past the strip faces, or narrower than
+min(`clear_floor_m`, the corridor's own width at the chicane's two ends) or `clear_hard_min_m` (existing); any wall step
+steeper than `steepest_pin_rate` 1:3 (existing); a wall plan radius under `RADIUS_MIN_M` 20 m or a backward step
+(existing); the lane's faces not ON the walls; a crossing under `MIN_CROSSING_M`. The closure runs either side keep
+gates 1-12 unchanged (the leg is their pin zone, its rate their pin rate, judged against the same 1:3).
+
+| Constant | Value | Flag |
+|---|---|---|
+| `MIN_CROSSING_M` — the lane's centre moves at least this across the road | 15 m | [invented]; v0.18.0's crossing (the one Kevin liked) was 18.4 m, this one 19.9 / 20.4 m |
+| `race_chicane.EASE` — each leg's slope eases in / out over this fraction (steepest = mean / (1 − EASE)) | 0.35 | [invented]: 0.2 (an 18 m ramp) bunched the AI line's turn-in under `verify_ai_line`'s ±6 m car scale — 57 V3 "spurious dip" points on the first rehearsal |
+| `ISLAND_NOSE_VERTS` — the island author's nose taper | 3 | MEASURED (`author_median_blend.NOSE_VERTS`): the race island stays non-zero 3 vertices past each street-only cap so every tool's modelled nose lies beyond the physical, full-width cap |
+| College legs v1253-1289 / v1343-1379 | 36 vertices each | measured: 26 stood at 1:2.85-3.0, 30 at 1:3.0-3.4 with EASE 0.2; 36 / 0.35 gives 1:3.2-3.5 |
+
+The consumers judge the new wall exactly as a closure: `race_furniture` sweeps it into the layout's own closure kn5
+(`wall: chicane`), `verify_race` C' / H / J / G measure it against `race_wall_y_by_vertex` (pins on the race-side strip),
+`no_route` (planned) walls it, `median_zone` bands it (kind `chicane`) and `drive_test` probes it for `barrier_missing`
+(a stricter gate: one more declared band to find a wall on). `write_ai_line` knows the zone (`chicane`, a walled lane).
+
+**The street-only island (`<slug>_street.kn5`).** Where a chicane's span crosses the median, the island's curb and
+barrier there are authored as `1KERB_sidewalk_streetonly_median` / `1WALL_guard_streetonly_median`
+(`tools/author_median_blend.py`; no shrub planted — TreeFX is track-wide), routed by `tools/split_exports_blend.py` to
+`loop_street.blend`, exported as `<slug>_street.kn5`, checked by the new `tools/check_street_kn5.py` (every mesh
+street-only, every material's diffuse embedded, no AC_* node, under the vertex cap), listed in every NON-race layout's
+ini (`track_folder`; `verify_kn5 --inis` now expects `[road, street, spawn]` there and FAILS a race ini that lists it;
+`verify_kn5` FAILS the street kn5 missing, stray, or doubling a road mesh) and folded into `data/track.obj` (the street
+layout's gate OBJ), never into a race layout's. Every race tool reads the island through
+`race_chicane.race_island_w` (zero inside the span).

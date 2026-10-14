@@ -116,6 +116,8 @@ RAIL_SINK_M = 0.30    # ...and its foot runs this far into the curb
 RAIL_TAPER_M = 2.0    # [invented] a rail's top slopes down over this much of each end (a sloped end treatment)...
 RAIL_END_H_M = 0.05   # ...to this height over its base: no square end standing up — only over padding past every
 #                       station that needs the rail (ground_release.rail_heights; fix round 4)
+DEGEN_AREA_M2 = 1e-5  # [invented] a zone face smaller than this is a sliver of the halving (dissolved; was 1e-8 before 0055)
+DEGEN_DIST_M = 1e-3   # [invented] ...merged into its neighbours with vertices this close (dissolve_degenerate)
 RAIL_OBJECT = "1WALL_guard_release"   # the release rails' own physical mesh(es) (never appended to GUARDRAIL)
 RAIL_CHUNK_TRIS = 18000  # [invented] triangles per rail mesh: 3 kn5 vertices each at worst stays under the 65,536 cap
 RAIL_EXT_FALL_M = 1.0  # [invented] ...and only while the ground falls more than this under the pavement edge, steeply
@@ -484,15 +486,23 @@ def main():
         return h - CLEAR_M - gap * u * u * (3.0 - 2.0 * u)
 
     n_cut = n_fill = n_bank = 0
+    n_round = 0
+    zone_rec = {z["name"]: z for z in R["zones"]}
     for vi, (under, zname, z0) in released.items():
         if under:
             continue
         v = bm.verts[vi]
-        near = flat.find_nearest_range((v.co.x, v.co.y, 0.0), BATTER_REACH_M)
-        if not near:
+        # ledger 0055: a zone may read its cut farther than BATTER_REACH_M (College Ave's cut face meets the real hill
+        # 12-14 m out, 12-13.8 m over the deck) and round its top (round_m); the fill keeps BATTER_REACH_M
+        zr = zone_rec.get(zname) or {}
+        reach_c = max(BATTER_REACH_M, float(zr.get("cut_reach_m") or 0.0))
+        rk = GR.round_k(float(zr.get("round_m") or 0.0), BATTER_CUT)
+        near_c = flat.find_nearest_range((v.co.x, v.co.y, 0.0), reach_c)
+        if not near_c:
             continue
+        near = [r for r in near_c if r[3] <= BATTER_REACH_M]
         # (limit, the pavement height it starts from, its plan distance): the lowest cut, the highest fill
-        cut = min((face_h[fi] - CLEAR_M + BATTER_CUT * d, face_h[fi] - CLEAR_M, d) for _q, _n, fi, d in near)
+        cut = min((face_h[fi] - CLEAR_M + BATTER_CUT * d, face_h[fi] - CLEAR_M, d) for _q, _n, fi, d in near_c)
         if zone_kind.get(zname) == "span":
             # SPAN zones: the ground under the pavement is the released real earth (a deck may stand over it), so the fill
             # starts where the pavement actually sits on it — read at the nearest point, eased by the gap (fill_top)
@@ -503,7 +513,9 @@ def main():
                      if grounded(fi)]
         fill = max(fills) if fills else None
         z_in = v.co.z
-        nz = GR.batter_z(z_in, cut, fill)
+        nz = GR.batter_z(z_in, cut, fill, round_k=rk)
+        if rk > 0.0 and cut[0] - rk < max(z_in, fill[0] if fill is not None else z_in) < cut[0] + rk:
+            n_round += 1
         if fill is not None and z_in < fill[0]:
             n_fill += 1
         if nz < max(z_in, fill[0] if fill is not None else z_in) - 1e-9:
@@ -600,10 +612,22 @@ def main():
     n_weld0 = len(bm.verts)
     bmesh.ops.remove_doubles(bm, verts=weld, dist=1e-4)
     n_weld = n_weld0 - len(bm.verts)
-    degen = [f for f in bm.faces if f.calc_area() < 1e-8 and any(v.index in zone_v for v in f.verts)]
-    n_degen = len(degen)
-    if degen:
-        bmesh.ops.dissolve_degenerate(bm, dist=1e-4, edges=list({e for f in degen for e in f.edges}))
+    # ...and every near-zero-area face the zone's halving left (ledger 0055: College's cut zone, 800 m of kerb seam,
+    # left 22 collinear slivers — three points on one line — and one of them on the terrain's open edge at the kerb
+    # carried its own corner as a T-junction on its other edge: the kn5 prep's T-junction weld then built the same
+    # fan triangle twice and stopped the chain). A sliver is any face under DEGEN_AREA_M2 touching a zone vertex or
+    # lying in a zone; dissolved (merged into its neighbours, vertices within DEGEN_DIST_M), re-checked, at most 3 rounds
+    n_degen = 0
+    for _round in range(3):
+        degen = [f for f in bm.faces if f.calc_area() < DEGEN_AREA_M2 and (
+            any(v.index in zone_v for v in f.verts)
+            or Z.weight(f.calc_center_median().x, f.calc_center_median().y)[0] > 0.0)]
+        if not degen:
+            break
+        n_degen += len(degen)
+        bmesh.ops.dissolve_degenerate(bm, dist=DEGEN_DIST_M, edges=list({e for f in degen for e in f.edges}))
+    n_degen_left = sum(1 for f in bm.faces if f.calc_area() < DEGEN_AREA_M2 and (
+        any(v.index in zone_v for v in f.verts) or Z.weight(f.calc_center_median().x, f.calc_center_median().y)[0] > 0.0))
     bm.to_mesh(me)
     bm.free()
     me.update()
@@ -700,7 +724,8 @@ def main():
                 "need_ext": need and e is not None and steep and fall > RAIL_EXT_FALL_M}
 
     by_side = {}
-    for zone in R["zones"]:
+    rail_zones = [z for z in R["zones"] if z.get("rails", True)]      # a declared cut zone (rails false) has no drop
+    for zone in rail_zones:
         a, b = float(zone["s_m"][0]), float(zone["s_m"][1])
         for side in zone["sides"]:
             seen = by_side.setdefault(side, {})
@@ -718,7 +743,7 @@ def main():
     # another zone on that side, stations continue outward while the drop does (gaps up to RAIL_GAP_M), at most
     # RAIL_EXT_MAX_M, plus RAIL_PAD_M of padding stations past the last one that needs a rail
     n_ext = 0
-    for zone in R["zones"]:
+    for zone in rail_zones:
         a, b = float(zone["s_m"][0]), float(zone["s_m"][1])
         for side in zone["sides"]:
             seen = by_side[side]
@@ -897,9 +922,12 @@ def main():
            "terrain_vertices": [v0, len(me.vertices)], "edges_halved": n_sub, "no_data_vertices": n_nodata,
            "ramp_toward_the_prep_refinement": n_ramp_ref,
            "zones": per_zone, "batter": {"cut_m_per_m": BATTER_CUT, "fill_m_per_m": BATTER_FILL, "reach_m": BATTER_REACH_M, "cut": n_cut, "fill": n_fill,
-                      "straight_bank_between_two_pavements": n_bank, "straight_bank_min_m": GR.STRAIGHT_BANK_MIN_M},
+                      "straight_bank_between_two_pavements": n_bank, "straight_bank_min_m": GR.STRAIGHT_BANK_MIN_M,
+                      "rounded_cut_top": n_round,
+                      "zone_cut_reach_m": {n: z.get("cut_reach_m") for n, z in zone_rec.items() if z.get("cut_reach_m")},
+                      "zone_round_m": {n: z.get("round_m") for n, z in zone_rec.items() if z.get("round_m")}},
            "held_pits_lifted_under_the_pavement": n_held_pin, "coincident_faces_removed": n_coinc,
-           "coincident_vertices_welded": n_weld, "zero_area_faces_dissolved": n_degen,
+           "coincident_vertices_welded": n_weld, "zero_area_faces_dissolved": n_degen, "zero_area_faces_left": n_degen_left,
            "face_cap": {"vertices_lowered": n_capped, "faces_over_pavement": len(low_of),
                         "faces_still_over_by_an_unreleased_corner": len(pre_face), "those": pre_face[:20]},
            "steep_faces_within_reach": n_steep, "steep_faces_within_reach_in_the_open": len(steep_open),
@@ -911,7 +939,7 @@ def main():
     bpy.ops.wm.save_mainfile(filepath=str(proj / "loop.blend"))
     print(f"[release] TERRAIN {v0} -> {len(me.vertices)} verts ({n_sub} edges halved in the zones); " + "; ".join(
         f"{n}: {r['moved']} moved (down <= {r['max_down_m']} m, up <= {r['max_up_m']} m, {r['under_deck']} under a deck)"
-        for n, r in per_zone.items()) + f"; {n_held_pin} pits under the pavement lifted to it; batter cut {n_cut} / fill {n_fill} / straight bank "
+        for n, r in per_zone.items()) + f"; {n_held_pin} pits under the pavement lifted to it; batter cut {n_cut} (rounded top {n_round}) / fill {n_fill} / straight bank "
         f"{n_bank}, per-face cap lowered {n_capped} "
         f"vertices on {len(low_of)} faces over the pavement ({len(pre_face)} held over it by an unreleased corner "
         f"{pre_face[:3]}), {n_steep} steep faces within {BATTER_REACH_M} m "

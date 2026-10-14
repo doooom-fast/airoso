@@ -12,9 +12,11 @@ This tool does the data half:
      picked the mainline's own chain as "opposing");
   2. decomposes each mainline vertex's offset to the opposing POLYLINE (segment distance — OSM
      nodes are 20-60 m apart on straights) into lateral + along components, and trusts a vertex
-     only when the offset is genuinely LATERAL (|along| <= 0.5*|lat|) and 11-24 m — near corners
-     the nearest "opposing" geometry is the CROSS street and the raw vector drags the road along
-     its own axis (the Navajo jank, 2026-08-20: an 11.24 m sideways step at vert 1501);
+     only when the offset is genuinely LATERAL (|along| <= 0.5*|lat|), at least 11 m, and the two
+     carriageways (opposing way - ridden way) are at most 24 m apart — near corners the nearest
+     "opposing" geometry is the CROSS street and the raw vector drags the road along its own axis
+     (the Navajo jank, 2026-08-20: an 11.24 m sideways step at vert 1501). The upper bound was the
+     raw line's offset until ledger 0055 (College Ave's split section, see `trusted`);
   3. shifts the RAW centerline by the smoothed signed lateral/2 toward the true middle and widens
      the ribbon to span both carriageways, tapered over ~36 m at run ends — never a step;
   4. trims runs of DIFFERENT roads that meet at a shared corner back to a neutral buffer (real
@@ -37,7 +39,9 @@ import sys
 from pathlib import Path
 
 MIN_SEP = 11.0        # carriageways this far apart = real median between them
-SEP_TRUST = 24.0      # above this it's a junction flare / wrong-chain match — untrusted
+SEP_TRUST = 24.0      # carriageways (opposing way - ridden way) further apart than this: a junction flare /
+#                       wrong-chain match — untrusted (ledger 0055: the separation, not the raw line's offset)
+RIDDEN_MAX_M = 8.0    # the ridden carriageway's way lies within this of the raw line (chain pick + trust test)
 MIN_RUN_M = 120.0
 GAP_BRIDGE = 8        # out-of-band verts (~24 m) tolerated INSIDE a run (turn-pocket flares)
 TAPER_VERTS = 16      # ~48 m blend of shift+width at run ends (cosine ramp — see _ramp)
@@ -103,6 +107,29 @@ def _nearest_on_polyline(px, pz, line):
         if d < best:
             best, bp = d, (qx, qz)
     return best, bp
+
+
+def _ridden_lat(mx, mz, lxn, lzn, ridden):
+    """(signed lateral of the RIDDEN carriageway's way from the raw vertex along the same normal, its plan distance)"""
+    d, (rx, rz) = _nearest_on_polyline(mx, mz, ridden)
+    return (rx - mx) * lxn + (rz - mz) * lzn, d
+
+
+def trusted(vlat, valong, rlat, rdist):
+    """Is this vertex's offset to the OPPOSING carriageway a real median (ledger 0055)?
+
+    The lower bound and the lateral test read the raw centreline's offset to the opposing way (as before): a
+    vertex less than MIN_SEP from it rides no median, and an offset that is mostly ALONG the road is a cross
+    street near a corner. The UPPER bound reads what it means — the two CARRIAGEWAYS' separation (opposing
+    lateral minus ridden lateral), not the raw line's distance to the far one. On College Ave the raw line sits on
+    the aerial's southbound carriageway while OSM draws both ways ~3.5 m east of their pavement, so the raw-line
+    offset read 24.1-24.7 m over v1282-1350 where the carriageways are 20.5-21.2 m apart: the run split in two,
+    each end tapered, and the road swerved off the northbound carriageway onto the southbound one and back
+    (Kevin: "one of the lanes swerves into where the other lane should be"). The ridden way must be within
+    RIDDEN_MAX_M of the vertex (the bound that picked it as the ridden chain), else the separation is unknown."""
+    s = abs(vlat)
+    return (MIN_SEP <= s and abs(vlat - rlat) <= SEP_TRUST and abs(valong) <= 0.5 * s
+            and rdist <= RIDDEN_MAX_M)
 
 
 def _median_filter(v, half=2):
@@ -171,9 +198,10 @@ def build(project_dir):
                           for x, z in near)
             cands.append((lats[len(lats) // 2], xz))
         cands.sort(key=lambda t: t[0])
-        if not cands or cands[0][0] > 8.0:
+        if not cands or cands[0][0] > RIDDEN_MAX_M:
             print(f"[median] '{road}': could not identify the ridden carriageway — skipped")
             continue
+        ridden = cands[0][1]
         opp = next((p for lat, p in cands[1:] if 8.0 <= lat <= 30.0), None)
         if opp is None:
             print(f"[median] '{road}': no opposing carriageway found "
@@ -193,7 +221,7 @@ def build(project_dir):
             valong = (qx - mx) * tx + (qz - mz) * tz
             s = abs(vlat)
             lat_signed[k] = vlat
-            ok[k] = MIN_SEP <= s <= SEP_TRUST and abs(valong) <= 0.5 * s
+            ok[k] = trusted(vlat, valong, *_ridden_lat(mx, mz, lxn, lzn, ridden))
             # SELF-PROXIMITY GUARD. Where the loop runs beside ITSELF (College's south end: the
             # outbound leg hairpins at verts 760-770 and comes back 22.8 m away), re-centring and
             # widening the ribbon walked it onto its own other leg — the shifted deck sat 1.2 m over

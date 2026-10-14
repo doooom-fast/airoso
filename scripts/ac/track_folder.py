@@ -229,6 +229,17 @@ def race_kn5_name(cfg, layout: dict) -> str:
     return f"{slug}_race.kn5" if not lap else f"{slug}_race_{lap}.kn5"
 
 
+def street_kn5_name(cfg) -> str | None:
+    """``<slug>_street.kn5`` when the track declares a street-only island (race.chicanes, ledger 0055 — the median over
+    a Speedway chicane's span stands in the street layouts only), else None. Loaded by every NON-race layout."""
+    from scripts.geometry import race_chicane as _rc
+    raw = cfg.raw if hasattr(cfg, "raw") else cfg
+    if not _rc.has_street_kn5(raw):
+        return None
+    slug = cfg.slug if hasattr(cfg, "slug") else raw["slug"]
+    return f"{slug}{_rc.STREET_KN5_SUFFIX}.kn5"
+
+
 def layout_kn5s(cfg, layout: dict | str, project_dir: Path, *, single: bool,
                 strict: bool = True) -> list[tuple[str, Path | None]]:
     """The kn5s a layout adds beside the shared road kn5, as (file name, source path or None).
@@ -259,6 +270,13 @@ def layout_kn5s(cfg, layout: dict | str, project_dir: Path, *, single: bool,
             out.append((name, src if src.exists() else None))
     elif lo.get("closure_token"):
         closure_kn5_name(cfg, lo)                          # raises: a token on a non-race layout
+    if not lo.get("race_furniture") and isinstance(layout, dict):
+        sk = street_kn5_name(cfg)                          # ledger 0055: the street-only island (Free Roam only)
+        if sk:
+            src = build / sk
+            if not src.exists():
+                missing.append(sk)
+            out.append((sk, src if src.exists() else None))
     if not single:
         name = f"{cfg.slug}__{lid}.kn5"
         src = build / name
@@ -682,6 +700,10 @@ def generate(project_dir: str | Path, kn5_name: str | None = None, *, strict_kn5
             print(f"[track_folder] removed stale {_stale.name} (no declared layout loads it)")
             _stale.unlink()
     for _stale in sorted(out.glob(f"{cfg.slug}_race_*.kn5")):     # a retired lap's common set (ledger 0054)
+        if _stale.name not in _wanted:
+            print(f"[track_folder] removed stale {_stale.name} (no declared layout loads it)")
+            _stale.unlink()
+    for _stale in sorted(out.glob(f"{cfg.slug}_street.kn5")):      # a retired chicane's street set (ledger 0055)
         if _stale.name not in _wanted:
             print(f"[track_folder] removed stale {_stale.name} (no declared layout loads it)")
             _stale.unlink()

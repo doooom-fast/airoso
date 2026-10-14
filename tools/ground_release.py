@@ -56,26 +56,49 @@ STRAIGHT_BANK_MIN_M = 1.0   # [invented] two pavements this much apart in height
 #                             straight bank between their edges (below it the cut wins, as before)
 RAIL_HOLD_M = 1.0           # [invented] a rail stands full height at least this far past its last station over a drop
 RAIL_TAPER_MIN_M = 0.5      # [invented] a sloped end shorter than this is not built: the end stays square (full height)
+ROUND_MAX_M = 5.0           # a zone's round_m (the cut top's rounding) is at most this: docs/ROAD-CONSTRUCTION.md's 2-5 m
 
 
-def batter_z(z: float, cut: tuple | None, fill: tuple | None) -> float:
+def round_k(round_m: float, cut_slope: float) -> float:
+    """the smooth-minimum width (a HEIGHT) that rounds a cut top over ``round_m`` metres of plan: against level ground
+    the rounding spans |cut - ground| < k, i.e. k / cut_slope metres either side of the crease"""
+    return max(0.0, 0.5 * float(round_m) * float(cut_slope))
+
+
+def smin(a: float, b: float, k: float) -> float:
+    """polynomial smooth minimum: min(a, b) away from the crease, rounded where |a - b| < k (at most k / 4 under it)"""
+    if k <= 0.0:
+        return min(a, b)
+    h = max(k - abs(a - b), 0.0) / k
+    return min(a, b) - h * h * k * 0.25
+
+
+def batter_z(z: float, cut: tuple | None, fill: tuple | None, round_k: float = 0.0) -> float:
     """The released height of a vertex beside the pavement (ground_release_blend step 2b). cut = (limit, h_c, d_c): the
     lowest 'no higher than' bound (an earth cut rising from a pavement face at h_c, d_c away); fill = (limit, h_f, d_f):
     the highest 'no lower than' bound (a fill falling from a grounded pavement face at h_f). Normally the fill lifts and
     the cut wins. Where they conflict (fill limit over cut limit) between two pavements more than STRAIGHT_BANK_MIN_M
     apart in height — College Ave's south approach 5-6 m over Alvarado Rd with 2-3 m of ground between their sidewalks
     (v0.18.0, the view lens's stepped curtain) — neither bank fits: the ground is the straight bank between the two
-    edges, so no cliff stands on either side."""
+    edges, so no cliff stands on either side.
+    round_k (ledger 0055, a zone's round_m): the cut's TOP EDGE — where the cut plane meets the real ground — is rounded
+    into it (docs/ROAD-CONSTRUCTION.md: "Round the cut top into natural ground over 2-5 m") by a smooth minimum of the
+    ground and the cut limit, never above either; where the fill lifts or the straight bank holds, nothing changes."""
     nz = z
     if fill is not None and nz < fill[0]:
         nz = fill[0]
-    if cut is not None and nz > cut[0]:
+    if cut is not None and nz > cut[0] - round_k:
         if fill is not None and fill[0] > cut[0] and fill[1] - cut[1] > STRAIGHT_BANK_MIN_M:
-            lim_c, h_c, d_c = cut
-            lim_f, h_f, d_f = fill
-            t = d_c / max(1e-9, d_c + d_f)
-            return h_c + (h_f - h_c) * t
-        nz = cut[0]
+            if nz > cut[0]:
+                lim_c, h_c, d_c = cut
+                lim_f, h_f, d_f = fill
+                t = d_c / max(1e-9, d_c + d_f)
+                return h_c + (h_f - h_c) * t
+            return nz
+        if round_k > 0.0 and (fill is None or nz > fill[0]):
+            nz = max(smin(nz, cut[0], round_k), fill[0] if fill is not None else -1e9)
+        else:
+            nz = min(nz, cut[0])
     return nz
 
 
@@ -235,8 +258,32 @@ def resolve_zones(cfg: dict) -> list[dict]:
             sides.append(1 if str(s) in ("left", "1", "+1") else -1 if str(s) in ("right", "-1") else None)
         if None in sides or z.get("kind") not in ("bank", "span"):
             raise SystemExit(f"[release] zone {z.get('name')}: kind must be bank|span, sides left|right")
-        out.append({"name": z["name"], "kind": z["kind"], "s_m": [float(v) for v in z["s_m"]], "sides": sides,
-                    "reach_m": float(z["reach_m"]), "why": z.get("why", "")})
+        rec = {"name": z["name"], "kind": z["kind"], "s_m": [float(v) for v in z["s_m"]], "sides": sides,
+               "reach_m": float(z["reach_m"]), "why": z.get("why", "")}
+        # ledger 0055 (College Ave's cut face): a zone may carry its own cut reach (the batter's plan reach from the
+        # pavement edge, ground_release_blend.BATTER_REACH_M otherwise) and a rounded cut top (round_m, the plan width
+        # of the rounding where the cut plane meets the real ground). Neither may reach past the zone itself.
+        if z.get("cut_reach_m") is not None:
+            cr = float(z["cut_reach_m"])
+            if not 0.0 < cr <= rec["reach_m"]:
+                raise SystemExit(f"[release] zone {z['name']}: cut_reach_m {cr} must be in (0, reach_m {rec['reach_m']}]")
+            rec["cut_reach_m"] = cr
+        if z.get("round_m") is not None:
+            rm = float(z["round_m"])
+            if not 0.0 <= rm <= ROUND_MAX_M:
+                raise SystemExit(f"[release] zone {z['name']}: round_m {rm} must be in [0, {ROUND_MAX_M}] "
+                                 f"(docs/ROAD-CONSTRUCTION.md: round the cut top over 2-5 m)")
+            rec["round_m"] = rm
+        # a CUT zone (the ground beside the road rises: College's hillside, 0055) declares rails false — the release
+        # makes no drop there to guard (drive_test's excursion rule then reads only the sidewalk's own outer apron,
+        # the same on every street of the loop, and a rail station would stand a jersey barrier along the whole cut)
+        if z.get("rails") is not None:
+            if not isinstance(z["rails"], bool):
+                raise SystemExit(f"[release] zone {z['name']}: rails must be true / false")
+            if not z["rails"] and not rec.get("cut_reach_m"):
+                raise SystemExit(f"[release] zone {z['name']}: rails false only on a declared cut zone (cut_reach_m)")
+            rec["rails"] = bool(z["rails"])
+        out.append(rec)
     return out
 
 

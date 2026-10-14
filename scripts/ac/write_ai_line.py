@@ -1745,7 +1745,8 @@ def corridor_for_layout(bands: dict, layout_id: str, pts_fwd, *, reverse: bool, 
     bad = [k for k, (a, b) in enumerate(lane) if not a < b]
     if bad:
         raise SystemExit(f"corridors.{layout_id}: lane_by_vertex y_lo >= y_hi at {len(bad)} vertices (first v{bad[0]})")
-    codes = {"box": 2, "whole": 1, "pin": 1, "closure": 0, "island": 0}
+    # 'chicane' (ledger 0055): a declared chicane's lane, bounded by two walls like a closure run's
+    codes = {"box": 2, "whole": 1, "pin": 1, "closure": 0, "island": 0, "chicane": 0}
     unknown = sorted({z for z in zone[:m] if z not in codes})
     if unknown:
         raise SystemExit(f"corridors.{layout_id}: unknown zone(s) {unknown}")
@@ -2872,6 +2873,11 @@ def main(argv: list[str] | None = None) -> None:
     # Per-vertex divider channels, ENGINE frame, index-aligned with the forward vertex order.
     zeros = [0.0] * n
     island = _channel(src if _lap else data_dir / "median_bands.json", "island_w_by_vertex", n, "island") or zeros
+    if race and not _lap:
+        # ledger 0055: a race layout drives beside the RACE island — a declared chicane's street-only island is not
+        # in its kn5 set (scripts/geometry/race_chicane.race_island_w)
+        from scripts.geometry import race_chicane as _race_chicane
+        island = _race_chicane.race_island_w(island, cfg)
     bands_path = args.bands or (data_dir / _race_lap.bands_file(_lap))
     centre_w = inset = zeros
     corridor = None

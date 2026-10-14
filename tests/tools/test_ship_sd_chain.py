@@ -50,7 +50,7 @@ def test_stage_order():
         'tools/verify_ai_line.py "$PROJ" --layout "$lid"',
         '(cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ")',
         'rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"',
-        'kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")',
+        'kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" $STREET_KN5)',
         "scripts.ac.track_folder",
         'cp "$PROJ/build/$SLUG.kn5" "$PROJ/build/$SLUG/"',
         '(cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ" --inis)',
@@ -458,7 +458,7 @@ def test_mouth_weld_and_its_gate_are_wired():
     vm = [(p, ln) for p, ln in _code_lines() if "tools/verify_mouths.py" in ln]
     assert len(vm) == 1 and vm[0][1].strip() == '(cd "$AIROSO" && python tools/verify_mouths.py "$PROJ")', vm
     vpos = vm[0][0]
-    assert _first('rm -f "$PROJ/data/verify_mouths.json"') < _first('kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")') \
+    assert _first('rm -f "$PROJ/data/verify_mouths.json"') < _first('kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" $STREET_KN5)') \
         < vpos < _first('drive_test "$PROJ" --layout street')
     sync = TEXT[_first('step "sync outputs workshop -> airoso"\n'):_first("never synced.\nfi\n")]
     assert "mouth_welds.json" in sync and "verify_mouths.json" in sync
@@ -488,7 +488,7 @@ def test_tiered_terrain_chain_ledger_0046():
     assert "for f in $TERRAIN_DATA; do" in down and 'cp "$SRC/data/$f" "$PROJ/data/$f"' in down
     sync = TEXT[_first('step "sync outputs workshop -> airoso"\n'):_first("never synced.\nfi\n")]
     assert "$TERRAIN_DATA terrain.tiers.report.json" in sync and "terrain.tiers.json.gz" not in sync
-    assert _first('kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")') < _first("scripts.ac.track_folder") \
+    assert _first('kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" $STREET_KN5)') < _first("scripts.ac.track_folder") \
         < _first("tools/make_treefx.py")
 
 
@@ -607,3 +607,22 @@ def test_lap_groups_are_wired_and_inert_without_a_lap_ledger_0054():
     assert lines[0].split() == ["|", "1"], lines
     slug = json.loads(cfgp.read_text(encoding="utf-8"))["slug"]
     assert lines[1:] == [f"race_cw {slug}_race.kn5 barrier_bands.json", f"race_acw {slug}_race.kn5 barrier_bands.json"]
+
+
+def test_street_only_kn5_is_exported_checked_and_in_the_street_gate_obj_only():
+    """ledger 0055: the median over a Speedway chicane's span ships in <slug>_street.kn5 (Free Roam only) — exported
+    after the closures from loop_street.blend, content-checked, stale copies removed, and folded into data/track.obj
+    (the street layout's kn5 set) but never into a race layout's gate OBJ"""
+    order = ['rm -f "$PROJ/build/${SLUG}_street.kn5" "$PROJ/data/street_kn5.json"',
+             'if [ -f "$PROJ/blender/split/loop_street.blend" ]; then',
+             '--blend "$PROJ/blender/split/loop_street.blend" --out "${SLUG}_street.kn5"',
+             'inspect_kn5 "$PROJ/build/${SLUG}_street.kn5" --json "$PROJ/data/street_kn5.json"',
+             'python tools/check_street_kn5.py "$PROJ/data/street_kn5.json"',
+             'STREET_KN5="--kn5 $PROJ/build/${SLUG}_street.kn5"',
+             'kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" $STREET_KN5)']
+    pos = [_first(o) for o in order]
+    assert pos == sorted(pos), list(zip(order, pos))
+    assert _first('--out "${SLUG}_closure_$lid.kn5"') < pos[2] < _first("scripts/ac/build_spawn_kn5.py")
+    race_obj = [ln for ln in TEXT.splitlines() if '--out "$PROJ/data/track.$lid.obj"' in ln]
+    assert race_obj and not any("STREET_KN5" in ln or "_street.kn5" in ln for ln in race_obj)
+    assert "street_kn5.json" in TEXT.split('step "sync outputs workshop -> airoso"')[1]

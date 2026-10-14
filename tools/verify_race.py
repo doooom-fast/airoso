@@ -523,6 +523,9 @@ def lamp_margins(bases: list, pts: list, widths: list, bands: dict, mast_r: floa
             yy = _closure_y_at(c.get("closure_y_by_vertex") or [], pts, m, k, b["x"], b["z"])
             if yy is not None:
                 closure.append((f"closure_{lid}", abs(lat - yy) - bh - mast_r))
+            yw = _closure_y_at(c.get("race_wall_y_by_vertex") or [], pts, m, k, b["x"], b["z"])   # ledger 0055
+            if yw is not None:
+                closure.append((f"chicane_{lid}", abs(lat - yw) - bh - mast_r))
         cand += closure
         if not cand:
             continue
@@ -649,6 +652,9 @@ def scenery_margins(items: list, bands: dict, pts: list, widths: list, grid=None
             yy = _closure_y_at(c.get("closure_y_by_vertex") or [], pts, m, k, x, z)
             if yy is not None:
                 cand.append(("closure", abs(lat - yy) - bh - r))
+            yw = _closure_y_at(c.get("race_wall_y_by_vertex") or [], pts, m, k, x, z)   # ledger 0055
+            if yw is not None:
+                cand.append(("chicane wall", abs(lat - yw) - bh - r))
             if not cand:
                 continue
             what, mg = min(cand, key=lambda t: t[1])
@@ -693,8 +699,10 @@ def declared_curve(bands: dict, pts: list, widths: list | None, side: str, per_v
     centreline only."""
     m = _unique_count(pts)
     corners = []
-    if side.startswith("close:"):
-        y = (_corridors(bands).get(side[len("close:"):]) or {}).get("closure_y_by_vertex") or []
+    if side.startswith("close:") or side.startswith("chicane:"):
+        # 'chicane:<layout id>' (ledger 0055): that layout's declared chicanes' race-side walls, race_wall_y_by_vertex
+        row = "closure_y_by_vertex" if side.startswith("close:") else "race_wall_y_by_vertex"
+        y = (_corridors(bands).get(side.split(":", 1)[1]) or {}).get(row) or []
         flags = [1 if q is not None else 0 for q in y]
         lat_of = lambda k: float(y[k])  # noqa: E731
     else:
@@ -843,9 +851,10 @@ def span_chords(centres: list, samples: dict, grid: _SampleGrid, n_samples: int,
 
 
 def _curve_side(o):
-    """the declared curve an object is judged against: its curb side, or 'close:<layout>' for a closure"""
+    """the declared curve an object is judged against: its curb side, 'close:<layout>' for a closure, or
+    'chicane:<layout>' for a declared chicane's race-side wall (ledger 0055)"""
     if o.get("kind") == "close":
-        return f"close:{o.get('layout')}"
+        return f"{'chicane' if o.get('wall') == 'chicane' else 'close'}:{o.get('layout')}"
     return str(o.get("side"))
 
 
@@ -966,6 +975,68 @@ def _end_kinds(o):
     return out
 
 
+def _verify_chicane_walls(lid, c, objs, rc, bands, pts, widths, m, fails, row):
+    """C' for a declared chicane's RACE-SIDE wall (ledger 0055; corridors.<id>.chicane_walls on race_wall_y_by_vertex):
+    one object chain per declared wall, consecutive parts joined, every ring within CLOSE_TOL_M of the declared line,
+    both end rings AT their pins — on the declared RACE-SIDE curb-strip line (PIN_TOL_M), at the declared vertex"""
+    walls = c.get("chicane_walls") or []
+    by_run: dict[tuple, list] = {}
+    for o in objs:
+        by_run.setdefault((int(o["run"][0]) % m, int(o["run"][1]) % m), []).append(o)
+    declared = [(int(w["i"]) % m, int(w["j"]) % m) for w in walls]
+    for run in declared:
+        if run not in by_run:
+            fails.append(f"C': {lid}: declared chicane wall v{run[0]}-v{run[1]} has no object")
+    for run in by_run:
+        if run not in declared:
+            fails.append(f"C': {lid}: chicane wall objects for v{run[0]}-v{run[1]}, which is not declared")
+    row.update({"chicane_walls": len(declared), "chicane_objects": len(objs)})
+    if not walls:
+        return
+    n_samples = m * DENSE_PER_VERTEX
+    curve = declared_curve(bands, pts, widths, f"chicane:{lid}")
+    cgrid = _SampleGrid(curve)
+    race_side = "L" if _closure_side(c) == "R" else "R"
+    rs_curve = declared_curve(bands, pts, widths, race_side) if widths is not None else None
+    rgrid = _SampleGrid(rs_curve) if rs_curve is not None else None
+    off, worst = 0, 0.0
+    pin_rows = []
+    for run in declared:
+        parts = sorted(by_run.get(run, []), key=lambda o: int(o.get("part", 0)))
+        for prev, nxt in zip(parts, parts[1:]):
+            a, b = rc.get(prev["name"], []), rc.get(nxt["name"], [])
+            if a and b and _dist_xz(a[-1], b[0]) > JOIN_TOL_M:
+                fails.append(f"C': {prev['name']} -> {nxt['name']}: chicane wall parts {_dist_xz(a[-1], b[0]):.2f} m apart")
+        for o in parts:
+            if str(o.get("side")) != race_side:
+                fails.append(f"C': {o['name']}: a chicane wall on side {o.get('side')}, not {lid}'s race side {race_side}")
+            for q in rc.get(o["name"], []):
+                d, _si = curve_distance((q[0], q[2]), curve, cgrid, n_samples)
+                worst = max(worst, d if d < float("inf") else 99.0)
+                if d > CLOSE_TOL_M + ROUND_M:
+                    off += 1
+        if not parts:
+            continue
+        for idx, (o, end_c, v) in enumerate(((parts[0], rc.get(parts[0]["name"], [[0, 0, 0]])[0], run[0]),
+                                             (parts[-1], rc.get(parts[-1]["name"], [[0, 0, 0]])[-1], run[1]))):
+            p2 = (end_c[0], end_c[2])
+            d_decl = curve_distance(p2, rs_curve, rgrid, n_samples)[0] if rs_curve is not None else None
+            _d, si = curve_distance(p2, curve, cgrid, n_samples)
+            kv = (si // DENSE_PER_VERTEX) if si is not None else None
+            pin_rows.append({"object": o["name"], "end": "start" if idx == 0 else "end", "vertex": v, "ring_vertex": kv,
+                             "race_line_m": None if d_decl is None else round(d_decl, 3)})
+            if d_decl is not None and d_decl > PIN_TOL_M + ROUND_M:
+                fails.append(f"C': {o['name']}: its {'first' if idx == 0 else 'last'} ring is {d_decl:.2f} m off the "
+                             f"declared race-side curb-strip line ({race_side}) at pin v{v} (> {PIN_TOL_M} m) — not pinned")
+            if kv is None or min((kv - v) % m, (v - kv) % m) > VERTEX_TOL:
+                fails.append(f"C': {o['name']}: its {'first' if idx == 0 else 'last'} ring stands at v{kv}, not at the "
+                             f"declared pin v{v}")
+    if off:
+        fails.append(f"C': {lid}: {off} chicane-wall rings stand more than {CLOSE_TOL_M} m off the declared line "
+                     f"(worst {worst:.2f} m)")
+    row.update({"chicane_off_curve_max_m": round(worst, 3), "chicane_pins": pin_rows})
+
+
 def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns, counts, widths=None, lap=None):
     m = _unique_count(pts)
     grid = VertexGrid(pts[:m])
@@ -1083,8 +1154,10 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
     for lid, c in sorted(cors.items()):
         tok = tokens[lid]
         row = counts["by_layout"].setdefault(lid, {"token": tok})
-        objs = [o for o in objects if o.get("kind") == "close" and race_owner(o["name"]) == tok]
-        close_polys[lid] = [[(q[0], q[2]) for q in rc.get(o["name"], [])] for o in objs]
+        objs = [o for o in objects if o.get("kind") == "close" and race_owner(o["name"]) == tok and o.get("wall") != "chicane"]
+        chic_objs = [o for o in objects if o.get("kind") == "close" and race_owner(o["name"]) == tok and o.get("wall") == "chicane"]
+        close_polys[lid] = [[(q[0], q[2]) for q in rc.get(o["name"], [])] for o in objs + chic_objs]
+        _verify_chicane_walls(lid, c, chic_objs, rc, bands, pts, widths, m, fails, row)
         y = c.get("closure_y_by_vertex") or []
         zone = c.get("zone_by_vertex") or []
         bad_zone = [k for k in range(min(m, len(y), len(zone))) if y[k] is not None and str(zone[k]) in ("box", "whole")]

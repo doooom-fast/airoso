@@ -2175,3 +2175,88 @@ pole_audit and road_gap; output in D:/k10-scratch/v0181/r3audit). Across 238 pol
 - Lamp 53 is now 1.156 m from the road (axis 1.28 m); on r2 it was −0.104 m.
 
 Lamp 53's road-ward lens (east) now hangs over College's carriageway instead of running along the curb.
+
+### Fix round 2 (2026-10-14, after the gates lens refuted r3): race bumps re-measured on the wheel's own travel; the lap seam's chord graded
+
+The gates lens refuted r3 on one gated metric: race_cw `steps_per_km` 4.38 -> 5.20 (59 -> 70 counted 2.5-6 cm bumps),
+absent from the r2 / r3 tables above. Both causes are fixed. Full rehearsal **r4** (fresh scratch copies
+D:/k10-scratch/v0181/r4/{project, engine-july}; no snapshot file differed; `--no-install`; it ended EXIT 1 / NOT
+INSTALLED, the v0.18.0 pattern).
+
+**Diagnosis, every counted bump on both builds** (drive_test with a per-step dump, D:/k10-scratch/v0181/bumps). Most
+of r3's 70 sit where a fixed-offset wheel path HOPS at a centreline vertex: it jumps forward round the outside of a corner
+(1.8-3.9 m at 10-13 m out) or creeps on the inside (0.1-0.6 m). The bump rule compares the height change over that hop
+with the one over the previous metre, so a plane at grade g reads g x (hop - 1): 3.4 cm on the 1.25 % Navajo / Jackson
+plane at s 6954, already in v0.18.0. Ledger 0057's real grades (+5.9 % into the College light, -7.7 % off 70th) made
+the same hops read more. Re-measured on the wheel's own travel, 60 of r3's 70 read under 2.5 cm and 10 stay over (v0.18.0: 4 of 59 stay over). Six
+of those 10 were at the lap seam's exit (s 12-14, -5.8 / -6.5 m), on a sliver the weld built: the seam's hook (the 27.5
+-> 17 m width step, rows 4496 -> 5) is bridged by a forward chord whose rows kept their OWN heights. Rows 1-4 bunched
+into about 2 m of chord at 24.465-24.491 m, with row 5's own edge 0.78 m on at 24.405 m: a 6-9 cm drop in under a
+metre. Along the same wheel path v0.18.0's mesh reads -2.8 / -17.8 / -11.4 / -3.4 % in 0.1 m steps. It is the fold
+mend's own sliver, made worse by the real grade behind it.
+
+| Change | Where | Before -> after | Flag |
+|---|---|---|---|
+| VERTEX BUMPS: a 2.5-6 cm bump is re-measured on the wheel path's own travel (the grades of its two metres over the plan distance each covered, their change over the mean of the two, x STEP_M^2). Under 2.5 cm it is reported (`vertex_bumps`, with its re-measured value), not counted in `steps_per_km`; still over, it counts | `scripts/geometry/drive_test.py` `_own_travel_step` (every track, every layout) | every 2.5-6 cm second difference counted as read, whatever distance each of its metres covered -> re-measured. Severe steps (> 6 cm) are never re-measured; kinks, fold bumps and apron bumps are unchanged. Where both metres cover 1 m it IS the old measure, so a straight road reads exactly as before | **VERTEX_MIN_TRAVEL_M = 0.05 m [invented]**: a metre covering less plan than this is not re-measured (a grade over a few cm is facet noise) and the bump counts as read. Test `tests/geometry/test_drive_test.py::test_a_plane_round_a_polygon_corner_reads_vertex_bumps_not_gated_bumps_v0181`: a 5 % plane round a 10-degree polygon corner reads 92.4 bumps /km under the old measure (17 bumps, 0 severe) and 0 counted + 17 vertex bumps under the new (re-measured 1.6-2.1 cm); a real 5 cm crease on a straight still counts (30 /km, 0 vertex bumps) |
+| the levelled MAINLINE's forward chord carries its own straight grade | `tools/mouth_weld._grade_chord` (called from `unfold_line` when `level`: the weld's MAINLINE, deck_datum's fan prediction, verify_fold_fans' re-find) | each chord row at its own row's height -> at the height of E[k] -> E[l + 1] at its plan fraction of the chord. Plan positions unchanged; connectors and paint (level off) unchanged; the paint is re-laid on the deck as before | refused (WeldError, the build stops) where a row would tilt more than `FOLD_LEVEL_XFALL_MAX` (4 %, [invented] in 0050) against its own height over its distance to the centre row. Tests: `tests/tools/test_mouth_weld.py::test_level_grades_a_forward_chord_straight_and_refuses_a_steep_tilt_v0181`, and test (g) re-stated |
+
+**Why the re-measure is a measurement fix, not a loosening.** The v0.18.0 FOLD BUMPS entry above recorded that forward
+samples on the real 3DEP plane also read bumps "from the stations' changing spacing round a corner" and left them
+counted, because that rule was a blanket exemption for the backwards case. This is not an exemption: every bump is
+measured again over the distance the wheel actually covered, and only a bump that is under 2.5 cm on that measure leaves
+the count. A plane reads zero, a real crease reads what it always read, a severe step is untouched, and nothing can be
+added to the count. Measured both ways on both meshes:
+
+| race bumps counted (phase 0, the shipped sampling) | race_cw | race_acw |
+|---|---|---|
+| v0.18.0 mesh, old measure (as shipped) | 59 (4.38 /km) | 91 (6.75 /km) |
+| v0.18.0 mesh, re-measured | **4 (0.30 /km)** | **10 (0.74 /km)** |
+| r3 mesh, re-measured | 10 (0.74 /km) | 7 (0.52 /km) |
+| **r4, re-measured (the gate of record)** | **6 (0.45 /km)**, 60 vertex bumps | **5 (0.37 /km)**, 78 vertex bumps |
+| r4, old measure | 66 | 83 |
+
+**race_cw 6 against v0.18.0's 4, place by place.** v0.18.0's 4 are all on the seam sliver (s 8-11 at -6.5 / -5.8 / -2.9
+m, re-measured 2.7-5.2 cm), now gone: the fine profile along the same path reads -1.0 / -2.4 / -2.2 / -4.3 % on r4. r4's
+6 are:
+- s 14, -6.5 / -5.8 m (re-measured 2.59 / 2.57 cm): Alvarado's real descent rolling off the seam corner, facet kinks
+  of about 2 % per row over the 0.6 m the inside path covers.
+- s 2268 / 2273, -4.8 / -5.1 m (2.67 / 3.32 cm): inside the College / Alvarado fold fan's eased leg (0057's fit).
+- s 9884, -12.15 m (3.78 cm): the inside race kerb at Lake Murray Blvd v3296 (`1KERB_race_3296_in`), its 5 cm lane-side
+  ramp crossed by the lane-edge path. The surface there reads the same on both builds in 0.1 m steps (the kerb kept
+  rows 3291-3302; only its name followed the street boundary from v3297 to v3296).
+- s 13471, -11.78 m (4.18 cm): the seam's inside race kerb (`1KERB_race_0_in`, the same plan on both builds).
+
+None of the last four is new geometry; each is where the integer-metre stations happen to fall. Sampled at the three
+other phases (stations at +0.25, +0.5 and +0.75 m, the same patched drive_test, both meshes):
+
+| race_cw counted, re-measured | phase 0 | 0.25 | 0.5 | 0.75 | mean |
+|---|---|---|---|---|---|
+| v0.18.0 | 4 | 12 | 10 | 9 | **8.75** |
+| r4 | 6 | 6 | 6 | 3 | **5.25** |
+
+v0.18.0 reads the same kerbs (s 9890-9891 and 13473) and the same eased fan leg (s 2265-2275) at the other phases. On
+three of the four phases r4 has fewer; on the shipped phase it has two more, none of them on new geometry.
+
+**Gates, r4 against v0.18.0** (v0.18.0's bump rate shown both as shipped and re-measured):
+
+| Gate | v0.18.0 | r4 |
+|---|---|---|
+| street soft top / severe / bumps /km | 33 / 0 / 0.0 | 8 / 0 / 0.0 |
+| street kinks /km (not gated) | 3.41 | **2.67** (r3 2.97) |
+| street excursions / floating / daylight / obstruction | 98 (96 on the corrected probe) / 391 / 0 / 0 | 96 / 391 / 0 / 0 |
+| audit, all three layouts | 53 (D 0, K 20, I 20, F 13) | 53 (D 0, K 20, I 20, F 13) |
+| race severe cw / acw | 22 / 20 | 15 / 20 |
+| race soft top cw / acw | 9 / 9 | 8 / 4 |
+| **race bumps /km cw / acw** | 4.38 / 6.75 as shipped; **0.30 / 0.74** re-measured | **0.45 / 0.37** (above) |
+| race fold bumps cw / acw (not gated) | 45 / 49 | 56 / 42 |
+| race kinks /km cw / acw (not gated) | 6.23 / 7.05 | 6.46 / 6.09 |
+| race excursions / barrier_missing / obstruction | 0 / 0 / 0 | 0 / 0 / 0 |
+| no_route BUILT + PLANNED, both | PASS | PASS (leak 0, 0/411 probes) |
+
+These also pass on r4: verify_mouths x4, verify_fold_fans (3 x 3; DT max 0.047 / 0.044 / 0.044), verify_ai_line (wall
+minimum 2.542 / 2.384 m), verify_signs 23, verify_race and `--scenery-only` (G lamp margin 2.435 m, lamp 53), rib_check,
+house_seat_check, verify_kn5 and `--inis`, check_race_kn5 x3, check_street_kn5. Road kn5 73,574,777 B. `[LIGHT_N]` 238,
+every one `255, 165, 30, 0.015`; ext_config.ini is byte-identical to r3's. Lamp audit on the built split scenes: 238
+lamps / 238 lights, 0 bases over 1ROAD, 0 feet in the air, 0 poles under 0.5 m from a 1WALL. The centreline, widths,
+`median_bands.json` and `lights.local.json` are byte-identical to r3's. The hills grades re-measure the same to the
+hundredth, except Alvarado westbound s 0-25 -2.92 -> -2.89 % and s 0-100 -6.83 -> -6.82 % (the seam's graded edge).

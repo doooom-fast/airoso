@@ -373,3 +373,19 @@ same: the deck now stands 8.3–10.5 m over the real creek bed, beyond the sweep
 Jersey rail. They are not gated on either build and were not changed. Grades re-measured on r3 are identical to r2's to
 the hundredth: College stop line s 2313, last 30 m +5.87 % (real +5.93 %), Alvarado westbound s 0–100 −6.83 % (real
 −6.95 %), 70th eastbound last 30 m to s 12 +6.97 % (real +6.77 %).
+
+### v0.18.1 fix round 2 (2026-10-14, rehearsal r4)
+
+The gates lens found race_cw bumps / km 4.38 -> 5.20 on r3, a gated rate missing from the tables. This ledger's real
+grades were the cause, through two mechanisms (GATES-CHANGELOG v0.18.1 fix round 2). (1) drive_test's fixed-offset
+wheel paths hop forward or creep at every centreline vertex round a corner, and the bump rule read grade x (hop - 1)
+there; a steeper real grade reads more. Bumps are now re-measured on the wheel's own travel: a plane reads zero, a real
+crease still counts, severe steps are untouched. (2) The lap seam's hook (70th / Alvarado, rows 4496 -> 5) was mended
+by a forward chord whose rows kept their own heights, a 6-9 cm drop in under a metre (-17.8 % over 0.3 m on v0.18.0),
+made worse by Alvarado's real -7.7 % pitch. The mainline's chord now carries its own straight grade (`mouth_weld`).
+On r4, re-measured, race_cw counts 6 bumps against v0.18.0's 4 and race_acw 5 against 10. v0.18.0's 4 were that seam
+sliver. r4's 6 are two 2.6 cm facet kinks where Alvarado rolls off the seam corner, two in the College fan's eased leg,
+and two race-kerb crossings on geometry identical to v0.18.0's. Averaged over four sampling phases, v0.18.0 counts 8.75
+and r4 5.25. Grades on r4 are r3's to the hundredth, except Alvarado westbound s 0-25 -2.89 % (r3 -2.92) and s 0-100
+-6.82 % (r3 -6.83), from the seam's graded edge. Stills of the seam exit, race_cw, before (r1) and after (r4):
+D:/k10-scratch/v0181/stills/r4/seam_race_cw*/seam_v{4494,1,4}.png.

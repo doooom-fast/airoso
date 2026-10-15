@@ -73,6 +73,18 @@ fresh USGS 3DEP 1 m (TLS verified) round five Lake Murray fans, the least-square
 or previous metre runs backwards (``_advance`` < 0) is filed under ``fold_bumps`` (reported, not gated); a SEVERE step
 (> 6 cm) there still counts — the 0.37 m Navajo/Jackson lip of ledger 0050 was read on such a sample too. Real wheel
 paths through the levelled fans are judged by tools/verify_fold_fans.py.
+
+VERTEX BUMPS (v0.18.1, ledger 0057 integration). The same fixed offset hops FORWARD at every centreline vertex where the
+segment normal turns: on the outside of a corner the point jumps ahead by offset x turn angle (2.7-3.9 m at 10 m out
+round the Navajo / Jackson fan, 1.8-3.7 m round College / Alvarado), on the inside it creeps (0.1-0.5 m). The 1 m second
+difference then compares a height change over that hop with one over the previous metre: on a plane at grade g it reads
+g x (hop - 1) — 3.4 cm on a 1.25 % plane at s 6954 (race_cw, v0.18.0), more wherever ledger 0057 restored a real
+grade. A BUMP (2.5-6 cm; never a severe step) is therefore RE-MEASURED on the wheel path's own travel: the grades of its
+two metres over the plan distance each actually covered, their change over the mean of the two (the same 1 m second
+difference wherever both cover 1 m). One under STEP_BUMP_M is filed under ``vertex_bumps`` (reported, not gated); one
+still over it counts. Neither travel may be under VERTEX_MIN_TRAVEL_M (a grade over a few cm of plan is facet noise —
+such a bump counts as read). The re-measure can only move a bump out of the gated count when the surface the wheel
+actually crosses is smoother than 2.5 cm per metre; it never adds one.
 """
 
 from __future__ import annotations
@@ -104,6 +116,8 @@ OBST_HEIGHT_M = 1.8          # car-strike ceiling: AC cars are ~1.3 m tall; wall
 #                              level and still trip this, while legit overhead furniture (cobra-head
 #                              lamps arching the lane at 2.5 m+) clears it
 STEP_M = 1.0                 # sampling step along the lap
+VERTEX_MIN_TRAVEL_M = 0.05   # [invented] v0.18.1 VERTEX BUMPS: a metre whose wheel path covers less plan than this is not
+#                              re-measured (its grade would be a facet's noise); the bump counts as read
 
 
 def _advance(prev, px_pz, c):
@@ -117,6 +131,18 @@ def _advance(prev, px_pz, c):
     if n2 < 1e-12:
         return 1.0
     return ((px_pz[0] - prev[0]) * cx + (px_pz[1] - prev[1]) * cz) / n2
+
+
+def _own_travel_step(dh1, dh0, d1, d0):
+    """VERTEX BUMPS (v0.18.1): the 1 m second difference of a wheel path re-measured on its own travel — the grades of
+    its last two metres (height change dh over the plan distance d each covered), their change over the mean of the two
+    distances, times STEP_M^2. Exactly |dh1 - dh0| where both metres cover STEP_M. None when either travel is unknown
+    or under VERTEX_MIN_TRAVEL_M (the bump then counts as read)."""
+    if d1 is None or d0 is None or min(d1, d0) < VERTEX_MIN_TRAVEL_M:
+        return None
+    return abs(dh1 / d1 - dh0 / d0) * 2.0 * STEP_M * STEP_M / (d0 + d1)
+
+
 WHEEL_HALF_TRACK = 0.75      # wheel offset around each driving line
 CELL = 3.0                   # spatial hash cell (m)
 
@@ -762,6 +788,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     # the metre that ended there (see _advance) — reset with prev_h
     prev_p = [None] * 10
     prev_adv = [None] * 10
+    prev_d = [None] * 10       # VERTEX BUMPS (v0.18.1): the plan distance each path covered over its previous metre
     off_pavement = 0
     obst_names = defaultdict(int)
     _phase("pre-sweep setup")
@@ -819,6 +846,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
             prev_slope = [None] * 10
             prev_p = [None] * 10
             prev_adv = [None] * 10
+            prev_d = [None] * 10
         _prev_lane = _lane_key
         # edge paths (|line| = w/2-0.5) DETECT holes/ground-through at the pavement lip;
         # smoothness (steps/kinks) gates only on INTERIOR paths — nobody laps on the hinge
@@ -843,6 +871,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
             prev_slope = [None] * 10
             prev_p = [None] * 10
             prev_adv = [None] * 10
+            prev_d = [None] * 10
             s += STEP_M          # MUST advance: `s += STEP_M` lives at the END of this body, so a
             continue             # bare `continue` here spins forever. That hung every rally build
                                  # from v0.25.1 on — the stages were never slow, they never finished.
@@ -858,14 +887,17 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                 prev_slope[pi] = None
                 prev_p[pi] = None
                 prev_adv[pi] = None
+                prev_d[pi] = None
                 continue
             if owner and owner.upper().startswith(SOFT):
                 problems["soft_top_in_lane"].append((round(s, 1), round(off, 2), owner))
             adv = None
+            d_now = None
             if prev_h[pi] is not None:
                 dh = h - prev_h[pi]
                 slope = dh / STEP_M
                 adv = _advance(prev_p[pi], (px, pz), (x, z))
+                d_now = math.hypot(px - prev_p[pi][0], pz - prev_p[pi][1])
                 # a second difference that spans a metre this fixed-offset point ran BACKWARDS (offset past the turning
                 # centre of a corner tighter than the lane: a fold) is not a wheel's experience — see FOLD BUMPS
                 folded = adv < 0.0 or (prev_adv[pi] is not None and prev_adv[pi] < 0.0)
@@ -894,9 +926,15 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                             problems.setdefault("apron_bumps", []).append(
                                 (round(s, 1), round(off, 2), round(step, 3)))
                         else:
-                            problems["steps"].append((round(s, 1), round(off, 2), round(step, 3)))
+                            own = _own_travel_step(dh, prev_slope[pi] * STEP_M, d_now, prev_d[pi])
+                            if own is not None and own <= STEP_BUMP_M:
+                                problems.setdefault("vertex_bumps", []).append(
+                                    (round(s, 1), round(off, 2), round(step, 3), round(own, 4)))
+                            else:
+                                problems["steps"].append((round(s, 1), round(off, 2), round(step, 3)))
                 prev_slope[pi] = slope
             prev_adv[pi] = adv
+            prev_d[pi] = d_now
             prev_p[pi] = (px, pz, x, z)
             prev_h[pi] = h
         # daylight probe: just past each pavement edge, some surface must exist from deck level
@@ -1271,6 +1309,8 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
         "floating_furniture": len(problems["floating_furniture"]),
         "apron_steps": len(problems.get("apron_steps", [])),
         "fold_bumps": len(problems.get("fold_bumps", [])),
+        "vertex_bumps": len(problems.get("vertex_bumps", [])),
+        "vertex_bumps_worst": sorted(problems.get("vertex_bumps", []), key=lambda r: -r[3])[:12],
         "excursion_drops": sum(1 for r in problems["excursion_drops"] if r[3]),
         "excursion_far_ledges": sum(1 for r in problems["excursion_drops"] if not r[3]),
         "worst_excursions": sorted(problems["excursion_drops"], key=lambda r: -r[2])[:12],
@@ -1336,6 +1376,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     if report["fold_bumps"]:
         print(f"  fold bumps (2.5-6 cm where a fixed-offset path runs backwards; reported, not gated): "
               f"{report['fold_bumps']}")
+    if report["vertex_bumps"]:
+        print(f"  vertex bumps (2.5-6 cm read across a vertex hop, under {STEP_BUMP_M*100:.1f} cm on the path's own "
+              f"travel; reported, not gated): {report['vertex_bumps']}")
     print(f"  slope kinks >{KINK_PCT}%% /km   : {report['kinks_per_km']}")
     print(f"  daylight gaps at edges : {report['daylight_gaps']}")
     if report.get("replication_vs_measured"):

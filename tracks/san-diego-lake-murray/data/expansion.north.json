@@ -3,7 +3,7 @@
  "_doc": "The readable intermediate of the Lake Murray north network (ledger 0054, EXPANSION-PLAN P1 steps 1-2). Written by tools/author_expansion.py; read by tools/plot_expansion_plan.py, tools/route_connectors.py (route_connectors.authored_take) and P3's builders. Nothing here is a mesh.",
  "ledger": "0054",
  "plan": "tracks/san-diego-lake-murray/EXPANSION-PLAN.md P1",
- "written_utc": "2026-10-14T12:14:50Z",
+ "written_utc": "2026-10-15T02:04:29Z",
  "frame": {
   "what": "local ENU metres of data/centerline.local.json (x east, z north, y = height over origin.elev_m)",
   "origin": {
@@ -22,7 +22,7 @@
   },
   "centerline.local.json": {
    "path": "tracks/san-diego-lake-murray/data/centerline.local.json",
-   "sha256_16": "99e5d330ad87ec99"
+   "sha256_16": "2d2fbb7dff5bc437"
   },
   "osm.expansion.json": {
    "path": "tracks/san-diego-lake-murray/data/osm.expansion.json",
@@ -54925,7 +54925,7 @@
       "angle_deg": 61.15,
       "xz": [
        -1989.066,
-       602.479
+       602.48
       ]
      },
      "return": null,
@@ -54966,7 +54966,7 @@
       "angle_deg": 61.15,
       "xz": [
        -1989.066,
-       602.479
+       602.48
       ]
      },
      "return": null,
@@ -55245,7 +55245,7 @@
      ],
      [
       -1989.066,
-      602.479
+      602.48
      ]
     ],
     "right": [
@@ -55447,7 +55447,7 @@
      ],
      [
       -1989.066,
-      602.479
+      602.48
      ]
     ],
     "right": [
@@ -55814,7 +55814,7 @@
       620.592
      ],
      [
-      -1986.011,
+      -1986.012,
       22.536,
       622.066
      ],

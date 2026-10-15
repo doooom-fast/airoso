@@ -559,6 +559,37 @@ FOLD_HALF_JUMP_MAX_M = 0.28
 FOLD_LEVEL_XFALL_MAX = 0.04    # [invented] an eased row's height change over its plan distance to the centre row
 
 
+# --- v0.18.1: the graded chord ---------------------------------------------------------------------------------------
+# A hook's forward chord (_forward_chord) puts each row it replaces on the straight line E[k] -> E[l + 1] at that row's
+# fraction of the centre's arc, and until v0.18.1 at the ROW'S OWN height. The rows' heights follow the centre line's
+# profile over ~6 rows (~16 m of arc), but their chord points can bunch into the last metre or two of the chord: at the
+# lap seam (70th St / Alvarado, the 27.5 -> 17 m width step, rows 4496 -> 5) rows 1-4 bunched into ~2 m of chord at
+# 24.465-24.491 m with row 5's own edge 0.78 m on at 24.405 m — a 6-9 cm drop in under a metre (v0.18.0 read -17.8 %
+# over 0.3 m along the inside wheel path) that the race lane's inside wheel paths read as a 3-5 cm bump on the seam's
+# exit (drive_test race_cw: 4 re-measured bumps over 2.5 cm on v0.18.0, 6 once ledger 0057 gave Alvarado its real
+# -7.7 % pitch; graded, the sliver reads -1.0 / -2.4 / -2.2 / -4.3 % along the same path). A straight chord
+# now carries a straight grade: each row on it takes the height of E[k] -> E[l + 1] at its plan fraction of the
+# chord. Plan positions are unchanged. Refused (WeldError) where that would tilt a row more than FOLD_LEVEL_XFALL_MAX
+# against its own height over its plan distance to the centre row (the levelled pinch's own limit).
+
+def _grade_chord(E, C, k, l, pts, m):
+    """the chord points ``pts`` (rows k+1..l, mod m) re-heighted on the straight grade between E[k] and E[l + 1]"""
+    a, b = E[k % m], E[(l + 1) % m]
+    L = math.hypot(b[0] - a[0], b[2] - a[2]) or 1e-9
+    out = []
+    for r, q in zip(range(k + 1, l + 1), pts):
+        f = min(1.0, math.hypot(q[0] - a[0], q[2] - a[2]) / L)
+        h = a[1] + (b[1] - a[1]) * f
+        c = C[r % m]
+        dist = math.hypot(q[0] - c[0], q[2] - c[2])
+        dy = h - E[r % m][1]
+        if dist > 1e-6 and abs(dy) / dist > FOLD_LEVEL_XFALL_MAX + 1e-12:
+            raise WeldError(f"grading the forward chord at rows {k}..{l + 1} moves row {r % m} by {dy:+.3f} m: "
+                            f"{abs(dy) / dist:.1%} over its {dist:.2f} m to the centre row (> {FOLD_LEVEL_XFALL_MAX:.0%})")
+        out.append((q[0], h, q[2]))
+    return out
+
+
 def _wrap_rows(lo, hi, m, closed):
     """row indices lo..hi (inclusive), wrapped on a closed line, clipped on an open one"""
     return [r % m for r in range(lo, hi + 1) if closed or 0 <= r < m]
@@ -578,7 +609,9 @@ def unfold_line(E, C, closed, window=FOLD_WINDOW, strict=True, level=None, half_
     window overlaps another cut on the same line (the result would depend on the order the cuts are found).
     level False: X takes the higher of the two heights and nothing else moves (the 2026-10-11 rule, kept bit for
     bit for connectors and the paint lines).
-    A fold with no self-intersection (a hook) is replaced by the cheapest forward chord instead (X = None).
+    A fold with no self-intersection (a hook) is replaced by the cheapest forward chord instead (X = None). With
+    `level` the chord's rows take the chord's own straight grade between its two end rows (_grade_chord, v0.18.1);
+    without it each keeps its own row's height (the 2026-10-11 rule).
     Returns (new points, [(k, l, X or None)]: rows k+1..l (mod the row count on a closed line) moved, [(ja, jb)]:
     the runs left as they were). strict: a fold with neither raises WeldError; otherwise it is left and listed (a
     connector's hairpin whose legs stand closer than its width overlaps ITSELF, not a fold a cut can mend).
@@ -625,6 +658,9 @@ def unfold_line(E, C, closed, window=FOLD_WINDOW, strict=True, level=None, half_
                 skip.update(j % m for j in range(ja, jb + 1))
                 left.append((ja, jb))
                 continue
+            if level:
+                # v0.18.1 (ledger 0057 integration): the levelled MAINLINE's chord carries its own straight grade
+                pts = _grade_chord(E, C, k, l, pts, m)
             for r, q in zip(range(k + 1, l + 1), pts):
                 E[r % m] = q
             done.append((k, l, None))

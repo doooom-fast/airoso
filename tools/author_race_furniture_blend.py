@@ -24,7 +24,15 @@ is for Kevin's eye and toggling; the export split routes on the name): RACE -> <
 1KERB_RACE prefix, so scripts/ac/pbr.py binds Kevin's K-rail / kerb textures with no new row.
 
 Idempotent: every object whose upper-case name starts with 1WALL_RACE / 1KERB_RACE, every member of `RACE` and of
-any `RACE_CLOSE_*` collection is removed, and those collections with it (the author_lamps_blend LIGHTS pattern).
+any `RACE_CLOSE_*` / `RACE_LAP_*` collection is removed, and those collections with it (the author_lamps_blend
+LIGHTS pattern).
+
+LAPS (ledger 0054, scripts/geometry/race_lap.py): a race layout may name its own lap (layouts[].lap). Each lap is
+authored as its own GROUP after the mainline's, from data/lap.<lap>.json + data/barrier_bands.<lap>.json: its
+common set (both curb strips + kerbs, named 1WALL_race_edge_lap<lap>_* / 1KERB_race_lap<lap>_*) in collection
+RACE_LAP_<LAP>, its layouts' closures in their own RACE_CLOSE_<TOKEN>, seated on EVERY ROAD face (a lap runs on
+connectors, which the ribbon merges into ROAD after the mainline rows), reported in data/race_authored.<lap>.json.
+With no lap declared the run is the mainline group alone — race_authored.json exactly as before.
 Nothing else in the scene is touched — the hand-edit layers stay. A ledger-0047 (v1) declaration — the retired
 centre chain, no corridors — is refused (race_furniture.check_bands).
 
@@ -76,6 +84,8 @@ from mathutils.bvhtree import BVHTree
 AIROSO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(AIROSO / "tools"))
 import race_furniture as rf  # noqa: E402
+
+LAP = rf._race_lap()             # scripts/geometry/race_lap.py: the lap groups (ledger 0054)
 
 RAY_UP_M = 15.0
 RAY_DOWN_M = 4.0           # the lowest-sheet up-cast starts this far under the data height
@@ -173,11 +183,12 @@ def _members(col):
 
 def _race_collections():
     return [c for c in bpy.data.collections
-            if c.name == rf.COMMON_COLLECTION or c.name.startswith(rf.COMMON_COLLECTION + "_CLOSE_")]
+            if c.name == rf.COMMON_COLLECTION or c.name.startswith(rf.COMMON_COLLECTION + "_CLOSE_")
+            or c.name.startswith(rf.COMMON_COLLECTION + "_LAP_")]
 
 
 def _remove_existing():
-    """every RACE-named object, every member of RACE / RACE_CLOSE_*, then those collections themselves"""
+    """every RACE-named object, every member of RACE / RACE_CLOSE_* / RACE_LAP_*, then those collections themselves"""
     cols = _race_collections()
     doomed = set()
     for col in cols:
@@ -339,39 +350,32 @@ def _poly_dist(p, polys):
     return best
 
 
-def main():
-    t0 = time.time()
-    a = _args()
-    proj = Path(a["project"]).resolve()
-    blend = Path(a["blend"]).resolve() if a["blend"] else proj / "loop.blend"
-    out_blend = Path(a["out_blend"]).resolve() if a["out_blend"] else blend
-    if (AIROSO / "tracks") in out_blend.parents:
-        raise SystemExit(f"[race] refusing to write under airoso/tracks ({out_blend}) — ship_sd.sh syncs the hand-edit surface")
-    cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
-    race_cfg = cfg.get("race", {}) or {}
+def _plan_group(proj, cfg, lap, a, race_cfg, height):
+    """the PURE plans of one lap group (None = the mainline; scripts/geometry/race_lap.py): its line, its declaration
+    (data/barrier_bands.json / barrier_bands.<lap>.json), its race layouts, tokens and plans — exactly the mainline's
+    old sequence when lap is None"""
+    view = LAP.config_view(cfg, lap)
     mode = a["edge_mode"] or race_cfg.get("edge_mode", "road")
-    height = a["height"] or float(race_cfg.get("barrier_height_m", rf.BARRIER_H))
-    data = proj / "data"
-    pts, widths = rf.load_centerline(proj)
+    pts, widths = rf.load_centerline(proj, lap)
     m = rf.unique_count(pts)
     st = rf.stations(pts)
-
-    bands = rf.load_bands(proj)
+    bands = rf.load_bands(proj, lap)
+    bname = LAP.bands_file(lap)
     if bands is None:
-        raise SystemExit("[race] no data/barrier_bands.json — run tools/barrier_bands.py first")
+        raise SystemExit(f"[race] no data/{bname} — run tools/barrier_bands.py first")
     probs = rf.check_bands(bands, pts)
     if probs:
         for p in probs:
-            print(f"[race] bands FAIL: {p}")
+            print(f"[race] bands FAIL{(' (lap ' + lap + ')') if lap else ''}: {p}")
         raise SystemExit(1)
     mode = (bands.get("params") or {}).get("edge_mode", mode)
-    race_ids = [str(lo["id"]) for lo in cfg.get("layouts", []) if lo.get("race_furniture")]
+    race_ids = [str(lo["id"]) for lo in view.get("layouts", []) if lo.get("race_furniture")]
     declared_ids = sorted(rf.corridors(bands))
     if sorted(race_ids) != declared_ids:
         raise SystemExit(f"[race] race layouts in track.config.json {sorted(race_ids)} != corridors declared in "
-                         f"barrier_bands.json {declared_ids} — re-run tools/barrier_bands.py")
+                         f"{bname} {declared_ids} — re-run tools/barrier_bands.py")
     tokens = {lid: rf.closure_token(bands, lid) for lid in race_ids}
-    for lo in cfg.get("layouts", []):
+    for lo in view.get("layouts", []):
         ct = lo.get("closure_token")
         if lo.get("race_furniture") and ct and str(ct).lower() != tokens[str(lo["id"])]:
             raise SystemExit(f"[race] layout {lo['id']}: closure_token {ct!r} in the config != {tokens[str(lo['id'])]!r} "
@@ -387,31 +391,28 @@ def main():
             print(f"[race] WARNING declared kerb apex v{d.get('apex')} {d.get('side')} {d.get('kind')} "
                   f"matches no detected corner — not authored")
         kerb = rf.clip_kerbs(rf.kerb_plans(rb, corners, bands, mode), [p for lid in race_ids for p in closures[lid]])
+    if lap:
+        for p in edge + kerb:
+            p["lap"] = lap                     # the lap's common set: 1WALL_race_edge_lap<lap>_* / 1KERB_race_lap<lap>_*
     plans = edge + kerb + [p for lid in race_ids for p in closures[lid]]
+    return {"lap": lap, "view": view, "mode": mode, "pts": pts, "widths": widths, "m": m, "st": st, "bands": bands,
+            "race_ids": race_ids, "tokens": tokens, "corners": corners, "unmatched_kerbs": unmatched_kerbs,
+            "plans": plans}
 
-    bpy.ops.wm.open_mainfile(filepath=str(blend))
-    road_name = "ROAD" if bpy.data.objects.get("ROAD") else "1ROAD_road"
-    road = bpy.data.objects.get(road_name)
-    if road is None:
-        raise SystemExit("[race] no ROAD mesh to seat on")
-    main_n = 3 * m
-    if len(road.data.vertices) < main_n:
-        raise SystemExit(f"[race] ROAD has {len(road.data.vertices)} verts < 3 x {m} mainline rows")
-    for k in (0, m // 3, 2 * m // 3):   # the ribbon's centre vertex of row k is the centreline vertex
-        c = road.data.vertices[3 * k + 1].co
-        if abs(c.x - pts[k][0]) > 0.05 or abs(c.y - pts[k][2]) > 0.05:
-            raise SystemExit(f"[race] ROAD row {k} centre {tuple(round(v, 2) for v in c)} is not centreline v{k} — ribbon layout changed")
-    road_main = _bvh(road_name, keep=lambda f: all(v.index < main_n for v in f.verts))
-    road_any = _bvh(road_name)
-    curb_name = "CURB" if bpy.data.objects.get("CURB") else "1KERB_sidewalk"
-    curb_bvh = _bvh(curb_name) if mode == "walk" else None
-    removed = _remove_existing()
-    col_common = _collection(rf.COMMON_COLLECTION)
+
+def _author_group(G, data, height, removed, road_main, road_any, curb_bvh):
+    """emit one group's plans into the open blend; returns (report-in-progress, seaters, failed_runs, hard, objects,
+    totals, per_layout, ...) as a dict — the mainline group's records are exactly the pre-lap author's"""
+    lap, mode, pts, widths, bands = G["lap"], G["mode"], G["pts"], G["widths"], G["bands"]
+    race_ids, tokens, corners, plans = G["race_ids"], G["tokens"], G["corners"], G["plans"]
+    col_common = _collection(rf.lap_collection(lap))
     col_close = {lid: _collection(rf.closure_collection(tokens[lid])) for lid in race_ids}
-
-    strips = Seater(road_main, road_any, rf.BURY_M)
+    # the mainline seats on the MAINLINE rows of ROAD (unchanged); a lap runs on connectors too, which the ribbon
+    # merges into ROAD after the mainline rows (build_loop_blend.py) — it seats on every ROAD face
+    seat_bvh = road_main if lap is None else road_any
+    strips = Seater(seat_bvh, road_any, rf.BURY_M)
     walk = Seater(curb_bvh, curb_bvh, rf.BURY_M) if mode == "walk" else strips
-    kerbs = Seater(road_main, road_any, KERB_SINK_M)
+    kerbs = Seater(seat_bvh, road_any, KERB_SINK_M)
     objects, centres, frames = [], {}, {}
     tot = {"edge_len": 0.0, "edge_cl": 0.0, "edge_rings": 0, "kerb_len": 0.0, "kerb_stations": 0, "positions": 0,
            "triangles": 0, "render_verts_est": 0, "densified": 0, "spacing_max": 0.0, "chord_max": 0.0}
@@ -469,6 +470,8 @@ def main():
                 bridge["by_object"][name] = bo
             rec = {"name": name, "kind": kind, "owner": owner, "layout": plan.get("layout"), "collection": col.name,
                    "side": plan["side"], "street": plan["street"], "run": list(plan["run"]), "part": plan["part"],
+                   # ledger 0055: a closure object is the layout's closure or a declared chicane's race-side wall
+                   "wall": (plan.get("wall") or "closure") if kind == "close" else None,
                    "rings": len(plan["rings"]), "length_m": round(length, 1), "centreline_m": round(cl, 1),
                    "segments_4m": round(length / rf.MODULE_PITCH_M, 1),
                    "seated": {"hit": seater.hit - h0, "near": seater.near - n0, "interpolated": seater.interp - i0},
@@ -579,7 +582,7 @@ def main():
 
     # grid / pit exclusions: no spawn of a race layout may stand in a strip, or outside its own lane
     clearance, hard = {}, []
-    for lo in cfg.get("layouts", []):
+    for lo in G["view"].get("layouts", []):
         if not lo.get("race_furniture"):
             continue
         dp = data / f"dummies_{lo['id']}.json"
@@ -600,12 +603,17 @@ def main():
             print(f"[race] spawn FAIL {lo['id']}: {p}")
         for p in notes:
             print(f"[race] spawn note {lo['id']}: {p}")
+    return {"strips": strips, "walk": walk, "kerbs": kerbs, "objects": objects, "centres": centres, "frames": frames,
+            "tot": tot, "per_layout": per_layout, "bridge": bridge, "failed_runs": failed_runs, "clearance": clearance,
+            "hard": hard, "col_common": col_common, "col_close": col_close}
 
-    if out_blend != blend:
-        bpy.ops.wm.save_as_mainfile(filepath=str(out_blend))
-    else:
-        bpy.ops.wm.save_mainfile(filepath=str(blend))
 
+def _report_group(G, R, out_blend, height, removed, t0, data):
+    """race_authored.json (the mainline) / race_authored.<lap>.json for one group, printed; returns its failures"""
+    lap, mode, bands, tokens, corners = G["lap"], G["mode"], G["bands"], G["tokens"], G["corners"]
+    strips, walk, kerbs = R["strips"], R["walk"], R["kerbs"]
+    objects, tot, per_layout, bridge = R["objects"], R["tot"], R["per_layout"], R["bridge"]
+    failed_runs, col_common, col_close = R["failed_runs"], R["col_common"], R["col_close"]
     all_devs = sorted(strips.devs + kerbs.devs + (walk.devs if walk is not strips else []), key=lambda d: -abs(d[0]))
     all_other = sorted(strips.other + kerbs.other, key=lambda d: -d[0])
     strip_rings = tot["edge_rings"] + sum(L["rings"] for L in per_layout.values())
@@ -654,7 +662,7 @@ def main():
         "bridge_seating": bridge,
         "corners": [{k: v for k, v in c.items() if k != "kerbs"} | {"kerbs": [{"side": kb["side"], "kind": kb["kind"],
                      "i": kb["i"], "j": kb["j"], "declared": bool(kb.get("declared"))} for kb in c["kerbs"]]} for c in corners],
-        "kerbs_declared_unmatched": unmatched_kerbs,
+        "kerbs_declared_unmatched": G["unmatched_kerbs"],
         "kerb_clips": {o["name"]: o["clip"] for o in objects if o["kind"] == "kerb"},
         "kerb_atlas": {"_doc": "ledger 0053: the race kerbs wrap kerb_race_worn_{diffuse,normal}.jpg (tools/make_kerb_texture.py) — "
                                "column = tyre-rubber level 0..3 per span (race_furniture.kerb_wear), v along the kerb's own "
@@ -665,76 +673,143 @@ def main():
                                       for lv in range(rf.KERB_ATLAS_COLUMNS)],
                        "render_verts_est": sum(o["render_verts_est"] for o in objects if o["kind"] == "kerb")},
         "street_table": rf.street_table(bands),
-        "spawn_clearance": clearance,
+        "spawn_clearance": R["clearance"],
         "failed_runs": failed_runs,
         "deck_interpolated": strips.misses + kerbs.misses,
         "deck_vs_data_worst": all_devs[:12],
         "other_deck_above": all_other[:24],
         "objects": objects,
-        "ring_centres": centres,
-        "ring_frames": frames,
+        "ring_centres": R["centres"],
+        "ring_frames": R["frames"],
         "seconds": round(time.time() - t0, 1),
     }
-    (data / "race_authored.json").write_text(json.dumps(report), encoding="utf-8")
+    if lap:
+        # ledger 0054: this report is a LAP's — every vertex in it is the lap's own (data/lap.<lap>.json); the
+        # mainline's race_authored.json never carries this key
+        report["lap"] = {"id": lap, "line": f"data/{LAP.lap_file(lap)}", "bands": f"data/{LAP.bands_file(lap)}",
+                         "seated_on": "every ROAD face (the lap runs on connectors too)"}
+    tag = f"[race] lap {lap}:" if lap else "[race]"
+    (data / LAP.authored_file(lap)).write_text(json.dumps(report), encoding="utf-8")
     for mname, k, mx, mz, my in report["deck_interpolated"][:20]:
-        print(f"[race] interpolated {mname} v{k} at ({mx}, {mz}) -> y {my}")
+        print(f"{tag} interpolated {mname} v{k} at ({mx}, {mz}) -> y {my}")
     for dv, dname, k in all_devs[:5]:
-        print(f"[race] deck vs data {dv:+.3f} m at {dname} v{k}")
+        print(f"{tag} deck vs data {dv:+.3f} m at {dname} v{k}")
     for dv, dname, k in all_other[:8]:
-        print(f"[race] other deck {dv:+.3f} m above the strip base at {dname} v{k} (junction defect, not a seating choice)")
+        print(f"{tag} other deck {dv:+.3f} m above the strip base at {dname} v{k} (junction defect, not a seating choice)")
     t = report["totals"]
-    print(f"[race] COMMON (collection {col_common.name}): curb strips {t['edge_length_m']} m / {t['edge_rings']} rings in "
+    print(f"{tag} COMMON (collection {col_common.name}): curb strips {t['edge_length_m']} m / {t['edge_rings']} rings in "
           f"{t['edge_objects']} objects (closed loops, bridges included); kerbs {t['kerb_length_m']} m / {t['kerb_stations']} "
           f"stations in {t['kerb_objects']} objects")
     for lid, L in per_layout.items():
-        print(f"[race] {lid} closure (collection {L['collection']}, token {L['token']}): {L['length_m']} m "
+        print(f"{tag} {lid} closure (collection {L['collection']}, token {L['token']}): {L['length_m']} m "
               f"(centreline {L['centreline_m']} m) / {L['rings']} rings / {L['segments_4m']} x 4.04 m in {L['objects']} objects, "
               f"{L['positions']} positions, ~{L['render_verts_est']} render verts")
     pins = [e for o in objects if o["kind"] == "close" for e in o.get("ends", []) if e.get("kind") == "pin"]
-    print(f"[race] closure pins: {len(pins)}, gap to the far curb strip max "
+    print(f"{tag} closure pins: {len(pins)}, gap to the far curb strip max "
           f"{max([e['gap_m'] for e in pins] or [0.0]):.3f} m; free ends: "
           f"{sum(1 for o in objects for e in o.get('ends', []) if e.get('kind') == 'free')}")
     for o in objects:
         ur = o.get("under_road") if o["kind"] == "kerb" else None
         if ur:
-            print(f"[race] kerb {o['name']} run v{o['run'][0]}-v{o['run'][1]}: {ur['stations']} stations under another "
+            print(f"{tag} kerb {o['name']} run v{o['run'][0]}-v{o['run'][1]}: {ur['stations']} stations under another "
                   f"ROAD sheet" + (f" (max {ur['max_m']} m over its top, at v{ur['vertices']})" if ur['stations'] else ""))
     for o in objects:
         if o["kind"] == "kerb":
             wr = o["wear"]
-            print(f"[race] kerb {o['name']} wear (ledger 0053): {wr['real_length_m']} m, metres at rubber level 0..3 "
+            print(f"{tag} kerb {o['name']} wear (ledger 0053): {wr['real_length_m']} m, metres at rubber level 0..3 "
                   f"{wr['m_by_level']}, {wr['seams']} column seams, heavy rubber at {wr['heavy_spans_m_from_apex']} m from the apex")
     ka = report["kerb_atlas"]
-    print(f"[race] kerb atlas: {ka['seams']} column seams, metres at level 0..3 {ka['m_by_level']}, "
+    print(f"{tag} kerb atlas: {ka['seams']} column seams, metres at level 0..3 {ka['m_by_level']}, "
           f"~{ka['render_verts_est']} kerb render verts")
     for name, clip in report["kerb_clips"].items():
         if clip and clip.get("stations_removed") != [0, 0]:
-            print(f"[race] kerb {name} clipped by {clip['by']}: {clip['stations_removed']} stations (start, end) removed, "
+            print(f"{tag} kerb {name} clipped by {clip['by']}: {clip['stations_removed']} stations (start, end) removed, "
                   f"kept min clearance {clip['min_clear_m']} m")
-    print(f"[race] bridge spans: {bridge['hit']} rings hit / {bridge['near']} near / {bridge['interpolated']} interpolated")
-    print(f"[race] {t['positions']} positions in {t['objects']} objects; seated {t['seated_hit']} hit / {t['seated_near']} near / "
+    print(f"{tag} bridge spans: {bridge['hit']} rings hit / {bridge['near']} near / {bridge['interpolated']} interpolated")
+    print(f"{tag} {t['positions']} positions in {t['objects']} objects; seated {t['seated_hit']} hit / {t['seated_near']} near / "
           f"{t['seated_interpolated']} interpolated; deck vs data max {t['deck_vs_data_max_m']} m; other deck above "
           f"{t['other_deck_above_rings']} rings (max {t['other_deck_above_max_m']} m); removed {removed} old; saved "
           f"{out_blend.name} ({report['seconds']} s)")
     n_io = sum(int(o.get("inside_out_spans", 0) or 0) for o in objects)
     for o in objects:
         for c in o.get("fold_corners", []) or []:
-            print(f"[race] trimmed fold {o['name']}: {c['kind']} corner at ({c['xz'][0]:.2f}, {c['xz'][1]:.2f}) turn "
+            print(f"{tag} trimmed fold {o['name']}: {c['kind']} corner at ({c['xz'][0]:.2f}, {c['xz'][1]:.2f}) turn "
                   f"{c['turn_deg']:+.1f} deg, mitre {c['mitre']}, {c.get('n_removed', len(c['removed']))} rings/stations removed")
-    print(f"[race] inside-out spans (author-time column test): {n_io}")
+    print(f"{tag} inside-out spans (author-time column test): {n_io}")
     sh, dn = report["shading"], report["density"]
-    print(f"[race] shading: smooth, hard edges > {sh['sharp_deg']:.0f} deg + kerb outline; {sh['triangles']} triangles -> "
+    print(f"{tag} shading: smooth, hard edges > {sh['sharp_deg']:.0f} deg + kerb outline; {sh['triangles']} triangles -> "
           f"~{sh['render_verts_est']} render verts ({sh['verts_per_triangle_est']} per triangle; flat-shaded was 3.0)")
-    print(f"[race] density: {dn['rings_inserted']} rings inserted; ring spacing max {dn['ring_spacing_max_m']} m "
+    print(f"{tag} density: {dn['rings_inserted']} rings inserted; ring spacing max {dn['ring_spacing_max_m']} m "
           f"(target {dn['ring_spacing_max_target_m']}), chord vs the declared curve max {dn['chord_max_m']} m "
           f"(target {dn['chord_max_target_m']})")
+    fails = []
     if failed_runs:
-        print(f"[race] FAIL: runs with no deck under any ring: {failed_runs}")
-        raise SystemExit(1)
+        print(f"{tag} FAIL: runs with no deck under any ring: {failed_runs}")
+        fails.append("failed runs")
     if n_interp > INTERP_MAX_FRAC * n_rings:
-        print(f"[race] FAIL: {n_interp} of {n_rings} rings interpolated (> {INTERP_MAX_FRAC:.0%})")
-        raise SystemExit(1)
-    if hard:
+        print(f"{tag} FAIL: {n_interp} of {n_rings} rings interpolated (> {INTERP_MAX_FRAC:.0%})")
+        fails.append("interpolated")
+    if R["hard"]:
+        fails.append("spawns")
+    return fails
+
+
+def main():
+    t0 = time.time()
+    a = _args()
+    proj = Path(a["project"]).resolve()
+    blend = Path(a["blend"]).resolve() if a["blend"] else proj / "loop.blend"
+    out_blend = Path(a["out_blend"]).resolve() if a["out_blend"] else blend
+    if (AIROSO / "tracks") in out_blend.parents:
+        raise SystemExit(f"[race] refusing to write under airoso/tracks ({out_blend}) — ship_sd.sh syncs the hand-edit surface")
+    cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
+    race_cfg = cfg.get("race", {}) or {}
+    height = a["height"] or float(race_cfg.get("barrier_height_m", rf.BARRIER_H))
+    data = proj / "data"
+    lap_probs = LAP.validate(cfg)
+    if lap_probs:
+        raise SystemExit("[race] race.laps / layouts[].lap: " + " | ".join(lap_probs))
+    # one group per line the race layouts count along: the mainline (data/barrier_bands.json), then every lap
+    # (data/barrier_bands.<lap>.json) — with no lap declared this is the mainline alone, exactly as before
+    groups = [_plan_group(proj, cfg, lap, a, race_cfg, height) for lap in LAP.groups(cfg)]
+    pts, _w = rf.load_centerline(proj)
+    m = rf.unique_count(pts)
+
+    bpy.ops.wm.open_mainfile(filepath=str(blend))
+    road_name = "ROAD" if bpy.data.objects.get("ROAD") else "1ROAD_road"
+    road = bpy.data.objects.get(road_name)
+    if road is None:
+        raise SystemExit("[race] no ROAD mesh to seat on")
+    main_n = 3 * m
+    if len(road.data.vertices) < main_n:
+        raise SystemExit(f"[race] ROAD has {len(road.data.vertices)} verts < 3 x {m} mainline rows")
+    for k in (0, m // 3, 2 * m // 3):   # the ribbon's centre vertex of row k is the centreline vertex
+        c = road.data.vertices[3 * k + 1].co
+        if abs(c.x - pts[k][0]) > 0.05 or abs(c.y - pts[k][2]) > 0.05:
+            raise SystemExit(f"[race] ROAD row {k} centre {tuple(round(v, 2) for v in c)} is not centreline v{k} — ribbon layout changed")
+    road_main = _bvh(road_name, keep=lambda f: all(v.index < main_n for v in f.verts))
+    road_any = _bvh(road_name)
+    curb_name = "CURB" if bpy.data.objects.get("CURB") else "1KERB_sidewalk"
+    curb_bvh = _bvh(curb_name) if any(G["mode"] == "walk" for G in groups) else None
+    removed = _remove_existing()
+    results = [_author_group(G, data, height, removed, road_main, road_any, curb_bvh) for G in groups]
+
+    if out_blend != blend:
+        bpy.ops.wm.save_as_mainfile(filepath=str(out_blend))
+    else:
+        bpy.ops.wm.save_mainfile(filepath=str(blend))
+
+    fails = []
+    for G, R in zip(groups, results):
+        fails += _report_group(G, R, out_blend, height, removed, t0, data)
+    # a lap file of a lap no layout names any more would be read by nothing — but a STALE one beside a retired lap
+    # must not pass for this run's: removed (the mainline's race_authored.json is never touched here)
+    live = {LAP.authored_file(G["lap"]) for G in groups}
+    for old in sorted(data.glob("race_authored.*.json")):
+        if old.name not in live:
+            old.unlink()
+            print(f"[race] removed stale {old.name} (no layout names that lap)")
+    if fails:
         raise SystemExit(1)
 
 

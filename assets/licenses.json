@@ -171,6 +171,19 @@
    "license": "CC0-1.0",
    "url": "",
    "_note": "For the deferred Macau-style tall collider sheet (ledger 0047 Q11): 1WALL_racecol_* meshes, a '1WALL_RACECOL' pbr row before '1WALL' with ALPHATEST=1. Not bound by any shipped material yet."
+  },
+  {
+   "name": "Modern LED street light (generated) — ledger 0056",
+   "files": [
+    "models/streetlight_led_post_twin.obj",
+    "models/streetlight_led_post_single.obj",
+    "models/streetlight_led_lens.obj",
+    "models/streetlight_led.json"
+   ],
+   "source": "self-made: tools/make_streetlight_led.py, a deterministic generator (rerun = byte-identical; tests/tools/test_streetlight_led.py checks it). Dimensions from public standards only: Caltrans Standard Plan ES-6A (Type 21 pole 35 ft, 12 ft mast arm, 38'-9\" mounting height) and City of San Diego SDE-101 (12 ft arm for the steel standard). No third-party mesh or texture; it binds the engine's own LIGHTPOST / LIGHTS pbr rows (solid_metal_dark.png / solid_lens_warm.png)",
+   "license": "CC0-1.0",
+   "url": "",
+   "_note": "Replaces Kevin's decimated Street_Lamp (assets/models/lamp_post.obj + lamp_lens.obj, from the Dropbox Street_Lamp.zip, licence unrecorded) on Lake Murray by track.config.json scenery.streetlights.model = led_cobra; the old OBJs stay in the repo for the one-key rollback (street_lamp_2026_10)."
   }
  ],
  "stock_audio_note": "Surface scrub/rumble (data/surfaces.ini WAV=) references the player's own stock Assetto Corsa sounds (content/sfx). No audio is bundled or redistributed."

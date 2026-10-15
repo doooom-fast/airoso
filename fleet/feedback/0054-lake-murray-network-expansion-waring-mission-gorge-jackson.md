@@ -94,6 +94,68 @@ vertices moved by more than 1 m against the pre-change v0.18 build (max 25.24 m)
 drive / audit / no_route verdict identical to v0.17.1 before 0050; `rib_check` PASS; from v1640 the hill in front of
 Cowles now stands at 7.157° (3DEP 7.231°; it was 6.600°). Details in ledger 0046 "Integration (v0.18.0)". Integration fix round 3 (2026-10-13): kept at 20 / 40 with the freeway off; LAWS L3's bullet now reads Kevin's principle (near-road relief is shaped to the road within the road's own construction zone, ~20-40 m; real relief beyond is never reshaped); from v1640 the hill reads 7.157° against fresh 3DEP's 7.215° (ledger 0046 "Integration fix round 3").
 
+## The roadmap of Lake Murray phases (Kevin, 2026-10-14)
+
+> "Phase 3 will be waring to Zion, Zion to mission gorge"
+
+- **Phase 1** (this entry, building): Waring (J1→J2), Princess View (J2→J3), Mission Gorge (J3→J4), Jackson north
+  (J4→J5). Free Roam only.
+- **Phase 2: Mission Gorge Speedway** (+ Reverse) — confirmed by Kevin 2026-10-14 ("Phase 2 is correct"); the plan's
+  D1 default. Needs the race tools generalised past one lap line first (every race tool counts along one lap by point number).
+- **Phase 3 (Kevin):** **Waring from J2 south-west to Zion Ave (~0.6 km), Zion Ave west to Mission Gorge Rd
+  (~1.6 km, 32.7927-32.7930 N, from Waring at −117.0807 to Mission Gorge at −117.0976, fresh OSM 2026-10-14),** and
+  Mission Gorge Rd from Zion back up to J3 (~2.3 km) so it joins the network. A western loop J2 → Waring → Zion →
+  Mission Gorge → J3 → Princess View → J2; Princess View stays. Terrain: Zion's west end lies inside the D2 far box
+  (west −117.108) but ~1.6 km west of phase 1's grown physical grid edge (−117.0807), so phase 3 grows the grid
+  again with the same whole-cell pin + `tools/remap_sample_cache.py` (no old node moves).
+
+- **Phase 4 (Kevin):** *"And then phase 4 will be waring to 8, and we'll start working on freeway ramps. 8 will then
+  go to college one way and mission gorge the other"* — Waring Rd south from Zion to its I-8 interchange (~−117.09),
+  the freeway ramps, and **I-8 itself drivable** east to the College Ave interchange (the loop's own College deck,
+  ~−117.06/−117.07) and west to the Mission Gorge Rd / Fairmount Ave interchange (~−117.10/−117.11): about 3.9 km each
+  way (fresh OSM 2026-10-14; 71 I-8 motorway ways in the box). This settles the I-8 question for the long run: the
+  freeway becomes real, drivable road in phase 4 (physics, ramps, decks over it), not the drawn see-only freeway the
+  v0.18.0 integration added and then switched off. Reusable: the SD freeway network track's data/tools (registry
+  `k10-san-diego` freeway), `tools/author_freeway_blend.py` (visual, OFF), the College/LMB bridge bodies from 0046.
+  Terrain: the Mission Gorge/Fairmount interchange is near the D2 far box's west edge (−117.108) — phase 4 grows the
+  physical grid west again (same pin + remap).
+
+- **Phase 5 (Kevin):** *"We are going to change intersections, such that a road we are not completing gets a barrier,
+  not a curve. That's phase 5"* — every unbuilt side road keeps its mouth and a short stub, closed by a **barrier
+  across it**, instead of today's curb return that curves the curb round and erases the road. Network-wide (the old
+  loop's sealed side streets and every expansion mouth), all layouts. Until then, phase 1's new junctions and stubs are
+  built so phase 5 can swap the curb return for a barrier without rebuilding the road (the stub ribbon and mouth are
+  kept; only the closure object changes). Touches: `docs/JUNCTIONS.md` R18(c) (stub = curb returns + invisible wall),
+  `gap_mouths_blend` / the sealed-mouth curb sweep, the Speedways' sealed-mouth policy (`barrier_bands` mouths,
+  `no_route` probes), `verify_mouths`.
+
+(Naming: the plan's build steps P0-P7 are *steps*; "Phase N" is Kevin's expansion phase.)
+
+**Parallel work (Kevin, 2026-10-14: "Yes and a").** Started alongside Phase 1: the Phase 2 groundwork (race tools
+taught a second lap, proven byte-identical on both Lake Murray Speedways; the Mission Gorge Speedway design), the
+Phase 3 + Phase 4 plans (read-only research), and the Phase 5 barrier-stub tool — **option (a): Phase 1's ~24 public
+side streets get barrier stubs from the start**, not curved curbs later. Phase 5 proper (converting the old loop's
+side streets) keeps its place in the order.
+
+**Phase 3 and 4 plans (2026-10-14).** `tracks/san-diego-lake-murray/EXPANSION-PHASE3-PLAN.md` (Zion western loop:
+4.60 km of new road, loop 5.71 km, J6 Waring/Zion, J7 Zion/Mission Gorge, Zion drops 66 m at up to 10 %, Mission
+Gorge's 28.7 m sag becomes the network's low point, 35 barrier stubs) and `EXPANSION-PHASE4-PLAN.md` (Waring south
+1.59 km to I-8; I-8 EB 2.85 km Fairmount on-ramps -> College exit, WB 2.36 km College on-ramps -> Mission Gorge exit;
+ramps at X8/X9/X10; Mission Gorge south through Grantville incl. Friars Rd; at Waring I-8 is two levels up to 18.8 m
+apart), place facts in `DOSSIER-EXPANSION-WEST.md`. Revision 2 after an independent critic (11 errors fixed). Decisions
+with defaults pending Kevin; the big one is the **lamp weight**: Phase 4 projects to 161-174 MB of road kn5 without a
+lighter streetlight model.
+
+**Lamp weight, measured on the installed v0.18.0 road kn5 (116.3 MB; 42 meshes, 1,697,179 verts, 2,026,253 tris;
+`scripts.modkit.inspect_kn5 --json`):** LIGHTPOST = 17 meshes, **966,725 verts (57.0 %) and 899,835 tris (44.4 %)** for
+243 lamps (~4,000 points each; six LIGHTPOST meshes sit at the 65,535 cap). All drivable ground (1GRASS) is 357,262
+verts (21.1 %). A lamp ~10x lighter would remove ~870k verts — the single biggest load-time lever, and the precondition
+both expansion plans name before more lamps. The lamp is Kevin's own model ("Kevin's lamp model at every
+streetlight"), so a lighter version is his call.
+
+**P0 step 1 met (2026-10-14):** Kevin, on v0.18.0's Navajo/Jackson corner: "yeah that corner feels right now" (ledger 0050
+shipped). The Phase 1 road build (step P3 on) starts as soon as v0.18.1 (0055 College, 0056 lamp, 0057 hills) is merged
+and installed, because 0055 changes College's divided run up to the J1 box.
 
 ## P0 — preconditions and data (2026-10-14; branch `worktree-wf_c6ab4b42-146-1` off 4a9e66f, not merged, nothing installed)
 

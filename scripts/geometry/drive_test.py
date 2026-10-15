@@ -46,6 +46,10 @@ continuity wrapped across the seam of a closed lap. Each layout writes
 ``data/drive_test.<id>.json``; ``data/drive_test.json`` becomes the per-layout summary. A
 single-layout track is byte-for-byte today's gate.
 
+LAPS (ledger 0054). A race layout that names a lap (layouts[].lap, scripts/geometry/race_lap.py) walks THAT line
+(data/lap.<lap>.json) against its own declaration (data/barrier_bands.<lap>.json, via MedianZone.load); the fold-fan
+discs stay on the mainline rows the weld indexes. Every other layout is driven exactly as before.
+
 CORRIDORS (ledger 0049, 2026-10-11). A version-2 declaration gives every race layout its own lane:
 ``corridors.<id>.lane_by_vertex`` (the corridor FACES — the race-side curb strip face and the layout's closure
 face, full width in the open boxes and the whole-street zone), read through
@@ -79,7 +83,20 @@ difference of at most 0.025 m (and an independent 5 cm arc-length sweep at most 
 is filed under ``fold_severe`` (reported, not gated here) and judged where a wheel can be: verify_fold_fans gates a
 fine step >= 0.02 m and a 1 m second difference > 0.06 m on the real wheel paths of every levelled pinch (rows
 k - 12 ... l + 13 cover these zones), hard in the chain, never covered by --force-install — the 0050 lip read 0.42 /
-0.48 m there. Outside a levelled fan, on a forward sample, or without the key: severe as before."""
+0.48 m there. Outside a levelled fan, on a forward sample, or without the key: severe as before.
+
+VERTEX BUMPS (v0.18.1, ledger 0057 integration). The same fixed offset hops FORWARD at every centreline vertex where the
+segment normal turns: on the outside of a corner the point jumps ahead by offset x turn angle (2.7-3.9 m at 10 m out
+round the Navajo / Jackson fan, 1.8-3.7 m round College / Alvarado), on the inside it creeps (0.1-0.5 m). The 1 m second
+difference then compares a height change over that hop with one over the previous metre: on a plane at grade g it reads
+g x (hop - 1) — 3.4 cm on a 1.25 % plane at s 6954 (race_cw, v0.18.0), more wherever ledger 0057 restored a real
+grade. A BUMP (2.5-6 cm; never a severe step) is therefore RE-MEASURED on the wheel path's own travel: the grades of its
+two metres over the plan distance each actually covered, their change over the mean of the two (the same 1 m second
+difference wherever both cover 1 m). One under STEP_BUMP_M is filed under ``vertex_bumps`` (reported, not gated); one
+still over it counts. Neither travel may be under VERTEX_MIN_TRAVEL_M (a grade over a few cm of plan is facet noise —
+such a bump counts as read). The re-measure can only move a bump out of the gated count when the surface the wheel
+actually crosses is smoother than 2.5 cm per metre; it never adds one.
+"""
 
 from __future__ import annotations
 
@@ -110,6 +127,8 @@ OBST_HEIGHT_M = 1.8          # car-strike ceiling: AC cars are ~1.3 m tall; wall
 #                              level and still trip this, while legit overhead furniture (cobra-head
 #                              lamps arching the lane at 2.5 m+) clears it
 STEP_M = 1.0                 # sampling step along the lap
+VERTEX_MIN_TRAVEL_M = 0.05   # [invented] v0.18.1 VERTEX BUMPS: a metre whose wheel path covers less plan than this is not
+#                              re-measured (its grade would be a facet's noise); the bump counts as read
 
 
 def _advance(prev, px_pz, c):
@@ -123,10 +142,26 @@ def _advance(prev, px_pz, c):
     if n2 < 1e-12:
         return 1.0
     return ((px_pz[0] - prev[0]) * cx + (px_pz[1] - prev[1]) * cz) / n2
+
+
+def _own_travel_step(dh1, dh0, d1, d0):
+    """VERTEX BUMPS (v0.18.1): the 1 m second difference of a wheel path re-measured on its own travel — the grades of
+    its last two metres (height change dh over the plan distance d each covered), their change over the mean of the two
+    distances, times STEP_M^2. Exactly |dh1 - dh0| where both metres cover STEP_M. None when either travel is unknown
+    or under VERTEX_MIN_TRAVEL_M (the bump then counts as read)."""
+    if d1 is None or d0 is None or min(d1, d0) < VERTEX_MIN_TRAVEL_M:
+        return None
+    return abs(dh1 / d1 - dh0 / d0) * 2.0 * STEP_M * STEP_M / (d0 + d1)
+
+
 WHEEL_HALF_TRACK = 0.75      # wheel offset around each driving line
 CELL = 3.0                   # spatial hash cell (m)
 
-DIVIDER_CLEAR_M = 0.4        # the inner wheel (or scan edge) clears a divider/barrier FACE by this
+WALL_CROSS_H_M = 0.5         # [invented] v0.18.1: the excursion guard's crossing probe runs this far over the
+#                              pavement edge — over a wheel centre (~0.3 m), under every barrier top the loop builds
+#                              (0.81 m Jersey, 0.95 m bridge panel): a wall standing that tall across the path stops the car
+
+DIVIDER_CLEAR_M = 0.4       # the inner wheel (or scan edge) clears a divider/barrier FACE by this
 BARRIER_GAP_MAX_M = 4.04      # one module: consecutive 1WALL hits on a declared band further apart = missing
 BARRIER_PROBE_M = 0.3         # lateral probe spread on a declared band (the band's own reach is 0.935)
 NEAR_DIVIDER_M = 7.0          # the 6.3 m centre disc reaches a strip end / island nose from this far out
@@ -176,6 +211,42 @@ def speed_profile(pts, st, closed: bool) -> list[float]:
         d = max(1e-6, st[i + 1] - st[i])
         v[i] = min(v[i], math.sqrt(v[i + 1] ** 2 + 2 * BRAKE_MS2 * d))
     return v
+
+
+def _wall_crossed(field, a, b) -> bool:
+    """does the straight segment a -> b (x, y, z) pass through a 1WALL triangle of ``field``? (Moller-Trumbore on
+    every 1WALL triangle in the cells the segment's plan box covers.) Sees a wall of any orientation — a vertical
+    panel with no plan area included, which a downward top_at read never can."""
+    dx, dy, dz = b[0] - a[0], b[1] - a[1], b[2] - a[2]
+    seen = set()
+    for ci in range(int(min(a[0], b[0]) // CELL), int(max(a[0], b[0]) // CELL) + 1):
+        for cj in range(int(min(a[2], b[2]) // CELL), int(max(a[2], b[2]) // CELL) + 1):
+            for k in field.cells.get((ci, cj), ()):
+                if k in seen:
+                    continue
+                seen.add(k)
+                t = field.tris[k]
+                if not str(t[9]).upper().startswith("1WALL"):
+                    continue
+                e1 = (t[3] - t[0], t[4] - t[1], t[5] - t[2])
+                e2 = (t[6] - t[0], t[7] - t[1], t[8] - t[2])
+                px, py, pz = dy * e2[2] - dz * e2[1], dz * e2[0] - dx * e2[2], dx * e2[1] - dy * e2[0]
+                det = e1[0] * px + e1[1] * py + e1[2] * pz
+                if abs(det) < 1e-12:
+                    continue
+                inv = 1.0 / det
+                sx, sy, sz = a[0] - t[0], a[1] - t[1], a[2] - t[2]
+                u = (sx * px + sy * py + sz * pz) * inv
+                if u < 0.0 or u > 1.0:
+                    continue
+                qx, qy, qz = sy * e1[2] - sz * e1[1], sz * e1[0] - sx * e1[2], sx * e1[1] - sy * e1[0]
+                v = (dx * qx + dy * qy + dz * qz) * inv
+                if v < 0.0 or u + v > 1.0:
+                    continue
+                tt = (e2[0] * qx + e2[1] * qy + e2[2] * qz) * inv
+                if 0.0 <= tt <= 1.0:
+                    return True
+    return False
 
 
 def _load_obj(path: Path):
@@ -376,10 +447,15 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     reverse = direction == "reverse"
     race = bool(_lo.get("race_furniture")) if _lo else False
     kind = str(_lo.get("kind", "race" if race else "street")) if _lo else "street"
+    # ledger 0054: a race layout that names a LAP drives the lap (data/lap.<lap>.json) against its declaration
+    # (data/barrier_bands.<lap>.json); every other layout walks the gate centreline exactly as before
+    from scripts.geometry import race_lap as _race_lap
+    _lap = _race_lap.lap_of(_lo) if _lo else None
+    _bands_name = _race_lap.bands_file(_lap)
     _corridor_decl = False
-    if race and (data / "barrier_bands.json").exists():
+    if race and (data / _bands_name).exists():
         try:
-            _corridor_decl = bool((json.loads((data / "barrier_bands.json").read_text(encoding="utf-8"))
+            _corridor_decl = bool((json.loads((data / _bands_name).read_text(encoding="utf-8"))
                                    .get("corridors") or {}))
         except (json.JSONDecodeError, OSError):
             _corridor_decl = False
@@ -410,6 +486,13 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
         lc = json.loads((data / "centerline.local.json").read_text())
         pts = [(mirror * p[0], p[1], p[2]) for p in lc["points_xyz_m"]]
     widths = list(lc["widths_m"])
+    _main_pts, _main_w = list(pts), list(widths)    # the MAINLINE gate line: the weld's fold-fan rows index it
+    _lap_rec = None
+    if _lap:
+        _lap_rec = _race_lap.load(project, _lap)
+        _mx = -1.0 if cfg.get("mirror_x", False) else 1.0
+        pts = [(_mx * p[0], p[1], p[2]) for p in _lap_rec["points_xyz_m"]]
+        widths = [float(w) for w in _lap_rec["widths_m"]]
     # LANE WIDTHS (race layouts, 2026-10-11). The lane a race layout drives is bounded by the declared
     # strips, and the declaration lerps the road width between vertices; `widths[i]` (the vertex AHEAD
     # of a station) made the lane up to 1.36 m too wide on a mouth flare (0.55-1.50 m per 3 m vertex),
@@ -419,7 +502,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     # vertex 0 (it carried the LAST street's width: 27.5 m on SD vs Alvarado's 17.0 m — median_zone's
     # rule). The street layout and every single-layout track keep `widths` and are unchanged.
     _closed_lap = (len(pts) > 2 and abs(pts[0][0] - pts[-1][0]) < 1e-6 and abs(pts[0][2] - pts[-1][2]) < 1e-6)
-    _fan_pts, _fan_w = list(pts), list(widths)      # forward order: the weld's row indices (ledger 0050 fan discs)
+    _fan_pts, _fan_w = _main_pts, _main_w           # forward order: the weld's MAINLINE row indices (ledger 0050 fan discs)
     _wl = list(widths)
     if _closed_lap:
         _wl[-1] = _wl[0]
@@ -618,7 +701,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
             d1, i1 = _divider_at(k); dh = max(dh, d1); ins = max(ins, i1); k += 1
         return dh, ins
 
-    _bm_hits: dict = {"centre": [], "edge_L": [], "edge_R": [], "closure": []}   # (station, hit) per declared band
+    _bm_hits: dict = {"centre": [], "edge_L": [], "edge_R": [], "closure": [], "chicane": []}   # (station, hit) per band
 
     def _corr_lane(k, u):
         """the declared corridor lane (scan + wheel bands, right of travel) at fraction u of segment k-1 -> k"""
@@ -720,6 +803,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     # the metre that ended there (see _advance) — reset with prev_h
     prev_p = [None] * 10
     prev_adv = [None] * 10
+    prev_d = [None] * 10       # VERTEX BUMPS (v0.18.1): the plan distance each path covered over its previous metre
     off_pavement = 0
     obst_names = defaultdict(int)
     _phase("pre-sweep setup")
@@ -777,6 +861,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
             prev_slope = [None] * 10
             prev_p = [None] * 10
             prev_adv = [None] * 10
+            prev_d = [None] * 10
         _prev_lane = _lane_key
         # edge paths (|line| = w/2-0.5) DETECT holes/ground-through at the pavement lip;
         # smoothness (steps/kinks) gates only on INTERIOR paths — nobody laps on the hinge
@@ -801,6 +886,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
             prev_slope = [None] * 10
             prev_p = [None] * 10
             prev_adv = [None] * 10
+            prev_d = [None] * 10
             s += STEP_M          # MUST advance: `s += STEP_M` lives at the END of this body, so a
             continue             # bare `continue` here spins forever. That hung every rally build
                                  # from v0.25.1 on — the stages were never slow, they never finished.
@@ -816,14 +902,17 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                 prev_slope[pi] = None
                 prev_p[pi] = None
                 prev_adv[pi] = None
+                prev_d[pi] = None
                 continue
             if owner and owner.upper().startswith(SOFT):
                 problems["soft_top_in_lane"].append((round(s, 1), round(off, 2), owner))
             adv = None
+            d_now = None
             if prev_h[pi] is not None:
                 dh = h - prev_h[pi]
                 slope = dh / STEP_M
                 adv = _advance(prev_p[pi], (px, pz), (x, z))
+                d_now = math.hypot(px - prev_p[pi][0], pz - prev_p[pi][1])
                 # a second difference that spans a metre this fixed-offset point ran BACKWARDS (offset past the turning
                 # centre of a corner tighter than the lane: a fold) is not a wheel's experience — see FOLD BUMPS
                 folded = adv < 0.0 or (prev_adv[pi] is not None and prev_adv[pi] < 0.0)
@@ -855,9 +944,15 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                             problems.setdefault("apron_bumps", []).append(
                                 (round(s, 1), round(off, 2), round(step, 3)))
                         else:
-                            problems["steps"].append((round(s, 1), round(off, 2), round(step, 3)))
+                            own = _own_travel_step(dh, prev_slope[pi] * STEP_M, d_now, prev_d[pi])
+                            if own is not None and own <= STEP_BUMP_M:
+                                problems.setdefault("vertex_bumps", []).append(
+                                    (round(s, 1), round(off, 2), round(step, 3), round(own, 4)))
+                            else:
+                                problems["steps"].append((round(s, 1), round(off, 2), round(step, 3)))
                 prev_slope[pi] = slope
             prev_adv[pi] = adv
+            prev_d[pi] = d_now
             prev_p[pi] = (px, pz, x, z)
             prev_h[pi] = h
         # daylight probe: just past each pavement edge, some surface must exist from deck level
@@ -936,6 +1031,13 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                     _qx, _qz = _qa[0] + (_qb[0] - _qa[0]) * t, _qa[2] + (_qb[2] - _qa[2]) * t
                     _ql = math.hypot(_qb[0] - _qa[0], _qb[2] - _qa[2]) or 1e-9
                     _bm_probe("closure", s, _qx, _qz, -(_qb[2] - _qa[2]) / _ql, (_qb[0] - _qa[0]) / _ql, 0.0, deck_c)
+                # a declared chicane's race-side wall (ledger 0055): the same probe on its declared line
+                if _corr and _zone.race_wall_at(i) is not None and _zone.race_wall_at(i - 1) is not None:
+                    _qa = _zone._band_point("chicane", i - 1)
+                    _qb = _zone._band_point("chicane", i)
+                    _qx, _qz = _qa[0] + (_qb[0] - _qa[0]) * t, _qa[2] + (_qb[2] - _qa[2]) * t
+                    _ql = math.hypot(_qb[0] - _qa[0], _qb[2] - _qa[2]) or 1e-9
+                    _bm_probe("chicane", s, _qx, _qz, -(_qb[2] - _qa[2]) / _ql, (_qb[0] - _qa[0]) / _ql, 0.0, deck_c)
         s += STEP_M
 
     # BARRIER CONTINUITY: a declared station is MISSING when no 1WALL hit lies within half a
@@ -1069,6 +1171,21 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                             guarded = True
                             break
                         _wo += 0.5
+                    # A VERTICAL-PANEL wall (v0.18.1, ledger 0057's Lake Murray Blvd I-8 deck): the loop's I-8 bridge
+                    # rails are double-sided 0.95 m panels with no plan area at all (scripts-v021 build_guardrails),
+                    # so the top_at probe above — a downward read — can never land on one, and every drop behind
+                    # them read "unguarded" (v0.18.0 too: its 150 m station fell 3 vertices short of the deck).
+                    # The rule is unchanged — a 1WALL between the pavement edge and the drop guards it — the
+                    # probe now also asks the question the car asks: does its path out to the drop, WALL_CROSS_H_M
+                    # over the pavement edge, pass THROUGH a 1WALL face?
+                    if not guarded and edge_y is not None:
+                        _w0 = max(we - 0.4, 0.5)
+                        _w1 = off - 0.25
+                        if _w1 > _w0:
+                            guarded = _wall_crossed(
+                                obstacle,
+                                (x0 + nxe * _w0 * sgn, edge_y + WALL_CROSS_H_M, z0 + nze * _w0 * sgn),
+                                (x0 + nxe * _w1 * sgn, edge_y + WALL_CROSS_H_M, z0 + nze * _w1 * sgn))
                     _drop = prev_y - ey
                     if _unpaved:
                         # Gate on PHYSICAL DANGER, not on proximity to the pavement. Two reasons the
@@ -1150,6 +1267,10 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
         try:
             ej = json.loads(ep.read_text())
             zr = ej.get("z_raw_m") or []
+            if _lap_rec is not None:
+                # the lap's mainline vertices take the mainline's measured height; connector / join vertices have none
+                zr = [(zr[sv[1]] if sv[0] == _race_lap.MAINLINE and sv[1] < len(zr) else None)
+                      for sv in _lap_rec["source_by_vertex"]]
             if reverse:
                 zr = zr[::-1]
             e0 = 0.0
@@ -1161,7 +1282,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                 stq = 0.0
                 for i in range(1, m2):
                     stq += math.hypot(pts[i][0] - pts[i - 1][0], pts[i][2] - pts[i - 1][2])
-                    if any(a <= stq <= b for a, b in spans):
+                    if any(a <= stq <= b for a, b in spans) or zr[i] is None:
                         continue
                     rep.append(abs(pts[i][1] - (zr[i] - e0)))
         except Exception:
@@ -1188,7 +1309,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
         "kind": kind,
         "race_furniture": race,
         "obj": obj_name,
-        "lane": (f"barrier_bands.json corridors.{lid}" if _corr else
+        "lane": (f"{_bands_name} corridors.{lid}" if _corr else
                  ("barrier_bands.json v1 (chain / island face)" if race else "full width / island")),
         "barrier_stations": problems["barrier_stations"],
         "barrier_missing": len(barrier_missing),
@@ -1206,6 +1327,8 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
         "floating_furniture": len(problems["floating_furniture"]),
         "apron_steps": len(problems.get("apron_steps", [])),
         "fold_bumps": len(problems.get("fold_bumps", [])),
+        "vertex_bumps": len(problems.get("vertex_bumps", [])),
+        "vertex_bumps_worst": sorted(problems.get("vertex_bumps", []), key=lambda r: -r[3])[:12],
         "excursion_drops": sum(1 for r in problems["excursion_drops"] if r[3]),
         "excursion_far_ledges": sum(1 for r in problems["excursion_drops"] if not r[3]),
         "worst_excursions": sorted(problems["excursion_drops"], key=lambda r: -r[2])[:12],
@@ -1279,6 +1402,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     if _fold_severe_defer:
         print(f"  fold severe (> 6 cm where a fixed-offset path runs backwards inside a levelled fan; judged by "
               f"tools/verify_fold_fans.py on the real wheel paths): {report['fold_severe']}")
+    if report["vertex_bumps"]:
+        print(f"  vertex bumps (2.5-6 cm read across a vertex hop, under {STEP_BUMP_M*100:.1f} cm on the path's own "
+              f"travel; reported, not gated): {report['vertex_bumps']}")
     print(f"  slope kinks >{KINK_PCT}%% /km   : {report['kinks_per_km']}")
     print(f"  daylight gaps at edges : {report['daylight_gaps']}")
     if report.get("replication_vs_measured"):

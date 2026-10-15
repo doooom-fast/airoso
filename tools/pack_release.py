@@ -127,6 +127,8 @@ def strip_race_layouts(folder: Path, cfg_path: Path = TRACK_DIR / "track.config.
         removed.append(str(p.relative_to(folder)).replace("\\", "/"))
 
     _rm(folder / f"{SLUG}_race.kn5")
+    for p in sorted(folder.glob(f"{SLUG}_race_*.kn5")):      # a lap's common set (ledger 0054: <slug>_race_<lap>.kn5)
+        _rm(p)
     for p in sorted(folder.glob(f"{SLUG}_closure_*.kn5")):
         _rm(p)
     for lid in race_ids:

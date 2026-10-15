@@ -101,18 +101,19 @@ class Canvas:
         self.img.save(path, optimize=True)
 
 
-def _load(proj, planned):
+def _load(proj, planned, lap=None):
+    """one lap group (ledger 0054): the mainline (lap None, as before) or a lap's line / declaration / authored set"""
     proj = Path(proj)
     data = proj / "data"
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
-    pts, widths = rf.load_centerline(proj)
+    pts, widths = rf.load_centerline(proj, lap)
     m = rf.unique_count(pts)
-    island_w = json.loads((data / "median_bands.json").read_text(encoding="utf-8"))["island_w_by_vertex"]
-    bands = rf.load_bands(proj)
+    island_w = rf.load_island_w(proj, lap)
+    bands = rf.load_bands(proj, lap)
     if bands is None:
-        raise SystemExit("[plot-race] no data/barrier_bands.json (tools/barrier_bands.py)")
+        raise SystemExit(f"[plot-race] no data/{rf._race_lap().bands_file(lap)} (tools/barrier_bands.py)")
     authored = None
-    rep = data / "race_authored.json"
+    rep = data / rf._race_lap().authored_file(lap)
     if rep.exists() and not planned:
         authored = json.loads(rep.read_text(encoding="utf-8"))
     curves = {}
@@ -121,7 +122,7 @@ def _load(proj, planned):
             curves[name] = [(c[0], c[2]) for c in cs]
         source = f"race_authored.json ({authored['totals']['objects']} objects, seated on the built deck)"
     else:
-        _, _, _, plans, _ = rf.plan_all(proj, bands, (bands.get("params") or {}).get("edge_mode", "road"))
+        _, _, _, plans, _ = rf.plan_all(proj, bands, (bands.get("params") or {}).get("edge_mode", "road"), lap=lap)
         for p in plans:
             name = rf.object_name(p)
             if p["kind"] in ("edge", "close"):
@@ -250,7 +251,7 @@ def _window(cv_args, pts, widths, m, island_w, lane, k0, half_v):
     return cv, ks
 
 
-def _plot_layout(out, lid, lo, cfg, pts, widths, m, island_w, bands, curves, dummies, authored, source):
+def _plot_layout(out, lid, lo, cfg, pts, widths, m, island_w, bands, curves, dummies, authored, source, lap=None):
     c = rf.corridors(bands).get(lid) or {}
     token = rf.closure_token(bands, lid)
     lane = c.get("lane_by_vertex")
@@ -280,8 +281,10 @@ def _plot_layout(out, lid, lo, cfg, pts, widths, m, island_w, bands, curves, dum
     pin_marks(cv, 5)
     if lid in dummies:
         _draw_dummies(cv, pts, m, dummies[lid], False)
-    for k, label in ((300, "start/finish v300"), (770, "hairpin v770"), (1085, "Del Cerro 4-way"), (1514, "College/Navajo"),
-                     (2319, "Navajo/Jackson"), (3297, "Jackson/LMB"), (4454, "I-8 bridge v4454"), (0, "seam v0")):
+    marks = ((300, "start/finish v300"), (770, "hairpin v770"), (1085, "Del Cerro 4-way"), (1514, "College/Navajo"),
+             (2319, "Navajo/Jackson"), (3297, "Jackson/LMB"), (4454, "I-8 bridge v4454"), (0, "seam v0")) if not lap else \
+        tuple((int(c["apex"]), f"corner v{c['apex']}") for c in bands.get("corners") or []) + ((0, f"lap {lap} v0"),)
+    for k, label in marks:
         if k >= m:
             continue
         x, yy = cv.px((pts[k][0], pts[k][2]))
@@ -320,12 +323,18 @@ def _plot_layout(out, lid, lo, cfg, pts, widths, m, island_w, bands, curves, dum
         cv.save(out / f"{tag}.png")
         written.append(f"{tag}.png")
 
-    for apex, name in CORNERS:
-        window(f"corner_{apex}", apex, f"Corner v{apex} — {name}: the whole intersection is open between the curb barriers")
-    window("del_cerro_1085", 1085, "Del Cerro 4-way: not a turn — the closure runs across it nose to nose, both side "
-                                   "streets stay sealed")
-    window("i8_end_4454", 4454, "The I-8 bridge: the closure ends on the bridge's far curb barrier; the bridge and "
-                                "Alvarado are the whole street", win=220.0, pxm=5.0)
+    if lap:
+        # a LAP (ledger 0054): its own detected corners (barrier_bands.<lap>.json) — the mainline's named windows
+        # (Del Cerro, the I-8 end) are mainline vertex numbers
+        for c_ in bands.get("corners") or []:
+            window(f"corner_{c_['apex']}", int(c_["apex"]), f"Lap {lap} corner v{c_['apex']} (D {c_.get('D_deg')} deg)")
+    else:
+        for apex, name in CORNERS:
+            window(f"corner_{apex}", apex, f"Corner v{apex} — {name}: the whole intersection is open between the curb barriers")
+        window("del_cerro_1085", 1085, "Del Cerro 4-way: not a turn — the closure runs across it nose to nose, both side "
+                                       "streets stay sealed")
+        window("i8_end_4454", 4454, "The I-8 bridge: the closure ends on the bridge's far curb barrier; the bridge and "
+                                    "Alvarado are the whole street", win=220.0, pxm=5.0)
     for k in noses:
         window(f"nose_{k}", k, f"Island nose v{k}: the closure passes the tip on the race side — the nose is behind the wall",
                win=70.0, pxm=11.0)
@@ -352,17 +361,29 @@ def main(argv=None):
     for f in OLD_FILES:
         if (out / f).is_file():
             (out / f).unlink()
-    cfg, pts, widths, m, island_w, bands, curves, dummies, authored, source = _load(proj, planned)
-    race = [lo for lo in cfg.get("layouts", []) if lo.get("race_furniture")]
-    if not race:
+    LAP = rf._race_lap()
+    cfg0 = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
+    if not [lo for lo in cfg0.get("layouts", []) if lo.get("race_furniture")]:
         raise SystemExit("[plot-race] no race layout in track.config.json")
+    for lap in LAP.groups(cfg0):
+        _plot_group(proj, out, planned, lap)
+    return 0
+
+
+def _plot_group(proj, out, planned, lap):
+    cfg, pts, widths, m, island_w, bands, curves, dummies, authored, source = _load(proj, planned, lap)
+    race = [lo for lo in cfg.get("layouts", []) if lo.get("race_furniture") and (lo.get("lap") or None) == lap]
     for lo in race:
         lid = str(lo["id"])
         if lid not in rf.corridors(bands):
-            raise SystemExit(f"[plot-race] no corridors.{lid} in barrier_bands.json — re-run tools/barrier_bands.py (v2)")
-        written = _plot_layout(out / lid, lid, lo, cfg, pts, widths, m, island_w, bands, curves, dummies, authored, source)
-        print(f"[plot-race] {lid}: {len(written)} pictures -> {out / lid} (overview, {len(CORNERS)} corners, Del Cerro, "
-              f"I-8 end, {sum(1 for w in written if w.startswith('nose_'))} noses, {sum(1 for w in written if w.startswith('pin_'))} pins)")
+            raise SystemExit(f"[plot-race] no corridors.{lid} in {rf._race_lap().bands_file(lap)} — re-run "
+                             f"tools/barrier_bands.py (v2)")
+        written = _plot_layout(out / lid, lid, lo, cfg, pts, widths, m, island_w, bands, curves, dummies, authored, source,
+                               lap=lap)
+        where = (f"{len(CORNERS)} corners, Del Cerro, I-8 end" if not lap else
+                 f"lap {lap}: {sum(1 for w in written if w.startswith('corner_'))} corners")
+        print(f"[plot-race] {lid}: {len(written)} pictures -> {out / lid} (overview, {where}, "
+              f"{sum(1 for w in written if w.startswith('nose_'))} noses, {sum(1 for w in written if w.startswith('pin_'))} pins)")
     return 0
 
 

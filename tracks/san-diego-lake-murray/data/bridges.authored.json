@@ -45,33 +45,33 @@
   {
    "line": "loop",
    "span_m": [
-    13318.7,
-    13463.4
+    13312.1,
+    13456.8
    ],
    "stations": 97,
    "built": true,
    "object": "BRIDGESTRUCT_2",
-   "vertices": 4160,
-   "faces": 1040,
+   "vertices": 4328,
+   "faces": 1082,
    "opening_m": [
-    13339.7,
-    13444.7
+    13330.1,
+    13439.6
    ],
-   "max_clearance_m": 8.55,
+   "max_clearance_m": 10.55,
    "abutment_walls_m": [
-    13342.7,
-    13405.7,
-    13420.7,
-    13444.7
+    13333.1,
+    13400.6,
+    13414.1,
+    13439.6
    ],
    "carriageway_crossings_m": [
-    13360.13,
-    13384.07
+    13353.57,
+    13377.5
    ],
    "bents_m": [
-    13348.7,
-    13372.1,
-    13395.5
+    13342.2,
+    13365.5,
+    13388.9
    ],
    "road_under_structure": 0,
    "above_the_deck": 0

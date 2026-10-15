@@ -11,6 +11,14 @@ Writes, into --out-dir (default: the input blend's folder):
                                kerbs (1KERB_race_*) — every RACE object that is not a closure   -> <slug>_race.kn5
   loop_closure_<id>.blend      per race layout: ITS closure ONLY (1WALL_race_close_<token>_*, the token
                                barrier_bands.json corridors.<id>.token declares)              -> <slug>_closure_<id>.kn5
+  loop_race_<lap>.blend        per LAP a race layout names (ledger 0054, scripts/geometry/race_lap.py): that lap's
+                               common set ONLY (1WALL_race_edge_lap<lap>_*, 1KERB_race_lap<lap>_*)  -> <slug>_race_<lap>.kn5
+                               (loop_race.blend then holds the MAINLINE's common set alone; it is written only when a
+                               race layout drives the mainline — always, while no layout names a lap)
+  loop_street.blend            (ledger 0055, only when race.chicanes declares a street-only island) the STREET-ONLY
+                               objects (their names carry race_chicane.STREET_TAG: the median island over a chicane's
+                               span, tools/author_median_blend.py) — never in loop_main.blend -> <slug>_street.kn5,
+                               loaded by every non-race layout only
   loop_spawn_<id>.blend        AC_* empties from data/dummies_<id>.json for each layouts[] id (nothing else)
   split_manifest.json          what went where (objects, meshes, positions, materials, AC nodes per output)
                                + problems (exit 1 on any)
@@ -50,6 +58,17 @@ import race_furniture as rf  # noqa: E402
 AC_PREFIX = "AC_"
 
 
+def _race_chicane():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("_race_chicane_split", AIROSO / "scripts" / "geometry" / "race_chicane.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+RC = _race_chicane()
+
+
 def _args():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:]
     out = {"blend": None, "project": None, "out_dir": None, "layouts": None, "synth": False}
@@ -78,6 +97,11 @@ def closure_blend_name(layout_id):
     return f"loop_closure_{layout_id}.blend"
 
 
+def lap_blend_name(lap):
+    """loop_race_<lap>.blend — a lap's common set, exported as <slug>_race_<lap>.kn5 (tools/ship_sd.sh)"""
+    return f"loop_race_{lap}.blend"
+
+
 def _members(col):
     out = set(ob.name for ob in col.objects)
     for c in col.children:
@@ -90,7 +114,8 @@ def _classify():
     every AC_* object"""
     race = set()
     for col in bpy.data.collections:
-        if col.name == rf.COMMON_COLLECTION or col.name.startswith(rf.COMMON_COLLECTION + "_CLOSE_"):
+        if (col.name == rf.COMMON_COLLECTION or col.name.startswith(rf.COMMON_COLLECTION + "_CLOSE_")
+                or col.name.startswith(rf.COMMON_COLLECTION + "_LAP_")):
             race |= _members(col)
     race |= {ob.name for ob in bpy.data.objects if rf.is_race_name(ob.name)}
     ac = {ob.name for ob in bpy.data.objects if ob.name.startswith(AC_PREFIX)}
@@ -148,7 +173,15 @@ def main():
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     layouts = [lo for lo in cfg.get("layouts", []) if (a["layouts"] is None or lo["id"] in a["layouts"])]
     race_ids = [str(lo["id"]) for lo in layouts if lo.get("race_furniture")]
-    bands = rf.load_bands(proj) or {}
+    LAP = rf._race_lap()
+    # ledger 0054: the lap groups — the mainline's declaration (barrier_bands.json) and one per lap a race layout
+    # names (barrier_bands.<lap>.json); with no lap declared, the mainline's alone
+    laps = LAP.lap_ids(cfg)
+    has_main = None in LAP.groups(cfg)
+    bands_of = {None: rf.load_bands(proj) or {}}
+    for lap in laps:
+        bands_of[lap] = rf.load_bands(proj, lap) or {}
+    lap_of = {str(lo["id"]): LAP.lap_of(lo) for lo in layouts}
     manifest = {"input": str(blend), "outputs": {}, "problems": []}
     problems = manifest["problems"]
     # the declared owner token of every race layout's closure (barrier_bands.json v2 corridors; the config's
@@ -158,21 +191,32 @@ def main():
         if not lo.get("race_furniture"):
             continue
         lid = str(lo["id"])
-        tok = rf.closure_token(bands, lid)
+        tok = rf.closure_token(bands_of[lap_of[lid]], lid)
         ct = str(lo.get("closure_token") or "").lower()
         if not tok:
-            problems.append(f"layout {lid}: no corridors.{lid}.token declared in barrier_bands.json — its closure cannot be routed")
+            problems.append(f"layout {lid}: no corridors.{lid}.token declared in {LAP.bands_file(lap_of[lid])} — its "
+                            f"closure cannot be routed")
             continue
         if ct and ct != tok:
             problems.append(f"layout {lid}: closure_token {ct!r} in the config != {tok!r} declared")
         tokens[lid] = tok
     tok_to_lid = {t: lid for lid, t in tokens.items()}
     manifest["tokens"] = tokens
-    outputs = {"main": out_dir / "loop_main.blend", "race": out_dir / "loop_race.blend"}
+    outputs = {"main": out_dir / "loop_main.blend"}
+    if has_main:
+        outputs["race"] = out_dir / "loop_race.blend"
+    for lap in laps:
+        outputs[f"race_{lap}"] = out_dir / lap_blend_name(lap)
     for lid in tokens:
         outputs[f"closure_{lid}"] = out_dir / closure_blend_name(lid)
     for lo in layouts:
         outputs[f"spawn_{lo['id']}"] = out_dir / f"loop_spawn_{lo['id']}.blend"
+    want_street = RC.has_street_kn5(cfg)
+    if want_street:
+        outputs["street"] = out_dir / "loop_street.blend"
+    stale_street = out_dir / "loop_street.blend"
+    if not want_street and stale_street.exists():
+        stale_street.unlink()                       # a retired chicane's street set never rides along
     for p in outputs.values():
         if p.resolve() == blend:
             raise SystemExit(f"[split] output {p} is the input — refusing")
@@ -192,36 +236,62 @@ def main():
     common_in = race - closures_in
     if not race:
         problems.append("input: no race furniture (run author_race_furniture_blend first)")
-    manifest["routes"] = {"common": len(common_in), **{lid: sum(1 for n in closures_in if rf.race_owner(n) == t)
-                                                       for lid, t in tokens.items()}}
+    stray_lap = sorted(n for n in common_in if rf.race_lap(n) is not None and rf.race_lap(n) not in laps)
+    if stray_lap:
+        problems.append(f"input: {len(stray_lap)} lap common objects whose lap no layout names (laps {laps}): {stray_lap[:4]}")
+    manifest["routes"] = {"common": len([n for n in common_in if rf.race_lap(n) is None]),
+                          **{f"common_{lap}": sum(1 for n in common_in if rf.race_lap(n) == lap) for lap in laps},
+                          **{lid: sum(1 for n in closures_in if rf.race_owner(n) == t) for lid, t in tokens.items()}}
 
-    # --- main: everything except race furniture + AC_* ----------------------------------------
-    _remove(race | ac)
+    street_in = {ob.name for ob in bpy.data.objects if RC.is_street_only_name(ob.name)}
+    manifest["routes"]["street"] = len(street_in)
+    if street_in & race:
+        problems.append(f"input: objects both race and street-only {sorted(street_in & race)[:4]}")
+    if want_street and not street_in:
+        problems.append("input: race.chicanes declares a street-only island but no street-only object exists "
+                        "(tools/author_median_blend.py)")
+    if street_in and not want_street:
+        problems.append(f"input: {len(street_in)} street-only objects but no street-only span is declared {sorted(street_in)[:4]}")
+
+    # --- main: everything except race furniture + AC_* + the street-only set -----------------------
+    _remove(race | ac | street_in)
     c = _census()
     bad = [m for m in c["materials"] if rf.is_race_name(m)]
     if c["ac_nodes"] or c["race_objects"] or bad:
         problems.append(f"main: ac={c['ac_nodes']} race={c['race_objects']} race_mats={bad}")
+    if any(RC.is_street_only_name(nm) for nm in c["names"]):
+        problems.append("main: a street-only object in loop_main.blend")
     _save(outputs["main"])
     manifest["outputs"]["loop_main.blend"] = c
     print(f"[split] main: {c['meshes']} meshes / {c['positions']} positions / {len(c['materials'])} materials / "
           f"{len(c['ac_nodes'])} AC nodes / {len(c['race_objects'])} race objects -> {outputs['main'].name}")
 
     # --- race: the COMMON furniture only (curb strips + kerbs; no closure) -----------------------
-    bpy.ops.wm.open_mainfile(filepath=str(blend))
-    race, ac = _classify()
-    keep = {n for n in race if rf.race_role(n) != "close"}
-    _remove({ob.name for ob in bpy.data.objects} - keep)
-    c = _census()
-    _furniture_problems("race", c, problems)
-    if c["closure_objects"]:
-        problems.append(f"race: {len(c['closure_objects'])} closure objects in loop_race.blend {c['closure_objects'][:4]}")
-    if not any(rf.race_role(n) == "edge" for n in c["race_objects"]):
-        problems.append("race: no curb strip (1WALL_race_edge_*) in loop_race.blend")
-    _save(outputs["race"])
-    manifest["outputs"]["loop_race.blend"] = c
-    kept_all = set(c["race_objects"])
-    print(f"[split] race (common): {c['meshes']} meshes / {c['positions']} positions (max {c['max_positions']}) / "
-          f"{len(c['materials'])} materials / {len(c['ac_nodes'])} AC nodes -> {outputs['race'].name}")
+    # one common blend per group: the mainline's (loop_race.blend) and each lap's (loop_race_<lap>.blend) — which
+    # one an object goes to is its NAME's lap field (race_furniture.race_lap; None = the mainline)
+    kept_all = set()
+    for lap in ([None] if has_main else []) + laps:
+        bpy.ops.wm.open_mainfile(filepath=str(blend))
+        race, ac = _classify()
+        keep = {n for n in race if rf.race_role(n) != "close" and rf.race_lap(n) == lap}
+        _remove({ob.name for ob in bpy.data.objects} - keep)
+        c = _census()
+        tag, key, bname = ("race", "race", "loop_race.blend") if lap is None else \
+            (f"race_{lap}", f"race_{lap}", lap_blend_name(lap))
+        _furniture_problems(tag, c, problems)
+        if c["closure_objects"]:
+            problems.append(f"{tag}: {len(c['closure_objects'])} closure objects in {bname} {c['closure_objects'][:4]}")
+        if not any(rf.race_role(n) == "edge" for n in c["race_objects"]):
+            problems.append(f"{tag}: no curb strip (1WALL_race_edge_*) in {bname}")
+        alien = [n for n in c["race_objects"] if rf.race_lap(n) != lap]
+        if alien:
+            problems.append(f"{tag}: objects of another group's common set {alien[:4]}")
+        _save(outputs[key])
+        manifest["outputs"][bname] = c
+        kept_all |= set(c["race_objects"])
+        print(f"[split] {tag} (common{'' if lap is None else ', lap ' + lap}): {c['meshes']} meshes / {c['positions']} "
+              f"positions (max {c['max_positions']}) / {len(c['materials'])} materials / {len(c['ac_nodes'])} AC nodes -> "
+              f"{outputs[key].name}")
 
     # --- closure per race layout: ITS closure only ------------------------------------------------
     for lid, tok in tokens.items():
@@ -243,16 +313,37 @@ def main():
         print(f"[split] closure {lid} (token {tok}): {c['meshes']} meshes / {c['positions']} positions "
               f"(max {c['max_positions']}) / {len(c['materials'])} materials / {len(c['ac_nodes'])} AC nodes -> "
               f"{outputs[tag].name}")
+    # --- street: the street-only set (ledger 0055) ------------------------------------------------
+    if want_street:
+        bpy.ops.wm.open_mainfile(filepath=str(blend))
+        keep = {ob.name for ob in bpy.data.objects if RC.is_street_only_name(ob.name)}
+        _remove({ob.name for ob in bpy.data.objects} - keep)
+        c = _census()
+        if not c["meshes"]:
+            problems.append("street: EMPTY — no street-only object in the input")
+        alien = [nm for nm in c["names"] if not RC.is_street_only_name(nm)]
+        if alien or c["ac_nodes"] or c["race_objects"]:
+            problems.append(f"street: objects that are not street-only {alien[:4]} ac={c['ac_nodes']} race={c['race_objects']}")
+        if c["orphan_materials"]:
+            problems.append(f"street: materials no kept object uses {c['orphan_materials'][:6]}")
+        if c["max_positions"] >= 60000:
+            problems.append(f"street: an object has {c['max_positions']} positions")
+        _save(outputs["street"])
+        manifest["outputs"]["loop_street.blend"] = c
+        print(f"[split] street (street-only island, ledger 0055): {c['meshes']} meshes / {c['positions']} positions / "
+              f"{len(c['materials'])} materials / {len(c['ac_nodes'])} AC nodes -> {outputs['street'].name}")
+
     input_race = set(manifest["input_census"]["race_objects"])
     if kept_all != input_race:
         problems.append(f"race u closures != every RACE object of the input: missing {sorted(input_race - kept_all)[:4]}, "
                         f"extra {sorted(kept_all - input_race)[:4]}")
 
     # --- spawn per layout: AC_* empties only ------------------------------------------------------
-    pts, widths = rf.load_centerline(proj)
-    m = rf.unique_count(pts)
+    pts_main, widths_main = rf.load_centerline(proj)
     for lo in layouts:
         lid = lo["id"]
+        pts, widths = (pts_main, widths_main) if not lap_of.get(str(lid)) else rf.load_centerline(proj, lap_of[str(lid)])
+        m = rf.unique_count(pts)
         dp = proj / "data" / f"dummies_{lid}.json"
         if not dp.exists():
             if a["synth"] and lo.get("start"):

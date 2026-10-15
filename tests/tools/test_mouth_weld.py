@@ -300,7 +300,8 @@ def test_unfold_level_refusals_ledger_0050():
 
 
 def test_unfold_level_wraps_a_closed_lap_and_leaves_chords_alone_ledger_0050():
-    """(d) a fold straddling index 0 on a closed lap levels across the seam; (g) a chord mend is untouched"""
+    """(d) a fold straddling index 0 on a closed lap levels across the seam; (g) a chord mend is no pinch: no X,
+    nothing levelled, the same cut and plan either way (v0.18.1: with `level` its rows take the chord's own grade)"""
     C = _climbing_corner(grade=0.0)
     # close it: back along a wide loop far from the corner (no other fold)
     last = C[-1]
@@ -319,11 +320,15 @@ def test_unfold_level_wraps_a_closed_lap_and_leaves_chords_alone_ledger_0050():
     assert mw.check_levelled(E, newE, Cr, True, done) == []
     # the hook (chord) from test_unfold_replaces_a_hook_with_a_forward_chord: no X, nothing levelled
     Ch = [(float(i), 0.0, 0.0) for i in range(10)]
-    Eh = [(0.0, 0.0, -5.0), (1.0, 0.0, -5.0), (2.0, 0.0, -5.0), (3.0, 0.3, -5.0), (2.6, 0.5, -5.5), (2.4, 0.0, -6.0),
+    Eh = [(0.0, 0.0, -5.0), (1.0, 0.0, -5.0), (2.0, 0.0, -5.0), (3.0, 0.15, -5.0), (2.6, 0.2, -5.5), (2.4, 0.0, -6.0),
           (4.0, 0.0, -6.5), (5.0, 0.0, -6.5), (6.0, 0.0, -6.5), (7.0, 0.0, -6.5)]
-    a = mw.unfold_line(Eh, Ch, False, strict=True)
+    rep = []
+    a = mw.unfold_line(Eh, Ch, False, strict=True, report=rep)
     b = mw.unfold_line(Eh, Ch, False, strict=True, level=False)
-    assert a == b and a[1][0][2] is None
+    assert a[1] == b[1] and a[2] == b[2] and a[1][0][2] is None and not rep
+    assert all((p[0], p[2]) == (q[0], q[2]) for p, q in zip(a[0], b[0]))
+    assert b[0][3][1] == 0.15 and b[0][4][1] == 0.2               # level off: each row keeps its own height
+    assert a[0][3][1] == 0.0 and a[0][4][1] == 0.0                # level: the chord E[2] -> E[5] runs level at 0.0
 
 
 def test_unfold_level_refuses_overlapping_windows_ledger_0050():
@@ -377,6 +382,33 @@ def test_unfold_level_keeps_a_curb_face_ledger_0050():
         assert abs(face - 0.14) <= 0.03 + 1e-9, (r, face)
 
 
+def test_level_grades_a_forward_chord_straight_and_refuses_a_steep_tilt_v0181():
+    """v0.18.1 (the lap seam's hook, race_cw bumps at s 12-14): each row on a levelled chord takes the straight grade
+    between the chord's end rows at its plan fraction — however its own row's height bunched there — and a grade that
+    would tilt a row more than FOLD_LEVEL_XFALL_MAX against its own height is refused, never shipped"""
+    C = [(float(i), 0.04 * i, 0.0) for i in range(10)]            # a 4 % climb
+    E = [(0.0, 0.0, -5.0), (1.0, 0.04, -5.0), (2.0, 0.08, -5.0), (3.0, 0.12, -5.0), (2.6, 0.16, -5.5),
+         (2.4, 0.20, -6.0), (4.0, 0.24, -6.5), (5.0, 0.28, -6.5), (6.0, 0.32, -6.5), (7.0, 0.36, -6.5)]
+    newE, done, _left = mw.unfold_line(E, C, False)
+    assert done == [(2, 4, None)], done
+    a, b = E[2], E[5]
+    L = math.hypot(b[0] - a[0], b[2] - a[2])
+    for r in (3, 4):
+        f = math.hypot(newE[r][0] - a[0], newE[r][2] - a[2]) / L
+        assert abs(newE[r][1] - (a[1] + (b[1] - a[1]) * f)) < 1e-12, (r, newE[r])
+    old = mw.unfold_line(E, C, False, level=False)[0]
+    assert [(p[0], p[2]) for p in newE] == [(p[0], p[2]) for p in old]          # nothing moves in plan
+    assert all(newE[r] == E[r] for r in (0, 1, 2, 5, 6, 7, 8, 9))
+    steep = list(E)
+    steep[4] = (2.6, 0.60, -5.5)                                   # a row 0.4 m over the chord: > 4 % over ~5.5 m
+    try:
+        mw.unfold_line(steep, C, False)
+    except mw.WeldError as e:
+        assert "forward chord" in str(e) and "centre row" in str(e), e
+    else:
+        raise AssertionError("a chord grade tilting a row past FOLD_LEVEL_XFALL_MAX was accepted")
+
+
 def test_unfold_replaces_a_hook_with_a_forward_chord():
     C = [(float(i), 0.0, 0.0) for i in range(10)]
     E = [(0.0, 0.0, -5.0), (1.0, 0.0, -5.0), (2.0, 0.0, -5.0), (3.0, 0.0, -5.0), (2.6, 0.0, -5.5), (2.4, 0.0, -6.0),
@@ -387,7 +419,7 @@ def test_unfold_replaces_a_hook_with_a_forward_chord():
     assert not mw.backward_segments(newE, C, False)
     assert abs(newE[3][0] - (2.0 + 0.4 / 3)) < 1e-9 and abs(newE[3][2] - (-5.0 - 1.0 / 3)) < 1e-9
     assert abs(newE[4][0] - (2.0 + 0.8 / 3)) < 1e-9 and abs(newE[4][2] - (-5.0 - 2.0 / 3)) < 1e-9
-    assert newE[4][1] == E[4][1]                          # each row keeps its own height
+    assert newE[4][1] == E[4][1]                          # a level line: the chord's straight grade is its rows' height
     assert all(newE[r] == E[r] for r in (0, 1, 2, 5, 6, 7, 8, 9))
 
 

@@ -24,6 +24,11 @@ with the (x, z, y) remap and REVERSED winding (LAWS L6: the remap is a reflectio
                                                         a kerb the declaration drops or pulls back
                                                         (race.kerbs.trims: off a ribbon fold) follows it
 
+A layout that names a LAP (layouts[].lap, ledger 0054 — scripts/geometry/race_lap.py) has its own common set on its
+own line: `1WALL_race_edge_lap<lap>_<L|R>_...` and `1KERB_race_lap<lap>_<apex>_<in|out>` in the collection
+RACE_LAP_<LAP>, routed to <slug>_race_<lap>.kn5 (race_lap here reads the token back). The mainline's names are
+unchanged: a mainline strip's first field is its side (L / R), a kerb's its apex vertex — never "lap...".
+
 The retired ledger-0047 centre chain (`1WALL_race_kbar_*`, `centre_w_by_vertex`, `centre_runs`) is refused:
 a declaration that still carries it is a v1 file (check_bands). The owner token rides in a closure's NAME
 (race_owner) because the prep re-links objects to the scene root — the export split, check_race_kn5 and
@@ -94,6 +99,7 @@ KBAR_TAG = "1WALL_RACE_KBAR_"     # the RETIRED centre chain (ledger 0047): its 
 KERB_TAG = "1KERB_RACE_"
 TOKEN_RE = re.compile(r"^[a-z0-9]+$")   # a closure owner token ("cw" / "acw"): no underscore, it ends the name field
 COMMON_COLLECTION = "RACE"        # the common furniture's Blender collection; closures: RACE_CLOSE_<TOKEN>
+LAP_FIELD = "lap"                 # ledger 0054: a lap's common furniture names carry lap<token> as their first field
 KERB_CLOSURE_CLEAR_M = 0.05       # a race kerb's footprint stands >= this off EVERY race layout's closure footprint
 #                                   (INVENTED, spec 0049 §6: the clip rule) — else the kerb is cut back
 LOOP_START_WINDOW = 10            # a closed curb-strip loop starts at the straightest vertex of the lap (least
@@ -164,11 +170,54 @@ FACING = ("AC_START", "AC_PIT", "AC_HOTLAP")
 
 # ---------------------------------------------------------------------------------------------
 # centreline helpers
-def load_centerline(proj):
-    local = json.loads((Path(proj) / "data" / "centerline.local.json").read_text(encoding="utf-8"))
+def load_centerline(proj, lap=None):
+    """the mainline (data/centerline.local.json), or with `lap` the stitched lap line data/lap.<lap>.json"""
+    if lap:
+        local = _race_lap().load(proj, lap)
+    else:
+        local = json.loads((Path(proj) / "data" / "centerline.local.json").read_text(encoding="utf-8"))
     pts = [tuple(p) for p in local["points_xyz_m"]]
     widths = [float(w) for w in local["widths_m"]]
     return pts, widths
+
+
+def load_island_w(proj, lap=None):
+    """the island the RACE layouts meet: median_bands island_w_by_vertex (mainline) with every street-only chicane span
+    zeroed (scripts/geometry/race_chicane.race_island_w, ledger 0055), or the lap file's island_w_by_vertex"""
+    if lap:
+        return [float(w) for w in _race_lap().load(proj, lap)["island_w_by_vertex"]]
+    mb = json.loads((Path(proj) / "data" / "median_bands.json").read_text(encoding="utf-8"))
+    cp = Path(proj) / "track.config.json"
+    cfg = json.loads(cp.read_text(encoding="utf-8")) if cp.exists() else {}
+    return _race_chicane().race_island_w(mb["island_w_by_vertex"], cfg)
+
+
+_RACE_CHICANE = []
+
+
+def _race_chicane():
+    """scripts/geometry/race_chicane.py (pure), loaded by file once — this module also runs inside Blender"""
+    if not _RACE_CHICANE:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("_race_chicane_rf", AIROSO / "scripts" / "geometry" / "race_chicane.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        _RACE_CHICANE.append(mod)
+    return _RACE_CHICANE[0]
+
+
+_RACE_LAP = []
+
+
+def _race_lap():
+    """scripts/geometry/race_lap.py (pure), loaded by file once — this module also runs inside Blender"""
+    if not _RACE_LAP:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("_race_lap_rf", AIROSO / "scripts" / "geometry" / "race_lap.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        _RACE_LAP.append(mod)
+    return _RACE_LAP[0]
 
 
 def unique_count(pts):
@@ -250,6 +299,24 @@ def race_owner(name):
 def closure_collection(token):
     """the Blender collection a layout's closure objects are authored into (Kevin toggles a direction there)"""
     return f"{COMMON_COLLECTION}_CLOSE_{str(token).upper()}"
+
+
+def lap_collection(lap):
+    """the Blender collection a LAP's common furniture (its curb strips + kerbs) is authored into; None = RACE"""
+    return COMMON_COLLECTION if not lap else f"{COMMON_COLLECTION}_LAP_{str(lap).upper()}"
+
+
+def race_lap(name):
+    """the lap token of a lap's common furniture (`1WALL_race_edge_lap<tok>_...`, `1KERB_race_lap<tok>_...`), else
+    None — the mainline's strips start with their side (L / R), its kerbs with their apex vertex"""
+    u = str(name).upper()
+    for tag in (EDGE_TAG, KERB_TAG):
+        if u.startswith(tag):
+            field = str(name)[len(tag):].split("_", 1)[0]
+            if field.lower().startswith(LAP_FIELD) and TOKEN_RE.match(field[len(LAP_FIELD):].lower() or "-"):
+                return field[len(LAP_FIELD):].lower()
+            return None
+    return None
 
 
 def yaw_blender(tx, tz, direction="forward"):
@@ -645,8 +712,9 @@ def uv_handedness(verts, face, uvs):
 
 # ---------------------------------------------------------------------------------------------
 # bands: the declaration the gates read (written by tools/barrier_bands.py — the data agent's file)
-def load_bands(proj):
-    p = Path(proj) / "data" / "barrier_bands.json"
+def load_bands(proj, lap=None):
+    """data/barrier_bands.json (the mainline), or with `lap` data/barrier_bands.<lap>.json — None when absent"""
+    p = Path(proj) / "data" / ("barrier_bands.json" if not lap else f"barrier_bands.{lap}.json")
     if not p.exists():
         return None
     return json.loads(p.read_text(encoding="utf-8"))
@@ -1163,6 +1231,31 @@ def closure_plans(pts, widths, bands, layout_id, height=BARRIER_H):
         for part in _count_inserted(split_plan(whole)):
             part["fold_corners"], part["fold_skipped"] = [], 0
             plans.append(part)
+    # ledger 0055: each declared chicane's RACE-SIDE wall (corridors.<id>.chicane_walls on race_wall_y_by_vertex) — the
+    # same jersey strip in this layout's closure kn5, pinned at both ends in the race-side curb strip; its plan carries
+    # wall = "chicane" and side = the race side (verify_race C' judges it against race_wall_y_by_vertex)
+    yw = c.get("race_wall_y_by_vertex") or []
+    race_side = "R" if side == "L" else "L"
+    for w in c.get("chicane_walls") or []:
+        i, j = int(w["i"]) % m, int(w["j"]) % m
+        ks = walk(i, j, m)
+        if any(k >= len(yw) or yw[k] is None for k in ks):
+            raise SystemExit(f"[race] corridors.{layout_id} chicane {w.get('name')} v{i}-v{j}: race_wall_y_by_vertex is "
+                             f"null inside it — the declaration is broken (re-run tools/barrier_bands.py)")
+        whole = _plan_run(pts, widths, m, st, ks, lambda k: float(yw[k]), "pin", "pin", height, "close",
+                          street_of(i, table), race_side, (i, j))
+        rings, dropped, corners = trim_folded_rings(whole["rings"])
+        if corners or dropped:
+            raise SystemExit(f"[race] chicane wall {layout_id} v{i}-v{j} folds — the declared line is tighter than its "
+                             f"own offset there; re-solve the corridor")
+        rings, _ = densify_rings(rings, m)
+        joins = str(w.get("joins") or ("edge_" + race_side))
+        pins = [{"vertex": v, "y": round(float(yw[v]), 4), "joins": joins} for v in (i, j)]
+        whole.update(rings=rings, token=tok, layout=layout_id, pins=pins, closed_loop=False, wall="chicane",
+                     chicane=str(w.get("name") or ""), run_length_m=round(rings[-1]["arc"] - rings[0]["arc"], 1))
+        for part in _count_inserted(split_plan(whole)):
+            part["fold_corners"], part["fold_skipped"] = [], 0
+            plans.append(part)
     return plans
 
 
@@ -1664,12 +1757,13 @@ def edge_fold_corners(pts, widths, edge_inset, mode="road", height=BARRIER_H):
 # ---------------------------------------------------------------------------------------------
 # names
 def object_name(plan):
+    lap = f"{LAP_FIELD}{plan['lap']}_" if plan.get("lap") else ""      # ledger 0054: a lap's common set
     if plan["kind"] == "edge":
-        return f"1WALL_race_edge_{plan['side']}_{plan['street']}_{plan['run'][0]}_{plan['part']}"
+        return f"1WALL_race_edge_{lap}{plan['side']}_{plan['street']}_{plan['run'][0]}_{plan['part']}"
     if plan["kind"] == "close":
         return f"1WALL_race_close_{plan['token']}_{plan['street']}_{plan['run'][0]}_{plan['part']}"
     if plan["kind"] == "kerb":
-        return f"1KERB_race_{plan['apex']}_{plan['sub']}"
+        return f"1KERB_race_{lap}{plan['apex']}_{plan['sub']}"
     raise ValueError(plan["kind"])
 
 
@@ -1825,13 +1919,14 @@ def strip_length(rings):
     return sum(math.dist(_strip_xz(a), _strip_xz(b)) for a, b in zip(rings, rings[1:]))
 
 
-def plan_all(proj, bands, mode="road", height=BARRIER_H, kerbs=True):
+def plan_all(proj, bands, mode="road", height=BARRIER_H, kerbs=True, lap=None):
     """everything the Blender tool needs, plus the corner table for the report: the COMMON furniture (both curb
     strips as closed loops, the race kerbs clipped against every closure) then every race layout's closure
-    (corridors.<id>, sorted by id). A declaration check_bands refuses (a v1 file) is a SystemExit."""
-    pts, widths = load_centerline(proj)
-    mb = json.loads((Path(proj) / "data" / "median_bands.json").read_text(encoding="utf-8"))
-    island_w = mb["island_w_by_vertex"]
+    (corridors.<id>, sorted by id). A declaration check_bands refuses (a v1 file) is a SystemExit. With `lap` the
+    line is data/lap.<lap>.json, `bands` that lap's declaration, and the common plans carry the lap token (their
+    names: object_name)."""
+    pts, widths = load_centerline(proj, lap)
+    island_w = load_island_w(proj, lap)
     if len(island_w) != len(pts):
         raise SystemExit(f"[race] median_bands {len(island_w)} vs centerline {len(pts)} vertices")
     probs = check_bands(bands, pts)
@@ -1846,6 +1941,9 @@ def plan_all(proj, bands, mode="road", height=BARRIER_H, kerbs=True):
             print(f"[race] WARNING declared kerb apex v{d.get('apex')} {d.get('side')} {d.get('kind')} "
                   f"matches no detected corner — not authored")
         plans += clip_kerbs(kerb_plans(rb, corners, bands, mode), closures)
+    if lap:
+        for p in plans:
+            p["lap"] = lap
     return pts, widths, island_w, plans + closures, corners
 
 

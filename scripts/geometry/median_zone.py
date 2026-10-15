@@ -91,7 +91,7 @@ def _load_pts(project: Path):
 class MedianZone:
     def __init__(self, pts, island_w, extra=(), *, widths=None, centre_w=None, edge_strip=None,
                  edge_inset=None, barrier_half=0.335, edge_centre_from_lip=-0.485, mouths=(), edge_corners=(),
-                 closure_y=None, lane=None, zone_kind=None, layout=None):
+                 closure_y=None, lane=None, zone_kind=None, layout=None, race_wall_y=None):
         """pts/island_w: the mainline (gate frame). extra: [(pts, island_w), ...] for divided
         connectors' islands (tools/divide_connectors.py), same frame as the gate OBJ.
         Barrier kind (all per mainline vertex, same length as pts, or absent): centre_w (the chain's
@@ -127,6 +127,9 @@ class MedianZone:
         self.closure_y = ([None if v is None else float(v) for v in closure_y]
                           if closure_y is not None and len(closure_y) == n else None)
         self.lane = ([(float(a), float(b)) for a, b in lane] if lane is not None and len(lane) == n else None)
+        # ledger 0055: a declared chicane's race-side wall (corridors.<id>.race_wall_y_by_vertex), the band kind 'chicane'
+        self.race_wall_y = ([None if v is None else float(v) for v in race_wall_y]
+                            if race_wall_y is not None and len(race_wall_y) == n else None)
         self.zone_kind = list(zone_kind) if zone_kind is not None and len(zone_kind) == n else None
         self.cells: dict[tuple[int, int], list[tuple[int, int]]] = {}
         for pi, (pp, ww) in enumerate(self.polys):
@@ -146,6 +149,10 @@ class MedianZone:
                 nx, nz = self._normal(i)
                 y = self.closure_y[i]
                 self._bput("closure", i, pts[i][0] + nx * y, pts[i][2] + nz * y)
+            if self.race_wall_y is not None and self.race_wall_y[i] is not None:
+                nx, nz = self._normal(i)
+                y = self.race_wall_y[i]
+                self._bput("chicane", i, pts[i][0] + nx * y, pts[i][2] + nz * y)
             if self.edge_strip[i]:
                 nx, nz = self._normal(i)
                 off = self.widths[i] / 2.0 + self.edge_centre_from_lip
@@ -173,7 +180,8 @@ class MedianZone:
                         self.bcells.setdefault((cx, cz), []).append(("mouth", mi * 100000 + k, 0.0, 0.0))
         self.n_barrier = sum(1 for w in self.centre_w if w > 0)
         self.n_edge = sum(1 for e in self.edge_strip if e)
-        self.n_closure = sum(1 for v in (self.closure_y or []) if v is not None)
+        self.n_closure = sum(1 for v in (self.closure_y or []) if v is not None) + \
+            sum(1 for v in (self.race_wall_y or []) if v is not None)
 
     def _bput(self, kind, i, x, z):
         self.bcells.setdefault((int(x // CELL_M), int(z // CELL_M)), []).append((kind, i, x, z))
@@ -198,14 +206,31 @@ class MedianZone:
         data = project / "data"
         bands = data / "median_bands.json"
         bbands = data / "barrier_bands.json"
-        if not bands.exists() and not bbands.exists():
+        # ledger 0054: a race layout that names a LAP (layouts[].lap) is zoned on that lap — its line
+        # (data/lap.<lap>.json), its island widths and its declaration (data/barrier_bands.<lap>.json), every index
+        # the lap's own vertex. Any other layout (and every track without race.laps) reads exactly what it did.
+        lap_rec = None
+        if layout is not None:
+            from scripts.geometry import race_lap as _rl
+            _cp = project / "track.config.json"
+            cfg = json.loads(_cp.read_text(encoding="utf-8")) if _cp.exists() else {}
+            lap = _rl.lap_of_layout(cfg, layout)
+            if lap:
+                lap_rec = _rl.load(project, lap)
+                bbands = data / _rl.bands_file(lap)
+        if not bands.exists() and not bbands.exists() and lap_rec is None:
             return None
-        pts, widths = _load_pts(project)
+        if lap_rec is not None:
+            mirror = -1.0 if cfg.get("mirror_x", False) else 1.0
+            pts = [(mirror * p[0], p[1], p[2]) for p in lap_rec["points_xyz_m"]]
+            widths = [float(w) for w in lap_rec["widths_m"]]
+        else:
+            pts, widths = _load_pts(project)
         iw: list = []
         extra = []
         if bands.exists():
             mj = json.loads(bands.read_text(encoding="utf-8"))
-            iw = mj.get("island_w_by_vertex", [])
+            iw = mj.get("island_w_by_vertex", []) if lap_rec is None else list(lap_rec["island_w_by_vertex"])
             if len(iw) != len(pts):
                 print(f"  [median-zone] bands ({len(iw)}) vs centreline ({len(pts)}) length mismatch "
                       f"— island exemption DISABLED")
@@ -216,6 +241,14 @@ class MedianZone:
                 # from finished_centerline (kn5 frame) they would disagree, hence gate_centerline first.
                 for ci in mj.get("connector_islands", []):
                     extra.append(([tuple(p) for p in ci["points_xyz_m"]], ci["island_w_by_point"]))
+                # ledger 0055: a RACE layout's gate OBJ carries no street-only island (a declared chicane's span) —
+                # it meets the race island (scripts/geometry/race_chicane.race_island_w); the street layout keeps it
+                if layout is not None and lap_rec is None and any(
+                        str(lo.get("id")) == str(layout) and lo.get("race_furniture") for lo in cfg.get("layouts", [])):
+                    from scripts.geometry import race_chicane as _rc
+                    iw = _rc.race_island_w(iw, cfg)
+        elif lap_rec is not None:
+            iw = list(lap_rec["island_w_by_vertex"])
         kw: dict = {}
         if bbands.exists():
             bj = json.loads(bbands.read_text(encoding="utf-8"))
@@ -247,7 +280,7 @@ class MedianZone:
                         raise SystemExit(f"median_zone: corridors.{layout} lane / closure rows ({len(lane)} / {len(cy)}) "
                                          f"vs centreline ({len(pts)}) - re-run tools/barrier_bands.py")
                     kw.update({"closure_y": cy, "lane": lane, "zone_kind": cor.get("zone_by_vertex"),
-                               "layout": str(layout)})
+                               "layout": str(layout), "race_wall_y": cor.get("race_wall_y_by_vertex")})
         zone = cls(pts, iw, extra, widths=widths, **kw)
         if zone.n_island == 0 and zone.n_barrier == 0 and zone.n_edge == 0 and zone.n_closure == 0:
             return None
@@ -293,6 +326,13 @@ class MedianZone:
             return None
         return self.closure_y[i]
 
+    def race_wall_at(self, i: int):
+        """a declared chicane's race-side wall centre lateral at vertex i (+ = left of THIS zone's travel), None where
+        none stands (ledger 0055)"""
+        if self.race_wall_y is None or not 0 <= i < len(self.race_wall_y):
+            return None
+        return self.race_wall_y[i]
+
     def lane_r(self, i: int):
         """(lo, hi): the corridor faces at vertex i in metres RIGHT of this zone's travel (lo may be negative -
         past the centreline); None without a corridor"""
@@ -327,6 +367,7 @@ class MedianZone:
         # the corridor walked backwards: laterals flip sign (left of the reversed travel = right of the forward),
         # so the forward lane [y_lo, y_hi] becomes [-y_hi, -y_lo] and the closure y becomes -y
         cy = None if self.closure_y is None else [None if v is None else -v for v in self.closure_y[::-1]]
+        ry = None if self.race_wall_y is None else [None if v is None else -v for v in self.race_wall_y[::-1]]
         lane = None if self.lane is None else [(-b, -a) for a, b in self.lane[::-1]]
         zk = None if self.zone_kind is None else self.zone_kind[::-1]
         return MedianZone(self.pts[::-1], self.island_w[::-1], self.polys[1:],
@@ -334,7 +375,7 @@ class MedianZone:
                           edge_strip=self.edge_strip[::-1], edge_inset=self.edge_inset[::-1],
                           barrier_half=self.barrier_half, edge_centre_from_lip=self.edge_centre_from_lip,
                           mouths=self.mouths, edge_corners=corners, closure_y=cy, lane=lane, zone_kind=zk,
-                          layout=self.layout)
+                          layout=self.layout, race_wall_y=ry)
 
     # ---- the band test --------------------------------------------------------------------
     def contains(self, x: float, z: float, kinds=ISLAND_KINDS) -> bool:
@@ -408,11 +449,12 @@ class MedianZone:
             return None
         if kind == "centre":
             return (self.pts[j][0], 0.0, self.pts[j][2]) if self.centre_w[j] > 0 else None
-        if kind == "closure":
-            if self.closure_y is None or self.closure_y[j] is None:
+        if kind in ("closure", "chicane"):
+            row = self.closure_y if kind == "closure" else self.race_wall_y
+            if row is None or row[j] is None:
                 return None
             nx, nz = self._normal(j)
-            y = self.closure_y[j]
+            y = row[j]
             return (self.pts[j][0] + nx * y, 0.0, self.pts[j][2] + nz * y)
         if kind in ("edge_L", "edge_R") and self.edge_strip[j]:
             if j in self.removed.get(kind[-1], ()):

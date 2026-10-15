@@ -10,9 +10,28 @@
   "by_layout": {
    "race_acw": {
     "token": "acw",
-    "closure_objects": 6,
-    "closure_runs": 4,
-    "closure_rings": 3636,
+    "chicane_walls": 1,
+    "chicane_objects": 1,
+    "chicane_off_curve_max_m": 0.006,
+    "chicane_pins": [
+     {
+      "object": "1WALL_race_close_acw_college_1253_0",
+      "end": "start",
+      "vertex": 1253,
+      "ring_vertex": 1253,
+      "race_line_m": 0.005
+     },
+     {
+      "object": "1WALL_race_close_acw_college_1253_0",
+      "end": "end",
+      "vertex": 1379,
+      "ring_vertex": 1379,
+      "race_line_m": 0.001
+     }
+    ],
+    "closure_objects": 7,
+    "closure_runs": 5,
+    "closure_rings": 3583,
     "closure_off_curve_max_m": 0.007,
     "pins": [
      {
@@ -58,6 +77,20 @@
       "far_line_m": 0.001
      },
      {
+      "object": "1WALL_race_close_acw_college_1343_0",
+      "end": "start",
+      "vertex": 1343,
+      "ring_vertex": 1343,
+      "far_line_m": 0.002
+     },
+     {
+      "object": "1WALL_race_close_acw_college_1343_0",
+      "end": "end",
+      "vertex": 1506,
+      "ring_vertex": 1506,
+      "far_line_m": 0.001
+     },
+     {
       "object": "1WALL_race_close_acw_college_777_0",
       "end": "start",
       "vertex": 777,
@@ -67,17 +100,36 @@
      {
       "object": "1WALL_race_close_acw_college_777_0",
       "end": "end",
-      "vertex": 1506,
-      "ring_vertex": 1506,
+      "vertex": 1289,
+      "ring_vertex": 1289,
       "far_line_m": 0.001
      }
     ]
    },
    "race_cw": {
     "token": "cw",
-    "closure_objects": 6,
-    "closure_runs": 4,
-    "closure_rings": 3637,
+    "chicane_walls": 1,
+    "chicane_objects": 1,
+    "chicane_off_curve_max_m": 0.006,
+    "chicane_pins": [
+     {
+      "object": "1WALL_race_close_cw_college_1253_0",
+      "end": "start",
+      "vertex": 1253,
+      "ring_vertex": 1253,
+      "race_line_m": 0.001
+     },
+     {
+      "object": "1WALL_race_close_cw_college_1253_0",
+      "end": "end",
+      "vertex": 1379,
+      "ring_vertex": 1379,
+      "race_line_m": 0.004
+     }
+    ],
+    "closure_objects": 7,
+    "closure_runs": 5,
+    "closure_rings": 3584,
     "closure_off_curve_max_m": 0.007,
     "pins": [
      {
@@ -90,9 +142,23 @@
      {
       "object": "1WALL_race_close_cw_college_777_0",
       "end": "end",
+      "vertex": 1289,
+      "ring_vertex": 1289,
+      "far_line_m": 0.002
+     },
+     {
+      "object": "1WALL_race_close_cw_college_1343_0",
+      "end": "start",
+      "vertex": 1343,
+      "ring_vertex": 1343,
+      "far_line_m": 0.001
+     },
+     {
+      "object": "1WALL_race_close_cw_college_1343_0",
+      "end": "end",
       "vertex": 1506,
       "ring_vertex": 1506,
-      "far_line_m": 0.001
+      "far_line_m": 0.0
      },
      {
       "object": "1WALL_race_close_cw_navajo_1521_0",
@@ -139,9 +205,9 @@
     ]
    }
   },
-  "rings_total": 17499,
+  "rings_total": 17625,
   "interpolated": 0,
-  "objects": 35,
+  "objects": 39,
   "kbar_objects": 0,
   "edge_objects": 15,
   "edge_declared_vertices": 4498,
@@ -174,8 +240,8 @@
     "in_vertex": 1508,
     "out_vertex": 1517,
     "xz": [
-     -1961.396,
-     592.809
+     -1961.397,
+     592.808
     ],
     "nearest_ring_m": 0.004
    },
@@ -215,12 +281,12 @@
    "R": 41
   },
   "edge_gap_worst_m": 3.503,
-  "edge_rings": 9054,
+  "edge_rings": 9042,
   "free_ends": 0,
-  "pins": 16,
+  "pins": 24,
   "pin_gap_max_m": 0.0,
   "bridge_seating": {
-   "hit": 328,
+   "hit": 324,
    "near": 0,
    "interpolated": 0
   },
@@ -241,8 +307,8 @@
    "1KERB_race_770_in": 0,
    "1KERB_race_1514_out": 0,
    "1KERB_race_2319_out": 0,
-   "1KERB_race_3297_out": 0,
-   "1KERB_race_3297_in": 0,
+   "1KERB_race_3296_out": 0,
+   "1KERB_race_3296_in": 0,
    "1KERB_race_0_out": 0,
    "1KERB_race_0_in": 0
   },
@@ -257,18 +323,18 @@
     "race_acw"
    ],
    "1KERB_race_1514_out": [
-    3.059,
+    3.009,
     "race_cw"
    ],
    "1KERB_race_2319_out": [
     2.482,
     "race_cw"
    ],
-   "1KERB_race_3297_out": [
+   "1KERB_race_3296_out": [
     2.753,
     "race_cw"
    ],
-   "1KERB_race_3297_in": [
+   "1KERB_race_3296_in": [
     5.193,
     "race_acw"
    ],
@@ -298,11 +364,11 @@
     0,
     0
    ],
-   "1KERB_race_3297_out": [
+   "1KERB_race_3296_out": [
     0,
     0
    ],
-   "1KERB_race_3297_in": [
+   "1KERB_race_3296_in": [
     0,
     0
    ],
@@ -347,7 +413,7 @@
    ]
   },
   "chord_fail_m": 0.15,
-  "chord_spans_measured": 16300,
+  "chord_spans_measured": 16432,
   "chord_spans_fold": 0,
   "chord_spans_unmeasured": 0,
   "chord_spans_over": 0,
@@ -806,47 +872,48 @@
     }
    ]
   },
-  "lamps": 239,
-  "lamps_checked": 239,
+  "lamps": 238,
+  "lamps_checked": 238,
   "lamp_arm_m": 1.8,
-  "lamp_post_h_m": 11.5,
-  "mast_r_m": 0.585,
-  "lamp_min_margin_m": 2.364,
+  "lamp_post_h_m": 10.668,
+  "lamp_model": "led_cobra",
+  "mast_r_m": 0.124,
+  "lamp_min_margin_m": 2.435,
   "lamp_min": {
-   "lamp": 0,
-   "vertex": 20,
-   "lat_m": 10.21,
+   "lamp": 53,
+   "vertex": 1089,
+   "lat_m": 16.924,
    "base_xz": [
-    -51.27,
-    -1645.74
+    -1447.2,
+    -531.8
    ],
    "against": "edge",
-   "margin_m": 2.364,
+   "margin_m": 2.435,
    "fallback": false,
-   "closure": null,
-   "closure_margin_m": null
+   "closure": "closure_race_acw",
+   "closure_margin_m": 14.852
   },
   "lamps_inside": 0,
   "lamp_min_vs_closure": {
-   "lamp": 174,
-   "vertex": 3304,
-   "lat_m": -17.8,
+   "lamp": 120,
+   "vertex": 2312,
+   "lat_m": -15.075,
    "base_xz": [
-    2591.97,
-    509.85
+    45.99,
+    1703.29
    ],
-   "against": "edge",
-   "margin_m": 2.365,
+   "against": "closure_race_acw",
+   "margin_m": 2.741,
    "fallback": false,
    "closure": "closure_race_acw",
-   "closure_margin_m": 2.365
+   "closure_margin_m": 2.741
   },
   "scenery_source": "trees: tools/make_treefx.py plan (every species); signs: data/signs.local.json",
   "scenery_items": {
-   "tree": 15260,
+   "tree": 15264,
    "sign": 23
   },
-  "scenery_beside": 399,
+  "scenery_beside": 396,
   "scenery_hits": 0,
   "scenery_min": {
    "race_cw": {
@@ -854,13 +921,13 @@
     "kind": "tree",
     "id": "Bush.bin@median_planting#2462",
     "vertex": 1196,
-    "lat_m": -2.695,
+    "lat_m": -2.694,
     "xz": [
-     -1562.44,
-     -243.06
+     -1564.14,
+     -244.23
     ],
     "against": "closure",
-    "margin_m": 0.655
+    "margin_m": 0.656
    },
    "race_acw": {
     "layout": "race_acw",

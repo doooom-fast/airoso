@@ -156,3 +156,119 @@ def test_fold_fan_discs_refuse_a_row_count_mismatch():
     welds["folds"]["MAINLINE"]["rows"] = 50
     discs = fold_fan_discs(welds, pts, w)
     assert [round(d[1]) for d in discs] == list(range(18, 26)) and all(d[3] == 6.5 for d in discs)
+
+
+def _deck_project(panel_h=None, panel_x=4.15) -> Path:
+    """an 8 m road on a deck 3 m over the grass (every excursion crossing falls 3 m off its edge), optionally railed by
+    the loop's I-8 bridge-rail kind: a double-sided VERTICAL panel (no plan area) ``panel_h`` tall at +/-``panel_x``"""
+    d = Path(tempfile.mkdtemp())
+    (d / "data").mkdir()
+    (d / "track.config.json").write_text(json.dumps({"slug": "t", "mirror_x": False}))
+    cl = [(0.0, 0.0, float(z)) for z in range(0, N_M + 1, 5)]
+    widths = [W] * len(cl)
+    (d / "data" / "centerline.local.json").write_text(json.dumps(
+        {"points_xyz_m": [list(p) for p in cl], "widths_m": widths, "origin": {"lon": 0.0, "lat": 0.0, "elev_m": 0.0}}))
+    groups = [("1ROAD_main", ribbon.road_ribbon(cl, widths)), ("1GRASS", _grass_plane(y=-3.0))]
+    if panel_h is not None:
+        for side in (1.0, -1.0):
+            v, t = [], []
+            for z in range(-5, N_M + 6, 5):                          # one panel per 5 m, as build_guardrails writes it
+                v += [(side * panel_x, 0.0, float(z)), (side * panel_x, panel_h, float(z))]
+                if z > -5:
+                    q = len(v) - 4
+                    t += [(q, q + 1, q + 3), (q, q + 3, q + 2), (q, q + 3, q + 1), (q, q + 2, q + 3)]   # both windings
+            groups.append((f"1WALL_guard_{'L' if side > 0 else 'R'}", {"vertices": v, "tris": t, "uvs": [(0.0, 0.0)] * len(v)}))
+    _write_obj(d / "data" / "track.obj", groups)
+    return d
+
+
+def test_a_vertical_panel_rail_guards_the_deck_edge_drop_v0181():
+    """v0.18.1 (ledger 0057's Lake Murray Blvd I-8 deck): the loop's bridge rails are vertical panels with no plan area,
+    which the downward top_at guard probe can never land on — every drop behind one read 'unguarded'. The crossing
+    probe credits a 1WALL the car's path passes THROUGH; a rail too low to stop a car, or one standing beyond the drop,
+    still guards nothing"""
+    bare = drive_run(_deck_project())
+    assert bare["excursion_drops"] > 0, bare["excursion_drops"]
+    railed = drive_run(_deck_project(panel_h=0.95))
+    assert railed["excursion_drops"] == 0, railed["worst_gated_excursions"]
+    assert railed["excursion_far_ledges"] >= bare["excursion_drops"]        # still REPORTED, no longer gated
+    low = drive_run(_deck_project(panel_h=0.3))
+    assert low["excursion_drops"] == bare["excursion_drops"]
+    beyond = drive_run(_deck_project(panel_h=0.95, panel_x=6.0))
+    assert beyond["excursion_drops"] == bare["excursion_drops"]
+
+
+def _plane_grid(fy, x0, x1, z0, z1, cell=5.0) -> dict:
+    """a surface y = fy(x, z) sampled on a cell x cell grid (exact for a plane; creased along grid lines otherwise)"""
+    xs, zs = [], []
+    x = x0
+    while x <= x1 + 1e-9:
+        xs.append(x); x += cell
+    z = z0
+    while z <= z1 + 1e-9:
+        zs.append(z); z += cell
+    verts = [(x, fy(x, z), z) for z in zs for x in xs]
+    nx = len(xs)
+    tris = []
+    for j in range(len(zs) - 1):
+        for i in range(nx - 1):
+            a = j * nx + i
+            tris += [(a, a + 1, a + nx + 1), (a, a + nx + 1, a + nx)]
+    return {"vertices": verts, "tris": tris, "uvs": [(0.0, 0.0)] * len(verts)}
+
+
+def _vertex_hop_project(corner: bool, fy) -> Path:
+    """a 9 m road (under the 9.5 m apron width) whose surface is ``fy``; ``corner``: a polygon turning 10 deg at each of
+    eight 8 m vertices between two straights, so every fixed-offset wheel path hops 0.4-0.65 m at every vertex"""
+    import math
+    d = Path(tempfile.mkdtemp())
+    (d / "data").mkdir()
+    (d / "track.config.json").write_text(json.dumps({"slug": "t", "mirror_x": False}))
+    cl = [(0.0, 0.0, float(z)) for z in range(0, 61, 5)]
+    if corner:
+        h = 0.0
+        for _ in range(8):
+            h += math.radians(10.0)
+            x, _y, z = cl[-1]
+            cl.append((x + 8.0 * math.sin(h), 0.0, z + 8.0 * math.cos(h)))
+        for _ in range(12):
+            x, _y, z = cl[-1]
+            cl.append((x + 5.0 * math.sin(h), 0.0, z + 5.0 * math.cos(h)))
+    else:
+        cl = [(0.0, 0.0, float(z)) for z in range(0, N_M + 1, 5)]
+    cl = [(x, fy(x, z), z) for x, _y, z in cl]
+    xs, zs = [p[0] for p in cl], [p[2] for p in cl]
+    (d / "data" / "centerline.local.json").write_text(json.dumps(
+        {"points_xyz_m": [list(p) for p in cl], "widths_m": [9.0] * len(cl),
+         "origin": {"lon": 0.0, "lat": 0.0, "elev_m": 0.0}}))
+    box = (min(xs) - 20.0, max(xs) + 20.0, min(zs) - 20.0, max(zs) + 20.0)
+    _write_obj(d / "data" / "track.obj", [("1ROAD_main", _plane_grid(fy, *box)),
+                                          ("1GRASS", _plane_grid(lambda x, z: fy(x, z) - 0.05, *box, cell=10.0))])
+    return d
+
+
+def test_a_plane_round_a_polygon_corner_reads_vertex_bumps_not_gated_bumps_v0181():
+    """v0.18.1 VERTEX BUMPS: a fixed-offset wheel path hops forward (outside) or creeps (inside) at every centreline
+    vertex, so the 1 m second difference of a PLANE at 5 % reads grade x (hop - 1) there — gated bumps on the smoothest
+    surface a road can have (the pre-v0.18.1 rule, measured here by disabling the re-measure). Re-measured on the
+    path's own travel they are under 2.5 cm: reported as vertex_bumps, not gated. A real 5 cm crease is still a bump
+    (both of its metres cover 1 m: the re-measure is the old measure), and a severe step is never re-measured."""
+    from scripts.geometry import drive_test as dtm
+    plane = lambda x, z: 0.05 * z
+    new = drive_run(_vertex_hop_project(True, plane))
+    keep = dtm._own_travel_step
+    try:
+        dtm._own_travel_step = lambda *a: None                   # the pre-v0.18.1 measure: every bump counts as read
+        old = drive_run(_vertex_hop_project(True, plane))
+    finally:
+        dtm._own_travel_step = keep
+    assert old["steps_per_km"] > 0, old
+    assert new["steps_per_km"] == 0 and new["vertex_bumps"] > 0, new
+    assert new["severe_steps"] == old["severe_steps"] and new["fold_bumps"] == old["fold_bumps"]
+    assert all(r[3] <= dtm.STEP_BUMP_M for r in new["vertex_bumps_worst"])
+    crease = drive_run(_vertex_hop_project(False, lambda x, z: 0.05 * max(0.0, z - 100.0)))
+    assert crease["steps_per_km"] > 0 and crease["vertex_bumps"] == 0, crease
+    # the helper itself: exactly the old second difference where both metres cover STEP_M; None under the floor
+    assert dtm._own_travel_step(0.03, -0.01, 1.0, 1.0) == abs(0.03 - -0.01)
+    assert dtm._own_travel_step(0.03, 0.01, 1.0, dtm.VERTEX_MIN_TRAVEL_M / 2) is None
+    assert abs(dtm._own_travel_step(0.05 * 1.65, 0.05, 1.65, 1.0)) < 1e-12           # a plane across a hop

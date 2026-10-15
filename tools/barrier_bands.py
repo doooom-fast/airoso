@@ -54,6 +54,14 @@ plan radius >= 20 m; mouths per policy; spawns >= 0.30 m off every face; every d
 dropped (2 per corner), each declared one clear of every closure; strips on every vertex; the Alvarado
 re-measure; the planned no-route.
 
+LAPS (ledger 0054, phase 2 groundwork; scripts/geometry/race_lap.py): a race layout may name its own lap
+(layouts[].lap = <lap id>, declared in race.laps.<lap id>: pieces of the mainline and of connectors, its own
+corridor / kerbs / roads keyed on the LAP's vertices). The writer then declares one GROUP per line: the mainline's
+race layouts -> data/barrier_bands.json (exactly as before; with no lap declared nothing else changes), and each lap's
+-> data/barrier_bands.<lap>.json, every vertex number in it the lap's own, from the stitched line it writes to
+data/lap.<lap>.json. A lap's mouths are its pieces' side streets plus the BRANCH it abandons at every junction (sealed
+by the curb strips like any side street, probed by an `xz` point ON the branch, BRANCH_PROBE_M past the curb).
+
 Inputs (read-only; loop.blend is never opened):
   track.config.json            race.* (+ race.corridor) and layouts[] (closure_token, direction, start)
   data/centerline.local.json   points_xyz_m (engine frame x=E, y=up, z=N) + widths_m
@@ -96,6 +104,28 @@ _LD = _load_tool("layout_dummies", "_layout_dummies_ro")
 _RF = _load_tool("race_furniture", "_race_furniture_ro")
 _RC = _load_tool("race_corridor", "_race_corridor_ro")
 _MW = _load_tool("mouth_weld", "_mouth_weld_ro")   # gap_window: where gap_mouths_blend opens the host's sidewalk
+
+
+def _load_lap_module():
+    """scripts/geometry/race_lap.py by file (pure; no sys.path side effects)"""
+    spec = importlib.util.spec_from_file_location("_race_lap_ro", AIROSO / "scripts" / "geometry" / "race_lap.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_LAP = _load_lap_module()
+
+
+def _load_chicane_module():
+    """scripts/geometry/race_chicane.py by file (pure; no sys.path side effects) — ledger 0055"""
+    spec = importlib.util.spec_from_file_location("_race_chicane_ro", AIROSO / "scripts" / "geometry" / "race_chicane.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_CH = _load_chicane_module()
 FOLD_APEX_MAX_VERTICES = 15  # a trimmed fold farther than this from every inside corner apex is a data defect
 GRID_STAGGER_M = _LD.GRID_STAGGER_M
 GRID_PITCH_M = _LD.GRID_PITCH_M
@@ -124,6 +154,8 @@ SWEPT_EXTEND_MAX_M = 25.0    # tools/mouth_weld.py EXTEND_MAX_M: a swept edge sh
 SWEPT_PROBE_EVERY_M = 6.0    # INVENTED (ledger 0054 P1): a swept mouth gets probes this often along its opening (and
                              # at both ends of its declared window) ...
 SWEPT_PROBE_DEPTHS_M = (3.0, MOUTH_PROBE_M)   # ... each 3 m (surely on the new road) and 10 m past the host edge
+MIN_CROSSING_M = 15.0        # INVENTED (ledger 0055): a declared chicane moves the lane's centre at least this far across
+#                              the road (v0.18.0's College crossing, the one Kevin liked: 18.4 m in race_cw)
 
 
 def _stations(pts):
@@ -221,10 +253,22 @@ def _median(vals):
 
 # ---------------------------------------------------------------------------------------------
 def build(project_dir, out_name: str | None = None, config_path=None, *, planned_no_route: bool = True,
-          no_route_cell: float | None = None, write: bool = True) -> dict:
+          no_route_cell: float | None = None, write: bool = True, lap: str | None = None) -> dict:
+    """The declaration of ONE lap group: lap None = the mainline (data/centerline.local.json, the race layouts that
+    name no lap -> data/barrier_bands.json, byte-identical to before when no layout names a lap); lap <id> = the
+    stitched line of race.laps.<id> (scripts/geometry/race_lap.py, written to data/lap.<id>.json) and the race
+    layouts on it -> data/barrier_bands.<id>.json, every vertex number in it the LAP's own."""
     proj = Path(project_dir)
     data = proj / "data"
-    cfg = json.loads(Path(config_path or (proj / "track.config.json")).read_text(encoding="utf-8"))
+    lap_id = lap                    # (`lap` below is the lap LENGTH, as it always was)
+    cfg_all = json.loads(Path(config_path or (proj / "track.config.json")).read_text(encoding="utf-8"))
+    lap_probs = _LAP.validate(cfg_all)
+    if lap_probs:
+        raise SystemExit("[bands] race.laps / layouts[].lap: " + " | ".join(lap_probs))
+    cfg = _LAP.config_view(cfg_all, lap_id)
+    lap_rec = _LAP.stitch(proj, cfg_all, lap_id) if lap_id else None
+    if lap_rec is not None and write:
+        _LAP.write(proj, lap_rec)
     race = cfg.get("race") or {}
     fails: list[str] = []
     if race.get("centre_runs"):
@@ -235,7 +279,7 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
     if not isinstance(cor_cfg, dict):
         raise SystemExit("[bands] track.config.json has no race.corridor — nothing to declare (ledger 0049; the "
                          "v1 centre-chain declaration is retired)")
-    cl = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
+    cl = lap_rec if lap_rec is not None else json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
     pts = [tuple(p) for p in cl["points_xyz_m"]]
     widths = [float(w) for w in cl["widths_m"]]
     n = len(pts)
@@ -245,15 +289,29 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
     W = widths[:m]                                 # ring widths (the duplicate carries the last street's width)
     st = _stations(pts)
     lap = st[-1]
-    mb = data / "median_bands.json"
-    island_w = json.loads(mb.read_text(encoding="utf-8")).get("island_w_by_vertex", []) if mb.exists() else [0.0] * n
-    if len(island_w) != n:
-        raise SystemExit(f"[bands] median_bands.json ({len(island_w)}) vs centreline ({n}) length mismatch")
-    bsp = data / "bridge.spans.auto.json"
-    spans = [tuple(map(float, s)) for s in json.loads(bsp.read_text(encoding="utf-8"))] if bsp.exists() else []
-    mp = data / "mouths.json"
-    mouths = [mo for mo in (json.loads(mp.read_text(encoding="utf-8")).get("mouths", []) if mp.exists() else [])
-              if mo.get("host") == "MAINLINE"]
+    if lap_rec is not None:
+        # the lap's own channels: island widths, bridge spans (lap stations) and mouths (its pieces' side streets +
+        # the abandoned branch at every junction) mapped through its source map by race_lap.stitch
+        island_w = [float(w) for w in lap_rec["island_w_by_vertex"]]
+        spans = [tuple(map(float, s)) for s in lap_rec.get("bridge_spans_m") or []]
+        mouths = [dict(mo) for mo in lap_rec.get("mouths") or []]
+    else:
+        mb = data / "median_bands.json"
+        island_w = json.loads(mb.read_text(encoding="utf-8")).get("island_w_by_vertex", []) if mb.exists() else [0.0] * n
+        if len(island_w) != n:
+            raise SystemExit(f"[bands] median_bands.json ({len(island_w)}) vs centreline ({n}) length mismatch")
+        bsp = data / "bridge.spans.auto.json"
+        spans = [tuple(map(float, s)) for s in json.loads(bsp.read_text(encoding="utf-8"))] if bsp.exists() else []
+        mp = data / "mouths.json"
+        mouths = [mo for mo in (json.loads(mp.read_text(encoding="utf-8")).get("mouths", []) if mp.exists() else [])
+                  if mo.get("host") == "MAINLINE"]
+    # ledger 0055: race.chicanes (the mainline's own vertices; a lap declares none) — the island between each street-only
+    # chicane's outer leg ends stands in the street layout only, so every race solve / gate here reads the RACE island
+    chicanes, ch_probs = _CH.declared(cfg) if lap_rec is None else ([], [])
+    fails += [f"chicanes: {p_}" for p_ in ch_probs]
+    island_w_all = list(island_w)
+    if lap_rec is None:
+        island_w = _CH.race_island_w(island_w, cfg)
 
     edge_mode = str(race.get("edge_mode", "road"))
     if edge_mode != "road":
@@ -350,8 +408,12 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
             continue
         d = "cw" if direction == "forward" else "acw"
         sol = _RC.solve(pts, widths, island_w, free, d, P, inset=edge_inset, half=bhalf, context=ctx)
+        mine = [c_ for c_ in chicanes if lid in c_["layouts"]]
+        walls, ch_lane, ch_fails = _apply_chicanes(sol, mine, direction, pts, widths, m, st, edge_inset, bhalf, P)
+        fails += [f"chicanes {lid}: {f_}" for f_ in ch_fails]
         corridors[lid] = _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, street_at,
-                                          edge_inset, bhalf, strip_c, whole)
+                                          edge_inset, bhalf, strip_c, whole, chicane_lane=ch_lane)
+        _chicane_record(corridors[lid], walls, mine, direction, pts, widths, n, m, st, edge_inset, bhalf, P)
 
     # ---- kerbs: outside + inside at every corner, clipped against EVERY layout's closure --------------
     kerbs = _kerbs(corners, st, m, ext_lo, ext_hi)
@@ -369,7 +431,9 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
     # ---- sealed mouths (top-level, the 0047 shape; the per-layout policy is corridors.<id>.mouths) ----
     closed = []
     nrm = _normals(pts, m)
-    swept_prefixes = [str(x) for x in (race.get("swept_mouths") or [])]
+    # race.swept_mouths name MAINLINE weld mouths (data/mouths.json host_seg / piece / end); a lap's stitched mouths
+    # (race_lap.stitch) carry none of that, so a lap keeps the symmetric window
+    swept_prefixes = [str(x) for x in (race.get("swept_mouths") or [])] if lap_rec is None else []
     swept_conns = None
     # ledger 0054 P1 fix round (opt-in, track.config.json route.aprons): a corner apron (tools/author_aprons_blend.py ->
     # data/aprons.json, the apron as built) widens its weld mouth's opening on the loop edge to where its return curb
@@ -413,17 +477,23 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
             nx, nz = nrm[v]
             off = sgn * (widths[v] / 2.0 + EDGE_CENTRE_FROM_LIP[edge_mode])
             poly.append([round(pts[v][0] + nx * off, 3), round(pts[v][1], 3), round(pts[v][2] + nz * off, 3)])
-        row = {"connector": mo["connector"], "host_vertex": h, "side": side,
+        rec = {"connector": mo["connector"], "host_vertex": h, "side": side,
                "connector_width_m": mo.get("connector_width_m"), "vertex_from": lo_, "vertex_to": hi_,
                "policy": "sealed: both curb strips run straight across the mouth line (Q1); per layout see "
                          "corridors.<id>.mouths",
                "polyline_xyz_m": poly}
         if swept is not None:
-            row["swept"] = swept
-        closed.append(row)
+            rec["swept"] = swept
+        if lap_rec is not None:
+            # a lap's mouth (race_lap.stitch): a side street of one of its pieces, or the BRANCH it abandons at a
+            # junction — probed at the point BRANCH_PROBE_M past the lap's curb ALONG the abandoned line
+            rec["kind"] = mo.get("kind", "side_street")
+            if mo.get("probe_xz") is not None:
+                rec["probe_xz"] = [float(mo["probe_xz"][0]), float(mo["probe_xz"][1])]
+        closed.append(rec)
     for lid, c in corridors.items():
         c["mouths"] = _mouth_policies(closed, c, m, widths, nrm, pts)
-        c["no_route"]["forbidden_probes"] += _mouth_probes(closed, widths, m)
+        c["no_route"]["forbidden_probes"] += _mouth_probes(closed, widths, m, pts, nrm)
         c["no_route"]["forbidden_probes"] += _swept_probes(closed, widths, m, st)
 
     # ---- grid / pit zones ----------------------------------------------------------------------------
@@ -499,6 +569,12 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
         "summary": {},
         "fails": [],
     }
+    if lap_rec is not None:
+        out["lap"] = {"id": lap_id, "line": f"data/{_LAP.lap_file(lap_id)}", "pieces": lap_rec["pieces"],
+                      "joins": lap_rec["joins"], "mouths_skipped": lap_rec.get("mouths_skipped", []),
+                      "_doc": "every vertex number in this file is the LAP's own (data/lap.<id>.json, "
+                              "source_by_vertex maps it back to its source line); the race layouts on it: "
+                              + ", ".join(str(lo.get("id")) for lo in race_layouts)}
     vctx = {"pts": pts, "widths": widths, "island_w": island_w, "half_auth": half_auth, "m": m, "n": n, "st": st,
             "params": P, "free": free, "whole": whole, "boxes": boxes, "pinned": pinned, "corners": corners,
             "corner_by_apex": corner_by_apex, "removed": removed, "layouts": race_layouts, "cfg": cfg,
@@ -510,6 +586,8 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
         nr = _load_tool("no_route", "_no_route_ro")
         for lid in corridors:
             kw = {"cell": no_route_cell} if no_route_cell else {}
+            if lap_rec is not None:
+                kw["line"] = (pts, widths, island_w)          # the lap, in memory (its file may not be written)
             r = nr.run(proj, lid, planned=True, bands=out, cfg=cfg, write=write, verbose=False, **kw)
             planned[lid] = {k: r[k] for k in ("fail", "leak_m2", "reached_m2", "door_clusters", "blocked",
                                               "forbidden_reached", "seconds")}
@@ -525,7 +603,7 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
     out.pop("_st", None)
     out["fails"] = fails
     if write:
-        out_path = data / (out_name or "barrier_bands.json")
+        out_path = data / (out_name or _LAP.bands_file(lap_id))
         out_path.write_text(json.dumps(out), encoding="utf-8")
         out["_path"] = str(out_path)
     _report(proj, out, fails)
@@ -542,8 +620,10 @@ def _corridor_params_echo(cor_cfg, P, measured_clear, island_mode):
 
 
 def _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, street_at, inset, bhalf, strip_c,
-                     whole):
-    """corridors.<lid>: the solved closure as a declaration (forward-frame laterals per vertex)"""
+                     whole, chicane_lane=None):
+    """corridors.<lid>: the solved closure as a declaration (forward-frame laterals per vertex). chicane_lane
+    {vertex: (y_lo, y_hi)}: the declared chicanes' lane (ledger 0055) — zone 'chicane' there, the lane between the
+    closure and the chicane's race-side wall (or a curb strip)"""
     e = sol["e"]
     reverse = direction == "reverse"
     race_side = "L" if reverse else "R"
@@ -565,6 +645,9 @@ def _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, st
         else:
             zone.append("whole" if _RC.in_rng(v, whole[0], whole[1], m) else "box")
     lane = _RC.lane_by_vertex(y, widths, m, "acw" if reverse else "cw", inset=inset, half=bhalf, pins=pins)
+    for v, lh in (chicane_lane or {}).items():
+        lane[v] = [float(lh[0]), float(lh[1])]
+        zone[v] = "chicane"
     runs = []
     for R in sol["runs"]:
         vs, rr, g = R["vs"], R["rr"], R["g"]
@@ -666,6 +749,177 @@ def _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, st
         "mouths": [],
         "no_route": {"seed": "AC_START_0", "probe_r_m": 0.5, "tol_m": 0.75, "forbidden_probes": probes},
     }
+
+
+def _travel_walk(a, b, m, direction):
+    """vertices from a to b in the layout's travel order (forward: increasing, reverse: decreasing), both included"""
+    if direction == "reverse":
+        return list(reversed(_RC.walk(b % m, a % m, m)))
+    return _RC.walk(a % m, b % m, m)
+
+
+def _apply_chicanes(sol, chicanes, direction, pts, widths, m, st, inset, bhalf, P):
+    """Ledger 0055 (Kevin: "for the racetrack versions, I do like the chicane that kind of goes from one side of the
+    road across to the other and back"): carry this layout's lane across the road and back at each declared chicane.
+
+    Works in g (metres toward THIS layout's race side, the solver's frame; race strip centre g = +(w/2 - strip_c),
+    far strip centre g = -(w/2 - strip_c)). The lane enters with its solved faces [g_A + half, F] (F = w/2 - inset, the
+    race-side strip face) and width W. Over the out leg (in travel order) both faces move toward the far side by the
+    S of race_chicane.slope_shape: hi = F (1 - 2 f) + W f, lo = hi - W — so at the leg's end the lane is [-F, -F + W],
+    against the far curb strip. Two walls carry it: the CLOSURE (g_A = lo - half), which ends pinned in the far curb
+    strip at the out leg's end (the run that held the chicane is split there), and the RACE-SIDE wall (g_C = hi +
+    half), which starts pinned in the race-side curb strip at the out leg's start. Between the legs the closure is gone
+    (the lane runs to the far curb strip) and the race-side wall holds the line; the back leg mirrors the out leg, the
+    width easing from W to the solved width where it ends, the closure restarting pinned in the far strip.
+
+    MUTATES sol: the closure run holding the chicane is split into the part before the out leg's end and the part
+    from the back leg's start, its g overridden over both legs (zone flags, pin rates and bound rows sliced and
+    re-derived). Returns (walls [{name, vs (travel order), g}], lane {vertex: (y_lo, y_hi) forward frame}, fails)."""
+    fails = []
+    e = sol["e"]
+    zone_m = float(P["pin_zone_m"])
+    lane = {}
+    walls = []
+    for ch in chicanes:
+        out_leg, back_leg = _CH.legs_in_travel(ch, direction)
+        span = _travel_walk(out_leg[0], back_leg[1], m, direction)
+        R = next((R_ for R_ in sol["runs"] if out_leg[0] in R_["vs"] and back_leg[1] in R_["vs"]), None)
+        if R is None:
+            fails.append(f"{ch['name']}: v{out_leg[0]}..v{back_leg[1]} is not inside ONE closure run of this layout "
+                         f"(a chicane crosses a carriageway the closure divides off)")
+            continue
+        vs = R["vs"]
+        q_in, q_out_end = vs.index(out_leg[0]), vs.index(out_leg[1])
+        q_back0, q_out = vs.index(back_leg[0]), vs.index(back_leg[1])
+        if not (0 < q_in < q_out_end <= q_back0 < q_out < len(vs) - 1):
+            fails.append(f"{ch['name']}: the legs are not strictly inside the closure run v{vs[0]}..v{vs[-1]} in travel "
+                         f"order ({q_in}, {q_out_end}, {q_back0}, {q_out} of {len(vs)})")
+            continue
+
+        def F(v):
+            return widths[v] / 2.0 - inset
+
+        def arc(qa, qb):
+            return [R["rr"][q] - R["rr"][qa] for q in range(qa, qb + 1)]
+        g = list(R["g"])
+        W0 = F(vs[q_in]) - (g[q_in] + bhalf)
+        W1 = F(vs[q_out]) - (g[q_out] + bhalf)
+        hi_by, gA, gC = {}, {}, {}
+        a_out = arc(q_in, q_out_end)
+        for k, q in enumerate(range(q_in, q_out_end + 1)):
+            v = vs[q]
+            f = _CH.slope_shape(a_out[k] / a_out[-1])
+            hi = F(v) * (1.0 - 2.0 * f) + W0 * f
+            hi_by[v], gA[v], gC[v] = (hi - W0, hi), hi - W0 - bhalf, hi + bhalf
+        for q in range(q_out_end + 1, q_back0):
+            v = vs[q]
+            hi = -F(v) + W0
+            hi_by[v], gC[v] = (-F(v), hi), hi + bhalf
+        a_back = arc(q_back0, q_out)
+        for k, q in enumerate(range(q_back0, q_out + 1)):
+            v = vs[q]
+            t = a_back[k] / a_back[-1]
+            f = _CH.slope_shape(1.0 - t)
+            W = W0 + (W1 - W0) * t
+            hi = F(v) * (1.0 - 2.0 * f) + W * f
+            hi_by[v], gA[v], gC[v] = (hi - W, hi), hi - W - bhalf, hi + bhalf
+        # the closure's two pins land EXACTLY on the far strip centre, the wall's on the race strip centre
+        for v in (vs[q_out_end], vs[q_back0]):
+            gA[v] = -(widths[v] / 2.0 - (inset - bhalf))
+        for v in (vs[q_in], vs[q_out]):
+            gC[v] = widths[v] / 2.0 - (inset - bhalf)
+        for q in range(q_in, q_out + 1):
+            if vs[q] in gA:
+                g[q] = gA[vs[q]]
+
+        def part(qa, qb, k_new0=None, k_new1=None):
+            """a slice of the run (R1 = start .. out leg end, pinned in the far strip; R2 = back leg start .. end)"""
+            sub = {"vs": vs[qa:qb + 1], "g": g[qa:qb + 1], "iters": R["iters"],
+                   "infeas": [v for v in R["infeas"] if v in vs[qa:qb + 1]]}
+            for key in ("t", "L", "Lraw", "U", "isl", "face", "g_far", "kc", "kd"):
+                sub[key] = R[key][qa:qb + 1]
+            rr0 = R["rr"][qa]
+            sub["rr"] = [x - rr0 for x in R["rr"][qa:qb + 1]]
+            L_ = sub["rr"][-1]
+            sub["zone0"] = [x <= zone_m for x in sub["rr"]]
+            sub["zone1"] = [L_ - x <= zone_m for x in sub["rr"]]
+            k0, k1 = R["k_pin"]
+            sub["k_pin"] = (k0 if k_new0 is None else k_new0, k1 if k_new1 is None else k_new1)
+            return sub
+
+        def leg_rate(gx, qa, qb):
+            best = 0.0
+            for q in range(qa + 1, qb + 1):
+                ds = R["rr"][q] - R["rr"][q - 1]
+                if ds > 1e-9:
+                    best = max(best, abs(gx[vs[q]] - gx[vs[q - 1]]) / ds)
+            return best
+        kA_out = leg_rate(gA, q_in, q_out_end)
+        kA_back = leg_rate(gA, q_back0, q_out)
+        R1 = part(0, q_out_end, k_new1=kA_out * 1.02)
+        R2 = part(q_back0, len(vs) - 1, k_new0=kA_back * 1.02)
+        i = sol["runs"].index(R)
+        sol["runs"][i:i + 1] = [R1, R2]
+        for v in span:
+            sol["g"][v] = gA.get(v)
+        for v, (lo_g, hi_g) in hi_by.items():
+            # forward frame: y = e * g; the lane's two faces swap order when e = -1
+            a_, b_ = e * lo_g, e * hi_g
+            lane[v] = (min(a_, b_), max(a_, b_))
+        wall_vs = vs[q_in:q_out + 1]
+        walls.append({"name": ch["name"], "vs": wall_vs, "g": [gC[v] for v in wall_vs],
+                      "out_leg": out_leg, "back_leg": back_leg, "lane_w_m": [round(W0, 3), round(W1, 3)],
+                      "rate_closure": [kA_out, kA_back],
+                      "rate_wall": [leg_rate(gC, q_in, q_out_end), leg_rate(gC, q_back0, q_out)]})
+    return walls, lane, fails
+
+
+def _chicane_record(c, walls, chicanes, direction, pts, widths, n, m, st, inset, bhalf, P):
+    """corridors.<lid> gains, per declared chicane of THIS layout (ledger 0055): chicane_walls[] (the race-side wall:
+    i / j forward, travel_from / travel_to, its pins on the race-side curb strip, rates, radius), the full-length
+    race_wall_y_by_vertex (the wall's CENTRE lateral, forward frame, null elsewhere — the consumers' one row) and
+    chicanes[] (what the driver gets: the lane's crossing, its legs and width); plus a forbidden probe every
+    PROBE_STEP_M in the pocket the race-side wall closes off (between it and the race-side curb strip)"""
+    e = -1.0 if c["race_side"] == "R" else 1.0
+    yw = [None] * n
+    recs, summ = [], []
+    probes = c["no_route"]["forbidden_probes"]
+    pocket_min = float(P["pocket_min_m"])
+    for w in walls:
+        vs, g = w["vs"], w["g"]
+        for v, gv in zip(vs, g):
+            yw[v] = round(e * gv, 4)
+        fwd = sorted([vs[0], vs[-1]])
+        rad, rad_v, back = _RC.plan_radius(pts, m, vs, yw)
+        recs.append({
+            "name": w["name"], "i": fwd[0], "j": fwd[1], "travel_from": vs[0], "travel_to": vs[-1],
+            "side": c["race_side"], "joins": "edge_" + c["race_side"],
+            "ends": [{"vertex": vs[0], "y": yw[vs[0]], "joins": "edge_" + c["race_side"], "role": "in"},
+                     {"vertex": vs[-1], "y": yw[vs[-1]], "joins": "edge_" + c["race_side"], "role": "out"}],
+            "length_m": round(sum(math.hypot(pts[b][0] - pts[a][0], pts[b][2] - pts[a][2]) for a, b in zip(vs, vs[1:])), 1),
+            "max_rate": {"out_leg": _ratio(w["rate_wall"][0]), "back_leg": _ratio(w["rate_wall"][1])},
+            "min_radius_m": round(rad, 1) if rad < float("inf") else None, "min_radius_vertex": rad_v,
+            "backward_steps": back})
+        lane = c["lane_by_vertex"]
+        mids = [0.5 * (lane[v][0] + lane[v][1]) for v in vs]
+        summ.append({"name": w["name"], "out_leg": w["out_leg"], "back_leg": w["back_leg"],
+                     "lane_w_m": w["lane_w_m"], "crossing_m": round(max(mids) - min(mids), 2),
+                     "closure_rate": [_ratio(k) for k in w["rate_closure"]],
+                     "wall_rate": [_ratio(k) for k in w["rate_wall"]],
+                     "hold_m": round(abs(st[w["back_leg"][0]] - st[w["out_leg"][1]]), 1)})
+        # the pocket behind the race-side wall (toward the race-side curb strip): a probe every PROBE_STEP_M of
+        # TRAVEL — |st - st at the last probe|, since vs runs backward along the stations on a reverse layout (the
+        # gates lens, 0055 round 2: race_acw got 1 pocket probe where race_cw got 12)
+        last_s = None
+        for v, gv in zip(vs[1:-1], g[1:-1]):
+            face = widths[v] / 2.0 - inset
+            lo_g, hi_g = gv + bhalf, face
+            if hi_g - lo_g >= pocket_min and (last_s is None or abs(st[v] - last_s) >= PROBE_STEP_M):
+                probes.append({"vertex": v, "y": round(e * 0.5 * (lo_g + hi_g), 3), "why": "chicane_pocket"})
+                last_s = st[v]
+    c["race_wall_y_by_vertex"] = yw
+    c["chicane_walls"] = recs
+    c["chicanes"] = summ
 
 
 def _ratio(k):
@@ -1027,14 +1281,153 @@ def _seg_x(a, b, c, d):
     return u if (0.0 <= t <= 1.0 and 0.0 <= u <= 1.0) else None
 
 
-def _mouth_probes(closed, widths, m):
+def _mouth_probes(closed, widths, m, pts=None, nrm=None):
     out = []
     for mo in closed:
         h = int(mo["host_vertex"]) % m
+        if mo.get("probe_xz") is not None and pts is not None and nrm is not None:
+            # a lap's abandoned branch: the probe stands ON the branch (xz), y is its lateral at the junction
+            # vertex for the report; tools/no_route.py reads the xz
+            px, pz = mo["probe_xz"]
+            y = (px - pts[h][0]) * nrm[h][0] + (pz - pts[h][2]) * nrm[h][1]
+            out.append({"vertex": h, "y": round(y, 3), "xz": [round(px, 3), round(pz, 3)],
+                        "why": f"{mo.get('kind', 'branch')} {mo['connector']}"})
+            continue
         sgn = 1.0 if mo["side"] == "L" else -1.0
         out.append({"vertex": h, "y": round(sgn * (widths[h] / 2.0 + MOUTH_PROBE_M), 3),
                     "why": f"side_street {mo['connector']}"})
     return out
+
+
+def _chicane_vertices(c, m):
+    """every vertex of a corridor's declared chicanes (travel_from .. travel_to of each race-side wall)"""
+    out = set()
+    for w in c.get("chicane_walls") or []:
+        out.update(_RC.walk(int(w["i"]) % m, int(w["j"]) % m, m))
+    return out
+
+
+def _validate_chicanes(out: dict, ctx: dict) -> list[str]:
+    """13. the declared chicanes (ledger 0055), per race layout that drives one:
+      * declared == driven: every race.chicanes entry naming the layout has its wall, and nothing else does;
+      * zone 'chicane' on every vertex of the span, a lane on every one (y_lo < y_hi), never wider than the road
+        between the curb-strip faces, never narrower than min(the clear floor, the corridor's own width at the
+        chicane's two ends) nor the hard minimum;
+      * the race-side wall: declared at every span vertex, both ends ON the race-side curb strip's centre (PIN_TOL_M),
+        no step steeper than race.corridor.steepest_pin_rate, plan radius >= RADIUS_MIN_M, no backward step; the lane's
+        race-side face IS the wall's face (half a barrier off its centre) or the race-side strip face;
+      * the closure: declared on the out leg up to its far-strip pin and on the back leg from it, NONE between the
+        legs (the lane runs to the far curb strip there), its two chicane pins ON the far strip centre (PIN_TOL_M);
+        the lane's far-side face IS the closure's face where one stands, else the far strip face;
+      * the island: the race island is zero over the whole span (the street-only island never stands in a race lane);
+      * the crossing: the lane's centre moves at least MIN_CROSSING_M across the road (what Kevin asked to keep)."""
+    fails = []
+    m, n = ctx["m"], ctx["n"]
+    P = ctx["params"]
+    widths, pts, half_auth = ctx["widths"], ctx["pts"], ctx["half_auth"]
+    inset, bhalf, strip_c = ctx["edge_inset"], ctx["bhalf"], ctx["strip_c"]
+    k_hard = 1.0 / float(P["steepest_pin_rate"])
+    floor_ = float(P["clear_floor_m"])
+    chicanes, _p = _CH.declared(ctx["cfg"])
+    for lid, c in (out.get("corridors") or {}).items():
+        mine = {ch["name"]: ch for ch in chicanes if lid in ch["layouts"]}
+        walls = {w["name"]: w for w in c.get("chicane_walls") or []}
+        if sorted(mine) != sorted(walls):
+            fails.append(f"chicanes {lid}: declared {sorted(mine)} but the corridor carries walls for {sorted(walls)}")
+        yw = c.get("race_wall_y_by_vertex") or [None] * n
+        y = c["closure_y_by_vertex"]
+        lane = c["lane_by_vertex"]
+        zn = c["zone_by_vertex"]
+        rs = 1.0 if c["race_side"] == "L" else -1.0           # forward-frame sign of the race side
+        for name, w in walls.items():
+            ch = mine.get(name)
+            if ch is None:
+                continue
+            vs = _RC.walk(int(w["i"]) % m, int(w["j"]) % m, m)
+            if c["travel"] != "increasing":
+                vs = list(reversed(vs))
+            if (vs[0], vs[-1]) != (w["travel_from"], w["travel_to"]):
+                fails.append(f"chicanes {lid} {name}: travel_from / travel_to {w['travel_from']} / {w['travel_to']} != "
+                             f"the walk's ends {vs[0]} / {vs[-1]}")
+                continue
+            a, b = _CH.span_of(ch)
+            if sorted([vs[0], vs[-1]]) != [a, b]:
+                fails.append(f"chicanes {lid} {name}: the wall runs v{w['i']}-v{w['j']}, the declaration v{a}-v{b}")
+            out_leg, back_leg = _CH.legs_in_travel(ch, "reverse" if c["travel"] != "increasing" else "forward")
+            q1, q2 = vs.index(out_leg[1]), vs.index(back_leg[0])
+            # the lane may not be narrower than the corridor gives it where the chicane starts and ends (an island
+            # convergence there is already below the floor, listed on its run) — nor below the hard minimum
+            w_ends = min(lane[vs[0]][1] - lane[vs[0]][0], lane[vs[-1]][1] - lane[vs[-1]][0])
+            hard_min = float(P["clear_hard_min_m"])
+            if any(yw[k] is None for k in vs):
+                fails.append(f"chicanes {lid} {name}: the race-side wall is not declared on every span vertex — a door")
+                continue
+            for k in (vs[0], vs[-1]):
+                race_c = rs * (widths[k] / 2.0 - strip_c)
+                if abs(yw[k] - race_c) > PIN_TOL_M:
+                    fails.append(f"chicanes {lid} {name}: the wall's end at v{k} is {abs(yw[k] - race_c):.3f} m off the "
+                                 f"race-side strip centre (> {PIN_TOL_M}) — an unburied end is a door")
+            for k in (out_leg[1], back_leg[0]):
+                far_c = -rs * (widths[k] / 2.0 - strip_c)
+                if y[k] is None or abs(y[k] - far_c) > PIN_TOL_M:
+                    fails.append(f"chicanes {lid} {name}: the closure's chicane pin at v{k} is "
+                                 f"{'missing' if y[k] is None else f'{abs(y[k] - far_c):.3f} m off'} the far strip centre")
+            for q, k in enumerate(vs):
+                if zn[k] != "chicane":
+                    fails.append(f"chicanes {lid} {name}: v{k} zone {zn[k]!r}, expected 'chicane'")
+                    break
+                if half_auth[k] > 0 and _CH.ISLAND_NOSE_VERTS < q < len(vs) - 1 - _CH.ISLAND_NOSE_VERTS:
+                    # (the modelled nose past each cap is gate 5's, on the closure run that holds it)
+                    fails.append(f"chicanes {lid} {name}: the race island stands at v{k} ({2 * half_auth[k]:.2f} m) — a "
+                                 f"chicane span's island must be street-only")
+                    break
+                held = q1 < q < q2
+                if held and y[k] is not None:
+                    fails.append(f"chicanes {lid} {name}: a closure stands at v{k} between the legs")
+                    break
+                if not held and y[k] is None:
+                    fails.append(f"chicanes {lid} {name}: no closure at v{k} on a leg — a door")
+                    break
+                lo_, hi_ = lane[k]
+                face = widths[k] / 2.0 - inset
+                if not (-face - 1e-6 <= lo_ < hi_ <= face + 1e-6):
+                    fails.append(f"chicanes {lid} {name}: v{k} lane [{lo_:.2f}, {hi_:.2f}] leaves the strip faces +-{face:.2f}")
+                    break
+                if hi_ - lo_ < min(floor_, w_ends) - 1e-3 or hi_ - lo_ < hard_min:
+                    fails.append(f"chicanes {lid} {name}: v{k} lane {hi_ - lo_:.2f} m < min(the clear floor {floor_} m, "
+                                 f"the corridor's own width at the chicane's ends {w_ends:.2f} m)")
+                    break
+                race_face = hi_ if rs > 0 else lo_
+                far_face = lo_ if rs > 0 else hi_
+                want_r = yw[k] - rs * bhalf
+                if q not in (0, len(vs) - 1) and abs(race_face - want_r) > 1e-3:
+                    fails.append(f"chicanes {lid} {name}: v{k} the lane's race-side face {race_face:+.3f} is not the "
+                                 f"wall's face {want_r:+.3f}")
+                    break
+                want_f = (y[k] + rs * bhalf) if (y[k] is not None and k not in (out_leg[1], back_leg[0])) else -rs * face
+                if abs(far_face - want_f) > 1e-3:
+                    fails.append(f"chicanes {lid} {name}: v{k} the lane's far face {far_face:+.3f} is not "
+                                 f"{'the closure face' if y[k] is not None else 'the far strip face'} {want_f:+.3f}")
+                    break
+            rr = [0.0]
+            for q in range(1, len(vs)):
+                rr.append(rr[-1] + math.hypot(pts[vs[q]][0] - pts[vs[q - 1]][0], pts[vs[q]][2] - pts[vs[q - 1]][2]))
+            for q in range(1, len(vs)):
+                ds = rr[q] - rr[q - 1]
+                if ds > 1e-9 and abs(yw[vs[q]] - yw[vs[q - 1]]) / ds > k_hard * (1 + RATE_TOL):
+                    fails.append(f"chicanes {lid} {name}: the wall moves 1:{ds / abs(yw[vs[q]] - yw[vs[q - 1]]):.2f} at "
+                                 f"v{vs[q - 1]}->v{vs[q]} — steeper than 1:{P['steepest_pin_rate']}")
+                    break
+            rad, rad_v, back = _RC.plan_radius(pts, m, vs, yw)
+            if back:
+                fails.append(f"chicanes {lid} {name}: the wall has {back} backward steps (a fold)")
+            if rad < RADIUS_MIN_M:
+                fails.append(f"chicanes {lid} {name}: the wall's plan radius {rad:.1f} m at v{rad_v} < {RADIUS_MIN_M} m")
+            mids = [0.5 * (lane[k][0] + lane[k][1]) for k in vs]
+            if max(mids) - min(mids) < MIN_CROSSING_M:
+                fails.append(f"chicanes {lid} {name}: the lane crosses only {max(mids) - min(mids):.1f} m "
+                             f"(< {MIN_CROSSING_M} m) — not a chicane across the road")
+    return fails
 
 
 # ---------------------------------------------------------------------------------------------
@@ -1103,7 +1496,10 @@ def validate(out: dict, ctx: dict) -> list[str]:
         if len(y) != n or len(zn) != n or len(lane) != n:
             fails.append(f"zones {lid}: closure_y / zone / lane rows {len(y)} / {len(zn)} / {len(lane)} != {n}")
             continue
+        chic = _chicane_vertices(c, m)
         for k in range(m):
+            if k in chic:
+                continue                                 # a declared chicane: gate 13
             fr = free(k)
             if k in pin_set:
                 if zn[k] != "pin" or y[k] is None:
@@ -1295,6 +1691,9 @@ def validate(out: dict, ctx: dict) -> list[str]:
                              f"face (< {GRID_CLEAR_MIN_M})")
                 break
 
+    # 13. chicanes (ledger 0055)
+    fails += _validate_chicanes(out, ctx)
+
     # 9. kerbs
     kerbs = out.get("kerbs") or []
     dropped = out.get("kerbs_dropped") or []
@@ -1390,7 +1789,8 @@ def _summary(out, corridors, kerbs, edge_corners, corners, island_w, planned):
 
 def _report(proj, out, fails):
     s = out["summary"]
-    print(f"[bands] {proj.name}: v2 corridors for {sorted(out['corridors'])}; strips on {s['edge_verts']}/{out['n']} "
+    print(f"[bands] {proj.name}{(' lap ' + out['lap']['id']) if out.get('lap') else ''}: v2 corridors for "
+          f"{sorted(out['corridors'])}; strips on {s['edge_verts']}/{out['n']} "
           f"verts (closed loops, {s['edge_corners']} trimmed corners); {s['kerbs']} kerbs at {s['corners']} corners; "
           f"{len(out['closed_mouths'])} sealed mouths; clear width {out['params']['corridor']['clear_width_m']} m "
           f"(measured {out['params']['corridor']['clear_width_measured_m']})")
@@ -1408,6 +1808,11 @@ def _report(proj, out, fails):
                   f"pins 1:{mr['pin_in']} / 1:{mr['pin_out']}  toward 1:{mr['toward']} away 1:{mr['away']}  "
                   f"clear {r['clear_min_m']:.2f} / {r['clear_median_m']:.2f}  below floor "
                   f"{[(a, b, w) for a, b, w in r['below_floor']][:4]}")
+        for ch, w in zip(c.get("chicanes") or [], c.get("chicane_walls") or []):
+            print(f"[bands]     chicane {ch['name']}: out leg v{ch['out_leg'][0]}->v{ch['out_leg'][1]}, back leg "
+                  f"v{ch['back_leg'][0]}->v{ch['back_leg'][1]} (travel order), hold {ch['hold_m']} m; the lane crosses "
+                  f"{ch['crossing_m']} m at width {ch['lane_w_m']} m; closure 1:{ch['closure_rate']} / race-side wall "
+                  f"1:{ch['wall_rate']}, its radius {w['min_radius_m']} m (v{w['min_radius_vertex']})")
         pl = c["no_route"].get("planned")
         if isinstance(pl, dict):
             print(f"[bands]     planned no_route: {'FAIL' if pl['fail'] else 'PASS'} — leak {pl['leak_m2']} m2, "
@@ -1452,8 +1857,14 @@ def main(argv=None):
     if "--no-planned-route" in argv:
         argv.remove("--no-planned-route")
         planned = False
-    out = build(argv[0], out_name, config_path, planned_no_route=planned)
-    return 1 if out["fails"] else 0
+    # one declaration per lap group (scripts/geometry/race_lap.groups): the mainline's race layouts ->
+    # data/barrier_bands.json (exactly as before when no layout names a lap), each race.laps.<id> -> its own file
+    cfg = json.loads(Path(config_path or (Path(argv[0]) / "track.config.json")).read_text(encoding="utf-8"))
+    bad = 0
+    for lap in _LAP.groups(cfg):
+        out = build(argv[0], out_name if lap is None else None, config_path, planned_no_route=planned, lap=lap)
+        bad += 1 if out["fails"] else 0
+    return 1 if bad else 0
 
 
 if __name__ == "__main__":

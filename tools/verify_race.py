@@ -66,7 +66,7 @@ kerbs) and on EACH race layout's closure (counts.by_layout).
 Reported, never gated: the worst deck-vs-data height, the minimum spawn clearance, the author's kerb clips.
 
     python tools/verify_race.py <project-dir> [--allow-standin] [--authored <file>] [--bands <file>]
-                                [--config <track.config.json>] [--pre-author | --scenery-only]
+                                [--config <track.config.json>] [--pre-author | --scenery-only] [--lap <id>]
                                 [--trees <trees.txt>] [--out <file>]
 
 --pre-author runs F (disk) and G only — no data/race_authored.json needed; it writes
@@ -90,6 +90,7 @@ AIROSO = Path(__file__).resolve().parents[1]
 RACE_PREFIXES = ("1WALL_RACE", "1KERB_RACE")
 EDGE_TAG, CLOSE_TAG, KBAR_TAG, KERB_TAG = "1WALL_RACE_EDGE_", "1WALL_RACE_CLOSE_", "1WALL_RACE_KBAR_", "1KERB_RACE_"
 COMMON_COLLECTION = "RACE"
+LAP_FIELD = "lap"       # ledger 0054: a lap's common set is 1WALL_race_edge_lap<lap>_* / 1KERB_race_lap<lap>_* in RACE_LAP_<LAP>
 MAX_RINGS = 900
 MAX_POSITIONS = 60_000
 RENDER_VERT_CAP = 65_535
@@ -233,6 +234,23 @@ def race_owner(name):
     return str(name)[len(CLOSE_TAG):].split("_", 1)[0].lower() or None
 
 
+def race_lap(name):
+    """the lap token of a lap's common furniture name (`1WALL_race_edge_lap<tok>_...` / `1KERB_race_lap<tok>_...`),
+    else None — race_furniture.race_lap, restated so this gate stays independent of the module it judges"""
+    u = str(name).upper()
+    for tag in (EDGE_TAG, KERB_TAG):
+        if u.startswith(tag):
+            field = str(name)[len(tag):].split("_", 1)[0]
+            tok = field[len(LAP_FIELD):].lower() if field.lower().startswith(LAP_FIELD) else ""
+            return tok if re.match(r"^[a-z0-9]+$", tok) else None
+    return None
+
+
+def common_collection(lap=None):
+    """RACE (the mainline's common set) or RACE_LAP_<LAP>"""
+    return COMMON_COLLECTION if not lap else f"{COMMON_COLLECTION}_LAP_{str(lap).upper()}"
+
+
 def race_kind(name):
     u = str(name).upper()
     for tag, kind in ((CLOSE_TAG, "close"), (EDGE_TAG, "edge"), (KERB_TAG, "kerb"), (KBAR_TAG, "kbar")):
@@ -280,16 +298,20 @@ def _closure_side(c):
 def verify(authored: dict | None, bands: dict, pts: list, island_w: list, *, allow_standin: bool = False,
            widths: list | None = None, spawns: dict | None = None, lamps: list | None = None,
            pre_author: bool = False, lamp_arm_m: float | None = None, mast_r_m: float | None = None,
-           scenery: list | None = None, scenery_source: str | None = None) -> dict:
+           scenery: list | None = None, scenery_source: str | None = None, lap: str | None = None,
+           lamp_model: dict | None = None) -> dict:
     """A-E and J-N (+ the author's own F record) on the authored file unless ``pre_author``; H and I too; F
     re-measured from ``spawns`` ({race layout id: dummies dict, or None when its file is missing}), G from
     ``lamps`` (lights.local.json heads) and G-scenery from ``scenery`` (TreeFX trunks + sign posts, scenery_items)
-    whenever they and ``widths`` are given (main always gives them)."""
+    whenever they and ``widths`` are given (main always gives them). ``lap`` (ledger 0054): the group is a lap's —
+    ``pts`` / ``island_w`` / ``widths`` its line (data/lap.<lap>.json), ``bands`` its declaration, and its common
+    set must carry the lap token in its names and stand in RACE_LAP_<LAP>; None = the mainline's group, whose
+    common set must carry none."""
     fails: list[str] = []
     warns: list[str] = []
     counts: dict = {"by_layout": {}}
     if not pre_author:
-        _verify_authored(authored or {}, bands, pts, island_w, allow_standin, fails, warns, counts, widths)
+        _verify_authored(authored or {}, bands, pts, island_w, allow_standin, fails, warns, counts, widths, lap=lap)
         _verify_inside_out(authored or {}, bands, fails, warns, counts)
         if widths is not None:
             _verify_density(authored or {}, bands, pts, widths, fails, warns, counts)
@@ -300,7 +322,9 @@ def verify(authored: dict | None, bands: dict, pts: list, island_w: list, *, all
     if spawns is not None and widths is not None:
         _verify_spawns(spawns, bands, pts, widths, grid, fails, warns, counts)
     if lamps is not None and widths is not None:
-        _verify_lamps(lamps, bands, pts, widths, grid, fails, warns, counts, lamp_arm_m, mast_r_m)
+        lm = lamp_model or {}
+        _verify_lamps(lamps, bands, pts, widths, grid, fails, warns, counts, lamp_arm_m,
+                      mast_r_m if mast_r_m is not None else lm.get("mast_r_m"), lm.get("post_h_m"), lm.get("model"))
     if scenery is not None and widths is not None:
         _verify_scenery(scenery, bands, pts, widths, grid, fails, warns, counts, scenery_source)
     return {"ok": not fails, "fails": fails, "warnings": warns, "counts": counts}
@@ -502,6 +526,9 @@ def lamp_margins(bases: list, pts: list, widths: list, bands: dict, mast_r: floa
             yy = _closure_y_at(c.get("closure_y_by_vertex") or [], pts, m, k, b["x"], b["z"])
             if yy is not None:
                 closure.append((f"closure_{lid}", abs(lat - yy) - bh - mast_r))
+            yw = _closure_y_at(c.get("race_wall_y_by_vertex") or [], pts, m, k, b["x"], b["z"])   # ledger 0055
+            if yw is not None:
+                closure.append((f"chicane_{lid}", abs(lat - yw) - bh - mast_r))
         cand += closure
         if not cand:
             continue
@@ -513,9 +540,25 @@ def lamp_margins(bases: list, pts: list, widths: list, bands: dict, mast_r: floa
     return rows
 
 
-def _verify_lamps(heads, bands, pts, widths, grid, fails, warns, counts, arm_m=None, mast_r=None):
+def lamp_model_info(cfg: dict | None) -> dict:
+    """the lamp model track.config.json scenery.streetlights.model selects (tools/author_lamps_blend.py): its name,
+    pole height and mast footprint radius. The 2026-10 lamp (the default) is lamp_post.obj scaled to POST_H; the
+    LED model (ledger 0056) reads its own spec, assets/models/streetlight_led.json"""
+    sl = (((cfg or {}).get("scenery") or {}).get("streetlights") or {})
+    model = str(sl.get("model", "street_lamp_2026_10"))
+    if model == "led_cobra":
+        try:
+            spec = json.loads((AIROSO / "assets" / "models" / "streetlight_led.json").read_text(encoding="utf-8"))
+            return {"model": model, "post_h_m": float(spec["pole_height_m"]), "mast_r_m": float(spec["mast_radius_m"])}
+        except (OSError, KeyError, ValueError):
+            return {"model": model, "post_h_m": None, "mast_r_m": MAST_R_FALLBACK_M}
+    return {"model": model, "post_h_m": None, "mast_r_m": None}
+
+
+def _verify_lamps(heads, bands, pts, widths, grid, fails, warns, counts, arm_m=None, mast_r=None, post_h=None,
+                  model=None):
     arm = arm_m if arm_m is not None else _author_lamps_constant("ARM_M", LAMP_ARM_FALLBACK_M)
-    post_h = _author_lamps_constant("POST_H", LAMP_POST_H_FALLBACK_M)
+    post_h = post_h if post_h is not None else _author_lamps_constant("POST_H", LAMP_POST_H_FALLBACK_M)
     r_m = mast_r if mast_r is not None else mast_radius_m(post_h)
     bases = lamp_bases(heads, pts, arm)
     rows = lamp_margins(bases, pts, widths, bands, r_m, grid)
@@ -532,6 +575,7 @@ def _verify_lamps(heads, bands, pts, widths, grid, fails, warns, counts, arm_m=N
                      f"author_lamps_blend aims those at vertex 0 (measured as authored)")
     closure_rows = [r for r in rows if r.get("closure_margin_m") is not None]
     counts.update({"lamps": len(bases), "lamps_checked": len(rows), "lamp_arm_m": arm, "lamp_post_h_m": post_h,
+                   "lamp_model": model or "street_lamp_2026_10",
                    "mast_r_m": round(r_m, 3), "lamp_min_margin_m": worst["margin_m"] if worst else None,
                    "lamp_min": worst, "lamps_inside": len(bad),
                    "lamp_min_vs_closure": min(closure_rows, key=lambda r: r["closure_margin_m"]) if closure_rows else None})
@@ -628,6 +672,9 @@ def scenery_margins(items: list, bands: dict, pts: list, widths: list, grid=None
             yy = _closure_y_at(c.get("closure_y_by_vertex") or [], pts, m, k, x, z)
             if yy is not None:
                 cand.append(("closure", abs(lat - yy) - bh - r))
+            yw = _closure_y_at(c.get("race_wall_y_by_vertex") or [], pts, m, k, x, z)   # ledger 0055
+            if yw is not None:
+                cand.append(("chicane wall", abs(lat - yw) - bh - r))
             if not cand:
                 continue
             what, mg = min(cand, key=lambda t: t[1])
@@ -672,8 +719,10 @@ def declared_curve(bands: dict, pts: list, widths: list | None, side: str, per_v
     centreline only."""
     m = _unique_count(pts)
     corners = []
-    if side.startswith("close:"):
-        y = (_corridors(bands).get(side[len("close:"):]) or {}).get("closure_y_by_vertex") or []
+    if side.startswith("close:") or side.startswith("chicane:"):
+        # 'chicane:<layout id>' (ledger 0055): that layout's declared chicanes' race-side walls, race_wall_y_by_vertex
+        row = "closure_y_by_vertex" if side.startswith("close:") else "race_wall_y_by_vertex"
+        y = (_corridors(bands).get(side.split(":", 1)[1]) or {}).get(row) or []
         flags = [1 if q is not None else 0 for q in y]
         lat_of = lambda k: float(y[k])  # noqa: E731
     else:
@@ -822,9 +871,10 @@ def span_chords(centres: list, samples: dict, grid: _SampleGrid, n_samples: int,
 
 
 def _curve_side(o):
-    """the declared curve an object is judged against: its curb side, or 'close:<layout>' for a closure"""
+    """the declared curve an object is judged against: its curb side, 'close:<layout>' for a closure, or
+    'chicane:<layout>' for a declared chicane's race-side wall (ledger 0055)"""
     if o.get("kind") == "close":
-        return f"close:{o.get('layout')}"
+        return f"{'chicane' if o.get('wall') == 'chicane' else 'close'}:{o.get('layout')}"
     return str(o.get("side"))
 
 
@@ -945,7 +995,69 @@ def _end_kinds(o):
     return out
 
 
-def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns, counts, widths=None):
+def _verify_chicane_walls(lid, c, objs, rc, bands, pts, widths, m, fails, row):
+    """C' for a declared chicane's RACE-SIDE wall (ledger 0055; corridors.<id>.chicane_walls on race_wall_y_by_vertex):
+    one object chain per declared wall, consecutive parts joined, every ring within CLOSE_TOL_M of the declared line,
+    both end rings AT their pins — on the declared RACE-SIDE curb-strip line (PIN_TOL_M), at the declared vertex"""
+    walls = c.get("chicane_walls") or []
+    by_run: dict[tuple, list] = {}
+    for o in objs:
+        by_run.setdefault((int(o["run"][0]) % m, int(o["run"][1]) % m), []).append(o)
+    declared = [(int(w["i"]) % m, int(w["j"]) % m) for w in walls]
+    for run in declared:
+        if run not in by_run:
+            fails.append(f"C': {lid}: declared chicane wall v{run[0]}-v{run[1]} has no object")
+    for run in by_run:
+        if run not in declared:
+            fails.append(f"C': {lid}: chicane wall objects for v{run[0]}-v{run[1]}, which is not declared")
+    row.update({"chicane_walls": len(declared), "chicane_objects": len(objs)})
+    if not walls:
+        return
+    n_samples = m * DENSE_PER_VERTEX
+    curve = declared_curve(bands, pts, widths, f"chicane:{lid}")
+    cgrid = _SampleGrid(curve)
+    race_side = "L" if _closure_side(c) == "R" else "R"
+    rs_curve = declared_curve(bands, pts, widths, race_side) if widths is not None else None
+    rgrid = _SampleGrid(rs_curve) if rs_curve is not None else None
+    off, worst = 0, 0.0
+    pin_rows = []
+    for run in declared:
+        parts = sorted(by_run.get(run, []), key=lambda o: int(o.get("part", 0)))
+        for prev, nxt in zip(parts, parts[1:]):
+            a, b = rc.get(prev["name"], []), rc.get(nxt["name"], [])
+            if a and b and _dist_xz(a[-1], b[0]) > JOIN_TOL_M:
+                fails.append(f"C': {prev['name']} -> {nxt['name']}: chicane wall parts {_dist_xz(a[-1], b[0]):.2f} m apart")
+        for o in parts:
+            if str(o.get("side")) != race_side:
+                fails.append(f"C': {o['name']}: a chicane wall on side {o.get('side')}, not {lid}'s race side {race_side}")
+            for q in rc.get(o["name"], []):
+                d, _si = curve_distance((q[0], q[2]), curve, cgrid, n_samples)
+                worst = max(worst, d if d < float("inf") else 99.0)
+                if d > CLOSE_TOL_M + ROUND_M:
+                    off += 1
+        if not parts:
+            continue
+        for idx, (o, end_c, v) in enumerate(((parts[0], rc.get(parts[0]["name"], [[0, 0, 0]])[0], run[0]),
+                                             (parts[-1], rc.get(parts[-1]["name"], [[0, 0, 0]])[-1], run[1]))):
+            p2 = (end_c[0], end_c[2])
+            d_decl = curve_distance(p2, rs_curve, rgrid, n_samples)[0] if rs_curve is not None else None
+            _d, si = curve_distance(p2, curve, cgrid, n_samples)
+            kv = (si // DENSE_PER_VERTEX) if si is not None else None
+            pin_rows.append({"object": o["name"], "end": "start" if idx == 0 else "end", "vertex": v, "ring_vertex": kv,
+                             "race_line_m": None if d_decl is None else round(d_decl, 3)})
+            if d_decl is not None and d_decl > PIN_TOL_M + ROUND_M:
+                fails.append(f"C': {o['name']}: its {'first' if idx == 0 else 'last'} ring is {d_decl:.2f} m off the "
+                             f"declared race-side curb-strip line ({race_side}) at pin v{v} (> {PIN_TOL_M} m) — not pinned")
+            if kv is None or min((kv - v) % m, (v - kv) % m) > VERTEX_TOL:
+                fails.append(f"C': {o['name']}: its {'first' if idx == 0 else 'last'} ring stands at v{kv}, not at the "
+                             f"declared pin v{v}")
+    if off:
+        fails.append(f"C': {lid}: {off} chicane-wall rings stand more than {CLOSE_TOL_M} m off the declared line "
+                     f"(worst {worst:.2f} m)")
+    row.update({"chicane_off_curve_max_m": round(worst, 3), "chicane_pins": pin_rows})
+
+
+def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns, counts, widths=None, lap=None):
     m = _unique_count(pts)
     grid = VertexGrid(pts[:m])
     objects = authored.get("objects", [])
@@ -1047,8 +1159,14 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
         else:
             if o.get("owner") not in (None, "", "common"):
                 fails.append(f"K: {n}: common furniture records an owner {o.get('owner')!r}")
-            if "collection" in o and o["collection"] != COMMON_COLLECTION:
-                fails.append(f"K: {n}: common furniture in collection {o['collection']!r}, not {COMMON_COLLECTION}")
+            want_col = common_collection(lap)
+            if "collection" in o and o["collection"] != want_col:
+                fails.append(f"K: {n}: common furniture in collection {o['collection']!r}, not {want_col}")
+            if race_lap(n) != (lap or None):
+                # ledger 0054: the export split routes the common set on this field — a mainline strip named for a
+                # lap (or a lap's without its token) would ship in the other common kn5
+                fails.append(f"K: {n}: its name carries lap {race_lap(n)!r}, this group is "
+                             f"{'lap ' + repr(lap) if lap else 'the mainline'}")
 
     # C'. closures, per race layout
     n_samples = m * DENSE_PER_VERTEX
@@ -1056,8 +1174,10 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
     for lid, c in sorted(cors.items()):
         tok = tokens[lid]
         row = counts["by_layout"].setdefault(lid, {"token": tok})
-        objs = [o for o in objects if o.get("kind") == "close" and race_owner(o["name"]) == tok]
-        close_polys[lid] = [[(q[0], q[2]) for q in rc.get(o["name"], [])] for o in objs]
+        objs = [o for o in objects if o.get("kind") == "close" and race_owner(o["name"]) == tok and o.get("wall") != "chicane"]
+        chic_objs = [o for o in objects if o.get("kind") == "close" and race_owner(o["name"]) == tok and o.get("wall") == "chicane"]
+        close_polys[lid] = [[(q[0], q[2]) for q in rc.get(o["name"], [])] for o in objs + chic_objs]
+        _verify_chicane_walls(lid, c, chic_objs, rc, bands, pts, widths, m, fails, row)
         y = c.get("closure_y_by_vertex") or []
         zone = c.get("zone_by_vertex") or []
         bad_zone = [k for k in range(min(m, len(y), len(zone))) if y[k] is not None and str(zone[k]) in ("box", "whole")]
@@ -1415,14 +1535,17 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
         warns.append(f"built deck vs data height, worst {tot.get('deck_vs_data_max_m')} m")
 
 
-def race_layout_spawns(data: Path, cfg: dict | None) -> dict:
+def race_layout_spawns(data: Path, cfg: dict | None, exclude=()) -> dict:
     """{race layout id: its data/dummies_<id>.json dict, or None when the file is missing}. A race layout
     is one the config marks race_furniture: true OR whose dummies file says `_kind: race` (so a workshop
-    whose own track.config.json predates the layouts is still judged on the dummies it holds)."""
+    whose own track.config.json predates the layouts is still judged on the dummies it holds). ``exclude``: the
+    race layouts of OTHER lap groups (ledger 0054) — their spawns are judged against their own lap's lane."""
     ids = {str(lo["id"]) for lo in ((cfg or {}).get("layouts") or []) if isinstance(lo, dict) and lo.get("race_furniture")}
     found = {}
     for f in sorted(data.glob("dummies_*.json")):
         lid = f.stem[len("dummies_"):]
+        if lid in exclude:
+            continue
         try:
             d = json.loads(f.read_text(encoding="utf-8"))
         except (OSError, ValueError):
@@ -1436,9 +1559,10 @@ def main(argv=None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     if not argv:
         raise SystemExit("usage: python tools/verify_race.py <project-dir> [--allow-standin] [--authored <file>] [--bands <file>] "
-                         "[--config <track.config.json>] [--pre-author | --scenery-only] [--trees <trees.txt>] [--out <file>]")
+                         "[--config <track.config.json>] [--pre-author | --scenery-only] [--trees <trees.txt>] [--out <file>] [--lap <id>]")
     allow_standin = pre_author = scenery_only = False
     authored_p = bands_p = config_p = out_p = trees_p = None
+    lap = None
     rest = []
     i = 0
     while i < len(argv):
@@ -1459,18 +1583,25 @@ def main(argv=None) -> int:
             config_p = Path(argv[i + 1]); i += 2
         elif a == "--out":
             out_p = Path(argv[i + 1]); i += 2
+        elif a == "--lap":
+            lap = argv[i + 1]; i += 2
         else:
             rest.append(a); i += 1
     proj = Path(rest[0]).resolve()
     data = proj / "data"
-    authored_p = authored_p or data / "race_authored.json"
-    bands_p = bands_p or data / "barrier_bands.json"
+    # ledger 0054: --lap <id> judges one LAP group — its line (data/lap.<id>.json), its declaration
+    # (barrier_bands.<id>.json), its authored set (race_authored.<id>.json) and its layouts; every report name
+    # carries the lap. Without --lap: the mainline group, exactly as before.
+    sfx = f".{lap}" if lap else ""
+    authored_p = authored_p or data / f"race_authored{sfx}.json"
+    bands_p = bands_p or data / f"barrier_bands{sfx}.json"
     config_p = config_p or proj / "track.config.json"
     if scenery_only:
         pre_author = True                                             # no authored file needed; F and lamp G are skipped below
-    out_p = out_p or data / ("race_verify.scenery.json" if scenery_only else
-                             "race_verify.pre.json" if pre_author else "race_verify.json")   # a partial run never overwrites the full report
-    need = [bands_p, data / "centerline.local.json", data / "median_bands.json"] + ([trees_p] if trees_p else [])
+    out_p = out_p or data / (f"race_verify.scenery{sfx}.json" if scenery_only else
+                             f"race_verify.pre{sfx}.json" if pre_author else f"race_verify{sfx}.json")   # a partial run never overwrites the full report
+    line_files = [data / f"lap.{lap}.json"] if lap else [data / "centerline.local.json", data / "median_bands.json"]
+    need = [bands_p] + line_files + ([trees_p] if trees_p else [])
     if not pre_author:
         need.insert(0, authored_p)
     for p in need:
@@ -1478,14 +1609,25 @@ def main(argv=None) -> int:
             raise SystemExit(f"[verify-race] missing {p}")
     authored = None if pre_author else json.loads(authored_p.read_text(encoding="utf-8"))
     bands = json.loads(bands_p.read_text(encoding="utf-8"))
-    cl = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
-    pts = [tuple(p) for p in cl["points_xyz_m"]]
-    widths = [float(w) for w in cl["widths_m"]]
-    island_w = json.loads((data / "median_bands.json").read_text(encoding="utf-8"))["island_w_by_vertex"]
+    if lap:
+        cl = json.loads((data / f"lap.{lap}.json").read_text(encoding="utf-8"))
+        pts = [tuple(p) for p in cl["points_xyz_m"]]
+        widths = [float(w) for w in cl["widths_m"]]
+        island_w = [float(w) for w in cl["island_w_by_vertex"]]
+    else:
+        cl = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
+        pts = [tuple(p) for p in cl["points_xyz_m"]]
+        widths = [float(w) for w in cl["widths_m"]]
+        island_w = json.loads((data / "median_bands.json").read_text(encoding="utf-8"))["island_w_by_vertex"]
     if len(island_w) != len(pts) or len(widths) != len(pts):
         raise SystemExit(f"[verify-race] median_bands {len(island_w)} / widths {len(widths)} vs centreline {len(pts)} vertices")
     cfg = json.loads(config_p.read_text(encoding="utf-8")) if config_p.exists() else None
-    spawns = None if scenery_only else race_layout_spawns(data, cfg)
+    # the race layouts of every OTHER group (another lap, or the mainline when judging a lap) are not this group's
+    others = {str(lo.get("id")) for lo in ((cfg or {}).get("layouts") or [])
+              if isinstance(lo, dict) and lo.get("race_furniture") and (lo.get("lap") or None) != (lap or None)}
+    view = dict(cfg, layouts=[lo for lo in (cfg.get("layouts") or []) if str(lo.get("id")) not in others]) \
+        if (cfg and others) else cfg
+    spawns = None if scenery_only else race_layout_spawns(data, view, exclude=others)
     lp = data / "lights.local.json"
     lamps = json.loads(lp.read_text(encoding="utf-8")).get("lampheads", []) if (lp.exists() and not scenery_only) else None
     # G scenery: the TreeFX trunks (the WRITTEN trees.txt with --trees, else make_treefx's own plan of it) and the
@@ -1504,7 +1646,8 @@ def main(argv=None) -> int:
         scenery += sign_items(json.loads(sgp.read_text(encoding="utf-8")))
         src_note.append("signs: data/signs.local.json")
     r = verify(authored, bands, pts, island_w, allow_standin=allow_standin, widths=widths, spawns=spawns,
-               lamps=lamps, pre_author=pre_author, scenery=scenery, scenery_source="; ".join(src_note))
+               lamps=lamps, pre_author=pre_author, scenery=scenery, scenery_source="; ".join(src_note), lap=lap,
+               lamp_model=lamp_model_info(cfg))
     if lamps is None and not scenery_only:
         r["warnings"].append("G: no data/lights.local.json — no lamps authored, nothing to check")
     c = r["counts"]

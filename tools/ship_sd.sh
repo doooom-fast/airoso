@@ -87,6 +87,13 @@
 # ENG=<dir>       the engine-july tree the prep / exporter / spawn builder run from (default: the real one). Point
 #                 it at a scratch COPY to rehearse an engine-july change before it is mirrored (the change itself is
 #                 recorded in tracks/san-diego-lake-murray/engine-july-snapshot/, see its PENDING-MIRROR.md5).
+# STUBS=<file>   PHASE 5 (ledger 0054, Kevin 2026-10-14: "a road we are not completing gets a barrier, not a curve"):
+#                 the side-road stub declaration (tools/stub_roads.py declare; default $SRC/stubs.json). OPT-IN: with
+#                 no declaration every stub step below is skipped and every output is what it was. With one, each
+#                 `stub` entry becomes a short connector (tools/stub_roads.py apply, after divide / before trim) that
+#                 the whole side-street chain builds and welds, tools/author_stubs_blend.py adds its curb returns,
+#                 corner pavement and K-rail barrier around gap_mouths, and tools/verify_stubs.py gates it on the
+#                 BUILT road (hard).
 # STREET_AI=draft|july  the street layout's AI line (Q8). Default `draft` = the V3 right-hand-lane draft
 #                 (scripts/ac/write_ai_line.py --layout street). `july` (explicit opt-in) copies the
 #                 installed July line — a July write_ai_line DRAFT, never an in-game recording, and
@@ -162,6 +169,16 @@ for f in $TRACK_TEXTURES; do
   [ -f "$SRC/$f" ] && { mkdir -p "$(dirname "$PROJ/$f")"; cp "$SRC/$f" "$PROJ/$f"; }
 done
 mkdir -p "$PROJ/source/trees" && cp "$SRC/source/trees/"*.bin "$PROJ/source/trees/" 2>/dev/null || true   # TreeFX models (gitignored, personal use)
+# PHASE 5 side-road stubs (ledger 0054), opt-in: a declaration is synced down with its 3DEP cache; without one, no stub
+# file of an earlier run survives in the project (the audit's barrier exemption reads stubs.built.json)
+STUBS="${STUBS:-$SRC/stubs.json}"
+if [ -f "$STUBS" ]; then
+  cp "$STUBS" "$PROJ/data/stubs.json"
+  [ -f "$SRC/data/stubs.3dep.json" ] && cp "$SRC/data/stubs.3dep.json" "$PROJ/data/stubs.3dep.json"
+  echo "phase-5 stubs: declared in $STUBS"
+else
+  rm -f "$PROJ/data/stubs.json" "$PROJ/data/stubs.plan.json" "$PROJ/data/stubs.built.json" "$PROJ/data/verify_stubs.json"
+fi
 # the declared layouts drive every per-layout step below (never a hand-typed list)
 LAYOUT_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts']))" "$PROJ/track.config.json")
 RACE_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts'] if l.get('race_furniture')))" "$PROJ/track.config.json")
@@ -197,6 +214,10 @@ if [ "$SKIP_BLEND" = 0 ]; then
   (cd "$AIROSO" && python tools/route_connectors.py "$PROJ")
   step "draft: divided side streets -> one trunk + island (Del Cerro)"
   (cd "$AIROSO" && python tools/divide_connectors.py "$PROJ")
+  if [ -f "$PROJ/data/stubs.json" ]; then
+    step "draft: phase-5 side-road stubs -> short connectors at their real width, heading and 3DEP grade (tools/stub_roads.py)"
+    (cd "$AIROSO" && python tools/stub_roads.py apply "$PROJ")
+  fi
   step "draft: trim connectors at the mainline edge"
   (cd "$AIROSO" && python tools/trim_connectors.py "$PROJ")
   step "draft: tiered terrain re-planned on the trimmed connectors (only new vertices fetched)"
@@ -230,8 +251,15 @@ if [ "$SKIP_BLEND" = 0 ]; then
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/ground_release_blend.py" -- "$PROJ" 2>&1 | grep "^\[release\]\|Error\|Traceback" )
   step "author: median island"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_blend.py" -- "$PROJ" 2>&1 | grep "^\[median" )
+  if [ -f "$PROJ/data/stubs.plan.json" ]; then
+    step "author: phase-5 stubs — curb returns, corner pavement, K-rail barrier (tools/author_stubs_blend.py, self-checked)"
+    (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_stubs_blend.py" -- "$PROJ" --stage author 2>&1 | grep "^\[stubs\]\|Error\|Traceback" )
+  fi
   step "author: gap the mainline sidewalk at every mouth"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/gap_mouths_blend.py" -- "$PROJ" 2>&1 | grep "^\[gap" )
+  if [ -f "$PROJ/data/stubs.plan.json" ]; then
+    (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_stubs_blend.py" -- "$PROJ" --stage tidy 2>&1 | grep "^\[stubs\]\|Error\|Traceback" )
+  fi
   step "author: bridge bodies under the overcrossings (soffit, fascia, abutments, pier bents; visual only, self-checked)"
   # ledger 0046 fix round 4: with the I-8 cut out of the ground the two decks stood over it as paper-thin ribbons with
   # sky under them (AC culls back faces). tools/author_bridges_blend.py builds BRIDGESTRUCT_<span> under every declared
@@ -396,7 +424,7 @@ step "ship: verify_kn5 (hard — spawn-free road, common race kn5 + one closure 
 # shared race gate OBJ / audit (road + the retired centre chain) are retired: each race layout is judged on
 # its own kn5 set (ledger 0049).
 for lid in $LAYOUT_IDS; do rm -f "$PROJ/data/drive_test.$lid.json"; done
-rm -f "$PROJ/data/verify_mouths.json" "$PROJ/data/rib_check.json" "$PROJ/data/house_seat_check.json"
+rm -f "$PROJ/data/verify_mouths.json" "$PROJ/data/rib_check.json" "$PROJ/data/house_seat_check.json" "$PROJ/data/verify_stubs.json"
 for lid in $RACE_IDS; do rm -f "$PROJ/data/audit.$lid.json" "$PROJ/data/no_route.$lid.json" "$PROJ/data/track.$lid.obj"; done
 rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"
 # the road gate OBJ is written BEFORE the track folder (ledger 0046): ext_config's GrassFX lists and make_treefx's
@@ -428,6 +456,11 @@ step "gate: verify_mouths on the built road (every side-street mouth: mouth line
 # tools/verify_mouths.py reads data/track.obj (the shipped road kn5) at every data/mouths.json record; exit 1 stops
 # the chain (data/verify_mouths.json) — a mouth floating over its host or notched below it never reaches a gate run
 (cd "$AIROSO" && python tools/verify_mouths.py "$PROJ")
+if [ -f "$PROJ/data/stubs.plan.json" ]; then
+  step "gate: verify_stubs on the built road (every declared stub: present, welded, drivable to its barrier, the barrier curb to curb and seated — hard)"
+  # tools/verify_stubs.py reads data/track.obj (the shipped road kn5) at every data/stubs.plan.json stub; exit 1 stops the chain
+  (cd "$AIROSO" && python tools/verify_stubs.py "$PROJ")
+fi
 step "gate: terrain ribbing on the built ground (tools/rib_check.py: sub-cell features folded into staircases — hard)"
 # ledger 0046 fix round 2: a feature narrower than two terrain cells (a concrete channel, a cut-slope bench) point-
 # sampled every 5 m and folded across its grain shows as washboard ribs; exit 1 (data/rib_check.json) past the
@@ -494,7 +527,7 @@ cp "$PROJ/loop.blend" "$SRC/loop.blend"
 for f in centerline.local.json centerline.raw.local.json median_bands.json dummies.json \
          finished_centerline.json gate_centerline.json lights.local.json connectors.local.json \
          mouths.json mouth_welds.json aprons.json aprons.lamps.json verify_mouths.json verify_fold_fans.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
-         drive_test.json audit.json \
+         drive_test.json audit.json stubs.plan.json stubs.built.json verify_stubs.json stubs.3dep.json \
          barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json street_kn5.json \
          $TERRAIN_DATA terrain.tiers.report.json bridges.authored.json          deck_datum.json ground_release.json ground_release.report.json freeway_i8.json freeway_i8.report.json; do
   [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"

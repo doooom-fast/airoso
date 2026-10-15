@@ -177,6 +177,21 @@ draft_divide_connectors() {
   step "draft: divided side streets -> one trunk + island (Del Cerro)"
   (cd "$AIROSO" && python tools/divide_connectors.py "$PROJ")
 }
+draft_stubs() {
+  # PHASE 5 (ledger 0054), opt-in: STUBS=<file> (default $SRC/stubs.json) — as tools/ship_sd.sh. Without a declaration
+  # no stub file of an earlier run survives in the project and no stub step does anything.
+  local decl="${STUBS:-$SRC/stubs.json}"
+  if [ -f "$decl" ]; then
+    cp "$decl" "$PROJ/data/stubs.json"
+    [ -f "$SRC/data/stubs.3dep.json" ] && cp "$SRC/data/stubs.3dep.json" "$PROJ/data/stubs.3dep.json"
+  else
+    rm -f "$PROJ/data/stubs.json" "$PROJ/data/stubs.plan.json" "$PROJ/data/stubs.built.json" "$PROJ/data/verify_stubs.json"
+  fi
+  if [ -f "$PROJ/data/stubs.json" ]; then
+    step "draft: phase-5 side-road stubs -> short connectors at their real width, heading and 3DEP grade (tools/stub_roads.py)"
+    (cd "$AIROSO" && python tools/stub_roads.py apply "$PROJ")
+  fi
+}
 draft_trim_connectors() {
   step "draft: trim connectors at the mainline edge"
   (cd "$AIROSO" && python tools/trim_connectors.py "$PROJ")
@@ -216,6 +231,17 @@ draft_ground_release() {
 draft_median() {
   step "author: median island"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_blend.py" -- "$PROJ" 2>&1 | grep "^\[median" )
+}
+draft_stubs_author() {
+  if [ -f "$PROJ/data/stubs.plan.json" ]; then
+    step "author: phase-5 stubs — curb returns, corner pavement, K-rail barrier (tools/author_stubs_blend.py, self-checked)"
+    (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_stubs_blend.py" -- "$PROJ" --stage author 2>&1 | grep "^\[stubs\]\|Error\|Traceback" )
+  fi
+}
+draft_stubs_tidy() {
+  if [ -f "$PROJ/data/stubs.plan.json" ]; then
+    (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_stubs_blend.py" -- "$PROJ" --stage tidy 2>&1 | grep "^\[stubs\]\|Error\|Traceback" )
+  fi
 }
 draft_gap_mouths() {
   step "author: gap the mainline sidewalk at every mouth"
@@ -403,6 +429,13 @@ ship_race_scenery_gate() {
 gate_verify_mouths() {
   step "gate: verify_mouths on the built road (every side-street mouth: mouth line, host lane, notch, approach — hard)"
   (cd "$AIROSO" && python tools/verify_mouths.py "$PROJ")
+}
+gate_verify_stubs() {
+  if [ -f "$PROJ/data/stubs.plan.json" ]; then
+    step "gate: verify_stubs on the built road (every declared stub: present, welded, drivable to its barrier, the barrier curb to curb and seated — hard)"
+    rm -f "$PROJ/data/verify_stubs.json"
+    (cd "$AIROSO" && python tools/verify_stubs.py "$PROJ")
+  fi
 }
 gate_rib_check() {
   step "gate: terrain ribbing on the built ground (tools/rib_check.py: sub-cell features folded into staircases — hard)"

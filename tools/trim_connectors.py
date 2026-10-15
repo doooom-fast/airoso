@@ -196,8 +196,10 @@ def _trim_against(conns, hosts, mouths, deltas=None, capped=()):
         # REACH THE HOST: a piece whose end stops short of a host's pavement (the route node sits
         # on the host's carriageway, but a divided trunk's centre is the carriageway midpoint, so
         # the end lands outside half-width) is extended to the host's centreline so the cut below
-        # butts it to the edge. Only ends within REACH_M of a host are extended.
-        for end in (0, -1):
+        # butts it to the edge. Only ends within REACH_M of a host are extended. A phase-5 STUB (tools/stub_roads.py,
+        # `stub` in its record) is never extended: its start already stands inside its host and its far end, the
+        # barrier's tail, is a dead end that must stay where it was declared.
+        for end in (() if c.get("stub") else (0, -1)):
             x, y, z = pts[end]
             best = None
             for hname, hpts, hw in hosts:
@@ -267,7 +269,10 @@ def _trim_against(conns, hosts, mouths, deltas=None, capped=()):
                                   f"grade within {100 * GRADE_CAP:.0f} % (least: {100 * bg:.1f} % at {bl:.0f} m)")
                         moved = blend_from_cut(piece, cut, host_y, at_start, blend_m=bl, frozen=frozen)
                     else:
-                        moved = blend_from_cut(piece, cut, host_y, at_start, frozen=frozen)
+                        # a record's own `blend_m` (a phase-5 stub carries 0: its profile is already anchored on host_y
+                        # with the host's own grade, tools/stub_roads.py) — every other connector keeps BLEND_M
+                        moved = blend_from_cut(piece, cut, host_y, at_start, blend_m=float(c.get("blend_m", BLEND_M)),
+                                               frozen=frozen)
                     if deltas is not None:
                         deltas.setdefault(c["name"], []).extend(moved)
                     if at_start:
@@ -291,7 +296,8 @@ def _trim_against(conns, hosts, mouths, deltas=None, capped=()):
             continue
         for q, (piece, pw) in enumerate(pieces):
             out.append({"name": f"{c['name']}#{q}", "kind": c.get("kind", "connector"),
-                        "points_xyz_m": [[round(v, 3) for v in p] for p in piece], "widths_m": pw})
+                        "points_xyz_m": [[round(v, 3) for v in p] for p in piece], "widths_m": pw,
+                        **({"stub": c["stub"]} if c.get("stub") else {})})
         if any(inside):
             print(f"[trim] {c['name']}: {len(pieces)} piece(s), {sum(inside)} pt(s) inside a host dropped")
     return out
@@ -371,7 +377,19 @@ def build(project_dir):
     hosts_set = {h[0] for h in hosts}
     rest = [c for c in first if c["name"] not in hosts_set and not any(c["name"].startswith(d + "_loop") for d in divided)]
     loops = [c for c in first if any(c["name"].startswith(d + "_loop") for d in divided)]
+    # phase 5 (tools/stub_roads.py, ledger 0054): a stub declared on a CONNECTOR host (an expansion piece) is cut
+    # against that host's pieces only — no other connector meets a non-divided host here. None declared: unchanged.
+    conn_stubs = [c for c in rest if (c.get("stub") or {}).get("host", "MAINLINE") != "MAINLINE"]
+    if conn_stubs:
+        rest = [c for c in rest if c not in conn_stubs]
     second = _trim_against(rest, hosts, mouths, deltas, capped=capped) if hosts else rest
+    for c in conn_stubs:
+        h = c["stub"]["host"]
+        hp = [(p["name"], [tuple(q) for q in p["points_xyz_m"]], p["widths_m"]) for p in first
+              if p["name"] == h or p["name"].startswith(h + "#")]
+        if not hp:
+            raise SystemExit(f"[trim] stub {c['name']}: its host {h!r} is not a connector piece")
+        second += _trim_against([c], hp, mouths, deltas)
     out = [c for c in first if c["name"] in hosts_set] + loops + second
     resolve_pieces(mouths, out)
     unresolved = [f"{mo['connector']}@{mo['host']}:{mo['host_vertex']}" for mo in mouths if mo["piece"] is None]

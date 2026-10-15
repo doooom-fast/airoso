@@ -1187,10 +1187,11 @@ def main():
     for ob in [o for o in bpy.data.objects if o.type == "MESH"]:
         me = ob.data
         # props / billboards carry authored UVs — don't flatten (freeway BUSHES/CHAINLINK too)
-        # ...and the race furniture (ledger 0047): the strips carry u = arc / 4.04 m along the
+        # ...and the race furniture (ledger 0047) + the phase-5 stub barriers (1WALL_STUB, ledger 0054): the strips carry
+        # u = arc / 4.04 m along the
         # vertical faces and the kerbs v = arc / 1 m — a top-down projection would smear them
         if not ob.name.upper().startswith(("PALM", "TREE", "SCRUB", "BUSHES", "CHAINLINK", "ROADTEXT",
-                                           "1WALL_RACE", "1KERB_RACE", "BRIDGESTRUCT")):
+                                           "1WALL_RACE", "1KERB_RACE", "BRIDGESTRUCT", "1WALL_STUB")):
             planar_uv(me)
         bm = bmesh.new(); bm.from_mesh(me)
         bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-4)

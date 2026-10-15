@@ -321,7 +321,8 @@ def test_bridge_bodies_are_visual_only_and_concrete():
     snap_pbr = (SNAP / "pbr.py").read_text(encoding="utf-8")
     assert '"BRIDGESTRUCT": ("building_diffuse.jpg"' in snap_pbr
     for prep in (SNAP / "build_kn5_loop.py", ROOT / "scripts" / "ac" / "build_kn5_loop.py"):
-        assert '"1WALL_RACE", "1KERB_RACE", "BRIDGESTRUCT")):' in prep.read_text(encoding="utf-8"), prep
+        # (the snapshot's tuple also carries the phase-5 stub barrier, ledger 0054: "BRIDGESTRUCT", "1WALL_STUB")
+        assert '"1WALL_RACE", "1KERB_RACE", "BRIDGESTRUCT"' in prep.read_text(encoding="utf-8"), prep
 
 
 def test_both_chains_run_the_bridge_pass_after_the_mouths_gap():
@@ -332,7 +333,8 @@ def test_both_chains_run_the_bridge_pass_after_the_mouths_gap():
     assert a < b < c and "--python-exit-code 1 --python \"$AIROSO/tools/author_bridges_blend.py\"" in sd
     spec = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "ship.json").read_text(encoding="utf-8"))
     st = spec["steps"]["draft"]
-    assert st.index("gap_mouths") + 1 == st.index("bridges")
+    # (the phase-5 stub tidy, ledger 0054 — a no-op without a declaration — sits between them, as in ship_sd.sh)
+    assert st.index("gap_mouths") + 1 + (1 if "stubs_tidy" in st else 0) == st.index("bridges")
     assert "draft_bridges()" in (ROOT / "tools" / "ship_track.sh").read_text(encoding="utf-8")
 
 

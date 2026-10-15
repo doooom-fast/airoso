@@ -463,8 +463,9 @@ def main():
             for a, bb in ((0, 1), (1, 2)):
                 ridge_quads.append((mw.road_index(lay, piece, r0, a), mw.road_index(lay, piece, r0, bb),
                                     mw.road_index(lay, piece, r1, bb), mw.road_index(lay, piece, r1, a)))
+        # (a piece shorter than the warp — a phase-5 stub, ledger 0054 — has every row warped: K == its row count)
         island_dy.setdefault(piece, []).append(
-            ([r[1] for r in rows_old[:K + 1]], [rows_new[j][1][1] - rows_old[j][1][1] for j in range(K + 1)],
+            ([r[1] for r in rows_old[:K + 1]], [rows_new[j][1][1] - rows_old[j][1][1] for j in range(min(K + 1, len(rows_new)))],
              [math.hypot(r[0][0] - r[1][0], r[0][2] - r[1][2]) for r in rows_old[:K + 1]]))
 
     if fails:

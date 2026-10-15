@@ -2401,3 +2401,88 @@ absent every output is the old one, byte for byte (tests).
   - V7 passes, with Kwaay Paay as re-worded; facets 20-60 m from the planned pavement have p90 5.02 m;
   - criterion 3 as restated has 0 offenders on both v0.18.0 and the rehearsal;
   - the road kn5 is 125.0 MB.
+---
+
+## 2026-10-14 — phase 5 side-road stubs: `tools/verify_stubs.py` (new, hard), audit D's declared stub-barrier exemption, the stub draft's numbers (ledger 0054)
+
+Kevin 2026-10-14: *"a road we are not completing gets a barrier, not a curve."* An unbuilt public side road gets its
+real mouth (curb returns, the host sidewalk gapped), a short stub of real road and a K-rail barrier across it
+(`tools/stub_roads.py` declare + draft, `tools/author_stubs_blend.py`, docs/JUNCTIONS.md R18 (d)). **Opt-in**: with no
+declaration (`STUBS=` / `tracks/<track>/stubs.json` absent) no step runs, no file is read or written, and every output
+is what it was — the identity proof is under "Measured".
+
+### The gate (`tools/verify_stubs.py <project>`, new; hard in `ship_sd.sh` right after `verify_mouths`, only when `data/stubs.plan.json` exists)
+
+On the BUILT road gate OBJ (data/track.obj — the stubs ride in the road kn5, every layout loads them), per declared stub:
+
+| Check | Threshold | Basis |
+|---|---|---|
+| S1 present | the mouth + piece in mouths.json, the authored record, ≥ 1 `1WALL_STUB_<id>` triangle | — |
+| S2 mouth | `verify_mouths.check_mouth`, unchanged (0.05 / 0.02 / 0.05 m, 3 %-pt/m over 2.5 m) | verify_mouths' own (2026-10-11) |
+| S3 drivable, mouth line → barrier toe | a 1ROAD sheet every 0.25 m on the centre + both wheel lines; neighbouring samples ≤ **0.05 m** apart; no grass within 0.005 m; nothing else (another wall, a post, a house, a TreeFX trunk) > **0.05 m** over the carriageway (±(w/2 − 0.3)) | 0.05 / 0.05 [invented]; grass = verify_mouths GRASS_AT_M |
+| S4 span | across the stub's own cross-section at the declared distance, back of walk to back of walk (half-width + 0.08 + 1.5), every 0.05 m: the barrier top ≥ **0.80 m** over the surface | [invented]; real K-rail 0.81–1.07 m (Q5), the module is 1.20 m |
+| S5 seat | each barrier vertex's least gap within **0.45 m** in plan (its own ring's toe) ≤ **0.05 m** (no hover); sunk into the stub's road / curb / walk ≤ **0.15 m** (the ends may stand buried in a bank) | 0.05 m = the task's seating limit; 0.45 = 0.255 across the jersey + a 0.25 m ring step; 0.15 [invented] (a 0.67 m base on a 15 % grade sinks 0.10) |
+| S6 host lane | every barrier vertex ≥ **1.0 m** outside the host's pavement edge | [invented] |
+| S7 returns | at each corner's arc midpoint: 1ROAD 0.5 m inside the arc, no grass at/above it; 1KERB ≥ **0.10 m** over the lane edge 0.6 m outside | [invented]; the curb is 0.14 m |
+| S8 curb cut | the host walk 0.5 m behind a driveway's lip ≤ lip + 0.03 m + its share of the apron rise | [invented] |
+
+Teeth (tests/tools/test_verify_stubs.py, a synthetic welded stub dressed by stub_geom): passes dressed; fails a 2-ring gap
+in the barrier (S4), the barrier lifted 0.12 m (S5), a post in the carriageway (S3), a missing return (S7), no barrier (S1).
+
+### audit_mesh D (wall on a road) — the declared stub barrier only
+
+The barrier stands ON its stub's road by design. D skips a vertex only when it is a `1WALL_STUB*` object's AND lies
+within its DECLARED footprint (data/stubs.built.json: the ring path ± the 0.335 m half base + **0.15 m** [invented]);
+any other wall there, or a stub-barrier vertex off its footprint, still counts. Presence, span, seating and the host
+lane are S1 / S4–S6. No stubs.built.json: nothing read, nothing printed — proven byte-identical below (A4).
+
+### The draft's and the authoring's numbers (`tools/stub_roads.py`, `tools/stub_geom.py`, `tools/author_stubs_blend.py`)
+
+| Number | Value | |
+|---|---|---|
+| stub length, mouth line → barrier centre | 15.0 m | [invented]; ≥ 13.65 m survives trim's 15 m MIN_PIECE_M |
+| road behind the barrier centre | 1.0 m | [invented]: the 0.67 m base stands wholly on the stub |
+| stub row spacing | 1.0 m | denser than the loop's 3 m (JUNCTIONS R6: never coarser) |
+| vertical curve | grade change ≤ 0.015 /m, ≥ 4 m; 3DEP grade capped at 15 % | [invented]; half verify_mouths' 0.03 |
+| widths | OSM `width`; else `lanes` × 3.6 + 2 × 1.2 m; else residential / unclassified 10.0 (= route_connectors), living 8, tertiary 12, secondary 14, primary 16 | [invented] |
+| side-road detection | an OSM node within half-width + 3 m of the BUILT centreline is on the host; < 25° to the host = a carriageway / slip; a connector within 6 m of the branch 5–25 m out = already built | [invented] |
+| driveway curb cut | lip 0.03 m, flare 1.5 m each side, apron 4 m when OSM gives none | [invented] |
+| return | the circle tangent to both road edges at the host's gap-end row (mouth_weld.gap_window: R = tH tan(φ/2)), stations ≤ 0.3 m, the walk compressed inside 0.85 R | 0.3 m = JUNCTIONS R5/R10 (macau 0.18 m); 0.85 [invented] |
+| barrier | rings ≤ 0.25 m across (every curb profile point ringed), base 0.02 m under the lowest surface under its footprint | [invented] |
+| ground under a corner | halved to 0.75 m within its tangent + 3.5 m (never the host's pavement + 0.3 m), pinned 0.16 m under the pavement / walk (seat_terrain's rule), 0.02 m under the verge | 0.16 = seat_terrain; 0.75 / 3.5 / 0.3 [invented] |
+
+### Changed tools, every change opt-in
+
+- `tools/trim_connectors.py`: a record's own `blend_m` (stubs carry 0 — their profile is already on the host deck), no
+  REACH extension of a stub's ends, a stub on a CONNECTOR host cut against that host's pieces (phase 1's expansion
+  roads). Records without those keys: proven byte-identical (A1).
+- `tools/weld_mouths_blend.py`: a piece shorter than the 30 m warp (every row warped) no longer raises IndexError on the
+  island bookkeeping; for every existing piece (K + 1 ≤ rows) the line is unchanged.
+- engine-july (rehearsed on a scratch ENG copy, `PENDING-MIRROR.md5`): `pbr.TEXTURES["1WALL_STUB"]` (the K-rail
+  module's own row, immune to the network-wall reskin) and the prep's planar-UV exemption for `1WALL_STUB`; no v0.18.0
+  mesh name binds differently (A5).
+
+### Measured (2026-10-14; scratch copies of the workshop, `--no-install`, the worktree's tools, the patched ENG copy)
+
+**Demo** (the old loop, 6 of the 70 unbuilt public side roads declared: Reservoir Dr off Alvarado, Saint Therese Way and
+Lambda Dr (63°) off College, Camino Estrellado (76°) and Margerum Ave (66°) off Navajo, Hyde Park Dr (12 m) off Jackson;
+`tracks/san-diego-lake-murray/source/phase5/stubs.demo.json`), full chain on a fresh copy: `verify_stubs` PASS 6/6
+(barrier span short 0 everywhere, seat float −0.02 m, sink ≤ 0.084 m, host edge ≥ 8.4 m away, 12 returns R 1.73–6.10 m);
+`verify_mouths` PASS 10/10 (the six stub mouths: line ≤ 0.01 m, approach ≤ 1.29 %/m); planned + BUILT `no_route` PASS
+both layouts (412 probes, 6 of them the new mouths); street drive_test soft top 33 / severe 0 / kinks 3.41 / obstruction
+0, audit 53 (D 0, K 20, I 20, F 13); race_cw 9 / 22 / 6.23, race_acw 9 / 20 / 7.05, barrier_missing 0, audits 53 / 53
+(D 0, 4,040 stub-barrier vertices exempt on 398 declared segments); verify_fold_fans PASS — every v0.18.0 number equal.
+Two corner-ground defects the gates caught on the way (verify_mouths HOST LANE / NOTCH, grass within 1–3 mm of a deck
+where a 4 m facet spanned the corner seam) are fixed in the tool (the corner's lane edge blends the host and stub decks;
+the corner ground is refined across the host edge), not by any threshold.
+
+**Identity** (no declaration): A1 trim_connectors (HEAD vs worktree, the workshop's own inputs) — every output file
+identical; A2 stub_roads apply — no file touched; A3 verify_stubs — exit 0, nothing written; A4 audit_mesh HEAD vs
+worktree on the v0.18.0 BUILT gate OBJs (street, race_cw, race_acw) — audit*.json byte-identical (53 / 53 / 53); A5 pbr —
+all 69 mesh names of the v0.18.0 gate OBJs bind the same row and textures; A6 ship_sd.sh — every added executable line
+sits under a stub-file test or only names stub files. B: the FULL chain from the worktree with no declaration on a fresh
+workshop copy vs the installed v0.18.0's own files: 199 written files byte-identical (every drive_test / audit /
+verify_mouths / verify_fold_fans / race_verify verdict, mouths.json, mouth_welds.json, connectors, every AI line, every
+ini); the 29 others differ only in absolute paths and timings, plus 103 of 2,026,253 road-OBJ triangles moved ≤ 0.2 mm
+in one ground_release zone (tools/ground_release_blend.py iterates Python sets of BMVerts — run-to-run order; that tool
+is untouched here).

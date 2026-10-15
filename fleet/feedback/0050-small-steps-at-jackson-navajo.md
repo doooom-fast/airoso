@@ -1,7 +1,7 @@
 ---
 id: 0050
 title: "The small steps are a problem at Jackson/Navajo" — the mended fold's pinch left a 0-0.5 m lip across the inside half of the corner
-status: in-progress — fixed and rehearsed in v0.18.0 (2026-10-13, full scratch ship, not installed); closes on Kevin's drive
+status: shipped
 scope: tracks/san-diego-lake-murray (proof: the Navajo/Jackson box v2307-2332, s 6930-6982; also the hairpin v763-773, College/Navajo v1508-1516); tools/{mouth_weld,weld_mouths_blend,verify_fold_fans,ship_sd.sh,ship_track.sh}, scripts/geometry/drive_test.py (opt-in by data/mouth_welds.json); fleet/LAWS.md L3 corollary
 layer: project + engine
 train: -
@@ -179,3 +179,10 @@ drivable now and keeps the corridor model.
 - Ask specifically (the review): "small steps" was plural. Besides the lip (gone), the box holds the Navajo approach's
   0.02-0.03 m grass-to-road lip at the lane edge (s 6843) and, on the street layout, the real 0.20 m median curb at
   ±1 m. Neither was changed; if either is what he felt, 0050 is not closed.
+
+## Drive verdict (Kevin, 2026-10-14, v0.18.0)
+
+> "yeah that corner feels right now"
+
+Closed in the seat: the Navajo/Jackson inside-corner steps (the fold-fan riser) are gone. This also meets the Phase 1
+expansion's precondition (EXPANSION-PLAN P0 step 1: Jackson north joins the loop at this box).

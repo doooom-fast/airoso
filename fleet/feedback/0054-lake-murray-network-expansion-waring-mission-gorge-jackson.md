@@ -150,3 +150,7 @@ lighter streetlight model.
 verts (21.1 %). A lamp ~10x lighter would remove ~870k verts — the single biggest load-time lever, and the precondition
 both expansion plans name before more lamps. The lamp is Kevin's own model ("Kevin's lamp model at every
 streetlight"), so a lighter version is his call.
+
+**P0 step 1 met (2026-10-14):** Kevin, on v0.18.0's Navajo/Jackson corner: "yeah that corner feels right now" (ledger 0050
+shipped). The Phase 1 road build (step P3 on) starts as soon as v0.18.1 (0055 College, 0056 lamp, 0057 hills) is merged
+and installed, because 0055 changes College's divided run up to the J1 box.

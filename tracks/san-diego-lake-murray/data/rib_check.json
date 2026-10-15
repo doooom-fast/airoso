@@ -1,23 +1,23 @@
 {
  "obj": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\data\\track.obj",
- "lattice_nodes": 363470,
- "terrain_vertices": 469445,
+ "lattice_nodes": 367069,
+ "terrain_vertices": 485578,
  "near_m": 20.0,
  "nyquist": {
   "rib_m": 2.0,
   "max": 100,
   "by_amplitude": {
    ">0.5m": {
-    "beyond_near": 4173,
-    "near_road": 516
+    "beyond_near": 4113,
+    "near_road": 493
    },
    ">1m": {
-    "beyond_near": 807,
-    "near_road": 196
+    "beyond_near": 781,
+    "near_road": 185
    },
    ">2m": {
-    "beyond_near": 76,
-    "near_road": 28
+    "beyond_near": 72,
+    "near_road": 27
    },
    ">4m": {
     "beyond_near": 4,
@@ -88,17 +88,17 @@
   ],
   "boxes": {},
   "coarse_cells_info": {
-   "20": 10949,
+   "20": 10946,
    "40": 10030
   },
   "straight_info": {
    ">0.5m": {
-    "beyond_near": 3464,
-    "near_road": 185
+    "beyond_near": 3442,
+    "near_road": 175
    },
    ">1m": {
-    "beyond_near": 1077,
-    "near_road": 92
+    "beyond_near": 1073,
+    "near_road": 86
    },
    ">2m": {
     "beyond_near": 101,
@@ -109,59 +109,35 @@
     "near_road": 0
    }
   },
-  "gated": 76
+  "gated": 72
  },
  "cross_grain": {
   "fold_m": 1.0,
   "max": 100,
   "by_amplitude": {
    ">0.5m": {
-    "beyond_near": 42,
-    "near_road": 17
+    "beyond_near": 38,
+    "near_road": 18
    },
    ">1m": {
-    "beyond_near": 33,
+    "beyond_near": 29,
     "near_road": 5
    },
    ">2m": {
-    "beyond_near": 25,
+    "beyond_near": 21,
     "near_road": 1
    },
    ">4m": {
-    "beyond_near": 11,
+    "beyond_near": 8,
     "near_road": 0
    }
   },
   "hotspots": [
    {
-    "x": -1675,
-    "z": -25,
-    "n": 1,
-    "max_m": 4.29
-   },
-   {
     "x": -1625,
     "z": -725,
     "n": 1,
     "max_m": 4.13
-   },
-   {
-    "x": -1625,
-    "z": -125,
-    "n": 1,
-    "max_m": 4.88
-   },
-   {
-    "x": -1625,
-    "z": -75,
-    "n": 1,
-    "max_m": 3.78
-   },
-   {
-    "x": -1575,
-    "z": -175,
-    "n": 1,
-    "max_m": 4.19
    },
    {
     "x": -1425,
@@ -192,10 +168,34 @@
     "z": 1225,
     "n": 1,
     "max_m": 3.09
+   },
+   {
+    "x": -1175,
+    "z": 1275,
+    "n": 1,
+    "max_m": 2.64
+   },
+   {
+    "x": -1075,
+    "z": -25,
+    "n": 1,
+    "max_m": 2.37
+   },
+   {
+    "x": -1075,
+    "z": 25,
+    "n": 1,
+    "max_m": 1.94
+   },
+   {
+    "x": -1025,
+    "z": -125,
+    "n": 1,
+    "max_m": 9.49
    }
   ],
   "boxes": {},
-  "gated": 33
+  "gated": 29
  },
  "step_jogs": {
   "jog_m": 2.0,
@@ -203,8 +203,8 @@
   "max": 5,
   "by_amplitude": {
    ">2m": {
-    "beyond_near": 59,
-    "near_road": 10
+    "beyond_near": 58,
+    "near_road": 9
    }
   },
   "hotspots": [
@@ -270,7 +270,7 @@
    }
   ],
   "boxes": {},
-  "jogs_beyond_near": 59,
+  "jogs_beyond_near": 58,
   "gated": 4,
   "densest_at": [
    2852.0,

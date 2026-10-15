@@ -5,11 +5,11 @@
    "l": 773,
    "X": [
     -1976.1805,
-    9.9125,
+    10.2107,
     -1269.8053
    ],
-   "y_k": 9.9337,
-   "y_l": 9.8913,
+   "y_k": 10.061,
+   "y_l": 10.3603,
    "lane": 2,
    "source": "mouth_welds.json levelled"
   },
@@ -17,11 +17,11 @@
    "k": 1508,
    "l": 1516,
    "X": [
-    -1960.8408,
-    24.4447,
-    592.6711
+    -1960.8413,
+    24.4444,
+    592.6706
    ],
-   "y_k": 24.4714,
+   "y_k": 24.4709,
    "y_l": 24.4179,
    "lane": 2,
    "source": "mouth_welds.json levelled"
@@ -56,9 +56,9 @@
     "paths_with_step": 0,
     "kerb_lip_max_m": 0.0,
     "fine_max_m": 0.0,
-    "dt_max_m": 0.0252,
-    "grass_on_top": 79,
-    "grass_over_max_m": 0.0128,
+    "dt_max_m": 0.047,
+    "grass_on_top": 0,
+    "grass_over_max_m": 0.0,
     "road_jumps": 0,
     "steep_road_tris": 0,
     "apex": {
@@ -67,14 +67,14 @@
       -1269.805
      ],
      "built_y": [
-      9.9125,
-      9.9125
+      10.2107,
+      10.2107
      ],
      "legs": [
-      9.9337,
-      9.8913
+      10.061,
+      10.3603
      ],
-     "midpoint": 9.9125,
+     "midpoint": 10.2107,
      "max_dev_m": 0.0
     }
    },
@@ -91,9 +91,9 @@
     "paths_with_step": 0,
     "kerb_lip_max_m": 0.0,
     "fine_max_m": 0.0,
-    "dt_max_m": 0.021,
-    "grass_on_top": 56,
-    "grass_over_max_m": 0.0049,
+    "dt_max_m": 0.0209,
+    "grass_on_top": 59,
+    "grass_over_max_m": 0.0057,
     "road_jumps": 0,
     "steep_road_tris": 0,
     "apex": {
@@ -102,15 +102,15 @@
       592.671
      ],
      "built_y": [
-      24.4447,
-      24.4447
+      24.4444,
+      24.4444
      ],
      "legs": [
-      24.4714,
+      24.4709,
       24.4179
      ],
-     "midpoint": 24.4446,
-     "max_dev_m": 0.0001
+     "midpoint": 24.4444,
+     "max_dev_m": 0.0
     }
    },
    {
@@ -161,9 +161,9 @@
     ],
     "paths": 113,
     "paths_with_step": 0,
-    "kerb_lip_max_m": 0.0251,
+    "kerb_lip_max_m": 0.0239,
     "fine_max_m": 0.0,
-    "dt_max_m": 0.0241,
+    "dt_max_m": 0.0443,
     "grass_on_top": 0,
     "grass_over_max_m": 0.0,
     "road_jumps": 0,
@@ -174,18 +174,18 @@
       -1269.805
      ],
      "built_y": [
-      9.9125,
-      9.9125
+      10.2107,
+      10.2107
      ],
      "legs": [
-      9.9337,
-      9.8913
+      10.061,
+      10.3603
      ],
-     "midpoint": 9.9125,
+     "midpoint": 10.2107,
      "max_dev_m": 0.0
     },
     "wall_cells": 122,
-    "wall_worst_delta_m": -0.1164
+    "wall_worst_delta_m": 0.1562
    },
    {
     "k": 1508,
@@ -200,9 +200,9 @@
     "paths_with_step": 0,
     "kerb_lip_max_m": 0.0,
     "fine_max_m": 0.0,
-    "dt_max_m": 0.021,
-    "grass_on_top": 12,
-    "grass_over_max_m": 0.0028,
+    "dt_max_m": 0.0205,
+    "grass_on_top": 13,
+    "grass_over_max_m": 0.003,
     "road_jumps": 0,
     "steep_road_tris": 0,
     "apex": {
@@ -211,18 +211,18 @@
       592.671
      ],
      "built_y": [
-      24.4447,
-      24.4447
+      24.4444,
+      24.4444
      ],
      "legs": [
-      24.4714,
+      24.4709,
       24.4179
      ],
-     "midpoint": 24.4446,
-     "max_dev_m": 0.0001
+     "midpoint": 24.4444,
+     "max_dev_m": 0.0
     },
-    "wall_cells": 88,
-    "wall_worst_delta_m": -0.0315
+    "wall_cells": 87,
+    "wall_worst_delta_m": 0.0353
    },
    {
     "k": 2315,
@@ -274,9 +274,9 @@
     ],
     "paths": 113,
     "paths_with_step": 0,
-    "kerb_lip_max_m": 0.0251,
+    "kerb_lip_max_m": 0.0239,
     "fine_max_m": 0.0,
-    "dt_max_m": 0.0241,
+    "dt_max_m": 0.0443,
     "grass_on_top": 0,
     "grass_over_max_m": 0.0,
     "road_jumps": 0,
@@ -287,18 +287,18 @@
       -1269.805
      ],
      "built_y": [
-      9.9125,
-      9.9125
+      10.2107,
+      10.2107
      ],
      "legs": [
-      9.9337,
-      9.8913
+      10.061,
+      10.3603
      ],
-     "midpoint": 9.9125,
+     "midpoint": 10.2107,
      "max_dev_m": 0.0
     },
     "wall_cells": 138,
-    "wall_worst_delta_m": -0.1164
+    "wall_worst_delta_m": 0.1562
    },
    {
     "k": 1508,
@@ -313,9 +313,9 @@
     "paths_with_step": 0,
     "kerb_lip_max_m": 0.0,
     "fine_max_m": 0.0,
-    "dt_max_m": 0.021,
-    "grass_on_top": 12,
-    "grass_over_max_m": 0.0028,
+    "dt_max_m": 0.0205,
+    "grass_on_top": 13,
+    "grass_over_max_m": 0.003,
     "road_jumps": 0,
     "steep_road_tris": 0,
     "apex": {
@@ -324,18 +324,18 @@
       592.671
      ],
      "built_y": [
-      24.4447,
-      24.4447
+      24.4444,
+      24.4444
      ],
      "legs": [
-      24.4714,
+      24.4709,
       24.4179
      ],
-     "midpoint": 24.4446,
-     "max_dev_m": 0.0001
+     "midpoint": 24.4444,
+     "max_dev_m": 0.0
     },
-    "wall_cells": 116,
-    "wall_worst_delta_m": -0.0315
+    "wall_cells": 117,
+    "wall_worst_delta_m": 0.0353
    },
    {
     "k": 2315,

@@ -1,0 +1,132 @@
+{
+ "file": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\build\\san_diego_lake_murray_street.kn5",
+ "version": 5,
+ "file_bytes": 872525,
+ "textures": [
+  {
+   "name": "building_diffuse.jpg",
+   "bytes": 231365
+  },
+  {
+   "name": "building_normal.jpg",
+   "bytes": 328479
+  }
+ ],
+ "materials": [
+  {
+   "name": "1KERB_sidewalk_streetonly_median_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "building_diffuse.jpg"
+    ],
+    [
+     "txNormal",
+     "building_normal.jpg"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_guard_streetonly_median_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "building_diffuse.jpg"
+    ],
+    [
+     "txNormal",
+     "building_normal.jpg"
+    ]
+   ]
+  }
+ ],
+ "meshes": [
+  {
+   "name": "1KERB_sidewalk_streetonly_median",
+   "verts": 3024,
+   "tris": 1008,
+   "matid": 0,
+   "surface": "KERB",
+   "renderable": true,
+   "radius_m": 186.8,
+   "area_m2": 235.0,
+   "edge_p10_m": 0.11,
+   "edge_med_m": 2.961,
+   "edge_p90_m": 2.999,
+   "grid_m": 0.683,
+   "bbox_m": [
+    130.6,
+    18.2,
+    352.7
+   ]
+  },
+  {
+   "name": "1WALL_guard_streetonly_median",
+   "verts": 3742,
+   "tris": 1344,
+   "matid": 1,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 185.9,
+   "area_m2": 413.4,
+   "edge_p10_m": 0.24,
+   "edge_med_m": 2.862,
+   "edge_p90_m": 3.0,
+   "grid_m": 0.784,
+   "bbox_m": [
+    124.5,
+    18.6,
+    350.0
+   ]
+  }
+ ],
+ "nodes": [
+  "BlenderFile"
+ ],
+ "summary": {
+  "meshes": 2,
+  "verts": 6766,
+  "tris": 2352,
+  "textures": 2,
+  "texture_bytes": 559844,
+  "materials": 2,
+  "surfaces": {
+   "KERB": {
+    "meshes": 1,
+    "verts": 3024,
+    "tris": 1008,
+    "area_m2": 235.0,
+    "invisible": 0,
+    "edge_med_m": 2.961,
+    "grid_m": 0.683
+   },
+   "WALL": {
+    "meshes": 1,
+    "verts": 3742,
+    "tris": 1344,
+    "area_m2": 413.4,
+    "invisible": 0,
+    "edge_med_m": 2.862,
+    "grid_m": 0.784
+   }
+  },
+  "shaders_by_tris": {
+   "ksPerPixelMultiMap": {
+    "meshes": 2,
+    "tris": 2352
+   }
+  },
+  "near_vert_cap": [],
+  "non_pot_textures": []
+ }
+}

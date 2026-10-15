@@ -4,6 +4,7 @@
   "ROAD"
  ],
  "ground_objects": [
+  "1KERB_sidewalk_streetonly_median",
   "CURB",
   "TERRAIN"
  ],
@@ -11,42 +12,42 @@
  "scan": "5-degree polar, 0.25 m steps, bisected; ROAD top vs CURB/SIDEWALK/TERRAIN top; ground = top hit at the base (SIGN* excluded); plate normals = Mesh.polygons[].normal of the vertical SIGNPLATE faces within 1.2 m of the post; plate bottom = lowest SIGNPLATE vertex 0.5-0.75 m off the post axis; post base = lowest SIGNPOST vertex within 0.1 m of it; walk_behind_m = the ground profile from the base toward the nearest pavement (> 0 behind the walk, < 0 on it)",
  "signs": {
   "M1-fwd": {
-   "clear_m": 1.744,
+   "clear_m": 1.787,
    "bearing_deg": 85,
    "on_road": false,
-   "ground_y": 23.7759,
-   "walk_behind_m": -0.3,
+   "ground_y": 24.6313,
+   "walk_behind_m": -0.25,
    "plate_normals_xz": [
     [
-     0.44298,
-     0.89653
+     0.44279,
+     0.89663
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 25.9059,
-   "post_base_y": 23.4759
+   "plate_bottom_y": 26.7613,
+   "post_base_y": 24.3313
   },
   "M2-fwd": {
-   "clear_m": 1.795,
+   "clear_m": 1.768,
    "bearing_deg": 120,
    "on_road": false,
-   "ground_y": 9.7395,
-   "walk_behind_m": -0.15,
+   "ground_y": 9.8254,
+   "walk_behind_m": -0.2,
    "plate_normals_xz": [
     [
-     0.28446,
-     0.95869
+     0.28458,
+     0.95865
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 11.8695,
-   "post_base_y": 9.4395
+   "plate_bottom_y": 11.9554,
+   "post_base_y": 9.5254
   },
   "M2-fwd-2": {
    "clear_m": 1.783,
    "bearing_deg": 0,
    "on_road": false,
-   "ground_y": 10.1294,
+   "ground_y": 10.6062,
    "walk_behind_m": -0.25,
    "plate_normals_xz": [
     [
@@ -55,56 +56,56 @@
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 12.2594,
-   "post_base_y": 9.8294
+   "plate_bottom_y": 12.7362,
+   "post_base_y": 10.3062
   },
   "M3-fwd": {
-   "clear_m": 1.781,
+   "clear_m": 1.763,
    "bearing_deg": 325,
    "on_road": false,
-   "ground_y": 24.5359,
+   "ground_y": 24.5374,
    "walk_behind_m": -0.25,
    "plate_normals_xz": [
     [
-     0.65637,
-     -0.75444
+     0.64005,
+     -0.76833
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 26.6659,
-   "post_base_y": 24.2359
+   "plate_bottom_y": 26.6674,
+   "post_base_y": 24.2374
   },
   "M4-fwd": {
-   "clear_m": 1.8,
+   "clear_m": 1.776,
    "bearing_deg": 225,
    "on_road": false,
-   "ground_y": 109.3228,
+   "ground_y": 109.3223,
    "walk_behind_m": -0.25,
    "plate_normals_xz": [
     [
-     -0.75195,
-     -0.65922
+     -0.75144,
+     -0.6598
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 111.4528,
-   "post_base_y": 109.0228
+   "plate_bottom_y": 111.4523,
+   "post_base_y": 109.0223
   },
   "M5-fwd": {
-   "clear_m": 1.775,
+   "clear_m": 1.763,
    "bearing_deg": 160,
    "on_road": false,
-   "ground_y": 92.0789,
+   "ground_y": 92.0793,
    "walk_behind_m": -0.25,
    "plate_normals_xz": [
     [
-     -0.8095,
-     0.58713
+     -0.80871,
+     0.58821
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 94.2089,
-   "post_base_y": 91.7789
+   "plate_bottom_y": 94.2093,
+   "post_base_y": 91.7793
   },
   "M5-rev": {
    "clear_m": 1.747,
@@ -155,36 +156,36 @@
    "post_base_y": 24.2127
   },
   "M2-rev": {
-   "clear_m": 1.766,
+   "clear_m": 1.741,
    "bearing_deg": 35,
    "on_road": false,
-   "ground_y": 10.167,
-   "walk_behind_m": -0.25,
+   "ground_y": 10.6125,
+   "walk_behind_m": -0.3,
    "plate_normals_xz": [
     [
-     0.37225,
-     0.92813
+     0.3693,
+     0.92931
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 12.297,
-   "post_base_y": 9.867
+   "plate_bottom_y": 12.7425,
+   "post_base_y": 10.3125
   },
   "M1-rev": {
-   "clear_m": 1.828,
+   "clear_m": 1.733,
    "bearing_deg": 95,
    "on_road": false,
-   "ground_y": 23.8284,
-   "walk_behind_m": -0.2,
+   "ground_y": 24.623,
+   "walk_behind_m": -0.3,
    "plate_normals_xz": [
     [
-     -0.87323,
-     0.48732
+     -0.87101,
+     0.49127
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 25.9584,
-   "post_base_y": 23.5284
+   "plate_bottom_y": 26.753,
+   "post_base_y": 24.323
   },
   "MED-1-fwd": {
    "clear_m": 1.55,
@@ -366,7 +367,7 @@
    "clear_m": 1.333,
    "bearing_deg": 35,
    "on_road": false,
-   "ground_y": 25.501,
+   "ground_y": 25.5007,
    "walk_behind_m": -0.4,
    "plate_normals_xz": [
     [
@@ -375,8 +376,8 @@
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 27.631,
-   "post_base_y": 25.201
+   "plate_bottom_y": 27.6307,
+   "post_base_y": 25.2007
   }
  }
 }

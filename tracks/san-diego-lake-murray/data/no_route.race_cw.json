@@ -18,18 +18,18 @@
   "barrier_half_m": 0.335
  },
  "seed": "AC_START_0",
- "domain_m2": 936750,
- "reached_m2": 139148,
- "allowed_m2": 139148,
+ "domain_m2": 940418,
+ "reached_m2": 138776,
+ "allowed_m2": 138776,
  "leak_cells": 0,
  "leak_m2": 0,
  "escaped": false,
- "wall_cells": 585200,
- "wall_tris_in_band": 165347,
+ "wall_cells": 587369,
+ "wall_tris_in_band": 166038,
  "door_clusters": 0,
  "doors": [],
  "doors_by_class": {},
- "forbidden_probes": 406,
+ "forbidden_probes": 411,
  "forbidden_reached": [],
  "lap_vertices": 4498,
  "blocked": [],
@@ -37,5 +37,5 @@
  "spawns_unreached": [],
  "fail": false,
  "fails": [],
- "seconds": 15.1
+ "seconds": 14.3
 }

@@ -6,24 +6,24 @@
   "by_layout": {},
   "scenery_source": "trees: trees.txt (written); signs: data/signs.local.json",
   "scenery_items": {
-   "tree": 15260,
+   "tree": 15264,
    "sign": 23
   },
-  "scenery_beside": 399,
+  "scenery_beside": 396,
   "scenery_hits": 0,
   "scenery_min": {
    "race_cw": {
     "layout": "race_cw",
     "kind": "tree",
-    "id": "Sage.bin#2639",
-    "vertex": 1722,
-    "lat_m": -1.214,
+    "id": "Bush.bin#2462",
+    "vertex": 1196,
+    "lat_m": -2.696,
     "xz": [
-     -1528.51,
-     1028.94
+     -1564.14,
+     -244.23
     ],
     "against": "closure",
-    "margin_m": 0.656
+    "margin_m": 0.654
    },
    "race_acw": {
     "layout": "race_acw",

@@ -1,7 +1,7 @@
 {
  "file": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\build\\san_diego_lake_murray_closure_race_cw.kn5",
  "version": 5,
- "file_bytes": 5433534,
+ "file_bytes": 5496964,
  "textures": [
   {
    "name": "concrete_barrier_diffuse.png",
@@ -13,6 +13,42 @@
   }
  ],
  "materials": [
+  {
+   "name": "1WALL_race_close_cw_college_1253_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_close_cw_college_1343_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
   {
    "name": "1WALL_race_close_cw_college_777_0_mat",
    "shader": "ksPerPixelMultiMap",
@@ -124,29 +160,67 @@
  ],
  "meshes": [
   {
-   "name": "1WALL_race_close_cw_college_777_0",
-   "verts": 11700,
-   "tris": 14596,
+   "name": "1WALL_race_close_cw_college_1253_0",
+   "verts": 2052,
+   "tris": 2536,
    "matid": 0,
    "surface": "WALL",
    "renderable": true,
-   "radius_m": 957.0,
-   "area_m2": 7407.7,
+   "radius_m": 183.1,
+   "area_m2": 1262.0,
    "edge_p10_m": 0.12,
-   "edge_med_m": 3.0,
-   "edge_p90_m": 3.145,
+   "edge_med_m": 2.981,
+   "edge_p90_m": 3.095,
+   "grid_m": 0.998,
+   "bbox_m": [
+    123.5,
+    19.2,
+    344.6
+   ]
+  },
+  {
+   "name": "1WALL_race_close_cw_college_1343_0",
+   "verts": 2644,
+   "tris": 3276,
+   "matid": 1,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 239.8,
+   "area_m2": 1656.2,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 3.002,
+   "edge_p90_m": 3.112,
+   "grid_m": 1.006,
+   "bbox_m": [
+    195.6,
+    21.1,
+    437.9
+   ]
+  },
+  {
+   "name": "1WALL_race_close_cw_college_777_0",
+   "verts": 8228,
+   "tris": 10256,
+   "matid": 2,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 680.2,
+   "area_m2": 5195.2,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.998,
+   "edge_p90_m": 3.147,
    "grid_m": 1.007,
    "bbox_m": [
     575.2,
-    54.2,
-    1825.4
+    54.4,
+    1232.4
    ]
   },
   {
    "name": "1WALL_race_close_cw_jackson_2328_0",
    "verts": 7722,
    "tris": 9628,
-   "matid": 1,
+   "matid": 3,
    "surface": "WALL",
    "renderable": true,
    "radius_m": 686.6,
@@ -165,7 +239,7 @@
    "name": "1WALL_race_close_cw_jackson_2328_1",
    "verts": 7706,
    "tris": 9608,
-   "matid": 2,
+   "matid": 4,
    "surface": "WALL",
    "renderable": true,
    "radius_m": 714.9,
@@ -184,7 +258,7 @@
    "name": "1WALL_race_close_cw_lakemurray_3304_0",
    "verts": 9226,
    "tris": 11508,
-   "matid": 3,
+   "matid": 5,
    "surface": "WALL",
    "renderable": true,
    "radius_m": 842.6,
@@ -203,7 +277,7 @@
    "name": "1WALL_race_close_cw_lakemurray_3304_1",
    "verts": 9226,
    "tris": 11508,
-   "matid": 4,
+   "matid": 6,
    "surface": "WALL",
    "renderable": true,
    "radius_m": 807.1,
@@ -214,7 +288,7 @@
    "grid_m": 1.001,
    "bbox_m": [
     1395.9,
-    43.4,
+    43.1,
     810.3
    ]
   },
@@ -222,7 +296,7 @@
    "name": "1WALL_race_close_cw_navajo_1521_0",
    "verts": 12692,
    "tris": 15836,
-   "matid": 5,
+   "matid": 7,
    "surface": "WALL",
    "renderable": true,
    "radius_m": 1139.5,
@@ -242,27 +316,27 @@
   "BlenderFile"
  ],
  "summary": {
-  "meshes": 6,
-  "verts": 58272,
-  "tris": 72684,
+  "meshes": 8,
+  "verts": 59496,
+  "tris": 74156,
   "textures": 2,
   "texture_bytes": 2431043,
-  "materials": 6,
+  "materials": 8,
   "surfaces": {
    "WALL": {
-    "meshes": 6,
-    "verts": 58272,
-    "tris": 72684,
-    "area_m2": 36550.2,
+    "meshes": 8,
+    "verts": 59496,
+    "tris": 74156,
+    "area_m2": 37255.9,
     "invisible": 0,
-    "edge_med_m": 2.999,
+    "edge_med_m": 2.998,
     "grid_m": 1.003
    }
   },
   "shaders_by_tris": {
    "ksPerPixelMultiMap": {
-    "meshes": 6,
-    "tris": 72684
+    "meshes": 8,
+    "tris": 74156
    }
   },
   "near_vert_cap": [],

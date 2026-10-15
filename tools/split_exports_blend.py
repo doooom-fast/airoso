@@ -15,6 +15,10 @@ Writes, into --out-dir (default: the input blend's folder):
                                common set ONLY (1WALL_race_edge_lap<lap>_*, 1KERB_race_lap<lap>_*)  -> <slug>_race_<lap>.kn5
                                (loop_race.blend then holds the MAINLINE's common set alone; it is written only when a
                                race layout drives the mainline — always, while no layout names a lap)
+  loop_street.blend            (ledger 0055, only when race.chicanes declares a street-only island) the STREET-ONLY
+                               objects (their names carry race_chicane.STREET_TAG: the median island over a chicane's
+                               span, tools/author_median_blend.py) — never in loop_main.blend -> <slug>_street.kn5,
+                               loaded by every non-race layout only
   loop_spawn_<id>.blend        AC_* empties from data/dummies_<id>.json for each layouts[] id (nothing else)
   split_manifest.json          what went where (objects, meshes, positions, materials, AC nodes per output)
                                + problems (exit 1 on any)
@@ -52,6 +56,17 @@ sys.path.insert(0, str(AIROSO / "tools"))
 import race_furniture as rf  # noqa: E402
 
 AC_PREFIX = "AC_"
+
+
+def _race_chicane():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("_race_chicane_split", AIROSO / "scripts" / "geometry" / "race_chicane.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+RC = _race_chicane()
 
 
 def _args():
@@ -196,6 +211,12 @@ def main():
         outputs[f"closure_{lid}"] = out_dir / closure_blend_name(lid)
     for lo in layouts:
         outputs[f"spawn_{lo['id']}"] = out_dir / f"loop_spawn_{lo['id']}.blend"
+    want_street = RC.has_street_kn5(cfg)
+    if want_street:
+        outputs["street"] = out_dir / "loop_street.blend"
+    stale_street = out_dir / "loop_street.blend"
+    if not want_street and stale_street.exists():
+        stale_street.unlink()                       # a retired chicane's street set never rides along
     for p in outputs.values():
         if p.resolve() == blend:
             raise SystemExit(f"[split] output {p} is the input — refusing")
@@ -222,12 +243,24 @@ def main():
                           **{f"common_{lap}": sum(1 for n in common_in if rf.race_lap(n) == lap) for lap in laps},
                           **{lid: sum(1 for n in closures_in if rf.race_owner(n) == t) for lid, t in tokens.items()}}
 
-    # --- main: everything except race furniture + AC_* ----------------------------------------
-    _remove(race | ac)
+    street_in = {ob.name for ob in bpy.data.objects if RC.is_street_only_name(ob.name)}
+    manifest["routes"]["street"] = len(street_in)
+    if street_in & race:
+        problems.append(f"input: objects both race and street-only {sorted(street_in & race)[:4]}")
+    if want_street and not street_in:
+        problems.append("input: race.chicanes declares a street-only island but no street-only object exists "
+                        "(tools/author_median_blend.py)")
+    if street_in and not want_street:
+        problems.append(f"input: {len(street_in)} street-only objects but no street-only span is declared {sorted(street_in)[:4]}")
+
+    # --- main: everything except race furniture + AC_* + the street-only set -----------------------
+    _remove(race | ac | street_in)
     c = _census()
     bad = [m for m in c["materials"] if rf.is_race_name(m)]
     if c["ac_nodes"] or c["race_objects"] or bad:
         problems.append(f"main: ac={c['ac_nodes']} race={c['race_objects']} race_mats={bad}")
+    if any(RC.is_street_only_name(nm) for nm in c["names"]):
+        problems.append("main: a street-only object in loop_main.blend")
     _save(outputs["main"])
     manifest["outputs"]["loop_main.blend"] = c
     print(f"[split] main: {c['meshes']} meshes / {c['positions']} positions / {len(c['materials'])} materials / "
@@ -280,6 +313,26 @@ def main():
         print(f"[split] closure {lid} (token {tok}): {c['meshes']} meshes / {c['positions']} positions "
               f"(max {c['max_positions']}) / {len(c['materials'])} materials / {len(c['ac_nodes'])} AC nodes -> "
               f"{outputs[tag].name}")
+    # --- street: the street-only set (ledger 0055) ------------------------------------------------
+    if want_street:
+        bpy.ops.wm.open_mainfile(filepath=str(blend))
+        keep = {ob.name for ob in bpy.data.objects if RC.is_street_only_name(ob.name)}
+        _remove({ob.name for ob in bpy.data.objects} - keep)
+        c = _census()
+        if not c["meshes"]:
+            problems.append("street: EMPTY — no street-only object in the input")
+        alien = [nm for nm in c["names"] if not RC.is_street_only_name(nm)]
+        if alien or c["ac_nodes"] or c["race_objects"]:
+            problems.append(f"street: objects that are not street-only {alien[:4]} ac={c['ac_nodes']} race={c['race_objects']}")
+        if c["orphan_materials"]:
+            problems.append(f"street: materials no kept object uses {c['orphan_materials'][:6]}")
+        if c["max_positions"] >= 60000:
+            problems.append(f"street: an object has {c['max_positions']} positions")
+        _save(outputs["street"])
+        manifest["outputs"]["loop_street.blend"] = c
+        print(f"[split] street (street-only island, ledger 0055): {c['meshes']} meshes / {c['positions']} positions / "
+              f"{len(c['materials'])} materials / {len(c['ac_nodes'])} AC nodes -> {outputs['street'].name}")
+
     input_race = set(manifest["input_census"]["race_objects"])
     if kept_all != input_race:
         problems.append(f"race u closures != every RACE object of the input: missing {sorted(input_race - kept_all)[:4]}, "

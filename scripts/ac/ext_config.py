@@ -33,6 +33,41 @@ _LIGHT_OPTIONAL_KEYS = (("diffuse_concentration", "DIFFUSE_CONCENTRATION"),
                         ("long_specular", "LONG_SPECULAR"))
 
 
+LAMP_LINK_M = 2.0   # LIGHTS vertices closer than this (horizontally) are one lamp's lens (lamps stand >= 25 m apart)
+
+
+def lamp_clusters(pts, link_m: float = LAMP_LINK_M) -> list[tuple[float, float, float]]:
+    """one (x, y, z) per lamp lens: single-linkage clusters of the LIGHTS vertices (horizontal distance < ``link_m``),
+    each the centroid of its DISTINCT vertex positions (the exporter repeats a corner whose tangent differs).
+
+    Was a fixed 5 m (x // 5, z // 5) bucket per vertex: a lens straddling a bucket edge became TWO lights at one
+    lamp — v0.18.0 shipped 4 such coincident pairs from 2 cm marker triangles (ledger 0043, LIGHT_17/18 ...), and
+    a 0.5 m LED lens (ledger 0056) would straddle ~1 in 6. Linkage is frame-proof and size-free."""
+    uniq = sorted({(round(x, 4), round(y, 4), round(z, 4)) for x, y, z in pts})
+    parent = list(range(len(uniq)))
+
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    cells: dict[tuple[int, int], list[int]] = {}
+    for i, (x, _y, z) in enumerate(uniq):
+        cells.setdefault((int(x // link_m), int(z // link_m)), []).append(i)
+    for (cx, cz), ids in cells.items():
+        for dx in (-1, 0, 1):
+            for dz in (-1, 0, 1):
+                for j in cells.get((cx + dx, cz + dz), ()):
+                    for i in ids:
+                        if i < j and (uniq[i][0] - uniq[j][0]) ** 2 + (uniq[i][2] - uniq[j][2]) ** 2 < link_m * link_m:
+                            parent[find(i)] = find(j)
+    groups: dict[int, list] = {}
+    for i, p in enumerate(uniq):
+        groups.setdefault(find(i), []).append(p)
+    return [tuple(sum(c) / len(vs) for c in zip(*vs)) for vs in groups.values()]
+
+
 def _obj_groups(path: Path) -> list[str]:
     if not path.exists():
         return []
@@ -253,11 +288,7 @@ def generate(project_dir: str | Path) -> Path:
                 from scripts.ac.verify_kn5 import _parse
                 _nodes, _meshes = _parse(kn5p)
                 pts = [v for m in _meshes if m["name"].upper().startswith("LIGHTS") for v in m["P"]]
-                buckets: dict[tuple[int, int], list] = {}
-                for x, y, z in pts:
-                    buckets.setdefault((int(x // 5), int(z // 5)), []).append((x, y, z))
-                for vs in buckets.values():
-                    heads.append(tuple(sum(c) / len(vs) for c in zip(*vs)))
+                heads = lamp_clusters(pts)
             except Exception as e:  # kn5 unreadable -> fall through to series
                 print(f"  [ext_config] LIGHTS clustering failed ({e}); falling back to LIGHT_SERIES")
         if heads:

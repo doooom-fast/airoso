@@ -4,7 +4,7 @@
   "ui_series": "",
   "_ui_series_doc": "Engine track_folder prefixes the CM display name with ui_series (default 'K10 Colorado'); empty = use the track name as-is (SD names already carry the K10 - San Diego branding).",
   "slug": "san_diego_lake_murray",
-  "version": "0.18.0",
+  "version": "0.18.1",
   "author": "k10-san-diego",
   "year": 2026,
   "_about": "A single drivable LOOP around Lake Murray (Kevin's childhood neighborhood). This repo is the standalone, Blender-first home for the track: the loop is mapped from the REAL roads (OpenStreetMap) at REAL elevation (USGS 3DEP), imported into Blender, and shaped there interactively (Kevin designs, Claude operates) BEFORE any kn5 export. Start point = just the 5-road main loop; everything else is added deliberately, in Blender.",
@@ -69,6 +69,14 @@
     ],
     "_divided_connectors_doc": "Ledger 0039 (Kevin's seat, 2026-10-08: side streets 'not connecting correctly'). Del Cerro Boulevard is a divided boulevard whose two carriageways OSM stores as one out-and-back loop (the connector polyline parallels itself at 12-15 m for 0-475 / 625-1100); tools/divide_connectors.py collapses the legs into one trunk ribbon + median island (far loop kept as a plain ribbon) so it meets College as ONE mouth with a set-back nose.",
     "_median_islands_doc": "Ledger 0037 (Kevin's seat, 2026-08-20): C1's single slab 'loses realism because that road doesn't look like that there' \u2014 the real streets are divided by raised landscaped medians ('flowers and barriers... grass etc... shrubs'). The rt_macau pattern (docs/JUNCTIONS.md): ONE continuous pavement slab, median standing ON it as a raised island. tools/median_envelope.py measures the real median from the OSM dual-carriageway geometry, re-centers the ribbon over the true middle and spans both carriageways; tools/author_median_blend.py authors the island (grass deck, shrub clumps, barrier runs) after build_loop_blend, gapped at every connector mouth.",
+    "median_registration": [
+      {
+        "road": "College Avenue",
+        "points": [[1104, 0.0], [1190, 2.0], [1220, 2.6], [1250, 3.4], [1270, 4.2], [1300, 4.5], [1330, 4.7], [1355, 5.5], [1375, 5.5], [1400, 4.3], [1430, 3.75], [1485, 4.2], [1505, 0.0]],
+        "why": "ledger 0055 round 2"
+      }
+    ],
+    "_median_registration_doc": "Ledger 0055 round 2 (the truth lens: College's lanes sat east of the real road). Raw-centreline vertices (centerline.raw.local.json.pre-median) and the lateral move of the FINISHED divided road, metres, + = left of the vertex order (west on College northbound), cosine between points (tools/median_envelope.registration). MEASURED 2026-10-14 in the engine frame (WGS84 series) on two independent sources that agree within ~0.5-1 m: USGS 3DEP 1 m lidar cross-sections every 4 verts over v1190-1430 (the median slope's half-height point between the southbound and the 2-6 m higher northbound bench) and NAIP 2022-04-25 (m_3211716_sw_11_060) read on the ImageServer's SERVED extent (it widens the latitude extent to square-degree pixels; reading a tile on its requested bbox squeezes it ~16 % north-south, which put every earlier aerial check 3-12 m off). Model island centre minus the real median middle, smoothed +-10 verts: 2.0 (v1190), 2.6 (1220), 3.4 (1250), 4.3 (1280-1300), 4.7 (1310-1330), 5.5 (1350-1370), 4.3 (1400), 3.75 (1430), NAIP 4.55 (1485) / 3.2 (1495). Cause: OSM draws both College ways 2-4 m east of their pavement, and median_envelope's sphere projection of OSM adds 1.3-2.1 m (its trusted() doc). Ramps: in from the Del Cerro Blvd mouth's island gap (ends v1100) over 1104-1190, out over 1485-1505 inside the run's own taper into the Navajo box (1506). Height is untouched (the deck keeps the southbound grade, Kevin's 0055 choice).",
     "route_connectors": {
       "routes": [
         "medium",
@@ -202,11 +210,12 @@
           "j": 2328
         },
         {
-          "apex": 3297,
+          "apex": 3296,
           "i": 3289,
           "j": 3304
         }
       ],
+      "_boxes_apex_doc": "Ledger 0055 round 2: the Jackson / Lake Murray Blvd apex reads v3296 (was v3297). The corner is unchanged (every centreline vertex from v1510 on is byte-identical); College's registration shortens the lap 0.45 m, which shifts place_signs' 1 m detector stations downstream and moves the max-curvature station from v3297 to v3296, 2.1 m apart on the R 10.8 m arc. barrier_bands self-gate 1 requires the declared apex to BE a detected one; the box v3289-3304 still holds PC v3291 .. PT v3302.",
       "closure_runs": [
         [
           777,
@@ -273,7 +282,26 @@
       ]
     },
     "grid_slots": 8,
-    "pit_slots": 8
+    "pit_slots": 8,
+    "chicanes": [
+      {
+        "name": "college_split",
+        "out_leg": [
+          1253,
+          1289
+        ],
+        "back_leg": [
+          1343,
+          1379
+        ],
+        "layouts": [
+          "race_cw",
+          "race_acw"
+        ],
+        "street_only_island": true,
+        "why": "Ledger 0055 (Kevin, seat, 2026-10-14: 'for the racetrack versions, I do like the chicane that kind of goes from one side of the road across to the other and back'). v0.18.0's crossing was the ROAD jogging ~12 m sideways off the northbound carriageway onto the southbound one and back (tools/median_envelope.py's trust test, reading OSM through its own sphere projection, split College's divided run at v1280-1352); with the road where it really runs, the Speedways keep the crossing as race geometry on it (scripts/geometry/race_chicane.py, tools/barrier_bands.py: the closure sweeps into the far curb strip while a race-side wall sweeps in parallel from the race-side strip, ~108 m legs (36 vertices) centred on the v0.18.0 jogs (v1262-1280 / v1352-1370): 26 vertices stood at 1:2.85-3.0 against race.corridor.steepest_pin_rate 1:3, and 30 with race_chicane.EASE 0.2 bunched the AI line's turn-in under verify_ai_line's car scale; at 36 / EASE 0.35 the walls run 1:3.2-3.5, the lane held ~160 m on the far carriageway between the legs). Each Speedway crosses in its own direction: Speedway (race_cw, northbound) over to the southbound carriageway and back, Speedway Reverse (race_acw) the mirror. The median island from v1253 to v1379 stands in Lake Murray Free Roam only (<slug>_street.kn5): a race layout's road there is the bare slab the island stands on."
+      }
+    ]
   },
   "lighting": {
     "presets": [
@@ -282,7 +310,7 @@
       "morning"
     ],
     "streetlight": {
-      "intensity": 0.013,
+      "intensity": 0.015,
       "range_m": 25.0,
       "color": [
         1.0,
@@ -308,7 +336,7 @@
         165,
         30
       ],
-      "_doc": "Kevin 2026-10-10: 'Can we do something about the lights? They're very harsh and very bright. And they need to be more like sodium lights from the 80s.' LOW-pressure sodium, not HPS: north of I-8 every City of San Diego street light was LPS from the Feb 1984 council vote (Palomar) until the 2002 broad-spectrum resolution, so Del Cerro's 80s lamps are the monochrome 589 nm yellow - color 255,165,30 (config is 0..1 floats, the writer scales x255) with single_frequency 0.9 as the sodium switch; HPS alternative if the hue reads wrong: color [1.0, 0.72, 0.30], single_frequency 0.7. 'Very bright' was a 255x scale error, not taste: CSP multiplies the 0..255 COLOR by intensity with no /255, so 1.6 was an effective 408 against a community median of ~10 (SRP 1.5); 0.01 = effective 2.55, the soft-sodium band. Ladder if too dark: 0.015 -> 0.02, ceiling 0.03, never back toward 0.1+. Harshness levers: SPOT 150 puts the cone rim (25.9 m at the 6.93 m light height) just outside the 24 m range edge so the gradient, not the cone, draws the pool; specular 0.6 -> 0.1 kills the asphalt glare; diffuse_concentration 0.25 + half-res blurred shadows soften the terminator and the black wedge under each post. emissive/emissive_color are inert here (LIGHTS_0_mat is the invisible 2 cm marker from the 2026-10-08 'glowing ball' fix, 5.0 -> 1.6 / 0.35 -> 0.08) but hue-matched for a future visible lens. Kevin 2026-10-11 after driving it: 'Lights need to be a bit brighter but not much' -> 0.010 -> 0.013 (+30%, under the planned 0.015 step); colour, cone and softness unchanged."
+      "_doc": "Kevin 2026-10-10: 'Can we do something about the lights? They're very harsh and very bright. And they need to be more like sodium lights from the 80s.' LOW-pressure sodium, not HPS: north of I-8 every City of San Diego street light was LPS from the Feb 1984 council vote (Palomar) until the 2002 broad-spectrum resolution, so Del Cerro's 80s lamps are the monochrome 589 nm yellow - color 255,165,30 (config is 0..1 floats, the writer scales x255) with single_frequency 0.9 as the sodium switch; HPS alternative if the hue reads wrong: color [1.0, 0.72, 0.30], single_frequency 0.7. 'Very bright' was a 255x scale error, not taste: CSP multiplies the 0..255 COLOR by intensity with no /255, so 1.6 was an effective 408 against a community median of ~10 (SRP 1.5); 0.01 = effective 2.55, the soft-sodium band. Ladder if too dark: 0.015 -> 0.02, ceiling 0.03, never back toward 0.1+. Harshness levers: SPOT 150 puts the cone rim (25.9 m at the 6.93 m light height) just outside the 24 m range edge so the gradient, not the cone, draws the pool; specular 0.6 -> 0.1 kills the asphalt glare; diffuse_concentration 0.25 + half-res blurred shadows soften the terminator and the black wedge under each post. emissive/emissive_color are inert here (LIGHTS_0_mat is the invisible 2 cm marker from the 2026-10-08 'glowing ball' fix, 5.0 -> 1.6 / 0.35 -> 0.08) but hue-matched for a future visible lens. Kevin 2026-10-11 after driving it: 'Lights need to be a bit brighter but not much' -> 0.010 -> 0.013 (+30%, under the planned 0.015 step); colour, cone and softness unchanged. Ledger 0056 (2026-10-14, the taller LED lamp: light 6.71 -> 11.43 m over the centreline, tools/streetlight_pool.py on CSP's documented range/spot/diffuse terms): UNDER each lamp the road stays in the RANGE_GRADIENT_OFFSET plateau (slant 11.4 m < 12.5 m) and the spot's full-strength core, so the brightness there is unchanged (+0.4 %); BETWEEN lamps the mid-block stays dark as before (3 % of midpoints lit, both) -> intensity stays 0.013, no scaling needed. What does change: the higher source puts the road 8-14 m from a lamp deeper in the cone, so the pool flanks are +16 % (quadratic fade) to +48 % (linear fade) brighter and the lit road +45-69 % on average, while the range sphere's ground footprint shrinks 24.0 -> ~22 m. If Kevin's seat reads that as brighter: 0.009 matches the road average (quadratic), 0.0077 (linear) - at the cost of the core under each lamp (-30-40 %); range_m 26.7 restores the 24 m footprint. 2026-10-14 (ledger 0056): with the taller LED lamps Kevin saw the preview and said 'They could be a little brighter' -> intensity 0.013 -> 0.015 (+15 %, the ladder's next step); seat-tune from here."
     },
     "light_pollution": {
       "color": [
@@ -378,10 +406,11 @@
         {
           "name": "lmb_alvarado_creek",
           "kind": "span",
-          "s_m": [
-            13428.0,
-            13464.0
+          "v": [
+            4479.852,
+            4491.888
           ],
+          "_v_doc": "ledger 0055 round 2: s 13428-13464 on v0.18.0's centreline, as centreline vertices (a station slides when College's length changes)",
           "sides": [
             "left",
             "right"
@@ -406,10 +435,11 @@
         {
           "name": "lmb_i8_span",
           "kind": "span",
-          "s_m": [
-            13330.0,
-            13428.0
+          "v": [
+            4447.108,
+            4479.852
           ],
+          "_v_doc": "ledger 0055 round 2: s 13330-13428 on v0.18.0's centreline, as centreline vertices — College's realignment shortened the lap 6.6 m and the station-declared zone slid 6.6 m off the abutment (a 4.9 m unguarded drop at the deck edge, street drive_test s 13353)",
           "sides": [
             "left",
             "right"
@@ -456,6 +486,22 @@
           ],
           "reach_m": 40.0,
           "why": "fix round 4 (the view lens: short grass fins 20-50 m west of College Ave's north approach, s 2660-2700, seen over the parapet from the seat; worse than v0.17.1): college_i8_span ended at s 2690 and ramped back over 4 m to the near-road verge the build holds, which fresh 3DEP reads 1.3-3.3 m above the real earth 20-35 m out at s 2680-2720; the 1.25 m lattice sampled that 4 m ramp as a row of teeth. Beside the road only (the approach sits on its embankment, on the ground), from the span's north end (no ramp there: the zones abut) to s 2745"
+        },
+        {
+          "name": "college_split_cut",
+          "kind": "bank",
+          "v": [
+            1197.643,
+            1468.542
+          ],
+          "sides": [
+            "right"
+          ],
+          "reach_m": 40.0,
+          "cut_reach_m": 20.0,
+          "round_m": 3.0,
+          "rails": false,
+          "why": "Ledger 0055 (Kevin, seat, 2026-10-14: 'cut into the hillside the way California does and has like a flat side of the hill alongside one side of the road'). College Ave north of Del Cerro is a split-level divided road: on fresh 3DEP 1 m the northbound carriageway rides a bench 2.4-5.7 m over the southbound one (v1216-1414) and the hill east of it rises another 4-8 m within 20 m (to 168-171 m against a road at ~157 m). The build carries both carriageways at the southbound grade (one slab, ledger 0037; the L3 note in 0055: the northbound lanes run up to ~5.7 m under their real bench, by Kevin's choice). East of the slab (right of the street layout's northbound travel) the ground is the real earth cut back by a planar earth batter (ground_release_blend BATTER_CUT, 1 m per metre) from the east pavement edge, read out to cut_reach_m 20 m (= terrain.clamp_corridor_m, the construction zone: at v1279-1306 the hill stands 12-13.8 m over the deck 12-14 m out, beyond the default 12 m reach), its top rounded into the real hill over round_m 3 m (docs/ROAD-CONSTRUCTION.md: 2-5 m). Past the daylight line it is untouched 3DEP; the west side (house lots at grade) has no zone. rails false: the ground rises from the kerb (a cut), so the release makes no drop to guard; the only fall a station reads there is the sidewalk's own outer apron, as on every street of the loop (the first rehearsal stood a jersey rail along all 816 m). Declared by centreline vertex, v1197.6-1468.5 (round 2: a station slides when the road before it changes length; the split level fades out north of v1400, the hillside cut runs on to ~v1470). Round 2 (the truth lens): with College registered onto its measured carriageways (route.median_registration) the cut's toe stands at the real northbound east kerb (~22-25 m east of the raw line); the face is ~10-11 m tall where the real one is ~5 m, because the deck keeps the southbound grade ~5-5.9 m under the real northbound bench (Kevin's choice)"
         }
       ]
     },
@@ -547,7 +593,7 @@
     ]
   },
   "road_datum": {
-    "_doc": "LAWS L3 'Bridges dip': a deck is held straight between its REAL abutments at the road's REAL height (tools/deck_datum.py, the first draft step: it edits data/centerline.raw.local.json.pre-median in the build project, y only, before median_envelope). Stations are on that pre-median centreline. Abutments measured 2026-10-13 from fresh 3DEP 1 m along the centreline (data/deck_datum.samples.json): College Ave over I-8 rides its south embankment to s 2586 (108.65 m) and its north embankment from s 2683 (~112.5 m); the pre-0046 deck ran 2568-2697 from an approach height read off the slope under the bridge, leaving the road 2.0-3.0 m low for 60 m north of it and a ~10 % climb to catch up (ledger 0046, v0.18.0 integration fix round: criterion 4's section 2050 north rim). Lake Murray Blvd's deck over I-8 and Alvarado Creek reads 1-2 m low too (3DEP) and is NOT corrected here: it runs into the lap seam (L13) and criterion 4 does not need it; recorded in ledger 0046 for Kevin.",
+    "_doc": "LAWS L3 'Bridges dip': a deck is held straight between its REAL abutments at the road's REAL height (tools/deck_datum.py, the first draft step: it edits data/centerline.raw.local.json.pre-median in the build project, y only, before median_envelope). Stations are on that pre-median centreline. Abutments measured 2026-10-13 from fresh 3DEP 1 m along the centreline (data/deck_datum.samples.json): College Ave over I-8 rides its south embankment to s 2586 (108.65 m) and its north embankment from s 2683 (~112.5 m); the pre-0046 deck ran 2568-2697 from an approach height read off the slope under the bridge, leaving the road 2.0-3.0 m low for 60 m north of it and a ~10 % climb to catch up (ledger 0046, v0.18.0 integration fix round: criterion 4's section 2050 north rim). Lake Murray Blvd's two decks (over I-8, and over Alvarado Creek just north of 70th St) read 1-2.6 m low (3DEP) and were deferred in ledger 0046 (they run into the lap seam, L13); ledger 0057 declares them here at their real abutments (fresh 3DEP 1 m, 2026-10-14), re-derived inside the 70th / Alvarado profile window, which crosses the seam. PROFILES (ledger 0057, tools/deck_datum.py PROFILE WINDOWS): inside each window the road is fresh 3DEP 1 m at both carriageway centres (mean), every deck span inside held straight, a Gaussian of 3 m, blended over blend_m at each end; the assembler smooths the window with assembler_sigma_y_pts instead of route.smooth_sigma_y_pts. A window whose start is past its end runs through the seam.",
     "decks": [
       {
         "name": "college_ave_over_i8",
@@ -560,8 +606,64 @@
           2742.0
         ],
         "why": "fresh 3DEP 1 m: south embankment at road height to s 2586 (108.65 m), open span 2587-2682 (bare earth 102.7-104.3 m under it), north embankment from s 2683 (112.4-113.4 m); the old deck ended at s 2697 at 110.22 m"
+      },
+      {
+        "name": "lmb_over_i8",
+        "deck_m": [
+          13347.0,
+          13424.0
+        ],
+        "window_m": [
+          13322.0,
+          13432.0
+        ],
+        "why": "ledger 0057 (deferred in 0046): fresh 3DEP 1 m at both carriageway centres, 2026-10-14: Lake Murray Blvd rides its north embankment at road height to s 13347 (126.2 m), the open span over I-8 13348-13423 (bare earth 119.3-120.1 m under it), the fill between the freeway and Alvarado Creek from s 13424 (126.2 m); the pre-median deck ran 125.0 -> 124.2 m, 1.2-2.0 m low"
+      },
+      {
+        "name": "lmb_over_alvarado_creek",
+        "deck_m": [
+          13432.0,
+          13457.0
+        ],
+        "window_m": [
+          13424.0,
+          13472.0
+        ],
+        "why": "ledger 0057 (deferred in 0046): fresh 3DEP 1 m, 2026-10-14: the fill between I-8 and the creek at road height to s 13432 (126.2 m), the open span over Alvarado Creek 13433-13456 (bare earth 115.7-117.9 m), the south embankment from s 13457 (125.6 m) down to the 70th St junction (125.1 m at v0); the pre-median deck ran 124.1 -> 123.8 m, 1.8-2.1 m low, then climbed ~7 % in 20 m to the junction (the 12-point crest the assembler's Gaussian rounded 0.7 m off)"
       }
-    ]
+    ],
+    "profiles": [
+      {
+        "name": "college_alvarado_junction",
+        "window_m": [
+          2200.0,
+          2530.0
+        ],
+        "blend_m": 30.0,
+        "assembler_sigma_y_pts": 1.0,
+        "fold_fan_fit": {
+          "fit_m": [
+            2250.0,
+            2340.0
+          ],
+          "dt_max_m": 0.05
+        },
+        "_fold_fan_fit_doc": "Ledger 0057 fix round (2026-10-14; replaces round 1's hold_straight_m box). Two gates judge the College/Alvarado hairpin on paths its tight turn bends: verify_fold_fans' pinch paths (the levelled fold fan, rows 763-774, ledger 0050, pinches its inside edge to ONE point; every path inside folds and turns sharply on the corner's medial axis) and drive_test's fixed-offset wheel paths (each metre's sample jumps sideways where the segment normal turns). The junction's real crest fails both (fan DT 0.076-0.087 m; rehearsal 5: street severe 0 -> 10, race 22 / 20 -> 27 / 26). Round 1's box passed by removing the crest: 0.55 m under the real road centre, the stop line's last metres flat. tools/deck_datum.py fold_fan_fit: inside fit_m (pre-median s 2250-2340: the fan's rows, their eased legs and College's last 15 m to the stop line) the profile takes the change with the smallest misfit to the 3DEP target (heights, grades, grade changes) that keeps the fan within dt_max_m 0.05 m (the gate: 0.06) and drive_test's wheel paths there (street, a race lane both ways) at no severe step and no more kinks than v0.18.0 built here - all read on the ribbon the assembler and the weld will build; inside fit_m the 3DEP is read on the plan the assembler builds (its smoothing moves the hairpin's line up to 3.6 m; the junction tilts 8 % across). Solved: fan DT 0.076 -> 0.047 m; wheel paths street 8 kinks / 0 severe (v0.18.0 here: 12 / 0), race 22 / 0 and 20 / 0 (22 / 6, 20 / 6); the built profile within +0.16 / -0.21 m of the target; the crest 111.27 m against a real 111.48 m on the road centre (round 1: 110.93). fit_m stops at 2340: reaching 2360 the fit steepened College's flank into a sag where the seated ground's 10 m facets rose through the road by up to 9 mm (soft tops street 33 -> 39, race 9 -> 21; rehearsal 6). The solve is cached in data/deck_datum.samples.json fold_fan_fits (keyed by everything it reads; a fresh solve reproduces it byte for byte). The road stays a level slab: the race walls' containment band (no_route, verify_fold_fans (7): +-0.28 m about the centre line) cannot hold the junction's 8 % tilt at 14 m from the line.",
+        "why": "ledger 0057, Kevin 2026-10-14: 'my cars with clutches would roll back from stoplights there ... Stoplight would be heading onto Alvarado from college'. The junction is a real hump (fresh 3DEP 1 m: crest ~111.8 m at s ~2310; College southbound climbs into it at +5.8 % on both lanes over the last 30 m before the stop line, s 2356 -> 2326 here = local s 2343 -> 2313) that the August heightfield smoothing and the assembler's sigma_y 5 had cut to +3.5 % and 0.8-1.2 m low. From Alvarado's climb to the junction (s 2200) to the bottom of College by the I-8 ramps (s 2530), short of the College deck window (2548)"
+      },
+      {
+        "name": "seventieth_alvarado",
+        "window_m": [
+          13280.0,
+          230.0
+        ],
+        "blend_m": 30.0,
+        "assembler_sigma_y_pts": 1.5,
+        "why": "ledger 0057, Kevin 2026-10-14: 'same with heading down Alvarado from 70th'. Alvarado's pitch from the 70th St junction (v0) to s ~112 is real -7.7 % over 100 m (built -6.1 %), and the eastbound wait at 70th faces +8.3 % uphill (built +5.6 %). Through the lap seam (L13): from Lake Murray Blvd north of its I-8 deck (s 13280) over both of its decks (held straight, lmb_over_i8 / lmb_over_alvarado_creek) and the junction to Alvarado at s 230, where the road runs at ~1 % to College"
+      }
+    ],
+    "assembler_smooth": "tracks/san-diego-lake-murray/scripts-v021/geometry/smooth.py",
+    "_assembler_smooth_doc": "the assembler of record's smoothing module, read by tools/deck_datum.py's fold-fan fit to predict the centreline build_loop_blend will build (plan smoothing + per-window sigma_y): the fit judges the ribbon the build will carry, not the pre-median line (ledger 0057 fix round)"
   },
   "scenery": {
     "freeway": {
@@ -592,7 +694,93 @@
     "scatter_trees": true,
     "scatter_scrub": true,
     "tree_pct": 38,
-    "scrub_pct": 24
+    "scrub_pct": 24,
+    "streetlights": {
+      "model": "led_cobra",
+      "arms": 2,
+      "relocate": [
+        {
+          "name": "lamp_53_college_junction",
+          "from_base_xz": [
+            -1448.43,
+            -543.81
+          ],
+          "to_base_xz": [
+            -1447.2,
+            -531.8
+          ],
+          "seat": "ground",
+          "why": "the 0056 look verifier: lamp 53 stands on 1ROAD in a junction carriageway (0.86 m from the yellow line; its base is the draft's since v0.18.0, both 4 m arms over the road). Moved 12.1 m onto the sidewalk slab on the junction's corner (CURB top 42.21 m), seated on it. v0.18.1 fix round (the runtime + view verifiers): the first spot, (-1450.13, -533.51), had its axis 2 cm onto the curb and the pole 0.10 m over the asphalt in the gutter; this one is mid-slab on the corner: axis 1.30 m from the nearest road surface, 1.04 m from the slab's back edge (r2 track.obj, 0.1 m raster), and the road-ward arm (east, toward College) reaches over College's carriageway instead of running along the curb"
+        },
+        {
+          "name": "lamp_30_guard_release",
+          "from_base_xz": [
+            -1540.08,
+            -1058.22
+          ],
+          "to_base_xz": [
+            -1540.34,
+            -1059.19
+          ],
+          "seat": "keep",
+          "why": "the 0056 look verifier: the pole axis 0.11-0.12 m from 1WALL_guard_release (the rail on the sidewalk's back edge where ground_release drops the ground) - the pole through the rail. Moved 1.0 m straight away from the road, behind the rail (pole >= 0.5 m clear of it), the light at its height"
+        },
+        {
+          "name": "lamp_32_guard_release",
+          "from_base_xz": [
+            -1645.2,
+            -1043.51
+          ],
+          "to_base_xz": [
+            -1645.27,
+            -1044.51
+          ],
+          "seat": "keep",
+          "why": "as lamp 30 (pole through 1WALL_guard_release); 1.0 m straight back, behind the rail, on the released slope (ground 0.8 m under the datum, the pole foot 2.5 m under it)"
+        },
+        {
+          "name": "lamp_34_guard_release",
+          "from_base_xz": [
+            -1754.8,
+            -1048.36
+          ],
+          "to_base_xz": [
+            -1754.72,
+            -1049.36
+          ],
+          "seat": "keep",
+          "why": "as lamp 30 (pole through 1WALL_guard_release); 1.0 m straight back, behind the rail, on the released slope"
+        },
+        {
+          "name": "lamp_43_guard_release",
+          "from_base_xz": [
+            -1816.38,
+            -920.6
+          ],
+          "to_base_xz": [
+            -1817.24,
+            -920.09
+          ],
+          "seat": "keep",
+          "why": "as lamp 30 (pole through 1WALL_guard_release); 1.0 m straight back, behind the rail"
+        },
+        {
+          "name": "lamp_237_lmb_creek_deck",
+          "from_base_xz": [
+            40.86,
+            -1623.14
+          ],
+          "to_base_xz": [
+            44.86,
+            -1618.24
+          ],
+          "seat": "keep",
+          "why": "two findings on one post: the 0056 look verifier's lamp 237 (pole through 1WALL_guard_release) is the 0057 view verifier's LIGHTPOST_8 by the Lake Murray Blvd / Alvarado Creek deck, whose foot hung 0.28-1.07 m over the grass once 0057 raised the deck (combined build: on the deck's sidewalk edge, the earth 10 m below). Moved 6.3 m back along the road off the deck onto the embankment beside its abutment, behind the rail (1.2 m clear): ground 24.44 m, 0.49 m under the datum, the foot buried"
+        }
+      ],
+      "_relocate_doc": "v0.18.1 integration (2026-10-14): tools/author_lamps_blend.py RELOCATIONS (tools/streetlight_relocate.py) - each entry names ONE post by its base as the draft places it (local x/z, within 1.0 m) and stands it at to_base_xz; seat 'ground' = the draft's rule on the authored ground under the new base (head 8.8 m over it), 'keep' = the draft's head height. The tool exits 1 (loop.blend not saved) if a named post is missing, the new base is on a road, the pole is < 0.5 m from a wall / guardrail, or its foot is not in the earth. Every other lamp stands where the draft put it. Bases are those of the College (0055) lap: its registration shortened the lap 6.565 m and the draft's 55 m spacing re-stations every lamp after College (238 posts, was 239).",
+      "_doc": "Ledger 0056 (Kevin 2026-10-14: 'make lighter lamp model' / 'more modern' / 'Taller too'). tools/author_lamps_blend.py stands this model at every post in data/lights.local.json (the post bases do not move). led_cobra = the modern San Diego arterial light from tools/make_streetlight_led.py (CC0): a 35 ft (10.67 m) galvanised tapered steel pole (Caltrans ES-6A Type 21), 12 ft (3.66 m) upswept mast arm, flat-bottom LED cobra head with a twist-lock photocell, flat LED lens at the 38'-9\" (11.81 m) ES-6A mounting height (the 2026-10 lamp's light stood 6.94 m over the road), 371 kn5 render points per lamp with its lens (rehearsal, 2026-10-14) against ~4,045. arms 2 = back-to-back heads, the configuration every 2026-10 lamp has (its lamp_post.obj is symmetric); only the road-ward head carries the emissive lens and the CSP light, as before; arms 1 = the single-arm cobra head. ROLLBACK (one key): model 'street_lamp_2026_10' = Kevin's decimated Street_Lamp (assets/models/lamp_post.obj, 11.5 m, 2 cm invisible lens marker) exactly as v0.18.0 shipped it. The light settings in lighting.streetlight are unchanged (see its _doc, 2026-10-14)."
+    }
   },
   "ui_description": "Lake Murray, San Diego (Kevin's childhood neighbourhood): the real 13.5 km loop of Alvarado Road, College Avenue, Navajo Road, Jackson Drive and Lake Murray Boulevard around the reservoir, from OpenStreetMap at real USGS 3DEP elevation. Three layouts: Lake Murray Free Roam (the open streets) and the Lake Murray Speedway, normal (clockwise) and Reverse (anticlockwise).",
   "_ui_description_doc": "Ledger 0047 fix round (2026-10-11): the CM description is per layout (layouts[].ui_description, read first by scripts/ac/track_folder.ui_track_json); this track-level text is the fallback. The old one described the V3 C1 build (split carriageways deleted, 'no phantom opposing lanes') and a Del Cerro sub-loop, even on the race layouts that seal every side street.",

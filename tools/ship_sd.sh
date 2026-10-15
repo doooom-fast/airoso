@@ -342,6 +342,19 @@ for lid in $RACE_IDS; do
   (cd "$AIROSO" && python -m scripts.modkit.inspect_kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --json "$PROJ/data/closure_$lid.kn5.json" >/dev/null)
   (cd "$AIROSO" && python tools/check_race_kn5.py "$PROJ/data/closure_$lid.kn5.json" --role closure --owner "$tok")
 done
+rm -f "$PROJ/build/${SLUG}_street.kn5" "$PROJ/data/street_kn5.json"   # a retired chicane's street set never rides along
+if [ -f "$PROJ/blender/split/loop_street.blend" ]; then
+  # ledger 0055 (an echo, not a `step`: tracks/san-diego-lake-murray/ship.json reproduces this chain's step headers
+  # and gains the street set when the general chain learns race.chicanes): the median island over each declared
+  # chicane's span (race.chicanes street_only_island) stands in Free Roam only — <slug>_street.kn5, loaded by every
+  # non-race layout beside the road kn5; content-checked (street-only meshes, embedded textures, no AC_* node)
+  echo; echo "=================== ship: export the STREET-ONLY kn5 (the median island over the Speedways' chicane span; the street layout alone)"
+  "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/export_kn5_addon.py" -- "$PROJ" --blend "$PROJ/blender/split/loop_street.blend" --out "${SLUG}_street.kn5" 2>&1 | grep "KN5 EXISTS\|INI materials"
+  (cd "$AIROSO" && python -m scripts.modkit.inspect_kn5 "$PROJ/build/${SLUG}_street.kn5" --json "$PROJ/data/street_kn5.json" >/dev/null)
+  (cd "$AIROSO" && python tools/check_street_kn5.py "$PROJ/data/street_kn5.json")
+fi
+STREET_KN5=""
+[ -f "$PROJ/build/${SLUG}_street.kn5" ] && STREET_KN5="--kn5 $PROJ/build/${SLUG}_street.kn5"
 step "ship: spawn kn5 per layout (nodes only: AC_START/PIT/HOTLAP/TIME from data/dummies_<id>.json)"
 "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/build_spawn_kn5.py" -- "$PROJ" 2>&1 | grep "^\[spawn_kn5\]"
 
@@ -380,7 +393,8 @@ rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"
 # the road gate OBJ is written BEFORE the track folder (ledger 0046): ext_config's GrassFX lists and make_treefx's
 # SURFACE_MATERIALS read the mesh names off it, and the 1GRASS tile count now follows the terrain
 step "gate: road kn5 -> gate OBJ (engine frame) + gate centreline"
-(cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")
+# (+ the street-only kn5 when there is one, ledger 0055: data/track.obj is the STREET layout's kn5 set)
+(cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" $STREET_KN5)
 step "ship: track folder (models_<id>.ini x3, ui/<id>/, <id>/{map,data,ai}; a race layout without its closure kn5 is a HARD error)"
 (cd "$AIROSO" && python -m scripts.ac.track_folder "$PROJ") | grep -E "wrote|length_m|n_pits|layouts packed|removed stale|models|WARNING|ai/"
 cp "$PROJ/build/$SLUG.kn5" "$PROJ/build/$SLUG/"          # the race, closure + spawn kn5s are copied by track_folder itself
@@ -472,7 +486,7 @@ for f in centerline.local.json centerline.raw.local.json median_bands.json dummi
          finished_centerline.json gate_centerline.json lights.local.json connectors.local.json \
          mouths.json mouth_welds.json verify_mouths.json verify_fold_fans.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
          drive_test.json audit.json \
-         barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json \
+         barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json street_kn5.json \
          $TERRAIN_DATA terrain.tiers.report.json bridges.authored.json          deck_datum.json ground_release.json ground_release.report.json freeway_i8.json freeway_i8.report.json; do
   [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
 done

@@ -874,6 +874,45 @@ def make_mesh(name, mesh_dict, rgba):
     return ob
 
 
+def _profile_sigma_windows(cfg, data, raw_centerline):
+    """Ledger 0057: [(sigma_y_pts, weight per unique vertex)] for every track.config.json road_datum.profiles window
+    that carries assembler_sigma_y_pts. Its stations are on the pre-median centreline the windows are declared on
+    (index-aligned with centerline.raw.local.json: median_envelope moves x/z, never the vertex count), else on the
+    raw line; a window whose start is past its end runs through the lap seam (L13). [] when none is declared."""
+    profs = [p for p in ((cfg.get("road_datum") or {}).get("profiles") or []) if p.get("assembler_sigma_y_pts")]
+    if not profs:
+        return []
+    from scripts.geometry import smooth as smoothmod
+    pts = raw_centerline
+    pre = data / "centerline.raw.local.json.pre-median"
+    if pre.exists():
+        pp = json.loads(pre.read_text())["points_xyz_m"]
+        if len(pp) == len(raw_centerline):
+            pts = pp
+    st = [0.0]
+    for a, b in zip(pts, pts[1:]):
+        st.append(st[-1] + math.hypot(b[0] - a[0], b[2] - a[2]))
+    closed = (abs(raw_centerline[0][0] - raw_centerline[-1][0]) < 1e-6
+              and abs(raw_centerline[0][2] - raw_centerline[-1][2]) < 1e-6)
+    lap = st[-1] if closed else None
+    by_sigma = {}
+    for p in profs:
+        w0, w1 = float(p["window_m"][0]), float(p["window_m"][1])
+        if w1 < w0:
+            if not closed:
+                raise SystemExit(f"road_datum.profiles {p['name']}: a window through the seam needs a closed loop")
+            w1 += lap
+        # blend default = tools/deck_datum.py PROFILE_BLEND_M
+        by_sigma.setdefault(float(p["assembler_sigma_y_pts"]), []).append((w0, w1, float(p.get("blend_m", 30.0))))
+    out = []
+    for sig, wins in sorted(by_sigma.items()):
+        wts = smoothmod.window_weights(st[:-1] if closed else st, lap, wins)
+        out.append((sig, wts))
+        print(f"[blend] sigma_y {sig:g} pts in {len(wins)} road_datum.profiles window(s) (ledger 0057): "
+              f"{sum(1 for w in wts if w > 0)} vertices, {sum(1 for w in wts if w >= 1.0)} at full weight")
+    return out
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else ["project"]
     proj = Path(argv[0]).resolve()
@@ -906,10 +945,15 @@ def main():
     # down-and-up is the whole point. sigma_y is LIGHT: it only rounds the sharpest launch-crests (grade
     # reversals that send the car airborne) so the profile is smooth, NOT flat. We do NOT level the bridge
     # decks — the roads ease down and up across them; forcing a flat deck was wrong.
+    # Ledger 0057 (opt-in): road_datum.profiles windows (tools/deck_datum.py re-based them on fresh 3DEP) keep their
+    # real short grades — smoothed with their own assembler_sigma_y_pts instead of smooth_sigma_y_pts; every vertex
+    # outside them is exactly the smooth_sigma_y_pts result. No declared window = the call below, unchanged.
+    y_windows = _profile_sigma_windows(cfg, data, raw_centerline)
     centerline = smoothmod.smooth_centerline(
         raw_centerline, sigma_pts=float(route.get("smooth_sigma_pts", 2.0)),
         passes=int(route.get("smooth_passes", 2)),
-        sigma_y_pts=float(route.get("smooth_sigma_y_pts", 1.5)))
+        sigma_y_pts=float(route.get("smooth_sigma_y_pts", 1.5)),
+        **({"y_sigma_windows": y_windows} if y_windows else {}))
     tiers_on = bool((cfg.get("terrain") or {}).get("tiers"))
     i8 = _load_i8(proj, legacy=tiers_on)
     print(f"[blend] smoothed curves: max kink {smoothmod.max_kink_deg(raw_centerline):.1f} -> "

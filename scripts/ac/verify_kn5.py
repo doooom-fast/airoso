@@ -524,6 +524,25 @@ def _verify_layouts(project: Path, cfg: dict, slug: str, layouts: list, kn5_dir:
                    if p.name not in {closure_kn5_name(slug, lid) for lid in need_race})
     for name in stray:
         fails.append(f"stray closure kn5 build/{name} — no race layout declares it (a retired id or a typo)")
+    # ledger 0055: the street-only kn5 — present exactly when a street-only island is declared, street-only meshes,
+    # none of them also a road-kn5 mesh (a doubled island)
+    from scripts.geometry import race_chicane as _rc
+    sp = kn5_dir / _rc.street_kn5_name(cfg) if cfg.get("slug") else None
+    if sp is not None and _rc.has_street_kn5(cfg):
+        if not sp.exists():
+            fails.append(f"race.chicanes declares a street-only island but build/{sp.name} does not exist — Free Roam "
+                         f"would lose the median there")
+        else:
+            _n, s_meshes, _m = _parse_full(sp)
+            main_names = {m["name"] for m in main_meshes}
+            bad = [m["name"] for m in s_meshes if not _rc.is_street_only_name(m["name"]) or m["name"] in main_names]
+            if not s_meshes or bad:
+                fails.append(f"build/{sp.name}: {len(s_meshes)} meshes, not street-only or doubled in the road kn5: {bad[:4]}")
+            if any(n.upper().startswith(SPAWN_PREFIXES) for n, _p, _z in _n):
+                fails.append(f"build/{sp.name} carries spawn / timing nodes")
+            print(f"  street-only kn5 {sp.name}: {len(s_meshes)} meshes {[m['name'] for m in s_meshes]}")
+    elif sp is not None and sp.exists():
+        fails.append(f"stray street-only kn5 build/{sp.name} — race.chicanes declares no street-only island")
     # (a) exactly one spawn kn5 per id, no strays
     expected = {f"{slug}__{lid}.kn5" for lid in ids}
     present = {p.name for p in kn5_dir.glob(f"{slug}__*.kn5")}
@@ -613,6 +632,8 @@ def verify_inis(project_dir: str | Path, folder: str | Path | None = None) -> li
     if len(layouts) <= 1:
         return fails
     closures = {closure_kn5_name(slug, str(lo["id"])): str(lo["id"]) for lo in layouts if lo.get("race_furniture")}
+    from scripts.geometry import race_chicane as _rc
+    street_kn5 = _rc.street_kn5_name(cfg) if _rc.has_street_kn5(cfg) else None
     for lo in layouts:
         lid = str(lo["id"])
         ini = folder / f"models_{lid}.ini"
@@ -623,7 +644,11 @@ def verify_inis(project_dir: str | Path, folder: str | Path | None = None) -> li
         if lo.get("race_furniture"):
             want = [f"{slug}.kn5", race_kn5_name(slug, lo), closure_kn5_name(slug, lid), f"{slug}__{lid}.kn5"]
         else:
-            want = [f"{slug}.kn5", f"{slug}__{lid}.kn5"]
+            # ledger 0055: a street layout also loads the street-only island (<slug>_street.kn5) when one is declared
+            want = [f"{slug}.kn5"] + ([street_kn5] if street_kn5 else []) + [f"{slug}__{lid}.kn5"]
+        if lo.get("race_furniture") and street_kn5 and street_kn5 in got:
+            fails.append(f"INI: {ini.name} lists {street_kn5} — the street-only island would stand in a race lane "
+                         f"(ledger 0055)")
         others = [f for f in got if f in closures and closures[f] != lid]
         if others:
             fails.append(f"INI: {ini.name} lists another layout's closure {others} — loading both closures blocks both "

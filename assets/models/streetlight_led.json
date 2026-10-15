@@ -1,0 +1,29 @@
+{
+ "name": "streetlight_led",
+ "_doc": "ledger 0056 \u2014 modern LED street light. Frame: metres, +x road-ward, +y up, origin = pole axis at the road datum. Read by tools/author_lamps_blend.py (placement) and tools/verify_race.py (mast footprint).",
+ "files": {
+  "post_twin": "streetlight_led_post_twin.obj",
+  "post_single": "streetlight_led_post_single.obj",
+  "lens": "streetlight_led_lens.obj"
+ },
+ "pole_height_m": 10.668,
+ "arm_length_m": 3.6576,
+ "mounting_height_m": 11.811,
+ "lens_centre_m": [
+  4.0376,
+  11.811,
+  0.0
+ ],
+ "lens_size_m": [
+  0.52,
+  0.23
+ ],
+ "pole_bury_m": 2.5,
+ "mast_radius_m": 0.1241,
+ "sources": {
+  "pole_height": "Caltrans Standard Plan ES-6A (Lighting Standard, Types 15 and 21): Type 21 pole 35'-0\"",
+  "arm": "ES-6A mast-arm lengths 6/8/10/12/15 ft; City of San Diego SDE-101: arm 8' max (concrete/fiberglass), 12' for Type 15 (steel)",
+  "mounting_height": "ES-6A Type 21 + 12 ft arm = 38'-9\" (Type 15 + 12 ft arm = 33'-9\"); SDE-101's own table tops out at 30' for its 250 W HPS / 180 W LPS arterial lamp",
+  "pole_od": "ES-6A Type 21 base OD 8-5/8\"; 0.14 in/ft taper"
+ }
+}

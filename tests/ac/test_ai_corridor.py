@@ -115,6 +115,26 @@ def test_lane_centre_target_tapers_and_stays_in_the_lane():
     assert all(o2[i] >= lo2[i] + w.LINE_MIN_CLEAR_M - 1e-9 for i in range(n))
 
 
+def test_a_chicane_holds_the_comfort_clearance_where_the_plain_bound_lets_the_line_cut_the_s():
+    # ledger 0055 round 2: a 9.6 m walled lane that sweeps 20 m sideways over ~55 m and back (College's chicane);
+    # with the 1 m bound the lane-centre target cuts each bend toward its inside wall, with the chicane's hold it
+    # stays comfort + FAIR_CLEAR_EXTRA_M off both walls
+    n, ds = 600, 1.5
+    def sweep(i):
+        t = min(1.0, max(0.0, (i - 200) / 36.0)) - min(1.0, max(0.0, (i - 360) / 36.0))
+        return 20.0 * (0.5 - 0.5 * math.cos(math.pi * t)) if 0.0 < t < 1.0 else 20.0 * t
+    lo = [sweep(i) - 4.8 for i in range(n)]
+    hi = [sweep(i) + 4.8 for i in range(n)]
+    o, _ = w.corridor_offsets(lo, hi, ds, False)
+    plain = min(min(o[i] - lo[i], hi[i] - o[i]) for i in range(n))
+    hold = 2.5 + w.FAIR_CLEAR_EXTRA_M
+    clear = [hold if 190 <= i <= 410 else w.LINE_MIN_CLEAR_M for i in range(n)]
+    o3, _ = w.corridor_offsets(lo, hi, ds, False, clear=clear)
+    held = min(min(o3[i] - lo[i], hi[i] - o3[i]) for i in range(190, 411))
+    assert plain < 2.5 <= hold - 1e-9 <= held, (plain, held)
+    assert max(abs(o3[i + 1] - o3[i]) for i in range(n - 1)) < 1.0                 # still a taper, never a step
+
+
 # --- open corners ---------------------------------------------------------------------------------
 
 def _square_corridor(open_corners: bool):

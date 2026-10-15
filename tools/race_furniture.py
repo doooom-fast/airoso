@@ -182,11 +182,28 @@ def load_centerline(proj, lap=None):
 
 
 def load_island_w(proj, lap=None):
-    """median_bands island_w_by_vertex (mainline), or the lap file's island_w_by_vertex"""
+    """the island the RACE layouts meet: median_bands island_w_by_vertex (mainline) with every street-only chicane span
+    zeroed (scripts/geometry/race_chicane.race_island_w, ledger 0055), or the lap file's island_w_by_vertex"""
     if lap:
         return [float(w) for w in _race_lap().load(proj, lap)["island_w_by_vertex"]]
     mb = json.loads((Path(proj) / "data" / "median_bands.json").read_text(encoding="utf-8"))
-    return mb["island_w_by_vertex"]
+    cp = Path(proj) / "track.config.json"
+    cfg = json.loads(cp.read_text(encoding="utf-8")) if cp.exists() else {}
+    return _race_chicane().race_island_w(mb["island_w_by_vertex"], cfg)
+
+
+_RACE_CHICANE = []
+
+
+def _race_chicane():
+    """scripts/geometry/race_chicane.py (pure), loaded by file once — this module also runs inside Blender"""
+    if not _RACE_CHICANE:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("_race_chicane_rf", AIROSO / "scripts" / "geometry" / "race_chicane.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        _RACE_CHICANE.append(mod)
+    return _RACE_CHICANE[0]
 
 
 _RACE_LAP = []
@@ -1211,6 +1228,31 @@ def closure_plans(pts, widths, bands, layout_id, height=BARRIER_H):
             pins.append({"vertex": v, "y": round(float(y[v]), 4), "joins": str(e.get("joins") or far)})
         whole.update(rings=rings, token=tok, layout=layout_id, pins=pins, closed_loop=False,
                      run_length_m=round(rings[-1]["arc"] - rings[0]["arc"], 1))
+        for part in _count_inserted(split_plan(whole)):
+            part["fold_corners"], part["fold_skipped"] = [], 0
+            plans.append(part)
+    # ledger 0055: each declared chicane's RACE-SIDE wall (corridors.<id>.chicane_walls on race_wall_y_by_vertex) — the
+    # same jersey strip in this layout's closure kn5, pinned at both ends in the race-side curb strip; its plan carries
+    # wall = "chicane" and side = the race side (verify_race C' judges it against race_wall_y_by_vertex)
+    yw = c.get("race_wall_y_by_vertex") or []
+    race_side = "R" if side == "L" else "L"
+    for w in c.get("chicane_walls") or []:
+        i, j = int(w["i"]) % m, int(w["j"]) % m
+        ks = walk(i, j, m)
+        if any(k >= len(yw) or yw[k] is None for k in ks):
+            raise SystemExit(f"[race] corridors.{layout_id} chicane {w.get('name')} v{i}-v{j}: race_wall_y_by_vertex is "
+                             f"null inside it — the declaration is broken (re-run tools/barrier_bands.py)")
+        whole = _plan_run(pts, widths, m, st, ks, lambda k: float(yw[k]), "pin", "pin", height, "close",
+                          street_of(i, table), race_side, (i, j))
+        rings, dropped, corners = trim_folded_rings(whole["rings"])
+        if corners or dropped:
+            raise SystemExit(f"[race] chicane wall {layout_id} v{i}-v{j} folds — the declared line is tighter than its "
+                             f"own offset there; re-solve the corridor")
+        rings, _ = densify_rings(rings, m)
+        joins = str(w.get("joins") or ("edge_" + race_side))
+        pins = [{"vertex": v, "y": round(float(yw[v]), 4), "joins": joins} for v in (i, j)]
+        whole.update(rings=rings, token=tok, layout=layout_id, pins=pins, closed_loop=False, wall="chicane",
+                     chicane=str(w.get("name") or ""), run_length_m=round(rings[-1]["arc"] - rings[0]["arc"], 1))
         for part in _count_inserted(split_plan(whole)):
             part["fold_corners"], part["fold_skipped"] = [], 0
             plans.append(part)

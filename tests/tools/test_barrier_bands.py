@@ -67,6 +67,13 @@ def _project(cfg_edit=None) -> Path:
     d = Path(tempfile.mkdtemp())
     (d / "data").mkdir()
     cfg = v2_config(json.loads((SD / "track.config.json").read_text(encoding="utf-8")))
+    # ledger 0055's College chicane is declared on the rebuilt road (one continuous divided run); the data pinned here
+    # is the installed v0.18.0 build's (College split in two at v1258-1374) — judged as declared then, without it.
+    # tests/tools/test_college_split_0055.py drives a declared chicane on this data where the island IS continuous.
+    cfg.get("race", {}).pop("chicanes", None)
+    # ...and on that v0.18.0 centreline the detector reads the Jackson / Lake Murray Blvd apex at v3297 (the rebuilt road,
+    # 0.45 m shorter on College, reads v3296 — the config's box): the boxes as declared for this data
+    cfg["race"]["corridor"]["boxes"] = copy.deepcopy(CORRIDOR["boxes"])
     if cfg_edit:
         cfg_edit(cfg)
     (d / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")

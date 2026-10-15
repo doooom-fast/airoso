@@ -363,6 +363,10 @@ def test_lake_murray_dummies_from_layout_dummies_pass_the_spawn_gate():
         if lo.get("race_furniture"):
             ms, mats = _closure_meshes(lo["closure_token"])
             write_kn5(d / "build" / f"san_diego_lake_murray_closure_{lo['id']}.kn5", ms, [], mats)
+    # ledger 0055: race.chicanes declares a street-only island -> <slug>_street.kn5 must exist, street-only meshes
+    street = d / "build" / "san_diego_lake_murray_street.kn5"
+    write_kn5(street, [("1KERB_sidewalk_streetonly_median", _BOX, _BTRIS, 0)], [],
+              ["1KERB_sidewalk_streetonly_median_mat"])
     for lo in cfg["layouts"]:
         lid = lo["id"]
         dj = json.loads((d / "data" / f"dummies_{lid}.json").read_text(encoding="utf-8"))
@@ -377,6 +381,9 @@ def test_lake_murray_dummies_from_layout_dummies_pass_the_spawn_gate():
         write_kn5(d / "build" / f"san_diego_lake_murray__{lid}.kn5", [], nodes, [])
     fails = verify(d)
     assert fails == [], fails
+    # ...and without it Free Roam would lose the median over the Speedways' chicane: a FAIL
+    street.unlink()
+    assert any("san_diego_lake_murray_street.kn5 does not exist" in f for f in verify(d))
 
 
 def test_lake_murray_reflected_yaw_is_caught():

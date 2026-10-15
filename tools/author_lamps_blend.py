@@ -34,8 +34,11 @@ exactly one post, or exit 1) and gives the new base (`to_base_xz`, at most MAX_M
 ground under the post; "keep" = the head height the draft gave it). The recorded head moves with the base (same arm, the
 road-ward direction re-read at the new spot), and data/lights.local.json `lampheads` is rewritten, so every reader
 downstream (place_signs, verify_race G, ext_config's [LIGHT_N] through the lens) sees the moved post. Self-checks per
-moved lamp, exit 1 (loop.blend NOT saved): the base is not over a road surface, the pole stands at least WALL_CLEAR_M
-from every wall / guardrail, and its foot (POLE_BURY_M under the datum) is in the ground — never hanging in the air.
+moved lamp, exit 1 (loop.blend NOT saved): the pole's whole FOOTPRINT is off the road — the axis and a ring of radius
+(mast radius + ROAD_SETBACK_M) around it, read in FOOTPRINT_DIRS directions, each on a surface that is not a road (v0.18.1
+fix round: the axis-only read let lamp 53 straddle the carriageway edge by 0.11 m with its axis 2 cm onto the curb) —
+the pole stands at least WALL_CLEAR_M from every wall / guardrail, and its foot (POLE_BURY_M under the datum) is in the
+ground — never hanging in the air.
 
 The local->Blender remap (x, z, y) is a reflection (LAWS L6), so face winding is reversed on import to keep the
 models' outward normals.
@@ -68,6 +71,9 @@ HEAD_OVER_GROUND_M = 8.8      # build_loop_blend.build_streetlights: head = grou
 MATCH_TOL_M = 1.0             # [invented] a relocation names its post within this of the draft's base
 MAX_MOVE_M = 15.0             # [invented] a relocation is a nudge to the right spot, not a new lamp
 WALL_CLEAR_M = 0.5            # the integration brief: the pole >= 0.5 m clear of a barrier
+ROAD_SETBACK_M = 0.46         # the pole's FACE >= this from any road surface (AASHTO Roadside Design Guide: 1.5 ft minimum
+#                               lateral offset from the curb face on a curbed street; cited from memory, not re-read)
+FOOTPRINT_DIRS = 16           # the footprint ring is read in this many directions (22.5 deg: a 0.58 m ring's chord 0.23 m)
 WALL_PREFIXES = ("1WALL", "GUARDRAIL", "WALL")
 ROAD_PREFIXES = ("ROAD", "1ROAD")
 GROUND_PREFIXES = ("TERRAIN", "CURB", "SIDEWALK", "1KERB", "1GRASS", "GRASS", "ROAD", "1ROAD", "BRIDGESTRUCT")
@@ -323,6 +329,47 @@ def _bvh(prefixes, exclude=()):
     return BVHTree.FromPolygons(verts, polys) if polys else None
 
 
+def _bvh_tagged(prefixes, exclude=()):
+    """(BVH, owner name per polygon) over every mesh whose name starts with a prefix (world space, Blender frame)"""
+    from mathutils import Vector
+    from mathutils.bvhtree import BVHTree
+    verts, polys, owner = [], [], []
+    for o in bpy.data.objects:
+        u = o.name.upper()
+        if o.type != "MESH" or not u.startswith(prefixes) or (exclude and u.startswith(exclude)):
+            continue
+        mw = o.matrix_world
+        off = len(verts)
+        verts += [mw @ Vector(v.co) for v in o.data.vertices]
+        for p in o.data.polygons:
+            polys.append([off + i for i in p.vertices])
+            owner.append(u)
+    return (BVHTree.FromPolygons(verts, polys) if polys else None), owner
+
+
+def _top_owner(tagged, x, z, y_from):
+    """the first surface of ``tagged`` straight down from local height ``y_from`` at local (x, z): (height, owner) or None"""
+    from mathutils import Vector
+    bvh, owner = tagged
+    if bvh is None:
+        return None
+    hit = bvh.ray_cast(Vector((x, z, y_from)), Vector((0.0, 0.0, -1.0)), 50.0)
+    return None if hit[0] is None else (float(hit[0].z), owner[hit[2]])
+
+
+def footprint_on_road(tagged, bx, bz, g, radius, dirs=FOOTPRINT_DIRS):
+    """the points of the pole's footprint (the axis + a ``radius`` ring) whose top surface — read down from 1 m over the
+    ground at the axis ``g`` — is a road: [(x, z, owner)]"""
+    pts = [(bx, bz)] + [(bx + radius * math.cos(2 * math.pi * k / dirs), bz + radius * math.sin(2 * math.pi * k / dirs))
+                        for k in range(dirs)]
+    out = []
+    for x, z in pts:
+        t = _top_owner(tagged, x, z, g + 1.0)
+        if t is not None and t[1].startswith(ROAD_PREFIXES):
+            out.append((round(x, 3), round(z, 3), t[1]))
+    return out
+
+
 def _top(bvh, x, z):
     """the highest surface of ``bvh`` under local (x, z): its height (local y), or None"""
     from mathutils import Vector
@@ -345,6 +392,7 @@ def relocate(heads, nearest_cl, cfg, model):
         return []
     from mathutils import Vector
     ground = _bvh(GROUND_PREFIXES, exclude=("GRASS_FAR",))
+    ground_tagged = _bvh_tagged(GROUND_PREFIXES, exclude=("GRASS_FAR",))
     earth = _bvh(("TERRAIN", "1GRASS", "GRASS"), exclude=("GRASS_FAR",))
     road = _bvh(ROAD_PREFIXES)
     walls = _bvh(WALL_PREFIXES)
@@ -368,6 +416,11 @@ def relocate(heads, nearest_cl, cfg, model):
         rd = _top(road, bx, bz)
         if rd is not None and abs(rd - g) < 0.3:
             bad.append(f"{r['name']}: the new base ({bx}, {bz}) is on a road surface")
+        on_road = footprint_on_road(ground_tagged, bx, bz, g, mast_r + ROAD_SETBACK_M)
+        if on_road:
+            bad.append(f"{r['name']}: the pole's footprint + {ROAD_SETBACK_M} m setback (radius {mast_r + ROAD_SETBACK_M:.3f} m "
+                       f"around ({bx}, {bz})) reaches a road surface at {len(on_road)} of {FOOTPRINT_DIRS + 1} points, "
+                       f"e.g. {on_road[:3]}")
         e = _top(earth, bx, bz)
         if e is None or e < foot + 0.05:
             bad.append(f"{r['name']}: the pole foot ({foot:.2f}) is not in the earth (earth {e if e is None else round(e, 2)})"
@@ -384,6 +437,7 @@ def relocate(heads, nearest_cl, cfg, model):
         old = list(heads[i])
         heads[i] = [round(hx, 3), round(hy, 3), round(hz, 3)]
         r.update({"old_head": old, "new_head": heads[i], "ground_y": round(g, 3), "earth_y": None if e is None else round(e, 3),
+                  "footprint_on_road": len(on_road), "footprint_radius_m": round(mast_r + ROAD_SETBACK_M, 3),
                   "foot_y": round(foot, 3), "wall_clear_m": None if clear == float("inf") else round(clear, 3)})
         r.pop("head_xz", None)
         print(f"[lamps] relocate {r['name']}: lamp {i} base ({r['old_base'][0]}, {r['old_base'][1]}) -> ({bx}, {bz}) "

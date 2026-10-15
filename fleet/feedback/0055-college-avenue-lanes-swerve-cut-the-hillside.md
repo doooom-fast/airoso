@@ -163,8 +163,18 @@ Speedways: one declared, one object, off-curve max 0.006 m, pins 0.001-0.005 m f
 **Race severe re-measured on the combined build: cw 15, acw 20 (v0.18.0 22 / 20)** — no longer above v0.18.0. Place by
 place (severe steps mapped to vertices on both builds): cw −4 Alvarado v5, −4 College/Alvarado junction (0057), −1
 Navajo v1514, +1 LMB v3300, +1 the 70th seam fold fan v4495-4497; acw −2 Alvarado, −2 junction, +4 the 70th seam fold
-fan (0057's raised deck, outermost fixed paths). **Street gated excursions 100 vs 98** stay one higher: −4 here
+fan (0057's raised deck, outermost fixed paths). **Street gated excursions** read 100 against 98 on r2: −4 here
 (v1302 / v1352), sampling ±1-4 elsewhere (v0.18.0's own mesh on these stations reads 102), +2 at v3806 where the mesh is
 unchanged but drive_test's flare exemption follows the lap's median width, which this run's one divided College run
-raised 17.00 → 17.64 m (GATES-CHANGELOG v0.18.1). Stills: D:/k10-scratch/v0181/stills/freeroam_college_nb_*.png, D:/k10-scratch/v0181/stills/speedway_chicane/,
+raised 17.00 → 17.64 m, and +4 at v4457 (see the fix round below — not ledges; GATES-CHANGELOG v0.18.1). Stills: D:/k10-scratch/v0181/stills/freeroam_college_nb_*.png, D:/k10-scratch/v0181/stills/speedway_chicane/,
 D:/k10-scratch/v0181/stills/speedway_reverse_chicane/.
+
+### v0.18.1 fix round (2026-10-14, rehearsal r3)
+
+Correction to round 2's note above ("the I-8 deck edge drop at s 13353 (4.9 m) is v0.18.0's own"): that was true of this
+ledger's own build, whose Lake Murray Blvd deck still stood at v0.18.0's height. In the combined build 0057 puts that
+deck at its real 3DEP height, so the same drop is 6.05 / 6.32 m (v4457 ±10.0 m). It stands behind the deck's 0.95 m
+bridge-rail panels at ±6.90 m, which drive_test's guard probe could not see (a vertical panel has no plan area). The
+probe now credits a 1WALL the car's path crosses (GATES-CHANGELOG v0.18.1 fix round): street excursions **96** on r3,
+**96** on v0.18.0's own mesh under the same probe (98 / 100 under the old one). College is untouched by this round.
+Centreline, widths and `median_bands.json` are byte-identical to r2, and both Speedway chicanes are as verified.

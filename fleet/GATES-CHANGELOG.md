@@ -2080,12 +2080,15 @@ engine-july}; no snapshot file differed) against v0.18.0 (the shipped workshop r
 **The one higher gated count — street excursions 100 vs 98 — explained place by place** (every gated excursion mapped to
 its centreline vertex on both builds; `drive_test` samples one crossing every 150 m from station 0, and 0055's registration
 re-stations everything downstream of College): −4 at College v1302 / v1352 (the 0055 fix; the island and lanes moved
-onto the real road); +4 at v1753 and v2755, +2 at v4457, −1 at v2103, −1 at v4306 — the same 0.13–0.14 m
+onto the real road); +4 at v1753 and v2755, −1 at v2103, −1 at v4306 — the same 0.13–0.14 m
 sidewalk-back ledges v0.18.0 has at those places, met or missed by the shifted stations (v0.18.0's own mesh sampled on
 this build's downstream stations reads 102, with all of these); +2 at v3806, where the mesh and widths are byte-identical
 (w = 18.91 m, a junction flare's taper) but `drive_test`'s flare exemption is `widths[i] > median(widths) + 1.5` and
-College's one continuous divided run raised the lap's median width 17.00 → 17.64 m (exemption 18.5 → 19.14 m). No
-geometry is worse; the number is. Installing needs `--force-install` with this note (v0.18.0 was installed red too).
+College's one continuous divided run raised the lap's median width 17.00 → 17.64 m (exemption 18.5 → 19.14 m); and
++4 / −2 at v4457 / v4454 — **CORRECTED in the fix round below**: this was first filed here as more sidewalk-back ledges
+with "no geometry is worse", which was wrong. Two of v4457's four are 6.05 / 6.32 m deck-edge drops on Lake Murray Blvd's
+I-8 overcrossing, 1.4–1.9 m taller than v0.18.0's at every vertex v4455–4473, because 0057 put that deck at its real
+3DEP height; they sit behind the deck's bridge rail, which `drive_test` could not see (fix round).
 Race severe, place by place: cw −4 Alvarado v5, −4 College/Alvarado junction (0057), −1 Navajo v1514 (0055), +1 LMB
 v3300, +1 the 70th seam fold fan v4495–4497 (0057's raised deck); acw −2 Alvarado, −2 junction, +4 the 70th seam fold fan
 (0057, outermost fixed paths at ±11.8 m — flagged by 0057's gates lens for Kevin's Speedway drive).
@@ -2098,3 +2101,77 @@ lamp spacing re-stations every lamp after College (~6 m along) and the last post
 lamp fewer, the other +16.7 k vertices are 0055 / 0057 geometry); LIGHTPOST 15 meshes, 365 render points per lamp, the
 largest mesh 5,923 v; LIGHTS_0 1,350 v. `[LIGHT_N]` 238, `COLOR = 255, 165, 30, 0.015` in every block; each light 0.146–0.155 m
 under its lens, the six moved lamps' lights moved with them and no other.
+
+### Fix round (2026-10-14, after the gates / runtime / view lenses refuted r2): the guard probe sees a panel rail; lamp 53 off the curb line
+
+Two findings, each fixed at its cause; full rehearsal **r3** (fresh scratch copies D:/k10-scratch/v0181/r3/{project,
+engine-july}, no snapshot file differed, `--no-install`; it ended EXIT 1 / NOT INSTALLED, exactly as v0.18.0 and r2 did).
+
+| Change | Where | Before → after | Flag |
+|---|---|---|---|
+| excursion guard: a wall the car's path passes THROUGH | `scripts/geometry/drive_test.py` (`_wall_crossed`, the excursion sweep) | a drop counted as guarded only when the downward `top_at` probe (every 0.5 m out from the lane edge) landed on a 1WALL. A vertical panel has no plan area, so the probe can never land on one → a drop is now also guarded when the straight path from `max(we − 0.4, 0.5)` to `off − 0.25`, **WALL_CROSS_H_M** over the pavement edge, crosses a 1WALL triangle (Möller–Trumbore). The rule text is unchanged ("ANY 1WALL between the pavement edge and the drop guards it"), and so are the thresholds, step, band and flare rule. A wall too low (top under edge + 0.5 m), or one standing beyond the drop, still guards nothing | **WALL_CROSS_H_M = 0.5 m [invented]**: above a wheel centre (~0.3 m) and below every barrier top the loop builds (0.81 m Jersey `1WALL_guard_release`, 0.95 m bridge panel `1WALL_guard`). Test: `tests/geometry/test_drive_test.py::test_a_vertical_panel_rail_guards_the_deck_edge_drop_v0181`. In it a bare deck is gated, a panel-railed deck is not, and a 0.3 m panel or a panel past the drop is still gated. The pre-fix gate gates the railed deck (checked) |
+| lamp relocation self-check: the whole footprint | `tools/author_lamps_blend.py` `footprint_on_road` | the base POINT was ray-cast against ROAD, so lamp 53 passed with its axis 2 cm onto the curb and its 0.124 m pole 0.10 m over the asphalt → now the axis plus a ring of radius mast + **ROAD_SETBACK_M** in **16** directions, each read down from 1 m over the ground. Any point whose top surface is a ROAD fails (exit 1, loop.blend not saved) | **ROAD_SETBACK_M = 0.46 m**, sourced: the AASHTO Roadside Design Guide's 1.5 ft minimum lateral offset from the curb face on curbed streets (cited from memory, not re-read). **FOOTPRINT_DIRS = 16 [invented]**: 22.5°, so a 0.58 m ring's chord is 0.23 m |
+| lamp 53's spot | `track.config.json` relocate entry | (−1450.13, −533.51), on the curb line → **(−1447.2, −531.8)**, mid-slab on the junction corner: axis 1.30 m from the nearest road surface and 1.04 m from the slab's back edge (r2 track.obj, 0.1 m raster). The move from the draft's base is 12.08 m (≤ 15) | measured |
+
+**Why the probe change is a measurement fix, not a loosening.** The loop's I-8 bridge rails (`scripts-v021`
+`build_guardrails`) are double-sided 0.95 m vertical panels, standing on the curb 0.15 m outside the lane edge. On Lake
+Murray Blvd's deck they are at ±6.90 m, with the deck at 25.36 m and the rail from 25.36 to 26.31 m. `TriField.top_at`
+skips every triangle with zero plan area, so the sweep's guard probe has never been able to land on one. Every drop
+behind those rails read "unguarded", in v0.18.0 as well. Each gate was measured with a dump-patched copy of itself: the
+new one in D:/k10-scratch/v0181/fix2, the old one from the gates lens's own dumps in D:/k10-scratch/v0181/verify_gates.
+
+| street excursions, gated | old probe | new probe |
+|---|---|---|
+| v0.18.0 mesh (its own stations, median 17.00) | 98 | **96**. The 2 credited are v4454 ±10.5 m, on the LMB I-8 deck behind its rail |
+| r2 / r3 mesh (identical road geometry) | 100 | **96**. The 4 credited are v4457 ±9.5 m (0.14) and ±10.0 m (**6.05 / 6.32 m**), on the same deck behind the same rail |
+| dense sweep, every vertex, r2 mesh | 4,786 | 4,686. 100 are credited, all behind a crossed 1WALL: v4452–4473 (the LMB I-8 deck's panel rail), v4480–4483 (the creek deck's Jersey), and v695–698 / 710 / 828–831 (Alvarado's `1WALL_guard_release` Jersey rails at −11.9…−12.5 m, whose tops stand outside `top_at`'s ±2.5 m window). 0 are newly gated |
+| dense, gated drops > 0.5 m (not holes) | v0.18.0 44 (max 5.09), r2 42 (max 6.82) | v0.18.0 6 (max 1.57), r2 4 (max 1.52) |
+
+So the brief's comparison holds on either gate. Under the corrected probe it is **96 against 96**. Under the old probe
+r3 reads 100 against 98, and every extra entry is a sampling station, the flare median, or this deck.
+
+**The deck geometry.** 0057's `road_datum.decks` `lmb_over_i8` holds Lake Murray Blvd at its real 3DEP road height:
+126.2 m at both abutments, where the pre-median deck ran 1.2–2.0 m low. The drop from the deck edge to the real I-8 floor
+(119.3–120.1 m on 3DEP) is therefore 6.0–6.8 m, where v0.18.0's was 4.4–5.2 m. It is taller because it is true, and it
+is behind the bridge rail.
+
+**Not gated on either build, and not changed:** the sweep's NO-SURFACE holes (9.99: no surface within 8 m of the deck) at
+the creek deck's far end, v4478–4484. In the dense sweep they rise from 4 to 10, because the deck now stands 8.3–10.5 m
+over the real creek bed (115.7–117.9 m on 3DEP). They lie behind the creek deck's Jersey rail (−10.0…−10.6 m), but the
+hole branch takes no guard credit and this round does not change that. Neither 150 m sweep samples them. The worst gated
+street excursion on r3 is 1.52 m at v701, as on r2 (v0.18.0: 1.57 m).
+
+**Gates, r3 against v0.18.0.** r3 equals r2 in every number except street excursions. Its road geometry, centreline,
+widths and `median_bands.json` are byte-identical to r2's.
+
+| Gate | v0.18.0 | r3 |
+|---|---|---|
+| street soft top | 33 | 8 |
+| street severe | 0 | 0 |
+| street kinks /km | 3.41 | 2.97 |
+| street bumps /km | 0.0 | 0.0 |
+| **street excursions** | **98** | **96** |
+| floating / daylight / obstruction | 391 / 0 / 0 | 391 / 0 / 0 |
+| audit, all three layouts | 53 (D 0, K 20, I 20, F 13) | 53 (D 0, K 20, I 20, F 13) |
+| race severe, cw / acw | 22 / 20 | 15 / 20 |
+| race soft top, cw / acw | 9 / 9 | 8 / 4 |
+| race excursions / barrier_missing / obstruction | 0 / 0 / 0 | 0 / 0 / 0 |
+| no_route BUILT + PLANNED, both | PASS | PASS (leak 0, 0/411 probes) |
+
+These also pass on r3: verify_mouths ×4, verify_fold_fans (3 × 3), verify_ai_line (wall minimum 2.542 / 2.384 m),
+verify_signs 23, verify_race and `--scenery-only`, rib_check, house_seat_check, verify_kn5 and `--inis`,
+check_race_kn5, check_street_kn5.
+
+The verify_race G lamp margin is now **2.435 m**: lamp 53 at its new corner, 16.9 m off College's race edge strip (r2:
+2.741 m, lamp 120). 0 masts stand inside a strip. Road kn5 is 73,574,689 B (834,670 v / 1,229,616 tri). There are 238
+`[LIGHT_N]` blocks, all `255, 165, 30, 0.015`; from r2 to r3 only `[LIGHT_59]` (lamp 53's lens) moved.
+
+**Lamps on the BUILT r3 split scenes.** Three audits were run (the integrator's lamp_audit, and the view lens's
+pole_audit and road_gap; output in D:/k10-scratch/v0181/r3audit). Across 238 poles:
+- 0 axes are over 1ROAD and 0 pole edges are over 1ROAD.
+- 0 feet are in the air.
+- 0 poles are less than 0.5 m from a 1WALL.
+- The nearest pole SURFACE to any road top surface is 0.816 m (lamp 119, unmoved).
+- Lamp 53 is now 1.156 m from the road (axis 1.28 m); on r2 it was −0.104 m.
+
+Lamp 53's road-ward lens (east) now hangs over College's carriageway instead of running along the curb.

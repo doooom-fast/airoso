@@ -120,7 +120,11 @@ def _advance(prev, px_pz, c):
 WHEEL_HALF_TRACK = 0.75      # wheel offset around each driving line
 CELL = 3.0                   # spatial hash cell (m)
 
-DIVIDER_CLEAR_M = 0.4        # the inner wheel (or scan edge) clears a divider/barrier FACE by this
+WALL_CROSS_H_M = 0.5         # [invented] v0.18.1: the excursion guard's crossing probe runs this far over the
+#                              pavement edge — over a wheel centre (~0.3 m), under every barrier top the loop builds
+#                              (0.81 m Jersey, 0.95 m bridge panel): a wall standing that tall across the path stops the car
+
+DIVIDER_CLEAR_M = 0.4       # the inner wheel (or scan edge) clears a divider/barrier FACE by this
 BARRIER_GAP_MAX_M = 4.04      # one module: consecutive 1WALL hits on a declared band further apart = missing
 BARRIER_PROBE_M = 0.3         # lateral probe spread on a declared band (the band's own reach is 0.935)
 NEAR_DIVIDER_M = 7.0          # the 6.3 m centre disc reaches a strip end / island nose from this far out
@@ -170,6 +174,42 @@ def speed_profile(pts, st, closed: bool) -> list[float]:
         d = max(1e-6, st[i + 1] - st[i])
         v[i] = min(v[i], math.sqrt(v[i + 1] ** 2 + 2 * BRAKE_MS2 * d))
     return v
+
+
+def _wall_crossed(field, a, b) -> bool:
+    """does the straight segment a -> b (x, y, z) pass through a 1WALL triangle of ``field``? (Moller-Trumbore on
+    every 1WALL triangle in the cells the segment's plan box covers.) Sees a wall of any orientation — a vertical
+    panel with no plan area included, which a downward top_at read never can."""
+    dx, dy, dz = b[0] - a[0], b[1] - a[1], b[2] - a[2]
+    seen = set()
+    for ci in range(int(min(a[0], b[0]) // CELL), int(max(a[0], b[0]) // CELL) + 1):
+        for cj in range(int(min(a[2], b[2]) // CELL), int(max(a[2], b[2]) // CELL) + 1):
+            for k in field.cells.get((ci, cj), ()):
+                if k in seen:
+                    continue
+                seen.add(k)
+                t = field.tris[k]
+                if not str(t[9]).upper().startswith("1WALL"):
+                    continue
+                e1 = (t[3] - t[0], t[4] - t[1], t[5] - t[2])
+                e2 = (t[6] - t[0], t[7] - t[1], t[8] - t[2])
+                px, py, pz = dy * e2[2] - dz * e2[1], dz * e2[0] - dx * e2[2], dx * e2[1] - dy * e2[0]
+                det = e1[0] * px + e1[1] * py + e1[2] * pz
+                if abs(det) < 1e-12:
+                    continue
+                inv = 1.0 / det
+                sx, sy, sz = a[0] - t[0], a[1] - t[1], a[2] - t[2]
+                u = (sx * px + sy * py + sz * pz) * inv
+                if u < 0.0 or u > 1.0:
+                    continue
+                qx, qy, qz = sy * e1[2] - sz * e1[1], sz * e1[0] - sx * e1[2], sx * e1[1] - sy * e1[0]
+                v = (dx * qx + dy * qy + dz * qz) * inv
+                if v < 0.0 or u + v > 1.0:
+                    continue
+                tt = (e2[0] * qx + e2[1] * qy + e2[2] * qz) * inv
+                if 0.0 <= tt <= 1.0:
+                    return True
+    return False
 
 
 def _load_obj(path: Path):
@@ -1075,6 +1115,21 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                             guarded = True
                             break
                         _wo += 0.5
+                    # A VERTICAL-PANEL wall (v0.18.1, ledger 0057's Lake Murray Blvd I-8 deck): the loop's I-8 bridge
+                    # rails are double-sided 0.95 m panels with no plan area at all (scripts-v021 build_guardrails),
+                    # so the top_at probe above — a downward read — can never land on one, and every drop behind
+                    # them read "unguarded" (v0.18.0 too: its 150 m station fell 3 vertices short of the deck).
+                    # The rule is unchanged — a 1WALL between the pavement edge and the drop guards it — the
+                    # probe now also asks the question the car asks: does its path out to the drop, WALL_CROSS_H_M
+                    # over the pavement edge, pass THROUGH a 1WALL face?
+                    if not guarded and edge_y is not None:
+                        _w0 = max(we - 0.4, 0.5)
+                        _w1 = off - 0.25
+                        if _w1 > _w0:
+                            guarded = _wall_crossed(
+                                obstacle,
+                                (x0 + nxe * _w0 * sgn, edge_y + WALL_CROSS_H_M, z0 + nze * _w0 * sgn),
+                                (x0 + nxe * _w1 * sgn, edge_y + WALL_CROSS_H_M, z0 + nze * _w1 * sgn))
                     _drop = prev_y - ey
                     if _unpaved:
                         # Gate on PHYSICAL DANGER, not on proximity to the pavement. Two reasons the

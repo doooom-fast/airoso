@@ -361,3 +361,15 @@ main descent changed by at most 0.012 % in any 25-200 m window. The stops at s 2
 short as round 3 bounded (15 m: -3.14 on the +7.5 m lane at s 2305). LIGHTPOST_8 (the floating lamp by the creek deck) is
 0056's lamp 237 in the combined build: moved off the deck onto its embankment (0056 v0.18.1 section). Still:
 D:/k10-scratch/v0181/stills/freeroam_college_sb_*.png; lamp D:/k10-scratch/v0181/stills/lamp237_lightpost8_*_low.png.
+
+### v0.18.1 fix round (2026-10-14, rehearsal r3)
+
+The gates lens found that this ledger's `lmb_over_i8` deck (at its real 3DEP height, 126.2 m) raises Lake Murray Blvd's
+deck-edge drop over the I-8 floor from v0.18.0's 4.4–5.2 m to 6.0–6.8 m (v4455–4473). One 150 m sample (v4457) now
+lands on it. The drop is real and stands behind the deck's 0.95 m bridge-rail panels (±6.90 m). drive_test's guard
+probe could not see a vertical panel; it now credits a 1WALL that the car's path crosses (GATES-CHANGELOG v0.18.1 fix
+round). On the creek deck's far end (v4478–4484), the dense sweep's no-surface holes rise from 4 to 10. The cause is the
+same: the deck now stands 8.3–10.5 m over the real creek bed, beyond the sweep's 8 m window, behind the creek deck's
+Jersey rail. They are not gated on either build and were not changed. Grades re-measured on r3 are identical to r2's to
+the hundredth: College stop line s 2313, last 30 m +5.87 % (real +5.93 %), Alvarado westbound s 0–100 −6.83 % (real
+−6.95 %), 70th eastbound last 30 m to s 12 +6.97 % (real +6.77 %).

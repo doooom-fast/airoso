@@ -156,3 +156,43 @@ def test_fold_fan_discs_refuse_a_row_count_mismatch():
     welds["folds"]["MAINLINE"]["rows"] = 50
     discs = fold_fan_discs(welds, pts, w)
     assert [round(d[1]) for d in discs] == list(range(18, 26)) and all(d[3] == 6.5 for d in discs)
+
+
+def _deck_project(panel_h=None, panel_x=4.15) -> Path:
+    """an 8 m road on a deck 3 m over the grass (every excursion crossing falls 3 m off its edge), optionally railed by
+    the loop's I-8 bridge-rail kind: a double-sided VERTICAL panel (no plan area) ``panel_h`` tall at +/-``panel_x``"""
+    d = Path(tempfile.mkdtemp())
+    (d / "data").mkdir()
+    (d / "track.config.json").write_text(json.dumps({"slug": "t", "mirror_x": False}))
+    cl = [(0.0, 0.0, float(z)) for z in range(0, N_M + 1, 5)]
+    widths = [W] * len(cl)
+    (d / "data" / "centerline.local.json").write_text(json.dumps(
+        {"points_xyz_m": [list(p) for p in cl], "widths_m": widths, "origin": {"lon": 0.0, "lat": 0.0, "elev_m": 0.0}}))
+    groups = [("1ROAD_main", ribbon.road_ribbon(cl, widths)), ("1GRASS", _grass_plane(y=-3.0))]
+    if panel_h is not None:
+        for side in (1.0, -1.0):
+            v, t = [], []
+            for z in range(-5, N_M + 6, 5):                          # one panel per 5 m, as build_guardrails writes it
+                v += [(side * panel_x, 0.0, float(z)), (side * panel_x, panel_h, float(z))]
+                if z > -5:
+                    q = len(v) - 4
+                    t += [(q, q + 1, q + 3), (q, q + 3, q + 2), (q, q + 3, q + 1), (q, q + 2, q + 3)]   # both windings
+            groups.append((f"1WALL_guard_{'L' if side > 0 else 'R'}", {"vertices": v, "tris": t, "uvs": [(0.0, 0.0)] * len(v)}))
+    _write_obj(d / "data" / "track.obj", groups)
+    return d
+
+
+def test_a_vertical_panel_rail_guards_the_deck_edge_drop_v0181():
+    """v0.18.1 (ledger 0057's Lake Murray Blvd I-8 deck): the loop's bridge rails are vertical panels with no plan area,
+    which the downward top_at guard probe can never land on — every drop behind one read 'unguarded'. The crossing
+    probe credits a 1WALL the car's path passes THROUGH; a rail too low to stop a car, or one standing beyond the drop,
+    still guards nothing"""
+    bare = drive_run(_deck_project())
+    assert bare["excursion_drops"] > 0, bare["excursion_drops"]
+    railed = drive_run(_deck_project(panel_h=0.95))
+    assert railed["excursion_drops"] == 0, railed["worst_gated_excursions"]
+    assert railed["excursion_far_ledges"] >= bare["excursion_drops"]        # still REPORTED, no longer gated
+    low = drive_run(_deck_project(panel_h=0.3))
+    assert low["excursion_drops"] == bare["excursion_drops"]
+    beyond = drive_run(_deck_project(panel_h=0.95, panel_x=6.0))
+    assert beyond["excursion_drops"] == bare["excursion_drops"]

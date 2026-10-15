@@ -706,11 +706,11 @@
             -543.81
           ],
           "to_base_xz": [
-            -1450.13,
-            -533.51
+            -1447.2,
+            -531.8
           ],
           "seat": "ground",
-          "why": "the 0056 look verifier: lamp 53 stands on 1ROAD in a junction carriageway (0.86 m from the yellow line; its base is the draft's since v0.18.0, both 4 m arms over the road). Moved 10.4 m to the nearest sidewalk slab behind the curb (CURB top 42.21 m, 0.19 m over the earth), seated on it"
+          "why": "the 0056 look verifier: lamp 53 stands on 1ROAD in a junction carriageway (0.86 m from the yellow line; its base is the draft's since v0.18.0, both 4 m arms over the road). Moved 12.1 m onto the sidewalk slab on the junction's corner (CURB top 42.21 m), seated on it. v0.18.1 fix round (the runtime + view verifiers): the first spot, (-1450.13, -533.51), had its axis 2 cm onto the curb and the pole 0.10 m over the asphalt in the gutter; this one is mid-slab on the corner: axis 1.30 m from the nearest road surface, 1.04 m from the slab's back edge (r2 track.obj, 0.1 m raster), and the road-ward arm (east, toward College) reaches over College's carriageway instead of running along the curb"
         },
         {
           "name": "lamp_30_guard_release",

@@ -123,7 +123,7 @@ GATES-CHANGELOG v0.18.1). Nothing else moved (r1 vs r2: exactly these six bases 
 
 | lamp | was | now |
 |---|---|---|
-| 53 | on 1ROAD in the College Ave / Del Cerro Blvd mouth (v1085), 0.86 m from the yellow line | 10.4 m to the nearest sidewalk slab behind the curb, seated on it (datum +1.02 m) |
+| 53 | on 1ROAD in the College Ave / Del Cerro Blvd mouth (v1085), 0.86 m from the yellow line | r2: 10.4 m to the curb line, pole 0.10 m over the asphalt (refuted). **r3: 12.1 m to mid-slab on the junction corner (-1447.2, -531.8), pole surface 1.16 m from the road** (fix round below) |
 | 30 / 32 / 34 / 43 (Alvarado v570 / 606 / 643, College v903) | pole through `1WALL_guard_release` (clearance −0.02 … 0.00 m) | 1.0 m straight back, behind the rail, light height kept: clearance 0.67–0.68 m |
 | 237 (= 0057 LIGHTPOST_8, v4480) | on the raised Alvarado Creek deck's sidewalk edge, through the rail, foot 7.6 m over the creek bank | 6.3 m back along the road onto the embankment by the abutment, behind the rail (1.17 m clear), foot buried |
 
@@ -131,3 +131,25 @@ Audit of all 238 lamps on the BUILT split scenes (road + street-only + race + bo
 in the air, 0 poles < 0.5 m from a 1WALL; each light 0.146–0.155 m under its lens. Stills (before = r1, after = r2, same
 eye): D:/k10-scratch/v0181/stills/lamp53_*.png, lamp32_*.png, lamp237_lightpost8_*.png (+ `_low`, from under the bridge); night on Alvarado
 D:/k10-scratch/v0181/stills/freeroam_night_alvarado_*.png (Eevee approximation of the CSP lights, not a brightness measurement).
+
+### v0.18.1 fix round (2026-10-14, rehearsal r3)
+
+The runtime and view lenses found lamp 53's r2 spot on the curb line. Its axis was 2 cm onto the sidewalk and the
+0.124 m pole hung 0.10 m over the asphalt in the gutter. The relocation self-check had only ray-cast the base point. Two
+fixes:
+- The self-check (`tools/author_lamps_blend.py` `footprint_on_road`) now reads the whole footprint: the axis plus a ring
+  of radius mast + 0.46 m (the AASHTO 1.5 ft curb-face offset) in 16 directions. Any point that lands on a road fails
+  the build.
+- Lamp 53 moved to the middle of the sidewalk slab on the junction corner, (-1447.2, -531.8). Its axis is 1.28 m from
+  the nearest road surface and its pole surface 1.16 m. Its road-ward head now hangs over College's carriageway rather
+  than along the curb.
+
+The other five relocations are unchanged. Audits on the BUILT r3 scenes across all 238 poles:
+- 0 axes and 0 pole edges over 1ROAD
+- 0 feet in the air
+- 0 poles under 0.5 m from a wall
+- nearest pole surface to a road: 0.816 m (lamp 119, never moved)
+
+From r2 to r3 only lamp 53's light (`[LIGHT_59]`) moved. The verify_race G margin is now 2.435 m, at lamp 53 (16.9 m
+off College's race edge strip). Close-ups are in D:/k10-scratch/v0181/stills/lamps_closeup/: lamp53_r3_top,
+_from_junction_south, _low_from_road(_b), _context, _night_context, against lamp53_r2_*. Lamps 32 and 237 are there too.

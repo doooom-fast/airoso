@@ -367,6 +367,15 @@ Steps 2–8 can start now on a branch off the 0046 branch, and get rebased after
 > fixed; the held rehearsal equals v0.18.1. Steps 1-8 below are next.
 >
 > **2026-10-19: steps 1-8 built and rehearsed (full chain, `--no-install`), v0.19.0, not installed (ledger 0054, "P3").** J2 / J3 / J4 single-coverage pads (seams ≤ 1.1 mm), J1 / J5 welds permanent, 24 barrier stubs + 27 curb cuts, the six cut slopes released (none lost over 50 m), paint per road, Speedways sealed (no_route PASS), `drive_test --line expansion` PASS both ways; the three existing layouts no worse than v0.18.1 on any key. JUNCTIONS 18(d) applied to the pad arms (each pad's side-street arms are 15 m of real, drivable road closed by a physical K-rail, in place of step 4's see-only stubs). Step 6's M3 / M4 race-file plates move to P4 with the lamps and signs. Next: Drive 1.
+>
+> **2026-10-19: repair round 1 (ledger 0054, "P3 repair round 1"; GATES-CHANGELOG 2026-10-19).** Three checks refused the
+> first build; fixed at their causes and rehearsed again from fresh copies: the step-7 lines keep their lane inside the
+> pads' curbs (no late exemption; the V6 verdict as written, + edge drops per km at the loop's rate); V5's kn5_ground_check
+> runs on all three layouts; the cut walls of step 4 are measured off 3DEP along every piece and kept as raise-only cuts
+> (P3's six hand zones retired); the terrain's T-vertex slivers mended (author stage and kn5 prep); step 2's pads follow
+> the real ground within their steepness and seam bounds; Glenroy St's south-west leg and Doreen Rd get their stubs. The
+> three existing layouts stay no worse than v0.18.1. Open for Kevin: J1's College/Navajo crossroads is built level where
+> the real one tilts ~2 m toward Waring, so Waring's first 40 m start up to 1.4 m high.
 
 1. **The `ship_sd.sh` draft.** **adapted** `route_connectors` takes the four pieces with their per-station widths. `divide_connectors` passes them through untouched. `trim_connectors` cuts at the pads and the two welds, then the rebuild runs.
 2. **new `author_junction_pad_blend.py`** builds J2, J3 and J4 as single-coverage pads:

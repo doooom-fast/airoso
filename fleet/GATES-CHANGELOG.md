@@ -2569,7 +2569,9 @@ could not read before (below). Every other change is opt-in by a new key (absent
 | `tools/verify_pads.py` (hard, after `verify_stubs`, only with `data/pads.built.json`) | per junction pad on the BUILT road: P1 its deck / curb / every stub barrier present; P2 single coverage over the pad's outline; P3 every arm row vertex has a pad vertex within 1 mm, none 1 mm-5 cm off (JUNCTIONS rule 3), the two surfaces 2 cm either side of the seam within the gap; P4 no grass over the deck; P5 no curb triangle over the pad's pavement; P6 every barrier ≥ 0.8 m over the deck, its base ≤ 0.05 m over the surface under it; P7 the deck at the junction node within 1 m of its 3DEP | COVER_STEP_M 0.5 m [invented], SHEET_DZ_M 0.25 m [invented], raster phase 0.137 / 0.311 m (never on the deck's own 1 m grid), SEAM_STEP_M 0.25 m [invented], SEAM_GAP_M 0.010 m [EXPANSION-PLAN V3], 1 mm / 5 cm [JUNCTIONS rule 3], GRASS_OVER_M 0.005 m [invented], 0.8 m / 0.05 m [tools/verify_stubs.py's], NODE_TOL_M 1.0 m [EXPANSION-PLAN V2] |
 | `drive_test --line expansion` (hard, after the street drive_test; a red is never installed, `--force-install` does not cover it) | the north network's own lines (tools/expansion_lines.py: each direction's right-hand carriageway, J1 → … → J5 and back, through the pads on a cubic turn), driven by drive_test's own sweep on the street OBJ; the verdict is EXPANSION-PLAN V6: obstructions, floating furniture, undrivable corners, daylight gaps 0; severe steps 0; soft top ≤ 6.1 /km; kinks ≤ 4.97 /km. drive_test's own lap rule (soft top 0, excursions ≤ 1 /km) is reported beside it, not gated — the loop's street layout itself ships red on it since v0.18.0 | LINE_SOFT_PER_KM 6.1, LINE_KINK_PER_KM 4.97 [invented in the plan, copied from the loop's rates]; expansion_lines MEDIAN_CLEAR_M 0.3 m [invented], EASE_M 15 m [invented] |
 
-drive_test `--line` only (the lap and every layout are unchanged): a kink read on a fixed-offset sample that runs
+(Superseded 2026-10-19 by repair round 1, below: `travel_kinks` removed, the verdict's documentation made the code's,
+excursions per km added, kn5_ground_check run, verify_stubs S4 read on the built crest.) drive_test `--line` only (the lap
+and every layout are unchanged): a kink read on a fixed-offset sample that runs
 backwards (`folded`) is filed as `fold_kinks`, and one whose grade change on the path's OWN travel (VERTEX BUMPS' rule,
 v0.18.1, applied to the grade) is within KINK_PCT as `travel_kinks` — both reported, not gated: on the inside of a pad's
 right turn a fixed-offset path covers well under 1 m a station and the turn's curvature changes from station to station,
@@ -2649,3 +2651,144 @@ key of the three existing layouts worse (`source/expansion/p3-proofs/compare_vs_
 | verify_signs | 23 | 19 PASS (M3 and M4 skipped, two posts each: P1's reasons; their race-file plates are P4) |
 | road kn5 | 82.27 MB | 108.18 MB, 92 meshes, 1,445,573 positions; largest mesh 1WALL_guard 65,251 of 65,535 |
 | race kn5 | 11.80 MB | 11.72 MB |
+
+## 2026-10-19 — Lake Murray expansion P3, repair round 1 (the gates, truth and view lenses refuted P3): the line gate's late exemption removed, its verdict and its documentation made one, kn5_ground_check run on every layout, verify_stubs S4 read on the barrier as built; the cut walls, J4's deck, the terrain's vertical slivers and two missing side streets fixed at their causes (ledger 0054)
+
+No existing threshold is loosened. One exemption added late in P3 is removed (`travel_kinks`); one search that took the
+best of 13 readings is replaced by a single reading on the built barrier (verify_stubs S4); one rule is added to the line
+gate (excursions per km); one engine gate runs where it did not (`kn5_ground_check`).
+
+### drive_test --line expansion
+
+- **`travel_kinks` is gone.** P3 added it (re-measuring a kink on the wheel path's own travel) one minute before the
+  final rehearsal, after the forward line read 5.09 kinks/km against its 4.97 limit; it turned that verdict to PASS. The
+  cause was not the measure: tools/expansion_lines.py strung each turn through a pad as a cubic between the two lanes'
+  centres carrying a 12-16 m carriageway, so the right-hand wheel paths of every right turn ran up the pad's curb return
+  (10-17 %-point kinks at s ~960 / ~2060 / ~4320: a wheel climbing a 0.14 m curb). Fixed there (below); the forward line
+  now reads KINKS without any exemption.
+- **The verdict and its documentation are one.** The code's verdict was V6 only while the docstring, the gate comment and
+  data/drive_test.expansion.json's `_doc` said "drive_test's rule or V6". The verdict stays the plan's V6 (EXPANSION-PLAN,
+  decided before the build) plus one added rule — **unguarded excursion drops ≤ LINE_EXC_PER_KM 7.12 /km** [invented:
+  the loop's own held v0.18.1 street rate, 96 over 13.47 km, copied the way V6 copied its two rates]. drive_test's own lap
+  rule (soft top 0, excursions ≤ 1 /km — failed by the loop's street layout since v0.18.0) is read on every line and
+  written beside the verdict with its reasons (`drive_test_rule_fail`, `drive_test_rule_reasons`), and printed.
+- **Nothing uncounted is unrecorded.** Each line report now carries, with their places: `fold_kinks_all` (the one
+  reading the line does not count — a fixed-offset sample running backwards round a turn, FOLD BUMPS' rule),
+  `excursions_all`, `soft_top_all`, `kinks_all`.
+
+### tools/expansion_lines.py: the turn stays inside the curb
+
+Where data/pads.built.json exists, every line point casts a ray to each side against the pads' curb faces (the outline's
+`edge` runs); a carriageway edge within CURB_CLEAR_M 0.5 m [invented: drive_test's edge path runs 0.25 m past the edge
+it is given, so it stays 0.25 m off the face] of a face is pulled back to it, the other edge kept, never narrower than
+MIN_W_M 6.0 m [invented: one 3.6 m lane + its edge paths], each edge eased into it over EASE_PTS 4 points [invented]
+(never past the face); RAY_PAD_M 1.0 m. A piece's own curbs are its carriageway already: only the pads' are read.
+
+### kn5_ground_check on every layout (EXPANSION-PLAN V5)
+
+V5 lists it on all three layouts; neither the held nor the P3 chain ran it (a gap on main too). It now runs after
+verify_fold_fans, per layout, on the kn5 SET that layout loads (`--kn5`: the street-only kn5, or the common race kn5 +
+its closure), writing data/kn5_ground_check.<id>.json; its red counts with the street gates (`--force-install` only under
+0047's no-key-worse rule). Where data/track.obj is the kn5's own gate OBJ (kn5_to_gate_obj's gate_centerline.json beside
+it) the fidelity half is skipped as for a Blender-authored project: it compared the kn5 with itself, in another frame
+("1ROAD unalignable" on v0.18.1). Every physical check is unchanged and runs.
+
+### verify_stubs S4: the barrier read where it stands
+
+P3's S4 took the best barrier-over-surface reading of 13 cross-sections within CREST_SEARCH_M ±0.3 m of the declared
+distance. Now one reading per lateral sample, on the barrier's own crest line as built (data/stubs.built.json
+barrier.path_xz, ring by ring), and a new rule: that crest line within BAR_STATION_TOL_M 0.25 m [invented] of the
+declared distance along the stub (P3's search tolerated 0.3 m without saying so).
+
+### The ground: cut walls (tools/ground_release.py AUTO CUTS; tools/ground_release_blend.py RAISE-ONLY)
+
+Replaces P3's six hand-declared cut zones. terrain.ground_release.auto_cuts {pieces A-D}: per piece, every
+probe_step_m 5 m [invented], each side, 3DEP on the release lattice's own 2 m nodes from probe_from_curb_m 1 m to
+probe_to_curb_m 29 m [invented: the conform corridor's 20 m + most of its blend] past the curb (probe_every_m 1 m: every
+node across is met, deduped); a station-side is a CUT where the real ground stands min_rise_m 1.0 m [invented] over the
+road (the piece's own 3DEP profile); cut stations within merge_gap_m 20 m [invented] join; a stretch shorter than
+min_len_m 10 m [invented] is a bump; each stretch is padded pad_m 15 m [invented] and split into batter_window_m 50 m
+[invented] windows, each window's batter the p90 of its stations' steepest probe-to-probe climb, held to
+docs/ROAD-CONSTRUCTION.md's 1.0-2.0 m per metre (common earth 1:1 .. fractured rock 0.5:1) and rounded to batter_step 0.25
+[invented]; equal neighbours join, the pieces abut (no ramp between them). Each zone: bank, rails false, College's
+reach 40 / cut reach 20 / round 3 m, `batter` "max" (default): its `cut_slope` is cut_slope_max 2.0, a BOUND, never a
+target (the ground is 3DEP wherever 3DEP stands under it); it binds only where the built walk and apron (2.8 m) cover the
+real wall's toe (the first full rehearsal used each window's own p90 climb: Mission Gorge's south wall then stood 1.1-1.9 m
+short 18-20 m out); `batter` "face" keeps the windowed reading. And RAISE-ONLY, in tools/ground_release_blend.py:
+  * the released height is taken only where it stands over the ground the vertex had, never lower, except down to the
+    cut batter where the seat left ground standing over it at the pavement edge (min(max(released, had), batter));
+  * "the ground it had" is the LOWEST sheet at the vertex's plan point (the seat's vertical curtains put two vertices on
+    one plan point: raised each from its own they stood as 780 vertical faces up to 1.3 m; from the lower one they
+    collapse and the zone weld takes the pair);
+  * never under what the prep's contact band would have left: the prep feathers every vertex OUTSIDE a zone toward the
+    nearest road deck (PREP_BAND_M 3.0 m full, smoothstep over PREP_FEATHER_M 6.0 m: build_kn5_loop's BAND_M / FEATHER_M)
+    and leaves zone ground alone, so a raise-only cut takes the up half of it, max(released, feather); and under the walk
+    (not the road) exactly the prep's feather + anti-poke (min(feather, lowest sheet - 0.02)). Without both, the grass
+    behind every walk in a cut stood 0.2-0.35 m low and bared the walk's buried apron (excursions 39 -> 60 on the first
+    rehearsal), and a face from a vertex under the curb top to one under the gutter stood 2-4 cm over the road (soft tops);
+  * its faces are capped under the WALK and the ROAD only, not the walk's buried outer apron (CURB faces sloping more than
+    APRON_NZ |normal z| 0.985 [invented]: the apron at 0.96, a walk top on a 15 % hill at 0.989), the same surface the
+    release's own self-check reads for those faces.
+
+resolve_zones refuses raise_only off a declared cut and cut_slope outside 0.5-2 (loose soil 2:1 .. fractured rock). An
+auto zone that moves nothing is reported, not fatal (a declared one still is).
+
+### The terrain's vertical slivers (tools/terrain_mend.py; the engine-july snapshot's build_kn5_loop, PENDING MIRROR)
+
+BEAUTY can cut an n-gon with a T-vertex m on its straight edge a-b into the ear (a, m, b): no plan area; once m moves off
+the line the ear stands up as a one-sided vertical fin over a crack (the see-through slit on Jackson north; 1,978 within
+80 m of the north roads before the release). triangulate_terrain_blend and ground_release_blend (after its halving and
+after its heights) rotate a-b inside the quad it makes with the face across it — no vertex moves or is added — or delete
+the fin on the open edge; a face across a-b already fanned through m is rebuilt by hand. LINE_TOL_M 1 mm [invented],
+END_FRAC 1e-3, MAX_ROUNDS 6 [invented]. The kn5 prep's corridor subdivision made 262 more the same way (a halved edge
+beside a coarser face, BEAUTY after it, the pin / feather after that): the snapshot prep mends them right after its
+triangulation, before anything moves, by the same rule and tolerances (`_collinear_middle`, `_mend_vertical_slivers`).
+That file is recorded in engine-july-snapshot/PENDING-MIRROR.md5 (757a0ac6...), not yet copied into the live engine-july.
+
+### The junction pads' decks follow the real ground (tools/junction_pad.py)
+
+The plan reads 3DEP every GROUND_STEP_M 2 m [invented] inside each pad's design outline (cached in data/pads.3dep.json);
+the author stage pulls the soap film toward a quadratic fitted to it (+ LIFT 0.10 m): the screened film minimises the
+cotangent energy + Σ λ_i (h_i − guide_i)², λ_i = λ × the smoothstep of the distance inside the design outline over
+GUIDE_FADE_M 10 m [invented] (the stub tails keep the plain film to their level far edges). λ is the strongest of
+GUIDE_LAMBDAS (1, 0.3, 0.1, 0.03, 0) [invented] whose deck keeps the pad's own steepness bound (the seams' grades + 2 %,
+unchanged) AND creases no route seam more than the plain film does or CREASE_MAX 3 % [invented: drive_test's KINK_PCT]
+(each seam vertex's arm grade into the pad against the deck's over CREASE_IN_M 2 m [invented]; without it a dev rehearsal
+pulled J4 into an 8 % ramp onto its Jackson seam, a 6.3 cm severe step on the forward line); 0 is P3's film exactly. Recorded per pad
+(pads.built.json deck.ground_guide: the pull, the crease, the plain film's crease).
+
+### The side streets the stub tool could not see (tools/stub_roads.py)
+
+A way counted as a host carriageway when 60 % of its nodes lay within the host's half-width + 3 m and it was over 20 m
+long: Glenroy St's south-west leg (way 663868618, 3 of 5 nodes inside Princess View's 22 m) and Doreen Rd (5955946, 2 of
+3 inside Jackson's) were taken for Princess View and Jackson and got no entry at all. A host way must now also run ALONG
+the host where it is on it (length-weighted |cos| of its on-host segments ≥ cos PARALLEL_DEG 25°, the tool's own number).
+
+### Lamps on a corner apron's walk (tools/author_lamps_blend.py)
+
+A post standing on a return's walk (within LAMP_WALK_BAND_M 2.8 m behind the apron outline: curb 0.08 + walk 1.5 +
+grade 1.2) is re-seated where it stands on the built walk (head = surface + HEAD_OVER_GROUND_M 8.8 m, the draft's rule);
+a moved post is seated on the built walk under its new base the same way. Lamp 77 behind J1's R 30 return only.
+
+### Measured (the final rehearsal, D:/k10-scratch/phase1/r1final: fresh workshop copy + fresh engine-july copy with the snapshot's two pending files, FULL chain, `--no-install`, commit 285147c)
+
+The same end as the held v0.18.1 rehearsal ("NOT INSTALLED": the street lap's own soft-top rule, red since v0.18.0, and
+kn5_ground_check's lamppost reading, red on v0.18.1 as well); no key of the three existing layouts worse
+(`source/expansion/p3-proofs/compare_vs_held.json`).
+
+| | held v0.18.1 | P3 (refuted) | repair round 1 |
+|---|---|---|---|
+| street: soft top / severe / kinks per km / excursions / audit | 8 / 0 / 2.67 / 96 / 53 | same | 8 / 0 / 2.67 / 96 / 53 (K 20, F 13, I 20) |
+| race_cw / race_acw severe (fold fans apart) | 15 / 20 | 4 + 11 / 6 + 14 | 4 + 11 / 6 + 14 |
+| race soft top, kinks, barrier_missing, audit, no_route | 8 / 4, 6.46 / 6.09, 0, 53, PASS | same | same (leak 0 m², reached 138,776 / 138,218 m², as held) |
+| kn5_ground_check street / race_cw / race_acw | FAIL (lampposts: no ground in reach under 38.4 %, seat median −3.04 m: the LED lamps' buried feet; double-sheet 0, lamp orphans 0, road over ground p95 0.021 m) | not run | FAIL, the same reason and numbers (walls 50 objects, hovering 0; road over ground p95 0.021 m) |
+| drive_test --line expansion fwd / rev | — | "PASS" (the forward line only through travel_kinks) | PASS / PASS: soft top 0 / 0, severe 0 / 0, kinks 2.86 / 0.32 per km, excursions 44 / 43 (7.0 / 6.8 per km), fold kinks 2 / 0; drive_test's own lap rule FAIL on excursions alone (fwd 38 walk aprons + 5 median curbs + 1 fill, rev 29 + 7 + 7) |
+| verify_mouths | PASS | 30 PASS | 32 PASS (J1 mouth line 0.006 m, J5 0.017 m) |
+| verify_stubs | — | 24 + 27 PASS | 26 stubs + 29 curb cuts PASS (S4 on the built crest, every crest within 0.149 m of its declared distance) |
+| verify_pads J2 / J3 / J4 | — | PASS, node −0.03 / +0.13 / +0.27 m | PASS, seams 1.2 / 0.7 / 2.4 mm, node −0.02 / +0.04 / +0.02 m, ground-guide pull 0.1 / 0.1 / 1.0 |
+| pad deck − 3DEP inside each design outline (p95; points over 0.3 m) | — | 0.31 / 0.29 / 0.44; 17 / 38 / 152 | 0.21 / 0.17 / 0.20; 6 / 17 / 12 |
+| J4's Jackson seam crease | — | 3.9-4.6 %-points | 2.87 % (its plain film 5.48 %) |
+| real walls 3 m+ kept, 12-20 m off the centre line (stations / > 1 m short / under half / runs ≥ 20 m) | — | 249 / 109 / 97 / 12 | 250 / 4 / 0 / 0 (Mission Gorge south, s 1490-1555: the built walk covers the wall's toe) |
+| the same, 12-35 m | — | 678 / 517 / 478 / 23 | 678 / 0 / 0 / 0 |
+| vertical grass faces, whole OBJ / within 80 m of the north roads | 730 / 3 | 2,700 / 1,972 | 46 / 26 (one over 0.25 m tall) |
+| road kn5 | 82.27 MB | 108.18 MB, 92 meshes, 1,445,573 positions | 115.96 MB, 94 meshes, 1,585,066 positions (1WALL_guard 65,251 of 65,535, unchanged) |

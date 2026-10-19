@@ -6,9 +6,9 @@
    "width_built_vs_design_max_m": 23.3
   },
   "B": {
-   "centre_vs_design_p95_m": 1.35,
+   "centre_vs_design_p95_m": 0.8,
    "sections": 106,
-   "width_built_vs_design_max_m": 25.8
+   "width_built_vs_design_max_m": 26.72
   },
   "C": {
    "centre_vs_design_p95_m": 0.085,
@@ -16,7 +16,7 @@
    "width_built_vs_design_max_m": 19.72
   },
   "D": {
-   "centre_vs_design_p95_m": 0.13,
+   "centre_vs_design_p95_m": 0.16,
    "sections": 195,
    "width_built_vs_design_max_m": 15.26
   },
@@ -366,8 +366,8 @@
     "max_real_m": 3.21,
     "min_kept_frac": null,
     "length_m": 5.0,
-    "kept_frac_median": 0.07,
-    "built_max_m": 0.23
+    "kept_frac_median": 0.76,
+    "built_max_m": 2.44
    },
    {
     "piece": "C",
@@ -377,8 +377,8 @@
     "max_real_m": 5.02,
     "min_kept_frac": null,
     "length_m": 90.0,
-    "kept_frac_median": 0.58,
-    "built_max_m": 2.57
+    "kept_frac_median": 0.87,
+    "built_max_m": 3.83
    },
    {
     "piece": "C",
@@ -388,8 +388,8 @@
     "max_real_m": 3.48,
     "min_kept_frac": null,
     "length_m": 5.0,
-    "kept_frac_median": 0.07,
-    "built_max_m": 0.24
+    "kept_frac_median": 0.76,
+    "built_max_m": 2.66
    },
    {
     "piece": "D",
@@ -399,8 +399,8 @@
     "max_real_m": 5.84,
     "min_kept_frac": null,
     "length_m": 75.0,
-    "kept_frac_median": 0.89,
-    "built_max_m": 4.81
+    "kept_frac_median": 0.95,
+    "built_max_m": 5.54
    },
    {
     "piece": "D",
@@ -410,8 +410,8 @@
     "max_real_m": 4.67,
     "min_kept_frac": null,
     "length_m": 40.0,
-    "kept_frac_median": 0.06,
-    "built_max_m": 0.26
+    "kept_frac_median": 0.99,
+    "built_max_m": 4.56
    },
    {
     "piece": "D",
@@ -421,8 +421,8 @@
     "max_real_m": 3.18,
     "min_kept_frac": null,
     "length_m": 10.0,
-    "kept_frac_median": 0.08,
-    "built_max_m": 0.24
+    "kept_frac_median": 0.99,
+    "built_max_m": 2.99
    },
    {
     "piece": "D",
@@ -432,8 +432,8 @@
     "max_real_m": 6.68,
     "min_kept_frac": null,
     "length_m": 170.0,
-    "kept_frac_median": 0.96,
-    "built_max_m": 6.23
+    "kept_frac_median": 0.97,
+    "built_max_m": 6.4
    },
    {
     "piece": "D",
@@ -443,8 +443,8 @@
     "max_real_m": 3.66,
     "min_kept_frac": null,
     "length_m": 25.0,
-    "kept_frac_median": 0.02,
-    "built_max_m": 0.07
+    "kept_frac_median": 0.99,
+    "built_max_m": 3.53
    },
    {
     "piece": "D",
@@ -465,8 +465,8 @@
     "max_real_m": 3.07,
     "min_kept_frac": null,
     "length_m": 5.0,
-    "kept_frac_median": 0.07,
-    "built_max_m": 0.23
+    "kept_frac_median": 0.99,
+    "built_max_m": 3.05
    },
    {
     "piece": "D",
@@ -476,8 +476,8 @@
     "max_real_m": 5.91,
     "min_kept_frac": null,
     "length_m": 25.0,
-    "kept_frac_median": 0.05,
-    "built_max_m": 0.23
+    "kept_frac_median": 0.96,
+    "built_max_m": 5.51
    },
    {
     "piece": "D",
@@ -487,8 +487,8 @@
     "max_real_m": 3.48,
     "min_kept_frac": null,
     "length_m": 45.0,
-    "kept_frac_median": 0.07,
-    "built_max_m": 0.24
+    "kept_frac_median": 0.97,
+    "built_max_m": 3.37
    },
    {
     "piece": "D",
@@ -498,8 +498,8 @@
     "max_real_m": 3.5,
     "min_kept_frac": null,
     "length_m": 25.0,
-    "kept_frac_median": 0.08,
-    "built_max_m": 0.25
+    "kept_frac_median": 0.94,
+    "built_max_m": 3.1
    },
    {
     "piece": "D",
@@ -509,8 +509,8 @@
     "max_real_m": 5.47,
     "min_kept_frac": null,
     "length_m": 125.0,
-    "kept_frac_median": 0.99,
-    "built_max_m": 5.4
+    "kept_frac_median": 1.01,
+    "built_max_m": 5.49
    },
    {
     "piece": "D",
@@ -521,7 +521,7 @@
     "min_kept_frac": null,
     "length_m": 305.0,
     "kept_frac_median": 0.97,
-    "built_max_m": 6.87
+    "built_max_m": 7.08
    },
    {
     "piece": "D",
@@ -531,37 +531,80 @@
     "max_real_m": 3.64,
     "min_kept_frac": null,
     "length_m": 30.0,
-    "kept_frac_median": 0.08,
-    "built_max_m": 0.25
+    "kept_frac_median": 0.98,
+    "built_max_m": 3.55
    }
   ],
   "lost_stretches_ge_50m": [],
   "stations_with_real_wall": 212,
-  "of_them_lost": 57
+  "of_them_lost": 0
+ },
+ "walls_all": {
+  "12-20": {
+   "stations_real_ge_3m": 250,
+   "short_gt_1m": 4,
+   "kept_under_half": 0,
+   "shortfall_median_m": 0.19,
+   "runs_ge_20m": [],
+   "short_stations": [
+    [
+     "C",
+     "right",
+     1490.0,
+     4.5,
+     3.31
+    ],
+    [
+     "C",
+     "right",
+     1495.0,
+     4.83,
+     3.33
+    ],
+    [
+     "C",
+     "right",
+     1530.0,
+     4.81,
+     3.38
+    ],
+    [
+     "C",
+     "right",
+     1555.0,
+     5.02,
+     3.68
+    ]
+   ]
+  },
+  "12-35": {
+   "stations_real_ge_3m": 678,
+   "short_gt_1m": 0,
+   "kept_under_half": 0,
+   "shortfall_median_m": 0.12,
+   "runs_ge_20m": [],
+   "short_stations": []
+  }
  },
  "lamp77": {
   "head": [
    -1954.731,
-   33.266,
+   33.6298,
    632.081
   ],
   "base": [
    -1955.389,
-   21.822,
+   22.186,
    633.65
   ],
-  "surface_under_base": 24.913,
-  "base_minus_surface_m": -3.091,
+  "surface_under_base": 24.926,
+  "base_minus_surface_m": -2.74,
+  "head_over_surface_m": 8.704,
+  "head_over_surface_rule_m": 8.8,
   "surfaces": [
-   "1GRASS_3",
+   "1GRASS_1",
    "1KERB_SIDEWALK_APAP1",
    "LIGHTPOST_4"
-  ],
-  "held_v0181": {
-   "base_y": 22.188,
-   "surface_under_base": 24.96,
-   "base_minus_surface_m": -2.772
-  },
-  "note": "the post's foot stands 3.09 m under the ground over it (1GRASS_3 / AP1's walk); the held v0.18.1 already had it 2.77 m under (its head 0.37 m higher, the ground the same): a lamp seated off the road below, not the ground at its foot. Nothing floats; the pole shows ~3 m shorter. P4 re-seats lamps."
+  ]
  }
 }

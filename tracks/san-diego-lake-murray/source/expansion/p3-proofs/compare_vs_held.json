@@ -1,1223 +1,538 @@
 {
+ "_doc": "ledger 0054 P3 repair round 1: held v0.18.1 rehearsal (D:/k10-scratch/phase1/held) -> the repair rehearsal (D:/k10-scratch/phase1/r1final), [held, rehearsal] per key",
  "layouts": {
   "street": {
-   "v0.18.0 -> rehearsal": {
-    "soft_top_in_lane": [
-     8,
-     8
-    ],
-    "severe_steps": [
-     0,
-     0
-    ],
-    "severe_per_km": [
-     0.0,
-     0.0
-    ],
-    "steps_per_km": [
-     0.0,
-     0.0
-    ],
-    "kinks_per_km": [
-     2.67,
-     2.67
-    ],
-    "obstruction_stations": [
-     0,
-     0
-    ],
-    "barrier_missing": [
-     0,
-     0
-    ],
-    "excursion_drops": [
-     96,
-     96
-    ],
-    "daylight_gaps": [
-     0,
-     0
-    ],
-    "undrivable_corners": [
-     0,
-     0
-    ],
-    "floating_furniture": [
-     391,
-     0
-    ],
-    "fold_severe": [
-     null,
-     0
-    ],
-    "severe_old_rule": [
-     0,
-     0
-    ]
-   },
-   "worse": [],
-   "box_samples": {
-    "J1": [],
-    "J5": [
-     [
-      "kinks",
-      6949.0,
-      -6.0,
-      4.8
-     ],
-     [
-      "kinks",
-      6949.0,
-      -6.0,
-      4.8
-     ],
-     [
-      "kinks",
-      6950.0,
-      -6.0,
-      4.8
-     ],
-     [
-      "kinks",
-      6950.0,
-      -6.0,
-      4.8
-     ],
-     [
-      "kinks",
-      6951.0,
-      -6.0,
-      4.25
-     ],
-     [
-      "kinks",
-      6951.0,
-      -6.0,
-      4.25
-     ],
-     [
-      "kinks",
-      6948.0,
-      -6.0,
-      4.15
-     ],
-     [
-      "kinks",
-      6948.0,
-      -6.0,
-      4.15
-     ],
-     [
-      "kinks",
-      6952.0,
-      -6.0,
-      4.04
-     ],
-     [
-      "kinks",
-      6952.0,
-      -6.0,
-      4.04
-     ],
-     [
-      "kinks",
-      6947.0,
-      -6.0,
-      3.97
-     ],
-     [
-      "kinks",
-      6947.0,
-      -6.0,
-      3.97
-     ]
-    ]
-   },
-   "box_samples_v0.18.0": {
-    "J1": [],
-    "J5": [
-     [
-      "kinks",
-      6949.0,
-      -6.0,
-      4.8
-     ],
-     [
-      "kinks",
-      6949.0,
-      -6.0,
-      4.8
-     ],
-     [
-      "kinks",
-      6950.0,
-      -6.0,
-      4.8
-     ],
-     [
-      "kinks",
-      6950.0,
-      -6.0,
-      4.8
-     ],
-     [
-      "kinks",
-      6951.0,
-      -6.0,
-      4.25
-     ],
-     [
-      "kinks",
-      6951.0,
-      -6.0,
-      4.25
-     ],
-     [
-      "kinks",
-      6948.0,
-      -6.0,
-      4.15
-     ],
-     [
-      "kinks",
-      6948.0,
-      -6.0,
-      4.15
-     ],
-     [
-      "kinks",
-      6952.0,
-      -6.0,
-      4.04
-     ],
-     [
-      "kinks",
-      6952.0,
-      -6.0,
-      4.04
-     ],
-     [
-      "kinks",
-      6947.0,
-      -6.0,
-      3.97
-     ],
-     [
-      "kinks",
-      6947.0,
-      -6.0,
-      3.97
-     ]
-    ]
-   }
+   "soft_top_in_lane": [
+    8,
+    8
+   ],
+   "severe_steps": [
+    0,
+    0
+   ],
+   "fold_severe": [
+    null,
+    0
+   ],
+   "severe_per_km": [
+    0.0,
+    0.0
+   ],
+   "steps_per_km": [
+    0.0,
+    0.0
+   ],
+   "kinks_per_km": [
+    2.67,
+    2.67
+   ],
+   "obstruction_stations": [
+    0,
+    0
+   ],
+   "barrier_missing": [
+    0,
+    0
+   ],
+   "excursion_drops": [
+    96,
+    96
+   ],
+   "daylight_gaps": [
+    0,
+    0
+   ],
+   "undrivable_corners": [
+    0,
+    0
+   ],
+   "floating_furniture": [
+    391,
+    0
+   ],
+   "lap_m": [
+    13473.5,
+    13473.5
+   ]
   },
   "race_cw": {
-   "v0.18.0 -> rehearsal": {
-    "soft_top_in_lane": [
-     8,
-     8
-    ],
-    "severe_steps": [
-     15,
-     4
-    ],
-    "severe_per_km": [
-     1.11,
-     0.3
-    ],
-    "steps_per_km": [
-     0.45,
-     0.45
-    ],
-    "kinks_per_km": [
-     6.46,
-     6.46
-    ],
-    "obstruction_stations": [
-     0,
-     0
-    ],
-    "barrier_missing": [
-     0,
-     0
-    ],
-    "excursion_drops": [
-     0,
-     0
-    ],
-    "daylight_gaps": [
-     0,
-     0
-    ],
-    "undrivable_corners": [
-     0,
-     0
-    ],
-    "floating_furniture": [
-     391,
-     0
-    ],
-    "fold_severe": [
-     null,
-     11
-    ],
-    "severe_old_rule": [
-     15,
-     15
-    ]
-   },
-   "worse": [],
-   "box_samples": {
-    "J1": [],
-    "J5": [
-     [
-      "kinks",
-      6950.0,
-      -10.03,
-      8.11
-     ],
-     [
-      "kinks",
-      6949.0,
-      -10.03,
-      7.97
-     ],
-     [
-      "kinks",
-      6950.0,
-      -9.28,
-      7.47
-     ],
-     [
-      "kinks",
-      6949.0,
-      -9.28,
-      7.38
-     ],
-     [
-      "kinks",
-      6951.0,
-      -10.03,
-      7.37
-     ],
-     [
-      "kinks",
-      6952.0,
-      -10.03,
-      7.26
-     ],
-     [
-      "kinks",
-      6951.0,
-      -9.28,
-      6.73
-     ],
-     [
-      "kinks",
-      6948.0,
-      -10.03,
-      6.67
-     ],
-     [
-      "fold_severe",
-      6950.0,
-      -10.03,
-      0.081
-     ],
-     [
-      "fold_severe",
-      6949.0,
-      -10.03,
-      0.08
-     ],
-     [
-      "fold_severe",
-      6950.0,
-      -9.28,
-      0.075
-     ],
-     [
-      "fold_severe",
-      6949.0,
-      -9.28,
-      0.074
-     ],
-     [
-      "fold_severe",
-      6951.0,
-      -10.03,
-      0.074
-     ],
-     [
-      "fold_severe",
-      6952.0,
-      -10.03,
-      0.073
-     ],
-     [
-      "fold_severe",
-      6948.0,
-      -10.03,
-      0.067
-     ],
-     [
-      "fold_severe",
-      6951.0,
-      -9.28,
-      0.067
-     ],
-     [
-      "fold_severe",
-      6952.0,
-      -9.28,
-      0.066
-     ],
-     [
-      "fold_severe",
-      6947.0,
-      -10.03,
-      0.064
-     ],
-     [
-      "fold_severe",
-      6948.0,
-      -9.28,
-      0.062
-     ]
-    ]
-   },
-   "box_samples_v0.18.0": {
-    "J1": [],
-    "J5": [
-     [
-      "severe_steps",
-      6950.0,
-      -10.03,
-      0.081
-     ],
-     [
-      "severe_steps",
-      6949.0,
-      -10.03,
-      0.08
-     ],
-     [
-      "severe_steps",
-      6950.0,
-      -9.28,
-      0.075
-     ],
-     [
-      "severe_steps",
-      6949.0,
-      -9.28,
-      0.074
-     ],
-     [
-      "severe_steps",
-      6951.0,
-      -10.03,
-      0.074
-     ],
-     [
-      "severe_steps",
-      6952.0,
-      -10.03,
-      0.073
-     ],
-     [
-      "severe_steps",
-      6948.0,
-      -10.03,
-      0.067
-     ],
-     [
-      "severe_steps",
-      6951.0,
-      -9.28,
-      0.067
-     ],
-     [
-      "severe_all",
-      6950.0,
-      -10.03,
-      0.081
-     ],
-     [
-      "severe_all",
-      6949.0,
-      -10.03,
-      0.08
-     ],
-     [
-      "severe_all",
-      6950.0,
-      -9.28,
-      0.075
-     ],
-     [
-      "severe_all",
-      6949.0,
-      -9.28,
-      0.074
-     ],
-     [
-      "severe_all",
-      6951.0,
-      -10.03,
-      0.074
-     ],
-     [
-      "severe_all",
-      6952.0,
-      -10.03,
-      0.073
-     ],
-     [
-      "severe_all",
-      6948.0,
-      -10.03,
-      0.067
-     ],
-     [
-      "severe_all",
-      6951.0,
-      -9.28,
-      0.067
-     ],
-     [
-      "severe_all",
-      6952.0,
-      -9.28,
-      0.066
-     ],
-     [
-      "severe_all",
-      6947.0,
-      -10.03,
-      0.064
-     ],
-     [
-      "severe_all",
-      6948.0,
-      -9.28,
-      0.062
-     ],
-     [
-      "kinks",
-      6950.0,
-      -10.03,
-      8.11
-     ],
-     [
-      "kinks",
-      6949.0,
-      -10.03,
-      7.97
-     ],
-     [
-      "kinks",
-      6950.0,
-      -9.28,
-      7.47
-     ],
-     [
-      "kinks",
-      6949.0,
-      -9.28,
-      7.38
-     ],
-     [
-      "kinks",
-      6951.0,
-      -10.03,
-      7.37
-     ],
-     [
-      "kinks",
-      6952.0,
-      -10.03,
-      7.26
-     ],
-     [
-      "kinks",
-      6951.0,
-      -9.28,
-      6.73
-     ],
-     [
-      "kinks",
-      6948.0,
-      -10.03,
-      6.67
-     ]
-    ]
-   }
+   "soft_top_in_lane": [
+    8,
+    8
+   ],
+   "severe_steps": [
+    15,
+    4
+   ],
+   "fold_severe": [
+    null,
+    11
+   ],
+   "severe_per_km": [
+    1.11,
+    0.3
+   ],
+   "steps_per_km": [
+    0.45,
+    0.45
+   ],
+   "kinks_per_km": [
+    6.46,
+    6.46
+   ],
+   "obstruction_stations": [
+    0,
+    0
+   ],
+   "barrier_missing": [
+    0,
+    0
+   ],
+   "excursion_drops": [
+    0,
+    0
+   ],
+   "daylight_gaps": [
+    0,
+    0
+   ],
+   "undrivable_corners": [
+    0,
+    0
+   ],
+   "floating_furniture": [
+    391,
+    0
+   ],
+   "lap_m": [
+    13473.5,
+    13473.5
+   ]
   },
   "race_acw": {
-   "v0.18.0 -> rehearsal": {
-    "soft_top_in_lane": [
-     4,
-     4
-    ],
-    "severe_steps": [
-     20,
-     6
-    ],
-    "severe_per_km": [
-     1.48,
-     0.45
-    ],
-    "steps_per_km": [
-     0.37,
-     0.37
-    ],
-    "kinks_per_km": [
-     6.09,
-     6.09
-    ],
-    "obstruction_stations": [
-     0,
-     0
-    ],
-    "barrier_missing": [
-     0,
-     0
-    ],
-    "excursion_drops": [
-     0,
-     0
-    ],
-    "daylight_gaps": [
-     0,
-     0
-    ],
-    "undrivable_corners": [
-     0,
-     0
-    ],
-    "floating_furniture": [
-     391,
-     0
-    ],
-    "fold_severe": [
-     null,
-     14
-    ],
-    "severe_old_rule": [
-     20,
-     20
-    ]
-   },
-   "worse": [],
-   "box_samples": {
-    "J1": [],
-    "J5": []
-   },
-   "box_samples_v0.18.0": {
-    "J1": [],
-    "J5": []
-   }
+   "soft_top_in_lane": [
+    4,
+    4
+   ],
+   "severe_steps": [
+    20,
+    6
+   ],
+   "fold_severe": [
+    null,
+    14
+   ],
+   "severe_per_km": [
+    1.48,
+    0.45
+   ],
+   "steps_per_km": [
+    0.37,
+    0.37
+   ],
+   "kinks_per_km": [
+    6.09,
+    6.09
+   ],
+   "obstruction_stations": [
+    0,
+    0
+   ],
+   "barrier_missing": [
+    0,
+    0
+   ],
+   "excursion_drops": [
+    0,
+    0
+   ],
+   "daylight_gaps": [
+    0,
+    0
+   ],
+   "undrivable_corners": [
+    0,
+    0
+   ],
+   "floating_furniture": [
+    391,
+    0
+   ],
+   "lap_m": [
+    13473.5,
+    13473.5
+   ]
   }
  },
  "audit": {
   "street": [
-   [
-    53,
-    {
-     "A_supports_in_road": 0,
-     "B_terrain_poke": 0,
-     "C_junction_crossings": 0,
-     "D_wall_on_road": 0,
-     "E_wall_floating": 0,
-     "J_terrain_span": 0,
-     "K_kerb_in_carriageway": 20,
-     "F_curb_not_flush": 13,
-     "I_sidewalk_isolating": 20
-    }
-   ],
-   [
-    53,
-    {
-     "A_supports_in_road": 0,
-     "B_terrain_poke": 0,
-     "C_junction_crossings": 0,
-     "D_wall_on_road": 0,
-     "E_wall_floating": 0,
-     "J_terrain_span": 0,
-     "K_kerb_in_carriageway": 20,
-     "F_curb_not_flush": 13,
-     "I_sidewalk_isolating": 20
-    }
-   ]
+   {
+    "race": false,
+    "road_verts": 17868,
+    "grass_verts": 480743,
+    "piers": 0,
+    "wall_verts": 71648,
+    "curb_verts": 57987,
+    "A_supports_in_road": 0,
+    "B_terrain_poke": 0,
+    "C_junction_crossings": 0,
+    "D_wall_on_road": 0,
+    "E_wall_floating": 0,
+    "J_terrain_span": 0,
+    "K_kerb_in_carriageway": 20,
+    "F_curb_not_flush": 13,
+    "F_skirt_off_terrain": 1557,
+    "F_side_faces_skipped": 2056,
+    "I_sidewalk_isolating": 20
+   },
+   {
+    "race": false,
+    "road_verts": 76806,
+    "grass_verts": 824002,
+    "piers": 0,
+    "wall_verts": 151460,
+    "curb_verts": 99809,
+    "A_supports_in_road": 0,
+    "B_terrain_poke": 0,
+    "C_junction_crossings": 0,
+    "D_wall_on_road": 0,
+    "E_wall_floating": 0,
+    "J_terrain_span": 0,
+    "K_kerb_in_carriageway": 20,
+    "F_curb_not_flush": 13,
+    "F_skirt_off_terrain": 1550,
+    "F_side_faces_skipped": 3727,
+    "I_sidewalk_isolating": 20
+   }
   ],
   "race_cw": [
-   [
-    53,
-    {
-     "A_supports_in_road": 0,
-     "B_terrain_poke": 0,
-     "C_junction_crossings": 0,
-     "D_wall_on_road": 0,
-     "E_wall_floating": 0,
-     "J_terrain_span": 0,
-     "K_kerb_in_carriageway": 20,
-     "F_curb_not_flush": 13,
-     "I_sidewalk_isolating": 20,
-     "W_race_wall_clash": 0
-    }
-   ],
-   [
-    53,
-    {
-     "A_supports_in_road": 0,
-     "B_terrain_poke": 0,
-     "C_junction_crossings": 0,
-     "D_wall_on_road": 0,
-     "E_wall_floating": 0,
-     "J_terrain_span": 0,
-     "K_kerb_in_carriageway": 20,
-     "F_curb_not_flush": 13,
-     "I_sidewalk_isolating": 20,
-     "W_race_wall_clash": 0
-    }
-   ]
+   {
+    "race": true,
+    "road_verts": 17868,
+    "grass_verts": 480743,
+    "piers": 0,
+    "wall_verts": 272148,
+    "curb_verts": 62157,
+    "A_supports_in_road": 0,
+    "B_terrain_poke": 0,
+    "C_junction_crossings": 0,
+    "D_wall_on_road": 0,
+    "E_wall_floating": 0,
+    "J_terrain_span": 0,
+    "K_kerb_in_carriageway": 20,
+    "F_curb_not_flush": 13,
+    "F_skirt_off_terrain": 1770,
+    "F_side_faces_skipped": 1560,
+    "I_sidewalk_isolating": 20,
+    "W_race_wall_clash": 0
+   },
+   {
+    "race": true,
+    "road_verts": 76806,
+    "grass_verts": 824002,
+    "piers": 0,
+    "wall_verts": 351960,
+    "curb_verts": 102467,
+    "A_supports_in_road": 0,
+    "B_terrain_poke": 0,
+    "C_junction_crossings": 0,
+    "D_wall_on_road": 0,
+    "E_wall_floating": 0,
+    "J_terrain_span": 0,
+    "K_kerb_in_carriageway": 20,
+    "F_curb_not_flush": 13,
+    "F_skirt_off_terrain": 1651,
+    "F_side_faces_skipped": 3231,
+    "I_sidewalk_isolating": 20,
+    "W_race_wall_clash": 0
+   }
   ],
   "race_acw": [
-   [
-    53,
-    {
-     "A_supports_in_road": 0,
-     "B_terrain_poke": 0,
-     "C_junction_crossings": 0,
-     "D_wall_on_road": 0,
-     "E_wall_floating": 0,
-     "J_terrain_span": 0,
-     "K_kerb_in_carriageway": 20,
-     "F_curb_not_flush": 13,
-     "I_sidewalk_isolating": 20,
-     "W_race_wall_clash": 0
-    }
-   ],
-   [
-    53,
-    {
-     "A_supports_in_road": 0,
-     "B_terrain_poke": 0,
-     "C_junction_crossings": 0,
-     "D_wall_on_road": 0,
-     "E_wall_floating": 0,
-     "J_terrain_span": 0,
-     "K_kerb_in_carriageway": 20,
-     "F_curb_not_flush": 13,
-     "I_sidewalk_isolating": 20,
-     "W_race_wall_clash": 0
-    }
-   ]
+   {
+    "race": true,
+    "road_verts": 17868,
+    "grass_verts": 480743,
+    "piers": 0,
+    "wall_verts": 272132,
+    "curb_verts": 62157,
+    "A_supports_in_road": 0,
+    "B_terrain_poke": 0,
+    "C_junction_crossings": 0,
+    "D_wall_on_road": 0,
+    "E_wall_floating": 0,
+    "J_terrain_span": 0,
+    "K_kerb_in_carriageway": 20,
+    "F_curb_not_flush": 13,
+    "F_skirt_off_terrain": 1770,
+    "F_side_faces_skipped": 1560,
+    "I_sidewalk_isolating": 20,
+    "W_race_wall_clash": 0
+   },
+   {
+    "race": true,
+    "road_verts": 76806,
+    "grass_verts": 824002,
+    "piers": 0,
+    "wall_verts": 351944,
+    "curb_verts": 102467,
+    "A_supports_in_road": 0,
+    "B_terrain_poke": 0,
+    "C_junction_crossings": 0,
+    "D_wall_on_road": 0,
+    "E_wall_floating": 0,
+    "J_terrain_span": 0,
+    "K_kerb_in_carriageway": 20,
+    "F_curb_not_flush": 13,
+    "F_skirt_off_terrain": 1651,
+    "F_side_faces_skipped": 3231,
+    "I_sidewalk_isolating": 20,
+    "W_race_wall_clash": 0
+   }
   ]
  },
  "no_route": {
+  "race_cw": [
+   {
+    "fail": false,
+    "leak_m2": 0,
+    "leak_cells": 0,
+    "reached_m2": 138776
+   },
+   {
+    "fail": false,
+    "leak_m2": 0,
+    "leak_cells": 0,
+    "reached_m2": 138776
+   }
+  ],
+  "race_acw": [
+   {
+    "fail": false,
+    "leak_m2": 0,
+    "leak_cells": 0,
+    "reached_m2": 138218
+   },
+   {
+    "fail": false,
+    "leak_m2": 0,
+    "leak_cells": 0,
+    "reached_m2": 138218
+   }
+  ]
+ },
+ "kn5_ground_check": {
+  "street": {
+   "fail": true,
+   "reasons": [
+    "lampposts: median -3.04 p95 -2.97 hovering 0.0%"
+   ],
+   "kn5": [
+    "san_diego_lake_murray.kn5",
+    "san_diego_lake_murray_street.kn5"
+   ],
+   "fidelity": "skipped: gate OBJ written from this kn5",
+   "double_sheet_cells": 0,
+   "seating": {
+    "walls": {
+     "objects": 50,
+     "no_ground_pct": 0.0,
+     "median_m": -0.494,
+     "p95_m": -0.13,
+     "hovering": 0
+    },
+    "lampposts": {
+     "objects": 238,
+     "no_ground_pct": 38.4,
+     "median_m": -3.044,
+     "p95_m": -2.968,
+     "hovering": 0
+    },
+    "signposts": {
+     "objects": 18,
+     "no_ground_pct": 0.0,
+     "median_m": -0.377,
+     "p95_m": -0.3,
+     "hovering": 0
+    }
+   },
+   "lamp_heads": 290,
+   "lamp_orphans": 0,
+   "road_over_ground": {
+    "over": 12,
+    "samples": 10785,
+    "p95_m": 0.021,
+    "max_m": 0.255
+   }
+  },
   "race_cw": {
-   "fail": false,
-   "leak_m2": 0,
-   "leak_cells": 0,
-   "blocked": [],
-   "forbidden_reached": [],
-   "spawns_unreached": [],
-   "reached_m2": 138776,
-   "probes": null
+   "fail": true,
+   "reasons": [
+    "lampposts: median -3.04 p95 -2.97 hovering 0.0%"
+   ],
+   "kn5": [
+    "san_diego_lake_murray.kn5",
+    "san_diego_lake_murray_race.kn5",
+    "san_diego_lake_murray_closure_race_cw.kn5"
+   ],
+   "fidelity": "skipped: gate OBJ written from this kn5",
+   "double_sheet_cells": 0,
+   "seating": {
+    "walls": {
+     "objects": 50,
+     "no_ground_pct": 0.0,
+     "median_m": -0.498,
+     "p95_m": -0.13,
+     "hovering": 0
+    },
+    "lampposts": {
+     "objects": 238,
+     "no_ground_pct": 38.4,
+     "median_m": -3.044,
+     "p95_m": -2.968,
+     "hovering": 0
+    },
+    "signposts": {
+     "objects": 18,
+     "no_ground_pct": 0.0,
+     "median_m": -0.377,
+     "p95_m": -0.3,
+     "hovering": 0
+    }
+   },
+   "lamp_heads": 290,
+   "lamp_orphans": 0,
+   "road_over_ground": {
+    "over": 12,
+    "samples": 10785,
+    "p95_m": 0.021,
+    "max_m": 0.255
+   }
   },
   "race_acw": {
-   "fail": false,
-   "leak_m2": 0,
-   "leak_cells": 0,
-   "blocked": [],
-   "forbidden_reached": [],
-   "spawns_unreached": [],
-   "reached_m2": 138218,
-   "probes": null
+   "fail": true,
+   "reasons": [
+    "lampposts: median -3.04 p95 -2.97 hovering 0.0%"
+   ],
+   "kn5": [
+    "san_diego_lake_murray.kn5",
+    "san_diego_lake_murray_race.kn5",
+    "san_diego_lake_murray_closure_race_acw.kn5"
+   ],
+   "fidelity": "skipped: gate OBJ written from this kn5",
+   "double_sheet_cells": 0,
+   "seating": {
+    "walls": {
+     "objects": 50,
+     "no_ground_pct": 0.0,
+     "median_m": -0.496,
+     "p95_m": -0.13,
+     "hovering": 0
+    },
+    "lampposts": {
+     "objects": 238,
+     "no_ground_pct": 38.4,
+     "median_m": -3.044,
+     "p95_m": -2.968,
+     "hovering": 0
+    },
+    "signposts": {
+     "objects": 18,
+     "no_ground_pct": 0.0,
+     "median_m": -0.377,
+     "p95_m": -0.3,
+     "hovering": 0
+    }
+   },
+   "lamp_heads": 290,
+   "lamp_orphans": 0,
+   "road_over_ground": {
+    "over": 12,
+    "samples": 10785,
+    "p95_m": 0.021,
+    "max_m": 0.255
+   }
   }
  },
- "verify_mouths": [
-  {
-   "piece": "del_cerro_blvd#0",
-   "end": "end",
-   "host_vertex": 1085,
-   "angle_deg": 75.63,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -12.75,
-    12.27
-   ],
-   "mouth_line_max_m": 0.015,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.02,
-   "approach_max_dg_per_m": 0.0113
+ "lines": {
+  "_doc": "ledger 0054 P3: drive_test --line (the north network's own lines, tools/expansion_lines.py); fail = the LINE GATE: EXPANSION-PLAN V6 (obstructions / floating furniture / undrivable / daylight 0, severe 0, LINE_SOFT_PER_KM, LINE_KINK_PER_KM) + LINE_EXC_PER_KM (repair round 1). drive_test's own lap rule is NOT the verdict; it is written per line as drive_test_rule_fail / _reasons",
+  "limits": {
+   "soft_top_per_km": 6.1,
+   "kinks_per_km": 4.97,
+   "excursion_drops_per_km": 7.12,
+   "severe_steps": 0
   },
-  {
-   "piece": "del_cerro_blvd#1",
-   "end": "start",
-   "host_vertex": 1086,
-   "angle_deg": 86.05,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -10.18,
-    10.57
-   ],
-   "mouth_line_max_m": 0.016,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.016,
-   "approach_max_dg_per_m": 0.0098
+  "lines": {
+   "fwd": {
+    "fail": false,
+    "obj": "track.obj",
+    "lap_m": 6287.5,
+    "soft_top_in_lane": 0,
+    "obstruction_stations": 0,
+    "barrier_missing": 0,
+    "barrier_stations": 0,
+    "floating_furniture": 0,
+    "daylight_gaps": 0,
+    "excursion_drops": 44,
+    "undrivable_corners": 0,
+    "severe_steps": 0,
+    "severe_per_km": 0.0,
+    "steps_per_km": 0.48,
+    "kinks_per_km": 2.86,
+    "soft_top_per_km": 0.0,
+    "excursion_drops_per_km": 7.0,
+    "v6": {
+     "obstruction_stations": true,
+     "floating_furniture": true,
+     "undrivable_corners": true,
+     "severe_steps": true,
+     "daylight_gaps": true,
+     "soft_top_per_km": true,
+     "kinks_per_km": true,
+     "excursion_drops_per_km": true
+    },
+    "drive_test_rule_fail": true,
+    "drive_test_rule_reasons": [
+     "excursion_drops"
+    ],
+    "fold_kinks": 2,
+    "file": "drive_test.line.expansion_fwd.json"
+   },
+   "rev": {
+    "fail": false,
+    "obj": "track.obj",
+    "lap_m": 6326.0,
+    "soft_top_in_lane": 0,
+    "obstruction_stations": 0,
+    "barrier_missing": 0,
+    "barrier_stations": 0,
+    "floating_furniture": 0,
+    "daylight_gaps": 0,
+    "excursion_drops": 43,
+    "undrivable_corners": 0,
+    "severe_steps": 0,
+    "severe_per_km": 0.0,
+    "steps_per_km": 0.16,
+    "kinks_per_km": 0.32,
+    "soft_top_per_km": 0.0,
+    "excursion_drops_per_km": 6.8,
+    "v6": {
+     "obstruction_stations": true,
+     "floating_furniture": true,
+     "undrivable_corners": true,
+     "severe_steps": true,
+     "daylight_gaps": true,
+     "soft_top_per_km": true,
+     "kinks_per_km": true,
+     "excursion_drops_per_km": true
+    },
+    "drive_test_rule_fail": true,
+    "drive_test_rule_reasons": [
+     "excursion_drops"
+    ],
+    "fold_kinks": 0,
+    "file": "drive_test.line.expansion_rev.json"
+   }
   },
-  {
-   "piece": "medium#2+0#0#0",
-   "end": "start",
-   "host_vertex": 4424,
-   "angle_deg": 88.88,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -4.95,
-    4.89
-   ],
-   "mouth_line_max_m": 0.003,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.005,
-   "approach_max_dg_per_m": 0.0182
-  },
-  {
-   "piece": "north_J1_waring#0",
-   "end": "start",
-   "host_vertex": 1517,
-   "angle_deg": 83.62,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -7.0,
-    9.88
-   ],
-   "mouth_line_max_m": 0.006,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.015,
-   "approach_max_dg_per_m": 0.025
-  },
-  {
-   "piece": "north_J5_jackson_north#0",
-   "end": "start",
-   "host_vertex": 2317,
-   "angle_deg": 76.95,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -9.82,
-    8.47
-   ],
-   "mouth_line_max_m": 0.017,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.023,
-   "approach_max_dg_per_m": 0.0077
-  },
-  {
-   "piece": "medium#2+0#0#0",
-   "end": "end",
-   "host_vertex": 82,
-   "angle_deg": 87.77,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -5.92,
-    5.66
-   ],
-   "mouth_line_max_m": 0.004,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.01,
-   "approach_max_dg_per_m": 0.0097
-  },
-  {
-   "piece": "STUB_galewood_street_5984405_R#0",
-   "end": "start",
-   "host_vertex": 36,
-   "angle_deg": 87.98,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -4.64,
-    4.67
-   ],
-   "mouth_line_max_m": 0.006,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.007,
-   "approach_max_dg_per_m": 0.0042
-  },
-  {
-   "piece": "STUB_galewood_street_5984405_L#0",
-   "end": "start",
-   "host_vertex": 36,
-   "angle_deg": 89.33,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -4.96,
-    5.07
-   ],
-   "mouth_line_max_m": 0.006,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.008,
-   "approach_max_dg_per_m": 0.0073
-  },
-  {
-   "piece": "STUB_eldridge_street_6013754_L#0",
-   "end": "start",
-   "host_vertex": 135,
-   "angle_deg": 89.69,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -4.8,
-    4.85
-   ],
-   "mouth_line_max_m": 0.002,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.005,
-   "approach_max_dg_per_m": 0.0085
-  },
-  {
-   "piece": "STUB_eldridge_street_6013754_R#0",
-   "end": "start",
-   "host_vertex": 135,
-   "angle_deg": 89.19,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -4.79,
-    4.75
-   ],
-   "mouth_line_max_m": 0.002,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.004,
-   "approach_max_dg_per_m": 0.0042
-  },
-  {
-   "piece": "STUB_birchwood_street_1370375341_R#0",
-   "end": "start",
-   "host_vertex": 224,
-   "angle_deg": 86.19,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -4.76,
-    4.03
-   ],
-   "mouth_line_max_m": 0.013,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.014,
-   "approach_max_dg_per_m": 0.0053
-  },
-  {
-   "piece": "STUB_glenroy_street_663868622_R#0",
-   "end": "start",
-   "host_vertex": 21,
-   "angle_deg": 84.74,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -4.66,
-    4.37
-   ],
-   "mouth_line_max_m": 0.002,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.003,
-   "approach_max_dg_per_m": 0.0026
-  },
-  {
-   "piece": "STUB_princess_view_court_5998286_R#0",
-   "end": "start",
-   "host_vertex": 54,
-   "angle_deg": 86.14,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -5.34,
-    5.43
-   ],
-   "mouth_line_max_m": 0.016,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.016,
-   "approach_max_dg_per_m": 0.009
-  },
-  {
-   "piece": "STUB_princess_view_place_5998259_R#0",
-   "end": "start",
-   "host_vertex": 101,
-   "angle_deg": 88.74,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -5.16,
-    5.07
-   ],
-   "mouth_line_max_m": 0.007,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.01,
-   "approach_max_dg_per_m": 0.0114
-  },
-  {
-   "piece": "STUB_princess_view_way_6018734_R#0",
-   "end": "start",
-   "host_vertex": 124,
-   "angle_deg": 89.79,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -4.36,
-    4.82
-   ],
-   "mouth_line_max_m": 0.02,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.02,
-   "approach_max_dg_per_m": 0.0093
-  },
-  {
-   "piece": "STUB_fontaine_street_5986946_R#0",
-   "end": "start",
-   "host_vertex": 178,
-   "angle_deg": 80.71,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -4.89,
-    4.83
-   ],
-   "mouth_line_max_m": 0.002,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.003,
-   "approach_max_dg_per_m": 0.0035
-  },
-  {
-   "piece": "STUB_fontaine_street_5986946_L#0",
-   "end": "start",
-   "host_vertex": 178,
-   "angle_deg": 89.37,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -4.78,
-    4.8
-   ],
-   "mouth_line_max_m": 0.002,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.005,
-   "approach_max_dg_per_m": 0.0132
-  },
-  {
-   "piece": "STUB_laura_street_6042836_R#0",
-   "end": "start",
-   "host_vertex": 234,
-   "angle_deg": 89.79,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -5.94,
-    5.47
-   ],
-   "mouth_line_max_m": 0.036,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.038,
-   "approach_max_dg_per_m": 0.01
-  },
-  {
-   "piece": "STUB_conestoga_way_6042936_R#0",
-   "end": "start",
-   "host_vertex": 138,
-   "angle_deg": 88.42,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -5.0,
-    5.01
-   ],
-   "mouth_line_max_m": 0.003,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.003,
-   "approach_max_dg_per_m": 0.0079
-  },
-  {
-   "piece": "STUB_mission_vista_drive_5977531_L#0",
-   "end": "start",
-   "host_vertex": 362,
-   "angle_deg": 82.04,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -5.13,
-    5.18
-   ],
-   "mouth_line_max_m": 0.008,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.009,
-   "approach_max_dg_per_m": 0.0041
-  },
-  {
-   "piece": "STUB_margerum_avenue_135149732_R#0",
-   "end": "start",
-   "host_vertex": 362,
-   "angle_deg": 84.98,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -4.69,
-    4.71
-   ],
-   "mouth_line_max_m": 0.007,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.005,
-   "approach_max_dg_per_m": 0.0144
-  },
-  {
-   "piece": "STUB_mission_montana_drive_5988290_L#0",
-   "end": "start",
-   "host_vertex": 466,
-   "angle_deg": 89.05,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -4.97,
-    5.01
-   ],
-   "mouth_line_max_m": 0.001,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.003,
-   "approach_max_dg_per_m": 0.0051
-  },
-  {
-   "piece": "STUB_mission_vista_drive_5977531_L_560#0",
-   "end": "start",
-   "host_vertex": 560,
-   "angle_deg": 84.28,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -5.01,
-    5.02
-   ],
-   "mouth_line_max_m": 0.003,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.007,
-   "approach_max_dg_per_m": 0.011
-  },
-  {
-   "piece": "STUB_deerfield_crescent_638144640_L#0",
-   "end": "start",
-   "host_vertex": 669,
-   "angle_deg": 85.27,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -5.02,
-    5.01
-   ],
-   "mouth_line_max_m": 0.002,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.005,
-   "approach_max_dg_per_m": 0.0068
-  },
-  {
-   "piece": "STUB_deerfield_street_6055959_R#0",
-   "end": "start",
-   "host_vertex": 670,
-   "angle_deg": 84.28,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -5.0,
-    5.02
-   ],
-   "mouth_line_max_m": 0.003,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.006,
-   "approach_max_dg_per_m": 0.0108
-  },
-  {
-   "piece": "STUB_birchcreek_road_6024742_R#0",
-   "end": "start",
-   "host_vertex": 59,
-   "angle_deg": 81.55,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -4.79,
-    4.82
-   ],
-   "mouth_line_max_m": 0.007,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.007,
-   "approach_max_dg_per_m": 0.0052
-  },
-  {
-   "piece": "STUB_park_ridge_boulevard_1224664714_L#0",
-   "end": "start",
-   "host_vertex": 119,
-   "angle_deg": 89.91,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -4.77,
-    4.8
-   ],
-   "mouth_line_max_m": 0.002,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.004,
-   "approach_max_dg_per_m": 0.0082
-  },
-  {
-   "piece": "STUB_tuxedo_road_6051501_R#0",
-   "end": "start",
-   "host_vertex": 397,
-   "angle_deg": 71.53,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -6.72,
-    6.42
-   ],
-   "mouth_line_max_m": 0.006,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.011,
-   "approach_max_dg_per_m": 0.0093
-  },
-  {
-   "piece": "STUB_winding_creek_drive_5968105_R#0",
-   "end": "start",
-   "host_vertex": 446,
-   "angle_deg": 84.64,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -6.02,
-    6.02
-   ],
-   "mouth_line_max_m": 0.003,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.005,
-   "approach_max_dg_per_m": 0.0095
-  },
-  {
-   "piece": "STUB_hemingway_drive_6045093_L#0",
-   "end": "start",
-   "host_vertex": 494,
-   "angle_deg": 88.89,
-   "fail": false,
-   "fails": [],
-   "span_mouth_line_m": [
-    -5.34,
-    5.09
-   ],
-   "mouth_line_max_m": 0.008,
-   "host_lane_above_max_m": 0.0,
-   "notch_max_m": 0.011,
-   "approach_max_dg_per_m": 0.0138
-  }
- ]
+  "fail": false
+ }
 }

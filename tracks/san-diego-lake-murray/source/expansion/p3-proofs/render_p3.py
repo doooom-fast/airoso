@@ -13,8 +13,8 @@ carriageway of each direction) at a station along them, looking ahead along the 
   j2              fwd, Waring 45 m before J2, looking into the J2 pad (Mound Ave + Waring SW barriered ahead / left)
   j3              fwd, Princess View 45 m before J3, looking into the J3 pad
   j4              fwd, Mission Gorge 45 m before J4, looking into the J4 pad (Jackson to the right)
-  mg_cowles       fwd, Mission Gorge at its s 2150, a LEVEL camera toward Cowles Mountain's summit: the raised median
-                  and its guardrail on the left, the far ridge and the summit ahead (repair round 1, the view lens: from
+  mg_cowles       rev, Mission Gorge at its s 2150, a LEVEL camera toward Cowles Mountain's summit: the raised median
+                  and its guardrail beside the lane, the far ridge and the summit ahead (repair round 1, the view lens: from
                   s 1865 the near cut bank filled the frame)
   jackson_walls   fwd, Jackson north climbing at its s 1330 (the 1225-1525 cut wall on the right)
   stub_eldridge   fwd on Waring at Eldridge St, looking right into the barrier-closed stub
@@ -104,7 +104,7 @@ SHOTDEF["pv_descent"] = lambda: line_at_near("fwd", piece_xz("B", 400.0), 200.0)
 SHOTDEF["j2"] = lambda: line_at_near("fwd", piece_xz("A", 915.0), 60.0)[:2]
 SHOTDEF["j3"] = lambda: line_at_near("fwd", piece_xz("B", 1035.0), 60.0)[:2]
 SHOTDEF["j4"] = lambda: line_at_near("fwd", piece_xz("C", 2205.0), 60.0)[:2]
-SHOTDEF["mg_cowles"] = lambda: (line_at_near("fwd", piece_xz("C", 2150.0), 0.0)[0], COWLES, True)
+SHOTDEF["mg_cowles"] = lambda: (line_at_near("rev", piece_xz("C", 2150.0), 0.0)[0], COWLES, True)
 SHOTDEF["jackson_walls"] = lambda: line_at_near("fwd", piece_xz("D", 1330.0), 80.0)[:2]
 
 
@@ -144,7 +144,9 @@ with open(OBJ, encoding="utf-8", errors="replace") as f:
         elif c == "f " and cur:
             idx = [int(t.split("/")[0]) - 1 for t in ln.split()[1:]]
             p0 = V[idx[0]]
-            far_ok = cur.upper().startswith("GRASS_FAR")
+            # the far ring and every physical ground tile are kept whole (repair round 1: the old KEEP cull dropped the
+            # physical terrain past 900 m, and a level camera saw the sky through the gap to the far ring)
+            far_ok = cur.upper().startswith(("GRASS_FAR", "1GRASS"))
             if far_ok or min((p0[0] - fx) ** 2 + (p0[1] - fz) ** 2 for fx, fz in FOCUS) <= KEEP * KEEP:
                 groups[cur].append(idx)
 mats = {}

@@ -17,6 +17,8 @@
   "straight": true,
   "_straight_doc": "Ledger 0054 P3 (2026-10-18): each stub on the chord of its OSM branch over its 16 m (tools/stub_roads.py straighten): the corner returns fit one straight edge line to the stub, and side streets curving 0.3-1.2 m within their first 16 m put the stub's own road under the return's curb top (audit K / I on P3's second build)."
  },
+ "_doc_p3": "Ledger 0054 P3 step 4 (2026-10-18): declared on the four north pieces as route_connectors writes them (tools/stub_roads.py declare --host north_J1_waring,north_princess_view,north_mission_gorge,north_J5_jackson_north --mouths source/expansion/routes__mouths.json --legs ...=W,P,M,J --osm data/osm.expansion.json); the J1 / J5 legs (the loop) and J3's quarry drive (the pad's own stub arm) set to skip by hand. Public side roads: a 15 m stub to Kevin's K-rail; service ways: a curb cut.",
+ "_doc_repair_1": "Ledger 0054 P3 repair round 1 (2026-10-19, the view lens: 'Glenroy St's mouths are not declared'): re-declared with --merge after tools/stub_roads.py stopped taking a short side-street way whose last nodes lie inside the host's width for a host carriageway (it must also run ALONG the host). Two public mouths that had no entry at all now have a stub: Glenroy St's south-west leg off Princess View (way 663868618) and Doreen Rd off Jackson (way 5955946); two service ways get a curb cut. Set to skip by hand: navajo_road_436270254_L (J5: the loop itself, as its two neighbours) and service_577444270_R (a 12 deg parallel lane; its 87 deg turn-in, service_577444270_R_722, keeps its curb cut). Birchwood St's second OSM way (5958459) is the 10 m crossover between Waring's two carriageways through its median, not a side street: Birchwood leaves Waring only to the north-east (stubbed).",
  "stubs": [
   {
    "id": "college_avenue_1074514299_L",
@@ -266,6 +268,41 @@
    ]
   },
   {
+   "id": "glenroy_street_663868618_L",
+   "way": 663868618,
+   "node": 11309199906,
+   "name": "Glenroy Street",
+   "highway": "tertiary",
+   "service": null,
+   "host": "north_princess_view",
+   "host_street": "Princess View Drive",
+   "host_vertex": 21,
+   "station_m": 61.8,
+   "side": 1,
+   "angle_deg": 88.4,
+   "heading_deg": 227.3,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0766832,
+     32.797785
+    ],
+    [
+     -117.076843,
+     32.797661
+    ],
+    [
+     -117.077164,
+     32.797356
+    ]
+   ]
+  },
+  {
    "id": "glenroy_street_663868622_R",
    "way": 663868622,
    "node": 49082539,
@@ -273,7 +310,7 @@
    "highway": "residential",
    "service": null,
    "host": "north_princess_view",
-   "host_street": "Glenroy Street",
+   "host_street": "Princess View Drive",
    "host_vertex": 21,
    "station_m": 61.8,
    "side": -1,
@@ -1533,6 +1570,81 @@
    ]
   },
   {
+   "id": "service_577444270_R",
+   "way": 577444270,
+   "node": 5535679005,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 714,
+   "station_m": 2138.7,
+   "side": -1,
+   "angle_deg": 11.5,
+   "heading_deg": 76.3,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0606914,
+     32.816518
+    ],
+    [
+     -117.0604219,
+     32.8165732
+    ],
+    [
+     -117.0604903,
+     32.8167157
+    ]
+   ],
+   "skip_reason": "leaves Jackson at 12 deg: a parallel service lane, not a mouth (its turn-in is service_577444270_R_722)",
+   "hand": [
+    "skip_reason",
+    "treatment"
+   ]
+  },
+  {
+   "id": "service_577444270_R_722",
+   "way": 577444270,
+   "node": 5535679007,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 722,
+   "station_m": 2165.0,
+   "side": -1,
+   "angle_deg": 87.4,
+   "heading_deg": 158.0,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0604903,
+     32.8167157
+    ],
+    [
+     -117.0604219,
+     32.8165732
+    ],
+    [
+     -117.0606914,
+     32.816518
+    ]
+   ]
+  },
+  {
    "id": "navajo_road_436270248_R",
    "way": 436270248,
    "node": 1713415645,
@@ -1540,7 +1652,7 @@
    "highway": "primary",
    "service": null,
    "host": "north_J5_jackson_north",
-   "host_street": "Navajo Road",
+   "host_street": "Jackson Drive",
    "host_vertex": 0,
    "station_m": 0.0,
    "side": -1,
@@ -1574,6 +1686,42 @@
    "hand": [
     "treatment",
     "skip_reason"
+   ]
+  },
+  {
+   "id": "navajo_road_436270254_L",
+   "way": 436270254,
+   "node": 11357323351,
+   "name": "Navajo Road",
+   "highway": "primary",
+   "service": null,
+   "host": "north_J5_jackson_north",
+   "host_street": "Jackson Drive",
+   "host_vertex": 0,
+   "station_m": 0.0,
+   "side": 1,
+   "angle_deg": 69.9,
+   "heading_deg": 239.0,
+   "width_m": 16.8,
+   "width_source": "osm lanes=4 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "4",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0461826,
+     32.8037042
+    ],
+    [
+     -117.0466073,
+     32.8034893
+    ]
+   ],
+   "skip_reason": "J5: Navajo Road is the loop itself at the Jackson-north weld (W5) — built",
+   "hand": [
+    "skip_reason",
+    "treatment"
    ]
   },
   {
@@ -1664,6 +1812,37 @@
    ]
   },
   {
+   "id": "service_577444238_L",
+   "way": 577444238,
+   "node": 7050559970,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_J5_jackson_north",
+   "host_street": "Jackson Drive",
+   "host_vertex": 20,
+   "station_m": 56.4,
+   "side": 1,
+   "angle_deg": 87.0,
+   "heading_deg": 221.5,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0465531,
+     32.8042011
+    ],
+    [
+     -117.0468143,
+     32.8039527
+    ]
+   ]
+  },
+  {
    "id": "service_577444239_L",
    "way": 577444239,
    "node": 7050559969,
@@ -1671,7 +1850,7 @@
    "highway": "service",
    "service": null,
    "host": "north_J5_jackson_north",
-   "host_street": null,
+   "host_street": "Jackson Drive",
    "host_vertex": 23,
    "station_m": 67.8,
    "side": 1,
@@ -2066,6 +2245,37 @@
    ]
   },
   {
+   "id": "doreen_road_5955946_L",
+   "way": 5955946,
+   "node": 8433390169,
+   "name": "Doreen Road",
+   "highway": "residential",
+   "service": null,
+   "host": "north_J5_jackson_north",
+   "host_street": "Jackson Drive",
+   "host_vertex": 606,
+   "station_m": 1811.4,
+   "side": 1,
+   "angle_deg": 87.3,
+   "heading_deg": 204.0,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0580683,
+     32.8160697
+    ],
+    [
+     -117.058296,
+     32.815639
+    ]
+   ]
+  },
+  {
    "id": "service_577444267_R",
    "way": 577444267,
    "node": 5535679001,
@@ -2167,6 +2377,5 @@
     "skip_reason"
    ]
   }
- ],
- "_doc_p3": "Ledger 0054 P3 step 4 (2026-10-18): declared on the four north pieces as route_connectors writes them (tools/stub_roads.py declare --host north_J1_waring,north_princess_view,north_mission_gorge,north_J5_jackson_north --mouths source/expansion/routes__mouths.json --legs ...=W,P,M,J --osm data/osm.expansion.json); the J1 / J5 legs (the loop) and J3's quarry drive (the pad's own stub arm) set to skip by hand. Public side roads: a 15 m stub to Kevin's K-rail; service ways: a curb cut."
+ ]
 }

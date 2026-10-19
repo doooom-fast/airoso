@@ -943,12 +943,6 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
                             # (--line only) a fixed-offset path running backwards round a junction pad's turn re-traces
                             # the plan (FOLD BUMPS): reported as fold_kinks, as fold bumps are
                             problems.setdefault("fold_kinks", []).append((round(s, 1), round(off, 2), round(kink, 2)))
-                        elif line is not None and d_now is not None and prev_d[pi] is not None and                                 min(d_now, prev_d[pi]) >= VERTEX_MIN_TRAVEL_M and                                 abs(dh / d_now - prev_slope[pi] * STEP_M / prev_d[pi]) * 100 <= KINK_PCT:
-                            # (--line only) on the inside of a pad's turn a fixed-offset path covers well under 1 m a
-                            # station, and the turn's curvature changes station to station: the grade over the metre it
-                            # did NOT travel jumps. Re-measured on the path's own travel (VERTEX BUMPS' rule, for the
-                            # grade): within KINK_PCT -> travel_kinks (reported); a real crease reads on its own travel
-                            problems.setdefault("travel_kinks", []).append((round(s, 1), round(off, 2), round(kink, 2)))
                         else:
                             problems["kinks"].append((round(s, 1), round(off, 2), round(kink, 2)))
                     step = abs(dh - prev_slope[pi] * STEP_M)
@@ -1384,8 +1378,12 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
         out_name = f"drive_test.line.{line['id']}.json"
         report["line"] = line["id"]
         report["fold_kinks"] = len(problems.get("fold_kinks", []))
-        report["travel_kinks"] = len(problems.get("travel_kinks", []))
         report["worst"]["kinks_all"] = sorted(problems["kinks"], key=lambda r: r[0])[:2000]
+        # every reading the line does NOT count is written with its place (repair round 1, the gates lens: counts alone
+        # could not be checked from the build's own artifacts)
+        report["worst"]["fold_kinks_all"] = sorted(problems.get("fold_kinks", []), key=lambda r: r[0])[:2000]
+        report["worst"]["excursions_all"] = sorted(problems["excursion_drops"], key=lambda r: (r[0], r[1]))[:2000]
+        report["worst"]["soft_top_all"] = problems["soft_top_in_lane"][:2000]
 
     # Gate philosophy: ABSOLUTE ZERO for the things no driver tolerates (ground through the lane,
     # solid objects in the corridor); RATES vs the driver-approved baseline for surface texture
@@ -1522,15 +1520,21 @@ def write_summary(project_dir: str | Path, ran: list[str]) -> dict:
 
 
 # LINE GATE (ledger 0054 P3, EXPANSION-PLAN V6 — the plan's own numbers): on the north network's own lines no
-# obstruction, floating furniture or undrivable corner [std], no severe step [invented], ground on top in the lane at most
-# LINE_SOFT_PER_KM and kinks at most LINE_KINK_PER_KM [invented: the loop's rates, copied], plus every rule of the lap gate
+# obstruction, floating furniture, undrivable corner or daylight gap [std], no severe step [invented], ground on top in the
+# lane at most LINE_SOFT_PER_KM and kinks at most LINE_KINK_PER_KM [invented: the loop's rates, copied]; repair round 1
+# (2026-10-19, the gates lens) adds unguarded excursion drops at most LINE_EXC_PER_KM [invented: the loop's own v0.18.1
+# street rate, copied the same way]. drive_test's own lap rule (soft top 0, excursions <= 1 per km) is NOT the line's
+# verdict — the loop's street layout itself has failed it since v0.18.0 (soft top 8, excursions 96) — but it is read on
+# every line and written beside the verdict (drive_test_rule_fail, and its reasons), never hidden.
 LINE_SOFT_PER_KM = 6.1
 LINE_KINK_PER_KM = 4.97
+LINE_EXC_PER_KM = 7.12      # held v0.18.1 street: 96 gated excursion drops over 13.49 km
 
 
 def run_lines(project_dir: str | Path, set_name: str) -> int:
     """drive every line of data/drive_lines.<set>.json (tools/expansion_lines.py); data/drive_test.<set>.json is the
-    verdict: a line fails on drive_test's own rule or the LINE GATE; exit 1 on any failure"""
+    verdict: a line fails on the LINE GATE (above); drive_test's own lap rule is read and written beside it; exit 1 on
+    any failure"""
     project = Path(project_dir)
     data = project / "data"
     src = data / f"drive_lines.{set_name}.json"
@@ -1545,24 +1549,43 @@ def run_lines(project_dir: str | Path, set_name: str) -> int:
         v6 = {"obstruction_stations": r["obstruction_stations"] == 0, "floating_furniture": r["floating_furniture"] == 0,
               "undrivable_corners": r["undrivable_corners"] == 0, "severe_steps": r["severe_steps"] == 0,
               "daylight_gaps": r["daylight_gaps"] == 0,
-              "soft_top_per_km": soft_km <= LINE_SOFT_PER_KM, "kinks_per_km": r["kinks_per_km"] <= LINE_KINK_PER_KM}
-        # the line's verdict is V6's (EXPANSION-PLAN): its excursion count, and drive_test's own soft-top-0 rule, are
-        # reported beside it — the loop's street layout itself ships red on both since v0.18.0 (inherited)
+              "soft_top_per_km": soft_km <= LINE_SOFT_PER_KM, "kinks_per_km": r["kinks_per_km"] <= LINE_KINK_PER_KM,
+              "excursion_drops_per_km": (r["excursion_drops"] / km if km else 0.0) <= LINE_EXC_PER_KM}
         fail = not all(v6.values())
+        # drive_test's own lap rule on this line, reason by reason (the same tests as run()'s `fail`)
+        dt_reasons = [k for k, bad in (("soft_top_in_lane", r["soft_top_in_lane"] > 0),
+                                       ("daylight_gaps", r["daylight_gaps"] > 0),
+                                       ("excursion_drops", r["excursion_drops"] > int(r["lap_m"] / 1000)),
+                                       ("obstruction_stations", r["obstruction_stations"] > 0),
+                                       ("undrivable_corners", r["undrivable_corners"] > 0),
+                                       ("floating_furniture", r["floating_furniture"] > 0),
+                                       ("barrier_missing", r["barrier_missing"] > 0)) if bad]
         any_fail = any_fail or fail
         rows[lid_] = {k: r.get(k) for k in SUMMARY_KEYS if k not in ("direction", "kind", "race_furniture", "lane")}
-        rows[lid_].update({"soft_top_per_km": round(soft_km, 2), "v6": v6, "fail": fail,
-                           "drive_test_rule_fail": bool(r["fail"]), "fold_kinks": r.get("fold_kinks"),
-                           "travel_kinks": r.get("travel_kinks"),
+        rows[lid_].update({"soft_top_per_km": round(soft_km, 2),
+                           "excursion_drops_per_km": round(r["excursion_drops"] / km, 2) if km else 0.0,
+                           "excursion_drops": r["excursion_drops"], "v6": v6, "fail": fail,
+                           "drive_test_rule_fail": bool(r["fail"]), "drive_test_rule_reasons": dt_reasons,
+                           "fold_kinks": r.get("fold_kinks"),
                            "file": f"drive_test.line.{set_name}_{lid_}.json"})
+        print(f"  LINE {lid_}: line gate {'FAIL' if fail else 'PASS'} "
+              f"({', '.join(k for k, ok in v6.items() if not ok) or 'every key in limit'}); drive_test's own lap rule "
+              f"{'FAIL (' + ', '.join(dt_reasons) + ')' if r['fail'] else 'PASS'}: soft top {r['soft_top_in_lane']}, "
+              f"excursions {r['excursion_drops']} ({rows[lid_]['excursion_drops_per_km']}/km), kinks "
+              f"{r['kinks_per_km']}/km, fold kinks {r.get('fold_kinks')}")
         print()
     out = {"_doc": "ledger 0054 P3: drive_test --line (the north network's own lines, tools/expansion_lines.py); "
-                   "fail = drive_test's rule or EXPANSION-PLAN V6 (LINE_SOFT_PER_KM / LINE_KINK_PER_KM, severe 0)",
-           "limits": {"soft_top_per_km": LINE_SOFT_PER_KM, "kinks_per_km": LINE_KINK_PER_KM, "severe_steps": 0},
+                   "fail = the LINE GATE: EXPANSION-PLAN V6 (obstructions / floating furniture / undrivable / daylight 0, "
+                   "severe 0, LINE_SOFT_PER_KM, LINE_KINK_PER_KM) + LINE_EXC_PER_KM (repair round 1). drive_test's own "
+                   "lap rule is NOT the verdict; it is written per line as drive_test_rule_fail / _reasons",
+           "limits": {"soft_top_per_km": LINE_SOFT_PER_KM, "kinks_per_km": LINE_KINK_PER_KM,
+                      "excursion_drops_per_km": LINE_EXC_PER_KM, "severe_steps": 0},
            "lines": rows, "fail": any_fail}
     (data / f"drive_test.{set_name}.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
     print(f"DRIVE TEST LINES {set_name}: " + " ".join(f"{k}={'FAIL' if v['fail'] else 'PASS'}" for k, v in rows.items())
-          + f"   (data/drive_test.{set_name}.json)")
+          + "   (drive_test's own lap rule: " + " ".join(f"{k}={'FAIL' if v['drive_test_rule_fail'] else 'PASS'}"
+                                                   for k, v in rows.items())
+          + f")   (data/drive_test.{set_name}.json)")
     return 1 if any_fail else 0
 
 

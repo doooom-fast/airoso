@@ -267,3 +267,26 @@ def test_trim_records_the_stub_mouth_keeps_its_profile_and_never_extends_its_dea
             assert abs(kept[(round(p[0], 3), round(p[2], 3))] - p[1]) < 1e-9
         assert piece["points_xyz_m"][-1] == pre["points_xyz_m"][-1]
         assert abs(piece["points_xyz_m"][0][1] - pre["points_xyz_m"][1][1]) < 0.05   # the cut lands on the profile
+
+
+def test_a_side_street_whose_last_nodes_lie_inside_the_host_is_not_a_host_way():
+    """ledger 0054 P3 repair round 1 (the view lens: "Glenroy St's mouths are not declared"): Glenroy St's south-west
+    leg reaches Princess View on a short way with 3 of its 5 nodes inside the 22 m road, and was taken for a host
+    carriageway (no entry at all). A host way must also run ALONG the host where it is on it"""
+    with tempfile.TemporaryDirectory() as tmp:
+        proj = _project(tmp)
+        osm = json.loads((proj / "osm.json").read_text(encoding="utf-8"))
+
+        def node(nid, x, z):
+            osm["nodes"][str(nid)] = _ll(x, z)
+            return nid
+        # 5 nodes, the last three within HALF + HOST_REACH_M of the host, crossing it at 90 deg at x = 50
+        osm["ways"].append({"id": 7, "nodes": [node(7001, 50.0, -60.0), node(7002, 50.0, -30.0), node(7003, 50.0, -9.0),
+                                               node(7004, 50.0, -5.0), 1020],
+                            "tags": {"highway": "residential", "name": "Short Leg"}})
+        (proj / "osm.json").write_text(json.dumps(osm), encoding="utf-8")
+        doc = sr.declare(proj, proj / "osm.json")
+        legs = [e for e in doc["stubs"] if e["way"] == 7]
+        assert legs and legs[0]["treatment"] == "stub" and legs[0]["side"] == -1, legs
+        # the host itself is still the host (no entry for way 1)
+        assert not [e for e in doc["stubs"] if e["way"] == 1]

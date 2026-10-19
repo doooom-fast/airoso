@@ -13,6 +13,15 @@ an undivided road's at its centre line); through each pad the line turns on a cu
 lines (the right turn a car makes there), its width eased between theirs. The welds' first PAD_IN_M of the loop are not
 part of it: the mouths are verify_mouths' (on the same built road). Wheel paths, steps, obstructions: drive_test's own.
 
+THE TURN STAYS INSIDE THE CURB (ledger 0054 P3 repair round 1, the gates lens): a cubic between two lane lines is the
+centre of the turn, not its edges — at J2 / J3 / J4 the carriageway it carried (12-16 m, eased between the arms') put
+the right-hand wheel paths of every right turn up the pad's curb return (kinks of 10-17 %-points at s ~960, ~2060,
+~4320 on the forward line: a wheel climbing a 0.14 m curb, not the deck). Where the pads are built
+(data/pads.built.json: each deck's outline, its 'edge' runs = the curb faces), every line point casts a ray to each
+side; a carriageway edge within CURB_CLEAR_M of a curb face is pulled back to it (the other edge stays), the width
+never under MIN_W_M, and each edge eased into it over EASE_PTS points (never past the face) so the line never jogs. Only the pads' curbs
+are read: a piece's own curbs are its carriageway already.
+
     python tools/expansion_lines.py <project-dir>       -> data/drive_lines.expansion.json
 """
 from __future__ import annotations
@@ -31,6 +40,11 @@ EASE_M = 15.0              # [invented] the line's offset and width are eased ov
                            # jogging line's cross-section reads the road's own 10 % grade as a step)
 STEP_M = 3.0               # the lines' point spacing (the connectors' own)
 ORDER = ["A", "B", "C", "D"]   # J order: J1 -A- J2 -B- J3 -C- J4 -D- J5
+CURB_CLEAR_M = 0.5         # [invented] a carriageway edge stands this far inside a pad's curb face (drive_test's edge
+#                            wheel path runs 0.25 m past the edge it is given: it then stays 0.25 m off the face)
+MIN_W_M = 6.0              # [invented] ...never narrower than this (one 3.6 m lane + its edge paths)
+EASE_PTS = 4               # [invented] each edge's pulled-back half-width eases over +- this many line points
+RAY_PAD_M = 1.0            # a curb face is looked for out to the edge + this
 
 
 def carriageway(pc, s, side):
@@ -98,6 +112,106 @@ def _dir(pts, at_end):
     return dx / L, dz / L
 
 
+def _ray_hit(px, pz, dx, dz, segs, reach):
+    """distance along the ray (px, pz) + t (dx, dz) to the first segment in segs, within reach; None"""
+    best = None
+    for (ax, az), (bx, bz) in segs:
+        ex, ez = bx - ax, bz - az
+        den = dx * ez - dz * ex
+        if abs(den) < 1e-12:
+            continue
+        t = ((ax - px) * ez - (az - pz) * ex) / den
+        u = ((ax - px) * dz - (az - pz) * dx) / den
+        if 0.0 <= u <= 1.0 and 0.0 <= t <= reach and (best is None or t < best):
+            best = t
+    return best
+
+
+def curb_segments(pads_built):
+    """the pads' curb faces: every outline segment whose two ends are both 'edge' vertices"""
+    segs = []
+    for pad in (pads_built or {}).get("pads", []):
+        O, K = pad["outline_xz"], pad["kind"]
+        n = len(O)
+        for i in range(n):
+            j = (i + 1) % n
+            if K[i] == "edge" and K[j] == "edge":
+                segs.append((tuple(O[i]), tuple(O[j])))
+    return segs
+
+
+def keep_inside_curbs(P, W, segs):
+    """(P, W, n_pulled): the line points and widths with every carriageway edge kept CURB_CLEAR_M inside the pads'
+    curb faces (see the module doc); P [(x, y, z)], W [width]; nothing moves where no edge comes near a face"""
+    if not segs:
+        return list(P), list(W), 0
+    n = len(P)
+    cell = 20.0
+    grid = {}
+    for k, (a, b) in enumerate(segs):
+        for gx in range(int(math.floor(min(a[0], b[0]) / cell)), int(math.floor(max(a[0], b[0]) / cell)) + 1):
+            for gz in range(int(math.floor(min(a[1], b[1]) / cell)), int(math.floor(max(a[1], b[1]) / cell)) + 1):
+                grid.setdefault((gx, gz), []).append(k)
+    lbs, rbs, pulled = [w / 2.0 for w in W], [w / 2.0 for w in W], [False] * n
+    for i in range(n):
+        a, b = P[max(0, i - 1)], P[min(n - 1, i + 1)]
+        tx, tz = b[0] - a[0], b[2] - a[2]
+        L = math.hypot(tx, tz) or 1.0
+        nx, nz = -tz / L, tx / L                      # left of travel
+        half = W[i] / 2.0
+        reach = half + RAY_PAD_M
+        x, z = P[i][0], P[i][2]
+        near = set()
+        r = int(math.ceil(reach / cell))
+        for gx in range(int(math.floor(x / cell)) - r, int(math.floor(x / cell)) + r + 1):
+            for gz in range(int(math.floor(z / cell)) - r, int(math.floor(z / cell)) + r + 1):
+                near.update(grid.get((gx, gz), ()))
+        if not near:
+            continue
+        cand = [segs[k] for k in near]
+        lb, rb = half, half
+        dl = _ray_hit(x, z, nx, nz, cand, reach)
+        dr = _ray_hit(x, z, -nx, -nz, cand, reach)
+        if dl is not None:
+            lb = min(lb, dl - CURB_CLEAR_M)
+        if dr is not None:
+            rb = min(rb, dr - CURB_CLEAR_M)
+        if lb + rb < MIN_W_M:                          # keep the width; split the shortfall off the freer side
+            short = MIN_W_M - (lb + rb)
+            if lb >= rb:
+                lb += short
+            else:
+                rb += short
+        if lb < half - 1e-6 or rb < half - 1e-6:
+            pulled[i] = True
+            lbs[i], rbs[i] = lb, rb
+    if not any(pulled):
+        return list(P), list(W), 0
+
+    # ease: each edge's half-width is the lesser of its own bound and its +- EASE_PTS moving average, so a face is never
+    # crossed (a pulled point keeps at most its bound) and the neighbours ease into it (the line never jogs)
+    def eased(v):
+        out = []
+        for i in range(n):
+            js = range(max(0, i - EASE_PTS), min(n, i + EASE_PTS + 1))
+            if not any(pulled[j] for j in js):
+                out.append(v[i])            # no face near: exactly as before
+                continue
+            out.append(min(v[i], sum(v[j] for j in js) / len(js)))
+        return out
+    lbe, rbe = eased(lbs), eased(rbs)
+    so = [(lbe[i] - rbe[i]) / 2.0 for i in range(n)]
+    sw = [lbe[i] + rbe[i] for i in range(n)]
+    out = []
+    for i in range(n):
+        a, b = P[max(0, i - 1)], P[min(n - 1, i + 1)]
+        tx, tz = b[0] - a[0], b[2] - a[2]
+        L = math.hypot(tx, tz) or 1.0
+        nx, nz = -tz / L, tx / L
+        out.append((P[i][0] + nx * so[i], P[i][1], P[i][2] + nz * so[i]))
+    return out, sw, sum(pulled)
+
+
 def build(proj):
     proj = Path(proj)
     data = proj / "data"
@@ -150,10 +264,14 @@ def build(proj):
             P += list(pts)
             W += list(ws)
             parts += [pid] * len(pts)
+        pb = data / "pads.built.json"
+        segs = curb_segments(json.loads(pb.read_text(encoding="utf-8"))) if pb.exists() else []
+        P, W, n_pull = keep_inside_curbs(P, W, segs)
         lines[name] = {"points_xyz_m": [[round(v, 3) for v in q] for q in P], "widths_m": [round(w, 3) for w in W],
-                       "parts": parts}
+                       "parts": parts, "curb_pulled_points": n_pull}
         L = sum(math.dist((a[0], a[2]), (b[0], b[2])) for a, b in zip(P, P[1:]))
-        print(f"[lines] {name}: {len(P)} pts, {L / 1000:.2f} km, carriageway {min(W):.1f}-{max(W):.1f} m")
+        print(f"[lines] {name}: {len(P)} pts, {L / 1000:.2f} km, carriageway {min(W):.1f}-{max(W):.1f} m, "
+              f"{n_pull} point(s) kept {CURB_CLEAR_M} m inside a pad curb")
     out_p.write_text(json.dumps({"_doc": "tools/expansion_lines.py (ledger 0054 P3 step 7): the north network's "
                                          "right-hand carriageway per direction, for drive_test --line expansion",
                                  "frame": "local = engine (x E, y up, z N), the gate OBJ's", "lines": lines}),

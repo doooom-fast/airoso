@@ -7,11 +7,15 @@ Engine frame x=E, y=up, z=N -> Blender (x, z, y). Workbench, back faces culled (
 (road grey, curb pale, grass green, walls light, paint white / yellow), the eye 1.2 m over the BUILT road (a ray down
 onto the 1ROAD sheets). The eye rides the north network's own drive lines (data/drive_lines.expansion.json, the right-hand
 carriageway of each direction) at a station along them, looking ahead along the line (or at a named target). Shots:
-  pv_descent      fwd, Princess View 70 m below J2, looking down the hill to J3
+  pv_descent      fwd, Princess View at its s 400, on the 10 % drop (s 400-500), a LEVEL camera 200 m down the line:
+                  the road falls away below the horizon to the valley floor and J3 (repair round 1, the view lens: at
+                  s 70 the road is still nearly flat)
   j2              fwd, Waring 45 m before J2, looking into the J2 pad (Mound Ave + Waring SW barriered ahead / left)
   j3              fwd, Princess View 45 m before J3, looking into the J3 pad
   j4              fwd, Mission Gorge 45 m before J4, looking into the J4 pad (Jackson to the right)
-  mg_cowles       fwd, Mission Gorge at its s 1865, looking at Cowles Mountain
+  mg_cowles       fwd, Mission Gorge at its s 2150, a LEVEL camera toward Cowles Mountain's summit: the raised median
+                  and its guardrail on the left, the far ridge and the summit ahead (repair round 1, the view lens: from
+                  s 1865 the near cut bank filled the frame)
   jackson_walls   fwd, Jackson north climbing at its s 1330 (the 1225-1525 cut wall on the right)
   stub_eldridge   fwd on Waring at Eldridge St, looking right into the barrier-closed stub
   stub_margerum   fwd on Mission Gorge at Margerum Ave, looking right into the barrier-closed stub
@@ -96,11 +100,11 @@ def stub_view(prefix):
 
 
 SHOTDEF = {}
-SHOTDEF["pv_descent"] = lambda: line_at_near("fwd", piece_xz("B", 70.0), 120.0)[:2]
+SHOTDEF["pv_descent"] = lambda: line_at_near("fwd", piece_xz("B", 400.0), 200.0)[:2] + (True,)
 SHOTDEF["j2"] = lambda: line_at_near("fwd", piece_xz("A", 915.0), 60.0)[:2]
 SHOTDEF["j3"] = lambda: line_at_near("fwd", piece_xz("B", 1035.0), 60.0)[:2]
 SHOTDEF["j4"] = lambda: line_at_near("fwd", piece_xz("C", 2205.0), 60.0)[:2]
-SHOTDEF["mg_cowles"] = lambda: (line_at_near("fwd", piece_xz("C", 1865.0), 0.0)[0], COWLES)
+SHOTDEF["mg_cowles"] = lambda: (line_at_near("fwd", piece_xz("C", 2150.0), 0.0)[0], COWLES, True)
 SHOTDEF["jackson_walls"] = lambda: line_at_near("fwd", piece_xz("D", 1330.0), 80.0)[:2]
 
 
@@ -219,7 +223,8 @@ cam = bpy.data.objects.new("cam", cd)
 sc.collection.objects.link(cam)
 sc.camera = cam
 for s in SHOTS:
-    e, t = CAMS[s]
+    e, t = CAMS[s][:2]
+    level = len(CAMS[s]) > 2 and CAMS[s][2]
     z = hit(road, *e)
     if z is None:
         raise SystemExit(f"no road under {s} at {e}")
@@ -228,6 +233,8 @@ for s in SHOTS:
     if tz is None:
         tz = hit(ground, *t)
     tgt = Vector((t[0], t[1], (tz if tz is not None else z) + 0.6))
+    if level:                                   # a level camera: the horizon on the frame's middle line
+        tgt.z = eye.z
     cd.angle = math.radians(75.0)
     cam.location = eye
     cam.rotation_euler = (tgt - eye).to_track_quat("-Z", "Y").to_euler()

@@ -44,6 +44,12 @@ bodies (which read the ground under each deck):
      v0.18.0 (the view lens's white teeth on the parapet): the stations are read per SIDE over the union of the zones,
      so overlapping or abutting zones give ONE rail, not two prisms 3 cm apart with their end caps standing up; and
      each end slopes down over RAIL_TAPER_M (a sloped end treatment) instead of standing its square profile up.
+  RAISE-ONLY CUTS (ledger 0054 P3 repair round 1, tools/ground_release.py AUTO CUTS): a zone with raise_only takes
+     the released height only where it stands over the ground it had (the real wall over the graded verge) — never
+     lower, except down to the cut batter where the ground stood over it at the pavement edge — and its batter is the
+     zone's own cut_slope (the steepest the real face climbs there, 1-2 m per metre)
+     instead of BATTER_CUT. After the halving and after the heights, every vertical sliver the halving's n-gons left
+     (a T-vertex on a face's straight edge, tools/terrain_mend.py) is mended: no fin, no crack.
 Self-checks (exit 1, loop.blend NOT saved): a zone that moved nothing; a released vertex left above the deck over it;
 a face with a released vertex standing over a ROAD / CURB surface anywhere over its area (raster); a rail vertex over a
 ROAD surface. Writes data/ground_release.report.json.
@@ -66,6 +72,8 @@ from mathutils.bvhtree import BVHTree
 from mathutils.kdtree import KDTree
 
 AIROSO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import terrain_mend  # noqa: E402
 
 SUBDIV_M = 2.5        # [invented] zone terrain edges are halved down to this
 CLEAR_M = 0.02        # build_kn5_loop.GROUND_CLEAR: ground stands this far under the deck
@@ -89,6 +97,10 @@ FILL_EASE_M = 0.25    # [invented] ...and the fill starts at the pavement only w
 #                       3DEP, where the sidewalk's 3.5 m faces flipped between 'on the ground' and 'in the air')
 EDGE_SUBDIV_M = 1.0   # [invented] zone edges crossing the pavement's outer edge are halved down to this
 TOP_NZ = 0.7          # [invented] a ROAD / CURB face is pavement to stand on when its normal is this close to up
+PREP_BAND_M = 3.0     # engine-july build_kn5_loop BAND_M (the prep's full-contact shelf past the road's edge)
+PREP_FEATHER_M = 6.0  # engine-july build_kn5_loop FEATHER_M (its smoothstep blend beyond the shelf)
+APRON_NZ = 0.985      # [invented] repair round 1: a CURB face sloping more than this (|normal z| under it: ~10 deg, the
+#                       walk's own 0.28 m-per-metre apron at 0.96; a walk top on a 15 % hill at 0.989) is the buried apron
 FACE_STEP_M = 0.25    # [invented] raster step of the per-face pavement cap (zone faces are <= ~2.5 m)
 FACE_TOL_M = 0.003    # [invented] the self-check: no released face more than this OVER the pavement (the cap holds the
 #                       corners CLEAR_M under its lowest point; a curb edge's own camber may eat into that clearance)
@@ -257,8 +269,26 @@ def main():
         mw3 = o.matrix_world.to_3x3()
         dfaces += [tuple(base + i for i in p.vertices) for p in o.data.polygons if abs((mw3 @ p.normal).normalized().z) >= TOP_NZ]
     top = BVHTree.FromPolygons(dv, dfaces)
+    # ...and that pavement less the sidewalk's outer APRON (the CURB profile's last 1.2 m, graded down to 0.20 m under the
+    # edge so the ground buries it — the prep's contact feather leaves the grass over it on every street): what a
+    # raise-only cut's faces must stay under (repair round 1: capped under the apron's foot, the grass behind every walk
+    # in the cut zones fell 0.2-0.35 m and bared the apron, 0.14 m drops a car reads off the walk: excursions 39 -> 60)
+    wfaces = []
+    for o in deck_objs:
+        base = sum(len(q.data.vertices) for q in deck_objs[:deck_objs.index(o)])
+        mw3 = o.matrix_world.to_3x3()
+        for p in o.data.polygons:
+            nz_ = abs((mw3 @ p.normal).normalized().z)
+            if nz_ >= TOP_NZ and (o is road_obj or nz_ >= APRON_NZ):
+                wfaces.append(tuple(base + i for i in p.vertices))
+    top_walk = BVHTree.FromPolygons(dv, wfaces)
     flat = BVHTree.FromPolygons([(p[0], p[1], 0.0) for p in dv], dfaces)   # the pavement's plan, for edge distances
     road_only = _bvh([road_obj]) if road_obj is not None else None
+    # the ROAD's plan (repair round 1: a raise-only cut keeps the prep's contact band — the prep leaves zone ground alone)
+    flat_road = None
+    if road_obj is not None:
+        _rv = [tuple(road_obj.matrix_world @ v.co) for v in road_obj.data.vertices]
+        flat_road = BVHTree.FromPolygons([(p[0], p[1], 0.0) for p in _rv], [tuple(q.vertices) for q in road_obj.data.polygons])
     if deck is None:
         raise SystemExit("[release] no ROAD/CURB deck")
 
@@ -337,6 +367,7 @@ def main():
         loose = [v for v in touched if v.is_valid and not v.link_faces]
         if loose:
             bmesh.ops.delete(bm, geom=loose, context="VERTS")
+    mend0 = terrain_mend.mend_vertical_slivers(bm)
     bm.verts.index_update()
     bm.faces.index_update()
     bm.verts.ensure_lookup_table()
@@ -356,6 +387,15 @@ def main():
     n_ramp_ref = 0
     n_held_pin = 0
     pits = set()
+    # raise-only cuts: the ground a vertex "had" is the LOWEST sheet at its plan point (the seat's vertical curtains put
+    # two vertices on one plan point at different heights; raising each from its own left the curtain standing — 780
+    # vertical faces up to 1.3 m on repair round 1's first rehearsal — raising both from the lower one collapses it and
+    # the weld below takes the pair)
+    low_at = {}
+    for v in bm.verts:
+        k_ = (round(v.co.x, 4), round(v.co.y, 4))
+        if k_ not in low_at or v.co.z < low_at[k_]:
+            low_at[k_] = v.co.z
     for v in bm.verts:
         x, y, z = v.co.x, v.co.y, v.co.z
         w, zone = Z.weight(x, y)
@@ -392,6 +432,8 @@ def main():
                 per_zone[zone["name"]]["under_deck"] += 1
             else:
                 t = D
+        if zone.get("raise_only") and not under:
+            z = low_at[(round(x, 4), round(y, 4))]
         released[v.index] = (under, zone["name"], z)
         zo = z
         if w < 1.0 and not under and RF is not None and RF.in_kept(x, y):
@@ -401,15 +443,17 @@ def main():
                 zo = tg
         if w < 1.0 and zo != z:
             n_ramp_ref += 1
+        if zone.get("raise_only"):
+            t = max(t, z)              # the real wall over the graded verge: up to it, never below the ground it had
         v.co.z = zo + w * (t - zo)
         if under:                     # in a zone's ramp the blend may not leave the ground over the deck either
             v.co.z = min(v.co.z, min(hs) - CLEAR_M)
         if under and v.co.z > min(hs) - CLEAR_M + 1e-4:
             bad_poke.append((round(x, 1), round(y, 1), round(v.co.z, 2), round(min(hs), 2)))
 
-    def pave_at(x, y):
-        """the LOWEST upward ROAD / CURB surface at (x, y), or None"""
-        hs = _hits(top, x, y, 10000.0, -1000.0)
+    def pave_at(x, y, walk=False):
+        """the LOWEST upward ROAD / CURB surface at (x, y), or None (walk: the sidewalk's buried apron left out)"""
+        hs = _hits(top_walk if walk else top, x, y, 10000.0, -1000.0)
         return min(hs) if hs else None
 
     # 2b. the batter, from EVERY pavement face within reach (not only the nearest: between a low road and a high one
@@ -496,13 +540,14 @@ def main():
         # 12-14 m out, 12-13.8 m over the deck) and round its top (round_m); the fill keeps BATTER_REACH_M
         zr = zone_rec.get(zname) or {}
         reach_c = max(BATTER_REACH_M, float(zr.get("cut_reach_m") or 0.0))
-        rk = GR.round_k(float(zr.get("round_m") or 0.0), BATTER_CUT)
+        cut_k = float(zr.get("cut_slope") or BATTER_CUT)
+        rk = GR.round_k(float(zr.get("round_m") or 0.0), cut_k)
         near_c = flat.find_nearest_range((v.co.x, v.co.y, 0.0), reach_c)
         if not near_c:
             continue
         near = [r for r in near_c if r[3] <= BATTER_REACH_M]
         # (limit, the pavement height it starts from, its plan distance): the lowest cut, the highest fill
-        cut = min((face_h[fi] - CLEAR_M + BATTER_CUT * d, face_h[fi] - CLEAR_M, d) for _q, _n, fi, d in near_c)
+        cut = min((face_h[fi] - CLEAR_M + cut_k * d, face_h[fi] - CLEAR_M, d) for _q, _n, fi, d in near_c)
         if zone_kind.get(zname) == "span":
             # SPAN zones: the ground under the pavement is the released real earth (a deck may stand over it), so the fill
             # starts where the pavement actually sits on it — read at the nearest point, eased by the gap (fill_top)
@@ -514,6 +559,25 @@ def main():
         fill = max(fills) if fills else None
         z_in = v.co.z
         nz = GR.batter_z(z_in, cut, fill, round_k=rk)
+        if zr.get("raise_only"):
+            # raise-only: never under the ground it had (no fill side changes, no new drop) — but never over the cut
+            # batter either: ground the seat left standing over the batter line at the pavement edge is trimmed to it
+            # (it never falls below the pavement there: the limit starts at the pavement's own height), so no curtain
+            # stands at the back of the walk (repair round 1's first rehearsal: 780 vertical faces kept, up to 1.3 m)
+            nz = min(max(nz, z0), cut[0])
+            # ...and never under the ground the prep's contact band would have left there: the prep feathers every
+            # vertex outside a zone toward the nearest road deck (PREP_BAND_M full, smoothstep over PREP_FEATHER_M), which
+            # is what buries the sidewalk's outer apron on every street; it leaves zone ground alone, so a raise-only cut
+            # takes the UP half of it itself (repair round 1: without it the grass behind every walk in a cut stood
+            # 0.2-0.35 m low and bared the apron)
+            if flat_road is not None:
+                nr = flat_road.find_nearest((v.co.x, v.co.y, 0.0), PREP_BAND_M + PREP_FEATHER_M)
+                if nr[0] is not None:
+                    d2 = nr[3]
+                    wb = 1.0 if d2 <= PREP_BAND_M else GR.smoothstep(1.0 - (d2 - PREP_BAND_M) / PREP_FEATHER_M)
+                    n3 = road_only.find_nearest((v.co.x, v.co.y, z0))
+                    if n3[0] is not None:
+                        nz = max(nz, (n3[0].z - CLEAR_M) * wb + z0 * (1.0 - wb))
         if rk > 0.0 and cut[0] - rk < max(z_in, fill[0] if fill is not None else z_in) < cut[0] + rk:
             n_round += 1
         if fill is not None and z_in < fill[0]:
@@ -530,7 +594,14 @@ def main():
     lowerable = set(released) | pits
     rel_faces = {f for vi in lowerable for f in bm.verts[vi].link_faces}
 
+    raise_zone = {z["name"] for z in R["zones"] if z.get("raise_only")}
+
+    def walk_face(f):
+        """a face with a corner released in a raise-only cut stays under the walk and the road, not the apron"""
+        return any(released.get(v.index, (None, None))[1] in raise_zone for v in f.verts)
+
     def face_low_pave(f):
+        wk = walk_face(f)
         co = [tuple(v.co) for v in f.verts]
         cx = sum(c[0] for c in co) / len(co)
         cy = sum(c[1] for c in co) / len(co)
@@ -539,7 +610,7 @@ def main():
             return None
         low = None
         for x, y in face_samples(co, FACE_STEP_M):
-            h = pave_at(x, y)
+            h = pave_at(x, y, wk)
             if h is not None and (low is None or h < low):
                 low = h
         return low
@@ -565,6 +636,7 @@ def main():
     for f in low_of:
         co = []
         unrel_high = False
+        wk = walk_face(f)
         for v in f.verts:
             z = v.co.z
             if v.index not in lowerable:
@@ -575,7 +647,7 @@ def main():
                     unrel_high = True
             co.append((v.co.x, v.co.y, z))
         for x, y in face_samples(co, FACE_STEP_M):
-            h = pave_at(x, y)
+            h = pave_at(x, y, wk)
             gz = _plane_z(co, x, y) if h is not None else None
             if gz is not None and gz > h + FACE_TOL_M:
                 (pre_face if unrel_high else bad_face).append(
@@ -628,10 +700,14 @@ def main():
         bmesh.ops.dissolve_degenerate(bm, dist=DEGEN_DIST_M, edges=list({e for f in degen for e in f.edges}))
     n_degen_left = sum(1 for f in bm.faces if f.calc_area() < DEGEN_AREA_M2 and (
         any(v.index in zone_v for v in f.verts) or Z.weight(f.calc_center_median().x, f.calc_center_median().y)[0] > 0.0))
+    mend1 = terrain_mend.mend_vertical_slivers(bm)
     bm.to_mesh(me)
     bm.free()
     me.update()
-    idle = [n for n, r in per_zone.items() if r["moved"] == 0]
+    # an AUTO cut zone that moved nothing found the graded ground already holding its wall: reported, not fatal (a
+    # declared zone that moves nothing is a mistaken declaration)
+    idle_auto = [n for n, r in per_zone.items() if r["moved"] == 0 and (zone_rec.get(n) or {}).get("auto")]
+    idle = [n for n, r in per_zone.items() if r["moved"] == 0 and n not in idle_auto]
     if idle or bad_poke or bad_face:
         raise SystemExit(f"[release] FATAL: zones that moved nothing {idle}; {len(bad_poke)} released vertices over the "
                          f"deck {bad_poke[:4]}; {len(bad_face)} released faces over a ROAD / CURB surface "
@@ -925,7 +1001,11 @@ def main():
                       "straight_bank_between_two_pavements": n_bank, "straight_bank_min_m": GR.STRAIGHT_BANK_MIN_M,
                       "rounded_cut_top": n_round,
                       "zone_cut_reach_m": {n: z.get("cut_reach_m") for n, z in zone_rec.items() if z.get("cut_reach_m")},
-                      "zone_round_m": {n: z.get("round_m") for n, z in zone_rec.items() if z.get("round_m")}},
+                      "zone_round_m": {n: z.get("round_m") for n, z in zone_rec.items() if z.get("round_m")},
+                      "zone_cut_slope": {n: z.get("cut_slope") for n, z in zone_rec.items() if z.get("cut_slope")},
+                      "raise_only": sorted(n for n, z in zone_rec.items() if z.get("raise_only"))},
+           "vertical_slivers_mended": {"after_halving": mend0, "after_heights": mend1},
+           "auto_zones_that_moved_nothing": idle_auto,
            "held_pits_lifted_under_the_pavement": n_held_pin, "coincident_faces_removed": n_coinc,
            "coincident_vertices_welded": n_weld, "zero_area_faces_dissolved": n_degen, "zero_area_faces_left": n_degen_left,
            "face_cap": {"vertices_lowered": n_capped, "faces_over_pavement": len(low_of),

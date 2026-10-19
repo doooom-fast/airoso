@@ -77,9 +77,50 @@ def B(p):
     return (p[0], p[2], p[1])
 
 
-def film(outline, heights, fixed, what):
+CREASE_IN_M = 2.0          # [invented] repair round 1: a seam's crease is read over this much of the pad past it
+CREASE_MAX = 0.03          # [invented] ...and a pull may leave it at most this (drive_test's KINK_PCT) or the plain film's
+
+
+def _deck_at(verts, tris, x, z):
+    for a, b, c in tris:
+        pa, pb, pc = verts[a], verts[b], verts[c]
+        d = (pb[2] - pc[2]) * (pa[0] - pc[0]) + (pc[0] - pb[0]) * (pa[2] - pc[2])
+        if abs(d) < 1e-12:
+            continue
+        l1 = ((pb[2] - pc[2]) * (x - pc[0]) + (pc[0] - pb[0]) * (z - pc[2])) / d
+        l2 = ((pc[2] - pa[2]) * (x - pc[0]) + (pa[0] - pc[0]) * (z - pc[2])) / d
+        l3 = 1.0 - l1 - l2
+        if min(l1, l2, l3) >= -1e-9:
+            return l1 * pa[1] + l2 * pb[1] + l3 * pc[1]
+    return None
+
+
+def seam_crease(verts, tris, arm_rows, arm_prev):
+    """the worst change of grade across a route arm's seam: at each of its three seam vertices, the arm's own grade
+    into the pad (its last two rows) against the deck's over CREASE_IN_M past the seam, the same direction"""
+    worst = 0.0
+    for name, row in arm_rows.items():
+        for k in ("L", "C", "R"):
+            p, q = row[k], arm_prev[name][k]
+            dx, dz = p[0] - q[0], p[2] - q[2]
+            L = math.hypot(dx, dz)
+            if L < 1e-6:
+                continue
+            ux, uz = dx / L, dz / L
+            g_arm = (p[1] - q[1]) / L
+            h = _deck_at(verts, tris, p[0] + ux * CREASE_IN_M, p[2] + uz * CREASE_IN_M)
+            if h is None:
+                continue
+            worst = max(worst, abs((h - p[1]) / CREASE_IN_M - g_arm))
+    return worst
+
+
+def film(outline, heights, fixed, what, guide=None, weight=None, lam=0.0):
     """the deck: Blender's CDT over the (already densified) outline + a 1 m interior grid, the fixed outline heights
-    held, the rest the cotangent film. Returns (verts [(x, y, z)], tris, where[outline index] -> vertex index)"""
+    held, the rest the cotangent film. With `guide` ((x, z) -> deck y: tools/junction_pad.fit_quadratic over the pad's
+    3DEP, repair round 1) and lam > 0 the film is pulled toward the ground: tools/junction_pad.screened_heights, each
+    vertex's pull lam x weight(x, z) (the crossroads, faded out toward the stub tails). Returns (verts [(x, y, z)], tris,
+    where[outline index] -> vertex index)"""
     nO = len(outline)
     pts2 = list(outline) + ap_.interior_points(outline)
     res = mgeo.delaunay_2d_cdt([(x, z) for x, z in pts2], [(i, (i + 1) % nO) for i in range(nO)],
@@ -109,7 +150,12 @@ def film(outline, heights, fixed, what):
     guess = [guess_at(float(v[0]), float(v[1])) for v in vco]
     for i, h in fx.items():
         guess[i] = h
-    hs = ap_.harmonic_heights(len(vco), tris, fx, guess, xz=[(float(v[0]), float(v[1])) for v in vco])
+    xz = [(float(v[0]), float(v[1])) for v in vco]
+    if guide is not None and lam > 0.0:
+        hs = jp.screened_heights(len(vco), tris, fx, guess, xz, [guide(x, z) for x, z in xz],
+                                 [lam * weight(x, z) for x, z in xz])
+    else:
+        hs = ap_.harmonic_heights(len(vco), tris, fx, guess, xz=xz)
     verts = [(float(v[0]), hs[i], float(v[1])) for i, v in enumerate(vco)]
     return verts, tris, [out_of[k] for k in range(nO)]
 
@@ -153,7 +199,7 @@ def main():
         pid = pad["id"]
         prec = pad["design"]                     # tools/junction_pad.design_pads: the pad on the roads as they are
         stubs = prec["stubs"]
-        arm_rows, arm_curb, arm_grade = {}, {}, {}
+        arm_rows, arm_curb, arm_grade, arm_prev = {}, {}, {}, {}
         for a in pad["arms"]:
             if a["kind"] != "route":
                 continue
@@ -164,6 +210,9 @@ def main():
             C = RV[mw.road_index(lay, name, r, 1)]
             R = RV[mw.road_index(lay, name, r, 2)]
             arm_rows[a["name"]] = {"L": L, "C": C, "R": R}
+            # the arm's next rows in (repair round 1: its slope INTO the pad at each seam vertex, for the crease)
+            r2 = 1 if end == "start" else b["rows"] - 2
+            arm_prev[a["name"]] = {k: RV[mw.road_index(lay, name, r2, j)] for k, j in (("L", 0), ("C", 1), ("R", 2))}
             arm_curb[(a["name"], "L")] = [CV[mw.curb_index(lay, name, r, 1, p)] for p in range(mw.CURB_P)]
             arm_curb[(a["name"], "R")] = [CV[mw.curb_index(lay, name, r, -1, p)] for p in range(mw.CURB_P)]
             for key, e in (("L", L), ("R", R)):
@@ -188,48 +237,64 @@ def main():
         except jp.PadError as e:
             raise SystemExit(f"[pads] FATAL: {pid}: {e}")
         outline, heights, fixed = ob_["outline"], ob_["heights"], ob_["fixed"]
-        verts, tris, where = film(outline, heights, fixed, f"pad {pid}")
-        # seams: the arm row vertices must BE deck vertices, bit for bit
-        seams = []
-        for a in pad["arms"]:
-            if a["kind"] != "route":
-                continue
-            info = ob_["arms"][a["name"]]
-            for i_o, key in zip(info["idx"], ("p", "C", "q")):
-                vi = where[i_o]
-                v = verts[vi]
-                tag = ob_["tags"][i_o]
-                ref = arm_rows[a["name"]][tag[2]]
-                d = max(abs(v[0] - ref[0]), abs(v[1] - ref[1]), abs(v[2] - ref[2]))
-                seams.append({"arm": a["name"], "connector": a["connector"], "row_vertex": tag[2], "pad_vertex": vi,
-                              "xyz": [round(c, 4) for c in v], "max_abs_diff_m": d})
-                if d > 0.0:
-                    # the film's heights are float64; the arm's are its float32 mesh values: write them exactly
-                    verts[vi] = tuple(ref)
-        # steepness vs the seams' own grades (+ GRADE_OVER_SEAMS)
-        stub_g = []
-        for sid, s in pad["stubs"].items():
-            info = next(v for v in ob_["arms"].values() if v["kind"] == "stub" and v["stub"] == sid)
-            m0, m1 = (verts[where[i]] for i in info["mouth"])
-            mouth_y = (m0[1] + m1[1]) / 2
-            stub_g.append(abs(s["far_deck_y"][1] - mouth_y) / (jp.STUB_LENGTH_M + jp.TAIL_M))
-        # ... and the steepest CHORD between two different seams (an arm row, a stub's far edge): the film can be no
-        # gentler than the straight line between two edges it must meet (J2: Waring's end stands 0.6 m over Princess
-        # View's start, ~12 m away round the corner)
-        groups = []
-        for i_o, (fxd, tag) in enumerate(zip(fixed, ob_["tags"])):
-            if fxd and tag is not None:
-                groups.append((tag[:2], outline[i_o], verts[where[i_o]][1]))
-        chord = 0.0
-        for gi in range(len(groups)):
-            for gj in range(gi + 1, len(groups)):
-                if groups[gi][0] == groups[gj][0]:
+        gr_ = pad.get("ground")
+        guide = (jp.fit_quadratic([(x, z, y) for (x, z), y in zip(gr_["xz"], gr_["deck_y"])])
+                 if gr_ and gr_.get("xz") else None)
+        wfun = jp.guide_weight(prec["outline_xz"])
+        crease0 = None
+        for lam in (jp.GUIDE_LAMBDAS if guide is not None else (0.0,)):
+            verts, tris, where = film(outline, heights, fixed, f"pad {pid}", guide=guide, weight=wfun, lam=lam)
+            # seams: the arm row vertices must BE deck vertices, bit for bit
+            seams = []
+            for a in pad["arms"]:
+                if a["kind"] != "route":
                     continue
-                dd = math.dist(groups[gi][1], groups[gj][1])
-                if dd >= 1.0:
-                    chord = max(chord, abs(groups[gi][2] - groups[gj][2]) / dd)
-        seam_grade = max(list(arm_grade.values()) + stub_g + [chord])
-        steep = ap_.robust_grade(verts, tris)
+                info = ob_["arms"][a["name"]]
+                for i_o, key in zip(info["idx"], ("p", "C", "q")):
+                    vi = where[i_o]
+                    v = verts[vi]
+                    tag = ob_["tags"][i_o]
+                    ref = arm_rows[a["name"]][tag[2]]
+                    d = max(abs(v[0] - ref[0]), abs(v[1] - ref[1]), abs(v[2] - ref[2]))
+                    seams.append({"arm": a["name"], "connector": a["connector"], "row_vertex": tag[2], "pad_vertex": vi,
+                                  "xyz": [round(c, 4) for c in v], "max_abs_diff_m": d})
+                    if d > 0.0:
+                        # the film's heights are float64; the arm's are its float32 mesh values: write them exactly
+                        verts[vi] = tuple(ref)
+            # steepness vs the seams' own grades (+ GRADE_OVER_SEAMS)
+            stub_g = []
+            for sid, s in pad["stubs"].items():
+                info = next(v for v in ob_["arms"].values() if v["kind"] == "stub" and v["stub"] == sid)
+                m0, m1 = (verts[where[i]] for i in info["mouth"])
+                mouth_y = (m0[1] + m1[1]) / 2
+                stub_g.append(abs(s["far_deck_y"][1] - mouth_y) / (jp.STUB_LENGTH_M + jp.TAIL_M))
+            # ... and the steepest CHORD between two different seams (an arm row, a stub's far edge): the film can be no
+            # gentler than the straight line between two edges it must meet (J2: Waring's end stands 0.6 m over Princess
+            # View's start, ~12 m away round the corner)
+            groups = []
+            for i_o, (fxd, tag) in enumerate(zip(fixed, ob_["tags"])):
+                if fxd and tag is not None:
+                    groups.append((tag[:2], outline[i_o], verts[where[i_o]][1]))
+            chord = 0.0
+            for gi in range(len(groups)):
+                for gj in range(gi + 1, len(groups)):
+                    if groups[gi][0] == groups[gj][0]:
+                        continue
+                    dd = math.dist(groups[gi][1], groups[gj][1])
+                    if dd >= 1.0:
+                        chord = max(chord, abs(groups[gi][2] - groups[gj][2]) / dd)
+            seam_grade = max(list(arm_grade.values()) + stub_g + [chord])
+            steep = ap_.robust_grade(verts, tris)
+            crease = seam_crease(verts, tris, arm_rows, arm_prev)
+            lam_used = lam
+            if guide is None:
+                break
+            if crease0 is None:
+                # the plain film's crease is the reference, computed once before any pull is judged
+                v0, t0, _w0 = film(outline, heights, fixed, f"pad {pid}")
+                crease0 = seam_crease(v0, t0, arm_rows, arm_prev)
+            if steep <= seam_grade + GRADE_OVER_SEAMS and crease <= max(crease0, CREASE_MAX):
+                break
         steep_all, st_t = ap_.steepest(verts, tris)
         area = sum(0.5 * abs((verts[b][0] - verts[a][0]) * (verts[c][2] - verts[a][2]) -
                              (verts[b][2] - verts[a][2]) * (verts[c][0] - verts[a][0])) for a, b, c in tris)
@@ -330,12 +395,18 @@ def main():
                                "outline_area_m2": round(oarea, 2), "steepest_pct": round(100 * steep, 2),
                                "steepest_any_pct": round(100 * steep_all, 2),
                                "seam_grade_pct": round(100 * seam_grade, 2),
-                               "arm_grades_pct": {k: round(100 * v, 2) for k, v in arm_grade.items()}},
+                               "arm_grades_pct": {k: round(100 * v, 2) for k, v in arm_grade.items()},
+                               "ground_guide": None if guide is None else {
+                                   "points": len(gr_["xz"]), "lambda": lam_used, "fade_m": jp.GUIDE_FADE_M,
+                                   "tried": [x for x in jp.GUIDE_LAMBDAS if x >= lam_used],
+                                   "seam_crease_pct": round(100 * crease, 2),
+                                   "seam_crease_plain_film_pct": None if crease0 is None else round(100 * crease0, 2)}},
                       "outline_xz": [[round(x, 4), round(z, 4)] for x, z in outline],
                       "outline_deck_y": [round(h, 4) for h in deck_h], "kind": ob_["kind"],
                       "seams": seams, "curb_runs": run_recs, "stubs": bar_recs})
         print(f"[pads] {pid}: deck {len(verts)} v / {len(tris)} tris, {area:.1f} m2 (outline {oarea:.1f}), steepest "
-              f"{100 * steep:.2f} % (arms / stubs {100 * seam_grade:.2f} %); {len(seams)} seam vertices welded to "
+              f"{100 * steep:.2f} % (arms / stubs {100 * seam_grade:.2f} %), ground guide pull "
+              f"{'-' if guide is None else lam_used}; {len(seams)} seam vertices welded to "
               f"{sum(1 for a in pad['arms'] if a['kind'] == 'route')} arm row(s); curb {len(run_recs)} run(s), "
               f"{len(cverts) // 4} stations; {len(bar_recs)} K-rail barrier(s) "
               f"({', '.join(b_['stub'] + ' %.2f m' % b_['barrier']['span_m'] for b_ in bar_recs)})")

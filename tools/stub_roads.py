@@ -439,12 +439,30 @@ def _host_entries(project, osm_path, host_name, streets, length_m, ways_filter=N
         if len(ns) < 2:
             continue
         on = 0
+        flags = []
         for n in ns:
             x, z = nodes_xz[n]
             d, i, t, _l, _s = host.project(x, z)
-            on += d <= host.half(i, t) + HOST_REACH_M
+            flags.append((d <= host.half(i, t) + HOST_REACH_M, i))
+            on += flags[-1][0]
         L = polyline_length([nodes_xz[n] for n in ns])
-        if on >= 0.6 * len(ns) and L > 20.0:
+        # ...and running ALONG the host where it is on it (ledger 0054 P3 repair round 1: Glenroy St's south-west leg
+        # and Doreen Rd reach the host on a short way whose last nodes lie inside its 22 m width — 3 of 5 / 2 of 3
+        # nodes "on" it — and were taken for host carriageways, so they got no stub and no entry at all): the length-
+        # weighted |cos| of its on-host segments against the host's tangent at least cos(PARALLEL_DEG)
+        al_w = al = 0.0
+        for (f0, i0), (f1, _i1), n0, n1 in zip(flags, flags[1:], ns, ns[1:]):
+            if not (f0 and f1):
+                continue
+            (x0, z0), (x1, z1) = nodes_xz[n0], nodes_xz[n1]
+            sl = math.hypot(x1 - x0, z1 - z0)
+            if sl < 1e-6:
+                continue
+            htx, htz = host.tangent(i0)
+            al += sl * abs(((x1 - x0) * htx + (z1 - z0) * htz) / sl)
+            al_w += sl
+        along = al_w > 0.0 and al / al_w >= math.cos(math.radians(PARALLEL_DEG))
+        if on >= 0.6 * len(ns) and L > 20.0 and along:
             hostish.add(w["id"])
             for n in ns:
                 host_way_names.setdefault(n, (w.get("tags") or {}).get("name"))

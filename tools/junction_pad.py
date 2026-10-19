@@ -30,6 +30,13 @@ soap film between them (tools/apron.harmonic_heights). The CURB RUNS: the outlin
 stub far edges — each run a curb + sidewalk strip (build_loop_blend's curb_sidewalk profile, swept toward the outside)
 whose first / last station is the route arm's own curb row where it starts / ends at one (rule 9: the strip follows
 the pad's outline round the corner arc into the next street and never crosses pavement).
+
+THE DECK FOLLOWS THE REAL GROUND (ledger 0054 P3 repair round 1, the truth lens: J4's deck stood 0.32-0.43 m over fresh
+3DEP on its west and south side). A soap film between the seams is flat wherever nothing pins it, and a real crossroads
+on a hillside is not: the plan also reads 3DEP every GROUND_STEP_M inside each pad's design outline (cached beside the
+stub edges) and the author stage stretches the film over the ground instead of over nothing — the deck is a smooth
+quadratic surface fitted to that 3DEP (fit_quadratic, + LIFT_M as every deck) plus the soap film of the seams' own
+departure from it (the seams stay exact; between them the deck keeps the ground's tilt and bowl).
 """
 from __future__ import annotations
 
@@ -49,6 +56,7 @@ TAIL_M = 1.0                # tools/stub_roads.py TAIL_M [invented there]: road 
 LIFT_M = 0.10               # build_loop_blend: the road deck stands this over the profile it was swept on
 SNAP_MAX_M = 0.6            # [invented] a route arm's built end row must lie within this of the design cut, or stop
 CUT_MATCH_M = 1e-3          # a design cut point IS an outline vertex within this
+GROUND_STEP_M = 2.0         # [invented] repair round 1: 3DEP read every this inside a pad's design outline (its guide)
 PREFIX = "pad"              # object names: 1ROAD_pad_<id>, 1KERB_sidewalk_pad<id>, 1WALL_STUB_PAD_<id>_<stub>
 
 
@@ -400,6 +408,135 @@ def run_stations(outline, deck_h, run, profile, first=None, last=None):
     return rows
 
 
+def inside(poly, x, z):
+    """point in polygon (even-odd), plan"""
+    c = False
+    n = len(poly)
+    for i in range(n):
+        (x1, z1), (x2, z2) = poly[i], poly[(i + 1) % n]
+        if (z1 > z) != (z2 > z) and x < x1 + (z - z1) * (x2 - x1) / (z2 - z1):
+            c = not c
+    return c
+
+
+def ground_grid(outline, step=GROUND_STEP_M):
+    """[(x, z)] every `step` on a grid inside the outline (the pad's 3DEP guide points)"""
+    xs = [p[0] for p in outline]
+    zs = [p[1] for p in outline]
+    out = []
+    x = math.floor(min(xs) / step) * step
+    while x <= max(xs):
+        z = math.floor(min(zs) / step) * step
+        while z <= max(zs):
+            if inside(outline, x, z):
+                out.append((round(x, 3), round(z, 3)))
+            z += step
+        x += step
+    return out
+
+
+def fit_quadratic(pts):
+    """least squares y = a + b u + c v + d u^2 + e u v + f v^2 over [(x, z, y)], (u, v) = (x, z) - their mean; returns
+    a callable (x, z) -> y (the smooth ground a pad's deck follows)"""
+    n = len(pts)
+    if n < 6:
+        raise PadError(f"a pad's ground guide needs 6+ points, has {n}")
+    mx = sum(p[0] for p in pts) / n
+    mz = sum(p[1] for p in pts) / n
+    A = [[0.0] * 6 for _ in range(6)]
+    B = [0.0] * 6
+    for x, z, y in pts:
+        u, v = x - mx, z - mz
+        r = (1.0, u, v, u * u, u * v, v * v)
+        for i in range(6):
+            B[i] += r[i] * y
+            for j in range(6):
+                A[i][j] += r[i] * r[j]
+    M = [row[:] + [b] for row, b in zip(A, B)]
+    for c in range(6):
+        piv = max(range(c, 6), key=lambda r_: abs(M[r_][c]))
+        M[c], M[piv] = M[piv], M[c]
+        if abs(M[c][c]) < 1e-12:
+            raise PadError("a pad's ground guide is singular (its 3DEP points are collinear)")
+        for r_ in range(6):
+            if r_ != c:
+                f = M[r_][c] / M[c][c]
+                for k in range(c, 7):
+                    M[r_][k] -= f * M[c][k]
+    k_ = [M[i][6] / M[i][i] for i in range(6)]
+
+    def g(x, z):
+        u, v = x - mx, z - mz
+        return k_[0] + k_[1] * u + k_[2] * v + k_[3] * u * u + k_[4] * u * v + k_[5] * v * v
+    g.coef = k_
+    g.mean = (mx, mz)
+    return g
+
+
+GUIDE_FADE_M = 10.0         # [invented] repair round 1: the ground guide pulls fully this far inside the design outline
+#                             (the crossroads) and not at all at its edge — the stub tails beyond it keep the plain film
+#                             to their far edges (held level across at their middle's 3DEP: a guide tilting across them
+#                             fought that, 8 % beside J2's Mound Ave edge on the first try)
+GUIDE_LAMBDAS = (1.0, 0.3, 0.1, 0.03, 0.0)   # [invented] the guide's pull, strongest first: the strongest whose deck keeps
+#                             the pad's own steepness bound (the seams' grades + 2 %) and creases no seam more than the
+#                             plain film does or 3 % (tools/author_junction_pad_blend.CREASE_MAX) is built; 0 = the plain film
+
+
+def edge_distance(poly, x, z):
+    """the plan distance from (x, z) to the polygon's outline, + inside, - outside"""
+    best = None
+    n = len(poly)
+    for i in range(n):
+        (ax, az), (bx, bz) = poly[i], poly[(i + 1) % n]
+        ex, ez = bx - ax, bz - az
+        L2 = ex * ex + ez * ez
+        t = 0.0 if L2 < 1e-12 else max(0.0, min(1.0, ((x - ax) * ex + (z - az) * ez) / L2))
+        d = math.hypot(x - ax - t * ex, z - az - t * ez)
+        best = d if best is None or d < best else best
+    return best if inside(poly, x, z) else -best
+
+
+def guide_weight(design_outline, fade=GUIDE_FADE_M):
+    """(x, z) -> 0..1: smoothstep of the distance inside the design outline over `fade` (0 outside it)"""
+    def w(x, z):
+        d = edge_distance(design_outline, x, z)
+        if d <= 0.0:
+            return 0.0
+        t = min(1.0, d / fade)
+        return t * t * (3.0 - 2.0 * t)
+    return w
+
+
+def screened_heights(n_verts, tris, fixed, guess, xz, target, lam, iters=20000, tol=1e-7):
+    """the soap film between the fixed heights PULLED toward the ground: minimises the cotangent Dirichlet energy +
+    sum lam_i (h_i - target_i)^2 (lam [per vertex] 0 = tools/apron.harmonic_heights exactly). Gauss-Seidel from guess"""
+    w = [dict() for _ in range(n_verts)]
+
+    def add(i, j, v):
+        w[i][j] = w[i].get(j, 0.0) + v
+        w[j][i] = w[j].get(i, 0.0) + v
+    for a, b, c in tris:
+        for i, j, k in ((a, b, c), (b, c, a), (c, a, b)):
+            u = (xz[i][0] - xz[k][0], xz[i][1] - xz[k][1])
+            v = (xz[j][0] - xz[k][0], xz[j][1] - xz[k][1])
+            cr = abs(u[0] * v[1] - u[1] * v[0])
+            add(i, j, 0.5 * max(0.0, (u[0] * v[0] + u[1] * v[1]) / cr) if cr > 1e-12 else 0.0)
+    h = list(guess)
+    for i, v in fixed.items():
+        h[i] = v
+    free = [i for i in range(n_verts) if i not in fixed and (w[i] and sum(w[i].values()) > 1e-12 or lam[i] > 0.0)]
+    for _ in range(iters):
+        dmax = 0.0
+        for i in free:
+            tot = sum(w[i].values()) + lam[i]
+            v = (sum(h[j] * wij for j, wij in w[i].items()) + lam[i] * target[i]) / tot
+            dmax = max(dmax, abs(v - h[i]))
+            h[i] = v
+        if dmax < tol:
+            break
+    return h
+
+
 def fetch_heights(points_lonlat, cache_path, what):
     """3DEP 1 m at each (lon, lat), cached in cache_path ({key "lon,lat" (7 dp): metres}, with provenance); missing ones
     fetched (TLS verified, scripts.elevation.terrain_sample.sample_lonlat), never gap filled"""
@@ -479,6 +616,21 @@ def plan(project, offline=False):
         # centre entrance's 12 m (a 15 % cross-fall, a 25 % facet beside it on the first build)
         raw = {sid: list(v) for sid, v in sh.items()}
         sh = {sid: [v[1], v[1], v[1]] for sid, v in sh.items()}
+        # repair round 1: the pad's ground guide — 3DEP every GROUND_STEP_M inside its design outline (deck heights:
+        # + LIFT_M), cached in the same file
+        gxz = ground_grid(pad["outline_xz"])
+        gll = [frame.lonlat(x, z) for x, z in gxz]
+        if offline:
+            hp = data / "pads.3dep.json"
+            cache = json.loads(hp.read_text(encoding="utf-8"))["h"] if hp.exists() else {}
+            gv = [cache.get(f"{a:.7f},{b:.7f}") for a, b in gll]
+            if any(v is None for v in gv):
+                raise SystemExit(f"[pads] FATAL: {pid_}: the ground guide's 3DEP not cached and --offline")
+            ngf = 0
+        else:
+            gv, ngf = fetch_heights(gll, data / "pads.3dep.json", f"junction pad {pid_} ground guide")
+        ground = {"step_m": GROUND_STEP_M, "xz": [list(p) for p in gxz],
+                  "deck_y": [round(v - elev0 + LIFT_M, 3) for v in gv]}
         # each route arm's connector piece and which end stands on the cut
         arms = []
         for a in pad["arms"]:
@@ -508,11 +660,12 @@ def plan(project, offline=False):
                      "y_3dep_m": src_pad.get("y_3dep_m"), "arms": arms,
                      "stubs": {sid: dict(stubs[sid], far_xz=[list(map(lambda v: round(v, 4), p)) for p in far[sid]],
                                          far_deck_y=sh[sid], far_3dep_deck_y=raw[sid]) for sid in far},
-                     "design": pad, "corners": pad["corners"],
+                     "design": pad, "corners": pad["corners"], "ground": ground,
                      "stub_length_m": STUB_LENGTH_M, "tail_m": TAIL_M})
         print(f"[pads] {pid_}: {sum(1 for a in arms if a['kind'] == 'route')} route arm(s) "
               f"({', '.join(a['connector'] + ' ' + a['end'] for a in arms if a['kind'] == 'route')}), "
-              f"{len(far)} stub arm(s); 3DEP at the stub far edges ({nf} fetched)")
+              f"{len(far)} stub arm(s); 3DEP at the stub far edges ({nf} fetched) and {len(gxz)} ground-guide points "
+              f"({ngf} fetched)")
     out_p.write_text(json.dumps({"_doc": "tools/junction_pad.py plan (ledger 0054 P3 step 2): the junction pads to "
                                          "author (tools/author_junction_pad_blend.py)", "pads": pads}, indent=1),
                      encoding="utf-8")

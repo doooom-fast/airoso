@@ -11,6 +11,11 @@ against data that did not place it (L5): the OSM midline / the aerial eye widths
               side, the 3DEP cached in ../p2-proofs/cut_walls.samples.json.gz) read on the BUILT ground: per station the
               real wall (max 3DEP - road) and the built one (max ground - road); a stretch of >= 50 m where a real wall
               >= 3 m keeps under half of it is LOST (P2's own rule)
+  walls_all   (repair round 1, the truth lens's own reading) every 5 m of ALL FOUR pieces, BOTH sides, fresh 3DEP at
+              12-35 m off the centre line (walls_sweep.samples.json.gz, cached with provenance): per station-side the real
+              wall (max 3DEP - the 3DEP road) and the built one (max ground - the built road), at 12-20 m and at 12-35 m,
+              skipping points over pavement; counted: stations with a 3 m+ real wall, those more than 1 m short, those
+              keeping under half, and runs of 20 m+ of short stations
 
     python measure_p3.py <airoso> <project> <out.json>
 """
@@ -217,6 +222,58 @@ for w in walls:
 res["walls"] = {"real_walls_ge_3m": walls, "lost_stretches_ge_50m": lost,
                 "stations_with_real_wall": sum(1 for q in rows_out if q["real_cut_m"] >= 3.0),
                 "of_them_lost": sum(1 for q in rows_out if q["lost"])}
+# ---- walls_all (repair round 1): the truth lens's sweep on all four pieces, both sides
+SW = json.loads(gzip.decompress((Path(__file__).resolve().parent / "walls_sweep.samples.json.gz").read_bytes()))
+y3 = {pid: {q["s"]: q["y3"] for q in rows} for pid, rows in R.items()}
+cuts_s = {pid: (p["cuts"]["start"]["s"], p["cuts"]["end"]["s"]) for pid, p in pieces.items()}
+st_all = {}
+for pid, s_, off, x, z, h in zip(SW["piece"], SW["s"], SW["off"], SW["x"], SW["z"], SW["h"]):
+    q = next((q for q in R[pid] if abs(q["s"] - s_) < 1e-6), None)
+    if q is None or h is None or s_ not in y3[pid]:
+        continue
+    key = (pid, s_, 1 if off > 0 else -1)
+    if key not in st_all:
+        rd = road_at(q["x"], q["z"])
+        st_all[key] = {"road_built": rd, "road_3dep": y3[pid][s_] + elev0, "pts": []}
+    on_road = road_at(x, z) is not None
+    st_all[key]["pts"].append((abs(off), h, ground_at(x, z), on_road))
+wall_rows = []
+for (pid, s_, side), r in sorted(st_all.items()):
+    if r["road_built"] is None or not (cuts_s[pid][0] <= s_ <= cuts_s[pid][1]):
+        continue
+    for lo, hi, tag in ((12, 20, "12-20"), (12, 35, "12-35")):
+        win = [t for t in r["pts"] if lo <= t[0] <= hi and t[2] is not None and not t[3]]
+        if not win:
+            continue
+        real = max(t[1] - r["road_3dep"] for t in win)
+        built = max(t[2] + elev0 - r["road_built"] for t in win)
+        wall_rows.append({"piece": pid, "s": s_, "side": "left" if side > 0 else "right", "band": tag,
+                          "real_m": round(real, 2), "built_m": round(built, 2)})
+wa = {}
+for tag in ("12-20", "12-35"):
+    w3 = [q for q in wall_rows if q["band"] == tag and q["real_m"] >= 3.0]
+    short = sorted([q for q in w3 if q["real_m"] - q["built_m"] > 1.0], key=lambda q: (q["piece"], q["side"], q["s"]))
+    runs, cur = [], None
+    for q in short:
+        k = (q["piece"], q["side"])
+        if cur and cur["k"] == k and q["s"] - cur["s_to"] <= 5.01:
+            cur["s_to"] = q["s"]
+            cur["n"] += 1
+        else:
+            if cur:
+                runs.append(cur)
+            cur = {"k": k, "s_from": q["s"], "s_to": q["s"], "n": 1}
+    if cur:
+        runs.append(cur)
+    shortfall = sorted(q["real_m"] - q["built_m"] for q in w3)
+    wa[tag] = {"stations_real_ge_3m": len(w3), "short_gt_1m": len(short),
+               "kept_under_half": sum(1 for q in w3 if q["built_m"] < 0.5 * q["real_m"]),
+               "shortfall_median_m": round(shortfall[len(shortfall) // 2], 2) if shortfall else None,
+               "runs_ge_20m": [{"piece": c["k"][0], "side": c["k"][1], "s_from": c["s_from"], "s_to": c["s_to"],
+                                "length_m": round(c["s_to"] - c["s_from"] + 5.0, 1)}
+                               for c in runs if c["s_to"] - c["s_from"] + 5.0 >= 20.0],
+               "short_stations": [[q["piece"], q["side"], q["s"], q["real_m"], q["built_m"]] for q in short][:60]}
+res["walls_all"] = wa
 # ---- lamp 77 (ledger 0054 prep: v0.18.1 stood it behind J1's R 30 return; is its foot on the apron's ground?)
 lights = json.loads((PROJ / "data" / "lights.local.json").read_text(encoding="utf-8"))["lampheads"]
 hx, hy, hz = lights[77]
@@ -243,8 +300,12 @@ if post:
     res["lamp77"] = {"head": [hx, hy, hz], "base": [round(c, 3) for c in base],
                      "surface_under_base": None if top is None else round(top, 3),
                      "base_minus_surface_m": None if top is None else round(base[1] - top, 3),
+                     "head_over_surface_m": None if top is None else round(hy - top, 3),
+                     "head_over_surface_rule_m": 8.8,
                      "surfaces": sorted({n for _h, n in F.at(base[0], base[2])})}
 OUT.write_text(json.dumps(res, indent=1), encoding="utf-8")
 print(json.dumps({"V1": {k: v for k, v in res["V1"].items() if k != "aerial_stations"}, "V2": res["V2"],
                   "walls": {"lost_stretches_ge_50m": lost, "stations_with_real_wall": res["walls"]["stations_with_real_wall"],
-                            "of_them_lost": res["walls"]["of_them_lost"]}}, indent=1))
+                            "of_them_lost": res["walls"]["of_them_lost"]},
+                  "walls_all": {k: {kk: vv for kk, vv in v.items() if kk != "short_stations"} for k, v in wa.items()},
+                  "lamp77": res.get("lamp77")}, indent=1))

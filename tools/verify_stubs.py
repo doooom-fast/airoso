@@ -250,23 +250,32 @@ def check_stub(st, sb, mo, piece, host, field, by_name, data, trees):
     (cx, cz), (tx, tz), (nx, nz), wb = pp.frame(u_bar)
     reach = wb / 2.0 + WALK_M
     span_bad, worst_low, n_s = [], None, 0
+    # the barrier is read on its OWN crest line as built (repair round 1, the gates lens: the ±CREST_SEARCH_M search
+    # took the best of 13 readings along the stub). The author stage stations the barrier on the welded mesh's rows (on
+    # a steep host the weld's mitre moves the stub's first row up to 0.17 m along it), so its centre line — the jersey's
+    # crest, recorded ring by ring in data/stubs.built.json barrier.path_xz — is where it is read, at the lateral
+    # position of each cross-section sample; and that line must stand within BAR_STATION_TOL_M of the declared distance
+    path = [(float(q[0]), float(q[1])) for q in (((sb or {}).get("barrier") or {}).get("path_xz") or [])]
+    crest = sorted(((q[0] - cx) * nx + (q[1] - cz) * nz, (q[0] - cx) * tx + (q[1] - cz) * tz) for q in path)
+    station_off = max((abs(u_) for _l, u_ in crest), default=None)
+
+    def crest_at(o_):
+        """the crest line's along-stub offset at lateral o_ (linear between its rings), or 0 without a built record"""
+        if not crest:
+            return 0.0
+        if o_ <= crest[0][0]:
+            return crest[0][1]
+        for (l0, u0), (l1, u1) in zip(crest, crest[1:]):
+            if l0 <= o_ <= l1:
+                return u0 if l1 - l0 < 1e-9 else u0 + (u1 - u0) * (o_ - l0) / (l1 - l0)
+        return crest[-1][1]
     o = -reach
     while o <= reach + 1e-9:
-        # the barrier's CREST within CREST_SEARCH_M of the declared distance, along the stub (ledger 0054 P3): the
-        # author stage stations the barrier on the welded mesh's own rows, and on a steep host the weld's mitre moves
-        # the stub's first row up to 0.17 m along it (Laura St off Princess View's 9.6 %) — a cross-section 0.17 m off
-        # the crest reads the jersey's sloped face, 0.77 m over the road, not its 1.1 m top
-        best = None
-        k = -CREST_SEARCH_M
-        while k <= CREST_SEARCH_M + 1e-9:
-            x, z = cx + nx * o + tx * k, cz + nz * o + tz * k
-            h = field.heights(x, z)
-            sf = max(h["ROAD"] + h["KERB"], default=None)
-            tp = max(wall_heights(wall, x, z), default=None)
-            if sf is not None and tp is not None and (best is None or tp - sf > best[1] - best[0]):
-                best = (sf, tp)
-            k += CREST_STEP_M
-        surf, top = best if best is not None else (None, None)
+        k = crest_at(o)
+        x, z = cx + nx * o + tx * k, cz + nz * o + tz * k
+        h = field.heights(x, z)
+        surf = max(h["ROAD"] + h["KERB"], default=None)
+        top = max(wall_heights(wall, x, z), default=None)
         n_s += 1
         if surf is None or top is None or top - surf < BARRIER_MIN_H_M:
             span_bad.append(round(o, 2))
@@ -274,7 +283,11 @@ def check_stub(st, sb, mo, piece, host, field, by_name, data, trees):
             worst_low = hh if worst_low is None or (hh is not None and hh < worst_low) else worst_low
         o += SPAN_STEP_M
     rec["S4"] = {"half_span_m": round(reach, 3), "samples": n_s, "short": len(span_bad), "short_at_m": span_bad[:10],
-                 "lowest_short_m": worst_low}
+                 "lowest_short_m": worst_low, "read_on": "built crest line" if crest else "declared cross-section",
+                 "crest_off_declared_max_m": None if station_off is None else round(station_off, 3)}
+    if station_off is not None and station_off > BAR_STATION_TOL_M:
+        fails.append(f"S4: the barrier's crest stands {station_off:.3f} m off its declared distance along the stub "
+                     f"(> {BAR_STATION_TOL_M})")
     if span_bad:
         fails.append(f"S4: the barrier does not stand {BARRIER_MIN_H_M} m over the stub at {len(span_bad)} of {n_s} "
                      f"points across back of walk to back of walk (e.g. lateral {span_bad[:5]})")
@@ -424,8 +437,7 @@ def check_cut(cc, field, host):
 
 
 VM_FIELD = [None]
-CREST_SEARCH_M = 0.3      # [invented] S4 reads the barrier's crest within this of its declared distance along the stub
-CREST_STEP_M = 0.05
+BAR_STATION_TOL_M = 0.25  # [invented] repair round 1: the barrier's built crest line within this of its declared distance
 EXACT_PX = []             # route.weld_exact_deck (set by verify()): S2 reads the host deck as verify_mouths does
 
 

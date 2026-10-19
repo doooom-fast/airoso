@@ -527,6 +527,20 @@ step "gate: verify_fold_fans (every levelled mainline fold pinch, all layouts, o
 # no_route's band; exit 1 (data/verify_fold_fans.json) stops the chain, --force-install does not cover it
 rm -f "$PROJ/data/verify_fold_fans.json"
 (cd "$AIROSO" && python tools/verify_fold_fans.py "$PROJ")
+step "gate: kn5_ground_check per layout (EXPANSION-PLAN V5: the kn5 set each layout loads — terrain sheets, furniture seating, lamp masts, the road on the ground)"
+# ledger 0054 P3 repair round 1 (the gates lens: EXPANSION-PLAN V5 lists kn5_ground_check on all three layouts and
+# neither chain ran it): scripts/ac/kn5_ground_check.py on the kn5 SET each layout loads (the road + the street-only kn5,
+# or + the common race kn5 + its closure) — double-sheet terrain, furniture seating, lamp masts, the road on the ground
+# (kn5-internal: data/track.obj is this kn5's own gate OBJ); data/kn5_ground_check.<id>.json. A red counts with the
+# street gates (KG): --force-install covers it only where no key is worse than the reference (ledger 0047)
+KG=0
+for lid in $LAYOUT_IDS; do
+  rm -f "$PROJ/data/kn5_ground_check.$lid.json"
+  if [[ " $RACE_IDS " == *" $lid "* ]]; then KX="--kn5 $PROJ/build/${RK[$lid]} --kn5 $PROJ/build/${SLUG}_closure_$lid.kn5"; else KX="$STREET_KN5"; fi
+  rc=0; (cd "$AIROSO" && python -m scripts.ac.kn5_ground_check "$PROJ" $KX --json "$PROJ/data/kn5_ground_check.$lid.json" 2>&1 | tail -14) || rc=$?
+  echo "  kn5_ground_check $lid: exit $rc"
+  [ "$rc" = 0 ] || KG=$rc
+done
 # a race layout red on its OWN gates is never installed, --force-install or not: drive_test barrier_missing /
 # obstruction_stations / not run, or the BUILT no_route verdict missing or failing (a leak, a blocked lap, a
 # reached forbidden probe, an unreached spawn). check_race_kn5 / verify_kn5 / verify_kn5 --inis already
@@ -560,12 +574,12 @@ for f in centerline.local.json centerline.raw.local.json median_bands.json dummi
          mouths.json mouth_welds.json aprons.json aprons.lamps.json pads.plan.json pads.built.json pads.3dep.json verify_pads.json verify_mouths.json verify_fold_fans.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
          drive_test.json drive_test.expansion.json drive_lines.expansion.json audit.json stubs.plan.json stubs.built.json verify_stubs.json stubs.3dep.json \
          barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json street_kn5.json \
-         $TERRAIN_DATA terrain.tiers.report.json bridges.authored.json          deck_datum.json ground_release.json ground_release.report.json freeway_i8.json freeway_i8.report.json; do
+         $TERRAIN_DATA terrain.tiers.report.json bridges.authored.json          deck_datum.json ground_release.json ground_release.report.json ground_release.auto_cuts.json freeway_i8.json freeway_i8.report.json; do
   [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
 done
 rm -f "$SRC/data/audit.race.json"   # 0047's shared race audit: retired (ledger 0049 audits each race layout on its own OBJ)
 for lid in $LAYOUT_IDS; do
-  for f in "dummies_$lid.json" "drive_test.$lid.json"; do [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"; done
+  for f in "dummies_$lid.json" "drive_test.$lid.json" "kn5_ground_check.$lid.json"; do [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"; done
   if [ -d "$PROJ/ai/$lid" ]; then rm -rf "$SRC/ai/$lid"; mkdir -p "$SRC/ai"; cp -r "$PROJ/ai/$lid" "$SRC/ai/$lid"; fi   # track_folder is reproducible from the repo
 done
 for lid in $RACE_IDS; do
@@ -590,14 +604,14 @@ if [ "$DT_L" != 0 ]; then
   echo; echo "  NOT INSTALLED: drive_test --line expansion exited $DT_L (the north network's own drive gate; no reference"
   echo "  exists to be 'no worse than', so --force-install does not apply — data/drive_test.expansion.json)"; exit 1
 fi
-echo; echo "GATES: street drive_test exit $DT_S, street audit exit $AU_S, race drive_test exit $DT_R, race audit exit $AU_R, race no_route exit $NR_R"
+echo; echo "GATES: street drive_test exit $DT_S, street audit exit $AU_S, race drive_test exit $DT_R, race audit exit $AU_R, race no_route exit $NR_R, kn5_ground_check exit $KG"
 echo "  race layouts red on their own gates: ${RACE_RED:-none}"
 if [ -n "$RACE_RED" ]; then
   echo "  NOT INSTALLED: race layout(s) $RACE_RED fail on their own gates (drive_test barrier_missing / obstruction,"
   echo "  the BUILT no_route containment fill) — no reference exists to be 'no worse than', so --force-install does not"
   echo "  apply (data/drive_test.<id>.json, data/no_route.<id>.json)"; exit 1
 fi
-if [ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ] || [ "$NR_R" != 0 ]; then
+if [ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ] || [ "$NR_R" != 0 ] || [ "$KG" != 0 ]; then
   if [ "$NR_R" != 0 ]; then
     echo "  NOT INSTALLED: no_route exited $NR_R (2 = an input error: the containment verdict could not be computed)"; exit 1
   elif [ "$FORCE" = 1 ]; then

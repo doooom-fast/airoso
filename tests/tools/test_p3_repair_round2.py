@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools"))
 import aerial_paint_north as apn  # noqa: E402
 import author_expansion as ae  # noqa: E402
+import ground_release as gr  # noqa: E402
 
 TRACK = ROOT / "tracks" / "san-diego-lake-murray"
 
@@ -152,18 +153,20 @@ def test_the_paint_measurement_records_its_windows_and_thresholds():
 
 
 # --- the raise-only batter's origin ----------------------------------------------------------------------------------
-def test_a_raise_only_cut_has_a_fine_toe():
-    """the cut face's toe on 1 m facets within 5 m of the pavement (on 2.5 m facets one facet rose 1.2-1.55 m per metre
-    behind Mission Gorge's south walk, not the batter's 2: 1.1-1.5 m short 18-20 m out)"""
+def test_a_raise_only_cut_rounds_its_top_on_the_real_climb():
+    """the cut top's rounding height takes the real ground's own climb off the batter in a raise-only cut (up a face
+    climbing nearly as steeply as the batter the level-ground rounding lowered the whole kept face by up to 0.75 m)"""
     src = (ROOT / "tools" / "ground_release_blend.py").read_text(encoding="utf-8").replace("\r\n", "\n")
-    assert "CUT_SUBDIV_M = 1.0" in src and "CUT_NEAR_M = 5.0" in src
-    i = src.index("n_cut_sub = 0")
-    blk = src[i:i + 1400]
-    assert 'zn_.get("raise_only")' in blk and "flat.find_nearest((mx, my, 0.0), CUT_NEAR_M)" in blk
-    assert i < src.index("# 2. released heights")
-    assert '"cut_toe_edges_halved": n_cut_sub' in src
+    assert "ROUND_GRAD_M = 1.0" in src
+    i = src.index('if zr.get("raise_only") and rk > 0.0 and cut[2] > 1e-6:')
+    blk = src[i:i + 1600]
+    assert "climb = max(0.0, (ga - gb) / (2.0 * ROUND_GRAD_M))" in blk
+    assert 'rk = GR.round_k(float(zr.get("round_m") or 0.0), max(0.0, cut_k - climb))' in blk
+    assert '"raise_only_rounding_on_the_real_climb": n_round_local' in src
+    # the smooth minimum's lowering: k / 4 at the crease; with the climb taken off a 1.6 m-per-metre face keeps 0.15 m
+    assert abs(gr.round_k(3.0, 2.0) / 4 - 0.75) < 1e-9 and abs(gr.round_k(3.0, 2.0 - 1.6) / 4 - 0.15) < 1e-9
     gc = (ROOT / "fleet" / "GATES-CHANGELOG.md").read_text(encoding="utf-8")
-    assert "CUT_SUBDIV_M" in gc and "CUT_NEAR_M" in gc
+    assert "ROUND_GRAD_M" in gc
 
 
 def test_the_pad_measure_reads_the_plans_own_guide_points():

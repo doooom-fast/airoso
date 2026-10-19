@@ -48,8 +48,8 @@ bodies (which read the ground under each deck):
      the released height only where it stands over the ground it had (the real wall over the graded verge) — never
      lower, except down to the cut batter where the ground stood over it at the pavement edge — and its batter is the
      zone's own cut_slope (the steepest the real face climbs there, 1-2 m per metre)
-     instead of BATTER_CUT; within CUT_NEAR_M of the pavement its edges are halved down to CUT_SUBDIV_M (repair round 2)
-     so the face's toe climbs at that batter instead of one coarse facet's slope. After the halving and after the heights, every vertical sliver the halving's n-gons left
+     instead of BATTER_CUT; its top rounding (round_m of plan) takes its height from the batter LESS the real ground's
+     own climb at the vertex (repair round 2), not the batter alone (which assumes level ground beside the cut). After the halving and after the heights, every vertical sliver the halving's n-gons left
      (a T-vertex on a face's straight edge, tools/terrain_mend.py) is mended: no fin, no crack.
 Self-checks (exit 1, loop.blend NOT saved): a zone that moved nothing; a released vertex left above the deck over it;
 a face with a released vertex standing over a ROAD / CURB surface anywhere over its area (raster); a rail vertex over a
@@ -97,11 +97,8 @@ FILL_EASE_M = 0.25    # [invented] ...and the fill starts at the pavement only w
 #                       by face (the view lens, v0.18.0: grass teeth beside College's south abutment wall, 1.2-1.9 m over
 #                       3DEP, where the sidewalk's 3.5 m faces flipped between 'on the ground' and 'in the air')
 EDGE_SUBDIV_M = 1.0   # [invented] zone edges crossing the pavement's outer edge are halved down to this
-CUT_SUBDIV_M = 1.0    # [invented] repair round 2: in a raise-only cut, every zone edge within CUT_NEAR_M of the
-CUT_NEAR_M = 5.0      # [invented]  pavement is halved down to this, so the face can climb at its batter from the
-#                       walk's back edge: on 2.5 m facets the face between the walk's apron and the real wall was one
-#                       facet rising ~1.2-1.55 m per metre, not the batter's 2 (Mission Gorge's south face s 1490-1555 kept
-#                       1.1-1.5 m too little 18-20 m out)
+ROUND_GRAD_M = 1.0    # [invented] repair round 2: a raise-only cut's top rounding reads the real ground's climb away from
+#                       the road over +- this along the line from the nearest pavement (the lattice is 2 m)
 TOP_NZ = 0.7          # [invented] a ROAD / CURB face is pavement to stand on when its normal is this close to up
 PREP_BAND_M = 3.0     # engine-july build_kn5_loop BAND_M (the prep's full-contact shelf past the road's edge)
 PREP_FEATHER_M = 6.0  # engine-july build_kn5_loop FEATHER_M (its smoothstep blend beyond the shelf)
@@ -356,32 +353,6 @@ def main():
         if faces:
             bmesh.ops.triangulate(bm, faces=faces, quad_method="BEAUTY", ngon_method="BEAUTY")
     n_sub += n_edge
-    # ...and in a RAISE-ONLY cut every zone edge within CUT_NEAR_M of the pavement down to CUT_SUBDIV_M (repair round 2:
-    # the cut face's toe; the heights come from the release lattice and the batter in step 2 as for every vertex)
-    n_cut_sub = 0
-    for _round in range(4):
-        todo = []
-        for e in bm.edges:
-            a, b = e.verts[0].co, e.verts[1].co
-            if math.hypot(a.x - b.x, a.y - b.y) <= CUT_SUBDIV_M:
-                continue
-            mx, my = (a.x + b.x) / 2, (a.y + b.y) / 2
-            w_, zn_ = Z.weight(mx, my)
-            if w_ <= 0.0 or not zn_.get("raise_only"):
-                continue
-            nr_ = flat.find_nearest((mx, my, 0.0), CUT_NEAR_M)
-            if nr_[0] is None:
-                continue
-            todo.append(e)
-        if not todo:
-            break
-        new = bmesh.ops.subdivide_edges(bm, edges=todo, cuts=1, use_grid_fill=True)
-        n_cut_sub += len(todo)
-        faces = {f for g in new.get("geom", []) if isinstance(g, bmesh.types.BMVert) for f in g.link_faces}
-        faces = [f for f in faces if len(f.verts) > 3]
-        if faces:
-            bmesh.ops.triangulate(bm, faces=faces, quad_method="BEAUTY", ngon_method="BEAUTY")
-    n_sub += n_cut_sub
     # coincident faces (one vertex set, either winding) left by the halving: a sliver group goes (it covers no ground),
     # a real face keeps one copy (v0.18.0 fix round 4: 448 such sets in round 3, up to 31 faces deep, back to back)
     bm.verts.index_update()
@@ -579,6 +550,7 @@ def main():
 
     n_cut = n_fill = n_bank = 0
     n_round = 0
+    n_round_local = 0
     zone_rec = {z["name"]: z for z in R["zones"]}
     for vi, (under, zname, z0) in released.items():
         if under:
@@ -595,7 +567,22 @@ def main():
             continue
         near = [r for r in near_c if r[3] <= BATTER_REACH_M]
         # (limit, the pavement height it starts from, its plan distance): the lowest cut, the highest fill
-        cut = min((face_h[fi] - CLEAR_M + cut_k * d, face_h[fi] - CLEAR_M, d) for _q, _n, fi, d in near_c)
+        cut_q = min(((face_h[fi] - CLEAR_M + cut_k * d, face_h[fi] - CLEAR_M, d), q) for q, _n, fi, d in near_c)
+        cut, q_c = cut_q
+        if zr.get("raise_only") and rk > 0.0 and cut[2] > 1e-6:
+            # repair round 2: the cut top's rounding is round_m metres of PLAN where the cut plane meets the real ground
+            # (ledger 0055); round_k turns it into a height assuming LEVEL ground beside the cut (k = round_m / 2 x the
+            # batter). Up a real rock face that climbs nearly as steeply as the batter the two run within that height of
+            # each other for metres, and the smooth minimum lowered the whole kept face by up to k / 4 = 0.75 m (Mission
+            # Gorge's south face s 1490-1555: 1.2-1.5 m short 18-20 m out). Here the height is the batter LESS the real
+            # ground's own climb away from the road at this vertex, read on the release lattice over +-ROUND_GRAD_M
+            ux, uy = (v.co.x - q_c[0]) / cut[2], (v.co.y - q_c[1]) / cut[2]
+            ga = L.at(v.co.x + ux * ROUND_GRAD_M, v.co.y + uy * ROUND_GRAD_M)
+            gb = L.at(v.co.x - ux * ROUND_GRAD_M, v.co.y - uy * ROUND_GRAD_M)
+            if ga is not None and gb is not None:
+                climb = max(0.0, (ga - gb) / (2.0 * ROUND_GRAD_M))
+                rk = GR.round_k(float(zr.get("round_m") or 0.0), max(0.0, cut_k - climb))
+                n_round_local += 1
         if zone_kind.get(zname) == "span":
             # SPAN zones: the ground under the pavement is the released real earth (a deck may stand over it), so the fill
             # starts where the pavement actually sits on it — read at the nearest point, eased by the gap (fill_top)
@@ -1043,7 +1030,7 @@ def main():
     for b in chunks:
         b.free()
     rep = {"_doc": "tools/ground_release_blend.py (ledger 0046 v0.18.0 integration fix round)",
-           "terrain_vertices": [v0, len(me.vertices)], "edges_halved": n_sub, "cut_toe_edges_halved": n_cut_sub, "no_data_vertices": n_nodata,
+           "terrain_vertices": [v0, len(me.vertices)], "edges_halved": n_sub, "raise_only_rounding_on_the_real_climb": n_round_local, "no_data_vertices": n_nodata,
            "ramp_toward_the_prep_refinement": n_ramp_ref,
            "zones": per_zone, "batter": {"cut_m_per_m": BATTER_CUT, "fill_m_per_m": BATTER_FILL, "reach_m": BATTER_REACH_M, "cut": n_cut, "fill": n_fill,
                       "straight_bank_between_two_pavements": n_bank, "straight_bank_min_m": GR.STRAIGHT_BANK_MIN_M,

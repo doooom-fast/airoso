@@ -2830,15 +2830,19 @@ island of BARRIER_MIN_M 120 m or more — Princess View's s 399-535).
 
 ### Mission Gorge's south rock face (tools/ground_release_blend.py, RAISE-ONLY)
 
-Round 1 kept every real wall but four stations 18-20 m off Mission Gorge's centre, 1.2-1.5 m short. The cause, read on
-the built cross-sections (s 1495 / 1530): the zone's terrain is halved down to SUBDIV_M 2.5 m, so the cut face between
-the walk's buried apron and the real wall was ONE facet rising 1.2-1.55 m per metre — not the zone's batter of 2. Within
-CUT_NEAR_M 5.0 m [invented] of the pavement, a raise-only cut's edges are now halved down to CUT_SUBDIV_M 1.0 m
-[invented] (`cut_toe_edges_halved` in ground_release.report.json); the heights come from the same lattice and batter.
-Two other causes were tried on this round's development builds and dropped: the batter measured from the back of the
-walk instead of the apron's foot (it stood the ground 1-2 m over the apron's foot within 0.3 m — light "teeth" along
-every cut's toe in the stills; steep faces within reach 4,914 in the open), and the ground under the apron released
-with it (the kn5 prep's anti-poke puts it back under the apron, as on every street).
+Round 1 kept every real wall but four stations 18-20 m off Mission Gorge's centre, 1.2-1.5 m short. Read on the built
+cross-sections and the release's own numbers (s 1495): the zone's cut-top rounding (ledger 0055 round_m 3 m) is a smooth
+minimum of the real ground and the batter whose HEIGHT round_k = round_m / 2 × the batter assumes level ground beside the
+cut; up a rock face climbing 1.2-1.6 m per metre against a batter of 2 the two stay within that height for metres, and the
+whole kept face was lowered by up to k / 4 = 0.75 m. In a raise-only cut the rounding's height now uses the batter LESS
+the real ground's own climb away from the road at the vertex (central difference on the release lattice over
+±ROUND_GRAD_M 1.0 m [invented]); where the natural ground beyond the cut is level it rounds exactly as before
+(`raise_only_rounding_on_the_real_climb` in ground_release.report.json). Tried on development builds and dropped:
+the batter measured from the back of the walk instead of the apron's foot (light "teeth" along every cut's toe), the
+ground under the apron released with it (the kn5 prep's anti-poke puts it back), the toe band on 1 m facets
+(vertical grass faces 46 → 123, the wall unchanged), and a 1 m 3DEP lattice in the toe band (the face unchanged: the
+same 3DEP read on a 1 m grid stands 1.0 m under the single 1 m sample the measure takes at the 20 m mark — that is the
+residual, see the measured table).
 
 ### The kn5 prep counts what the kn5 writer counts (engine-july snapshot scripts/ac/build_kn5_loop.py, PENDING MIRROR)
 

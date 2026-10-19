@@ -2792,3 +2792,68 @@ kn5_ground_check's lamppost reading, red on v0.18.1 as well); no key of the thre
 | the same, 12-35 m | — | 678 / 517 / 478 / 23 | 678 / 0 / 0 / 0 |
 | vertical grass faces, whole OBJ / within 80 m of the north roads | 730 / 3 | 2,700 / 1,972 | 46 / 26 (one over 0.25 m tall) |
 | road kn5 | 82.27 MB | 108.18 MB, 92 meshes, 1,445,573 positions | 115.96 MB, 94 meshes, 1,585,066 positions (1WALL_guard 65,251 of 65,535, unchanged) |
+
+## 2026-10-19 — Lake Murray expansion P3, repair round 2 (the truth lens refuted round 1): the north roads' centre paint measured off the aerial, three raised islands where the aerial has them, Mission Gorge's south rock face from the back of the walk, the kn5 prep counting what the kn5 writer counts (ledger 0054)
+
+No existing threshold is loosened and no gate is bypassed. One engine guard gains the count it was missing (the kn5
+writer's own vertex count, below); every other change is in what is built.
+
+### The centre paint, measured (tools/aerial_paint_north.py -> source/expansion/aerial__paint_north.json)
+
+The intermediate placed every undivided station's centre paint from the aerial eye readings (one every ~250 m),
+interpolated; the lens traced Jackson's painted median ~1.65 m to one side of the built one for ~1 km. Now measured at
+every 2.5 m station off NAIP (EPSG:3857, 0.3 m pixel, TLS verified; windows WIN_HALF_M 150 m every WIN_EVERY_M 200 m
+[invented], cached outside the repo): a cross profile every DL_M 0.1 m [invented] over ±18 m, each sample the mean of
+ALONG_N 5 readings ALONG_STEP_M 1.0 m apart [invented], yellowness = min(R, G) − B; re-read about the station line
+smoothed by a gaussian of FRAME_SIGMA_M 15 m [invented] (the station line is OSM's chords: |offset to its smooth| p95
+0.60 m, max 2.49 m on Jackson); profiles stacked (mean) over ±SMOOTH_HALF_M 7.5 m [invented]; read between the curbs
+less CENTRE_CLEAR_M 3.3 m [invented: a bike lane 1.8 m + half a lane; the narrowest real carriageway, Jackson s 380-520,
+leaves the paint ~3.8 m off the curb]. A yellow stretch stands SEG_MIN 6 [invented, NAIP 8-bit units] and half the
+profile's peak over the zone's median; two stretches MEDIAN_SEP_M 0.9-6.5 m apart [invented] with the weaker at least
+PAIR_RATIO 0.35 [invented] of the stronger are a painted median's faces (width + 2 × FACE_IN_M 0.18 m: expansion_pieces'
+own face-to-line offset); one stretch at least MERGED_W_M 1.3 m wide [invented] is a narrow median, its faces BLUR_M
+0.35 m [invented] inside its edges; a reading narrower than MEDIAN_MIN_M 1.6 m [invented: NAIP's 0.6 m pixel spreads a
+0.36 m double yellow to a 1.2-1.4 m stretch] is one double yellow. Along the road: a reading more than SANITY_M 5 m
+[invented] off the intermediate's centre is dropped (a painted curb return), one more than OUTLIER_M 1.5 m [invented] off
+its neighbours' running median over ±OUTLIER_HALF_M 25 m [invented] is dropped, a run of one kind shorter than
+KIND_MIN_M 10 m [invented] between the other is dropped, gaps up to GAP_MAX_M 30 m [invented] are interpolated, longer
+ones keep the intermediate's values.
+
+tools/author_expansion.py takes it on Princess View and Jackson only (PAINT_MEASURED_PIECES; Waring's and Mission Gorge's
+raised medians are curbs, checked fine by the lens): a painted median's offset and width, or a double yellow's offset,
+per station. And MEASURED_ISLANDS: the raised islands the aerial shows that the eye readings and the dossier missed or
+misplaced — Princess View s 399-535 (the Fontaine St island; the dossier's "nose st ~500-557" stood on the Fontaine
+crosswalk) and s 612-700 (planted), Jackson s 32-118 (the J4 approach's concrete island) — each its measured outline
+less 2 × FACE_IN_M and 2 × ISLAND_EDGE_M 0.30 m (expansion_pieces.MEDIAN_EDGE_M: the built yellow edge line stands that
+far off a raised face). They take the median rule every north island already has (author_median_blend: a barrier on an
+island of BARRIER_MIN_M 120 m or more — Princess View's s 399-535).
+
+### Mission Gorge's south rock face (tools/ground_release_blend.py, RAISE-ONLY)
+
+Round 1 kept every real wall but four stations 18-20 m off Mission Gorge's centre, 1.2-1.5 m short. The cause, read on
+the built cross-sections (s 1495 / 1530): the zone's terrain is halved down to SUBDIV_M 2.5 m, so the cut face between
+the walk's buried apron and the real wall was ONE facet rising 1.2-1.55 m per metre — not the zone's batter of 2. Within
+CUT_NEAR_M 5.0 m [invented] of the pavement, a raise-only cut's edges are now halved down to CUT_SUBDIV_M 1.0 m
+[invented] (`cut_toe_edges_halved` in ground_release.report.json); the heights come from the same lattice and batter.
+Two other causes were tried on this round's development builds and dropped: the batter measured from the back of the
+walk instead of the apron's foot (it stood the ground 1-2 m over the apron's foot within 0.3 m — light "teeth" along
+every cut's toe in the stills; steep faces within reach 4,914 in the open), and the ground under the apron released
+with it (the kn5 prep's anti-poke puts it back under the apron, as on every street).
+
+### The kn5 prep counts what the kn5 writer counts (engine-july snapshot scripts/ac/build_kn5_loop.py, PENDING MIRROR)
+
+The prep's split pass and its FATAL over-cap guard read Blender vertices; the writer that runs
+(blender-assetto-corsa-tools exporter/node_writer.py) emits one kn5 vertex per unique (position, normal, uv, tangent) of a
+TRIANGLE corner after its own bmesh triangulation, and splits past 2**16 into meshes of one name (AC drops them from
+collision). The median barriers' 1WALL_guard: 15,136 Blender vertices, 65,251 kn5 positions on round 1, 66,367 with
+Princess View's island barrier — verify_kn5 "DUPLICATE physical mesh '1WALL_guard' x2". After the per-mesh pass, a mesh
+whose triangle corners exceed VERT_CAP is counted exactly as the writer counts (the writer's triangulation on a copy); over
+VERT_CAP it is triangulated the same way and tiled by balanced_face_tiles over those keys into uniquely named tiles of at
+most SPLIT_CAP 60,000 (the prep's existing numbers), each tile re-checked by assert_under_cap on the writer's count.
+
+### Measurements of record (p3-proofs)
+
+- measure_p3.py `pads`: the lens's reading — the built pad deck at every ground-guide point of the pad plan (3DEP every
+  2 m inside the design outline + the 0.10 m lift). Round 1's ledger quoted J3 at 0.17 m from another reading; on the
+  plan's own points round 1 reads J2 / J3 / J4 0.207 / 0.226 / 0.209 m (6 / 17 / 12 points over 0.3 m).
+- measure_paint.py: the built YLINE vs the aerial per 10 m station on Princess View and Jackson (the lens's paint check).

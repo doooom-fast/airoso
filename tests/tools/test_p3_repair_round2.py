@@ -152,16 +152,18 @@ def test_the_paint_measurement_records_its_windows_and_thresholds():
 
 
 # --- the raise-only batter's origin ----------------------------------------------------------------------------------
-def test_a_raise_only_cut_rises_from_the_back_of_the_walk():
-    src = (ROOT / "tools" / "ground_release_blend.py").read_text(encoding="utf-8")
-    assert "flat_walk = BVHTree.FromPolygons" in src and "wface_h" in src
-    i = src.index('if zr.get("raise_only") and flat_walk is not None:')
-    assert "near_w = flat_walk.find_nearest_range" in src[i:i + 900]
-    assert '"raise_only_batter_from_the_walk_edge"' in src
-    # ...and the ground under nothing but the walk's buried apron (not the road's curb lip) is released with it
-    k = src.index('if (under and zone.get("raise_only") and not _hits(top_walk')
-    assert "APRON_ROAD_MIN_M" in src[k:k + 400] and "under = False" in src[k:k + 1400]
-    assert '"raise_only_released_over_the_buried_apron"' in src
+def test_a_raise_only_cut_has_a_fine_toe():
+    """the cut face's toe on 1 m facets within 5 m of the pavement (on 2.5 m facets one facet rose 1.2-1.55 m per metre
+    behind Mission Gorge's south walk, not the batter's 2: 1.1-1.5 m short 18-20 m out)"""
+    src = (ROOT / "tools" / "ground_release_blend.py").read_text(encoding="utf-8").replace("\r\n", "\n")
+    assert "CUT_SUBDIV_M = 1.0" in src and "CUT_NEAR_M = 5.0" in src
+    i = src.index("n_cut_sub = 0")
+    blk = src[i:i + 1400]
+    assert 'zn_.get("raise_only")' in blk and "flat.find_nearest((mx, my, 0.0), CUT_NEAR_M)" in blk
+    assert i < src.index("# 2. released heights")
+    assert '"cut_toe_edges_halved": n_cut_sub' in src
+    gc = (ROOT / "fleet" / "GATES-CHANGELOG.md").read_text(encoding="utf-8")
+    assert "CUT_SUBDIV_M" in gc and "CUT_NEAR_M" in gc
 
 
 def test_the_pad_measure_reads_the_plans_own_guide_points():

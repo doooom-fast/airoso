@@ -16,6 +16,9 @@ against data that did not place it (L5): the OSM midline / the aerial eye widths
               wall (max 3DEP - the 3DEP road) and the built one (max ground - the built road), at 12-20 m and at 12-35 m,
               skipping points over pavement; counted: stations with a 3 m+ real wall, those more than 1 m short, those
               keeping under half, and runs of 20 m+ of short stations
+  pads        (repair round 2, the truth lens's own reading) the built pad deck at every ground-guide point of the pad plan
+              (pads.plan.json: 3DEP every 2 m inside the design outline + the 0.10 m deck lift): |deck - target| p95, and
+              the points over 0.3 m
 
     python measure_p3.py <airoso> <project> <out.json>
 """
@@ -52,6 +55,7 @@ def rows_of(p):
 R = {pid: rows_of(p) for pid, p in pieces.items()}
 centres = [(q["x"], q["z"]) for rows in R.values() for q in rows[::8]]
 centres.append(tuple(json.loads((PROJ / "data" / "lights.local.json").read_text(encoding="utf-8"))["lampheads"][77][::2]))
+centres += [tuple(p["node_xz"]) for p in json.loads((PROJ / "data" / "pads.plan.json").read_text(encoding="utf-8"))["pads"]]
 _V, T = vp.load(PROJ / "data" / "track.obj", centres)
 F = vp.Field(T)
 
@@ -303,9 +307,25 @@ if post:
                      "head_over_surface_m": None if top is None else round(hy - top, 3),
                      "head_over_surface_rule_m": 8.8,
                      "surfaces": sorted({n for _h, n in F.at(base[0], base[2])})}
+# ---- pads (repair round 2, the truth lens's own reading): the built pad deck (1ROAD_PAD_Jn) at every ground-guide point of
+# the pad plan (data/pads.plan.json pads[].ground: 3DEP every 2 m inside the design outline, + the 0.10 m deck lift)
+res["pads"] = {}
+_plan = json.loads((PROJ / "data" / "pads.plan.json").read_text(encoding="utf-8"))
+for _p in _plan["pads"]:
+    _nm = "1ROAD_PAD_" + _p["id"]
+    _d = []
+    for (x, z), ty in zip(_p["ground"]["xz"], _p["ground"]["deck_y"]):
+        hs = [h for h, n in F.at(x, z) if n == _nm]
+        if hs:
+            _d.append(max(hs) - ty)
+    _a = sorted(abs(v) for v in _d)
+    res["pads"][_p["id"]] = {"guide_points": len(_p["ground"]["xz"]), "read": len(_d),
+                             "abs_p95_m": round(_a[int(0.95 * (len(_a) - 1))], 3) if _a else None,
+                             "over_0_3_m": sum(1 for v in _a if v > 0.3),
+                             "median_m": round(sorted(_d)[len(_d) // 2], 3) if _d else None}
 OUT.write_text(json.dumps(res, indent=1), encoding="utf-8")
 print(json.dumps({"V1": {k: v for k, v in res["V1"].items() if k != "aerial_stations"}, "V2": res["V2"],
                   "walls": {"lost_stretches_ge_50m": lost, "stations_with_real_wall": res["walls"]["stations_with_real_wall"],
                             "of_them_lost": res["walls"]["of_them_lost"]},
                   "walls_all": {k: {kk: vv for kk, vv in v.items() if kk != "short_stations"} for k, v in wa.items()},
-                  "lamp77": res.get("lamp77")}, indent=1))
+                  "lamp77": res.get("lamp77"), "pads": res.get("pads")}, indent=1))

@@ -148,12 +148,31 @@ FLUSH = {"painted", "hatched"}
 
 # per-piece overrides from the plan / dossier where the eye readings are too sparse (A2)
 MEDIAN_OVERRIDES = {
-    # Princess View: undivided, double yellow; ONLY the short raised nose at Fontaine St (A2, dossier: st ~500-557)
-    "B": [{"from": 0.0, "to": 500.0, "type": "line"}, {"from": 500.0, "to": 557.0, "type": "nose", "w": 3.0},
-          {"from": 557.0, "to": 1e9, "type": "line"}],
+    # Princess View: undivided (A2). Its raised islands are MEASURED_ISLANDS below (repair round 2: the dossier's
+    # "raised nose at Fontaine St, st ~500-557" stood on the Fontaine crosswalk; the real island is st 399-535)
+    "B": [{"from": 0.0, "to": 1e9, "type": "line"}],
     # Jackson north: the hatched painted median on the last ~180 m into J4 = where OSM maps two one-way ways (A2)
     "D": [{"from": 0.0, "to": "osm_divided_end", "type": "hatched"}],
 }
+
+# ledger 0054 P3 repair round 2: the centre paint MEASURED off NAIP (tools/aerial_paint_north.py ->
+# source/expansion/aerial__paint_north.json). Where it reads, it replaces the eye-interpolated centre of every
+# undivided station: a painted median's offset and width (its two faces), or a plain double yellow's offset. Raised
+# medians (Waring, Mission Gorge) are curbs, never re-read here.
+PAINT_MEASURED = "source/expansion/aerial__paint_north.json"
+PAINT_MEASURED_PIECES = ("B", "D")   # the undivided roads; Waring and Mission Gorge keep their raised medians' paint
+# raised islands the aerial shows (NAIP straightened strips, p3-proofs/paint_strips) that the eye readings and the
+# dossier missed or misplaced: (piece, from s, to s, type). Each island's outline is the measured yellow edge paint;
+# the island's face stands ISLAND_EDGE_M inside that paint (expansion_pieces.MEDIAN_EDGE_M) and its yellow is centred
+# FACE_IN_M inside the outer edge the measurement reports (aerial_paint_north.FACE_IN_M)
+MEASURED_ISLANDS = {
+    "B": [(399.0, 535.0, "nose"),       # the Fontaine St island: lighter concrete, two trees, the turn pocket st ~480
+          (612.0, 700.0, "planted")],   # the island with two trees past Fontaine (none in OSM / the dossier)
+    "D": [(32.0, 118.0, "nose")],       # the J4 approach: stamped concrete inside the yellow (the hatched teardrop
+                                        # beyond it, st 118-158, is paint)
+}
+ISLAND_EDGE_M = 0.30
+FACE_IN_M = 0.18
 GAPS = {"C": [(174.0, CROSSOVER_W_M), (202.0, CROSSOVER_W_M)]}     # Mission Gorge median crossovers (dossier §2)
 
 
@@ -590,7 +609,51 @@ def nearest_row(rows, s):
     return min(rows, key=lambda r: abs(r["s"] - s))
 
 
-def build_pieces(legs, frame, eye, osm):
+def load_paint_measured(track: Path):
+    """{pid: {round(s, 2): use}} from aerial__paint_north.json (empty when the file is absent)"""
+    p = track / PAINT_MEASURED
+    if not p.exists():
+        return {}, None
+    doc = json.loads(p.read_text(encoding="utf-8"))
+    out = {pid: {round(float(q["s"]), 2): q["use"] for q in recs if q.get("use")} for pid, recs in doc["pieces"].items()}
+    return out, {"path": _rel(p), "sha256_16": sha16(p), "written_utc": doc.get("written_utc"),
+                 "intermediate_sha256_12": doc.get("intermediate_sha256_12"), "what": "NAIP centre paint, measured"}
+
+
+def apply_paint_measured(pid, recs, measured):
+    """the measured centre paint into a piece's station records (see PAINT_MEASURED / MEASURED_ISLANDS)"""
+    if pid not in PAINT_MEASURED_PIECES:
+        return 0, 0
+    mp = measured.get(pid) or {}
+    islands = MEASURED_ISLANDS.get(pid, [])
+    n_paint = n_island = 0
+    last_isl = None
+    for r in recs:
+        u = mp.get(round(r["s"], 2))
+        isl = next((t for a, b, t in islands if a <= r["s"] <= b), None)
+        if isl is not None:
+            if u is not None and u["kind"] == "median":
+                last_isl = (u["centre_off_m"], max(NOSE_W_M, u["width_m"] - 2 * FACE_IN_M - 2 * ISLAND_EDGE_M))
+            if last_isl is None:
+                continue
+            r["mtype"], r["moff"], r["m"] = isl, last_isl[0], last_isl[1]
+            r["paint_src"] = "aerial island"
+            n_island += 1
+            continue
+        last_isl = None
+        if r["mtype"] in RAISED or u is None:
+            continue
+        if u["kind"] == "median":
+            r["mtype"] = "hatched" if r["mtype"] == "hatched" else "painted"
+            r["m"], r["moff"] = u["width_m"], u["centre_off_m"]
+        else:
+            r["mtype"], r["m"], r["moff"] = "line", 0.0, u["centre_off_m"]
+        r["paint_src"] = "aerial " + u["how"]
+        n_paint += 1
+    return n_paint, n_island
+
+
+def build_pieces(legs, frame, eye, osm, measured=None):
     pairs = way_lanes(osm)
     nodes = osm["nodes"]
     midlines = {}
@@ -662,13 +725,15 @@ def build_pieces(legs, frame, eye, osm):
             fw = next((x for x in fl if x[0] <= s <= x[1]), fl[-1] if fl else None)
             s_rev = rl_len - s * rl_len / length
             rw = next((x for x in rl if x[0] <= s_rev <= x[1]), rl[-1] if rl else None)
-            recs.append({"s": s, "p": p, "t": t, "L": Lo, "R": Ro, "m": m_eff, "moff": moff, "mtype": mtype,
+            recs.append({"s": s, "p": p, "t": t, "L": Lo, "R": Ro, "m": m_eff, "moff": moff, "mtype": mtype, "paint_src": "eye",
                          "sep": ml["sep"][i], "lanes_fwd": (fw[3].get("lanes") if fw else None),
                          "lanes_rev": (rw[3].get("lanes") if rw else None),
                          "way_fwd": fw[2] if fw else None, "way_rev": rw[2] if rw else None,
                          "maxspeed": (fw[3].get("maxspeed") if fw else None)})
+        n_paint, n_island = apply_paint_measured(pid, recs, measured or {})
         pieces[pid] = {"id": pid, "name": PIECE_NAME[pid], "road": road, "from": a, "to": b, "length_m": length,
-                       "recs": recs, "rows": rows, "dev": devs, "midline": ml, "osm_divided_end": osm_div_end}
+                       "recs": recs, "rows": rows, "dev": devs, "midline": ml, "osm_divided_end": osm_div_end,
+                       "paint_measured": {"stations_paint": n_paint, "stations_island": n_island}}
     return pieces, stations
 
 
@@ -1377,10 +1442,13 @@ def cross_sections(pieces, frame, samples):
 
 def build(track: Path, offline: bool = False) -> dict:
     north, cl, osm, eye, meas, prov = load_inputs(track)
+    measured, mprov = load_paint_measured(track)
+    if mprov:
+        prov["aerial__paint_north.json"] = mprov
     frame = Frame(cl["origin"])
     samples = Samples(track / "data" / "expansion.north.samples.json.gz", offline)
     legs = split_legs(north, frame)
-    pieces, stations = build_pieces(legs, frame, eye, osm)
+    pieces, stations = build_pieces(legs, frame, eye, osm, measured)
 
     # junctions
     jf = north["junctions"]["fwd"]
@@ -1501,10 +1569,11 @@ def build(track: Path, offline: bool = False) -> dict:
             "length_m": r2(pc["length_m"]), "spacing_m": SPACING_M, "n": len(recs),
             "cuts": pc.get("cuts", {}), "osm_divided_end_s": pc["osm_divided_end"],
             "columns": ["s", "x", "z", "y_3dep", "y_smooth", "left_m", "right_m", "median_w_m", "median_off_m",
-                        "median_type", "osm_sep_m", "lanes_fwd", "lanes_rev"],
+                        "median_type", "osm_sep_m", "lanes_fwd", "lanes_rev", "median_src"],
             "stations": [[r2(r["s"]), r3(r["p"][0]), r3(r["p"][1]), r3(r["z3"] - frame.elev0), r3(r["zs"] - frame.elev0),
                           r2(r["L"]), r2(r["R"]), r2(r["m"]), r2(r["moff"]), r["mtype"], r2(r["sep"]),
-                          r["lanes_fwd"], r["lanes_rev"]] for r in recs],
+                          r["lanes_fwd"], r["lanes_rev"], r["paint_src"]] for r in recs],
+            "paint_measured": pc["paint_measured"],
             "maxspeed": sorted({r["maxspeed"] for r in recs if r["maxspeed"]}),
             "width_readings": [{"label": r["label"], "s": r2(r["s"]), "left_m": r2(r["L"]), "right_m": r2(r["R"]),
                                 "median_m": r2(r["m"]), "type": r["type"], "divided_osm": r["divided"]} for r in pc["rows"]],
@@ -1554,14 +1623,20 @@ PAINT = {  # per piece, from the dossier §2 (aerial + OSM); a Street View pass 
     "A": {"centre": "raised planted median (MD runs); left-turn pockets at Eldridge (st ~415-440)",
           "lanes": "2 + 2 (3 at the turn pockets), white dashed lane lines", "edges": "bike lanes both sides",
           "crosswalks": ["J1 yellow school ladder across College", "Eldridge St signal st ~415-446", "J2 yellow ladders"]},
-    "B": {"centre": "double yellow; raised nose + turn pocket at Fontaine St (st ~500-557)",
+    "B": {"centre": "measured off NAIP (repair round 2): double yellow st 0-399 (narrow painted tapers st ~100-140, "
+                    "~190-220); raised island st 399-535 with the Fontaine left-turn pocket (~480); a painted median "
+                    "st 560-610; a raised planted island st 612-700; turn-pocket paint st ~720-805; a painted centre "
+                    "lane 5-6 m wide st ~840-1010",
           "lanes": "2 + 2, then 3 + 2 on the last 614 m", "edges": "parking lanes both sides",
           "crosswalks": ["J2 yellow school ladder", "Glenroy St signal st 79-88 yellow ladder"]},
     "C": {"centre": "terracotta raised median (MD runs); crossovers st 174 / 202; turn pockets at Margerum (st 1099-1108)",
           "lanes": "3 + 3, white dashed", "edges": "bike lanes both sides",
           "crosswalks": ["J3 ladders", "J4 white ladders"]},
-    "D": {"centre": "painted double-double-yellow median 1.5-4.5 m; hatched 3-4 m on the last ~180 m into J4; "
-                    "a plain double yellow where it narrows (Hemingway st ~500, st ~1500)",
+    "D": {"centre": "measured off NAIP (repair round 2): a raised concrete island st 32-118 then the hatched teardrop "
+                    "to ~172 on the J4 approach; the painted double-double-yellow median 1.7-6.6 m wide, ~1.6 m LEFT of "
+                    "the road's middle on the 1 km climb (the lanes are uneven: one down, two up), opening into left-turn "
+                    "pockets at the side streets; a plain double yellow where it narrows (Hemingway st ~380-520, "
+                    "st ~1500-1545, Park Ridge st ~1620-1710)",
           "lanes": "2 + 2 (1 down / 2 up on the 763 m way)", "edges": "buffered bike lanes both sides",
           "crosswalks": ["J4 ladders", "Park Ridge Blvd signal st 1623-1635", "J5 crosswalks"]},
 }

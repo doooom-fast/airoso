@@ -24,10 +24,12 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "tests"))
+import sd_v0180  # noqa: E402  (the pinned v0.18.0 Lake Murray data, tests/fixtures/lake_murray_v0180)
 sys.path.insert(0, str(ROOT / "tools"))
 import race_furniture as rf  # noqa: E402
 
-TRACK = ROOT / "tracks" / "san-diego-lake-murray"
+TRACK = sd_v0180.project()          # the current config on the pinned v0.18.0 data
 SD_KERB_RENDER_VERTS = 7050       # the installed v0.17.1 race kn5's KERB render vertices (inspect_kn5)
 SD_KERB_RENDER_VERTS_MAX = 7300   # pre-registered in the diagnosis (ledger 0053 Verification 2), before the fix
 

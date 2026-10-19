@@ -636,6 +636,7 @@ def build_stub(e, local, conns, dem, origin):
         P.append([round(x, 3), round(draft_y(u, host_y, g0, g, T), 3), round(z, 3)])
     name = STUB_PREFIX + e["id"]
     stub_meta = {"id": e["id"], "host": e.get("host", "MAINLINE"), "length_m": L, "tail_m": TAIL_M,
+                 "lanes_per_side": lanes_per_side(e.get("lanes")),
                  "barrier": e.get("barrier", "krail"),
                  "u_mouth_from_cut_m": round(u_mouth, 3), "u_barrier_from_cut_m": round(u_bar, 3)}
     conn = {"name": name, "kind": "connector", "points_xyz_m": P, "widths_m": [width] * len(P),
@@ -650,6 +651,16 @@ def build_stub(e, local, conns, dem, origin):
             "dem_offset_m": round(host_y + local["origin"]["elev_m"] - okk[0][1], 3),
             "dem_samples": [[round(u, 2), d] for u, d in okk]}
     return conn, plan
+
+
+def lanes_per_side(lanes) -> int:
+    """the stub's lanes each way from its OSM `lanes` (both directions; a side street is two-way): half, at least 1
+    — the assembler paints lanes_per_side - 1 dividers a side (scripts-v021 ribbon.connector_markings)"""
+    try:
+        n = int(float(str(lanes).split(";")[0]))
+    except (TypeError, ValueError):
+        return 1
+    return max(1, n // 2)
 
 
 def curb_cut_plan(e, local, origin):

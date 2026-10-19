@@ -2486,3 +2486,73 @@ verify_mouths / verify_fold_fans / race_verify verdict, mouths.json, mouth_welds
 ini); the 29 others differ only in absolute paths and timings, plus 103 of 2,026,253 road-OBJ triangles moved ≤ 0.2 mm
 in one ground_release zone (tools/ground_release_blend.py iterates Python sets of BMVerts — run-to-run order; that tool
 is untouched here).
+
+
+## 2026-10-18 — Phase 1 prep: the phase-5 stub tool's four cosmetic notes fixed at their causes; the real-data tests pinned to the data their numbers came from (ledger 0054)
+
+No gate threshold changes. Every change below is in the phase-5 stub tools (opt-in: no stub declaration, no step runs)
+or in the assembler's connector paint (one function, byte-identical off a stub), so the three installed layouts are
+v0.18.1's: the held rehearsal (north route HELD, no stubs) wrote `drive_test.{street,race_cw,race_acw}.json`,
+`verify_mouths.json`, `verify_fold_fans.json`, `lights.local.json`, `mouths.json`, `mouth_welds.json` and
+`connectors.local.json` byte-identical to the installed v0.18.1's (Measured, below).
+
+### The four notes (the phase-5 verifier, 2026-10-14) and their causes
+
+| Note | Cause | Fix |
+|---|---|---|
+| doubled edge lines near the mouth and the barrier; paint 1 m past the barrier | `ribbon.lane_markings` paints a dashed divider every 3.65 m that fits inside the edge inset: on a 9.6-12 m two-lane side street that is a 3 m dash 0.6-1.8 m inside each edge line, falling at the 15 m stub's two ends; the paint follows the whole polyline, which runs 1 m past the barrier | `ribbon.connector_markings` (scripts-v021, the ONE call the assembler and `weld_mouths_blend`'s layout check both make; a plain connector = `lane_markings(.., center_yellow=True)` exactly): a stub paints `lanes_per_side` − 1 dividers a side (`stub_roads.lanes_per_side`: OSM `lanes` / 2, ≥ 1) and stops **0.5 m** [invented] short of the barrier's road-side toe |
+| K-rail "one continuous slab" across the carriageway | a swept strip has no joint in its shape | `stub_geom`: a V-groove every **4.04 m** (the module, measured) laid symmetric about the barrier's middle: a ring of Kevin's module's own end face (`JOINT_HALF_PROFILE`, measured off `concrete_barrier_4m.obj`: base inset 0.020 m, top 1.202 → 1.106 m) between two full rings **0.020 m** (measured: the obj's end chamfer) either side; u starts on the first groove. No joint within **0.30 m** [invented] of an end; a joint within **0.06 m** [invented] of a profile-point ring (the 0.08 m curb face / top pair) slides past it. The two end rings stand **0.02 m** [invented] inside the grass meets (a ring ON the strip's boundary edge read no surface: Saint Therese Way, v0.18.1 road) |
+| V-notch at the acute corners (Lambda 57°, Margerum 64°) | only the arc stations were compressed: the host's gap-end row A kept its full walk (mainline 1.88 m + 1.2 m verge, past the centre of an R 1.4-2.5 m return) and the walk stepped back out at B | the compression is continuous: row A compressed, the host rows behind it eased back over **3.0 m** [invented] (`stub_geom.host_ramp`; their walk-back / grass-meet vertices move, no index changes), J taken at least **3.0 m** [invented] past B and the tail eased back to the stub's own walk |
+| jagged grass behind the returns | the loop's verges end 0.20 m under the road (curb_sidewalk grass_clearance) and the kn5 prep lays the ground beside every road at deck − 0.02 m, then clamps it 0.02 m under the lowest drivable sheet: the verge's foot is buried and the two rules meet along it. On the host's coarse ground that meeting is one long facet; on the corner zone's ground refined to 0.75 m it alternated cell by cell (measured after the prep; the author stage's own ground there was smooth) | (a) the return's interior grass meet stands **0.02 m** under its lane edge (the prep's GROUND_CLEAR, engine-july build_kn5_loop), eased to the strips' own over **1.5 m** [invented] at each end (`stub_geom.MEET_H_M` / `MEET_RAMP_M`): the return's verge lands on the ground the prep lays there; (b) the corner zone is still refined to 0.75 m, except under the straight strips' verges (the stub's own kept curb rows, the host's rows behind the gap end) and the **1.0 m** [invented] behind their grass meet (`COARSE_OUT_M`), where the buried foot stays on coarse ground like the host's |
+
+### The real-data tests (not a gate; recorded because they judge the race and corridor tools)
+
+Ten tests pin numbers measured on v0.18.0's road (their own docs say "the data pinned here is the installed v0.18.0
+build's") but read `tracks/san-diego-lake-murray/data/` live. The v0.18.1 install (704f1d0) synced the rebuilt road
+into it and they failed on main (12 failures there, the same 12 on this branch before this round; the other two are the
+CRLF md5 pins). They now read `tests/fixtures/lake_murray_v0180/data/` (git 8f25c48, the v0.18.1 merge before its
+install) through `tests/sd_v0180.py`, with the current config as before. Nothing in a tool changed.
+
+### New numbers (all phase-5 stub tools; opt-in)
+
+| Number | Value | |
+|---|---|---|
+| `stub_geom.HOST_RAMP_M` | 3.0 m | [invented] a compressed return's host walk eases back to full over this |
+| `stub_geom.STUB_RAMP_M` | 3.0 m | [invented] ... and its stub walk over at least this (2.0 m read a 45 deg flare per station on the 58 deg test corner) |
+| `stub_geom.MEET_H_M` | −0.02 m | the prep's GROUND_CLEAR (engine-july build_kn5_loop) |
+| `stub_geom.MEET_RAMP_M` | 1.5 m | [invented] |
+| `stub_geom.JOINT_HALF_M`, `JOINT_HALF_PROFILE` | 0.020 m; (0.315, 0), (0.311, 0.113), (0.147, 0.375), (0.117, 0.466), (0.073, 1.106) | measured off `assets/models/concrete_barrier_4m.obj` (its end face) |
+| `stub_geom.JOINT_CLEAR_M` | 0.30 m | [invented] |
+| `stub_geom.JOINT_KEY_CLEAR_M` | 0.06 m | [invented] |
+| `stub_geom.END_INSET_M` | 0.02 m | [invented] |
+| `author_stubs_blend.COARSE_OUT_M` | 1.0 m | [invented] |
+| `ribbon.STUB_PAINT_STOP_M` | 0.5 m | [invented] |
+| `stub_roads.lanes_per_side` | OSM `lanes` // 2, ≥ 1 | a side street is two-way |
+
+### Measured (2026-10-18; fresh scratch copies of the workshop, the full `ship_sd.sh --no-install` chain, ENG = a fresh engine-july copy + the snapshot's two pending files)
+
+**Held** (the north route HELD, no stub declaration): every v0.18.1 gate number — street soft top 8 / severe 0 / kinks
+2.67 /km / obstruction 0, audit 53 (D 0, F 13, I 20, K 20); race_cw / race_acw severe 15 / 20, soft top 8 / 4, kinks
+6.46 / 6.09, barrier_missing 0, audits 53 / 53, BUILT no_route PASS both (0 / 411 probes); verify_mouths PASS ×4,
+verify_fold_fans PASS, verify_ai_line PASS both (wall min 2.542 / 2.384 m), verify_signs 23 posts PASS, verify_race
+(0 fails, H chord max 0.043 m), rib_check PASS, house_seat PASS (153 buildings). Byte-identical to the installed
+v0.18.1: `drive_test{,.street,.race_cw,.race_acw}.json`, `verify_mouths.json`, `verify_fold_fans.json`,
+`lights.local.json`, `mouths.json`, `mouth_welds.json`, `connectors.local.json` (48 of the 77 data/ files the chain
+wrote). The 29 that differ: absolute paths and timings; the grown terrain of P2 (heightfield, tiers, samples, corridor,
+`audit*.grass_verts` 480,743 vs 373,416, house_seat contacts within 2 cm, ground_release report); and the
+Lake Murray Blvd I-8 span stations in `barrier_bands.json` / `race_authored.json` / `race_verify.json` (13312.1-13456.8
+vs 13318.7-13463.4, bridge_seating hits 328 vs 324): the installed declaration carried v0.18.0's stations, 6.6 m off
+the v0.18.1 lap (College's realignment), while its own `bridge.spans.auto.json` already reads 13312.1 — the rehearsal
+reads the file, nothing else in the race files moves (`no_route` PASS, every probe and wall the same).
+
+**Demo** (5 stubs of `source/phase5/stubs.demo.json` on the v0.18.1 road: Saint Therese Way is skipped because its
+mouth, v1257, sits inside College's chicane out-leg v1253-1289 (ledger 0055) and barrier_bands refuses a mouth
+"behind the closure" where the closure leaves the curb — a real Phase 5 finding, not fixed here):
+verify_stubs 5/5 PASS, verify_mouths 9/9, every gate number above unchanged; per corner on the BUILT gate OBJ
+(`source/phase5/proofs/2026-10-18/`, `analyze.py`): lane dividers on a stub 0 (was 66-72 vertices each), the farthest
+paint 0.50 m before the barrier's toe (was 1.34 m past it), K-rail grooves every 4.04 m, symmetric (±2.02 / ±6.06 m about
+the middle of the 15 m barriers, 5 on Hyde Park's 17.5 m); folded kerb triangles unchanged; grass facets steeper than 45° and taller than 0.10 m within R + 5 m of the 10
+corners 57 → 35 (the comb behind the returns gone; left: long sliver creases where the ground climbs behind Lambda Dr's
+uphill corner, max 0.60 m, and the welded approaches' own bumps along the stub walks, as at v0.18.1's existing mouths
+(max 0.19 m)); grass within 5 mm of a corner's road: as the 2026-10-14 demo (Lambda c0 6 samples at −2 mm, Hyde Park c0
+5 at 0.0).

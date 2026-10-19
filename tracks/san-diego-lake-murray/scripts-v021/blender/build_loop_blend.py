@@ -968,6 +968,7 @@ def main():
     #     as ribbons and MERGED into the main ROAD/CURB/MARKINGS meshes so they share physics + materials.
     #     Their points also feed the terrain conform/clamp/carve so the hill ground meets them (no float). ---
     connectors = []
+    stub_of = {}
     conn_path = data / "connectors.local.json"
     if conn_path.exists():
         conn_data = json.loads(conn_path.read_text())
@@ -977,6 +978,8 @@ def main():
                 continue
             cpts = smoothmod.smooth_centerline(cpts, sigma_pts=1.5, passes=1, sigma_y_pts=1.0)
             connectors.append((c["name"], cpts, list(c["widths_m"])))
+            if c.get("stub"):
+                stub_of[c["name"]] = c["stub"]          # ledger 0054 phase 5: a stub is painted as its street
         print(f"[blend] {len(connectors)} connector line(s): " + ", ".join(n for n, _, _ in connectors))
         # split carriageways: narrow the main loop where it rides a divided road to ONE carriageway, so the
         # double-wide ribbon doesn't overlap the opposing carriageway added beside it (per-direction grade).
@@ -1021,7 +1024,7 @@ def main():
         cker = ribbon.curb_sidewalk(cpts, cw, lift=0.10, curb_h=0.14, curb_face_w=0.08,
                                     sidewalk_w=1.5, grade_w=1.2, grass_clearance=0.10)
         _append(kerb, cker)
-        cmk = ribbon.lane_markings(cpts, cw, center_yellow=True)
+        cmk = ribbon.connector_markings(cpts, cw, stub_of.get(cname))   # == lane_markings(.., center_yellow=True) off a stub
         for _k in ("white", "yellow"):
             cmk[_k]["vertices"] = [(x, y + 0.115, z) for (x, y, z) in cmk[_k]["vertices"]]
             _append(marks[_k], cmk[_k])

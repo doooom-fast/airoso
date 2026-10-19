@@ -537,3 +537,61 @@ source/expansion/routes__mouths.json --legs <W piece>=W,... --osm data/osm.expan
 tracks/san-diego-lake-murray/stubs.json --out tracks/san-diego-lake-murray/stubs.json`), set by hand the entries that
 are the built pads / welds (J1-J5 legs, College / Navajo at station 0) to `skip`, and ship: ship_sd reads
 `tracks/<track>/stubs.json` by default. trim_connectors cuts a stub on a connector host against that host's pieces.
+
+
+## Phase 1 prep for the road build (2026-10-18; branch `worktree-wf_c6ab4b42-146-1`, not merged, nothing installed)
+
+Kevin, 2026-10-18: "pick this back up" (Phase 1's road build, paused 2026-10-14 in its prep). The prep is done; the road
+build itself (EXPANSION-PLAN P3 → Drive 1, v0.19.0) is next. The north route stays HELD.
+
+- **Merges** (2026-10-14, re-checked): main at v0.18.1 (704f1d0) → 35cdf17; the Phase 5 stub tool (fcdf68e) → 1444272.
+  ship_sd.sh / ship_track.sh / ship.json carry every step (deck datum, both terrain plans, stubs draft / author / tidy,
+  seat, aprons, triangulate, ground release, lamps, signs; gates verify_stubs, house_seat); the parity tests pass.
+  GATES-CHANGELOG reads v0.18.1 → expansion P0 / P1 / P2 → phase 5 → this round. engine-july PENDING-MIRROR: the Phase
+  5 pair (build_kn5_loop.py, pbr.py; old md5 = live engine-july, checked), nothing new.
+- **J1 re-checked against v0.18.1's College.** The opening's mainline vertices v1513-v1530 are byte-identical in
+  v0.18.0 and v0.18.1 (x, y, z, widths); v1505-v1512 moved ≤ 0.08 m inside the run's own taper. College's island ends
+  v1487 (its ramp-out v1485-1505) and `college_split_cut` (v1197-1468) is on the other side: neither reaches W1
+  (v1514.1-v1526.3, box v1506-1521). `tools/author_expansion.py --offline` reproduces the committed intermediate byte
+  for byte but its stamp (the WIP 52dd91e had re-run it: 1 mm rounding on 6 coordinates, the new centreline hash).
+  **Lamp 77 moved in v0.18.1** (the LED relocation pass): its base now stands 2.47 m outside AP1's outline, 2.4 m behind
+  the R 30 return's curb line, 0.8 m behind its walk — like its neighbours behind the loop's walk. So `apron_moves`
+  (0.5 m clearance) no longer moves it: P1's "lamp 77 behind the new curb" is already v0.18.1's placement. For P3: the
+  lamp is not re-seated by apron_moves, so its foot must be checked on the apron's ground (P1 measured the ground behind
+  the return falling 1-2 m over 6-8 m). The plan map (`data/expansion_plan.svg` and the NAIP sheet) is re-drawn on the
+  v0.18.1 loop and lamps.
+- **The Phase 5 tool's four cosmetic notes, fixed at their causes** (GATES-CHANGELOG 2026-10-18; stills and numbers in
+  `source/phase5/proofs/2026-10-18/`, `before_after.jpg` left = the 2026-10-14 demo, right = now):
+  - **Doubled edge lines.** In plain terms: the line painter spaces lane lines every 3.65 m from the centre wherever
+    they fit, so a two-lane side street got a short extra dash just inside each edge line at both ends of the stub. A
+    stub now paints only the lane lines its real lanes need (none on a two-lane street) and stops 0.5 m before the
+    barrier instead of running under it.
+  - **K-rail with no joints.** The barrier is one swept strip, so nothing in its shape marked where one 4 m block ends.
+    Each joint is now the real V-groove Kevin's block has at its ends (measured off the model: 2 cm in at the base, the
+    top 10 cm lower), every 4.04 m, centred on the road.
+  - **V-notch at the sharp corners.** At a tight corner the walk round the curve has to be narrowed so it does not fold
+    over itself; before, only the curve was narrowed, so the walk stepped in and out at both ends. Now it narrows
+    gradually over the last 3 m of the main road's walk and widens back over 3 m of the side street's.
+  - **Jagged grass behind the curbs.** The sidewalk's outer slope ends 20 cm below the road, and the export step lays
+    the ground beside every road at road height and tucks it under the sidewalk — so the slope's foot is always buried
+    in grass. On the main road that is one long smooth crease; on the finer ground round a stub corner it became a row
+    of teeth. The corner's sidewalk slope now ends exactly where that ground is laid, and the ground under the straight
+    sidewalks next to the corner stays as coarse as on the main road. Steep grass facets taller than 10 cm round the 10
+    demo corners: 57 → 35; the comb behind the curbs is gone. Left: long creases where the ground climbs behind Lambda
+    Dr's uphill corner (up to 0.60 m) and the bumps every welded side street already has along its first metres (v0.18.1's
+    own mouths: up to 0.19 m).
+- **Found on the way (not fixed, Phase 5 proper):** on the v0.18.1 road the demo's Saint Therese Way mouth (v1257) sits
+  inside College's Speedway chicane (out leg v1253-1289): barrier_bands refuses it ("declared behind the closure but no
+  closure stands there") because the closure leaves the curb there. No Phase 1 stub is on College; the demo ran with 5
+  of its 6 stubs.
+- **Tests.** Ten real-data tests failed on main since the v0.18.1 install: they pin numbers measured on v0.18.0's road
+  but read the track's data live, and the install synced the rebuilt road in. They now read v0.18.0's data frozen in
+  `tests/fixtures/lake_murray_v0180/` (git 8f25c48) through `tests/sd_v0180.py`; no tool changed. New tests for the four
+  fixes (`test_stub_geom.py`, `tests/geometry/test_v021_connector_markings.py`). Suite: 858 passed, 2 failed (the
+  engine-july md5 pins of this worktree's CRLF checkout of `scripts/ac/export_kn5_addon.py`; main fails the same two).
+- **The held rehearsal = v0.18.1** (fresh workshop copy, full chain, `--no-install`): street soft top 8 / severe 0 /
+  kinks 2.67 / audit 53; race severe 15 / 20, soft top 8 / 4, barrier_missing 0, no_route PASS both; verify_mouths ×4,
+  verify_fold_fans, verify_ai_line ×2, verify_signs 23, verify_race, rib_check, house_seat PASS; every drive_test file,
+  verify_mouths, verify_fold_fans, lights, mouths, welds and connectors byte-identical to the installed v0.18.1's. The
+  one race-file difference is a correction: the Lake Murray Blvd I-8 span now sits at the v0.18.1 lap's stations
+  (13312.1 m, the installed declaration still had v0.18.0's 13318.7).

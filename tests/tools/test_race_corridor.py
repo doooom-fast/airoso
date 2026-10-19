@@ -21,10 +21,12 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "tests"))
+import sd_v0180  # noqa: E402  (the pinned v0.18.0 Lake Murray data, tests/fixtures/lake_murray_v0180)
 sys.path.insert(0, str(ROOT / "tools"))
 import race_corridor as rc  # noqa: E402
 
-SD = ROOT / "tracks" / "san-diego-lake-murray" / "data"
+SD = sd_v0180.DATA                  # the pinned v0.18.0 data (the study solution was solved on it)
 FIXTURE = Path(__file__).resolve().parent / "fixtures" / "sd_corridor_proto.json"
 BOXES = [(1506, 1521), (2311, 2328), (3289, 3304)]
 WHOLE = (4454, 777)

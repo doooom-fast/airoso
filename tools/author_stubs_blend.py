@@ -16,8 +16,23 @@ author (after author_median, before gap_mouths), per stub (data/stubs.plan.json 
      window) round a circle tangent to both edges to the stub's first curb row past B. The return strip is APPENDED
      to CURB; the corner pavement (a fan from K) to ROAD — merged like every connector, shared physics and material.
      The stub's own curb faces before row J are removed FACES_ONLY (no vertex moves or goes before gap_mouths).
-  2. GROUND: TERRAIN edges in each corner zone are halved down to TERRAIN_EDGE_M, then every TERRAIN vertex under the
-     new pavement / return is pinned under it (seat_terrain's rule: deck - 0.10 - 0.06), under the verge 0.02 under it.
+     A return whose walk must be compressed (stub_geom.walk_scale < 1: an acute corner's small radius) is compressed
+     continuously: the host's own curb rows behind the gap end ease into it over HOST_RAMP_M (their walk-back and grass-
+     meet vertices MOVE, no index changes), and J is taken at least STUB_RAMP_M past B for the tail to ease back out.
+  2. GROUND: TERRAIN edges in each corner zone (within its tangent + ZONE_PAD_M of K) are halved down to TERRAIN_EDGE_M
+     — except under the straight strips' verges (the stub's own kept curb rows, the host's rows behind the gap end) and
+     the COARSE_OUT_M behind their grass meet — then every TERRAIN vertex under a road or curb strip there (the corner
+     fan, the return, the stub's road and kept curb rows, the host's eased rows) is pinned under it (seat_terrain's
+     rule: deck - 0.10 - 0.06; under a verge 0.02 under it).
+     WHY (2026-10-18, the phase-5 verifier's sawtooth "teeth" of grass behind the returns): the kn5 prep lays every
+     ground vertex within 3 m of a road at deck - 0.02 and then clamps it 0.02 under the lowest drivable sheet, and the
+     loop's verges end 0.20 m under their road (curb_sidewalk grass_clearance): the verge's foot is buried, and the two
+     rules meet along it. On the host's coarse ground that meeting is one long gentle facet (the loop's look
+     everywhere); refined to 0.75 m it alternated cell by cell — 0.2-0.6 m teeth along every grass meet in the zone
+     (measured after the prep; the author stage's own ground there was smooth). The return's grass meet now lands on the
+     prep's ground (stub_geom MEET_H_M), so the ground under and behind it may be fine; the straight strips keep the
+     buried foot, so the ground there stays as coarse as the host's. The corner's pavement and nose stay refined (a
+     coarse facet across an acute corner's narrow fan rode 5 mm over the road at Lambda Dr's 57 deg nose).
   3. BARRIER `1WALL_STUB_<id>` (collection STUBS): the K-rail jersey strip across the stub at its declared distance
      from the mouth line, grass meet to grass meet over both sidewalks, each ring seated on the lowest stub surface
      under its footprint (a BVH over ROAD + CURB) less 0.02 m; smooth-shaded with hard creases (race_furniture).
@@ -60,6 +75,22 @@ PIN_UNDER_M = 0.16         # seat_terrain: deck - LIFT 0.10 - CLEAR_M 0.06
 VERGE_UNDER_M = 0.02
 EDGE_FIT_FROM_M = 8.0     # the stub's road edge line is fitted on its rows at least this far out AND past the weld's
 EDGE_FIT_ROWS = 3          # re-spread (data/mouth_welds.json rows_respread), over at least this many rows
+COARSE_OUT_M = 1.0         # [INVENTED] the ground behind a straight strip's grass meet left unrefined this far (GROUND)
+
+
+def _box(t):
+    return (min(p[0] for p in t), max(p[0] for p in t), min(p[2] for p in t), max(p[2] for p in t))
+
+
+def _hash(tris, cell=1.0):
+    """{(floor(x), floor(z)): [tri]} over each triangle's plan box (1 m cells)"""
+    out = {}
+    for t in tris:
+        x0, x1, z0, z1 = _box(t)
+        for i in range(math.floor(x0 / cell), math.floor(x1 / cell) + 1):
+            for j in range(math.floor(z0 / cell), math.floor(z1 / cell) + 1):
+                out.setdefault((i, j), []).append(t)
+    return out
 
 
 def B(p):
@@ -169,6 +200,7 @@ def main():
     new_road_v, new_road_f = [], []
     new_curb_v, new_curb_f = [], []
     doomed_curb = set()          # (row, side, piece) stub curb faces to remove
+    moved_curb = {}              # CURB vertex index -> engine point: a compressed return's host rows eased (stub_geom)
     zones = []                   # ground work: (pavement tris, return tris, verge tris, centre, reach)
     for st in plan["stubs"]:
         mo, piece = stub_pieces[st["id"]]
@@ -227,17 +259,42 @@ def main():
                 raise SystemExit(f"[stubs] FATAL: {piece} edge {e:+d}: no host gap end on its side")
             _s, kend, A_row = cands[0]
             tH = sg.dist2(Kp, A_row[0])
-            # J: the first stub curb row at or past B (u along the edge from K >= tH)
+            # the walk's compression (stub_geom: continuous — a compressed return eases back over the host behind A and
+            # over at least STUB_RAMP_M of the stub's tail); every stub curb row has the same profile offsets
+            try:
+                wscale = sg.walk_scale(A_row, tuple(CV[mw.curb_index(lay, piece, j1, e, p)] for p in range(4)), Kp, bdir)
+            except sg.GeomError as ex:
+                raise SystemExit(f"[stubs] FATAL: {piece} edge {e:+d}: {ex}")
+            # J: the first stub curb row at or past B (u along the edge from K >= tH; + STUB_RAMP_M when compressed)
             J = None
+            need = tH + 0.05 + (sg.STUB_RAMP_M if wscale < 1.0 else 0.0)
             for r in range(b["rows"]):
                 p0 = CV[mw.curb_index(lay, piece, r, e, 0)]
                 u = (p0[0] - Kp[0]) * bdir[0] + (p0[2] - Kp[2]) * bdir[1]
-                if u >= tH + 0.05:
+                if u >= need:
                     J = r
                     break
             if J is None or J >= b["rows"] - 3:
                 raise SystemExit(f"[stubs] FATAL: {piece} edge {e:+d}: the return (tangent {tH:.2f} m) runs past the stub")
             J_row = tuple(CV[mw.curb_index(lay, piece, J, e, p)] for p in range(4))
+            wscale = sg.walk_scale(A_row, J_row, Kp, bdir)            # exactly return_stations' own
+            # the host's rows behind A, away from the mouth (the gap window S holds the mouth side)
+            away = 1 if (((kend + 1) % mh) if closed else kend + 1) not in S else -1
+            h_ramp_rows = []
+            for k in range(0, 24):
+                r = kend + away * k
+                if closed:
+                    r %= mh
+                elif not 0 <= r < mh:
+                    break
+                h_ramp_rows.append(r)
+            h_rows = [tuple(CV[mw.curb_index(lay, host, r, side, p)] for p in range(4)) for r in h_ramp_rows]
+            eased = sg.host_ramp(h_rows, wscale)
+            for k, nrow in eased:
+                for p in (2, 3):
+                    vi = mw.curb_index(lay, host, h_ramp_rows[k], side, p)
+                    moved_curb[vi] = nrow[p]
+                    CV[vi] = nrow[p]
             # the lane edge's height round the corner: the host deck (extended level past its edge) and this stub
             # edge's own height, blended by distance to each — the corner pavement meets both at their heights, so
             # the ground pinned under it never stands over either deck where a facet spans the seam
@@ -263,6 +320,10 @@ def main():
                 stations, rec = sg.return_stations(A_row, J_row, Kp, bdir, y0_of=y0_of)
             except sg.GeomError as ex:
                 raise SystemExit(f"[stubs] FATAL: {piece} edge {e:+d}: {ex}")
+            if eased and max(sg.dist2(stations[0][p], eased[0][1][p]) for p in range(4)) > 1e-9:
+                raise SystemExit(f"[stubs] FATAL: {piece} edge {e:+d}: the return's first row is not the host's eased "
+                                 f"row A")
+            rec["host_rows_eased"] = len(eased)
             # the curb return strip -> CURB (appended)
             base = len(CV) + len(new_curb_v)
             for row in stations:
@@ -279,16 +340,46 @@ def main():
             rec.update({"edge": e, "host_gap_end_station": kend, "J_row": J, "faces_removed": J * 3,
                         "pavement_tris": len(pt)})
             corners.append(rec)
-            # ground zone: pavement fan, the return's walk (p0-p2) and its verge (p2-p3)
+            # ground zone (GROUND below): every road and curb strip over the corner ground — the corner pavement fan,
+            # the return, the stub's own kept curb rows (J on) and road, the host's kept curb rows behind A (as eased)
+            reach = tH + ZONE_PAD_M
             ptris = [(pv[t[0]], pv[t[1]], pv[t[2]]) for t in pt]
             wtris, vtris = [], []
-            for r0, r1 in zip(stations, stations[1:]):
-                for p in range(3):
-                    quad = (r0[p], r0[p + 1], r1[p + 1], r1[p])
-                    tl = [(quad[0], quad[1], quad[2]), (quad[0], quad[2], quad[3])]
-                    (vtris if p == 2 else wtris).extend(tl)
+
+            def band(rows_, _w=wtris, _v=vtris):
+                for r0, r1 in zip(rows_, rows_[1:]):
+                    dy = min(r0[0][1], r1[0][1])
+                    for p in range(3):
+                        quad = (r0[p], r0[p + 1], r1[p + 1], r1[p])
+                        tl = [(quad[0], quad[1], quad[2]), (quad[0], quad[2], quad[3])]
+                        if p == 2:
+                            _v.extend(tl)
+                        else:
+                            _w.extend((t_, dy) for t_ in tl)
+
+            def within(row, _K=Kp, _r=reach):
+                return any(math.hypot(q[0] - _K[0], q[2] - _K[2]) <= _r for q in row)
+            band(list(stations))
+            s_rows = [tuple(CV[mw.curb_index(lay, piece, r, e, p)] for p in range(4)) for r in range(J, b["rows"])]
+            s_rows = s_rows[:next((k for k, rw in enumerate(s_rows) if not within(rw)), len(s_rows)) + 1]
+            band(s_rows)
+            hz_rows = [tuple(CV[mw.curb_index(lay, host, r, side, p)] for p in range(4)) for r in h_ramp_rows]
+            hz_rows = hz_rows[:next((k for k, rw in enumerate(hz_rows) if not within(rw)), len(hz_rows)) + 1]
+            band(hz_rows)
+            for r0, r1 in zip(rows, rows[1:]):
+                if within(r0) or within(r1):
+                    ptris += [(r0[0], r0[1], r1[1]), (r0[0], r1[1], r1[0]), (r0[1], r0[2], r1[2]), (r0[1], r1[2], r1[1])]
+            # the straight strips' verges + COARSE_OUT_M behind them stay as coarse as the host's (GROUND below)
+            coarse = []
+            for rows_ in (s_rows, hz_rows):
+                for r0, r1 in zip(rows_, rows_[1:]):
+                    out_ = []
+                    for r in (r0, r1):
+                        n_ = sg.unit2(r[3][0] - r[0][0], r[3][2] - r[0][2])
+                        out_.append((r[3][0] + n_[0] * COARSE_OUT_M, r[3][1], r[3][2] + n_[1] * COARSE_OUT_M))
+                    coarse += [(r0[2], out_[0], out_[1]), (r0[2], out_[1], r1[2])]
             zones.append({"pave": ptris, "walk": wtris, "verge": vtris, "centre": (Kp[0], Kp[2]),
-                          "reach": tH + ZONE_PAD_M, "deck": [r[0] for r in stations], "host": hdeck})
+                          "reach": reach, "host": hdeck, "coarse": coarse})
         built["stubs"].append({"id": st["id"], "connector": st["connector"], "piece": piece, "host": host,
                                "side": side, "corners": corners})
 
@@ -297,6 +388,10 @@ def main():
         bm = bmesh.new()
         bm.from_mesh(ob.data)
         bm.verts.ensure_lookup_table()
+        if ob is curb:
+            for vi, p in moved_curb.items():
+                bm.verts[vi].co = B(p)
+            built["host_curb_verts_eased"] = len(moved_curb)
         if delset:
             want = []
             for piece, e, r in delset:
@@ -361,6 +456,23 @@ def main():
         built["curb_cuts"].append({**cc, "curb_rows_lowered": moved})
 
     # ---- ground under the corners
+    for z_ in zones:                      # plan boxes + a 1 m hash, so a point reads only the triangles over it
+        for kind in ("pave", "verge"):
+            z_[kind] = [(t, _box(t)) for t in z_[kind]]
+        z_["walk"] = [(t, dy, _box(t)) for t, dy in z_["walk"]]
+        z_["coarse"] = _hash(z_["coarse"])
+
+    def refine_here(x, z):
+        """inside a corner zone and not under a straight strip's verge or the COARSE_OUT_M behind it"""
+        inside = False
+        for z_ in zones:
+            if math.hypot(x - z_["centre"][0], z - z_["centre"][1]) > z_["reach"]:
+                continue
+            for t in z_["coarse"].get((math.floor(x), math.floor(z)), ()):
+                if sg.tri_height(x, z, *t) is not None:
+                    return False
+            inside = True
+        return inside
     tbm = bmesh.new()
     tbm.from_mesh(terr.data)
     halved = 0
@@ -371,7 +483,7 @@ def main():
                 continue
             mx = 0.5 * (e.verts[0].co.x + e.verts[1].co.x)
             mz = 0.5 * (e.verts[0].co.y + e.verts[1].co.y)
-            if any(math.hypot(mx - z_["centre"][0], mz - z_["centre"][1]) <= z_["reach"] for z_ in zones):
+            if refine_here(mx, mz):
                 todo.append(e)
         if not todo:
             break
@@ -380,25 +492,24 @@ def main():
     pinned = 0
     for v in tbm.verts:
         x, z, y = v.co.x, v.co.y, v.co.z
+        top = None
         for z_ in zones:
             if math.hypot(x - z_["centre"][0], z - z_["centre"][1]) > z_["reach"] or z_["host"].inside(x, z, -HOST_KEEP_M):
                 continue
-            top = None
-            for kind, under in (("pave", PIN_UNDER_M), ("walk", None), ("verge", VERGE_UNDER_M)):
-                for t in z_[kind]:
-                    h = sg.tri_height(x, z, *t)
-                    if h is None:
+            for kind, under in (("pave", PIN_UNDER_M), ("verge", VERGE_UNDER_M)):
+                for t, bx in z_[kind]:
+                    if not (bx[0] <= x <= bx[1] and bx[2] <= z <= bx[3]):
                         continue
-                    if kind == "walk":
-                        # under the walk: pinned like the pavement, off the lane edge's height (the nearest station)
-                        d0 = min(z_["deck"], key=lambda p: (p[0] - x) ** 2 + (p[2] - z) ** 2)
-                        lim = d0[1] - PIN_UNDER_M
-                    else:
-                        lim = h - under
-                    top = lim if top is None else min(top, lim)
-            if top is not None and y > top:
-                v.co.z = top
-                pinned += 1
+                    h = sg.tri_height(x, z, *t)
+                    if h is not None:
+                        top = h - under if top is None else min(top, h - under)
+            for t, dy, bx in z_["walk"]:
+                if bx[0] <= x <= bx[1] and bx[2] <= z <= bx[3] and sg.tri_height(x, z, *t) is not None:
+                    # under the curb face + walk: pinned like the pavement, off its own lane edge's height
+                    top = dy - PIN_UNDER_M if top is None else min(top, dy - PIN_UNDER_M)
+        if top is not None and y > top:
+            v.co.z = top
+            pinned += 1
     tbm.to_mesh(terr.data)
     tbm.free()
     terr.data.update()

@@ -362,12 +362,15 @@ def taper(idx, n, start_kind, end_kind):
 def strip_mesh(rings, cap_start, cap_end, u_scale=MODULE_PITCH_M):
     """A closed swept solid from ring records. Each ring: dict(cx, cz, y, tx, tz, lat, ls, h, arc).
     Returns (verts, faces, uvs) in the ENGINE frame with OUTWARD normals under the right-hand rule
-    (the Blender tool remaps + reverses). u = arc / u_scale, v = perimeter fraction."""
+    (the Blender tool remaps + reverses). u = arc / u_scale, v = perimeter fraction. A ring may carry its own
+    "prof" ((lat, h) x 10, ring_profile's order: tools/stub_geom.py's K-rail module joint); else ring_profile."""
     verts, faces, uvs = [], [], []
     P = len(ring_profile())
     rows = []
     for r in rings:
-        prof = ring_profile(r["ls"], r["h"])
+        prof = r["prof"] if r.get("prof") else ring_profile(r["ls"], r["h"])
+        if len(prof) != P:
+            raise ValueError(f"a ring's own profile has {len(prof)} points, the strip's {P}")
         vv = ring_perimeter_v(prof)
         lx, lz = left_normal(r["tx"], r["tz"])
         base = len(verts)

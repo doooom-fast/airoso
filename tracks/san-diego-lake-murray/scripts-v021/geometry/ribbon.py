@@ -406,6 +406,47 @@ def lane_markings(centerline_m: list[Vertex], widths_m: list[float], *, line_w: 
     return {"white": white, "yellow": yellow}
 
 
+STUB_PAINT_STOP_M = 0.5        # [INVENTED] a phase-5 stub's paint ends this far short of its barrier's road-side toe
+STUB_BARRIER_HALF_BASE_M = 0.335   # the K-rail's half base (tools/race_furniture.HALF_PROFILE[0][0])
+
+
+def connector_markings(cpts: list[Vertex], cw: list[float], stub: dict | None = None) -> dict:
+    """A connector's paint, as the assembler (blender/build_loop_blend.py) sweeps it and tools/weld_mouths_blend.py
+    rebuilds it to check the layout — ONE function, so the two can never disagree. A plain connector: exactly
+    ``lane_markings(cpts, cw, center_yellow=True)``. A phase-5 STUB (ledger 0054; its connector record's ``stub``,
+    tools/stub_roads.py) is painted as the street it is (2026-10-18, the phase-5 verifier: "short dashes about 0.3 m
+    inside the edge lines near the mouth and near the barrier, which look like doubled edge lines" and "the centre line
+    and edge lines also run about 1 m past the barrier onto the tail"):
+      - lane dividers only between real lanes: ``lanes_per_side`` (OSM ``lanes`` / 2, default 1) - 1 per side. The
+        generic rule paints a divider every 3.65 m that fits inside the edge inset, so a 9.6-12 m two-lane side street
+        got one 0.6-1.8 m inside each edge line, and its 3 m dash fell at the 15 m stub's two ends;
+      - the paint ends STUB_PAINT_STOP_M short of the barrier's road-side toe: the polyline is cut at
+        ``tail_m`` + the K-rail's half base + the stop, measured back from its far end (stub_roads ends every stub
+        exactly ``tail_m`` past the barrier's centre line)."""
+    if not stub:
+        return lane_markings(cpts, cw, center_yellow=True)
+    per_side = max(1, int(stub.get("lanes_per_side") or 1))
+    keep_back = float(stub.get("tail_m") or 0.0) + STUB_BARRIER_HALF_BASE_M + STUB_PAINT_STOP_M
+    arc = [0.0]
+    for i in range(1, len(cpts)):
+        arc.append(arc[-1] + math.hypot(cpts[i][0] - cpts[i - 1][0], cpts[i][2] - cpts[i - 1][2]))
+    stop = arc[-1] - keep_back
+    pts, ws = [], []
+    for i in range(len(cpts)):
+        if arc[i] <= stop + 1e-9:
+            pts.append(tuple(cpts[i]))
+            ws.append(cw[i])
+            continue
+        if i > 0 and arc[i - 1] < stop:
+            f = (stop - arc[i - 1]) / max(1e-12, arc[i] - arc[i - 1])
+            pts.append(tuple(cpts[i - 1][k] + (cpts[i][k] - cpts[i - 1][k]) * f for k in range(3)))
+            ws.append(cw[i - 1] + (cw[i] - cw[i - 1]) * f)
+        break
+    if len(pts) < 2:
+        return {"white": {"vertices": [], "uvs": [], "tris": []}, "yellow": {"vertices": [], "uvs": [], "tris": []}}
+    return lane_markings(pts, ws, center_yellow=True, max_lanes_side=per_side - 1)
+
+
 def road_markings(centerline_m: list[Vertex], widths_m: list[float], *, line_w: float = 0.14,
                   edge_inset: float = 0.4, lift: float = 0.0, dash_on: float = 3.0,
                   dash_gap: float = 4.5, tile_m: float = 1.0, bank_at=None) -> dict:

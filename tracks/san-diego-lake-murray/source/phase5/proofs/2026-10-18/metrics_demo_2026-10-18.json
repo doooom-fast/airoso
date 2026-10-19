@@ -1,0 +1,318 @@
+{
+ "stubs": {
+  "reservoir_drive_6028810_L": {
+   "corners": [
+    {
+     "edge": 1,
+     "phi": 91.09,
+     "R": 4.648,
+     "compress": 1.0,
+     "steep_grass": 3,
+     "steep_max_rise": 0.155,
+     "grass_over_kerb_samples": 358,
+     "grass_at_road_samples": 0,
+     "grass_at_road_max": -1.0,
+     "grass_over_kerb_max": 0.162,
+     "kerb_tris": 198,
+     "kerb_flipped": 0,
+     "pit_grass_min": 7.699,
+     "walk_top_near_O": 7.9,
+     "pit_depth_below_walk": 0.202
+    },
+    {
+     "edge": -1,
+     "phi": 88.83,
+     "R": 3.784,
+     "compress": 1.0,
+     "steep_grass": 2,
+     "steep_max_rise": 0.005,
+     "grass_over_kerb_samples": 567,
+     "grass_at_road_samples": 0,
+     "grass_at_road_max": -1.0,
+     "grass_over_kerb_max": 0.193,
+     "kerb_tris": 186,
+     "kerb_flipped": 0,
+     "pit_grass_min": 7.716,
+     "walk_top_near_O": 7.941,
+     "pit_depth_below_walk": 0.225
+    }
+   ],
+   "paint": {
+    "lateral_offsets_m": [
+     0.0,
+     0.1,
+     0.2,
+     4.2,
+     4.3
+    ],
+    "divider_verts": 0,
+    "farthest_paint_u_m": 14.566,
+    "barrier_toe_u_m": 15.065,
+    "past_toe_m": -0.499
+   },
+   "joints": {
+    "rings": 77,
+    "dip_rings_lat": [
+     -6.06,
+     -2.02,
+     2.02,
+     6.06
+    ],
+    "n_dips": 4
+   }
+  },
+  "lambda_drive_6021410_L": {
+   "corners": [
+    {
+     "edge": 1,
+     "phi": 120.22,
+     "R": 5.555,
+     "compress": 1.0,
+     "steep_grass": 30,
+     "steep_max_rise": 0.595,
+     "grass_over_kerb_samples": 673,
+     "grass_at_road_samples": 6,
+     "grass_at_road_max": -0.002,
+     "grass_over_kerb_max": 0.322,
+     "kerb_tris": 202,
+     "kerb_flipped": 2,
+     "pit_grass_min": 52.049,
+     "walk_top_near_O": null,
+     "pit_depth_below_walk": null
+    },
+    {
+     "edge": -1,
+     "phi": 57.38,
+     "R": 1.446,
+     "compress": 0.383,
+     "steep_grass": 4,
+     "steep_max_rise": 0.131,
+     "grass_over_kerb_samples": 85,
+     "grass_at_road_samples": 0,
+     "grass_at_road_max": -1.0,
+     "grass_over_kerb_max": 0.133,
+     "kerb_tris": 157,
+     "kerb_flipped": 0,
+     "pit_grass_min": 53.72,
+     "walk_top_near_O": 54.126,
+     "pit_depth_below_walk": 0.406
+    }
+   ],
+   "paint": {
+    "lateral_offsets_m": [
+     0.0,
+     0.1,
+     0.2,
+     2.6,
+     4.4,
+     4.5,
+     5.0,
+     5.1
+    ],
+    "divider_verts": 0,
+    "farthest_paint_u_m": 14.615,
+    "barrier_toe_u_m": 15.114,
+    "past_toe_m": -0.499
+   },
+   "joints": {
+    "rings": 77,
+    "dip_rings_lat": [
+     -6.06,
+     -2.02,
+     2.02,
+     6.06
+    ],
+    "n_dips": 4
+   }
+  },
+  "camino_estrellado_5977723_R": {
+   "corners": [
+    {
+     "edge": 1,
+     "phi": 101.18,
+     "R": 4.585,
+     "compress": 1.0,
+     "steep_grass": 10,
+     "steep_max_rise": 0.069,
+     "grass_over_kerb_samples": 419,
+     "grass_at_road_samples": 0,
+     "grass_at_road_max": -1.0,
+     "grass_over_kerb_max": 0.152,
+     "kerb_tris": 190,
+     "kerb_flipped": 1,
+     "pit_grass_min": 39.443,
+     "walk_top_near_O": 39.799,
+     "pit_depth_below_walk": 0.355
+    },
+    {
+     "edge": -1,
+     "phi": 79.15,
+     "R": 3.741,
+     "compress": 1.0,
+     "steep_grass": 14,
+     "steep_max_rise": 0.582,
+     "grass_over_kerb_samples": 358,
+     "grass_at_road_samples": 0,
+     "grass_at_road_max": -1.0,
+     "grass_over_kerb_max": 0.297,
+     "kerb_tris": 184,
+     "kerb_flipped": 1,
+     "pit_grass_min": 38.535,
+     "walk_top_near_O": 39.185,
+     "pit_depth_below_walk": 0.65
+    }
+   ],
+   "paint": {
+    "lateral_offsets_m": [
+     0.0,
+     0.1,
+     0.2,
+     4.2,
+     4.3
+    ],
+    "divider_verts": 0,
+    "farthest_paint_u_m": 14.578,
+    "barrier_toe_u_m": 15.077,
+    "past_toe_m": -0.499
+   },
+   "joints": {
+    "rings": 76,
+    "dip_rings_lat": [
+     -6.06,
+     -2.02,
+     2.02,
+     6.06
+    ],
+    "n_dips": 4
+   }
+  },
+  "margerum_avenue_135149732_L": {
+   "corners": [
+    {
+     "edge": 1,
+     "phi": 116.41,
+     "R": 5.2,
+     "compress": 1.0,
+     "steep_grass": 4,
+     "steep_max_rise": 0.162,
+     "grass_over_kerb_samples": 620,
+     "grass_at_road_samples": 0,
+     "grass_at_road_max": -1.0,
+     "grass_over_kerb_max": 0.238,
+     "kerb_tris": 186,
+     "kerb_flipped": 2,
+     "pit_grass_min": 38.875,
+     "walk_top_near_O": null,
+     "pit_depth_below_walk": null
+    },
+    {
+     "edge": -1,
+     "phi": 63.5,
+     "R": 2.488,
+     "compress": 0.678,
+     "steep_grass": 22,
+     "steep_max_rise": 0.242,
+     "grass_over_kerb_samples": 143,
+     "grass_at_road_samples": 0,
+     "grass_at_road_max": -1.0,
+     "grass_over_kerb_max": 0.172,
+     "kerb_tris": 189,
+     "kerb_flipped": 0,
+     "pit_grass_min": 39.942,
+     "walk_top_near_O": 40.373,
+     "pit_depth_below_walk": 0.43
+    }
+   ],
+   "paint": {
+    "lateral_offsets_m": [
+     0.0,
+     0.1,
+     0.2,
+     3.2,
+     3.3,
+     4.2,
+     4.3
+    ],
+    "divider_verts": 0,
+    "farthest_paint_u_m": 14.602,
+    "barrier_toe_u_m": 15.102,
+    "past_toe_m": -0.5
+   },
+   "joints": {
+    "rings": 81,
+    "dip_rings_lat": [
+     -6.06,
+     -3.82,
+     -2.02,
+     -0.62,
+     2.02,
+     2.58,
+     6.06
+    ],
+    "n_dips": 7
+   }
+  },
+  "hyde_park_drive_5962845_R": {
+   "corners": [
+    {
+     "edge": 1,
+     "phi": 94.03,
+     "R": 6.095,
+     "compress": 1.0,
+     "steep_grass": 51,
+     "steep_max_rise": 0.224,
+     "grass_over_kerb_samples": 628,
+     "grass_at_road_samples": 5,
+     "grass_at_road_max": 0.0,
+     "grass_over_kerb_max": 0.173,
+     "kerb_tris": 244,
+     "kerb_flipped": 0,
+     "pit_grass_min": 111.293,
+     "walk_top_near_O": null,
+     "pit_depth_below_walk": null
+    },
+    {
+     "edge": -1,
+     "phi": 85.21,
+     "R": 3.935,
+     "compress": 1.0,
+     "steep_grass": 46,
+     "steep_max_rise": 0.249,
+     "grass_over_kerb_samples": 457,
+     "grass_at_road_samples": 0,
+     "grass_at_road_max": -1.0,
+     "grass_over_kerb_max": 0.187,
+     "kerb_tris": 180,
+     "kerb_flipped": 0,
+     "pit_grass_min": 111.491,
+     "walk_top_near_O": 111.805,
+     "pit_depth_below_walk": 0.314
+    }
+   ],
+   "paint": {
+    "lateral_offsets_m": [
+     0.0,
+     0.1,
+     0.2,
+     5.4,
+     5.5
+    ],
+    "divider_verts": 0,
+    "farthest_paint_u_m": 14.565,
+    "barrier_toe_u_m": 15.065,
+    "past_toe_m": -0.5
+   },
+   "joints": {
+    "rings": 87,
+    "dip_rings_lat": [
+     -8.08,
+     -4.04,
+     -0.0,
+     4.04,
+     8.08
+    ],
+    "n_dips": 5
+   }
+  }
+ }
+}

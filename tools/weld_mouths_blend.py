@@ -156,7 +156,7 @@ def main():
         rib = [(x, y + 0.10, z) for (x, y, z) in wr.road_ribbon(cpts, cw)["vertices"]]
         ker = wr.curb_sidewalk(cpts, cw, lift=0.10, curb_h=0.14, curb_face_w=0.08, sidewalk_w=1.5, grade_w=1.2,
                                grass_clearance=0.10)["vertices"]
-        cmk = wr.lane_markings(cpts, cw, center_yellow=True)
+        cmk = wr.connector_markings(cpts, cw, c.get("stub"))     # the assembler's own call (a phase-5 stub: its street's paint)
         mk = {"MARKINGS": [(x, y + 0.115, z) for (x, y, z) in cmk["white"]["vertices"]],
               "YLINE": [(x, y + 0.115, z) for (x, y, z) in cmk["yellow"]["vertices"]]}
         recon[c["name"]] = mk

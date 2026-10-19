@@ -23,6 +23,8 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "tests"))
+import sd_v0180  # noqa: E402  (the pinned v0.18.0 Lake Murray data, tests/fixtures/lake_murray_v0180)
 sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT))
 import barrier_bands as bb  # noqa: E402
@@ -179,7 +181,7 @@ def _project(chicanes):
             b["apex"] = 3297
     (d / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
     for f in ("centerline.local.json", "median_bands.json", "mouths.json", "bridge.spans.auto.json"):
-        shutil.copyfile(SD / "data" / f, d / "data" / f)
+        shutil.copyfile(sd_v0180.DATA / f, d / "data" / f)
     return d
 
 
@@ -196,8 +198,8 @@ def _built():
 def test_a_declared_chicane_carries_each_speedway_across_and_back_every_gate_holding():
     _d, out = _built()
     assert out["fails"] == [], out["fails"]
-    pts = [tuple(p) for p in json.loads((SD / "data" / "centerline.local.json").read_text())["points_xyz_m"]]
-    w = json.loads((SD / "data" / "centerline.local.json").read_text())["widths_m"]
+    pts = [tuple(p) for p in json.loads((sd_v0180.DATA / "centerline.local.json").read_text())["points_xyz_m"]]
+    w = json.loads((sd_v0180.DATA / "centerline.local.json").read_text())["widths_m"]
     for lid in ("race_cw", "race_acw"):
         c = out["corridors"][lid]
         assert c["no_route"]["planned"]["fail"] is False and c["no_route"]["planned"]["leak_m2"] == 0

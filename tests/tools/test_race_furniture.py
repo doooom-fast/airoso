@@ -21,10 +21,12 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "tests"))
+import sd_v0180  # noqa: E402  (the pinned v0.18.0 Lake Murray data, tests/fixtures/lake_murray_v0180)
 sys.path.insert(0, str(ROOT / "tools"))
 import race_furniture as rf  # noqa: E402
 
-TRACK = ROOT / "tracks" / "san-diego-lake-murray"
+TRACK = sd_v0180.project()          # the current config on the pinned v0.18.0 data
 
 
 def _straight_rings(n, step=3.0, lat=0.0, start="free", end="free", y=0.0):

@@ -361,6 +361,11 @@ Steps 2–8 can start now on a branch off the 0046 branch, and get rebased after
 
 ### P3 — Road and ground build → **Drive 1 (v0.19.0)**
 
+> **2026-10-18: prep done on branch `worktree-wf_c6ab4b42-146-1` (ledger 0054, "Phase 1 prep").** v0.18.1 and the
+> Phase 5 stub tool merged; J1 re-checked against v0.18.1's College (the opening's vertices unchanged; lamp 77 already
+> stands behind the R 30 return — check its foot on the apron's ground in step 3); the stub tool's four cosmetic notes
+> fixed; the held rehearsal equals v0.18.1. Steps 1-8 below are next.
+
 1. **The `ship_sd.sh` draft.** **adapted** `route_connectors` takes the four pieces with their per-station widths. `divide_connectors` passes them through untouched. `trim_connectors` cuts at the pads and the two welds, then the rebuild runs.
 2. **new `author_junction_pad_blend.py`** builds J2, J3 and J4 as single-coverage pads:
    - seams welded to 0.000 m;

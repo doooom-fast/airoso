@@ -25,6 +25,8 @@ from pathlib import Path
 from scripts.ac.verify_kn5 import verify, _parse_full, _right_of
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "tests"))
+import sd_v0180  # noqa: E402  (the pinned v0.18.0 Lake Murray data, tests/fixtures/lake_murray_v0180)
 sys.path.insert(0, str(ROOT / "tools"))
 import layout_dummies as ld  # noqa: E402
 
@@ -343,7 +345,7 @@ def _sd_project() -> Path:
     (d / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
     shutil.copyfile(SD / "start_positions.json", d / "start_positions.json")
     for f in ("centerline.local.json", "median_bands.json", "finished_centerline.json", "barrier_bands.json"):
-        shutil.copyfile(SD / "data" / f, d / "data" / f)
+        shutil.copyfile(sd_v0180.DATA / f, d / "data" / f)
     return d
 
 

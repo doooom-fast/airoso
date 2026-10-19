@@ -454,8 +454,16 @@ AUTO_DEFAULTS = {
     "reach_m": 40.0, "cut_reach_m": 20.0, "round_m": 3.0,     # the parameters of College's cut face (0055)
     "cut_slope_min": 1.0,       # docs/ROAD-CONSTRUCTION.md: common earth 1:1 ...
     "cut_slope_max": 2.0,       # ... fractured rock 0.5:1 (m per metre)
-    "batter_window_m": 50.0,    # [invented] the batter is read per this much of a stretch
+    "batter_window_m": 50.0,    # [invented] the real face's climb is read per this much of a stretch
     "batter_step": 0.25,        # [invented] ...rounded to this (m per metre): neighbouring windows alike join
+    "batter": "max",            # the zone's batter: "max" = cut_slope_max everywhere (the face read for the record only),
+    #                             "face" = each window's own p90 climb, held to the range. Repair round 1's first full
+    #                             rehearsal ran "face": Mission Gorge's south wall then stood its full real height from
+    #                             22 m out but 1.1-1.9 m short at 18-20 m — the built walk + apron (2.8 m) covers the real
+    #                             wall's toe, so a batter as gentle as the face itself starts it 2-3 m late. The batter is a
+    #                             bound, never a target (the ground is 3DEP wherever 3DEP stands under it): the steepest the
+    #                             construction range allows (fractured rock 0.5:1) binds only where the built pavement
+    #                             overlaps the real wall
 }
 
 
@@ -551,6 +559,8 @@ def detect_cuts(pieces: dict, ac: dict, probes, height):
                 p90 = st_[min(len(st_) - 1, int(0.9 * len(st_)))]
                 sl = max(prm["cut_slope_min"], min(prm["cut_slope_max"], p90))
                 sl = round(round(sl / prm["batter_step"]) * prm["batter_step"], 2)
+                if prm["batter"] == "max":
+                    sl = float(prm["cut_slope_max"])
                 if parts and parts[-1]["slope"] == sl:
                     parts[-1]["rs"] += rs
                     parts[-1]["p90"] = max(parts[-1]["p90"], p90)
@@ -572,8 +582,9 @@ def detect_cuts(pieces: dict, ac: dict, probes, height):
                     "why": f"ledger 0054 P3 repair round 1 (auto cut): fresh 3DEP stands up to {ptop:.1f} m over the road "
                            f"{prm['probe_from_curb_m']:.0f}-{prm['probe_to_curb_m']:.0f} m past the {sd} curb, piece s "
                            f"{pt['rs'][0]['s']:.0f}-{pt['rs'][-1]['s']:.0f} (a stretch of s {a:.0f}-{b:.0f}, up to "
-                           f"{top:.1f} m); the real face climbs {pt['p90']:.2f} m per metre (p90), batter "
-                           f"{pt['slope']} (docs/ROAD-CONSTRUCTION.md 1-2)"})
+                           f"{top:.1f} m); the real face climbs {pt['p90']:.2f} m per metre (p90); batter "
+                           f"{pt['slope']} ({'the construction maximum, a bound only' if prm['batter'] == 'max' else 'the face own'}"
+                           f", docs/ROAD-CONSTRUCTION.md 1-2)"})
     return zones, stations
 
 

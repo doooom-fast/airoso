@@ -310,6 +310,67 @@ def _weld_t_junctions(bm, tol=0.001):
     return len(by_face)
 
 
+def _collinear_middle(pts, tol=1e-3, end=1e-3):
+    """ledger 0054 P3 repair round 1 (airoso tools/terrain_mend.collinear_middle, the same rule): the index of the one
+    of three plan points lying on the segment between the other two (within tol of the line, strictly inside), or None"""
+    for k in range(3):
+        a, m, b = pts[(k + 1) % 3], pts[k], pts[(k + 2) % 3]
+        ex, ey = b[0] - a[0], b[1] - a[1]
+        L = math.hypot(ex, ey)
+        if L < 10 * tol:
+            continue
+        t = ((m[0] - a[0]) * ex + (m[1] - a[1]) * ey) / (L * L)
+        d = abs((m[0] - a[0]) * ey - (m[1] - a[1]) * ex) / L
+        if end < t < 1.0 - end and d <= tol and min(t, 1.0 - t) * L > tol:
+            return k
+    return None
+
+
+def _mend_vertical_slivers(bm, rounds=6):
+    """ledger 0054 P3 repair round 1 (airoso tools/terrain_mend.mend_vertical_slivers, the same mend): the corridor
+    subdivision leaves a T-vertex m on a coarser face's straight edge a-b, and the BEAUTY triangulation after it may cut
+    the ear (a, m, b) — no plan area; the pin / feather then moves m off the line and the ear stands up as a one-sided
+    vertical fin over a crack (sky through the ground from half the directions; 262 such faces within 80 m of Lake
+    Murray's north roads after the author stage had mended its own). Here, BEFORE anything moves (the surface is still
+    the old faces' planes), the edge a-b is rotated inside the quad it makes with the face across it — no vertex moves or
+    is added — or the ear deleted on the open edge. Returns the number mended."""
+    import bmesh
+    n = 0
+    for _r in range(rounds):
+        rot, dele, used = [], [], set()
+        for f in bm.faces:
+            if len(f.verts) != 3:
+                continue
+            vs = list(f.verts)
+            k = _collinear_middle([(v.co.x, v.co.y) for v in vs])
+            if k is None:
+                continue
+            m = vs[k]
+            e = next((e for e in f.edges if m not in e.verts), None)
+            if e is None:
+                continue
+            others = [g for g in e.link_faces if g is not f]
+            if not others:
+                if f not in used:
+                    used.add(f)
+                    dele.append((f, e))
+                continue
+            if len(others) == 1 and len(others[0].verts) == 3 and f not in used and others[0] not in used:
+                used.update((f, others[0]))
+                rot.append(e)
+        if not rot and not dele:
+            break
+        if rot:
+            n += len(bmesh.ops.rotate_edges(bm, edges=rot, use_ccw=False).get("edges") or [])
+        if dele:
+            bmesh.ops.delete(bm, geom=[f for f, _e in dele], context="FACES_ONLY")
+            loose = [e for _f, e in dele if e.is_valid and not e.link_faces]
+            if loose:
+                bmesh.ops.delete(bm, geom=loose, context="EDGES")
+            n += len(dele)
+    return n
+
+
 def xsplit_interp(u, v, sw, se, ne, nw, c):
     """Pure (no bpy): the value at (u, v) in [0, 1]^2 of a cell split in four around its centre — linear on the
     S (sw, se, c), E (se, ne, c), N (ne, nw, c) or W (nw, sw, c) triangle holding the point. The same surface the
@@ -981,6 +1042,9 @@ def _conform_and_reseat(proj: Path, spans):
             bmesh.ops.subdivide_edges(bm, edges=todo, cuts=1)
             n_sub += len(todo)
         bmesh.ops.triangulate(bm, faces=bm.faces)
+        n_mend = _mend_vertical_slivers(bm)
+        if n_mend:
+            print(f"[build_kn5_loop] vertical slivers: {n_mend} T-vertex ears of the corridor subdivision mended")
         # 2. pin + feather (all distances HORIZONTAL — bench-cut ground is legitimately metres low)
         for v in bm.verts:
             x, y, z = v.co.x, v.co.y, v.co.z

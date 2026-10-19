@@ -246,7 +246,7 @@ for (pid, s_, side), r in sorted(st_all.items()):
         if not win:
             continue
         real = max(t[1] - r["road_3dep"] for t in win)
-        built = max(t[2] + elev0 - r["road_built"] for t in win)
+        built = max(t[2] - r["road_built"] for t in win)            # both local (the 3DEP pair is absolute)
         wall_rows.append({"piece": pid, "s": s_, "side": "left" if side > 0 else "right", "band": tag,
                           "real_m": round(real, 2), "built_m": round(built, 2)})
 wa = {}

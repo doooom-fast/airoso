@@ -84,8 +84,12 @@ def test_auto_cuts_declare_a_padded_raise_only_zone_over_a_wall():
         assert z["line"] == "north_mission_gorge" and z["piece"] == "C"
         assert gr.AUTO_DEFAULTS["cut_slope_min"] <= z["cut_slope"] <= gr.AUTO_DEFAULTS["cut_slope_max"]
         assert z["measured"]["max_rise_m"] >= gr.AUTO_DEFAULTS["min_rise_m"]
-    # the face climbs 1.5 m per metre: the batter is read off it (windowed, rounded to 0.25)
-    assert max(z["cut_slope"] for z in right) == 1.5
+    # the batter is the construction maximum (a bound only); the face's own climb (1.5 m per metre) is recorded
+    assert all(z["cut_slope"] == gr.AUTO_DEFAULTS["cut_slope_max"] for z in right)
+    assert max(z["measured"]["face_p90_m_per_m"] for z in right) == 1.5
+    # ...and with batter "face" the face's own climb is the batter (windowed, rounded to 0.25)
+    zf, _ = gr.detect_cuts(pcs, dict(ac, batter="face"), probes, _ground(150.0, 250.0))
+    assert max(z["cut_slope"] for z in zf if z["sides"] == ["right"]) == 1.5
 
 
 def test_auto_cuts_hold_the_batter_to_the_construction_range_and_ignore_a_bump():
@@ -213,3 +217,19 @@ def test_a_raise_only_cut_keeps_the_prep_contact_band_buries_the_apron_and_colla
     prep = (ROOT / "tracks" / "san-diego-lake-murray" / "engine-july-snapshot" / "scripts" / "ac" /
             "build_kn5_loop.py").read_text(encoding="utf-8")
     assert "BAND_M = 3.0" in prep and "FEATHER_M = 6.0" in prep          # the numbers it copies
+
+
+def test_the_kn5_prep_mends_its_own_corridor_slivers_before_anything_moves():
+    """the author stage left 31 vertical faces near the north roads; the kn5 prep's corridor subdivision (a T-vertex on
+    a coarser face's edge, BEAUTY after it) made 262 more in the gate OBJ — the snapshot prep mends them right after
+    that triangulation, before the pin / feather move a vertex, by the same rule as tools/terrain_mend.py"""
+    prep = (ROOT / "tracks" / "san-diego-lake-murray" / "engine-july-snapshot" / "scripts" / "ac" /
+            "build_kn5_loop.py").read_text(encoding="utf-8").replace("\r\n", "\n")
+    assert "def _collinear_middle(pts, tol=1e-3, end=1e-3):" in prep and "def _mend_vertical_slivers(bm, rounds=6):" in prep
+    i = prep.index("bmesh.ops.subdivide_edges(bm, edges=todo, cuts=1)")
+    j = prep.index("bmesh.ops.triangulate(bm, faces=bm.faces)", i)
+    k = prep.index("n_mend = _mend_vertical_slivers(bm)", j)
+    assert k < prep.index("# 2. pin + feather", j)
+    assert tm.LINE_TOL_M == 1e-3 and tm.END_FRAC == 1e-3                # the two copies' tolerances agree
+    pend = (ROOT / "tracks" / "san-diego-lake-murray" / "engine-july-snapshot" / "PENDING-MIRROR.md5").read_text()
+    assert "scripts/ac/build_kn5_loop.py" in pend                        # still to mirror into engine-july

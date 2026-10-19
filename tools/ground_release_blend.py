@@ -386,6 +386,7 @@ def main():
     RF = _refine_field(proj)
     n_ramp_ref = 0
     n_held_pin = 0
+    n_walk_seat = 0
     pits = set()
     # raise-only cuts: the ground a vertex "had" is the LOWEST sheet at its plan point (the seat's vertical curtains put
     # two vertices on one plan point at different heights; raising each from its own left the curtain standing — 780
@@ -423,6 +424,21 @@ def main():
                     v.co.z = min(ht) - CLEAR_M
                     pits.add(v.index)
                     n_held_pin += 1
+                elif (zone.get("raise_only") and ht and flat_road is not None
+                      and not _hits(road_only, x, y, 10000.0, -1000.0)):
+                    # repair round 1: under the WALK (not the road) in a raise-only cut, exactly what the prep does to
+                    # such ground outside a zone (it leaves a zone's alone): its contact feather toward the nearest
+                    # road deck, then its anti-poke under the lowest sheet over it — so the ground under the curb and
+                    # the walk stands where it does on every other street (left at the seat's height, a face from a
+                    # vertex under the curb top to one under the gutter stood 2-4 cm over the road: soft tops)
+                    nr = flat_road.find_nearest((x, y, 0.0), PREP_BAND_M + PREP_FEATHER_M)
+                    if nr[0] is not None:
+                        d2 = nr[3]
+                        wb = 1.0 if d2 <= PREP_BAND_M else GR.smoothstep(1.0 - (d2 - PREP_BAND_M) / PREP_FEATHER_M)
+                        n3 = road_only.find_nearest((x, y, z))
+                        if n3[0] is not None:
+                            v.co.z = min((n3[0].z - CLEAR_M) * wb + z * (1.0 - wb), min(ht) - CLEAR_M)
+                            n_walk_seat += 1
                 held[v.index] = z
                 continue
             t = D
@@ -1005,6 +1021,7 @@ def main():
                       "zone_cut_slope": {n: z.get("cut_slope") for n, z in zone_rec.items() if z.get("cut_slope")},
                       "raise_only": sorted(n for n, z in zone_rec.items() if z.get("raise_only"))},
            "vertical_slivers_mended": {"after_halving": mend0, "after_heights": mend1},
+           "raise_only_under_walk_seated_as_the_prep": n_walk_seat,
            "auto_zones_that_moved_nothing": idle_auto,
            "held_pits_lifted_under_the_pavement": n_held_pin, "coincident_faces_removed": n_coinc,
            "coincident_vertices_welded": n_weld, "zero_area_faces_dissolved": n_degen, "zero_area_faces_left": n_degen_left,

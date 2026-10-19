@@ -212,6 +212,125 @@ def balanced_face_tiles(centers, face_verts, cap=SPLIT_CAP):
     return out
 
 
+def _export_vertex_keys(me):
+    """Per polygon of ``me`` TRIANGULATED as the kn5 writer triangulates it, the writer's vertex keys of its corners.
+    The writer that runs (blender-assetto-corsa-tools exporter/node_writer.py _split_object_by_materials) takes
+    obj.to_mesh(), bmesh.ops.triangulate(faces=all) with its defaults, calc_loop_triangles, calc_tangents, and emits one
+    kn5 vertex per unique (position, loop normal, uv, tangent) of a triangle corner, compared as exact floats; past 2**16
+    it splits the mesh into meshes of ONE name, which AC drops from collision. A flat-shaded box beam whose quads are a
+    hair off planar is two normals per quad corner after the triangulation: the median barriers' 1WALL_guard, 15,136
+    Blender vertices and 48,200 corner keys untriangulated, was 65,251 kn5 positions on the v0.19.0 repair round 1 build
+    and 67,447 (two meshes of one name, verify_kn5 "DUPLICATE physical mesh '1WALL_guard' x2") after repair round 2 gave
+    two more north islands their barrier (ledger 0054). Returns (keys per triangle, the triangulated temporary mesh's
+    polygon centres)."""
+    import bmesh
+    import bpy
+
+    tmp = bpy.data.meshes.new("__writer_count")
+    try:
+        bm = bmesh.new()
+        bm.from_mesh(me)
+        bmesh.ops.triangulate(bm, faces=bm.faces[:])
+        bm.to_mesh(tmp)
+        bm.free()
+        tmp.calc_loop_triangles()
+        try:
+            tmp.calc_tangents()
+            tang = True
+        except Exception:
+            tang = False
+        uvl = tmp.uv_layers.active
+        loops, verts = tmp.loops, tmp.vertices
+        keys = []
+        for tri in tmp.loop_triangles:
+            ks = []
+            for li in tri.loops:
+                lp = loops[li]
+                ks.append((tuple(verts[lp.vertex_index].co), tuple(lp.normal),
+                           tuple(uvl.data[li].uv) if uvl is not None else None,
+                           tuple(lp.tangent) if tang else None))
+            keys.append(ks)
+        centres = [(tuple(p.center)[0], tuple(p.center)[1]) for p in tmp.polygons]
+        return keys, centres
+    finally:
+        bpy.data.meshes.remove(tmp)
+
+
+def export_vertex_count(face_keys):
+    """Pure (no bpy): the number of kn5 vertices the writer emits for these per-polygon corner keys."""
+    return len({k for ks in face_keys for k in ks})
+
+
+def _split_for_writer(ob, cap=SPLIT_CAP):
+    """Split a mesh whose WRITER vertex count (_export_vertex_keys) is over VERT_CAP into uniquely-named tiles
+    (base_0, base_1, ...) of at most ``cap`` writer vertices each (balanced_face_tiles over the corner keys). The mesh is
+    first triangulated exactly as the writer would (so its own triangulation is then a no-op and the count is the
+    writer's); each tile keeps its triangles' uvs, smooth flags and materials. Runs after the per-mesh pass (UVs, flips,
+    shading final). Returns the tile objects ([] when the mesh fits)."""
+    import bmesh
+    import bpy
+
+    me = ob.data
+    # the writer emits at most one vertex per TRIANGLE corner (a quad is 6, not 4): fewer than the cap fit for certain
+    if sum(3 * (len(p.vertices) - 2) for p in me.polygons) <= VERT_CAP:
+        return []
+    keys, _c = _export_vertex_keys(me)
+    n = export_vertex_count(keys)
+    if n <= VERT_CAP:
+        return []
+    bm = bmesh.new()
+    bm.from_mesh(me)
+    bmesh.ops.triangulate(bm, faces=bm.faces[:])
+    bm.to_mesh(me)
+    bm.free()
+    me.update()
+    keys, centres = _export_vertex_keys(me)                 # a no-op triangulation now: the same triangles, in order
+    if len(keys) != len(me.polygons):
+        raise SystemExit(f"[build_kn5_loop] FATAL: {ob.name}: {len(keys)} writer triangles vs {len(me.polygons)} "
+                         f"polygons after the triangulation")
+    polys = list(me.polygons)
+    groups = balanced_face_tiles(centres, keys, cap)
+    uvl = me.uv_layers.active
+    base = ob.name
+    tiles = []
+    for k, g in enumerate(groups):
+        used, nv, nf, smooth, mats, fuv = {}, [], [], [], [], []
+        for fi in g:
+            poly = polys[fi]
+            idx = []
+            for vi in poly.vertices:
+                if vi not in used:
+                    used[vi] = len(nv)
+                    nv.append(tuple(me.vertices[vi].co))
+                idx.append(used[vi])
+            nf.append(idx)
+            smooth.append(poly.use_smooth)
+            mats.append(poly.material_index)
+            if uvl is not None:
+                fuv.append([tuple(uvl.data[li].uv) for li in poly.loop_indices])
+        nm = bpy.data.meshes.new(f"{base}_{k}")
+        nm.from_pydata(nv, [], nf)
+        nm.update()
+        for m in me.materials:
+            nm.materials.append(m)
+        for poly, sm, mi in zip(nm.polygons, smooth, mats):
+            poly.use_smooth = sm
+            poly.material_index = mi
+        if uvl is not None:
+            nuv = nm.uv_layers.new(name=uvl.name)
+            for poly, uvs in zip(nm.polygons, fuv):
+                for li, u in zip(poly.loop_indices, uvs):
+                    nuv.data[li].uv = u
+        nm.update()
+        nob = bpy.data.objects.new(f"{base}_{k}", nm)
+        bpy.context.scene.collection.objects.link(nob)
+        tiles.append(nob)
+    print(f"[build_kn5_loop] split {base} for the kn5 writer ({len(me.vertices)} Blender vertices, {n} writer "
+          f"vertices > {VERT_CAP}) -> {len(tiles)} tiles under {cap}")
+    bpy.data.objects.remove(ob, do_unlink=True)
+    return tiles
+
+
 def t_junctions(co, boundary_edges, tol=0.001, cell=5.0):
     """Pure (no bpy): [(edge_index, vert_index, t)] for every vertex lying on the INTERIOR of a boundary edge
     (within ``tol`` in 3D, 0 < t < 1 along it) — a T-junction. ``co`` = [(x, y, z)], ``boundary_edges`` =
@@ -1309,6 +1428,10 @@ def main():
         # loop-path over-cap guard: FATAL (the OBJ program guards in build_kn5.py; this path is its
         # own program and needs its own gate — a WARNING here shipped over-cap meshes before).
         assert_under_cap(ob.name, len(me.vertices))
+        # ...and the count the kn5 WRITER emits (ledger 0054 P3 repair round 2): a mesh past it is tiled under unique
+        # names here, never left to the writer's split into meshes of one name
+        for t in _split_for_writer(ob):
+            assert_under_cap(t.name, export_vertex_count(_export_vertex_keys(t.data)[0]))
     tiles = {}
     for o in bpy.data.objects:
         if o.type == "MESH" and o.name.upper().startswith(TERRAIN_TILES):

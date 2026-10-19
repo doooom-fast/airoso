@@ -19,27 +19,33 @@ mercator and converts each local (x, z) through the loop's own lon/lat series, a
 verification is always on (scripts.tls.https_context). Windows are cached on disk (default
 %LOCALAPPDATA%/airoso/naip_sd3857, never the repo); a cached window is reused only when its bbox and size match.
 
-At every station of the intermediate (pieces[].stations, s every 2.5 m, the station's own left normal):
-  * a cross profile from the right curb + EDGE_CLEAR_M to the left curb - EDGE_CLEAR_M every DL_M, each sample the
-    mean of ALONG_N readings ALONG_STEP_M apart along the road;
-  * yellowness = min(R, G) - B (paint is yellow; asphalt, concrete and shadow are grey; tree canopy is green, its
-    red low), stacked in a smooth frame and read against its
-    own running median over +-HP_HALF_M (a slow tint across the road is not paint);
-  * peaks: local maxima over +-PEAK_HALF_M with a high-passed yellowness >= PEAK_MIN. At NAIP's 0.6 m source
-    pixel a double yellow (two 0.12 m lines 0.24 m apart, ribbon.lane_markings) is ONE peak; a painted median is two.
-The station reading: two peaks MEDIAN_SEP_M apart (the strongest pair whose weaker peak is at least PAIR_RATIO of
-the stronger) = a painted median, its centre their midpoint and its width their distance + 2 * FACE_IN_M (the built
-face's double yellow sits FACE_IN_M inside the face: expansion_pieces.PAIR_IN_M / 2 + 0.06); one peak = a double
-yellow at that offset; none = no reading (shadow, a junction, a crosswalk).
+SAMPLING (profiles(), cached as profiles_<intermediate sha>_*.json.gz beside the windows). At every station of the
+intermediate (pieces[].stations, s every 2.5 m, the station's own left normal) a cross profile over GRID every DL_M,
+each sample the mean of ALONG_N readings ALONG_STEP_M apart along the road, of yellowness = min(R, G) - B (paint is
+yellow; asphalt, concrete and shadow are grey; tree canopy is green, its red low).
 
-Along the road: the readings are smoothed by a running MEDIAN over +-SMOOTH_HALF_M (a single stray peak — a yellow
-car, a curb painted red-orange — cannot move the line), a stretch counts as MEASURED where at least COVER_MIN of the
-stations in that window read, and only measured stretches are written. Raised medians (Waring, Mission Gorge, the
-Fontaine nose) are curbs, not paint: their stations are reported, never written as paint.
+READING (measure()). The station line is OSM's chords with sigma-4 m corners, the real road a smooth curve, so in the
+station frame the real paint wanders by the chords' sagitta (up to ~2.5 m on Jackson): every profile is re-read about
+the station line smoothed by a gaussian of FRAME_SIGMA_M (smooth_frame), the profiles within +-SMOOTH_HALF_M are
+averaged (a single shadow, car or crack cannot make a line), and the mean profile between the curbs less
+CENTRE_CLEAR_M each side is read:
+  * yellow stretches (segments()): at least SEG_MIN and half the profile's peak over its own median (the asphalt);
+  * read_segments(): the stretch nearest the expected centre and a partner MEDIAN_SEP_M from it (at least PAIR_RATIO
+    of its strength) = a painted median's two faces, its centre their midpoint and its width their distance +
+    2 * FACE_IN_M (the built face's double yellow sits FACE_IN_M inside the face: expansion_pieces.PAIR_IN_M / 2 +
+    0.06); one stretch at least MERGED_W_M wide = a narrow median whose faces blur into one (each face BLUR_M inside
+    its half-height edge); a reading narrower than MEDIAN_MIN_M, or one narrow stretch, = one double yellow at its
+    centroid; nothing = no reading (shadow, a junction, a crosswalk).
+Along the road (clean()): a reading more than SANITY_M off the intermediate's own centre is not centre paint (a painted
+curb return at a side street); one more than OUTLIER_M off the running median of its neighbours over +-OUTLIER_HALF_M
+is dropped; a run of one kind shorter than KIND_MIN_M between runs of the other is dropped; gaps up to GAP_MAX_M
+between readings of one kind are interpolated; longer gaps keep the intermediate's values. Every station is measured,
+raised medians included: tools/author_expansion.py decides what it takes (the undivided roads' paint, and the outline
+of the raised islands the aerial shows, MEASURED_ISLANDS).
 
-Writes source/expansion/aerial__paint_north.json: per piece, per station s the measured centre offset (+ = left of
-the J-order direction, the intermediate's frame), the width (0 = a double yellow), the kind, the support, plus the
-NAIP windows' provenance. Every threshold here is [invented] and listed in fleet/GATES-CHANGELOG.md (2026-10-19
+Writes source/expansion/aerial__paint_north.json: per piece, per station s the stretches read (smooth frame), the frame
+offset, and `use` = {kind, centre_off_m (+ = left of the J-order direction, the intermediate's frame), width_m (0 = a
+double yellow), how: read / interpolated} or why it was dropped, plus the NAIP windows' provenance. Every threshold here is [invented] and listed in fleet/GATES-CHANGELOG.md (2026-10-19
 repair round 2).
 """
 from __future__ import annotations

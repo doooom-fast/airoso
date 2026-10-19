@@ -17,6 +17,12 @@ carriageway of each direction) at a station along them, looking ahead along the 
                   and its guardrail beside the lane, the far ridge and the summit ahead (repair round 1, the view lens: from
                   s 1865 the near cut bank filled the frame)
   jackson_walls   fwd, Jackson north climbing at its s 1330 (the 1225-1525 cut wall on the right)
+  jackson_paint   fwd, Jackson north at its s 960, 90 m up the climb: the painted median where the aerial has it, left
+                  of the road's middle (one lane down, two up) (repair round 2)
+  pv_fontaine     fwd, Princess View at its s 365, toward the Fontaine St island (s 399-535) (repair round 2)
+  pv_centre_lane  fwd, Princess View at its s 850: the 5-6 m painted centre lane (repair round 2)
+  mg_south_face   fwd, Mission Gorge at its s 1465, the south rock face on the right rising from the back of the walk
+                  (repair round 2)
   stub_eldridge   fwd on Waring at Eldridge St, looking right into the barrier-closed stub
   stub_margerum   fwd on Mission Gorge at Margerum Ave, looking right into the barrier-closed stub
   j1_freeroam     the loop northbound on College 3 m right of the centre at v1500, straight on into Waring (W1)
@@ -106,6 +112,11 @@ SHOTDEF["j3"] = lambda: line_at_near("fwd", piece_xz("B", 1035.0), 60.0)[:2]
 SHOTDEF["j4"] = lambda: line_at_near("fwd", piece_xz("C", 2205.0), 60.0)[:2]
 SHOTDEF["mg_cowles"] = lambda: (line_at_near("rev", piece_xz("C", 2150.0), 0.0)[0], COWLES, True)
 SHOTDEF["jackson_walls"] = lambda: line_at_near("fwd", piece_xz("D", 1330.0), 80.0)[:2]
+# repair round 2: the paint and islands measured off NAIP, and Mission Gorge's south face
+SHOTDEF["jackson_paint"] = lambda: line_at_near("fwd", piece_xz("D", 960.0), 90.0)[:2]
+SHOTDEF["pv_fontaine"] = lambda: line_at_near("fwd", piece_xz("B", 365.0), 70.0)[:2]
+SHOTDEF["pv_centre_lane"] = lambda: line_at_near("fwd", piece_xz("B", 850.0), 80.0)[:2]
+SHOTDEF["mg_south_face"] = lambda: line_at_near("fwd", piece_xz("C", 1465.0), 70.0)[:2]
 
 
 def _stub_shot(prefix, back):

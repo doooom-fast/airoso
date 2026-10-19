@@ -8,7 +8,8 @@ eye readings, the loop centreline, the cached 3DEP samples) and holds what EXPAN
   * the two weld openings within V3's vertex extents (J1 v1512-1532 running past box end v1521, J5 v2311-2323
     inside box 2311-2328), the weld stubs' swept edges within 0.5 m of their authored curbs; J1's rehearsed stub
     with Waring's straight curbs (opening v1514-v1520.4) and the R 30 return's area as apron AP1 (P3);
-  * the medians per A2 (Princess View only the Fontaine nose raised; Jackson flush only, hatched into J4);
+  * the medians per A2 as the aerial measured them (repair round 2): Princess View's two raised islands, Jackson's J4
+    approach island, the rest flush paint (hatched into J4);
   * every aerial width station built at its eye reading.
 Plain ``test_*`` for tests/run_tests.py (the offline build takes ~5 s).
 """
@@ -57,7 +58,7 @@ def test_offline_refuses_to_fetch_a_missing_sample():
             (tr / sub).mkdir(parents=True)
         for f in ("centerline.local.json", "osm.expansion.json"):
             shutil.copy(TRACK / "data" / f, tr / "data" / f)
-        for f in ("aerial__widths_eye.csv", "revise__measure.json"):
+        for f in ("aerial__widths_eye.csv", "revise__measure.json", "aerial__paint_north.json"):
             shutil.copy(TRACK / "source" / "expansion" / f, tr / "source" / "expansion" / f)
         try:
             mod.build(tr, offline=True)
@@ -132,10 +133,16 @@ def test_medians_per_a2():
     by = {}
     for m in d["medians"]:
         by.setdefault(m["piece"], []).append(m)
-    assert [(m["type"], m["raised"]) for m in by["B"]] == [("nose", True)]
-    assert 495 <= by["B"][0]["s_from"] and by["B"][0]["s_to"] <= 560
-    assert all(not m["raised"] for m in by["D"]) and by["D"][0]["type"] == "hatched"
-    assert by["D"][0]["s_to"] <= 185
+    # repair round 2: the raised islands where the aerial shows them (MEASURED_ISLANDS), the rest flush paint
+    raised_b = [(m["type"], m["s_from"], m["s_to"]) for m in by["B"] if m["raised"]]
+    assert [t for t, *_ in raised_b] == ["nose", "planted"]
+    assert 398 <= raised_b[0][1] and raised_b[0][2] <= 536 and 611 <= raised_b[1][1] and raised_b[1][2] <= 701
+    assert all(m["type"] == "painted" for m in by["B"] if not m["raised"])
+    raised_d = [m for m in by["D"] if m["raised"]]
+    assert len(raised_d) == 1 and raised_d[0]["type"] == "nose" and raised_d[0]["s_to"] <= 119
+    flush_d = [m for m in by["D"] if not m["raised"]]
+    assert flush_d[0]["type"] == "hatched" and flush_d[0]["s_to"] <= 185
+    assert all(m["type"] == "painted" for m in flush_d[1:])
     assert all(m["type"] == "planted" for m in by["A"]) and all(m["type"] == "terracotta" for m in by["C"])
     for m in by["C"]:                                                       # the two crossovers stay open
         assert not (m["s_from"] <= 174 <= m["s_to"]) and not (m["s_from"] <= 202 <= m["s_to"])

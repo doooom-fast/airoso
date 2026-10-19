@@ -49,7 +49,8 @@ bodies (which read the ground under each deck):
      lower, except down to the cut batter where the ground stood over it at the pavement edge — and its batter is the
      zone's own cut_slope (the steepest the real face climbs there, 1-2 m per metre)
      instead of BATTER_CUT, measured from the back of the WALK (repair round 2), not from the foot of the walk's buried
-     apron: the face climbs from the walk's own edge and buries the apron. After the halving and after the heights, every vertical sliver the halving's n-gons left
+     apron: the face climbs from the walk's own edge and buries the apron — the ground under nothing but the apron is
+     released with it (not held at the prep's feather as under the walk). After the halving and after the heights, every vertical sliver the halving's n-gons left
      (a T-vertex on a face's straight edge, tools/terrain_mend.py) is mended: no fin, no crack.
 Self-checks (exit 1, loop.blend NOT saved): a zone that moved nothing; a released vertex left above the deck over it;
 a face with a released vertex standing over a ROAD / CURB surface anywhere over its area (raster); a rail vertex over a
@@ -102,6 +103,9 @@ PREP_BAND_M = 3.0     # engine-july build_kn5_loop BAND_M (the prep's full-conta
 PREP_FEATHER_M = 6.0  # engine-july build_kn5_loop FEATHER_M (its smoothstep blend beyond the shelf)
 APRON_NZ = 0.985      # [invented] repair round 1: a CURB face sloping more than this (|normal z| under it: ~10 deg, the
 #                       walk's own 0.28 m-per-metre apron at 0.96; a walk top on a 15 % hill at 0.989) is the buried apron
+APRON_ROAD_MIN_M = 1.0 # [invented] repair round 2: ground under a sloping CURB face counts as under the walk's buried apron
+#                       only this far or more from the road (the walk lies between): the curb's own lip by the gutter is
+#                       never released
 FACE_STEP_M = 0.25    # [invented] raster step of the per-face pavement cap (zone faces are <= ~2.5 m)
 FACE_TOL_M = 0.003    # [invented] the self-check: no released face more than this OVER the pavement (the cap holds the
 #                       corners CLEAR_M under its lowest point; a curb edge's own camber may eat into that clearance)
@@ -393,6 +397,7 @@ def main():
     n_ramp_ref = 0
     n_held_pin = 0
     n_walk_seat = 0
+    n_apron_released = 0
     pits = set()
     # raise-only cuts: the ground a vertex "had" is the LOWEST sheet at its plan point (the seat's vertical curtains put
     # two vertices on one plan point at different heights; raising each from its own left the curtain standing — 780
@@ -414,6 +419,17 @@ def main():
             continue
         hs = _hits(deck, x, y, 10000.0, -1000.0)
         under = bool(hs)
+        if (under and zone.get("raise_only") and not _hits(top_walk, x, y, 10000.0, -1000.0)
+                and not (road_only is not None and _hits(road_only, x, y, 10000.0, -1000.0))
+                and flat_road is not None and (flat_road.find_nearest((x, y, 0.0), APRON_ROAD_MIN_M)[0] is None)):
+            # repair round 2: under nothing but the walk's buried APRON in a raise-only cut, the ground is released like
+            # the ground beside it (the batter from the back of the walk, never lower than it had): the apron is buried,
+            # as it is behind every walk on the loop. Held at the prep's feather under it, the cut face started 1.1 m out
+            # and 0.3 m down behind a walk the real rock rises straight from (Mission Gorge's south face, s 1495 / 1530:
+            # 1.1 m short 18-20 m out after the batter's origin moved to the walk)
+            under = False
+            hs = []
+            n_apron_released += 1
         if zone["kind"] == "bank":
             if under:
                 # in the zone, under the pavement: held CLEAR_M under its LOWEST upward sheet, here. The prep pins the
@@ -1038,6 +1054,7 @@ def main():
            "vertical_slivers_mended": {"after_halving": mend0, "after_heights": mend1},
            "raise_only_under_walk_seated_as_the_prep": n_walk_seat,
            "raise_only_batter_from_the_walk_edge": n_walk_origin,
+           "raise_only_released_over_the_buried_apron": n_apron_released,
            "auto_zones_that_moved_nothing": idle_auto,
            "held_pits_lifted_under_the_pavement": n_held_pin, "coincident_faces_removed": n_coinc,
            "coincident_vertices_welded": n_weld, "zero_area_faces_dissolved": n_degen, "zero_area_faces_left": n_degen_left,

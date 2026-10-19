@@ -434,13 +434,39 @@ def main():
     # ---- curb cuts (driveways): the host curb top drops to the lip over the apron
     for cc in plan.get("curb_cuts", []):
         host = cc["host"]
+        st_m = cc["station_m"]
+        if host not in lay:
+            # ledger 0054 P3: a connector host trim renamed (<name>#k): the piece nearest the cut, its own station there
+            cand = [n for n in hosts if n.startswith(host + "#")]
+            if not cand:
+                raise SystemExit(f"[stubs] FATAL: curb cut {cc['id']}: host {host!r} is not in the mesh layout")
+            cx_, cz_ = cc["cut_xz"]
+
+            def _near(n):
+                return min(math.hypot(q[0] - cx_, q[2] - cz_) for q in hosts[n])
+            host = min(cand, key=_near)
+        if host != "MAINLINE":
+            hp_ = hosts[host]
+            ar_ = mw.arc_lengths(hp_)
+            cx_, cz_ = cc["cut_xz"]
+            best_ = None
+            for i_ in range(len(hp_) - 1):
+                dx_, dz_ = hp_[i_ + 1][0] - hp_[i_][0], hp_[i_ + 1][2] - hp_[i_][2]
+                L2_ = dx_ * dx_ + dz_ * dz_
+                if L2_ < 1e-12:
+                    continue
+                t_ = max(0.0, min(1.0, ((cx_ - hp_[i_][0]) * dx_ + (cz_ - hp_[i_][2]) * dz_) / L2_))
+                d_ = math.hypot(cx_ - hp_[i_][0] - t_ * dx_, cz_ - hp_[i_][2] - t_ * dz_)
+                if best_ is None or d_ < best_[0]:
+                    best_ = (d_, ar_[i_] + t_ * (ar_[i_ + 1] - ar_[i_]))
+            st_m = best_[1]
         hb = lay[host]
         hpts = hosts[host]
         arc = mw.arc_lengths(hpts)
         me = curb.data
         moved = 0
         for r in range(hb["rows"]):
-            d = abs(arc[r] - cc["station_m"])
+            d = abs(arc[r] - st_m)
             if _closed(hpts):
                 d = min(d, arc[-1] - d)
             if d > cc["half_span_m"] + cc["flare_m"]:
@@ -519,7 +545,9 @@ def main():
     col = bpy.data.collections.get(COLLECTION) or bpy.data.collections.new(COLLECTION)
     if col.name not in bpy.context.scene.collection.children:
         bpy.context.scene.collection.children.link(col)
-    for ob in [o for o in bpy.data.objects if o.name.upper().startswith(WALL_PREFIX)]:
+    # (a junction pad's stub barriers, 1WALL_STUB_PAD_*, are tools/author_junction_pad_blend.py's — ledger 0054 P3)
+    for ob in [o for o in bpy.data.objects if o.name.upper().startswith(WALL_PREFIX)
+               and not o.name.upper().startswith(WALL_PREFIX + "PAD_")]:
         bpy.data.objects.remove(ob, do_unlink=True)
     def bvh_of(ob):
         me = ob.data

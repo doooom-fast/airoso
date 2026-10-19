@@ -68,7 +68,7 @@ def v2_config(cfg: dict) -> dict:
 def _project(cfg_edit=None) -> Path:
     d = Path(tempfile.mkdtemp())
     (d / "data").mkdir()
-    cfg = v2_config(json.loads((SD / "track.config.json").read_text(encoding="utf-8")))
+    cfg = sd_v0180.loop_config(v2_config(json.loads((SD / "track.config.json").read_text(encoding="utf-8"))))
     # ledger 0055's College chicane is declared on the rebuilt road (one continuous divided run); the data pinned here
     # is the installed v0.18.0 build's (College split in two at v1258-1374) — judged as declared then, without it.
     # tests/tools/test_college_split_0055.py drives a declared chicane on this data where the island IS continuous.
@@ -333,7 +333,7 @@ def test_pinned_closure_runs_that_disagree_with_the_zones_fail():
 def test_a_v1_config_without_a_corridor_is_refused():
     d = Path(tempfile.mkdtemp())
     (d / "data").mkdir()
-    cfg = json.loads((SD / "track.config.json").read_text(encoding="utf-8"))
+    cfg = sd_v0180.loop_config(json.loads((SD / "track.config.json").read_text(encoding="utf-8")))
     cfg["race"].pop("corridor", None)
     (d / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
     for f in ("centerline.local.json", "median_bands.json", "mouths.json", "bridge.spans.auto.json"):

@@ -414,6 +414,19 @@ def check_cut(cc, field, host):
 VM_FIELD = [None]
 
 
+def host_path(hosts, conns, hn, cut_xz):
+    """the host's path as built: MAINLINE, a connector by name, or (ledger 0054 P3) the piece trim renamed <name>#k
+    nearest the cut"""
+    if hn in hosts:
+        return hosts[hn]
+    cand = [c for c in conns if c["name"] == hn or c["name"].startswith(hn + "#")]
+    if not cand:
+        raise LookupError(f"host {hn!r} not found")
+    hc = min(cand, key=lambda c: min(math.hypot(q[0] - cut_xz[0], q[2] - cut_xz[1]) for q in c["points_xyz_m"]))
+    hosts[hn] = VM.Path2(hc["points_xyz_m"], hc["widths_m"])
+    return hosts[hn]
+
+
 def verify(project: Path, obj: Path | None = None, trees_txt: Path | None = None) -> dict | None:
     data = project / "data"
     pp = data / "stubs.plan.json"
@@ -443,14 +456,10 @@ def verify(project: Path, obj: Path | None = None, trees_txt: Path | None = None
         mo = next((m for m in mouths if str(m.get("connector")) == st["connector"] and m.get("piece")), None)
         piece = next((c for c in conns if mo and c["name"] == mo["piece"]), None)
         sb = next((s for s in built.get("stubs", []) if s["id"] == st["id"]), None)
-        hn = st.get("host", "MAINLINE")
-        if hn not in hosts:
-            hc = next((c for c in conns if c["name"] == hn), None)
-            if hc is None:
-                raise LookupError(f"stub {st['id']}: host {hn!r} not found")
-            hosts[hn] = VM.Path2(hc["points_xyz_m"], hc["widths_m"])
-        rows.append(check_stub(st, sb, mo, piece, hosts[hn], field, by_name, data, trees))
-    cut_rows = [check_cut(cc, field, hosts["MAINLINE"]) for cc in plan.get("curb_cuts", [])]
+        rows.append(check_stub(st, sb, mo, piece, host_path(hosts, conns, st.get("host", "MAINLINE"), st["cut_xz"]),
+                               field, by_name, data, trees))
+    cut_rows = [check_cut(cc, field, host_path(hosts, conns, cc.get("host", "MAINLINE"), cc["cut_xz"]))
+                for cc in plan.get("curb_cuts", [])]
     return {"obj": obj.name, "stubs": rows, "curb_cuts": cut_rows,
             "fail": any(r["fail"] for r in rows) or any(r["fail"] for r in cut_rows),
             "thresholds": {"step_max_m_invented": STEP_MAX_M, "obstruct_m_invented": OBSTRUCT_M,

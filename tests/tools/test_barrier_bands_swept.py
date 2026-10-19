@@ -65,6 +65,9 @@ def _project(full: bool = False) -> Path:
     (d / "data" / "connectors.local.json").write_text(json.dumps(base), encoding="utf-8")
     cfg = json.loads((TRACK / ".p1-rehearsal.bak" / "track.config.json").read_text(encoding="utf-8")) \
         if (TRACK / ".p1-rehearsal.bak").exists() else json.loads((TRACK / "track.config.json").read_text(encoding="utf-8"))
+    # (ledger 0054 P3: the config now declares route.aprons for good; these tests judge the stubs without the apron —
+    # its record is a build artefact — and the apron test below declares it itself)
+    cfg.get("route", {}).pop("aprons", None)
     (d / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
     with contextlib.redirect_stdout(io.StringIO()):
         trim.build(d)

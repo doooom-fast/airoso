@@ -30,3 +30,19 @@ def project() -> Path:
     for f in FILES:
         shutil.copyfile(DATA / f, d / "data" / f)
     return d
+
+
+def loop_config(cfg: dict) -> dict:
+    """the current config as the loop-only race tests read it (2026-10-18, ledger 0054 P3): the north network's
+    route.aprons (J1's R 30 return, authored by tools/author_aprons_blend.py into data/aprons.json — a build artefact
+    the pinned v0.18.0 data has none of) taken out; barrier_bands refuses a declared apron without its record. A test
+    that judges the apron declares it itself (tests/tools/test_barrier_bands_swept.py)."""
+    cfg.get("route", {}).pop("aprons", None)
+    # ... and A7's two outside-kerb drops at the north mouths (J1 apex 1514, J5 apex 2319): the loop's own kerb census
+    # (8 kerbs, 2 dropped) is what these tests pin; the swept tests judge A7's drops with the mouths they belong to
+    kerbs = cfg.get("race", {}).get("kerbs") or {}
+    if "trims" in kerbs:
+        kerbs["trims"] = [t for t in kerbs["trims"] if not (t.get("kind") == "outside" and t.get("apex") in (1514, 2319)
+                                                             and "Ledger 0054 A7" in str(t.get("why", "")))]
+    return cfg
+

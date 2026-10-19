@@ -138,6 +138,24 @@ class Zones:
     sides: [+1 (left of travel) / -1 (right)], reach_m}. Left of travel = (-tz, tx)."""
 
     def __init__(self, pts, widths, zones, cell=20.0):
+        # ledger 0054 P3: a zone resolved on a CONNECTOR line (its record carries line / line_xz / line_w, see
+        # resolve_line_zones) is judged on that line by its own Zones; self.zones stays index-aligned with `zones`
+        groups, main_idx = {}, []
+        for i, z in enumerate(zones):
+            if z.get("line_xz"):
+                groups.setdefault(z["line"], []).append(i)
+            else:
+                main_idx.append(i)
+        self._subs = []
+        aligned = [None] * len(zones)
+        for _line, idx in groups.items():
+            z0 = zones[idx[0]]
+            sub = Zones([(x, 0.0, zz) for x, zz in z0["line_xz"]], z0["line_w"],
+                        [{k: v for k, v in zones[i].items() if k not in ("line_xz", "line_w")} for i in idx], cell)
+            self._subs.append(sub)
+            for i, zz in zip(idx, sub.zones):
+                aligned[i] = zz
+        zones = [zones[i] for i in main_idx]
         n = len(pts)
         self.closed = n > 2 and abs(pts[0][0] - pts[-1][0]) < 1e-6 and abs(pts[0][2] - pts[-1][2]) < 1e-6
         self.P = [(p[0], p[2]) for p in pts]
@@ -179,6 +197,10 @@ class Zones:
         for i, (x, z) in enumerate(self.P):
             if any(zz["a"] - LOCATE_M <= self.s[i] <= zz["b"] + LOCATE_M for zz in self.zones):
                 self.grid.setdefault((int(x // cell), int(z // cell)), []).append(i)
+        self.main_zones = self.zones
+        for i, zz in zip(main_idx, self.main_zones):
+            aligned[i] = zz
+        self.zones = aligned
 
     def locate(self, x, z):
         """(i, s, lat): the nearest indexed centreline vertex, the station of the point projected on its tangent, and
@@ -203,15 +225,20 @@ class Zones:
         """(w, zone) — w in [0, 1] (1 inside, smoothstep to 0 over RAMP_M at the zone's ends and outer edge; no ramp at
         an end lying inside another zone on that side), the zone with the largest weight; (0.0, None) outside every zone"""
         rm = RAMP_M
+        best_sub = (0.0, None)
+        for sub in self._subs:
+            w_ = sub.weight(x, z)
+            if w_[0] > best_sub[0]:
+                best_sub = w_
         if not any(b[0] <= x <= b[1] and b[2] <= z <= b[3] for b in self.boxes):
-            return 0.0, None
+            return best_sub
         loc = self.locate(x, z)
         if loc is None:
-            return 0.0, None
+            return best_sub
         i, s, lat = loc
         hw = self.W[i] / 2.0
-        best = (0.0, None)
-        for zz in self.zones:
+        best = best_sub
+        for zz in self.main_zones:
             if not (zz["a"] <= s <= zz["b"]):
                 continue
             # a bank zone starts at the kerb seam; a span zone takes the ground under the whole deck as well
@@ -261,7 +288,62 @@ def station_at_vertex(pts, v: float) -> float:
     return s + (v - i) * math.hypot(pts[i + 1][0] - pts[i][0], pts[i + 1][2] - pts[i][2])
 
 
-def resolve_zones(cfg: dict, pts=None) -> list[dict]:
+def line_resolver(proj: Path):
+    """ledger 0054 P3: resolve a zone declared on a north PIECE (zone keys line = the piece's connector name, piece,
+    piece_s_m = [a, b] in the intermediate's station frame, sides relative to the piece's own J-order travel) onto the
+    connector as data/connectors.local.json has it after trim: (line_xz, line_w, s_m on the connector's own arc, sides
+    relative to the connector's direction). Returns a function zone -> that tuple."""
+    data = proj / "data"
+    conns = json.loads((data / "connectors.local.json").read_text(encoding="utf-8"))["connectors"]
+    cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
+    src = (((cfg.get("route") or {}).get("route_connectors") or {}).get("authored_routes") or {}).get("north")
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import expansion_pieces as ep
+    _doc, pieces = ep.load(proj / src)
+
+    def resolve(z):
+        pc = pieces[z["piece"]]
+        cands = [c for c in conns if c["name"] == z["line"] or c["name"].startswith(z["line"] + "#")]
+        a_, b_ = (float(v) for v in z["piece_s_m"])
+        pa, pb = pc.point(a_), pc.point(b_)
+        best = None
+        for c in cands:
+            P = [(q[0], q[2]) for q in c["points_xyz_m"]]
+            arc = [0.0]
+            for u, v in zip(P, P[1:]):
+                arc.append(arc[-1] + math.hypot(v[0] - u[0], v[1] - u[1]))
+
+            def proj_(pt):
+                bb = None
+                for i in range(len(P) - 1):
+                    dx, dz = P[i + 1][0] - P[i][0], P[i + 1][1] - P[i][1]
+                    L2 = dx * dx + dz * dz
+                    if L2 < 1e-12:
+                        continue
+                    t = max(0.0, min(1.0, ((pt[0] - P[i][0]) * dx + (pt[1] - P[i][1]) * dz) / L2))
+                    d = math.hypot(pt[0] - P[i][0] - t * dx, pt[1] - P[i][1] - t * dz)
+                    if bb is None or d < bb[0]:
+                        bb = (d, arc[i] + t * (arc[i + 1] - arc[i]), (dx, dz))
+                return bb
+            ja, jb = proj_(pa), proj_(pb)
+            if ja is None or jb is None:
+                continue
+            if best is None or ja[0] + jb[0] < best[0]:
+                best = (ja[0] + jb[0], c, ja, jb, P)
+        if best is None or best[0] > 20.0:
+            raise SystemExit(f"[release] zone {z['name']}: no {z['line']} piece runs past piece {z['piece']} "
+                             f"s {a_}-{b_}")
+        _d, c, ja, jb, P = best
+        t = pc.tangent((a_ + b_) / 2.0)
+        dx, dz = ja[2]
+        same = (t[0] * dx + t[1] * dz) >= 0
+        sides = [s_ if same else -s_ for s_ in z["_sides_piece"]]
+        s_m = sorted([round(ja[1], 3), round(jb[1], 3)])
+        return [[round(x, 3), round(zz, 3)] for x, zz in P], [float(w) for w in c["widths_m"]], s_m, sides, c["name"]
+    return resolve
+
+
+def resolve_zones(cfg: dict, pts=None, lines=None) -> list[dict]:
     """The declared zones with their stations on THIS centreline (pts = data/centerline.local.json points). A zone
     names its extent either by station (s_m) or by centreline VERTEX (v: [from, to], fractional) — ledger 0055 round 2:
     a station is a place only while every metre of road before it keeps its length; College's realignment shortened
@@ -275,7 +357,20 @@ def resolve_zones(cfg: dict, pts=None) -> list[dict]:
             sides.append(1 if str(s) in ("left", "1", "+1") else -1 if str(s) in ("right", "-1") else None)
         if None in sides or z.get("kind") not in ("bank", "span"):
             raise SystemExit(f"[release] zone {z.get('name')}: kind must be bank|span, sides left|right")
-        if ("v" in z) == ("s_m" in z):
+        line_rec = None
+        if z.get("line"):
+            # ledger 0054 P3: a zone on a north piece (the cut walls beside Jackson north and Mission Gorge)
+            if lines is None:
+                continue        # resolvable only against a project's connectors (run() passes line_resolver)
+            if z.get("rails", True) or z.get("cut_reach_m") is None:
+                raise SystemExit(f"[release] zone {z['name']}: a line zone must be a declared cut (cut_reach_m, rails "
+                                 f"false) — the rail pass walks the mainline only")
+            line_xz, line_w, s_m, lsides, cname = lines(dict(z, _sides_piece=sides))
+            line_rec = {"line": z["line"], "line_xz": line_xz, "line_w": line_w, "connector": cname,
+                        "piece": z["piece"], "piece_s_m": [float(v) for v in z["piece_s_m"]]}
+            sides = lsides
+            z = dict(z, s_m=s_m)
+        elif ("v" in z) == ("s_m" in z):
             raise SystemExit(f"[release] zone {z.get('name')}: declare its extent by s_m OR by v (centreline vertices)")
         if "v" in z:
             if pts is None:
@@ -286,8 +381,10 @@ def resolve_zones(cfg: dict, pts=None) -> list[dict]:
             s_m = [round(station_at_vertex(pts, va), 3), round(station_at_vertex(pts, vb), 3)]
         else:
             s_m = [float(v) for v in z["s_m"]]
+        if line_rec is not None:
+            s_m = [float(v) for v in z["s_m"]]
         rec = {"name": z["name"], "kind": z["kind"], "s_m": s_m, "sides": sides,
-               "reach_m": float(z["reach_m"]), "why": z.get("why", "")}
+               "reach_m": float(z["reach_m"]), "why": z.get("why", ""), **(line_rec or {})}
         if "v" in z:
             rec["v"] = [float(z["v"][0]), float(z["v"][1])]
         # ledger 0055 (College Ave's cut face): a zone may carry its own cut reach (the batter's plan reach from the
@@ -318,9 +415,12 @@ def resolve_zones(cfg: dict, pts=None) -> list[dict]:
 
 
 def plan_nodes(Z: Zones, cell=CELL_M):
-    """every lattice node within one cell of a point in a zone (scan of the zones' bounding boxes)"""
+    """every lattice node within one cell of a point in a zone (scan of the zones' bounding boxes); a zone on a
+    connector line is scanned on its line's own Zones (ledger 0054 P3)"""
     nodes = set()
-    for zz in Z.zones:
+    for sub in Z._subs:
+        nodes.update(plan_nodes(sub, cell))
+    for zz in Z.main_zones:
         idx = [i for i in range(len(Z.P)) if zz["a"] - RAMP_M <= Z.s[i] <= zz["b"] + RAMP_M]
         if not idx:
             continue
@@ -344,7 +444,9 @@ def run(proj: Path, offline: bool = False) -> dict | None:
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     cl = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
     pts = [tuple(p) for p in cl["points_xyz_m"]]
-    zones = resolve_zones(cfg, pts)
+    lines = line_resolver(proj) if any(z.get("line") for z in ((cfg.get("terrain") or {}).get("ground_release")
+                                                              or {}).get("zones") or []) else None
+    zones = resolve_zones(cfg, pts, lines)
     out_p = data / "ground_release.json"
     if not zones:
         if out_p.exists():

@@ -224,6 +224,20 @@ def _island_half(mo, host_path, data, s):
             best = min(range(len(ci["points_xyz_m"])),
                        key=lambda k: math.hypot(ci["points_xyz_m"][k][0] - x, ci["points_xyz_m"][k][2] - z))
             k0 = max(0, best - 2)
+            if ci.get("offset_aware"):
+                # ledger 0054 P3: a north piece's raised median stands off the host's centre line (median_off_m) —
+                # its reach on the mouth's side is its own lateral + its half-width, point by point
+                side = int(mo.get("side", 1))
+                (_x, _z), _t, (nx, nz), _w = host_path.frame(s)
+                ext = 0.0
+                for k in range(k0, min(len(ci["points_xyz_m"]), best + 3)):
+                    w_ = ci["island_w_by_point"][k]
+                    if w_ <= 0:
+                        continue
+                    q = ci["points_xyz_m"][k]
+                    lat = (q[0] - x) * nx + (q[2] - z) * nz
+                    ext = max(ext, side * lat + w_ / 2.0)
+                return ext
             return max(ci["island_w_by_point"][k0:best + 3]) / 2.0
     return 0.0
 

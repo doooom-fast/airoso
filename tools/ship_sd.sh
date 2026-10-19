@@ -169,6 +169,8 @@ for f in $TRACK_TEXTURES; do
   [ -f "$SRC/$f" ] && { mkdir -p "$(dirname "$PROJ/$f")"; cp "$SRC/$f" "$PROJ/$f"; }
 done
 mkdir -p "$PROJ/source/trees" && cp "$SRC/source/trees/"*.bin "$PROJ/source/trees/" 2>/dev/null || true   # TreeFX models (gitignored, personal use)
+# ledger 0054 P3: the junction pads' 3DEP cache (tools/junction_pad.py plan; data with provenance, L2)
+[ -f "$SRC/data/pads.3dep.json" ] && cp "$SRC/data/pads.3dep.json" "$PROJ/data/pads.3dep.json"
 # PHASE 5 side-road stubs (ledger 0054), opt-in: a declaration is synced down with its 3DEP cache; without one, no stub
 # file of an earlier run survives in the project (the audit's barrier exemption reads stubs.built.json)
 STUBS="${STUBS:-$SRC/stubs.json}"
@@ -220,6 +222,15 @@ if [ "$SKIP_BLEND" = 0 ]; then
   fi
   step "draft: trim connectors at the mainline edge"
   (cd "$AIROSO" && python tools/trim_connectors.py "$PROJ")
+  step "draft: the north pieces' authored paint + raised medians (tools/expansion_pieces.py decorate; none taken = no-op)"
+  # ledger 0054 P3: per point of every north piece as trim left it, its paint (connector record `paint`, scripts-v021
+  # ribbon.paint_markings — the assembler and the weld both read it) and its raised medians (median_bands.json
+  # connector_islands, named after the piece); with route_connectors.authored_take naming no piece it prints one line
+  (cd "$AIROSO" && python tools/expansion_pieces.py decorate "$PROJ")
+  step "draft: junction pads plan (tools/junction_pad.py: the J2-J4 pads on the roads as built, the stubs' far-edge 3DEP; none declared = no-op)"
+  # ledger 0054 P3 step 2: route.junction_pads -> data/pads.plan.json (each route arm's piece + end, each stub arm's far
+  # edge at 3DEP, cached in data/pads.3dep.json, TLS verified); tools/author_junction_pad_blend.py builds it below
+  (cd "$AIROSO" && python tools/junction_pad.py plan "$PROJ")
   step "draft: tiered terrain re-planned on the trimmed connectors (only new vertices fetched)"
   (cd "$AIROSO" && python -m scripts.elevation.terrain_sample "$PROJ")
   step "draft: rebuild loop.blend with trimmed connectors"
@@ -236,6 +247,11 @@ if [ "$SKIP_BLEND" = 0 ]; then
   # 1ROAD_apron_<id> + 1KERB_sidewalk_ap<id>, the stub's curb on it removed, the ground seated; data/aprons.json for
   # gap_mouths / barrier_bands / verify_mouths / make_treefx / author_lamps. Exit 1 = loop.blend not saved
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_aprons_blend.py" -- "$PROJ" 2>&1 | grep "^\[apron\]\|Error\|Traceback" )
+  step "author: junction pads (tools/author_junction_pad_blend.py: one deck per crossroads welded onto its arms, curb returns, K-rail stubs, the ground seated; self-checked; none planned = no-op)"
+  # ledger 0054 P3 step 2 (EXPANSION-PLAN A4, docs/JUNCTIONS.md topology B): 1ROAD_pad_<id> + 1KERB_sidewalk_pad<id> +
+  # 1WALL_STUB_PAD_<id>_<stub>; data/pads.built.json for audit_mesh (the barriers' D exemption) and verify_pads. Exit 1 =
+  # loop.blend not saved
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_junction_pad_blend.py" -- "$PROJ" 2>&1 | grep "^\[pads\]\|Error\|Traceback" )
   # (the far-terrain decimation that paid for the prep's equal-width grass bands is gone — ledger 0046: the
   #  terrain is tiered at the source and the prep tiles 1GRASS by balanced bisection. It also triangulated every
   #  terrain face here, and the near-road ground the gates were tuned on is that triangulation's: kept, alone.)
@@ -424,6 +440,7 @@ step "ship: verify_kn5 (hard — spawn-free road, common race kn5 + one closure 
 # shared race gate OBJ / audit (road + the retired centre chain) are retired: each race layout is judged on
 # its own kn5 set (ledger 0049).
 for lid in $LAYOUT_IDS; do rm -f "$PROJ/data/drive_test.$lid.json"; done
+rm -f "$PROJ/data/drive_test.expansion.json" "$PROJ/data/drive_test.line."*.json "$PROJ/data/verify_pads.json"
 rm -f "$PROJ/data/verify_mouths.json" "$PROJ/data/rib_check.json" "$PROJ/data/house_seat_check.json" "$PROJ/data/verify_stubs.json"
 for lid in $RACE_IDS; do rm -f "$PROJ/data/audit.$lid.json" "$PROJ/data/no_route.$lid.json" "$PROJ/data/track.$lid.obj"; done
 rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"
@@ -461,6 +478,11 @@ if [ -f "$PROJ/data/stubs.plan.json" ]; then
   # tools/verify_stubs.py reads data/track.obj (the shipped road kn5) at every data/stubs.plan.json stub; exit 1 stops the chain
   (cd "$AIROSO" && python tools/verify_stubs.py "$PROJ")
 fi
+if [ -f "$PROJ/data/pads.built.json" ]; then
+  step "gate: verify_pads on the built road (every junction pad: present, single coverage, seams <= 10 mm, no grass / curb on the deck, barriers, node height vs 3DEP — hard)"
+  # ledger 0054 P3 step 2 (EXPANSION-PLAN V3): tools/verify_pads.py reads data/track.obj; exit 1 stops the chain
+  (cd "$AIROSO" && python tools/verify_pads.py "$PROJ")
+fi
 step "gate: terrain ribbing on the built ground (tools/rib_check.py: sub-cell features folded into staircases — hard)"
 # ledger 0046 fix round 2: a feature narrower than two terrain cells (a concrete channel, a cut-slope bench) point-
 # sampled every 5 m and folded across its grain shows as washboard ribs; exit 1 (data/rib_check.json) past the
@@ -473,6 +495,15 @@ step "gate: houses on the built ground (tools/house_seat_check.py: floating, sun
 (cd "$AIROSO" && python tools/house_seat_check.py "$PROJ" --json "$PROJ/data/house_seat_check.json")
 step "gate: drive_test, street layout (hard)"
 DT_S=0; (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --layout street 2>&1 | grep -v "drive-time\] sweep" | tail -30) || DT_S=$?
+DT_L=0
+if [ -f "$PROJ/data/expansion.north.json" ] && grep -q '"authored_take"' "$PROJ/track.config.json"; then
+  step "gate: drive_test --line expansion (the north network's own lines, both directions, on the street OBJ — hard, never covered by --force-install)"
+  # ledger 0054 P3 step 7 (EXPANSION-PLAN V6, Risk 10): tools/expansion_lines.py strings each direction's right-hand
+  # carriageway J1 -> ... -> J5 (and back) through the pads; drive_test --line drives them (data/drive_test.expansion.json).
+  # The new roads have no reference to be "no worse than": a red here is never installed
+  (cd "$AIROSO" && python tools/expansion_lines.py "$PROJ")
+  (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --line expansion 2>&1 | grep -v "drive-time\] sweep" | tail -40) || DT_L=$?
+fi
 step "gate: audit_mesh, street (hard total; the regression floor — D 0 / K 20 / I 20 / F 13 since v0.18.0: the I-8 deck rails stand on the curb, 0.15 m off the pavement; D 512 while they stood on its edge, since the 2026-10-11 mouth weld + fold mend, was 512 / 154 / 145 / 15)"
 AU_S=0; (cd "$AIROSO" && python -m scripts.geometry.audit_mesh "$PROJ" 2>&1 | tail -16) || AU_S=$?
 DT_R=0; AU_R=0; NR_R=0
@@ -526,8 +557,8 @@ step "sync outputs workshop -> airoso"
 cp "$PROJ/loop.blend" "$SRC/loop.blend"
 for f in centerline.local.json centerline.raw.local.json median_bands.json dummies.json \
          finished_centerline.json gate_centerline.json lights.local.json connectors.local.json \
-         mouths.json mouth_welds.json aprons.json aprons.lamps.json verify_mouths.json verify_fold_fans.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
-         drive_test.json audit.json stubs.plan.json stubs.built.json verify_stubs.json stubs.3dep.json \
+         mouths.json mouth_welds.json aprons.json aprons.lamps.json pads.plan.json pads.built.json pads.3dep.json verify_pads.json verify_mouths.json verify_fold_fans.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
+         drive_test.json drive_test.expansion.json drive_lines.expansion.json audit.json stubs.plan.json stubs.built.json verify_stubs.json stubs.3dep.json \
          barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json street_kn5.json \
          $TERRAIN_DATA terrain.tiers.report.json bridges.authored.json          deck_datum.json ground_release.json ground_release.report.json freeway_i8.json freeway_i8.report.json; do
   [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
@@ -555,6 +586,10 @@ done
 # track.obj / track.<id>.obj are 66-78 MB each and regenerable from the kn5s: never synced.
 fi
 
+if [ "$DT_L" != 0 ]; then
+  echo; echo "  NOT INSTALLED: drive_test --line expansion exited $DT_L (the north network's own drive gate; no reference"
+  echo "  exists to be 'no worse than', so --force-install does not apply — data/drive_test.expansion.json)"; exit 1
+fi
 echo; echo "GATES: street drive_test exit $DT_S, street audit exit $AU_S, race drive_test exit $DT_R, race audit exit $AU_R, race no_route exit $NR_R"
 echo "  race layouts red on their own gates: ${RACE_RED:-none}"
 if [ -n "$RACE_RED" ]; then

@@ -1,0 +1,2172 @@
+{
+ "version": 1,
+ "_doc": "Phase 5 stub declaration (tools/stub_roads.py declare). Edit by hand: set treatment stub|curb_cut|skip (+ skip_reason), width_m, length_m (>= 13.65), barrier krail|type3, and list every hand-edited key in `hand` so a re-declare (--merge) keeps it.",
+ "host": "north_J1_waring,north_princess_view,north_mission_gorge,north_J5_jackson_north",
+ "osm": "osm.expansion.json",
+ "mouths": "routes__mouths.json",
+ "legs": {
+  "north_J1_waring": "W",
+  "north_princess_view": "P",
+  "north_mission_gorge": "M",
+  "north_J5_jackson_north": "J"
+ },
+ "defaults": {
+  "length_m": 15.0,
+  "tail_m": 1.0,
+  "barrier": "krail",
+  "straight": true,
+  "_straight_doc": "Ledger 0054 P3 (2026-10-18): each stub on the chord of its OSM branch over its 16 m (tools/stub_roads.py straighten): the corner returns fit one straight edge line to the stub, and side streets curving 0.3-1.2 m within their first 16 m put the stub's own road under the return's curb top (audit K / I on P3's second build)."
+ },
+ "stubs": [
+  {
+   "id": "college_avenue_1074514299_L",
+   "way": 1074514299,
+   "node": 49082495,
+   "name": "College Avenue",
+   "highway": "primary",
+   "service": null,
+   "host": "north_J1_waring",
+   "host_street": "Waring Road",
+   "host_vertex": 0,
+   "station_m": 0.0,
+   "side": 1,
+   "angle_deg": 3.5,
+   "heading_deg": 144.3,
+   "width_m": 16.0,
+   "width_source": "class default primary [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "leaves the host at 3 deg — a carriageway / slip lane, not a side road",
+   "branch_lonlat": [
+    [
+     -117.0677968,
+     32.7937508
+    ],
+    [
+     -117.0677085,
+     32.7936475
+    ]
+   ]
+  },
+  {
+   "id": "navajo_road_436315947_R",
+   "way": 436315947,
+   "node": 49082495,
+   "name": "Navajo Road",
+   "highway": "primary",
+   "service": null,
+   "host": "north_J1_waring",
+   "host_street": "Waring Road",
+   "host_vertex": 0,
+   "station_m": 0.0,
+   "side": -1,
+   "angle_deg": 86.2,
+   "heading_deg": 54.7,
+   "width_m": 16.0,
+   "width_source": "class default primary [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0677968,
+     32.7937508
+    ],
+    [
+     -117.0676356,
+     32.7938468
+    ]
+   ],
+   "skip_reason": "J1: Navajo Road is the loop itself at the Waring weld (W1) — built",
+   "hand": [
+    "treatment",
+    "skip_reason"
+   ]
+  },
+  {
+   "id": "galewood_street_5984405_R",
+   "way": 5984405,
+   "node": 1713352274,
+   "name": "Galewood Street",
+   "highway": "residential",
+   "service": null,
+   "host": "north_J1_waring",
+   "host_street": "Waring Road",
+   "host_vertex": 38,
+   "station_m": 111.8,
+   "side": -1,
+   "angle_deg": 88.0,
+   "heading_deg": 43.8,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.068524,
+     32.7946543
+    ],
+    [
+     -117.0684486,
+     32.7947204
+    ],
+    [
+     -117.06794,
+     32.795166
+    ]
+   ]
+  },
+  {
+   "id": "galewood_street_5984405_L",
+   "way": 5984405,
+   "node": 11309199883,
+   "name": "Galewood Street",
+   "highway": "residential",
+   "service": null,
+   "host": "north_J1_waring",
+   "host_street": "Waring Road",
+   "host_vertex": 38,
+   "station_m": 111.9,
+   "side": 1,
+   "angle_deg": 89.5,
+   "heading_deg": 226.3,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0686895,
+     32.7945213
+    ],
+    [
+     -117.068832,
+     32.794407
+    ],
+    [
+     -117.068977,
+     32.794327
+    ],
+    [
+     -117.069168,
+     32.79427
+    ],
+    [
+     -117.069603,
+     32.794205
+    ]
+   ]
+  },
+  {
+   "id": "eldridge_street_6013754_L",
+   "way": 6013754,
+   "node": 11309199945,
+   "name": "Eldridge Street",
+   "highway": "residential",
+   "service": null,
+   "host": "north_J1_waring",
+   "host_street": "Waring Road",
+   "host_vertex": 137,
+   "station_m": 405.4,
+   "side": 1,
+   "angle_deg": 89.7,
+   "heading_deg": 224.3,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0709525,
+     32.796349
+    ],
+    [
+     -117.071449,
+     32.795921
+    ]
+   ]
+  },
+  {
+   "id": "eldridge_street_6013754_R",
+   "way": 6013754,
+   "node": 1713352276,
+   "name": "Eldridge Street",
+   "highway": "residential",
+   "service": null,
+   "host": "north_J1_waring",
+   "host_street": "Waring Road",
+   "host_vertex": 137,
+   "station_m": 405.5,
+   "side": -1,
+   "angle_deg": 89.2,
+   "heading_deg": 43.8,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0707546,
+     32.7965186
+    ],
+    [
+     -117.0706944,
+     32.7965714
+    ],
+    [
+     -117.0706659,
+     32.7965964
+    ],
+    [
+     -117.070183,
+     32.79702
+    ]
+   ]
+  },
+  {
+   "id": "birchwood_street_1370375341_R",
+   "way": 1370375341,
+   "node": 1713352297,
+   "name": "Birchwood Street",
+   "highway": "residential",
+   "service": null,
+   "host": "north_J1_waring",
+   "host_street": "Waring Road",
+   "host_vertex": 227,
+   "station_m": 671.4,
+   "side": -1,
+   "angle_deg": 86.2,
+   "heading_deg": 13.6,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0730848,
+     32.7979164
+    ],
+    [
+     -117.072891,
+     32.798592
+    ]
+   ]
+  },
+  {
+   "id": "glenroy_street_663868622_R",
+   "way": 663868622,
+   "node": 49082539,
+   "name": "Glenroy Street",
+   "highway": "residential",
+   "service": null,
+   "host": "north_princess_view",
+   "host_street": "Glenroy Street",
+   "host_vertex": 21,
+   "station_m": 61.8,
+   "side": -1,
+   "angle_deg": 84.8,
+   "heading_deg": 54.2,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.076553,
+     32.797886
+    ],
+    [
+     -117.0764447,
+     32.7979517
+    ],
+    [
+     -117.0764168,
+     32.7979686
+    ],
+    [
+     -117.076088,
+     32.798168
+    ],
+    [
+     -117.075562,
+     32.798397
+    ]
+   ]
+  },
+  {
+   "id": "princess_view_court_5998286_R",
+   "way": 5998286,
+   "node": 49425764,
+   "name": "Princess View Court",
+   "highway": "residential",
+   "service": null,
+   "host": "north_princess_view",
+   "host_street": "Princess View Drive",
+   "host_vertex": 54,
+   "station_m": 160.9,
+   "side": -1,
+   "angle_deg": 85.0,
+   "heading_deg": 57.7,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.077202,
+     32.798557
+    ],
+    [
+     -117.0770543,
+     32.7986355
+    ],
+    [
+     -117.0767625,
+     32.7987662
+    ],
+    [
+     -117.0766759,
+     32.7988685
+    ]
+   ]
+  },
+  {
+   "id": "princess_view_place_5998259_R",
+   "way": 5998259,
+   "node": 49425611,
+   "name": "Princess View Place",
+   "highway": "residential",
+   "service": null,
+   "host": "north_princess_view",
+   "host_street": "Princess View Drive",
+   "host_vertex": 101,
+   "station_m": 303.8,
+   "side": -1,
+   "angle_deg": 88.4,
+   "heading_deg": 86.1,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.077461,
+     32.799789
+    ],
+    [
+     -117.0772901,
+     32.7997987
+    ],
+    [
+     -117.0766259,
+     32.799825
+    ]
+   ]
+  },
+  {
+   "id": "princess_view_way_6018734_R",
+   "way": 6018734,
+   "node": 49561835,
+   "name": "Princess View Way",
+   "highway": "residential",
+   "service": null,
+   "host": "north_princess_view",
+   "host_street": "Princess View Drive",
+   "host_vertex": 124,
+   "station_m": 372.3,
+   "side": -1,
+   "angle_deg": 87.4,
+   "heading_deg": 74.0,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.077507,
+     32.800415
+    ],
+    [
+     -117.077363,
+     32.8004497
+    ],
+    [
+     -117.076973,
+     32.800507
+    ]
+   ]
+  },
+  {
+   "id": "fontaine_street_5986946_R",
+   "way": 5986946,
+   "node": 49336331,
+   "name": "Fontaine Street",
+   "highway": "residential",
+   "service": null,
+   "host": "north_princess_view",
+   "host_street": "Princess View Drive",
+   "host_vertex": 177,
+   "station_m": 531.8,
+   "side": -1,
+   "angle_deg": 82.7,
+   "heading_deg": 72.6,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0781342,
+     32.8017652
+    ],
+    [
+     -117.0779931,
+     32.8018023
+    ],
+    [
+     -117.0777927,
+     32.8018363
+    ],
+    [
+     -117.0766278,
+     32.8018357
+    ]
+   ]
+  },
+  {
+   "id": "fontaine_street_5986946_L",
+   "way": 5986946,
+   "node": 11357299138,
+   "name": "Fontaine Street",
+   "highway": "residential",
+   "service": null,
+   "host": "north_princess_view",
+   "host_street": "Princess View Drive",
+   "host_vertex": 178,
+   "station_m": 532.6,
+   "side": 1,
+   "angle_deg": 88.8,
+   "heading_deg": 246.5,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0782644,
+     32.8017178
+    ],
+    [
+     -117.0783834,
+     32.8016744
+    ],
+    [
+     -117.079033,
+     32.801407
+    ]
+   ]
+  },
+  {
+   "id": "laura_street_6042836_R",
+   "way": 6042836,
+   "node": 49614636,
+   "name": "Laura Street",
+   "highway": "residential",
+   "service": null,
+   "host": "north_princess_view",
+   "host_street": "Princess View Drive",
+   "host_vertex": 234,
+   "station_m": 702.6,
+   "side": -1,
+   "angle_deg": 88.5,
+   "heading_deg": 70.6,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.078873,
+     32.803154
+    ],
+    [
+     -117.0787256,
+     32.8031977
+    ],
+    [
+     -117.078552,
+     32.803234
+    ],
+    [
+     -117.078247,
+     32.803242
+    ],
+    [
+     -117.078079,
+     32.80328
+    ]
+   ]
+  },
+  {
+   "id": "service_576889885_L",
+   "way": 576889885,
+   "node": 49614643,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_princess_view",
+   "host_street": "Princess View Drive",
+   "host_vertex": 270,
+   "station_m": 809.4,
+   "side": 1,
+   "angle_deg": 89.0,
+   "heading_deg": 278.5,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.079033,
+     32.804062
+    ],
+    [
+     -117.079318,
+     32.8040979
+    ],
+    [
+     -117.079314,
+     32.8038747
+    ],
+    [
+     -117.079487,
+     32.8038995
+    ]
+   ]
+  },
+  {
+   "id": "service_576889897_R",
+   "way": 576889897,
+   "node": 5531917326,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_princess_view",
+   "host_street": "Princess View Drive",
+   "host_vertex": 291,
+   "station_m": 873.1,
+   "side": -1,
+   "angle_deg": 89.9,
+   "heading_deg": 94.2,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0789735,
+     32.8046398
+    ],
+    [
+     -117.078685,
+     32.804622
+    ],
+    [
+     -117.0785737,
+     32.8057966
+    ]
+   ]
+  },
+  {
+   "id": "service_576889898_R",
+   "way": 576889898,
+   "node": 49614649,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_princess_view",
+   "host_street": "Princess View Drive",
+   "host_vertex": 336,
+   "station_m": 1009.0,
+   "side": -1,
+   "angle_deg": 87.8,
+   "heading_deg": 95.4,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.078873,
+     32.805862
+    ],
+    [
+     -117.0786019,
+     32.8058405
+    ],
+    [
+     -117.0784798,
+     32.8059375
+    ],
+    [
+     -117.0784289,
+     32.805933
+    ]
+   ]
+  },
+  {
+   "id": "service_576889900_R",
+   "way": 576889900,
+   "node": 5531917334,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_princess_view",
+   "host_street": "Princess View Drive",
+   "host_vertex": 342,
+   "station_m": 1025.0,
+   "side": -1,
+   "angle_deg": 73.9,
+   "heading_deg": 76.5,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.078873,
+     32.805986
+    ],
+    [
+     -117.0785321,
+     32.8060547
+    ],
+    [
+     -117.0785992,
+     32.8063444
+    ]
+   ]
+  },
+  {
+   "id": "tierrasanta_boulevard_proposed_683943070_L",
+   "way": 683943070,
+   "node": 1484501883,
+   "name": "Tierrasanta Boulevard (Proposed)",
+   "highway": "residential",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 0,
+   "station_m": 0.0,
+   "side": 1,
+   "angle_deg": 87.4,
+   "heading_deg": 338.7,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0790063,
+     32.8068387
+    ],
+    [
+     -117.0790366,
+     32.8069039
+    ],
+    [
+     -117.079075,
+     32.8069865
+    ],
+    [
+     -117.0792528,
+     32.8073267
+    ],
+    [
+     -117.0794498,
+     32.8075991
+    ]
+   ],
+   "skip_reason": "J3: the quarry drive is the J3 pad's own stub arm S4 (tools/author_junction_pad_blend.py) — built",
+   "hand": [
+    "treatment",
+    "skip_reason"
+   ]
+  },
+  {
+   "id": "service_576889906_R",
+   "way": 576889906,
+   "node": 5531917344,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 10,
+   "station_m": 30.6,
+   "side": -1,
+   "angle_deg": 88.9,
+   "heading_deg": 154.9,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0784874,
+     32.8067313
+    ],
+    [
+     -117.078457,
+     32.8066767
+    ],
+    [
+     -117.0783135,
+     32.8064188
+    ],
+    [
+     -117.0779877,
+     32.8065611
+    ]
+   ]
+  },
+  {
+   "id": "service_745284422_L",
+   "way": 745284422,
+   "node": 6976455367,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 27,
+   "station_m": 81.8,
+   "side": 1,
+   "angle_deg": 88.8,
+   "heading_deg": 339.1,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0781077,
+     32.8071506
+    ],
+    [
+     -117.0781778,
+     32.8073052
+    ],
+    [
+     -117.0781926,
+     32.8074664
+    ],
+    [
+     -117.0782751,
+     32.8075618
+    ],
+    [
+     -117.0782634,
+     32.8078345
+    ]
+   ]
+  },
+  {
+   "id": "service_576889906_R_56",
+   "way": 576889906,
+   "node": 5531917347,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 56,
+   "station_m": 169.0,
+   "side": -1,
+   "angle_deg": 77.0,
+   "heading_deg": 174.5,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0771488,
+     32.8072988
+    ],
+    [
+     -117.0771293,
+     32.8071278
+    ],
+    [
+     -117.0774432,
+     32.8070365
+    ],
+    [
+     -117.0774512,
+     32.8067953
+    ]
+   ]
+  },
+  {
+   "id": "service_567651095_L",
+   "way": 567651095,
+   "node": 4343153809,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 59,
+   "station_m": 178.3,
+   "side": 1,
+   "angle_deg": 69.1,
+   "heading_deg": 2.7,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0771441,
+     32.8074409
+    ],
+    [
+     -117.0771295,
+     32.8077015
+    ]
+   ]
+  },
+  {
+   "id": "service_576889892_R",
+   "way": 576889892,
+   "node": 4343153807,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 61,
+   "station_m": 184.1,
+   "side": -1,
+   "angle_deg": 70.6,
+   "heading_deg": 181.8,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0769849,
+     32.8073477
+    ],
+    [
+     -117.0769925,
+     32.8071413
+    ],
+    [
+     -117.0770274,
+     32.8066183
+    ]
+   ]
+  },
+  {
+   "id": "service_576889892_R_76",
+   "way": 576889892,
+   "node": 5531917305,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 76,
+   "station_m": 230.0,
+   "side": -1,
+   "angle_deg": 89.7,
+   "heading_deg": 164.3,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0765532,
+     32.8074603
+    ],
+    [
+     -117.0764963,
+     32.8072897
+    ],
+    [
+     -117.07644,
+     32.8071211
+    ],
+    [
+     -117.0768853,
+     32.806536
+    ]
+   ]
+  },
+  {
+   "id": "service_576889890_R",
+   "way": 576889890,
+   "node": 5531917300,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 79,
+   "station_m": 237.5,
+   "side": -1,
+   "angle_deg": 89.5,
+   "heading_deg": 163.5,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0764777,
+     32.8074787
+    ],
+    [
+     -117.0764065,
+     32.8072766
+    ],
+    [
+     -117.0759183,
+     32.8073848
+    ]
+   ]
+  },
+  {
+   "id": "service_576889890_R_95",
+   "way": 576889890,
+   "node": 5531917303,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 95,
+   "station_m": 285.4,
+   "side": -1,
+   "angle_deg": 88.2,
+   "heading_deg": 164.4,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.075989,
+     32.8075979
+    ],
+    [
+     -117.0759183,
+     32.8073848
+    ],
+    [
+     -117.0764065,
+     32.8072766
+    ]
+   ]
+  },
+  {
+   "id": "service_576889889_R",
+   "way": 576889889,
+   "node": 5531917299,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 98,
+   "station_m": 295.6,
+   "side": -1,
+   "angle_deg": 87.5,
+   "heading_deg": 166.5,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0758874,
+     32.8076211
+    ],
+    [
+     -117.0758362,
+     32.8074418
+    ]
+   ]
+  },
+  {
+   "id": "service_576889888_R",
+   "way": 576889888,
+   "node": 5531917295,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 117,
+   "station_m": 353.0,
+   "side": -1,
+   "angle_deg": 88.4,
+   "heading_deg": 170.1,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0752772,
+     32.8077248
+    ],
+    [
+     -117.0752411,
+     32.8075505
+    ],
+    [
+     -117.0758362,
+     32.8074418
+    ]
+   ]
+  },
+  {
+   "id": "service_576889887_R",
+   "way": 576889887,
+   "node": 5531917294,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 123,
+   "station_m": 371.2,
+   "side": -1,
+   "angle_deg": 84.3,
+   "heading_deg": 162.8,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0751014,
+     32.8077562
+    ],
+    [
+     -117.0750318,
+     32.8075674
+    ],
+    [
+     -117.074594,
+     32.8076451
+    ]
+   ]
+  },
+  {
+   "id": "conestoga_way_6042936_R",
+   "way": 6042936,
+   "node": 8433390177,
+   "name": "Conestoga Way",
+   "highway": "residential",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 138,
+   "station_m": 415.5,
+   "side": -1,
+   "angle_deg": 88.5,
+   "heading_deg": 171.0,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0746122,
+     32.8077418
+    ],
+    [
+     -117.074594,
+     32.8076451
+    ],
+    [
+     -117.074577,
+     32.807556
+    ],
+    [
+     -117.074623,
+     32.80724
+    ],
+    [
+     -117.074806,
+     32.806744
+    ]
+   ]
+  },
+  {
+   "id": "service_1013051647_R",
+   "way": 1013051647,
+   "node": 3253177692,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 284,
+   "station_m": 851.9,
+   "side": -1,
+   "angle_deg": 89.8,
+   "heading_deg": 159.4,
+   "width_m": 6.0,
+   "width_source": "osm lanes=1 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "1",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0700212,
+     32.8084288
+    ],
+    [
+     -117.0699256,
+     32.8082155
+    ],
+    [
+     -117.0698458,
+     32.8081756
+    ]
+   ]
+  },
+  {
+   "id": "service_1013051648_R",
+   "way": 1013051648,
+   "node": 9346275299,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 287,
+   "station_m": 860.9,
+   "side": -1,
+   "angle_deg": 89.7,
+   "heading_deg": 159.0,
+   "width_m": 6.0,
+   "width_source": "osm lanes=1 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "1",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0699314,
+     32.8084572
+    ],
+    [
+     -117.0698368,
+     32.8082499
+    ],
+    [
+     -117.0698458,
+     32.8081756
+    ]
+   ]
+  },
+  {
+   "id": "mission_vista_drive_5977531_L",
+   "way": 5977531,
+   "node": 1484501863,
+   "name": "Mission Vista Drive",
+   "highway": "residential",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 362,
+   "station_m": 1082.0,
+   "side": 1,
+   "angle_deg": 81.7,
+   "heading_deg": 310.9,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0680189,
+     32.8096148
+    ],
+    [
+     -117.0681263,
+     32.8096929
+    ],
+    [
+     -117.068733,
+     32.810146
+    ]
+   ]
+  },
+  {
+   "id": "margerum_avenue_135149732_R",
+   "way": 135149732,
+   "node": 1484501924,
+   "name": "Margerum Avenue",
+   "highway": "tertiary",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 362,
+   "station_m": 1082.5,
+   "side": -1,
+   "angle_deg": 85.0,
+   "heading_deg": 143.9,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0678371,
+     32.8094323
+    ],
+    [
+     -117.067543,
+     32.809093
+    ],
+    [
+     -117.0675238,
+     32.809062
+    ],
+    [
+     -117.067301,
+     32.8087019
+    ]
+   ]
+  },
+  {
+   "id": "service_318915680_R",
+   "way": 318915680,
+   "node": 1484501790,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 413,
+   "station_m": 1232.6,
+   "side": -1,
+   "angle_deg": 90.0,
+   "heading_deg": 121.7,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0668721,
+     32.8105544
+    ],
+    [
+     -117.066643,
+     32.8104356
+    ],
+    [
+     -117.0664901,
+     32.8103218
+    ],
+    [
+     -117.0663231,
+     32.8102142
+    ]
+   ]
+  },
+  {
+   "id": "service_318915571_R",
+   "way": 318915571,
+   "node": 3253176130,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 441,
+   "station_m": 1316.6,
+   "side": -1,
+   "angle_deg": 85.8,
+   "heading_deg": 125.9,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0663973,
+     32.8112014
+    ],
+    [
+     -117.0662592,
+     32.8111173
+    ],
+    [
+     -117.0662302,
+     32.8110691
+    ]
+   ]
+  },
+  {
+   "id": "mission_montana_drive_5988290_L",
+   "way": 5988290,
+   "node": 49317121,
+   "name": "Mission Montana Drive",
+   "highway": "residential",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 466,
+   "station_m": 1391.9,
+   "side": 1,
+   "angle_deg": 90.0,
+   "heading_deg": 302.2,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0661327,
+     32.8118551
+    ],
+    [
+     -117.0662389,
+     32.8119113
+    ],
+    [
+     -117.066673,
+     32.81213
+    ],
+    [
+     -117.067017,
+     32.812328
+    ]
+   ]
+  },
+  {
+   "id": "mission_vista_drive_5977531_L_560",
+   "way": 5977531,
+   "node": 8433390176,
+   "name": "Mission Vista Drive",
+   "highway": "residential",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 560,
+   "station_m": 1672.4,
+   "side": 1,
+   "angle_deg": 84.3,
+   "heading_deg": 308.3,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.064641,
+     32.814051
+    ],
+    [
+     -117.064987,
+     32.814281
+    ],
+    [
+     -117.065392,
+     32.814537
+    ]
+   ]
+  },
+  {
+   "id": "deerfield_crescent_638144640_L",
+   "way": 638144640,
+   "node": 1484501847,
+   "name": "Deerfield Crescent",
+   "highway": "unclassified",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 669,
+   "station_m": 2003.5,
+   "side": 1,
+   "angle_deg": 85.1,
+   "heading_deg": 326.1,
+   "width_m": 10.0,
+   "width_source": "class default unclassified [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0621013,
+     32.8161846
+    ],
+    [
+     -117.0621721,
+     32.8162732
+    ],
+    [
+     -117.0622653,
+     32.8163914
+    ]
+   ]
+  },
+  {
+   "id": "deerfield_street_6055959_R",
+   "way": 6055959,
+   "node": 8433390167,
+   "name": "Deerfield Street",
+   "highway": "residential",
+   "service": null,
+   "host": "north_mission_gorge",
+   "host_street": "Mission Gorge Road",
+   "host_vertex": 670,
+   "station_m": 2006.9,
+   "side": -1,
+   "angle_deg": 84.3,
+   "heading_deg": 145.2,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0619389,
+     32.8159953
+    ],
+    [
+     -117.0616669,
+     32.8156659
+    ],
+    [
+     -117.061127,
+     32.815041
+    ]
+   ]
+  },
+  {
+   "id": "navajo_road_436270248_R",
+   "way": 436270248,
+   "node": 1713415645,
+   "name": "Navajo Road",
+   "highway": "primary",
+   "service": null,
+   "host": "north_J5_jackson_north",
+   "host_street": "Navajo Road",
+   "host_vertex": 0,
+   "station_m": 0.0,
+   "side": -1,
+   "angle_deg": 69.5,
+   "heading_deg": 58.5,
+   "width_m": 13.2,
+   "width_source": "osm lanes=3 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "3",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0459842,
+     32.8038046
+    ],
+    [
+     -117.0458022,
+     32.8038982
+    ],
+    [
+     -117.0454394,
+     32.8040848
+    ],
+    [
+     -117.045327,
+     32.8041426
+    ]
+   ],
+   "skip_reason": "J5: Navajo Road is the loop itself at the Jackson-north weld (W5) — built",
+   "hand": [
+    "treatment",
+    "skip_reason"
+   ]
+  },
+  {
+   "id": "navajo_road_436270256_R",
+   "way": 436270256,
+   "node": 49082469,
+   "name": "Navajo Road",
+   "highway": "primary",
+   "service": null,
+   "host": "north_J5_jackson_north",
+   "host_street": "Jackson Drive",
+   "host_vertex": 3,
+   "station_m": 9.3,
+   "side": -1,
+   "angle_deg": 78.8,
+   "heading_deg": 58.7,
+   "width_m": 16.8,
+   "width_source": "osm lanes=4 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "4",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0460988,
+     32.8039364
+    ],
+    [
+     -117.0459366,
+     32.8040194
+    ],
+    [
+     -117.0458964,
+     32.80404
+    ],
+    [
+     -117.0456335,
+     32.8041746
+    ],
+    [
+     -117.0455322,
+     32.8042266
+    ]
+   ],
+   "skip_reason": "J5: Navajo Road is the loop itself at the Jackson-north weld (W5) — built",
+   "hand": [
+    "treatment",
+    "skip_reason"
+   ]
+  },
+  {
+   "id": "service_577444242_R",
+   "way": 577444242,
+   "node": 2713389867,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_J5_jackson_north",
+   "host_street": "Jackson Drive",
+   "host_vertex": 16,
+   "station_m": 44.6,
+   "side": -1,
+   "angle_deg": 84.7,
+   "heading_deg": 52.8,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0463686,
+     32.8042153
+    ],
+    [
+     -117.0462658,
+     32.8042808
+    ],
+    [
+     -117.0458856,
+     32.8045228
+    ],
+    [
+     -117.045689,
+     32.8042513
+    ]
+   ]
+  },
+  {
+   "id": "service_577444239_L",
+   "way": 577444239,
+   "node": 7050559969,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_J5_jackson_north",
+   "host_street": null,
+   "host_vertex": 23,
+   "station_m": 67.8,
+   "side": 1,
+   "angle_deg": 87.6,
+   "heading_deg": 221.4,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0466412,
+     32.8042703
+    ],
+    [
+     -117.0468459,
+     32.8040753
+    ],
+    [
+     -117.0468628,
+     32.8040174
+    ]
+   ]
+  },
+  {
+   "id": "service_577444241_L",
+   "way": 577444241,
+   "node": 7050559971,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_J5_jackson_north",
+   "host_street": "Jackson Drive",
+   "host_vertex": 30,
+   "station_m": 86.7,
+   "side": 1,
+   "angle_deg": 86.7,
+   "heading_deg": 220.5,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.046789,
+     32.8043862
+    ],
+    [
+     -117.0470658,
+     32.8041136
+    ],
+    [
+     -117.0470993,
+     32.804046
+    ],
+    [
+     -117.0470899,
+     32.8039705
+    ],
+    [
+     -117.0468692,
+     32.8036483
+    ]
+   ]
+  },
+  {
+   "id": "service_577444237_L",
+   "way": 577444237,
+   "node": 7050566637,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_J5_jackson_north",
+   "host_street": "Jackson Drive",
+   "host_vertex": 60,
+   "station_m": 176.5,
+   "side": 1,
+   "angle_deg": 89.8,
+   "heading_deg": 223.9,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0474826,
+     32.8049447
+    ],
+    [
+     -117.0484324,
+     32.8041148
+    ]
+   ]
+  },
+  {
+   "id": "birchcreek_road_6024742_R",
+   "way": 6024742,
+   "node": 49489103,
+   "name": "Birchcreek Road",
+   "highway": "residential",
+   "service": null,
+   "host": "north_J5_jackson_north",
+   "host_street": "Jackson Drive",
+   "host_vertex": 63,
+   "station_m": 185.5,
+   "side": -1,
+   "angle_deg": 83.9,
+   "heading_deg": 36.5,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.04744,
+     32.805088
+    ],
+    [
+     -117.0473632,
+     32.8051751
+    ],
+    [
+     -117.047297,
+     32.8052238
+    ],
+    [
+     -117.0472398,
+     32.8052454
+    ],
+    [
+     -117.0471801,
+     32.8052613
+    ],
+    [
+     -117.0471185,
+     32.8052713
+    ],
+    [
+     -117.047056,
+     32.8052751
+    ],
+    [
+     -117.0469912,
+     32.8052726
+    ],
+    [
+     -117.0469272,
+     32.8052636
+    ],
+    [
+     -117.046865,
+     32.8052481
+    ]
+   ]
+  },
+  {
+   "id": "service_851357844_L",
+   "way": 851357844,
+   "node": 7940756821,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_J5_jackson_north",
+   "host_street": "Jackson Drive",
+   "host_vertex": 116,
+   "station_m": 344.4,
+   "side": 1,
+   "angle_deg": 89.6,
+   "heading_deg": 241.9,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0484921,
+     32.8062184
+    ],
+    [
+     -117.0486187,
+     32.8061616
+    ],
+    [
+     -117.0488941,
+     32.806038
+    ]
+   ]
+  },
+  {
+   "id": "park_ridge_boulevard_1224664714_L",
+   "way": 1224664714,
+   "node": 7050566643,
+   "name": "Park Ridge Boulevard",
+   "highway": "secondary",
+   "service": null,
+   "host": "north_J5_jackson_north",
+   "host_street": "Jackson Drive",
+   "host_vertex": 123,
+   "station_m": 365.2,
+   "side": 1,
+   "angle_deg": 89.9,
+   "heading_deg": 242.7,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0486035,
+     32.8063806
+    ],
+    [
+     -117.0487244,
+     32.8063281
+    ],
+    [
+     -117.0489573,
+     32.8062269
+    ],
+    [
+     -117.0494641,
+     32.8060255
+    ]
+   ]
+  },
+  {
+   "id": "tuxedo_road_6051501_R",
+   "way": 6051501,
+   "node": 49489131,
+   "name": "Tuxedo Road",
+   "highway": "tertiary",
+   "service": null,
+   "host": "north_J5_jackson_north",
+   "host_street": "Jackson Drive",
+   "host_vertex": 401,
+   "station_m": 1198.5,
+   "side": -1,
+   "angle_deg": 71.4,
+   "heading_deg": 69.0,
+   "width_m": 12.0,
+   "width_source": "class default tertiary [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0533263,
+     32.8126443
+    ],
+    [
+     -117.0531216,
+     32.8127102
+    ],
+    [
+     -117.05291,
+     32.812782
+    ],
+    [
+     -117.052589,
+     32.812824
+    ]
+   ]
+  },
+  {
+   "id": "winding_creek_drive_5968105_R",
+   "way": 5968105,
+   "node": 49166460,
+   "name": "Winding Creek Drive",
+   "highway": "tertiary",
+   "service": null,
+   "host": "north_J5_jackson_north",
+   "host_street": "Jackson Drive",
+   "host_vertex": 450,
+   "station_m": 1346.0,
+   "side": -1,
+   "angle_deg": 89.6,
+   "heading_deg": 58.4,
+   "width_m": 12.0,
+   "width_source": "class default tertiary [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.054207,
+     32.813709
+    ],
+    [
+     -117.0540987,
+     32.8137651
+    ],
+    [
+     -117.053993,
+     32.813801
+    ],
+    [
+     -117.053757,
+     32.813869
+    ],
+    [
+     -117.053467,
+     32.813896
+    ]
+   ]
+  },
+  {
+   "id": "hemingway_drive_6045093_L",
+   "way": 6045093,
+   "node": 49489139,
+   "name": "Hemingway Drive",
+   "highway": "residential",
+   "service": null,
+   "host": "north_J5_jackson_north",
+   "host_street": "Jackson Drive",
+   "host_vertex": 498,
+   "station_m": 1488.7,
+   "side": 1,
+   "angle_deg": 88.9,
+   "heading_deg": 231.5,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.055023,
+     32.8148
+    ],
+    [
+     -117.05545,
+     32.814514
+    ]
+   ]
+  },
+  {
+   "id": "sdcwa_service_road_401663247_L",
+   "way": 401663247,
+   "node": 4040756062,
+   "name": "SDCWA service road",
+   "highway": "service",
+   "service": "emergency_access",
+   "host": "north_J5_jackson_north",
+   "host_street": "Jackson Drive",
+   "host_vertex": 590,
+   "station_m": 1763.7,
+   "side": 1,
+   "angle_deg": 78.5,
+   "heading_deg": 208.3,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0576112,
+     32.8158681
+    ],
+    [
+     -117.0576408,
+     32.8158218
+    ],
+    [
+     -117.0576351,
+     32.8157849
+    ],
+    [
+     -117.0575469,
+     32.8156749
+    ],
+    [
+     -117.0571301,
+     32.815146
+    ]
+   ]
+  },
+  {
+   "id": "service_577444267_R",
+   "way": 577444267,
+   "node": 5535679001,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_J5_jackson_north",
+   "host_street": "Jackson Drive",
+   "host_vertex": 633,
+   "station_m": 1892.5,
+   "side": -1,
+   "angle_deg": 85.3,
+   "heading_deg": 37.9,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0587645,
+     32.8165049
+    ],
+    [
+     -117.0586248,
+     32.8166555
+    ]
+   ]
+  },
+  {
+   "id": "service_577444268_R",
+   "way": 577444268,
+   "node": 4343058469,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_J5_jackson_north",
+   "host_street": "Jackson Drive",
+   "host_vertex": 647,
+   "station_m": 1933.3,
+   "side": -1,
+   "angle_deg": 88.5,
+   "heading_deg": 44.3,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "curb_cut",
+   "branch_lonlat": [
+    [
+     -117.0591181,
+     32.8166896
+    ],
+    [
+     -117.0589185,
+     32.8168618
+    ]
+   ]
+  },
+  {
+   "id": "service_577444269_L",
+   "way": 577444269,
+   "node": 5535679003,
+   "name": null,
+   "highway": "service",
+   "service": null,
+   "host": "north_J5_jackson_north",
+   "host_street": "Jackson Drive",
+   "host_vertex": 649,
+   "station_m": 1937.3,
+   "side": 1,
+   "angle_deg": 1.8,
+   "heading_deg": 310.5,
+   "width_m": 4.0,
+   "width_source": "service apron default [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0593584,
+     32.8165552
+    ],
+    [
+     -117.059691,
+     32.8167941
+    ],
+    [
+     -117.0604219,
+     32.8165732
+    ]
+   ],
+   "skip_reason": "leaves Jackson at 2 deg: a parallel service lane, not a mouth",
+   "hand": [
+    "treatment",
+    "skip_reason"
+   ]
+  }
+ ],
+ "_doc_p3": "Ledger 0054 P3 step 4 (2026-10-18): declared on the four north pieces as route_connectors writes them (tools/stub_roads.py declare --host north_J1_waring,north_princess_view,north_mission_gorge,north_J5_jackson_north --mouths source/expansion/routes__mouths.json --legs ...=W,P,M,J --osm data/osm.expansion.json); the J1 / J5 legs (the loop) and J3's quarry drive (the pad's own stub arm) set to skip by hand. Public side roads: a 15 m stub to Kevin's K-rail; service ways: a curb cut."
+}

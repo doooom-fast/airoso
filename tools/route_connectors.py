@@ -103,10 +103,31 @@ def _authored_take(rname, path, ids, local):
         raise SystemExit(f"[route-conn] {rname}: {path.name} is in another frame (origin {o}) than "
                          f"centerline.local.json ({lo}) - rerun tools/author_expansion.py")
     welds = {w["id"]: w for w in doc.get("welds", [])}
+    piece_ids = {pc["id"] for pc in doc.get("pieces", [])}
     out = []
+    # ledger 0054 P3 (step 1): a PIECE id (A-D) takes the whole road piece (tools/expansion_pieces.py: the pavement
+    # midline + curb-to-curb width per station, a welded piece starting with its P1 weld stub, a pad end exactly on the
+    # pad's arm cut, the 3DEP profile through a local quadratic fit — never re-smoothed here: route_connectors' running
+    # means are one-sided at a piece's end); a piece that carries a weld replaces that weld's stub
+    taken_pieces = [x for x in ids if x in piece_ids]
+    if taken_pieces:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import expansion_pieces as ep
+        _doc, pieces = ep.load(path)
+        for pid in taken_pieces:
+            c = ep.piece_connector(_doc, pieces, pid)
+            g, at = ep.grade_report(c)
+            out.append(c)
+            print(f"[route-conn] {rname}: piece {pid} taken from {path.name} -> {c['name']} ({len(c['points_xyz_m'])} "
+                  f"pts, width {min(c['widths_m']):.1f}..{max(c['widths_m']):.1f} m, steepest {100 * g:.1f} %"
+                  f"{' - OVER the 11 % cap' if g > MAX_GRADE + 1e-9 else ', the 11 % cap binds nowhere'}; ledger 0054 P3)")
+    covered = {w["id"] for w in doc.get("welds", []) if w.get("piece") in taken_pieces}
     for wid in ids:
+        if wid in piece_ids or wid in covered:
+            continue
         if wid not in welds:
-            raise SystemExit(f"[route-conn] {rname}: authored_take names {wid!r}; {path.name} has welds {sorted(welds)}")
+            raise SystemExit(f"[route-conn] {rname}: authored_take names {wid!r}; {path.name} has welds {sorted(welds)}"
+                             f" and pieces {sorted(piece_ids)}")
         c = welds[wid]["connector"]
         pts = c["points_xyz_m"]
         y = _despike_smooth_cap([p[1] for p in pts], RESAMPLE_M)
@@ -282,7 +303,7 @@ def build(project_dir):
     for c in authored_conns:
         out.append(c)
         ys = [p[1] for p in c["points_xyz_m"]]
-        print(f"[route-conn] {c['name']}: {len(c['points_xyz_m'])} pts (authored weld stub), width "
+        print(f"[route-conn] {c['name']}: {len(c['points_xyz_m'])} pts (authored {'piece' if c.get('expansion') else 'weld stub'}), width "
               f"{min(c['widths_m']):.1f}..{max(c['widths_m']):.1f} m, y {min(ys):.1f}..{max(ys):.1f}")
     payload = dict(old)
     payload["connectors"] = out

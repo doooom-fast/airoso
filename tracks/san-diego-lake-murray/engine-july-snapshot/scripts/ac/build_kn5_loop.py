@@ -478,8 +478,20 @@ class ReleaseZones:
         return False
 
 
+class _UnionZones:
+    """ledger 0054 P3: the mainline's zones and each connector line's (a zone carrying line_xz / line_w) together"""
+
+    def __init__(self, parts):
+        self.parts = parts
+
+    def contains(self, x, z):
+        return any(p.contains(x, z) for p in self.parts)
+
+
 def _release_zones(proj):
-    """ReleaseZones from data/ground_release.json + data/centerline.local.json, or None (no file: nothing released)"""
+    """ReleaseZones from data/ground_release.json + data/centerline.local.json, or None (no file: nothing released).
+    A zone resolved on a connector line (ledger 0054 P3: line_xz / line_w in its record, tools/ground_release.py) is
+    judged on that line; with none, exactly the mainline's ReleaseZones as before."""
     p = proj / "data" / "ground_release.json"
     if not p.exists():
         return None
@@ -487,8 +499,19 @@ def _release_zones(proj):
     if not R.get("zones"):
         return None
     local = json.loads((proj / "data" / "centerline.local.json").read_text(encoding="utf-8"))
-    return ReleaseZones([tuple(q) for q in local["points_xyz_m"]], local.get("widths_m") or [7.0] * len(
-        local["points_xyz_m"]), R["zones"], inner_m=float(R.get("inner_m", 0.5)))
+    main = [z for z in R["zones"] if not z.get("line_xz")]
+    lines = {}
+    for z in R["zones"]:
+        if z.get("line_xz"):
+            lines.setdefault(z["line"], []).append(z)
+    inner = float(R.get("inner_m", 0.5))
+    mz = ReleaseZones([tuple(q) for q in local["points_xyz_m"]], local.get("widths_m") or [7.0] * len(
+        local["points_xyz_m"]), main, inner_m=inner)
+    if not lines:
+        return mz
+    parts = [mz] + [ReleaseZones([(x, 0.0, zz) for x, zz in zs[0]["line_xz"]], zs[0]["line_w"], zs, inner_m=inner)
+                    for zs in lines.values()]
+    return _UnionZones(parts)
 
 
 def _clip_ears(f):

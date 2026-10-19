@@ -397,11 +397,12 @@ def audit(project_dir: str | Path, *, race: bool = False, obj: str = "track.obj"
     # there, or a stub barrier vert off its footprint, still counts. Presence, curb-to-curb span, seating and the host
     # lane are tools/verify_stubs.py's (hard, on the same built OBJ). No stubs.built.json: nothing read, nothing printed.
     _stub_ok = lambda x, z: False   # noqa: E731
-    _sbp = data / "stubs.built.json"
-    if _sbp.exists():
+    # (ledger 0054 P3: a junction pad's stub barriers, data/pads.built.json stubs[] in the same shape, likewise)
+    _sbps = [p for p in (data / "stubs.built.json", data / "pads.built.json") if p.exists()]
+    if _sbps:
         STUB_D_MARGIN_M = 0.15
         _segs = []
-        for _s in json.loads(_sbp.read_text(encoding="utf-8")).get("stubs", []):
+        for _s in [s for p in _sbps for s in json.loads(p.read_text(encoding="utf-8")).get("stubs", [])]:
             _b = _s.get("barrier") or {}
             _pp = _b.get("path_xz") or []
             _r = float(_b.get("half_base_m", 0.335)) + STUB_D_MARGIN_M

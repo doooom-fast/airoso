@@ -172,7 +172,7 @@ CHICANE = {"name": "test_college", "out_leg": [900, 930], "back_leg": [990, 1020
 def _project(chicanes):
     d = Path(tempfile.mkdtemp())
     (d / "data").mkdir()
-    cfg = json.loads((SD / "track.config.json").read_text(encoding="utf-8"))
+    cfg = sd_v0180.loop_config(json.loads((SD / "track.config.json").read_text(encoding="utf-8")))
     cfg["race"]["chicanes"] = chicanes
     # the data pinned here is v0.18.0's centreline, where the detector reads the Jackson / Lake Murray Blvd apex at v3297
     # (the rebuilt road, 0.45 m shorter on College, reads v3296 — the config's box; see its _boxes_apex_doc)

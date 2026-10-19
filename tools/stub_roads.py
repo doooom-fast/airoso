@@ -585,8 +585,22 @@ class Dem:
             self.path.write_text(json.dumps(self.cache, sort_keys=True), encoding="utf-8")
 
 
-def build_stub(e, local, conns, dem, origin):
-    """(connector record, plan record) for one `stub` entry"""
+def straighten(pts, uc, u_end):
+    """(ledger 0054 P3) the branch replaced by its CHORD from the cut out to u_end — the same resample-shaped polyline
+    [(x, z)] from the cut (index 0 at u = 0 ... extended both ways along the chord) that point_at reads: the return's
+    corner (tools/author_stubs_blend.py) fits ONE straight edge line to the stub, and a side street curving 0.3-1.2 m
+    within its first 16 m (Princess View Way, Fontaine St, Laura St, Birchcreek Rd) put the stub's own road 0.1-0.2 m
+    under the return's curb top at B (audit K / I, P3's second build)"""
+    x0, z0, _a, _b = point_at(pts, uc)
+    x1, z1, _c, _d = point_at(pts, uc + u_end)
+    L = math.hypot(x1 - x0, z1 - z0) or 1.0
+    tx, tz = (x1 - x0) / L, (z1 - z0) / L
+    return [(x0 + tx * (u - uc), z0 + tz * (u - uc)) for u in (uc - 4.0, uc + u_end + 20.0)]
+
+
+def build_stub(e, local, conns, dem, origin, straight=False):
+    """(connector record, plan record) for one `stub` entry; straight (opt-in, the declaration's defaults.straight):
+    the stub on the chord of its branch (straighten)"""
     if e.get("host", "MAINLINE") == "MAINLINE":
         hpts, hw = local["points_xyz_m"], local["widths_m"]
     else:
@@ -611,6 +625,18 @@ def build_stub(e, local, conns, dem, origin):
     u_bar = u_mouth + L
     u_end = u_bar + TAIL_M
     width = float(e["width_m"])
+    if straight:
+        pts = resample(straighten(pts, uc, u_end), 0.05)
+        _cut2 = find_cut(host, pts)
+        if _cut2 is None:
+            raise SystemExit(f"[stubs] {e['id']}: the straightened branch never leaves the host's pavement")
+        uc, cx, cz, tx, tz, seg, t, lat, pts = _cut2
+        htx, htz = host.tangent(seg)
+        ang = math.degrees(math.acos(min(1.0, abs(tx * htx + tz * htz))))
+        sin_a = max(0.2, math.sin(math.radians(ang)))
+        u_mouth = OVERLAP_M / sin_a
+        u_bar = u_mouth + L
+        u_end = u_bar + TAIL_M
     host_y, hseg, ht = TRIM.host_height([tuple(p) for p in hpts], cx, cz)
     g0 = host.grade(hseg) * (htx * tx + htz * tz)
     # 3DEP along the branch, every metre from the mouth line to the end
@@ -663,8 +689,16 @@ def lanes_per_side(lanes) -> int:
     return max(1, n // 2)
 
 
-def curb_cut_plan(e, local, origin):
-    host = Line(local["points_xyz_m"], local["widths_m"])
+def curb_cut_plan(e, local, origin, conns=()):
+    hn = e.get("host", "MAINLINE")
+    if hn == "MAINLINE":
+        host = Line(local["points_xyz_m"], local["widths_m"])
+    else:
+        # ledger 0054 P3: a driveway on a north piece (the old loop's OSM cache had no service ways)
+        hc = next((c for c in conns if c["name"] == hn), None)
+        if hc is None:
+            raise SystemExit(f"[stubs] {e['id']}: host {hn!r} not in connectors.local.json")
+        host = Line(hc["points_xyz_m"], hc["widths_m"])
     geo = [to_local(lo, la, origin) for lo, la in e["branch_lonlat"]]
     cut = find_cut(host, geo, overlap=0.0)
     if cut is None:
@@ -675,7 +709,7 @@ def curb_cut_plan(e, local, origin):
     ang = math.degrees(math.acos(min(1.0, abs(tx * htx + tz * htz))))
     w = float(e.get("width_m", SERVICE_WIDTH_M))
     half_span = w / 2.0 / max(0.3, math.sin(math.radians(ang)))
-    return {"id": e["id"], "host": "MAINLINE", "side": 1 if lat >= 0 else -1, "station_m": round(s, 2),
+    return {"id": e["id"], "host": hn, "side": 1 if lat >= 0 else -1, "station_m": round(s, 2),
             "half_span_m": round(half_span, 2), "flare_m": CURB_CUT_FLARE_M, "lip_m": CURB_CUT_LIP_M,
             "width_m": w, "angle_deg": round(ang, 2), "cut_xz": [round(cx, 3), round(cz, 3)]}
 
@@ -703,11 +737,12 @@ def apply(project, decl_path=None, sampler=None) -> int:
     conns, plans, cuts = [], [], []
     for e in decl.get("stubs", []):
         if e["treatment"] == "stub":
-            c, p = build_stub(e, local, base, dem, origin)
+            c, p = build_stub(e, local, base, dem, origin,
+                              straight=bool((decl.get("defaults") or {}).get("straight")))
             conns.append(c)
             plans.append(p)
         elif e["treatment"] == "curb_cut":
-            cuts.append(curb_cut_plan(e, local, origin))
+            cuts.append(curb_cut_plan(e, local, origin, base))
     dem.save()
     for p, doc in docs.items():
         doc["connectors"] = [c for c in doc["connectors"] if not c["name"].startswith(STUB_PREFIX)] + conns

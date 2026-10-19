@@ -369,6 +369,24 @@ def main():
                 for j in range(max(0, i - 3), min(n - 1, i + 4)):
                     flag[j] = True
         tight.append(flag)
+    # ON A STEEP HOST (ledger 0054 P3, opt-in: track.config.json route.tight_approach_host_grade, a grade): a connector
+    # whose mouth's host climbs at least that steeply is TIGHT over its whole approach — the weld eases the host's cross-
+    # fall (its grade, ~9 % on Princess View) to level over a 15 m stub's every row, a twist of up to 0.45 m across 10 m,
+    # and a 1.5 m grass facet across it stood 1-4 mm under the stub's road (verify_mouths APPROACH, Fontaine St / Princess
+    # View Way, P3's second build); absent key: as before
+    _tg = None
+    if cfgp_ := (proj / "track.config.json"):
+        if cfgp_.exists():
+            _tg = (json.loads(cfgp_.read_text(encoding="utf-8")).get("route") or {}).get("tight_approach_host_grade")
+    _tight_lines = set()
+    if _tg is not None:
+        for li, ln in enumerate(lines):
+            g_ = max((abs(float(m_.get("host_grade") or 0.0)) for m_ in mouths if m_.get("piece") == ln["name"]),
+                     default=0.0)
+            if g_ >= float(_tg):
+                tight[li] = [True] * len(tight[li])
+                _tight_lines.add(li)
+    _tight_px = bool(_tight_lines)
     # HOST LANE UNDER AN EXACT-DECK MOUTH (ledger 0054 P1 fix round; opt-in by track.config.json route.weld_exact_deck,
     # connector-name prefixes). The kn5 prep pins every grass vertex under a road 0.02 m below it and leaves the grass a
     # plane between them (its corridor edges ~4.5 m). On the J5 corner (Navajo / Jackson, 0050's levelled fan) the
@@ -431,6 +449,15 @@ def main():
                 todo.append(e)
                 continue
             r = roads.nearest(mx, mz)
+            if (r is None or r[0] > APPROACH_OFF_M) and _tight_px:
+                # (route.tight_approach_host_grade) a long edge whose MIDPOINT stands off a steep-host stub can still
+                # reach under its road from a coarse kept cell: its ends are read too (a 14 m fan edge from a 20 m kept
+                # cell reached 0.6 m inside Fontaine St's road edge, grass 3-5 mm under it — P3's third build)
+                for vv in e.verts:
+                    rv = roads.nearest(vv.co.x, vv.co.y)
+                    if rv is not None and rv[0] <= APPROACH_OFF_M and tight[rv[1]][rv[2]] and rv[1] in _tight_lines:
+                        r = rv
+                        break
             if r is None or r[0] > APPROACH_OFF_M:
                 continue
             if ln_e > (TIGHT_EDGE_M if tight[r[1]][r[2]] else FINE_EDGE_M):

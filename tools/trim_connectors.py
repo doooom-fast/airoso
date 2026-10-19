@@ -66,6 +66,8 @@ BLEND_M = 30.0
 BLEND_CAP_STEP_M = 5.0     # [invented] grade-capped blend (opt-in): lengths tried, BLEND_M upward in this step ...
 BLEND_CAP_MAX_M = 90.0     # [invented] ... to at most this
 GRADE_CAP = 0.11           # tools/route_connectors.py MAX_GRADE (EXPANSION-PLAN A6: the 11 % cap stays)
+OWN_GRADE_PLUS = 0.03      # [invented] ledger 0054 P3: an authored piece's offset blend may steepen its own grade by at
+                           # most this (drive_test's KINK_PCT, 3 %-points: the vertical curve's allowance)
 REACH_M = 15.0
 END_MATCH_M = 1e-3        # a piece endpoint IS the cut when within this (cut_xyz is rounded to 1 mm)
 
@@ -150,6 +152,40 @@ def blend_from_cut(piece, cut, host_y, at_start, blend_m=BLEND_M, frozen=()):
     return moved
 
 
+def offset_blend_from_cut(piece, cut, host_y, at_start, blend_m=BLEND_M, frozen=()):
+    """THE OFFSET BLEND (ledger 0054 P3, the grade-capped connectors only): the piece's own profile, extended to the cut
+    along its own grade, is LIFTED (or lowered) by dy0 = host_y - that height, the lift easing out over blend_m
+    (weight smoothstep(1 - s / blend_m), 1 at the cut). blend_from_cut pulls every point toward the FLAT host height
+    instead, so on a road that itself falls away from the host its slope adds (host - piece) x the weight's slope —
+    which grows along the blend: Waring, falling 6 % from J1 under a loop deck 1.6 m over its 3DEP, read 11.3 % at
+    any blend up to 90 m that way, and 6 % + 1.5 x 1.6 / blend_m (9.0 % at 80 m) this way. Same walk, same frozen
+    stop, same return as blend_from_cut."""
+    order = list(range(len(piece))) if at_start else list(range(len(piece) - 1, -1, -1))
+    if not order:
+        return []
+    p0 = piece[order[0]]
+    d0 = math.hypot(p0[0] - cut[0], p0[2] - cut[2])
+    g0 = 0.0
+    if len(order) > 1:
+        p1 = piece[order[1]]
+        L01 = math.hypot(p1[0] - p0[0], p1[2] - p0[2])
+        g0 = 0.0 if L01 < 1e-9 else (p0[1] - p1[1]) / L01      # rise per metre toward the cut
+    dy0 = host_y - (p0[1] + g0 * d0)
+    moved = []
+    acc = 0.0
+    prev = cut
+    for q in order:
+        p = piece[q]
+        acc += math.hypot(p[0] - prev[0], p[2] - prev[2])
+        if acc >= blend_m or (round(p[0], 3), round(p[2], 3)) in frozen:
+            break
+        w = smoothstep(1.0 - acc / blend_m)
+        moved.append((p[0], p[2], dy0 * w))
+        piece[q] = (p[0], p[1] + dy0 * w, p[2])
+        prev = p
+    return moved
+
+
 def blended_grade(piece, cut, at_start, reach):
     """the steepest |grade| between consecutive points from the cut out to `reach` of arc along a blended piece"""
     order = list(range(len(piece))) if at_start else list(range(len(piece) - 1, -1, -1))
@@ -166,16 +202,41 @@ def blended_grade(piece, cut, at_start, reach):
     return g
 
 
-def capped_blend_length(piece, cut, host_y, at_start, frozen=(), cap=GRADE_CAP):
+def own_grade(piece, at_start, reach):
+    """the steepest |grade| between the piece's OWN consecutive points over `reach` of arc from its cut end (the cut
+    itself, at the host's height, left out)"""
+    order = list(range(len(piece))) if at_start else list(range(len(piece) - 1, -1, -1))
+    g, acc = 0.0, 0.0
+    for a_, b_ in zip(order, order[1:]):
+        p, q = piece[a_], piece[b_]
+        L = math.hypot(q[0] - p[0], q[2] - p[2])
+        if L > 1e-6:
+            g = max(g, abs(q[1] - p[1]) / L)
+        acc += L
+        if acc >= reach:
+            break
+    return g
+
+
+def capped_blend_length(piece, cut, host_y, at_start, frozen=(), cap=GRADE_CAP, blend=None, least_steep=False):
     """(blend_m, its max grade): the shortest BLEND_M + k * BLEND_CAP_STEP_M <= BLEND_CAP_MAX_M whose blended piece
-    stays within `cap` over the blend (+ one step), else the least steep of them"""
+    stays within `cap` over the blend (+ one step), else the least steep of them. `blend`: the blend function
+    (blend_from_cut by default; offset_blend_from_cut for an offset-blended connector). least_steep (an authored piece,
+    ledger 0054 P3): the cap is the road's OWN steepest grade over the same reach + OWN_GRADE_PLUS (and never over
+    `cap`) — its real grade is what the road should keep, the lift onto the loop deck a gentle vertical curve on it
+    (Waring at J1, 6.3 % of its own: 60 m at 9.3 %; the shortest within 11 % was 40 m at 10.8 %, the longest 90 m at
+    8.4 % kept the road off its 3DEP over 54 m)"""
+    blend = blend or blend_from_cut
     best = None
     L = BLEND_M
     while L <= BLEND_CAP_MAX_M + 1e-9:
         trial = list(piece)
-        blend_from_cut(trial, cut, host_y, at_start, blend_m=L, frozen=frozen)
+        blend(trial, cut, host_y, at_start, blend_m=L, frozen=frozen)
         g = blended_grade(trial, cut, at_start, L + BLEND_CAP_STEP_M)
-        if g <= cap:
+        lim = cap
+        if least_steep:
+            lim = min(cap, own_grade(piece, at_start, L + BLEND_CAP_STEP_M) + OWN_GRADE_PLUS)
+        if g <= lim:
             return L, g
         if best is None or g < best[1]:
             best = (L, g)
@@ -262,12 +323,18 @@ def _trim_against(conns, hosts, mouths, deltas=None, capped=()):
                     frozen = {(round(mo["cut_xyz"][0], 3), round(mo["cut_xyz"][2], 3)) for mo in mouths}
                     cap_rec = None
                     if capped and any(str(c["name"]).startswith(px) for px in capped):
-                        bl, bg = capped_blend_length(piece, cut, host_y, at_start, frozen=frozen)
-                        cap_rec = {"blend_m": bl, "blend_max_grade": round(bg, 4)}
+                        # ledger 0054 P3: an authored piece (its record carries `expansion`, tools/expansion_pieces.py)
+                        # is OFFSET-blended (offset_blend_from_cut); P1's weld stubs and every other capped connector
+                        # keep blend_from_cut
+                        bfun = offset_blend_from_cut if c.get("expansion") else blend_from_cut
+                        bl, bg = capped_blend_length(piece, cut, host_y, at_start, frozen=frozen, blend=bfun,
+                                                     least_steep=bfun is offset_blend_from_cut)
+                        cap_rec = {"blend_m": bl, "blend_max_grade": round(bg, 4),
+                                   **({"blend_kind": "offset"} if bfun is offset_blend_from_cut else {})}
                         if bg > GRADE_CAP:
                             print(f"[trim] WARNING: {c['name']}: no blend up to {BLEND_CAP_MAX_M:.0f} m keeps the "
                                   f"grade within {100 * GRADE_CAP:.0f} % (least: {100 * bg:.1f} % at {bl:.0f} m)")
-                        moved = blend_from_cut(piece, cut, host_y, at_start, blend_m=bl, frozen=frozen)
+                        moved = bfun(piece, cut, host_y, at_start, blend_m=bl, frozen=frozen)
                     else:
                         # a record's own `blend_m` (a phase-5 stub carries 0: its profile is already anchored on host_y
                         # with the host's own grade, tools/stub_roads.py) — every other connector keeps BLEND_M
@@ -297,7 +364,8 @@ def _trim_against(conns, hosts, mouths, deltas=None, capped=()):
         for q, (piece, pw) in enumerate(pieces):
             out.append({"name": f"{c['name']}#{q}", "kind": c.get("kind", "connector"),
                         "points_xyz_m": [[round(v, 3) for v in p] for p in piece], "widths_m": pw,
-                        **({"stub": c["stub"]} if c.get("stub") else {})})
+                        **({"stub": c["stub"]} if c.get("stub") else {}),
+                        **({"expansion": c["expansion"]} if c.get("expansion") else {})})
         if any(inside):
             print(f"[trim] {c['name']}: {len(pieces)} piece(s), {sum(inside)} pt(s) inside a host dropped")
     return out

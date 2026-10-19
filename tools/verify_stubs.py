@@ -176,7 +176,8 @@ def check_stub(st, sb, mo, piece, host, field, by_name, data, trees):
         return rec
     # S2
     pp = VM.Path2(VM.smooth_xz([tuple(q) for q in piece["points_xyz_m"]]), piece["widths_m"])
-    m2 = VM.check_mouth(mo, VM_FIELD[0], host, pp, mo["end"], data)
+    m2 = VM.check_mouth(mo, VM_FIELD[0], host, pp, mo["end"], data,
+                        exact_deck=any(str(mo.get("connector", "")).startswith(px) for px in EXACT_PX))
     rec["S2"] = {k: m2[k] for k in ("angle_deg", "span_half_m")}
     rec["S2"].update({"mouth_line_max_m": m2["mouth_line"]["max_dev_m"], "host_lane_above_max_m": m2["host_lane"]["max_above_m"],
                       "notch_max_m": m2["notch"]["max_dev_m"], "approach_max_dg_per_m": m2["approach"]["max_dg_per_m"],
@@ -251,10 +252,21 @@ def check_stub(st, sb, mo, piece, host, field, by_name, data, trees):
     span_bad, worst_low, n_s = [], None, 0
     o = -reach
     while o <= reach + 1e-9:
-        x, z = cx + nx * o, cz + nz * o
-        h = field.heights(x, z)
-        surf = max(h["ROAD"] + h["KERB"], default=None)
-        top = max(wall_heights(wall, x, z), default=None)
+        # the barrier's CREST within CREST_SEARCH_M of the declared distance, along the stub (ledger 0054 P3): the
+        # author stage stations the barrier on the welded mesh's own rows, and on a steep host the weld's mitre moves
+        # the stub's first row up to 0.17 m along it (Laura St off Princess View's 9.6 %) — a cross-section 0.17 m off
+        # the crest reads the jersey's sloped face, 0.77 m over the road, not its 1.1 m top
+        best = None
+        k = -CREST_SEARCH_M
+        while k <= CREST_SEARCH_M + 1e-9:
+            x, z = cx + nx * o + tx * k, cz + nz * o + tz * k
+            h = field.heights(x, z)
+            sf = max(h["ROAD"] + h["KERB"], default=None)
+            tp = max(wall_heights(wall, x, z), default=None)
+            if sf is not None and tp is not None and (best is None or tp - sf > best[1] - best[0]):
+                best = (sf, tp)
+            k += CREST_STEP_M
+        surf, top = best if best is not None else (None, None)
         n_s += 1
         if surf is None or top is None or top - surf < BARRIER_MIN_H_M:
             span_bad.append(round(o, 2))
@@ -412,6 +424,9 @@ def check_cut(cc, field, host):
 
 
 VM_FIELD = [None]
+CREST_SEARCH_M = 0.3      # [invented] S4 reads the barrier's crest within this of its declared distance along the stub
+CREST_STEP_M = 0.05
+EXACT_PX = []             # route.weld_exact_deck (set by verify()): S2 reads the host deck as verify_mouths does
 
 
 def host_path(hosts, conns, hn, cut_xz):
@@ -433,6 +448,9 @@ def verify(project: Path, obj: Path | None = None, trees_txt: Path | None = None
     if not pp.exists():
         return None
     plan = json.loads(pp.read_text(encoding="utf-8"))
+    cfgp = project / "track.config.json"
+    EXACT_PX[:] = [str(x) for x in ((json.loads(cfgp.read_text(encoding="utf-8")).get("route") or {})
+                                    .get("weld_exact_deck") or [])] if cfgp.exists() else []
     bp = data / "stubs.built.json"
     built = json.loads(bp.read_text(encoding="utf-8")) if bp.exists() else {"stubs": []}
     mouths = json.loads((data / "mouths.json").read_text(encoding="utf-8")).get("mouths", [])

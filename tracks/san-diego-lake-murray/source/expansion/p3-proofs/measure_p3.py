@@ -46,6 +46,7 @@ def rows_of(p):
 
 R = {pid: rows_of(p) for pid, p in pieces.items()}
 centres = [(q["x"], q["z"]) for rows in R.values() for q in rows[::8]]
+centres.append(tuple(json.loads((PROJ / "data" / "lights.local.json").read_text(encoding="utf-8"))["lampheads"][77][::2]))
 _V, T = vp.load(PROJ / "data" / "track.obj", centres)
 F = vp.Field(T)
 
@@ -216,6 +217,33 @@ for w in walls:
 res["walls"] = {"real_walls_ge_3m": walls, "lost_stretches_ge_50m": lost,
                 "stations_with_real_wall": sum(1 for q in rows_out if q["real_cut_m"] >= 3.0),
                 "of_them_lost": sum(1 for q in rows_out if q["lost"])}
+# ---- lamp 77 (ledger 0054 prep: v0.18.1 stood it behind J1's R 30 return; is its foot on the apron's ground?)
+lights = json.loads((PROJ / "data" / "lights.local.json").read_text(encoding="utf-8"))["lampheads"]
+hx, hy, hz = lights[77]
+post = []
+cur = None
+with open(PROJ / "data" / "track.obj", encoding="ascii", errors="replace") as f:
+    Vall = []
+    for ln in f:
+        c2 = ln[:2]
+        if c2 == "v ":
+            q = ln.split()
+            Vall.append((float(q[1]), float(q[2]), float(q[3])))
+        elif c2 in ("o ", "g "):
+            cur = ln[2:].strip().upper()
+        elif c2 == "f " and cur and cur.startswith("LIGHTPOST"):
+            for t in ln.split()[1:]:
+                v = Vall[int(t.split("/")[0]) - 1]
+                if math.hypot(v[0] - hx, v[2] - hz) < 6.0:
+                    post.append(v)
+if post:
+    base = min(post, key=lambda v: v[1])
+    gnd = [h for h, n in F.at(base[0], base[2]) if not n.startswith(("MARKINGS", "YLINE", "1WALL", "LIGHT", "SIGN"))]
+    top = max(gnd) if gnd else None
+    res["lamp77"] = {"head": [hx, hy, hz], "base": [round(c, 3) for c in base],
+                     "surface_under_base": None if top is None else round(top, 3),
+                     "base_minus_surface_m": None if top is None else round(base[1] - top, 3),
+                     "surfaces": sorted({n for _h, n in F.at(base[0], base[2])})}
 OUT.write_text(json.dumps(res, indent=1), encoding="utf-8")
 print(json.dumps({"V1": {k: v for k, v in res["V1"].items() if k != "aerial_stations"}, "V2": res["V2"],
                   "walls": {"lost_stretches_ge_50m": lost, "stations_with_real_wall": res["walls"]["stations_with_real_wall"],

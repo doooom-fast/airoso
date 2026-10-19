@@ -1,0 +1,567 @@
+{
+ "V1": {
+  "A": {
+   "centre_vs_design_p95_m": 0.34,
+   "sections": 94,
+   "width_built_vs_design_max_m": 23.3
+  },
+  "B": {
+   "centre_vs_design_p95_m": 1.35,
+   "sections": 106,
+   "width_built_vs_design_max_m": 25.8
+  },
+  "C": {
+   "centre_vs_design_p95_m": 0.085,
+   "sections": 222,
+   "width_built_vs_design_max_m": 19.72
+  },
+  "D": {
+   "centre_vs_design_p95_m": 0.13,
+   "sections": 195,
+   "width_built_vs_design_max_m": 15.26
+  },
+  "aerial_stations": [
+   {
+    "n": 1,
+    "label": "A st 40",
+    "eye_m": 27.0,
+    "built_m": 31.2,
+    "pass": false
+   },
+   {
+    "n": 2,
+    "label": "J1 arm Waring Road brg 312",
+    "eye_m": 26.5,
+    "built_m": 26.4,
+    "pass": true
+   },
+   {
+    "n": 3,
+    "label": "A st 250",
+    "eye_m": 26.5,
+    "built_m": 26.4,
+    "pass": true
+   },
+   {
+    "n": 4,
+    "label": "A st 500",
+    "eye_m": 27.5,
+    "built_m": 27.4,
+    "pass": true
+   },
+   {
+    "n": 5,
+    "label": "A st 750",
+    "eye_m": 24.5,
+    "built_m": 24.4,
+    "pass": true
+   },
+   {
+    "n": 6,
+    "label": "J2 arm Waring Road brg 052",
+    "eye_m": 27.0,
+    "built_m": 26.8,
+    "pass": true
+   },
+   {
+    "n": 7,
+    "label": "A st 936",
+    "eye_m": 24.0,
+    "built_m": 24.0,
+    "pass": true
+   },
+   {
+    "n": 8,
+    "label": "B st 40",
+    "eye_m": 22.5,
+    "built_m": 22.4,
+    "pass": true
+   },
+   {
+    "n": 9,
+    "label": "J2 arm Princess View Drive brg 319",
+    "eye_m": 22.5,
+    "built_m": 22.4,
+    "pass": true
+   },
+   {
+    "n": 10,
+    "label": "B st 250",
+    "eye_m": 23.0,
+    "built_m": 22.9,
+    "pass": true
+   },
+   {
+    "n": 11,
+    "label": "B st 500",
+    "eye_m": 24.0,
+    "built_m": 23.9,
+    "pass": true
+   },
+   {
+    "n": 12,
+    "label": "B st 750",
+    "eye_m": 24.0,
+    "built_m": 23.9,
+    "pass": true
+   },
+   {
+    "n": 13,
+    "label": "B st 1000",
+    "eye_m": 27.0,
+    "built_m": 26.9,
+    "pass": true
+   },
+   {
+    "n": 14,
+    "label": "J3 arm Princess View Drive brg 170",
+    "eye_m": 27.0,
+    "built_m": 27.0,
+    "pass": true
+   },
+   {
+    "n": 15,
+    "label": "B st 1078",
+    "eye_m": 28.0,
+    "built_m": 27.9,
+    "pass": true
+   },
+   {
+    "n": 16,
+    "label": "C st 40",
+    "eye_m": 32.0,
+    "built_m": 31.9,
+    "pass": true
+   },
+   {
+    "n": 17,
+    "label": "J3 arm Mission Gorge Road brg 057",
+    "eye_m": 33.0,
+    "built_m": 32.9,
+    "pass": true
+   },
+   {
+    "n": 18,
+    "label": "C st 250",
+    "eye_m": 29.0,
+    "built_m": 28.9,
+    "pass": true
+   },
+   {
+    "n": 19,
+    "label": "C st 500",
+    "eye_m": 28.5,
+    "built_m": 28.4,
+    "pass": true
+   },
+   {
+    "n": 20,
+    "label": "C st 750",
+    "eye_m": 27.5,
+    "built_m": 27.4,
+    "pass": true
+   },
+   {
+    "n": 21,
+    "label": "C st 1000",
+    "eye_m": 27.5,
+    "built_m": 27.5,
+    "pass": true
+   },
+   {
+    "n": 22,
+    "label": "C st 1250",
+    "eye_m": 33.0,
+    "built_m": 32.9,
+    "pass": true
+   },
+   {
+    "n": 23,
+    "label": "C st 1500",
+    "eye_m": 31.5,
+    "built_m": 31.4,
+    "pass": true
+   },
+   {
+    "n": 24,
+    "label": "C st 1750",
+    "eye_m": 30.0,
+    "built_m": 29.9,
+    "pass": true
+   },
+   {
+    "n": 25,
+    "label": "C st 2000",
+    "eye_m": 31.5,
+    "built_m": 31.4,
+    "pass": true
+   },
+   {
+    "n": 26,
+    "label": "J4 arm Mission Gorge Road brg 244",
+    "eye_m": 29.0,
+    "built_m": 29.0,
+    "pass": true
+   },
+   {
+    "n": 27,
+    "label": "C st 2248",
+    "eye_m": 30.5,
+    "built_m": 30.4,
+    "pass": true
+   },
+   {
+    "n": 28,
+    "label": "D st 40",
+    "eye_m": 26.0,
+    "built_m": 26.0,
+    "pass": true
+   },
+   {
+    "n": 29,
+    "label": "J4 arm Jackson Drive brg 144",
+    "eye_m": 28.5,
+    "built_m": 28.3,
+    "pass": true
+   },
+   {
+    "n": 30,
+    "label": "D st 250",
+    "eye_m": 20.5,
+    "built_m": 20.4,
+    "pass": true
+   },
+   {
+    "n": 31,
+    "label": "D st 500",
+    "eye_m": 17.0,
+    "built_m": 18.6,
+    "pass": false
+   },
+   {
+    "n": 32,
+    "label": "D st 750",
+    "eye_m": 24.0,
+    "built_m": 23.9,
+    "pass": true
+   },
+   {
+    "n": 33,
+    "label": "D st 1000",
+    "eye_m": 21.0,
+    "built_m": 20.9,
+    "pass": true
+   },
+   {
+    "n": 34,
+    "label": "D st 1250",
+    "eye_m": 20.5,
+    "built_m": 20.4,
+    "pass": true
+   },
+   {
+    "n": 35,
+    "label": "D st 1500",
+    "eye_m": 20.5,
+    "built_m": 20.4,
+    "pass": true
+   },
+   {
+    "n": 36,
+    "label": "D st 1750",
+    "eye_m": 25.5,
+    "built_m": 25.4,
+    "pass": true
+   },
+   {
+    "n": 37,
+    "label": "J5 arm Jackson Drive brg 321",
+    "eye_m": 24.0,
+    "built_m": 23.9,
+    "pass": true
+   },
+   {
+    "n": 38,
+    "label": "D st 1971",
+    "eye_m": 26.0,
+    "built_m": 26.0,
+    "pass": true
+   }
+  ],
+  "aerial_pass": [
+   36,
+   38
+  ]
+ },
+ "V2": {
+  "A": {
+   "stations": 376,
+   "p95_m": 0.17,
+   "max_m": 1.285,
+   "steepest_down_pct_20m": [
+    -8.79,
+    45.0
+   ],
+   "steepest_up_pct_20m": [
+    1.35,
+    567.5
+   ],
+   "pass_p95": true
+  },
+  "B": {
+   "stations": 423,
+   "p95_m": 0.056,
+   "max_m": 0.102,
+   "steepest_down_pct_20m": [
+    -10.32,
+    477.5
+   ],
+   "steepest_up_pct_20m": [
+    -0.58,
+    1032.5
+   ],
+   "pass_p95": true
+  },
+  "C": {
+   "stations": 888,
+   "p95_m": 0.052,
+   "max_m": 0.111,
+   "steepest_down_pct_20m": [
+    -5.78,
+    1772.5
+   ],
+   "steepest_up_pct_20m": [
+    7.46,
+    567.5
+   ],
+   "pass_p95": true,
+   "crest": {
+    "s": 1462.5,
+    "z_m": 114.53,
+    "pass": true
+   }
+  },
+  "D": {
+   "stations": 778,
+   "p95_m": 0.048,
+   "max_m": 0.093,
+   "steepest_down_pct_20m": [
+    1.45,
+    1962.5
+   ],
+   "steepest_up_pct_20m": [
+    8.08,
+    152.5
+   ],
+   "pass_p95": true
+  }
+ },
+ "walls": {
+  "real_walls_ge_3m": [
+   {
+    "piece": "C",
+    "side": "right",
+    "s_from": 1210.0,
+    "s_to": 1210.0,
+    "max_real_m": 3.21,
+    "min_kept_frac": null,
+    "length_m": 5.0,
+    "kept_frac_median": 0.07,
+    "built_max_m": 0.23
+   },
+   {
+    "piece": "C",
+    "side": "right",
+    "s_from": 1475.0,
+    "s_to": 1560.0,
+    "max_real_m": 5.02,
+    "min_kept_frac": null,
+    "length_m": 90.0,
+    "kept_frac_median": 0.58,
+    "built_max_m": 2.57
+   },
+   {
+    "piece": "C",
+    "side": "right",
+    "s_from": 1570.0,
+    "s_to": 1570.0,
+    "max_real_m": 3.48,
+    "min_kept_frac": null,
+    "length_m": 5.0,
+    "kept_frac_median": 0.07,
+    "built_max_m": 0.24
+   },
+   {
+    "piece": "D",
+    "side": "right",
+    "s_from": 95.0,
+    "s_to": 165.0,
+    "max_real_m": 5.84,
+    "min_kept_frac": null,
+    "length_m": 75.0,
+    "kept_frac_median": 0.89,
+    "built_max_m": 4.81
+   },
+   {
+    "piece": "D",
+    "side": "right",
+    "s_from": 195.0,
+    "s_to": 230.0,
+    "max_real_m": 4.67,
+    "min_kept_frac": null,
+    "length_m": 40.0,
+    "kept_frac_median": 0.06,
+    "built_max_m": 0.26
+   },
+   {
+    "piece": "D",
+    "side": "right",
+    "s_from": 260.0,
+    "s_to": 265.0,
+    "max_real_m": 3.18,
+    "min_kept_frac": null,
+    "length_m": 10.0,
+    "kept_frac_median": 0.08,
+    "built_max_m": 0.24
+   },
+   {
+    "piece": "D",
+    "side": "right",
+    "s_from": 320.0,
+    "s_to": 485.0,
+    "max_real_m": 6.68,
+    "min_kept_frac": null,
+    "length_m": 170.0,
+    "kept_frac_median": 0.96,
+    "built_max_m": 6.23
+   },
+   {
+    "piece": "D",
+    "side": "right",
+    "s_from": 520.0,
+    "s_to": 540.0,
+    "max_real_m": 3.66,
+    "min_kept_frac": null,
+    "length_m": 25.0,
+    "kept_frac_median": 0.02,
+    "built_max_m": 0.07
+   },
+   {
+    "piece": "D",
+    "side": "right",
+    "s_from": 555.0,
+    "s_to": 630.0,
+    "max_real_m": 4.39,
+    "min_kept_frac": null,
+    "length_m": 80.0,
+    "kept_frac_median": 0.99,
+    "built_max_m": 4.28
+   },
+   {
+    "piece": "D",
+    "side": "right",
+    "s_from": 645.0,
+    "s_to": 645.0,
+    "max_real_m": 3.07,
+    "min_kept_frac": null,
+    "length_m": 5.0,
+    "kept_frac_median": 0.07,
+    "built_max_m": 0.23
+   },
+   {
+    "piece": "D",
+    "side": "right",
+    "s_from": 665.0,
+    "s_to": 685.0,
+    "max_real_m": 5.91,
+    "min_kept_frac": null,
+    "length_m": 25.0,
+    "kept_frac_median": 0.05,
+    "built_max_m": 0.23
+   },
+   {
+    "piece": "D",
+    "side": "right",
+    "s_from": 790.0,
+    "s_to": 830.0,
+    "max_real_m": 3.48,
+    "min_kept_frac": null,
+    "length_m": 45.0,
+    "kept_frac_median": 0.07,
+    "built_max_m": 0.24
+   },
+   {
+    "piece": "D",
+    "side": "right",
+    "s_from": 915.0,
+    "s_to": 935.0,
+    "max_real_m": 3.5,
+    "min_kept_frac": null,
+    "length_m": 25.0,
+    "kept_frac_median": 0.08,
+    "built_max_m": 0.25
+   },
+   {
+    "piece": "D",
+    "side": "right",
+    "s_from": 1005.0,
+    "s_to": 1125.0,
+    "max_real_m": 5.47,
+    "min_kept_frac": null,
+    "length_m": 125.0,
+    "kept_frac_median": 0.99,
+    "built_max_m": 5.4
+   },
+   {
+    "piece": "D",
+    "side": "right",
+    "s_from": 1225.0,
+    "s_to": 1525.0,
+    "max_real_m": 7.15,
+    "min_kept_frac": null,
+    "length_m": 305.0,
+    "kept_frac_median": 0.97,
+    "built_max_m": 6.87
+   },
+   {
+    "piece": "D",
+    "side": "right",
+    "s_from": 1690.0,
+    "s_to": 1715.0,
+    "max_real_m": 3.64,
+    "min_kept_frac": null,
+    "length_m": 30.0,
+    "kept_frac_median": 0.08,
+    "built_max_m": 0.25
+   }
+  ],
+  "lost_stretches_ge_50m": [],
+  "stations_with_real_wall": 212,
+  "of_them_lost": 57
+ },
+ "lamp77": {
+  "head": [
+   -1954.731,
+   33.266,
+   632.081
+  ],
+  "base": [
+   -1955.389,
+   21.822,
+   633.65
+  ],
+  "surface_under_base": 24.913,
+  "base_minus_surface_m": -3.091,
+  "surfaces": [
+   "1GRASS_3",
+   "1KERB_SIDEWALK_APAP1",
+   "LIGHTPOST_4"
+  ],
+  "held_v0181": {
+   "base_y": 22.188,
+   "surface_under_base": 24.96,
+   "base_minus_surface_m": -2.772
+  },
+  "note": "the post's foot stands 3.09 m under the ground over it (1GRASS_3 / AP1's walk); the held v0.18.1 already had it 2.77 m under (its head 0.37 m higher, the ground the same): a lamp seated off the road below, not the ground at its foot. Nothing floats; the pole shows ~3 m shorter. P4 re-seats lamps."
+ }
+}

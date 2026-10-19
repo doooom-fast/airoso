@@ -943,6 +943,12 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
                             # (--line only) a fixed-offset path running backwards round a junction pad's turn re-traces
                             # the plan (FOLD BUMPS): reported as fold_kinks, as fold bumps are
                             problems.setdefault("fold_kinks", []).append((round(s, 1), round(off, 2), round(kink, 2)))
+                        elif line is not None and d_now is not None and prev_d[pi] is not None and                                 min(d_now, prev_d[pi]) >= VERTEX_MIN_TRAVEL_M and                                 abs(dh / d_now - prev_slope[pi] * STEP_M / prev_d[pi]) * 100 <= KINK_PCT:
+                            # (--line only) on the inside of a pad's turn a fixed-offset path covers well under 1 m a
+                            # station, and the turn's curvature changes station to station: the grade over the metre it
+                            # did NOT travel jumps. Re-measured on the path's own travel (VERTEX BUMPS' rule, for the
+                            # grade): within KINK_PCT -> travel_kinks (reported); a real crease reads on its own travel
+                            problems.setdefault("travel_kinks", []).append((round(s, 1), round(off, 2), round(kink, 2)))
                         else:
                             problems["kinks"].append((round(s, 1), round(off, 2), round(kink, 2)))
                     step = abs(dh - prev_slope[pi] * STEP_M)
@@ -1378,6 +1384,8 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
         out_name = f"drive_test.line.{line['id']}.json"
         report["line"] = line["id"]
         report["fold_kinks"] = len(problems.get("fold_kinks", []))
+        report["travel_kinks"] = len(problems.get("travel_kinks", []))
+        report["worst"]["kinks_all"] = sorted(problems["kinks"], key=lambda r: r[0])[:2000]
 
     # Gate philosophy: ABSOLUTE ZERO for the things no driver tolerates (ground through the lane,
     # solid objects in the corridor); RATES vs the driver-approved baseline for surface texture
@@ -1545,6 +1553,7 @@ def run_lines(project_dir: str | Path, set_name: str) -> int:
         rows[lid_] = {k: r.get(k) for k in SUMMARY_KEYS if k not in ("direction", "kind", "race_furniture", "lane")}
         rows[lid_].update({"soft_top_per_km": round(soft_km, 2), "v6": v6, "fail": fail,
                            "drive_test_rule_fail": bool(r["fail"]), "fold_kinks": r.get("fold_kinks"),
+                           "travel_kinks": r.get("travel_kinks"),
                            "file": f"drive_test.line.{set_name}_{lid_}.json"})
         print()
     out = {"_doc": "ledger 0054 P3: drive_test --line (the north network's own lines, tools/expansion_lines.py); "

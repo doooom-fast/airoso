@@ -51,7 +51,7 @@ the new roads is a candidate for a later phase.
 
 ## Status
 
-**Open — P2 (the ground over the expansion) done on a branch 2026-10-14** (see "P2" at the end: the grown heightfield, the pin's 37 / 26 and the re-keyed cache in one change; the tiers planned over the held north network; 3DEP fetched; the existing three layouts byte-identical to v0.18.0 on every drive, mouth and route gate; the loop's ground within 150 m unchanged except beside the two weld mouths; six cut-wall stretches listed for P3's hand authoring; the low clause restated). Was: **Open — P1 done on a branch 2026-10-14, after a fix round** (see "P1 fix round" at the end: both new mouths pass verify_mouths, J1's R 30 return is built as apron AP1 to v1526.3, no road lies over another at either mouth, no step over 6 cm at J5 in any layout on the real wheel paths, both Speedways sealed; the existing three layouts equal to v0.18.0 key for key). Was: **Open — P1 (the readable intermediate, the numbered map, the J1 / J5 weld rehearsal) done on a branch 2026-10-14** (refuted: J5 failed verify_mouths, drive_test still read 6-8 cm steps at J5). Was: **Open — P0 (data, no geometry) done on a branch 2026-10-14** (see "P0" at the end: guarded OSM + buildings, `north`
+**Open — P3 (the north roads) built and rehearsed on a branch 2026-10-19, v0.19.0, not installed** (see "P3" at the end: four roads, three junction pads, two permanent welds, 24 barrier-closed side streets, six cut slopes kept; every gate of the three existing layouts no worse than v0.18.1; the new roads driven both ways PASS). Next: Kevin's Drive 1, then P4 dressing. Was: **Open — P2 (the ground over the expansion) done on a branch 2026-10-14** (see "P2" at the end: the grown heightfield, the pin's 37 / 26 and the re-keyed cache in one change; the tiers planned over the held north network; 3DEP fetched; the existing three layouts byte-identical to v0.18.0 on every drive, mouth and route gate; the loop's ground within 150 m unchanged except beside the two weld mouths; six cut-wall stretches listed for P3's hand authoring; the low clause restated). Was: **Open — P1 done on a branch 2026-10-14, after a fix round** (see "P1 fix round" at the end: both new mouths pass verify_mouths, J1's R 30 return is built as apron AP1 to v1526.3, no road lies over another at either mouth, no step over 6 cm at J5 in any layout on the real wheel paths, both Speedways sealed; the existing three layouts equal to v0.18.0 key for key). Was: **Open — P1 (the readable intermediate, the numbered map, the J1 / J5 weld rehearsal) done on a branch 2026-10-14** (refuted: J5 failed verify_mouths, drive_test still read 6-8 cm steps at J5). Was: **Open — P0 (data, no geometry) done on a branch 2026-10-14** (see "P0" at the end: guarded OSM + buildings, `north`
 appended with full/medium/short byte-identical, config per D2, `grid_grow` + frame pin + cache remap proven; the grown
 grid, the pin's offsets and the re-keyed cache land together in P2). Next: P1, the readable intermediate. Was: **Open — planned 2026-10-13** (`tracks/san-diego-lake-murray/EXPANSION-PLAN.md`, revision 2 after an independent critic; place facts in `DOSSIER-EXPANSION-NORTH.md`). Kevin's answers to D1-D4 pending (D3 amends law L3: needs his explicit yes). Was: **Open — research and plan first** (dossier-style: routes, junctions with the loop, elevation and the gorge,
 widths and medians off the aerial, terrain extent, layouts, budget, gates), then the build after v0.18.x lands
@@ -595,3 +595,68 @@ build itself (EXPANSION-PLAN P3 → Drive 1, v0.19.0) is next. The north route s
   verify_mouths, verify_fold_fans, lights, mouths, welds and connectors byte-identical to the installed v0.18.1's. The
   one race-file difference is a correction: the Lake Murray Blvd I-8 span now sits at the v0.18.1 lap's stations
   (13312.1 m, the installed declaration still had v0.18.0's 13318.7).
+
+## P3 — the north roads built → Drive 1, v0.19.0 (2026-10-18/19; branch `worktree-wf_c6ab4b42-146-1`, not merged, nothing installed)
+
+The north route is no longer held: Waring (A), Princess View (B), Mission Gorge (C) and Jackson north (D) are built as
+four whole connectors off the P1 intermediate, joined to the loop at J1 / J5 (P1's welds, now permanent) and to each
+other at three new junction pads J2 / J3 / J4. Rehearsed fresh, full chain, `--no-install`, in
+`D:/k10-scratch/phase1/p3final`; proofs in `tracks/san-diego-lake-murray/source/expansion/p3-proofs/`
+(`compare_vs_held.json`, `measure_p3.json`, `stills/`, the two scripts that made them). GATES-CHANGELOG 2026-10-18 "P3".
+
+**What was built, in plain terms.**
+- **The four roads** follow the intermediate's centre line and curb-to-curb width station by station (a station every
+  3 m); their height is a smooth fit through the real 3DEP ground under them (within 0.17 m on Waring, 0.06 m on the
+  others, 95 % of stations). Princess View's steepest 20 m is −10.3 %; Mission Gorge keeps its crest (114.5 m at s 1462).
+- **Where Waring leaves College (J1)** the new road eases its own slope onto the loop's surface over 65 m instead of
+  bending down to meet it (9.0 % at worst, its own steepest + 3 points); before, the join pulled it to 11.3 %.
+- **The three new corners (J2, J3, J4)** are one sheet of road each, welded to the four roads that meet there with no
+  gap and no overlap (the worst seam is 1.1 mm), curved curbs on every corner, and the corner surface at the junction
+  within 0.3 m of the real ground. Their minor side streets end after 15 m at a concrete K-rail.
+- **Side streets** off the new roads: 24 public mouths end in a 15 m stub and a K-rail (Phase 5's tool, now with
+  straight stubs); 27 driveways / service mouths are curb cuts; 6 are skipped (the Navajo legs at J1 / J5, the J3 quarry
+  drive, one parallel service road).
+- **Medians, islands and paint.** Raised medians and painted ones per the dossier; paint per road: Waring and Mission
+  Gorge lane lines and bike lanes; Princess View double yellow with parking lanes (a third downhill lane on its last
+  614 m); Jackson the double-double yellow median, the hatched approach to J4 and buffered bike lanes.
+- **The six cut slopes** (Mission Gorge s 1475-1560, Jackson s 95-165, 320-485, 555-630, 1005-1120, 1225-1525, all on the
+  right) are released from the graded ground the way College's cut face is (ledger 0055): the real hillside stands
+  behind the curb instead of being smoothed to road height. P2 predicted six 50 m+ stretches of 3 m+ wall would be lost;
+  none is (57 of the 212 wall stations lose their wall individually, scattered, none in a run of 50 m).
+- **The Speedways** seal the two new openings with their curb strip and barrier, as in P1; two outside kerbs dropped;
+  `no_route` finds no way out (0 of 439 probes).
+
+**Gates vs the held v0.18.1** (same end state: "NOT INSTALLED" on the street lap's own soft-top rule, red since v0.18.0;
+nothing worse in any of the three layouts):
+- Free Roam: soft top 8 → 8, severe 0 → 0, kinks 2.67 → 2.67 /km, excursions 96 → 96, audit 53 → 53.
+- Speedway / Reverse: severe 15 / 20 → 4 + 11 / 6 + 14 (the same count, now filed apart as fold-fan reads), soft top 8 /
+  4, kinks 6.46 / 6.09, barrier_missing 0, audit 53, no_route PASS, verify_ai_line PASS (2.54 / 2.38 m).
+- verify_mouths 30 mouths PASS (J1 0.006 / 0.025 m, J5 0.017 m); verify_stubs 24 + 27 PASS; verify_pads J2 / J3 / J4
+  PASS; verify_fold_fans, rib, house_seat, verify_race, verify_signs (19 posts) PASS.
+- **The new roads, driven** (`drive_test --line expansion`, each direction in its right-hand lanes J1 → J5 and back):
+  forward PASS (soft top 2, severe 0, kinks 3.66 /km), reverse PASS (0, 0, 1.11 /km).
+- kn5: road 108.18 MB (held 82.27, installed v0.18.1 73.57), 92 meshes, 1,445,573 positions; race 11.72 MB; closures 5.50.
+- Tests: `tests/run_tests.py` 874 passed, 1 failed (the known engine-july md5 pin of this worktree's CRLF checkout of `scripts/ac/export_kn5_addon.py`; main fails it the same way). New: `tests/tools/test_expansion_pieces.py`, `tests/tools/test_p3_chain_pieces.py`, `tests/geometry/test_drive_test_line.py`.
+
+**Fixed on the way** (each at its cause, each in GATES-CHANGELOG): drive_test's furniture check now loads the ground
+under every wall (the held road's 391 "floating" columns were walls with nothing loaded under them: 0 stand off their
+ground); verify_stubs reads the barrier's top and an exact-deck host the way verify_mouths does; steep hosts get a tight
+ground approach at their side streets; offset medians are read by verify_mouths on their own offset.
+
+**Left, honestly.**
+- **J4's Jackson arm** has a crease at its seam of 3.9-4.6 %-points (counted as kinks on every path; within V6).
+- **The forward line's two soft tops** are at Mission Gorge s ~1530, inside the cut zone: the grass edge stands 3.7 mm
+  over the road's edge there.
+- **1WALL_guard is at 65,251 of 65,535 positions**: the next guard rail added must go in a second mesh.
+- **Lamp 77** (behind J1's R 30 return): its foot stands 3.09 m under the ground there (the held v0.18.1 already had it
+  2.77 m under, its head 0.37 m higher): the pole shows ~3 m shorter, nothing floats. P4 re-seats lamps.
+- **Aerial widths** 36 of 38 within tolerance: Waring at s 40 (inside J1's flare, 31.2 m built vs 27 m on the aerial) and
+  Jackson at s 500 (the Hemingway mouth, 18.6 vs 17).
+- Stubs are straight (the real side streets' curves are not followed past the mouth); Doreen Rd, Glenroy St and Birchwood
+  St are not declared by the stub tool (their mouths stay curbed).
+- M3 / M4 are skipped on the street signs (P1's reasons); their race-file plates, the lamps, signs, trees and buildings
+  of the north network are P4.
+- The cut slopes are terrain: they render as grass, not rock, until P4's dressing.
+
+**Next:** Kevin's Drive 1 (P3 "done when": every Drive-1 gate passes and he has driven it; a DRIVE-TEST-REPORT with the
+addendum's §10 rows). Installing it is his call (`ship_sd.sh --force-install` under 0047's rule, no key worse).

@@ -365,6 +365,8 @@ Steps 2–8 can start now on a branch off the 0046 branch, and get rebased after
 > Phase 5 stub tool merged; J1 re-checked against v0.18.1's College (the opening's vertices unchanged; lamp 77 already
 > stands behind the R 30 return — check its foot on the apron's ground in step 3); the stub tool's four cosmetic notes
 > fixed; the held rehearsal equals v0.18.1. Steps 1-8 below are next.
+>
+> **2026-10-19: steps 1-8 built and rehearsed (full chain, `--no-install`), v0.19.0, not installed (ledger 0054, "P3").** J2 / J3 / J4 single-coverage pads (seams ≤ 1.1 mm), J1 / J5 welds permanent, 24 barrier stubs + 27 curb cuts, the six cut slopes released (none lost over 50 m), paint per road, Speedways sealed (no_route PASS), `drive_test --line expansion` PASS both ways; the three existing layouts no worse than v0.18.1 on any key. JUNCTIONS 18(d) applied to the pad arms (each pad's side-street arms are 15 m of real, drivable road closed by a physical K-rail, in place of step 4's see-only stubs). Step 6's M3 / M4 race-file plates move to P4 with the lamps and signs. Next: Drive 1.
 
 1. **The `ship_sd.sh` draft.** **adapted** `route_connectors` takes the four pieces with their per-station widths. `divide_connectors` passes them through untouched. `trim_connectors` cuts at the pads and the two welds, then the rebuild runs.
 2. **new `author_junction_pad_blend.py`** builds J2, J3 and J4 as single-coverage pads:

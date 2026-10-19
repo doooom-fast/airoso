@@ -2556,3 +2556,96 @@ corners 57 → 35 (the comb behind the returns gone; left: long sliver creases w
 uphill corner, max 0.60 m, and the welded approaches' own bumps along the stub walks, as at v0.18.1's existing mouths
 (max 0.19 m)); grass within 5 mm of a corner's road: as the 2026-10-14 demo (Lambda c0 6 samples at −2 mm, Hyde Park c0
 5 at 0.0).
+
+## 2026-10-18 — Lake Murray expansion P3 (Drive 1, v0.19.0): the north roads built; two new gates (`verify_pads`, `drive_test --line expansion`); drive_test's furniture seating reads every wall on its own ground (ledger 0054)
+
+No existing threshold changes. Two new hard gates; one existing gate (drive_test's FURNITURE SEATING) now reads walls it
+could not read before (below). Every other change is opt-in by a new key (absent: the old output).
+
+### New gates
+
+| Gate | Rule | Numbers |
+|---|---|---|
+| `tools/verify_pads.py` (hard, after `verify_stubs`, only with `data/pads.built.json`) | per junction pad on the BUILT road: P1 its deck / curb / every stub barrier present; P2 single coverage over the pad's outline; P3 every arm row vertex has a pad vertex within 1 mm, none 1 mm-5 cm off (JUNCTIONS rule 3), the two surfaces 2 cm either side of the seam within the gap; P4 no grass over the deck; P5 no curb triangle over the pad's pavement; P6 every barrier ≥ 0.8 m over the deck, its base ≤ 0.05 m over the surface under it; P7 the deck at the junction node within 1 m of its 3DEP | COVER_STEP_M 0.5 m [invented], SHEET_DZ_M 0.25 m [invented], raster phase 0.137 / 0.311 m (never on the deck's own 1 m grid), SEAM_STEP_M 0.25 m [invented], SEAM_GAP_M 0.010 m [EXPANSION-PLAN V3], 1 mm / 5 cm [JUNCTIONS rule 3], GRASS_OVER_M 0.005 m [invented], 0.8 m / 0.05 m [tools/verify_stubs.py's], NODE_TOL_M 1.0 m [EXPANSION-PLAN V2] |
+| `drive_test --line expansion` (hard, after the street drive_test; a red is never installed, `--force-install` does not cover it) | the north network's own lines (tools/expansion_lines.py: each direction's right-hand carriageway, J1 → … → J5 and back, through the pads on a cubic turn), driven by drive_test's own sweep on the street OBJ; the verdict is EXPANSION-PLAN V6: obstructions, floating furniture, undrivable corners, daylight gaps 0; severe steps 0; soft top ≤ 6.1 /km; kinks ≤ 4.97 /km. drive_test's own lap rule (soft top 0, excursions ≤ 1 /km) is reported beside it, not gated — the loop's street layout itself ships red on it since v0.18.0 | LINE_SOFT_PER_KM 6.1, LINE_KINK_PER_KM 4.97 [invented in the plan, copied from the loop's rates]; expansion_lines MEDIAN_CLEAR_M 0.3 m [invented], EASE_M 15 m [invented] |
+
+drive_test `--line` only (the lap and every layout are unchanged): a kink read on a fixed-offset sample that runs
+backwards (`folded`) is filed as `fold_kinks`, and one whose grade change on the path's OWN travel (VERTEX BUMPS' rule,
+v0.18.1, applied to the grade) is within KINK_PCT as `travel_kinks` — both reported, not gated: on the inside of a pad's
+right turn a fixed-offset path covers well under 1 m a station and the turn's curvature changes from station to station,
+so the grade over the metre it did not travel jumps (10-17 %-points on the first build, every one on the inside path at
+J2 / J3 / J4, the pad decks themselves 1.6-4.8 % at their steepest). A crease in the deck reads on its own travel and
+still counts (the Jackson arm's seam at J4, 3.9-4.6 %-points on every path, is counted).
+
+### verify_stubs (hard since phase 5): S2 and S4
+
+- S2 now reads the host deck the way verify_mouths does under `route.weld_exact_deck` (the same mouth, the same
+  verdict); before, a stub on an exact-deck host was judged twice, the second time on the level-across deck.
+- S4 reads the barrier's CREST within CREST_SEARCH_M 0.3 m [invented] of its declared distance along the stub
+  (CREST_STEP_M 0.05 m): the author stage stations the barrier on the welded mesh's own rows, and on a steep host the
+  weld's mitre moves a stub's first row up to 0.17 m along it (Laura St off Princess View's 9.6 %) — a cross-section
+  0.17 m off the crest read the jersey's sloped face (0.75-0.79 m) instead of its 1.1 m top, at all 264 points. The
+  rule (≥ 0.8 m over the stub back of walk to back of walk) is unchanged.
+
+### drive_test FURNITURE SEATING: every wall on its own ground
+
+The seating check reads each 1WALL column against the surface under it, but the corridor cull loaded surfaces only
+within 120 m of the swept line: a wall farther out had nothing under it and read "floating 99" whatever stood under it.
+On the v0.18.1 street layout that was 391 columns (re-read on the held rehearsal's own OBJ with the change: 0 — every one
+of them stands on its ground); the north network's island rails and stub barriers made it 3,743. The ground under every
+wall is now loaded; every wall is still judged. Not a loosening: no wall escapes the check, the ones it could not see
+are now seen.
+
+### Changed behaviour, opt-in
+
+| Where | Key | What |
+|---|---|---|
+| `tools/route_connectors.py` | `route_connectors.authored_take` naming a piece (A-D) | takes the whole piece (tools/expansion_pieces.py) |
+| `tools/trim_connectors.py` | a capped connector carrying `expansion` | OFFSET blend (the piece's own line lifted onto the host, easing out) at the shortest length whose grade stays within its own steepest + OWN_GRADE_PLUS 0.03 [invented: drive_test's KINK_PCT] (and the 11 % cap) |
+| `tools/seat_terrain_blend.py` | `route.tight_approach_host_grade` 0.06 [invented] | a side street off a host climbing ≥ 6 % is TIGHT over its whole approach (0.75 m ground); a coarse edge reaching under it from a kept cell is read by its ends too |
+| `tools/verify_mouths.py` | a connector island with `offset_aware` | its reach on the mouth side is its own lateral + half-width (the north medians stand off the centre line) |
+| `tools/stub_roads.py` | declaration `defaults.straight` | each stub on the chord of its OSM branch (the returns fit one straight edge) |
+| `tools/stub_roads.py`, `tools/author_stubs_blend.py`, `tools/verify_stubs.py` | a curb cut on a connector host | the host line from the connector (trim's renamed piece found by the cut) |
+| `tools/ground_release.py` (+ `_blend`, engine-july prep `_release_zones`) | a zone with `line` / `piece` / `piece_s_m` | resolved onto the trimmed connector, judged on its own line (cut zones only: `cut_reach_m`, rails false) |
+| `scripts-v021 ribbon.connector_markings` | a connector record's `paint` | paint_markings: exactly the authored lines (tools/expansion_pieces.py decorate) |
+| `scripts/geometry/audit_mesh.py` D | `data/pads.built.json` | its stub barriers exempt on their declared footprint, as stubs.built.json's |
+| `track.config.json` | `route.weld_exact_deck` += `STUB_` | the north side streets read the host deck off its triangles (hosts up to 9.6 % round curves) |
+
+### New numbers (P3 tools)
+
+| Number | Value | |
+|---|---|---|
+| `expansion_pieces.PROFILE_HALF_M` | 30 m | [invented] the profile's local quadratic fit reach (tricube) |
+| `expansion_pieces.MEDIAN_EDGE_M` | 0.30 m | [invented] |
+| `expansion_pieces.BIKE_LINE_M` / `BUFFER_M` / `PARKING_LINE_M` | 1.80 / 0.90 / 2.40 m | [invented] (the parking lane 8 ft) |
+| `expansion_pieces.PAIR_IN_M` | 0.24 m | [invented] the double-double yellow's pair spacing |
+| `expansion_pieces.PLAIN_DOUBLE_UNDER_M` | 1.0 m | [invented] |
+| `expansion_pieces.HATCH_EVERY_M`, hatch stroke width | 6.0 m, 0.30 m | [invented] |
+| `expansion_pieces.LANE_MIN_M` | 2.9 m | [invented] |
+| lanes per direction | Waring 2, Princess View 2 + 2 (3 downhill on its last 614 m), Mission Gorge 3 + 3, Jackson 2 + 2 | the intermediate's pieces[].paint (dossier §2) |
+| `junction_pad.SNAP_MAX_M` | 0.6 m | [invented] the built arm row vs the design cut |
+| stub far edge | level across, at its middle's 3DEP + 0.10 m | the corners stand on curb lines (gutter / kerb / verge) |
+| `author_junction_pad_blend.ARM_GRADE_REACH_M` | 30 m | [invented] |
+| pad steepness self-check | ≤ the steepest of the arms', the stubs' and the chords between two seams + 2 % | tools/author_aprons_blend.py's GRADE_OVER_SEAMS |
+| six cut zones (ground_release) | reach 40 m, cut reach 20 m, round 3 m, rails false | College's cut face (ledger 0055), the very parameters |
+
+### Measured (the final rehearsal, D:/k10-scratch/phase1/p3final: fresh workshop copy + fresh engine-july copy, FULL chain, `--no-install`)
+
+The same end as the held v0.18.1 rehearsal ("NOT INSTALLED": the street lap's own soft-top rule, red since v0.18.0); no
+key of the three existing layouts worse (`source/expansion/p3-proofs/compare_vs_held.json`).
+
+| | held v0.18.1 | v0.19.0 rehearsal |
+|---|---|---|
+| street: soft top / severe / kinks per km / excursions | 8 / 0 / 2.67 / 96 | 8 / 0 / 2.67 / 96 |
+| street floating furniture | 391 | 0 (the reading fix above; 0 on the held OBJ too) |
+| race_cw: severe (fold fans apart) / soft top / kinks | 15 / 8 / 6.46 | 4 + 11 fold = 15 / 8 / 6.46 |
+| race_acw: severe (fold fans apart) / soft top / kinks | 20 / 4 / 6.09 | 6 + 14 fold = 20 / 4 / 6.09 |
+| audit_mesh (each layout) | 53 | 53, class for class |
+| no_route both Speedways | PASS | PASS (leak 0 m²) |
+| verify_mouths | PASS | 30 mouths PASS (J1 0.006 / 0.025 m, J5 0.017 m) |
+| verify_stubs | — | 24 stubs + 27 curb cuts PASS |
+| verify_pads J2 / J3 / J4 | — | PASS: multi-coverage 0, seam max 1.1 / 0.7 / 0.9 mm, near misses 0, node −0.03 / +0.13 / +0.27 m vs 3DEP, barriers 1.08 m |
+| drive_test --line expansion fwd / rev | — | PASS / PASS: soft top 2 / 0, severe 0 / 0, kinks 3.66 / 1.11 per km |
+| verify_signs | 23 | 19 PASS (M3 and M4 skipped, two posts each: P1's reasons; their race-file plates are P4) |
+| road kn5 | 82.27 MB | 108.18 MB, 92 meshes, 1,445,573 positions; largest mesh 1WALL_guard 65,251 of 65,535 |
+| race kn5 | 11.80 MB | 11.72 MB |

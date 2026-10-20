@@ -1,0 +1,532 @@
+{
+ "_doc": "ledger 0054 P3 repair: held v0.18.1 rehearsal (D:/k10-scratch/phase1/held) -> the repair rehearsal (D:\\k10-scratch\\phase1\\r3run), [held, rehearsal] per key",
+ "layouts": {
+  "street": {
+   "soft_top_in_lane": [
+    8,
+    8
+   ],
+   "severe_steps": [
+    0,
+    0
+   ],
+   "fold_severe": [
+    null,
+    0
+   ],
+   "severe_per_km": [
+    0.0,
+    0.0
+   ],
+   "steps_per_km": [
+    0.0,
+    0.0
+   ],
+   "kinks_per_km": [
+    2.67,
+    2.67
+   ],
+   "obstruction_stations": [
+    0,
+    0
+   ],
+   "barrier_missing": [
+    0,
+    0
+   ],
+   "excursion_drops": [
+    96,
+    96
+   ],
+   "daylight_gaps": [
+    0,
+    0
+   ],
+   "undrivable_corners": [
+    0,
+    0
+   ],
+   "floating_furniture": [
+    391,
+    0
+   ],
+   "lap_m": [
+    13473.5,
+    13473.5
+   ]
+  },
+  "race_cw": {
+   "soft_top_in_lane": [
+    8,
+    8
+   ],
+   "severe_steps": [
+    15,
+    4
+   ],
+   "fold_severe": [
+    null,
+    11
+   ],
+   "severe_per_km": [
+    1.11,
+    0.3
+   ],
+   "steps_per_km": [
+    0.45,
+    0.45
+   ],
+   "kinks_per_km": [
+    6.46,
+    6.46
+   ],
+   "obstruction_stations": [
+    0,
+    0
+   ],
+   "barrier_missing": [
+    0,
+    0
+   ],
+   "excursion_drops": [
+    0,
+    0
+   ],
+   "daylight_gaps": [
+    0,
+    0
+   ],
+   "undrivable_corners": [
+    0,
+    0
+   ],
+   "floating_furniture": [
+    391,
+    0
+   ],
+   "lap_m": [
+    13473.5,
+    13473.5
+   ]
+  },
+  "race_acw": {
+   "soft_top_in_lane": [
+    4,
+    4
+   ],
+   "severe_steps": [
+    20,
+    6
+   ],
+   "fold_severe": [
+    null,
+    14
+   ],
+   "severe_per_km": [
+    1.48,
+    0.45
+   ],
+   "steps_per_km": [
+    0.37,
+    0.37
+   ],
+   "kinks_per_km": [
+    6.09,
+    6.09
+   ],
+   "obstruction_stations": [
+    0,
+    0
+   ],
+   "barrier_missing": [
+    0,
+    0
+   ],
+   "excursion_drops": [
+    0,
+    0
+   ],
+   "daylight_gaps": [
+    0,
+    0
+   ],
+   "undrivable_corners": [
+    0,
+    0
+   ],
+   "floating_furniture": [
+    391,
+    0
+   ],
+   "lap_m": [
+    13473.5,
+    13473.5
+   ]
+  }
+ },
+ "audit": {
+  "street": [
+   {
+    "race": false,
+    "road_verts": 17868,
+    "grass_verts": 480743,
+    "piers": 0,
+    "wall_verts": 71648,
+    "curb_verts": 57987,
+    "A_supports_in_road": 0,
+    "B_terrain_poke": 0,
+    "C_junction_crossings": 0,
+    "D_wall_on_road": 0,
+    "E_wall_floating": 0,
+    "J_terrain_span": 0,
+    "K_kerb_in_carriageway": 20,
+    "F_curb_not_flush": 13,
+    "F_skirt_off_terrain": 1557,
+    "F_side_faces_skipped": 2056,
+    "I_sidewalk_isolating": 20
+   },
+   {
+    "race": false,
+    "road_verts": 76806,
+    "grass_verts": 392918,
+    "piers": 0,
+    "wall_verts": 152578,
+    "curb_verts": 100329,
+    "A_supports_in_road": 0,
+    "B_terrain_poke": 0,
+    "C_junction_crossings": 0,
+    "D_wall_on_road": 0,
+    "E_wall_floating": 0,
+    "J_terrain_span": 0,
+    "K_kerb_in_carriageway": 20,
+    "F_curb_not_flush": 13,
+    "F_skirt_off_terrain": 1564,
+    "F_side_faces_skipped": 3808,
+    "I_sidewalk_isolating": 20
+   }
+  ],
+  "race_cw": [
+   {
+    "race": true,
+    "road_verts": 17868,
+    "grass_verts": 480743,
+    "piers": 0,
+    "wall_verts": 272148,
+    "curb_verts": 62157,
+    "A_supports_in_road": 0,
+    "B_terrain_poke": 0,
+    "C_junction_crossings": 0,
+    "D_wall_on_road": 0,
+    "E_wall_floating": 0,
+    "J_terrain_span": 0,
+    "K_kerb_in_carriageway": 20,
+    "F_curb_not_flush": 13,
+    "F_skirt_off_terrain": 1770,
+    "F_side_faces_skipped": 1560,
+    "I_sidewalk_isolating": 20,
+    "W_race_wall_clash": 0
+   },
+   {
+    "race": true,
+    "road_verts": 76806,
+    "grass_verts": 392918,
+    "piers": 0,
+    "wall_verts": 353078,
+    "curb_verts": 102987,
+    "A_supports_in_road": 0,
+    "B_terrain_poke": 0,
+    "C_junction_crossings": 0,
+    "D_wall_on_road": 0,
+    "E_wall_floating": 0,
+    "J_terrain_span": 0,
+    "K_kerb_in_carriageway": 20,
+    "F_curb_not_flush": 13,
+    "F_skirt_off_terrain": 1713,
+    "F_side_faces_skipped": 3312,
+    "I_sidewalk_isolating": 20,
+    "W_race_wall_clash": 0
+   }
+  ],
+  "race_acw": [
+   {
+    "race": true,
+    "road_verts": 17868,
+    "grass_verts": 480743,
+    "piers": 0,
+    "wall_verts": 272132,
+    "curb_verts": 62157,
+    "A_supports_in_road": 0,
+    "B_terrain_poke": 0,
+    "C_junction_crossings": 0,
+    "D_wall_on_road": 0,
+    "E_wall_floating": 0,
+    "J_terrain_span": 0,
+    "K_kerb_in_carriageway": 20,
+    "F_curb_not_flush": 13,
+    "F_skirt_off_terrain": 1770,
+    "F_side_faces_skipped": 1560,
+    "I_sidewalk_isolating": 20,
+    "W_race_wall_clash": 0
+   },
+   {
+    "race": true,
+    "road_verts": 76806,
+    "grass_verts": 392918,
+    "piers": 0,
+    "wall_verts": 353062,
+    "curb_verts": 102987,
+    "A_supports_in_road": 0,
+    "B_terrain_poke": 0,
+    "C_junction_crossings": 0,
+    "D_wall_on_road": 0,
+    "E_wall_floating": 0,
+    "J_terrain_span": 0,
+    "K_kerb_in_carriageway": 20,
+    "F_curb_not_flush": 13,
+    "F_skirt_off_terrain": 1713,
+    "F_side_faces_skipped": 3312,
+    "I_sidewalk_isolating": 20,
+    "W_race_wall_clash": 0
+   }
+  ]
+ },
+ "no_route": {
+  "race_cw": [
+   {
+    "fail": false,
+    "leak_m2": 0,
+    "leak_cells": 0,
+    "reached_m2": 138776
+   },
+   {
+    "fail": false,
+    "leak_m2": 0,
+    "leak_cells": 0,
+    "reached_m2": 138776
+   }
+  ],
+  "race_acw": [
+   {
+    "fail": false,
+    "leak_m2": 0,
+    "leak_cells": 0,
+    "reached_m2": 138218
+   },
+   {
+    "fail": false,
+    "leak_m2": 0,
+    "leak_cells": 0,
+    "reached_m2": 138218
+   }
+  ]
+ },
+ "kn5_ground_check": {
+  "street": {
+   "fail": false,
+   "reasons": [],
+   "kn5": [
+    "san_diego_lake_murray.kn5",
+    "san_diego_lake_murray_street.kn5"
+   ],
+   "fidelity": "skipped: gate OBJ written from this kn5",
+   "double_sheet_cells": 0,
+   "seating": {
+    "walls": {
+     "objects": 49,
+     "no_ground_pct": 0.0,
+     "median_m": -0.496,
+     "p95_m": -0.13,
+     "hovering": 0
+    },
+    "lampposts": {
+     "objects": 238,
+     "no_ground_pct": 0.0,
+     "median_m": -3.044,
+     "p95_m": -2.968,
+     "hovering": 0
+    },
+    "signposts": {
+     "objects": 18,
+     "no_ground_pct": 0.0,
+     "median_m": -0.377,
+     "p95_m": -0.3,
+     "hovering": 0
+    }
+   },
+   "lamp_heads": 290,
+   "lamp_orphans": 0,
+   "road_over_ground": {
+    "over": 12,
+    "samples": 10785,
+    "p95_m": 0.022,
+    "max_m": 0.255
+   }
+  },
+  "race_cw": {
+   "fail": false,
+   "reasons": [],
+   "kn5": [
+    "san_diego_lake_murray.kn5",
+    "san_diego_lake_murray_race.kn5",
+    "san_diego_lake_murray_closure_race_cw.kn5"
+   ],
+   "fidelity": "skipped: gate OBJ written from this kn5",
+   "double_sheet_cells": 0,
+   "seating": {
+    "walls": {
+     "objects": 49,
+     "no_ground_pct": 0.0,
+     "median_m": -0.502,
+     "p95_m": -0.13,
+     "hovering": 0
+    },
+    "lampposts": {
+     "objects": 238,
+     "no_ground_pct": 0.0,
+     "median_m": -3.044,
+     "p95_m": -2.968,
+     "hovering": 0
+    },
+    "signposts": {
+     "objects": 18,
+     "no_ground_pct": 0.0,
+     "median_m": -0.377,
+     "p95_m": -0.3,
+     "hovering": 0
+    }
+   },
+   "lamp_heads": 290,
+   "lamp_orphans": 0,
+   "road_over_ground": {
+    "over": 12,
+    "samples": 10785,
+    "p95_m": 0.022,
+    "max_m": 0.255
+   }
+  },
+  "race_acw": {
+   "fail": false,
+   "reasons": [],
+   "kn5": [
+    "san_diego_lake_murray.kn5",
+    "san_diego_lake_murray_race.kn5",
+    "san_diego_lake_murray_closure_race_acw.kn5"
+   ],
+   "fidelity": "skipped: gate OBJ written from this kn5",
+   "double_sheet_cells": 0,
+   "seating": {
+    "walls": {
+     "objects": 49,
+     "no_ground_pct": 0.0,
+     "median_m": -0.502,
+     "p95_m": -0.13,
+     "hovering": 0
+    },
+    "lampposts": {
+     "objects": 238,
+     "no_ground_pct": 0.0,
+     "median_m": -3.044,
+     "p95_m": -2.968,
+     "hovering": 0
+    },
+    "signposts": {
+     "objects": 18,
+     "no_ground_pct": 0.0,
+     "median_m": -0.377,
+     "p95_m": -0.3,
+     "hovering": 0
+    }
+   },
+   "lamp_heads": 290,
+   "lamp_orphans": 0,
+   "road_over_ground": {
+    "over": 12,
+    "samples": 10785,
+    "p95_m": 0.022,
+    "max_m": 0.255
+   }
+  }
+ },
+ "lines": {
+  "_doc": "ledger 0054 P3: drive_test --line (the north network's own lines, tools/expansion_lines.py); fail = the LINE GATE: EXPANSION-PLAN V6 (obstructions / floating furniture / undrivable / daylight 0, severe 0, LINE_SOFT_PER_KM, LINE_KINK_PER_KM) + LINE_EXC_PER_KM (repair round 1). drive_test's own lap rule is NOT the verdict; it is written per line as drive_test_rule_fail / _reasons",
+  "limits": {
+   "soft_top_per_km": 6.1,
+   "kinks_per_km": 4.97,
+   "excursion_drops_per_km": 7.12,
+   "severe_steps": 0
+  },
+  "lines": {
+   "fwd": {
+    "fail": false,
+    "obj": "track.obj",
+    "lap_m": 6287.8,
+    "soft_top_in_lane": 0,
+    "obstruction_stations": 0,
+    "barrier_missing": 0,
+    "barrier_stations": 0,
+    "floating_furniture": 0,
+    "daylight_gaps": 0,
+    "excursion_drops": 40,
+    "undrivable_corners": 0,
+    "severe_steps": 0,
+    "severe_per_km": 0.0,
+    "steps_per_km": 0.32,
+    "kinks_per_km": 2.39,
+    "soft_top_per_km": 0.0,
+    "excursion_drops_per_km": 6.36,
+    "v6": {
+     "obstruction_stations": true,
+     "floating_furniture": true,
+     "undrivable_corners": true,
+     "severe_steps": true,
+     "daylight_gaps": true,
+     "soft_top_per_km": true,
+     "kinks_per_km": true,
+     "excursion_drops_per_km": true
+    },
+    "drive_test_rule_fail": true,
+    "drive_test_rule_reasons": [
+     "excursion_drops"
+    ],
+    "fold_kinks": 4,
+    "file": "drive_test.line.expansion_fwd.json"
+   },
+   "rev": {
+    "fail": false,
+    "obj": "track.obj",
+    "lap_m": 6327.1,
+    "soft_top_in_lane": 0,
+    "obstruction_stations": 0,
+    "barrier_missing": 0,
+    "barrier_stations": 0,
+    "floating_furniture": 0,
+    "daylight_gaps": 0,
+    "excursion_drops": 38,
+    "undrivable_corners": 0,
+    "severe_steps": 0,
+    "severe_per_km": 0.0,
+    "steps_per_km": 0.16,
+    "kinks_per_km": 2.53,
+    "soft_top_per_km": 0.0,
+    "excursion_drops_per_km": 6.01,
+    "v6": {
+     "obstruction_stations": true,
+     "floating_furniture": true,
+     "undrivable_corners": true,
+     "severe_steps": true,
+     "daylight_gaps": true,
+     "soft_top_per_km": true,
+     "kinks_per_km": true,
+     "excursion_drops_per_km": true
+    },
+    "drive_test_rule_fail": true,
+    "drive_test_rule_reasons": [
+     "excursion_drops"
+    ],
+    "fold_kinks": 0,
+    "file": "drive_test.line.expansion_rev.json"
+   }
+  },
+  "fail": false
+ }
+}

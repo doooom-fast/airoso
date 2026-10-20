@@ -367,6 +367,10 @@ On the gate OBJ / kn5 (L5) against independent 3DEP, before anything is installe
    its own position by more than 3 m [invented] where the first wording guarded it. That is every vertex below 100 m,
    plus the far ring, which criterion 6 already holds to 1 m. Three metres is above the anti-alias filter's largest
    move (2.34 m, on ridge tops) and far below the old skirt's pit (tens of metres).
+   *Restated 2026-10-14 for the network expansion (ledger 0054 P2; the network itself reaches 33.4 m at J3):* (i) no
+   terrain vertex more than 2 m below the 3DEP value at its own position (its point, or a finest-level vertex's
+   anti-aliasing tent) beyond the graded near-road band (36 m of a built pavement, and the ground_release zones), plus
+   (ii) and (iii) above, kept. See "Criterion 3's low clause restated" at the end.
 4. **I-8 cut and fill:** cross-sections every 50 m along the OSM I-8 centreline through the built
    terrain: floor within ±1.0 m of 3DEP; rim-to-floor at ±60 m within ±2.0 m of the 2 m 3DEP section;
    every section has vertices within 12 m (today none east of x 1100); any fill section 3DEP confirms
@@ -990,3 +994,36 @@ metric is worse than v0.17.1. The terrain is round 4's but for 344 of 928,435 tr
 exactly (C2 v1640 7.157 deg vs 3DEP 7.215; C4 171 / 173; C5 5.24 / 20.24 m; C6 max 0.855 m). Still for Kevin's eye, as
 in round 4: College's left side and Lake Murray Blvd's s 13468-13480 drops unguarded as in v0.17.1; the steep bank
 between College and Alvarado; frame rate and load time with the 116.3 MB road kn5.
+
+## Criterion 3's low clause restated for the network expansion (ledger 0054 P2, 2026-10-14; branch, not installed)
+
+EXPANSION-PLAN P2 step 5. The network itself now reaches 33.4 m (J3, the Mission Gorge valley floor), and the
+landmark box has grown to D2 [32.755, −117.108, 32.850, −116.998]: an absolute floor taken from a box's low no longer
+says anything about the roads. The clause as it stands from 2026-10-14:
+
+- **(i), new (the plan's wording):** no terrain vertex more than **2 m** below the 3DEP value at its own position. That
+  value is the vertex's own point sample, or for a finest-level (5 m) vertex the anti-aliasing tent of the 2.5 m
+  samples it is built from (fix round 2). The clause holds beyond the graded near-road band, which is 36 m of a built
+  pavement (keep_surface_m 20 + keep_feather_m 16, criterion 7) plus the `terrain.ground_release` zones. Inside the
+  band a road cut is graded to the road by design. What that loses beside the expansion's sidehill roads is judged by
+  0054's cut-wall check (V7), and P3 hand-authors those slopes.
+- **(ii), kept from fix round 3:** no vertex below 100 m abs more than **3 m** under the fresh 3DEP point. The far ring
+  stays within 1 m (criterion 6).
+- **(iii), kept:** no vertex below **15.52 m**.
+
+No part is loosened. (i) adds a guard where there was none: above 100 m, outside the band. (ii) and (iii) stand as
+they were. The plan's sentence alone, "2 m everywhere", fails on v0.18.0 itself, by design rather than through 3DEP:
+21,189 near-road vertices are graded more than 2 m under 3DEP, the worst 16.3 m in the loop's own cuts. A single ridge
+vertex is anti-aliased 2.34 m under its point. Hence the band and the tent, stated rather than hidden.
+
+Measured on v0.18.0's installed gate OBJ and on the P2 rehearsal (0054 `p2-proofs/low_clause.py`; 16,306 vertices
+with no sample at their own position were read from fresh 3DEP, TLS):
+
+| | v0.18.0 | P2 rehearsal |
+|---|---|---|
+| (i) offenders | 0 | 0 |
+| (ii) offenders (worst under) | 0 (1.995 m) | 0 (1.995 m) |
+| (iii) min abs | 19.67 m | 16.54 m |
+
+The point-only reading has 6 offenders on both builds, all at most 2.44 m: 5 inside College's I-8 release zones, and 1
+the ridge vertex built exactly at its tent. GATES-CHANGELOG 2026-10-14 "P2".

@@ -92,6 +92,17 @@ tracks = {
 }
 
 out = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "routes.json")
+# Ledger 0054 P0 (2026-10-14): routes.json is APPEND-ONLY now (tools/route_append.py added `north`). Rewriting it from
+# here re-routes full/medium/short on whatever OSM did to their nodes since 2026-08-10 (a fresh fetch on 2026-10-14
+# had lost one of their nodes and moved six by up to 5.6 m), moves every tool that counts along them, and drops every
+# appended route. Refused unless --overwrite; an identical result is a no-op.
+if os.path.exists(out):
+    with open(out, "rb") as f:
+        _old = f.read()
+    if json.dumps(tracks).encode("utf-8") != _old and "--overwrite" not in sys.argv:
+        raise SystemExit(f"route_tracks: {out} exists and differs from this regeneration (keys "
+                         f"{sorted(json.loads(_old))}); it is append-only (tools/route_append.py). "
+                         f"Re-run with --overwrite only to discard it on purpose.")
 with open(out, "w", encoding="utf-8") as f:
     json.dump(tracks, f)
 

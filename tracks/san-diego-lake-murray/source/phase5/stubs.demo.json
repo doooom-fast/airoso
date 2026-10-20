@@ -1,0 +1,3707 @@
+{
+ "version": 1,
+ "_doc": "Phase 5 stub declaration (tools/stub_roads.py declare). Edit by hand: set treatment stub|curb_cut|skip (+ skip_reason), width_m, length_m (>= 13.65), barrier krail|type3, and list every hand-edited key in `hand` so a re-declare (--merge) keeps it.",
+ "host": "MAINLINE",
+ "osm": "osm.json",
+ "defaults": {
+  "length_m": 15.0,
+  "tail_m": 1.0,
+  "barrier": "krail"
+ },
+ "stubs": [
+  {
+   "id": "70th_street_150167464_L",
+   "way": 150167464,
+   "node": 1630990745,
+   "name": "70th Street",
+   "highway": "secondary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Alvarado Road",
+   "host_vertex": 0,
+   "station_m": 0.5,
+   "side": 1,
+   "angle_deg": 47.4,
+   "heading_deg": 204.8,
+   "width_m": 14.0,
+   "width_source": "class default secondary [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0465801,
+     32.7733339
+    ],
+    [
+     -117.0466453,
+     32.7732151
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "alvarado_road_436321217_L",
+   "way": 436321217,
+   "node": 1630990745,
+   "name": "Alvarado Road",
+   "highway": "secondary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Alvarado Road",
+   "host_vertex": 0,
+   "station_m": 1.1,
+   "side": 1,
+   "angle_deg": 34.1,
+   "heading_deg": 106.3,
+   "width_m": 20.4,
+   "width_source": "osm lanes=5 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "5",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0465801,
+     32.7733339
+    ],
+    [
+     -117.0459133,
+     32.7731704
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "alvarado_road_1072234428_L",
+   "way": 1072234428,
+   "node": 49576102,
+   "name": "Alvarado Road",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Alvarado Road",
+   "host_vertex": 16,
+   "station_m": 46.7,
+   "side": 1,
+   "angle_deg": 30.0,
+   "heading_deg": 155.8,
+   "width_m": 13.2,
+   "width_source": "osm lanes=3 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "3",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.047127,
+     32.77356
+    ],
+    [
+     -117.0470569,
+     32.773429
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "reservoir_drive_6028810_L",
+   "way": 6028810,
+   "node": 49576069,
+   "name": "Reservoir Drive",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Alvarado Road",
+   "host_vertex": 344,
+   "station_m": 1029.1,
+   "side": 1,
+   "angle_deg": 88.9,
+   "heading_deg": 192.1,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.056213,
+     32.777081
+    ],
+    [
+     -117.0562351,
+     32.776994
+    ],
+    [
+     -117.0563188,
+     32.7766649
+    ],
+    [
+     -117.0563653,
+     32.776482
+    ]
+   ]
+  },
+  {
+   "id": "sterling_verde_drive_562643734_L",
+   "way": 562643734,
+   "node": 5423890687,
+   "name": "Sterling Verde Drive",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Alvarado Road",
+   "host_vertex": 426,
+   "station_m": 1275.1,
+   "side": 1,
+   "angle_deg": 85.8,
+   "heading_deg": 196.4,
+   "width_m": 13.2,
+   "width_source": "osm lanes=3 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "3",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0587576,
+     32.7776476
+    ],
+    [
+     -117.0587972,
+     32.7775348
+    ],
+    [
+     -117.0588883,
+     32.7772614
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "alvarado_court_5970685_L",
+   "way": 5970685,
+   "node": 49194499,
+   "name": "Alvarado Court",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Alvarado Road",
+   "host_vertex": 537,
+   "station_m": 1609.5,
+   "side": 1,
+   "angle_deg": 73.0,
+   "heading_deg": 185.5,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.062172,
+     32.778568
+    ],
+    [
+     -117.0621812,
+     32.7784877
+    ],
+    [
+     -117.0622259,
+     32.7780972
+    ],
+    [
+     -117.062286,
+     32.777573
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "east_campus_drive_35154323_L",
+   "way": 35154323,
+   "node": 49488317,
+   "name": "East Campus Drive",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Alvarado Road",
+   "host_vertex": 758,
+   "station_m": 2269.2,
+   "side": 1,
+   "angle_deg": 50.4,
+   "heading_deg": 112.3,
+   "width_m": 12.0,
+   "width_source": "class default tertiary [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0676065,
+     32.7767822
+    ],
+    [
+     -117.0672659,
+     32.7766646
+    ],
+    [
+     -117.0671903,
+     32.7766291
+    ],
+    [
+     -117.0671056,
+     32.7765634
+    ],
+    [
+     -117.0670318,
+     32.7764761
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "college_avenue_436409660_L",
+   "way": 436409660,
+   "node": 49123187,
+   "name": "College Avenue",
+   "highway": "primary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 762,
+   "station_m": 2280.1,
+   "side": 1,
+   "angle_deg": 79.7,
+   "heading_deg": 192.5,
+   "width_m": 16.8,
+   "width_source": "osm lanes=4 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "4",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0677574,
+     32.7768004
+    ],
+    [
+     -117.0677853,
+     32.7766943
+    ],
+    [
+     -117.067792,
+     32.7766619
+    ],
+    [
+     -117.0678313,
+     32.7764722
+    ],
+    [
+     -117.067833,
+     32.7764034
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "college_avenue_436409665_L",
+   "way": 436409665,
+   "node": 3317904848,
+   "name": "College Avenue",
+   "highway": "primary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 767,
+   "station_m": 2294.7,
+   "side": 1,
+   "angle_deg": 69.4,
+   "heading_deg": 186.7,
+   "width_m": 13.2,
+   "width_source": "osm lanes=3 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "3",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0679836,
+     32.7767286
+    ],
+    [
+     -117.0680163,
+     32.7764937
+    ],
+    [
+     -117.0680113,
+     32.7763537
+    ],
+    [
+     -117.0680114,
+     32.7763442
+    ],
+    [
+     -117.0680059,
+     32.7761762
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "motorway_link_38414904_L",
+   "way": 38414904,
+   "node": 1283132881,
+   "name": null,
+   "highway": "motorway_link",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": null,
+   "host_vertex": 816,
+   "station_m": 2434.6,
+   "side": 1,
+   "angle_deg": 47.9,
+   "heading_deg": 341.4,
+   "width_m": 6.0,
+   "width_source": "osm lanes=1 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "1",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "freeway ramp \u2014 phase 4 builds the ramps",
+   "branch_lonlat": [
+    [
+     -117.067466,
+     32.7780503
+    ],
+    [
+     -117.0674809,
+     32.7780875
+    ],
+    [
+     -117.0675073,
+     32.7781332
+    ],
+    [
+     -117.0675387,
+     32.7781742
+    ],
+    [
+     -117.0676244,
+     32.7782583
+    ],
+    [
+     -117.0681769,
+     32.7787778
+    ]
+   ]
+  },
+  {
+   "id": "motorway_link_436411010_L",
+   "way": 436411010,
+   "node": 49123191,
+   "name": null,
+   "highway": "motorway_link",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 831,
+   "station_m": 2482.0,
+   "side": 1,
+   "angle_deg": 41.6,
+   "heading_deg": 259.6,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "freeway ramp \u2014 phase 4 builds the ramps",
+   "branch_lonlat": [
+    [
+     -117.067035,
+     32.7784154
+    ],
+    [
+     -117.0672733,
+     32.7783787
+    ]
+   ]
+  },
+  {
+   "id": "motorway_link_5953027_L",
+   "way": 5953027,
+   "node": 49022806,
+   "name": null,
+   "highway": "motorway_link",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 844,
+   "station_m": 2519.9,
+   "side": 1,
+   "angle_deg": 19.2,
+   "heading_deg": 228.7,
+   "width_m": 10.0,
+   "width_source": "class default motorway_link [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "freeway ramp \u2014 phase 4 builds the ramps",
+   "branch_lonlat": [
+    [
+     -117.0669771,
+     32.7786675
+    ],
+    [
+     -117.0670642,
+     32.7786032
+    ],
+    [
+     -117.0671512,
+     32.7785449
+    ],
+    [
+     -117.0672728,
+     32.7784865
+    ],
+    [
+     -117.0673742,
+     32.778458
+    ],
+    [
+     -117.0674503,
+     32.7784412
+    ],
+    [
+     -117.0675333,
+     32.7784466
+    ],
+    [
+     -117.067623,
+     32.7784603
+    ]
+   ]
+  },
+  {
+   "id": "mission_valley_freeway_615980462_L",
+   "way": 615980462,
+   "node": 1711785706,
+   "name": "Mission Valley Freeway",
+   "highway": "motorway",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 879,
+   "station_m": 2623.9,
+   "side": 1,
+   "angle_deg": 59.7,
+   "heading_deg": 268.2,
+   "width_m": 20.4,
+   "width_source": "osm lanes=5 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "5",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "freeway \u2014 phase 4 builds the I-8",
+   "branch_lonlat": [
+    [
+     -117.066326,
+     32.7794866
+    ],
+    [
+     -117.067665,
+     32.7794505
+    ]
+   ]
+  },
+  {
+   "id": "mission_valley_freeway_615980462_R",
+   "way": 615980462,
+   "node": 1711785706,
+   "name": "Mission Valley Freeway",
+   "highway": "motorway",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 883,
+   "station_m": 2636.0,
+   "side": -1,
+   "angle_deg": 58.8,
+   "heading_deg": 87.2,
+   "width_m": 20.4,
+   "width_source": "osm lanes=5 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "5",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "freeway \u2014 phase 4 builds the I-8",
+   "branch_lonlat": [
+    [
+     -117.066326,
+     32.7794866
+    ],
+    [
+     -117.0657938,
+     32.7795082
+    ]
+   ]
+  },
+  {
+   "id": "motorway_link_33644901_R",
+   "way": 33644901,
+   "node": 1283132872,
+   "name": null,
+   "highway": "motorway_link",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 918,
+   "station_m": 2740.8,
+   "side": -1,
+   "angle_deg": 15.0,
+   "heading_deg": 56.9,
+   "width_m": 6.0,
+   "width_source": "osm lanes=1 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "1",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "freeway ramp \u2014 phase 4 builds the ramps",
+   "branch_lonlat": [
+    [
+     -117.0655109,
+     32.7803094
+    ],
+    [
+     -117.0653479,
+     32.7803988
+    ],
+    [
+     -117.0652967,
+     32.7804146
+    ],
+    [
+     -117.0652504,
+     32.7804288
+    ],
+    [
+     -117.0651669,
+     32.7804477
+    ],
+    [
+     -117.0650757,
+     32.7804553
+    ],
+    [
+     -117.0649861,
+     32.7804522
+    ],
+    [
+     -117.0648671,
+     32.7804202
+    ]
+   ]
+  },
+  {
+   "id": "motorway_link_5952895_R",
+   "way": 5952895,
+   "node": 49021285,
+   "name": null,
+   "highway": "motorway_link",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 952,
+   "station_m": 2840.2,
+   "side": -1,
+   "angle_deg": 45.0,
+   "heading_deg": 186.2,
+   "width_m": 6.0,
+   "width_source": "osm lanes=1 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "1",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "freeway ramp \u2014 phase 4 builds the ramps",
+   "branch_lonlat": [
+    [
+     -117.0647961,
+     32.7808862
+    ],
+    [
+     -117.0648123,
+     32.7807602
+    ],
+    [
+     -117.0648154,
+     32.780735
+    ],
+    [
+     -117.064814,
+     32.7807072
+    ],
+    [
+     -117.0648046,
+     32.7806801
+    ],
+    [
+     -117.0647818,
+     32.7806418
+    ],
+    [
+     -117.0646784,
+     32.7804867
+    ]
+   ]
+  },
+  {
+   "id": "del_cerro_boulevard_1220464889_L",
+   "way": 1220464889,
+   "node": 3379001651,
+   "name": "Del Cerro Boulevard",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 1082,
+   "station_m": 3236.3,
+   "side": 1,
+   "angle_deg": 73.9,
+   "heading_deg": 262.7,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "already built: mouth of del_cerro_blvd#0",
+   "branch_lonlat": [
+    [
+     -117.0620435,
+     32.7833848
+    ],
+    [
+     -117.0621742,
+     32.7833707
+    ],
+    [
+     -117.0622025,
+     32.7833677
+    ],
+    [
+     -117.0625,
+     32.783323
+    ],
+    [
+     -117.0627601,
+     32.7832383
+    ]
+   ]
+  },
+  {
+   "id": "del_cerro_boulevard_1031552274_R",
+   "way": 1031552274,
+   "node": 7050533066,
+   "name": "Del Cerro Boulevard",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 1084,
+   "station_m": 3242.3,
+   "side": -1,
+   "angle_deg": 81.1,
+   "heading_deg": 88.0,
+   "width_m": 12.0,
+   "width_source": "class default tertiary [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "already built: mouth of del_cerro_blvd#1",
+   "branch_lonlat": [
+    [
+     -117.0618175,
+     32.7833946
+    ],
+    [
+     -117.0615578,
+     32.7834022
+    ],
+    [
+     -117.0613034,
+     32.7833779
+    ]
+   ]
+  },
+  {
+   "id": "del_cerro_boulevard_1031552277_L",
+   "way": 1031552277,
+   "node": 7050533069,
+   "name": "Del Cerro Boulevard",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 1087,
+   "station_m": 3252.7,
+   "side": 1,
+   "angle_deg": 74.4,
+   "heading_deg": 259.1,
+   "width_m": 6.0,
+   "width_source": "osm lanes=1 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "1",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "already built: mouth of del_cerro_blvd#0",
+   "branch_lonlat": [
+    [
+     -117.0621388,
+     32.7835099
+    ],
+    [
+     -117.0622301,
+     32.7834951
+    ],
+    [
+     -117.0625398,
+     32.7834251
+    ],
+    [
+     -117.0628119,
+     32.7833364
+    ]
+   ]
+  },
+  {
+   "id": "lambda_drive_1299929489_R",
+   "way": 1299929489,
+   "node": 11793797263,
+   "name": "Lambda Drive",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 1129,
+   "station_m": 3383.1,
+   "side": -1,
+   "angle_deg": 77.9,
+   "heading_deg": 76.6,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0620632,
+     32.7846973
+    ],
+    [
+     -117.0620332,
+     32.7847033
+    ],
+    [
+     -117.0615895,
+     32.784832
+    ],
+    [
+     -117.061225,
+     32.7848974
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "lambda_drive_6021410_L",
+   "way": 6021410,
+   "node": 11793797277,
+   "name": "Lambda Drive",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 1132,
+   "station_m": 3391.7,
+   "side": 1,
+   "angle_deg": 63.5,
+   "heading_deg": 270.1,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0624127,
+     32.784661
+    ],
+    [
+     -117.0628029,
+     32.7846616
+    ],
+    [
+     -117.065979,
+     32.784695
+    ]
+   ]
+  },
+  {
+   "id": "rockhurst_drive_678652464_R",
+   "way": 678652464,
+   "node": 11793797258,
+   "name": "Rockhurst Drive",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 1158,
+   "station_m": 3472.4,
+   "side": -1,
+   "angle_deg": 64.8,
+   "heading_deg": 80.5,
+   "width_m": 12.0,
+   "width_source": "class default tertiary [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0625935,
+     32.7853854
+    ],
+    [
+     -117.0620059,
+     32.7854685
+    ],
+    [
+     -117.0613141,
+     32.7855699
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "rockhurst_drive_6054975_R",
+   "way": 6054975,
+   "node": 8433413134,
+   "name": "Rockhurst Drive",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 1163,
+   "station_m": 3486.9,
+   "side": -1,
+   "angle_deg": 65.5,
+   "heading_deg": 79.8,
+   "width_m": 12.0,
+   "width_source": "class default tertiary [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0626628,
+     32.785497
+    ],
+    [
+     -117.062042,
+     32.785591
+    ],
+    [
+     -117.0612499,
+     32.785688
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "rockhurst_drive_6054977_L",
+   "way": 6054977,
+   "node": 11793797282,
+   "name": "Rockhurst Drive",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 1166,
+   "station_m": 3496.3,
+   "side": 1,
+   "angle_deg": 55.3,
+   "heading_deg": 270.1,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.063008,
+     32.7854318
+    ],
+    [
+     -117.066032,
+     32.785435
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "wenrich_drive_6010351_L",
+   "way": 6010351,
+   "node": 11793797287,
+   "name": "Wenrich Drive",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 1229,
+   "station_m": 3683.8,
+   "side": 1,
+   "angle_deg": 86.4,
+   "heading_deg": 232.0,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0641414,
+     32.7868046
+    ],
+    [
+     -117.064217,
+     32.786755
+    ],
+    [
+     -117.064293,
+     32.786701
+    ],
+    [
+     -117.064423,
+     32.786644
+    ],
+    [
+     -117.064613,
+     32.786606
+    ],
+    [
+     -117.065918,
+     32.786659
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "saint_therese_way_27751389_R",
+   "way": 27751389,
+   "node": 304728607,
+   "name": "Saint Therese Way",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 1257,
+   "station_m": 3767.4,
+   "side": -1,
+   "angle_deg": 89.2,
+   "heading_deg": 57.8,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0644,
+     32.7875665
+    ],
+    [
+     -117.063988,
+     32.787785
+    ],
+    [
+     -117.0638028,
+     32.7879276
+    ]
+   ]
+  },
+  {
+   "id": "college_avenue_682676216_R",
+   "way": 682676216,
+   "node": 7055996175,
+   "name": "College Avenue",
+   "highway": "primary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 1267,
+   "station_m": 3797.7,
+   "side": -1,
+   "angle_deg": 16.5,
+   "heading_deg": 332.7,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "leaves the host at 17 deg \u2014 a carriageway / slip lane, not a side road",
+   "branch_lonlat": [
+    [
+     -117.0646054,
+     32.7878632
+    ],
+    [
+     -117.0647875,
+     32.7881599
+    ],
+    [
+     -117.0649334,
+     32.7884341
+    ]
+   ]
+  },
+  {
+   "id": "college_avenue_682676216_R_1365",
+   "way": 682676216,
+   "node": 304728601,
+   "name": "College Avenue",
+   "highway": "primary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 1365,
+   "station_m": 4092.4,
+   "side": -1,
+   "angle_deg": 15.4,
+   "heading_deg": 165.6,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "leaves the host at 15 deg \u2014 a carriageway / slip lane, not a side road",
+   "branch_lonlat": [
+    [
+     -117.0655256,
+     32.7902524
+    ],
+    [
+     -117.065354,
+     32.7896896
+    ]
+   ]
+  },
+  {
+   "id": "eldergardens_street_6025821_L",
+   "way": 6025821,
+   "node": 49123227,
+   "name": "Eldergardens Street",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 1386,
+   "station_m": 4157.0,
+   "side": 1,
+   "angle_deg": 88.0,
+   "heading_deg": 256.6,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0658604,
+     32.790743
+    ],
+    [
+     -117.066803,
+     32.790554
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "lance_street_6037638_L",
+   "way": 6037638,
+   "node": 11357323338,
+   "name": "Lance Street",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 1456,
+   "station_m": 4369.6,
+   "side": 1,
+   "angle_deg": 88.7,
+   "heading_deg": 238.1,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0669124,
+     32.7924083
+    ],
+    [
+     -117.067291,
+     32.79221
+    ],
+    [
+     -117.068077,
+     32.79179
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "camino_rico_1462984071_R",
+   "way": 1462984071,
+   "node": 11357323356,
+   "name": "Camino Rico",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 1457,
+   "station_m": 4371.0,
+   "side": -1,
+   "angle_deg": 86.3,
+   "heading_deg": 63.1,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0666109,
+     32.7925722
+    ],
+    [
+     -117.0665973,
+     32.792578
+    ],
+    [
+     -117.066071,
+     32.792847
+    ],
+    [
+     -117.065666,
+     32.793053
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "college_avenue_436315943_R",
+   "way": 436315943,
+   "node": 4341851117,
+   "name": "College Avenue",
+   "highway": "primary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "College Avenue",
+   "host_vertex": 1496,
+   "station_m": 4489.5,
+   "side": -1,
+   "angle_deg": 15.8,
+   "heading_deg": 329.6,
+   "width_m": 13.2,
+   "width_source": "osm lanes=3 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "3",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "leaves the host at 16 deg \u2014 a carriageway / slip lane, not a side road",
+   "branch_lonlat": [
+    [
+     -117.0673973,
+     32.7935307
+    ],
+    [
+     -117.0674811,
+     32.793651
+    ],
+    [
+     -117.0674965,
+     32.7936732
+    ],
+    [
+     -117.067546,
+     32.7937443
+    ]
+   ]
+  },
+  {
+   "id": "waring_road_436315962_L",
+   "way": 436315962,
+   "node": 304728588,
+   "name": "Waring Road",
+   "highway": "secondary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Navajo Road",
+   "host_vertex": 1520,
+   "station_m": 4557.4,
+   "side": 1,
+   "angle_deg": 80.6,
+   "heading_deg": 318.8,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0676356,
+     32.7938468
+    ],
+    [
+     -117.0681014,
+     32.7942948
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "college_avenue_436315943_R_1522",
+   "way": 436315943,
+   "node": 1713415440,
+   "name": "College Avenue",
+   "highway": "primary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Navajo Road",
+   "host_vertex": 1522,
+   "station_m": 4561.5,
+   "side": -1,
+   "angle_deg": 89.8,
+   "heading_deg": 149.7,
+   "width_m": 13.2,
+   "width_source": "osm lanes=3 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "3",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.067546,
+     32.7937443
+    ],
+    [
+     -117.0674965,
+     32.7936732
+    ],
+    [
+     -117.0674811,
+     32.793651
+    ],
+    [
+     -117.0673973,
+     32.7935307
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "camino_estrellado_5977723_R",
+   "way": 5977723,
+   "node": 11357346499,
+   "name": "Camino Estrellado",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Navajo Road",
+   "host_vertex": 1659,
+   "station_m": 4975.5,
+   "side": -1,
+   "angle_deg": 76.1,
+   "heading_deg": 145.5,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0642534,
+     32.7962628
+    ],
+    [
+     -117.064087,
+     32.796059
+    ],
+    [
+     -117.064034,
+     32.795975
+    ],
+    [
+     -117.063889,
+     32.795727
+    ]
+   ]
+  },
+  {
+   "id": "margerum_avenue_135149732_L",
+   "way": 135149732,
+   "node": 49082490,
+   "name": "Margerum Avenue",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Navajo Road",
+   "host_vertex": 1661,
+   "station_m": 4980.5,
+   "side": 1,
+   "angle_deg": 66.3,
+   "heading_deg": 335.3,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0643958,
+     32.7964005
+    ],
+    [
+     -117.0644529,
+     32.796505
+    ],
+    [
+     -117.064507,
+     32.796604
+    ],
+    [
+     -117.064583,
+     32.796829
+    ],
+    [
+     -117.064583,
+     32.797142
+    ]
+   ]
+  },
+  {
+   "id": "park_ridge_boulevard_1224664728_R",
+   "way": 1224664728,
+   "node": 9980422653,
+   "name": "Park Ridge Boulevard",
+   "highway": "secondary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Navajo Road",
+   "host_vertex": 2174,
+   "station_m": 6522.7,
+   "side": -1,
+   "angle_deg": 84.7,
+   "heading_deg": 149.3,
+   "width_m": 6.0,
+   "width_source": "osm lanes=1 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "1",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0500047,
+     32.8017521
+    ],
+    [
+     -117.049945,
+     32.8016677
+    ],
+    [
+     -117.0497249,
+     32.8013269
+    ],
+    [
+     -117.0495511,
+     32.8010399
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "park_ridge_boulevard_1089535695_L",
+   "way": 1089535695,
+   "node": 49082472,
+   "name": "Park Ridge Boulevard",
+   "highway": "secondary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Navajo Road",
+   "host_vertex": 2177,
+   "station_m": 6529.8,
+   "side": 1,
+   "angle_deg": 85.1,
+   "heading_deg": 327.1,
+   "width_m": 20.4,
+   "width_source": "osm lanes=5 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "5",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0500068,
+     32.8019071
+    ],
+    [
+     -117.0500844,
+     32.8020079
+    ],
+    [
+     -117.0501067,
+     32.8020369
+    ],
+    [
+     -117.0503256,
+     32.8023213
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "park_ridge_boulevard_1224664716_R",
+   "way": 1224664716,
+   "node": 1713415517,
+   "name": "Park Ridge Boulevard",
+   "highway": "secondary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Navajo Road",
+   "host_vertex": 2179,
+   "station_m": 6537.9,
+   "side": -1,
+   "angle_deg": 85.8,
+   "heading_deg": 153.0,
+   "width_m": 16.8,
+   "width_source": "osm lanes=4 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "4",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0498524,
+     32.8018291
+    ],
+    [
+     -117.0498,
+     32.8017425
+    ],
+    [
+     -117.0497836,
+     32.8017188
+    ],
+    [
+     -117.0496662,
+     32.8015488
+    ],
+    [
+     -117.0495882,
+     32.8014137
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "jackson_drive_436270246_L",
+   "way": 436270246,
+   "node": 49082469,
+   "name": "Jackson Drive",
+   "highway": "secondary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Navajo Road",
+   "host_vertex": 2319,
+   "station_m": 6954.2,
+   "side": 1,
+   "angle_deg": 53.3,
+   "heading_deg": 323.4,
+   "width_m": 20.4,
+   "width_source": "osm lanes=5 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "5",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0460988,
+     32.8039364
+    ],
+    [
+     -117.0461699,
+     32.8040169
+    ],
+    [
+     -117.0461887,
+     32.8040356
+    ],
+    [
+     -117.0463686,
+     32.8042153
+    ],
+    [
+     -117.0464095,
+     32.8042521
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "navajo_road_436270256_L",
+   "way": 436270256,
+   "node": 49082469,
+   "name": "Navajo Road",
+   "highway": "primary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Navajo Road",
+   "host_vertex": 2319,
+   "station_m": 6955.6,
+   "side": 1,
+   "angle_deg": 48.0,
+   "heading_deg": 58.7,
+   "width_m": 16.8,
+   "width_source": "osm lanes=4 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "4",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0460988,
+     32.8039364
+    ],
+    [
+     -117.0459366,
+     32.8040194
+    ],
+    [
+     -117.0458964,
+     32.80404
+    ],
+    [
+     -117.0456335,
+     32.8041746
+    ],
+    [
+     -117.0455322,
+     32.8042266
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "navajo_road_436270248_L",
+   "way": 436270248,
+   "node": 1713415645,
+   "name": "Navajo Road",
+   "highway": "primary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Navajo Road",
+   "host_vertex": 2324,
+   "station_m": 6966.7,
+   "side": 1,
+   "angle_deg": 89.7,
+   "heading_deg": 58.5,
+   "width_m": 13.2,
+   "width_source": "osm lanes=3 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "3",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0459842,
+     32.8038046
+    ],
+    [
+     -117.0458022,
+     32.8038982
+    ],
+    [
+     -117.0454394,
+     32.8040848
+    ],
+    [
+     -117.045327,
+     32.8041426
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "secondary_link_265726341_L",
+   "way": 265726341,
+   "node": 3414798873,
+   "name": null,
+   "highway": "secondary_link",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 2380,
+   "station_m": 7133.6,
+   "side": 1,
+   "angle_deg": 44.3,
+   "heading_deg": 98.8,
+   "width_m": 6.0,
+   "width_source": "osm lanes=1 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "1",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "slip / ramp link",
+   "branch_lonlat": [
+    [
+     -117.0449618,
+     32.802579
+    ],
+    [
+     -117.0449132,
+     32.8025727
+    ],
+    [
+     -117.0448502,
+     32.8025679
+    ]
+   ]
+  },
+  {
+   "id": "hyde_park_drive_5962845_R",
+   "way": 5962845,
+   "node": 49118453,
+   "name": "Hyde Park Drive",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 2383,
+   "station_m": 7143.9,
+   "side": -1,
+   "angle_deg": 88.5,
+   "heading_deg": 231.0,
+   "width_m": 12.0,
+   "width_source": "class default tertiary [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "stub",
+   "branch_lonlat": [
+    [
+     -117.0449663,
+     32.802467
+    ],
+    [
+     -117.0454545,
+     32.802135
+    ],
+    [
+     -117.0457,
+     32.801968
+    ]
+   ]
+  },
+  {
+   "id": "golfcrest_drive_1224664725_L",
+   "way": 1224664725,
+   "node": 2713389817,
+   "name": "Golfcrest Drive",
+   "highway": "secondary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 2552,
+   "station_m": 7652.0,
+   "side": 1,
+   "angle_deg": 85.6,
+   "heading_deg": 29.5,
+   "width_m": 20.4,
+   "width_source": "osm lanes=5 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "5",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0399178,
+     32.801197
+    ],
+    [
+     -117.0398374,
+     32.8013163
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "jackson_drive_265721279_L",
+   "way": 265721279,
+   "node": 2713362577,
+   "name": "Jackson Drive",
+   "highway": "secondary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 2746,
+   "station_m": 8232.7,
+   "side": 1,
+   "angle_deg": 4.9,
+   "heading_deg": 118.5,
+   "width_m": 13.2,
+   "width_source": "osm lanes=3 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "3",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "leaves the host at 5 deg \u2014 a carriageway / slip lane, not a side road",
+   "branch_lonlat": [
+    [
+     -117.0349803,
+     32.7979112
+    ],
+    [
+     -117.0348451,
+     32.7978495
+    ],
+    [
+     -117.0345745,
+     32.7977537
+    ],
+    [
+     -117.0343581,
+     32.7976939
+    ]
+   ]
+  },
+  {
+   "id": "lake_shore_drive_1079354726_R",
+   "way": 1079354726,
+   "node": 9894349163,
+   "name": "Lake Shore Drive",
+   "highway": "secondary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 2748,
+   "station_m": 8238.7,
+   "side": -1,
+   "angle_deg": 83.9,
+   "heading_deg": 205.5,
+   "width_m": 14.0,
+   "width_source": "class default secondary [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0351517,
+     32.797755
+    ],
+    [
+     -117.0352954,
+     32.797502
+    ],
+    [
+     -117.0352733,
+     32.7974333
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "lake_shore_drive_594963468_L",
+   "way": 594963468,
+   "node": 2713362577,
+   "name": "Lake Shore Drive",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 2750,
+   "station_m": 8243.3,
+   "side": 1,
+   "angle_deg": 86.0,
+   "heading_deg": 26.3,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0349803,
+     32.7979112
+    ],
+    [
+     -117.0349354,
+     32.7979877
+    ],
+    [
+     -117.0349283,
+     32.797999
+    ],
+    [
+     -117.034698,
+     32.798367
+    ],
+    [
+     -117.03466,
+     32.798485
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "lake_shore_drive_1079354725_R",
+   "way": 1079354725,
+   "node": 2713362574,
+   "name": "Lake Shore Drive",
+   "highway": "secondary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 2751,
+   "station_m": 8247.5,
+   "side": -1,
+   "angle_deg": 86.9,
+   "heading_deg": 205.5,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0350574,
+     32.7977223
+    ],
+    [
+     -117.0352011,
+     32.7974694
+    ],
+    [
+     -117.0352733,
+     32.7974333
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "twin_lake_drive_6014978_R",
+   "way": 6014978,
+   "node": 11765130778,
+   "name": "Twin Lake Drive",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 2867,
+   "station_m": 8596.2,
+   "side": -1,
+   "angle_deg": 89.7,
+   "heading_deg": 210.9,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0315663,
+     32.7967332
+    ],
+    [
+     -117.032028,
+     32.796085
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "twin_lake_drive_6014978_L",
+   "way": 6014978,
+   "node": 2713362510,
+   "name": "Twin Lake Drive",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 2867,
+   "station_m": 8597.2,
+   "side": 1,
+   "angle_deg": 89.1,
+   "heading_deg": 30.4,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0314374,
+     32.7968942
+    ],
+    [
+     -117.0313869,
+     32.7969667
+    ],
+    [
+     -117.031082,
+     32.797405
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "cowles_mountain_boulevard_6007989_R",
+   "way": 6007989,
+   "node": 11751870312,
+   "name": "Cowles Mountain Boulevard",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 2984,
+   "station_m": 8946.8,
+   "side": -1,
+   "angle_deg": 89.3,
+   "heading_deg": 198.9,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0282614,
+     32.7952267
+    ],
+    [
+     -117.028503,
+     32.794632
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "cowles_mountain_boulevard_6007989_L",
+   "way": 6007989,
+   "node": 2713362471,
+   "name": "Cowles Mountain Boulevard",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 2984,
+   "station_m": 8947.1,
+   "side": 1,
+   "angle_deg": 89.1,
+   "heading_deg": 20.4,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0281748,
+     32.7954238
+    ],
+    [
+     -117.02813,
+     32.795525
+    ],
+    [
+     -117.0280996,
+     32.7956073
+    ],
+    [
+     -117.0279533,
+     32.7959326
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "lake_badin_avenue_6048886_L",
+   "way": 6048886,
+   "node": 2713362464,
+   "name": "Lake Badin Avenue",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 3122,
+   "station_m": 9360.5,
+   "side": 1,
+   "angle_deg": 88.8,
+   "heading_deg": 16.9,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.024021,
+     32.7941593
+    ],
+    [
+     -117.0239923,
+     32.7942387
+    ],
+    [
+     -117.0236981,
+     32.79491
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "lake_badin_avenue_6048886_R",
+   "way": 6048886,
+   "node": 2713362456,
+   "name": "Lake Badin Avenue",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 3122,
+   "station_m": 9361.0,
+   "side": -1,
+   "angle_deg": 85.4,
+   "heading_deg": 193.5,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.02409,
+     32.7939684
+    ],
+    [
+     -117.0242773,
+     32.7933125
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "boulder_lake_avenue_5987374_R",
+   "way": 5987374,
+   "node": 11765130782,
+   "name": "Boulder Lake Avenue",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 3232,
+   "station_m": 9693.2,
+   "side": -1,
+   "angle_deg": 75.7,
+   "heading_deg": 202.3,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0205594,
+     32.7934873
+    ],
+    [
+     -117.0207006,
+     32.7931982
+    ],
+    [
+     -117.0208507,
+     32.7928071
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "boulder_lake_avenue_5987374_L",
+   "way": 5987374,
+   "node": 2713421799,
+   "name": "Boulder Lake Avenue",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 3235,
+   "station_m": 9700.7,
+   "side": 1,
+   "angle_deg": 71.5,
+   "heading_deg": 26.8,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0205063,
+     32.7935634
+    ],
+    [
+     -117.0204402,
+     32.7936732
+    ],
+    [
+     -117.0203969,
+     32.7937499
+    ],
+    [
+     -117.0203029,
+     32.7938883
+    ],
+    [
+     -117.0200065,
+     32.7942605
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "lake_murray_boulevard_164280023_L",
+   "way": 164280023,
+   "node": 13577636585,
+   "name": "Lake Murray Boulevard",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 3281,
+   "station_m": 9839.0,
+   "side": 1,
+   "angle_deg": 56.5,
+   "heading_deg": 50.4,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0189948,
+     32.7933471
+    ],
+    [
+     -117.0189695,
+     32.7933647
+    ],
+    [
+     -117.0184191,
+     32.7937856
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "lake_murray_boulevard_436315295_L",
+   "way": 436315295,
+   "node": 11313244515,
+   "name": "Lake Murray Boulevard",
+   "highway": "primary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 3290,
+   "station_m": 9865.5,
+   "side": 1,
+   "angle_deg": 89.8,
+   "heading_deg": 35.9,
+   "width_m": 13.2,
+   "width_source": "osm lanes=3 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "3",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0187415,
+     32.7931935
+    ],
+    [
+     -117.0187247,
+     32.793213
+    ],
+    [
+     -117.0186769,
+     32.7932764
+    ],
+    [
+     -117.0184715,
+     32.7935162
+    ],
+    [
+     -117.0184058,
+     32.7935945
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "lake_murray_boulevard_436315304_R",
+   "way": 436315304,
+   "node": 1759305352,
+   "name": "Lake Murray Boulevard",
+   "highway": "primary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 3290,
+   "station_m": 9865.6,
+   "side": -1,
+   "angle_deg": 89.3,
+   "heading_deg": 216.1,
+   "width_m": 16.0,
+   "width_source": "class default primary [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0188219,
+     32.793101
+    ],
+    [
+     -117.0189257,
+     32.7929814
+    ],
+    [
+     -117.0193231,
+     32.7925251
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "lake_murray_boulevard_436315306_L",
+   "way": 436315306,
+   "node": 11313244494,
+   "name": "Lake Murray Boulevard",
+   "highway": "primary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Jackson Drive",
+   "host_vertex": 3294,
+   "station_m": 9876.7,
+   "side": 1,
+   "angle_deg": 78.8,
+   "heading_deg": 34.7,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0186226,
+     32.7931204
+    ],
+    [
+     -117.0185576,
+     32.7931993
+    ],
+    [
+     -117.0183427,
+     32.7934491
+    ],
+    [
+     -117.0180514,
+     32.7937971
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "blue_lake_drive_1458424318_L",
+   "way": 1458424318,
+   "node": 1759303899,
+   "name": "Blue Lake Drive",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 3351,
+   "station_m": 10041.7,
+   "side": 1,
+   "angle_deg": 53.0,
+   "heading_deg": 89.6,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0195017,
+     32.791759
+    ],
+    [
+     -117.0180034,
+     32.7917667
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "dallas_street_5992563_R",
+   "way": 5992563,
+   "node": 1759305301,
+   "name": "Dallas Street",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 3395,
+   "station_m": 10175.6,
+   "side": -1,
+   "angle_deg": 79.6,
+   "heading_deg": 294.8,
+   "width_m": 12.0,
+   "width_source": "class default tertiary [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.020528,
+     32.7908915
+    ],
+    [
+     -117.0206653,
+     32.7909449
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "el_paso_street_1221405645_R",
+   "way": 1221405645,
+   "node": 1763829560,
+   "name": "El Paso Street",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 3450,
+   "station_m": 10340.3,
+   "side": -1,
+   "angle_deg": 77.4,
+   "heading_deg": 317.3,
+   "width_m": 16.8,
+   "width_source": "osm lanes=4 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "4",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0215698,
+     32.789658
+    ],
+    [
+     -117.0216797,
+     32.789758
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "dugan_avenue_594961113_R",
+   "way": 594961113,
+   "node": 1763829561,
+   "name": "Dugan Avenue",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 3504,
+   "station_m": 10501.8,
+   "side": -1,
+   "angle_deg": 88.1,
+   "heading_deg": 304.0,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0225616,
+     32.7884958
+    ],
+    [
+     -117.0226886,
+     32.7885679
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "stadler_street_6001136_L",
+   "way": 6001136,
+   "node": 11328060910,
+   "name": "Stadler Street",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 3616,
+   "station_m": 10835.9,
+   "side": 1,
+   "angle_deg": 85.1,
+   "heading_deg": 114.8,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.02512,
+     32.7864614
+    ],
+    [
+     -117.0247764,
+     32.7863279
+    ],
+    [
+     -117.0245828,
+     32.7863091
+    ],
+    [
+     -117.0242555,
+     32.7863415
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "stadler_street_6001136_R",
+   "way": 6001136,
+   "node": 1763829563,
+   "name": "Stadler Street",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 3616,
+   "station_m": 10836.2,
+   "side": -1,
+   "angle_deg": 86.8,
+   "heading_deg": 302.9,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0251835,
+     32.7864921
+    ],
+    [
+     -117.025317,
+     32.7865646
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "marengo_avenue_692686511_R",
+   "way": 692686511,
+   "node": 1763829565,
+   "name": "Marengo Avenue",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 3679,
+   "station_m": 11026.9,
+   "side": -1,
+   "angle_deg": 88.4,
+   "heading_deg": 303.1,
+   "width_m": 12.0,
+   "width_source": "class default tertiary [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0259118,
+     32.7848981
+    ],
+    [
+     -117.026048,
+     32.7849726
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "marengo_avenue_936996211_L",
+   "way": 936996211,
+   "node": 49423715,
+   "name": "Marengo Avenue",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 3679,
+   "station_m": 11027.1,
+   "side": 1,
+   "angle_deg": 87.1,
+   "heading_deg": 124.3,
+   "width_m": 12.0,
+   "width_source": "class default tertiary [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0257742,
+     32.7848291
+    ],
+    [
+     -117.025721,
+     32.7847986
+    ],
+    [
+     -117.0256718,
+     32.7847638
+    ],
+    [
+     -117.025627,
+     32.784725
+    ],
+    [
+     -117.0255862,
+     32.7846816
+    ],
+    [
+     -117.0255509,
+     32.7846348
+    ],
+    [
+     -117.0255215,
+     32.7845853
+    ],
+    [
+     -117.0254983,
+     32.7845335
+    ],
+    [
+     -117.0254852,
+     32.7844884
+    ],
+    [
+     -117.0254762,
+     32.7844577
+    ],
+    [
+     -117.0254597,
+     32.7844009
+    ],
+    [
+     -117.0253978,
+     32.7841882
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "primary_link_436321306_R",
+   "way": 436321306,
+   "node": 4341886965,
+   "name": null,
+   "highway": "primary_link",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 3706,
+   "station_m": 11107.9,
+   "side": -1,
+   "angle_deg": 87.3,
+   "heading_deg": 313.5,
+   "width_m": 10.0,
+   "width_source": "class default primary_link [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "slip / ramp link",
+   "branch_lonlat": [
+    [
+     -117.0264175,
+     32.784322
+    ],
+    [
+     -117.0265344,
+     32.7844151
+    ]
+   ]
+  },
+  {
+   "id": "aztec_drive_6003199_L",
+   "way": 6003199,
+   "node": 11328060943,
+   "name": "Aztec Drive",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 3809,
+   "station_m": 11414.7,
+   "side": 1,
+   "angle_deg": 69.6,
+   "heading_deg": 116.9,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.029126,
+     32.7827875
+    ],
+    [
+     -117.0290357,
+     32.782749
+    ],
+    [
+     -117.0289633,
+     32.7827138
+    ],
+    [
+     -117.028557,
+     32.782516
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "cowles_mountain_boulevard_6007989_R_3811",
+   "way": 6007989,
+   "node": 48867122,
+   "name": "Cowles Mountain Boulevard",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 3811,
+   "station_m": 11422.5,
+   "side": -1,
+   "angle_deg": 70.8,
+   "heading_deg": 297.7,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.029266,
+     32.782845
+    ],
+    [
+     -117.0293488,
+     32.7828815
+    ],
+    [
+     -117.0294216,
+     32.7829206
+    ],
+    [
+     -117.0294974,
+     32.7829614
+    ],
+    [
+     -117.0297513,
+     32.7831084
+    ],
+    [
+     -117.0299844,
+     32.7832378
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "secondary_436321307_R",
+   "way": 436321307,
+   "node": 1763829489,
+   "name": null,
+   "highway": "secondary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 3848,
+   "station_m": 11532.0,
+   "side": -1,
+   "angle_deg": 86.4,
+   "heading_deg": 323.6,
+   "width_m": 14.0,
+   "width_source": "class default secondary [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0300419,
+     32.7821056
+    ],
+    [
+     -117.0301378,
+     32.7822148
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "baltimore_drive_436321230_L",
+   "way": 436321230,
+   "node": 11328060916,
+   "name": "Baltimore Drive",
+   "highway": "primary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 3948,
+   "station_m": 11832.7,
+   "side": 1,
+   "angle_deg": 86.5,
+   "heading_deg": 160.7,
+   "width_m": 13.2,
+   "width_source": "osm lanes=3 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "3",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0328879,
+     32.7808039
+    ],
+    [
+     -117.0328769,
+     32.7807775
+    ],
+    [
+     -117.0328548,
+     32.7807244
+    ],
+    [
+     -117.0327277,
+     32.7804911
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "baltimore_drive_436321220_R",
+   "way": 436321220,
+   "node": 1763829573,
+   "name": "Baltimore Drive",
+   "highway": "primary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 3948,
+   "station_m": 11832.9,
+   "side": -1,
+   "angle_deg": 88.3,
+   "heading_deg": 346.1,
+   "width_m": 13.2,
+   "width_source": "osm lanes=3 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "3",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0329235,
+     32.7808898
+    ],
+    [
+     -117.032962,
+     32.7810205
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "baltimore_drive_1221405646_L",
+   "way": 1221405646,
+   "node": 11328060957,
+   "name": "Baltimore Drive",
+   "highway": "primary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 3952,
+   "station_m": 11845.9,
+   "side": 1,
+   "angle_deg": 81.3,
+   "heading_deg": 156.3,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0330266,
+     32.7807706
+    ],
+    [
+     -117.0329805,
+     32.7806822
+    ],
+    [
+     -117.0329741,
+     32.7806715
+    ],
+    [
+     -117.0327706,
+     32.7802995
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "baltimore_drive_1221405652_R",
+   "way": 1221405652,
+   "node": 1713444394,
+   "name": "Baltimore Drive",
+   "highway": "secondary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 3953,
+   "station_m": 11847.5,
+   "side": -1,
+   "angle_deg": 87.7,
+   "heading_deg": 347.4,
+   "width_m": 13.2,
+   "width_source": "osm lanes=3 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "3",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0331115,
+     32.7809869
+    ],
+    [
+     -117.0331348,
+     32.7810742
+    ],
+    [
+     -117.0331387,
+     32.7810889
+    ],
+    [
+     -117.0331402,
+     32.7810992
+    ],
+    [
+     -117.0331491,
+     32.7811604
+    ],
+    [
+     -117.0331979,
+     32.7814981
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "lake_park_way_1098239189_R",
+   "way": 1098239189,
+   "node": 1763829580,
+   "name": "Lake Park Way",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 4019,
+   "station_m": 12047.0,
+   "side": -1,
+   "angle_deg": 90.0,
+   "heading_deg": 325.1,
+   "width_m": 12.0,
+   "width_source": "class default tertiary [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0350523,
+     32.7802502
+    ],
+    [
+     -117.0351436,
+     32.7803603
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "shasta_lane_5978160_L",
+   "way": 5978160,
+   "node": 1763829581,
+   "name": "Shasta Lane",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 4053,
+   "station_m": 12147.9,
+   "side": 1,
+   "angle_deg": 84.2,
+   "heading_deg": 155.2,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0359901,
+     32.7797921
+    ],
+    [
+     -117.0359424,
+     32.7797053
+    ],
+    [
+     -117.035812,
+     32.779549
+    ],
+    [
+     -117.035713,
+     32.779461
+    ],
+    [
+     -117.0352643,
+     32.7791759
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "lesa_road_5957700_R",
+   "way": 5957700,
+   "node": 1763829582,
+   "name": "Lesa Road",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 4073,
+   "station_m": 12208.6,
+   "side": -1,
+   "angle_deg": 85.4,
+   "heading_deg": 357.5,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0366241,
+     32.7796562
+    ],
+    [
+     -117.0366311,
+     32.7797885
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "lesa_road_5957700_L",
+   "way": 5957700,
+   "node": 1763829582,
+   "name": "Lesa Road",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 4074,
+   "station_m": 12209.8,
+   "side": 1,
+   "angle_deg": 86.4,
+   "heading_deg": 176.4,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0366241,
+     32.7796562
+    ],
+    [
+     -117.0366169,
+     32.7795595
+    ],
+    [
+     -117.0365798,
+     32.7786165
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "maryland_avenue_5963380_R",
+   "way": 5963380,
+   "node": 49123377,
+   "name": "Maryland Avenue",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 4122,
+   "station_m": 12353.7,
+   "side": -1,
+   "angle_deg": 83.1,
+   "heading_deg": 1.8,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0381771,
+     32.7796221
+    ],
+    [
+     -117.038174,
+     32.7797061
+    ],
+    [
+     -117.0381746,
+     32.7797772
+    ],
+    [
+     -117.0381701,
+     32.7800491
+    ],
+    [
+     -117.0381471,
+     32.7801561
+    ],
+    [
+     -117.0381062,
+     32.7803046
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "maryland_avenue_5963380_L",
+   "way": 5963380,
+   "node": 1763829584,
+   "name": "Maryland Avenue",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 4122,
+   "station_m": 12356.2,
+   "side": 1,
+   "angle_deg": 83.8,
+   "heading_deg": 180.6,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0381813,
+     32.7795029
+    ],
+    [
+     -117.0381829,
+     32.7793654
+    ],
+    [
+     -117.0381778,
+     32.7792013
+    ],
+    [
+     -117.0381712,
+     32.7783644
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "kiowa_drive_975668777_R",
+   "way": 975668777,
+   "node": 1763829588,
+   "name": "Kiowa Drive",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 4178,
+   "station_m": 12522.4,
+   "side": -1,
+   "angle_deg": 89.5,
+   "heading_deg": 354.6,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0399699,
+     32.7795121
+    ],
+    [
+     -117.0399767,
+     32.7795724
+    ],
+    [
+     -117.0399767,
+     32.7796598
+    ],
+    [
+     -117.0399631,
+     32.7798906
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "kiowa_drive_5985769_L",
+   "way": 5985769,
+   "node": 49324840,
+   "name": "Kiowa Drive",
+   "highway": "residential",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 4197,
+   "station_m": 12581.8,
+   "side": 1,
+   "angle_deg": 85.7,
+   "heading_deg": 178.8,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0405796,
+     32.779248
+    ],
+    [
+     -117.0405773,
+     32.779152
+    ],
+    [
+     -117.040574,
+     32.7790124
+    ],
+    [
+     -117.0405725,
+     32.7789524
+    ],
+    [
+     -117.0405699,
+     32.778845
+    ],
+    [
+     -117.0405639,
+     32.7785961
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "secondary_link_436321305_R",
+   "way": 436321305,
+   "node": 4341886940,
+   "name": null,
+   "highway": "secondary_link",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 4345,
+   "station_m": 13025.2,
+   "side": -1,
+   "angle_deg": 87.8,
+   "heading_deg": 300.9,
+   "width_m": 10.0,
+   "width_source": "class default secondary_link [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "slip / ramp link",
+   "branch_lonlat": [
+    [
+     -117.0439482,
+     32.7768316
+    ],
+    [
+     -117.0440934,
+     32.7769047
+    ]
+   ]
+  },
+  {
+   "id": "wisconsin_avenue_594592749_R",
+   "way": 594592749,
+   "node": 1763829591,
+   "name": "Wisconsin Avenue",
+   "highway": "tertiary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 4424,
+   "station_m": 13260.4,
+   "side": -1,
+   "angle_deg": 89.3,
+   "heading_deg": 304.0,
+   "width_m": 12.0,
+   "width_source": "class default tertiary [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "already built: mouth of medium#2+0#0#0",
+   "branch_lonlat": [
+    [
+     -117.0454201,
+     32.7751137
+    ],
+    [
+     -117.0455042,
+     32.7751614
+    ],
+    [
+     -117.0455787,
+     32.7751969
+    ],
+    [
+     -117.0456938,
+     32.7752465
+    ]
+   ]
+  },
+  {
+   "id": "parkway_drive_6047188_L",
+   "way": 6047188,
+   "node": 1763829597,
+   "name": "Parkway Drive",
+   "highway": "secondary",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 4424,
+   "station_m": 13261.3,
+   "side": 1,
+   "angle_deg": 88.9,
+   "heading_deg": 125.5,
+   "width_m": 13.2,
+   "width_source": "osm lanes=3 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "3",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "branch_lonlat": [
+    [
+     -117.0452934,
+     32.7750327
+    ],
+    [
+     -117.044853,
+     32.774769
+    ],
+    [
+     -117.044769,
+     32.7747
+    ]
+   ],
+   "skip_reason": "not selected (--only)"
+  },
+  {
+   "id": "motorway_link_5938918_L",
+   "way": 5938918,
+   "node": 48864644,
+   "name": null,
+   "highway": "motorway_link",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 4434,
+   "station_m": 13290.4,
+   "side": 1,
+   "angle_deg": 41.7,
+   "heading_deg": 75.6,
+   "width_m": 6.0,
+   "width_source": "osm lanes=1 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "1",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "freeway ramp \u2014 phase 4 builds the ramps",
+   "branch_lonlat": [
+    [
+     -117.0453497,
+     32.7747582
+    ],
+    [
+     -117.0452733,
+     32.7747747
+    ],
+    [
+     -117.0451951,
+     32.7747773
+    ],
+    [
+     -117.045125,
+     32.7747699
+    ],
+    [
+     -117.0450603,
+     32.7747515
+    ],
+    [
+     -117.0449975,
+     32.7747227
+    ],
+    [
+     -117.0449531,
+     32.7746899
+    ],
+    [
+     -117.044911,
+     32.7746523
+    ],
+    [
+     -117.0448796,
+     32.7746123
+    ],
+    [
+     -117.0448544,
+     32.7745576
+    ]
+   ]
+  },
+  {
+   "id": "motorway_link_5944197_R",
+   "way": 5944197,
+   "node": 1292346410,
+   "name": null,
+   "highway": "motorway_link",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 4437,
+   "station_m": 13299.6,
+   "side": -1,
+   "angle_deg": 19.6,
+   "heading_deg": 234.5,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "2",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "freeway ramp \u2014 phase 4 builds the ramps",
+   "branch_lonlat": [
+    [
+     -117.0456314,
+     32.7748327
+    ],
+    [
+     -117.0457396,
+     32.7747677
+    ],
+    [
+     -117.0458165,
+     32.7747374
+    ],
+    [
+     -117.0459131,
+     32.7747138
+    ],
+    [
+     -117.0460102,
+     32.7747094
+    ],
+    [
+     -117.0461131,
+     32.774718
+    ],
+    [
+     -117.0462404,
+     32.7747555
+    ]
+   ]
+  },
+  {
+   "id": "motorway_link_5938915_L",
+   "way": 5938915,
+   "node": 49753816,
+   "name": null,
+   "highway": "motorway_link",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 4457,
+   "station_m": 13359.3,
+   "side": 1,
+   "angle_deg": 75.5,
+   "heading_deg": 107.4,
+   "width_m": 10.0,
+   "width_source": "class default motorway_link [invented]",
+   "lanes": null,
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "freeway ramp \u2014 phase 4 builds the ramps",
+   "branch_lonlat": [
+    [
+     -117.0460442,
+     32.7743484
+    ],
+    [
+     -117.0456659,
+     32.7742489
+    ],
+    [
+     -117.0455139,
+     32.7741798
+    ],
+    [
+     -117.0453561,
+     32.774119
+    ]
+   ]
+  },
+  {
+   "id": "mission_valley_freeway_1012076496_R",
+   "way": 1012076496,
+   "node": 49753816,
+   "name": "Mission Valley Freeway",
+   "highway": "motorway",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 4458,
+   "station_m": 13363.3,
+   "side": -1,
+   "angle_deg": 89.8,
+   "heading_deg": 302.0,
+   "width_m": 16.8,
+   "width_source": "osm lanes=4 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "4",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "freeway \u2014 phase 4 builds the I-8",
+   "branch_lonlat": [
+    [
+     -117.0460442,
+     32.7743484
+    ],
+    [
+     -117.0472115,
+     32.7749618
+    ]
+   ]
+  },
+  {
+   "id": "mission_valley_freeway_1012076496_L",
+   "way": 1012076496,
+   "node": 49753816,
+   "name": "Mission Valley Freeway",
+   "highway": "motorway",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 4458,
+   "station_m": 13363.9,
+   "side": 1,
+   "angle_deg": 88.1,
+   "heading_deg": 123.7,
+   "width_m": 16.8,
+   "width_source": "osm lanes=4 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "4",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "freeway \u2014 phase 4 builds the I-8",
+   "branch_lonlat": [
+    [
+     -117.0460442,
+     32.7743484
+    ],
+    [
+     -117.0457867,
+     32.7742041
+    ],
+    [
+     -117.045024,
+     32.773786
+    ]
+   ]
+  },
+  {
+   "id": "mission_valley_freeway_1013694210_R",
+   "way": 1013694210,
+   "node": 49755325,
+   "name": "Mission Valley Freeway",
+   "highway": "motorway",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 4466,
+   "station_m": 13387.6,
+   "side": -1,
+   "angle_deg": 89.3,
+   "heading_deg": 302.4,
+   "width_m": 16.8,
+   "width_source": "osm lanes=4 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "4",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "freeway \u2014 phase 4 builds the I-8",
+   "branch_lonlat": [
+    [
+     -117.046051,
+     32.774094
+    ],
+    [
+     -117.0469462,
+     32.7745719
+    ]
+   ]
+  },
+  {
+   "id": "mission_valley_freeway_1013694210_L",
+   "way": 1013694210,
+   "node": 49755325,
+   "name": "Mission Valley Freeway",
+   "highway": "motorway",
+   "service": null,
+   "host": "MAINLINE",
+   "host_street": "Lake Murray Boulevard",
+   "host_vertex": 4466,
+   "station_m": 13387.7,
+   "side": 1,
+   "angle_deg": 88.4,
+   "heading_deg": 120.2,
+   "width_m": 16.8,
+   "width_source": "osm lanes=4 x 3.6 + 2 x 1.2 [invented]",
+   "lanes": "4",
+   "length_m": 15.0,
+   "barrier": "krail",
+   "treatment": "skip",
+   "skip_reason": "freeway \u2014 phase 4 builds the I-8",
+   "branch_lonlat": [
+    [
+     -117.046051,
+     32.774094
+    ],
+    [
+     -117.045965,
+     32.774052
+    ],
+    [
+     -117.04513,
+     32.773644
+    ]
+   ]
+  }
+ ]
+}

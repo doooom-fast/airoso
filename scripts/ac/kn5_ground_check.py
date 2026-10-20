@@ -10,7 +10,14 @@ group the yaw loop missed — all become loud failures instead of in-game screen
 Also keeps one physical sanity check: sampled 1ROAD_MAIN verts must have grass/shoulder support
 beneath (floating-deck guard), with declared bridges excepted by proportion.
 
-Run:  python -m scripts.ac.kn5_ground_check <project-dir>
+Run:  python -m scripts.ac.kn5_ground_check <project-dir> [--kn5 <more.kn5> ...] [--json <out.json>]
+
+A GATE OBJ is not a source (ledger 0054 P3 repair round 1, EXPANSION-PLAN V5 on Lake Murray): where data/track.obj was
+written FROM the shipped kn5 by scripts.modkit.kn5_to_gate_obj (its data/gate_centerline.json beside it), comparing the
+kn5 with it compares the kn5 with itself (and in another frame: z mirrored, the fidelity half read "1ROAD unalignable" on
+v0.18.1) — the fidelity half is skipped exactly as for a Blender-authored project, said so, and every kn5-internal
+physical check runs. --kn5 adds a layout's further kn5s (its race furniture, its closure) to those checks: the set a
+layout loads. --json writes the verdict and every number printed (data/kn5_ground_check.<layout>.json in the chain).
 """
 
 from __future__ import annotations
@@ -49,6 +56,9 @@ ROAD_GAP_FRAC = 0.0   # green means zero (declared bridges/approaches exempt by 
 # not centimetres, so it still fails loudly. The fraction over ROAD_GAP_M stays in the report as
 # the flush-contact quality number, and max is printed so a real outlier is never invisible.
 ROAD_GAP_P95_M = 0.10
+# MAST buckets (ledger 0054 P3 repair round 3): objects whose arms reach further from their pole than the 3.5 m arm
+# window of the seating lens — their feet are found per object (the chain of columns), not per neighbourhood
+MAST_BUCKETS = ("LIGHTPOST", "GANTRY")
 
 
 
@@ -122,8 +132,9 @@ def _obj_verts(path: Path) -> dict[str, list]:
     return out
 
 
-def check(project_dir: str | Path) -> dict:
+def check(project_dir: str | Path, extra_kn5=(), stats: dict | None = None) -> dict:
     project_dir = Path(project_dir)
+    stats = {} if stats is None else stats
     cfg = json.loads((project_dir / "track.config.json").read_text())
     slug = cfg["slug"]
     # prefer the FRESH export (build/<slug>.kn5); build/<slug>/<slug>.kn5 is only refreshed at pack
@@ -133,11 +144,19 @@ def check(project_dir: str | Path) -> dict:
         kn5p = project_dir / "build" / slug / f"{slug}.kn5"
     yaw = math.radians(float(cfg.get("true_north_rotation_deg") or 0.0))
 
-    obj = _obj_verts(project_dir / "data" / "track.obj")
-    for k, v in _obj_verts(project_dir / "data" / "environment.obj").items():
-        obj[k].extend(v)
+    gate_obj = (project_dir / "data" / "gate_centerline.json").exists()
+    if gate_obj:
+        obj = defaultdict(list)     # data/track.obj is the kn5's own gate OBJ: nothing independent to compare with
+    else:
+        obj = _obj_verts(project_dir / "data" / "track.obj")
+        for k, v in _obj_verts(project_dir / "data" / "environment.obj").items():
+            obj[k].extend(v)
 
     nodes, meshes = _parse(kn5p)
+    for ek in extra_kn5 or ():
+        meshes = list(meshes) + list(_parse(Path(ek))[1])
+    stats["kn5"] = [kn5p.name] + [Path(ek).name for ek in extra_kn5 or ()]
+    stats["fidelity"] = "skipped: gate OBJ written from this kn5" if gate_obj else "run"
     kn5: dict[str, list] = defaultdict(list)
     for m in meshes:
         b = _bucket(m["name"])
@@ -163,8 +182,9 @@ def check(project_dir: str | Path) -> dict:
     # physical check below (double-sheet terrain, base seating, lamp integrity, road-over-ground)
     # still runs on the shipped binary. Do NOT fake OBJs to force the fidelity half.
     has_objs = any(obj.values())
-    print(f"KN5 FIDELITY {kn5p.name}  (yaw {math.degrees(yaw):.0f} deg)"
-          + ("" if has_objs else "  [Blender-authored: no source OBJs — kn5-internal checks only]"))
+    print(f"KN5 FIDELITY {' + '.join(stats['kn5'])}  (yaw {math.degrees(yaw):.0f} deg)"
+          + ("" if has_objs else ("  [data/track.obj is this kn5's own gate OBJ (kn5_to_gate_obj) — kn5-internal checks "
+                                  "only]" if gate_obj else "  [Blender-authored: no source OBJs — kn5-internal checks only]")))
 
     # pick the working un-rotation on the road buckets (specific + generic road names)
     road_h = hash_pts(obj.get("1ROAD_MAIN", []) + obj.get("1ROAD", []))
@@ -234,6 +254,7 @@ def check(project_dir: str | Path) -> dict:
             c[0] = min(c[0], y); c[1] = max(c[1], y)
         sheets = [(k, v[1] - v[0]) for k, v in cells.items() if v[1] - v[0] > 12.0]
         print(f"  double-sheet terrain cells (>12 m spread): {len(sheets)}")
+        stats["double_sheet_cells"] = len(sheets)
         for (cx, cz), sp in sorted(sheets, key=lambda s: -s[1])[:4]:
             print(f"    spread {sp:6.1f} m at ({cx*2:8.0f},{cz*2:8.0f})")
         if len(sheets) > 20:
@@ -243,7 +264,8 @@ def check(project_dir: str | Path) -> dict:
     # slope (nearest vert below can be metres away and lower than the surface at the foot's exact
     # XZ): Sand Creek shipped 100% of its barriers hovering +0.59 m median while the vertex gate
     # read +0.15. Feet are measured against the barycentric surface of the actual ground TRIANGLES.
-    # Still excluded: mast arms (a column with a lower column of the same object within 3.5 m).
+    # Still excluded: mast arms (a column with a lower column of the same object within 3.5 m; for the MAST buckets —
+    # lamp posts, gantries — a column with a lower column of the same object anywhere along it, MAST_BUCKETS below).
     # declared bridge spans (+approach margin): a wall foot there is a railing guarding the drop —
     # being above the bank grass is its JOB (Sand Creek's e46th approach read as 278 floating feet).
     span_pts = []
@@ -404,12 +426,41 @@ def check(project_dir: str | Path) -> dict:
             if k not in colmin or y < colmin[k][0]:
                 colmin[k] = (y, x, z)
         feet = []
-        for (kx, kz), (base, bx2, bz2) in colmin.items():
-            lower_neighbor = any(
-                colmin.get((kx + di, kz + dj), (1e9,))[0] < base - 0.8
-                for di in (-2, -1, 0, 1, 2) for dj in (-2, -1, 0, 1, 2))
-            if not lower_neighbor:
-                feet.append((bx2, base, bz2))
+        if b in MAST_BUCKETS:
+            # MAST ARMS (ledger 0054 P3 repair round 3): a lamp's arm and luminaire reach past the 3.5 m window above —
+            # the LED standard's 3.66 m arm + cobra head, 4.04 m to the lens, two of them back to back (ledger 0056) —
+            # so their outer columns, 11 m up, read as FEET with no ground in their window: 38.4 % of the 2026-10
+            # lampposts "no-ground" on a mesh whose every pole stands in the earth. The object is the chain of
+            # occupied columns (8-neighbour, 1.5 m cells) its own vertices draw; its feet are the columns within 0.8 m
+            # of that chain's lowest. A pole hovering over the ground keeps its pole column as its foot and is
+            # measured exactly as before; an arm with no pole under it is its own chain, and its own foot.
+            seen_c: dict = {}
+            for k0 in colmin:
+                if k0 in seen_c:
+                    continue
+                chain_c, stack_c = [k0], [k0]
+                seen_c[k0] = True
+                while stack_c:
+                    kx, kz = stack_c.pop()
+                    for di in (-1, 0, 1):
+                        for dj in (-1, 0, 1):
+                            kk = (kx + di, kz + dj)
+                            if kk in colmin and kk not in seen_c:
+                                seen_c[kk] = True
+                                stack_c.append(kk)
+                                chain_c.append(kk)
+                low = min(colmin[kk][0] for kk in chain_c)
+                for kk in chain_c:
+                    base, bx2, bz2 = colmin[kk]
+                    if base < low + 0.8:
+                        feet.append((bx2, base, bz2))
+        else:
+            for (kx, kz), (base, bx2, bz2) in colmin.items():
+                lower_neighbor = any(
+                    colmin.get((kx + di, kz + dj), (1e9,))[0] < base - 0.8
+                    for di in (-2, -1, 0, 1, 2) for dj in (-2, -1, 0, 1, 2))
+                if not lower_neighbor:
+                    feet.append((bx2, base, bz2))
         # per-foot gaps, then cluster into OBJECTS (a 4 m barrier on a sidewalk lip is seated on
         # its inboard edge with honest daylight under the outboard overhang — real installations
         # look exactly like that). An object floats only when its BEST-SUPPORTED foot has a gap:
@@ -461,8 +512,10 @@ def check(project_dir: str | Path) -> dict:
         nogf = nog / max(1, len(foot_gaps) + nog)
         print(f"  {label:9s} objects {n2:5d}: no-ground {100*nogf:4.1f}%  seat-gap median {med:+.2f}  "
               f"p95 {p95:+.2f}  hovering>0.3m {big} ({100*bigf:.1f}%)")
+        stats.setdefault("seating", {})[label] = {"objects": n2, "no_ground_pct": round(100 * nogf, 1),
+                                                  "median_m": round(med, 3), "p95_m": round(p95, 3), "hovering": big}
         if med > 0.2 or p95 > 0.4 or bigf > 0.01 or nogf > 0.10:
-            fails.append(f"{label}: median {med:.2f} p95 {p95:.2f} hovering {100*bigf:.1f}%")
+            fails.append(f"{label}: median {med:.2f} p95 {p95:.2f} hovering {100*bigf:.1f}% no-ground {100*nogf:.1f}%")
 
     # LAMP INTEGRITY: every lens cluster (LIGHTS) must have a mast (LIGHTPOST) under it that reaches
     # it — an orphan head floats in the sky AND its clustered CSP light becomes a mid-air floodlight
@@ -489,6 +542,8 @@ def check(project_dir: str | Path) -> dict:
             if not reached:
                 orphans += 1
         print(f"  lamp integrity: {len(hcl)} heads, orphaned (no mast reaching them): {orphans}")
+        stats["lamp_heads"] = len(hcl)
+        stats["lamp_orphans"] = orphans
         if orphans:
             fails.append(f"{orphans} lamp heads floating without a mast")
 
@@ -651,14 +706,28 @@ def check(project_dir: str | Path) -> dict:
     _p95 = gaps_c[19 * len(gaps_c) // 20] if gaps_c else 0.0
     print(f"  road-over-ground: {over}/{tot} samples gap > {ROAD_GAP_M} m ({100*frac:.1f}%)  "
           f"p95 {_p95:+.3f} m (gate {ROAD_GAP_P95_M} m)")
+    stats["road_over_ground"] = {"over": over, "samples": tot, "p95_m": round(_p95, 3),
+                                 "max_m": round(gaps_c[-1], 3) if gaps_c else None}
     if _p95 > ROAD_GAP_P95_M:
         fails.append(f"road floating over ground: p95 gap {_p95:.3f} m > {ROAD_GAP_P95_M} m "
                      f"({100*frac:.1f}% of samples over {ROAD_GAP_M} m)")
 
     print(f"  => {'FAIL: ' + '; '.join(fails) if fails else 'PASS — kn5 matches the audited OBJs'}")
-    return {"fail": bool(fails), "reasons": fails}
+    return {"fail": bool(fails), "reasons": fails, **stats}
 
 
 if __name__ == "__main__":
-    r = check(sys.argv[1])
+    _a = sys.argv[1:]
+    _extra, _json, _proj = [], None, None
+    _i = 0
+    while _i < len(_a):
+        if _a[_i] == "--kn5":
+            _extra.append(_a[_i + 1]); _i += 2
+        elif _a[_i] == "--json":
+            _json = _a[_i + 1]; _i += 2
+        else:
+            _proj = _a[_i]; _i += 1
+    r = check(_proj, _extra)
+    if _json:
+        Path(_json).write_text(json.dumps(r, indent=1), encoding="utf-8")
     sys.exit(1 if r["fail"] else 0)

@@ -99,3 +99,37 @@ def test_the_side_comes_from_the_approach_not_the_first_point_inside():
     out = tc._trim_against([c], [("MAINLINE", hpts, hw)], mouths)
     assert len(out) == 1 and len(mouths) == 1
     assert mouths[0]["side"] == 1, mouths[0]                 # it arrives from z > 0: the host's left
+
+
+# --- GRADE-CAPPED BLEND (opt-in, ledger 0054 P1 fix round) ---------------------------------------------------------
+
+def test_grade_capped_blend_is_opt_in_and_keeps_the_piece_within_the_cap():
+    """a connector 3 m BELOW the host (the J1 case: the loop stands over Waring's 3DEP): 30 m of smoothstep makes it
+    climb 1.5 x 3 / 30 = 15 % onto the host; capped, the blend lengthens until it stays within 11 %"""
+    hpts, hw = _host()
+    plain, capped = [], []
+    out0 = tc._trim_against([_crossing(angle=90.0, y=7.0)], [("MAINLINE", hpts, hw)], plain, {})
+    out1 = tc._trim_against([_crossing(angle=90.0, y=7.0)], [("MAINLINE", hpts, hw)], capped, {}, capped=["x"])
+    tc.resolve_pieces(plain, out0)
+    tc.resolve_pieces(capped, out1)
+    for mo in plain:                                         # absent the key: the record and the blend as before
+        assert "blend_m" not in mo and "blend_max_grade" not in mo
+    for mo0, mo1 in zip(plain, capped):
+        assert mo0["cut_xyz"] == mo1["cut_xyz"] and mo0["piece"] == mo1["piece"]
+        assert mo1["blend_max_grade"] <= tc.GRADE_CAP + 1e-9 and tc.BLEND_M < mo1["blend_m"] <= tc.BLEND_CAP_MAX_M
+    p0 = {c["name"]: c["points_xyz_m"] for c in out0}
+    p1 = {c["name"]: c["points_xyz_m"] for c in out1}
+    for mo in capped:
+        cut = mo["cut_xyz"]
+        at_start = mo["end"] == "start"
+        g0 = tc.blended_grade([tuple(p) for p in p0[mo["piece"]]], cut, at_start, 200.0)
+        g1 = tc.blended_grade([tuple(p) for p in p1[mo["piece"]]], cut, at_start, 200.0)
+        assert g0 > 0.13 and g1 <= tc.GRADE_CAP + 1e-9, (g0, g1)
+
+
+def test_grade_capped_blend_keeps_30_m_where_30_m_is_within_the_cap():
+    hpts, hw = _host()
+    mouths = []
+    out = tc._trim_against([_crossing(angle=90.0, y=10.5)], [("MAINLINE", hpts, hw)], mouths, {}, capped=["x"])
+    tc.resolve_pieces(mouths, out)
+    assert all(mo["blend_m"] == tc.BLEND_M for mo in mouths)

@@ -1,0 +1,1007 @@
+{
+ "version": 1,
+ "declaration": "stubs.json",
+ "stubs": [
+  {
+   "id": "reservoir_drive_6028810_L",
+   "host": "MAINLINE",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.4,
+   "u_barrier_from_cut_m": 15.4,
+   "connector": "STUB_reservoir_drive_6028810_L",
+   "way": 6028810,
+   "street": "Reservoir Drive",
+   "highway": "tertiary",
+   "host_street": "Alvarado Road",
+   "side": 1,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "angle_deg": 88.9,
+   "cut_xz": [
+    -893.288,
+    -1256.826
+   ],
+   "dir_xz": [
+    -0.20884,
+    -0.97795
+   ],
+   "host_y": 7.7432,
+   "host_seg": 344,
+   "host_t": 0.1125,
+   "grade_3dep": -0.00923,
+   "grade_used": -0.00923,
+   "grade_capped": false,
+   "grade_host_along": -0.00012,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.017,
+   "dem_offset_m": 0.171,
+   "dem_samples": [
+    [
+     0.4,
+     108.372
+    ],
+    [
+     1.4,
+     108.332
+    ],
+    [
+     2.4,
+     108.312
+    ],
+    [
+     3.4,
+     108.312
+    ],
+    [
+     4.4,
+     108.312
+    ],
+    [
+     5.4,
+     108.312
+    ],
+    [
+     6.4,
+     108.312
+    ],
+    [
+     7.4,
+     108.302
+    ],
+    [
+     8.4,
+     108.302
+    ],
+    [
+     9.4,
+     108.302
+    ],
+    [
+     10.4,
+     108.282
+    ],
+    [
+     11.4,
+     108.262
+    ],
+    [
+     12.4,
+     108.262
+    ],
+    [
+     13.4,
+     108.242
+    ],
+    [
+     14.4,
+     108.222
+    ],
+    [
+     15.4,
+     108.189
+    ],
+    [
+     16.4,
+     108.189
+    ]
+   ]
+  },
+  {
+   "id": "lambda_drive_6021410_L",
+   "host": "MAINLINE",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.447,
+   "u_barrier_from_cut_m": 15.447,
+   "connector": "STUB_lambda_drive_6021410_L",
+   "way": 6021410,
+   "street": "Lambda Drive",
+   "highway": "residential",
+   "host_street": "College Avenue",
+   "side": 1,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "angle_deg": 63.48,
+   "cut_xz": [
+    -1468.615,
+    -410.84
+   ],
+   "dir_xz": [
+    -1.0,
+    0.00183
+   ],
+   "host_y": 52.9602,
+   "host_seg": 1131,
+   "host_t": 0.8351,
+   "grade_3dep": 0.04045,
+   "grade_used": 0.04045,
+   "grade_capped": false,
+   "grade_host_along": 0.03873,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.069,
+   "dem_offset_m": -0.009,
+   "dem_samples": [
+    [
+     0.45,
+     153.769
+    ],
+    [
+     1.45,
+     153.849
+    ],
+    [
+     2.45,
+     153.929
+    ],
+    [
+     3.45,
+     154.009
+    ],
+    [
+     4.45,
+     154.109
+    ],
+    [
+     5.45,
+     154.169
+    ],
+    [
+     6.45,
+     154.221
+    ],
+    [
+     7.45,
+     154.261
+    ],
+    [
+     8.45,
+     154.281
+    ],
+    [
+     9.45,
+     154.321
+    ],
+    [
+     10.45,
+     154.361
+    ],
+    [
+     11.45,
+     154.381
+    ],
+    [
+     12.45,
+     154.401
+    ],
+    [
+     13.45,
+     154.421
+    ],
+    [
+     14.45,
+     154.427
+    ],
+    [
+     15.45,
+     154.427
+    ],
+    [
+     16.45,
+     154.427
+    ]
+   ]
+  },
+  {
+   "id": "saint_therese_way_27751389_R",
+   "host": "MAINLINE",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.4,
+   "u_barrier_from_cut_m": 15.4,
+   "connector": "STUB_saint_therese_way_27751389_R",
+   "way": 27751389,
+   "street": "Saint Therese Way",
+   "highway": "residential",
+   "host_street": "College Avenue",
+   "side": -1,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "angle_deg": 89.16,
+   "cut_xz": [
+    -1654.6,
+    -85.655
+   ],
+   "dir_xz": [
+    0.84577,
+    0.53355
+   ],
+   "host_y": 56.5333,
+   "host_seg": 1256,
+   "host_t": 0.9474,
+   "grade_3dep": 0.08663,
+   "grade_used": 0.08663,
+   "grade_capped": false,
+   "grade_host_along": -0.0002,
+   "vcurve_m": 8.68,
+   "dem_rmse_m": 0.051,
+   "dem_offset_m": -5.725,
+   "dem_samples": [
+    [
+     0.4,
+     163.058
+    ],
+    [
+     1.4,
+     163.178
+    ],
+    [
+     2.4,
+     163.238
+    ],
+    [
+     3.4,
+     163.294
+    ],
+    [
+     4.4,
+     163.334
+    ],
+    [
+     5.4,
+     163.459
+    ],
+    [
+     6.4,
+     163.499
+    ],
+    [
+     7.4,
+     163.619
+    ],
+    [
+     8.4,
+     163.679
+    ],
+    [
+     9.4,
+     163.799
+    ],
+    [
+     10.4,
+     163.799
+    ],
+    [
+     11.4,
+     163.919
+    ],
+    [
+     12.4,
+     163.999
+    ],
+    [
+     13.4,
+     164.159
+    ],
+    [
+     14.4,
+     164.238
+    ],
+    [
+     15.4,
+     164.418
+    ],
+    [
+     16.4,
+     164.498
+    ]
+   ]
+  },
+  {
+   "id": "camino_estrellado_5977723_R",
+   "host": "MAINLINE",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.412,
+   "u_barrier_from_cut_m": 15.412,
+   "connector": "STUB_camino_estrellado_5977723_R",
+   "way": 5977723,
+   "street": "Camino Estrellado",
+   "highway": "residential",
+   "host_street": "Navajo Road",
+   "side": -1,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "angle_deg": 76.12,
+   "cut_xz": [
+    -1644.989,
+    880.338
+   ],
+   "dir_xz": [
+    0.56591,
+    -0.82446
+   ],
+   "host_y": 39.2256,
+   "host_seg": 1659,
+   "host_t": 0.1576,
+   "grade_3dep": 0.03196,
+   "grade_used": 0.03196,
+   "grade_capped": false,
+   "grade_host_along": -0.01403,
+   "vcurve_m": 4.6,
+   "dem_rmse_m": 0.02,
+   "dem_offset_m": 0.462,
+   "dem_samples": [
+    [
+     0.41,
+     139.564
+    ],
+    [
+     1.41,
+     139.664
+    ],
+    [
+     2.41,
+     139.651
+    ],
+    [
+     3.41,
+     139.719
+    ],
+    [
+     4.41,
+     139.719
+    ],
+    [
+     5.41,
+     139.779
+    ],
+    [
+     6.41,
+     139.779
+    ],
+    [
+     7.41,
+     139.819
+    ],
+    [
+     8.41,
+     139.859
+    ],
+    [
+     9.41,
+     139.879
+    ],
+    [
+     10.41,
+     139.919
+    ],
+    [
+     11.41,
+     139.919
+    ],
+    [
+     12.41,
+     139.972
+    ],
+    [
+     13.41,
+     139.992
+    ],
+    [
+     14.41,
+     140.052
+    ],
+    [
+     15.41,
+     140.112
+    ]
+   ]
+  },
+  {
+   "id": "margerum_avenue_135149732_L",
+   "host": "MAINLINE",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.437,
+   "u_barrier_from_cut_m": 15.437,
+   "connector": "STUB_margerum_avenue_135149732_L",
+   "way": 135149732,
+   "street": "Margerum Avenue",
+   "highway": "tertiary",
+   "host_street": "Navajo Road",
+   "side": 1,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "angle_deg": 66.28,
+   "cut_xz": [
+    -1660.312,
+    900.578
+   ],
+   "dir_xz": [
+    -0.41742,
+    0.90871
+   ],
+   "host_y": 39.5148,
+   "host_seg": 1660,
+   "host_t": 0.8068,
+   "grade_3dep": 0.00801,
+   "grade_used": 0.00801,
+   "grade_capped": false,
+   "grade_host_along": 0.02349,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.034,
+   "dem_offset_m": 0.435,
+   "dem_samples": [
+    [
+     0.44,
+     139.88
+    ],
+    [
+     1.44,
+     139.9
+    ],
+    [
+     2.44,
+     139.82
+    ],
+    [
+     3.44,
+     139.86
+    ],
+    [
+     4.44,
+     139.9
+    ],
+    [
+     5.44,
+     139.9
+    ],
+    [
+     6.44,
+     139.94
+    ],
+    [
+     7.44,
+     139.96
+    ],
+    [
+     8.44,
+     139.96
+    ],
+    [
+     9.44,
+     140.0
+    ],
+    [
+     10.44,
+     140.0
+    ],
+    [
+     11.44,
+     140.0
+    ],
+    [
+     12.44,
+     139.981
+    ],
+    [
+     13.44,
+     139.981
+    ],
+    [
+     14.44,
+     139.981
+    ],
+    [
+     15.44,
+     139.961
+    ],
+    [
+     16.44,
+     139.941
+    ]
+   ]
+  },
+  {
+   "id": "hyde_park_drive_5962845_R",
+   "host": "MAINLINE",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.4,
+   "u_barrier_from_cut_m": 15.4,
+   "connector": "STUB_hyde_park_drive_5962845_R",
+   "way": 5962845,
+   "street": "Hyde Park Drive",
+   "highway": "tertiary",
+   "host_street": "Jackson Drive",
+   "side": -1,
+   "width_m": 12.0,
+   "width_source": "class default tertiary [invented]",
+   "angle_deg": 88.5,
+   "cut_xz": [
+    150.645,
+    1562.578
+   ],
+   "dir_xz": [
+    -0.77747,
+    -0.62892
+   ],
+   "host_y": 111.5989,
+   "host_seg": 2383,
+   "host_t": 0.2628,
+   "grade_3dep": -0.0366,
+   "grade_used": -0.0366,
+   "grade_capped": false,
+   "grade_host_along": -4e-05,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.038,
+   "dem_offset_m": -0.224,
+   "dem_samples": [
+    [
+     0.4,
+     212.623
+    ],
+    [
+     1.4,
+     212.595
+    ],
+    [
+     2.4,
+     212.595
+    ],
+    [
+     3.4,
+     212.575
+    ],
+    [
+     4.4,
+     212.535
+    ],
+    [
+     5.4,
+     212.535
+    ],
+    [
+     6.4,
+     212.515
+    ],
+    [
+     7.4,
+     212.454
+    ],
+    [
+     8.4,
+     212.434
+    ],
+    [
+     9.4,
+     212.374
+    ],
+    [
+     10.4,
+     212.374
+    ],
+    [
+     11.4,
+     212.314
+    ],
+    [
+     12.4,
+     212.254
+    ],
+    [
+     13.4,
+     212.214
+    ],
+    [
+     14.4,
+     212.141
+    ],
+    [
+     15.4,
+     212.081
+    ],
+    [
+     16.4,
+     212.041
+    ]
+   ]
+  }
+ ],
+ "curb_cuts": [],
+ "skipped": [
+  {
+   "id": "70th_street_150167464_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "alvarado_road_436321217_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "alvarado_road_1072234428_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "sterling_verde_drive_562643734_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "alvarado_court_5970685_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "east_campus_drive_35154323_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "college_avenue_436409660_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "college_avenue_436409665_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "motorway_link_38414904_L",
+   "why": "freeway ramp \u2014 phase 4 builds the ramps"
+  },
+  {
+   "id": "motorway_link_436411010_L",
+   "why": "freeway ramp \u2014 phase 4 builds the ramps"
+  },
+  {
+   "id": "motorway_link_5953027_L",
+   "why": "freeway ramp \u2014 phase 4 builds the ramps"
+  },
+  {
+   "id": "mission_valley_freeway_615980462_L",
+   "why": "freeway \u2014 phase 4 builds the I-8"
+  },
+  {
+   "id": "mission_valley_freeway_615980462_R",
+   "why": "freeway \u2014 phase 4 builds the I-8"
+  },
+  {
+   "id": "motorway_link_33644901_R",
+   "why": "freeway ramp \u2014 phase 4 builds the ramps"
+  },
+  {
+   "id": "motorway_link_5952895_R",
+   "why": "freeway ramp \u2014 phase 4 builds the ramps"
+  },
+  {
+   "id": "del_cerro_boulevard_1220464889_L",
+   "why": "already built: mouth of del_cerro_blvd#0"
+  },
+  {
+   "id": "del_cerro_boulevard_1031552274_R",
+   "why": "already built: mouth of del_cerro_blvd#1"
+  },
+  {
+   "id": "del_cerro_boulevard_1031552277_L",
+   "why": "already built: mouth of del_cerro_blvd#0"
+  },
+  {
+   "id": "lambda_drive_1299929489_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "rockhurst_drive_678652464_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "rockhurst_drive_6054975_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "rockhurst_drive_6054977_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "wenrich_drive_6010351_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "college_avenue_682676216_R",
+   "why": "leaves the host at 17 deg \u2014 a carriageway / slip lane, not a side road"
+  },
+  {
+   "id": "college_avenue_682676216_R_1365",
+   "why": "leaves the host at 15 deg \u2014 a carriageway / slip lane, not a side road"
+  },
+  {
+   "id": "eldergardens_street_6025821_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "lance_street_6037638_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "camino_rico_1462984071_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "college_avenue_436315943_R",
+   "why": "leaves the host at 16 deg \u2014 a carriageway / slip lane, not a side road"
+  },
+  {
+   "id": "waring_road_436315962_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "college_avenue_436315943_R_1522",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "park_ridge_boulevard_1224664728_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "park_ridge_boulevard_1089535695_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "park_ridge_boulevard_1224664716_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "jackson_drive_436270246_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "navajo_road_436270256_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "navajo_road_436270248_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "secondary_link_265726341_L",
+   "why": "slip / ramp link"
+  },
+  {
+   "id": "golfcrest_drive_1224664725_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "jackson_drive_265721279_L",
+   "why": "leaves the host at 5 deg \u2014 a carriageway / slip lane, not a side road"
+  },
+  {
+   "id": "lake_shore_drive_1079354726_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "lake_shore_drive_594963468_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "lake_shore_drive_1079354725_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "twin_lake_drive_6014978_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "twin_lake_drive_6014978_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "cowles_mountain_boulevard_6007989_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "cowles_mountain_boulevard_6007989_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "lake_badin_avenue_6048886_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "lake_badin_avenue_6048886_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "boulder_lake_avenue_5987374_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "boulder_lake_avenue_5987374_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "lake_murray_boulevard_164280023_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "lake_murray_boulevard_436315295_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "lake_murray_boulevard_436315304_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "lake_murray_boulevard_436315306_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "blue_lake_drive_1458424318_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "dallas_street_5992563_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "el_paso_street_1221405645_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "dugan_avenue_594961113_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "stadler_street_6001136_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "stadler_street_6001136_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "marengo_avenue_692686511_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "marengo_avenue_936996211_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "primary_link_436321306_R",
+   "why": "slip / ramp link"
+  },
+  {
+   "id": "aztec_drive_6003199_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "cowles_mountain_boulevard_6007989_R_3811",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "secondary_436321307_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "baltimore_drive_436321230_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "baltimore_drive_436321220_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "baltimore_drive_1221405646_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "baltimore_drive_1221405652_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "lake_park_way_1098239189_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "shasta_lane_5978160_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "lesa_road_5957700_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "lesa_road_5957700_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "maryland_avenue_5963380_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "maryland_avenue_5963380_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "kiowa_drive_975668777_R",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "kiowa_drive_5985769_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "secondary_link_436321305_R",
+   "why": "slip / ramp link"
+  },
+  {
+   "id": "wisconsin_avenue_594592749_R",
+   "why": "already built: mouth of medium#2+0#0#0"
+  },
+  {
+   "id": "parkway_drive_6047188_L",
+   "why": "not selected (--only)"
+  },
+  {
+   "id": "motorway_link_5938918_L",
+   "why": "freeway ramp \u2014 phase 4 builds the ramps"
+  },
+  {
+   "id": "motorway_link_5944197_R",
+   "why": "freeway ramp \u2014 phase 4 builds the ramps"
+  },
+  {
+   "id": "motorway_link_5938915_L",
+   "why": "freeway ramp \u2014 phase 4 builds the ramps"
+  },
+  {
+   "id": "mission_valley_freeway_1012076496_R",
+   "why": "freeway \u2014 phase 4 builds the I-8"
+  },
+  {
+   "id": "mission_valley_freeway_1012076496_L",
+   "why": "freeway \u2014 phase 4 builds the I-8"
+  },
+  {
+   "id": "mission_valley_freeway_1013694210_R",
+   "why": "freeway \u2014 phase 4 builds the I-8"
+  },
+  {
+   "id": "mission_valley_freeway_1013694210_L",
+   "why": "freeway \u2014 phase 4 builds the I-8"
+  }
+ ],
+ "constants": {
+  "stub_length_m": 15.0,
+  "tail_m": 1.0,
+  "spacing_m": 1.0,
+  "ramp_dg_per_m_invented": 0.015,
+  "ramp_min_m_invented": 4.0,
+  "grade_cap_invented": 0.15,
+  "curb_cut_lip_m_invented": 0.03,
+  "curb_cut_flare_m_invented": 1.5
+ }
+}

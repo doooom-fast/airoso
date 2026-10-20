@@ -119,6 +119,13 @@ def main():
     mouths = json.loads((data / "mouths.json").read_text(encoding="utf-8"))["mouths"]
     local = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
     conns = json.loads((data / "connectors.local.json").read_text(encoding="utf-8"))["connectors"]
+    # ledger 0054 P1 (opt-in): route.weld_exact_deck — connector-name prefixes whose mouths read the host deck off the
+    # host's triangles (mouth_weld.ExactHostDeck), for wide mouths on a corner's fanned outer edge; absent = as before
+    cfgp = proj / "track.config.json"
+    exact_prefixes = []
+    if cfgp.exists():
+        exact_prefixes = [str(x) for x in (json.loads(cfgp.read_text(encoding="utf-8")).get("route", {})
+                                           .get("weld_exact_deck") or [])]
     main_pts = [tuple(p) for p in local["points_xyz_m"]]
     lay = mw.mesh_layout(main_pts, conns)
     cdict = {c["name"]: c for c in conns}
@@ -149,7 +156,7 @@ def main():
         rib = [(x, y + 0.10, z) for (x, y, z) in wr.road_ribbon(cpts, cw)["vertices"]]
         ker = wr.curb_sidewalk(cpts, cw, lift=0.10, curb_h=0.14, curb_face_w=0.08, sidewalk_w=1.5, grade_w=1.2,
                                grass_clearance=0.10)["vertices"]
-        cmk = wr.lane_markings(cpts, cw, center_yellow=True)
+        cmk = wr.connector_markings(cpts, cw, c.get("stub"), c.get("paint"))     # the assembler's own call (a phase-5 stub: its street's paint; a P3 piece: its authored paint)
         mk = {"MARKINGS": [(x, y + 0.115, z) for (x, y, z) in cmk["white"]["vertices"]],
               "YLINE": [(x, y + 0.115, z) for (x, y, z) in cmk["yellow"]["vertices"]]}
         recon[c["name"]] = mk
@@ -355,7 +362,8 @@ def main():
         rows_old = [rows_of(piece)[r] for r in order]
         hrows = rows_of(host)
         cx, _cy, cz = mo["cut_xyz"]
-        deck = mw.HostDeck(hrows, mw.host_window(hrows, lay[host]["closed"], cx, cz))
+        Deck = mw.ExactHostDeck if any(str(mo["connector"]).startswith(px) for px in exact_prefixes) else mw.HostDeck
+        deck = Deck(hrows, mw.host_window(hrows, lay[host]["closed"], cx, cz))
         far = rows_old[min(len(rows_old) - 1, 6)][1]
         if (1 if deck.project(far[0], far[2])[3] >= 0 else -1) != side:
             raise SystemExit(f"[weld] FATAL: mouth {tag}: the piece approaches from side "
@@ -431,6 +439,7 @@ def main():
         rec = {"connector": mo["connector"], "piece": piece, "end": end, "host": host, "side": side,
                "host_vertex": mo["host_vertex"], "angle_deg": mo.get("angle_deg"), "host_grade": mo.get("host_grade"),
                "rows_respread": J, "rows_touched": K, "markings_moved": moved_mk,
+               **({"deck": "exact (route.weld_exact_deck)"} if Deck is mw.ExactHostDeck else {}),
                "cut_arc_m": {f"{k[0]}{''.join('%+d' % v for v in k[1:])}": round(v, 3) for k, v in res["u_x"].items()},
                "end_dy_m": [round(res["dy_end"][("road", lane)], 3) for lane in range(3)],
                "end_vs_host_before_m": [round(v, 3) for v in before],
@@ -454,8 +463,9 @@ def main():
             for a, bb in ((0, 1), (1, 2)):
                 ridge_quads.append((mw.road_index(lay, piece, r0, a), mw.road_index(lay, piece, r0, bb),
                                     mw.road_index(lay, piece, r1, bb), mw.road_index(lay, piece, r1, a)))
+        # (a piece shorter than the warp — a phase-5 stub, ledger 0054 — has every row warped: K == its row count)
         island_dy.setdefault(piece, []).append(
-            ([r[1] for r in rows_old[:K + 1]], [rows_new[j][1][1] - rows_old[j][1][1] for j in range(K + 1)],
+            ([r[1] for r in rows_old[:K + 1]], [rows_new[j][1][1] - rows_old[j][1][1] for j in range(min(K + 1, len(rows_new)))],
              [math.hypot(r[0][0] - r[1][0], r[0][2] - r[1][2]) for r in rows_old[:K + 1]]))
 
     if fails:

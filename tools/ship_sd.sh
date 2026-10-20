@@ -87,6 +87,13 @@
 # ENG=<dir>       the engine-july tree the prep / exporter / spawn builder run from (default: the real one). Point
 #                 it at a scratch COPY to rehearse an engine-july change before it is mirrored (the change itself is
 #                 recorded in tracks/san-diego-lake-murray/engine-july-snapshot/, see its PENDING-MIRROR.md5).
+# STUBS=<file>   PHASE 5 (ledger 0054, Kevin 2026-10-14: "a road we are not completing gets a barrier, not a curve"):
+#                 the side-road stub declaration (tools/stub_roads.py declare; default $SRC/stubs.json). OPT-IN: with
+#                 no declaration every stub step below is skipped and every output is what it was. With one, each
+#                 `stub` entry becomes a short connector (tools/stub_roads.py apply, after divide / before trim) that
+#                 the whole side-street chain builds and welds, tools/author_stubs_blend.py adds its curb returns,
+#                 corner pavement and K-rail barrier around gap_mouths, and tools/verify_stubs.py gates it on the
+#                 BUILT road (hard).
 # STREET_AI=draft|july  the street layout's AI line (Q8). Default `draft` = the V3 right-hand-lane draft
 #                 (scripts/ac/write_ai_line.py --layout street). `july` (explicit opt-in) copies the
 #                 installed July line — a July write_ai_line DRAFT, never an in-game recording, and
@@ -147,7 +154,11 @@ pyq() { (cd "$AIROSO" && python -c "$@"); }
 step "sync inputs airoso -> workshop ($PROJ)"
 cp "$SRC/track.config.json" "$PROJ/track.config.json"
 cp "$SRC/start_positions.json" "$PROJ/start_positions.json"
-for f in centerline.raw.local.json.pre-median connectors.local.json.pre-trim; do
+# ledger 0054 P1: the authored intermediate of the north network (tools/author_expansion.py) — route_connectors reads it
+# through route_connectors.authored_routes / authored_take; P2: terrain_sample plans the tiers + physical ground over it
+# (terrain.tier_options.planned_pavement). P2 also grew the 40 m heightfield by whole cells (tools/grow_heightfield.py,
+# terrain.grid_grow + tier_options.frame.pin): airoso's heightfield.npy + .meta.json are the source of truth, synced in
+for f in centerline.raw.local.json.pre-median connectors.local.json.pre-trim expansion.north.json heightfield.npy heightfield.meta.json; do
   [ -f "$SRC/data/$f" ] && cp "$SRC/data/$f" "$PROJ/data/$f"
 done
 # ledger 0046: the 3DEP cache + the I-8 corridor (data with provenance, L2) — a fresh workshop never re-fetches them
@@ -158,6 +169,18 @@ for f in $TRACK_TEXTURES; do
   [ -f "$SRC/$f" ] && { mkdir -p "$(dirname "$PROJ/$f")"; cp "$SRC/$f" "$PROJ/$f"; }
 done
 mkdir -p "$PROJ/source/trees" && cp "$SRC/source/trees/"*.bin "$PROJ/source/trees/" 2>/dev/null || true   # TreeFX models (gitignored, personal use)
+# ledger 0054 P3: the junction pads' 3DEP cache (tools/junction_pad.py plan; data with provenance, L2)
+[ -f "$SRC/data/pads.3dep.json" ] && cp "$SRC/data/pads.3dep.json" "$PROJ/data/pads.3dep.json"
+# PHASE 5 side-road stubs (ledger 0054), opt-in: a declaration is synced down with its 3DEP cache; without one, no stub
+# file of an earlier run survives in the project (the audit's barrier exemption reads stubs.built.json)
+STUBS="${STUBS:-$SRC/stubs.json}"
+if [ -f "$STUBS" ]; then
+  cp "$STUBS" "$PROJ/data/stubs.json"
+  [ -f "$SRC/data/stubs.3dep.json" ] && cp "$SRC/data/stubs.3dep.json" "$PROJ/data/stubs.3dep.json"
+  echo "phase-5 stubs: declared in $STUBS"
+else
+  rm -f "$PROJ/data/stubs.json" "$PROJ/data/stubs.plan.json" "$PROJ/data/stubs.built.json" "$PROJ/data/verify_stubs.json"
+fi
 # the declared layouts drive every per-layout step below (never a hand-typed list)
 LAYOUT_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts']))" "$PROJ/track.config.json")
 RACE_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts'] if l.get('race_furniture')))" "$PROJ/track.config.json")
@@ -193,8 +216,21 @@ if [ "$SKIP_BLEND" = 0 ]; then
   (cd "$AIROSO" && python tools/route_connectors.py "$PROJ")
   step "draft: divided side streets -> one trunk + island (Del Cerro)"
   (cd "$AIROSO" && python tools/divide_connectors.py "$PROJ")
+  if [ -f "$PROJ/data/stubs.json" ]; then
+    step "draft: phase-5 side-road stubs -> short connectors at their real width, heading and 3DEP grade (tools/stub_roads.py)"
+    (cd "$AIROSO" && python tools/stub_roads.py apply "$PROJ")
+  fi
   step "draft: trim connectors at the mainline edge"
   (cd "$AIROSO" && python tools/trim_connectors.py "$PROJ")
+  step "draft: the north pieces' authored paint + raised medians (tools/expansion_pieces.py decorate; none taken = no-op)"
+  # ledger 0054 P3: per point of every north piece as trim left it, its paint (connector record `paint`, scripts-v021
+  # ribbon.paint_markings — the assembler and the weld both read it) and its raised medians (median_bands.json
+  # connector_islands, named after the piece); with route_connectors.authored_take naming no piece it prints one line
+  (cd "$AIROSO" && python tools/expansion_pieces.py decorate "$PROJ")
+  step "draft: junction pads plan (tools/junction_pad.py: the J2-J4 pads on the roads as built, the stubs' far-edge 3DEP; none declared = no-op)"
+  # ledger 0054 P3 step 2: route.junction_pads -> data/pads.plan.json (each route arm's piece + end, each stub arm's far
+  # edge at 3DEP, cached in data/pads.3dep.json, TLS verified); tools/author_junction_pad_blend.py builds it below
+  (cd "$AIROSO" && python tools/junction_pad.py plan "$PROJ")
   step "draft: tiered terrain re-planned on the trimmed connectors (only new vertices fetched)"
   (cd "$AIROSO" && python -m scripts.elevation.terrain_sample "$PROJ")
   step "draft: rebuild loop.blend with trimmed connectors"
@@ -206,6 +242,16 @@ if [ "$SKIP_BLEND" = 0 ]; then
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$V021_SHIM" --python "$AIROSO/tools/weld_mouths_blend.py" -- "$PROJ" 2>&1 | grep "^\[weld\]\|Error\|Traceback" )
   step "author: seat the terrain under every road (verge finer than the road)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/seat_terrain_blend.py" -- "$PROJ" 2>&1 | grep "^\[seat\]\|Error\|Traceback" )
+  step "author: corner aprons (route.aprons: the return pavement, its curb + walk, the ground under it; self-checked; none declared = no-op)"
+  # ledger 0054 P1 fix round: J1's R 30 return (tools/author_aprons_blend.py, opt-in by track.config.json route.aprons):
+  # 1ROAD_apron_<id> + 1KERB_sidewalk_ap<id>, the stub's curb on it removed, the ground seated; data/aprons.json for
+  # gap_mouths / barrier_bands / verify_mouths / make_treefx / author_lamps. Exit 1 = loop.blend not saved
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_aprons_blend.py" -- "$PROJ" 2>&1 | grep "^\[apron\]\|Error\|Traceback" )
+  step "author: junction pads (tools/author_junction_pad_blend.py: one deck per crossroads welded onto its arms, curb returns, K-rail stubs, the ground seated; self-checked; none planned = no-op)"
+  # ledger 0054 P3 step 2 (EXPANSION-PLAN A4, docs/JUNCTIONS.md topology B): 1ROAD_pad_<id> + 1KERB_sidewalk_pad<id> +
+  # 1WALL_STUB_PAD_<id>_<stub>; data/pads.built.json for audit_mesh (the barriers' D exemption) and verify_pads. Exit 1 =
+  # loop.blend not saved
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_junction_pad_blend.py" -- "$PROJ" 2>&1 | grep "^\[pads\]\|Error\|Traceback" )
   # (the far-terrain decimation that paid for the prep's equal-width grass bands is gone — ledger 0046: the
   #  terrain is tiered at the source and the prep tiles 1GRASS by balanced bisection. It also triangulated every
   #  terrain face here, and the near-road ground the gates were tuned on is that triangulation's: kept, alone.)
@@ -221,8 +267,15 @@ if [ "$SKIP_BLEND" = 0 ]; then
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/ground_release_blend.py" -- "$PROJ" 2>&1 | grep "^\[release\]\|Error\|Traceback" )
   step "author: median island"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_blend.py" -- "$PROJ" 2>&1 | grep "^\[median" )
+  if [ -f "$PROJ/data/stubs.plan.json" ]; then
+    step "author: phase-5 stubs — curb returns, corner pavement, K-rail barrier (tools/author_stubs_blend.py, self-checked)"
+    (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_stubs_blend.py" -- "$PROJ" --stage author 2>&1 | grep "^\[stubs\]\|Error\|Traceback" )
+  fi
   step "author: gap the mainline sidewalk at every mouth"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/gap_mouths_blend.py" -- "$PROJ" 2>&1 | grep "^\[gap" )
+  if [ -f "$PROJ/data/stubs.plan.json" ]; then
+    (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_stubs_blend.py" -- "$PROJ" --stage tidy 2>&1 | grep "^\[stubs\]\|Error\|Traceback" )
+  fi
   step "author: bridge bodies under the overcrossings (soffit, fascia, abutments, pier bents; visual only, self-checked)"
   # ledger 0046 fix round 4: with the I-8 cut out of the ground the two decks stood over it as paper-thin ribbons with
   # sky under them (AC culls back faces). tools/author_bridges_blend.py builds BRIDGESTRUCT_<span> under every declared
@@ -279,6 +332,16 @@ done
 
 step "ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)"
 "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS\|split GRASS_FAR\|terrain tiles\|terrain conform\|T-junctions\|kept-cell refinement\|house seat\|multi-layout\|Error\|Traceback" | cut -c1-200
+# ledger 0054 P3 repair round 3 (an echo, not a `step`: tracks/san-diego-lake-murray/ship.json reproduces this chain's
+# step headers and gains the thinning when the general chain does): the north roads' refinements left the ground with
+# far more vertices than its surface needs (1GRASS 941,699 on r2run2, a 122.6 MB road kn5; v0.18.1 355k / 73.6 MB).
+# tools/thin_terrain_blend.py thins every terrain tile of the PREPPED scene by error-bounded half-edge collapse (no
+# vertex moves; +- 0.005-0.03 m within 22 m of a pavement, 0.10 / 0.15 m beyond; rib_check's lattice kept through
+# data/terrain_thin.nodes.json.gz); self-checked, exit 1 = the blend not saved. Before the freeway drape (it reads this
+# ground) and the split
+rm -f "$PROJ/data/terrain_thin.json" "$PROJ/data/terrain_thin.nodes.json.gz"
+echo; echo "=================== ship: thin the terrain, every vertex where the chain put it (tools/thin_terrain_blend.py; self-checked)"
+"$BL" --background --python-exit-code 1 --python "$AIROSO/tools/thin_terrain_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[thin\]\|Error\|Traceback"
 step "ship: the I-8's own pavement, lane lines and median barrier on the final ground (visual only; self-checked)"
 # ledger 0046 v0.18.0 integration fix round (the view lens): track.config.json scenery.freeway — tools/freeway_i8.py
 # plans both carriageways from the OSM ways the corridor was cut from, tools/author_freeway_blend.py drapes them on the
@@ -387,7 +450,8 @@ step "ship: verify_kn5 (hard — spawn-free road, common race kn5 + one closure 
 # shared race gate OBJ / audit (road + the retired centre chain) are retired: each race layout is judged on
 # its own kn5 set (ledger 0049).
 for lid in $LAYOUT_IDS; do rm -f "$PROJ/data/drive_test.$lid.json"; done
-rm -f "$PROJ/data/verify_mouths.json" "$PROJ/data/rib_check.json" "$PROJ/data/house_seat_check.json"
+rm -f "$PROJ/data/drive_test.expansion.json" "$PROJ/data/drive_test.line."*.json "$PROJ/data/verify_pads.json"
+rm -f "$PROJ/data/verify_mouths.json" "$PROJ/data/rib_check.json" "$PROJ/data/house_seat_check.json" "$PROJ/data/verify_stubs.json"
 for lid in $RACE_IDS; do rm -f "$PROJ/data/audit.$lid.json" "$PROJ/data/no_route.$lid.json" "$PROJ/data/track.$lid.obj"; done
 rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"
 # the road gate OBJ is written BEFORE the track folder (ledger 0046): ext_config's GrassFX lists and make_treefx's
@@ -419,6 +483,16 @@ step "gate: verify_mouths on the built road (every side-street mouth: mouth line
 # tools/verify_mouths.py reads data/track.obj (the shipped road kn5) at every data/mouths.json record; exit 1 stops
 # the chain (data/verify_mouths.json) — a mouth floating over its host or notched below it never reaches a gate run
 (cd "$AIROSO" && python tools/verify_mouths.py "$PROJ")
+if [ -f "$PROJ/data/stubs.plan.json" ]; then
+  step "gate: verify_stubs on the built road (every declared stub: present, welded, drivable to its barrier, the barrier curb to curb and seated — hard)"
+  # tools/verify_stubs.py reads data/track.obj (the shipped road kn5) at every data/stubs.plan.json stub; exit 1 stops the chain
+  (cd "$AIROSO" && python tools/verify_stubs.py "$PROJ")
+fi
+if [ -f "$PROJ/data/pads.built.json" ]; then
+  step "gate: verify_pads on the built road (every junction pad: present, single coverage, seams <= 10 mm, no grass / curb on the deck, barriers, node height vs 3DEP — hard)"
+  # ledger 0054 P3 step 2 (EXPANSION-PLAN V3): tools/verify_pads.py reads data/track.obj; exit 1 stops the chain
+  (cd "$AIROSO" && python tools/verify_pads.py "$PROJ")
+fi
 step "gate: terrain ribbing on the built ground (tools/rib_check.py: sub-cell features folded into staircases — hard)"
 # ledger 0046 fix round 2: a feature narrower than two terrain cells (a concrete channel, a cut-slope bench) point-
 # sampled every 5 m and folded across its grain shows as washboard ribs; exit 1 (data/rib_check.json) past the
@@ -431,6 +505,15 @@ step "gate: houses on the built ground (tools/house_seat_check.py: floating, sun
 (cd "$AIROSO" && python tools/house_seat_check.py "$PROJ" --json "$PROJ/data/house_seat_check.json")
 step "gate: drive_test, street layout (hard)"
 DT_S=0; (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --layout street 2>&1 | grep -v "drive-time\] sweep" | tail -30) || DT_S=$?
+DT_L=0
+if [ -f "$PROJ/data/expansion.north.json" ] && grep -q '"authored_take"' "$PROJ/track.config.json"; then
+  step "gate: drive_test --line expansion (the north network's own lines, both directions, on the street OBJ — hard, never covered by --force-install)"
+  # ledger 0054 P3 step 7 (EXPANSION-PLAN V6, Risk 10): tools/expansion_lines.py strings each direction's right-hand
+  # carriageway J1 -> ... -> J5 (and back) through the pads; drive_test --line drives them (data/drive_test.expansion.json).
+  # The new roads have no reference to be "no worse than": a red here is never installed
+  (cd "$AIROSO" && python tools/expansion_lines.py "$PROJ")
+  (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --line expansion 2>&1 | grep -v "drive-time\] sweep" | tail -40) || DT_L=$?
+fi
 step "gate: audit_mesh, street (hard total; the regression floor — D 0 / K 20 / I 20 / F 13 since v0.18.0: the I-8 deck rails stand on the curb, 0.15 m off the pavement; D 512 while they stood on its edge, since the 2026-10-11 mouth weld + fold mend, was 512 / 154 / 145 / 15)"
 AU_S=0; (cd "$AIROSO" && python -m scripts.geometry.audit_mesh "$PROJ" 2>&1 | tail -16) || AU_S=$?
 DT_R=0; AU_R=0; NR_R=0
@@ -454,6 +537,20 @@ step "gate: verify_fold_fans (every levelled mainline fold pinch, all layouts, o
 # no_route's band; exit 1 (data/verify_fold_fans.json) stops the chain, --force-install does not cover it
 rm -f "$PROJ/data/verify_fold_fans.json"
 (cd "$AIROSO" && python tools/verify_fold_fans.py "$PROJ")
+step "gate: kn5_ground_check per layout (EXPANSION-PLAN V5: the kn5 set each layout loads — terrain sheets, furniture seating, lamp masts, the road on the ground)"
+# ledger 0054 P3 repair round 1 (the gates lens: EXPANSION-PLAN V5 lists kn5_ground_check on all three layouts and
+# neither chain ran it): scripts/ac/kn5_ground_check.py on the kn5 SET each layout loads (the road + the street-only kn5,
+# or + the common race kn5 + its closure) — double-sheet terrain, furniture seating, lamp masts, the road on the ground
+# (kn5-internal: data/track.obj is this kn5's own gate OBJ); data/kn5_ground_check.<id>.json. A red counts with the
+# street gates (KG): --force-install covers it only where no key is worse than the reference (ledger 0047)
+KG=0
+for lid in $LAYOUT_IDS; do
+  rm -f "$PROJ/data/kn5_ground_check.$lid.json"
+  if [[ " $RACE_IDS " == *" $lid "* ]]; then KX="--kn5 $PROJ/build/${RK[$lid]} --kn5 $PROJ/build/${SLUG}_closure_$lid.kn5"; else KX="$STREET_KN5"; fi
+  rc=0; (cd "$AIROSO" && python -m scripts.ac.kn5_ground_check "$PROJ" $KX --json "$PROJ/data/kn5_ground_check.$lid.json" 2>&1 | tail -14) || rc=$?
+  echo "  kn5_ground_check $lid: exit $rc"
+  [ "$rc" = 0 ] || KG=$rc
+done
 # a race layout red on its OWN gates is never installed, --force-install or not: drive_test barrier_missing /
 # obstruction_stations / not run, or the BUILT no_route verdict missing or failing (a leak, a blocked lap, a
 # reached forbidden probe, an unreached spawn). check_race_kn5 / verify_kn5 / verify_kn5 --inis already
@@ -484,15 +581,15 @@ step "sync outputs workshop -> airoso"
 cp "$PROJ/loop.blend" "$SRC/loop.blend"
 for f in centerline.local.json centerline.raw.local.json median_bands.json dummies.json \
          finished_centerline.json gate_centerline.json lights.local.json connectors.local.json \
-         mouths.json mouth_welds.json verify_mouths.json verify_fold_fans.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
-         drive_test.json audit.json \
+         mouths.json mouth_welds.json aprons.json aprons.lamps.json pads.plan.json pads.built.json pads.3dep.json verify_pads.json verify_mouths.json verify_fold_fans.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
+         drive_test.json drive_test.expansion.json drive_lines.expansion.json audit.json stubs.plan.json stubs.built.json verify_stubs.json stubs.3dep.json \
          barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json street_kn5.json \
-         $TERRAIN_DATA terrain.tiers.report.json bridges.authored.json          deck_datum.json ground_release.json ground_release.report.json freeway_i8.json freeway_i8.report.json; do
+         $TERRAIN_DATA terrain.tiers.report.json terrain_thin.json bridges.authored.json          deck_datum.json ground_release.json ground_release.report.json ground_release.auto_cuts.json freeway_i8.json freeway_i8.report.json; do
   [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
 done
 rm -f "$SRC/data/audit.race.json"   # 0047's shared race audit: retired (ledger 0049 audits each race layout on its own OBJ)
 for lid in $LAYOUT_IDS; do
-  for f in "dummies_$lid.json" "drive_test.$lid.json"; do [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"; done
+  for f in "dummies_$lid.json" "drive_test.$lid.json" "kn5_ground_check.$lid.json"; do [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"; done
   if [ -d "$PROJ/ai/$lid" ]; then rm -rf "$SRC/ai/$lid"; mkdir -p "$SRC/ai"; cp -r "$PROJ/ai/$lid" "$SRC/ai/$lid"; fi   # track_folder is reproducible from the repo
 done
 for lid in $RACE_IDS; do
@@ -513,14 +610,18 @@ done
 # track.obj / track.<id>.obj are 66-78 MB each and regenerable from the kn5s: never synced.
 fi
 
-echo; echo "GATES: street drive_test exit $DT_S, street audit exit $AU_S, race drive_test exit $DT_R, race audit exit $AU_R, race no_route exit $NR_R"
+if [ "$DT_L" != 0 ]; then
+  echo; echo "  NOT INSTALLED: drive_test --line expansion exited $DT_L (the north network's own drive gate; no reference"
+  echo "  exists to be 'no worse than', so --force-install does not apply — data/drive_test.expansion.json)"; exit 1
+fi
+echo; echo "GATES: street drive_test exit $DT_S, street audit exit $AU_S, race drive_test exit $DT_R, race audit exit $AU_R, race no_route exit $NR_R, kn5_ground_check exit $KG"
 echo "  race layouts red on their own gates: ${RACE_RED:-none}"
 if [ -n "$RACE_RED" ]; then
   echo "  NOT INSTALLED: race layout(s) $RACE_RED fail on their own gates (drive_test barrier_missing / obstruction,"
   echo "  the BUILT no_route containment fill) — no reference exists to be 'no worse than', so --force-install does not"
   echo "  apply (data/drive_test.<id>.json, data/no_route.<id>.json)"; exit 1
 fi
-if [ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ] || [ "$NR_R" != 0 ]; then
+if [ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ] || [ "$NR_R" != 0 ] || [ "$KG" != 0 ]; then
   if [ "$NR_R" != 0 ]; then
     echo "  NOT INSTALLED: no_route exited $NR_R (2 = an input error: the containment verdict could not be computed)"; exit 1
   elif [ "$FORCE" = 1 ]; then

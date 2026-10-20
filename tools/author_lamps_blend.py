@@ -43,6 +43,20 @@ ground — never hanging in the air.
 The local->Blender remap (x, z, y) is a reflection (LAWS L6), so face winding is reversed on import to keep the
 models' outward normals.
 
+A CORNER APRON (opt-in, ledger 0054 P1 fix round: data/aprons.json, written by tools/author_aprons_blend.py only when
+track.config.json route.aprons declares one; EXPANSION-PLAN A7 "lamp #77 moves behind the new curb"): a post whose
+base stands inside an apron's outline (or within LAMP_APRON_CLEAR_M of it) is moved to the return's walk — on the
+nearest arc point's normal toward the planted wedge, LAMP_BEHIND_CURB_M behind the pavement edge, seated by the draft's
+own rule on the walk top (head = walk top + HEAD_OVER_GROUND_M, v0.18.1 merge: the P1 rule "base on the walk top" put the
+LED lens 2.5 m above its neighbours') — and data/lights.local.json is rewritten with the moved head (the draft's heads
+kept as lampheads_draft, so a re-run starts from them), so every later reader (place_signs' lamp bases, verify_race G)
+sees the lamp that ships; the moves are recorded in data/aprons.lamps.json. No apron file: as before (a stale
+aprons.lamps.json is removed). Repair round 1 (ledger 0054 P3, the view + truth lenses: lamp 77 behind J1's R 30 return,
+its head 8.35 m over the walk it stands on — the draft seated it on the ground the apron's walk was then built over,
+0.44 m higher): a post whose base stands ON a return's walk (within LAMP_WALK_BAND_M behind the outline) is re-seated
+where it stands — head = the built surface under its base + HEAD_OVER_GROUND_M — and a moved post is seated on the built
+walk under its new base the same way (the arc's recorded edge height only where nothing is built there).
+
 Runs INSIDE Blender after strip_scenery_blend, before the kn5 prep:
 
     blender --background --python tools/author_lamps_blend.py -- <project-dir>
@@ -61,6 +75,10 @@ MODELS = AIROSO / "assets" / "models"
 ARM_M = 1.8
 POST_H = 11.5   # Kevin 2026-10-09: "lights need to be taller" — arterial cobra-head height (was 9.0); street_lamp_2026_10 only
 CAP = 60000
+LAMP_APRON_CLEAR_M = 0.5    # [invented] a post this close to an apron's outline is in its way
+LAMP_BEHIND_CURB_M = 0.83   # the middle of the return's 1.5 m walk (curb face 0.08 + 0.75): the post's base
+LAMP_WALK_BAND_M = 2.8      # the return's walk + its grade behind the outline (curb 0.08 + walk 1.5 + grade 1.2)
+WALK_TOP_M = 0.14           # the walk top over the pavement edge (build_loop_blend's curb_sidewalk curb_h)
 LEGACY = "street_lamp_2026_10"
 LED = "led_cobra"
 HEAD_ABOVE_ROAD_M = 8.944     # recorded head - road (ledger 0043: light 6.94 m over the road = head - 2.004 m)
@@ -448,6 +466,86 @@ def relocate(heads, nearest_cl, cfg, model):
     return rows
 
 
+def apron_moves(heads, nearest_cl, data, ground=None):
+    """the corner aprons (module doc, CORNER APRON): a post whose base stands in an apron's outline (or within
+    LAMP_APRON_CLEAR_M of it) moves behind the return curb onto the walk; ``heads`` is changed in place. The moved head
+    keeps the draft's own rule — HEAD_OVER_GROUND_M over the ground under the post, here the walk top — so the moved lamp
+    is seated exactly like its neighbours under either model (LED: road datum = the walk top - 0.144 m, the pavement;
+    2026-10 lamp: the base POST_H - 0.1 m under the head). Returns the provenance rows (data/aprons.lamps.json) or None
+    when no apron was built"""
+    ap_path = data / "aprons.json"
+    if not ap_path.exists():
+        lp = data / "aprons.lamps.json"
+        if lp.exists():
+            lp.unlink()                     # a stale record from an earlier apron build never outlives its apron
+        return None
+    sys.path.insert(0, str(AIROSO / "tools"))
+    import apron as ap_  # noqa: E402
+    aprons = json.loads(ap_path.read_text(encoding="utf-8")).get("aprons", [])
+    moved = []
+    for i, (hx, hy, hz) in enumerate(list(heads)):
+        c = nearest_cl(hx, hz)
+        L = math.hypot(c[0] - hx, c[2] - hz) or 1e-9
+        bx, bz = hx - (c[0] - hx) / L * ARM_M, hz - (c[2] - hz) / L * ARM_M
+        for a in aprons:
+            poly = a["outline_xz"]
+            if not (ap_.point_in_polygon(poly, bx, bz) or ap_.dist_to_outline(poly, bx, bz) < LAMP_APRON_CLEAR_M):
+                continue
+            arc = a["arc_xyz"]
+            k = min(range(1, len(arc) - 1), key=lambda q: math.hypot(arc[q][0] - bx, arc[q][2] - bz))
+            C = a["centre_xz"]
+            wl = math.hypot(C[0] - arc[k][0], C[1] - arc[k][2])
+            nbx = arc[k][0] + (C[0] - arc[k][0]) / wl * LAMP_BEHIND_CURB_M
+            nbz = arc[k][2] + (C[1] - arc[k][2]) / wl * LAMP_BEHIND_CURB_M
+            c2 = nearest_cl(nbx, nbz)
+            L2 = math.hypot(c2[0] - nbx, c2[2] - nbz) or 1e-9
+            nby = arc[k][1] + WALK_TOP_M
+            gy = _top(ground, nbx, nbz) if ground is not None else None
+            if gy is not None:
+                nby = gy                    # the walk as built under the new base (repair round 1)
+            new = [round(nbx + (c2[0] - nbx) / L2 * ARM_M, 4), round(nby + HEAD_OVER_GROUND_M, 4),
+                   round(nbz + (c2[2] - nbz) / L2 * ARM_M, 4)]
+            moved.append({"lamp": i, "apron": a["id"], "head_was": [round(v, 4) for v in (hx, hy, hz)],
+                          "base_was": [round(bx, 3), round(bz, 3)], "head": new,
+                          "base": [round(nbx, 3), round(nby, 3), round(nbz, 3)],
+                          "seat": f"walk top + HEAD_OVER_GROUND_M ({HEAD_OVER_GROUND_M} m), the draft's rule",
+                          "why": "ledger 0054 A7: the post stood in the apron's pavement; moved behind its return "
+                                 "curb onto the walk"})
+            heads[i] = new
+            break
+        else:
+            # repair round 1: a post standing ON a return's walk (behind the outline, not in its way) keeps its base and
+            # is seated on the built walk under it, as the draft seats every post on the ground under it
+            if ground is None:
+                continue
+            for a in aprons:
+                poly = a["outline_xz"]
+                if ap_.point_in_polygon(poly, bx, bz) or ap_.dist_to_outline(poly, bx, bz) > LAMP_WALK_BAND_M:
+                    continue
+                gy = _top(ground, bx, bz)
+                if gy is None or abs(gy + HEAD_OVER_GROUND_M - hy) < 0.02:
+                    break
+                new = [round(hx, 4), round(gy + HEAD_OVER_GROUND_M, 4), round(hz, 4)]
+                moved.append({"lamp": i, "apron": a["id"], "head_was": [round(v, 4) for v in (hx, hy, hz)],
+                              "base_was": [round(bx, 3), round(bz, 3)], "head": new,
+                              "base": [round(bx, 3), round(gy, 3), round(bz, 3)],
+                              "seat": f"built walk under the base + HEAD_OVER_GROUND_M ({HEAD_OVER_GROUND_M} m), the "
+                                      f"draft's rule", "reseated_only": True,
+                              "why": "ledger 0054 P3 repair round 1: the post stands on the return's walk, built "
+                                     f"{gy - (hy - HEAD_OVER_GROUND_M):+.2f} m off the ground the draft seated it on"})
+                heads[i] = new
+                break
+    (data / "aprons.lamps.json").write_text(json.dumps({"moved": moved}, indent=1), encoding="utf-8")
+    for mv in moved:
+        if mv.get("reseated_only"):
+            print(f"[lamps] lamp {mv['lamp']} stands on apron {mv['apron']}'s walk (base {mv['base_was']}): re-seated, "
+                  f"head y {mv['head_was'][1]} -> {mv['head'][1]}")
+        else:
+            print(f"[lamps] lamp {mv['lamp']} stood in apron {mv['apron']} (base {mv['base_was']}): moved behind its "
+                  f"return curb, base {mv['base']}")
+    return moved
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:]
     proj = Path(argv[0])
@@ -471,12 +569,19 @@ def main():
 
     draft = [list(h) for h in heads]
     moved = relocate(heads, nearest_cl, cfg, model)
-    if moved:
+    apron_moved = apron_moves(heads, nearest_cl, data, ground=_bvh(GROUND_PREFIXES, exclude=("GRASS_FAR",)))
+    if moved or apron_moved:
         lights["lampheads_draft"] = draft
-        lights["relocated"] = moved
     else:
         lights.pop("lampheads_draft", None)
+    if moved:
+        lights["relocated"] = moved
+    else:
         lights.pop("relocated", None)
+    if apron_moved:
+        lights["apron_moved"] = apron_moved
+    else:
+        lights.pop("apron_moved", None)
 
     if model == LED:
         n, batches, note, prov = author_led(heads, nearest_cl, arms)

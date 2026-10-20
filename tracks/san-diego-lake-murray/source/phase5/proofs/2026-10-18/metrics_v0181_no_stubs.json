@@ -1,0 +1,236 @@
+{
+ "stubs": {
+  "reservoir_drive_6028810_L": {
+   "corners": [
+    {
+     "edge": 1,
+     "phi": 91.09,
+     "R": 4.648,
+     "compress": 1.0,
+     "steep_grass": 0,
+     "steep_max_rise": 0.0,
+     "grass_over_kerb_samples": 992,
+     "grass_at_road_samples": 0,
+     "grass_at_road_max": -1.0,
+     "grass_over_kerb_max": 0.174,
+     "kerb_tris": 42,
+     "kerb_flipped": 0,
+     "pit_grass_min": 7.8,
+     "walk_top_near_O": 7.766,
+     "pit_depth_below_walk": -0.034
+    },
+    {
+     "edge": -1,
+     "phi": 88.83,
+     "R": 3.784,
+     "compress": 1.0,
+     "steep_grass": 0,
+     "steep_max_rise": 0.0,
+     "grass_over_kerb_samples": 930,
+     "grass_at_road_samples": 0,
+     "grass_at_road_max": -1.0,
+     "grass_over_kerb_max": 0.177,
+     "kerb_tris": 42,
+     "kerb_flipped": 0,
+     "pit_grass_min": 7.698,
+     "walk_top_near_O": 7.894,
+     "pit_depth_below_walk": 0.196
+    }
+   ],
+   "paint": {
+    "lateral_offsets_m": [],
+    "divider_verts": 0,
+    "farthest_paint_u_m": null,
+    "barrier_toe_u_m": 15.065,
+    "past_toe_m": null
+   }
+  },
+  "lambda_drive_6021410_L": {
+   "corners": [
+    {
+     "edge": 1,
+     "phi": 120.22,
+     "R": 5.555,
+     "compress": 1.0,
+     "steep_grass": 0,
+     "steep_max_rise": 0.0,
+     "grass_over_kerb_samples": 962,
+     "grass_at_road_samples": 0,
+     "grass_at_road_max": -1.0,
+     "grass_over_kerb_max": 0.183,
+     "kerb_tris": 64,
+     "kerb_flipped": 0,
+     "pit_grass_min": 51.952,
+     "walk_top_near_O": null,
+     "pit_depth_below_walk": null
+    },
+    {
+     "edge": -1,
+     "phi": 57.38,
+     "R": 1.446,
+     "compress": 0.383,
+     "steep_grass": 0,
+     "steep_max_rise": 0.0,
+     "grass_over_kerb_samples": 523,
+     "grass_at_road_samples": 0,
+     "grass_at_road_max": -1.0,
+     "grass_over_kerb_max": 0.184,
+     "kerb_tris": 35,
+     "kerb_flipped": 0,
+     "pit_grass_min": 53.866,
+     "walk_top_near_O": 54.129,
+     "pit_depth_below_walk": 0.264
+    }
+   ],
+   "paint": {
+    "lateral_offsets_m": [
+     2.6,
+     5.0,
+     5.1
+    ],
+    "divider_verts": 0,
+    "farthest_paint_u_m": 2.988,
+    "barrier_toe_u_m": 15.114,
+    "past_toe_m": -12.126
+   }
+  },
+  "camino_estrellado_5977723_R": {
+   "corners": [
+    {
+     "edge": 1,
+     "phi": 101.18,
+     "R": 4.585,
+     "compress": 1.0,
+     "steep_grass": 0,
+     "steep_max_rise": 0.0,
+     "grass_over_kerb_samples": 1040,
+     "grass_at_road_samples": 0,
+     "grass_at_road_max": -1.0,
+     "grass_over_kerb_max": 0.233,
+     "kerb_tris": 42,
+     "kerb_flipped": 0,
+     "pit_grass_min": 39.625,
+     "walk_top_near_O": 39.792,
+     "pit_depth_below_walk": 0.167
+    },
+    {
+     "edge": -1,
+     "phi": 79.15,
+     "R": 3.741,
+     "compress": 1.0,
+     "steep_grass": 0,
+     "steep_max_rise": 0.0,
+     "grass_over_kerb_samples": 934,
+     "grass_at_road_samples": 0,
+     "grass_at_road_max": -1.0,
+     "grass_over_kerb_max": 0.217,
+     "kerb_tris": 42,
+     "kerb_flipped": 0,
+     "pit_grass_min": 38.572,
+     "walk_top_near_O": 38.92,
+     "pit_depth_below_walk": 0.348
+    }
+   ],
+   "paint": {
+    "lateral_offsets_m": [],
+    "divider_verts": 0,
+    "farthest_paint_u_m": null,
+    "barrier_toe_u_m": 15.077,
+    "past_toe_m": null
+   }
+  },
+  "margerum_avenue_135149732_L": {
+   "corners": [
+    {
+     "edge": 1,
+     "phi": 116.41,
+     "R": 5.2,
+     "compress": 1.0,
+     "steep_grass": 0,
+     "steep_max_rise": 0.0,
+     "grass_over_kerb_samples": 1155,
+     "grass_at_road_samples": 0,
+     "grass_at_road_max": -1.0,
+     "grass_over_kerb_max": 0.185,
+     "kerb_tris": 48,
+     "kerb_flipped": 0,
+     "pit_grass_min": 38.906,
+     "walk_top_near_O": null,
+     "pit_depth_below_walk": null
+    },
+    {
+     "edge": -1,
+     "phi": 63.5,
+     "R": 2.488,
+     "compress": 0.678,
+     "steep_grass": 0,
+     "steep_max_rise": 0.0,
+     "grass_over_kerb_samples": 740,
+     "grass_at_road_samples": 0,
+     "grass_at_road_max": -1.0,
+     "grass_over_kerb_max": 0.182,
+     "kerb_tris": 36,
+     "kerb_flipped": 0,
+     "pit_grass_min": 39.996,
+     "walk_top_near_O": 40.397,
+     "pit_depth_below_walk": 0.401
+    }
+   ],
+   "paint": {
+    "lateral_offsets_m": [
+     3.2,
+     3.3
+    ],
+    "divider_verts": 0,
+    "farthest_paint_u_m": 1.513,
+    "barrier_toe_u_m": 15.102,
+    "past_toe_m": -13.589
+   }
+  },
+  "hyde_park_drive_5962845_R": {
+   "corners": [
+    {
+     "edge": 1,
+     "phi": 94.03,
+     "R": 6.095,
+     "compress": 1.0,
+     "steep_grass": 0,
+     "steep_max_rise": 0.0,
+     "grass_over_kerb_samples": 963,
+     "grass_at_road_samples": 0,
+     "grass_at_road_max": -1.0,
+     "grass_over_kerb_max": 0.171,
+     "kerb_tris": 48,
+     "kerb_flipped": 0,
+     "pit_grass_min": 111.512,
+     "walk_top_near_O": null,
+     "pit_depth_below_walk": null
+    },
+    {
+     "edge": -1,
+     "phi": 85.21,
+     "R": 3.935,
+     "compress": 1.0,
+     "steep_grass": 0,
+     "steep_max_rise": 0.0,
+     "grass_over_kerb_samples": 834,
+     "grass_at_road_samples": 0,
+     "grass_at_road_max": -1.0,
+     "grass_over_kerb_max": 0.162,
+     "kerb_tris": 42,
+     "kerb_flipped": 0,
+     "pit_grass_min": 111.519,
+     "walk_top_near_O": 111.806,
+     "pit_depth_below_walk": 0.286
+    }
+   ],
+   "paint": {
+    "lateral_offsets_m": [],
+    "divider_verts": 0,
+    "farthest_paint_u_m": null,
+    "barrier_toe_u_m": 15.065,
+    "past_toe_m": null
+   }
+  }
+ }
+}

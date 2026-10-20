@@ -212,6 +212,125 @@ def balanced_face_tiles(centers, face_verts, cap=SPLIT_CAP):
     return out
 
 
+def _export_vertex_keys(me):
+    """Per polygon of ``me`` TRIANGULATED as the kn5 writer triangulates it, the writer's vertex keys of its corners.
+    The writer that runs (blender-assetto-corsa-tools exporter/node_writer.py _split_object_by_materials) takes
+    obj.to_mesh(), bmesh.ops.triangulate(faces=all) with its defaults, calc_loop_triangles, calc_tangents, and emits one
+    kn5 vertex per unique (position, loop normal, uv, tangent) of a triangle corner, compared as exact floats; past 2**16
+    it splits the mesh into meshes of ONE name, which AC drops from collision. A flat-shaded box beam whose quads are a
+    hair off planar is two normals per quad corner after the triangulation: the median barriers' 1WALL_guard, 15,136
+    Blender vertices and 48,200 corner keys untriangulated, was 65,251 kn5 positions on the v0.19.0 repair round 1 build
+    and 67,447 (two meshes of one name, verify_kn5 "DUPLICATE physical mesh '1WALL_guard' x2") after repair round 2 gave
+    two more north islands their barrier (ledger 0054). Returns (keys per triangle, the triangulated temporary mesh's
+    polygon centres)."""
+    import bmesh
+    import bpy
+
+    tmp = bpy.data.meshes.new("__writer_count")
+    try:
+        bm = bmesh.new()
+        bm.from_mesh(me)
+        bmesh.ops.triangulate(bm, faces=bm.faces[:])
+        bm.to_mesh(tmp)
+        bm.free()
+        tmp.calc_loop_triangles()
+        try:
+            tmp.calc_tangents()
+            tang = True
+        except Exception:
+            tang = False
+        uvl = tmp.uv_layers.active
+        loops, verts = tmp.loops, tmp.vertices
+        keys = []
+        for tri in tmp.loop_triangles:
+            ks = []
+            for li in tri.loops:
+                lp = loops[li]
+                ks.append((tuple(verts[lp.vertex_index].co), tuple(lp.normal),
+                           tuple(uvl.data[li].uv) if uvl is not None else None,
+                           tuple(lp.tangent) if tang else None))
+            keys.append(ks)
+        centres = [(tuple(p.center)[0], tuple(p.center)[1]) for p in tmp.polygons]
+        return keys, centres
+    finally:
+        bpy.data.meshes.remove(tmp)
+
+
+def export_vertex_count(face_keys):
+    """Pure (no bpy): the number of kn5 vertices the writer emits for these per-polygon corner keys."""
+    return len({k for ks in face_keys for k in ks})
+
+
+def _split_for_writer(ob, cap=SPLIT_CAP):
+    """Split a mesh whose WRITER vertex count (_export_vertex_keys) is over VERT_CAP into uniquely-named tiles
+    (base_0, base_1, ...) of at most ``cap`` writer vertices each (balanced_face_tiles over the corner keys). The mesh is
+    first triangulated exactly as the writer would (so its own triangulation is then a no-op and the count is the
+    writer's); each tile keeps its triangles' uvs, smooth flags and materials. Runs after the per-mesh pass (UVs, flips,
+    shading final). Returns the tile objects ([] when the mesh fits)."""
+    import bmesh
+    import bpy
+
+    me = ob.data
+    # the writer emits at most one vertex per TRIANGLE corner (a quad is 6, not 4): fewer than the cap fit for certain
+    if sum(3 * (len(p.vertices) - 2) for p in me.polygons) <= VERT_CAP:
+        return []
+    keys, _c = _export_vertex_keys(me)
+    n = export_vertex_count(keys)
+    if n <= VERT_CAP:
+        return []
+    bm = bmesh.new()
+    bm.from_mesh(me)
+    bmesh.ops.triangulate(bm, faces=bm.faces[:])
+    bm.to_mesh(me)
+    bm.free()
+    me.update()
+    keys, centres = _export_vertex_keys(me)                 # a no-op triangulation now: the same triangles, in order
+    if len(keys) != len(me.polygons):
+        raise SystemExit(f"[build_kn5_loop] FATAL: {ob.name}: {len(keys)} writer triangles vs {len(me.polygons)} "
+                         f"polygons after the triangulation")
+    polys = list(me.polygons)
+    groups = balanced_face_tiles(centres, keys, cap)
+    uvl = me.uv_layers.active
+    base = ob.name
+    tiles = []
+    for k, g in enumerate(groups):
+        used, nv, nf, smooth, mats, fuv = {}, [], [], [], [], []
+        for fi in g:
+            poly = polys[fi]
+            idx = []
+            for vi in poly.vertices:
+                if vi not in used:
+                    used[vi] = len(nv)
+                    nv.append(tuple(me.vertices[vi].co))
+                idx.append(used[vi])
+            nf.append(idx)
+            smooth.append(poly.use_smooth)
+            mats.append(poly.material_index)
+            if uvl is not None:
+                fuv.append([tuple(uvl.data[li].uv) for li in poly.loop_indices])
+        nm = bpy.data.meshes.new(f"{base}_{k}")
+        nm.from_pydata(nv, [], nf)
+        nm.update()
+        for m in me.materials:
+            nm.materials.append(m)
+        for poly, sm, mi in zip(nm.polygons, smooth, mats):
+            poly.use_smooth = sm
+            poly.material_index = mi
+        if uvl is not None:
+            nuv = nm.uv_layers.new(name=uvl.name)
+            for poly, uvs in zip(nm.polygons, fuv):
+                for li, u in zip(poly.loop_indices, uvs):
+                    nuv.data[li].uv = u
+        nm.update()
+        nob = bpy.data.objects.new(f"{base}_{k}", nm)
+        bpy.context.scene.collection.objects.link(nob)
+        tiles.append(nob)
+    print(f"[build_kn5_loop] split {base} for the kn5 writer ({len(me.vertices)} Blender vertices, {n} writer "
+          f"vertices > {VERT_CAP}) -> {len(tiles)} tiles under {cap}")
+    bpy.data.objects.remove(ob, do_unlink=True)
+    return tiles
+
+
 def t_junctions(co, boundary_edges, tol=0.001, cell=5.0):
     """Pure (no bpy): [(edge_index, vert_index, t)] for every vertex lying on the INTERIOR of a boundary edge
     (within ``tol`` in 3D, 0 < t < 1 along it) — a T-junction. ``co`` = [(x, y, z)], ``boundary_edges`` =
@@ -308,6 +427,67 @@ def _weld_t_junctions(bm, tol=0.001):
         if e.is_valid and not e.link_faces:
             bm.edges.remove(e)
     return len(by_face)
+
+
+def _collinear_middle(pts, tol=1e-3, end=1e-3):
+    """ledger 0054 P3 repair round 1 (airoso tools/terrain_mend.collinear_middle, the same rule): the index of the one
+    of three plan points lying on the segment between the other two (within tol of the line, strictly inside), or None"""
+    for k in range(3):
+        a, m, b = pts[(k + 1) % 3], pts[k], pts[(k + 2) % 3]
+        ex, ey = b[0] - a[0], b[1] - a[1]
+        L = math.hypot(ex, ey)
+        if L < 10 * tol:
+            continue
+        t = ((m[0] - a[0]) * ex + (m[1] - a[1]) * ey) / (L * L)
+        d = abs((m[0] - a[0]) * ey - (m[1] - a[1]) * ex) / L
+        if end < t < 1.0 - end and d <= tol and min(t, 1.0 - t) * L > tol:
+            return k
+    return None
+
+
+def _mend_vertical_slivers(bm, rounds=6):
+    """ledger 0054 P3 repair round 1 (airoso tools/terrain_mend.mend_vertical_slivers, the same mend): the corridor
+    subdivision leaves a T-vertex m on a coarser face's straight edge a-b, and the BEAUTY triangulation after it may cut
+    the ear (a, m, b) — no plan area; the pin / feather then moves m off the line and the ear stands up as a one-sided
+    vertical fin over a crack (sky through the ground from half the directions; 262 such faces within 80 m of Lake
+    Murray's north roads after the author stage had mended its own). Here, BEFORE anything moves (the surface is still
+    the old faces' planes), the edge a-b is rotated inside the quad it makes with the face across it — no vertex moves or
+    is added — or the ear deleted on the open edge. Returns the number mended."""
+    import bmesh
+    n = 0
+    for _r in range(rounds):
+        rot, dele, used = [], [], set()
+        for f in bm.faces:
+            if len(f.verts) != 3:
+                continue
+            vs = list(f.verts)
+            k = _collinear_middle([(v.co.x, v.co.y) for v in vs])
+            if k is None:
+                continue
+            m = vs[k]
+            e = next((e for e in f.edges if m not in e.verts), None)
+            if e is None:
+                continue
+            others = [g for g in e.link_faces if g is not f]
+            if not others:
+                if f not in used:
+                    used.add(f)
+                    dele.append((f, e))
+                continue
+            if len(others) == 1 and len(others[0].verts) == 3 and f not in used and others[0] not in used:
+                used.update((f, others[0]))
+                rot.append(e)
+        if not rot and not dele:
+            break
+        if rot:
+            n += len(bmesh.ops.rotate_edges(bm, edges=rot, use_ccw=False).get("edges") or [])
+        if dele:
+            bmesh.ops.delete(bm, geom=[f for f, _e in dele], context="FACES_ONLY")
+            loose = [e for _f, e in dele if e.is_valid and not e.link_faces]
+            if loose:
+                bmesh.ops.delete(bm, geom=loose, context="EDGES")
+            n += len(dele)
+    return n
 
 
 def xsplit_interp(u, v, sw, se, ne, nw, c):
@@ -478,8 +658,20 @@ class ReleaseZones:
         return False
 
 
+class _UnionZones:
+    """ledger 0054 P3: the mainline's zones and each connector line's (a zone carrying line_xz / line_w) together"""
+
+    def __init__(self, parts):
+        self.parts = parts
+
+    def contains(self, x, z):
+        return any(p.contains(x, z) for p in self.parts)
+
+
 def _release_zones(proj):
-    """ReleaseZones from data/ground_release.json + data/centerline.local.json, or None (no file: nothing released)"""
+    """ReleaseZones from data/ground_release.json + data/centerline.local.json, or None (no file: nothing released).
+    A zone resolved on a connector line (ledger 0054 P3: line_xz / line_w in its record, tools/ground_release.py) is
+    judged on that line; with none, exactly the mainline's ReleaseZones as before."""
     p = proj / "data" / "ground_release.json"
     if not p.exists():
         return None
@@ -487,8 +679,19 @@ def _release_zones(proj):
     if not R.get("zones"):
         return None
     local = json.loads((proj / "data" / "centerline.local.json").read_text(encoding="utf-8"))
-    return ReleaseZones([tuple(q) for q in local["points_xyz_m"]], local.get("widths_m") or [7.0] * len(
-        local["points_xyz_m"]), R["zones"], inner_m=float(R.get("inner_m", 0.5)))
+    main = [z for z in R["zones"] if not z.get("line_xz")]
+    lines = {}
+    for z in R["zones"]:
+        if z.get("line_xz"):
+            lines.setdefault(z["line"], []).append(z)
+    inner = float(R.get("inner_m", 0.5))
+    mz = ReleaseZones([tuple(q) for q in local["points_xyz_m"]], local.get("widths_m") or [7.0] * len(
+        local["points_xyz_m"]), main, inner_m=inner)
+    if not lines:
+        return mz
+    parts = [mz] + [ReleaseZones([(x, 0.0, zz) for x, zz in zs[0]["line_xz"]], zs[0]["line_w"], zs, inner_m=inner)
+                    for zs in lines.values()]
+    return _UnionZones(parts)
 
 
 def _clip_ears(f):
@@ -958,6 +1161,9 @@ def _conform_and_reseat(proj: Path, spans):
             bmesh.ops.subdivide_edges(bm, edges=todo, cuts=1)
             n_sub += len(todo)
         bmesh.ops.triangulate(bm, faces=bm.faces)
+        n_mend = _mend_vertical_slivers(bm)
+        if n_mend:
+            print(f"[build_kn5_loop] vertical slivers: {n_mend} T-vertex ears of the corridor subdivision mended")
         # 2. pin + feather (all distances HORIZONTAL — bench-cut ground is legitimately metres low)
         for v in bm.verts:
             x, y, z = v.co.x, v.co.y, v.co.z
@@ -1187,10 +1393,11 @@ def main():
     for ob in [o for o in bpy.data.objects if o.type == "MESH"]:
         me = ob.data
         # props / billboards carry authored UVs — don't flatten (freeway BUSHES/CHAINLINK too)
-        # ...and the race furniture (ledger 0047): the strips carry u = arc / 4.04 m along the
+        # ...and the race furniture (ledger 0047) + the phase-5 stub barriers (1WALL_STUB, ledger 0054): the strips carry
+        # u = arc / 4.04 m along the
         # vertical faces and the kerbs v = arc / 1 m — a top-down projection would smear them
         if not ob.name.upper().startswith(("PALM", "TREE", "SCRUB", "BUSHES", "CHAINLINK", "ROADTEXT",
-                                           "1WALL_RACE", "1KERB_RACE", "BRIDGESTRUCT")):
+                                           "1WALL_RACE", "1KERB_RACE", "BRIDGESTRUCT", "1WALL_STUB")):
             planar_uv(me)
         bm = bmesh.new(); bm.from_mesh(me)
         bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-4)
@@ -1221,6 +1428,10 @@ def main():
         # loop-path over-cap guard: FATAL (the OBJ program guards in build_kn5.py; this path is its
         # own program and needs its own gate — a WARNING here shipped over-cap meshes before).
         assert_under_cap(ob.name, len(me.vertices))
+        # ...and the count the kn5 WRITER emits (ledger 0054 P3 repair round 2): a mesh past it is tiled under unique
+        # names here, never left to the writer's split into meshes of one name
+        for t in _split_for_writer(ob):
+            assert_under_cap(t.name, export_vertex_count(_export_vertex_keys(t.data)[0]))
     tiles = {}
     for o in bpy.data.objects:
         if o.type == "MESH" and o.name.upper().startswith(TERRAIN_TILES):

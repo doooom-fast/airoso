@@ -1,0 +1,86 @@
+{
+ "A2_stub_roads_apply_no_declaration": {
+  "exit": 0,
+  "stdout": "[stubs] no stub declaration (C:\\Users\\Owner\\AppData\\Local\\Temp\\claude\\C--Users-Owner-Documents-GitHub-airoso\\59395b0b-e098-4e22-9ea8-1346efc0cf70\\scratchpad\\p5\\tmpd6rjzrdh\\new\\data\\stubs.json) \u2014 nothing to do (every output untouched)",
+  "untouched": true
+ },
+ "A1_trim_connectors": {
+  "files": [
+   "centerline.local.json",
+   "connectors.local.json",
+   "connectors.local.json.pre-trim",
+   "median_bands.json",
+   "mouths.json"
+  ],
+  "identical": true,
+  "md5": {
+   "centerline.local.json": "a5839b5f719d39cb5161b26af2f1fdbe",
+   "connectors.local.json": "270c1a675b3dff099154f786fae56c33",
+   "connectors.local.json.pre-trim": "dd96f129b881a3c61ba05f7cb2266e1a",
+   "median_bands.json": "a6776a9f1cf983ab72101bee98fcd6e2",
+   "mouths.json": "9625e4ffbaa947c34071ef091077ea3c"
+  }
+ },
+ "A3_verify_stubs_no_plan": {
+  "exit": 0,
+  "stdout": "[verify_stubs] no data/stubs.plan.json \u2014 no stub declared, nothing to verify",
+  "wrote": []
+ },
+ "A4_audit_mesh_on_v018_built": {
+  "street": {
+   "head": [
+    1,
+    "cf9a34281fca4cdaab7dae60a817a98c",
+    "  => 53 issues"
+   ],
+   "new": [
+    1,
+    "cf9a34281fca4cdaab7dae60a817a98c",
+    "  => 53 issues"
+   ],
+   "identical": true
+  },
+  "race_cw": {
+   "head": [
+    1,
+    "d7f8e68b4ba3c62c84145759622c9cb6",
+    "  => 53 issues"
+   ],
+   "new": [
+    1,
+    "d7f8e68b4ba3c62c84145759622c9cb6",
+    "  => 53 issues"
+   ],
+   "identical": true
+  },
+  "race_acw": {
+   "head": [
+    1,
+    "bade24c4aac2acb80dd6e23624bca728",
+    "  => 53 issues"
+   ],
+   "new": [
+    1,
+    "bade24c4aac2acb80dd6e23624bca728",
+    "  => 53 issues"
+   ],
+   "identical": true
+  }
+ },
+ "A5_pbr": {
+  "mesh_names": 69,
+  "differ": [],
+  "stub_names_in_v018": [],
+  "new_rows": [
+   "1WALL_STUB"
+  ]
+ },
+ "A6_ship_sd": {
+  "added_lines": 35,
+  "removed_lines": [
+   "rm -f \"$PROJ/data/verify_mouths.json\" \"$PROJ/data/rib_check.json\" \"$PROJ/data/house_seat_check.json\"",
+   "         drive_test.json audit.json \\"
+  ],
+  "executable_added_outside_a_stub_guard": []
+ }
+}

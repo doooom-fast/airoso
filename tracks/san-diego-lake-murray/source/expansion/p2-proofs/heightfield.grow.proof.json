@@ -1,0 +1,38 @@
+{
+ "what": "ledger 0054 P2: the installed 40 m heightfield grown by whole cells (tools/grow_heightfield.py)",
+ "utc": "2026-10-14T14:26:43Z",
+ "grid_grow": {
+  "rows_n": 37,
+  "rows_s": 37,
+  "cols_w": 26,
+  "cols_e": 0
+ },
+ "installed": {
+  "nx": 123,
+  "ny": 93,
+  "bbox_swne": [
+   32.771983,
+   -117.069563,
+   32.805287,
+   -117.017103
+  ]
+ },
+ "grown": {
+  "nx": 149,
+  "ny": 167,
+  "bbox_swne": [
+   32.75864966666666,
+   -117.08070806805426,
+   32.818620333333335,
+   -117.017103
+  ]
+ },
+ "nodes": 24883,
+ "old_nodes_from_installed_grid": 11439,
+ "new_nodes_from_3dep": 13444,
+ "requests": 30,
+ "old_block_identical_to_installed": true,
+ "positions": "scripts-v021 heightfield.build_heightfield(grow=...): every old node at its bit-identical position (looked up by exact float pair)",
+ "source": "USGS 3DEP 1 m bare earth, ImageServer getSamples (scripts.elevation.usgs_3dep, TLS verified)",
+ "seconds": 12.2
+}

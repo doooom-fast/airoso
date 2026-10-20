@@ -11,6 +11,8 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "tests"))
+import sd_v0180  # noqa: E402  (the pinned v0.18.0 Lake Murray data, tests/fixtures/lake_murray_v0180)
 sys.path.insert(0, str(ROOT / "tools"))
 import deck_datum as dd  # noqa: E402
 import freeway_i8 as fw  # noqa: E402
@@ -147,7 +149,7 @@ def test_lake_murray_zones_are_declared_and_resolve():
     cfg = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
     # the vertex-declared zones (ledger 0055 round 2) resolve on the pinned v0.18.0 centreline to the stations they were
     # measured at there
-    cl = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "data" / "centerline.local.json").read_text(encoding="utf-8"))
+    cl = json.loads((sd_v0180.DATA / "centerline.local.json").read_text(encoding="utf-8"))
     zs = gr.resolve_zones(cfg, [tuple(p) for p in cl["points_xyz_m"]])
     assert [z["name"] for z in zs] == ["alvarado_creek_bank", "college_south_approach", "lmb_alvarado_creek",
                                        "college_i8_span", "lmb_i8_span", "alvarado_college_terrace",

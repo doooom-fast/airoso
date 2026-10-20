@@ -193,7 +193,9 @@ def test_every_fetch_function_passes_the_https_context():
          json.dumps({"status": "OK", "results": [{"elevation": 600.0}]}).encode()),
         ("srtm._meteo_batch", srtm, lambda: srtm._meteo_batch([(6.94, 50.33)], retries=1),
          json.dumps({"elevation": [600.0]}).encode()),
-        ("tools/fetch_osm.fetch", fetch_osm, lambda: fetch_osm.fetch("[out:json];"), empty),
+        # tools/fetch_osm fetches through widths_from_osm._overpass since ledger 0054 P0 (the 7-day guard): its
+        # context is that module's https_context()
+        ("tools/fetch_osm.fetch", widths_from_osm, lambda: fetch_osm.fetch("[out:json];", max_age_days=None), empty),
         ("overpass.fetch_ways", overpass, lambda: overpass.fetch_ways(bbox, ["X"], retries=1), empty),
         ("overpass._post", overpass, lambda: overpass._post("[out:json];", retries=1), empty),
         ("street_labels._fetch_named_highways", street_labels,

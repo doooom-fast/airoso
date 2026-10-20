@@ -74,6 +74,17 @@ or previous metre runs backwards (``_advance`` < 0) is filed under ``fold_bumps`
 (> 6 cm) there still counts — the 0.37 m Navajo/Jackson lip of ledger 0050 was read on such a sample too. Real wheel
 paths through the levelled fans are judged by tools/verify_fold_fans.py.
 
+FOLD SEVERE (opt-in, ledger 0054 P1 fix round: track.config.json ``drive_test.fold_fan_severe = "verify_fold_fans"``).
+Inside a levelled mainline fold fan (data/mouth_welds.json, the 0050 zones) a SEVERE reading on a sample whose metre or
+previous metre runs backwards is the same re-traced plan at a larger hop: on v0.18.0 every severe step left at the
+Navajo / Jackson box (race_cw s 6954-6959 lat -9.3 / -10, race_acw s 6523-6529 lat +9.3 / +10, 6.1-7.9 cm) sits on
+such a sample, where tools/verify_fold_fans.py's arc-length wheel paths through the same fan read a 1 m second
+difference of at most 0.025 m (and an independent 5 cm arc-length sweep at most 0.030 m). With the key, such a sample
+is filed under ``fold_severe`` (reported, not gated here) and judged where a wheel can be: verify_fold_fans gates a
+fine step >= 0.02 m and a 1 m second difference > 0.06 m on the real wheel paths of every levelled pinch (rows
+k - 12 ... l + 13 cover these zones), hard in the chain, never covered by --force-install — the 0050 lip read 0.42 /
+0.48 m there. Outside a levelled fan, on a forward sample, or without the key: severe as before.
+
 VERTEX BUMPS (v0.18.1, ledger 0057 integration). The same fixed offset hops FORWARD at every centreline vertex where the
 segment normal turns: on the outside of a corner the point jumps ahead by offset x turn angle (2.7-3.9 m at 10 m out
 round the Navajo / Jackson fan, 1.8-3.7 m round College / Alvarado), on the inside it creeps (0.1-0.5 m). The 1 m second
@@ -415,7 +426,11 @@ def fold_fan_discs(welds: dict, pts, widths) -> list:
     return out
 
 
-def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
+def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict | None = None) -> dict:
+    """``line`` (ledger 0054 P3, opt-in: ``--line <set>``): drive ONE open line instead of the mainline — {"id",
+    "points_xyz_m", "widths_m"} in the gate OBJ's frame, on the street layout's OBJ (track.obj): no lap, no layout, no
+    median-band / fold-fan / bridge-span / replication reading (those are the mainline's), its ends off-pavement-aware;
+    the report goes to data/drive_test.line.<id>.json. With ``line`` None every reading below is exactly today's."""
     import time as _tmod
     _t0 = _tmod.time()
     def _phase(_label):
@@ -428,7 +443,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     cfg = json.loads((project / "track.config.json").read_text())
     # LAYOUT (0047): direction, kind and furniture come from the declared layout; the OBJ is the
     # gate OBJ of the kn5 set that layout loads (kn5_to_gate_obj --kn5 main [--kn5 race]).
-    _lo = _layout_of(cfg, layout)
+    _lo = _layout_of(cfg, layout) if line is None else None
     lid = str(_lo.get("id")) if _lo else None
     direction = str(_lo.get("direction", "forward")) if _lo else "forward"
     if direction not in ("forward", "reverse"):
@@ -475,6 +490,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
         lc = json.loads((data / "centerline.local.json").read_text())
         pts = [(mirror * p[0], p[1], p[2]) for p in lc["points_xyz_m"]]
     widths = list(lc["widths_m"])
+    if line is not None:
+        pts = [tuple(p) for p in line["points_xyz_m"]]
+        widths = [float(w) for w in line["widths_m"]]
     _main_pts, _main_w = list(pts), list(widths)    # the MAINLINE gate line: the weld's fold-fan rows index it
     _lap_rec = None
     if _lap:
@@ -505,7 +523,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     # declared bridge spans: parapet/railing furniture INSIDE these is expected (a bridge with no
     # railing is the defect, not the railing) — obstruction hits on *bridge-named meshes there are skipped
     spans = [(b.get("center_m", 0) - b.get("len_m", 0) / 2 - 20, b.get("center_m", 0) + b.get("len_m", 0) / 2 + 20)
-             for b in (cfg.get("capture", {}) or {}).get("bridges", [])]
+             for b in (cfg.get("capture", {}) or {}).get("bridges", [])] if line is None else []
 
     surface = TriField()      # everything the car can roll on
     obstacle = TriField()     # everything else that could stand in the corridor
@@ -543,11 +561,24 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
 
     _track_groups: list = []
     _culled = 0
+    _loaded = []
     for objfile in (obj_name, "environment.obj"):
         p = data / objfile
         if not p.exists():
             continue
-        verts, groups = _load_obj(p)
+        _loaded.append((objfile, _load_obj(p)))
+    # FURNITURE SEATING reads every 1WALL column against the surface under it, so the ground under EVERY wall is loaded,
+    # not only the swept corridor's (ledger 0054 P3, 2026-10-18): a wall 120+ m off the swept line had no surface
+    # loaded under it and read "floating 99" whatever stood under it — 391 columns on the v0.18.1 street layout (off
+    # the loop, judged against nothing), 3,743 with the north network's island rails and stub barriers. Every wall is
+    # still judged; it is judged on its own ground.
+    for _objfile, (verts, groups) in _loaded:
+        for grp in groups:
+            if grp["name"].upper().startswith("1WALL"):
+                for tri in grp["tris"]:
+                    for vi in tri:
+                        _cnear.add((int(verts[vi][0] // _ccell), int(verts[vi][2] // _ccell)))
+    for objfile, (verts, groups) in _loaded:
         if objfile == obj_name:
             _track_groups = groups
         for grp in groups:
@@ -608,11 +639,15 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     # judgement inside the fans is verify_fold_fans' (2 cm fine steps on real paths).
     _fan_zones = []
     _mwp = project / "data" / "mouth_welds.json"
-    if _mwp.exists():
+    if _mwp.exists() and line is None:
         _fan_zones = fold_fan_discs(json.loads(_mwp.read_text(encoding="utf-8")), _fan_pts, _fan_w)
 
     def _in_fan(px, pz):
         return any((px - a) ** 2 + (pz - b) ** 2 < d * d for a, b, c, d in _fan_zones)
+
+    # FOLD SEVERE (opt-in; module doc): a severe reading on a folded sample inside a levelled fan is judged by
+    # tools/verify_fold_fans.py on the real wheel paths, not here
+    _fold_severe_defer = bool(_fan_zones) and         str((cfg.get("drive_test") or {}).get("fold_fan_severe") or "") == "verify_fold_fans"
 
     def _in_flat_zone(px, pz):
         return any((px - a) ** 2 + (pz - b) ** 2 < d * d for a, b, c, d in _fzones)
@@ -636,7 +671,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
             if w0 >= -1e-6 and w1 >= -1e-6 and 1.0 - w0 - w1 >= -1e-6:
                 return True
         return False
-    _has_ends = not bool(cfg.get("loop", True))
+    _has_ends = (not bool(cfg.get("loop", True))) or line is not None
     _lap_end = sum(math.dist((pts[i][0], pts[i][2]), (pts[i + 1][0], pts[i + 1][2]))
                    for i in range(len(pts) - 1))
     # MEDIAN ISLAND (0037). On a divided road the centreline IS the raised island — sweeping the
@@ -650,7 +685,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     # the kerb-line barrier inset as dividers of a second kind; the street layout never does, so a
     # track without barrier_bands.json (or a layout without race_furniture) is today's gate exactly.
     from scripts.geometry.median_zone import MedianZone
-    _zone = MedianZone.load(project, layout=lid if race else None)
+    _zone = MedianZone.load(project, layout=lid if race else None) if line is None else None
     if _zone and reverse:
         _zone = _zone.reversed()
     # CORRIDOR (0049): the declared lane of THIS layout, lerped per station (see the module doc)
@@ -904,7 +939,12 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                 if prev_slope[pi] is not None and not is_edge:
                     kink = abs(slope - prev_slope[pi]) * 100
                     if kink > KINK_PCT:
-                        problems["kinks"].append((round(s, 1), round(off, 2), round(kink, 2)))
+                        if line is not None and folded:
+                            # (--line only) a fixed-offset path running backwards round a junction pad's turn re-traces
+                            # the plan (FOLD BUMPS): reported as fold_kinks, as fold bumps are
+                            problems.setdefault("fold_kinks", []).append((round(s, 1), round(off, 2), round(kink, 2)))
+                        else:
+                            problems["kinks"].append((round(s, 1), round(off, 2), round(kink, 2)))
                     step = abs(dh - prev_slope[pi] * STEP_M)
                     if step > STEP_SEVERE_M:
                         # flared-apron texture: on widened corner pavement (w >= 11) the OUTER
@@ -913,6 +953,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
                         if not _corr and w >= 9.5 and abs(off) > 3.5 and not _in_flat_zone(px, pz) \
                                 and not _in_fan(px, pz):
                             problems.setdefault("apron_steps", []).append(
+                                (round(s, 1), round(off, 2), round(step, 3)))
+                        elif _fold_severe_defer and folded and _in_fan(px, pz):
+                            problems.setdefault("fold_severe", []).append(
                                 (round(s, 1), round(off, 2), round(step, 3)))
                         else:
                             # inside a junction flat zone the WHOLE pad is driving surface —
@@ -1245,7 +1288,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     # how far the pipeline strayed from the real mountain.
     rep = []
     ep = data / "centerline.elevation.json"
-    if ep.exists():
+    if ep.exists() and line is None:
         try:
             ej = json.loads(ep.read_text())
             zr = ej.get("z_raw_m") or []
@@ -1325,7 +1368,22 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
             "obstructions": problems["obstructions"][:16],
         },
     }
+    if _fold_severe_defer:
+        # opt-in only (absent the key the report is byte-identical): the severe readings handed to verify_fold_fans
+        report["fold_severe"] = len(problems.get("fold_severe", []))
+        report["fold_severe_judge"] = "tools/verify_fold_fans.py (real wheel paths, hard)"
+        report["worst"]["fold_severe"] = sorted(problems.get("fold_severe", []), key=lambda r: -r[2])[:200]
     out_name = f"drive_test.{lid}.json" if lid else "drive_test.json"
+    if line is not None:
+        out_name = f"drive_test.line.{line['id']}.json"
+        report["line"] = line["id"]
+        report["fold_kinks"] = len(problems.get("fold_kinks", []))
+        report["worst"]["kinks_all"] = sorted(problems["kinks"], key=lambda r: r[0])[:2000]
+        # every reading the line does NOT count is written with its place (repair round 1, the gates lens: counts alone
+        # could not be checked from the build's own artifacts)
+        report["worst"]["fold_kinks_all"] = sorted(problems.get("fold_kinks", []), key=lambda r: r[0])[:2000]
+        report["worst"]["excursions_all"] = sorted(problems["excursion_drops"], key=lambda r: (r[0], r[1]))[:2000]
+        report["worst"]["soft_top_all"] = problems["soft_top_in_lane"][:2000]
 
     # Gate philosophy: ABSOLUTE ZERO for the things no driver tolerates (ground through the lane,
     # solid objects in the corridor); RATES vs the driver-approved baseline for surface texture
@@ -1362,7 +1420,8 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
             or report["steps_per_km"] > _bump_limit)
     report["fail"] = fail
     (data / out_name).write_text(json.dumps(report, indent=1), encoding="utf-8")
-    print(f"DRIVE TEST {cfg['slug']}{(' [' + lid + ' ' + direction + ' ' + kind + ']') if lid else ''}  "
+    print(f"DRIVE TEST {cfg['slug']}{(' [' + lid + ' ' + direction + ' ' + kind + ']') if lid else ''}"
+          f"{(' [line ' + line['id'] + ']') if line is not None else ''}  "
           f"lap {lap/1000:.2f} km  (10 wheel paths @ {STEP_M} m)")
     print(f"  ground on top mid-lane : {report['soft_top_in_lane']}"
           + (f"   [{off_pavement} station(s) skipped: no pavement — off the stage end]" if off_pavement else ""))
@@ -1376,6 +1435,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None) -> dict:
     if report["fold_bumps"]:
         print(f"  fold bumps (2.5-6 cm where a fixed-offset path runs backwards; reported, not gated): "
               f"{report['fold_bumps']}")
+    if _fold_severe_defer:
+        print(f"  fold severe (> 6 cm where a fixed-offset path runs backwards inside a levelled fan; judged by "
+              f"tools/verify_fold_fans.py on the real wheel paths): {report['fold_severe']}")
     if report["vertex_bumps"]:
         print(f"  vertex bumps (2.5-6 cm read across a vertex hop, under {STEP_BUMP_M*100:.1f} cm on the path's own "
               f"travel; reported, not gated): {report['vertex_bumps']}")
@@ -1457,12 +1519,86 @@ def write_summary(project_dir: str | Path, ran: list[str]) -> dict:
     return summary
 
 
+# LINE GATE (ledger 0054 P3, EXPANSION-PLAN V6 — the plan's own numbers): on the north network's own lines no
+# obstruction, floating furniture, undrivable corner or daylight gap [std], no severe step [invented], ground on top in the
+# lane at most LINE_SOFT_PER_KM and kinks at most LINE_KINK_PER_KM [invented: the loop's rates, copied]; repair round 1
+# (2026-10-19, the gates lens) adds unguarded excursion drops at most LINE_EXC_PER_KM [invented: the loop's own v0.18.1
+# street rate, copied the same way]. drive_test's own lap rule (soft top 0, excursions <= 1 per km) is NOT the line's
+# verdict — the loop's street layout itself has failed it since v0.18.0 (soft top 8, excursions 96) — but it is read on
+# every line and written beside the verdict (drive_test_rule_fail, and its reasons), never hidden.
+LINE_SOFT_PER_KM = 6.1
+LINE_KINK_PER_KM = 4.97
+LINE_EXC_PER_KM = 7.12      # held v0.18.1 street: 96 gated excursion drops over 13.49 km
+
+
+def run_lines(project_dir: str | Path, set_name: str) -> int:
+    """drive every line of data/drive_lines.<set>.json (tools/expansion_lines.py); data/drive_test.<set>.json is the
+    verdict: a line fails on the LINE GATE (above); drive_test's own lap rule is read and written beside it; exit 1 on
+    any failure"""
+    project = Path(project_dir)
+    data = project / "data"
+    src = data / f"drive_lines.{set_name}.json"
+    if not src.exists():
+        raise SystemExit(f"drive_test: --line {set_name}: no data/{src.name} (tools/expansion_lines.py writes it)")
+    doc = json.loads(src.read_text(encoding="utf-8"))
+    rows, any_fail = {}, False
+    for lid_, ln in doc["lines"].items():
+        r = run(project, line={"id": f"{set_name}_{lid_}", **ln})
+        km = r["lap_m"] / 1000.0
+        soft_km = r["soft_top_in_lane"] / km if km else 0.0
+        v6 = {"obstruction_stations": r["obstruction_stations"] == 0, "floating_furniture": r["floating_furniture"] == 0,
+              "undrivable_corners": r["undrivable_corners"] == 0, "severe_steps": r["severe_steps"] == 0,
+              "daylight_gaps": r["daylight_gaps"] == 0,
+              "soft_top_per_km": soft_km <= LINE_SOFT_PER_KM, "kinks_per_km": r["kinks_per_km"] <= LINE_KINK_PER_KM,
+              "excursion_drops_per_km": (r["excursion_drops"] / km if km else 0.0) <= LINE_EXC_PER_KM}
+        fail = not all(v6.values())
+        # drive_test's own lap rule on this line, reason by reason (the same tests as run()'s `fail`)
+        dt_reasons = [k for k, bad in (("soft_top_in_lane", r["soft_top_in_lane"] > 0),
+                                       ("daylight_gaps", r["daylight_gaps"] > 0),
+                                       ("excursion_drops", r["excursion_drops"] > int(r["lap_m"] / 1000)),
+                                       ("obstruction_stations", r["obstruction_stations"] > 0),
+                                       ("undrivable_corners", r["undrivable_corners"] > 0),
+                                       ("floating_furniture", r["floating_furniture"] > 0),
+                                       ("barrier_missing", r["barrier_missing"] > 0)) if bad]
+        any_fail = any_fail or fail
+        rows[lid_] = {k: r.get(k) for k in SUMMARY_KEYS if k not in ("direction", "kind", "race_furniture", "lane")}
+        rows[lid_].update({"soft_top_per_km": round(soft_km, 2),
+                           "excursion_drops_per_km": round(r["excursion_drops"] / km, 2) if km else 0.0,
+                           "excursion_drops": r["excursion_drops"], "v6": v6, "fail": fail,
+                           "drive_test_rule_fail": bool(r["fail"]), "drive_test_rule_reasons": dt_reasons,
+                           "fold_kinks": r.get("fold_kinks"),
+                           "file": f"drive_test.line.{set_name}_{lid_}.json"})
+        print(f"  LINE {lid_}: line gate {'FAIL' if fail else 'PASS'} "
+              f"({', '.join(k for k, ok in v6.items() if not ok) or 'every key in limit'}); drive_test's own lap rule "
+              f"{'FAIL (' + ', '.join(dt_reasons) + ')' if r['fail'] else 'PASS'}: soft top {r['soft_top_in_lane']}, "
+              f"excursions {r['excursion_drops']} ({rows[lid_]['excursion_drops_per_km']}/km), kinks "
+              f"{r['kinks_per_km']}/km, fold kinks {r.get('fold_kinks')}")
+        print()
+    out = {"_doc": "ledger 0054 P3: drive_test --line (the north network's own lines, tools/expansion_lines.py); "
+                   "fail = the LINE GATE: EXPANSION-PLAN V6 (obstructions / floating furniture / undrivable / daylight 0, "
+                   "severe 0, LINE_SOFT_PER_KM, LINE_KINK_PER_KM) + LINE_EXC_PER_KM (repair round 1). drive_test's own "
+                   "lap rule is NOT the verdict; it is written per line as drive_test_rule_fail / _reasons",
+           "limits": {"soft_top_per_km": LINE_SOFT_PER_KM, "kinks_per_km": LINE_KINK_PER_KM,
+                      "excursion_drops_per_km": LINE_EXC_PER_KM, "severe_steps": 0},
+           "lines": rows, "fail": any_fail}
+    (data / f"drive_test.{set_name}.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+    print(f"DRIVE TEST LINES {set_name}: " + " ".join(f"{k}={'FAIL' if v['fail'] else 'PASS'}" for k, v in rows.items())
+          + "   (drive_test's own lap rule: " + " ".join(f"{k}={'FAIL' if v['drive_test_rule_fail'] else 'PASS'}"
+                                                   for k, v in rows.items())
+          + f")   (data/drive_test.{set_name}.json)")
+    return 1 if any_fail else 0
+
+
 def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     only: list[str] = []
     project = "."
     obj = None
     i = 0
+    if "--line" in argv:
+        k = argv.index("--line")
+        rest = argv[:k] + argv[k + 2:]
+        return run_lines(rest[0] if rest else ".", argv[k + 1])
     while i < len(argv):
         if argv[i] == "--layout":
             only.append(argv[i + 1]); i += 2

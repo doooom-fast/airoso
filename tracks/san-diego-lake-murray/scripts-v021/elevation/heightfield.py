@@ -95,8 +95,46 @@ def write_npy(path: Path, grid: list[list[float]]) -> None:
 
 # --- grid ----------------------------------------------------------------------
 
-def build_heightfield(coords: list[Vertex], spacing_m: float, margin_m: float) -> tuple[list[list[float]], dict]:
-    """Sample a regular terrain grid over the centerline bbox + margin (row 0 = north)."""
+GROW_KEYS = ("rows_n", "rows_s", "cols_w", "cols_e")
+
+
+def grid_grow_spec(raw_cfg: dict | None) -> dict | None:
+    """``terrain.grid_grow`` (opt-in; ledger 0054 P0 step 6): whole 40 m cells added beyond the loop's own grid,
+    ``{rows_n, rows_s, cols_w, cols_e}`` (non-negative integers; a missing key is 0). ``None`` when absent (every
+    track before 0054), which leaves build_heightfield on its original code path, byte for byte.
+
+    rows_n must equal rows_s: every consumer of heightfield.meta.json (build_loop_blend.project_grid,
+    terrain_tiers.Frame.heightfield, make_treefx) derives the grid's column spacing from the meta bbox's MID
+    LATITUDE, so growing north and south equally is what keeps that spacing - and every old node's longitude - put."""
+    g = ((raw_cfg or {}).get("terrain") or {}).get("grid_grow")
+    if not g:
+        return None
+    unknown = sorted(k for k in g if k not in GROW_KEYS and not str(k).startswith("_"))
+    if unknown:
+        raise ValueError(f"terrain.grid_grow: unknown keys {unknown} (whole cells: {list(GROW_KEYS)})")
+    out = {}
+    for k in GROW_KEYS:
+        v = g.get(k, 0)
+        if isinstance(v, bool) or not isinstance(v, int) or v < 0:
+            raise ValueError(f"terrain.grid_grow.{k} must be a non-negative whole number of cells, got {v!r}")
+        out[k] = v
+    if out["rows_n"] != out["rows_s"]:
+        raise ValueError(f"terrain.grid_grow: rows_n {out['rows_n']} != rows_s {out['rows_s']} would move the meta "
+                         f"bbox's mid-latitude, and with it every consumer's column spacing (grow both by the same)")
+    return out
+
+
+def build_heightfield(coords: list[Vertex], spacing_m: float, margin_m: float,
+                      grow: dict | None = None) -> tuple[list[list[float]], dict]:
+    """Sample a regular terrain grid over the centerline bbox + margin (row 0 = north).
+
+    ``grow`` (:func:`grid_grow_spec`, ledger 0054): the same grid extended by whole cells. The anchor, mid-latitude
+    and cell size still come from the loop's own points, and node (row j, col i) of the loop's grid is node
+    (j + rows_n, i + cols_w) of the grown one, sampled at EXACTLY the position it always was (the same float
+    expression). The grown meta's bbox is written at full precision from the loop grid's ROUNDED bbox - the anchor
+    every consumer has projected it from - shifted by whole cells of the consumers' own size, so a consumer places
+    every old node where it always placed it; ``grid_grow`` / ``base_bbox_swne`` / ``base_nx`` / ``base_ny`` record
+    the growth (terrain_tiers' frame pin checks them)."""
     lons = [c[0] for c in coords]
     lats = [c[1] for c in coords]
     midlat = (min(lats) + max(lats)) / 2
@@ -107,11 +145,28 @@ def build_heightfield(coords: list[Vertex], spacing_m: float, margin_m: float) -
     gx = spacing_m / (111_000.0 * math.cos(math.radians(midlat)))
     ny = int((n - s) / gy) + 1
     nx = int((e - w) / gx) + 1
-    points = [(w + i * gx, n - j * gy) for j in range(ny) for i in range(nx)]
+    if not grow:
+        points = [(w + i * gx, n - j * gy) for j in range(ny) for i in range(nx)]
+        flat = usgs_3dep.sample_points(points)
+        grid = [flat[j * nx:(j + 1) * nx] for j in range(ny)]
+        meta = {"bbox_swne": [round(s, 6), round(w, 6), round(n, 6), round(e, 6)],
+                "nx": nx, "ny": ny, "spacing_m": spacing_m, "margin_m": margin_m, "row0": "north"}
+        return grid, meta
+    rn, rs, cw, ce = (grow[k] for k in GROW_KEYS)
+    NY, NX = ny + rn + rs, nx + cw + ce
+    # indexed from the loop grid's own anchor: for an old node, (i - cw, j - rn) ARE its old integer indices, so
+    # the expression - and the float it yields - is the one the ungrown grid sampled
+    points = [(w + (i - cw) * gx, n - (j - rn) * gy) for j in range(NY) for i in range(NX)]
     flat = usgs_3dep.sample_points(points)
-    grid = [flat[j * nx:(j + 1) * nx] for j in range(ny)]
-    meta = {"bbox_swne": [round(s, 6), round(w, 6), round(n, 6), round(e, 6)],
-            "nx": nx, "ny": ny, "spacing_m": spacing_m, "margin_m": margin_m, "row0": "north"}
+    grid = [flat[j * NX:(j + 1) * NX] for j in range(NY)]
+    base = [round(s, 6), round(w, 6), round(n, 6), round(e, 6)]
+    bs, bw, bn, be = base
+    mid_r = (bs + bn) / 2                                       # the consumers' mid-latitude of the loop grid
+    gy_r = spacing_m / 111_000.0
+    gx_r = spacing_m / (111_000.0 * math.cos(math.radians(mid_r)))
+    meta = {"bbox_swne": [bs - rs * gy_r, bw - cw * gx_r, bn + rn * gy_r, be + ce * gx_r],
+            "nx": NX, "ny": NY, "spacing_m": spacing_m, "margin_m": margin_m, "row0": "north",
+            "grid_grow": dict(grow), "base_bbox_swne": base, "base_nx": nx, "base_ny": ny}
     return grid, meta
 
 
@@ -188,8 +243,10 @@ def build(project_dir: str | Path) -> dict:
 
     # Sample the terrain grid over the loop's bbox + margin. (This repo is loop-only; the prior build's
     # connector-extent widening lived here and is intentionally dropped — add it back if the track ever
-    # grows spur roads that leave the loop's own bbox.)
-    grid, meta = build_heightfield(list(coords), HF_SPACING_M, HF_MARGIN_M)
+    # grows spur roads that leave the loop's own bbox.) Ledger 0054: it has - terrain.grid_grow (opt-in) adds whole
+    # cells around the loop's own grid without moving one of its nodes (build_heightfield).
+    grid, meta = build_heightfield(list(coords), HF_SPACING_M, HF_MARGIN_M,
+                                   grow=grid_grow_spec(_lc(project_dir).raw))
     if _escale != 1.0:                                          # compress terrain relief to match the profile
         grid = [[_eref + (v - _eref) * _escale for v in row] for row in grid]
         print(f"[heightfield] elevation_scale {_escale}: relief compressed about {_eref:.0f} m")

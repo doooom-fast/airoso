@@ -80,6 +80,36 @@ def road_inputs(proj: Path):
     return lines, local["origin"], files
 
 
+def planned_inputs(proj: Path, spec: tt.TierSpec):
+    """(plan lines, input files) of ``terrain.tier_options.planned_pavement`` (ledger 0054 P2; opt-in): every authored
+    intermediate it names (project-relative, e.g. data/expansion.north.json, tools/author_expansion.py) as open lines
+    [(pts_xyz, widths)] in the local frame - each piece's centre at its stations with the WIDER side's curb offset as
+    its half-width (a pavement edge is never under-marked), each pad outline and each see-only stub's pavement as a
+    closed ring of zero width. ([], []) when none is declared."""
+    lines, files = [], []
+    for rel in spec.planned_files:
+        p = proj / rel
+        if not p.exists():
+            raise SystemExit(f"[terrain] tier_options.planned_pavement: {rel} is missing (sync it in)")
+        d = json.loads(p.read_text(encoding="utf-8"))
+        files.append(p)
+        for pc in d.get("pieces") or []:
+            col = {c: k for k, c in enumerate(pc["columns"])}
+            pts, wid = [], []
+            for row in pc["stations"]:
+                pts.append((float(row[col["x"]]), 0.0, float(row[col["z"]])))
+                wid.append(2.0 * max(abs(float(row[col["left_m"]])), abs(float(row[col["right_m"]]))))
+            if len(pts) >= 2:
+                lines.append((pts, wid))
+        rings = [pd.get("outline_xz") or [] for pd in d.get("pads") or []]
+        rings += [st.get("pavement_xz") or [] for st in d.get("stubs") or []]
+        for ring in rings:
+            if len(ring) >= 3:
+                pts = [(float(x), 0.0, float(z)) for x, z in ring] + [(float(ring[0][0]), 0.0, float(ring[0][1]))]
+                lines.append((pts, [0.0] * len(pts)))
+    return lines, files
+
+
 def inputs_md5(files) -> dict:
     return {Path(f).name: _md5_file(Path(f)) for f in files}
 
@@ -533,8 +563,14 @@ def run(proj: Path, offline: bool = False) -> dict | None:
         cors.append(cor)
         corridor_lines.append([(x, 0.0, z) for x, z in cor["centreline_local"]])
     frame = spec.frame(tt.load_heightfield_meta(proj))
-    topo = tt.Topology(spec, lines, corridor_lines, closed_first=bool(cfg.get("loop", True)), frame=frame)
+    plan_lines, plan_files = planned_inputs(proj, spec)
+    files = list(files) + plan_files                # the plan is stale when a planned pavement changes too
+    topo = tt.Topology(spec, lines, corridor_lines, closed_first=bool(cfg.get("loop", True)), frame=frame,
+                       plan_lines=plan_lines)
     st = topo.stats()
+    if plan_lines:
+        print(f"[terrain] planned pavement (tiers + physical only, ledger 0054 P2): {len(plan_lines)} lines from "
+              f"{[f.name for f in plan_files]}", flush=True)
     print(f"[terrain] topology: {st['vertices']} vertices, {st['triangles']} triangles "
           f"(physical {st['physical_vertices']} v / far {st['far_vertices']} v), leaves {st['leaves_by_cell_m']} "
           f"({time.time() - t0:.0f} s)", flush=True)

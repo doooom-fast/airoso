@@ -1,0 +1,1210 @@
+{
+ "_doc": "Ledger 0054 P1 fix round (2026-10-14): the full tools/ship_sd.sh rehearsal on a fresh scratch copy of the workshop (--no-install) with p1-proofs/rehearsal_delta.py applied; the chain ran to its end",
+ "mouths": [
+  {
+   "connector": "north_J1_waring",
+   "host": "MAINLINE",
+   "host_vertex": 1517,
+   "side": 1,
+   "connector_width_m": 26.761,
+   "cut_xyz": [
+    -1981.259,
+    24.328,
+    614.083
+   ],
+   "host_seg": 1516,
+   "host_t": 0.9793,
+   "angle_deg": 83.62,
+   "host_grade": 0.01085,
+   "blend_m": 70.0,
+   "blend_max_grade": 0.1097,
+   "piece": "north_J1_waring#0",
+   "end": "start"
+  },
+  {
+   "connector": "north_J5_jackson_north",
+   "host": "MAINLINE",
+   "host_vertex": 2317,
+   "side": 1,
+   "connector_width_m": 29.48,
+   "cut_xyz": [
+    45.125,
+    108.849,
+    1734.058
+   ],
+   "host_seg": 2317,
+   "host_t": 0.1602,
+   "angle_deg": 80.42,
+   "host_grade": 0.02665,
+   "blend_m": 30.0,
+   "blend_max_grade": 0.036,
+   "piece": "north_J5_jackson_north#0",
+   "end": "start"
+  }
+ ],
+ "aprons_and_fills": {
+  "mouth_fills": [
+   {
+    "piece": "north_J1_waring#0",
+    "host": "MAINLINE",
+    "side": 1,
+    "object": "1ROAD_mouthfill_0",
+    "k_star": 1,
+    "rows_replaced": [
+     0,
+     1
+    ],
+    "host_edge_crossings": {
+     "L": [
+      -1989.0666,
+      24.3735,
+      602.4784
+     ],
+     "R": [
+      -1970.7575,
+      24.5873,
+      622.3772
+     ]
+    },
+    "area_m2": 73.46,
+    "steepest_pct": 2.02,
+    "steepest_any_pct": 2.02,
+    "seam_grade_pct": 1.72,
+    "vertices": 115,
+    "triangles": 161,
+    "road_faces_deleted": 8
+   },
+   {
+    "piece": "north_J5_jackson_north#0",
+    "host": "MAINLINE",
+    "side": 1,
+    "object": "1ROAD_mouthfill_1",
+    "k_star": 1,
+    "rows_replaced": [
+     0,
+     1
+    ],
+    "host_edge_crossings": {
+     "L": [
+      32.0893,
+      108.7135,
+      1727.1632
+     ],
+     "R": [
+      62.9597,
+      109.1686,
+      1731.2056
+     ]
+    },
+    "area_m2": 82.38,
+    "steepest_pct": 2.45,
+    "steepest_any_pct": 2.45,
+    "seam_grade_pct": 1.99,
+    "vertices": 132,
+    "triangles": 183,
+    "road_faces_deleted": 8
+   }
+  ],
+  "_doc": "tools/author_aprons_blend.py (ledger 0054 P1 fix round): the corner aprons as built; host_rows_opened = [P0's row, E's row] on the mouth side",
+  "aprons": [
+   {
+    "id": "AP1",
+    "source": "data/expansion.north.json",
+    "piece": "north_J1_waring#0",
+    "connector": "north_J1_waring",
+    "host": "MAINLINE",
+    "side": 1,
+    "host_lane": 0,
+    "stub_lane": 2,
+    "stub_curb_side": -1,
+    "P0_xyz": [
+     -1970.7575,
+     24.5873,
+     622.3772
+    ],
+    "P0_host_vertex": 1520.432,
+    "P0_stub_row": 0.123,
+    "T_row": 9,
+    "T_xyz": [
+     -1986.1123,
+     23.5367,
+     641.3582
+    ],
+    "E_row": 1527,
+    "E_xyz": [
+     -1953.4665,
+     25.0243,
+     631.5721
+    ],
+    "design_true_end_vertex": 1527.48,
+    "design_R_m": 30.0,
+    "R_m": 30.0,
+    "centre_xz": [
+     -1962.6997,
+     660.1158
+    ],
+    "entry_deg": 8.06,
+    "arc_len_m": 36.25,
+    "area_m2": 108.51,
+    "deck_vertices": 180,
+    "deck_triangles": 259,
+    "steepest_deck_pct": 6.98,
+    "steepest_any_pct": 7.16,
+    "seam_grade_pct": 7.71,
+    "E_vertex": 1526.298,
+    "host_rows_opened": [
+     1520,
+     1527
+    ],
+    "objects": [
+     "1ROAD_apron_AP1",
+     "1KERB_sidewalk_apAP1"
+    ],
+    "stub_curb_faces_deleted": 54,
+    "paint_faces_deleted": 0,
+    "terrain": {
+     "edges_halved": 281,
+     "verts_seated": 282
+    }
+   }
+  ]
+ },
+ "verify_mouths_exact_deck": [
+  {
+   "piece": "del_cerro_blvd#0",
+   "fail": false,
+   "fails": [],
+   "mouth_line_max_m": 0.015,
+   "host_lane_road_above": 0,
+   "host_lane_grass_at": 0,
+   "host_lane_grass_max_m": -0.006,
+   "notch_max_m": 0.02,
+   "approach_max_dg_per_m": 0.0113
+  },
+  {
+   "piece": "del_cerro_blvd#1",
+   "fail": false,
+   "fails": [],
+   "mouth_line_max_m": 0.016,
+   "host_lane_road_above": 0,
+   "host_lane_grass_at": 0,
+   "host_lane_grass_max_m": -0.009,
+   "notch_max_m": 0.016,
+   "approach_max_dg_per_m": 0.0098
+  },
+  {
+   "piece": "medium#2+0#0#0",
+   "fail": false,
+   "fails": [],
+   "mouth_line_max_m": 0.003,
+   "host_lane_road_above": 0,
+   "host_lane_grass_at": 0,
+   "host_lane_grass_max_m": -0.015,
+   "notch_max_m": 0.005,
+   "approach_max_dg_per_m": 0.0182
+  },
+  {
+   "piece": "north_J1_waring#0",
+   "fail": false,
+   "fails": [],
+   "mouth_line_max_m": 0.006,
+   "host_lane_road_above": 0,
+   "host_lane_grass_at": 0,
+   "host_lane_grass_max_m": -0.013,
+   "notch_max_m": 0.006,
+   "approach_max_dg_per_m": 0.0043,
+   "apron": {
+    "id": "AP1",
+    "notch_span_m": [
+     -7.0,
+     26.35
+    ],
+    "lane_span_m": [
+     -16.46,
+     30.68
+    ],
+    "stub_seam": {
+     "samples": 77,
+     "fail": 0,
+     "max_dev_m": 0.005,
+     "worst": []
+    },
+    "deck": {
+     "samples": 350,
+     "holes": 0,
+     "grass_at_or_above": 0,
+     "max_grass_m": -0.017,
+     "worst": []
+    }
+   }
+  },
+  {
+   "piece": "north_J5_jackson_north#0",
+   "fail": false,
+   "fails": [],
+   "mouth_line_max_m": 0.017,
+   "host_lane_road_above": 0,
+   "host_lane_grass_at": 0,
+   "host_lane_grass_max_m": -0.007,
+   "notch_max_m": 0.022,
+   "approach_max_dg_per_m": 0.0042
+  },
+  {
+   "piece": "medium#2+0#0#0",
+   "fail": false,
+   "fails": [],
+   "mouth_line_max_m": 0.004,
+   "host_lane_road_above": 0,
+   "host_lane_grass_at": 0,
+   "host_lane_grass_max_m": -0.019,
+   "notch_max_m": 0.01,
+   "approach_max_dg_per_m": 0.0097
+  }
+ ],
+ "verify_mouths_level_across_for_the_record": [
+  {
+   "piece": "del_cerro_blvd#0",
+   "fail": false,
+   "fails": [],
+   "mouth_line_max_m": 0.015,
+   "host_lane_road_above": 0,
+   "host_lane_grass_at": 0,
+   "host_lane_grass_max_m": -0.006,
+   "notch_max_m": 0.02,
+   "approach_max_dg_per_m": 0.0113
+  },
+  {
+   "piece": "del_cerro_blvd#1",
+   "fail": false,
+   "fails": [],
+   "mouth_line_max_m": 0.016,
+   "host_lane_road_above": 0,
+   "host_lane_grass_at": 0,
+   "host_lane_grass_max_m": -0.009,
+   "notch_max_m": 0.016,
+   "approach_max_dg_per_m": 0.0098
+  },
+  {
+   "piece": "medium#2+0#0#0",
+   "fail": false,
+   "fails": [],
+   "mouth_line_max_m": 0.003,
+   "host_lane_road_above": 0,
+   "host_lane_grass_at": 0,
+   "host_lane_grass_max_m": -0.015,
+   "notch_max_m": 0.005,
+   "approach_max_dg_per_m": 0.0182
+  },
+  {
+   "piece": "north_J1_waring#0",
+   "fail": false,
+   "fails": [],
+   "mouth_line_max_m": 0.006,
+   "host_lane_road_above": 0,
+   "host_lane_grass_at": 0,
+   "host_lane_grass_max_m": -0.012,
+   "notch_max_m": 0.006,
+   "approach_max_dg_per_m": 0.0043,
+   "apron": {
+    "id": "AP1",
+    "notch_span_m": [
+     -7.0,
+     26.35
+    ],
+    "lane_span_m": [
+     -16.46,
+     30.68
+    ],
+    "stub_seam": {
+     "samples": 77,
+     "fail": 0,
+     "max_dev_m": 0.005,
+     "worst": []
+    },
+    "deck": {
+     "samples": 350,
+     "holes": 0,
+     "grass_at_or_above": 0,
+     "max_grass_m": -0.017,
+     "worst": []
+    }
+   }
+  },
+  {
+   "piece": "north_J5_jackson_north#0",
+   "fail": true,
+   "fails": [
+    "HOST LANE: 11 samples with road/curb > 0.02 m over the host deck (max 0.024 m), 50 with grass at/above it"
+   ],
+   "mouth_line_max_m": 0.017,
+   "host_lane_road_above": 11,
+   "host_lane_grass_at": 50,
+   "host_lane_grass_max_m": 0.003,
+   "notch_max_m": 0.022,
+   "approach_max_dg_per_m": 0.0042
+  },
+  {
+   "piece": "medium#2+0#0#0",
+   "fail": false,
+   "fails": [],
+   "mouth_line_max_m": 0.004,
+   "host_lane_road_above": 0,
+   "host_lane_grass_at": 0,
+   "host_lane_grass_max_m": -0.019,
+   "notch_max_m": 0.01,
+   "approach_max_dg_per_m": 0.0097
+  }
+ ],
+ "barrier_bands_swept": {
+  "north_J1_waring": {
+   "edge_vertex_from": 1514.1,
+   "edge_vertex_to": 1526.3,
+   "vertex_from": 1509,
+   "vertex_to": 1527,
+   "sidewalk_gap": [
+    1509,
+    1527
+   ],
+   "apron": "AP1",
+   "apron_end_vertex": 1526.3,
+   "how": "the piece's swept road edges (assembler smoothing) crossing the host edge, + MOUTH_CORNER_M of arc, and the host sidewalk gap (mouth_weld.gap_window) (race.swept_mouths, ledger 0054 P1)"
+  },
+  "north_J5_jackson_north": {
+   "edge_vertex_from": 2313.54,
+   "edge_vertex_to": 2320.91,
+   "vertex_from": 2310,
+   "vertex_to": 2325,
+   "sidewalk_gap": [
+    2310,
+    2325
+   ],
+   "how": "the piece's swept road edges (assembler smoothing) crossing the host edge, + MOUTH_CORNER_M of arc, and the host sidewalk gap (mouth_weld.gap_window) (race.swept_mouths, ledger 0054 P1)"
+  }
+ },
+ "policies": {
+  "race_cw": [
+   {
+    "connector": "north_J1_waring",
+    "policy": "sealed_far_strip",
+    "vertex_from": 1509,
+    "vertex_to": 1521
+   },
+   {
+    "connector": "north_J1_waring",
+    "policy": "behind_closure",
+    "vertex_from": 1522,
+    "vertex_to": 1527
+   },
+   {
+    "connector": "north_J5_jackson_north",
+    "policy": "behind_closure",
+    "vertex_from": 2310,
+    "vertex_to": 2310
+   },
+   {
+    "connector": "north_J5_jackson_north",
+    "policy": "sealed_far_strip",
+    "vertex_from": 2311,
+    "vertex_to": 2325
+   }
+  ],
+  "race_acw": [
+   {
+    "connector": "north_J1_waring",
+    "policy": "sealed_race_strip",
+    "vertex_from": 1509,
+    "vertex_to": 1527
+   },
+   {
+    "connector": "north_J5_jackson_north",
+    "policy": "sealed_race_strip",
+    "vertex_from": 2310,
+    "vertex_to": 2325
+   }
+  ]
+ },
+ "no_route_built": {
+  "race_cw": {
+   "fail": false,
+   "leak_m2": 0,
+   "forbidden_reached": [],
+   "blocked": [],
+   "spawns_unreached": []
+  },
+  "race_acw": {
+   "fail": false,
+   "leak_m2": 0,
+   "forbidden_reached": [],
+   "blocked": [],
+   "spawns_unreached": []
+  }
+ },
+ "compare_with_v0_18_0": {
+  "layouts": {
+   "street": {
+    "v0.18.0 -> rehearsal": {
+     "soft_top_in_lane": [
+      33,
+      33
+     ],
+     "severe_steps": [
+      0,
+      0
+     ],
+     "severe_per_km": [
+      0.0,
+      0.0
+     ],
+     "steps_per_km": [
+      0.0,
+      0.0
+     ],
+     "kinks_per_km": [
+      3.41,
+      3.41
+     ],
+     "obstruction_stations": [
+      0,
+      0
+     ],
+     "barrier_missing": [
+      0,
+      0
+     ],
+     "excursion_drops": [
+      98,
+      98
+     ],
+     "daylight_gaps": [
+      0,
+      0
+     ],
+     "undrivable_corners": [
+      0,
+      0
+     ],
+     "floating_furniture": [
+      391,
+      391
+     ],
+     "fold_severe": [
+      null,
+      0
+     ],
+     "severe_old_rule": [
+      0,
+      0
+     ]
+    },
+    "worse": [],
+    "box_samples": {
+     "J1": [],
+     "J5": [
+      [
+       "kinks",
+       6956.0,
+       -6.0,
+       4.73
+      ],
+      [
+       "kinks",
+       6956.0,
+       -6.0,
+       4.73
+      ],
+      [
+       "kinks",
+       6957.0,
+       -6.0,
+       4.73
+      ],
+      [
+       "kinks",
+       6957.0,
+       -6.0,
+       4.73
+      ]
+     ]
+    },
+    "box_samples_v0.18.0": {
+     "J1": [],
+     "J5": [
+      [
+       "kinks",
+       6956.0,
+       -6.0,
+       4.73
+      ],
+      [
+       "kinks",
+       6956.0,
+       -6.0,
+       4.73
+      ],
+      [
+       "kinks",
+       6957.0,
+       -6.0,
+       4.73
+      ],
+      [
+       "kinks",
+       6957.0,
+       -6.0,
+       4.73
+      ]
+     ]
+    }
+   },
+   "race_cw": {
+    "v0.18.0 -> rehearsal": {
+     "soft_top_in_lane": [
+      9,
+      9
+     ],
+     "severe_steps": [
+      22,
+      6
+     ],
+     "severe_per_km": [
+      1.63,
+      0.45
+     ],
+     "steps_per_km": [
+      4.38,
+      4.38
+     ],
+     "kinks_per_km": [
+      6.23,
+      6.23
+     ],
+     "obstruction_stations": [
+      0,
+      0
+     ],
+     "barrier_missing": [
+      0,
+      0
+     ],
+     "excursion_drops": [
+      0,
+      0
+     ],
+     "daylight_gaps": [
+      0,
+      0
+     ],
+     "undrivable_corners": [
+      0,
+      0
+     ],
+     "floating_furniture": [
+      391,
+      391
+     ],
+     "fold_severe": [
+      null,
+      16
+     ],
+     "severe_old_rule": [
+      22,
+      22
+     ]
+    },
+    "worse": [],
+    "box_samples": {
+     "J1": [
+      [
+       "fold_severe",
+       4541.0,
+       -13.03,
+       0.06
+      ]
+     ],
+     "J5": [
+      [
+       "kinks",
+       6957.0,
+       -10.03,
+       7.95
+      ],
+      [
+       "kinks",
+       6956.0,
+       -10.03,
+       7.86
+      ],
+      [
+       "kinks",
+       6957.0,
+       -9.28,
+       7.35
+      ],
+      [
+       "kinks",
+       6956.0,
+       -9.28,
+       7.28
+      ],
+      [
+       "kinks",
+       6958.0,
+       -10.03,
+       7.28
+      ],
+      [
+       "kinks",
+       6959.0,
+       -10.03,
+       7.19
+      ],
+      [
+       "kinks",
+       6958.0,
+       -9.28,
+       6.69
+      ],
+      [
+       "fold_severe",
+       6956.0,
+       -10.03,
+       0.079
+      ],
+      [
+       "fold_severe",
+       6957.0,
+       -10.03,
+       0.079
+      ],
+      [
+       "fold_severe",
+       6956.0,
+       -9.28,
+       0.073
+      ],
+      [
+       "fold_severe",
+       6957.0,
+       -9.28,
+       0.073
+      ],
+      [
+       "fold_severe",
+       6958.0,
+       -10.03,
+       0.073
+      ],
+      [
+       "fold_severe",
+       6959.0,
+       -10.03,
+       0.072
+      ],
+      [
+       "fold_severe",
+       6958.0,
+       -9.28,
+       0.067
+      ],
+      [
+       "fold_severe",
+       6959.0,
+       -9.28,
+       0.066
+      ],
+      [
+       "fold_severe",
+       6955.0,
+       -10.03,
+       0.065
+      ],
+      [
+       "fold_severe",
+       6954.0,
+       -10.03,
+       0.063
+      ],
+      [
+       "fold_severe",
+       6955.0,
+       -9.28,
+       0.061
+      ]
+     ]
+    },
+    "box_samples_v0.18.0": {
+     "J1": [
+      [
+       "severe_all",
+       4541.0,
+       -13.03,
+       0.06
+      ]
+     ],
+     "J5": [
+      [
+       "severe_steps",
+       6956.0,
+       -10.03,
+       0.079
+      ],
+      [
+       "severe_steps",
+       6957.0,
+       -10.03,
+       0.079
+      ],
+      [
+       "severe_steps",
+       6956.0,
+       -9.28,
+       0.073
+      ],
+      [
+       "severe_steps",
+       6957.0,
+       -9.28,
+       0.073
+      ],
+      [
+       "severe_steps",
+       6958.0,
+       -10.03,
+       0.073
+      ],
+      [
+       "severe_steps",
+       6959.0,
+       -10.03,
+       0.072
+      ],
+      [
+       "severe_steps",
+       6958.0,
+       -9.28,
+       0.067
+      ],
+      [
+       "severe_all",
+       6956.0,
+       -10.03,
+       0.079
+      ],
+      [
+       "severe_all",
+       6957.0,
+       -10.03,
+       0.079
+      ],
+      [
+       "severe_all",
+       6956.0,
+       -9.28,
+       0.073
+      ],
+      [
+       "severe_all",
+       6957.0,
+       -9.28,
+       0.073
+      ],
+      [
+       "severe_all",
+       6958.0,
+       -10.03,
+       0.073
+      ],
+      [
+       "severe_all",
+       6959.0,
+       -10.03,
+       0.072
+      ],
+      [
+       "severe_all",
+       6958.0,
+       -9.28,
+       0.067
+      ],
+      [
+       "severe_all",
+       6959.0,
+       -9.28,
+       0.066
+      ],
+      [
+       "severe_all",
+       6955.0,
+       -10.03,
+       0.065
+      ],
+      [
+       "severe_all",
+       6954.0,
+       -10.03,
+       0.063
+      ],
+      [
+       "severe_all",
+       6955.0,
+       -9.28,
+       0.061
+      ],
+      [
+       "kinks",
+       6957.0,
+       -10.03,
+       7.95
+      ],
+      [
+       "kinks",
+       6956.0,
+       -10.03,
+       7.86
+      ],
+      [
+       "kinks",
+       6957.0,
+       -9.28,
+       7.35
+      ],
+      [
+       "kinks",
+       6956.0,
+       -9.28,
+       7.28
+      ],
+      [
+       "kinks",
+       6958.0,
+       -10.03,
+       7.28
+      ],
+      [
+       "kinks",
+       6959.0,
+       -10.03,
+       7.19
+      ],
+      [
+       "kinks",
+       6958.0,
+       -9.28,
+       6.69
+      ]
+     ]
+    }
+   },
+   "race_acw": {
+    "v0.18.0 -> rehearsal": {
+     "soft_top_in_lane": [
+      9,
+      9
+     ],
+     "severe_steps": [
+      20,
+      3
+     ],
+     "severe_per_km": [
+      1.48,
+      0.22
+     ],
+     "steps_per_km": [
+      6.75,
+      6.75
+     ],
+     "kinks_per_km": [
+      7.05,
+      7.05
+     ],
+     "obstruction_stations": [
+      0,
+      0
+     ],
+     "barrier_missing": [
+      0,
+      0
+     ],
+     "excursion_drops": [
+      0,
+      0
+     ],
+     "daylight_gaps": [
+      0,
+      0
+     ],
+     "undrivable_corners": [
+      0,
+      0
+     ],
+     "floating_furniture": [
+      391,
+      391
+     ],
+     "fold_severe": [
+      null,
+      17
+     ],
+     "severe_old_rule": [
+      20,
+      20
+     ]
+    },
+    "worse": [],
+    "box_samples": {
+     "J1": [],
+     "J5": []
+    },
+    "box_samples_v0.18.0": {
+     "J1": [],
+     "J5": []
+    }
+   }
+  },
+  "audit": {
+   "street": [
+    [
+     53,
+     {
+      "A_supports_in_road": 0,
+      "B_terrain_poke": 0,
+      "C_junction_crossings": 0,
+      "D_wall_on_road": 0,
+      "E_wall_floating": 0,
+      "J_terrain_span": 0,
+      "K_kerb_in_carriageway": 20,
+      "F_curb_not_flush": 13,
+      "I_sidewalk_isolating": 20
+     }
+    ],
+    [
+     53,
+     {
+      "A_supports_in_road": 0,
+      "B_terrain_poke": 0,
+      "C_junction_crossings": 0,
+      "D_wall_on_road": 0,
+      "E_wall_floating": 0,
+      "J_terrain_span": 0,
+      "K_kerb_in_carriageway": 20,
+      "F_curb_not_flush": 13,
+      "I_sidewalk_isolating": 20
+     }
+    ]
+   ],
+   "race_cw": [
+    [
+     53,
+     {
+      "A_supports_in_road": 0,
+      "B_terrain_poke": 0,
+      "C_junction_crossings": 0,
+      "D_wall_on_road": 0,
+      "E_wall_floating": 0,
+      "J_terrain_span": 0,
+      "K_kerb_in_carriageway": 20,
+      "F_curb_not_flush": 13,
+      "I_sidewalk_isolating": 20,
+      "W_race_wall_clash": 0
+     }
+    ],
+    [
+     53,
+     {
+      "A_supports_in_road": 0,
+      "B_terrain_poke": 0,
+      "C_junction_crossings": 0,
+      "D_wall_on_road": 0,
+      "E_wall_floating": 0,
+      "J_terrain_span": 0,
+      "K_kerb_in_carriageway": 20,
+      "F_curb_not_flush": 13,
+      "I_sidewalk_isolating": 20,
+      "W_race_wall_clash": 0
+     }
+    ]
+   ],
+   "race_acw": [
+    [
+     53,
+     {
+      "A_supports_in_road": 0,
+      "B_terrain_poke": 0,
+      "C_junction_crossings": 0,
+      "D_wall_on_road": 0,
+      "E_wall_floating": 0,
+      "J_terrain_span": 0,
+      "K_kerb_in_carriageway": 20,
+      "F_curb_not_flush": 13,
+      "I_sidewalk_isolating": 20,
+      "W_race_wall_clash": 0
+     }
+    ],
+    [
+     53,
+     {
+      "A_supports_in_road": 0,
+      "B_terrain_poke": 0,
+      "C_junction_crossings": 0,
+      "D_wall_on_road": 0,
+      "E_wall_floating": 0,
+      "J_terrain_span": 0,
+      "K_kerb_in_carriageway": 20,
+      "F_curb_not_flush": 13,
+      "I_sidewalk_isolating": 20,
+      "W_race_wall_clash": 0
+     }
+    ]
+   ]
+  },
+  "no_route": {
+   "race_cw": {
+    "fail": false,
+    "leak_m2": 0,
+    "leak_cells": 0,
+    "blocked": [],
+    "forbidden_reached": [],
+    "spawns_unreached": [],
+    "reached_m2": 139148,
+    "probes": null
+   },
+   "race_acw": {
+    "fail": false,
+    "leak_m2": 0,
+    "leak_cells": 0,
+    "blocked": [],
+    "forbidden_reached": [],
+    "spawns_unreached": [],
+    "reached_m2": 138847,
+    "probes": null
+   }
+  },
+  "verify_mouths": [
+   {
+    "piece": "del_cerro_blvd#0",
+    "end": "end",
+    "host_vertex": 1085,
+    "angle_deg": 75.63,
+    "fail": false,
+    "fails": [],
+    "span_mouth_line_m": [
+     -12.75,
+     12.27
+    ],
+    "mouth_line_max_m": 0.015,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.02,
+    "approach_max_dg_per_m": 0.0113
+   },
+   {
+    "piece": "del_cerro_blvd#1",
+    "end": "start",
+    "host_vertex": 1086,
+    "angle_deg": 86.05,
+    "fail": false,
+    "fails": [],
+    "span_mouth_line_m": [
+     -10.18,
+     10.57
+    ],
+    "mouth_line_max_m": 0.016,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.016,
+    "approach_max_dg_per_m": 0.0098
+   },
+   {
+    "piece": "medium#2+0#0#0",
+    "end": "start",
+    "host_vertex": 4424,
+    "angle_deg": 88.88,
+    "fail": false,
+    "fails": [],
+    "span_mouth_line_m": [
+     -4.95,
+     4.89
+    ],
+    "mouth_line_max_m": 0.003,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.005,
+    "approach_max_dg_per_m": 0.0182
+   },
+   {
+    "piece": "north_J1_waring#0",
+    "end": "start",
+    "host_vertex": 1517,
+    "angle_deg": 83.62,
+    "fail": false,
+    "fails": [],
+    "span_mouth_line_m": [
+     -7.0,
+     9.88
+    ],
+    "mouth_line_max_m": 0.006,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.006,
+    "approach_max_dg_per_m": 0.0043
+   },
+   {
+    "piece": "north_J5_jackson_north#0",
+    "end": "start",
+    "host_vertex": 2317,
+    "angle_deg": 76.95,
+    "fail": false,
+    "fails": [],
+    "span_mouth_line_m": [
+     -9.82,
+     8.47
+    ],
+    "mouth_line_max_m": 0.017,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.022,
+    "approach_max_dg_per_m": 0.0042
+   },
+   {
+    "piece": "medium#2+0#0#0",
+    "end": "end",
+    "host_vertex": 82,
+    "angle_deg": 87.77,
+    "fail": false,
+    "fails": [],
+    "span_mouth_line_m": [
+     -5.92,
+     5.66
+    ],
+    "mouth_line_max_m": 0.004,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.01,
+    "approach_max_dg_per_m": 0.0097
+   }
+  ]
+ },
+ "lamps_moved": {
+  "moved": [
+   {
+    "lamp": 77,
+    "apron": "AP1",
+    "head_was": [
+     -1963.62,
+     32.922,
+     627.653
+    ],
+    "base_was": [
+     -1964.463,
+     629.243
+    ],
+    "head": [
+     -1963.5939,
+     36.2595,
+     629.3652
+    ],
+    "base": [
+     -1964.362,
+     24.86,
+     630.993
+    ],
+    "why": "ledger 0054 A7: the post stood in the apron's pavement; moved behind its return curb onto the walk"
+   }
+  ]
+ },
+ "road_kn5_bytes": 119839679
+}

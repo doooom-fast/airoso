@@ -26,6 +26,8 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "tests"))
+import sd_v0180  # noqa: E402  (the pinned v0.18.0 Lake Murray data, tests/fixtures/lake_murray_v0180)
 sys.path.insert(0, str(ROOT / "tools"))
 import barrier_bands as bb  # noqa: E402
 import no_route as nr  # noqa: E402
@@ -66,7 +68,7 @@ def v2_config(cfg: dict) -> dict:
 def _project(cfg_edit=None) -> Path:
     d = Path(tempfile.mkdtemp())
     (d / "data").mkdir()
-    cfg = v2_config(json.loads((SD / "track.config.json").read_text(encoding="utf-8")))
+    cfg = sd_v0180.loop_config(v2_config(json.loads((SD / "track.config.json").read_text(encoding="utf-8"))))
     # ledger 0055's College chicane is declared on the rebuilt road (one continuous divided run); the data pinned here
     # is the installed v0.18.0 build's (College split in two at v1258-1374) — judged as declared then, without it.
     # tests/tools/test_college_split_0055.py drives a declared chicane on this data where the island IS continuous.
@@ -78,7 +80,7 @@ def _project(cfg_edit=None) -> Path:
         cfg_edit(cfg)
     (d / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
     for f in ("centerline.local.json", "median_bands.json", "mouths.json", "bridge.spans.auto.json"):
-        shutil.copyfile(SD / "data" / f, d / "data" / f)
+        shutil.copyfile(sd_v0180.DATA / f, d / "data" / f)
     return d
 
 
@@ -130,7 +132,7 @@ def test_zones_runs_and_pins_are_the_spec():
         assert len(zn) == len(y) == len(lane) == out["n"]
         assert zn[300] == "whole" and zn[1514] == "box" and zn[777] == "pin" and zn[1000] == "island"
         assert zn[2000] == "closure" and y[300] is None and y[1514] is None
-        cl = json.loads((SD / "data" / "centerline.local.json").read_text())
+        cl = json.loads((sd_v0180.DATA / "centerline.local.json").read_text())
         w = cl["widths_m"]
         sgn = 1.0 if side == "L" else -1.0
         for v in PINS:
@@ -331,11 +333,11 @@ def test_pinned_closure_runs_that_disagree_with_the_zones_fail():
 def test_a_v1_config_without_a_corridor_is_refused():
     d = Path(tempfile.mkdtemp())
     (d / "data").mkdir()
-    cfg = json.loads((SD / "track.config.json").read_text(encoding="utf-8"))
+    cfg = sd_v0180.loop_config(json.loads((SD / "track.config.json").read_text(encoding="utf-8")))
     cfg["race"].pop("corridor", None)
     (d / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
     for f in ("centerline.local.json", "median_bands.json", "mouths.json", "bridge.spans.auto.json"):
-        shutil.copyfile(SD / "data" / f, d / "data" / f)
+        shutil.copyfile(sd_v0180.DATA / f, d / "data" / f)
     try:
         bb.build(d, planned_no_route=False)
     except SystemExit as e:

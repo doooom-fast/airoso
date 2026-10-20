@@ -74,6 +74,7 @@ JOG_CLUSTER_M = 75.0        # a WASHBOARD: the jogs within this radius of one an
 MAX_JOG_CLUSTER = 5         # ... more than this many of them (the lens saw 6-10 parallel steps; the round-3 build
                             # holds 7 within 75 m at two places, the break-line build 4)
 ON_LATTICE = 0.01           # a vertex is a lattice node when its (I, J) is within this of an integer
+THINNED = "terrain_thin.nodes.json.gz"   # tools/thin_terrain_blend.py: the lattice vertices the thinning removed
 AMPS = (0.5, 1.0, 2.0, 4.0)
 
 
@@ -130,6 +131,65 @@ def lattice(verts, frame, on_lines=None):
         for k in on_lines:
             on_lines[k].sort()
     return out, keys
+
+
+def thinned_lattice(proj: Path, verts, tris, frame, H, on_lines):
+    """ledger 0054 P3 repair round 3: tools/thin_terrain_blend.py thins the shipped terrain (no vertex moved, the surface
+    held within its tolerance of the one the chain built) and records the plan position of every vertex it removed ON
+    the lattice (data/terrain_thin.nodes.json.gz). This measure's lattice is the ground's, not the vertex list's: a
+    removed NODE is read as before, its height now off the BUILT triangles at that point (L5: the artifact), and a
+    removed lattice-LINE vertex still marks its row as drawn through a break (the surface there is held within the
+    thinning's tolerance of it). Without the file (no thinning ran): nothing changes. Returns (nodes, line vertices)
+    read in; the frame must be this lattice's, or SystemExit"""
+    p = proj / "data" / THINNED
+    if not p.exists():
+        return 0, 0
+    d = json.loads(gzip.decompress(p.read_bytes()).decode("utf-8"))
+    if any(abs(a - b) > 1e-9 for a, b in zip(d["frame"], frame)):
+        raise SystemExit(f"[ribs] {p.name} was written on another lattice frame ({d['frame']} vs {frame})")
+    x0, z0, ux, uz = frame
+    cell = 10.0
+    want = {}
+    for x, z in d["removed"]:
+        want.setdefault((math.floor(x / cell), math.floor(z / cell)), []).append((x, z))
+    grid = {}
+    for t in tris:
+        a, b, c = verts[t[0]], verts[t[1]], verts[t[2]]
+        for gi in range(math.floor(min(a[0], b[0], c[0]) / cell), math.floor(max(a[0], b[0], c[0]) / cell) + 1):
+            for gj in range(math.floor(min(a[2], b[2], c[2]) / cell), math.floor(max(a[2], b[2], c[2]) / cell) + 1):
+                if (gi, gj) in want:
+                    grid.setdefault((gi, gj), []).append((a, b, c))
+    n_nodes = n_lines = 0
+    for key, pts in want.items():
+        for x, z in pts:
+            fi, fj = (x - x0) / ux, (z - z0) / uz
+            I, J = round(fi), round(fj)
+            on_i, on_j = abs(fi - I) < ON_LATTICE, abs(fj - J) < ON_LATTICE
+            if on_i and on_j:
+                if (I, J) in H:
+                    continue
+                ys = []
+                for a, b, c in grid.get(key, ()):
+                    dd = (b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2])
+                    if abs(dd) < 1e-12:
+                        continue
+                    wa = ((b[2] - c[2]) * (x - c[0]) + (c[0] - b[0]) * (z - c[2])) / dd
+                    wb = ((c[2] - a[2]) * (x - c[0]) + (a[0] - c[0]) * (z - c[2])) / dd
+                    wc = 1.0 - wa - wb
+                    if wa >= -1e-7 and wb >= -1e-7 and wc >= -1e-7:
+                        ys.append(wa * a[1] + wb * b[1] + wc * c[1])
+                if ys:
+                    H[(I, J)] = max(ys)
+                    n_nodes += 1
+            elif on_i or on_j:
+                if on_j:
+                    on_lines.setdefault((0, J), []).append(fi)
+                else:
+                    on_lines.setdefault((1, I), []).append(fj)
+                n_lines += 1
+    for k in on_lines:
+        on_lines[k].sort()
+    return n_nodes, n_lines
 
 
 def _drawn_between(on_lines, ax, line, a, b):
@@ -416,6 +476,7 @@ def run(proj: Path, obj: Path | None = None, boxes=(), rib_m=RIB_M, max_ribs=MAX
     verts, tris, pav = read_obj(obj)
     on_lines = {}
     H, keys = lattice(verts, frame, on_lines)
+    thin_n, thin_l = thinned_lattice(proj, verts, tris, frame, H, on_lines)
     P = Pavement(pav)
     x0, z0, ux, uz = frame
     dcache = {}
@@ -443,6 +504,7 @@ def run(proj: Path, obj: Path | None = None, boxes=(), rib_m=RIB_M, max_ribs=MAX
         x, z = x0 + (I + r / 2) * ux, z0 + (J + r / 2) * uz
         rows_c.append((x, z, ex, dist(x, z)))
     rep = {"obj": str(obj), "lattice_nodes": len(H), "terrain_vertices": len(verts), "near_m": NEAR_M,
+           "thinned": {"nodes_read_on_the_surface": thin_n, "line_vertices": thin_l},
            "nyquist": {"rib_m": rib_m, "max": max_ribs, **_summ(rows_n, AMPS, boxes, rib_m),
                        "coarse_cells_info": coarse,
                        "straight_info": _summ(rows_s, AMPS, boxes, rib_m)["by_amplitude"]},
@@ -476,7 +538,10 @@ def main(argv=None):
             n, *v = argv[k + 1].split(":")
             boxes.append((n, *map(float, v)))
     rep = run(proj, obj, boxes)
-    print(f"[ribs] {rep['obj']}: {rep['lattice_nodes']} lattice nodes of {rep['terrain_vertices']} terrain vertices")
+    print(f"[ribs] {rep['obj']}: {rep['lattice_nodes']} lattice nodes of {rep['terrain_vertices']} terrain vertices"
+          + (f" (+ the thinning's removed lattice vertices: {rep['thinned']['nodes_read_on_the_surface']} nodes read on "
+             f"the built surface, {rep['thinned']['line_vertices']} lattice-line breaks)"
+             if rep['thinned']['nodes_read_on_the_surface'] or rep['thinned']['line_vertices'] else ""))
     for m, lim_m, lim_n in (("nyquist", RIB_M, MAX_RIBS), ("cross_grain", FOLD_M, MAX_FOLDS)):
         r = rep[m]
         for k, v in r["by_amplitude"].items():

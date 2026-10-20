@@ -210,6 +210,10 @@ def build_tiered_terrain(proj, cfg, grid_xyz, road_lines, elev0):
         files.append(data / "connectors.local.json")
     if (data / "heightfield.meta.json").exists():
         files.append(data / "heightfield.meta.json")
+    # ledger 0054 P2: tier_options.planned_pavement's intermediates planned the tiers + physical ground too (never the
+    # kept cells, the clamp or the feather below: those follow the built roads in road_lines)
+    for rel in ((cfg.get("terrain") or {}).get("tier_options") or {}).get("planned_pavement", {}).get("files", []):
+        files.append(proj / rel)
     now = {f.name: hashlib.md5(f.read_bytes()).hexdigest() for f in files}
     if now != T["inputs_md5"]:
         raise SystemExit(f"[blend] data/terrain.tiers.json.gz was planned on other road inputs ({T['inputs_md5']} "
@@ -964,6 +968,8 @@ def main():
     #     as ribbons and MERGED into the main ROAD/CURB/MARKINGS meshes so they share physics + materials.
     #     Their points also feed the terrain conform/clamp/carve so the hill ground meets them (no float). ---
     connectors = []
+    stub_of = {}
+    paint_of = {}
     conn_path = data / "connectors.local.json"
     if conn_path.exists():
         conn_data = json.loads(conn_path.read_text())
@@ -973,6 +979,10 @@ def main():
                 continue
             cpts = smoothmod.smooth_centerline(cpts, sigma_pts=1.5, passes=1, sigma_y_pts=1.0)
             connectors.append((c["name"], cpts, list(c["widths_m"])))
+            if c.get("stub"):
+                stub_of[c["name"]] = c["stub"]          # ledger 0054 phase 5: a stub is painted as its street
+            if c.get("paint"):
+                paint_of[c["name"]] = c["paint"]        # ledger 0054 P3: an authored piece is painted as authored
         print(f"[blend] {len(connectors)} connector line(s): " + ", ".join(n for n, _, _ in connectors))
         # split carriageways: narrow the main loop where it rides a divided road to ONE carriageway, so the
         # double-wide ribbon doesn't overlap the opposing carriageway added beside it (per-direction grade).
@@ -1017,7 +1027,7 @@ def main():
         cker = ribbon.curb_sidewalk(cpts, cw, lift=0.10, curb_h=0.14, curb_face_w=0.08,
                                     sidewalk_w=1.5, grade_w=1.2, grass_clearance=0.10)
         _append(kerb, cker)
-        cmk = ribbon.lane_markings(cpts, cw, center_yellow=True)
+        cmk = ribbon.connector_markings(cpts, cw, stub_of.get(cname), paint_of.get(cname))   # == lane_markings(.., center_yellow=True) off a stub / authored piece
         for _k in ("white", "yellow"):
             cmk[_k]["vertices"] = [(x, y + 0.115, z) for (x, y, z) in cmk[_k]["vertices"]]
             _append(marks[_k], cmk[_k])
@@ -1027,7 +1037,9 @@ def main():
     #     and buries the ribbon), then clamp to ±band so there are no fake mountains ---
     grid = read_npy(data / "heightfield.npy")
     meta = json.loads((data / "heightfield.meta.json").read_text())
+    _grow = meta.get("grid_grow") or {}                                 # ledger 0054: whole cells added N / W
     grid, meta = ribbon.upsample_grid(grid, meta, 2)                      # 40 m -> 20 m facets
+    _grow_rc = (2 * int(_grow.get("rows_n", 0)), 2 * int(_grow.get("cols_w", 0)))   # in 20 m rows / cols
     grid_xyz = project_grid(grid, meta, lon0, lat0, elev0)
     # connectors climb the Del Cerro hill (~40 m above the loop) — the terrain MUST conform + clamp to them
     # too, or the hill ground is clamped down to the loop grade and the connector ribbon floats over a void.
@@ -1102,7 +1114,8 @@ def main():
         scen, ntree, nscrub = scenery.scatter(
             grid_xyz, centerline, widths,
             tree_pct=int(_scn.get("tree_pct", 40)) if _scn.get("scatter_trees") else 0,
-            scrub_pct=int(_scn.get("scrub_pct", 26)) if _scn.get("scatter_scrub") else 0)
+            scrub_pct=int(_scn.get("scrub_pct", 26)) if _scn.get("scatter_scrub") else 0,
+            index_offset=_grow_rc)     # a grown grid keeps every old node's jitter and pick (ledger 0054 P2)
         print(f"[blend] scenery: {ntree} shade trees + {nscrub} scrub (all placed off-road)")
 
     # --- fresh scene ---

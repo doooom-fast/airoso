@@ -85,3 +85,59 @@ def test_drive_test_source_keeps_severe_steps_gated_on_folded_samples():
     # the fold rule lives in the BUMP branch only: a severe step on a folded sample is still severe
     assert sev < bump < fold, (sev, bump, fold)
     assert '"fold_bumps": len(problems.get("fold_bumps", []))' in src
+
+
+# --- FOLD SEVERE (opt-in, ledger 0054 P1 fix round) -----------------------------------------------------------------
+
+def _fan_project(grade: float, opt_in: bool, width: float = 12.0) -> Path:
+    """the U-turn on a steep plane with a WIDE road (its third paths at +-4 m lie past the 3 m turning centre and hop
+    back ~0.5 m a metre), the turn declared a levelled fan in data/mouth_welds.json; `opt_in` sets
+    track.config.json drive_test.fold_fan_severe"""
+    d = _uturn_project(grade)
+    cl = json.loads((d / "data" / "centerline.local.json").read_text())
+    cl["widths_m"] = [width] * len(cl["points_xyz_m"])
+    (d / "data" / "centerline.local.json").write_text(json.dumps(cl))
+    sheet = _grid(lambda z: grade * z, cell=1.0)
+    grass = _grid(lambda z: -10.0)
+    _write_obj(d / "data" / "track.obj", [("1ROAD_main", sheet), ("1GRASS", grass)])
+    n = len(cl["points_xyz_m"])
+    (d / "data" / "mouth_welds.json").write_text(json.dumps({"folds": {"MAINLINE": {
+        "cuts": [["road", 2, 100, 109]], "levelled": [{"line": ["road", 2], "k": 100, "l": 109}],
+        "level_rows": 8, "rows": n}}}))
+    cfg = {"slug": "t", "mirror_x": False}
+    if opt_in:
+        cfg["drive_test"] = {"fold_fan_severe": "verify_fold_fans"}
+    (d / "track.config.json").write_text(json.dumps(cfg))
+    return d
+
+
+def test_fold_severe_is_opt_in_and_only_hands_folded_fan_samples_to_verify_fold_fans():
+    off = drive_run(_fan_project(0.08, opt_in=False))
+    on = drive_run(_fan_project(0.08, opt_in=True))
+    # without the key: the plane's re-traced hops read as severe steps, as on v0.18.0, and no new key is written
+    assert off["severe_steps"] > 0, off
+    assert "fold_severe" not in off and "fold_severe" not in off["worst"]
+    # with it: the ones on a folded sample (the inside paths past the 3 m turning centre) inside the levelled fan ->
+    # fold_severe, judged elsewhere; the outside paths' severe readings (forward samples) stay severe, unchanged
+    assert on["fold_severe"] > 0 and on["severe_steps"] + on["fold_severe"] == off["severe_steps"], (on, off)
+    moved = {tuple(r) for r in on["worst"]["fold_severe"]}
+    kept = {tuple(r) for r in on["worst"]["severe_all"]}
+    assert kept | moved == {tuple(r) for r in off["worst"]["severe_all"]} and not (kept & moved)
+    assert all(r[1] < 0 for r in moved)                     # the inside of this right-hand U-turn
+    assert on["fold_severe_judge"].startswith("tools/verify_fold_fans.py")
+    for k in ("soft_top_in_lane", "steps_per_km", "fold_bumps", "kinks_per_km"):
+        assert on[k] == off[k], k
+
+
+def test_fold_severe_never_covers_a_forward_step_or_one_outside_a_fan():
+    # a real 0.3 m riser across the straight before the U-turn (z 50): forward samples, outside the fan zone -> severe
+    # with or without the key
+    def riser(grade_unused=None):
+        return lambda z: 0.3 if z >= 50.0 else 0.0
+    for opt_in in (False, True):
+        d = _fan_project(0.0, opt_in=opt_in)
+        sheet = _grid(riser(), cell=1.0)
+        _write_obj(d / "data" / "track.obj", [("1ROAD_main", sheet), ("1GRASS", _grid(lambda z: -10.0))])
+        r = drive_run(d)
+        assert r["severe_steps"] > 0, (opt_in, r)
+        assert r.get("fold_severe", 0) == 0

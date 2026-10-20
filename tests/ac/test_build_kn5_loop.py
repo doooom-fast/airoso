@@ -84,6 +84,28 @@ def test_ground_check_kn5_internal_mode_without_objs():
     assert r["fail"] is False, r["reasons"]
 
 
+def test_ground_check_on_a_gate_obj_is_kn5_internal_and_reads_extra_kn5s():
+    """ledger 0054 P3 repair round 1: a data/track.obj written FROM the kn5 by kn5_to_gate_obj (its gate_centerline.json
+    beside it) is not an independent source — the fidelity half is skipped as for a Blender-authored project (on the
+    Lake Murray chain it compared the kn5 with itself in another frame: '1ROAD unalignable'); --kn5 adds a layout's
+    further kn5s to the physical checks, and every number is in the returned record"""
+    d = _project()
+    build(d)
+    objp = d / "data" / "track.obj"
+    out = []
+    for ln in objp.read_text(encoding="utf-8").splitlines():      # displaced: would fail the fidelity half
+        if ln.startswith("v "):
+            x, y, z = (float(t) for t in ln.split()[1:4])
+            ln = f"v {x:.4f} {y + 5.0:.4f} {z:.4f}"
+        out.append(ln)
+    objp.write_text("\n".join(out) + "\n", encoding="utf-8")
+    (d / "data" / "gate_centerline.json").write_text("{}", encoding="utf-8")
+    kn5 = sorted((d / "build").glob("*.kn5"))[0]
+    r = check(d, [kn5])
+    assert r["fail"] is False, r["reasons"]
+    assert r["fidelity"].startswith("skipped") and len(r["kn5"]) == 2 and "road_over_ground" in r
+
+
 def test_ground_check_full_fidelity_still_gates_with_objs():
     """Adding the kn5-internal mode must NOT loosen the OBJ-backed gate."""
     d = _project()

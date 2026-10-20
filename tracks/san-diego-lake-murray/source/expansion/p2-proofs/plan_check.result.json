@@ -1,0 +1,84 @@
+{
+ "C": {
+  "rc": 0,
+  "log": [
+   "[terrain] topology: 268976 vertices, 530521 triangles (physical 163104 v / far 106959 v), leaves {'5.0': 107568, '20.0': 40645, '40.0': 28176} (4 s)",
+   "[terrain] break lines: {'cells_eligible': 53072, 'edges_read': 10036, 'break_cells': 6570, 'extra_vertices': 5157, 'triangles': 23454, 'corner_nodes': 13159, 'corners': 'filtered'}",
+   "[terrain] anti-aliased 240144 finest-level nodes (tent, 9 taps): |filtered - point| median 0.030 m, p99 0.50 m, max 2.34 m",
+   "[terrain] wrote terrain.tiers.json.gz: 268976 vertices, 3DEP 19.7..484.3 m (13 s total)"
+  ],
+  "identical_up_to_the_key_shift": {
+   "I_shifted": true,
+   "J_shifted": true,
+   "h": true,
+   "keep": true,
+   "tris": true,
+   "phys": true,
+   "stats": true,
+   "refine": true,
+   "break": true,
+   "frame_is_pinned": true
+  },
+  "all": true,
+  "frame": [
+   -3189.092384542444,
+   3356.3902548377737,
+   2.5096704987920786,
+   2.4977803755637766
+  ],
+  "frame_v018": [
+   -2145.069457044939,
+   1877.7042725040178,
+   2.5096704987920786,
+   2.4977803755637766
+  ],
+  "max_position_change_m": [
+   9.094947017729282e-13,
+   4.547473508864641e-13
+  ]
+ },
+ "D": {
+  "without_planned": {
+   "stats": {
+    "vertices": 301500,
+    "triangles": 595360,
+    "leaves_by_cell_m": {
+     "5.0": 108304,
+     "20.0": 45275,
+     "40.0": 55094
+    },
+    "kept_cells": 3499,
+    "kept_vertices": 11148,
+    "refine_cells": 34036,
+    "refine_nodes": 76926,
+    "physical_vertices": 163104,
+    "far_vertices": 139483,
+    "physical_triangles": 318561,
+    "far_triangles": 276799
+   },
+   "missing_samples": 34852,
+   "plan_lines": 0
+  },
+  "with_planned": {
+   "stats": {
+    "vertices": 409360,
+    "triangles": 811080,
+    "leaves_by_cell_m": {
+     "5.0": 151632,
+     "20.0": 56923,
+     "40.0": 51505
+    },
+    "kept_cells": 3499,
+    "kept_vertices": 11148,
+    "refine_cells": 34036,
+    "refine_nodes": 76926,
+    "physical_vertices": 269657,
+    "far_vertices": 141056,
+    "physical_triangles": 531401,
+    "far_triangles": 279679
+   },
+   "missing_samples": 237260,
+   "plan_lines": 13
+  }
+ }
+}

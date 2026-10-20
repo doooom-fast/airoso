@@ -37,6 +37,10 @@ kept surface); the kn5 prep welds them after those passes (``build_kn5_loop._wel
 PHYSICAL vs FAR. Cells within ``physical_within_m`` of a pavement (and any pocket of other cells
 enclosed by them) are physical ground (``1GRASS``); everything else is the FAR RING: visual-only,
 named without a digit prefix, never scanned by the gates, never listed for GrassFX or occlusion.
+
+PLANNED PAVEMENT (``tier_options.planned_pavement``, ledger 0054 P2): road a later phase builds, read from an
+authored intermediate, marks the tiers and the physical ground (pockets included) like a built pavement, so the
+ground over it is planned, sampled and tiled before the road exists; it never marks kept cells or their refinement.
 """
 from __future__ import annotations
 
@@ -158,6 +162,15 @@ class TierSpec:
             self.breaks["corners"] = str(bk.get("corners", "point"))
             if self.breaks["corners"] not in ("point", "filtered"):
                 raise ValueError("terrain.tier_options.breaks.corners: 'point' or 'filtered'")
+        # PLANNED PAVEMENT (ledger 0054 P2, opt-in): road a later phase will build, described by an authored
+        # intermediate (e.g. data/expansion.north.json). It marks the TIERS and the PHYSICAL ground (with its pockets)
+        # exactly as a built pavement does, so the ground under and around it is planned, sampled and tiled before the
+        # road exists; it never marks keep_cells / refine and never counts as pavement for the break lines or the
+        # assembler's clamp and feather: those follow BUILT pavement only. Absent = every output byte-identical.
+        pp = opt.get("planned_pavement") or {}
+        self.planned_files = [str(f) for f in (pp.get("files") or [])]
+        if pp and not self.planned_files:
+            raise ValueError("terrain.tier_options.planned_pavement needs files (authored intermediates)")
         self.physical_m = float(opt.get("physical_within_m", 250.0))
         self.keep_m = float(opt.get("keep_surface_m", 0.0))
         self.keep_feather_m = float(opt.get("keep_feather_m", 0.0))
@@ -226,7 +239,7 @@ class TierSpec:
         if self.sx < 0:
             raise ValueError("a heightfield frame on a mirror_x track is not supported")
         return Frame.heightfield(heightfield_meta, self.origin, int(self.frame_cfg.get("upsample", 1)),
-                                 self.levels, self.base_m)
+                                 self.levels, self.base_m, pin=self.frame_cfg.get("pin"))
 
 
 class Frame:
@@ -236,11 +249,31 @@ class Frame:
         self.x0, self.z0, self.ux, self.uz = float(x0), float(z0), float(ux), float(uz)
 
     @classmethod
-    def heightfield(cls, meta, origin, upsample, levels, base_m):
+    def heightfield(cls, meta, origin, upsample, levels, base_m, pin=None):
         """the frame whose nominal-``sp`` cells are the heightfield grid's own cells, exactly as the v021
         assembler projects it (build_loop_blend.project_grid): node (row j, col i) at
-        x = (w + i*gx - lon0) * m_lon, z = (n - j*gy - lat0) * m_lat, gx/gy from the grid's mid latitude"""
-        s, w, n, e = meta["bbox_swne"]
+        x = (w + i*gx - lon0) * m_lon, z = (n - j*gy - lat0) * m_lat, gx/gy from the grid's mid latitude
+
+        ``pin`` (``tier_options.frame.pin``, opt-in; ledger 0054 P0 step 6): the frame is computed from the PINNED
+        anchor - the installed meta's rounded ``bbox_swne`` (and its ``spacing_m``) - shifted by whole heightfield
+        cells ``rows_n`` north / ``cols_w`` west, so neither growing the grid nor re-rounding a regrown meta can
+        move it. The shift is a whole number of base units, so every lattice key keeps its position up to float
+        rounding and the 3DEP cache is re-keyed by exactly that number (tools/remap_sample_cache.py). The meta must
+        agree: its recorded ``grid_grow`` (absent = 0) is the pin's offsets and its anchor is the pinned one to
+        1e-6 deg (a rounded meta), else ValueError. With offsets 0 on the installed meta the frame is today's,
+        bit for bit (the same expression on the same numbers)."""
+        if pin:
+            g = meta.get("grid_grow") or {}
+            for k in ("rows_n", "cols_w"):
+                if int(g.get(k, 0)) != int(pin.get(k, 0)):
+                    raise ValueError(f"tier_options.frame.pin.{k} {pin.get(k, 0)} != the heightfield meta's grid_grow."
+                                     f"{k} {g.get(k, 0)}: the frame pin and data/heightfield.meta.json disagree")
+            if abs(float(pin.get("spacing_m", meta["spacing_m"])) - float(meta["spacing_m"])) > 1e-9:
+                raise ValueError(f"tier_options.frame.pin.spacing_m {pin.get('spacing_m')} != the meta's "
+                                 f"{meta['spacing_m']}")
+            s, w, n, e = (float(v) for v in pin["bbox_swne"])
+        else:
+            s, w, n, e = meta["bbox_swne"]
         sp = float(meta["spacing_m"]) / max(1, upsample)
         midlat = (s + n) / 2
         gy = sp / 111_000.0
@@ -251,10 +284,37 @@ class Frame:
             raise ValueError(f"the heightfield's {sp} m cell must be one of the tier cells {levels}")
         per = int(round(per))
         # row 0 is NORTH and rows run south: lattice J = -per * row so J grows northward
-        return cls((w - origin["lon"]) * m_lon, (n - origin["lat"]) * m_lat, gx * m_lon / per, gy * m_lat / per)
+        f = cls((w - origin["lon"]) * m_lon, (n - origin["lat"]) * m_lat, gx * m_lon / per, gy * m_lat / per)
+        if pin:
+            kx, kz = pin_key_shift(pin, upsample, per)
+            if kx or kz:
+                f = cls(f.x0 - kx * f.ux, f.z0 + kz * f.uz, f.ux, f.uz)
+            # the meta's own anchor (rounded or full precision) is the pinned one shifted by the same whole cells
+            hf_gx, hf_gy = gx * max(1, upsample), gy * max(1, upsample)
+            ms, mw, mn, me = meta["bbox_swne"]
+            dw = abs(mw - (w - int(pin.get("cols_w", 0)) * hf_gx))
+            dn = abs(mn - (n + int(pin.get("rows_n", 0)) * hf_gy))
+            if dw > 1.000001e-6 or dn > 1.000001e-6:
+                raise ValueError(f"data/heightfield.meta.json's anchor (w {mw}, n {mn}) is {max(dw, dn):.3g} deg from "
+                                 f"the frame pin's {pin['bbox_swne']} grown by {pin.get('rows_n', 0)} rows N / "
+                                 f"{pin.get('cols_w', 0)} cols W: the grid was not grown by whole cells of the pin")
+        return f
 
     def to_json(self):
         return [self.x0, self.z0, self.ux, self.uz]
+
+
+def pin_key_shift(pin: dict | None, upsample: int, per: int) -> tuple[int, int]:
+    """the whole-cell growth of a frame pin in BASE units: (kx, kz). A lattice key (I, J) of the unpinned frame is
+    key (I + kx, J - kz) of the pinned one (the anchor moved kx units west and kz units north); ``per`` is base
+    units per frame cell (Frame.heightfield's), a heightfield cell is ``upsample`` frame cells"""
+    if not pin:
+        return 0, 0
+    u = max(1, int(upsample)) * int(per)
+    rows_n, cols_w = int(pin.get("rows_n", 0)), int(pin.get("cols_w", 0))
+    if rows_n < 0 or cols_w < 0:
+        raise ValueError(f"tier_options.frame.pin rows_n / cols_w must be >= 0, got {rows_n} / {cols_w}")
+    return cols_w * u, rows_n * u
 
 
 def load_heightfield_meta(project_dir) -> dict | None:
@@ -328,7 +388,11 @@ class Topology:
     """Leaves, vertices (base-lattice keys), triangles and the physical/far split. Deterministic:
     the same inputs give the same vertex order and triangle list, byte for byte."""
 
-    def __init__(self, spec: TierSpec, road_lines, corridor_lines=(), *, closed_first=True, frame: Frame | None = None):
+    def __init__(self, spec: TierSpec, road_lines, corridor_lines=(), *, closed_first=True, frame: Frame | None = None,
+                 plan_lines=()):
+        """``plan_lines`` (``tier_options.planned_pavement``, ledger 0054 P2): [(pts_xyz, widths)] of pavement not
+        built yet - open lines appended after the road lines for the TIER and PHYSICAL marks only (never keep /
+        refine). Empty: the topology is the one the road lines alone give, byte for byte."""
         self.spec = spec
         self.f = frame or spec.frame(None)
         self.r = spec.r
@@ -352,13 +416,25 @@ class Topology:
                 pts_cache[sp] = densify(road_lines, sp, closed_first)
             return pts_cache[sp]
 
+        plan_lines = [ln for ln in (plan_lines or ()) if len(ln[0]) >= 1]
+        ppts_cache = {}
+
+        def ppts(sp):
+            """the road points + the planned pavement's (tier and physical marks)"""
+            if not plan_lines:
+                return pts(sp)
+            if sp not in ppts_cache:
+                ppts_cache[sp] = pts(sp) + densify(plan_lines, sp, False)
+            return ppts_cache[sp]
+
+        self.n_plan_lines = len(plan_lines)
         for t in spec.tiers[:-1]:
             L = spec.level_of(t["cell_m"])
             if L == 0:
                 continue
             W = float(t["within_m"])
             sp = max(2.0, min(10.0, W / 50.0))
-            cells = mark(pts(sp), W, L - 1)
+            cells = mark(ppts(sp), W, L - 1)
             marks.append((L - 1, cells, L))
             if t.get("x_split"):
                 self.xsplit.setdefault(L, set()).update(cells)
@@ -410,7 +486,7 @@ class Topology:
                             self.refine_cells.append(k)
         # physical marks at the finest tier level that is not the coarse ground's
         self.phys_level = min(1, nlev - 1)
-        self.phys = mark(pts(5.0), spec.physical_m, self.phys_level)
+        self.phys = mark(ppts(5.0), spec.physical_m, self.phys_level)
 
         # ancestors of every mark (a coarse cell wants to split when any descendant is marked)
         self._marks = []

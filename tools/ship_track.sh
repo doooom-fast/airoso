@@ -177,9 +177,34 @@ draft_divide_connectors() {
   step "draft: divided side streets -> one trunk + island (Del Cerro)"
   (cd "$AIROSO" && python tools/divide_connectors.py "$PROJ")
 }
+draft_stubs() {
+  # PHASE 5 (ledger 0054), opt-in: STUBS=<file> (default $SRC/stubs.json) — as tools/ship_sd.sh. Without a declaration
+  # no stub file of an earlier run survives in the project and no stub step does anything.
+  local decl="${STUBS:-$SRC/stubs.json}"
+  if [ -f "$decl" ]; then
+    cp "$decl" "$PROJ/data/stubs.json"
+    [ -f "$SRC/data/stubs.3dep.json" ] && cp "$SRC/data/stubs.3dep.json" "$PROJ/data/stubs.3dep.json"
+  else
+    rm -f "$PROJ/data/stubs.json" "$PROJ/data/stubs.plan.json" "$PROJ/data/stubs.built.json" "$PROJ/data/verify_stubs.json"
+  fi
+  if [ -f "$PROJ/data/stubs.json" ]; then
+    step "draft: phase-5 side-road stubs -> short connectors at their real width, heading and 3DEP grade (tools/stub_roads.py)"
+    (cd "$AIROSO" && python tools/stub_roads.py apply "$PROJ")
+  fi
+}
 draft_trim_connectors() {
   step "draft: trim connectors at the mainline edge"
   (cd "$AIROSO" && python tools/trim_connectors.py "$PROJ")
+}
+draft_expansion_decorate() {
+  step "draft: the north pieces' authored paint + raised medians (tools/expansion_pieces.py decorate; none taken = no-op)"
+  # ledger 0054 P3: as tools/ship_sd.sh (the paint each north piece carries, its raised medians -> median_bands.json)
+  (cd "$AIROSO" && python tools/expansion_pieces.py decorate "$PROJ")
+}
+draft_pads_plan() {
+  [ -f "$SRC/data/pads.3dep.json" ] && cp "$SRC/data/pads.3dep.json" "$PROJ/data/pads.3dep.json"
+  step "draft: junction pads plan (tools/junction_pad.py: the J2-J4 pads on the roads as built, the stubs' far-edge 3DEP; none declared = no-op)"
+  (cd "$AIROSO" && python tools/junction_pad.py plan "$PROJ")
 }
 draft_terrain_resample() {
   step "draft: tiered terrain re-planned on the trimmed connectors (only new vertices fetched)"
@@ -197,6 +222,16 @@ draft_seat_terrain() {
   step "author: seat the terrain under every road (verge finer than the road)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/seat_terrain_blend.py" -- "$PROJ" 2>&1 | grep "^\[seat\]\|Error\|Traceback" )
 }
+draft_aprons() {
+  step "author: corner aprons (route.aprons: the return pavement, its curb + walk, the ground under it; self-checked; none declared = no-op)"
+  # ledger 0054 P1 fix round: corner aprons (tools/author_aprons_blend.py; track.config.json route.aprons, absent = no-op)
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_aprons_blend.py" -- "$PROJ" 2>&1 | grep "^\[apron\]\|Error\|Traceback" )
+}
+draft_pads() {
+  step "author: junction pads (tools/author_junction_pad_blend.py: one deck per crossroads welded onto its arms, curb returns, K-rail stubs, the ground seated; self-checked; none planned = no-op)"
+  # ledger 0054 P3 step 2 (as tools/ship_sd.sh): 1ROAD_pad_<id> + 1KERB_sidewalk_pad<id> + 1WALL_STUB_PAD_<id>_<stub>
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_junction_pad_blend.py" -- "$PROJ" 2>&1 | grep "^\[pads\]\|Error\|Traceback" )
+}
 draft_triangulate_terrain() {
   step "author: triangulate the terrain (BEAUTY, what the retired decimation did to every face; no vertex moves)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/triangulate_terrain_blend.py" -- "$PROJ" 2>&1 | grep "^\[tri\]\|Error\|Traceback" )
@@ -211,6 +246,17 @@ draft_ground_release() {
 draft_median() {
   step "author: median island"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_blend.py" -- "$PROJ" 2>&1 | grep "^\[median" )
+}
+draft_stubs_author() {
+  if [ -f "$PROJ/data/stubs.plan.json" ]; then
+    step "author: phase-5 stubs — curb returns, corner pavement, K-rail barrier (tools/author_stubs_blend.py, self-checked)"
+    (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_stubs_blend.py" -- "$PROJ" --stage author 2>&1 | grep "^\[stubs\]\|Error\|Traceback" )
+  fi
+}
+draft_stubs_tidy() {
+  if [ -f "$PROJ/data/stubs.plan.json" ]; then
+    (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_stubs_blend.py" -- "$PROJ" --stage tidy 2>&1 | grep "^\[stubs\]\|Error\|Traceback" )
+  fi
 }
 draft_gap_mouths() {
   step "author: gap the mainline sidewalk at every mouth"
@@ -399,6 +445,20 @@ gate_verify_mouths() {
   step "gate: verify_mouths on the built road (every side-street mouth: mouth line, host lane, notch, approach — hard)"
   (cd "$AIROSO" && python tools/verify_mouths.py "$PROJ")
 }
+gate_verify_stubs() {
+  if [ -f "$PROJ/data/stubs.plan.json" ]; then
+    step "gate: verify_stubs on the built road (every declared stub: present, welded, drivable to its barrier, the barrier curb to curb and seated — hard)"
+    rm -f "$PROJ/data/verify_stubs.json"
+    (cd "$AIROSO" && python tools/verify_stubs.py "$PROJ")
+  fi
+}
+gate_verify_pads() {
+  rm -f "$PROJ/data/verify_pads.json"
+  if [ -f "$PROJ/data/pads.built.json" ]; then
+    step "gate: verify_pads on the built road (every junction pad: present, single coverage, seams <= 10 mm, no grass / curb on the deck, barriers, node height vs 3DEP — hard)"
+    (cd "$AIROSO" && python tools/verify_pads.py "$PROJ")
+  fi
+}
 gate_rib_check() {
   step "gate: terrain ribbing on the built ground (tools/rib_check.py: sub-cell features folded into staircases — hard)"
   (cd "$AIROSO" && python tools/rib_check.py "$PROJ" --json "$PROJ/data/rib_check.json")
@@ -414,6 +474,17 @@ gate_drive_test_street() {
     rc=0; (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --layout "$lid" 2>&1 | grep -v "drive-time\] sweep" | tail -30) || rc=$?
     [ "$rc" = 0 ] || DT_S=$rc
   done
+}
+gate_drive_test_lines() {
+  # ledger 0054 P3 step 7 (as tools/ship_sd.sh): the north network's own lines, both directions; a red here is never
+  # installed (no reference to be "no worse than")
+  rm -f "$PROJ/data/drive_test.expansion.json" "$PROJ/data/drive_test.line."*.json
+  DT_L=0
+  if [ -f "$PROJ/data/expansion.north.json" ] && grep -q '"authored_take"' "$PROJ/track.config.json"; then
+    step "gate: drive_test --line expansion (the north network's own lines, both directions, on the street OBJ — hard, never covered by --force-install)"
+    (cd "$AIROSO" && python tools/expansion_lines.py "$PROJ")
+    (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --line expansion 2>&1 | grep -v "drive-time\] sweep" | tail -40) || DT_L=$?
+  fi
 }
 gate_audit_street() {
   if [ -n "$AUDIT_NOTE" ]; then step "gate: audit_mesh, street (hard total; $AUDIT_NOTE)"; else step "gate: audit_mesh, street (hard total)"; fi
@@ -442,6 +513,24 @@ gate_fold_fans() {
   step "gate: verify_fold_fans (every levelled mainline fold pinch, all layouts, on the BUILT gate OBJs — hard)"
   rm -f "$PROJ/data/verify_fold_fans.json"
   (cd "$AIROSO" && python tools/verify_fold_fans.py "$PROJ")
+}
+gate_kn5_ground() {
+  # ledger 0054 P3 repair round 1 (the gates lens: EXPANSION-PLAN V5 lists kn5_ground_check on all three layouts and
+  # neither chain ran it): scripts/ac/kn5_ground_check.py on the kn5 SET each layout loads (the road + the street-only kn5,
+  # or + the common race kn5 + its closure) — double-sheet terrain, furniture seating, lamp masts, the road on the ground
+  # (kn5-internal: data/track.obj is this kn5's own gate OBJ); data/kn5_ground_check.<id>.json. A red counts with the
+  # street gates (KG): --force-install covers it only where no key is worse than the reference (ledger 0047)
+  local lid rc KX
+  step "gate: kn5_ground_check per layout (EXPANSION-PLAN V5: the kn5 set each layout loads — terrain sheets, furniture seating, lamp masts, the road on the ground)"
+  KG=0
+  for lid in $LAYOUT_IDS; do
+    rm -f "$PROJ/data/kn5_ground_check.$lid.json"
+    if [[ " $RACE_IDS " == *" $lid "* ]]; then KX="--kn5 $PROJ/build/${SLUG}_race.kn5 --kn5 $PROJ/build/${SLUG}_closure_$lid.kn5"
+    elif [ -f "$PROJ/build/${SLUG}_street.kn5" ]; then KX="--kn5 $PROJ/build/${SLUG}_street.kn5"; else KX=""; fi
+    rc=0; (cd "$AIROSO" && python -m scripts.ac.kn5_ground_check "$PROJ" $KX --json "$PROJ/data/kn5_ground_check.$lid.json" 2>&1 | tail -14) || rc=$?
+    echo "  kn5_ground_check $lid: exit $rc"
+    [ "$rc" = 0 ] || KG=$rc
+  done
 }
 
 # a draft step that needs no Blender (what --draft-only runs)
@@ -611,7 +700,7 @@ for lid in $LAYOUT_IDS; do rm -f "$PROJ/data/drive_test.$lid.json"; done
 rm -f "$PROJ/data/verify_mouths.json" "$PROJ/data/rib_check.json" "$PROJ/data/house_seat_check.json"
 for lid in $RACE_IDS; do rm -f "$PROJ/data/audit.$lid.json" "$PROJ/data/no_route.$lid.json" "$PROJ/data/track.$lid.obj"; done
 rm -f "$PROJ/data/track.race.obj" "$PROJ/data/audit.race.json"
-DT_S=0; AU_S=0; DT_R=0; AU_R=0; NR_R=0
+DT_S=0; AU_S=0; DT_R=0; AU_R=0; NR_R=0; DT_L=0; KG=0
 for n in ${GATE[@]+"${GATE[@]}"}; do "gate_$n"; done
 # a race layout red on its OWN gates is never installed, --force-install or not
 RACE_RED=$(pyq "import json,os,sys
@@ -669,14 +758,18 @@ done
 # gate OBJs (66-78 MB each, regenerable from the kn5s) are never in a sync_out list
 fi
 
-echo; echo "GATES: street drive_test exit $DT_S, street audit exit $AU_S, race drive_test exit $DT_R, race audit exit $AU_R, race no_route exit $NR_R"
+if [ "$DT_L" != 0 ]; then
+  echo; echo "  NOT INSTALLED: drive_test --line expansion exited $DT_L (the north network's own drive gate; no reference"
+  echo "  exists to be 'no worse than', so --force-install does not apply — data/drive_test.expansion.json)"; exit 1
+fi
+echo; echo "GATES: street drive_test exit $DT_S, street audit exit $AU_S, race drive_test exit $DT_R, race audit exit $AU_R, race no_route exit $NR_R, kn5_ground_check exit $KG"
 echo "  race layouts red on their own gates: ${RACE_RED:-none}"
 if [ -n "$RACE_RED" ]; then
   echo "  NOT INSTALLED: race layout(s) $RACE_RED fail on their own gates (drive_test barrier_missing / obstruction,"
   echo "  the BUILT no_route containment fill) — no reference exists to be 'no worse than', so --force-install does not"
   echo "  apply (data/drive_test.<id>.json, data/no_route.<id>.json)"; exit 1
 fi
-if [ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ] || [ "$NR_R" != 0 ]; then
+if [ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ] || [ "$NR_R" != 0 ] || [ "$KG" != 0 ]; then
   if [ "$NR_R" != 0 ]; then
     echo "  NOT INSTALLED: no_route exited $NR_R (2 = an input error: the containment verdict could not be computed)"; exit 1
   elif [ "$FORCE" = 1 ]; then

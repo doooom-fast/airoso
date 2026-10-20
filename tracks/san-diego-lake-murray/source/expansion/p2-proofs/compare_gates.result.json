@@ -1,0 +1,749 @@
+{
+ "layouts": {
+  "street": {
+   "v0.18.0 -> rehearsal": {
+    "soft_top_in_lane": [
+     33,
+     33
+    ],
+    "severe_steps": [
+     0,
+     0
+    ],
+    "severe_per_km": [
+     0.0,
+     0.0
+    ],
+    "steps_per_km": [
+     0.0,
+     0.0
+    ],
+    "kinks_per_km": [
+     3.41,
+     3.41
+    ],
+    "obstruction_stations": [
+     0,
+     0
+    ],
+    "barrier_missing": [
+     0,
+     0
+    ],
+    "excursion_drops": [
+     98,
+     98
+    ],
+    "daylight_gaps": [
+     0,
+     0
+    ],
+    "undrivable_corners": [
+     0,
+     0
+    ],
+    "floating_furniture": [
+     391,
+     391
+    ],
+    "fold_severe": [
+     null,
+     null
+    ],
+    "severe_old_rule": [
+     0,
+     0
+    ]
+   },
+   "worse": [],
+   "box_samples": {
+    "J1": [],
+    "J5": [
+     [
+      "kinks",
+      6956.0,
+      -6.0,
+      4.73
+     ],
+     [
+      "kinks",
+      6956.0,
+      -6.0,
+      4.73
+     ],
+     [
+      "kinks",
+      6957.0,
+      -6.0,
+      4.73
+     ],
+     [
+      "kinks",
+      6957.0,
+      -6.0,
+      4.73
+     ]
+    ]
+   },
+   "box_samples_v0.18.0": {
+    "J1": [],
+    "J5": [
+     [
+      "kinks",
+      6956.0,
+      -6.0,
+      4.73
+     ],
+     [
+      "kinks",
+      6956.0,
+      -6.0,
+      4.73
+     ],
+     [
+      "kinks",
+      6957.0,
+      -6.0,
+      4.73
+     ],
+     [
+      "kinks",
+      6957.0,
+      -6.0,
+      4.73
+     ]
+    ]
+   }
+  },
+  "race_cw": {
+   "v0.18.0 -> rehearsal": {
+    "soft_top_in_lane": [
+     9,
+     9
+    ],
+    "severe_steps": [
+     22,
+     22
+    ],
+    "severe_per_km": [
+     1.63,
+     1.63
+    ],
+    "steps_per_km": [
+     4.38,
+     4.38
+    ],
+    "kinks_per_km": [
+     6.23,
+     6.23
+    ],
+    "obstruction_stations": [
+     0,
+     0
+    ],
+    "barrier_missing": [
+     0,
+     0
+    ],
+    "excursion_drops": [
+     0,
+     0
+    ],
+    "daylight_gaps": [
+     0,
+     0
+    ],
+    "undrivable_corners": [
+     0,
+     0
+    ],
+    "floating_furniture": [
+     391,
+     391
+    ],
+    "fold_severe": [
+     null,
+     null
+    ],
+    "severe_old_rule": [
+     22,
+     22
+    ]
+   },
+   "worse": [],
+   "box_samples": {
+    "J1": [
+     [
+      "severe_all",
+      4541.0,
+      -13.03,
+      0.06
+     ]
+    ],
+    "J5": [
+     [
+      "severe_steps",
+      6956.0,
+      -10.03,
+      0.079
+     ],
+     [
+      "severe_steps",
+      6957.0,
+      -10.03,
+      0.079
+     ],
+     [
+      "severe_steps",
+      6956.0,
+      -9.28,
+      0.073
+     ],
+     [
+      "severe_steps",
+      6957.0,
+      -9.28,
+      0.073
+     ],
+     [
+      "severe_steps",
+      6958.0,
+      -10.03,
+      0.073
+     ],
+     [
+      "severe_steps",
+      6959.0,
+      -10.03,
+      0.072
+     ],
+     [
+      "severe_steps",
+      6958.0,
+      -9.28,
+      0.067
+     ],
+     [
+      "severe_all",
+      6956.0,
+      -10.03,
+      0.079
+     ],
+     [
+      "severe_all",
+      6957.0,
+      -10.03,
+      0.079
+     ],
+     [
+      "severe_all",
+      6956.0,
+      -9.28,
+      0.073
+     ],
+     [
+      "severe_all",
+      6957.0,
+      -9.28,
+      0.073
+     ],
+     [
+      "severe_all",
+      6958.0,
+      -10.03,
+      0.073
+     ],
+     [
+      "severe_all",
+      6959.0,
+      -10.03,
+      0.072
+     ],
+     [
+      "severe_all",
+      6958.0,
+      -9.28,
+      0.067
+     ],
+     [
+      "severe_all",
+      6959.0,
+      -9.28,
+      0.066
+     ],
+     [
+      "severe_all",
+      6955.0,
+      -10.03,
+      0.065
+     ],
+     [
+      "severe_all",
+      6954.0,
+      -10.03,
+      0.063
+     ],
+     [
+      "severe_all",
+      6955.0,
+      -9.28,
+      0.061
+     ],
+     [
+      "kinks",
+      6957.0,
+      -10.03,
+      7.95
+     ],
+     [
+      "kinks",
+      6956.0,
+      -10.03,
+      7.86
+     ],
+     [
+      "kinks",
+      6957.0,
+      -9.28,
+      7.35
+     ],
+     [
+      "kinks",
+      6956.0,
+      -9.28,
+      7.28
+     ],
+     [
+      "kinks",
+      6958.0,
+      -10.03,
+      7.28
+     ],
+     [
+      "kinks",
+      6959.0,
+      -10.03,
+      7.19
+     ],
+     [
+      "kinks",
+      6958.0,
+      -9.28,
+      6.69
+     ]
+    ]
+   },
+   "box_samples_v0.18.0": {
+    "J1": [
+     [
+      "severe_all",
+      4541.0,
+      -13.03,
+      0.06
+     ]
+    ],
+    "J5": [
+     [
+      "severe_steps",
+      6956.0,
+      -10.03,
+      0.079
+     ],
+     [
+      "severe_steps",
+      6957.0,
+      -10.03,
+      0.079
+     ],
+     [
+      "severe_steps",
+      6956.0,
+      -9.28,
+      0.073
+     ],
+     [
+      "severe_steps",
+      6957.0,
+      -9.28,
+      0.073
+     ],
+     [
+      "severe_steps",
+      6958.0,
+      -10.03,
+      0.073
+     ],
+     [
+      "severe_steps",
+      6959.0,
+      -10.03,
+      0.072
+     ],
+     [
+      "severe_steps",
+      6958.0,
+      -9.28,
+      0.067
+     ],
+     [
+      "severe_all",
+      6956.0,
+      -10.03,
+      0.079
+     ],
+     [
+      "severe_all",
+      6957.0,
+      -10.03,
+      0.079
+     ],
+     [
+      "severe_all",
+      6956.0,
+      -9.28,
+      0.073
+     ],
+     [
+      "severe_all",
+      6957.0,
+      -9.28,
+      0.073
+     ],
+     [
+      "severe_all",
+      6958.0,
+      -10.03,
+      0.073
+     ],
+     [
+      "severe_all",
+      6959.0,
+      -10.03,
+      0.072
+     ],
+     [
+      "severe_all",
+      6958.0,
+      -9.28,
+      0.067
+     ],
+     [
+      "severe_all",
+      6959.0,
+      -9.28,
+      0.066
+     ],
+     [
+      "severe_all",
+      6955.0,
+      -10.03,
+      0.065
+     ],
+     [
+      "severe_all",
+      6954.0,
+      -10.03,
+      0.063
+     ],
+     [
+      "severe_all",
+      6955.0,
+      -9.28,
+      0.061
+     ],
+     [
+      "kinks",
+      6957.0,
+      -10.03,
+      7.95
+     ],
+     [
+      "kinks",
+      6956.0,
+      -10.03,
+      7.86
+     ],
+     [
+      "kinks",
+      6957.0,
+      -9.28,
+      7.35
+     ],
+     [
+      "kinks",
+      6956.0,
+      -9.28,
+      7.28
+     ],
+     [
+      "kinks",
+      6958.0,
+      -10.03,
+      7.28
+     ],
+     [
+      "kinks",
+      6959.0,
+      -10.03,
+      7.19
+     ],
+     [
+      "kinks",
+      6958.0,
+      -9.28,
+      6.69
+     ]
+    ]
+   }
+  },
+  "race_acw": {
+   "v0.18.0 -> rehearsal": {
+    "soft_top_in_lane": [
+     9,
+     9
+    ],
+    "severe_steps": [
+     20,
+     20
+    ],
+    "severe_per_km": [
+     1.48,
+     1.48
+    ],
+    "steps_per_km": [
+     6.75,
+     6.75
+    ],
+    "kinks_per_km": [
+     7.05,
+     7.05
+    ],
+    "obstruction_stations": [
+     0,
+     0
+    ],
+    "barrier_missing": [
+     0,
+     0
+    ],
+    "excursion_drops": [
+     0,
+     0
+    ],
+    "daylight_gaps": [
+     0,
+     0
+    ],
+    "undrivable_corners": [
+     0,
+     0
+    ],
+    "floating_furniture": [
+     391,
+     391
+    ],
+    "fold_severe": [
+     null,
+     null
+    ],
+    "severe_old_rule": [
+     20,
+     20
+    ]
+   },
+   "worse": [],
+   "box_samples": {
+    "J1": [],
+    "J5": []
+   },
+   "box_samples_v0.18.0": {
+    "J1": [],
+    "J5": []
+   }
+  }
+ },
+ "audit": {
+  "street": [
+   [
+    53,
+    {
+     "A_supports_in_road": 0,
+     "B_terrain_poke": 0,
+     "C_junction_crossings": 0,
+     "D_wall_on_road": 0,
+     "E_wall_floating": 0,
+     "J_terrain_span": 0,
+     "K_kerb_in_carriageway": 20,
+     "F_curb_not_flush": 13,
+     "I_sidewalk_isolating": 20
+    }
+   ],
+   [
+    53,
+    {
+     "A_supports_in_road": 0,
+     "B_terrain_poke": 0,
+     "C_junction_crossings": 0,
+     "D_wall_on_road": 0,
+     "E_wall_floating": 0,
+     "J_terrain_span": 0,
+     "K_kerb_in_carriageway": 20,
+     "F_curb_not_flush": 13,
+     "I_sidewalk_isolating": 20
+    }
+   ]
+  ],
+  "race_cw": [
+   [
+    53,
+    {
+     "A_supports_in_road": 0,
+     "B_terrain_poke": 0,
+     "C_junction_crossings": 0,
+     "D_wall_on_road": 0,
+     "E_wall_floating": 0,
+     "J_terrain_span": 0,
+     "K_kerb_in_carriageway": 20,
+     "F_curb_not_flush": 13,
+     "I_sidewalk_isolating": 20,
+     "W_race_wall_clash": 0
+    }
+   ],
+   [
+    53,
+    {
+     "A_supports_in_road": 0,
+     "B_terrain_poke": 0,
+     "C_junction_crossings": 0,
+     "D_wall_on_road": 0,
+     "E_wall_floating": 0,
+     "J_terrain_span": 0,
+     "K_kerb_in_carriageway": 20,
+     "F_curb_not_flush": 13,
+     "I_sidewalk_isolating": 20,
+     "W_race_wall_clash": 0
+    }
+   ]
+  ],
+  "race_acw": [
+   [
+    53,
+    {
+     "A_supports_in_road": 0,
+     "B_terrain_poke": 0,
+     "C_junction_crossings": 0,
+     "D_wall_on_road": 0,
+     "E_wall_floating": 0,
+     "J_terrain_span": 0,
+     "K_kerb_in_carriageway": 20,
+     "F_curb_not_flush": 13,
+     "I_sidewalk_isolating": 20,
+     "W_race_wall_clash": 0
+    }
+   ],
+   [
+    53,
+    {
+     "A_supports_in_road": 0,
+     "B_terrain_poke": 0,
+     "C_junction_crossings": 0,
+     "D_wall_on_road": 0,
+     "E_wall_floating": 0,
+     "J_terrain_span": 0,
+     "K_kerb_in_carriageway": 20,
+     "F_curb_not_flush": 13,
+     "I_sidewalk_isolating": 20,
+     "W_race_wall_clash": 0
+    }
+   ]
+  ]
+ },
+ "no_route": {
+  "race_cw": {
+   "fail": false,
+   "leak_m2": 0,
+   "leak_cells": 0,
+   "blocked": [],
+   "forbidden_reached": [],
+   "spawns_unreached": [],
+   "reached_m2": 139148,
+   "probes": null
+  },
+  "race_acw": {
+   "fail": false,
+   "leak_m2": 0,
+   "leak_cells": 0,
+   "blocked": [],
+   "forbidden_reached": [],
+   "spawns_unreached": [],
+   "reached_m2": 138847,
+   "probes": null
+  }
+ },
+ "verify_mouths": [
+  {
+   "piece": "del_cerro_blvd#0",
+   "end": "end",
+   "host_vertex": 1085,
+   "angle_deg": 75.63,
+   "fail": false,
+   "fails": [],
+   "span_mouth_line_m": [
+    -12.75,
+    12.27
+   ],
+   "mouth_line_max_m": 0.015,
+   "host_lane_above_max_m": 0.0,
+   "notch_max_m": 0.02,
+   "approach_max_dg_per_m": 0.0113
+  },
+  {
+   "piece": "del_cerro_blvd#1",
+   "end": "start",
+   "host_vertex": 1086,
+   "angle_deg": 86.05,
+   "fail": false,
+   "fails": [],
+   "span_mouth_line_m": [
+    -10.18,
+    10.57
+   ],
+   "mouth_line_max_m": 0.016,
+   "host_lane_above_max_m": 0.0,
+   "notch_max_m": 0.016,
+   "approach_max_dg_per_m": 0.0098
+  },
+  {
+   "piece": "medium#2+0#0#0",
+   "end": "start",
+   "host_vertex": 4424,
+   "angle_deg": 88.88,
+   "fail": false,
+   "fails": [],
+   "span_mouth_line_m": [
+    -4.95,
+    4.89
+   ],
+   "mouth_line_max_m": 0.003,
+   "host_lane_above_max_m": 0.0,
+   "notch_max_m": 0.005,
+   "approach_max_dg_per_m": 0.0182
+  },
+  {
+   "piece": "medium#2+0#0#0",
+   "end": "end",
+   "host_vertex": 82,
+   "angle_deg": 87.77,
+   "fail": false,
+   "fails": [],
+   "span_mouth_line_m": [
+    -5.92,
+    5.66
+   ],
+   "mouth_line_max_m": 0.004,
+   "host_lane_above_max_m": 0.0,
+   "notch_max_m": 0.01,
+   "approach_max_dg_per_m": 0.0097
+  }
+ ]
+}

@@ -18,6 +18,12 @@ coincident back-to-back slivers whose normals cancel (a NaN shading normal in th
 vertices whose area is under SLIVER_M2 is removed (it covers no ground), and a vertex left with no face (the T-vertex)
 goes with it; nothing else changes.
 
+A second repair (ledger 0054 P3 repair round 1, the view lens's see-through slit on Jackson north): an n-gon the seat
+left with a T-vertex m on one of its straight edges a-b can be cut into the ear (a, m, b) — a triangle with no plan
+area, a vertical fin as soon as m moves off the line (1,978 within 80 m of the north roads before the release). Each is
+mended by tools/terrain_mend.py: the edge a-b rotated inside the quad it makes with the face across it (no vertex moves
+or is added), or the fin deleted where nothing lies across a-b.
+
     blender --background --python-exit-code 1 --python tools/triangulate_terrain_blend.py -- <project-dir>
 """
 from __future__ import annotations
@@ -27,6 +33,9 @@ from pathlib import Path
 
 import bmesh
 import bpy
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import terrain_mend  # noqa: E402
 
 SLIVER_M2 = 0.01   # [invented] coincident faces (one vertex set, either winding) smaller than this are removed
 
@@ -65,6 +74,7 @@ def main():
     bmesh.ops.triangulate(bm, faces=bm.faces, quad_method="BEAUTY", ngon_method="BEAUTY")
     bm.verts.ensure_lookup_table()
     nf, nv = remove_coincident_slivers(bm)
+    mend = terrain_mend.mend_vertical_slivers(bm)
     bm.to_mesh(me)
     bm.free()
     me.update()
@@ -73,8 +83,9 @@ def main():
                          f"coincident slivers): refusing to save")
     bpy.ops.wm.save_mainfile(filepath=str(proj / "loop.blend"))
     print(f"[tri] TERRAIN: {n} quads/ngons triangulated (BEAUTY), {before_f} -> {len(me.polygons)} faces "
-          f"({nf} coincident back-to-back slivers removed, {nv} vertices left with no face), no vertex moved; "
-          f"saved loop.blend")
+          f"({nf} coincident back-to-back slivers removed, {nv} vertices left with no face; vertical slivers "
+          f"{mend['rotated']} rotated, {mend['deleted']} deleted on the open edge, {mend['rebuilt']} rebuilt, {mend['left']} left), no vertex "
+          f"moved; saved loop.blend")
 
 
 main()

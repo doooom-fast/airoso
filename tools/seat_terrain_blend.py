@@ -16,6 +16,9 @@ TERRAIN):
      grass follows a creased deck only as finely as its vertices stand (budget: the prep tiles 1GRASS into
      equal-width bands and the western one sits near its 65,535 cap — a 0.75 m pass under the mended mainline folds
      put it at 80,362 and the prep refused), and
+  1a. (opt-in, ledger 0054 P1 fix round: track.config.json route.weld_exact_deck) under the HOST's lane on the mouth
+     side of every exact-deck mouth, over its span + HOST_LANE_PAD_M, halves the edges down to HOST_LANE_FINE_M — see
+     HOST LANE UNDER AN EXACT-DECK MOUTH in main; absent the key nothing here changes, and
   1b. removes the terrain from under the inside half of every mainline fold the weld mended (see
      _clear_under_mended_folds: the fan of a climbing corner is no plane a 4.5 m grass facet can lie under),
   2. sets every TERRAIN vertex within the pavement + sidewalk width to deck − LIFT − CLEAR_M (never above
@@ -72,6 +75,11 @@ FOLD_PRE_PAD_M = 2.0       # ... out to the rows' half-width + this
 EDGE_FINE_M = 0.6     # terrain edge length along the host's pavement edge at a mouth ...
 EDGE_BAND_M = 1.2     # ... within this either side of that edge ...
 EDGE_REACH_M = 20.0   # ... and this of the cut (Del Cerro: half-width / sin(angle) 12.3 m + a corner)
+HOST_LANE_FINE_M = 0.75   # [invented] ledger 0054 P1 fix round, opt-in (route.weld_exact_deck): terrain edge length
+                          # under the HOST's lane on the mouth side of an exact-deck mouth ...
+HOST_LANE_PAD_M = 4.0     # ... over the mouth's span (connector half-width / sin(angle)) + this each way (verify_mouths'
+                          # HOST LANE window is span + 3.0 m) ...
+HOST_LANE_IN_M = 1.0      # ... from this far across the host centre line to its edge + 0.5 m
 
 
 class Roads:
@@ -361,7 +369,67 @@ def main():
                 for j in range(max(0, i - 3), min(n - 1, i + 4)):
                     flag[j] = True
         tight.append(flag)
-    n_fine = 0
+    # ON A STEEP HOST (ledger 0054 P3, opt-in: track.config.json route.tight_approach_host_grade, a grade): a connector
+    # whose mouth's host climbs at least that steeply is TIGHT over its whole approach — the weld eases the host's cross-
+    # fall (its grade, ~9 % on Princess View) to level over a 15 m stub's every row, a twist of up to 0.45 m across 10 m,
+    # and a 1.5 m grass facet across it stood 1-4 mm under the stub's road (verify_mouths APPROACH, Fontaine St / Princess
+    # View Way, P3's second build); absent key: as before
+    _tg = None
+    if cfgp_ := (proj / "track.config.json"):
+        if cfgp_.exists():
+            _tg = (json.loads(cfgp_.read_text(encoding="utf-8")).get("route") or {}).get("tight_approach_host_grade")
+    _tight_lines = set()
+    if _tg is not None:
+        for li, ln in enumerate(lines):
+            g_ = max((abs(float(m_.get("host_grade") or 0.0)) for m_ in mouths if m_.get("piece") == ln["name"]),
+                     default=0.0)
+            if g_ >= float(_tg):
+                tight[li] = [True] * len(tight[li])
+                _tight_lines.add(li)
+    _tight_px = bool(_tight_lines)
+    # HOST LANE UNDER AN EXACT-DECK MOUTH (ledger 0054 P1 fix round; opt-in by track.config.json route.weld_exact_deck,
+    # connector-name prefixes). The kn5 prep pins every grass vertex under a road 0.02 m below it and leaves the grass a
+    # plane between them (its corridor edges ~4.5 m). On the J5 corner (Navajo / Jackson, 0050's levelled fan) the
+    # host's own deck creases along its centre line (the inside edge eased up to the pinch, the centre left alone): a
+    # 4.5 m grass facet across that valley crease stood within 5 mm of the road, 2 mm over it, at v2311-2313 — 11
+    # verify_mouths HOST LANE samples, the same 11 on the installed v0.18.0 road (no gate looked there before a mouth
+    # did). Under the host's lane on the mouth's side, over its span + HOST_LANE_PAD_M, the terrain edges are halved to
+    # HOST_LANE_FINE_M, so the prep pins the grass every 0.75 m and a 2 % crease lifts a facet ~4 mm, not 2.2 cm.
+    exact_px = []
+    cfgp = proj / "track.config.json"
+    if cfgp.exists():
+        exact_px = [str(x) for x in (json.loads(cfgp.read_text(encoding="utf-8")).get("route", {})
+                                     .get("weld_exact_deck") or [])]
+    lane_wins = []
+    for ln in lines:
+        for cx, cz, deck in ln["cuts"]:
+            mo = next((m_ for m_ in mouths if m_.get("piece") == ln["name"]
+                       and abs(m_["cut_xyz"][0] - cx) < 1e-6 and abs(m_["cut_xyz"][2] - cz) < 1e-6), None)
+            if mo is None or not any(str(mo["connector"]).startswith(px) for px in exact_px):
+                continue
+            ang = math.radians(max(1.0, min(90.0, float(mo.get("angle_deg") or 90.0))))
+            hw = (float(mo.get("connector_width_m") or 10.0) / 2.0) / max(math.sin(ang), 0.05)
+            arc = [0.0]
+            for k in range(len(deck.idx) - 1):
+                arc.append(arc[-1] + math.hypot(deck.rows[deck.idx[k + 1]][1][0] - deck.rows[deck.idx[k]][1][0],
+                                                deck.rows[deck.idx[k + 1]][1][2] - deck.rows[deck.idx[k]][1][2]))
+            _d, k0, t0, _o = deck.project(cx, cz)
+            s_cut = arc[k0] + (arc[k0 + 1] - arc[k0]) * t0
+            lane_wins.append((cx, cz, deck, arc, s_cut, hw + HOST_LANE_PAD_M, int(mo["side"])))
+
+    def in_host_lane(mx, mz):
+        for cx, cz, deck, arc, s_cut, reach_s, sd in lane_wins:
+            if math.hypot(mx - cx, mz - cz) > reach_s + 30.0:
+                continue
+            _d, k, t, lat = deck.project(mx, mz)
+            s_ = arc[k] + (arc[k + 1] - arc[k]) * t
+            if abs(s_ - s_cut) > reach_s:
+                continue
+            if -HOST_LANE_IN_M <= lat * sd <= deck._half(deck.idx[k], sd) + 0.5:
+                return True
+        return False
+
+    n_fine = n_lane = 0
     for _round in range(8):
         todo = []
         for e in bm.edges:
@@ -370,6 +438,10 @@ def main():
                 continue
             mx = 0.5 * (e.verts[0].co.x + e.verts[1].co.x)
             mz = 0.5 * (e.verts[0].co.y + e.verts[1].co.y)
+            if lane_wins and ln_e > HOST_LANE_FINE_M and in_host_lane(mx, mz):
+                todo.append(e)
+                n_lane += 1
+                continue
             if not any(math.hypot(mx - cx, mz - cz) <= FINE_REACH_M for cx, cz in cuts_xz):
                 continue
             if any(math.hypot(mx - cx, mz - cz) <= EDGE_REACH_M and abs(deck.edge_gap(mx, mz, sd, 0.0)) <= EDGE_BAND_M
@@ -377,6 +449,15 @@ def main():
                 todo.append(e)
                 continue
             r = roads.nearest(mx, mz)
+            if (r is None or r[0] > APPROACH_OFF_M) and _tight_px:
+                # (route.tight_approach_host_grade) a long edge whose MIDPOINT stands off a steep-host stub can still
+                # reach under its road from a coarse kept cell: its ends are read too (a 14 m fan edge from a 20 m kept
+                # cell reached 0.6 m inside Fontaine St's road edge, grass 3-5 mm under it — P3's third build)
+                for vv in e.verts:
+                    rv = roads.nearest(vv.co.x, vv.co.y)
+                    if rv is not None and rv[0] <= APPROACH_OFF_M and tight[rv[1]][rv[2]] and rv[1] in _tight_lines:
+                        r = rv
+                        break
             if r is None or r[0] > APPROACH_OFF_M:
                 continue
             if ln_e > (TIGHT_EDGE_M if tight[r[1]][r[2]] else FINE_EDGE_M):
@@ -426,6 +507,9 @@ def main():
           f"inside edge); "
           f"{moved} verts seated to the verge ({under} under a connector's ROAD, deck read off the welded mesh); "
           f"{sum(len(ln['cuts']) for ln in lines)} cut end(s) stop at their host's pavement; saved loop.blend")
+    if lane_wins:
+        print(f"[seat] HOST LANE (route.weld_exact_deck): {n_lane} of those edges halved to {HOST_LANE_FINE_M} m under the "
+              f"host's lane at {len(lane_wins)} exact-deck mouth(s)")
 
 
 main()

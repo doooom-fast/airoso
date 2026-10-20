@@ -406,6 +406,123 @@ def lane_markings(centerline_m: list[Vertex], widths_m: list[float], *, line_w: 
     return {"white": white, "yellow": yellow}
 
 
+STUB_PAINT_STOP_M = 0.5        # [INVENTED] a phase-5 stub's paint ends this far short of its barrier's road-side toe
+STUB_BARRIER_HALF_BASE_M = 0.335   # the K-rail's half base (tools/race_furniture.HALF_PROFILE[0][0])
+
+
+def paint_markings(cpts: list[Vertex], cw: list[float], paint: dict, *, line_w: float = 0.12) -> dict:
+    """AUTHORED paint (ledger 0054 P3, the north network: tools/expansion_pieces.py decorate writes it into the
+    connector record). ``paint["lines"]`` = [{"color": "white" | "yellow", "dash": bool, "w": metres (optional),
+    "off": [lateral offset per connector point, + = left of the connector's own direction, None = no line there]}];
+    a line is a constant-width strip between consecutive points that both carry an offset (dashed: 3 m on / 9 m off,
+    lane_markings' pattern, by the arc at the strip's first point). ``paint["strokes"]`` = [{"color", "w", "a": [i, o],
+    "b": [i, o]}] — single straight strips (the J4 approach's hatching) between two points given as a fractional
+    connector point index i and an offset o. Same station frames as lane_markings (centred tangent, left normal), same
+    quad layout (double-sided decal), so tools/weld_mouths_blend.py rebuilds it exactly."""
+    pts = cpts
+    m = len(pts)
+    stations = []
+    arc = 0.0
+    for i in range(m):
+        if i > 0:
+            arc += math.hypot(pts[i][0] - pts[i - 1][0], pts[i][2] - pts[i - 1][2])
+        x, y, z = pts[i]
+        tx, tz = _horiz_tangent(pts, i, False)
+        stations.append((x, y, z, -tz, tx, cw[i] / 2.0, arc))
+    out = {"white": {"vertices": [], "uvs": [], "tris": []}, "yellow": {"vertices": [], "uvs": [], "tris": []}}
+    for ln in paint.get("lines") or []:
+        mesh = out["yellow" if ln.get("color") == "yellow" else "white"]
+        V, U, T = mesh["vertices"], mesh["uvs"], mesh["tris"]
+        offs = ln["off"]
+        w = float(ln.get("w", line_w))
+        dashed = bool(ln.get("dash"))
+        for i in range(m - 1):
+            o0, o1 = offs[i], offs[i + 1]
+            if o0 is None or o1 is None:
+                continue
+            s0, s1 = stations[i], stations[i + 1]
+            if dashed and (s0[6] % 12.0) > 3.0:
+                continue
+            b = len(V)
+            for s, o in ((s0, o0), (s1, o1)):
+                x, y, z, nx, nz, _half, a = s
+                for sign in (-1, 1):
+                    off = o + sign * w / 2
+                    V.append((x + nx * off, y, z + nz * off))
+                    U.append(((sign + 1) / 2, a))
+            T.append((b, b + 1, b + 3)); T.append((b, b + 3, b + 2))
+    for sk in paint.get("strokes") or []:
+        mesh = out["yellow" if sk.get("color") == "yellow" else "white"]
+        V, U, T = mesh["vertices"], mesh["uvs"], mesh["tris"]
+        w = float(sk.get("w", line_w))
+
+        def at(fi, o):
+            i = max(0, min(m - 2, int(math.floor(fi))))
+            t = max(0.0, min(1.0, fi - i))
+            a, b_ = stations[i], stations[i + 1]
+            x = a[0] + (b_[0] - a[0]) * t
+            y = a[1] + (b_[1] - a[1]) * t
+            z = a[2] + (b_[2] - a[2]) * t
+            nx = a[3] + (b_[3] - a[3]) * t
+            nz = a[4] + (b_[4] - a[4]) * t
+            L = math.hypot(nx, nz) or 1.0
+            return x + nx / L * o, y, z + nz / L * o
+        pa, pb = at(*sk["a"]), at(*sk["b"])
+        dx, dz = pb[0] - pa[0], pb[2] - pa[2]
+        L = math.hypot(dx, dz)
+        if L < 1e-6:
+            continue
+        px, pz = -dz / L * w / 2, dx / L * w / 2
+        b = len(V)
+        for p in (pa, pb):
+            for sign in (-1, 1):
+                V.append((p[0] + sign * px, p[1], p[2] + sign * pz))
+                U.append(((sign + 1) / 2, 0.0))
+        T.append((b, b + 1, b + 3)); T.append((b, b + 3, b + 2))
+    return out
+
+
+def connector_markings(cpts: list[Vertex], cw: list[float], stub: dict | None = None, paint: dict | None = None) -> dict:
+    """A connector's paint, as the assembler (blender/build_loop_blend.py) sweeps it and tools/weld_mouths_blend.py
+    rebuilds it to check the layout — ONE function, so the two can never disagree. A plain connector: exactly
+    ``lane_markings(cpts, cw, center_yellow=True)``. A phase-5 STUB (ledger 0054; its connector record's ``stub``,
+    tools/stub_roads.py) is painted as the street it is (2026-10-18, the phase-5 verifier: "short dashes about 0.3 m
+    inside the edge lines near the mouth and near the barrier, which look like doubled edge lines" and "the centre line
+    and edge lines also run about 1 m past the barrier onto the tail"):
+      - lane dividers only between real lanes: ``lanes_per_side`` (OSM ``lanes`` / 2, default 1) - 1 per side. The
+        generic rule paints a divider every 3.65 m that fits inside the edge inset, so a 9.6-12 m two-lane side street
+        got one 0.6-1.8 m inside each edge line, and its 3 m dash fell at the 15 m stub's two ends;
+      - the paint ends STUB_PAINT_STOP_M short of the barrier's road-side toe: the polyline is cut at
+        ``tail_m`` + the K-rail's half base + the stop, measured back from its far end (stub_roads ends every stub
+        exactly ``tail_m`` past the barrier's centre line).
+    An AUTHORED connector (ledger 0054 P3, the north network: its record's ``paint``) is painted exactly as authored
+    (paint_markings)."""
+    if paint:
+        return paint_markings(cpts, cw, paint)
+    if not stub:
+        return lane_markings(cpts, cw, center_yellow=True)
+    per_side = max(1, int(stub.get("lanes_per_side") or 1))
+    keep_back = float(stub.get("tail_m") or 0.0) + STUB_BARRIER_HALF_BASE_M + STUB_PAINT_STOP_M
+    arc = [0.0]
+    for i in range(1, len(cpts)):
+        arc.append(arc[-1] + math.hypot(cpts[i][0] - cpts[i - 1][0], cpts[i][2] - cpts[i - 1][2]))
+    stop = arc[-1] - keep_back
+    pts, ws = [], []
+    for i in range(len(cpts)):
+        if arc[i] <= stop + 1e-9:
+            pts.append(tuple(cpts[i]))
+            ws.append(cw[i])
+            continue
+        if i > 0 and arc[i - 1] < stop:
+            f = (stop - arc[i - 1]) / max(1e-12, arc[i] - arc[i - 1])
+            pts.append(tuple(cpts[i - 1][k] + (cpts[i][k] - cpts[i - 1][k]) * f for k in range(3)))
+            ws.append(cw[i - 1] + (cw[i] - cw[i - 1]) * f)
+        break
+    if len(pts) < 2:
+        return {"white": {"vertices": [], "uvs": [], "tris": []}, "yellow": {"vertices": [], "uvs": [], "tris": []}}
+    return lane_markings(pts, ws, center_yellow=True, max_lanes_side=per_side - 1)
+
+
 def road_markings(centerline_m: list[Vertex], widths_m: list[float], *, line_w: float = 0.14,
                   edge_inset: float = 0.4, lift: float = 0.0, dash_on: float = 3.0,
                   dash_gap: float = 4.5, tile_m: float = 1.0, bank_at=None) -> dict:

@@ -1,0 +1,76 @@
+{
+ "mouths": [
+  {
+   "connector": "del_cerro_blvd",
+   "host": "MAINLINE",
+   "host_vertex": 1085,
+   "side": 1,
+   "connector_width_m": 22.91,
+   "cut_xyz": [
+    -1445.267,
+    41.566,
+    -544.375
+   ],
+   "host_seg": 1084,
+   "host_t": 0.8927,
+   "angle_deg": 76.94,
+   "host_grade": 0.04558,
+   "piece": "del_cerro_blvd#0",
+   "end": "end"
+  },
+  {
+   "connector": "del_cerro_blvd",
+   "host": "MAINLINE",
+   "host_vertex": 1086,
+   "side": -1,
+   "connector_width_m": 21.82,
+   "cut_xyz": [
+    -1416.935,
+    41.752,
+    -543.179
+   ],
+   "host_seg": 1086,
+   "host_t": 0.1393,
+   "angle_deg": 85.96,
+   "host_grade": 0.05074,
+   "piece": "del_cerro_blvd#1",
+   "end": "start"
+  },
+  {
+   "connector": "medium#2+0",
+   "host": "MAINLINE",
+   "host_vertex": 4424,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    115.9,
+    24.411,
+    -1472.181
+   ],
+   "host_seg": 4423,
+   "host_t": 0.8405,
+   "angle_deg": 89.35,
+   "host_grade": 0.00417,
+   "piece": "medium#2+0#0#0",
+   "end": "start"
+  },
+  {
+   "connector": "medium#2+0#0",
+   "host": "del_cerro_blvd#1",
+   "host_vertex": 82,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -1190.753,
+    39.252,
+    -618.251
+   ],
+   "host_seg": 82,
+   "host_t": 0.2023,
+   "angle_deg": 86.41,
+   "host_grade": 0.00334,
+   "piece": "medium#2+0#0#0",
+   "end": "end"
+  }
+ ]
+}

@@ -66,6 +66,7 @@ def test_stage_order():
         'tools/no_route.py "$PROJ" --layout "$lid"',
         'rm -f "$PROJ/data/verify_fold_fans.json"',
         'tools/verify_fold_fans.py "$PROJ"',
+        'python -m scripts.ac.kn5_ground_check "$PROJ" $KX --json "$PROJ/data/kn5_ground_check.$lid.json"',
         "RACE_RED=$(pyq",
         "sync outputs workshop -> airoso",
         "NOT INSTALLED: race layout(s)",
@@ -626,3 +627,14 @@ def test_street_only_kn5_is_exported_checked_and_in_the_street_gate_obj_only():
     race_obj = [ln for ln in TEXT.splitlines() if '--out "$PROJ/data/track.$lid.obj"' in ln]
     assert race_obj and not any("STREET_KN5" in ln or "_street.kn5" in ln for ln in race_obj)
     assert "street_kn5.json" in TEXT.split('step "sync outputs workshop -> airoso"')[1]
+
+
+def test_kn5_ground_check_runs_per_layout_on_its_kn5_set_repair_round_1():
+    """ledger 0054 P3 repair round 1 (the gates lens: EXPANSION-PLAN V5 lists kn5_ground_check on all three layouts and
+    neither chain ran it): after the fold fans, per layout on the kn5 set it loads, its red counted with the street
+    gates (--force-install only under 0047's no-key-worse rule) and its report synced"""
+    i = _first('python -m scripts.ac.kn5_ground_check "$PROJ" $KX --json "$PROJ/data/kn5_ground_check.$lid.json"')
+    assert _first('tools/verify_fold_fans.py "$PROJ"') < i < _first("RACE_RED=$(pyq")
+    assert 'KX="--kn5 $PROJ/build/${RK[$lid]} --kn5 $PROJ/build/${SLUG}_closure_$lid.kn5"; else KX="$STREET_KN5"' in TEXT
+    assert '[ "$NR_R" != 0 ] || [ "$KG" != 0 ]; then' in TEXT and "kn5_ground_check exit $KG" in TEXT
+    assert '"kn5_ground_check.$lid.json"' in TEXT

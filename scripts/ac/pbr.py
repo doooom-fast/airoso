@@ -65,6 +65,10 @@ TEXTURES = {
     # starts with 1WALL_RACE — it needs its own row ABOVE this one (alpha-tested invisible), or it
     # would render as visible K-rail.
     "1WALL_RACE": ("concrete_barrier_diffuse.png", "concrete_barrier_normal.png", 0.85, (0.72, 0.72, 0.70, 1), 0.0, False),
+    # 1WALL_STUB BEFORE 1WALL (ledger 0054 phase 5, tools/author_stubs_blend.py): the barrier across every unbuilt side
+    # road's stub is the same K-rail module swept as a strip (u = arc / 4.04 m) — its own row for the reason above
+    # (the network-wall override reskins only the generic 1WALL key). It ships in the ROAD kn5 (all layouts).
+    "1WALL_STUB": ("concrete_barrier_diffuse.png", "concrete_barrier_normal.png", 0.85, (0.72, 0.72, 0.70, 1), 0.0, False),
     "BUSHES":  ("bushes_atlas.png", None, 0.9, (0.36, 0.37, 0.24, 1), 0.0, False),  # dry scrub billboards (LA Canyons bo_bushes_11)
     "HIGHWAY": ("asphalt_cracked_diffuse.jpg", "asphalt_cracked_normal.jpg", 0.80, (0.30, 0.30, 0.32, 1), 0.0, False),  # I-70 deck
     "HWYSTRUCT": ("building_diffuse.jpg", "building_normal.jpg", 0.85, (0.68, 0.68, 0.66, 1), 0.0, False),  # concrete parapets/piers

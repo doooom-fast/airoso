@@ -4,7 +4,7 @@
   "ui_series": "",
   "_ui_series_doc": "Engine track_folder prefixes the CM display name with ui_series (default 'K10 Colorado'); empty = use the track name as-is (SD names already carry the K10 - San Diego branding).",
   "slug": "san_diego_lake_murray",
-  "version": "0.18.1",
+  "version": "0.19.0",
   "author": "k10-san-diego",
   "year": 2026,
   "_about": "A single drivable LOOP around Lake Murray (Kevin's childhood neighborhood). This repo is the standalone, Blender-first home for the track: the loop is mapped from the REAL roads (OpenStreetMap) at REAL elevation (USGS 3DEP), imported into Blender, and shaped there interactively (Kevin designs, Claude operates) BEFORE any kn5 export. Start point = just the 5-road main loop; everything else is added deliberately, in Blender.",
@@ -22,10 +22,11 @@
   "route": {
     "bbox": [
       32.76,
-      -117.075,
-      32.808,
+      -117.082,
+      32.82,
       -116.998
     ],
+    "_bbox_doc": "Ledger 0054 P0 step 5 (2026-10-14): grown from [32.76, -117.075, 32.808, -116.998] to take the north loop (Waring, Princess View, Mission Gorge, Jackson north: J3 at -117.0790, J4 at 32.8171 N; EXPANSION-PLAN 'at least N 32.820 / W -117.082'). South and east unchanged. Read only by the centreline stage (scripts-v021/gps/centerline.py) and the buildings/zones fetchers' default box; no SD ship step reads it. The expansion's own OSM snapshot is data/osm.expansion.json (bbox 32.755 / -117.115 / 32.850 / -116.985, tools/fetch_osm.py, 7-day guard).",
     "roads": [
       "Alvarado Road",
       "College Avenue",
@@ -80,13 +81,29 @@
     "route_connectors": {
       "routes": [
         "medium",
-        "short"
+        "short",
+        "north"
       ],
+      "authored_routes": {
+        "north": "data/expansion.north.json"
+      },
+      "_authored_routes_doc": "Ledger 0054 P0 step 5 (2026-10-14; Kevin 2026-10-12: 'the new loop will connect to the old one'). north = airoso data/routes.json 'north' (tools/route_append.py from data/route.north.spec.json on data/osm.expansion.json): J1 (College/Waring) -> Waring -> Princess View -> Mission Gorge -> Jackson north -> J5 (Navajo/Jackson), both directions, one-way tags respected. Its roads are 17-33 m divided boulevards, so route_connectors does NOT draw it as constant connector_width_m pieces (EXPANSION-PLAN A3): an authored route is HELD (listed, no connector drawn) until P1 writes the readable intermediate (data/expansion.north.json, tools/author_expansion.py) and P3 has route_connectors take it over. Held = the connectors this tool writes are byte-identical to the [medium, short] set (tests/tools/test_route_connectors_held.py).",
       "keep": [
         "del_cerro_blvd"
       ],
-      "_doc": "Ledger 0041 (Kevin's seat, 2026-10-08): side streets disjointed. The per-name connectors missed Madra Ave and Delaware Ave and never had Pennsylvania Lane; tools/route_connectors.py derives the side streets from airoso data/routes.json (tools/route_tracks.py \u2014 Kevin's confirmed routes as continuous OSM node paths): the medium/short routes' off-loop runs become connector pieces, cut at College / the Del Cerro trunk by trim_connectors. route.connectors above is now documentation of the old name-based set."
+      "_doc": "Ledger 0041 (Kevin's seat, 2026-10-08): side streets disjointed. The per-name connectors missed Madra Ave and Delaware Ave and never had Pennsylvania Lane; tools/route_connectors.py derives the side streets from airoso data/routes.json (tools/route_tracks.py \u2014 Kevin's confirmed routes as continuous OSM node paths): the medium/short routes' off-loop runs become connector pieces, cut at College / the Del Cerro trunk by trim_connectors. route.connectors above is now documentation of the old name-based set.",
+      "authored_take": {"north": ["A", "B", "C", "D"]},
+      "_authored_take_doc": "Ledger 0054 P3 step 1 (2026-10-18): the north route is no longer HELD. tools/route_connectors.py takes the intermediate's four road PIECES whole (A Waring, B Princess View, C Mission Gorge, D Jackson north; tools/expansion_pieces.py): the pavement midline + curb-to-curb width per station (A3), A and D starting with P1's weld stubs W1 / W5 (so D runs J5 -> J4), B / C and the far ends of A / D ending exactly on the J2 / J3 / J4 pad arm cuts; the 3DEP profile through a local quadratic fit (the 11 % cap binds nowhere). P1's rehearsal took only the two weld stubs ([W1, W5])."
     },
+    "aprons": {"AP1": "data/expansion.north.json"},
+    "trim_blend_grade_cap": ["north_"],
+    "mouth_fill": ["north_"],
+    "weld_exact_deck": ["north_", "STUB_"],
+    "tight_approach_host_grade": 0.06,
+    "_tight_approach_doc": "Ledger 0054 P3 (2026-10-18; tools/seat_terrain_blend.py, opt-in): a side street whose mouth's host climbs at least 6 % [invented] has its whole approach's ground halved to 0.75 m (the seat's TIGHT_EDGE_M, as under a tight corner): the weld eases a 9 % host cross-fall to level over a 15 m stub's every row, and a 1.5 m grass facet across that twist stood 1-4 mm under the stub's road (verify_mouths APPROACH at Fontaine St / Princess View Way, P3's second build).",
+    "junction_pads": {"J2": "data/expansion.north.json", "J3": "data/expansion.north.json", "J4": "data/expansion.north.json"},
+    "_junction_pads_doc": "Ledger 0054 P3 step 2 (2026-10-18; EXPANSION-PLAN A4, docs/JUNCTIONS.md topology B): the three new crossroads J2 / J3 / J4 as one junction pad each (tools/junction_pad.py plan + tools/author_junction_pad_blend.py; gate tools/verify_pads.py): the deck welded onto every route arm's last row (seams 0.000 m), true-arc corners at the measured curb-return radii every 0.75 m, the curb + walk round every corner, and every unbuilt arm a Phase 5 closed stub (JUNCTIONS 18(d)): 15 m of real road to Kevin's K-rail, its far edge at 3DEP (data/pads.3dep.json).",
+    "_north_welds_doc": "Ledger 0054 P3 step 3 (2026-10-18): P1's rehearsal delta (source/expansion/p1-proofs/rehearsal_delta.py, P1 fix round) made permanent: aprons {AP1} = J1's R 30 return (tools/author_aprons_blend.py); trim_blend_grade_cap [north_] = the welded pieces' blends onto the loop deck lengthened until they stay within the 11 % cap (Waring fell 14.8 % in 30 m: the loop stands 1.44 m over 3DEP at J1); mouth_fill [north_] = their strips over the loop's pavement replaced by one piece from the loop's own edge; weld_exact_deck [north_] = the weld reads the loop deck off its triangles (the J1 corner's fanned outer edge). Each key names connector-name prefixes: only the two north mouths (J1, J5) carry them (the phase-5 stubs are STUB_*), but for weld_exact_deck, which also names STUB_: the north network's side streets join hosts that climb up to 9.6 % round curves (Princess View), where the level-across host deck read 2-3 cm off the host's own triangles at the mouth (verify_mouths HOST LANE, Laura St, P3's first build); the weld, the seat's host-lane refinement and verify_mouths then read the host deck off its triangles there, as at J1 / J5.",
     "smooth_sigma_y_pts": 5.0,
     "_smooth_sigma_y_doc": "Kevin 2026-10-09: 'smooth out the roughness'. The road profile is 3DEP sampled every 3 m (noise ~\u00b110 cm) and build_loop_blend's vertical smoothing was sigma 1.5 pts (~4.5 m) \u2014 every sample step is a felt event (fleet/reference/MEASURED.md). 5.0 pts (~15 m) rounds the sample noise while keeping the real grades (climbs are hundreds of metres long). Measured by drive_test bumps/km + kinks/km vs the locked build."
   },
@@ -251,6 +268,8 @@
       "clear_hard_min_m": 6.5,
       "pocket_min_m": 2.0
     },
+    "swept_mouths": ["north_"],
+    "_swept_mouths_doc": "Ledger 0054 P3 step 6 (2026-10-18; P1's rehearsal delta made permanent): the two north mouths are declared where their swept edges open the loop edge, policy per vertex (A7): race_cw seals J1 with the far strip to the box pin v1521 and puts the rest behind its closure, race_acw with its race strip; J5 sealed_far_strip / sealed_race_strip.",
     "kerbs": {
       "min_turn_deg": 45,
       "width_m": 1.0,
@@ -278,6 +297,18 @@
           "kind": "inside",
           "drop": true,
           "why": "Navajo/Jackson inside apex (race_cw's AI line apexes 1.5 m off it): the ribbon folds into two sheets up to 0.46 m apart at v2315 and v2323-2324, and 8 of the kerb's 51 stations sit under the upper sheet by up to 0.42 m - a red/white kerb vanishing under the asphalt at the apex. The single-sheet pieces are 4.5 m on entry (v2313-2314) and about 5 m on exit (v2324-2326), neither at the apex: dropped until the ribbon fold is one sheet."
+        },
+        {
+          "apex": 1514,
+          "kind": "outside",
+          "drop": true,
+          "why": "Ledger 0054 A7: the J1 Waring opening (W1, v1514-v1526 on the outer curb) takes the whole outside of the College/Navajo corner the kerb ran along (v1507-1520); a kerb that ends at a road opening reads wrong. The inside kerb stays dropped for its own reason (above)."
+        },
+        {
+          "apex": 2319,
+          "kind": "outside",
+          "drop": true,
+          "why": "Ledger 0054 A7: the J5 Jackson-north opening (W5, v2312-v2322) covers the outside apex of the Navajo/Jackson corner (the kerb ran v2312-2327); only a 14 m exit stub would be left."
         }
       ]
     },
@@ -503,7 +534,11 @@
           "rails": false,
           "why": "Ledger 0055 (Kevin, seat, 2026-10-14: 'cut into the hillside the way California does and has like a flat side of the hill alongside one side of the road'). College Ave north of Del Cerro is a split-level divided road: on fresh 3DEP 1 m the northbound carriageway rides a bench 2.4-5.7 m over the southbound one (v1216-1414) and the hill east of it rises another 4-8 m within 20 m (to 168-171 m against a road at ~157 m). The build carries both carriageways at the southbound grade (one slab, ledger 0037; the L3 note in 0055: the northbound lanes run up to ~5.7 m under their real bench, by Kevin's choice). East of the slab (right of the street layout's northbound travel) the ground is the real earth cut back by a planar earth batter (ground_release_blend BATTER_CUT, 1 m per metre) from the east pavement edge, read out to cut_reach_m 20 m (= terrain.clamp_corridor_m, the construction zone: at v1279-1306 the hill stands 12-13.8 m over the deck 12-14 m out, beyond the default 12 m reach), its top rounded into the real hill over round_m 3 m (docs/ROAD-CONSTRUCTION.md: 2-5 m). Past the daylight line it is untouched 3DEP; the west side (house lots at grade) has no zone. rails false: the ground rises from the kerb (a cut), so the release makes no drop to guard; the only fall a station reads there is the sidewalk's own outer apron, as on every street of the loop (the first rehearsal stood a jersey rail along all 816 m). Declared by centreline vertex, v1197.6-1468.5 (round 2: a station slides when the road before it changes length; the split level fades out north of v1400, the hillside cut runs on to ~v1470). Round 2 (the truth lens): with College registered onto its measured carriageways (route.median_registration) the cut's toe stands at the real northbound east kerb (~22-25 m east of the raw line); the face is ~10-11 m tall where the real one is ~5 m, because the deck keeps the southbound grade ~5-5.9 m under the real northbound bench (Kevin's choice)"
         }
-      ]
+      ],
+      "auto_cuts": {
+        "_doc": "Ledger 0054 P3 repair round 1 (2026-10-19, the truth lens; Kevin 2026-10-13: 'Why are we changing ridges?'; REALISM: lean in, never eject). Replaces the six hand-declared cut zones of P3 (mission_gorge_cut_1475_1560, jackson_cut_95_165 / 320_485 / 555_630 / 1005_1120 / 1225_1525 — P2's 50 m stretches, measured only on Mission Gorge's south side and Jackson's south-west side): fresh 3DEP showed the real walls run past their ends (planed flat at both end stations of every Jackson zone), stand at ten more places 20-50 m long on all four roads and both sides (97 of 249 stations with a 3 m+ wall kept less than half), and the 45 deg batter held Mission Gorge's ~1.5 m-per-metre rock face to half its height. tools/ground_release.py probes 3DEP beside every piece listed (every probe_step_m, each side, probe_from_curb_m..probe_to_curb_m past the curb) and declares a raise-only cut zone (bank, rails false, College's cut_reach_m / round_m) over every stretch where the real ground stands min_rise_m over the road, padded pad_m, its batter the p90 of the real face's own climb held to docs/ROAD-CONSTRUCTION.md's 1-2 m per metre. Every number is in tools/ground_release.AUTO_DEFAULTS [invented, fleet/GATES-CHANGELOG.md]; the zones and every probe station: data/ground_release.auto_cuts.json.",
+        "pieces": ["A", "B", "C", "D"]
+      }
     },
     "terrain_band_m": 22.0,
     "clamp_corridor_m": 20.0,
@@ -511,6 +546,13 @@
     "_clamp_doc": "Ledger 0054 D3 (Kevin 2026-10-12: 'why are we changing ridges?' - keep the real ridges), applied in v0.18.0: the band clamp holds in full within 20 m of a pavement and eases out by 40 m, the conform corridor (20 m) plus its 16 m blend, which already shape 0-36 m. Measured 2026-10-13 on fresh 3DEP transects (41,486 points, loop + every expansion road): 20 / 40 moves 0 real points by more than 1 m; 0046's 80 / 250 (GATES-CHANGELOG 2026-10-11, invented) filled the canyon north of west Navajo by up to 25 m and planed the Navajo-side ridge and the ridge west of College by 12-18 m. A hard 40 / 40 cut leaves a 2.2-2.4 m step beside Alvarado. GATES-CHANGELOG 2026-10-13 (0054): 20 / 40 [invented, measured].",
     "terrain_max_grade": 0.35,
     "elevation_scale": 1.0,
+    "grid_grow": {
+      "rows_n": 37,
+      "rows_s": 37,
+      "cols_w": 26,
+      "cols_e": 0,
+      "_doc": "Ledger 0054 P0 step 6 (2026-10-14; EXPANSION-PLAN 'grow the 40 m heightfield without moving a single old stake'). Read by scripts-v021 elevation/heightfield.py and tools/grow_heightfield.py (no ship step runs either; the grown grid itself is synced in): the 40 m grid (123 x 93 over the loop's bbox + 150 m) grows by whole cells to 149 x 167 = 24,883 nodes, [32.758650, -117.080708, 32.818620, -117.017103]. Every old node is sampled at its bit-identical position and every consumer projects it where it always did (the grown meta's bbox is the rounded loop bbox shifted by whole cells, written at full precision; 1.4e-14 deg max over all 11,439 old nodes). rows_n = rows_s keeps the meta's mid-latitude (heightfield.py refuses otherwise). Sized by the north route's kept near-road cells (20 m cells within 18 m of a pavement at the aerial's widest per road): 1,617 cells, the furthest 32.8175 N (J4) and -117.0794 W (J3), 119.9 m inside the grown north edge and 120.5 m inside the west one, so no extra rows. Applied in P2 (2026-10-14) together with tier_options.frame.pin rows_n 37 / cols_w 26 and the re-keyed 3DEP cache: data/heightfield.npy + .meta.json are the grown grid (tools/grow_heightfield.py, which runs build_heightfield's own layout and takes every old node from the installed grid, byte for byte; only the 13,444 new nodes came from 3DEP), synced into the workshop by the ship chain. The assembler's scatter and make_treefx's fill number the old cells as before (ledger 0054 P2), so the scenery near the loop does not move."
+    },
     "tiers": [
       {
         "within_m": 60.0,
@@ -529,7 +571,19 @@
     "tier_options": {
       "frame": {
         "kind": "heightfield",
-        "upsample": 2
+        "upsample": 2,
+        "pin": {
+          "bbox_swne": [
+            32.771983,
+            -117.069563,
+            32.805287,
+            -117.017103
+          ],
+          "spacing_m": 40.0,
+          "rows_n": 37,
+          "cols_w": 26,
+          "_doc": "Ledger 0054 P0 step 6 (2026-10-14); applied in P2 (2026-10-14): rows_n 37 / cols_w 26, in the same change as the grown data/heightfield.npy + .meta.json (tools/grow_heightfield.py: the 11,439 installed nodes byte for byte, 13,444 new ones from 3DEP) and the re-keyed data/terrain.samples.json.gz (tools/remap_sample_cache.py, PASS: source/expansion/p2-proofs/). The lattice frame is computed from THIS anchor - the installed v0.18.0 data/heightfield.meta.json's rounded bbox_swne (40 m grid, 123 x 93) - shifted by rows_n rows north / cols_w columns west of whole 40 m cells, never from a regrown meta's own (re-rounded) anchor, so growing the grid cannot move a lattice node (terrain_tiers.Frame.heightfield; the meta's recorded grid_grow must equal these offsets and its anchor must be this one shifted, else ValueError). Offsets 0 on the installed meta = today's frame, bit for bit. P2 sets rows_n 37 / cols_w 26 in the SAME change that writes the grown heightfield (terrain.grid_grow, scripts-v021 heightfield.py) and the re-keyed 3DEP cache (tools/remap_sample_cache.py --rows-n 37 --cols-w 26: keys shift by [+416, -592] base units, the identity proof is the tool's)."
+        }
       },
       "keep_cells": {
         "cell_m": 20.0,
@@ -550,13 +604,17 @@
       "antialias": {"cell_m": 5.0, "kernel": "tent", "far_max_move_m": 0.85},
       "diagonals": {"rule": "min_dh", "beyond_m": 20.0},
       "breaks": {"beyond_m": 20.0, "screen_m": 0.25, "tol_m": 0.4, "max_per_edge": 3, "min_spacing_m": 0.75, "corners": "filtered"},
+      "planned_pavement": {
+        "files": ["data/expansion.north.json"],
+        "_doc": "Ledger 0054 P2 (2026-10-14; EXPANSION-PLAN P2 step 1: physical ground within 250 m of every new pavement, the enclosed pocket included, before the roads exist). The north network's authored intermediate (tools/author_expansion.py: the four pieces at their stations with the wider curb offset as half-width, the J2-J4 pad outlines, the six see-only stubs) marks the TIERS and the PHYSICAL ground exactly as a built pavement does (terrain_tiers.Topology plan_lines; terrain_sample.planned_inputs), so the ground over the expansion is planned, sampled from 3DEP and tiled now. It never marks keep_cells / refine and is never pavement for the break lines, the clamp or the feather: those follow the BUILT roads, which P3 adds (route_connectors takes the pieces; then this key is retired). The plan is stale when the intermediate changes (inputs_md5)."
+      },
       "_doc": "frame: the lattice is anchored on data/heightfield.meta.json upsampled x2 (the assembler's graded 20 m grid; ~20.07 x 19.98 m at Lake Murray), so cell_m 40 / 20 / 5 are 2, 1 and 1/4 of its cells. keep_cells: every grid cell within 18 m of a pavement keeps its own two triangles and graded heights (the seat moves ground <= 11.1 m past a connector's pavement and subdivides <= 15.1 m; the prep pins <= 9 m and subdivides <= 16 m of a road vertex), so near-road ground and every near-road gate are exactly v0.17.1's. x_split: a centre vertex, longest edge = the cell side (5.0 m, 20.1 m) \u2014 criterion 5's 7 m / 28.3 m. physical_within_m: the 1GRASS extent (drive_test sweeps <= 20 m off the road; TreeFX fills <= 200 m). keep_surface_m / keep_feather_m: the graded surface is kept to 20 m (the conform corridor) and feathered into the data over 16 m (the conform blend), by pavement distance. keep_cells.refine (ledger 0046 fix round, 2026-10-12): a kept 20 m cell reaches ~46 m out, so past the prep's reach it stayed 20 m graded facets (criterion 5) and smoothed the I-8 terrace walls beside Alvarado away; once the seat and the prep have reshaped the near-road ground, the prep (build_kn5_loop._refine_kept_terrain) halves every kept-cell edge over edge_m 5.5 m on faces reaching past move_beyond_m 20 m or centred past min_face_d_m 12 m (coplanar: on the 20 m grid the halving lands on the 5 m x-split sub-lattice), then moves every kept-cell vertex past 20 m onto the 3DEP sub-lattice (planned for every kept cell's 5 m sub-cells not wholly within beyond_m 10 m, sampled like any vertex, under the L3 clamp) feathered exactly as the lattice beside it \u2014 one field across the kept edge, so the kept-node feather of 2026-10-12 (which held the kept cells' outer edge on the graded surface) is retired. Within 20 m of a pavement nothing moves (criterion 7). antialias + diagonals (ledger 0046 fix round 2, 2026-10-13): the visual lens's washboard ribs (the concrete Alvarado Creek channel SE of the LMB overcrossing, ~7 m wide and 6 m deep, and a ~3 m ditch on the cut slope west of College) are real 3DEP features narrower than two 5 m cells, point-sampled every 5 m and folded by a fixed diagonal into a staircase. antialias: every 5 m-level vertex (and refine node) takes the tent-filtered 3DEP of the 2.5 m base lattice around it (weights 1/4 1/2 1/4 per axis, terrain_tiers.AA_TAPS) instead of one point — exact on a plane, it only moves vertices where the ground bends inside a cell; in the far ring the move is held to far_max_move_m 0.85 m of the vertex's own 3DEP point (criterion 6's 1 m less a 0.15 m margin, three times the 0.045 m a fresh 3DEP fetch drifts from the cache on steep far slopes: at 0.95 the truth lens read all 106,544 far vertices against fresh 3DEP at max 0.995 m, 152 over 0.95; at 1.0 a re-sample read 3 of 3,000 at 1.003-1.005 m). diagonals: every plain square cell more than beyond_m 20 m from a pavement is split along the diagonal whose corners differ least in height (terrain_tiers.data_diagonals); no vertex moves, kept cells and x-split fans are untouched. Measured by tools/rib_check.py. GATES-CHANGELOG 2026-10-11 / 2026-10-12 / 2026-10-13: 18 / 250 / 20 / 16, 10 / 5.5 / 20 / 12, the tent kernel, far_max_move_m 0.85 and 20 are invented within the ledger's ranges. breaks + keep_batter (ledger 0046 fix round 4, 2026-10-13): the visual lens still saw a washboard west of College — cut-slope benches, risers 4-6 m tall and ~1.5 m wide, running ~8 degrees off the lattice axis: a lattice can only put a riser BETWEEN two rows of nodes, so it sat between rows j and j+1 for ~35 m and then jumped a row (and in the far ring criterion 6 holds the tent to 0.85 m). breaks: on every edge of a plain 5 m cell (no x-split, no hanging node, not kept, all corners more than beyond_m 20 m from a pavement) whose base-lattice midpoint departs from its ends' line by screen_m 0.25 m and which climbs the ground at least as steeply as it crosses it, 3DEP is read every 0.5 m (cached as fine samples); up to max_per_edge 3 points where the lightly smoothed profile departs most from the polyline (tol_m 0.4 m, min_spacing_m 0.75 m) become vertices ON the edge, and the cell is triangulated through them (the least-squares triangulation of its boundary polygon) — the riser runs straight through the cell. corners filtered: the cell corners keep their anti-aliased height. Measured by tools/rib_check.py step_jogs. keep_batter 3.5 / keep_feather_min_m 8: past 20 m the graded surface returns to 3DEP within an earth batter's run of the gap between them (3.5 m per metre, held to 8-16 m; steepest 0.43, never steeper than the 16 m blend where the gap exceeds 4.6 m), so ground 29 m from the LMB approach is the data within criterion 4's 2 m (truth lens s 3800); per node, interpolated by the prep like D and d. All numbers invented, GATES-CHANGELOG 2026-10-13 fix round 4."
     },
     "far_extent": {
       "bbox_swne": [
         32.755,
-        -117.0895,
-        32.822,
+        -117.108,
+        32.85,
         -116.998
       ],
       "_doc": "The dossier's landmark box (ledger 0046 Project): Cowles summit + ~1 km north (32.822), the valley wall south of I-8 (32.755), the Cowles ridge east and the San Diego River gorge west; widened from the ledger's -117.085 / -117.00 to -117.0895 / -116.998 so criterion 3's faces at x <= -4000 and x >= 4500 exist (8.6 x 7.4 km). Note: the gorge floor is 3DEP 27-100 m abs (probe 2026-10-11) \u2014 real ground below the ledger's 'no vertex below 100 m' line, kept as data."
@@ -567,7 +625,7 @@
         "bbox_swne": [
           32.8055,
           -117.0425,
-          32.82,
+          32.828,
           -117.0215
         ],
         "cell_m": 20.0,
@@ -790,6 +848,7 @@
     "real-roads"
   ],
   "_ui_tags_doc": "Real public roads: never 'fictional' (the engine default before the 0047 fix round). track_folder prepends 'circuit' on every closed loop \u2014 Content Manager refuses Race / Track Day sessions without it, on the street layout as much as the race ones. CM's width is the narrowest declared width of the lap (Alvarado, 13.0 m), measured by track_folder from data/centerline.local.json.",
+  "drive_test": {"fold_fan_severe": "verify_fold_fans", "_doc": "Ledger 0054 P1 fix round, permanent in P3 (2026-10-18): a severe reading on a fixed-offset wheel path running backwards inside a levelled mainline fold fan is judged by tools/verify_fold_fans.py's real wheel paths (hard), filed here as fold_severe (scripts/geometry/drive_test.py module doc, FOLD SEVERE)."},
   "ai": {
     "_note": "ledger 0052: Kunos payload semantics, 2.5 m off the K-rail, faired, seated on and clamped at the BUILT gate OBJ; still GENERATED drafts (0023)",
     "layouts": ["race_cw", "race_acw"],

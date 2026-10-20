@@ -1,5 +1,5 @@
 {
- "_doc": "ledger 0054 P3 repair round 1: held v0.18.1 rehearsal (D:/k10-scratch/phase1/held) -> the repair rehearsal (D:/k10-scratch/phase1/r1final), [held, rehearsal] per key",
+ "_doc": "ledger 0054 P3 repair: held v0.18.1 rehearsal (D:/k10-scratch/phase1/held) -> the repair rehearsal (D:\\k10-scratch\\phase1\\r2run3), [held, rehearsal] per key",
  "layouts": {
   "street": {
    "soft_top_in_lane": [
@@ -188,10 +188,10 @@
    {
     "race": false,
     "road_verts": 76806,
-    "grass_verts": 824002,
+    "grass_verts": 824284,
     "piers": 0,
-    "wall_verts": 151460,
-    "curb_verts": 99809,
+    "wall_verts": 152578,
+    "curb_verts": 100329,
     "A_supports_in_road": 0,
     "B_terrain_poke": 0,
     "C_junction_crossings": 0,
@@ -201,7 +201,7 @@
     "K_kerb_in_carriageway": 20,
     "F_curb_not_flush": 13,
     "F_skirt_off_terrain": 1550,
-    "F_side_faces_skipped": 3727,
+    "F_side_faces_skipped": 3808,
     "I_sidewalk_isolating": 20
    }
   ],
@@ -229,10 +229,10 @@
    {
     "race": true,
     "road_verts": 76806,
-    "grass_verts": 824002,
+    "grass_verts": 824284,
     "piers": 0,
-    "wall_verts": 351960,
-    "curb_verts": 102467,
+    "wall_verts": 353078,
+    "curb_verts": 102987,
     "A_supports_in_road": 0,
     "B_terrain_poke": 0,
     "C_junction_crossings": 0,
@@ -242,7 +242,7 @@
     "K_kerb_in_carriageway": 20,
     "F_curb_not_flush": 13,
     "F_skirt_off_terrain": 1651,
-    "F_side_faces_skipped": 3231,
+    "F_side_faces_skipped": 3312,
     "I_sidewalk_isolating": 20,
     "W_race_wall_clash": 0
    }
@@ -271,10 +271,10 @@
    {
     "race": true,
     "road_verts": 76806,
-    "grass_verts": 824002,
+    "grass_verts": 824284,
     "piers": 0,
-    "wall_verts": 351944,
-    "curb_verts": 102467,
+    "wall_verts": 353062,
+    "curb_verts": 102987,
     "A_supports_in_road": 0,
     "B_terrain_poke": 0,
     "C_junction_crossings": 0,
@@ -284,7 +284,7 @@
     "K_kerb_in_carriageway": 20,
     "F_curb_not_flush": 13,
     "F_skirt_off_terrain": 1651,
-    "F_side_faces_skipped": 3231,
+    "F_side_faces_skipped": 3312,
     "I_sidewalk_isolating": 20,
     "W_race_wall_clash": 0
    }
@@ -334,9 +334,9 @@
    "double_sheet_cells": 0,
    "seating": {
     "walls": {
-     "objects": 50,
+     "objects": 49,
      "no_ground_pct": 0.0,
-     "median_m": -0.494,
+     "median_m": -0.496,
      "p95_m": -0.13,
      "hovering": 0
     },
@@ -378,9 +378,9 @@
    "double_sheet_cells": 0,
    "seating": {
     "walls": {
-     "objects": 50,
+     "objects": 49,
      "no_ground_pct": 0.0,
-     "median_m": -0.498,
+     "median_m": -0.502,
      "p95_m": -0.13,
      "hovering": 0
     },
@@ -422,9 +422,9 @@
    "double_sheet_cells": 0,
    "seating": {
     "walls": {
-     "objects": 50,
+     "objects": 49,
      "no_ground_pct": 0.0,
-     "median_m": -0.496,
+     "median_m": -0.502,
      "p95_m": -0.13,
      "hovering": 0
     },
@@ -465,21 +465,21 @@
    "fwd": {
     "fail": false,
     "obj": "track.obj",
-    "lap_m": 6287.5,
+    "lap_m": 6287.8,
     "soft_top_in_lane": 0,
     "obstruction_stations": 0,
     "barrier_missing": 0,
     "barrier_stations": 0,
     "floating_furniture": 0,
     "daylight_gaps": 0,
-    "excursion_drops": 44,
+    "excursion_drops": 40,
     "undrivable_corners": 0,
     "severe_steps": 0,
     "severe_per_km": 0.0,
-    "steps_per_km": 0.48,
-    "kinks_per_km": 2.86,
+    "steps_per_km": 0.32,
+    "kinks_per_km": 2.39,
     "soft_top_per_km": 0.0,
-    "excursion_drops_per_km": 7.0,
+    "excursion_drops_per_km": 6.36,
     "v6": {
      "obstruction_stations": true,
      "floating_furniture": true,
@@ -494,27 +494,27 @@
     "drive_test_rule_reasons": [
      "excursion_drops"
     ],
-    "fold_kinks": 2,
+    "fold_kinks": 4,
     "file": "drive_test.line.expansion_fwd.json"
    },
    "rev": {
     "fail": false,
     "obj": "track.obj",
-    "lap_m": 6326.0,
+    "lap_m": 6327.1,
     "soft_top_in_lane": 0,
     "obstruction_stations": 0,
     "barrier_missing": 0,
     "barrier_stations": 0,
     "floating_furniture": 0,
     "daylight_gaps": 0,
-    "excursion_drops": 43,
+    "excursion_drops": 38,
     "undrivable_corners": 0,
     "severe_steps": 0,
     "severe_per_km": 0.0,
     "steps_per_km": 0.16,
-    "kinks_per_km": 0.32,
+    "kinks_per_km": 2.53,
     "soft_top_per_km": 0.0,
-    "excursion_drops_per_km": 6.8,
+    "excursion_drops_per_km": 6.01,
     "v6": {
      "obstruction_stations": true,
      "floating_furniture": true,

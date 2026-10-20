@@ -2861,3 +2861,24 @@ most SPLIT_CAP 60,000 (the prep's existing numbers), each tile re-checked by ass
   2 m inside the design outline + the 0.10 m lift). Round 1's ledger quoted J3 at 0.17 m from another reading; on the
   plan's own points round 1 reads J2 / J3 / J4 0.207 / 0.226 / 0.209 m (6 / 17 / 12 points over 0.3 m).
 - measure_paint.py: the built YLINE vs the aerial per 10 m station on Princess View and Jackson (the lens's paint check).
+
+### Measured (the final rehearsal, D:/k10-scratch/phase1/r2run3: fresh workshop copy + fresh engine-july copy with the snapshot's two pending files, FULL chain, `--no-install`)
+
+The same end as the held v0.18.1 rehearsal ("NOT INSTALLED": the street lap's own soft-top rule and kn5_ground_check's
+lamppost reading); every key of the three existing layouts equal to round 1's and no worse than held
+(`source/expansion/p3-proofs/compare_vs_held.json`).
+
+| | repair round 1 | repair round 2 |
+|---|---|---|
+| street / race_cw / race_acw keys, audit, no_route, kn5_ground_check | as held v0.18.1 | the same |
+| drive_test --line expansion fwd / rev | PASS / PASS: kinks 2.86 / 0.32 per km, excursions 44 / 43 | PASS / PASS: kinks 2.39 / 2.53 per km, excursions 40 / 38 (6.36 / 6.01 per km), soft top 0 / 0, severe 0 / 0 |
+| verify_mouths / verify_stubs / verify_pads | 32 PASS / 26 + 29 PASS / PASS | the same (seams 1.2 / 0.7 / 2.4 mm) |
+| centre paint vs NAIP (measure_paint.py): Jackson, a clear painted median's real centre − built (n, p50, \|p90\|) | 53, +1.70 m, 2.43 m | 69, 0.00 m, 0.14 m |
+| the same, Princess View | 0 clear medians built | 29, −0.03 m, 0.32 m |
+| built yellow line → nearest aerial yellow, p50: Princess View / Jackson | 1.15 / 1.63 m | 0.11 / 0.05 m |
+| pad deck − (3DEP + 0.10) on the plan's guide points, \|p95\| J2 / J3 / J4 (points over 0.3 m) | 0.207 / 0.226 / 0.209 (6 / 17 / 12) — round 1's ledger quoted J3 0.17 | the same |
+| real walls 3 m+ kept, 12-20 m (stations / > 1 m short / under half / runs ≥ 20 m) | 250 / 4 / 0 / 0 | 250 / 3 / 0 / 0 (Mission Gorge south s 1495 / 1530 / 1555: 1.16 / 1.14 / 1.08 m) |
+| the same, 12-35 m | 678 / 0 / 0 / 0 | 678 / 0 / 0 / 0 |
+| vertical grass faces, whole OBJ / within 80 m of the north roads | 46 / 26 | 51 / 29 |
+| road kn5 | 115.96 MB, 94 meshes, 1,585,066 positions | 116.05 MB, 95 meshes (1WALL_guard_0 / _1: 33,192 / 33,177), 1,586,930 positions |
+| Waring s 0-45 out of J1 over 3DEP (max), steepest 20 m | 1.285 m, −8.79 % | the same (the J1 tilt is Kevin's call) |

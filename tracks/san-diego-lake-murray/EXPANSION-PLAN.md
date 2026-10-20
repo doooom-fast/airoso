@@ -376,6 +376,14 @@ Steps 2–8 can start now on a branch off the 0046 branch, and get rebased after
 > the real ground within their steepness and seam bounds; Glenroy St's south-west leg and Doreen Rd get their stubs. The
 > three existing layouts stay no worse than v0.18.1. Open for Kevin: J1's College/Navajo crossroads is built level where
 > the real one tilts ~2 m toward Waring, so Waring's first 40 m start up to 1.4 m high.
+>
+> **2026-10-19: repair round 2 (ledger 0054, "P3 repair round 2"; GATES-CHANGELOG 2026-10-19 "repair round 2").** The
+> truth check refused round 1 on step 5's paint, step 4's Mission Gorge wall and round 1's J3 number. Step 5's centre
+> paint on Princess View and Jackson is now measured off NAIP every 2.5 m (`tools/aerial_paint_north.py` →
+> `source/expansion/aerial__paint_north.json`, taken by `tools/author_expansion.py`), and A2's medians as the aerial shows
+> them (Princess View's islands at s 399-535 and 612-700, Jackson's J4-approach island s 32-118); the raise-only cuts'
+> top rounding takes the real climb into account; the kn5 prep tiles a mesh by the exporter's own vertex count (snapshot,
+> pending mirror). The three existing layouts stay no worse than v0.18.1. Still open for Kevin: the J1 tilt.
 
 1. **The `ship_sd.sh` draft.** **adapted** `route_connectors` takes the four pieces with their per-station widths. `divide_connectors` passes them through untouched. `trim_connectors` cuts at the pads and the two welds, then the rebuild runs.
 2. **new `author_junction_pad_blend.py`** builds J2, J3 and J4 as single-coverage pads:

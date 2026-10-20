@@ -366,8 +366,8 @@
     "max_real_m": 3.21,
     "min_kept_frac": null,
     "length_m": 5.0,
-    "kept_frac_median": 0.76,
-    "built_max_m": 2.44
+    "kept_frac_median": 0.81,
+    "built_max_m": 2.61
    },
    {
     "piece": "C",
@@ -377,8 +377,8 @@
     "max_real_m": 5.02,
     "min_kept_frac": null,
     "length_m": 90.0,
-    "kept_frac_median": 0.87,
-    "built_max_m": 3.83
+    "kept_frac_median": 0.93,
+    "built_max_m": 4.13
    },
    {
     "piece": "C",
@@ -388,8 +388,8 @@
     "max_real_m": 3.48,
     "min_kept_frac": null,
     "length_m": 5.0,
-    "kept_frac_median": 0.76,
-    "built_max_m": 2.66
+    "kept_frac_median": 0.78,
+    "built_max_m": 2.72
    },
    {
     "piece": "D",
@@ -542,38 +542,31 @@
  "walls_all": {
   "12-20": {
    "stations_real_ge_3m": 250,
-   "short_gt_1m": 4,
+   "short_gt_1m": 3,
    "kept_under_half": 0,
-   "shortfall_median_m": 0.19,
+   "shortfall_median_m": 0.18,
    "runs_ge_20m": [],
    "short_stations": [
     [
      "C",
      "right",
-     1490.0,
-     4.5,
-     3.31
-    ],
-    [
-     "C",
-     "right",
      1495.0,
      4.83,
-     3.33
+     3.67
     ],
     [
      "C",
      "right",
      1530.0,
      4.81,
-     3.38
+     3.67
     ],
     [
      "C",
      "right",
      1555.0,
      5.02,
-     3.68
+     3.94
     ]
    ]
   },
@@ -606,5 +599,28 @@
    "1KERB_SIDEWALK_APAP1",
    "LIGHTPOST_4"
   ]
+ },
+ "pads": {
+  "J2": {
+   "guide_points": 323,
+   "read": 323,
+   "abs_p95_m": 0.207,
+   "over_0_3_m": 6,
+   "median_m": 0.011
+  },
+  "J3": {
+   "guide_points": 560,
+   "read": 558,
+   "abs_p95_m": 0.226,
+   "over_0_3_m": 17,
+   "median_m": -0.011
+  },
+  "J4": {
+   "guide_points": 619,
+   "read": 618,
+   "abs_p95_m": 0.209,
+   "over_0_3_m": 12,
+   "median_m": -0.006
+  }
  }
 }

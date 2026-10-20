@@ -1,3 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# the provenance in data/expansion.north.json hashes this file raw; its blob has mixed line endings, so check it out byte-exact
+tracks/san-diego-lake-murray/source/expansion/aerial__paint_north.json -text
 *.blend filter=lfs diff=lfs merge=lfs -text

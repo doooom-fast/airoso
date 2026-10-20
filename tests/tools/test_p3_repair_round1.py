@@ -231,5 +231,19 @@ def test_the_kn5_prep_mends_its_own_corridor_slivers_before_anything_moves():
     k = prep.index("n_mend = _mend_vertical_slivers(bm)", j)
     assert k < prep.index("# 2. pin + feather", j)
     assert tm.LINE_TOL_M == 1e-3 and tm.END_FRAC == 1e-3                # the two copies' tolerances agree
-    pend = (ROOT / "tracks" / "san-diego-lake-murray" / "engine-july-snapshot" / "PENDING-MIRROR.md5").read_text()
-    assert "scripts/ac/build_kn5_loop.py" in pend                        # still to mirror into engine-july
+    assert _mirrored_or_pending("scripts/ac/build_kn5_loop.py")         # to, or already in, engine-july
+
+
+def _mirrored_or_pending(rel: str) -> bool:
+    """the snapshot copy of `rel` is either still listed in PENDING-MIRROR.md5 or already in engine-july (same md5)"""
+    import hashlib
+    snap = ROOT / "tracks" / "san-diego-lake-murray" / "engine-july-snapshot"
+    pend = snap / "PENDING-MIRROR.md5"
+    if pend.exists() and rel in pend.read_text(encoding="utf-8"):
+        return True
+    man = {ln.split()[-1]: ln.split()[0] for ln in (snap / "MANIFEST.md5").read_text(encoding="utf-8").splitlines()
+           if ln.strip() and not ln.startswith("#")}
+    eng = ROOT.parent / "engine-july" / rel
+    if not eng.exists():                     # no engine-july on this machine: the manifest is the record
+        return rel in man
+    return hashlib.md5(eng.read_bytes()).hexdigest() == man.get(rel)

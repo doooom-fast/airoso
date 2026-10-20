@@ -56,6 +56,9 @@ ROAD_GAP_FRAC = 0.0   # green means zero (declared bridges/approaches exempt by 
 # not centimetres, so it still fails loudly. The fraction over ROAD_GAP_M stays in the report as
 # the flush-contact quality number, and max is printed so a real outlier is never invisible.
 ROAD_GAP_P95_M = 0.10
+# MAST buckets (ledger 0054 P3 repair round 3): objects whose arms reach further from their pole than the 3.5 m arm
+# window of the seating lens — their feet are found per object (the chain of columns), not per neighbourhood
+MAST_BUCKETS = ("LIGHTPOST", "GANTRY")
 
 
 
@@ -261,7 +264,8 @@ def check(project_dir: str | Path, extra_kn5=(), stats: dict | None = None) -> d
     # slope (nearest vert below can be metres away and lower than the surface at the foot's exact
     # XZ): Sand Creek shipped 100% of its barriers hovering +0.59 m median while the vertex gate
     # read +0.15. Feet are measured against the barycentric surface of the actual ground TRIANGLES.
-    # Still excluded: mast arms (a column with a lower column of the same object within 3.5 m).
+    # Still excluded: mast arms (a column with a lower column of the same object within 3.5 m; for the MAST buckets —
+    # lamp posts, gantries — a column with a lower column of the same object anywhere along it, MAST_BUCKETS below).
     # declared bridge spans (+approach margin): a wall foot there is a railing guarding the drop —
     # being above the bank grass is its JOB (Sand Creek's e46th approach read as 278 floating feet).
     span_pts = []
@@ -422,12 +426,41 @@ def check(project_dir: str | Path, extra_kn5=(), stats: dict | None = None) -> d
             if k not in colmin or y < colmin[k][0]:
                 colmin[k] = (y, x, z)
         feet = []
-        for (kx, kz), (base, bx2, bz2) in colmin.items():
-            lower_neighbor = any(
-                colmin.get((kx + di, kz + dj), (1e9,))[0] < base - 0.8
-                for di in (-2, -1, 0, 1, 2) for dj in (-2, -1, 0, 1, 2))
-            if not lower_neighbor:
-                feet.append((bx2, base, bz2))
+        if b in MAST_BUCKETS:
+            # MAST ARMS (ledger 0054 P3 repair round 3): a lamp's arm and luminaire reach past the 3.5 m window above —
+            # the LED standard's 3.66 m arm + cobra head, 4.04 m to the lens, two of them back to back (ledger 0056) —
+            # so their outer columns, 11 m up, read as FEET with no ground in their window: 38.4 % of the 2026-10
+            # lampposts "no-ground" on a mesh whose every pole stands in the earth. The object is the chain of
+            # occupied columns (8-neighbour, 1.5 m cells) its own vertices draw; its feet are the columns within 0.8 m
+            # of that chain's lowest. A pole hovering over the ground keeps its pole column as its foot and is
+            # measured exactly as before; an arm with no pole under it is its own chain, and its own foot.
+            seen_c: dict = {}
+            for k0 in colmin:
+                if k0 in seen_c:
+                    continue
+                chain_c, stack_c = [k0], [k0]
+                seen_c[k0] = True
+                while stack_c:
+                    kx, kz = stack_c.pop()
+                    for di in (-1, 0, 1):
+                        for dj in (-1, 0, 1):
+                            kk = (kx + di, kz + dj)
+                            if kk in colmin and kk not in seen_c:
+                                seen_c[kk] = True
+                                stack_c.append(kk)
+                                chain_c.append(kk)
+                low = min(colmin[kk][0] for kk in chain_c)
+                for kk in chain_c:
+                    base, bx2, bz2 = colmin[kk]
+                    if base < low + 0.8:
+                        feet.append((bx2, base, bz2))
+        else:
+            for (kx, kz), (base, bx2, bz2) in colmin.items():
+                lower_neighbor = any(
+                    colmin.get((kx + di, kz + dj), (1e9,))[0] < base - 0.8
+                    for di in (-2, -1, 0, 1, 2) for dj in (-2, -1, 0, 1, 2))
+                if not lower_neighbor:
+                    feet.append((bx2, base, bz2))
         # per-foot gaps, then cluster into OBJECTS (a 4 m barrier on a sidewalk lip is seated on
         # its inboard edge with honest daylight under the outboard overhang — real installations
         # look exactly like that). An object floats only when its BEST-SUPPORTED foot has a gap:
@@ -482,7 +515,7 @@ def check(project_dir: str | Path, extra_kn5=(), stats: dict | None = None) -> d
         stats.setdefault("seating", {})[label] = {"objects": n2, "no_ground_pct": round(100 * nogf, 1),
                                                   "median_m": round(med, 3), "p95_m": round(p95, 3), "hovering": big}
         if med > 0.2 or p95 > 0.4 or bigf > 0.01 or nogf > 0.10:
-            fails.append(f"{label}: median {med:.2f} p95 {p95:.2f} hovering {100*bigf:.1f}%")
+            fails.append(f"{label}: median {med:.2f} p95 {p95:.2f} hovering {100*bigf:.1f}% no-ground {100*nogf:.1f}%")
 
     # LAMP INTEGRITY: every lens cluster (LIGHTS) must have a mast (LIGHTPOST) under it that reaches
     # it — an orphan head floats in the sky AND its clustered CSP light becomes a mid-air floodlight

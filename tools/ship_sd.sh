@@ -332,6 +332,16 @@ done
 
 step "ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)"
 "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS\|split GRASS_FAR\|terrain tiles\|terrain conform\|T-junctions\|kept-cell refinement\|house seat\|multi-layout\|Error\|Traceback" | cut -c1-200
+# ledger 0054 P3 repair round 3 (an echo, not a `step`: tracks/san-diego-lake-murray/ship.json reproduces this chain's
+# step headers and gains the thinning when the general chain does): the north roads' refinements left the ground with
+# far more vertices than its surface needs (1GRASS 941,699 on r2run2, a 122.6 MB road kn5; v0.18.1 355k / 73.6 MB).
+# tools/thin_terrain_blend.py thins every terrain tile of the PREPPED scene by error-bounded half-edge collapse (no
+# vertex moves; +- 0.005-0.03 m within 22 m of a pavement, 0.10 / 0.15 m beyond; rib_check's lattice kept through
+# data/terrain_thin.nodes.json.gz); self-checked, exit 1 = the blend not saved. Before the freeway drape (it reads this
+# ground) and the split
+rm -f "$PROJ/data/terrain_thin.json" "$PROJ/data/terrain_thin.nodes.json.gz"
+echo; echo "=================== ship: thin the terrain, every vertex where the chain put it (tools/thin_terrain_blend.py; self-checked)"
+"$BL" --background --python-exit-code 1 --python "$AIROSO/tools/thin_terrain_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[thin\]\|Error\|Traceback"
 step "ship: the I-8's own pavement, lane lines and median barrier on the final ground (visual only; self-checked)"
 # ledger 0046 v0.18.0 integration fix round (the view lens): track.config.json scenery.freeway — tools/freeway_i8.py
 # plans both carriageways from the OSM ways the corridor was cut from, tools/author_freeway_blend.py drapes them on the
@@ -574,7 +584,7 @@ for f in centerline.local.json centerline.raw.local.json median_bands.json dummi
          mouths.json mouth_welds.json aprons.json aprons.lamps.json pads.plan.json pads.built.json pads.3dep.json verify_pads.json verify_mouths.json verify_fold_fans.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
          drive_test.json drive_test.expansion.json drive_lines.expansion.json audit.json stubs.plan.json stubs.built.json verify_stubs.json stubs.3dep.json \
          barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json street_kn5.json \
-         $TERRAIN_DATA terrain.tiers.report.json bridges.authored.json          deck_datum.json ground_release.json ground_release.report.json ground_release.auto_cuts.json freeway_i8.json freeway_i8.report.json; do
+         $TERRAIN_DATA terrain.tiers.report.json terrain_thin.json bridges.authored.json          deck_datum.json ground_release.json ground_release.report.json ground_release.auto_cuts.json freeway_i8.json freeway_i8.report.json; do
   [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
 done
 rm -f "$SRC/data/audit.race.json"   # 0047's shared race audit: retired (ledger 0049 audits each race layout on its own OBJ)

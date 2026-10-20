@@ -384,6 +384,13 @@ Steps 2–8 can start now on a branch off the 0046 branch, and get rebased after
 > them (Princess View's islands at s 399-535 and 612-700, Jackson's J4-approach island s 32-118); the raise-only cuts'
 > top rounding takes the real climb into account; the kn5 prep tiles a mesh by the exporter's own vertex count (snapshot,
 > pending mirror). The three existing layouts stay no worse than v0.18.1. Still open for Kevin: the J1 tilt.
+>
+> **2026-10-19: repair round 3 (ledger 0054, "P3 repair round 3"; GATES-CHANGELOG 2026-10-19 "repair round 3").** The
+> road kn5 had grown to 116 MB (the steps' refinements: the seat's halving under every approach, the release zones' facets,
+> the prep's corridor and kept-cell passes — most of the vertices never moved again). A new self-checked step between the
+> prep and the split, `tools/thin_terrain_blend.py`, thins every terrain tile without moving a vertex (0.005-0.03 m within
+> 22 m of a pavement, 0.10-0.15 m beyond); `rib_check` reads the lattice vertices it removed. V5's kn5_ground_check takes a
+> lamp's feet per lamp (the LED arms read as hovering feet). Still open for Kevin: the J1 tilt.
 
 1. **The `ship_sd.sh` draft.** **adapted** `route_connectors` takes the four pieces with their per-station widths. `divide_connectors` passes them through untouched. `trim_connectors` cuts at the pads and the two welds, then the rebuild runs.
 2. **new `author_junction_pad_blend.py`** builds J2, J3 and J4 as single-coverage pads:

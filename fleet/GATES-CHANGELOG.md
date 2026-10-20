@@ -2882,3 +2882,79 @@ lamppost reading); every key of the three existing layouts equal to round 1's an
 | vertical grass faces, whole OBJ / within 80 m of the north roads | 46 / 26 | 51 / 29 |
 | road kn5 | 115.96 MB, 94 meshes, 1,585,066 positions | 116.05 MB, 95 meshes (1WALL_guard_0 / _1: 33,192 / 33,177), 1,586,930 positions |
 | Waring s 0-45 out of J1 over 3DEP (max), steepest 20 m | 1.285 m, −8.79 % | the same (the J1 tilt is Kevin's call) |
+
+## 2026-10-19 — Lake Murray expansion P3, repair round 3: the road kn5 thinned without moving a vertex, rib_check reads the lattice the thinning took, kn5_ground_check finds a lamp's feet per lamp (ledger 0054)
+
+No threshold is loosened and no gate is bypassed. Two gates change how they FIND what they measure (below, each with
+the build that shows it judges at least what it judged before); one new self-checked author step, every number of it
+invented and listed here.
+
+### The size, and where it came from
+
+Road kn5 116.05 MB on r2run3 (1GRASS 818,196 vertices) and 122.6 MB on r2run2 (941,699, round 2's 1 m cut toe since
+dropped in 273b116); v0.18.1 73.6 MB (355k). kn5 bytes are ~44 per vertex + 6 per triangle (r2run2: 1,704,346 vertices,
+2,615,733 triangles, textures 31.9 MB = 90.7 MB of geometry); 1GRASS + GRASS_FAR were 60 % of the vertices. TERRAIN
+through the chain, v0.18.1 -> r2run2: the assembler's tiers 163k -> 229.8k (the north roads' 5 m band); the seat
+174k -> 372.6k (137,015 edges halved under the welded approaches and the host edges, 37,707 of them to 0.75 m under the
+host lanes at 28 exact-deck mouths); the ground release 200k -> 732.8k (44 zones, 35 of them round 1's auto cuts, edges
+halved to 2.5 m and 1 m); stubs and pads ~32k; the prep's corridor subdivision 57k -> 80k edges and kept-cell refinement
+94k -> 106k on top. Most of it was never moved again: on r2run2 268k of the 555k vertices within 20 m of a pavement lay
+in their neighbours' plane to 2 mm.
+
+### tools/thin_terrain_blend.py + tools/terrain_thin.py (new, between the prep and the freeway drape / the split)
+
+Greedy half-edge collapse on every 1GRASS / GRASS_FAR tile of the prepped scene: a vertex merges into a neighbour, no
+vertex moves, none is made. The new surface's deviation from the chain's own is computed EXACTLY over the star (both are
+linear on the overlay of the two triangulations: v and every old-spoke / new-edge crossing) and accumulated per triangle
+as an interval; every triangle keeps the strictest tolerance of every vertex it has covered. Tolerances by the plan
+distance to the pavement (1ROAD / 1KERB, the race kerbs out — read on the flattened pavement):
+
+| where | up / down | longest new edge | |
+|---|---|---|---|
+| under the pavement | UNDER_UP_M 0.005 / UNDER_DOWN_M 0.015 | MAX_EDGE_NEAR_M 8 | [invented] the prep pins it 0.02 under the deck; verify_fold_fans fails grass 0.02 over the lane (worst today 0.003); 0.035 under stays inside the ground gate's 0.05 contact line |
+| beside it to NEAR_EXACT_M 6 | TOL_NEAR_M 0.005 | 8 | [invented] the drive gates' 4 m excursion band (+2 m); an excursion is a 0.12 m fall between 0.5 m samples |
+| to NEAR_ROAD_M 22 | TOL_M 0.03 | MAX_EDGE_M 20 | [invented] the near-road bound for this round was 0.05 |
+| beyond, to FAR_EDGE_FROM_M 60 | FAR_TOL_M 0.10 | 20 | [invented] 60 = terrain.tier_options' own 5 m band |
+| beyond 60 m | FAR_TOL_OUT_M 0.15 | MAX_EDGE_FAR_M 40 | [invented] the 20 / 40 m tiers and the far ring |
+
+Left alone [invented]: every vertex within HOUSE_CLEAR_M 2 m of a building (tolerance 0: no star around it changes), the
+prep's hole-fill n-gons, tile seams and boundaries, every vertex of a face with |normal z| under NZ_LOCK 0.25. A new
+triangle is refused when it flips or degenerates (plan area x 2 under MIN_AREA2 1e-6), is thinner than ASPECT 0.02 of its
+longest edge, or is steeper than the steepest it replaces by NZ_SLACK 0.02 (normal z); the link condition holds.
+
+**rib_check's own inputs** (it gates the ground past its NEAR_M 20 m, to the nearest pavement vertex): every removed
+vertex ON the lattice (node or lattice line) is written to data/terrain_thin.nodes.json.gz (rib_check below); a
+cross-grain FOLD (a plain cell whose diagonal leans across the grain by more than HALF_CELL_EX 0.25 m [invented] —
+rib_check reports folds from 0.5 m, gates them from 1 m) with its centre past CELL_LOCK_M 18 m [invented] keeps its four
+corners, and no new plain cell may lean across the grain by more than HALF_CELL_EX; from JOG_ZONE_M 12 m [invented] out,
+a star with any triangle (old or new) steeper than NZ_FINE 0.84 [invented: 0.65 m per metre, under rib_check's JOG_SLOPE
+0.7] keeps every new edge under FINE_CAP_M 7.5 m [invented: rib_check's step jogs read finest-tier triangles, extent
+<= 7.6 m] — a triangle that could carry a riser never grows out of the jog measure's reach, and one that cannot (gentler
+than 0.65) carries no riser segment to lose.
+
+Self-checks (exit 1, the blend not saved): at every removed vertex the thinned surface within that vertex's own
+tolerance; every face the thinning made facing up, no tile with more faces not facing up than before; every tile's
+material kept. data/terrain_thin.json records every tile, every parameter.
+
+### tools/rib_check.py — the lattice is the ground's, not the vertex list's
+
+`thinned_lattice`: with data/terrain_thin.nodes.json.gz present (written by the thinning, same lattice frame or
+SystemExit), a removed NODE is read as before with its height off the BUILT triangles at that point (L5), and a removed
+lattice-LINE vertex still marks its row as drawn through a break. Without the file nothing changes. No threshold moved.
+Measured on the round-1 build thinned offline (D:/k10-scratch/phase1/r3dev/r1p, the same gate code as r1final):
+lattice nodes 555,669 = 555,669 (198,243 of them read on the surface), nyquist gated 87 = 87, cross-grain 44 = 44, step
+jogs 68 -> 69 beyond 20 m (densest 75 m: 4 = 4, limit 5) — the jog measure saw one more, never fewer.
+
+### scripts/ac/kn5_ground_check.py — a lamp's feet are the lamp's
+
+The seating lens takes the lowest vertex of every 1.5 m column with no lower column within ~3.5 m as a FOOT. The 2026-10
+LED standard (ledger 0056: a 3.66 m arm, the lens 4.04 m from the pole, two arms back to back) leaves its outer arm
+columns 11 m up as feet with nothing in their 4 m support window: 38.4 % of Lake Murray's lampposts "no-ground" (the
+gate's > 10 % rule; its message printed only median / p95 / hovering). MAST_BUCKETS ("LIGHTPOST", "GANTRY"): the object
+is the chain of occupied columns (8-neighbour) its vertices draw, its feet the columns within the existing 0.8 m of that
+chain's lowest — on r2run2's street set exactly 238 chains for 238 lamps. A pole hovering keeps its pole column as its
+foot (tests/ac/test_lamp_mast_seating.py: 20 long-armed lamps 1.5 m over the ground FAIL; the same on the ground PASS, and
+FAIL on the old rule at 66.7 % no-ground). Every other bucket keeps the old rule. The fail message now names no-ground.
+r2run2 street set: lampposts no-ground 38.4 % -> 0.0 %, seat-gap median -3.04 / p95 -2.97 unchanged — the poles' feet
+are 2.5 m under the road datum by the model's own footing (streetlight_led.json pole_bury_m), in the earth on every
+slope, which this lens never failed (it fails hovering, not buried); every other line identical.

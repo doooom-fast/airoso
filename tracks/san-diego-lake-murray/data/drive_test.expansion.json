@@ -1,0 +1,82 @@
+{
+ "_doc": "ledger 0054 P3: drive_test --line (the north network's own lines, tools/expansion_lines.py); fail = the LINE GATE: EXPANSION-PLAN V6 (obstructions / floating furniture / undrivable / daylight 0, severe 0, LINE_SOFT_PER_KM, LINE_KINK_PER_KM) + LINE_EXC_PER_KM (repair round 1). drive_test's own lap rule is NOT the verdict; it is written per line as drive_test_rule_fail / _reasons",
+ "limits": {
+  "soft_top_per_km": 6.1,
+  "kinks_per_km": 4.97,
+  "excursion_drops_per_km": 7.12,
+  "severe_steps": 0
+ },
+ "lines": {
+  "fwd": {
+   "fail": false,
+   "obj": "track.obj",
+   "lap_m": 6287.8,
+   "soft_top_in_lane": 0,
+   "obstruction_stations": 0,
+   "barrier_missing": 0,
+   "barrier_stations": 0,
+   "floating_furniture": 0,
+   "daylight_gaps": 0,
+   "excursion_drops": 40,
+   "undrivable_corners": 0,
+   "severe_steps": 0,
+   "severe_per_km": 0.0,
+   "steps_per_km": 0.32,
+   "kinks_per_km": 2.39,
+   "soft_top_per_km": 0.0,
+   "excursion_drops_per_km": 6.36,
+   "v6": {
+    "obstruction_stations": true,
+    "floating_furniture": true,
+    "undrivable_corners": true,
+    "severe_steps": true,
+    "daylight_gaps": true,
+    "soft_top_per_km": true,
+    "kinks_per_km": true,
+    "excursion_drops_per_km": true
+   },
+   "drive_test_rule_fail": true,
+   "drive_test_rule_reasons": [
+    "excursion_drops"
+   ],
+   "fold_kinks": 4,
+   "file": "drive_test.line.expansion_fwd.json"
+  },
+  "rev": {
+   "fail": false,
+   "obj": "track.obj",
+   "lap_m": 6327.1,
+   "soft_top_in_lane": 0,
+   "obstruction_stations": 0,
+   "barrier_missing": 0,
+   "barrier_stations": 0,
+   "floating_furniture": 0,
+   "daylight_gaps": 0,
+   "excursion_drops": 38,
+   "undrivable_corners": 0,
+   "severe_steps": 0,
+   "severe_per_km": 0.0,
+   "steps_per_km": 0.16,
+   "kinks_per_km": 2.53,
+   "soft_top_per_km": 0.0,
+   "excursion_drops_per_km": 6.01,
+   "v6": {
+    "obstruction_stations": true,
+    "floating_furniture": true,
+    "undrivable_corners": true,
+    "severe_steps": true,
+    "daylight_gaps": true,
+    "soft_top_per_km": true,
+    "kinks_per_km": true,
+    "excursion_drops_per_km": true
+   },
+   "drive_test_rule_fail": true,
+   "drive_test_rule_reasons": [
+    "excursion_drops"
+   ],
+   "fold_kinks": 0,
+   "file": "drive_test.line.expansion_rev.json"
+  }
+ },
+ "fail": false
+}

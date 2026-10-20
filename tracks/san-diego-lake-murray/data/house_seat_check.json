@@ -15,8 +15,8 @@
   "MAX_BURIED": 0
  },
  "contact_m": {
-  "min": -0.322,
-  "max": -0.148
+  "min": -0.303,
+  "max": -0.143
  },
  "show_m_min": 1.598,
  "lens_buried_share": {
@@ -76,7 +76,7 @@
    "top": 118.943,
    "ground_low": 112.219,
    "ground_high": 113.06,
-   "ground_mean": 112.827,
+   "ground_mean": 112.828,
    "contact_m": -0.15,
    "show_m": 5.884,
    "lens_buried_share": 0.11
@@ -165,10 +165,10 @@
    "z": 1473.6,
    "bottom": 99.343,
    "top": 111.738,
-   "ground_low": 99.493,
+   "ground_low": 99.486,
    "ground_high": 102.107,
    "ground_mean": 101.112,
-   "contact_m": -0.15,
+   "contact_m": -0.143,
    "show_m": 9.632,
    "lens_buried_share": 0.143
   },
@@ -189,14 +189,14 @@
    "group": "BUILDING",
    "x": 62.3,
    "z": 1764.3,
-   "bottom": 108.836,
-   "top": 116.264,
-   "ground_low": 108.986,
-   "ground_high": 110.575,
-   "ground_mean": 110.135,
+   "bottom": 108.835,
+   "top": 116.329,
+   "ground_low": 108.985,
+   "ground_high": 110.598,
+   "ground_mean": 110.21,
    "contact_m": -0.15,
-   "show_m": 5.689,
-   "lens_buried_share": 0.175
+   "show_m": 5.731,
+   "lens_buried_share": 0.183
   },
   {
    "group": "BUILDING",
@@ -438,10 +438,10 @@
    "z": 1535.1,
    "bottom": 104.407,
    "top": 113.842,
-   "ground_low": 104.557,
+   "ground_low": 104.561,
    "ground_high": 110.577,
    "ground_mean": 108.437,
-   "contact_m": -0.15,
+   "contact_m": -0.154,
    "show_m": 3.265,
    "lens_buried_share": 0.427
   },
@@ -592,14 +592,14 @@
    "group": "HOUSE",
    "x": -100.4,
    "z": 1767.4,
-   "bottom": 104.5,
-   "top": 110.0,
-   "ground_low": 104.822,
+   "bottom": 104.517,
+   "top": 110.017,
+   "ground_low": 104.82,
    "ground_high": 105.0,
-   "ground_mean": 104.877,
-   "contact_m": -0.322,
-   "show_m": 5.0,
-   "lens_buried_share": 0.069
+   "ground_mean": 104.89,
+   "contact_m": -0.303,
+   "show_m": 5.017,
+   "lens_buried_share": 0.068
   },
   {
    "group": "HOUSE",
@@ -788,13 +788,13 @@
    "x": 11.1,
    "z": 1725.7,
    "bottom": 107.679,
-   "top": 113.316,
+   "top": 113.345,
    "ground_low": 107.829,
-   "ground_high": 108.695,
-   "ground_mean": 108.24,
+   "ground_high": 108.589,
+   "ground_mean": 108.253,
    "contact_m": -0.15,
-   "show_m": 4.62,
-   "lens_buried_share": 0.099
+   "show_m": 4.756,
+   "lens_buried_share": 0.101
   },
   {
    "group": "HOUSE",
@@ -856,8 +856,8 @@
    "top": 41.813,
    "ground_low": 36.357,
    "ground_high": 36.973,
-   "ground_mean": 36.699,
-   "contact_m": -0.149,
+   "ground_mean": 36.702,
+   "contact_m": -0.15,
    "show_m": 4.841,
    "lens_buried_share": 0.088
   },
@@ -917,14 +917,14 @@
    "group": "HOUSE",
    "x": -44.8,
    "z": 1775.9,
-   "bottom": 105.463,
-   "top": 111.066,
-   "ground_low": 105.613,
-   "ground_high": 106.439,
-   "ground_mean": 105.984,
+   "bottom": 105.357,
+   "top": 111.111,
+   "ground_low": 105.507,
+   "ground_high": 106.483,
+   "ground_mean": 106.032,
    "contact_m": -0.15,
-   "show_m": 4.627,
-   "lens_buried_share": 0.093
+   "show_m": 4.628,
+   "lens_buried_share": 0.117
   },
   {
    "group": "HOUSE",
@@ -945,10 +945,10 @@
    "z": -717.4,
    "bottom": 38.458,
    "top": 44.067,
-   "ground_low": 38.608,
+   "ground_low": 38.606,
    "ground_high": 39.274,
    "ground_mean": 38.96,
-   "contact_m": -0.15,
+   "contact_m": -0.148,
    "show_m": 4.793,
    "lens_buried_share": 0.089
   },
@@ -1987,10 +1987,10 @@
    "top": 53.674,
    "ground_low": 48.04,
    "ground_high": 49.334,
-   "ground_mean": 48.465,
+   "ground_mean": 48.468,
    "contact_m": -0.149,
    "show_m": 4.34,
-   "lens_buried_share": 0.099
+   "lens_buried_share": 0.1
   },
   {
    "group": "HOUSE",

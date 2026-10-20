@@ -1,30 +1,46 @@
 {
  "obj": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\data\\track.obj",
- "lattice_nodes": 367069,
- "terrain_vertices": 485578,
+ "lattice_nodes": 555668,
+ "terrain_vertices": 516060,
  "near_m": 20.0,
+ "thinned": {
+  "nodes_read_on_the_surface": 197950,
+  "line_vertices": 106245
+ },
  "nyquist": {
   "rib_m": 2.0,
   "max": 100,
   "by_amplitude": {
    ">0.5m": {
-    "beyond_near": 4113,
-    "near_road": 493
+    "beyond_near": 5074,
+    "near_road": 571
    },
    ">1m": {
-    "beyond_near": 781,
-    "near_road": 185
+    "beyond_near": 959,
+    "near_road": 200
    },
    ">2m": {
-    "beyond_near": 72,
+    "beyond_near": 87,
     "near_road": 27
    },
    ">4m": {
-    "beyond_near": 4,
+    "beyond_near": 5,
     "near_road": 0
    }
   },
   "hotspots": [
+   {
+    "x": -4975,
+    "z": -975,
+    "n": 5,
+    "max_m": 3.63
+   },
+   {
+    "x": -2025,
+    "z": 575,
+    "n": 4,
+    "max_m": 3.03
+   },
    {
     "x": 75,
     "z": -1325,
@@ -38,6 +54,12 @@
     "max_m": 3.65
    },
    {
+    "x": -4325,
+    "z": -925,
+    "n": 3,
+    "max_m": 4.17
+   },
+   {
     "x": -3925,
     "z": -875,
     "n": 3,
@@ -48,12 +70,6 @@
     "z": -1225,
     "n": 3,
     "max_m": 4.06
-   },
-   {
-    "x": -4025,
-    "z": -875,
-    "n": 2,
-    "max_m": 2.75
    },
    {
     "x": -3825,
@@ -72,36 +88,24 @@
     "z": -1025,
     "n": 2,
     "max_m": 2.54
-   },
-   {
-    "x": -2025,
-    "z": 575,
-    "n": 2,
-    "max_m": 3.03
-   },
-   {
-    "x": -1725,
-    "z": -775,
-    "n": 2,
-    "max_m": 2.81
    }
   ],
   "boxes": {},
   "coarse_cells_info": {
-   "20": 10946,
-   "40": 10030
+   "20": 16428,
+   "40": 18940
   },
   "straight_info": {
    ">0.5m": {
-    "beyond_near": 3442,
-    "near_road": 175
+    "beyond_near": 4323,
+    "near_road": 188
    },
    ">1m": {
-    "beyond_near": 1073,
-    "near_road": 86
+    "beyond_near": 1359,
+    "near_road": 90
    },
    ">2m": {
-    "beyond_near": 101,
+    "beyond_near": 113,
     "near_road": 4
    },
    ">4m": {
@@ -109,30 +113,54 @@
     "near_road": 0
    }
   },
-  "gated": 72
+  "gated": 87
  },
  "cross_grain": {
   "fold_m": 1.0,
   "max": 100,
   "by_amplitude": {
    ">0.5m": {
-    "beyond_near": 38,
-    "near_road": 18
+    "beyond_near": 57,
+    "near_road": 13
    },
    ">1m": {
-    "beyond_near": 29,
-    "near_road": 5
+    "beyond_near": 44,
+    "near_road": 6
    },
    ">2m": {
-    "beyond_near": 21,
+    "beyond_near": 32,
     "near_road": 1
    },
    ">4m": {
-    "beyond_near": 8,
+    "beyond_near": 14,
     "near_road": 0
    }
   },
   "hotspots": [
+   {
+    "x": -775,
+    "z": 2975,
+    "n": 3,
+    "max_m": 4.36
+   },
+   {
+    "x": -825,
+    "z": 3025,
+    "n": 2,
+    "max_m": 4.08
+   },
+   {
+    "x": -2375,
+    "z": 1625,
+    "n": 1,
+    "max_m": 1.21
+   },
+   {
+    "x": -1975,
+    "z": 1375,
+    "n": 1,
+    "max_m": 1.4
+   },
    {
     "x": -1625,
     "z": -725,
@@ -168,34 +196,10 @@
     "z": 1225,
     "n": 1,
     "max_m": 3.09
-   },
-   {
-    "x": -1175,
-    "z": 1275,
-    "n": 1,
-    "max_m": 2.64
-   },
-   {
-    "x": -1075,
-    "z": -25,
-    "n": 1,
-    "max_m": 2.37
-   },
-   {
-    "x": -1075,
-    "z": 25,
-    "n": 1,
-    "max_m": 1.94
-   },
-   {
-    "x": -1025,
-    "z": -125,
-    "n": 1,
-    "max_m": 9.49
    }
   ],
   "boxes": {},
-  "gated": 29
+  "gated": 44
  },
  "step_jogs": {
   "jog_m": 2.0,
@@ -203,8 +207,8 @@
   "max": 5,
   "by_amplitude": {
    ">2m": {
-    "beyond_near": 58,
-    "near_road": 9
+    "beyond_near": 69,
+    "near_road": 12
    }
   },
   "hotspots": [
@@ -251,6 +255,12 @@
     "max_m": 5.59
    },
    {
+    "x": -4975,
+    "z": -975,
+    "n": 1,
+    "max_m": 2.3
+   },
+   {
     "x": -3825,
     "z": -925,
     "n": 1,
@@ -261,20 +271,14 @@
     "z": -825,
     "n": 1,
     "max_m": 2.22
-   },
-   {
-    "x": -3525,
-    "z": -925,
-    "n": 1,
-    "max_m": 2.01
    }
   ],
   "boxes": {},
-  "jogs_beyond_near": 58,
+  "jogs_beyond_near": 69,
   "gated": 4,
   "densest_at": [
-   2852.0,
-   -1732.8
+   -1421.0,
+   1201.0
   ]
  },
  "verdict": "PASS"

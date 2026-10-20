@@ -1,0 +1,30 @@
+{
+ "moved": [
+  {
+   "lamp": 77,
+   "apron": "AP1",
+   "head_was": [
+    -1954.731,
+    33.266,
+    632.081
+   ],
+   "base_was": [
+    -1955.497,
+    633.71
+   ],
+   "head": [
+    -1954.731,
+    33.6298,
+    632.081
+   ],
+   "base": [
+    -1955.497,
+    24.83,
+    633.71
+   ],
+   "seat": "built walk under the base + HEAD_OVER_GROUND_M (8.8 m), the draft's rule",
+   "reseated_only": true,
+   "why": "ledger 0054 P3 repair round 1: the post stands on the return's walk, built +0.36 m off the ground the draft seated it on"
+  }
+ ]
+}

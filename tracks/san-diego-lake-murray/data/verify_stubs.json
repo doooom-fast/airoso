@@ -1,0 +1,1911 @@
+{
+ "obj": "track.obj",
+ "stubs": [
+  {
+   "id": "galewood_street_5984405_R",
+   "connector": "STUB_galewood_street_5984405_R",
+   "piece": "STUB_galewood_street_5984405_R#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1536
+   },
+   "S2": {
+    "angle_deg": 87.98,
+    "span_half_m": 4.8,
+    "mouth_line_max_m": 0.006,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.007,
+    "approach_max_dg_per_m": 0.0042,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.01,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.005,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.38,
+    "samples": 256,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.026
+   },
+   "S5": {
+    "vertices": 770,
+    "max_float_m": -0.0199,
+    "max_sink_m": 0.041,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 14.458
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 6.069,
+     "road": 16.513,
+     "walk_over_edge_m": 0.125,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 5.597,
+     "road": 17.175,
+     "walk_over_edge_m": 0.157,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "galewood_street_5984405_L",
+   "connector": "STUB_galewood_street_5984405_L",
+   "piece": "STUB_galewood_street_5984405_L#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1516
+   },
+   "S2": {
+    "angle_deg": 89.33,
+    "span_half_m": 4.8,
+    "mouth_line_max_m": 0.006,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.008,
+    "approach_max_dg_per_m": 0.0073,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.01,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.011,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.38,
+    "samples": 256,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.026
+   },
+   "S5": {
+    "vertices": 760,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.055,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 14.498
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 5.143,
+     "road": 17.176,
+     "walk_over_edge_m": 0.157,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 5.333,
+     "road": 16.478,
+     "walk_over_edge_m": 0.122,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "eldridge_street_6013754_L",
+   "connector": "STUB_eldridge_street_6013754_L",
+   "piece": "STUB_eldridge_street_6013754_L#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1556
+   },
+   "S2": {
+    "angle_deg": 89.69,
+    "span_half_m": 4.8,
+    "mouth_line_max_m": 0.002,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.005,
+    "approach_max_dg_per_m": 0.0085,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.01,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.01,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.38,
+    "samples": 256,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.003
+   },
+   "S5": {
+    "vertices": 780,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.0483,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 14.648
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 5.821,
+     "road": 7.663,
+     "walk_over_edge_m": 0.142,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 5.453,
+     "road": 7.585,
+     "walk_over_edge_m": 0.138,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "eldridge_street_6013754_R",
+   "connector": "STUB_eldridge_street_6013754_R",
+   "piece": "STUB_eldridge_street_6013754_R#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1516
+   },
+   "S2": {
+    "angle_deg": 89.19,
+    "span_half_m": 4.8,
+    "mouth_line_max_m": 0.002,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.004,
+    "approach_max_dg_per_m": 0.0042,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.01,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.005,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.38,
+    "samples": 256,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.003
+   },
+   "S5": {
+    "vertices": 760,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.0351,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 14.564
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 5.421,
+     "road": 7.599,
+     "walk_over_edge_m": 0.139,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 5.99,
+     "road": 7.678,
+     "walk_over_edge_m": 0.142,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "birchwood_street_1370375341_R",
+   "connector": "STUB_birchwood_street_1370375341_R",
+   "piece": "STUB_birchwood_street_1370375341_R#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1596
+   },
+   "S2": {
+    "angle_deg": 86.19,
+    "span_half_m": 5.01,
+    "mouth_line_max_m": 0.013,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.014,
+    "approach_max_dg_per_m": 0.0053,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.02,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.006,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.58,
+    "samples": 264,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.079
+   },
+   "S5": {
+    "vertices": 800,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.0387,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 14.428
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 6.178,
+     "road": 7.879,
+     "walk_over_edge_m": 0.136,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 6.02,
+     "road": 8.107,
+     "walk_over_edge_m": 0.146,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "glenroy_street_663868618_L",
+   "connector": "STUB_glenroy_street_663868618_L",
+   "piece": "STUB_glenroy_street_663868618_L#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1536
+   },
+   "S2": {
+    "angle_deg": 88.36,
+    "span_half_m": 4.8,
+    "mouth_line_max_m": 0.004,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.005,
+    "approach_max_dg_per_m": 0.002,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.01,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.002,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.38,
+    "samples": 256,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.054
+   },
+   "S5": {
+    "vertices": 770,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.0263,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 14.385
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 5.464,
+     "road": 1.629,
+     "walk_over_edge_m": 0.144,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 4.823,
+     "road": 1.454,
+     "walk_over_edge_m": 0.135,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "glenroy_street_663868622_R",
+   "connector": "STUB_glenroy_street_663868622_R",
+   "piece": "STUB_glenroy_street_663868622_R#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1556
+   },
+   "S2": {
+    "angle_deg": 84.74,
+    "span_half_m": 4.82,
+    "mouth_line_max_m": 0.002,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.003,
+    "approach_max_dg_per_m": 0.0026,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.02,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.004,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.38,
+    "samples": 256,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.055
+   },
+   "S5": {
+    "vertices": 780,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.0327,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 13.994
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 6.689,
+     "road": 1.468,
+     "walk_over_edge_m": 0.136,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 2.976,
+     "road": 1.621,
+     "walk_over_edge_m": 0.142,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "princess_view_court_5998286_R",
+   "connector": "STUB_princess_view_court_5998286_R",
+   "piece": "STUB_princess_view_court_5998286_R#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1536
+   },
+   "S2": {
+    "angle_deg": 86.14,
+    "span_half_m": 5.01,
+    "mouth_line_max_m": 0.016,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.016,
+    "approach_max_dg_per_m": 0.009,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.02,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.011,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.58,
+    "samples": 264,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.06
+   },
+   "S5": {
+    "vertices": 770,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.058,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 13.886
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 3.828,
+     "road": -3.768,
+     "walk_over_edge_m": 0.111,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 5.809,
+     "road": -2.833,
+     "walk_over_edge_m": 0.167,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "princess_view_place_5998259_R",
+   "connector": "STUB_princess_view_place_5998259_R",
+   "piece": "STUB_princess_view_place_5998259_R#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1596
+   },
+   "S2": {
+    "angle_deg": 88.74,
+    "span_half_m": 5.0,
+    "mouth_line_max_m": 0.007,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.01,
+    "approach_max_dg_per_m": 0.0114,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.01,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.016,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.58,
+    "samples": 264,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.015
+   },
+   "S5": {
+    "vertices": 800,
+    "max_float_m": -0.0199,
+    "max_sink_m": 0.0747,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 14.455
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 2.865,
+     "road": -17.455,
+     "walk_over_edge_m": 0.123,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 4.863,
+     "road": -16.464,
+     "walk_over_edge_m": 0.164,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "princess_view_way_6018734_R",
+   "connector": "STUB_princess_view_way_6018734_R",
+   "piece": "STUB_princess_view_way_6018734_R#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1556
+   },
+   "S2": {
+    "angle_deg": 89.79,
+    "span_half_m": 5.0,
+    "mouth_line_max_m": 0.02,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.02,
+    "approach_max_dg_per_m": 0.0093,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.01,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.013,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.58,
+    "samples": 264,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.073
+   },
+   "S5": {
+    "vertices": 780,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.0637,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 14.579
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 3.616,
+     "road": -23.834,
+     "walk_over_edge_m": 0.115,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 5.768,
+     "road": -22.863,
+     "walk_over_edge_m": 0.165,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "fontaine_street_5986946_R",
+   "connector": "STUB_fontaine_street_5986946_R",
+   "piece": "STUB_fontaine_street_5986946_R#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1516
+   },
+   "S2": {
+    "angle_deg": 80.71,
+    "span_half_m": 4.86,
+    "mouth_line_max_m": 0.002,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.003,
+    "approach_max_dg_per_m": 0.0035,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.41,
+    "to_m": 15.02,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.007,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.38,
+    "samples": 256,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.005
+   },
+   "S5": {
+    "vertices": 760,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.0475,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 13.243
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 6.772,
+     "road": -39.313,
+     "walk_over_edge_m": 0.116,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 4.648,
+     "road": -38.307,
+     "walk_over_edge_m": 0.166,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "fontaine_street_5986946_L",
+   "connector": "STUB_fontaine_street_5986946_L",
+   "piece": "STUB_fontaine_street_5986946_L#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1536
+   },
+   "S2": {
+    "angle_deg": 89.37,
+    "span_half_m": 4.8,
+    "mouth_line_max_m": 0.002,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.005,
+    "approach_max_dg_per_m": 0.0132,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.01,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.022,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.38,
+    "samples": 256,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.003
+   },
+   "S5": {
+    "vertices": 770,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.0887,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 14.584
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 3.407,
+     "road": -38.437,
+     "walk_over_edge_m": 0.166,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 5.046,
+     "road": -39.388,
+     "walk_over_edge_m": 0.116,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "laura_street_6042836_R",
+   "connector": "STUB_laura_street_6042836_R",
+   "piece": "STUB_laura_street_6042836_R#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1556
+   },
+   "S2": {
+    "angle_deg": 89.79,
+    "span_half_m": 5.0,
+    "mouth_line_max_m": 0.036,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.038,
+    "approach_max_dg_per_m": 0.01,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.01,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.014,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.58,
+    "samples": 264,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.113
+   },
+   "S5": {
+    "vertices": 780,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.0672,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 14.236
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 2.604,
+     "road": -55.672,
+     "walk_over_edge_m": 0.121,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 3.672,
+     "road": -54.529,
+     "walk_over_edge_m": 0.172,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "conestoga_way_6042936_R",
+   "connector": "STUB_conestoga_way_6042936_R",
+   "piece": "STUB_conestoga_way_6042936_R#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1456
+   },
+   "S2": {
+    "angle_deg": 88.42,
+    "span_half_m": 5.0,
+    "mouth_line_max_m": 0.003,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.003,
+    "approach_max_dg_per_m": 0.0079,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.01,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.012,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.58,
+    "samples": 264,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.001
+   },
+   "S5": {
+    "vertices": 730,
+    "max_float_m": -0.0199,
+    "max_sink_m": 0.06,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 14.455
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 3.99,
+     "road": -46.15,
+     "walk_over_edge_m": 0.16,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 3.858,
+     "road": -46.916,
+     "walk_over_edge_m": 0.118,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "mission_vista_drive_5977531_L",
+   "connector": "STUB_mission_vista_drive_5977531_L",
+   "piece": "STUB_mission_vista_drive_5977531_L#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1556
+   },
+   "S2": {
+    "angle_deg": 82.04,
+    "span_half_m": 5.05,
+    "mouth_line_max_m": 0.008,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.009,
+    "approach_max_dg_per_m": 0.0041,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.02,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.008,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.58,
+    "samples": 264,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.017
+   },
+   "S5": {
+    "vertices": 780,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.0411,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 13.52
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 2.757,
+     "road": -0.405,
+     "walk_over_edge_m": 0.126,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 4.162,
+     "road": 0.383,
+     "walk_over_edge_m": 0.162,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "margerum_avenue_135149732_R",
+   "connector": "STUB_margerum_avenue_135149732_R",
+   "piece": "STUB_margerum_avenue_135149732_R#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1536
+   },
+   "S2": {
+    "angle_deg": 84.98,
+    "span_half_m": 4.82,
+    "mouth_line_max_m": 0.007,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.005,
+    "approach_max_dg_per_m": 0.0144,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.02,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.027,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.38,
+    "samples": 256,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.021
+   },
+   "S5": {
+    "vertices": 770,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.1027,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 14.105
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 4.947,
+     "road": 0.379,
+     "walk_over_edge_m": 0.159,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 4.013,
+     "road": -0.339,
+     "walk_over_edge_m": 0.121,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "mission_montana_drive_5988290_L",
+   "connector": "STUB_mission_montana_drive_5988290_L",
+   "piece": "STUB_mission_montana_drive_5988290_L#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1496
+   },
+   "S2": {
+    "angle_deg": 89.05,
+    "span_half_m": 5.0,
+    "mouth_line_max_m": 0.001,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.003,
+    "approach_max_dg_per_m": 0.0051,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.01,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.006,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.58,
+    "samples": 264,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.003
+   },
+   "S5": {
+    "vertices": 750,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.0378,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 14.52
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 4.17,
+     "road": 13.572,
+     "walk_over_edge_m": 0.137,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 3.932,
+     "road": 13.673,
+     "walk_over_edge_m": 0.142,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "mission_vista_drive_5977531_L_560",
+   "connector": "STUB_mission_vista_drive_5977531_L_560",
+   "piece": "STUB_mission_vista_drive_5977531_L_560#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1496
+   },
+   "S2": {
+    "angle_deg": 84.28,
+    "span_half_m": 5.03,
+    "mouth_line_max_m": 0.003,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.007,
+    "approach_max_dg_per_m": 0.011,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.02,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.014,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.58,
+    "samples": 264,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.001
+   },
+   "S5": {
+    "vertices": 750,
+    "max_float_m": -0.0199,
+    "max_sink_m": 0.0639,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 13.854
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 6.484,
+     "road": 7.604,
+     "walk_over_edge_m": 0.155,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 4.585,
+     "road": 6.997,
+     "walk_over_edge_m": 0.125,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "deerfield_crescent_638144640_L",
+   "connector": "STUB_deerfield_crescent_638144640_L",
+   "piece": "STUB_deerfield_crescent_638144640_L#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1596
+   },
+   "S2": {
+    "angle_deg": 85.27,
+    "span_half_m": 5.02,
+    "mouth_line_max_m": 0.002,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.005,
+    "approach_max_dg_per_m": 0.0068,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.02,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.008,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.58,
+    "samples": 264,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.001
+   },
+   "S5": {
+    "vertices": 800,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.0437,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 13.941
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 5.95,
+     "road": -5.945,
+     "walk_over_edge_m": 0.143,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 5.542,
+     "road": -6.084,
+     "walk_over_edge_m": 0.137,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "deerfield_street_6055959_R",
+   "connector": "STUB_deerfield_street_6055959_R",
+   "piece": "STUB_deerfield_street_6055959_R#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1516
+   },
+   "S2": {
+    "angle_deg": 84.28,
+    "span_half_m": 5.02,
+    "mouth_line_max_m": 0.003,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.006,
+    "approach_max_dg_per_m": 0.0108,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.02,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.015,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.58,
+    "samples": 264,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.002
+   },
+   "S5": {
+    "vertices": 760,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.0625,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 13.88
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 4.148,
+     "road": -6.118,
+     "walk_over_edge_m": 0.138,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 3.678,
+     "road": -6.004,
+     "walk_over_edge_m": 0.143,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "birchcreek_road_6024742_R",
+   "connector": "STUB_birchcreek_road_6024742_R",
+   "piece": "STUB_birchcreek_road_6024742_R#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1556
+   },
+   "S2": {
+    "angle_deg": 81.55,
+    "span_half_m": 4.85,
+    "mouth_line_max_m": 0.007,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.007,
+    "approach_max_dg_per_m": 0.0052,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.02,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.004,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.38,
+    "samples": 256,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.01
+   },
+   "S5": {
+    "vertices": 780,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.0371,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 13.508
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 5.476,
+     "road": 101.458,
+     "walk_over_edge_m": 0.125,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 2.848,
+     "road": 102.055,
+     "walk_over_edge_m": 0.15,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "park_ridge_boulevard_1224664714_L",
+   "connector": "STUB_park_ridge_boulevard_1224664714_L",
+   "piece": "STUB_park_ridge_boulevard_1224664714_L#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1516
+   },
+   "S2": {
+    "angle_deg": 89.91,
+    "span_half_m": 4.8,
+    "mouth_line_max_m": 0.002,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.004,
+    "approach_max_dg_per_m": 0.0082,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.01,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.011,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.38,
+    "samples": 256,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.005
+   },
+   "S5": {
+    "vertices": 760,
+    "max_float_m": -0.0199,
+    "max_sink_m": 0.0555,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 14.612
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 3.247,
+     "road": 91.122,
+     "walk_over_edge_m": 0.15,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 5.199,
+     "road": 90.502,
+     "walk_over_edge_m": 0.124,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "tuxedo_road_6051501_R",
+   "connector": "STUB_tuxedo_road_6051501_R",
+   "piece": "STUB_tuxedo_road_6051501_R#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1696
+   },
+   "S2": {
+    "angle_deg": 71.53,
+    "span_half_m": 6.33,
+    "mouth_line_max_m": 0.006,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.011,
+    "approach_max_dg_per_m": 0.0093,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.42,
+    "to_m": 15.04,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.006,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 7.58,
+    "samples": 304,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.036
+   },
+   "S5": {
+    "vertices": 850,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.0498,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 10.938
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 4.825,
+     "road": 34.623,
+     "walk_over_edge_m": 0.13,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 2.936,
+     "road": 35.184,
+     "walk_over_edge_m": 0.149,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "winding_creek_drive_5968105_R",
+   "connector": "STUB_winding_creek_drive_5968105_R",
+   "piece": "STUB_winding_creek_drive_5968105_R#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1716
+   },
+   "S2": {
+    "angle_deg": 84.64,
+    "span_half_m": 6.03,
+    "mouth_line_max_m": 0.003,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.005,
+    "approach_max_dg_per_m": 0.0095,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.02,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.011,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 7.58,
+    "samples": 304,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.002
+   },
+   "S5": {
+    "vertices": 860,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.0549,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 13.667
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 3.435,
+     "road": 24.663,
+     "walk_over_edge_m": 0.124,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 5.297,
+     "road": 25.519,
+     "walk_over_edge_m": 0.159,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "hemingway_drive_6045093_L",
+   "connector": "STUB_hemingway_drive_6045093_L",
+   "piece": "STUB_hemingway_drive_6045093_L#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1556
+   },
+   "S2": {
+    "angle_deg": 88.89,
+    "span_half_m": 5.0,
+    "mouth_line_max_m": 0.008,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.011,
+    "approach_max_dg_per_m": 0.0138,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.01,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.026,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.58,
+    "samples": 264,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.038
+   },
+   "S5": {
+    "vertices": 780,
+    "max_float_m": -0.0199,
+    "max_sink_m": 0.0931,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 14.534
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 5.125,
+     "road": 17.088,
+     "walk_over_edge_m": 0.152,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 4.882,
+     "road": 16.626,
+     "walk_over_edge_m": 0.13,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "doreen_road_5955946_L",
+   "connector": "STUB_doreen_road_5955946_L",
+   "piece": "STUB_doreen_road_5955946_L#0",
+   "S1": {
+    "mouth": true,
+    "built": true,
+    "barrier_tris": 1536
+   },
+   "S2": {
+    "angle_deg": 87.32,
+    "span_half_m": 5.01,
+    "mouth_line_max_m": 0.04,
+    "host_lane_above_max_m": 0.0,
+    "notch_max_m": 0.042,
+    "approach_max_dg_per_m": 0.0147,
+    "fails": []
+   },
+   "S3": {
+    "from_m": 0.4,
+    "to_m": 15.01,
+    "holes": 0,
+    "steps_over": 0,
+    "worst_step_m": 0.033,
+    "grass_at_or_above": 0,
+    "obstructions": 0,
+    "obstructed_at": []
+   },
+   "S4": {
+    "half_span_m": 6.58,
+    "samples": 264,
+    "short": 0,
+    "short_at_m": [],
+    "lowest_short_m": null,
+    "read_on": "built crest line",
+    "crest_off_declared_max_m": 0.149
+   },
+   "S5": {
+    "vertices": 770,
+    "max_float_m": -0.02,
+    "max_sink_m": 0.1191,
+    "no_surface": 0
+   },
+   "S6": {
+    "min_off_host_edge_m": 14.443
+   },
+   "S7": [
+    {
+     "edge": 1,
+     "radius_m": 7.877,
+     "road": 2.633,
+     "walk_over_edge_m": 0.155,
+     "fails": []
+    },
+    {
+     "edge": -1,
+     "radius_m": 4.655,
+     "road": 1.854,
+     "walk_over_edge_m": 0.12,
+     "fails": []
+    }
+   ],
+   "fails": [],
+   "fail": false
+  }
+ ],
+ "curb_cuts": [
+  {
+   "id": "service_576889885_L",
+   "road": -63.55044202650434,
+   "kerb": -63.48850109936698,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_576889897_R",
+   "road": -65.54173770514133,
+   "kerb": -65.48092829017088,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_576889898_R",
+   "road": -66.78550184415683,
+   "kerb": -66.72204184391416,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_576889900_R",
+   "road": -66.88660459251284,
+   "kerb": -66.82353561504016,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_576889906_R",
+   "road": -66.35362834322498,
+   "kerb": -66.29305816047939,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_745284422_L",
+   "road": -65.17657065565898,
+   "kerb": -65.11510160644926,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_576889906_R_56",
+   "road": -61.94438895030563,
+   "kerb": -61.88285213745431,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_567651095_L",
+   "road": -61.56363907455292,
+   "kerb": -61.50197883962308,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_576889892_R",
+   "road": -61.32472007344767,
+   "kerb": -61.2635306745845,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_576889892_R_76",
+   "road": -59.15231202819317,
+   "kerb": -59.09127436313069,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_576889890_R",
+   "road": -58.595287262921126,
+   "kerb": -58.53436800287861,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_576889890_R_95",
+   "road": -55.50283625677092,
+   "kerb": -55.446639671430184,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_576889889_R",
+   "road": -54.87975300432357,
+   "kerb": -54.818125370463136,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_576889888_R",
+   "road": -51.06519917503585,
+   "kerb": -51.004140051981345,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_576889887_R",
+   "road": -49.73139533390377,
+   "kerb": -49.67048223789811,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_1013051647_R",
+   "road": -16.01075341807995,
+   "kerb": -15.949954843076977,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_1013051648_R",
+   "road": -15.382585214656862,
+   "kerb": -15.321304970453756,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_318915680_R",
+   "road": 9.33651288665258,
+   "kerb": 9.397362580914933,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_318915571_R",
+   "road": 12.303089395583596,
+   "kerb": 12.363908593148265,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_577444270_R_722",
+   "road": -7.513882854502545,
+   "kerb": -7.453216923211392,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_577444242_R",
+   "road": 108.39184003231414,
+   "kerb": 108.45594919190195,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_577444238_L",
+   "road": 108.06069557233049,
+   "kerb": 108.1196840464977,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_577444239_L",
+   "road": 107.75011669934189,
+   "kerb": 107.81107808050601,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_577444241_L",
+   "road": 106.90706559314961,
+   "kerb": 106.96785244627716,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_577444237_L",
+   "road": 102.21841985786526,
+   "kerb": 102.27821029681792,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_851357844_L",
+   "road": 92.03410963429867,
+   "kerb": 92.0949962714357,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "sdcwa_service_road_401663247_L",
+   "road": 5.520337367701135,
+   "kerb": 5.581087869507272,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_577444267_R",
+   "road": -3.5650624859510223,
+   "kerb": -3.4957288519569603,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "service_577444268_R",
+   "road": -6.5732386281518576,
+   "kerb": -6.4801083815126574,
+   "fails": [],
+   "fail": false
+  }
+ ],
+ "fail": false,
+ "thresholds": {
+  "step_max_m_invented": 0.05,
+  "obstruct_m_invented": 0.05,
+  "barrier_min_h_m_invented": 0.8,
+  "seat_float_m": 0.05,
+  "seat_sink_m_invented": 0.15,
+  "host_clear_m_invented": 1.0,
+  "grass_at_m": 0.005,
+  "trees_checked": 347
+ }
+}

@@ -115,6 +115,82 @@
    "folds": []
   },
   {
+   "connector": "north_J1_waring",
+   "piece": "north_J1_waring#0",
+   "end": "start",
+   "host": "MAINLINE",
+   "side": 1,
+   "host_vertex": 1517,
+   "angle_deg": 83.62,
+   "host_grade": 0.01085,
+   "rows_respread": 3,
+   "rows_touched": 11,
+   "markings_moved": 240,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": -4.203,
+    "road+1": 0.0,
+    "road+2": -0.597,
+    "curb+1+0": -3.643,
+    "curb+1+1": -3.722,
+    "curb+1+2": -5.189,
+    "curb+1+3": -6.857,
+    "curb-1+0": -0.194,
+    "curb-1+1": -0.204,
+    "curb-1+2": -0.396,
+    "curb-1+3": -0.575
+   },
+   "end_dy_m": [
+    -0.055,
+    -0.005,
+    0.16
+   ],
+   "end_vs_host_before_m": [
+    0.005
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "north_J5_jackson_north",
+   "piece": "north_J5_jackson_north#0",
+   "end": "start",
+   "host": "MAINLINE",
+   "side": 1,
+   "host_vertex": 2317,
+   "angle_deg": 80.42,
+   "host_grade": 0.02665,
+   "rows_respread": 3,
+   "rows_touched": 12,
+   "markings_moved": 300,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": -0.844,
+    "road+1": -0.0,
+    "road+2": -11.05,
+    "curb+1+0": -0.436,
+    "curb+1+1": -0.452,
+    "curb+1+2": -0.754,
+    "curb+1+3": -1.03,
+    "curb-1+0": -10.294,
+    "curb-1+1": -10.423,
+    "curb-1+2": -14.26,
+    "curb-1+3": -19.496
+   },
+   "end_dy_m": [
+    -0.237,
+    0.01,
+    0.227
+   ],
+   "end_vs_host_before_m": [
+    -0.01
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
    "connector": "medium#2+0#0",
    "piece": "medium#2+0#0#0",
    "end": "end",
@@ -148,6 +224,1035 @@
     0.009,
     -0.0,
     -0.02
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_galewood_street_5984405_R",
+   "piece": "STUB_galewood_street_5984405_R#0",
+   "end": "start",
+   "host": "north_J1_waring#0",
+   "side": -1,
+   "host_vertex": 36,
+   "angle_deg": 87.97,
+   "host_grade": -0.0639,
+   "rows_respread": 7,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": 0.113,
+    "road+1": -0.025,
+    "road+2": -0.211,
+    "curb+1+0": 0.513,
+    "curb+1+1": 0.515,
+    "curb+1+2": 0.544,
+    "curb+1+3": 0.567,
+    "curb-1+0": 0.19,
+    "curb-1+1": 0.186,
+    "curb-1+2": 0.12,
+    "curb-1+3": 0.065
+   },
+   "end_dy_m": [
+    -0.287,
+    0.003,
+    0.3
+   ],
+   "end_vs_host_before_m": [
+    0.287,
+    -0.003,
+    -0.299
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_galewood_street_5984405_L",
+   "piece": "STUB_galewood_street_5984405_L#0",
+   "end": "start",
+   "host": "north_J1_waring#0",
+   "side": 1,
+   "host_vertex": 36,
+   "angle_deg": 89.32,
+   "host_grade": -0.0639,
+   "rows_respread": 7,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": -0.013,
+    "road+1": 0.025,
+    "road+2": 0.116,
+    "curb+1+0": 0.387,
+    "curb+1+1": 0.386,
+    "curb+1+2": 0.383,
+    "curb+1+3": 0.382,
+    "curb-1+0": 0.516,
+    "curb-1+1": 0.518,
+    "curb-1+2": 0.559,
+    "curb-1+3": 0.593
+   },
+   "end_dy_m": [
+    0.312,
+    0.001,
+    -0.307
+   ],
+   "end_vs_host_before_m": [
+    -0.312,
+    -0.001,
+    0.306
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_eldridge_street_6013754_L",
+   "piece": "STUB_eldridge_street_6013754_L#0",
+   "end": "start",
+   "host": "north_J1_waring#0",
+   "side": 1,
+   "host_vertex": 135,
+   "angle_deg": 89.68,
+   "host_grade": -0.00769,
+   "rows_respread": 7,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": 0.013,
+    "road+1": 0.003,
+    "road+2": -0.002,
+    "curb+1+0": 0.413,
+    "curb+1+1": 0.413,
+    "curb+1+2": 0.417,
+    "curb+1+3": 0.421,
+    "curb-1+0": 0.398,
+    "curb-1+1": 0.398,
+    "curb-1+2": 0.397,
+    "curb-1+3": 0.398
+   },
+   "end_dy_m": [
+    0.041,
+    0.003,
+    -0.029
+   ],
+   "end_vs_host_before_m": [
+    -0.041,
+    -0.003,
+    0.029
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_eldridge_street_6013754_R",
+   "piece": "STUB_eldridge_street_6013754_R#0",
+   "end": "start",
+   "host": "north_J1_waring#0",
+   "side": -1,
+   "host_vertex": 135,
+   "angle_deg": 89.19,
+   "host_grade": -0.00769,
+   "rows_respread": 7,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": 0.062,
+    "road+1": -0.003,
+    "road+2": -0.073,
+    "curb+1+0": 0.462,
+    "curb+1+1": 0.463,
+    "curb+1+2": 0.482,
+    "curb+1+3": 0.497,
+    "curb-1+0": 0.327,
+    "curb-1+1": 0.326,
+    "curb-1+2": 0.304,
+    "curb-1+3": 0.286
+   },
+   "end_dy_m": [
+    -0.029,
+    0.003,
+    0.04
+   ],
+   "end_vs_host_before_m": [
+    0.029,
+    -0.003,
+    -0.04
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_birchwood_street_1370375341_R",
+   "piece": "STUB_birchwood_street_1370375341_R#0",
+   "end": "start",
+   "host": "north_J1_waring#0",
+   "side": -1,
+   "host_vertex": 224,
+   "angle_deg": 86.21,
+   "host_grade": -0.024,
+   "rows_respread": 7,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": 0.042,
+    "road+1": -0.079,
+    "road+2": -0.379,
+    "curb+1+0": 0.442,
+    "curb+1+1": 0.44,
+    "curb+1+2": 0.416,
+    "curb+1+3": 0.397,
+    "curb-1+0": 0.022,
+    "curb-1+1": 0.016,
+    "curb-1+2": -0.096,
+    "curb-1+3": -0.187
+   },
+   "end_dy_m": [
+    -0.088,
+    0.009,
+    0.122
+   ],
+   "end_vs_host_before_m": [
+    0.088,
+    -0.009,
+    -0.121
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_glenroy_street_663868618_L",
+   "piece": "STUB_glenroy_street_663868618_L#0",
+   "end": "start",
+   "host": "north_princess_view",
+   "side": 1,
+   "host_vertex": 21,
+   "angle_deg": 88.35,
+   "host_grade": -0.01368,
+   "rows_respread": 7,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": 0.201,
+    "road+1": 0.053,
+    "road+2": 0.012,
+    "curb+1+0": 0.602,
+    "curb+1+1": 0.605,
+    "curb+1+2": 0.67,
+    "curb+1+3": 0.722,
+    "curb-1+0": 0.412,
+    "curb-1+1": 0.412,
+    "curb-1+2": 0.423,
+    "curb-1+3": 0.44
+   },
+   "end_dy_m": [
+    0.064,
+    -0.006,
+    -0.091
+   ],
+   "end_vs_host_before_m": [
+    -0.063,
+    0.006,
+    0.091
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_glenroy_street_663868622_R",
+   "piece": "STUB_glenroy_street_663868622_R#0",
+   "end": "start",
+   "host": "north_princess_view",
+   "side": -1,
+   "host_vertex": 21,
+   "angle_deg": 84.74,
+   "host_grade": -0.01368,
+   "rows_respread": 7,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": -0.572,
+    "road+1": -0.054,
+    "road+2": 0.366,
+    "curb+1+0": -0.169,
+    "curb+1+1": -0.179,
+    "curb+1+2": -0.364,
+    "curb+1+3": -0.513,
+    "curb-1+0": 0.767,
+    "curb-1+1": 0.774,
+    "curb-1+2": 0.886,
+    "curb-1+3": 0.976
+   },
+   "end_dy_m": [
+    -0.08,
+    -0.004,
+    0.06
+   ],
+   "end_vs_host_before_m": [
+    0.004,
+    -0.06
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_princess_view_court_5998286_R",
+   "piece": "STUB_princess_view_court_5998286_R#0",
+   "end": "start",
+   "host": "north_princess_view",
+   "side": -1,
+   "host_vertex": 54,
+   "angle_deg": 86.14,
+   "host_grade": -0.07843,
+   "rows_respread": 8,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": 0.492,
+    "road+1": 0.059,
+    "road+2": -0.242,
+    "curb+1+0": 0.894,
+    "curb+1+1": 0.902,
+    "curb+1+2": 1.056,
+    "curb+1+3": 1.198,
+    "curb-1+0": 0.158,
+    "curb-1+1": 0.154,
+    "curb-1+2": 0.087,
+    "curb-1+3": 0.034
+   },
+   "end_dy_m": [
+    -0.445,
+    -0.011,
+    0.395
+   ],
+   "end_vs_host_before_m": [
+    0.441,
+    0.011,
+    -0.395
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_princess_view_place_5998259_R",
+   "piece": "STUB_princess_view_place_5998259_R#0",
+   "end": "start",
+   "host": "north_princess_view",
+   "side": -1,
+   "host_vertex": 101,
+   "angle_deg": 88.77,
+   "host_grade": -0.0893,
+   "rows_respread": 7,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": 0.139,
+    "road+1": 0.014,
+    "road+2": -0.076,
+    "curb+1+0": 0.539,
+    "curb+1+1": 0.541,
+    "curb+1+2": 0.583,
+    "curb+1+3": 0.617,
+    "curb-1+0": 0.324,
+    "curb-1+1": 0.323,
+    "curb-1+2": 0.303,
+    "curb-1+3": 0.29
+   },
+   "end_dy_m": [
+    -0.451,
+    0.003,
+    0.465
+   ],
+   "end_vs_host_before_m": [
+    0.451,
+    -0.003,
+    -0.465
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_princess_view_way_6018734_R",
+   "piece": "STUB_princess_view_way_6018734_R#0",
+   "end": "start",
+   "host": "north_princess_view",
+   "side": -1,
+   "host_vertex": 124,
+   "angle_deg": 89.8,
+   "host_grade": -0.09586,
+   "rows_respread": 7,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": -0.041,
+    "road+1": -0.072,
+    "road+2": -0.244,
+    "curb+1+0": 0.359,
+    "curb+1+1": 0.359,
+    "curb+1+2": 0.346,
+    "curb+1+3": 0.334,
+    "curb-1+0": 0.156,
+    "curb-1+1": 0.152,
+    "curb-1+2": 0.071,
+    "curb-1+3": -0.003
+   },
+   "end_dy_m": [
+    -0.467,
+    -0.015,
+    0.428
+   ],
+   "end_vs_host_before_m": [
+    0.467,
+    0.015,
+    -0.427
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_fontaine_street_5986946_R",
+   "piece": "STUB_fontaine_street_5986946_R#0",
+   "end": "start",
+   "host": "north_princess_view",
+   "side": -1,
+   "host_vertex": 178,
+   "angle_deg": 80.71,
+   "host_grade": -0.091,
+   "rows_respread": 8,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": -0.781,
+    "road+1": 0.003,
+    "road+2": 0.791,
+    "curb+1+0": -0.375,
+    "curb+1+1": -0.388,
+    "curb+1+2": -0.633,
+    "curb+1+3": -0.828,
+    "curb-1+0": 1.196,
+    "curb-1+1": 1.209,
+    "curb-1+2": 1.456,
+    "curb-1+3": 1.654
+   },
+   "end_dy_m": [
+    -0.447,
+    -0.001,
+    0.442
+   ],
+   "end_vs_host_before_m": [
+    0.001,
+    -0.431
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_fontaine_street_5986946_L",
+   "piece": "STUB_fontaine_street_5986946_L#0",
+   "end": "start",
+   "host": "north_princess_view",
+   "side": 1,
+   "host_vertex": 178,
+   "angle_deg": 89.38,
+   "host_grade": -0.091,
+   "rows_respread": 7,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": 0.047,
+    "road+1": -0.003,
+    "road+2": -0.057,
+    "curb+1+0": 0.447,
+    "curb+1+1": 0.448,
+    "curb+1+2": 0.463,
+    "curb+1+3": 0.475,
+    "curb-1+0": 0.343,
+    "curb-1+1": 0.342,
+    "curb-1+2": 0.325,
+    "curb-1+3": 0.311
+   },
+   "end_dy_m": [
+    0.435,
+    -0.002,
+    -0.442
+   ],
+   "end_vs_host_before_m": [
+    -0.435,
+    0.002,
+    0.442
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_laura_street_6042836_R",
+   "piece": "STUB_laura_street_6042836_R#0",
+   "end": "start",
+   "host": "north_princess_view",
+   "side": -1,
+   "host_vertex": 234,
+   "angle_deg": 89.8,
+   "host_grade": -0.09561,
+   "rows_respread": 7,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": 0.16,
+    "road+1": 0.111,
+    "road+2": 0.309,
+    "curb+1+0": 0.561,
+    "curb+1+1": 0.563,
+    "curb+1+2": 0.615,
+    "curb+1+3": 0.658,
+    "curb-1+0": 0.71,
+    "curb-1+1": 0.715,
+    "curb-1+2": 0.821,
+    "curb-1+3": 0.925
+   },
+   "end_dy_m": [
+    -0.509,
+    0.018,
+    0.553
+   ],
+   "end_vs_host_before_m": [
+    0.508,
+    -0.017,
+    -0.55
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_conestoga_way_6042936_R",
+   "piece": "STUB_conestoga_way_6042936_R#0",
+   "end": "start",
+   "host": "north_mission_gorge",
+   "side": -1,
+   "host_vertex": 138,
+   "angle_deg": 88.43,
+   "host_grade": 0.07078,
+   "rows_respread": 7,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": 0.128,
+    "road+1": -0.0,
+    "road+2": -0.122,
+    "curb+1+0": 0.528,
+    "curb+1+1": 0.53,
+    "curb+1+2": 0.571,
+    "curb+1+3": 0.604,
+    "curb-1+0": 0.278,
+    "curb-1+1": 0.276,
+    "curb-1+2": 0.243,
+    "curb-1+3": 0.219
+   },
+   "end_dy_m": [
+    0.349,
+    -0.002,
+    -0.361
+   ],
+   "end_vs_host_before_m": [
+    -0.348,
+    0.002,
+    0.36
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_mission_vista_drive_5977531_L",
+   "piece": "STUB_mission_vista_drive_5977531_L#0",
+   "end": "start",
+   "host": "north_mission_gorge",
+   "side": 1,
+   "host_vertex": 362,
+   "angle_deg": 82.06,
+   "host_grade": 0.0706,
+   "rows_respread": 8,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": 0.663,
+    "road+1": 0.016,
+    "road+2": -0.572,
+    "curb+1+0": 1.066,
+    "curb+1+1": 1.077,
+    "curb+1+2": 1.282,
+    "curb+1+3": 1.446,
+    "curb-1+0": -0.17,
+    "curb-1+1": -0.178,
+    "curb-1+2": -0.337,
+    "curb-1+3": -0.458
+   },
+   "end_dy_m": [
+    -0.364,
+    0.003,
+    0.377
+   ],
+   "end_vs_host_before_m": [
+    0.357,
+    -0.004
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_margerum_avenue_135149732_R",
+   "piece": "STUB_margerum_avenue_135149732_R#0",
+   "end": "start",
+   "host": "north_mission_gorge",
+   "side": -1,
+   "host_vertex": 362,
+   "angle_deg": 84.95,
+   "host_grade": 0.0707,
+   "rows_respread": 7,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": -0.421,
+    "road+1": -0.02,
+    "road+2": 0.321,
+    "curb+1+0": -0.019,
+    "curb+1+1": -0.026,
+    "curb+1+2": -0.164,
+    "curb+1+3": -0.286,
+    "curb-1+0": 0.722,
+    "curb-1+1": 0.728,
+    "curb-1+2": 0.829,
+    "curb-1+3": 0.906
+   },
+   "end_dy_m": [
+    0.329,
+    0.001,
+    -0.331
+   ],
+   "end_vs_host_before_m": [
+    -0.001,
+    0.33
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_mission_montana_drive_5988290_L",
+   "piece": "STUB_mission_montana_drive_5988290_L#0",
+   "end": "start",
+   "host": "north_mission_gorge",
+   "side": 1,
+   "host_vertex": 466,
+   "angle_deg": 89.03,
+   "host_grade": 0.00867,
+   "rows_respread": 7,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": 0.089,
+    "road+1": -0.002,
+    "road+2": -0.097,
+    "curb+1+0": 0.489,
+    "curb+1+1": 0.49,
+    "curb+1+2": 0.516,
+    "curb+1+3": 0.537,
+    "curb-1+0": 0.303,
+    "curb-1+1": 0.301,
+    "curb-1+2": 0.272,
+    "curb-1+3": 0.248
+   },
+   "end_dy_m": [
+    -0.055,
+    -0.004,
+    0.039
+   ],
+   "end_vs_host_before_m": [
+    0.055,
+    0.004,
+    -0.039
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_mission_vista_drive_5977531_L_560",
+   "piece": "STUB_mission_vista_drive_5977531_L_560#0",
+   "end": "start",
+   "host": "north_mission_gorge",
+   "side": 1,
+   "host_vertex": 560,
+   "angle_deg": 84.29,
+   "host_grade": -0.05506,
+   "rows_respread": 8,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": -0.479,
+    "road+1": 0.0,
+    "road+2": 0.48,
+    "curb+1+0": -0.077,
+    "curb+1+1": -0.085,
+    "curb+1+2": -0.23,
+    "curb+1+3": -0.345,
+    "curb-1+0": 0.882,
+    "curb-1+1": 0.889,
+    "curb-1+2": 1.033,
+    "curb-1+3": 1.149
+   },
+   "end_dy_m": [
+    0.275,
+    0.001,
+    -0.274
+   ],
+   "end_vs_host_before_m": [
+    -0.001,
+    0.272
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_deerfield_crescent_638144640_L",
+   "piece": "STUB_deerfield_crescent_638144640_L#0",
+   "end": "start",
+   "host": "north_mission_gorge",
+   "side": 1,
+   "host_vertex": 669,
+   "angle_deg": 85.28,
+   "host_grade": -0.01135,
+   "rows_respread": 8,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": 0.43,
+    "road+1": -0.0,
+    "road+2": -0.44,
+    "curb+1+0": 0.831,
+    "curb+1+1": 0.838,
+    "curb+1+2": 0.959,
+    "curb+1+3": 1.056,
+    "curb-1+0": -0.038,
+    "curb-1+1": -0.045,
+    "curb-1+2": -0.176,
+    "curb-1+3": -0.281
+   },
+   "end_dy_m": [
+    0.058,
+    0.001,
+    -0.056
+   ],
+   "end_vs_host_before_m": [
+    -0.058,
+    -0.001
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_deerfield_street_6055959_R",
+   "piece": "STUB_deerfield_street_6055959_R#0",
+   "end": "start",
+   "host": "north_mission_gorge",
+   "side": -1,
+   "host_vertex": 670,
+   "angle_deg": 84.3,
+   "host_grade": -0.01135,
+   "rows_respread": 8,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": 0.47,
+    "road+1": -0.001,
+    "road+2": -0.47,
+    "curb+1+0": 0.872,
+    "curb+1+1": 0.88,
+    "curb+1+2": 1.022,
+    "curb+1+3": 1.133,
+    "curb-1+0": -0.069,
+    "curb-1+1": -0.076,
+    "curb-1+2": -0.216,
+    "curb-1+3": -0.327
+   },
+   "end_dy_m": [
+    -0.056,
+    0.0,
+    0.058
+   ],
+   "end_vs_host_before_m": [
+    0.055,
+    -0.0
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_birchcreek_road_6024742_R",
+   "piece": "STUB_birchcreek_road_6024742_R#0",
+   "end": "start",
+   "host": "north_J5_jackson_north#0",
+   "side": -1,
+   "host_vertex": 59,
+   "angle_deg": 81.54,
+   "host_grade": -0.05774,
+   "rows_respread": 8,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": -0.682,
+    "road+1": -0.01,
+    "road+2": 0.658,
+    "curb+1+0": -0.279,
+    "curb+1+1": -0.289,
+    "curb+1+2": -0.491,
+    "curb+1+3": -0.644,
+    "curb-1+0": 1.061,
+    "curb-1+1": 1.072,
+    "curb-1+2": 1.27,
+    "curb-1+3": 1.426
+   },
+   "end_dy_m": [
+    -0.282,
+    -0.002,
+    0.273
+   ],
+   "end_vs_host_before_m": [
+    0.002,
+    -0.268
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_park_ridge_boulevard_1224664714_L",
+   "piece": "STUB_park_ridge_boulevard_1224664714_L#0",
+   "end": "start",
+   "host": "north_J5_jackson_north#0",
+   "side": 1,
+   "host_vertex": 119,
+   "angle_deg": 89.91,
+   "host_grade": -0.05909,
+   "rows_respread": 7,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": 0.031,
+    "road+1": -0.004,
+    "road+2": -0.045,
+    "curb+1+0": 0.431,
+    "curb+1+1": 0.431,
+    "curb+1+2": 0.44,
+    "curb+1+3": 0.447,
+    "curb-1+0": 0.355,
+    "curb-1+1": 0.354,
+    "curb-1+2": 0.343,
+    "curb-1+3": 0.332
+   },
+   "end_dy_m": [
+    0.286,
+    0.001,
+    -0.281
+   ],
+   "end_vs_host_before_m": [
+    -0.286,
+    -0.001,
+    0.281
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_tuxedo_road_6051501_R",
+   "piece": "STUB_tuxedo_road_6051501_R#0",
+   "end": "start",
+   "host": "north_J5_jackson_north#0",
+   "side": -1,
+   "host_vertex": 397,
+   "angle_deg": 71.52,
+   "host_grade": -0.03986,
+   "rows_respread": 10,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": -1.875,
+    "road+1": 0.035,
+    "road+2": 2.078,
+    "curb+1+0": -1.456,
+    "curb+1+1": -1.481,
+    "curb+1+2": -1.947,
+    "curb+1+3": -2.319,
+    "curb-1+0": 2.502,
+    "curb-1+1": 2.53,
+    "curb-1+2": 3.06,
+    "curb-1+3": 3.495
+   },
+   "end_dy_m": [
+    -0.27,
+    -0.001,
+    0.263
+   ],
+   "end_vs_host_before_m": [
+    0.001,
+    -0.234
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_winding_creek_drive_5968105_R",
+   "piece": "STUB_winding_creek_drive_5968105_R#0",
+   "end": "start",
+   "host": "north_J5_jackson_north#0",
+   "side": -1,
+   "host_vertex": 446,
+   "angle_deg": 84.65,
+   "host_grade": -0.06676,
+   "rows_respread": 8,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": -0.645,
+    "road+1": -0.001,
+    "road+2": 0.634,
+    "curb+1+0": -0.243,
+    "curb+1+1": -0.252,
+    "curb+1+2": -0.413,
+    "curb+1+3": -0.543,
+    "curb-1+0": 1.036,
+    "curb-1+1": 1.044,
+    "curb-1+2": 1.201,
+    "curb-1+3": 1.326
+   },
+   "end_dy_m": [
+    -0.402,
+    -0.0,
+    0.4
+   ],
+   "end_vs_host_before_m": [
+    0.0,
+    -0.397
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_hemingway_drive_6045093_L",
+   "piece": "STUB_hemingway_drive_6045093_L#0",
+   "end": "start",
+   "host": "north_J5_jackson_north#0",
+   "side": 1,
+   "host_vertex": 494,
+   "angle_deg": 88.89,
+   "host_grade": -0.03989,
+   "rows_respread": 7,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": 0.105,
+    "road+1": 0.037,
+    "road+2": 0.062,
+    "curb+1+0": 0.505,
+    "curb+1+1": 0.508,
+    "curb+1+2": 0.556,
+    "curb+1+3": 0.601,
+    "curb-1+0": 0.462,
+    "curb-1+1": 0.463,
+    "curb-1+2": 0.484,
+    "curb-1+3": 0.512
+   },
+   "end_dy_m": [
+    0.216,
+    0.005,
+    -0.196
+   ],
+   "end_vs_host_before_m": [
+    -0.216,
+    -0.005,
+    0.196
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "STUB_doreen_road_5955946_L",
+   "piece": "STUB_doreen_road_5955946_L#0",
+   "end": "start",
+   "host": "north_J5_jackson_north#0",
+   "side": 1,
+   "host_vertex": 602,
+   "angle_deg": 87.3,
+   "host_grade": -0.07792,
+   "rows_respread": 7,
+   "rows_touched": 18,
+   "markings_moved": 232,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": -0.607,
+    "road+1": -0.148,
+    "road+2": 0.039,
+    "curb+1+0": -0.205,
+    "curb+1+1": -0.214,
+    "curb+1+2": -0.399,
+    "curb+1+3": -0.563,
+    "curb-1+0": 0.439,
+    "curb-1+1": 0.44,
+    "curb-1+2": 0.466,
+    "curb-1+3": 0.471
+   },
+   "end_dy_m": [
+    0.34,
+    -0.004,
+    -0.364
+   ],
+   "end_vs_host_before_m": [
+    0.004,
+    0.364
    ],
    "end_vs_host_after_max_m": 0.0,
    "above_host_after": [],
@@ -820,8 +1925,158 @@
    "levelled": [],
    "level_rows": 0,
    "rows": 852
+  },
+  "north_J1_waring#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "north_princess_view": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "north_mission_gorge": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "north_J5_jackson_north#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_galewood_street_5984405_R#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_galewood_street_5984405_L#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_eldridge_street_6013754_L#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_eldridge_street_6013754_R#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_birchwood_street_1370375341_R#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_glenroy_street_663868618_L#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_glenroy_street_663868622_R#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_princess_view_court_5998286_R#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_princess_view_place_5998259_R#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_princess_view_way_6018734_R#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_fontaine_street_5986946_R#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_fontaine_street_5986946_L#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_laura_street_6042836_R#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_conestoga_way_6042936_R#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_mission_vista_drive_5977531_L#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_margerum_avenue_135149732_R#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_mission_montana_drive_5988290_L#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_mission_vista_drive_5977531_L_560#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_deerfield_crescent_638144640_L#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_deerfield_street_6055959_R#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_birchcreek_road_6024742_R#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_park_ridge_boulevard_1224664714_L#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_tuxedo_road_6051501_R#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_winding_creek_drive_5968105_R#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_hemingway_drive_6045093_L#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "STUB_doreen_road_5955946_L#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
   }
  },
- "ridge_diagonals_turned": 26,
- "island_points_moved": 19
+ "ridge_diagonals_turned": 566,
+ "island_points_moved": 36
 }

@@ -41,7 +41,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.006,
+    "max_grass_m": -0.01,
     "worst": []
    },
    "notch": {
@@ -221,7 +221,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.015,
+    "max_grass_m": -0.014,
     "worst": []
    },
    "notch": {
@@ -272,6 +272,210 @@
    "fail": false
   },
   {
+   "connector": "north_J1_waring",
+   "piece": "north_J1_waring#0",
+   "end": "start",
+   "host": "MAINLINE",
+   "host_vertex": 1517,
+   "side": 1,
+   "side_recorded": 1,
+   "angle_deg": 83.62,
+   "angle_recorded_deg": 83.62,
+   "span_half_m": 13.46,
+   "span_mouth_line_m": [
+    -7.0,
+    9.88
+   ],
+   "span_notch_m": [
+    -7.0,
+    26.35
+   ],
+   "host_half_m": 15.0,
+   "mouth_line": {
+    "samples": 63,
+    "fail": 0,
+    "max_dev_m": 0.006,
+    "no_road": 0,
+    "worst": [
+     0.2,
+     -1980.15,
+     615.37,
+     [
+      0.006
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 2793,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.016,
+    "worst": []
+   },
+   "notch": {
+    "samples": 128,
+    "fail": 0,
+    "max_dev_m": 0.015,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-12.38": {
+      "max_dg_per_m": 0.0218,
+      "at_m": 0.0,
+      "max_dg_per_m_1m": 0.05,
+      "at_m_1m": 0.0,
+      "unmeasured": 0,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.025,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.0523,
+      "at_m_1m": 0.5,
+      "unmeasured": 0,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     },
+     "+12.38": {
+      "max_dg_per_m": 0.0197,
+      "at_m": 0.0,
+      "max_dg_per_m_1m": 0.0422,
+      "at_m_1m": 0.5,
+      "unmeasured": 0,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     }
+    },
+    "max_dg_per_m": 0.025,
+    "max_dg_per_m_1m": 0.0523,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "apron": {
+    "id": "AP1",
+    "notch_span_m": [
+     -7.0,
+     26.35
+    ],
+    "lane_span_m": [
+     -16.46,
+     30.68
+    ],
+    "stub_seam": {
+     "samples": 77,
+     "fail": 0,
+     "max_dev_m": 0.006,
+     "worst": []
+    },
+    "deck": {
+     "samples": 350,
+     "holes": 0,
+     "grass_at_or_above": 0,
+     "max_grass_m": -0.018,
+     "worst": []
+    }
+   },
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "north_J5_jackson_north",
+   "piece": "north_J5_jackson_north#0",
+   "end": "start",
+   "host": "MAINLINE",
+   "host_vertex": 2317,
+   "side": 1,
+   "side_recorded": 1,
+   "angle_deg": 76.95,
+   "angle_recorded_deg": 80.42,
+   "span_half_m": 15.13,
+   "span_mouth_line_m": [
+    -9.82,
+    8.47
+   ],
+   "span_notch_m": [
+    -9.75,
+    8.47
+   ],
+   "host_half_m": 12.01,
+   "mouth_line": {
+    "samples": 68,
+    "fail": 0,
+    "max_dev_m": 0.017,
+    "no_road": 0,
+    "worst": [
+     1.96,
+     49.93,
+     1735.1,
+     [
+      0.017
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 1776,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.007,
+    "worst": []
+   },
+   "notch": {
+    "samples": 68,
+    "fail": 0,
+    "max_dev_m": 0.023,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-13.74": {
+      "max_dg_per_m": 0.0021,
+      "at_m": -2.5,
+      "max_dg_per_m_1m": 0.002,
+      "at_m_1m": -2.5,
+      "unmeasured": 101,
+      "holes": 105,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 4
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0077,
+      "at_m": -0.25,
+      "max_dg_per_m_1m": 0.0179,
+      "at_m_1m": 0.25,
+      "unmeasured": 0,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     },
+     "+13.74": {
+      "max_dg_per_m": 0.0047,
+      "at_m": 0.25,
+      "max_dg_per_m_1m": 0.0109,
+      "at_m_1m": -0.25,
+      "unmeasured": 100,
+      "holes": 104,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     }
+    },
+    "max_dg_per_m": 0.0077,
+    "max_dg_per_m_1m": 0.0179,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
    "connector": "medium#2+0#0",
    "piece": "medium#2+0#0#0",
    "end": "end",
@@ -311,7 +515,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.019,
+    "max_grass_m": -0.018,
     "worst": []
    },
    "notch": {
@@ -358,6 +562,2372 @@
     "wheelbase_m": 2.5,
     "grass_on_road": 0
    },
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_galewood_street_5984405_R",
+   "piece": "STUB_galewood_street_5984405_R#0",
+   "end": "start",
+   "host": "north_J1_waring#0",
+   "host_vertex": 36,
+   "side": -1,
+   "side_recorded": -1,
+   "angle_deg": 87.98,
+   "angle_recorded_deg": 87.97,
+   "span_half_m": 4.8,
+   "span_mouth_line_m": [
+    -4.64,
+    4.67
+   ],
+   "span_notch_m": [
+    -4.62,
+    4.67
+   ],
+   "host_half_m": 13.25,
+   "mouth_line": {
+    "samples": 32,
+    "fail": 0,
+    "max_dev_m": 0.006,
+    "no_road": 0,
+    "worst": [
+     -1.12,
+     -2041.05,
+     701.11,
+     [
+      0.004,
+      0.006
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 692,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.019,
+    "worst": []
+   },
+   "notch": {
+    "samples": 32,
+    "fail": 0,
+    "max_dev_m": 0.007,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-3.80": {
+      "max_dg_per_m": 0.0013,
+      "at_m": 1.75,
+      "max_dg_per_m_1m": 0.0021,
+      "at_m_1m": 1.0,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 1
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0021,
+      "at_m": 0.75,
+      "max_dg_per_m_1m": 0.0024,
+      "at_m_1m": 0.0,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 56
+     },
+     "+3.80": {
+      "max_dg_per_m": 0.0042,
+      "at_m": 2.0,
+      "max_dg_per_m_1m": 0.0059,
+      "at_m_1m": 1.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 56
+     }
+    },
+    "max_dg_per_m": 0.0042,
+    "max_dg_per_m_1m": 0.0059,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_galewood_street_5984405_L",
+   "piece": "STUB_galewood_street_5984405_L#0",
+   "end": "start",
+   "host": "north_J1_waring#0",
+   "host_vertex": 36,
+   "side": 1,
+   "side_recorded": 1,
+   "angle_deg": 89.33,
+   "angle_recorded_deg": 89.32,
+   "span_half_m": 4.8,
+   "span_mouth_line_m": [
+    -4.96,
+    5.07
+   ],
+   "span_notch_m": [
+    -4.96,
+    5.09
+   ],
+   "host_half_m": 13.25,
+   "mouth_line": {
+    "samples": 35,
+    "fail": 0,
+    "max_dev_m": 0.006,
+    "no_road": 0,
+    "worst": [
+     -4.21,
+     -2057.89,
+     680.96,
+     [
+      -0.005,
+      -0.006
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 768,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.019,
+    "worst": []
+   },
+   "notch": {
+    "samples": 35,
+    "fail": 0,
+    "max_dev_m": 0.008,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-3.80": {
+      "max_dg_per_m": 0.0047,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.0071,
+      "at_m_1m": 0.25,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 1
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.006,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.0075,
+      "at_m_1m": 0.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 56
+     },
+     "+3.80": {
+      "max_dg_per_m": 0.0073,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.0086,
+      "at_m_1m": 1.5,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 56
+     }
+    },
+    "max_dg_per_m": 0.0073,
+    "max_dg_per_m_1m": 0.0086,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_eldridge_street_6013754_L",
+   "piece": "STUB_eldridge_street_6013754_L#0",
+   "end": "start",
+   "host": "north_J1_waring#0",
+   "host_vertex": 135,
+   "side": 1,
+   "side_recorded": 1,
+   "angle_deg": 89.69,
+   "angle_recorded_deg": 89.68,
+   "span_half_m": 4.8,
+   "span_mouth_line_m": [
+    -4.8,
+    4.85
+   ],
+   "span_notch_m": [
+    -4.81,
+    4.85
+   ],
+   "host_half_m": 13.61,
+   "mouth_line": {
+    "samples": 34,
+    "fail": 0,
+    "max_dev_m": 0.002,
+    "no_road": 0,
+    "worst": [
+     -0.59,
+     -2269.55,
+     888.89,
+     [
+      -0.0,
+      -0.002
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 704,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.019,
+    "worst": []
+   },
+   "notch": {
+    "samples": 34,
+    "fail": 0,
+    "max_dev_m": 0.005,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-3.80": {
+      "max_dg_per_m": 0.0082,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.0096,
+      "at_m_1m": 0.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 56
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0083,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.0103,
+      "at_m_1m": 0.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 56
+     },
+     "+3.80": {
+      "max_dg_per_m": 0.0085,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.0101,
+      "at_m_1m": 0.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 56
+     }
+    },
+    "max_dg_per_m": 0.0085,
+    "max_dg_per_m_1m": 0.0103,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_eldridge_street_6013754_R",
+   "piece": "STUB_eldridge_street_6013754_R#0",
+   "end": "start",
+   "host": "north_J1_waring#0",
+   "host_vertex": 135,
+   "side": -1,
+   "side_recorded": -1,
+   "angle_deg": 89.19,
+   "angle_recorded_deg": 89.19,
+   "span_half_m": 4.8,
+   "span_mouth_line_m": [
+    -4.79,
+    4.75
+   ],
+   "span_notch_m": [
+    -4.79,
+    4.75
+   ],
+   "host_half_m": 13.61,
+   "mouth_line": {
+    "samples": 33,
+    "fail": 0,
+    "max_dev_m": 0.002,
+    "no_road": 0,
+    "worst": [
+     1.23,
+     -2252.07,
+     909.33,
+     [
+      0.0,
+      0.002
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 608,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.02,
+    "worst": []
+   },
+   "notch": {
+    "samples": 33,
+    "fail": 0,
+    "max_dev_m": 0.004,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-3.80": {
+      "max_dg_per_m": 0.0038,
+      "at_m": 2.0,
+      "max_dg_per_m_1m": 0.0047,
+      "at_m_1m": 1.25,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0041,
+      "at_m": 0.75,
+      "max_dg_per_m_1m": 0.0049,
+      "at_m_1m": 1.25,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     },
+     "+3.80": {
+      "max_dg_per_m": 0.0042,
+      "at_m": 0.75,
+      "max_dg_per_m_1m": 0.0051,
+      "at_m_1m": 1.25,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     }
+    },
+    "max_dg_per_m": 0.0042,
+    "max_dg_per_m_1m": 0.0051,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_birchwood_street_1370375341_R",
+   "piece": "STUB_birchwood_street_1370375341_R#0",
+   "end": "start",
+   "host": "north_J1_waring#0",
+   "host_vertex": 224,
+   "side": -1,
+   "side_recorded": -1,
+   "angle_deg": 86.19,
+   "angle_recorded_deg": 86.21,
+   "span_half_m": 5.01,
+   "span_mouth_line_m": [
+    -4.76,
+    4.03
+   ],
+   "span_notch_m": [
+    -4.73,
+    4.03
+   ],
+   "host_half_m": 12.6,
+   "mouth_line": {
+    "samples": 30,
+    "fail": 0,
+    "max_dev_m": 0.013,
+    "no_road": 0,
+    "worst": [
+     1.27,
+     -2470.61,
+     1064.98,
+     [
+      0.008,
+      0.013
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 594,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.02,
+    "worst": []
+   },
+   "notch": {
+    "samples": 30,
+    "fail": 0,
+    "max_dev_m": 0.014,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-4.00": {
+      "max_dg_per_m": 0.0047,
+      "at_m": 1.75,
+      "max_dg_per_m_1m": 0.0062,
+      "at_m_1m": 1.0,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0048,
+      "at_m": 2.0,
+      "max_dg_per_m_1m": 0.0059,
+      "at_m_1m": 1.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+4.00": {
+      "max_dg_per_m": 0.0053,
+      "at_m": 0.75,
+      "max_dg_per_m_1m": 0.0096,
+      "at_m_1m": 0.0,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     }
+    },
+    "max_dg_per_m": 0.0053,
+    "max_dg_per_m_1m": 0.0096,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_glenroy_street_663868618_L",
+   "piece": "STUB_glenroy_street_663868618_L#0",
+   "end": "start",
+   "host": "north_princess_view",
+   "host_vertex": 21,
+   "side": 1,
+   "side_recorded": 1,
+   "angle_deg": 88.36,
+   "angle_recorded_deg": 88.35,
+   "span_half_m": 4.8,
+   "span_mouth_line_m": [
+    -5.04,
+    5.23
+   ],
+   "span_notch_m": [
+    -5.06,
+    5.24
+   ],
+   "host_half_m": 11.29,
+   "mouth_line": {
+    "samples": 36,
+    "fail": 0,
+    "max_dev_m": 0.004,
+    "no_road": 0,
+    "worst": [
+     -1.78,
+     -2805.77,
+     1046.66,
+     [
+      -0.002,
+      -0.004
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 704,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.019,
+    "worst": []
+   },
+   "notch": {
+    "samples": 36,
+    "fail": 0,
+    "max_dev_m": 0.005,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-3.80": {
+      "max_dg_per_m": 0.002,
+      "at_m": 2.0,
+      "max_dg_per_m_1m": 0.0038,
+      "at_m_1m": 1.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 56
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0003,
+      "at_m": 3.0,
+      "max_dg_per_m_1m": 0.0005,
+      "at_m_1m": 0.0,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 56
+     },
+     "+3.80": {
+      "max_dg_per_m": 0.0002,
+      "at_m": 8.0,
+      "max_dg_per_m_1m": 0.0006,
+      "at_m_1m": 0.75,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 1
+     }
+    },
+    "max_dg_per_m": 0.002,
+    "max_dg_per_m_1m": 0.0038,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_glenroy_street_663868622_R",
+   "piece": "STUB_glenroy_street_663868622_R#0",
+   "end": "start",
+   "host": "north_princess_view",
+   "host_vertex": 21,
+   "side": -1,
+   "side_recorded": -1,
+   "angle_deg": 84.74,
+   "angle_recorded_deg": 84.74,
+   "span_half_m": 4.82,
+   "span_mouth_line_m": [
+    -4.66,
+    4.37
+   ],
+   "span_notch_m": [
+    -4.69,
+    4.32
+   ],
+   "host_half_m": 11.29,
+   "mouth_line": {
+    "samples": 31,
+    "fail": 0,
+    "max_dev_m": 0.002,
+    "no_road": 0,
+    "worst": [
+     1.61,
+     -2791.38,
+     1063.87,
+     [
+      -0.001,
+      -0.002
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 704,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.019,
+    "worst": []
+   },
+   "notch": {
+    "samples": 31,
+    "fail": 0,
+    "max_dev_m": 0.003,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-3.80": {
+      "max_dg_per_m": 0.0022,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.0029,
+      "at_m_1m": 0.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0026,
+      "at_m": 2.0,
+      "max_dg_per_m_1m": 0.0032,
+      "at_m_1m": 1.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+3.80": {
+      "max_dg_per_m": 0.0026,
+      "at_m": 0.75,
+      "max_dg_per_m_1m": 0.0033,
+      "at_m_1m": 3.75,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     }
+    },
+    "max_dg_per_m": 0.0026,
+    "max_dg_per_m_1m": 0.0033,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_princess_view_court_5998286_R",
+   "piece": "STUB_princess_view_court_5998286_R#0",
+   "end": "start",
+   "host": "north_princess_view",
+   "host_vertex": 54,
+   "side": -1,
+   "side_recorded": -1,
+   "angle_deg": 86.14,
+   "angle_recorded_deg": 86.14,
+   "span_half_m": 5.01,
+   "span_mouth_line_m": [
+    -5.34,
+    5.43
+   ],
+   "span_notch_m": [
+    -5.33,
+    5.47
+   ],
+   "host_half_m": 11.42,
+   "mouth_line": {
+    "samples": 38,
+    "fail": 0,
+    "max_dev_m": 0.016,
+    "no_road": 0,
+    "worst": [
+     -2.08,
+     -2849.86,
+     1135.14,
+     [
+      -0.012,
+      -0.016
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 726,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.019,
+    "worst": []
+   },
+   "notch": {
+    "samples": 38,
+    "fail": 0,
+    "max_dev_m": 0.016,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-4.00": {
+      "max_dg_per_m": 0.009,
+      "at_m": 3.25,
+      "max_dg_per_m_1m": 0.0144,
+      "at_m_1m": 4.0,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0078,
+      "at_m": 12.75,
+      "max_dg_per_m_1m": 0.0195,
+      "at_m_1m": 12.0,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+4.00": {
+      "max_dg_per_m": 0.006,
+      "at_m": 15.5,
+      "max_dg_per_m_1m": 0.0167,
+      "at_m_1m": 15.0,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     }
+    },
+    "max_dg_per_m": 0.009,
+    "max_dg_per_m_1m": 0.0195,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_princess_view_place_5998259_R",
+   "piece": "STUB_princess_view_place_5998259_R#0",
+   "end": "start",
+   "host": "north_princess_view",
+   "host_vertex": 101,
+   "side": -1,
+   "side_recorded": -1,
+   "angle_deg": 88.74,
+   "angle_recorded_deg": 88.77,
+   "span_half_m": 5.0,
+   "span_mouth_line_m": [
+    -5.16,
+    5.07
+   ],
+   "span_notch_m": [
+    -5.15,
+    5.08
+   ],
+   "host_half_m": 11.66,
+   "mouth_line": {
+    "samples": 36,
+    "fail": 0,
+    "max_dev_m": 0.007,
+    "no_road": 0,
+    "worst": [
+     -3.91,
+     -2873.71,
+     1267.79,
+     [
+      0.005,
+      0.007
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 759,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.019,
+    "worst": []
+   },
+   "notch": {
+    "samples": 36,
+    "fail": 0,
+    "max_dev_m": 0.01,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-4.00": {
+      "max_dg_per_m": 0.0064,
+      "at_m": 0.5,
+      "max_dg_per_m_1m": 0.0076,
+      "at_m_1m": 1.25,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 1
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0092,
+      "at_m": 2.0,
+      "max_dg_per_m_1m": 0.0115,
+      "at_m_1m": 1.25,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 1
+     },
+     "+4.00": {
+      "max_dg_per_m": 0.0114,
+      "at_m": 2.0,
+      "max_dg_per_m_1m": 0.0138,
+      "at_m_1m": 1.5,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 56
+     }
+    },
+    "max_dg_per_m": 0.0114,
+    "max_dg_per_m_1m": 0.0138,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_princess_view_way_6018734_R",
+   "piece": "STUB_princess_view_way_6018734_R#0",
+   "end": "start",
+   "host": "north_princess_view",
+   "host_vertex": 124,
+   "side": -1,
+   "side_recorded": -1,
+   "angle_deg": 89.79,
+   "angle_recorded_deg": 89.8,
+   "span_half_m": 5.0,
+   "span_mouth_line_m": [
+    -4.36,
+    4.82
+   ],
+   "span_notch_m": [
+    -4.34,
+    4.82
+   ],
+   "host_half_m": 11.8,
+   "mouth_line": {
+    "samples": 32,
+    "fail": 0,
+    "max_dev_m": 0.02,
+    "no_road": 0,
+    "worst": [
+     -3.61,
+     -2878.28,
+     1337.91,
+     [
+      0.017,
+      0.02
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 747,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.019,
+    "worst": []
+   },
+   "notch": {
+    "samples": 32,
+    "fail": 0,
+    "max_dev_m": 0.02,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-4.00": {
+      "max_dg_per_m": 0.0063,
+      "at_m": 1.75,
+      "max_dg_per_m_1m": 0.0103,
+      "at_m_1m": 1.0,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0063,
+      "at_m": 0.75,
+      "max_dg_per_m_1m": 0.0109,
+      "at_m_1m": 0.0,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+4.00": {
+      "max_dg_per_m": 0.0093,
+      "at_m": 2.0,
+      "max_dg_per_m_1m": 0.0121,
+      "at_m_1m": 1.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     }
+    },
+    "max_dg_per_m": 0.0093,
+    "max_dg_per_m_1m": 0.0121,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_fontaine_street_5986946_R",
+   "piece": "STUB_fontaine_street_5986946_R#0",
+   "end": "start",
+   "host": "north_princess_view",
+   "host_vertex": 178,
+   "side": -1,
+   "side_recorded": -1,
+   "angle_deg": 80.71,
+   "angle_recorded_deg": 80.71,
+   "span_half_m": 4.86,
+   "span_mouth_line_m": [
+    -4.89,
+    4.83
+   ],
+   "span_notch_m": [
+    -4.95,
+    4.77
+   ],
+   "host_half_m": 12.0,
+   "mouth_line": {
+    "samples": 34,
+    "fail": 0,
+    "max_dev_m": 0.002,
+    "no_road": 0,
+    "worst": [
+     -1.65,
+     -2938.05,
+     1490.57,
+     [
+      -0.001,
+      -0.002
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 768,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.02,
+    "worst": []
+   },
+   "notch": {
+    "samples": 34,
+    "fail": 0,
+    "max_dev_m": 0.003,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-3.80": {
+      "max_dg_per_m": 0.0035,
+      "at_m": 1.75,
+      "max_dg_per_m_1m": 0.0046,
+      "at_m_1m": 1.0,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0015,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.0019,
+      "at_m_1m": 15.5,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+3.80": {
+      "max_dg_per_m": 0.0016,
+      "at_m": 15.25,
+      "max_dg_per_m_1m": 0.0024,
+      "at_m_1m": 15.5,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     }
+    },
+    "max_dg_per_m": 0.0035,
+    "max_dg_per_m_1m": 0.0046,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_fontaine_street_5986946_L",
+   "piece": "STUB_fontaine_street_5986946_L#0",
+   "end": "start",
+   "host": "north_princess_view",
+   "host_vertex": 178,
+   "side": 1,
+   "side_recorded": 1,
+   "angle_deg": 89.37,
+   "angle_recorded_deg": 89.38,
+   "span_half_m": 4.8,
+   "span_mouth_line_m": [
+    -4.78,
+    4.8
+   ],
+   "span_notch_m": [
+    -4.78,
+    4.8
+   ],
+   "host_half_m": 12.0,
+   "mouth_line": {
+    "samples": 33,
+    "fail": 0,
+    "max_dev_m": 0.002,
+    "no_road": 0,
+    "worst": [
+     4.05,
+     -2962.2,
+     1486.63,
+     [
+      0.001,
+      0.002
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 756,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.02,
+    "worst": []
+   },
+   "notch": {
+    "samples": 33,
+    "fail": 0,
+    "max_dev_m": 0.005,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-3.80": {
+      "max_dg_per_m": 0.0132,
+      "at_m": 2.75,
+      "max_dg_per_m_1m": 0.0134,
+      "at_m_1m": 3.0,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 1
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0111,
+      "at_m": 2.75,
+      "max_dg_per_m_1m": 0.0116,
+      "at_m_1m": 3.0,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 56
+     },
+     "+3.80": {
+      "max_dg_per_m": 0.0093,
+      "at_m": 3.5,
+      "max_dg_per_m_1m": 0.0096,
+      "at_m_1m": 3.0,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 1
+     }
+    },
+    "max_dg_per_m": 0.0132,
+    "max_dg_per_m_1m": 0.0134,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_laura_street_6042836_R",
+   "piece": "STUB_laura_street_6042836_R#0",
+   "end": "start",
+   "host": "north_princess_view",
+   "host_vertex": 234,
+   "side": -1,
+   "side_recorded": -1,
+   "angle_deg": 89.79,
+   "angle_recorded_deg": 89.8,
+   "span_half_m": 5.0,
+   "span_mouth_line_m": [
+    -5.94,
+    5.47
+   ],
+   "span_notch_m": [
+    -5.97,
+    5.49
+   ],
+   "host_half_m": 12.0,
+   "mouth_line": {
+    "samples": 41,
+    "fail": 0,
+    "max_dev_m": 0.036,
+    "no_road": 0,
+    "worst": [
+     2.24,
+     -3009.24,
+     1648.03,
+     [
+      0.034,
+      0.036
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 792,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.018,
+    "worst": []
+   },
+   "notch": {
+    "samples": 41,
+    "fail": 0,
+    "max_dev_m": 0.038,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-4.00": {
+      "max_dg_per_m": 0.01,
+      "at_m": 1.25,
+      "max_dg_per_m_1m": 0.0168,
+      "at_m_1m": 0.5,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0081,
+      "at_m": -0.25,
+      "max_dg_per_m_1m": 0.0202,
+      "at_m_1m": 0.5,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+4.00": {
+      "max_dg_per_m": 0.0061,
+      "at_m": -0.25,
+      "max_dg_per_m_1m": 0.0153,
+      "at_m_1m": 0.5,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     }
+    },
+    "max_dg_per_m": 0.01,
+    "max_dg_per_m_1m": 0.0202,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_conestoga_way_6042936_R",
+   "piece": "STUB_conestoga_way_6042936_R#0",
+   "end": "start",
+   "host": "north_mission_gorge",
+   "host_vertex": 138,
+   "side": -1,
+   "side_recorded": -1,
+   "angle_deg": 88.42,
+   "angle_recorded_deg": 88.43,
+   "span_half_m": 5.0,
+   "span_mouth_line_m": [
+    -5.0,
+    5.01
+   ],
+   "span_notch_m": [
+    -4.99,
+    5.02
+   ],
+   "host_half_m": 14.3,
+   "mouth_line": {
+    "samples": 35,
+    "fail": 0,
+    "max_dev_m": 0.003,
+    "no_road": 0,
+    "worst": [
+     -4.25,
+     -2616.51,
+     2153.41,
+     [
+      -0.003,
+      -0.002
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 825,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.02,
+    "worst": []
+   },
+   "notch": {
+    "samples": 35,
+    "fail": 0,
+    "max_dev_m": 0.003,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-4.00": {
+      "max_dg_per_m": 0.0079,
+      "at_m": 0.75,
+      "max_dg_per_m_1m": 0.0089,
+      "at_m_1m": 1.25,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 1
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0063,
+      "at_m": 0.75,
+      "max_dg_per_m_1m": 0.0078,
+      "at_m_1m": 1.25,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 1
+     },
+     "+4.00": {
+      "max_dg_per_m": 0.0051,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.0059,
+      "at_m_1m": 1.25,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 1
+     }
+    },
+    "max_dg_per_m": 0.0079,
+    "max_dg_per_m_1m": 0.0089,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_mission_vista_drive_5977531_L",
+   "piece": "STUB_mission_vista_drive_5977531_L#0",
+   "end": "start",
+   "host": "north_mission_gorge",
+   "host_vertex": 362,
+   "side": 1,
+   "side_recorded": 1,
+   "angle_deg": 82.04,
+   "angle_recorded_deg": 82.06,
+   "span_half_m": 5.05,
+   "span_mouth_line_m": [
+    -5.13,
+    5.18
+   ],
+   "span_notch_m": [
+    -5.18,
+    5.14
+   ],
+   "host_half_m": 15.01,
+   "mouth_line": {
+    "samples": 36,
+    "fail": 0,
+    "max_dev_m": 0.008,
+    "no_road": 0,
+    "worst": [
+     3.17,
+     -1997.99,
+     2369.52,
+     [
+      0.007,
+      0.008
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 792,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.019,
+    "worst": []
+   },
+   "notch": {
+    "samples": 36,
+    "fail": 0,
+    "max_dev_m": 0.009,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-4.00": {
+      "max_dg_per_m": 0.0033,
+      "at_m": 12.5,
+      "max_dg_per_m_1m": 0.0092,
+      "at_m_1m": 14.0,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0025,
+      "at_m": 2.0,
+      "max_dg_per_m_1m": 0.0043,
+      "at_m_1m": 1.25,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     },
+     "+4.00": {
+      "max_dg_per_m": 0.0041,
+      "at_m": 4.0,
+      "max_dg_per_m_1m": 0.0065,
+      "at_m_1m": 3.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     }
+    },
+    "max_dg_per_m": 0.0041,
+    "max_dg_per_m_1m": 0.0092,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_margerum_avenue_135149732_R",
+   "piece": "STUB_margerum_avenue_135149732_R#0",
+   "end": "start",
+   "host": "north_mission_gorge",
+   "host_vertex": 362,
+   "side": -1,
+   "side_recorded": -1,
+   "angle_deg": 84.98,
+   "angle_recorded_deg": 84.95,
+   "span_half_m": 4.82,
+   "span_mouth_line_m": [
+    -4.69,
+    4.71
+   ],
+   "span_notch_m": [
+    -4.72,
+    4.67
+   ],
+   "host_half_m": 15.01,
+   "mouth_line": {
+    "samples": 33,
+    "fail": 0,
+    "max_dev_m": 0.007,
+    "no_road": 0,
+    "worst": [
+     2.72,
+     -1978.45,
+     2347.18,
+     [
+      -0.007,
+      -0.005
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 768,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.019,
+    "worst": []
+   },
+   "notch": {
+    "samples": 33,
+    "fail": 0,
+    "max_dev_m": 0.005,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-3.80": {
+      "max_dg_per_m": 0.0144,
+      "at_m": 4.75,
+      "max_dg_per_m_1m": 0.0146,
+      "at_m_1m": 5.0,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0132,
+      "at_m": 4.75,
+      "max_dg_per_m_1m": 0.0134,
+      "at_m_1m": 5.0,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     },
+     "+3.80": {
+      "max_dg_per_m": 0.0122,
+      "at_m": 4.75,
+      "max_dg_per_m_1m": 0.0123,
+      "at_m_1m": 5.0,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     }
+    },
+    "max_dg_per_m": 0.0144,
+    "max_dg_per_m_1m": 0.0146,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_mission_montana_drive_5988290_L",
+   "piece": "STUB_mission_montana_drive_5988290_L#0",
+   "end": "start",
+   "host": "north_mission_gorge",
+   "host_vertex": 466,
+   "side": 1,
+   "side_recorded": 1,
+   "angle_deg": 89.05,
+   "angle_recorded_deg": 89.03,
+   "span_half_m": 5.0,
+   "span_mouth_line_m": [
+    -4.97,
+    5.01
+   ],
+   "span_notch_m": [
+    -4.97,
+    5.01
+   ],
+   "host_half_m": 15.98,
+   "mouth_line": {
+    "samples": 35,
+    "fail": 0,
+    "max_dev_m": 0.001,
+    "no_road": 0,
+    "worst": [
+     0.02,
+     -1826.2,
+     2617.0,
+     [
+      0.0,
+      0.001
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 957,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.02,
+    "worst": []
+   },
+   "notch": {
+    "samples": 35,
+    "fail": 0,
+    "max_dev_m": 0.003,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-4.00": {
+      "max_dg_per_m": 0.0043,
+      "at_m": 0.75,
+      "max_dg_per_m_1m": 0.0051,
+      "at_m_1m": 1.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0045,
+      "at_m": 0.75,
+      "max_dg_per_m_1m": 0.0055,
+      "at_m_1m": 1.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+4.00": {
+      "max_dg_per_m": 0.0051,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.0057,
+      "at_m_1m": 1.25,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     }
+    },
+    "max_dg_per_m": 0.0051,
+    "max_dg_per_m_1m": 0.0057,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_mission_vista_drive_5977531_L_560",
+   "piece": "STUB_mission_vista_drive_5977531_L_560#0",
+   "end": "start",
+   "host": "north_mission_gorge",
+   "host_vertex": 560,
+   "side": 1,
+   "side_recorded": 1,
+   "angle_deg": 84.28,
+   "angle_recorded_deg": 84.29,
+   "span_half_m": 5.03,
+   "span_mouth_line_m": [
+    -5.01,
+    5.02
+   ],
+   "span_notch_m": [
+    -4.98,
+    5.06
+   ],
+   "host_half_m": 15.14,
+   "mouth_line": {
+    "samples": 35,
+    "fail": 0,
+    "max_dev_m": 0.003,
+    "no_road": 0,
+    "worst": [
+     1.01,
+     -1677.52,
+     2856.12,
+     [
+      0.001,
+      0.003
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 891,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.019,
+    "worst": []
+   },
+   "notch": {
+    "samples": 35,
+    "fail": 0,
+    "max_dev_m": 0.007,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-4.00": {
+      "max_dg_per_m": 0.011,
+      "at_m": 1.25,
+      "max_dg_per_m_1m": 0.0126,
+      "at_m_1m": 1.75,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0096,
+      "at_m": 2.0,
+      "max_dg_per_m_1m": 0.0108,
+      "at_m_1m": 1.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+4.00": {
+      "max_dg_per_m": 0.0082,
+      "at_m": 2.0,
+      "max_dg_per_m_1m": 0.009,
+      "at_m_1m": 1.75,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     }
+    },
+    "max_dg_per_m": 0.011,
+    "max_dg_per_m_1m": 0.0126,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_deerfield_crescent_638144640_L",
+   "piece": "STUB_deerfield_crescent_638144640_L#0",
+   "end": "start",
+   "host": "north_mission_gorge",
+   "host_vertex": 669,
+   "side": 1,
+   "side_recorded": 1,
+   "angle_deg": 85.27,
+   "angle_recorded_deg": 85.28,
+   "span_half_m": 5.02,
+   "span_mouth_line_m": [
+    -5.02,
+    5.01
+   ],
+   "span_notch_m": [
+    -5.04,
+    4.98
+   ],
+   "host_half_m": 15.56,
+   "mouth_line": {
+    "samples": 35,
+    "fail": 0,
+    "max_dev_m": 0.002,
+    "no_road": 0,
+    "worst": [
+     -3.51,
+     -1447.23,
+     3094.37,
+     [
+      -0.0,
+      0.002
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 825,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.02,
+    "worst": []
+   },
+   "notch": {
+    "samples": 35,
+    "fail": 0,
+    "max_dev_m": 0.005,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-4.00": {
+      "max_dg_per_m": 0.0067,
+      "at_m": 1.75,
+      "max_dg_per_m_1m": 0.0075,
+      "at_m_1m": 1.0,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0065,
+      "at_m": 0.75,
+      "max_dg_per_m_1m": 0.0076,
+      "at_m_1m": 1.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+4.00": {
+      "max_dg_per_m": 0.0068,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.0079,
+      "at_m_1m": 0.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     }
+    },
+    "max_dg_per_m": 0.0068,
+    "max_dg_per_m_1m": 0.0079,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_deerfield_street_6055959_R",
+   "piece": "STUB_deerfield_street_6055959_R#0",
+   "end": "start",
+   "host": "north_mission_gorge",
+   "host_vertex": 670,
+   "side": -1,
+   "side_recorded": -1,
+   "angle_deg": 84.28,
+   "angle_recorded_deg": 84.3,
+   "span_half_m": 5.02,
+   "span_mouth_line_m": [
+    -5.0,
+    5.02
+   ],
+   "span_notch_m": [
+    -4.96,
+    5.06
+   ],
+   "host_half_m": 15.54,
+   "mouth_line": {
+    "samples": 35,
+    "fail": 0,
+    "max_dev_m": 0.003,
+    "no_road": 0,
+    "worst": [
+     3.02,
+     -1423.55,
+     3072.4,
+     [
+      0.0,
+      0.003
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 684,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.019,
+    "worst": []
+   },
+   "notch": {
+    "samples": 35,
+    "fail": 0,
+    "max_dev_m": 0.006,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-4.00": {
+      "max_dg_per_m": 0.0102,
+      "at_m": 2.5,
+      "max_dg_per_m_1m": 0.0105,
+      "at_m_1m": 2.75,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0105,
+      "at_m": 2.75,
+      "max_dg_per_m_1m": 0.011,
+      "at_m_1m": 3.0,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     },
+     "+4.00": {
+      "max_dg_per_m": 0.0108,
+      "at_m": 2.5,
+      "max_dg_per_m_1m": 0.0115,
+      "at_m_1m": 1.75,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     }
+    },
+    "max_dg_per_m": 0.0108,
+    "max_dg_per_m_1m": 0.0115,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_birchcreek_road_6024742_R",
+   "piece": "STUB_birchcreek_road_6024742_R#0",
+   "end": "start",
+   "host": "north_J5_jackson_north#0",
+   "host_vertex": 59,
+   "side": -1,
+   "side_recorded": -1,
+   "angle_deg": 81.55,
+   "angle_recorded_deg": 81.54,
+   "span_half_m": 4.85,
+   "span_mouth_line_m": [
+    -4.79,
+    4.82
+   ],
+   "span_notch_m": [
+    -4.84,
+    4.77
+   ],
+   "host_half_m": 12.53,
+   "mouth_line": {
+    "samples": 33,
+    "fail": 0,
+    "max_dev_m": 0.007,
+    "no_road": 0,
+    "worst": [
+     3.82,
+     -70.09,
+     1870.21,
+     [
+      -0.006,
+      -0.007
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 800,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.02,
+    "worst": []
+   },
+   "notch": {
+    "samples": 33,
+    "fail": 0,
+    "max_dev_m": 0.007,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-3.80": {
+      "max_dg_per_m": 0.0052,
+      "at_m": 1.5,
+      "max_dg_per_m_1m": 0.0068,
+      "at_m_1m": 2.0,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.003,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.0036,
+      "at_m_1m": 1.5,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+3.80": {
+      "max_dg_per_m": 0.0018,
+      "at_m": 2.0,
+      "max_dg_per_m_1m": 0.0041,
+      "at_m_1m": 4.75,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     }
+    },
+    "max_dg_per_m": 0.0052,
+    "max_dg_per_m_1m": 0.0068,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_park_ridge_boulevard_1224664714_L",
+   "piece": "STUB_park_ridge_boulevard_1224664714_L#0",
+   "end": "start",
+   "host": "north_J5_jackson_north#0",
+   "host_vertex": 119,
+   "side": 1,
+   "side_recorded": 1,
+   "angle_deg": 89.91,
+   "angle_recorded_deg": 89.91,
+   "span_half_m": 4.8,
+   "span_mouth_line_m": [
+    -4.77,
+    4.8
+   ],
+   "span_notch_m": [
+    -4.77,
+    4.8
+   ],
+   "host_half_m": 11.55,
+   "mouth_line": {
+    "samples": 33,
+    "fail": 0,
+    "max_dev_m": 0.002,
+    "no_road": 0,
+    "worst": [
+     1.02,
+     -181.23,
+     2005.48,
+     [
+      -0.001,
+      -0.002
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 736,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.019,
+    "worst": []
+   },
+   "notch": {
+    "samples": 33,
+    "fail": 0,
+    "max_dev_m": 0.004,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-3.80": {
+      "max_dg_per_m": 0.0056,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.0072,
+      "at_m_1m": 0.25,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 1
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.007,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.0087,
+      "at_m_1m": 0.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 56
+     },
+     "+3.80": {
+      "max_dg_per_m": 0.0082,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.0093,
+      "at_m_1m": 1.5,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 56
+     }
+    },
+    "max_dg_per_m": 0.0082,
+    "max_dg_per_m_1m": 0.0093,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_tuxedo_road_6051501_R",
+   "piece": "STUB_tuxedo_road_6051501_R#0",
+   "end": "start",
+   "host": "north_J5_jackson_north#0",
+   "host_vertex": 397,
+   "side": -1,
+   "side_recorded": -1,
+   "angle_deg": 71.53,
+   "angle_recorded_deg": 71.52,
+   "span_half_m": 6.33,
+   "span_mouth_line_m": [
+    -6.72,
+    6.42
+   ],
+   "span_notch_m": [
+    -6.85,
+    6.32
+   ],
+   "host_half_m": 11.71,
+   "mouth_line": {
+    "samples": 48,
+    "fail": 0,
+    "max_dev_m": 0.006,
+    "no_road": 0,
+    "worst": [
+     -5.23,
+     -612.99,
+     2699.6,
+     [
+      -0.004,
+      -0.006
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 874,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.019,
+    "worst": []
+   },
+   "notch": {
+    "samples": 48,
+    "fail": 0,
+    "max_dev_m": 0.011,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-5.00": {
+      "max_dg_per_m": 0.0093,
+      "at_m": 2.75,
+      "max_dg_per_m_1m": 0.0186,
+      "at_m_1m": 2.0,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.006,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.007,
+      "at_m_1m": 0.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+5.00": {
+      "max_dg_per_m": 0.0042,
+      "at_m": 2.5,
+      "max_dg_per_m_1m": 0.0059,
+      "at_m_1m": 1.75,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     }
+    },
+    "max_dg_per_m": 0.0093,
+    "max_dg_per_m_1m": 0.0186,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_winding_creek_drive_5968105_R",
+   "piece": "STUB_winding_creek_drive_5968105_R#0",
+   "end": "start",
+   "host": "north_J5_jackson_north#0",
+   "host_vertex": 446,
+   "side": -1,
+   "side_recorded": -1,
+   "angle_deg": 84.64,
+   "angle_recorded_deg": 84.65,
+   "span_half_m": 6.03,
+   "span_mouth_line_m": [
+    -6.02,
+    6.02
+   ],
+   "span_notch_m": [
+    -6.06,
+    5.99
+   ],
+   "host_half_m": 10.6,
+   "mouth_line": {
+    "samples": 43,
+    "fail": 0,
+    "max_dev_m": 0.003,
+    "no_road": 0,
+    "worst": [
+     -2.76,
+     -698.94,
+     2819.7,
+     [
+      -0.001,
+      -0.003
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 777,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.02,
+    "worst": []
+   },
+   "notch": {
+    "samples": 43,
+    "fail": 0,
+    "max_dev_m": 0.005,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-5.00": {
+      "max_dg_per_m": 0.0095,
+      "at_m": 1.5,
+      "max_dg_per_m_1m": 0.013,
+      "at_m_1m": 0.75,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0067,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.0083,
+      "at_m_1m": 0.25,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+5.00": {
+      "max_dg_per_m": 0.0042,
+      "at_m": 2.0,
+      "max_dg_per_m_1m": 0.005,
+      "at_m_1m": 1.5,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     }
+    },
+    "max_dg_per_m": 0.0095,
+    "max_dg_per_m_1m": 0.013,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_hemingway_drive_6045093_L",
+   "piece": "STUB_hemingway_drive_6045093_L#0",
+   "end": "start",
+   "host": "north_J5_jackson_north#0",
+   "host_vertex": 494,
+   "side": 1,
+   "side_recorded": 1,
+   "angle_deg": 88.89,
+   "angle_recorded_deg": 88.89,
+   "span_half_m": 5.0,
+   "span_mouth_line_m": [
+    -5.34,
+    5.09
+   ],
+   "span_notch_m": [
+    -5.34,
+    5.1
+   ],
+   "host_half_m": 8.6,
+   "mouth_line": {
+    "samples": 37,
+    "fail": 0,
+    "max_dev_m": 0.008,
+    "no_road": 0,
+    "worst": [
+     -1.86,
+     -792.42,
+     2929.29,
+     [
+      0.005,
+      0.008
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 561,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.019,
+    "worst": []
+   },
+   "notch": {
+    "samples": 37,
+    "fail": 0,
+    "max_dev_m": 0.011,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-4.00": {
+      "max_dg_per_m": 0.0138,
+      "at_m": 4.75,
+      "max_dg_per_m_1m": 0.014,
+      "at_m_1m": 5.0,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.013,
+      "at_m": 4.75,
+      "max_dg_per_m_1m": 0.0134,
+      "at_m_1m": 5.0,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+4.00": {
+      "max_dg_per_m": 0.0122,
+      "at_m": 4.75,
+      "max_dg_per_m_1m": 0.0125,
+      "at_m_1m": 5.0,
+      "unmeasured": 60,
+      "holes": 65,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     }
+    },
+    "max_dg_per_m": 0.0138,
+    "max_dg_per_m_1m": 0.014,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "STUB_doreen_road_5955946_L",
+   "piece": "STUB_doreen_road_5955946_L#0",
+   "end": "start",
+   "host": "north_J5_jackson_north#0",
+   "host_vertex": 602,
+   "side": 1,
+   "side_recorded": 1,
+   "angle_deg": 87.32,
+   "angle_recorded_deg": 87.3,
+   "span_half_m": 5.01,
+   "span_mouth_line_m": [
+    -4.25,
+    4.13
+   ],
+   "span_notch_m": [
+    -4.21,
+    4.12
+   ],
+   "host_half_m": 11.61,
+   "mouth_line": {
+    "samples": 29,
+    "fail": 0,
+    "max_dev_m": 0.04,
+    "no_road": 0,
+    "worst": [
+     0.92,
+     -1072.05,
+     3072.21,
+     [
+      -0.04,
+      -0.039
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 758,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.019,
+    "worst": []
+   },
+   "notch": {
+    "samples": 28,
+    "fail": 0,
+    "max_dev_m": 0.042,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-4.00": {
+      "max_dg_per_m": 0.0147,
+      "at_m": 5.75,
+      "max_dg_per_m_1m": 0.015,
+      "at_m_1m": 6.0,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0139,
+      "at_m": 5.75,
+      "max_dg_per_m_1m": 0.0145,
+      "at_m_1m": 15.5,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     },
+     "+4.00": {
+      "max_dg_per_m": 0.0135,
+      "at_m": 6.75,
+      "max_dg_per_m_1m": 0.0149,
+      "at_m_1m": 7.0,
+      "unmeasured": 56,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 55
+     }
+    },
+    "max_dg_per_m": 0.0147,
+    "max_dg_per_m_1m": 0.015,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
    "fails": [],
    "fail": false
   }

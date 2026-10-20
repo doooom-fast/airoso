@@ -1,0 +1,93 @@
+{
+ "_doc": "tools/verify_pads.py (ledger 0054 P3): the junction pads on the BUILT road",
+ "pads": [
+  {
+   "id": "J2",
+   "raster_points": 7382,
+   "multi_coverage_m2": 0.0,
+   "grass_on_deck": 0,
+   "seam_max_gap_m": 0.0012,
+   "seam_near_misses": 0,
+   "curb_over_pavement": 0,
+   "barriers": [
+    {
+     "stub": "S2",
+     "min_height_over_deck_m": 1.083,
+     "max_float_m": 0.0,
+     "tris": 2716,
+     "base_y": 3.0711
+    },
+    {
+     "stub": "S1",
+     "min_height_over_deck_m": 1.083,
+     "max_float_m": 0.0,
+     "tris": 1576,
+     "base_y": 2.5521
+    }
+   ],
+   "node_deck_minus_3dep_m": -0.019,
+   "node_z_3dep_m": 103.86,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "J3",
+   "raster_points": 11523,
+   "multi_coverage_m2": 0.0,
+   "grass_on_deck": 0,
+   "seam_max_gap_m": 0.00068,
+   "seam_near_misses": 0,
+   "curb_over_pavement": 0,
+   "barriers": [
+    {
+     "stub": "S4",
+     "min_height_over_deck_m": 1.077,
+     "max_float_m": 0.0,
+     "tris": 1696,
+     "base_y": -68.0353
+    },
+    {
+     "stub": "S3",
+     "min_height_over_deck_m": 1.086,
+     "max_float_m": 0.0,
+     "tris": 3296,
+     "base_y": -67.6635
+    }
+   ],
+   "node_deck_minus_3dep_m": 0.039,
+   "node_z_3dep_m": 33.43,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "J4",
+   "raster_points": 12628,
+   "multi_coverage_m2": 0.0,
+   "grass_on_deck": 0,
+   "seam_max_gap_m": 0.0024,
+   "seam_near_misses": 0,
+   "curb_over_pavement": 0,
+   "barriers": [
+    {
+     "stub": "S6",
+     "min_height_over_deck_m": 1.086,
+     "max_float_m": 0.0,
+     "tris": 1736,
+     "base_y": -8.2831
+    },
+    {
+     "stub": "S5",
+     "min_height_over_deck_m": 1.078,
+     "max_float_m": 0.0,
+     "tris": 3456,
+     "base_y": -7.9267
+    }
+   ],
+   "node_deck_minus_3dep_m": 0.017,
+   "node_z_3dep_m": 92.36,
+   "fails": [],
+   "fail": false
+  }
+ ],
+ "fail": false
+}

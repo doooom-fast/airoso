@@ -205,9 +205,9 @@
     ]
    }
   },
-  "rings_total": 17625,
+  "rings_total": 17381,
   "interpolated": 0,
-  "objects": 39,
+  "objects": 37,
   "kbar_objects": 0,
   "edge_objects": 15,
   "edge_declared_vertices": 4498,
@@ -286,11 +286,11 @@
   "pins": 24,
   "pin_gap_max_m": 0.0,
   "bridge_seating": {
-   "hit": 324,
+   "hit": 328,
    "near": 0,
    "interpolated": 0
   },
-  "kerb_objects": 8,
+  "kerb_objects": 6,
   "corners": 5,
   "kerbs_dropped": [
    [
@@ -300,13 +300,19 @@
    [
     2319,
     "inside"
+   ],
+   [
+    1514,
+    "outside"
+   ],
+   [
+    2319,
+    "outside"
    ]
   ],
   "kerb_under_road": {
    "1KERB_race_770_out": 0,
    "1KERB_race_770_in": 0,
-   "1KERB_race_1514_out": 0,
-   "1KERB_race_2319_out": 0,
    "1KERB_race_3296_out": 0,
    "1KERB_race_3296_in": 0,
    "1KERB_race_0_out": 0,
@@ -321,14 +327,6 @@
    "1KERB_race_770_in": [
     null,
     "race_acw"
-   ],
-   "1KERB_race_1514_out": [
-    3.009,
-    "race_cw"
-   ],
-   "1KERB_race_2319_out": [
-    2.482,
-    "race_cw"
    ],
    "1KERB_race_3296_out": [
     2.753,
@@ -353,14 +351,6 @@
     0
    ],
    "1KERB_race_770_in": [
-    0,
-    0
-   ],
-   "1KERB_race_1514_out": [
-    0,
-    0
-   ],
-   "1KERB_race_2319_out": [
     0,
     0
    ],
@@ -391,6 +381,16 @@
     "host_vertex": 1086,
     "side": "R",
     "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 1517,
+    "side": "L",
+    "strip_off_m": 0.006
+   },
+   {
+    "host_vertex": 2317,
+    "side": "L",
+    "strip_off_m": 0.006
    },
    {
     "host_vertex": 4424,
@@ -910,16 +910,16 @@
   },
   "scenery_source": "trees: tools/make_treefx.py plan (every species); signs: data/signs.local.json",
   "scenery_items": {
-   "tree": 15264,
-   "sign": 23
+   "tree": 15739,
+   "sign": 19
   },
-  "scenery_beside": 396,
+  "scenery_beside": 392,
   "scenery_hits": 0,
   "scenery_min": {
    "race_cw": {
     "layout": "race_cw",
     "kind": "tree",
-    "id": "Bush.bin@median_planting#2462",
+    "id": "Bush.bin@median_planting#2457",
     "vertex": 1196,
     "lat_m": -2.694,
     "xz": [
@@ -932,7 +932,7 @@
    "race_acw": {
     "layout": "race_acw",
     "kind": "tree",
-    "id": "Sage.bin@median_planting#2403",
+    "id": "Sage.bin@median_planting#2398",
     "vertex": 1054,
     "lat_m": 2.688,
     "xz": [

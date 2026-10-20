@@ -1,0 +1,3245 @@
+{
+ "version": 1,
+ "declaration": "stubs.json",
+ "stubs": [
+  {
+   "id": "galewood_street_5984405_R",
+   "host": "north_J1_waring",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.4,
+   "u_barrier_from_cut_m": 15.4,
+   "connector": "STUB_galewood_street_5984405_R",
+   "way": 5984405,
+   "street": "Galewood Street",
+   "highway": "residential",
+   "host_street": "Waring Road",
+   "side": -1,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "angle_deg": 87.97,
+   "cut_xz": [
+    -2042.031,
+    701.839
+   ],
+   "dir_xz": [
+    0.69225,
+    0.72166
+   ],
+   "host_y": 16.7416,
+   "host_seg": 38,
+   "host_t": 0.3621,
+   "grade_3dep": 0.0075,
+   "grade_used": 0.0075,
+   "grade_capped": false,
+   "grade_host_along": -0.00226,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.068,
+   "dem_offset_m": 0.204,
+   "dem_samples": [
+    [
+     0.4,
+     117.338
+    ],
+    [
+     1.4,
+     117.306
+    ],
+    [
+     2.4,
+     117.226
+    ],
+    [
+     3.4,
+     117.106
+    ],
+    [
+     4.4,
+     117.126
+    ],
+    [
+     5.4,
+     117.146
+    ],
+    [
+     6.4,
+     117.146
+    ],
+    [
+     7.4,
+     117.186
+    ],
+    [
+     8.4,
+     117.246
+    ],
+    [
+     9.4,
+     117.266
+    ],
+    [
+     10.4,
+     117.246
+    ],
+    [
+     11.4,
+     117.294
+    ],
+    [
+     12.4,
+     117.285
+    ],
+    [
+     13.4,
+     117.265
+    ],
+    [
+     14.4,
+     117.325
+    ],
+    [
+     15.4,
+     117.365
+    ],
+    [
+     16.4,
+     117.325
+    ]
+   ]
+  },
+  {
+   "id": "galewood_street_5984405_L",
+   "host": "north_J1_waring",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.4,
+   "u_barrier_from_cut_m": 15.4,
+   "connector": "STUB_galewood_street_5984405_L",
+   "way": 5984405,
+   "street": "Galewood Street",
+   "highway": "residential",
+   "host_street": "Waring Road",
+   "side": 1,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "angle_deg": 89.33,
+   "cut_xz": [
+    -2060.548,
+    684.018
+   ],
+   "dir_xz": [
+    -0.72544,
+    -0.68829
+   ],
+   "host_y": 16.7341,
+   "host_seg": 38,
+   "host_t": 0.4027,
+   "grade_3dep": -0.02685,
+   "grade_used": -0.02685,
+   "grade_capped": false,
+   "grade_host_along": -0.00075,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.035,
+   "dem_offset_m": 0.339,
+   "dem_samples": [
+    [
+     0.4,
+     117.195
+    ],
+    [
+     1.4,
+     117.175
+    ],
+    [
+     2.4,
+     117.175
+    ],
+    [
+     3.4,
+     117.155
+    ],
+    [
+     4.4,
+     117.155
+    ],
+    [
+     5.4,
+     117.155
+    ],
+    [
+     6.4,
+     117.115
+    ],
+    [
+     7.4,
+     117.095
+    ],
+    [
+     8.4,
+     117.075
+    ],
+    [
+     9.4,
+     117.064
+    ],
+    [
+     10.4,
+     117.004
+    ],
+    [
+     11.4,
+     116.984
+    ],
+    [
+     12.4,
+     116.924
+    ],
+    [
+     13.4,
+     116.884
+    ],
+    [
+     14.4,
+     116.864
+    ],
+    [
+     15.4,
+     116.804
+    ],
+    [
+     16.4,
+     116.764
+    ]
+   ]
+  },
+  {
+   "id": "eldridge_street_6013754_L",
+   "host": "north_J1_waring",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.4,
+   "u_barrier_from_cut_m": 15.4,
+   "connector": "STUB_eldridge_street_6013754_L",
+   "way": 6013754,
+   "street": "Eldridge Street",
+   "highway": "residential",
+   "host_street": "Waring Road",
+   "side": 1,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "angle_deg": 89.69,
+   "cut_xz": [
+    -2269.829,
+    889.452
+   ],
+   "dir_xz": [
+    -0.69818,
+    -0.71592
+   ],
+   "host_y": 7.5273,
+   "host_seg": 136,
+   "host_t": 0.5523,
+   "grade_3dep": -0.03532,
+   "grade_used": -0.03532,
+   "grade_capped": false,
+   "grade_host_along": 4e-05,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.009,
+   "dem_offset_m": 0.336,
+   "dem_samples": [
+    [
+     0.4,
+     107.991
+    ],
+    [
+     1.4,
+     107.951
+    ],
+    [
+     2.4,
+     107.911
+    ],
+    [
+     3.4,
+     107.891
+    ],
+    [
+     4.4,
+     107.846
+    ],
+    [
+     5.4,
+     107.826
+    ],
+    [
+     6.4,
+     107.788
+    ],
+    [
+     7.4,
+     107.748
+    ],
+    [
+     8.4,
+     107.708
+    ],
+    [
+     9.4,
+     107.668
+    ],
+    [
+     10.4,
+     107.648
+    ],
+    [
+     11.4,
+     107.608
+    ],
+    [
+     12.4,
+     107.588
+    ],
+    [
+     13.4,
+     107.548
+    ],
+    [
+     14.4,
+     107.488
+    ],
+    [
+     15.4,
+     107.453
+    ],
+    [
+     16.4,
+     107.413
+    ]
+   ]
+  },
+  {
+   "id": "eldridge_street_6013754_R",
+   "host": "north_J1_waring",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.4,
+   "u_barrier_from_cut_m": 15.4,
+   "connector": "STUB_eldridge_street_6013754_R",
+   "way": 6013754,
+   "street": "Eldridge Street",
+   "highway": "residential",
+   "host_street": "Waring Road",
+   "side": -1,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "angle_deg": 89.19,
+   "cut_xz": [
+    -2251.334,
+    908.317
+   ],
+   "dir_xz": [
+    0.69194,
+    0.72196
+   ],
+   "host_y": 7.5267,
+   "host_seg": 136,
+   "host_t": 0.5772,
+   "grade_3dep": 0.01865,
+   "grade_used": 0.01865,
+   "grade_capped": false,
+   "grade_host_along": -0.00011,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.089,
+   "dem_offset_m": 0.108,
+   "dem_samples": [
+    [
+     0.4,
+     108.219
+    ],
+    [
+     1.4,
+     108.179
+    ],
+    [
+     2.4,
+     108.103
+    ],
+    [
+     3.4,
+     107.996
+    ],
+    [
+     4.4,
+     107.976
+    ],
+    [
+     5.4,
+     107.976
+    ],
+    [
+     6.4,
+     108.036
+    ],
+    [
+     7.4,
+     108.076
+    ],
+    [
+     8.4,
+     108.096
+    ],
+    [
+     9.4,
+     108.176
+    ],
+    [
+     10.4,
+     108.196
+    ],
+    [
+     11.4,
+     108.196
+    ],
+    [
+     12.4,
+     108.256
+    ],
+    [
+     13.4,
+     108.318
+    ],
+    [
+     14.4,
+     108.324
+    ],
+    [
+     15.4,
+     108.344
+    ],
+    [
+     16.4,
+     108.384
+    ]
+   ]
+  },
+  {
+   "id": "birchwood_street_1370375341_R",
+   "host": "north_J1_waring",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.401,
+   "u_barrier_from_cut_m": 15.401,
+   "connector": "STUB_birchwood_street_1370375341_R",
+   "way": 1370375341,
+   "street": "Birchwood Street",
+   "highway": "residential",
+   "host_street": "Waring Road",
+   "side": -1,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "angle_deg": 86.2,
+   "cut_xz": [
+    -2469.46,
+    1064.417
+   ],
+   "dir_xz": [
+    0.23443,
+    0.97213
+   ],
+   "host_y": 7.8696,
+   "host_seg": 226,
+   "host_t": 0.5138,
+   "grade_3dep": 0.0205,
+   "grade_used": 0.0205,
+   "grade_capped": false,
+   "grade_host_along": -0.00159,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.074,
+   "dem_offset_m": 0.204,
+   "dem_samples": [
+    [
+     0.4,
+     108.466
+    ],
+    [
+     1.4,
+     108.406
+    ],
+    [
+     2.4,
+     108.306
+    ],
+    [
+     3.4,
+     108.246
+    ],
+    [
+     4.4,
+     108.226
+    ],
+    [
+     5.4,
+     108.266
+    ],
+    [
+     6.4,
+     108.366
+    ],
+    [
+     7.4,
+     108.413
+    ],
+    [
+     8.4,
+     108.473
+    ],
+    [
+     9.4,
+     108.493
+    ],
+    [
+     10.4,
+     108.513
+    ],
+    [
+     11.4,
+     108.533
+    ],
+    [
+     12.4,
+     108.553
+    ],
+    [
+     13.4,
+     108.553
+    ],
+    [
+     14.4,
+     108.582
+    ],
+    [
+     15.4,
+     108.596
+    ],
+    [
+     16.4,
+     108.636
+    ]
+   ]
+  },
+  {
+   "id": "glenroy_street_663868618_L",
+   "host": "north_princess_view",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.4,
+   "u_barrier_from_cut_m": 15.4,
+   "connector": "STUB_glenroy_street_663868618_L",
+   "way": 663868618,
+   "street": "Glenroy Street",
+   "highway": "tertiary",
+   "host_street": "Princess View Drive",
+   "side": 1,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "angle_deg": 88.36,
+   "cut_xz": [
+    -2806.684,
+    1047.998
+   ],
+   "dir_xz": [
+    -0.73482,
+    -0.67826
+   ],
+   "host_y": 1.4547,
+   "host_seg": 20,
+   "host_t": 0.5924,
+   "grade_3dep": 0.00169,
+   "grade_used": 0.00169,
+   "grade_capped": false,
+   "grade_host_along": 0.00039,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.015,
+   "dem_offset_m": 0.146,
+   "dem_samples": [
+    [
+     0.4,
+     102.109
+    ],
+    [
+     1.4,
+     102.089
+    ],
+    [
+     2.4,
+     102.066
+    ],
+    [
+     3.4,
+     102.066
+    ],
+    [
+     4.4,
+     102.07
+    ],
+    [
+     5.4,
+     102.07
+    ],
+    [
+     6.4,
+     102.07
+    ],
+    [
+     7.4,
+     102.07
+    ],
+    [
+     8.4,
+     102.09
+    ],
+    [
+     9.4,
+     102.07
+    ],
+    [
+     10.4,
+     102.07
+    ],
+    [
+     11.4,
+     102.09
+    ],
+    [
+     12.4,
+     102.09
+    ],
+    [
+     13.4,
+     102.11
+    ],
+    [
+     14.4,
+     102.115
+    ],
+    [
+     15.4,
+     102.102
+    ],
+    [
+     16.4,
+     102.102
+    ]
+   ]
+  },
+  {
+   "id": "glenroy_street_663868622_R",
+   "host": "north_princess_view",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.402,
+   "u_barrier_from_cut_m": 15.402,
+   "connector": "STUB_glenroy_street_663868622_R",
+   "way": 663868622,
+   "street": "Glenroy Street",
+   "highway": "residential",
+   "host_street": "Princess View Drive",
+   "side": -1,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "angle_deg": 84.74,
+   "cut_xz": [
+    -2790.321,
+    1062.361
+   ],
+   "dir_xz": [
+    0.81102,
+    0.58501
+   ],
+   "host_y": 1.4536,
+   "host_seg": 20,
+   "host_t": 0.6192,
+   "grade_3dep": 0.0124,
+   "grade_used": 0.0124,
+   "grade_capped": false,
+   "grade_host_along": 0.00125,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.018,
+   "dem_offset_m": -0.046,
+   "dem_samples": [
+    [
+     0.4,
+     102.3
+    ],
+    [
+     1.4,
+     102.311
+    ],
+    [
+     2.4,
+     102.351
+    ],
+    [
+     3.4,
+     102.351
+    ],
+    [
+     4.4,
+     102.351
+    ],
+    [
+     5.4,
+     102.351
+    ],
+    [
+     6.4,
+     102.353
+    ],
+    [
+     7.4,
+     102.373
+    ],
+    [
+     8.4,
+     102.373
+    ],
+    [
+     9.4,
+     102.393
+    ],
+    [
+     10.4,
+     102.393
+    ],
+    [
+     11.4,
+     102.413
+    ],
+    [
+     12.4,
+     102.433
+    ],
+    [
+     13.4,
+     102.453
+    ],
+    [
+     14.4,
+     102.475
+    ],
+    [
+     15.4,
+     102.495
+    ],
+    [
+     16.4,
+     102.538
+    ]
+   ]
+  },
+  {
+   "id": "princess_view_court_5998286_R",
+   "host": "north_princess_view",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.401,
+   "u_barrier_from_cut_m": 15.401,
+   "connector": "STUB_princess_view_court_5998286_R",
+   "way": 5998286,
+   "street": "Princess View Court",
+   "highway": "residential",
+   "host_street": "Princess View Drive",
+   "side": -1,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "angle_deg": 86.15,
+   "cut_xz": [
+    -2850.884,
+    1136.712
+   ],
+   "dir_xz": [
+    0.856,
+    0.51697
+   ],
+   "host_y": -3.3668,
+   "host_seg": 53,
+   "host_t": 0.6631,
+   "grade_3dep": -0.02574,
+   "grade_used": -0.02574,
+   "grade_capped": false,
+   "grade_host_along": -0.00527,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.175,
+   "dem_offset_m": 0.361,
+   "dem_samples": [
+    [
+     0.4,
+     97.072
+    ],
+    [
+     1.4,
+     96.932
+    ],
+    [
+     2.4,
+     96.793
+    ],
+    [
+     3.4,
+     96.733
+    ],
+    [
+     4.4,
+     96.533
+    ],
+    [
+     5.4,
+     96.453
+    ],
+    [
+     6.4,
+     96.313
+    ],
+    [
+     7.4,
+     96.333
+    ],
+    [
+     8.4,
+     96.293
+    ],
+    [
+     9.4,
+     96.373
+    ],
+    [
+     10.4,
+     96.373
+    ],
+    [
+     11.4,
+     96.424
+    ],
+    [
+     12.4,
+     96.426
+    ],
+    [
+     13.4,
+     96.486
+    ],
+    [
+     14.4,
+     96.506
+    ],
+    [
+     15.4,
+     96.506
+    ],
+    [
+     16.4,
+     96.546
+    ]
+   ]
+  },
+  {
+   "id": "princess_view_place_5998259_R",
+   "host": "north_princess_view",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.4,
+   "u_barrier_from_cut_m": 15.4,
+   "connector": "STUB_princess_view_place_5998259_R",
+   "way": 5998259,
+   "street": "Princess View Place",
+   "highway": "residential",
+   "host_street": "Princess View Drive",
+   "side": -1,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "angle_deg": 88.74,
+   "cut_xz": [
+    -2874.062,
+    1271.647
+   ],
+   "dir_xz": [
+    0.99814,
+    0.06093
+   ],
+   "host_y": -17.0823,
+   "host_seg": 101,
+   "host_t": 0.3296,
+   "grade_3dep": 0.0406,
+   "grade_used": 0.0406,
+   "grade_capped": false,
+   "grade_host_along": -0.00196,
+   "vcurve_m": 4.26,
+   "dem_rmse_m": 0.112,
+   "dem_offset_m": -0.218,
+   "dem_samples": [
+    [
+     0.4,
+     83.936
+    ],
+    [
+     1.4,
+     83.933
+    ],
+    [
+     2.4,
+     83.913
+    ],
+    [
+     3.4,
+     83.873
+    ],
+    [
+     4.4,
+     83.833
+    ],
+    [
+     5.4,
+     83.793
+    ],
+    [
+     6.4,
+     83.793
+    ],
+    [
+     7.4,
+     83.833
+    ],
+    [
+     8.4,
+     83.933
+    ],
+    [
+     9.4,
+     84.051
+    ],
+    [
+     10.4,
+     84.171
+    ],
+    [
+     11.4,
+     84.171
+    ],
+    [
+     12.4,
+     84.231
+    ],
+    [
+     13.4,
+     84.311
+    ],
+    [
+     14.4,
+     84.371
+    ],
+    [
+     15.4,
+     84.431
+    ],
+    [
+     16.4,
+     84.491
+    ]
+   ]
+  },
+  {
+   "id": "princess_view_way_6018734_R",
+   "host": "north_princess_view",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.4,
+   "u_barrier_from_cut_m": 15.4,
+   "connector": "STUB_princess_view_way_6018734_R",
+   "way": 6018734,
+   "street": "Princess View Way",
+   "highway": "residential",
+   "host_street": "Princess View Drive",
+   "side": -1,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "angle_deg": 89.79,
+   "cut_xz": [
+    -2879.355,
+    1342.022
+   ],
+   "dir_xz": [
+    0.9718,
+    0.23579
+   ],
+   "host_y": -23.4407,
+   "host_seg": 124,
+   "host_t": 0.2052,
+   "grade_3dep": 0.02857,
+   "grade_used": 0.02857,
+   "grade_capped": false,
+   "grade_host_along": -0.00035,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.053,
+   "dem_offset_m": -0.29,
+   "dem_samples": [
+    [
+     0.4,
+     77.649
+    ],
+    [
+     1.4,
+     77.689
+    ],
+    [
+     2.4,
+     77.609
+    ],
+    [
+     3.4,
+     77.649
+    ],
+    [
+     4.4,
+     77.669
+    ],
+    [
+     5.4,
+     77.669
+    ],
+    [
+     6.4,
+     77.669
+    ],
+    [
+     7.4,
+     77.662
+    ],
+    [
+     8.4,
+     77.722
+    ],
+    [
+     9.4,
+     77.802
+    ],
+    [
+     10.4,
+     77.862
+    ],
+    [
+     11.4,
+     77.882
+    ],
+    [
+     12.4,
+     77.922
+    ],
+    [
+     13.4,
+     77.982
+    ],
+    [
+     14.4,
+     78.023
+    ],
+    [
+     15.4,
+     78.023
+    ]
+   ]
+  },
+  {
+   "id": "fontaine_street_5986946_R",
+   "host": "north_princess_view",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.405,
+   "u_barrier_from_cut_m": 15.405,
+   "connector": "STUB_fontaine_street_5986946_R",
+   "way": 5986946,
+   "street": "Fontaine Street",
+   "highway": "residential",
+   "host_street": "Princess View Drive",
+   "side": -1,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "angle_deg": 80.71,
+   "cut_xz": [
+    -2938.908,
+    1491.969
+   ],
+   "dir_xz": [
+    0.9644,
+    0.26443
+   ],
+   "host_y": -38.9318,
+   "host_seg": 177,
+   "host_t": 0.4756,
+   "grade_3dep": 0.00785,
+   "grade_used": 0.00785,
+   "grade_capped": false,
+   "grade_host_along": 0.01469,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.031,
+   "dem_offset_m": -0.086,
+   "dem_samples": [
+    [
+     0.41,
+     61.954
+    ],
+    [
+     1.41,
+     61.998
+    ],
+    [
+     2.41,
+     62.038
+    ],
+    [
+     3.41,
+     62.078
+    ],
+    [
+     4.41,
+     61.998
+    ],
+    [
+     5.41,
+     61.998
+    ],
+    [
+     6.41,
+     62.058
+    ],
+    [
+     7.41,
+     62.078
+    ],
+    [
+     8.41,
+     62.038
+    ],
+    [
+     9.41,
+     62.038
+    ],
+    [
+     10.41,
+     62.065
+    ],
+    [
+     11.41,
+     62.025
+    ],
+    [
+     12.41,
+     62.085
+    ],
+    [
+     13.41,
+     62.125
+    ],
+    [
+     14.41,
+     62.145
+    ],
+    [
+     15.41,
+     62.092
+    ],
+    [
+     16.41,
+     62.112
+    ]
+   ]
+  },
+  {
+   "id": "fontaine_street_5986946_L",
+   "host": "north_princess_view",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.4,
+   "u_barrier_from_cut_m": 15.4,
+   "connector": "STUB_fontaine_street_5986946_L",
+   "way": 5986946,
+   "street": "Fontaine Street",
+   "highway": "residential",
+   "host_street": "Princess View Drive",
+   "side": 1,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "angle_deg": 89.37,
+   "cut_xz": [
+    -2960.332,
+    1483.032
+   ],
+   "dir_xz": [
+    -0.90441,
+    -0.42666
+   ],
+   "host_y": -39.005,
+   "host_seg": 177,
+   "host_t": 0.7436,
+   "grade_3dep": 0.06576,
+   "grade_used": 0.06576,
+   "grade_capped": false,
+   "grade_host_along": 0.001,
+   "vcurve_m": 6.48,
+   "dem_rmse_m": 0.06,
+   "dem_offset_m": 0.104,
+   "dem_samples": [
+    [
+     0.4,
+     61.691
+    ],
+    [
+     1.4,
+     61.691
+    ],
+    [
+     2.4,
+     61.678
+    ],
+    [
+     3.4,
+     61.738
+    ],
+    [
+     4.4,
+     61.738
+    ],
+    [
+     5.4,
+     61.818
+    ],
+    [
+     6.4,
+     61.858
+    ],
+    [
+     7.4,
+     61.964
+    ],
+    [
+     8.4,
+     62.024
+    ],
+    [
+     9.4,
+     62.084
+    ],
+    [
+     10.4,
+     62.201
+    ],
+    [
+     11.4,
+     62.281
+    ],
+    [
+     12.4,
+     62.321
+    ],
+    [
+     13.4,
+     62.401
+    ],
+    [
+     14.4,
+     62.461
+    ],
+    [
+     15.4,
+     62.601
+    ],
+    [
+     16.4,
+     62.681
+    ]
+   ]
+  },
+  {
+   "id": "laura_street_6042836_R",
+   "host": "north_princess_view",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.4,
+   "u_barrier_from_cut_m": 15.4,
+   "connector": "STUB_laura_street_6042836_R",
+   "way": 6042836,
+   "street": "Laura Street",
+   "highway": "residential",
+   "host_street": "Princess View Drive",
+   "side": -1,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "angle_deg": 89.79,
+   "cut_xz": [
+    -3008.86,
+    1646.197
+   ],
+   "dir_xz": [
+    0.95037,
+    0.31114
+   ],
+   "host_y": -55.2328,
+   "host_seg": 234,
+   "host_t": 0.3225,
+   "grade_3dep": -0.02538,
+   "grade_used": -0.02538,
+   "grade_capped": false,
+   "grade_host_along": -0.00035,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.087,
+   "dem_offset_m": -0.176,
+   "dem_samples": [
+    [
+     0.4,
+     45.743
+    ],
+    [
+     1.4,
+     45.603
+    ],
+    [
+     2.4,
+     45.583
+    ],
+    [
+     3.4,
+     45.563
+    ],
+    [
+     4.4,
+     45.463
+    ],
+    [
+     5.4,
+     45.463
+    ],
+    [
+     6.4,
+     45.463
+    ],
+    [
+     7.4,
+     45.36
+    ],
+    [
+     8.4,
+     45.349
+    ],
+    [
+     9.4,
+     45.309
+    ],
+    [
+     10.4,
+     45.189
+    ],
+    [
+     11.4,
+     45.189
+    ],
+    [
+     12.4,
+     45.229
+    ],
+    [
+     13.4,
+     45.289
+    ],
+    [
+     14.4,
+     45.289
+    ],
+    [
+     15.4,
+     45.329
+    ],
+    [
+     16.4,
+     45.375
+    ]
+   ]
+  },
+  {
+   "id": "conestoga_way_6042936_R",
+   "host": "north_mission_gorge",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.4,
+   "u_barrier_from_cut_m": 15.4,
+   "connector": "STUB_conestoga_way_6042936_R",
+   "way": 6042936,
+   "street": "Conestoga Way",
+   "highway": "residential",
+   "host_street": "Mission Gorge Road",
+   "side": -1,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "angle_deg": 88.42,
+   "cut_xz": [
+    -2612.324,
+    2154.162
+   ],
+   "dir_xz": [
+    0.15717,
+    -0.98757
+   ],
+   "host_y": -46.6348,
+   "host_seg": 137,
+   "host_t": 0.9586,
+   "grade_3dep": 0.03089,
+   "grade_used": 0.03089,
+   "grade_capped": false,
+   "grade_host_along": 0.00195,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.014,
+   "dem_offset_m": 0.969,
+   "dem_samples": [
+    [
+     0.4,
+     53.196
+    ],
+    [
+     1.4,
+     53.196
+    ],
+    [
+     2.4,
+     53.216
+    ],
+    [
+     3.4,
+     53.256
+    ],
+    [
+     4.4,
+     53.256
+    ],
+    [
+     5.4,
+     53.316
+    ],
+    [
+     6.4,
+     53.336
+    ],
+    [
+     7.4,
+     53.376
+    ],
+    [
+     8.4,
+     53.402
+    ],
+    [
+     9.4,
+     53.422
+    ],
+    [
+     10.4,
+     53.462
+    ],
+    [
+     11.4,
+     53.514
+    ],
+    [
+     12.4,
+     53.534
+    ],
+    [
+     13.4,
+     53.574
+    ],
+    [
+     14.4,
+     53.594
+    ],
+    [
+     15.4,
+     53.634
+    ]
+   ]
+  },
+  {
+   "id": "mission_vista_drive_5977531_L",
+   "host": "north_mission_gorge",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.404,
+   "u_barrier_from_cut_m": 15.404,
+   "connector": "STUB_mission_vista_drive_5977531_L",
+   "way": 5977531,
+   "street": "Mission Vista Drive",
+   "highway": "residential",
+   "host_street": "Mission Gorge Road",
+   "side": 1,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "angle_deg": 82.04,
+   "cut_xz": [
+    -2000.167,
+    2367.315
+   ],
+   "dir_xz": [
+    -0.7519,
+    0.65928
+   ],
+   "host_y": -0.1101,
+   "host_seg": 361,
+   "host_t": 0.8606,
+   "grade_3dep": -0.00252,
+   "grade_used": -0.00252,
+   "grade_capped": false,
+   "grade_host_along": -0.00978,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.083,
+   "dem_offset_m": 1.002,
+   "dem_samples": [
+    [
+     0.4,
+     99.688
+    ],
+    [
+     1.4,
+     99.608
+    ],
+    [
+     2.4,
+     99.528
+    ],
+    [
+     3.4,
+     99.448
+    ],
+    [
+     4.4,
+     99.448
+    ],
+    [
+     5.4,
+     99.388
+    ],
+    [
+     6.4,
+     99.388
+    ],
+    [
+     7.4,
+     99.357
+    ],
+    [
+     8.4,
+     99.437
+    ],
+    [
+     9.4,
+     99.448
+    ],
+    [
+     10.4,
+     99.408
+    ],
+    [
+     11.4,
+     99.428
+    ],
+    [
+     12.4,
+     99.488
+    ],
+    [
+     13.4,
+     99.468
+    ],
+    [
+     14.4,
+     99.528
+    ],
+    [
+     15.4,
+     99.548
+    ],
+    [
+     16.4,
+     99.548
+    ]
+   ]
+  },
+  {
+   "id": "margerum_avenue_135149732_R",
+   "host": "north_mission_gorge",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.402,
+   "u_barrier_from_cut_m": 15.402,
+   "connector": "STUB_margerum_avenue_135149732_R",
+   "way": 135149732,
+   "street": "Margerum Avenue",
+   "highway": "tertiary",
+   "host_street": "Mission Gorge Road",
+   "side": -1,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "angle_deg": 84.98,
+   "cut_xz": [
+    -1980.651,
+    2345.564
+   ],
+   "dir_xz": [
+    0.58892,
+    -0.80819
+   ],
+   "host_y": -0.0759,
+   "host_seg": 362,
+   "host_t": 0.0243,
+   "grade_3dep": 0.09038,
+   "grade_used": 0.09038,
+   "grade_capped": false,
+   "grade_host_along": -0.00619,
+   "vcurve_m": 9.66,
+   "dem_rmse_m": 0.039,
+   "dem_offset_m": -0.019,
+   "dem_samples": [
+    [
+     0.4,
+     100.743
+    ],
+    [
+     1.4,
+     100.723
+    ],
+    [
+     2.4,
+     100.823
+    ],
+    [
+     3.4,
+     101.003
+    ],
+    [
+     4.4,
+     101.063
+    ],
+    [
+     5.4,
+     101.183
+    ],
+    [
+     6.4,
+     101.228
+    ],
+    [
+     7.4,
+     101.368
+    ],
+    [
+     8.4,
+     101.388
+    ],
+    [
+     9.4,
+     101.528
+    ],
+    [
+     10.4,
+     101.668
+    ],
+    [
+     11.4,
+     101.668
+    ],
+    [
+     12.4,
+     101.808
+    ],
+    [
+     13.4,
+     101.828
+    ],
+    [
+     14.4,
+     101.968
+    ],
+    [
+     15.4,
+     102.094
+    ],
+    [
+     16.4,
+     102.094
+    ]
+   ]
+  },
+  {
+   "id": "mission_montana_drive_5988290_L",
+   "host": "north_mission_gorge",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.4,
+   "u_barrier_from_cut_m": 15.4,
+   "connector": "STUB_mission_montana_drive_5988290_L",
+   "way": 5988290,
+   "street": "Mission Montana Drive",
+   "highway": "residential",
+   "host_street": "Mission Gorge Road",
+   "side": 1,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "angle_deg": 89.05,
+   "cut_xz": [
+    -1826.044,
+    2616.879
+   ],
+   "dir_xz": [
+    -0.85468,
+    0.51916
+   ],
+   "host_y": 13.5292,
+   "host_seg": 466,
+   "host_t": 0.0465,
+   "grade_3dep": 0.02044,
+   "grade_used": 0.02044,
+   "grade_capped": false,
+   "grade_host_along": -0.00014,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.019,
+   "dem_offset_m": 0.657,
+   "dem_samples": [
+    [
+     0.4,
+     113.672
+    ],
+    [
+     1.4,
+     113.692
+    ],
+    [
+     2.4,
+     113.712
+    ],
+    [
+     3.4,
+     113.712
+    ],
+    [
+     4.4,
+     113.732
+    ],
+    [
+     5.4,
+     113.727
+    ],
+    [
+     6.4,
+     113.767
+    ],
+    [
+     7.4,
+     113.767
+    ],
+    [
+     8.4,
+     113.807
+    ],
+    [
+     9.4,
+     113.807
+    ],
+    [
+     10.4,
+     113.853
+    ],
+    [
+     11.4,
+     113.853
+    ],
+    [
+     12.4,
+     113.913
+    ],
+    [
+     13.4,
+     113.913
+    ],
+    [
+     14.4,
+     113.965
+    ],
+    [
+     15.4,
+     113.985
+    ]
+   ]
+  },
+  {
+   "id": "mission_vista_drive_5977531_L_560",
+   "host": "north_mission_gorge",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.402,
+   "u_barrier_from_cut_m": 15.402,
+   "connector": "STUB_mission_vista_drive_5977531_L_560",
+   "way": 5977531,
+   "street": "Mission Vista Drive",
+   "highway": "residential",
+   "host_street": "Mission Gorge Road",
+   "side": 1,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "angle_deg": 84.28,
+   "cut_xz": [
+    -1677.896,
+    2855.159
+   ],
+   "dir_xz": [
+    -0.78441,
+    0.62025
+   ],
+   "host_y": 7.197,
+   "host_seg": 559,
+   "host_t": 0.6304,
+   "grade_3dep": 0.04286,
+   "grade_used": 0.04286,
+   "grade_capped": false,
+   "grade_host_along": -0.00549,
+   "vcurve_m": 4.83,
+   "dem_rmse_m": 0.023,
+   "dem_offset_m": -0.557,
+   "dem_samples": [
+    [
+     0.4,
+     108.554
+    ],
+    [
+     1.4,
+     108.534
+    ],
+    [
+     2.4,
+     108.574
+    ],
+    [
+     3.4,
+     108.634
+    ],
+    [
+     4.4,
+     108.634
+    ],
+    [
+     5.4,
+     108.694
+    ],
+    [
+     6.4,
+     108.754
+    ],
+    [
+     7.4,
+     108.794
+    ],
+    [
+     8.4,
+     108.874
+    ],
+    [
+     9.4,
+     108.874
+    ],
+    [
+     10.4,
+     108.934
+    ],
+    [
+     11.4,
+     108.982
+    ],
+    [
+     12.4,
+     109.022
+    ],
+    [
+     13.4,
+     109.019
+    ],
+    [
+     14.4,
+     109.099
+    ],
+    [
+     15.4,
+     109.139
+    ],
+    [
+     16.4,
+     109.219
+    ]
+   ]
+  },
+  {
+   "id": "deerfield_crescent_638144640_L",
+   "host": "north_mission_gorge",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.401,
+   "u_barrier_from_cut_m": 15.401,
+   "connector": "STUB_deerfield_crescent_638144640_L",
+   "way": 638144640,
+   "street": "Deerfield Crescent",
+   "highway": "unclassified",
+   "host_street": "Mission Gorge Road",
+   "side": 1,
+   "width_m": 10.0,
+   "width_source": "class default unclassified [invented]",
+   "angle_deg": 85.27,
+   "cut_xz": [
+    -1444.034,
+    3095.894
+   ],
+   "dir_xz": [
+    -0.55567,
+    0.8314
+   ],
+   "host_y": -6.1266,
+   "host_seg": 668,
+   "host_t": 0.6341,
+   "grade_3dep": 0.03045,
+   "grade_used": 0.03045,
+   "grade_capped": false,
+   "grade_host_along": 0.00094,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.017,
+   "dem_offset_m": -0.306,
+   "dem_samples": [
+    [
+     0.4,
+     94.979
+    ],
+    [
+     1.4,
+     94.999
+    ],
+    [
+     2.4,
+     95.039
+    ],
+    [
+     3.4,
+     95.059
+    ],
+    [
+     4.4,
+     95.099
+    ],
+    [
+     5.4,
+     95.085
+    ],
+    [
+     6.4,
+     95.105
+    ],
+    [
+     7.4,
+     95.185
+    ],
+    [
+     8.4,
+     95.205
+    ],
+    [
+     9.4,
+     95.225
+    ],
+    [
+     10.4,
+     95.252
+    ],
+    [
+     11.4,
+     95.312
+    ],
+    [
+     12.4,
+     95.332
+    ],
+    [
+     13.4,
+     95.372
+    ],
+    [
+     14.4,
+     95.412
+    ],
+    [
+     15.4,
+     95.412
+    ],
+    [
+     16.4,
+     95.452
+    ]
+   ]
+  },
+  {
+   "id": "deerfield_street_6055959_R",
+   "host": "north_mission_gorge",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.402,
+   "u_barrier_from_cut_m": 15.402,
+   "connector": "STUB_deerfield_street_6055959_R",
+   "way": 6055959,
+   "street": "Deerfield Street",
+   "highway": "residential",
+   "host_street": "Mission Gorge Road",
+   "side": -1,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "angle_deg": 84.29,
+   "cut_xz": [
+    -1426.283,
+    3071.096
+   ],
+   "dir_xz": [
+    0.57025,
+    -0.82147
+   ],
+   "host_y": -6.1661,
+   "host_seg": 669,
+   "host_t": 0.7958,
+   "grade_3dep": 0.05726,
+   "grade_used": 0.05726,
+   "grade_capped": false,
+   "grade_host_along": -0.00113,
+   "vcurve_m": 5.84,
+   "dem_rmse_m": 0.021,
+   "dem_offset_m": 0.53,
+   "dem_samples": [
+    [
+     0.4,
+     94.104
+    ],
+    [
+     1.4,
+     94.164
+    ],
+    [
+     2.4,
+     94.264
+    ],
+    [
+     3.4,
+     94.325
+    ],
+    [
+     4.4,
+     94.404
+    ],
+    [
+     5.4,
+     94.444
+    ],
+    [
+     6.4,
+     94.485
+    ],
+    [
+     7.4,
+     94.525
+    ],
+    [
+     8.4,
+     94.605
+    ],
+    [
+     9.4,
+     94.686
+    ],
+    [
+     10.4,
+     94.726
+    ],
+    [
+     11.4,
+     94.766
+    ],
+    [
+     12.4,
+     94.806
+    ],
+    [
+     13.4,
+     94.866
+    ],
+    [
+     14.4,
+     94.906
+    ],
+    [
+     15.4,
+     95.006
+    ],
+    [
+     16.4,
+     95.066
+    ]
+   ]
+  },
+  {
+   "id": "birchcreek_road_6024742_R",
+   "host": "north_J5_jackson_north",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.404,
+   "u_barrier_from_cut_m": 15.404,
+   "connector": "STUB_birchcreek_road_6024742_R",
+   "way": 6024742,
+   "street": "Birchcreek Road",
+   "highway": "residential",
+   "host_street": "Jackson Drive",
+   "side": -1,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "angle_deg": 81.54,
+   "cut_xz": [
+    -67.408,
+    1867.452
+   ],
+   "dir_xz": [
+    0.77831,
+    0.62788
+   ],
+   "host_y": 101.6584,
+   "host_seg": 62,
+   "host_t": 0.6622,
+   "grade_3dep": -0.00489,
+   "grade_used": -0.00489,
+   "grade_capped": false,
+   "grade_host_along": 0.00849,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.037,
+   "dem_offset_m": 0.031,
+   "dem_samples": [
+    [
+     0.4,
+     202.427
+    ],
+    [
+     1.4,
+     202.347
+    ],
+    [
+     2.4,
+     202.287
+    ],
+    [
+     3.4,
+     202.307
+    ],
+    [
+     4.4,
+     202.287
+    ],
+    [
+     5.4,
+     202.267
+    ],
+    [
+     6.4,
+     202.267
+    ],
+    [
+     7.4,
+     202.25
+    ],
+    [
+     8.4,
+     202.29
+    ],
+    [
+     9.4,
+     202.29
+    ],
+    [
+     10.4,
+     202.23
+    ],
+    [
+     11.4,
+     202.29
+    ],
+    [
+     12.4,
+     202.288
+    ],
+    [
+     13.4,
+     202.268
+    ],
+    [
+     14.4,
+     202.308
+    ],
+    [
+     15.4,
+     202.268
+    ]
+   ]
+  },
+  {
+   "id": "park_ridge_boulevard_1224664714_L",
+   "host": "north_J5_jackson_north",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.4,
+   "u_barrier_from_cut_m": 15.4,
+   "connector": "STUB_park_ridge_boulevard_1224664714_L",
+   "way": 1224664714,
+   "street": "Park Ridge Boulevard",
+   "highway": "secondary",
+   "host_street": "Jackson Drive",
+   "side": 1,
+   "width_m": 9.6,
+   "width_source": "osm lanes=2 x 3.6 + 2 x 1.2 [invented]",
+   "angle_deg": 89.91,
+   "cut_xz": [
+    -180.586,
+    2004.64
+   ],
+   "dir_xz": [
+    -0.88845,
+    -0.45897
+   ],
+   "host_y": 90.7224,
+   "host_seg": 122,
+   "host_t": 0.6812,
+   "grade_3dep": -0.02959,
+   "grade_used": -0.02959,
+   "grade_capped": false,
+   "grade_host_along": -9e-05,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.024,
+   "dem_offset_m": 0.02,
+   "dem_samples": [
+    [
+     0.4,
+     191.502
+    ],
+    [
+     1.4,
+     191.522
+    ],
+    [
+     2.4,
+     191.49
+    ],
+    [
+     3.4,
+     191.473
+    ],
+    [
+     4.4,
+     191.433
+    ],
+    [
+     5.4,
+     191.413
+    ],
+    [
+     6.4,
+     191.373
+    ],
+    [
+     7.4,
+     191.373
+    ],
+    [
+     8.4,
+     191.333
+    ],
+    [
+     9.4,
+     191.313
+    ],
+    [
+     10.4,
+     191.253
+    ],
+    [
+     11.4,
+     191.261
+    ],
+    [
+     12.4,
+     191.221
+    ],
+    [
+     13.4,
+     191.181
+    ],
+    [
+     14.4,
+     191.121
+    ],
+    [
+     15.4,
+     191.101
+    ],
+    [
+     16.4,
+     191.021
+    ]
+   ]
+  },
+  {
+   "id": "tuxedo_road_6051501_R",
+   "host": "north_J5_jackson_north",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.422,
+   "u_barrier_from_cut_m": 15.422,
+   "connector": "STUB_tuxedo_road_6051501_R",
+   "way": 6051501,
+   "street": "Tuxedo Road",
+   "highway": "tertiary",
+   "host_street": "Jackson Drive",
+   "side": -1,
+   "width_m": 12.0,
+   "width_source": "class default tertiary [invented]",
+   "angle_deg": 71.53,
+   "cut_xz": [
+    -616.282,
+    2703.253
+   ],
+   "dir_xz": [
+    0.93274,
+    0.36056
+   ],
+   "host_y": 34.793,
+   "host_seg": 400,
+   "host_t": 0.6892,
+   "grade_3dep": -0.01195,
+   "grade_used": -0.01195,
+   "grade_capped": false,
+   "grade_host_along": 0.01263,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.06,
+   "dem_offset_m": -0.196,
+   "dem_samples": [
+    [
+     0.42,
+     135.789
+    ],
+    [
+     1.42,
+     135.836
+    ],
+    [
+     2.42,
+     135.856
+    ],
+    [
+     3.42,
+     135.876
+    ],
+    [
+     4.42,
+     135.896
+    ],
+    [
+     5.42,
+     135.896
+    ],
+    [
+     6.42,
+     135.896
+    ],
+    [
+     7.42,
+     135.916
+    ],
+    [
+     8.42,
+     135.856
+    ],
+    [
+     9.42,
+     135.854
+    ],
+    [
+     10.42,
+     135.854
+    ],
+    [
+     11.42,
+     135.794
+    ],
+    [
+     12.42,
+     135.814
+    ],
+    [
+     13.42,
+     135.734
+    ],
+    [
+     14.42,
+     135.714
+    ],
+    [
+     15.42,
+     135.674
+    ],
+    [
+     16.42,
+     135.614
+    ]
+   ]
+  },
+  {
+   "id": "winding_creek_drive_5968105_R",
+   "host": "north_J5_jackson_north",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.402,
+   "u_barrier_from_cut_m": 15.402,
+   "connector": "STUB_winding_creek_drive_5968105_R",
+   "way": 5968105,
+   "street": "Winding Creek Drive",
+   "highway": "tertiary",
+   "host_street": "Jackson Drive",
+   "side": -1,
+   "width_m": 12.0,
+   "width_source": "class default tertiary [invented]",
+   "angle_deg": 84.64,
+   "cut_xz": [
+    -700.577,
+    2821.944
+   ],
+   "dir_xz": [
+    0.89983,
+    0.43625
+   ],
+   "host_y": 24.9771,
+   "host_seg": 449,
+   "host_t": 0.9694,
+   "grade_3dep": -0.0223,
+   "grade_used": -0.0223,
+   "grade_capped": false,
+   "grade_host_along": 0.00623,
+   "vcurve_m": 4.0,
+   "dem_rmse_m": 0.036,
+   "dem_offset_m": -0.37,
+   "dem_samples": [
+    [
+     0.4,
+     126.147
+    ],
+    [
+     1.4,
+     126.127
+    ],
+    [
+     2.4,
+     126.107
+    ],
+    [
+     3.4,
+     126.075
+    ],
+    [
+     4.4,
+     126.075
+    ],
+    [
+     5.4,
+     126.096
+    ],
+    [
+     6.4,
+     126.056
+    ],
+    [
+     7.4,
+     126.056
+    ],
+    [
+     8.4,
+     125.996
+    ],
+    [
+     9.4,
+     126.016
+    ],
+    [
+     10.4,
+     125.976
+    ],
+    [
+     11.4,
+     125.976
+    ],
+    [
+     12.4,
+     125.956
+    ],
+    [
+     13.4,
+     125.896
+    ],
+    [
+     14.4,
+     125.86
+    ],
+    [
+     15.4,
+     125.78
+    ],
+    [
+     16.4,
+     125.74
+    ]
+   ]
+  },
+  {
+   "id": "hemingway_drive_6045093_L",
+   "host": "north_J5_jackson_north",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.4,
+   "u_barrier_from_cut_m": 15.4,
+   "connector": "STUB_hemingway_drive_6045093_L",
+   "way": 6045093,
+   "street": "Hemingway Drive",
+   "highway": "residential",
+   "host_street": "Jackson Drive",
+   "side": 1,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "angle_deg": 88.89,
+   "cut_xz": [
+    -793.429,
+    2930.87
+   ],
+   "dir_xz": [
+    -0.78212,
+    -0.62313
+   ],
+   "host_y": 16.738,
+   "host_seg": 497,
+   "host_t": 0.6306,
+   "grade_3dep": 0.09198,
+   "grade_used": 0.09198,
+   "grade_capped": false,
+   "grade_host_along": -0.00077,
+   "vcurve_m": 9.28,
+   "dem_rmse_m": 0.082,
+   "dem_offset_m": 0.089,
+   "dem_samples": [
+    [
+     0.4,
+     117.449
+    ],
+    [
+     1.4,
+     117.449
+    ],
+    [
+     2.4,
+     117.509
+    ],
+    [
+     3.4,
+     117.549
+    ],
+    [
+     4.4,
+     117.629
+    ],
+    [
+     5.4,
+     117.651
+    ],
+    [
+     6.4,
+     117.731
+    ],
+    [
+     7.4,
+     117.851
+    ],
+    [
+     8.4,
+     117.975
+    ],
+    [
+     9.4,
+     118.075
+    ],
+    [
+     10.4,
+     118.115
+    ],
+    [
+     11.4,
+     118.235
+    ],
+    [
+     12.4,
+     118.415
+    ],
+    [
+     13.4,
+     118.595
+    ],
+    [
+     14.4,
+     118.595
+    ],
+    [
+     15.4,
+     118.795
+    ]
+   ]
+  },
+  {
+   "id": "doreen_road_5955946_L",
+   "host": "north_J5_jackson_north",
+   "length_m": 15.0,
+   "tail_m": 1.0,
+   "lanes_per_side": 1,
+   "barrier": "krail",
+   "u_mouth_from_cut_m": 0.4,
+   "u_barrier_from_cut_m": 15.4,
+   "connector": "STUB_doreen_road_5955946_L",
+   "way": 5955946,
+   "street": "Doreen Road",
+   "highway": "residential",
+   "host_street": "Jackson Drive",
+   "side": 1,
+   "width_m": 10.0,
+   "width_source": "class default residential [invented]",
+   "angle_deg": 87.32,
+   "cut_xz": [
+    -1070.438,
+    3071.781
+   ],
+   "dir_xz": [
+    -0.40614,
+    -0.91381
+   ],
+   "host_y": 2.1487,
+   "host_seg": 605,
+   "host_t": 0.7366,
+   "grade_3dep": 0.1135,
+   "grade_used": 0.1135,
+   "grade_capped": false,
+   "grade_host_along": -0.00365,
+   "vcurve_m": 11.71,
+   "dem_rmse_m": 0.038,
+   "dem_offset_m": -1.494,
+   "dem_samples": [
+    [
+     0.4,
+     104.443
+    ],
+    [
+     1.4,
+     104.543
+    ],
+    [
+     2.4,
+     104.643
+    ],
+    [
+     3.4,
+     104.753
+    ],
+    [
+     4.4,
+     104.833
+    ],
+    [
+     5.4,
+     104.993
+    ],
+    [
+     6.4,
+     104.993
+    ],
+    [
+     7.4,
+     105.153
+    ],
+    [
+     8.4,
+     105.253
+    ],
+    [
+     9.4,
+     105.362
+    ],
+    [
+     10.4,
+     105.542
+    ],
+    [
+     11.4,
+     105.642
+    ],
+    [
+     12.4,
+     105.782
+    ],
+    [
+     13.4,
+     105.902
+    ],
+    [
+     14.4,
+     106.002
+    ],
+    [
+     15.4,
+     106.142
+    ]
+   ]
+  }
+ ],
+ "curb_cuts": [
+  {
+   "id": "service_576889885_L",
+   "host": "north_princess_view",
+   "side": 1,
+   "station_m": 809.4,
+   "half_span_m": 2.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 88.99,
+   "cut_xz": [
+    -3046.024,
+    1749.488
+   ]
+  },
+  {
+   "id": "service_576889897_R",
+   "host": "north_princess_view",
+   "side": -1,
+   "station_m": 873.06,
+   "half_span_m": 2.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 89.89,
+   "cut_xz": [
+    -3015.587,
+    1810.366
+   ]
+  },
+  {
+   "id": "service_576889898_R",
+   "host": "north_princess_view",
+   "side": -1,
+   "station_m": 1008.96,
+   "half_span_m": 2.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 87.8,
+   "cut_xz": [
+    -3004.025,
+    1945.966
+   ]
+  },
+  {
+   "id": "service_576889900_R",
+   "host": "north_princess_view",
+   "side": -1,
+   "station_m": 1025.12,
+   "half_span_m": 2.08,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 73.89,
+   "cut_xz": [
+    -3003.187,
+    1962.236
+   ]
+  },
+  {
+   "id": "service_576889906_R",
+   "host": "north_mission_gorge",
+   "side": -1,
+   "station_m": 30.6,
+   "half_span_m": 2.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 88.87,
+   "cut_xz": [
+    -2976.079,
+    2045.989
+   ]
+  },
+  {
+   "id": "service_745284422_L",
+   "host": "north_mission_gorge",
+   "side": 1,
+   "station_m": 81.85,
+   "half_span_m": 2.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 88.75,
+   "cut_xz": [
+    -2941.437,
+    2095.468
+   ]
+  },
+  {
+   "id": "service_576889906_R_56",
+   "host": "north_mission_gorge",
+   "side": -1,
+   "station_m": 168.95,
+   "half_span_m": 2.05,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 76.96,
+   "cut_xz": [
+    -2848.654,
+    2095.711
+   ]
+  },
+  {
+   "id": "service_567651095_L",
+   "host": "north_mission_gorge",
+   "side": 1,
+   "station_m": 178.5,
+   "half_span_m": 2.14,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 69.13,
+   "cut_xz": [
+    -2849.004,
+    2127.115
+   ]
+  },
+  {
+   "id": "service_576889892_R",
+   "host": "north_mission_gorge",
+   "side": -1,
+   "station_m": 183.92,
+   "half_span_m": 2.12,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 70.6,
+   "cut_xz": [
+    -2834.705,
+    2100.496
+   ]
+  },
+  {
+   "id": "service_576889892_R_76",
+   "host": "north_mission_gorge",
+   "side": -1,
+   "station_m": 230.0,
+   "half_span_m": 2.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 89.66,
+   "cut_xz": [
+    -2791.185,
+    2114.296
+   ]
+  },
+  {
+   "id": "service_576889890_R",
+   "host": "north_mission_gorge",
+   "side": -1,
+   "station_m": 237.5,
+   "half_span_m": 2.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 89.48,
+   "cut_xz": [
+    -2783.977,
+    2116.369
+   ]
+  },
+  {
+   "id": "service_576889890_R_95",
+   "host": "north_mission_gorge",
+   "side": -1,
+   "station_m": 285.45,
+   "half_span_m": 2.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 88.2,
+   "cut_xz": [
+    -2738.382,
+    2129.317
+   ]
+  },
+  {
+   "id": "service_576889889_R",
+   "host": "north_mission_gorge",
+   "side": -1,
+   "station_m": 295.61,
+   "half_span_m": 2.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 87.48,
+   "cut_xz": [
+    -2729.131,
+    2131.255
+   ]
+  },
+  {
+   "id": "service_576889888_R",
+   "host": "north_mission_gorge",
+   "side": -1,
+   "station_m": 352.98,
+   "half_span_m": 2.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 88.44,
+   "cut_xz": [
+    -2672.764,
+    2142.507
+   ]
+  },
+  {
+   "id": "service_576889887_R",
+   "host": "north_mission_gorge",
+   "side": -1,
+   "station_m": 371.24,
+   "half_span_m": 2.01,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 84.29,
+   "cut_xz": [
+    -2654.853,
+    2146.154
+   ]
+  },
+  {
+   "id": "service_1013051647_R",
+   "host": "north_mission_gorge",
+   "side": -1,
+   "station_m": 851.9,
+   "half_span_m": 3.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 6.0,
+   "angle_deg": 89.83,
+   "cut_xz": [
+    -2179.708,
+    2222.239
+   ]
+  },
+  {
+   "id": "service_1013051648_R",
+   "host": "north_mission_gorge",
+   "side": -1,
+   "station_m": 860.87,
+   "half_span_m": 3.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 6.0,
+   "angle_deg": 89.73,
+   "cut_xz": [
+    -2171.248,
+    2225.403
+   ]
+  },
+  {
+   "id": "service_318915680_R",
+   "host": "north_mission_gorge",
+   "side": -1,
+   "station_m": 1232.61,
+   "half_span_m": 2.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 89.99,
+   "cut_xz": [
+    -1882.656,
+    2464.456
+   ]
+  },
+  {
+   "id": "service_318915571_R",
+   "host": "north_mission_gorge",
+   "side": -1,
+   "station_m": 1316.6,
+   "half_span_m": 2.01,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 85.77,
+   "cut_xz": [
+    -1838.754,
+    2536.063
+   ]
+  },
+  {
+   "id": "service_577444270_R_722",
+   "host": "north_mission_gorge",
+   "side": -1,
+   "station_m": 2165.06,
+   "half_span_m": 2.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 87.41,
+   "cut_xz": [
+    -1287.213,
+    3140.494
+   ]
+  },
+  {
+   "id": "service_577444242_R",
+   "host": "north_J5_jackson_north",
+   "side": -1,
+   "station_m": 44.58,
+   "half_span_m": 2.01,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 84.74,
+   "cut_xz": [
+    34.703,
+    1768.87
+   ]
+  },
+  {
+   "id": "service_577444238_L",
+   "host": "north_J5_jackson_north",
+   "side": 1,
+   "station_m": 56.34,
+   "half_span_m": 2.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 87.03,
+   "cut_xz": [
+    9.208,
+    1760.602
+   ]
+  },
+  {
+   "id": "service_577444239_L",
+   "host": "north_J5_jackson_north",
+   "side": 1,
+   "station_m": 67.75,
+   "half_span_m": 2.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 87.63,
+   "cut_xz": [
+    1.055,
+    1768.388
+   ]
+  },
+  {
+   "id": "service_577444241_L",
+   "host": "north_J5_jackson_north",
+   "side": 1,
+   "station_m": 86.63,
+   "half_span_m": 2.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 86.67,
+   "cut_xz": [
+    -12.617,
+    1781.403
+   ]
+  },
+  {
+   "id": "service_577444237_L",
+   "host": "north_J5_jackson_north",
+   "side": 1,
+   "station_m": 176.52,
+   "half_span_m": 2.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 89.82,
+   "cut_xz": [
+    -77.71,
+    1843.363
+   ]
+  },
+  {
+   "id": "service_851357844_L",
+   "host": "north_J5_jackson_north",
+   "side": 1,
+   "station_m": 344.4,
+   "half_span_m": 2.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 89.61,
+   "cut_xz": [
+    -171.484,
+    1985.916
+   ]
+  },
+  {
+   "id": "sdcwa_service_road_401663247_L",
+   "host": "north_J5_jackson_north",
+   "side": 1,
+   "station_m": 1763.79,
+   "half_span_m": 2.04,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 78.54,
+   "cut_xz": [
+    -1023.877,
+    3058.203
+   ]
+  },
+  {
+   "id": "service_577444267_R",
+   "host": "north_J5_jackson_north",
+   "side": -1,
+   "station_m": 1892.45,
+   "half_span_m": 2.01,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 85.32,
+   "cut_xz": [
+    -1131.52,
+    3129.547
+   ]
+  },
+  {
+   "id": "service_577444268_R",
+   "host": "north_J5_jackson_north",
+   "side": -1,
+   "station_m": 1933.31,
+   "half_span_m": 2.0,
+   "flare_m": 1.5,
+   "lip_m": 0.03,
+   "width_m": 4.0,
+   "angle_deg": 88.46,
+   "cut_xz": [
+    -1162.899,
+    3151.904
+   ]
+  }
+ ],
+ "skipped": [
+  {
+   "id": "college_avenue_1074514299_L",
+   "why": "leaves the host at 3 deg \u2014 a carriageway / slip lane, not a side road"
+  },
+  {
+   "id": "navajo_road_436315947_R",
+   "why": "J1: Navajo Road is the loop itself at the Waring weld (W1) \u2014 built"
+  },
+  {
+   "id": "tierrasanta_boulevard_proposed_683943070_L",
+   "why": "J3: the quarry drive is the J3 pad's own stub arm S4 (tools/author_junction_pad_blend.py) \u2014 built"
+  },
+  {
+   "id": "service_577444270_R",
+   "why": "leaves Jackson at 12 deg: a parallel service lane, not a mouth (its turn-in is service_577444270_R_722)"
+  },
+  {
+   "id": "navajo_road_436270248_R",
+   "why": "J5: Navajo Road is the loop itself at the Jackson-north weld (W5) \u2014 built"
+  },
+  {
+   "id": "navajo_road_436270254_L",
+   "why": "J5: Navajo Road is the loop itself at the Jackson-north weld (W5) \u2014 built"
+  },
+  {
+   "id": "navajo_road_436270256_R",
+   "why": "J5: Navajo Road is the loop itself at the Jackson-north weld (W5) \u2014 built"
+  },
+  {
+   "id": "service_577444269_L",
+   "why": "leaves Jackson at 2 deg: a parallel service lane, not a mouth"
+  }
+ ],
+ "constants": {
+  "stub_length_m": 15.0,
+  "tail_m": 1.0,
+  "spacing_m": 1.0,
+  "ramp_dg_per_m_invented": 0.015,
+  "ramp_min_m_invented": 4.0,
+  "grade_cap_invented": 0.15,
+  "curb_cut_lip_m_invented": 0.03,
+  "curb_cut_flare_m_invented": 1.5
+ }
+}

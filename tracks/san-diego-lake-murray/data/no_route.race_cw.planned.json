@@ -24,12 +24,12 @@
  "leak_cells": 0,
  "leak_m2": 0,
  "escaped": false,
- "wall_cells": 584396,
+ "wall_cells": 584397,
  "wall_tris_in_band": 0,
  "door_clusters": 0,
  "doors": [],
  "doors_by_class": {},
- "forbidden_probes": 411,
+ "forbidden_probes": 439,
  "forbidden_reached": [],
  "lap_vertices": 4498,
  "blocked": [],
@@ -37,5 +37,5 @@
  "spawns_unreached": [],
  "fail": false,
  "fails": [],
- "seconds": 4.9
+ "seconds": 4.6
 }

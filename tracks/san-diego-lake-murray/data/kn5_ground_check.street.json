@@ -1,0 +1,41 @@
+{
+ "fail": false,
+ "reasons": [],
+ "kn5": [
+  "san_diego_lake_murray.kn5",
+  "san_diego_lake_murray_street.kn5"
+ ],
+ "fidelity": "skipped: gate OBJ written from this kn5",
+ "double_sheet_cells": 0,
+ "seating": {
+  "walls": {
+   "objects": 49,
+   "no_ground_pct": 0.0,
+   "median_m": -0.496,
+   "p95_m": -0.13,
+   "hovering": 0
+  },
+  "lampposts": {
+   "objects": 238,
+   "no_ground_pct": 0.0,
+   "median_m": -3.044,
+   "p95_m": -2.968,
+   "hovering": 0
+  },
+  "signposts": {
+   "objects": 18,
+   "no_ground_pct": 0.0,
+   "median_m": -0.377,
+   "p95_m": -0.3,
+   "hovering": 0
+  }
+ },
+ "lamp_heads": 290,
+ "lamp_orphans": 0,
+ "road_over_ground": {
+  "over": 12,
+  "samples": 10785,
+  "p95_m": 0.022,
+  "max_m": 0.255
+ }
+}

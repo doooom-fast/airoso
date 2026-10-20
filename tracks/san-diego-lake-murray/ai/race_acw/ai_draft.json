@@ -271,8 +271,8 @@
   "built": {
    "obj": "track.race_acw.obj",
    "header": "gate OBJ extracted from san_diego_lake_murray.kn5 + san_diego_lake_murray_race.kn5 + san_diego_lake_murray_closure_race_acw.kn5 (kn5->engine frame, z mirrored, winding reversed)",
-   "wall_segments": 322847,
-   "road_tris": 23825
+   "wall_segments": 394614,
+   "road_tris": 51854
   },
   "payload": {
    "camber_min_rad": -0.014,

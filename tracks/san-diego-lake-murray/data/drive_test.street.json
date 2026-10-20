@@ -23,7 +23,7 @@
   "max": 10.55
  },
  "undrivable_corners": 0,
- "floating_furniture": 391,
+ "floating_furniture": 0,
  "apron_steps": 0,
  "fold_bumps": 20,
  "vertex_bumps": 0,
@@ -334,7 +334,10 @@
     3.97
    ]
   ],
-  "obstructions": []
+  "obstructions": [],
+  "fold_severe": []
  },
+ "fold_severe": 0,
+ "fold_severe_judge": "tools/verify_fold_fans.py (real wheel paths, hard)",
  "fail": true
 }

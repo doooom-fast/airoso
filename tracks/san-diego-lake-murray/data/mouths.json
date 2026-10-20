@@ -55,6 +55,48 @@
    "end": "start"
   },
   {
+   "connector": "north_J1_waring",
+   "host": "MAINLINE",
+   "host_vertex": 1517,
+   "side": 1,
+   "connector_width_m": 26.761,
+   "cut_xyz": [
+    -1981.259,
+    24.328,
+    614.083
+   ],
+   "host_seg": 1516,
+   "host_t": 0.9793,
+   "angle_deg": 83.62,
+   "host_grade": 0.01085,
+   "blend_m": 65.0,
+   "blend_max_grade": 0.0903,
+   "blend_kind": "offset",
+   "piece": "north_J1_waring#0",
+   "end": "start"
+  },
+  {
+   "connector": "north_J5_jackson_north",
+   "host": "MAINLINE",
+   "host_vertex": 2317,
+   "side": 1,
+   "connector_width_m": 29.48,
+   "cut_xyz": [
+    45.125,
+    108.849,
+    1734.058
+   ],
+   "host_seg": 2317,
+   "host_t": 0.1602,
+   "angle_deg": 80.42,
+   "host_grade": 0.02665,
+   "blend_m": 30.0,
+   "blend_max_grade": 0.025,
+   "blend_kind": "offset",
+   "piece": "north_J5_jackson_north#0",
+   "end": "start"
+  },
+  {
    "connector": "medium#2+0#0",
    "host": "del_cerro_blvd#1",
    "host_vertex": 82,
@@ -71,6 +113,474 @@
    "host_grade": 0.00334,
    "piece": "medium#2+0#0#0",
    "end": "end"
+  },
+  {
+   "connector": "STUB_galewood_street_5984405_R",
+   "host": "north_J1_waring#0",
+   "host_vertex": 36,
+   "side": -1,
+   "connector_width_m": 9.6,
+   "cut_xyz": [
+    -2042.031,
+    16.742,
+    701.839
+   ],
+   "host_seg": 36,
+   "host_t": 0.3621,
+   "angle_deg": 87.97,
+   "host_grade": -0.0639,
+   "piece": "STUB_galewood_street_5984405_R#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_galewood_street_5984405_L",
+   "host": "north_J1_waring#0",
+   "host_vertex": 36,
+   "side": 1,
+   "connector_width_m": 9.6,
+   "cut_xyz": [
+    -2060.549,
+    16.734,
+    684.018
+   ],
+   "host_seg": 36,
+   "host_t": 0.4027,
+   "angle_deg": 89.32,
+   "host_grade": -0.0639,
+   "piece": "STUB_galewood_street_5984405_L#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_eldridge_street_6013754_L",
+   "host": "north_J1_waring#0",
+   "host_vertex": 135,
+   "side": 1,
+   "connector_width_m": 9.6,
+   "cut_xyz": [
+    -2269.829,
+    7.527,
+    889.452
+   ],
+   "host_seg": 134,
+   "host_t": 0.5523,
+   "angle_deg": 89.68,
+   "host_grade": -0.00769,
+   "piece": "STUB_eldridge_street_6013754_L#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_eldridge_street_6013754_R",
+   "host": "north_J1_waring#0",
+   "host_vertex": 135,
+   "side": -1,
+   "connector_width_m": 9.6,
+   "cut_xyz": [
+    -2251.334,
+    7.527,
+    908.317
+   ],
+   "host_seg": 134,
+   "host_t": 0.5772,
+   "angle_deg": 89.19,
+   "host_grade": -0.00769,
+   "piece": "STUB_eldridge_street_6013754_R#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_birchwood_street_1370375341_R",
+   "host": "north_J1_waring#0",
+   "host_vertex": 224,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -2469.459,
+    7.87,
+    1064.417
+   ],
+   "host_seg": 224,
+   "host_t": 0.5137,
+   "angle_deg": 86.21,
+   "host_grade": -0.024,
+   "piece": "STUB_birchwood_street_1370375341_R#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_glenroy_street_663868618_L",
+   "host": "north_princess_view",
+   "host_vertex": 21,
+   "side": 1,
+   "connector_width_m": 9.6,
+   "cut_xyz": [
+    -2806.684,
+    1.455,
+    1047.997
+   ],
+   "host_seg": 20,
+   "host_t": 0.5923,
+   "angle_deg": 88.35,
+   "host_grade": -0.01368,
+   "piece": "STUB_glenroy_street_663868618_L#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_glenroy_street_663868622_R",
+   "host": "north_princess_view",
+   "host_vertex": 21,
+   "side": -1,
+   "connector_width_m": 9.6,
+   "cut_xyz": [
+    -2790.321,
+    1.454,
+    1062.361
+   ],
+   "host_seg": 20,
+   "host_t": 0.6193,
+   "angle_deg": 84.74,
+   "host_grade": -0.01368,
+   "piece": "STUB_glenroy_street_663868622_R#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_princess_view_court_5998286_R",
+   "host": "north_princess_view",
+   "host_vertex": 54,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -2850.884,
+    -3.367,
+    1136.712
+   ],
+   "host_seg": 53,
+   "host_t": 0.6632,
+   "angle_deg": 86.14,
+   "host_grade": -0.07843,
+   "piece": "STUB_princess_view_court_5998286_R#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_princess_view_place_5998259_R",
+   "host": "north_princess_view",
+   "host_vertex": 101,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -2874.062,
+    -17.082,
+    1271.647
+   ],
+   "host_seg": 101,
+   "host_t": 0.3296,
+   "angle_deg": 88.77,
+   "host_grade": -0.0893,
+   "piece": "STUB_princess_view_place_5998259_R#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_princess_view_way_6018734_R",
+   "host": "north_princess_view",
+   "host_vertex": 124,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -2879.355,
+    -23.441,
+    1342.022
+   ],
+   "host_seg": 124,
+   "host_t": 0.2053,
+   "angle_deg": 89.8,
+   "host_grade": -0.09586,
+   "piece": "STUB_princess_view_way_6018734_R#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_fontaine_street_5986946_R",
+   "host": "north_princess_view",
+   "host_vertex": 178,
+   "side": -1,
+   "connector_width_m": 9.6,
+   "cut_xyz": [
+    -2938.908,
+    -38.932,
+    1491.968
+   ],
+   "host_seg": 177,
+   "host_t": 0.4756,
+   "angle_deg": 80.71,
+   "host_grade": -0.091,
+   "piece": "STUB_fontaine_street_5986946_R#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_fontaine_street_5986946_L",
+   "host": "north_princess_view",
+   "host_vertex": 178,
+   "side": 1,
+   "connector_width_m": 9.6,
+   "cut_xyz": [
+    -2960.333,
+    -39.005,
+    1483.032
+   ],
+   "host_seg": 177,
+   "host_t": 0.7437,
+   "angle_deg": 89.38,
+   "host_grade": -0.091,
+   "piece": "STUB_fontaine_street_5986946_L#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_laura_street_6042836_R",
+   "host": "north_princess_view",
+   "host_vertex": 234,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -3008.86,
+    -55.233,
+    1646.197
+   ],
+   "host_seg": 234,
+   "host_t": 0.3224,
+   "angle_deg": 89.8,
+   "host_grade": -0.09561,
+   "piece": "STUB_laura_street_6042836_R#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_conestoga_way_6042936_R",
+   "host": "north_mission_gorge",
+   "host_vertex": 138,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -2612.324,
+    -46.635,
+    2154.162
+   ],
+   "host_seg": 137,
+   "host_t": 0.9586,
+   "angle_deg": 88.43,
+   "host_grade": 0.07078,
+   "piece": "STUB_conestoga_way_6042936_R#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_mission_vista_drive_5977531_L",
+   "host": "north_mission_gorge",
+   "host_vertex": 362,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -2000.169,
+    -0.11,
+    2367.317
+   ],
+   "host_seg": 361,
+   "host_t": 0.8606,
+   "angle_deg": 82.06,
+   "host_grade": 0.0706,
+   "piece": "STUB_mission_vista_drive_5977531_L#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_margerum_avenue_135149732_R",
+   "host": "north_mission_gorge",
+   "host_vertex": 362,
+   "side": -1,
+   "connector_width_m": 9.6,
+   "cut_xyz": [
+    -1980.651,
+    -0.076,
+    2345.563
+   ],
+   "host_seg": 362,
+   "host_t": 0.0242,
+   "angle_deg": 84.95,
+   "host_grade": 0.0707,
+   "piece": "STUB_margerum_avenue_135149732_R#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_mission_montana_drive_5988290_L",
+   "host": "north_mission_gorge",
+   "host_vertex": 466,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -1826.044,
+    13.529,
+    2616.879
+   ],
+   "host_seg": 466,
+   "host_t": 0.0466,
+   "angle_deg": 89.03,
+   "host_grade": 0.00867,
+   "piece": "STUB_mission_montana_drive_5988290_L#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_mission_vista_drive_5977531_L_560",
+   "host": "north_mission_gorge",
+   "host_vertex": 560,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -1677.896,
+    7.197,
+    2855.159
+   ],
+   "host_seg": 559,
+   "host_t": 0.6304,
+   "angle_deg": 84.29,
+   "host_grade": -0.05506,
+   "piece": "STUB_mission_vista_drive_5977531_L_560#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_deerfield_crescent_638144640_L",
+   "host": "north_mission_gorge",
+   "host_vertex": 669,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -1444.033,
+    -6.127,
+    3095.893
+   ],
+   "host_seg": 668,
+   "host_t": 0.6341,
+   "angle_deg": 85.28,
+   "host_grade": -0.01135,
+   "piece": "STUB_deerfield_crescent_638144640_L#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_deerfield_street_6055959_R",
+   "host": "north_mission_gorge",
+   "host_vertex": 670,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -1426.283,
+    -6.166,
+    3071.095
+   ],
+   "host_seg": 669,
+   "host_t": 0.7958,
+   "angle_deg": 84.3,
+   "host_grade": -0.01135,
+   "piece": "STUB_deerfield_street_6055959_R#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_birchcreek_road_6024742_R",
+   "host": "north_J5_jackson_north#0",
+   "host_vertex": 59,
+   "side": -1,
+   "connector_width_m": 9.6,
+   "cut_xyz": [
+    -67.407,
+    101.658,
+    1867.452
+   ],
+   "host_seg": 58,
+   "host_t": 0.6621,
+   "angle_deg": 81.54,
+   "host_grade": -0.05774,
+   "piece": "STUB_birchcreek_road_6024742_R#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_park_ridge_boulevard_1224664714_L",
+   "host": "north_J5_jackson_north#0",
+   "host_vertex": 119,
+   "side": 1,
+   "connector_width_m": 9.6,
+   "cut_xyz": [
+    -180.586,
+    90.722,
+    2004.64
+   ],
+   "host_seg": 118,
+   "host_t": 0.6812,
+   "angle_deg": 89.91,
+   "host_grade": -0.05909,
+   "piece": "STUB_park_ridge_boulevard_1224664714_L#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_tuxedo_road_6051501_R",
+   "host": "north_J5_jackson_north#0",
+   "host_vertex": 397,
+   "side": -1,
+   "connector_width_m": 12.0,
+   "cut_xyz": [
+    -616.281,
+    34.793,
+    2703.254
+   ],
+   "host_seg": 396,
+   "host_t": 0.6891,
+   "angle_deg": 71.52,
+   "host_grade": -0.03986,
+   "piece": "STUB_tuxedo_road_6051501_R#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_winding_creek_drive_5968105_R",
+   "host": "north_J5_jackson_north#0",
+   "host_vertex": 446,
+   "side": -1,
+   "connector_width_m": 12.0,
+   "cut_xyz": [
+    -700.578,
+    24.977,
+    2821.943
+   ],
+   "host_seg": 445,
+   "host_t": 0.9694,
+   "angle_deg": 84.65,
+   "host_grade": -0.06676,
+   "piece": "STUB_winding_creek_drive_5968105_R#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_hemingway_drive_6045093_L",
+   "host": "north_J5_jackson_north#0",
+   "host_vertex": 494,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -793.429,
+    16.738,
+    2930.87
+   ],
+   "host_seg": 493,
+   "host_t": 0.6306,
+   "angle_deg": 88.89,
+   "host_grade": -0.03989,
+   "piece": "STUB_hemingway_drive_6045093_L#0",
+   "end": "start"
+  },
+  {
+   "connector": "STUB_doreen_road_5955946_L",
+   "host": "north_J5_jackson_north#0",
+   "host_vertex": 602,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -1070.438,
+    2.149,
+    3071.782
+   ],
+   "host_seg": 601,
+   "host_t": 0.7366,
+   "angle_deg": 87.3,
+   "host_grade": -0.07792,
+   "piece": "STUB_doreen_road_5955946_L#0",
+   "end": "start"
   }
  ]
 }

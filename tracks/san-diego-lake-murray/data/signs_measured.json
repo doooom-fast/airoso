@@ -1,9 +1,19 @@
 {
  "blend": "C:/Users/Owner/Documents/GitHub/k10-sd-v021/project/loop.blend",
  "road_objects": [
+  "1ROAD_apron_AP1",
+  "1ROAD_mouthfill_0",
+  "1ROAD_mouthfill_1",
+  "1ROAD_pad_J2",
+  "1ROAD_pad_J3",
+  "1ROAD_pad_J4",
   "ROAD"
  ],
  "ground_objects": [
+  "1KERB_sidewalk_apAP1",
+  "1KERB_sidewalk_padJ2",
+  "1KERB_sidewalk_padJ3",
+  "1KERB_sidewalk_padJ4",
   "1KERB_sidewalk_streetonly_median",
   "CURB",
   "TERRAIN"
@@ -59,38 +69,6 @@
    "plate_bottom_y": 12.7362,
    "post_base_y": 10.3062
   },
-  "M3-fwd": {
-   "clear_m": 1.763,
-   "bearing_deg": 325,
-   "on_road": false,
-   "ground_y": 24.5374,
-   "walk_behind_m": -0.25,
-   "plate_normals_xz": [
-    [
-     0.64005,
-     -0.76833
-    ]
-   ],
-   "n_plate_faces": 4,
-   "plate_bottom_y": 26.6674,
-   "post_base_y": 24.2374
-  },
-  "M4-fwd": {
-   "clear_m": 1.776,
-   "bearing_deg": 225,
-   "on_road": false,
-   "ground_y": 109.3223,
-   "walk_behind_m": -0.25,
-   "plate_normals_xz": [
-    [
-     -0.75144,
-     -0.6598
-    ]
-   ],
-   "n_plate_faces": 4,
-   "plate_bottom_y": 111.4523,
-   "post_base_y": 109.0223
-  },
   "M5-fwd": {
    "clear_m": 1.763,
    "bearing_deg": 160,
@@ -122,38 +100,6 @@
    "n_plate_faces": 4,
    "plate_bottom_y": 94.2006,
    "post_base_y": 91.7706
-  },
-  "M4-rev": {
-   "clear_m": 1.655,
-   "bearing_deg": 245,
-   "on_road": false,
-   "ground_y": 109.259,
-   "walk_behind_m": -0.4,
-   "plate_normals_xz": [
-    [
-     0.36325,
-     -0.93169
-    ]
-   ],
-   "n_plate_faces": 4,
-   "plate_bottom_y": 111.389,
-   "post_base_y": 108.959
-  },
-  "M3-rev": {
-   "clear_m": 1.653,
-   "bearing_deg": 350,
-   "on_road": false,
-   "ground_y": 24.5127,
-   "walk_behind_m": -0.35,
-   "plate_normals_xz": [
-    [
-     0.87001,
-     0.49304
-    ]
-   ],
-   "n_plate_faces": 4,
-   "plate_bottom_y": 26.6427,
-   "post_base_y": 24.2127
   },
   "M2-rev": {
    "clear_m": 1.741,

@@ -1598,1058 +1598,6 @@
    }
   },
   {
-   "id": "M3-fwd",
-   "kind": "W1-6R",
-   "plate": "W1-6",
-   "ribbon": "MAINLINE",
-   "direction": "fwd",
-   "corner": {
-    "apex_vertex": 1514,
-    "apex_station_m": 4534,
-    "PC": 4519,
-    "PT": 4548,
-    "arc_m": 29,
-    "R_apex_m": 10.5,
-    "D_deg": -91.4,
-    "turn": "right",
-    "apex_xz": [
-     -1974.74,
-     598.25
-    ],
-    "second_arrow": false,
-    "R_at_PC_m": 64.3
-   },
-   "approach": {
-    "t_xz": [
-     -0.64,
-     0.7683
-    ],
-    "bearing_deg": 320.2,
-    "pca_vs_chord_deg": -3.28,
-    "w_app_m": 20.16,
-    "w_at_apex_m": 30.0,
-    "island_m": 0.0,
-    "lane_off_m": 5.04
-   },
-   "ray": {
-    "A_xz": [
-     -1965.82,
-     587.82
-    ],
-    "len_m": 30.0,
-    "C_xz": [
-     -1985.02,
-     610.87
-    ],
-    "exit_ribbon": "MAINLINE",
-    "hw_at_exit_m": 15.0,
-    "sC_station": 4538,
-    "sC_rel_PC_m": 19,
-    "sC_rel_apex_m": 4,
-    "s_S_m": 31.44,
-    "C_mesh_xz": [
-     -1984.86,
-     610.68
-    ],
-    "len_mesh_m": 29.75,
-    "back_of_walk_m": 31.8,
-    "walk_run_m": 2.05,
-    "s_S_walk_m": 31.53,
-    "s_S_mesh_m": 31.53,
-    "marched_m": 0.0,
-    "beyond_walk": false
-   },
-   "base_xz": [
-    -1985.999,
-    612.044
-   ],
-   "curb_dir_xz": [
-    0.6169,
-    0.7871
-   ],
-   "y_road_at_sC": 24.298,
-   "y_base": {
-    "analytic": 24.538,
-    "raycast": 24.537,
-    "source": "raycast",
-    "value": 24.537,
-    "road_hit": null,
-    "pushed_on_road_m": 0.0
-   },
-   "face_dir_xz": [
-    0.64,
-    -0.7683
-   ],
-   "face_bearing_deg": 140.2,
-   "yaw_deg": -50.2,
-   "right_xz": [
-    0.7683,
-    0.64
-   ],
-   "arrow": "right",
-   "expect_arrow": "right",
-   "lateral_offset_m": 1.63,
-   "height_m": 2.13,
-   "om1_3": true,
-   "checks": {
-    "outside_cross": 15.23,
-    "edge_clear_m": 1.71,
-    "lamp_m": 37.38,
-    "plant_m": 10.6,
-    "plant_zone": "palms",
-    "pushed_m": 1.44,
-    "slid_m": 0.0,
-    "lateral_step_m": 0.0,
-    "gate_margin_m": 10.28,
-    "gate_margin_gated_m": 10.28,
-    "gate_ribbons": "all",
-    "mouth_m": 1109.8,
-    "spawn_m": 857.7,
-    "spawn": "AC_TIME_1_R@race_cw",
-    "warnings": [],
-    "slid_polyline_m": 0.0,
-    "mesh_clear_m": 1.76,
-    "mesh_clear_bearing_deg": 325,
-    "mesh_shift_m": 0.08,
-    "walk_behind_m": -0.27
-   },
-   "old_rule": {
-    "rev1_xz": [
-     -1951.35,
-     536.22
-    ],
-    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
-    "rev2_xz": [
-     -1957.52,
-     593.71
-    ],
-    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
-   },
-   "overrides_applied": [],
-   "exclude_plant": null,
-   "where": "College Ave -> Navajo Rd",
-   "base_xz_polyline": [
-    -1985.948,
-    611.981
-   ],
-   "base_xz_mesh": [
-    -1985.999,
-    612.044
-   ],
-   "base_source": "mesh (walk fraction start, marched 0.00 m along the ray, slid 0.00 m along the curb)",
-   "built": {
-    "outside_edge_xz": [
-     [
-      -1970.25,
-      569.23
-     ],
-     [
-      -1971.81,
-      570.82
-     ],
-     [
-      -1973.42,
-      572.41
-     ],
-     [
-      -1974.96,
-      573.98
-     ],
-     [
-      -1976.59,
-      575.57
-     ],
-     [
-      -1978.27,
-      577.18
-     ],
-     [
-      -1979.82,
-      578.85
-     ],
-     [
-      -1981.48,
-      580.62
-     ],
-     [
-      -1983.27,
-      582.6
-     ],
-     [
-      -1984.96,
-      584.93
-     ],
-     [
-      -1986.61,
-      587.73
-     ],
-     [
-      -1988.24,
-      591.4
-     ],
-     [
-      -1989.39,
-      596.3
-     ],
-     [
-      -1989.14,
-      602.05
-     ],
-     [
-      -1987.05,
-      607.24
-     ],
-     [
-      -1984.45,
-      611.07
-     ],
-     [
-      -1982.01,
-      613.75
-     ],
-     [
-      -1979.76,
-      615.82
-     ],
-     [
-      -1977.56,
-      617.62
-     ],
-     [
-      -1975.43,
-      619.17
-     ],
-     [
-      -1973.47,
-      620.51
-     ],
-     [
-      -1971.51,
-      621.79
-     ],
-     [
-      -1969.57,
-      623.11
-     ],
-     [
-      -1967.62,
-      624.26
-     ],
-     [
-      -1965.67,
-      625.37
-     ],
-     [
-      -1963.67,
-      626.46
-     ],
-     [
-      -1961.72,
-      627.49
-     ],
-     [
-      -1959.77,
-      628.48
-     ],
-     [
-      -1957.81,
-      629.45
-     ],
-     [
-      -1955.91,
-      630.36
-     ],
-     [
-      -1954.02,
-      631.25
-     ]
-    ],
-    "back_of_walk_xz": [
-     [
-      -1970.25,
-      569.23
-     ],
-     [
-      -1971.81,
-      570.82
-     ],
-     [
-      -1974.95,
-      571.13
-     ],
-     [
-      -1974.96,
-      573.98
-     ],
-     [
-      -1976.59,
-      575.57
-     ],
-     [
-      -1979.9,
-      576.01
-     ],
-     [
-      -1979.82,
-      578.85
-     ],
-     [
-      -1981.48,
-      580.62
-     ],
-     [
-      -1985.01,
-      581.61
-     ],
-     [
-      -1984.96,
-      584.93
-     ],
-     [
-      -1986.61,
-      587.73
-     ],
-     [
-      -1988.24,
-      591.4
-     ],
-     [
-      -1991.39,
-      596.3
-     ],
-     [
-      -1989.14,
-      602.05
-     ],
-     [
-      -1987.05,
-      607.24
-     ],
-     [
-      -1984.45,
-      611.07
-     ],
-     [
-      -1982.01,
-      613.75
-     ],
-     [
-      -1979.76,
-      615.82
-     ],
-     [
-      -1977.56,
-      617.62
-     ],
-     [
-      -1975.43,
-      619.17
-     ],
-     [
-      -1973.47,
-      620.51
-     ],
-     [
-      -1971.51,
-      621.79
-     ],
-     [
-      -1970.6,
-      624.82
-     ],
-     [
-      -1968.63,
-      625.99
-     ],
-     [
-      -1966.64,
-      627.12
-     ],
-     [
-      -1964.61,
-      628.23
-     ],
-     [
-      -1962.64,
-      629.26
-     ],
-     [
-      -1960.66,
-      630.27
-     ],
-     [
-      -1958.68,
-      631.25
-     ],
-     [
-      -1955.91,
-      630.36
-     ],
-     [
-      -1954.02,
-      631.25
-     ]
-    ]
-   },
-   "blender": {
-    "base_xyz_engine": [
-     -1985.999,
-     24.537,
-     612.044
-    ],
-    "base_xyz_blender": [
-     -1985.999,
-     612.044,
-     24.537
-    ],
-    "plate_bottom_y": 26.667,
-    "plate_top_y": 27.277,
-    "post_base_y": 24.237,
-    "post_top_y": 27.327,
-    "plates": [
-     {
-      "front_xyz": [
-       [
-        -1986.4481,
-        26.6674,
-        611.6309
-       ],
-       [
-        -1985.5115,
-        26.6674,
-        612.411
-       ],
-       [
-        -1985.5115,
-        27.2774,
-        612.411
-       ],
-       [
-        -1986.4481,
-        27.2774,
-        611.6309
-       ]
-      ],
-      "back_xyz": [
-       [
-        -1986.45,
-        26.6674,
-        611.6332
-       ],
-       [
-        -1985.5134,
-        26.6674,
-        612.4133
-       ],
-       [
-        -1985.5134,
-        27.2774,
-        612.4133
-       ],
-       [
-        -1986.45,
-        27.2774,
-        611.6332
-       ]
-      ],
-      "arrow_xyz": [
-       [
-        -1985.5967,
-        26.9722,
-        612.3349
-       ],
-       [
-        -1985.8719,
-        27.2008,
-        612.1057
-       ],
-       [
-        -1985.8602,
-        27.0567,
-        612.1154
-       ],
-       [
-        -1986.3578,
-        27.0567,
-        611.7009
-       ],
-       [
-        -1986.3578,
-        26.8876,
-        611.7009
-       ],
-       [
-        -1985.8602,
-        26.8876,
-        612.1154
-       ],
-       [
-        -1985.8719,
-        26.7436,
-        612.1057
-       ]
-      ]
-     }
-    ],
-    "post": {
-     "post_base_xyz": [
-      [
-       -1985.9958,
-       24.2374,
-       612.0792
-      ],
-      [
-       -1985.9638,
-       24.2374,
-       612.0408
-      ],
-      [
-       -1986.0022,
-       24.2374,
-       612.0088
-      ],
-      [
-       -1986.0342,
-       24.2374,
-       612.0472
-      ]
-     ],
-     "post_top_y": 27.3274
-    },
-    "meshes": {
-     "SIGNPLATE": "SIGNPLATE_0",
-     "SIGNARROW": "SIGNARROW_0",
-     "SIGNPOST": "SIGNPOST_0"
-    }
-   }
-  },
-  {
-   "id": "M4-fwd",
-   "kind": "W1-6R",
-   "plate": "W1-6",
-   "ribbon": "MAINLINE",
-   "direction": "fwd",
-   "corner": {
-    "apex_vertex": 2319,
-    "apex_station_m": 6949,
-    "PC": 6934,
-    "PT": 6966,
-    "arc_m": 32,
-    "R_apex_m": 9.7,
-    "D_deg": -106.4,
-    "turn": "right",
-    "apex_xz": [
-     52.4,
-     1723.18
-    ],
-    "second_arrow": false,
-    "R_at_PC_m": 75.8
-   },
-   "approach": {
-    "t_xz": [
-     0.7514,
-     0.6598
-    ],
-    "bearing_deg": 48.7,
-    "pca_vs_chord_deg": -1.41,
-    "w_app_m": 24.36,
-    "w_at_apex_m": 24.0,
-    "island_m": 0.0,
-    "lane_off_m": 6.09
-   },
-   "ray": {
-    "A_xz": [
-     43.16,
-     1712.66
-    ],
-    "len_m": 27.5,
-    "C_xz": [
-     63.83,
-     1730.8
-    ],
-    "exit_ribbon": "MAINLINE",
-    "hw_at_exit_m": 12.0,
-    "sC_station": 6953,
-    "sC_rel_PC_m": 19,
-    "sC_rel_apex_m": 4,
-    "s_S_m": 28.98,
-    "C_mesh_xz": [
-     63.67,
-     1730.67
-    ],
-    "len_mesh_m": 27.3,
-    "back_of_walk_m": 29.35,
-    "walk_run_m": 2.05,
-    "s_S_walk_m": 29.08,
-    "s_S_mesh_m": 29.08,
-    "marched_m": 0.0,
-    "beyond_walk": false
-   },
-   "base_xz": [
-    65.011,
-    1731.847
-   ],
-   "curb_dir_xz": [
-    0.7917,
-    -0.6109
-   ],
-   "y_road_at_sC": 109.074,
-   "y_base": {
-    "analytic": 109.314,
-    "raycast": 109.322,
-    "source": "raycast",
-    "value": 109.322,
-    "road_hit": null,
-    "pushed_on_road_m": 0.0
-   },
-   "face_dir_xz": [
-    -0.7514,
-    -0.6598
-   ],
-   "face_bearing_deg": 228.7,
-   "yaw_deg": -138.71,
-   "right_xz": [
-    0.6598,
-    -0.7514
-   ],
-   "arrow": "right",
-   "expect_arrow": "right",
-   "lateral_offset_m": 1.63,
-   "height_m": 2.13,
-   "om1_3": true,
-   "checks": {
-    "outside_cross": 12.16,
-    "edge_clear_m": 1.73,
-    "lamp_m": 34.31,
-    "plant_m": 10.49,
-    "plant_zone": "palms",
-    "pushed_m": 1.48,
-    "slid_m": 0.0,
-    "lateral_step_m": 0.0,
-    "gate_margin_m": 7.37,
-    "gate_margin_gated_m": 7.37,
-    "gate_ribbons": "all",
-    "mouth_m": 2664.5,
-    "spawn_m": 1518.2,
-    "spawn": "AC_TIME_1_R@race_cw",
-    "warnings": [],
-    "slid_polyline_m": 0.0,
-    "mesh_clear_m": 1.78,
-    "mesh_clear_bearing_deg": 225,
-    "mesh_shift_m": 0.1,
-    "walk_behind_m": -0.27
-   },
-   "old_rule": {
-    "rev1_xz": [
-     -10.4,
-     1699.35
-    ],
-    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
-    "rev2_xz": [
-     49.6,
-     1708.65
-    ],
-    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
-   },
-   "overrides_applied": [],
-   "exclude_plant": null,
-   "where": "Navajo Rd -> Jackson Dr",
-   "base_xz_polyline": [
-    64.936,
-    1731.775
-   ],
-   "base_xz_mesh": [
-    65.011,
-    1731.847
-   ],
-   "base_source": "mesh (walk fraction start, marched 0.00 m along the ray, slid 0.00 m along the curb)",
-   "built": {
-    "outside_edge_xz": [
-     [
-      22.61,
-      1719.29
-     ],
-     [
-      24.1,
-      1720.62
-     ],
-     [
-      25.69,
-      1721.89
-     ],
-     [
-      27.25,
-      1723.26
-     ],
-     [
-      28.9,
-      1724.56
-     ],
-     [
-      30.57,
-      1725.99
-     ],
-     [
-      32.42,
-      1727.36
-     ],
-     [
-      34.25,
-      1728.76
-     ],
-     [
-      36.41,
-      1730.21
-     ],
-     [
-      38.9,
-      1731.75
-     ],
-     [
-      41.78,
-      1733.11
-     ],
-     [
-      45.26,
-      1734.39
-     ],
-     [
-      49.65,
-      1735.17
-     ],
-     [
-      54.65,
-      1734.87
-     ],
-     [
-      59.36,
-      1733.32
-     ],
-     [
-      63.26,
-      1730.91
-     ],
-     [
-      66.13,
-      1728.24
-     ],
-     [
-      68.2,
-      1725.77
-     ],
-     [
-      69.87,
-      1723.35
-     ],
-     [
-      71.34,
-      1720.86
-     ],
-     [
-      72.56,
-      1718.38
-     ],
-     [
-      73.53,
-      1716.12
-     ],
-     [
-      74.39,
-      1713.95
-     ],
-     [
-      75.14,
-      1711.88
-     ],
-     [
-      75.81,
-      1710.01
-     ],
-     [
-      76.46,
-      1708.26
-     ],
-     [
-      77.05,
-      1706.69
-     ],
-     [
-      77.68,
-      1705.22
-     ],
-     [
-      78.39,
-      1703.7
-     ],
-     [
-      79.1,
-      1702.26
-     ],
-     [
-      79.88,
-      1700.84
-     ]
-    ],
-    "back_of_walk_xz": [
-     [
-      22.61,
-      1719.29
-     ],
-     [
-      22.77,
-      1722.11
-     ],
-     [
-      25.69,
-      1721.89
-     ],
-     [
-      25.94,
-      1724.77
-     ],
-     [
-      28.9,
-      1724.56
-     ],
-     [
-      29.3,
-      1727.53
-     ],
-     [
-      32.42,
-      1727.36
-     ],
-     [
-      33.05,
-      1730.36
-     ],
-     [
-      36.41,
-      1730.21
-     ],
-     [
-      37.91,
-      1733.49
-     ],
-     [
-      41.78,
-      1733.11
-     ],
-     [
-      44.73,
-      1736.32
-     ],
-     [
-      49.53,
-      1737.17
-     ],
-     [
-      55.03,
-      1736.83
-     ],
-     [
-      59.36,
-      1733.32
-     ],
-     [
-      63.26,
-      1730.91
-     ],
-     [
-      66.13,
-      1728.24
-     ],
-     [
-      68.2,
-      1725.77
-     ],
-     [
-      69.87,
-      1723.35
-     ],
-     [
-      71.34,
-      1720.86
-     ],
-     [
-      72.56,
-      1718.38
-     ],
-     [
-      73.53,
-      1716.12
-     ],
-     [
-      74.39,
-      1713.95
-     ],
-     [
-      75.14,
-      1711.88
-     ],
-     [
-      75.81,
-      1710.01
-     ],
-     [
-      76.46,
-      1708.26
-     ],
-     [
-      77.05,
-      1706.69
-     ],
-     [
-      77.68,
-      1705.22
-     ],
-     [
-      78.39,
-      1703.7
-     ],
-     [
-      79.1,
-      1702.26
-     ],
-     [
-      79.88,
-      1700.84
-     ]
-    ]
-   },
-   "blender": {
-    "base_xyz_engine": [
-     65.011,
-     109.322,
-     1731.847
-    ],
-    "base_xyz_blender": [
-     65.011,
-     1731.847,
-     109.322
-    ],
-    "plate_bottom_y": 111.452,
-    "plate_top_y": 112.062,
-    "post_base_y": 109.022,
-    "post_top_y": 112.112,
-    "plates": [
-     {
-      "front_xyz": [
-       [
-        64.5863,
-        111.4523,
-        1732.2852
-       ],
-       [
-        65.3906,
-        111.4523,
-        1731.3692
-       ],
-       [
-        65.3906,
-        112.0623,
-        1731.3692
-       ],
-       [
-        64.5863,
-        112.0623,
-        1732.2852
-       ]
-      ],
-      "back_xyz": [
-       [
-        64.5886,
-        111.4523,
-        1732.2872
-       ],
-       [
-        65.3929,
-        111.4523,
-        1731.3712
-       ],
-       [
-        65.3929,
-        112.0623,
-        1731.3712
-       ],
-       [
-        64.5886,
-        112.0623,
-        1732.2872
-       ]
-      ],
-      "arrow_xyz": [
-       [
-        65.3123,
-        111.7571,
-        1731.4524
-       ],
-       [
-        65.076,
-        111.9857,
-        1731.7215
-       ],
-       [
-        65.086,
-        111.8416,
-        1731.7101
-       ],
-       [
-        64.6587,
-        111.8416,
-        1732.1967
-       ],
-       [
-        64.6587,
-        111.6725,
-        1732.1967
-       ],
-       [
-        65.086,
-        111.6725,
-        1731.7101
-       ],
-       [
-        65.076,
-        111.5285,
-        1731.7215
-       ]
-      ]
-     }
-    ],
-    "post": {
-     "post_base_xyz": [
-      [
-       65.0463,
-       109.0223,
-       1731.8447
-      ],
-      [
-       65.0087,
-       109.0223,
-       1731.8117
-      ],
-      [
-       64.9757,
-       109.0223,
-       1731.8493
-      ],
-      [
-       65.0133,
-       109.0223,
-       1731.8823
-      ]
-     ],
-     "post_top_y": 112.1123
-    },
-    "meshes": {
-     "SIGNPLATE": "SIGNPLATE_0",
-     "SIGNARROW": "SIGNARROW_0",
-     "SIGNPOST": "SIGNPOST_0"
-    }
-   }
-  },
-  {
    "id": "M5-fwd",
    "kind": "W1-6R",
    "plate": "W1-6",
@@ -2755,7 +1703,7 @@
     "gate_margin_m": 9.08,
     "gate_margin_gated_m": 9.08,
     "gate_ribbons": "all",
-    "mouth_m": 3197.1,
+    "mouth_m": 2860.4,
     "spawn_m": 35.4,
     "spawn": "AC_TIME_1_R@race_acw",
     "warnings": [
@@ -3283,7 +2231,7 @@
     "gate_margin_m": 7.58,
     "gate_margin_gated_m": 7.58,
     "gate_ribbons": "all",
-    "mouth_m": 3206.3,
+    "mouth_m": 2855.7,
     "spawn_m": 47.6,
     "spawn": "AC_TIME_1_R@race_acw",
     "warnings": [
@@ -3699,1062 +2647,6 @@
       ]
      ],
      "post_top_y": 94.8606
-    },
-    "meshes": {
-     "SIGNPLATE": "SIGNPLATE_0",
-     "SIGNARROW": "SIGNARROW_0",
-     "SIGNPOST": "SIGNPOST_0"
-    }
-   }
-  },
-  {
-   "id": "M4-rev",
-   "kind": "W1-6L",
-   "plate": "W1-6",
-   "ribbon": "MAINLINE",
-   "direction": "rev",
-   "corner": {
-    "apex_vertex": 2319,
-    "apex_station_m": 6523,
-    "PC": 6505,
-    "PT": 6537,
-    "arc_m": 32,
-    "R_apex_m": 9.8,
-    "D_deg": 106.4,
-    "turn": "left",
-    "apex_xz": [
-     51.67,
-     1723.29
-    ],
-    "second_arrow": false,
-    "R_at_PC_m": 76.7
-   },
-   "approach": {
-    "t_xz": [
-     -0.3633,
-     0.9317
-    ],
-    "bearing_deg": 338.7,
-    "pca_vs_chord_deg": -0.47,
-    "w_app_m": 24.0,
-    "w_at_apex_m": 24.0,
-    "island_m": 0.0,
-    "lane_off_m": 6.0
-   },
-   "ray": {
-    "A_xz": [
-     68.59,
-     1712.6
-    ],
-    "len_m": 21.75,
-    "C_xz": [
-     60.69,
-     1732.86
-    ],
-    "exit_ribbon": "MAINLINE",
-    "hw_at_exit_m": 12.0,
-    "sC_station": 6520,
-    "sC_rel_PC_m": 15,
-    "sC_rel_apex_m": -3,
-    "s_S_m": 24.07,
-    "C_mesh_xz": [
-     60.82,
-     1732.54
-    ],
-    "len_mesh_m": 21.4,
-    "back_of_walk_m": 24.5,
-    "walk_run_m": 3.1,
-    "s_S_walk_m": 24.09,
-    "s_S_mesh_m": 24.09,
-    "marched_m": 0.0,
-    "beyond_walk": false
-   },
-   "base_xz": [
-    59.838,
-    1735.045
-   ],
-   "curb_dir_xz": [
-    -0.8824,
-    0.4706
-   ],
-   "y_road_at_sC": 109.03,
-   "y_base": {
-    "analytic": 109.27,
-    "raycast": 109.259,
-    "source": "raycast",
-    "value": 109.259,
-    "road_hit": null,
-    "pushed_on_road_m": 0.0
-   },
-   "face_dir_xz": [
-    0.3633,
-    -0.9317
-   ],
-   "face_bearing_deg": 158.7,
-   "yaw_deg": -68.69,
-   "right_xz": [
-    0.9317,
-    0.3633
-   ],
-   "arrow": "left",
-   "expect_arrow": "left",
-   "lateral_offset_m": 1.63,
-   "height_m": 2.13,
-   "om1_3": true,
-   "checks": {
-    "outside_cross": 12.12,
-    "edge_clear_m": 1.64,
-    "lamp_m": 34.64,
-    "plant_m": 4.43,
-    "plant_zone": "palms",
-    "pushed_m": 2.32,
-    "slid_m": 0.0,
-    "lateral_step_m": 0.0,
-    "gate_margin_m": 6.91,
-    "gate_margin_gated_m": 6.91,
-    "gate_ribbons": "all",
-    "mouth_m": 2664.9,
-    "spawn_m": 1514.7,
-    "spawn": "AC_TIME_1_R@race_cw",
-    "warnings": [],
-    "slid_polyline_m": 0.0,
-    "mesh_clear_m": 1.65,
-    "mesh_clear_bearing_deg": 245,
-    "mesh_shift_m": 0.02,
-    "walk_behind_m": -0.41
-   },
-   "old_rule": {
-    "rev1_xz": [
-     100.47,
-     1673.1
-    ],
-    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
-    "rev2_xz": [
-     50.09,
-     1708.58
-    ],
-    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
-   },
-   "overrides_applied": [
-    "expect_arrow mirrored for the reverse approach (right -> left)"
-   ],
-   "exclude_plant": null,
-   "where": "Navajo Rd -> Jackson Dr",
-   "base_xz_polyline": [
-    59.848,
-    1735.026
-   ],
-   "base_xz_mesh": [
-    59.838,
-    1735.045
-   ],
-   "base_source": "mesh (walk fraction start, marched 0.00 m along the ray, slid 0.00 m along the curb)",
-   "built": {
-    "outside_edge_xz": [
-     [
-      22.61,
-      1719.29
-     ],
-     [
-      24.1,
-      1720.62
-     ],
-     [
-      25.69,
-      1721.89
-     ],
-     [
-      27.25,
-      1723.26
-     ],
-     [
-      28.9,
-      1724.56
-     ],
-     [
-      30.57,
-      1725.99
-     ],
-     [
-      32.42,
-      1727.36
-     ],
-     [
-      34.25,
-      1728.76
-     ],
-     [
-      36.41,
-      1730.21
-     ],
-     [
-      38.9,
-      1731.75
-     ],
-     [
-      41.78,
-      1733.11
-     ],
-     [
-      45.26,
-      1734.39
-     ],
-     [
-      49.65,
-      1735.17
-     ],
-     [
-      54.65,
-      1734.87
-     ],
-     [
-      59.36,
-      1733.32
-     ],
-     [
-      63.26,
-      1730.91
-     ],
-     [
-      66.13,
-      1728.24
-     ],
-     [
-      68.2,
-      1725.77
-     ],
-     [
-      69.87,
-      1723.35
-     ],
-     [
-      71.34,
-      1720.86
-     ],
-     [
-      72.56,
-      1718.38
-     ],
-     [
-      73.53,
-      1716.12
-     ],
-     [
-      74.39,
-      1713.95
-     ],
-     [
-      75.14,
-      1711.88
-     ],
-     [
-      75.81,
-      1710.01
-     ],
-     [
-      76.46,
-      1708.26
-     ],
-     [
-      77.05,
-      1706.69
-     ],
-     [
-      77.68,
-      1705.22
-     ],
-     [
-      78.39,
-      1703.7
-     ],
-     [
-      79.1,
-      1702.26
-     ],
-     [
-      79.88,
-      1700.84
-     ]
-    ],
-    "back_of_walk_xz": [
-     [
-      22.61,
-      1719.29
-     ],
-     [
-      22.77,
-      1722.11
-     ],
-     [
-      25.69,
-      1721.89
-     ],
-     [
-      25.94,
-      1724.77
-     ],
-     [
-      28.9,
-      1724.56
-     ],
-     [
-      29.3,
-      1727.53
-     ],
-     [
-      32.42,
-      1727.36
-     ],
-     [
-      33.05,
-      1730.36
-     ],
-     [
-      36.41,
-      1730.21
-     ],
-     [
-      37.91,
-      1733.49
-     ],
-     [
-      41.78,
-      1733.11
-     ],
-     [
-      44.73,
-      1736.32
-     ],
-     [
-      49.53,
-      1737.17
-     ],
-     [
-      55.03,
-      1736.83
-     ],
-     [
-      59.36,
-      1733.32
-     ],
-     [
-      63.26,
-      1730.91
-     ],
-     [
-      66.13,
-      1728.24
-     ],
-     [
-      68.2,
-      1725.77
-     ],
-     [
-      69.87,
-      1723.35
-     ],
-     [
-      71.34,
-      1720.86
-     ],
-     [
-      72.56,
-      1718.38
-     ],
-     [
-      73.53,
-      1716.12
-     ],
-     [
-      74.39,
-      1713.95
-     ],
-     [
-      75.14,
-      1711.88
-     ],
-     [
-      75.81,
-      1710.01
-     ],
-     [
-      76.46,
-      1708.26
-     ],
-     [
-      77.05,
-      1706.69
-     ],
-     [
-      77.68,
-      1705.22
-     ],
-     [
-      78.39,
-      1703.7
-     ],
-     [
-      79.1,
-      1702.26
-     ],
-     [
-      79.88,
-      1700.84
-     ]
-    ]
-   },
-   "blender": {
-    "base_xyz_engine": [
-     59.838,
-     109.259,
-     1735.045
-    ],
-    "base_xyz_blender": [
-     59.838,
-     1735.045,
-     109.259
-    ],
-    "plate_bottom_y": 111.389,
-    "plate_top_y": 111.999,
-    "post_base_y": 108.959,
-    "post_top_y": 112.049,
-    "plates": [
-     {
-      "front_xyz": [
-       [
-        59.281,
-        111.389,
-        1734.7956
-       ],
-       [
-        60.4168,
-        111.389,
-        1735.2385
-       ],
-       [
-        60.4168,
-        111.999,
-        1735.2385
-       ],
-       [
-        59.281,
-        111.999,
-        1734.7956
-       ]
-      ],
-      "back_xyz": [
-       [
-        59.2799,
-        111.389,
-        1734.7984
-       ],
-       [
-        60.4157,
-        111.389,
-        1735.2413
-       ],
-       [
-        60.4157,
-        111.999,
-        1735.2413
-       ],
-       [
-        59.2799,
-        111.999,
-        1734.7984
-       ]
-      ],
-      "arrow_xyz": [
-       [
-        59.3889,
-        111.6938,
-        1734.8334
-       ],
-       [
-        59.7226,
-        111.9224,
-        1734.9635
-       ],
-       [
-        59.7084,
-        111.7784,
-        1734.958
-       ],
-       [
-        60.3118,
-        111.7784,
-        1735.1933
-       ],
-       [
-        60.3118,
-        111.6093,
-        1735.1933
-       ],
-       [
-        59.7084,
-        111.6093,
-        1734.958
-       ],
-       [
-        59.7226,
-        111.4652,
-        1734.9635
-       ]
-      ]
-     }
-    ],
-    "post": {
-     "post_base_xyz": [
-      [
-       59.8522,
-       108.959,
-       1735.0774
-      ],
-      [
-       59.8704,
-       108.959,
-       1735.0308
-      ],
-      [
-       59.8238,
-       108.959,
-       1735.0126
-      ],
-      [
-       59.8056,
-       108.959,
-       1735.0592
-      ]
-     ],
-     "post_top_y": 112.049
-    },
-    "meshes": {
-     "SIGNPLATE": "SIGNPLATE_0",
-     "SIGNARROW": "SIGNARROW_0",
-     "SIGNPOST": "SIGNPOST_0"
-    }
-   }
-  },
-  {
-   "id": "M3-rev",
-   "kind": "W1-6L",
-   "plate": "W1-6",
-   "ribbon": "MAINLINE",
-   "direction": "rev",
-   "corner": {
-    "apex_vertex": 1514,
-    "apex_station_m": 8938,
-    "PC": 8923,
-    "PT": 8952,
-    "arc_m": 29,
-    "R_apex_m": 10.5,
-    "D_deg": 91.4,
-    "turn": "left",
-    "apex_xz": [
-     -1974.84,
-     597.51
-    ],
-    "second_arrow": false,
-    "R_at_PC_m": 66.5
-   },
-   "approach": {
-    "t_xz": [
-     -0.87,
-     -0.493
-    ],
-    "bearing_deg": 240.5,
-    "pca_vs_chord_deg": 2.83,
-    "w_app_m": 29.74,
-    "w_at_apex_m": 29.63,
-    "island_m": 0.0,
-    "lane_off_m": 7.44
-   },
-   "ray": {
-    "A_xz": [
-     -1968.64,
-     614.74
-    ],
-    "len_m": 23.5,
-    "C_xz": [
-     -1989.09,
-     603.15
-    ],
-    "exit_ribbon": "MAINLINE",
-    "hw_at_exit_m": 15.0,
-    "sC_station": 8937,
-    "sC_rel_PC_m": 14,
-    "sC_rel_apex_m": -1,
-    "s_S_m": 25.61,
-    "C_mesh_xz": [
-     -1988.74,
-     603.35
-    ],
-    "len_mesh_m": 23.1,
-    "back_of_walk_m": 26.0,
-    "walk_run_m": 2.9,
-    "s_S_walk_m": 25.61,
-    "s_S_mesh_m": 25.61,
-    "marched_m": 0.0,
-    "beyond_walk": false
-   },
-   "base_xz": [
-    -1990.921,
-    602.114
-   ],
-   "curb_dir_xz": [
-    -0.2948,
-    -0.9555
-   ],
-   "y_road_at_sC": 24.274,
-   "y_base": {
-    "analytic": 24.514,
-    "raycast": 24.513,
-    "source": "raycast",
-    "value": 24.513,
-    "road_hit": null,
-    "pushed_on_road_m": 0.0
-   },
-   "face_dir_xz": [
-    0.87,
-    0.493
-   ],
-   "face_bearing_deg": 60.5,
-   "yaw_deg": 29.54,
-   "right_xz": [
-    -0.493,
-    0.87
-   ],
-   "arrow": "left",
-   "expect_arrow": "left",
-   "lateral_offset_m": 1.63,
-   "height_m": 2.13,
-   "om1_3": true,
-   "checks": {
-    "outside_cross": 15.18,
-    "edge_clear_m": 1.63,
-    "lamp_m": 37.94,
-    "plant_m": 21.55,
-    "plant_zone": "trees",
-    "pushed_m": 2.11,
-    "slid_m": 0.0,
-    "lateral_step_m": 0.0,
-    "gate_margin_m": 9.92,
-    "gate_margin_gated_m": 9.92,
-    "gate_ribbons": "all",
-    "mouth_m": 1099.6,
-    "spawn_m": 868.1,
-    "spawn": "AC_TIME_1_R@race_cw",
-    "warnings": [],
-    "slid_polyline_m": 0.0,
-    "mesh_clear_m": 1.65,
-    "mesh_clear_bearing_deg": 350,
-    "mesh_shift_m": 0.01,
-    "walk_behind_m": -0.39
-   },
-   "old_rule": {
-    "rev1_xz": [
-     -1928.92,
-     646.35
-    ],
-    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
-    "rev2_xz": [
-     -1957.48,
-     594.51
-    ],
-    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
-   },
-   "overrides_applied": [
-    "expect_arrow mirrored for the reverse approach (right -> left)"
-   ],
-   "exclude_plant": null,
-   "where": "College Ave -> Navajo Rd",
-   "base_xz_polyline": [
-    -1990.925,
-    602.111
-   ],
-   "base_xz_mesh": [
-    -1990.921,
-    602.114
-   ],
-   "base_source": "mesh (walk fraction start, marched 0.00 m along the ray, slid 0.00 m along the curb)",
-   "built": {
-    "outside_edge_xz": [
-     [
-      -1968.7,
-      567.72
-     ],
-     [
-      -1970.25,
-      569.23
-     ],
-     [
-      -1971.81,
-      570.82
-     ],
-     [
-      -1973.42,
-      572.41
-     ],
-     [
-      -1974.96,
-      573.98
-     ],
-     [
-      -1976.59,
-      575.57
-     ],
-     [
-      -1978.27,
-      577.18
-     ],
-     [
-      -1979.82,
-      578.85
-     ],
-     [
-      -1981.48,
-      580.62
-     ],
-     [
-      -1983.27,
-      582.6
-     ],
-     [
-      -1984.96,
-      584.93
-     ],
-     [
-      -1986.61,
-      587.73
-     ],
-     [
-      -1988.24,
-      591.4
-     ],
-     [
-      -1989.39,
-      596.3
-     ],
-     [
-      -1989.14,
-      602.05
-     ],
-     [
-      -1987.05,
-      607.24
-     ],
-     [
-      -1984.45,
-      611.07
-     ],
-     [
-      -1982.01,
-      613.75
-     ],
-     [
-      -1979.76,
-      615.82
-     ],
-     [
-      -1977.56,
-      617.62
-     ],
-     [
-      -1975.43,
-      619.17
-     ],
-     [
-      -1973.47,
-      620.51
-     ],
-     [
-      -1971.51,
-      621.79
-     ],
-     [
-      -1969.57,
-      623.11
-     ],
-     [
-      -1967.62,
-      624.26
-     ],
-     [
-      -1965.67,
-      625.37
-     ],
-     [
-      -1963.67,
-      626.46
-     ],
-     [
-      -1961.72,
-      627.49
-     ],
-     [
-      -1959.77,
-      628.48
-     ],
-     [
-      -1957.81,
-      629.45
-     ],
-     [
-      -1955.91,
-      630.36
-     ]
-    ],
-    "back_of_walk_xz": [
-     [
-      -1968.7,
-      567.72
-     ],
-     [
-      -1970.25,
-      569.23
-     ],
-     [
-      -1971.81,
-      570.82
-     ],
-     [
-      -1974.95,
-      571.13
-     ],
-     [
-      -1974.96,
-      573.98
-     ],
-     [
-      -1976.59,
-      575.57
-     ],
-     [
-      -1979.9,
-      576.01
-     ],
-     [
-      -1979.82,
-      578.85
-     ],
-     [
-      -1981.48,
-      580.62
-     ],
-     [
-      -1985.01,
-      581.61
-     ],
-     [
-      -1984.96,
-      584.93
-     ],
-     [
-      -1986.61,
-      587.73
-     ],
-     [
-      -1988.24,
-      591.4
-     ],
-     [
-      -1991.39,
-      596.3
-     ],
-     [
-      -1989.14,
-      602.05
-     ],
-     [
-      -1987.05,
-      607.24
-     ],
-     [
-      -1984.45,
-      611.07
-     ],
-     [
-      -1982.01,
-      613.75
-     ],
-     [
-      -1979.76,
-      615.82
-     ],
-     [
-      -1977.56,
-      617.62
-     ],
-     [
-      -1975.43,
-      619.17
-     ],
-     [
-      -1973.47,
-      620.51
-     ],
-     [
-      -1971.51,
-      621.79
-     ],
-     [
-      -1970.6,
-      624.82
-     ],
-     [
-      -1968.63,
-      625.99
-     ],
-     [
-      -1966.64,
-      627.12
-     ],
-     [
-      -1964.61,
-      628.23
-     ],
-     [
-      -1962.64,
-      629.26
-     ],
-     [
-      -1960.66,
-      630.27
-     ],
-     [
-      -1958.68,
-      631.25
-     ],
-     [
-      -1955.91,
-      630.36
-     ]
-    ]
-   },
-   "blender": {
-    "base_xyz_engine": [
-     -1990.921,
-     24.513,
-     602.114
-    ],
-    "base_xyz_blender": [
-     -1990.921,
-     602.114,
-     24.513
-    ],
-    "plate_bottom_y": 26.643,
-    "plate_top_y": 27.253,
-    "post_base_y": 24.213,
-    "post_top_y": 27.303,
-    "plates": [
-     {
-      "front_xyz": [
-       [
-        -1990.5944,
-        26.6427,
-        601.5985
-       ],
-       [
-        -1991.1954,
-        26.6427,
-        602.6591
-       ],
-       [
-        -1991.1954,
-        27.2527,
-        602.6591
-       ],
-       [
-        -1990.5944,
-        27.2527,
-        601.5985
-       ]
-      ],
-      "back_xyz": [
-       [
-        -1990.597,
-        26.6427,
-        601.597
-       ],
-       [
-        -1991.198,
-        26.6427,
-        602.6576
-       ],
-       [
-        -1991.198,
-        27.2527,
-        602.6576
-       ],
-       [
-        -1990.597,
-        27.2527,
-        601.597
-       ]
-      ],
-      "arrow_xyz": [
-       [
-        -1990.6472,
-        26.9475,
-        601.6999
-       ],
-       [
-        -1990.8238,
-        27.1761,
-        602.0114
-       ],
-       [
-        -1990.8163,
-        27.0321,
-        601.9982
-       ],
-       [
-        -1991.1356,
-        27.0321,
-        602.5617
-       ],
-       [
-        -1991.1356,
-        26.8629,
-        602.5617
-       ],
-       [
-        -1990.8163,
-        26.8629,
-        601.9982
-       ],
-       [
-        -1990.8238,
-        26.7189,
-        602.0114
-       ]
-      ]
-     }
-    ],
-    "post": {
-     "post_base_xyz": [
-      [
-       -1990.9551,
-       24.2127,
-       602.1234
-      ],
-      [
-       -1990.9116,
-       24.2127,
-       602.1481
-      ],
-      [
-       -1990.8869,
-       24.2127,
-       602.1046
-      ],
-      [
-       -1990.9304,
-       24.2127,
-       602.0799
-      ]
-     ],
-     "post_top_y": 27.3027
     },
     "meshes": {
      "SIGNPLATE": "SIGNPLATE_0",
@@ -12142,6 +10034,39 @@
  ],
  "skipped": [
   {
+   "id": "M3-fwd",
+   "ribbon": "MAINLINE",
+   "apex_vertex": 1514,
+   "apex_station_m": 4534,
+   "R_apex_m": 10.5,
+   "D_deg": -91.4,
+   "arc_m": 29,
+   "apex_xz": [
+    -1974.7,
+    598.2
+   ],
+   "reasons": [
+    "signs.json skip: Ledger 0054 A7: M3-fwd / M3-rev stand inside the new J1 Waring opening (straight on is now a real road in Free Roam). A sign ships only in the road kn5 all three layouts load, so until P4's adapted author_signs_blend writes plates into the race files this skips it in EVERY layout."
+   ]
+  },
+  {
+   "id": "M4-fwd",
+   "ribbon": "MAINLINE",
+   "apex_vertex": 2319,
+   "apex_station_m": 6949,
+   "R_apex_m": 9.7,
+   "D_deg": -106.4,
+   "arc_m": 32,
+   "apex_xz": [
+    52.4,
+    1723.2
+   ],
+   "reasons": [
+    "signs.json skip: Ledger 0054 A7: M4-fwd / M4-rev stand inside the new J5 Jackson-north opening. A sign ships only in the road kn5 all three layouts load, so until P4's adapted author_signs_blend writes plates into the race files this skips it in EVERY layout.",
+    "apex 13 m from mouth north_J5_jackson_north@MAINLINE:2317 (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
    "id": "M-c5-fwd",
    "ribbon": "MAINLINE",
    "apex_vertex": 3282,
@@ -12173,6 +10098,39 @@
    "reasons": [
     "R_apex 42.1 > 30 m",
     "|D| 16.3 < 45 deg"
+   ]
+  },
+  {
+   "id": "M4-rev",
+   "ribbon": "MAINLINE(rev)",
+   "apex_vertex": 2319,
+   "apex_station_m": 6523,
+   "R_apex_m": 9.8,
+   "D_deg": 106.4,
+   "arc_m": 32,
+   "apex_xz": [
+    51.7,
+    1723.3
+   ],
+   "reasons": [
+    "signs.json skip: Ledger 0054 A7: M4-fwd / M4-rev stand inside the new J5 Jackson-north opening. A sign ships only in the road kn5 all three layouts load, so until P4's adapted author_signs_blend writes plates into the race files this skips it in EVERY layout.",
+    "apex 13 m from mouth north_J5_jackson_north@MAINLINE:2317 (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "M3-rev",
+   "ribbon": "MAINLINE(rev)",
+   "apex_vertex": 1514,
+   "apex_station_m": 8938,
+   "R_apex_m": 10.5,
+   "D_deg": 91.4,
+   "arc_m": 29,
+   "apex_xz": [
+    -1974.8,
+    597.5
+   ],
+   "reasons": [
+    "signs.json skip: Ledger 0054 A7: M3-fwd / M3-rev stand inside the new J1 Waring opening (straight on is now a real road in Free Roam). A sign ships only in the road kn5 all three layouts load, so until P4's adapted author_signs_blend writes plates into the race files this skips it in EVERY layout."
    ]
   },
   {
@@ -12883,24 +10841,2046 @@
     "R_apex 41.4 > 30 m",
     "|D| 16.2 < 45 deg"
    ]
+  },
+  {
+   "id": "NORTH_J1_WARING_0-c1-fwd",
+   "ribbon": "north_J1_waring#0",
+   "apex_vertex": 1,
+   "apex_station_m": 2,
+   "R_apex_m": 5.3,
+   "D_deg": 53.8,
+   "arc_m": 5,
+   "apex_xz": [
+    -1982.5,
+    615.6
+   ],
+   "reasons": [
+    "apex 2 m from mouth north_J1_waring@MAINLINE:1517 (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "NORTH_J1_WARING_0-c2-fwd",
+   "ribbon": "north_J1_waring#0",
+   "apex_vertex": 315,
+   "apex_station_m": 931,
+   "R_apex_m": 4.7,
+   "D_deg": 60.8,
+   "arc_m": 5,
+   "apex_xz": [
+    -2727.2,
+    1006.0
+   ],
+   "reasons": [
+    "apex 4 m from north_J1_waring#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "NORTH_J1_WARING_0-r1-rev",
+   "ribbon": "north_J1_waring#0(rev)",
+   "apex_vertex": 317,
+   "apex_station_m": 0,
+   "R_apex_m": 20.1,
+   "D_deg": 14.2,
+   "arc_m": 5,
+   "apex_xz": [
+    -2731.3,
+    1003.2
+   ],
+   "reasons": [
+    "|D| 14.2 < 45 deg",
+    "apex 1 m from north_J1_waring#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "NORTH_J1_WARING_0-r2-rev",
+   "ribbon": "north_J1_waring#0(rev)",
+   "apex_vertex": 2,
+   "apex_station_m": 931,
+   "R_apex_m": 13.5,
+   "D_deg": 21.2,
+   "arc_m": 5,
+   "apex_xz": [
+    -1984.4,
+    617.9
+   ],
+   "reasons": [
+    "|D| 21.2 < 45 deg",
+    "apex 5 m from mouth north_J1_waring@MAINLINE:1517 (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "NORTH_PRINCESS_VIEW-c1-fwd",
+   "ribbon": "north_princess_view",
+   "apex_vertex": 0,
+   "apex_station_m": 0,
+   "R_apex_m": 5.3,
+   "D_deg": 54.1,
+   "arc_m": 5,
+   "apex_xz": [
+    -2758.9,
+    1007.7
+   ],
+   "reasons": [
+    "apex 0 m from north_princess_view start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "NORTH_PRINCESS_VIEW-c2-fwd",
+   "ribbon": "north_princess_view",
+   "apex_vertex": 355,
+   "apex_station_m": 1065,
+   "R_apex_m": 7.0,
+   "D_deg": -39.8,
+   "arc_m": 5,
+   "apex_xz": [
+    -3018.9,
+    2002.6
+   ],
+   "reasons": [
+    "|D| 39.8 < 45 deg",
+    "apex 0 m from north_princess_view end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "NORTH_PRINCESS_VIEW-r1-rev",
+   "ribbon": "north_princess_view(rev)",
+   "apex_vertex": 354,
+   "apex_station_m": 4,
+   "R_apex_m": 8.2,
+   "D_deg": -35.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -3018.4,
+    1999.3
+   ],
+   "reasons": [
+    "|D| 35.0 < 45 deg",
+    "apex 3 m from north_princess_view end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "NORTH_PRINCESS_VIEW-r2-rev",
+   "ribbon": "north_princess_view(rev)",
+   "apex_vertex": 1,
+   "apex_station_m": 1064,
+   "R_apex_m": 13.7,
+   "D_deg": 20.9,
+   "arc_m": 5,
+   "apex_xz": [
+    -2760.0,
+    1008.9
+   ],
+   "reasons": [
+    "|D| 20.9 < 45 deg",
+    "apex 2 m from north_princess_view start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "NORTH_MISSION_GORGE-c1-fwd",
+   "ribbon": "north_mission_gorge",
+   "apex_vertex": 1,
+   "apex_station_m": 2,
+   "R_apex_m": 27.9,
+   "D_deg": 10.3,
+   "arc_m": 5,
+   "apex_xz": [
+    -3008.8,
+    2049.3
+   ],
+   "reasons": [
+    "|D| 10.3 < 45 deg",
+    "apex 2 m from north_mission_gorge start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "NORTH_MISSION_GORGE-c2-fwd",
+   "ribbon": "north_mission_gorge",
+   "apex_vertex": 743,
+   "apex_station_m": 2229,
+   "R_apex_m": 38.7,
+   "D_deg": -7.4,
+   "arc_m": 5,
+   "apex_xz": [
+    -1231.4,
+    3174.4
+   ],
+   "reasons": [
+    "R_apex 38.7 > 30 m",
+    "|D| 7.4 < 45 deg",
+    "apex 4 m from north_mission_gorge end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "NORTH_MISSION_GORGE-r1-rev",
+   "ribbon": "north_mission_gorge(rev)",
+   "apex_vertex": 745,
+   "apex_station_m": 0,
+   "R_apex_m": 4.2,
+   "D_deg": -67.6,
+   "arc_m": 5,
+   "apex_xz": [
+    -1226.6,
+    3175.9
+   ],
+   "reasons": [
+    "apex 1 m from north_mission_gorge end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "NORTH_MISSION_GORGE-r2-rev",
+   "ribbon": "north_mission_gorge(rev)",
+   "apex_vertex": 2,
+   "apex_station_m": 2229,
+   "R_apex_m": 4.4,
+   "D_deg": 64.7,
+   "arc_m": 5,
+   "apex_xz": [
+    -3006.1,
+    2050.5
+   ],
+   "reasons": [
+    "apex 5 m from north_mission_gorge start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "NORTH_J5_JACKSON_NORTH_0-c1-fwd",
+   "ribbon": "north_J5_jackson_north#0",
+   "apex_vertex": 1,
+   "apex_station_m": 4,
+   "R_apex_m": 5.5,
+   "D_deg": 58.4,
+   "arc_m": 11,
+   "apex_xz": [
+    43.4,
+    1737.7
+   ],
+   "reasons": [
+    "apex 4 m from mouth north_J5_jackson_north@MAINLINE:2317 (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "NORTH_J5_JACKSON_NORTH_0-c2-fwd",
+   "ribbon": "north_J5_jackson_north#0",
+   "apex_vertex": 374,
+   "apex_station_m": 1120,
+   "R_apex_m": 58.7,
+   "D_deg": 4.8,
+   "arc_m": 4,
+   "apex_xz": [
+    -580.8,
+    2645.6
+   ],
+   "reasons": [
+    "R_apex 58.7 > 30 m",
+    "|D| 4.8 < 45 deg"
+   ]
+  },
+  {
+   "id": "NORTH_J5_JACKSON_NORTH_0-c3-fwd",
+   "ribbon": "north_J5_jackson_north#0",
+   "apex_vertex": 650,
+   "apex_station_m": 1940,
+   "R_apex_m": 5.0,
+   "D_deg": -57.4,
+   "arc_m": 5,
+   "apex_xz": [
+    -1186.0,
+    3153.7
+   ],
+   "reasons": [
+    "apex 4 m from north_J5_jackson_north#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "NORTH_J5_JACKSON_NORTH_0-r1-rev",
+   "ribbon": "north_J5_jackson_north#0(rev)",
+   "apex_vertex": 651,
+   "apex_station_m": 0,
+   "R_apex_m": 16.3,
+   "D_deg": -17.6,
+   "arc_m": 5,
+   "apex_xz": [
+    -1189.3,
+    3156.7
+   ],
+   "reasons": [
+    "|D| 17.6 < 45 deg",
+    "apex 0 m from north_J5_jackson_north#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "NORTH_J5_JACKSON_NORTH_0-c2-rev",
+   "ribbon": "north_J5_jackson_north#0(rev)",
+   "apex_vertex": 374,
+   "apex_station_m": 825,
+   "R_apex_m": 58.8,
+   "D_deg": -4.7,
+   "arc_m": 4,
+   "apex_xz": [
+    -580.5,
+    2645.2
+   ],
+   "reasons": [
+    "R_apex 58.8 > 30 m",
+    "|D| 4.7 < 45 deg"
+   ]
+  },
+  {
+   "id": "NORTH_J5_JACKSON_NORTH_0-c1-rev",
+   "ribbon": "north_J5_jackson_north#0(rev)",
+   "apex_vertex": 2,
+   "apex_station_m": 1938,
+   "R_apex_m": 48.9,
+   "D_deg": -7.5,
+   "arc_m": 6,
+   "apex_xz": [
+    42.3,
+    1739.9
+   ],
+   "reasons": [
+    "R_apex 48.9 > 30 m",
+    "|D| 7.5 < 45 deg",
+    "apex 6 m from mouth north_J5_jackson_north@MAINLINE:2317 (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "NORTH_J5_JACKSON_NORTH_0-r2-rev",
+   "ribbon": "north_J5_jackson_north#0(rev)",
+   "apex_vertex": 0,
+   "apex_station_m": 1944,
+   "R_apex_m": 11.4,
+   "D_deg": 23.8,
+   "arc_m": 4,
+   "apex_xz": [
+    44.9,
+    1734.5
+   ],
+   "reasons": [
+    "|D| 23.8 < 45 deg",
+    "apex 0 m from mouth north_J5_jackson_north@MAINLINE:2317 (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_GALEWOOD_STREET_5984405_R_0-c1-fwd",
+   "ribbon": "STUB_galewood_street_5984405_R#0",
+   "apex_vertex": 4,
+   "apex_station_m": 4,
+   "R_apex_m": 14.9,
+   "D_deg": 19.2,
+   "arc_m": 5,
+   "apex_xz": [
+    -2039.3,
+    704.7
+   ],
+   "reasons": [
+    "|D| 19.2 < 45 deg",
+    "apex 4 m from STUB_galewood_street_5984405_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_GALEWOOD_STREET_5984405_R_0-c2-fwd",
+   "ribbon": "STUB_galewood_street_5984405_R#0",
+   "apex_vertex": 16,
+   "apex_station_m": 16,
+   "R_apex_m": 14.9,
+   "D_deg": -19.2,
+   "arc_m": 5,
+   "apex_xz": [
+    -2031.0,
+    713.4
+   ],
+   "reasons": [
+    "|D| 19.2 < 45 deg",
+    "apex 0 m from STUB_galewood_street_5984405_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_GALEWOOD_STREET_5984405_R_0-c1-rev",
+   "ribbon": "STUB_galewood_street_5984405_R#0(rev)",
+   "apex_vertex": 12,
+   "apex_station_m": 4,
+   "R_apex_m": 5.1,
+   "D_deg": -55.8,
+   "arc_m": 5,
+   "apex_xz": [
+    -2033.4,
+    710.8
+   ],
+   "reasons": [
+    "apex 4 m from STUB_galewood_street_5984405_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_GALEWOOD_STREET_5984405_R_0-c2-rev",
+   "ribbon": "STUB_galewood_street_5984405_R#0(rev)",
+   "apex_vertex": 0,
+   "apex_station_m": 16,
+   "R_apex_m": 5.1,
+   "D_deg": 55.8,
+   "arc_m": 5,
+   "apex_xz": [
+    -2041.8,
+    702.1
+   ],
+   "reasons": [
+    "apex 0 m from STUB_galewood_street_5984405_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_GALEWOOD_STREET_5984405_L_0-c1-fwd",
+   "ribbon": "STUB_galewood_street_5984405_L#0",
+   "apex_vertex": 2,
+   "apex_station_m": 2,
+   "R_apex_m": 5.0,
+   "D_deg": -56.9,
+   "arc_m": 5,
+   "apex_xz": [
+    -2062.0,
+    682.6
+   ],
+   "reasons": [
+    "apex 2 m from STUB_galewood_street_5984405_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_GALEWOOD_STREET_5984405_L_0-c2-fwd",
+   "ribbon": "STUB_galewood_street_5984405_L#0",
+   "apex_vertex": 14,
+   "apex_station_m": 14,
+   "R_apex_m": 5.0,
+   "D_deg": 56.9,
+   "arc_m": 5,
+   "apex_xz": [
+    -2070.7,
+    674.4
+   ],
+   "reasons": [
+    "apex 2 m from STUB_galewood_street_5984405_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_GALEWOOD_STREET_5984405_L_0-c1-rev",
+   "ribbon": "STUB_galewood_street_5984405_L#0(rev)",
+   "apex_vertex": 15,
+   "apex_station_m": 1,
+   "R_apex_m": 15.8,
+   "D_deg": 18.1,
+   "arc_m": 5,
+   "apex_xz": [
+    -2071.7,
+    673.4
+   ],
+   "reasons": [
+    "|D| 18.1 < 45 deg",
+    "apex 1 m from STUB_galewood_street_5984405_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_GALEWOOD_STREET_5984405_L_0-c2-rev",
+   "ribbon": "STUB_galewood_street_5984405_L#0(rev)",
+   "apex_vertex": 3,
+   "apex_station_m": 13,
+   "R_apex_m": 15.8,
+   "D_deg": -18.1,
+   "arc_m": 5,
+   "apex_xz": [
+    -2063.0,
+    681.7
+   ],
+   "reasons": [
+    "|D| 18.1 < 45 deg",
+    "apex 3 m from STUB_galewood_street_5984405_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_ELDRIDGE_STREET_6013754_L_0-c1-fwd",
+   "ribbon": "STUB_eldridge_street_6013754_L#0",
+   "apex_vertex": 2,
+   "apex_station_m": 2,
+   "R_apex_m": 5.1,
+   "D_deg": -56.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -2271.2,
+    888.0
+   ],
+   "reasons": [
+    "apex 2 m from STUB_eldridge_street_6013754_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_ELDRIDGE_STREET_6013754_L_0-c2-fwd",
+   "ribbon": "STUB_eldridge_street_6013754_L#0",
+   "apex_vertex": 14,
+   "apex_station_m": 14,
+   "R_apex_m": 5.1,
+   "D_deg": 56.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -2279.6,
+    879.4
+   ],
+   "reasons": [
+    "apex 2 m from STUB_eldridge_street_6013754_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_ELDRIDGE_STREET_6013754_L_0-c1-rev",
+   "ribbon": "STUB_eldridge_street_6013754_L#0(rev)",
+   "apex_vertex": 17,
+   "apex_station_m": 0,
+   "R_apex_m": 15.0,
+   "D_deg": 19.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -2281.3,
+    877.7
+   ],
+   "reasons": [
+    "|D| 19.0 < 45 deg",
+    "apex 0 m from STUB_eldridge_street_6013754_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_ELDRIDGE_STREET_6013754_L_0-c2-rev",
+   "ribbon": "STUB_eldridge_street_6013754_L#0(rev)",
+   "apex_vertex": 4,
+   "apex_station_m": 12,
+   "R_apex_m": 15.0,
+   "D_deg": -19.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -2272.9,
+    886.3
+   ],
+   "reasons": [
+    "|D| 19.0 < 45 deg",
+    "apex 4 m from STUB_eldridge_street_6013754_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_ELDRIDGE_STREET_6013754_R_0-c1-fwd",
+   "ribbon": "STUB_eldridge_street_6013754_R#0",
+   "apex_vertex": 4,
+   "apex_station_m": 4,
+   "R_apex_m": 14.9,
+   "D_deg": 19.3,
+   "arc_m": 5,
+   "apex_xz": [
+    -2248.6,
+    911.2
+   ],
+   "reasons": [
+    "|D| 19.3 < 45 deg",
+    "apex 4 m from STUB_eldridge_street_6013754_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_ELDRIDGE_STREET_6013754_R_0-c2-fwd",
+   "ribbon": "STUB_eldridge_street_6013754_R#0",
+   "apex_vertex": 16,
+   "apex_station_m": 16,
+   "R_apex_m": 14.9,
+   "D_deg": -19.3,
+   "arc_m": 5,
+   "apex_xz": [
+    -2240.3,
+    919.9
+   ],
+   "reasons": [
+    "|D| 19.3 < 45 deg",
+    "apex 0 m from STUB_eldridge_street_6013754_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_ELDRIDGE_STREET_6013754_R_0-c1-rev",
+   "ribbon": "STUB_eldridge_street_6013754_R#0(rev)",
+   "apex_vertex": 12,
+   "apex_station_m": 4,
+   "R_apex_m": 5.1,
+   "D_deg": -55.7,
+   "arc_m": 5,
+   "apex_xz": [
+    -2242.8,
+    917.3
+   ],
+   "reasons": [
+    "apex 4 m from STUB_eldridge_street_6013754_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_ELDRIDGE_STREET_6013754_R_0-c2-rev",
+   "ribbon": "STUB_eldridge_street_6013754_R#0(rev)",
+   "apex_vertex": 0,
+   "apex_station_m": 16,
+   "R_apex_m": 5.1,
+   "D_deg": 55.7,
+   "arc_m": 5,
+   "apex_xz": [
+    -2251.1,
+    908.6
+   ],
+   "reasons": [
+    "apex 0 m from STUB_eldridge_street_6013754_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_BIRCHWOOD_STREET_1370375341_R_0-c1-fwd",
+   "ribbon": "STUB_birchwood_street_1370375341_R#0",
+   "apex_vertex": 4,
+   "apex_station_m": 4,
+   "R_apex_m": 9.0,
+   "D_deg": 31.8,
+   "arc_m": 5,
+   "apex_xz": [
+    -2468.5,
+    1068.3
+   ],
+   "reasons": [
+    "|D| 31.8 < 45 deg",
+    "apex 4 m from STUB_birchwood_street_1370375341_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_BIRCHWOOD_STREET_1370375341_R_0-c2-fwd",
+   "ribbon": "STUB_birchwood_street_1370375341_R#0",
+   "apex_vertex": 16,
+   "apex_station_m": 16,
+   "R_apex_m": 9.0,
+   "D_deg": -31.8,
+   "arc_m": 5,
+   "apex_xz": [
+    -2465.7,
+    1080.0
+   ],
+   "reasons": [
+    "|D| 31.8 < 45 deg",
+    "apex 0 m from STUB_birchwood_street_1370375341_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_BIRCHWOOD_STREET_1370375341_R_0-c1-rev",
+   "ribbon": "STUB_birchwood_street_1370375341_R#0(rev)",
+   "apex_vertex": 13,
+   "apex_station_m": 3,
+   "R_apex_m": 6.6,
+   "D_deg": -43.2,
+   "arc_m": 5,
+   "apex_xz": [
+    -2466.3,
+    1077.4
+   ],
+   "reasons": [
+    "|D| 43.2 < 45 deg",
+    "apex 3 m from STUB_birchwood_street_1370375341_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_BIRCHWOOD_STREET_1370375341_R_0-c2-rev",
+   "ribbon": "STUB_birchwood_street_1370375341_R#0(rev)",
+   "apex_vertex": 1,
+   "apex_station_m": 15,
+   "R_apex_m": 6.6,
+   "D_deg": 43.2,
+   "arc_m": 5,
+   "apex_xz": [
+    -2469.1,
+    1065.8
+   ],
+   "reasons": [
+    "|D| 43.2 < 45 deg",
+    "apex 1 m from STUB_birchwood_street_1370375341_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_GLENROY_STREET_663868618_L_0-c1-fwd",
+   "ribbon": "STUB_glenroy_street_663868618_L#0",
+   "apex_vertex": 1,
+   "apex_station_m": 1,
+   "R_apex_m": 5.0,
+   "D_deg": -57.2,
+   "arc_m": 5,
+   "apex_xz": [
+    -2807.4,
+    1047.3
+   ],
+   "reasons": [
+    "apex 1 m from STUB_glenroy_street_663868618_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_GLENROY_STREET_663868618_L_0-c2-fwd",
+   "ribbon": "STUB_glenroy_street_663868618_L#0",
+   "apex_vertex": 13,
+   "apex_station_m": 13,
+   "R_apex_m": 5.0,
+   "D_deg": 57.2,
+   "arc_m": 5,
+   "apex_xz": [
+    -2816.2,
+    1039.2
+   ],
+   "reasons": [
+    "apex 3 m from STUB_glenroy_street_663868618_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_GLENROY_STREET_663868618_L_0-c1-rev",
+   "ribbon": "STUB_glenroy_street_663868618_L#0(rev)",
+   "apex_vertex": 17,
+   "apex_station_m": 0,
+   "R_apex_m": 16.1,
+   "D_deg": 17.8,
+   "arc_m": 5,
+   "apex_xz": [
+    -2818.7,
+    1036.9
+   ],
+   "reasons": [
+    "|D| 17.8 < 45 deg",
+    "apex 0 m from STUB_glenroy_street_663868618_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_GLENROY_STREET_663868618_L_0-c2-rev",
+   "ribbon": "STUB_glenroy_street_663868618_L#0(rev)",
+   "apex_vertex": 4,
+   "apex_station_m": 12,
+   "R_apex_m": 16.1,
+   "D_deg": -17.8,
+   "arc_m": 5,
+   "apex_xz": [
+    -2809.9,
+    1045.0
+   ],
+   "reasons": [
+    "|D| 17.8 < 45 deg",
+    "apex 4 m from STUB_glenroy_street_663868618_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_GLENROY_STREET_663868622_R_0-c1-fwd",
+   "ribbon": "STUB_glenroy_street_663868622_R#0",
+   "apex_vertex": 3,
+   "apex_station_m": 3,
+   "R_apex_m": 19.2,
+   "D_deg": 14.9,
+   "arc_m": 5,
+   "apex_xz": [
+    -2787.9,
+    1064.1
+   ],
+   "reasons": [
+    "|D| 14.9 < 45 deg",
+    "apex 3 m from STUB_glenroy_street_663868622_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_GLENROY_STREET_663868622_R_0-c2-fwd",
+   "ribbon": "STUB_glenroy_street_663868622_R#0",
+   "apex_vertex": 15,
+   "apex_station_m": 15,
+   "R_apex_m": 19.2,
+   "D_deg": -14.9,
+   "arc_m": 5,
+   "apex_xz": [
+    -2778.2,
+    1071.1
+   ],
+   "reasons": [
+    "|D| 14.9 < 45 deg",
+    "apex 1 m from STUB_glenroy_street_663868622_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_GLENROY_STREET_663868622_R_0-c1-rev",
+   "ribbon": "STUB_glenroy_street_663868622_R#0(rev)",
+   "apex_vertex": 17,
+   "apex_station_m": 0,
+   "R_apex_m": 4.8,
+   "D_deg": -60.1,
+   "arc_m": 5,
+   "apex_xz": [
+    -2777.0,
+    1072.0
+   ],
+   "reasons": [
+    "apex 0 m from STUB_glenroy_street_663868622_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_GLENROY_STREET_663868622_R_0-c2-rev",
+   "ribbon": "STUB_glenroy_street_663868622_R#0(rev)",
+   "apex_vertex": 4,
+   "apex_station_m": 12,
+   "R_apex_m": 4.8,
+   "D_deg": 60.1,
+   "arc_m": 5,
+   "apex_xz": [
+    -2786.8,
+    1064.9
+   ],
+   "reasons": [
+    "apex 4 m from STUB_glenroy_street_663868622_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_PRINCESS_VIEW_COURT_5998286_R_0-c1-fwd",
+   "ribbon": "STUB_princess_view_court_5998286_R#0",
+   "apex_vertex": 2,
+   "apex_station_m": 2,
+   "R_apex_m": 22.1,
+   "D_deg": 13.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -2849.2,
+    1137.7
+   ],
+   "reasons": [
+    "|D| 13.0 < 45 deg",
+    "apex 2 m from STUB_princess_view_court_5998286_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_PRINCESS_VIEW_COURT_5998286_R_0-c2-fwd",
+   "ribbon": "STUB_princess_view_court_5998286_R#0",
+   "apex_vertex": 14,
+   "apex_station_m": 14,
+   "R_apex_m": 22.1,
+   "D_deg": -13.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -2838.9,
+    1143.9
+   ],
+   "reasons": [
+    "|D| 13.0 < 45 deg",
+    "apex 2 m from STUB_princess_view_court_5998286_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_PRINCESS_VIEW_COURT_5998286_R_0-c1-rev",
+   "ribbon": "STUB_princess_view_court_5998286_R#0(rev)",
+   "apex_vertex": 17,
+   "apex_station_m": 0,
+   "R_apex_m": 4.6,
+   "D_deg": -62.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -2836.8,
+    1145.2
+   ],
+   "reasons": [
+    "apex 0 m from STUB_princess_view_court_5998286_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_PRINCESS_VIEW_COURT_5998286_R_0-c2-rev",
+   "ribbon": "STUB_princess_view_court_5998286_R#0(rev)",
+   "apex_vertex": 4,
+   "apex_station_m": 12,
+   "R_apex_m": 4.6,
+   "D_deg": 62.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -2847.1,
+    1139.0
+   ],
+   "reasons": [
+    "apex 4 m from STUB_princess_view_court_5998286_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_PRINCESS_VIEW_PLACE_5998259_R_0-r1-rev",
+   "ribbon": "STUB_princess_view_place_5998259_R#0(rev)",
+   "apex_vertex": 17,
+   "apex_station_m": 0,
+   "R_apex_m": 3.9,
+   "D_deg": -73.5,
+   "arc_m": 5,
+   "apex_xz": [
+    -2857.7,
+    1272.6
+   ],
+   "reasons": [
+    "apex 0 m from STUB_princess_view_place_5998259_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_PRINCESS_VIEW_PLACE_5998259_R_0-r2-rev",
+   "ribbon": "STUB_princess_view_place_5998259_R#0(rev)",
+   "apex_vertex": 4,
+   "apex_station_m": 12,
+   "R_apex_m": 3.9,
+   "D_deg": 73.5,
+   "arc_m": 5,
+   "apex_xz": [
+    -2869.7,
+    1271.9
+   ],
+   "reasons": [
+    "apex 4 m from STUB_princess_view_place_5998259_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_PRINCESS_VIEW_WAY_6018734_R_0-c1-fwd",
+   "ribbon": "STUB_princess_view_way_6018734_R#0",
+   "apex_vertex": 0,
+   "apex_station_m": 0,
+   "R_apex_m": 50.4,
+   "D_deg": 5.7,
+   "arc_m": 5,
+   "apex_xz": [
+    -2879.4,
+    1342.0
+   ],
+   "reasons": [
+    "R_apex 50.4 > 30 m",
+    "|D| 5.7 < 45 deg",
+    "apex 0 m from STUB_princess_view_way_6018734_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_PRINCESS_VIEW_WAY_6018734_R_0-c2-fwd",
+   "ribbon": "STUB_princess_view_way_6018734_R#0",
+   "apex_vertex": 12,
+   "apex_station_m": 12,
+   "R_apex_m": 50.4,
+   "D_deg": -5.7,
+   "arc_m": 5,
+   "apex_xz": [
+    -2867.7,
+    1344.9
+   ],
+   "reasons": [
+    "R_apex 50.4 > 30 m",
+    "|D| 5.7 < 45 deg",
+    "apex 4 m from STUB_princess_view_way_6018734_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_PRINCESS_VIEW_WAY_6018734_R_0-c1-rev",
+   "ribbon": "STUB_princess_view_way_6018734_R#0(rev)",
+   "apex_vertex": 13,
+   "apex_station_m": 3,
+   "R_apex_m": 4.1,
+   "D_deg": -69.3,
+   "arc_m": 5,
+   "apex_xz": [
+    -2866.3,
+    1345.2
+   ],
+   "reasons": [
+    "apex 3 m from STUB_princess_view_way_6018734_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_PRINCESS_VIEW_WAY_6018734_R_0-c2-rev",
+   "ribbon": "STUB_princess_view_way_6018734_R#0(rev)",
+   "apex_vertex": 1,
+   "apex_station_m": 15,
+   "R_apex_m": 4.1,
+   "D_deg": 69.3,
+   "arc_m": 5,
+   "apex_xz": [
+    -2878.0,
+    1342.4
+   ],
+   "reasons": [
+    "apex 1 m from STUB_princess_view_way_6018734_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_FONTAINE_STREET_5986946_R_0-c1-fwd",
+   "ribbon": "STUB_fontaine_street_5986946_R#0",
+   "apex_vertex": 4,
+   "apex_station_m": 4,
+   "R_apex_m": 44.8,
+   "D_deg": 6.4,
+   "arc_m": 5,
+   "apex_xz": [
+    -2935.1,
+    1493.0
+   ],
+   "reasons": [
+    "R_apex 44.8 > 30 m",
+    "|D| 6.4 < 45 deg",
+    "apex 4 m from STUB_fontaine_street_5986946_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_FONTAINE_STREET_5986946_R_0-c2-fwd",
+   "ribbon": "STUB_fontaine_street_5986946_R#0",
+   "apex_vertex": 16,
+   "apex_station_m": 16,
+   "R_apex_m": 44.8,
+   "D_deg": -6.4,
+   "arc_m": 5,
+   "apex_xz": [
+    -2923.5,
+    1496.2
+   ],
+   "reasons": [
+    "R_apex 44.8 > 30 m",
+    "|D| 6.4 < 45 deg",
+    "apex 0 m from STUB_fontaine_street_5986946_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_FONTAINE_STREET_5986946_R_0-c1-rev",
+   "ribbon": "STUB_fontaine_street_5986946_R#0(rev)",
+   "apex_vertex": 15,
+   "apex_station_m": 1,
+   "R_apex_m": 4.2,
+   "D_deg": -68.6,
+   "arc_m": 5,
+   "apex_xz": [
+    -2924.1,
+    1496.0
+   ],
+   "reasons": [
+    "apex 1 m from STUB_fontaine_street_5986946_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_FONTAINE_STREET_5986946_R_0-c2-rev",
+   "ribbon": "STUB_fontaine_street_5986946_R#0(rev)",
+   "apex_vertex": 3,
+   "apex_station_m": 13,
+   "R_apex_m": 4.2,
+   "D_deg": 68.6,
+   "arc_m": 5,
+   "apex_xz": [
+    -2935.6,
+    1492.9
+   ],
+   "reasons": [
+    "apex 3 m from STUB_fontaine_street_5986946_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_FONTAINE_STREET_5986946_L_0-c1-fwd",
+   "ribbon": "STUB_fontaine_street_5986946_L#0",
+   "apex_vertex": 2,
+   "apex_station_m": 2,
+   "R_apex_m": 4.4,
+   "D_deg": -64.5,
+   "arc_m": 5,
+   "apex_xz": [
+    -2962.1,
+    1482.2
+   ],
+   "reasons": [
+    "apex 2 m from STUB_fontaine_street_5986946_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_FONTAINE_STREET_5986946_L_0-c2-fwd",
+   "ribbon": "STUB_fontaine_street_5986946_L#0",
+   "apex_vertex": 14,
+   "apex_station_m": 14,
+   "R_apex_m": 4.4,
+   "D_deg": 64.5,
+   "arc_m": 5,
+   "apex_xz": [
+    -2973.0,
+    1477.1
+   ],
+   "reasons": [
+    "apex 2 m from STUB_fontaine_street_5986946_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_FONTAINE_STREET_5986946_L_0-c1-rev",
+   "ribbon": "STUB_fontaine_street_5986946_L#0(rev)",
+   "apex_vertex": 15,
+   "apex_station_m": 1,
+   "R_apex_m": 27.2,
+   "D_deg": 10.5,
+   "arc_m": 5,
+   "apex_xz": [
+    -2974.3,
+    1476.5
+   ],
+   "reasons": [
+    "|D| 10.5 < 45 deg",
+    "apex 1 m from STUB_fontaine_street_5986946_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_FONTAINE_STREET_5986946_L_0-c2-rev",
+   "ribbon": "STUB_fontaine_street_5986946_L#0(rev)",
+   "apex_vertex": 3,
+   "apex_station_m": 13,
+   "R_apex_m": 27.2,
+   "D_deg": -10.5,
+   "arc_m": 5,
+   "apex_xz": [
+    -2963.4,
+    1481.6
+   ],
+   "reasons": [
+    "|D| 10.5 < 45 deg",
+    "apex 3 m from STUB_fontaine_street_5986946_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_LAURA_STREET_6042836_R_0-c1-fwd",
+   "ribbon": "STUB_laura_street_6042836_R#0",
+   "apex_vertex": 3,
+   "apex_station_m": 3,
+   "R_apex_m": 37.9,
+   "D_deg": 7.6,
+   "arc_m": 5,
+   "apex_xz": [
+    -3006.0,
+    1647.1
+   ],
+   "reasons": [
+    "R_apex 37.9 > 30 m",
+    "|D| 7.6 < 45 deg",
+    "apex 3 m from STUB_laura_street_6042836_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_LAURA_STREET_6042836_R_0-c2-fwd",
+   "ribbon": "STUB_laura_street_6042836_R#0",
+   "apex_vertex": 15,
+   "apex_station_m": 15,
+   "R_apex_m": 37.9,
+   "D_deg": -7.6,
+   "arc_m": 5,
+   "apex_xz": [
+    -2994.6,
+    1650.9
+   ],
+   "reasons": [
+    "R_apex 37.9 > 30 m",
+    "|D| 7.6 < 45 deg",
+    "apex 1 m from STUB_laura_street_6042836_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_LAURA_STREET_6042836_R_0-c1-rev",
+   "ribbon": "STUB_laura_street_6042836_R#0(rev)",
+   "apex_vertex": 12,
+   "apex_station_m": 4,
+   "R_apex_m": 4.2,
+   "D_deg": -67.4,
+   "arc_m": 5,
+   "apex_xz": [
+    -2997.1,
+    1650.1
+   ],
+   "reasons": [
+    "apex 4 m from STUB_laura_street_6042836_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_LAURA_STREET_6042836_R_0-c2-rev",
+   "ribbon": "STUB_laura_street_6042836_R#0(rev)",
+   "apex_vertex": 0,
+   "apex_station_m": 16,
+   "R_apex_m": 4.2,
+   "D_deg": 67.4,
+   "arc_m": 5,
+   "apex_xz": [
+    -3008.5,
+    1646.3
+   ],
+   "reasons": [
+    "apex 0 m from STUB_laura_street_6042836_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_CONESTOGA_WAY_6042936_R_0-c1-fwd",
+   "ribbon": "STUB_conestoga_way_6042936_R#0",
+   "apex_vertex": 0,
+   "apex_station_m": 0,
+   "R_apex_m": 8.5,
+   "D_deg": -33.7,
+   "arc_m": 5,
+   "apex_xz": [
+    -2612.3,
+    2154.2
+   ],
+   "reasons": [
+    "|D| 33.7 < 45 deg",
+    "apex 0 m from STUB_conestoga_way_6042936_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_CONESTOGA_WAY_6042936_R_0-c2-fwd",
+   "ribbon": "STUB_conestoga_way_6042936_R#0",
+   "apex_vertex": 12,
+   "apex_station_m": 12,
+   "R_apex_m": 8.5,
+   "D_deg": 33.7,
+   "arc_m": 5,
+   "apex_xz": [
+    -2610.4,
+    2142.3
+   ],
+   "reasons": [
+    "|D| 33.7 < 45 deg",
+    "apex 4 m from STUB_conestoga_way_6042936_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_CONESTOGA_WAY_6042936_R_0-c1-rev",
+   "ribbon": "STUB_conestoga_way_6042936_R#0(rev)",
+   "apex_vertex": 14,
+   "apex_station_m": 2,
+   "R_apex_m": 6.9,
+   "D_deg": 41.3,
+   "arc_m": 5,
+   "apex_xz": [
+    -2610.1,
+    2139.9
+   ],
+   "reasons": [
+    "|D| 41.3 < 45 deg",
+    "apex 2 m from STUB_conestoga_way_6042936_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_CONESTOGA_WAY_6042936_R_0-c2-rev",
+   "ribbon": "STUB_conestoga_way_6042936_R#0(rev)",
+   "apex_vertex": 2,
+   "apex_station_m": 14,
+   "R_apex_m": 6.9,
+   "D_deg": -41.3,
+   "arc_m": 5,
+   "apex_xz": [
+    -2611.9,
+    2151.8
+   ],
+   "reasons": [
+    "|D| 41.3 < 45 deg",
+    "apex 2 m from STUB_conestoga_way_6042936_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_MISSION_VISTA_DRIVE_5977531_L_0-c1-fwd",
+   "ribbon": "STUB_mission_vista_drive_5977531_L#0",
+   "apex_vertex": 1,
+   "apex_station_m": 1,
+   "R_apex_m": 5.0,
+   "D_deg": 57.8,
+   "arc_m": 5,
+   "apex_xz": [
+    -2000.9,
+    2368.0
+   ],
+   "reasons": [
+    "apex 1 m from STUB_mission_vista_drive_5977531_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_MISSION_VISTA_DRIVE_5977531_L_0-c2-fwd",
+   "ribbon": "STUB_mission_vista_drive_5977531_L#0",
+   "apex_vertex": 13,
+   "apex_station_m": 13,
+   "R_apex_m": 5.0,
+   "D_deg": -57.8,
+   "arc_m": 5,
+   "apex_xz": [
+    -2009.9,
+    2375.9
+   ],
+   "reasons": [
+    "apex 3 m from STUB_mission_vista_drive_5977531_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_MISSION_VISTA_DRIVE_5977531_L_0-c1-rev",
+   "ribbon": "STUB_mission_vista_drive_5977531_L#0(rev)",
+   "apex_vertex": 15,
+   "apex_station_m": 1,
+   "R_apex_m": 16.7,
+   "D_deg": -17.2,
+   "arc_m": 5,
+   "apex_xz": [
+    -2011.7,
+    2377.5
+   ],
+   "reasons": [
+    "|D| 17.2 < 45 deg",
+    "apex 1 m from STUB_mission_vista_drive_5977531_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_MISSION_VISTA_DRIVE_5977531_L_0-c2-rev",
+   "ribbon": "STUB_mission_vista_drive_5977531_L#0(rev)",
+   "apex_vertex": 3,
+   "apex_station_m": 13,
+   "R_apex_m": 16.7,
+   "D_deg": 17.2,
+   "arc_m": 5,
+   "apex_xz": [
+    -2002.7,
+    2369.6
+   ],
+   "reasons": [
+    "|D| 17.2 < 45 deg",
+    "apex 3 m from STUB_mission_vista_drive_5977531_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_MARGERUM_AVENUE_135149732_R_0-c1-fwd",
+   "ribbon": "STUB_margerum_avenue_135149732_R#0",
+   "apex_vertex": 4,
+   "apex_station_m": 4,
+   "R_apex_m": 12.8,
+   "D_deg": -22.5,
+   "arc_m": 5,
+   "apex_xz": [
+    -1978.3,
+    2342.3
+   ],
+   "reasons": [
+    "|D| 22.5 < 45 deg",
+    "apex 4 m from STUB_margerum_avenue_135149732_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_MARGERUM_AVENUE_135149732_R_0-c2-fwd",
+   "ribbon": "STUB_margerum_avenue_135149732_R#0",
+   "apex_vertex": 16,
+   "apex_station_m": 16,
+   "R_apex_m": 12.8,
+   "D_deg": 22.5,
+   "arc_m": 5,
+   "apex_xz": [
+    -1971.2,
+    2332.6
+   ],
+   "reasons": [
+    "|D| 22.5 < 45 deg",
+    "apex 0 m from STUB_margerum_avenue_135149732_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_MARGERUM_AVENUE_135149732_R_0-c1-rev",
+   "ribbon": "STUB_margerum_avenue_135149732_R#0(rev)",
+   "apex_vertex": 14,
+   "apex_station_m": 2,
+   "R_apex_m": 5.5,
+   "D_deg": 52.5,
+   "arc_m": 5,
+   "apex_xz": [
+    -1972.2,
+    2333.9
+   ],
+   "reasons": [
+    "apex 2 m from STUB_margerum_avenue_135149732_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_MARGERUM_AVENUE_135149732_R_0-c2-rev",
+   "ribbon": "STUB_margerum_avenue_135149732_R#0(rev)",
+   "apex_vertex": 2,
+   "apex_station_m": 14,
+   "R_apex_m": 5.5,
+   "D_deg": -52.5,
+   "arc_m": 5,
+   "apex_xz": [
+    -1979.2,
+    2343.6
+   ],
+   "reasons": [
+    "apex 2 m from STUB_margerum_avenue_135149732_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_MISSION_MONTANA_DRIVE_5988290_L_0-c1-fwd",
+   "ribbon": "STUB_mission_montana_drive_5988290_L#0",
+   "apex_vertex": 1,
+   "apex_station_m": 1,
+   "R_apex_m": 4.6,
+   "D_deg": 62.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -1826.9,
+    2617.4
+   ],
+   "reasons": [
+    "apex 1 m from STUB_mission_montana_drive_5988290_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_MISSION_MONTANA_DRIVE_5988290_L_0-c2-fwd",
+   "ribbon": "STUB_mission_montana_drive_5988290_L#0",
+   "apex_vertex": 13,
+   "apex_station_m": 13,
+   "R_apex_m": 4.6,
+   "D_deg": -62.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -1837.2,
+    2623.6
+   ],
+   "reasons": [
+    "apex 3 m from STUB_mission_montana_drive_5988290_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_MISSION_MONTANA_DRIVE_5988290_L_0-c1-rev",
+   "ribbon": "STUB_mission_montana_drive_5988290_L#0(rev)",
+   "apex_vertex": 15,
+   "apex_station_m": 1,
+   "R_apex_m": 22.0,
+   "D_deg": -13.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -1839.2,
+    2624.9
+   ],
+   "reasons": [
+    "|D| 13.0 < 45 deg",
+    "apex 1 m from STUB_mission_montana_drive_5988290_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_MISSION_MONTANA_DRIVE_5988290_L_0-c2-rev",
+   "ribbon": "STUB_mission_montana_drive_5988290_L#0(rev)",
+   "apex_vertex": 3,
+   "apex_station_m": 13,
+   "R_apex_m": 22.0,
+   "D_deg": 13.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -1829.0,
+    2618.6
+   ],
+   "reasons": [
+    "|D| 13.0 < 45 deg",
+    "apex 3 m from STUB_mission_montana_drive_5988290_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_MISSION_VISTA_DRIVE_5977531_L_560_0-c1-fwd",
+   "ribbon": "STUB_mission_vista_drive_5977531_L_560#0",
+   "apex_vertex": 1,
+   "apex_station_m": 1,
+   "R_apex_m": 4.9,
+   "D_deg": 59.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -1678.7,
+    2855.8
+   ],
+   "reasons": [
+    "apex 1 m from STUB_mission_vista_drive_5977531_L_560#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_MISSION_VISTA_DRIVE_5977531_L_560_0-c2-fwd",
+   "ribbon": "STUB_mission_vista_drive_5977531_L_560#0",
+   "apex_vertex": 13,
+   "apex_station_m": 13,
+   "R_apex_m": 4.9,
+   "D_deg": -59.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -1688.1,
+    2863.2
+   ],
+   "reasons": [
+    "apex 3 m from STUB_mission_vista_drive_5977531_L_560#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_MISSION_VISTA_DRIVE_5977531_L_560_0-c1-rev",
+   "ribbon": "STUB_mission_vista_drive_5977531_L_560#0(rev)",
+   "apex_vertex": 14,
+   "apex_station_m": 2,
+   "R_apex_m": 17.9,
+   "D_deg": -16.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -1689.2,
+    2864.1
+   ],
+   "reasons": [
+    "|D| 16.0 < 45 deg",
+    "apex 2 m from STUB_mission_vista_drive_5977531_L_560#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_MISSION_VISTA_DRIVE_5977531_L_560_0-c2-rev",
+   "ribbon": "STUB_mission_vista_drive_5977531_L_560#0(rev)",
+   "apex_vertex": 2,
+   "apex_station_m": 14,
+   "R_apex_m": 17.9,
+   "D_deg": 16.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -1679.8,
+    2856.6
+   ],
+   "reasons": [
+    "|D| 16.0 < 45 deg",
+    "apex 2 m from STUB_mission_vista_drive_5977531_L_560#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_DEERFIELD_CRESCENT_638144640_L_0-c1-fwd",
+   "ribbon": "STUB_deerfield_crescent_638144640_L#0",
+   "apex_vertex": 1,
+   "apex_station_m": 1,
+   "R_apex_m": 5.6,
+   "D_deg": 51.6,
+   "arc_m": 5,
+   "apex_xz": [
+    -1444.6,
+    3096.7
+   ],
+   "reasons": [
+    "apex 1 m from STUB_deerfield_crescent_638144640_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_DEERFIELD_CRESCENT_638144640_L_0-c2-fwd",
+   "ribbon": "STUB_deerfield_crescent_638144640_L#0",
+   "apex_vertex": 13,
+   "apex_station_m": 13,
+   "R_apex_m": 5.6,
+   "D_deg": -51.6,
+   "arc_m": 5,
+   "apex_xz": [
+    -1451.3,
+    3106.7
+   ],
+   "reasons": [
+    "apex 3 m from STUB_deerfield_crescent_638144640_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_DEERFIELD_CRESCENT_638144640_L_0-c1-rev",
+   "ribbon": "STUB_deerfield_crescent_638144640_L#0(rev)",
+   "apex_vertex": 17,
+   "apex_station_m": 0,
+   "R_apex_m": 12.2,
+   "D_deg": -23.4,
+   "arc_m": 5,
+   "apex_xz": [
+    -1453.1,
+    3109.5
+   ],
+   "reasons": [
+    "|D| 23.4 < 45 deg",
+    "apex 0 m from STUB_deerfield_crescent_638144640_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_DEERFIELD_CRESCENT_638144640_L_0-c2-rev",
+   "ribbon": "STUB_deerfield_crescent_638144640_L#0(rev)",
+   "apex_vertex": 4,
+   "apex_station_m": 12,
+   "R_apex_m": 12.2,
+   "D_deg": 23.4,
+   "arc_m": 5,
+   "apex_xz": [
+    -1446.5,
+    3099.6
+   ],
+   "reasons": [
+    "|D| 23.4 < 45 deg",
+    "apex 4 m from STUB_deerfield_crescent_638144640_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_DEERFIELD_STREET_6055959_R_0-c1-fwd",
+   "ribbon": "STUB_deerfield_street_6055959_R#0",
+   "apex_vertex": 4,
+   "apex_station_m": 4,
+   "R_apex_m": 12.4,
+   "D_deg": -23.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -1424.0,
+    3067.8
+   ],
+   "reasons": [
+    "|D| 23.0 < 45 deg",
+    "apex 4 m from STUB_deerfield_street_6055959_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_DEERFIELD_STREET_6055959_R_0-c2-fwd",
+   "ribbon": "STUB_deerfield_street_6055959_R#0",
+   "apex_vertex": 16,
+   "apex_station_m": 16,
+   "R_apex_m": 12.4,
+   "D_deg": 23.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -1417.2,
+    3058.0
+   ],
+   "reasons": [
+    "|D| 23.0 < 45 deg",
+    "apex 0 m from STUB_deerfield_street_6055959_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_DEERFIELD_STREET_6055959_R_0-c1-rev",
+   "ribbon": "STUB_deerfield_street_6055959_R#0(rev)",
+   "apex_vertex": 13,
+   "apex_station_m": 3,
+   "R_apex_m": 5.5,
+   "D_deg": 52.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -1418.6,
+    3060.1
+   ],
+   "reasons": [
+    "apex 3 m from STUB_deerfield_street_6055959_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_DEERFIELD_STREET_6055959_R_0-c2-rev",
+   "ribbon": "STUB_deerfield_street_6055959_R#0(rev)",
+   "apex_vertex": 1,
+   "apex_station_m": 15,
+   "R_apex_m": 5.5,
+   "D_deg": -52.0,
+   "arc_m": 5,
+   "apex_xz": [
+    -1425.5,
+    3069.9
+   ],
+   "reasons": [
+    "apex 1 m from STUB_deerfield_street_6055959_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_BIRCHCREEK_ROAD_6024742_R_0-c1-fwd",
+   "ribbon": "STUB_birchcreek_road_6024742_R#0",
+   "apex_vertex": 4,
+   "apex_station_m": 4,
+   "R_apex_m": 17.7,
+   "D_deg": 16.2,
+   "arc_m": 5,
+   "apex_xz": [
+    -64.3,
+    1870.0
+   ],
+   "reasons": [
+    "|D| 16.2 < 45 deg",
+    "apex 4 m from STUB_birchcreek_road_6024742_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_BIRCHCREEK_ROAD_6024742_R_0-c2-fwd",
+   "ribbon": "STUB_birchcreek_road_6024742_R#0",
+   "apex_vertex": 16,
+   "apex_station_m": 16,
+   "R_apex_m": 17.7,
+   "D_deg": -16.2,
+   "arc_m": 5,
+   "apex_xz": [
+    -55.0,
+    1877.5
+   ],
+   "reasons": [
+    "|D| 16.2 < 45 deg",
+    "apex 0 m from STUB_birchcreek_road_6024742_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_BIRCHCREEK_ROAD_6024742_R_0-c1-rev",
+   "ribbon": "STUB_birchcreek_road_6024742_R#0(rev)",
+   "apex_vertex": 12,
+   "apex_station_m": 4,
+   "R_apex_m": 4.9,
+   "D_deg": -58.8,
+   "arc_m": 5,
+   "apex_xz": [
+    -57.8,
+    1875.2
+   ],
+   "reasons": [
+    "apex 4 m from STUB_birchcreek_road_6024742_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_BIRCHCREEK_ROAD_6024742_R_0-c2-rev",
+   "ribbon": "STUB_birchcreek_road_6024742_R#0(rev)",
+   "apex_vertex": 0,
+   "apex_station_m": 16,
+   "R_apex_m": 4.9,
+   "D_deg": 58.8,
+   "arc_m": 5,
+   "apex_xz": [
+    -67.1,
+    1867.7
+   ],
+   "reasons": [
+    "apex 0 m from STUB_birchcreek_road_6024742_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_PARK_RIDGE_BOULEVARD_1224664714_L_0-c1-fwd",
+   "ribbon": "STUB_park_ridge_boulevard_1224664714_L#0",
+   "apex_vertex": 3,
+   "apex_station_m": 3,
+   "R_apex_m": 4.5,
+   "D_deg": -63.6,
+   "arc_m": 5,
+   "apex_xz": [
+    -183.3,
+    2003.3
+   ],
+   "reasons": [
+    "apex 3 m from STUB_park_ridge_boulevard_1224664714_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_PARK_RIDGE_BOULEVARD_1224664714_L_0-c2-fwd",
+   "ribbon": "STUB_park_ridge_boulevard_1224664714_L#0",
+   "apex_vertex": 15,
+   "apex_station_m": 15,
+   "R_apex_m": 4.5,
+   "D_deg": 63.6,
+   "arc_m": 5,
+   "apex_xz": [
+    -193.9,
+    1997.8
+   ],
+   "reasons": [
+    "apex 1 m from STUB_park_ridge_boulevard_1224664714_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_PARK_RIDGE_BOULEVARD_1224664714_L_0-c1-rev",
+   "ribbon": "STUB_park_ridge_boulevard_1224664714_L#0(rev)",
+   "apex_vertex": 14,
+   "apex_station_m": 2,
+   "R_apex_m": 25.2,
+   "D_deg": 11.4,
+   "arc_m": 5,
+   "apex_xz": [
+    -193.4,
+    1998.0
+   ],
+   "reasons": [
+    "|D| 11.4 < 45 deg",
+    "apex 2 m from STUB_park_ridge_boulevard_1224664714_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_PARK_RIDGE_BOULEVARD_1224664714_L_0-c2-rev",
+   "ribbon": "STUB_park_ridge_boulevard_1224664714_L#0(rev)",
+   "apex_vertex": 2,
+   "apex_station_m": 14,
+   "R_apex_m": 25.2,
+   "D_deg": -11.4,
+   "arc_m": 5,
+   "apex_xz": [
+    -182.7,
+    2003.5
+   ],
+   "reasons": [
+    "|D| 11.4 < 45 deg",
+    "apex 2 m from STUB_park_ridge_boulevard_1224664714_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_TUXEDO_ROAD_6051501_R_0-c1-fwd",
+   "ribbon": "STUB_tuxedo_road_6051501_R#0",
+   "apex_vertex": 4,
+   "apex_station_m": 4,
+   "R_apex_m": 32.5,
+   "D_deg": 8.8,
+   "arc_m": 5,
+   "apex_xz": [
+    -612.6,
+    2704.7
+   ],
+   "reasons": [
+    "R_apex 32.5 > 30 m",
+    "|D| 8.8 < 45 deg",
+    "apex 4 m from STUB_tuxedo_road_6051501_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_TUXEDO_ROAD_6051501_R_0-c2-fwd",
+   "ribbon": "STUB_tuxedo_road_6051501_R#0",
+   "apex_vertex": 16,
+   "apex_station_m": 16,
+   "R_apex_m": 32.5,
+   "D_deg": -8.8,
+   "arc_m": 5,
+   "apex_xz": [
+    -601.4,
+    2709.0
+   ],
+   "reasons": [
+    "R_apex 32.5 > 30 m",
+    "|D| 8.8 < 45 deg",
+    "apex 0 m from STUB_tuxedo_road_6051501_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_TUXEDO_ROAD_6051501_R_0-c1-rev",
+   "ribbon": "STUB_tuxedo_road_6051501_R#0(rev)",
+   "apex_vertex": 14,
+   "apex_station_m": 2,
+   "R_apex_m": 4.3,
+   "D_deg": -66.2,
+   "arc_m": 5,
+   "apex_xz": [
+    -602.8,
+    2708.5
+   ],
+   "reasons": [
+    "apex 2 m from STUB_tuxedo_road_6051501_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_TUXEDO_ROAD_6051501_R_0-c2-rev",
+   "ribbon": "STUB_tuxedo_road_6051501_R#0(rev)",
+   "apex_vertex": 2,
+   "apex_station_m": 14,
+   "R_apex_m": 4.3,
+   "D_deg": 66.2,
+   "arc_m": 5,
+   "apex_xz": [
+    -614.0,
+    2704.1
+   ],
+   "reasons": [
+    "apex 2 m from STUB_tuxedo_road_6051501_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_WINDING_CREEK_DRIVE_5968105_R_0-c1-fwd",
+   "ribbon": "STUB_winding_creek_drive_5968105_R#0",
+   "apex_vertex": 4,
+   "apex_station_m": 4,
+   "R_apex_m": 26.6,
+   "D_deg": 10.8,
+   "arc_m": 5,
+   "apex_xz": [
+    -697.0,
+    2823.7
+   ],
+   "reasons": [
+    "|D| 10.8 < 45 deg",
+    "apex 4 m from STUB_winding_creek_drive_5968105_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_WINDING_CREEK_DRIVE_5968105_R_0-c2-fwd",
+   "ribbon": "STUB_winding_creek_drive_5968105_R#0",
+   "apex_vertex": 16,
+   "apex_station_m": 16,
+   "R_apex_m": 26.6,
+   "D_deg": -10.8,
+   "arc_m": 5,
+   "apex_xz": [
+    -686.2,
+    2828.9
+   ],
+   "reasons": [
+    "|D| 10.8 < 45 deg",
+    "apex 0 m from STUB_winding_creek_drive_5968105_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_WINDING_CREEK_DRIVE_5968105_R_0-c1-rev",
+   "ribbon": "STUB_winding_creek_drive_5968105_R#0(rev)",
+   "apex_vertex": 12,
+   "apex_station_m": 4,
+   "R_apex_m": 4.5,
+   "D_deg": -64.2,
+   "arc_m": 5,
+   "apex_xz": [
+    -689.4,
+    2827.4
+   ],
+   "reasons": [
+    "apex 4 m from STUB_winding_creek_drive_5968105_R#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_WINDING_CREEK_DRIVE_5968105_R_0-c2-rev",
+   "ribbon": "STUB_winding_creek_drive_5968105_R#0(rev)",
+   "apex_vertex": 0,
+   "apex_station_m": 16,
+   "R_apex_m": 4.5,
+   "D_deg": 64.2,
+   "arc_m": 5,
+   "apex_xz": [
+    -700.2,
+    2822.1
+   ],
+   "reasons": [
+    "apex 0 m from STUB_winding_creek_drive_5968105_R#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_HEMINGWAY_DRIVE_6045093_L_0-c1-fwd",
+   "ribbon": "STUB_hemingway_drive_6045093_L#0",
+   "apex_vertex": 0,
+   "apex_station_m": 0,
+   "R_apex_m": 4.9,
+   "D_deg": -58.9,
+   "arc_m": 5,
+   "apex_xz": [
+    -793.4,
+    2930.9
+   ],
+   "reasons": [
+    "apex 0 m from STUB_hemingway_drive_6045093_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_HEMINGWAY_DRIVE_6045093_L_0-c2-fwd",
+   "ribbon": "STUB_hemingway_drive_6045093_L#0",
+   "apex_vertex": 12,
+   "apex_station_m": 12,
+   "R_apex_m": 4.9,
+   "D_deg": 58.9,
+   "arc_m": 5,
+   "apex_xz": [
+    -802.8,
+    2923.4
+   ],
+   "reasons": [
+    "apex 4 m from STUB_hemingway_drive_6045093_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_HEMINGWAY_DRIVE_6045093_L_0-c1-rev",
+   "ribbon": "STUB_hemingway_drive_6045093_L#0(rev)",
+   "apex_vertex": 15,
+   "apex_station_m": 1,
+   "R_apex_m": 17.8,
+   "D_deg": 16.1,
+   "arc_m": 5,
+   "apex_xz": [
+    -805.5,
+    2921.3
+   ],
+   "reasons": [
+    "|D| 16.1 < 45 deg",
+    "apex 1 m from STUB_hemingway_drive_6045093_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_HEMINGWAY_DRIVE_6045093_L_0-c2-rev",
+   "ribbon": "STUB_hemingway_drive_6045093_L#0(rev)",
+   "apex_vertex": 3,
+   "apex_station_m": 13,
+   "R_apex_m": 17.8,
+   "D_deg": -16.1,
+   "arc_m": 5,
+   "apex_xz": [
+    -796.1,
+    2928.8
+   ],
+   "reasons": [
+    "|D| 16.1 < 45 deg",
+    "apex 3 m from STUB_hemingway_drive_6045093_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_DOREEN_ROAD_5955946_L_0-c1-fwd",
+   "ribbon": "STUB_doreen_road_5955946_L#0",
+   "apex_vertex": 2,
+   "apex_station_m": 2,
+   "R_apex_m": 6.0,
+   "D_deg": -47.5,
+   "arc_m": 5,
+   "apex_xz": [
+    -1071.3,
+    3070.0
+   ],
+   "reasons": [
+    "apex 2 m from STUB_doreen_road_5955946_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_DOREEN_ROAD_5955946_L_0-c2-fwd",
+   "ribbon": "STUB_doreen_road_5955946_L#0",
+   "apex_vertex": 14,
+   "apex_station_m": 14,
+   "R_apex_m": 6.0,
+   "D_deg": 47.5,
+   "arc_m": 5,
+   "apex_xz": [
+    -1076.1,
+    3059.0
+   ],
+   "reasons": [
+    "apex 2 m from STUB_doreen_road_5955946_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_DOREEN_ROAD_5955946_L_0-c1-rev",
+   "ribbon": "STUB_doreen_road_5955946_L#0(rev)",
+   "apex_vertex": 12,
+   "apex_station_m": 4,
+   "R_apex_m": 10.4,
+   "D_deg": 27.5,
+   "arc_m": 5,
+   "apex_xz": [
+    -1075.5,
+    3060.4
+   ],
+   "reasons": [
+    "|D| 27.5 < 45 deg",
+    "apex 4 m from STUB_doreen_road_5955946_L#0 end (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "STUB_DOREEN_ROAD_5955946_L_0-c2-rev",
+   "ribbon": "STUB_doreen_road_5955946_L#0(rev)",
+   "apex_vertex": 0,
+   "apex_station_m": 16,
+   "R_apex_m": 10.4,
+   "D_deg": -27.5,
+   "arc_m": 5,
+   "apex_xz": [
+    -1070.6,
+    3071.4
+   ],
+   "reasons": [
+    "|D| 27.5 < 45 deg",
+    "apex 0 m from STUB_doreen_road_5955946_L#0 start (< 15 m: mouth-flare geometry)"
+   ]
   }
  ],
  "exclude_plants": [],
  "stale_overrides": [],
  "pairs": [],
  "counts": {
-  "placed": 23,
-  "plates": 23,
-  "skipped": 44
+  "placed": 19,
+  "plates": 19,
+  "skipped": 169
  },
  "blender": {
   "blend": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\loop.blend",
   "ground_objects": [
+   "1KERB_sidewalk_apAP1",
+   "1KERB_sidewalk_padJ2",
+   "1KERB_sidewalk_padJ3",
+   "1KERB_sidewalk_padJ4",
    "1KERB_sidewalk_streetonly_median",
    "CURB",
    "TERRAIN"
   ],
   "road_objects": [
+   "1ROAD_apron_AP1",
+   "1ROAD_mouthfill_0",
+   "1ROAD_mouthfill_1",
+   "1ROAD_pad_J2",
+   "1ROAD_pad_J3",
+   "1ROAD_pad_J4",
    "ROAD"
   ],
   "removed_existing": 0,
@@ -12916,14 +12896,14 @@
    ]
   },
   "vertices": {
-   "SIGNPLATE": 184,
-   "SIGNARROW": 529,
-   "SIGNPOST": 644
+   "SIGNPLATE": 152,
+   "SIGNARROW": 437,
+   "SIGNPOST": 532
   },
   "faces": {
-   "SIGNPLATE": 92,
-   "SIGNARROW": 299,
-   "SIGNPOST": 322
+   "SIGNPLATE": 76,
+   "SIGNARROW": 247,
+   "SIGNPOST": 266
   },
   "normal_mismatches": 0,
   "ground_warnings": 0,

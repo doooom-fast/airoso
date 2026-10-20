@@ -544,7 +544,7 @@
    "stations_real_ge_3m": 250,
    "short_gt_1m": 3,
    "kept_under_half": 0,
-   "shortfall_median_m": 0.18,
+   "shortfall_median_m": 0.17,
    "runs_ge_20m": [],
    "short_stations": [
     [

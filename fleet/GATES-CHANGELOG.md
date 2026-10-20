@@ -2958,3 +2958,36 @@ FAIL on the old rule at 66.7 % no-ground). Every other bucket keeps the old rule
 r2run2 street set: lampposts no-ground 38.4 % -> 0.0 %, seat-gap median -3.04 / p95 -2.97 unchanged — the poles' feet
 are 2.5 m under the road datum by the model's own footing (streetlight_led.json pole_bury_m), in the earth on every
 slope, which this lens never failed (it fails hovering, not buried); every other line identical.
+
+### Measured (the final rehearsal, D:/k10-scratch/phase1/r3run: fresh workshop copy + fresh engine-july copy with the snapshot's two pending files, FULL chain at 751550b, `--no-install`)
+
+| | r2run2 (round 2, with its 1 m toe) | r2run3 (round 2 final) | r3run (round 3) |
+|---|---|---|---|
+| road kn5 | 122,608,352 B | 116,050,024 B | **89,815,220 B** |
+| 1GRASS exported vertices (16 tiles) / GRASS_FAR | 941,699 / 160,499 | 823,164 (the prep's tiles) / 160,499 | **392,918** / 123,172 (the thinning: 983,650 -> 515,973 over 20 tiles) |
+| road kn5 totals | 1,704,346 v, 2,615,733 tri | 1,586,930 positions | 1,118,236 v, 1,448,351 tri (textures 31.9 MB, unchanged) |
+| verify_mouths / verify_stubs / verify_pads | 32 / 26 + 29 / J2-J4 PASS | the same | the same (pads: seams 1.2 / 0.7 / 2.4 mm, nodes -0.019 / 0.039 / 0.017 m) |
+| verify_signs | 19 PASS | 19 PASS | 19 PASS (M3 / M4 still skipped until P4) |
+| rib_check nyquist / cross-grain / step jogs (densest 75 m) | 87 / 44 / 68 (4) | 87 / 44 / 68 (4) | 87 / 44 / 69 (4), limits 100 / 100 / 5 |
+| house_seat_check contact min / max | -0.303 / -0.148 | -0.303 / -0.148 | -0.303 / -0.143, 0 floating / sunken / buried |
+| drive_test street: soft top / severe / kinks / excursions | 8 / 0 / 2.67 / 96 | the same | the same |
+| drive_test --line fwd / rev: kinks, excursions | 2.39 / 2.53, 40 / 38 | the same | the same (soft top 0 / 0, severe 0 / 0) |
+| race_cw / race_acw: severe (fold) / kinks / barrier_missing | 4 (11) / 6 (14), 6.46 / 6.09, 0 | the same | the same |
+| audit street / race_cw / race_acw | 53 / 53 / 53 | the same | the same (F 13, I 20, K 20) |
+| no_route built race_cw / race_acw | PASS 0/439 | PASS | PASS 0/439, reached 138,776 / 138,218 m2 |
+| verify_fold_fans | PASS 3 x 3 | PASS | PASS 3 x 3 |
+| kn5_ground_check street / race_cw / race_acw | FAIL x 3 (lampposts no-ground 38.4 %) | FAIL x 3 | **PASS x 3** (lampposts 0.0 %, median -3.04 / p95 -2.97; road-over-ground 12/10785, p95 0.021 -> 0.022 m) |
+| six cut walls, built max over the road (measure_p3 walls) | Mission Gorge 3.87, Jackson 5.54 / 6.40 / 4.28 / 5.49 / 7.08 | MG 4.13, the rest the same | the same as r2run3 |
+| real walls 3 m+ 12-20 m: stations / > 1 m short / median shortfall | 250 / 4 / 0.19 | 250 / 3 / 0.18 | 250 / 3 / 0.17 (12-35 m: 678 / 0 / 0.12 in all three) |
+| vertical grass faces, whole OBJ / within 80 m of the north roads | — | 51 / 29 | 47 / 25 |
+
+The ground near the roads, at every r2run3 terrain vertex within 22 m of a pavement vertex (503,605 compared; 968 on
+near-vertical faces skipped): within 6 m p99 0.0037 m and 5 vertices over 0.05 m at three places (max 0.091), 6-20 m and
+20-22 m at most 0.030 m. The three places are not the thinning's: this run's own prep output, rebuilt offline before any
+thinning (D:/k10-scratch/phase1/r3dev/r3pre), already stands there (the author stage's sliver mend rebuilt 27 slivers in
+this run, 24 in r2run3 — run to run). Against that pre-thinning ground of the same run, at all 981,984 terrain vertices
+off near-vertical faces: under the pavement p99 0.0036 m, 0-6 m at most 0.005, 6-22 m at most 0.030, 22-60 m at most
+0.100, beyond at most 0.150 (7 vertices under the College / I-8 bank read no surface at their height in EITHER build —
+they stand on near-vertical faces a downward ray cannot hit). Against r2run2: 28,906 of the 28,918 vertices within 6 m that
+moved more than 0.05 m lie in the 35 raise-only cut zones (round 2's 273b116: the 1 m toe dropped, the cut top's rounding
+on the real climb); the 12 others <= 0.145 m (near-vertical faces and run-to-run).

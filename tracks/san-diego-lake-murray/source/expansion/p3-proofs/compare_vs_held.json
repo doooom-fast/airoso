@@ -1,5 +1,5 @@
 {
- "_doc": "ledger 0054 P3 repair: held v0.18.1 rehearsal (D:/k10-scratch/phase1/held) -> the repair rehearsal (D:\\k10-scratch\\phase1\\r2run3), [held, rehearsal] per key",
+ "_doc": "ledger 0054 P3 repair: held v0.18.1 rehearsal (D:/k10-scratch/phase1/held) -> the repair rehearsal (D:\\k10-scratch\\phase1\\r3run), [held, rehearsal] per key",
  "layouts": {
   "street": {
    "soft_top_in_lane": [
@@ -188,7 +188,7 @@
    {
     "race": false,
     "road_verts": 76806,
-    "grass_verts": 824284,
+    "grass_verts": 392918,
     "piers": 0,
     "wall_verts": 152578,
     "curb_verts": 100329,
@@ -200,7 +200,7 @@
     "J_terrain_span": 0,
     "K_kerb_in_carriageway": 20,
     "F_curb_not_flush": 13,
-    "F_skirt_off_terrain": 1550,
+    "F_skirt_off_terrain": 1564,
     "F_side_faces_skipped": 3808,
     "I_sidewalk_isolating": 20
    }
@@ -229,7 +229,7 @@
    {
     "race": true,
     "road_verts": 76806,
-    "grass_verts": 824284,
+    "grass_verts": 392918,
     "piers": 0,
     "wall_verts": 353078,
     "curb_verts": 102987,
@@ -241,7 +241,7 @@
     "J_terrain_span": 0,
     "K_kerb_in_carriageway": 20,
     "F_curb_not_flush": 13,
-    "F_skirt_off_terrain": 1651,
+    "F_skirt_off_terrain": 1713,
     "F_side_faces_skipped": 3312,
     "I_sidewalk_isolating": 20,
     "W_race_wall_clash": 0
@@ -271,7 +271,7 @@
    {
     "race": true,
     "road_verts": 76806,
-    "grass_verts": 824284,
+    "grass_verts": 392918,
     "piers": 0,
     "wall_verts": 353062,
     "curb_verts": 102987,
@@ -283,7 +283,7 @@
     "J_terrain_span": 0,
     "K_kerb_in_carriageway": 20,
     "F_curb_not_flush": 13,
-    "F_skirt_off_terrain": 1651,
+    "F_skirt_off_terrain": 1713,
     "F_side_faces_skipped": 3312,
     "I_sidewalk_isolating": 20,
     "W_race_wall_clash": 0
@@ -322,10 +322,8 @@
  },
  "kn5_ground_check": {
   "street": {
-   "fail": true,
-   "reasons": [
-    "lampposts: median -3.04 p95 -2.97 hovering 0.0%"
-   ],
+   "fail": false,
+   "reasons": [],
    "kn5": [
     "san_diego_lake_murray.kn5",
     "san_diego_lake_murray_street.kn5"
@@ -342,7 +340,7 @@
     },
     "lampposts": {
      "objects": 238,
-     "no_ground_pct": 38.4,
+     "no_ground_pct": 0.0,
      "median_m": -3.044,
      "p95_m": -2.968,
      "hovering": 0
@@ -360,15 +358,13 @@
    "road_over_ground": {
     "over": 12,
     "samples": 10785,
-    "p95_m": 0.021,
+    "p95_m": 0.022,
     "max_m": 0.255
    }
   },
   "race_cw": {
-   "fail": true,
-   "reasons": [
-    "lampposts: median -3.04 p95 -2.97 hovering 0.0%"
-   ],
+   "fail": false,
+   "reasons": [],
    "kn5": [
     "san_diego_lake_murray.kn5",
     "san_diego_lake_murray_race.kn5",
@@ -386,7 +382,7 @@
     },
     "lampposts": {
      "objects": 238,
-     "no_ground_pct": 38.4,
+     "no_ground_pct": 0.0,
      "median_m": -3.044,
      "p95_m": -2.968,
      "hovering": 0
@@ -404,15 +400,13 @@
    "road_over_ground": {
     "over": 12,
     "samples": 10785,
-    "p95_m": 0.021,
+    "p95_m": 0.022,
     "max_m": 0.255
    }
   },
   "race_acw": {
-   "fail": true,
-   "reasons": [
-    "lampposts: median -3.04 p95 -2.97 hovering 0.0%"
-   ],
+   "fail": false,
+   "reasons": [],
    "kn5": [
     "san_diego_lake_murray.kn5",
     "san_diego_lake_murray_race.kn5",
@@ -430,7 +424,7 @@
     },
     "lampposts": {
      "objects": 238,
-     "no_ground_pct": 38.4,
+     "no_ground_pct": 0.0,
      "median_m": -3.044,
      "p95_m": -2.968,
      "hovering": 0
@@ -448,7 +442,7 @@
    "road_over_ground": {
     "over": 12,
     "samples": 10785,
-    "p95_m": 0.021,
+    "p95_m": 0.022,
     "max_m": 0.255
    }
   }

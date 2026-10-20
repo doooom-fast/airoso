@@ -856,3 +856,32 @@ roads, half of all ground points sat exactly in the flat of their neighbours.
 983,373 → 515,489; within 22 m of a road no point of the old ground more than 3 cm from the new one; every check equal
 (the ribbed-hillside check found one more small step, 68 → 69, never fewer; houses, side-street mouths, stubs, junction
 pads, the drive tests of Free Roam and the new roads all identical); the lamp check PASS.
+
+**Rehearsed** from fresh copies (`D:/k10-scratch/phase1/r3run`, the whole chain, `--no-install`):
+- **Road model file 89.8 MB** (round 2: 116.1 MB; v0.18.1: 73.6 MB). Physical ground 392,918 points (was ~823,000), the
+  far ring 123,172 (was 160,499).
+- **The ground check passes on all three layouts** for the first time (lamp posts: no foot without ground, 0 %).
+- **Everything else reads exactly as round 2:** Free Roam soft top 8, severe 0, kinks 2.67 per km, edge drops 96, audit
+  53; Speedway / Reverse severe 4 + 11 / 6 + 14, kinks 6.46 / 6.09, barrier_missing 0, audit 53, no_route PASS with the
+  same reachable area; the new roads both ways PASS (kinks 2.39 / 2.53 per km, edge drops 40 / 38); all 32 mouths, 26
+  stubs + 29 curb cuts, the three junction pads, the 19 signs, the fold fans PASS; houses all seated. The ribbed-hillside
+  check counts one more small step (68 → 69, the worst spot still 4 of the limit 5).
+- **The six rock walls stand exactly as high as in round 2** (Mission Gorge 4.13 m, Jackson 5.54 / 6.40 / 4.28 / 5.49 /
+  7.08 m over the road), the junction pads and the road profiles read the same.
+- **The ground near the roads:** against this run's own ground before thinning, nothing within 22 m of a road moved more
+  than 3 cm (5 mm right beside and under it). Against round 2's build, five points within 6 m of a road differ by 5-9 cm
+  at three places — they differ the same way before the thinning runs: the step that mends thin upright triangles in
+  the hillside does not come out exactly the same every run (27 mended this time, 24 in round 2). Against the earlier
+  round-2 build (r2run2) the cut walls' bottom edge differs, as round 2's last change intended.
+- Stills: `p3-proofs/stills/` (Princess View down from Waring, Jackson's rock walls, Mission Gorge toward Cowles, the
+  Eldridge St barrier) and `D:/k10-scratch/phase1/r3run/stills/`; nothing looks different from round 2.
+
+**Left, honestly.**
+- **The run still ends "NOT INSTALLED"** on the same two reds v0.18.1 has: the Free Roam lap's own soft-top / edge-drop
+  rule and the Speedways' own drive test (red since v0.18.0, no worse); installing is Kevin's call (`--force-install`
+  under 0047's rule: no key worse, which this run meets).
+- The thinning is new: it runs after the export prep, in airoso (no engine-july change). The general chain's San Diego
+  spec (`ship.json`) does not run it yet.
+- Pending as before: the engine-july mirror (`engine-july-snapshot/PENDING-MIRROR.md5`; the test suite's one red,
+  `test_engine_july_mirror_is_byte_identical`, is that), the J1 tilt question, P4 dressing.
+

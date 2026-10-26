@@ -521,6 +521,8 @@ Not shipped on the loop (that is Phase 5 proper); demoed on a scratch copy. Opt-
   no service ways; phase 1's ~28 service mouths are where it first applies.
 - **Type III barricade** — offered as an option with a still (preview only; `apply` refuses `barrier: type3` until Kevin
   picks it — no texture, no model shipped).
+  **Kevin, 2026-10-26, on v0.19.0's 24 K-rail-closed side streets: "the barriers look great" — K-rail is the
+  confirmed style for every phase; the barricade option is closed.**
 - **Speedways** — unchanged policy: each stub mouth is sealed by the curb strips / behind the closure exactly as any
   side street (barrier_bands reads mouths.json); the stub and its barrier stand behind the strip. Demo: planned + BUILT
   no_route PASS both layouts.

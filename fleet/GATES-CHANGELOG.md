@@ -2991,3 +2991,97 @@ off near-vertical faces: under the pavement p99 0.0036 m, 0-6 m at most 0.005, 6
 they stand on near-vertical faces a downward ray cannot hit). Against r2run2: 28,906 of the 28,918 vertices within 6 m that
 moved more than 0.05 m lie in the 35 raise-only cut zones (round 2's 273b116: the 1 m toe dropped, the cut top's rounding
 on the real climb); the 12 others <= 0.145 m (near-vertical faces and run-to-run).
+
+## 2026-10-26 — Lake Murray expansion P4 lamps (ledger 0054 P4 step 2, EXPANSION-PLAN D4): streetlights on the four north pieces, every post seated on the built ground and kept off every pavement, one CSP light per lamp proved on the written file
+
+No threshold is loosened and no gate is bypassed. The lamp author gains a hard self-check on EVERY post (not only the
+relocated ones, as since v0.18.1), the track-folder step gains a hard read-back of the written `ext_config.ini`, and the
+draft's lamp walk is extended to the north pieces with the numbers below, every invented one marked.
+
+### The pieces' posts (scripts-v021 `geometry/streetlights.py`, called by `build_loop_blend.build_streetlights` after the loop's posts; opt-in `scenery.streetlights.expansion`)
+
+The loop's rules, kept as they are: spacing 55 m, no two posts within 25 m (the loop's posts counted), sides alternating,
+the head 1.8 m road-ward of the post and 8.8 m over the draft ground (`build_streetlights`: `spacing`, the 25 m test,
+`arm`, `post_h - 0.2`). The pieces' own:
+- `WALK_OFFSET_M` 0.83 — the post stands mid-walk: the curb face 0.08 + half the connectors' 1.5 m walk (`ribbon.curb_sidewalk`
+  `curb_face_w`, `sidewalk_w`). Not invented: `tools/author_lamps_blend.py` `LAMP_BEHIND_CURB_M`, the rule lamp 77 stands by on
+  J1's return since the P1 fix round. (The loop's posts stand hw + 2.8 m, on the graded back edge of their 1.8 m walk; the
+  pieces' cut faces rise right there, so the walk it is.)
+- `PAVEMENT_CLEAR_M` 1.5 [invented] — a base closer than this to ANOTHER pavement's edge (the mainline, any other connector)
+  is in its way: the pole's mast radius 0.124 + the author's `ROAD_SETBACK_M` 0.46 + 0.9 m of margin for the curb and walk
+  that stand on that edge.
+- `STUB_CLEAR_M` 10.0 [invented] — past a side-street stub's pavement edge along its host, on the stub's side: its curb
+  returns (R 6-8 m, `tools/stub_geom.py`) and the walk round them.
+- `PAD_CLEAR_M` 3.0 [invented] — from a junction pad's outline (`expansion.north.json` pads[].outline_xz) and from each
+  pad's stub arms' pavement polygons: the returns' curb and walk stand on the outline.
+- a curb cut (a lowered curb at a driveway, `stubs.plan.json` curb_cuts) blocks its host and side for `half_span_m +
+  flare_m + PAVEMENT_CLEAR_M` either way of its station.
+- `SLIDE_M` 12.0 in `SLIDE_STEP_M` 2.0 [invented] — a blocked station slides along the walk (closest first), then the
+  other side is tried at the same station and its slides, then the station is SKIPPED with every reason recorded
+  (`lights.local.json` expansion.skipped). The grid itself never moves: the next station is 55 m from the one that was
+  blocked, not from where its post landed.
+- `OSM_MATCH_M` 15.0 [invented] — a real OSM `highway=street_lamp` node within this of a piece's pavement edge stands a post
+  AT its station, on its side, on the walk (its own lateral offset is not trusted at 1-2 m). `OSM_STRETCH_PAD_M` 27.5
+  (half the spacing): nodes closer than 110 m to each other make one OSM-grounded stretch reaching 27.5 m past its end
+  nodes, inside which the loop's spacing is not used. Each post records `source` "osm:<id>" or "authored"; each piece its
+  stretches. The P0 research (`source/expansion/pipeline__osm_lamps_signals.json`, 30 nodes, OSM base 2026-10-12) has no
+  node nearer than 745 m to any piece (Jackson north's nearest, node 13715721518), so every stretch of the four pieces is
+  **authored** — the plan's own label until a Street View night check.
+- D4's unlit stretch: `scenery.streetlights.expansion.unlit` [{piece D, s 250-1500}] in the intermediate's station frame
+  (from J4) — Kevin's 2026-10-13 default; a station inside it is skipped outright, never slid around.
+- the draft ground under a piece post is the assembler's 20 m grid as before; the author then seats EVERY piece post on the
+  built walk (below): on the steep pieces the walk stands 0.1-2.3 m over that grid.
+
+### Every post seated on the built ground, every pole clear (`tools/author_lamps_blend.py` `reseat_and_check`, hard — exit 1, loop.blend not saved)
+
+After the named relocations and the apron moves, before the model is stood up, on the authored scene's own BVH:
+- `RESEAT_TOL_M` 1.0 [the P4 brief] — a loop post whose BASE (the road datum under its head: LED `head - 8.944`) stands more
+  than this under or over the built surface under it is re-seated by the draft's own rule, head = that surface + 8.8 m.
+  The model's footing (`streetlight_led.json` pole_bury_m 2.5) is by design and is never counted. A piece post (new in
+  this build) is always seated on the built walk (tolerance 0). Every move is recorded (`lights.local.json` reseated).
+- the footprint rule of the v0.18.1 relocations now runs on every post: the pole's axis + a ring of `mast_radius + 0.46 m`
+  read in 16 directions must find no road surface; the pole >= `WALL_CLEAR_M` 0.5 from every wall / guardrail / K-rail
+  along its whole height; its foot in the earth.
+- `LENS_APART_M` 2.0 — `scripts/ac/ext_config.py` `LAMP_LINK_M`: no two heads (hence lenses) closer than this
+  horizontally, or two lamps would be written as one light.
+- `lamp_bases_xz` (one base per head, as built) is written for `tools/place_signs.py` and `tools/verify_race.py` G, which
+  used to re-derive every base from the MAINLINE (meaningless 500 m from it, and 3.6 m wrong at J2-J4 where the signs
+  stand); both take the recorded base when it is there and keep their old rule otherwise.
+
+### One light per lamp on the written file (`tools/check_lights_ini.py`, in the track-folder step of both chains, hard)
+
+`POS_TOL_M` 0.05 [the writer rounds POSITION to 0.01 m]: every `[LIGHT_N]` of the written `extension/ext_config.ini` must
+stand within this of exactly one recorded lens (`lights.local.json` provenance.lens_xyz; kn5 frame = local with z negated,
+POSITION y = lens y - 0.15), every lens must have its light, the count must equal the lamp count, and COLOR / SPOT /
+RANGE / RANGE_GRADIENT_OFFSET / SPECULAR_MULT must be the config's on every block (ledger 0043 / 0056's look, unchanged:
+colour 255,165,30 at 0.015, SPOT 150, RANGE 25, offset 0.5, specular 0.1). v0.18.0 shipped 4 duplicate lights out of
+this clustering (ledger 0043); 238 of 238 on v0.19.0's rehearsal (r3run).
+
+### Stills (`tools/lamp_stills_blend.py`)
+
+EEVEE night renders off the gate OBJ: a render spot light of 16,000 W [a render number, not CSP's intensity] at every lens
+within 320 m of the eye, the lenses emissive in the sodium colour; `--day` Workbench for a pole-foot close-up. Nothing of
+it ships.
+
+### Measured (the rehearsal, D:/k10-scratch/p4/lamps/run1: fresh workshop copy + fresh engine-july copy with the snapshot's files, FULL chain, `--no-install`)
+
+| | v0.19.0 floor (r3run, installed) | P4 lamps run1 |
+|---|---|---|
+| lamps / CSP `[LIGHT_N]` / at their lens | 238 / 238 / 238 | **323 / 323 / 323** (A 16, B 18, C 40, D 11; all authored, 0 OSM-grounded; 23 unlit stations on D, 0 skipped for a blockage) |
+| road kn5 | 89,815,220 B, 95 meshes, 1,118,236 positions | **91,373,396 B** (+1.56 MB), 101 meshes, 1,150,111 positions; largest 1KERB_sidewalk_0 62,439 (unchanged) |
+| LIGHTPOST / LIGHTS meshes, largest | 15 + 1, 5,923 | 21 + 1, 5,944 |
+| 1WALL_guard_0 / _1 / _release | 33,192 / 33,177 / 32,279 | the same |
+| race / closure cw / closure acw / street kn5 | 11,722,654 / 5,496,964 / 5,496,156 / 872,525 B | the same |
+| author seat check (new) | — | 323 lamps, 89 re-seated (loop 0 +0.89, 32 -1.16, 113 +1.27, 143 +1.25 m; 85 piece posts on their walk, +0.25 to +2.12 m), base vs ground -0.914 / 0.199 / 0.983 m, 0 footprints on a road, wall clearance min 0.667 m |
+| drive_test street: soft top / severe / kinks / excursions / obstructed | 8 / 0 / 2.67 / 96 / 0 | the same |
+| drive_test --line fwd / rev: kinks, excursions, soft top, severe | 2.39 / 2.53, 40 / 38, 0 / 0, 0 / 0 | the same |
+| race_cw / race_acw: severe / kinks / soft top / barrier_missing / obstructed | 4 / 6, 6.46 / 6.09, 8 / 4, 0, 0 | the same |
+| audit street / race_cw / race_acw | 53 / 53 / 53 | the same |
+| no_route built race_cw / race_acw | PASS 0/439, leak 0 | the same |
+| verify_mouths / verify_stubs / verify_pads / verify_signs | 32 / 26 + 29 / J2-J4 PASS / 19 PASS | the same |
+| verify_fold_fans / rib_check (nyquist, cross-grain, step jogs, densest) / house_seat_check | PASS 3 x 3 / 87, 44, 69 (4) / PASS | the same |
+| kn5_ground_check street / race_cw / race_acw | PASS x 3 (lampposts 238, no-ground 0.0 %, median -3.04 / p95 -2.97) | PASS x 3 (lampposts 323, no-ground 0.0 %, median -3.03 / p95 -2.71, hovering 0) |
+| verify_race G lamps | 238/238, min margin 2.434 m | 323/323, min margin 2.434 m (lamp 53), nearest to a closure 2.741 m |
+| check_lights_ini (new) | 238 / 238 / 238 PASS (run after the fact) | 323 / 323 / 323 PASS |
+| terrain thinning / tiles | 983,650 -> 515,973; 1GRASS x16 (max 29,695), GRASS_FAR x4 | 983,649 -> 515,983; the same tiles |
+| chain verdict | NOT INSTALLED on the two reds red since v0.18.0 | the same two, no key worse |

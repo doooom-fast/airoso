@@ -57,6 +57,17 @@ its head 8.35 m over the walk it stands on — the draft seated it on the ground
 where it stands — head = the built surface under its base + HEAD_OVER_GROUND_M — and a moved post is seated on the built
 walk under its new base the same way (the arc's recorded edge height only where nothing is built there).
 
+THE NORTH PIECES (ledger 0054 P4 step 2, EXPANSION-PLAN D4; 2026-10-26): the draft records the pieces' posts with their
+own base and road-ward unit (lights.local.json `expansion.lamps[]`, scripts-v021 geometry/streetlights.py) because
+"road-ward = head -> nearest MAINLINE point" has no meaning 500 m from the mainline; make_base_rule stands those posts by
+their record, every other post by the loop's rule. SEAT + CLEARANCE (reseat_and_check, every post, after the relocations
+and the apron moves): a pole base more than RESEAT_TOL_M under or over the BUILT ground under it is re-seated by the
+draft's rule (head = ground + HEAD_OVER_GROUND_M; the model's 2.5 m footing is by design and never counted); then every
+pole's footprint must be off every road, >= WALL_CLEAR_M from every wall / K-rail, its foot in the earth, and no two
+heads within LENS_APART_M (one [LIGHT_N] per lamp) — exit 1, loop.blend not saved. lights.local.json gains
+`lamp_bases_xz` (one base per head, as built: tools/place_signs.py and tools/verify_race.py G read it), `reseated` and
+`seat_check`.
+
 Runs INSIDE Blender after strip_scenery_blend, before the kn5 prep:
 
     blender --background --python tools/author_lamps_blend.py -- <project-dir>
@@ -92,6 +103,9 @@ WALL_CLEAR_M = 0.5            # the integration brief: the pole >= 0.5 m clear o
 ROAD_SETBACK_M = 0.46         # the pole's FACE >= this from any road surface (AASHTO Roadside Design Guide: 1.5 ft minimum
 #                               lateral offset from the curb face on a curbed street; cited from memory, not re-read)
 FOOTPRINT_DIRS = 16           # the footprint ring is read in this many directions (22.5 deg: a 0.58 m ring's chord 0.23 m)
+RESEAT_TOL_M = 1.0            # ledger 0054 P4 [invented, the P4 brief]: a pole base further than this from the built
+#                               ground under it is re-seated (tools/streetlight_relocate.needs_reseat)
+LENS_APART_M = 2.0            # scripts/ac/ext_config.py LAMP_LINK_M: LIGHTS vertices closer than this are ONE light
 WALL_PREFIXES = ("1WALL", "GUARDRAIL", "WALL")
 ROAD_PREFIXES = ("ROAD", "1ROAD")
 GROUND_PREFIXES = ("TERRAIN", "CURB", "SIDEWALK", "1KERB", "1GRASS", "GRASS", "ROAD", "1ROAD", "BRIDGESTRUCT")
@@ -222,7 +236,25 @@ def _centreline_cells(cl):
     return nearest_cl
 
 
-def author_legacy(heads, nearest_cl):
+def make_base_rule(nearest_cl, recorded):
+    """base_of(i, head) -> (bx, bz, rx, rz): the post's base and the road-ward unit. A post the draft RECORDED (the
+    north pieces', lights.local.json expansion.lamps[].roadward_xz, ledger 0054 P4) stands ARM_M behind its head along
+    its own recorded road-ward; every other post by the loop's rule, road-ward = head -> nearest MAINLINE point"""
+    def base_of(i, head):
+        hx, _hy, hz = head
+        r = recorded.get(i)
+        if r is not None:
+            rx, rz = float(r["roadward_xz"][0]), float(r["roadward_xz"][1])
+            return hx - rx * ARM_M, hz - rz * ARM_M, rx, rz
+        c = nearest_cl(hx, hz)
+        dx, dz = c[0] - hx, c[2] - hz
+        L = math.hypot(dx, dz) or 1e-9
+        rx, rz = dx / L, dz / L
+        return hx - rx * ARM_M, hz - rz * ARM_M, rx, rz
+    return base_of
+
+
+def author_legacy(heads, base_of):
     post_v, post_f = load_obj(MODELS / "lamp_post.obj")
     lens_v, lens_f = load_obj(MODELS / "lamp_lens.obj")
     top_y = max(v[1] for v in post_v)
@@ -241,13 +273,9 @@ def author_legacy(heads, nearest_cl):
             F.clear()
 
     n = 0
-    for (hx, hy, hz) in heads:
-        c = nearest_cl(hx, hz)
-        dx, dz = c[0] - hx, c[2] - hz
-        L = math.hypot(dx, dz) or 1e-9
-        rx, rz = dx / L, dz / L                 # road-ward
+    for i, (hx, hy, hz) in enumerate(heads):
+        bx, bz, rx, rz = base_of(i, (hx, hy, hz))   # rx, rz road-ward
         tx, tz = -rz, rx                        # along the road
-        bx, bz = hx - rx * ARM_M, hz - rz * ARM_M
         by = hy + 0.1 - POST_H
         def place(v):
             mx, my, mz = v[0] * scale, v[1] * scale, v[2] * scale
@@ -277,7 +305,7 @@ def author_legacy(heads, nearest_cl):
     return n, batches, f"model {len(post_v)}v + lens {len(lens_v)}v each, fixture h {fixture[1] * scale:.2f} m", None
 
 
-def author_led(heads, nearest_cl, arms):
+def author_led(heads, base_of, arms):
     spec = led_spec()
     post_v, post_f = load_obj_full(MODELS / spec["files"]["post_twin" if arms == 2 else "post_single"])
     lens_v, lens_f = load_obj_full(MODELS / spec["files"]["lens"])
@@ -286,13 +314,9 @@ def author_led(heads, nearest_cl, arms):
 
     posts, cur_v, cur_f, lensV, lensF, lenses = [], [], [], [], [], []
     n = 0
-    for (hx, hy, hz) in heads:
-        c = nearest_cl(hx, hz)
-        dx, dz = c[0] - hx, c[2] - hz
-        L = math.hypot(dx, dz) or 1e-9
-        rx, rz = dx / L, dz / L                 # road-ward
+    for i, (hx, hy, hz) in enumerate(heads):
+        bx, bz, rx, rz = base_of(i, (hx, hy, hz))   # rx, rz road-ward
         tx, tz = -rz, rx                        # along the road
-        bx, bz = hx - rx * ARM_M, hz - rz * ARM_M
         yd = hy - HEAD_ABOVE_ROAD_M             # the road datum under this lamp
         def place(v):
             return B((bx + rx * v[0] + tx * v[2], yd + v[1], bz + rz * v[0] + tz * v[2]))
@@ -466,13 +490,14 @@ def relocate(heads, nearest_cl, cfg, model):
     return rows
 
 
-def apron_moves(heads, nearest_cl, data, ground=None):
+def apron_moves(heads, nearest_cl, data, ground=None, skip=()):
     """the corner aprons (module doc, CORNER APRON): a post whose base stands in an apron's outline (or within
     LAMP_APRON_CLEAR_M of it) moves behind the return curb onto the walk; ``heads`` is changed in place. The moved head
     keeps the draft's own rule — HEAD_OVER_GROUND_M over the ground under the post, here the walk top — so the moved lamp
     is seated exactly like its neighbours under either model (LED: road datum = the walk top - 0.144 m, the pavement;
     2026-10 lamp: the base POST_H - 0.1 m under the head). Returns the provenance rows (data/aprons.lamps.json) or None
-    when no apron was built"""
+    when no apron was built. ``skip``: lamp indices this rule never touches (the north pieces' recorded posts, whose
+    road-ward is not the mainline's — ledger 0054 P4)"""
     ap_path = data / "aprons.json"
     if not ap_path.exists():
         lp = data / "aprons.lamps.json"
@@ -484,6 +509,8 @@ def apron_moves(heads, nearest_cl, data, ground=None):
     aprons = json.loads(ap_path.read_text(encoding="utf-8")).get("aprons", [])
     moved = []
     for i, (hx, hy, hz) in enumerate(list(heads)):
+        if i in skip:
+            continue
         c = nearest_cl(hx, hz)
         L = math.hypot(c[0] - hx, c[2] - hz) or 1e-9
         bx, bz = hx - (c[0] - hx) / L * ARM_M, hz - (c[2] - hz) / L * ARM_M
@@ -546,6 +573,96 @@ def apron_moves(heads, nearest_cl, data, ground=None):
     return moved
 
 
+def reseat_and_check(heads, base_of, model, recorded):
+    """ledger 0054 P4 (EXPANSION-PLAN P4 step 2): EVERY post, on the BUILT ground of the authored scene — after the
+    relocations and the apron moves, before the model is stood up.
+      RE-SEAT: a post whose base (the road datum under its head: LED yd = head - HEAD_ABOVE_ROAD_M; 2026-10 lamp
+      head + 0.1 - POST_H) stands more than RESEAT_TOL_M under or over the built surface under it (the walk, the
+      verge, a released slope — whatever the chain built there after the draft seated it on its grid) is re-seated
+      by the draft's own rule, head = that surface + HEAD_OVER_GROUND_M. The model's footing (streetlight_led.json
+      pole_bury_m, 2.5 m) is by design and never counted: the measure is the pole's BASE.
+      SELF-CHECK (exit 1, loop.blend not saved): the pole's footprint + ROAD_SETBACK_M ring is off every road
+      surface; the pole stands >= WALL_CLEAR_M from every wall / guardrail / K-rail; its foot is in the earth; no two
+      lenses within LENS_APART_M horizontally (scripts/ac/ext_config.py clusters LIGHTS vertices closer than that into
+      ONE [LIGHT_N] — 0056's duplicate class, read the other way round: two lamps as one light).
+    Returns (reseated rows, per-lamp clearance rows)."""
+    from mathutils import Vector
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import streetlight_relocate as SR
+    ground = _bvh(GROUND_PREFIXES, exclude=("GRASS_FAR",))
+    ground_tagged = _bvh_tagged(GROUND_PREFIXES, exclude=("GRASS_FAR",))
+    earth = _bvh(("TERRAIN", "1GRASS", "GRASS"), exclude=("GRASS_FAR",))
+    walls = _bvh(WALL_PREFIXES)
+    if model == LED:
+        spec = led_spec()
+        bury, pole_h, mast_r = float(spec.get("pole_bury_m", 2.5)), float(spec["pole_height_m"]), float(spec["mast_radius_m"])
+    else:
+        bury, pole_h, mast_r = 0.0, POST_H, 0.585
+    reseated, rows, bad = [], [], []
+    for i, (hx, hy, hz) in enumerate(list(heads)):
+        bx, bz, _rx, _rz = base_of(i, (hx, hy, hz))
+        yd = (hy - HEAD_ABOVE_ROAD_M) if model == LED else (hy + 0.1 - POST_H)
+        t = _top_owner(ground_tagged, bx, bz, yd + 30.0)
+        g = None if t is None else t[0]
+        row = {"lamp": i, "base_xz": [round(bx, 3), round(bz, 3)], "piece": (recorded.get(i) or {}).get("piece"),
+               "ground_y": None if g is None else round(g, 3), "ground_owner": None if t is None else t[1],
+               "base_y": round(yd, 3), "base_vs_ground_m": None if g is None else round(g - yd, 3)}
+        if g is None:
+            bad.append(f"lamp {i}: no ground under its base ({bx:.2f}, {bz:.2f})")
+            rows.append(row)
+            continue
+        # a RECORDED post (the north pieces', new in this build) is always seated on the built walk under it — the
+        # draft's rule on the built surface instead of its 20 m grid, whose ground the walk stands 0.1-2.3 m over on
+        # the steep pieces; a loop post is re-seated only past RESEAT_TOL_M (v0.19.0's lamps stay as Kevin drove them)
+        tol = 0.0 if i in recorded else RESEAT_TOL_M
+        new_hy = round(SR.reseat_head_y(g, HEAD_OVER_GROUND_M), 4)
+        if SR.needs_reseat(g, yd, tol) and abs(new_hy - hy) > 1e-3:
+            reseated.append({"lamp": i, "piece": row["piece"], "base_xz": row["base_xz"], "ground_owner": t[1],
+                             "ground_y": round(g, 3), "base_y_was": round(yd, 3), "head_y_was": round(hy, 4),
+                             "head_y": new_hy, "moved_m": round(new_hy - hy, 3),
+                             "why": (f"the pole's base stood {g - yd:+.2f} m from the built ground under it (> {tol} m); "
+                                     f"re-seated by the draft's rule, head = ground + {HEAD_OVER_GROUND_M} m")
+                                    + (" — a new post of this build, seated on the built walk" if i in recorded else "")})
+            heads[i] = [round(hx, 3), new_hy, round(hz, 3)]
+            hy = new_hy
+            yd = (hy - HEAD_ABOVE_ROAD_M) if model == LED else (hy + 0.1 - POST_H)
+            row.update({"base_y": round(yd, 3), "base_vs_ground_m": round(g - yd, 3), "reseated": True})
+        foot = yd - bury
+        on_road = footprint_on_road(ground_tagged, bx, bz, g, mast_r + ROAD_SETBACK_M)
+        if on_road:
+            bad.append(f"lamp {i}{' (piece ' + str(row['piece']) + ')' if row['piece'] else ''}: the pole's footprint + "
+                       f"{ROAD_SETBACK_M} m setback reaches a road surface at {len(on_road)} of {FOOTPRINT_DIRS + 1} points, "
+                       f"e.g. {on_road[:2]}")
+        e = _top(earth, bx, bz)
+        if e is None or e < foot + 0.05:
+            bad.append(f"lamp {i}: the pole foot ({foot:.2f}) is not in the earth (earth {e if e is None else round(e, 2)})")
+        clear = float("inf")
+        if walls is not None:
+            for k in range(0, 23):
+                y = foot + (yd + pole_h - foot) * k / 22.0
+                hit = walls.find_nearest(Vector((bx, bz, y)), 10.0)
+                if hit[0] is not None:
+                    clear = min(clear, float(hit[3]) - mast_r)
+        if clear < WALL_CLEAR_M:
+            bad.append(f"lamp {i}: the pole stands {clear:.2f} m from a wall / guardrail / K-rail (< {WALL_CLEAR_M} m)")
+        row.update({"footprint_on_road": len(on_road), "foot_y": round(foot, 3),
+                    "earth_y": None if e is None else round(e, 3),
+                    "wall_clear_m": None if clear == float("inf") else round(clear, 3)})
+        rows.append(row)
+    # one [LIGHT_N] per lamp: no two heads (hence lenses, a constant offset from them) closer than LENS_APART_M
+    for i, j, d in SR.heads_too_close(heads, LENS_APART_M):
+        bad.append(f"lamps {i} and {j} stand {d:.2f} m apart (< {LENS_APART_M} m): ext_config would cluster their lenses "
+                   "into one light")
+    for r in reseated:
+        print(f"[lamps] re-seated lamp {r['lamp']}{' (piece ' + str(r['piece']) + ')' if r['piece'] else ''}: base stood "
+              f"{r['ground_y'] - r['base_y_was']:+.2f} m from the built {r['ground_owner']} under it; head y "
+              f"{r['head_y_was']} -> {r['head_y']} ({r['moved_m']:+.2f} m)")
+    if bad:
+        raise SystemExit("[lamps] seat / clearance self-check FAILED (loop.blend not saved): " + "; ".join(bad[:12])
+                         + (f"; ... {len(bad) - 12} more" if len(bad) > 12 else ""))
+    return reseated, rows
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:]
     proj = Path(argv[0])
@@ -559,6 +676,10 @@ def main():
         heads[:] = [list(h) for h in lights["lampheads_draft"]]   # idempotent: relocations start from the draft's posts
     cl = [tuple(p) for p in json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))["points_xyz_m"]]
     nearest_cl = _centreline_cells(cl)
+    # ledger 0054 P4: the north pieces' posts, recorded by the draft with their own road-ward (lights.local.json
+    # expansion.lamps[]; index i into lampheads)
+    recorded = {int(r["i"]): r for r in (lights.get("expansion") or {}).get("lamps", []) if "i" in r}
+    base_of = make_base_rule(nearest_cl, recorded)
 
     bpy.ops.wm.open_mainfile(filepath=str(proj / "loop.blend"))
     old = bpy.data.objects.get("LIGHTS")
@@ -569,8 +690,10 @@ def main():
 
     draft = [list(h) for h in heads]
     moved = relocate(heads, nearest_cl, cfg, model)
-    apron_moved = apron_moves(heads, nearest_cl, data, ground=_bvh(GROUND_PREFIXES, exclude=("GRASS_FAR",)))
-    if moved or apron_moved:
+    apron_moved = apron_moves(heads, nearest_cl, data, ground=_bvh(GROUND_PREFIXES, exclude=("GRASS_FAR",)),
+                              skip=set(recorded))
+    reseated, seat_rows = reseat_and_check(heads, base_of, model, recorded)
+    if moved or apron_moved or reseated:
         lights["lampheads_draft"] = draft
     else:
         lights.pop("lampheads_draft", None)
@@ -582,11 +705,27 @@ def main():
         lights["apron_moved"] = apron_moved
     else:
         lights.pop("apron_moved", None)
+    if reseated:
+        lights["reseated"] = reseated
+    else:
+        lights.pop("reseated", None)
+    seats = [r["base_vs_ground_m"] for r in seat_rows if r.get("base_vs_ground_m") is not None]
+    lights["seat_check"] = {"rule": f"|built ground - pole base| <= {RESEAT_TOL_M} m after the author stage; the model's "
+                                    f"footing (pole_bury_m) is by design and never counted",
+                            "lamps": len(seat_rows), "reseated": len(reseated),
+                            "base_vs_ground_m": {"min": min(seats) if seats else None, "max": max(seats) if seats else None,
+                                                 "median": sorted(seats)[len(seats) // 2] if seats else None},
+                            "footprint_on_road": sum(r.get("footprint_on_road") or 0 for r in seat_rows),
+                            "wall_clear_min_m": min((r["wall_clear_m"] for r in seat_rows if r.get("wall_clear_m") is not None),
+                                                    default=None),
+                            "rows": seat_rows}
+    # every reader downstream (tools/place_signs.py, tools/verify_race.py G) takes the base as BUILT, one per head
+    lights["lamp_bases_xz"] = [[round(b[0], 3), round(b[1], 3)] for b in (base_of(i, h)[:2] for i, h in enumerate(heads))]
 
     if model == LED:
-        n, batches, note, prov = author_led(heads, nearest_cl, arms)
+        n, batches, note, prov = author_led(heads, base_of, arms)
     else:
-        n, batches, note, prov = author_legacy(heads, nearest_cl)
+        n, batches, note, prov = author_legacy(heads, base_of)
     if prov is not None:
         lights["provenance"] = prov
     else:
@@ -597,6 +736,18 @@ def main():
           f"{len(batches['LIGHTS'])} LIGHTS mesh(es) [{model}] ({note}); procedural LIGHTS removed; saved loop.blend")
     if prov is not None:
         print(f"[lamps] lens offset vs {LEGACY}: {prov['lens_offset_m']} (recorded in data/lights.local.json provenance)")
+    ex = lights.get("expansion") or {}
+    if ex:
+        per = ex.get("per_piece") or {}
+        print("[lamps] north pieces (ledger 0054 P4 D4): " + ", ".join(
+            f"{pid} {r['authored'] + r['osm']} ({r['osm']} OSM-grounded, {r['authored']} authored)" for pid, r in sorted(per.items()))
+              + f"; {len(ex.get('skipped', []))} stations skipped; OSM source {ex.get('osm_source')}")
+    sc = lights["seat_check"]
+    n_new = sum(1 for r in reseated if r["lamp"] in recorded)
+    print(f"[lamps] seat check: {sc['lamps']} lamps, {sc['reseated']} re-seated ({sc['reseated'] - n_new} loop posts past "
+          f"|base - ground| > {RESEAT_TOL_M} m, {n_new} new piece posts seated on their built walk); base vs ground "
+          f"min {sc['base_vs_ground_m']['min']} / median {sc['base_vs_ground_m']['median']} / max {sc['base_vs_ground_m']['max']} m; "
+          f"footprints on a road 0; wall clearance min {sc['wall_clear_min_m']} m")
 
 
 if __name__ == "__main__":

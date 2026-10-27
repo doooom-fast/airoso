@@ -23,13 +23,14 @@
                  "data/heightfield.npy", "data/heightfield.meta.json",
                  "data/terrain.samples.json.gz", "data/corridor.i8.json", "data/i8.local.json", "data/i8.legacy.local.json",
                  "data/deck_datum.samples.json", "data/ground_release.samples.json.gz", "data/freeway_i8.samples.json.gz",
-                 "textures/chaparral_far_diffuse.jpg"],
+                 "textures/chaparral_far_diffuse.jpg",
+                 "source/expansion/pipeline__osm_lamps_signals.json"],
     "globs": ["source/trees/*.bin"]
   },
   "sync_out": {
     "required": ["loop.blend"],
     "files": ["data/centerline.local.json", "data/centerline.raw.local.json", "data/median_bands.json", "data/dummies.json",
-              "data/finished_centerline.json", "data/gate_centerline.json", "data/lights.local.json", "data/connectors.local.json",
+              "data/finished_centerline.json", "data/gate_centerline.json", "data/lights.local.json", "data/lights_ini_check.json", "data/connectors.local.json",
               "data/mouths.json", "data/mouth_welds.json", "data/aprons.json", "data/aprons.lamps.json", "data/pads.plan.json", "data/pads.built.json", "data/pads.3dep.json", "data/verify_pads.json", "data/verify_mouths.json", "data/verify_fold_fans.json", "data/rib_check.json", "data/house_seat_check.json", "data/signs.local.json",
               "data/signs_preview.svg", "data/signs_measured.json", "data/drive_test.json", "data/drive_test.expansion.json", "data/drive_lines.expansion.json", "data/audit.json", "data/stubs.plan.json", "data/stubs.built.json",
               "data/verify_stubs.json", "data/stubs.3dep.json",

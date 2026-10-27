@@ -299,7 +299,7 @@ def verify(authored: dict | None, bands: dict, pts: list, island_w: list, *, all
            widths: list | None = None, spawns: dict | None = None, lamps: list | None = None,
            pre_author: bool = False, lamp_arm_m: float | None = None, mast_r_m: float | None = None,
            scenery: list | None = None, scenery_source: str | None = None, lap: str | None = None,
-           lamp_model: dict | None = None) -> dict:
+           lamp_model: dict | None = None, lamp_bases_xz: list | None = None) -> dict:
     """A-E and J-N (+ the author's own F record) on the authored file unless ``pre_author``; H and I too; F
     re-measured from ``spawns`` ({race layout id: dummies dict, or None when its file is missing}), G from
     ``lamps`` (lights.local.json heads) and G-scenery from ``scenery`` (TreeFX trunks + sign posts, scenery_items)
@@ -324,7 +324,8 @@ def verify(authored: dict | None, bands: dict, pts: list, island_w: list, *, all
     if lamps is not None and widths is not None:
         lm = lamp_model or {}
         _verify_lamps(lamps, bands, pts, widths, grid, fails, warns, counts, lamp_arm_m,
-                      mast_r_m if mast_r_m is not None else lm.get("mast_r_m"), lm.get("post_h_m"), lm.get("model"))
+                      mast_r_m if mast_r_m is not None else lm.get("mast_r_m"), lm.get("post_h_m"), lm.get("model"),
+                      bases_xz=lamp_bases_xz)
     if scenery is not None and widths is not None:
         _verify_scenery(scenery, bands, pts, widths, grid, fails, warns, counts, scenery_source)
     return {"ok": not fails, "fails": fails, "warnings": warns, "counts": counts}
@@ -456,16 +457,21 @@ def mast_radius_m(post_h: float, obj: Path | None = None) -> float:
     return max(base) * (post_h / top) if base and top > 0 else MAST_R_FALLBACK_M
 
 
-def lamp_bases(heads: list, pts: list, arm_m: float) -> list[dict]:
+def lamp_bases(heads: list, pts: list, arm_m: float, bases_xz: list | None = None) -> list[dict]:
     """tools/author_lamps_blend.py's base rule, replicated: road-ward = head -> the nearest centreline
     point in the 3 x 3 30 m cells around the head (point 0 when none — that tool's own fallback, flagged
-    here), base = head - arm_m * road-ward"""
+    here), base = head - arm_m * road-ward. ``bases_xz`` (ledger 0054 P4: lights.local.json lamp_bases_xz, one
+    base per head as the author BUILT it — the north pieces' posts have their own road-ward) is taken as is
+    where it is given, the rule above filling any head without one."""
     cells: dict[tuple[int, int], list[int]] = {}
     for i, p in enumerate(pts):
         cells.setdefault((int(p[0] // LAMP_CELL_M), int(p[2] // LAMP_CELL_M)), []).append(i)
     out = []
-    for h in heads:
+    for k, h in enumerate(heads):
         hx, hz = float(h[0]), float(h[2])
+        if bases_xz is not None and k < len(bases_xz) and bases_xz[k] is not None:
+            out.append({"x": float(bases_xz[k][0]), "z": float(bases_xz[k][1]), "fallback": False, "recorded": True})
+            continue
         best, bi = float("inf"), 0
         cx, cz = int(hx // LAMP_CELL_M), int(hz // LAMP_CELL_M)
         for dx in (-1, 0, 1):
@@ -556,11 +562,11 @@ def lamp_model_info(cfg: dict | None) -> dict:
 
 
 def _verify_lamps(heads, bands, pts, widths, grid, fails, warns, counts, arm_m=None, mast_r=None, post_h=None,
-                  model=None):
+                  model=None, bases_xz=None):
     arm = arm_m if arm_m is not None else _author_lamps_constant("ARM_M", LAMP_ARM_FALLBACK_M)
     post_h = post_h if post_h is not None else _author_lamps_constant("POST_H", LAMP_POST_H_FALLBACK_M)
     r_m = mast_r if mast_r is not None else mast_radius_m(post_h)
-    bases = lamp_bases(heads, pts, arm)
+    bases = lamp_bases(heads, pts, arm, bases_xz=bases_xz)
     rows = lamp_margins(bases, pts, widths, bands, r_m, grid)
     bad = sorted((r for r in rows if r["margin_m"] < 0), key=lambda r: r["margin_m"])
     for r in bad[:10]:
@@ -1629,7 +1635,12 @@ def main(argv=None) -> int:
         if (cfg and others) else cfg
     spawns = None if scenery_only else race_layout_spawns(data, view, exclude=others)
     lp = data / "lights.local.json"
-    lamps = json.loads(lp.read_text(encoding="utf-8")).get("lampheads", []) if (lp.exists() and not scenery_only) else None
+    _lights = json.loads(lp.read_text(encoding="utf-8")) if (lp.exists() and not scenery_only) else None
+    lamps = _lights.get("lampheads", []) if _lights is not None else None
+    # ledger 0054 P4: the bases as the author BUILT them (the north pieces' posts have their own road-ward)
+    lamp_bases_rec = _lights.get("lamp_bases_xz") if _lights is not None else None
+    if lamp_bases_rec is not None and len(lamp_bases_rec) != len(lamps or []):
+        lamp_bases_rec = None
     # G scenery: the TreeFX trunks (the WRITTEN trees.txt with --trees, else make_treefx's own plan of it) and the
     # W1-6 sign posts, against every race layout's lane and walls
     scenery, src_note = [], []
@@ -1647,7 +1658,7 @@ def main(argv=None) -> int:
         src_note.append("signs: data/signs.local.json")
     r = verify(authored, bands, pts, island_w, allow_standin=allow_standin, widths=widths, spawns=spawns,
                lamps=lamps, pre_author=pre_author, scenery=scenery, scenery_source="; ".join(src_note), lap=lap,
-               lamp_model=lamp_model_info(cfg))
+               lamp_model=lamp_model_info(cfg), lamp_bases_xz=lamp_bases_rec)
     if lamps is None and not scenery_only:
         r["warnings"].append("G: no data/lights.local.json — no lamps authored, nothing to check")
     c = r["counts"]

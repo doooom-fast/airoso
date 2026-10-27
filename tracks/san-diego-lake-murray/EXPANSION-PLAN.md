@@ -423,6 +423,16 @@ Steps 2–8 can start now on a branch off the 0046 branch, and get rebased after
    - **reused** `verify_signs`.
    - The preview is shown to you first.
 2. **Lamps (D4).** **adapted** `build_streetlights` takes connector lines and stays clear of every pavement. Today it sees only the mainline, and lamp #77 already stands in Waring. Same sodium look as 0043.
+
+> **2026-10-26: step 2 built and rehearsed on the P4 `lamps` branch (ledger 0054 "P4 lamps"; GATES-CHANGELOG 2026-10-26).**
+> 85 lamps on the four roads at the loop's spacing (Waring 16 / Princess View 18 / Mission Gorge 40 / Jackson north 11;
+> D4's canyon stations 250-1500 dark), each on the new road's walk 0.83 m behind the curb and clear of the loop, every
+> stub and its returns, the J2-J4 pads and every curb cut; no OSM street_lamp node stands within 745 m of the roads, so
+> every stretch is authored (the OSM path is built for the night check). Every lamp on the track is now seated on the
+> BUILT ground from its pole base (four loop lamps re-seated: 0, 32, 113, 143; lamp 77 already right since repair round
+> 1) and proved off every pavement and 0.5 m from every wall; one CSP light per lamp is read back off the written
+> ext_config.ini (`tools/check_lights_ini.py`, both chains). Merged with the other P4 pieces by the integration agent.
+
 3. **Trees (A9).** **adapted** `make_treefx`:
    - the surface list comes from config (today "1GRASS_0_mat, 1GRASS_1_mat, 1ROAD_road_mat" is hard-coded at `:32`);
    - the caps scale with area;

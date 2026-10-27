@@ -1,0 +1,9199 @@
+{
+ "_doc": "ledger 0054 P4 lamps (2026-10-26): data/lights.local.json of the rehearsal D:/k10-scratch/p4/lamps/run1 without the head lists \u2014 the pieces' plan (per post: base, road-ward, station, side, source), the skipped stations, the re-seats and the author's seat / clearance check (tools/author_lamps_blend.py)",
+ "lamps": 323,
+ "expansion": {
+  "lamps": [
+   {
+    "head": [
+     -2025.096,
+     28.675,
+     648.003
+    ],
+    "base_xz": [
+     -2026.395,
+     646.757
+    ],
+    "roadward_xz": [
+     0.72168,
+     0.69223
+    ],
+    "piece": "A",
+    "name": "north_J1_waring#0",
+    "u_m": 55.0,
+    "s_m": 70.0,
+    "side": "L",
+    "width_m": 26.5,
+    "source": "authored",
+    "ground_y_draft": 19.875,
+    "i": 238
+   },
+   {
+    "head": [
+     -2054.358,
+     24.48,
+     713.278
+    ],
+    "base_xz": [
+     -2053.097,
+     714.562
+    ],
+    "roadward_xz": [
+     -0.70051,
+     -0.71364
+    ],
+    "piece": "A",
+    "name": "north_J1_waring#0",
+    "u_m": 122.0,
+    "s_m": 137.5,
+    "side": "R",
+    "width_m": 26.5,
+    "source": "authored",
+    "ground_y_draft": 15.68,
+    "i": 239
+   },
+   {
+    "head": [
+     -2102.255,
+     22.114,
+     725.863
+    ],
+    "base_xz": [
+     -2103.516,
+     724.578
+    ],
+    "roadward_xz": [
+     0.70037,
+     0.71378
+    ],
+    "piece": "A",
+    "name": "north_J1_waring#0",
+    "u_m": 165.0,
+    "s_m": 180.0,
+    "side": "L",
+    "width_m": 26.5,
+    "source": "authored",
+    "ground_y_draft": 13.314,
+    "i": 240
+   },
+   {
+    "head": [
+     -2124.3,
+     19.495,
+     781.909
+    ],
+    "base_xz": [
+     -2123.038,
+     783.193
+    ],
+    "roadward_xz": [
+     -0.70105,
+     -0.71311
+    ],
+    "piece": "A",
+    "name": "north_J1_waring#0",
+    "u_m": 220.0,
+    "s_m": 235.0,
+    "side": "R",
+    "width_m": 26.5,
+    "source": "authored",
+    "ground_y_draft": 10.695,
+    "i": 241
+   },
+   {
+    "head": [
+     -2180.793,
+     17.71,
+     802.915
+    ],
+    "base_xz": [
+     -2182.056,
+     801.633
+    ],
+    "roadward_xz": [
+     0.70176,
+     0.71242
+    ],
+    "piece": "A",
+    "name": "north_J1_waring#0",
+    "u_m": 275.0,
+    "s_m": 290.0,
+    "side": "L",
+    "width_m": 26.72,
+    "source": "authored",
+    "ground_y_draft": 8.91,
+    "i": 242
+   },
+   {
+    "head": [
+     -2202.509,
+     16.892,
+     859.244
+    ],
+    "base_xz": [
+     -2201.246,
+     860.527
+    ],
+    "roadward_xz": [
+     -0.70178,
+     -0.7124
+    ],
+    "piece": "A",
+    "name": "north_J1_waring#0",
+    "u_m": 330.0,
+    "s_m": 345.0,
+    "side": "R",
+    "width_m": 26.95,
+    "source": "authored",
+    "ground_y_draft": 8.092,
+    "i": 243
+   },
+   {
+    "head": [
+     -2256.463,
+     15.981,
+     877.145
+    ],
+    "base_xz": [
+     -2257.726,
+     875.863
+    ],
+    "roadward_xz": [
+     0.70172,
+     0.71246
+    ],
+    "piece": "A",
+    "name": "north_J1_waring#0",
+    "u_m": 381.0,
+    "s_m": 397.5,
+    "side": "L",
+    "width_m": 27.15,
+    "source": "authored",
+    "ground_y_draft": 7.181,
+    "i": 244
+   },
+   {
+    "head": [
+     -2280.876,
+     16.131,
+     936.511
+    ],
+    "base_xz": [
+     -2279.618,
+     937.799
+    ],
+    "roadward_xz": [
+     -0.69881,
+     -0.71531
+    ],
+    "piece": "A",
+    "name": "north_J1_waring#0",
+    "u_m": 440.0,
+    "s_m": 455.0,
+    "side": "R",
+    "width_m": 27.38,
+    "source": "authored",
+    "ground_y_draft": 7.331,
+    "i": 245
+   },
+   {
+    "head": [
+     -2337.952,
+     16.556,
+     956.757
+    ],
+    "base_xz": [
+     -2339.208,
+     955.467
+    ],
+    "roadward_xz": [
+     0.6974,
+     0.71668
+    ],
+    "piece": "A",
+    "name": "north_J1_waring#0",
+    "u_m": 495.0,
+    "s_m": 510.0,
+    "side": "L",
+    "width_m": 27.2,
+    "source": "authored",
+    "ground_y_draft": 7.756,
+    "i": 246
+   },
+   {
+    "head": [
+     -2363.016,
+     17.052,
+     1011.909
+    ],
+    "base_xz": [
+     -2361.932,
+     1013.346
+    ],
+    "roadward_xz": [
+     -0.6024,
+     -0.7982
+    ],
+    "piece": "A",
+    "name": "north_J1_waring#0",
+    "u_m": 550.0,
+    "s_m": 565.0,
+    "side": "R",
+    "width_m": 26.56,
+    "source": "authored",
+    "ground_y_draft": 8.252,
+    "i": 247
+   },
+   {
+    "head": [
+     -2422.456,
+     17.47,
+     1019.578
+    ],
+    "base_xz": [
+     -2423.213,
+     1017.945
+    ],
+    "roadward_xz": [
+     0.4207,
+     0.9072
+    ],
+    "piece": "A",
+    "name": "north_J1_waring#0",
+    "u_m": 605.0,
+    "s_m": 622.5,
+    "side": "L",
+    "width_m": 25.91,
+    "source": "authored",
+    "ground_y_draft": 8.67,
+    "i": 248
+   },
+   {
+    "head": [
+     -2453.133,
+     16.47,
+     1058.495
+    ],
+    "base_xz": [
+     -2452.555,
+     1060.2
+    ],
+    "roadward_xz": [
+     -0.32141,
+     -0.94694
+    ],
+    "piece": "A",
+    "name": "north_J1_waring#0",
+    "u_m": 648.0,
+    "s_m": 667.5,
+    "side": "R",
+    "width_m": 25.39,
+    "source": "authored",
+    "ground_y_draft": 7.67,
+    "i": 249
+   },
+   {
+    "head": [
+     -2522.978,
+     15.819,
+     1048.911
+    ],
+    "base_xz": [
+     -2523.071,
+     1047.114
+    ],
+    "roadward_xz": [
+     0.05156,
+     0.99867
+    ],
+    "piece": "A",
+    "name": "north_J1_waring#0",
+    "u_m": 715.0,
+    "s_m": 735.0,
+    "side": "L",
+    "width_m": 24.6,
+    "source": "authored",
+    "ground_y_draft": 7.019,
+    "i": 250
+   },
+   {
+    "head": [
+     -2578.06,
+     15.014,
+     1071.317
+    ],
+    "base_xz": [
+     -2578.171,
+     1073.113
+    ],
+    "roadward_xz": [
+     0.06177,
+     -0.99809
+    ],
+    "piece": "A",
+    "name": "north_J1_waring#0",
+    "u_m": 770.0,
+    "s_m": 792.5,
+    "side": "R",
+    "width_m": 25.18,
+    "source": "authored",
+    "ground_y_draft": 6.214,
+    "i": 251
+   },
+   {
+    "head": [
+     -2627.977,
+     14.049,
+     1038.253
+    ],
+    "base_xz": [
+     -2627.474,
+     1036.525
+    ],
+    "roadward_xz": [
+     -0.27954,
+     0.96014
+    ],
+    "piece": "A",
+    "name": "north_J1_waring#0",
+    "u_m": 825.0,
+    "s_m": 847.5,
+    "side": "L",
+    "width_m": 25.99,
+    "source": "authored",
+    "ground_y_draft": 5.249,
+    "i": 252
+   },
+   {
+    "head": [
+     -2688.198,
+     13.163,
+     1042.432
+    ],
+    "base_xz": [
+     -2688.949,
+     1044.068
+    ],
+    "roadward_xz": [
+     0.41722,
+     -0.90881
+    ],
+    "piece": "A",
+    "name": "north_J1_waring#0",
+    "u_m": 880.0,
+    "s_m": 905.0,
+    "side": "R",
+    "width_m": 26.8,
+    "source": "authored",
+    "ground_y_draft": 4.363,
+    "i": 253
+   },
+   {
+    "head": [
+     -2795.617,
+     10.373,
+     1035.731
+    ],
+    "base_xz": [
+     -2797.001,
+     1034.579
+    ],
+    "roadward_xz": [
+     0.76862,
+     0.6397
+    ],
+    "piece": "B",
+    "name": "north_princess_view",
+    "u_m": 45.0,
+    "s_m": 60.0,
+    "side": "L",
+    "width_m": 22.52,
+    "source": "authored",
+    "ground_y_draft": 1.573,
+    "i": 254
+   },
+   {
+    "head": [
+     -2824.312,
+     8.489,
+     1097.001
+    ],
+    "base_xz": [
+     -2822.994,
+     1098.227
+    ],
+    "roadward_xz": [
+     -0.73211,
+     -0.68119
+    ],
+    "piece": "B",
+    "name": "north_princess_view",
+    "u_m": 110.0,
+    "s_m": 125.0,
+    "side": "R",
+    "width_m": 22.7,
+    "source": "authored",
+    "ground_y_draft": -0.311,
+    "i": 255
+   },
+   {
+    "head": [
+     -2871.909,
+     4.72,
+     1130.911
+    ],
+    "base_xz": [
+     -2873.534,
+     1130.139
+    ],
+    "roadward_xz": [
+     0.9032,
+     0.42922
+    ],
+    "piece": "B",
+    "name": "north_princess_view",
+    "u_m": 165.0,
+    "s_m": 180.0,
+    "side": "L",
+    "width_m": 22.84,
+    "source": "authored",
+    "ground_y_draft": -4.08,
+    "i": 256
+   },
+   {
+    "head": [
+     -2868.162,
+     -1.981,
+     1189.805
+    ],
+    "base_xz": [
+     -2866.394,
+     1190.142
+    ],
+    "roadward_xz": [
+     -0.98234,
+     -0.18709
+    ],
+    "piece": "B",
+    "name": "north_princess_view",
+    "u_m": 220.0,
+    "s_m": 235.0,
+    "side": "R",
+    "width_m": 22.99,
+    "source": "authored",
+    "ground_y_draft": -10.781,
+    "i": 257
+   },
+   {
+    "head": [
+     -2894.338,
+     -5.761,
+     1241.901
+    ],
+    "base_xz": [
+     -2896.135,
+     1241.796
+    ],
+    "roadward_xz": [
+     0.9983,
+     0.05829
+    ],
+    "piece": "B",
+    "name": "north_princess_view",
+    "u_m": 275.0,
+    "s_m": 290.0,
+    "side": "L",
+    "width_m": 23.2,
+    "source": "authored",
+    "ground_y_draft": -14.561,
+    "i": 258
+   },
+   {
+    "head": [
+     -2875.472,
+     -10.848,
+     1297.822
+    ],
+    "base_xz": [
+     -2873.673,
+     1297.882
+    ],
+    "roadward_xz": [
+     -0.99944,
+     -0.03352
+    ],
+    "piece": "B",
+    "name": "north_princess_view",
+    "u_m": 330.0,
+    "s_m": 345.0,
+    "side": "R",
+    "width_m": 23.42,
+    "source": "authored",
+    "ground_y_draft": -19.648,
+    "i": 259
+   },
+   {
+    "head": [
+     -2904.118,
+     -16.908,
+     1349.014
+    ],
+    "base_xz": [
+     -2905.859,
+     1348.555
+    ],
+    "roadward_xz": [
+     0.96707,
+     0.25453
+    ],
+    "piece": "B",
+    "name": "north_princess_view",
+    "u_m": 385.0,
+    "s_m": 400.0,
+    "side": "L",
+    "width_m": 23.64,
+    "source": "authored",
+    "ground_y_draft": -25.708,
+    "i": 260
+   },
+   {
+    "head": [
+     -2901.193,
+     -21.301,
+     1408.315
+    ],
+    "base_xz": [
+     -2899.556,
+     1409.064
+    ],
+    "roadward_xz": [
+     -0.90933,
+     -0.41608
+    ],
+    "piece": "B",
+    "name": "north_princess_view",
+    "u_m": 440.0,
+    "s_m": 455.0,
+    "side": "R",
+    "width_m": 23.86,
+    "source": "authored",
+    "ground_y_draft": -30.101,
+    "i": 261
+   },
+   {
+    "head": [
+     -2944.109,
+     -28.158,
+     1449.136
+    ],
+    "base_xz": [
+     -2945.744,
+     1448.384
+    ],
+    "roadward_xz": [
+     0.90842,
+     0.41806
+    ],
+    "piece": "B",
+    "name": "north_princess_view",
+    "u_m": 495.0,
+    "s_m": 510.0,
+    "side": "L",
+    "width_m": 24.0,
+    "source": "authored",
+    "ground_y_draft": -36.958,
+    "i": 262
+   },
+   {
+    "head": [
+     -2947.004,
+     -32.635,
+     1508.311
+    ],
+    "base_xz": [
+     -2945.367,
+     1509.059
+    ],
+    "roadward_xz": [
+     -0.9097,
+     -0.41527
+    ],
+    "piece": "B",
+    "name": "north_princess_view",
+    "u_m": 550.0,
+    "s_m": 565.0,
+    "side": "R",
+    "width_m": 24.0,
+    "source": "authored",
+    "ground_y_draft": -41.435,
+    "i": 263
+   },
+   {
+    "head": [
+     -2989.912,
+     -37.467,
+     1549.183
+    ],
+    "base_xz": [
+     -2991.549,
+     1548.435
+    ],
+    "roadward_xz": [
+     0.90967,
+     0.41534
+    ],
+    "piece": "B",
+    "name": "north_princess_view",
+    "u_m": 605.0,
+    "s_m": 620.0,
+    "side": "L",
+    "width_m": 24.0,
+    "source": "authored",
+    "ground_y_draft": -46.267,
+    "i": 264
+   },
+   {
+    "head": [
+     -2992.688,
+     -42.694,
+     1608.377
+    ],
+    "base_xz": [
+     -2991.051,
+     1609.124
+    ],
+    "roadward_xz": [
+     -0.90967,
+     -0.41533
+    ],
+    "piece": "B",
+    "name": "north_princess_view",
+    "u_m": 660.0,
+    "s_m": 675.0,
+    "side": "R",
+    "width_m": 24.0,
+    "source": "authored",
+    "ground_y_draft": -51.494,
+    "i": 265
+   },
+   {
+    "head": [
+     -3033.99,
+     -48.431,
+     1651.729
+    ],
+    "base_xz": [
+     -3035.725,
+     1651.248
+    ],
+    "roadward_xz": [
+     0.96365,
+     0.26718
+    ],
+    "piece": "B",
+    "name": "north_princess_view",
+    "u_m": 715.0,
+    "s_m": 730.0,
+    "side": "L",
+    "width_m": 24.0,
+    "source": "authored",
+    "ground_y_draft": -57.231,
+    "i": 266
+   },
+   {
+    "head": [
+     -3022.09,
+     -52.478,
+     1709.965
+    ],
+    "base_xz": [
+     -3020.302,
+     1710.173
+    ],
+    "roadward_xz": [
+     -0.99331,
+     -0.11548
+    ],
+    "piece": "B",
+    "name": "north_princess_view",
+    "u_m": 770.0,
+    "s_m": 785.0,
+    "side": "R",
+    "width_m": 24.54,
+    "source": "authored",
+    "ground_y_draft": -61.278,
+    "i": 267
+   },
+   {
+    "head": [
+     -3043.47,
+     -55.505,
+     1764.468
+    ],
+    "base_xz": [
+     -3045.264,
+     1764.62
+    ],
+    "roadward_xz": [
+     0.99638,
+     -0.08497
+    ],
+    "piece": "B",
+    "name": "north_princess_view",
+    "u_m": 825.0,
+    "s_m": 840.0,
+    "side": "L",
+    "width_m": 25.19,
+    "source": "authored",
+    "ground_y_draft": -64.305,
+    "i": 268
+   },
+   {
+    "head": [
+     -3016.008,
+     -57.01,
+     1817.485
+    ],
+    "base_xz": [
+     -3014.212,
+     1817.357
+    ],
+    "roadward_xz": [
+     -0.99746,
+     0.07128
+    ],
+    "piece": "B",
+    "name": "north_princess_view",
+    "u_m": 880.0,
+    "s_m": 895.0,
+    "side": "R",
+    "width_m": 25.86,
+    "source": "authored",
+    "ground_y_draft": -65.81,
+    "i": 269
+   },
+   {
+    "head": [
+     -3036.271,
+     -57.54,
+     1874.073
+    ],
+    "base_xz": [
+     -3038.066,
+     1874.202
+    ],
+    "roadward_xz": [
+     0.99746,
+     -0.07128
+    ],
+    "piece": "B",
+    "name": "north_princess_view",
+    "u_m": 935.0,
+    "s_m": 950.0,
+    "side": "L",
+    "width_m": 26.52,
+    "source": "authored",
+    "ground_y_draft": -66.34,
+    "i": 270
+   },
+   {
+    "head": [
+     -3006.955,
+     -58.001,
+     1926.495
+    ],
+    "base_xz": [
+     -3005.167,
+     1926.28
+    ],
+    "roadward_xz": [
+     -0.99283,
+     0.11957
+    ],
+    "piece": "B",
+    "name": "north_princess_view",
+    "u_m": 990.0,
+    "s_m": 1005.0,
+    "side": "R",
+    "width_m": 27.0,
+    "source": "authored",
+    "ground_y_draft": -66.801,
+    "i": 271
+   },
+   {
+    "head": [
+     -2966.085,
+     -57.184,
+     2084.64
+    ],
+    "base_xz": [
+     -2966.769,
+     2086.305
+    ],
+    "roadward_xz": [
+     0.37996,
+     -0.925
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 55.0,
+    "s_m": 77.5,
+    "side": "L",
+    "width_m": 32.57,
+    "source": "authored",
+    "ground_y_draft": -65.984,
+    "i": 272
+   },
+   {
+    "head": [
+     -2904.089,
+     -55.666,
+     2076.957
+    ],
+    "base_xz": [
+     -2903.469,
+     2075.267
+    ],
+    "roadward_xz": [
+     -0.34422,
+     0.93889
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 110.0,
+    "s_m": 132.5,
+    "side": "R",
+    "width_m": 31.33,
+    "source": "authored",
+    "ground_y_draft": -64.466,
+    "i": 273
+   },
+   {
+    "head": [
+     -2861.534,
+     -53.523,
+     2122.097
+    ],
+    "base_xz": [
+     -2862.092,
+     2123.809
+    ],
+    "roadward_xz": [
+     0.30997,
+     -0.95075
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 165.0,
+    "s_m": 187.5,
+    "side": "L",
+    "width_m": 30.1,
+    "source": "authored",
+    "ground_y_draft": -62.323,
+    "i": 274
+   },
+   {
+    "head": [
+     -2800.909,
+     -51.039,
+     2112.44
+    ],
+    "base_xz": [
+     -2800.396,
+     2110.715
+    ],
+    "roadward_xz": [
+     -0.28514,
+     0.95848
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 220.0,
+    "s_m": 242.5,
+    "side": "R",
+    "width_m": 28.99,
+    "source": "authored",
+    "ground_y_draft": -59.839,
+    "i": 275
+   },
+   {
+    "head": [
+     -2755.539,
+     -47.664,
+     2153.584
+    ],
+    "base_xz": [
+     -2756.024,
+     2155.317
+    ],
+    "roadward_xz": [
+     0.26937,
+     -0.96304
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 275.0,
+    "s_m": 297.5,
+    "side": "L",
+    "width_m": 28.88,
+    "source": "authored",
+    "ground_y_draft": -56.464,
+    "i": 276
+   },
+   {
+    "head": [
+     -2695.481,
+     -44.038,
+     2138.867
+    ],
+    "base_xz": [
+     -2695.126,
+     2137.102
+    ],
+    "roadward_xz": [
+     -0.19707,
+     0.98039
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 330.0,
+    "s_m": 350.0,
+    "side": "R",
+    "width_m": 28.77,
+    "source": "authored",
+    "ground_y_draft": -52.838,
+    "i": 277
+   },
+   {
+    "head": [
+     -2646.87,
+     -40.069,
+     2176.04
+    ],
+    "base_xz": [
+     -2647.227,
+     2177.804
+    ],
+    "roadward_xz": [
+     0.1983,
+     -0.98014
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 385.0,
+    "s_m": 405.0,
+    "side": "L",
+    "width_m": 28.66,
+    "source": "authored",
+    "ground_y_draft": -48.869,
+    "i": 278
+   },
+   {
+    "head": [
+     -2588.124,
+     -38.015,
+     2157.938
+    ],
+    "base_xz": [
+     -2587.89,
+     2156.153
+    ],
+    "roadward_xz": [
+     -0.12985,
+     0.99153
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 440.0,
+    "s_m": 460.0,
+    "side": "R",
+    "width_m": 28.54,
+    "source": "authored",
+    "ground_y_draft": -46.815,
+    "i": 279
+   },
+   {
+    "head": [
+     -2537.094,
+     -32.461,
+     2191.618
+    ],
+    "base_xz": [
+     -2537.332,
+     2193.402
+    ],
+    "roadward_xz": [
+     0.13199,
+     -0.99125
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 495.0,
+    "s_m": 515.0,
+    "side": "L",
+    "width_m": 28.37,
+    "source": "authored",
+    "ground_y_draft": -41.261,
+    "i": 280
+   },
+   {
+    "head": [
+     -2479.356,
+     -28.882,
+     2171.228
+    ],
+    "base_xz": [
+     -2479.178,
+     2169.437
+    ],
+    "roadward_xz": [
+     -0.09905,
+     0.99508
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 550.0,
+    "s_m": 570.0,
+    "side": "R",
+    "width_m": 28.15,
+    "source": "authored",
+    "ground_y_draft": -37.682,
+    "i": 281
+   },
+   {
+    "head": [
+     -2427.195,
+     -24.697,
+     2202.62
+    ],
+    "base_xz": [
+     -2427.371,
+     2204.412
+    ],
+    "roadward_xz": [
+     0.09799,
+     -0.99519
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 605.0,
+    "s_m": 625.0,
+    "side": "L",
+    "width_m": 27.93,
+    "source": "authored",
+    "ground_y_draft": -33.497,
+    "i": 282
+   },
+   {
+    "head": [
+     -2369.984,
+     -21.853,
+     2182.092
+    ],
+    "base_xz": [
+     -2369.818,
+     2180.3
+    ],
+    "roadward_xz": [
+     -0.09219,
+     0.99574
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 660.0,
+    "s_m": 680.0,
+    "side": "R",
+    "width_m": 27.71,
+    "source": "authored",
+    "ground_y_draft": -30.653,
+    "i": 283
+   },
+   {
+    "head": [
+     -2317.972,
+     -16.928,
+     2213.441
+    ],
+    "base_xz": [
+     -2318.182,
+     2215.228
+    ],
+    "roadward_xz": [
+     0.11641,
+     -0.9932
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 715.0,
+    "s_m": 735.0,
+    "side": "L",
+    "width_m": 27.5,
+    "source": "authored",
+    "ground_y_draft": -25.728,
+    "i": 284
+   },
+   {
+    "head": [
+     -2259.62,
+     -13.225,
+     2197.245
+    ],
+    "base_xz": [
+     -2259.246,
+     2195.484
+    ],
+    "roadward_xz": [
+     -0.20757,
+     0.97822
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 770.0,
+    "s_m": 790.0,
+    "side": "R",
+    "width_m": 27.5,
+    "source": "authored",
+    "ground_y_draft": -22.025,
+    "i": 285
+   },
+   {
+    "head": [
+     -2213.987,
+     -9.234,
+     2237.738
+    ],
+    "base_xz": [
+     -2214.593,
+     2239.433
+    ],
+    "roadward_xz": [
+     0.33639,
+     -0.94172
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 825.0,
+    "s_m": 847.5,
+    "side": "L",
+    "width_m": 27.5,
+    "source": "authored",
+    "ground_y_draft": -18.034,
+    "i": 286
+   },
+   {
+    "head": [
+     -2153.58,
+     -5.476,
+     2233.105
+    ],
+    "base_xz": [
+     -2152.93,
+     2231.426
+    ],
+    "roadward_xz": [
+     -0.36105,
+     0.93255
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 880.0,
+    "s_m": 902.5,
+    "side": "R",
+    "width_m": 27.5,
+    "source": "authored",
+    "ground_y_draft": -14.276,
+    "i": 287
+   },
+   {
+    "head": [
+     -2115.251,
+     -2.412,
+     2281.077
+    ],
+    "base_xz": [
+     -2116.11,
+     2282.659
+    ],
+    "roadward_xz": [
+     0.47733,
+     -0.87873
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 935.0,
+    "s_m": 957.5,
+    "side": "L",
+    "width_m": 27.5,
+    "source": "authored",
+    "ground_y_draft": -11.212,
+    "i": 288
+   },
+   {
+    "head": [
+     -2054.632,
+     2.108,
+     2288.735
+    ],
+    "base_xz": [
+     -2053.528,
+     2287.314
+    ],
+    "roadward_xz": [
+     -0.61367,
+     0.78956
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 990.0,
+    "s_m": 1015.0,
+    "side": "R",
+    "width_m": 28.04,
+    "source": "authored",
+    "ground_y_draft": -6.692,
+    "i": 289
+   },
+   {
+    "head": [
+     -2027.622,
+     5.516,
+     2343.575
+    ],
+    "base_xz": [
+     -2028.729,
+     2344.995
+    ],
+    "roadward_xz": [
+     0.61483,
+     -0.78866
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 1045.0,
+    "s_m": 1070.0,
+    "side": "L",
+    "width_m": 29.21,
+    "source": "authored",
+    "ground_y_draft": -3.284,
+    "i": 290
+   },
+   {
+    "head": [
+     -1967.226,
+     9.836,
+     2358.671
+    ],
+    "base_xz": [
+     -1965.931,
+     2357.421
+    ],
+    "roadward_xz": [
+     -0.71982,
+     0.69416
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 1100.0,
+    "s_m": 1125.0,
+    "side": "R",
+    "width_m": 30.41,
+    "source": "authored",
+    "ground_y_draft": 1.036,
+    "i": 291
+   },
+   {
+    "head": [
+     -1952.145,
+     13.693,
+     2418.653
+    ],
+    "base_xz": [
+     -1953.546,
+     2419.784
+    ],
+    "roadward_xz": [
+     0.7782,
+     -0.62802
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 1155.0,
+    "s_m": 1180.0,
+    "side": "L",
+    "width_m": 31.6,
+    "source": "authored",
+    "ground_y_draft": 4.893,
+    "i": 292
+   },
+   {
+    "head": [
+     -1895.453,
+     16.829,
+     2445.803
+    ],
+    "base_xz": [
+     -1893.924,
+     2444.853
+    ],
+    "roadward_xz": [
+     -0.84946,
+     0.52766
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 1210.0,
+    "s_m": 1237.5,
+    "side": "R",
+    "width_m": 32.8,
+    "source": "authored",
+    "ground_y_draft": 8.029,
+    "i": 293
+   },
+   {
+    "head": [
+     -1892.716,
+     19.252,
+     2508.799
+    ],
+    "base_xz": [
+     -1894.248,
+     2509.745
+    ],
+    "roadward_xz": [
+     0.85094,
+     -0.52527
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 1265.0,
+    "s_m": 1292.5,
+    "side": "L",
+    "width_m": 32.72,
+    "source": "authored",
+    "ground_y_draft": 10.452,
+    "i": 294
+   },
+   {
+    "head": [
+     -1836.727,
+     21.042,
+     2541.224
+    ],
+    "base_xz": [
+     -1835.195,
+     2540.278
+    ],
+    "roadward_xz": [
+     -0.85097,
+     0.52522
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 1322.0,
+    "s_m": 1350.0,
+    "side": "R",
+    "width_m": 32.38,
+    "source": "authored",
+    "ground_y_draft": 12.242,
+    "i": 295
+   },
+   {
+    "head": [
+     -1834.583,
+     21.946,
+     2602.248
+    ],
+    "base_xz": [
+     -1836.112,
+     2603.199
+    ],
+    "roadward_xz": [
+     0.84903,
+     -0.52835
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 1375.0,
+    "s_m": 1402.5,
+    "side": "L",
+    "width_m": 32.06,
+    "source": "authored",
+    "ground_y_draft": 13.146,
+    "i": 296
+   },
+   {
+    "head": [
+     -1779.917,
+     22.479,
+     2632.911
+    ],
+    "base_xz": [
+     -1778.395,
+     2631.952
+    ],
+    "roadward_xz": [
+     -0.84607,
+     0.53306
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 1430.0,
+    "s_m": 1457.5,
+    "side": "R",
+    "width_m": 31.73,
+    "source": "authored",
+    "ground_y_draft": 13.679,
+    "i": 297
+   },
+   {
+    "head": [
+     -1776.466,
+     22.159,
+     2695.378
+    ],
+    "base_xz": [
+     -1778.008,
+     2696.306
+    ],
+    "roadward_xz": [
+     0.85682,
+     -0.51562
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 1485.0,
+    "s_m": 1512.5,
+    "side": "L",
+    "width_m": 31.4,
+    "source": "authored",
+    "ground_y_draft": 13.359,
+    "i": 298
+   },
+   {
+    "head": [
+     -1722.794,
+     21.149,
+     2726.957
+    ],
+    "base_xz": [
+     -1721.269,
+     2726.001
+    ],
+    "roadward_xz": [
+     -0.84731,
+     0.5311
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 1540.0,
+    "s_m": 1567.5,
+    "side": "R",
+    "width_m": 31.07,
+    "source": "authored",
+    "ground_y_draft": 12.349,
+    "i": 299
+   },
+   {
+    "head": [
+     -1718.449,
+     19.484,
+     2788.897
+    ],
+    "base_xz": [
+     -1719.988,
+     2789.831
+    ],
+    "roadward_xz": [
+     0.85492,
+     -0.51876
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 1595.0,
+    "s_m": 1622.5,
+    "side": "L",
+    "width_m": 30.74,
+    "source": "authored",
+    "ground_y_draft": 10.684,
+    "i": 300
+   },
+   {
+    "head": [
+     -1665.478,
+     17.168,
+     2820.779
+    ],
+    "base_xz": [
+     -1663.957,
+     2819.817
+    ],
+    "roadward_xz": [
+     -0.84517,
+     0.53449
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 1650.0,
+    "s_m": 1677.5,
+    "side": "R",
+    "width_m": 30.41,
+    "source": "authored",
+    "ground_y_draft": 8.368,
+    "i": 301
+   },
+   {
+    "head": [
+     -1659.264,
+     13.981,
+     2882.569
+    ],
+    "base_xz": [
+     -1660.746,
+     2883.589
+    ],
+    "roadward_xz": [
+     0.82369,
+     -0.56704
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 1705.0,
+    "s_m": 1732.5,
+    "side": "L",
+    "width_m": 30.09,
+    "source": "authored",
+    "ground_y_draft": 5.181,
+    "i": 302
+   },
+   {
+    "head": [
+     -1604.475,
+     11.137,
+     2910.194
+    ],
+    "base_xz": [
+     -1603.081,
+     2909.056
+    ],
+    "roadward_xz": [
+     -0.77476,
+     0.63226
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 1760.0,
+    "s_m": 1785.0,
+    "side": "R",
+    "width_m": 30.24,
+    "source": "authored",
+    "ground_y_draft": 2.337,
+    "i": 303
+   },
+   {
+    "head": [
+     -1590.456,
+     8.187,
+     2970.735
+    ],
+    "base_xz": [
+     -1591.786,
+     2971.948
+    ],
+    "roadward_xz": [
+     0.7391,
+     -0.6736
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 1815.0,
+    "s_m": 1840.0,
+    "side": "L",
+    "width_m": 30.58,
+    "source": "authored",
+    "ground_y_draft": -0.613,
+    "i": 304
+   },
+   {
+    "head": [
+     -1531.215,
+     5.836,
+     2989.583
+    ],
+    "base_xz": [
+     -1529.982,
+     2988.272
+    ],
+    "roadward_xz": [
+     -0.68526,
+     0.7283
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 1870.0,
+    "s_m": 1895.0,
+    "side": "R",
+    "width_m": 30.91,
+    "source": "authored",
+    "ground_y_draft": -2.964,
+    "i": 305
+   },
+   {
+    "head": [
+     -1509.208,
+     4.069,
+     3047.358
+    ],
+    "base_xz": [
+     -1510.381,
+     3048.723
+    ],
+    "roadward_xz": [
+     0.65167,
+     -0.7585
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 1925.0,
+    "s_m": 1950.0,
+    "side": "L",
+    "width_m": 31.25,
+    "source": "authored",
+    "ground_y_draft": -4.731,
+    "i": 306
+   },
+   {
+    "head": [
+     -1448.124,
+     2.718,
+     3058.482
+    ],
+    "base_xz": [
+     -1447.084,
+     3057.014
+    ],
+    "roadward_xz": [
+     -0.57822,
+     0.81588
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 1980.0,
+    "s_m": 2002.5,
+    "side": "R",
+    "width_m": 31.37,
+    "source": "authored",
+    "ground_y_draft": -6.082,
+    "i": 307
+   },
+   {
+    "head": [
+     -1416.045,
+     2.279,
+     3110.602
+    ],
+    "base_xz": [
+     -1416.92,
+     3112.175
+    ],
+    "roadward_xz": [
+     0.48592,
+     -0.87401
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 2035.0,
+    "s_m": 2057.5,
+    "side": "L",
+    "width_m": 30.76,
+    "source": "authored",
+    "ground_y_draft": -6.521,
+    "i": 308
+   },
+   {
+    "head": [
+     -1354.473,
+     1.818,
+     3111.144
+    ],
+    "base_xz": [
+     -1353.7,
+     3109.518
+    ],
+    "roadward_xz": [
+     -0.42924,
+     0.90319
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 2090.0,
+    "s_m": 2112.5,
+    "side": "R",
+    "width_m": 30.16,
+    "source": "authored",
+    "ground_y_draft": -6.982,
+    "i": 309
+   },
+   {
+    "head": [
+     -1316.222,
+     1.328,
+     3159.99
+    ],
+    "base_xz": [
+     -1316.933,
+     3161.643
+    ],
+    "roadward_xz": [
+     0.39511,
+     -0.91863
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 2145.0,
+    "s_m": 2167.5,
+    "side": "L",
+    "width_m": 29.55,
+    "source": "authored",
+    "ground_y_draft": -7.472,
+    "i": 310
+   },
+   {
+    "head": [
+     -1254.488,
+     0.726,
+     3152.344
+    ],
+    "base_xz": [
+     -1253.918,
+     3150.637
+    ],
+    "roadward_xz": [
+     -0.31649,
+     0.9486
+    ],
+    "piece": "C",
+    "name": "north_mission_gorge",
+    "u_m": 2200.0,
+    "s_m": 2220.0,
+    "side": "R",
+    "width_m": 29.42,
+    "source": "authored",
+    "ground_y_draft": -8.074,
+    "i": 311
+   },
+   {
+    "head": [
+     2.61,
+     116.383,
+     1768.247
+    ],
+    "base_xz": [
+     1.364,
+     1766.948
+    ],
+    "roadward_xz": [
+     0.69255,
+     0.72137
+    ],
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 55.0,
+    "s_m": 1920.0,
+    "side": "L",
+    "width_m": 24.17,
+    "source": "authored",
+    "ground_y_draft": 107.583,
+    "i": 312
+   },
+   {
+    "head": [
+     -21.552,
+     113.866,
+     1822.505
+    ],
+    "base_xz": [
+     -20.306,
+     1823.804
+    ],
+    "roadward_xz": [
+     -0.69215,
+     -0.72175
+    ],
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 110.0,
+    "s_m": 1865.0,
+    "side": "R",
+    "width_m": 24.58,
+    "source": "authored",
+    "ground_y_draft": 105.066,
+    "i": 313
+   },
+   {
+    "head": [
+     -77.032,
+     110.903,
+     1844.041
+    ],
+    "base_xz": [
+     -78.272,
+     1842.737
+    ],
+    "roadward_xz": [
+     0.68899,
+     0.72477
+    ],
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 165.0,
+    "s_m": 1810.0,
+    "side": "L",
+    "width_m": 24.99,
+    "source": "authored",
+    "ground_y_draft": 102.103,
+    "i": 314
+   },
+   {
+    "head": [
+     -96.504,
+     107.636,
+     1899.259
+    ],
+    "base_xz": [
+     -95.005,
+     1900.255
+    ],
+    "roadward_xz": [
+     -0.83299,
+     -0.55328
+    ],
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 220.0,
+    "s_m": 1755.0,
+    "side": "R",
+    "width_m": 25.4,
+    "source": "authored",
+    "ground_y_draft": 98.836,
+    "i": 315
+   },
+   {
+    "head": [
+     -144.05,
+     104.244,
+     1934.697
+    ],
+    "base_xz": [
+     -145.625,
+     1933.826
+    ],
+    "roadward_xz": [
+     0.87497,
+     0.48417
+    ],
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 275.0,
+    "s_m": 1700.0,
+    "side": "L",
+    "width_m": 24.68,
+    "source": "authored",
+    "ground_y_draft": 95.444,
+    "i": 316
+   },
+   {
+    "head": [
+     -150.161,
+     100.87,
+     1993.881
+    ],
+    "base_xz": [
+     -148.567,
+     1994.716
+    ],
+    "roadward_xz": [
+     -0.88571,
+     -0.46424
+    ],
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 330.0,
+    "s_m": 1645.0,
+    "side": "R",
+    "width_m": 23.58,
+    "source": "authored",
+    "ground_y_draft": 92.07,
+    "i": 317
+   },
+   {
+    "head": [
+     -194.235,
+     97.649,
+     2032.937
+    ],
+    "base_xz": [
+     -195.833,
+     2032.109
+    ],
+    "roadward_xz": [
+     0.88811,
+     0.45962
+    ],
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 385.0,
+    "s_m": 1590.0,
+    "side": "L",
+    "width_m": 22.48,
+    "source": "authored",
+    "ground_y_draft": 88.849,
+    "i": 318
+   },
+   {
+    "head": [
+     -201.753,
+     94.542,
+     2090.959
+    ],
+    "base_xz": [
+     -200.153,
+     2091.784
+    ],
+    "roadward_xz": [
+     -0.88876,
+     -0.45838
+    ],
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 440.0,
+    "s_m": 1535.0,
+    "side": "R",
+    "width_m": 21.38,
+    "source": "authored",
+    "ground_y_draft": 85.742,
+    "i": 319
+   },
+   {
+    "head": [
+     -1025.55,
+     13.626,
+     3080.066
+    ],
+    "base_xz": [
+     -1025.03,
+     3081.789
+    ],
+    "roadward_xz": [
+     -0.28874,
+     -0.95741
+    ],
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 1760.0,
+    "s_m": 215.0,
+    "side": "R",
+    "width_m": 21.58,
+    "source": "authored",
+    "ground_y_draft": 4.826,
+    "i": 320
+   },
+   {
+    "head": [
+     -1086.9,
+     9.277,
+     3079.75
+    ],
+    "base_xz": [
+     -1087.698,
+     3078.136
+    ],
+    "roadward_xz": [
+     0.44352,
+     0.89627
+    ],
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 1817.0,
+    "s_m": 157.5,
+    "side": "L",
+    "width_m": 23.98,
+    "source": "authored",
+    "ground_y_draft": 0.477,
+    "i": 321
+   },
+   {
+    "head": [
+     -1123.897,
+     5.718,
+     3123.688
+    ],
+    "base_xz": [
+     -1123.052,
+     3125.277
+    ],
+    "roadward_xz": [
+     -0.4694,
+     -0.88299
+    ],
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 1870.0,
+    "s_m": 105.0,
+    "side": "R",
+    "width_m": 26.16,
+    "source": "authored",
+    "ground_y_draft": -3.082,
+    "i": 322
+   }
+  ],
+  "skipped": [
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 495.0,
+    "side": "L",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 550.0,
+    "side": "R",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 605.0,
+    "side": "L",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 660.0,
+    "side": "R",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 715.0,
+    "side": "L",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 770.0,
+    "side": "R",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 825.0,
+    "side": "L",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 880.0,
+    "side": "R",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 935.0,
+    "side": "L",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 990.0,
+    "side": "R",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 1045.0,
+    "side": "L",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 1100.0,
+    "side": "R",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 1155.0,
+    "side": "L",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 1210.0,
+    "side": "R",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 1265.0,
+    "side": "L",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 1320.0,
+    "side": "R",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 1375.0,
+    "side": "L",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 1430.0,
+    "side": "R",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 1485.0,
+    "side": "L",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 1540.0,
+    "side": "R",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 1595.0,
+    "side": "L",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 1650.0,
+    "side": "R",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   },
+   {
+    "piece": "D",
+    "name": "north_J5_jackson_north#0",
+    "u_m": 1705.0,
+    "side": "L",
+    "source": "authored",
+    "why": [
+     "unlit"
+    ]
+   }
+  ],
+  "per_piece": {
+   "A": {
+    "name": "north_J1_waring#0",
+    "length_m": 935.8,
+    "authored": 16,
+    "osm": 0,
+    "skipped": 0,
+    "unlit": [],
+    "osm_stretches_u": [],
+    "osm_nodes": []
+   },
+   "B": {
+    "name": "north_princess_view",
+    "length_m": 1065.5,
+    "authored": 18,
+    "osm": 0,
+    "skipped": 0,
+    "unlit": [],
+    "osm_stretches_u": [],
+    "osm_nodes": []
+   },
+   "C": {
+    "name": "north_mission_gorge",
+    "length_m": 2233.9,
+    "authored": 40,
+    "osm": 0,
+    "skipped": 0,
+    "unlit": [],
+    "osm_stretches_u": [],
+    "osm_nodes": []
+   },
+   "D": {
+    "name": "north_J5_jackson_north#0",
+    "length_m": 1944.2,
+    "authored": 11,
+    "osm": 0,
+    "skipped": 0,
+    "unlit": [
+     {
+      "s_from": 250.0,
+      "s_to": 1500.0,
+      "why": "EXPANSION-PLAN D4 (Kevin 2026-10-13, defaults): Jackson north's open canyon, stations 250-1500 from J4, stays dark - houses only on its rims; not verified by a Street View night check yet"
+     }
+    ],
+    "osm_stretches_u": [],
+    "osm_nodes": []
+   }
+  },
+  "rules": {
+   "spacing_m": 55.0,
+   "min_gap_m": 25.0,
+   "walk_offset_m": 0.83,
+   "pavement_clear_m": 1.5,
+   "pad_clear_m": 3.0,
+   "stub_clear_m": 10.0,
+   "slide_m": 12.0,
+   "osm_match_m": 15.0,
+   "arm_m": 1.8,
+   "head_over_ground_m": 8.8
+  },
+  "osm_source": {
+   "file": "source/expansion/pipeline__osm_lamps_signals.json",
+   "osm_base": "2026-10-12T18:20:36Z",
+   "nodes_in_file": 30
+  },
+  "pieces": [
+   {
+    "name": "north_J1_waring#0",
+    "id": "A",
+    "n_points": 318
+   },
+   {
+    "name": "north_princess_view",
+    "id": "B",
+    "n_points": 356
+   },
+   {
+    "name": "north_mission_gorge",
+    "id": "C",
+    "n_points": 746
+   },
+   {
+    "name": "north_J5_jackson_north#0",
+    "id": "D",
+    "n_points": 652
+   }
+  ]
+ },
+ "reseated": [
+  {
+   "lamp": 0,
+   "piece": null,
+   "base_xz": [
+    -51.265,
+    -1645.74
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 21.033,
+   "base_y_was": 19.999,
+   "head_y_was": 28.943,
+   "head_y": 29.8326,
+   "moved_m": 0.89,
+   "why": "the pole's base stood +1.03 m from the built ground under it (> 1.0 m); re-seated by the draft's rule, head = ground + 8.8 m"
+  },
+  {
+   "lamp": 32,
+   "piece": null,
+   "base_xz": [
+    -1645.269,
+    -1044.51
+   ],
+   "ground_owner": "TERRAIN",
+   "ground_y": 0.669,
+   "base_y_was": 1.683,
+   "head_y_was": 10.627,
+   "head_y": 9.4691,
+   "moved_m": -1.158,
+   "why": "the pole's base stood -1.01 m from the built ground under it (> 1.0 m); re-seated by the draft's rule, head = ground + 8.8 m"
+  },
+  {
+   "lamp": 113,
+   "piece": null,
+   "base_xz": [
+    -297.474,
+    1523.445
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 88.887,
+   "base_y_was": 87.474,
+   "head_y_was": 96.418,
+   "head_y": 97.6874,
+   "moved_m": 1.269,
+   "why": "the pole's base stood +1.41 m from the built ground under it (> 1.0 m); re-seated by the draft's rule, head = ground + 8.8 m"
+  },
+  {
+   "lamp": 143,
+   "piece": null,
+   "base_xz": [
+    1060.814,
+    1085.796
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 86.49,
+   "base_y_was": 85.1,
+   "head_y_was": 94.044,
+   "head_y": 95.2904,
+   "moved_m": 1.246,
+   "why": "the pole's base stood +1.39 m from the built ground under it (> 1.0 m); re-seated by the draft's rule, head = ground + 8.8 m"
+  },
+  {
+   "lamp": 238,
+   "piece": "A",
+   "base_xz": [
+    -2026.395,
+    646.757
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 20.153,
+   "base_y_was": 19.731,
+   "head_y_was": 28.675,
+   "head_y": 28.9529,
+   "moved_m": 0.278,
+   "why": "the pole's base stood +0.42 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 239,
+   "piece": "A",
+   "base_xz": [
+    -2053.097,
+    714.563
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 15.993,
+   "base_y_was": 15.536,
+   "head_y_was": 24.48,
+   "head_y": 24.7931,
+   "moved_m": 0.313,
+   "why": "the pole's base stood +0.46 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 240,
+   "piece": "A",
+   "base_xz": [
+    -2103.516,
+    724.578
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 13.617,
+   "base_y_was": 13.17,
+   "head_y_was": 22.114,
+   "head_y": 22.4175,
+   "moved_m": 0.303,
+   "why": "the pole's base stood +0.45 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 241,
+   "piece": "A",
+   "base_xz": [
+    -2123.038,
+    783.193
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 11.001,
+   "base_y_was": 10.551,
+   "head_y_was": 19.495,
+   "head_y": 19.8006,
+   "moved_m": 0.306,
+   "why": "the pole's base stood +0.45 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 242,
+   "piece": "A",
+   "base_xz": [
+    -2182.056,
+    801.633
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 9.207,
+   "base_y_was": 8.766,
+   "head_y_was": 17.71,
+   "head_y": 18.007,
+   "moved_m": 0.297,
+   "why": "the pole's base stood +0.44 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 243,
+   "piece": "A",
+   "base_xz": [
+    -2201.246,
+    860.526
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 8.409,
+   "base_y_was": 7.948,
+   "head_y_was": 16.892,
+   "head_y": 17.2094,
+   "moved_m": 0.317,
+   "why": "the pole's base stood +0.46 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 244,
+   "piece": "A",
+   "base_xz": [
+    -2257.726,
+    875.863
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 7.918,
+   "base_y_was": 7.037,
+   "head_y_was": 15.981,
+   "head_y": 16.7179,
+   "moved_m": 0.737,
+   "why": "the pole's base stood +0.88 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 245,
+   "piece": "A",
+   "base_xz": [
+    -2279.618,
+    937.799
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 7.635,
+   "base_y_was": 7.187,
+   "head_y_was": 16.131,
+   "head_y": 16.435,
+   "moved_m": 0.304,
+   "why": "the pole's base stood +0.45 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 246,
+   "piece": "A",
+   "base_xz": [
+    -2339.207,
+    955.467
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 8.082,
+   "base_y_was": 7.612,
+   "head_y_was": 16.556,
+   "head_y": 16.8819,
+   "moved_m": 0.326,
+   "why": "the pole's base stood +0.47 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 247,
+   "piece": "A",
+   "base_xz": [
+    -2361.932,
+    1013.346
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 8.579,
+   "base_y_was": 8.108,
+   "head_y_was": 17.052,
+   "head_y": 17.3793,
+   "moved_m": 0.327,
+   "why": "the pole's base stood +0.47 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 248,
+   "piece": "A",
+   "base_xz": [
+    -2423.213,
+    1017.945
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 8.997,
+   "base_y_was": 8.526,
+   "head_y_was": 17.47,
+   "head_y": 17.7973,
+   "moved_m": 0.327,
+   "why": "the pole's base stood +0.47 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 249,
+   "piece": "A",
+   "base_xz": [
+    -2452.554,
+    1060.199
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 8.51,
+   "base_y_was": 7.526,
+   "head_y_was": 16.47,
+   "head_y": 17.3099,
+   "moved_m": 0.84,
+   "why": "the pole's base stood +0.98 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 250,
+   "piece": "A",
+   "base_xz": [
+    -2523.071,
+    1047.113
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 7.331,
+   "base_y_was": 6.875,
+   "head_y_was": 15.819,
+   "head_y": 16.1315,
+   "moved_m": 0.312,
+   "why": "the pole's base stood +0.46 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 251,
+   "piece": "A",
+   "base_xz": [
+    -2578.171,
+    1073.114
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 6.547,
+   "base_y_was": 6.07,
+   "head_y_was": 15.014,
+   "head_y": 15.3473,
+   "moved_m": 0.333,
+   "why": "the pole's base stood +0.48 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 252,
+   "piece": "A",
+   "base_xz": [
+    -2627.474,
+    1036.525
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 5.571,
+   "base_y_was": 5.105,
+   "head_y_was": 14.049,
+   "head_y": 14.3705,
+   "moved_m": 0.322,
+   "why": "the pole's base stood +0.47 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 253,
+   "piece": "A",
+   "base_xz": [
+    -2688.949,
+    1044.068
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 4.677,
+   "base_y_was": 4.219,
+   "head_y_was": 13.163,
+   "head_y": 13.4772,
+   "moved_m": 0.314,
+   "why": "the pole's base stood +0.46 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 254,
+   "piece": "B",
+   "base_xz": [
+    -2797.001,
+    1034.58
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 1.938,
+   "base_y_was": 1.429,
+   "head_y_was": 10.373,
+   "head_y": 10.738,
+   "moved_m": 0.365,
+   "why": "the pole's base stood +0.51 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 255,
+   "piece": "B",
+   "base_xz": [
+    -2822.994,
+    1098.227
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 0.034,
+   "base_y_was": -0.455,
+   "head_y_was": 8.489,
+   "head_y": 8.8338,
+   "moved_m": 0.345,
+   "why": "the pole's base stood +0.49 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 256,
+   "piece": "B",
+   "base_xz": [
+    -2873.535,
+    1130.138
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -3.475,
+   "base_y_was": -4.224,
+   "head_y_was": 4.72,
+   "head_y": 5.3249,
+   "moved_m": 0.605,
+   "why": "the pole's base stood +0.75 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 257,
+   "piece": "B",
+   "base_xz": [
+    -2866.394,
+    1190.142
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -8.751,
+   "base_y_was": -10.925,
+   "head_y_was": -1.981,
+   "head_y": 0.0492,
+   "moved_m": 2.03,
+   "why": "the pole's base stood +2.17 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 258,
+   "piece": "B",
+   "base_xz": [
+    -2896.135,
+    1241.796
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -14.059,
+   "base_y_was": -14.705,
+   "head_y_was": -5.761,
+   "head_y": -5.2591,
+   "moved_m": 0.502,
+   "why": "the pole's base stood +0.65 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 259,
+   "piece": "B",
+   "base_xz": [
+    -2873.673,
+    1297.882
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -19.232,
+   "base_y_was": -19.792,
+   "head_y_was": -10.848,
+   "head_y": -10.4322,
+   "moved_m": 0.416,
+   "why": "the pole's base stood +0.56 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 260,
+   "piece": "B",
+   "base_xz": [
+    -2905.859,
+    1348.556
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -24.419,
+   "base_y_was": -25.852,
+   "head_y_was": -16.908,
+   "head_y": -15.6188,
+   "moved_m": 1.289,
+   "why": "the pole's base stood +1.43 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 261,
+   "piece": "B",
+   "base_xz": [
+    -2899.556,
+    1409.064
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -29.74,
+   "base_y_was": -30.245,
+   "head_y_was": -21.301,
+   "head_y": -20.9398,
+   "moved_m": 0.361,
+   "why": "the pole's base stood +0.51 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 262,
+   "piece": "B",
+   "base_xz": [
+    -2945.744,
+    1448.383
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -35.281,
+   "base_y_was": -37.102,
+   "head_y_was": -28.158,
+   "head_y": -26.4809,
+   "moved_m": 1.677,
+   "why": "the pole's base stood +1.82 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 263,
+   "piece": "B",
+   "base_xz": [
+    -2945.367,
+    1509.058
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -40.414,
+   "base_y_was": -41.579,
+   "head_y_was": -32.635,
+   "head_y": -31.6142,
+   "moved_m": 1.021,
+   "why": "the pole's base stood +1.16 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 264,
+   "piece": "B",
+   "base_xz": [
+    -2991.549,
+    1548.435
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -45.696,
+   "base_y_was": -46.411,
+   "head_y_was": -37.467,
+   "head_y": -36.8955,
+   "moved_m": 0.572,
+   "why": "the pole's base stood +0.72 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 265,
+   "piece": "B",
+   "base_xz": [
+    -2991.051,
+    1609.125
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -50.915,
+   "base_y_was": -51.638,
+   "head_y_was": -42.694,
+   "head_y": -42.1152,
+   "moved_m": 0.579,
+   "why": "the pole's base stood +0.72 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 266,
+   "piece": "B",
+   "base_xz": [
+    -3035.725,
+    1651.248
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -56.204,
+   "base_y_was": -57.375,
+   "head_y_was": -48.431,
+   "head_y": -47.4038,
+   "moved_m": 1.027,
+   "why": "the pole's base stood +1.17 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 267,
+   "piece": "B",
+   "base_xz": [
+    -3020.302,
+    1710.173
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -60.936,
+   "base_y_was": -61.422,
+   "head_y_was": -52.478,
+   "head_y": -52.1363,
+   "moved_m": 0.342,
+   "why": "the pole's base stood +0.49 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 268,
+   "piece": "B",
+   "base_xz": [
+    -3045.263,
+    1764.621
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -64.054,
+   "base_y_was": -64.449,
+   "head_y_was": -55.505,
+   "head_y": -55.2543,
+   "moved_m": 0.251,
+   "why": "the pole's base stood +0.39 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 269,
+   "piece": "B",
+   "base_xz": [
+    -3014.213,
+    1817.357
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -65.482,
+   "base_y_was": -65.954,
+   "head_y_was": -57.01,
+   "head_y": -56.6815,
+   "moved_m": 0.328,
+   "why": "the pole's base stood +0.47 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 270,
+   "piece": "B",
+   "base_xz": [
+    -3038.066,
+    1874.201
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -66.015,
+   "base_y_was": -66.484,
+   "head_y_was": -57.54,
+   "head_y": -57.2151,
+   "moved_m": 0.325,
+   "why": "the pole's base stood +0.47 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 271,
+   "piece": "B",
+   "base_xz": [
+    -3005.168,
+    1926.28
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -66.484,
+   "base_y_was": -66.945,
+   "head_y_was": -58.001,
+   "head_y": -57.6843,
+   "moved_m": 0.317,
+   "why": "the pole's base stood +0.46 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 272,
+   "piece": "C",
+   "base_xz": [
+    -2966.769,
+    2086.305
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -65.667,
+   "base_y_was": -66.128,
+   "head_y_was": -57.184,
+   "head_y": -56.8667,
+   "moved_m": 0.317,
+   "why": "the pole's base stood +0.46 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 273,
+   "piece": "C",
+   "base_xz": [
+    -2903.469,
+    2075.267
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -64.133,
+   "base_y_was": -64.61,
+   "head_y_was": -55.666,
+   "head_y": -55.3334,
+   "moved_m": 0.333,
+   "why": "the pole's base stood +0.48 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 274,
+   "piece": "C",
+   "base_xz": [
+    -2862.092,
+    2123.808
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -61.972,
+   "base_y_was": -62.467,
+   "head_y_was": -53.523,
+   "head_y": -53.1718,
+   "moved_m": 0.351,
+   "why": "the pole's base stood +0.50 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 275,
+   "piece": "C",
+   "base_xz": [
+    -2800.396,
+    2110.715
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -59.513,
+   "base_y_was": -59.983,
+   "head_y_was": -51.039,
+   "head_y": -50.7125,
+   "moved_m": 0.327,
+   "why": "the pole's base stood +0.47 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 276,
+   "piece": "C",
+   "base_xz": [
+    -2756.024,
+    2155.317
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -56.101,
+   "base_y_was": -56.608,
+   "head_y_was": -47.664,
+   "head_y": -47.3014,
+   "moved_m": 0.363,
+   "why": "the pole's base stood +0.51 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 277,
+   "piece": "C",
+   "base_xz": [
+    -2695.126,
+    2137.102
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -52.458,
+   "base_y_was": -52.982,
+   "head_y_was": -44.038,
+   "head_y": -43.6578,
+   "moved_m": 0.38,
+   "why": "the pole's base stood +0.52 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 278,
+   "piece": "C",
+   "base_xz": [
+    -2647.227,
+    2177.804
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -48.55,
+   "base_y_was": -49.013,
+   "head_y_was": -40.069,
+   "head_y": -39.7503,
+   "moved_m": 0.319,
+   "why": "the pole's base stood +0.46 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 279,
+   "piece": "C",
+   "base_xz": [
+    -2587.89,
+    2156.153
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -44.694,
+   "base_y_was": -46.959,
+   "head_y_was": -38.015,
+   "head_y": -35.8943,
+   "moved_m": 2.121,
+   "why": "the pole's base stood +2.26 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 280,
+   "piece": "C",
+   "base_xz": [
+    -2537.332,
+    2193.402
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -40.968,
+   "base_y_was": -41.405,
+   "head_y_was": -32.461,
+   "head_y": -32.1681,
+   "moved_m": 0.293,
+   "why": "the pole's base stood +0.44 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 281,
+   "piece": "C",
+   "base_xz": [
+    -2479.178,
+    2169.437
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -37.081,
+   "base_y_was": -37.826,
+   "head_y_was": -28.882,
+   "head_y": -28.2813,
+   "moved_m": 0.601,
+   "why": "the pole's base stood +0.74 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 282,
+   "piece": "C",
+   "base_xz": [
+    -2427.371,
+    2204.411
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -33.146,
+   "base_y_was": -33.641,
+   "head_y_was": -24.697,
+   "head_y": -24.3456,
+   "moved_m": 0.351,
+   "why": "the pole's base stood +0.50 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 283,
+   "piece": "C",
+   "base_xz": [
+    -2369.818,
+    2180.3
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -29.261,
+   "base_y_was": -30.797,
+   "head_y_was": -21.853,
+   "head_y": -20.461,
+   "moved_m": 1.392,
+   "why": "the pole's base stood +1.54 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 284,
+   "piece": "C",
+   "base_xz": [
+    -2318.182,
+    2215.229
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -25.348,
+   "base_y_was": -25.872,
+   "head_y_was": -16.928,
+   "head_y": -16.5477,
+   "moved_m": 0.38,
+   "why": "the pole's base stood +0.52 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 285,
+   "piece": "C",
+   "base_xz": [
+    -2259.246,
+    2195.484
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -21.548,
+   "base_y_was": -22.169,
+   "head_y_was": -13.225,
+   "head_y": -12.748,
+   "moved_m": 0.477,
+   "why": "the pole's base stood +0.62 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 286,
+   "piece": "C",
+   "base_xz": [
+    -2214.593,
+    2239.433
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -17.705,
+   "base_y_was": -18.178,
+   "head_y_was": -9.234,
+   "head_y": -8.9049,
+   "moved_m": 0.329,
+   "why": "the pole's base stood +0.47 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 287,
+   "piece": "C",
+   "base_xz": [
+    -2152.93,
+    2231.426
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -13.904,
+   "base_y_was": -14.42,
+   "head_y_was": -5.476,
+   "head_y": -5.1039,
+   "moved_m": 0.372,
+   "why": "the pole's base stood +0.52 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 288,
+   "piece": "C",
+   "base_xz": [
+    -2116.11,
+    2282.659
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -9.954,
+   "base_y_was": -11.356,
+   "head_y_was": -2.412,
+   "head_y": -1.1538,
+   "moved_m": 1.258,
+   "why": "the pole's base stood +1.40 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 289,
+   "piece": "C",
+   "base_xz": [
+    -2053.527,
+    2287.314
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -6.352,
+   "base_y_was": -6.836,
+   "head_y_was": 2.108,
+   "head_y": 2.4478,
+   "moved_m": 0.34,
+   "why": "the pole's base stood +0.48 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 290,
+   "piece": "C",
+   "base_xz": [
+    -2028.729,
+    2344.995
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -2.544,
+   "base_y_was": -3.428,
+   "head_y_was": 5.516,
+   "head_y": 6.2565,
+   "moved_m": 0.74,
+   "why": "the pole's base stood +0.88 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 291,
+   "piece": "C",
+   "base_xz": [
+    -1965.93,
+    2357.422
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 1.442,
+   "base_y_was": 0.892,
+   "head_y_was": 9.836,
+   "head_y": 10.242,
+   "moved_m": 0.406,
+   "why": "the pole's base stood +0.55 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 292,
+   "piece": "C",
+   "base_xz": [
+    -1953.546,
+    2419.783
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 5.191,
+   "base_y_was": 4.749,
+   "head_y_was": 13.693,
+   "head_y": 13.9908,
+   "moved_m": 0.298,
+   "why": "the pole's base stood +0.44 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 293,
+   "piece": "C",
+   "base_xz": [
+    -1893.924,
+    2444.853
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 8.38,
+   "base_y_was": 7.885,
+   "head_y_was": 16.829,
+   "head_y": 17.1801,
+   "moved_m": 0.351,
+   "why": "the pole's base stood +0.50 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 294,
+   "piece": "C",
+   "base_xz": [
+    -1894.248,
+    2509.744
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 10.787,
+   "base_y_was": 10.308,
+   "head_y_was": 19.252,
+   "head_y": 19.5874,
+   "moved_m": 0.335,
+   "why": "the pole's base stood +0.48 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 295,
+   "piece": "C",
+   "base_xz": [
+    -1835.195,
+    2540.279
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 12.578,
+   "base_y_was": 12.098,
+   "head_y_was": 21.042,
+   "head_y": 21.3781,
+   "moved_m": 0.336,
+   "why": "the pole's base stood +0.48 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 296,
+   "piece": "C",
+   "base_xz": [
+    -1836.111,
+    2603.199
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 13.562,
+   "base_y_was": 13.002,
+   "head_y_was": 21.946,
+   "head_y": 22.362,
+   "moved_m": 0.416,
+   "why": "the pole's base stood +0.56 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 297,
+   "piece": "C",
+   "base_xz": [
+    -1778.394,
+    2631.951
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 13.967,
+   "base_y_was": 13.535,
+   "head_y_was": 22.479,
+   "head_y": 22.7666,
+   "moved_m": 0.288,
+   "why": "the pole's base stood +0.43 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 298,
+   "piece": "C",
+   "base_xz": [
+    -1778.008,
+    2696.306
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 13.676,
+   "base_y_was": 13.215,
+   "head_y_was": 22.159,
+   "head_y": 22.4756,
+   "moved_m": 0.317,
+   "why": "the pole's base stood +0.46 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 299,
+   "piece": "C",
+   "base_xz": [
+    -1721.269,
+    2726.001
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 12.663,
+   "base_y_was": 12.205,
+   "head_y_was": 21.149,
+   "head_y": 21.4627,
+   "moved_m": 0.314,
+   "why": "the pole's base stood +0.46 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 300,
+   "piece": "C",
+   "base_xz": [
+    -1719.988,
+    2789.831
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 11.004,
+   "base_y_was": 10.54,
+   "head_y_was": 19.484,
+   "head_y": 19.8042,
+   "moved_m": 0.32,
+   "why": "the pole's base stood +0.46 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 301,
+   "piece": "C",
+   "base_xz": [
+    -1663.957,
+    2819.817
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 8.626,
+   "base_y_was": 8.224,
+   "head_y_was": 17.168,
+   "head_y": 17.4261,
+   "moved_m": 0.258,
+   "why": "the pole's base stood +0.40 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 302,
+   "piece": "C",
+   "base_xz": [
+    -1660.747,
+    2883.59
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 5.695,
+   "base_y_was": 5.037,
+   "head_y_was": 13.981,
+   "head_y": 14.4946,
+   "moved_m": 0.514,
+   "why": "the pole's base stood +0.66 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 303,
+   "piece": "C",
+   "base_xz": [
+    -1603.08,
+    2909.056
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 2.67,
+   "base_y_was": 2.193,
+   "head_y_was": 11.137,
+   "head_y": 11.47,
+   "moved_m": 0.333,
+   "why": "the pole's base stood +0.48 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 304,
+   "piece": "C",
+   "base_xz": [
+    -1591.786,
+    2971.947
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -0.251,
+   "base_y_was": -0.757,
+   "head_y_was": 8.187,
+   "head_y": 8.5489,
+   "moved_m": 0.362,
+   "why": "the pole's base stood +0.51 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 305,
+   "piece": "C",
+   "base_xz": [
+    -1529.982,
+    2988.272
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -2.632,
+   "base_y_was": -3.108,
+   "head_y_was": 5.836,
+   "head_y": 6.1685,
+   "moved_m": 0.332,
+   "why": "the pole's base stood +0.48 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 306,
+   "piece": "C",
+   "base_xz": [
+    -1510.381,
+    3048.723
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -4.418,
+   "base_y_was": -4.875,
+   "head_y_was": 4.069,
+   "head_y": 4.3819,
+   "moved_m": 0.313,
+   "why": "the pole's base stood +0.46 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 307,
+   "piece": "C",
+   "base_xz": [
+    -1447.083,
+    3057.013
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -5.595,
+   "base_y_was": -6.226,
+   "head_y_was": 2.718,
+   "head_y": 3.2046,
+   "moved_m": 0.487,
+   "why": "the pole's base stood +0.63 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 308,
+   "piece": "C",
+   "base_xz": [
+    -1416.92,
+    3112.175
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -6.213,
+   "base_y_was": -6.665,
+   "head_y_was": 2.279,
+   "head_y": 2.5867,
+   "moved_m": 0.308,
+   "why": "the pole's base stood +0.45 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 309,
+   "piece": "C",
+   "base_xz": [
+    -1353.7,
+    3109.518
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -6.663,
+   "base_y_was": -7.126,
+   "head_y_was": 1.818,
+   "head_y": 2.1374,
+   "moved_m": 0.319,
+   "why": "the pole's base stood +0.46 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 310,
+   "piece": "C",
+   "base_xz": [
+    -1316.933,
+    3161.644
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -7.144,
+   "base_y_was": -7.616,
+   "head_y_was": 1.328,
+   "head_y": 1.656,
+   "moved_m": 0.328,
+   "why": "the pole's base stood +0.47 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 311,
+   "piece": "C",
+   "base_xz": [
+    -1253.918,
+    3150.637
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -7.756,
+   "base_y_was": -8.218,
+   "head_y_was": 0.726,
+   "head_y": 1.0443,
+   "moved_m": 0.318,
+   "why": "the pole's base stood +0.46 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 312,
+   "piece": "D",
+   "base_xz": [
+    1.363,
+    1766.949
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 107.84,
+   "base_y_was": 107.439,
+   "head_y_was": 116.383,
+   "head_y": 116.6404,
+   "moved_m": 0.257,
+   "why": "the pole's base stood +0.40 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 313,
+   "piece": "D",
+   "base_xz": [
+    -20.306,
+    1823.804
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 105.4,
+   "base_y_was": 104.922,
+   "head_y_was": 113.866,
+   "head_y": 114.1999,
+   "moved_m": 0.334,
+   "why": "the pole's base stood +0.48 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 314,
+   "piece": "D",
+   "base_xz": [
+    -78.272,
+    1842.736
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 102.359,
+   "base_y_was": 101.959,
+   "head_y_was": 110.903,
+   "head_y": 111.1591,
+   "moved_m": 0.256,
+   "why": "the pole's base stood +0.40 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 315,
+   "piece": "D",
+   "base_xz": [
+    -95.005,
+    1900.255
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 99.216,
+   "base_y_was": 98.692,
+   "head_y_was": 107.636,
+   "head_y": 108.0163,
+   "moved_m": 0.38,
+   "why": "the pole's base stood +0.52 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 316,
+   "piece": "D",
+   "base_xz": [
+    -145.625,
+    1933.825
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 95.725,
+   "base_y_was": 95.3,
+   "head_y_was": 104.244,
+   "head_y": 104.5251,
+   "moved_m": 0.281,
+   "why": "the pole's base stood +0.43 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 317,
+   "piece": "D",
+   "base_xz": [
+    -148.567,
+    1994.717
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 92.394,
+   "base_y_was": 91.926,
+   "head_y_was": 100.87,
+   "head_y": 101.1939,
+   "moved_m": 0.324,
+   "why": "the pole's base stood +0.47 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 318,
+   "piece": "D",
+   "base_xz": [
+    -195.834,
+    2032.11
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 89.156,
+   "base_y_was": 88.705,
+   "head_y_was": 97.649,
+   "head_y": 97.9562,
+   "moved_m": 0.307,
+   "why": "the pole's base stood +0.45 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 319,
+   "piece": "D",
+   "base_xz": [
+    -200.153,
+    2091.784
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 86.065,
+   "base_y_was": 85.598,
+   "head_y_was": 94.542,
+   "head_y": 94.8653,
+   "moved_m": 0.323,
+   "why": "the pole's base stood +0.47 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 320,
+   "piece": "D",
+   "base_xz": [
+    -1025.03,
+    3081.789
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 5.243,
+   "base_y_was": 4.682,
+   "head_y_was": 13.626,
+   "head_y": 14.0426,
+   "moved_m": 0.417,
+   "why": "the pole's base stood +0.56 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 321,
+   "piece": "D",
+   "base_xz": [
+    -1087.698,
+    3078.137
+   ],
+   "ground_owner": "CURB",
+   "ground_y": 0.987,
+   "base_y_was": 0.333,
+   "head_y_was": 9.277,
+   "head_y": 9.7867,
+   "moved_m": 0.51,
+   "why": "the pole's base stood +0.65 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  },
+  {
+   "lamp": 322,
+   "piece": "D",
+   "base_xz": [
+    -1123.052,
+    3125.277
+   ],
+   "ground_owner": "CURB",
+   "ground_y": -2.774,
+   "base_y_was": -3.226,
+   "head_y_was": 5.718,
+   "head_y": 6.0259,
+   "moved_m": 0.308,
+   "why": "the pole's base stood +0.45 m from the built ground under it (> 0.0 m); re-seated by the draft's rule, head = ground + 8.8 m \u2014 a new post of this build, seated on the built walk"
+  }
+ ],
+ "seat_check": {
+  "rule": "|built ground - pole base| <= 1.0 m after the author stage; the model's footing (pole_bury_m) is by design and never counted",
+  "lamps": 323,
+  "reseated": 89,
+  "base_vs_ground_m": {
+   "min": -0.914,
+   "max": 0.983,
+   "median": 0.199
+  },
+  "footprint_on_road": 0,
+  "wall_clear_min_m": 0.667,
+  "rows": [
+   {
+    "lamp": 0,
+    "base_xz": [
+     -51.265,
+     -1645.74
+    ],
+    "piece": null,
+    "ground_y": 21.033,
+    "ground_owner": "CURB",
+    "base_y": 20.889,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 18.389,
+    "earth_y": 20.318,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 1,
+    "base_xz": [
+     -83.79,
+     -1599.653
+    ],
+    "piece": null,
+    "ground_y": 16.833,
+    "ground_owner": "CURB",
+    "base_y": 16.411,
+    "base_vs_ground_m": 0.422,
+    "footprint_on_road": 0,
+    "foot_y": 13.911,
+    "earth_y": 16.553,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 2,
+    "base_xz": [
+     -140.243,
+     -1592.77
+    ],
+    "piece": null,
+    "ground_y": 15.708,
+    "ground_owner": "CURB",
+    "base_y": 15.516,
+    "base_vs_ground_m": 0.192,
+    "footprint_on_road": 0,
+    "foot_y": 13.016,
+    "earth_y": 15.661,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 3,
+    "base_xz": [
+     -184.564,
+     -1551.989
+    ],
+    "piece": null,
+    "ground_y": 15.072,
+    "ground_owner": "CURB",
+    "base_y": 14.862,
+    "base_vs_ground_m": 0.21,
+    "footprint_on_road": 0,
+    "foot_y": 12.362,
+    "earth_y": 15.007,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 4,
+    "base_xz": [
+     -241.596,
+     -1541.672
+    ],
+    "piece": null,
+    "ground_y": 14.596,
+    "ground_owner": "CURB",
+    "base_y": 14.53,
+    "base_vs_ground_m": 0.066,
+    "footprint_on_road": 0,
+    "foot_y": 12.03,
+    "earth_y": 14.532,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 5,
+    "base_xz": [
+     -251.665,
+     -1482.451
+    ],
+    "piece": null,
+    "ground_y": 14.268,
+    "ground_owner": "CURB",
+    "base_y": 14.061,
+    "base_vs_ground_m": 0.207,
+    "footprint_on_road": 0,
+    "foot_y": 11.561,
+    "earth_y": 14.205,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 6,
+    "base_xz": [
+     -288.878,
+     -1442.296
+    ],
+    "piece": null,
+    "ground_y": 13.967,
+    "ground_owner": "CURB",
+    "base_y": 13.766,
+    "base_vs_ground_m": 0.201,
+    "footprint_on_road": 0,
+    "foot_y": 11.266,
+    "earth_y": 13.908,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 7,
+    "base_xz": [
+     -324.758,
+     -1397.273
+    ],
+    "piece": null,
+    "ground_y": 13.542,
+    "ground_owner": "CURB",
+    "base_y": 13.326,
+    "base_vs_ground_m": 0.216,
+    "footprint_on_road": 0,
+    "foot_y": 10.826,
+    "earth_y": 13.473,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 8,
+    "base_xz": [
+     -381.465,
+     -1391.642
+    ],
+    "piece": null,
+    "ground_y": 13.049,
+    "ground_owner": "CURB",
+    "base_y": 12.842,
+    "base_vs_ground_m": 0.207,
+    "footprint_on_road": 0,
+    "foot_y": 10.342,
+    "earth_y": 12.985,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 9,
+    "base_xz": [
+     -424.689,
+     -1353.958
+    ],
+    "piece": null,
+    "ground_y": 12.53,
+    "ground_owner": "CURB",
+    "base_y": 12.305,
+    "base_vs_ground_m": 0.225,
+    "footprint_on_road": 0,
+    "foot_y": 9.805,
+    "earth_y": 12.477,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 10,
+    "base_xz": [
+     -481.675,
+     -1353.156
+    ],
+    "piece": null,
+    "ground_y": 11.982,
+    "ground_owner": "CURB",
+    "base_y": 11.789,
+    "base_vs_ground_m": 0.193,
+    "footprint_on_road": 0,
+    "foot_y": 9.289,
+    "earth_y": 11.933,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 11,
+    "base_xz": [
+     -530.777,
+     -1318.54
+    ],
+    "piece": null,
+    "ground_y": 11.408,
+    "ground_owner": "CURB",
+    "base_y": 11.197,
+    "base_vs_ground_m": 0.211,
+    "footprint_on_road": 0,
+    "foot_y": 8.697,
+    "earth_y": 11.34,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 12,
+    "base_xz": [
+     -587.735,
+     -1323.006
+    ],
+    "piece": null,
+    "ground_y": 10.825,
+    "ground_owner": "CURB",
+    "base_y": 10.628,
+    "base_vs_ground_m": 0.197,
+    "footprint_on_road": 0,
+    "foot_y": 8.128,
+    "earth_y": 10.771,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 13,
+    "base_xz": [
+     -636.561,
+     -1293.308
+    ],
+    "piece": null,
+    "ground_y": 10.252,
+    "ground_owner": "CURB",
+    "base_y": 10.056,
+    "base_vs_ground_m": 0.196,
+    "footprint_on_road": 0,
+    "foot_y": 7.556,
+    "earth_y": 10.198,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 14,
+    "base_xz": [
+     -696.314,
+     -1299.307
+    ],
+    "piece": null,
+    "ground_y": 9.578,
+    "ground_owner": "CURB",
+    "base_y": 9.379,
+    "base_vs_ground_m": 0.199,
+    "footprint_on_road": 0,
+    "foot_y": 6.879,
+    "earth_y": 9.523,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 15,
+    "base_xz": [
+     -745.442,
+     -1269.846
+    ],
+    "piece": null,
+    "ground_y": 8.973,
+    "ground_owner": "CURB",
+    "base_y": 8.775,
+    "base_vs_ground_m": 0.198,
+    "footprint_on_road": 0,
+    "foot_y": 6.275,
+    "earth_y": 8.924,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 16,
+    "base_xz": [
+     -802.106,
+     -1277.775
+    ],
+    "piece": null,
+    "ground_y": 8.458,
+    "ground_owner": "CURB",
+    "base_y": 8.259,
+    "base_vs_ground_m": 0.199,
+    "footprint_on_road": 0,
+    "foot_y": 5.759,
+    "earth_y": 8.403,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 17,
+    "base_xz": [
+     -854.621,
+     -1248.634
+    ],
+    "piece": null,
+    "ground_y": 7.974,
+    "ground_owner": "CURB",
+    "base_y": 7.774,
+    "base_vs_ground_m": 0.2,
+    "footprint_on_road": 0,
+    "foot_y": 5.274,
+    "earth_y": 7.919,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 18,
+    "base_xz": [
+     -911.238,
+     -1256.642
+    ],
+    "piece": null,
+    "ground_y": 7.611,
+    "ground_owner": "CURB",
+    "base_y": 7.408,
+    "base_vs_ground_m": 0.203,
+    "footprint_on_road": 0,
+    "foot_y": 4.908,
+    "earth_y": 7.552,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 19,
+    "base_xz": [
+     -960.885,
+     -1228.228
+    ],
+    "piece": null,
+    "ground_y": 7.278,
+    "ground_owner": "CURB",
+    "base_y": 7.08,
+    "base_vs_ground_m": 0.198,
+    "footprint_on_road": 0,
+    "foot_y": 4.58,
+    "earth_y": 7.224,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 20,
+    "base_xz": [
+     -1021.364,
+     -1233.508
+    ],
+    "piece": null,
+    "ground_y": 6.97,
+    "ground_owner": "CURB",
+    "base_y": 6.771,
+    "base_vs_ground_m": 0.199,
+    "footprint_on_road": 0,
+    "foot_y": 4.271,
+    "earth_y": 6.916,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 21,
+    "base_xz": [
+     -1065.408,
+     -1195.435
+    ],
+    "piece": null,
+    "ground_y": 7.296,
+    "ground_owner": "CURB",
+    "base_y": 7.081,
+    "base_vs_ground_m": 0.215,
+    "footprint_on_road": 0,
+    "foot_y": 4.581,
+    "earth_y": 7.219,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 22,
+    "base_xz": [
+     -1122.972,
+     -1199.579
+    ],
+    "piece": null,
+    "ground_y": 7.288,
+    "ground_owner": "CURB",
+    "base_y": 7.092,
+    "base_vs_ground_m": 0.196,
+    "footprint_on_road": 0,
+    "foot_y": 4.592,
+    "earth_y": 7.236,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 23,
+    "base_xz": [
+     -1171.614,
+     -1163.542
+    ],
+    "piece": null,
+    "ground_y": 6.76,
+    "ground_owner": "CURB",
+    "base_y": 6.562,
+    "base_vs_ground_m": 0.198,
+    "footprint_on_road": 0,
+    "foot_y": 4.062,
+    "earth_y": 6.708,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 24,
+    "base_xz": [
+     -1229.18,
+     -1168.095
+    ],
+    "piece": null,
+    "ground_y": 6.193,
+    "ground_owner": "CURB",
+    "base_y": 5.989,
+    "base_vs_ground_m": 0.204,
+    "footprint_on_road": 0,
+    "foot_y": 3.489,
+    "earth_y": 6.128,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 25,
+    "base_xz": [
+     -1275.73,
+     -1134.977
+    ],
+    "piece": null,
+    "ground_y": 5.704,
+    "ground_owner": "CURB",
+    "base_y": 5.529,
+    "base_vs_ground_m": 0.175,
+    "footprint_on_road": 0,
+    "foot_y": 3.029,
+    "earth_y": 5.648,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 26,
+    "base_xz": [
+     -1335.649,
+     -1135.117
+    ],
+    "piece": null,
+    "ground_y": 5.207,
+    "ground_owner": "CURB",
+    "base_y": 4.995,
+    "base_vs_ground_m": 0.212,
+    "footprint_on_road": 0,
+    "foot_y": 2.495,
+    "earth_y": 5.139,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 27,
+    "base_xz": [
+     -1381.281,
+     -1100.64
+    ],
+    "piece": null,
+    "ground_y": 4.656,
+    "ground_owner": "CURB",
+    "base_y": 4.464,
+    "base_vs_ground_m": 0.192,
+    "footprint_on_road": 0,
+    "foot_y": 1.964,
+    "earth_y": 4.608,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 28,
+    "base_xz": [
+     -1438.699,
+     -1100.838
+    ],
+    "piece": null,
+    "ground_y": 3.884,
+    "ground_owner": "CURB",
+    "base_y": 3.688,
+    "base_vs_ground_m": 0.196,
+    "footprint_on_road": 0,
+    "foot_y": 1.188,
+    "earth_y": 3.833,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 29,
+    "base_xz": [
+     -1480.571,
+     -1061.578
+    ],
+    "piece": null,
+    "ground_y": 3.071,
+    "ground_owner": "CURB",
+    "base_y": 2.869,
+    "base_vs_ground_m": 0.202,
+    "footprint_on_road": 0,
+    "foot_y": 0.369,
+    "earth_y": 3.017,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 30,
+    "base_xz": [
+     -1540.34,
+     -1059.19
+    ],
+    "piece": null,
+    "ground_y": 2.776,
+    "ground_owner": "TERRAIN",
+    "base_y": 2.605,
+    "base_vs_ground_m": 0.171,
+    "footprint_on_road": 0,
+    "foot_y": 0.105,
+    "earth_y": 2.776,
+    "wall_clear_m": 0.684
+   },
+   {
+    "lamp": 31,
+    "base_xz": [
+     -1589.699,
+     -1030.737
+    ],
+    "piece": null,
+    "ground_y": 2.389,
+    "ground_owner": "CURB",
+    "base_y": 2.19,
+    "base_vs_ground_m": 0.199,
+    "footprint_on_road": 0,
+    "foot_y": -0.31,
+    "earth_y": 2.334,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 32,
+    "base_xz": [
+     -1645.269,
+     -1044.51
+    ],
+    "piece": null,
+    "ground_y": 0.669,
+    "ground_owner": "TERRAIN",
+    "base_y": 0.525,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -1.975,
+    "earth_y": 0.669,
+    "wall_clear_m": 0.683
+   },
+   {
+    "lamp": 33,
+    "base_xz": [
+     -1702.286,
+     -1025.596
+    ],
+    "piece": null,
+    "ground_y": 1.287,
+    "ground_owner": "CURB",
+    "base_y": 1.086,
+    "base_vs_ground_m": 0.201,
+    "footprint_on_road": 0,
+    "foot_y": -1.414,
+    "earth_y": 1.231,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 34,
+    "base_xz": [
+     -1754.72,
+     -1049.36
+    ],
+    "piece": null,
+    "ground_y": -0.346,
+    "ground_owner": "TERRAIN",
+    "base_y": 0.568,
+    "base_vs_ground_m": -0.914,
+    "footprint_on_road": 0,
+    "foot_y": -1.932,
+    "earth_y": -0.346,
+    "wall_clear_m": 0.68
+   },
+   {
+    "lamp": 35,
+    "base_xz": [
+     -1811.788,
+     -1037.217
+    ],
+    "piece": null,
+    "ground_y": 0.281,
+    "ground_owner": "CURB",
+    "base_y": -0.066,
+    "base_vs_ground_m": 0.347,
+    "footprint_on_road": 0,
+    "foot_y": -2.566,
+    "earth_y": 0.088,
+    "wall_clear_m": 6.961
+   },
+   {
+    "lamp": 36,
+    "base_xz": [
+     -1846.126,
+     -1085.3
+    ],
+    "piece": null,
+    "ground_y": 0.136,
+    "ground_owner": "CURB",
+    "base_y": -0.071,
+    "base_vs_ground_m": 0.207,
+    "footprint_on_road": 0,
+    "foot_y": -2.571,
+    "earth_y": 0.078,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 37,
+    "base_xz": [
+     -1893.494,
+     -1116.985
+    ],
+    "piece": null,
+    "ground_y": 1.442,
+    "ground_owner": "CURB",
+    "base_y": 0.725,
+    "base_vs_ground_m": 0.717,
+    "footprint_on_road": 0,
+    "foot_y": -1.775,
+    "earth_y": 0.931,
+    "wall_clear_m": 3.012
+   },
+   {
+    "lamp": 38,
+    "base_xz": [
+     -1909.16,
+     -1171.215
+    ],
+    "piece": null,
+    "ground_y": 3.901,
+    "ground_owner": "CURB",
+    "base_y": 3.653,
+    "base_vs_ground_m": 0.248,
+    "footprint_on_road": 0,
+    "foot_y": 1.153,
+    "earth_y": 3.879,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 39,
+    "base_xz": [
+     -1946.695,
+     -1216.974
+    ],
+    "piece": null,
+    "ground_y": 6.791,
+    "ground_owner": "TERRAIN",
+    "base_y": 6.574,
+    "base_vs_ground_m": 0.217,
+    "footprint_on_road": 0,
+    "foot_y": 4.074,
+    "earth_y": 6.791,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 40,
+    "base_xz": [
+     -1943.815,
+     -1275.261
+    ],
+    "piece": null,
+    "ground_y": 9.18,
+    "ground_owner": "CURB",
+    "base_y": 8.912,
+    "base_vs_ground_m": 0.268,
+    "footprint_on_road": 0,
+    "foot_y": 6.412,
+    "earth_y": 9.057,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 41,
+    "base_xz": [
+     -1974.625,
+     -1267.845
+    ],
+    "piece": null,
+    "ground_y": 10.238,
+    "ground_owner": "CURB",
+    "base_y": 9.255,
+    "base_vs_ground_m": 0.983,
+    "footprint_on_road": 0,
+    "foot_y": 6.755,
+    "earth_y": 9.556,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 42,
+    "base_xz": [
+     -1980.354,
+     -1207.348
+    ],
+    "piece": null,
+    "ground_y": 7.411,
+    "ground_owner": "CURB",
+    "base_y": 7.205,
+    "base_vs_ground_m": 0.206,
+    "footprint_on_road": 0,
+    "foot_y": 4.705,
+    "earth_y": 7.317,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 43,
+    "base_xz": [
+     -1817.24,
+     -920.091
+    ],
+    "piece": null,
+    "ground_y": 12.998,
+    "ground_owner": "TERRAIN",
+    "base_y": 12.673,
+    "base_vs_ground_m": 0.325,
+    "footprint_on_road": 0,
+    "foot_y": 10.173,
+    "earth_y": 12.998,
+    "wall_clear_m": 0.667
+   },
+   {
+    "lamp": 44,
+    "base_xz": [
+     -1760.43,
+     -894.564
+    ],
+    "piece": null,
+    "ground_y": 15.18,
+    "ground_owner": "CURB",
+    "base_y": 14.992,
+    "base_vs_ground_m": 0.188,
+    "footprint_on_road": 0,
+    "foot_y": 12.492,
+    "earth_y": 15.135,
+    "wall_clear_m": 2.816
+   },
+   {
+    "lamp": 45,
+    "base_xz": [
+     -1736.544,
+     -837.221
+    ],
+    "piece": null,
+    "ground_y": 17.671,
+    "ground_owner": "TERRAIN",
+    "base_y": 17.519,
+    "base_vs_ground_m": 0.152,
+    "footprint_on_road": 0,
+    "foot_y": 15.019,
+    "earth_y": 17.671,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 46,
+    "base_xz": [
+     -1676.752,
+     -825.143
+    ],
+    "piece": null,
+    "ground_y": 20.593,
+    "ground_owner": "CURB",
+    "base_y": 20.178,
+    "base_vs_ground_m": 0.415,
+    "footprint_on_road": 0,
+    "foot_y": 17.678,
+    "earth_y": 20.107,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 47,
+    "base_xz": [
+     -1652.389,
+     -769.153
+    ],
+    "piece": null,
+    "ground_y": 23.864,
+    "ground_owner": "CURB",
+    "base_y": 23.632,
+    "base_vs_ground_m": 0.232,
+    "footprint_on_road": 0,
+    "foot_y": 21.132,
+    "earth_y": 23.778,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 48,
+    "base_xz": [
+     -1589.9,
+     -760.675
+    ],
+    "piece": null,
+    "ground_y": 27.229,
+    "ground_owner": "CURB",
+    "base_y": 26.96,
+    "base_vs_ground_m": 0.269,
+    "footprint_on_road": 0,
+    "foot_y": 24.46,
+    "earth_y": 27.091,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 49,
+    "base_xz": [
+     -1560.278,
+     -705.412
+    ],
+    "piece": null,
+    "ground_y": 30.315,
+    "ground_owner": "CURB",
+    "base_y": 30.098,
+    "base_vs_ground_m": 0.217,
+    "footprint_on_road": 0,
+    "foot_y": 27.598,
+    "earth_y": 30.225,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 50,
+    "base_xz": [
+     -1494.891,
+     -701.56
+    ],
+    "piece": null,
+    "ground_y": 33.511,
+    "ground_owner": "CURB",
+    "base_y": 32.954,
+    "base_vs_ground_m": 0.557,
+    "footprint_on_road": 0,
+    "foot_y": 30.454,
+    "earth_y": 33.095,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 51,
+    "base_xz": [
+     -1481.442,
+     -637.784
+    ],
+    "piece": null,
+    "ground_y": 36.819,
+    "ground_owner": "CURB",
+    "base_y": 36.593,
+    "base_vs_ground_m": 0.226,
+    "footprint_on_road": 0,
+    "foot_y": 34.093,
+    "earth_y": 36.738,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 52,
+    "base_xz": [
+     -1427.933,
+     -605.615
+    ],
+    "piece": null,
+    "ground_y": 39.429,
+    "ground_owner": "CURB",
+    "base_y": 39.212,
+    "base_vs_ground_m": 0.217,
+    "footprint_on_road": 0,
+    "foot_y": 36.712,
+    "earth_y": 39.37,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 53,
+    "base_xz": [
+     -1447.2,
+     -531.8
+    ],
+    "piece": null,
+    "ground_y": 42.473,
+    "ground_owner": "CURB",
+    "base_y": 42.329,
+    "base_vs_ground_m": 0.144,
+    "footprint_on_road": 0,
+    "foot_y": 39.829,
+    "earth_y": 42.096,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 54,
+    "base_xz": [
+     -1416.546,
+     -487.905
+    ],
+    "piece": null,
+    "ground_y": 45.29,
+    "ground_owner": "CURB",
+    "base_y": 44.946,
+    "base_vs_ground_m": 0.344,
+    "footprint_on_road": 0,
+    "foot_y": 42.446,
+    "earth_y": 45.09,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 55,
+    "base_xz": [
+     -1457.974,
+     -440.786
+    ],
+    "piece": null,
+    "ground_y": 50.044,
+    "ground_owner": "CURB",
+    "base_y": 49.447,
+    "base_vs_ground_m": 0.597,
+    "footprint_on_road": 0,
+    "foot_y": 46.947,
+    "earth_y": 49.631,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 56,
+    "base_xz": [
+     -1452.532,
+     -379.618
+    ],
+    "piece": null,
+    "ground_y": 54.558,
+    "ground_owner": "CURB",
+    "base_y": 54.179,
+    "base_vs_ground_m": 0.379,
+    "footprint_on_road": 0,
+    "foot_y": 51.679,
+    "earth_y": 54.312,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 57,
+    "base_xz": [
+     -1511.976,
+     -350.545
+    ],
+    "piece": null,
+    "ground_y": 58.425,
+    "ground_owner": "CURB",
+    "base_y": 58.148,
+    "base_vs_ground_m": 0.277,
+    "footprint_on_road": 0,
+    "foot_y": 55.648,
+    "earth_y": 58.244,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 58,
+    "base_xz": [
+     -1517.139,
+     -288.132
+    ],
+    "piece": null,
+    "ground_y": 57.66,
+    "ground_owner": "CURB",
+    "base_y": 57.42,
+    "base_vs_ground_m": 0.24,
+    "footprint_on_road": 0,
+    "foot_y": 54.92,
+    "earth_y": 57.528,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 59,
+    "base_xz": [
+     -1574.42,
+     -262.219
+    ],
+    "piece": null,
+    "ground_y": 54.405,
+    "ground_owner": "CURB",
+    "base_y": 54.048,
+    "base_vs_ground_m": 0.357,
+    "footprint_on_road": 0,
+    "foot_y": 51.548,
+    "earth_y": 54.229,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 60,
+    "base_xz": [
+     -1580.134,
+     -196.964
+    ],
+    "piece": null,
+    "ground_y": 53.972,
+    "ground_owner": "CURB",
+    "base_y": 53.875,
+    "base_vs_ground_m": 0.097,
+    "footprint_on_road": 0,
+    "foot_y": 51.375,
+    "earth_y": 53.939,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 61,
+    "base_xz": [
+     -1638.49,
+     -171.867
+    ],
+    "piece": null,
+    "ground_y": 55.056,
+    "ground_owner": "CURB",
+    "base_y": 54.865,
+    "base_vs_ground_m": 0.191,
+    "footprint_on_road": 0,
+    "foot_y": 52.365,
+    "earth_y": 55.009,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 62,
+    "base_xz": [
+     -1640.615,
+     -107.423
+    ],
+    "piece": null,
+    "ground_y": 56.093,
+    "ground_owner": "CURB",
+    "base_y": 55.951,
+    "base_vs_ground_m": 0.142,
+    "footprint_on_road": 0,
+    "foot_y": 53.451,
+    "earth_y": 56.017,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 63,
+    "base_xz": [
+     -1702.204,
+     -80.23
+    ],
+    "piece": null,
+    "ground_y": 56.738,
+    "ground_owner": "CURB",
+    "base_y": 56.532,
+    "base_vs_ground_m": 0.206,
+    "footprint_on_road": 0,
+    "foot_y": 54.032,
+    "earth_y": 56.676,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 64,
+    "base_xz": [
+     -1694.012,
+     -15.814
+    ],
+    "piece": null,
+    "ground_y": 56.013,
+    "ground_owner": "CURB",
+    "base_y": 55.781,
+    "base_vs_ground_m": 0.232,
+    "footprint_on_road": 0,
+    "foot_y": 53.281,
+    "earth_y": 55.914,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 65,
+    "base_xz": [
+     -1750.878,
+     21.42
+    ],
+    "piece": null,
+    "ground_y": 53.337,
+    "ground_owner": "CURB",
+    "base_y": 53.057,
+    "base_vs_ground_m": 0.28,
+    "footprint_on_road": 0,
+    "foot_y": 50.557,
+    "earth_y": 53.198,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 66,
+    "base_xz": [
+     -1730.809,
+     86.276
+    ],
+    "piece": null,
+    "ground_y": 49.125,
+    "ground_owner": "CURB",
+    "base_y": 48.483,
+    "base_vs_ground_m": 0.642,
+    "footprint_on_road": 0,
+    "foot_y": 45.983,
+    "earth_y": 48.457,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 67,
+    "base_xz": [
+     -1780.428,
+     129.163
+    ],
+    "piece": null,
+    "ground_y": 44.835,
+    "ground_owner": "CURB",
+    "base_y": 44.504,
+    "base_vs_ground_m": 0.331,
+    "footprint_on_road": 0,
+    "foot_y": 42.004,
+    "earth_y": 44.738,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 68,
+    "base_xz": [
+     -1756.325,
+     190.438
+    ],
+    "piece": null,
+    "ground_y": 41.199,
+    "ground_owner": "CURB",
+    "base_y": 40.861,
+    "base_vs_ground_m": 0.338,
+    "footprint_on_road": 0,
+    "foot_y": 38.361,
+    "earth_y": 41.08,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 69,
+    "base_xz": [
+     -1804.937,
+     237.4
+    ],
+    "piece": null,
+    "ground_y": 38.834,
+    "ground_owner": "CURB",
+    "base_y": 38.67,
+    "base_vs_ground_m": 0.164,
+    "footprint_on_road": 0,
+    "foot_y": 36.17,
+    "earth_y": 38.813,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 70,
+    "base_xz": [
+     -1785.533,
+     299.204
+    ],
+    "piece": null,
+    "ground_y": 37.76,
+    "ground_owner": "CURB",
+    "base_y": 37.545,
+    "base_vs_ground_m": 0.215,
+    "footprint_on_road": 0,
+    "foot_y": 35.045,
+    "earth_y": 37.688,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 71,
+    "base_xz": [
+     -1836.641,
+     338.477
+    ],
+    "piece": null,
+    "ground_y": 36.468,
+    "ground_owner": "CURB",
+    "base_y": 36.252,
+    "base_vs_ground_m": 0.216,
+    "footprint_on_road": 0,
+    "foot_y": 33.752,
+    "earth_y": 36.397,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 72,
+    "base_xz": [
+     -1830.531,
+     401.805
+    ],
+    "piece": null,
+    "ground_y": 34.018,
+    "ground_owner": "CURB",
+    "base_y": 33.8,
+    "base_vs_ground_m": 0.218,
+    "footprint_on_road": 0,
+    "foot_y": 31.3,
+    "earth_y": 33.875,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 73,
+    "base_xz": [
+     -1888.337,
+     434.433
+    ],
+    "piece": null,
+    "ground_y": 30.442,
+    "ground_owner": "CURB",
+    "base_y": 30.169,
+    "base_vs_ground_m": 0.273,
+    "footprint_on_road": 0,
+    "foot_y": 27.669,
+    "earth_y": 30.337,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 74,
+    "base_xz": [
+     -1886.14,
+     499.148
+    ],
+    "piece": null,
+    "ground_y": 27.505,
+    "ground_owner": "CURB",
+    "base_y": 27.259,
+    "base_vs_ground_m": 0.246,
+    "footprint_on_road": 0,
+    "foot_y": 24.759,
+    "earth_y": 27.403,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 75,
+    "base_xz": [
+     -1945.978,
+     525.851
+    ],
+    "piece": null,
+    "ground_y": 25.86,
+    "ground_owner": "CURB",
+    "base_y": 25.641,
+    "base_vs_ground_m": 0.219,
+    "footprint_on_road": 0,
+    "foot_y": 23.141,
+    "earth_y": 25.796,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 76,
+    "base_xz": [
+     -1955.667,
+     588.141
+    ],
+    "piece": null,
+    "ground_y": 24.458,
+    "ground_owner": "CURB",
+    "base_y": 23.928,
+    "base_vs_ground_m": 0.53,
+    "footprint_on_road": 0,
+    "foot_y": 21.428,
+    "earth_y": 24.072,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 77,
+    "base_xz": [
+     -1955.497,
+     633.71
+    ],
+    "piece": null,
+    "ground_y": 24.83,
+    "ground_owner": "1KERB_SIDEWALK_APAP1",
+    "base_y": 24.686,
+    "base_vs_ground_m": 0.144,
+    "footprint_on_road": 0,
+    "foot_y": 22.186,
+    "earth_y": 24.428,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 78,
+    "base_xz": [
+     -1892.976,
+     635.227
+    ],
+    "piece": null,
+    "ground_y": 26.29,
+    "ground_owner": "CURB",
+    "base_y": 26.092,
+    "base_vs_ground_m": 0.198,
+    "footprint_on_road": 0,
+    "foot_y": 23.592,
+    "earth_y": 26.253,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 79,
+    "base_xz": [
+     -1870.286,
+     693.073
+    ],
+    "piece": null,
+    "ground_y": 26.963,
+    "ground_owner": "CURB",
+    "base_y": 26.76,
+    "base_vs_ground_m": 0.203,
+    "footprint_on_road": 0,
+    "foot_y": 24.26,
+    "earth_y": 26.905,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 80,
+    "base_xz": [
+     -1810.143,
+     706.29
+    ],
+    "piece": null,
+    "ground_y": 27.624,
+    "ground_owner": "CURB",
+    "base_y": 27.428,
+    "base_vs_ground_m": 0.196,
+    "footprint_on_road": 0,
+    "foot_y": 24.928,
+    "earth_y": 27.562,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 81,
+    "base_xz": [
+     -1790.35,
+     765.109
+    ],
+    "piece": null,
+    "ground_y": 29.086,
+    "ground_owner": "CURB",
+    "base_y": 28.876,
+    "base_vs_ground_m": 0.21,
+    "footprint_on_road": 0,
+    "foot_y": 26.376,
+    "earth_y": 28.959,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 82,
+    "base_xz": [
+     -1729.424,
+     785.386
+    ],
+    "piece": null,
+    "ground_y": 31.839,
+    "ground_owner": "CURB",
+    "base_y": 31.675,
+    "base_vs_ground_m": 0.164,
+    "footprint_on_road": 0,
+    "foot_y": 29.175,
+    "earth_y": 31.812,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 83,
+    "base_xz": [
+     -1714.378,
+     845.486
+    ],
+    "piece": null,
+    "ground_y": 34.964,
+    "ground_owner": "CURB",
+    "base_y": 34.756,
+    "base_vs_ground_m": 0.208,
+    "footprint_on_road": 0,
+    "foot_y": 32.256,
+    "earth_y": 34.9,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 84,
+    "base_xz": [
+     -1655.633,
+     865.019
+    ],
+    "piece": null,
+    "ground_y": 38.121,
+    "ground_owner": "CURB",
+    "base_y": 37.938,
+    "base_vs_ground_m": 0.183,
+    "footprint_on_road": 0,
+    "foot_y": 35.438,
+    "earth_y": 38.082,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 85,
+    "base_xz": [
+     -1640.378,
+     927.71
+    ],
+    "piece": null,
+    "ground_y": 41.446,
+    "ground_owner": "CURB",
+    "base_y": 41.109,
+    "base_vs_ground_m": 0.337,
+    "footprint_on_road": 0,
+    "foot_y": 38.609,
+    "earth_y": 41.198,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 86,
+    "base_xz": [
+     -1582.486,
+     948.584
+    ],
+    "piece": null,
+    "ground_y": 44.575,
+    "ground_owner": "CURB",
+    "base_y": 44.323,
+    "base_vs_ground_m": 0.252,
+    "footprint_on_road": 0,
+    "foot_y": 41.823,
+    "earth_y": 44.484,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 87,
+    "base_xz": [
+     -1567.413,
+     1007.292
+    ],
+    "piece": null,
+    "ground_y": 47.714,
+    "ground_owner": "CURB",
+    "base_y": 47.452,
+    "base_vs_ground_m": 0.262,
+    "footprint_on_road": 0,
+    "foot_y": 44.952,
+    "earth_y": 47.506,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 88,
+    "base_xz": [
+     -1509.584,
+     1032.229
+    ],
+    "piece": null,
+    "ground_y": 51.06,
+    "ground_owner": "CURB",
+    "base_y": 50.866,
+    "base_vs_ground_m": 0.194,
+    "footprint_on_road": 0,
+    "foot_y": 48.366,
+    "earth_y": 51.01,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 89,
+    "base_xz": [
+     -1494.09,
+     1089.62
+    ],
+    "piece": null,
+    "ground_y": 54.312,
+    "ground_owner": "CURB",
+    "base_y": 54.119,
+    "base_vs_ground_m": 0.193,
+    "footprint_on_road": 0,
+    "foot_y": 51.619,
+    "earth_y": 54.264,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 90,
+    "base_xz": [
+     -1443.589,
+     1118.016
+    ],
+    "piece": null,
+    "ground_y": 57.447,
+    "ground_owner": "CURB",
+    "base_y": 57.172,
+    "base_vs_ground_m": 0.275,
+    "footprint_on_road": 0,
+    "foot_y": 54.672,
+    "earth_y": 57.315,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 91,
+    "base_xz": [
+     -1417.302,
+     1172.801
+    ],
+    "piece": null,
+    "ground_y": 59.677,
+    "ground_owner": "CURB",
+    "base_y": 59.473,
+    "base_vs_ground_m": 0.204,
+    "footprint_on_road": 0,
+    "foot_y": 56.973,
+    "earth_y": 59.628,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 92,
+    "base_xz": [
+     -1360.556,
+     1185.159
+    ],
+    "piece": null,
+    "ground_y": 60.741,
+    "ground_owner": "CURB",
+    "base_y": 60.527,
+    "base_vs_ground_m": 0.214,
+    "footprint_on_road": 0,
+    "foot_y": 58.027,
+    "earth_y": 60.672,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 93,
+    "base_xz": [
+     -1324.864,
+     1231.652
+    ],
+    "piece": null,
+    "ground_y": 61.478,
+    "ground_owner": "CURB",
+    "base_y": 61.28,
+    "base_vs_ground_m": 0.198,
+    "footprint_on_road": 0,
+    "foot_y": 58.78,
+    "earth_y": 61.424,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 94,
+    "base_xz": [
+     -1263.957,
+     1239.732
+    ],
+    "piece": null,
+    "ground_y": 62.346,
+    "ground_owner": "CURB",
+    "base_y": 62.13,
+    "base_vs_ground_m": 0.216,
+    "footprint_on_road": 0,
+    "foot_y": 59.63,
+    "earth_y": 62.27,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 95,
+    "base_xz": [
+     -1227.682,
+     1285.745
+    ],
+    "piece": null,
+    "ground_y": 63.429,
+    "ground_owner": "CURB",
+    "base_y": 63.219,
+    "base_vs_ground_m": 0.21,
+    "footprint_on_road": 0,
+    "foot_y": 60.719,
+    "earth_y": 63.303,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 96,
+    "base_xz": [
+     -1169.803,
+     1291.623
+    ],
+    "piece": null,
+    "ground_y": 64.882,
+    "ground_owner": "CURB",
+    "base_y": 64.704,
+    "base_vs_ground_m": 0.178,
+    "footprint_on_road": 0,
+    "foot_y": 62.204,
+    "earth_y": 64.86,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 97,
+    "base_xz": [
+     -1126.346,
+     1335.214
+    ],
+    "piece": null,
+    "ground_y": 66.363,
+    "ground_owner": "CURB",
+    "base_y": 66.16,
+    "base_vs_ground_m": 0.203,
+    "footprint_on_road": 0,
+    "foot_y": 63.66,
+    "earth_y": 66.308,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 98,
+    "base_xz": [
+     -1068.334,
+     1328.027
+    ],
+    "piece": null,
+    "ground_y": 67.194,
+    "ground_owner": "CURB",
+    "base_y": 66.975,
+    "base_vs_ground_m": 0.219,
+    "footprint_on_road": 0,
+    "foot_y": 64.475,
+    "earth_y": 67.129,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 99,
+    "base_xz": [
+     -1017.87,
+     1357.921
+    ],
+    "piece": null,
+    "ground_y": 67.006,
+    "ground_owner": "CURB",
+    "base_y": 66.792,
+    "base_vs_ground_m": 0.214,
+    "footprint_on_road": 0,
+    "foot_y": 64.292,
+    "earth_y": 66.937,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 100,
+    "base_xz": [
+     -963.508,
+     1335.316
+    ],
+    "piece": null,
+    "ground_y": 65.749,
+    "ground_owner": "CURB",
+    "base_y": 65.553,
+    "base_vs_ground_m": 0.196,
+    "footprint_on_road": 0,
+    "foot_y": 63.053,
+    "earth_y": 65.689,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 101,
+    "base_xz": [
+     -905.358,
+     1355.139
+    ],
+    "piece": null,
+    "ground_y": 63.958,
+    "ground_owner": "CURB",
+    "base_y": 63.741,
+    "base_vs_ground_m": 0.217,
+    "footprint_on_road": 0,
+    "foot_y": 61.241,
+    "earth_y": 63.885,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 102,
+    "base_xz": [
+     -852.43,
+     1329.902
+    ],
+    "piece": null,
+    "ground_y": 62.761,
+    "ground_owner": "CURB",
+    "base_y": 62.582,
+    "base_vs_ground_m": 0.179,
+    "footprint_on_road": 0,
+    "foot_y": 60.082,
+    "earth_y": 62.736,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 103,
+    "base_xz": [
+     -797.219,
+     1349.692
+    ],
+    "piece": null,
+    "ground_y": 62.833,
+    "ground_owner": "CURB",
+    "base_y": 62.638,
+    "base_vs_ground_m": 0.195,
+    "footprint_on_road": 0,
+    "foot_y": 60.138,
+    "earth_y": 62.782,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 104,
+    "base_xz": [
+     -741.246,
+     1324.231
+    ],
+    "piece": null,
+    "ground_y": 64.323,
+    "ground_owner": "CURB",
+    "base_y": 64.145,
+    "base_vs_ground_m": 0.178,
+    "footprint_on_road": 0,
+    "foot_y": 61.645,
+    "earth_y": 64.295,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 105,
+    "base_xz": [
+     -687.405,
+     1347.845
+    ],
+    "piece": null,
+    "ground_y": 66.715,
+    "ground_owner": "CURB",
+    "base_y": 66.5,
+    "base_vs_ground_m": 0.215,
+    "footprint_on_road": 0,
+    "foot_y": 64.0,
+    "earth_y": 66.615,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 106,
+    "base_xz": [
+     -631.139,
+     1331.827
+    ],
+    "piece": null,
+    "ground_y": 69.313,
+    "ground_owner": "CURB",
+    "base_y": 69.126,
+    "base_vs_ground_m": 0.187,
+    "footprint_on_road": 0,
+    "foot_y": 66.626,
+    "earth_y": 69.27,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 107,
+    "base_xz": [
+     -580.905,
+     1367.415
+    ],
+    "piece": null,
+    "ground_y": 72.088,
+    "ground_owner": "CURB",
+    "base_y": 71.925,
+    "base_vs_ground_m": 0.163,
+    "footprint_on_road": 0,
+    "foot_y": 69.425,
+    "earth_y": 72.069,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 108,
+    "base_xz": [
+     -522.868,
+     1365.568
+    ],
+    "piece": null,
+    "ground_y": 74.736,
+    "ground_owner": "CURB",
+    "base_y": 74.518,
+    "base_vs_ground_m": 0.218,
+    "footprint_on_road": 0,
+    "foot_y": 72.018,
+    "earth_y": 74.662,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 109,
+    "base_xz": [
+     -484.818,
+     1410.16
+    ],
+    "piece": null,
+    "ground_y": 77.435,
+    "ground_owner": "CURB",
+    "base_y": 77.225,
+    "base_vs_ground_m": 0.21,
+    "footprint_on_road": 0,
+    "foot_y": 74.725,
+    "earth_y": 77.369,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 110,
+    "base_xz": [
+     -427.106,
+     1419.188
+    ],
+    "piece": null,
+    "ground_y": 80.068,
+    "ground_owner": "CURB",
+    "base_y": 79.868,
+    "base_vs_ground_m": 0.2,
+    "footprint_on_road": 0,
+    "foot_y": 77.368,
+    "earth_y": 80.008,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 111,
+    "base_xz": [
+     -390.444,
+     1468.389
+    ],
+    "piece": null,
+    "ground_y": 82.816,
+    "ground_owner": "CURB",
+    "base_y": 82.603,
+    "base_vs_ground_m": 0.213,
+    "footprint_on_road": 0,
+    "foot_y": 80.103,
+    "earth_y": 82.744,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 112,
+    "base_xz": [
+     -333.074,
+     1475.79
+    ],
+    "piece": null,
+    "ground_y": 85.663,
+    "ground_owner": "CURB",
+    "base_y": 85.463,
+    "base_vs_ground_m": 0.2,
+    "footprint_on_road": 0,
+    "foot_y": 82.963,
+    "earth_y": 85.57,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 113,
+    "base_xz": [
+     -297.474,
+     1523.445
+    ],
+    "piece": null,
+    "ground_y": 88.887,
+    "ground_owner": "CURB",
+    "base_y": 88.743,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 86.243,
+    "earth_y": 87.63,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 114,
+    "base_xz": [
+     -233.153,
+     1528.403
+    ],
+    "piece": null,
+    "ground_y": 92.339,
+    "ground_owner": "CURB",
+    "base_y": 92.102,
+    "base_vs_ground_m": 0.237,
+    "footprint_on_road": 0,
+    "foot_y": 89.602,
+    "earth_y": 92.225,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 115,
+    "base_xz": [
+     -202.616,
+     1581.495
+    ],
+    "piece": null,
+    "ground_y": 95.728,
+    "ground_owner": "TERRAIN",
+    "base_y": 95.45,
+    "base_vs_ground_m": 0.278,
+    "footprint_on_road": 0,
+    "foot_y": 92.95,
+    "earth_y": 95.728,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 116,
+    "base_xz": [
+     -141.879,
+     1585.658
+    ],
+    "piece": null,
+    "ground_y": 98.893,
+    "ground_owner": "CURB",
+    "base_y": 98.668,
+    "base_vs_ground_m": 0.225,
+    "footprint_on_road": 0,
+    "foot_y": 96.168,
+    "earth_y": 98.837,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 117,
+    "base_xz": [
+     -108.153,
+     1639.975
+    ],
+    "piece": null,
+    "ground_y": 102.315,
+    "ground_owner": "CURB",
+    "base_y": 102.132,
+    "base_vs_ground_m": 0.183,
+    "footprint_on_road": 0,
+    "foot_y": 99.632,
+    "earth_y": 102.295,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 118,
+    "base_xz": [
+     -46.008,
+     1641.507
+    ],
+    "piece": null,
+    "ground_y": 105.104,
+    "ground_owner": "CURB",
+    "base_y": 104.875,
+    "base_vs_ground_m": 0.229,
+    "footprint_on_road": 0,
+    "foot_y": 102.375,
+    "earth_y": 105.037,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 119,
+    "base_xz": [
+     -16.074,
+     1696.624
+    ],
+    "piece": null,
+    "ground_y": 107.066,
+    "ground_owner": "CURB",
+    "base_y": 106.866,
+    "base_vs_ground_m": 0.2,
+    "footprint_on_road": 0,
+    "foot_y": 104.366,
+    "earth_y": 107.007,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 120,
+    "base_xz": [
+     45.988,
+     1703.288
+    ],
+    "piece": null,
+    "ground_y": 108.821,
+    "ground_owner": "CURB",
+    "base_y": 108.002,
+    "base_vs_ground_m": 0.819,
+    "footprint_on_road": 0,
+    "foot_y": 105.502,
+    "earth_y": 108.189,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 121,
+    "base_xz": [
+     84.04,
+     1699.459
+    ],
+    "piece": null,
+    "ground_y": 109.625,
+    "ground_owner": "CURB",
+    "base_y": 109.402,
+    "base_vs_ground_m": 0.223,
+    "footprint_on_road": 0,
+    "foot_y": 106.902,
+    "earth_y": 109.545,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 122,
+    "base_xz": [
+     88.29,
+     1638.495
+    ],
+    "piece": null,
+    "ground_y": 110.446,
+    "ground_owner": "CURB",
+    "base_y": 110.234,
+    "base_vs_ground_m": 0.212,
+    "footprint_on_road": 0,
+    "foot_y": 107.734,
+    "earth_y": 110.378,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 123,
+    "base_xz": [
+     145.689,
+     1608.503
+    ],
+    "piece": null,
+    "ground_y": 111.276,
+    "ground_owner": "CURB",
+    "base_y": 111.074,
+    "base_vs_ground_m": 0.202,
+    "footprint_on_road": 0,
+    "foot_y": 108.574,
+    "earth_y": 111.212,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 124,
+    "base_xz": [
+     158.514,
+     1549.616
+    ],
+    "piece": null,
+    "ground_y": 111.573,
+    "ground_owner": "CURB",
+    "base_y": 111.34,
+    "base_vs_ground_m": 0.233,
+    "footprint_on_road": 0,
+    "foot_y": 108.84,
+    "earth_y": 111.493,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 125,
+    "base_xz": [
+     214.082,
+     1531.854
+    ],
+    "piece": null,
+    "ground_y": 111.032,
+    "ground_owner": "CURB",
+    "base_y": 110.821,
+    "base_vs_ground_m": 0.211,
+    "footprint_on_road": 0,
+    "foot_y": 108.321,
+    "earth_y": 110.97,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 126,
+    "base_xz": [
+     252.039,
+     1483.828
+    ],
+    "piece": null,
+    "ground_y": 110.16,
+    "ground_owner": "CURB",
+    "base_y": 109.947,
+    "base_vs_ground_m": 0.213,
+    "footprint_on_road": 0,
+    "foot_y": 107.447,
+    "earth_y": 110.096,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 127,
+    "base_xz": [
+     310.555,
+     1486.498
+    ],
+    "piece": null,
+    "ground_y": 109.316,
+    "ground_owner": "CURB",
+    "base_y": 109.104,
+    "base_vs_ground_m": 0.212,
+    "footprint_on_road": 0,
+    "foot_y": 106.604,
+    "earth_y": 109.254,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 128,
+    "base_xz": [
+     359.576,
+     1454.856
+    ],
+    "piece": null,
+    "ground_y": 108.358,
+    "ground_owner": "CURB",
+    "base_y": 108.136,
+    "base_vs_ground_m": 0.222,
+    "footprint_on_road": 0,
+    "foot_y": 105.636,
+    "earth_y": 108.283,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 129,
+    "base_xz": [
+     418.483,
+     1472.995
+    ],
+    "piece": null,
+    "ground_y": 107.18,
+    "ground_owner": "CURB",
+    "base_y": 106.981,
+    "base_vs_ground_m": 0.199,
+    "footprint_on_road": 0,
+    "foot_y": 104.481,
+    "earth_y": 107.13,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 130,
+    "base_xz": [
+     470.908,
+     1446.703
+    ],
+    "piece": null,
+    "ground_y": 105.669,
+    "ground_owner": "CURB",
+    "base_y": 105.458,
+    "base_vs_ground_m": 0.211,
+    "footprint_on_road": 0,
+    "foot_y": 102.958,
+    "earth_y": 105.587,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 131,
+    "base_xz": [
+     526.405,
+     1465.693
+    ],
+    "piece": null,
+    "ground_y": 103.248,
+    "ground_owner": "CURB",
+    "base_y": 103.041,
+    "base_vs_ground_m": 0.207,
+    "footprint_on_road": 0,
+    "foot_y": 100.541,
+    "earth_y": 103.189,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 132,
+    "base_xz": [
+     575.816,
+     1433.695
+    ],
+    "piece": null,
+    "ground_y": 99.906,
+    "ground_owner": "CURB",
+    "base_y": 99.644,
+    "base_vs_ground_m": 0.262,
+    "footprint_on_road": 0,
+    "foot_y": 97.144,
+    "earth_y": 99.77,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 133,
+    "base_xz": [
+     637.914,
+     1438.08
+    ],
+    "piece": null,
+    "ground_y": 95.835,
+    "ground_owner": "CURB",
+    "base_y": 95.238,
+    "base_vs_ground_m": 0.597,
+    "footprint_on_road": 0,
+    "foot_y": 92.738,
+    "earth_y": 95.382,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 134,
+    "base_xz": [
+     669.762,
+     1385.749
+    ],
+    "piece": null,
+    "ground_y": 92.068,
+    "ground_owner": "CURB",
+    "base_y": 91.616,
+    "base_vs_ground_m": 0.452,
+    "footprint_on_road": 0,
+    "foot_y": 89.116,
+    "earth_y": 91.602,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 135,
+    "base_xz": [
+     732.625,
+     1374.02
+    ],
+    "piece": null,
+    "ground_y": 88.171,
+    "ground_owner": "CURB",
+    "base_y": 87.913,
+    "base_vs_ground_m": 0.258,
+    "footprint_on_road": 0,
+    "foot_y": 85.413,
+    "earth_y": 88.068,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 136,
+    "base_xz": [
+     754.672,
+     1316.791
+    ],
+    "piece": null,
+    "ground_y": 84.388,
+    "ground_owner": "CURB",
+    "base_y": 84.216,
+    "base_vs_ground_m": 0.172,
+    "footprint_on_road": 0,
+    "foot_y": 81.716,
+    "earth_y": 84.281,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 137,
+    "base_xz": [
+     814.532,
+     1302.704
+    ],
+    "piece": null,
+    "ground_y": 80.745,
+    "ground_owner": "CURB",
+    "base_y": 80.028,
+    "base_vs_ground_m": 0.717,
+    "footprint_on_road": 0,
+    "foot_y": 77.528,
+    "earth_y": 80.033,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 138,
+    "base_xz": [
+     837.071,
+     1242.548
+    ],
+    "piece": null,
+    "ground_y": 77.816,
+    "ground_owner": "CURB",
+    "base_y": 77.656,
+    "base_vs_ground_m": 0.16,
+    "footprint_on_road": 0,
+    "foot_y": 75.156,
+    "earth_y": 77.812,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 139,
+    "base_xz": [
+     897.031,
+     1228.42
+    ],
+    "piece": null,
+    "ground_y": 76.591,
+    "ground_owner": "CURB",
+    "base_y": 76.416,
+    "base_vs_ground_m": 0.175,
+    "footprint_on_road": 0,
+    "foot_y": 73.916,
+    "earth_y": 76.59,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 140,
+    "base_xz": [
+     917.219,
+     1170.224
+    ],
+    "piece": null,
+    "ground_y": 76.954,
+    "ground_owner": "CURB",
+    "base_y": 76.79,
+    "base_vs_ground_m": 0.164,
+    "footprint_on_road": 0,
+    "foot_y": 74.29,
+    "earth_y": 76.953,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 141,
+    "base_xz": [
+     979.35,
+     1153.928
+    ],
+    "piece": null,
+    "ground_y": 79.064,
+    "ground_owner": "CURB",
+    "base_y": 78.88,
+    "base_vs_ground_m": 0.184,
+    "footprint_on_road": 0,
+    "foot_y": 76.38,
+    "earth_y": 79.033,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 142,
+    "base_xz": [
+     999.494,
+     1095.693
+    ],
+    "piece": null,
+    "ground_y": 82.604,
+    "ground_owner": "CURB",
+    "base_y": 82.209,
+    "base_vs_ground_m": 0.395,
+    "footprint_on_road": 0,
+    "foot_y": 79.709,
+    "earth_y": 82.472,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 143,
+    "base_xz": [
+     1060.814,
+     1085.796
+    ],
+    "piece": null,
+    "ground_y": 86.49,
+    "ground_owner": "CURB",
+    "base_y": 86.346,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 83.846,
+    "earth_y": 85.225,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 144,
+    "base_xz": [
+     1094.815,
+     1031.734
+    ],
+    "piece": null,
+    "ground_y": 90.375,
+    "ground_owner": "CURB",
+    "base_y": 90.171,
+    "base_vs_ground_m": 0.204,
+    "footprint_on_road": 0,
+    "foot_y": 87.671,
+    "earth_y": 90.354,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 145,
+    "base_xz": [
+     1153.224,
+     1035.005
+    ],
+    "piece": null,
+    "ground_y": 93.737,
+    "ground_owner": "CURB",
+    "base_y": 93.558,
+    "base_vs_ground_m": 0.179,
+    "footprint_on_road": 0,
+    "foot_y": 91.058,
+    "earth_y": 93.678,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 146,
+    "base_xz": [
+     1201.867,
+     1002.951
+    ],
+    "piece": null,
+    "ground_y": 96.056,
+    "ground_owner": "CURB",
+    "base_y": 95.834,
+    "base_vs_ground_m": 0.222,
+    "footprint_on_road": 0,
+    "foot_y": 93.334,
+    "earth_y": 95.974,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 147,
+    "base_xz": [
+     1258.809,
+     1017.93
+    ],
+    "piece": null,
+    "ground_y": 96.992,
+    "ground_owner": "CURB",
+    "base_y": 96.782,
+    "base_vs_ground_m": 0.21,
+    "footprint_on_road": 0,
+    "foot_y": 94.282,
+    "earth_y": 96.926,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 148,
+    "base_xz": [
+     1308.88,
+     982.919
+    ],
+    "piece": null,
+    "ground_y": 96.896,
+    "ground_owner": "CURB",
+    "base_y": 96.697,
+    "base_vs_ground_m": 0.199,
+    "footprint_on_road": 0,
+    "foot_y": 94.197,
+    "earth_y": 96.841,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 149,
+    "base_xz": [
+     1369.017,
+     984.951
+    ],
+    "piece": null,
+    "ground_y": 95.892,
+    "ground_owner": "CURB",
+    "base_y": 95.683,
+    "base_vs_ground_m": 0.209,
+    "footprint_on_road": 0,
+    "foot_y": 93.183,
+    "earth_y": 95.821,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 150,
+    "base_xz": [
+     1401.818,
+     932.957
+    ],
+    "piece": null,
+    "ground_y": 95.197,
+    "ground_owner": "CURB",
+    "base_y": 95.021,
+    "base_vs_ground_m": 0.176,
+    "footprint_on_road": 0,
+    "foot_y": 92.521,
+    "earth_y": 95.172,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 151,
+    "base_xz": [
+     1463.178,
+     923.936
+    ],
+    "piece": null,
+    "ground_y": 95.992,
+    "ground_owner": "CURB",
+    "base_y": 95.81,
+    "base_vs_ground_m": 0.182,
+    "footprint_on_road": 0,
+    "foot_y": 93.31,
+    "earth_y": 95.962,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 152,
+    "base_xz": [
+     1496.619,
+     875.943
+    ],
+    "piece": null,
+    "ground_y": 97.286,
+    "ground_owner": "CURB",
+    "base_y": 97.072,
+    "base_vs_ground_m": 0.214,
+    "footprint_on_road": 0,
+    "foot_y": 94.572,
+    "earth_y": 97.214,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 153,
+    "base_xz": [
+     1554.545,
+     866.988
+    ],
+    "piece": null,
+    "ground_y": 98.507,
+    "ground_owner": "CURB",
+    "base_y": 98.279,
+    "base_vs_ground_m": 0.228,
+    "footprint_on_road": 0,
+    "foot_y": 95.779,
+    "earth_y": 98.411,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 154,
+    "base_xz": [
+     1591.344,
+     817.679
+    ],
+    "piece": null,
+    "ground_y": 98.369,
+    "ground_owner": "CURB",
+    "base_y": 98.173,
+    "base_vs_ground_m": 0.196,
+    "footprint_on_road": 0,
+    "foot_y": 95.673,
+    "earth_y": 98.312,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 155,
+    "base_xz": [
+     1649.474,
+     813.674
+    ],
+    "piece": null,
+    "ground_y": 96.172,
+    "ground_owner": "CURB",
+    "base_y": 96.009,
+    "base_vs_ground_m": 0.163,
+    "footprint_on_road": 0,
+    "foot_y": 93.509,
+    "earth_y": 96.153,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 156,
+    "base_xz": [
+     1690.844,
+     770.517
+    ],
+    "piece": null,
+    "ground_y": 93.586,
+    "ground_owner": "CURB",
+    "base_y": 93.327,
+    "base_vs_ground_m": 0.259,
+    "footprint_on_road": 0,
+    "foot_y": 90.827,
+    "earth_y": 93.477,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 157,
+    "base_xz": [
+     1753.368,
+     774.765
+    ],
+    "piece": null,
+    "ground_y": 92.499,
+    "ground_owner": "CURB",
+    "base_y": 92.314,
+    "base_vs_ground_m": 0.185,
+    "footprint_on_road": 0,
+    "foot_y": 89.814,
+    "earth_y": 92.465,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 158,
+    "base_xz": [
+     1796.283,
+     734.773
+    ],
+    "piece": null,
+    "ground_y": 93.278,
+    "ground_owner": "CURB",
+    "base_y": 93.089,
+    "base_vs_ground_m": 0.189,
+    "footprint_on_road": 0,
+    "foot_y": 90.589,
+    "earth_y": 93.234,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 159,
+    "base_xz": [
+     1854.843,
+     737.56
+    ],
+    "piece": null,
+    "ground_y": 94.344,
+    "ground_owner": "CURB",
+    "base_y": 94.125,
+    "base_vs_ground_m": 0.219,
+    "footprint_on_road": 0,
+    "foot_y": 91.625,
+    "earth_y": 94.267,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 160,
+    "base_xz": [
+     1900.803,
+     696.84
+    ],
+    "piece": null,
+    "ground_y": 95.467,
+    "ground_owner": "CURB",
+    "base_y": 95.279,
+    "base_vs_ground_m": 0.188,
+    "footprint_on_road": 0,
+    "foot_y": 92.779,
+    "earth_y": 95.417,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 161,
+    "base_xz": [
+     1959.355,
+     699.636
+    ],
+    "piece": null,
+    "ground_y": 96.311,
+    "ground_owner": "CURB",
+    "base_y": 96.108,
+    "base_vs_ground_m": 0.203,
+    "footprint_on_road": 0,
+    "foot_y": 93.608,
+    "earth_y": 96.25,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 162,
+    "base_xz": [
+     2002.489,
+     659.945
+    ],
+    "piece": null,
+    "ground_y": 97.286,
+    "ground_owner": "CURB",
+    "base_y": 97.095,
+    "base_vs_ground_m": 0.191,
+    "footprint_on_road": 0,
+    "foot_y": 94.595,
+    "earth_y": 97.24,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 163,
+    "base_xz": [
+     2060.899,
+     662.93
+    ],
+    "piece": null,
+    "ground_y": 98.974,
+    "ground_owner": "CURB",
+    "base_y": 98.765,
+    "base_vs_ground_m": 0.209,
+    "footprint_on_road": 0,
+    "foot_y": 96.265,
+    "earth_y": 98.908,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 164,
+    "base_xz": [
+     2106.724,
+     620.226
+    ],
+    "piece": null,
+    "ground_y": 100.235,
+    "ground_owner": "CURB",
+    "base_y": 100.002,
+    "base_vs_ground_m": 0.233,
+    "footprint_on_road": 0,
+    "foot_y": 97.502,
+    "earth_y": 100.141,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 165,
+    "base_xz": [
+     2165.78,
+     631.1
+    ],
+    "piece": null,
+    "ground_y": 99.262,
+    "ground_owner": "CURB",
+    "base_y": 99.054,
+    "base_vs_ground_m": 0.208,
+    "footprint_on_road": 0,
+    "foot_y": 96.554,
+    "earth_y": 99.185,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 166,
+    "base_xz": [
+     2215.175,
+     599.558
+    ],
+    "piece": null,
+    "ground_y": 97.427,
+    "ground_owner": "CURB",
+    "base_y": 97.225,
+    "base_vs_ground_m": 0.202,
+    "footprint_on_road": 0,
+    "foot_y": 94.725,
+    "earth_y": 97.37,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 167,
+    "base_xz": [
+     2274.949,
+     613.859
+    ],
+    "piece": null,
+    "ground_y": 95.83,
+    "ground_owner": "CURB",
+    "base_y": 95.632,
+    "base_vs_ground_m": 0.198,
+    "footprint_on_road": 0,
+    "foot_y": 93.132,
+    "earth_y": 95.78,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 168,
+    "base_xz": [
+     2325.242,
+     583.705
+    ],
+    "piece": null,
+    "ground_y": 95.76,
+    "ground_owner": "CURB",
+    "base_y": 95.58,
+    "base_vs_ground_m": 0.18,
+    "footprint_on_road": 0,
+    "foot_y": 93.08,
+    "earth_y": 95.726,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 169,
+    "base_xz": [
+     2382.109,
+     598.926
+    ],
+    "piece": null,
+    "ground_y": 96.438,
+    "ground_owner": "CURB",
+    "base_y": 96.247,
+    "base_vs_ground_m": 0.191,
+    "footprint_on_road": 0,
+    "foot_y": 93.747,
+    "earth_y": 96.39,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 170,
+    "base_xz": [
+     2435.018,
+     564.971
+    ],
+    "piece": null,
+    "ground_y": 96.892,
+    "ground_owner": "CURB",
+    "base_y": 96.676,
+    "base_vs_ground_m": 0.216,
+    "footprint_on_road": 0,
+    "foot_y": 94.176,
+    "earth_y": 96.818,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 171,
+    "base_xz": [
+     2492.397,
+     581.995
+    ],
+    "piece": null,
+    "ground_y": 95.691,
+    "ground_owner": "CURB",
+    "base_y": 95.521,
+    "base_vs_ground_m": 0.17,
+    "footprint_on_road": 0,
+    "foot_y": 93.021,
+    "earth_y": 95.664,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 172,
+    "base_xz": [
+     2537.606,
+     544.403
+    ],
+    "piece": null,
+    "ground_y": 93.048,
+    "ground_owner": "CURB",
+    "base_y": 92.798,
+    "base_vs_ground_m": 0.25,
+    "footprint_on_road": 0,
+    "foot_y": 90.298,
+    "earth_y": 92.949,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 173,
+    "base_xz": [
+     2601.536,
+     546.998
+    ],
+    "piece": null,
+    "ground_y": 91.791,
+    "ground_owner": "CURB",
+    "base_y": 91.607,
+    "base_vs_ground_m": 0.184,
+    "footprint_on_road": 0,
+    "foot_y": 89.107,
+    "earth_y": 91.762,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 174,
+    "base_xz": [
+     2588.54,
+     505.112
+    ],
+    "piece": null,
+    "ground_y": 91.781,
+    "ground_owner": "CURB",
+    "base_y": 91.575,
+    "base_vs_ground_m": 0.206,
+    "footprint_on_road": 0,
+    "foot_y": 89.075,
+    "earth_y": 91.755,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 175,
+    "base_xz": [
+     2585.137,
+     440.723
+    ],
+    "piece": null,
+    "ground_y": 91.533,
+    "ground_owner": "CURB",
+    "base_y": 91.333,
+    "base_vs_ground_m": 0.2,
+    "footprint_on_road": 0,
+    "foot_y": 88.833,
+    "earth_y": 91.476,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 176,
+    "base_xz": [
+     2523.294,
+     415.938
+    ],
+    "piece": null,
+    "ground_y": 91.576,
+    "ground_owner": "CURB",
+    "base_y": 91.373,
+    "base_vs_ground_m": 0.203,
+    "footprint_on_road": 0,
+    "foot_y": 88.873,
+    "earth_y": 91.516,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 177,
+    "base_xz": [
+     2520.335,
+     351.47
+    ],
+    "piece": null,
+    "ground_y": 91.791,
+    "ground_owner": "CURB",
+    "base_y": 91.573,
+    "base_vs_ground_m": 0.218,
+    "footprint_on_road": 0,
+    "foot_y": 89.073,
+    "earth_y": 91.726,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 178,
+    "base_xz": [
+     2460.579,
+     327.972
+    ],
+    "piece": null,
+    "ground_y": 91.392,
+    "ground_owner": "CURB",
+    "base_y": 91.168,
+    "base_vs_ground_m": 0.224,
+    "footprint_on_road": 0,
+    "foot_y": 88.668,
+    "earth_y": 91.32,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 179,
+    "base_xz": [
+     2453.699,
+     262.521
+    ],
+    "piece": null,
+    "ground_y": 90.241,
+    "ground_owner": "CURB",
+    "base_y": 90.04,
+    "base_vs_ground_m": 0.201,
+    "footprint_on_road": 0,
+    "foot_y": 87.54,
+    "earth_y": 90.184,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 180,
+    "base_xz": [
+     2395.197,
+     238.02
+    ],
+    "piece": null,
+    "ground_y": 88.982,
+    "ground_owner": "CURB",
+    "base_y": 88.794,
+    "base_vs_ground_m": 0.188,
+    "footprint_on_road": 0,
+    "foot_y": 86.294,
+    "earth_y": 88.938,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 181,
+    "base_xz": [
+     2392.806,
+     173.427
+    ],
+    "piece": null,
+    "ground_y": 87.64,
+    "ground_owner": "CURB",
+    "base_y": 87.409,
+    "base_vs_ground_m": 0.231,
+    "footprint_on_road": 0,
+    "foot_y": 84.909,
+    "earth_y": 87.55,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 182,
+    "base_xz": [
+     2332.824,
+     146.185
+    ],
+    "piece": null,
+    "ground_y": 86.556,
+    "ground_owner": "CURB",
+    "base_y": 86.377,
+    "base_vs_ground_m": 0.179,
+    "footprint_on_road": 0,
+    "foot_y": 83.877,
+    "earth_y": 86.521,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 183,
+    "base_xz": [
+     2328.079,
+     83.253
+    ],
+    "piece": null,
+    "ground_y": 86.894,
+    "ground_owner": "CURB",
+    "base_y": 86.692,
+    "base_vs_ground_m": 0.202,
+    "footprint_on_road": 0,
+    "foot_y": 84.192,
+    "earth_y": 86.826,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 184,
+    "base_xz": [
+     2267.799,
+     60.188
+    ],
+    "piece": null,
+    "ground_y": 88.208,
+    "ground_owner": "CURB",
+    "base_y": 87.979,
+    "base_vs_ground_m": 0.229,
+    "footprint_on_road": 0,
+    "foot_y": 85.479,
+    "earth_y": 88.145,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 185,
+    "base_xz": [
+     2263.239,
+     -7.082
+    ],
+    "piece": null,
+    "ground_y": 89.607,
+    "ground_owner": "CURB",
+    "base_y": 89.415,
+    "base_vs_ground_m": 0.192,
+    "footprint_on_road": 0,
+    "foot_y": 86.915,
+    "earth_y": 89.57,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 186,
+    "base_xz": [
+     2200.099,
+     -22.724
+    ],
+    "piece": null,
+    "ground_y": 90.706,
+    "ground_owner": "CURB",
+    "base_y": 90.516,
+    "base_vs_ground_m": 0.19,
+    "footprint_on_road": 0,
+    "foot_y": 88.016,
+    "earth_y": 90.662,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 187,
+    "base_xz": [
+     2176.58,
+     -85.239
+    ],
+    "piece": null,
+    "ground_y": 91.433,
+    "ground_owner": "TERRAIN",
+    "base_y": 91.106,
+    "base_vs_ground_m": 0.327,
+    "footprint_on_road": 0,
+    "foot_y": 88.606,
+    "earth_y": 91.433,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 188,
+    "base_xz": [
+     2111.277,
+     -82.278
+    ],
+    "piece": null,
+    "ground_y": 90.037,
+    "ground_owner": "CURB",
+    "base_y": 89.802,
+    "base_vs_ground_m": 0.235,
+    "footprint_on_road": 0,
+    "foot_y": 87.302,
+    "earth_y": 89.946,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 189,
+    "base_xz": [
+     2087.481,
+     -142.233
+    ],
+    "piece": null,
+    "ground_y": 87.878,
+    "ground_owner": "CURB",
+    "base_y": 87.639,
+    "base_vs_ground_m": 0.239,
+    "footprint_on_road": 0,
+    "foot_y": 85.139,
+    "earth_y": 87.784,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 190,
+    "base_xz": [
+     2022.509,
+     -158.872
+    ],
+    "piece": null,
+    "ground_y": 85.704,
+    "ground_owner": "CURB",
+    "base_y": 85.489,
+    "base_vs_ground_m": 0.215,
+    "footprint_on_road": 0,
+    "foot_y": 82.989,
+    "earth_y": 85.641,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 191,
+    "base_xz": [
+     2021.086,
+     -222.18
+    ],
+    "piece": null,
+    "ground_y": 84.522,
+    "ground_owner": "CURB",
+    "base_y": 84.319,
+    "base_vs_ground_m": 0.203,
+    "footprint_on_road": 0,
+    "foot_y": 81.819,
+    "earth_y": 84.462,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 192,
+    "base_xz": [
+     1970.49,
+     -258.888
+    ],
+    "piece": null,
+    "ground_y": 83.914,
+    "ground_owner": "CURB",
+    "base_y": 83.722,
+    "base_vs_ground_m": 0.192,
+    "footprint_on_road": 0,
+    "foot_y": 81.222,
+    "earth_y": 83.869,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 193,
+    "base_xz": [
+     1988.099,
+     -323.92
+    ],
+    "piece": null,
+    "ground_y": 83.337,
+    "ground_owner": "CURB",
+    "base_y": 83.122,
+    "base_vs_ground_m": 0.215,
+    "footprint_on_road": 0,
+    "foot_y": 80.622,
+    "earth_y": 83.266,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 194,
+    "base_xz": [
+     1935.883,
+     -361.373
+    ],
+    "piece": null,
+    "ground_y": 82.732,
+    "ground_owner": "CURB",
+    "base_y": 82.545,
+    "base_vs_ground_m": 0.187,
+    "footprint_on_road": 0,
+    "foot_y": 80.045,
+    "earth_y": 82.69,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 195,
+    "base_xz": [
+     1933.258,
+     -421.864
+    ],
+    "piece": null,
+    "ground_y": 82.136,
+    "ground_owner": "CURB",
+    "base_y": 81.927,
+    "base_vs_ground_m": 0.209,
+    "footprint_on_road": 0,
+    "foot_y": 79.427,
+    "earth_y": 81.999,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 196,
+    "base_xz": [
+     1878.403,
+     -449.032
+    ],
+    "piece": null,
+    "ground_y": 81.991,
+    "ground_owner": "CURB",
+    "base_y": 81.805,
+    "base_vs_ground_m": 0.186,
+    "footprint_on_road": 0,
+    "foot_y": 79.305,
+    "earth_y": 81.936,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 197,
+    "base_xz": [
+     1849.805,
+     -500.032
+    ],
+    "piece": null,
+    "ground_y": 82.377,
+    "ground_owner": "CURB",
+    "base_y": 82.173,
+    "base_vs_ground_m": 0.204,
+    "footprint_on_road": 0,
+    "foot_y": 79.673,
+    "earth_y": 82.318,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 198,
+    "base_xz": [
+     1791.993,
+     -509.217
+    ],
+    "piece": null,
+    "ground_y": 81.838,
+    "ground_owner": "CURB",
+    "base_y": 81.634,
+    "base_vs_ground_m": 0.204,
+    "footprint_on_road": 0,
+    "foot_y": 79.134,
+    "earth_y": 81.78,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 199,
+    "base_xz": [
+     1751.898,
+     -556.852
+    ],
+    "piece": null,
+    "ground_y": 79.75,
+    "ground_owner": "CURB",
+    "base_y": 79.544,
+    "base_vs_ground_m": 0.206,
+    "footprint_on_road": 0,
+    "foot_y": 77.044,
+    "earth_y": 79.686,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 200,
+    "base_xz": [
+     1691.788,
+     -556.276
+    ],
+    "piece": null,
+    "ground_y": 77.38,
+    "ground_owner": "CURB",
+    "base_y": 77.203,
+    "base_vs_ground_m": 0.177,
+    "footprint_on_road": 0,
+    "foot_y": 74.703,
+    "earth_y": 77.347,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 201,
+    "base_xz": [
+     1661.58,
+     -606.766
+    ],
+    "piece": null,
+    "ground_y": 75.056,
+    "ground_owner": "CURB",
+    "base_y": 74.898,
+    "base_vs_ground_m": 0.158,
+    "footprint_on_road": 0,
+    "foot_y": 72.398,
+    "earth_y": 75.039,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 202,
+    "base_xz": [
+     1603.709,
+     -630.201
+    ],
+    "piece": null,
+    "ground_y": 72.811,
+    "ground_owner": "CURB",
+    "base_y": 72.631,
+    "base_vs_ground_m": 0.18,
+    "footprint_on_road": 0,
+    "foot_y": 70.131,
+    "earth_y": 72.79,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 203,
+    "base_xz": [
+     1584.437,
+     -686.674
+    ],
+    "piece": null,
+    "ground_y": 70.766,
+    "ground_owner": "CURB",
+    "base_y": 70.613,
+    "base_vs_ground_m": 0.153,
+    "footprint_on_road": 0,
+    "foot_y": 68.113,
+    "earth_y": 70.758,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 204,
+    "base_xz": [
+     1522.832,
+     -698.268
+    ],
+    "piece": null,
+    "ground_y": 68.559,
+    "ground_owner": "CURB",
+    "base_y": 68.326,
+    "base_vs_ground_m": 0.233,
+    "footprint_on_road": 0,
+    "foot_y": 65.826,
+    "earth_y": 68.451,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 205,
+    "base_xz": [
+     1488.312,
+     -746.48
+    ],
+    "piece": null,
+    "ground_y": 66.645,
+    "ground_owner": "CURB",
+    "base_y": 66.425,
+    "base_vs_ground_m": 0.22,
+    "footprint_on_road": 0,
+    "foot_y": 63.925,
+    "earth_y": 66.569,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 206,
+    "base_xz": [
+     1428.691,
+     -749.641
+    ],
+    "piece": null,
+    "ground_y": 64.845,
+    "ground_owner": "CURB",
+    "base_y": 64.596,
+    "base_vs_ground_m": 0.249,
+    "footprint_on_road": 0,
+    "foot_y": 62.096,
+    "earth_y": 64.74,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 207,
+    "base_xz": [
+     1392.551,
+     -797.269
+    ],
+    "piece": null,
+    "ground_y": 63.112,
+    "ground_owner": "CURB",
+    "base_y": 62.894,
+    "base_vs_ground_m": 0.218,
+    "footprint_on_road": 0,
+    "foot_y": 60.394,
+    "earth_y": 63.039,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 208,
+    "base_xz": [
+     1331.274,
+     -800.078
+    ],
+    "piece": null,
+    "ground_y": 61.785,
+    "ground_owner": "CURB",
+    "base_y": 61.58,
+    "base_vs_ground_m": 0.205,
+    "footprint_on_road": 0,
+    "foot_y": 59.08,
+    "earth_y": 61.724,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 209,
+    "base_xz": [
+     1288.131,
+     -841.404
+    ],
+    "piece": null,
+    "ground_y": 61.242,
+    "ground_owner": "CURB",
+    "base_y": 61.036,
+    "base_vs_ground_m": 0.206,
+    "footprint_on_road": 0,
+    "foot_y": 58.536,
+    "earth_y": 61.18,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 210,
+    "base_xz": [
+     1229.035,
+     -826.45
+    ],
+    "piece": null,
+    "ground_y": 60.923,
+    "ground_owner": "CURB",
+    "base_y": 60.723,
+    "base_vs_ground_m": 0.2,
+    "footprint_on_road": 0,
+    "foot_y": 58.223,
+    "earth_y": 60.865,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 211,
+    "base_xz": [
+     1179.474,
+     -865.34
+    ],
+    "piece": null,
+    "ground_y": 61.091,
+    "ground_owner": "CURB",
+    "base_y": 60.884,
+    "base_vs_ground_m": 0.207,
+    "footprint_on_road": 0,
+    "foot_y": 58.384,
+    "earth_y": 61.029,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 212,
+    "base_xz": [
+     1120.518,
+     -864.052
+    ],
+    "piece": null,
+    "ground_y": 61.033,
+    "ground_owner": "CURB",
+    "base_y": 60.816,
+    "base_vs_ground_m": 0.217,
+    "footprint_on_road": 0,
+    "foot_y": 58.316,
+    "earth_y": 60.962,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 213,
+    "base_xz": [
+     1089.164,
+     -914.86
+    ],
+    "piece": null,
+    "ground_y": 59.896,
+    "ground_owner": "CURB",
+    "base_y": 59.64,
+    "base_vs_ground_m": 0.256,
+    "footprint_on_road": 0,
+    "foot_y": 57.14,
+    "earth_y": 59.784,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 214,
+    "base_xz": [
+     1028.02,
+     -924.51
+    ],
+    "piece": null,
+    "ground_y": 58.048,
+    "ground_owner": "CURB",
+    "base_y": 57.8,
+    "base_vs_ground_m": 0.248,
+    "footprint_on_road": 0,
+    "foot_y": 55.3,
+    "earth_y": 57.944,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 215,
+    "base_xz": [
+     987.102,
+     -965.924
+    ],
+    "piece": null,
+    "ground_y": 56.392,
+    "ground_owner": "CURB",
+    "base_y": 56.222,
+    "base_vs_ground_m": 0.17,
+    "footprint_on_road": 0,
+    "foot_y": 53.722,
+    "earth_y": 56.365,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 216,
+    "base_xz": [
+     929.436,
+     -954.771
+    ],
+    "piece": null,
+    "ground_y": 55.186,
+    "ground_owner": "CURB",
+    "base_y": 54.992,
+    "base_vs_ground_m": 0.194,
+    "footprint_on_road": 0,
+    "foot_y": 52.492,
+    "earth_y": 55.136,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 217,
+    "base_xz": [
+     874.085,
+     -980.585
+    ],
+    "piece": null,
+    "ground_y": 53.371,
+    "ground_owner": "CURB",
+    "base_y": 53.134,
+    "base_vs_ground_m": 0.237,
+    "footprint_on_road": 0,
+    "foot_y": 50.634,
+    "earth_y": 53.278,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 218,
+    "base_xz": [
+     818.5,
+     -961.351
+    ],
+    "piece": null,
+    "ground_y": 52.474,
+    "ground_owner": "CURB",
+    "base_y": 52.274,
+    "base_vs_ground_m": 0.2,
+    "footprint_on_road": 0,
+    "foot_y": 49.774,
+    "earth_y": 52.415,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 219,
+    "base_xz": [
+     768.102,
+     -992.315
+    ],
+    "piece": null,
+    "ground_y": 54.772,
+    "ground_owner": "CURB",
+    "base_y": 54.572,
+    "base_vs_ground_m": 0.2,
+    "footprint_on_road": 0,
+    "foot_y": 52.072,
+    "earth_y": 54.721,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 220,
+    "base_xz": [
+     708.143,
+     -975.127
+    ],
+    "piece": null,
+    "ground_y": 57.685,
+    "ground_owner": "CURB",
+    "base_y": 57.472,
+    "base_vs_ground_m": 0.213,
+    "footprint_on_road": 0,
+    "foot_y": 54.972,
+    "earth_y": 57.617,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 221,
+    "base_xz": [
+     657.131,
+     -1003.773
+    ],
+    "piece": null,
+    "ground_y": 59.3,
+    "ground_owner": "CURB",
+    "base_y": 59.069,
+    "base_vs_ground_m": 0.231,
+    "footprint_on_road": 0,
+    "foot_y": 56.569,
+    "earth_y": 59.217,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 222,
+    "base_xz": [
+     600.693,
+     -983.4
+    ],
+    "piece": null,
+    "ground_y": 59.164,
+    "ground_owner": "CURB",
+    "base_y": 58.951,
+    "base_vs_ground_m": 0.213,
+    "footprint_on_road": 0,
+    "foot_y": 56.451,
+    "earth_y": 59.096,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 223,
+    "base_xz": [
+     549.3,
+     -1014.48
+    ],
+    "piece": null,
+    "ground_y": 57.71,
+    "ground_owner": "CURB",
+    "base_y": 57.447,
+    "base_vs_ground_m": 0.263,
+    "footprint_on_road": 0,
+    "foot_y": 54.947,
+    "earth_y": 57.593,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 224,
+    "base_xz": [
+     488.918,
+     -1003.83
+    ],
+    "piece": null,
+    "ground_y": 54.736,
+    "ground_owner": "CURB",
+    "base_y": 54.487,
+    "base_vs_ground_m": 0.249,
+    "footprint_on_road": 0,
+    "foot_y": 51.987,
+    "earth_y": 54.661,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 225,
+    "base_xz": [
+     449.24,
+     -1046.251
+    ],
+    "piece": null,
+    "ground_y": 51.447,
+    "ground_owner": "TERRAIN",
+    "base_y": 51.168,
+    "base_vs_ground_m": 0.279,
+    "footprint_on_road": 0,
+    "foot_y": 48.668,
+    "earth_y": 51.447,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 226,
+    "base_xz": [
+     391.248,
+     -1063.939
+    ],
+    "piece": null,
+    "ground_y": 47.608,
+    "ground_owner": "CURB",
+    "base_y": 47.367,
+    "base_vs_ground_m": 0.241,
+    "footprint_on_road": 0,
+    "foot_y": 44.867,
+    "earth_y": 47.509,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 227,
+    "base_xz": [
+     372.646,
+     -1119.131
+    ],
+    "piece": null,
+    "ground_y": 44.393,
+    "ground_owner": "CURB",
+    "base_y": 44.154,
+    "base_vs_ground_m": 0.239,
+    "footprint_on_road": 0,
+    "foot_y": 41.654,
+    "earth_y": 44.297,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 228,
+    "base_xz": [
+     324.409,
+     -1151.538
+    ],
+    "piece": null,
+    "ground_y": 41.712,
+    "ground_owner": "CURB",
+    "base_y": 41.512,
+    "base_vs_ground_m": 0.2,
+    "footprint_on_road": 0,
+    "foot_y": 39.012,
+    "earth_y": 41.657,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 229,
+    "base_xz": [
+     312.164,
+     -1211.601
+    ],
+    "piece": null,
+    "ground_y": 39.131,
+    "ground_owner": "CURB",
+    "base_y": 38.918,
+    "base_vs_ground_m": 0.213,
+    "footprint_on_road": 0,
+    "foot_y": 36.418,
+    "earth_y": 39.062,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 230,
+    "base_xz": [
+     263.392,
+     -1243.885
+    ],
+    "piece": null,
+    "ground_y": 36.555,
+    "ground_owner": "CURB",
+    "base_y": 36.32,
+    "base_vs_ground_m": 0.235,
+    "footprint_on_road": 0,
+    "foot_y": 33.82,
+    "earth_y": 36.468,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 231,
+    "base_xz": [
+     255.616,
+     -1303.323
+    ],
+    "piece": null,
+    "ground_y": 33.449,
+    "ground_owner": "CURB",
+    "base_y": 33.185,
+    "base_vs_ground_m": 0.264,
+    "footprint_on_road": 0,
+    "foot_y": 30.685,
+    "earth_y": 33.344,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 232,
+    "base_xz": [
+     199.78,
+     -1334.987
+    ],
+    "piece": null,
+    "ground_y": 29.995,
+    "ground_owner": "CURB",
+    "base_y": 29.575,
+    "base_vs_ground_m": 0.42,
+    "footprint_on_road": 0,
+    "foot_y": 27.075,
+    "earth_y": 29.816,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 233,
+    "base_xz": [
+     198.49,
+     -1397.93
+    ],
+    "piece": null,
+    "ground_y": 26.852,
+    "ground_owner": "TERRAIN",
+    "base_y": 26.702,
+    "base_vs_ground_m": 0.15,
+    "footprint_on_road": 0,
+    "foot_y": 24.202,
+    "earth_y": 26.852,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 234,
+    "base_xz": [
+     142.576,
+     -1427.265
+    ],
+    "piece": null,
+    "ground_y": 24.795,
+    "ground_owner": "CURB",
+    "base_y": 24.61,
+    "base_vs_ground_m": 0.185,
+    "footprint_on_road": 0,
+    "foot_y": 22.11,
+    "earth_y": 24.761,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 235,
+    "base_xz": [
+     139.044,
+     -1492.266
+    ],
+    "piece": null,
+    "ground_y": 24.399,
+    "ground_owner": "CURB",
+    "base_y": 24.196,
+    "base_vs_ground_m": 0.203,
+    "footprint_on_road": 0,
+    "foot_y": 21.696,
+    "earth_y": 24.309,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 236,
+    "base_xz": [
+     82.754,
+     -1516.349
+    ],
+    "piece": null,
+    "ground_y": 25.087,
+    "ground_owner": "CURB",
+    "base_y": 24.874,
+    "base_vs_ground_m": 0.213,
+    "footprint_on_road": 0,
+    "foot_y": 22.374,
+    "earth_y": 24.994,
+    "wall_clear_m": 9.068
+   },
+   {
+    "lamp": 237,
+    "base_xz": [
+     44.86,
+     -1618.24
+    ],
+    "piece": null,
+    "ground_y": 24.432,
+    "ground_owner": "TERRAIN",
+    "base_y": 24.935,
+    "base_vs_ground_m": -0.503,
+    "footprint_on_road": 0,
+    "foot_y": 22.435,
+    "earth_y": 24.432,
+    "wall_clear_m": 1.171
+   },
+   {
+    "lamp": 238,
+    "base_xz": [
+     -2026.395,
+     646.757
+    ],
+    "piece": "A",
+    "ground_y": 20.153,
+    "ground_owner": "CURB",
+    "base_y": 20.009,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 17.509,
+    "earth_y": 19.865,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 239,
+    "base_xz": [
+     -2053.097,
+     714.563
+    ],
+    "piece": "A",
+    "ground_y": 15.993,
+    "ground_owner": "CURB",
+    "base_y": 15.849,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 13.349,
+    "earth_y": 15.833,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 240,
+    "base_xz": [
+     -2103.516,
+     724.578
+    ],
+    "piece": "A",
+    "ground_y": 13.617,
+    "ground_owner": "CURB",
+    "base_y": 13.473,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 10.973,
+    "earth_y": 13.457,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 241,
+    "base_xz": [
+     -2123.038,
+     783.193
+    ],
+    "piece": "A",
+    "ground_y": 11.001,
+    "ground_owner": "CURB",
+    "base_y": 10.857,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 8.357,
+    "earth_y": 10.784,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 242,
+    "base_xz": [
+     -2182.056,
+     801.633
+    ],
+    "piece": "A",
+    "ground_y": 9.207,
+    "ground_owner": "CURB",
+    "base_y": 9.063,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 6.563,
+    "earth_y": 8.912,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 243,
+    "base_xz": [
+     -2201.246,
+     860.526
+    ],
+    "piece": "A",
+    "ground_y": 8.409,
+    "ground_owner": "CURB",
+    "base_y": 8.265,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 5.765,
+    "earth_y": 8.25,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 244,
+    "base_xz": [
+     -2257.726,
+     875.863
+    ],
+    "piece": "A",
+    "ground_y": 7.918,
+    "ground_owner": "CURB",
+    "base_y": 7.774,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 5.274,
+    "earth_y": 7.618,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 245,
+    "base_xz": [
+     -2279.618,
+     937.799
+    ],
+    "piece": "A",
+    "ground_y": 7.635,
+    "ground_owner": "CURB",
+    "base_y": 7.491,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 4.991,
+    "earth_y": 7.445,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 246,
+    "base_xz": [
+     -2339.207,
+     955.467
+    ],
+    "piece": "A",
+    "ground_y": 8.082,
+    "ground_owner": "CURB",
+    "base_y": 7.938,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 5.438,
+    "earth_y": 7.765,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 247,
+    "base_xz": [
+     -2361.932,
+     1013.346
+    ],
+    "piece": "A",
+    "ground_y": 8.579,
+    "ground_owner": "CURB",
+    "base_y": 8.435,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 5.935,
+    "earth_y": 8.279,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 248,
+    "base_xz": [
+     -2423.213,
+     1017.945
+    ],
+    "piece": "A",
+    "ground_y": 8.997,
+    "ground_owner": "CURB",
+    "base_y": 8.853,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 6.353,
+    "earth_y": 8.69,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 249,
+    "base_xz": [
+     -2452.554,
+     1060.199
+    ],
+    "piece": "A",
+    "ground_y": 8.51,
+    "ground_owner": "CURB",
+    "base_y": 8.366,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 5.866,
+    "earth_y": 8.21,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 250,
+    "base_xz": [
+     -2523.071,
+     1047.113
+    ],
+    "piece": "A",
+    "ground_y": 7.331,
+    "ground_owner": "CURB",
+    "base_y": 7.187,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 4.687,
+    "earth_y": 7.033,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 251,
+    "base_xz": [
+     -2578.171,
+     1073.114
+    ],
+    "piece": "A",
+    "ground_y": 6.547,
+    "ground_owner": "CURB",
+    "base_y": 6.403,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 3.903,
+    "earth_y": 6.234,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 252,
+    "base_xz": [
+     -2627.474,
+     1036.525
+    ],
+    "piece": "A",
+    "ground_y": 5.571,
+    "ground_owner": "CURB",
+    "base_y": 5.426,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 2.926,
+    "earth_y": 5.266,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 253,
+    "base_xz": [
+     -2688.949,
+     1044.068
+    ],
+    "piece": "A",
+    "ground_y": 4.677,
+    "ground_owner": "CURB",
+    "base_y": 4.533,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 2.033,
+    "earth_y": 4.37,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 254,
+    "base_xz": [
+     -2797.001,
+     1034.58
+    ],
+    "piece": "B",
+    "ground_y": 1.938,
+    "ground_owner": "CURB",
+    "base_y": 1.794,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -0.706,
+    "earth_y": 1.638,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 255,
+    "base_xz": [
+     -2822.994,
+     1098.227
+    ],
+    "piece": "B",
+    "ground_y": 0.034,
+    "ground_owner": "CURB",
+    "base_y": -0.11,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -2.61,
+    "earth_y": -0.126,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 256,
+    "base_xz": [
+     -2873.535,
+     1130.138
+    ],
+    "piece": "B",
+    "ground_y": -3.475,
+    "ground_owner": "CURB",
+    "base_y": -3.619,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -6.119,
+    "earth_y": -3.637,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 257,
+    "base_xz": [
+     -2866.394,
+     1190.142
+    ],
+    "piece": "B",
+    "ground_y": -8.751,
+    "ground_owner": "CURB",
+    "base_y": -8.895,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -11.395,
+    "earth_y": -8.913,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 258,
+    "base_xz": [
+     -2896.135,
+     1241.796
+    ],
+    "piece": "B",
+    "ground_y": -14.059,
+    "ground_owner": "CURB",
+    "base_y": -14.203,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -16.703,
+    "earth_y": -14.359,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 259,
+    "base_xz": [
+     -2873.673,
+     1297.882
+    ],
+    "piece": "B",
+    "ground_y": -19.232,
+    "ground_owner": "CURB",
+    "base_y": -19.376,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -21.876,
+    "earth_y": -19.394,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 260,
+    "base_xz": [
+     -2905.859,
+     1348.556
+    ],
+    "piece": "B",
+    "ground_y": -24.419,
+    "ground_owner": "CURB",
+    "base_y": -24.563,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -27.063,
+    "earth_y": -24.719,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 261,
+    "base_xz": [
+     -2899.556,
+     1409.064
+    ],
+    "piece": "B",
+    "ground_y": -29.74,
+    "ground_owner": "CURB",
+    "base_y": -29.884,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -32.384,
+    "earth_y": -29.937,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 262,
+    "base_xz": [
+     -2945.744,
+     1448.383
+    ],
+    "piece": "B",
+    "ground_y": -35.281,
+    "ground_owner": "CURB",
+    "base_y": -35.425,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -37.925,
+    "earth_y": -35.546,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 263,
+    "base_xz": [
+     -2945.367,
+     1509.058
+    ],
+    "piece": "B",
+    "ground_y": -40.414,
+    "ground_owner": "CURB",
+    "base_y": -40.558,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -43.058,
+    "earth_y": -40.576,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 264,
+    "base_xz": [
+     -2991.549,
+     1548.435
+    ],
+    "piece": "B",
+    "ground_y": -45.696,
+    "ground_owner": "CURB",
+    "base_y": -45.84,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -48.34,
+    "earth_y": -45.857,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 265,
+    "base_xz": [
+     -2991.051,
+     1609.125
+    ],
+    "piece": "B",
+    "ground_y": -50.915,
+    "ground_owner": "CURB",
+    "base_y": -51.059,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -53.559,
+    "earth_y": -51.101,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 266,
+    "base_xz": [
+     -3035.725,
+     1651.248
+    ],
+    "piece": "B",
+    "ground_y": -56.204,
+    "ground_owner": "CURB",
+    "base_y": -56.348,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -58.848,
+    "earth_y": -56.365,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 267,
+    "base_xz": [
+     -3020.302,
+     1710.173
+    ],
+    "piece": "B",
+    "ground_y": -60.936,
+    "ground_owner": "CURB",
+    "base_y": -61.08,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -63.58,
+    "earth_y": -61.097,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 268,
+    "base_xz": [
+     -3045.263,
+     1764.621
+    ],
+    "piece": "B",
+    "ground_y": -64.054,
+    "ground_owner": "CURB",
+    "base_y": -64.198,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -66.698,
+    "earth_y": -64.344,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 269,
+    "base_xz": [
+     -3014.213,
+     1817.357
+    ],
+    "piece": "B",
+    "ground_y": -65.482,
+    "ground_owner": "CURB",
+    "base_y": -65.626,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -68.126,
+    "earth_y": -65.642,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 270,
+    "base_xz": [
+     -3038.066,
+     1874.201
+    ],
+    "piece": "B",
+    "ground_y": -66.015,
+    "ground_owner": "CURB",
+    "base_y": -66.159,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -68.659,
+    "earth_y": -66.314,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 271,
+    "base_xz": [
+     -3005.168,
+     1926.28
+    ],
+    "piece": "B",
+    "ground_y": -66.484,
+    "ground_owner": "CURB",
+    "base_y": -66.628,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -69.128,
+    "earth_y": -66.667,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 272,
+    "base_xz": [
+     -2966.769,
+     2086.305
+    ],
+    "piece": "C",
+    "ground_y": -65.667,
+    "ground_owner": "CURB",
+    "base_y": -65.811,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -68.311,
+    "earth_y": -65.968,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 273,
+    "base_xz": [
+     -2903.469,
+     2075.267
+    ],
+    "piece": "C",
+    "ground_y": -64.133,
+    "ground_owner": "CURB",
+    "base_y": -64.277,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -66.777,
+    "earth_y": -64.453,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 274,
+    "base_xz": [
+     -2862.092,
+     2123.808
+    ],
+    "piece": "C",
+    "ground_y": -61.972,
+    "ground_owner": "CURB",
+    "base_y": -62.116,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -64.616,
+    "earth_y": -62.3,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 275,
+    "base_xz": [
+     -2800.396,
+     2110.715
+    ],
+    "piece": "C",
+    "ground_y": -59.513,
+    "ground_owner": "CURB",
+    "base_y": -59.657,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -62.157,
+    "earth_y": -59.724,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 276,
+    "base_xz": [
+     -2756.024,
+     2155.317
+    ],
+    "piece": "C",
+    "ground_y": -56.101,
+    "ground_owner": "CURB",
+    "base_y": -56.245,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -58.745,
+    "earth_y": -56.438,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 277,
+    "base_xz": [
+     -2695.126,
+     2137.102
+    ],
+    "piece": "C",
+    "ground_y": -52.458,
+    "ground_owner": "CURB",
+    "base_y": -52.602,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -55.102,
+    "earth_y": -52.757,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 278,
+    "base_xz": [
+     -2647.227,
+     2177.804
+    ],
+    "piece": "C",
+    "ground_y": -48.55,
+    "ground_owner": "CURB",
+    "base_y": -48.694,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -51.194,
+    "earth_y": -48.873,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 279,
+    "base_xz": [
+     -2587.89,
+     2156.153
+    ],
+    "piece": "C",
+    "ground_y": -44.694,
+    "ground_owner": "CURB",
+    "base_y": -44.838,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -47.338,
+    "earth_y": -44.862,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 280,
+    "base_xz": [
+     -2537.332,
+     2193.402
+    ],
+    "piece": "C",
+    "ground_y": -40.968,
+    "ground_owner": "CURB",
+    "base_y": -41.112,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -43.612,
+    "earth_y": -41.265,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 281,
+    "base_xz": [
+     -2479.178,
+     2169.437
+    ],
+    "piece": "C",
+    "ground_y": -37.081,
+    "ground_owner": "CURB",
+    "base_y": -37.225,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -39.725,
+    "earth_y": -37.242,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 282,
+    "base_xz": [
+     -2427.371,
+     2204.411
+    ],
+    "piece": "C",
+    "ground_y": -33.146,
+    "ground_owner": "CURB",
+    "base_y": -33.29,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -35.79,
+    "earth_y": -33.482,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 283,
+    "base_xz": [
+     -2369.818,
+     2180.3
+    ],
+    "piece": "C",
+    "ground_y": -29.261,
+    "ground_owner": "CURB",
+    "base_y": -29.405,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -31.905,
+    "earth_y": -29.788,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 284,
+    "base_xz": [
+     -2318.182,
+     2215.229
+    ],
+    "piece": "C",
+    "ground_y": -25.348,
+    "ground_owner": "CURB",
+    "base_y": -25.492,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -27.992,
+    "earth_y": -25.509,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 285,
+    "base_xz": [
+     -2259.246,
+     2195.484
+    ],
+    "piece": "C",
+    "ground_y": -21.548,
+    "ground_owner": "CURB",
+    "base_y": -21.692,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -24.192,
+    "earth_y": -21.709,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 286,
+    "base_xz": [
+     -2214.593,
+     2239.433
+    ],
+    "piece": "C",
+    "ground_y": -17.705,
+    "ground_owner": "CURB",
+    "base_y": -17.849,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -20.349,
+    "earth_y": -17.908,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 287,
+    "base_xz": [
+     -2152.93,
+     2231.426
+    ],
+    "piece": "C",
+    "ground_y": -13.904,
+    "ground_owner": "CURB",
+    "base_y": -14.048,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -16.548,
+    "earth_y": -14.065,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 288,
+    "base_xz": [
+     -2116.11,
+     2282.659
+    ],
+    "piece": "C",
+    "ground_y": -9.954,
+    "ground_owner": "CURB",
+    "base_y": -10.098,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -12.598,
+    "earth_y": -10.117,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 289,
+    "base_xz": [
+     -2053.527,
+     2287.314
+    ],
+    "piece": "C",
+    "ground_y": -6.352,
+    "ground_owner": "CURB",
+    "base_y": -6.496,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -8.996,
+    "earth_y": -6.512,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 290,
+    "base_xz": [
+     -2028.729,
+     2344.995
+    ],
+    "piece": "C",
+    "ground_y": -2.544,
+    "ground_owner": "CURB",
+    "base_y": -2.688,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -5.188,
+    "earth_y": -2.705,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 291,
+    "base_xz": [
+     -1965.93,
+     2357.422
+    ],
+    "piece": "C",
+    "ground_y": 1.442,
+    "ground_owner": "CURB",
+    "base_y": 1.298,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -1.202,
+    "earth_y": 1.282,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 292,
+    "base_xz": [
+     -1953.546,
+     2419.783
+    ],
+    "piece": "C",
+    "ground_y": 5.191,
+    "ground_owner": "CURB",
+    "base_y": 5.047,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 2.547,
+    "earth_y": 5.031,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 293,
+    "base_xz": [
+     -1893.924,
+     2444.853
+    ],
+    "piece": "C",
+    "ground_y": 8.38,
+    "ground_owner": "CURB",
+    "base_y": 8.236,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 5.736,
+    "earth_y": 8.22,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 294,
+    "base_xz": [
+     -1894.248,
+     2509.744
+    ],
+    "piece": "C",
+    "ground_y": 10.787,
+    "ground_owner": "CURB",
+    "base_y": 10.643,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 8.143,
+    "earth_y": 10.483,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 295,
+    "base_xz": [
+     -1835.195,
+     2540.279
+    ],
+    "piece": "C",
+    "ground_y": 12.578,
+    "ground_owner": "CURB",
+    "base_y": 12.434,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 9.934,
+    "earth_y": 12.424,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 296,
+    "base_xz": [
+     -1836.111,
+     2603.199
+    ],
+    "piece": "C",
+    "ground_y": 13.562,
+    "ground_owner": "CURB",
+    "base_y": 13.418,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 10.918,
+    "earth_y": 13.402,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 297,
+    "base_xz": [
+     -1778.394,
+     2631.951
+    ],
+    "piece": "C",
+    "ground_y": 13.967,
+    "ground_owner": "CURB",
+    "base_y": 13.823,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 11.323,
+    "earth_y": 13.803,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 298,
+    "base_xz": [
+     -1778.008,
+     2696.306
+    ],
+    "piece": "C",
+    "ground_y": 13.676,
+    "ground_owner": "CURB",
+    "base_y": 13.532,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 11.032,
+    "earth_y": 13.511,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 299,
+    "base_xz": [
+     -1721.269,
+     2726.001
+    ],
+    "piece": "C",
+    "ground_y": 12.663,
+    "ground_owner": "CURB",
+    "base_y": 12.519,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 10.019,
+    "earth_y": 12.503,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 300,
+    "base_xz": [
+     -1719.988,
+     2789.831
+    ],
+    "piece": "C",
+    "ground_y": 11.004,
+    "ground_owner": "CURB",
+    "base_y": 10.86,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 8.36,
+    "earth_y": 10.844,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 301,
+    "base_xz": [
+     -1663.957,
+     2819.817
+    ],
+    "piece": "C",
+    "ground_y": 8.626,
+    "ground_owner": "CURB",
+    "base_y": 8.482,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 5.982,
+    "earth_y": 8.399,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 302,
+    "base_xz": [
+     -1660.747,
+     2883.59
+    ],
+    "piece": "C",
+    "ground_y": 5.695,
+    "ground_owner": "CURB",
+    "base_y": 5.551,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 3.051,
+    "earth_y": 5.534,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 303,
+    "base_xz": [
+     -1603.08,
+     2909.056
+    ],
+    "piece": "C",
+    "ground_y": 2.67,
+    "ground_owner": "CURB",
+    "base_y": 2.526,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 0.026,
+    "earth_y": 2.505,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 304,
+    "base_xz": [
+     -1591.786,
+     2971.947
+    ],
+    "piece": "C",
+    "ground_y": -0.251,
+    "ground_owner": "CURB",
+    "base_y": -0.395,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -2.895,
+    "earth_y": -0.412,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 305,
+    "base_xz": [
+     -1529.982,
+     2988.272
+    ],
+    "piece": "C",
+    "ground_y": -2.632,
+    "ground_owner": "CURB",
+    "base_y": -2.776,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -5.276,
+    "earth_y": -2.87,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 306,
+    "base_xz": [
+     -1510.381,
+     3048.723
+    ],
+    "piece": "C",
+    "ground_y": -4.418,
+    "ground_owner": "CURB",
+    "base_y": -4.562,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -7.062,
+    "earth_y": -4.725,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 307,
+    "base_xz": [
+     -1447.083,
+     3057.013
+    ],
+    "piece": "C",
+    "ground_y": -5.595,
+    "ground_owner": "CURB",
+    "base_y": -5.739,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -8.239,
+    "earth_y": -5.762,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 308,
+    "base_xz": [
+     -1416.92,
+     3112.175
+    ],
+    "piece": "C",
+    "ground_y": -6.213,
+    "ground_owner": "CURB",
+    "base_y": -6.357,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -8.857,
+    "earth_y": -6.373,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 309,
+    "base_xz": [
+     -1353.7,
+     3109.518
+    ],
+    "piece": "C",
+    "ground_y": -6.663,
+    "ground_owner": "CURB",
+    "base_y": -6.807,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -9.307,
+    "earth_y": -6.823,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 310,
+    "base_xz": [
+     -1316.933,
+     3161.644
+    ],
+    "piece": "C",
+    "ground_y": -7.144,
+    "ground_owner": "CURB",
+    "base_y": -7.288,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -9.788,
+    "earth_y": -7.459,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 311,
+    "base_xz": [
+     -1253.918,
+     3150.637
+    ],
+    "piece": "C",
+    "ground_y": -7.756,
+    "ground_owner": "CURB",
+    "base_y": -7.9,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -10.4,
+    "earth_y": -8.013,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 312,
+    "base_xz": [
+     1.363,
+     1766.949
+    ],
+    "piece": "D",
+    "ground_y": 107.84,
+    "ground_owner": "CURB",
+    "base_y": 107.696,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 105.196,
+    "earth_y": 107.582,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 313,
+    "base_xz": [
+     -20.306,
+     1823.804
+    ],
+    "piece": "D",
+    "ground_y": 105.4,
+    "ground_owner": "CURB",
+    "base_y": 105.256,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 102.756,
+    "earth_y": 105.088,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 314,
+    "base_xz": [
+     -78.272,
+     1842.736
+    ],
+    "piece": "D",
+    "ground_y": 102.359,
+    "ground_owner": "CURB",
+    "base_y": 102.215,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 99.715,
+    "earth_y": 102.254,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 315,
+    "base_xz": [
+     -95.005,
+     1900.255
+    ],
+    "piece": "D",
+    "ground_y": 99.216,
+    "ground_owner": "CURB",
+    "base_y": 99.072,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 96.572,
+    "earth_y": 99.056,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 316,
+    "base_xz": [
+     -145.625,
+     1933.825
+    ],
+    "piece": "D",
+    "ground_y": 95.725,
+    "ground_owner": "CURB",
+    "base_y": 95.581,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 93.081,
+    "earth_y": 95.543,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 317,
+    "base_xz": [
+     -148.567,
+     1994.717
+    ],
+    "piece": "D",
+    "ground_y": 92.394,
+    "ground_owner": "CURB",
+    "base_y": 92.25,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 89.75,
+    "earth_y": 92.094,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 318,
+    "base_xz": [
+     -195.834,
+     2032.11
+    ],
+    "piece": "D",
+    "ground_y": 89.156,
+    "ground_owner": "CURB",
+    "base_y": 89.012,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 86.512,
+    "earth_y": 88.994,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 319,
+    "base_xz": [
+     -200.153,
+     2091.784
+    ],
+    "piece": "D",
+    "ground_y": 86.065,
+    "ground_owner": "CURB",
+    "base_y": 85.921,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 83.421,
+    "earth_y": 85.766,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 320,
+    "base_xz": [
+     -1025.03,
+     3081.789
+    ],
+    "piece": "D",
+    "ground_y": 5.243,
+    "ground_owner": "CURB",
+    "base_y": 5.099,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": 2.599,
+    "earth_y": 4.863,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 321,
+    "base_xz": [
+     -1087.698,
+     3078.137
+    ],
+    "piece": "D",
+    "ground_y": 0.987,
+    "ground_owner": "CURB",
+    "base_y": 0.843,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -1.657,
+    "earth_y": 0.824,
+    "wall_clear_m": null
+   },
+   {
+    "lamp": 322,
+    "base_xz": [
+     -1123.052,
+     3125.277
+    ],
+    "piece": "D",
+    "ground_y": -2.774,
+    "ground_owner": "CURB",
+    "base_y": -2.918,
+    "base_vs_ground_m": 0.144,
+    "reseated": true,
+    "footprint_on_road": 0,
+    "foot_y": -5.418,
+    "earth_y": -3.083,
+    "wall_clear_m": null
+   }
+  ]
+ },
+ "relocated": [
+  {
+   "name": "lamp_53_college_junction",
+   "lamp": 53,
+   "seat": "ground",
+   "old_base": [
+    -1448.43,
+    -543.814
+   ],
+   "new_base": [
+    -1447.2,
+    -531.8
+   ],
+   "move_m": 12.077,
+   "old_head": [
+    -1446.639,
+    49.99,
+    -543.993
+   ],
+   "new_head": [
+    -1445.407,
+    51.273,
+    -531.955
+   ],
+   "ground_y": 42.473,
+   "earth_y": 42.096,
+   "footprint_on_road": 0,
+   "footprint_radius_m": 0.584,
+   "foot_y": 39.829,
+   "wall_clear_m": null
+  },
+  {
+   "name": "lamp_30_guard_release",
+   "lamp": 30,
+   "seat": "keep",
+   "old_base": [
+    -1540.078,
+    -1058.216
+   ],
+   "new_base": [
+    -1540.34,
+    -1059.19
+   ],
+   "move_m": 1.009,
+   "old_head": [
+    -1539.606,
+    11.549,
+    -1056.479
+   ],
+   "new_head": [
+    -1539.868,
+    11.549,
+    -1057.453
+   ],
+   "ground_y": 2.776,
+   "earth_y": 2.776,
+   "footprint_on_road": 0,
+   "footprint_radius_m": 0.584,
+   "foot_y": 0.105,
+   "wall_clear_m": 0.684
+  },
+  {
+   "name": "lamp_32_guard_release",
+   "lamp": 32,
+   "seat": "keep",
+   "old_base": [
+    -1645.2,
+    -1043.505
+   ],
+   "new_base": [
+    -1645.27,
+    -1044.51
+   ],
+   "move_m": 1.007,
+   "old_head": [
+    -1645.082,
+    10.627,
+    -1041.709
+   ],
+   "new_head": [
+    -1645.151,
+    10.627,
+    -1042.714
+   ],
+   "ground_y": 0.669,
+   "earth_y": 0.669,
+   "footprint_on_road": 0,
+   "footprint_radius_m": 0.584,
+   "foot_y": -0.817,
+   "wall_clear_m": 0.682
+  },
+  {
+   "name": "lamp_34_guard_release",
+   "lamp": 34,
+   "seat": "keep",
+   "old_base": [
+    -1754.799,
+    -1048.359
+   ],
+   "new_base": [
+    -1754.72,
+    -1049.36
+   ],
+   "move_m": 1.004,
+   "old_head": [
+    -1754.94,
+    9.512,
+    -1046.565
+   ],
+   "new_head": [
+    -1754.861,
+    9.512,
+    -1047.566
+   ],
+   "ground_y": -0.345,
+   "earth_y": -0.345,
+   "footprint_on_road": 0,
+   "footprint_radius_m": 0.584,
+   "foot_y": -1.932,
+   "wall_clear_m": 0.68
+  },
+  {
+   "name": "lamp_43_guard_release",
+   "lamp": 43,
+   "seat": "keep",
+   "old_base": [
+    -1816.378,
+    -920.598
+   ],
+   "new_base": [
+    -1817.24,
+    -920.09
+   ],
+   "move_m": 1.0,
+   "old_head": [
+    -1814.834,
+    21.617,
+    -921.523
+   ],
+   "new_head": [
+    -1815.696,
+    21.617,
+    -921.015
+   ],
+   "ground_y": 12.998,
+   "earth_y": 12.998,
+   "footprint_on_road": 0,
+   "footprint_radius_m": 0.584,
+   "foot_y": 10.173,
+   "wall_clear_m": 0.666
+  },
+  {
+   "name": "lamp_237_lmb_creek_deck",
+   "lamp": 237,
+   "seat": "keep",
+   "old_base": [
+    40.861,
+    -1623.139
+   ],
+   "new_base": [
+    44.86,
+    -1618.24
+   ],
+   "move_m": 6.324,
+   "old_head": [
+    39.3,
+    33.879,
+    -1622.243
+   ],
+   "new_head": [
+    43.279,
+    33.879,
+    -1617.38
+   ],
+   "ground_y": 24.433,
+   "earth_y": 24.433,
+   "footprint_on_road": 0,
+   "footprint_radius_m": 0.584,
+   "foot_y": 22.435,
+   "wall_clear_m": 1.17
+  }
+ ],
+ "apron_moved": [
+  {
+   "lamp": 77,
+   "apron": "AP1",
+   "head_was": [
+    -1954.731,
+    33.266,
+    632.081
+   ],
+   "base_was": [
+    -1955.497,
+    633.71
+   ],
+   "head": [
+    -1954.731,
+    33.6298,
+    632.081
+   ],
+   "base": [
+    -1955.497,
+    24.83,
+    633.71
+   ],
+   "seat": "built walk under the base + HEAD_OVER_GROUND_M (8.8 m), the draft's rule",
+   "reseated_only": true,
+   "why": "ledger 0054 P3 repair round 1: the post stands on the return's walk, built +0.36 m off the ground the draft seated it on"
+  }
+ ],
+ "provenance": {
+  "model": "led_cobra",
+  "arms": 2,
+  "generator": "tools/make_streetlight_led.py (assets/models/streetlight_led*.obj, CC0)",
+  "mounting_height_m": 11.811,
+  "arm_length_m": 3.6576,
+  "pole_height_m": 10.668,
+  "road_datum": "head y - 8.944 m (ledger 0043: the 2026-10 light stood 6.94 m over the nearest road vertex, 2.004 m under the recorded head)",
+  "lens_offset_m": {
+   "road_ward_m": 2.4398,
+   "up_m": 4.718
+  },
+  "lens_offset_frame": "per lamp: road_ward = head -> nearest centreline point (horizontal), up = +y; from the 2026-10 lamp's LIGHTS marker centroid (street_lamp_2026_10) to this lens centroid. ext_config [LIGHT_N] POSITION = lens centroid - 0.15 m y, so each light moves by the same offset"
+ }
+}

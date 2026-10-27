@@ -421,6 +421,9 @@ ship_track_folder() {
   step "ship: track folder (models_<id>.ini per layout, ui/<id>/, <id>/{map,data,ai}; a race layout without its closure kn5 is a HARD error)"
   (cd "$AIROSO" && python -m scripts.ac.track_folder "$PROJ") | grep -E "wrote|length_m|n_pits|layouts packed|removed stale|models|WARNING|ai/"
   cp "$PROJ/build/$SLUG.kn5" "$PROJ/build/$SLUG/"          # the race, closure + spawn kn5s are copied by track_folder itself
+  # P4 lamps (ledger 0054 P4 step 2): one CSP [LIGHT_N] per lamp, at its lens, the approved look on every block — read
+  # back off the WRITTEN ext_config.ini (0043 / 0056's duplicate-light class, hard); as in tools/ship_sd.sh
+  (cd "$AIROSO" && python tools/check_lights_ini.py "$PROJ" --json "$PROJ/data/lights_ini_check.json")
 }
 ship_verify_inis() {
   step "ship: verify_kn5 --inis (hard — each race ini lists exactly road + common race + ITS closure + its spawns; none lists another layout's closure)"

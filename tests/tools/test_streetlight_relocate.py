@@ -76,3 +76,23 @@ def test_lake_murray_relocations_are_well_formed():
     ents = SR.entries(cfg)
     assert all(math.dist(e["from"], e["to"]) <= 15.0 for e in ents)
     assert len({e["from"] for e in ents}) == len(ents)
+
+
+# --- ledger 0054 P4 step 2: the seat rule and the one-light-per-lamp spacing (pure halves of reseat_and_check) ---
+def test_needs_reseat_measures_the_pole_base_not_the_footing():
+    # the base 0.14 m under the walk it stands in (the design seat): no; 1.41 m under (lamps 113 / 143 of v0.19.0): yes;
+    # 1.01 m over a released slope (lamp 32): yes; 0.91 over (lamp 34): no; no ground at all: yes
+    assert not SR.needs_reseat(88.0, 87.856, 1.0)
+    assert SR.needs_reseat(88.887, 87.474, 1.0)
+    assert SR.needs_reseat(0.669, 1.683, 1.0)
+    assert not SR.needs_reseat(-0.346, 0.568, 1.0)
+    assert SR.needs_reseat(None, 5.0, 1.0)
+    assert abs(SR.reseat_head_y(88.887, 8.8) - 97.687) < 1e-9
+
+
+def test_heads_too_close_finds_every_pair_under_the_cluster_link():
+    heads = [[0.0, 9.0, 0.0], [1.5, 9.0, 0.0], [60.0, 9.0, 0.0], [60.0, 9.0, 1.9], [120.0, 9.0, 0.0], [122.5, 9.0, 0.0]]
+    pairs = SR.heads_too_close(heads, 2.0)
+    assert [(i, j) for i, j, _d in pairs] == [(0, 1), (2, 3)]
+    assert SR.heads_too_close([[0.0, 9.0, 0.0], [25.0, 9.0, 0.0]], 2.0) == []
+    assert SR.heads_too_close([], 2.0) == []

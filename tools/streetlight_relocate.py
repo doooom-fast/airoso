@@ -81,3 +81,34 @@ def plan(heads, nearest_cl, ents: list[dict], arm: float, match_tol: float, max_
         rows.append({"name": e["name"], "lamp": i, "seat": e["seat"], "old_base": [round(bases[i][0], 3), round(bases[i][1], 3)],
                      "new_base": [round(e["to"][0], 3), round(e["to"][1], 3)], "head_xz": (hx, hz), "move_m": round(move, 3)})
     return rows
+
+
+# --- ledger 0054 P4 step 2: the seat rule, pure (tools/author_lamps_blend.reseat_and_check reads the built ground) ---
+def needs_reseat(ground_y, base_y: float, tol_m: float) -> bool:
+    """True when a pole's BASE (the road datum under its head, never the model's buried footing) stands more than
+    ``tol_m`` under or over the built ground under it — or when there is no ground at all"""
+    return ground_y is None or abs(float(ground_y) - float(base_y)) > float(tol_m)
+
+
+def reseat_head_y(ground_y: float, head_over_ground_m: float) -> float:
+    """the head height the draft's rule gives a post on this ground (build_loop_blend.build_streetlights)"""
+    return float(ground_y) + float(head_over_ground_m)
+
+
+def heads_too_close(heads, apart_m: float) -> list[tuple[int, int, float]]:
+    """every pair of heads closer than ``apart_m`` horizontally — their lenses (a constant offset from the heads)
+    would be clustered into ONE CSP light by scripts/ac/ext_config.py (LAMP_LINK_M)"""
+    cells: dict = {}
+    for i, h in enumerate(heads):
+        cells.setdefault((int(float(h[0]) // apart_m), int(float(h[2]) // apart_m)), []).append(i)
+    out = []
+    for (cx, cz), ids in cells.items():
+        for i in ids:
+            for dx in (-1, 0, 1):
+                for dz in (-1, 0, 1):
+                    for j in cells.get((cx + dx, cz + dz), ()):
+                        if j > i:
+                            d = math.hypot(float(heads[i][0]) - float(heads[j][0]), float(heads[i][2]) - float(heads[j][2]))
+                            if d < apart_m:
+                                out.append((i, j, round(d, 3)))
+    return sorted(out)

@@ -148,6 +148,8 @@ V021_SHIM="import sys, importlib.util as u; s=u.spec_from_file_location('scripts
 TERRAIN_DATA="terrain.samples.json.gz corridor.i8.json i8.local.json i8.legacy.local.json deck_datum.samples.json ground_release.samples.json.gz freeway_i8.samples.json.gz"
 # the track's own textures (track.config.json texture_overrides with a project-relative path: the far ring's chaparral)
 TRACK_TEXTURES="textures/chaparral_far_diffuse.jpg"
+# P4 trees: the research make_treefx reads (scenery.treefx.veg_bins / rock_walls; ledger 0054 P4 step 3 / A9)
+TREEFX_RESEARCH="source/expansion/aerial__veg_bins.json source/expansion/p3-proofs/measure_p3.json"
 step() { echo; echo "=================== $1"; }
 pyq() { (cd "$AIROSO" && python -c "$@"); }
 
@@ -166,6 +168,11 @@ for f in $TERRAIN_DATA; do
   [ -f "$SRC/data/$f" ] && cp "$SRC/data/$f" "$PROJ/data/$f"
 done
 for f in $TRACK_TEXTURES; do
+  [ -f "$SRC/$f" ] && { mkdir -p "$(dirname "$PROJ/$f")"; cp "$SRC/$f" "$PROJ/$f"; }
+done
+# --- P4 trees (ledger 0054 P4 step 3 / A9): the aerial lens's vegetation bins, the research of record make_treefx
+#     zones the north network by (track.config.json scenery.treefx.veg_bins, project-relative) ---
+for f in $TREEFX_RESEARCH; do
   [ -f "$SRC/$f" ] && { mkdir -p "$(dirname "$PROJ/$f")"; cp "$SRC/$f" "$PROJ/$f"; }
 done
 mkdir -p "$PROJ/source/trees" && cp "$SRC/source/trees/"*.bin "$PROJ/source/trees/" 2>/dev/null || true   # TreeFX models (gitignored, personal use)
@@ -466,7 +473,9 @@ step "ship: verify_kn5 --inis (hard — each race ini lists exactly road + commo
 (cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ" --inis)   # after the road-kn5 copy: every listed kn5 must be in the folder
 step "ship: minimap in the KN5 frame, per layout (tools/make_map.py)"
 (cd "$AIROSO" && python tools/make_map.py "$PROJ")
-step "ship: TreeFX palms / street trees / scrub (tools/make_treefx.py)"
+step "ship: TreeFX palms / street trees / scrub + the north network by zone (tools/make_treefx.py; the loop's cells byte-identical, the added cells per the aerial bins, caps by area)"
+# P4 trees (ledger 0054 P4 step 3 / A9): the loop's and the north's planted areas, densities and caps are printed here
+# before anything is written; data/treefx.report.json is the record (per zone, per species, the north per piece)
 (cd "$AIROSO" && python tools/make_treefx.py "$PROJ")
 step "gate: scenery vs the race lanes and walls, on the WRITTEN trees.txt (tools/verify_race.py --scenery-only, hard)"
 # TreeFX trunks and sign posts are not physical in AC: one standing in a race lane or inside a wall is a car
@@ -583,7 +592,7 @@ for f in centerline.local.json centerline.raw.local.json median_bands.json dummi
          finished_centerline.json gate_centerline.json lights.local.json connectors.local.json \
          mouths.json mouth_welds.json aprons.json aprons.lamps.json pads.plan.json pads.built.json pads.3dep.json verify_pads.json verify_mouths.json verify_fold_fans.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
          drive_test.json drive_test.expansion.json drive_lines.expansion.json audit.json stubs.plan.json stubs.built.json verify_stubs.json stubs.3dep.json \
-         barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json street_kn5.json \
+         barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json street_kn5.json treefx.report.json \
          $TERRAIN_DATA terrain.tiers.report.json terrain_thin.json bridges.authored.json          deck_datum.json ground_release.json ground_release.report.json ground_release.auto_cuts.json freeway_i8.json freeway_i8.report.json; do
   [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
 done

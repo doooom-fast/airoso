@@ -143,3 +143,170 @@ def test_a_grown_grid_fills_the_loops_own_cells_exactly_as_before():
     assert len(before) > 50
     assert fill(_fill_project(grow=(2, 2, 3))) == before
     assert fill(_fill_project(grow=(2, 2, 3), tag=False)) != before
+
+
+# --- ledger 0054 P4 step 3 (EXPANSION-PLAN A9): the north network, planted by zone from the aerial bins -------------
+
+def _north_project(bins=None, zones=None, median_trees=None, cap_scale=None, pads=None, cuts=None, config=True,
+                   medians=None):
+    """_fill_project grown by (2, 2, 3) with one north piece 'A' laid through the ADDED north rows: a straight 500 m road
+    at z = 240 from x = -100 to 400 (20 m curb to curb), as a connector + the readable intermediate (stations every
+    2.5 m, a raised planted median 4 m wide along s 0-500) + the aerial bins + scenery.treefx (``config``)"""
+    d = _fill_project(grow=(2, 2, 3))
+    rows = []
+    for k in range(201):
+        s = 2.5 * k
+        rows.append([s, -100.0 + s, 240.0, 0.0, 0.0, 10.0, -10.0, 4.0, 0.0, "planted", 0.0, "2", "2", "eye"])
+    cols = ["s", "x", "z", "y_3dep", "y_smooth", "left_m", "right_m", "median_w_m", "median_off_m", "median_type",
+            "osm_sep_m", "lanes_fwd", "lanes_rev", "median_src"]
+    md = medians if medians is not None else [
+        {"id": "MD1", "piece": "A", "type": "planted", "raised": True, "s_from": 0.0, "s_to": 500.0, "width_m": [4.0, 4.0],
+         "polygon_xz": [[-100.0, 238.0], [400.0, 238.0], [400.0, 242.0], [-100.0, 242.0]]}]
+    (d / "data" / "expansion.north.json").write_text(json.dumps({
+        "frame": {"origin": {"lon": -117.0, "lat": 32.8, "elev_m": 100.0}},
+        "pieces": [{"id": "A", "name": "test", "columns": cols, "stations": rows}], "medians": md}), encoding="utf-8")
+    cpts = [[-100.0 + x, 0.0, 240.0] for x in range(0, 501, 5)]
+    (d / "data" / "connectors.local.json").write_text(json.dumps({"connectors": [
+        {"name": "north_test#0", "kind": "connector", "points_xyz_m": cpts, "widths_m": [20.0] * len(cpts),
+         "expansion": {"route": "north", "piece": "A"}}]}), encoding="utf-8")
+    (d / "source" / "expansion").mkdir(parents=True, exist_ok=True)
+    b = bins if bins is not None else {"A": {"0L": [800, 1000, 0, 200], "1L": [800, 1000, 0, 200],
+                                             "0R": [800, 1000, 0, 200], "1R": [800, 1000, 0, 200]}}
+    (d / "source" / "expansion" / "veg.json").write_text(json.dumps(b), encoding="utf-8")
+    if pads is not None:
+        (d / "data" / "pads.built.json").write_text(json.dumps({"pads": [{"id": "J9", "outline_xz": pads}]}), encoding="utf-8")
+    if cuts is not None:        # the measured real walls of record (measure_p3.json's shape)
+        (d / "source" / "expansion" / "walls.json").write_text(json.dumps({"walls": {"real_walls_ge_3m": cuts}}), encoding="utf-8")
+    cfg = {"slug": "tiny"}
+    if config:
+        tf = {"veg_bins": "source/expansion/veg.json", "pieces": "data/expansion.north.json", "bin_m": 250,
+              "zones": zones if zones is not None else [{"piece": "A", "trees": "north_canyon_trees", "bushes": "north_scrub"}],
+              "median_tree_types": ["planted"], "median_trees": median_trees if median_trees is not None else []}
+        if cuts is not None:
+            tf["rock_walls"] = "source/expansion/walls.json"
+        if cap_scale is not None:
+            tf["cap_scale"] = cap_scale
+        cfg["scenery"] = {"treefx": tf}
+    (d / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
+    return d
+
+
+def _entries(d, prefix):
+    return [e for e in mt.plan(d, all_species=True)["entries"] if e["zone"].startswith(prefix)]
+
+
+def test_north_config_plants_the_added_cells_and_moves_nothing_of_the_loops():
+    """the loop's own cells plant exactly as without the config (every fill_* entry identical); the north zones plant
+    only with the config, every one at least the yard setback off every pavement and never in the loop's own cells"""
+    on, off = _north_project(), _north_project(config=False)
+    key = lambda es: sorted((e["zone"], e["model"], round(e["x"], 3), round(e["z"], 3)) for e in es)
+    assert key(_entries(on, "fill_")) == key(_entries(off, "fill_")) and len(_entries(off, "fill_")) > 50
+    assert _entries(off, "north_") == [] and mt.plan(off)["north"] is None
+    north = _entries(on, "north_")
+    assert len(north) > 100
+    for e in north:
+        assert e["zone"] in mt.NORTH_ZONE_ORDER
+        if e["zone"].startswith("north_median"):
+            continue
+        if -100.0 <= e["x"] <= 400.0:
+            assert abs(e["z"] - 240.0) >= 10.0 + 6.0, e        # the piece's curb + the 6 m yard setback
+        assert not (-200.0 <= e["z"] <= 200.0 and -196.0 <= e["x"] <= 404.0), e    # never inside the loop's own block
+    assert mt.plan(on)["north"]["area_loop_m2"] > 0
+
+
+def test_north_density_follows_the_aerial_bins_per_side_and_station():
+    """bin 0L a woodland, 1L bare ground, the right side scrub only: trees stand left of s 0-250 and nowhere on the
+    bare bin; the right side gets bushes and no trees"""
+    d = _north_project(bins={"A": {"0L": [200, 1600, 0, 200], "1L": [2000, 0, 0, 0],
+                                   "0R": [1000, 0, 0, 1000], "1R": [1000, 0, 0, 1000]}})
+    es = [e for e in _entries(d, "north_") if not e["zone"].startswith("north_median")]
+    left = [e for e in es if e["z"] > 240.0]
+    right = [e for e in es if e["z"] < 240.0]
+    assert not [e for e in left if -100.0 + 250.0 <= e["x"]], "the bare bin (1L, s 250-500) plants nothing"
+    assert [e for e in left if e["zone"] == "north_canyon_trees"], "the woodland bin plants trees"
+    assert right and all(e["zone"] == "north_scrub" for e in right), "scrub only on the right (no canopy there)"
+
+
+def test_nothing_on_a_junction_pad_or_a_rock_cut_face():
+    """a pad outline in the band keeps every plant off it (and APRON_PLANT_CLEAR_M past its edge); a measured real wall
+    (rock_walls, NORTH_ROCK_RISE_M or more) is bare from the curb to NORTH_ROCK_REACH_M on its side along its stations
+    (+ NORTH_ROCK_PAD_M each end); a wall under the threshold is a bank and keeps its plants"""
+    pad = [[50.0, 262.0], [90.0, 262.0], [90.0, 300.0], [50.0, 300.0]]
+    rock = [{"piece": "A", "side": "right", "s_from": 0.0, "s_to": 245.0, "max_real_m": 5.0},      # right = z < 240
+            {"piece": "A", "side": "left", "s_from": 0.0, "s_to": 245.0, "max_real_m": 1.5}]
+    bare = _north_project(pads=pad, cuts=rock)
+    es = [e for e in _entries(bare, "north_") if not e["zone"].startswith("north_median")]
+    assert es
+    for e in es:
+        assert not (50.0 - 1.0 <= e["x"] <= 90.0 + 1.0 and 262.0 - 1.0 <= e["z"] <= 300.0 + 1.0), ("on the pad", e)
+        if -100.0 <= e["x"] <= 150.0 - mt.NORTH_ROCK_PAD_M and e["z"] < 240.0:
+            assert 230.0 - e["z"] > mt.NORTH_ROCK_REACH_M, ("on the rock face", e)
+    assert [e for e in es if -100.0 <= e["x"] <= 150.0 and e["z"] > 240.0 and e["z"] - 250.0 <= mt.NORTH_ROCK_REACH_M], \
+        "the 1.5 m bank keeps its plants"
+    st = mt.plan(bare)["north"]
+    assert st["drops"]["pad"] > 0 and st["drops"]["rock"] > 0
+    assert len(_entries(_north_project(), "north_")) > len(_entries(bare, "north_"))
+
+
+def test_median_trees_only_where_declared_and_on_raised_planted_medians_only():
+    """the islands' low planting is the assembler's (scatter_positions.json median_planting), never duplicated here:
+    the north adds only the declared trees, down the island's middle, inside its outline, 6 m clear of each nose"""
+    d = _north_project(median_trees=[{"piece": "A", "s": [100.0, 300.0], "zone": "north_median_trees"}])
+    trees = _entries(d, "north_median_trees")
+    assert trees and not [e for e in _entries(d, "north_") if "median" in e["zone"] and e["zone"] != "north_median_trees"]
+    for e in trees:
+        assert 0.0 - 0.01 <= e["x"] <= 200.0 + 0.01 and abs(e["z"] - 240.0) < 0.01, e      # s 100-300 at the middle
+        assert e["model"] in {"PepperV1.bin", "Oak3.bin"}
+    xs = sorted(e["x"] for e in trees)
+    assert all(abs((b - a) - mt.NORTH_MEDIAN_TREE_STEP_M) < 0.01 for a, b in zip(xs, xs[1:]))
+    near_nose = _entries(_north_project(median_trees=[{"piece": "A", "s": [0.0, 500.0]}]), "north_median_trees")
+    assert near_nose and all(-100.0 + mt.NORTH_MEDIAN_END_CLEAR_M - 0.01 <= e["x"] <= 400.0 - mt.NORTH_MEDIAN_END_CLEAR_M + 0.01
+                             for e in near_nose)
+    # a terracotta median (Mission Gorge) stays bare; so does one that is not raised
+    md = [{"id": "MD1", "piece": "A", "type": "terracotta", "raised": True, "s_from": 0.0, "s_to": 500.0, "width_m": [4.0, 4.0],
+           "polygon_xz": [[-100.0, 238.0], [400.0, 238.0], [400.0, 242.0], [-100.0, 242.0]]},
+          {"id": "MD2", "piece": "A", "type": "planted", "raised": False, "s_from": 0.0, "s_to": 500.0, "width_m": [4.0, 4.0],
+           "polygon_xz": [[-100.0, 238.0], [400.0, 238.0], [400.0, 242.0], [-100.0, 242.0]]}]
+    assert _entries(_north_project(medians=md, median_trees=[{"piece": "A", "s": [100.0, 300.0]}]), "north_median") == []
+
+
+def test_north_caps_scale_with_planted_area_at_the_loops_density():
+    """cap = the loop's cap x (north area / loop area) x cap_scale, applied to the north alone; the loop's thinning is
+    untouched (its fill count is the same with and without the north); a bigger cap_scale keeps more"""
+    d = _north_project()
+    p = mt.plan(d, all_species=True)
+    st = p["north"]
+    for name, cap in (("trees", mt.CAP_TREES), ("bushes", mt.CAP_BUSHES)):
+        assert st["caps"][name] == round(cap * st["area_north_m2"] / st["area_loop_m2"])
+        assert st["kept"][name] <= st["aerial_implied"][name]
+    assert st["cap_scale"] == 1.0 and st["loop_density_per_ha"]["trees"] > 0
+    assert sum(1 for e in p["entries"] if e["zone"].startswith("fill_")) == len(_entries(_north_project(config=False), "fill_"))
+    big = mt.plan(_north_project(cap_scale=10.0), all_species=True)["north"]
+    assert big["caps"]["trees"] == round(mt.CAP_TREES * 10.0 * big["area_north_m2"] / big["area_loop_m2"])
+    assert big["caps"]["trees"] > st["caps"]["trees"] and big["kept"]["trees"] >= st["kept"]["trees"]
+    assert sum(big["per_piece_total"].values()) >= sum(st["per_piece_total"].values())
+    assert "A" in st["per_piece"] and all(isinstance(v, int) for v in st["per_piece"]["A"].values())
+
+
+def test_build_writes_the_north_zones_and_the_report():
+    d = _north_project(median_trees=[{"piece": "A", "s": [100.0, 300.0]}])
+    for b in ("Oak3.bin", "Pine_Aleppo.bin", "Gum.bin", "Sage.bin", "Yucca.bin", "Bush.bin", "Bush3.bin", "Agave.bin", "PepperV1.bin"):
+        (d / "source" / "trees" / b).write_bytes(b"bin")
+    p = mt.plan(d)
+    mt.build(d)
+    written = (d / "build" / "tiny" / "extension" / "trees" / "trees.txt").read_text(encoding="utf-8")
+    assert written == "\n".join(p["lines"]) + "\n"
+    rep = json.loads((d / "data" / "treefx.report.json").read_text(encoding="utf-8"))
+    assert rep["north"]["per_piece_total"]["A"] > 0 and rep["per_zone"]["north_median_trees"] > 0
+    assert rep["surface_materials"] == "1GRASS_0_mat, 1ROAD_road_mat" and rep["total"] == sum(rep["per_zone"].values())
+
+
+def test_a_declared_zoning_with_no_bins_file_is_an_error_not_a_bare_network():
+    d = _north_project()
+    (d / "source" / "expansion" / "veg.json").unlink()
+    try:
+        mt.plan(d)
+    except SystemExit as e:
+        assert "veg.json" in str(e)
+    else:
+        raise AssertionError("scenery.treefx naming a missing bins file must stop the planner")

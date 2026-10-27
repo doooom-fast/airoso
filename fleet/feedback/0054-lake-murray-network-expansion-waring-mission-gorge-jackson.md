@@ -1155,3 +1155,74 @@ extract kept as `source/expansion/p4-proofs/gates_trees.txt`, the planting recor
 - The stand-in stills show where and how dense; the real foliage is the game's. Nothing on the loop moved.
 - The lamps (D4, lamp 77), the signs (M3 / M4), the map, the buildings and the rock texture on the cut faces are the
   other three P4 pieces, merged after this one.
+
+## P4 signs — the north corners, the Speedways' own M3 / M4, the per-layout map (2026-10-26; branch `worktree-wf_566e8616-71e-2`, not merged, nothing installed)
+
+Kevin, 2026-10-26, on v0.19.0's barriers: *"the barriers look great"* — K-rail confirmed (this entry's plates stand behind
+them where a turn's outside is a stub). P4 step 1 (signs, A8 / A7) and step 6 (map, A12), one of the four P4 pieces built in
+parallel; lamps, trees + GrassFX, buildings + rock are sibling branches, merged after.
+
+**What was built (in plain terms).** A W1-6 "large arrow" is the yellow plate with the black arrow that stands just past
+the outside curb of a tight corner, square to the road you arrive on — where a car that did not turn would end up. Two
+things stopped the rule seeing the new corners. First, each north road piece ends at its junction pad's cut, so no piece
+carries the turn made ACROSS the pad; the rule now also reads ONE stitched centre line J1 → J2 → J3 → J4 → J5 through the
+pads (`tools/expansion_lines.centre_ribbon`), with the built pad decks as pavement, and finds the three turns both ways.
+Second, M3 (College → Navajo) and M4 (Navajo → Jackson) stand where Free Roam now drives straight on into Waring and
+Jackson north: an arrow there would point you away from a real road. Those two corners are marked `per_layout` in
+`signs.json`: Free Roam gets no plate (the rule's own skip), and each Speedway gets ITS own plate behind ITS sealing wall
+(the K-rail curb strip that runs across the opening in that layout), built into that layout's `RACE_CLOSE_<TOKEN>`
+collection and shipped in its closure kn5 — the file only that layout loads. A new rule clause makes the first case
+general: a failed-to-turn ray that runs 8 m or more down ANOTHER road before it leaves pavement is "a through road" and no
+shared plate (v0.19.0's M3-rev would have stood at the Waring mouth's far corner pointing away from Waring).
+
+**Where the plates stand** (dev pass on the v0.19.0 reference loop.blend; the rehearsal below reads the same):
+- **J2** (Waring → Princess View): forward, at the pad's west curb return between Princess View and the Waring south-west
+  stub (the ray crosses the deck; clearance 1.56 m); reverse (Princess View → Waring, a left), at the curb return by Mound
+  Ave — a grazing exit, the post stepped 0.90 m square off the ray to the outside (the new mesh-stage fallback, confirmed
+  by the gate's own ray).
+- **J3** (Princess View → Mission Gorge): forward, at the north curb return beside the quarry drive (1.51 m); reverse, at
+  the west curb return between the Mission Gorge west stub and the quarry drive (stepped 1.15 m).
+- **J4** (Mission Gorge → Jackson): forward, the ray runs down the Mission Gorge EAST stub arm and the plate stands behind
+  its K-rail (A8 as written: 3.44 m from the rail, 2.75 m clear of the pavement); reverse, at the north-west curb return by
+  the visitor-centre entrance (1.50 m).
+- **M3** at J1: `M3-fwd@race_cw` on the Waring mouth's deck 1.67 m behind the Speedway's wall; `M3-rev@race_acw` on the
+  loop's walk at Waring's south-west corner, 1.61 m behind Reverse's wall. Free Roam: no plate (College runs on into
+  Waring: the ray never leaves pavement; Navajo westbound runs 16 m across the opening: a through road).
+- **M4** at J5: `M4-fwd@race_cw` on the walk just east of the Jackson-north mouth (1.76 m); `M4-rev@race_acw` on the mouth's
+  deck (1.62 m; the ray crosses the curved strip obliquely, so the post is placed by the nearest wall face, not by its
+  length along the ray). Free Roam: no plate (the apex is 13 m from the J5 mouth, the mouth-flare rule).
+- Every one of v0.19.0's 19 plates stands exactly where it did.
+
+**The gate.** `verify_signs` measures a layout plate against the walls its layout loads (1.3–3.0 m to the sealing wall;
+on the deck, on no wall; the mainline's disc) and every post against every wall (≥ 0.5 m, the lamp rule's number); its
+new check (m) asks, per layout and per corner, "does THIS layout load a plate here, or does the rule's own skip apply to
+it?" — the question v0.19.0 could not ask (M3 / M4 skipped everywhere, the Speedways turning there with no arrow). The
+closure kn5 guards (`split_exports`, `check_race_kn5`, `verify_kn5`) admit a layout's own `SIGN*_<token>_<k>` plates and
+their solid textures into its closure file and nowhere else; `verify_race`'s scenery check judges a layout plate against
+its own layout only. The signs step runs AFTER the race furniture now, every ship (the furniture author empties the
+closure collections). Every number: GATES-CHANGELOG 2026-10-26.
+
+**The map (A12).** `layouts[].map: "lap"` on both Speedways: their minimap and Content Manager outline are drawn from the
+13.5 km lap alone, to its own extent (no 1.21× shrink for roads they cannot reach); Free Roam's and the root's show the
+whole network. Opt-in; a track without the key gets byte-identical maps.
+
+**Tests:** `tests/tools/test_p4_signs.py` (11); the suite 926 passed, 2 failed — the two known reds of this checkout
+(`test_engine_july_mirror_is_byte_identical`, `test_snapshot_copies_match_their_manifest_and_stay_small`: the CRLF
+checkout of `scripts/ac/export_kn5_addon.py`, as on main). No engine-july file touched.
+
+**Rehearsed** (`D:/k10-scratch/p4/signs/run1`: fresh workshop copy minus build/release, fresh engine-july copy with the
+snapshot's two differing files, the FULL chain from this branch, `--no-install`): see "Rehearsal numbers" below.
+
+**Stills** (`D:/k10-scratch/p4/signs/run1/stills/`): the J2 approach with its arrow (driver's eye), Speedway's M3 at J1,
+Free Roam at J1 with no arrow, the three maps.
+
+**Left, honestly.**
+- Drive 2 asks whether the layout plates read right from the seat: M3-rev@race_acw and M4-fwd@race_cw stand on the loop's
+  own walk beside the sealed openings (the wall stands in for the curb there), the other two on the openings' decks.
+- J4-fwd stands 3.4 m behind the Mission Gorge east K-rail (the march found a modelled walk at the stub's end); a plate
+  nearer the rail is a `slide_along_curb_m` / `base_xz` pin in signs.json if Kevin wants it closer.
+- The north plates' lateral offsets are the CONNECTOR rule's (1.33 m, a 1.5 m walk); the north roads' real walks are the
+  pads' returns. The 1.0 m gate minimum holds on every one.
+- Speed-limit plates (A8: Waring 35/40, Mission Gorge 55) and the W1-7 second-pass devices are not built; the rule still
+  builds W1-6 only.
+

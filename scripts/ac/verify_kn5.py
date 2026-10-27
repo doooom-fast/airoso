@@ -70,6 +70,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 import struct
 import sys
 from collections import Counter
@@ -226,14 +227,26 @@ class _Line:
         return d % self.lap if self.closed else d
 
 
-def _furniture_kn5(p: Path, tag: str, fails: list) -> tuple[list, list, list]:
-    """the checks every race-furniture kn5 shares: RACE meshes only, RACE materials only, no mesh over the cap, no
-    duplicate name inside it, no spawn / timing node, under RACE_KN5_MAX_B. Returns its (nodes, meshes, materials)."""
+SIGN_RE = re.compile(r"^(SIGNPLATE|SIGNARROW|SIGNPOST)_([a-z0-9]+)_(\d+)(?:_mat)?(?:\.\d+)?$", re.I)
+
+
+def layout_sign_owner(name: str):
+    """the owner token of a race layout's own W1-6 sign plate (ledger 0054 P4: SIGN*_<token>_<k>, or its <object>_mat
+    material; tools/race_furniture.layout_sign_owner restated — this gate reads only the kn5), else None"""
+    m = SIGN_RE.match(str(name))
+    return m.group(2).lower() if m else None
+
+
+def _furniture_kn5(p: Path, tag: str, fails: list, owner: str | None = None) -> tuple[list, list, list]:
+    """the checks every race-furniture kn5 shares: RACE meshes only, RACE materials only (a closure kn5: its owner's own
+    sign plates and their materials too, ledger 0054 P4), no mesh over the cap, no duplicate name inside it, no spawn /
+    timing node, under RACE_KN5_MAX_B. Returns its (nodes, meshes, materials)."""
     rnodes, rmeshes, rmats = _parse_full(p)
-    bad = [m["name"] for m in rmeshes if not m["name"].upper().startswith(RACE_PREFIXES)]
+    own = (lambda n: owner is not None and layout_sign_owner(n) == str(owner).lower())
+    bad = [m["name"] for m in rmeshes if not m["name"].upper().startswith(RACE_PREFIXES) and not own(m["name"])]
     if bad:
         fails.append(f"{tag} carries {len(bad)} non-race mesh(es) e.g. {bad[:3]} — the export filter leaked "
-                     f"(only 1WALL_RACE*/1KERB_RACE* belong in it)")
+                     f"(only 1WALL_RACE*/1KERB_RACE*{' and this layout' + chr(39) + 's SIGN*_<token>_<k> plates' if owner else ''} belong in it)")
     for m in rmeshes:
         if m["nverts"] > VERT_CAP:
             fails.append(f"OVER-CAP '{p.name}:{m['name']}' {m['nverts']} v > {VERT_CAP} — will split into dup meshes")
@@ -243,7 +256,7 @@ def _furniture_kn5(p: Path, tag: str, fails: list) -> tuple[list, list, list]:
     dups = {n: c for n, c in Counter(m["name"] for m in rmeshes if m["name"].startswith("1")).items() if c > 1}
     for name, c in dups.items():
         fails.append(f"DUPLICATE physical mesh '{p.name}:{name}' x{c}")
-    nonrace_mats = [mn for mn in rmats if not mn.upper().startswith(RACE_PREFIXES)]
+    nonrace_mats = [mn for mn in rmats if not mn.upper().startswith(RACE_PREFIXES) and not own(mn)]
     if nonrace_mats:
         fails.append(f"{tag} embeds {len(nonrace_mats)} non-race material(s) e.g. {nonrace_mats[:3]} — the "
                      f"material table was not purged (orphan meshes keep materials 'used') or the .ini was swapped")
@@ -304,12 +317,12 @@ def _verify_closure_kn5(p: Path, lid: str, token: str, loaded_names: set, fails:
     """(f) one race layout's closure kn5: only ITS closure (1WALL_RACE_CLOSE_<TOKEN>_*), >= 1 mesh, no name shared with
     the road + common kn5s that layout also loads"""
     tag = f"CLOSURE kn5 '{p.name}' ({lid})"
-    _n, cmeshes, _m = _furniture_kn5(p, tag, fails)
+    _n, cmeshes, _m = _furniture_kn5(p, tag, fails, owner=token)
     want = f"{CLOSE_TAG}{token.upper()}_"
-    wrong = [m["name"] for m in cmeshes if not m["name"].upper().startswith(want)]
+    wrong = [m["name"] for m in cmeshes if not m["name"].upper().startswith(want) and layout_sign_owner(m["name"]) != token.lower()]
     if wrong:
-        fails.append(f"{tag} carries {len(wrong)} mesh(es) that are not {lid}'s closure ({want}*) e.g. {wrong[:3]} — "
-                     f"a kerb, a curb strip or the other direction's closure")
+        fails.append(f"{tag} carries {len(wrong)} mesh(es) that are not {lid}'s closure ({want}*) or its own sign plates "
+                     f"e.g. {wrong[:3]} — a kerb, a curb strip or the other direction's closure / plates")
     if not any(m["name"].upper().startswith(want) for m in cmeshes):
         fails.append(f"{tag} holds no {want}* mesh — the {lid} closure is empty")
     dup = sorted(loaded_names & {m["name"] for m in cmeshes if m["name"].startswith("1")})

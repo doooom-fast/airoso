@@ -148,11 +148,19 @@ def driven_layouts(proj):
 
 
 def serves(p, ribbon, driven):
-    """which drivers a plate is for, in words (ledger 0051: the mainline is signed both ways)"""
+    """which drivers a plate is for, in words (ledger 0051: the mainline is signed both ways; 0054 P4: a layout plate
+    is one race layout's own, behind its sealing wall, in its closure kn5)"""
+    if p.get("layout"):
+        return "%s ONLY (its own plate, behind its sealing wall; ships in its closure kn5)" % p["layout"]
+    if ribbon == "north":
+        return "%s drivers on the north network (every layout; the turn across the junction pad)" % ("J1 -> J5" if p["direction"] == "fwd" else "J5 -> J1")
     if ribbon != "MAINLINE":
         return "%s approach of a two-way street (every layout)" % ("forward" if p["direction"] == "fwd" else "reverse")
     lays = driven.get(p["direction"], [])
     return "drivers going %s%s" % (DIRECTION_WORDS[p["direction"]].split(" (")[0], (" — " + ", ".join(lays)) if lays else " — no layout drives this way")
+
+
+PADS = []        # ledger 0054 P4: the junction pads' built decks (pavement polygons), drawn under the ribbons
 
 
 def load(proj):
@@ -170,10 +178,20 @@ def load(proj):
     if mb.exists():
         isl = json.loads(mb.read_text(encoding="utf-8")).get("island_w_by_vertex", [])
         island = isl if isinstance(isl, list) else [isl.get(str(i), 0.0) for i in range(len(ribbons[0][1]))]
+    # the north network (ledger 0054 P4): the pads' built decks as pavement; the stitched "north" ribbon is the
+    # pieces already drawn, so a north sign's own ribbon is never drawn twice
+    PADS[:] = []
+    pb = data / "pads.built.json"
+    if pb.exists():
+        for pad in json.loads(pb.read_text(encoding="utf-8")).get("pads", []):
+            PADS.append((pad["id"], [tuple(q) for q in pad["outline_xz"]]))
     return signs, ribbons, island
 
 
 def draw_ribbons(cv, ribbons, island, detail=True):
+    for pid, poly in PADS:
+        if any(cv.inside(q) for q in poly):
+            cv.d.polygon([cv.px(q) for q in poly], fill=COL["road"], outline=COL["walk"])
     layers = [("walk", True), ("road", False), ("island", False), ("lane", False)] if detail else [("road", False)]
     for layer, _ in layers:
         for name, P, W, closed in ribbons:

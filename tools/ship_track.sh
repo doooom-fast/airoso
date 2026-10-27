@@ -275,8 +275,10 @@ draft_lamps() {
   step "author: Kevin's lamp model at every streetlight (LIGHTPOST + LIGHTS lens)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_lamps_blend.py" -- "$PROJ" 2>&1 | grep "^\[lamps\]\|Error\|Traceback" )
 }
-draft_signs() {
-  step "author: W1-6 large-arrow signs at every tight corner (SIGNPLATE + SIGNARROW + SIGNPOST)"
+author_signs() {
+  # ledger 0054 P4: after the race furniture, every ship (the furniture author empties the RACE_CLOSE_<TOKEN> collections
+  # the race layouts' own plates live in); a track with no race layout gets its shared plates and nothing else
+  step "author: W1-6 large-arrow signs at every tight corner (SIGNPLATE + SIGNARROW + SIGNPOST; the race layouts' own plates into RACE_CLOSE_<TOKEN>)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_signs_blend.py" -- "$PROJ" 2>&1 | grep "^\[signs\]\|Error\|Traceback" )
   (cd "$AIROSO" && python tools/verify_signs.py "$PROJ" --blend "$PROJ/loop.blend" --blender "$BL" | tail -8)
   (cd "$AIROSO" && PYTHONUTF8=1 python tools/plot_signs.py "$PROJ")
@@ -436,7 +438,7 @@ ship_verify_inis() {
   (cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ" --inis)   # after the road-kn5 copy: every listed kn5 must be in the folder
 }
 ship_make_map() {
-  step "ship: minimap in the KN5 frame, per layout (tools/make_map.py)"
+  step "ship: minimap in the KN5 frame, per layout (tools/make_map.py; a layout with map = lap gets its lap alone, map + outline)"
   (cd "$AIROSO" && python tools/make_map.py "$PROJ")
 }
 ship_treefx() {

@@ -42,14 +42,17 @@
 #   draft  : median_envelope → terrain_sample → build_loop_blend → trim_connectors → terrain_sample →
 #            build_loop_blend → weld_mouths (GEN layer, regenerable; the weld mitres + warps every side-street
 #            end onto its host, self-checked — 2026-10-11; terrain_sample = the ledger-0046 tiered 3DEP plan)
-#   author : seat_terrain → median → gap_mouths → bridges → lamps → signs                 (scripted authoring)
+#   author : seat_terrain → median → gap_mouths → bridges → lamps                         (scripted authoring)
 #            → barrier_bands v2 (corridor solve + self-gates + PLANNED no_route per race layout, hard)
 #            → layout_dummies → author_race_furniture (RACE + RACE_CLOSE_<TOKEN>) → verify_race (idempotent)
+#            → signs (ledger 0054 P4: the road kn5's plates + each race layout's own plates into its RACE_CLOSE_<TOKEN>;
+#              after the furniture because the furniture author empties those collections; every ship) → verify_signs
 #   ship   : build_kn5_loop prep → split_exports (road / common race / closure per race layout / spawns)
 #            → export road / race / closure x race layouts (each content-checked) / spawn kn5s
 #            → AI per layout → verify_kn5 → kn5_to_gate_obj (road; the track folder reads its mesh names)
 #            → track_folder (three layouts) → verify_kn5 --inis
-#            → make_map → make_treefx → verify_race --scenery-only on the written trees.txt (hard)
+#            → make_map (ledger 0054 P4 / A12: per layout, track.config.json layouts[].map "lap" = its lap alone)
+#            → make_treefx → verify_race --scenery-only on the written trees.txt (hard)
 #   gate   : street: verify_mouths (every side-street mouth on the BUILT road, hard)
 #            → drive_test --layout street → audit_mesh
 #            per race layout: kn5_to_gate_obj (road + race + ITS closure → data/track.<id>.obj)
@@ -307,10 +310,6 @@ if [ "$SKIP_BLEND" = 0 ]; then
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/strip_scenery_blend.py" -- "$PROJ" 2>&1 | grep "^\[strip" | cut -c1-160 )
   step "author: Kevin's lamp model at every streetlight (LIGHTPOST + LIGHTS lens)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_lamps_blend.py" -- "$PROJ" 2>&1 | grep "^\[lamps\]\|Error\|Traceback" )
-  step "author: W1-6 large-arrow signs at every tight corner (SIGNPLATE + SIGNARROW + SIGNPOST)"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_signs_blend.py" -- "$PROJ" 2>&1 | grep "^\[signs\]\|Error\|Traceback" )
-  (cd "$AIROSO" && python tools/verify_signs.py "$PROJ" --blend "$PROJ/loop.blend" --blender "$BL" | tail -8)
-  (cd "$AIROSO" && PYTHONUTF8=1 python tools/plot_signs.py "$PROJ")
 fi
 
 # --- 0047/0049: the race furniture. Runs on every ship (idempotent; see --skip-blend above). -----
@@ -349,6 +348,18 @@ for lap in $LAP_IDS; do                                          # ledger 0054: 
   (cd "$AIROSO" && python tools/verify_race.py "$PROJ" --lap "$lap")   # data/race_verify.<lap>.json; exit 1
 done
 (cd "$AIROSO" && python tools/plot_race_furniture.py "$PROJ" | tail -3)   # data/race_plots/*.png
+# --- P4 signs (ledger 0054 P4 step 1, EXPANSION-PLAN A8 / A7): the signs AFTER the race furniture, every ship ---------
+# The shared W1-6 plates (the road kn5) and, for a signs.json per_layout corner (M3 at J1, M4 at J5: straight on is a
+# real road in Free Roam), each race layout's OWN plates behind its sealing wall, built into RACE_CLOSE_<TOKEN> as
+# SIGN*_<token>_<k> and shipped in that layout's closure kn5 alone. They live in the furniture's collections, which
+# tools/author_race_furniture_blend.py empties on every ship — so this step runs after it, --skip-blend or not
+# (idempotent: every SIGN* mesh is removed first). The north network's J2 / J3 / J4 corners are read off the stitched
+# north ribbon (tools/expansion_lines.centre_ribbon) with the built pads as pavement. verify_signs (hard) then measures
+# every plate on the mesh — a layout plate against its layout's walls — and plot_signs draws them.
+step "author: W1-6 large-arrow signs at every tight corner (SIGNPLATE + SIGNARROW + SIGNPOST; the race layouts' own plates into RACE_CLOSE_<TOKEN>)"
+(cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_signs_blend.py" -- "$PROJ" 2>&1 | grep "^\[signs\]\|Error\|Traceback" )
+(cd "$AIROSO" && python tools/verify_signs.py "$PROJ" --blend "$PROJ/loop.blend" --blender "$BL" | tail -8)
+(cd "$AIROSO" && PYTHONUTF8=1 python tools/plot_signs.py "$PROJ")
 
 step "ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)"
 "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS\|split GRASS_FAR\|terrain tiles\|terrain conform\|T-junctions\|kept-cell refinement\|house seat\|multi-layout\|Error\|Traceback" | cut -c1-200
@@ -494,7 +505,7 @@ cp "$PROJ/build/$SLUG.kn5" "$PROJ/build/$SLUG/"          # the race, closure + s
 (cd "$AIROSO" && python tools/check_lights_ini.py "$PROJ" --json "$PROJ/data/lights_ini_check.json")
 step "ship: verify_kn5 --inis (hard — each race ini lists exactly road + common race + ITS closure + its spawns; none lists another layout's closure)"
 (cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ" --inis)   # after the road-kn5 copy: every listed kn5 must be in the folder
-step "ship: minimap in the KN5 frame, per layout (tools/make_map.py)"
+step "ship: minimap in the KN5 frame, per layout (tools/make_map.py; a layout with map = lap gets its lap alone, map + outline)"
 (cd "$AIROSO" && python tools/make_map.py "$PROJ")
 step "ship: TreeFX palms / street trees / scrub + the north network by zone (tools/make_treefx.py; the loop's cells byte-identical, the added cells per the aerial bins, caps by area)"
 # P4 trees (ledger 0054 P4 step 3 / A9): the loop's and the north's planted areas, densities and caps are printed here

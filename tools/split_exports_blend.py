@@ -117,9 +117,14 @@ def _classify():
         if (col.name == rf.COMMON_COLLECTION or col.name.startswith(rf.COMMON_COLLECTION + "_CLOSE_")
                 or col.name.startswith(rf.COMMON_COLLECTION + "_LAP_")):
             race |= _members(col)
-    race |= {ob.name for ob in bpy.data.objects if rf.is_race_name(ob.name)}
+    race |= {ob.name for ob in bpy.data.objects if _is_race_object(ob.name)}
     ac = {ob.name for ob in bpy.data.objects if ob.name.startswith(AC_PREFIX)}
     return race, ac
+
+
+def _is_race_object(name):
+    """a RACE-prefixed name, or a per-layout sign plate (ledger 0054 P4: SIGN*_<token>_<k>, routed with its closure)"""
+    return rf.is_race_name(name) or rf.is_layout_sign_name(name)
 
 
 def _remove(names):
@@ -144,8 +149,9 @@ def _census():
             "materials": sorted(m.name for m in bpy.data.materials),
             "orphan_materials": sorted(m.name for m in bpy.data.materials if m.name not in used),
             "ac_nodes": sorted(o.name for o in bpy.data.objects if o.name.startswith(AC_PREFIX)),
-            "race_objects": sorted(o.name for o in bpy.data.objects if rf.is_race_name(o.name)),
+            "race_objects": sorted(o.name for o in bpy.data.objects if _is_race_object(o.name)),
             "closure_objects": sorted(o.name for o in bpy.data.objects if rf.race_role(o.name) == "close"),
+            "sign_objects": sorted(o.name for o in bpy.data.objects if rf.race_role(o.name) == "sign"),
             "names": sorted(o.name for o in bpy.data.objects)}
 
 
@@ -154,8 +160,9 @@ def _save(path):
 
 
 def _furniture_problems(tag, c, problems):
-    """a race / closure scene: RACE objects + RACE materials only, every material used, no AC_* node, < 60k positions"""
-    bad = [m for m in c["materials"] if not rf.is_race_name(m)]
+    """a race / closure scene: RACE objects + RACE materials only (a closure scene: its layout's sign plates and their
+    materials too, ledger 0054 P4), every material used, no AC_* node, < 60k positions"""
+    bad = [m for m in c["materials"] if not (rf.is_race_name(m) or rf.is_layout_sign_name(m))]
     if bad or c["ac_nodes"] or len(c["race_objects"]) != c["objects"]:
         problems.append(f"{tag}: non-race materials {bad} ac={c['ac_nodes']} objects={c['objects']} race={len(c['race_objects'])}")
     if c["orphan_materials"]:
@@ -273,7 +280,7 @@ def main():
     for lap in ([None] if has_main else []) + laps:
         bpy.ops.wm.open_mainfile(filepath=str(blend))
         race, ac = _classify()
-        keep = {n for n in race if rf.race_role(n) != "close" and rf.race_lap(n) == lap}
+        keep = {n for n in race if rf.race_role(n) not in ("close", "sign") and rf.race_lap(n) == lap}
         _remove({ob.name for ob in bpy.data.objects} - keep)
         c = _census()
         tag, key, bname = ("race", "race", "loop_race.blend") if lap is None else \
@@ -281,6 +288,8 @@ def main():
         _furniture_problems(tag, c, problems)
         if c["closure_objects"]:
             problems.append(f"{tag}: {len(c['closure_objects'])} closure objects in {bname} {c['closure_objects'][:4]}")
+        if c["sign_objects"]:
+            problems.append(f"{tag}: {len(c['sign_objects'])} per-layout sign plates in {bname} {c['sign_objects'][:4]} (they ride with their closure)")
         if not any(rf.race_role(n) == "edge" for n in c["race_objects"]):
             problems.append(f"{tag}: no curb strip (1WALL_race_edge_*) in {bname}")
         alien = [n for n in c["race_objects"] if rf.race_lap(n) != lap]
@@ -297,12 +306,13 @@ def main():
     for lid, tok in tokens.items():
         bpy.ops.wm.open_mainfile(filepath=str(blend))
         race, ac = _classify()
-        keep = {n for n in race if rf.race_role(n) == "close" and rf.race_owner(n) == tok}
+        # ITS closure walls and ITS sign plates (ledger 0054 P4: SIGN*_<token>_<k>, a per_layout corner's plates)
+        keep = {n for n in race if rf.race_role(n) in ("close", "sign") and rf.race_owner(n) == tok}
         _remove({ob.name for ob in bpy.data.objects} - keep)
         c = _census()
         tag = f"closure_{lid}"
         _furniture_problems(tag, c, problems)
-        if not c["meshes"]:
+        if not c["closure_objects"]:
             problems.append(f"{tag}: EMPTY — no 1WALL_race_close_{tok}_* object in the input")
         alien = [n for n in c["race_objects"] if rf.race_owner(n) != tok]
         if alien:
@@ -311,7 +321,8 @@ def main():
         manifest["outputs"][closure_blend_name(lid)] = c
         kept_all |= set(c["race_objects"])
         print(f"[split] closure {lid} (token {tok}): {c['meshes']} meshes / {c['positions']} positions "
-              f"(max {c['max_positions']}) / {len(c['materials'])} materials / {len(c['ac_nodes'])} AC nodes -> "
+              f"(max {c['max_positions']}) / {len(c['materials'])} materials / {len(c['ac_nodes'])} AC nodes"
+              f"{(' / ' + str(len(c['sign_objects'])) + ' sign plates') if c['sign_objects'] else ''} -> "
               f"{outputs[tag].name}")
     # --- street: the street-only set (ledger 0055) ------------------------------------------------
     if want_street:

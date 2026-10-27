@@ -1,0 +1,11 @@
+# buildings pass replayed offline on run 1's inputs (D:/k10-scratch/p4/integrate/proj_run1), count_bands.py
+## old rule (HEAD f8e0f5e: 111320 cos / 110574 projection, centroid crowding)
+extruded 334
+bands {'old': 153, 'new_north': 61, 'new_other': 120} approx verts {'old': 4737, 'new_north': 1269, 'new_other': 4389}
+## new rule (the roads' series projection, centroid 5 m + corner 3.1 m)
+extruded 329
+bands {'old': 145, 'new_north': 62, 'new_other': 122} approx verts {'old': 4515, 'new_north': 1281, 'new_other': 4419}
+## corner clearance with BOTH crowding rules off, new projection (measured 22:40 before the corner rule existed): 335 candidates; histogram (m, floor) [(0, 2), (2, 4), (3, 4), (4, 14), (5, 12), (6, 11), (7, 6)]; under 5 m: 24, under 3 m: 6, under 2 m: 2, under 1 m: 2 (the two ON the walk)
+## corner clearance of the 329 footprints the new rule keeps (centroid rule off, corner rule on)
+candidates 329 corner clearance histogram (m, floor): [(3, 4), (4, 14), (5, 12), (6, 11), (7, 6)]
+under 5: 18 under 3: 0 under 2: 0 under 1: 0

@@ -2991,3 +2991,124 @@ off near-vertical faces: under the pavement p99 0.0036 m, 0-6 m at most 0.005, 6
 they stand on near-vertical faces a downward ray cannot hit). Against r2run2: 28,906 of the 28,918 vertices within 6 m that
 moved more than 0.05 m lie in the 35 raise-only cut zones (round 2's 273b116: the 1 m toe dropped, the cut top's rounding
 on the real climb); the 12 others <= 0.145 m (near-vertical faces and run-to-run).
+
+## 2026-10-26 — Lake Murray expansion P4 "buildings + rock" (ledger 0054 P4 step 4 and the cut faces): the buildings pass reads two caches over two bands, the cut faces split out as `1GRASS_ROCK_*`, the cut toes re-triangulated on the raised ground
+
+No threshold is loosened and no gate is bypassed. One new self-checked ship step (`tools/rock_faces_blend.py`, inside the
+prep phase after the I-8 pavement, before the split), one author step changed at its cause (`tools/ground_release_blend.py`
+step 2d), one assembler pass widened (`scripts-v021/blender/build_loop_blend.build_buildings`), one reader narrowed
+(`scripts/ac/ext_config.py` GRASS_MESHES), one pbr row (`1GRASS_ROCK`, engine-july-mirrored, `PENDING-MIRROR.md5`).
+Every number below is invented unless marked measured. Rehearsed fresh, full chain, `--no-install`,
+`D:/k10-scratch/p4/buildings` (proj/ + eng/ fresh copies; chain.log; stills/); proofs in
+`tracks/san-diego-lake-murray/source/expansion/p4-proofs/`.
+
+### The buildings pass: two bands, two caches (`build_loop_blend.build_buildings`)
+
+- A footprint is kept when it stands within **120 m** of ANY drivable piece — the mainline, every connector
+  (`data/connectors.local.json`: the four north roads, the Del Cerro sub-loop, the phase-5 stubs) and the three junction
+  pads (`data/pads.plan.json`: each pad's outline as the convex hull of its arms' cut lines and its stubs' pavement) — and
+  not within **half the pavement + 5 m** of any of them (the same 120 / +5 as v0.18.x, now `BUILDING_BAND_M` /
+  `BUILDING_CLEAR_M`; a pad's edge is read as a pavement edge with no half width; inside a pad = crowding).
+- **The old band** (within 120 m of the mainline) still reads `data/buildings.cache.json` with the mainline-only crowding
+  rule and the cap: byte for byte the v0.19.0 pass. **The new band** (within 120 m of a connector or a pad and NOT in the
+  old band) reads `data/buildings.expansion.cache.json` (ledger 0054 P0 step 7, 20,631 footprints, provenance beside it),
+  uncapped. Measured on the rehearsal: old band 153 (v0.19.0: 153 seated), new band 181 — 61 along the north roads
+  (OSM holds 74 footprints within 120 m of them: Waring 4, Princess View 32, Mission Gorge 23, Jackson north 15 — the
+  Allied Gardens houses along Waring are simply not mapped), 120 along the Del Cerro sub-loop and the stubs. The
+  expansion cache read in the old band would give the same 153 footprints, 0 of them new or edited since the old cache,
+  so the two caches agree there and the choice changes nothing; the old cache stays the old band's by rule.
+- The ship sync carries both caches and the provenance in (`tools/ship_sd.sh BUILDING_CACHES`, `ship.json
+  sync_in.optional`); airoso's copies are the source of truth (the workshop's `buildings.cache.json` was byte-identical).
+
+### The cut faces: `tools/rock_faces_blend.py` (new, prep phase, self-checked)
+
+- Reads the SAME declaration the ground release built the walls from (`data/ground_release.auto_cuts.json`: piece,
+  stations, side, `cut_reach_m` 20, `round_m` 3) and the intermediate's stations (`data/expansion.north.json`: x, z, curb
+  offsets); a band per zone and side from the curb line out to `cut_reach_m + round_m + BAND_PAD_M` (**6 m**).
+- Inside a band a ground triangle (1GRASS_<n>, after the prep and the thinning) is rock when it stands at
+  `terrain.rock_faces.slope_min_m_per_m` = **0.70 m per metre (35 deg)** or steeper: the angle of repose of loose earth —
+  steeper ground beside these roads is cut rock, not a grassed bank (the real faces climb 1.1-1.6, `auto_cuts
+  face_p90_m_per_m`; the batter cap is 2.0). A zone whose measured real rise over the road (`auto_cuts
+  measured.max_rise_m`) is under **MIN_RISE_M 3.0 m** [std: ledger 0054 P2 / repair round 1's own "a real wall 3 m or
+  taller" bar] is a bank and gets no rock however steep a facet of it is. Clean-up: a rock patch under **MIN_PATCH_M2
+  40 m²** goes back to grass, a grass hole inside the rock under **MAX_HOLE_M2 60 m²** becomes rock (components over
+  the edge adjacency, across tiles by vertex position). Measured, rehearsal 5 at 12 / 20 m² and no rise bar: 17-35 m²
+  outcrop speckles on Mission Gorge's south bank (`stills/run5_mg_apartments`), and the lattice's 1 m bench rows left
+  as 10-20 m grass stripes across the Jackson walls; the three bars above are the answer to both.
+- Self-checks, exit 1 = the blend is not saved: no rock vertex in a pavement's plan column (a ray down from 0.05 m over
+  it and from 60 m over it against 1ROAD / 1KERB); no rock face centroid within **TOE_CLEAR_M 0.30 m** (plan) of a
+  pavement edge; tile faces before == tile faces after + rock faces; every rock mesh under 65,535. No vertex moves: the
+  split only decides which mesh a triangle belongs to; the two meshes share their boundary by position.
+- Names `1GRASS_ROCK_<tile>`: the digit prefix keeps the physics, the GRASS key keeps `surfaces.ini` unchanged, and
+  every gate that reads ground by the 1GRASS prefix (drive_test, audit_mesh, verify_kn5 face-up, kn5_ground_check,
+  house_seat_check, rib_check) reads them exactly as before. Two readers tell them apart: pbr's `1GRASS_ROCK` row
+  (before `1GRASS`; stock skin `stone_tan.png`, Lake Murray's `texture_overrides["1GRASS_ROCK"]` = its own generated
+  sandstone / conglomerate pair, CC0, `textures/make_sandstone_cut.py`) and ext_config's GRASS_MESHES (no GrassFX on a
+  rock wall). UVs: a wall projection per face (u along the face's strike, v up it, 4 m per tile; a top-down projection
+  stretches a face this steep 1.5-3x).
+- Report `data/rock_faces.json` (synced out): per zone faces / area / rise / slope; the thin toe triangles counted in
+  the bands before the split (for P3 "Left").
+
+### The cut toes re-triangulated (`tools/ground_release_blend.py` step 2d, at the cause of P3's thin lighter triangles)
+
+- The halving chose its triangles in PLAN, on the flat, before step 2 raised the batter; a triangle from the toe row to
+  the second batter row then cut through the raised face as a tooth standing flatter than the wall (lit from above while
+  the wall is in shade: the pale slivers at the foot of every Jackson cut, `p4-proofs/stills/v0190_jackson_toe.png`).
+- Now, after the heights and BEFORE the per-face cap (step 2c-0, so the cap and its self-check judge the final
+  triangles), every triangle of a raise-only cut zone whose three corners are released (none under the pavement), whose
+  centre lies within **TOE_BAND_M 30 m** of a pavement (the cut's reach 20 + its rounding 3 + the lattice's spread: the
+  hillside beyond the construction zone keeps its triangles) and whose corners, edge midpoints and centre all stand more
+  than **TOE_KEEP_M 0.10 m** off every drivable sheet's plan footprint (ROAD / CURB less the walk's buried apron, which
+  the toe stands over by design, plus every other `1ROAD_*` / `1KERB_*` object: the corner aprons' decks, the junction
+  pads, the mouth fills) is handed to Blender's beautify (`bmesh.ops.beautify_fill`, ANGLE): edge rotations only, no
+  vertex moves, none is made, each rotated pair keeps the plan it covered. Counted before / after: triangles with a
+  shortest altitude under **TOE_THIN_ALT_M 0.25 m** and an edge over **TOE_THIN_LONG_M 1.5 m**. The remaining thin ones
+  are slivers IN the face's plane (the halving's own lattice), which share their neighbours' normal and do not show.
+- Why the two fences (measured, three rehearsals): with the rotation over every raise-only face (303,611 faces, 39,909
+  rotations, thin 5,277 -> 2,330) a rotated diagonal left 2 grass samples 7 mm over J1's apron deck `1ROAD_apron_AP1`
+  (verify_mouths FAIL: the release's own deck set is ROAD / CURB, so neither its cap nor its batter knows the aprons or
+  the pads); moving the rotation before the cap and inside the 30 m band (264,177 faces, 35,817 rotations, thin
+  5,197 -> 2,255) still left them (the cap reads the same ROAD / CURB set); keeping every rotated pair off every
+  drivable sheet's footprint is what makes the rotation unable to touch ground over any pavement. The final rule:
+  263,599 faces in the bands, 35,692 edges rotated, thin 5,182 -> 2,258; verify_mouths 32 PASS (J1's apron deck: 0 grass
+  samples at or over it, max −0.018 m as v0.19.0).
+
+### Rehearsal vs v0.19.0 (the floor; nothing may get worse)
+
+Six rehearsals from fresh copies (`D:/k10-scratch/p4/buildings/run.sh`, `chain.log`; the last is the one below; runs
+1-5 are the fences above being found). Every gate reads as v0.19.0 (`p4-proofs/gates_v0190.txt` vs `gates_p4.txt`, a
+line-for-line diff; the only differences are the ones this change makes):
+
+| | v0.19.0 (r3run) | P4 buildings + rock (run 6) |
+|---|---|---|
+| Free Roam soft top / severe / kinks / edge drops / audit | 8 / 0 / 2.67 / 96 / 53 | **8 / 0 / 2.67 / 96 / 53** |
+| Speedway / Reverse severe | 4 / 6 | **4 / 6** |
+| Speedway / Reverse kinks | 6.46 / 6.09 | **6.46 / 6.09** |
+| Speedway / Reverse barrier_missing, no_route | 0, PASS 0/439 both | **0, PASS 0/439 both** (reached 138.8 / 138.2 k m²) |
+| new roads `--line expansion` fwd / rev | PASS (2.39, 40) / PASS (2.53, 38) | **PASS (2.39, 40) / PASS (2.53, 38)** |
+| verify_mouths / stubs / pads | 32 PASS / 26 + 29 PASS / J2-J4 PASS | **the same, every number** |
+| verify_signs / fold fans / rib_check | 19 / PASS / 69 (worst 4 of 5) | **19 / PASS / 69 (worst 4 of 5)** |
+| house_seat_check | 153 judged, PASS (contact −0.303..−0.143) | **334 judged, PASS** (contact −0.330..−0.143; floating / sunken / buried 0) |
+| kn5_ground_check street / cw / acw | PASS ×3 | **PASS ×3** (the same wall / lamp / sign / deck / road-over-ground lines) |
+| road kn5 | 89.82 MB, 95 meshes, 1,118,236 v | **92.74 MB, 104 → 103 meshes** (16 ground tiles + 8 rock; 1,118k → ~1,177k v) |
+| race / closure / street-only / spawn kn5s | 11,722,654 / 5,496,964 / 5,496,156 / 872,525 / 2,104 B | **byte-for-byte the same sizes** |
+| CSP `[LIGHT_n]` | 239 | **239** (colour, pool, intensity untouched) |
+| GRASS_MESHES | 16 tiles | **16 tiles** (no `1GRASS_ROCK`); OCCLUDING_MESHES carries BUILDING + HOUSE as before |
+| 1WALL_guard | 65,251 pre-split → `_0` 33,192 / `_1` 33,177 | **the same** |
+| end state | NOT INSTALLED (the Free Roam lap's own soft-top rule, red since v0.18.0) | **the same reds, nothing new** |
+
+Measured on the built OBJs (`p4-proofs/analysis/compare_buildings.py`): the 153 buildings within 120 m of the mainline
+are **identical** to v0.19.0's (0 re-seated by 2 cm or more, 0 missing, 0 extra); the new band holds 181 (HOUSE 128,
+BUILDING 53). Rock: 10,718 faces / **12,459 m²** of cut face in 10 of the 16 zones standing 3 m or taller, 8 meshes
+(`1GRASS_ROCK_2/4/5/6/7/12/13/14`, 8,077 vertices in the blend); 13,733 facets were steep, 5,214 of them under a pavement
+left grass, 3,170 in patches under 40 m² back to grass, 155 hole faces filled. Per zone: Jackson north SW wall (`D_right_25_1595`)
+4,431 m²; Mission Gorge north side (`C_left_635_1100`) 3,584 m², south face (`C_right_1335_2253`, s 1475-1560 in it)
+2,301 m², `C_right_1070_1335` 595 m²; Princess View's left cut (`B_left_496_731`) 835 m²; `C_left_1360_1665` 222 m²,
+`C_left_1665_1860` 228 m², `C_right_670_795` 156 m², `B_left_86_276` 61 m², `B_right_711_896` 46 m²
+(`p4-proofs/rock_faces.json`). The cut toes: 263,599 faces in the bands, 35,692 edges rotated, thin 5,182 -> 2,258
+(`cut_toe_retriangulated`); on the Jackson 320-485 cut's own face (`analysis/thin_tris.py` on the gate OBJs, the
+connector's left side, s 1459-1624), thin triangles 228 -> 155 — 139 -> 99 of them 3-7 m past the pavement edge, 40
+-> 13 beyond 7 m, and 38 -> 38 in the 3-4 m strip, the flat shoulder between the walk's buried apron and the first batter
+row, which is kept off the rotation by the 0.10 m fence (its zigzag boundary with the batter is still visible at the foot:
+`stills/p4_jackson_toe.jpg`, honestly). Tests: `tests/run_tests.py` 921 passed, 0 failed (4 new in
+`tests/ac/test_pbr_rock_row.py`).

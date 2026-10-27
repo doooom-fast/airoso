@@ -91,7 +91,10 @@ def generate(project_dir: str | Path) -> Path:
     lp_note = lp.get("_note", "broad warm-white metro glow")
     groups = _obj_groups(data / "track.obj") + _obj_groups(data / "environment.obj")
 
-    grass_meshes = [g for g in groups if g.upper().startswith(("1GRASS", "1LAWN"))] or ["1GRASS"]
+    # ...less the road cuts' rock faces (ledger 0054 P4: 1GRASS_ROCK_* keep the 1GRASS prefix for physics and the gates,
+    # but no grass blade grows on a sandstone wall)
+    grass_meshes = [g for g in groups if g.upper().startswith(("1GRASS", "1LAWN"))
+                    and not g.upper().startswith("1GRASS_ROCK")] or ["1GRASS"]
     # GrassFX OCCLUDING_MESHES = ONLY ground-level solid surfaces that sit on the grass plane (so grass
     # doesn't grow through them). This is a deliberate ALLOW-LIST. Anything else MUST NOT be an occluder:
     # foliage billboards (TREES/BUSHES), the far-field MOUNTAINS backdrop, elevated HIGHWAY/HWYSTRUCT decks,

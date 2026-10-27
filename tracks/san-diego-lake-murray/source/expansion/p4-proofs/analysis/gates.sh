@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# the gate lines of a chain.log, for a side-by-side with the v0.19.0 reference (D:/k10-scratch/phase1/r3run/chain.log)
+f="${1:-D:/k10-scratch/p4/buildings/chain.log}"
+grep -E "planned: (PASS|FAIL)|\[build_kn5_loop\] (split|terrain tiles|house seat)|^\[thin\]|^\[rock\]|KN5 EXISTS|^  terrain tiles|\[verify_mouths\]|\[verify_stubs\]|\[verify_pads\]|\[ribs\] (step_jogs|PASS|FAIL)|\[houses\]|ground on top mid-lane|severe steps|slope kinks|off-road excursion|obstructed stations|barrier_missing|=> (PASS|FAIL)|DRIVE TEST|LINE (fwd|rev)|=> [0-9]+ issues|\[no_route\]|\[fold-fans\]|walls +objects|lampposts objects|signposts objects|deck-vs-mountain|road-over-ground|kn5_ground_check [a-z_]+: exit|\[verify_signs\]|verify_ai_line|NOT INSTALLED|^EXIT|1WALL_guard|\[release\] TERRAIN|cut toes" "$f" | sed -E 's/^\[gate: [^]]*\] //' | cut -c1-230

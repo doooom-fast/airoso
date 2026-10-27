@@ -1,0 +1,12 @@
+{'params': {'slope_min_m_per_m': 0.7, 'band_pad_m': 6.0, 'min_rise_m': 3.0, 'min_patch_m2': 40.0, 'max_hole_m2': 60.0, 'uv_tile_m': 4.0}, 'texture': {'key': '1GRASS_ROCK', 'diffuse': 'D:\\k10-scratch\\p4\\buildings\\proj\\textures\\sandstone_cut_diffuse.jpg', 'normal': 'D:\\k10-scratch\\p4\\buildings\\proj\\textures\\sandstone_cut_normal.jpg', 'overridden': True}, 'bands': 16, 'faces_in_bands': 149283, 'steep_under_pavement_left_grass': 5214, 'rock_raw': 13733, 'patches_dropped': 3170, 'holes_filled': 155, 'rock_faces': 10718, 'rock_area_m2': 12458.9, 'thin_triangles_in_bands_before_split': 1751}
+auto_cut_B_left_496_731 {'faces': 552, 'area_m2': 834.7, 'rise_max_m': 4.0, 'slope_min': 0.62, 'slope_max': 1.66}
+auto_cut_B_left_86_276 {'faces': 59, 'area_m2': 61.3, 'rise_max_m': 1.92, 'slope_min': 0.71, 'slope_max': 1.72}
+auto_cut_B_right_711_896 {'faces': 44, 'area_m2': 45.5, 'rise_max_m': 1.33, 'slope_min': 0.71, 'slope_max': 1.13}
+auto_cut_C_left_1360_1665 {'faces': 198, 'area_m2': 222.3, 'rise_max_m': 2.19, 'slope_min': 0.71, 'slope_max': 1.98}
+auto_cut_C_left_1665_1860 {'faces': 341, 'area_m2': 228.3, 'rise_max_m': 2.83, 'slope_min': 0.7, 'slope_max': 10.57}
+auto_cut_C_left_635_1100 {'faces': 2600, 'area_m2': 3584.4, 'rise_max_m': 3.1, 'slope_min': 0.61, 'slope_max': 2.23}
+auto_cut_C_right_1070_1335 {'faces': 629, 'area_m2': 595.1, 'rise_max_m': 2.44, 'slope_min': 0.0, 'slope_max': 99.0}
+auto_cut_C_right_1335_2253 {'faces': 1672, 'area_m2': 2300.5, 'rise_max_m': 2.56, 'slope_min': 0.67, 'slope_max': 1.99}
+auto_cut_C_right_670_795 {'faces': 96, 'area_m2': 156.1, 'rise_max_m': 1.92, 'slope_min': 0.7, 'slope_max': 1.28}
+auto_cut_D_right_25_1595 {'faces': 4527, 'area_m2': 4430.8, 'rise_max_m': 2.8, 'slope_min': 0.5, 'slope_max': 2.46}
+[{'name': '1GRASS_ROCK_12', 'from': '1GRASS_12', 'vertices': 1029, 'faces': 1195}, {'name': '1GRASS_ROCK_13', 'from': '1GRASS_13', 'vertices': 1058, 'faces': 1269}, {'name': '1GRASS_ROCK_14', 'from': '1GRASS_14', 'vertices': 1665, 'faces': 2157}, {'name': '1GRASS_ROCK_2', 'from': '1GRASS_2', 'vertices': 55, 'faces': 59}, {'name': '1GRASS_ROCK_4', 'from': '1GRASS_4', 'vertices': 471, 'faces': 596}, {'name': '1GRASS_ROCK_5', 'from': '1GRASS_5', 'vertices': 83, 'faces': 96}, {'name': '1GRASS_ROCK_6', 'from': '1GRASS_6', 'vertices': 2169, 'faces': 3229}, {'name': '1GRASS_ROCK_7', 'from': '1GRASS_7', 'vertices': 1547, 'faces': 2117}]

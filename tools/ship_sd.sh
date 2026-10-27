@@ -147,7 +147,10 @@ V021_SHIM="import sys, importlib.util as u; s=u.spec_from_file_location('scripts
 
 TERRAIN_DATA="terrain.samples.json.gz corridor.i8.json i8.local.json i8.legacy.local.json deck_datum.samples.json ground_release.samples.json.gz freeway_i8.samples.json.gz"
 # the track's own textures (track.config.json texture_overrides with a project-relative path: the far ring's chaparral)
-TRACK_TEXTURES="textures/chaparral_far_diffuse.jpg"
+TRACK_TEXTURES="textures/chaparral_far_diffuse.jpg textures/sandstone_cut_diffuse.jpg textures/sandstone_cut_normal.jpg"
+# ledger 0054 P4 (buildings): the two OSM footprint caches the assembler's buildings pass reads — the old one dresses the
+# loop's own band exactly as v0.19.0, the expansion one (P0 step 7, provenance beside it) dresses the new band
+BUILDING_CACHES="data/buildings.cache.json data/buildings.expansion.cache.json data/buildings.expansion.cache.json.provenance.json"
 step() { echo; echo "=================== $1"; }
 pyq() { (cd "$AIROSO" && python -c "$@"); }
 
@@ -171,6 +174,9 @@ done
 mkdir -p "$PROJ/source/trees" && cp "$SRC/source/trees/"*.bin "$PROJ/source/trees/" 2>/dev/null || true   # TreeFX models (gitignored, personal use)
 # ledger 0054 P3: the junction pads' 3DEP cache (tools/junction_pad.py plan; data with provenance, L2)
 [ -f "$SRC/data/pads.3dep.json" ] && cp "$SRC/data/pads.3dep.json" "$PROJ/data/pads.3dep.json"
+for f in $BUILDING_CACHES; do
+  [ -f "$SRC/$f" ] && cp "$SRC/$f" "$PROJ/$f"
+done
 # PHASE 5 side-road stubs (ledger 0054), opt-in: a declaration is synced down with its 3DEP cache; without one, no stub
 # file of an earlier run survives in the project (the audit's barrier exemption reads stubs.built.json)
 STUBS="${STUBS:-$SRC/stubs.json}"
@@ -350,6 +356,13 @@ step "ship: the I-8's own pavement, lane lines and median barrier on the final g
 if [ -f "$PROJ/data/freeway_i8.json" ]; then
   "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_freeway_blend.py" -- "$PROJ" --eng "$ENG" 2>&1 | grep "^\[freeway\]\|Error\|Traceback"
 fi
+step "ship: the road cuts' rock faces split out of the ground tiles (tools/rock_faces_blend.py: 1GRASS_ROCK_*, the sandstone skin, GRASS physics kept; self-checked; no auto cut declared = no-op)"
+# ledger 0054 P4 (buildings + rock): on the PREPPED, thinned ground — every ground triangle inside an auto-cut band standing
+# terrain.rock_faces.slope_min_m_per_m or steeper moves into its own 1GRASS_ROCK_<tile> mesh (same prefix = same surfaces.ini
+# key, same gates; pbr's own row = the rock texture; ext_config leaves it out of GRASS_MESHES). No vertex moves. Exit 1 =
+# the blend not saved. data/rock_faces.json = the report
+rm -f "$PROJ/data/rock_faces.json"
+"$BL" --background --python-exit-code 1 --python "$AIROSO/tools/rock_faces_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[rock\]\|Error\|Traceback"
 step "ship: split the prepped scene -> road / common race / closure per race layout / spawn scenes (tools/split_exports_blend.py)"
 "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/split_exports_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" --out-dir "$PROJ/blender/split" 2>&1 | grep "^\[split\]"
 # the split asserts: loop_main.blend holds 0 AC_* and 0 RACE objects/materials; loop_race.blend only the
@@ -584,7 +597,7 @@ for f in centerline.local.json centerline.raw.local.json median_bands.json dummi
          mouths.json mouth_welds.json aprons.json aprons.lamps.json pads.plan.json pads.built.json pads.3dep.json verify_pads.json verify_mouths.json verify_fold_fans.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
          drive_test.json drive_test.expansion.json drive_lines.expansion.json audit.json stubs.plan.json stubs.built.json verify_stubs.json stubs.3dep.json \
          barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json street_kn5.json \
-         $TERRAIN_DATA terrain.tiers.report.json terrain_thin.json bridges.authored.json          deck_datum.json ground_release.json ground_release.report.json ground_release.auto_cuts.json freeway_i8.json freeway_i8.report.json; do
+         $TERRAIN_DATA terrain.tiers.report.json terrain_thin.json rock_faces.json bridges.authored.json          deck_datum.json ground_release.json ground_release.report.json ground_release.auto_cuts.json freeway_i8.json freeway_i8.report.json; do
   [ -f "$PROJ/data/$f" ] && cp "$PROJ/data/$f" "$SRC/data/$f"
 done
 rm -f "$SRC/data/audit.race.json"   # 0047's shared race audit: retired (ledger 0049 audits each race layout on its own OBJ)

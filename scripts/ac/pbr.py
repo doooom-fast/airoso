@@ -39,6 +39,12 @@ TEXTURES = {
     "YLINE":   ("line_yellow.png", None, 0.45, (0.85, 0.68, 0.10, 1), 0.0, False),  # double-yellow centreline (two-way roads, Lake Murray style)
     "ROADTEXT": ("roadtext_atlas.png", None, 0.5, (0.92, 0.92, 0.90, 1), 0.0, False),  # painted street-name decals (alpha cutout)
     "1LAWN":   ("grass_diffuse.jpg", "grass_normal.jpg",     0.90, (0.30, 0.42, 0.20, 1), 0.0, False),  # irrigated suburban green turf (SoCal neighbourhood tiles)
+    # 1GRASS_ROCK BEFORE 1GRASS (ledger 0054 P4 buildings + rock): the steep faces of a road cut, split out of the
+    # physical ground tiles by tools/rock_faces_blend.py after the kn5 prep. They keep the 1GRASS prefix on purpose —
+    # same surfaces.ini key (GRASS), same physics, read as ground by every gate — and bind their OWN row here, so a
+    # track's "1GRASS" turf override never reaches them (overrides bind by the matched key). Stock skin: the tan stone
+    # tile; Lake Murray overrides it with its own sandstone / conglomerate cut (texture_overrides["1GRASS_ROCK"]).
+    "1GRASS_ROCK": ("stone_tan.png", None,                   0.92, (0.62, 0.54, 0.42, 1), 0.0, False),
     "1GRASS":  ("ground_dry_diffuse.jpg", None,              0.95, (0.42, 0.38, 0.29, 1), 0.0, False),  # dry dirt/chaparral (canyon/hill/freeway-cut tiles)
     # GRASS_FAR: the visual-only far ring of a tiered terrain (ledger 0046 E3; Cowles, the valley walls). No digit
     # prefix = no physics, never a gate / GrassFX / occluder mesh. TEXTURED dry chaparral — never the MOUNTAINS
@@ -143,6 +149,7 @@ KS_PROPS = {
     "PALMS":    {"ksAmbient": 0.55, "ksDiffuse": 0.10, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
     "PALMFROND": {"ksAmbient": 0.55, "ksDiffuse": 0.10, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
     "FENCEWOOD": {"ksAmbient": 0.45, "ksDiffuse": 0.35, "ksSpecular": 0.05, "ksSpecularEXP": 8.0},
+    "1GRASS_ROCK": {"ksAmbient": 0.50, "ksDiffuse": 0.22, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},   # as the ground it was cut from (ledger 0054 P4)
     "1GRASS":   {"ksAmbient": 0.50, "ksDiffuse": 0.22, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
     "GRASS_FAR": {"ksAmbient": 0.50, "ksDiffuse": 0.22, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
     "POLE":     {"ksAmbient": 0.40, "ksDiffuse": 0.15, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},

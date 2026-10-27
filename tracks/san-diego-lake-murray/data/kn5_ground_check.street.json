@@ -16,21 +16,21 @@
    "hovering": 0
   },
   "lampposts": {
-   "objects": 238,
+   "objects": 323,
    "no_ground_pct": 0.0,
-   "median_m": -3.044,
-   "p95_m": -2.968,
+   "median_m": -3.029,
+   "p95_m": -2.711,
    "hovering": 0
   },
   "signposts": {
-   "objects": 18,
+   "objects": 24,
    "no_ground_pct": 0.0,
-   "median_m": -0.377,
+   "median_m": -0.351,
    "p95_m": -0.3,
    "hovering": 0
   }
  },
- "lamp_heads": 290,
+ "lamp_heads": 393,
  "lamp_orphans": 0,
  "road_over_ground": {
   "over": 12,

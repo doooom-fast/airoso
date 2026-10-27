@@ -2,9 +2,9 @@
  "input": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\blender\\san_diego_lake_murray.blend",
  "outputs": {
   "loop_main.blend": {
-   "objects": 95,
-   "meshes": 95,
-   "positions": 846393,
+   "objects": 109,
+   "meshes": 109,
+   "positions": 880350,
    "max_positions": 62202,
    "materials": [
     "1GRASS_0_mat",
@@ -23,6 +23,14 @@
     "1GRASS_7_mat",
     "1GRASS_8_mat",
     "1GRASS_9_mat",
+    "1GRASS_ROCK_12_mat",
+    "1GRASS_ROCK_13_mat",
+    "1GRASS_ROCK_14_mat",
+    "1GRASS_ROCK_2_mat",
+    "1GRASS_ROCK_4_mat",
+    "1GRASS_ROCK_5_mat",
+    "1GRASS_ROCK_6_mat",
+    "1GRASS_ROCK_7_mat",
     "1KERB_sidewalk_0_mat",
     "1KERB_sidewalk_1_mat",
     "1KERB_sidewalk_apAP1_mat",
@@ -85,7 +93,13 @@
     "LIGHTPOST_12_mat",
     "LIGHTPOST_13_mat",
     "LIGHTPOST_14_mat",
+    "LIGHTPOST_15_mat",
+    "LIGHTPOST_16_mat",
+    "LIGHTPOST_17_mat",
+    "LIGHTPOST_18_mat",
+    "LIGHTPOST_19_mat",
     "LIGHTPOST_1_mat",
+    "LIGHTPOST_20_mat",
     "LIGHTPOST_2_mat",
     "LIGHTPOST_3_mat",
     "LIGHTPOST_4_mat",
@@ -107,6 +121,7 @@
    "ac_nodes": [],
    "race_objects": [],
    "closure_objects": [],
+   "sign_objects": [],
    "names": [
     "1GRASS_0",
     "1GRASS_1",
@@ -124,6 +139,14 @@
     "1GRASS_7",
     "1GRASS_8",
     "1GRASS_9",
+    "1GRASS_ROCK_12",
+    "1GRASS_ROCK_13",
+    "1GRASS_ROCK_14",
+    "1GRASS_ROCK_2",
+    "1GRASS_ROCK_4",
+    "1GRASS_ROCK_5",
+    "1GRASS_ROCK_6",
+    "1GRASS_ROCK_7",
     "1KERB_sidewalk_0",
     "1KERB_sidewalk_1",
     "1KERB_sidewalk_apAP1",
@@ -187,7 +210,13 @@
     "LIGHTPOST_12",
     "LIGHTPOST_13",
     "LIGHTPOST_14",
+    "LIGHTPOST_15",
+    "LIGHTPOST_16",
+    "LIGHTPOST_17",
+    "LIGHTPOST_18",
+    "LIGHTPOST_19",
     "LIGHTPOST_2",
+    "LIGHTPOST_20",
     "LIGHTPOST_3",
     "LIGHTPOST_4",
     "LIGHTPOST_5",
@@ -259,6 +288,7 @@
     "1WALL_race_edge_R_navajo_1517_0"
    ],
    "closure_objects": [],
+   "sign_objects": [],
    "names": [
     "1KERB_race_0_in",
     "1KERB_race_0_out",
@@ -284,9 +314,9 @@
    ]
   },
   "loop_closure_race_cw.blend": {
-   "objects": 8,
-   "meshes": 8,
-   "positions": 37110,
+   "objects": 11,
+   "meshes": 11,
+   "positions": 37196,
    "max_positions": 7920,
    "materials": [
     "1WALL_race_close_cw_college_1253_0_mat",
@@ -296,7 +326,10 @@
     "1WALL_race_close_cw_jackson_2328_1_mat",
     "1WALL_race_close_cw_lakemurray_3304_0_mat",
     "1WALL_race_close_cw_lakemurray_3304_1_mat",
-    "1WALL_race_close_cw_navajo_1521_0_mat"
+    "1WALL_race_close_cw_navajo_1521_0_mat",
+    "SIGNARROW_cw_0_mat",
+    "SIGNPLATE_cw_0_mat",
+    "SIGNPOST_cw_0_mat"
    ],
    "orphan_materials": [],
    "ac_nodes": [],
@@ -308,7 +341,10 @@
     "1WALL_race_close_cw_jackson_2328_1",
     "1WALL_race_close_cw_lakemurray_3304_0",
     "1WALL_race_close_cw_lakemurray_3304_1",
-    "1WALL_race_close_cw_navajo_1521_0"
+    "1WALL_race_close_cw_navajo_1521_0",
+    "SIGNARROW_cw_0",
+    "SIGNPLATE_cw_0",
+    "SIGNPOST_cw_0"
    ],
    "closure_objects": [
     "1WALL_race_close_cw_college_1253_0",
@@ -320,6 +356,11 @@
     "1WALL_race_close_cw_lakemurray_3304_1",
     "1WALL_race_close_cw_navajo_1521_0"
    ],
+   "sign_objects": [
+    "SIGNARROW_cw_0",
+    "SIGNPLATE_cw_0",
+    "SIGNPOST_cw_0"
+   ],
    "names": [
     "1WALL_race_close_cw_college_1253_0",
     "1WALL_race_close_cw_college_1343_0",
@@ -328,13 +369,16 @@
     "1WALL_race_close_cw_jackson_2328_1",
     "1WALL_race_close_cw_lakemurray_3304_0",
     "1WALL_race_close_cw_lakemurray_3304_1",
-    "1WALL_race_close_cw_navajo_1521_0"
+    "1WALL_race_close_cw_navajo_1521_0",
+    "SIGNARROW_cw_0",
+    "SIGNPLATE_cw_0",
+    "SIGNPOST_cw_0"
    ]
   },
   "loop_closure_race_acw.blend": {
-   "objects": 8,
-   "meshes": 8,
-   "positions": 37100,
+   "objects": 11,
+   "meshes": 11,
+   "positions": 37186,
    "max_positions": 7910,
    "materials": [
     "1WALL_race_close_acw_college_1253_0_mat",
@@ -344,7 +388,10 @@
     "1WALL_race_close_acw_jackson_2328_1_mat",
     "1WALL_race_close_acw_lakemurray_3304_0_mat",
     "1WALL_race_close_acw_lakemurray_3304_1_mat",
-    "1WALL_race_close_acw_navajo_1521_0_mat"
+    "1WALL_race_close_acw_navajo_1521_0_mat",
+    "SIGNARROW_acw_0_mat",
+    "SIGNPLATE_acw_0_mat",
+    "SIGNPOST_acw_0_mat"
    ],
    "orphan_materials": [],
    "ac_nodes": [],
@@ -356,7 +403,10 @@
     "1WALL_race_close_acw_jackson_2328_1",
     "1WALL_race_close_acw_lakemurray_3304_0",
     "1WALL_race_close_acw_lakemurray_3304_1",
-    "1WALL_race_close_acw_navajo_1521_0"
+    "1WALL_race_close_acw_navajo_1521_0",
+    "SIGNARROW_acw_0",
+    "SIGNPLATE_acw_0",
+    "SIGNPOST_acw_0"
    ],
    "closure_objects": [
     "1WALL_race_close_acw_college_1253_0",
@@ -368,6 +418,11 @@
     "1WALL_race_close_acw_lakemurray_3304_1",
     "1WALL_race_close_acw_navajo_1521_0"
    ],
+   "sign_objects": [
+    "SIGNARROW_acw_0",
+    "SIGNPLATE_acw_0",
+    "SIGNPOST_acw_0"
+   ],
    "names": [
     "1WALL_race_close_acw_college_1253_0",
     "1WALL_race_close_acw_college_1343_0",
@@ -376,7 +431,10 @@
     "1WALL_race_close_acw_jackson_2328_1",
     "1WALL_race_close_acw_lakemurray_3304_0",
     "1WALL_race_close_acw_lakemurray_3304_1",
-    "1WALL_race_close_acw_navajo_1521_0"
+    "1WALL_race_close_acw_navajo_1521_0",
+    "SIGNARROW_acw_0",
+    "SIGNPLATE_acw_0",
+    "SIGNPOST_acw_0"
    ]
   },
   "loop_street.blend": {
@@ -392,6 +450,7 @@
    "ac_nodes": [],
    "race_objects": [],
    "closure_objects": [],
+   "sign_objects": [],
    "names": [
     "1KERB_sidewalk_streetonly_median",
     "1WALL_guard_streetonly_median"
@@ -431,6 +490,7 @@
    ],
    "race_objects": [],
    "closure_objects": [],
+   "sign_objects": [],
    "names": [
     "AC_HOTLAP_START_0",
     "AC_PIT_0",
@@ -492,6 +552,7 @@
    ],
    "race_objects": [],
    "closure_objects": [],
+   "sign_objects": [],
    "names": [
     "AC_HOTLAP_START_0",
     "AC_PIT_0",
@@ -553,6 +614,7 @@
    ],
    "race_objects": [],
    "closure_objects": [],
+   "sign_objects": [],
    "names": [
     "AC_HOTLAP_START_0",
     "AC_PIT_0",
@@ -587,9 +649,9 @@
   "race_acw": "acw"
  },
  "input_census": {
-  "objects": 134,
-  "meshes": 134,
-  "positions": 1016301,
+  "objects": 154,
+  "meshes": 154,
+  "positions": 1050430,
   "max_positions": 62202,
   "materials": [
    "1GRASS_0_mat",
@@ -608,6 +670,14 @@
    "1GRASS_7_mat",
    "1GRASS_8_mat",
    "1GRASS_9_mat",
+   "1GRASS_ROCK_12_mat",
+   "1GRASS_ROCK_13_mat",
+   "1GRASS_ROCK_14_mat",
+   "1GRASS_ROCK_2_mat",
+   "1GRASS_ROCK_4_mat",
+   "1GRASS_ROCK_5_mat",
+   "1GRASS_ROCK_6_mat",
+   "1GRASS_ROCK_7_mat",
    "1KERB_race_0_in_mat",
    "1KERB_race_0_out_mat",
    "1KERB_race_3296_in_mat",
@@ -709,7 +779,13 @@
    "LIGHTPOST_12_mat",
    "LIGHTPOST_13_mat",
    "LIGHTPOST_14_mat",
+   "LIGHTPOST_15_mat",
+   "LIGHTPOST_16_mat",
+   "LIGHTPOST_17_mat",
+   "LIGHTPOST_18_mat",
+   "LIGHTPOST_19_mat",
    "LIGHTPOST_1_mat",
+   "LIGHTPOST_20_mat",
    "LIGHTPOST_2_mat",
    "LIGHTPOST_3_mat",
    "LIGHTPOST_4_mat",
@@ -722,8 +798,14 @@
    "MARKINGS_0_mat",
    "MARKINGS_1_mat",
    "SIGNARROW_0_mat",
+   "SIGNARROW_acw_0_mat",
+   "SIGNARROW_cw_0_mat",
    "SIGNPLATE_0_mat",
+   "SIGNPLATE_acw_0_mat",
+   "SIGNPLATE_cw_0_mat",
    "SIGNPOST_0_mat",
+   "SIGNPOST_acw_0_mat",
+   "SIGNPOST_cw_0_mat",
    "YLINE_0_mat",
    "YLINE_1_mat"
   ],
@@ -766,7 +848,13 @@
    "1WALL_race_edge_R_jackson_2324_1",
    "1WALL_race_edge_R_lakemurray_3300_0",
    "1WALL_race_edge_R_lakemurray_3300_1",
-   "1WALL_race_edge_R_navajo_1517_0"
+   "1WALL_race_edge_R_navajo_1517_0",
+   "SIGNARROW_acw_0",
+   "SIGNARROW_cw_0",
+   "SIGNPLATE_acw_0",
+   "SIGNPLATE_cw_0",
+   "SIGNPOST_acw_0",
+   "SIGNPOST_cw_0"
   ],
   "closure_objects": [
    "1WALL_race_close_acw_college_1253_0",
@@ -786,6 +874,14 @@
    "1WALL_race_close_cw_lakemurray_3304_1",
    "1WALL_race_close_cw_navajo_1521_0"
   ],
+  "sign_objects": [
+   "SIGNARROW_acw_0",
+   "SIGNARROW_cw_0",
+   "SIGNPLATE_acw_0",
+   "SIGNPLATE_cw_0",
+   "SIGNPOST_acw_0",
+   "SIGNPOST_cw_0"
+  ],
   "names": [
    "1GRASS_0",
    "1GRASS_1",
@@ -803,6 +899,14 @@
    "1GRASS_7",
    "1GRASS_8",
    "1GRASS_9",
+   "1GRASS_ROCK_12",
+   "1GRASS_ROCK_13",
+   "1GRASS_ROCK_14",
+   "1GRASS_ROCK_2",
+   "1GRASS_ROCK_4",
+   "1GRASS_ROCK_5",
+   "1GRASS_ROCK_6",
+   "1GRASS_ROCK_7",
    "1KERB_race_0_in",
    "1KERB_race_0_out",
    "1KERB_race_3296_in",
@@ -905,7 +1009,13 @@
    "LIGHTPOST_12",
    "LIGHTPOST_13",
    "LIGHTPOST_14",
+   "LIGHTPOST_15",
+   "LIGHTPOST_16",
+   "LIGHTPOST_17",
+   "LIGHTPOST_18",
+   "LIGHTPOST_19",
    "LIGHTPOST_2",
+   "LIGHTPOST_20",
    "LIGHTPOST_3",
    "LIGHTPOST_4",
    "LIGHTPOST_5",
@@ -917,14 +1027,20 @@
    "MARKINGS_0",
    "MARKINGS_1",
    "SIGNARROW_0",
+   "SIGNARROW_acw_0",
+   "SIGNARROW_cw_0",
    "SIGNPLATE_0",
+   "SIGNPLATE_acw_0",
+   "SIGNPLATE_cw_0",
    "SIGNPOST_0",
+   "SIGNPOST_acw_0",
+   "SIGNPOST_cw_0",
    "YLINE_0",
    "YLINE_1"
   ]
  },
  "routes": {
-  "common": 21,
+  "common": 27,
   "race_cw": 8,
   "race_acw": 8,
   "street": 2

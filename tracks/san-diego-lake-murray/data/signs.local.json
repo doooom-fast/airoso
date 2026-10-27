@@ -21,6 +21,7 @@
    "id": "M1-fwd",
    "kind": "W1-6R",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "MAINLINE",
    "direction": "fwd",
    "corner": {
@@ -114,7 +115,7 @@
    "checks": {
     "outside_cross": 9.33,
     "edge_clear_m": 1.04,
-    "lamp_m": 58.07,
+    "lamp_m": 58.0,
     "plant_m": 9.83,
     "plant_zone": "palms",
     "pushed_m": 1.56,
@@ -131,7 +132,8 @@
     "mesh_clear_m": 1.79,
     "mesh_clear_bearing_deg": 85,
     "mesh_shift_m": 0.6,
-    "walk_behind_m": -0.29
+    "walk_behind_m": -0.29,
+    "wall_m": 2.03
    },
    "old_rule": {
     "rev1_xz": [
@@ -547,6 +549,7 @@
    "id": "M2-fwd",
    "kind": "W1-6R",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "MAINLINE",
    "direction": "fwd",
    "corner": {
@@ -640,7 +643,7 @@
    "checks": {
     "outside_cross": 7.23,
     "edge_clear_m": 1.54,
-    "lamp_m": 21.87,
+    "lamp_m": 21.78,
     "plant_m": 9.09,
     "plant_zone": "trees",
     "pushed_m": 2.29,
@@ -657,7 +660,8 @@
     "mesh_clear_m": 1.77,
     "mesh_clear_bearing_deg": 120,
     "mesh_shift_m": 0.13,
-    "walk_behind_m": -0.39
+    "walk_behind_m": -0.39,
+    "wall_m": 2.01
    },
    "old_rule": {
     "rev1_xz": [
@@ -1073,6 +1077,7 @@
    "id": "M2-fwd-2",
    "kind": "W1-6R",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "MAINLINE",
    "direction": "fwd",
    "corner": {
@@ -1166,7 +1171,7 @@
    "checks": {
     "outside_cross": 15.2,
     "edge_clear_m": 1.7,
-    "lamp_m": 33.74,
+    "lamp_m": 33.87,
     "plant_m": 9.24,
     "plant_zone": "palms",
     "pushed_m": 1.41,
@@ -1185,7 +1190,8 @@
     "mesh_clear_m": 1.78,
     "mesh_clear_bearing_deg": 0,
     "mesh_shift_m": 0.07,
-    "walk_behind_m": -0.27
+    "walk_behind_m": -0.27,
+    "wall_m": 1.99
    },
    "old_rule": {
     "rev1_xz": [
@@ -1598,9 +1604,1089 @@
    }
   },
   {
+   "id": "M3-fwd@race_cw",
+   "kind": "W1-6R",
+   "plate": "W1-6",
+   "layout": "race_cw",
+   "ribbon": "MAINLINE",
+   "direction": "fwd",
+   "corner": {
+    "apex_vertex": 1514,
+    "apex_station_m": 4534,
+    "PC": 4519,
+    "PT": 4548,
+    "arc_m": 29,
+    "R_apex_m": 10.5,
+    "D_deg": -91.4,
+    "turn": "right",
+    "apex_xz": [
+     -1974.74,
+     598.25
+    ],
+    "second_arrow": false,
+    "R_at_PC_m": 64.3
+   },
+   "approach": {
+    "t_xz": [
+     -0.64,
+     0.7683
+    ],
+    "bearing_deg": 320.2,
+    "pca_vs_chord_deg": -3.28,
+    "w_app_m": 20.16,
+    "w_at_apex_m": 30.0,
+    "island_m": 0.0,
+    "lane_off_m": 5.04
+   },
+   "ray": {
+    "A_xz": [
+     -1965.82,
+     587.82
+    ],
+    "len_m": 30.0,
+    "C_xz": [
+     -1985.02,
+     610.87
+    ],
+    "exit_ribbon": "MAINLINE",
+    "hw_at_exit_m": 15.0,
+    "sC_station": 4538,
+    "sC_rel_PC_m": 19,
+    "sC_rel_apex_m": 4,
+    "s_S_m": 31.29,
+    "wall_in_m": 28.9,
+    "wall_out_m": 29.6,
+    "s_S_mesh_m": 31.23,
+    "C_mesh_xz": [
+     -1984.32,
+     610.02
+    ],
+    "len_mesh_m": 28.9
+   },
+   "base_xz": [
+    -1985.807,
+    611.814
+   ],
+   "curb_dir_xz": [
+    0.6169,
+    0.7871
+   ],
+   "y_road_at_sC": 24.298,
+   "y_base": {
+    "analytic": 24.538,
+    "raycast": 24.336,
+    "source": "raycast (deck: the highest of ROAD / ground under the post)",
+    "value": 24.336,
+    "road_hit": 24.336,
+    "pushed_on_road_m": 0.0
+   },
+   "face_dir_xz": [
+    0.64,
+    -0.7683
+   ],
+   "face_bearing_deg": 140.2,
+   "yaw_deg": -50.2,
+   "right_xz": [
+    0.7683,
+    0.64
+   ],
+   "arrow": "right",
+   "expect_arrow": "right",
+   "lateral_offset_m": 1.63,
+   "height_m": 2.13,
+   "om1_3": true,
+   "wall": {
+    "behind_lip_m": 1.48,
+    "edge_centre_from_lip_m": -0.485,
+    "barrier_half_m": 0.335,
+    "token": "cw",
+    "rule": "the layout's sealing curb strip: its far face stands in for the curb face, lateral_offset_m behind it"
+   },
+   "checks": {
+    "outside_cross": 15.23,
+    "edge_clear_m": 1.42,
+    "edge_clear_all_m": -8.42,
+    "lamp_m": 37.39,
+    "plant_m": 10.66,
+    "plant_zone": "palms",
+    "pushed_m": 1.29,
+    "slid_m": 0.0,
+    "lateral_step_m": 0.0,
+    "gate_margin_m": -5.2,
+    "gate_margin_gated_m": 9.98,
+    "gate_ribbons": "MAINLINE",
+    "mouth_m": 5.1,
+    "spawn_m": 857.7,
+    "spawn": "AC_TIME_1_R@race_cw",
+    "warnings": [
+     "layout plate for race_cw: stands 1.48 m past the MAINLINE lip, behind its sealing wall (strip centre -0.485 m from the lip, half width 0.335 m, + lateral_offset_m 1.63); every other pavement -8.42 m away",
+     "plate footprint 5.20 m inside the obstacle disc of a connector centreline (not gated: drive_test sweeps the mainline only; the post stays at the back of the walk)",
+     "layout plate for race_cw: the sealing wall crossed 28.90-29.60 m along the ray, the post 1.63 m past its far face (the wall stands in for the curb); on the sealed opening's deck; every centreline's disc -5.20 m (the sealed openings' not gated here)"
+    ],
+    "slid_polyline_m": 0.0,
+    "mesh_clear_m": 1.67,
+    "mesh_clear_bearing_deg": null,
+    "mesh_shift_m": 0.06,
+    "pavement_clear_m": 0.0,
+    "walk_behind_m": null,
+    "wall_m": 1.67,
+    "on_deck": true
+   },
+   "old_rule": {
+    "rev1_xz": [
+     -1951.35,
+     536.22
+    ],
+    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
+    "rev2_xz": [
+     -1957.52,
+     593.71
+    ],
+    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
+   },
+   "overrides_applied": [],
+   "exclude_plant": null,
+   "where": "College Ave -> Navajo Rd",
+   "base_xz_polyline": [
+    -1985.849,
+    611.862
+   ],
+   "base_xz_mesh": [
+    -1985.807,
+    611.814
+   ],
+   "base_source": "mesh (layout race_cw: the ray through the sealing wall, 1.63 m past its far face, slid 0.00 m)",
+   "built": {
+    "outside_edge_xz": [
+     [
+      -1970.25,
+      569.23
+     ],
+     [
+      -1971.81,
+      570.82
+     ],
+     [
+      -1973.42,
+      572.41
+     ],
+     [
+      -1974.96,
+      573.98
+     ],
+     [
+      -1976.59,
+      575.57
+     ],
+     [
+      -1978.27,
+      577.18
+     ],
+     [
+      -1979.82,
+      578.85
+     ],
+     [
+      -1981.48,
+      580.62
+     ],
+     [
+      -1983.27,
+      582.6
+     ],
+     [
+      -1984.96,
+      584.93
+     ],
+     [
+      -1986.61,
+      587.73
+     ],
+     [
+      -1988.24,
+      591.4
+     ],
+     [
+      -1989.39,
+      596.3
+     ],
+     [
+      -1989.14,
+      602.05
+     ],
+     [
+      -1993.2,
+      610.59
+     ],
+     [
+      -1989.9,
+      615.45
+     ],
+     [
+      -1986.95,
+      618.7
+     ],
+     [
+      -1984.34,
+      621.12
+     ],
+     [
+      -1981.83,
+      623.16
+     ],
+     [
+      -1979.47,
+      624.89
+     ],
+     [
+      -1977.36,
+      626.33
+     ],
+     [
+      -1975.27,
+      627.7
+     ],
+     [
+      -1973.14,
+      629.02
+     ],
+     [
+      -1968.17,
+      625.21
+     ],
+     [
+      -1967.08,
+      627.91
+     ],
+     [
+      -1965.13,
+      629.2
+     ],
+     [
+      -1963.05,
+      630.06
+     ],
+     [
+      -1960.62,
+      630.18
+     ],
+     [
+      -1958.29,
+      630.44
+     ],
+     [
+      -1956.12,
+      630.81
+     ],
+     [
+      -1954.06,
+      631.34
+     ]
+    ],
+    "back_of_walk_xz": [
+     [
+      -1970.25,
+      569.23
+     ],
+     [
+      -1971.81,
+      570.82
+     ],
+     [
+      -1974.95,
+      571.13
+     ],
+     [
+      -1974.96,
+      573.98
+     ],
+     [
+      -1976.59,
+      575.57
+     ],
+     [
+      -1979.9,
+      576.01
+     ],
+     [
+      -1979.82,
+      578.85
+     ],
+     [
+      -1984.85,
+      578.46
+     ],
+     [
+      -1986.75,
+      580.62
+     ],
+     [
+      -1988.56,
+      583.18
+     ],
+     [
+      -1990.27,
+      586.36
+     ],
+     [
+      -1992.05,
+      590.59
+     ],
+     [
+      -1993.29,
+      596.31
+     ],
+     [
+      -1989.14,
+      602.05
+     ],
+     [
+      -1993.81,
+      610.93
+     ],
+     [
+      -1990.45,
+      615.89
+     ],
+     [
+      -1987.38,
+      619.13
+     ],
+     [
+      -1984.73,
+      621.57
+     ],
+     [
+      -1982.2,
+      623.63
+     ],
+     [
+      -1979.81,
+      625.38
+     ],
+     [
+      -1977.69,
+      626.83
+     ],
+     [
+      -1975.64,
+      628.29
+     ],
+     [
+      -1973.45,
+      629.53
+     ],
+     [
+      -1968.83,
+      626.33
+     ],
+     [
+      -1967.08,
+      627.91
+     ],
+     [
+      -1966.69,
+      632.11
+     ],
+     [
+      -1963.05,
+      630.06
+     ],
+     [
+      -1961.38,
+      631.7
+     ],
+     [
+      -1959.03,
+      631.97
+     ],
+     [
+      -1956.85,
+      632.35
+     ],
+     [
+      -1954.79,
+      632.88
+     ]
+    ]
+   },
+   "blender": {
+    "base_xyz_engine": [
+     -1985.807,
+     24.336,
+     611.814
+    ],
+    "base_xyz_blender": [
+     -1985.807,
+     611.814,
+     24.336
+    ],
+    "plate_bottom_y": 26.466,
+    "plate_top_y": 27.076,
+    "post_base_y": 24.036,
+    "post_top_y": 27.126,
+    "plates": [
+     {
+      "front_xyz": [
+       [
+        -1986.2561,
+        26.4664,
+        611.4009
+       ],
+       [
+        -1985.3195,
+        26.4664,
+        612.181
+       ],
+       [
+        -1985.3195,
+        27.0764,
+        612.181
+       ],
+       [
+        -1986.2561,
+        27.0764,
+        611.4009
+       ]
+      ],
+      "back_xyz": [
+       [
+        -1986.258,
+        26.4664,
+        611.4032
+       ],
+       [
+        -1985.3214,
+        26.4664,
+        612.1833
+       ],
+       [
+        -1985.3214,
+        27.0764,
+        612.1833
+       ],
+       [
+        -1986.258,
+        27.0764,
+        611.4032
+       ]
+      ],
+      "arrow_xyz": [
+       [
+        -1985.4047,
+        26.7712,
+        612.1049
+       ],
+       [
+        -1985.6799,
+        26.9998,
+        611.8757
+       ],
+       [
+        -1985.6682,
+        26.8558,
+        611.8854
+       ],
+       [
+        -1986.1658,
+        26.8558,
+        611.4709
+       ],
+       [
+        -1986.1658,
+        26.6866,
+        611.4709
+       ],
+       [
+        -1985.6682,
+        26.6866,
+        611.8854
+       ],
+       [
+        -1985.6799,
+        26.5426,
+        611.8757
+       ]
+      ]
+     }
+    ],
+    "post": {
+     "post_base_xyz": [
+      [
+       -1985.8038,
+       24.0364,
+       611.8492
+      ],
+      [
+       -1985.7718,
+       24.0364,
+       611.8108
+      ],
+      [
+       -1985.8102,
+       24.0364,
+       611.7788
+      ],
+      [
+       -1985.8422,
+       24.0364,
+       611.8172
+      ]
+     ],
+     "post_top_y": 27.1264
+    },
+    "meshes": {
+     "SIGNPLATE": "SIGNPLATE_cw_0",
+     "SIGNARROW": "SIGNARROW_cw_0",
+     "SIGNPOST": "SIGNPOST_cw_0"
+    },
+    "collection": "RACE_CLOSE_CW"
+   }
+  },
+  {
+   "id": "M4-fwd@race_cw",
+   "kind": "W1-6R",
+   "plate": "W1-6",
+   "layout": "race_cw",
+   "ribbon": "MAINLINE",
+   "direction": "fwd",
+   "corner": {
+    "apex_vertex": 2319,
+    "apex_station_m": 6949,
+    "PC": 6934,
+    "PT": 6966,
+    "arc_m": 32,
+    "R_apex_m": 9.7,
+    "D_deg": -106.4,
+    "turn": "right",
+    "apex_xz": [
+     52.4,
+     1723.18
+    ],
+    "second_arrow": false,
+    "R_at_PC_m": 75.8
+   },
+   "approach": {
+    "t_xz": [
+     0.7514,
+     0.6598
+    ],
+    "bearing_deg": 48.7,
+    "pca_vs_chord_deg": -1.41,
+    "w_app_m": 24.36,
+    "w_at_apex_m": 24.0,
+    "island_m": 0.0,
+    "lane_off_m": 6.09
+   },
+   "ray": {
+    "A_xz": [
+     43.16,
+     1712.66
+    ],
+    "len_m": 27.5,
+    "C_xz": [
+     63.83,
+     1730.8
+    ],
+    "exit_ribbon": "MAINLINE",
+    "hw_at_exit_m": 12.0,
+    "sC_station": 6953,
+    "sC_rel_PC_m": 19,
+    "sC_rel_apex_m": 4,
+    "s_S_m": 28.82,
+    "wall_in_m": 26.5,
+    "wall_out_m": 27.2,
+    "s_S_mesh_m": 28.83,
+    "C_mesh_xz": [
+     63.07,
+     1730.14
+    ],
+    "len_mesh_m": 26.5
+   },
+   "base_xz": [
+    64.823,
+    1731.682
+   ],
+   "curb_dir_xz": [
+    0.7917,
+    -0.6109
+   ],
+   "y_road_at_sC": 109.074,
+   "y_base": {
+    "analytic": 109.314,
+    "raycast": 109.218,
+    "source": "raycast (deck: the highest of ROAD / ground under the post)",
+    "value": 109.218,
+    "road_hit": null,
+    "pushed_on_road_m": 0.0
+   },
+   "face_dir_xz": [
+    -0.7514,
+    -0.6598
+   ],
+   "face_bearing_deg": 228.7,
+   "yaw_deg": -138.71,
+   "right_xz": [
+    0.6598,
+    -0.7514
+   ],
+   "arrow": "right",
+   "expect_arrow": "right",
+   "lateral_offset_m": 1.63,
+   "height_m": 2.13,
+   "om1_3": true,
+   "wall": {
+    "behind_lip_m": 1.48,
+    "edge_centre_from_lip_m": -0.485,
+    "barrier_half_m": 0.335,
+    "token": "cw",
+    "rule": "the layout's sealing curb strip: its far face stands in for the curb face, lateral_offset_m behind it"
+   },
+   "checks": {
+    "outside_cross": 12.16,
+    "edge_clear_m": 1.49,
+    "edge_clear_all_m": 1.49,
+    "lamp_m": 34.07,
+    "plant_m": 10.43,
+    "plant_zone": "palms",
+    "pushed_m": 1.32,
+    "slid_m": 0.0,
+    "lateral_step_m": 0.0,
+    "gate_margin_m": 7.12,
+    "gate_margin_gated_m": 7.12,
+    "gate_ribbons": "MAINLINE",
+    "mouth_m": 19.8,
+    "spawn_m": 1518.1,
+    "spawn": "AC_TIME_1_R@race_cw",
+    "warnings": [
+     "layout plate for race_cw: stands 1.48 m past the MAINLINE lip, behind its sealing wall (strip centre -0.485 m from the lip, half width 0.335 m, + lateral_offset_m 1.63); every other pavement +1.48 m away",
+     "layout plate for race_cw: the sealing wall crossed 26.50-27.20 m along the ray, the post 1.63 m past its far face (the wall stands in for the curb); on the walk / ground beside it; every centreline's disc +7.12 m (the sealed openings' not gated here)"
+    ],
+    "slid_polyline_m": 0.0,
+    "mesh_clear_m": 1.76,
+    "mesh_clear_bearing_deg": null,
+    "mesh_shift_m": 0.01,
+    "pavement_clear_m": 1.53,
+    "walk_behind_m": null,
+    "wall_m": 1.76,
+    "on_deck": false
+   },
+   "old_rule": {
+    "rev1_xz": [
+     -10.4,
+     1699.35
+    ],
+    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
+    "rev2_xz": [
+     49.6,
+     1708.65
+    ],
+    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
+   },
+   "overrides_applied": [],
+   "exclude_plant": null,
+   "where": "Navajo Rd -> Jackson Dr",
+   "base_xz_polyline": [
+    64.822,
+    1731.675
+   ],
+   "base_xz_mesh": [
+    64.823,
+    1731.682
+   ],
+   "base_source": "mesh (layout race_cw: the ray through the sealing wall, 1.63 m past its far face, slid 0.00 m)",
+   "built": {
+    "outside_edge_xz": [
+     [
+      22.61,
+      1719.29
+     ],
+     [
+      24.1,
+      1720.62
+     ],
+     [
+      25.69,
+      1721.89
+     ],
+     [
+      27.25,
+      1723.26
+     ],
+     [
+      28.9,
+      1724.56
+     ],
+     [
+      30.57,
+      1725.99
+     ],
+     [
+      31.31,
+      1728.77
+     ],
+     [
+      29.39,
+      1735.24
+     ],
+     [
+      30.88,
+      1738.41
+     ],
+     [
+      34.01,
+      1740.36
+     ],
+     [
+      37.72,
+      1742.25
+     ],
+     [
+      42.58,
+      1744.02
+     ],
+     [
+      49.01,
+      1745.15
+     ],
+     [
+      56.39,
+      1743.9
+     ],
+     [
+      60.59,
+      1735.94
+     ],
+     [
+      63.26,
+      1730.91
+     ],
+     [
+      66.13,
+      1728.24
+     ],
+     [
+      68.2,
+      1725.77
+     ],
+     [
+      69.87,
+      1723.35
+     ],
+     [
+      71.34,
+      1720.86
+     ],
+     [
+      72.56,
+      1718.38
+     ],
+     [
+      73.53,
+      1716.12
+     ],
+     [
+      74.39,
+      1713.95
+     ],
+     [
+      75.14,
+      1711.88
+     ],
+     [
+      75.81,
+      1710.01
+     ],
+     [
+      76.46,
+      1708.26
+     ],
+     [
+      77.05,
+      1706.69
+     ],
+     [
+      77.68,
+      1705.22
+     ],
+     [
+      78.39,
+      1703.7
+     ],
+     [
+      79.1,
+      1702.26
+     ],
+     [
+      79.88,
+      1700.84
+     ]
+    ],
+    "back_of_walk_xz": [
+     [
+      22.61,
+      1719.29
+     ],
+     [
+      21.45,
+      1723.61
+     ],
+     [
+      23.04,
+      1724.89
+     ],
+     [
+      24.62,
+      1726.28
+     ],
+     [
+      26.29,
+      1727.59
+     ],
+     [
+      30.19,
+      1726.45
+     ],
+     [
+      31.31,
+      1728.77
+     ],
+     [
+      29.39,
+      1735.24
+     ],
+     [
+      28.69,
+      1741.65
+     ],
+     [
+      32.09,
+      1743.76
+     ],
+     [
+      36.14,
+      1745.82
+     ],
+     [
+      41.69,
+      1747.2
+     ],
+     [
+      48.81,
+      1748.34
+     ],
+     [
+      56.39,
+      1743.9
+     ],
+     [
+      60.59,
+      1735.94
+     ],
+     [
+      64.24,
+      1732.18
+     ],
+     [
+      66.27,
+      1728.38
+     ],
+     [
+      68.36,
+      1725.89
+     ],
+     [
+      73.24,
+      1725.5
+     ],
+     [
+      74.86,
+      1722.75
+     ],
+     [
+      76.19,
+      1720.05
+     ],
+     [
+      73.53,
+      1716.12
+     ],
+     [
+      74.39,
+      1713.95
+     ],
+     [
+      75.14,
+      1711.88
+     ],
+     [
+      75.81,
+      1710.01
+     ],
+     [
+      76.46,
+      1708.26
+     ],
+     [
+      77.05,
+      1706.69
+     ],
+     [
+      77.68,
+      1705.22
+     ],
+     [
+      78.39,
+      1703.7
+     ],
+     [
+      79.1,
+      1702.26
+     ],
+     [
+      79.88,
+      1700.84
+     ]
+    ]
+   },
+   "blender": {
+    "base_xyz_engine": [
+     64.823,
+     109.218,
+     1731.682
+    ],
+    "base_xyz_blender": [
+     64.823,
+     1731.682,
+     109.218
+    ],
+    "plate_bottom_y": 111.348,
+    "plate_top_y": 111.958,
+    "post_base_y": 108.918,
+    "post_top_y": 112.008,
+    "plates": [
+     {
+      "front_xyz": [
+       [
+        64.3983,
+        111.3478,
+        1732.1202
+       ],
+       [
+        65.2026,
+        111.3478,
+        1731.2042
+       ],
+       [
+        65.2026,
+        111.9578,
+        1731.2042
+       ],
+       [
+        64.3983,
+        111.9578,
+        1732.1202
+       ]
+      ],
+      "back_xyz": [
+       [
+        64.4006,
+        111.3478,
+        1732.1222
+       ],
+       [
+        65.2049,
+        111.3478,
+        1731.2062
+       ],
+       [
+        65.2049,
+        111.9578,
+        1731.2062
+       ],
+       [
+        64.4006,
+        111.9578,
+        1732.1222
+       ]
+      ],
+      "arrow_xyz": [
+       [
+        65.1243,
+        111.6526,
+        1731.2874
+       ],
+       [
+        64.888,
+        111.8812,
+        1731.5565
+       ],
+       [
+        64.898,
+        111.7372,
+        1731.5451
+       ],
+       [
+        64.4707,
+        111.7372,
+        1732.0317
+       ],
+       [
+        64.4707,
+        111.568,
+        1732.0317
+       ],
+       [
+        64.898,
+        111.568,
+        1731.5451
+       ],
+       [
+        64.888,
+        111.424,
+        1731.5565
+       ]
+      ]
+     }
+    ],
+    "post": {
+     "post_base_xyz": [
+      [
+       64.8583,
+       108.9178,
+       1731.6797
+      ],
+      [
+       64.8207,
+       108.9178,
+       1731.6467
+      ],
+      [
+       64.7877,
+       108.9178,
+       1731.6843
+      ],
+      [
+       64.8253,
+       108.9178,
+       1731.7173
+      ]
+     ],
+     "post_top_y": 112.0078
+    },
+    "meshes": {
+     "SIGNPLATE": "SIGNPLATE_cw_0",
+     "SIGNARROW": "SIGNARROW_cw_0",
+     "SIGNPOST": "SIGNPOST_cw_0"
+    },
+    "collection": "RACE_CLOSE_CW"
+   }
+  },
+  {
    "id": "M5-fwd",
    "kind": "W1-6R",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "MAINLINE",
    "direction": "fwd",
    "corner": {
@@ -1694,7 +2780,7 @@
    "checks": {
     "outside_cross": 13.85,
     "edge_clear_m": 1.67,
-    "lamp_m": 39.57,
+    "lamp_m": 39.59,
     "plant_m": 5.6,
     "plant_zone": "trees",
     "pushed_m": 1.68,
@@ -1713,7 +2799,8 @@
     "mesh_clear_m": 1.76,
     "mesh_clear_bearing_deg": 160,
     "mesh_shift_m": 0.04,
-    "walk_behind_m": -0.28
+    "walk_behind_m": -0.28,
+    "wall_m": 2.02
    },
    "old_rule": {
     "rev1_xz": [
@@ -2129,6 +3216,7 @@
    "id": "M5-rev",
    "kind": "W1-6L",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "MAINLINE",
    "direction": "rev",
    "corner": {
@@ -2222,7 +3310,7 @@
    "checks": {
     "outside_cross": 12.88,
     "edge_clear_m": 1.48,
-    "lamp_m": 39.66,
+    "lamp_m": 39.65,
     "plant_m": 15.93,
     "plant_zone": "trees",
     "pushed_m": 2.41,
@@ -2241,7 +3329,8 @@
     "mesh_clear_m": 1.75,
     "mesh_clear_bearing_deg": 195,
     "mesh_shift_m": 0.2,
-    "walk_behind_m": -0.35
+    "walk_behind_m": -0.35,
+    "wall_m": 1.93
    },
    "old_rule": {
     "rev1_xz": [
@@ -2656,9 +3745,1092 @@
    }
   },
   {
+   "id": "M4-rev@race_acw",
+   "kind": "W1-6L",
+   "plate": "W1-6",
+   "layout": "race_acw",
+   "ribbon": "MAINLINE",
+   "direction": "rev",
+   "corner": {
+    "apex_vertex": 2319,
+    "apex_station_m": 6523,
+    "PC": 6505,
+    "PT": 6537,
+    "arc_m": 32,
+    "R_apex_m": 9.8,
+    "D_deg": 106.4,
+    "turn": "left",
+    "apex_xz": [
+     51.67,
+     1723.29
+    ],
+    "second_arrow": false,
+    "R_at_PC_m": 76.7
+   },
+   "approach": {
+    "t_xz": [
+     -0.3633,
+     0.9317
+    ],
+    "bearing_deg": 338.7,
+    "pca_vs_chord_deg": -0.47,
+    "w_app_m": 24.0,
+    "w_at_apex_m": 24.0,
+    "island_m": 0.0,
+    "lane_off_m": 6.0
+   },
+   "ray": {
+    "A_xz": [
+     68.59,
+     1712.6
+    ],
+    "len_m": 21.75,
+    "C_xz": [
+     60.69,
+     1732.86
+    ],
+    "exit_ribbon": "MAINLINE",
+    "hw_at_exit_m": 12.0,
+    "sC_station": 6520,
+    "sC_rel_PC_m": 15,
+    "sC_rel_apex_m": -3,
+    "s_S_m": 23.85,
+    "wall_in_m": 20.15,
+    "wall_out_m": 21.25,
+    "s_S_mesh_m": 23.68,
+    "C_mesh_xz": [
+     61.27,
+     1731.37
+    ],
+    "len_mesh_m": 20.15
+   },
+   "base_xz": [
+    59.987,
+    1734.663
+   ],
+   "curb_dir_xz": [
+    -0.8824,
+    0.4706
+   ],
+   "y_road_at_sC": 109.03,
+   "y_base": {
+    "analytic": 109.27,
+    "raycast": 109.115,
+    "source": "raycast (deck: the highest of ROAD / ground under the post)",
+    "value": 109.115,
+    "road_hit": 109.115,
+    "pushed_on_road_m": 0.0
+   },
+   "face_dir_xz": [
+    0.3633,
+    -0.9317
+   ],
+   "face_bearing_deg": 158.7,
+   "yaw_deg": -68.69,
+   "right_xz": [
+    0.9317,
+    0.3633
+   ],
+   "arrow": "left",
+   "expect_arrow": "left",
+   "lateral_offset_m": 1.63,
+   "height_m": 2.13,
+   "om1_3": true,
+   "wall": {
+    "behind_lip_m": 1.48,
+    "edge_centre_from_lip_m": -0.485,
+    "barrier_half_m": 0.335,
+    "token": "acw",
+    "rule": "the layout's sealing curb strip: its far face stands in for the curb face, lateral_offset_m behind it"
+   },
+   "checks": {
+    "outside_cross": 12.12,
+    "edge_clear_m": 1.36,
+    "edge_clear_all_m": 0.13,
+    "lamp_m": 34.36,
+    "plant_m": 4.79,
+    "plant_zone": "palms",
+    "pushed_m": 2.1,
+    "slid_m": 0.0,
+    "lateral_step_m": 0.0,
+    "gate_margin_m": 1.89,
+    "gate_margin_gated_m": 6.62,
+    "gate_ribbons": "MAINLINE",
+    "mouth_m": 14.8,
+    "spawn_m": 1514.7,
+    "spawn": "AC_TIME_1_R@race_cw",
+    "warnings": [
+     "layout plate for race_acw: stands 1.48 m past the MAINLINE lip, behind its sealing wall (strip centre -0.485 m from the lip, half width 0.335 m, + lateral_offset_m 1.63); every other pavement +0.08 m away",
+     "layout plate for race_acw: the sealing wall crossed 20.15-21.25 m along the ray, the post 1.63 m past its far face (the wall stands in for the curb); on the sealed opening's deck; every centreline's disc +1.89 m (the sealed openings' not gated here)"
+    ],
+    "slid_polyline_m": 0.0,
+    "mesh_clear_m": 1.62,
+    "mesh_clear_bearing_deg": null,
+    "mesh_shift_m": 0.17,
+    "pavement_clear_m": 0.0,
+    "walk_behind_m": null,
+    "wall_m": 1.62,
+    "on_deck": true
+   },
+   "old_rule": {
+    "rev1_xz": [
+     100.47,
+     1673.1
+    ],
+    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
+    "rev2_xz": [
+     50.09,
+     1708.58
+    ],
+    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
+   },
+   "overrides_applied": [
+    "expect_arrow mirrored for the reverse approach (right -> left)"
+   ],
+   "exclude_plant": null,
+   "where": "Navajo Rd -> Jackson Dr",
+   "base_xz_polyline": [
+    59.928,
+    1734.823
+   ],
+   "base_xz_mesh": [
+    59.987,
+    1734.663
+   ],
+   "base_source": "mesh (layout race_acw: the ray through the sealing wall, 1.63 m past its far face, slid 0.00 m)",
+   "built": {
+    "outside_edge_xz": [
+     [
+      22.61,
+      1719.29
+     ],
+     [
+      24.1,
+      1720.62
+     ],
+     [
+      25.69,
+      1721.89
+     ],
+     [
+      27.25,
+      1723.26
+     ],
+     [
+      28.9,
+      1724.56
+     ],
+     [
+      30.57,
+      1725.99
+     ],
+     [
+      31.31,
+      1728.77
+     ],
+     [
+      29.39,
+      1735.24
+     ],
+     [
+      30.88,
+      1738.41
+     ],
+     [
+      34.01,
+      1740.36
+     ],
+     [
+      37.72,
+      1742.25
+     ],
+     [
+      42.58,
+      1744.02
+     ],
+     [
+      49.01,
+      1745.15
+     ],
+     [
+      56.39,
+      1743.9
+     ],
+     [
+      60.59,
+      1735.94
+     ],
+     [
+      63.26,
+      1730.91
+     ],
+     [
+      66.13,
+      1728.24
+     ],
+     [
+      68.2,
+      1725.77
+     ],
+     [
+      69.87,
+      1723.35
+     ],
+     [
+      71.34,
+      1720.86
+     ],
+     [
+      72.56,
+      1718.38
+     ],
+     [
+      73.53,
+      1716.12
+     ],
+     [
+      74.39,
+      1713.95
+     ],
+     [
+      75.14,
+      1711.88
+     ],
+     [
+      75.81,
+      1710.01
+     ],
+     [
+      76.46,
+      1708.26
+     ],
+     [
+      77.05,
+      1706.69
+     ],
+     [
+      77.68,
+      1705.22
+     ],
+     [
+      78.39,
+      1703.7
+     ],
+     [
+      79.1,
+      1702.26
+     ],
+     [
+      79.88,
+      1700.84
+     ]
+    ],
+    "back_of_walk_xz": [
+     [
+      22.61,
+      1719.29
+     ],
+     [
+      21.45,
+      1723.61
+     ],
+     [
+      23.04,
+      1724.89
+     ],
+     [
+      24.62,
+      1726.28
+     ],
+     [
+      26.29,
+      1727.59
+     ],
+     [
+      30.19,
+      1726.45
+     ],
+     [
+      31.31,
+      1728.77
+     ],
+     [
+      29.39,
+      1735.24
+     ],
+     [
+      28.69,
+      1741.65
+     ],
+     [
+      32.09,
+      1743.76
+     ],
+     [
+      36.14,
+      1745.82
+     ],
+     [
+      41.69,
+      1747.2
+     ],
+     [
+      48.81,
+      1748.34
+     ],
+     [
+      56.39,
+      1743.9
+     ],
+     [
+      60.59,
+      1735.94
+     ],
+     [
+      64.24,
+      1732.18
+     ],
+     [
+      66.27,
+      1728.38
+     ],
+     [
+      68.36,
+      1725.89
+     ],
+     [
+      73.24,
+      1725.5
+     ],
+     [
+      74.86,
+      1722.75
+     ],
+     [
+      76.19,
+      1720.05
+     ],
+     [
+      73.53,
+      1716.12
+     ],
+     [
+      74.39,
+      1713.95
+     ],
+     [
+      75.14,
+      1711.88
+     ],
+     [
+      75.81,
+      1710.01
+     ],
+     [
+      76.46,
+      1708.26
+     ],
+     [
+      77.05,
+      1706.69
+     ],
+     [
+      77.68,
+      1705.22
+     ],
+     [
+      78.39,
+      1703.7
+     ],
+     [
+      79.1,
+      1702.26
+     ],
+     [
+      79.88,
+      1700.84
+     ]
+    ]
+   },
+   "blender": {
+    "base_xyz_engine": [
+     59.987,
+     109.115,
+     1734.663
+    ],
+    "base_xyz_blender": [
+     59.987,
+     1734.663,
+     109.115
+    ],
+    "plate_bottom_y": 111.245,
+    "plate_top_y": 111.855,
+    "post_base_y": 108.815,
+    "post_top_y": 111.905,
+    "plates": [
+     {
+      "front_xyz": [
+       [
+        59.43,
+        111.2452,
+        1734.4136
+       ],
+       [
+        60.5658,
+        111.2452,
+        1734.8565
+       ],
+       [
+        60.5658,
+        111.8552,
+        1734.8565
+       ],
+       [
+        59.43,
+        111.8552,
+        1734.4136
+       ]
+      ],
+      "back_xyz": [
+       [
+        59.4289,
+        111.2452,
+        1734.4164
+       ],
+       [
+        60.5647,
+        111.2452,
+        1734.8593
+       ],
+       [
+        60.5647,
+        111.8552,
+        1734.8593
+       ],
+       [
+        59.4289,
+        111.8552,
+        1734.4164
+       ]
+      ],
+      "arrow_xyz": [
+       [
+        59.5379,
+        111.55,
+        1734.4514
+       ],
+       [
+        59.8716,
+        111.7786,
+        1734.5815
+       ],
+       [
+        59.8574,
+        111.6346,
+        1734.576
+       ],
+       [
+        60.4608,
+        111.6346,
+        1734.8113
+       ],
+       [
+        60.4608,
+        111.4655,
+        1734.8113
+       ],
+       [
+        59.8574,
+        111.4655,
+        1734.576
+       ],
+       [
+        59.8716,
+        111.3214,
+        1734.5815
+       ]
+      ]
+     }
+    ],
+    "post": {
+     "post_base_xyz": [
+      [
+       60.0012,
+       108.8152,
+       1734.6954
+      ],
+      [
+       60.0194,
+       108.8152,
+       1734.6488
+      ],
+      [
+       59.9728,
+       108.8152,
+       1734.6306
+      ],
+      [
+       59.9546,
+       108.8152,
+       1734.6772
+      ]
+     ],
+     "post_top_y": 111.9052
+    },
+    "meshes": {
+     "SIGNPLATE": "SIGNPLATE_acw_0",
+     "SIGNARROW": "SIGNARROW_acw_0",
+     "SIGNPOST": "SIGNPOST_acw_0"
+    },
+    "collection": "RACE_CLOSE_ACW"
+   }
+  },
+  {
+   "id": "M3-rev@race_acw",
+   "kind": "W1-6L",
+   "plate": "W1-6",
+   "layout": "race_acw",
+   "ribbon": "MAINLINE",
+   "direction": "rev",
+   "corner": {
+    "apex_vertex": 1514,
+    "apex_station_m": 8938,
+    "PC": 8923,
+    "PT": 8952,
+    "arc_m": 29,
+    "R_apex_m": 10.5,
+    "D_deg": 91.4,
+    "turn": "left",
+    "apex_xz": [
+     -1974.84,
+     597.51
+    ],
+    "second_arrow": false,
+    "R_at_PC_m": 66.5
+   },
+   "approach": {
+    "t_xz": [
+     -0.87,
+     -0.493
+    ],
+    "bearing_deg": 240.5,
+    "pca_vs_chord_deg": 2.83,
+    "w_app_m": 29.74,
+    "w_at_apex_m": 29.63,
+    "island_m": 0.0,
+    "lane_off_m": 7.44
+   },
+   "ray": {
+    "A_xz": [
+     -1968.64,
+     614.74
+    ],
+    "len_m": 23.5,
+    "C_xz": [
+     -1989.09,
+     603.15
+    ],
+    "exit_ribbon": "MAINLINE",
+    "hw_at_exit_m": 15.0,
+    "sC_station": 8937,
+    "sC_rel_PC_m": 14,
+    "sC_rel_apex_m": -1,
+    "s_S_m": 25.4,
+    "wall_in_m": 21.95,
+    "wall_out_m": 22.95,
+    "s_S_mesh_m": 25.18,
+    "C_mesh_xz": [
+     -1987.74,
+     603.92
+    ],
+    "len_mesh_m": 21.95
+   },
+   "base_xz": [
+    -1990.547,
+    602.326
+   ],
+   "curb_dir_xz": [
+    -0.2948,
+    -0.9555
+   ],
+   "y_road_at_sC": 24.274,
+   "y_base": {
+    "analytic": 24.514,
+    "raycast": 24.514,
+    "source": "raycast (deck: the highest of ROAD / ground under the post)",
+    "value": 24.514,
+    "road_hit": null,
+    "pushed_on_road_m": 0.0
+   },
+   "face_dir_xz": [
+    0.87,
+    0.493
+   ],
+   "face_bearing_deg": 60.5,
+   "yaw_deg": 29.54,
+   "right_xz": [
+    -0.493,
+    0.87
+   ],
+   "arrow": "left",
+   "expect_arrow": "left",
+   "lateral_offset_m": 1.63,
+   "height_m": 2.13,
+   "om1_3": true,
+   "wall": {
+    "behind_lip_m": 1.48,
+    "edge_centre_from_lip_m": -0.485,
+    "barrier_half_m": 0.335,
+    "token": "acw",
+    "rule": "the layout's sealing curb strip: its far face stands in for the curb face, lateral_offset_m behind it"
+   },
+   "checks": {
+    "outside_cross": 15.18,
+    "edge_clear_m": 1.32,
+    "edge_clear_all_m": 1.32,
+    "lamp_m": 37.65,
+    "plant_m": 21.18,
+    "plant_zone": "palms",
+    "pushed_m": 1.9,
+    "slid_m": 0.0,
+    "lateral_step_m": 0.0,
+    "gate_margin_m": 1.98,
+    "gate_margin_gated_m": 9.6,
+    "gate_ribbons": "MAINLINE",
+    "mouth_m": 15.2,
+    "spawn_m": 867.9,
+    "spawn": "AC_TIME_1_R@race_cw",
+    "warnings": [
+     "layout plate for race_acw: stands 1.48 m past the MAINLINE lip, behind its sealing wall (strip centre -0.485 m from the lip, half width 0.335 m, + lateral_offset_m 1.63); every other pavement +1.48 m away",
+     "layout plate for race_acw: the sealing wall crossed 21.95-22.95 m along the ray, the post 1.63 m past its far face (the wall stands in for the curb); on the walk / ground beside it; every centreline's disc +1.98 m (the sealed openings' not gated here)"
+    ],
+    "slid_polyline_m": 0.0,
+    "mesh_clear_m": 1.61,
+    "mesh_clear_bearing_deg": null,
+    "mesh_shift_m": 0.23,
+    "pavement_clear_m": 1.24,
+    "walk_behind_m": null,
+    "wall_m": 1.61,
+    "on_deck": false
+   },
+   "old_rule": {
+    "rev1_xz": [
+     -1928.92,
+     646.35
+    ],
+    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
+    "rev2_xz": [
+     -1957.48,
+     594.51
+    ],
+    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
+   },
+   "overrides_applied": [
+    "expect_arrow mirrored for the reverse approach (right -> left)"
+   ],
+   "exclude_plant": null,
+   "where": "College Ave -> Navajo Rd",
+   "base_xz_polyline": [
+    -1990.745,
+    602.213
+   ],
+   "base_xz_mesh": [
+    -1990.547,
+    602.326
+   ],
+   "base_source": "mesh (layout race_acw: the ray through the sealing wall, 1.63 m past its far face, slid 0.00 m)",
+   "built": {
+    "outside_edge_xz": [
+     [
+      -1968.7,
+      567.72
+     ],
+     [
+      -1970.25,
+      569.23
+     ],
+     [
+      -1971.81,
+      570.82
+     ],
+     [
+      -1973.42,
+      572.41
+     ],
+     [
+      -1974.96,
+      573.98
+     ],
+     [
+      -1976.59,
+      575.57
+     ],
+     [
+      -1978.27,
+      577.18
+     ],
+     [
+      -1979.82,
+      578.85
+     ],
+     [
+      -1981.48,
+      580.62
+     ],
+     [
+      -1983.27,
+      582.6
+     ],
+     [
+      -1984.96,
+      584.93
+     ],
+     [
+      -1986.61,
+      587.73
+     ],
+     [
+      -1988.24,
+      591.4
+     ],
+     [
+      -1989.39,
+      596.3
+     ],
+     [
+      -1989.14,
+      602.05
+     ],
+     [
+      -1993.2,
+      610.59
+     ],
+     [
+      -1989.9,
+      615.45
+     ],
+     [
+      -1986.95,
+      618.7
+     ],
+     [
+      -1984.34,
+      621.12
+     ],
+     [
+      -1981.83,
+      623.16
+     ],
+     [
+      -1979.47,
+      624.89
+     ],
+     [
+      -1977.36,
+      626.33
+     ],
+     [
+      -1975.27,
+      627.7
+     ],
+     [
+      -1973.14,
+      629.02
+     ],
+     [
+      -1968.17,
+      625.21
+     ],
+     [
+      -1967.08,
+      627.91
+     ],
+     [
+      -1965.13,
+      629.2
+     ],
+     [
+      -1963.05,
+      630.06
+     ],
+     [
+      -1960.62,
+      630.18
+     ],
+     [
+      -1958.29,
+      630.44
+     ],
+     [
+      -1956.12,
+      630.81
+     ]
+    ],
+    "back_of_walk_xz": [
+     [
+      -1968.7,
+      567.72
+     ],
+     [
+      -1970.25,
+      569.23
+     ],
+     [
+      -1971.81,
+      570.82
+     ],
+     [
+      -1974.95,
+      571.13
+     ],
+     [
+      -1974.96,
+      573.98
+     ],
+     [
+      -1976.59,
+      575.57
+     ],
+     [
+      -1979.9,
+      576.01
+     ],
+     [
+      -1979.82,
+      578.85
+     ],
+     [
+      -1984.85,
+      578.46
+     ],
+     [
+      -1986.75,
+      580.62
+     ],
+     [
+      -1988.56,
+      583.18
+     ],
+     [
+      -1990.27,
+      586.36
+     ],
+     [
+      -1992.05,
+      590.59
+     ],
+     [
+      -1993.29,
+      596.31
+     ],
+     [
+      -1989.14,
+      602.05
+     ],
+     [
+      -1993.81,
+      610.93
+     ],
+     [
+      -1990.45,
+      615.89
+     ],
+     [
+      -1987.38,
+      619.13
+     ],
+     [
+      -1984.73,
+      621.57
+     ],
+     [
+      -1982.2,
+      623.63
+     ],
+     [
+      -1979.81,
+      625.38
+     ],
+     [
+      -1977.69,
+      626.83
+     ],
+     [
+      -1975.64,
+      628.29
+     ],
+     [
+      -1973.45,
+      629.53
+     ],
+     [
+      -1968.83,
+      626.33
+     ],
+     [
+      -1967.08,
+      627.91
+     ],
+     [
+      -1966.69,
+      632.11
+     ],
+     [
+      -1963.05,
+      630.06
+     ],
+     [
+      -1961.38,
+      631.7
+     ],
+     [
+      -1959.03,
+      631.97
+     ],
+     [
+      -1956.85,
+      632.35
+     ]
+    ]
+   },
+   "blender": {
+    "base_xyz_engine": [
+     -1990.547,
+     24.514,
+     602.326
+    ],
+    "base_xyz_blender": [
+     -1990.547,
+     602.326,
+     24.514
+    ],
+    "plate_bottom_y": 26.644,
+    "plate_top_y": 27.254,
+    "post_base_y": 24.214,
+    "post_top_y": 27.304,
+    "plates": [
+     {
+      "front_xyz": [
+       [
+        -1990.2204,
+        26.6439,
+        601.8105
+       ],
+       [
+        -1990.8214,
+        26.6439,
+        602.8711
+       ],
+       [
+        -1990.8214,
+        27.2539,
+        602.8711
+       ],
+       [
+        -1990.2204,
+        27.2539,
+        601.8105
+       ]
+      ],
+      "back_xyz": [
+       [
+        -1990.223,
+        26.6439,
+        601.809
+       ],
+       [
+        -1990.824,
+        26.6439,
+        602.8696
+       ],
+       [
+        -1990.824,
+        27.2539,
+        602.8696
+       ],
+       [
+        -1990.223,
+        27.2539,
+        601.809
+       ]
+      ],
+      "arrow_xyz": [
+       [
+        -1990.2732,
+        26.9487,
+        601.9119
+       ],
+       [
+        -1990.4498,
+        27.1773,
+        602.2234
+       ],
+       [
+        -1990.4423,
+        27.0333,
+        602.2102
+       ],
+       [
+        -1990.7616,
+        27.0333,
+        602.7737
+       ],
+       [
+        -1990.7616,
+        26.8641,
+        602.7737
+       ],
+       [
+        -1990.4423,
+        26.8641,
+        602.2102
+       ],
+       [
+        -1990.4498,
+        26.7201,
+        602.2234
+       ]
+      ]
+     }
+    ],
+    "post": {
+     "post_base_xyz": [
+      [
+       -1990.5811,
+       24.2139,
+       602.3354
+      ],
+      [
+       -1990.5376,
+       24.2139,
+       602.3601
+      ],
+      [
+       -1990.5129,
+       24.2139,
+       602.3166
+      ],
+      [
+       -1990.5564,
+       24.2139,
+       602.2919
+      ]
+     ],
+     "post_top_y": 27.3039
+    },
+    "meshes": {
+     "SIGNPLATE": "SIGNPLATE_acw_0",
+     "SIGNARROW": "SIGNARROW_acw_0",
+     "SIGNPOST": "SIGNPOST_acw_0"
+    },
+    "collection": "RACE_CLOSE_ACW"
+   }
+  },
+  {
    "id": "M2-rev",
    "kind": "W1-6L",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "MAINLINE",
    "direction": "rev",
    "corner": {
@@ -2752,7 +4924,7 @@
    "checks": {
     "outside_cross": 15.2,
     "edge_clear_m": 1.57,
-    "lamp_m": 33.97,
+    "lamp_m": 34.08,
     "plant_m": 15.12,
     "plant_zone": "trees",
     "pushed_m": 1.86,
@@ -2769,7 +4941,8 @@
     "mesh_clear_m": 1.74,
     "mesh_clear_bearing_deg": 35,
     "mesh_shift_m": 0.08,
-    "walk_behind_m": -0.32
+    "walk_behind_m": -0.32,
+    "wall_m": 1.91
    },
    "old_rule": {
     "rev1_xz": [
@@ -3187,6 +5360,7 @@
    "id": "M1-rev",
    "kind": "W1-6L",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "MAINLINE",
    "direction": "rev",
    "corner": {
@@ -3280,7 +5454,7 @@
    "checks": {
     "outside_cross": 12.4,
     "edge_clear_m": -1.16,
-    "lamp_m": 62.09,
+    "lamp_m": 62.02,
     "plant_m": 5.19,
     "plant_zone": "palms",
     "pushed_m": 2.92,
@@ -3297,7 +5471,8 @@
     "mesh_clear_m": 1.73,
     "mesh_clear_bearing_deg": 95,
     "mesh_shift_m": 6.43,
-    "walk_behind_m": -0.46
+    "walk_behind_m": -0.46,
+    "wall_m": 1.98
    },
    "old_rule": {
     "rev1_xz": [
@@ -3715,6 +5890,7 @@
    "id": "MED-1-fwd",
    "kind": "W1-6R",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "medium#2+0#0#0",
    "direction": "fwd",
    "corner": {
@@ -3808,7 +5984,7 @@
    "checks": {
     "outside_cross": 5.08,
     "edge_clear_m": 1.34,
-    "lamp_m": 62.11,
+    "lamp_m": 62.15,
     "plant_m": 19.75,
     "plant_zone": "scrub",
     "pushed_m": 1.32,
@@ -3816,7 +5992,7 @@
     "lateral_step_m": 0.0,
     "gate_margin_m": 1.23,
     "gate_margin_gated_m": 44.04,
-    "gate_ribbons": "MAINLINE",
+    "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
     "mouth_m": 36.9,
     "spawn_m": 737.2,
     "spawn": "AC_PIT_7@race_cw",
@@ -3825,7 +6001,8 @@
     "mesh_clear_m": 1.55,
     "mesh_clear_bearing_deg": 0,
     "mesh_shift_m": 0.01,
-    "walk_behind_m": -0.32
+    "walk_behind_m": -0.32,
+    "wall_m": 36.57
    },
    "old_rule": {
     "rev1_xz": [
@@ -4241,6 +6418,7 @@
    "id": "MED-6-fwd",
    "kind": "W1-6L",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "medium#2+0#0#0",
    "direction": "fwd",
    "corner": {
@@ -4334,7 +6512,7 @@
    "checks": {
     "outside_cross": 5.24,
     "edge_clear_m": -1.68,
-    "lamp_m": 457.43,
+    "lamp_m": 457.42,
     "plant_m": 382.65,
     "plant_zone": "scrub",
     "pushed_m": 1.28,
@@ -4342,7 +6520,7 @@
     "lateral_step_m": 0.0,
     "gate_margin_m": -2.06,
     "gate_margin_gated_m": Infinity,
-    "gate_ribbons": "MAINLINE",
+    "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
     "mouth_m": 586.7,
     "spawn_m": 685.7,
     "spawn": "AC_PIT_7@race_cw",
@@ -4353,7 +6531,8 @@
     "mesh_clear_m": 1.34,
     "mesh_clear_bearing_deg": 205,
     "mesh_shift_m": 3.79,
-    "walk_behind_m": -0.26
+    "walk_behind_m": -0.26,
+    "wall_m": 460.45
    },
    "old_rule": {
     "rev1_xz": [
@@ -4769,6 +6948,7 @@
    "id": "MED-7-fwd",
    "kind": "W1-6L",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "medium#2+0#0#0",
    "direction": "fwd",
    "corner": {
@@ -4870,7 +7050,7 @@
     "lateral_step_m": 0.0,
     "gate_margin_m": 0.19,
     "gate_margin_gated_m": Infinity,
-    "gate_ribbons": "MAINLINE",
+    "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
     "mouth_m": 578.2,
     "spawn_m": 555.3,
     "spawn": "AC_PIT_7@race_cw",
@@ -4881,7 +7061,8 @@
     "mesh_clear_m": 1.32,
     "mesh_clear_bearing_deg": 340,
     "mesh_shift_m": 1.14,
-    "walk_behind_m": 0.36
+    "walk_behind_m": 0.36,
+    "wall_m": 446.08
    },
    "old_rule": {
     "rev1_xz": [
@@ -5297,6 +7478,7 @@
    "id": "MED-8-fwd",
    "kind": "W1-6R",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "medium#2+0#0#0",
    "direction": "fwd",
    "corner": {
@@ -5398,7 +7580,7 @@
     "lateral_step_m": 0.0,
     "gate_margin_m": 0.76,
     "gate_margin_gated_m": Infinity,
-    "gate_ribbons": "MAINLINE",
+    "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
     "mouth_m": 416.1,
     "spawn_m": 460.7,
     "spawn": "AC_PIT_7@race_cw",
@@ -5407,7 +7589,8 @@
     "mesh_clear_m": 1.4,
     "mesh_clear_bearing_deg": 100,
     "mesh_shift_m": 0.65,
-    "walk_behind_m": -0.26
+    "walk_behind_m": -0.26,
+    "wall_m": 251.81
    },
    "old_rule": {
     "rev1_xz": [
@@ -5823,6 +8006,7 @@
    "id": "MED-10-fwd",
    "kind": "W1-6L",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "medium#2+0#0#0",
    "direction": "fwd",
    "corner": {
@@ -5924,7 +8108,7 @@
     "lateral_step_m": 0.0,
     "gate_margin_m": 0.07,
     "gate_margin_gated_m": Infinity,
-    "gate_ribbons": "MAINLINE",
+    "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
     "mouth_m": 458.4,
     "spawn_m": 289.9,
     "spawn": "AC_PIT_7@race_cw",
@@ -5935,7 +8119,8 @@
     "mesh_clear_m": 1.32,
     "mesh_clear_bearing_deg": 280,
     "mesh_shift_m": 1.28,
-    "walk_behind_m": 1.32
+    "walk_behind_m": 1.32,
+    "wall_m": 224.9
    },
    "old_rule": {
     "rev1_xz": [
@@ -6351,6 +8536,7 @@
    "id": "MED-13-fwd",
    "kind": "W1-6R",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "medium#2+0#0#0",
    "direction": "fwd",
    "corner": {
@@ -6444,7 +8630,7 @@
    "checks": {
     "outside_cross": 5.02,
     "edge_clear_m": 0.77,
-    "lamp_m": 104.0,
+    "lamp_m": 103.99,
     "plant_m": 19.61,
     "plant_zone": "scrub",
     "pushed_m": 1.63,
@@ -6452,7 +8638,7 @@
     "lateral_step_m": 0.0,
     "gate_margin_m": 0.53,
     "gate_margin_gated_m": 90.91,
-    "gate_ribbons": "MAINLINE",
+    "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
     "mouth_m": 429.2,
     "spawn_m": 467.0,
     "spawn": "AC_PIT_7@race_acw",
@@ -6461,7 +8647,8 @@
     "mesh_clear_m": 1.59,
     "mesh_clear_bearing_deg": 15,
     "mesh_shift_m": 0.68,
-    "walk_behind_m": -0.4
+    "walk_behind_m": -0.4,
+    "wall_m": 91.89
    },
    "old_rule": {
     "rev1_xz": [
@@ -6877,6 +9064,7 @@
    "id": "MED-13-rev",
    "kind": "W1-6L",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "medium#2+0#0#0",
    "direction": "rev",
    "corner": {
@@ -6970,7 +9158,7 @@
    "checks": {
     "outside_cross": 5.0,
     "edge_clear_m": 0.62,
-    "lamp_m": 107.14,
+    "lamp_m": 107.13,
     "plant_m": 21.42,
     "plant_zone": "scrub",
     "pushed_m": 3.1,
@@ -6978,7 +9166,7 @@
     "lateral_step_m": 0.0,
     "gate_margin_m": 0.17,
     "gate_margin_gated_m": 96.48,
-    "gate_ribbons": "MAINLINE",
+    "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
     "mouth_m": 425.7,
     "spawn_m": 469.4,
     "spawn": "AC_PIT_7@race_acw",
@@ -6990,7 +9178,8 @@
     "mesh_clear_m": 1.19,
     "mesh_clear_bearing_deg": 5,
     "mesh_shift_m": 1.61,
-    "walk_behind_m": 1.5
+    "walk_behind_m": 1.5,
+    "wall_m": 96.92
    },
    "old_rule": {
     "rev1_xz": [
@@ -7406,6 +9595,7 @@
    "id": "MED-10-rev",
    "kind": "W1-6R",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "medium#2+0#0#0",
    "direction": "rev",
    "corner": {
@@ -7507,7 +9697,7 @@
     "lateral_step_m": 0.0,
     "gate_margin_m": 1.35,
     "gate_margin_gated_m": Infinity,
-    "gate_ribbons": "MAINLINE",
+    "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
     "mouth_m": 468.6,
     "spawn_m": 298.8,
     "spawn": "AC_PIT_7@race_cw",
@@ -7516,7 +9706,8 @@
     "mesh_clear_m": 1.77,
     "mesh_clear_bearing_deg": 250,
     "mesh_shift_m": 0.26,
-    "walk_behind_m": -0.4
+    "walk_behind_m": -0.4,
+    "wall_m": 227.89
    },
    "old_rule": {
     "rev1_xz": [
@@ -7932,6 +10123,7 @@
    "id": "MED-8-rev",
    "kind": "W1-6L",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "medium#2+0#0#0",
    "direction": "rev",
    "corner": {
@@ -8033,7 +10225,7 @@
     "lateral_step_m": 0.0,
     "gate_margin_m": -1.06,
     "gate_margin_gated_m": Infinity,
-    "gate_ribbons": "MAINLINE",
+    "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
     "mouth_m": 412.6,
     "spawn_m": 469.6,
     "spawn": "AC_PIT_7@race_cw",
@@ -8044,7 +10236,8 @@
     "mesh_clear_m": 1.51,
     "mesh_clear_bearing_deg": 145,
     "mesh_shift_m": 2.48,
-    "walk_behind_m": -0.42
+    "walk_behind_m": -0.42,
+    "wall_m": 257.24
    },
    "old_rule": {
     "rev1_xz": [
@@ -8460,6 +10653,7 @@
    "id": "MED-7-rev",
    "kind": "W1-6R",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "medium#2+0#0#0",
    "direction": "rev",
    "corner": {
@@ -8561,7 +10755,7 @@
     "lateral_step_m": 0.0,
     "gate_margin_m": 1.22,
     "gate_margin_gated_m": Infinity,
-    "gate_ribbons": "MAINLINE",
+    "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
     "mouth_m": 583.8,
     "spawn_m": 569.8,
     "spawn": "AC_PIT_7@race_cw",
@@ -8570,7 +10764,8 @@
     "mesh_clear_m": 1.55,
     "mesh_clear_bearing_deg": 310,
     "mesh_shift_m": 0.26,
-    "walk_behind_m": -0.4
+    "walk_behind_m": -0.4,
+    "wall_m": 459.94
    },
    "old_rule": {
     "rev1_xz": [
@@ -8986,6 +11181,7 @@
    "id": "MED-6-rev",
    "kind": "W1-6R",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "medium#2+0#0#0",
    "direction": "rev",
    "corner": {
@@ -9087,7 +11283,7 @@
     "lateral_step_m": 0.0,
     "gate_margin_m": -0.52,
     "gate_margin_gated_m": Infinity,
-    "gate_ribbons": "MAINLINE",
+    "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
     "mouth_m": 580.5,
     "spawn_m": 684.2,
     "spawn": "AC_PIT_7@race_cw",
@@ -9098,7 +11294,8 @@
     "mesh_clear_m": 1.4,
     "mesh_clear_bearing_deg": 205,
     "mesh_shift_m": 1.86,
-    "walk_behind_m": -0.26
+    "walk_behind_m": -0.26,
+    "wall_m": 457.94
    },
    "old_rule": {
     "rev1_xz": [
@@ -9514,6 +11711,7 @@
    "id": "MED-1-rev",
    "kind": "W1-6L",
    "plate": "W1-6",
+   "layout": null,
    "ribbon": "medium#2+0#0#0",
    "direction": "rev",
    "corner": {
@@ -9607,7 +11805,7 @@
    "checks": {
     "outside_cross": 4.67,
     "edge_clear_m": 0.12,
-    "lamp_m": 54.62,
+    "lamp_m": 54.6,
     "plant_m": 17.65,
     "plant_zone": "trees",
     "pushed_m": 1.4,
@@ -9615,7 +11813,7 @@
     "lateral_step_m": 0.0,
     "gate_margin_m": -0.1,
     "gate_margin_gated_m": 34.81,
-    "gate_ribbons": "MAINLINE",
+    "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
     "mouth_m": 28.6,
     "spawn_m": 743.0,
     "spawn": "AC_PIT_7@race_cw",
@@ -9627,7 +11825,8 @@
     "mesh_clear_m": 1.33,
     "mesh_clear_bearing_deg": 35,
     "mesh_shift_m": 1.42,
-    "walk_behind_m": 0.13
+    "walk_behind_m": 0.13,
+    "wall_m": 27.24
    },
    "old_rule": {
     "rev1_xz": [
@@ -10030,6 +12229,3192 @@
      "SIGNPOST": "SIGNPOST_0"
     }
    }
+  },
+  {
+   "id": "J2-fwd",
+   "kind": "W1-6R",
+   "plate": "W1-6",
+   "layout": null,
+   "ribbon": "north",
+   "direction": "fwd",
+   "corner": {
+    "apex_vertex": 319,
+    "apex_station_m": 942,
+    "PC": 932,
+    "PT": 969,
+    "arc_m": 37,
+    "R_apex_m": 20.2,
+    "D_deg": -82.1,
+    "turn": "right",
+    "apex_xz": [
+     -2736.89,
+     1000.96
+    ],
+    "second_arrow": false,
+    "R_at_PC_m": 76.6
+   },
+   "approach": {
+    "t_xz": [
+     -0.8303,
+     -0.5574
+    ],
+    "bearing_deg": 236.1,
+    "pca_vs_chord_deg": 0.24,
+    "w_app_m": 24.0,
+    "w_at_apex_m": 23.68,
+    "island_m": 2.0,
+    "lane_off_m": 6.5
+   },
+   "ray": {
+    "A_xz": [
+     -2731.67,
+     1010.85
+    ],
+    "len_m": 36.25,
+    "C_xz": [
+     -2761.77,
+     990.64
+    ],
+    "exit_ribbon": "pad J2",
+    "hw_at_exit_m": 0.0,
+    "sC_station": 960,
+    "sC_rel_PC_m": 28,
+    "sC_rel_apex_m": 18,
+    "s_S_m": 37.89,
+    "C_mesh_xz": [
+     -2761.69,
+     990.7
+    ],
+    "len_mesh_m": 36.15,
+    "back_of_walk_m": 38.6,
+    "walk_run_m": 2.45,
+    "s_S_walk_m": 38.21,
+    "s_S_mesh_m": 38.21,
+    "marched_m": 0.0,
+    "beyond_walk": false
+   },
+   "base_xz": [
+    -2763.396,
+    989.552
+   ],
+   "curb_dir_xz": [
+    -0.8645,
+    0.5026
+   ],
+   "y_road_at_sC": 2.829,
+   "y_base": {
+    "analytic": 3.069,
+    "raycast": 3.227,
+    "source": "raycast",
+    "value": 3.227,
+    "road_hit": null,
+    "pushed_on_road_m": 0.0
+   },
+   "face_dir_xz": [
+    0.8303,
+    0.5574
+   ],
+   "face_bearing_deg": 56.1,
+   "yaw_deg": 33.87,
+   "right_xz": [
+    -0.5574,
+    0.8303
+   ],
+   "arrow": "right",
+   "expect_arrow": "right",
+   "lateral_offset_m": 1.33,
+   "height_m": 2.13,
+   "om1_3": true,
+   "checks": {
+    "outside_cross": 15.2,
+    "edge_clear_m": 1.56,
+    "lamp_m": 56.19,
+    "plant_m": 61.41,
+    "plant_zone": "median_planting",
+    "pushed_m": 1.64,
+    "slid_m": 0.0,
+    "lateral_step_m": 0.0,
+    "gate_margin_m": 5.88,
+    "gate_margin_gated_m": 5.88,
+    "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
+    "mouth_m": 18.5,
+    "spawn_m": 1417.2,
+    "spawn": "AC_TIME_1_L@race_cw",
+    "warnings": [],
+    "slid_polyline_m": 0.0,
+    "mesh_clear_m": 1.56,
+    "mesh_clear_bearing_deg": 350,
+    "mesh_shift_m": 0.33,
+    "walk_behind_m": -0.39,
+    "wall_m": 19.7
+   },
+   "old_rule": {
+    "rev1_xz": [
+     -2676.77,
+     1016.92
+    ],
+    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
+    "rev2_xz": [
+     -2740.09,
+     1015.25
+    ],
+    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
+   },
+   "overrides_applied": [],
+   "exclude_plant": null,
+   "where": "Waring Rd -> Princess View Dr (junction pad J2)",
+   "base_xz_polyline": [
+    -2763.124,
+    989.732
+   ],
+   "base_xz_mesh": [
+    -2763.396,
+    989.552
+   ],
+   "base_source": "mesh (walk fraction start, marched 0.00 m along the ray, slid 0.00 m along the curb)",
+   "built": {
+    "outside_edge_xz": [
+     [
+      -2719.66,
+      996.64
+     ],
+     [
+      -2721.31,
+      995.52
+     ],
+     [
+      -2722.98,
+      994.39
+     ],
+     [
+      -2725.15,
+      992.94
+     ],
+     [
+      -2727.91,
+      991.12
+     ],
+     [
+      -2730.29,
+      988.01
+     ],
+     [
+      -2732.1,
+      979.59
+     ],
+     [
+      -2736.46,
+      978.88
+     ],
+     [
+      -2740.09,
+      978.63
+     ],
+     [
+      -2743.97,
+      978.64
+     ],
+     [
+      -2747.86,
+      979.03
+     ],
+     [
+      -2751.12,
+      979.59
+     ],
+     [
+      -2754.88,
+      980.49
+     ],
+     [
+      -2758.54,
+      981.75
+     ],
+     [
+      -2761.73,
+      983.1
+     ],
+     [
+      -2761.67,
+      991.4
+     ],
+     [
+      -2763.14,
+      995.28
+     ],
+     [
+      -2765.15,
+      997.7
+     ],
+     [
+      -2767.13,
+      1000.09
+     ],
+     [
+      -2768.76,
+      1002.02
+     ],
+     [
+      -2770.05,
+      1003.57
+     ],
+     [
+      -2771.33,
+      1005.11
+     ],
+     [
+      -2772.61,
+      1006.64
+     ],
+     [
+      -2773.89,
+      1008.18
+     ],
+     [
+      -2775.17,
+      1009.72
+     ],
+     [
+      -2776.44,
+      1011.26
+     ],
+     [
+      -2777.72,
+      1012.79
+     ],
+     [
+      -2779.0,
+      1014.33
+     ],
+     [
+      -2780.28,
+      1015.87
+     ],
+     [
+      -2781.56,
+      1017.41
+     ],
+     [
+      -2782.84,
+      1018.95
+     ]
+    ],
+    "back_of_walk_xz": [
+     [
+      -2718.7,
+      995.24
+     ],
+     [
+      -2720.36,
+      994.11
+     ],
+     [
+      -2722.03,
+      992.98
+     ],
+     [
+      -2724.27,
+      991.49
+     ],
+     [
+      -2727.91,
+      991.12
+     ],
+     [
+      -2730.29,
+      988.01
+     ],
+     [
+      -2731.6,
+      977.34
+     ],
+     [
+      -2736.13,
+      975.9
+     ],
+     [
+      -2739.95,
+      974.74
+     ],
+     [
+      -2744.17,
+      974.74
+     ],
+     [
+      -2748.4,
+      975.17
+     ],
+     [
+      -2751.89,
+      975.77
+     ],
+     [
+      -2755.98,
+      976.74
+     ],
+     [
+      -2759.94,
+      978.11
+     ],
+     [
+      -2763.37,
+      979.56
+     ],
+     [
+      -2761.67,
+      991.4
+     ],
+     [
+      -2763.14,
+      995.28
+     ],
+     [
+      -2765.15,
+      997.7
+     ],
+     [
+      -2767.13,
+      1000.09
+     ],
+     [
+      -2768.76,
+      1002.02
+     ],
+     [
+      -2770.05,
+      1003.57
+     ],
+     [
+      -2771.33,
+      1005.11
+     ],
+     [
+      -2772.61,
+      1006.64
+     ],
+     [
+      -2773.89,
+      1008.18
+     ],
+     [
+      -2775.17,
+      1009.72
+     ],
+     [
+      -2776.44,
+      1011.26
+     ],
+     [
+      -2777.72,
+      1012.79
+     ],
+     [
+      -2779.0,
+      1014.33
+     ],
+     [
+      -2780.28,
+      1015.87
+     ],
+     [
+      -2781.56,
+      1017.41
+     ],
+     [
+      -2782.84,
+      1018.95
+     ]
+    ]
+   },
+   "blender": {
+    "base_xyz_engine": [
+     -2763.396,
+     3.227,
+     989.552
+    ],
+    "base_xyz_blender": [
+     -2763.396,
+     989.552,
+     3.227
+    ],
+    "plate_bottom_y": 5.357,
+    "plate_top_y": 5.967,
+    "post_base_y": 2.927,
+    "post_top_y": 6.017,
+    "plates": [
+     {
+      "front_xyz": [
+       [
+        -2763.0314,
+        5.3568,
+        989.0627
+       ],
+       [
+        -2763.7108,
+        5.3568,
+        990.0748
+       ],
+       [
+        -2763.7108,
+        5.9668,
+        990.0748
+       ],
+       [
+        -2763.0314,
+        5.9668,
+        989.0627
+       ]
+      ],
+      "back_xyz": [
+       [
+        -2763.0338,
+        5.3568,
+        989.061
+       ],
+       [
+        -2763.7133,
+        5.3568,
+        990.0731
+       ],
+       [
+        -2763.7133,
+        5.9668,
+        990.0731
+       ],
+       [
+        -2763.0338,
+        5.9668,
+        989.061
+       ]
+      ],
+      "arrow_xyz": [
+       [
+        -2763.6439,
+        5.6616,
+        989.9822
+       ],
+       [
+        -2763.4442,
+        5.8902,
+        989.6848
+       ],
+       [
+        -2763.4527,
+        5.7462,
+        989.6975
+       ],
+       [
+        -2763.0917,
+        5.7462,
+        989.1597
+       ],
+       [
+        -2763.0917,
+        5.577,
+        989.1597
+       ],
+       [
+        -2763.4527,
+        5.577,
+        989.6975
+       ],
+       [
+        -2763.4442,
+        5.433,
+        989.6848
+       ]
+      ]
+     }
+    ],
+    "post": {
+     "post_base_xyz": [
+      [
+       -2763.4307,
+       2.9268,
+       989.5588
+      ],
+      [
+       -2763.3892,
+       2.9268,
+       989.5867
+      ],
+      [
+       -2763.3613,
+       2.9268,
+       989.5452
+      ],
+      [
+       -2763.4028,
+       2.9268,
+       989.5173
+      ]
+     ],
+     "post_top_y": 6.0168
+    },
+    "meshes": {
+     "SIGNPLATE": "SIGNPLATE_0",
+     "SIGNARROW": "SIGNARROW_0",
+     "SIGNPOST": "SIGNPOST_0"
+    }
+   }
+  },
+  {
+   "id": "J3-fwd",
+   "kind": "W1-6R",
+   "plate": "W1-6",
+   "layout": null,
+   "ribbon": "north",
+   "direction": "fwd",
+   "corner": {
+    "apex_vertex": 695,
+    "apex_station_m": 2074,
+    "PC": 2054,
+    "PT": 2084,
+    "arc_m": 30,
+    "R_apex_m": 16.7,
+    "D_deg": -63.8,
+    "turn": "right",
+    "apex_xz": [
+     -3016.05,
+     2044.28
+    ],
+    "second_arrow": false,
+    "R_at_PC_m": 62.6
+   },
+   "approach": {
+    "t_xz": [
+     -0.0702,
+     0.9975
+    ],
+    "bearing_deg": 356.0,
+    "pca_vs_chord_deg": -3.36,
+    "w_app_m": 27.66,
+    "w_at_apex_m": 31.37,
+    "island_m": 0.0,
+    "lane_off_m": 6.91
+   },
+   "ray": {
+    "A_xz": [
+     -3014.38,
+     2025.85
+    ],
+    "len_m": 37.5,
+    "C_xz": [
+     -3017.01,
+     2063.26
+    ],
+    "exit_ribbon": "north_mission_gorge",
+    "hw_at_exit_m": 16.0,
+    "sC_station": 2081,
+    "sC_rel_PC_m": 27,
+    "sC_rel_apex_m": 7,
+    "s_S_m": 38.82,
+    "C_mesh_xz": [
+     -3017.01,
+     2063.21
+    ],
+    "len_mesh_m": 37.45,
+    "back_of_walk_m": 39.3,
+    "walk_run_m": 1.85,
+    "s_S_walk_m": 39.01,
+    "s_S_mesh_m": 39.01,
+    "marched_m": 0.0,
+    "beyond_walk": false
+   },
+   "base_xz": [
+    -3017.119,
+    2064.762
+   ],
+   "curb_dir_xz": [
+    0.8965,
+    0.443
+   ],
+   "y_road_at_sC": -67.004,
+   "y_base": {
+    "analytic": -66.764,
+    "raycast": -66.756,
+    "source": "raycast",
+    "value": -66.756,
+    "road_hit": null,
+    "pushed_on_road_m": 0.0
+   },
+   "face_dir_xz": [
+    0.0702,
+    -0.9975
+   ],
+   "face_bearing_deg": 176.0,
+   "yaw_deg": -85.98,
+   "right_xz": [
+    0.9975,
+    0.0702
+   ],
+   "arrow": "right",
+   "expect_arrow": "right",
+   "lateral_offset_m": 1.33,
+   "height_m": 2.13,
+   "om1_3": true,
+   "checks": {
+    "outside_cross": 16.07,
+    "edge_clear_m": 1.51,
+    "lamp_m": 54.76,
+    "plant_m": 232.58,
+    "plant_zone": "median_planting",
+    "pushed_m": 1.32,
+    "slid_m": 0.0,
+    "lateral_step_m": 0.0,
+    "gate_margin_m": 2.88,
+    "gate_margin_gated_m": 2.88,
+    "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
+    "mouth_m": 17.3,
+    "spawn_m": 1863.6,
+    "spawn": "AC_TIME_1_L@race_cw",
+    "warnings": [],
+    "slid_polyline_m": 0.0,
+    "mesh_clear_m": 1.51,
+    "mesh_clear_bearing_deg": 295,
+    "mesh_shift_m": 0.19,
+    "walk_behind_m": -0.29,
+    "wall_m": 23.36
+   },
+   "old_rule": {
+    "rev1_xz": [
+     -3032.21,
+     1973.25
+    ],
+    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
+    "rev2_xz": [
+     -3001.77,
+     2032.54
+    ],
+    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
+   },
+   "overrides_applied": [],
+   "exclude_plant": null,
+   "where": "Princess View Dr -> Mission Gorge Rd (junction pad J3)",
+   "base_xz_polyline": [
+    -3017.1,
+    2064.572
+   ],
+   "base_xz_mesh": [
+    -3017.119,
+    2064.762
+   ],
+   "base_source": "mesh (walk fraction start, marched 0.00 m along the ray, slid 0.00 m along the curb)",
+   "built": {
+    "outside_edge_xz": [
+     [
+      -3043.15,
+      2021.79
+     ],
+     [
+      -3043.17,
+      2024.39
+     ],
+     [
+      -3043.14,
+      2026.99
+     ],
+     [
+      -3043.01,
+      2029.82
+     ],
+     [
+      -3042.78,
+      2032.5
+     ],
+     [
+      -3042.42,
+      2035.59
+     ],
+     [
+      -3041.82,
+      2038.82
+     ],
+     [
+      -3041.14,
+      2041.76
+     ],
+     [
+      -3039.7,
+      2045.22
+     ],
+     [
+      -3038.57,
+      2049.09
+     ],
+     [
+      -3036.86,
+      2052.48
+     ],
+     [
+      -3034.5,
+      2056.25
+     ],
+     [
+      -3031.27,
+      2060.16
+     ],
+     [
+      -3024.71,
+      2059.81
+     ],
+     [
+      -3020.98,
+      2061.35
+     ],
+     [
+      -3017.69,
+      2062.84
+     ],
+     [
+      -3015.24,
+      2063.94
+     ],
+     [
+      -3013.47,
+      2064.73
+     ],
+     [
+      -3011.72,
+      2065.52
+     ],
+     [
+      -3009.94,
+      2066.34
+     ],
+     [
+      -3008.12,
+      2067.18
+     ],
+     [
+      -3006.31,
+      2068.12
+     ],
+     [
+      -3004.44,
+      2068.96
+     ],
+     [
+      -3002.58,
+      2069.8
+     ],
+     [
+      -3000.75,
+      2070.73
+     ],
+     [
+      -2998.89,
+      2071.55
+     ],
+     [
+      -2997.06,
+      2072.36
+     ],
+     [
+      -2995.27,
+      2073.26
+     ],
+     [
+      -2993.45,
+      2074.07
+     ],
+     [
+      -2991.63,
+      2074.87
+     ],
+     [
+      -2989.81,
+      2075.68
+     ]
+    ],
+    "back_of_walk_xz": [
+     [
+      -3047.05,
+      2021.68
+     ],
+     [
+      -3047.07,
+      2024.4
+     ],
+     [
+      -3047.04,
+      2027.1
+     ],
+     [
+      -3046.9,
+      2030.08
+     ],
+     [
+      -3046.66,
+      2032.89
+     ],
+     [
+      -3046.28,
+      2036.17
+     ],
+     [
+      -3045.64,
+      2039.63
+     ],
+     [
+      -3044.91,
+      2042.74
+     ],
+     [
+      -3041.31,
+      2045.78
+     ],
+     [
+      -3042.12,
+      2050.7
+     ],
+     [
+      -3040.26,
+      2054.39
+     ],
+     [
+      -3037.1,
+      2058.12
+     ],
+     [
+      -3032.57,
+      2061.4
+     ],
+     [
+      -3024.71,
+      2059.81
+     ],
+     [
+      -3020.98,
+      2061.35
+     ],
+     [
+      -3018.45,
+      2064.36
+     ],
+     [
+      -3015.94,
+      2065.49
+     ],
+     [
+      -3014.17,
+      2066.28
+     ],
+     [
+      -3012.42,
+      2067.07
+     ],
+     [
+      -3009.94,
+      2066.34
+     ],
+     [
+      -3008.12,
+      2067.18
+     ],
+     [
+      -3007.01,
+      2069.66
+     ],
+     [
+      -3005.14,
+      2070.51
+     ],
+     [
+      -3002.58,
+      2069.8
+     ],
+     [
+      -3001.44,
+      2072.28
+     ],
+     [
+      -2999.58,
+      2073.1
+     ],
+     [
+      -2997.06,
+      2072.36
+     ],
+     [
+      -2995.96,
+      2074.81
+     ],
+     [
+      -2994.14,
+      2075.62
+     ],
+     [
+      -2991.63,
+      2074.87
+     ],
+     [
+      -2989.81,
+      2075.68
+     ]
+    ]
+   },
+   "blender": {
+    "base_xyz_engine": [
+     -3017.119,
+     -66.756,
+     2064.762
+    ],
+    "base_xyz_blender": [
+     -3017.119,
+     2064.762,
+     -66.756
+    ],
+    "plate_bottom_y": -64.626,
+    "plate_top_y": -64.016,
+    "post_base_y": -67.056,
+    "post_top_y": -63.966,
+    "plates": [
+     {
+      "front_xyz": [
+       [
+        -3017.7249,
+        -64.6256,
+        2064.6893
+       ],
+       [
+        -3016.5089,
+        -64.6256,
+        2064.7749
+       ],
+       [
+        -3016.5089,
+        -64.0156,
+        2064.7749
+       ],
+       [
+        -3017.7249,
+        -64.0156,
+        2064.6893
+       ]
+      ],
+      "back_xyz": [
+       [
+        -3017.7251,
+        -64.6256,
+        2064.6923
+       ],
+       [
+        -3016.5091,
+        -64.6256,
+        2064.7779
+       ],
+       [
+        -3016.5091,
+        -64.0156,
+        2064.7779
+       ],
+       [
+        -3017.7251,
+        -64.0156,
+        2064.6923
+       ]
+      ],
+      "arrow_xyz": [
+       [
+        -3016.6226,
+        -64.3208,
+        2064.7629
+       ],
+       [
+        -3016.9798,
+        -64.0922,
+        2064.7377
+       ],
+       [
+        -3016.9646,
+        -64.2362,
+        2064.7388
+       ],
+       [
+        -3017.6107,
+        -64.2362,
+        2064.6933
+       ],
+       [
+        -3017.6107,
+        -64.4054,
+        2064.6933
+       ],
+       [
+        -3016.9646,
+        -64.4054,
+        2064.7388
+       ],
+       [
+        -3016.9798,
+        -64.5494,
+        2064.7377
+       ]
+      ]
+     }
+    ],
+    "post": {
+     "post_base_xyz": [
+      [
+       -3017.0958,
+       -67.0556,
+       2064.7887
+      ],
+      [
+       -3017.0923,
+       -67.0556,
+       2064.7388
+      ],
+      [
+       -3017.1422,
+       -67.0556,
+       2064.7353
+      ],
+      [
+       -3017.1457,
+       -67.0556,
+       2064.7852
+      ]
+     ],
+     "post_top_y": -63.9656
+    },
+    "meshes": {
+     "SIGNPLATE": "SIGNPLATE_0",
+     "SIGNARROW": "SIGNARROW_0",
+     "SIGNPOST": "SIGNPOST_0"
+    }
+   }
+  },
+  {
+   "id": "J4-fwd",
+   "kind": "W1-6R",
+   "plate": "W1-6",
+   "layout": null,
+   "ribbon": "north",
+   "direction": "fwd",
+   "corner": {
+    "apex_vertex": 1445,
+    "apex_station_m": 4322,
+    "PC": 4312,
+    "PT": 4338,
+    "arc_m": 26,
+    "R_apex_m": 20.0,
+    "D_deg": -51.4,
+    "turn": "right",
+    "apex_xz": [
+     -1219.58,
+     3176.51
+    ],
+    "second_arrow": false,
+    "R_at_PC_m": 64.5
+   },
+   "approach": {
+    "t_xz": [
+     0.9526,
+     0.3043
+    ],
+    "bearing_deg": 72.3,
+    "pca_vs_chord_deg": -0.29,
+    "w_app_m": 29.04,
+    "w_at_apex_m": 29.73,
+    "island_m": 1.5,
+    "lane_off_m": 7.63
+   },
+   "ray": {
+    "A_xz": [
+     -1227.04,
+     3167.76
+    ],
+    "len_m": 70.75,
+    "C_xz": [
+     -1159.64,
+     3189.29
+    ],
+    "exit_ribbon": "pad J4",
+    "hw_at_exit_m": 0.0,
+    "sC_station": 4359,
+    "sC_rel_PC_m": 47,
+    "sC_rel_apex_m": 37,
+    "s_S_m": 72.05,
+    "C_mesh_xz": [
+     -1159.64,
+     3189.29
+    ],
+    "len_mesh_m": 70.75,
+    "back_of_walk_m": 74.0,
+    "walk_run_m": 3.25,
+    "s_S_walk_m": 73.49,
+    "s_S_mesh_m": 73.49,
+    "marched_m": 0.0,
+    "beyond_walk": false
+   },
+   "base_xz": [
+    -1157.033,
+    3190.123
+   ],
+   "curb_dir_xz": [
+    0.7393,
+    -0.6734
+   ],
+   "y_road_at_sC": -8.208,
+   "y_base": {
+    "analytic": -7.968,
+    "raycast": -7.84,
+    "source": "raycast",
+    "value": -7.84,
+    "road_hit": null,
+    "pushed_on_road_m": 0.0
+   },
+   "face_dir_xz": [
+    -0.9526,
+    -0.3043
+   ],
+   "face_bearing_deg": 252.3,
+   "yaw_deg": -162.28,
+   "right_xz": [
+    0.3043,
+    -0.9526
+   ],
+   "arrow": "right",
+   "expect_arrow": "right",
+   "lateral_offset_m": 1.33,
+   "height_m": 2.13,
+   "om1_3": true,
+   "checks": {
+    "outside_cross": 44.08,
+    "edge_clear_m": 2.75,
+    "lamp_m": 73.21,
+    "plant_m": 58.8,
+    "plant_zone": "median_planting",
+    "pushed_m": 1.3,
+    "slid_m": 0.0,
+    "lateral_step_m": 0.0,
+    "gate_margin_m": 34.23,
+    "gate_margin_gated_m": 34.23,
+    "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
+    "mouth_m": 45.2,
+    "spawn_m": 1993.4,
+    "spawn": "AC_TIME_1_L@race_cw",
+    "warnings": [],
+    "slid_polyline_m": 0.0,
+    "mesh_clear_m": 2.75,
+    "mesh_clear_bearing_deg": 190,
+    "mesh_shift_m": 1.44,
+    "walk_behind_m": -0.51,
+    "wall_m": 3.44
+   },
+   "old_rule": {
+    "rev1_xz": [
+     -1284.07,
+     3174.87
+    ],
+    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
+    "rev2_xz": [
+     -1221.43,
+     3158.94
+    ],
+    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
+   },
+   "overrides_applied": [],
+   "exclude_plant": null,
+   "where": "Mission Gorge Rd -> Jackson Dr (junction pad J4)",
+   "base_xz_polyline": [
+    -1158.402,
+    3189.69
+   ],
+   "base_xz_mesh": [
+    -1157.033,
+    3190.123
+   ],
+   "base_source": "mesh (walk fraction start, marched 0.00 m along the ray, slid 0.00 m along the curb)",
+   "built": {
+    "outside_edge_xz": [
+     [
+      -1204.16,
+      3194.77
+     ],
+     [
+      -1201.26,
+      3193.41
+     ],
+     [
+      -1198.51,
+      3191.96
+     ],
+     [
+      -1195.88,
+      3190.37
+     ],
+     [
+      -1193.64,
+      3188.9
+     ],
+     [
+      -1191.37,
+      3187.32
+     ],
+     [
+      -1189.28,
+      3185.73
+     ],
+     [
+      -1187.36,
+      3184.22
+     ],
+     [
+      -1185.46,
+      3182.65
+     ],
+     [
+      -1183.71,
+      3181.16
+     ],
+     [
+      -1182.58,
+      3178.98
+     ],
+     [
+      -1184.24,
+      3173.87
+     ],
+     [
+      -1183.91,
+      3171.15
+     ],
+     [
+      -1182.96,
+      3169.18
+     ],
+     [
+      -1181.76,
+      3167.55
+     ],
+     [
+      -1180.38,
+      3166.15
+     ],
+     [
+      -1178.85,
+      3164.89
+     ],
+     [
+      -1177.3,
+      3163.62
+     ],
+     [
+      -1175.69,
+      3162.43
+     ],
+     [
+      -1174.14,
+      3161.16
+     ],
+     [
+      -1172.6,
+      3159.9
+     ],
+     [
+      -1171.01,
+      3158.72
+     ],
+     [
+      -1169.48,
+      3157.49
+     ],
+     [
+      -1167.93,
+      3156.24
+     ],
+     [
+      -1166.33,
+      3154.94
+     ],
+     [
+      -1164.71,
+      3153.6
+     ],
+     [
+      -1163.29,
+      3152.29
+     ],
+     [
+      -1162.05,
+      3151.19
+     ],
+     [
+      -1160.98,
+      3150.28
+     ],
+     [
+      -1159.91,
+      3149.36
+     ],
+     [
+      -1158.6,
+      3148.32
+     ]
+    ],
+    "back_of_walk_xz": [
+     [
+      -1202.61,
+      3198.35
+     ],
+     [
+      -1199.52,
+      3196.89
+     ],
+     [
+      -1196.6,
+      3195.35
+     ],
+     [
+      -1193.8,
+      3193.67
+     ],
+     [
+      -1191.46,
+      3192.13
+     ],
+     [
+      -1189.07,
+      3190.47
+     ],
+     [
+      -1186.89,
+      3188.82
+     ],
+     [
+      -1184.91,
+      3187.26
+     ],
+     [
+      -1182.95,
+      3185.64
+     ],
+     [
+      -1181.16,
+      3184.12
+     ],
+     [
+      -1182.58,
+      3178.98
+     ],
+     [
+      -1184.24,
+      3173.87
+     ],
+     [
+      -1183.91,
+      3171.15
+     ],
+     [
+      -1181.81,
+      3170.44
+     ],
+     [
+      -1180.61,
+      3168.8
+     ],
+     [
+      -1180.38,
+      3166.15
+     ],
+     [
+      -1178.85,
+      3164.89
+     ],
+     [
+      -1177.3,
+      3163.62
+     ],
+     [
+      -1174.54,
+      3163.68
+     ],
+     [
+      -1174.14,
+      3161.16
+     ],
+     [
+      -1172.6,
+      3159.9
+     ],
+     [
+      -1169.87,
+      3159.99
+     ],
+     [
+      -1168.34,
+      3158.75
+     ],
+     [
+      -1167.93,
+      3156.24
+     ],
+     [
+      -1165.13,
+      3156.28
+     ],
+     [
+      -1164.71,
+      3153.6
+     ],
+     [
+      -1163.29,
+      3152.29
+     ],
+     [
+      -1162.05,
+      3151.19
+     ],
+     [
+      -1159.92,
+      3151.62
+     ],
+     [
+      -1159.91,
+      3149.36
+     ],
+     [
+      -1158.6,
+      3148.32
+     ]
+    ]
+   },
+   "blender": {
+    "base_xyz_engine": [
+     -1157.033,
+     -7.84,
+     3190.123
+    ],
+    "base_xyz_blender": [
+     -1157.033,
+     3190.123,
+     -7.84
+    ],
+    "plate_bottom_y": -5.71,
+    "plate_top_y": -5.1,
+    "post_base_y": -8.14,
+    "post_top_y": -5.05,
+    "plates": [
+     {
+      "front_xyz": [
+       [
+        -1157.247,
+        -5.7103,
+        3190.6945
+       ],
+       [
+        -1156.8761,
+        -5.7103,
+        3189.5333
+       ],
+       [
+        -1156.8761,
+        -5.1003,
+        3189.5333
+       ],
+       [
+        -1157.247,
+        -5.1003,
+        3190.6945
+       ]
+      ],
+      "back_xyz": [
+       [
+        -1157.2442,
+        -5.7103,
+        3190.6954
+       ],
+       [
+        -1156.8732,
+        -5.7103,
+        3189.5342
+       ],
+       [
+        -1156.8732,
+        -5.1003,
+        3189.5342
+       ],
+       [
+        -1157.2442,
+        -5.1003,
+        3190.6954
+       ]
+      ],
+      "arrow_xyz": [
+       [
+        -1156.9147,
+        -5.4055,
+        3189.6408
+       ],
+       [
+        -1157.0237,
+        -5.1769,
+        3189.982
+       ],
+       [
+        -1157.019,
+        -5.321,
+        3189.9675
+       ],
+       [
+        -1157.2161,
+        -5.321,
+        3190.5845
+       ],
+       [
+        -1157.2161,
+        -5.4901,
+        3190.5845
+       ],
+       [
+        -1157.019,
+        -5.4901,
+        3189.9675
+       ],
+       [
+        -1157.0237,
+        -5.6341,
+        3189.982
+       ]
+      ]
+     }
+    ],
+    "post": {
+     "post_base_xyz": [
+      [
+       -1157.0016,
+       -8.1403,
+       3190.1068
+      ],
+      [
+       -1157.0492,
+       -8.1403,
+       3190.0916
+      ],
+      [
+       -1157.0644,
+       -8.1403,
+       3190.1392
+      ],
+      [
+       -1157.0168,
+       -8.1403,
+       3190.1544
+      ]
+     ],
+     "post_top_y": -5.0503
+    },
+    "meshes": {
+     "SIGNPLATE": "SIGNPLATE_0",
+     "SIGNARROW": "SIGNARROW_0",
+     "SIGNPOST": "SIGNPOST_0"
+    }
+   }
+  },
+  {
+   "id": "J4-rev",
+   "kind": "W1-6L",
+   "plate": "W1-6",
+   "layout": null,
+   "ribbon": "north",
+   "direction": "rev",
+   "corner": {
+    "apex_vertex": 1446,
+    "apex_station_m": 1981,
+    "PC": 1965,
+    "PT": 1991,
+    "arc_m": 26,
+    "R_apex_m": 20.1,
+    "D_deg": 51.4,
+    "turn": "left",
+    "apex_xz": [
+     -1219.32,
+     3176.48
+    ],
+    "second_arrow": false,
+    "R_at_PC_m": 62.4
+   },
+   "approach": {
+    "t_xz": [
+     -0.7668,
+     0.6419
+    ],
+    "bearing_deg": 309.9,
+    "pca_vs_chord_deg": 3.12,
+    "w_app_m": 26.17,
+    "w_at_apex_m": 29.7,
+    "island_m": 0.0,
+    "lane_off_m": 6.54
+   },
+   "ray": {
+    "A_xz": [
+     -1200.66,
+     3175.05
+    ],
+    "len_m": 28.75,
+    "C_xz": [
+     -1222.71,
+     3193.5
+    ],
+    "exit_ribbon": "pad J4",
+    "hw_at_exit_m": 0.0,
+    "sC_station": 1984,
+    "sC_rel_PC_m": 19,
+    "sC_rel_apex_m": 3,
+    "s_S_m": 30.09,
+    "C_mesh_xz": [
+     -1222.71,
+     3193.5
+    ],
+    "len_mesh_m": 28.75,
+    "back_of_walk_m": 30.55,
+    "walk_run_m": 1.8,
+    "s_S_walk_m": 30.27,
+    "s_S_mesh_m": 30.27,
+    "marched_m": 0.0,
+    "beyond_walk": false
+   },
+   "base_xz": [
+    -1223.871,
+    3194.48
+   ],
+   "curb_dir_xz": [
+    -0.999,
+    -0.044
+   ],
+   "y_road_at_sC": -8.265,
+   "y_base": {
+    "analytic": -8.025,
+    "raycast": -8.007,
+    "source": "raycast",
+    "value": -8.007,
+    "road_hit": null,
+    "pushed_on_road_m": 0.0
+   },
+   "face_dir_xz": [
+    0.7668,
+    -0.6419
+   ],
+   "face_bearing_deg": 129.9,
+   "yaw_deg": -39.93,
+   "right_xz": [
+    0.6419,
+    0.7668
+   ],
+   "arrow": "left",
+   "expect_arrow": "left",
+   "lateral_offset_m": 1.33,
+   "height_m": 2.13,
+   "om1_3": true,
+   "checks": {
+    "outside_cross": 16.9,
+    "edge_clear_m": 1.5,
+    "lamp_m": 53.15,
+    "plant_m": 58.25,
+    "plant_zone": "median_planting",
+    "pushed_m": 1.34,
+    "slid_m": 0.0,
+    "lateral_step_m": 0.0,
+    "gate_margin_m": 2.53,
+    "gate_margin_gated_m": 2.53,
+    "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
+    "mouth_m": 19.1,
+    "spawn_m": 1992.4,
+    "spawn": "AC_TIME_1_L@race_cw",
+    "warnings": [],
+    "slid_polyline_m": 0.0,
+    "mesh_clear_m": 1.5,
+    "mesh_clear_bearing_deg": 305,
+    "mesh_shift_m": 0.18,
+    "walk_behind_m": -0.28,
+    "wall_m": 30.85
+   },
+   "old_rule": {
+    "rev1_xz": [
+     -1156.45,
+     3149.47
+    ],
+    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
+    "rev2_xz": [
+     -1221.52,
+     3158.97
+    ],
+    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
+   },
+   "overrides_applied": [
+    "expect_arrow mirrored for the reverse approach (right -> left)"
+   ],
+   "exclude_plant": null,
+   "where": "Mission Gorge Rd -> Jackson Dr (junction pad J4)",
+   "base_xz_polyline": [
+    -1223.738,
+    3194.364
+   ],
+   "base_xz_mesh": [
+    -1223.871,
+    3194.48
+   ],
+   "base_source": "mesh (walk fraction start, marched 0.00 m along the ray, slid 0.00 m along the curb)",
+   "built": {
+    "outside_edge_xz": [
+     [
+      -1251.72,
+      3169.36
+     ],
+     [
+      -1249.82,
+      3170.0
+     ],
+     [
+      -1247.83,
+      3170.35
+     ],
+     [
+      -1250.29,
+      3184.28
+     ],
+     [
+      -1248.34,
+      3184.92
+     ],
+     [
+      -1246.41,
+      3185.55
+     ],
+     [
+      -1244.49,
+      3186.16
+     ],
+     [
+      -1242.57,
+      3186.78
+     ],
+     [
+      -1240.66,
+      3187.39
+     ],
+     [
+      -1238.74,
+      3188.0
+     ],
+     [
+      -1236.82,
+      3188.61
+     ],
+     [
+      -1234.91,
+      3189.22
+     ],
+     [
+      -1232.96,
+      3189.84
+     ],
+     [
+      -1230.41,
+      3190.62
+     ],
+     [
+      -1227.11,
+      3191.65
+     ],
+     [
+      -1223.64,
+      3192.86
+     ],
+     [
+      -1219.49,
+      3198.5
+     ],
+     [
+      -1214.95,
+      3197.99
+     ],
+     [
+      -1211.17,
+      3197.17
+     ],
+     [
+      -1207.63,
+      3196.12
+     ],
+     [
+      -1204.16,
+      3194.77
+     ],
+     [
+      -1201.26,
+      3193.41
+     ],
+     [
+      -1198.51,
+      3191.96
+     ],
+     [
+      -1195.88,
+      3190.37
+     ],
+     [
+      -1193.64,
+      3188.9
+     ],
+     [
+      -1191.37,
+      3187.32
+     ],
+     [
+      -1189.28,
+      3185.73
+     ],
+     [
+      -1187.36,
+      3184.22
+     ],
+     [
+      -1185.46,
+      3182.65
+     ],
+     [
+      -1183.71,
+      3181.16
+     ],
+     [
+      -1182.58,
+      3178.98
+     ]
+    ],
+    "back_of_walk_xz": [
+     [
+      -1252.1,
+      3170.49
+     ],
+     [
+      -1250.17,
+      3171.04
+     ],
+     [
+      -1247.83,
+      3170.35
+     ],
+     [
+      -1250.82,
+      3185.9
+     ],
+     [
+      -1248.87,
+      3186.54
+     ],
+     [
+      -1246.93,
+      3187.16
+     ],
+     [
+      -1244.49,
+      3186.16
+     ],
+     [
+      -1242.57,
+      3186.78
+     ],
+     [
+      -1240.66,
+      3187.39
+     ],
+     [
+      -1238.74,
+      3188.0
+     ],
+     [
+      -1236.82,
+      3188.61
+     ],
+     [
+      -1234.91,
+      3189.22
+     ],
+     [
+      -1232.96,
+      3189.84
+     ],
+     [
+      -1230.41,
+      3190.62
+     ],
+     [
+      -1227.11,
+      3191.65
+     ],
+     [
+      -1223.64,
+      3192.86
+     ],
+     [
+      -1219.3,
+      3202.4
+     ],
+     [
+      -1214.3,
+      3201.84
+     ],
+     [
+      -1210.2,
+      3200.95
+     ],
+     [
+      -1206.37,
+      3199.81
+     ],
+     [
+      -1202.61,
+      3198.35
+     ],
+     [
+      -1199.52,
+      3196.89
+     ],
+     [
+      -1196.6,
+      3195.35
+     ],
+     [
+      -1193.8,
+      3193.67
+     ],
+     [
+      -1191.46,
+      3192.13
+     ],
+     [
+      -1189.07,
+      3190.47
+     ],
+     [
+      -1186.89,
+      3188.82
+     ],
+     [
+      -1184.91,
+      3187.26
+     ],
+     [
+      -1182.95,
+      3185.64
+     ],
+     [
+      -1181.16,
+      3184.12
+     ],
+     [
+      -1182.58,
+      3178.98
+     ]
+    ]
+   },
+   "blender": {
+    "base_xyz_engine": [
+     -1223.871,
+     -8.007,
+     3194.48
+    ],
+    "base_xyz_blender": [
+     -1223.871,
+     3194.48,
+     -8.007
+    ],
+    "plate_bottom_y": -5.877,
+    "plate_top_y": -5.267,
+    "post_base_y": -8.307,
+    "post_top_y": -5.217,
+    "plates": [
+     {
+      "front_xyz": [
+       [
+        -1224.2392,
+        -5.8768,
+        3193.9934
+       ],
+       [
+        -1223.4568,
+        -5.8768,
+        3194.9281
+       ],
+       [
+        -1223.4568,
+        -5.2668,
+        3194.9281
+       ],
+       [
+        -1224.2392,
+        -5.2668,
+        3193.9934
+       ]
+      ],
+      "back_xyz": [
+       [
+        -1224.2415,
+        -5.8768,
+        3193.9953
+       ],
+       [
+        -1223.4591,
+        -5.8768,
+        3194.93
+       ],
+       [
+        -1223.4591,
+        -5.2668,
+        3194.93
+       ],
+       [
+        -1224.2415,
+        -5.2668,
+        3193.9953
+       ]
+      ],
+      "arrow_xyz": [
+       [
+        -1224.1629,
+        -5.572,
+        3194.0784
+       ],
+       [
+        -1223.933,
+        -5.3434,
+        3194.353
+       ],
+       [
+        -1223.9428,
+        -5.4875,
+        3194.3413
+       ],
+       [
+        -1223.527,
+        -5.4875,
+        3194.838
+       ],
+       [
+        -1223.527,
+        -5.6566,
+        3194.838
+       ],
+       [
+        -1223.9428,
+        -5.6566,
+        3194.3413
+       ],
+       [
+        -1223.933,
+        -5.8006,
+        3194.353
+       ]
+      ]
+     }
+    ],
+    "post": {
+     "post_base_xyz": [
+      [
+       -1223.8741,
+       -8.3068,
+       3194.5152
+      ],
+      [
+       -1223.8358,
+       -8.3068,
+       3194.4831
+      ],
+      [
+       -1223.8679,
+       -8.3068,
+       3194.4448
+      ],
+      [
+       -1223.9062,
+       -8.3068,
+       3194.4769
+      ]
+     ],
+     "post_top_y": -5.2168
+    },
+    "meshes": {
+     "SIGNPLATE": "SIGNPLATE_0",
+     "SIGNARROW": "SIGNARROW_0",
+     "SIGNPOST": "SIGNPOST_0"
+    }
+   }
+  },
+  {
+   "id": "J3-rev",
+   "kind": "W1-6L",
+   "plate": "W1-6",
+   "layout": null,
+   "ribbon": "north",
+   "direction": "rev",
+   "corner": {
+    "apex_vertex": 696,
+    "apex_station_m": 4229,
+    "PC": 4219,
+    "PT": 4249,
+    "arc_m": 30,
+    "R_apex_m": 16.9,
+    "D_deg": 63.7,
+    "turn": "left",
+    "apex_xz": [
+     -3015.88,
+     2044.48
+    ],
+    "second_arrow": false,
+    "R_at_PC_m": 71.2
+   },
+   "approach": {
+    "t_xz": [
+     -0.9098,
+     -0.415
+    ],
+    "bearing_deg": 245.5,
+    "pca_vs_chord_deg": -0.06,
+    "w_app_m": 32.01,
+    "w_at_apex_m": 31.4,
+    "island_m": 0.0,
+    "lane_off_m": 8.0
+   },
+   "ray": {
+    "A_xz": [
+     -3010.9,
+     2057.12
+    ],
+    "len_m": 33.0,
+    "C_xz": [
+     -3040.93,
+     2043.42
+    ],
+    "exit_ribbon": "pad J3",
+    "hw_at_exit_m": 0.0,
+    "sC_station": 4237,
+    "sC_rel_PC_m": 18,
+    "sC_rel_apex_m": 8,
+    "s_S_m": 33.0,
+    "C_mesh_xz": [
+     -3040.88,
+     2043.45
+    ],
+    "len_mesh_m": 32.95,
+    "back_of_walk_m": 36.85,
+    "walk_run_m": 3.9,
+    "s_S_walk_m": 36.23,
+    "s_S_mesh_m": 38.35,
+    "marched_m": 2.12,
+    "beyond_walk": true,
+    "side_step_from_m": 38.35,
+    "side_step_m": 1.15
+   },
+   "base_xz": [
+    -3046.268,
+    2042.251
+   ],
+   "curb_dir_xz": [
+    -0.2858,
+    -0.9583
+   ],
+   "y_road_at_sC": -67.07,
+   "y_base": {
+    "analytic": -66.83,
+    "raycast": -67.187,
+    "source": "raycast (terrain behind the walk, -0.36 m vs the walk's analytic height)",
+    "value": -67.187,
+    "road_hit": null,
+    "pushed_on_road_m": 0.0
+   },
+   "face_dir_xz": [
+    0.9098,
+    0.415
+   ],
+   "face_bearing_deg": 65.5,
+   "yaw_deg": 24.52,
+   "right_xz": [
+    -0.415,
+    0.9098
+   ],
+   "arrow": "left",
+   "expect_arrow": "left",
+   "lateral_offset_m": 1.33,
+   "height_m": 2.13,
+   "om1_3": true,
+   "checks": {
+    "outside_cross": 22.13,
+    "edge_clear_m": 1.31,
+    "lamp_m": 90.89,
+    "plant_m": 267.12,
+    "plant_zone": "median_planting",
+    "pushed_m": 0.0,
+    "slid_m": 0.0,
+    "lateral_step_m": 1.15,
+    "gate_margin_m": 12.78,
+    "gate_margin_gated_m": 12.78,
+    "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
+    "mouth_m": 31.0,
+    "spawn_m": 1876.4,
+    "spawn": "AC_TIME_1_L@race_cw",
+    "warnings": [
+     "perpendicular-clearance march capped; stepped 1.33 m sideways",
+     "post stands 1.50 m behind the back of the modelled walk (marched for the built clearance); ground = terrain ray-cast",
+     "grazing exit: no point on the ray within the 1.5 m behind the modelled walk cap clears the built curb; the post stepped 1.15 m square off the ray to the outside of the turn"
+    ],
+    "slid_polyline_m": -0.25,
+    "mesh_clear_m": 1.31,
+    "mesh_clear_bearing_deg": 290,
+    "mesh_shift_m": 5.52,
+    "walk_behind_m": 1.5,
+    "wall_m": 27.37
+   },
+   "old_rule": {
+    "rev1_xz": [
+     -2966.94,
+     2087.71
+    ],
+    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
+    "rev2_xz": [
+     -3001.86,
+     2032.42
+    ],
+    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
+   },
+   "overrides_applied": [
+    "expect_arrow mirrored for the reverse approach (right -> left)"
+   ],
+   "exclude_plant": null,
+   "where": "Princess View Dr -> Mission Gorge Rd (junction pad J3)",
+   "base_xz_polyline": [
+    -3041.408,
+    2044.87
+   ],
+   "base_xz_mesh": [
+    -3045.791,
+    2041.205
+   ],
+   "base_source": "mesh (walk fraction start, marched 2.12 m along the ray, slid 0.00 m along the curb)",
+   "built": {
+    "outside_edge_xz": [
+     [
+      -3033.97,
+      2005.21
+     ],
+     [
+      -3035.19,
+      2007.23
+     ],
+     [
+      -3037.08,
+      2009.22
+     ],
+     [
+      -3040.43,
+      2011.05
+     ],
+     [
+      -3042.58,
+      2013.21
+     ],
+     [
+      -3042.79,
+      2015.57
+     ],
+     [
+      -3042.98,
+      2018.01
+     ],
+     [
+      -3043.1,
+      2020.55
+     ],
+     [
+      -3043.17,
+      2023.02
+     ],
+     [
+      -3043.17,
+      2025.71
+     ],
+     [
+      -3043.08,
+      2028.34
+     ],
+     [
+      -3042.92,
+      2031.17
+     ],
+     [
+      -3042.59,
+      2034.18
+     ],
+     [
+      -3042.17,
+      2036.98
+     ],
+     [
+      -3041.53,
+      2040.3
+     ],
+     [
+      -3040.57,
+      2043.75
+     ],
+     [
+      -3039.29,
+      2046.83
+     ],
+     [
+      -3037.84,
+      2050.73
+     ],
+     [
+      -3035.54,
+      2054.7
+     ],
+     [
+      -3032.97,
+      2058.19
+     ],
+     [
+      -3028.82,
+      2060.47
+     ],
+     [
+      -3022.7,
+      2060.63
+     ],
+     [
+      -3019.01,
+      2062.24
+     ],
+     [
+      -3016.44,
+      2063.41
+     ],
+     [
+      -3014.36,
+      2064.33
+     ],
+     [
+      -3012.61,
+      2065.12
+     ],
+     [
+      -3010.84,
+      2065.93
+     ],
+     [
+      -3009.03,
+      2066.76
+     ],
+     [
+      -3007.19,
+      2067.6
+     ],
+     [
+      -3005.38,
+      2068.54
+     ],
+     [
+      -3003.51,
+      2069.38
+     ]
+    ],
+    "back_of_walk_xz": [
+     [
+      -3035.65,
+      2004.95
+     ],
+     [
+      -3037.07,
+      2006.96
+     ],
+     [
+      -3037.08,
+      2009.22
+     ],
+     [
+      -3040.43,
+      2011.05
+     ],
+     [
+      -3046.46,
+      2012.82
+     ],
+     [
+      -3046.68,
+      2015.25
+     ],
+     [
+      -3046.87,
+      2017.77
+     ],
+     [
+      -3046.99,
+      2020.41
+     ],
+     [
+      -3047.06,
+      2022.96
+     ],
+     [
+      -3047.07,
+      2025.77
+     ],
+     [
+      -3046.98,
+      2028.51
+     ],
+     [
+      -3046.81,
+      2031.49
+     ],
+     [
+      -3046.46,
+      2034.69
+     ],
+     [
+      -3046.02,
+      2037.64
+     ],
+     [
+      -3045.32,
+      2041.2
+     ],
+     [
+      -3042.28,
+      2044.29
+     ],
+     [
+      -3040.97,
+      2047.47
+     ],
+     [
+      -3041.32,
+      2052.47
+     ],
+     [
+      -3038.71,
+      2056.78
+     ],
+     [
+      -3034.9,
+      2059.78
+     ],
+     [
+      -3028.82,
+      2060.47
+     ],
+     [
+      -3023.67,
+      2062.03
+     ],
+     [
+      -3019.81,
+      2063.74
+     ],
+     [
+      -3017.16,
+      2064.95
+     ],
+     [
+      -3015.05,
+      2065.89
+     ],
+     [
+      -3013.31,
+      2066.67
+     ],
+     [
+      -3010.84,
+      2065.93
+     ],
+     [
+      -3009.03,
+      2066.76
+     ],
+     [
+      -3007.19,
+      2067.6
+     ],
+     [
+      -3006.08,
+      2070.08
+     ],
+     [
+      -3003.51,
+      2069.38
+     ]
+    ]
+   },
+   "blender": {
+    "base_xyz_engine": [
+     -3046.268,
+     -67.187,
+     2042.251
+    ],
+    "base_xyz_blender": [
+     -3046.268,
+     2042.251,
+     -67.187
+    ],
+    "plate_bottom_y": -65.057,
+    "plate_top_y": -64.447,
+    "post_base_y": -67.487,
+    "post_top_y": -64.397,
+    "plates": [
+     {
+      "front_xyz": [
+       [
+        -3045.9878,
+        -65.0565,
+        2041.7089
+       ],
+       [
+        -3046.4936,
+        -65.0565,
+        2042.818
+       ],
+       [
+        -3046.4936,
+        -64.4465,
+        2042.818
+       ],
+       [
+        -3045.9878,
+        -64.4465,
+        2041.7089
+       ]
+      ],
+      "back_xyz": [
+       [
+        -3045.9905,
+        -65.0565,
+        2041.7077
+       ],
+       [
+        -3046.4964,
+        -65.0565,
+        2042.8167
+       ],
+       [
+        -3046.4964,
+        -64.4465,
+        2042.8167
+       ],
+       [
+        -3045.9905,
+        -64.4465,
+        2041.7077
+       ]
+      ],
+      "arrow_xyz": [
+       [
+        -3046.0315,
+        -64.7517,
+        2041.8145
+       ],
+       [
+        -3046.1801,
+        -64.5231,
+        2042.1403
+       ],
+       [
+        -3046.1738,
+        -64.6671,
+        2042.1265
+       ],
+       [
+        -3046.4426,
+        -64.6671,
+        2042.7157
+       ],
+       [
+        -3046.4426,
+        -64.8363,
+        2042.7157
+       ],
+       [
+        -3046.1738,
+        -64.8363,
+        2042.1265
+       ],
+       [
+        -3046.1801,
+        -64.9803,
+        2042.1403
+       ]
+      ]
+     }
+    ],
+    "post": {
+     "post_base_xyz": [
+      [
+       -3046.3011,
+       -67.4865,
+       2042.2634
+      ],
+      [
+       -3046.2556,
+       -67.4865,
+       2042.2841
+      ],
+      [
+       -3046.2349,
+       -67.4865,
+       2042.2386
+      ],
+      [
+       -3046.2804,
+       -67.4865,
+       2042.2179
+      ]
+     ],
+     "post_top_y": -64.3965
+    },
+    "meshes": {
+     "SIGNPLATE": "SIGNPLATE_0",
+     "SIGNARROW": "SIGNARROW_0",
+     "SIGNPOST": "SIGNPOST_0"
+    }
+   }
+  },
+  {
+   "id": "J2-rev",
+   "kind": "W1-6L",
+   "plate": "W1-6",
+   "layout": null,
+   "ribbon": "north",
+   "direction": "rev",
+   "corner": {
+    "apex_vertex": 319,
+    "apex_station_m": 5361,
+    "PC": 5334,
+    "PT": 5371,
+    "arc_m": 37,
+    "R_apex_m": 20.1,
+    "D_deg": 82.2,
+    "turn": "left",
+    "apex_xz": [
+     -2737.15,
+     1000.92
+    ],
+    "second_arrow": false,
+    "R_at_PC_m": 68.7
+   },
+   "approach": {
+    "t_xz": [
+     0.6394,
+     -0.7689
+    ],
+    "bearing_deg": 140.3,
+    "pca_vs_chord_deg": 0.15,
+    "w_app_m": 22.5,
+    "w_at_apex_m": 23.67,
+    "island_m": 0.0,
+    "lane_off_m": 5.62
+   },
+   "ray": {
+    "A_xz": [
+     -2765.29,
+     1006.57
+    ],
+    "len_m": 44.5,
+    "C_xz": [
+     -2736.84,
+     972.35
+    ],
+    "exit_ribbon": "pad J2",
+    "hw_at_exit_m": 0.0,
+    "sC_station": 5359,
+    "sC_rel_PC_m": 25,
+    "sC_rel_apex_m": -2,
+    "s_S_m": 44.5,
+    "C_mesh_xz": [
+     -2736.96,
+     972.51
+    ],
+    "len_mesh_m": 44.3,
+    "back_of_walk_m": 47.55,
+    "walk_run_m": 3.25,
+    "s_S_walk_m": 47.04,
+    "s_S_mesh_m": 49.05,
+    "marched_m": 2.01,
+    "beyond_walk": true,
+    "side_step_from_m": 49.05,
+    "side_step_m": 0.9
+   },
+   "base_xz": [
+    -2734.619,
+    968.28
+   ],
+   "curb_dir_xz": [
+    0.9933,
+    0.1156
+   ],
+   "y_road_at_sC": 3.252,
+   "y_base": {
+    "analytic": 3.492,
+    "raycast": 3.05,
+    "source": "raycast (terrain behind the walk, -0.44 m vs the walk's analytic height)",
+    "value": 3.05,
+    "road_hit": null,
+    "pushed_on_road_m": 0.0
+   },
+   "face_dir_xz": [
+    -0.6394,
+    0.7689
+   ],
+   "face_bearing_deg": 320.3,
+   "yaw_deg": 129.74,
+   "right_xz": [
+    -0.7689,
+    -0.6394
+   ],
+   "arrow": "left",
+   "expect_arrow": "left",
+   "lateral_offset_m": 1.33,
+   "height_m": 2.13,
+   "om1_3": true,
+   "checks": {
+    "outside_cross": 28.35,
+    "edge_clear_m": 1.34,
+    "lamp_m": 88.49,
+    "plant_m": 54.84,
+    "plant_zone": "median_planting",
+    "pushed_m": 0.0,
+    "slid_m": 0.0,
+    "lateral_step_m": 0.9,
+    "gate_margin_m": 20.7,
+    "gate_margin_gated_m": 20.7,
+    "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
+    "mouth_m": 33.1,
+    "spawn_m": 1395.2,
+    "spawn": "AC_TIME_1_L@race_cw",
+    "warnings": [
+     "perpendicular-clearance march capped; stepped 1.33 m sideways",
+     "post stands 1.50 m behind the back of the modelled walk (marched for the built clearance); ground = terrain ray-cast",
+     "grazing exit: no point on the ray within the 1.5 m behind the modelled walk cap clears the built curb; the post stepped 0.90 m square off the ray to the outside of the turn"
+    ],
+    "slid_polyline_m": 0.0,
+    "mesh_clear_m": 1.34,
+    "mesh_clear_bearing_deg": 40,
+    "mesh_shift_m": 4.57,
+    "walk_behind_m": 1.5,
+    "wall_m": 14.3
+   },
+   "old_rule": {
+    "rev1_xz": [
+     -2804.57,
+     1041.5
+    ],
+    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
+    "rev2_xz": [
+     -2740.2,
+     1015.23
+    ],
+    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
+   },
+   "overrides_applied": [
+    "expect_arrow mirrored for the reverse approach (right -> left)"
+   ],
+   "exclude_plant": null,
+   "where": "Waring Rd -> Princess View Dr (junction pad J2)",
+   "base_xz_polyline": [
+    -2737.863,
+    971.499
+   ],
+   "base_xz_mesh": [
+    -2733.927,
+    968.855
+   ],
+   "base_source": "mesh (walk fraction start, marched 2.01 m along the ray, slid 0.00 m along the curb)",
+   "built": {
+    "outside_edge_xz": [
+     [
+      -2712.6,
+      1014.64
+     ],
+     [
+      -2714.25,
+      1013.53
+     ],
+     [
+      -2715.93,
+      1012.48
+     ],
+     [
+      -2717.6,
+      1011.4
+     ],
+     [
+      -2719.21,
+      1010.21
+     ],
+     [
+      -2720.92,
+      1009.19
+     ],
+     [
+      -2716.36,
+      998.88
+     ],
+     [
+      -2718.01,
+      997.76
+     ],
+     [
+      -2719.66,
+      996.64
+     ],
+     [
+      -2721.31,
+      995.52
+     ],
+     [
+      -2722.98,
+      994.39
+     ],
+     [
+      -2725.15,
+      992.94
+     ],
+     [
+      -2727.91,
+      991.12
+     ],
+     [
+      -2730.29,
+      988.01
+     ],
+     [
+      -2732.1,
+      979.59
+     ],
+     [
+      -2736.46,
+      978.88
+     ],
+     [
+      -2740.09,
+      978.63
+     ],
+     [
+      -2743.97,
+      978.64
+     ],
+     [
+      -2747.86,
+      979.03
+     ],
+     [
+      -2751.12,
+      979.59
+     ],
+     [
+      -2754.88,
+      980.49
+     ],
+     [
+      -2758.54,
+      981.75
+     ],
+     [
+      -2761.73,
+      983.1
+     ],
+     [
+      -2761.67,
+      991.4
+     ],
+     [
+      -2763.14,
+      995.28
+     ],
+     [
+      -2765.15,
+      997.7
+     ],
+     [
+      -2767.13,
+      1000.09
+     ],
+     [
+      -2768.76,
+      1002.02
+     ],
+     [
+      -2770.05,
+      1003.57
+     ],
+     [
+      -2771.33,
+      1005.11
+     ],
+     [
+      -2772.61,
+      1006.64
+     ]
+    ],
+    "back_of_walk_xz": [
+     [
+      -2711.78,
+      1013.26
+     ],
+     [
+      -2713.46,
+      1012.25
+     ],
+     [
+      -2715.12,
+      1011.21
+     ],
+     [
+      -2716.77,
+      1010.14
+     ],
+     [
+      -2718.49,
+      1009.13
+     ],
+     [
+      -2720.08,
+      1007.94
+     ],
+     [
+      -2715.41,
+      997.47
+     ],
+     [
+      -2717.05,
+      996.35
+     ],
+     [
+      -2718.7,
+      995.24
+     ],
+     [
+      -2720.36,
+      994.11
+     ],
+     [
+      -2722.03,
+      992.98
+     ],
+     [
+      -2724.27,
+      991.49
+     ],
+     [
+      -2727.91,
+      991.12
+     ],
+     [
+      -2730.29,
+      988.01
+     ],
+     [
+      -2731.6,
+      977.34
+     ],
+     [
+      -2736.13,
+      975.9
+     ],
+     [
+      -2739.95,
+      974.74
+     ],
+     [
+      -2744.17,
+      974.74
+     ],
+     [
+      -2748.4,
+      975.17
+     ],
+     [
+      -2751.89,
+      975.77
+     ],
+     [
+      -2755.98,
+      976.74
+     ],
+     [
+      -2759.94,
+      978.11
+     ],
+     [
+      -2763.37,
+      979.56
+     ],
+     [
+      -2761.67,
+      991.4
+     ],
+     [
+      -2763.14,
+      995.28
+     ],
+     [
+      -2765.15,
+      997.7
+     ],
+     [
+      -2767.13,
+      1000.09
+     ],
+     [
+      -2768.76,
+      1002.02
+     ],
+     [
+      -2770.05,
+      1003.57
+     ],
+     [
+      -2771.33,
+      1005.11
+     ],
+     [
+      -2772.61,
+      1006.64
+     ]
+    ]
+   },
+   "blender": {
+    "base_xyz_engine": [
+     -2734.619,
+     3.05,
+     968.28
+    ],
+    "base_xyz_blender": [
+     -2734.619,
+     968.28,
+     3.05
+    ],
+    "plate_bottom_y": 5.18,
+    "plate_top_y": 5.79,
+    "post_base_y": 2.75,
+    "post_top_y": 5.84,
+    "plates": [
+     {
+      "front_xyz": [
+       [
+        -2734.1695,
+        5.18,
+        968.6928
+       ],
+       [
+        -2735.1068,
+        5.18,
+        967.9134
+       ],
+       [
+        -2735.1068,
+        5.79,
+        967.9134
+       ],
+       [
+        -2734.1695,
+        5.79,
+        968.6928
+       ]
+      ],
+      "back_xyz": [
+       [
+        -2734.1676,
+        5.18,
+        968.6905
+       ],
+       [
+        -2735.1049,
+        5.18,
+        967.911
+       ],
+       [
+        -2735.1049,
+        5.79,
+        967.911
+       ],
+       [
+        -2734.1676,
+        5.79,
+        968.6905
+       ]
+      ],
+      "arrow_xyz": [
+       [
+        -2734.2599,
+        5.4848,
+        968.6228
+       ],
+       [
+        -2734.5353,
+        5.7134,
+        968.3938
+       ],
+       [
+        -2734.5236,
+        5.5694,
+        968.4036
+       ],
+       [
+        -2735.0216,
+        5.5694,
+        967.9894
+       ],
+       [
+        -2735.0216,
+        5.4003,
+        967.9894
+       ],
+       [
+        -2734.5236,
+        5.4003,
+        968.4036
+       ],
+       [
+        -2734.5353,
+        5.2562,
+        968.3938
+       ]
+      ]
+     }
+    ],
+    "post": {
+     "post_base_xyz": [
+      [
+       -2734.6222,
+       2.75,
+       968.2448
+      ],
+      [
+       -2734.6542,
+       2.75,
+       968.2832
+      ],
+      [
+       -2734.6158,
+       2.75,
+       968.3152
+      ],
+      [
+       -2734.5838,
+       2.75,
+       968.2768
+      ]
+     ],
+     "post_top_y": 5.84
+    },
+    "meshes": {
+     "SIGNPLATE": "SIGNPLATE_0",
+     "SIGNARROW": "SIGNARROW_0",
+     "SIGNPOST": "SIGNPOST_0"
+    }
+   }
   }
  ],
  "skipped": [
@@ -10046,8 +15431,9 @@
     598.2
    ],
    "reasons": [
-    "signs.json skip: Ledger 0054 A7: M3-fwd / M3-rev stand inside the new J1 Waring opening (straight on is now a real road in Free Roam). A sign ships only in the road kn5 all three layouts load, so until P4's adapted author_signs_blend writes plates into the race files this skips it in EVERY layout."
-   ]
+    "ray never leaves pavement within 80 m (through leg / junction)"
+   ],
+   "would_be": null
   },
   {
    "id": "M4-fwd",
@@ -10062,7 +15448,6 @@
     1723.2
    ],
    "reasons": [
-    "signs.json skip: Ledger 0054 A7: M4-fwd / M4-rev stand inside the new J5 Jackson-north opening. A sign ships only in the road kn5 all three layouts load, so until P4's adapted author_signs_blend writes plates into the race files this skips it in EVERY layout.",
     "apex 13 m from mouth north_J5_jackson_north@MAINLINE:2317 (< 15 m: mouth-flare geometry)"
    ]
   },
@@ -10113,7 +15498,6 @@
     1723.3
    ],
    "reasons": [
-    "signs.json skip: Ledger 0054 A7: M4-fwd / M4-rev stand inside the new J5 Jackson-north opening. A sign ships only in the road kn5 all three layouts load, so until P4's adapted author_signs_blend writes plates into the race files this skips it in EVERY layout.",
     "apex 13 m from mouth north_J5_jackson_north@MAINLINE:2317 (< 15 m: mouth-flare geometry)"
    ]
   },
@@ -10130,7 +15514,11 @@
     597.5
    ],
    "reasons": [
-    "signs.json skip: Ledger 0054 A7: M3-fwd / M3-rev stand inside the new J1 Waring opening (straight on is now a real road in Free Roam). A sign ships only in the road kn5 all three layouts load, so until P4's adapted author_signs_blend writes plates into the race files this skips it in EVERY layout."
+    "ray runs 16 m down north_J1_waring#0 before leaving pavement (a through road)"
+   ],
+   "would_be": [
+    -1990.925,
+    602.111
    ]
   },
   {
@@ -12853,15 +18241,182 @@
     "|D| 27.5 < 45 deg",
     "apex 0 m from STUB_doreen_road_5955946_L#0 start (< 15 m: mouth-flare geometry)"
    ]
+  },
+  {
+   "id": "N-c1-fwd",
+   "ribbon": "north",
+   "apex_vertex": 1,
+   "apex_station_m": 2,
+   "R_apex_m": 5.3,
+   "D_deg": 53.8,
+   "arc_m": 5,
+   "apex_xz": [
+    -1982.5,
+    615.6
+   ],
+   "reasons": [
+    "apex 2 m from mouth north_J1_waring@MAINLINE:1517 (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "N-c5-fwd",
+   "ribbon": "north",
+   "apex_vertex": 1734,
+   "apex_station_m": 5184,
+   "R_apex_m": 58.8,
+   "D_deg": -4.7,
+   "arc_m": 4,
+   "apex_xz": [
+    -580.3,
+    2645.1
+   ],
+   "reasons": [
+    "R_apex 58.8 > 30 m",
+    "|D| 4.7 < 45 deg"
+   ]
+  },
+  {
+   "id": "N-c6-fwd",
+   "ribbon": "north",
+   "apex_vertex": 2105,
+   "apex_station_m": 6296,
+   "R_apex_m": 48.5,
+   "D_deg": -7.5,
+   "arc_m": 6,
+   "apex_xz": [
+    41.9,
+    1740.5
+   ],
+   "reasons": [
+    "R_apex 48.5 > 30 m",
+    "|D| 7.5 < 45 deg",
+    "apex 7 m from mouth north_J5_jackson_north@MAINLINE:2317 (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "N-c7-fwd",
+   "ribbon": "north",
+   "apex_vertex": 2108,
+   "apex_station_m": 6303,
+   "R_apex_m": 11.3,
+   "D_deg": 24.0,
+   "arc_m": 4,
+   "apex_xz": [
+    45.0,
+    1734.3
+   ],
+   "reasons": [
+    "|D| 24.0 < 45 deg",
+    "apex 0 m from mouth north_J5_jackson_north@MAINLINE:2317 (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "N-c6-rev",
+   "ribbon": "north(rev)",
+   "apex_vertex": 2107,
+   "apex_station_m": 4,
+   "R_apex_m": 5.5,
+   "D_deg": 58.4,
+   "arc_m": 11,
+   "apex_xz": [
+    43.4,
+    1737.7
+   ],
+   "reasons": [
+    "apex 4 m from mouth north_J5_jackson_north@MAINLINE:2317 (< 15 m: mouth-flare geometry)"
+   ]
+  },
+  {
+   "id": "N-c5-rev",
+   "ribbon": "north(rev)",
+   "apex_vertex": 1734,
+   "apex_station_m": 1120,
+   "R_apex_m": 58.7,
+   "D_deg": 4.8,
+   "arc_m": 4,
+   "apex_xz": [
+    -580.8,
+    2645.6
+   ],
+   "reasons": [
+    "R_apex 58.7 > 30 m",
+    "|D| 4.8 < 45 deg"
+   ]
+  },
+  {
+   "id": "N-r1-rev",
+   "ribbon": "north(rev)",
+   "apex_vertex": 2,
+   "apex_station_m": 6299,
+   "R_apex_m": 13.5,
+   "D_deg": 21.2,
+   "arc_m": 5,
+   "apex_xz": [
+    -1983.9,
+    617.4
+   ],
+   "reasons": [
+    "|D| 21.2 < 45 deg",
+    "apex 4 m from mouth north_J1_waring@MAINLINE:1517 (< 15 m: mouth-flare geometry)"
+   ]
   }
  ],
  "exclude_plants": [],
  "stale_overrides": [],
  "pairs": [],
+ "north": {
+  "ribbon": "north",
+  "pieces": [
+   "north_J1_waring#0",
+   "north_princess_view",
+   "north_mission_gorge",
+   "north_J5_jackson_north#0"
+  ],
+  "points": 2109,
+  "pads": [
+   "pad J2",
+   "pad J3",
+   "pad J4"
+  ],
+  "stub_reach_m": 16.0
+ },
+ "north_note": null,
+ "gated_ribbons": [
+  "MAINLINE",
+  "expansion_fwd",
+  "expansion_rev"
+ ],
+ "layouts": [
+  {
+   "id": "street",
+   "direction": "fwd",
+   "race": false,
+   "token": ""
+  },
+  {
+   "id": "race_cw",
+   "direction": "fwd",
+   "race": true,
+   "token": "cw"
+  },
+  {
+   "id": "race_acw",
+   "direction": "rev",
+   "race": true,
+   "token": "acw"
+  }
+ ],
+ "layout_plates": [
+  "M3-fwd@race_cw",
+  "M4-fwd@race_cw",
+  "M4-rev@race_acw",
+  "M3-rev@race_acw"
+ ],
  "counts": {
-  "placed": 19,
-  "plates": 19,
-  "skipped": 169
+  "placed": 29,
+  "plates": 29,
+  "skipped": 176,
+  "layout_plates": 4
  },
  "blender": {
   "blend": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\loop.blend",
@@ -12883,6 +18438,51 @@
    "1ROAD_pad_J4",
    "ROAD"
   ],
+  "race_excluded": [
+   "1KERB_race_0_in",
+   "1KERB_race_0_out",
+   "1KERB_race_3296_in",
+   "1KERB_race_3296_out",
+   "1KERB_race_770_in",
+   "1KERB_race_770_out",
+   "1WALL_race_close_acw_college_1253_0",
+   "1WALL_race_close_acw_college_1343_0",
+   "1WALL_race_close_acw_college_777_0",
+   "1WALL_race_close_acw_jackson_2328_0",
+   "1WALL_race_close_acw_jackson_2328_1",
+   "1WALL_race_close_acw_lakemurray_3304_0",
+   "1WALL_race_close_acw_lakemurray_3304_1",
+   "1WALL_race_close_acw_navajo_1521_0",
+   "1WALL_race_close_cw_college_1253_0",
+   "1WALL_race_close_cw_college_1343_0",
+   "1WALL_race_close_cw_college_777_0",
+   "1WALL_race_close_cw_jackson_2328_0",
+   "1WALL_race_close_cw_jackson_2328_1",
+   "1WALL_race_close_cw_lakemurray_3304_0",
+   "1WALL_race_close_cw_lakemurray_3304_1",
+   "1WALL_race_close_cw_navajo_1521_0",
+   "1WALL_race_edge_L_alvarado_0_0",
+   "1WALL_race_edge_L_college_770_0",
+   "1WALL_race_edge_L_jackson_2319_0",
+   "1WALL_race_edge_L_jackson_2319_1",
+   "1WALL_race_edge_L_lakemurray_3296_0",
+   "1WALL_race_edge_L_lakemurray_3296_1",
+   "1WALL_race_edge_L_navajo_1514_0",
+   "1WALL_race_edge_L_navajo_1514_1",
+   "1WALL_race_edge_R_alvarado_5_0",
+   "1WALL_race_edge_R_college_774_0",
+   "1WALL_race_edge_R_jackson_2324_0",
+   "1WALL_race_edge_R_jackson_2324_1",
+   "1WALL_race_edge_R_lakemurray_3300_0",
+   "1WALL_race_edge_R_lakemurray_3300_1",
+   "1WALL_race_edge_R_navajo_1517_0"
+  ],
+  "walls": {
+   "RACE": 15,
+   "acw": 8,
+   "all": 65,
+   "cw": 8
+  },
   "removed_existing": 0,
   "meshes": {
    "SIGNPLATE": [
@@ -12895,18 +18495,30 @@
     "SIGNPOST_0"
    ]
   },
+  "layout_meshes": {
+   "RACE_CLOSE_ACW": [
+    "SIGNPLATE_acw_0",
+    "SIGNARROW_acw_0",
+    "SIGNPOST_acw_0"
+   ],
+   "RACE_CLOSE_CW": [
+    "SIGNPLATE_cw_0",
+    "SIGNARROW_cw_0",
+    "SIGNPOST_cw_0"
+   ]
+  },
   "vertices": {
-   "SIGNPLATE": 152,
-   "SIGNARROW": 437,
-   "SIGNPOST": 532
+   "SIGNPLATE": 232,
+   "SIGNARROW": 667,
+   "SIGNPOST": 812
   },
   "faces": {
-   "SIGNPLATE": 76,
-   "SIGNARROW": 247,
-   "SIGNPOST": 266
+   "SIGNPLATE": 116,
+   "SIGNARROW": 377,
+   "SIGNPOST": 406
   },
   "normal_mismatches": 0,
   "ground_warnings": 0,
-  "base_rule": "built mesh authoritative: walk-fraction start, marched along the ray to polar clearance >= lateral_offset and disc footprint >= 0"
+  "base_rule": "built mesh authoritative: walk-fraction start, marched along the ray to polar clearance >= lateral_offset, disc footprint >= 0 and every wall >= 0.5 m; a layout plate lateral_offset past its layout's sealing wall"
  }
 }

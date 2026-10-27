@@ -35577,8 +35577,8 @@
  "host_curb_verts_eased": 22,
  "curb_faces_removed_total": 1878,
  "terrain": {
-  "edges_halved": 14090,
-  "verts_pinned": 14500
+  "edges_halved": 13660,
+  "verts_pinned": 14468
  },
  "tidy": {
   "orphan_curb_verts_deleted": 1252

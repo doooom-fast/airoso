@@ -1,23 +1,23 @@
 {
  "obj": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\data\\track.obj",
  "lattice_nodes": 555668,
- "terrain_vertices": 516060,
+ "terrain_vertices": 552851,
  "near_m": 20.0,
  "thinned": {
-  "nodes_read_on_the_surface": 197950,
-  "line_vertices": 106245
+  "nodes_read_on_the_surface": 193976,
+  "line_vertices": 103627
  },
  "nyquist": {
   "rib_m": 2.0,
   "max": 100,
   "by_amplitude": {
    ">0.5m": {
-    "beyond_near": 5074,
-    "near_road": 571
+    "beyond_near": 5072,
+    "near_road": 569
    },
    ">1m": {
-    "beyond_near": 959,
-    "near_road": 200
+    "beyond_near": 958,
+    "near_road": 199
    },
    ">2m": {
     "beyond_near": 87,
@@ -97,7 +97,7 @@
   },
   "straight_info": {
    ">0.5m": {
-    "beyond_near": 4323,
+    "beyond_near": 4327,
     "near_road": 188
    },
    ">1m": {
@@ -207,8 +207,8 @@
   "max": 5,
   "by_amplitude": {
    ">2m": {
-    "beyond_near": 69,
-    "near_road": 12
+    "beyond_near": 68,
+    "near_road": 11
    }
   },
   "hotspots": [
@@ -274,7 +274,7 @@
    }
   ],
   "boxes": {},
-  "jogs_beyond_near": 69,
+  "jogs_beyond_near": 68,
   "gated": 4,
   "densest_at": [
    -1421.0,

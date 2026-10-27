@@ -1,7 +1,7 @@
 {
  "file": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\build\\san_diego_lake_murray_closure_race_cw.kn5",
  "version": 5,
- "file_bytes": 5496964,
+ "file_bytes": 5506635,
  "textures": [
   {
    "name": "concrete_barrier_diffuse.png",
@@ -10,6 +10,18 @@
   {
    "name": "concrete_barrier_normal.png",
    "bytes": 63035
+  },
+  {
+   "name": "solid_sign_black.png",
+   "bytes": 136
+  },
+  {
+   "name": "solid_sign_yellow.png",
+   "bytes": 136
+  },
+  {
+   "name": "solid_metal_grey.png",
+   "bytes": 184
   }
  ],
  "materials": [
@@ -154,6 +166,50 @@
     [
      "txNormal",
      "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "SIGNARROW_cw_0_mat",
+   "shader": "ksPerPixel",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "solid_sign_black.png"
+    ]
+   ]
+  },
+  {
+   "name": "SIGNPLATE_cw_0_mat",
+   "shader": "ksPerPixel",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "solid_sign_yellow.png"
+    ]
+   ]
+  },
+  {
+   "name": "SIGNPOST_cw_0_mat",
+   "shader": "ksPerPixel",
+   "props": {
+    "ksAmbient": 0.4,
+    "ksDiffuse": 0.25,
+    "ksSpecular": 0.0,
+    "ksSpecularEXP": 1.0
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "solid_metal_grey.png"
     ]
    ]
   }
@@ -310,18 +366,45 @@
     85.1,
     1099.1
    ]
+  },
+  {
+   "name": "SIGNARROW_cw_0",
+   "verts": 72,
+   "tris": 26,
+   "matid": 8,
+   "surface": null,
+   "renderable": true,
+   "radius_m": 1169.6
+  },
+  {
+   "name": "SIGNPLATE_cw_0",
+   "verts": 24,
+   "tris": 8,
+   "matid": 9,
+   "surface": null,
+   "renderable": true,
+   "radius_m": 1169.6
+  },
+  {
+   "name": "SIGNPOST_cw_0",
+   "verts": 82,
+   "tris": 28,
+   "matid": 10,
+   "surface": null,
+   "renderable": true,
+   "radius_m": 1169.6
   }
  ],
  "nodes": [
   "BlenderFile"
  ],
  "summary": {
-  "meshes": 8,
-  "verts": 59496,
-  "tris": 74156,
-  "textures": 2,
-  "texture_bytes": 2431043,
-  "materials": 8,
+  "meshes": 11,
+  "verts": 59674,
+  "tris": 74218,
+  "textures": 5,
+  "texture_bytes": 2431499,
+  "materials": 11,
   "surfaces": {
    "WALL": {
     "meshes": 8,
@@ -337,6 +420,10 @@
    "ksPerPixelMultiMap": {
     "meshes": 8,
     "tris": 74156
+   },
+   "ksPerPixel": {
+    "meshes": 3,
+    "tris": 62
    }
   },
   "near_vert_cap": [],

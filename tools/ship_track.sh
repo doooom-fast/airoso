@@ -337,6 +337,12 @@ prep_prep() {
   if [ -f "$PROJ/data/freeway_i8.json" ]; then
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_freeway_blend.py" -- "$PROJ" --eng "$ENGINE" 2>&1 | grep "^\[freeway\]\|Error\|Traceback"
   fi
+  # ledger 0054 P4 (buildings + rock), part of prep as the I-8 pavement is (steps.prep stays prep, split): the auto cuts'
+  # steep faces -> 1GRASS_ROCK_<tile> on the prepped scene (no auto cut declared = no-op; exit 1 = the blend not saved).
+  # ship_sd.sh thins the terrain before this (an echo there, not a step)
+  step "ship: the road cuts' rock faces split out of the ground tiles (tools/rock_faces_blend.py: 1GRASS_ROCK_*, the sandstone skin, GRASS physics kept; self-checked; no auto cut declared = no-op)"
+  rm -f "$PROJ/data/rock_faces.json"
+  "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/rock_faces_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[rock\]\|Error\|Traceback"
 }
 prep_split() {
   local lid

@@ -57,6 +57,12 @@ document must not lie.
 `bloem_hill_02_4k.exr` (HDRI), `door.png`; plus `Textures.rar` (104 MB), `textures.zip`.
 Poly Haven naming suggests CC0 — confirm before anything ships.
 
+Generated, owned outright (not Dropbox): `tracks/san-diego-lake-murray/textures/sandstone_cut_diffuse.jpg` +
+`sandstone_cut_normal.jpg` — the north network's road-cut rock (ledger 0054 P4), drawn by `make_sandstone_cut.py`
+(deterministic, CC0; `assets/licenses.json` "Sandstone / conglomerate road cut"). Bound to pbr's `1GRASS_ROCK` row by
+`track.config.json texture_overrides`. The Dropbox `cliff.obj` (303 MB) was not used: the cut faces are the built
+ground's own triangles (`tools/rock_faces_blend.py`), not a prop.
+
 ## Conversion pipeline — applies to every import
 1. Extract archives (`.rar` needs `unrar`/`7z`; re-store as zip in the project).
 2. Verify **metres and Y-up** at the projection boundary; fix once, on import.

@@ -1,0 +1,4 @@
+v0.19.0 islands 153 (old band 153 ) | new build islands 334 (old band 153 )
+old band: identical 153 | re-seated by >= 2 cm 0 [] | missing 0 [] | extra 0 []
+new band islands 181 Counter({'HOUSE': 128, 'BUILDING': 53})
+total verts (positions) old 3158 new 6930

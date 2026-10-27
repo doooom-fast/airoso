@@ -7,6 +7,7 @@ margin and the sampler are no-ops for a track that does not declare them."""
 from __future__ import annotations
 
 import json
+import re
 import sys
 import tempfile
 from pathlib import Path
@@ -109,6 +110,9 @@ def test_lake_murray_far_ring_wears_its_chaparral_and_the_chain_carries_it():
         # 1GRASS keeps its own turf: the two keys never cross
         assert Path(ov["1GRASS"]["diffuse"]).name == "grass_diffuse.jpg"
     ship_sd = (ROOT / "tools" / "ship_sd.sh").read_text(encoding="utf-8")
-    assert 'TRACK_TEXTURES="textures/chaparral_far_diffuse.jpg"' in ship_sd
+    # the chain's TRACK_TEXTURES list carries the chaparral tile (since ledger 0054 P4 it also carries the road cuts'
+    # sandstone pair; the list is one quoted, space-separated line)
+    m = re.search(r'^TRACK_TEXTURES="([^"]*)"', ship_sd, re.M)
+    assert m and "textures/chaparral_far_diffuse.jpg" in m.group(1).split(), m and m.group(1)
     spec = json.loads((sd / "ship.json").read_text(encoding="utf-8"))
     assert rel in spec["sync_in"]["optional"]

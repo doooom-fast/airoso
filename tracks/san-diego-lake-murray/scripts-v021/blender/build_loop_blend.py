@@ -815,12 +815,72 @@ def _bld_height(b):
     return _H_DEFAULT.get(b.get("building"), 6.0)
 
 
-def build_buildings(centerline, widths, grid_xyz, cache, lon0, lat0, *, min_area=25.0, cap=None, terr=None):
+BUILDING_BAND_M = 120.0   # a footprint within this of a drivable piece is roadside context (v0.18.x: the mainline only)
+BUILDING_CLEAR_M = 5.0    # ...but not within this of the pavement's edge (crowding the road)
+
+
+def _pad_polygons(pads_plan):
+    """ledger 0054 P4: each junction pad's plan outline, approximated as the convex hull of its arms' cut lines and its
+    stubs' pavement (data/pads.plan.json; the pad itself is authored later, tools/author_junction_pad_blend.py)"""
+    polys = []
+    for pad in (pads_plan or {}).get("pads", []):
+        pts = [tuple(pad["node_xz"])]
+        for arm in pad.get("arms", []):
+            pts += [tuple(p) for p in arm.get("cut_line_xz", [])]
+        for st in (pad.get("stubs") or {}).values():
+            pts += [tuple(p) for p in st.get("pavement_xz", [])]
+        pts = sorted(set(pts))
+        if len(pts) < 3:
+            continue
+        def cross(o, a, b):
+            return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+        lower, upper = [], []
+        for p in pts:
+            while len(lower) >= 2 and cross(lower[-2], lower[-1], p) <= 0:
+                lower.pop()
+            lower.append(p)
+        for p in reversed(pts):
+            while len(upper) >= 2 and cross(upper[-2], upper[-1], p) <= 0:
+                upper.pop()
+            upper.append(p)
+        polys.append((pad.get("id"), lower[:-1] + upper[:-1]))
+    return polys
+
+
+def _poly_dist(x, z, poly):
+    """(plan distance to the polygon's edge, inside?)"""
+    n = len(poly)
+    inside = False
+    best = 1e18
+    j = n - 1
+    for i in range(n):
+        ax, az = poly[i]; bx, bz = poly[j]
+        if (az > z) != (bz > z) and x < (bx - ax) * (z - az) / ((bz - az) or 1e-12) + ax:
+            inside = not inside
+        ex, ez = bx - ax, bz - az
+        L2 = ex * ex + ez * ez or 1.0
+        t = max(0.0, min(1.0, ((x - ax) * ex + (z - az) * ez) / L2))
+        best = min(best, (x - ax - t * ex) ** 2 + (z - az - t * ez) ** 2)
+        j = i
+    return math.sqrt(best), inside
+
+
+def build_buildings(centerline, widths, grid_xyz, cache, lon0, lat0, *, min_area=25.0, cap=None, terr=None,
+                    new_cache=None, pieces=None, pads=None):
     """Extrude OSM building footprints near the loop (houses included — building=yes/house cover them).
     Sit each on the sampled terrain, skip any that crowd the road, split HOUSE vs BUILDING for material
     variety. ``cap`` keeps only the N largest near-road footprints (a 46 km urban loop has 60k+). Returns
     {'HOUSE': mesh, 'BUILDING': mesh}. ``terr``: the ground to sit on (default the graded grid; the tiered
-    terrain passes its own surface so a house 40-120 m out stands on the ground that ships)."""
+    terrain passes its own surface so a house 40-120 m out stands on the ground that ships).
+
+    Ledger 0054 P4 (EXPANSION-PLAN A10, P4 step 4): a footprint is kept when it stands within BUILDING_BAND_M of ANY
+    drivable piece, not only the mainline. Two bands, two caches, so the loop's own buildings are exactly v0.19.0's:
+      - the OLD band (within the band of the mainline): ``cache`` (data/buildings.cache.json, the 2026-08 fetch
+        v0.18.0-v0.19.0 were built from), the mainline-only crowding rule, ``cap`` — byte for byte the old pass;
+      - the NEW band (within the band of a connector — the north roads, the Del Cerro sub-loop, the phase-5 stubs — or
+        of a junction pad, and NOT in the old band): ``new_cache`` (data/buildings.expansion.cache.json, ledger 0054
+        P0 step 7), crowding read against every piece (mainline, connectors, pads), uncapped.
+    ``pieces``: [(name, points_xyz_m, widths_m)] the connectors; ``pads``: data/pads.plan.json (its pads' outlines)."""
     m_lon = 111320.0 * math.cos(math.radians(lat0)); m_lat = 110574.0
     terr = terr or _grid_sampler(grid_xyz)
     # bucket the road for fast nearest (centre pt -> half width)
@@ -829,15 +889,49 @@ def build_buildings(centerline, widths, grid_xyz, cache, lon0, lat0, *, min_area
     rb = defaultdict(list)
     for i in range(0, len(centerline), 2):
         x, _y, z = centerline[i]; rb[(int(x // B), int(z // B))].append((x, z, widths[i] / 2))
-    def near_road(x, z):
+
+    def nearest_in(buckets, x, z):
         bx, bz = int(x // B), int(z // B); best_d, best_hw = 1e18, 0
         for dx in (-2, -1, 0, 1, 2):
             for dz in (-2, -1, 0, 1, 2):
-                for (rx, rz, hw) in rb.get((bx + dx, bz + dz), ()):
+                for (rx, rz, hw) in buckets.get((bx + dx, bz + dz), ()):
                     d = (x - rx) ** 2 + (z - rz) ** 2
                     if d < best_d:
                         best_d, best_hw = d, hw
         return math.sqrt(best_d), best_hw
+
+    def near_road(x, z):
+        return nearest_in(rb, x, z)
+
+    # the new band's pieces (ledger 0054 P4): every connector point, and the pads' outlines
+    pb = defaultdict(list)
+    for _n, cpts, cw in (pieces or []):
+        for i in range(0, len(cpts), 2):
+            x, _y, z = cpts[i]
+            w = cw[i] if isinstance(cw, (list, tuple)) else cw
+            pb[(int(x // B), int(z // B))].append((x, z, float(w) / 2))
+    pad_polys = _pad_polygons(pads) if pads else []
+
+    def near_piece(x, z):
+        d, hw = nearest_in(pb, x, z)
+        for _pid, poly in pad_polys:
+            pd, inside = _poly_dist(x, z, poly)
+            if inside:
+                return 0.0, 1e9
+            if pd < d - hw:                 # read the pad's edge as a pavement edge (no half width)
+                d, hw = pd, 0.0
+        return d, hw
+
+    def footprint(b):
+        foot = [((lo - lon0) * m_lon, (la - lat0) * m_lat) for lo, la in b["geom"]]
+        if len(foot) >= 2 and foot[0] == foot[-1]:
+            foot = foot[:-1]
+        if len(foot) < 3:
+            return None
+        cx = sum(p[0] for p in foot) / len(foot); cz = sum(p[1] for p in foot) / len(foot)
+        area = abs(sum(foot[i][0] * foot[(i + 1) % len(foot)][1] - foot[(i + 1) % len(foot)][0] * foot[i][1]
+                       for i in range(len(foot)))) / 2
+        return foot, cx, cz, area
 
     meshes = {"HOUSE": {"vertices": [], "uvs": [], "tris": []},
               "BUILDING": {"vertices": [], "uvs": [], "tris": []}}
@@ -845,29 +939,57 @@ def build_buildings(centerline, widths, grid_xyz, cache, lon0, lat0, *, min_area
     for b in cache:
         if b.get("building") == "roof":
             continue
-        foot = [((lo - lon0) * m_lon, (la - lat0) * m_lat) for lo, la in b["geom"]]
-        if len(foot) >= 2 and foot[0] == foot[-1]:
-            foot = foot[:-1]
-        if len(foot) < 3:
+        fp = footprint(b)
+        if fp is None:
             continue
-        cx = sum(p[0] for p in foot) / len(foot); cz = sum(p[1] for p in foot) / len(foot)
-        area = abs(sum(foot[i][0] * foot[(i + 1) % len(foot)][1] - foot[(i + 1) % len(foot)][0] * foot[i][1]
-                       for i in range(len(foot)))) / 2
+        foot, cx, cz, area = fp
         if area < min_area:
             continue
         d_road, hw = near_road(cx, cz)                    # bucketed nearest — O(1), no per-vertex scan
-        if d_road > 120 or d_road < hw + 5:               # roadside context, but not crowding the road
+        if d_road > BUILDING_BAND_M or d_road < hw + BUILDING_CLEAR_M:   # roadside context, but not crowding the road
             continue
         cand.append((area, foot, cx, cz, b))
     cand.sort(key=lambda c: -c[0])                        # largest footprints first
     if cap:
         cand = cand[:cap]
-    for area, foot, cx, cz, b in cand:
+    n_old = len(cand)
+    # the new band (ledger 0054 P4): the new cache, beyond the old band, against every piece
+    n_new = n_new_old_band = n_old_band_differs = 0
+    new_cand = []
+    if new_cache and (pb or pad_polys):
+        old_geoms = {tuple((round(lo, 7), round(la, 7)) for lo, la in b["geom"]) for b in cache}
+        for b in new_cache:
+            if b.get("building") == "roof":
+                continue
+            fp = footprint(b)
+            if fp is None:
+                continue
+            foot, cx, cz, area = fp
+            if area < min_area:
+                continue
+            d_road, hw = near_road(cx, cz)
+            if d_road <= BUILDING_BAND_M:                 # the old band is v0.19.0's (the old cache above)
+                if d_road >= hw + BUILDING_CLEAR_M:
+                    n_new_old_band += 1
+                    if tuple((round(lo, 7), round(la, 7)) for lo, la in b["geom"]) not in old_geoms:
+                        n_old_band_differs += 1
+                continue
+            dp, hwp = near_piece(cx, cz)
+            if dp > BUILDING_BAND_M:
+                continue
+            if dp < hwp + BUILDING_CLEAR_M or d_road < hw + BUILDING_CLEAR_M:
+                continue
+            new_cand.append((area, foot, cx, cz, b))
+        new_cand.sort(key=lambda c: -c[0])
+        n_new = len(new_cand)
+    for area, foot, cx, cz, b in cand + new_cand:
         if _signed_area(foot) < 0:                        # ensure CCW so walls face outward
             foot = foot[::-1]
         grp = "HOUSE" if b.get("building") in _HOUSE_TYPES else "BUILDING"
         _extrude_footprint(meshes[grp], foot, terr(cx, cz) - 0.4, _bld_height(b))
-    print(f"[blend] buildings: {len(cand)} extruded near the loop "
+    print(f"[blend] buildings: {n_old + n_new} extruded — old band (mainline, old cache) {n_old}, new band (connectors "
+          f"+ pads, expansion cache) {n_new}; the expansion cache in the old band would be {n_new_old_band} footprints, "
+          f"{n_old_band_differs} of them new or edited since the old cache (kept as v0.19.0: the old cache) "
           f"(HOUSE {len(meshes['HOUSE']['tris'])//2}, BUILDING {len(meshes['BUILDING']['tris'])//2} quads)")
     return meshes
 
@@ -1164,9 +1286,16 @@ def main():
     (data / "lights.local.json").write_text(json.dumps(lights_rec))
     bcache = data / "buildings.cache.json"
     _scn = cfg.get("scenery", {})
+    # ledger 0054 P4 (EXPANSION-PLAN A10): the expansion cache (P0 step 7) dresses the NEW band — within 120 m of a
+    # connector or a junction pad — while the old cache keeps the loop's own band exactly as v0.19.0 built it
+    bcache_new = data / str(_scn.get("buildings_expansion_cache", "buildings.expansion.cache.json"))
+    pads_plan = data / "pads.plan.json"
     bmeshes = build_buildings(centerline, widths, grid_xyz, json.loads(bcache.read_text()), lon0, lat0,
                               min_area=float(_scn.get("building_min_area_m2", 25.0)),
-                              cap=_scn.get("building_cap"), terr=bterr) \
+                              cap=_scn.get("building_cap"), terr=bterr,
+                              new_cache=json.loads(bcache_new.read_text()) if bcache_new.exists() else None,
+                              pieces=connectors,
+                              pads=json.loads(pads_plan.read_text()) if pads_plan.exists() else None) \
         if bcache.exists() else {"HOUSE": {"vertices": [], "uvs": [], "tris": []},
                                  "BUILDING": {"vertices": [], "uvs": [], "tris": []}}
     # Continuous sidewalks now come from curb_sidewalk (above); the sparse OSM footways would only z-fight it.

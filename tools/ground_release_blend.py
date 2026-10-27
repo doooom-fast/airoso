@@ -133,6 +133,10 @@ RAIL_END_H_M = 0.05   # ...to this height over its base: no square end standing 
 #                       station that needs the rail (ground_release.rail_heights; fix round 4)
 DEGEN_AREA_M2 = 1e-5  # [invented] a zone face smaller than this is a sliver of the halving (dissolved; was 1e-8 before 0055)
 DEGEN_DIST_M = 1e-3   # [invented] ...merged into its neighbours with vertices this close (dissolve_degenerate)
+TOE_THIN_ALT_M = 0.25 # [invented] ledger 0054 P4: a cut-toe triangle with a shortest altitude under this ...
+TOE_THIN_LONG_M = 1.5 # [invented] ... and an edge longer than this is a sliver (counted before / after the toe re-triangulation)
+TOE_BAND_M = 30.0     # [invented] ledger 0054 P4: the toe re-triangulation reaches this far (plan) from a pavement (cut reach 20 + rounding 3 + the lattice's spread)
+TOE_KEEP_M = 0.10     # [invented] ledger 0054 P4: no rotated pair within this (plan) of any drivable sheet (the walk, the aprons, the pads)
 RAIL_OBJECT = "1WALL_guard_release"   # the release rails' own physical mesh(es) (never appended to GUARDRAIL)
 RAIL_CHUNK_TRIS = 18000  # [invented] triangles per rail mesh: 3 kn5 vertices each at worst stays under the 65,536 cap
 RAIL_EXT_FALL_M = 1.0  # [invented] ...and only while the ground falls more than this under the pavement edge, steeply
@@ -286,6 +290,17 @@ def main():
                 wfaces.append(tuple(base + i for i in p.vertices))
     top_walk = BVHTree.FromPolygons(dv, wfaces)
     flat = BVHTree.FromPolygons([(p[0], p[1], 0.0) for p in dv], dfaces)   # the pavement's plan, for edge distances
+    # ledger 0054 P4 (the toe re-triangulation, 2c-0): the plan footprint of EVERY drivable sheet a rotated diagonal must
+    # stay off — ROAD / CURB less the walk's buried apron (top_walk's faces; the cut's toe stands over that apron by
+    # design) plus every other 1ROAD_* / 1KERB_* object in the scene (the corner aprons' decks and walks, the junction
+    # pads, the mouth fills), which this tool's own deck set leaves out (its batter and cap read ROAD / CURB only)
+    xv, xf = [(p[0], p[1], 0.0) for p in dv], list(wfaces)
+    for o in bpy.data.objects:
+        if o.type == "MESH" and o not in deck_objs and o.name.upper().startswith(("1ROAD", "1KERB")):
+            base = len(xv)
+            xv += [(q.x, q.y, 0.0) for q in (o.matrix_world @ v.co for v in o.data.vertices)]
+            xf += [tuple(base + i for i in p.vertices) for p in o.data.polygons]
+    flat_x = BVHTree.FromPolygons(xv, xf)
     road_only = _bvh([road_obj]) if road_obj is not None else None
     # the ROAD's plan (repair round 1: a raise-only cut keeps the prep's contact band — the prep leaves zone ground alone)
     flat_road = None
@@ -630,6 +645,61 @@ def main():
     rel_faces = {f for vi in lowerable for f in bm.verts[vi].link_faces}
 
     raise_zone = {z["name"] for z in R["zones"] if z.get("raise_only")}
+
+    # 2c-0. the cut's toe re-triangulated on the RAISED ground, BEFORE the per-face cap below judges the final triangles
+    # (ledger 0054 P4 buildings + rock; P3 "Left": the thin lighter
+    # triangles at the foot of the Jackson cuts, fixed at their cause). The halving above chose its triangles in PLAN, on
+    # the flat, before step 2 raised the batter: a triangle running from the toe row (the first vertices past the walk's
+    # apron) to the SECOND batter row then cuts through the raised face as a tooth standing flatter than the wall around
+    # it — lit from above while the wall is in shade, so it shows pale at the foot of every cut. Inside a raise-only cut,
+    # every triangle whose three corners are released (none under the pavement) is handed to Blender's beautify: edge
+    # rotations only — no vertex moves, none is made, each rotated pair keeps the plan it covered (so 2c's per-face cap
+    # still holds) — until the triangles follow the surface as it now stands. Counted before and after: triangles with
+    # a shortest altitude under TOE_THIN_ALT_M and an edge over TOE_THIN_LONG_M. Only the cut band is touched (a face
+    # whose centre lies within TOE_BAND_M of a pavement: the cut's reach + its top rounding + the lattice's own spread);
+    # the hillside beyond the road's construction zone keeps the triangles it had. The cap (2c) runs AFTER this on the
+    # rotated faces, so a rotated diagonal can never leave ground over a pavement (the first rehearsal: 2 grass samples
+    # over J1's apron deck, verify_mouths FAIL).
+    def _thin_count(fs):
+        n = 0
+        for f in fs:
+            if not f.is_valid or len(f.verts) != 3:
+                continue
+            co = [v.co for v in f.verts]
+            e = max((co[i] - co[(i + 1) % 3]).length for i in range(3))
+            if e > TOE_THIN_LONG_M and 2.0 * f.calc_area() / e < TOE_THIN_ALT_M:
+                n += 1
+        return n
+
+    def _toe_face(f):
+        if len(f.verts) != 3 or not all(
+                v.index in released and not released[v.index][0] and released[v.index][1] in raise_zone for v in f.verts):
+            return False
+        c = f.calc_center_median()
+        if flat.find_nearest((c.x, c.y, 0.0), TOE_BAND_M)[0] is None:
+            return False
+        # ...and never a face that reaches over a drivable sheet: a rotated diagonal changes the surface inside its
+        # quad only, so a pair whose corners, edge midpoints and centres all stand off every pavement footprint leaves
+        # the ground over every pavement exactly as the cap below finds it (rehearsal 3: 2 grass samples 7 mm over
+        # J1's apron deck, which this tool's ROAD / CURB deck set does not know — verify_mouths FAIL)
+        co = [v.co for v in f.verts]
+        pts = co + [(co[i] + co[(i + 1) % 3]) / 2 for i in range(3)] + [c]
+        return not any(flat_x.find_nearest((p.x, p.y, 0.0), TOE_KEEP_M)[0] is not None for p in pts)
+
+    toe_faces = [f for f in rel_faces if _toe_face(f)]
+    toe_set = set(toe_faces)
+    toe_edges = [e for e in {e for f in toe_faces for e in f.edges}
+                 if len(e.link_faces) == 2 and all(lf in toe_set for lf in e.link_faces)]
+    n_toe_thin0 = _thin_count(toe_faces)
+    n_toe_rot = 0
+    if toe_edges:
+        ret = bmesh.ops.beautify_fill(bm, faces=toe_faces, edges=toe_edges, use_restrict_tag=False, method="ANGLE")
+        new_faces = [g for g in ret.get("geom", []) if isinstance(g, bmesh.types.BMFace)]
+        n_toe_rot = len(new_faces) // 2
+        bm.verts.ensure_lookup_table()
+        rel_faces = {f for vi in lowerable for f in bm.verts[vi].link_faces}     # the rotated faces replace their pairs
+        toe_faces = [f for f in rel_faces if _toe_face(f)]
+    n_toe_thin1 = _thin_count(toe_faces)
 
     def walk_face(f):
         """a face with a corner released in a raise-only cut stays under the walk and the road, not the apron"""
@@ -1040,6 +1110,8 @@ def main():
                       "zone_cut_slope": {n: z.get("cut_slope") for n, z in zone_rec.items() if z.get("cut_slope")},
                       "raise_only": sorted(n for n, z in zone_rec.items() if z.get("raise_only"))},
            "vertical_slivers_mended": {"after_halving": mend0, "after_heights": mend1},
+           "cut_toe_retriangulated": {"faces": len(toe_set), "edges_rotated": n_toe_rot, "thin_before": n_toe_thin0,
+                                      "thin_after": n_toe_thin1, "thin_alt_m": TOE_THIN_ALT_M, "thin_long_m": TOE_THIN_LONG_M},
            "raise_only_under_walk_seated_as_the_prep": n_walk_seat,
            "auto_zones_that_moved_nothing": idle_auto,
            "held_pits_lifted_under_the_pavement": n_held_pin, "coincident_faces_removed": n_coinc,
@@ -1062,7 +1134,8 @@ def main():
         f"({len(steep_open)} not under a deck); "
         f"{n_ramp_ref} ramp vertices blended toward the prep's refined ground; {len(rail_rep)} rail(s) "
         f"{[(r['zone'], r['side'], r['s_m'], r['ends_full_height']) for r in rail_rep]} on the curb lip ({n_ext} stations "
-        f"past a zone's end over a drop); saved loop.blend")
+        f"past a zone's end over a drop); cut toes re-triangulated on the raised ground: {len(toe_set)} faces, {n_toe_rot} edges "
+        f"rotated, thin {n_toe_thin0} -> {n_toe_thin1}; saved loop.blend")
 
 
 main()

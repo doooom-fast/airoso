@@ -972,3 +972,103 @@ the LF md5s equal the manifest; main fails them the same way; no mirrored file t
 - The lamps' 21 LIGHTPOST meshes (16 lamps each) + 1 LIGHTS mesh: every tile far under 65,535 (the largest ~5.8k points).
 
 **Next:** the integration agent merges this with signs + map, trees + GrassFX, buildings + rock; then Drive 2 (v0.19.1).
+
+## P4 buildings — buildings on every drivable piece, the cut faces as rock, the cut toes cleaned (2026-10-26; branch `worktree-wf_566e8616-71e-4`, not merged, nothing installed)
+
+The "buildings" piece of P4 (EXPANSION-PLAN P4 step 4, A10, and P3's "the cut faces are grass, not rock, until P4" /
+"thin lighter triangles at the foot of the Jackson cuts"). Three sibling branches carry the lamps, the signs + map and
+the trees + GrassFX; an integration pass merges the four. Rehearsed fresh, full chain, `--no-install`, from fresh copies of
+the workshop project and engine-july in `D:/k10-scratch/p4/buildings` (proj/, eng/, chain.log, stills/); proofs in
+`tracks/san-diego-lake-murray/source/expansion/p4-proofs/` (the renderer, the before / after stills, the counts).
+GATES-CHANGELOG 2026-10-26 "P4 buildings + rock" has every number.
+
+**What changed, in plain terms.**
+- **Buildings beside every road you can drive, not only the loop.** The assembler's buildings pass (`scripts-v021
+  build_loop_blend.build_buildings`) now keeps an OSM footprint when it stands within 120 m of ANY drivable piece: the
+  mainline, each of the four north roads, the Del Cerro sub-loop, the side-street stubs, and the three junction pads
+  (their outlines from `data/pads.plan.json`) — and not within 5 m of any of their pavements. Two bands, two caches: the
+  loop's own band (120 m of the mainline) still reads the old `data/buildings.cache.json` with the old rule, so the
+  loop's buildings are exactly v0.19.0's (153 of them; the expansion cache would give the same 153 there, none new or
+  edited); the new band reads `data/buildings.expansion.cache.json` (P0 step 7). Measured: **181 new buildings — 61 along
+  the north roads and 120 along the Del Cerro sub-loop and the stubs.** OSM holds only 74 footprints within 120 m of the
+  north roads (Waring 4, Princess View 32 — the Grantville self-storage and industry, Mission Gorge 23, Jackson north
+  15): the Allied Gardens houses along Waring are not mapped in OSM, and the Mission Gorge apartment blocks (C 500-1000)
+  are mapped as a handful of large footprints. That is what OSM has; nothing is invented. Both caches and the provenance
+  are synced into the workshop by `tools/ship_sd.sh` / `ship.json` (`BUILDING_CACHES`); airoso's are the source of truth.
+- **The cut faces are rock.** A new ship step (`tools/rock_faces_blend.py`, after the kn5 prep and the thinning, before
+  the split into road / race scenes) reads the same auto-cut declaration the ground release built the walls from and, in
+  each cut's band (the declared side, from the curb to the cut's reach + its top rounding + 6 m), moves every ground
+  triangle standing steeper than 0.7 m per metre (35 deg, the angle at which loose earth stops holding — steeper than
+  that beside these roads is cut rock, not a grassed bank; the real faces climb 1.1-1.6) into its own mesh
+  `1GRASS_ROCK_<tile>`. Nothing moves: the split only decides which mesh a triangle belongs to, and the two meshes share
+  their boundary by position, so there is no crack. The name keeps the `1GRASS` prefix on purpose — same `surfaces.ini`
+  key (GRASS), same physics, read as ground by every gate — and binds its own pbr row (`1GRASS_ROCK`, before `1GRASS`),
+  so the loop's turf override never reaches it; GrassFX leaves it out (`ext_config` GRASS_MESHES). The split lands at the
+  toe (the first batter row past the sidewalk) and at the top rounding by that one slope rule; a cut whose real rise is
+  under 3 m (the ledger's own "real wall" bar) is a bank and gets no rock; rock patches under 40 m2 go back to grass,
+  grass holes under 60 m2 (the lattice's 1 m bench rows across a wall) become rock. Self-checked: no rock face under a
+  pavement sheet, every triangle accounted for, no vertex moved, every mesh under the cap.
+- **The rock texture is ours.** `textures/make_sandstone_cut.py` draws a tileable sandstone / conglomerate pair (diffuse +
+  OpenGL normal, 1024², 4 m per tile) deterministically — the Stadium Conglomerate and Friars sandstone the Mission Gorge
+  cuts stand in: tan bedded sandstone, rounded cobbles (~20 %), dark weathering streaks under the rim. No captured pixels,
+  CC0, recorded in `assets/licenses.json` and `fleet/reference/ASSET-LIBRARY.md`; bound by `track.config.json
+  texture_overrides["1GRASS_ROCK"]`, synced in with the chaparral tile (`TRACK_TEXTURES`). The UVs run along the wall and
+  up it (a top-down projection would stretch the tile 1.5-3x on a face this steep).
+- **The thin lighter triangles at the foot of the cuts, fixed at their cause.** The ground release halves the terrain's
+  edges and chooses the triangles in PLAN, on the flat, before it raises the batter; a triangle running from the toe row
+  to the second batter row then cut through the raised face as a tooth standing flatter than the wall, lit from above
+  while the wall is in shade — the pale sawtooth at the foot of every Jackson cut (`p4-proofs/stills/v0190_jackson_toe.png`,
+  the v0.19.0 build). Now, once the heights are set and before the release's own cap checks every face against the
+  pavement, every triangle of a raise-only cut zone whose corners are all released, within 30 m of the road and clear of
+  every drivable sheet (the walk, the corner aprons, the junction pads) is re-triangulated on the raised surface
+  (Blender's beautify: edge rotations only, no vertex moves, none made). It took three rehearsals to fence it right: the
+  first two rotations (over every zone face, then inside the band) each left two grass samples 7 mm over J1's corner
+  apron deck, a sheet the release tool's cap does not know (it reads ROAD / CURB only) — verify_mouths refused both, as
+  it should. Measured on the final rule: 35,692 edges rotated, thin toe triangles in the cut bands 5,182 -> 2,258; on
+  the Jackson 320-485 wall itself 228 -> 155, of which the slivers up the face (3-7 m out) 139 -> 99 and beyond 7 m 40 ->
+  13; the 38 in the flat 3-4 m shoulder between the walk's buried apron and the first batter row are untouched (the
+  fence keeps the rotation off the walk), and that shoulder's zigzag edge against the batter is what still shows at the
+  foot (`p4_jackson_toe.jpg`, before / after). The rest lie in the face's own plane and do not show.
+
+**Rehearsal (full chain, `--no-install`; v0.19.0 = `D:/k10-scratch/phase1/r3run`, the installed build).**
+
+- **Every gate reads exactly as v0.19.0** (`p4-proofs/gates_v0190.txt` vs `gates_p4.txt`, line for line): Free Roam soft
+  top 8, severe 0, kinks 2.67 per km, edge drops 96, audit 53; Speedway / Reverse severe 4 / 6, kinks 6.46 / 6.09,
+  barrier_missing 0, no_route PASS (0 of 439 probes, the same reachable area); the new roads driven both ways PASS
+  (kinks 2.39 / 2.53, edge drops 40 / 38); verify_mouths 32, verify_stubs 26 + 29, verify_pads J2-J4, verify_signs 19,
+  the fold fans, kn5_ground_check on all three layouts (the same wall / lamp / sign / deck lines), rib_check 69 (worst 4
+  of 5), all PASS; house_seat_check PASS on **334** buildings (153 + 181; floating / sunken / buried 0). It ends where
+  v0.19.0 ends: "NOT INSTALLED" on the Free Roam lap's own soft-top rule, red since v0.18.0, nothing new red.
+- **Buildings:** the 153 within 120 m of the loop are identical to v0.19.0's on the built model (0 moved, 0 missing, 0
+  extra; `analysis/compare_buildings.py`); 181 new (128 houses, 53 buildings): 61 along the north roads, 120 along the
+  Del Cerro sub-loop and the stubs. Vertices in the model: HOUSE 22,887, BUILDING 4,349 (both under the 65,535 cap, one
+  mesh each); the budget's "< 0.6 MB" holds (the road model grew 2.9 MB in all, the rock meshes and their two textures
+  included).
+- **Rock:** 10,718 triangles, **12,459 m² of cut face** in 10 of the 16 cuts standing 3 m or taller, 8 meshes, 8,077
+  vertices: Jackson's south-west wall 4,431 m², Mission Gorge's north side 3,584 m², its south face 2,301 m² (the s
+  1475-1560 wall inside it) and another 595 m² by the crest, Princess View's left cut 835 m², the rest 46-228 m². The
+  texture is the generated sandstone pair (override, 367 KB). Stills: `p4-proofs/stills/p4_jackson_walls.jpg` (driver's
+  eye, climbing, the walls on the right), `p4_jackson_walls_rev.jpg`, `p4_jackson_toe.jpg` (the foot of the 320-485 cut,
+  before / after), `p4_mg_cut_cowles.jpg` (the south face on the right, Cowles ahead), `p4_mg_apartments.jpg`,
+  `p4_grantville_waring.jpg`, `p4_grantville_pv.jpg` (the self-storage and industry from Princess View), `p4_j5_shops.jpg`.
+- **Road kn5 92.74 MB** (v0.19.0 89.82; ceiling 145), 103 meshes (16 ground tiles + 8 rock + the rest as before); race,
+  closure, street-only and spawn kn5s byte-for-byte the same sizes; CSP `[LIGHT_n]` 239, intensity and pool untouched;
+  GRASS_MESHES the 16 ground tiles, no rock; 1WALL_guard as before. Tests 921 passed, 0 failed (4 new).
+
+**Left, honestly.**
+- OSM is thin along the north roads: 74 footprints within 120 m, 61 kept. Waring's houses and most of the Mission Gorge
+  apartment blocks are not in OSM; adding them means tracing footprints off the aerial (P0's `aerial-tracing` path, a
+  later pass), not inventing them.
+- The rock rule is one slope threshold inside the declared cut bands (plus the 3 m rise bar and the patch / hole sizes):
+  a real grassed bank steeper than 35 deg inside a band reads as rock, a real rock face flatter than that reads as grass,
+  and a few grass tongues stay inside the Jackson walls where a lattice bench is wider than 60 m2 or opens to the hill
+  (`p4_jackson_walls.jpg`). The six named walls all stand well over the bar; Kevin's drive and the aerial are the check.
+- The foot of each cut still shows a zigzag where the flat shoulder behind the walk meets the first batter row (the two
+  vertex rows are offset, so the grass / rock boundary saws between them). The tooth slivers up the face are what the
+  re-triangulation removed; a straight toe needs the batter's first row laid along the toe line itself, a change to the
+  ground release's lattice, not to its triangles.
+- `tools/make_treefx.py` still lists every `1GRASS*` material as a TreeFX surface, the rock faces included (harmless: a
+  tree gets its ground height from whatever ground it stands on); the trees sibling branch owns that list.
+- `engine-july` mirror pending for `scripts/ac/pbr.py` (`engine-july-snapshot/PENDING-MIRROR.md5`; the live ENG is never
+  edited by an agent). The suite's one red, `test_engine_july_mirror_is_byte_identical`, is this worktree's CRLF checkout
+  of `scripts/ac/export_kn5_addon.py` (equal to ENG modulo line endings; main's checkout is LF).

@@ -1,0 +1,213 @@
+[release] TERRAIN 393422 -> 613367 verts (239365 edges halved in the zones); alvarado_creek_bank: 6969 moved (down <= 8.283 m, up <= 2.548 m, 0 under a deck); college_south_approach: 2387 moved (down <= 4.183 m, up <= 8.042 m, 952
+[median-blend] 1WALL_guard_streetonly_median: 844 verts (street-only island over [[1253, 1379]], 127 rings)
+  race_cw   planned: PASS  leak_cells 0  blocked 0  forbidden_reached 0  spawns_unreached 0  reached 138756 m2
+  race_acw  planned: PASS  leak_cells 0  blocked 0  forbidden_reached 0  spawns_unreached 0  reached 138195 m2
+[build_kn5_loop] house seat: 153 buildings seated on the final ground under their footprints, 131 with a foundation reaching down a slope (deepest 9.54 m)
+[build_kn5_loop] split 1GRASS (818184 verts) -> 16 tiles under 60000 (balanced bisection)
+[build_kn5_loop] split GRASS_FAR (159512 verts) -> 4 tiles under 60000 (balanced bisection)
+[build_kn5_loop] terrain tiles: 1GRASS x16 (max 51851 v, total 823151 v), GRASS_FAR x4 (max 40314 v, total 160499 v)
+[thin] 20 tiles, 983650 vertices read; stars left alone: 10156 vertices within 2 m of a building; 473304 at 22 m or more from the pavement (+- 0.1 m); kept as rib_check inputs: 276 corners of cross-grain cells (centre > 18 m); 21 
+[thin] workers done (51 s)
+[thin] terrain 983650 -> 515973 vertices (47.5 % fewer) over 20 tiles; removed vertices now -0.1500 .. +0.1500 m off the thinned surface; saved san_diego_lake_murray.blend (79 s)
+KN5 EXISTS: True SIZE: 89815220 FILE: san_diego_lake_murray.kn5
+KN5 EXISTS: True SIZE: 11722654 FILE: san_diego_lake_murray_race.kn5
+KN5 EXISTS: True SIZE: 5496964 FILE: san_diego_lake_murray_closure_race_cw.kn5
+KN5 EXISTS: True SIZE: 5496156 FILE: san_diego_lake_murray_closure_race_acw.kn5
+KN5 EXISTS: True SIZE: 872525 FILE: san_diego_lake_murray_street.kn5
+=================== gate: verify_ai_line --layout race_cw (hard; ledger 0052 - the written line vs the BUILT walls and road)
+verify_ai_line race_cw: wall min 2.542 m, under 2.5 m 0.0; spurious dips 0, flips 0.594/km; sides past a wall 0; min radius 13.9 m; lap est 276.8 s (mu 1.0) -> D:\k10-scratch\phase1\r3run\proj\data\ai_verify.race_cw.json
+=================== gate: verify_ai_line --layout race_acw (hard; ledger 0052 - the written line vs the BUILT walls and road)
+verify_ai_line race_acw: wall min 2.384 m, under 2.5 m 0.00045; spurious dips 0, flips 0.372/km; sides past a wall 0; min radius 14.13 m; lap est 273.3 s (mu 1.0) -> D:\k10-scratch\phase1\r3run\proj\data\ai_verify.race_acw.json
+  terrain tiles: 1GRASS x16 (max 29695 v), GRASS_FAR x4 (max 38122 v)
+  street-only kn5 san_diego_lake_murray_street.kn5: 2 meshes ['1KERB_sidewalk_streetonly_median', '1WALL_guard_streetonly_median']
+[verify_mouths] del_cerro_blvd#0 (end) -> MAINLINE side +1 angle 75.63 deg: mouth line max 0.015 m (95 samples); host lane road/curb above max 0.0 m, grass max -0.01 m (1705 samples); notch max 0.02 m; approach max 1.13 %/m over 2
+[verify_mouths] del_cerro_blvd#1 (start) -> MAINLINE side -1 angle 86.05 deg: mouth line max 0.016 m (78 samples); host lane road/curb above max 0.0 m, grass max -0.009 m (1621 samples); notch max 0.016 m; approach max 0.98 %/m ov
+[verify_mouths] medium#2+0#0#0 (start) -> MAINLINE side -1 angle 88.88 deg: mouth line max 0.003 m (34 samples); host lane road/curb above max 0.0 m, grass max -0.014 m (903 samples); notch max 0.005 m; approach max 1.82 %/m over 
+[verify_mouths] north_J1_waring#0 (start) -> MAINLINE side +1 angle 83.62 deg: mouth line max 0.006 m (63 samples); host lane road/curb above max 0.0 m, grass max -0.016 m (2793 samples); notch max 0.015 m; approach max 2.50 %/m o
+[verify_mouths] north_J5_jackson_north#0 (start) -> MAINLINE side +1 angle 76.95 deg: mouth line max 0.017 m (68 samples); host lane road/curb above max 0.0 m, grass max -0.007 m (1776 samples); notch max 0.023 m; approach max 0.7
+[verify_mouths] medium#2+0#0#0 (end) -> del_cerro_blvd#1 side -1 angle 87.77 deg: mouth line max 0.004 m (41 samples); host lane road/curb above max 0.0 m, grass max -0.018 m (665 samples); notch max 0.01 m; approach max 0.97 %/m 
+[verify_mouths] STUB_galewood_street_5984405_R#0 (start) -> north_J1_waring#0 side -1 angle 87.98 deg: mouth line max 0.006 m (32 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (692 samples); notch max 0.007 m; 
+[verify_mouths] STUB_galewood_street_5984405_L#0 (start) -> north_J1_waring#0 side +1 angle 89.33 deg: mouth line max 0.006 m (35 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (768 samples); notch max 0.008 m; 
+[verify_mouths] STUB_eldridge_street_6013754_L#0 (start) -> north_J1_waring#0 side +1 angle 89.69 deg: mouth line max 0.002 m (34 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (704 samples); notch max 0.005 m; 
+[verify_mouths] STUB_eldridge_street_6013754_R#0 (start) -> north_J1_waring#0 side -1 angle 89.19 deg: mouth line max 0.002 m (33 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (608 samples); notch max 0.004 m; a
+[verify_mouths] STUB_birchwood_street_1370375341_R#0 (start) -> north_J1_waring#0 side -1 angle 86.19 deg: mouth line max 0.013 m (30 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (594 samples); notch max 0.014 
+[verify_mouths] STUB_glenroy_street_663868618_L#0 (start) -> north_princess_view side +1 angle 88.36 deg: mouth line max 0.004 m (36 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (704 samples); notch max 0.005 
+[verify_mouths] STUB_glenroy_street_663868622_R#0 (start) -> north_princess_view side -1 angle 84.74 deg: mouth line max 0.002 m (31 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (704 samples); notch max 0.003 
+[verify_mouths] STUB_princess_view_court_5998286_R#0 (start) -> north_princess_view side -1 angle 86.14 deg: mouth line max 0.016 m (38 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (726 samples); notch max 0.0
+[verify_mouths] STUB_princess_view_place_5998259_R#0 (start) -> north_princess_view side -1 angle 88.74 deg: mouth line max 0.007 m (36 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (759 samples); notch max 0.0
+[verify_mouths] STUB_princess_view_way_6018734_R#0 (start) -> north_princess_view side -1 angle 89.79 deg: mouth line max 0.02 m (32 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (747 samples); notch max 0.02 m
+[verify_mouths] STUB_fontaine_street_5986946_R#0 (start) -> north_princess_view side -1 angle 80.71 deg: mouth line max 0.002 m (34 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (768 samples); notch max 0.003 m;
+[verify_mouths] STUB_fontaine_street_5986946_L#0 (start) -> north_princess_view side +1 angle 89.37 deg: mouth line max 0.002 m (33 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (756 samples); notch max 0.005 m;
+[verify_mouths] STUB_laura_street_6042836_R#0 (start) -> north_princess_view side -1 angle 89.79 deg: mouth line max 0.036 m (41 samples); host lane road/curb above max 0.0 m, grass max -0.018 m (792 samples); notch max 0.038 m; a
+[verify_mouths] STUB_conestoga_way_6042936_R#0 (start) -> north_mission_gorge side -1 angle 88.42 deg: mouth line max 0.003 m (35 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (825 samples); notch max 0.003 m; a
+[verify_mouths] STUB_mission_vista_drive_5977531_L#0 (start) -> north_mission_gorge side +1 angle 82.04 deg: mouth line max 0.008 m (36 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (792 samples); notch max 0.0
+[verify_mouths] STUB_margerum_avenue_135149732_R#0 (start) -> north_mission_gorge side -1 angle 84.98 deg: mouth line max 0.007 m (33 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (768 samples); notch max 0.005
+[verify_mouths] STUB_mission_montana_drive_5988290_L#0 (start) -> north_mission_gorge side +1 angle 89.05 deg: mouth line max 0.001 m (35 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (957 samples); notch max 0.
+[verify_mouths] STUB_mission_vista_drive_5977531_L_560#0 (start) -> north_mission_gorge side +1 angle 84.28 deg: mouth line max 0.003 m (35 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (891 samples); notch max
+[verify_mouths] STUB_deerfield_crescent_638144640_L#0 (start) -> north_mission_gorge side +1 angle 85.27 deg: mouth line max 0.002 m (35 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (825 samples); notch max 0.0
+[verify_mouths] STUB_deerfield_street_6055959_R#0 (start) -> north_mission_gorge side -1 angle 84.28 deg: mouth line max 0.003 m (35 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (684 samples); notch max 0.006 
+[verify_mouths] STUB_birchcreek_road_6024742_R#0 (start) -> north_J5_jackson_north#0 side -1 angle 81.55 deg: mouth line max 0.007 m (33 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (800 samples); notch max 0.0
+[verify_mouths] STUB_park_ridge_boulevard_1224664714_L#0 (start) -> north_J5_jackson_north#0 side +1 angle 89.91 deg: mouth line max 0.002 m (33 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (736 samples); notc
+[verify_mouths] STUB_tuxedo_road_6051501_R#0 (start) -> north_J5_jackson_north#0 side -1 angle 71.53 deg: mouth line max 0.006 m (48 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (874 samples); notch max 0.011 m
+[verify_mouths] STUB_winding_creek_drive_5968105_R#0 (start) -> north_J5_jackson_north#0 side -1 angle 84.64 deg: mouth line max 0.003 m (43 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (777 samples); notch max
+[verify_mouths] STUB_hemingway_drive_6045093_L#0 (start) -> north_J5_jackson_north#0 side +1 angle 88.89 deg: mouth line max 0.008 m (37 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (561 samples); notch max 0.
+[verify_mouths] STUB_doreen_road_5955946_L#0 (start) -> north_J5_jackson_north#0 side +1 angle 87.32 deg: mouth line max 0.04 m (29 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (758 samples); notch max 0.042 m
+[verify_mouths] 32 mouth(s) on track.obj: PASS -> verify_mouths.json
+[verify_stubs] STUB_galewood_street_5984405_R#0: mouth ok (line 0.006 m, approach 0.42 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.005 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.0199 / sink
+[verify_stubs] STUB_galewood_street_5984405_L#0: mouth ok (line 0.006 m, approach 0.73 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.011 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 0
+[verify_stubs] STUB_eldridge_street_6013754_L#0: mouth ok (line 0.002 m, approach 0.85 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.01 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 0.
+[verify_stubs] STUB_eldridge_street_6013754_R#0: mouth ok (line 0.002 m, approach 0.42 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.005 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 0
+[verify_stubs] STUB_birchwood_street_1370375341_R#0: mouth ok (line 0.013 m, approach 0.53 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.006 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / si
+[verify_stubs] STUB_glenroy_street_663868618_L#0: mouth ok (line 0.004 m, approach 0.20 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.002 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 
+[verify_stubs] STUB_glenroy_street_663868622_R#0: mouth ok (line 0.002 m, approach 0.26 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.004 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 
+[verify_stubs] STUB_princess_view_court_5998286_R#0: mouth ok (line 0.016 m, approach 0.90 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.011 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / si
+[verify_stubs] STUB_princess_view_place_5998259_R#0: mouth ok (line 0.007 m, approach 1.14 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.016 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.0199 / 
+[verify_stubs] STUB_princess_view_way_6018734_R#0: mouth ok (line 0.02 m, approach 0.93 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.013 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / sink 
+[verify_stubs] STUB_fontaine_street_5986946_R#0: mouth ok (line 0.002 m, approach 0.35 %/m); drivable 0.41-15.02 m (holes 0, worst step 0.007 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 
+[verify_stubs] STUB_fontaine_street_5986946_L#0: mouth ok (line 0.002 m, approach 1.32 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.022 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 0
+[verify_stubs] STUB_laura_street_6042836_R#0: mouth ok (line 0.036 m, approach 1.00 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.014 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / sink 0.06
+[verify_stubs] STUB_conestoga_way_6042936_R#0: mouth ok (line 0.003 m, approach 0.79 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.012 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.0199 / sink 0
+[verify_stubs] STUB_mission_vista_drive_5977531_L#0: mouth ok (line 0.008 m, approach 0.41 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.008 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / si
+[verify_stubs] STUB_margerum_avenue_135149732_R#0: mouth ok (line 0.007 m, approach 1.44 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.027 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink
+[verify_stubs] STUB_mission_montana_drive_5988290_L#0: mouth ok (line 0.001 m, approach 0.51 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.006 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / 
+[verify_stubs] STUB_mission_vista_drive_5977531_L_560#0: mouth ok (line 0.003 m, approach 1.10 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.014 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.019
+[verify_stubs] STUB_deerfield_crescent_638144640_L#0: mouth ok (line 0.002 m, approach 0.68 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.008 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / s
+[verify_stubs] STUB_deerfield_street_6055959_R#0: mouth ok (line 0.003 m, approach 1.08 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.015 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / sink 
+[verify_stubs] STUB_birchcreek_road_6024742_R#0: mouth ok (line 0.007 m, approach 0.52 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.004 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 0
+[verify_stubs] STUB_park_ridge_boulevard_1224664714_L#0: mouth ok (line 0.002 m, approach 0.82 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.011 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.019
+[verify_stubs] STUB_tuxedo_road_6051501_R#0: mouth ok (line 0.006 m, approach 0.93 %/m); drivable 0.42-15.04 m (holes 0, worst step 0.006 m, grass 0, obstructions 0); barrier span +-7.58 m short 0/304, seat float -0.02 / sink 0.04
+[verify_stubs] STUB_winding_creek_drive_5968105_R#0: mouth ok (line 0.003 m, approach 0.95 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.011 m, grass 0, obstructions 0); barrier span +-7.58 m short 0/304, seat float -0.02 / si
+[verify_stubs] STUB_hemingway_drive_6045093_L#0: mouth ok (line 0.008 m, approach 1.38 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.026 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.0199 / sink
+[verify_stubs] STUB_doreen_road_5955946_L#0: mouth ok (line 0.04 m, approach 1.47 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.033 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / sink 0.1191
+[verify_stubs] curb cut service_576889885_L: PASS
+[verify_stubs] curb cut service_576889897_R: PASS
+[verify_stubs] curb cut service_576889898_R: PASS
+[verify_stubs] curb cut service_576889900_R: PASS
+[verify_stubs] curb cut service_576889906_R: PASS
+[verify_stubs] curb cut service_745284422_L: PASS
+[verify_stubs] curb cut service_576889906_R_56: PASS
+[verify_stubs] curb cut service_567651095_L: PASS
+[verify_stubs] curb cut service_576889892_R: PASS
+[verify_stubs] curb cut service_576889892_R_76: PASS
+[verify_stubs] curb cut service_576889890_R: PASS
+[verify_stubs] curb cut service_576889890_R_95: PASS
+[verify_stubs] curb cut service_576889889_R: PASS
+[verify_stubs] curb cut service_576889888_R: PASS
+[verify_stubs] curb cut service_576889887_R: PASS
+[verify_stubs] curb cut service_1013051647_R: PASS
+[verify_stubs] curb cut service_1013051648_R: PASS
+[verify_stubs] curb cut service_318915680_R: PASS
+[verify_stubs] curb cut service_318915571_R: PASS
+[verify_stubs] curb cut service_577444270_R_722: PASS
+[verify_stubs] curb cut service_577444242_R: PASS
+[verify_stubs] curb cut service_577444238_L: PASS
+[verify_stubs] curb cut service_577444239_L: PASS
+[verify_stubs] curb cut service_577444241_L: PASS
+[verify_stubs] curb cut service_577444237_L: PASS
+[verify_stubs] curb cut service_851357844_L: PASS
+[verify_stubs] curb cut sdcwa_service_road_401663247_L: PASS
+[verify_stubs] curb cut service_577444267_R: PASS
+[verify_stubs] curb cut service_577444268_R: PASS
+[verify_stubs] 26 stub(s), 29 curb cut(s) on track.obj: PASS -> verify_stubs.json
+[verify_pads] J2: PASS  multi-coverage 0.0 m2, seam max 1.2 mm (0 near misses), grass 0, curb over pavement 0, node -0.019 m vs 3DEP, barriers S2 1.083 m, S1 1.083 m
+[verify_pads] J3: PASS  multi-coverage 0.0 m2, seam max 0.7 mm (0 near misses), grass 0, curb over pavement 0, node 0.039 m vs 3DEP, barriers S4 1.077 m, S3 1.086 m
+[verify_pads] J4: PASS  multi-coverage 0.0 m2, seam max 2.4 mm (0 near misses), grass 0, curb over pavement 0, node 0.017 m vs 3DEP, barriers S6 1.086 m, S5 1.078 m
+[ribs] step_jogs   hotspot (3925, -1225): 3, max 3.39 m
+[ribs] step_jogs   hotspot (-3775, -775): 2, max 5.82 m
+[ribs] step_jogs   hotspot (-2125, -925): 2, max 6.25 m
+[ribs] step_jogs   hotspot (-1575, 1025): 2, max 4.75 m
+[ribs] step_jogs   hotspot (2825, -1775): 2, max 2.53 m
+[ribs] step_jogs   gate: 69 riser jogs (a row jump 2 m past the riser's own pace) beyond 20 m; the densest 75 m: 4 at (-1421.0, 1201.0) (limit 5) — a sharp bench or channel drawn as a staircase, read on the built surface
+[ribs] PASS
+[houses] D:\k10-scratch\phase1\r3run\proj\data\track.obj: 153 buildings judged, 0 with no ground under them
+[houses] contact (bottom - lowest ground under the walls): min -0.303 m, max -0.143 m
+[houses] floating (> 0.1 m above): 0 (limit 0); sunken (> 1 m below): 0 (limit 0); buried (roof < 1 m over the highest ground under the walls): 0 (limit 0); lowest roof over that ground 1.598 m
+[houses] the visual lens's buried share (mean ground over the height, foundation included; not gated): {'over_30pct': 12, 'over_50pct': 0, 'p95': 0.321}
+[houses] PASS
+DRIVE TEST san_diego_lake_murray [street forward street]  lap 13.47 km  (10 wheel paths @ 1.0 m)
+  ground on top mid-lane : 8
+  severe steps (>6 cm)  : 0
+  slope kinks >3.0%% /km   : 2.67
+  off-road excursion drops>20cm : 96  (far flare ledges, reported: 107)
+  obstructed stations    : 0
+  => FAIL   (data/drive_test.street.json)
+DRIVE TEST SUMMARY san_diego_lake_murray: street=FAIL race_cw=- race_acw=-   (data/drive_test.json)
+  slope kinks >3.0%% /km   : 2.39
+  off-road excursion drops>20cm : 40  (far flare ledges, reported: 21)
+  obstructed stations    : 0
+  => FAIL   (data/drive_test.line.expansion_fwd.json)
+  LINE fwd: line gate PASS (every key in limit); drive_test's own lap rule FAIL (excursion_drops): soft top 0, excursions 40 (6.36/km), kinks 2.39/km, fold kinks 4
+DRIVE TEST san_diego_lake_murray [line expansion_rev]  lap 6.33 km  (10 wheel paths @ 1.0 m)
+  ground on top mid-lane : 0
+  severe steps (>6 cm)  : 0
+  slope kinks >3.0%% /km   : 2.53
+  off-road excursion drops>20cm : 38  (far flare ledges, reported: 15)
+  obstructed stations    : 0
+  => FAIL   (data/drive_test.line.expansion_rev.json)
+  LINE rev: line gate PASS (every key in limit); drive_test's own lap rule FAIL (excursion_drops): soft top 0, excursions 38 (6.01/km), kinks 2.53/km, fold kinks 0
+DRIVE TEST LINES expansion: fwd=PASS rev=PASS   (drive_test's own lap rule: fwd=FAIL rev=FAIL)   (data/drive_test.expansion.json)
+  => 53 issues
+=================== gate: drive_test --layout race_cw (hard; the declared corridor lane — barrier_missing and obstruction_stations must be 0)
+DRIVE TEST san_diego_lake_murray [race_cw forward race]  lap 13.47 km  (10 wheel paths @ 1.0 m)
+  ground on top mid-lane : 8
+  severe steps (>6 cm)  : 4
+  slope kinks >3.0%% /km   : 6.46
+  off-road excursion drops>20cm : 0  (far flare ledges, reported: 203)
+  obstructed stations    : 0
+  => FAIL   (data/drive_test.race_cw.json)
+DRIVE TEST SUMMARY san_diego_lake_murray: street=FAIL race_cw=FAIL race_acw=-   (data/drive_test.json)
+  => 53 issues
+[no_route] race_cw (built, v2 corridors.race_cw): domain 940 k m2 in 490 tiles of 64 m (2.2 s)
+[no_route] walls: 166038 -> 587369 wall cells, dilated 0.5 m (22.9 s)
+[no_route] reached 138.8 k m2 from AC_START_0 (22.9 s)
+[no_route] race_cw: PASS — leak 0 m2, 0 doors, 0/439 probes reached, 0 blocked spans, 0 spawns unreached (23.0 s)
+=================== gate: drive_test --layout race_acw (hard; the declared corridor lane — barrier_missing and obstruction_stations must be 0)
+DRIVE TEST san_diego_lake_murray [race_acw reverse race]  lap 13.47 km  (10 wheel paths @ 1.0 m)
+  ground on top mid-lane : 4
+  severe steps (>6 cm)  : 6
+  slope kinks >3.0%% /km   : 6.09
+  off-road excursion drops>20cm : 0  (far flare ledges, reported: 231)
+  obstructed stations    : 0
+  => FAIL   (data/drive_test.race_acw.json)
+DRIVE TEST SUMMARY san_diego_lake_murray: street=FAIL race_cw=FAIL race_acw=FAIL   (data/drive_test.json)
+  => 53 issues
+[no_route] race_acw (built, v2 corridors.race_acw): domain 940 k m2 in 490 tiles of 64 m (2.3 s)
+[no_route] walls: 166026 -> 587313 wall cells, dilated 0.5 m (23.2 s)
+[no_route] reached 138.2 k m2 from AC_START_0 (23.3 s)
+[no_route] race_acw: PASS — leak 0 m2, 0 doors, 0/439 probes reached, 0 blocked spans, 0 spawns unreached (23.4 s)
+[fold-fans] pinch rows 763..774 (ROAD lane 2): legs 10.061 / 10.360, midpoint 10.211 — mouth_welds.json levelled
+[fold-fans] pinch rows 1508..1517 (ROAD lane 2): legs 24.471 / 24.418, midpoint 24.444 — mouth_welds.json levelled
+[fold-fans] pinch rows 2315..2324 (ROAD lane 2): legs 108.813 / 109.310, midpoint 109.061 — mouth_welds.json levelled
+[fold-fans] street    rows 751..786: 117 paths, 0 with a step; fine max 0.000, DT max 0.047, race-kerb lip max 0.000, grass-on-top 0 (max 0.000 over), road jumps 0, steep road tris 0, X built [10.2107, 10.2107] vs midpoint 10.2107
+[fold-fans] street    rows 1496..1529: 117 paths, 0 with a step; fine max 0.000, DT max 0.021, race-kerb lip max 0.000, grass-on-top 59 (max 0.006 over), road jumps 0, steep road tris 0, X built [24.4444, 24.4444] vs midpoint 24.4
+[fold-fans] street    rows 2303..2336: 101 paths, 0 with a step; fine max 0.000, DT max 0.018, race-kerb lip max 0.000, grass-on-top 0 (max 0.000 over), road jumps 0, steep road tris 0, X built [109.0615, 109.0615] vs midpoint 109
+[fold-fans] race_cw   rows 751..786: 113 paths, 0 with a step; fine max 0.000, DT max 0.044, race-kerb lip max 0.024, grass-on-top 0 (max 0.000 over), road jumps 0, steep road tris 0, X built [10.2107, 10.2107] vs midpoint 10.2107
+[fold-fans] race_cw   rows 1496..1529: 114 paths, 0 with a step; fine max 0.000, DT max 0.021, race-kerb lip max 0.000, grass-on-top 13 (max 0.003 over), road jumps 0, steep road tris 0, X built [24.4444, 24.4444] vs midpoint 24.4
+[fold-fans] race_cw   rows 2303..2336: 95 paths, 0 with a step; fine max 0.000, DT max 0.018, race-kerb lip max 0.000, grass-on-top 0 (max 0.000 over), road jumps 0, steep road tris 0, X built [109.0615, 109.0615] vs midpoint 109.
+[fold-fans] race_acw  rows 751..786: 113 paths, 0 with a step; fine max 0.000, DT max 0.044, race-kerb lip max 0.024, grass-on-top 0 (max 0.000 over), road jumps 0, steep road tris 0, X built [10.2107, 10.2107] vs midpoint 10.2107
+[fold-fans] race_acw  rows 1496..1529: 114 paths, 0 with a step; fine max 0.000, DT max 0.021, race-kerb lip max 0.000, grass-on-top 13 (max 0.003 over), road jumps 0, steep road tris 0, X built [24.4444, 24.4444] vs midpoint 24.4
+[fold-fans] race_acw  rows 2303..2336: 95 paths, 0 with a step; fine max 0.000, DT max 0.018, race-kerb lip max 0.000, grass-on-top 0 (max 0.000 over), road jumps 0, steep road tris 0, X built [109.0615, 109.0615] vs midpoint 109.
+[fold-fans] PASS: 3 levelled pinch(es) x 3 layout(s)
+  walls     objects    49: no-ground  0.0%  seat-gap median -0.50  p95 -0.13  hovering>0.3m 0 (0.0%)
+  lampposts objects   238: no-ground  0.0%  seat-gap median -3.04  p95 -2.97  hovering>0.3m 0 (0.0%)
+  signposts objects    18: no-ground  0.0%  seat-gap median -0.38  p95 -0.30  hovering>0.3m 0 (0.0%)
+  deck-vs-mountain (tri-exact): median +0.020  p95 +0.022  max +0.255
+  road-over-ground: 12/10785 samples gap > 0.05 m (0.1%)  p95 +0.022 m (gate 0.1 m)
+  => PASS — kn5 matches the audited OBJs
+  kn5_ground_check street: exit 0
+  walls     objects    49: no-ground  0.0%  seat-gap median -0.50  p95 -0.13  hovering>0.3m 0 (0.0%)
+  lampposts objects   238: no-ground  0.0%  seat-gap median -3.04  p95 -2.97  hovering>0.3m 0 (0.0%)
+  signposts objects    18: no-ground  0.0%  seat-gap median -0.38  p95 -0.30  hovering>0.3m 0 (0.0%)
+  deck-vs-mountain (tri-exact): median +0.020  p95 +0.022  max +0.255
+  road-over-ground: 12/10785 samples gap > 0.05 m (0.1%)  p95 +0.022 m (gate 0.1 m)
+  => PASS — kn5 matches the audited OBJs
+  kn5_ground_check race_cw: exit 0
+  walls     objects    49: no-ground  0.0%  seat-gap median -0.50  p95 -0.13  hovering>0.3m 0 (0.0%)
+  lampposts objects   238: no-ground  0.0%  seat-gap median -3.04  p95 -2.97  hovering>0.3m 0 (0.0%)
+  signposts objects    18: no-ground  0.0%  seat-gap median -0.38  p95 -0.30  hovering>0.3m 0 (0.0%)
+  deck-vs-mountain (tri-exact): median +0.020  p95 +0.022  max +0.255
+  road-over-ground: 12/10785 samples gap > 0.05 m (0.1%)  p95 +0.022 m (gate 0.1 m)
+  => PASS — kn5 matches the audited OBJs
+  kn5_ground_check race_acw: exit 0
+  NOT INSTALLED (Kevin never loads a build the machine failed)
+EXIT 1

@@ -124,6 +124,11 @@
       "diffuse": "assets/textures/grass_diffuse.jpg",
       "normal": "assets/textures/grass_normal.jpg"
     },
+    "1GRASS_ROCK": {
+      "diffuse": "textures/sandstone_cut_diffuse.jpg",
+      "normal": "textures/sandstone_cut_normal.jpg",
+      "_doc": "Ledger 0054 P4 (buildings + rock): the north network's cut faces (Mission Gorge s 1475-1560, Jackson north's five south-west walls, and every other auto cut face standing 0.7 m/m or steeper), split out of the ground tiles by tools/rock_faces_blend.py as 1GRASS_ROCK_* (same GRASS physics, same gates; terrain.rock_faces). The tile is Lake Murray's own, drawn by textures/make_sandstone_cut.py (CC0, deterministic): the Stadium Conglomerate / Friars sandstone of the Mission Gorge, tan bedded sandstone with rounded cobbles, 4 m per tile; project-relative, synced in by tools/ship_sd.sh (TRACK_TEXTURES) and ship.json."
+    },
     "GRASS_FAR": {
       "diffuse": "textures/chaparral_far_diffuse.jpg",
       "_doc": "Ledger 0046 fix round (visual verify, 2026-10-12): the far ring wore pbr's stock ground_dry tile, a neutral grey gravel (mean RGB 139/132/122) - Cowles read as bare rock beside the green turf. This is grey-olive sage scrub over tan soil (mean 93/93/66), derived from the owned grass + ground_dry tiles (tracks/san-diego-lake-murray/textures/README.md); project-relative, synced into the workshop by tools/ship_sd.sh (TRACK_TEXTURES)."
@@ -539,6 +544,11 @@
         "_doc": "Ledger 0054 P3 repair round 1 (2026-10-19, the truth lens; Kevin 2026-10-13: 'Why are we changing ridges?'; REALISM: lean in, never eject). Replaces the six hand-declared cut zones of P3 (mission_gorge_cut_1475_1560, jackson_cut_95_165 / 320_485 / 555_630 / 1005_1120 / 1225_1525 — P2's 50 m stretches, measured only on Mission Gorge's south side and Jackson's south-west side): fresh 3DEP showed the real walls run past their ends (planed flat at both end stations of every Jackson zone), stand at ten more places 20-50 m long on all four roads and both sides (97 of 249 stations with a 3 m+ wall kept less than half), and the 45 deg batter held Mission Gorge's ~1.5 m-per-metre rock face to half its height. tools/ground_release.py probes 3DEP beside every piece listed (every probe_step_m, each side, probe_from_curb_m..probe_to_curb_m past the curb) and declares a raise-only cut zone (bank, rails false, College's cut_reach_m / round_m) over every stretch where the real ground stands min_rise_m over the road, padded pad_m, its batter the p90 of the real face's own climb held to docs/ROAD-CONSTRUCTION.md's 1-2 m per metre. Every number is in tools/ground_release.AUTO_DEFAULTS [invented, fleet/GATES-CHANGELOG.md]; the zones and every probe station: data/ground_release.auto_cuts.json.",
         "pieces": ["A", "B", "C", "D"]
       }
+    },
+    "rock_faces": {
+      "_doc": "Ledger 0054 P4 (buildings + rock): after the kn5 prep and the thinning, tools/rock_faces_blend.py takes every ground triangle inside an auto-cut zone's band (data/ground_release.auto_cuts.json: the piece's declared side, from the curb to cut_reach_m + round_m + 6 m) that stands slope_min_m_per_m or steeper and moves it into its own 1GRASS_ROCK_<tile> mesh, so the cut wears texture_overrides['1GRASS_ROCK'] (the sandstone / conglomerate tile) while keeping the GRASS physics and every ground gate. 0.7 m per metre (35 deg) is the angle of repose of loose earth: steeper ground beside these roads is cut rock, not a grassed bank (the real faces climb 1.1-1.6, auto_cuts face_p90_m_per_m). The split lands at the toe and the top rounding by that one rule; a zone whose measured real rise is under 3 m is a bank and gets no rock; rock patches under 40 m2 go back to grass, grass holes under 60 m2 (the lattice's bench rows across a wall) become rock (fleet/GATES-CHANGELOG.md 2026-10-26). enabled false = the step is a no-op.",
+      "enabled": true,
+      "slope_min_m_per_m": 0.7
     },
     "terrain_band_m": 22.0,
     "clamp_corridor_m": 20.0,

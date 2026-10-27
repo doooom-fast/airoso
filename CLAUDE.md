@@ -6,6 +6,13 @@ retired and tombstoned — never work in them, never build from them. This repo 
 k10-track-agents' full history (which itself absorbed prodrive-ac-builder), so nothing was lost.
 `prodrive-agents` is the telemetry product — unrelated, leave it alone.
 
+**Where it lives (2026-10-27):** GitHub `doooom-fast/airoso` (private) — the ONE remote; astra and every
+machine clone this. `*.blend` is in Git LFS (`loop.blend` ~160 MB). History was rewritten 2026-10-27 to drop 17 old
+`.blend` copies and move the current one to LFS, so commit IDs quoted in the ledger before that date don't match;
+the pre-rewrite repo is kept byte-exact at `D:/k10-track-archive/2026-10-27_airoso_before_lfs.git` (look old IDs up
+there). Release packages still publish from `k10-motorsports/k10-san-diego` (docs/PUBLISHING.md). The `engine`
+remote (local k10-track-agents) is history only.
+
 **The V3 model (docs/V3-PLAN.md):** the engine emits first drafts; Claude hand-authors geometry
 (Blender / readable intermediates); deterministic gates judge every build; Kevin's drive test is
 the only ground truth. Do not write kn5 generators, do not reverse-engineer binaries, do not

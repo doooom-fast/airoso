@@ -8,7 +8,7 @@ INSTALL
   layout; that is gone — the San Diego Freeway Network is its own download beside this one.
 
 NEEDS
-  Custom Shaders Patch 0.2.x. The vegetation (CSP TreeFX, ~15,000 plants) and the ~240 street
+  Custom Shaders Patch 0.2.x. The vegetation (CSP TreeFX, ~21,000 plants) and the ~320 street
   lights are CSP features; without it you get the bare road and no night lighting.
   Pure or Sol recommended.
 
@@ -23,9 +23,21 @@ WHAT IT IS
   AI drive — a line computed from the road in that version's own lane, NOT recorded in game, so AI
   behaviour is unverified.
 
+  Since v0.19.0 Free Roam also carries the north network: 6.4 km of two-way road joined to the loop
+  at both ends - Waring Rd from College/Navajo to Princess View Dr, Princess View down into
+  Grantville, Mission Gorge Rd east through the gorge under Cowles Mountain, and Jackson Dr north up
+  the canyon back to Navajo - about 19.9 km of road in all. The 24 side streets off those roads are
+  closed by concrete K-rail; the three new corners (Waring/Princess View, Princess View/Mission
+  Gorge, Mission Gorge/Jackson) are real crossroads with curb returns. v0.19.1 dresses it: street
+  lamps (Jackson's open canyon stays dark, as the real one is), large-arrow signs at the tight
+  corners, the real rock cut walls on Mission Gorge and Jackson, trees placed from the aerial, and
+  the buildings OpenStreetMap maps along them. The Speedways stay on the 13.5 km loop.
+
 VERSIONS (pick one in Content Manager)
   Lake Murray Free Roam        — Lake Murray as it is: the open two-way streets, raised landscaped medians
-                               on College and Navajo, the side streets open, no race furniture. Lap
+                               on College and Navajo, the side streets open, no race furniture, plus
+                               the 6.4 km north network (Waring, Princess View, Mission Gorge, Jackson
+                               north) joined to the loop at both ends - about 19.9 km of road. Lap
                                clockwise from the line on Alvarado Rd.
   Lake Murray Speedway         — the same 13.5 km as a one-way race track: Alvarado westbound, College
                                northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest.

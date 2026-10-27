@@ -440,7 +440,9 @@ ship_make_map() {
   (cd "$AIROSO" && python tools/make_map.py "$PROJ")
 }
 ship_treefx() {
-  step "ship: TreeFX palms / street trees / scrub (tools/make_treefx.py)"
+  step "ship: TreeFX palms / street trees / scrub + the north network by zone (tools/make_treefx.py; the loop's cells byte-identical, the added cells per the aerial bins, caps by area)"
+  # P4 trees (ledger 0054 P4 step 3 / A9): the loop's and the north's planted areas, densities and caps are printed here
+  # before anything is written; data/treefx.report.json is the record (per zone, per species, the north per piece)
   (cd "$AIROSO" && python tools/make_treefx.py "$PROJ")
 }
 ship_race_scenery_gate() {

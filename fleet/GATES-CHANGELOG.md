@@ -3206,3 +3206,86 @@ connector's left side, s 1459-1624), thin triangles 228 -> 155 — 139 -> 99 of 
 row, which is kept off the rotation by the 0.10 m fence (its zigzag boundary with the batter is still visible at the foot:
 `stills/p4_jackson_toe.jpg`, honestly). Tests: `tests/run_tests.py` 921 passed, 0 failed (4 new in
 `tests/ac/test_pbr_rock_row.py`).
+
+
+## 2026-10-26 — Lake Murray expansion P4 trees: the north network planted by zone from the aerial bins, caps by area, GrassFX confirmed (ledger 0054, P4 step 3 + 5)
+
+**P4 trees.** `tools/make_treefx.py` plants the heightfield cells P2's growth added (the `grid_grow` block of
+`heightfield.meta.json`), opt-in by `track.config.json scenery.treefx` (San Diego only; a project without the key is
+today's make_treefx, byte for byte). The loop's own cells keep their numbering and their trees: the v0.19.0 reference's
+`trees.txt` (D:/k10-scratch/phase1/r3run, 15,763 lines) is the first 15,763 lines of this build's, byte for byte. No
+gate threshold changed; nothing is bypassed. Every number this step invents:
+
+| Number | Value | Why |
+|---|---|---|
+| `NORTH_TREE_PER_CANOPY` | 2.5 [invented] | p(tree per 10 m sub-cell) = 2.5 x the aerial bin's canopy share (the 10-40 m band's NAIP CIR pixels, `source/expansion/aerial__veg_bins.json`): one ~50 m2 crown per 100 m2 sub-cell at a 40 % canopy. Waring's 5-14 % canopy lands at 0.13-0.35, the loop's own yard-band rate (`FILL_BANDS` 0.30), so the two sides of J1 are planted by the same rule. |
+| `NORTH_BUSH_PER_SCRUB` / `NORTH_BUSH_FLOOR` | 2.0 / 0.05 [invented] | p(bush) = 2.0 x the bin's scrub share, + 0.05 under any canopy (understorey). |
+| `NORTH_P_TREE_MAX` / `NORTH_P_SUM_MAX` | 0.85 / 0.95 [invented] | one plant per sub-cell at most (the loop's rule); a few cells stay open even in a 69 % canopy. |
+| `NORTH_FAR_FROM_M` / `NORTH_FAR_FACTOR` | 120 m / 0.5 | past 120 m from the pavement the rate halves, exactly as the loop's own far band (120-200 m) halves its slope band. |
+| the caps | the loop's density x the north's planted area x `cap_scale` (1.0) | EXPANSION-PLAN A9 / Risk 14: "tree caps scale with area". The loop's caps (3,500 / 9,000) over its own in-band sub-cells (471.8 ha, 47,179 sub-cells of 100 m2: 7.29 trees/ha, 18.88 bushes/ha) set the north's caps over its 201.9 ha: 1,498 trees / 3,852 bushes. Thinning is uniform over the north alone (hash salt 9, the loop's own), so the zones keep their relative density; the loop's thinning never sees a north candidate. `scenery.treefx.cap_scale` is Kevin's lever after Drive 2 (the bins imply 8,900 trees: 5.9x). |
+| `NORTH_ROCK_RISE_M` / `NORTH_ROCK_REACH_M` / `NORTH_ROCK_PAD_M` | 3 m / 20 m / 5 m | a REAL wall of 3 m or more is bare rock (EXPANSION-PLAN V7's own threshold), read from P3's measurement of record (`source/expansion/p3-proofs/measure_p3.json` `walls.real_walls_ge_3m`: 16 stretches on Mission Gorge's south side and Jackson's SW side, the six walls Kevin keeps among them); nothing stands from the curb to 20 m along them (V7: the walls stand 12-20 m off), the stretch padded by the measurement's 5 m station. The lower banks (the 35 auto-cut zones) are soil and get their scrub. |
+| `NORTH_MEDIAN_TREE_STEP_M` / `NORTH_MEDIAN_TREE_MIN_W_M` | 12 m / 2.5 m [invented] | A2: Waring's planted median has trees at st 250-550 (`scenery.treefx.median_trees`): one small tree (PepperV1 0.45-0.65, Oak3 0.40-0.55) every 12 m down the island's middle where it is 2.5 m or wider. |
+| `NORTH_MEDIAN_INSET_M` / `NORTH_MEDIAN_END_CLEAR_M` | 0.5 m / 6 m | a median tree stands 0.5 m inside the island's outline and 6 m (author_expansion `NOSE_M`) from each nose. The islands' LOW planting is not make_treefx's: `author_median_blend` already plants every raised island, the north pieces' included (`export_scatter_blend` ships it as `median_planting`, 1,102 plants in v0.19.0, the Fontaine nose among them), so make_treefx adds no bush there — a first draft of this step doubled them and was caught on the dry-run still. |
+| pads, pavement, K-rail, curbs, sidewalks | 0 plants | the J2-J4 pads are excluded by their built outlines (`data/pads.built.json`, + `APRON_PLANT_CLEAR_M` 1 m, the apron rule); every pavement including the 24 stubs is in the corridor field, and the fill starts 6 m past the curb (`FILL_BANDS`), which covers the walks and the K-rail (15 m out on the stub itself). |
+| species per zone | `scenery.treefx.zones`, first match wins | A9 / dossier §6: Waring suburb mix; Princess View, the gorge sides and Jackson's canyon `north_canyon_trees` (Oak3 / Pine_Aleppo / Gum) over `north_scrub` (Sage / Yucca / Bush / Bush3 / Agave); the river belt C L 300-1200 `north_riparian_trees` (SycamoreV1 / V2 / Oak3); the apartment frontage C R 500-1000 `north_street_trees`; E1 on Jackson D L 1000-1400 `north_gum_belt` (Gum 5 : Oak3 1 — the library's Gum is the eucalyptus until Street View confirms; 0040 stays the later species pass). No palms in the canyon. |
+| `verify_race --scenery-only` | unchanged, PASS | the north zones are in `plan(all_species=True)`, so G judges them before Blender as well as the written file. |
+
+**GrassFX (P4 step 5).** No change was needed: `scripts/ac/ext_config.py` already lists every `1GRASS*` group of the
+built road kn5's gate OBJ (`data/track.obj`) and nothing else; the plan's "4 -> 5-6 tiles" is superseded by the
+balanced bisection (ledger 0046) + P3's thinning: **16 physical tiles, `1GRASS_0` .. `1GRASS_15`**, in both
+`GRASS_MESHES` and `GRASS_MATERIALS`, the far ring (`GRASS_FAR_*`) in neither. `[TREES] SURFACE_MATERIALS` is the same
+16 tiles + `1ROAD_road_mat`, read off the same OBJ (the plan's "hard-coded at :32" was already retired in 0046).
+
+**Chain.** `tools/ship_sd.sh` and `tools/ship_track.sh` / `ship.json` sync the two research files in
+(`source/expansion/aerial__veg_bins.json`, `source/expansion/p3-proofs/measure_p3.json`: `TREEFX_RESEARCH` /
+`sync_in.optional`) and `data/treefx.report.json` out (per zone, per species, the north per piece, the areas, the caps);
+the make_treefx step prints the loop's and the north's planted areas, densities and caps before anything is written.
+The step title changed in both chains together (parity test green).
+
+**Tests** (`tests/tools/test_make_treefx_plan.py`, +7): the config plants the added cells and moves nothing of the
+loop's (every `fill_*` entry identical with and without it; `north_*` only with it, 6 m off every pavement, never in the
+loop's block); density follows the bins per side and station (a bare bin plants nothing, a scrub-only side gets no
+trees); nothing on a pad or a measured wall, a bank under 3 m keeps its plants; median trees only where declared, on
+raised planted medians only, never a duplicate of the assembler's low planting; the caps scale with area at the loop's density and `cap_scale` scales
+them; `build` writes the zones and the report; a declared zoning with a missing bins file is an error.
+
+### Measured (the rehearsal, D:/k10-scratch/p4/trees: fresh workshop copy minus build/release + fresh engine-july copy, nothing pending in the mirror, FULL chain, `--no-install`; `gates.txt` kept as `source/expansion/p4-proofs/gates_trees.txt`)
+
+Every v0.19.0 gate number (the floor, r3run) is unchanged — the only built file that differs is `trees.txt` (and the
+tree-count comment in `ext_config.ini`; the ini is otherwise byte-identical to the reference's, lights included):
+
+| | v0.19.0 reference (r3run) | P4 trees rehearsal |
+|---|---|---|
+| road kn5 | 89,815,220 B | 89,815,866 B (+646 B, run to run; ceiling 145 MB) |
+| 1GRASS tiles / GRASS_FAR after the thinning | 16 (max 29,695 v) / 4 (max 38,122 v) | 16 (max 29,693 v) / 4 (max 38,122 v) |
+| verify_mouths / verify_stubs / verify_pads | 32 / 26 + 29 / J2-J4 PASS | the same (seams 1.2 / 0.7 / 2.4 mm, nodes -0.019 / 0.039 / 0.017 m) |
+| verify_signs | 19 PASS (M3 / M4 skipped until P4 signs) | 19 posts, 19 plates, PASS |
+| rib_check step jogs (densest 75 m) | 69 (4, limit 5) | 69 (4) PASS |
+| house_seat_check | 0 floating / sunken / buried | the same, PASS |
+| drive_test street: soft top / severe / kinks / excursions | 8 / 0 / 2.67 / 96 | 8 / 0 / 2.67 / 96 |
+| drive_test --line fwd / rev: kinks, excursions | 2.39 / 2.53, 40 / 38, PASS both | the same, PASS both |
+| race_cw / race_acw: severe / kinks / barrier_missing | 4 / 6, 6.46 / 6.09, 0 | the same |
+| audit street / race_cw / race_acw | 53 / 53 / 53 | the same |
+| no_route built race_cw / race_acw | PASS 0/439, 138.8 / 138.2 k m2 | the same |
+| verify_fold_fans | PASS 3 x 3 | PASS 3 x 3 |
+| kn5_ground_check street / race_cw / race_acw | PASS x 3 (lampposts 0.0 %, road-over-ground 12/10785) | PASS x 3, the same numbers |
+| CSP `[LIGHT_n]` blocks / `[GRASS_FX]` | 238 / 16 tiles, no far ring | 238 (byte-identical blocks) / 16 tiles `1GRASS_0`..`1GRASS_15`, no far ring |
+| `[TREES] SURFACE_MATERIALS` | 16 tiles + `1ROAD_road_mat` | the same |
+| verify_race --scenery-only (plan, then the written file) | 15,739 trees, 0 in a lane / wall | 21,171 trees, 0 in a lane / wall, 392 beside the race road; nearest 0.654 m (the same median plant as before) |
+| trees.txt | 15,763 lines, 1,129,790 B | 21,219 lines, 1,528,168 B; **the first 15,763 lines byte-identical** |
+| TreeFX instances | 15,739 | 21,171 (+5,432: the north's 5,406 fill + 26 median trees) |
+
+Per species, reference -> this build (the delta is the north's): Agave 831 -> 1,125; Bush 2,967 -> 3,912; Bush3 1,330
+-> 1,905; Gum 1,123 -> 1,423; Oak3 704 -> 1,366; PalmV1 679 -> 710; PalmV2 274 / PalmV3 102 unchanged; PepperV1 620 ->
+681; Pine_Aleppo 765 -> 1,173; Sage 4,259 -> 5,725; SycamoreV1 407 -> 497; SycamoreV2 66 -> 90; Yucca 1,612 -> 2,188.
+Per piece (`data/treefx.report.json`): **A Waring 691** (Bush 233, Bush3 181, Sage 165, PepperV1 35 — 26 of them the
+median trees — Oak3 28, SycamoreV1 22, PalmV1 14, Gum 7, Pine 6); **B Princess View 1,124** (Sage 367, Bush 184, Yucca
+174, Bush3 107, Agave 93, Oak3 90, Pine 69, Gum 40); **C Mission Gorge 1,965** (Sage 515, Bush 299, Oak3 247, Yucca 220,
+Bush3 186, Pine 143, Agave 126, Gum 95, SycamoreV1 67, PepperV1 26, SycamoreV2 24, PalmV1 17); **D Jackson north 1,576**
+(Sage 394, Oak3 297, Bush 196, Pine 189, Yucca 182, Gum 158, Bush3 85, Agave 75); the 150-200 m ring the growth added
+around the loop's own roads 76. The loop's planted area 471.8 ha (47,179 in-band sub-cells; 7,263 / 18,114 candidates,
+kept 0.482 / 0.497 to the caps: 7.29 trees/ha, 18.88 bushes/ha); the north's 201.9 ha (20,195 sub-cells): the bins imply
+8,900 trees / 3,988 bushes, the caps 1,498 / 3,852, kept 1,550 / 3,856 (the hash thinning lands within 4 % of a cap);
+dropped on a pad 55, on a measured wall 160. The chain ends `NOT INSTALLED` on the same two reds v0.19.0 carries
+(Free Roam's own soft-top / excursion rule and the Speedways' own drive test; `--force-install` under 0047's rule, no key
+worse). Tests: the whole suite, `tests/run_tests.py`.

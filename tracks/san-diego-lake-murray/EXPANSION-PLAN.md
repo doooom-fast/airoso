@@ -441,6 +441,14 @@ Steps 2–8 can start now on a branch off the 0046 branch, and get rebased after
 5. **GrassFX tiles regenerated:** `GRASS_MESHES` goes from 4 to 5–6.
 6. **Map (A12).**
 
+> **2026-10-26: steps 3 + 5 built and rehearsed on a branch (ledger 0054 "P4 trees"; one of four parallel P4 pieces,
+> merged by the integration agent).** `make_treefx` plants the grown cells by zone (`scenery.treefx`), the density from
+> P0's aerial bins, the caps at the loop's density over the north's own area (`cap_scale` is the lever), nothing on a
+> pad, a measured wall, a pavement or a terracotta / painted median; Waring's median trees at st 250–550 (A2). The
+> loop's trees.txt is byte for byte v0.19.0's. Step 5 needed no change: the writer already lists every physical
+> `1GRASS` tile (16 since 0046's balanced tiling + P3's thinning, not 5–6) and no far ring; the "hard-coded at :32"
+> surface list was retired in 0046 (read off the gate OBJ).
+
 **Done when:** the Drive-2 gates pass and you have driven it.
 
 ### P5 — Release

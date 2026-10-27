@@ -1,0 +1,126 @@
+{
+ "_doc": "tools/make_treefx.py: what trees.txt holds (counts per zone and per species; the north network per piece per species, its planted area, the loop's density and the area-scaled caps \u2014 ledger 0054 P4 / A9)",
+ "total": 21171,
+ "per_zone": {
+  "palms": 891,
+  "trees": 411,
+  "scrub": 991,
+  "median_planting": 1102,
+  "fill_yard_trees": 1663,
+  "fill_yard_bushes": 1569,
+  "fill_slope_trees": 1775,
+  "fill_slope_bushes": 7337,
+  "north_suburb_trees": 88,
+  "north_suburb_bushes": 837,
+  "north_canyon_trees": 1214,
+  "north_scrub": 3019,
+  "north_riparian_trees": 105,
+  "north_street_trees": 70,
+  "north_gum_belt": 73,
+  "north_median_trees": 26
+ },
+ "per_species": {
+  "Agave.bin": 1125,
+  "Bush.bin": 3912,
+  "Bush3.bin": 1905,
+  "Gum.bin": 1423,
+  "Oak3.bin": 1366,
+  "PalmV1.bin": 710,
+  "PalmV2.bin": 274,
+  "PalmV3.bin": 102,
+  "PepperV1.bin": 681,
+  "Pine_Aleppo.bin": 1173,
+  "Sage.bin": 5725,
+  "SycamoreV1.bin": 497,
+  "SycamoreV2.bin": 90,
+  "Yucca.bin": 2188
+ },
+ "rejected_in_corridor": 19,
+ "surface_materials": "1GRASS_0_mat, 1GRASS_1_mat, 1GRASS_2_mat, 1GRASS_3_mat, 1GRASS_4_mat, 1GRASS_5_mat, 1GRASS_6_mat, 1GRASS_7_mat, 1GRASS_8_mat, 1GRASS_9_mat, 1GRASS_10_mat, 1GRASS_11_mat, 1GRASS_12_mat, 1GRASS_13_mat, 1GRASS_14_mat, 1GRASS_15_mat, 1ROAD_road_mat",
+ "north": {
+  "area_loop_m2": 4717900,
+  "area_north_m2": 2019500,
+  "loop_density_per_ha": {
+   "trees": 7.287,
+   "bushes": 18.877
+  },
+  "caps": {
+   "trees": 1498,
+   "bushes": 3852
+  },
+  "aerial_implied": {
+   "trees": 8900,
+   "bushes": 3988
+  },
+  "kept": {
+   "trees": 1550,
+   "bushes": 3856
+  },
+  "drops": {
+   "pad": 55,
+   "rock": 160
+  },
+  "per_piece": {
+   "A": {
+    "PepperV1.bin": 35,
+    "SycamoreV1.bin": 22,
+    "Pine_Aleppo.bin": 6,
+    "Oak3.bin": 28,
+    "Gum.bin": 7,
+    "PalmV1.bin": 14,
+    "Sage.bin": 165,
+    "Bush3.bin": 181,
+    "Bush.bin": 233
+   },
+   "ring": {
+    "Pine_Aleppo.bin": 1,
+    "SycamoreV1.bin": 1,
+    "Bush3.bin": 16,
+    "Sage.bin": 25,
+    "Bush.bin": 33
+   },
+   "C": {
+    "Bush.bin": 299,
+    "Bush3.bin": 186,
+    "Sage.bin": 515,
+    "Oak3.bin": 247,
+    "Gum.bin": 95,
+    "Pine_Aleppo.bin": 143,
+    "Yucca.bin": 220,
+    "Agave.bin": 126,
+    "SycamoreV2.bin": 24,
+    "SycamoreV1.bin": 67,
+    "PalmV1.bin": 17,
+    "PepperV1.bin": 26
+   },
+   "D": {
+    "Oak3.bin": 297,
+    "Pine_Aleppo.bin": 189,
+    "Gum.bin": 158,
+    "Bush.bin": 196,
+    "Sage.bin": 394,
+    "Agave.bin": 75,
+    "Bush3.bin": 85,
+    "Yucca.bin": 182
+   },
+   "B": {
+    "Pine_Aleppo.bin": 69,
+    "Oak3.bin": 90,
+    "Gum.bin": 40,
+    "Sage.bin": 367,
+    "Yucca.bin": 174,
+    "Agave.bin": 93,
+    "Bush.bin": 184,
+    "Bush3.bin": 107
+   }
+  },
+  "cap_scale": 1.0,
+  "per_piece_total": {
+   "A": 691,
+   "ring": 76,
+   "C": 1965,
+   "D": 1576,
+   "B": 1124
+  }
+ }
+}

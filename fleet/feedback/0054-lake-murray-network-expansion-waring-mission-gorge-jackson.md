@@ -51,7 +51,7 @@ the new roads is a candidate for a later phase.
 
 ## Status
 
-**Open — v0.19.0 INSTALLED 2026-10-20 (Drive 1; Kevin 2026-10-26: "the barriers look great"); P4 trees built and rehearsed on a branch 2026-10-26, not merged** (see "P4 trees" at the end: the north network planted by zone from the aerial bins at the loop's density, Waring's median trees, GrassFX confirmed at 16 tiles; every v0.19.0 gate number unchanged; the other three P4 pieces run in parallel). Was: **Open — P3 repaired a third time and rehearsed again on the branch 2026-10-19, v0.19.0, not installed** (see "P3 repair round 3" at the end: the ground thinned before the export without moving a point, the road model back to about 90 MB; the lamp-post check finds each lamp's own foot; the J1 question for Kevin still open). Was: **Open — P3 repaired a second time and rehearsed again on the branch 2026-10-19, v0.19.0, not installed** (see "P3 repair round 2" at the end: Jackson's painted median and Princess View's centre lane put where the aerial shows them, three raised islands added or moved to their real places, Mission Gorge's south rock face raised 0.3-0.5 m, the model export's duplicate barrier piece fixed; the three existing layouts no worse than v0.18.1; the J1 question for Kevin still open). Was: **Open — P3 repaired and rehearsed again on the branch 2026-10-19, v0.19.0, not installed** (see "P3 repair round 1" at the end: the three checks' refusals fixed at their causes — the drive test's late exemption removed and its verdict written as it works, kn5_ground_check run on all three layouts, every real wall beside the new roads kept, the holes in the hillside closed, the corners on the real ground, Glenroy St's south-west leg and Doreen Rd stubbed; the three existing layouts no worse than v0.18.1; one question for Kevin: tilt the College/Navajo crossroads to its real slope?). Next: Kevin's Drive 1, then P4 dressing. Was: **Open — P3 (the north roads) built and rehearsed on a branch 2026-10-19, v0.19.0, not installed** (refuted by three checks; see "P3" at the end: four roads, three junction pads, two permanent welds, 24 barrier-closed side streets, six cut slopes kept; every gate of the three existing layouts no worse than v0.18.1; the new roads driven both ways PASS). Next: Kevin's Drive 1, then P4 dressing. Was: **Open — P2 (the ground over the expansion) done on a branch 2026-10-14** (see "P2" at the end: the grown heightfield, the pin's 37 / 26 and the re-keyed cache in one change; the tiers planned over the held north network; 3DEP fetched; the existing three layouts byte-identical to v0.18.0 on every drive, mouth and route gate; the loop's ground within 150 m unchanged except beside the two weld mouths; six cut-wall stretches listed for P3's hand authoring; the low clause restated). Was: **Open — P1 done on a branch 2026-10-14, after a fix round** (see "P1 fix round" at the end: both new mouths pass verify_mouths, J1's R 30 return is built as apron AP1 to v1526.3, no road lies over another at either mouth, no step over 6 cm at J5 in any layout on the real wheel paths, both Speedways sealed; the existing three layouts equal to v0.18.0 key for key). Was: **Open — P1 (the readable intermediate, the numbered map, the J1 / J5 weld rehearsal) done on a branch 2026-10-14** (refuted: J5 failed verify_mouths, drive_test still read 6-8 cm steps at J5). Was: **Open — P0 (data, no geometry) done on a branch 2026-10-14** (see "P0" at the end: guarded OSM + buildings, `north`
+**Open — v0.19.0 INSTALLED 2026-10-20 (Drive 1; Kevin 2026-10-26: "the barriers look great"); P4 (lamps, signs + map, trees + GrassFX, buildings + rock) INTEGRATED on one branch as v0.19.1 2026-10-26, the full rehearsal in flight, not installed** (see "P4 — dressing, integrated" at the end). Was: **P4 trees built and rehearsed on a branch 2026-10-26, not merged** (see "P4 trees" at the end: the north network planted by zone from the aerial bins at the loop's density, Waring's median trees, GrassFX confirmed at 16 tiles; every v0.19.0 gate number unchanged; the other three P4 pieces run in parallel). Was: **Open — P3 repaired a third time and rehearsed again on the branch 2026-10-19, v0.19.0, not installed** (see "P3 repair round 3" at the end: the ground thinned before the export without moving a point, the road model back to about 90 MB; the lamp-post check finds each lamp's own foot; the J1 question for Kevin still open). Was: **Open — P3 repaired a second time and rehearsed again on the branch 2026-10-19, v0.19.0, not installed** (see "P3 repair round 2" at the end: Jackson's painted median and Princess View's centre lane put where the aerial shows them, three raised islands added or moved to their real places, Mission Gorge's south rock face raised 0.3-0.5 m, the model export's duplicate barrier piece fixed; the three existing layouts no worse than v0.18.1; the J1 question for Kevin still open). Was: **Open — P3 repaired and rehearsed again on the branch 2026-10-19, v0.19.0, not installed** (see "P3 repair round 1" at the end: the three checks' refusals fixed at their causes — the drive test's late exemption removed and its verdict written as it works, kn5_ground_check run on all three layouts, every real wall beside the new roads kept, the holes in the hillside closed, the corners on the real ground, Glenroy St's south-west leg and Doreen Rd stubbed; the three existing layouts no worse than v0.18.1; one question for Kevin: tilt the College/Navajo crossroads to its real slope?). Next: Kevin's Drive 1, then P4 dressing. Was: **Open — P3 (the north roads) built and rehearsed on a branch 2026-10-19, v0.19.0, not installed** (refuted by three checks; see "P3" at the end: four roads, three junction pads, two permanent welds, 24 barrier-closed side streets, six cut slopes kept; every gate of the three existing layouts no worse than v0.18.1; the new roads driven both ways PASS). Next: Kevin's Drive 1, then P4 dressing. Was: **Open — P2 (the ground over the expansion) done on a branch 2026-10-14** (see "P2" at the end: the grown heightfield, the pin's 37 / 26 and the re-keyed cache in one change; the tiers planned over the held north network; 3DEP fetched; the existing three layouts byte-identical to v0.18.0 on every drive, mouth and route gate; the loop's ground within 150 m unchanged except beside the two weld mouths; six cut-wall stretches listed for P3's hand authoring; the low clause restated). Was: **Open — P1 done on a branch 2026-10-14, after a fix round** (see "P1 fix round" at the end: both new mouths pass verify_mouths, J1's R 30 return is built as apron AP1 to v1526.3, no road lies over another at either mouth, no step over 6 cm at J5 in any layout on the real wheel paths, both Speedways sealed; the existing three layouts equal to v0.18.0 key for key). Was: **Open — P1 (the readable intermediate, the numbered map, the J1 / J5 weld rehearsal) done on a branch 2026-10-14** (refuted: J5 failed verify_mouths, drive_test still read 6-8 cm steps at J5). Was: **Open — P0 (data, no geometry) done on a branch 2026-10-14** (see "P0" at the end: guarded OSM + buildings, `north`
 appended with full/medium/short byte-identical, config per D2, `grid_grow` + frame pin + cache remap proven; the grown
 grid, the pin's offsets and the re-keyed cache land together in P2). Next: P1, the readable intermediate. Was: **Open — planned 2026-10-13** (`tracks/san-diego-lake-murray/EXPANSION-PLAN.md`, revision 2 after an independent critic; place facts in `DOSSIER-EXPANSION-NORTH.md`). Kevin's answers to D1-D4 pending (D3 amends law L3: needs his explicit yes). Was: **Open — research and plan first** (dossier-style: routes, junctions with the loop, elevation and the gorge,
 widths and medians off the aerial, terrain extent, layouts, budget, gates), then the build after v0.18.x lands
@@ -1226,3 +1226,75 @@ Free Roam at J1 with no arrow, the three maps.
 - Speed-limit plates (A8: Waring 35/40, Mission Gorge 55) and the W1-7 second-pass devices are not built; the rule still
   builds W1-6 only.
 
+## P4 — dressing, integrated → Drive 2, v0.19.1 (2026-10-26; branch `worktree-wf_566e8616-71e-5` of k10-track-agents, off airoso main 1b5a6b3; not installed)
+
+The four P4 pieces built in parallel are one branch: lamps (`worktree-wf_566e8616-71e-1`, fb4569f), buildings + rock
+(`-4`, 3fde21a), trees + GrassFX (`-3`, 364699d) and signs + map (`-2`, 9e2e72e), merged in that order onto airoso main
+with every conflict resolved as a union of both sides' intent:
+
+- `tools/ship_sd.sh`: one chain in the order the pieces need — the lamps inside the assembler (draft stage), the rock
+  faces inside the prep phase after the I-8 pavement and before the split, the signs AFTER the race furniture on every
+  ship (the signs branch moved them there; `--skip-blend` included), the map and TreeFX after the exports, then the
+  gates; the sync-in list carries the lamp research, the two building caches, the sandstone pair and the trees'
+  research; the sync-out list carries `lights_ini_check.json`, `rock_faces.json` and `treefx.report.json`.
+  `tools/ship_track.sh` and `ship.json` match (parity tests green; `steps.draft` loses `signs`, `steps.author` gains it
+  after `race_verify`).
+- `track.config.json`: `scenery.streetlights.expansion`, `scenery.treefx`, `terrain.rock_faces`, the `1GRASS_ROCK`
+  texture override and the Speedways' `map: lap` all land; **version 0.19.1**.
+- `tools/place_signs.py` / `tools/verify_race.py`: the signs rewrite carries the lamps' `lamp_bases_xz` reads (the
+  pieces' posts have their own road-ward); `build_loop_blend.py` carries both the lamp planner and the two-band
+  buildings pass; `fleet/GATES-CHANGELOG.md` and this ledger keep the four "P4 <name>" sections in merge order.
+- `engine-july` mirror: the union is ONE file, `scripts/ac/pbr.py` (the `1GRASS_ROCK` row; `engine-july-snapshot/
+  PENDING-MIRROR.md5` 92569ac8… → 79baf515…). No other mirrored file was edited by any piece.
+
+**Texts (P5 is Kevin's click, not this branch's):** Free Roam's `ui_description`, the track-level text and both
+release READMEs (`release/full`, `release/cc0`, the trees README) now carry the north network — Waring 980 m, Princess
+View 1,110 m, Mission Gorge 2,276 m, Jackson north 2,004 m = 6.4 km joined to the 13.5 km loop at J1 and J5, about
+19.9 km of road in Free Roam — and P4's dressing; the plant / lamp counts updated (~21,000 / ~320).
+
+**Tests:** `tests/run_tests.py` on the merged tree: 955 passed, 2 failed before the line-ending fix — the two md5 tests
+(`test_engine_july_mirror_is_byte_identical`, `test_snapshot_copies_match_their_manifest_and_stay_small`) read CRLF
+bytes in this `core.autocrlf=true` checkout; with the snapshot copies and their live counterparts rewritten to the line
+ending the manifest md5s were taken on (working tree only; `git diff` empty) all three md5 tests pass. The suite on
+the final commit was re-run as the rehearsal started (`D:/k10-scratch/p4/integrate/tests_final.log`).
+
+**Rehearsal (owed at the time of this entry):** the FULL chain, `--no-install`, from `D:/k10-scratch/p4/integrate/run.sh`
+(SHIP_PROJ = a fresh copy of k10-sd-v021/project minus build/release, ENG = a fresh engine-july + the snapshot's
+`pbr.py`, AIROSO = this worktree) was running (step 15 of ~50, "author: seat the terrain") when this entry was
+written. Its proof — every v0.19.0 gate number no worse (Free Roam soft top 8 / severe 0 / kinks 2.67 / edge drops 96 /
+audit 53; Speedway / Reverse severe 4 / 6, kinks 6.46 / 6.09, barrier_missing 0, no_route 0/439 both; new roads' lines
+PASS 2.39 / 2.53, 40 / 38; verify_mouths 32, verify_stubs 26 + 29, verify_pads J2–J4, verify_signs 19 → 29, fold fans,
+rib_check 69, house_seat PASS, kn5_ground_check x3 with 323 lamps), the road kn5 under 145 MB with the deltas per piece
+(lamps +1.56 MB, buildings + rock +2.9 MB, trees and signs 0 on the road kn5: expected ≈ 94.3 MB), `[LIGHT_N]` 323,
+TreeFX ≈ 21,171, `[GRASS_FX]` 16 tiles — is read off `chain.log` with `gates.sh`, the gate JSONs diffed against
+`D:/k10-scratch/phase1/r3run/proj/data/` with `diff_gates.py`, and the stills (day + night: Princess View from J2 under
+the lamps, Mission Gorge, Waring from J1, Jackson's dark canyon, J2 with its arrow, Free Roam at J1 with no arrow vs the
+Speedways' M3, the Cowles cut, Jackson's walls, Waring's median trees, the three maps) come from `stills.sh`, all three
+in `D:/k10-scratch/p4/integrate/`. When the chain ends: run `gates.sh`, `diff_gates.py`, `stills.sh`, fill the numbers
+here and in `GATES-CHANGELOG.md`, and commit.
+
+**Known from the pieces' own rehearsals, each on v0.19.0's exact build:** every one of the four ended on the same two
+pre-existing reds (Free Roam's lap soft-top / excursion rule; the Speedways' own drive test, red since v0.18.0), no key
+worse — `--force-install` under 0047's rule is Kevin's call, as for v0.19.0.
+
+**Left, honestly** (the union of the four pieces' lists, unchanged by the merge):
+- Lamp positions on the four roads are authored at the loop's spacing; the real ones wait on a Street View night check
+  (the OSM path is built). The canyon is dark by D4 — Kevin's seat says whether that is right.
+- The north's trees stand at the loop's density (1,550 where the aerial implies 8,900); `scenery.treefx.cap_scale` is
+  the knob. Species are stand-ins by zone; 0040's species pass is still the later request.
+- OSM is thin along the north roads (74 footprints within 120 m): Waring's houses and most of the Mission Gorge
+  apartment blocks are not there; adding them means tracing the aerial, not inventing.
+- The rock rule is one slope threshold inside the cut bands; a few grass tongues stay inside the Jackson walls, and the
+  foot of each cut still shows the zigzag where the flat shoulder meets the first batter row.
+- J4-fwd stands 3.4 m behind the Mission Gorge east K-rail; speed-limit plates and the W1-7 devices are not built.
+- `tools/make_treefx.py` lists every `1GRASS*` material as a TreeFX surface, the rock faces included (harmless; trees
+  are kept off the measured walls by their own rule).
+- `scripts/ac/pbr.py` is pending its mirror into the live engine-july.
+
+**For Kevin, in plain terms:** nothing about the roads changed between v0.19.0 and v0.19.1 — same asphalt, curbs,
+corners and barriers. What changed is everything standing beside them: lamp posts dropped onto the sidewalk the chain
+actually built (a lamp is a pole with a buried stub, and every pole now stands on its sidewalk, not above or under it),
+arrow signs just past the outside curb where a car that missed the turn would end up, trees placed where the April 2022
+aerial shows crown and scrub, the buildings OpenStreetMap knows about, and the steep cut faces along Mission Gorge and
+Jackson painted as the tan sandstone they are instead of grass. The game still draws the trees and the grass itself;
+the track only carries the list of spots.

@@ -572,6 +572,10 @@ def plan(project_dir, all_species=False, verbose=False):
         for i, e in enumerate(entries, start=idx_base):
             if (zone_key, i - idx_base) in excluded:
                 continue
+            # every guard judges the spot AS WRITTEN: trees.txt carries centimetres, and a plan spot a few millimetres
+            # clear of a guard's edge (the building ring at exactly BUILT_BUILDING_CLEAR_M) lands inside it once rounded
+            # (ledger 0054 P4 integration fix round, run 2: one loop Sage at (-1358.81, -1172.46) survived the guard that way)
+            e["x"], e["y"], e["z"] = round(e["x"], 2), round(e["y"], 2), round(e["z"], 2)
             if guard and (field.query(e["x"], e["z"])[0] < 1.0
                           or (fwy is not None and fwy.query(e["x"], e["z"])[0] < 1.0)):
                 rejected += 1

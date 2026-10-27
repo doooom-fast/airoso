@@ -1,0 +1,586 @@
+===== D:/k10-scratch/p4/integrate/chain.log
+[seat] TERRAIN: 2794 faces near roads subdivided (229793 -> 372612 verts); 137015 edges halved under the welded approaches + along the host edges; 1132 terrain faces cleared from under the mended mainline folds (1210 edges halved along thei
+[seat] HOST LANE (route.weld_exact_deck): 37707 of those edges halved to 0.75 m under the host's lane at 28 exact-deck mouth(s)
+[release] TERRAIN 393422 -> 613322 verts (239365 edges halved in the zones); alvarado_creek_bank: 6969 moved (down <= 8.283 m, up <= 2.548 m, 0 under a deck); college_south_approach: 2387 moved (down <= 4.183 m, up <= 8.042 m, 952 under a d
+[median-blend] 1WALL_guard_streetonly_median: 844 verts (street-only island over [[1253, 1379]], 127 rings)
+[lamps] relocate lamp_53_college_junction: lamp 53 base (-1448.43, -543.814) -> (-1447.2, -531.8) 12.077 m, seat ground: head y 49.99 -> 51.273, ground 42.47, foot 39.83, wall clear None
+[lamps] relocate lamp_30_guard_release: lamp 30 base (-1540.078, -1058.216) -> (-1540.34, -1059.19) 1.009 m, seat keep: head y 11.549 -> 11.549, ground 2.78, foot 0.10, wall clear 0.684
+[lamps] relocate lamp_32_guard_release: lamp 32 base (-1645.2, -1043.505) -> (-1645.27, -1044.51) 1.007 m, seat keep: head y 10.627 -> 10.627, ground 0.67, foot -0.82, wall clear 0.682
+[lamps] relocate lamp_34_guard_release: lamp 34 base (-1754.799, -1048.359) -> (-1754.72, -1049.36) 1.004 m, seat keep: head y 9.512 -> 9.512, ground -0.35, foot -1.93, wall clear 0.68
+[lamps] relocate lamp_43_guard_release: lamp 43 base (-1816.378, -920.598) -> (-1817.24, -920.09) 1.0 m, seat keep: head y 21.617 -> 21.617, ground 13.00, foot 10.17, wall clear 0.666
+[lamps] relocate lamp_237_lmb_creek_deck: lamp 237 base (40.861, -1623.139) -> (44.86, -1618.24) 6.324 m, seat keep: head y 33.879 -> 33.879, ground 24.43, foot 22.43, wall clear 1.17
+[lamps] lamp 77 stands on apron AP1's walk (base [-1955.497, 633.71]): re-seated, head y 33.266 -> 33.6298
+[lamps] re-seated lamp 0: base stood +1.03 m from the built CURB under it; head y 28.943 -> 29.8326 (+0.89 m)
+[lamps] re-seated lamp 32: base stood -1.01 m from the built TERRAIN under it; head y 10.627 -> 9.4691 (-1.16 m)
+[lamps] re-seated lamp 113: base stood +1.41 m from the built CURB under it; head y 96.418 -> 97.6874 (+1.27 m)
+[lamps] re-seated lamp 143: base stood +1.39 m from the built CURB under it; head y 94.044 -> 95.2904 (+1.25 m)
+[lamps] re-seated lamp 238 (piece A): base stood +0.42 m from the built CURB under it; head y 28.675 -> 28.9529 (+0.28 m)
+[lamps] re-seated lamp 239 (piece A): base stood +0.46 m from the built CURB under it; head y 24.48 -> 24.7931 (+0.31 m)
+[lamps] re-seated lamp 240 (piece A): base stood +0.45 m from the built CURB under it; head y 22.114 -> 22.4175 (+0.30 m)
+[lamps] re-seated lamp 241 (piece A): base stood +0.45 m from the built CURB under it; head y 19.495 -> 19.8006 (+0.31 m)
+[lamps] re-seated lamp 242 (piece A): base stood +0.44 m from the built CURB under it; head y 17.71 -> 18.007 (+0.30 m)
+[lamps] re-seated lamp 243 (piece A): base stood +0.46 m from the built CURB under it; head y 16.892 -> 17.2094 (+0.32 m)
+[lamps] re-seated lamp 244 (piece A): base stood +0.88 m from the built CURB under it; head y 15.981 -> 16.7179 (+0.74 m)
+[lamps] re-seated lamp 245 (piece A): base stood +0.45 m from the built CURB under it; head y 16.131 -> 16.435 (+0.30 m)
+[lamps] re-seated lamp 246 (piece A): base stood +0.47 m from the built CURB under it; head y 16.556 -> 16.8819 (+0.33 m)
+[lamps] re-seated lamp 247 (piece A): base stood +0.47 m from the built CURB under it; head y 17.052 -> 17.3793 (+0.33 m)
+[lamps] re-seated lamp 248 (piece A): base stood +0.47 m from the built CURB under it; head y 17.47 -> 17.7973 (+0.33 m)
+[lamps] re-seated lamp 249 (piece A): base stood +0.98 m from the built CURB under it; head y 16.47 -> 17.3099 (+0.84 m)
+[lamps] re-seated lamp 250 (piece A): base stood +0.46 m from the built CURB under it; head y 15.819 -> 16.1315 (+0.31 m)
+[lamps] re-seated lamp 251 (piece A): base stood +0.48 m from the built CURB under it; head y 15.014 -> 15.3473 (+0.33 m)
+[lamps] re-seated lamp 252 (piece A): base stood +0.47 m from the built CURB under it; head y 14.049 -> 14.3705 (+0.32 m)
+[lamps] re-seated lamp 253 (piece A): base stood +0.46 m from the built CURB under it; head y 13.163 -> 13.4772 (+0.31 m)
+[lamps] re-seated lamp 254 (piece B): base stood +0.51 m from the built CURB under it; head y 10.373 -> 10.738 (+0.36 m)
+[lamps] re-seated lamp 255 (piece B): base stood +0.49 m from the built CURB under it; head y 8.489 -> 8.8338 (+0.34 m)
+[lamps] re-seated lamp 256 (piece B): base stood +0.75 m from the built CURB under it; head y 4.72 -> 5.3249 (+0.60 m)
+[lamps] re-seated lamp 257 (piece B): base stood +2.17 m from the built CURB under it; head y -1.981 -> 0.0492 (+2.03 m)
+[lamps] re-seated lamp 258 (piece B): base stood +0.65 m from the built CURB under it; head y -5.761 -> -5.2591 (+0.50 m)
+[lamps] re-seated lamp 259 (piece B): base stood +0.56 m from the built CURB under it; head y -10.848 -> -10.4322 (+0.42 m)
+[lamps] re-seated lamp 260 (piece B): base stood +1.43 m from the built CURB under it; head y -16.908 -> -15.6188 (+1.29 m)
+[lamps] re-seated lamp 261 (piece B): base stood +0.51 m from the built CURB under it; head y -21.301 -> -20.9398 (+0.36 m)
+[lamps] re-seated lamp 262 (piece B): base stood +1.82 m from the built CURB under it; head y -28.158 -> -26.4809 (+1.68 m)
+[lamps] re-seated lamp 263 (piece B): base stood +1.16 m from the built CURB under it; head y -32.635 -> -31.6142 (+1.02 m)
+[lamps] re-seated lamp 264 (piece B): base stood +0.72 m from the built CURB under it; head y -37.467 -> -36.8955 (+0.57 m)
+[lamps] re-seated lamp 265 (piece B): base stood +0.72 m from the built CURB under it; head y -42.694 -> -42.1152 (+0.58 m)
+[lamps] re-seated lamp 266 (piece B): base stood +1.17 m from the built CURB under it; head y -48.431 -> -47.4038 (+1.03 m)
+[lamps] re-seated lamp 267 (piece B): base stood +0.49 m from the built CURB under it; head y -52.478 -> -52.1363 (+0.34 m)
+[lamps] re-seated lamp 268 (piece B): base stood +0.39 m from the built CURB under it; head y -55.505 -> -55.2543 (+0.25 m)
+[lamps] re-seated lamp 269 (piece B): base stood +0.47 m from the built CURB under it; head y -57.01 -> -56.6815 (+0.33 m)
+[lamps] re-seated lamp 270 (piece B): base stood +0.47 m from the built CURB under it; head y -57.54 -> -57.2151 (+0.33 m)
+[lamps] re-seated lamp 271 (piece B): base stood +0.46 m from the built CURB under it; head y -58.001 -> -57.6843 (+0.32 m)
+[lamps] re-seated lamp 272 (piece C): base stood +0.46 m from the built CURB under it; head y -57.184 -> -56.8667 (+0.32 m)
+[lamps] re-seated lamp 273 (piece C): base stood +0.48 m from the built CURB under it; head y -55.666 -> -55.3334 (+0.33 m)
+[lamps] re-seated lamp 274 (piece C): base stood +0.49 m from the built CURB under it; head y -53.523 -> -53.1718 (+0.35 m)
+[lamps] re-seated lamp 275 (piece C): base stood +0.47 m from the built CURB under it; head y -51.039 -> -50.7125 (+0.33 m)
+[lamps] re-seated lamp 276 (piece C): base stood +0.51 m from the built CURB under it; head y -47.664 -> -47.3014 (+0.36 m)
+[lamps] re-seated lamp 277 (piece C): base stood +0.52 m from the built CURB under it; head y -44.038 -> -43.6578 (+0.38 m)
+[lamps] re-seated lamp 278 (piece C): base stood +0.46 m from the built CURB under it; head y -40.069 -> -39.7503 (+0.32 m)
+[lamps] re-seated lamp 279 (piece C): base stood +2.27 m from the built CURB under it; head y -38.015 -> -35.8943 (+2.12 m)
+[lamps] re-seated lamp 280 (piece C): base stood +0.44 m from the built CURB under it; head y -32.461 -> -32.1681 (+0.29 m)
+[lamps] re-seated lamp 281 (piece C): base stood +0.74 m from the built CURB under it; head y -28.882 -> -28.2813 (+0.60 m)
+[lamps] re-seated lamp 282 (piece C): base stood +0.49 m from the built CURB under it; head y -24.697 -> -24.3456 (+0.35 m)
+[lamps] re-seated lamp 283 (piece C): base stood +1.54 m from the built CURB under it; head y -21.853 -> -20.461 (+1.39 m)
+[lamps] re-seated lamp 284 (piece C): base stood +0.52 m from the built CURB under it; head y -16.928 -> -16.5477 (+0.38 m)
+[lamps] re-seated lamp 285 (piece C): base stood +0.62 m from the built CURB under it; head y -13.225 -> -12.748 (+0.48 m)
+[lamps] re-seated lamp 286 (piece C): base stood +0.47 m from the built CURB under it; head y -9.234 -> -8.9049 (+0.33 m)
+[lamps] re-seated lamp 287 (piece C): base stood +0.52 m from the built CURB under it; head y -5.476 -> -5.1039 (+0.37 m)
+[lamps] re-seated lamp 288 (piece C): base stood +1.40 m from the built CURB under it; head y -2.412 -> -1.1538 (+1.26 m)
+[lamps] re-seated lamp 289 (piece C): base stood +0.48 m from the built CURB under it; head y 2.108 -> 2.4478 (+0.34 m)
+[lamps] re-seated lamp 290 (piece C): base stood +0.88 m from the built CURB under it; head y 5.516 -> 6.2565 (+0.74 m)
+[lamps] re-seated lamp 291 (piece C): base stood +0.55 m from the built CURB under it; head y 9.836 -> 10.242 (+0.41 m)
+[lamps] re-seated lamp 292 (piece C): base stood +0.44 m from the built CURB under it; head y 13.693 -> 13.9908 (+0.30 m)
+[lamps] re-seated lamp 293 (piece C): base stood +0.50 m from the built CURB under it; head y 16.829 -> 17.1801 (+0.35 m)
+[lamps] re-seated lamp 294 (piece C): base stood +0.48 m from the built CURB under it; head y 19.252 -> 19.5874 (+0.34 m)
+[lamps] re-seated lamp 295 (piece C): base stood +0.48 m from the built CURB under it; head y 21.042 -> 21.3781 (+0.34 m)
+[lamps] re-seated lamp 296 (piece C): base stood +0.56 m from the built CURB under it; head y 21.946 -> 22.362 (+0.42 m)
+[lamps] re-seated lamp 297 (piece C): base stood +0.43 m from the built CURB under it; head y 22.479 -> 22.7666 (+0.29 m)
+[lamps] re-seated lamp 298 (piece C): base stood +0.46 m from the built CURB under it; head y 22.159 -> 22.4756 (+0.32 m)
+[lamps] re-seated lamp 299 (piece C): base stood +0.46 m from the built CURB under it; head y 21.149 -> 21.4627 (+0.31 m)
+[lamps] re-seated lamp 300 (piece C): base stood +0.46 m from the built CURB under it; head y 19.484 -> 19.8042 (+0.32 m)
+[lamps] re-seated lamp 301 (piece C): base stood +0.40 m from the built CURB under it; head y 17.168 -> 17.4261 (+0.26 m)
+[lamps] re-seated lamp 302 (piece C): base stood +0.66 m from the built CURB under it; head y 13.981 -> 14.4946 (+0.51 m)
+[lamps] re-seated lamp 303 (piece C): base stood +0.48 m from the built CURB under it; head y 11.137 -> 11.47 (+0.33 m)
+[lamps] re-seated lamp 304 (piece C): base stood +0.51 m from the built CURB under it; head y 8.187 -> 8.5489 (+0.36 m)
+[lamps] re-seated lamp 305 (piece C): base stood +0.48 m from the built CURB under it; head y 5.836 -> 6.1685 (+0.33 m)
+[lamps] re-seated lamp 306 (piece C): base stood +0.46 m from the built CURB under it; head y 4.069 -> 4.3819 (+0.31 m)
+[lamps] re-seated lamp 307 (piece C): base stood +0.63 m from the built CURB under it; head y 2.718 -> 3.2046 (+0.49 m)
+[lamps] re-seated lamp 308 (piece C): base stood +0.45 m from the built CURB under it; head y 2.279 -> 2.5867 (+0.31 m)
+[lamps] re-seated lamp 309 (piece C): base stood +0.46 m from the built CURB under it; head y 1.818 -> 2.1374 (+0.32 m)
+[lamps] re-seated lamp 310 (piece C): base stood +0.47 m from the built CURB under it; head y 1.328 -> 1.656 (+0.33 m)
+[lamps] re-seated lamp 311 (piece C): base stood +0.46 m from the built CURB under it; head y 0.726 -> 1.0443 (+0.32 m)
+[lamps] re-seated lamp 312 (piece D): base stood +0.40 m from the built CURB under it; head y 116.383 -> 116.6404 (+0.26 m)
+[lamps] re-seated lamp 313 (piece D): base stood +0.48 m from the built CURB under it; head y 113.866 -> 114.1999 (+0.33 m)
+[lamps] re-seated lamp 314 (piece D): base stood +0.40 m from the built CURB under it; head y 110.903 -> 111.1591 (+0.26 m)
+[lamps] re-seated lamp 315 (piece D): base stood +0.52 m from the built CURB under it; head y 107.636 -> 108.0163 (+0.38 m)
+[lamps] re-seated lamp 316 (piece D): base stood +0.42 m from the built CURB under it; head y 104.244 -> 104.5251 (+0.28 m)
+[lamps] re-seated lamp 317 (piece D): base stood +0.47 m from the built CURB under it; head y 100.87 -> 101.1939 (+0.32 m)
+[lamps] re-seated lamp 318 (piece D): base stood +0.45 m from the built CURB under it; head y 97.649 -> 97.9562 (+0.31 m)
+[lamps] re-seated lamp 319 (piece D): base stood +0.47 m from the built CURB under it; head y 94.542 -> 94.8653 (+0.32 m)
+[lamps] re-seated lamp 320 (piece D): base stood +0.56 m from the built CURB under it; head y 13.626 -> 14.0426 (+0.42 m)
+[lamps] re-seated lamp 321 (piece D): base stood +0.65 m from the built CURB under it; head y 9.277 -> 9.7867 (+0.51 m)
+[lamps] re-seated lamp 322 (piece D): base stood +0.45 m from the built CURB under it; head y 5.718 -> 6.0259 (+0.31 m)
+[lamps] 323 lamps from lights.local.json -> 21 LIGHTPOST + 1 LIGHTS mesh(es) [led_cobra] (model 180v (2 arms) + lens 4v each, lens 11.81 m over the road datum, 4.04 m road-ward of the pole); procedural LIGHTS removed; saved loop.blend
+[lamps] lens offset vs street_lamp_2026_10: {'road_ward_m': 2.4398, 'up_m': 4.718} (recorded in data/lights.local.json provenance)
+[lamps] north pieces (ledger 0054 P4 D4): A 16 (0 OSM-grounded, 16 authored), B 18 (0 OSM-grounded, 18 authored), C 40 (0 OSM-grounded, 40 authored), D 11 (0 OSM-grounded, 11 authored); 23 stations skipped; OSM source {'file': 'source/expan
+[lamps] seat check: 323 lamps, 89 re-seated (4 loop posts past |base - ground| > 1.0 m, 85 new piece posts seated on their built walk); base vs ground min -0.914 / median 0.199 / max 0.983 m; footprints on a road 0; wall clearance min 0.667
+  race_cw   planned: PASS  leak_cells 0  blocked 0  forbidden_reached 0  spawns_unreached 0  reached 138756 m2
+  race_acw  planned: PASS  leak_cells 0  blocked 0  forbidden_reached 0  spawns_unreached 0  reached 138195 m2
+[verify-race] G lamps: 323/323 masts beside a strip (arm 1.8 m, mast r 0.124 m); minimum margin 2.434 m at lamp 53 v1089 lat +16.92 vs the edge strip; 0 inside; nearest to a closure 2.741 m (lamp 120 v2312, closure_race_acw)
+[verify-race] G scenery (trees: tools/make_treefx.py plan (every species); signs: data/signs.local.json): {'tree': 20736, 'sign': 19} items, 391 beside the race road; 0 in a lane or a wall (trunk r 0.3 m, post r 0.03 m); nearest per layout:
+[signs] ground 1KERB_sidewalk_apAP1+1KERB_sidewalk_padJ2+1KERB_sidewalk_padJ3+1KERB_sidewalk_padJ4+1KERB_sidewalk_streetonly_median+CURB+TERRAIN; road 1ROAD_apron_AP1+1ROAD_mouthfill_0+1ROAD_mouthfill_1+1ROAD_pad_J2+1ROAD_pad_J3+1ROAD_pad_J
+[signs] M1-fwd      W1-6R        MAINLINE/fwd         base (    -0.2,  24.63,  -1673.3) faces 26.3 deg  built clear 1.79 m (shift 0.60, slid +0.00)  walk-behind -0.29  wall 2.03  disc +3.73 (gated all +3.73)  y_base raycast
+[signs] M2-fwd      W1-6R        MAINLINE/fwd         base ( -1960.4,   9.82,  -1289.3) faces 16.5 deg  built clear 1.77 m (shift 0.13, slid +0.00)  walk-behind -0.39  wall 2.01  disc +2.35 (gated all +2.35)  y_base raycast
+[signs] M2-fwd-2    W1-6R        MAINLINE/fwd         base ( -2008.1,  10.61,  -1272.9) faces 97.9 deg  built clear 1.78 m (shift 0.07, slid +0.00)  walk-behind -0.27  wall 1.99  disc +10.30 (gated all +10.30)  y_base raycast  WARN approach
+[signs] M3-fwd@race_cw W1-6R        MAINLINE/fwd@race_cw base ( -1985.8,  24.34,    611.8) faces 140.2 deg  built clear 1.67 m (shift 0.06, slid +0.00)  walk-behind -  wall 1.67  disc -5.20 (gated MAINLINE +9.98)  y_base raycast (deck: the 
+[signs] M4-fwd@race_cw W1-6R        MAINLINE/fwd@race_cw base (    64.8, 109.22,   1731.7) faces 228.7 deg  built clear 1.76 m (shift 0.01, slid +0.00)  walk-behind -  wall 1.76  disc +7.12 (gated MAINLINE +7.12)  y_base raycast (deck: the 
+[signs] M5-fwd      W1-6R        MAINLINE/fwd         base (  2628.1,  92.08,    505.2) faces 306.0 deg  built clear 1.76 m (shift 0.04, slid +0.00)  walk-behind -0.28  wall 2.02  disc +9.08 (gated all +9.08)  y_base raycast  WARN 35 m from
+[signs] M5-rev      W1-6L        MAINLINE/rev         base (  2629.1,  92.07,    518.5) faces 215.6 deg  built clear 1.75 m (shift 0.20, slid +0.00)  walk-behind -0.35  wall 1.93  disc +7.58 (gated all +7.58)  y_base raycast  WARN 48 m from
+[signs] M4-rev@race_acw W1-6L        MAINLINE/rev@race_acw base (    60.0, 109.11,   1734.7) faces 158.7 deg  built clear 1.62 m (shift 0.17, slid +0.00)  walk-behind -  wall 1.62  disc +1.89 (gated MAINLINE +6.62)  y_base raycast (deck: th
+[signs] M3-rev@race_acw W1-6L        MAINLINE/rev@race_acw base ( -1990.5,  24.51,    602.3) faces 60.5 deg  built clear 1.61 m (shift 0.23, slid +0.00)  walk-behind -  wall 1.61  disc +1.98 (gated MAINLINE +9.60)  y_base raycast (deck: the
+[signs] M2-rev      W1-6L        MAINLINE/rev         base ( -2004.9,  10.61,  -1283.4) faces 21.7 deg  built clear 1.74 m (shift 0.08, slid +0.00)  walk-behind -0.32  wall 1.91  disc +9.91 (gated all +9.91)  y_base raycast
+[signs] M1-rev      W1-6L        MAINLINE/rev         base (     4.4,  24.62,  -1673.1) faces 299.4 deg  built clear 1.73 m (shift 6.43, slid +0.00)  walk-behind -0.46  wall 1.98  disc +3.39 (gated all +3.39)  y_base raycast
+[signs] MED-1-fwd   W1-6R        medium#2+0#0#0/fwd   base (    85.3,  25.81,  -1451.5) faces 119.3 deg  built clear 1.55 m (shift 0.01, slid +0.00)  walk-behind -0.32  wall 36.57  disc +1.23 (gated MAINLINE+expansion_fwd+expansion_rev +44.
+[signs] MED-6-fwd   W1-6L        medium#2+0#0#0/fwd   base (   -69.4,  60.44,   -918.8) faces 196.0 deg  built clear 1.34 m (shift 3.79, slid +0.00)  walk-behind -0.26  wall 460.45  disc -2.06 (gated MAINLINE+expansion_fwd+expansion_rev +in
+[signs] MED-7-fwd   W1-6L        medium#2+0#0#0/fwd   base (  -182.7,  56.89,   -976.9) faces 52.7 deg  built clear 1.32 m (shift 1.14, slid +0.00)  walk-behind +0.36  wall 446.08  disc +0.19 (gated MAINLINE+expansion_fwd+expansion_rev +inf
+[signs] MED-8-fwd   W1-6R        medium#2+0#0#0/fwd   base (  -188.9,  39.92,  -1188.2) faces 3.0 deg  built clear 1.40 m (shift 0.65, slid +0.00)  walk-behind -0.26  wall 251.81  disc +0.76 (gated MAINLINE+expansion_fwd+expansion_rev +inf)
+[signs] MED-10-fwd  W1-6L        medium#2+0#0#0/fwd   base (  -402.9,  24.77,  -1126.2) faces 115.0 deg  built clear 1.32 m (shift 1.28, slid +0.00)  walk-behind +1.32  wall 224.90  disc +0.07 (gated MAINLINE+expansion_fwd+expansion_rev +in
+[signs] MED-13-fwd  W1-6R        medium#2+0#0#0/fwd   base ( -1301.9,  13.57,  -1033.4) faces 107.6 deg  built clear 1.59 m (shift 0.68, slid +0.00)  walk-behind -0.40  wall 91.89  disc +0.53 (gated MAINLINE+expansion_fwd+expansion_rev +90.
+[signs] MED-13-rev  W1-6L        medium#2+0#0#0/rev   base ( -1302.6,  13.86,  -1027.9) faces 24.7 deg  built clear 1.19 m (shift 1.61, slid +0.00)  walk-behind +1.50  wall 96.92  disc +0.17 (gated MAINLINE+expansion_fwd+expansion_rev +96.4
+[signs] MED-10-rev  W1-6R        medium#2+0#0#0/rev   base (  -392.0,  25.53,  -1126.9) faces 235.2 deg  built clear 1.77 m (shift 0.26, slid +0.00)  walk-behind -0.40  wall 227.89  disc +1.35 (gated MAINLINE+expansion_fwd+expansion_rev +in
+[signs] MED-8-rev   W1-6L        medium#2+0#0#0/rev   base (  -183.1,  40.14,  -1185.2) faces 271.1 deg  built clear 1.51 m (shift 2.48, slid +0.00)  walk-behind -0.42  wall 257.24  disc -1.06 (gated MAINLINE+expansion_fwd+expansion_rev +in
+[signs] MED-7-rev   W1-6R        medium#2+0#0#0/rev   base (  -174.4,  57.23,   -965.4) faces 182.3 deg  built clear 1.55 m (shift 0.26, slid +0.00)  walk-behind -0.40  wall 459.94  disc +1.22 (gated MAINLINE+expansion_fwd+expansion_rev +in
+[signs] MED-6-rev   W1-6R        medium#2+0#0#0/rev   base (   -68.1,  60.50,   -921.4) faces 256.3 deg  built clear 1.40 m (shift 1.86, slid +0.00)  walk-behind -0.26  wall 457.94  disc -0.52 (gated MAINLINE+expansion_fwd+expansion_rev +in
+[signs] MED-1-rev   W1-6L        medium#2+0#0#0/rev   base (    88.7,  25.50,  -1462.1) faces 3.8 deg  built clear 1.33 m (shift 1.42, slid +0.00)  walk-behind +0.13  wall 27.24  disc -0.10 (gated MAINLINE+expansion_fwd+expansion_rev +34.81
+[signs] J2-fwd      W1-6R        north/fwd            base ( -2763.4,   3.23,    989.6) faces 56.1 deg  built clear 1.56 m (shift 0.33, slid +0.00)  walk-behind -0.39  wall 19.70  disc +5.88 (gated MAINLINE+expansion_fwd+expansion_rev +5.88
+[signs] J3-fwd      W1-6R        north/fwd            base ( -3017.1, -66.76,   2064.8) faces 176.0 deg  built clear 1.51 m (shift 0.19, slid +0.00)  walk-behind -0.29  wall 23.36  disc +2.88 (gated MAINLINE+expansion_fwd+expansion_rev +2.8
+[signs] J4-fwd      W1-6R        north/fwd            base ( -1157.0,  -7.84,   3190.1) faces 252.3 deg  built clear 2.75 m (shift 1.44, slid +0.00)  walk-behind -0.51  wall 3.44  disc +34.23 (gated MAINLINE+expansion_fwd+expansion_rev +34.
+[signs] J4-rev      W1-6L        north/rev            base ( -1223.9,  -8.01,   3194.5) faces 129.9 deg  built clear 1.50 m (shift 0.18, slid +0.00)  walk-behind -0.28  wall 30.85  disc +2.53 (gated MAINLINE+expansion_fwd+expansion_rev +2.5
+[signs] J3-rev      W1-6L        north/rev            base ( -3046.3, -67.19,   2042.3) faces 65.5 deg  built clear 1.31 m (shift 5.52, slid +0.00)  walk-behind +1.50  wall 27.37  disc +12.78 (gated MAINLINE+expansion_fwd+expansion_rev +12.
+[signs] J2-rev      W1-6L        north/rev            base ( -2734.6,   3.05,    968.3) faces 320.3 deg  built clear 1.34 m (shift 4.57, slid +0.00)  walk-behind +1.50  wall 14.30  disc +20.70 (gated MAINLINE+expansion_fwd+expansion_rev +20
+[signs] skip M3-fwd      MAINLINE             v1514  ray never leaves pavement within 80 m (through leg / junction)
+[signs] skip M4-fwd      MAINLINE             v2319  apex 13 m from mouth north_J5_jackson_north@MAINLINE:2317 (< 15 m: mouth-flare geometry)
+[signs] skip M-c5-fwd    MAINLINE             v3282  R_apex 42.0 > 30 m; |D| 15.4 < 45 deg
+[signs] skip M-c5-rev    MAINLINE(rev)        v3282  R_apex 42.1 > 30 m; |D| 16.3 < 45 deg
+[signs] skip M4-rev      MAINLINE(rev)        v2319  apex 13 m from mouth north_J5_jackson_north@MAINLINE:2317 (< 15 m: mouth-flare geometry)
+[signs] skip M3-rev      MAINLINE(rev)        v1514  ray runs 16 m down north_J1_waring#0 before leaving pavement (a through road)
+[signs] skip M2-rev-2    MAINLINE(rev)        v770   second arrow 0.9 m from the first (< 12)
+[signs] skip DC0-c1-fwd  del_cerro_blvd#0     v5     R_apex 54.2 > 30 m; |D| 9.0 < 45 deg
+[signs] skip DC0-c2-fwd  del_cerro_blvd#0     v65    R_apex 43.9 > 30 m; |D| 11.3 < 45 deg
+[signs] skip DC0-c3-fwd  del_cerro_blvd#0     v164   R_apex 57.2 > 30 m; |D| 3.7 < 45 deg
+[signs] skip DC0-r1-rev  del_cerro_blvd#0(rev) v223   apex 0 m from mouth del_cerro_blvd@MAINLINE:1085 (< 15 m: mouth-flare geometry)
+[signs] skip DC0-c3-rev  del_cerro_blvd#0(rev) v164   R_apex 57.3 > 30 m; |D| 3.8 < 45 deg
+[signs] skip DC0-c2-rev  del_cerro_blvd#0(rev) v65    R_apex 44.6 > 30 m; |D| 12.1 < 45 deg
+[signs] skip DC0-c1-rev  del_cerro_blvd#0(rev) v6     R_apex 54.3 > 30 m; |D| 9.0 < 45 deg
+[signs] skip DC0-r2-rev  del_cerro_blvd#0(rev) v1     apex 4 m from del_cerro_blvd#0 start (< 15 m: mouth-flare geometry)
+[signs] skip DC1-c1-fwd  del_cerro_blvd#1     v245   R_apex 35.4 > 30 m; |D| 8.1 < 45 deg; apex 0 m from del_cerro_blvd#1 end (< 15 m: mouth-flare geometry)
+[signs] skip DC1-r1-rev  del_cerro_blvd#1(rev) v244   apex 3 m from del_cerro_blvd#1 end (< 15 m: mouth-flare geometry)
+[signs] skip DC1-r2-rev  del_cerro_blvd#1(rev) v2     apex 4 m from del_cerro_blvd#1 start (< 15 m: mouth-flare geometry)
+[signs] skip DCL-1-fwd   del_cerro_blvd_loop  v0     signs.json skip: junction with the del_cerro_blvd#1 trunk: the forward ray runs down the trunk and never leaves pavement; a W1-7 across the loop for traffic arriving on the trunk is a sec
+[signs] skip DCL-2-fwd   del_cerro_blvd_loop  v75    signs.json skip: Kevin 2026-10-10: 'keep the cul-de-sac sign off' - a turnaround is not signed in reality; removing skip yields two posts 2.06 m apart (pair test)
+[signs] skip DCL-2-rev   del_cerro_blvd_loop(rev) v74    signs.json skip: Kevin 2026-10-10: 'keep the cul-de-sac sign off' - a turnaround is not signed in reality; removing skip yields two posts 2.06 m apart (pair test)
+[signs] skip DCL-1-rev   del_cerro_blvd_loop(rev) v0     signs.json skip: junction with the del_cerro_blvd#1 trunk: the forward ray runs down the trunk and never leaves pavement; a W1-7 across the loop for traffic arriving on the trunk is a
+[signs] skip MED-c1-fwd  medium#2+0#0#0       v1     apex 4 m from medium#2+0#0#0 start (< 15 m: mouth-flare geometry)
+[signs] skip MED-c3-fwd  medium#2+0#0#0       v16    R_apex 41.4 > 30 m; |D| 18.2 < 45 deg
+[signs] skip MED-c4-fwd  medium#2+0#0#0       v34    R_apex 53.7 > 30 m; |D| 10.1 < 45 deg
+[signs] skip MED-c5-fwd  medium#2+0#0#0       v74    R_apex 38.3 > 30 m; |D| 15.5 < 45 deg
+[signs] skip MED-c6-fwd  medium#2+0#0#0       v99    R_apex 32.7 > 30 m; |D| 20.1 < 45 deg
+[signs] skip MED-c7-fwd  medium#2+0#0#0       v182   R_apex 53.5 > 30 m; |D| 11.1 < 45 deg
+[signs] skip MED-c11-fwd medium#2+0#0#0       v352   R_apex 54.9 > 30 m; |D| 10.1 < 45 deg
+[signs] skip MED-c13-fwd medium#2+0#0#0       v430   R_apex 39.0 > 30 m; |D| 14.1 < 45 deg
+[signs] skip MED-c14-fwd medium#2+0#0#0       v447   R_apex 48.5 > 30 m; |D| 13.4 < 45 deg
+[signs] skip MED-c16-fwd medium#2+0#0#0       v793   R_apex 53.8 > 30 m; |D| 3.9 < 45 deg
+[signs] skip MED-c17-fwd medium#2+0#0#0       v814   R_apex 39.4 > 30 m; |D| 17.6 < 45 deg
+[signs] skip MED-16-fwd  medium#2+0#0#0       v845   signs.json skip: the stem arriving at the Del Cerro Blvd / Madra Ave T: a W1-7 Two-Direction Large Arrow on Del Cerro's far (north) curb is the second-pass device, not a W1-6 on the stem;
+[signs] skip MED-c19-fwd medium#2+0#0#0       v849   R_apex 43.1 > 30 m; |D| 7.4 < 45 deg; apex 8 m from medium#2+0#0#0 end (< 15 m: mouth-flare geometry)
+[signs] skip MED-c20-fwd medium#2+0#0#0       v851   |D| 21.8 < 45 deg; apex 0 m from medium#2+0#0#0 end (< 15 m: mouth-flare geometry)
+[signs] skip MED-c19-rev medium#2+0#0#0(rev)  v851   apex 1 m from medium#2+0#0#0 end (< 15 m: mouth-flare geometry)
+[signs] skip MED-16-rev  medium#2+0#0#0(rev)  v845   signs.json skip: the stem arriving at the Del Cerro Blvd / Madra Ave T: a W1-7 Two-Direction Large Arrow on Del Cerro's far (north) curb is the second-pass device, not a W1-6 on the stem;
+[signs] skip MED-c17-rev medium#2+0#0#0(rev)  v814   R_apex 39.6 > 30 m; |D| 36.6 < 45 deg
+[signs] skip MED-c16-rev medium#2+0#0#0(rev)  v794   R_apex 54.4 > 30 m; |D| 3.9 < 45 deg
+[signs] skip MED-c14-rev medium#2+0#0#0(rev)  v447   R_apex 48.5 > 30 m; |D| 13.4 < 45 deg
+[signs] skip MED-c13-rev medium#2+0#0#0(rev)  v430   R_apex 39.0 > 30 m; |D| 13.5 < 45 deg
+[signs] skip MED-c11-rev medium#2+0#0#0(rev)  v352   R_apex 54.9 > 30 m; |D| 10.9 < 45 deg
+[signs] skip MED-c7-rev  medium#2+0#0#0(rev)  v182   R_apex 53.6 > 30 m; |D| 10.3 < 45 deg
+[signs] skip MED-c6-rev  medium#2+0#0#0(rev)  v99    R_apex 32.7 > 30 m; |D| 19.5 < 45 deg
+[signs] skip MED-c5-rev  medium#2+0#0#0(rev)  v74    R_apex 38.3 > 30 m; |D| 15.5 < 45 deg
+[signs] skip MED-c4-rev  medium#2+0#0#0(rev)  v34    R_apex 53.8 > 30 m; |D| 9.2 < 45 deg
+[signs] skip MED-c3-rev  medium#2+0#0#0(rev)  v16    R_apex 41.4 > 30 m; |D| 16.2 < 45 deg
+[signs] skip NORTH_J1_WARING_0-c1-fwd north_J1_waring#0    v1     apex 2 m from mouth north_J1_waring@MAINLINE:1517 (< 15 m: mouth-flare geometry)
+[signs] skip NORTH_J1_WARING_0-c2-fwd north_J1_waring#0    v315   apex 4 m from north_J1_waring#0 end (< 15 m: mouth-flare geometry)
+[signs] skip NORTH_J1_WARING_0-r1-rev north_J1_waring#0(rev) v317   |D| 14.2 < 45 deg; apex 1 m from north_J1_waring#0 end (< 15 m: mouth-flare geometry)
+[signs] skip NORTH_J1_WARING_0-r2-rev north_J1_waring#0(rev) v2     |D| 21.2 < 45 deg; apex 5 m from mouth north_J1_waring@MAINLINE:1517 (< 15 m: mouth-flare geometry)
+[signs] skip NORTH_PRINCESS_VIEW-c1-fwd north_princess_view  v0     apex 0 m from north_princess_view start (< 15 m: mouth-flare geometry)
+[signs] skip NORTH_PRINCESS_VIEW-c2-fwd north_princess_view  v355   |D| 39.8 < 45 deg; apex 0 m from north_princess_view end (< 15 m: mouth-flare geometry)
+[signs] skip NORTH_PRINCESS_VIEW-r1-rev north_princess_view(rev) v354   |D| 35.0 < 45 deg; apex 3 m from north_princess_view end (< 15 m: mouth-flare geometry)
+[signs] skip NORTH_PRINCESS_VIEW-r2-rev north_princess_view(rev) v1     |D| 20.9 < 45 deg; apex 2 m from north_princess_view start (< 15 m: mouth-flare geometry)
+[signs] skip NORTH_MISSION_GORGE-c1-fwd north_mission_gorge  v1     |D| 10.3 < 45 deg; apex 2 m from north_mission_gorge start (< 15 m: mouth-flare geometry)
+[signs] skip NORTH_MISSION_GORGE-c2-fwd north_mission_gorge  v743   R_apex 38.7 > 30 m; |D| 7.4 < 45 deg; apex 4 m from north_mission_gorge end (< 15 m: mouth-flare geometry)
+[signs] skip NORTH_MISSION_GORGE-r1-rev north_mission_gorge(rev) v745   apex 1 m from north_mission_gorge end (< 15 m: mouth-flare geometry)
+[signs] skip NORTH_MISSION_GORGE-r2-rev north_mission_gorge(rev) v2     apex 5 m from north_mission_gorge start (< 15 m: mouth-flare geometry)
+[signs] skip NORTH_J5_JACKSON_NORTH_0-c1-fwd north_J5_jackson_north#0 v1     apex 4 m from mouth north_J5_jackson_north@MAINLINE:2317 (< 15 m: mouth-flare geometry)
+[signs] skip NORTH_J5_JACKSON_NORTH_0-c2-fwd north_J5_jackson_north#0 v374   R_apex 58.7 > 30 m; |D| 4.8 < 45 deg
+[signs] skip NORTH_J5_JACKSON_NORTH_0-c3-fwd north_J5_jackson_north#0 v650   apex 4 m from north_J5_jackson_north#0 end (< 15 m: mouth-flare geometry)
+[signs] skip NORTH_J5_JACKSON_NORTH_0-r1-rev north_J5_jackson_north#0(rev) v651   |D| 17.6 < 45 deg; apex 0 m from north_J5_jackson_north#0 end (< 15 m: mouth-flare geometry)
+[signs] skip NORTH_J5_JACKSON_NORTH_0-c2-rev north_J5_jackson_north#0(rev) v374   R_apex 58.8 > 30 m; |D| 4.7 < 45 deg
+[signs] skip NORTH_J5_JACKSON_NORTH_0-c1-rev north_J5_jackson_north#0(rev) v2     R_apex 48.9 > 30 m; |D| 7.5 < 45 deg; apex 6 m from mouth north_J5_jackson_north@MAINLINE:2317 (< 15 m: mouth-flare geometry)
+[signs] skip NORTH_J5_JACKSON_NORTH_0-r2-rev north_J5_jackson_north#0(rev) v0     |D| 23.8 < 45 deg; apex 0 m from mouth north_J5_jackson_north@MAINLINE:2317 (< 15 m: mouth-flare geometry)
+[signs] skip STUB_GALEWOOD_STREET_5984405_R_0-c1-fwd STUB_galewood_street_5984405_R#0 v4     |D| 19.2 < 45 deg; apex 4 m from STUB_galewood_street_5984405_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_GALEWOOD_STREET_5984405_R_0-c2-fwd STUB_galewood_street_5984405_R#0 v16    |D| 19.2 < 45 deg; apex 0 m from STUB_galewood_street_5984405_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_GALEWOOD_STREET_5984405_R_0-c1-rev STUB_galewood_street_5984405_R#0(rev) v12    apex 4 m from STUB_galewood_street_5984405_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_GALEWOOD_STREET_5984405_R_0-c2-rev STUB_galewood_street_5984405_R#0(rev) v0     apex 0 m from STUB_galewood_street_5984405_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_GALEWOOD_STREET_5984405_L_0-c1-fwd STUB_galewood_street_5984405_L#0 v2     apex 2 m from STUB_galewood_street_5984405_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_GALEWOOD_STREET_5984405_L_0-c2-fwd STUB_galewood_street_5984405_L#0 v14    apex 2 m from STUB_galewood_street_5984405_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_GALEWOOD_STREET_5984405_L_0-c1-rev STUB_galewood_street_5984405_L#0(rev) v15    |D| 18.1 < 45 deg; apex 1 m from STUB_galewood_street_5984405_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_GALEWOOD_STREET_5984405_L_0-c2-rev STUB_galewood_street_5984405_L#0(rev) v3     |D| 18.1 < 45 deg; apex 3 m from STUB_galewood_street_5984405_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_ELDRIDGE_STREET_6013754_L_0-c1-fwd STUB_eldridge_street_6013754_L#0 v2     apex 2 m from STUB_eldridge_street_6013754_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_ELDRIDGE_STREET_6013754_L_0-c2-fwd STUB_eldridge_street_6013754_L#0 v14    apex 2 m from STUB_eldridge_street_6013754_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_ELDRIDGE_STREET_6013754_L_0-c1-rev STUB_eldridge_street_6013754_L#0(rev) v17    |D| 19.0 < 45 deg; apex 0 m from STUB_eldridge_street_6013754_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_ELDRIDGE_STREET_6013754_L_0-c2-rev STUB_eldridge_street_6013754_L#0(rev) v4     |D| 19.0 < 45 deg; apex 4 m from STUB_eldridge_street_6013754_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_ELDRIDGE_STREET_6013754_R_0-c1-fwd STUB_eldridge_street_6013754_R#0 v4     |D| 19.3 < 45 deg; apex 4 m from STUB_eldridge_street_6013754_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_ELDRIDGE_STREET_6013754_R_0-c2-fwd STUB_eldridge_street_6013754_R#0 v16    |D| 19.3 < 45 deg; apex 0 m from STUB_eldridge_street_6013754_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_ELDRIDGE_STREET_6013754_R_0-c1-rev STUB_eldridge_street_6013754_R#0(rev) v12    apex 4 m from STUB_eldridge_street_6013754_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_ELDRIDGE_STREET_6013754_R_0-c2-rev STUB_eldridge_street_6013754_R#0(rev) v0     apex 0 m from STUB_eldridge_street_6013754_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_BIRCHWOOD_STREET_1370375341_R_0-c1-fwd STUB_birchwood_street_1370375341_R#0 v4     |D| 31.8 < 45 deg; apex 4 m from STUB_birchwood_street_1370375341_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_BIRCHWOOD_STREET_1370375341_R_0-c2-fwd STUB_birchwood_street_1370375341_R#0 v16    |D| 31.8 < 45 deg; apex 0 m from STUB_birchwood_street_1370375341_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_BIRCHWOOD_STREET_1370375341_R_0-c1-rev STUB_birchwood_street_1370375341_R#0(rev) v13    |D| 43.2 < 45 deg; apex 3 m from STUB_birchwood_street_1370375341_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_BIRCHWOOD_STREET_1370375341_R_0-c2-rev STUB_birchwood_street_1370375341_R#0(rev) v1     |D| 43.2 < 45 deg; apex 1 m from STUB_birchwood_street_1370375341_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_GLENROY_STREET_663868618_L_0-c1-fwd STUB_glenroy_street_663868618_L#0 v1     apex 1 m from STUB_glenroy_street_663868618_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_GLENROY_STREET_663868618_L_0-c2-fwd STUB_glenroy_street_663868618_L#0 v13    apex 3 m from STUB_glenroy_street_663868618_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_GLENROY_STREET_663868618_L_0-c1-rev STUB_glenroy_street_663868618_L#0(rev) v17    |D| 17.8 < 45 deg; apex 0 m from STUB_glenroy_street_663868618_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_GLENROY_STREET_663868618_L_0-c2-rev STUB_glenroy_street_663868618_L#0(rev) v4     |D| 17.8 < 45 deg; apex 4 m from STUB_glenroy_street_663868618_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_GLENROY_STREET_663868622_R_0-c1-fwd STUB_glenroy_street_663868622_R#0 v3     |D| 14.9 < 45 deg; apex 3 m from STUB_glenroy_street_663868622_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_GLENROY_STREET_663868622_R_0-c2-fwd STUB_glenroy_street_663868622_R#0 v15    |D| 14.9 < 45 deg; apex 1 m from STUB_glenroy_street_663868622_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_GLENROY_STREET_663868622_R_0-c1-rev STUB_glenroy_street_663868622_R#0(rev) v17    apex 0 m from STUB_glenroy_street_663868622_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_GLENROY_STREET_663868622_R_0-c2-rev STUB_glenroy_street_663868622_R#0(rev) v4     apex 4 m from STUB_glenroy_street_663868622_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_PRINCESS_VIEW_COURT_5998286_R_0-c1-fwd STUB_princess_view_court_5998286_R#0 v2     |D| 13.0 < 45 deg; apex 2 m from STUB_princess_view_court_5998286_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_PRINCESS_VIEW_COURT_5998286_R_0-c2-fwd STUB_princess_view_court_5998286_R#0 v14    |D| 13.0 < 45 deg; apex 2 m from STUB_princess_view_court_5998286_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_PRINCESS_VIEW_COURT_5998286_R_0-c1-rev STUB_princess_view_court_5998286_R#0(rev) v17    apex 0 m from STUB_princess_view_court_5998286_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_PRINCESS_VIEW_COURT_5998286_R_0-c2-rev STUB_princess_view_court_5998286_R#0(rev) v4     apex 4 m from STUB_princess_view_court_5998286_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_PRINCESS_VIEW_PLACE_5998259_R_0-r1-rev STUB_princess_view_place_5998259_R#0(rev) v17    apex 0 m from STUB_princess_view_place_5998259_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_PRINCESS_VIEW_PLACE_5998259_R_0-r2-rev STUB_princess_view_place_5998259_R#0(rev) v4     apex 4 m from STUB_princess_view_place_5998259_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_PRINCESS_VIEW_WAY_6018734_R_0-c1-fwd STUB_princess_view_way_6018734_R#0 v0     R_apex 50.4 > 30 m; |D| 5.7 < 45 deg; apex 0 m from STUB_princess_view_way_6018734_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_PRINCESS_VIEW_WAY_6018734_R_0-c2-fwd STUB_princess_view_way_6018734_R#0 v12    R_apex 50.4 > 30 m; |D| 5.7 < 45 deg; apex 4 m from STUB_princess_view_way_6018734_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_PRINCESS_VIEW_WAY_6018734_R_0-c1-rev STUB_princess_view_way_6018734_R#0(rev) v13    apex 3 m from STUB_princess_view_way_6018734_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_PRINCESS_VIEW_WAY_6018734_R_0-c2-rev STUB_princess_view_way_6018734_R#0(rev) v1     apex 1 m from STUB_princess_view_way_6018734_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_FONTAINE_STREET_5986946_R_0-c1-fwd STUB_fontaine_street_5986946_R#0 v4     R_apex 44.8 > 30 m; |D| 6.4 < 45 deg; apex 4 m from STUB_fontaine_street_5986946_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_FONTAINE_STREET_5986946_R_0-c2-fwd STUB_fontaine_street_5986946_R#0 v16    R_apex 44.8 > 30 m; |D| 6.4 < 45 deg; apex 0 m from STUB_fontaine_street_5986946_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_FONTAINE_STREET_5986946_R_0-c1-rev STUB_fontaine_street_5986946_R#0(rev) v15    apex 1 m from STUB_fontaine_street_5986946_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_FONTAINE_STREET_5986946_R_0-c2-rev STUB_fontaine_street_5986946_R#0(rev) v3     apex 3 m from STUB_fontaine_street_5986946_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_FONTAINE_STREET_5986946_L_0-c1-fwd STUB_fontaine_street_5986946_L#0 v2     apex 2 m from STUB_fontaine_street_5986946_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_FONTAINE_STREET_5986946_L_0-c2-fwd STUB_fontaine_street_5986946_L#0 v14    apex 2 m from STUB_fontaine_street_5986946_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_FONTAINE_STREET_5986946_L_0-c1-rev STUB_fontaine_street_5986946_L#0(rev) v15    |D| 10.5 < 45 deg; apex 1 m from STUB_fontaine_street_5986946_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_FONTAINE_STREET_5986946_L_0-c2-rev STUB_fontaine_street_5986946_L#0(rev) v3     |D| 10.5 < 45 deg; apex 3 m from STUB_fontaine_street_5986946_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_LAURA_STREET_6042836_R_0-c1-fwd STUB_laura_street_6042836_R#0 v3     R_apex 37.9 > 30 m; |D| 7.6 < 45 deg; apex 3 m from STUB_laura_street_6042836_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_LAURA_STREET_6042836_R_0-c2-fwd STUB_laura_street_6042836_R#0 v15    R_apex 37.9 > 30 m; |D| 7.6 < 45 deg; apex 1 m from STUB_laura_street_6042836_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_LAURA_STREET_6042836_R_0-c1-rev STUB_laura_street_6042836_R#0(rev) v12    apex 4 m from STUB_laura_street_6042836_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_LAURA_STREET_6042836_R_0-c2-rev STUB_laura_street_6042836_R#0(rev) v0     apex 0 m from STUB_laura_street_6042836_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_CONESTOGA_WAY_6042936_R_0-c1-fwd STUB_conestoga_way_6042936_R#0 v0     |D| 33.7 < 45 deg; apex 0 m from STUB_conestoga_way_6042936_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_CONESTOGA_WAY_6042936_R_0-c2-fwd STUB_conestoga_way_6042936_R#0 v12    |D| 33.7 < 45 deg; apex 4 m from STUB_conestoga_way_6042936_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_CONESTOGA_WAY_6042936_R_0-c1-rev STUB_conestoga_way_6042936_R#0(rev) v14    |D| 41.3 < 45 deg; apex 2 m from STUB_conestoga_way_6042936_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_CONESTOGA_WAY_6042936_R_0-c2-rev STUB_conestoga_way_6042936_R#0(rev) v2     |D| 41.3 < 45 deg; apex 2 m from STUB_conestoga_way_6042936_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MISSION_VISTA_DRIVE_5977531_L_0-c1-fwd STUB_mission_vista_drive_5977531_L#0 v1     apex 1 m from STUB_mission_vista_drive_5977531_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MISSION_VISTA_DRIVE_5977531_L_0-c2-fwd STUB_mission_vista_drive_5977531_L#0 v13    apex 3 m from STUB_mission_vista_drive_5977531_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MISSION_VISTA_DRIVE_5977531_L_0-c1-rev STUB_mission_vista_drive_5977531_L#0(rev) v15    |D| 17.2 < 45 deg; apex 1 m from STUB_mission_vista_drive_5977531_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MISSION_VISTA_DRIVE_5977531_L_0-c2-rev STUB_mission_vista_drive_5977531_L#0(rev) v3     |D| 17.2 < 45 deg; apex 3 m from STUB_mission_vista_drive_5977531_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MARGERUM_AVENUE_135149732_R_0-c1-fwd STUB_margerum_avenue_135149732_R#0 v4     |D| 22.5 < 45 deg; apex 4 m from STUB_margerum_avenue_135149732_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MARGERUM_AVENUE_135149732_R_0-c2-fwd STUB_margerum_avenue_135149732_R#0 v16    |D| 22.5 < 45 deg; apex 0 m from STUB_margerum_avenue_135149732_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MARGERUM_AVENUE_135149732_R_0-c1-rev STUB_margerum_avenue_135149732_R#0(rev) v14    apex 2 m from STUB_margerum_avenue_135149732_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MARGERUM_AVENUE_135149732_R_0-c2-rev STUB_margerum_avenue_135149732_R#0(rev) v2     apex 2 m from STUB_margerum_avenue_135149732_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MISSION_MONTANA_DRIVE_5988290_L_0-c1-fwd STUB_mission_montana_drive_5988290_L#0 v1     apex 1 m from STUB_mission_montana_drive_5988290_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MISSION_MONTANA_DRIVE_5988290_L_0-c2-fwd STUB_mission_montana_drive_5988290_L#0 v13    apex 3 m from STUB_mission_montana_drive_5988290_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MISSION_MONTANA_DRIVE_5988290_L_0-c1-rev STUB_mission_montana_drive_5988290_L#0(rev) v15    |D| 13.0 < 45 deg; apex 1 m from STUB_mission_montana_drive_5988290_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MISSION_MONTANA_DRIVE_5988290_L_0-c2-rev STUB_mission_montana_drive_5988290_L#0(rev) v3     |D| 13.0 < 45 deg; apex 3 m from STUB_mission_montana_drive_5988290_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MISSION_VISTA_DRIVE_5977531_L_560_0-c1-fwd STUB_mission_vista_drive_5977531_L_560#0 v1     apex 1 m from STUB_mission_vista_drive_5977531_L_560#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MISSION_VISTA_DRIVE_5977531_L_560_0-c2-fwd STUB_mission_vista_drive_5977531_L_560#0 v13    apex 3 m from STUB_mission_vista_drive_5977531_L_560#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MISSION_VISTA_DRIVE_5977531_L_560_0-c1-rev STUB_mission_vista_drive_5977531_L_560#0(rev) v14    |D| 16.0 < 45 deg; apex 2 m from STUB_mission_vista_drive_5977531_L_560#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_MISSION_VISTA_DRIVE_5977531_L_560_0-c2-rev STUB_mission_vista_drive_5977531_L_560#0(rev) v2     |D| 16.0 < 45 deg; apex 2 m from STUB_mission_vista_drive_5977531_L_560#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_DEERFIELD_CRESCENT_638144640_L_0-c1-fwd STUB_deerfield_crescent_638144640_L#0 v1     apex 1 m from STUB_deerfield_crescent_638144640_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_DEERFIELD_CRESCENT_638144640_L_0-c2-fwd STUB_deerfield_crescent_638144640_L#0 v13    apex 3 m from STUB_deerfield_crescent_638144640_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_DEERFIELD_CRESCENT_638144640_L_0-c1-rev STUB_deerfield_crescent_638144640_L#0(rev) v17    |D| 23.4 < 45 deg; apex 0 m from STUB_deerfield_crescent_638144640_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_DEERFIELD_CRESCENT_638144640_L_0-c2-rev STUB_deerfield_crescent_638144640_L#0(rev) v4     |D| 23.4 < 45 deg; apex 4 m from STUB_deerfield_crescent_638144640_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_DEERFIELD_STREET_6055959_R_0-c1-fwd STUB_deerfield_street_6055959_R#0 v4     |D| 23.0 < 45 deg; apex 4 m from STUB_deerfield_street_6055959_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_DEERFIELD_STREET_6055959_R_0-c2-fwd STUB_deerfield_street_6055959_R#0 v16    |D| 23.0 < 45 deg; apex 0 m from STUB_deerfield_street_6055959_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_DEERFIELD_STREET_6055959_R_0-c1-rev STUB_deerfield_street_6055959_R#0(rev) v13    apex 3 m from STUB_deerfield_street_6055959_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_DEERFIELD_STREET_6055959_R_0-c2-rev STUB_deerfield_street_6055959_R#0(rev) v1     apex 1 m from STUB_deerfield_street_6055959_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_BIRCHCREEK_ROAD_6024742_R_0-c1-fwd STUB_birchcreek_road_6024742_R#0 v4     |D| 16.2 < 45 deg; apex 4 m from STUB_birchcreek_road_6024742_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_BIRCHCREEK_ROAD_6024742_R_0-c2-fwd STUB_birchcreek_road_6024742_R#0 v16    |D| 16.2 < 45 deg; apex 0 m from STUB_birchcreek_road_6024742_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_BIRCHCREEK_ROAD_6024742_R_0-c1-rev STUB_birchcreek_road_6024742_R#0(rev) v12    apex 4 m from STUB_birchcreek_road_6024742_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_BIRCHCREEK_ROAD_6024742_R_0-c2-rev STUB_birchcreek_road_6024742_R#0(rev) v0     apex 0 m from STUB_birchcreek_road_6024742_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_PARK_RIDGE_BOULEVARD_1224664714_L_0-c1-fwd STUB_park_ridge_boulevard_1224664714_L#0 v3     apex 3 m from STUB_park_ridge_boulevard_1224664714_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_PARK_RIDGE_BOULEVARD_1224664714_L_0-c2-fwd STUB_park_ridge_boulevard_1224664714_L#0 v15    apex 1 m from STUB_park_ridge_boulevard_1224664714_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_PARK_RIDGE_BOULEVARD_1224664714_L_0-c1-rev STUB_park_ridge_boulevard_1224664714_L#0(rev) v14    |D| 11.4 < 45 deg; apex 2 m from STUB_park_ridge_boulevard_1224664714_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_PARK_RIDGE_BOULEVARD_1224664714_L_0-c2-rev STUB_park_ridge_boulevard_1224664714_L#0(rev) v2     |D| 11.4 < 45 deg; apex 2 m from STUB_park_ridge_boulevard_1224664714_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_TUXEDO_ROAD_6051501_R_0-c1-fwd STUB_tuxedo_road_6051501_R#0 v4     R_apex 32.5 > 30 m; |D| 8.8 < 45 deg; apex 4 m from STUB_tuxedo_road_6051501_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_TUXEDO_ROAD_6051501_R_0-c2-fwd STUB_tuxedo_road_6051501_R#0 v16    R_apex 32.5 > 30 m; |D| 8.8 < 45 deg; apex 0 m from STUB_tuxedo_road_6051501_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_TUXEDO_ROAD_6051501_R_0-c1-rev STUB_tuxedo_road_6051501_R#0(rev) v14    apex 2 m from STUB_tuxedo_road_6051501_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_TUXEDO_ROAD_6051501_R_0-c2-rev STUB_tuxedo_road_6051501_R#0(rev) v2     apex 2 m from STUB_tuxedo_road_6051501_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_WINDING_CREEK_DRIVE_5968105_R_0-c1-fwd STUB_winding_creek_drive_5968105_R#0 v4     |D| 10.8 < 45 deg; apex 4 m from STUB_winding_creek_drive_5968105_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_WINDING_CREEK_DRIVE_5968105_R_0-c2-fwd STUB_winding_creek_drive_5968105_R#0 v16    |D| 10.8 < 45 deg; apex 0 m from STUB_winding_creek_drive_5968105_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_WINDING_CREEK_DRIVE_5968105_R_0-c1-rev STUB_winding_creek_drive_5968105_R#0(rev) v12    apex 4 m from STUB_winding_creek_drive_5968105_R#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_WINDING_CREEK_DRIVE_5968105_R_0-c2-rev STUB_winding_creek_drive_5968105_R#0(rev) v0     apex 0 m from STUB_winding_creek_drive_5968105_R#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_HEMINGWAY_DRIVE_6045093_L_0-c1-fwd STUB_hemingway_drive_6045093_L#0 v0     apex 0 m from STUB_hemingway_drive_6045093_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_HEMINGWAY_DRIVE_6045093_L_0-c2-fwd STUB_hemingway_drive_6045093_L#0 v12    apex 4 m from STUB_hemingway_drive_6045093_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_HEMINGWAY_DRIVE_6045093_L_0-c1-rev STUB_hemingway_drive_6045093_L#0(rev) v15    |D| 16.1 < 45 deg; apex 1 m from STUB_hemingway_drive_6045093_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_HEMINGWAY_DRIVE_6045093_L_0-c2-rev STUB_hemingway_drive_6045093_L#0(rev) v3     |D| 16.1 < 45 deg; apex 3 m from STUB_hemingway_drive_6045093_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_DOREEN_ROAD_5955946_L_0-c1-fwd STUB_doreen_road_5955946_L#0 v2     apex 2 m from STUB_doreen_road_5955946_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip STUB_DOREEN_ROAD_5955946_L_0-c2-fwd STUB_doreen_road_5955946_L#0 v14    apex 2 m from STUB_doreen_road_5955946_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_DOREEN_ROAD_5955946_L_0-c1-rev STUB_doreen_road_5955946_L#0(rev) v12    |D| 27.5 < 45 deg; apex 4 m from STUB_doreen_road_5955946_L#0 end (< 15 m: mouth-flare geometry)
+[signs] skip STUB_DOREEN_ROAD_5955946_L_0-c2-rev STUB_doreen_road_5955946_L#0(rev) v0     |D| 27.5 < 45 deg; apex 0 m from STUB_doreen_road_5955946_L#0 start (< 15 m: mouth-flare geometry)
+[signs] skip N-c1-fwd    north                v1     apex 2 m from mouth north_J1_waring@MAINLINE:1517 (< 15 m: mouth-flare geometry)
+[signs] skip N-c5-fwd    north                v1734  R_apex 58.8 > 30 m; |D| 4.7 < 45 deg
+[signs] skip N-c6-fwd    north                v2105  R_apex 48.5 > 30 m; |D| 7.5 < 45 deg; apex 7 m from mouth north_J5_jackson_north@MAINLINE:2317 (< 15 m: mouth-flare geometry)
+[signs] skip N-c7-fwd    north                v2108  |D| 24.0 < 45 deg; apex 0 m from mouth north_J5_jackson_north@MAINLINE:2317 (< 15 m: mouth-flare geometry)
+[signs] skip N-c6-rev    north(rev)           v2107  apex 4 m from mouth north_J5_jackson_north@MAINLINE:2317 (< 15 m: mouth-flare geometry)
+[signs] skip N-c5-rev    north(rev)           v1734  R_apex 58.7 > 30 m; |D| 4.8 < 45 deg
+[signs] skip N-r1-rev    north(rev)           v2     |D| 21.2 < 45 deg; apex 4 m from mouth north_J1_waring@MAINLINE:1517 (< 15 m: mouth-flare geometry)
+[signs] 29 placed (14 W1-6L, 15 W1-6R; mainline plates 6 fwd / 5 rev; 4 layout plates (M3-fwd@race_cw, M4-fwd@race_cw, M4-rev@race_acw, M3-rev@race_acw); 6 on the north ribbon), 176 skipped -> 1 SIGNPLATE + 1 SIGNARROW + 1 SIGNPOST + 3 in R
+[build_kn5_loop] split 1GRASS (817813 verts) -> 16 tiles under 60000 (balanced bisection)
+[build_kn5_loop] split GRASS_FAR (159512 verts) -> 4 tiles under 60000 (balanced bisection)
+[build_kn5_loop] terrain tiles: 1GRASS x16 (max 51788 v, total 822792 v), GRASS_FAR x4 (max 40314 v, total 160499 v)
+[thin] 20 tiles, 983291 vertices read; stars left alone: 21909 vertices within 2 m of a building; 465982 at 22 m or more from the pavement (+- 0.1 m); kept as rib_check inputs: 274 corners of cross-grain cells (centre > 18 m); 17 corners of
+[thin] workers done (49 s)
+[thin] terrain 983291 -> 526317 vertices (46.5 % fewer) over 20 tiles; removed vertices now -0.1500 .. +0.1500 m off the thinned surface; saved san_diego_lake_murray.blend (77 s)
+[rock] 9805 faces / 11935.7 m2 of cut face at 0.7 m/m or steeper in 9 of 16 bands -> 8 mesh(es) 1GRASS_ROCK_12, 1GRASS_ROCK_13, 1GRASS_ROCK_14, 1GRASS_ROCK_2, 1GRASS_ROCK_4, 1GRASS_ROCK_5, 1GRASS_ROCK_6, 1GRASS_ROCK_7 (6943 vertices); 13730
+KN5 EXISTS: True SIZE: 94173764 FILE: san_diego_lake_murray.kn5
+KN5 EXISTS: True SIZE: 11722654 FILE: san_diego_lake_murray_race.kn5
+KN5 EXISTS: True SIZE: 5506635 FILE: san_diego_lake_murray_closure_race_cw.kn5
+KN5 EXISTS: True SIZE: 5505921 FILE: san_diego_lake_murray_closure_race_acw.kn5
+KN5 EXISTS: True SIZE: 872525 FILE: san_diego_lake_murray_street.kn5
+=================== gate: verify_ai_line --layout race_cw (hard; ledger 0052 - the written line vs the BUILT walls and road)
+verify_ai_line race_cw: wall min 2.542 m, under 2.5 m 0.0; spurious dips 0, flips 0.594/km; sides past a wall 0; min radius 13.9 m; lap est 276.8 s (mu 1.0) -> D:\k10-scratch\p4\integrate\proj\data\ai_verify.race_cw.json
+=================== gate: verify_ai_line --layout race_acw (hard; ledger 0052 - the written line vs the BUILT walls and road)
+verify_ai_line race_acw: wall min 2.384 m, under 2.5 m 0.00045; spurious dips 0, flips 0.372/km; sides past a wall 0; min radius 14.13 m; lap est 273.3 s (mu 1.0) -> D:\k10-scratch\p4\integrate\proj\data\ai_verify.race_acw.json
+  terrain tiles: 1GRASS x24 (max 31488 v), GRASS_FAR x4 (max 38122 v)
+  street-only kn5 san_diego_lake_murray_street.kn5: 2 meshes ['1KERB_sidewalk_streetonly_median', '1WALL_guard_streetonly_median']
+[lights-ini] 323 [LIGHT_N] for 323 lamps, 323 at their lens: PASS
+[map] wrote D:\k10-scratch\p4\integrate\proj\build\san_diego_lake_murray\map.png + data/map.ini (kn5 frame, network: 35 line(s), 6.694 m/px)
+[map] wrote D:\k10-scratch\p4\integrate\proj\build\san_diego_lake_murray\race_acw\map.png + data/map.ini (kn5 frame, lap: 1 line(s), 5.458 m/px)
+[map] wrote D:\k10-scratch\p4\integrate\proj\build\san_diego_lake_murray\ui\race_acw\outline.png (lap)
+[map] wrote D:\k10-scratch\p4\integrate\proj\build\san_diego_lake_murray\race_cw\map.png + data/map.ini (kn5 frame, lap: 1 line(s), 5.458 m/px)
+[map] wrote D:\k10-scratch\p4\integrate\proj\build\san_diego_lake_murray\ui\race_cw\outline.png (lap)
+[map] wrote D:\k10-scratch\p4\integrate\proj\build\san_diego_lake_murray\street\map.png + data/map.ini (kn5 frame, network: 35 line(s), 6.694 m/px)
+[map] wrote D:\k10-scratch\p4\integrate\proj\build\san_diego_lake_murray\ui\street\outline.png (network)
+[treefx] built-surface guard on track.obj: plan triangles rock 9804, road 51854, walk 130652, building 2747
+[treefx] fill: 3438 trees + 8906 bushes from the terrain grid (4x4 sub-cells per 40 m)
+[treefx] loop planted area 471.8 ha (47179 in-band sub-cells): candidates 7263 trees / 18114 bushes, caps 3500 / 9000 (kept 0.482 / 0.497) -> density 7.29 trees/ha, 18.88 bushes/ha
+[treefx] north (ledger 0054 P4 / A9): planted area 201.9 ha (20195 sub-cells); the aerial bins imply 8900 trees / 3988 bushes; caps at the loop's density 1498 / 3852; kept 1550 / 3856; median trees 26; dropped on a pad 55, on a rock face 16
+[treefx]   piece A: 683 -> Bush.bin 231, Bush3.bin 179, Gum.bin 7, Oak3.bin 28, PalmV1.bin 13, PepperV1.bin 35, Pine_Aleppo.bin 6, Sage.bin 163, SycamoreV1.bin 21
+[treefx]   piece B: 1072 -> Agave.bin 92, Bush.bin 174, Bush3.bin 99, Gum.bin 40, Oak3.bin 85, Pine_Aleppo.bin 66, Sage.bin 356, Yucca.bin 160
+[treefx]   piece C: 1924 -> Agave.bin 117, Bush.bin 295, Bush3.bin 178, Gum.bin 94, Oak3.bin 244, PalmV1.bin 17, PepperV1.bin 26, Pine_Aleppo.bin 141, Sage.bin 504, SycamoreV1.bin 67, SycamoreV2.bin 24, Yucca.bin 217
+[treefx]   piece D: 1574 -> Agave.bin 75, Bush.bin 196, Bush3.bin 85, Gum.bin 158, Oak3.bin 296, Pine_Aleppo.bin 189, Sage.bin 393, Yucca.bin 182
+[treefx]   piece ring: 66 -> Bush.bin 27, Bush3.bin 16, Pine_Aleppo.bin 1, Sage.bin 21, SycamoreV1.bin 1
+[treefx] built-surface guard: dropped rock 10, road 0, walk 2, building 695 (of them on the loop's own zones: rock 0, road 0, walk 2, building 592)
+[treefx] 20464 trees ({'palms': 890, 'trees': 404, 'scrub': 932, 'median_planting': 1102, 'fill_yard_trees': 1601, 'fill_yard_bushes': 1503, 'fill_slope_trees': 1684, 'fill_slope_bushes': 7029, 'north_suburb_trees': 86, 'north_suburb_bushes
+[verify-race] G scenery (trees: trees.txt (written); signs: data/signs.local.json): {'tree': 20464, 'sign': 29} items, 395 beside the race road; 0 in a lane or a wall (trunk r 0.3 m, post r 0.03 m); nearest per layout: race_acw 0.656 m (tre
+[verify_mouths] del_cerro_blvd#0 (end) -> MAINLINE side +1 angle 75.63 deg: mouth line max 0.015 m (95 samples); host lane road/curb above max 0.0 m, grass max -0.01 m (1705 samples); notch max 0.02 m; approach max 1.13 %/m over 2.5 m (1 m:
+[verify_mouths] del_cerro_blvd#1 (start) -> MAINLINE side -1 angle 86.05 deg: mouth line max 0.016 m (78 samples); host lane road/curb above max 0.0 m, grass max -0.009 m (1621 samples); notch max 0.016 m; approach max 0.98 %/m over 2.5 m (
+[verify_mouths] medium#2+0#0#0 (start) -> MAINLINE side -1 angle 88.88 deg: mouth line max 0.003 m (34 samples); host lane road/curb above max 0.0 m, grass max -0.014 m (903 samples); notch max 0.005 m; approach max 1.82 %/m over 2.5 m (1 m
+[verify_mouths] north_J1_waring#0 (start) -> MAINLINE side +1 angle 83.62 deg: mouth line max 0.006 m (63 samples); host lane road/curb above max 0.0 m, grass max -0.016 m (2793 samples); notch max 0.015 m; approach max 2.50 %/m over 2.5 m 
+[verify_mouths] north_J5_jackson_north#0 (start) -> MAINLINE side +1 angle 76.95 deg: mouth line max 0.017 m (68 samples); host lane road/curb above max 0.0 m, grass max -0.007 m (1776 samples); notch max 0.023 m; approach max 0.77 %/m over
+[verify_mouths] medium#2+0#0#0 (end) -> del_cerro_blvd#1 side -1 angle 87.77 deg: mouth line max 0.004 m (41 samples); host lane road/curb above max 0.0 m, grass max -0.018 m (665 samples); notch max 0.01 m; approach max 0.97 %/m over 2.5 m
+[verify_mouths] STUB_galewood_street_5984405_R#0 (start) -> north_J1_waring#0 side -1 angle 87.98 deg: mouth line max 0.006 m (32 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (692 samples); notch max 0.007 m; approach m
+[verify_mouths] STUB_galewood_street_5984405_L#0 (start) -> north_J1_waring#0 side +1 angle 89.33 deg: mouth line max 0.006 m (35 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (768 samples); notch max 0.008 m; approach ma
+[verify_mouths] STUB_eldridge_street_6013754_L#0 (start) -> north_J1_waring#0 side +1 angle 89.69 deg: mouth line max 0.002 m (34 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (704 samples); notch max 0.005 m; approach m
+[verify_mouths] STUB_eldridge_street_6013754_R#0 (start) -> north_J1_waring#0 side -1 angle 89.19 deg: mouth line max 0.002 m (33 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (608 samples); notch max 0.004 m; approach ma
+[verify_mouths] STUB_birchwood_street_1370375341_R#0 (start) -> north_J1_waring#0 side -1 angle 86.19 deg: mouth line max 0.013 m (30 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (594 samples); notch max 0.014 m; approac
+[verify_mouths] STUB_glenroy_street_663868618_L#0 (start) -> north_princess_view side +1 angle 88.36 deg: mouth line max 0.004 m (36 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (704 samples); notch max 0.005 m; approac
+[verify_mouths] STUB_glenroy_street_663868622_R#0 (start) -> north_princess_view side -1 angle 84.74 deg: mouth line max 0.002 m (31 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (704 samples); notch max 0.003 m; approac
+[verify_mouths] STUB_princess_view_court_5998286_R#0 (start) -> north_princess_view side -1 angle 86.14 deg: mouth line max 0.016 m (38 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (726 samples); notch max 0.016 m; appr
+[verify_mouths] STUB_princess_view_place_5998259_R#0 (start) -> north_princess_view side -1 angle 88.74 deg: mouth line max 0.007 m (36 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (759 samples); notch max 0.01 m; appro
+[verify_mouths] STUB_princess_view_way_6018734_R#0 (start) -> north_princess_view side -1 angle 89.79 deg: mouth line max 0.02 m (32 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (747 samples); notch max 0.02 m; approach
+[verify_mouths] STUB_fontaine_street_5986946_R#0 (start) -> north_princess_view side -1 angle 80.71 deg: mouth line max 0.002 m (34 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (768 samples); notch max 0.003 m; approach 
+[verify_mouths] STUB_fontaine_street_5986946_L#0 (start) -> north_princess_view side +1 angle 89.37 deg: mouth line max 0.002 m (33 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (756 samples); notch max 0.005 m; approach 
+[verify_mouths] STUB_laura_street_6042836_R#0 (start) -> north_princess_view side -1 angle 89.79 deg: mouth line max 0.036 m (41 samples); host lane road/curb above max 0.0 m, grass max -0.018 m (792 samples); notch max 0.038 m; approach ma
+[verify_mouths] STUB_conestoga_way_6042936_R#0 (start) -> north_mission_gorge side -1 angle 88.42 deg: mouth line max 0.003 m (35 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (825 samples); notch max 0.003 m; approach ma
+[verify_mouths] STUB_mission_vista_drive_5977531_L#0 (start) -> north_mission_gorge side +1 angle 82.04 deg: mouth line max 0.008 m (36 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (792 samples); notch max 0.009 m; appr
+[verify_mouths] STUB_margerum_avenue_135149732_R#0 (start) -> north_mission_gorge side -1 angle 84.98 deg: mouth line max 0.007 m (33 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (768 samples); notch max 0.005 m; approa
+[verify_mouths] STUB_mission_montana_drive_5988290_L#0 (start) -> north_mission_gorge side +1 angle 89.05 deg: mouth line max 0.001 m (35 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (957 samples); notch max 0.003 m; app
+[verify_mouths] STUB_mission_vista_drive_5977531_L_560#0 (start) -> north_mission_gorge side +1 angle 84.28 deg: mouth line max 0.003 m (35 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (891 samples); notch max 0.007 m; 
+[verify_mouths] STUB_deerfield_crescent_638144640_L#0 (start) -> north_mission_gorge side +1 angle 85.27 deg: mouth line max 0.002 m (35 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (825 samples); notch max 0.005 m; appr
+[verify_mouths] STUB_deerfield_street_6055959_R#0 (start) -> north_mission_gorge side -1 angle 84.28 deg: mouth line max 0.003 m (35 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (684 samples); notch max 0.006 m; approac
+[verify_mouths] STUB_birchcreek_road_6024742_R#0 (start) -> north_J5_jackson_north#0 side -1 angle 81.55 deg: mouth line max 0.007 m (33 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (800 samples); notch max 0.007 m; appr
+[verify_mouths] STUB_park_ridge_boulevard_1224664714_L#0 (start) -> north_J5_jackson_north#0 side +1 angle 89.91 deg: mouth line max 0.002 m (33 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (736 samples); notch max 0.00
+[verify_mouths] STUB_tuxedo_road_6051501_R#0 (start) -> north_J5_jackson_north#0 side -1 angle 71.53 deg: mouth line max 0.006 m (48 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (874 samples); notch max 0.011 m; approac
+[verify_mouths] STUB_winding_creek_drive_5968105_R#0 (start) -> north_J5_jackson_north#0 side -1 angle 84.64 deg: mouth line max 0.003 m (43 samples); host lane road/curb above max 0.0 m, grass max -0.02 m (777 samples); notch max 0.005 m; 
+[verify_mouths] STUB_hemingway_drive_6045093_L#0 (start) -> north_J5_jackson_north#0 side +1 angle 88.89 deg: mouth line max 0.008 m (37 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (561 samples); notch max 0.011 m; app
+[verify_mouths] STUB_doreen_road_5955946_L#0 (start) -> north_J5_jackson_north#0 side +1 angle 87.32 deg: mouth line max 0.04 m (29 samples); host lane road/curb above max 0.0 m, grass max -0.019 m (758 samples); notch max 0.042 m; approach
+[verify_mouths] 32 mouth(s) on track.obj: PASS -> verify_mouths.json
+[verify_stubs] STUB_galewood_street_5984405_R#0: mouth ok (line 0.006 m, approach 0.42 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.005 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.0199 / sink 0.041 m, 
+[verify_stubs] STUB_galewood_street_5984405_L#0: mouth ok (line 0.006 m, approach 0.73 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.011 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 0.055 m, 14
+[verify_stubs] STUB_eldridge_street_6013754_L#0: mouth ok (line 0.002 m, approach 0.85 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.01 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 0.0483 m, 14
+[verify_stubs] STUB_eldridge_street_6013754_R#0: mouth ok (line 0.002 m, approach 0.42 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.005 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 0.0351 m, 1
+[verify_stubs] STUB_birchwood_street_1370375341_R#0: mouth ok (line 0.013 m, approach 0.53 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.006 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / sink 0.0387 
+[verify_stubs] STUB_glenroy_street_663868618_L#0: mouth ok (line 0.004 m, approach 0.20 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.002 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 0.0263 m, 
+[verify_stubs] STUB_glenroy_street_663868622_R#0: mouth ok (line 0.002 m, approach 0.26 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.004 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 0.0327 m, 
+[verify_stubs] STUB_princess_view_court_5998286_R#0: mouth ok (line 0.016 m, approach 0.90 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.011 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / sink 0.058 m
+[verify_stubs] STUB_princess_view_place_5998259_R#0: mouth ok (line 0.007 m, approach 1.14 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.016 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.0199 / sink 0.074
+[verify_stubs] STUB_princess_view_way_6018734_R#0: mouth ok (line 0.02 m, approach 0.93 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.013 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / sink 0.0637 m, 
+[verify_stubs] STUB_fontaine_street_5986946_R#0: mouth ok (line 0.002 m, approach 0.35 %/m); drivable 0.41-15.02 m (holes 0, worst step 0.007 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 0.0475 m, 
+[verify_stubs] STUB_fontaine_street_5986946_L#0: mouth ok (line 0.002 m, approach 1.32 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.022 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 0.0887 m, 1
+[verify_stubs] STUB_laura_street_6042836_R#0: mouth ok (line 0.036 m, approach 1.00 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.014 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / sink 0.0672 m, 14.2
+[verify_stubs] STUB_conestoga_way_6042936_R#0: mouth ok (line 0.003 m, approach 0.79 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.012 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.0199 / sink 0.06 m, 14.
+[verify_stubs] STUB_mission_vista_drive_5977531_L#0: mouth ok (line 0.008 m, approach 0.41 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.008 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / sink 0.0411 
+[verify_stubs] STUB_margerum_avenue_135149732_R#0: mouth ok (line 0.007 m, approach 1.44 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.027 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 0.1027 m,
+[verify_stubs] STUB_mission_montana_drive_5988290_L#0: mouth ok (line 0.001 m, approach 0.51 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.006 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / sink 0.037
+[verify_stubs] STUB_mission_vista_drive_5977531_L_560#0: mouth ok (line 0.003 m, approach 1.10 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.014 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.0199 / sink 0
+[verify_stubs] STUB_deerfield_crescent_638144640_L#0: mouth ok (line 0.002 m, approach 0.68 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.008 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / sink 0.0437
+[verify_stubs] STUB_deerfield_street_6055959_R#0: mouth ok (line 0.003 m, approach 1.08 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.015 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / sink 0.0625 m, 
+[verify_stubs] STUB_birchcreek_road_6024742_R#0: mouth ok (line 0.007 m, approach 0.52 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.004 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.02 / sink 0.0371 m, 1
+[verify_stubs] STUB_park_ridge_boulevard_1224664714_L#0: mouth ok (line 0.002 m, approach 0.82 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.011 m, grass 0, obstructions 0); barrier span +-6.38 m short 0/256, seat float -0.0199 / sink 0
+[verify_stubs] STUB_tuxedo_road_6051501_R#0: mouth ok (line 0.006 m, approach 0.93 %/m); drivable 0.42-15.04 m (holes 0, worst step 0.006 m, grass 0, obstructions 0); barrier span +-7.58 m short 0/304, seat float -0.02 / sink 0.0498 m, 10.9
+[verify_stubs] STUB_winding_creek_drive_5968105_R#0: mouth ok (line 0.003 m, approach 0.95 %/m); drivable 0.4-15.02 m (holes 0, worst step 0.011 m, grass 0, obstructions 0); barrier span +-7.58 m short 0/304, seat float -0.02 / sink 0.0549 
+[verify_stubs] STUB_hemingway_drive_6045093_L#0: mouth ok (line 0.008 m, approach 1.38 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.026 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.0199 / sink 0.0931 m,
+[verify_stubs] STUB_doreen_road_5955946_L#0: mouth ok (line 0.04 m, approach 1.47 %/m); drivable 0.4-15.01 m (holes 0, worst step 0.033 m, grass 0, obstructions 0); barrier span +-6.58 m short 0/264, seat float -0.02 / sink 0.1191 m, 14.443
+[verify_stubs] curb cut service_576889885_L: PASS
+[verify_stubs] curb cut service_576889897_R: PASS
+[verify_stubs] curb cut service_576889898_R: PASS
+[verify_stubs] curb cut service_576889900_R: PASS
+[verify_stubs] curb cut service_576889906_R: PASS
+[verify_stubs] curb cut service_745284422_L: PASS
+[verify_stubs] curb cut service_576889906_R_56: PASS
+[verify_stubs] curb cut service_567651095_L: PASS
+[verify_stubs] curb cut service_576889892_R: PASS
+[verify_stubs] curb cut service_576889892_R_76: PASS
+[verify_stubs] curb cut service_576889890_R: PASS
+[verify_stubs] curb cut service_576889890_R_95: PASS
+[verify_stubs] curb cut service_576889889_R: PASS
+[verify_stubs] curb cut service_576889888_R: PASS
+[verify_stubs] curb cut service_576889887_R: PASS
+[verify_stubs] curb cut service_1013051647_R: PASS
+[verify_stubs] curb cut service_1013051648_R: PASS
+[verify_stubs] curb cut service_318915680_R: PASS
+[verify_stubs] curb cut service_318915571_R: PASS
+[verify_stubs] curb cut service_577444270_R_722: PASS
+[verify_stubs] curb cut service_577444242_R: PASS
+[verify_stubs] curb cut service_577444238_L: PASS
+[verify_stubs] curb cut service_577444239_L: PASS
+[verify_stubs] curb cut service_577444241_L: PASS
+[verify_stubs] curb cut service_577444237_L: PASS
+[verify_stubs] curb cut service_851357844_L: PASS
+[verify_stubs] curb cut sdcwa_service_road_401663247_L: PASS
+[verify_stubs] curb cut service_577444267_R: PASS
+[verify_stubs] curb cut service_577444268_R: PASS
+[verify_stubs] 26 stub(s), 29 curb cut(s) on track.obj: PASS -> verify_stubs.json
+[verify_pads] J2: PASS  multi-coverage 0.0 m2, seam max 1.2 mm (0 near misses), grass 0, curb over pavement 0, node -0.019 m vs 3DEP, barriers S2 1.083 m, S1 1.083 m
+[verify_pads] J3: PASS  multi-coverage 0.0 m2, seam max 0.7 mm (0 near misses), grass 0, curb over pavement 0, node 0.039 m vs 3DEP, barriers S4 1.077 m, S3 1.086 m
+[verify_pads] J4: PASS  multi-coverage 0.0 m2, seam max 2.4 mm (0 near misses), grass 0, curb over pavement 0, node 0.017 m vs 3DEP, barriers S6 1.086 m, S5 1.078 m
+[ribs] D:\k10-scratch\p4\integrate\proj\data\track.obj: 555668 lattice nodes of 552868 terrain vertices (+ the thinning's removed lattice vertices: 193975 nodes read on the built surface, 103622 lattice-line breaks)
+[ribs] nyquist     >0.5m:   5072 beyond 20 m of a pavement,    569 within
+[ribs] nyquist       >1m:    958 beyond 20 m of a pavement,    199 within
+[ribs] nyquist       >2m:     87 beyond 20 m of a pavement,     27 within
+[ribs] nyquist       >4m:      5 beyond 20 m of a pavement,      0 within
+[ribs] nyquist     hotspot (-4975, -975): 5, max 3.63 m
+[ribs] nyquist     hotspot (-2025, 575): 4, max 3.03 m
+[ribs] nyquist     hotspot (75, -1325): 4, max 2.41 m
+[ribs] nyquist     hotspot (3625, -1425): 4, max 3.65 m
+[ribs] nyquist     hotspot (-4325, -925): 3, max 4.17 m
+[ribs] nyquist     gate: 87 over 2 m beyond 20 m (limit 100)
+[ribs] cross_grain >0.5m:     57 beyond 20 m of a pavement,     13 within
+[ribs] cross_grain   >1m:     44 beyond 20 m of a pavement,      6 within
+[ribs] cross_grain   >2m:     32 beyond 20 m of a pavement,      1 within
+[ribs] cross_grain   >4m:     14 beyond 20 m of a pavement,      0 within
+[ribs] cross_grain hotspot (-775, 2975): 3, max 4.36 m
+[ribs] cross_grain hotspot (-825, 3025): 2, max 4.08 m
+[ribs] cross_grain hotspot (-2375, 1625): 1, max 1.21 m
+[ribs] cross_grain hotspot (-1975, 1375): 1, max 1.4 m
+[ribs] cross_grain hotspot (-1625, -725): 1, max 4.13 m
+[ribs] cross_grain gate: 44 over 1 m beyond 20 m (limit 100)
+[ribs] step_jogs   hotspot (3925, -1225): 3, max 3.39 m
+[ribs] step_jogs   hotspot (-3775, -775): 2, max 5.82 m
+[ribs] step_jogs   hotspot (-2125, -925): 2, max 6.25 m
+[ribs] step_jogs   hotspot (-1575, 1025): 2, max 4.75 m
+[ribs] step_jogs   hotspot (2825, -1775): 2, max 2.53 m
+[ribs] step_jogs   gate: 68 riser jogs (a row jump 2 m past the riser's own pace) beyond 20 m; the densest 75 m: 4 at (-1421.0, 1201.0) (limit 5) — a sharp bench or channel drawn as a staircase, read on the built surface
+[ribs] nyquist straight (along a lattice axis, a ridge not a staircase; not gated): {'>0.5m': 4327, '>1m': 1359, '>2m': 113, '>4m': 2}
+[ribs] nyquist at 20/40 m cells (> 2 m; natural hill roughness at that scale, not gated): {'20': 16428, '40': 18940}
+[ribs] PASS
+[houses] D:\k10-scratch\p4\integrate\proj\data\track.obj: 329 buildings judged, 0 with no ground under them
+[houses] contact (bottom - lowest ground under the walls): min -0.34 m, max -0.145 m
+[houses] floating (> 0.1 m above): 0 (limit 0); sunken (> 1 m below): 0 (limit 0); buried (roof < 1 m over the highest ground under the walls): 0 (limit 0); lowest roof over that ground 1.601 m
+[houses] the visual lens's buried share (mean ground over the height, foundation included; not gated): {'over_30pct': 14, 'over_50pct': 1, 'p95': 0.278}
+[houses] PASS
+DRIVE TEST san_diego_lake_murray [street forward street]  lap 13.47 km  (10 wheel paths @ 1.0 m)
+  ground on top mid-lane : 8
+  severe steps (>6 cm)  : 0
+  slope kinks >3.0%% /km   : 2.67
+  off-road excursion drops>20cm : 96  (far flare ledges, reported: 107)
+  obstructed stations    : 0
+  => FAIL   (data/drive_test.street.json)
+DRIVE TEST SUMMARY san_diego_lake_murray: street=FAIL race_cw=- race_acw=-   (data/drive_test.json)
+  slope kinks >3.0%% /km   : 2.39
+  off-road excursion drops>20cm : 40  (far flare ledges, reported: 20)
+  obstructed stations    : 0
+  => FAIL   (data/drive_test.line.expansion_fwd.json)
+  LINE fwd: line gate PASS (every key in limit); drive_test's own lap rule FAIL (excursion_drops): soft top 0, excursions 40 (6.36/km), kinks 2.39/km, fold kinks 4
+DRIVE TEST san_diego_lake_murray [line expansion_rev]  lap 6.33 km  (10 wheel paths @ 1.0 m)
+  ground on top mid-lane : 0
+  severe steps (>6 cm)  : 0
+  slope kinks >3.0%% /km   : 2.53
+  off-road excursion drops>20cm : 38  (far flare ledges, reported: 15)
+  obstructed stations    : 0
+  => FAIL   (data/drive_test.line.expansion_rev.json)
+  LINE rev: line gate PASS (every key in limit); drive_test's own lap rule FAIL (excursion_drops): soft top 0, excursions 38 (6.01/km), kinks 2.53/km, fold kinks 0
+DRIVE TEST LINES expansion: fwd=PASS rev=PASS   (drive_test's own lap rule: fwd=FAIL rev=FAIL)   (data/drive_test.expansion.json)
+  => 53 issues
+=================== gate: drive_test --layout race_cw (hard; the declared corridor lane — barrier_missing and obstruction_stations must be 0)
+DRIVE TEST san_diego_lake_murray [race_cw forward race]  lap 13.47 km  (10 wheel paths @ 1.0 m)
+  ground on top mid-lane : 8
+  severe steps (>6 cm)  : 4
+  slope kinks >3.0%% /km   : 6.46
+  off-road excursion drops>20cm : 0  (far flare ledges, reported: 203)
+  obstructed stations    : 0
+  => FAIL   (data/drive_test.race_cw.json)
+DRIVE TEST SUMMARY san_diego_lake_murray: street=FAIL race_cw=FAIL race_acw=-   (data/drive_test.json)
+  => 53 issues
+[no_route] race_cw (built, v2 corridors.race_cw): domain 940 k m2 in 490 tiles of 64 m (2.1 s)
+[no_route] walls: 166038 -> 587369 wall cells, dilated 0.5 m (21.7 s)
+[no_route] reached 138.8 k m2 from AC_START_0 (21.8 s)
+[no_route] race_cw: PASS — leak 0 m2, 0 doors, 0/439 probes reached, 0 blocked spans, 0 spawns unreached (21.8 s)
+=================== gate: drive_test --layout race_acw (hard; the declared corridor lane — barrier_missing and obstruction_stations must be 0)
+DRIVE TEST san_diego_lake_murray [race_acw reverse race]  lap 13.47 km  (10 wheel paths @ 1.0 m)
+  ground on top mid-lane : 4
+  severe steps (>6 cm)  : 6
+  slope kinks >3.0%% /km   : 6.09
+  off-road excursion drops>20cm : 0  (far flare ledges, reported: 231)
+  obstructed stations    : 0
+  => FAIL   (data/drive_test.race_acw.json)
+DRIVE TEST SUMMARY san_diego_lake_murray: street=FAIL race_cw=FAIL race_acw=FAIL   (data/drive_test.json)
+  => 53 issues
+[no_route] race_acw (built, v2 corridors.race_acw): domain 940 k m2 in 490 tiles of 64 m (2.2 s)
+[no_route] walls: 166026 -> 587313 wall cells, dilated 0.5 m (21.6 s)
+[no_route] reached 138.2 k m2 from AC_START_0 (21.7 s)
+[no_route] race_acw: PASS — leak 0 m2, 0 doors, 0/439 probes reached, 0 blocked spans, 0 spawns unreached (21.8 s)
+[fold-fans] pinch rows 763..774 (ROAD lane 2): legs 10.061 / 10.360, midpoint 10.211 — mouth_welds.json levelled
+[fold-fans] pinch rows 1508..1517 (ROAD lane 2): legs 24.471 / 24.418, midpoint 24.444 — mouth_welds.json levelled
+[fold-fans] pinch rows 2315..2324 (ROAD lane 2): legs 108.813 / 109.310, midpoint 109.061 — mouth_welds.json levelled
+[fold-fans] street    rows 751..786: 117 paths, 0 with a step; fine max 0.000, DT max 0.047, race-kerb lip max 0.000, grass-on-top 0 (max 0.000 over), road jumps 0, steep road tris 0, X built [10.2107, 10.2107] vs midpoint 10.2107
+[fold-fans] street    rows 1496..1529: 117 paths, 0 with a step; fine max 0.000, DT max 0.021, race-kerb lip max 0.000, grass-on-top 59 (max 0.006 over), road jumps 0, steep road tris 0, X built [24.4444, 24.4444] vs midpoint 24.4444
+[fold-fans] street    rows 2303..2336: 101 paths, 0 with a step; fine max 0.000, DT max 0.018, race-kerb lip max 0.000, grass-on-top 0 (max 0.000 over), road jumps 0, steep road tris 0, X built [109.0615, 109.0615] vs midpoint 109.0615
+[fold-fans] race_cw   rows 751..786: 113 paths, 0 with a step; fine max 0.000, DT max 0.044, race-kerb lip max 0.024, grass-on-top 0 (max 0.000 over), road jumps 0, steep road tris 0, X built [10.2107, 10.2107] vs midpoint 10.2107, walls wo
+[fold-fans] race_cw   rows 1496..1529: 114 paths, 0 with a step; fine max 0.000, DT max 0.021, race-kerb lip max 0.000, grass-on-top 13 (max 0.003 over), road jumps 0, steep road tris 0, X built [24.4444, 24.4444] vs midpoint 24.4444, walls
+[fold-fans] race_cw   rows 2303..2336: 95 paths, 0 with a step; fine max 0.000, DT max 0.018, race-kerb lip max 0.000, grass-on-top 0 (max 0.000 over), road jumps 0, steep road tris 0, X built [109.0615, 109.0615] vs midpoint 109.0615, wall
+[fold-fans] race_acw  rows 751..786: 113 paths, 0 with a step; fine max 0.000, DT max 0.044, race-kerb lip max 0.024, grass-on-top 0 (max 0.000 over), road jumps 0, steep road tris 0, X built [10.2107, 10.2107] vs midpoint 10.2107, walls wo
+[fold-fans] race_acw  rows 1496..1529: 114 paths, 0 with a step; fine max 0.000, DT max 0.021, race-kerb lip max 0.000, grass-on-top 13 (max 0.003 over), road jumps 0, steep road tris 0, X built [24.4444, 24.4444] vs midpoint 24.4444, walls
+[fold-fans] race_acw  rows 2303..2336: 95 paths, 0 with a step; fine max 0.000, DT max 0.018, race-kerb lip max 0.000, grass-on-top 0 (max 0.000 over), road jumps 0, steep road tris 0, X built [109.0615, 109.0615] vs midpoint 109.0615, wall
+[fold-fans] PASS: 3 levelled pinch(es) x 3 layout(s)
+  walls     objects    49: no-ground  0.0%  seat-gap median -0.50  p95 -0.13  hovering>0.3m 0 (0.0%)
+  lampposts objects   323: no-ground  0.0%  seat-gap median -3.03  p95 -2.71  hovering>0.3m 0 (0.0%)
+  signposts objects    24: no-ground  0.0%  seat-gap median -0.35  p95 -0.30  hovering>0.3m 0 (0.0%)
+  deck-vs-mountain (tri-exact): median +0.020  p95 +0.022  max +0.255
+  road-over-ground: 12/10785 samples gap > 0.05 m (0.1%)  p95 +0.022 m (gate 0.1 m)
+  => PASS — kn5 matches the audited OBJs
+  kn5_ground_check street: exit 0
+  walls     objects    49: no-ground  0.0%  seat-gap median -0.50  p95 -0.13  hovering>0.3m 0 (0.0%)
+  lampposts objects   323: no-ground  0.0%  seat-gap median -3.03  p95 -2.71  hovering>0.3m 0 (0.0%)
+  signposts objects    26: no-ground  0.0%  seat-gap median -0.36  p95 -0.30  hovering>0.3m 0 (0.0%)
+  deck-vs-mountain (tri-exact): median +0.020  p95 +0.022  max +0.255
+  road-over-ground: 12/10785 samples gap > 0.05 m (0.1%)  p95 +0.022 m (gate 0.1 m)
+  => PASS — kn5 matches the audited OBJs
+  kn5_ground_check race_cw: exit 0
+  walls     objects    49: no-ground  0.0%  seat-gap median -0.50  p95 -0.13  hovering>0.3m 0 (0.0%)
+  lampposts objects   323: no-ground  0.0%  seat-gap median -3.03  p95 -2.71  hovering>0.3m 0 (0.0%)
+  signposts objects    26: no-ground  0.0%  seat-gap median -0.35  p95 -0.30  hovering>0.3m 0 (0.0%)
+  deck-vs-mountain (tri-exact): median +0.020  p95 +0.022  max +0.255
+  road-over-ground: 12/10785 samples gap > 0.05 m (0.1%)  p95 +0.022 m (gate 0.1 m)
+  => PASS — kn5 matches the audited OBJs
+  kn5_ground_check race_acw: exit 0
+GATES: street drive_test exit 1, street audit exit 1, race drive_test exit 1, race audit exit 1, race no_route exit 0, kn5_ground_check exit 0
+  race layouts red on their own gates: none
+  NOT INSTALLED (Kevin never loads a build the machine failed)
+EXIT 1
+----- ext_config GRASS_FX / TREES / LIGHT count
+GRASS_MATERIALS = 1GRASS_0_mat, 1GRASS_1_mat, 1GRASS_10_mat, 1GRASS_11_mat, 1GRASS_12_mat, 1GRASS_13_mat, 1GRASS_14_mat, 1GRASS_15_mat, 1GRASS_2_mat, 1GRASS_3_mat, 1GRASS_4_mat, 1GRASS_5_mat, 1GRASS_6_mat, 1GRASS_7_mat, 1GRASS_8_mat, 1GRASS_9_mat
+GRASS_MESHES = 1GRASS_0, 1GRASS_1, 1GRASS_10, 1GRASS_11, 1GRASS_12, 1GRASS_13, 1GRASS_14, 1GRASS_15, 1GRASS_2, 1GRASS_3, 1GRASS_4, 1GRASS_5, 1GRASS_6, 1GRASS_7, 1GRASS_8, 1GRASS_9
+LIST_0 = trees/trees.txt
+SURFACE_MATERIALS = 1GRASS_0_mat, 1GRASS_1_mat, 1GRASS_2_mat, 1GRASS_3_mat, 1GRASS_4_mat, 1GRASS_5_mat, 1GRASS_6_mat, 1GRASS_7_mat, 1GRASS_8_mat, 1GRASS_9_mat, 1GRASS_10_mat, 1GRASS_11_mat, 1GRASS_12_mat, 1GRASS_13_mat, 1GRASS_14_mat, 1GRASS_15_mat, 1GRASS_ROCK_2_mat, 1GRASS_ROCK_4_mat, 1GRASS_ROCK_5_mat, 1GRASS_ROCK_6_mat, 1GRASS_ROCK_7_mat, 1GRASS_ROCK_12_mat, 1GRASS_ROCK_13_mat, 1GRASS_ROCK_14_mat, 1ROAD_road_mat
+LIGHT_n blocks: 324
+INTENSITY values: 
+trees.txt bytes: 1477180 lines: 20512
+kn5 san_diego_lake_murray.kn5 bytes: 94173764
+kn5 san_diego_lake_murray__race_acw.kn5 bytes: 2104
+kn5 san_diego_lake_murray__race_cw.kn5 bytes: 2104
+kn5 san_diego_lake_murray__street.kn5 bytes: 2104
+kn5 san_diego_lake_murray_closure_race_acw.kn5 bytes: 5505921
+kn5 san_diego_lake_murray_closure_race_cw.kn5 bytes: 5506635
+kn5 san_diego_lake_murray_race.kn5 bytes: 11722654
+kn5 san_diego_lake_murray_street.kn5 bytes: 872525

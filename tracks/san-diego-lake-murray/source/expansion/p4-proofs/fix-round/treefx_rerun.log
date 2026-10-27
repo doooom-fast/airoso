@@ -1,0 +1,22 @@
+Mon Oct 26 23:44:22 MDT 2026
+[treefx] built-surface guard on track.obj: plan triangles rock 9804, road 51854, walk 130652, building 2747
+[treefx] fill: 3438 trees + 8906 bushes from the terrain grid (4x4 sub-cells per 40 m)
+[treefx] loop planted area 471.8 ha (47179 in-band sub-cells): candidates 7263 trees / 18114 bushes, caps 3500 / 9000 (kept 0.482 / 0.497) -> density 7.29 trees/ha, 18.88 bushes/ha
+[treefx] north (ledger 0054 P4 / A9): planted area 201.9 ha (20195 sub-cells); the aerial bins imply 8900 trees / 3988 bushes; caps at the loop's density 1498 / 3852; kept 1550 / 3856; median trees 26; dropped on a pad 55, on a rock face 160
+[treefx]   piece A: 683 -> Bush.bin 231, Bush3.bin 179, Gum.bin 7, Oak3.bin 28, PalmV1.bin 13, PepperV1.bin 35, Pine_Aleppo.bin 6, Sage.bin 163, SycamoreV1.bin 21
+[treefx]   piece B: 1072 -> Agave.bin 92, Bush.bin 174, Bush3.bin 99, Gum.bin 40, Oak3.bin 85, Pine_Aleppo.bin 66, Sage.bin 356, Yucca.bin 160
+[treefx]   piece C: 1924 -> Agave.bin 117, Bush.bin 295, Bush3.bin 178, Gum.bin 94, Oak3.bin 244, PalmV1.bin 17, PepperV1.bin 26, Pine_Aleppo.bin 141, Sage.bin 504, SycamoreV1.bin 67, SycamoreV2.bin 24, Yucca.bin 217
+[treefx]   piece D: 1574 -> Agave.bin 75, Bush.bin 196, Bush3.bin 85, Gum.bin 158, Oak3.bin 296, Pine_Aleppo.bin 189, Sage.bin 393, Yucca.bin 182
+[treefx]   piece ring: 66 -> Bush.bin 27, Bush3.bin 16, Pine_Aleppo.bin 1, Sage.bin 21, SycamoreV1.bin 1
+[treefx] built-surface guard: dropped rock 10, road 0, walk 2, building 696 (of them on the loop's own zones: rock 0, road 0, walk 2, building 593)
+[treefx] 20463 trees ({'palms': 890, 'trees': 404, 'scrub': 932, 'median_planting': 1102, 'fill_yard_trees': 1601, 'fill_yard_bushes': 1503, 'fill_slope_trees': 1684, 'fill_slope_bushes': 7028, 'north_suburb_trees': 86, 'north_suburb_bushes': 821, 'north_canyon_trees': 1199, 'north_scrub': 2939, 'north_riparian_trees': 105, 'north_street_trees': 70, 'north_gum_belt': 73, 'north_median_trees': 26}), 19 rejected in the corridor, species ['Agave.bin', 'Bush.bin', 'Bush3.bin', 'Gum.bin', 'Oak3.bin', 'PalmV1.bin', 'PalmV2.bin', 'PalmV3.bin', 'PepperV1.bin', 'Pine_Aleppo.bin', 'Sage.bin', 'SycamoreV1.bin', 'SycamoreV2.bin', 'Yucca.bin'] -> D:\k10-scratch\p4\integrate\proj\build\san_diego_lake_murray\extension\trees\trees.txt + [TREES] in ext_config.ini
+make_treefx EXIT 0
+[verify-race] G scenery (trees: trees.txt (written); signs: data/signs.local.json): {'tree': 20463, 'sign': 29} items, 395 beside the race road; 0 in a lane or a wall (trunk r 0.3 m, post r 0.03 m); nearest per layout: race_acw 0.656 m (tree Sage.bin#2331 v1054 vs the closure), race_cw 0.654 m (tree Bush.bin#2390 v1196 vs the closure)
+[verify-race] OK (scenery only: G trunks + posts) -> D:\k10-scratch\p4\integrate\proj\data\race_verify.scenery.json
+scenery EXIT 0
+[verify-race] missing D:\k10-scratch\p4\integrate\proj\data\barrier_bands.race_cw.json
+scenery race_cw EXIT 1
+[verify-race] missing D:\k10-scratch\p4\integrate\proj\data\barrier_bands.race_acw.json
+scenery race_acw EXIT 1
+[post-trees] 20463 {'rock': 0, 'walk': 0, 'building': 0, 'road': 1128}
+[vv-bld] {'trees': 20463, 'in_building_footprint': 0, 'north': 0}

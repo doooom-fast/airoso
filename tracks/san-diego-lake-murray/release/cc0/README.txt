@@ -12,7 +12,7 @@ NEEDS
   Pure or Sol recommended.
 
 VEGETATION
-  This package ships no tree models. The track was authored with ~21,000 CSP TreeFX plants whose
+  This package ships no tree models. The track was authored with ~20,500 CSP TreeFX plants whose
   models come from other mods that are not licensed for redistribution; the placement list is
   included and extension/trees/README.txt explains how to drop in TreeFX models you own.
 

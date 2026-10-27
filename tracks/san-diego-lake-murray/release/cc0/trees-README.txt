@@ -1,7 +1,7 @@
 CSP TreeFX — bring your own models
 ==================================
 
-trees.txt places ~21,000 plants along the loop and the north roads (positions, headings and sizes) but this package
+trees.txt places ~20,500 plants along the loop and the north roads (positions, headings and sizes) but this package
 ships NO tree models: the build was authored with models taken from other Assetto Corsa mods
 (No Hesi 1.10, Algarve Portimão 2023, Shutoko Revival Project) and their authors have not
 licensed redistribution.

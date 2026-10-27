@@ -1,0 +1,232 @@
+{
+ "_doc": "tools/rock_faces_blend.py (ledger 0054 P4 buildings + rock): the cut faces split out of the ground tiles",
+ "params": {
+  "slope_min_m_per_m": 0.7,
+  "band_pad_m": 6.0,
+  "min_rise_m": 3.0,
+  "min_patch_m2": 40.0,
+  "max_hole_m2": 60.0,
+  "uv_tile_m": 4.0,
+  "smooth_passes": 2,
+  "clean_rounds": 2,
+  "tongue_rock_frac": 0.6
+ },
+ "texture": {
+  "key": "1GRASS_ROCK",
+  "diffuse": "D:\\k10-scratch\\p4\\integrate\\proj\\textures\\sandstone_cut_diffuse.jpg",
+  "normal": "D:\\k10-scratch\\p4\\integrate\\proj\\textures\\sandstone_cut_normal.jpg",
+  "overridden": true
+ },
+ "bands": 16,
+ "faces_in_bands": 149388,
+ "steep_under_pavement_left_grass": 5209,
+ "rock_raw": 13730,
+ "boundary_smoothing": {
+  "teeth_filled": 934,
+  "teeth_eroded": 1682,
+  "passes": 4,
+  "teeth_before_grass_rock": [
+   380,
+   893
+  ],
+  "teeth_after_grass_rock": [
+   100,
+   137
+  ],
+  "teeth_final_grass_rock": [
+   100,
+   137
+  ],
+  "teeth_final_grass_beneath_pavement": 0,
+  "teeth_final_per_zone": {
+   "auto_cut_B_left_496_731": [
+    11,
+    13
+   ],
+   "auto_cut_B_left_86_276": [
+    0,
+    1
+   ],
+   "auto_cut_B_right_306_406": [
+    0,
+    0
+   ],
+   "auto_cut_B_right_536_716": [
+    0,
+    0
+   ],
+   "auto_cut_B_right_711_896": [
+    0,
+    0
+   ],
+   "auto_cut_C_left_1105_1220": [
+    0,
+    0
+   ],
+   "auto_cut_C_left_1360_1665": [
+    0,
+    2
+   ],
+   "auto_cut_C_left_1665_1860": [
+    6,
+    10
+   ],
+   "auto_cut_C_left_635_1100": [
+    29,
+    32
+   ],
+   "auto_cut_C_right_1070_1335": [
+    5,
+    6
+   ],
+   "auto_cut_C_right_1335_2253": [
+    21,
+    25
+   ],
+   "auto_cut_C_right_425_660": [
+    0,
+    0
+   ],
+   "auto_cut_C_right_670_795": [
+    1,
+    2
+   ],
+   "auto_cut_C_right_790_905": [
+    0,
+    0
+   ],
+   "auto_cut_D_right_1670_1850": [
+    0,
+    0
+   ],
+   "auto_cut_D_right_25_1595": [
+    27,
+    46
+   ]
+  }
+ },
+ "tongues_filled": {
+  "faces": 179,
+  "components": 82
+ },
+ "patches_dropped": 3356,
+ "holes_filled": 0,
+ "rock_faces": 9805,
+ "rock_area_m2": 11935.7,
+ "thin_triangles_in_bands_before_split": 1762,
+ "meshes": [
+  {
+   "name": "1GRASS_ROCK_12",
+   "from": "1GRASS_12",
+   "vertices": 885,
+   "faces": 1085
+  },
+  {
+   "name": "1GRASS_ROCK_13",
+   "from": "1GRASS_13",
+   "vertices": 826,
+   "faces": 1056
+  },
+  {
+   "name": "1GRASS_ROCK_14",
+   "from": "1GRASS_14",
+   "vertices": 1449,
+   "faces": 1983
+  },
+  {
+   "name": "1GRASS_ROCK_2",
+   "from": "1GRASS_2",
+   "vertices": 44,
+   "faces": 50
+  },
+  {
+   "name": "1GRASS_ROCK_4",
+   "from": "1GRASS_4",
+   "vertices": 370,
+   "faces": 509
+  },
+  {
+   "name": "1GRASS_ROCK_5",
+   "from": "1GRASS_5",
+   "vertices": 50,
+   "faces": 66
+  },
+  {
+   "name": "1GRASS_ROCK_6",
+   "from": "1GRASS_6",
+   "vertices": 1989,
+   "faces": 3122
+  },
+  {
+   "name": "1GRASS_ROCK_7",
+   "from": "1GRASS_7",
+   "vertices": 1330,
+   "faces": 1934
+  }
+ ],
+ "zones": {
+  "auto_cut_B_left_496_731": {
+   "faces": 509,
+   "area_m2": 798.6,
+   "rise_max_m": 4.0,
+   "slope_min": 0.52,
+   "slope_max": 1.56
+  },
+  "auto_cut_B_left_86_276": {
+   "faces": 50,
+   "area_m2": 53.2,
+   "rise_max_m": 1.92,
+   "slope_min": 0.62,
+   "slope_max": 1.66
+  },
+  "auto_cut_C_left_1360_1665": {
+   "faces": 160,
+   "area_m2": 199.3,
+   "rise_max_m": 2.19,
+   "slope_min": 0.62,
+   "slope_max": 1.84
+  },
+  "auto_cut_C_left_1665_1860": {
+   "faces": 285,
+   "area_m2": 206.7,
+   "rise_max_m": 2.83,
+   "slope_min": 0.58,
+   "slope_max": 2.83
+  },
+  "auto_cut_C_left_635_1100": {
+   "faces": 2556,
+   "area_m2": 3612.7,
+   "rise_max_m": 3.1,
+   "slope_min": 0.49,
+   "slope_max": 2.23
+  },
+  "auto_cut_C_right_1070_1335": {
+   "faces": 566,
+   "area_m2": 574.8,
+   "rise_max_m": 2.44,
+   "slope_min": 0.58,
+   "slope_max": 99.0
+  },
+  "auto_cut_C_right_1335_2253": {
+   "faces": 1573,
+   "area_m2": 2208.3,
+   "rise_max_m": 2.56,
+   "slope_min": 0.59,
+   "slope_max": 1.87
+  },
+  "auto_cut_C_right_670_795": {
+   "faces": 66,
+   "area_m2": 100.8,
+   "rise_max_m": 1.82,
+   "slope_min": 0.69,
+   "slope_max": 1.28
+  },
+  "auto_cut_D_right_25_1595": {
+   "faces": 4040,
+   "area_m2": 4181.2,
+   "rise_max_m": 2.8,
+   "slope_min": 0.34,
+   "slope_max": 2.46
+  }
+ }
+}

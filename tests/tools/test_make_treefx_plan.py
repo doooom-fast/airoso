@@ -349,3 +349,28 @@ def test_built_surface_guard_reads_quads_and_ignores_walls():
     b._add("building", (0.0, 0.0), (10.0, 0.0), (10.0, 10.0))
     assert b.kinds_at(5.0, 2.0) == {"building"} and b.kinds_at(2.0, 8.0) == set()
     assert b.reject(10.6, 5.0) == "building" and b.reject(12.0, 5.0) is None
+
+
+def test_built_surface_guard_judges_the_spot_as_written():
+    """ledger 0054 P4 integration fix round (run 2): trees.txt carries centimetres; a plan spot a few millimetres clear of
+    the building ring lands inside it once rounded. The guard must judge the rounded spot, and the plan's entries carry it."""
+    # a house wall running diagonally (z = x - 124 between x 150 and 170): the plant stands just above the wall's line,
+    # its 315-degree ring sample 0.4 mm outside the wall unrounded and 4 mm inside once the spot is rounded to centimetres
+    b = mt.BuiltSurfaces.__new__(mt.BuiltSurfaces)
+    b.cells, b.counts = {}, {"building": 0}
+    b._add("building", (150.0, 26.0), (170.0, 26.0), (170.0, 46.0))
+    raw = (164.996, 42.4121)
+    assert b.reject(*raw) is None
+    assert b.reject(round(raw[0], 2), round(raw[1], 2)) == "building"
+    d = _project()
+    palms = [{"x": raw[0], "y": 0.0, "z": raw[1]},     # the millimetre case: dropped only if judged as written
+             {"x": 140.0, "y": 0.123456, "z": 30.0}]   # open ground: kept, its coordinates rounded in the plan
+    (d / "data" / "scatter_positions.json").write_text(json.dumps({"palms": palms, "trees": [], "scrub": [],
+                                                                   "median_planting": []}))
+    obj = ["o 1GRASS_0", "usemtl 1GRASS_0_mat", "v -10 0 -50", "v 200 0 -50", "v 200 0 50", "v -10 0 50", "f 1 2 3 4",
+           "o HOUSE", "usemtl HOUSE_mat", "v 150 0 26", "v 170 0 26", "v 170 0 46", "f 5 6 7"]
+    (d / "data" / "track.obj").write_text("\n".join(obj) + "\n", encoding="utf-8")
+    p = mt.plan(d)
+    assert [(e["x"], e["y"], e["z"]) for e in p["entries"]] == [(140.0, 0.12, 30.0)]
+    assert p["rejected_built"]["building"] == 1
+    assert any(ln.startswith("tree: ") and "pos=140.00, 0.12, -30.00" in ln for ln in p["lines"])

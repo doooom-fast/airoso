@@ -8,7 +8,7 @@ INSTALL
   layout; that is gone — the San Diego Freeway Network is its own download beside this one.
 
 NEEDS
-  Custom Shaders Patch 0.2.x. The vegetation (CSP TreeFX, ~21,000 plants) and the ~320 street
+  Custom Shaders Patch 0.2.x. The vegetation (CSP TreeFX, ~20,500 plants) and the ~320 street
   lights are CSP features; without it you get the bare road and no night lighting.
   Pure or Sol recommended.
 

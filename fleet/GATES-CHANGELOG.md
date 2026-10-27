@@ -39,6 +39,7 @@ The islands' plantings (`median_planting`, `north_median_trees`) are unguarded (
 island by design). Without the OBJ (verify_race G on the plan, before Blender) nothing is guarded; the written file is
 re-judged with it. The report (`data/treefx.report.json rejected_on_built_surface[_loop_zones]`) counts each reason.
 Hard? No new exit; `verify_race --scenery-only` on the written file is the hard gate as before.
+**As written** (run 2's own post-check of the written file: one loop Sage 4 mm clear of a building ring in the plan, 6 mm inside it once rounded to the file's centimetres): every spot is rounded to the file's 0.01 m before any guard judges it, and the plan's entries carry the rounded spot. Not a threshold — the file's own precision.
 
 **`tools/rock_faces_rules.py` + `tools/rock_faces_blend.py` — the boundary clean-up** (lens: a sawtooth of 1–2 m grass
 teeth along the whole Jackson 1225–1525 toe; 146 steep grass faces / 115 m2 inside Jackson's faces). On the band's
@@ -81,22 +82,22 @@ steps, not of the shipped vertex set. No gate reads that set; `rib_check` and th
 
 | Gate / count | v0.19.0 (r3run) | run 1 (ecf5f5d) | run 2 (fix round) |
 |---|---|---|---|
-| Free Roam ground-on-top / severe / kinks / excursion drops / audit | 8 / 0 / 2.67 / 96 / 53 | 8 / 0 / 2.67 / 96 / 53 | {R2_FR} |
-| Speedway / Reverse severe, kinks, barrier_missing, audit | 4 / 6, 6.46 / 6.09, 0, 53 / 53 | same | {R2_RACE} |
-| no_route cw / acw | PASS 0/439 both | PASS 0/439 both | {R2_NOROUTE} |
-| lines expansion fwd / rev (kinks, drops) | PASS 2.39 / 2.53, 40 / 38 | same | {R2_LINES} |
-| verify_mouths / stubs / pads | 32 / 26 + 29 / J2–J4 PASS | same | {R2_MOUTHS} |
-| verify_signs posts | 19 | 29 PASS | {R2_SIGNS} |
-| rib_check step jogs (densest) | 69 (4 / 5) | 69 (4 / 5) | {R2_RIB} |
-| house_seat_check | PASS 153 | PASS 334 | {R2_HOUSES} |
-| kn5_ground_check x3 (lamp posts) | PASS (238) | PASS (323) | {R2_KGC} |
-| check_lights_ini / `[LIGHT_n]` | — / 238 | 323 / 323 | {R2_LIGHTS} |
-| TreeFX plants (built-surface drops) | 15,739 | 21,171 (—) | {R2_TREES} |
-| rock faces / m2 / meshes; teeth grass / rock | — | 10,716 / 12,459 / 8; — | {R2_ROCK} |
-| buildings (old band / new band) | 153 | 334 (153 / 181) | {R2_BLD} |
-| road kn5 bytes (ceiling 145 MB) | 89,815,220 | 94,316,244 | {R2_KN5} |
-| `[GRASS_FX]` tiles | 16 | 16 (no rock, no far ring) | {R2_GRASS} |
-| chain end | NOT INSTALLED (2 pre-existing reds) | same | {R2_END} |
+| Free Roam ground-on-top / severe / kinks / excursion drops / audit | 8 / 0 / 2.67 / 96 / 53 | 8 / 0 / 2.67 / 96 / 53 | 8 / 0 / 2.67 / 96 / 53 |
+| Speedway / Reverse severe, kinks, barrier_missing, audit | 4 / 6, 6.46 / 6.09, 0, 53 / 53 | same | same |
+| no_route cw / acw | PASS 0/439 both | PASS 0/439 both | PASS 0/439 both |
+| lines expansion fwd / rev (kinks, drops) | PASS 2.39 / 2.53, 40 / 38 | same | same (far ledges fwd 21 → 20, ungated) |
+| verify_mouths / stubs / pads | 32 / 26 + 29 / J2–J4 PASS | same | same |
+| verify_signs posts | 19 | 29 PASS | 29 PASS (4 layout plates) |
+| rib_check step jogs (densest) | 69 (4 / 5) | 69 (4 / 5) | 68 (4 / 5) |
+| house_seat_check | PASS 153 | PASS 334 | PASS 329 |
+| kn5_ground_check x3 (lamp posts) | PASS (238) | PASS (323) | PASS (323) |
+| check_lights_ini / `[LIGHT_n]` | — / 238 | 323 / 323 | 323 / 323 |
+| TreeFX plants (built-surface drops) | 15,739 | 21,171 (—) | 20,464 (rock 10, walk 2, building 695) → 20,463 as written (building 696); post-check 0 / 0 / 0 |
+| rock faces / m2 / meshes; teeth grass / rock | — | 10,716 / 12,459 / 8; — | 9,805 / 11,935.7 / 8; 380 / 893 → 100 / 137 |
+| buildings (old band / new band) | 153 | 334 (153 / 181) | 329 (145 / 184) |
+| road kn5 bytes (ceiling 145 MB) | 89,815,220 | 94,316,244 | 94,173,764 (+4.36 MB vs v0.19.0) |
+| `[GRASS_FX]` tiles | 16 | 16 (no rock, no far ring) | 16 (no rock, no far ring) |
+| chain end | NOT INSTALLED (2 pre-existing reds) | same | same |
 
 
 ## 2026-08-10 — Baseline inventory (no changes; recording current state)

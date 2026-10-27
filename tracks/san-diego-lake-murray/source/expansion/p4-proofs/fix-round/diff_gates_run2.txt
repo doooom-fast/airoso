@@ -1,0 +1,349 @@
+
+### drive_test.line.expansion_fwd.json  (12 differing leaves)
+  .excursion_far_ledges: 21 -> 20
+  .worst.excursions_all.len: 61 -> 60
+  .worst_excursions[7][0]: 152.9 -> 2851.1
+  .worst_excursions[7][1]: -7.5 -> -13.5
+  .worst_excursions[7][2]: 0.14 -> 0.16
+  .worst_excursions[7][3]: true -> false
+  .worst_excursions[8][0]: 302.6 -> 152.9
+  .worst_excursions[8][1]: -7.0 -> -7.5
+  .worst_excursions[9][0]: 452.2 -> 302.6
+  .worst_excursions[10][1]: -7.5 -> -7.0
+  .worst_excursions[11][0]: 752.4 -> 452.2
+  .worst_excursions[11][1]: -7.0 -> -7.5
+
+### audit.json  (1 differing leaves)
+  .grass_verts: 392918 -> 429696
+
+### audit.race_cw.json  (1 differing leaves)
+  .grass_verts: 392918 -> 429696
+
+### audit.race_acw.json  (1 differing leaves)
+  .grass_verts: 392918 -> 429696
+
+### kn5_ground_check.street.json  (6 differing leaves)
+  .lamp_heads: 290 -> 393
+  .seating.lampposts.median_m: -3.044 -> -3.029
+  .seating.lampposts.objects: 238 -> 323
+  .seating.lampposts.p95_m: -2.968 -> -2.711
+  .seating.signposts.median_m: -0.377 -> -0.351
+  .seating.signposts.objects: 18 -> 24
+
+### kn5_ground_check.race_cw.json  (6 differing leaves)
+  .lamp_heads: 290 -> 393
+  .seating.lampposts.median_m: -3.044 -> -3.029
+  .seating.lampposts.objects: 238 -> 323
+  .seating.lampposts.p95_m: -2.968 -> -2.711
+  .seating.signposts.median_m: -0.377 -> -0.363
+  .seating.signposts.objects: 18 -> 26
+
+### kn5_ground_check.race_acw.json  (6 differing leaves)
+  .lamp_heads: 290 -> 393
+  .seating.lampposts.median_m: -3.044 -> -3.029
+  .seating.lampposts.objects: 238 -> 323
+  .seating.lampposts.p95_m: -2.968 -> -2.711
+  .seating.signposts.median_m: -0.377 -> -0.351
+  .seating.signposts.objects: 18 -> 26
+
+### verify_mouths.json  (2 differing leaves)
+  .mouths[7].host_lane.max_grass_m: -0.019 -> -0.02
+  .mouths[28].host_lane.max_grass_m: -0.02 -> -0.019
+
+### verify_stubs.json  (1 differing leaves)
+  .thresholds.trees_checked: 347 -> 1000
+
+### rib_check.json  (11 differing leaves)
+  .nyquist.by_amplitude.>0.5m.beyond_near: 5074 -> 5072
+  .nyquist.by_amplitude.>0.5m.near_road: 571 -> 569
+  .nyquist.by_amplitude.>1m.beyond_near: 959 -> 958
+  .nyquist.by_amplitude.>1m.near_road: 200 -> 199
+  .nyquist.straight_info.>0.5m.beyond_near: 4323 -> 4327
+  .step_jogs.by_amplitude.>2m.beyond_near: 69 -> 68
+  .step_jogs.by_amplitude.>2m.near_road: 12 -> 11
+  .step_jogs.jogs_beyond_near: 69 -> 68
+  .terrain_vertices: 516090 -> 552868
+  .thinned.line_vertices: 106237 -> 103622
+  .thinned.nodes_read_on_the_surface: 197964 -> 193975
+
+### house_seat_check.json  (8 differing leaves)
+  .buildings: 153 -> 329
+  .contact_m.max: -0.143 -> -0.145
+  .contact_m.min: -0.303 -> -0.34
+  .lens_buried_share.over_30pct: 12 -> 14
+  .lens_buried_share.over_50pct: 0 -> 1
+  .lens_buried_share.p95: 0.321 -> 0.278
+  .rows.len: 153 -> 329
+  .show_m_min: 1.598 -> 1.601
+
+### race_verify.json  (9 differing leaves)
+  .counts.lamp_min.lat_m: 16.924 -> 16.923
+  .counts.lamp_min.margin_m: 2.435 -> 2.434
+  .counts.lamp_min_margin_m: 2.435 -> 2.434
+  .counts.lamps: 238 -> 323
+  .counts.lamps_checked: 238 -> 323
+  .counts.scenery_beside: 392 -> 391
+  .counts.scenery_items.tree: 15739 -> 20736
+  .counts.scenery_min.race_acw.id: Sage.bin@median_planting#2398 -> Sage.bin@median_planting#2336
+  .counts.scenery_min.race_cw.id: Bush.bin@median_planting#2457 -> Bush.bin@median_planting#2395
+
+### race_verify.scenery.json  (5 differing leaves)
+  .counts.scenery_beside: 392 -> 395
+  .counts.scenery_items.sign: 19 -> 29
+  .counts.scenery_items.tree: 15739 -> 20464
+  .counts.scenery_min.race_acw.id: Sage.bin#2398 -> Sage.bin#2331
+  .counts.scenery_min.race_cw.id: Bush.bin#2457 -> Bush.bin#2390
+
+### closure_race_cw.kn5.json  (11 differing leaves)
+  .file_bytes: 5496964 -> 5506635
+  .materials.len: 8 -> 11
+  .meshes.len: 8 -> 11
+  .summary.materials: 8 -> 11
+  .summary.meshes: 8 -> 11
+  .summary.shaders_by_tris.ksPerPixel: <absent> -> {"meshes": 3, "tris": 62}
+  .summary.texture_bytes: 2431043 -> 2431499
+  .summary.textures: 2 -> 5
+  .summary.tris: 74156 -> 74218
+  .summary.verts: 59496 -> 59674
+  .textures.len: 2 -> 5
+
+### closure_race_acw.kn5.json  (11 differing leaves)
+  .file_bytes: 5496156 -> 5505921
+  .materials.len: 8 -> 11
+  .meshes.len: 8 -> 11
+  .summary.materials: 8 -> 11
+  .summary.meshes: 8 -> 11
+  .summary.shaders_by_tris.ksPerPixel: <absent> -> {"meshes": 3, "tris": 62}
+  .summary.texture_bytes: 2431043 -> 2431499
+  .summary.textures: 2 -> 5
+  .summary.tris: 74136 -> 74198
+  .summary.verts: 59480 -> 59660
+  .textures.len: 2 -> 5
+
+### ai_verify.race_cw.json  (1 differing leaves)
+  .ai: D:\k10-scratch\phase1\r3run\proj\ai\race_cw\fast_lane.ai -> D:\k10-scratch\p4\integrate\proj\ai\race_cw\fast_lane.ai
+
+### ai_verify.race_acw.json  (1 differing leaves)
+  .ai: D:\k10-scratch\phase1\r3run\proj\ai\race_acw\fast_lane.ai -> D:\k10-scratch\p4\integrate\proj\ai\race_acw\fast_lane.ai
+
+### signs_measured.json  (33 differing leaves)
+  .blend: D:/k10-scratch/phase1/r3run/proj/loop.blend -> D:/k10-scratch/p4/integrate/proj/loop.blend
+  .race_excluded.len: 0 -> 37
+  .scan: 5-degree polar, 0.25 m steps, bisected; ROAD top vs CURB/... -> 5-degree polar, 0.25 m steps, bisected; ROAD top vs CURB/...
+  .signs.J2-fwd: <absent> -> {"clear_m": 1.558, "bearing_deg": 350, "on_road": false, ...
+  .signs.J2-rev: <absent> -> {"clear_m": 1.34, "bearing_deg": 40, "on_road": false, "g...
+  .signs.J3-fwd: <absent> -> {"clear_m": 1.508, "bearing_deg": 295, "on_road": false, ...
+  .signs.J3-rev: <absent> -> {"clear_m": 1.314, "bearing_deg": 290, "on_road": false, ...
+  .signs.J4-fwd: <absent> -> {"clear_m": 2.753, "bearing_deg": 190, "on_road": false, ...
+  .signs.J4-rev: <absent> -> {"clear_m": 1.501, "bearing_deg": 305, "on_road": false, ...
+  .signs.M1-fwd.wall_m: <absent> -> 2.032
+  .signs.M1-rev.wall_m: <absent> -> 1.975
+  .signs.M2-fwd.wall_m: <absent> -> 2.012
+  .signs.M2-fwd-2.wall_m: <absent> -> 1.987
+  .signs.M2-rev.wall_m: <absent> -> 1.907
+  .signs.M3-fwd@race_cw: <absent> -> {"clear_m": 0.0, "bearing_deg": 0, "on_road": true, "grou...
+  .signs.M3-rev@race_acw: <absent> -> {"clear_m": 1.245, "bearing_deg": 40, "on_road": false, "...
+  .signs.M4-fwd@race_cw: <absent> -> {"clear_m": 1.534, "bearing_deg": 230, "on_road": false, ...
+  .signs.M4-rev@race_acw: <absent> -> {"clear_m": 0.0, "bearing_deg": 0, "on_road": true, "grou...
+  .signs.M5-fwd.wall_m: <absent> -> 2.021
+  .signs.M5-rev.wall_m: <absent> -> 1.933
+  .signs.MED-1-fwd.wall_m: <absent> -> 36.572
+  .signs.MED-1-rev.wall_m: <absent> -> 27.244
+  .signs.MED-10-fwd.wall_m: <absent> -> 224.898
+  .signs.MED-10-rev.wall_m: <absent> -> 227.89
+  .signs.MED-13-fwd.wall_m: <absent> -> 91.887
+  .signs.MED-13-rev.wall_m: <absent> -> 96.923
+  .signs.MED-6-fwd.wall_m: <absent> -> 460.451
+  .signs.MED-6-rev.wall_m: <absent> -> 457.938
+  .signs.MED-7-fwd.wall_m: <absent> -> 446.08
+  .signs.MED-7-rev.wall_m: <absent> -> 459.94
+  .signs.MED-8-fwd.wall_m: <absent> -> 251.811
+  .signs.MED-8-rev.wall_m: <absent> -> 257.24
+  .walls: <absent> -> {"RACE": 15, "acw": 8, "all": 65, "cw": 8}
+
+### terrain_thin.json  (141 differing leaves)
+  .removed_lattice_vertices: 304201 -> 297597
+  .tiles.1GRASS_0.collapse.removed: 22010 -> 20175
+  .tiles.1GRASS_0.collapse.triangles[0]: 101822 -> 101776
+  .tiles.1GRASS_0.collapse.triangles[1]: 57802 -> 61426
+  .tiles.1GRASS_0.collapse.vertices: 51701 -> 51658
+  .tiles.1GRASS_0.faces[0]: 101822 -> 101776
+  .tiles.1GRASS_0.faces[1]: 57802 -> 61426
+  .tiles.1GRASS_0.vertices[0]: 51701 -> 51658
+  .tiles.1GRASS_0.vertices[1]: 29691 -> 31483
+  .tiles.1GRASS_1.collapse.removed: 23829 -> 22812
+  .tiles.1GRASS_1.collapse.triangles[0]: 101813 -> 101765
+  .tiles.1GRASS_1.collapse.triangles[1]: 54155 -> 56141
+  .tiles.1GRASS_1.collapse.vertices: 51851 -> 51788
+  .tiles.1GRASS_1.faces[0]: 101814 -> 101766
+  .tiles.1GRASS_1.faces[1]: 54156 -> 56142
+  .tiles.1GRASS_1.vertices[0]: 51851 -> 51788
+  .tiles.1GRASS_1.vertices[1]: 28022 -> 28976
+  .tiles.1GRASS_10.collapse.removed: 24165 -> 24141
+  .tiles.1GRASS_10.collapse.triangles[0]: 101845 -> 101799
+  .tiles.1GRASS_10.collapse.triangles[1]: 53515 -> 53517
+  .tiles.1GRASS_10.collapse.vertices: 51300 -> 51263
+  .tiles.1GRASS_10.faces[0]: 101845 -> 101799
+  .tiles.1GRASS_10.faces[1]: 53515 -> 53517
+  .tiles.1GRASS_10.vertices[0]: 51300 -> 51263
+  .tiles.1GRASS_10.vertices[1]: 27135 -> 27122
+  .tiles.1GRASS_11.collapse.removed: 22619 -> 22587
+  .tiles.1GRASS_11.collapse.triangles[0]: 101850 -> 101804
+  .tiles.1GRASS_11.collapse.triangles[1]: 56612 -> 56630
+  .tiles.1GRASS_11.collapse.vertices: 51304 -> 51271
+  .tiles.1GRASS_11.faces[0]: 101850 -> 101804
+  .tiles.1GRASS_11.faces[1]: 56612 -> 56630
+  .tiles.1GRASS_11.vertices[0]: 51304 -> 51271
+  .tiles.1GRASS_11.vertices[1]: 28685 -> 28684
+  .tiles.1GRASS_12.collapse.locked_steep: 39 -> 41
+  .tiles.1GRASS_12.collapse.removed: 25812 -> 25775
+  .tiles.1GRASS_12.collapse.triangles[0]: 101701 -> 101652
+  .tiles.1GRASS_12.collapse.triangles[1]: 50077 -> 50102
+  .tiles.1GRASS_12.collapse.vertices: 51353 -> 51308
+  .tiles.1GRASS_12.faces[0]: 101702 -> 101652
+  .tiles.1GRASS_12.faces[1]: 50078 -> 50102
+  .tiles.1GRASS_12.vertices[0]: 51353 -> 51308
+  .tiles.1GRASS_12.vertices[1]: 25541 -> 25533
+  .tiles.1GRASS_13.collapse.locked_steep: 46 -> 37
+  .tiles.1GRASS_13.collapse.removed: 29935 -> 29171
+  .tiles.1GRASS_13.collapse.triangles[0]: 101516 -> 101481
+  .tiles.1GRASS_13.collapse.triangles[1]: 41646 -> 43139
+  .tiles.1GRASS_13.collapse.vertices: 51142 -> 51121
+  .tiles.1GRASS_13.faces[0]: 101516 -> 101481
+  .tiles.1GRASS_13.faces[1]: 41646 -> 43139
+  .tiles.1GRASS_13.vertices[0]: 51142 -> 51121
+  .tiles.1GRASS_13.vertices[1]: 21207 -> 21950
+  .tiles.1GRASS_14.collapse.locked_steep: 15 -> 12
+  .tiles.1GRASS_14.collapse.removed: 26125 -> 25698
+  .tiles.1GRASS_14.collapse.triangles[0]: 101849 -> 101803
+  .tiles.1GRASS_14.collapse.triangles[1]: 49599 -> 50407
+  .tiles.1GRASS_14.collapse.vertices: 51446 -> 51423
+  .tiles.1GRASS_14.faces[0]: 101849 -> 101803
+  .tiles.1GRASS_14.faces[1]: 49599 -> 50407
+  .tiles.1GRASS_14.vertices[0]: 51446 -> 51423
+  .tiles.1GRASS_14.vertices[1]: 25321 -> 25725
+  .tiles.1GRASS_15.collapse.locked_steep: 48 -> 53
+  .tiles.1GRASS_15.collapse.removed: 26151 -> 25876
+  .tiles.1GRASS_15.collapse.triangles[0]: 101742 -> 101723
+  .tiles.1GRASS_15.collapse.triangles[1]: 49440 -> 49971
+  .tiles.1GRASS_15.collapse.vertices: 51422 -> 51415
+  .tiles.1GRASS_15.faces[0]: 101743 -> 101724
+  .tiles.1GRASS_15.faces[1]: 49441 -> 49972
+  .tiles.1GRASS_15.vertices[0]: 51422 -> 51415
+  .tiles.1GRASS_15.vertices[1]: 25271 -> 25539
+  .tiles.1GRASS_2.collapse.locked_steep: 87 -> 86
+  .tiles.1GRASS_2.collapse.removed: 34965 -> 34679
+  .tiles.1GRASS_2.collapse.triangles[0]: 101748 -> 101717
+  .tiles.1GRASS_2.collapse.triangles[1]: 31818 -> 32359
+  .tiles.1GRASS_2.collapse.vertices: 51221 -> 51198
+  .tiles.1GRASS_2.faces[0]: 101749 -> 101718
+  .tiles.1GRASS_2.faces[1]: 31819 -> 32360
+  .tiles.1GRASS_2.vertices[0]: 51221 -> 51198
+  .tiles.1GRASS_2.vertices[1]: 16256 -> 16519
+  .tiles.1GRASS_3.collapse.removed: 31978 -> 31856
+  .tiles.1GRASS_3.collapse.triangles[0]: 101834 -> 101787
+  ... 61 more
+
+### ground_release.report.json  (448 differing leaves)
+  .coincident_vertices_welded: 6990 -> 7053
+  .cut_toe_retriangulated: <absent> -> {"faces": 263599, "edges_rotated": 35686, "thin_before": ...
+  .face_cap.those[0][0]: -1864.99 -> -1771.6
+  .face_cap.those[0][1]: -1079.04 -> 250.24
+  .face_cap.those[0][2]: 0.004 -> 0.007
+  .face_cap.those[0][3][0][0]: -1865.24 -> -1771.76
+  .face_cap.those[0][3][0][1]: -1078.42 -> 251.02
+  .face_cap.those[0][3][0][2]: 0.097 -> 38.583
+  .face_cap.those[0][3][0][3]: true -> false
+  .face_cap.those[0][3][0][4]: null -> 38.603
+  .face_cap.those[0][3][1][0]: -1865.24 -> -1771.76
+  .face_cap.those[0][3][1][1]: -1079.04 -> 249.78
+  .face_cap.those[0][3][1][2]: 0.113 -> 38.701
+  .face_cap.those[0][3][1][3]: true -> false
+  .face_cap.those[0][3][1][4]: null -> 38.721
+  .face_cap.those[0][3][2][0]: -1864.61 -> -1771.44
+  .face_cap.those[0][3][2][1]: -1079.04 -> 250.71
+  .face_cap.those[0][3][2][2]: 0.209 -> 38.583
+  .face_cap.those[0][3][2][3]: false -> true
+  .face_cap.those[0][3][2][4]: 0.229 -> null
+  .face_cap.those[1][0]: -1802.19 -> -1824.21
+  .face_cap.those[1][1]: -899.2 -> 391.15
+  .face_cap.those[1][2]: 0.005 -> 0.008
+  .face_cap.those[1][3][0][0]: -1802.5 -> -1824.46
+  .face_cap.those[1][3][0][1]: -898.58 -> 390.9
+  .face_cap.those[1][3][0][2]: 13.773 -> 34.646
+  .face_cap.those[1][3][0][3]: true -> false
+  .face_cap.those[1][3][0][4]: null -> 34.714
+  .face_cap.those[1][3][1][0]: -1802.5 -> -1823.83
+  .face_cap.those[1][3][1][1]: -899.2 -> 391.52
+  .face_cap.those[1][3][1][2]: 13.756 -> 34.579
+  .face_cap.those[1][3][2][0]: -1801.87 -> -1824.46
+  .face_cap.those[1][3][2][1]: -899.2 -> 391.52
+  .face_cap.those[1][3][2][2]: 13.841 -> 34.579
+  .face_cap.those[1][3][2][4]: 13.87 -> 34.599
+  .face_cap.those[2][0]: -1624.69 -> -1558.75
+  .face_cap.those[2][1]: -130.64 -> -227.92
+  .face_cap.those[2][2]: 0.004 -> 0.007
+  .face_cap.those[2][3][0][0]: -1624.94 -> -1558.43
+  .face_cap.those[2][3][0][1]: -130.51 -> -227.92
+  .face_cap.those[2][3][0][2]: 55.507 -> 53.732
+  .face_cap.those[2][3][0][3]: false -> true
+  .face_cap.those[2][3][0][4]: 55.527 -> null
+  .face_cap.those[2][3][1][0]: -1624.31 -> -1559.06
+  .face_cap.those[2][3][1][1]: -131.14 -> -227.3
+  .face_cap.those[2][3][1][2]: 55.454 -> 53.727
+  .face_cap.those[2][3][2][0]: -1624.31 -> -1559.06
+  .face_cap.those[2][3][2][1]: -130.51 -> -227.92
+  .face_cap.those[2][3][2][2]: 55.463 -> 53.818
+  .face_cap.those[2][3][2][3]: true -> false
+  .face_cap.those[2][3][2][4]: null -> 53.838
+  .face_cap.those[3][0]: -1559.38 -> -1568.16
+  .face_cap.those[3][1]: -226.99 -> -214.19
+  .face_cap.those[3][2]: 0.035 -> 0.011
+  .face_cap.those[3][3][0][0]: -1559.06 -> -1568.47
+  .face_cap.those[3][3][0][1]: -226.68 -> -214.19
+  .face_cap.those[3][3][0][2]: 53.727 -> 53.732
+  .face_cap.those[3][3][0][3]: true -> false
+  .face_cap.those[3][3][0][4]: null -> 53.752
+  .face_cap.those[3][3][1][0]: -1559.69 -> -1567.85
+  .face_cap.those[3][3][1][1]: -227.3 -> -214.19
+  .face_cap.those[3][3][1][2]: 53.836 -> 53.643
+  .face_cap.those[3][3][1][3]: false -> true
+  .face_cap.those[3][3][1][4]: 53.871 -> null
+  .face_cap.those[3][3][2][0]: -1559.06 -> -1568.47
+  .face_cap.those[3][3][2][1]: -227.3 -> -213.56
+  .face_cap.those[3][3][2][2]: 53.727 -> 53.645
+  .face_cap.those[4][0]: -1587.61 -> -1573.18
+  .face_cap.those[4][1]: -185.46 -> -206.69
+  .face_cap.those[4][2]: 0.003 -> 0.018
+  .face_cap.those[4][3][0][0]: -1587.92 -> -1573.49
+  .face_cap.those[4][3][0][1]: -185.46 -> -206.69
+  .face_cap.those[4][3][0][2]: 54.188 -> 53.776
+  .face_cap.those[4][3][0][4]: 54.24 -> 53.796
+  .face_cap.those[4][3][1][0]: -1587.3 -> -1572.86
+  .face_cap.those[4][3][1][1]: -186.09 -> -206.69
+  .face_cap.those[4][3][1][2]: 54.154 -> 53.701
+  .face_cap.those[4][3][1][3]: false -> true
+  .face_cap.those[4][3][1][4]: 54.174 -> null
+  .face_cap.those[4][3][2][0]: -1587.3 -> -1573.49
+  ... 368 more
+
+### race_authored.json  (1 differing leaves)
+  .blend: D:\k10-scratch\phase1\r3run\proj\loop.blend -> D:\k10-scratch\p4\integrate\proj\loop.blend
+
+### unchanged (no scalar moved):
+  drive_test.json
+  drive_test.street.json
+  drive_test.race_cw.json
+  drive_test.race_acw.json
+  drive_test.expansion.json
+  drive_test.line.expansion_rev.json
+  no_route.race_cw.json
+  no_route.race_acw.json
+  no_route.race_cw.planned.json
+  no_route.race_acw.planned.json
+  verify_pads.json
+  verify_fold_fans.json
+  race_kn5.json
+  street_kn5.json
+  terrain.tiers.report.json
+  barrier_bands.json

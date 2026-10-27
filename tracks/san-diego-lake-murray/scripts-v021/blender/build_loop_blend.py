@@ -816,7 +816,21 @@ def _bld_height(b):
 
 
 BUILDING_BAND_M = 120.0   # a footprint within this of a drivable piece is roadside context (v0.18.x: the mainline only)
-BUILDING_CLEAR_M = 5.0    # ...but not within this of the pavement's edge (crowding the road)
+BUILDING_CLEAR_M = 5.0    # ...but not within this of the pavement's edge (crowding the road; read at the centroid)
+BUILDING_CORNER_CLEAR_M = 3.1   # ...and no CORNER within this of the pavement's edge: the curb profile's full width (curb face
+                                # 0.08 + walk 1.8 + grade strip 1.2 m), so no wall stands on the built walk — ledger 0054 P4
+                                # integration fix round (the centroid rule let a 30 m house put a wall on Del Cerro's walk)
+
+
+def _meters_per_degree(lat0):
+    """(m per degree of longitude, of latitude) at lat0 — the WGS84 series the roads are projected with
+    (scripts-v021/geometry/projection._meters_per_degree). Ledger 0054 P4 integration fix round: the buildings used
+    111320 cos(lat) / 110574 (0.1 % / 0.3 % short of the series here), which stood every footprint south-west of its
+    true place by 0.3 % of its distance from the origin — 9 m at J4, 2.7 m at the median loop house."""
+    phi = math.radians(lat0)
+    m_lat = 111132.954 - 559.822 * math.cos(2 * phi) + 1.175 * math.cos(4 * phi)
+    m_lon = 111412.84 * math.cos(phi) - 93.5 * math.cos(3 * phi) + 0.118 * math.cos(5 * phi)
+    return m_lon, m_lat
 
 
 def _pad_polygons(pads_plan):
@@ -880,8 +894,11 @@ def build_buildings(centerline, widths, grid_xyz, cache, lon0, lat0, *, min_area
       - the NEW band (within the band of a connector — the north roads, the Del Cerro sub-loop, the phase-5 stubs — or
         of a junction pad, and NOT in the old band): ``new_cache`` (data/buildings.expansion.cache.json, ledger 0054
         P0 step 7), crowding read against every piece (mainline, connectors, pads), uncapped.
-    ``pieces``: [(name, points_xyz_m, widths_m)] the connectors; ``pads``: data/pads.plan.json (its pads' outlines)."""
-    m_lon = 111320.0 * math.cos(math.radians(lat0)); m_lat = 110574.0
+    ``pieces``: [(name, points_xyz_m, widths_m)] the connectors; ``pads``: data/pads.plan.json (its pads' outlines).
+    Integration fix round (ledger 0054 P4): footprints are projected with the roads' own series (_meters_per_degree),
+    and besides the centroid rule the footprint's nearest CORNER must clear the pavement's edge by
+    BUILDING_CORNER_CLEAR_M (the built walk), in both bands — the band itself (120 m) is still read at the centroid."""
+    m_lon, m_lat = _meters_per_degree(lat0)
     terr = terr or _grid_sampler(grid_xyz)
     # bucket the road for fast nearest (centre pt -> half width)
     from collections import defaultdict
@@ -933,6 +950,14 @@ def build_buildings(centerline, widths, grid_xyz, cache, lon0, lat0, *, min_area
                        for i in range(len(foot)))) / 2
         return foot, cx, cz, area
 
+    def clear_of(foot, near):
+        """the footprint's smallest corner distance to a pavement edge under ``near`` (centre distance less half width)"""
+        best = 1e18
+        for vx, vz in foot:
+            d, hw = near(vx, vz)
+            best = min(best, d - hw)
+        return best
+
     meshes = {"HOUSE": {"vertices": [], "uvs": [], "tris": []},
               "BUILDING": {"vertices": [], "uvs": [], "tris": []}}
     cand = []                                             # (area, foot, cx, cz, building)
@@ -945,8 +970,10 @@ def build_buildings(centerline, widths, grid_xyz, cache, lon0, lat0, *, min_area
         foot, cx, cz, area = fp
         if area < min_area:
             continue
-        d_road, hw = near_road(cx, cz)                    # bucketed nearest — O(1), no per-vertex scan
+        d_road, hw = near_road(cx, cz)                    # bucketed nearest — the band at the centroid
         if d_road > BUILDING_BAND_M or d_road < hw + BUILDING_CLEAR_M:   # roadside context, but not crowding the road
+            continue
+        if clear_of(foot, near_road) < BUILDING_CORNER_CLEAR_M:           # ...and no corner on the built walk
             continue
         cand.append((area, foot, cx, cz, b))
     cand.sort(key=lambda c: -c[0])                        # largest footprints first
@@ -969,7 +996,7 @@ def build_buildings(centerline, widths, grid_xyz, cache, lon0, lat0, *, min_area
                 continue
             d_road, hw = near_road(cx, cz)
             if d_road <= BUILDING_BAND_M:                 # the old band is v0.19.0's (the old cache above)
-                if d_road >= hw + BUILDING_CLEAR_M:
+                if d_road >= hw + BUILDING_CLEAR_M and clear_of(foot, near_road) >= BUILDING_CORNER_CLEAR_M:
                     n_new_old_band += 1
                     if tuple((round(lo, 7), round(la, 7)) for lo, la in b["geom"]) not in old_geoms:
                         n_old_band_differs += 1
@@ -978,6 +1005,8 @@ def build_buildings(centerline, widths, grid_xyz, cache, lon0, lat0, *, min_area
             if dp > BUILDING_BAND_M:
                 continue
             if dp < hwp + BUILDING_CLEAR_M or d_road < hw + BUILDING_CLEAR_M:
+                continue
+            if clear_of(foot, near_piece) < BUILDING_CORNER_CLEAR_M or clear_of(foot, near_road) < BUILDING_CORNER_CLEAR_M:
                 continue
             new_cand.append((area, foot, cx, cz, b))
         new_cand.sort(key=lambda c: -c[0])

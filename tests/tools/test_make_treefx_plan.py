@@ -310,3 +310,42 @@ def test_a_declared_zoning_with_no_bins_file_is_an_error_not_a_bare_network():
         assert "veg.json" in str(e)
     else:
         raise AssertionError("scenery.treefx naming a missing bins file must stop the planner")
+
+
+def test_built_surface_guard_drops_plants_on_rock_walks_roads_and_in_buildings():
+    """ledger 0054 P4 integration fix round: the gate OBJ is the truth — a plant whose spot the built road kn5 covers with
+    a rock cut face (1GRASS_ROCK*), a walk (1KERB*), a road (1ROAD*) or a HOUSE / BUILDING footprint (+ BUILT_BUILDING_CLEAR_M)
+    is dropped with its reason; the raised islands' planting (unguarded) is not; without the OBJ nothing is guarded"""
+    d = _project()
+    palms = [{"x": 20.0, "y": 0.0, "z": 30.0},     # inside the house roof
+             {"x": 20.0, "y": 0.0, "z": 25.3},     # 0.7 m outside its wall: within BUILT_BUILDING_CLEAR_M
+             {"x": 20.0, "y": 0.0, "z": 22.0},     # 4 m clear of it: kept
+             {"x": 60.0, "y": 0.0, "z": 30.0},     # on the rock face
+             {"x": 100.0, "y": 0.0, "z": 8.0},     # on the walk (6.0-9.0 beside the 10 m road), past the corridor guard's 6 m
+             {"x": 140.0, "y": 0.5, "z": 30.0}]    # open ground: kept
+    (d / "data" / "scatter_positions.json").write_text(json.dumps({"palms": palms, "trees": [], "scrub": [],
+                                                                   "median_planting": []}))
+    obj = ["o 1GRASS_0", "usemtl 1GRASS_0_mat", "v -10 0 -50", "v 200 0 -50", "v 200 0 50", "v -10 0 50", "f 1 2 3 4",
+           "o HOUSE", "usemtl HOUSE_mat",
+           "v 10 0 26", "v 30 0 26", "v 30 0 40", "v 10 0 40",            # floor ring (5-8)
+           "v 10 5 26", "v 30 5 26", "v 30 5 40", "v 10 5 40",            # roof ring (9-12)
+           "f 9 10 11 12", "f 5 6 10 9", "f 6 7 11 10",                   # roof + two walls (walls: no plan area)
+           "o 1GRASS_ROCK_0", "usemtl 1GRASS_ROCK_0_mat", "v 50 0 20", "v 70 0 20", "v 70 8 40", "f 13 14 15",
+           "o 1KERB_sidewalk", "usemtl 1KERB_sidewalk_mat", "v 90 0 6", "v 110 0 6", "v 110 0 9", "v 90 0 9", "f 16 17 18 19",
+           "o 1ROAD_road", "usemtl 1ROAD_road_mat", "v 0 0 -5", "v 200 0 -5", "v 200 0 5", "v 0 0 5", "f 20 21 22 23"]
+    (d / "data" / "track.obj").write_text("\n".join(obj) + "\n", encoding="utf-8")
+    p = mt.plan(d)
+    kept = sorted((e["x"], e["z"]) for e in p["entries"])
+    assert kept == [(20.0, 22.0), (140.0, 30.0)], kept
+    assert p["rejected_built"] == {"rock": 1, "road": 0, "walk": 1, "building": 2}
+    assert p["rejected_built_loop"] == p["rejected_built"]
+    (d / "data" / "track.obj").unlink()
+    assert len(mt.plan(d)["entries"]) == 6 and mt.plan(d)["rejected_built"] == {"rock": 0, "road": 0, "walk": 0, "building": 0}
+
+
+def test_built_surface_guard_reads_quads_and_ignores_walls():
+    b = mt.BuiltSurfaces.__new__(mt.BuiltSurfaces)
+    b.cells, b.counts = {}, {"building": 0}
+    b._add("building", (0.0, 0.0), (10.0, 0.0), (10.0, 10.0))
+    assert b.kinds_at(5.0, 2.0) == {"building"} and b.kinds_at(2.0, 8.0) == set()
+    assert b.reject(10.6, 5.0) == "building" and b.reject(12.0, 5.0) is None

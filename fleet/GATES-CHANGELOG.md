@@ -14,6 +14,91 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-10-26 — Lake Murray expansion P4 integrated (v0.19.1, Drive 2) + the lenses' fix round (ledger 0054 "P4 — dressing, integrated")
+
+The four P4 branches (lamps, buildings + rock, trees + GrassFX, signs + map) merged as unions onto airoso main 1b5a6b3
+(ledger 0054 "P4 — dressing, integrated"; the four entries above are each piece's own). The merged branch was
+rehearsed on the full chain, refuted by the four verification lenses on the built output, fixed at the causes and
+rehearsed again. **No threshold moved anywhere in this entry.** Every number below is in the code beside its reason.
+
+### The two gate widenings of "P4 signs", restated so nobody reads them as a loosening later
+
+| Gate | Was | Is | Scope |
+|---|---|---|---|
+| `verify_kn5` (f) closure kn5 / `check_race_kn5 --role closure --owner T` | `1WALL_RACE_CLOSE_T_*` only | + T's OWN `SIGNPLATE/SIGNARROW/SIGNPOST_T_<k>` meshes and their materials / textures; `--role common` gains a NEW refusal of any sign plate | the owner token only; a plate of another layout is still refused |
+| `verify_signs` (g) for kind LAYOUT | on_road refused | on_road allowed on the sealed opening's deck (that layout does not drive it); instead (c) 1.3–3.0 m of clearance to the layout's own sealing wall + on_wall refused | LAYOUT plates only; the shared W1-6 plates keep (g) |
+
+### The fix round — new rules, every invented number
+
+**`tools/make_treefx.py` — the built-surface guard** (lens: 11 north plants on `1GRASS_ROCK` faces, 2 on a walk, 593
+inside building footprints). Every guarded plant is read against the gate OBJ (`data/track.obj`) LAST: dropped when the
+plan triangle under it is `1ROAD*` / `1KERB*` / `1GRASS_ROCK*` / `HOUSE*` / `BUILDING*` (first match wins), or when a
+HOUSE / BUILDING triangle lies within `BUILT_BUILDING_CLEAR_M` **1.0 m** ⚠ (the apron rule's own margin: a bush against
+a wall is a hedge, a trunk inside a wall is a tree through the roof). `BUILT_CELL_M` 12 is a bucket size, not a rule.
+The islands' plantings (`median_planting`, `north_median_trees`) are unguarded (they stand on the pavement under their
+island by design). Without the OBJ (verify_race G on the plan, before Blender) nothing is guarded; the written file is
+re-judged with it. The report (`data/treefx.report.json rejected_on_built_surface[_loop_zones]`) counts each reason.
+Hard? No new exit; `verify_race --scenery-only` on the written file is the hard gate as before.
+
+**`tools/rock_faces_rules.py` + `tools/rock_faces_blend.py` — the boundary clean-up** (lens: a sawtooth of 1–2 m grass
+teeth along the whole Jackson 1225–1525 toe; 146 steep grass faces / 115 m2 inside Jackson's faces). On the band's
+face set, after the per-face slope rule (unchanged, 0.7 m/m) and before the hole fill:
+- speckles under `MIN_PATCH_M2` 40 dropped first (so the smoothing cannot join outcrop speckles into a wall);
+- `smooth_boundary`: a grass face with ≥ 2 of its 3 edge-neighbours rock → rock; a rock face with ≥ 2 grass
+  edge-neighbours (among band faces) → grass; both read one state per pass (synchronous); `SMOOTH_PASSES` **2** ⚠ (a
+  tooth is a one-triangle feature; more passes only walk a strip's end back one triangle per pass — the asynchronous
+  6-pass first cut eroded 2,556 faces and never settled);
+- `fill_tongues`: a grass component under `MAX_HOLE_M2` 60 (unchanged) whose boundary sides are `TONGUE_ROCK_FRAC`
+  **0.6** ⚠ or more against rock (a side with no neighbour — band edge, mesh edge — counts as open) → rock;
+- speckles dropped again; `CLEAN_ROUNDS` **2** ⚠ (the second round catches the first's own teeth).
+A face with a corner BENEATH a pavement sheet may never become rock, in every rule (the self-check refuses it as before)
+— and "beneath" now reads height: the sheet above the corner must be higher than it by `BENEATH_TOL_M` 0.005 m (a
+corner over the walk's buried apron, 0.2 m below the ground, is not beneath anything; in plan alone every toe
+triangle along the walk was "under"). Measured on run 1's pre-rock scene (offline, `D:/k10-scratch/p4/integrate/fix/
+rock_test6.log`): grass / rock teeth 379 / 893 → 100 / 137; rock 10,716 faces / 12,459 m2 → 9,803 / 11,936 m2 in 8
+meshes (B_right_711_896's 42 m2 patch gone as a speckle); 179 tongue faces in 82 tongues filled; 0 beneath-pavement
+teeth. Reported in `data/rock_faces.json boundary_smoothing` (teeth before / after / per zone). No vertex moves.
+
+**`scripts-v021/blender/build_loop_blend.py build_buildings`** (lens: footprints 1.9–9.3 m from their true place; 10
+new houses with a wall corner on Del Cerro's walk, 25 within 5 m of a road surface):
+- projection: `_meters_per_degree` = the roads' WGS84 series (`scripts-v021/geometry/projection.py`), replacing
+  111320·cos(lat) / 110574 (0.1 % / 0.3 % short at 32.79° — 9 m south at J4, 2.7 m on the loop). Not a gate number:
+  a measured error at its cause. It moves every building, the loop's 153 included (≤ 5 m), stated in the ledger.
+- `BUILDING_CORNER_CLEAR_M` **3.1 m** [std: the curb profile's width, curb face 0.08 + walk 1.8 + grade strip 1.2]:
+  no footprint corner within it of the pavement's edge (centre distance less half width, bucketed nearest), in both
+  bands, besides the centroid rule (`BUILDING_CLEAR_M` 5.0, unchanged). Offline replay on run 1's inputs
+  (`p4-proofs/analysis/count_bands.py`): 334 → 329 (old band 153 → 145, north 61 → 62, Del Cerro + stubs 120 → 122);
+  the corner-clearance histogram with the rule off: 24 under 5 m, 6 under 3 m, 2 under 1 m (those two ON the walk).
+- `house_seat_check` thresholds unchanged; it re-judges every building at its new place.
+
+**Terrain beyond 40 m, stated as measured** (lens: "identical to v0.19.0" fails as a vertex-set test): 3,108 ground
+vertices only in the merged build and 221 only in v0.19.0 beyond 40 m of any road, the surface within 4 cm (p95), one
+lattice point 1.26 m off on a 1.7 m/m bank at (−1764, 2793) — the thinning keeps a different set after the release's
+re-triangulation ([thin] 983,255 → 526,101 vs 983,650 → 515,973). "No vertex moves" is true of the release and rock
+steps, not of the shipped vertex set. No gate reads that set; `rib_check` and the drive gates read the surface.
+
+### Measured — run 1 (merged, before the fix round) and run 2 (after), against the v0.19.0 floor (r3run)
+
+| Gate / count | v0.19.0 (r3run) | run 1 (ecf5f5d) | run 2 (fix round) |
+|---|---|---|---|
+| Free Roam ground-on-top / severe / kinks / excursion drops / audit | 8 / 0 / 2.67 / 96 / 53 | 8 / 0 / 2.67 / 96 / 53 | {R2_FR} |
+| Speedway / Reverse severe, kinks, barrier_missing, audit | 4 / 6, 6.46 / 6.09, 0, 53 / 53 | same | {R2_RACE} |
+| no_route cw / acw | PASS 0/439 both | PASS 0/439 both | {R2_NOROUTE} |
+| lines expansion fwd / rev (kinks, drops) | PASS 2.39 / 2.53, 40 / 38 | same | {R2_LINES} |
+| verify_mouths / stubs / pads | 32 / 26 + 29 / J2–J4 PASS | same | {R2_MOUTHS} |
+| verify_signs posts | 19 | 29 PASS | {R2_SIGNS} |
+| rib_check step jogs (densest) | 69 (4 / 5) | 69 (4 / 5) | {R2_RIB} |
+| house_seat_check | PASS 153 | PASS 334 | {R2_HOUSES} |
+| kn5_ground_check x3 (lamp posts) | PASS (238) | PASS (323) | {R2_KGC} |
+| check_lights_ini / `[LIGHT_n]` | — / 238 | 323 / 323 | {R2_LIGHTS} |
+| TreeFX plants (built-surface drops) | 15,739 | 21,171 (—) | {R2_TREES} |
+| rock faces / m2 / meshes; teeth grass / rock | — | 10,716 / 12,459 / 8; — | {R2_ROCK} |
+| buildings (old band / new band) | 153 | 334 (153 / 181) | {R2_BLD} |
+| road kn5 bytes (ceiling 145 MB) | 89,815,220 | 94,316,244 | {R2_KN5} |
+| `[GRASS_FX]` tiles | 16 | 16 (no rock, no far ring) | {R2_GRASS} |
+| chain end | NOT INSTALLED (2 pre-existing reds) | same | {R2_END} |
+
+
 ## 2026-08-10 — Baseline inventory (no changes; recording current state)
 
 Re-derived directly from the engine at `v0.66.3`+, not inherited. The v2-reboot draft that seeded

@@ -33,6 +33,15 @@ terracotta / painted / hatched median. The raised islands' low planting is the a
 scatter_positions.json median_planting, every island, v0.19.0 shipped it); Waring's planted median gets its real
 trees on top at st 250-550 (A2; scenery.treefx.median_trees).
 
+THE BUILT-SURFACE GUARD (ledger 0054 P4 integration fix round): the planner above reads plans — centrelines, pad
+outlines, P3's wall measurement. The gate OBJ (data/track.obj, the road kn5 the chain just exported) is the truth, so
+every guarded plant is judged against it last: the spot is dropped when the triangle under it is a road (1ROAD*), a
+walk (1KERB*), a rock cut face (1GRASS_ROCK*, tools/rock_faces_blend.py — 10 of the 16 cut bands, not only P3's 16
+measured walls), or when it stands inside a HOUSE / BUILDING footprint or within BUILT_BUILDING_CLEAR_M of one (TreeFX
+snaps a trunk onto whatever ground it finds, so a tree planted inside a footprint grows up through the roof). The
+loop's lines keep their numbering (every hash is the same); only the dropped lines go. The raised islands' plantings
+(median_planting, north_median_trees) stand on the pavement under their island by design and are not guarded.
+
     python tools/make_treefx.py <project-dir>
 """
 from __future__ import annotations
@@ -136,6 +145,12 @@ FILL_BANDS = [   # (off_min, off_max, tree zone, p_tree, bush zone, p_bush) per 
 FILL_STEP_M = 10.0
 LAKE_DROP_M = 8.0
 APRON_PLANT_CLEAR_M = 1.0   # [invented] ledger 0054 P1 fix round: no plant within this of a corner apron's outline
+BUILT_BUILDING_CLEAR_M = 1.0   # [invented] ledger 0054 P4 integration fix round: no plant inside a built HOUSE / BUILDING
+                               # footprint or within this of its walls (the apron rule's own margin; a bush against a wall
+                               # is a hedge, a trunk inside the wall is a tree through the roof)
+BUILT_SURFACE_KINDS = (("1GRASS_ROCK", "rock"), ("1ROAD", "road"), ("1KERB", "walk"), ("HOUSE", "building"),
+                       ("BUILDING", "building"))   # gate OBJ object prefixes the guard reads (first match wins)
+BUILT_CELL_M = 12.0
 CAP_TREES, CAP_BUSHES = 3500, 9000
 MARK_BEGIN, MARK_END = "; --- V3 TREEFX BEGIN (tools/make_treefx.py) ---", "; --- V3 TREEFX END ---"
 
@@ -379,6 +394,67 @@ class North:
         return out
 
 
+class BuiltSurfaces:
+    """The gate OBJ's roads, walks, rock cut faces and buildings as plan triangles (engine frame x, z), bucketed, for
+    the built-surface guard. ``reject(x, z)`` -> the kind standing under the spot (rock / road / walk / building) or
+    None. A building counts from BUILT_BUILDING_CLEAR_M away (the spot and eight ring samples)."""
+
+    def __init__(self, obj_path):
+        self.cells = {}
+        self.counts = {k: 0 for _p, k in BUILT_SURFACE_KINDS}
+        V = []
+        kind = None
+        with open(obj_path, encoding="utf-8", errors="replace") as f:
+            for ln in f:
+                c = ln[:2]
+                if c == "v ":
+                    p = ln.split()
+                    V.append((float(p[1]), float(p[3])))
+                elif c in ("o ", "g "):
+                    nm = ln[2:].strip().upper()
+                    kind = next((k for pfx, k in BUILT_SURFACE_KINDS if nm.startswith(pfx)), None)
+                elif c == "f " and kind is not None:
+                    idx = [int(q.split("/")[0]) - 1 for q in ln.split()[1:]]
+                    for i in range(1, len(idx) - 1):          # fan: every face, triangles and quads alike
+                        a, b, cc = V[idx[0]], V[idx[i]], V[idx[i + 1]]
+                        if abs((b[0] - a[0]) * (cc[1] - a[1]) - (cc[0] - a[0]) * (b[1] - a[1])) < 1e-6:
+                            continue                           # a wall: no plan area
+                        self._add(kind, a, b, cc)
+                        self.counts[kind] += 1
+
+    def _add(self, kind, a, b, c):
+        xs, zs = (a[0], b[0], c[0]), (a[1], b[1], c[1])
+        for ix in range(int(min(xs) // BUILT_CELL_M), int(max(xs) // BUILT_CELL_M) + 1):
+            for iz in range(int(min(zs) // BUILT_CELL_M), int(max(zs) // BUILT_CELL_M) + 1):
+                self.cells.setdefault((ix, iz), []).append((kind, a, b, c))
+
+    @staticmethod
+    def _inside(p, a, b, c):
+        d1 = (b[0] - a[0]) * (p[1] - a[1]) - (p[0] - a[0]) * (b[1] - a[1])
+        d2 = (c[0] - b[0]) * (p[1] - b[1]) - (p[0] - b[0]) * (c[1] - b[1])
+        d3 = (a[0] - c[0]) * (p[1] - c[1]) - (p[0] - c[0]) * (a[1] - c[1])
+        return not ((d1 < 0 or d2 < 0 or d3 < 0) and (d1 > 0 or d2 > 0 or d3 > 0))
+
+    def kinds_at(self, x, z):
+        out = set()
+        for kind, a, b, c in self.cells.get((int(x // BUILT_CELL_M), int(z // BUILT_CELL_M)), ()):
+            if kind not in out and self._inside((x, z), a, b, c):
+                out.add(kind)
+        return out
+
+    def reject(self, x, z):
+        k = self.kinds_at(x, z)
+        for want in ("building", "rock", "road", "walk"):
+            if want in k:
+                return want
+        r = BUILT_BUILDING_CLEAR_M
+        for i in range(8):
+            ang = i * math.pi / 4
+            if "building" in self.kinds_at(x + r * math.cos(ang), z + r * math.sin(ang)):
+                return "building"
+        return None
+
+
 def _pick(species, i):
     wsum = sum(s[3] for s in species)
     r = _hash(i, 1) * wsum
@@ -466,6 +542,18 @@ def plan(project_dir, all_species=False, verbose=False):
                     run.append(st)
         fwy = RoadField(flines, cell=60.0) if flines else None
 
+    # the built-surface guard (ledger 0054 P4 integration fix round): the gate OBJ, when the chain has exported it
+    # (verify_race G judges the plan before Blender, without it — the written file is re-judged after it, with it)
+    built = None
+    rejected_built = {"rock": 0, "road": 0, "walk": 0, "building": 0}
+    rejected_built_loop = dict(rejected_built)
+    obj_p = data / "track.obj"
+    if obj_p.exists():
+        built = BuiltSurfaces(obj_p)
+        if verbose:
+            print(f"[treefx] built-surface guard on {obj_p.name}: plan triangles " +
+                  ", ".join(f"{k} {n}" for k, n in built.counts.items()))
+
     out = []
     entries_out = []
     used = set()
@@ -491,6 +579,13 @@ def plan(project_dir, all_species=False, verbose=False):
             if apron_polys and on_apron(e["x"], e["z"]):
                 rejected += 1
                 continue
+            if guard and built is not None:
+                why = built.reject(e["x"], e["z"])
+                if why:
+                    rejected_built[why] += 1
+                    if not zone_key.startswith("north_"):
+                        rejected_built_loop[why] += 1
+                    continue
             s = _pick(species, i)
             size = s[1] + (s[2] - s[1]) * _hash(i, 2)
             angle = int(360 * _hash(i, 3))
@@ -674,8 +769,11 @@ def plan(project_dir, all_species=False, verbose=False):
                 for pc in sorted(north_stats["per_piece"]):
                     print(f"[treefx]   piece {pc}: {north_stats['per_piece_total'][pc]} -> "
                           + ", ".join(f"{m} {n}" for m, n in sorted(north_stats["per_piece"][pc].items())))
+    if verbose and built is not None:
+        print(f"[treefx] built-surface guard: dropped " + ", ".join(f"{k} {n}" for k, n in rejected_built.items())
+              + " (of them on the loop's own zones: " + ", ".join(f"{k} {n}" for k, n in rejected_built_loop.items()) + ")")
     return {"lines": out, "entries": entries_out, "counts": counts, "used": used, "rejected": rejected,
-            "north": north_stats}
+            "rejected_built": rejected_built, "rejected_built_loop": rejected_built_loop, "north": north_stats}
 
 
 def build(project_dir):
@@ -707,6 +805,7 @@ def build(project_dir):
     rep = {"_doc": "tools/make_treefx.py: what trees.txt holds (counts per zone and per species; the north network per "
                    "piece per species, its planted area, the loop's density and the area-scaled caps — ledger 0054 P4 / A9)",
            "total": total, "per_zone": counts, "per_species": dict(sorted(by_model.items())), "rejected_in_corridor": rejected,
+           "rejected_on_built_surface": p["rejected_built"], "rejected_on_built_surface_loop_zones": p["rejected_built_loop"],
            "surface_materials": surface_materials(proj), "north": p["north"]}
     (proj / "data" / "treefx.report.json").write_text(json.dumps(rep, indent=1), encoding="utf-8")
 

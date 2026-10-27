@@ -27,15 +27,22 @@ curb line out to cut_reach_m + round_m + BAND_PAD_M. Inside a band a triangle is
 rock, not a grassed bank — the real faces climb 1.1-1.6 m per metre, EXPANSION-PLAN D3 / auto_cuts face_p90_m_per_m). The
 split lands at the toe (the first batter row off the sidewalk's apron, where the ground turns from flat to the batter) and at
 the top rounding (where round_m eases the batter onto the hill's own slope, under SLOPE_MIN again) by that one rule; then a
-clean-up so the boundary reads as one line and not a lace: a rock patch smaller than MIN_PATCH_M2 goes back to grass, a grass
-hole inside the rock smaller than MAX_HOLE_M2 (the lattice's bench rows across a wall) becomes rock. A zone whose measured
-real rise over the road is under MIN_RISE_M (3 m, ledger 0054's own "real wall" bar) is a bank and gets no rock however steep
-a facet of it is. Every number is in fleet/GATES-CHANGELOG.md (2026-10-26 P4 buildings).
+clean-up so the boundary reads as one line and not a lace (tools/rock_faces_rules.py, ledger 0054 P4 integration fix round):
+a rock patch smaller than MIN_PATCH_M2 goes back to grass (the outcrop speckles on a bank); a grass tooth into the rock (two
+of its three neighbours rock) becomes rock and a rock tooth into the grass becomes grass, so the boundary follows a lattice
+row — the ground release lays the batter as rows, and where a flat row meets a raised row the triangles between them
+alternate flat / steep, which the slope rule alone read as a sawtooth of green teeth along the whole toe; a small grass
+tongue whose boundary is mostly rock (a bench row across the wall, open to the hill) becomes rock; CLEAN_ROUNDS rounds of
+that; then a grass hole inside the rock smaller than MAX_HOLE_M2 becomes rock. The lace is measured (teeth before / after,
+data/rock_faces.json boundary_smoothing). A zone whose measured real rise over the road is under MIN_RISE_M (3 m, ledger
+0054's own "real wall" bar) is a bank and gets no rock however steep a facet of it is. Every number is in
+fleet/GATES-CHANGELOG.md (2026-10-26 P4 buildings; the clean-up's in the P4 integration entry).
 
 THE TOE. The sidewalk's outer apron (the CURB profile's last 1.2 m, graded 0.2 m down and buried under the ground) runs on
 under the foot of the cut, so the first batter row stands OVER buried pavement: that is the real toe, and it is rock. What
-is never rock is ground UNDER a pavement sheet (a face with a corner that has 1ROAD / 1KERB above it: the ground pinned under
-the walk, the curtain behind a curb) — such a face stays grass whatever its slope.
+is never rock is ground BENEATH a pavement sheet (a face with a corner that has 1ROAD / 1KERB above it, higher than the
+corner: the ground pinned under the walk, the curtain behind a curb) — such a face stays grass whatever its slope, and the
+clean-up never turns one to rock. A corner over a buried sheet (the apron below the ground) is not beneath anything.
 
 SELF-CHECKS (exit 1 = the blend is not saved): no rock face has a vertex under a pavement sheet; the tiles' faces before ==
 the tiles' faces after + the rock faces (no triangle made or lost); every vertex of every rock mesh is a vertex of the tile
@@ -66,6 +73,9 @@ AIROSO = Path(__file__).resolve().parents[1]
 if str(AIROSO) not in sys.path:
     sys.path.insert(0, str(AIROSO))
 from scripts.ac import pbr  # noqa: E402
+if str(AIROSO / "tools") not in sys.path:
+    sys.path.insert(0, str(AIROSO / "tools"))
+from rock_faces_rules import smooth_boundary, fill_tongues, teeth, SMOOTH_PASSES, TONGUE_ROCK_FRAC  # noqa: E402
 
 TERRAIN = "1GRASS"            # the prep's physical ground tiles (1GRASS_<n>)
 ROCK = "1GRASS_ROCK"          # the rock meshes (1GRASS_ROCK_<n>, one per source tile)
@@ -80,6 +90,8 @@ MAX_HOLE_M2 = 60.0            # [invented] a grass hole inside the rock smaller 
                               # lattice's 1 m bench rows, 10-20 m long, left as grass stripes across the Jackson walls)
 UV_TILE = 4.0                 # metres per texture tile, as the prep's planar UV (build_kn5_loop.UV_TILE)
 VERT_CAP = 65535
+BENEATH_TOL_M = 0.005         # a sheet higher than this over the corner = the corner is beneath it
+CLEAN_ROUNDS = 2              # [invented] smoothing + tongue fill + speckle drop rounds (the second catches the first's own teeth)
 THIN_ALT_M = 0.25             # [reported] a triangle whose shortest altitude is under this ...
 THIN_LONG_M = 1.5             # ... with an edge longer than this is a sliver (ledger 0054 P3 "thin lighter triangles")
 
@@ -133,6 +145,16 @@ def zone_bands(proj, R, exp):
                 outer.append((r[ix] + lx * (off + sgn * reach), r[iz] + lz * (off + sgn * reach)))
             bands.append((z["name"], inner + outer[::-1], side))
     return bands
+
+
+def _beneath_pavement(pav, x, y, z):
+    """a ground corner BENEATH a pavement sheet: the sheet above it in plan is higher than it (the curtain behind a curb,
+    the ground under a walk). The curb profile's buried apron (its last 1.2 m, graded 0.2 m down under the ground) is
+    pavement in plan but below the ground over it: a toe triangle reaching over the apron is not beneath anything.
+    Ledger 0054 P4 integration fix round: read in plan alone, every toe triangle along the walk was 'under', could never
+    be rock, and the toe stayed a sawtooth of grass teeth however steep they stood."""
+    hit = pav.ray_cast(Vector((x, y, z + 60.0)), Vector((0, 0, -1)), 59.99)[0]
+    return hit is not None and hit.z > z + BENEATH_TOL_M
 
 
 def _flat_bvh(prefixes):
@@ -236,11 +258,11 @@ def main():
             thin = len(co) == 3 and alt < THIN_ALT_M and max(e) > THIN_LONG_M
             n_thin_before += thin
             key = (ti, p.index)
-            under = slope >= slope_min and any(
-                pav.ray_cast(Vector((v.x, v.y, v.z + 60.0)), Vector((0, 0, -1)), 59.99)[0] is not None for v in co)
+            under = slope >= slope_min and any(_beneath_pavement(pav, v.x, v.y, v.z) for v in co)
             n_under += under
             faces[key] = {"zone": zn, "slope": slope, "area": area, "rock": slope >= slope_min and not under, "thin": thin,
-                          "rise": max(v.z for v in co) - min(v.z for v in co), "c": (c.x, c.y)}
+                          "rise": max(v.z for v in co) - min(v.z for v in co), "c": (c.x, c.y),
+                          "under": under if slope >= slope_min else None, "co": [(v.x, v.y, v.z) for v in co]}
             rk = [(round(v.x, 3), round(v.y, 3), round(v.z, 3)) for v in co]
             for i in range(len(rk)):
                 a_, b_ = rk[i], rk[(i + 1) % len(rk)]
@@ -253,12 +275,41 @@ def main():
                     adjacency[a_].add(b_)
     rock = {k for k, f in faces.items() if f["rock"]}
     n_raw = len(rock)
-    # 2. clean-up: small rock patches back to grass; small grass holes inside the rock become rock
+
+    def is_under(key):
+        # a face with a corner under a pavement sheet may never become rock (read once, on demand)
+        f = faces[key]
+        if f["under"] is None:
+            f["under"] = any(_beneath_pavement(pav, x, y, z) for x, y, z in f["co"])
+        return f["under"]
+
+    # 2a. clean-up, first pass: small rock patches back to grass (the outcrop speckles on a bank, before the smoothing
+    # could join them)
     dropped = 0
     for comp in _components(rock, adjacency):
         if sum(faces[k]["area"] for k in comp) < MIN_PATCH_M2:
             rock -= set(comp)
             dropped += len(comp)
+    # 2b. the boundary follows the lattice row, not the lace (tools/rock_faces_rules, ledger 0054 P4 integration fix
+    # round): grass teeth with two rock neighbours become rock, rock teeth with two grass neighbours grass; then a small
+    # grass tongue whose boundary is mostly rock (a bench row across the wall, open to the hill) becomes rock; then
+    # anything the erosion left as a speckle goes; CLEAN_ROUNDS times, since each clean-up can leave a tooth of its own
+    sm = {"filled": 0, "eroded": 0, "passes": 0, "teeth_before": teeth(rock, faces.keys(), adjacency)}
+    n_tongue = n_tongue_comps = 0
+    areas = {k: f["area"] for k, f in faces.items()}
+    for _round in range(CLEAN_ROUNDS):
+        rock, sm1 = smooth_boundary(rock, faces.keys(), adjacency, blocked=is_under)
+        rock, nt, ntc = fill_tongues(rock, faces.keys(), adjacency, areas, blocked=is_under, max_area_m2=MAX_HOLE_M2)
+        for key in ("filled", "eroded", "passes"):
+            sm[key] += sm1[key]
+        n_tongue += nt
+        n_tongue_comps += ntc
+        for comp in _components(rock, adjacency):
+            if sum(areas[k] for k in comp) < MIN_PATCH_M2:
+                rock -= set(comp)
+                dropped += len(comp)
+    sm["teeth_after"] = teeth(rock, faces.keys(), adjacency)
+    # 2c. small grass holes inside the rock become rock
     grass = {k for k in faces if k not in rock}
     filled = 0
     for comp in _components(grass, adjacency):
@@ -276,7 +327,7 @@ def main():
             if any(h not in rock and h not in comp for h in nbrs):
                 enclosed = False
                 break
-        if enclosed:
+        if enclosed and not any(is_under(k) for k in comp):
             rock |= set(comp)
             filled += len(comp)
     # 3. self-check on the chosen faces (the hole fill may have added one): nothing under a pavement sheet
@@ -287,7 +338,7 @@ def main():
             p = ob.data.polygons[k[1]]
             for i in p.vertices:
                 v = vs[i].co
-                if pav.ray_cast(Vector((v.x, v.y, v.z + 60.0)), Vector((0, 0, -1)), 59.99)[0] is not None:
+                if _beneath_pavement(pav, v.x, v.y, v.z):
                     bad_under.append((ob.name, k[1], round(v.x, 1), round(v.y, 1)))
                     break
     if bad_under:
@@ -369,10 +420,20 @@ def main():
     res = pbr.resolve(ROCK + "_0", overrides)
     rep = {"_doc": "tools/rock_faces_blend.py (ledger 0054 P4 buildings + rock): the cut faces split out of the ground tiles",
            "params": {"slope_min_m_per_m": slope_min, "band_pad_m": BAND_PAD_M, "min_rise_m": MIN_RISE_M, "min_patch_m2": MIN_PATCH_M2,
-                      "max_hole_m2": MAX_HOLE_M2, "uv_tile_m": UV_TILE},
+                      "max_hole_m2": MAX_HOLE_M2, "uv_tile_m": UV_TILE, "smooth_passes": SMOOTH_PASSES, "clean_rounds": CLEAN_ROUNDS,
+                      "tongue_rock_frac": TONGUE_ROCK_FRAC},
            "texture": {"key": res["key"], "diffuse": str(res["diffuse"]), "normal": str(res["normal"]),
                        "overridden": res["overridden"]},
-           "bands": len(bands), "faces_in_bands": len(faces), "steep_under_pavement_left_grass": n_under, "rock_raw": n_raw, "patches_dropped": dropped,
+           "bands": len(bands), "faces_in_bands": len(faces), "steep_under_pavement_left_grass": n_under, "rock_raw": n_raw,
+           "boundary_smoothing": {"teeth_filled": sm["filled"], "teeth_eroded": sm["eroded"], "passes": sm["passes"],
+                                  "teeth_before_grass_rock": list(sm["teeth_before"]), "teeth_after_grass_rock": list(sm["teeth_after"]),
+                                  "teeth_final_grass_rock": list(teeth(rock, faces.keys(), adjacency)),
+                                  "teeth_final_grass_beneath_pavement": sum(
+                                      1 for k in faces if k not in rock and is_under(k)
+                                      and sum(1 for h in adjacency.get(k, ()) if h in rock) >= 2),
+                                  "teeth_final_per_zone": {z: list(teeth(rock, [k for k in faces if faces[k]["zone"] == z], adjacency))
+                                                           for z in sorted({f["zone"] for f in faces.values()})}},
+           "tongues_filled": {"faces": n_tongue, "components": n_tongue_comps}, "patches_dropped": dropped,
            "holes_filled": filled, "rock_faces": len(rock), "rock_area_m2": round(sum(faces[k]["area"] for k in rock), 1),
            "thin_triangles_in_bands_before_split": n_thin_before,
            "meshes": [{"name": n, "from": s, "vertices": v, "faces": f} for n, s, v, f in made],
@@ -389,7 +450,8 @@ def main():
     bpy.ops.wm.save_mainfile(filepath=str(blend))
     print(f"[rock] {len(rock)} faces / {rep['rock_area_m2']} m2 of cut face at {slope_min} m/m or steeper in {len(per_zone)} of "
           f"{len(bands)} bands -> {len(made)} mesh(es) {', '.join(n for n, *_ in made)} ({sum(v for _, _, v, _ in made)} "
-          f"vertices); {n_raw} raw ({n_under} steep faces under a pavement left grass), {dropped} in small patches back to grass, {filled} hole faces filled; thin toe "
+          f"vertices); {n_raw} raw ({n_under} steep faces under a pavement left grass), boundary smoothing +{sm['filled']} / -{sm['eroded']} "
+          f"teeth in {sm['passes']} pass(es) (lace {sm['teeth_before']} -> {sm['teeth_after']} grass / rock teeth), {n_tongue} tongue faces in {n_tongue_comps} tongue(s) filled, {dropped} in small patches back to grass, {filled} hole faces filled; thin toe "
           f"triangles in the bands {n_thin_before}; texture {res['diffuse'].name if res['diffuse'] else None}"
           f"{' (override)' if res['overridden'] else ''}; saved {blend.name} ({time.time() - t0:.0f} s)")
 

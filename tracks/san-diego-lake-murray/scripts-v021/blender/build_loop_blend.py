@@ -588,14 +588,18 @@ def _tube(verts, tris, x0, z0, y0, x1, z1, y1, r):
 
 
 def build_streetlights(centerline, widths, i8, grid_xyz, *, spacing=55.0, side_off=2.8,
-                       post_h=9.0, arm=1.8):
+                       post_h=9.0, arm=1.8, piece_planner=None):
     """Streetlight posts along the loop, COLLISION-AWARE so they never clip other objects:
     - offset outside the kerb (width/2 + side_off) — never in the road;
     - skip the I-8 bridge/cut spans (near_i8 < 26 m) — no posts on a deck or in the trench;
     - min 25 m between posts — no two overlap;
     - base GROUNDED on the sampled terrain (not floating/buried), and rejected where the road sits >6 m
       above the ground (a cut wall) so a post never spawns halfway down the freeway embankment.
-    Returns (mesh, lamp_head_positions) with heads in LOCAL frame (x=E, y=up, z=N) for the CSP lights."""
+    Returns (mesh, lamp_head_positions) with heads in LOCAL frame (x=E, y=up, z=N) for the CSP lights.
+    ``piece_planner(placed)`` (ledger 0054 P4 step 2, EXPANSION-PLAN D4): given the mainline's bases, returns the north
+    pieces' posts as scripts.geometry.streetlights plans them (its "lamps": head, base_xz, roadward_xz per post) — swept
+    here AFTER the mainline's, so the loop's posts keep their numbers (0..n-1) and every reader of lights.local.json
+    sees one list. Returns (mesh, heads, that plan or None)."""
     import bisect
     terr = _grid_sampler(grid_xyz)
 
@@ -642,7 +646,84 @@ def build_streetlights(centerline, widths, i8, grid_xyz, *, spacing=55.0, side_o
         _tube(verts, tris, bx, bz, top - 0.1, hx, hz, top - 0.1, 0.07)  # arm
         heads.append([round(hx, 3), round(top - 0.2, 3), round(hz, 3)])
         side = -side; s += spacing
-    return {"vertices": verts, "uvs": [], "tris": tris}, heads
+    # ledger 0054 P4: the north pieces' posts, as planned (base on the piece's walk, head ARM_M road-ward of it,
+    # HEAD_OVER_GROUND_M over the draft ground — the same box post + arm + head as the loop's, so every reader and
+    # gate downstream sees one kind of draft lamp; tools/author_lamps_blend.py stands the real model on them). The
+    # planner is given the loop's bases, so its MIN_GAP_M rule counts them too
+    piece_plan = piece_planner(list(placed)) if piece_planner is not None else None
+    for lamp in (piece_plan or {}).get("lamps", []):
+        bx, bz = lamp["base_xz"]
+        hx, hy, hz = lamp["head"]
+        top = hy + 0.2
+        _post_box(verts, tris, bx, bz, top - post_h, top, 0.16)   # post (the draft's 9 m box)
+        _post_box(verts, tris, hx, hz, top - 0.25, top, 0.24)      # lamp head
+        _tube(verts, tris, bx, bz, top - 0.1, hx, hz, top - 0.1, 0.07)  # arm
+        heads.append([round(hx, 3), round(hy, 3), round(hz, 3)])
+    return {"vertices": verts, "uvs": [], "tris": tris}, heads, piece_plan
+
+
+def plan_piece_streetlights(proj, cfg, data, centerline, widths, connectors, conn_records, grid_xyz, placed):
+    """ledger 0054 P4 step 2 (EXPANSION-PLAN D4): plan the posts of the north pieces (the connectors whose record
+    carries `expansion`) with scripts.geometry.streetlights — on the piece's walk, clear of every other pavement
+    (the mainline, every other connector and side-street stub, the junction pads' outlines and stub arms, the curb
+    cuts), the loop's spacing except where OSM has real street_lamp nodes, nothing in a declared unlit stretch.
+    Opt-in by track.config.json scenery.streetlights.expansion.enabled; returns None when off or when no piece is
+    built (then the loop's lamps are exactly as before)."""
+    from scripts.geometry import streetlights as SL
+    sl_cfg = ((cfg.get("scenery") or {}).get("streetlights") or {}).get("expansion") or {}
+    pieces = []
+    rec_of = {c["name"]: c for c in conn_records}
+    inter = {}
+    ip = data / "expansion.north.json"
+    if ip.exists():
+        inter = json.loads(ip.read_text(encoding="utf-8"))
+    st_of = {str(p["id"]): p.get("stations") or [] for p in inter.get("pieces", [])}
+    for cname, cpts, cw in connectors:
+        ex = (rec_of.get(cname) or {}).get("expansion")
+        if ex:
+            pieces.append({"name": cname, "id": str(ex.get("piece")), "pts": cpts, "widths": cw,
+                           "stations": st_of.get(str(ex.get("piece")), [])})
+    if not sl_cfg.get("enabled") or not pieces:
+        return None
+    piece_names = {p["name"] for p in pieces}
+    others = [(cname, cpts, cw, "stub" if (rec_of.get(cname) or {}).get("stub") else "connector")
+              for cname, cpts, cw in connectors if cname not in piece_names]
+    others += [(p["name"], p["pts"], p["widths"], "connector") for p in pieces]   # the other pieces (at the pads)
+    pads = [(pd["id"], [tuple(q) for q in pd["outline_xz"]]) for pd in inter.get("pads", []) if pd.get("outline_xz")]
+    pads += [(f"{s.get('junction')}:{s['id']}", [tuple(q) for q in s["pavement_xz"]])
+             for s in inter.get("stubs", []) if s.get("pavement_xz")]
+    stubs, cuts = [], []
+    sp = data / "stubs.plan.json"
+    if sp.exists():
+        plan = json.loads(sp.read_text(encoding="utf-8"))
+        stubs = [{"id": s["id"], "host": s.get("host"), "side": s.get("side"), "cut_xz": s.get("cut_xz"),
+                  "width_m": s.get("width_m")} for s in plan.get("stubs", [])]
+        cuts = [{"id": c["id"], "host": c.get("host"), "side": c.get("side"), "station_m": c.get("station_m"),
+                 "half_span_m": c.get("half_span_m"), "flare_m": c.get("flare_m"), "cut_xz": c.get("cut_xz")}
+                for c in plan.get("curb_cuts", [])]
+    osm_nodes, osm_src = [], None
+    of = sl_cfg.get("osm_lamps_file")
+    if of:
+        op = proj / of
+        if op.exists():
+            raw = json.loads(op.read_text(encoding="utf-8"))
+            local = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
+            o = local["origin"]
+            osm_nodes = SL.project_osm_nodes(raw.get("street_lamps", []), float(o["lon"]), float(o["lat"]))
+            osm_src = {"file": of, "osm_base": raw.get("osm_base"), "nodes_in_file": len(osm_nodes)}
+        else:
+            print(f"[blend] streetlights: osm_lamps_file {of} not in the project — every piece stretch is authored")
+    # the loop's posts stand first: the planner keeps MIN_GAP_M from them (mainline sweep replicated for the bases)
+    terr = _grid_sampler(grid_xyz)
+    out = SL.plan(pieces, mainline=(centerline, widths), others=others, pads=pads, stubs=stubs, curb_cuts=cuts,
+                  placed=placed, cfg_expansion=sl_cfg, osm_nodes=osm_nodes, ground=terr)
+    out["osm_source"] = osm_src
+    out["pieces"] = [{"name": p["name"], "id": p["id"], "n_points": len(p["pts"])} for p in pieces]
+    for pid, r in out["per_piece"].items():
+        print(f"[blend] streetlights piece {pid} ({r['name']}, {r['length_m']} m): {r['authored']} authored + "
+              f"{r['osm']} OSM-grounded, {r['skipped']} skipped, unlit {[(u['s_from'], u['s_to']) for u in r['unlit']]}, "
+              f"OSM nodes beside it {len(r['osm_nodes'])}")
+    return out
 
 
 def build_curbs(centerline, widths, *, curb_h=0.14, curb_w=0.15):
@@ -970,9 +1051,11 @@ def main():
     connectors = []
     stub_of = {}
     paint_of = {}
+    conn_records = []           # the records as read (ledger 0054 P4: `expansion` / `stub` keys for the lamp planner)
     conn_path = data / "connectors.local.json"
     if conn_path.exists():
         conn_data = json.loads(conn_path.read_text())
+        conn_records = list(conn_data.get("connectors", []))
         for c in conn_data.get("connectors", []):
             cpts = [tuple(p) for p in c["points_xyz_m"]]
             if len(cpts) < 2:
@@ -1065,8 +1148,20 @@ def main():
     else:
         terrain = ribbon.grass_terrain(grid_xyz)
     guardrail = build_guardrails(centerline, widths, i8)           # rails where the loop bridges I-8
-    lights, lampheads = build_streetlights(centerline, widths, i8, grid_xyz)  # collision-aware posts
-    (data / "lights.local.json").write_text(json.dumps({"lampheads": lampheads}))  # -> CSP [LIGHT_N]
+    # collision-aware posts; ledger 0054 P4 step 2: + the north pieces' posts (scenery.streetlights.expansion)
+    lights, lampheads, piece_plan = build_streetlights(
+        centerline, widths, i8, grid_xyz,
+        piece_planner=lambda placed: plan_piece_streetlights(proj, cfg, data, centerline, widths, connectors,
+                                                             conn_records, grid_xyz, placed))
+    lights_rec = {"lampheads": lampheads}                          # -> CSP [LIGHT_N]
+    if piece_plan is not None:
+        # the pieces' posts carry their base and road-ward unit (the author's "head -> nearest MAINLINE point" rule has
+        # no meaning on a piece); indexed into lampheads after the loop's posts, which keep their numbers
+        n0 = len(lampheads) - len(piece_plan["lamps"])
+        for k, lamp in enumerate(piece_plan["lamps"]):
+            lamp["i"] = n0 + k
+        lights_rec["expansion"] = piece_plan
+    (data / "lights.local.json").write_text(json.dumps(lights_rec))
     bcache = data / "buildings.cache.json"
     _scn = cfg.get("scenery", {})
     bmeshes = build_buildings(centerline, widths, grid_xyz, json.loads(bcache.read_text()), lon0, lat0,
@@ -1155,7 +1250,9 @@ def main():
             for ci, cmd in enumerate(chunks):
                 make_mesh(f"{base}_{chr(65 + ci)}", cmd, rgba)
             print(f"[blend] {base}: pre-chunked into {len(chunks)} meshes under the 65,535-vert cap")
-    print(f"[blend] {len(lampheads)} streetlights placed (collision-checked)")
+    print(f"[blend] {len(lampheads)} streetlights placed (collision-checked)"
+          + (f" — {len(piece_plan['lamps'])} of them on the north pieces (ledger 0054 P4 D4), "
+             f"{len(piece_plan['skipped'])} stations skipped" if piece_plan else ""))
 
     ys = [p[1] for p in centerline]
     print(f"[blend] loop: {len(centerline)} pts, road elevation {min(ys):.0f}..{max(ys):.0f} m (rel origin {elev0:.0f} m)")

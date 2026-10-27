@@ -887,3 +887,88 @@ pads, the drive tests of Free Roam and the new roads all identical); the lamp ch
 - Pending as before: the engine-july mirror (`engine-july-snapshot/PENDING-MIRROR.md5`; the test suite's one red,
   `test_engine_july_mirror_is_byte_identical`, is that), the J1 tilt question, P4 dressing.
 
+
+## P4 lamps — streetlights on the four north roads (2026-10-26; the `lamps` branch of P4, built and rehearsed, not merged, nothing installed)
+
+EXPANSION-PLAN P4 step 2 (D4, Kevin's 2026-10-13 default: "light everything except Jackson's open canyon"). The four
+new roads were dark in v0.19.0; the lamp walk saw only the loop. This piece of P4 lights them with the same twin-arm LED
+cobra model and the same 80s sodium light Kevin approved (0043 / 0056: colour, pool, intensity untouched), and makes
+every lamp on the whole track prove it stands on its ground and off every pavement. Three sibling pieces (signs + map,
+trees + GrassFX, buildings + rock) are built apart and merged after.
+
+**What was built.**
+- **85 new lamps on the north roads**, all at the loop's own spacing (55 m, alternating sides, none within 25 m of
+  another): Waring 16, Princess View 18, Mission Gorge 40, Jackson north 11. Jackson's open canyon (stations 250-1500
+  from Mission Gorge) stays dark as D4 says: 23 stations skipped there, none anywhere else. The same walk the loop's lamps
+  were placed by, extended to the pieces (`scripts-v021/geometry/streetlights.py`, called by the assembler's
+  `build_streetlights` after the loop's posts, which keep their numbers; opt-in by `scenery.streetlights.expansion`,
+  `enabled: false` = v0.19.0's lamps exactly).
+- **Each post stands on the new road's sidewalk**, 0.83 m behind the curb (the middle of the 1.5 m walk — the rule lamp
+  77 already stands by on J1's return), and stays clear of every other pavement: the loop at J1 / J5, every side-street
+  stub with its curb returns (10 m past its edge), the J2-J4 pads and their stub arms (3 m off the outline), every
+  driveway's lowered curb, and the K-rails (0.5 m). A station that is blocked slides up to 12 m along the walk, then
+  tries the other side of the road, then is skipped with its reasons written down; on this build nothing had to be
+  skipped for a blockage.
+- **OSM-grounded vs authored.** The P0 research holds 30 real `street_lamp` nodes; the nearest stands 745 m from any
+  of the four roads (one on the Lake Murray side of Jackson), so every stretch of all four roads is **authored** (the
+  loop's spacing), as the plan's D4 said it would be until a Street View night check. The machinery for a real node is
+  built and tested (a post AT the node, on its side; the loop's spacing switched off over that stretch; the source
+  recorded per lamp), so the night check can be applied as data.
+- **Every lamp's seat, measured from the pole's base on the built ground** (the model's 2.5 m footing is by design and
+  never counted). The draft seats a post on its 20 m grid; the chain then builds walks, pads, cut faces and released
+  slopes over that ground. Now `author_lamps_blend` reads the built scene under every post: a loop lamp whose base is
+  more than 1 m under or over it is re-seated by the draft's rule (head 8.8 m over the surface it stands on), and every
+  new piece lamp is seated on the built walk outright. Loop lamps re-seated: **0** (Alvarado, 1.03 m buried in its walk),
+  **32** (a v0.18.1 "keep" relocation behind the guard rail, its base 1.01 m over the released slope), **113** and **143**
+  (Jackson / Navajo, 1.41 and 1.39 m buried in the walk — the poles showed 1.3 m short). **Lamp 77** behind J1's return
+  was NOT re-seated: P3 repair round 1 already stands it on the apron's walk, base 0.21 m under the walk top (design 0.14);
+  the "3.09 m under" in P3's first notes counted the footing. Piece lamps: on Princess View and Mission Gorge the built
+  walk stands up to 2.3 m over the draft grid (the real hillside under the sidewalk), 8 of them by more than 1 m.
+- **Every pole proved clear, on the whole track**: the v0.18.1 footprint rule (axis + a 0.58 m ring on no road surface)
+  and the 0.5 m wall clearance, which ran only on the six relocated posts since v0.18.1, now run on all 323 and refuse
+  the build. 0 footprints on a road; nearest wall 0.667 m (lamp 43's guard rail, as v0.18.1 placed it).
+- **One CSP light per lamp, proved on the written file.** The lamp author refuses two heads within 2 m (ext_config's
+  cluster link), and a new read-back in the track-folder step of both chains (`tools/check_lights_ini.py`) refuses an
+  `ext_config.ini` whose `[LIGHT_N]` blocks are not exactly one per lamp, each within 5 cm of its lens, all in the
+  approved colour / pool / intensity. v0.18.0's 4 duplicate lights (0043) could not pass it.
+- `lights.local.json` now carries the base of every lamp as built (`lamp_bases_xz`); `place_signs` and `verify_race` G
+  read it instead of re-deriving bases from the loop's centreline — which, for a lamp on Princess View, pointed the
+  "road-ward" arm at College Ave and put the base 3.6 m off.
+
+**Plain terms, for the seat.** A street lamp is a pole with a 2.5 m stub buried under it so it never floats on a slope;
+what matters is where the pole's visible base meets the ground. The draft guessed that ground off a coarse 20 m height
+grid; on the steep new roads the finished sidewalk sits up to 2.3 m higher than that guess, so a pole placed by the guess
+would have stood with its base inside the sidewalk, visibly short. Every pole is now dropped onto the sidewalk the chain
+actually built, after the sidewalk exists.
+
+**Rehearsal** (`D:/k10-scratch/p4/lamps/run1`: fresh copies of the workshop project and engine-july, the FULL chain,
+`--no-install`): every v0.19.0 gate number equal to the floor (r3run / installed), nothing worse:
+Free Roam soft top 8 / severe 0 / kinks 2.67 per km / edge drops 96 / audit 53; Speedway / Reverse severe 4 / 6, kinks
+6.46 / 6.09, soft top 8 / 4, barrier_missing 0, obstructed 0, audit 53 / 53, no_route PASS both (0/439 probes, leak 0);
+the new roads `drive_test --line expansion` PASS fwd / rev (kinks 2.39 / 2.53, edge drops 40 / 38, soft top 0, severe 0);
+verify_mouths 32 PASS, verify_stubs 26 + 29 PASS, verify_pads J2 / J3 / J4 PASS, verify_signs 19 PASS (M3 / M4 still
+skipped, the signs piece's job), fold fans PASS 3 x 3, rib_check 87 / 44 / 69 (worst 4 of 5) PASS, house_seat_check
+PASS, kn5_ground_check PASS x 3 (lampposts 323, no-ground 0.0 %, seat-gap median -3.03 / p95 -2.71, hovering 0),
+verify_race G 323 / 323 masts beside a strip, minimum margin 2.434 m, 0 inside. Road kn5 **91,373,396 B** (v0.19.0
+89,815,220 B: **+1.56 MB** for 85 lamps, 1,150,111 positions in 101 meshes against 1,118,236 in 95; ceiling 145 MB);
+race / closure / street kn5s byte-identical in size. LIGHTPOST 21 meshes + LIGHTS 1, the largest 5,944 positions (cap
+65,535); 1WALL_guard_0 / _1 33,192 / 33,177 as before (no guard rail added). CSP `[LIGHT_N]` **323** (was 238), 323 at
+their lens, colour / pool / intensity unchanged (`tools/check_lights_ini.py` PASS). The author's seat check: 323 lamps,
+89 re-seated (4 loop posts past 1 m: 0, 32, 113, 143; 85 new piece posts on their built walk), base vs ground min -0.914
+/ median 0.199 / max 0.983 m, 0 footprints on a road, wall clearance min 0.667 m. The run ends where v0.19.0's does, "NOT
+INSTALLED" on the same two reds (the Free Roam lap's soft-top / edge-drop rule and the Speedways' own drive test, red
+since v0.18.0, no key worse). Tests: `tests/run_tests.py` 933 passed, 2 failed — the two engine-july md5 pins of this
+worktree's CRLF checkout (`test_engine_july_mirror_is_byte_identical`, `test_snapshot_copies_match_their_manifest...`;
+the LF md5s equal the manifest; main fails them the same way; no mirrored file touched). Stills:
+`source/expansion/p4-proofs/lamps/` and `D:/k10-scratch/p4/lamps/run1/stills/`.
+
+**Left, honestly.**
+- Every stretch is "authored": the real lamp positions on the four roads are still the Street View night check the
+  plan asks for; the OSM path is built and waits for data.
+- The night stills are Blender renders with a render light at each lens, not CSP's pool; the sodium look itself is
+  unchanged from v0.19.0 and is Kevin's seat to judge on the new roads.
+- Lamp 34 (a "keep" relocation behind the guard rail) stands with its base 0.91 m over the released slope — inside the
+  1 m rule, so left where v0.18.1 put it; the foot is 1.6 m in the earth.
+- The lamps' 21 LIGHTPOST meshes (16 lamps each) + 1 LIGHTS mesh: every tile far under 65,535 (the largest ~5.8k points).
+
+**Next:** the integration agent merges this with signs + map, trees + GrassFX, buildings + rock; then Drive 2 (v0.19.1).

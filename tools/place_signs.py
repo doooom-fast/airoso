@@ -490,9 +490,16 @@ class Context:
         isl = json.loads(mb.read_text(encoding="utf-8")).get("island_w_by_vertex", []) if mb.exists() else []
         self.island = {int(k): v for k, v in isl.items()} if isinstance(isl, dict) else {i: v for i, v in enumerate(isl) if v}
         lp = data / "lights.local.json"
-        heads = json.loads(lp.read_text(encoding="utf-8")).get("lampheads", []) if lp.exists() else []
+        _lights = json.loads(lp.read_text(encoding="utf-8")) if lp.exists() else {}
+        heads = _lights.get("lampheads", [])
+        # ledger 0054 P4: the bases as the author BUILT them (lamp_bases_xz, one per head; the north pieces' posts
+        # have their own road-ward, not the mainline's); the loop's rule below fills any head without one
+        _rec = _lights.get("lamp_bases_xz") or []
         self.lamp_bases = []
-        for (hx, hy, hz) in heads:   # the post stands 1.8 m away from the road (author_lamps_blend)
+        for k, (hx, hy, hz) in enumerate(heads):   # the post stands 1.8 m away from the road (author_lamps_blend)
+            if k < len(_rec) and _rec[k] is not None:
+                self.lamp_bases.append((float(_rec[k][0]), float(_rec[k][1])))
+                continue
             d, s = self.mainline.nearest((hx, hz))
             c = self.mainline.xz(int(round(s)))
             rx, rz = unit((c[0] - hx, c[1] - hz))

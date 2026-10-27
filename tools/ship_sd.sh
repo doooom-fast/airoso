@@ -148,6 +148,8 @@ V021_SHIM="import sys, importlib.util as u; s=u.spec_from_file_location('scripts
 TERRAIN_DATA="terrain.samples.json.gz corridor.i8.json i8.local.json i8.legacy.local.json deck_datum.samples.json ground_release.samples.json.gz freeway_i8.samples.json.gz"
 # the track's own textures (track.config.json texture_overrides with a project-relative path: the far ring's chaparral)
 TRACK_TEXTURES="textures/chaparral_far_diffuse.jpg"
+# P4 lamps: the OSM street_lamp research the north pieces' lamp planner reads (scenery.streetlights.expansion)
+LAMP_RESEARCH="source/expansion/pipeline__osm_lamps_signals.json"
 step() { echo; echo "=================== $1"; }
 pyq() { (cd "$AIROSO" && python -c "$@"); }
 
@@ -166,6 +168,11 @@ for f in $TERRAIN_DATA; do
   [ -f "$SRC/data/$f" ] && cp "$SRC/data/$f" "$PROJ/data/$f"
 done
 for f in $TRACK_TEXTURES; do
+  [ -f "$SRC/$f" ] && { mkdir -p "$(dirname "$PROJ/$f")"; cp "$SRC/$f" "$PROJ/$f"; }
+done
+# --- P4 lamps (ledger 0054 P4 step 2, EXPANSION-PLAN D4): the P0 research's OSM street_lamp nodes, read by the
+# assembler's lamp planner (track.config.json scenery.streetlights.expansion.osm_lamps_file) — data with provenance
+for f in $LAMP_RESEARCH; do
   [ -f "$SRC/$f" ] && { mkdir -p "$(dirname "$PROJ/$f")"; cp "$SRC/$f" "$PROJ/$f"; }
 done
 mkdir -p "$PROJ/source/trees" && cp "$SRC/source/trees/"*.bin "$PROJ/source/trees/" 2>/dev/null || true   # TreeFX models (gitignored, personal use)
@@ -462,6 +469,9 @@ step "gate: road kn5 -> gate OBJ (engine frame) + gate centreline"
 step "ship: track folder (models_<id>.ini x3, ui/<id>/, <id>/{map,data,ai}; a race layout without its closure kn5 is a HARD error)"
 (cd "$AIROSO" && python -m scripts.ac.track_folder "$PROJ") | grep -E "wrote|length_m|n_pits|layouts packed|removed stale|models|WARNING|ai/"
 cp "$PROJ/build/$SLUG.kn5" "$PROJ/build/$SLUG/"          # the race, closure + spawn kn5s are copied by track_folder itself
+# P4 lamps (ledger 0054 P4 step 2): one CSP [LIGHT_N] per lamp, at its lens, the approved look on every block — read back
+# off the WRITTEN ext_config.ini (0043 / 0056's duplicate-light class, hard)
+(cd "$AIROSO" && python tools/check_lights_ini.py "$PROJ" --json "$PROJ/data/lights_ini_check.json")
 step "ship: verify_kn5 --inis (hard — each race ini lists exactly road + common race + ITS closure + its spawns; none lists another layout's closure)"
 (cd "$AIROSO" && python -m scripts.ac.verify_kn5 "$PROJ" --inis)   # after the road-kn5 copy: every listed kn5 must be in the folder
 step "ship: minimap in the KN5 frame, per layout (tools/make_map.py)"
@@ -580,7 +590,7 @@ else
 step "sync outputs workshop -> airoso"
 cp "$PROJ/loop.blend" "$SRC/loop.blend"
 for f in centerline.local.json centerline.raw.local.json median_bands.json dummies.json \
-         finished_centerline.json gate_centerline.json lights.local.json connectors.local.json \
+         finished_centerline.json gate_centerline.json lights.local.json lights_ini_check.json connectors.local.json \
          mouths.json mouth_welds.json aprons.json aprons.lamps.json pads.plan.json pads.built.json pads.3dep.json verify_pads.json verify_mouths.json verify_fold_fans.json rib_check.json house_seat_check.json signs.local.json signs_preview.svg signs_measured.json \
          drive_test.json drive_test.expansion.json drive_lines.expansion.json audit.json stubs.plan.json stubs.built.json verify_stubs.json stubs.3dep.json \
          barrier_bands.json race_authored.json race_verify.json race_verify.scenery.json race_kn5.json street_kn5.json \

@@ -837,6 +837,22 @@
         }
       ],
       "_relocate_doc": "v0.18.1 integration (2026-10-14): tools/author_lamps_blend.py RELOCATIONS (tools/streetlight_relocate.py) - each entry names ONE post by its base as the draft places it (local x/z, within 1.0 m) and stands it at to_base_xz; seat 'ground' = the draft's rule on the authored ground under the new base (head 8.8 m over it), 'keep' = the draft's head height. The tool exits 1 (loop.blend not saved) if a named post is missing, the new base is on a road, the pole is < 0.5 m from a wall / guardrail, or its foot is not in the earth. Every other lamp stands where the draft put it. Bases are those of the College (0055) lap: its registration shortened the lap 6.565 m and the draft's 55 m spacing re-stations every lamp after College (238 posts, was 239).",
+      "expansion": {
+        "enabled": true,
+        "spacing_m": 55.0,
+        "min_gap_m": 25.0,
+        "walk_offset_m": 0.83,
+        "osm_lamps_file": "source/expansion/pipeline__osm_lamps_signals.json",
+        "unlit": [
+          {
+            "piece": "D",
+            "s_from": 250.0,
+            "s_to": 1500.0,
+            "why": "EXPANSION-PLAN D4 (Kevin 2026-10-13, defaults): Jackson north's open canyon, stations 250-1500 from J4, stays dark - houses only on its rims; not verified by a Street View night check yet"
+          }
+        ],
+        "_doc": "Ledger 0054 P4 step 2 (EXPANSION-PLAN D4, 2026-10-26): streetlights on the north pieces (A Waring, B Princess View, C Mission Gorge, D Jackson north; data/expansion.north.json as data/connectors.local.json carries them). scripts-v021 geometry/streetlights.py plans them inside build_loop_blend.build_streetlights, AFTER the loop's posts (which keep their numbers): the loop's spacing (spacing_m 55, min_gap_m 25 from every post, the loop's counted), alternating sides, the post ON the piece's walk (walk_offset_m 0.83 behind the pavement edge = the curb face 0.08 + half the 1.5 m walk, the rule lamp 77 stands by on J1's return), clear of every other pavement (the mainline, every connector and side-street stub with its curb returns, the junction pads' outlines and stub arms, every curb cut; GATES-CHANGELOG 'P4 lamps' for the clearances), a blocked station sliding 12 m before the other side is tried, then skipped with its reasons recorded (lights.local.json expansion.skipped). unlit: declared stretches (piece, s_from, s_to in the intermediate's station frame) get no post. osm_lamps_file: real OSM highway=street_lamp nodes (the P0 research, source/expansion/pipeline__osm_lamps_signals.json, synced in by ship_sd.sh) stand a post AT the node on its side and switch the loop's spacing off over their stretch; each post records its source, 'osm:<node id>' or 'authored' - today no OSM node stands within 745 m of any piece, so every stretch is authored. The lamps are the same led_cobra model, the same sodium light (lighting.streetlight unchanged); tools/author_lamps_blend.py re-seats EVERY post whose base is more than 1 m from the built ground under it and refuses a pole on any road, within 0.5 m of any wall / K-rail, or two lamps that would read as one CSP light; tools/check_lights_ini.py then proves one [LIGHT_N] per lamp at its lens on the written ext_config.ini. enabled false = the loop's lamps exactly as v0.19.0 (one key = the rollback)."
+      },
       "_doc": "Ledger 0056 (Kevin 2026-10-14: 'make lighter lamp model' / 'more modern' / 'Taller too'). tools/author_lamps_blend.py stands this model at every post in data/lights.local.json (the post bases do not move). led_cobra = the modern San Diego arterial light from tools/make_streetlight_led.py (CC0): a 35 ft (10.67 m) galvanised tapered steel pole (Caltrans ES-6A Type 21), 12 ft (3.66 m) upswept mast arm, flat-bottom LED cobra head with a twist-lock photocell, flat LED lens at the 38'-9\" (11.81 m) ES-6A mounting height (the 2026-10 lamp's light stood 6.94 m over the road), 371 kn5 render points per lamp with its lens (rehearsal, 2026-10-14) against ~4,045. arms 2 = back-to-back heads, the configuration every 2026-10 lamp has (its lamp_post.obj is symmetric); only the road-ward head carries the emissive lens and the CSP light, as before; arms 1 = the single-arm cobra head. ROLLBACK (one key): model 'street_lamp_2026_10' = Kevin's decimated Street_Lamp (assets/models/lamp_post.obj, 11.5 m, 2 cm invisible lens marker) exactly as v0.18.0 shipped it. The light settings in lighting.streetlight are unchanged (see its _doc, 2026-10-14)."
     }
   },

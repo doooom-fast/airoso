@@ -15,8 +15,10 @@ direction's closure). Which file a mesh belongs in is decided by its name (race_
                   (1WALL_RACE_CLOSE_*) or the retired centre chain (1WALL_RACE_KBAR_*); at least one curb strip
                   (1WALL_RACE_EDGE_*); exactly the declared number of race kerbs (1KERB_RACE_*: --expect-kerbs, else
                   len(kerbs) of --bands, else of the barrier_bands.json beside the parse when there is one — 10 on SD)
-  --role closure  every mesh is 1WALL_RACE_CLOSE_<OWNER>_* (no kerb, no curb strip, no other layout's closure);
-                  at least one
+  --role closure  every mesh is 1WALL_RACE_CLOSE_<OWNER>_* (no kerb, no curb strip, no other layout's closure) or one
+                  of that layout's own W1-6 sign plates (ledger 0054 P4: SIGNPLATE_<owner>_<k> / SIGNARROW_<owner>_<k> /
+                  SIGNPOST_<owner>_<k>, tools/race_furniture.layout_sign_owner; their solid textures, the SIGNPLATE /
+                  SIGNARROW / SIGNPOST rows of pbr.py, join the allowed set for this role only); at least one closure
   --lap <lap>     (with --role common, ledger 0054) the common set of a LAP (<slug>_race_<lap>.kn5): every curb strip
                   and kerb carries lap<lap> as its first name field (1WALL_RACE_EDGE_LAP<LAP>_*, 1KERB_RACE_LAP<LAP>_*);
                   without --lap NONE may carry a lap token (a lap's strip in the mainline's kn5 is a wall on its lap)
@@ -35,6 +37,7 @@ role is the role-free content guard (RACE meshes, race textures, no AC_* node) t
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -45,6 +48,15 @@ SIZE_WARN_B = 20_000_000
 AC_PREFIX = "AC_"
 ROLES = ("common", "closure")
 LAP_FIELD = "lap"
+SIGN_PREFIXES = ("SIGNPLATE", "SIGNARROW", "SIGNPOST")   # tools/race_furniture.SIGN_PREFIXES (the per-layout plates, P4)
+SIGN_RE = re.compile(r"^(SIGNPLATE|SIGNARROW|SIGNPOST)_([a-z0-9]+)_(\d+)$", re.I)
+
+
+def layout_sign_owner(name):
+    """the owner token of a per-layout sign mesh SIGN*_<token>_<k> (lower case), else None — race_furniture.layout_sign_owner,
+    restated (this guard reads only the parse)"""
+    m = SIGN_RE.match(str(name))
+    return m.group(2).lower() if m else None
 
 
 def race_lap(name):
@@ -73,6 +85,18 @@ def race_texture_set(textures: dict | None = None) -> set[str]:
     out = set()
     for key, row in textures.items():
         if key.upper().startswith(RACE_PREFIXES):
+            out |= {f for f in row[:2] if f}
+    return out
+
+
+def sign_texture_set(textures: dict | None = None) -> set[str]:
+    """the texture files the SIGNPLATE / SIGNARROW / SIGNPOST rows of pbr.py bind — a closure kn5 may carry them for
+    its layout's own plates (ledger 0054 P4); read from the table, never restated"""
+    if textures is None:
+        textures = _pbr_textures()
+    out = set()
+    for key, row in textures.items():
+        if key.upper() in SIGN_PREFIXES:
             out |= {f for f in row[:2] if f}
     return out
 
@@ -145,13 +169,19 @@ def check(parsed: dict, allowed: set[str], size_warn_b: int = SIZE_WARN_B, *, ro
     upper = [n.upper() for n in names]
     if not meshes:
         fails.append("no mesh in the race kn5")
-    leak = [n for n in names if not n.upper().startswith(RACE_PREFIXES)]
+    tok = str(owner or "").lower()
+    # a closure kn5 may carry its own layout's sign plates (ledger 0054 P4) — never the common kn5
+    signs = [n for n in names if layout_sign_owner(n) is not None]
+    own_signs = [n for n in signs if role == "closure" and tok and layout_sign_owner(n) == tok]
+    leak = [n for n in names if not n.upper().startswith(RACE_PREFIXES) and n not in own_signs]
     if leak:
-        fails.append(f"{len(leak)} non-race meshes (not 1WALL_RACE* / 1KERB_RACE*): {leak[:8]}")
+        fails.append(f"{len(leak)} non-race meshes (not 1WALL_RACE* / 1KERB_RACE*"
+                     f"{', not this layout' + chr(39) + 's sign plates' if role == 'closure' else ''}): {leak[:8]}")
     tex = [t.get("name", "") for t in parsed.get("textures") or []]
-    alien = [t for t in tex if t not in allowed]
+    allowed_here = set(allowed) | (sign_texture_set(textures) if (role == "closure" and own_signs) else set())
+    alien = [t for t in tex if t not in allowed_here]
     if alien:
-        fails.append(f"{len(alien)} textures outside the race set {sorted(allowed)}: {alien[:8]}")
+        fails.append(f"{len(alien)} textures outside the race set {sorted(allowed_here)}: {alien[:8]}")
     fails += black_slots(parsed, textures)
     ac = sorted(n for n in list(parsed.get("nodes") or []) + names if n.startswith(AC_PREFIX))
     if ac:
@@ -182,16 +212,17 @@ def check(parsed: dict, allowed: set[str], size_warn_b: int = SIZE_WARN_B, *, ro
             fails.append(f"{len(stray)} curb strips / kerbs of {'another lap or the mainline' if lap else 'a LAP'} in the "
                          f"{'lap ' + repr(lap) if lap else 'mainline'} common kn5 (race_furniture.race_lap): {stray[:4]}")
     elif role == "closure":
-        tok = str(owner or "").lower()
         if not tok:
             fails.append("--role closure needs --owner <token>")
         want = f"{CLOSE_TAG}{tok.upper()}_"
-        wrong = [n for n, u in zip(names, upper) if not u.startswith(want)]
+        wrong = [n for n, u in zip(names, upper) if not u.startswith(want) and n not in own_signs]
         if wrong:
-            fails.append(f"{len(wrong)} meshes that are not {tok!r}'s closure ({want}*) — a kerb, a curb strip or another "
-                         f"layout's closure leaked into it: {wrong[:6]}")
+            fails.append(f"{len(wrong)} meshes that are not {tok!r}'s closure ({want}*) or its sign plates — a kerb, a curb "
+                         f"strip, another layout's closure or plates leaked into it: {wrong[:6]}")
         if not [u for u in upper if u.startswith(want)]:
             fails.append(f"no {want}* mesh — the {tok!r} closure kn5 is empty")
+    if role == "common" and signs:
+        fails.append(f"{len(signs)} per-layout sign plates in the COMMON kn5 (each rides in its layout's closure kn5): {signs[:4]}")
     verts = sum(int(m.get("verts", 0)) for m in meshes)
     tris = sum(int(m.get("tris", 0)) for m in meshes)
     size = int(parsed.get("file_bytes", 0) or 0)
@@ -201,7 +232,8 @@ def check(parsed: dict, allowed: set[str], size_warn_b: int = SIZE_WARN_B, *, ro
     summary = {"file_bytes": size, "meshes": len(meshes), "verts": verts, "tris": tris,
                "verts_per_tri": round(verts / max(1, tris), 3), "textures": tex, "nodes": list(parsed.get("nodes") or []),
                "max_mesh_verts": max([int(m.get("verts", 0)) for m in meshes] or [0]),
-               "role": role, "owner": owner, "edges": len(edges), "kerbs": len(kerbs), "closures": len(closes)}
+               "role": role, "owner": owner, "edges": len(edges), "kerbs": len(kerbs), "closures": len(closes),
+               "sign_plates": len(own_signs)}
     if lap:
         summary["lap"] = lap
     return {"ok": not fails, "fails": fails, "warns": warns, "summary": summary}
@@ -243,7 +275,7 @@ def main(argv=None) -> int:
     s = r["summary"]
     what = ("COMMON" if not lap else f"COMMON lap {lap!r}") if role == "common" else f"CLOSURE {owner!r}"
     print(f"[race-kn5] {Path(parsed.get('file', p)).name} ({what}): {s['file_bytes']:,} B; {s['meshes']} meshes "
-          f"({s['edges']} curb strips, {s['kerbs']} kerbs, {s['closures']} closure; max {s['max_mesh_verts']:,} v), "
+          f"({s['edges']} curb strips, {s['kerbs']} kerbs, {s['closures']} closure, {s['sign_plates']} sign plates; max {s['max_mesh_verts']:,} v), "
           f"{s['verts']:,} v / {s['tris']:,} tri = {s['verts_per_tri']} per triangle; textures {s['textures']}; nodes {s['nodes']}")
     for w in r["warns"]:
         print(f"[race-kn5] WARN {w}")

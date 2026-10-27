@@ -68,10 +68,27 @@ Per sign (a paired post is checked once per plate where a plate matters):
       every driven direction unless signs.json skips that approach with a reason (a rule reason does not
       cover a named corner); a side-street one a plate in each approach or a skip there that (k) would
       count as coverage.
-  plus blender.normal_mismatches == 0, and no race furniture (1KERB_RACE / 1WALL_RACE) among the
-  authoring pass's or the scan's ground / road objects (ledger 0051: the signs ship in the road kn5 the
-  street layout loads, the race kerbs do not; measuring a post against one moved approved posts up to
-  0.319 m with this gate still green).
+  (m) layout coverage (ledger 0054 P4): per LAYOUT of track.config.json, in the direction it drives, every
+      MAINLINE corner with a plate anywhere has a plate THAT layout loads — a shared plate (the road kn5) or
+      its own LAYOUT PLATE (id <corner>-<dir>@<layout>, built into its closure kn5) — or a skip record for
+      that direction that applies to it (a shared skip, or one carrying its layout id) whose reasons (k)
+      counts as coverage. A plate for another layout is never this one's (v0.19.0: M3 / M4 skipped in every
+      layout; the Speedways turn at J1 / J5 and had no arrow).
+  LAYOUT PLATES (ledger 0054 P4): a record with "layout" is measured against the walls that layout loads
+      (the scan: tools/signs_mesh.load_wall_bvhs[token], the common curb strips + its closure): (c) is its
+      clearance to that wall, 1.3-3.0 m (the wall's far face stands in for the curb face; polyline-only: the
+      MAINLINE lip distance minus the declared strip offset, from the record's own wall params), (e)/(f) use
+      the deck under it (the highest of ROAD / ground: it stands on the sealed opening's road), (g) demands
+      the MAINLINE disc only and allows ROAD under it, and it must stand on no wall. (i) spacing is judged
+      only between posts a layout can load together.
+  NORTH RIBBON (ledger 0054 P4): a record on ribbon "north" is re-derived on the same stitched line the
+      rule scanned (tools/expansion_lines.centre_ribbon, rebuilt HERE from the connectors), as a CONNECTOR
+      post; its gated discs are the MAINLINE's and the two north drive lines' (expansion_lines.compute_lines,
+      rebuilt here too).
+  plus blender.normal_mismatches == 0, every post >= 0.5 m from every 1WALL* face (the scan), and no race
+  furniture (1KERB_RACE / 1WALL_RACE) among the authoring pass's or the scan's ground / road objects (ledger
+  0051: the signs ship in the road kn5 the street layout loads, the race kerbs do not; measuring a post
+  against one moved approved posts up to 0.319 m with this gate still green).
 
     python tools/verify_signs.py <project-dir> [--blend PATH] [--blender EXE] [--signs PATH]
 
@@ -95,9 +112,15 @@ import sys
 from pathlib import Path
 
 AIROSO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import expansion_lines as el  # noqa: E402  (the stitched north ribbon + the drive lines, rebuilt here)
+
 HALF_PLATE = 0.61
 FACE_TOL_DEG = 1.0
-CLEAR_RANGE = {"MAINLINE": (1.3, 3.0), "CONNECTOR": (1.0, None)}
+CLEAR_RANGE = {"MAINLINE": (1.3, 3.0), "CONNECTOR": (1.0, None), "LAYOUT": (1.3, 3.0)}
+WALL_CLEAR_M = 0.5              # every post this far from every 1WALL* face (tools/place_signs.WALL_CLEAR_M, measured here)
+LAYOUT_SEP = "@"                # a layout plate's id: <corner>-<dir>@<layout id>
+LINE_PREFIX = "expansion_"      # the north drive lines in the field (disc only)
 CONNECTOR_TARGET_M = 1.33       # the walk clearance a connector post aims for (WARN when missed)
 SCAN_TOL = 0.02
 HEIGHT_TOL = 0.05               # --blend: against the ground ray-cast made here
@@ -201,12 +224,15 @@ class Line:
 
 class Field:
     """every centreline's segments with widths: the pavement edge and drive_test's obstacle disc,
-    min(max(w/2 - 0.4, 0.8), 6) + 0.3 (scripts/geometry/drive_test.py:390/482)"""
+    min(max(w/2 - 0.4, 0.8), 6) + 0.3 (scripts/geometry/drive_test.py:390/482). Since ledger 0054 P4 also the
+    stitched north ribbon (a line to re-derive on, never pavement: its pieces are) and the two north drive lines
+    (disc only, never pavement) — both rebuilt here from the connectors, never read from the record."""
 
     def __init__(self, proj):
         data = Path(proj) / "data"
         self.segs = []
         self.lines = {}
+        self.disc_only = set()
         cl = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
         self._add("MAINLINE", cl["points_xyz_m"], cl["widths_m"], True)
         self.src = {"MAINLINE": (cl["points_xyz_m"], True)}
@@ -217,6 +243,19 @@ class Field:
                 closed = math.dist(P[0][::2], P[-1][::2]) < 1e-6
                 self._add(c["name"], P, c["widths_m"], closed)
                 self.src[c["name"]] = (P, closed)
+        self.gated = ("MAINLINE",)
+        self.polys = []          # the junction pads' BUILT decks (pavement polygons, stub arms included)
+        nr = el.centre_ribbon(proj)
+        if nr:
+            self.src[nr["name"]] = (nr["points_xyz_m"], False)
+            lines = el.compute_lines(proj) or {}
+            for lname, ln in sorted(lines.items()):
+                self._add(LINE_PREFIX + lname, ln["points_xyz_m"], ln["widths_m"], False)
+                self.disc_only.add(LINE_PREFIX + lname)
+            self.gated = ("MAINLINE",) + tuple(LINE_PREFIX + k for k in sorted(lines))
+            for pid, poly, _k in el.pad_polygons(proj):
+                xs, zs = [p[0] for p in poly], [p[1] for p in poly]
+                self.polys.append(("pad " + pid, [tuple(p) for p in poly], (min(xs), min(zs), max(xs), max(zs))))
         self.cells = {}
         for k, (_, a, b, _, _) in enumerate(self.segs):
             for p in (a, b):
@@ -234,7 +273,7 @@ class Field:
             self.lines[key] = Line(P, closed, reverse)
         return self.lines[key]
 
-    def _near(self, x, z, names=None):
+    def _near(self, x, z, names=None, pavement=False):
         cx, cz = int(x // 60), int(z // 60)
         for dx in (-1, 0, 1):
             for dz in (-1, 0, 1):
@@ -242,12 +281,45 @@ class Field:
                     name, a, b, wa, wb = self.segs[k]
                     if names is not None and name not in names:
                         continue
+                    if pavement and name in self.disc_only:
+                        continue
                     d, t = seg_dist((x, z), a, b)
                     yield d, wa * (1 - t) + wb * t
 
-    def edge(self, x, z):
-        """signed distance to the nearest pavement edge (> 0 = off pavement)"""
-        return min((d - w / 2 for d, w in self._near(x, z)), default=float("inf"))
+    def edge(self, x, z, names=None):
+        """signed distance to the nearest pavement edge (> 0 = off pavement); names = these ribbons alone (the pad
+        decks count as pavement unless names is given)"""
+        best = min((d - w / 2 for d, w in self._near(x, z, names, pavement=True)), default=float("inf"))
+        if names is None:
+            for _name, poly, (x0, z0, x1, z1) in self.polys:
+                if x < x0 - best or x > x1 + best or z < z0 - best or z > z1 + best:
+                    continue
+                dmin = min(seg_dist((x, z), poly[i], poly[(i + 1) % len(poly)])[0] for i in range(len(poly)))
+                inside = False
+                for i in range(len(poly)):
+                    ax, az = poly[i]
+                    bx, bz = poly[(i + 1) % len(poly)]
+                    if (az > z) != (bz > z) and ax + (z - az) * (bx - ax) / (bz - az) > x:
+                        inside = not inside
+                best = min(best, -dmin if inside else dmin)
+        return best
+
+    def grazing(self, A, t, d_target, cap=6.0, step=0.25, s_max=90.0):
+        """does the ray from A along t, once off pavement, stay within d_target of a pavement edge for the whole cap
+        past its exit? (the precondition of the mesh stage's square side step) -> (True/False/None, exit s)"""
+        s = 0.0
+        s_c = None
+        while s <= s_max:
+            e = self.edge(A[0] + t[0] * s, A[1] + t[1] * s)
+            if s_c is None:
+                if e > 0:
+                    s_c = s
+            elif e >= d_target:
+                return False, s_c
+            elif s - s_c >= cap:
+                return True, s_c
+            s += step
+        return (None, s_c)
 
     def disc(self, x, z, names=None):
         return min((d - (min(max(w / 2 - 0.4, 0.8), 6.0) + 0.3) for d, w in self._near(x, z, names)), default=float("inf"))
@@ -404,6 +476,16 @@ def walk_behind_scan(sm, ground, x, z, clear, bearing_deg, step=0.05, reach=4.0)
     return None
 
 
+def layout_tokens(proj):
+    """{layout id: closure token} of the race layouts (track.config.json layouts[].closure_token)"""
+    try:
+        cfg = json.loads((Path(proj) / "track.config.json").read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+    return {str(lo.get("id")): str(lo.get("closure_token") or "").lower()
+            for lo in cfg.get("layouts") or [] if isinstance(lo, dict) and lo.get("race_furniture")}
+
+
 def measure_in_blender(proj, blend, out_path):
     import bpy
     sys.path.insert(0, str(AIROSO / "tools"))
@@ -411,6 +493,9 @@ def measure_in_blender(proj, blend, out_path):
     bpy.ops.wm.open_mainfile(filepath=str(blend))
     road, ground, road_names, ground_names = sm.load_bvhs(skip_prefixes=("SIGN",))
     race_names = list(getattr(sm.load_bvhs, "last_race", []))
+    walls = sm.load_wall_bvhs()
+    wall_names = dict(sm.load_wall_bvhs.names)
+    tokens = layout_tokens(proj)
     d = json.loads((Path(proj) / "data" / "signs.local.json").read_text(encoding="utf-8"))
     # every SIGNPLATE polygon (centre, normal) and every SIGNPLATE / SIGNPOST vertex, world space,
     # in the engine frame (x, y up, z) = Blender (x, z, y)
@@ -433,26 +518,46 @@ def measure_in_blender(proj, blend, out_path):
         else:
             post_verts += [(v.x, v.z, v.y) for v in vs]
     res = {"blend": str(blend), "road_objects": road_names, "ground_objects": ground_names, "race_excluded": race_names,
+           "walls": {k: len(v) for k, v in sorted(wall_names.items())},
            "scan": "5-degree polar, 0.25 m steps, bisected; ROAD top vs CURB/SIDEWALK/TERRAIN top; "
                    "ground = top hit at the base (SIGN* excluded); plate normals = Mesh.polygons[].normal of "
                    "the vertical SIGNPLATE faces within 1.2 m of the post; plate bottom = lowest SIGNPLATE vertex "
                    "0.5-0.75 m off the post axis; post base = lowest SIGNPOST vertex within 0.1 m of it; walk_behind_m = "
-                   "the ground profile from the base toward the nearest pavement (> 0 behind the walk, < 0 on it)",
+                   "the ground profile from the base toward the nearest pavement (> 0 behind the walk, < 0 on it); "
+                   "wall_m = the nearest 1WALL* face 0.6 m up the post; a layout plate: layout_wall_m = the nearest face of "
+                   "the walls its layout loads (RACE + RACE_CLOSE_<TOKEN>), on_wall = a wall top over the deck at the base, "
+                   "ground_y = the highest of ROAD / ground under it",
            "signs": {}}
     for s in d["signs"]:
         x, z = s["base_xz"]
         clear, bearing = sm.polar_clearance(road, ground, x, z)
         g = sm.top_hit(ground, x, z)
+        r_top = sm.top_hit(road, x, z)
         wb = walk_behind_scan(sm, ground, x, z, clear, bearing)
         near = [n for c, n in plate_polys if math.hypot(c[0] - x, c[2] - z) < 1.2 and abs(n[1]) < 0.2]
         pb = [v[1] for v in plate_verts if 0.5 <= math.hypot(v[0] - x, v[2] - z) <= 0.75]
         pp = [v[1] for v in post_verts if math.hypot(v[0] - x, v[2] - z) <= 0.1]
-        res["signs"][s["id"]] = {"clear_m": round(clear, 3), "bearing_deg": bearing, "on_road": sm.on_road(road, ground, x, z),
-                                 "ground_y": None if g is None else round(g, 4), "walk_behind_m": wb,
-                                 "plate_normals_xz": cluster_normals([unit((n[0], n[2])) for n in near]),
-                                 "n_plate_faces": len(near),
-                                 "plate_bottom_y": None if not pb else round(min(pb), 4),
-                                 "post_base_y": None if not pp else round(min(pp), 4)}
+        y_ref = g if g is not None else (r_top if r_top is not None else 0.0)
+        wd = sm.nearest_dist(walls.get("all"), x, y_ref + 0.6, z)
+        rec = {"clear_m": round(clear, 3), "bearing_deg": bearing, "on_road": sm.on_road(road, ground, x, z),
+               "ground_y": None if g is None else round(g, 4), "walk_behind_m": wb,
+               "wall_m": None if wd == float("inf") else round(wd, 3),
+               "plate_normals_xz": cluster_normals([unit((n[0], n[2])) for n in near]),
+               "n_plate_faces": len(near),
+               "plate_bottom_y": None if not pb else round(min(pb), 4),
+               "post_base_y": None if not pp else round(min(pp), 4)}
+        if s.get("layout"):
+            tok = tokens.get(str(s["layout"]), "")
+            wl = walls.get(tok)
+            ys = [v for v in (g, r_top) if v is not None]
+            deck = max(ys) if ys else None
+            wtop = sm.top_hit(wl, x, z) if wl is not None else None
+            lw = sm.nearest_dist(wl, x, (deck if deck is not None else 0.0) + 0.6, z)
+            rec.update(ground_y=None if deck is None else round(deck, 4), layout_token=tok,
+                       layout_walls=len(wall_names.get(tok, [])),
+                       layout_wall_m=None if lw == float("inf") else round(lw, 3),
+                       on_wall=bool(wtop is not None and (deck is None or wtop > deck + 0.05)))
+        res["signs"][s["id"]] = rec
     Path(out_path).write_text(json.dumps(res, indent=1), encoding="utf-8")
     print("[verify-signs] measured %d bases in Blender -> %s" % (len(res["signs"]), out_path))
 
@@ -484,12 +589,22 @@ def run_blender_measure(proj, blend, exe):
 
 
 # --- (j) and (k): what signs.json and track.config.json say, read here ------------------------------------
+def split_layout(cid):
+    """('M3-fwd', 'race_cw') for a layout plate's id (ledger 0054 P4), (cid, None) otherwise"""
+    if LAYOUT_SEP in cid:
+        core, lid = cid.split(LAYOUT_SEP, 1)
+        return core, lid
+    return cid, None
+
+
 def parse_id(cid, second=None):
     """(corner base id, direction suffix or None, second-arrow flag): M2-fwd-2 -> (M2, fwd, True);
-    M2-2 -> (M2, None, True); MED-6-rev -> (MED-6, rev, False); M-c5 -> (M-c5, None, False).
+    M2-2 -> (M2, None, True); MED-6-rev -> (MED-6, rev, False); M-c5 -> (M-c5, None, False);
+    M3-fwd@race_cw -> (M3, fwd, False) (a layout plate's layout is split_layout's).
     A bare trailing "-2" is ambiguous (M2-2 = M2's hairpin second arrow, DCL-2 = a merged connector
     post): pass `second` (the record's corner.second_arrow, or for a skip whether the id minus "-2"
     was placed) and only a real second arrow loses its "-2". second=None = the id's shape alone."""
+    cid, _lid = split_layout(cid)
     if second is not None:
         core = cid[:-2] if second and cid.endswith("-2") else cid
         m = DIR_RE.match(core)
@@ -515,7 +630,9 @@ RULE_SKIP_RES = tuple(re.compile(r) for r in (
     r"^ray never leaves pavement within \d+ m \(through leg / junction\)$",
     r"^ray exits pavement at [\d.]+ m \(want \d+-\d+\)$",
     r"^T-end: ray re-enters .+ within 3 m of the curb \(W1-7 candidate, second pass\)$",
-    r"^ray foot at station PC[+-]\d+ is outside \[PC, PT\+\d+\] \(a curve, not a turn\)$",
+    r"^ray foot at station PC[+-]\d+ is outside \[PC, PT\+[\d.]+\] \(a curve, not a turn\)$",
+    r"^ray runs \d+ m down .+ before leaving pavement \(a through road\)$",     # ledger 0054 P4
+    r"^no race declaration \(data/barrier_bands\.json params\): .*$",         # a layout plate with no walls to stand behind
 ))
 SIGNS_JSON_SKIP_RE = re.compile(r"^signs\.json skip: (?P<reason>.*)$")
 
@@ -729,6 +846,56 @@ def named_coverage(d, driven, entries):
     return fails, rows
 
 
+def layout_coverage(d, driven, entries):
+    """check (m) (ledger 0054 P4): per layout, in the direction it drives, every MAINLINE corner with a plate anywhere
+    has a plate THAT layout loads — shared (no "layout") or its own (record.layout == the id) — or a skip record for
+    that direction that applies to it (shared, or carrying its id) whose reasons are coverage as (k) words them.
+    -> (fails, rows). driven = {direction: [layout ids]} (driven_directions)."""
+    fails, rows = [], []
+    placed = {s["id"] for s in d["signs"]} | {p["id"] for s in d["signs"] for p in (s.get("plates") or []) if "id" in p}
+    plates, skips = {}, {}
+    for s in d["signs"]:
+        if s["ribbon"] != "MAINLINE":
+            continue
+        for p in s.get("plates") or [s]:
+            base, _, _ = parse_id(p["id"], plate_second(p, s))
+            plates.setdefault(base, {}).setdefault(p["direction"], []).append((p["id"], s.get("layout")))
+    for sk in d["skipped"]:
+        if sk["ribbon"].split("(")[0] != "MAINLINE":
+            continue
+        base, _, second = parse_id(sk["id"], sk["id"].endswith("-2") and sk["id"][:-2] in placed)
+        if second:
+            continue
+        direction = "rev" if sk["ribbon"].endswith("(rev)") else "fwd"
+        skips.setdefault(base, {}).setdefault(direction, []).append((sk.get("layout"), list(sk.get("reasons") or [])))
+    by_layout = {}
+    for base in sorted(plates):
+        for dr, lids in sorted(driven.items()):
+            for lid in lids:
+                mine = [pid for pid, lay in plates[base].get(dr, []) if lay is None or lay == lid]
+                if mine:
+                    by_layout.setdefault(lid, []).append("%s %s" % (base, "/".join(mine)))
+                    continue
+                entry = False if entries is None else entries.get(base)
+                cov = [rs for lay, rs in skips.get(base, {}).get(dr, []) if lay is None or lay == lid]
+                if not cov:
+                    others = [pid for pid, lay in plates[base].get(dr, []) if lay not in (None, lid)]
+                    fails.append("m_layout_coverage: layout %s (%s) loads no plate of MAINLINE corner %s and has no skip record for "
+                                 "that approach%s" % (lid, dr, base, (" — only other layouts' plates %s" % ", ".join(others)) if others else ""))
+                    continue
+                bad = ["%s (%s)" % (r, why) for rs in cov for r in rs for ok, why in [coverage_reason(r, entry, dr)] if not ok]
+                if bad:
+                    fails.append("m_layout_coverage: layout %s (%s) loads no plate of MAINLINE corner %s and its skip is not the rule's own: %s"
+                                 % (lid, dr, base, "; ".join(bad)))
+                else:
+                    by_layout.setdefault(lid, []).append("%s skipped (%s)" % (base, "; ".join(r for rs in cov for r in rs)[:90]))
+    for lid in sorted(by_layout):
+        rows.append("(m) layout %s: %s" % (lid, "; ".join(by_layout[lid])))
+    if not plates:
+        rows.append("(m) no MAINLINE plate: nothing to cover per layout")
+    return fails, rows
+
+
 def race_ground(d, measured):
     """names of race furniture the authoring pass or the scan measured as ground / road (must be none)"""
     sys.path.insert(0, str(AIROSO / "tools"))
@@ -747,9 +914,12 @@ def check_sign(s, field, measured, ids, skipped_ids, warns, entries=None):
     S = tuple(s["base_xz"])
     c = s["checks"]
     tol_a = HALF_PLATE + (s.get("pair_split_m", 0.0) / 2 if s.get("pair") else 0.0)
-    kind = "MAINLINE" if s["ribbon"] == "MAINLINE" else "CONNECTOR"
+    layout = s.get("layout")
+    kind = "LAYOUT" if layout else ("MAINLINE" if s["ribbon"] == "MAINLINE" else "CONNECTOR")
     lo, hi = CLEAR_RANGE[kind]
-    gated = None if kind == "MAINLINE" else GATED
+    # the discs a gate enforces: every centreline for a mainline post; the MAINLINE alone for a layout plate (its
+    # race layout's drive_test sweeps the mainline and every side street is sealed); the swept lines for the rest
+    gated = None if kind == "MAINLINE" else (("MAINLINE",) if kind == "LAYOUT" else field.gated)
     meas = (measured or {}).get("signs", {}).get(s["id"]) if measured else None
     bl = s.get("blender") or {}
     rec_plates = bl.get("plates") or []
@@ -766,6 +936,18 @@ def check_sign(s, field, measured, ids, skipped_ids, warns, entries=None):
         S0 = (S[0] - u[0] * slid, S[1] - u[1] * slid)
         along = t[0] * (S0[0] - A[0]) + t[1] * (S0[1] - A[1])
         lat = abs(t[0] * (S0[1] - A[1]) - t[1] * (S0[0] - A[0]))
+        # a recorded square side step (the mesh stage's grazing-exit fallback) widens (a) only when THIS gate's own
+        # ray confirms the grazing exit on its own field: off pavement, the ray stays under the clearance target for
+        # the whole cap; an unconfirmed step is a plate the ray does not hit
+        step_m = float(p.get("checks", c).get("lateral_step_m", c.get("lateral_step_m", 0.0)) or 0.0)
+        if step_m > 0.0 and kind != "LAYOUT":
+            target = 1.33 if kind == "CONNECTOR" else 1.63
+            graz, _sc = field.grazing(A, t, target)
+            if graz:
+                tol_a += step_m + 0.1
+                notes.append("square side step %.2f m (grazing exit confirmed)" % step_m)
+            else:
+                notes.append("square side step %.2f m NOT confirmed (the ray clears %.2f m within the cap)" % (step_m, target))
         lat_max = max(lat_max, lat if along > 0 else float("inf"))
         # (b) the real normal
         want = (-t[0], -t[1])
@@ -820,6 +1002,13 @@ def check_sign(s, field, measured, ids, skipped_ids, warns, entries=None):
     edge = (s.get("built") or {}).get("outside_edge_xz")
     clear_poly = poly_dist(S, edge) if edge else None
     clear_bvh = meas["clear_m"] if meas else None
+    if kind == "LAYOUT":
+        # a layout plate's clearance is to its layout's sealing wall: the scan's nearest wall face, else the
+        # analytic one from the MAINLINE lip and the record's declared strip offset (not the record's own measure)
+        clear_bvh = meas.get("layout_wall_m") if meas else None
+        wl = s.get("wall") or {}
+        off = float(wl.get("edge_centre_from_lip_m", 0.0)) + float(wl.get("barrier_half_m", 0.0))
+        clear_poly = field.edge(S[0], S[1], ("MAINLINE",)) - off
     clears = [v for v in (clear_poly, clear_bvh) if v is not None]
     analytic_only = not clears
     if analytic_only:
@@ -858,6 +1047,14 @@ def check_sign(s, field, measured, ids, skipped_ids, warns, entries=None):
     on_road = bool(meas and meas.get("on_road"))
     if kind == "CONNECTOR" and disc_all < 0:
         warns.append("%s: plate footprint %.2f m inside the obstacle disc of a connector centreline (not gated: drive_test sweeps the mainline only)" % (s["id"], -disc_all))
+    # a layout plate may stand on the sealed opening's ROAD (behind the wall), never on a wall; every post clear of
+    # every 1WALL* face (the scan; a record without a scan is judged on its own wall_m, labelled)
+    on_wall = bool(meas and meas.get("on_wall"))
+    wall_m = meas.get("wall_m") if meas else c.get("wall_m")
+    wall_ok = None if wall_m is None else wall_m >= WALL_CLEAR_M - SCAN_TOL
+    if measured and meas and kind == "LAYOUT" and not meas.get("layout_walls"):
+        notes.append("the scan found no wall for layout %s (token %r)" % (layout, meas.get("layout_token")))
+        wall_ok = False
     twins = [i for i in ids if s.get("pair") and i in (s["id"] + "-fwd", s["id"] + "-rev")]
     checks = {
         "a_ray_hits_plate": lat_max <= tol_a,
@@ -866,19 +1063,21 @@ def check_sign(s, field, measured, ids, skipped_ids, warns, entries=None):
         "d_outside": outside_min > 0 and turn_ok,
         "e_plate_height": e_ok,
         "f_post_sunk": f_ok,
-        "g_gate_disc": disc_gated >= 0 and clear_min > 0 and not on_road,
+        "g_gate_disc": disc_gated >= 0 and clear_min > 0 and (kind == "LAYOUT" or not on_road) and not on_wall,
         "h_unique_id": ids.count(s["id"]) == 1 and s["id"] not in skipped_ids and not twins
                        and all(p.get("plate", s.get("plate")) in KNOWN_PLATES for p in plates),
         "j_expect_arrow": expect_ok,
+        "w_wall_clear": wall_ok,
     }
     bad = [k for k, v in checks.items() if v is False]
-    row = ("[verify-signs] %-11s %-12s ray-lat %.2f m (slid %+.2f)  face-err %.2f deg (%s)  edge: poly %s / scan %s m%s  "
-           "outside %+.1f  disc %+.2f (gated %+.2f)  walk-behind rec %s / scan %s  e/f: %s  %s"
-           % (s["id"], s["kind"], lat_max, c.get("slid_m", 0.0), ang_max, b_src,
+    row = ("[verify-signs] %-11s %-12s ray-lat %.2f m (slid %+.2f)  face-err %.2f deg (%s)  %s: poly %s / scan %s m%s  "
+           "outside %+.1f  disc %+.2f (gated %+.2f)  walk-behind rec %s / scan %s  wall %s  e/f: %s  %s"
+           % (s["id"], s["kind"], lat_max, c.get("slid_m", 0.0), ang_max, b_src, "wall" if kind == "LAYOUT" else "edge",
               "-" if clear_poly is None else "%.2f" % clear_poly, "-" if clear_bvh is None else "%.2f" % clear_bvh,
               " (analytic %.2f)" % c["edge_clear_m"] if analytic_only else "", outside_min, disc_all, disc_gated,
               "-" if walk_behind_rec is None else "%+.2f" % walk_behind_rec,
-              "-" if walk_behind_scan_m is None else "%+.2f" % walk_behind_scan_m, ef_src,
+              "-" if walk_behind_scan_m is None else "%+.2f" % walk_behind_scan_m,
+              "-" if wall_m is None else "%.2f" % wall_m, ef_src,
               "FAIL " + ", ".join(bad) + ("; " + "; ".join(notes) if notes else "") if bad else "ok" + ("; " + "; ".join(notes) if notes else "")))
     return checks, row, (["%s: %s" % (s["id"], ", ".join(bad))] if bad else []), {
         "clear_m": clear_min, "walk_behind_rec_m": walk_behind_rec, "walk_behind_scan_m": walk_behind_scan_m,
@@ -916,9 +1115,12 @@ def main():
         _, row, fl, _ = check_sign(s, field, measured, ids, skipped_ids, warns, entries)
         rows.append(row)
         fails += fl
-    # (i) spacing across every pair of posts
+    # (i) spacing across every pair of posts a layout can load together (two layouts' own plates never meet)
     for i in range(len(signs)):
         for j in range(i + 1, len(signs)):
+            la, lb = signs[i].get("layout"), signs[j].get("layout")
+            if la and lb and la != lb:
+                continue
             dd = math.dist(signs[i]["base_xz"], signs[j]["base_xz"])
             if dd < SPACING_MIN:
                 fails.append("%s / %s: i_spacing %.2f m < %.1f" % (signs[i]["id"], signs[j]["id"], dd, SPACING_MIN))
@@ -927,16 +1129,18 @@ def main():
         fails.append("skipped ids repeat: %s" % ", ".join(dup_skipped))
     if "blender" in d and d["blender"].get("normal_mismatches"):
         fails.append("blender: %d polygon normals do not face as intended" % d["blender"]["normal_mismatches"])
-    # (k) every driven direction signed
+    # (k) every driven direction signed; (l) named corners; (m) every layout (ledger 0054 P4)
     try:
         driven = driven_directions(proj)
         k_fails, k_rows = direction_coverage(d, driven, entries=entries if sj is not None else None)
         l_fails, l_rows = named_coverage(d, driven, entries if sj is not None else None)
+        m_fails, m_rows = layout_coverage(d, driven, entries if sj is not None else None)
     except ValueError as e:
         k_fails, k_rows = ["k_direction_coverage: %s" % e], []
         l_fails, l_rows = [], []
-    fails += k_fails + l_fails
-    rows += ["[verify-signs] " + r for r in k_rows + l_rows]
+        m_fails, m_rows = [], []
+    fails += k_fails + l_fails + m_fails
+    rows += ["[verify-signs] " + r for r in k_rows + l_rows + m_rows]
     # race furniture is never the signs' ground or road
     for n in race_ground(d, measured):
         fails.append("race furniture measured as the signs' surface (%s) — the street layout has no such kerb" % n)
@@ -949,8 +1153,11 @@ def main():
     for fl in fails:
         print("[verify-signs] FAIL", fl)
     print("[verify-signs] signs.json for (j): %s" % (sj if sj is not None else "(none: the track has no overrides)"))
-    print("[verify-signs] %d posts (%d plates), %d skipped, %s%s" % (
-        len(signs), sum(len(s.get("plates") or [s]) for s in signs), len(d["skipped"]),
+    lay = [s["id"] for s in signs if s.get("layout")]
+    print("[verify-signs] %d posts (%d plates%s), %d skipped, %s%s" % (
+        len(signs), sum(len(s.get("plates") or [s]) for s in signs),
+        (", %d layout plate%s: %s" % (len(lay), "s" if len(lay) != 1 else "", ", ".join(lay))) if lay else "",
+        len(d["skipped"]),
         "FAIL" if fails else ("PASS" if blend else "PASS polyline-only (not authoritative)"),
         "" if blend else " (no --blend: (b)/(e)/(f) from the recorded vertices, (c) on the recorded built edge only)"))
     raise SystemExit(1 if fails else 0)

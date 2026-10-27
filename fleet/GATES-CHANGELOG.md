@@ -2991,3 +2991,75 @@ off near-vertical faces: under the pavement p99 0.0036 m, 0-6 m at most 0.005, 6
 they stand on near-vertical faces a downward ray cannot hit). Against r2run2: 28,906 of the 28,918 vertices within 6 m that
 moved more than 0.05 m lie in the 35 raise-only cut zones (round 2's 273b116: the 1 m toe dropped, the cut top's rounding
 on the real climb); the 12 others <= 0.145 m (near-vertical faces and run-to-run).
+
+## 2026-10-26 — Lake Murray expansion P4 signs: the north corners, the Speedways' own M3 / M4 plates, the per-layout map (ledger 0054 "P4 signs")
+
+No threshold is loosened and no gate is bypassed. The W1-6 rule (tools/place_signs.py, tools/author_signs_blend.py)
+learns two kinds of corner it could not see, one gate gains a check per layout, two content guards admit a race layout's
+own plates into its closure kn5, and the map gets an opt-in scope. Every invented number is here.
+
+### The rule (tools/place_signs.py)
+
+| what | number | why |
+|---|---|---|
+| the stitched north ribbon "north" (`tools/expansion_lines.centre_ribbon`): the four pieces' connectors strung J1 → J5 through the pads on the drive lines' own cubic (`stitch`), scanned both ways | no number (the pieces' own points and widths; the cubic's handles a third of the chord, as `expansion_lines.bezier` already had them) | each piece ends at its pad's cut, so no piece carries the turn made ACROSS the pad; the pieces' own scans only ever found their mouth-flare ends (v0.19.0: 19 "north_*" skips, 0 plates) |
+| the junction pads' BUILT decks (data/pads.built.json outline, stub arms included) as pavement polygons in the field; the north drive lines (`expansion_lines.compute_lines`) as disc-only ribbons `expansion_fwd` / `expansion_rev` | no number | the ray crosses the deck and leaves at a curb return or down a stub arm (A8); a north post must clear what `drive_test --line expansion` sweeps, which is the lane, not the piece's centreline |
+| the pieces' pad ends are not mouths for the north ribbon (`Context.mouth_excludes`); the J1 / J5 cuts stay | — | they are its own interior; for the pieces' own scans they still are mouths (unchanged skips) |
+| foot window past PT for a ray that leaves through a pad: `RAY_PAST_PT_M` 10 + the pads' stub reach (`pad_stub_reach_m`: stub_length_m 15 + tail_m 1 = **16 m**, read from data/pads.plan.json) | 16 m, read, not invented | a foot 16 m down a stub arm is still the turn's own outside (J4-fwd: PC+46 on an arc of 26) |
+| **THROUGH_ROAD_M 8 m** ⚠ invented: a failed-to-turn ray that runs ≥ 8 m along ANOTHER road's pavement before it leaves pavement is the rule's own skip ("a through road"); a pad deck, a `STUB_*` connector and the north ribbon's own four pieces never count | 8 m: wider than a mouth flare crossed at its corner (a 10 m street's corner, crossed obliquely, is 2–5 m), narrower than any carriageway pair; M3-rev measured 16 m across the Waring opening | v0.19.0's M3-rev (Navajo westbound) would have stood at the Waring mouth's far corner with a left arrow pointing away from Waring; `verify_signs` RULE_SKIP_RES accepts the wording as the rule's own |
+| a `per_layout` MAINLINE corner (signs.json, validated: bool, MAINLINE only, never with skip): the shared attempt as always, then for each race layout that drives the approach and got no shared plate a LAYOUT PLATE on the MAINLINE's field alone (`PavementField.query(only=("MAINLINE",))`), standing `edge_centre_from_lip_m + barrier_half_m + lateral_offset_m` past the lip = **−0.485 + 0.335 + 1.63 = 1.48 m** (data/barrier_bands.json params + the curb rule's own offset; no race declaration = a skip the verifier counts as the rule's) | 1.48 m is DERIVED: the sealing curb strip's far face stands in for the curb face, the curb rule's 1.63 m behind it | A7: "both move into the Speedways' own race files … just past the outside edge, now on the sealed opening"; the mouth-flare rule does not apply to a layout attempt (the mouth IS the sealed opening) |
+| ids: `<corner>-<dir>@<layout>`; a layout plate never pairs; skipped ids dedupe per layout | — | `verify_signs.parse_id` strips the layout |
+
+### The mesh stage (tools/author_signs_blend.py, tools/signs_mesh.py)
+
+| what | number | why |
+|---|---|---|
+| **WALL_CLEAR_M 0.5 m** (reused: tools/author_lamps_blend.py's WALL_CLEAR_M): every post ≥ 0.5 m from every 1WALL* face (`signs_mesh.load_wall_bvhs()["all"]`, measured 0.6 m up the post), a march criterion and a final check; `verify_signs` (w) re-measures it | 0.5 m, the lamp rule's | a north post marches past a stub's K-rail; a mainline post beside a guard rail |
+| a LAYOUT PLATE on the mesh: the ray walked from 4 m before the polyline lip to **LAYOUT_WALL_SCAN_M 30 m** ⚠ invented past it; the layout's wall (`load_wall_bvhs()[token]`: RACE + RACE_CLOSE_<TOKEN>, 1WALL_RACE* names) entered at s_in, left at s_out; the post from s_out + lateral_offset_m on until the NEAREST face of that wall is ≥ lateral_offset_m (1.63) away, capped `RAY_EXTRA_CAP_M` 6 m past s_out; y_base = the highest of ROAD / ground (it stands on the sealed opening's deck, never pushed off ROAD); checks: wall clearance 1.3–3.0 m (the mainline's `GATE_MIN` / 3.0, measured to the wall), on no wall, the MAINLINE disc, every wall ≥ 0.5 m | 30 m: the widest opening (Jackson north 29.5 m) crossed obliquely; 1.3 / 3.0: the mainline curb range, unchanged | M4-rev@race_acw's ray crosses the curved strip at J5 obliquely: 1.63 m along the ray was 1.16 m from the wall (refused), the nearest-face march puts it at 1.62 |
+| **SIDE_STEP_MAX_M 2.5 m** ⚠ invented: a CONNECTOR / north post whose march caps with no clear point on the ray (a grazing exit: the ray leaves the pad's curb return at so flat an angle that no point within the cap clears the curb) steps square off the ray, to the OUTSIDE of the turn, until the built clearance, the gated disc and the walls hold; recorded as `checks.lateral_step_m` + `ray.side_step_from_m` | 2.5 m: a plate width past the 1.5 m behind-the-walk cap | J2-rev (0.90 m) and J3-rev (1.15 m) at the pads' curb returns; the polyline stage already stepped sideways at its cap (`lateral_step_m`), the mesh stage had no fallback and skipped both |
+| meshes `SIGNPLATE_<token>_<k>` / `SIGNARROW_<token>_<k>` / `SIGNPOST_<token>_<k>` linked into RACE_CLOSE_<TOKEN>; the signs step moved AFTER the race furniture (ship_sd.sh, ship.json, ship_track.sh), every ship | — | tools/author_race_furniture_blend.py empties RACE_CLOSE_* on every ship |
+
+### The gate (tools/verify_signs.py)
+
+| check | before | after | number |
+|---|---|---|---|
+| Field | the centrelines | + the north ribbon (rebuilt here from the connectors, `el.centre_ribbon`), the drive lines as disc-only (`el.compute_lines`), the pad decks (`el.pad_polygons`) for `edge()`; `gated` = MAINLINE + the lines | — |
+| (a) ray hits plate | ±0.61 m | + the recorded square side step + 0.1 m, ONLY when this gate's own ray, on its own field, confirms the grazing exit (`Field.grazing`: off pavement, the edge distance stays under the target 1.33 / 1.63 for the whole 6 m cap); an unconfirmed step keeps ±0.61 | 0.1 m: the march's own quantisation |
+| (c) clearance, LAYOUT kind | — | to the layout's wall: the scan's `layout_wall_m` (nearest face of RACE + RACE_CLOSE_<TOKEN>) and the analytic MAINLINE-lip distance minus the record's declared strip offset; 1.3–3.0 m | the mainline's range |
+| (e) (f) LAYOUT | ground = the ground top | ground = the highest of ROAD / ground under the post (the deck) | — |
+| (g) LAYOUT | not on ROAD | on ROAD allowed (behind the wall), on no wall (`on_wall` from the scan), the MAINLINE disc only | — |
+| (i) spacing | every pair | pairs one layout can load together (two layouts' own plates never meet) | 2.0 m unchanged |
+| (k) RULE_SKIP_RES | — | + "ray runs N m down X before leaving pavement (a through road)", + "no race declaration (…)" | — |
+| **(m) layout coverage (new)** | — | per layout of track.config.json, in its direction: every MAINLINE corner with a plate anywhere has a plate THAT layout loads (shared, or its own) or a skip for that direction applying to it (shared, or carrying its id) whose reasons are coverage as (k) words them | none (structural) |
+| (w) wall clearance (new) | — | every post ≥ 0.5 m from every 1WALL* face (the scan's `wall_m`) | 0.5 m |
+| the measurement | — | `signs_measured.json` gains `wall_m`, and per layout plate `layout_wall_m`, `on_wall`, `layout_walls` | — |
+
+Teeth: tests/tools/test_p4_signs.py (the field, the through-road rule, a per_layout corner on a synthetic square with a
+Waring-like street, (m), the names, both kn5 guards, the map, the chain order).
+
+### The kn5 guards (tools/race_furniture.py, tools/split_exports_blend.py, tools/check_race_kn5.py, scripts/ac/verify_kn5.py, tools/verify_race.py)
+
+| guard | before | after |
+|---|---|---|
+| `race_furniture.race_role` / `race_owner` | close / edge / kerb / kbar / other | + `sign` for `SIGN(PLATE|ARROW|POST)_<token>_<k>` (`layout_sign_owner`; a material `<object>_mat` matches on its object; the road kn5's `SIGNPLATE_<k>` never match) |
+| the export split | the closure scene = ITS closure walls | + ITS sign plates; the common scene refuses any sign plate; `_classify` / the census count sign plates as race objects; sign materials allowed in a closure scene |
+| `check_race_kn5 --role closure --owner T` | every mesh 1WALL_RACE_CLOSE_T_* | or T's own sign plates; their textures (the SIGNPLATE / SIGNARROW / SIGNPOST rows of pbr.py, read from the table) allowed in that file only when such plates are present; `--role common` refuses any sign plate |
+| `verify_kn5` (f) closure kn5 | 1WALL_RACE_CLOSE_T_* only | + T's own plates and materials (`layout_sign_owner`, restated: the gate reads only the kn5) |
+| `verify_race` G scenery | every sign post vs every race layout | a layout plate vs its own layout only (the item carries `layout`) |
+
+### The map (tools/make_map.py)
+
+`layouts[].map`: `"network"` (default, as before: byte-identical maps) or `"lap"` = that layout's map.png + data/map.ini
+from the mainline alone, to its own extent, and `ui/<id>/outline.png` redrawn the same way (track_folder's colours);
+any other value refused. The root map is always the network. Lake Murray: the two Speedways `lap`, Free Roam the network.
+
+### Measured (the dev pass on the v0.19.0 reference loop.blend, D:/k10-scratch/p4/signs/dev)
+
+29 posts, 29 plates: the 19 of v0.19.0 byte-for-byte in base and facing (every row `ok`), **J2 / J3 / J4 both ways** (six;
+J2-rev and J3-rev by the square side step, 0.90 / 1.15 m, confirmed by the gate's own ray; J4-fwd behind the Mission
+Gorge east stub's K-rail, 3.44 m from it, clearance 2.75 m) and **four layout plates**: M3-fwd@race_cw (wall 1.67 m, on the
+Waring mouth's deck), M3-rev@race_acw (1.61 m, the loop's walk at Waring's south-west corner), M4-fwd@race_cw (1.76 m,
+the walk east of the Jackson-north mouth), M4-rev@race_acw (1.62 m, the mouth's deck). Shared skips: M3-fwd "ray never
+leaves pavement" (College into Waring), M3-rev "ray runs 16 m down north_J1_waring#0 (a through road)", M4-fwd / M4-rev
+"apex 13 m from the J5 mouth". (m): street M1 M2 M5 + M3 / M4 skipped by the rule; race_cw / race_acw every corner.
+verify_signs PASS. The rehearsal of the full chain is in ledger 0054 "P4 signs" (its numbers below once it ran).

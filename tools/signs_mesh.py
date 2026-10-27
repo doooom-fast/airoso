@@ -106,6 +106,54 @@ def load_bvhs(skip_prefixes=()):
 load_bvhs.last_race = []
 
 
+WALL_PREFIX = "1WALL"
+RACE_WALL_PREFIX = "1WALL_RACE"
+
+
+def load_wall_bvhs():
+    """ledger 0054 P4 — the WALLS, which the ground / road BVHs never are: {"all": a BVH over every 1WALL* mesh (a post
+    stands clear of every one), "<token>": a BVH over the race walls one race layout loads — the members of the RACE
+    collection (the common curb strips) plus RACE_CLOSE_<TOKEN> (its closure), 1WALL_RACE* names only (the flat
+    1KERB_RACE kerbs are not walls)} — a layout plate stands behind ITS layout's sealing wall. Values None when a set
+    is empty; .names holds the object names per key."""
+    all_tris, by_tok, names = [], {}, {"all": []}
+    for ob in bpy.data.objects:
+        if ob.type != "MESH" or not ob.name.upper().startswith(WALL_PREFIX):
+            continue
+        tris = world_tris(ob)
+        all_tris += tris
+        names["all"].append(ob.name)
+        if not ob.name.upper().startswith(RACE_WALL_PREFIX):
+            continue
+        cols = [c.name for c in ob.users_collection]
+        toks = []
+        for c in cols:
+            if c == RACE_COLLECTION:
+                toks.append(RACE_COLLECTION)
+            elif c.startswith(RACE_CLOSE_COLLECTION):
+                toks.append(c[len(RACE_CLOSE_COLLECTION):].lower())
+        for t in toks:
+            by_tok.setdefault(t, []).extend(tris)
+            names.setdefault(t, []).append(ob.name)
+    out = {"all": bvh_of(all_tris)}
+    common = by_tok.pop(RACE_COLLECTION, [])
+    for tok, tris in by_tok.items():
+        out[tok] = bvh_of(common + tris)
+    load_wall_bvhs.names = names
+    return out
+
+
+load_wall_bvhs.names = {}
+
+
+def nearest_dist(bvh, x, y, z):
+    """metres from the engine-frame point (x, y up, z) to the nearest face of `bvh` (inf when None / nothing)"""
+    if bvh is None:
+        return float("inf")
+    hit = bvh.find_nearest(Vector((x, z, y)))
+    return float("inf") if hit[0] is None else float(hit[3])
+
+
 def top_hit(bvh, x, z):
     """highest surface height (engine y) under the engine-frame point (x, z); None if nothing"""
     if bvh is None:

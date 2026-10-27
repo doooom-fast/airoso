@@ -10,8 +10,8 @@
   "steps": {
     "draft": ["deck_datum", "median_envelope", "terrain_sample", "build_loop_blend", "route_connectors", "divide_connectors", "stubs",
               "trim_connectors", "expansion_decorate", "pads_plan", "terrain_resample", "rebuild_loop_blend", "weld_mouths", "seat_terrain", "aprons", "pads",
-              "triangulate_terrain", "ground_release", "median", "stubs_author", "gap_mouths", "stubs_tidy", "bridges", "scatter_strip", "lamps", "signs"],
-    "author": ["race_bands", "race_planned_gate", "layout_dummies", "race_author", "race_verify"],
+              "triangulate_terrain", "ground_release", "median", "stubs_author", "gap_mouths", "stubs_tidy", "bridges", "scatter_strip", "lamps"],
+    "author": ["race_bands", "race_planned_gate", "layout_dummies", "race_author", "race_verify", "signs"],
     "prep": ["prep", "split"],
     "ship": ["export_road", "export_race", "spawn_kn5", "ai", "verify_kn5", "road_obj", "track_folder", "verify_inis",
              "make_map", "treefx", "race_scenery_gate"],

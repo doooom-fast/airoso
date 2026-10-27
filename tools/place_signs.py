@@ -63,10 +63,46 @@ THE RULE (all maths in the engine frame x = E, y = up, z = N of data/centerline.
   expect    signs.json expect_arrow names the arrow the corner must get; a computed arrow that
             differs is a skip with a logged reason, never a silent relocation (and a ship FAIL in
             tools/verify_signs.py check (j)).
+  north     (ledger 0054 P4, EXPANSION-PLAN A8) the north network's tight corners are the turns made
+            ACROSS the junction pads J2 / J3 / J4, which no single piece carries: each piece ends at its
+            pad's cut, so its own scan only ever finds the mouth-flare stubs at its ends. The rule
+            therefore also scans ONE stitched centre ribbon, "north" (tools/expansion_lines.centre_ribbon:
+            the four pieces strung J1 -> J5 through the pads on the drive lines' own cubic), in both
+            directions, with the BUILT pad decks (data/pads.built.json outlines, their stub arms included)
+            as pavement in the field — the failed-to-turn ray crosses the deck and leaves pavement at the
+            pad's far curb return or down a stub arm, behind its K-rail (A8: "where the outside of a turn
+            is a stub, the plate stands behind the stub's wall"). For a ray that leaves through a pad the
+            foot window grows by the stub arms' reach (pads.plan.json stub_length_m + tail_m, 16 m on
+            Lake Murray): a foot 16 m down a stub is still the turn's own outside. The pieces' ends at
+            the pads are not mouths for the stitched ribbon (the J1 / J5 cuts stay); for the pieces' own
+            scans they still are. A north post is gated by the discs of the MAINLINE and of the two
+            north DRIVE LINES (expansion_lines.compute_lines, the carriageways drive_test --line sweeps),
+            the pieces' own centreline discs logged as a connector's are. Ids N-c<k>; signs.json names
+            the three corners (ribbon "north", vertex = the stitched point index).
+  through   (ledger 0054 P4) a failed-to-turn ray that runs THROUGH_ROAD_M (8 m) or more along ANOTHER
+            road's pavement before it leaves pavement is a ray down a real road (Navajo westbound across
+            the Waring opening at J1): the corner is skipped on that approach — in Free Roam the arrow
+            would point away from a road a driver may take. A pad deck ("pad J2") and a declared stub
+            (STUB_*, closed by its K-rail) are never a through road.
+  layout    (ledger 0054 A7 / P4) a MAINLINE corner marked per_layout in signs.json is one whose
+            shared plate the rule cannot place because straight on is now a real road (M3 at J1:
+            College runs on into Waring; M4 at J5: Navajo on into Jackson north) — in Free Roam the
+            arrow would point away from a road, and the road kn5 is loaded by every layout. The shared
+            attempt still runs (Free Roam gets whichever plate its own geometry warrants, if any); then,
+            for each RACE layout that drives the approach and got no shared plate, a LAYOUT PLATE is
+            placed against that layout's own pavement: the field is the MAINLINE alone (every side
+            street is sealed in a race layout) and the post stands behind the layout's sealing wall —
+            data/barrier_bands.json params: the curb strip's centre edge_centre_from_lip_m inside the
+            lip, its barrier_half_m, then the same lateral_offset_m the curb rule uses, so the wall's far
+            face stands in for the curb face (1.48 m past the lip on Lake Murray). The mouth-flare rule
+            does not apply (the mouth IS the sealed opening the plate stands on). Its id is
+            <corner>-<dir>@<layout id>, it records "layout", and tools/author_signs_blend.py builds it
+            into the RACE_CLOSE_<TOKEN> collection as SIGN*_<token>_<k>, so it ships in that layout's
+            closure kn5 and no other layout ever sees it.
 
 Overrides: tracks/<slug>/signs.json {defaults{...}, corners{<id>: {ribbon, vertex, skip, reason,
 slide_along_curb_m, base_xz, face_bearing_deg, plate, arrow, expect_arrow, height_m, om1_3,
-second_arrow, force, fwd{...}, rev{...}}}} — arrow / expect_arrow name the FORWARD approach's arrow
+second_arrow, force, per_layout, fwd{...}, rev{...}}}} — arrow / expect_arrow name the FORWARD approach's arrow
 (mirrored on a reversed scan); fwd / rev hold keys for one approach only (e.g. rev: {skip, reason}).
 A skip with no non-empty reason (its own or the entry's) is refused at load.
 An explicit --signs path that does not exist is an error, never "no overrides". defaults.kappa_window_m / hysteresis_stations drive the detector (12 m /
@@ -96,6 +132,8 @@ import sys
 from pathlib import Path
 
 AIROSO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import expansion_lines as el  # noqa: E402  (the stitched north ribbon, the pad decks, the drive lines)
 
 # --- detector ---------------------------------------------------------------------------------
 STATION_M = 1.0
@@ -150,6 +188,22 @@ PAIR_STACK_GAP = 0.05           # a paired plate whose facing is < 90 deg from t
 SPAWN_CLEAR_M = 200.0           # WARN only: AC_TIME_1 sits 30 m from M1, which the plan places
 GROUND_WARN_M = 0.30
 OVERRIDE_STALE_M = 30.0
+# --- ledger 0054 P4: the north ribbon and the per-layout plates --------------------------------------
+NORTH_RIBBON = el.NORTH_RIBBON      # "north": the stitched centre ribbon through the pads (expansion_lines.centre_ribbon)
+LINE_PREFIX = "expansion_"          # the north drive lines in the field: disc-only ribbons expansion_fwd / expansion_rev
+PAD_PREFIX = "pad "                 # a pad deck in the field: "pad J2" (its outline polygon, stub arms included)
+LAYOUT_SEP = "@"                    # a layout plate's id: <corner>-<dir>@<layout id>
+WALL_CLEAR_M = 0.5                  # the mesh stage: a post stands at least this far from every 1WALL* face (the lamp
+#                                     rule's number, tools/author_lamps_blend.py WALL_CLEAR_M)
+THROUGH_ROAD_M = 8.0                # [invented] the failed-to-turn ray running this far along ANOTHER road's pavement
+#                                     before it leaves pavement means straight on IS a road (M3-rev: Navajo westbound
+#                                     runs across the Waring opening): no shared plate — the arrow would point away
+#                                     from a real road in Free Roam. A pad deck and a declared stub (STUB_*) are the
+#                                     corner itself / a closed arm, never a through road.
+STUB_PREFIX = "STUB_"
+SIDE_STEP_MAX_M = 2.5               # [invented] the mesh stage's fallback for a grazing exit (the ray leaves the pavement
+#                                     at so flat an angle that no point on it within the cap is clear of the curb): the
+#                                     post steps square off the ray, to the outside, at most this far
 # --- the old rule, for the comparison picture ---------------------------------------------------
 OLD_REV1_LEAD_M = 52.0          # kerbs lead 28 m + 8 stations ~ 24 m before the first curved vertex
 OLD_REV1_LATERAL = 2.2
@@ -166,13 +220,15 @@ DEFAULTS = {
 PLATE_GEOMETRY = ("W1-6",)      # the plates sign_polygons can build; W1-7 / W1-8 are second-pass devices
 CORNER_KEYS = ("ribbon", "vertex", "skip", "reason", "slide_along_curb_m", "base_xz", "face_bearing_deg",
                "plate", "arrow", "expect_arrow", "height_m", "om1_3", "second_arrow", "force",
+               "per_layout",                 # a MAINLINE corner whose unplaceable shared plate becomes race-layout plates (P4)
                "where", "ship", "note",      # where/ship/note are prose for the pictures and for Kevin
                "fwd", "rev")                 # per-approach sub-objects (ledger 0051), see the module doc
 DIRECTION_KEYS = ("fwd", "rev")
 PIN_KEYS = ("base_xz", "face_bearing_deg", "slide_along_curb_m")   # one approach only (ledger 0051)
-GATED_RIBBONS = ("MAINLINE",)   # the centrelines drive_test sweeps: its disc is the only one a gate enforces
+GATED_RIBBONS = ("MAINLINE",)   # the centrelines drive_test sweeps: its disc is the only one a gate enforces (+ the
+#                                 north drive lines expansion_fwd / expansion_rev when the track has them: Context.gated)
 RIBBON_PREFIX = {"MAINLINE": "M", "del_cerro_blvd#0": "DC0", "del_cerro_blvd#1": "DC1",
-                 "del_cerro_blvd_loop": "DCL", "medium#2+0#0#0": "MED"}
+                 "del_cerro_blvd_loop": "DCL", "medium#2+0#0#0": "MED", NORTH_RIBBON: "N"}
 
 
 def wrap(a):
@@ -295,32 +351,73 @@ class Ribbon:
         return self.name + ("(rev)" if self.reverse else "")
 
 
+def point_in_polygon(x, z, poly):
+    inside = False
+    n = len(poly)
+    for i in range(n):
+        ax, az = poly[i][0], poly[i][1]
+        bx, bz = poly[(i + 1) % n][0], poly[(i + 1) % n][1]
+        if (az > z) != (bz > z):
+            if ax + (z - az) * (bx - ax) / (bz - az) > x:
+                inside = not inside
+    return inside
+
+
+def polygon_edge_dist(x, z, poly):
+    n = len(poly)
+    best = float("inf")
+    for i in range(n):
+        a, b = poly[i], poly[(i + 1) % n]
+        dx, dz = b[0] - a[0], b[1] - a[1]
+        L2 = dx * dx + dz * dz
+        t = 0.0 if L2 < 1e-12 else max(0.0, min(1.0, ((x - a[0]) * dx + (z - a[1]) * dz) / L2))
+        best = min(best, math.hypot(x - (a[0] + t * dx), z - (a[1] + t * dz)))
+    return best
+
+
 class PavementField:
-    """signed distance to the nearest pavement edge over every ribbon (negative = on pavement)"""
+    """signed distance to the nearest pavement edge over every ribbon (negative = on pavement) — plus, since ledger
+    0054 P4, pavement POLYGONS (the junction pads' built decks: add_polygon) and DISC-ONLY lines (the north drive
+    lines: add_line — never pavement, only drive_test's obstacle disc, so gate_margin reads them and query never does)"""
 
     def __init__(self, ribbons, cell=60.0):
         self.cell = cell
         self.segs = []
         self.cells = {}
+        self.polys = []          # (name, [(x, z)...], (minx, minz, maxx, maxz))
         for rb in ribbons:
             if rb.reverse:
                 continue
-            P, W = rb.raw, rb.raw_w
-            idx = list(range(len(P))) + ([0] if rb.closed else [])
-            for a, b in zip(idx[:-1], idx[1:]):
-                k = len(self.segs)
-                self.segs.append((rb.name, P[a], P[b], W[a] / 2, W[b] / 2))
-                for (x, _, z) in (P[a], P[b]):
-                    self.cells.setdefault((int(x // cell), int(z // cell)), set()).add(k)
+            self._add_segs(rb.name, rb.raw, rb.raw_w, rb.closed, False)
 
-    def query(self, x, z, exclude=None):
-        best = (float("inf"), None, 0.0, 0.0)   # (signed edge distance, ribbon, half-width, road y)
+    def _add_segs(self, name, P, W, closed, disc_only):
+        idx = list(range(len(P))) + ([0] if closed else [])
+        for a, b in zip(idx[:-1], idx[1:]):
+            k = len(self.segs)
+            self.segs.append((name, P[a], P[b], W[a] / 2, W[b] / 2, disc_only))
+            for (x, _, z) in (P[a], P[b]):
+                self.cells.setdefault((int(x // self.cell), int(z // self.cell)), set()).add(k)
+
+    def add_line(self, name, P, W):
+        """a disc-only ribbon (a swept drive line): gated, never pavement"""
+        self._add_segs(name, [tuple(p) for p in P], list(W), False, True)
+
+    def add_polygon(self, name, poly):
+        """a pavement polygon (a pad deck's built outline, xz): on it = negative distance to its edge"""
+        xs, zs = [p[0] for p in poly], [p[1] for p in poly]
+        self.polys.append((name, [tuple(p) for p in poly], (min(xs), min(zs), max(xs), max(zs))))
+
+    def query(self, x, z, exclude=None, only=None):
+        """(signed edge distance, ribbon, half-width, road y) of the nearest PAVEMENT (segments + polygons; a disc-only
+        line never counts); exclude = one ribbon left out, only = these ribbon names alone (a race layout's pavement is
+        the MAINLINE alone — every side street is sealed)"""
+        best = (float("inf"), None, 0.0, 0.0)
         cx, cz = int(x // self.cell), int(z // self.cell)
         for dx in (-1, 0, 1):
             for dz in (-1, 0, 1):
                 for k in self.cells.get((cx + dx, cz + dz), ()):
-                    name, a, b, ha, hb = self.segs[k]
-                    if name == exclude:
+                    name, a, b, ha, hb, disc_only = self.segs[k]
+                    if disc_only or name == exclude or (only is not None and name not in only):
                         continue
                     ddx, ddz = b[0] - a[0], b[2] - a[2]
                     L2 = ddx * ddx + ddz * ddz
@@ -329,17 +426,26 @@ class PavementField:
                     hw = ha * (1 - t) + hb * t
                     if d - hw < best[0]:
                         best = (d - hw, name, hw, a[1] + (b[1] - a[1]) * t)
+        if only is None:
+            for name, poly, (x0, z0, x1, z1) in self.polys:
+                if name == exclude or x < x0 - best[0] or x > x1 + best[0] or z < z0 - best[0] or z > z1 + best[0]:
+                    continue
+                d = polygon_edge_dist(x, z, poly)
+                sd = -d if point_in_polygon(x, z, poly) else d
+                if sd < best[0]:
+                    best = (sd, name, 0.0, best[3])
         return best
 
     def gate_margin(self, x, z, names=None):
         """distance beyond drive_test's obstacle disc min(max(w/2-0.4,0.8),6)+0.3 of EVERY ribbon
-        (names=None) or of the named ribbons only (GATED_RIBBONS: the ones drive_test sweeps)"""
+        (names=None) or of the named ribbons only (Context.gated: the ones drive_test sweeps — the
+        MAINLINE and the north drive lines)"""
         worst = float("inf")
         cx, cz = int(x // self.cell), int(z // self.cell)
         for dx in (-1, 0, 1):
             for dz in (-1, 0, 1):
                 for k in self.cells.get((cx + dx, cz + dz), ()):
-                    name, a, b, ha, hb = self.segs[k]
+                    name, a, b, ha, hb, _disc_only = self.segs[k]
                     if names is not None and name not in names:
                         continue
                     ddx, ddz = b[0] - a[0], b[2] - a[2]
@@ -360,11 +466,16 @@ class PavementField:
         return min(self.gate_margin(p[0], p[1], names) for p in pts)
 
 
-def disc_names_for(ribbon_name):
+def disc_names_for(ribbon_name, gated=GATED_RIBBONS):
     """the ribbons whose disc is a HARD requirement for a post on `ribbon_name`: every ribbon for a
     mainline post (it must not stand in a side street's corridor either), the gated ribbons only
-    for a connector post (its own street's disc is logged + WARN, see the module doc)"""
-    return None if ribbon_name in GATED_RIBBONS else GATED_RIBBONS
+    for a connector / north post (its own street's disc is logged + WARN, see the module doc).
+    gated = Context.gated: the MAINLINE plus the north drive lines when the track has them."""
+    return None if ribbon_name == "MAINLINE" else tuple(gated)
+
+
+def gate_label(names):
+    return "all" if names is None else "+".join(names)
 
 
 # ----------------------------------------------------------------------------------------------
@@ -477,18 +588,60 @@ class Context:
             closed = math.dist(P[0][::2], P[-1][::2]) < 1e-6
             self.ribbons.append(Ribbon(c["name"], P, c["widths_m"], closed, kappa_half=self.kappa_half))
         self.field = PavementField(self.ribbons)
+        mb = data / "median_bands.json"
+        isl = json.loads(mb.read_text(encoding="utf-8")).get("island_w_by_vertex", []) if mb.exists() else []
+        self.island = {int(k): v for k, v in isl.items()} if isinstance(isl, dict) else {i: v for i, v in enumerate(isl) if v}
+        self.island_by_ribbon = {"MAINLINE": self.island}
+        # --- ledger 0054 P4: the north network ------------------------------------------------------------
+        # the stitched centre ribbon "north" (the J2 / J3 / J4 turns), the BUILT pad decks as pavement, the two drive
+        # lines as gated discs. The ribbon is scanned like a connector but NOT added to the field (its pieces are
+        # already there); without built pads the stitched turns would be judged on a deck the field cannot see,
+        # so the ribbon is left out and said so (self.north_note).
+        self.north = None
+        self.north_note = None
+        self.gated = tuple(GATED_RIBBONS)
+        self.stub_reach_m = 0.0
+        nr = el.centre_ribbon(self.proj)
+        pads = el.pad_polygons(self.proj) if nr else []
+        if nr and not pads:
+            self.north_note = "north route declared but no data/pads.built.json: the stitched north ribbon is not scanned"
+        elif nr:
+            self.north = Ribbon(nr["name"], nr["points_xyz_m"], nr["widths_m"], False, kappa_half=self.kappa_half)
+            self.north_pieces = list(nr["pieces"])
+            self.ribbons.append(self.north)
+            self.island_by_ribbon[nr["name"]] = {i: v for i, v in enumerate(nr["island_w_by_vertex"]) if v}
+            for pid, poly, _kinds in pads:
+                self.field.add_polygon(PAD_PREFIX + pid, poly)
+            self.stub_reach_m = el.pad_stub_reach_m(self.proj)
+            lines = el.compute_lines(self.proj) or {}
+            for lname, ln in sorted(lines.items()):
+                self.field.add_line(LINE_PREFIX + lname, ln["points_xyz_m"], ln["widths_m"])
+            self.gated = tuple(GATED_RIBBONS) + tuple(LINE_PREFIX + k for k in sorted(lines))
         mp = data / "mouths.json"
         mouths = json.loads(mp.read_text(encoding="utf-8")) if mp.exists() else {"mouths": []}
         mouths = mouths["mouths"] if isinstance(mouths, dict) else mouths
         self.mouth_pts = [((m["cut_xyz"][0], m["cut_xyz"][2]), f"mouth {m.get('connector')}@{m.get('host')}:{m.get('host_vertex')}")
                           for m in mouths if m.get("cut_xyz")]
         for rb in self.ribbons[1:]:
-            if not rb.closed:
+            if not rb.closed and rb is not self.north:
                 self.mouth_pts.append((rb.xz(0), f"{rb.name} start"))
                 self.mouth_pts.append((rb.xz(rb.n - 1), f"{rb.name} end"))
-        mb = data / "median_bands.json"
-        isl = json.loads(mb.read_text(encoding="utf-8")).get("island_w_by_vertex", []) if mb.exists() else []
-        self.island = {int(k): v for k, v in isl.items()} if isinstance(isl, dict) else {i: v for i, v in enumerate(isl) if v}
+        # the layouts (ledger 0054 P4 layout plates): id, approach direction, race furniture, closure token; and the
+        # race declaration's wall geometry (data/barrier_bands.json params) the per-layout rule stands behind
+        try:
+            cfg_t = json.loads((self.proj / "track.config.json").read_text(encoding="utf-8"))
+        except Exception:
+            cfg_t = {}
+        self.layouts = [{"id": str(lo.get("id")), "direction": "rev" if str(lo.get("direction") or "forward").lower() == "reverse" else "fwd",
+                         "race": bool(lo.get("race_furniture")), "token": str(lo.get("closure_token") or "").lower()}
+                        for lo in (cfg_t.get("layouts") or []) if isinstance(lo, dict)]
+        bb = data / "barrier_bands.json"
+        self.walls = None
+        if bb.exists():
+            prm = (json.loads(bb.read_text(encoding="utf-8")).get("params") or {})
+            if prm.get("edge_centre_from_lip_m") is not None and prm.get("barrier_half_m") is not None:
+                self.walls = {"edge_centre_from_lip_m": float(prm["edge_centre_from_lip_m"]),
+                              "barrier_half_m": float(prm["barrier_half_m"])}
         lp = data / "lights.local.json"
         heads = json.loads(lp.read_text(encoding="utf-8")).get("lampheads", []) if lp.exists() else []
         self.lamp_bases = []
@@ -508,8 +661,34 @@ class Context:
                 if p not in self.spawn_pts:
                     self.spawn_pts.append(p)
 
-    def nearest_mouth(self, q):
-        return min(((math.hypot(q[0] - p[0], q[1] - p[1]), lab) for p, lab in self.mouth_pts), default=(float("inf"), "-"))
+    def race_layouts(self, direction):
+        """the race layouts that drive `direction` ('fwd' / 'rev')"""
+        return [lo for lo in self.layouts if lo["race"] and lo["direction"] == direction]
+
+    def layout_behind_lip_m(self, cfg):
+        """how far past the MAINLINE lip a layout plate stands: the sealing curb strip's centre (edge_centre_from_lip_m,
+        negative = inside the lip) + its half width + the curb rule's lateral_offset_m — None without a declaration"""
+        if not self.walls:
+            return None
+        return self.walls["edge_centre_from_lip_m"] + self.walls["barrier_half_m"] + float(cfg["lateral_offset_m"])
+
+    def own_names(self, rb):
+        """the pavement that is a ribbon's OWN for the through-road rule: itself, and for the stitched north ribbon
+        its four pieces (the road the driver turns onto is never a through road)"""
+        if self.north is not None and rb.name == self.north.name:
+            return {rb.name, *self.north_pieces}
+        return {rb.name}
+
+    def mouth_excludes(self, rb):
+        """the mouth labels a ribbon's scan ignores: the stitched north ribbon is not cut at its pieces' pad ends (they
+        are its own interior), only at the J1 / J5 mouths the pieces start from"""
+        if rb is not self.north and (self.north is None or rb.name != self.north.name):
+            return ()
+        return {f"{nm} {end}" for nm in self.north_pieces for end in ("start", "end")}
+
+    def nearest_mouth(self, q, exclude=()):
+        return min(((math.hypot(q[0] - p[0], q[1] - p[1]), lab) for p, lab in self.mouth_pts if lab not in exclude),
+                   default=(float("inf"), "-"))
 
     def nearest_lamp(self, q):
         return min((math.hypot(q[0] - b[0], q[1] - b[1]) for b in self.lamp_bases), default=float("inf"))
@@ -601,6 +780,13 @@ def validate_overrides(cfg, corners, src="signs.json"):
                 bad.append("%s.arrow = %r (left|right)" % (where, o["arrow"]))
             if o.get("expect_arrow") is not None and o["expect_arrow"] not in ("left", "right"):
                 bad.append("%s.expect_arrow = %r (left|right)" % (where, o["expect_arrow"]))
+        if ov.get("per_layout") is not None:
+            if not isinstance(ov["per_layout"], bool):
+                bad.append("corners.%s.per_layout = %r (true|false)" % (cid, ov["per_layout"]))
+            elif ov["per_layout"] and ov.get("ribbon", "MAINLINE") != "MAINLINE":
+                bad.append("corners.%s.per_layout: only a MAINLINE corner has race-layout plates (its ribbon is %r)" % (cid, ov.get("ribbon")))
+            elif ov["per_layout"] and ov.get("skip"):
+                bad.append("corners.%s: per_layout and skip together — a skipped corner has no plates in any layout" % cid)
         # a skip removes a driver's arrow: it carries its reason (the entry's own, or its approach
         # sub-object's), never a silent drop (ledger 0051: a bare rev skip at M4 once passed verify_signs
         # (k) with race_acw's Jackson/Navajo arrow gone)
@@ -677,24 +863,29 @@ def load_overrides(proj, signs_path=None):
 
 
 # ----------------------------------------------------------------------------------------------
-def march(ctx, rb, A, t, d_clear):
+def march(ctx, rb, A, t, d_clear, only=None):
     """the failed-to-turn ray: returns dict(C, s_C, exit_ribbon, hw_at_exit, t_end, S, s_S, pushed,
-    lateral) or None when the ray never leaves pavement within RAY_MAX_M"""
+    lateral) or None when the ray never leaves pavement within RAY_MAX_M. only = the ribbons that are
+    pavement for this ray (a layout plate: the MAINLINE alone), else every ribbon and pad deck."""
     s = 0.0
     C = None
     res = {}
+    through = {}          # ANOTHER road's pavement the ray runs along before it leaves pavement: {ribbon: metres}
+    own = ctx.own_names(rb)
     while s <= RAY_MAX_M + RAY_EXTRA_CAP_M + 1:
         q = (A[0] + t[0] * s, A[1] + t[1] * s)
-        d, name, hw, _ = ctx.field.query(q[0], q[1])
+        d, name, hw, _ = ctx.field.query(q[0], q[1], only=only)
         if C is None:
+            if d <= 0 and name is not None and name not in own and not str(name).startswith((PAD_PREFIX, STUB_PREFIX)):
+                through[name] = through.get(name, 0.0) + RAY_STEP
             if d > 0:
                 C = q
-                res.update(C=q, s_C=s, exit_ribbon=name, hw_at_exit=hw)
+                res.update(C=q, s_C=s, exit_ribbon=name, hw_at_exit=hw, through=through)
                 # T-end: back on ANOTHER ribbon within 3 m of C
                 t_end = False
                 for k in range(1, int(T_END_PROBE_M / RAY_STEP) + 1):
                     q2 = (q[0] + t[0] * k * RAY_STEP, q[1] + t[1] * k * RAY_STEP)
-                    d2, name2, _, _ = ctx.field.query(q2[0], q2[1])
+                    d2, name2, _, _ = ctx.field.query(q2[0], q2[1], only=only)
                     if d2 <= 0 and name2 != name:
                         t_end = True
                         res["t_end_ribbon"] = name2
@@ -708,7 +899,7 @@ def march(ctx, rb, A, t, d_clear):
                 lo, hi = s - RAY_STEP, s
                 for _ in range(12):
                     mid = (lo + hi) / 2
-                    if ctx.field.query(A[0] + t[0] * mid, A[1] + t[1] * mid)[0] >= d_clear:
+                    if ctx.field.query(A[0] + t[0] * mid, A[1] + t[1] * mid, only=only)[0] >= d_clear:
                         hi = mid
                     else:
                         lo = mid
@@ -756,8 +947,10 @@ def choose_slide(ctx, cfg, S, u, d_clear, clear_fn, rights=(), disc_names=None):
     return 0.0, S, lamp, plant, excl, reasons
 
 
-def place_corner(ctx, rb, corner, cid, ov, cfg, second=False):
-    """one approach of one corner -> (record | None, reasons[])"""
+def place_corner(ctx, rb, corner, cid, ov, cfg, second=False, layout=None):
+    """one approach of one corner -> (record | None, reasons[]). layout = a race layout record
+    (Context.layouts) for a LAYOUT PLATE (module doc): the ray is judged against the MAINLINE's pavement
+    alone and the post stands behind that layout's sealing wall, Context.layout_behind_lip_m past the lip."""
     n = rb.n
     sg = corner["sign"]
     reasons = []
@@ -765,6 +958,7 @@ def place_corner(ctx, rb, corner, cid, ov, cfg, second=False):
     pc = corner["PC"] if not second else corner["PC2"]
     apex = corner["apex"]
     thr = 1.0 / R_STRAIGHT_M
+    only = ("MAINLINE",) if layout else None
     # 1) approach tangent: the car's heading over the last 10 m before the hard turn
     a0, a1 = rb.xz(pc - 12), rb.xz(pc - 2)
     if math.hypot(a1[0] - a0[0], a1[1] - a0[1]) < 1.0:    # open ribbon, PC at its very start
@@ -776,19 +970,27 @@ def place_corner(ctx, rb, corner, cid, ov, cfg, second=False):
     # 2) launch point on the approach lane (un-flared width)
     lo_st = max(pc - 40, 0) if not rb.closed else pc - 40
     w_app = min(rb.w(i) for i in range(lo_st, pc + 1))
-    island = ctx.island.get(rb.vertex(pc), 0.0) if rb.name == "MAINLINE" else 0.0
+    island = ctx.island_by_ribbon.get(rb.name, {}).get(rb.vertex(pc), 0.0)
     lane_off = island / 2 + (w_app - island) / 4
     P_pc = rb.xz(pc)
     A = (P_pc[0] + nR[0] * lane_off, P_pc[1] + nR[1] * lane_off)
     d_clear = cfg["lateral_offset_m"] if rb.name == "MAINLINE" else cfg["lateral_offset_connector_m"]
+    d_march = d_clear
+    if layout:
+        d_march = ctx.layout_behind_lip_m(cfg)
+        if d_march is None:
+            return None, ["no race declaration (data/barrier_bands.json params): a layout plate stands behind the sealing wall it describes"]
     # 3) the ray
-    m = march(ctx, rb, A, t, d_clear)
+    m = march(ctx, rb, A, t, d_march, only=only)
     if m is None:
         return None, ["ray never leaves pavement within %.0f m (through leg / junction)" % RAY_MAX_M]
     if m["s_C"] < RAY_MIN_M or m["s_C"] > RAY_MAX_M:
         reasons.append("ray exits pavement at %.1f m (want %.0f-%.0f)" % (m["s_C"], RAY_MIN_M, RAY_MAX_M))
     if m.get("t_end"):
         reasons.append("T-end: ray re-enters %s within 3 m of the curb (W1-7 candidate, second pass)" % m["t_end_ribbon"])
+    thr_name, thr_run = max(m.get("through", {}).items(), key=lambda kv: kv[1], default=(None, 0.0))
+    if thr_run >= THROUGH_ROAD_M:
+        reasons.append("ray runs %.0f m down %s before leaving pavement (a through road)" % (thr_run, thr_name))
     C = m["C"]
     pt = corner["PT"]
     arc = corner["arc_m"]
@@ -799,10 +1001,14 @@ def place_corner(ctx, rb, corner, cid, ov, cfg, second=False):
     rel_pc = (sC - pc) % n if rb.closed else sC - pc
     if rb.closed and rel_pc > n // 2:
         rel_pc -= n
-    if not (0 <= rel_pc <= arc + RAY_PAST_PT_M):
-        reasons.append("ray foot at station PC%+d is outside [PC, PT+%d] (a curve, not a turn)" % (rel_pc, RAY_PAST_PT_M))
+    # a ray that leaves through a pad (its deck or down a stub arm) has its foot that much further on (module doc)
+    past_pt = RAY_PAST_PT_M + (ctx.stub_reach_m if str(m["exit_ribbon"] or "").startswith(PAD_PREFIX) else 0.0)
+    if not (0 <= rel_pc <= arc + past_pt):
+        reasons.append("ray foot at station PC%+d is outside [PC, PT+%d] (a curve, not a turn)" % (rel_pc, past_pt))
     # 4) sign point
     if "S" not in m:
+        if layout:
+            return None, ["the ray is still within %.2f m of the lip %.0f m past it: no room behind the sealing wall" % (d_march, RAY_EXTRA_CAP_M)]
         n_out = (-t[1], t[0]) if D < 0 else (t[1], -t[0])
         m["S"] = (C[0] + n_out[0] * d_clear, C[1] + n_out[1] * d_clear)
         m["s_S"] = m["s_C"]
@@ -842,9 +1048,9 @@ def place_corner(ctx, rb, corner, cid, ov, cfg, second=False):
     # 7) clearances: lamps never move; plants are excluded from TreeFX; the sign may slide along
     #    the curb (u at sC), <= SLIDE_MAX_M, the smallest move first — the only lateral deviation
     u = unit((rb.xz(sC + 1)[0] - rb.xz(sC - 1)[0], rb.xz(sC + 1)[1] - rb.xz(sC - 1)[1]))
-    disc_names = disc_names_for(rb.name)
+    disc_names = GATED_RIBBONS if layout else disc_names_for(rb.name, ctx.gated)   # a race layout sweeps the mainline alone
     slid, S, lamp, plant, excl_plant, slide_reasons = choose_slide(
-        ctx, cfg, S, u, d_clear, lambda x, z: ctx.field.query(x, z)[0], rights=(nR,), disc_names=disc_names)
+        ctx, cfg, S, u, d_march, lambda x, z: ctx.field.query(x, z, only=only)[0], rights=(nR,), disc_names=disc_names)
     reasons += slide_reasons
     # 8) manual overrides
     if ov.get("slide_along_curb_m"):
@@ -866,9 +1072,14 @@ def place_corner(ctx, rb, corner, cid, ov, cfg, second=False):
     y_road = rb.y(sC)
     gate_margin = ctx.field.footprint_margin(S, (nR,))                 # every centreline, logged
     gate_margin_gated = ctx.field.footprint_margin(S, (nR,), disc_names)   # the discs a gate enforces
-    edge_clear = ctx.field.query(S[0], S[1])[0]
+    edge_clear = ctx.field.query(S[0], S[1], only=only)[0]
+    edge_clear_all = ctx.field.query(S[0], S[1])[0] if layout else edge_clear   # a layout plate stands on the sealed opening's deck
     spawn = ctx.nearest_spawn(S)
     warns = []
+    if layout:
+        warns.append("layout plate for %s: stands %.2f m past the MAINLINE lip, behind its sealing wall (strip centre %+.3f m "
+                     "from the lip, half width %.3f m, + lateral_offset_m %.2f); every other pavement %+.2f m away"
+                     % (layout["id"], d_march, ctx.walls["edge_centre_from_lip_m"], ctx.walls["barrier_half_m"], d_clear, edge_clear_all))
     if abs(pca_vs_chord) > 5:
         warns.append("approach heading: 10 m chord %.1f deg vs PCA fit %.1f deg (differ by %.1f deg; the chord is used)"
                      % (bearing(t[0], t[1]), bearing(math.cos(th_pca), math.sin(th_pca)), abs(pca_vs_chord)))
@@ -894,9 +1105,10 @@ def place_corner(ctx, rb, corner, cid, ov, cfg, second=False):
     a_p = rb.xz(apex)
     a_off = rb.w(apex) / 2 + OLD_REV2_LATERAL
     rec = {
-        "id": cid if not second else cid + "-2",
+        "id": (cid if not second else cid + "-2") + ((LAYOUT_SEP + layout["id"]) if layout else ""),
         "kind": plate + ("R" if arrow == "right" else "L"),
         "plate": plate,
+        "layout": layout["id"] if layout else None,
         "ribbon": rb.name, "direction": "rev" if rb.reverse else "fwd",
         "corner": {"apex_vertex": rb.vertex(apex), "apex_station_m": apex, "PC": pc, "PT": pt, "arc_m": arc,
                    "R_apex_m": round(corner["R_apex_m"], 1), "D_deg": round(D, 1),
@@ -920,11 +1132,16 @@ def place_corner(ctx, rb, corner, cid, ov, cfg, second=False):
         "right_xz": [round(nR[0], 4), round(nR[1], 4)],
         "arrow": arrow, "expect_arrow": expect if expect in ("left", "right") else None,
         "lateral_offset_m": d_clear, "height_m": height, "om1_3": om,
+        **({"wall": {"behind_lip_m": round(d_march, 3), "edge_centre_from_lip_m": ctx.walls["edge_centre_from_lip_m"],
+                     "barrier_half_m": ctx.walls["barrier_half_m"], "token": layout.get("token"),
+                     "rule": "the layout's sealing curb strip: its far face stands in for the curb face, lateral_offset_m behind it"}}
+           if layout else {}),
         "checks": {"outside_cross": round(outside_cross, 2), "edge_clear_m": round(edge_clear, 2),
+                   **({"edge_clear_all_m": round(edge_clear_all, 2)} if layout else {}),
                    "lamp_m": round(lamp, 2), "plant_m": round(plant[0], 2), "plant_zone": plant[1],
                    "pushed_m": m["pushed_m"], "slid_m": round(slid, 2), "lateral_step_m": m.get("lateral_m", 0.0),
                    "gate_margin_m": round(gate_margin, 2), "gate_margin_gated_m": round(gate_margin_gated, 2),
-                   "gate_ribbons": "all" if disc_names is None else "+".join(disc_names),
+                   "gate_ribbons": gate_label(disc_names),
                    "mouth_m": round(ctx.nearest_mouth(S)[0], 1),
                    "spawn_m": round(spawn[0], 1), "spawn": spawn[1], "warnings": warns},
         "old_rule": {"rev1_xz": [round(o_p[0] + o_n[0] * o_off, 2), round(o_p[1] + o_n[1] * o_off, 2)],
@@ -944,9 +1161,17 @@ def corner_id(rb, k):
     return "%s-c%d" % (RIBBON_PREFIX.get(rb.name, rb.name.replace("#", "_").replace("+", "_").upper()), k)
 
 
-PLATE_KEYS = ("id", "kind", "plate", "direction", "corner", "approach", "ray", "face_dir_xz", "face_bearing_deg",
+PLATE_KEYS = ("id", "kind", "plate", "layout", "direction", "corner", "approach", "ray", "face_dir_xz", "face_bearing_deg",
               "yaw_deg", "right_xz", "arrow", "expect_arrow", "old_rule", "where", "base_xz", "curb_dir_xz",
               "overrides_applied")
+
+
+def split_layout_id(cid):
+    """('M3-fwd', 'race_cw') for a layout plate's id, (cid, None) otherwise"""
+    if LAYOUT_SEP in cid:
+        core, lid = cid.split(LAYOUT_SEP, 1)
+        return core, lid
+    return cid, None
 
 
 def merge_pairs(signs, thr=PAIR_MERGE_M, log=None):
@@ -956,7 +1181,7 @@ def merge_pairs(signs, thr=PAIR_MERGE_M, log=None):
     that knows one plate still draws something sensible. Idempotent; stable order."""
     by_corner = {}
     for s in signs:
-        if "plates" in s or not s["id"].endswith(("-fwd", "-rev")):
+        if "plates" in s or not s["id"].endswith(("-fwd", "-rev")) or s.get("layout"):   # a layout plate never pairs
             continue
         by_corner.setdefault(s["id"].rsplit("-", 1)[0], []).append(s)
     merged, drop = {}, set()
@@ -1041,7 +1266,8 @@ def dedupe_skipped(skipped):
     gain any the duplicate carried"""
     seen, out = {}, []
     for s in skipped:
-        key = (s["ribbon"], s["id"].rsplit("-", 1)[-1] if s["id"].endswith(("-fwd", "-rev")) else "", s.get("apex_station_m"), s["id"].endswith("-2"))
+        core, lid = split_layout_id(s["id"])
+        key = (s["ribbon"], core.rsplit("-", 1)[-1] if core.endswith(("-fwd", "-rev")) else "", s.get("apex_station_m"), core.endswith("-2"), lid)
         if key in seen:
             for r in s["reasons"]:
                 if r not in seen[key]["reasons"]:
@@ -1087,8 +1313,11 @@ def place_all(proj, cfg=None, corners_cfg=None, signs_path=None, log=print, merg
             ribbons.append(rb.copy(reverse=True))
     if cfg.get("both_directions_mainline"):
         ribbons.insert(1, ctx.mainline.copy(reverse=True))
+    if ctx.north_note:
+        log("[signs] WARN %s" % ctx.north_note)
     fwd_ids = {}
     fwd_rbs = {r.name: r for r in ctx.ribbons}
+    layout_plates = []        # ledger 0054 P4: the race-layout plates of per_layout corners
     for rb in ribbons:
         corners = detect_corners(rb, ctx.hyst)
         corners.sort(key=lambda c: c["apex"])
@@ -1096,6 +1325,8 @@ def place_all(proj, cfg=None, corners_cfg=None, signs_path=None, log=print, merg
             fwd_ids[rb.name] = [(c["apex"], corner_id(rb, k + 1), c["sign"]) for k, c in enumerate(corners)]
         cids = candidate_ids(rb, corners, fwd_ids.get(rb.name, []))
         named = assign_overrides(rb, fwd_rbs[rb.name], corners, corners_cfg)
+        mouth_ex = ctx.mouth_excludes(rb)
+        direction = "rev" if rb.reverse else "fwd"
         for ci, c in enumerate(corners):
             # id: forward numbering in station order; a reversed ribbon reuses the forward id of
             # the same bend, else a reverse-only id (candidate_ids) — never two records of one
@@ -1116,26 +1347,51 @@ def place_all(proj, cfg=None, corners_cfg=None, signs_path=None, log=print, merg
             reasons = []
             if ov.get("skip"):
                 reasons.append("signs.json skip: %s" % ov["reason"].strip())      # validate_overrides refused a bare skip
+            rule_reasons = []
             if not ov.get("force"):
                 if c["R_apex_m"] > cfg["r_sign_max_m"]:
-                    reasons.append("R_apex %.1f > %.0f m" % (c["R_apex_m"], cfg["r_sign_max_m"]))
+                    rule_reasons.append("R_apex %.1f > %.0f m" % (c["R_apex_m"], cfg["r_sign_max_m"]))
                 if abs(c["D_deg"]) < cfg["defl_min_deg"]:
-                    reasons.append("|D| %.1f < %.0f deg" % (abs(c["D_deg"]), cfg["defl_min_deg"]))
-            dm = ctx.nearest_mouth(rb.xz(c["apex"]))
+                    rule_reasons.append("|D| %.1f < %.0f deg" % (abs(c["D_deg"]), cfg["defl_min_deg"]))
+            reasons += rule_reasons
+            dm = ctx.nearest_mouth(rb.xz(c["apex"]), mouth_ex)
             if dm[0] < MOUTH_CLEAR_M and not ov.get("force"):
                 reasons.append("apex %.0f m from %s (< %.0f m: mouth-flare geometry)" % (dm[0], dm[1], MOUTH_CLEAR_M))
+            placed_shared = False
             if reasons:
                 skipped.append(dict(base, reasons=reasons))
+            else:
+                rec, reasons = place_corner(ctx, rb, c, cid_dir, ov, cfg)
+                if reasons and not ov.get("force"):
+                    skipped.append(dict(base, reasons=reasons, would_be=rec and rec["base_xz"]))
+                else:
+                    if reasons:
+                        rec["checks"]["warnings"] += ["FORCED past: " + r for r in reasons]
+                    signs.append(rec)
+                    placed_shared = True
+                    if rec["exclude_plant"]:
+                        excl.append(dict(rec["exclude_plant"], sign=rec["id"]))
+            # a per_layout MAINLINE corner (module doc "layout"): every race layout that drives this approach and
+            # got no shared plate gets its own plate behind its sealing wall — or a skip record of its own
+            if ov.get("per_layout") and rb.name == "MAINLINE" and not ov.get("skip") and not placed_shared:
+                for lo in ctx.race_layouts(direction):
+                    lid_dir = cid_dir + LAYOUT_SEP + lo["id"]
+                    lbase = dict(base, id=lid_dir, layout=lo["id"])
+                    if rule_reasons:
+                        skipped.append(dict(lbase, reasons=list(rule_reasons)))
+                        continue
+                    rec, lreasons = place_corner(ctx, rb, c, cid_dir, ov, cfg, layout=lo)
+                    if lreasons and not ov.get("force"):
+                        skipped.append(dict(lbase, reasons=lreasons, would_be=rec and rec["base_xz"]))
+                        continue
+                    if lreasons:
+                        rec["checks"]["warnings"] += ["FORCED past: " + r for r in lreasons]
+                    signs.append(rec)
+                    layout_plates.append(rec["id"])
+                    if rec["exclude_plant"]:
+                        excl.append(dict(rec["exclude_plant"], sign=rec["id"]))
+            if not placed_shared:
                 continue
-            rec, reasons = place_corner(ctx, rb, c, cid_dir, ov, cfg)
-            if reasons and not ov.get("force"):
-                skipped.append(dict(base, reasons=reasons, would_be=rec and rec["base_xz"]))
-                continue
-            if reasons:
-                rec["checks"]["warnings"] += ["FORCED past: " + r for r in reasons]
-            signs.append(rec)
-            if rec["exclude_plant"]:
-                excl.append(dict(rec["exclude_plant"], sign=rec["id"]))
             # hairpin: a second arrow from the R = 20 m crossing
             want2 = abs(c["D_deg"]) >= cfg["hairpin_deg"] and c["arc_m"] >= HAIRPIN_ARC_M
             if ov.get("second_arrow") is not None:
@@ -1174,7 +1430,17 @@ def place_all(proj, cfg=None, corners_cfg=None, signs_path=None, log=print, merg
         "exclude_plants": excl,
         "stale_overrides": stale,
         "pairs": [s["id"] for s in signs if s.get("pair")],
-        "counts": {"placed": len(signs), "plates": sum(len(plates_of(s)) for s in signs), "skipped": len(skipped)},
+        # ledger 0054 P4: the stitched north ribbon (its pieces, so the verifier rebuilds the same line), the gated discs,
+        # the race layouts and the plates that ship in a layout's closure kn5 rather than the road kn5
+        "north": ({"ribbon": ctx.north.name, "pieces": ctx.north_pieces, "points": len(ctx.north.raw),
+                   "pads": [n for n, _p, _b in ctx.field.polys], "stub_reach_m": ctx.stub_reach_m}
+                  if ctx.north is not None else None),
+        "north_note": ctx.north_note,
+        "gated_ribbons": list(ctx.gated),
+        "layouts": ctx.layouts,
+        "layout_plates": layout_plates,
+        "counts": {"placed": len(signs), "plates": sum(len(plates_of(s)) for s in signs), "skipped": len(skipped),
+                   "layout_plates": len(layout_plates)},
     }
     return out, ctx
 
@@ -1289,7 +1555,15 @@ def write_svg(path, out, ctx, win_m=60.0, px_per_m=6.0):
 
         g = ['<g><clipPath id="c%d"><rect x="%d" y="%d" width="%d" height="%d"/></clipPath><g clip-path="url(#c%d)">' % (k, ox, oy, W, W, k)]
         g.append('<rect x="%d" y="%d" width="%d" height="%d" fill="#3a5a34"/>' % (ox, oy, W, W))
+        # the junction pads' built decks (ledger 0054 P4): the pavement the north ribbon's ray crosses
+        for pname, poly, (x0, z0, x1, z1) in ctx.field.polys:
+            if x1 < cx - win_m or x0 > cx + win_m or z1 < cz - win_m or z0 > cz + win_m:
+                continue
+            g.append('<polygon points="%s" fill="#55555a" stroke="#b9b7ad" stroke-width="1"/>'
+                     % " ".join("%.1f,%.1f" % px(p) for p in poly))
         for rb in ctx.ribbons:
+            if ctx.north is not None and rb.name == ctx.north.name:
+                continue                                   # its pieces are drawn; the stitched line would double them
             near = [i for i in range(rb.n) if abs(rb.xz(i)[0] - cx) < win_m and abs(rb.xz(i)[1] - cz) < win_m]
             if not near:
                 continue
@@ -1327,6 +1601,9 @@ def write_svg(path, out, ctx, win_m=60.0, px_per_m=6.0):
                     "/".join("%.0f" % p["face_bearing_deg"] for p in plates_of(s)), "/".join(p["arrow"].upper() for p in plates_of(s))))
         g.append('<text x="%d" y="%d" fill="#ddd">ray %.0f m, curb clear %.2f m, lamp %.1f m, gate margin %.1f m</text>'
                  % (ox + 6, oy + 28, s["ray"]["len_m"], s["checks"].get("mesh_clear_m", s["checks"]["edge_clear_m"]), s["checks"]["lamp_m"], s["checks"]["gate_margin_m"]))
+        if s.get("layout"):
+            g.append('<text x="%d" y="%d" fill="#ffcc00">%s only: behind its sealing wall, %.2f m past the loop\'s lip (ships in its closure kn5)</text>'
+                     % (ox + 6, oy + 42, s["layout"], (s.get("wall") or {}).get("behind_lip_m", 0.0)))
         g.append('<line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#fff" stroke-width="3"/><text x="%d" y="%d" fill="#fff">10 m</text>'
                  % (ox + 8, oy + W - 10, ox + 8 + int(10 * px_per_m), oy + W - 10, ox + 8, oy + W - 14))
         g.append('<line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#fff" stroke-width="2"/><text x="%d" y="%d" fill="#fff">N</text>'
@@ -1351,8 +1628,12 @@ def summary_line(out):
     pairs = sum(1 for s in out["signs"] if s.get("pair"))
     md = direction_counts(out)
     main = ("; mainline plates %d fwd / %d rev" % (md["fwd"], md["rev"])) if md["rev"] else ""
-    return "%d placed (%s%s%s), %d skipped" % (len(out["signs"]), ", ".join("%d %s" % (v, k) for k, v in sorted(kinds.items())) or "-",
-                                               ("; %d paired post%s" % (pairs, "s" if pairs != 1 else "")) if pairs else "", main, len(out["skipped"]))
+    lay = [s["id"] for s in out["signs"] if s.get("layout")]
+    layout = ("; %d layout plate%s (%s)" % (len(lay), "s" if len(lay) != 1 else "", ", ".join(lay))) if lay else ""
+    north = sum(1 for s in out["signs"] if s["ribbon"] == NORTH_RIBBON)
+    northtxt = ("; %d on the north ribbon" % north) if north else ""
+    return "%d placed (%s%s%s%s%s), %d skipped" % (len(out["signs"]), ", ".join("%d %s" % (v, k) for k, v in sorted(kinds.items())) or "-",
+                                                   ("; %d paired post%s" % (pairs, "s" if pairs != 1 else "")) if pairs else "", main, layout, northtxt, len(out["skipped"]))
 
 
 def direction_counts(out):

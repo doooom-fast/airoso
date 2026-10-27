@@ -163,6 +163,7 @@
       "direction": "forward",
       "race_furniture": true,
       "closure_token": "cw",
+      "map": "lap",
       "start": {
         "line_vertex": 300,
         "grid_vertex": 291,
@@ -183,6 +184,7 @@
       "direction": "reverse",
       "race_furniture": true,
       "closure_token": "acw",
+      "map": "lap",
       "start": {
         "line_vertex": 300,
         "grid_vertex": 310,

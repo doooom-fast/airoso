@@ -279,21 +279,46 @@ def is_race_name(name):
 def race_role(name):
     """what a RACE object is, from its name alone: 'close' (a per-direction closure), 'edge' (a common curb
     strip), 'kerb' (a common race kerb), 'kbar' (the RETIRED ledger-0047 centre chain — a FAIL wherever it
-    shows up), 'other' (another RACE-prefixed name); None for a non-race name"""
+    shows up), 'sign' (a per-layout W1-6 plate, ledger 0054 P4: SIGN*_<token>_<k>, routed with its layout's
+    closure), 'other' (another RACE-prefixed name); None for a non-race name"""
     u = str(name).upper()
     for tag, role in ((CLOSE_TAG, "close"), (EDGE_TAG, "edge"), (KERB_TAG, "kerb"), (KBAR_TAG, "kbar")):
         if u.startswith(tag):
             return role
+    if layout_sign_owner(name) is not None:
+        return "sign"
     return "other" if u.startswith(RACE_PREFIXES) else None
 
 
 def race_owner(name):
-    """the owner token of a closure `1WALL_race_close_<token>_<street>_<k>_<part>` (lower case), else None — the
-    common furniture (curb strips, kerbs) belongs to every race layout"""
+    """the owner token of a closure `1WALL_race_close_<token>_<street>_<k>_<part>` or of a per-layout sign plate
+    `SIGNPLATE_<token>_<k>` (lower case), else None — the common furniture (curb strips, kerbs) belongs to every race
+    layout"""
     if not str(name).upper().startswith(CLOSE_TAG):
-        return None
+        return layout_sign_owner(name)
     tok = str(name)[len(CLOSE_TAG):].split("_", 1)[0].lower()
     return tok or None
+
+
+# ledger 0054 P4: a race layout's own W1-6 plates (tools/author_signs_blend.py, a per_layout corner of signs.json) —
+# SIGNPLATE_<token>_<k> / SIGNARROW_<token>_<k> / SIGNPOST_<token>_<k> in the RACE_CLOSE_<TOKEN> collection, routed into
+# that layout's closure kn5 by the export split and allowed there by every content guard. The road kn5's own plates are
+# SIGNPLATE_<k> (no token field) and never match. A material is named <object>_mat by the prep: it is matched on its
+# object's name.
+SIGN_PREFIXES = ("SIGNPLATE", "SIGNARROW", "SIGNPOST")
+SIGN_RE = re.compile(r"^(SIGNPLATE|SIGNARROW|SIGNPOST)_([a-z0-9]+)_(\d+)(?:_mat)?(?:\.\d+)?$", re.I)
+
+
+def layout_sign_owner(name):
+    """the owner token (lower case) of a per-layout sign mesh / its material, else None"""
+    m = SIGN_RE.match(str(name))
+    if not m:
+        return None
+    return m.group(2).lower()
+
+
+def is_layout_sign_name(name):
+    return layout_sign_owner(name) is not None
 
 
 def closure_collection(token):

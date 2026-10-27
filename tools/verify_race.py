@@ -609,12 +609,17 @@ def tree_items_planned(proj: Path) -> list[dict]:
 
 
 def sign_items(signs: dict) -> list[dict]:
-    """every W1-6 sign post of data/signs.local.json (tools/place_signs.py: `base_xz`, engine frame)"""
+    """every W1-6 sign post of data/signs.local.json (tools/place_signs.py: `base_xz`, engine frame). A LAYOUT PLATE
+    (ledger 0054 P4, record "layout": it ships in that layout's closure kn5 and no other layout loads it) carries its
+    layout id and is judged against that layout alone."""
     out = []
     for s in (signs or {}).get("signs", []) or []:
         b = s.get("base_xz")
         if isinstance(b, (list, tuple)) and len(b) >= 2:
-            out.append({"kind": "sign", "id": str(s.get("id")), "x": float(b[0]), "z": float(b[1]), "r": SIGN_POST_R_M})
+            it = {"kind": "sign", "id": str(s.get("id")), "x": float(b[0]), "z": float(b[1]), "r": SIGN_POST_R_M}
+            if s.get("layout"):
+                it["layout"] = str(s["layout"])
+            out.append(it)
     return out
 
 
@@ -665,6 +670,8 @@ def scenery_margins(items: list, bands: dict, pts: list, widths: list, grid=None
             inner, outer = edge
             strip = ((a - outer) if a >= outer else ((inner - a) if a <= inner else -min(a - inner, outer - a))) - r
         for lid, c in sorted(cors.items()):
+            if it.get("layout") and str(it["layout"]) != str(lid):
+                continue                                   # another layout's own plate: never loaded here
             cand = [] if strip is None else [("curb strip", strip)]
             ln = _lane_at(c.get("lane_by_vertex") or [], pts, m, k, x, z)
             if ln is not None:

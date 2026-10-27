@@ -416,6 +416,8 @@ Steps 2–8 can start now on a branch off the 0046 branch, and get rebased after
 
 ### P4 — Dressing → **Drive 2 (v0.19.x)**
 
+> **2026-10-26: steps 1 and 6 (signs, map) built and rehearsed on a branch (full chain, `--no-install`), not installed — ledger 0054 "P4 signs".** The W1-6 rule reads the north network's turns off ONE stitched centre ribbon J1 → J5 through the pads (`tools/expansion_lines.centre_ribbon`), with the built pad decks as pavement: six plates at J2 / J3 / J4, both ways (a plate behind a stub's K-rail where the ray runs down a stub arm, per A8). M3 and M4 are `per_layout` in `signs.json`: Free Roam gets no arrow at J1 / J5 (straight on is a road, the rule's own skip), each Speedway gets its own plate behind its sealing wall, built into its `RACE_CLOSE_<TOKEN>` collection and shipped in its closure kn5 (A7 as decided). `make_map` draws each Speedway's map and outline from its lap alone (`layouts[].map: "lap"`, A12); Free Roam's shows the whole network. The signs step now runs after the race furniture on every ship. Steps 2–5 (lamps, trees, buildings, GrassFX) are sibling branches.
+
 1. **Signs (A8).**
    - **adapted** `place_signs` detects tight corners on the expansion pieces in both directions.
    - `signs.json` gets the M3/M4 per-layout entries, plus skip entries with reasons.
@@ -479,11 +481,11 @@ The Lariat resumes after these (ledger 0048), and Sand Creek after that.
 | `race.kerbs.trims` | reused | drop at apex 1514 L and 2319 L |
 | `drive_test` | adapted | `--line` to sweep connector pieces |
 | `audit_mesh`, `verify_kn5`, `kn5_ground_check` | reused | — |
-| `place_signs`, `author_signs_blend` | adapted | expansion corners; per-layout plates (M3/M4) |
+| `place_signs`, `author_signs_blend` | **adapted (P4, 2026-10-26)** | the stitched north ribbon + pad decks (J2 / J3 / J4 both ways); per-layout plates (M3 / M4) behind each Speedway's wall, in its closure kn5; `verify_signs` (m) per layout |
 | `build_streetlights` | adapted | connector lines, pavement clearance |
 | `make_treefx` | adapted | surface list from config, caps by area |
 | `build_loop_blend` (buildings pass) | adapted | 120 m from any drivable piece |
-| `make_map` | adapted | per-layout lap filter |
+| `make_map` | **adapted (P4, 2026-10-26)** | per-layout lap filter: `layouts[].map` `"lap"` (the Speedways) draws the lap alone, map + CM outline |
 | `ship_sd.sh` + `ship_track.sh` + `ship.json` | adapted | new steps and sync-in entries in both chains |
 | engine-july prep balanced tiling | reused (0046 branch) | precondition: v0.18.x merged |
 | `sightline_check` (0046) | reused | new stations |

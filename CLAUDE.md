@@ -85,6 +85,21 @@ freeway). Tracks are **discovered** by scanning, not listed by hand.
 - **`fleet-builder`** — builds a selection across repos, reports the matrix *including its holes*.
 - **`engine-pin`** — operates the version seam: rehearse, cut over, converge, bisect.
 
+## Agent model tiers (Kevin, 2026-10-26)
+
+Every Workflow/Agent call inherits the session model unless `model` is set. **Decide the tier for each
+agent before launching, never afterward; an omitted `model` is a bug, not a default.**
+
+| Tier | Jobs |
+|---|---|
+| session model (Fable/Opus-class), `effort: high` | geometry authoring, Blender builds iterated against gates, branch integration/merge, judgment lenses (real-world truth, the look), diagnosis |
+| `sonnet`, `effort: low`/`medium` | mechanical verification (re-run gates and diff the numbers, check the files AC loads, md5/manifest checks), log parsing, scouting, listing |
+| `haiku` | trivial lookups and greps |
+
+Put the tier in `meta.phases[].model` so the progress tree shows it, and say the tiering in the launch
+message. Sequential mechanical follow-up (merge → engine-july mirror → tests → ship) runs inline, no agent.
+The quality comes from the build → refute → repair loop, not from the top model on every seat.
+
 `.claude/skills/` — the pipeline skills (`gps-extraction`, `aerial-tracing`, `elevation`,
 `road-grounding`, `track-grading`, `mesh-audit`, `drive-test`, `ac-track-modding`, `lighting`,
 `route-tracing`, `scs-extraction`) plus **`track-feedback`** for filing into the ledger.

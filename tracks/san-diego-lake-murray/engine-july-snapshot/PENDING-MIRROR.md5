@@ -1,4 +1,0 @@
-# old md5 (still live in C:/Users/Owner/Documents/GitHub/engine-july)  new md5 (this snapshot)  path —
-# changes rehearsed on a scratch ENG copy, to mirror into the real engine-july (cp, then check the
-# md5). Written by tools/snapshot_engine_july.py; tests accept the old md5 until then.
-92569ac86ae2fcadedc8878b28d8eda3  79baf5153bb2f985c6e31bb7e8eb53b9  scripts/ac/pbr.py

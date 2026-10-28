@@ -6,7 +6,7 @@ with the build session's first concrete steps. Kevin approves a dossier before a
 
 | File | Subject | Decision Kevin owes |
 |---|---|---|
-| [`tracks/milford-road-course/DOSSIER.md`](../tracks/milford-road-course/DOSSIER.md) | GM proving grounds worldwide (deep on Milford), every Michigan road course, ranked recommendation, full dossier for the Milford Road Course (Part D) | Confirm the first build: Milford Road Course (recommended), Grattan as fallback, MIS road course third |
+| [`tracks/milford-road-course/DOSSIER.md`](../tracks/milford-road-course/DOSSIER.md) | GM proving grounds worldwide (deep on Milford), every Michigan road course, ranked recommendation, full dossier for the Milford Road Course (Part D) | **Approved 2026-10-28** ("Build Milford first"). Built: v0.1.0 at T1, see `tracks/milford-road-course/source/route-notes.md` |
 | [`tracks/exotics-racing-lv/DOSSIER.md`](../tracks/exotics-racing-lv/DOSSIER.md) | Exotics Racing, Las Vegas | **The LVMS track closed 2021-11-28; Exotics Racing now runs at SpeedVegas.** Pick target A (shut-down LVMS circuit from historical imagery) or B (current SpeedVegas track) |
 | [`fleet/reference/SATELLITE-ROAD-TEXTURES.md`](../fleet/reference/SATELLITE-ROAD-TEXTURES.md) | Orthoimagery as hi-res AC road textures: sources and licences, GSD at driver height, shader layering, texture budget, proposed engine addition and gates | Whether to add the three `scripts/aerial/ortho_*` modules; which imagery licence to accept per track |
 

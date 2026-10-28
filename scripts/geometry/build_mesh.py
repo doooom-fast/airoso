@@ -1210,17 +1210,28 @@ def build(project_dir: str | Path) -> dict:
             print(f"  [sidewalk] despiked {_despiked} strip vert(s) that drape-dropped >"
                   f"{_MAX_DROP:.2f} m below the road inside the walk band")
         edge_group, edge_mat = "1KERB_sidewalk", "kerb"
-    elif cfg_raw.get("natural_ground"):
-        # NATURAL GROUND (Kevin, 2026-08-09, verbatim diagnosis: "you can't seem to generate
-        # natural ground... it's obvious how the terrain should meet the road when you look at
-        # it. There's a ton of extra terrain now just for you to cut it into a moat"). The lidar
-        # already recorded the real earthworks — real shoulders, ditches, cut faces are IN the
-        # 3DEP heights. So: NO constructed corridor. A plain two-point verge (road_shoulder's
-        # no-ground fallback: lip + 1 m verge, no sections, which also silences the ring
-        # annulus, the graded floor and the stone lips downstream), raw-grid grass everywhere,
-        # and a short blend band sewn in later where grass approaches the deck.
-        shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
-                                        ground_drop=GRASS_CLEARANCE_M)
+    else:
+        if cfg_raw.get("natural_ground"):
+            # NATURAL GROUND (Kevin, 2026-08-09, verbatim diagnosis: "you can't seem to generate
+            # natural ground... it's obvious how the terrain should meet the road when you look at
+            # it. There's a ton of extra terrain now just for you to cut it into a moat"). The lidar
+            # already recorded the real earthworks — real shoulders, ditches, cut faces are IN the
+            # 3DEP heights. So: NO constructed corridor. A plain two-point verge (road_shoulder's
+            # no-ground fallback: lip + 1 m verge, no sections, which also silences the ring
+            # annulus, the graded floor and the stone lips downstream), raw-grid grass everywhere,
+            # and a short blend band sewn in later where grass approaches the deck.
+            shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
+                                            ground_drop=GRASS_CLEARANCE_M)
+        else:
+            # CONSTRUCTED (the default): the verge drapes onto grass_surf and the construction
+            # selector grades each edge (fill_apron on tarmac keeps deep fills gentle). The
+            # natural_ground port (6f1c734, 2026-08-19) rewrote this `else:` as
+            # `elif natural_ground:`, so every track with neither a sidewalk nor natural ground
+            # died on an unbound edge_group (found on Milford, 2026-10-28).
+            shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
+                                            ground_drop=GRASS_CLEARANCE_M, ground=grass_surf,
+                                            fill_apron=(str(cfg_raw.get("road_surface", "tarmac"))
+                                                        == "tarmac"))
         edge_group, edge_mat = "1ROAD_shoulder", "road"
         _pav_reg(edge_group, shoulder, "shoulder")
         # CONNECTORS GET A DRAPED VERGE TOO. The main loop's shoulder extends a MANAGED corridor

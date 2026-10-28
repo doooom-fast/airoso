@@ -13,7 +13,9 @@ prototype a full track from a drive. Pure stdlib.
     python -m scripts.gps.from_track <project_dir> <track.json> [<track2.json> ...] [--loop] [--width 8]
 
 Each ``track.json`` is a list of ``{"t","lat","lon",...}`` fixes (the redtiger_gps / dashcam_tracks
-format). Multiple files are merged in time order (a drive split across 5-minute clips).
+format). Multiple files are merged in time order (a drive split across 5-minute clips). A fix may also
+carry ``"w"``, the paved width in metres measured at that point (an aerial trace has it, a drive does
+not); when every fix has one, each resampled vertex takes the width at its station instead of ``--width``.
 """
 
 from __future__ import annotations
@@ -28,15 +30,16 @@ from scripts.gps.centerline import (RESAMPLE_SPACING_M, _feature, haversine, pol
 Vertex = tuple[float, float]
 
 
-def _load(paths: list[str]) -> list[tuple[str, float, float]]:
+def _load(paths: list[str]) -> list[tuple[str, float, float, float | None]]:
     """Merge fix lists from one or more dashcam/phone track JSONs, ordered by timestamp, de-duped."""
-    fixes: list[tuple[str, float, float]] = []
+    fixes: list[tuple[str, float, float, float | None]] = []
     for p in paths:
         for f in json.loads(Path(p).read_text()):
             if f.get("lat") is not None and f.get("lon") is not None:
-                fixes.append((f.get("t", ""), float(f["lat"]), float(f["lon"])))
+                w = f.get("w")
+                fixes.append((f.get("t", ""), float(f["lat"]), float(f["lon"]), None if w is None else float(w)))
     fixes.sort(key=lambda r: r[0])
-    out: list[tuple[str, float, float]] = []
+    out: list[tuple[str, float, float, float | None]] = []
     for f in fixes:
         if not out or (abs(f[1] - out[-1][1]) + abs(f[2] - out[-1][2])) > 1e-7:
             out.append(f)
@@ -65,19 +68,36 @@ def build_from_track(project_dir: str | Path, track_paths: list[str], *,
     if len(fixes) < 10:
         raise SystemExit(f"only {len(fixes)} usable fixes — need a longer track")
     # (lon, lat) ring to match the geojson convention; smooth then close then resample
-    ring: list[Vertex] = [(lon, lat) for _t, lat, lon in fixes]
+    ring: list[Vertex] = [(lon, lat) for _t, lat, lon, _w in fixes]
     ring = _smooth(ring, smooth_window)
     close_gap = haversine(ring[0], ring[-1])
     if loop and ring[0] != ring[-1]:
         ring.append(ring[0])                      # bridge the start/end gap into a closed circuit
+    src = ring
     ring = resample(ring, RESAMPLE_SPACING_M)
     widths = [width_m] * len(ring)
+    measured = [f[3] for f in fixes]
+    if all(w is not None for w in measured):
+        # measured widths ride on the source stations: each resampled vertex takes the width of the
+        # fix at the same distance along the (smoothed) source line
+        if loop and len(measured) < len(src):
+            measured.append(measured[0])
+        s_src, acc = [], 0.0
+        for i, p in enumerate(src):
+            acc += haversine(src[i - 1], p) if i else 0.0
+            s_src.append(acc)
+        j, acc = 0, 0.0
+        for i, p in enumerate(ring):
+            acc += haversine(ring[i - 1], p) if i else 0.0
+            while j + 1 < len(s_src) and s_src[j + 1] <= acc:
+                j += 1
+            widths[i] = measured[j]
     length_m = polyline_length(ring)
 
     lons = [p[0] for p in ring]; lats = [p[1] for p in ring]
     bbox = [round(min(lats), 5), round(min(lons), 5), round(max(lats), 5), round(max(lons), 5)]
     feat = _feature("centerline", "full", ring,
-                    {"closed": loop, "default_width_m": width_m,
+                    {"closed": loop, "default_width_m": width_m if None in measured else round(sorted(measured)[len(measured) // 2], 2),
                      "widths_m": [round(w, 2) for w in widths], "length_m": round(length_m, 1),
                      "point_count": len(ring), "roads": ["<from GPS drive>"]})
     out = project_dir / "data" / "centerline.geojson"

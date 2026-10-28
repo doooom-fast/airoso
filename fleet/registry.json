@@ -37,8 +37,8 @@
       "_remote_doc": "No GitHub remote is configured: `git remote -v` lists only `engine` (the local k10-track-agents clone whose history airoso adopted, docs/V3-PLAN.md Phase 1).",
       "role": "THE one repo (V3): the engine, the gates, the doctrine and the ledger, plus every track as its source of truth moves here",
       "engine_repo": true,
-      "tracks_glob": "tracks/lookout-lariat/track.config.json",
-      "_tracks_glob_doc": "Only the tracks that have MOVED here. The other tracks/ dirs are Phase-1 imports whose fleet entry still points at their retired repo, and globbing them now would discover every Colorado track twice (S7 slug collisions). Widen this glob as each track moves, and add its dir to the old repo's moved_out in the same edit.",
+      "tracks_glob": ["tracks/lookout-lariat/track.config.json", "tracks/milford-road-course/track.config.json"],
+      "_tracks_glob_doc": "Only the tracks that have MOVED here. The other tracks/ dirs are Phase-1 imports whose fleet entry still points at their retired repo, and globbing them now would discover every Colorado track twice (S7 slug collisions). Widen this glob as each track moves, and add its dir to the old repo's moved_out in the same edit. A list since 2026-10-28: Milford is the first track born here rather than moved.",
       "build": {
         "cmd": null,
         "hold": "no fleet build for the V3 Lariat yet. scripts/build.sh is the engine's whole draft pipeline: on this track its mesh stage failed drive_test at v0.66.3 (2026-08-09) and its environment stage lays the I-70/C-470 decks (ledger 0048), and V3 uses the engine for the first draft only. The V3 chain is tools/ship_track.sh + tracks/lookout-lariat/ship.json (V3-PLAN P1), not written yet."
@@ -118,6 +118,12 @@
       "owner_of": [
         "engine-legacy/projects/sand-creek-raceway"
       ]
+    },
+    "airoso/milford-road-course": {
+      "kind": "circuit_port",
+      "fidelity": "real",
+      "source": "aerial trace off USDA NAIP 2022 (OSM raceway ways mis-drawn; topology only), 3DEP 1 m elevation",
+      "born_here": "2026-10-28, the first track created in airoso (dossier: tracks/milford-road-course/DOSSIER.md Part D)"
     },
     "airoso/lookout-lariat": {
       "kind": "street_port",

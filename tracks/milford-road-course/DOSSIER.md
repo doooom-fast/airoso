@@ -366,7 +366,9 @@ frames. `true_north_rotation_deg` is derived by `lighting` and written back (L2)
 6. Gates at current GATES-CHANGELOG thresholds. **First question for the drive test:** "Does the
    41 m of relief feel like a hill course, or did smoothing flatten the crests?"
 
-**Kevin's approval:** ☐ approved as-is · ☐ approved with changes — date: ____
+**Kevin's approval:** ☑ approved as-is ("Build Milford first") · ☐ approved with changes — date: 2026-10-28.
+What the build found against this file is in `source/route-notes.md`: OSM has the course but draws
+it wrong, the relief matches (39.7 m) and the length doesn't (4.07 km, not 4.7).
 
 ---
 

@@ -47,6 +47,7 @@ Recorded conservatively — a tier not evidenced here is not held.
 | Dragon Tail / Under the Dragon (gravel) | **T0** | Packaged and shipped; gates not re-run at current engine |
 | Grand Junction, Pikes Peak | **blocked** | Rough everywhere, mechanism not found (0018 / 0031) |
 | Dragon Tail / Under the Dragon (tarmac) | **blocked** | No packaged build |
+| Milford Road Course | **T1** (T0 caveat) | 2026-10-28, v0.1.0, constructed corridor: drive_test PASS (ground-on-top 0, gated drops 1, bumps 17.2/km), audit_mesh CLEAN, verify_kn5 PASS, kn5_ground_check PASS (`tracks/milford-road-course/source/route-notes.md`). **T0 caveat:** `scripts/build.sh` itself stops at its repo-wide PoT pre-flight on two Lake Murray sign-tool chevrons (`assets/textures/mutcd_w1-8l/r.png`, 1024x1365) this track never binds; the build ran as build.sh's own stage commands, gates unchanged. Installed 2026-10-28 14:07 to content/tracks/milford_road_course (kn5 md5 5fd3c911, matches the build); T2 open: load to spawn in the seat |
 | Nordschleife, Bathurst | **calibration** | Not products — the answer key that fixed the DEM (0030) and is testing the roughness mechanism (0031) |
 
 **No k10 track has ever held T2.** As of v0.14.0 / v0.22.0 / v0.3.0 every packaged track ships a

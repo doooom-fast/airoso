@@ -47,6 +47,24 @@ def test_builds_closed_centerline_from_drive():
         assert (proj / "data" / "centerline_preview.svg").exists()
 
 
+def test_measured_widths_ride_on_their_stations():
+    with tempfile.TemporaryDirectory() as d:
+        proj = Path(d)
+        trk = proj / "track.json"
+        _square_track(trk)
+        fixes = json.loads(trk.read_text())
+        for i, f in enumerate(fixes):
+            f["w"] = 16.0 if i < 40 else 10.0                    # first side measured wide (a front straight)
+        trk.write_text(json.dumps(fixes))
+        out, _ = ft.build_from_track(proj, [str(trk)], loop=True, width_m=8.0)
+        cl = json.loads(out.read_text())["features"][0]["properties"]
+        w = cl["widths_m"]
+        assert set(w) == {16.0, 10.0}                             # --width ignored once every fix is measured
+        assert w[5] == 16.0 and w[len(w) // 2] == 10.0
+        assert 0.2 < w.count(16.0) / len(w) < 0.3                 # one side of four
+        assert cl["default_width_m"] == 10.0                      # the median measured width
+
+
 def test_resample_spacing_is_even():
     import math
     with tempfile.TemporaryDirectory() as d:

@@ -2,7 +2,7 @@ name: tests
 
 # The first machine check in this lineage's history. The suite is hermetic — no Blender, no AC,
 # no network — and needs only the stdlib plus Pillow (tools/make_map.py draws map.png; a test imports
-# it), so it runs anywhere in seconds. It cannot judge a track (rule 0: only the game does that); it
+# it), so it runs anywhere in minutes. It cannot judge a track (rule 0: only the game does that); it
 # judges the engine that builds one.
 on:
   push:
@@ -12,7 +12,7 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30   # the full suite takes ~11 min on a hosted runner (968 tests, several build fixtures)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

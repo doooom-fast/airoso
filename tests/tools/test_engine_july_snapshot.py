@@ -23,6 +23,12 @@ def _manifest(name):
     return snap.read_manifest(SNAP / name)
 
 
+def _snapshot_files():
+    """every file in the snapshot except bytecode caches — tests that import a snapshot copy leave
+    __pycache__/ behind (gitignored, never snapshot content)"""
+    return [p for p in SNAP.rglob("*") if p.is_file() and "__pycache__" not in p.relative_to(SNAP).parts]
+
+
 def test_snapshot_copies_match_their_manifest_and_stay_small():
     rows = _manifest(snap.MANIFEST)
     assert len(rows) >= 20, len(rows)
@@ -31,13 +37,13 @@ def test_snapshot_copies_match_their_manifest_and_stay_small():
         assert p.is_file(), f"manifest names {rel} but the snapshot has no copy"
         assert snap.md5(p) == h, f"snapshot copy {rel} was edited (md5 {snap.md5(p)} != manifest {h})"
     listed = {rel for _, rel in rows}
-    extra = [p.relative_to(SNAP).as_posix() for p in SNAP.rglob("*") if p.is_file()
-             and p.name not in ("README.md", snap.MANIFEST, snap.REFERENCED, snap.EXCLUDED, snap.PENDING)
+    extra = [p.relative_to(SNAP).as_posix() for p in _snapshot_files()
+             if p.name not in ("README.md", snap.MANIFEST, snap.REFERENCED, snap.EXCLUDED, snap.PENDING)
              and p.relative_to(SNAP).as_posix() not in listed]
     assert not extra, f"files in the snapshot no manifest line covers: {extra}"
-    total = sum(p.stat().st_size for p in SNAP.rglob("*") if p.is_file())
+    total = sum(p.stat().st_size for p in _snapshot_files())
     assert total < snap.SIZE_CAP, f"snapshot is {total / 1e6:.2f} MB"
-    assert not [p for p in SNAP.rglob("*") if p.suffix.lower() in snap.EXCLUDE_SUFFIXES], "binaries copied"
+    assert not [p for p in _snapshot_files() if p.suffix.lower() in snap.EXCLUDE_SUFFIXES], "binaries copied"
 
 
 def test_every_engine_file_ship_sd_executes_is_snapshotted():

@@ -52,7 +52,10 @@ def _load(p: Path):
 CORR = _load(ROOT / "tests" / "ac" / "test_ai_corridor.py")
 LAY = _load(ROOT / "tests" / "ac" / "test_write_ai_line_layouts.py")
 
-# every file the writer emitted for the two fixtures before ledger 0052 (HEAD 5ccf20b, this PC)
+# every file the writer emitted for the two fixtures before ledger 0052 (HEAD 5ccf20b, this PC — Windows).
+# The bytes are platform-specific in two ways, so each platform keeps its own table: text files (.csv, ai_draft.json)
+# carry the platform's newline, and the v2 corridor fixture's trig lands a last-ulp apart between the MS UCRT libm
+# and glibc, which moves the packed .ai floats and the json's float repr. The v1 .ai files agree everywhere.
 GOLDEN = {
     "v2/race_cw/ai_draft.json": "be69544c02104d3bfb6ea0cfd8dde33b",
     "v2/race_cw/fast_lane.ai": "f24910802d817769a88cbeb59b578062",
@@ -80,6 +83,40 @@ GOLDEN = {
     "v1/street/side_l.csv": "ada964b587dc5b4ab0066d7889cf2002",
     "v1/street/side_r.csv": "48886d0eec618d419aaa21738da49393",
 }
+
+# the same files from the same writer on Linux/glibc (recorded 2026-10-28, identical under CPython 3.11 and 3.13)
+GOLDEN_LINUX = {
+    "v2/race_cw/ai_draft.json": "b21e9fd0ecefb28f516adfba39bf60b9",
+    "v2/race_cw/fast_lane.ai": "6d46075f9ca5bb56300cc71b8c6faf6a",
+    "v2/race_cw/pit_lane.ai": "6d46075f9ca5bb56300cc71b8c6faf6a",
+    "v2/race_cw/side_l.csv": "cf4917858fdfc2a6cd01e31e640be346",
+    "v2/race_cw/side_r.csv": "6761a632b9d4ce96b8a2778b7635c0a7",
+    "v2/race_acw/ai_draft.json": "62f1362ca739f1be63577c2e9b55cb3a",
+    "v2/race_acw/fast_lane.ai": "46c968981e0de38e7ac6ff6d3277e09c",
+    "v2/race_acw/pit_lane.ai": "46c968981e0de38e7ac6ff6d3277e09c",
+    "v2/race_acw/side_l.csv": "d495532e14b9d4f0556543583f59ef01",
+    "v2/race_acw/side_r.csv": "38425ee948e863886e1cf34f9614da32",
+    "v1/race_cw/ai_draft.json": "98c7b37762bf736a4fd755f1e46fd859",
+    "v1/race_cw/fast_lane.ai": "971869bafbdd52fff5637286c54d32a3",
+    "v1/race_cw/pit_lane.ai": "971869bafbdd52fff5637286c54d32a3",
+    "v1/race_cw/side_l.csv": "f79e2c82325bf3179dbfe2353665e1b3",
+    "v1/race_cw/side_r.csv": "da983567a95831671ee9f437b10a5882",
+    "v1/race_acw/ai_draft.json": "ec294ce6d7ca076a29f6c0729fc8dd70",
+    "v1/race_acw/fast_lane.ai": "3ee36ca9bc3cc78dd42269c2780bc75e",
+    "v1/race_acw/pit_lane.ai": "3ee36ca9bc3cc78dd42269c2780bc75e",
+    "v1/race_acw/side_l.csv": "f5c0a3f0f19e273824e8bbc9b473d76b",
+    "v1/race_acw/side_r.csv": "dcd442de36a875a2978b44b486cd4e36",
+    "v1/street/ai_draft.json": "4f6ef44114afc4316a72eeacf06b771b",
+    "v1/street/fast_lane.ai": "d873fa99c8a76f427445da87adfadc06",
+    "v1/street/pit_lane.ai": "d873fa99c8a76f427445da87adfadc06",
+    "v1/street/side_l.csv": "d8dcb9962e01eedc066c748f31d35578",
+    "v1/street/side_r.csv": "8956d391fc2ddaa038b54a7d4711471d",
+}
+
+
+def _golden() -> dict | None:
+    """this platform's recorded bytes, or None where none were recorded (macOS: libm differs again)"""
+    return {"win32": GOLDEN, "linux": GOLDEN_LINUX}.get(sys.platform)
 
 OPTS = {"_note": "ledger 0052", "layouts": ["race_cw", "race_acw"], "payload": "kunos", "wall_clear_m": 2.5,
         "fair": True, "surface": "gate_obj"}
@@ -138,6 +175,10 @@ def _gate_obj(d: Path, layout: str, *, walls: bool = True) -> Path:
 # --- today's bytes without the opt-in -----------------------------------------------------------------------
 
 def test_without_the_ai_block_every_file_is_todays_bytes():
+    golden = _golden()
+    if golden is None:
+        print(f"  (no golden bytes recorded for {sys.platform} — byte check skipped)")
+        return
     with tempfile.TemporaryDirectory() as td:
         got = {}
         d = CORR._v2_project(Path(td) / "v2")
@@ -148,11 +189,11 @@ def test_without_the_ai_block_every_file_is_todays_bytes():
         for lid in ("race_cw", "race_acw", "street"):
             _quiet(w.main, [str(d1), "--layout", lid])
             got.update(_md5s(d1 / "ai" / lid, f"v1/{lid}"))
-        assert got == GOLDEN, sorted(k for k in GOLDEN if got.get(k) != GOLDEN[k])
+        assert got == golden, sorted(k for k in golden if got.get(k) != golden[k])
         # an ai block that lists only the race layouts leaves the street layout's files byte-identical
         _set_ai(d1, dict(OPTS, layouts=["race_cw", "race_acw"]))
         _quiet(w.main, [str(d1), "--layout", "street"])
-        assert _md5s(d1 / "ai" / "street", "v1/street") == {k: v for k, v in GOLDEN.items() if k.startswith("v1/street/")}
+        assert _md5s(d1 / "ai" / "street", "v1/street") == {k: v for k, v in golden.items() if k.startswith("v1/street/")}
 
 
 # --- the opt-in, end to end on a synthetic BUILT world ---------------------------------------------------------

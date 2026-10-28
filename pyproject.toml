@@ -23,6 +23,7 @@ dependencies = [
   "trimesh>=4.0",     # mesh validation
   "astral>=3.2",      # solar azimuth/elevation for lighting
   "truststore>=0.10", # OS certificate verifier for urllib fetches (scripts/tls.py; Windows Overpass)
+  "pillow>=10.0",     # map.png / sign / kerb texture painting (tools/make_map.py, scripts/ac/track_folder.py)
 ]
 
 [project.scripts]

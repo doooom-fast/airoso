@@ -365,10 +365,11 @@ def write_all(project_dir, config_path=None, only=None, issue_spawn=None) -> int
         out.write_text(json.dumps(d, indent=1), encoding="utf-8")
         written.append(out)
         s0 = d["AC_START_0"]
+        last_pit_v = d["_vertex"][f"AC_PIT_{int(race.get('pit_slots', 8)) - 1}"]   # hoisted: a nested f-string is 3.12+
         print(f"[dummies] {lid:9} {d['_direction']:7} pole v{d['_vertex']['AC_START_0']} "
               f"({s0[0]:.2f}, {s0[1]:.2f}, {s0[2]:.2f}) right {d['_right_of_travel_m']['AC_START_0']:+.2f} m "
               f"yaw {d['_yaw_deg']['AC_START_0']:+.1f} deg; line v{d['_line']['vertex']} "
-              f"{d['_line']['pole_behind_line_m']:.1f} m ahead; pits v{d['_vertex']['AC_PIT_0']}..v{d['_vertex'][f'AC_PIT_{int(race.get('pit_slots', 8)) - 1}']}"
+              f"{d['_line']['pole_behind_line_m']:.1f} m ahead; pits v{d['_vertex']['AC_PIT_0']}..v{last_pit_v}"
               f"{'; ISSUE SPAWN ' + repr(ov['key']) if ov else ''} -> {out.name}")
     # stale per-layout files: a dummies_<x>.json whose id is no longer a layout would still become a
     # spawn kn5 through any glob-driven writer

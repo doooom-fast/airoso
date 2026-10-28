@@ -443,7 +443,12 @@ class Samples:
 # ------------------------------------------------------------------------------------------------ inputs
 
 def sha16(p: Path) -> str:
-    return hashlib.sha256(p.read_bytes()).hexdigest()[:16]
+    """first 16 hex of sha256 — text inputs (.json/.csv) hashed with CRLF read as LF, so the provenance is the
+    same from a Windows checkout (autocrlf) and from git's LF blob on Linux/macOS"""
+    b = p.read_bytes()
+    if p.suffix.lower() in (".json", ".csv", ".txt", ".md"):
+        b = b.replace(b"\r\n", b"\n")
+    return hashlib.sha256(b).hexdigest()[:16]
 
 
 def _rel(p: Path) -> str:

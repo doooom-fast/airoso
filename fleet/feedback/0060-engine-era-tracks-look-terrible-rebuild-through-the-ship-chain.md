@@ -99,8 +99,10 @@ Exotics Racing, on its committed draft data (`data/centerline.local.json`, `heig
 1ROAD_shoulder, 1RUNOFF_corners, 1KERB_corners, 1WALL_CHAINL_warn, BARRIER_warning, MARKINGS ×2, SHOULDERUND,
 58 × 1GRASS tiles ≤ 29,998 verts, 1GRASS_ring). `underlay` 60 s → `loop.blend` 249 MB: 67 GEN objects
 (GEN_road 3 incl. the run-off, GEN_kerb 1, GEN_wall 2, GEN_misc 3, GEN_terrain 58) + 5 refs (the centreline
-curve, REF_start, three 500 m stations), `data/underlay.report.json` written. The prep on that blend is the
-next check; the export and the gates need the Windows box.
+curve, REF_start, three 500 m stations), `data/underlay.report.json` written. **The prep on that blend** (`scripts/ac/build_kn5_loop.py` under the same `bpy`):
+13 m 59 s, every one of the 68 meshes prepped (terrain conform, carriageway carve, face-up flip, 50k tiles, materials)
++ 23 dummies → `blender/exotics_racing_lvms.blend` 256 MB, no FATAL. So draft → underlay → prep is proven end to end on a
+real track; the split, the export (the AC add-on) and the gates need the Windows box.
 
 ## Verification
 

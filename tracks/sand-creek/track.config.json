@@ -4,9 +4,9 @@
   "version": "0.26.0",
   "mirror_x": true,
   "osm_road_widths": true,
-  "_osm_road_widths_doc": "Real street circuit \u2014 after the project stage, scripts.gps.widths_from_osm map-matches each centerline vertex to its OSM way and sets curb-to-curb widths from lanes (arterials ~2x a side street) + writes intersection pads at the real junctions. Racetracks (defined widths) leave this off.",
+  "_osm_road_widths_doc": "Real street circuit — after the project stage, scripts.gps.widths_from_osm map-matches each centerline vertex to its OSM way and sets curb-to-curb widths from lanes (arterials ~2x a side street) + writes intersection pads at the real junctions. Racetracks (defined widths) leave this off.",
   "capture": {
-    "_doc": "Sand Creek is a ROAD circuit stitched from real Commerce City streets, so its elevation is the REAL road-surface profile: USGS 3DEP sampled ALONG the real street centerline (3 m spacing), median-despiked + smoothed into a launch-free longitudinal grade, with the terrain conforming DOWN to that road. The phone's GPS/baro altitude is NOT used \u2014 it is too noisy on flat terrain and injected fake metre-scale bumps (56th/45th/Sand Creek Dr) and a phone-fell dip (~idx 1240); use_elevation=false ignores it. Captured TEXTURES and lateral evidence in realworld_capture.json ARE still consumed (do not delete the file). 'bridges' is RETAINED: evidence.level_bridge_decks uses it to hold a LEVEL deck (geometry only, no phone) over the two real Sand Creek crossings where bare-earth 3DEP dives into the creek bed \u2014 E 56th over Sand Creek (station ~2485, bare earth dips ~7 m) and Quebec over Sand Creek (station ~5950, ~6 m); both also get visual parapets/piers from build_env._creek_bridge. 'bridges' = [{center_m, len_m}] in lap-station metres.",
+    "_doc": "Sand Creek is a ROAD circuit stitched from real Commerce City streets, so its elevation is the REAL road-surface profile: USGS 3DEP sampled ALONG the real street centerline (3 m spacing), median-despiked + smoothed into a launch-free longitudinal grade, with the terrain conforming DOWN to that road. The phone's GPS/baro altitude is NOT used — it is too noisy on flat terrain and injected fake metre-scale bumps (56th/45th/Sand Creek Dr) and a phone-fell dip (~idx 1240); use_elevation=false ignores it. Captured TEXTURES and lateral evidence in realworld_capture.json ARE still consumed (do not delete the file). 'bridges' is RETAINED: evidence.level_bridge_decks uses it to hold a LEVEL deck (geometry only, no phone) over the two real Sand Creek crossings where bare-earth 3DEP dives into the creek bed — E 56th over Sand Creek (station ~2485, bare earth dips ~7 m) and Quebec over Sand Creek (station ~5950, ~6 m); both also get visual parapets/piers from build_env._creek_bridge. 'bridges' = [{center_m, len_m}] in lap-station metres.",
     "use_elevation": false,
     "bridges": [
       {
@@ -36,7 +36,7 @@
     "flip_up": false
   },
   "road_profile": {
-    "_doc": "Corkscrew dips/cambers REMOVED \u2014 Sand Creek elevation now comes from real USGS 3DEP + capture (user: the hand-authored corkscrew sucks). Re-add dips/cambers here to bring it back.",
+    "_doc": "Corkscrew dips/cambers REMOVED — Sand Creek elevation now comes from real USGS 3DEP + capture (user: the hand-authored corkscrew sucks). Re-add dips/cambers here to bring it back.",
     "dips": [],
     "cambers": []
   },
@@ -125,11 +125,6 @@
       "ai": "ai/full",
       "uses_connectors": [],
       "_doc": "Outer loop: Colorado -> 50th -> Dahlia -> 56th -> Sand Creek -> Quebec -> 45th -> 46th -> start. The 'interior' layout was dropped: its interior_grid connector was never defined, and layouts share one kn5 so a distinct interior circuit isn't achievable without splitting geometry."
-    },
-    {
-      "id": "reverse",
-      "ai": "ai/reverse",
-      "_doc": "same world, opposite direction \u2014 own grid/timing via dummies_reverse.json + spawn kn5"
     }
   ],
   "lighting": {
@@ -198,5 +193,17 @@
   },
   "terrain_cell_m": 1.5,
   "corridor_refine_factor": 6,
-  "terrain_vertex_budget": 1500000
+  "terrain_vertex_budget": 1500000,
+  "install_folder": "sand_creek_raceway",
+  "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (Lariat plan A11); the previous install is parked in the archive",
+  "_layouts_v3_owed": {
+    "_doc": "2026-10-28, the first ship-chain pass (Kevin: 'rebuild all four with the Lake Murray chain'): the chain's multi-layout path needs a declared start per layout (layouts[].start: line_vertex, grid_vertex, offset_right_m, sector_vertices — tools/layout_dummies.py) and a spawn kn5 each; the reverse layout returns in the authoring pass with its start declared on the V3 centreline. Nothing of its world is lost: every layout shares the one kn5 (L8).",
+    "layouts": [
+      {
+        "id": "reverse",
+        "ai": "ai/reverse",
+        "_doc": "same world, opposite direction — own grid/timing via dummies_reverse.json + spawn kn5"
+      }
+    ]
+  }
 }

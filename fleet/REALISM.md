@@ -113,7 +113,9 @@ places. They move into the engine as `scripts/blender/`:
 
 - **`underlay.py`** — the generalisation of `build_loop_blend.py` to every track kind: build or
   refresh the data underlay in a `.blend`, from the same `track.config.json` + `data/` the rest of
-  the pipeline reads.
+  the pipeline reads. *Landed 2026-10-28 (`scripts/blender/underlay.py`): the engine's `data/track.obj` into
+  `loop.blend` as `GEN_*` collections, `AUTH_*` untouched, the scene never reset; `tools/ship_track.sh` runs it as
+  the last draft step.*
 - **`live_server.py` / `live_client.py`** — the operator bridge, promoted engine-side so every repo
   gets the same one.
 - **`views.py`** — flythrough, fixed-station stills, section cuts. The same stations every time, so

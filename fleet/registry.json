@@ -1,6 +1,6 @@
 {
   "_doc": [
-    "The fleet registry \u2014 the ONE place that knows which repos and tracks exist.",
+    "The fleet registry — the ONE place that knows which repos and tracks exist.",
     "Repos are declared here. Tracks are DISCOVERED by scanning each repo's tracks_glob, so this",
     "file can never go stale on a track that was added or renamed. Per-track annotations below are",
     "only for things a track.config.json cannot know about itself (its owning repo's build command,",
@@ -23,11 +23,11 @@
     }
   },
   "kinds": {
-    "_doc": "Kevin's four track types. Orthogonal to `archetype` (the construction philosophy in scripts/config.py ARCHETYPES) but they should agree \u2014 see fleet/STANDARDS.md S6.",
+    "_doc": "Kevin's four track types. Orthogonal to `archetype` (the construction philosophy in scripts/config.py ARCHETYPES) but they should agree — see fleet/STANDARDS.md S6.",
     "fictional_street_circuit": "A racing loop invented on top of real streets (Sand Creek Raceway). archetype: street_circuit",
     "street_port": "Real public road(s) ported as they exist, single route or whole network (Lookout Lariat, Lake Murray, SD freeway). archetype: real_road",
     "circuit_port": "A real purpose-built facility, extant or historical (IMI, High Plains, Second Creek, PPIR). archetype: race_circuit",
-    "rally_stage": "A real point-to-point special stage, gravel or the tarmac fiction (Rally Colorado). archetype: real_road TODAY (kerb/runoff off, which is right); a dedicated `rally_stage` archetype is PROPOSED, not implemented \u2014 see fleet/STANDARDS.md S6"
+    "rally_stage": "A real point-to-point special stage, gravel or the tarmac fiction (Rally Colorado). archetype: real_road TODAY (kerb/runoff off, which is right); a dedicated `rally_stage` archetype is PROPOSED, not implemented — see fleet/STANDARDS.md S6"
   },
   "repos": [
     {
@@ -37,7 +37,11 @@
       "_remote_doc": "No GitHub remote is configured: `git remote -v` lists only `engine` (the local k10-track-agents clone whose history airoso adopted, docs/V3-PLAN.md Phase 1).",
       "role": "THE one repo (V3): the engine, the gates, the doctrine and the ledger, plus every track as its source of truth moves here",
       "engine_repo": true,
-      "tracks_glob": ["tracks/lookout-lariat/track.config.json", "tracks/milford-road-course/track.config.json"],
+      "tracks_glob": [
+        "tracks/lookout-lariat/track.config.json",
+        "tracks/milford-road-course/track.config.json",
+        "tracks/exotics-racing-lv/track.config.json"
+      ],
       "_tracks_glob_doc": "Only the tracks that have MOVED here. The other tracks/ dirs are Phase-1 imports whose fleet entry still points at their retired repo, and globbing them now would discover every Colorado track twice (S7 slug collisions). Widen this glob as each track moves, and add its dir to the old repo's moved_out in the same edit. A list since 2026-10-28: Milford is the first track born here rather than moved.",
       "build": {
         "cmd": null,
@@ -181,7 +185,7 @@
       "kind": "rally_stage",
       "fidelity": "real geometry / fictional surface",
       "source": "same road as dragon-tail-gravel",
-      "status": "DEPRIORITISED \u2014 Kevin 2026-07-26: 'may be cancelled, not super interesting'",
+      "status": "DEPRIORITISED — Kevin 2026-07-26: 'may be cancelled, not super interesting'",
       "note": "Not deleted, but out of the installable target. Convenient: the tarmac variants are the only stages blocked on surface roughness (113 bumps/km against tarmac's 75 limit; gravel allows 150), so dropping them removes that from the critical path. The gravel stages carry the real geometry."
     },
     "k10-colorado-rally/under-the-dragon-gravel": {
@@ -193,7 +197,7 @@
       "kind": "rally_stage",
       "fidelity": "real geometry / fictional surface",
       "source": "same road as under-the-dragon-gravel",
-      "status": "DEPRIORITISED \u2014 Kevin 2026-07-26: 'may be cancelled, not super interesting'",
+      "status": "DEPRIORITISED — Kevin 2026-07-26: 'may be cancelled, not super interesting'",
       "note": "Not deleted, but out of the installable target. Convenient: the tarmac variants are the only stages blocked on surface roughness (113 bumps/km against tarmac's 75 limit; gravel allows 150), so dropping them removes that from the critical path. The gravel stages carry the real geometry."
     },
     "k10-san-diego/project": {
@@ -214,11 +218,17 @@
       "kind": "street_port",
       "fidelity": "real",
       "source": "single-ribbon freeway layout",
-      "status": "RETIRED \u2014 superseded by project_freeway_net"
+      "status": "RETIRED — superseded by project_freeway_net"
     },
     "second_creek": {
       "kind": "circuit_port",
-      "fidelity": "fitted \u2014 shape and length from the 1970s layout map (2741 m vs stated 1.7 mi); POSITION fitted to OSM street anchors (Buckley Rd, E 88th Ave) plus Kevin's east-of-Buckley confirmation, 2026-07-27. NOT surveyed, NOT traced from the aerial \u2014 the site is regraded and the scar is not distinguishable. Rotation about the site remains an open question. See tracks/second-creek/source/SOURCING.md."
+      "fidelity": "fitted — shape and length from the 1970s layout map (2741 m vs stated 1.7 mi); POSITION fitted to OSM street anchors (Buckley Rd, E 88th Ave) plus Kevin's east-of-Buckley confirmation, 2026-07-27. NOT surveyed, NOT traced from the aerial — the site is regraded and the scar is not distinguishable. Rotation about the site remains an open question. See tracks/second-creek/source/SOURCING.md."
+    },
+    "airoso/exotics-racing-lv": {
+      "kind": "circuit_port",
+      "fidelity": "real",
+      "source": "aerial trace off USDA NAIP 2019-07-06 (0.6 m; 2013-09-28 cross-check), 3DEP 1 m elevation; T2 bank from the lidar cross-slope",
+      "born_here": "2026-10-28, the second track created in airoso (dossier: tracks/exotics-racing-lv/DOSSIER.md); the 2015-2021 LVMS circuit, target A"
     }
   },
   "engine_projects": {
@@ -252,7 +262,7 @@
       "note": "predecessor of the SD loop work"
     },
     "gala-seed": {
-      "status": "ACTIVE \u2014 external contract",
+      "status": "ACTIVE — external contract",
       "note": "owed to the k10-1978 game repo via scripts/game/export_seed.py + its PIPELINE_BRIDGE.md. Absorbing the engine moved this contract here. Do not delete or relocate without updating the game repo."
     },
     "ats-colorado-sample": {

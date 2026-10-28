@@ -255,75 +255,37 @@ No mined mod content ships (REALISM §3). The Pellefred mod (§9) is a **referen
 
 ---
 
-## 11. Build plan: Opus handoff
+## 11. Build plan — through the Lake Murray chain
 
-**Gate 0. Before anything else:** get Kevin's A-vs-B choice (§0), then run the two existence
-checks below. Each one can stop the build.
+> **Rewritten 2026-10-28 (Kevin: "build these the same way that we build Lake Murray 0.19.1").** The first
+> version of this section prescribed the engine-era pipeline (`aerial-tracing` → `elevation` → `track-grading`
+> → mesh → gates → kn5); v0.1.0 was built that way on 2026-10-28 and retired the same evening. What that build
+> established stays (the "Answered 2026-10-28" block above: target A, the 2019 NAIP trace, the lidar T2 bank,
+> dressing as in 2013). The track builds through the ship chain: `tools/ship_track.sh exotics-racing-lv`, steps
+> in [`ship.json`](ship.json).
 
-| Step | Action | Pass condition |
-|---|---|---|
-| 0a | Overpass query from §9 | Record whether any raceway way exists. Expected: none, so the `aerial-tracing` front-end (L1) |
-| 0b | **Find the track.** Google Earth Pro → historical imagery slider → dates **mid-2015 to 2021**. Search the LVMS campus around the oval (36.2714, −115.0111) and along Speedway Blvd, including the [S61] geocode at 36.2780, −115.0179, for: a ~1.2-mi loop, a ~550 m straight, a building of about 1,300 m² (14,000 ft² [derived]) with a covered pit lane and carports, a gravel trap plus barrier line at the end of the straight | All features found on one date. **Write the chosen date into `source._note`.** Not found → stop and report |
-| 0c | Lidar Explorer [S43]: does `NV_ClarkCounty_2018` cover the found location? | Yes → it is the DEM. No → 3DEP 1/3″ and a T2 override |
-
-**1. Imagery (aerial-tracing input).**
-- Best: buy the Clark County historical section(s) covering the track for the **2018–2019** flight
-  [S45·snip] (closest to the 2018 lidar, inside the track's life). Fallback: the Google Earth Pro
-  historical frame from 0b.
-- Screenshot north-up, **with the whole loop plus the Welcome Center in frame and about 10 % margin.**
-  At Google Earth's ~150–200 m eye altitude a 1.2-mi loop (about 600 × 400 m bounding box
-  [unverified; estimate it from the found image]) needs **2–3 tiles stitched**, or one 4K capture at
-  about 0.15–0.25 m/px. Save it as PNG to keep the auto-trace option. Measure widths (§2) on the
-  same image.
-
-**2. Control points (two, opposite corners, hard-edged and still present today).**
-- **Prefer features that exist both in the vintage frame and in current Google Maps,** so the
-  `?q=lat,lon` pins are droppable today: e.g. **(NW) a Speedway Blvd curb-return or driveway
-  corner nearest the track**, and **(SE) a fixed LVMS structure corner** (an oval outside
-  retaining-wall break or grandstand corner, or a drag-strip feature) on the opposite diagonal. The
-  Welcome Center roof corner works *if* the building still stands (check current imagery).
-- Avoid track features themselves (they may be gone) and painted lot lines (repainted).
-- **Validate:** the georeferenced straight measures 549 m ± 3 % (QA 1). If it fails, re-pick.
-
-**3. Trace.** **Expect a manual `trace_px`.** The LVMS campus is acres of grey asphalt lots
-contiguous with the track, which is exactly the "busy shot, fences that read as grey" case where
-auto-trace's colour blob merges track into lot (aerial-tracing skill). Click the centerline at
-about 3–5 m spacing in corners and 15–20 m on the straight. Use the **rubber line and cone
-positions** as the racing-line check. Then:
-`source.type: "aerial"`, `control_points[2]`, `trace_px`, `nearby_roads: ["Speedway Blvd", "Las Vegas Blvd N"]`, `_note` = imagery source + date.
-
-**4. Elevation.** `elevation` stage on the 2018 QL2 1 m DEM if 0c passes, otherwise the 3DEP
-best-available. Light smoothing along the line. **Extract lateral cross-sections at T2 from the DEM**:
-if they show the bowl, use them as is; if the DEM is too coarse, go to step 5's override.
-
-**5. Grading. Does track-grading apply? Yes, but only as a researched override (L10).**
-- Turn 2: `grading.overrides[]` → **6.3° (11 %)** [S4·snip][S20·snip] over the station range of
-  the bowl as traced, outside edge up, ramped. **Verify the sign with a render** (`bank_sign`).
-- **Disable the procedural camber elsewhere** (`max_bank_deg: 0` or equivalent). No other banking
-  is published, and this was a lot track. A flat desert circuit gets real elevation only,
-  except where research says otherwise.
-- If the 2018 lidar resolves other cross-fall, record it as a measured override with `_note`. Never
-  infer it.
-
-**6. Geometry / config deltas.** Archetype `race_circuit`. `loop: true`. One layout (direction
-from §4). Measured width (per-vertex if the spread is over 1.5 m). Run-off + gravel at T2 sized from
-the imagery (≈137 m / 450 ft deep [S18·snip][derived]). Pit lane follows the covered pit as traced.
-Dummies: `AC_START_*` on the straight, `AC_PIT_*` in the covered pit, `AC_TIME_0_L/R`,
-`AC_HOTLAP_START_0`.
-
-**7. Blender authorship (`AUTH_*`, never overwritten).** `AUTH_welcome_center` (massing + covered
-pit + 35 carports), `AUTH_tecpro_T2`, `AUTH_cones`, `AUTH_lvms_backdrop` (grandstands as low-poly
-far geometry), `AUTH_desert_ground` shader. The engine's `GEN_*` underlay carries the draped vintage
-ortho as reference.
-
-**8. Gates.** `drive_test` → `audit_mesh` → `verify_kn5` → `kn5_ground_check`, at the current
-thresholds in `fleet/GATES-CHANGELOG.md` (no new thresholds invented here). Expected watch item:
-the T2 bank ramp against drive_test's step and kink checks.
-
-**9. First question for the drive test:** *"Braking from the end of the 549 m straight into the
-6.3° bowl: does T2 hold the car at bowl speed and lean the right way, and does a 488 GTB lap come
-in at or under 56 s?"* That single question tests the georeference (length), the grading (sign and
-magnitude) and the width at once.
+1. **Draft (the engine, as a draft only).** `aerial` (`scripts.aerial.build_aerial` on `source/naip_2019_exr.png`
+   with the two control points and the refined `trace_px`, measured widths per point) → `elev` (3DEP 1 m) →
+   `project` → `mesh` (`data/track.obj`: the ribbon with the −6.0° T2 bank from `road_profile`, kerbs, the
+   natural-ground verge, ground) → **`underlay`** (`scripts/blender/underlay.py`: the OBJ into `loop.blend` as
+   `GEN_road` / `GEN_kerb` / `GEN_wall` / `GEN_terrain` / `GEN_misc`, plus `GEN_refs`).
+2. **Author in Blender (`AUTH_*`, never regenerated).** First pass: nothing — the draft ships so the seat can
+   judge the bowl. Then, from Kevin's calls: the 2013 dressing (the two small south-west buildings, no Welcome
+   Center, no covered pit, no carports), the Mojave ground in place of the default grass, the Tec-Pro line and
+   gravel trap at the end of the straight, cones as the imagery shows them, the LVMS grandstands as low far
+   geometry. Satellite imagery as the road's macro texture (§12, `fleet/reference/SATELLITE-ROAD-TEXTURES.md`)
+   is an authoring-stage texture on the road object, never a mesh step.
+3. **Prep → split → export** from airoso's `scripts/ac`. One layout, `full`, clockwise; the AI line is the
+   writer's draft until recorded in game. Installed name "K10 Las Vegas - Exotics Racing Las Vegas (unofficial)";
+   the public name is Kevin's call at publish time (the mark is registered).
+4. **Gates on the built kn5:** `drive_test` → `audit_mesh` → `kn5_ground_check`, thresholds unchanged
+   (GATES-CHANGELOG). Watch item: the T2 bank ramps against drive_test's step and kink checks — the first build
+   passed them (soft top 0, severe 0, kinks 0.55/km).
+5. **Install** as `content/tracks/exotics_racing_lvms`; the previous build is parked in the archive.
+6. **First question for the drive test** stands: *"Braking from the end of the straight into the bowl: does T2
+   hold the car at bowl speed and lean the right way, and does a 488 GTB lap come in at or under 56 s?"* The
+   first build's sign error (T2 off-camber until the mirror was accounted for) is exactly what the seat, not the
+   gates, would have caught.
 
 ---
 

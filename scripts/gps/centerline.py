@@ -485,10 +485,44 @@ def write_preview_svg(ring: list[Vertex], connectors: dict[str, list[Vertex]], p
     path.write_text("".join(parts), encoding="utf-8")
 
 
+def build_for_source(project_dir: str | Path) -> tuple[Path, dict]:
+    """Phase 1 by ``track.config.json`` ``source.type`` — one entry point for the gps stage (scripts/build.sh,
+    tools/ship_track.sh draft_gps), so a KML route or a traced / recorded track never has to be run by hand:
+
+      osm (default)  build_centerline: the named roads from Overpass, stitched into the loop
+      kml            centerline_from_kml: the drawn line (or ordered turn pins) in source.kml / source/*.km*
+      from_track     scripts.gps.from_track on source.track (the project-relative fixes file; a traced centreline
+                     carries its own per-fix widths, otherwise default_width_m), closed when the config says loop
+      aerial         is NOT built here: the aerial front-end is its own step (python -m scripts.aerial.build_aerial)
+    """
+    project_dir = Path(project_dir)
+    cfg = load_config(project_dir)
+    src = cfg.source or {}
+    kind = src.get("type", "osm")
+    if kind in ("osm", "osm-route"):
+        return build_centerline(project_dir)
+    if kind == "kml":
+        kml_path = project_dir / src["kml"] if src.get("kml") else None
+        return centerline_from_kml(project_dir, kml_path)
+    if kind == "from_track":
+        # lazy: from_track imports this module
+        from scripts.gps import from_track
+        track = src.get("track")
+        if not track:
+            raise SystemExit("source.type from_track needs source.track (the fixes file, relative to the project)")
+        return from_track.build_from_track(project_dir, [str(project_dir / track)], loop=bool(cfg.loop),
+                                           width_m=float(cfg.default_width_m))
+    if kind == "aerial":
+        raise SystemExit("source.type aerial: run the aerial front-end instead — python -m scripts.aerial.build_aerial "
+                         f"{project_dir}")
+    raise SystemExit(f"source.type {kind!r} has no Phase-1 builder here (osm / kml / from_track; aerial via "
+                     "scripts.aerial.build_aerial; networks via scripts/build_network.sh)")
+
+
 def main() -> None:
     if len(sys.argv) < 2:
         raise SystemExit("usage: python -m scripts.gps.centerline <project-dir>")
-    out, stats = build_centerline(sys.argv[1])
+    out, stats = build_for_source(sys.argv[1])
     print(f"wrote {out}")
     for k, v in stats.items():
         print(f"  {k}: {v}")

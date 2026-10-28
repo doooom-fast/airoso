@@ -68,10 +68,15 @@ def _spec(path):
 
 
 # --- the closed vocabulary -----------------------------------------------------------------------------------
-def test_every_step_both_ship_jsons_name_is_a_function():
+ALL_SPECS = sorted((ROOT / "tracks").glob("*/ship.json"))
+CHAIN_SPECS = [ROOT / "tracks" / t / "ship.json" for t in ("milford-road-course", "exotics-racing-lv", "sand-creek", "high-plains")]
+
+
+def test_every_step_every_ship_json_names_is_a_function():
     fns = _functions()
     assert len(fns) >= 40, sorted(fns)
-    for p in (SD_SPEC, LARIAT_SPEC):
+    assert {SD_SPEC, LARIAT_SPEC, *CHAIN_SPECS} <= set(ALL_SPECS), ALL_SPECS
+    for p in ALL_SPECS:
         s = spec_mod.load(p, _spec(p)["track"])
         for ph in PHASES:
             for n in s["steps"][ph]:
@@ -349,13 +354,25 @@ def test_engine_rule_and_no_blend_yet_on_guard_runs():
         return
     tmp = Path(tempfile.mkdtemp())
     proj = tmp / "lariat_scratch"
-    r = _run(["lookout-lariat", "--dry-run"], {"SHIP_PROJ": proj.as_posix()})
+    # the Lariat's draft ends in the underlay, which exists (scripts/blender/underlay.py, 2026-10-28): its dry run
+    # would now sync inputs and run the draft. The 'no blend yet' guard is the case of a draft that lists NO blend
+    # builder, so it is exercised on a copy of the Lariat spec with the underlay removed (SHIP_SPEC = a rehearsal)
+    assert (ROOT / "scripts" / "blender" / "underlay.py").is_file(), "the underlay is the Lariat's blend builder"
+    no_builder = json.loads(LARIAT_SPEC.read_text(encoding="utf-8"))
+    no_builder["steps"]["draft"] = [n for n in no_builder["steps"]["draft"] if n != "underlay"]
+    nb = tmp / "ship.no_builder.json"
+    nb.write_text(json.dumps(no_builder), encoding="utf-8")
+    r = _run(["lookout-lariat", "--dry-run"], {"SHIP_SPEC": nb.as_posix(), "SHIP_PROJ": proj.as_posix()})
     assert r.returncode == 0, (r.stdout[-600:], r.stderr[-400:])
     assert f"engine (prep / export / spawn): {ROOT.as_posix()}" in r.stdout, r.stdout
     assert "no blend yet" in r.stdout and "DRY RUN: stopped cleanly at 'no blend yet'." in r.stdout
     assert "underlay" in r.stdout and "sync inputs" not in r.stdout and not proj.exists()
-    r = _run(["lookout-lariat"], {"SHIP_PROJ": proj.as_posix()})            # a real run with no blend is a failure
+    assert "not written yet" not in r.stdout, "the message must not claim the underlay is unwritten"
+    r = _run(["lookout-lariat"], {"SHIP_SPEC": nb.as_posix(), "SHIP_PROJ": proj.as_posix()})   # a real run with no blend is a failure
     assert r.returncode == 1 and "no blend yet" in r.stdout and not proj.exists()
+    # blend_builder_ready: the underlay counts as a builder exactly when scripts/blender/underlay.py exists
+    body = TEXT[_first("blend_builder_ready() {"):_first("if [ \"$DRAFT_ONLY\" = 0 ] && [ ! -f \"$PROJ/loop.blend\" ]")]
+    assert 'underlay) [ -f "$AIROSO/scripts/blender/underlay.py" ] && return 0;;' in body
     sd = tmp / "sd_scratch"
     r = _run(["san-diego-lake-murray", "--skip-blend", "--dry-run"],
              {"SHIP_SPEC": SD_SPEC.as_posix(), "SHIP_PROJ": sd.as_posix()})
@@ -484,3 +501,41 @@ def test_ship_sd_is_untouched_by_this_chain():
     """ship_sd.sh stays San Diego's chain of record (not a shim): ship_track.sh never calls it"""
     assert "ship_sd.sh" not in "\n".join(ln for _, ln in _code_lines())
     assert "ship_track" not in SD_TEXT
+
+
+# --- the four tracks rebuilt through the chain (Kevin, 2026-10-28: "Rebuild all four with the Lake Murray chain") ---
+def test_the_four_chain_specs_draft_the_engine_then_the_underlay_and_run_on_airosos_engine():
+    fns = _functions()
+    data_steps = TEXT[_first("is_data_step() {"):_first("SPEC_LINES=$(")]
+    for p in CHAIN_SPECS:
+        track = p.parent.name
+        s = spec_mod.load(p, track)
+        d = s["steps"]["draft"]
+        assert d[-1] == "underlay" and d[-2] == "mesh", (track, d)
+        assert d[0] in ("gps", "aerial") and "elev" in d and "project" in d, (track, d)
+        assert d.index("elev") < d.index("project") < d.index("mesh"), (track, d)
+        for n in d[:-1]:
+            assert re.search(rf"\b{n}\b", data_steps), f"{track}: {n} must be a --draft-only data step"
+        for n in ("build_loop_blend", "rebuild_loop_blend", "weld_mouths", "verify_mouths", "median", "route_connectors",
+                  "treefx", "export_race", "race_author"):
+            assert n not in [x for ph in PHASES for x in s["steps"][ph]], (track, n)
+        assert s["steps"]["prep"] == ["prep", "split"]
+        assert {"export_road", "ai", "verify_kn5", "road_obj", "track_folder", "verify_inis", "make_map"} <= set(s["steps"]["ship"])
+        assert s["steps"]["gate"] == ["drive_test_street", "audit_street", "kn5_ground"], (track, s["steps"]["gate"])
+        assert s["workshop"] == f"C:/Users/Owner/Documents/k10-workshops/{track}" and "airoso" not in s["workshop"].lower()
+        assert s["require_race_layout"] is False and s["street_ai_july"] == ""
+        assert "loop.blend" in s["sync_out"]["required"] and "data/underlay.report.json" in s["sync_out"]["files"]
+        assert "source" in s["sync_in"]["dirs"] and "track.config.json" in s["sync_in"]["required"]
+        cfg = json.loads((p.parent / "track.config.json").read_text(encoding="utf-8"))
+        assert re.fullmatch(r"[A-Za-z0-9_]+", cfg["install_folder"]), (track, cfg.get("install_folder"))
+        assert cfg["layouts"] and not any(l.get("race_furniture") for l in cfg["layouts"]), track
+        assert track != "san-diego-lake-murray"
+    # the two new draft steps run the engine on the absolute project and nothing else
+    assert 'python -m scripts.aerial.build_aerial "$PROJ"' in fns["draft_aerial"]
+    assert 'python -m scripts.geometry.build_mesh "$PROJ"' in fns["draft_mesh"]
+    mesh_code = "\n".join(ln for ln in fns["draft_mesh"].splitlines() if not ln.lstrip().startswith("#"))
+    assert "build_env" not in mesh_code, "no furniture in the draft (V3-PLAN P2 step 6)"
+    # the aerial front-end is the Exotics draft's first step; from_track / kml go through gps
+    assert spec_mod.load(ROOT / "tracks" / "exotics-racing-lv" / "ship.json", "exotics-racing-lv")["steps"]["draft"][0] == "aerial"
+    for t in ("milford-road-course", "sand-creek", "high-plains"):
+        assert spec_mod.load(ROOT / "tracks" / t / "ship.json", t)["steps"]["draft"][0] == "gps", t

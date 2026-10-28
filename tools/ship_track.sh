@@ -105,7 +105,7 @@ no_race() { echo; echo "(no race layout declared: $1 skipped)"; }
 
 # --- draft: the route data (Lariat P2; tools run from airoso on "$PROJ") -------------------------------------
 draft_gps() {
-  step "draft: route centreline from the OSM snapshot (scripts.gps.centerline -> data/centerline.geojson, the OSM line)"
+  step "draft: route centreline (scripts.gps.centerline -> data/centerline.geojson; by source.type: the OSM line, the KML route, or the traced / recorded track)"
   # the gps stage overwrites data/centerline.geojson with the OSM line. A paint centreline there is the line the
   # config's vertex indices and stations point into (track.config.json centerline_frame): keep it as
   # data/centerline.previous.geojson first, so tools/remap_centreline_config.py can map the config from it
@@ -145,8 +145,19 @@ draft_widths() {
   step "draft: per-vertex OSM widths (scripts.gps.widths_from_osm)"
   (cd "$AIROSO" && python -m scripts.gps.widths_from_osm "$PROJ")
 }
+draft_aerial() {
+  step "draft: aerial trace -> data/centerline.geojson (scripts.aerial.build_aerial: the asphalt off the georeferenced image; source.control_points, source.trace_px)"
+  (cd "$AIROSO" && python -m scripts.aerial.build_aerial "$PROJ")
+}
+draft_mesh() {
+  # the engine's draft geometry — road ribbon, kerbs, verge, the walls the data asks for, the ground — is the underlay's
+  # input (fleet/REALISM.md §2 Job 1: the engine prepares truth, regenerable and unprecious). No furniture: build_env is
+  # never a draft step (V3-PLAN P2 step 6)
+  step "draft: the engine's draft geometry -> data/track.obj (scripts.geometry.build_mesh: 1ROAD / 1KERB / 1WALL / 1GRASS, no furniture)"
+  (cd "$AIROSO" && python -m scripts.geometry.build_mesh "$PROJ")
+}
 draft_underlay() {
-  step "draft: underlay -> loop.blend (scripts/blender/underlay.py: GEN_* only, never AUTH_*, never a scene reset)"
+  step "draft: underlay -> loop.blend (scripts/blender/underlay.py: data/track.obj into GEN_* collections, never AUTH_*, never a scene reset)"
   [ -f "$AIROSO/scripts/blender/underlay.py" ] || { echo "no blend yet: scripts/blender/underlay.py (V3-PLAN P2 step 3) is not written"; exit 1; }
   "$BL" --background --python-exit-code 1 --python "$AIROSO/scripts/blender/underlay.py" -- "$PROJ" 2>&1 | grep "^\[underlay\]\|Error\|Traceback"
 }
@@ -549,7 +560,7 @@ gate_kn5_ground() {
 # a draft step that needs no Blender (what --draft-only runs)
 is_data_step() {
   case "$1" in
-    gps|paint_centreline|remap_config|verify_centreline_paint|route_oneway_check|elev|project|widths) return 0;;
+    gps|aerial|paint_centreline|remap_config|verify_centreline_paint|route_oneway_check|elev|project|widths|mesh) return 0;;
     deck_datum|median_envelope|route_connectors|divide_connectors|trim_connectors|terrain_sample|terrain_resample) return 0;;
     *) return 1;;
   esac
@@ -642,7 +653,7 @@ blend_builder_ready() {
 if [ "$DRAFT_ONLY" = 0 ] && [ ! -f "$PROJ/loop.blend" ] && ! blend_builder_ready; then
   echo; echo "no blend yet: $PROJ/loop.blend does not exist and nothing in this run can build it"
   if [ "$SKIP_BLEND" = 1 ]; then echo "  (--skip-blend resumes from an authored loop.blend)"
-  else echo "  (draft steps: ${DRAFT[*]:-none}; the blend builder is build_loop_blend (tracks/$TRACK/scripts-v021) or underlay (scripts/blender/underlay.py, V3-PLAN P2 step 3, not written yet))"; fi
+  else echo "  (draft steps: ${DRAFT[*]:-none}; the blend builder is build_loop_blend (tracks/$TRACK/scripts-v021) or underlay (scripts/blender/underlay.py, V3-PLAN P2 step 3) — list one in steps.draft)"; fi
   echo "  --draft-only runs the draft's data steps. Nothing synced in, nothing run, nothing installed."
   if [ "$DRY" = 1 ]; then echo "DRY RUN: stopped cleanly at 'no blend yet'."; exit 0; fi
   exit 1

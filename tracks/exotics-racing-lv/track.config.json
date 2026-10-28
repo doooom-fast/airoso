@@ -4863,5 +4863,7 @@
   "ui_tags": [
     "circuit"
   ],
-  "natural_ground": true
+  "natural_ground": true,
+  "install_folder": "exotics_racing_lvms",
+  "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (Lariat plan A11); the previous install is parked in the archive"
 }

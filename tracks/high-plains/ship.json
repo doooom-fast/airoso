@@ -1,0 +1,30 @@
+{
+  "_doc": "High Plains Raceway through the Lake Murray chain (tools/ship_track.sh; Kevin 2026-10-28: 'rebuild all four with the Lake Murray chain'). The draft is the engine's own on the OSM raceway cycle (source.type from_track over source/osm_fixes.json: gps -> elev -> project -> mesh), then the underlay drops data/track.obj into loop.blend as GEN_* collections (scripts/blender/underlay.py). Authoring happens in that blend (AUTH_*), the prep / exporter run from airoso's scripts/ac, the four gates run on the BUILT kn5. The workshop lives OUTSIDE airoso.",
+  "_owed": "First pass = the draft through the chain, no authoring yet. Kevin, 2026-10-28, on the engine-era build: 'High Plains has road signs, it looks terrible' — the V3 chain places no signs unless signs.json says so, which is the point. The north section (To Hell On A Bobsled / Ladder To Heaven) stays excluded as the config says.",
+  "track": "high-plains",
+  "workshop": "C:/Users/Owner/Documents/k10-workshops/high-plains",
+  "workshop_project": "project",
+  "require_race_layout": false,
+  "ui_name_prefix": "K10 Colorado",
+  "steps": {
+    "draft": ["gps", "elev", "project", "mesh", "underlay"],
+    "author": [],
+    "prep": ["prep", "split"],
+    "ship": ["export_road", "ai", "verify_kn5", "road_obj", "track_folder", "verify_inis", "make_map"],
+    "gate": ["drive_test_street", "audit_street", "kn5_ground"]
+  },
+  "sync_in": {
+    "required": ["track.config.json"],
+    "optional": ["data/centerline.geojson", "data/centerline.elevation.json", "data/heightfield.npy", "data/heightfield.meta.json",
+                 "data/corridor.elev.json"],
+    "dirs": ["source"]
+  },
+  "sync_out": {
+    "required": ["loop.blend"],
+    "files": ["data/centerline.geojson", "data/centerline.elevation.json", "data/centerline.local.json", "data/finished_centerline.json",
+              "data/gate_centerline.json", "data/bridge.spans.auto.json", "data/dummies.json", "data/underlay.report.json",
+              "data/drive_test.json", "data/audit.json", "data/kn5_ground_check.{id}.json", "data/drive_test.{id}.json"],
+    "map": [["blender/split/split_manifest.json", "data/split_manifest.json"]],
+    "dirs": ["ai/{id}"]
+  }
+}

@@ -73,5 +73,7 @@
   "terrain_vertex_budget": 1500000,
   "ui_tags": [
     "circuit"
-  ]
+  ],
+  "install_folder": "high_plains",
+  "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (Lariat plan A11); the previous install is parked in the archive"
 }

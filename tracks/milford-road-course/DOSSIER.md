@@ -355,16 +355,29 @@ frames. `true_north_rotation_deg` is derived by `lighting` and written back (L2)
    artifact (L5).
 
 ## 11. Build plan
-1. **Locate** the MRC in imagery using the Gadgetopia annotation and the length test. Record the
-   bbox.
-2. **Front-end:** `aerial-tracing` (private, no OSM expected). If Overpass returns
-   `highway=raceway` ways inside the fence, use `gps-extraction` instead, still checked against
-   NAIP.
-3. `elevation` with 3DEP 1 m and the corridor fetch (±60 m). Expect mixed-county tiles.
-4. `lighting` → true north. `geometry` / `ac` with `archetype: race_circuit`.
-5. Blender underlay. `AUTH_carousel_bank` from lidar sections, if the engine can't carry cross-slope.
-6. Gates at current GATES-CHANGELOG thresholds. **First question for the drive test:** "Does the
-   41 m of relief feel like a hill course, or did smoothing flatten the crests?"
+
+> **Rewritten 2026-10-28 (Kevin: "build these the same way that we build Lake Murray 0.19.1").** The first
+> version of this section prescribed the engine-era pipeline (`aerial-tracing` → `elevation` → mesh → gates →
+> kn5), and v0.1.0 was built that way and retired the same evening. The track builds through the ship chain:
+> `tools/ship_track.sh milford-road-course`, steps in [`ship.json`](ship.json).
+
+1. **Draft (the engine, as a draft only).** `gps` on `source.type from_track` (the NAIP-traced fixes with
+   their measured widths, `source/mrc_fixes.json`) → `elev` (3DEP 1 m, both counties) → `project` → `mesh`
+   (`data/track.obj`: ribbon, kerbs, verge, the guard walls the drops ask for, ground) → **`underlay`**
+   (`scripts/blender/underlay.py`: the OBJ into `loop.blend` as `GEN_road` / `GEN_kerb` / `GEN_wall` /
+   `GEN_terrain` / `GEN_misc`, plus `GEN_refs`: the centreline and a station marker every 500 m).
+2. **Author in Blender (`AUTH_*`, never regenerated).** First pass: nothing — the draft ships so the seat
+   can judge it. Then, in order of what the seat says: the real corner banking from the lidar sections
+   (4–8 %, Part D §3; the draft builds the corners flat, and it is never curvature-invented, L10); the
+   carousel; the stone walls as guardrail where the real course has rail; signs only from `signs.json`.
+3. **Prep → split → export** from airoso's `scripts/ac` (never engine-july: San Diego's alone). One
+   layout, `full`, clockwise; the AI line is the writer's draft until recorded in game.
+4. **Gates on the built kn5:** `drive_test` → `audit_mesh` → `kn5_ground_check`. Thresholds unchanged
+   (GATES-CHANGELOG).
+5. **Install** as `content/tracks/milford_road_course`, "K10 Michigan - Milford Road Course".
+6. **First question for the drive test** stands: "Does the 41 m of relief feel like a hill course, or did
+   smoothing flatten the crests?" — and now also: "Does the 27 % climb to the start/finish read as the
+   lidar says, or as a wall?"
 
 **Kevin's approval:** ☑ approved as-is ("Build Milford first") · ☐ approved with changes — date: 2026-10-28.
 What the build found against this file is in `source/route-notes.md`: OSM has the course but draws

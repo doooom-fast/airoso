@@ -321,7 +321,19 @@ def write_all(project_dir, config_path=None, only=None, issue_spawn=None) -> int
     race = cfg.get("race") or {}
     fails = validate_layouts(layouts)
     cl = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
-    line = Line(cl["points_xyz_m"], cl["widths_m"])
+    pts, widths = cl["points_xyz_m"], cl["widths_m"]
+    fin = data / "finished_centerline.json"
+    if fin.exists():
+        fj = json.loads(fin.read_text(encoding="utf-8"))
+        if str(fj.get("frame", "")).startswith("mesh"):
+            # build.sh's OBJ path writes the AS-BUILT deck in the mirrored mesh frame (bridges levelled, the
+            # profile smoothed: up to 7.9 m off the projected line on Sand Creek); un-mirror x back to the
+            # engine frame so the output frame is the one documented above, at the deck's real height.
+            # The loop path's file has no frame key and keeps centerline.local.json.
+            sx = -1.0 if cfg.get("mirror_x", False) else 1.0
+            pts = [(sx * p[0], p[1], p[2]) for p in fj["points_xyz_m"]]
+            widths = fj["widths_m"]
+    line = Line(pts, widths)
     mb = data / "median_bands.json"
     island_w = None
     if mb.exists():

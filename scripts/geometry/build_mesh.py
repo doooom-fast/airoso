@@ -1210,17 +1210,27 @@ def build(project_dir: str | Path) -> dict:
             print(f"  [sidewalk] despiked {_despiked} strip vert(s) that drape-dropped >"
                   f"{_MAX_DROP:.2f} m below the road inside the walk band")
         edge_group, edge_mat = "1KERB_sidewalk", "kerb"
-    elif cfg_raw.get("natural_ground"):
-        # NATURAL GROUND (Kevin, 2026-08-09, verbatim diagnosis: "you can't seem to generate
-        # natural ground... it's obvious how the terrain should meet the road when you look at
-        # it. There's a ton of extra terrain now just for you to cut it into a moat"). The lidar
-        # already recorded the real earthworks — real shoulders, ditches, cut faces are IN the
-        # 3DEP heights. So: NO constructed corridor. A plain two-point verge (road_shoulder's
-        # no-ground fallback: lip + 1 m verge, no sections, which also silences the ring
-        # annulus, the graded floor and the stone lips downstream), raw-grid grass everywhere,
-        # and a short blend band sewn in later where grass approaches the deck.
-        shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
-                                        ground_drop=GRASS_CLEARANCE_M)
+    else:
+        if cfg_raw.get("natural_ground"):
+            # NATURAL GROUND (Kevin, 2026-08-09, verbatim diagnosis: "you can't seem to generate
+            # natural ground... it's obvious how the terrain should meet the road when you look at
+            # it. There's a ton of extra terrain now just for you to cut it into a moat"). The lidar
+            # already recorded the real earthworks — real shoulders, ditches, cut faces are IN the
+            # 3DEP heights. So: NO constructed corridor. A plain two-point verge (road_shoulder's
+            # no-ground fallback: lip + 1 m verge, no sections, which also silences the ring
+            # annulus, the graded floor and the stone lips downstream), raw-grid grass everywhere,
+            # and a short blend band sewn in later where grass approaches the deck.
+            shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
+                                            ground_drop=GRASS_CLEARANCE_M)
+        else:
+            # The DEFAULT constructed shoulder, draped onto grass_surf. The natural_ground port
+            # (6f1c734) turned this arm's `else:` into the `elif` above and left every other
+            # non-sidewalk track with no edge at all (UnboundLocalError on edge_group, found
+            # rebuilding Sand Creek 2026-10-28) — this is the pre-port call, unchanged.
+            shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
+                                            ground_drop=GRASS_CLEARANCE_M, ground=grass_surf,
+                                            fill_apron=(str(cfg_raw.get("road_surface", "tarmac"))
+                                                        == "tarmac"))
         edge_group, edge_mat = "1ROAD_shoulder", "road"
         _pav_reg(edge_group, shoulder, "shoulder")
         # CONNECTORS GET A DRAPED VERGE TOO. The main loop's shoulder extends a MANAGED corridor
@@ -3008,6 +3018,30 @@ def build(project_dir: str | Path) -> dict:
                         _bW = _yyW
             return _bW
 
+        # the shoulder sheet on its own (the floor's shoulder cap below), same lookup as _pav_below_W
+        _pshW: dict = {}
+        _svSh = shoulder.get("vertices", [])
+        for _tW in shoulder.get("tris", ()):
+            _triW = (_svSh[_tW[0]], _svSh[_tW[1]], _svSh[_tW[2]])
+            for _ciW in range(int(min(_vW[0] for _vW in _triW) // 4.0), int(max(_vW[0] for _vW in _triW) // 4.0) + 1):
+                for _cjW in range(int(min(_vW[2] for _vW in _triW) // 4.0), int(max(_vW[2] for _vW in _triW) // 4.0) + 1):
+                    _pshW.setdefault((_ciW, _cjW), []).append(_triW)
+
+        def _shoulder_below_W(_pxW, _pzW, _refW):
+            _bW = None
+            for _AW, _BW, _CW in _pshW.get((int(_pxW // 4.0), int(_pzW // 4.0)), ()):
+                _dW2 = (_BW[2] - _CW[2]) * (_AW[0] - _CW[0]) + (_CW[0] - _BW[0]) * (_AW[2] - _CW[2])
+                if abs(_dW2) < 1e-12:
+                    continue
+                _w0W = ((_BW[2] - _CW[2]) * (_pxW - _CW[0]) + (_CW[0] - _BW[0]) * (_pzW - _CW[2])) / _dW2
+                _w1W = ((_CW[2] - _AW[2]) * (_pxW - _CW[0]) + (_AW[0] - _CW[0]) * (_pzW - _CW[2])) / _dW2
+                _w2W = 1.0 - _w0W - _w1W
+                if _w0W >= -1e-6 and _w1W >= -1e-6 and _w2W >= -1e-6:
+                    _yyW = _w0W * _AW[1] + _w1W * _BW[1] + _w2W * _CW[1]
+                    if abs(_yyW - _refW) <= 4.0 and (_bW is None or _yyW < _bW):
+                        _bW = _yyW
+            return _bW
+
         _gvW = grass["vertices"]
         # DROP-EDGE PREFILTER: only an edge whose nearby natural grass sits BELOW it may emit a
         # floor. At a cut/fill corner (station 302.5) high cut-side edges radiated 20% lines over
@@ -3060,6 +3094,16 @@ def build(project_dir: str | Path) -> dict:
                 _pavW = _pav_below_W(_gxW, _gzW, _floorW)
                 if _pavW is not None and _floorW > _pavW - 0.06:
                     _floorW = _pavW - 0.06
+                # ...and never ABOVE the shoulder. Left out of the cap above on purpose (on a fill its
+                # descending face sits over the floor all the way to the toe, and a -0.06 cap there
+                # pulled grass off the toe seam), but in a CUT the source is the bank crest, higher
+                # than the flat verge, and the 20% floor lifted the shoulder's own pinned grass up
+                # through it: Sand Creek 8047, grass +0.5..+1.06 m over the verge, the soft-top
+                # 0025 deferred. Binds only where the floor would end above the shoulder, so a fill
+                # (floor already under its face) is unchanged.
+                _shW = _shoulder_below_W(_gxW, _gzW, _floorW)
+                if _shW is not None and _floorW > _shW - 0.01:
+                    _floorW = _shW - 0.01
                 if _gyW < _floorW - 0.01:
                     _gvW[_giW] = (_gxW, _floorW, _gzW)
                     _weldW += 1
@@ -3181,10 +3225,16 @@ def build(project_dir: str | Path) -> dict:
             return _bH, _boH
 
         _wmedH = sorted(widths)[len(widths) // 2]
+        # the gate skips its excursion sweep inside declared bridge spans +/-20 m ("past the railing is
+        # a real drop, guarded"), so nothing here is a drop it measures: Sand Creek's third crossing
+        # grew lips 3-8 m BELOW the deck on the creek-channel slopes, chained into columns buried in
+        # the bank or hanging over the bed (drive_test floating furniture, 2026-10-28)
+        _spansH = [(_c - _l / 2 - 20.0, _c + _l / 2 + 20.0) for _c, _l in _bridges]
         _guardH = 0
         _prev_endH = {1.0: None, -1.0: None}
         for _iH in range(len(centerline)):
-            if widths[_iH] > _wmedH + 1.5:      # flare mouths: the gate exempts them
+            if (widths[_iH] > _wmedH + 1.5      # flare mouths: the gate exempts them
+                    or any(_a <= _stb[_iH] <= _b for _a, _b in _spansH)):   # declared spans only, as the gate
                 _prev_endH[1.0] = _prev_endH[-1.0] = None
                 continue
             _xH, _yH0, _zH = centerline[_iH]
@@ -3224,26 +3274,38 @@ def build(project_dir: str | Path) -> dict:
                         _vxH = _xH + _nxH * _inH
                         _vzH = _zH + _nzH * _inH
                         _vyH = min(_prevH, _yH0 + 1.8) - 0.2
-                        _pH = _prev_endH[_sideH]
-                        if _pH is not None and math.hypot(_vxH - _pH[0], _vzH - _pH[2]) <= 6.0:
-                            _sxH, _syH, _szH = _pH
-                        else:
-                            _sxH, _syH, _szH = _vxH - _txH * 1.5, _vyH, _vzH - _tzH * 1.5
                         _exH = _vxH + _txH * 1.5
                         _ezH = _vzH + _tzH * 1.5
                         _thH = (_offH - 0.25) - _inH
                         _lxH, _lzH = _nxH * _thH, _nzH * _thH
+
+                        def _seatH(_qxS, _qzS, _qyS):
+                            # the base stands on the LOWEST ground under this end's inner and outer
+                            # corners, not at the crest the probe read: on a cut bank the lip sits
+                            # inboard of the crest, over ground ~1.5 m lower, and hovered there
+                            # (Sand Creek 7990, drive_test floating furniture). The top stays at the
+                            # crest, so the gate's guard credit is unchanged.
+                            _gS = [_top_H(_pxS, _pzS, _yH0)[0]
+                                   for _pxS, _pzS in ((_qxS, _qzS), (_qxS + _lxH, _qzS + _lzH))]
+                            return min([_qyS] + [_g - 0.2 for _g in _gS if _g is not None])
+                        _pH = _prev_endH[_sideH]
+                        if _pH is not None and math.hypot(_vxH - _pH[0], _vzH - _pH[2]) <= 6.0:
+                            _sxH, _sbH, _szH, _stH = _pH
+                        else:
+                            _sxH, _szH = _vxH - _txH * 1.5, _vzH - _tzH * 1.5
+                            _sbH, _stH = _seatH(_sxH, _szH, _vyH), _vyH + 0.7
+                        _ebH, _etH = _seatH(_exH, _ezH, _vyH), _vyH + 0.7
                         _b0H = len(para_mesh["vertices"])
-                        for (_qxH, _qyH, _qzH) in ((_sxH, _syH, _szH), (_exH, _vyH, _ezH)):
-                            for _dyH in (0.0, 0.7):
-                                para_mesh["vertices"].append((_qxH, _qyH + _dyH, _qzH))
-                                para_mesh["vertices"].append((_qxH + _lxH, _qyH + _dyH, _qzH + _lzH))
+                        for (_qxH, _qzH, _qbH, _qtH) in ((_sxH, _szH, _sbH, _stH), (_exH, _ezH, _ebH, _etH)):
+                            for _qyH, _dyH in ((_qbH, 0.0), (_qtH, 0.7)):
+                                para_mesh["vertices"].append((_qxH, _qyH, _qzH))
+                                para_mesh["vertices"].append((_qxH + _lxH, _qyH, _qzH + _lzH))
                                 para_mesh["uvs"].append((0.0, _dyH))
                                 para_mesh["uvs"].append((0.5, _dyH))
                         for (_qaH, _qbH, _qcH) in ((0, 4, 6), (0, 6, 2), (1, 7, 5), (1, 3, 7),
                                                    (2, 6, 7), (2, 7, 3), (0, 5, 4), (0, 1, 5)):
                             para_mesh["tris"].append((_b0H + _qaH, _b0H + _qbH, _b0H + _qcH))
-                        _prev_endH[_sideH] = (_exH, _vyH, _ezH)
+                        _prev_endH[_sideH] = (_exH, _ebH, _ezH, _etH)
                         _guardH += 1
                         break        # one lip per crossing: it guards every drop outboard of it
                     if _tyH is not None:

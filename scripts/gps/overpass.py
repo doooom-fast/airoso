@@ -197,14 +197,42 @@ def _post(query: str, *, retries: int = 3) -> dict:
     return {}
 
 
-def fetch_drivable_ways(bbox: tuple[float, float, float, float], *, timeout: int = 120) -> list[dict]:
+def post_cached(query: str, cache=None, **meta) -> dict:
+    """:func:`_post` behind an optional snapshot file — the :func:`fetch_ways` contract for any query.
+    The snapshot is keyed by a fingerprint of the query, so a changed bbox/filter re-fetches instead of
+    reusing a stale network; ``meta`` is recorded beside the payload. Delete the file to re-fetch."""
+    fingerprint = hashlib.sha256(query.encode()).hexdigest()[:16]
+    if cache is not None and Path(cache).is_file():
+        try:
+            snap = json.loads(Path(cache).read_text(encoding="utf-8"))
+            if snap.get("query_fingerprint") == fingerprint:
+                print(f"  [overpass] using cached snapshot {Path(cache).name} "
+                      f"({len(snap['payload'].get('elements', []))} elements, fetched {snap.get('fetched_utc', '?')})")
+                return snap["payload"]
+            print(f"  [overpass] {Path(cache).name} is for a different query — re-fetching")
+        except (json.JSONDecodeError, KeyError):
+            print(f"  [overpass] {Path(cache).name} unreadable — re-fetching")
+    payload = _post(query)
+    if cache is not None:
+        Path(cache).parent.mkdir(parents=True, exist_ok=True)
+        Path(cache).write_text(json.dumps({"query_fingerprint": fingerprint,
+                                           "fetched_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                                           **meta, "payload": payload}), encoding="utf-8")
+        print(f"  [overpass] snapshotted {len(payload.get('elements', []))} elements -> {Path(cache).name}")
+    return payload
+
+
+def fetch_drivable_ways(bbox: tuple[float, float, float, float], *, timeout: int = 120,
+                        cache=None) -> list[dict]:
     """Every drivable OSM way in the bbox, for map-matching: ``[{id, name, highway, geom:[(lon,lat)]}]``.
     Unlike :func:`fetch_ways` (named route roads only), this pulls the whole road network so a recorded
-    drive can be snapped onto it regardless of what the streets are called."""
+    drive can be snapped onto it regardless of what the streets are called.
+
+    ``cache``: snapshot path (:func:`post_cached`)."""
     s, w, n, e = bbox
     query = (f'[out:json][timeout:{timeout}];\n'
              f'way["highway"~"^({DRIVABLE})$"]({s},{w},{n},{e});\nout geom;')
-    payload = _post(query)
+    payload = post_cached(query, cache, bbox=list(bbox), highway=DRIVABLE)
     out: list[dict] = []
     for el in payload.get("elements", []):
         if el.get("type") != "way":
@@ -254,23 +282,4 @@ def fetch_highways_by_class(
         out.append({"id": el.get("id"), "name": tags.get("name"), "ref": tags.get("ref"),
                     "highway": tags.get("highway"), "layer": tags.get("layer"),
                     "bridge": tags.get("bridge"), "geom": geom})
-    return out
-
-
-def fetch_drivable_ways(bbox: tuple[float, float, float, float], *, timeout: int = 120) -> list[dict]:
-    """Every drivable OSM way in the bbox, for map-matching: ``[{id, name, highway, geom:[(lon,lat)]}]``.
-    Unlike :func:`fetch_ways` (named route roads only), this pulls the whole road network so a recorded
-    drive can be snapped onto it regardless of what the streets are called."""
-    s, w, n, e = bbox
-    query = (f'[out:json][timeout:{timeout}];\n'
-             f'way["highway"~"^({DRIVABLE})$"]({s},{w},{n},{e});\nout geom;')
-    payload = _post(query)
-    out: list[dict] = []
-    for el in payload.get("elements", []):
-        if el.get("type") != "way":
-            continue
-        geom = [(g["lon"], g["lat"]) for g in el.get("geometry") or []]
-        if len(geom) >= 2:
-            out.append({"id": el.get("id"), "name": el.get("tags", {}).get("name"),
-                        "highway": el.get("tags", {}).get("highway"), "geom": geom})
     return out

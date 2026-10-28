@@ -12,9 +12,10 @@
 # Stages (in order). Earlier stages hit the network (Overpass/USGS) and only need re-running when the
 # route or region changes; the geometry->package back half is offline + deterministic. Resume from any
 # stage by name to skip the slow front half once the route is settled.
-#   gps     centerline + street labels       (Overpass / OSM)        -> data/centerline.geojson, street_labels.json
+#   gps     centerline                       (Overpass / OSM)        -> data/centerline.geojson
 #   elev    sample + smooth terrain          (USGS 3DEP)             -> data/heightfield.npy, dem
 #   project lat/lon/elev -> local metres, origin + true north        -> data/*.local.json, writes config
+#           + street labels on the projected line (Overpass)      -> data/street_labels.json
 #   mesh    road ribbon + grass + dummies + decals                   -> data/track.obj
 #   env     buildings / trees / highways / mountains                 -> data/environment.obj
 #   blend   import OBJs -> welded, materialed .blend  (Blender 4.2)   -> blender/<slug>.blend
@@ -74,11 +75,15 @@ active() { local s; for s in "${STAGES[@]:$START}"; do [[ "$s" == "$1" ]] && ret
 
 SLUG="$($PY -c "import json,sys;print(json.load(open('$PROJ/track.config.json'))['slug'])")"
 VER="$($PY -c "import json,sys;print(json.load(open('$PROJ/track.config.json'))['version'])")"
+MULTI="$($PY -c "import json;print(int(len(json.load(open('$PROJ/track.config.json')).get('layouts') or []) > 1))")"
 
-active gps     && { run gps     "$PY" -m scripts.gps.centerline "$PROJ"
-                    run gps     "$PY" -m scripts.gps.street_labels "$PROJ"; }
+active gps     &&   run gps     "$PY" -m scripts.gps.centerline "$PROJ"
 active elev    &&   run elev    "$PY" -m scripts.elevation.heightfield "$PROJ"
 active project &&   run project "$PY" -m scripts.geometry.projection "$PROJ"
+# street_labels indexes the PROJECTED line (data/centerline.local.json), so it runs after projection:
+# in the gps stage it failed on a clean checkout and, on a rebuild, labelled the new lap against the
+# previous build's local line.
+active project &&   run labels  "$PY" -m scripts.gps.street_labels "$PROJ"
 # Real street circuits (osm_road_widths=true): replace the flat default width with per-vertex OSM
 # lane-derived curb-to-curb widths + intersection pads. Runs after project (which writes the widths it
 # overrides) and hits Overpass. Racetracks keep their configured widths.
@@ -103,6 +108,15 @@ if active blend || active kn5; then
     BLENDER="${BLENDER:-$("$ROOT/scripts/bootstrap_blender.sh")}"   # pin/download Blender 4.2 if needed
     active blend && run blend "$BLENDER" --background --python scripts/ac/build_kn5.py -- "$PROJ"
     active kn5   && run kn5   "$BLENDER" --background --python scripts/ac/export_kn5_addon.py -- "$PROJ"
+    # MULTI-LAYOUT (fleet/LAWS.md L8 as amended, ledger 0047): build_kn5 left the road kn5 free of AC_*
+    # nodes; each layout gets its own nodes-only build/<slug>__<id>.kn5 from its declared layouts[].start,
+    # placed in the OBJ path's frame (--obj-frame). The loop chain (tools/ship_track.sh) does the same with
+    # the loop prep's frame.
+    if (( MULTI )); then
+      active kn5 && run dummies "$PY" tools/layout_dummies.py "$PROJ"
+      active kn5 && run spawn   "$BLENDER" --background --python-exit-code 1 \
+                                --python scripts/ac/build_spawn_kn5.py -- "$PROJ" --obj-frame
+    fi
   fi
   # Gate: assert the exported kn5 is actually drivable (no dup meshes, drivable surfaces face-up, spawns
   # on the road) — every past fall-through, encoded as a check. A failure aborts BEFORE packaging/release.

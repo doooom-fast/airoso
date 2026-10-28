@@ -386,9 +386,18 @@ def centerline_from_kml(project_dir: str | Path, kml_path: str | Path | None = N
     A LineString is used directly (longest = loop, others = connectors). If the KML is only Points
     (named turns), they're ordered by name and splined through with Catmull-Rom. Precise — your route,
     no road guessing.
+
+    The config ``source`` block steers the LineString case (all opt-in; absent = the old behaviour):
+      ``line``             index (document order) of the LineString that is the loop, instead of the
+                           longest — two Directions exports of near-equal length make "longest" a coin.
+      ``connector_lines``  ``{name: index}`` of the other LineStrings to keep as connectors; ``{}``
+                           keeps none (a second route in the file is not automatically a road).
+      ``snap: "osm"``      map-match every kept line onto the OSM drivable network (L1: the KML picks
+                           the roads, OSM supplies their geometry), snapshot in data/osm.cache.json.
     """
     project_dir = Path(project_dir)
     cfg = load_config(project_dir)
+    src = cfg.source or {}
     if kml_path is None:
         kml_path = next((p for p in sorted((project_dir / "source").glob("*.km*"))), None)
         if kml_path is None:
@@ -397,12 +406,34 @@ def centerline_from_kml(project_dir: str | Path, kml_path: str | Path | None = N
     lines = [f for f in feats if f["type"] == "line"]
     points = [f for f in feats if f["type"] == "point"]
     kml_connectors: dict[str, list[Vertex]] = {}  # name -> raw coords
+    match_stats: dict = {}
     if lines:
-        main = max(lines, key=lambda f: polyline_length(f["coords"]))
+        if "line" in src:
+            main = lines[int(src["line"])]
+        else:
+            main = max(lines, key=lambda f: polyline_length(f["coords"]))
         ring = list(main["coords"])
         kml_name, source = main["name"], "kml-line"
-        for i, f in enumerate(g for g in lines if g is not main):
-            kml_connectors[f["name"] or f"connector_{i}"] = f["coords"]
+        if "connector_lines" in src:
+            for name, idx in src["connector_lines"].items():
+                if lines[int(idx)] is main:
+                    raise SystemExit(f"source.connector_lines.{name} is the loop line ({idx})")
+                kml_connectors[name] = lines[int(idx)]["coords"]
+        else:
+            for i, f in enumerate(g for g in lines if g is not main):
+                kml_connectors[f["name"] or f"connector_{i}"] = f["coords"]
+        if src.get("snap") == "osm":
+            from scripts.gps.mapmatch import map_match  # lazy: needs numpy
+            pts = ring + [p for c in kml_connectors.values() for p in c]
+            pad = 0.004
+            bbox = tuple(cfg.raw.get("route", {}).get("bbox") or
+                         (min(p[1] for p in pts) - pad, min(p[0] for p in pts) - pad,
+                          max(p[1] for p in pts) + pad, max(p[0] for p in pts) + pad))
+            ways = overpass.fetch_drivable_ways(bbox, cache=project_dir / "data" / "osm.cache.json")
+            ring, match_stats = map_match(resample(ring, RESAMPLE_SPACING_M), ways)
+            for name in kml_connectors:
+                kml_connectors[name], _ = map_match(resample(list(kml_connectors[name]), RESAMPLE_SPACING_M), ways)
+            source = "kml-line+osm"
     elif points:
         # My Maps default-named pins ("Point NN") = interior junctions → a connector; the rest = loop.
         conn_re = re.compile(r"^\s*point\s*\d+", re.I)
@@ -444,7 +475,7 @@ def centerline_from_kml(project_dir: str | Path, kml_path: str | Path | None = N
     write_preview_svg(ring, connectors, project_dir / "data" / "centerline_preview.svg")
     return out, {"length_km": round(polyline_length(ring) / 1000, 2), "points": len(ring),
                  "lines_in_kml": len(lines), "points_in_kml": len(points), "closed": cfg.loop,
-                 "connectors": list(connectors)}
+                 "connectors": list(connectors), **match_stats}
 
 
 def write_preview_svg(ring: list[Vertex], connectors: dict[str, list[Vertex]], path: Path, size: int = 900) -> None:
@@ -488,7 +519,12 @@ def write_preview_svg(ring: list[Vertex], connectors: dict[str, list[Vertex]], p
 def main() -> None:
     if len(sys.argv) < 2:
         raise SystemExit("usage: python -m scripts.gps.centerline <project-dir>")
-    out, stats = build_centerline(sys.argv[1])
+    project_dir = Path(sys.argv[1])
+    src = load_config(project_dir).source or {}
+    if src.get("type") == "kml":
+        out, stats = centerline_from_kml(project_dir, project_dir / src["kml"] if src.get("kml") else None)
+    else:
+        out, stats = build_centerline(project_dir)
     print(f"wrote {out}")
     for k, v in stats.items():
         print(f"  {k}: {v}")

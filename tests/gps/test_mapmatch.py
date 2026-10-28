@@ -61,6 +61,25 @@ def test_picks_the_nearer_of_two_parallel_ways_and_ignores_blips():
         assert _pt_line_dist_m(p, south["geom"][0], south["geom"][-1]) < 2.0
 
 
+def test_a_blip_merged_at_a_run_end_is_reprojected_onto_the_run_way():
+    if not HAVE:
+        return
+    # drive north up B, 5 m east of its line; the first two fixes sit nearer the cross street C
+    # (a junction blip). Merged into B's run, they must be cut at B's arc, not the ~260 m arc they
+    # carried along C — that foreign arc chorded 2.8 km of Sand Creek Dr out of the lap.
+    north = {"id": 1, "name": "B", "highway": "tertiary", "geom": [(LON0, LAT0 + 0.0001 * i) for i in range(51)]}
+    cross = {"id": 2, "name": "C", "highway": "tertiary",
+             "geom": [(LON0 - 0.003, LAT0 + 0.0001), (LON0 + 0.001, LAT0 + 0.0001)]}
+    gps = [(LON0 + 0.00006, LAT0 + 0.0001 + 0.000027 * i) for i in range(178)]
+    out, stats = mm.map_match(gps, [north, cross], max_snap_m=30, min_run=4)
+    assert stats["ways_used"] == 1
+    kx = 111320 * math.cos(math.radians(LAT0)); ky = 110540
+    first_gap = math.hypot((out[0][0] - LON0) * kx, (out[0][1] - LAT0 - 0.0001) * ky)
+    assert first_gap < 3.0, first_gap
+    length = sum(math.hypot((b[0] - a[0]) * kx, (b[1] - a[1]) * ky) for a, b in zip(out, out[1:]))
+    assert abs(length - 0.000027 * 177 * ky) < 6.0, length
+
+
 def test_no_ways_returns_raw():
     if not HAVE:
         return

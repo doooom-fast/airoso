@@ -569,7 +569,16 @@ def _verify_layouts(project: Path, cfg: dict, slug: str, layouts: list, kn5_dir:
         fails.append("no data/finished_centerline.json — cannot judge spawn heading / side / line (kn5 frame)")
         return fails
     fj = json.loads(fin.read_text(encoding="utf-8"))
-    line = _Line(fj["points_xyz_m"], closed=bool(cfg.get("loop", True)) if "loop" in cfg else None)
+    pts = fj["points_xyz_m"]
+    if str(fj.get("frame", "")).startswith("mesh"):
+        # build.sh's OBJ path writes this file in the MESH frame (track.obj). Its road kn5 is that frame
+        # yawed by true north — build_kn5: Blender (x, -z, y) rotated about Z, exporter (x, z, -y) — so
+        # bring the line there before judging heading / side / line against the kn5's nodes. Read as the
+        # kn5 frame it sat 180 deg round the origin on Sand Creek (mirror_x + 180).
+        _yr = math.radians(float(cfg.get("true_north_rotation_deg", 0.0) or 0.0))
+        _c, _s = math.cos(_yr), math.sin(_yr)
+        pts = [(p[0] * _c + p[2] * _s, p[1], -p[0] * _s + p[2] * _c) for p in pts]
+    line = _Line(pts, closed=bool(cfg.get("loop", True)) if "loop" in cfg else None)
     lanes: dict = {}
     bb = project / "data" / "barrier_bands.json"
     if bb.exists():

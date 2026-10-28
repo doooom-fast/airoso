@@ -65,6 +65,19 @@ def _portion(geom: list[Vertex], arc: list[float], a0: float, a1: float) -> list
     return out if fwd else out[::-1]
 
 
+def _arc_on(xy: list[tuple[float, float]], arc: list[float], px: float, py: float) -> float:
+    """Arc length along one way (local metres) of the point nearest (px, py)."""
+    best, at = math.inf, 0.0
+    for i in range(len(xy) - 1):
+        (ax, ay), (bx, by) = xy[i], xy[i + 1]
+        dx, dy = bx - ax, by - ay
+        t = max(0.0, min(1.0, ((px - ax) * dx + (py - ay) * dy) / max(dx * dx + dy * dy, 1e-9)))
+        d = math.hypot(px - (ax + t * dx), py - (ay + t * dy))
+        if d < best:
+            best, at = d, arc[i] + t * (arc[i + 1] - arc[i])
+    return at
+
+
 def map_match(gps: list[Vertex], ways: list[dict], *, max_snap_m: float = 30.0, min_run: int = 4):
     """Snap ``gps`` (lon,lat) onto ``ways`` → stitched centerline (lon,lat) following OSM geometry.
     Returns (centerline, stats)."""
@@ -139,7 +152,12 @@ def map_match(gps: list[Vertex], ways: list[dict], *, max_snap_m: float = 30.0, 
             centerline += [(matched[i][2], matched[i][3]) for i in range(a, b + 1)]
             continue
         n_matched += b - a + 1
-        centerline += _portion(ways[wi]["geom"], way_arc[wi], matched[a][1], matched[b][1])
+        # the run's end fixes may be blips merged in from another way (a crossing street at the
+        # junction), whose stored arc is along THAT way — re-project them onto this one, or the cut
+        # lands at a foreign arc and the stitch chords across (Sand Creek Dr: 2.8 km lost to a chord)
+        a0 = _arc_on(way_xy[wi], way_arc[wi], *loc(matched[a][2], matched[a][3]))
+        a1 = _arc_on(way_xy[wi], way_arc[wi], *loc(matched[b][2], matched[b][3]))
+        centerline += _portion(ways[wi]["geom"], way_arc[wi], a0, a1)
 
     # de-dupe near-duplicate consecutive points
     out: list[Vertex] = []

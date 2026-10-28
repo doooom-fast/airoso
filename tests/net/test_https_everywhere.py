@@ -198,8 +198,11 @@ def test_every_fetch_function_passes_the_https_context():
         ("tools/fetch_osm.fetch", widths_from_osm, lambda: fetch_osm.fetch("[out:json];", max_age_days=None), empty),
         ("overpass.fetch_ways", overpass, lambda: overpass.fetch_ways(bbox, ["X"], retries=1), empty),
         ("overpass._post", overpass, lambda: overpass._post("[out:json];", retries=1), empty),
-        ("street_labels._fetch_named_highways", street_labels,
-         lambda: street_labels._fetch_named_highways(bbox, retries=1), empty),
+        # street_labels fetches through overpass.post_cached -> _post since 2026-10-28 (the snapshot): its
+        # context is that module's https_context()
+        ("street_labels._fetch_named_highways", overpass,
+         lambda: street_labels._fetch_named_highways(bbox), empty),
+        ("overpass.fetch_drivable_ways", overpass, lambda: overpass.fetch_drivable_ways(bbox), empty),
         ("widths_from_osm._overpass", widths_from_osm, lambda: widths_from_osm._overpass("[out:json];"),
          json.dumps({"elements": [], "osm3s": {"timestamp_osm_base": "2026-10-11T19:28:01Z"}}).encode()),
     ]

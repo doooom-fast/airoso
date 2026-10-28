@@ -88,3 +88,10 @@ tracks/*/build/
 !tracks/*/data/*.tif
 !tracks/*/data/*.json
 !tracks/*/loop.blend
+# ...but never the build OUTPUT build.sh leaves beside it: every build regenerates it, and it runs to
+# hundreds of MB (Sand Creek 2026-10-28: track.obj 584 MB, track_render.svg 607 MB, past GitHub's
+# 100 MB file limit; ground.local.json 26 MB)
+tracks/*/data/*.obj
+tracks/*/data/*.mtl
+tracks/*/data/*_render.svg
+tracks/*/data/ground.local.json

@@ -51,9 +51,12 @@ def _track_dir(argv):
 
 
 project = _track_dir(sys.argv)
+# --obj-frame: the road kn5 came from build.sh's OBJ path (scripts/ac/build_kn5.py), not the loop prep
+OBJ_FRAME = "--obj-frame" in sys.argv[sys.argv.index("--") + 1:]
 repo = Path(__file__).resolve().parents[2]
 cfg = json.loads((project / "track.config.json").read_text())
 slug = cfg["slug"]
+sx = -1.0 if cfg.get("mirror_x", False) else 1.0
 data = project / "data"
 build = project / "build"
 build.mkdir(parents=True, exist_ok=True)
@@ -133,7 +136,23 @@ for lo in layouts:
         e.empty_display_type = "ARROWS"
         e.empty_display_size = 3.0
         facing = any(name.startswith(p) for p in FACING)
-        if new_shape:
+        if new_shape and OBJ_FRAME:
+            # build.sh's OBJ path: the road kn5 is the MESH frame (engine x mirrored by mirror_x) imported as
+            # Blender (x, -z, y) and yawed by true north about Blender Z (build_kn5 step 3b) — the node goes
+            # exactly there. Its facing is this layout's engine travel (recovered from _yaw_deg =
+            # atan2(ux, -uz)) carried through the same map into the kn5 frame (exporter (x, z, -y)), and the
+            # Blender yaw psi gives kn5 local +Z = (sin psi, 0, cos psi). Adding true north to _yaw_deg, as
+            # the loop branch below does, faced Sand Creek's grid backwards (mirror_x + 180 deg).
+            xm = sx * x
+            e.location = (xm * yc + z * ys, xm * ys - z * yc, y)
+            if facing:
+                if name not in yaws:
+                    raise SystemExit(f"[spawn_kn5] dummies_{lid}.json: no _yaw_deg for facing node {name}")
+                p0 = math.radians(float(yaws[name]))
+                ux, uz = math.sin(p0), -math.cos(p0)
+                kx, kz = sx * ux * yc + uz * ys, -sx * ux * ys + uz * yc
+                e.rotation_euler = (0.0, 0.0, math.atan2(kx, kz))
+        elif new_shape:
             # ENGINE (E, up, N) -> Blender (E, N, up) = (x, z, y), yawed by true north about Blender Z
             # (the loop prep's placement); the exporter's (x, z, -y) then gives kn5 (x, y, -z).
             e.location = (x * yc - z * ys, x * ys + z * yc, y)
@@ -164,7 +183,7 @@ for lo in layouts:
     exists = out.exists()
     size = out.stat().st_size if exists else 0
     print(f"[spawn_kn5] {lid}: kn5={exists} size={size} dummies={len(dummies)} "
-          f"shape={'engine+yaw' if new_shape else 'legacy'} direction={meta.get('_direction', '?')}")
+          f"shape={('engine+yaw, obj frame' if OBJ_FRAME else 'engine+yaw') if new_shape else 'legacy'} direction={meta.get('_direction', '?')}")
     # nodes-only: no textures, no materials — a spawn kn5 over 1 MB has swallowed the main export's
     # material table (ini not purged) or a mesh, and verify_kn5 would reject it anyway
     if not exists or size == 0:

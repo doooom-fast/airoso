@@ -41,7 +41,7 @@ Recorded conservatively — a tier not evidenced here is not held.
 | Track | Tier | Evidence / what blocks the next one |
 |---|---|---|
 | IMI, Pueblo, Aspen, High Plains, Second Creek | **T1** | Green at the v0.66.3 gate wave (ledger 0025); in-seat verdict open. Second Creek's geometry is fabricated, not sourced — flagged in `registry.json`, must not ship as a real place |
-| Sand Creek | **T0** | 1 soft-top from un-excavated cut-corridor grass, deferred (0025) |
+| Sand Creek | **T0** | 2026-10-28 OSM-snapped draft (0058): all four gates PASS, packed `sand_creek_raceway_v0.27.0.zip` (forward + reverse) — not installed, never driven |
 | Lookout Lariat | **T0** (July v0.46.0 build only; current pin fails drive_test) | Its own campaign (0025: drive_test FAIL at v0.66.3, severe 1,033). *2026-10-11:* the V3 rebuild is approved (ledger 0048, `tracks/lookout-lariat/V3-PLAN.md`) and nothing of it is built yet |
 | Lake Murray | **T2** | 2026-10-08, Kevin in the seat on `san_diego_lake_murray_v3` (C1 + median island + C2 v1 mouths): **"this is super clean (v3)"** — the first rebuilt build to beat the July restoration in his seat (0029's condition). T3 claims on a full-lap DRIVE-TEST-REPORT; open: sub-loop connector-to-connector mouths, corner returns, the College south-end hairpin (C3). *2026-10-12:* the race layouts (v0.17.1, ledger 0049) drew **"the track width and race track layouts are incredible"** (dictated) — a seat verdict, not yet the full T3 report |
 | Dragon Tail / Under the Dragon (gravel) | **T0** | Packaged and shipped; gates not re-run at current engine |

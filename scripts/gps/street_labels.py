@@ -28,35 +28,20 @@ import sys
 from pathlib import Path
 
 from scripts.geometry.projection import _meters_per_degree
-from scripts.gps.overpass import OVERPASS_URL, USER_AGENT  # noqa: F401  (kept for parity / discoverability)
-from scripts.tls import https_context
+from scripts.gps.overpass import post_cached
 
 Vertex = tuple[float, float]
 
 
-def _fetch_named_highways(bbox: tuple[float, float, float, float], *, retries: int = 3):
+def _fetch_named_highways(bbox: tuple[float, float, float, float], *, cache=None):
     """All named highway ways within bbox -> [(name, [(lon,lat)...]), ...]. One Overpass call so we
-    discover the ACTUAL OSM names along the route instead of guessing 'East 52nd Avenue' vs 'E 52nd'."""
-    import time
-    import urllib.parse
-    import urllib.request
+    discover the ACTUAL OSM names along the route instead of guessing 'East 52nd Avenue' vs 'E 52nd'.
+    ``cache``: snapshot path (overpass.post_cached) so a rebuild never depends on a live Overpass."""
     s, w, n, e = bbox
     q = (f"[out:json][timeout:90];\n"
          f'(way["highway"]["name"]({s},{w},{n},{e}););\n'
          f"out geom;")
-    body = urllib.parse.urlencode({"data": q}).encode()
-    payload: dict = {}
-    for attempt in range(retries):
-        req = urllib.request.Request(OVERPASS_URL, data=body,
-                                     headers={"User-Agent": USER_AGENT, "Accept": "application/json"})
-        try:
-            with urllib.request.urlopen(req, timeout=180, context=https_context()) as resp:
-                payload = json.loads(resp.read().decode())
-            break
-        except Exception:
-            if attempt == retries - 1:
-                raise
-            time.sleep(2 * (attempt + 1))
+    payload = post_cached(q, cache, bbox=list(bbox))
     ways = []
     for el in payload.get("elements", []):
         if el.get("type") != "way":
@@ -112,7 +97,7 @@ def label(project_dir: str | Path, *, match_m: float = 28.0, smooth_win: int = 9
     bbox = (min(lats) - pad / mlat, min(lons) - pad / mlon,
             max(lats) + pad / mlat, max(lons) + pad / mlon)
     print(f"[street_labels] bbox(s,w,n,e)={tuple(round(b,5) for b in bbox)}  fetching named highways…")
-    ways = _fetch_named_highways(bbox)
+    ways = _fetch_named_highways(bbox, cache=data / "street_labels.osm.cache.json")
     print(f"[street_labels] fetched {len(ways)} named highway ways "
           f"({len({nm for nm,_ in ways})} distinct names)")
 

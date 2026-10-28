@@ -14,6 +14,28 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-10-28 — verify_kn5's per-layout checks read an OBJ-path centreline in the kn5 frame; build.sh gets L8 (ledger 0058)
+
+**Wiring, not a threshold.** `verify_kn5`'s multi-layout checks (b)–(e) judge spawn nodes against
+`data/finished_centerline.json` *as the kn5 frame*. That holds for the loop prep's file (no `frame` key), but
+build.sh's OBJ path writes it in the MESH frame (`"frame": "mesh (mirrored) local metres — same frame as
+track.obj"`), and its road kn5 is that frame yawed by true north (build_kn5: Blender (x, −z, y) about Z,
+exporter (x, z, −y)). A file carrying that `frame` is now rotated into the kn5 frame, kn5 =
+(x·c + z·s, y, −x·s + z·c), before heading / side / line are judged. No threshold, tolerance or exemption
+moved; HEADING_MIN_DEG, LINE_TOL_M, LINE_AHEAD_MAX_M, CAR_HALF_W_M are untouched. Before this the checks could
+not be reached on the OBJ path at all — `build_kn5.py` baked every spawn into the road kn5, so (a) failed first.
+
+The rest of the L8 wiring on that path: `build_kn5.py` places no AC_* empty when `layouts[]` has more than one
+entry (the loop prep's guard); build.sh then runs `tools/layout_dummies.py` (which reads the as-built
+finished line on this path) and `scripts/ac/build_spawn_kn5.py --obj-frame` (nodes placed with build_kn5's own
+transform, facing carried through it).
+
+**Proven** on Sand Creek (mirror_x, true north 180°): `verify_kn5` PASS — heading, 17 facing nodes per layout,
+local +Z · travel min **+1.00** on both `forward` and `reverse` (deepforest reads +1.00); spawns on 1ROAD; side;
+line; `--inis` PASS (models_forward.ini / models_reverse.ini = road + own spawn kn5). **Only proven at 180°**:
+there sin(yaw) = 0, so the sign of the s-terms is not exercised; a track with another true-north angle is the
+first real test of them (kn5_ground_check, which tries both sign conventions, is the cross-check).
+
 ## 2026-10-26 — Lake Murray expansion P4 integrated (v0.19.1, Drive 2) + the lenses' fix round (ledger 0054 "P4 — dressing, integrated")
 
 The four P4 branches (lamps, buildings + rock, trees + GrassFX, signs + map) merged as unions onto airoso main 1b5a6b3

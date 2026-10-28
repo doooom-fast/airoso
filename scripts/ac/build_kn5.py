@@ -275,6 +275,14 @@ def build(track_dir: Path) -> Path:
 
     FACING = ("AC_START", "AC_PIT", "AC_HOTLAP")
     dummies = json.loads((data / "dummies.json").read_text()) if (data / "dummies.json").exists() else {}
+    # MULTI-LAYOUT (ledger 0047; fleet/LAWS.md L8 as amended) — the loop prep's guard, on this path too:
+    # with more than one layouts[] entry the road kn5 carries NO AC_* node; each layout's grid, pits and
+    # gates ride in its own nodes-only build/<slug>__<id>.kn5 (tools/layout_dummies.py ->
+    # scripts/ac/build_spawn_kn5.py --obj-frame, build.sh). verify_kn5 (a) fails a road kn5 that bakes one.
+    if len(cfg_json.get("layouts") or []) > 1:
+        print(f"[build_kn5] multi-layout ({len(cfg_json['layouts'])} layouts): spawns ride in per-layout kn5s — "
+              f"no AC_* empties in the road scene")
+        dummies = {}
     for name, (x, y, z) in dummies.items():
         empty = bpy.data.objects.new(name, None)
         empty.empty_display_type = "ARROWS"

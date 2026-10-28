@@ -1,7 +1,7 @@
 {
   "name": "Sand Creek Raceway",
   "slug": "sand_creek_raceway",
-  "version": "0.26.0",
+  "version": "0.27.0",
   "mirror_x": true,
   "osm_road_widths": true,
   "_osm_road_widths_doc": "Real street circuit \u2014 after the project stage, scripts.gps.widths_from_osm map-matches each centerline vertex to its OSM way and sets curb-to-curb widths from lanes (arterials ~2x a side street) + writes intersection pads at the real junctions. Racetracks (defined widths) leave this off.",
@@ -50,7 +50,11 @@
   "source": {
     "type": "kml",
     "kml": "source/Sand Creek Raceway Drive-3.kml",
-    "kml_overrides": []
+    "kml_overrides": [],
+    "line": 0,
+    "connector_lines": {},
+    "snap": "osm",
+    "_v3_doc": "Kevin 2026-10-28 ('Yes, defaults'): the lap is the KML's FIRST LineString (Colorado & 48th -> Colorado & 48th, 9,687 m, closed), map-matched onto the OSM drivable network so its geometry is OSM's (L1; snapshot data/osm.cache.json) - the Google line sits within 4.2 m of the matched ring end to end. The SECOND LineString (Colorado & 48th -> 6409 E 45th Ave, open, 9,680 m, through the 49th/Pontiac/Oneida/Monaco/Ivy interior grid) is set aside, not built: connector_lines {} keeps it out of the mesh. It is the likely source of the dropped 'interior' layout."
   },
   "route": {
     "bbox": [
@@ -121,14 +125,32 @@
   },
   "layouts": [
     {
-      "id": "full",
-      "ai": "ai/full",
+      "id": "forward",
+      "ai": "ai/forward",
       "uses_connectors": [],
+      "direction": "forward",
+      "kind": "street",
+      "start": {
+        "line_vertex": 2269,
+        "grid_vertex": 2259,
+        "offset_right_m": 3.0,
+        "sector_vertices": [116, 1195],
+        "_doc": "L8 per-layout spawns (tools/layout_dummies.py, ledger 0058). The line, pole and sectors are where build_mesh's own placement had them on this lap (E 45th Ave, st 6796 / pole 30 m behind; sectors at 1/3 and 2/3 lap); the grid moves off the centreline into the right lane: 3.0 m right of travel on the 12 m street, staggered columns 2.0 / 4.0 m."
+      },
       "_doc": "Outer loop: Colorado -> 50th -> Dahlia -> 56th -> Sand Creek -> Quebec -> 45th -> 46th -> start. The 'interior' layout was dropped: its interior_grid connector was never defined, and layouts share one kn5 so a distinct interior circuit isn't achievable without splitting geometry."
     },
     {
       "id": "reverse",
       "ai": "ai/reverse",
+      "direction": "reverse",
+      "kind": "street",
+      "start": {
+        "line_vertex": 2307,
+        "grid_vertex": 2317,
+        "offset_right_m": 3.0,
+        "sector_vertices": [1232, 116],
+        "_doc": "As forward: build_mesh's own reverse line / pole (st 6910, pole 30 m behind in reverse travel), right lane. TIME_2 is v116 (17.3 m Colorado Blvd, the forward layout's TIME_1), not the derived v142 on the 24.7 m flare into the 50th Ave junction."
+      },
       "_doc": "same world, opposite direction \u2014 own grid/timing via dummies_reverse.json + spawn kn5"
     }
   ],

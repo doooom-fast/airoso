@@ -9,10 +9,12 @@ Two kinds of output, both deterministic (same pixels every run):
      (tools/author_signs_blend.py) because the kn5 prep overwrites every non-exempt mesh's UVs
      with a planar (x/4, y/4) projection, which would collapse a textured plate to a line — the
      same reason the lamps use solids. Bound by the pbr.TEXTURES keys SIGNPLATE / SIGNARROW.
-  2. the full MUTCD artwork at 1024 px width, public-domain designs drawn procedurally (MUTCD
-     Introduction para 04; FHWA SHS 2004 sheets 2-7/2-8/2-9): mutcd_w1-6r.png / mutcd_w1-6l.png
-     (48x24 Large Arrow), mutcd_w1-7.png (Two-Direction Large Arrow), mutcd_w1-8l.png /
-     mutcd_w1-8r.png (18x24 chevron, no border). RGBA with transparent rounded corners — NOT bound
+  2. the full MUTCD artwork, public-domain designs drawn procedurally (MUTCD Introduction para 04;
+     FHWA SHS 2004 sheets 2-7/2-8/2-9): mutcd_w1-6r.png / mutcd_w1-6l.png (48x24 Large Arrow,
+     1024x512), mutcd_w1-7.png (Two-Direction Large Arrow, 1024x512), mutcd_w1-8l.png /
+     mutcd_w1-8r.png (18x24 chevron, no border: the plate at 768x1024, centred on a transparent
+     1024x1024 canvas — every file in assets/textures must be power-of-two, L7, or build.sh's
+     pre-flight refuses every track; the first 1024x1365 cut did). RGBA with transparent rounded corners — NOT bound
      by anything today: to put them on a plate the prep must exempt the mesh prefix from its
      planar-UV pass and the material must sit in pbr.BILLBOARD (alpha test), else the transparent
      corners render black under ksPerPixel.
@@ -73,6 +75,16 @@ def mirror_x(poly, w_in):
     return [(w_in - x, y) for (x, y) in poly]
 
 
+def pad_pot(img):
+    """centre img on a transparent canvas whose sides are the next powers of two (L7)"""
+    W, H = (1 << (n - 1).bit_length() for n in img.size)
+    if (W, H) == img.size:
+        return img
+    canvas = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    canvas.paste(img, ((W - img.size[0]) // 2, (H - img.size[1]) // 2))
+    return canvas
+
+
 def artwork():
     w, h, r, bi, bw = W16
     out = {
@@ -81,8 +93,8 @@ def artwork():
         "mutcd_w1-7.png": plate(w, h, r, bi, bw, [ARROW_2]),
     }
     w, h, r, bi, bw = W18
-    out["mutcd_w1-8l.png"] = plate(w, h, r, bi, bw, [CHEVRON_L], y_up=False)
-    out["mutcd_w1-8r.png"] = plate(w, h, r, bi, bw, [mirror_x(CHEVRON_L, w)], y_up=False)
+    out["mutcd_w1-8l.png"] = pad_pot(plate(w, h, r, bi, bw, [CHEVRON_L], width_px=768, y_up=False))
+    out["mutcd_w1-8r.png"] = pad_pot(plate(w, h, r, bi, bw, [mirror_x(CHEVRON_L, w)], width_px=768, y_up=False))
     return out
 
 

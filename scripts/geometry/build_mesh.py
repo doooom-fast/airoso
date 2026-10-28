@@ -957,7 +957,10 @@ def build(project_dir: str | Path) -> dict:
 
     # tile_m=8 m — the LA Canyons cracked-tarmac detail reads at its real scale (cracks crisp, not
     # stretched). The cracking is irregular enough to hide the repeat.
-    road = ribbon.road_ribbon(centerline, widths, tile_m=4.0, bank_at=bnk)  # 4 m = the Lake Murray asphalt scale
+    # road_profile.ribbon_cols: lateral columns for a banked road, so a camber ramp's twist doesn't
+    # sag the deck between rows (ribbon.road_ribbon). Banked only; absent = the old two-edge ribbon.
+    _cols = int((cfg_raw.get("road_profile") or {}).get("ribbon_cols", 1)) if bnk is not None else 1
+    road = ribbon.road_ribbon(centerline, widths, tile_m=4.0, bank_at=bnk, cols=_cols)  # 4 m = the Lake Murray asphalt scale
     # ONE SHEET THROUGH JUNCTIONS: inside a flat zone every pavement vert snaps to the plane —
     # coplanar centerlines still left each leg's CAMBERED ribbon riding proud of the pad
     # (the 20-40 cm lip across the mouth in Kevin's photo).
@@ -997,7 +1000,8 @@ def build(project_dir: str | Path) -> dict:
     # runoff.enabled=false skips it — a flat apron "at graded terrain height" makes sense beside a
     # flat circuit, but on a pitched mountainside it's a tarmac shelf with a step at the road band.
     if cfg_raw.get("runoff", {}).get("enabled", True):
-        runoff = kerbs.corner_runoff(centerline, widths, bank_at=bnk)
+        runoff = kerbs.corner_runoff(centerline, widths, bank_at=bnk,
+                                     bank_hold=bool(cfg_raw.get("natural_ground")))
         runoff["vertices"] = [(x, y + 0.05, z) for x, y, z in runoff["vertices"]]  # clear the grass, below road
     else:
         runoff = {"vertices": [], "uvs": [], "tris": []}
@@ -1220,7 +1224,7 @@ def build(project_dir: str | Path) -> dict:
         # annulus, the graded floor and the stone lips downstream), raw-grid grass everywhere,
         # and a short blend band sewn in later where grass approaches the deck.
         shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
-                                        ground_drop=GRASS_CLEARANCE_M)
+                                        ground_drop=GRASS_CLEARANCE_M, bank_hold=True)
         edge_group, edge_mat = "1ROAD_shoulder", "road"
         _pav_reg(edge_group, shoulder, "shoulder")
         # CONNECTORS GET A DRAPED VERGE TOO. The main loop's shoulder extends a MANAGED corridor
@@ -1308,6 +1312,7 @@ def build(project_dir: str | Path) -> dict:
     kerb_cfg = cfg_raw.get("kerb", {})
     if kerb_cfg.get("enabled", True):
         kerb = kerbs.corner_kerbs(centerline, widths, bank_at=bnk, ground=grass_surf,
+                                  bank_hold=bool(cfg_raw.get("natural_ground")),
                                   kerb_h=float(kerb_cfg.get("height_m", 0.05)),
                                   kerb_w=float(kerb_cfg.get("width_m", 1.0)),
                                   top_frac=float(kerb_cfg.get("top_frac", 0.55)),
@@ -3135,7 +3140,32 @@ def build(project_dir: str | Path) -> dict:
             _ib = _best[1]
             _dc = math.sqrt(_best[0])
             _de = _dc - widths[_ib] / 2.0
+            # PERPENDICULAR, not vertex, distance: vertices are ~3 m apart, so grass midway between two
+            # reads up to ~0.2 m farther out than it is and was eased toward raw ground while still
+            # under the deck edge, poking up through it (Exotics Racing s 975, 2026-10-28: 1-3 cm of
+            # 1GRASS over 1ROAD_main where a kerb ends on a widening road). Take the nearer of the two
+            # segments either side of the nearest vertex, with the width lerped along it.
+            for _jb in (_ib - 1, _ib + 1):
+                if 0 <= _jb < len(centerline):
+                    _ax, _az = centerline[_ib][0], centerline[_ib][2]
+                    _sx, _sz = centerline[_jb][0] - _ax, centerline[_jb][2] - _az
+                    _sl2 = _sx * _sx + _sz * _sz
+                    if _sl2 > 1e-9:
+                        _tt = max(0.0, min(1.0, ((_gx - _ax) * _sx + (_gz - _az) * _sz) / _sl2))
+                        _dp = math.hypot(_gx - (_ax + _sx * _tt), _gz - (_az + _sz * _tt))
+                        _de = min(_de, _dp - (widths[_ib] + (widths[_jb] - widths[_ib]) * _tt) / 2.0)
             _ey = centerline[_ib][1] + ROAD_LIFT_M
+            if bnk is not None:
+                # BANKED DECK: ease to the edge on THIS side, not the centreline. On a banked turn the
+                # inner edge rides o*tan(bank) below the centre; easing grass to the centre height
+                # built a berm beside it and left the raised outer shoulder a 0.5 m drop to the
+                # grass (Exotics Racing T2, 6 deg: drive_test excursions at s 300/450, 2026-10-28).
+                _pa, _pn = centerline[max(0, _ib - 1)], centerline[min(len(centerline) - 1, _ib + 1)]
+                _tl = math.hypot(_pn[0] - _pa[0], _pn[2] - _pa[2]) or 1.0
+                _lo = ((_gx - centerline[_ib][0]) * -(_pn[2] - _pa[2]) +
+                       (_gz - centerline[_ib][2]) * (_pn[0] - _pa[0])) / _tl   # left +ve, as road_ribbon
+                _hw = widths[_ib] / 2.0
+                _ey += max(-_hw, min(_hw, _lo)) * math.tan(bnk(_stp[_ib]))
             if abs(_gy - _ey) > 6.0:
                 continue                      # another leg / stacked geometry: leave it alone
             if _de <= 0.0:

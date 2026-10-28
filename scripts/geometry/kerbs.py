@@ -77,7 +77,7 @@ def corner_kerbs(centerline_m: list[Vertex], widths_m: list[float], *, thr: floa
                  min_run: int = 5, kerb_w: float = 1.0, kerb_h: float = 0.05, ridge_period: float = 0.6,
                  ridge_lo: float = 0.45, top_frac: float = 0.55, lift: float = 0.01,
                  fine_step: float = 0.3, sharp: float = 0.05, tile_m: float = 0.6, edge_ramp: float = 0.0,
-                 bank_at=None, ground=None) -> dict:
+                 bank_at=None, ground=None, bank_hold: bool = False) -> dict:
     """Real 3D **ridged** kerbs on corners — a raised, serrated rumble strip, not a flat texture plane.
     Each corner run is resampled fine (``fine_step``) and a cross-section is swept along it:
         road-edge lip (vertical, flush at the lane edge) -> raised top -> ramp back down on the verge,
@@ -117,6 +117,10 @@ def corner_kerbs(centerline_m: list[Vertex], widths_m: list[float], *, thr: floa
             rx, rz = x + nx * ramp, z + nz * ramp
             ramp_y = ground(rx, rz) if ground is not None else y + lift + side * ramp * tb
             ramp_y = min(ramp_y, y + lift + side * top * tb)   # never above the kerb top (stay a down-ramp)
+            if bank_hold and tb:
+                # the verge beside a banked edge is held level with it (road_shoulder bank_hold); a kerb
+                # draped below that sank under the shoulder on Exotics T2's raised outside (kn5 pokes)
+                ramp_y = max(ramp_y, y + lift + side * edge * tb)
             verts.append((x + nx * edge, y + lift + side * edge * tb, z + nz * edge))        # 0 edge bottom (road edge)
             verts.append((x + nx * lip, y + lift + h + side * lip * tb, z + nz * lip))       # 1 edge top (lane-side face: vertical lip or rideable ramp)
             verts.append((x + nx * top, y + lift + h + side * top * tb, z + nz * top))       # 2 top (outward)
@@ -156,7 +160,7 @@ def corner_kerbs(centerline_m: list[Vertex], widths_m: list[float], *, thr: floa
 
 def corner_runoff(centerline_m: list[Vertex], widths_m: list[float], *, thr: float = 0.008,
                   min_run: int = 5, gap: float = 2.5, runoff_w: float = 9.0, pad: int = 5,
-                  taper: int = 5, tile_m: float = 8.0, bank_at=None) -> dict:
+                  taper: int = 5, tile_m: float = 8.0, bank_at=None, bank_hold: bool = False) -> dict:
     """A wide **paved tarmac apron** on the OUTSIDE of each corner — where the car runs wide — instead
     of grass. Replaces the old corner barriers: open, forgiving asphalt runoff rather than a wall.
 
@@ -198,9 +202,12 @@ def corner_runoff(centerline_m: list[Vertex], widths_m: list[float], *, thr: flo
                 half = widths_m[k] / 2.0
                 inner, outer = half + gap, half + gap + w
                 tb = math.tan(bank_at(stations[k])) if bank_at else 0.0   # roll with the cambered road
+                # bank_hold: level at the banked edge's height rather than climbing the bank plane out
+                # to ``outer`` (Exotics T2: a 1.4 m apron lip 0.8 m over the lidar's level verge)
+                oi, oo = (half, half) if bank_hold else (inner, outer)
                 r = len(verts)
-                verts.append((x + nx * inner, y + side * inner * tb, z + nz * inner))
-                verts.append((x + nx * outer, y + side * outer * tb, z + nz * outer))
+                verts.append((x + nx * inner, y + side * oi * tb, z + nz * inner))
+                verts.append((x + nx * outer, y + side * oo * tb, z + nz * outer))
                 uvs.append((0.0, arc / tile_m))
                 uvs.append((max(w, 0.1) / tile_m, arc / tile_m))
                 rows.append(r)

@@ -63,6 +63,13 @@ each one's pixel position in the screenshot. In `track.config.json`:
 `px` and `trace_px` accept **normalised [0,1] image fractions** (resolution-independent) or absolute
 pixels. Corners must differ in both x and y. Omit `trace_px` to auto-trace a PNG.
 
+Measured widths: add `source.trace_width_m`, one width in metres per `trace_px` point. They are
+interpolated along the resampled lap into `widths_m`; without it every point gets
+`default_width_m`. Use it when the measured spread exceeds about 1.5 m (circuits widen at corner
+exits). `tracks/exotics-racing-lv/source/trace/` shows a NAIP orthophoto traced edge line to edge
+line. An ortho's own georeference also gives exact control points (its corners), with no pins
+needed.
+
 ## Naming "from the data on the image"
 
 The on-image text *is* the metadata: the place label (e.g. "IMI Motorsports Complex") becomes

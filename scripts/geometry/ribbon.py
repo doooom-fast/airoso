@@ -69,7 +69,7 @@ def _cap_offset(off: float, k: float, frac: float = 0.9) -> float:
 
 
 def road_ribbon(centerline_m: list[Vertex], widths_m: list[float], *, tile_m: float = 4.0,
-                bank_at=None) -> dict:
+                bank_at=None, cols: int = 1) -> dict:
     """Sweep a drivable ribbon (1ROAD) along the centerline, offsetting ±width/2 per vertex.
 
     Also emits per-vertex UVs (parallel to vertices) in metres/``tile_m``: U across the width
@@ -77,7 +77,13 @@ def road_ribbon(centerline_m: list[Vertex], widths_m: list[float], *, tile_m: fl
     the road and a detail/markings layer can key off the same coordinates.
 
     ``bank_at`` (station_m -> roll radians) rolls the cross-section: a vertex at lateral offset ``o``
-    (left +ve) is lifted by ``o*tan(bank)`` so the road banks as one plane (see ``profile.py``)."""
+    (left +ve) is lifted by ``o*tan(bank)`` so the road banks as one plane (see ``profile.py``).
+
+    ``cols`` splits each cross-section into that many lateral columns. With the default 1 a row is a
+    single edge-to-edge quad, and where the bank changes between rows (a camber ramp) that quad
+    twists: its diagonal sags by half the edge lift difference, about 10 cm on a 17 m road ramping
+    6 deg over 20 m at 3 m rows (Exotics Racing T2, 2026-10-28). The sag falls as 1/cols. 1 is
+    byte-identical to the old ribbon."""
     pts = centerline_m
     n = len(pts)
     closed = abs(pts[0][0] - pts[-1][0]) < 1e-6 and abs(pts[0][2] - pts[-1][2]) < 1e-6
@@ -96,24 +102,39 @@ def road_ribbon(centerline_m: list[Vertex], widths_m: list[float], *, tile_m: fl
         half_l = _cap_offset(half, k)
         half_r = -_cap_offset(-half, k)
         tb = math.tan(bank_at(arc)) if bank_at else 0.0
-        verts.append((x + nx * half_l, y + half_l * tb, z + nz * half_l))  # left  -> 2i  (outside/raised)
-        verts.append((x - nx * half_r, y - half_r * tb, z - nz * half_r))  # right -> 2i+1
-        uvs.append((half_l / tile_m, arc / tile_m))        # left
-        uvs.append((-half_r / tile_m, arc / tile_m))       # right
+        if cols <= 1:
+            verts.append((x + nx * half_l, y + half_l * tb, z + nz * half_l))  # left  -> 2i  (outside/raised)
+            verts.append((x - nx * half_r, y - half_r * tb, z - nz * half_r))  # right -> 2i+1
+            uvs.append((half_l / tile_m, arc / tile_m))        # left
+            uvs.append((-half_r / tile_m, arc / tile_m))       # right
+        else:
+            for c in range(cols + 1):                          # left edge (c=0) -> right edge (c=cols)
+                o = half_l - (half_l + half_r) * c / cols
+                verts.append((x + nx * o, y + o * tb, z + nz * o))
+                uvs.append((o / tile_m, arc / tile_m))
     tris: list[tuple[int, int, int]] = []
     last = m if closed else m - 1
-    for i in range(last):
-        j = (i + 1) % m
-        l0, r0, l1, r1 = 2 * i, 2 * i + 1, 2 * j, 2 * j + 1
-        tris.append((l0, r0, r1))
-        tris.append((l0, r1, l1))
+    if cols <= 1:
+        for i in range(last):
+            j = (i + 1) % m
+            l0, r0, l1, r1 = 2 * i, 2 * i + 1, 2 * j, 2 * j + 1
+            tris.append((l0, r0, r1))
+            tris.append((l0, r1, l1))
+    else:
+        k = cols + 1
+        for i in range(last):
+            j = (i + 1) % m
+            for c in range(cols):
+                l0, r0, l1, r1 = k * i + c, k * i + c + 1, k * j + c, k * j + c + 1
+                tris.append((l0, r0, r1))
+                tris.append((l0, r1, l1))
     return {"vertices": verts, "uvs": uvs, "tris": tris}
 
 
 def road_shoulder(centerline_m: list[Vertex], widths_m: list[float], *, lift: float = 0.1,
                   verge_w: float = 2.5, tile_m: float = 4.0, bank_at=None, ground_drop: float = 0.0,
                   ground=None, ratio: float = 2.0, max_w: float = 60.0,
-                  fill_apron: bool = False) -> dict:
+                  fill_apron: bool = False, bank_hold: bool = False) -> dict:
     """A graded **verge + embankment** that ramps each road edge down (fill) or up (cut) to the REAL
     ground, so the road reads like a real shouldered/embanked road instead of a ribbon floating on a
     hard edge. Three points out from the lane edge: inner lip (road edge, ``lift`` proud) → a short
@@ -222,7 +243,10 @@ def road_shoulder(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
                 verts.append((x + nx * oh, ground(x + nx * oh, z + nz * oh) - 0.8, z + nz * oh))
                 uvs.append((1.0, arc / tile_m))
             else:
-                verts.append((x + nx * (half + verge_w), y + side * (half + verge_w) * tb - ground_drop, z + nz * (half + verge_w)))
+                # bank_hold: the verge stays at the banked EDGE's height instead of carrying the bank
+                # plane on past it (natural ground: the lidar's real verge flattens off the bowl's edge)
+                _vo = half if bank_hold else half + verge_w
+                verts.append((x + nx * (half + verge_w), y + side * _vo * tb - ground_drop, z + nz * (half + verge_w)))
                 uvs.append((1.0, arc / tile_m))
             rows.append(r)
         last = m if closed else m - 1

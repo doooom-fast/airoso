@@ -8,6 +8,12 @@ The first principle holds for *route* (OSM/KML), but a personal track gets to sc
     dip_of(s)  -> metres to LOWER the centerline Y at station s (a smooth raised-cosine bell)
     bank_at(s) -> road roll in RADIANS at station s (+ve banks a RIGHT-hander: left/outside edge up)
 
+The sign is in the BUILD frame, not the real world. ``mirror_x: true`` swaps left and right, so on a
+mirrored track +ve raises the real-world RIGHT edge: a real left-hander banks with +ve, and a real
+right-hander needs -ve. Exotics Racing's T2, a real right-hander on a mirrored track, ran +6 and came
+out off-camber with the inside up, 2026-10-28. Check the sign on the built deck: the raised edge must
+be the one farther from the corner's centre.
+
 Every swept generator (road ribbon, shoulder, kerbs, runoff, markings, crosswalk, painted names)
 asks ``bank_at(station)`` for the roll at each vertex and adds ``offset * tan(bank)`` to its Y, so the
 whole cross-section banks together. The dip is baked into the centerline before sweeping, so the

@@ -75,6 +75,35 @@ def test_build_trace_px_path_and_widths():
         assert stats["length_km"] > 0
 
 
+def test_trace_width_m_follows_the_trace():
+    trace = [[0.5, 0.2], [0.8, 0.5], [0.5, 0.8], [0.2, 0.5]]
+    with tempfile.TemporaryDirectory() as d:
+        pd = _project(Path(d), source={
+            "type": "aerial", "screenshot": "source/none.png", "control_points": CONTROL,
+            "trace_px": trace, "trace_width_m": [10.0, 14.0, 10.0, 14.0],
+        }, png=False)
+        write_png(pd / "source" / "none.png", 80, 80, ring_image(80, 40, 40, 5, 2))
+        build_aerial.build(pd)
+        w = _full_feature(pd)["properties"]["widths_m"]
+        # interpolated between the measured points, never outside them; both ends land on point 0
+        assert min(w) >= 10.0 and max(w) <= 14.0 and max(w) - min(w) > 3.0
+        assert abs(w[0] - 10.0) < 0.01 and abs(w[-1] - 10.0) < 0.3
+
+
+def test_trace_width_m_length_mismatch_errors():
+    with tempfile.TemporaryDirectory() as d:
+        pd = _project(Path(d), source={
+            "type": "aerial", "screenshot": "source/none.png", "control_points": CONTROL,
+            "trace_px": [[0.5, 0.2], [0.8, 0.5], [0.5, 0.8]], "trace_width_m": [10.0, 12.0],
+        }, png=False)
+        write_png(pd / "source" / "none.png", 80, 80, ring_image(80, 40, 40, 5, 2))
+        try:
+            build_aerial.build(pd)
+        except SystemExit:
+            return
+        raise AssertionError("expected SystemExit when trace_width_m and trace_px differ in length")
+
+
 def test_missing_control_point_lonlat_errors():
     with tempfile.TemporaryDirectory() as d:
         pd = _project(Path(d), source={

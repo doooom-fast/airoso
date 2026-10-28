@@ -366,6 +366,26 @@ magnitude) and the width at once.
    ("LVMS Supercar Circuit 2015–21") and no EXR logos.
 3. OK to spend about $20–40 on Clark County historical sections [S45·snip]?
 
+**Answered 2026-10-28 (build session):**
+- **Target A.** Kevin drove this track in 2013. Free USDA NAIP covered it, so no county imagery
+  was bought. 2019-07-06 at 0.6 m was the trace source, and 2013-09-28 at 1 m was the
+  cross-check.
+- **Location (§1, was [unverified]):** the circuit sits in the LVMS lots between I-15 and Speedway
+  Blvd, north-west of the drag strip. The lap centroid is 36.28245, −115.01823. The Welcome
+  Center is at 36.28087, −115.02109, on the circuit's south-west corner.
+- **Phase 1 vs Phase 2 (§1):** by September 2013 the circuit was already a real paved track, with
+  painted edges, kerbs and the same lap as 2019. The 2015 work added the Welcome Center and the
+  covered pit, not a new layout. "Parking lot with tents" described the 2013 buildings.
+- **Dressing: as in 2013** (Kevin: "As in 2013"). The two smaller 2013 buildings on the
+  south-west corner, with no Welcome Center, no covered pit and no carports.
+- **Geometry (§2/§3):** the lap is 1,825 m (published 1.2 mi, −5.3 %). The straight is about
+  470 m. Width runs 11.6 m on the straight and 15–19.5 m at corner exits. T2 is the NE corner,
+  a 129 m arc of 62 m radius. Its 11 % bank is confirmed by 3DEP lidar (+10.0 to +10.9 % across
+  ±5 m, against about +2 % elsewhere). The direction is clockwise (inferred). All of it is in
+  `source/trace/README.md` and `track.config.json`.
+- **Name:** "Exotics Racing Las Vegas (unofficial)" for now. Naming for a public release is
+  Kevin's call at publish time.
+
 ---
 
 ## Sources

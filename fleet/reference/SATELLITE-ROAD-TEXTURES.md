@@ -40,9 +40,9 @@ NV in particular licenses its data "for the licensee's own business use".
 |---|---|---|
 | The **road ribbon's UVs already follow the road**: U = lateral offset / `tile_m`, V = cumulative arc / `tile_m` (4 m on the main path, 8 m on connectors). Only the **grass terrain** is world-planar (x/tile, z/tile). | `scripts/geometry/ribbon.py:71-110` (`road_ribbon`), `:667-694` (`grass_terrain`); `build_mesh.py:960,1010` | Option (b) below is a **re-mapping of UVs that already exist**, plus splitting the ribbon at strip boundaries. It is not a new parameterisation. |
 | Projection is a local equirectangular ENU plane about the centroid: `x=(lon-lon0)·m_lon`, `z=(lat-lat0)·m_lat`, WGS84 series. | `scripts/geometry/projection.py:58-80` | Inverts in closed form (x,z → lon,lat), so a bake can map texel → world → ortho pixel exactly as the mesh was placed. |
-| The kn5 exporter writes **only `txDiffuse` + `txNormal`** and picks `ksPerPixelMultiMap` if a normal exists, else `ksPerPixel` (or `ksTree` for billboards). No `txMaps`, `txDetail`, `txNormalDetail`, `detailUVMultiplier`. | `scripts/ac/export_kn5_addon.py:83-103`; native path `kn5_write.py:186-199`, `kn5_native.py:35-48` | The macro+micro material needs the exporter to emit three more texture slots and two VARs (§6.4). |
-| `1ROAD` gets **no shader VARs**: `KS_PROPS` has no road entry, so `VARCOUNT=0`. The `_SHADERS` road scalars in `materials.py` are never written by the addon path. | `export_kn5_addon.py:120-126`, `pbr.py KS_PROPS`, `materials.py:14-16` | The road runs on shader defaults today. Fix this in the same change. |
-| **The shipped road texture is mined.** `1ROAD`/`1RUNOFF` bind `asphalt_cracked_*.jpg`, extracted from LA Canyons and marked "Personal/non-distributed use only". | `pbr.py:16-17`, `assets/textures/SOURCES.txt` | Every distributed k10 kn5 embeds a non-redistributable road texture **today**. A clean macro+micro road fixes a licensing hole as well as the look. |
+| The kn5 exporter writes **only `txDiffuse` + `txNormal`** and picks `ksPerPixelMultiMap` if a normal exists, else `ksPerPixel` (or `ksTree` for billboards). No `txMaps`, `txDetail`, `txNormalDetail`, `detailUVMultiplier`. | `scripts/ac/export_kn5_addon.py:111-131`; native path `kn5_write.py:186-199`, `kn5_native.py:35-48` | The macro+micro material needs the exporter to emit three more texture slots and two VARs (§6.4). |
+| `1ROAD` gets **no shader VARs**: `KS_PROPS` has no road entry, so `VARCOUNT=0`. The `_SHADERS` road scalars in `materials.py` are never written by the addon path. | `export_kn5_addon.py:148-154`, `pbr.py KS_PROPS`, `materials.py:14-16` | The road runs on shader defaults today. Fix this in the same change. |
+| **The shipped road texture is mined.** `1ROAD`/`1RUNOFF` bind `asphalt_cracked_*.jpg`, extracted from LA Canyons and marked "Personal/non-distributed use only". | `pbr.py:16-17`, `assets/textures/SOURCES.txt` | Every distributed k10 kn5 embeds it **today**. Recorded, not a blocker: provenance never withholds a release (`docs/PUBLISHING.md`). The macro+micro road is wanted for the look. |
 | Clean candidates already in the repo: `asphalt_diffuse/normal.jpg` (Poly Haven `aerial_asphalt_01`, CC0, ~30 m real-world scale), the procedural generator pattern in `scripts/assets/make_gravel.py` (seeded, ours), and `scripts/capture/textures.py`, which builds a de-lit, seamless road texture from Kevin's own capture video by **temporal median**. | `SOURCES.txt`, `scripts/assets/`, `scripts/capture/textures.py:1-15` | The micro layer can be **owned** (capture-derived or procedural). The temporal-median idea also carries over to multi-vintage ortho cleaning (§4.5). |
 | The aerial georef is a 2-point north-up affine for screenshots. | `scripts/aerial/georef.py` | Unsuitable for orthos: use the GeoTIFF's own geotransform + CRS (often State Plane **feet**) via pyproj. |
 | L7: **NPOT textures can hard-freeze the GPU**; every material needs a texture. L5: gate the built artifact. | `fleet/LAWS.md` | Atlases are PoT. Gates read UVs from the built `track.obj`/kn5 and the shipped DDS. |
@@ -283,6 +283,10 @@ licence terms are **[unverified]**.
 
 ## 5. Legal stance (consistent with `SOURCES.txt`)
 
+These are defaults for choosing a source, not a release gate. Asset provenance never withholds or
+degrades a release (`docs/PUBLISHING.md`, Kevin 2026-10-11); what a published build carries is
+Kevin's call.
+
 1. **Shippable:** NAIP (public domain, credit requested), USGS HRO (USGS disclaimer), OpenAerialMap
    CC-BY scenes (attribute), **Kevin's drone imagery** (owned), and county orthos **only where the
    licence text explicitly allows redistribution or the county grants it in writing**.
@@ -292,8 +296,9 @@ licence terms are **[unverified]**.
    extraction and derivative works (§2). Don't use them even "for reference" in an automated fetch.
    A human glancing at Google Maps to place control pins (aerial-tracing) is the existing,
    different use.
-4. **Fix the existing hole:** the shipped `1ROAD` texture is mined (`asphalt_cracked_*`, LA Canyons,
-   personal use). The macro+micro road replaces it with owned/PD content.
+4. **The current road texture:** the shipped `1ROAD` texture is mined (`asphalt_cracked_*`, LA Canyons,
+   personal use). That is recorded, not a blocker. The macro+micro road replaces it for the look;
+   that the replacement is owned/PD is a side effect.
 5. **Per-track provenance line** in the dossier (§9 "Data sources") and in `licenses.json`:
 
    ```
@@ -363,7 +368,7 @@ opencv. Keep them optional imports so the stdlib-only stages still run.
 | **Registration** (independent data: ortho vs OSM-placed mesh) | shipped DDS + UVs | asphalt/verge edge found in each baked cross-section within ±0.5 m of the mesh edge, p95 over stations; report the median lateral offset (it names the centerline bias) |
 | **Seams** | pairs of duplicated strip-end vertices | identical world position; ΔE (Lab) of the texel rows each side < 3 on the mean |
 | **Mip chain / format** | DDS headers | PoT, full mip count, BC1/BC3/BC7, gutter ≥ 8 px, no NPOT (L7) |
-| **Provenance** | `PROVENANCE.json` vs `licenses.json` | the source is on the shippable list (§5) or carries a permission ref, else the build fails |
+| **Provenance** (report-only) | `PROVENANCE.json` vs `licenses.json` | never fails the build: writes each source's licence and any permission ref into the build report and names any source outside §5's shippable list. Provenance never withholds a release (`docs/PUBLISHING.md`) |
 
 ### 6.4 Drive test: what to look for (`fleet/templates/DRIVE-TEST-REPORT.md` §Look rows)
 
@@ -398,7 +403,7 @@ opencv. Keep them optional imports so the stdlib-only stages still run.
 | R2 | **Registration**: OSM centerlines can sit metres off the photo, so the photo's road edge and paint land off the mesh | the registration gate measures it; re-trace or nudge the centerline on the same ortho (aerial-tracing / Blender underlay) before baking; circuits traced from that ortho are consistent by construction |
 | R3 | **Resolution cliff** inside d\* (≈180 m at 15 cm) | the micro layer carries 0–d\*; drone GSD shrinks d\* to ~30 m |
 | R4 | Fleet texture memory | non-issue with strip atlases (§4.1 table); cap files at 8192² |
-| R5 | Licence drift (counties change terms; NAIP licensing was floated in 2017, [Geography Realm](https://www.geographyrealm.com/naip-aerial-imagery-might-moved-public-domain-licensing-model/)) | provenance line pins licence URL + date + hash; the provenance gate |
+| R5 | Licence drift (counties change terms; NAIP licensing was floated in 2017, [Geography Realm](https://www.geographyrealm.com/naip-aerial-imagery-might-moved-public-domain-licensing-model/)) | provenance line pins licence URL + date + hash; the provenance report (§6.3) |
 | R6 | Shader slot / param names differ from CM's reimplementation | read a Kunos road with Objects Inspector first (RESEARCH A2) |
 | R7 | Multiply detail darkens the macro | normalise detail mean; calibrate against a Kunos road in game |
 | R8 | Realism doctrine | this is Job 1 (prepare truth). The macro is regenerable `GEN_` content; authored road paint in Blender (`AUTH_`) always wins |

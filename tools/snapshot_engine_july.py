@@ -68,8 +68,17 @@ PENDING = "PENDING-MIRROR.md5"
 SIZE_CAP = 5_000_000
 
 
+TEXT_SUFFIXES = (".py", ".md", ".txt", ".ini", ".json", ".csv", ".cfg", ".toml", ".yml", ".yaml", ".sh")
+
+
 def md5(p: Path) -> str:
+    """md5 of the file — with CRLF read as LF for text files, so a Windows checkout (core.autocrlf, the
+    machine that writes this manifest) and a Linux one (git's LF blob, the CI runner) hash the same bytes.
+    Binaries (textures, .exe/.dll in EXCLUDED) hash raw."""
     h = hashlib.md5()
+    if p.suffix.lower() in TEXT_SUFFIXES:
+        h.update(p.read_bytes().replace(b"\r\n", b"\n"))
+        return h.hexdigest()
     with open(p, "rb") as f:
         for chunk in iter(lambda: f.read(1 << 20), b""):
             h.update(chunk)

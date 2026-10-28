@@ -254,8 +254,9 @@ def test_argument_guards_exit_2_before_any_file_operation():
     inside = (ROOT / "tracks" / "_never_a_scratch_project").as_posix()
     cases = [({"STREET_AI": "bogus"}, "STREET_AI must be draft or july"),
              ({"SHIP_PROJ": "scratch/project"}, "must be an absolute path"),
-             ({"SHIP_PROJ": inside}, "is inside airoso"),
-             ({"SHIP_PROJ": inside.upper().replace("/", "\\")}, "is inside airoso")]   # any spelling of it
+             ({"SHIP_PROJ": inside}, "is inside airoso")]
+    if os.name == "nt":   # any Windows spelling of it (C:\USERS\...); on POSIX a backslash path is simply not absolute
+        cases.append(({"SHIP_PROJ": inside.upper().replace("/", "\\")}, "is inside airoso"))
     for extra, msg in cases:
         env = dict(os.environ, AIROSO=ROOT.as_posix(), **extra)   # the guard compares against this checkout, wherever it lives
         r = subprocess.run([bash, str(SH), "--dry-run", "--no-install"], capture_output=True, text=True,

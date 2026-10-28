@@ -309,8 +309,9 @@ def test_argument_guards_exit_2_before_any_file_operation():
              (["lookout-lariat"], {"STREET_AI": "bogus"}, "STREET_AI must be draft or july"),
              (["lookout-lariat", "--dry-run"], {"STREET_AI": "july"}, "names no street_ai_july"),
              (["lookout-lariat", "--dry-run"], {"SHIP_PROJ": "scratch/project"}, "must be an absolute path"),
-             (["lookout-lariat", "--dry-run"], {"SHIP_PROJ": inside}, "is inside airoso"),
-             (["lookout-lariat", "--dry-run"], {"SHIP_PROJ": inside.upper().replace("/", "\\")}, "is inside airoso")]
+             (["lookout-lariat", "--dry-run"], {"SHIP_PROJ": inside}, "is inside airoso")]
+    if os.name == "nt":   # any Windows spelling of it (C:\USERS\...); on POSIX a backslash path is simply not absolute
+        cases.append((["lookout-lariat", "--dry-run"], {"SHIP_PROJ": inside.upper().replace("/", "\\")}, "is inside airoso"))
     for args, extra, msg in cases:
         r = _run(args, extra, cwd=cwd)
         assert r.returncode == 2, (args, extra, r.returncode, r.stdout[-400:], r.stderr[-400:])

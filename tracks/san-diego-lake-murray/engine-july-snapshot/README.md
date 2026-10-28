@@ -24,8 +24,10 @@ mirror any file that also exists in airoso by `cp` + md5 equality), then refresh
 | `vendor/io_import_accsv/` (.py + README) | ENG | zipped and installed into Blender by the exporter and the spawn builder on every run |
 | `appdata-addons/blender-assetto-corsa-tools/` | `%APPDATA%/Blender Foundation/Blender/4.2/scripts/addons/` | **the add-on that actually writes the kn5** — v1.0.7 (Hagnhofer, Greveson, Murdoch, JWL; GPL-3.0, `LICENSE.txt` kept). It registers `exporter.kn5`, which `export_kn5_addon._find_export_op` picks first; the vendored add-on's own `export_kn5.write` is not the one that runs. It lives outside ENG, so it is snapshotted here for the same reason |
 
-`MANIFEST.md5` lists every copied file with its md5. Two more lists record what was deliberately
-**not** copied, so the omission is visible rather than silent:
+`MANIFEST.md5` lists every copied file with its md5 — text files hashed with CRLF read as LF, so the
+Windows checkout that writes the manifest and the LF blob git hands a Linux runner agree (binaries hash
+raw). Two more lists record what was deliberately **not** copied, so the omission is visible rather than
+silent:
 
 - `EXCLUDED.md5` — `vendor/io_import_accsv/kn52fbx/{AcTools.dll, FbxConverter.exe, kn52fbx.exe}`
   (5.5 MB): the add-on's kn5→FBX **import** helpers, never loaded by an export.

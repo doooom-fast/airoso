@@ -1,8 +1,9 @@
 name: tests
 
-# The first machine check in this lineage's history. The suite is hermetic and stdlib-only —
-# no Blender, no AC, no network — so it runs anywhere in seconds. It cannot judge a track
-# (rule 0: only the game does that); it judges the engine that builds one.
+# The first machine check in this lineage's history. The suite is hermetic — no Blender, no AC,
+# no network — and needs only the stdlib plus Pillow (tools/make_map.py draws map.png; a test imports
+# it), so it runs anywhere in seconds. It cannot judge a track (rule 0: only the game does that); it
+# judges the engine that builds one.
 on:
   push:
     branches: [main]
@@ -17,5 +18,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Install Pillow
+        run: python3 -m pip install --quiet pillow
       - name: Run test suite
         run: python3 tests/run_tests.py

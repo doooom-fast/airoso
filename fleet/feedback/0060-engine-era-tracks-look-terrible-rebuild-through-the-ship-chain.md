@@ -334,6 +334,95 @@ USGS 3DEP elevation, with airoso (Las Vegas, United States).", author doooom; "d
 (unofficial) 0.2.0", author "airoso" from its own config key), kn5s unchanged (756e4791…, bf3783ed…), the previous
 installs parked in `D:/k10-track-archive/2026-10-28_221602/` and `_222051/`; nothing tracked changed, no commit.
 
+**High Plains GREEN and INSTALLED (full run at 7f9faca; committed by the Windows session as `8b9b256`: the gate
+files, `ai/full/`, `loop.blend` in LFS).** "ring rotated by 815 points to the real start line", the permutation
+recorded, and the mesh step printed **no bridge span**. kn5 139.8 MB; `verify_kn5` PASS; **`drive_test` PASS**:
+severe 0, excursion drops 0 gated (13 far ledges, worst [2552.8, −14.0, 0.31]), ground on top 0, floating 0,
+daylight 0, obstructed 0, bumps 1.24/km, kinks 7.77/km, **replication 0.01 / 0.31 / 1.06 m** (the run before:
+2.91 / 12.08 / 14.62); **`audit_mesh` CLEAN**; **`kn5_ground_check` PASS**: road-over-ground 0/919 (p95 0.015),
+deck-vs-mountain median +0.011 / p95 +0.015 / max +0.022, flush edges +0.13 / +0.47, walls 229 / hovering 0,
+double-sheet 0. "installed: doooom Colorado — High Plains Raceway 0.68.0" (kn5 md5 819694f1…, the previous install
+parked in `2026-10-28_231220/`); ui: clockwise, author doooom, description "[build 0.68.0] Real-world circuit built
+from the real track's mapped outline, on USGS 3DEP elevation, with airoso (Deer Trail, United States)." **T1**
+(DEFINITION-OF-DONE). Three of the four are installed from the chain.
+
+**Sand Creek `--from prep` at 44bee3b: the gate-line fix took, and the run died in the AI step.** The prep's
+`data/finished_centerline.json` is now the engine's (source "build_mesh finished_centerline …", frame "kn5 …", 3,231
+points; the chain's prep grep did not show the "gate line" print — added to `tools/ship_track.sh`'s filter). Split
+148 meshes / 4.24 M positions, export 261 MB — then `python -m scripts.ac.write_ai_line <proj> --layout full` raised
+`IndexError: list index out of range` in `fillet_corners` → `floor_at` (`write_ai_line.py:856`), reproducible
+standalone. The Windows session's reading, confirmed here on a synthetic loop: the violation clusters are replaced
+from the last one back, and the cluster across the start seam (unwrapped to a negative `c0`, so it becomes
+`clusters[0]`) is processed LAST — after every other corner's fillet has shrunk the line (a jagged, over-sampled
+corner becomes a few arc points) — while `wrap` and `assoc` still belong to the sweep's original n, so
+`floor_at(wrap(i))` for the seam's negative i indexes past the new end. The guard meant to allow a seam window only
+as a sweep's first sat inside the window loop, after `need` was computed. Sand Creek is the first chain track with a
+tight corner across its seam plus 19 corners elsewhere (Lake Murray's and the circuits' seams are on straights).
+**Fix on the branch:** the seam cluster is processed first (its splice `break`s and the next sweep re-measures
+everything on the rotated line; if no window fits it, the others proceed), with the missing guard in place; a test
+reproduces the IndexError on a closed loop with eight to twelve over-sampled corners and a seam corner and asserts the
+seam is filleted. Sand Creek `--from prep` owed again.
+
+**Sand Creek `--from ai` at 99edc66 (the Windows session): the AI step works (9 fillets, R 12.6 m, min radius 12.21),
+`verify_kn5` PASS, `audit_mesh` CLEAN, `kn5_ground_check` PASS — and `drive_test` RED on the draft's own two
+defects**, identical to its test on the draft OBJ, so the chain now adds nothing: ground on top 2 ([8047.0, −5.97,
+1GRASS_dm], [8461.0, −5.35, 1GRASS_dg]), floating furniture 8 (one 1WALL_PARA_stone at (1332, −870.5)), severe 1
+([1275.0, +3.49, 0.066]), daylight 0, excursion drops 2 gated (worst [7950.5, −12.5, 0.68]; the gate's limit is
+9 on this lap). The spans: 127 → 1, 12 → 0. Not installed. The Windows session measured the flags against the gate
+line (the parapet at s 6522–6525, lateral +8.7..+9.8 on an 8.5 m road, 5–5.7 m BELOW the deck, 9–12 m before span 3;
+s 8047 width 12.0 so −5.97 is 3 cm inside the pavement; s 8461 width 10.5 so −5.35 is 10 cm onto the shoulder) and,
+on Kevin's "Yes", committed the draft's inputs and the red reports (`a856cbe`, `tracks/sand-creek/data/`, 2.5 MB) so
+the engine could be run here.
+
+**Diagnosed here on that data (2026-10-29): both are late grass/guard passes in `build_mesh`, and the gate was right.**
+The engine's draft rebuilt offline in 20 min (the box's 16 GB ran out while writing the last outputs; `track.obj` is
+complete, 4,292,747 verts, the Windows count), and `drive_test` on it here read the Windows run to the entry. Lateral
+cross-sections of the built OBJ (the road-grounding method), s 8047 left side: 1ROAD_main to −6.0 at deck +0.00, the
+1ROAD_shoulder flat at deck +0.00 from −6.0 to −8.5 — and 1GRASS_dm standing **+1.5 to +2.3 m over it**, along a 20 %
+line rising outward from the ring edge, the nodes at the lip alternating −0.3 (excavated) / +1.1; s 8461 the same at
++2.0. A cut: natural ground 2 m above the road. The pins had put the grass under the shoulder at deck −0.01
+(`[contact pin] 41548 grass verts pinned to the shoulder/runoff underside`); the **seam-weld** then raised it back:
+its 22 % floor radiates inward from the ring edge, which in a cut sits on natural ground 2.3 m above the deck, its
+drop-edge prefilter reads the pinned band beneath that edge as "low natural ground below the edge" and keeps the
+source, and its pavement cap — "nodes under a pavement triangle cap at that surface − 0.06" — was built from road,
+runoff and kerb **but not the shoulder** ("capping under its own descending face pins the floor away from the toe it
+exists to fill"). On a fill that exclusion buys nothing: the face rises inboard at ≥ 22 % while the floor off the
+meet falls at 20 %, so the cap can never be the smaller; in a cut it is the only thing between the floor and the
+deck. The `[cut-edge]` pass (154 nodes) is the band-aid that caught the first node at the lip (−0.3) and nothing
+beyond its +0.15 window. **Fix:** the shoulder joins the cap. The parapet, s 6522: deck 35.63, the shoulder flat to
+±6.5 then **a 1:6 retaining-wall face** from 35.63 at 6.5 m to 29.4 at 8.0 m (the selector's WALL case, fill drop
+> 4 m: the levelled approach rides 6 m over the creek bank, and `grade_embankment` keeps terrain natural within 14 m
+of a span point), the ring annulus at the toe (29.8–30.2), **1WALL_PARA_stone at +9.0..+9.5, y 29.92–30.62** — the
+`[measured-guard]` sweep's lip, 3 m long. That sweep mirrors `drive_test`'s outboard crossing 1:1 (origin, band,
+stride, flare exemption) except for one thing the gate does: skip crossings inside a DECLARED bridge span ± 20 m. So
+it walked down the wall (1ROAD_shoulder is pavement: built_edge followed the face and `_lipokH` could never stand a lip
+on it), reached the toe 5.6 m under the deck, read the 0.3 m bank step beyond the ring as "a drop" and set the lip
+there; the bank falls 4 m along the lip's 3 m, so two feet have nothing drivable within 2.5 m under them (the
+shoulder face passes 2 m ABOVE them: `top_at` 99.0) and the other two read 1.35 / 0.97. **Fix:** the sweep skips the
+declared spans ± 20 m as the gate does, and refuses any lip whose inboard surface is already > 1.5 m under the deck
+(a lip is a deck-edge element; the face above it is the pavement's own, and #17 owns its parapet — which here built
+0 verts: the approach is 4 sections at 3 m spacing against `min_run` 10). Text rules in
+`tests/geometry/test_build_mesh_edge_rules.py`.
+
+**Proven here in three rebuilds of the committed draft (20 min each; the gate on the rebuilt OBJ every time).**
+Rebuild 1 (`7a0b408`, the two fixes): **`drive_test` PASS** — ground on top 2 → **0**, floating furniture 8 → **0**,
+severe 1, daylight 0, excursion drops 2 gated — but `[cut-edge]` excavated **30,048** nodes (154 before),
+`[measured-guard]` set **681** lips (255) and the far ledges read 26 (7): the cut-edge pass shared the weld's pavement
+table and, with the shoulder in it, dug every cut's shoulder edge to pavement − 0.35; the sweep fenced the ledge. Rebuild
+2 (`88e80b2`, two tables; the excavation back on the deck): still **999 lips** against the original 472 and far ledges
+26. Cross-sections at the new lips (s 2147.9, s 4645.5, fill toes at lateral ±11): the shoulder's **buried hem** —
+the last quad, 1 m beyond the ground-meet and 0.8 m into the dirt — counted as pavement and capped the weld's floor
+UNDER the ground for every grass node within 1 m of the meet, so the 20 % apron off the toe was no longer built there
+(1GRASS_t beyond the meet 6.31 / 6.24 / 6.14 before, 6.25 / — / 5.93 after) and the top surface stepped 0.12–0.14 m
+per 0.5 m onto the ring: exactly "the toe it exists to fill" of the old comment. Rebuild 3 (`988166a`,
+`ribbon.road_shoulder` / `curb_sidewalk` return `hem_idx`, the cap skips hem triangles): **`drive_test` PASS, ground
+on top 0, floating 0, severe 1 ([1275.0, +3.49, 0.066]), daylight 0, excursion drops 2 gated (worst [7950.5, −12.5,
+0.68]) with far ledges 7 — the baseline's 7**; `[seam-weld]` 391,244 raised (397,497: the cap bound on ~6 k nodes in
+the cuts), `[cut-edge]` **0** (154: nothing left for the band-aid), `[measured-guard]` 246 (255). Lips 472 → **457**: 14
+gone — the 13 at span 3's approach and span (bases 1.0–7.8 m under the deck) and one at s 2680 (base −1.58) — and 2
+new ordinary toe lips at s 9592 / 9598 (bases −0.81 / −0.63). Nothing else on the lap moved. Sand Creek's full chain
+run on `988166a` is owed on the Windows box (the draft must rebuild: `--from prep` would reuse the old one).
+
 ## Verification
 
 - `tools/ship_track.sh <track>` completes on the Windows box for each of the four: `loop.blend` written by the

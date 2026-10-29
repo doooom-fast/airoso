@@ -321,16 +321,19 @@ def test_scenery_gate_judges_the_written_trees_and_is_hard():
             < _first('tools/verify_mouths.py "$PROJ"'))
 
 
-def test_install_refuses_while_ac_or_content_manager_runs():
-    """the install parks the old folder with mv: Assetto Corsa / Content Manager holding it makes that fail half-way,
-    so the REAL install refuses while either runs (the scratch path never reaches it)"""
+def test_install_refuses_while_ac_runs_and_lets_content_manager_stay_open():
+    """the install parks the old folder with mv: Assetto Corsa holding it makes that fail half-way, so the REAL
+    install refuses while acs.exe runs (the scratch path never reaches it). Content Manager may stay open — Kevin,
+    2026-10-27: "you can install when that's running just not while AC is driving the track" (CM does not lock the
+    track files); until 2026-10-29 it was refused too."""
     real_inst = _first('elif [ "$INSTALL" = 1 ]; then')
     guard = _first("tasklist //FO CSV //NH")
     park = _first('mv "$AC/$old"')
     assert real_inst < guard < park
     blk = TEXT[guard:park]
-    for frag in ("acs[.]exe", "Content Manager", "NOT INSTALLED: close", "exit 1"):
+    for frag in ("acs[.]exe", "acs_x86[.]exe", "NOT INSTALLED: close", "exit 1", "Content Manager may stay open"):
         assert frag in blk, frag
+    assert "Content Manager[^\"]*[.]exe" not in blk
 
 
 def test_install_folder_is_one_name_in_the_config_and_the_chain():

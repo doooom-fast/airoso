@@ -25,8 +25,8 @@
 # exception inside --python otherwise exits 0 and the chain ships what the last run left); absolute paths only;
 # scratch isolation (SHIP_PROJ: a scratch project never syncs back and never installs); refusal to work inside
 # airoso; --dry-run / --skip-blend / --force-install; the race layouts' own gates are never forced; refusal to
-# install while Assetto Corsa or Content Manager runs; the previous install parked in $ARCHIVE/<stamp>/ (never a
-# _prev beside it in content/tracks).
+# install while Assetto Corsa runs (Content Manager may stay open — Kevin 2026-10-27); the previous install parked in
+# $ARCHIVE/<stamp>/ (never a _prev beside it in content/tracks).
 #
 # Per track, from data, never from this script:
 #   tracks/<track>/ship.json        workshop root + project folder, the steps, what syncs in and out, the
@@ -694,6 +694,18 @@ if [ "$DRAFT_ONLY" = 0 ] && [ ! -f "$PROJ/loop.blend" ] && ! blend_builder_ready
   exit 1
 fi
 
+# THE FRAME (ledger 0060, 2026-10-29). This chain's frame is San Diego's: the prep imports the draft's local (E, up, N)
+# as Blender (E, N, up), the exporter writes kn5 (E, up, -N) — geographically right with NO mirror and NO yaw (Lake
+# Murray 0.19.1: mirror_x false, true_north_rotation_deg 0). mirror_x + true_north 180 were the V1 OBJ program's own
+# import convention (x, -z, y) and its sun fix; through THIS chain they ship a MIRRORED track (every turn the wrong way)
+# with the sun 180 deg off, every gate self-consistent and blind to it. Refused on the source config before any copy.
+FRAME=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print('%s %s'%(bool(d.get('mirror_x',False)), float(d.get('true_north_rotation_deg') or 0.0)))" "$SRC/track.config.json")
+FRAME="${FRAME%$'\r'}"
+if [ "$FRAME" != "False 0.0" ]; then
+  echo "track.config.json (mirror_x, true_north_rotation_deg) = ($FRAME): the chain's frame is San Diego's — mirror_x false, true_north_rotation_deg 0 (ledger 0060, 2026-10-29). mirror_x + 180 were the V1 OBJ program's import convention; through this chain they ship a mirrored track with the sun 180 deg off. Set both in tracks/$TRACK/track.config.json (a banked road_profile changes sign with mirror_x: profile.py)."
+  exit 2
+fi
+
 # =============================================================================================================
 # the chain
 # =============================================================================================================
@@ -844,12 +856,14 @@ if [ "$INSTALL" = 1 ] && [ "$SCRATCH" = 1 ]; then
   echo "folder is $PROJ/build/$SLUG (load it by hand if you mean to)."
 elif [ "$INSTALL" = 1 ]; then
   step "install: $AC/$INSTALL_FOLDER (layouts $LAYOUT_IDS; previous build parked in $ARCHIVE/<stamp>/)"
-  # Assetto Corsa or Content Manager holding the folder makes the park (mv) fail half-way: refuse while either runs
+  # Assetto Corsa holding the folder makes the park (mv) fail half-way: refuse while acs.exe runs. Content Manager may
+  # stay open — Kevin, 2026-10-27: "you can install when that's running just not while AC is driving the track" (CM
+  # does not lock the track files; a running acs.exe does). Until 2026-10-29 CM was refused too.
   if command -v tasklist >/dev/null 2>&1; then
-    RUNNING=$(tasklist //FO CSV //NH 2>/dev/null | grep -i -E '^"(acs[.]exe|acs_x86[.]exe|Content Manager[^"]*[.]exe)"' | cut -d, -f1 | tr '\n' ' ' || true)
-    if [ -n "$RUNNING" ]; then echo "NOT INSTALLED: close $RUNNING first (Assetto Corsa / Content Manager hold the track folder)"; exit 1; fi
+    RUNNING=$(tasklist //FO CSV //NH 2>/dev/null | grep -i -E '^"(acs[.]exe|acs_x86[.]exe)"' | cut -d, -f1 | tr '\n' ' ' || true)
+    if [ -n "$RUNNING" ]; then echo "NOT INSTALLED: close $RUNNING first (Assetto Corsa holds the track folder; Content Manager may stay open)"; exit 1; fi
   else
-    echo "(tasklist not found — make sure Assetto Corsa and Content Manager are closed)"
+    echo "(tasklist not found — make sure Assetto Corsa is not running; Content Manager may stay open)"
   fi
   B="$PROJ/build/$SLUG"
   for lid in $LAYOUT_IDS; do [ -f "$B/models_$lid.ini" ] || { echo "missing $B/models_$lid.ini"; exit 1; }; done

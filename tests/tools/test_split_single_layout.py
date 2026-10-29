@@ -24,10 +24,15 @@ TEXT = TOOL.read_text(encoding="utf-8")
 
 
 def _bpy():
+    """the real Blender module, or None: other tests (tests/tools/test_build_buildings_rules.py) leave a stand-in
+    ``bpy`` in sys.modules for the same process — it has no ops / data / app, so it is told apart by the version"""
     try:
         import bpy
+        real = bool(getattr(getattr(bpy, "app", None), "version_string", "")) and hasattr(bpy, "ops")
     except ImportError:
-        print("  (no bpy module — the split's scene cases skipped; the text case ran)")
+        real = False
+    if not real:
+        print("  (no Blender bpy module — the split's scene cases skipped; the text case ran)")
         return None
     return bpy
 

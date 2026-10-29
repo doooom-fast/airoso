@@ -34,6 +34,28 @@ byte; after: 67 meshes + 23 AC nodes in `loop_main.blend`, no race or spawn scen
 `tests/tools/test_split_single_layout.py`. `tools/ship_track.sh --from <step>` (resume at a draft / author / prep /
 ship step) refuses a gate name: every gate runs on every run.
 
+### Same day, the re-run: `verify_kn5` red on the pits, and the frame underneath it
+
+The Exotics re-run (`--from split`) exported and stopped at `verify_kn5`: `AC_PIT_3..7` 14.8–45.4 m off the road
+(`PIT_ROAD_MAX_M` 13.5, unchanged). Root cause, reproduced here on the draft mesh to the decimetre: the prep's
+single-layout branch recomputed the dummies from the unmirrored `centerline.local.json` (8 pits) while the mesh was
+built mirrored (`mirror_x: true`), so the pit row stood on the road's mirror image. Underneath it: **the chain's frame
+is San Diego's** (the prep's `(x, z, y)` import + the exporter's `(x, z, −y)` = kn5 `(E, up, −N)`, right with no
+mirror and no yaw; Lake Murray is `mirror_x false`, `true_north 0`), and `mirror_x: true` + `true_north 180` were the
+V1 OBJ program's own import convention `(x, −z, y)` and its sun fix — through this chain they ship a **mirrored**
+track with the sun 180° off while every gate stays self-consistent (`kn5_ground_check` even applies the 180° yaw the
+prep never made). No gate could have caught it; Kevin's seat would have.
+
+| Check | Was | Is | Scope |
+|---|---|---|---|
+| chain: the frame | not checked | `tools/ship_track.sh` refuses `mirror_x: true` or `true_north_rotation_deg ≠ 0` on the source config before any copy (exit 2) | every chain track; the four configs set to the chain's frame (Exotics' T2 bank sign flips with it: `profile.py`) |
+| prep: single-layout dummies | recomputed from `centerline.local.json`, 8 pits, facing `atan2(E, N)` | the draft's `data/dummies.json` (the engine's placement on the finished centreline; the recomputation only with no draft), facing `atan2(E, −N)` at the start — the measured convention of the per-layout spawn scenes (`tools/layout_dummies.yaw_deg`, ledger 0047) | single-layout tracks; `verify_kn5` single-layout branch has no facing check, so the old `atan2(E, N)` (a north-bound grid facing south) would have shipped silently |
+| `write_ai_line` grid check | `dummies_<id>.json` only (single layout: "unverified") | falls back to `data/dummies.json` on a single-layout track | the direction contract is now checked there too |
+| the install guard (both chains) | refused while `acs.exe` **or** Content Manager runs | refused while `acs.exe` / `acs_x86.exe` runs; Content Manager may stay open | Kevin, 2026-10-27, on the Windows box's auto-memory, verbatim: "you can install when that's running just not while AC is driving the track" (CM does not lock the track files; a running game does). A loosening, on his word; relayed by the Milford bridge session 2026-10-29 |
+
+No threshold moved. Tests: `tests/geometry/test_dummies_draft.py` (the yaw agrees with `layout_dummies.yaw_deg` on
+every heading), the frame refusal in `test_ship_track_chain.py` (a guard run on IMI's V1-frame config).
+
 ## 2026-10-26 — Lake Murray expansion P4 integrated (v0.19.1, Drive 2) + the lenses' fix round (ledger 0054 "P4 — dressing, integrated")
 
 The four P4 branches (lamps, buildings + rock, trees + GrassFX, signs + map) merged as unions onto airoso main 1b5a6b3

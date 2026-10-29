@@ -121,6 +121,28 @@ fix: 67 meshes / 23 AC nodes → `loop_main.blend`, exit 0 in 3 s. `tools/ship_t
 re-run starts at the split (`--from split`) instead of repeating the 22-minute draft + prep; a gate name is refused.
 Exotics' export, gates and install still owed to the re-run; Milford, High Plains and Sand Creek hold behind it.
 
+**The re-run (`--from split`, same day):** split OK (67 meshes, 23 AC nodes), export_road OK (106 MB kn5, 67
+materials, 8 textures), ai OK (1,214 pts over 1,821 m), **verify_kn5 FAIL**: `AC_PIT_3..7` 14.8 / 25.1 / 29.0 /
+41.7 / 45.4 m off the road. Reproduced here on the draft mesh to the decimetre. The prep's single-layout branch
+recomputed the dummies from `centerline.local.json` (8 pits, never mirrored) while the mesh was built with
+`mirror_x: true`: the pit row stood on the road's mirror image, diverging with the curve. The engine's own
+`data/dummies.json` (build_mesh → `place_dummies` on the finished centreline, 4 pits) sits 0.6 m from the road
+everywhere — the prep now takes it (`scripts/geometry/dummies.load_draft`) and recomputes only with no draft.
+
+**The frame, found underneath (the finding of the day).** Why was the mesh mirrored at all? `mirror_x: true` +
+`true_north_rotation_deg: 180` in every V1-era config are the V1 OBJ program's own import convention
+(`build_kn5.py` imported `(x, −z, y)`, which reads mirrored in-game, so build_mesh mirrored east at the source
+and the model was yawed 180° for the sun). The loop prep imports `(x, z, y)` and the exporter writes `(x, z, −y)`:
+kn5 `(E, up, −N)`, geographically right with **no mirror and no yaw** — Lake Murray 0.19.1 is `mirror_x: false`,
+`true_north 0`, and V1-with-mirror-and-180 is the same frame as loop-with-neither (the algebra: mirror E then yaw
+180° = negate N). So the chain on a V1-frame config ships a **mirrored** track — every turn the wrong way — with the
+sun 180° off, and every gate is self-consistent and blind to it (`kn5_ground_check` even applies the 180° yaw the
+prep never made). Fix: the four configs set to the chain's frame (Exotics' T2 bank from −6.0 to +6.0, the natural
+sign, `profile.py`); `tools/ship_track.sh` refuses the V1 frame before any copy; the prep's grid facing corrected to
+the measured `atan2(E, −N)` convention (ledger 0047; the `atan2(E, N)` that stood there faces a north-bound grid
+south, and `verify_kn5`'s single-layout branch has no facing check). GATES-CHANGELOG 2026-10-29. IMI, Pueblo,
+Aspen, Grand Junction, Pikes Peak and Second Creek still carry the V1 frame and are refused until their turn.
+
 ## Verification
 
 - `tools/ship_track.sh <track>` completes on the Windows box for each of the four: `loop.blend` written by the

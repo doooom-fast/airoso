@@ -3,7 +3,7 @@
   "name": "High Plains Raceway",
   "slug": "high_plains",
   "version": "0.66.3",
-  "mirror_x": true,
+  "mirror_x": false,
   "loop": true,
   "default_width_m": 12.0,
   "location": {
@@ -14,7 +14,7 @@
     "country": "United States"
   },
   "origin": "centroid",
-  "true_north_rotation_deg": 180.0,
+  "true_north_rotation_deg": 0.0,
   "surfaces": {
     "road": "1ROAD",
     "grass": "GRASS",

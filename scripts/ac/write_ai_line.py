@@ -2867,6 +2867,8 @@ def main(argv: list[str] | None = None) -> None:
     # (the chord is 27-30 m on Alvarado): a contradiction is a build error, not a warning.
     if args.layout:
         dpath = data_dir / f"dummies_{args.layout}.json"
+        if not dpath.exists() and len(cfg.get("layouts") or []) <= 1 and (data_dir / "dummies.json").exists():
+            dpath = data_dir / "dummies.json"        # a single layout's grid rides in the road scene (ledger 0060)
         if dpath.exists():
             dums = {k: v for k, v in json.loads(dpath.read_text(encoding="utf-8")).items()
                     if not k.startswith("_")}

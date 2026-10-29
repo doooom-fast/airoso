@@ -295,8 +295,12 @@ def test_install_folder_from_config_parked_old_build_and_running_game_refused():
     assert "_prev\"" not in install.replace('"${INSTALL_FOLDER}_prev"', ""), "never a _prev left in content/tracks"
     guard = _first("tasklist //FO CSV //NH")
     assert _first('elif [ "$INSTALL" = 1 ]; then') < guard < _first('mv "$AC/$old"')
-    for frag in ("acs[.]exe", "Content Manager", "NOT INSTALLED: close"):
-        assert frag in TEXT[guard:_first('mv "$AC/$old"')], frag
+    blk = TEXT[guard:_first('mv "$AC/$old"')]
+    for frag in ("acs[.]exe", "acs_x86[.]exe", "NOT INSTALLED: close", "Content Manager may stay open"):
+        assert frag in blk, frag
+    # Kevin, 2026-10-27: "you can install when that's running just not while AC is driving the track" — CM does not
+    # lock the track files, so only acs.exe is refused (as tools/ship_sd.sh)
+    assert "Content Manager[^\"]*[.]exe" not in blk and "Content Manager[^\"]*[.]exe" not in SD_TEXT
 
 
 def test_argument_guards_exit_2_before_any_file_operation():
@@ -352,6 +356,39 @@ def test_from_resumes_at_a_step_before_the_gates_and_never_through_them():
     ready = helper("blend_builder_ready")
     assert 'if [ -n "$FROM" ]; then case " ${DRAFT[*]:-} " in *" $FROM "*) ;; *) return 1;; esac; fi' in ready
     assert "--from <step>" in TEXT.split("set -euo pipefail")[0], "documented in the header"
+
+
+def test_the_chain_refuses_the_v1_frame_before_any_copy():
+    """ledger 0060, 2026-10-29: the chain's frame is San Diego's (mirror_x false, true_north_rotation_deg 0); the
+    V1 OBJ program's mirror_x + 180 ship a mirrored track through it. Refused on the source config after the
+    no-blend-yet guard and before the sync-in; every chain track's config carries the chain's frame."""
+    assert _first('if [ "$FRAME" != "False 0.0" ]') < _first('step "sync inputs airoso -> workshop ($PROJ)"')
+    assert _first("no blend yet: $PROJ/loop.blend does not exist") < _first('if [ "$FRAME" != "False 0.0" ]')
+    assert "the chain's frame is San Diego's" in TEXT
+    for track in ("exotics-racing-lv", "milford-road-course", "high-plains", "sand-creek", "lookout-lariat",
+                  "san-diego-lake-murray"):
+        cfg = json.loads((ROOT / "tracks" / track / "track.config.json").read_text(encoding="utf-8"))
+        assert cfg.get("mirror_x", False) is False, track
+        assert float(cfg.get("true_north_rotation_deg") or 0.0) == 0.0, track
+    # Exotics' T2: the real right-hander banks +ve in the chain's frame (profile.py), -6.0 was the mirrored sign
+    ex = json.loads((ROOT / "tracks" / "exotics-racing-lv" / "track.config.json").read_text(encoding="utf-8"))
+    banks = [c["bank_deg"] for c in ex["road_profile"]["cambers"]]
+    assert banks == [6.0], banks
+    if not shutil.which("bash"):
+        print("  (no bash on PATH — the guard run skipped)")
+        return
+    # a V1-frame config (IMI still carries mirror_x true / 180) with a spec whose draft can build the blend: the
+    # run passes the no-blend-yet guard and stops at the frame, nothing copied
+    d = _spec(ROOT / "tracks" / "exotics-racing-lv" / "ship.json")
+    d["track"] = "imi"
+    tmp = Path(tempfile.mkdtemp())
+    sp = tmp / "ship.json"
+    sp.write_text(json.dumps(d), encoding="utf-8")
+    proj = tmp / "proj"
+    r = _run(["imi", "--dry-run"], {"SHIP_SPEC": sp.as_posix(), "SHIP_PROJ": proj.as_posix()})
+    assert r.returncode == 2, (r.returncode, r.stdout[-600:], r.stderr[-400:])
+    assert "(True 180.0): the chain's frame is San Diego's" in r.stdout, r.stdout[-600:]
+    assert not proj.exists() and "sync inputs" not in r.stdout
 
 
 # --- engine-july -----------------------------------------------------------------------------------------------

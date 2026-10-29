@@ -19,12 +19,19 @@ def _block(start: str, end: str) -> str:
     return SRC[a:b]
 
 
-def test_the_seam_weld_floor_is_capped_under_the_shoulder_too():
+def test_the_seam_weld_floor_is_capped_under_the_shoulder_too_but_the_cut_edge_keeps_the_deck():
     """The 22 % floor off the ring edge may never raise grass through pavement; the shoulder was the one
-    sheet left out of that cap, and in a cut it is the sheet the grass was lifted through."""
+    sheet left out of that cap, and in a cut it is the sheet the grass was lifted through. The cut-edge
+    excavation asks the same question of the DECK only: with the shoulder in its table it dug 30,048
+    nodes along every cut's shoulder edge and the measured-guard fenced the ledge with 467 stone lips."""
     blk = _block("_ptW: dict = {}", "def _pav_below_W(")
     assert "for _sheetW in (road, runoff, kerb, shoulder):" in blk, blk
+    assert "if _sheetW is not shoulder:" in blk and "_ptW_shW.setdefault" in blk
     assert "NOT the shoulder" not in blk
+    weld = _block("_weldW = 0", "[seam-weld]")
+    assert "_pav_below_W(_gxW, _gzW, _floorW, _ptW_shW)" in weld, "the weld's cap uses the shoulder-inclusive table"
+    cut = _block("# CUT-EDGE EXCAVATION", "[cut-edge]")
+    assert "_pav_below_W(_ixW, _izW, _iyW)" in cut and "_ptW_shW" not in cut, "the excavation keeps the deck table"
 
 
 def test_the_measured_guard_skips_declared_spans_and_never_sets_a_lip_far_below_the_deck():

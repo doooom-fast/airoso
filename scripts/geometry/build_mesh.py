@@ -3014,7 +3014,14 @@ def build(project_dir: str | Path) -> dict:
         # over a 1ROAD_shoulder at deck height, poking through at the pavement lip (s 8047 at −5.97, s
         # 8461 at −5.35: drive_test "ground on top"). Measured on the committed draft: the shoulder from
         # 6.0 to 8.5 m out at deck +0.00, 1GRASS over it at +1.5 .. +2.3 along a 20 % line from the meet.
-        _ptW: dict = {}
+        # TWO TABLES, because the CUT-EDGE pass below asks the same question for a different purpose:
+        # it sinks the grass node at a deck-edge face to pavement − 0.35, and with the shoulder in ITS
+        # table it dug 30,048 nodes (154 before) along every cut's shoulder edge — a 0.35 m ledge the
+        # measured-guard then fenced with 467 new stone lips and the gate read as 19 new far ledges
+        # (measured on the first rebuild). The weld's cap sees the shoulder; the excavation keeps the
+        # deck edge it was written for.
+        _ptW: dict = {}          # the deck: road, runoff, kerb (the cut-edge excavation's pavement)
+        _ptW_shW: dict = {}      # ... plus the shoulder (the seam-weld floor's cap)
         for _sheetW in (road, runoff, kerb, shoulder):
             _svW = _sheetW.get("vertices", [])
             for _tW in _sheetW.get("tris", ()):
@@ -3023,11 +3030,13 @@ def build(project_dir: str | Path) -> dict:
                 _zsW = [_vW[2] for _vW in _triW]
                 for _ciW in range(int(min(_xsW) // 4.0), int(max(_xsW) // 4.0) + 1):
                     for _cjW in range(int(min(_zsW) // 4.0), int(max(_zsW) // 4.0) + 1):
-                        _ptW.setdefault((_ciW, _cjW), []).append(_triW)
+                        if _sheetW is not shoulder:
+                            _ptW.setdefault((_ciW, _cjW), []).append(_triW)
+                        _ptW_shW.setdefault((_ciW, _cjW), []).append(_triW)
 
-        def _pav_below_W(_pxW, _pzW, _refW):
+        def _pav_below_W(_pxW, _pzW, _refW, _tableW=None):
             _bW = None
-            for _AW, _BW, _CW in _ptW.get((int(_pxW // 4.0), int(_pzW // 4.0)), ()):
+            for _AW, _BW, _CW in (_ptW if _tableW is None else _tableW).get((int(_pxW // 4.0), int(_pzW // 4.0)), ()):
                 _dW2 = (_BW[2] - _CW[2]) * (_AW[0] - _CW[0]) + (_CW[0] - _BW[0]) * (_AW[2] - _CW[2])
                 if abs(_dW2) < 1e-12:
                     continue
@@ -3089,7 +3098,7 @@ def build(project_dir: str | Path) -> dict:
                             if _floorW is None or _fW > _floorW:
                                 _floorW = _fW
             if _floorW is not None and _gyW < _floorW - 0.01:
-                _pavW = _pav_below_W(_gxW, _gzW, _floorW)
+                _pavW = _pav_below_W(_gxW, _gzW, _floorW, _ptW_shW)     # the shoulder-inclusive cap
                 if _pavW is not None and _floorW > _pavW - 0.06:
                     _floorW = _pavW - 0.06
                 if _gyW < _floorW - 0.01:

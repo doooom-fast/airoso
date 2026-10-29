@@ -374,7 +374,8 @@ frames. `true_north_rotation_deg` is derived by `lighting` and written back (L2)
    layout, `full`, clockwise; the AI line is the writer's draft until recorded in game.
 4. **Gates on the built kn5:** `drive_test` → `audit_mesh` → `kn5_ground_check`. Thresholds unchanged
    (GATES-CHANGELOG).
-5. **Install** as `content/tracks/milford_road_course`, "K10 Michigan - Milford Road Course".
+5. **Install** as `content/tracks/milford_road_course`, "doooom Michigan - Milford Road Course" (Kevin, 2026-10-28:
+   "K10 is gone. doooom.").
 6. **First question for the drive test** stands: "Does the 41 m of relief feel like a hill course, or did
    smoothing flatten the crests?" — and now also: "Does the 27 % climb to the start/finish read as the
    lidar says, or as a wall?"

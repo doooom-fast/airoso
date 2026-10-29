@@ -82,10 +82,11 @@
   "ui_tags": [
     "circuit"
   ],
-  "ui_series": "K10 Michigan",
+  "ui_series": "doooom Michigan",
   "ui_description": "Unofficial reconstruction of the Milford Road Course, Michigan: the private proving-ground road course, traced from USDA NAIP 2022 aerial imagery onto USGS 3DEP 1 m lidar (40 m of real relief, 27 % at its steepest). Clockwise. Not an official or endorsed product.",
   "author": "airoso",
   "_ground_doc": "Constructed corridor, not natural_ground (2026-10-28). Natural ground (copied from IMI) left the lidar's real banks beside the pavement unguarded: drive_test counted 31 drops over 12 cm per 0.5 m within 4 m of the edge (limit 4), worst 49 cm, because the measured-guard lip pass and the shoulder drape only run in constructed mode. The other T1 circuits (Pueblo, Aspen, High Plains) are constructed.",
   "install_folder": "milford_road_course",
-  "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (Lariat plan A11); the previous install is parked in the archive"
+  "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (Lariat plan A11); the previous install is parked in the archive",
+  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)"
 }

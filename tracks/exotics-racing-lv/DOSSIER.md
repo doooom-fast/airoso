@@ -276,8 +276,9 @@ No mined mod content ships (REALISM §3). The Pellefred mod (§9) is a **referen
    geometry. Satellite imagery as the road's macro texture (§12, `fleet/reference/SATELLITE-ROAD-TEXTURES.md`)
    is an authoring-stage texture on the road object, never a mesh step.
 3. **Prep → split → export** from airoso's `scripts/ac`. One layout, `full`, clockwise; the AI line is the
-   writer's draft until recorded in game. Installed name "K10 Las Vegas - Exotics Racing Las Vegas (unofficial)";
-   the public name is Kevin's call at publish time (the mark is registered).
+   writer's draft until recorded in game. Installed name **"doooom Nevada - Nevada Nights"** (Kevin, 2026-10-28: "Call it Nevada Nights"; "K10 is gone.
+   doooom."). The Exotics Racing mark is registered, so the public title is Nevada Nights; the folder and slug stay
+   place-based.
 4. **Gates on the built kn5:** `drive_test` → `audit_mesh` → `kn5_ground_check`, thresholds unchanged
    (GATES-CHANGELOG). Watch item: the T2 bank ramps against drive_test's step and kink checks — the first build
    passed them (soft top 0, severe 0, kinks 0.55/km).

@@ -1,8 +1,8 @@
 {
   "archetype": "race_circuit",
-  "name": "Exotics Racing Las Vegas (unofficial)",
+  "name": "Nevada Nights",
   "slug": "exotics_racing_lvms",
-  "ui_series": "K10 Las Vegas",
+  "ui_series": "doooom Nevada",
   "version": "0.1.0",
   "mirror_x": true,
   "loop": true,
@@ -4865,5 +4865,7 @@
   ],
   "natural_ground": true,
   "install_folder": "exotics_racing_lvms",
-  "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (Lariat plan A11); the previous install is parked in the archive"
+  "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (Lariat plan A11); the previous install is parked in the archive",
+  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
+  "_name_doc": "Kevin 2026-10-28: 'Call it Nevada Nights.' The 2015-2021 Exotics Racing circuit at LVMS; 'Exotics Racing' is a registered mark, so the public title is this one. Folder and slug stay place-based (exotics-racing-lv / exotics_racing_lvms)."
 }

@@ -205,5 +205,7 @@
         "_doc": "same world, opposite direction — own grid/timing via dummies_reverse.json + spawn kn5"
       }
     ]
-  }
+  },
+  "ui_series": "doooom Colorado",
+  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)"
 }

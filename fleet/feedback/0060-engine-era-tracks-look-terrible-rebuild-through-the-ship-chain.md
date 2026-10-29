@@ -143,6 +143,15 @@ the measured `atan2(E, −N)` convention (ledger 0047; the `atan2(E, N)` that st
 south, and `verify_kn5`'s single-layout branch has no facing check). GATES-CHANGELOG 2026-10-29. IMI, Pueblo,
 Aspen, Grand Junction, Pikes Peak and Second Creek still carry the V1 frame and are refused until their turn.
 
+**Rehearsed here with the corrected frame (2026-10-29 01:05–01:16 UTC, the `bpy` module):** `mesh` 7 m 17 s →
+the unmirrored draft (x-extent −939..904 m, the mirror image of v0.1.0's; 15 dummies); `underlay` → 67 GEN objects
++ 5 refs, 72 old GEN replaced, 0 AUTH_* touched; the prep → 68 meshes + **15 dummies from the draft's
+`dummies.json`**, no FATAL; the split → 67 meshes / 15 AC nodes in `loop_main.blend`, exit 0. Checks on the
+built draft: `AC_START_0` 0.0 m and every `AC_PIT_0..3` 0.6 m from the nearest 1ROAD vertex, dY 0.00 (the
+`verify_kn5` rule, 13.5 m); `AC_START_0` at (−9.543, 8.981, 171.408) — v0.1.0's (9.543, …) mirrored, as it
+must be; the grid's yaw +116.0° puts the node forward at (+0.90, +0.44) against the travel (+2.71, +1.32) at the
+start: aligned. Export, gates and install are the Windows run's.
+
 ## Verification
 
 - `tools/ship_track.sh <track>` completes on the Windows box for each of the four: `loop.blend` written by the

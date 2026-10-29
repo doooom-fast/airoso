@@ -261,6 +261,79 @@ it between 14:07 and 21:37 (its build is still in the Windows checkout's untrack
 Plains 0.68.0) and the configs still said 0.1.0 / 0.1.0 / 0.26.0 / 0.66.3, so both installs carry 0.1.0 — bumped on
 the branch the same hour; a `--from track_folder` re-pack (two minutes plus the gates) relabels an installed track.
 
+**Sand Creek, second run (`--from prep` at 07c5e33, the conform skipped): the apron is fixed, the bridges show.**
+Excursion drops 217 → **3 gated** (11 far ledges; worst gated [8702.7, −12.0, 0.24]); flush edges +0.22 / +0.79.
+But `drive_test` still FAILS: **severe steps 1 → 127**, up to 1.75 m, in three clusters that are exactly the three
+auto bridge spans the mesh declared ('2429–2528 m', '5924–6008 m', '6534–6567 m': bins 2450–2500 47 steps, 5950–6000
+41, 6550 35; worst [6558, −3.58, 1.752], [5943, −0.75, 1.733], [6012, −0.75, 1.003], [2445, −0.75, 0.914]);
+**ground on top 12 at s 2443–2444** inside span 1 (1GRASS_i, lanes −6.0 / ±0.75; the conform-on run had 30 at
+s 2549 just past that span's end); daylight gaps 0 → 12; floating furniture 8, unchanged with the conform on or off
+(so not its prop re-seat); kinks 13.4 → 66.5/km; replication 0.01 / 0.04 / 3.56. `audit_mesh` CLEAN,
+`kn5_ground_check` PASS. Reading: the conform-on run was green on the spans because its anti-poke pass pushed every
+grass vert under the lowest drivable sheet, bridges included — the cover came off with it. `drive_test`'s lane
+surface is the highest DRIVABLE surface and 1GRASS is drivable, so terrain standing above the levelled deck inside a
+span reads as a 1.75 m step up onto the grass and back; the engine's own contact pins skip verts under a declared
+span ("the valley stays open") — pin #1 still lowers grass that stands above the deck, pin #2 (shoulder / runoff /
+kerb underside) skips in both directions — and the grass grid is the coarse heightfield's, so a creek-bank node
+near a span can read metres above the 1 m centreline profile the span was detected on. Not yet established whether
+the engine's DRAFT carries these (then build_mesh's span handling is the fix) or the prep adds them (its 1GRASS
+weld / holes_fill are the only grass passes left): Sand Creek has no committed `data/` and 3DEP is unreachable
+from the cloud box, so the Windows session runs `--draft-only` and `drive_test` on the draft OBJ after High Plains.
+The V1 v0.27.0 draft is said to have passed this gate; its report is not in the repo.
+
+**Diagnosed here, from the code and Milford's committed data (2026-10-29): the gate walked the wrong line.** Neither
+hypothesis above. `drive_test` samples the lane as the highest drivable surface within ±2.5 m of the gate
+centreline's height (`TriField.top_at(y_ref, window=2.5)`, the self-crossing guard), and the gate centreline is
+`data/gate_centerline.json`, which `kn5_to_gate_obj` derives from `data/finished_centerline.json`. build_mesh writes
+that file as the line it swept the road along (frame "mesh …": corner-rounded, smoothed, the three declared decks
+levelled crest to crest by `evidence.level_bridge_decks` — "max lift 7.9 m"). The loop prep's `declare_bridge_spans`
+then **overwrote it with the raw `centerline.local.json` line** mirrored to the kn5 frame — Milford's committed
+`finished_centerline.json` after the chain has no `frame` key and its first point is the raw file's with z negated.
+So inside each span the gate's y_ref dived toward the creek while the deck stayed level: where the deck rose past
+2.5 m above the raw line it left the window (a 1–1.75 m "step" as the lane surface changed), the creek bed read as
+"ground on top" in the one band where it was within 2.5 m of the raw line (12, at s 2443–2444 — and the daylight probe
+runs from that false deck height, hence 12 daylight gaps at the same stations), and through the middle of each span
+nothing was within the window at all (no reading, no step, which is why the clusters sit inside the spans and not at
+their ends). The conform-on run was green on the spans because its anti-poke pass had put the grass at deck−0.02
+under the decks: both surfaces left the window at the same station and a step needs two readings. V1 never saw it
+because `scripts/build.sh` gated on the engine's own file; the prep was written for Lake Murray, where the assembler
+has no engine draft and the raw line is the only line. Fix on the branch: `declare_bridge_spans` keeps an engine swept
+line (to the kn5 frame, with its widths and the builder's own `bridge.spans.auto.json`), keeps its own earlier copy on
+a `--from prep` re-run, warns when an unmarked (pre-fix) copy stands beside an engine draft, and `draft_mesh` removes
+the last run's `gate_centerline.json`. **Consequences:** Sand Creek needs a run from the draft (the engine's line in
+the Windows workshop is already overwritten; `--from prep` would warn and walk the raw line again); the planned
+`--draft-only` + `drive_test` on the draft OBJ is still worth having (it is the engine's own verdict on its spans,
+against its own line) — then `--from prep`. Milford's "15 lane steps in the esses against the draft's 8" is the
+same thing, measured: on the committed draft, `round_sharp_corners(smooth_centerline(raw))` — the engine's swept line
+— sits 0.04 m median / 0.20 p95 off the raw line in plan, and its six largest offsets (0.38–0.54 m) are at stations
+792–807, exactly the esses where the chain's gate read its 15 steps (s 795–808); the wheel paths were half a metre
+beside the swept road there. To be re-read on Milford's next full run. Still open on Sand Creek after this: the 8
+floating furniture pieces (unchanged with the conform on or off) and 3 gated excursion drops.
+
+**High Plains, full run (0.68.0 at 59bd8f0, the Windows session): `kn5_ground_check` FAIL, not installed — the ring
+rotation left the elevation file behind.** The gps fixes held: close_gap 0, 3.22 km, 1,074 points from 79 fixes,
+15.1 m of relief, "ring rotated by 815 points to the real start line". `drive_test` PASS (severe 0, excursion drops 0
+gated with 10 far ledges, bumps 1.55/km, daylight 0, obstructed 0), `audit_mesh` CLEAN, `verify_kn5` PASS, track
+folder 3,218.6 m — and **`kn5_ground_check` FAIL: road floating over ground, p95 gap 0.604 m (149/919 samples, 16.2 %
+over 0.05 m), deck-vs-mountain max +0.878**, flush edges +0.12 / +0.54, with the mesh step's "bridge spans: 1
+(['1126-1675m']) — deck+piers, no fill" and replication 2.91 / 12.08 / 14.62 m. The Windows session found the cause in
+code and proved it on the files: `scripts.geometry.projection` rotates the ring to `route.start_at` AFTER the elevation
+stage wrote `centerline.elevation.json` in `centerline.geojson` order, and two readers pair the files by bare index —
+`build_mesh`'s bridge detector (`raw_ground`, the along-road 3DEP profile the deck is tested against) and
+`drive_test`'s replication (which handles `reverse` but not rotation). The deck against `z_smooth_m` unshifted reads up
+to 14.7 m off; shifted by 2,445 m (815 points × 3 m) it matches to **0.01 m median / 0.16 max** — the deck is right,
+the detector was reading the ground 2.4 km along the lap, saw an invented 549 m valley and built a bridge with no fill
+over real ground. The same artefact explains the earlier High Plains run (rotated 251 points: four fake spans,
+replication p95 11.3) and Exotics' replication 1.79 / 2.84 / 3.06 m (rotated 48 points; no span crossed the threshold,
+so nothing else showed), V1 included; Milford and Sand Creek are not rotated (Milford reads 0.02). **Fix on the
+branch:** projection records the permutation in `centerline.local.json` (`source_index`, `route_orientation`; an
+unrotated file is unchanged) and both readers map through `projection.in_local_order`. High Plains' full run owed
+again. Same hour: **Exotics and Milford re-packed `--from track_folder` at 59bd8f0 and installed as 0.2.0** ("doooom
+Nevada — Nevada Nights 0.2.0", description "[build 0.2.0] Real-world circuit traced from USDA NAIP aerial imagery, on
+USGS 3DEP elevation, with airoso (Las Vegas, United States).", author doooom; "doooom Michigan — Milford Road Course
+(unofficial) 0.2.0", author "airoso" from its own config key), kn5s unchanged (756e4791…, bf3783ed…), the previous
+installs parked in `D:/k10-track-archive/2026-10-28_221602/` and `_222051/`; nothing tracked changed, no commit.
+
 ## Verification
 
 - `tools/ship_track.sh <track>` completes on the Windows box for each of the four: `loop.blend` written by the

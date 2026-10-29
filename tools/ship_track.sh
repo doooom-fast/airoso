@@ -180,6 +180,9 @@ draft_mesh() {
   # input (fleet/REALISM.md §2 Job 1: the engine prepares truth, regenerable and unprecious). No furniture: build_env is
   # never a draft step (V3-PLAN P2 step 6)
   step "draft: the engine's draft geometry -> data/track.obj (scripts.geometry.build_mesh: 1ROAD / 1KERB / 1WALL / 1GRASS, no furniture)"
+  # a gate centreline left by the last run's kn5_to_gate_obj belongs to THAT kn5's OBJ, and drive_test prefers it over
+  # the engine's finished_centerline: a drive_test on this draft's track.obj would walk the old line (ledger 0060)
+  rm -f "$PROJ/data/gate_centerline.json"
   (cd "$AIROSO" && python -m scripts.geometry.build_mesh "$PROJ")
 }
 # --- draft: a road NETWORK (source.type osm-network / kml-network; ONE-CHAIN §4 row 8) -------------------------

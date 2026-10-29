@@ -59,6 +59,60 @@ prep never made). No gate could have caught it; Kevin's seat would have.
 No threshold moved. Tests: `tests/geometry/test_dummies_draft.py` (the yaw agrees with `layout_dummies.yaw_deg` on
 every heading), the frame refusal in `test_ship_track_chain.py` (a guard run on IMI's V1-frame config).
 
+### Same day — the gate line on an engine draft (Sand Creek's three bridges; wiring, no threshold)
+
+Sand Creek's second chain run (the conform skipped) went red on `drive_test` with 127 severe steps of up to 1.75 m,
+12 "ground on top" and 12 daylight gaps, every one inside the three bridge spans the mesh had levelled over the creek
+(`evidence.level_bridge_decks`, max lift 7.9 m), while `audit_mesh` and `kn5_ground_check` were green. The gate was
+walking the wrong line: `drive_test`'s `top_at(y_ref, window=2.5)` takes the highest drivable surface within 2.5 m of
+the gate centreline's height, and the loop prep (`scripts/ac/build_kn5_loop.declare_bridge_spans`) had **overwritten
+build_mesh's `data/finished_centerline.json`** — the swept line, corner-rounded, smoothed, decks levelled — with the
+raw `centerline.local.json` line (its Y the bare-earth profile, diving into the creek), which `kn5_to_gate_obj` then
+handed to the gates as `gate_centerline.json`. Wherever the deck rode more than 2.5 m above the raw line it left the
+window: a step reading where it left and where it came back, the creek bed as "ground on top" in the one band where
+it was inside the window, nothing (no reading at all) through the middle. The conform-on run had been green on the
+same spans only because its anti-poke pass had put the grass at deck−0.02 under the decks, so both surfaces left the
+window together and no step could register. V1 was never exposed: `scripts/build.sh` ran the gates on the engine's own
+file. The prep was written for San Diego, whose assembler has no engine draft and whose raw line IS the line.
+
+| Check | Was | Is | Scope |
+|---|---|---|---|
+| prep: the gate line (`declare_bridge_spans`) | always the raw `centerline.local.json` line → KN5 frame; `bridge.spans.auto.json` from an OSM-way scan | an engine swept line in `data/` (build_mesh's, frame "mesh …") goes to the KN5 frame with its widths and **its** auto spans (the stations the builder left open are the stations the gate exempts); the prep's own earlier write (frame "kn5 …", a `--from prep` re-run) stays; with neither, the raw line as before, now marked `frame`/`source` | every chain track with an engine draft; SD unchanged. An unmarked file beside an engine draft is an earlier prep's raw copy: WARNING printed, the engine's line is back on the next run from the draft |
+| `tools/ship_track.sh draft_mesh` | left the last run's `data/gate_centerline.json` | removes it before `build_mesh` (a `drive_test` on the draft's OBJ would prefer the stale kn5 line) | the draft-only test the Windows box runs |
+
+Expected on Sand Creek: the 127 / 12 / 12 vanish with the frame of reference, and what is left on the spans is the
+mesh's. The same cause behind Milford's 15 lane steps in the banked esses against the draft's 8, measured on its
+committed draft: the swept line's six largest plan offsets from the raw line (0.38–0.54 m) are at stations 792–807,
+where the chain's gate read every one of those steps (s 795–808). Tests: `tests/ac/test_loop_conform.py` (the engine's line kept,
+levelled deck and rounded corner intact, OSM scan not run; a re-run keeps the prep's copy; the lost-line warning).
+
+### Same day — the ring rotation and the elevation file (High Plains; wiring, no threshold)
+
+High Plains' full run at `59bd8f0` (0.68.0) passed `drive_test` (severe 0, excursion drops 0 gated), `audit_mesh` and
+`verify_kn5`, and **failed `kn5_ground_check`: road floating over ground, p95 gap 0.604 m > 0.1 (149 / 919 samples,
+16.2 % over 0.05 m)**, with the mesh step printing "bridge spans: 1 (['1126-1675m']) — deck+piers, no fill" on a
+course with 15 m of relief and no bridge, and `drive_test` replication 2.91 / 12.08 / 14.62 m. Found by the Windows
+bridge session, checked on the data: `scripts.geometry.projection` rotates the ring to `route.start_at` (815 of 1,074
+points) AFTER the elevation stage has written `centerline.elevation.json` in `centerline.geojson` order, and two
+readers paired the two files by bare index — `build_mesh`'s bridge detector (`raw_ground`, the along-road 3DEP
+profile the span test compares the deck against) and `drive_test`'s replication. The detector saw the bare earth 2.4 km
+along the lap under every road point, read an invented 549 m valley and built a deck with no fill over real ground;
+the kn5 gate caught the road floating. Cyclically shifting the elevation by 815 points puts the deck on the smoothed
+profile to 0.01 m median / 0.16 max — the deck itself was right. The same artefact sat under the earlier High Plains
+run (rotated 251 points: four fake spans, replication p95 11.3) and under Exotics' replication 1.79 / 2.84 / 3.06
+(rotated 48 points, no span crossed the detector's threshold), V1 included; Milford and Sand Creek are not rotated.
+
+| Check | Was | Is | Scope |
+|---|---|---|---|
+| `projection` (route orientation) | re-ordered coords / widths / z, wrote nothing about it | also writes `source_index` (local point i ← geojson/elevation point) and `route_orientation` into `centerline.local.json` when `route.reverse` / `route.start_at` changed the order; an unrotated file is byte-identical | every rotated or reversed track |
+| `build_mesh` bridge detector (`raw_ground`) | `z_raw_m[i]` against local point i | `projection.in_local_order(local, z_raw_m)` — identity without a recorded re-ordering | the span test compares the deck with the ground under it again |
+| `drive_test` replication | `z_raw_m[i]` against gate point i (handled `reverse`, not rotation) | the same mapping before the lap / reverse handling | the "replication vs measured road" number is a measurement again on rotated tracks |
+
+No threshold moved; `BRIDGE_MIN_H_M` 3.5 / `BRIDGE_MIN_SPAN_M` 12 unchanged. Expected on High Plains: no span,
+the fill back under the road, `kn5_ground_check` green, replication at Milford's level (0.02). Tests:
+`tests/geometry/test_projection_orientation.py` (the recorded permutation lines the elevation up with the rotated,
+reversed and rotated-and-reversed line; the bare-index pairing is wrong at every point; no route = no key).
+
 ## 2026-10-26 — Lake Murray expansion P4 integrated (v0.19.1, Drive 2) + the lenses' fix round (ledger 0054 "P4 — dressing, integrated")
 
 The four P4 branches (lamps, buildings + rock, trees + GrassFX, signs + map) merged as unions onto airoso main 1b5a6b3

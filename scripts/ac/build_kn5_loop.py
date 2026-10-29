@@ -3,8 +3,9 @@
 This is the San Diego (k10-san-diego) build philosophy, ported as an alternate front-end: the
 project's ``loop.blend`` is the source of truth (Kevin shapes it in Blender), and this pass CONSUMES
 it — renames the working meshes to AC surface conventions, gives them tiling UVs + PBR materials,
-welds/holes-fills the grass, drops the AC_START/PIT/TIME/HOTLAP dummies computed from the real
-centreline, packs textures, and saves ``blender/<slug>.blend``. ``export_kn5_addon`` then binds
+welds/holes-fills the grass, drops the AC_START/PIT/TIME/HOTLAP dummies (a single layout: the engine
+draft's data/dummies.json, else computed from the real centreline; more than one layout: none — they
+ride in the per-layout spawn kn5s), packs textures, and saves ``blender/<slug>.blend``. ``export_kn5_addon`` then binds
 shaders + exports the real kn5 (see scripts/build_loop.sh for the full pipeline).
 
 THIS IS A DIFFERENT PROGRAM from scripts/ac/build_kn5.py (the OBJ-import pipeline). The two must
@@ -1016,15 +1017,30 @@ def main():
         local = json.loads((proj / "data" / "centerline.local.json").read_text())
         cl = [tuple(p) for p in local["points_xyz_m"]]
         widths = local["widths_m"]
-        n_pits = 8
-        # The start is a CONTRACT (0026): when the config declares start_arc_m, the grid goes there —
-        # Kevin: "i prefer starting on alvarado toward college" (station 3,467 on the Lake Murray
-        # loop); the straightest-window heuristic had parked it on Navajo. Declared beats derived.
-        placed = dmod.place_dummies(cl, widths, n_sectors=3, n_pits=n_pits,
-                                    start_arc_m=cfg.get("start_arc_m"))
-        # start facing = travel direction pts[0]->pts[1], as a yaw about Blender Z(up)
-        tx, ty = cl[1][0] - cl[0][0], cl[1][2] - cl[0][2]          # Blender (E, N)
-        start_yaw = math.atan2(tx, ty)
+        mirror_x = bool(cfg.get("mirror_x", False))
+        # The engine draft's own placement first (scripts/geometry/build_mesh.py -> place_dummies on the
+        # FINISHED centreline: the pits on the road that mesh has, the loop's start). Recomputed here from
+        # centerline.local.json, Exotics Racing's 8 pits walked 14-45 m off the road (verify_kn5,
+        # 2026-10-29; ledger 0060). The recomputation stays for a scene with no draft (the assembler's path).
+        placed = dmod.load_draft(proj / "data" / "dummies.json")
+        from_draft = bool(placed)
+        if from_draft:
+            print(f"[build_kn5_loop] AC dummies: the draft's data/dummies.json ({len(placed)} placements)")
+        else:
+            n_pits = 8
+            # The start is a CONTRACT (0026): when the config declares start_arc_m, the grid goes there —
+            # Kevin: "i prefer starting on alvarado toward college" (station 3,467 on the Lake Murray
+            # loop); the straightest-window heuristic had parked it on Navajo. Declared beats derived.
+            placed = dmod.place_dummies(cl, widths, n_sectors=3, n_pits=n_pits,
+                                        start_arc_m=cfg.get("start_arc_m"))
+            print(f"[build_kn5_loop] AC dummies: placed from centerline.local.json ({len(placed)}; no draft dummies.json)")
+        # facing = the travel direction at AC_START_0, as a yaw about Blender Z(up): atan2(tx, -tz), the measured
+        # convention of the per-layout spawn scenes (tools/layout_dummies.yaw_deg, ledger 0047; the exporter's
+        # (x, z, -y) puts north at kn5 -Z, so an unrotated node faces south). The atan2(tx, tz) that stood here
+        # faced a north-bound grid backwards. A mirrored draft's tangent is mirrored with it (the chain refuses
+        # mirror_x: tools/ship_track.sh THE FRAME).
+        start_at = placed.get("AC_START_0") or placed.get("AC_HOTLAP_START_0") or cl[0]
+        start_yaw = dmod.facing_yaw(cl, start_at, mirror_x=mirror_x and from_draft)
         for name, (x, y, z) in placed.items():
             e = bpy.data.objects.new(name, None)
             e.empty_display_type = "ARROWS"; e.empty_display_size = 4.0

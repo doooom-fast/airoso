@@ -2,7 +2,7 @@
   "name": "Sand Creek Raceway",
   "slug": "sand_creek_raceway",
   "version": "0.26.0",
-  "mirror_x": true,
+  "mirror_x": false,
   "osm_road_widths": true,
   "_osm_road_widths_doc": "Real street circuit — after the project stage, scripts.gps.widths_from_osm map-matches each centerline vertex to its OSM way and sets curb-to-curb widths from lanes (arterials ~2x a side street) + writes intersection pads at the real junctions. Racetracks (defined widths) leave this off.",
   "capture": {
@@ -113,7 +113,7 @@
     "fences": false
   },
   "origin": "centroid",
-  "true_north_rotation_deg": 180.0,
+  "true_north_rotation_deg": 0.0,
   "surfaces": {
     "road": "1ROAD",
     "grass": "GRASS",

@@ -55,12 +55,6 @@ DerivedData/
 apps/*/captures/
 *.prodrive-scan/
 
-# Mined mod assets are copyrighted / NOT redistributable (SRP, RT California Highway, etc.) and the
-# raw donor kn5 cache is hundreds of MB — both live outside git and are re-mined on demand (see the
-# project MANIFEST.md + the mod-mining flow). Reproducibility: re-run the mining, not a git checkout.
-projects/*/assets/_raw_kn5/
-projects/*/assets/props/
-
 # --- airoso V3 additions --------------------------------------------------------
 # Consumer-era engine checkouts (obsolete in the monorepo, may exist in old clones)
 .engine/

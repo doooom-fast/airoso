@@ -17,7 +17,7 @@ so downstream passes (painted street-name decals, the Sand Creek camber/dip) can
 driver turn onto X" and "which indices are Sand Creek Drive" by NAME, not by guessing corners.
 
 Pure stdlib + the existing ``scripts.gps.overpass`` fetcher. Run:
-    python -m scripts.gps.street_labels projects/sand-creek-raceway
+    python -m scripts.gps.street_labels tracks/sand-creek
 """
 
 from __future__ import annotations

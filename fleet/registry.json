@@ -238,11 +238,6 @@
       "path": "contracts/gala-seed",
       "note": "owed to the k10-1978 game repo via scripts/game/export_seed.py + its PIPELINE_BRIDGE.md. Moved from projects/gala-seed/ (ONE-CHAIN §2 row 9); the game repo's bridge doc must point at the new path."
     },
-    "ats-colorado-sample": {
-      "status": "fixture",
-      "path": "tests/fixtures/ats-colorado-sample",
-      "note": "scs-extraction sample; moved from projects/ (ONE-CHAIN §2 row 9)"
-    },
     "dashcam-loop-0406": {
       "status": "fixture",
       "path": "tests/fixtures/dashcam-loop-0406",

@@ -4,7 +4,7 @@ Reads ``track.config.json`` (the ``route`` block: bbox + ordered road names + co
 named roads from Overpass, stitches them into a single ordered ring, resamples to even spacing, and
 writes ``data/centerline.geojson`` (+ a quick ``data/centerline_preview.svg``). Pure stdlib.
 
-Run:  python -m scripts.gps.centerline projects/sand-creek-raceway
+Run:  python -m scripts.gps.centerline tracks/sand-creek
 """
 
 from __future__ import annotations

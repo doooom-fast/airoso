@@ -14,7 +14,7 @@ A + B read only track.obj (ground truth) + data/network.piers.json. C needs per-
 reconstructs the decks from network.geojson AND applies the same ramp merge-trim the build does, so it
 reflects what was actually built. Writes data/audit.json; exits 1 if any defect exceeds tolerance.
 
-    python -m scripts.geometry.audit_mesh projects/<slug>
+    python -m scripts.geometry.audit_mesh tracks/<slug>
 """
 
 from __future__ import annotations
@@ -816,7 +816,7 @@ def main(argv: list[str] | None = None) -> int:
     """python -m scripts.geometry.audit_mesh <project> [--race] [--layout <id>] [--obj track.<id>.obj]
                                              [--out audit.<id>.json]"""
     argv = list(sys.argv[1:] if argv is None else argv)
-    project = "projects/san-diego-freeway-loop"
+    project = "tracks/san-diego-freeway"
     race, obj, out, layout = False, "track.obj", "audit.json", None
     i = 0
     while i < len(argv):
@@ -847,7 +847,7 @@ if __name__ == "__main__":
 
 
 def _legacy_main():   # pragma: no cover — the pre-0047 entry, kept for reference of the gate line
-    r = audit(sys.argv[1] if len(sys.argv) > 1 else "projects/san-diego-freeway-loop")
+    r = audit(sys.argv[1] if len(sys.argv) > 1 else "tracks/san-diego-freeway")
     hard = (r["A_supports_in_road"] + r["B_terrain_poke"] + r["D_wall_on_road"] + r["E_wall_floating"]
             + r["F_curb_not_flush"] + (r["G_prop_floating"] or 0) + (r["H_ground_above_deck"] or 0)
             + r["I_sidewalk_isolating"])

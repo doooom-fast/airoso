@@ -4,7 +4,7 @@ Pipeline: detect drawn pixels â†’ georeference by aligning to the road network â
 Outputs (data/): traced_route.json (ranked roads + the solved georef) and traced_overlay.svg (the
 matched roads drawn back onto your screenshot, to verify the selection against your line).
 
-Run:  python -m scripts.trace.trace_route projects/<slug> [screenshot.png]
+Run:  python -m scripts.trace.trace_route tracks/<slug> [screenshot.png]
 """
 
 from __future__ import annotations

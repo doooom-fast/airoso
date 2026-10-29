@@ -38,7 +38,7 @@ The kn5s are produced by Blender (scripts/ac/build_kn5.py / export_kn5_addon.py 
 tools/make_map.py then redraws every map.png in the kn5 frame; the AI fast_lane is recorded
 in-game (Windows) or drafted by scripts/ac/write_ai_line.py.
 
-Run:  python -m scripts.ac.track_folder projects/<slug> [--allow-missing-kn5]
+Run:  python -m scripts.ac.track_folder tracks/<slug> [--allow-missing-kn5]
 """
 
 from __future__ import annotations
@@ -827,7 +827,7 @@ def main() -> None:
 
     ap = argparse.ArgumentParser(prog="scripts.ac.track_folder",
                                  description="Generate the installable AC track folder.")
-    ap.add_argument("project_dir", help="projects/<slug>")
+    ap.add_argument("project_dir", help="tracks/<slug>")
     ap.add_argument("--install", action="store_true",
                     help="after generating, install into a local AC content/tracks folder "
                          "(auto-detects it, asks if it can't find it)")

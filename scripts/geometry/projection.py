@@ -6,7 +6,7 @@ This frame is true-north-aligned by construction, so ``true_north_rotation_deg =
 handles any AC axis flip later). The origin (lon0, lat0, elev0) is written to data/ so every later
 phase projects identically. Metres-per-degree use the standard WGS84 series (sub-metre over a few km).
 
-Run:  python -m scripts.geometry.projection projects/sand-creek-raceway
+Run:  python -m scripts.geometry.projection tracks/sand-creek
 """
 
 from __future__ import annotations

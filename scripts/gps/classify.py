@@ -219,4 +219,4 @@ def classify(project_dir: str | Path) -> None:
 
 
 if __name__ == "__main__":
-    classify(sys.argv[1] if len(sys.argv) > 1 else "projects/san-diego-cruise")
+    classify(sys.argv[1] if len(sys.argv) > 1 else "tracks/san-diego-freeway")

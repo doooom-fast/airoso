@@ -5,7 +5,7 @@ Consumes the projected local-metre data from Phases 1-3 and emits, in data/:
   dummies.json (AC_* placements), and track_render.svg (a 3/4 view, elevation exaggerated, to eyeball).
 Pure stdlib.
 
-Run:  python -m scripts.geometry.build_mesh projects/sand-creek-raceway
+Run:  python -m scripts.geometry.build_mesh tracks/sand-creek
 """
 
 from __future__ import annotations

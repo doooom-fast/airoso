@@ -12,7 +12,7 @@ corridor conforms around them). Reproducible: re-run to regenerate byte-for-byte
          "match": "Cowles Mountain Blvd", "width_m": 10.0}
     ]}
 
-    python -m scripts.gps.connectors_from_kml projects/san-diego-loop
+    python -m scripts.gps.connectors_from_kml tracks/san-diego-lake-murray
 """
 
 from __future__ import annotations

@@ -109,7 +109,7 @@ The quality comes from the build → refute → repair loop, not from the top mo
 
 `.claude/skills/` — the pipeline skills (`gps-extraction`, `aerial-tracing`, `elevation`,
 `road-grounding`, `track-grading`, `mesh-audit`, `drive-test`, `ac-track-modding`, `lighting`,
-`route-tracing`, `scs-extraction`) plus **`track-feedback`** for filing into the ledger.
+`route-tracing`) plus **`track-feedback`** for filing into the ledger.
 
 ---
 
@@ -160,7 +160,7 @@ applies per track: a gravel/tarmac fork must be two installable tracks (L8).
 its `PIPELINE_BRIDGE.md`. Absorbing the engine moved that contract here — the game repo's bridge doc
 points at the old location (`projects/gala-seed/`) and needs updating (MIGRATION M1).
 
-`projects/` is retired (ONE-CHAIN §2 row 9, 2026-10-28): the seed moved to `contracts/`, the two test
-fixtures (`ats-colorado-sample`, `dashcam-loop-0406`) to `tests/fixtures/`, and the stale duplicates were
-deleted — the DEM answer-key configs of bathurst, nordschleife and the freeway loop are kept under
-`docs/history/projects/`. Tracks live in `tracks/<place>/`; see `fleet/registry.json` `engine_projects`.
+`projects/` is retired (ONE-CHAIN §2 row 9, 2026-10-28): the seed moved to `contracts/`, the
+`dashcam-loop-0406` test fixture to `tests/fixtures/` (the SCS sample went with the importer, row 7), and the
+stale duplicates were deleted — the DEM answer-key configs of bathurst, nordschleife and the freeway loop are
+kept under `docs/history/projects/`. Tracks live in `tracks/<place>/`; see `fleet/registry.json` `engine_projects`.

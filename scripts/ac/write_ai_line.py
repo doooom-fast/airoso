@@ -22,7 +22,7 @@ a hypothesis generator: whether the AI actually laps is decided in game, by the 
     python -m scripts.ac.write_ai_line <project-dir> --install <AC-track-dir>
     python -m scripts.ac.write_ai_line <centerline.json> --out <dir> --spacing 1.5
 
-STATUS — READ THIS BEFORE TRUSTING A FILE THIS WRITES (docs/HANDOFF.md:250-255, :284; V3-PLAN:297).
+STATUS — READ THIS BEFORE TRUSTING A FILE THIS WRITES (docs/history/HANDOFF.md:252-257, :286; V3-PLAN:297).
 HANDOFF bans *generating AI splines from GPS data* and says to record them in-game. Every line this
 module writes is a GENERATED DRAFT from the BUILT centreline (the mesh-frame line the ribbon was
 swept along — not lat/lon), with exactly the provenance of the line every V3 install ships today.

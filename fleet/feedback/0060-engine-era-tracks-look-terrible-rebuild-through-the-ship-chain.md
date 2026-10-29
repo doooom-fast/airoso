@@ -242,7 +242,24 @@ furniture pieces, one 99 m up (the conform's prop re-seat rides a terrain delta 
 kn5 md5 756e4791…, the gates green again on the re-run. Wrong in its `ui/ui_track.json`, from `track_folder`'s
 defaults: description "Real-world street circuit built from OpenStreetMap + USGS 3DEP" (it is a closed circuit
 traced off NAIP 2019) and author "prodrive-ac-builder" (the retired name). Fixed in the defaults: the description
-follows `source.type` and `kind`, the author is "doooom" unless `ui_author` says otherwise.
+follows `source.type` and `archetype`, the author defaults to "doooom" (`author` in the config still wins, as Milford's "airoso" does).
+
+**Milford GREEN and INSTALLED (2026-10-29, `--from prep` at 07c5e33; committed by the Windows session as `b62de58`).**
+The prep printed "terrain conform skipped: the ground is the engine draft's"; split 143 meshes / 15 AC nodes; export
+234 MB; `verify_kn5` PASS; **`drive_test` PASS**: excursion drops **0 gated** (5 far ledges; the red run: 75), ground
+on top 0, floating 0, obstructed 0, replication 0.02 / 0.16 / 1.58 m — the harness here read the same to the
+centimetre; `audit_mesh` CLEAN; `kn5_ground_check` PASS, flush edges deck-vs-verge **median +0.17 / p95 +0.78** (the
+red run: +0.24 / +0.99; the engine's own apron, now untouched), road-over-ground 23/1,162 > 0.05 m (p95 0.019),
+double-sheet 9 cells near (−216, 14) unchanged. "installed: doooom Michigan — Milford Road Course (unofficial)
+0.1.0", kn5 md5 bf3783ed…; the config's own `ui_description` and `author` ("airoso") carried through. **T1**
+(DEFINITION-OF-DONE). Open, carried: severe steps 15 at s 795–808 in the lane (the draft alone: 8) — about seven
+6–10 cm steps added by the prep or the export in the banked esses, the thing to feel on the drive. Two records from
+that install: (1) nothing was parked — `content/tracks/milford_road_course` did not exist when the chain installed,
+although the V1 v0.1.0 (md5 5fd3c911) had been installed at 14:07 local that day; something outside the chain removed
+it between 14:07 and 21:37 (its build is still in the Windows checkout's untracked `tracks/milford-road-course/build/`);
+(2) the version: ONE-CHAIN §3 says the chain keeps counting (Milford 0.2.0, Exotics 0.2.0, Sand Creek 0.28.0, High
+Plains 0.68.0) and the configs still said 0.1.0 / 0.1.0 / 0.26.0 / 0.66.3, so both installs carry 0.1.0 — bumped on
+the branch the same hour; a `--from track_folder` re-pack (two minutes plus the gates) relabels an installed track.
 
 ## Verification
 

@@ -51,7 +51,8 @@
 #                 --skip-blend), the chain stops before anything runs: "no blend yet" (exit 0 on a dry run,
 #                 1 on a real one).
 # --draft-only    sync the inputs and run the draft phase's DATA steps (route, paint centreline, config remap,
-#                 their gates, elevation, projection, widths), stopping at the first step that needs Blender;
+#                 their gates, elevation, projection, widths, the draft mesh; a network's graph, classes,
+#                 elevation and mesh), stopping at the first step that needs Blender;
 #                 nothing synced back, nothing installed.
 # --force-install as tools/ship_sd.sh: install RED when the caller asserts no gate metric is worse than the
 #                 reference; never covers a race layout red on its own gates or a no_route input error.
@@ -155,6 +156,27 @@ draft_mesh() {
   # never a draft step (V3-PLAN P2 step 6)
   step "draft: the engine's draft geometry -> data/track.obj (scripts.geometry.build_mesh: 1ROAD / 1KERB / 1WALL / 1GRASS, no furniture)"
   (cd "$AIROSO" && python -m scripts.geometry.build_mesh "$PROJ")
+}
+# --- draft: a road NETWORK (source.type osm-network / kml-network; ONE-CHAIN §4 row 8) -------------------------
+# the freeroam network draft that scripts/build_network.sh ran as its net -> classify -> elev -> mesh stages, as chain
+# steps: a branching graph (both carriageways, every ramp and connector) instead of one ordered centreline, so it has
+# its own elevation and mesh modules. No furniture: build_network_env is never a draft step (the chain's draft is
+# geometry only, V3-PLAN P2 step 6). network_mesh writes data/track.obj, the underlay's input, unchanged.
+draft_net() {
+  step "draft: road network graph (scripts.gps.network: Overpass source.highways in source.bbox, mainlines held to source.refs -> data/network.geojson)"
+  (cd "$AIROSO" && python -m scripts.gps.network "$PROJ")
+}
+draft_classify() {
+  step "draft: network edge classes (scripts.gps.classify: OSM class, ref, lanes, layer, ramp -> width per edge, into data/network.geojson)"
+  (cd "$AIROSO" && python -m scripts.gps.classify "$PROJ")
+}
+draft_network_elev() {
+  step "draft: network elevation (scripts.elevation.network_elev, USGS 3DEP along every edge + the terrain grid -> data/network.elevation.json, data/heightfield.npy)"
+  (cd "$AIROSO" && python -m scripts.elevation.network_elev "$PROJ")
+}
+draft_network_mesh() {
+  step "draft: the network's draft geometry -> data/track.obj (scripts.geometry.build_network_mesh: 1ROAD / 1WALL / 1RUNOFF / 1GRASS tiles, OSM-layer flyover decks, no furniture)"
+  (cd "$AIROSO" && python -m scripts.geometry.build_network_mesh "$PROJ")
 }
 draft_underlay() {
   step "draft: underlay -> loop.blend (scripts/blender/underlay.py: data/track.obj into GEN_* collections, never AUTH_*, never a scene reset)"
@@ -561,6 +583,7 @@ gate_kn5_ground() {
 is_data_step() {
   case "$1" in
     gps|aerial|paint_centreline|remap_config|verify_centreline_paint|route_oneway_check|elev|project|widths|mesh) return 0;;
+    net|classify|network_elev|network_mesh) return 0;;
     deck_datum|median_envelope|route_connectors|divide_connectors|trim_connectors|terrain_sample|terrain_resample) return 0;;
     *) return 1;;
   esac

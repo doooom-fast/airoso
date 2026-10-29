@@ -113,6 +113,21 @@ the fill back under the road, `kn5_ground_check` green, replication at Milford's
 `tests/geometry/test_projection_orientation.py` (the recorded permutation lines the elevation up with the rotated,
 reversed and rotated-and-reversed line; the bare-index pairing is wrong at every point; no route = no key).
 
+### Same day — the builder's mirror of the excursion sweep, and the weld's cap (Sand Creek's draft; builder side, no gate moved)
+
+With the gate line and the rotation right, Sand Creek's chain run was red on two things the draft itself carries and
+the gate was right about: 2 "ground on top" at the pavement lip (s 8047 / 8461, cuts) and 8 "floating furniture" on
+one stone lip (s 6522, the approach to span 3). Diagnosed on the committed draft (`a856cbe`) with cross-sections of the
+rebuilt OBJ; both are late `build_mesh` passes (ledger 0060 has the measurements).
+
+| Check | Was | Is | Scope |
+|---|---|---|---|
+| `build_mesh` measured-guard sweep (the builder's 1:1 mirror of `drive_test`'s outboard crossing) | same origin, band, stride and flare exemption as the gate — but not the gate's **declared-span ± 20 m** exemption; no height rule | skips declared spans ± 20 m as the gate does; refuses a lip whose inboard surface is already > 1.5 m under the deck (a deck-edge element; the face above it is the pavement's own) | the lip at the toe of a 6 m retaining wall on a bridge approach (5.7 m under the deck, two feet over a bank falling 4 m) is gone; 14 of 472 lips removed on Sand Creek, 2 ordinary ones added |
+| `build_mesh` seam-weld floor cap | road / runoff / kerb | + the shoulder, less its buried hem (`ribbon` returns `hem_idx`) | in a cut the floor off a ring edge 2 m above the road lifted the pinned shoulder band back to natural (+1.5 .. +2.3 m of dirt over a 1ROAD_shoulder at deck height); with the hem in the cap the toe apron broke at every fill (999 lips, far ledges 26 — rebuild 2) |
+
+`drive_test` on the rebuilt draft: ground on top 0, floating 0, severe 1, excursion drops 2 gated, far ledges 7 (the
+baseline's). No gate threshold or exemption changed. Tests: `tests/geometry/test_build_mesh_edge_rules.py`.
+
 ## 2026-10-26 — Lake Murray expansion P4 integrated (v0.19.1, Drive 2) + the lenses' fix round (ledger 0054 "P4 — dressing, integrated")
 
 The four P4 branches (lamps, buildings + rock, trees + GrassFX, signs + map) merged as unions onto airoso main 1b5a6b3

@@ -402,7 +402,26 @@ shoulder face passes 2 m ABOVE them: `top_at` 99.0) and the other two read 1.35 
 declared spans ± 20 m as the gate does, and refuses any lip whose inboard surface is already > 1.5 m under the deck
 (a lip is a deck-edge element; the face above it is the pavement's own, and #17 owns its parapet — which here built
 0 verts: the approach is 4 sections at 3 m spacing against `min_run` 10). Text rules in
-`tests/geometry/test_build_mesh_edge_rules.py`; the rebuilt draft's gate numbers follow.
+`tests/geometry/test_build_mesh_edge_rules.py`.
+
+**Proven here in three rebuilds of the committed draft (20 min each; the gate on the rebuilt OBJ every time).**
+Rebuild 1 (`7a0b408`, the two fixes): **`drive_test` PASS** — ground on top 2 → **0**, floating furniture 8 → **0**,
+severe 1, daylight 0, excursion drops 2 gated — but `[cut-edge]` excavated **30,048** nodes (154 before),
+`[measured-guard]` set **681** lips (255) and the far ledges read 26 (7): the cut-edge pass shared the weld's pavement
+table and, with the shoulder in it, dug every cut's shoulder edge to pavement − 0.35; the sweep fenced the ledge. Rebuild
+2 (`88e80b2`, two tables; the excavation back on the deck): still **999 lips** against the original 472 and far ledges
+26. Cross-sections at the new lips (s 2147.9, s 4645.5, fill toes at lateral ±11): the shoulder's **buried hem** —
+the last quad, 1 m beyond the ground-meet and 0.8 m into the dirt — counted as pavement and capped the weld's floor
+UNDER the ground for every grass node within 1 m of the meet, so the 20 % apron off the toe was no longer built there
+(1GRASS_t beyond the meet 6.31 / 6.24 / 6.14 before, 6.25 / — / 5.93 after) and the top surface stepped 0.12–0.14 m
+per 0.5 m onto the ring: exactly "the toe it exists to fill" of the old comment. Rebuild 3 (`988166a`,
+`ribbon.road_shoulder` / `curb_sidewalk` return `hem_idx`, the cap skips hem triangles): **`drive_test` PASS, ground
+on top 0, floating 0, severe 1 ([1275.0, +3.49, 0.066]), daylight 0, excursion drops 2 gated (worst [7950.5, −12.5,
+0.68]) with far ledges 7 — the baseline's 7**; `[seam-weld]` 391,244 raised (397,497: the cap bound on ~6 k nodes in
+the cuts), `[cut-edge]` **0** (154: nothing left for the band-aid), `[measured-guard]` 246 (255). Lips 472 → **457**: 14
+gone — the 13 at span 3's approach and span (bases 1.0–7.8 m under the deck) and one at s 2680 (base −1.58) — and 2
+new ordinary toe lips at s 9592 / 9598 (bases −0.81 / −0.63). Nothing else on the lap moved. Sand Creek's full chain
+run on `988166a` is owed on the Windows box (the draft must rebuild: `--from prep` would reuse the old one).
 
 ## Verification
 

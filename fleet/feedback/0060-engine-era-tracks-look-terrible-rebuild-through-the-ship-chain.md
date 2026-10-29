@@ -202,6 +202,48 @@ same pass cost it nothing (verge median +0.03). Reproduction here on Milford's c
 `drive_test` on the engine's draft OBJ (the V1 gate) → underlay → prep → `drive_test` on the prepped scene, with and
 without the conform.
 
+**Reproduced and fixed here (2026-10-29 02:10–03:11 UTC, Milford's committed draft data, the `bpy` module).**
+`mesh` → `drive_test` on the engine's own draft OBJ: excursion drops **1** (far ledges 12), severe steps 8, bumps
+16.7/km, replication 0.03 / 0.20 / 1.61 m — the V1 d433c07 numbers, so the engine's embankment is sound. Underlay
+143 GEN + 10 refs. Prep with the conform skipped → the prepped scene written out as a gate OBJ in the engine frame
+(the harness's own `kn5_to_gate_obj` stand-in, with `gate_centerline.json` un-mirrored from the prep's kn5-frame
+`finished_centerline.json`; without it the first pass swept a z-mirrored line and read 4,241 phantom pokes) →
+`drive_test` **PASS: excursion drops 0 gated** (far ledges 5, worst 0.37 m ungated), ground on top 0, floating 0,
+obstructed 0, replication 0.02 / 0.16 / 1.58 m. The Windows run with the conform on: 75. **Fix:**
+`scripts/ac/build_kn5_loop.py` skips `_conform_and_reseat` when `data/underlay.report.json` exists (an engine
+draft, conformed by build_mesh); `track.config.json prep.terrain_conform` true / false overrides (an authored deck
+on an engine draft is the case for true — and the case for a proper re-grade tool later, not this feather). Open,
+not the gate: severe steps 15 at s 795–808 in both the Windows run and here (the draft: 8) — something in the prep
+other than the conform (the kerb carve, the 1e-4 weld, the tile split) adds ~7 steps of 6–10 cm in the banked esses.
+
+**High Plains, full run (same day, bd3f1ba): `drive_test` RED with the same apron signature** — 103 excursion drops
+> 20 cm at 11.5–12 m lateral, flush edges deck-vs-verge median +0.23 / p95 +0.96 (`audit_mesh` CLEAN,
+`verify_kn5` PASS, `kn5_ground_check` PASS) — and three of its own, found by the Windows session:
+(1) `route.start_at` [39.67456, −104.77141] is the pre-July displaced frame, 77 km from the re-sourced site; the
+config's own `_orientation_doc` gives the real S/F (~39.7350, −103.8946, mid front straight) and says "re-derive
+when re-sourced" — never done, so the start was an arbitrary ring point; (2) `close_gap_m 466` on a source whose
+first fix equals its last; (3) four auto bridge spans (~860 m) and replication p95 11.3 m on a course with 15 m of
+relief. (2) and (3) have one cause, measured here on the committed `source/osm_fixes.json`: `scripts/gps/from_track`
+runs a 5-fix moving average meant for 1 Hz phone GPS jitter, and High Plains' "fixes" are 79 OSM nodes 18 m apart
+on the corners and up to 585 m apart on the straights — the smoothed line sits **3.4 m median / 13.5 p95 / 26.8 m
+max** off the source polygon (corners cut by a road width or two), and the smoother is not circular, so the closed
+ring's ends part by 466 m and get bridged with a chord. Over ground the real track is not on, the deck floats and
+the engine mints bridges. Fix: `source.smooth_window` (0 = none, for a node list), the smoother wraps on a loop,
+and High Plains' `start_at` moves to the real S/F.
+
+**Sand Creek, full run (same day, bd3f1ba, without the Mac-only NAIP width): `drive_test` RED**, the same apron
+signature (217 excursion drops, flush edges +0.23 / +0.93; `audit_mesh` CLEAN, `kn5_ground_check` PASS) plus two
+of its own to re-read after the conform fix: ground on top mid-lane 30, all at s 2549, ~21 m past the end of the
+auto bridge span 2429–2528 m (the abutment: the conform's span mask is a ±12 m disc, exactly the band where "pin
+up to deck−0.02" takes over from "push down only" — a conform artefact until shown otherwise); and 8 floating
+furniture pieces, one 99 m up (the conform's prop re-seat rides a terrain delta — another one).
+
+**Exotics INSTALLED (2bd258d): "installed: doooom Nevada — Nevada Nights 0.1.0"**, `content/tracks/exotics_racing_lvms`,
+kn5 md5 756e4791…, the gates green again on the re-run. Wrong in its `ui/ui_track.json`, from `track_folder`'s
+defaults: description "Real-world street circuit built from OpenStreetMap + USGS 3DEP" (it is a closed circuit
+traced off NAIP 2019) and author "prodrive-ac-builder" (the retired name). Fixed in the defaults: the description
+follows `source.type` and `kind`, the author is "doooom" unless `ui_author` says otherwise.
+
 ## Verification
 
 - `tools/ship_track.sh <track>` completes on the Windows box for each of the four: `loop.blend` written by the

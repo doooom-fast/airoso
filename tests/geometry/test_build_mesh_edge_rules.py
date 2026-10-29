@@ -24,10 +24,30 @@ def test_the_seam_weld_floor_is_capped_under_the_shoulder_too_but_the_cut_edge_k
     sheet left out of that cap, and in a cut it is the sheet the grass was lifted through. The cut-edge
     excavation asks the same question of the DECK only: with the shoulder in its table it dug 30,048
     nodes along every cut's shoulder edge and the measured-guard fenced the ledge with 467 stone lips."""
-    blk = _block("_ptW: dict = {}", "def _pav_below_W(")
+    blk = _block("_hemW = set(shoulder.get(\"hem_idx\", ()))", "def _pav_below_W(")
     assert "for _sheetW in (road, runoff, kerb, shoulder):" in blk, blk
     assert "if _sheetW is not shoulder:" in blk and "_ptW_shW.setdefault" in blk
     assert "NOT the shoulder" not in blk
+    # ... and never the buried hem: counted as pavement it capped the weld's apron under the ground at every toe
+    assert "if _sheetW is shoulder and (_tW[0] in _hemW or _tW[1] in _hemW or _tW[2] in _hemW):" in blk
+
+
+def test_the_shoulder_builders_name_their_hem_vertices():
+    """ribbon.road_shoulder / curb_sidewalk return ``hem_idx``: the buried-hem vertices, so a pass that treats
+    the sheet as pavement can leave the underground quad out."""
+    from scripts.geometry import ribbon
+    pts = [(0.0, 10.0, float(i) * 3.0) for i in range(12)]
+    def ground(x, z):
+        return 8.0                                                   # a 2 m fill everywhere
+
+    sh = ribbon.road_shoulder(pts, [8.0] * len(pts), ground=ground)
+    n = len(sh["vertices"])
+    assert sh["hem_idx"] and len(sh["hem_idx"]) == n // 4, (len(sh["hem_idx"]), n)      # 4 points per station-side
+    assert all(sh["vertices"][i][1] < 8.0 for i in sh["hem_idx"]), "the hem sits INTO the dirt"
+    cs = ribbon.curb_sidewalk(pts, [8.0] * len(pts), ground=ground)
+    assert cs["hem_idx"] and len(cs["hem_idx"]) == len(cs["vertices"]) // 6
+    assert all(cs["vertices"][i][1] < 8.0 for i in cs["hem_idx"])
+    assert "hem_idx" not in ribbon.road_shoulder(pts, [8.0] * len(pts)) or ribbon.road_shoulder(pts, [8.0] * len(pts))["hem_idx"] == []
     weld = _block("_weldW = 0", "[seam-weld]")
     assert "_pav_below_W(_gxW, _gzW, _floorW, _ptW_shW)" in weld, "the weld's cap uses the shoulder-inclusive table"
     cut = _block("# CUT-EDGE EXCAVATION", "[cut-edge]")

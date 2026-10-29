@@ -3020,11 +3020,22 @@ def build(project_dir: str | Path) -> dict:
         # measured-guard then fenced with 467 new stone lips and the gate read as 19 new far ledges
         # (measured on the first rebuild). The weld's cap sees the shoulder; the excavation keeps the
         # deck edge it was written for.
+        # ... AND NOT THE SHOULDER'S BURIED HEM. The sheet's last quad runs from the ground-meet 1 m
+        # out and 0.8 m INTO the dirt (ribbon.road_shoulder: "no grid-resolution mismatch can ever open
+        # daylight under the lip"). Counted as pavement, it capped the floor UNDER the ground for every
+        # grass node within 1 m beyond the meet, so the weld's 20 % apron off the toe was never built
+        # there: the top surface fell 0.12-0.14 m per 0.5 m onto the ring at every fill toe and the
+        # measured-guard fenced each one — 464 new lips and 19 new far ledges on the second rebuild
+        # (s 2147.9: 1GRASS_t at 6.31 / 6.24 / 6.14 beyond the meet before, 6.25 / — / 5.93 with the hem
+        # in the cap). That is the "toe it exists to fill" the old comment meant.
+        _hemW = set(shoulder.get("hem_idx", ()))
         _ptW: dict = {}          # the deck: road, runoff, kerb (the cut-edge excavation's pavement)
-        _ptW_shW: dict = {}      # ... plus the shoulder (the seam-weld floor's cap)
+        _ptW_shW: dict = {}      # ... plus the shoulder less its hem (the seam-weld floor's cap)
         for _sheetW in (road, runoff, kerb, shoulder):
             _svW = _sheetW.get("vertices", [])
             for _tW in _sheetW.get("tris", ()):
+                if _sheetW is shoulder and (_tW[0] in _hemW or _tW[1] in _hemW or _tW[2] in _hemW):
+                    continue
                 _triW = (_svW[_tW[0]], _svW[_tW[1]], _svW[_tW[2]])
                 _xsW = [_vW[0] for _vW in _triW]
                 _zsW = [_vW[2] for _vW in _triW]

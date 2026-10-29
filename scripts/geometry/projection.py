@@ -20,6 +20,10 @@ from scripts.config import load_config
 
 Vertex = tuple[float, float]
 
+_ORIENTATION_DOC = ("route.reverse / route.start_at were applied here, AFTER centerline.elevation.json was written in "
+                    "centerline.geojson order: local point i is geojson/elevation point source_index[i] "
+                    "(scripts.geometry.projection.in_local_order)")
+
 
 
 def slew_limit_widths(widths_m: list[float], points_xyz_m: list, rate: float = 0.25) -> list[float]:
@@ -178,9 +182,7 @@ def build(project_dir: str | Path) -> dict:
     if reversed_ or rotated_by:
         out["route_orientation"] = {
             "reversed": reversed_, "rotated_by_points": rotated_by,
-            "_doc": ("route.reverse / route.start_at were applied here, AFTER centerline.elevation.json was written in "
-                     "centerline.geojson order: local point i is geojson/elevation point source_index[i] "
-                     "(scripts.geometry.projection.in_local_order)")}
+            "_doc": _ORIENTATION_DOC}
         out["source_index"] = idx
     (data / "centerline.local.json").write_text(json.dumps(out), encoding="utf-8")
 

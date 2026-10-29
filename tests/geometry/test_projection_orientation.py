@@ -87,7 +87,7 @@ def test_reverse_and_start_at_compose_in_the_recorded_index():
 
 def test_no_route_orientation_writes_no_index_and_in_local_order_is_the_identity():
     with tempfile.TemporaryDirectory() as td:
-        proj, _ring_, z_raw, _z = _project(Path(td), None)
+        proj, _, z_raw, _z = _project(Path(td), None)
         loc = json.loads((proj / "data" / "centerline.local.json").read_text(encoding="utf-8"))
         assert "source_index" not in loc and "route_orientation" not in loc, "an unrotated file stays byte-identical"
         assert projection.in_local_order(loc, z_raw) == z_raw

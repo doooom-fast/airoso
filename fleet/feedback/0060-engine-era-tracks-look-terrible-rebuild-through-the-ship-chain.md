@@ -334,6 +334,35 @@ USGS 3DEP elevation, with airoso (Las Vegas, United States).", author doooom; "d
 (unofficial) 0.2.0", author "airoso" from its own config key), kn5s unchanged (756e4791…, bf3783ed…), the previous
 installs parked in `D:/k10-track-archive/2026-10-28_221602/` and `_222051/`; nothing tracked changed, no commit.
 
+**High Plains GREEN and INSTALLED (full run at 7f9faca; committed by the Windows session as `8b9b256`: the gate
+files, `ai/full/`, `loop.blend` in LFS).** "ring rotated by 815 points to the real start line", the permutation
+recorded, and the mesh step printed **no bridge span**. kn5 139.8 MB; `verify_kn5` PASS; **`drive_test` PASS**:
+severe 0, excursion drops 0 gated (13 far ledges, worst [2552.8, −14.0, 0.31]), ground on top 0, floating 0,
+daylight 0, obstructed 0, bumps 1.24/km, kinks 7.77/km, **replication 0.01 / 0.31 / 1.06 m** (the run before:
+2.91 / 12.08 / 14.62); **`audit_mesh` CLEAN**; **`kn5_ground_check` PASS**: road-over-ground 0/919 (p95 0.015),
+deck-vs-mountain median +0.011 / p95 +0.015 / max +0.022, flush edges +0.13 / +0.47, walls 229 / hovering 0,
+double-sheet 0. "installed: doooom Colorado — High Plains Raceway 0.68.0" (kn5 md5 819694f1…, the previous install
+parked in `2026-10-28_231220/`); ui: clockwise, author doooom, description "[build 0.68.0] Real-world circuit built
+from the real track's mapped outline, on USGS 3DEP elevation, with airoso (Deer Trail, United States)." **T1**
+(DEFINITION-OF-DONE). Three of the four are installed from the chain.
+
+**Sand Creek `--from prep` at 44bee3b: the gate-line fix took, and the run died in the AI step.** The prep's
+`data/finished_centerline.json` is now the engine's (source "build_mesh finished_centerline …", frame "kn5 …", 3,231
+points; the chain's prep grep did not show the "gate line" print — added to `tools/ship_track.sh`'s filter). Split
+148 meshes / 4.24 M positions, export 261 MB — then `python -m scripts.ac.write_ai_line <proj> --layout full` raised
+`IndexError: list index out of range` in `fillet_corners` → `floor_at` (`write_ai_line.py:856`), reproducible
+standalone. The Windows session's reading, confirmed here on a synthetic loop: the violation clusters are replaced
+from the last one back, and the cluster across the start seam (unwrapped to a negative `c0`, so it becomes
+`clusters[0]`) is processed LAST — after every other corner's fillet has shrunk the line (a jagged, over-sampled
+corner becomes a few arc points) — while `wrap` and `assoc` still belong to the sweep's original n, so
+`floor_at(wrap(i))` for the seam's negative i indexes past the new end. The guard meant to allow a seam window only
+as a sweep's first sat inside the window loop, after `need` was computed. Sand Creek is the first chain track with a
+tight corner across its seam plus 19 corners elsewhere (Lake Murray's and the circuits' seams are on straights).
+**Fix on the branch:** the seam cluster is processed first (its splice `break`s and the next sweep re-measures
+everything on the rotated line; if no window fits it, the others proceed), with the missing guard in place; a test
+reproduces the IndexError on a closed loop with eight to twelve over-sampled corners and a seam corner and asserts the
+seam is filleted. Sand Creek `--from prep` owed again.
+
 ## Verification
 
 - `tools/ship_track.sh <track>` completes on the Windows box for each of the four: `loop.blend` written by the

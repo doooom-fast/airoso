@@ -4,7 +4,7 @@ The ENU previews show shape, not streets. This stitches OpenStreetMap raster til
 bbox (Web Mercator z16-ish) and draws the route (red), network edges (orange), and landmark
 outlines on top, so "which streets is that?" has an answer.
 
-Run: python -m scripts.game.map_overlay projects/gala-seed [out.png]
+Run: python -m scripts.game.map_overlay contracts/gala-seed [out.png]
 """
 
 from __future__ import annotations
@@ -137,7 +137,7 @@ def render(project_dir: str | Path, out_path: str | Path | None = None) -> Path:
 
 def main() -> None:
     if len(sys.argv) < 2:
-        raise SystemExit("usage: python -m scripts.game.map_overlay projects/<slug> [out.png]")
+        raise SystemExit("usage: python -m scripts.game.map_overlay contracts/<slug> [out.png]")
     render(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else None)
 
 

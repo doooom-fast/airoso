@@ -59,6 +59,27 @@ def centroid(points: list[Vertex]) -> Vertex:
     return (sum(p[0] for p in points) / n, sum(p[1] for p in points) / n)
 
 
+def in_local_order(local: dict, per_point: list) -> list:
+    """Re-order a per-point array written in centerline.geojson order (centerline.elevation.json's
+    ``z_raw_m`` / ``z_smooth_m`` / ``distance_m`` — the elevation stage runs BEFORE this one) into
+    centerline.local.json's order.
+
+    ``route.reverse`` and ``route.start_at`` are applied here, in projection, after the elevation file is
+    written, so a reader that pairs the two files by index is wrong by the whole rotation. High Plains
+    2026-10-29 (ledger 0060): the ring was rotated by 815 of 1,074 points to the real start line, and
+    build_mesh's bridge detector read the bare earth 2.4 km along the lap under every road point —
+    an invented 549 m valley, a 'deck + piers, no fill' bridge over real ground, kn5_ground_check
+    road-over-ground p95 0.60 m; drive_test's replication read 14.6 m against the same misaligned
+    profile (Exotics' 1.79 m and every earlier High Plains run were the same artefact). ``build`` records
+    the permutation as ``source_index`` (local point i came from geojson/elevation point
+    ``source_index[i]``); without one (no re-ordering, or an older file) this is the identity. A
+    length mismatch is left to the caller's own guard."""
+    idx = local.get("source_index") if isinstance(local, dict) else None
+    if not idx or len(idx) != len(per_point) or min(idx) < 0 or max(idx) >= len(per_point):
+        return list(per_point)
+    return [per_point[j] for j in idx]
+
+
 def _meters_per_degree(lat0: float) -> tuple[float, float]:
     """(m_per_deg_lon, m_per_deg_lat) at latitude lat0 — WGS84 series, accurate to <1 m."""
     phi = math.radians(lat0)
@@ -101,12 +122,18 @@ def build(project_dir: str | Path) -> dict:
     #   route.start_at = [lat, lon] -> rotate the ring so station 0 (start/finish, pits, hotlap spawn)
     #                                  sits at the real start line.
     route = cfg.raw.get("route", {}) or {}
+    # source_index: which centerline.geojson / centerline.elevation.json point each local point came from.
+    # The elevation file stays in geojson order; anything pairing it with the local line goes through
+    # in_local_order (build_mesh's bridge detector, drive_test's replication — ledger 0060, High Plains).
+    idx = list(range(len(coords)))
+    reversed_, rotated_by = False, 0
     if route.get("reverse") or route.get("start_at"):
         was_closed = len(coords) > 2 and coords[0] == coords[-1]
         if was_closed:
-            coords, widths, z = coords[:-1], widths[:-1], z[:-1]
+            coords, widths, z, idx = coords[:-1], widths[:-1], z[:-1], idx[:-1]
         if route.get("reverse"):
-            coords, widths, z = coords[::-1], widths[::-1], z[::-1]
+            coords, widths, z, idx = coords[::-1], widths[::-1], z[::-1], idx[::-1]
+            reversed_ = True
             print("  [projection] route.reverse: lap direction flipped")
         sa = route.get("start_at")
         if sa and cfg.loop and len(coords) > 2:
@@ -115,10 +142,12 @@ def build(project_dir: str | Path) -> dict:
                     key=lambda i: ((coords[i][0] - float(sa[1])) * m_lon) ** 2
                                 + ((coords[i][1] - float(sa[0])) * m_lat) ** 2)
             if k:
-                coords, widths, z = coords[k:] + coords[:k], widths[k:] + widths[:k], z[k:] + z[:k]
+                coords, widths, z, idx = (coords[k:] + coords[:k], widths[k:] + widths[:k], z[k:] + z[:k],
+                                          idx[k:] + idx[:k])
+                rotated_by = k
                 print(f"  [projection] route.start_at: ring rotated by {k} points to the real start line")
         if was_closed:
-            coords, widths, z = coords + [coords[0]], widths + [widths[0]], z + [z[0]]
+            coords, widths, z, idx = coords + [coords[0]], widths + [widths[0]], z + [z[0]], idx + [idx[0]]
 
     # origin: default = centroid of THIS centerline; but config.origin may pin a SHARED origin (a
     # {lon,lat,elev_m} dict) so a detailed track builds in another map's frame (K10 merge) — its mesh
@@ -146,6 +175,13 @@ def build(project_dir: str | Path) -> dict:
         "points_xyz_m": [[round(x, 2), round(y, 2), round(zz, 2)] for x, y, zz in local],
         "widths_m": widths,
     }
+    if reversed_ or rotated_by:
+        out["route_orientation"] = {
+            "reversed": reversed_, "rotated_by_points": rotated_by,
+            "_doc": ("route.reverse / route.start_at were applied here, AFTER centerline.elevation.json was written in "
+                     "centerline.geojson order: local point i is geojson/elevation point source_index[i] "
+                     "(scripts.geometry.projection.in_local_order)")}
+        out["source_index"] = idx
     (data / "centerline.local.json").write_text(json.dumps(out), encoding="utf-8")
 
     # Persist the resolved true north back to the source of truth — but only when it has never been

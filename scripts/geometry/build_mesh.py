@@ -21,7 +21,7 @@ from scripts.capture import evidence
 from scripts.geometry import dummies as dummies_mod
 from scripts.geometry import kerbs, nodedbg, ribbon, road_text
 from scripts.geometry import profile as profile_mod
-from scripts.geometry.projection import _meters_per_degree
+from scripts.geometry.projection import _meters_per_degree, in_local_order
 
 Vertex = tuple[float, float, float]
 # FLUSH EDGES (the "road hovering" root cause): 0.1 lift + 0.25 clearance stacked to a permanent
@@ -920,7 +920,12 @@ def build(project_dir: str | Path) -> dict:
             for i in range(1, len(raw_pts)):
                 _gst.append(_gst[-1] + math.hypot(raw_pts[i][0] - raw_pts[i - 1][0],
                                                   raw_pts[i][2] - raw_pts[i - 1][2]))
-            raw_ground = (_gst, [z - elev0 for z in _ej["z_raw_m"]])
+            # centerline.elevation.json is in centerline.geojson order; route.reverse / route.start_at re-ordered
+            # the local points in projection AFTER it was written. Paired by bare index this read, on High Plains
+            # 2026-10-29 (ring rotated by 815 of 1,074 points), the bare earth 2.4 km along the lap under every
+            # road point: an invented 549 m valley, a 'deck + piers, no fill' bridge over real ground,
+            # kn5_ground_check road-over-ground p95 0.60 m (ledger 0060). in_local_order maps it.
+            raw_ground = (_gst, [z - elev0 for z in in_local_order(local, _ej["z_raw_m"])])
     bridge_of = _bridge_detector(centerline, natural_grid, raw_ground=raw_ground, paved_zones=_fillet_zones)
     # persist AUTO-detected spans for the kn5 gate: the builder exempts them from fill/pins,
     # so the gate must exempt the same stations (declared-only exemption read auto bridge

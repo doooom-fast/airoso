@@ -167,6 +167,41 @@ read `data/lights.local.json` unconditionally and no track but Lake Murray has l
 same hour: no lamps file = nothing to match, PASS unless the ini carries a `[LIGHT_N]` with no lamp behind it.
 make_map, the three gates and the install still owed; Milford's full run is in flight behind it.
 
+**Exotics: every gate green (2026-10-29, `--from track_folder` at f02ba1f; committed by the Windows session as
+airoso `bd3f1ba`, `loop.blend` in LFS).** `drive_test` PASS: ground on top 0, floating furniture 0, undrivable 0,
+severe steps 0, bumps 0.0/km, excursion drops 0 gated (7 far ledges reported, worst 0.23 m ungated at [300.4,
+15.0]), obstructed 0; fold bumps 21 reported, slope kinks 6.59/km. `audit_mesh` CLEAN, every class 0 (56,628 curb
+verts, 0 not flush). `verify_kn5` PASS and `--inis` PASS. `kn5_ground_check` PASS: double-sheet 0, walls 39 /
+hovering 0, flush edges deck-vs-verge median +0.03 m / p95 +0.70, road-over-ground 0/4,162. track_folder 1,821.9 m,
+4 pits; map 0.685 m/px. **T1 claimed** (DEFINITION-OF-DONE). Open, not chased: "replication vs measured road"
+median 1.79 / p95 2.84 / max 3.06 m — the V1 d12b14f build read 1.78 / 2.84 / 3.06, so not a chain regression, but
+a traced road 1.8 m off its measured line is a number to understand before T2. **The install stopped** on the
+chain's own check: `[ -f "$B/models_$lid.ini" ]` per layout, while a single-layout track folder is AC's
+single-config shape (`models.ini`, `ui/ui_track.json`; `scripts/ac/track_folder.py`) — fixed the same hour, the
+install check and the installed-name rename follow the layout count (the name: "doooom Nevada — Nevada Nights").
+There was no earlier Exotics install to park (the session's earlier "untouched old install" was mistaken: none
+existed).
+
+**Milford: the gates ran and `drive_test` is RED (same day, f02ba1f).** Draft → underlay → prep ("terrain conform:
+25,810 corridor edges split, 2,451,473 verts pinned to deck−0.02, 845,094 feathered") → split (144 meshes, 4.0 M
+positions, 15 AC nodes) → export (233 MB kn5) → ai (grid check +1.00 FORWARD, 4,080 m) → `verify_kn5` PASS →
+track_folder 4,071.7 m → `verify_inis` PASS → `audit_mesh` CLEAN → `kn5_ground_check` PASS (double-sheet 9 cells
+near (−216, 14), walls 165 / hovering 0, **flush edges deck-vs-verge median +0.24 m, p95 +0.99**) →
+**`drive_test` FAIL: off-road excursion drops > 20 cm: 75 gated** (the V1 v0.1.0 build: 1), the gated worst at
+10–12.5 m lateral ([750, −10.0, 0.48], [2251.4, −10.5, 0.30], [1950.9, −10..−11, 0.29] …); severe steps 15 (3.68/km;
+V1: 7), all at s 795–808 in the lane, the esses / U-turn where the lidar reads 4–8 % real bank; bumps 25.5/km
+(limit 75); replication median 0.02 / p95 0.16 / max 1.58 m (V1: 0.20 / 1.61). Not installed (the V1 install
+stays); nothing committed. **Diagnosis (the Windows session's read, being reproduced here):** the drops sit just
+past the 11 m deck + shoulder, where the engine's constructed corridor builds its fill apron (`_ground_doc`: that
+apron took Milford from 31 drops to 1 under V1). The prep's terrain conform (`scripts/ac/build_kn5_loop.py
+_conform_and_reseat`: subdivide the corridor, PIN every 1GRASS vert under 1ROAD to deck−0.02, smoothstep-FEATHER
+`BAND_M`+`FEATHER_M` past the edge, anti-poke clamp) was written for the SD assembler's independent terrain grid; on
+an engine draft the ground is already conformed to the road (L3, build_mesh's `grade_embankment` + the shoulder
+drape) and the conform re-sculpts the embankment into a short feather: 2.45 M verts moved. Exotics is flat, so the
+same pass cost it nothing (verge median +0.03). Reproduction here on Milford's committed draft data: mesh →
+`drive_test` on the engine's draft OBJ (the V1 gate) → underlay → prep → `drive_test` on the prepped scene, with and
+without the conform.
+
 ## Verification
 
 - `tools/ship_track.sh <track>` completes on the Windows box for each of the four: `loop.blend` written by the

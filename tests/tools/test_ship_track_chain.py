@@ -301,6 +301,15 @@ def test_install_folder_from_config_parked_old_build_and_running_game_refused():
     # Kevin, 2026-10-27: "you can install when that's running just not while AC is driving the track" — CM does not
     # lock the track files, so only acs.exe is refused (as tools/ship_sd.sh)
     assert "Content Manager[^\"]*[.]exe" not in blk and "Content Manager[^\"]*[.]exe" not in SD_TEXT
+    # the folder's shape follows the layout count (scripts/ac/track_folder.py): one layout = models.ini +
+    # ui/ui_track.json (Exotics' first install, 2026-10-29, stopped on "missing models_full.ini"); more = per layout
+    assert 'if [ "$N_LAYOUTS" = 1 ]; then' in install and '[ -f "$B/models.ini" ]' in install
+    assert 'for lid in $LAYOUT_IDS; do [ -f "$B/models_$lid.ini" ]' in install
+    assert "if len(layouts)==1:" in install and "os.path.join(sys.argv[2],'ui','ui_track.json')" in install
+    assert "lo.get('name') or cfg.get('name') or lo['id']" in install, "a single layout is named by the track when undeclared"
+    for track in ("exotics-racing-lv", "milford-road-course", "high-plains", "sand-creek"):
+        cfg = json.loads((ROOT / "tracks" / track / "track.config.json").read_text(encoding="utf-8"))
+        assert len(cfg["layouts"]) == 1, track
 
 
 def test_argument_guards_exit_2_before_any_file_operation():

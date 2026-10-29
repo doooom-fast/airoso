@@ -866,18 +866,37 @@ elif [ "$INSTALL" = 1 ]; then
     echo "(tasklist not found — make sure Assetto Corsa is not running; Content Manager may stay open)"
   fi
   B="$PROJ/build/$SLUG"
-  for lid in $LAYOUT_IDS; do [ -f "$B/models_$lid.ini" ] || { echo "missing $B/models_$lid.ini"; exit 1; }; done
+  # the folder's shape follows the layout count (scripts/ac/track_folder.py): ONE layout = AC's single-config shape,
+  # models.ini + ui/ui_track.json; more = models_<id>.ini + ui/<id>/ui_track.json per layout (Exotics' first install,
+  # 2026-10-29, stopped on "missing models_full.ini" with a complete single-layout folder beside it)
+  read -r -a _LAYOUTS <<< "$LAYOUT_IDS"; N_LAYOUTS=${#_LAYOUTS[@]}
+  if [ "$N_LAYOUTS" = 1 ]; then
+    [ -f "$B/models.ini" ] || { echo "missing $B/models.ini (one layout: track_folder packs models.ini, not models_$LAYOUT_IDS.ini)"; exit 1; }
+  else
+    for lid in $LAYOUT_IDS; do [ -f "$B/models_$lid.ini" ] || { echo "missing $B/models_$lid.ini"; exit 1; }; done
+  fi
   STAMP=$(date +%Y-%m-%d_%H%M%S)
   for old in "$INSTALL_FOLDER" "${INSTALL_FOLDER}_prev"; do
     if [ -d "$AC/$old" ]; then mkdir -p "$ARCHIVE/$STAMP"; mv "$AC/$old" "$ARCHIVE/$STAMP/$old"; echo "parked $old in $ARCHIVE/$STAMP/"; fi
   done
   cp -r "$B" "$AC/$INSTALL_FOLDER"
-  # the installed name: <ship.json ui_name_prefix> + an em dash + the layout's name (prefix passed as an argument)
+  # the installed name: <ship.json ui_name_prefix> + an em dash + the layout's name (prefix passed as an argument);
+  # one layout: ui/ui_track.json, the layout's name or, undeclared, the track's name (Exotics: "doooom Nevada — Nevada Nights")
   pyq "import json,glob,os,sys
 cfg=json.load(open(sys.argv[1],encoding='utf-8'))
-names={str(lo['id']): lo.get('name', lo['id']) for lo in cfg['layouts']}
+layouts=cfg['layouts']
+names={str(lo['id']): lo.get('name', lo['id']) for lo in layouts}
 seen=[]
-for p in sorted(glob.glob(os.path.join(sys.argv[2],'ui','*','ui_track.json'))):
+if len(layouts)==1:
+    lo=layouts[0]; p=os.path.join(sys.argv[2],'ui','ui_track.json')
+    if not os.path.exists(p): raise SystemExit('installed folder lacks ui/ui_track.json (one layout: the single-config shape)')
+    d=json.load(open(p,encoding='utf-8'))
+    d['name']=sys.argv[3]+' '+chr(8212)+' '+str(lo.get('name') or cfg.get('name') or lo['id'])
+    json.dump(d,open(p,'w',encoding='utf-8'),indent=2,ensure_ascii=False)
+    seen.append(str(lo['id']))
+    print('installed:',d['name'],d.get('version'))
+else:
+  for p in sorted(glob.glob(os.path.join(sys.argv[2],'ui','*','ui_track.json'))):
     lid=os.path.basename(os.path.dirname(p))
     d=json.load(open(p,encoding='utf-8'))
     d['name']=sys.argv[3]+' '+chr(8212)+' '+names[lid]

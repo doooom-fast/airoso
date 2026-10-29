@@ -1,7 +1,7 @@
 # ATS Colorado Sample — source notes
 
 Template project for the SCS → Assetto Corsa pipeline. Copy this folder to start a real port and
-edit `track.config.json`. See `docs/scs-to-ac-plan.md` and the `scs-extraction` skill.
+edit `track.config.json`. See `docs/history/scs-to-ac-plan.md` and the `scs-extraction` skill.
 
 ## Fill these in
 

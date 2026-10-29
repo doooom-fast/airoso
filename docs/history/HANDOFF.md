@@ -1,3 +1,5 @@
+> **History (moved 2026-10-28).** Superseded by docs/V3-PLAN.md and docs/ONE-CHAIN.md; kept as the record of the 2026-08-19 agent handoff. Nothing here is current.
+
 # Airoso Project Handoff — State of the System
 
 **Written 2026-08-19.** This document is for the next agent session. It covers the full project
@@ -211,7 +213,7 @@ engine to work with.
 
 ## What the V1 autopsy already knew
 
-The `docs/V1-AUTOPSY.md` (read it in full — it's excellent and honest) identified these lessons
+The `docs/history/V1-AUTOPSY.md` (read it in full — it's excellent and honest) identified these lessons
 that are still true:
 
 1. **The human drive test is the only ground truth.** Proxies (geometry checks, winding analysis,
@@ -308,9 +310,9 @@ This is a Phase T4 task (per DEFINITION-OF-DONE.md) — it requires a driveable 
 
 ## The V1/V2 documentation (read these)
 
-- `docs/V1-AUTOPSY.md` — brutally honest post-mortem of the first two months. Every lesson
+- `docs/history/V1-AUTOPSY.md` — brutally honest post-mortem of the first two months. Every lesson
   applies to the next attempt.
-- `docs/V2-OPERATING-MODEL.md` — the process framework. Phase R/P/B/H/D/I cycle.
+- `docs/history/V2-OPERATING-MODEL.md` — the process framework. Phase R/P/B/H/D/I cycle.
 - `docs/DEFINITION-OF-DONE.md` — tier ladder T0-T5. No track has reached T2.
 - `docs/ASSET-LIBRARY.md` — Kevin's owned 3D assets in Dropbox.
 

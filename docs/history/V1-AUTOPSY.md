@@ -1,3 +1,5 @@
+> **History (moved 2026-10-28).** Superseded by docs/V3-PLAN.md and docs/ONE-CHAIN.md; kept as the record of the v1 era's post-mortem. Nothing here is current.
+
 # V1 Autopsy — what two months and hundreds of dollars actually bought
 
 **Written 2026-08-10.** This document is the honest record of the v1 era (≈ Jun 7 – Jul 25, 2026)

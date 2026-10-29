@@ -44,7 +44,7 @@ photo that nails the mood.
 | Need (from §5–§6) | Owned asset (Dropbox path) | License status | Conversion notes (scale/Y-up/PoT/EXR→PNG) | Placement | Or GAP → purchase candidate (store link, price) |
 |---|---|---|---|---|---|
 Rules: every row has a license entry before import; purchases only from the GAP column and only
-after the owned-asset in-game proof (`V2-OPERATING-MODEL.md` §Assets); no mined mod content, ever.
+after the owned-asset in-game proof (`docs/history/V2-OPERATING-MODEL.md` §Assets); no mined mod content, ever.
 
 ## 9. Data sources & capture assets
 Overpass extracts, DEM tiles, KML (only for deliberate off-network segments), Kevin's recordings

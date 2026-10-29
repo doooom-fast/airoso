@@ -1,3 +1,5 @@
+> **History (moved 2026-10-28).** Superseded by docs/V3-PLAN.md and docs/ONE-CHAIN.md; kept as the record of the Sand Creek environment and immersion plan. Nothing here is current.
+
 # Sand Creek Raceway — environment & immersion plan
 
 How to dress the track accurately: trees/bushes, water (Sand Creek), raised freeways, streetlights,

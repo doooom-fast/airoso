@@ -18,6 +18,6 @@ Notes:
   welcome at every tier; there is no "releasable" bar to clear.
 - A regression drops the tier until re-proven; STATE.md records the drop and why.
 - "Gates pass" (T1) is a **pre-check**, never a proxy for T2+ — that substitution is the exact
-  v1 failure (`V1-AUTOPSY.md` §3).
+  v1 failure (`docs/history/V1-AUTOPSY.md` §3).
 - Current standing (2026-08-10): Sand Creek and Lake Murray hold **T0 as of Jul 1 builds**
   (unproven from today's checkout) and nothing higher — T2 has never been attempted.

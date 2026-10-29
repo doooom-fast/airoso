@@ -37,4 +37,4 @@ V1 (prodrive-ac-builder, Jun–Jul 2026) built a real engine and never verified 
 V2 (airoso's minimal generator, Aug 2026) proved the one-shot approach dead a second time. The
 fleet era (k10-track-agents + consumer repos) fixed a lot and diagnosed everything, but green
 gates kept shipping undrivable junctions. V3 is the synthesis: draft → author → gate → drive.
-Read `docs/V1-AUTOPSY.md` and `fleet/REALISM.md` before repeating any of it.
+Read `docs/history/V1-AUTOPSY.md` and `fleet/REALISM.md` before repeating any of it.

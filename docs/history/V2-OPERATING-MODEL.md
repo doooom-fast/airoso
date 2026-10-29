@@ -1,3 +1,5 @@
+> **History (moved 2026-10-28).** Superseded by docs/V3-PLAN.md and docs/ONE-CHAIN.md; kept as the record of the v2 process framework (Phase R/P/B/H/D/I). Nothing here is current.
+
 # V2 Operating Model — Claude as orchestrator
 
 v1 tried to be an anywhere-machine and finished nothing (`V1-AUTOPSY.md`). v2 is a **studio

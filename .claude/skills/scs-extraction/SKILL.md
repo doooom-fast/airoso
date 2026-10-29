@@ -16,7 +16,7 @@ pipeline produces, so the existing geometry → Blender → kn5 back-half is reu
 > `region.geojson` into `centerline.local.json`, and `build.py` reuses the geometry back-half to
 > emit `track.obj` (1ROAD + GRASS) + `dummies.json`. The external-tool boundaries — `extract`
 > (HashFS), `parse_map` (real `.mbd`→geojson), and `convert_models` (ConverterPIX) — still raise
-> `NotImplementedError` (they need a licensed install + binaries). See `docs/scs-to-ac-plan.md`.
+> `NotImplementedError` (they need a licensed install + binaries). See `docs/history/scs-to-ac-plan.md`.
 
 ## Decisions this skill assumes
 
@@ -64,7 +64,7 @@ Hand off to `geometry` (S3), then `ac-track-modding` + `lighting` (S5) unchanged
 
 HashFS v1/v2 layout · `.mbd` item/node graph · `road_look.sii` cross-sections · `.ppd` prefab nav
 curves · SCS `.mat`/`.tobj` → AC shader mapping. Tool details and the full rationale live in
-`docs/scs-to-ac-plan.md`.
+`docs/history/scs-to-ac-plan.md`.
 
 ## Scripts
 

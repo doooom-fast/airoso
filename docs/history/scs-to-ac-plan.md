@@ -1,3 +1,5 @@
+> **History (moved 2026-10-28).** Superseded by docs/V3-PLAN.md and docs/ONE-CHAIN.md; kept as the record of the SCS (ATS/ETS2) to Assetto Corsa import design. Nothing here is current.
+
 # SCS (ATS / ETS2) region → Assetto Corsa track
 
 > **Status: scaffold / design.** The `scs-extraction` skill and `scripts/scs/` modules are

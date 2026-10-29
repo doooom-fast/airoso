@@ -2,7 +2,7 @@
 
 Every change to a gate threshold, bypass, exclusion, or wiring gets an entry here **in the same
 PR**: what changed, measured justification, and Kevin's sign-off. Silent weakening is how v1's
-gates went vacuous (`V1-AUTOPSY.md` §3). Append-only; newest first.
+gates went vacuous (`docs/history/V1-AUTOPSY.md` §3). Append-only; newest first.
 
 Gate run *results* are not logged here — they append to each project's
 `data/gate_history.jsonl` so trends are visible.
@@ -13,7 +13,7 @@ Gate run *results* are not logged here — they append to each project's
 
 Documenting the thresholds and bypasses as found, so future changes have a comparison point.
 None of these are hereby endorsed; items marked ⚠ are queued for review in the v2 backlog
-(`V2-OPERATING-MODEL.md` #3).
+(`docs/history/V2-OPERATING-MODEL.md` #3).
 
 | Gate | Current behavior | Flag |
 |---|---|---|

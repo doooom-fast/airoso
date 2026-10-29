@@ -1,3 +1,5 @@
+> **History (moved 2026-10-28).** Superseded by docs/V3-PLAN.md and docs/ONE-CHAIN.md; kept as the record of the original Prodrive AC Builder project plan. Nothing here is current.
+
 # Prodrive AC Builder — Project Plan
 
 Convert real-world road loops into playable **Assetto Corsa** tracks. Given a Google Maps
@@ -5,8 +7,8 @@ screenshot, a location, and route notes, produce a complete, installable AC trac
 real elevation, accurate lighting, and multiple layout variants — reproducible end-to-end from a
 single `track.config.json`.
 
-**First target:** **Sand Creek Raceway** — a street loop in Commerce City, Colorado (`projects/sand-creek-raceway/`).
-See [route-notes.md](../projects/sand-creek-raceway/source/route-notes.md) for the marked layout.
+**First target:** **Sand Creek Raceway** — a street loop in Commerce City, Colorado (`tracks/sand-creek/`).
+See [route-notes.md](../../tracks/sand-creek/source/route-notes.md) for the marked layout.
 
 ---
 
@@ -50,7 +52,7 @@ or rotations in code; derived values (e.g. `true_north_rotation_deg`) are writte
 
 The source of truth. Layouts are route variants that **share one kn5** and differ only in AC config
 (connectors, AI line). Current Sand Creek Raceway values live in
-[track.config.json](../projects/sand-creek-raceway/track.config.json).
+[track.config.json](../../tracks/sand-creek/track.config.json).
 
 ---
 

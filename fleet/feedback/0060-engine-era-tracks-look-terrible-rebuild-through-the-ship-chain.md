@@ -152,6 +152,21 @@ built draft: `AC_START_0` 0.0 m and every `AC_PIT_0..3` 0.6 m from the nearest 1
 must be; the grid's yaw +116.0° puts the node forward at (+0.90, +0.44) against the travel (+2.71, +1.32) at the
 start: aligned. Export, gates and install are the Windows run's.
 
+**The Windows full run on b8e1f37 (2026-10-29, the Milford bridge session):** aerial → elev → project → mesh OK;
+underlay 67 GEN + 5 refs (72 replaced, 0 AUTH_*); prep no FATAL (808,287 verts pinned, 396,049 feathered); split 67
+meshes / 15 AC nodes; export_road 106.3 MB kn5, 67 materials; ai: **grid check +1.00 FORWARD**, 1,214 pts over
+1,821.1 m, est lap 74.4 s; **verify_kn5 PASS** ("no dup meshes, drivable surfaces face-up, spawns on road");
+road_obj 67 groups / 1,839,912 v; track_folder OK (length 1,821.9 m, 4 pits). **The frame, checked on the map** by
+that session: Lake Murray's Kevin-driven AI lines read geographic clockwise as POSITIVE signed area in AC (x, z)
+(race_cw +8.83 M m², race_acw −8.92 M), consistent with kn5 z = −N; Exotics' trace is −162,868 m² in (E, N) (CW) and
+its AI line +163,695 m² in AC (x, z): **clockwise in-game, the same handedness as Lake Murray, not mirrored**. T2 on
+the BUILT deck (gate OBJ): the raised edge is the OUTSIDE of the bend at 25 of the 25 most banked stations
+(idx 144–151), cross-slope 12.6–13.6 %. Open: that slope is ~7.5° against `bank_deg` 6.0 (10.5 %) — crown plus
+bank, or something else; flagged, not chased. Then **stopped in the track-folder step**: `tools/check_lights_ini.py`
+read `data/lights.local.json` unconditionally and no track but Lake Murray has lamps (FileNotFoundError). Fixed the
+same hour: no lamps file = nothing to match, PASS unless the ini carries a `[LIGHT_N]` with no lamp behind it.
+make_map, the three gates and the install still owed; Milford's full run is in flight behind it.
+
 ## Verification
 
 - `tools/ship_track.sh <track>` completes on the Windows box for each of the four: `loop.blend` written by the

@@ -3003,8 +3003,19 @@ def build(project_dir: str | Path) -> dict:
         # pavement footprint cap: a floor sourced from a cross-road or inner edge must never
         # raise grass through pavement (audit B hit 61k the build this was missing). Nodes under
         # a pavement triangle cap at that surface − 0.06.
+        # THE SHOULDER IS IN THE CAP (ledger 0060, Sand Creek 2026-10-29). It was left out ("capping
+        # under its own descending face pins the floor away from the toe it exists to fill"), but on a
+        # FILL the cap cannot bind: the face rises inboard from the meet at >= 22 % while the floor off
+        # that meet falls at 20 %, so the face is always above the floor and the cap (face − 0.06) is
+        # never the smaller. In a CUT it is the only thing standing between the floor and the deck: the
+        # ring edge (the meet) sits on natural ground 1.7–2.3 m ABOVE the road, the prefilter reads the
+        # pinned shoulder band beneath it as "low natural ground below the edge" and keeps the source,
+        # and the floor then lifts every grass node under the flat shoulder back to natural — 2 m of dirt
+        # over a 1ROAD_shoulder at deck height, poking through at the pavement lip (s 8047 at −5.97, s
+        # 8461 at −5.35: drive_test "ground on top"). Measured on the committed draft: the shoulder from
+        # 6.0 to 8.5 m out at deck +0.00, 1GRASS over it at +1.5 .. +2.3 along a 20 % line from the meet.
         _ptW: dict = {}
-        for _sheetW in (road, runoff, kerb):    # NOT the shoulder: capping under its own descending face pins the floor away from the toe it exists to fill
+        for _sheetW in (road, runoff, kerb, shoulder):
             _svW = _sheetW.get("vertices", [])
             for _tW in _sheetW.get("tris", ()):
                 _triW = (_svW[_tW[0]], _svW[_tW[1]], _svW[_tW[2]])
@@ -3229,9 +3240,26 @@ def build(project_dir: str | Path) -> dict:
         _wmedH = sorted(widths)[len(widths) // 2]
         _guardH = 0
         _prev_endH = {1.0: None, -1.0: None}
+        # THE GATE'S SPAN EXEMPTION, MIRRORED (ledger 0060, Sand Creek 2026-10-29). drive_test's
+        # excursion sweep skips every crossing inside a DECLARED bridge span ± 20 m ("past the railing
+        # is a real drop, guarded"); this sweep did not, and on the 12 m approach between the fill's
+        # end and span 3 — where the levelled deck rides 6 m over the creek bank and the shoulder
+        # selector builds a 1:6 retaining-wall face — it walked DOWN the wall (1ROAD_shoulder is
+        # pavement, so built_edge followed the face and no lip could legally stand on it), reached the
+        # ring annulus at the toe 5.6 m below the deck, read the 0.3 m bank step beyond it as "a drop",
+        # and set a 3 m stone lip there: two of its feet over a bank falling 4 m along its own length,
+        # nothing drivable within 2.5 m beneath them — drive_test "floating furniture" 8, the only
+        # red on the track that the gates were right about. A lip is a deck-edge element: the second
+        # rule below refuses one whose inboard surface is already > 1.5 m under the deck (the car is
+        # not there; the face above it is the pavement's own and #17 owns its parapet).
+        _spansH = [(c - l / 2.0 - 20.0, c + l / 2.0 + 20.0) for c, l in (_bridges or [])]
+        _LIP_MAX_BELOW_DECK_M = 1.5
         for _iH in range(len(centerline)):
             if widths[_iH] > _wmedH + 1.5:      # flare mouths: the gate exempts them
                 _prev_endH[1.0] = _prev_endH[-1.0] = None
+                continue
+            if any(_aH <= _stp[min(_iH, len(_stp) - 1)] <= _bH for _aH, _bH in _spansH):
+                _prev_endH[1.0] = _prev_endH[-1.0] = None   # declared span ± 20 m: the gate does not look here
                 continue
             _xH, _yH0, _zH = centerline[_iH]
             _aH = centerline[max(0, _iH - 1)]
@@ -3253,7 +3281,8 @@ def build(project_dir: str | Path) -> dict:
                     _bandH = _builtH is not None and _offH <= _builtH + 4.0
                     _lipokH = False
                     if (_bandH and _tyH is not None and _prevH is not None
-                            and _prevH - _tyH > 0.115 and _offH > _weH - 0.5):
+                            and _prevH - _tyH > 0.115 and _offH > _weH - 0.5
+                            and _prevH >= _yH0 - _LIP_MAX_BELOW_DECK_M):
                         # A creditable lip needs a guard probe (0.5 m grid) strictly inboard of
                         # the drop (< off-0.25), clear of the pavement (>= built+0.15), AND clear
                         # of the gate's obstruction scan (obstacles within min(lane_half,6)+0.3

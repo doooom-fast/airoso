@@ -363,6 +363,47 @@ everything on the rotated line; if no window fits it, the others proceed), with 
 reproduces the IndexError on a closed loop with eight to twelve over-sampled corners and a seam corner and asserts the
 seam is filleted. Sand Creek `--from prep` owed again.
 
+**Sand Creek `--from ai` at 99edc66 (the Windows session): the AI step works (9 fillets, R 12.6 m, min radius 12.21),
+`verify_kn5` PASS, `audit_mesh` CLEAN, `kn5_ground_check` PASS — and `drive_test` RED on the draft's own two
+defects**, identical to its test on the draft OBJ, so the chain now adds nothing: ground on top 2 ([8047.0, −5.97,
+1GRASS_dm], [8461.0, −5.35, 1GRASS_dg]), floating furniture 8 (one 1WALL_PARA_stone at (1332, −870.5)), severe 1
+([1275.0, +3.49, 0.066]), daylight 0, excursion drops 2 gated (worst [7950.5, −12.5, 0.68]; the gate's limit is
+9 on this lap). The spans: 127 → 1, 12 → 0. Not installed. The Windows session measured the flags against the gate
+line (the parapet at s 6522–6525, lateral +8.7..+9.8 on an 8.5 m road, 5–5.7 m BELOW the deck, 9–12 m before span 3;
+s 8047 width 12.0 so −5.97 is 3 cm inside the pavement; s 8461 width 10.5 so −5.35 is 10 cm onto the shoulder) and,
+on Kevin's "Yes", committed the draft's inputs and the red reports (`a856cbe`, `tracks/sand-creek/data/`, 2.5 MB) so
+the engine could be run here.
+
+**Diagnosed here on that data (2026-10-29): both are late grass/guard passes in `build_mesh`, and the gate was right.**
+The engine's draft rebuilt offline in 20 min (the box's 16 GB ran out while writing the last outputs; `track.obj` is
+complete, 4,292,747 verts, the Windows count), and `drive_test` on it here read the Windows run to the entry. Lateral
+cross-sections of the built OBJ (the road-grounding method), s 8047 left side: 1ROAD_main to −6.0 at deck +0.00, the
+1ROAD_shoulder flat at deck +0.00 from −6.0 to −8.5 — and 1GRASS_dm standing **+1.5 to +2.3 m over it**, along a 20 %
+line rising outward from the ring edge, the nodes at the lip alternating −0.3 (excavated) / +1.1; s 8461 the same at
++2.0. A cut: natural ground 2 m above the road. The pins had put the grass under the shoulder at deck −0.01
+(`[contact pin] 41548 grass verts pinned to the shoulder/runoff underside`); the **seam-weld** then raised it back:
+its 22 % floor radiates inward from the ring edge, which in a cut sits on natural ground 2.3 m above the deck, its
+drop-edge prefilter reads the pinned band beneath that edge as "low natural ground below the edge" and keeps the
+source, and its pavement cap — "nodes under a pavement triangle cap at that surface − 0.06" — was built from road,
+runoff and kerb **but not the shoulder** ("capping under its own descending face pins the floor away from the toe it
+exists to fill"). On a fill that exclusion buys nothing: the face rises inboard at ≥ 22 % while the floor off the
+meet falls at 20 %, so the cap can never be the smaller; in a cut it is the only thing between the floor and the
+deck. The `[cut-edge]` pass (154 nodes) is the band-aid that caught the first node at the lip (−0.3) and nothing
+beyond its +0.15 window. **Fix:** the shoulder joins the cap. The parapet, s 6522: deck 35.63, the shoulder flat to
+±6.5 then **a 1:6 retaining-wall face** from 35.63 at 6.5 m to 29.4 at 8.0 m (the selector's WALL case, fill drop
+> 4 m: the levelled approach rides 6 m over the creek bank, and `grade_embankment` keeps terrain natural within 14 m
+of a span point), the ring annulus at the toe (29.8–30.2), **1WALL_PARA_stone at +9.0..+9.5, y 29.92–30.62** — the
+`[measured-guard]` sweep's lip, 3 m long. That sweep mirrors `drive_test`'s outboard crossing 1:1 (origin, band,
+stride, flare exemption) except for one thing the gate does: skip crossings inside a DECLARED bridge span ± 20 m. So
+it walked down the wall (1ROAD_shoulder is pavement: built_edge followed the face and `_lipokH` could never stand a lip
+on it), reached the toe 5.6 m under the deck, read the 0.3 m bank step beyond the ring as "a drop" and set the lip
+there; the bank falls 4 m along the lip's 3 m, so two feet have nothing drivable within 2.5 m under them (the
+shoulder face passes 2 m ABOVE them: `top_at` 99.0) and the other two read 1.35 / 0.97. **Fix:** the sweep skips the
+declared spans ± 20 m as the gate does, and refuses any lip whose inboard surface is already > 1.5 m under the deck
+(a lip is a deck-edge element; the face above it is the pavement's own, and #17 owns its parapet — which here built
+0 verts: the approach is 4 sections at 3 m spacing against `min_run` 10). Text rules in
+`tests/geometry/test_build_mesh_edge_rules.py`; the rebuilt draft's gate numbers follow.
+
 ## Verification
 
 - `tools/ship_track.sh <track>` completes on the Windows box for each of the four: `loop.blend` written by the

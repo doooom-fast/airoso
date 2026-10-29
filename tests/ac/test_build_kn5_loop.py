@@ -147,6 +147,21 @@ def test_planar_uv_skips_the_race_furniture():
         assert '"1WALL_RACE"' in tup and '"1KERB_RACE"' in tup, tup
 
 
+def test_the_terrain_conform_skips_an_engine_draft_unless_the_config_forces_it():
+    """ledger 0060 (2026-10-29): an engine draft's ground is already conformed to its road (L3, build_mesh); the
+    prep's SD-era conform re-sculpted Milford's and High Plains' embankments into a shelf and a cliff (75 and 103
+    excursion drops > 20 cm at 10-12.5 m lateral; the V1 Milford build had 1). Auto = skip when the underlay
+    report exists; track.config.json prep.terrain_conform true / false overrides; the SD path is unchanged."""
+    for s in _prep_sources():
+        a = s.index("spans = declare_bridge_spans(proj)")
+        b = s.index("# split any mesh over the AC per-mesh vertex cap", a)
+        blk = s[a:b]
+        assert '(cfg.get("prep") or {}).get("terrain_conform", "auto")' in blk
+        assert 'not (proj / "data" / "underlay.report.json").exists()' in blk
+        assert "if _tc:\n        _conform_and_reseat(proj, spans)" in blk
+        assert "terrain conform skipped: the ground is the engine draft's" in blk
+
+
 def test_multi_layout_prep_bakes_no_spawn_dummies():
     """With more than one layouts[] entry the road kn5 carries NO AC_* nodes (L8 as amended): the
     prep writes data/dummies.json = {} and creates no empties; single-layout tracks keep today's path."""

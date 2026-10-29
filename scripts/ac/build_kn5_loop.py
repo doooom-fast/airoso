@@ -865,7 +865,21 @@ def main():
     #     the footprint (subdividing the corridor first), spare the declared spans, and re-seat the
     #     props on the moved ground. Engine-owned so every future rebuild stays fixed.
     spans = declare_bridge_spans(proj)
-    _conform_and_reseat(proj, spans)
+    # An ENGINE DRAFT's ground is already conformed to its road (L3: build_mesh grades the embankment and drapes
+    # the shoulder; scripts/blender/underlay.py drops it in as GEN_terrain and records data/underlay.report.json).
+    # This conform was written for the SD assembler's independent terrain grid; on an engine draft its FEATHER
+    # pulls the fill slope up toward deck height for BAND_M + FEATHER_M and leaves a cliff at the end of it —
+    # Milford 2026-10-29: 2.45 M verts moved, 75 excursion drops > 20 cm at 10-12.5 m lateral where the V1 build
+    # had 1; High Plains 103 (ledger 0060). So: auto = skip when the underlay report exists; track.config.json
+    # prep.terrain_conform true / false overrides (an authored deck on an engine draft is the case for true).
+    _tc = (cfg.get("prep") or {}).get("terrain_conform", "auto")
+    if _tc == "auto":
+        _tc = not (proj / "data" / "underlay.report.json").exists()
+    if _tc:
+        _conform_and_reseat(proj, spans)
+    else:
+        print("[build_kn5_loop] terrain conform skipped: the ground is the engine draft's, conformed to the road by "
+              "build_mesh (data/underlay.report.json; track.config.json prep.terrain_conform forces it)")
 
     # split any mesh over the AC per-mesh vertex cap into uniquely-named tiles (big tracks: freeway terrain)
     for ob in list(o for o in bpy.data.objects if o.type == "MESH"):

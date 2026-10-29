@@ -367,6 +367,20 @@ def test_from_resumes_at_a_step_before_the_gates_and_never_through_them():
     assert "--from <step>" in TEXT.split("set -euo pipefail")[0], "documented in the header"
 
 
+def test_every_chain_tracks_declared_start_is_at_its_site():
+    """ledger 0060 (High Plains, 2026-10-29): route.start_at still held the pre-July displaced frame's point, 77 km
+    from the re-sourced site, so the chain rotated the ring to an arbitrary vertex. A declared start stands within
+    3 km of the track's own location."""
+    for track in ("exotics-racing-lv", "milford-road-course", "high-plains", "sand-creek"):
+        cfg = json.loads((ROOT / "tracks" / track / "track.config.json").read_text(encoding="utf-8"))
+        start = (cfg.get("route") or {}).get("start_at")
+        if not start:
+            continue
+        loc = cfg["location"]
+        d_km = 111.32 * ((start[0] - loc["lat"]) ** 2 + ((start[1] - loc["lon"]) * 0.77) ** 2) ** 0.5
+        assert d_km < 3.0, (track, start, loc, round(d_km, 1))
+
+
 def test_the_chain_refuses_the_v1_frame_before_any_copy():
     """ledger 0060, 2026-10-29: the chain's frame is San Diego's (mirror_x false, true_north_rotation_deg 0); the
     V1 OBJ program's mirror_x + 180 ship a mirrored track through it. Refused on the source config after the

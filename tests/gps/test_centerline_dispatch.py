@@ -94,3 +94,14 @@ def test_aerial_points_at_its_front_end_and_unknown_types_are_refused():
             raise AssertionError("from_track without a fixes file must be refused")
         except SystemExit as e:
             assert "source.track" in str(e)
+
+
+def test_from_track_source_passes_smooth_window_through():
+    """source.smooth_window reaches from_track (ledger 0060: High Plains' node list sets 0); absent = 5, the GPS default"""
+    import inspect
+
+    from scripts.gps import centerline as cl
+    src = inspect.getsource(cl.build_for_source)
+    assert 'smooth_window=int(src.get("smooth_window", 5))' in src
+    hp = json.loads((ROOT / "tracks" / "high-plains" / "track.config.json").read_text(encoding="utf-8"))
+    assert hp["source"]["type"] == "from_track" and hp["source"]["smooth_window"] == 0

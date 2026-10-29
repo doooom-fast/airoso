@@ -9,7 +9,7 @@
  "barrier_stations": 0,
  "barrier_missing": 0,
  "barrier_missing_runs": [],
- "soft_top_in_lane": 2,
+ "soft_top_in_lane": 0,
  "off_pavement_stations": 0,
  "severe_steps": 1,
  "severe_per_km": 0.1,
@@ -23,7 +23,7 @@
   "max": 4.08
  },
  "undrivable_corners": 0,
- "floating_furniture": 8,
+ "floating_furniture": 0,
  "apron_steps": 28,
  "fold_bumps": 21,
  "vertex_bumps": 0,
@@ -102,18 +102,7 @@
  ],
  "obstruction_by_mesh": {},
  "worst": {
-  "soft_top": [
-   [
-    8047.0,
-    -5.97,
-    "1GRASS_dm"
-   ],
-   [
-    8461.0,
-    -5.35,
-    "1GRASS_dg"
-   ]
-  ],
+  "soft_top": [],
   "severe_steps": [
    [
     1275.0,
@@ -192,5 +181,5 @@
   ],
   "obstructions": []
  },
- "fail": true
+ "fail": false
 }

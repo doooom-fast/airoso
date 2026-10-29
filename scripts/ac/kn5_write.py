@@ -1,4 +1,11 @@
-"""Direct OBJ -> kn5 writer — no Blender, no addon, no import/weld/export pipeline between the
+"""TEST HARNESS ONLY (2026-10-28, docs/ONE-CHAIN.md §2 row 3, ledger 0060): this writer is kept so the gate
+tests (tests/ac/test_kn5_gates.py, test_lamp_mast_seating.py, test_wall_deck_seating.py, test_build_kn5_loop.py,
+tests/modkit/test_kn5_to_gate_obj_multi.py) can make a kn5 from OBJ fixtures without Blender. No build path uses
+it: scripts/build.sh's KN5_WRITER=native branch is gone, and a track's kn5 comes only from the chain's exporter
+(the AC Blender add-on, tools/ship_track.sh). V3-PLAN: no kn5 generators. It stays under scripts/ac because
+import paths under scripts/ are load-bearing (CLAUDE.md).
+
+Direct OBJ -> kn5 writer — no Blender, no addon, no import/weld/export pipeline between the
 audited geometry and the shipped binary.
 
 WHY: every "gates green, game broken" cycle this project suffered lived in the gap between

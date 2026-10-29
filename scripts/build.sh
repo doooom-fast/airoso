@@ -1,25 +1,22 @@
 #!/usr/bin/env bash
-# End-to-end Mac build for ONE track — Phases 1-5, from track.config.json to an installable .zip.
+# The engine's DRAFT for one track — Phases 1-4, from track.config.json to data/track.obj. Nothing here
+# builds a track: a track is built by the chain, tools/ship_track.sh <track> (docs/ONE-CHAIN.md §1), whose
+# draft phase runs exactly these stages and then the underlay (scripts/blender/underlay.py: the OBJ into
+# loop.blend as GEN_* collections). Kevin, 2026-10-28, ONE-CHAIN §2 row 1: the env / blend / kn5 / pack stages
+# that made a complete track out of generated geometry are retired (ledger 0060); the four gates run in the
+# chain's gate phase, on the BUILT kn5, never here.
 #
-# This is the single entrypoint the pipeline was missing. Given a project that has its inputs in
-# place (track.config.json + source/ KML/notes; see CLAUDE.md Phase 0), it runs every phase in order
-# and drops projects/<slug>/build/<slug>_v<version>.zip ready for Content Manager.
+#   ./scripts/build.sh tracks/<track>              # the whole draft, Phases 1-4
+#   ./scripts/build.sh tracks/<track> mesh         # resume from the mesh stage
+#   ./scripts/build.sh tracks/<track> --list       # list stages and exit
 #
-#   ./scripts/build.sh projects/sand-creek-raceway              # full run, Phases 1-5
-#   ./scripts/build.sh projects/sand-creek-raceway mesh         # resume from the mesh stage
-#   ./scripts/build.sh projects/<slug> --list                   # list stages and exit
-#
-# Stages (in order). Earlier stages hit the network (Overpass/USGS) and only need re-running when the
-# route or region changes; the geometry->package back half is offline + deterministic. Resume from any
-# stage by name to skip the slow front half once the route is settled.
-#   gps     centerline + street labels       (Overpass / OSM)        -> data/centerline.geojson, street_labels.json
+# Stages (in order). The front half hits the network (Overpass / USGS) and only needs re-running when the
+# route or region changes; mesh is offline + deterministic.
+#   gps     centerline (+ street labels on OSM routes) by source.type: osm / kml / from_track   -> data/centerline.geojson
+#           (an aerial source runs python -m scripts.aerial.build_aerial instead — the chain's `aerial` step)
 #   elev    sample + smooth terrain          (USGS 3DEP)             -> data/heightfield.npy, dem
 #   project lat/lon/elev -> local metres, origin + true north        -> data/*.local.json, writes config
-#   mesh    road ribbon + grass + dummies + decals                   -> data/track.obj
-#   env     buildings / trees / highways / mountains                 -> data/environment.obj
-#   blend   import OBJs -> welded, materialed .blend  (Blender 4.2)   -> blender/<slug>.blend
-#   kn5     export .blend -> .kn5 via vendored add-on (Blender 4.2)   -> build/<slug>.kn5
-#   pack    AC track folder (configs/ui/ai) + zip                     -> build/<slug>_v<version>.zip
+#   mesh    road ribbon + kerbs + verge + walls + ground              -> data/track.obj  (the underlay's input)
 set -euo pipefail
 # Windows Python defaults stdout to cp1252, which cannot encode the gates' ✓/━ glyphs — a PASSING
 # gate then dies printing its own verdict (seen on verify_kn5, 2026-08-07). Force UTF-8 everywhere.
@@ -39,30 +36,10 @@ if [ -d "$PROJ" ]; then
   esac
 fi
 PY="${PYTHON:-python3}"
-STAGES=(gps elev project mesh env blend kn5 pack)
+STAGES=(gps elev project mesh)
 
 # Pre-flight: AC/CSP can hard-CRASH THE GPU (whole-PC freeze) on load when a kn5 carries a
 # non-power-of-two texture (mipmap/DXT upload hangs the driver). Fail loudly before building.
-"$PY" - <<'POT' || exit 1
-import sys
-from pathlib import Path
-try:
-    from PIL import Image
-except Exception:
-    print("  [pot-check skipped: Pillow not available]"); sys.exit(0)
-pot = lambda n: (n & (n - 1)) == 0
-bad = []
-for f in Path("assets/textures").glob("*"):
-    if f.suffix.lower() in (".png", ".jpg", ".jpeg"):
-        w, h = Image.open(f).size
-        if not (pot(w) and pot(h)):
-            bad.append(f"{f.name} {w}x{h}")
-if bad:
-    print("NON-PoT textures (resize to power-of-two or AC hard-crashes on load):")
-    for b in bad: print("   ", b)
-    sys.exit(1)
-print("  pot-check: all textures power-of-two")
-POT
 
 if [[ "$FROM" == "--list" ]]; then printf '%s\n' "${STAGES[@]}"; exit 0; fi
 # index of the start stage
@@ -85,54 +62,4 @@ active project &&   run project "$PY" -m scripts.geometry.projection "$PROJ"
 active project && [ "$($PY -c "import json;print(json.load(open('$PROJ/track.config.json')).get('osm_road_widths',False))")" = "True" ] \
                &&  run widths  "$PY" -m scripts.gps.widths_from_osm "$PROJ"
 active mesh    &&   run mesh    "$PY" -m scripts.geometry.build_mesh "$PROJ"
-active env     &&   run env     "$PY" -m scripts.environment.build_env "$PROJ"
-# Gates: the virtual DRIVE TEST (wheel paths over the built triangles) AND the mesh audit
-# (geometry classes incl. E: walls floating over ground — the check that would have caught the
-# hovering barrier runs v0.7.4 shipped with). A FAIL in either aborts before Blender/kn5.
-active env     &&   run drive   "$PY" -m scripts.geometry.drive_test "$PROJ"
-active env     &&   run audit   "$PY" -m scripts.geometry.audit_mesh "$PROJ"
-
-if active blend || active kn5; then
-  if [[ "${KN5_WRITER:-blender}" == "native" ]]; then
-    # NATIVE PATH (KN5_WRITER=native): write the kn5 straight from the audited OBJs with
-    # scripts/ac/kn5_write.py — no Blender import/weld/yaw/exporter between the geometry the gates
-    # measure and the bytes the driver loads. Fidelity reads 0.00 m by construction. No .blend is
-    # produced (use the default path when a hand-editable scene is needed).
-    active kn5 && run kn5 "$PY" -m scripts.ac.kn5_write "$PROJ"
-  else
-    BLENDER="${BLENDER:-$("$ROOT/scripts/bootstrap_blender.sh")}"   # pin/download Blender 4.2 if needed
-    active blend && run blend "$BLENDER" --background --python scripts/ac/build_kn5.py -- "$PROJ"
-    active kn5   && run kn5   "$BLENDER" --background --python scripts/ac/export_kn5_addon.py -- "$PROJ"
-  fi
-  # Gate: assert the exported kn5 is actually drivable (no dup meshes, drivable surfaces face-up, spawns
-  # on the road) — every past fall-through, encoded as a check. A failure aborts BEFORE packaging/release.
-  active kn5   && run verify "$PY" -m scripts.ac.verify_kn5 "$PROJ"
-  # Gate: the SHIPPED kn5 must equal the audited OBJs up to the configured yaw (kn5 fidelity).
-  # Catches assembly bugs (dropped/displaced groups, stale meshes) that no OBJ-stage gate can see.
-  active kn5   && run fidelity "$PY" -m scripts.ac.kn5_ground_check "$PROJ"
-fi
-
-if active pack; then
-  run pack "$PY" -m scripts.ac.track_folder "$PROJ"
-  cp -f "$PROJ/build/$SLUG.kn5" "$PROJ/build/$SLUG/$SLUG.kn5"
-  run pack "$PY" - "$PROJ" "$SLUG" "$VER" <<'PY'
-import sys, zipfile
-from pathlib import Path
-proj, slug, ver = sys.argv[1], sys.argv[2], sys.argv[3]
-root = Path(proj) / "build"; folder = root / slug
-zp = root / f"{slug}_v{ver}.zip"
-with zipfile.ZipFile(zp, "w", zipfile.ZIP_DEFLATED, 6) as z:
-    for f in sorted(folder.rglob("*")):
-        if f.is_file():
-            z.write(f, f.relative_to(root))
-print(f"  -> {zp}  ({zp.stat().st_size/1e6:.1f} MB)")
-PY
-  # NOTE: build.sh used to publish the content folder to tracks/<slug>/ via `rsync -a --delete`.
-  # When the AC slug equals a track/project dir name, that --delete rsync WIPES the track's own
-  # config/source/data (it did exactly that in the k10-colorado layout, where tracks/<slug>/ IS the
-  # source project dir). The installable deliverable is build/<slug>_v<ver>.zip (+ build/<slug>/);
-  # publish to tracks/ by hand if a git-pullable copy is wanted. Do NOT re-add an rsync --delete
-  # that writes into tracks/<slug>/.
-  echo "  installable: $PROJ/build/${SLUG}_v${VER}.zip  (+ folder $PROJ/build/$SLUG/)"
-fi
-echo; echo "✓ build complete: $PROJ ($SLUG v$VER)"
+echo; echo "✓ draft complete: $PROJ ($SLUG v$VER) — data/track.obj; next: the chain (tools/ship_track.sh) or its underlay step"

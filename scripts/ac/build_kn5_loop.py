@@ -5,7 +5,8 @@ project's ``loop.blend`` is the source of truth (Kevin shapes it in Blender), an
 it — renames the working meshes to AC surface conventions, gives them tiling UVs + PBR materials,
 welds/holes-fills the grass, drops the AC_START/PIT/TIME/HOTLAP dummies computed from the real
 centreline, packs textures, and saves ``blender/<slug>.blend``. ``export_kn5_addon`` then binds
-shaders + exports the real kn5 (see scripts/build_loop.sh for the full pipeline).
+shaders + exports the real kn5 (tools/ship_track.sh runs this as its `prep` step; scripts/build_loop.sh
+is retired, 2026-10-28).
 
 THIS IS A DIFFERENT PROGRAM from scripts/ac/build_kn5.py (the OBJ-import pipeline). The two must
 never be merged: this one edits an existing hand-authored scene; that one assembles a scene from

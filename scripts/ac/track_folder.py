@@ -160,7 +160,7 @@ def ui_track_json(cfg, layout: str, length_m: float, n_pits: int, width_m: float
     width = lo_meta.get("ui_width_m") or cfg.raw.get("ui_width_m") or width_m or cfg.default_width_m
     # Content Manager display name: prefix the series so all K10 Colorado circuits group together in the
     # in-game list ("K10 Colorado - Sand Creek Raceway", ...). Override per track via `ui_series`.
-    series = cfg.raw.get("ui_series", "K10 Colorado")
+    series = cfg.raw.get("ui_series", "doooom")        # Kevin 2026-10-28: "K10 is gone. doooom."
     base_name = f"{series} - {cfg.name}" if series else cfg.name
     # Only append a layout label when the track actually HAS multiple layouts — a single-layout track
     # (e.g. IMI's one "full_course") shouldn't read "… — full_course".

@@ -2,9 +2,8 @@
 
 *Drafted 2026-10-28 from Kevin's ask: "clean up all of the repos and delete or archive the
 k10-motorsports ones and move everything that's current to the doooom-fast org."*
-*Status: **proposal.** Nothing has been transferred, archived or deleted. Every row below is a
-default for Kevin to confirm or change; transfers, archives and deletes are irreversible and need
-an org owner's click or token, which no agent session holds.*
+*Status: **decided 2026-10-28** (Kevin's answers in §Decisions). Nothing has been transferred, archived or deleted
+yet; the commands below are the org owner's to run, since no agent session holds that token.*
 
 ## What is live today (the things that must not break)
 
@@ -35,30 +34,30 @@ until a repo with the old name is created); **ARCHIVE** = read-only history; **D
 | prodrive-windows | public | 2026-07-21 | **TRANSFER** (confirm) | Product family |
 | prodrive-overlay | public | 2026-07-21 | **TRANSFER** (confirm) | Product family |
 | prodrive-macos, prodrive-ios, prodrive-tvos | private | 2026-07-21 | **TRANSFER** (confirm) | Product family; any App Store / signing config that names the repo path needs a check |
-| prodrive-edit | public | 2026-06-02 | **CONFIRM**: transfer or archive | Not seen referenced from airoso; unknown whether current |
-| prodrive-homebridge | public | 2026-06-02 | **CONFIRM**: transfer or archive | Same |
-| prodrive-designer | public | 2026-06-02 | **CONFIRM**: transfer or archive | Same |
-| prodrive-narrative | private | 2026-05-16 | **CONFIRM**: transfer or archive | Oldest of the family |
+| prodrive-edit | public | 2026-06-02 | **TRANSFER → ARCHIVE** | Kevin: not current |
+| prodrive-homebridge | public | 2026-06-02 | **TRANSFER → ARCHIVE** | Kevin: not current |
+| prodrive-designer | public | 2026-06-02 | **TRANSFER → ARCHIVE** | Kevin: not current |
+| prodrive-narrative | private | 2026-05-16 | **TRANSFER → ARCHIVE** | Kevin: not current |
 
 ### The track work
 
 | Repo | Vis. | Last push | Default | Why |
 |---|---|---|---|---|
-| k10-san-diego | public | 2026-08-28 | **TRANSFER, then rename `track-releases`** (confirm) | It is the public release host the website reads. Proposal (step 1): one public releases repo in doooom-fast for *every* track, fed by `tools/pack_release.py` + `gh release create`; Colorado's zips move onto it; `tracks.ts` reads one repo. Its old source tree is retired (airoso carries it) and can be pruned to a README after the move |
+| k10-san-diego | public | 2026-08-28 | **ARCHIVE** after its zips are re-published on the fresh **`doooom-fast/track-releases`** (Kevin: fresh repo) | It is the public release host the website reads today. Step 1 creates `track-releases` (public, README only), re-publishes the current Lake Murray + freeway zips there, `tracks.ts` reads that one repo; then this repo is archived, read-only, under doooom-fast |
 | k10-colorado | public | 2026-08-28 | **TRANSFER → ARCHIVE** after its releases are re-published on `track-releases` | Public zips live here today. The Lariat zip carries mined textures (Lariat V3-PLAN D0: take it down). Source retired; harvested into airoso 2026-08-19 |
 | k10-track-agents | private | 2026-10-28 | **TRANSFER → ARCHIVE** | Retired (its CLAUDE.md). airoso carries its history, **but** airoso's history was rewritten 2026-10-27 (LFS), so the commit IDs the ledger quotes before that date resolve only here and in `D:/k10-track-archive/2026-10-27_airoso_before_lfs.git`. Keep it, read-only, in the one org |
 | k10-colorado-rally | private | 2026-08-10 | **ARCHIVE** (transfer first so the old org can close) | Retired; the four stages' configs and STAGE-SOURCING are in airoso |
-| prodrive-ac-builder | private | 2026-08-28 | **DELETE** (confirm) | Frozen 2026-07-25; verified strict git ancestor of k10-track-agents with zero unique files (docs/V3-PLAN.md §0). Its history is inside k10-track-agents |
+| prodrive-ac-builder | private | 2026-08-28 | **DELETE** (Kevin: delete) | Frozen 2026-07-25; verified strict git ancestor of k10-track-agents with zero unique files (docs/V3-PLAN.md §0). Its history is inside k10-track-agents |
 | k10-1978 | private | 2026-07-09 | **TRANSFER** (confirm) | The game *1978*; airoso owes it the gala seed (`scripts/game/export_seed.py`, `projects/gala-seed/`). Current unless Kevin says otherwise |
-| K10-mxc | private | 2026-07-26 | **CONFIRM**: transfer or archive | Not referenced from airoso; purpose unknown to this session |
-| k10-stories | private | 2026-07-26 | **CONFIRM**: transfer or archive | Same |
+| K10-mxc | private | 2026-07-26 | **TRANSFER → ARCHIVE** as `mxc` | Kevin: not current |
+| k10-stories | private | 2026-07-26 | **TRANSFER → ARCHIVE** as `stories` | Kevin: not current |
 | .github | public | 2026-04-27 | **DELETE** with the org | Org profile README. Recreate in doooom-fast if a profile is wanted |
 
 After the table is settled, the k10-motorsports org is empty and can be deleted
 (Organization settings → Danger zone). The `k10motorsports.racing` domain lives on Vercel, not on
 GitHub, and is unaffected.
 
-### Names after the move (optional, Kevin's call)
+### Names after the move (Kevin: yes — and "K10 is gone. doooom.")
 
 The `k10-` prefix stops meaning anything inside doooom-fast: `k10-1978` → `1978`,
 `K10-mxc` → `mxc`, `k10-stories` → `stories`. `prodrive-*` stays; it is the product's name. Renames
@@ -66,8 +65,7 @@ also keep GitHub redirects.
 
 ## Order of operations
 
-1. **Create the public release home first** (`doooom-fast/track-releases`, or transfer + rename
-   `k10-san-diego`). Re-publish the current Lake Murray and freeway zips there as one release,
+1. **Create the public release home first**: a fresh public `doooom-fast/track-releases` (Kevin's choice). Re-publish the current Lake Murray and freeway zips there as one release,
    and the Colorado zips Kevin still wants public (not the Lariat: D0). Until this exists the
    website's downloads depend on the old org.
 2. **Transfer the four Vercel-backed repos** (`prodrive-server`, `prodrive-images-api`,
@@ -109,9 +107,14 @@ Each of these is a click Kevin makes, or a command run from a machine where `gh`
 an owner of both orgs. An agent session can prepare the list and verify the result; it should not
 hold the token that deletes repositories.
 
-## Open questions for Kevin
+## Decisions (Kevin, 2026-10-28)
 
-1. Release home: transfer `k10-san-diego` and rename it, or a fresh `track-releases`? (Default: transfer + rename, keeps the release history and download counts.)
-2. Which of `prodrive-edit`, `prodrive-homebridge`, `prodrive-designer`, `prodrive-narrative`, `K10-mxc`, `k10-stories` are current?
-3. Delete `prodrive-ac-builder` outright, or archive it beside `k10-track-agents`?
-4. Drop the `k10-` prefixes on the repos that move?
+1. Release home: **a fresh `doooom-fast/track-releases`**.
+2. `prodrive-edit`, `prodrive-homebridge`, `prodrive-designer`, `prodrive-narrative`, `K10-mxc`, `k10-stories`: **none are current** → transfer, then archive.
+3. `prodrive-ac-builder`: **delete**.
+4. **Drop the `k10-` prefixes.** And the brand itself: "K10 is gone. doooom." — the website catalog text, `ui_series` strings and the series names in Content Manager follow (docs/ONE-CHAIN.md §3).
+
+```bash
+# step 1, the release home (owner):
+gh repo create doooom-fast/track-releases --public --description "doooom track downloads: every Assetto Corsa track's release zips"
+```

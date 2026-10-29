@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # The ship chain for any track — draft -> author -> ship -> gate -> install, one command, exits nonzero on any gate.
 #
-#   bash tools/ship_track.sh <track> [--no-install] [--skip-blend] [--force-install] [--dry-run] [--draft-only]
+#   bash tools/ship_track.sh <track> [--no-install] [--skip-blend] [--force-install] [--dry-run] [--draft-only] [--from <step>]
 #
 # V3-PLAN P1 (tracks/lookout-lariat/V3-PLAN.md, "a ship chain that isn't San Diego"). tools/ship_sd.sh stays
 # San Diego's chain of record (test_ship_sd_chain.py / test_engine_july_snapshot.py pin it; re-synced here after
@@ -53,6 +53,13 @@
 # --draft-only    sync the inputs and run the draft phase's DATA steps (route, paint centreline, config remap,
 #                 their gates, elevation, projection, widths), stopping at the first step that needs Blender;
 #                 nothing synced back, nothing installed.
+# --from <step>   resume: every draft / author / prep / ship step BEFORE the named one is skipped (printed as skipped),
+#                 the named step and everything after it run, and EVERY gate runs — a gate name is refused, as is
+#                 --from with --skip-blend or --draft-only (its own resume rules). The sync-in still runs first (an
+#                 edited config reaches the workshop). The skipped steps' outputs are whatever the last run left in the
+#                 workshop: `--from split` re-splits the prepped blender/<slug>.blend (ledger 0060, 2026-10-29: the
+#                 Exotics draft + prep is 22 minutes the split's fix did not need to repeat), `--from export_road`
+#                 re-exports the last split, `--from verify_kn5` re-judges the last export.
 # --force-install as tools/ship_sd.sh: install RED when the caller asserts no gate metric is worse than the
 #                 reference; never covers a race layout red on its own gates or a no_route input error.
 # SHIP_PROJ=<dir> run against a scratch copy of the workshop project (ABSOLUTE, outside airoso): builds, exports
@@ -72,16 +79,24 @@ AC="D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks"
 ARCHIVE="D:/k10-track-archive"   # old installs live here, never in content/tracks (Kevin 2026-10-11: "clear old versions")
 STREET_AI="${STREET_AI:-draft}"
 case "$STREET_AI" in draft|july) ;; *) echo "STREET_AI must be draft or july, got '$STREET_AI'"; exit 2;; esac
-TRACK=""; INSTALL=1; SKIP_BLEND=0; FORCE=0; DRY=0; DRAFT_ONLY=0
-for a in "$@"; do case "$a" in
+TRACK=""; INSTALL=1; SKIP_BLEND=0; FORCE=0; DRY=0; DRAFT_ONLY=0; FROM=""; WANT_FROM=0
+for a in "$@"; do
+  if [ "$WANT_FROM" = 1 ]; then FROM="$a"; WANT_FROM=0; continue; fi
+  case "$a" in
   --no-install) INSTALL=0;; --skip-blend) SKIP_BLEND=1;; --force-install) FORCE=1;; --dry-run) DRY=1;;
   --draft-only) DRAFT_ONLY=1;;
+  --from) WANT_FROM=1;;
   -*) echo "unknown flag: $a"; exit 2;;
   *) if [ -z "$TRACK" ]; then TRACK="$a"; else echo "one track per run (got '$TRACK' and '$a')"; exit 2; fi;;
 esac; done
-[ -n "$TRACK" ] || { echo "usage: bash tools/ship_track.sh <track> [--no-install] [--skip-blend] [--force-install] [--dry-run] [--draft-only]"; exit 2; }
+[ "$WANT_FROM" = 0 ] || { echo "--from needs a step name (the draft / author / prep / ship step to resume at)"; exit 2; }
+[ -n "$TRACK" ] || { echo "usage: bash tools/ship_track.sh <track> [--no-install] [--skip-blend] [--force-install] [--dry-run] [--draft-only] [--from <step>]"; exit 2; }
 case "$TRACK" in ""|-*|*[!a-z0-9-]*) echo "track '$TRACK' is not a track folder name"; exit 2;; esac
 if [ "$DRAFT_ONLY" = 1 ] && [ "$SKIP_BLEND" = 1 ]; then echo "--draft-only runs the draft; --skip-blend skips it"; exit 2; fi
+if [ -n "$FROM" ]; then
+  case "$FROM" in *[!a-z0-9_]*) echo "--from '$FROM' is not a step name"; exit 2;; esac
+  if [ "$DRAFT_ONLY" = 1 ] || [ "$SKIP_BLEND" = 1 ]; then echo "--from resumes at a step; --draft-only and --skip-blend have their own resume rules — one of the three"; exit 2; fi
+fi
 if [ "$DRY" = 1 ] || [ "$DRAFT_ONLY" = 1 ]; then INSTALL=0; fi
 SRC="$AIROSO/tracks/$TRACK"
 [ -d "$SRC" ] || { echo "no track folder $SRC"; exit 2; }
@@ -98,6 +113,16 @@ fi
 step() { echo; echo "=================== $1"; }
 pyq() { (cd "$AIROSO" && python -c "$@"); }
 no_race() { echo; echo "(no race layout declared: $1 skipped)"; }
+# run_step <phase> <step>: the phase's function — with --from, skipped (and said so) until the named step is reached.
+# The gates never go through here: every gate runs on every run, whatever --from says.
+FROM_REACHED=0
+run_step() {
+  local phase="$1" n="$2"
+  if [ -n "$FROM" ] && [ "$FROM_REACHED" = 0 ]; then
+    if [ "$n" = "$FROM" ]; then FROM_REACHED=1; else echo "(--from $FROM: $phase $n skipped — the workshop keeps the last run's output)"; return 0; fi
+  fi
+  "${phase}_$n"
+}
 
 # =============================================================================================================
 # THE VOCABULARY. One function per step name; ship.json picks from these and nothing else.
@@ -608,6 +633,13 @@ for n in ${PREP[@]+"${PREP[@]}"}; do declare -F "prep_$n" >/dev/null || { echo "
 for n in ${SHIP[@]+"${SHIP[@]}"}; do declare -F "ship_$n" >/dev/null || { echo "ship.json steps.ship: unknown step '$n' (no ship_$n in tools/ship_track.sh)"; exit 2; }; done
 for n in ${GATE[@]+"${GATE[@]}"}; do declare -F "gate_$n" >/dev/null || { echo "ship.json steps.gate: unknown step '$n' (no gate_$n in tools/ship_track.sh)"; exit 2; }; done
 if [ "$STREET_AI" = july ] && [ -z "$JULY_AI" ]; then echo "STREET_AI=july: ship.json names no street_ai_july for $TRACK"; exit 2; fi
+# --from names a step of THIS ship.json's draft / author / prep / ship phases; never a gate (the gates always run)
+if [ -n "$FROM" ]; then
+  case " ${DRAFT[*]:-} ${AUTHOR[*]:-} ${PREP[*]:-} ${SHIP[*]:-} " in
+    *" $FROM "*) ;;
+    *) echo "--from '$FROM' is not a draft / author / prep / ship step of $SPEC (the gates always run); resume at one of: ${DRAFT[*]:-} ${AUTHOR[*]:-} ${PREP[*]:-} ${SHIP[*]:-}"; exit 2;;
+  esac
+fi
 
 # =============================================================================================================
 # the rails: absolute paths, nothing inside airoso, scratch derived from the workshop path — all before any copy
@@ -644,6 +676,8 @@ echo "engine (prep / export / spawn): $ENGINE"
 blend_builder_ready() {
   local n
   [ "$SKIP_BLEND" = 0 ] || return 1
+  # resuming past the draft: nothing in this run builds the blend
+  if [ -n "$FROM" ]; then case " ${DRAFT[*]:-} " in *" $FROM "*) ;; *) return 1;; esac; fi
   for n in ${DRAFT[@]+"${DRAFT[@]}"}; do case "$n" in
     build_loop_blend) [ -f "$V021/blender/build_loop_blend.py" ] && return 0;;
     underlay) [ -f "$AIROSO/scripts/blender/underlay.py" ] && return 0;;
@@ -653,6 +687,7 @@ blend_builder_ready() {
 if [ "$DRAFT_ONLY" = 0 ] && [ ! -f "$PROJ/loop.blend" ] && ! blend_builder_ready; then
   echo; echo "no blend yet: $PROJ/loop.blend does not exist and nothing in this run can build it"
   if [ "$SKIP_BLEND" = 1 ]; then echo "  (--skip-blend resumes from an authored loop.blend)"
+  elif [ -n "$FROM" ]; then echo "  (--from $FROM resumes past the draft; the draft that builds the blend ran in no earlier run)"
   else echo "  (draft steps: ${DRAFT[*]:-none}; the blend builder is build_loop_blend (tracks/$TRACK/scripts-v021) or underlay (scripts/blender/underlay.py, V3-PLAN P2 step 3) — list one in steps.draft)"; fi
   echo "  --draft-only runs the draft's data steps. Nothing synced in, nothing run, nothing installed."
   if [ "$DRY" = 1 ]; then echo "DRY RUN: stopped cleanly at 'no blend yet'."; exit 0; fi
@@ -685,6 +720,7 @@ LAYOUT_IDS="${LAYOUT_IDS%$'\r'}"; RACE_IDS="${RACE_IDS%$'\r'}"; STREET_IDS="${ST
 case "$SLUG" in ""|*[!a-z0-9_]*) echo "track.config.json slug '$SLUG' is not a file-name slug"; exit 2;; esac
 case "$INSTALL_FOLDER" in ""|*[!A-Za-z0-9_]*) echo "track.config.json install_folder '$INSTALL_FOLDER' missing or not a folder name (plan A11)"; exit 2;; esac
 echo "layouts: $LAYOUT_IDS   (race furniture: $RACE_IDS; street: $STREET_IDS; street AI = $STREET_AI)"
+if [ -n "$FROM" ]; then echo "--from $FROM: every step before it is skipped (the sync-in ran above; every gate runs)"; fi
 if [ "$REQUIRE_RACE" = 1 ] && [ -z "$RACE_IDS" ]; then echo "no race layout declared — ship.json says this chain is the three-version chain (ledger 0047)"; exit 2; fi
 if [ -n "$RACE_IDS" ]; then
   case " ${AUTHOR[*]:-} " in *" race_author "*) ;; *) echo "layouts $RACE_IDS declare race_furniture but ship.json steps.author has no race_author — they would ship without it"; exit 2;; esac
@@ -696,7 +732,7 @@ if [ "$SKIP_BLEND" = 0 ]; then
       echo; echo "DRAFT ONLY: stopping before '$n' (the first draft step that needs Blender). Nothing synced back, nothing installed ($PROJ)."
       exit 0
     fi
-    "draft_$n"
+    run_step draft "$n"
   done
 fi
 if [ "$DRAFT_ONLY" = 1 ]; then
@@ -704,8 +740,8 @@ if [ "$DRAFT_ONLY" = 1 ]; then
   exit 0
 fi
 
-for n in ${AUTHOR[@]+"${AUTHOR[@]}"}; do "author_$n"; done
-for n in "${PREP[@]}"; do "prep_$n"; done
+for n in ${AUTHOR[@]+"${AUTHOR[@]}"}; do run_step author "$n"; done
+for n in "${PREP[@]}"; do run_step prep "$n"; done
 
 if [ "$DRY" = 1 ]; then
   echo; echo "DRY RUN: stopping before the kn5 exports. Would now run, in order:"
@@ -716,7 +752,7 @@ if [ "$DRY" = 1 ]; then
   exit 0
 fi
 
-for n in ${SHIP[@]+"${SHIP[@]}"}; do "ship_$n"; done
+for n in ${SHIP[@]+"${SHIP[@]}"}; do run_step ship "$n"; done
 
 # A verdict from an earlier run is not this run's verdict: every per-layout gate file is removed before the gates
 # run, so a gate that does not run reads as "not run" (red), never as last time's pass.

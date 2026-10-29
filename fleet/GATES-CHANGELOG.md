@@ -14,6 +14,26 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-10-29 — the split's single-layout rule; `--from <step>` never skips a gate (ledger 0060; wiring, no threshold)
+
+The first non-San-Diego chain run (Exotics Racing, the Windows workshop) passed the draft, the underlay and the prep
+and stopped at `tools/split_exports_blend.py` with three PROBLEMs no single-layout track can satisfy: "no race
+furniture" (no layout declares any), "no curb strip in loop_race.blend" (a race scene it had no reason to write),
+"no dummies_full.json" (the prep bakes a single layout's AC_* into the road scene — `scripts/ac/build_kn5_loop.py`
+— and `verify_kn5`'s single-layout branch judges them in `<slug>.kn5`). The split had only ever run on Lake Murray's
+three layouts.
+
+| Check | Was | Is | Scope |
+|---|---|---|---|
+| split: race furniture required | always | only when a layout declares `race_furniture` (and RACE objects with no such layout are refused) | the common race scene is written only then |
+| split: `loop_main.blend` and the AC_* nodes | always removed; any left = PROBLEM | **one** `layouts[]` entry: kept, none left = PROBLEM; **more than one**: as before | keyed on the config's layout count, as the prep and `verify_kn5` are |
+| split: spawn scene per layout | always, `dummies_<id>.json` required | multi-layout only | a single layout's grid rides in the road kn5 |
+
+Proven on the real prepped Exotics scene under the `bpy` module (before: the Windows run's three PROBLEMs, byte for
+byte; after: 67 meshes + 23 AC nodes in `loop_main.blend`, no race or spawn scene, exit 0) and in
+`tests/tools/test_split_single_layout.py`. `tools/ship_track.sh --from <step>` (resume at a draft / author / prep /
+ship step) refuses a gate name: every gate runs on every run.
+
 ## 2026-10-26 — Lake Murray expansion P4 integrated (v0.19.1, Drive 2) + the lenses' fix round (ledger 0054 "P4 — dressing, integrated")
 
 The four P4 branches (lamps, buildings + rock, trees + GrassFX, signs + map) merged as unions onto airoso main 1b5a6b3

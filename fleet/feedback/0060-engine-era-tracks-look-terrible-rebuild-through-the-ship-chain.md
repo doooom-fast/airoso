@@ -104,6 +104,23 @@ curve, REF_start, three 500 m stations), `data/underlay.report.json` written. **
 + 23 dummies → `blender/exotics_racing_lvms.blend` 256 MB, no FATAL. So draft → underlay → prep is proven end to end on a
 real track; the split, the export (the AC add-on) and the gates need the Windows box.
 
+**The Windows box, 2026-10-29 (the Milford bridge session, `bash tools/ship_track.sh exotics-racing-lv` on
+13c8ad4):** `--draft-only` exit 0 in 8 min (track.obj 237.9 MB, 1,744,500 verts, 3,336,483 tris, 1GRASS in 58,
+road_area 25,375 m², 15 dummies). The full run: sync + draft OK, underlay OK (67 GEN objects + 5 refs, 0 replaced,
+0 AUTH_*, track.obj md5 `1f6e0a6e…` in the report), prep OK with no FATAL (807,207 terrain verts pinned to deck
+−0.02, 396,065 feathered), the I-8 and rock-face steps no-ops, **split FAIL (exit 1)** — three PROBLEMs a
+single-layout track can never satisfy: "no race furniture" (no layout declares any), "no curb strip in
+loop_race.blend" (a race scene with nothing to hold), "no dummies_full.json" (the prep had baked the 23 AC_*
+into the road scene; the split then removed them and wrote no spawn scene, which would have shipped a kn5 with no
+grid). Nothing exported, nothing synced back, the previous install untouched. The split had only ever run on Lake
+Murray's three layouts. **Fix, same day (GATES-CHANGELOG 2026-10-29):** `tools/split_exports_blend.py` keys on the
+config's layout count as the prep and `verify_kn5` do — one layout: the AC_* stay in `loop_main.blend` (none there
+is the PROBLEM), no spawn scene; race scenes only when a layout declares `race_furniture`; stale race / spawn scenes
+removed. Reproduced here on the real prepped scene under `bpy` (the Windows PROBLEMs byte for byte), then after the
+fix: 67 meshes / 23 AC nodes → `loop_main.blend`, exit 0 in 3 s. `tools/ship_track.sh --from <step>` added so the
+re-run starts at the split (`--from split`) instead of repeating the 22-minute draft + prep; a gate name is refused.
+Exotics' export, gates and install still owed to the re-run; Milford, High Plains and Sand Creek hold behind it.
+
 ## Verification
 
 - `tools/ship_track.sh <track>` completes on the Windows box for each of the four: `loop.blend` written by the

@@ -261,6 +261,26 @@ it between 14:07 and 21:37 (its build is still in the Windows checkout's untrack
 Plains 0.68.0) and the configs still said 0.1.0 / 0.1.0 / 0.26.0 / 0.66.3, so both installs carry 0.1.0 — bumped on
 the branch the same hour; a `--from track_folder` re-pack (two minutes plus the gates) relabels an installed track.
 
+**Sand Creek, second run (`--from prep` at 07c5e33, the conform skipped): the apron is fixed, the bridges show.**
+Excursion drops 217 → **3 gated** (11 far ledges; worst gated [8702.7, −12.0, 0.24]); flush edges +0.22 / +0.79.
+But `drive_test` still FAILS: **severe steps 1 → 127**, up to 1.75 m, in three clusters that are exactly the three
+auto bridge spans the mesh declared ('2429–2528 m', '5924–6008 m', '6534–6567 m': bins 2450–2500 47 steps, 5950–6000
+41, 6550 35; worst [6558, −3.58, 1.752], [5943, −0.75, 1.733], [6012, −0.75, 1.003], [2445, −0.75, 0.914]);
+**ground on top 12 at s 2443–2444** inside span 1 (1GRASS_i, lanes −6.0 / ±0.75; the conform-on run had 30 at
+s 2549 just past that span's end); daylight gaps 0 → 12; floating furniture 8, unchanged with the conform on or off
+(so not its prop re-seat); kinks 13.4 → 66.5/km; replication 0.01 / 0.04 / 3.56. `audit_mesh` CLEAN,
+`kn5_ground_check` PASS. Reading: the conform-on run was green on the spans because its anti-poke pass pushed every
+grass vert under the lowest drivable sheet, bridges included — the cover came off with it. `drive_test`'s lane
+surface is the highest DRIVABLE surface and 1GRASS is drivable, so terrain standing above the levelled deck inside a
+span reads as a 1.75 m step up onto the grass and back; the engine's own contact pins skip verts under a declared
+span ("the valley stays open") — pin #1 still lowers grass that stands above the deck, pin #2 (shoulder / runoff /
+kerb underside) skips in both directions — and the grass grid is the coarse heightfield's, so a creek-bank node
+near a span can read metres above the 1 m centreline profile the span was detected on. Not yet established whether
+the engine's DRAFT carries these (then build_mesh's span handling is the fix) or the prep adds them (its 1GRASS
+weld / holes_fill are the only grass passes left): Sand Creek has no committed `data/` and 3DEP is unreachable
+from the cloud box, so the Windows session runs `--draft-only` and `drive_test` on the draft OBJ after High Plains.
+The V1 v0.27.0 draft is said to have passed this gate; its report is not in the repo.
+
 ## Verification
 
 - `tools/ship_track.sh <track>` completes on the Windows box for each of the four: `loop.blend` written by the

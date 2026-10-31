@@ -10,12 +10,12 @@
   ],
   "engine": {
     "name": "k10-track-agents",
-    "remote": "git@github.com:k10-motorsports/k10-track-agents.git",
+    "remote": "git@github.com:doooom-fast/k10-track-agents.git",
     "scripts_root": "scripts",
     "consumed_as": ".engine",
     "absorbed_from": {
       "repo": "prodrive-ac-builder",
-      "remote": "git@github.com:k10-motorsports/prodrive-ac-builder.git",
+      "remote": "deleted 2026-10-31 (docs/ORG-CONSOLIDATION.md): its full history is inside doooom-fast/k10-track-agents",
       "path": "../racecor-prodrive/prodrive-ac-builder",
       "at_commit": "3e1aa52",
       "last_tag": "v0.19.0",
@@ -55,7 +55,7 @@
     {
       "name": "k10-colorado",
       "path": "../k10-colorado",
-      "remote": "git@github.com:k10-motorsports/k10-colorado.git",
+      "remote": "git@github.com:doooom-fast/k10-colorado.git",
       "role": "Colorado circuits + the Lookout Lariat street port",
       "tracks_glob": "tracks/*/track.config.json",
       "moved_out": {
@@ -73,7 +73,7 @@
     {
       "name": "k10-colorado-rally",
       "path": "../k10-colorado-rally",
-      "remote": "git@github.com:k10-motorsports/k10-colorado-rally.git",
+      "remote": "git@github.com:doooom-fast/k10-colorado-rally.git",
       "role": "Rally Colorado gravel/tarmac special stages near Rangely",
       "tracks_glob": "tracks/*/track.config.json",
       "build": {
@@ -88,7 +88,7 @@
     {
       "name": "k10-san-diego",
       "path": "../k10-san-diego",
-      "remote": "git@github.com:k10-motorsports/k10-san-diego.git",
+      "remote": "git@github.com:doooom-fast/k10-san-diego.git",
       "role": "Lake Murray loop + the I-5/I-8/CA-52/CA-163 freeway network, shipped as one kn5",
       "tracks_glob": "project*/track.config.json",
       "moved_out": {

@@ -7,13 +7,13 @@ V3; written so it is never re-derived.
 
 - **doooom.fast** (and racecor.io, k10motorsports.racing) is the Vercel project
   `k10-racecor-prodrive` on the "Alternate" team, deployed from
-  `k10-motorsports/prodrive-server` (`apps/web`, Next.js). Kevin's checkout:
+  `doooom-fast/prodrive-server` (`apps/web`, Next.js). Kevin's checkout:
   `C:\Users\Owner\Documents\GitHub\prodrive-server`. The copy under `prodrive-agents/` is a stale
   mirror — don't edit it.
 - The Tracks section (`apps/web/src/app/(doooom)/_site/Tracks.tsx`) merges a **committed catalog**
   (`apps/web/src/lib/doooom/tracks.ts`: name, place, roads, length, layouts, outline art, keyed by
   asset base) with the **latest GitHub Release** of each track repo
-  (`apps/web/src/lib/tracks.ts`: `k10-motorsports/k10-colorado`, `k10-motorsports/k10-san-diego`).
+  (`apps/web/src/lib/tracks.ts`: `doooom-fast/track-releases`, the one public release home since the org move of 2026-10-31 — docs/ORG-CONSOLIDATION.md; before it, `k10-motorsports/k10-colorado` and `k10-motorsports/k10-san-diego`).
   Every `.zip` asset on the latest release becomes a download; the asset filename minus
   `_vX.Y.Z` / `_ai` is the key (`san_diego_lake_murray_v0.23.0.zip` → `san_diego_lake_murray`).
   60 s ISR, so a published release shows within a minute. Nothing else to deploy.
@@ -96,9 +96,9 @@ a seam-start re-export (see above), not from the installed folder.
 
 ```bash
 tok() { printf 'protocol=https\nhost=github.com\n\n' | git credential fill | sed -n 's/^password=//p'; }
-GH_TOKEN="$(tok)" gh release create vX.Y.Z -R k10-motorsports/k10-san-diego --draft \
+GH_TOKEN="$(tok)" gh release create vX.Y.Z -R doooom-fast/track-releases --draft \
   --title "..." --notes-file NOTES.md lake_murray.zip freeway.zip
-GH_TOKEN="$(tok)" gh release edit vX.Y.Z -R k10-motorsports/k10-san-diego --draft=false   # publish
+GH_TOKEN="$(tok)" gh release edit vX.Y.Z -R doooom-fast/track-releases --draft=false   # publish
 ```
 
 Tags continue the public repo's own series (v0.22.0 → v0.23.0), not airoso's

@@ -17,7 +17,7 @@ from scripts.tls import https_context
 
 USGS_3DEP_IMAGE_SERVER = "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer"
 GET_SAMPLES = USGS_3DEP_IMAGE_SERVER + "/getSamples"
-USER_AGENT = "prodrive-ac-builder/0.1 (https://github.com/k10-motorsports/prodrive-ac-builder)"
+USER_AGENT = "airoso/0.1 (https://github.com/doooom-fast/airoso)"
 
 Vertex = tuple[float, float]  # (lon, lat)
 

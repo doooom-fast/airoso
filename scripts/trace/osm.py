@@ -13,7 +13,7 @@ from scripts.tls import https_context
 OVERPASS_URL = "https://overpass-api.de/api/interpreter"
 # Tried in order per attempt — overpass-api.de rate-limits bursty use (429); kumi tolerates more.
 OVERPASS_MIRRORS = [OVERPASS_URL, "https://overpass.kumi.systems/api/interpreter"]
-USER_AGENT = "prodrive-ac-builder/0.1 (https://github.com/k10-motorsports/prodrive-ac-builder)"
+USER_AGENT = "airoso/0.1 (https://github.com/doooom-fast/airoso)"
 DRIVABLE = r'^(motorway|trunk|primary|secondary|tertiary|unclassified|residential|living_street|service)(_link)?$'
 
 

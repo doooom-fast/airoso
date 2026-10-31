@@ -113,7 +113,7 @@
    ],
    "source": "k10-san-diego scripts/assets/generate_textures.py (original procedural art)",
    "license": "CC0-1.0",
-   "url": "https://github.com/k10-motorsports/k10-san-diego"
+   "url": "https://github.com/doooom-fast/track-releases"
   },
   {
    "name": "Palm frond, alpha cutout (loop-path 3D palms)",
@@ -122,7 +122,7 @@
    ],
    "source": "k10-san-diego scripts/assets/generate_textures.py (original procedural art)",
    "license": "CC0-1.0",
-   "url": "https://github.com/k10-motorsports/k10-san-diego"
+   "url": "https://github.com/doooom-fast/track-releases"
   },
   {
    "name": "gravel road (procedural)",

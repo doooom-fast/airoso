@@ -19,7 +19,7 @@ import urllib.request
 from scripts.tls import https_context
 
 OVERPASS_URL = "https://overpass-api.de/api/interpreter"
-USER_AGENT = "prodrive-ac-builder/0.1 (https://github.com/k10-motorsports/prodrive-ac-builder)"
+USER_AGENT = "airoso/0.1 (https://github.com/doooom-fast/airoso)"
 
 # (lon, lat) vertex; a way is a list of them; bbox is (south, west, north, east)
 Vertex = tuple[float, float]

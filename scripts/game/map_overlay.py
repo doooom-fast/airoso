@@ -22,7 +22,7 @@ from PIL import Image, ImageDraw, ImageFont
 from scripts.tls import https_context
 
 TILE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-USER_AGENT = "prodrive-ac-builder/0.1 (https://github.com/k10-motorsports/prodrive-ac-builder)"
+USER_AGENT = "airoso/0.1 (https://github.com/doooom-fast/airoso)"
 MAX_TILES = 120
 
 

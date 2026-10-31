@@ -1,5 +1,5 @@
 K10 - San Diego (V3) — Lake Murray Loop
-Assetto Corsa track · github.com/k10-motorsports/k10-san-diego · doooom.fast
+Assetto Corsa track · github.com/doooom-fast/track-releases · doooom.fast
 
 INSTALL
   Drag the zip into Content Manager, or unzip it so you have

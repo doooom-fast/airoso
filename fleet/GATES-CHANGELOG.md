@@ -128,6 +128,16 @@ rebuilt OBJ; both are late `build_mesh` passes (ledger 0060 has the measurements
 `drive_test` on the rebuilt draft: ground on top 0, floating 0, severe 1, excursion drops 2 gated, far ledges 7 (the
 baseline's). No gate threshold or exemption changed. Tests: `tests/geometry/test_build_mesh_edge_rules.py`.
 
+## 2026-10-28 — scripts/build.sh runs no gate any more, because it builds no track (ledger 0060; ONE-CHAIN §2 row 1)
+
+Wiring only, no threshold moved. `scripts/build.sh` is cut to the engine's draft (`gps elev project mesh` →
+`data/track.obj`); its `env / blend / kn5 / pack` stages and the four gate calls they carried (`drive_test`,
+`audit_mesh` on the OBJ after `env`; `verify_kn5`, `kn5_ground_check` after `kn5`) are gone with them. The gates
+run where they always ran for Lake Murray: in the chain's `gate` phase (`tools/ship_track.sh`: `drive_test_street`,
+`audit_street`, `kn5_ground`, the race gates), on the BUILT kn5 (L5), with the thresholds unchanged. The native
+kn5 path (`KN5_WRITER=native`, `scripts/ac/kn5_write.py`) is no longer a build path; the writer stays as the
+gate tests' fixture harness only. Proven: `tests/ac/test_build_kn5_loop.py::test_the_chain_wires_the_loop_program_and_the_draft_builds_no_track`.
+
 ## 2026-10-26 — Lake Murray expansion P4 integrated (v0.19.1, Drive 2) + the lenses' fix round (ledger 0054 "P4 — dressing, integrated")
 
 The four P4 branches (lamps, buildings + rock, trees + GrassFX, signs + map) merged as unions onto airoso main 1b5a6b3

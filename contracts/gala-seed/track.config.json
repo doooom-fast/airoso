@@ -4,7 +4,7 @@
   "version": "0.2.0",
   "author": "prodrive-ac-builder",
   "year": 2026,
-  "_about": "The real-world seed for the game 1978 (github.com/k10-motorsports/k10-1978). NOT an AC track. The owner's San Diego My Maps KML network (extensive, imperfect - smoothing knobs below), augmented from OSM so Waring Rd, Eldridge, Gala Ave and the residential grid around Gala Ave are always present. Landmarks: the golf course (sanctum), Lake Murray, Benchley-Weinberger, home. Built by scripts/game/build_seed.py, exported by scripts/game/export_seed.py into the game repo's seed/ (contract: k10-1978/PIPELINE_BRIDGE.md).",
+  "_about": "The real-world seed for the game 1978 (github.com/doooom-fast/1978). NOT an AC track. The owner's San Diego My Maps KML network (extensive, imperfect - smoothing knobs below), augmented from OSM so Waring Rd, Eldridge, Gala Ave and the residential grid around Gala Ave are always present. Landmarks: the golf course (sanctum), Lake Murray, Benchley-Weinberger, home. Built by scripts/game/build_seed.py, exported by scripts/game/export_seed.py into the game repo's seed/ (contract: k10-1978/PIPELINE_BRIDGE.md).",
   "location": {
     "lat": 32.798726,
     "lon": -117.068988,

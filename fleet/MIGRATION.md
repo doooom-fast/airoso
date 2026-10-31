@@ -20,7 +20,7 @@ guess.
 
 ## ☑ M1 — Publish this repo
 
-Done. `k10-motorsports/k10-track-agents`, **private** (matching `prodrive-ac-builder`; the track
+Done. `doooom-fast/k10-track-agents` (under k10-motorsports until the org move of 2026-10-31, docs/ORG-CONSOLIDATION.md; archived there, read-only), **private** (matching `prodrive-ac-builder`; the track
 repos stay public). `main` pushed, and all 94 absorbed tags pushed — consumers pinning `v0.16.0` or
 `v0.19.0` can resolve them here.
 
@@ -42,8 +42,8 @@ git tag v0.20.0 -m "Engine absorbed into k10-track-agents; control plane added"
 tags point at the same commits in both remotes:
 
 ```bash
-git ls-remote --tags git@github.com:k10-motorsports/prodrive-ac-builder.git v0.19.0
-git ls-remote --tags git@github.com:k10-motorsports/k10-track-agents.git   v0.19.0
+git ls-remote --tags git@github.com:doooom-fast/prodrive-ac-builder.git v0.19.0
+git ls-remote --tags git@github.com:doooom-fast/k10-track-agents.git   v0.19.0
 # a5005e33… for v0.16.0, 8638edac… for v0.19.0 — identical in both
 ```
 
@@ -55,15 +55,15 @@ cannot change build behaviour; anything that fails after it was already failing 
 > the override is silently ignored. A "rehearsal" run that way tests the old repo and reports
 > success. To genuinely point an existing checkout at this repo:
 > ```bash
-> git -C .engine remote set-url origin git@github.com:k10-motorsports/k10-track-agents.git
+> git -C .engine remote set-url origin git@github.com:doooom-fast/k10-track-agents.git
 > ./bootstrap.sh && git -C .engine rev-parse HEAD    # compare against the SHA above
 > ```
 
 Change the default in each repo's `bootstrap.sh`:
 
 ```diff
--REPO="${ENGINE_REPO:-git@github.com:k10-motorsports/prodrive-ac-builder.git}"
-+REPO="${ENGINE_REPO:-git@github.com:k10-motorsports/k10-track-agents.git}"
+-REPO="${ENGINE_REPO:-git@github.com:doooom-fast/prodrive-ac-builder.git}"
++REPO="${ENGINE_REPO:-git@github.com:doooom-fast/k10-track-agents.git}"
 ```
 
 Order matters — go **rally → san-diego → colorado**, cheapest and cleanest first. Rally is the

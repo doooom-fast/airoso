@@ -10,7 +10,7 @@ k10-track-agents' full history (which itself absorbed prodrive-ac-builder), so n
 machine clone this. `*.blend` is in Git LFS (`loop.blend` ~160 MB). History was rewritten 2026-10-27 to drop 17 old
 `.blend` copies and move the current one to LFS, so commit IDs quoted in the ledger before that date don't match;
 the pre-rewrite repo is kept byte-exact at `D:/k10-track-archive/2026-10-27_airoso_before_lfs.git` (look old IDs up
-there). Release packages still publish from `k10-motorsports/k10-san-diego` (docs/PUBLISHING.md). The `engine`
+there). Release packages publish from `doooom-fast/track-releases` (docs/PUBLISHING.md; the k10-motorsports org is retired, docs/ORG-CONSOLIDATION.md). The `engine`
 remote (local k10-track-agents) is history only.
 
 **The V3 model (docs/V3-PLAN.md):** the engine emits first drafts; Claude hand-authors geometry

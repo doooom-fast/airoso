@@ -1,7 +1,7 @@
 K10 - San Diego (V3) — Lake Murray Loop — credits
 ==================================================
 
-Built by Kevin Conboy with the airoso track engine (k10-motorsports), hand-finished in Blender.
+Built by Kevin Conboy with the airoso track engine (doooom), hand-finished in Blender.
 Surface scrub and kerb-rumble sounds are the player's own stock Assetto Corsa sounds
 (content/sfx), referenced by name in data/surfaces.ini — none are redistributed here.
 

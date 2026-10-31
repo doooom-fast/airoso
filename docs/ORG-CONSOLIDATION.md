@@ -2,8 +2,10 @@
 
 *Drafted 2026-10-28 from Kevin's ask: "clean up all of the repos and delete or archive the
 k10-motorsports ones and move everything that's current to the doooom-fast org."*
-*Status: **decided 2026-10-28** (Kevin's answers in §Decisions). Nothing has been transferred, archived or deleted
-yet; the commands below are the org owner's to run, since no agent session holds that token.*
+*Status: **decided 2026-10-28** (Kevin's answers in §Decisions); **in progress 2026-10-31** (Kevin: "lets do the org
+move"). The owner's commands are `tools/org_move.sh` — a dry run by default, one `--step N --yes` at a time in the
+order below, `--delete` for step 6, `--verify` to list both orgs — and airoso's references (step 8) are updated in the
+same PR, to merge once steps 1–5 are done. No agent session holds the owner's token.*
 
 ## What is live today (the things that must not break)
 

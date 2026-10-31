@@ -25,7 +25,7 @@ bash tools/ship_track.sh san-diego-freeway --dry-run        # + underlay, prep, 
 
 ## The source of truth, and how sure that is
 
-The network's config of record lived in the retired `k10-motorsports/k10-san-diego` repo, not in airoso:
+The network's config of record lived in the retired `k10-san-diego` repo (archived under doooom-fast since the org move), not in airoso:
 `project_freeway_net/track.config.json` at that repo's HEAD `64161fc` (2026-07-28; engine pin `.engine-version`
 v0.66.3), built by its `scripts/build_network.sh project_freeway_net`. It was read for this change through a
 read-only shallow clone (public repo); nothing there was changed. What ties it to the shipped zip:

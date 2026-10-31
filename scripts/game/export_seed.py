@@ -60,7 +60,7 @@ def export(project_dir: str | Path, out_dir: str | Path) -> Path:
         "origin": local["origin"],
         "true_north_rotation_deg": local.get("true_north_rotation_deg", 0.0),
         "provenance": {
-            "repo": "k10-motorsports/prodrive-ac-builder",
+            "repo": "doooom-fast/airoso",
             "git_sha": _git_sha(project_dir),
             "project": cfg.slug,
             "config_version": cfg.version,

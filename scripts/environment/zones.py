@@ -21,7 +21,7 @@ from scripts.config import load_config
 from scripts.tls import https_context
 
 OVERPASS_URL = "https://overpass-api.de/api/interpreter"
-USER_AGENT = "prodrive-ac-builder/0.1 (https://github.com/k10-motorsports/prodrive-ac-builder)"
+USER_AGENT = "airoso/0.1 (https://github.com/doooom-fast/airoso)"
 
 
 def _query(bbox: tuple[float, float, float, float]) -> str:

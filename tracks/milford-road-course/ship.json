@@ -1,0 +1,80 @@
+{
+  "_doc": "Milford Road Course through the Lake Murray chain (tools/ship_track.sh; Kevin 2026-10-28: 'rebuild all four with the Lake Murray chain'). The draft is the engine's own on the NAIP-traced line (source.type from_track: gps -> elev -> project -> mesh), then the underlay drops data/track.obj into loop.blend as GEN_* collections (scripts/blender/underlay.py). Authoring happens in that blend (AUTH_*), the prep / exporter / spawn builder run from airoso's scripts/ac (never engine-july: San Diego's alone), the four gates run on the BUILT kn5. The workshop lives OUTSIDE airoso (the sync rails require it).",
+  "_owed": "First pass = the draft through the chain, no authoring yet: no signs (signs.json), no lamps, no race layouts, no TreeFX (make_treefx reads SD-shaped zones; V3-PLAN P1 'other adapted tools'). The real 4-8 % corner banking is lidar fact the draft builds flat (DOSSIER Part D §3): an authoring item, never curvature-invented (L10).",
+  "track": "milford-road-course",
+  "workshop": "C:/Users/Owner/Documents/k10-workshops/milford-road-course",
+  "workshop_project": "project",
+  "require_race_layout": false,
+  "ui_name_prefix": "doooom Michigan",
+  "steps": {
+    "draft": [
+      "gps",
+      "elev",
+      "project",
+      "mesh",
+      "underlay"
+    ],
+    "author": [],
+    "prep": [
+      "prep",
+      "split"
+    ],
+    "ship": [
+      "export_road",
+      "ai",
+      "verify_kn5",
+      "road_obj",
+      "track_folder",
+      "verify_inis",
+      "make_map"
+    ],
+    "gate": [
+      "drive_test_street",
+      "audit_street",
+      "kn5_ground"
+    ]
+  },
+  "sync_in": {
+    "required": [
+      "track.config.json"
+    ],
+    "optional": [
+      "data/centerline.geojson",
+      "data/centerline.elevation.json",
+      "data/heightfield.npy",
+      "data/heightfield.meta.json",
+      "data/corridor.elev.json"
+    ],
+    "dirs": [
+      "source"
+    ]
+  },
+  "sync_out": {
+    "required": [
+      "loop.blend"
+    ],
+    "files": [
+      "data/centerline.geojson",
+      "data/centerline.elevation.json",
+      "data/centerline.local.json",
+      "data/finished_centerline.json",
+      "data/gate_centerline.json",
+      "data/bridge.spans.auto.json",
+      "data/dummies.json",
+      "data/underlay.report.json",
+      "data/drive_test.json",
+      "data/audit.json",
+      "data/kn5_ground_check.{id}.json",
+      "data/drive_test.{id}.json"
+    ],
+    "map": [
+      [
+        "blender/split/split_manifest.json",
+        "data/split_manifest.json"
+      ]
+    ],
+    "dirs": [
+      "ai/{id}"
+    ]
+  }
+}

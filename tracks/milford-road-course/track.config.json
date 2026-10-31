@@ -1,0 +1,92 @@
+{
+  "archetype": "race_circuit",
+  "name": "Milford Road Course (unofficial)",
+  "slug": "milford_road_course",
+  "version": "0.2.0",
+  "mirror_x": false,
+  "loop": true,
+  "default_width_m": 11.0,
+  "location": {
+    "lat": 42.570024,
+    "lon": -83.6636,
+    "timezone": "America/Detroit",
+    "city": "Milford",
+    "country": "United States",
+    "_note": "Centroid of the traced lap. The course sits in the SE corner of the Milford Proving Ground (Hickory Ridge Rd east, Commerce/Duana south), Oakland County side of the county line."
+  },
+  "origin": "centroid",
+  "true_north_rotation_deg": 0.0,
+  "surfaces": {
+    "road": "1ROAD",
+    "grass": "GRASS",
+    "kerb": "1KERB"
+  },
+  "kerb": {
+    "height_m": 0.08,
+    "width_m": 1.2,
+    "top_frac": 0.6,
+    "edge_ramp": 0.4
+  },
+  "scenery": {
+    "corridor_margin_m": 3.0,
+    "tree_step_m": 45,
+    "tree_cap": 150,
+    "tree_atlas_cols": 3,
+    "tree_atlas_rows": 2,
+    "bush_spacing_m": 9,
+    "bush_density": 0.25,
+    "bush_off_min_m": 6,
+    "bush_off_span_m": 22,
+    "bush_size_min_m": 1.0,
+    "bush_size_span_m": 1.2,
+    "light_spacing_m": 90
+  },
+  "layouts": [
+    {
+      "id": "full",
+      "ai": "ai/full",
+      "uses_connectors": []
+    }
+  ],
+  "lighting": {
+    "presets": [
+      "morning",
+      "noon",
+      "golden_hour"
+    ],
+    "grassfx": true
+  },
+  "source": {
+    "type": "from_track",
+    "track": "source/mrc_fixes.json",
+    "_note": "Traced 2026-10-28 off USDA NAIP 2022-08-16 (0.6 m native; tile m_4208327_ne_17_060_20220816), exported from the USGS NAIPImagery ImageServer as an EPSG:4326 north-up clip, bbox -83.6700,42.5630,-83.6570,42.5770 at 2130x3112 (0.5 m/px) = source/naip_2022_mrc.jpg. Paved surface classified by colour, centre line found by a centre-seeking shortest path between hand-placed waypoints (source/trace/F1.json), re-centred and width-measured by perpendicular scans every 2 m. Widths clamped 9-16 m (median 11; the west front straight 16). Tree-shadowed pavement on the east side added by colour (source/trace/shadow_patch.py). Re-run: source/trace/README.md. OSM has this course as highway=raceway (ways 72577419 + 72577413 + connectors) but its outer loop is mis-drawn ~190 m south of the asphalt, so OSM is topology only (L1). Identification: relief along the trace 39.7 m vs the SAE paper's 41 m; length 4,072 m vs GM's '2.9 mi' (4.67 km), -13 %, see source/route-notes.md."
+  },
+  "road_profile": {
+    "_doc": "No banking authored (L10). Deck follows bare-earth 3DEP; any real cross-slope comes from lidar sections, never from curvature. The lap IS banked: 1 m lidar sections read -4.3 % in the esses (s 620), -7.1 % at the U-turn (s 780, the likeliest Carousel), +8.0 % at s 995. Tried 2026-10-28: scripts.elevation.crossfall (measured, 6 % cap, 80 % of the lap banked) made drive_test WORSE than the flat deck (ground-on-top 14 -> 53, severe steps 7 -> 17, bumps 17.2 -> 89.7/km, excursion drops 31 -> 52), the ledger-0018 class (crossfall x width steps). data/crossfall.json removed; the banks are authoring work, not a flag.",
+    "dips": [],
+    "cambers": [],
+    "max_grade_pct": 32.0,
+    "_max_grade_doc": "Set so it never binds (L3; Kevin: real hills are never reshaped). At the 9 % default the cap shaved the real hill: the deck sat up to 5.96 m under the lidar at the SW corner and 1.6 m in the esses, and drive_test failed on grass over the pavement lip and drops off the edge (2026-10-28). The despiked 3DEP profile climbs 26.6 % over 21 m at s 3,650 (31 % over one 3 m step): the climb from the bottom sweeper to the front straight, cut into a hillside (lidar cross-sections: ground 2-3 m lower 20 m left, 1-2 m higher 20 m right, both edges climbing with the line). The 2 m dip at s 3,605 is the service-road underpass, removed by the 33 m despike."
+  },
+  "route": {
+    "start_at": [
+      42.57048,
+      -83.667269
+    ],
+    "_orientation_doc": "Clockwise, per the OSM oneway tags on every raceway way here (unverified against onboard video). S/F on the 16 m west front straight about 2/3 of the way up, raced north; the grid sits on the ~250 m of straight behind it. The lap: west straight N -> NW corner -> right-hand hairpin off the apron -> esses south -> U-turn -> north -> east into the serpentine round the woods -> top straight E -> NE corner -> east side S -> sweeping bottom W -> SW corner. Unused pavement (later layouts over this kn5): the inner hairpin short-cut, the top-straight bypass, the SE back section + cross-connector + hook."
+  },
+  "terrain_cell_m": 1.25,
+  "terrain_vertex_budget": 1500000,
+  "corridor_refine_factor": 6,
+  "_terrain_note": "L3b: 1.25 m as IMI. At Pueblo's 2.0 m, drive_test failed (2026-10-28): 28 grass-on-top hits at the pavement lip and 20 drops over 20 cm, all on the infield's 19-33 m corners",
+  "ui_tags": [
+    "circuit"
+  ],
+  "ui_series": "doooom Michigan",
+  "ui_description": "Unofficial reconstruction of the Milford Road Course, Michigan: the private proving-ground road course, traced from USDA NAIP 2022 aerial imagery onto USGS 3DEP 1 m lidar (40 m of real relief, 27 % at its steepest). Clockwise. Not an official or endorsed product.",
+  "author": "airoso",
+  "_ground_doc": "Constructed corridor, not natural_ground (2026-10-28). Natural ground (copied from IMI) left the lidar's real banks beside the pavement unguarded: drive_test counted 31 drops over 12 cm per 0.5 m within 4 m of the edge (limit 4), worst 49 cm, because the measured-guard lip pass and the shoulder drape only run in constructed mode. The other T1 circuits (Pueblo, Aspen, High Plains) are constructed.",
+  "install_folder": "milford_road_course",
+  "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (Lariat plan A11); the previous install is parked in the archive",
+  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)"
+}

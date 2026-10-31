@@ -125,7 +125,20 @@ def main(argv=None) -> int:
     proj = Path(a.project)
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     ini = Path(a.ini) if a.ini else proj / "build" / cfg["slug"] / "extension" / "ext_config.ini"
-    lights = json.loads((proj / "data" / "lights.local.json").read_text(encoding="utf-8"))
+    lamps_p = proj / "data" / "lights.local.json"
+    if not lamps_p.exists():
+        # no lamps authored (every track but Lake Murray today; ledger 0060, the Exotics run of 2026-10-29 crashed
+        # here): nothing to match — and a [LIGHT_N] with no lamp behind it is a stray, refused
+        blocks = parse_lights(ini.read_text(encoding="utf-8", errors="replace")) if ini.exists() else []
+        problems = [f"{len(blocks)} [LIGHT_N] blocks in {ini.name} but no data/lights.local.json — no lamp authored"] if blocks else []
+        r = {"ok": not problems, "n_lamps": 0, "n_lights": len(blocks), "matched": 0, "problems": problems,
+             "ini": str(ini), "lamps": None}
+        if a.json:
+            Path(a.json).write_text(json.dumps(r, indent=1), encoding="utf-8")
+        print(f"[lights-ini] no data/lights.local.json — no lamps authored; {len(blocks)} [LIGHT_N] in the ini: "
+              f"{'PASS' if r['ok'] else 'FAIL — ' + problems[0]}")
+        return 0 if r["ok"] else 1
+    lights = json.loads(lamps_p.read_text(encoding="utf-8"))
     if not ini.exists():
         print(f"[lights-ini] FAIL: no {ini}")
         return 1

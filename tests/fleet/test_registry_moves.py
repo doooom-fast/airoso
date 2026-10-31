@@ -109,6 +109,13 @@ def test_real_registry_puts_the_lariat_at_airoso_once():
     ann = reg["track_annotations"]
     assert "airoso/lookout-lariat" in ann and "k10-colorado/lookout-lariat" not in ann
     found = Repo("airoso", FLEET_ROOT, air, True).tracks()
-    assert [(t.key, t.slug) for t in found] == [("airoso/lookout-lariat", "lookout_lariat")]
-    assert found[0].project_dir == FLEET_ROOT / "tracks" / "lookout-lariat"
-    assert found[0].kind == "street_port"
+    # the glob is a list since Milford (2026-10-28), the first track born in airoso: each listed
+    # track is discovered exactly once, and nothing else under tracks/ comes along with it
+    assert [(t.key, t.slug) for t in found] == [("airoso/exotics-racing-lv", "exotics_racing_lvms"),
+                                                ("airoso/lookout-lariat", "lookout_lariat"),
+                                                ("airoso/milford-road-course", "milford_road_course")], \
+        "discovered once each, in path order"
+    lariat = found[1]
+    assert lariat.project_dir == FLEET_ROOT / "tracks" / "lookout-lariat"
+    assert lariat.kind == "street_port"
+    assert found[0].kind == "circuit_port" and found[2].kind == "circuit_port"

@@ -103,7 +103,9 @@ class Repo:
     def tracks(self) -> list[Track]:
         found: list[Track] = []
         ann = load_registry().get("track_annotations", {})
-        for cfg in sorted(self.path.glob(self.spec["tracks_glob"])):
+        globs = self.spec["tracks_glob"]
+        globs = [globs] if isinstance(globs, str) else globs   # a list once several tracks have moved
+        for cfg in sorted(c for g in globs for c in self.path.glob(g)):
             if ".claude/worktrees" in str(cfg):        # worktrees are scratch copies, not the fleet
                 continue
             try:

@@ -358,8 +358,9 @@ boxes marked, and the two C-470 crossings marked, before any geometry (L12, show
 > ship.json lists the race steps, which still run SD's shape); the "other adapted tools" (`split_exports_blend`
 > far-terrain scene, `pack_release --slug`, `make_treefx` from config, `place_signs` both directions + plate types,
 > `author_lamps_blend` positions file); station matching in `seat_terrain_blend`, `place_signs` and the edge and
-> closure authoring (all out of this change's reach: a concurrent job holds those files); the underlay
-> (P2 step 3), which is what ends "no blend yet".
+> closure authoring (all out of this change's reach: a concurrent job holds those files); ~~the underlay
+> (P2 step 3), which is what ends "no blend yet"~~ — *landed 2026-10-28 (`scripts/blender/underlay.py`), first used on
+> Milford, Exotics Racing, Sand Creek and High Plains; the Lariat's dry run no longer stops at "no blend yet".*
 
 ### P2 — Draft, route-only
 
@@ -399,7 +400,10 @@ boxes marked, and the two C-470 crossings marked, before any geometry (L12, show
      stay junction nodes for P3b (no arc at the measured radius fits between the ends of the traced
      arm paint). Every vertex and station in the config was re-derived onto the new line
      (`tools/remap_centreline_config.py`).
-3. **New `scripts/blender/underlay.py`** (REALISM §4, the generalised draft builder). It writes these
+3. **New `scripts/blender/underlay.py`** (REALISM §4, the generalised draft builder). *Landed 2026-10-28, in
+   its first form: it drops the engine's `data/track.obj` (the `mesh` step) into `loop.blend` as `GEN_*` collections
+   with the prep's own frame, keeps every `AUTH_*` object, never resets the scene, and writes
+   `data/underlay.report.json`. `GEN_buildings` and the D4 verge as its own object are still owed.* It writes these
    objects into `tracks/lookout-lariat/loop.blend`:
    - `GEN_road`: the engine ribbon on the fitted line, at real width.
    - `GEN_verge`: the D4 edge, either A's 0.3–0.5 m gravel or B's 1–1.5 m firm drivable gravel. It

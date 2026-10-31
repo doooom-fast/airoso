@@ -68,10 +68,15 @@ def _spec(path):
 
 
 # --- the closed vocabulary -----------------------------------------------------------------------------------
-def test_every_step_both_ship_jsons_name_is_a_function():
+ALL_SPECS = sorted((ROOT / "tracks").glob("*/ship.json"))
+CHAIN_SPECS = [ROOT / "tracks" / t / "ship.json" for t in ("milford-road-course", "exotics-racing-lv", "sand-creek", "high-plains")]
+
+
+def test_every_step_every_ship_json_names_is_a_function():
     fns = _functions()
     assert len(fns) >= 40, sorted(fns)
-    for p in (SD_SPEC, LARIAT_SPEC):
+    assert {SD_SPEC, LARIAT_SPEC, *CHAIN_SPECS} <= set(ALL_SPECS), ALL_SPECS
+    for p in ALL_SPECS:
         s = spec_mod.load(p, _spec(p)["track"])
         for ph in PHASES:
             for n in s["steps"][ph]:
@@ -176,10 +181,10 @@ def test_main_flow_order():
         'step "sync inputs airoso -> workshop ($PROJ)"',
         "LAYOUT_IDS=$(pyq",
         'if [ "$SKIP_BLEND" = 0 ]; then\n  for n in ${DRAFT[@]+"${DRAFT[@]}"}; do',
-        'for n in ${AUTHOR[@]+"${AUTHOR[@]}"}; do "author_$n"; done',
-        'for n in "${PREP[@]}"; do "prep_$n"; done',
+        'for n in ${AUTHOR[@]+"${AUTHOR[@]}"}; do run_step author "$n"; done',
+        'for n in "${PREP[@]}"; do run_step prep "$n"; done',
         "DRY RUN: stopping before the kn5 exports",
-        'for n in ${SHIP[@]+"${SHIP[@]}"}; do "ship_$n"; done',
+        'for n in ${SHIP[@]+"${SHIP[@]}"}; do run_step ship "$n"; done',
         'for lid in $LAYOUT_IDS; do rm -f "$PROJ/data/drive_test.$lid.json"; done',
         'for n in ${GATE[@]+"${GATE[@]}"}; do "gate_$n"; done',
         "RACE_RED=$(pyq",
@@ -290,8 +295,21 @@ def test_install_folder_from_config_parked_old_build_and_running_game_refused():
     assert "_prev\"" not in install.replace('"${INSTALL_FOLDER}_prev"', ""), "never a _prev left in content/tracks"
     guard = _first("tasklist //FO CSV //NH")
     assert _first('elif [ "$INSTALL" = 1 ]; then') < guard < _first('mv "$AC/$old"')
-    for frag in ("acs[.]exe", "Content Manager", "NOT INSTALLED: close"):
-        assert frag in TEXT[guard:_first('mv "$AC/$old"')], frag
+    blk = TEXT[guard:_first('mv "$AC/$old"')]
+    for frag in ("acs[.]exe", "acs_x86[.]exe", "NOT INSTALLED: close", "Content Manager may stay open"):
+        assert frag in blk, frag
+    # Kevin, 2026-10-27: "you can install when that's running just not while AC is driving the track" — CM does not
+    # lock the track files, so only acs.exe is refused (as tools/ship_sd.sh)
+    assert "Content Manager[^\"]*[.]exe" not in blk and "Content Manager[^\"]*[.]exe" not in SD_TEXT
+    # the folder's shape follows the layout count (scripts/ac/track_folder.py): one layout = models.ini +
+    # ui/ui_track.json (Exotics' first install, 2026-10-29, stopped on "missing models_full.ini"); more = per layout
+    assert 'if [ "$N_LAYOUTS" = 1 ]; then' in install and '[ -f "$B/models.ini" ]' in install
+    assert 'for lid in $LAYOUT_IDS; do [ -f "$B/models_$lid.ini" ]' in install
+    assert "if len(layouts)==1:" in install and "os.path.join(sys.argv[2],'ui','ui_track.json')" in install
+    assert "lo.get('name') or cfg.get('name') or lo['id']" in install, "a single layout is named by the track when undeclared"
+    for track in ("exotics-racing-lv", "milford-road-course", "high-plains", "sand-creek"):
+        cfg = json.loads((ROOT / "tracks" / track / "track.config.json").read_text(encoding="utf-8"))
+        assert len(cfg["layouts"]) == 1, track
 
 
 def test_argument_guards_exit_2_before_any_file_operation():
@@ -306,6 +324,12 @@ def test_argument_guards_exit_2_before_any_file_operation():
              (["../etc"], {}, "not a track folder name"),
              (["no-such-track"], {}, "no track folder"),
              (["lookout-lariat", "--draft-only", "--skip-blend"], {}, "--draft-only runs the draft"),
+             (["lookout-lariat", "--from"], {}, "--from needs a step name"),
+             (["lookout-lariat", "--from", "no-such!", "--dry-run"], {}, "is not a step name"),
+             (["lookout-lariat", "--from", "prep", "--draft-only"], {}, "--from resumes at a step"),
+             (["lookout-lariat", "--from", "prep", "--skip-blend"], {}, "--from resumes at a step"),
+             (["lookout-lariat", "--from", "frobnicate", "--dry-run"], {}, "is not a draft / author / prep / ship step"),
+             (["lookout-lariat", "--from", "drive_test_street", "--dry-run"], {}, "the gates always run"),
              (["lookout-lariat"], {"STREET_AI": "bogus"}, "STREET_AI must be draft or july"),
              (["lookout-lariat", "--dry-run"], {"STREET_AI": "july"}, "names no street_ai_july"),
              (["lookout-lariat", "--dry-run"], {"SHIP_PROJ": "scratch/project"}, "must be an absolute path"),
@@ -319,6 +343,75 @@ def test_argument_guards_exit_2_before_any_file_operation():
         assert "sync inputs" not in r.stdout
     assert os.listdir(cwd) == []
     assert not Path(inside).exists()
+
+
+def test_from_resumes_at_a_step_before_the_gates_and_never_through_them():
+    """--from <step> (ledger 0060, 2026-10-29): the draft / author / prep / ship loops go through run_step, which skips
+    until the named step; the gate loop calls its functions directly, so every gate runs on every run; a gate name is
+    refused with the spec's steps before any file operation; past-the-draft resumes need the blend to exist."""
+    def helper(name: str) -> str:   # a helper function of the script (not a vocabulary step: _functions() has those)
+        m = re.search(r"^" + name + r"\(\) \{\n(.*?)^\}\n", TEXT, re.S | re.M)
+        assert m, name
+        return m.group(1)
+
+    body = helper("run_step")
+    assert '[ "$n" = "$FROM" ]' in body and "FROM_REACHED=1" in body and '"${phase}_$n"' in body
+    assert 'run_step draft "$n"' in TEXT and 'run_step author "$n"' in TEXT
+    assert 'run_step prep "$n"' in TEXT and 'run_step ship "$n"' in TEXT
+    assert 'for n in ${GATE[@]+"${GATE[@]}"}; do "gate_$n"; done' in TEXT, "the gates never go through run_step"
+    assert "run_step gate" not in TEXT
+    assert "is not a draft / author / prep / ship step of $SPEC (the gates always run)" in TEXT
+    assert _first("(the gates always run)") < _first("must be an absolute path"), "refused before the rails and any copy"
+    ready = helper("blend_builder_ready")
+    assert 'if [ -n "$FROM" ]; then case " ${DRAFT[*]:-} " in *" $FROM "*) ;; *) return 1;; esac; fi' in ready
+    assert "--from <step>" in TEXT.split("set -euo pipefail")[0], "documented in the header"
+
+
+def test_every_chain_tracks_declared_start_is_at_its_site():
+    """ledger 0060 (High Plains, 2026-10-29): route.start_at still held the pre-July displaced frame's point, 77 km
+    from the re-sourced site, so the chain rotated the ring to an arbitrary vertex. A declared start stands within
+    3 km of the track's own location."""
+    for track in ("exotics-racing-lv", "milford-road-course", "high-plains", "sand-creek"):
+        cfg = json.loads((ROOT / "tracks" / track / "track.config.json").read_text(encoding="utf-8"))
+        start = (cfg.get("route") or {}).get("start_at")
+        if not start:
+            continue
+        loc = cfg["location"]
+        d_km = 111.32 * ((start[0] - loc["lat"]) ** 2 + ((start[1] - loc["lon"]) * 0.77) ** 2) ** 0.5
+        assert d_km < 3.0, (track, start, loc, round(d_km, 1))
+
+
+def test_the_chain_refuses_the_v1_frame_before_any_copy():
+    """ledger 0060, 2026-10-29: the chain's frame is San Diego's (mirror_x false, true_north_rotation_deg 0); the
+    V1 OBJ program's mirror_x + 180 ship a mirrored track through it. Refused on the source config after the
+    no-blend-yet guard and before the sync-in; every chain track's config carries the chain's frame."""
+    assert _first('if [ "$FRAME" != "False 0.0" ]') < _first('step "sync inputs airoso -> workshop ($PROJ)"')
+    assert _first("no blend yet: $PROJ/loop.blend does not exist") < _first('if [ "$FRAME" != "False 0.0" ]')
+    assert "the chain's frame is San Diego's" in TEXT
+    for track in ("exotics-racing-lv", "milford-road-course", "high-plains", "sand-creek", "lookout-lariat",
+                  "san-diego-lake-murray"):
+        cfg = json.loads((ROOT / "tracks" / track / "track.config.json").read_text(encoding="utf-8"))
+        assert cfg.get("mirror_x", False) is False, track
+        assert float(cfg.get("true_north_rotation_deg") or 0.0) == 0.0, track
+    # Exotics' T2: the real right-hander banks +ve in the chain's frame (profile.py), -6.0 was the mirrored sign
+    ex = json.loads((ROOT / "tracks" / "exotics-racing-lv" / "track.config.json").read_text(encoding="utf-8"))
+    banks = [c["bank_deg"] for c in ex["road_profile"]["cambers"]]
+    assert banks == [6.0], banks
+    if not shutil.which("bash"):
+        print("  (no bash on PATH — the guard run skipped)")
+        return
+    # a V1-frame config (IMI still carries mirror_x true / 180) with a spec whose draft can build the blend: the
+    # run passes the no-blend-yet guard and stops at the frame, nothing copied
+    d = _spec(ROOT / "tracks" / "exotics-racing-lv" / "ship.json")
+    d["track"] = "imi"
+    tmp = Path(tempfile.mkdtemp())
+    sp = tmp / "ship.json"
+    sp.write_text(json.dumps(d), encoding="utf-8")
+    proj = tmp / "proj"
+    r = _run(["imi", "--dry-run"], {"SHIP_SPEC": sp.as_posix(), "SHIP_PROJ": proj.as_posix()})
+    assert r.returncode == 2, (r.returncode, r.stdout[-600:], r.stderr[-400:])
+    assert "(True 180.0): the chain's frame is San Diego's" in r.stdout, r.stdout[-600:]
+    assert not proj.exists() and "sync inputs" not in r.stdout
 
 
 # --- engine-july -----------------------------------------------------------------------------------------------
@@ -349,13 +442,25 @@ def test_engine_rule_and_no_blend_yet_on_guard_runs():
         return
     tmp = Path(tempfile.mkdtemp())
     proj = tmp / "lariat_scratch"
-    r = _run(["lookout-lariat", "--dry-run"], {"SHIP_PROJ": proj.as_posix()})
+    # the Lariat's draft ends in the underlay, which exists (scripts/blender/underlay.py, 2026-10-28): its dry run
+    # would now sync inputs and run the draft. The 'no blend yet' guard is the case of a draft that lists NO blend
+    # builder, so it is exercised on a copy of the Lariat spec with the underlay removed (SHIP_SPEC = a rehearsal)
+    assert (ROOT / "scripts" / "blender" / "underlay.py").is_file(), "the underlay is the Lariat's blend builder"
+    no_builder = json.loads(LARIAT_SPEC.read_text(encoding="utf-8"))
+    no_builder["steps"]["draft"] = [n for n in no_builder["steps"]["draft"] if n != "underlay"]
+    nb = tmp / "ship.no_builder.json"
+    nb.write_text(json.dumps(no_builder), encoding="utf-8")
+    r = _run(["lookout-lariat", "--dry-run"], {"SHIP_SPEC": nb.as_posix(), "SHIP_PROJ": proj.as_posix()})
     assert r.returncode == 0, (r.stdout[-600:], r.stderr[-400:])
     assert f"engine (prep / export / spawn): {ROOT.as_posix()}" in r.stdout, r.stdout
     assert "no blend yet" in r.stdout and "DRY RUN: stopped cleanly at 'no blend yet'." in r.stdout
     assert "underlay" in r.stdout and "sync inputs" not in r.stdout and not proj.exists()
-    r = _run(["lookout-lariat"], {"SHIP_PROJ": proj.as_posix()})            # a real run with no blend is a failure
+    assert "not written yet" not in r.stdout, "the message must not claim the underlay is unwritten"
+    r = _run(["lookout-lariat"], {"SHIP_SPEC": nb.as_posix(), "SHIP_PROJ": proj.as_posix()})   # a real run with no blend is a failure
     assert r.returncode == 1 and "no blend yet" in r.stdout and not proj.exists()
+    # blend_builder_ready: the underlay counts as a builder exactly when scripts/blender/underlay.py exists
+    body = TEXT[_first("blend_builder_ready() {"):_first("if [ \"$DRAFT_ONLY\" = 0 ] && [ ! -f \"$PROJ/loop.blend\" ]")]
+    assert 'underlay) [ -f "$AIROSO/scripts/blender/underlay.py" ] && return 0;;' in body
     sd = tmp / "sd_scratch"
     r = _run(["san-diego-lake-murray", "--skip-blend", "--dry-run"],
              {"SHIP_SPEC": SD_SPEC.as_posix(), "SHIP_PROJ": sd.as_posix()})
@@ -484,3 +589,41 @@ def test_ship_sd_is_untouched_by_this_chain():
     """ship_sd.sh stays San Diego's chain of record (not a shim): ship_track.sh never calls it"""
     assert "ship_sd.sh" not in "\n".join(ln for _, ln in _code_lines())
     assert "ship_track" not in SD_TEXT
+
+
+# --- the four tracks rebuilt through the chain (Kevin, 2026-10-28: "Rebuild all four with the Lake Murray chain") ---
+def test_the_four_chain_specs_draft_the_engine_then_the_underlay_and_run_on_airosos_engine():
+    fns = _functions()
+    data_steps = TEXT[_first("is_data_step() {"):_first("SPEC_LINES=$(")]
+    for p in CHAIN_SPECS:
+        track = p.parent.name
+        s = spec_mod.load(p, track)
+        d = s["steps"]["draft"]
+        assert d[-1] == "underlay" and d[-2] == "mesh", (track, d)
+        assert d[0] in ("gps", "aerial") and "elev" in d and "project" in d, (track, d)
+        assert d.index("elev") < d.index("project") < d.index("mesh"), (track, d)
+        for n in d[:-1]:
+            assert re.search(rf"\b{n}\b", data_steps), f"{track}: {n} must be a --draft-only data step"
+        for n in ("build_loop_blend", "rebuild_loop_blend", "weld_mouths", "verify_mouths", "median", "route_connectors",
+                  "treefx", "export_race", "race_author"):
+            assert n not in [x for ph in PHASES for x in s["steps"][ph]], (track, n)
+        assert s["steps"]["prep"] == ["prep", "split"]
+        assert {"export_road", "ai", "verify_kn5", "road_obj", "track_folder", "verify_inis", "make_map"} <= set(s["steps"]["ship"])
+        assert s["steps"]["gate"] == ["drive_test_street", "audit_street", "kn5_ground"], (track, s["steps"]["gate"])
+        assert s["workshop"] == f"C:/Users/Owner/Documents/k10-workshops/{track}" and "airoso" not in s["workshop"].lower()
+        assert s["require_race_layout"] is False and s["street_ai_july"] == ""
+        assert "loop.blend" in s["sync_out"]["required"] and "data/underlay.report.json" in s["sync_out"]["files"]
+        assert "source" in s["sync_in"]["dirs"] and "track.config.json" in s["sync_in"]["required"]
+        cfg = json.loads((p.parent / "track.config.json").read_text(encoding="utf-8"))
+        assert re.fullmatch(r"[A-Za-z0-9_]+", cfg["install_folder"]), (track, cfg.get("install_folder"))
+        assert cfg["layouts"] and not any(l.get("race_furniture") for l in cfg["layouts"]), track
+        assert track != "san-diego-lake-murray"
+    # the two new draft steps run the engine on the absolute project and nothing else
+    assert 'python -m scripts.aerial.build_aerial "$PROJ"' in fns["draft_aerial"]
+    assert 'python -m scripts.geometry.build_mesh "$PROJ"' in fns["draft_mesh"]
+    mesh_code = "\n".join(ln for ln in fns["draft_mesh"].splitlines() if not ln.lstrip().startswith("#"))
+    assert "build_env" not in mesh_code, "no furniture in the draft (V3-PLAN P2 step 6)"
+    # the aerial front-end is the Exotics draft's first step; from_track / kml go through gps
+    assert spec_mod.load(ROOT / "tracks" / "exotics-racing-lv" / "ship.json", "exotics-racing-lv")["steps"]["draft"][0] == "aerial"
+    for t in ("milford-road-course", "sand-creek", "high-plains"):
+        assert spec_mod.load(ROOT / "tracks" / t / "ship.json", t)["steps"]["draft"][0] == "gps", t

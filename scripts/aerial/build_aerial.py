@@ -22,7 +22,7 @@ from pathlib import Path
 
 from scripts.aerial import detect, georef, skeleton
 from scripts.config import load_config
-from scripts.gps.centerline import _feature, polyline_length, resample, write_preview_svg
+from scripts.gps.centerline import _feature, haversine, polyline_length, resample, write_preview_svg
 
 Vertex = tuple[float, float]  # (lon, lat)
 RESAMPLE_SPACING_M = 3.0  # match the GPS pipeline
@@ -66,6 +66,29 @@ def _pixel_centerline(src: dict, png: Path, w: int, h: int) -> tuple[list, str]:
     return [(x * step, y * step) for x, y in px], "auto"
 
 
+def _trace_widths(src: dict, trace_mode: str, n: int) -> list[float] | None:
+    """Optional measured width per ``trace_px`` point (``source.trace_width_m``), else None."""
+    tw = src.get("trace_width_m")
+    if not tw:
+        return None
+    if trace_mode != "trace_px" or len(tw) != n:
+        raise SystemExit(f"source.trace_width_m needs one width per trace_px point "
+                         f"({len(tw)} widths for {n} points, trace mode {trace_mode}).")
+    return [float(x) for x in tw]
+
+
+def _interp(xs: list[float], ys: list[float], x: float) -> float:
+    """Linear interpolation of ys over ascending xs (clamped at both ends)."""
+    if x <= xs[0]:
+        return ys[0]
+    for i in range(1, len(xs)):
+        if x <= xs[i]:
+            span = xs[i] - xs[i - 1]
+            t = (x - xs[i - 1]) / span if span else 0.0
+            return ys[i - 1] + (ys[i] - ys[i - 1]) * t
+    return ys[-1]
+
+
 def build(project_dir: str | Path, screenshot: str | Path | None = None) -> dict:
     pd = Path(project_dir)
     data = pd / "data"
@@ -84,10 +107,21 @@ def build(project_dir: str | Path, screenshot: str | Path | None = None) -> dict
     params = georef.affine_from_corners(cps[0][0], cps[0][1], cps[1][0], cps[1][1])
 
     ring: list[Vertex] = [georef.to_lonlat(params, x, y) for x, y in px_path]
+    trace_w = _trace_widths(src, trace_mode, len(ring))
     if cfg.loop and ring and ring[0] != ring[-1]:
         ring.append(ring[0])
+        if trace_w:
+            trace_w.append(trace_w[0])
+    if trace_w:
+        cum = [0.0]
+        for a, b in zip(ring, ring[1:]):
+            cum.append(cum[-1] + haversine(a, b))
     ring = resample(ring, RESAMPLE_SPACING_M)
-    widths = [cfg.default_width_m] * len(ring)
+    if trace_w:
+        # resample walks the trace by arc length, so output k sits at k * spacing along it
+        widths = [_interp(cum, trace_w, min(k * RESAMPLE_SPACING_M, cum[-1])) for k in range(len(ring))]
+    else:
+        widths = [cfg.default_width_m] * len(ring)
 
     mpp = georef.meters_per_pixel(params, cps[0][1][1])
     provenance = {

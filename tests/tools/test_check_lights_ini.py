@@ -69,3 +69,28 @@ def test_parse_reads_only_light_blocks_and_crlf():
     assert [b["n"] for b in blocks] == [0, 1, 2]
     assert blocks[0]["pos"] == (10.0, round(11.8 - CL.LIGHT_DROP_M, 2), -100.0)
     assert blocks[0]["keys"]["COLOR"] == "255, 165, 30, 0.015"
+
+
+def test_no_lamps_authored_passes_and_a_light_with_no_lamp_is_a_stray():
+    """ledger 0060 (the Exotics run, 2026-10-29): every track but Lake Murray has no data/lights.local.json — the check
+    crashed there. No lamps = nothing to match, PASS; a [LIGHT_N] in the written ini with no lamp behind it = FAIL."""
+    import json
+    import tempfile
+    d = Path(tempfile.mkdtemp())
+    (d / "data").mkdir()
+    (d / "track.config.json").write_text(json.dumps({"slug": "t"}), encoding="utf-8")
+    ext = d / "build" / "t" / "extension"
+    ext.mkdir(parents=True)
+    (ext / "ext_config.ini").write_text("[INCLUDE]\nINCLUDE = common/conditions.ini\n\n[GRASS_FX]\nGRASS_MATERIALS = 1GRASS\n",
+                                        encoding="utf-8")
+    out = d / "data" / "lights_ini_check.json"
+    assert CL.main([str(d), "--json", str(out)]) == 0
+    r = json.loads(out.read_text(encoding="utf-8"))
+    assert r["ok"] and r["n_lamps"] == 0 and r["n_lights"] == 0 and r["problems"] == []
+    (ext / "ext_config.ini").write_text(_ini(LENSES[:1]), encoding="utf-8")
+    assert CL.main([str(d), "--json", str(out)]) == 1
+    r = json.loads(out.read_text(encoding="utf-8"))
+    assert not r["ok"] and r["n_lights"] == 1 and "no data/lights.local.json" in r["problems"][0]
+    # no ini written at all and no lamps: nothing to check either way
+    (ext / "ext_config.ini").unlink()
+    assert CL.main([str(d), "--json", str(out)]) == 0

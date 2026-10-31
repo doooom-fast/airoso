@@ -21,7 +21,7 @@ from scripts.capture import evidence
 from scripts.geometry import dummies as dummies_mod
 from scripts.geometry import kerbs, nodedbg, ribbon, road_text
 from scripts.geometry import profile as profile_mod
-from scripts.geometry.projection import _meters_per_degree
+from scripts.geometry.projection import _meters_per_degree, in_local_order
 
 Vertex = tuple[float, float, float]
 # FLUSH EDGES (the "road hovering" root cause): 0.1 lift + 0.25 clearance stacked to a permanent
@@ -920,7 +920,12 @@ def build(project_dir: str | Path) -> dict:
             for i in range(1, len(raw_pts)):
                 _gst.append(_gst[-1] + math.hypot(raw_pts[i][0] - raw_pts[i - 1][0],
                                                   raw_pts[i][2] - raw_pts[i - 1][2]))
-            raw_ground = (_gst, [z - elev0 for z in _ej["z_raw_m"]])
+            # centerline.elevation.json is in centerline.geojson order; route.reverse / route.start_at re-ordered
+            # the local points in projection AFTER it was written. Paired by bare index this read, on High Plains
+            # 2026-10-29 (ring rotated by 815 of 1,074 points), the bare earth 2.4 km along the lap under every
+            # road point: an invented 549 m valley, a 'deck + piers, no fill' bridge over real ground,
+            # kn5_ground_check road-over-ground p95 0.60 m (ledger 0060). in_local_order maps it.
+            raw_ground = (_gst, [z - elev0 for z in in_local_order(local, _ej["z_raw_m"])])
     bridge_of = _bridge_detector(centerline, natural_grid, raw_ground=raw_ground, paved_zones=_fillet_zones)
     # persist AUTO-detected spans for the kn5 gate: the builder exempts them from fill/pins,
     # so the gate must exempt the same stations (declared-only exemption read auto bridge
@@ -957,7 +962,10 @@ def build(project_dir: str | Path) -> dict:
 
     # tile_m=8 m — the LA Canyons cracked-tarmac detail reads at its real scale (cracks crisp, not
     # stretched). The cracking is irregular enough to hide the repeat.
-    road = ribbon.road_ribbon(centerline, widths, tile_m=4.0, bank_at=bnk)  # 4 m = the Lake Murray asphalt scale
+    # road_profile.ribbon_cols: lateral columns for a banked road, so a camber ramp's twist doesn't
+    # sag the deck between rows (ribbon.road_ribbon). Banked only; absent = the old two-edge ribbon.
+    _cols = int((cfg_raw.get("road_profile") or {}).get("ribbon_cols", 1)) if bnk is not None else 1
+    road = ribbon.road_ribbon(centerline, widths, tile_m=4.0, bank_at=bnk, cols=_cols)  # 4 m = the Lake Murray asphalt scale
     # ONE SHEET THROUGH JUNCTIONS: inside a flat zone every pavement vert snaps to the plane —
     # coplanar centerlines still left each leg's CAMBERED ribbon riding proud of the pad
     # (the 20-40 cm lip across the mouth in Kevin's photo).
@@ -997,7 +1005,8 @@ def build(project_dir: str | Path) -> dict:
     # runoff.enabled=false skips it — a flat apron "at graded terrain height" makes sense beside a
     # flat circuit, but on a pitched mountainside it's a tarmac shelf with a step at the road band.
     if cfg_raw.get("runoff", {}).get("enabled", True):
-        runoff = kerbs.corner_runoff(centerline, widths, bank_at=bnk)
+        runoff = kerbs.corner_runoff(centerline, widths, bank_at=bnk,
+                                     bank_hold=bool(cfg_raw.get("natural_ground")))
         runoff["vertices"] = [(x, y + 0.05, z) for x, y, z in runoff["vertices"]]  # clear the grass, below road
     else:
         runoff = {"vertices": [], "uvs": [], "tris": []}
@@ -1210,17 +1219,28 @@ def build(project_dir: str | Path) -> dict:
             print(f"  [sidewalk] despiked {_despiked} strip vert(s) that drape-dropped >"
                   f"{_MAX_DROP:.2f} m below the road inside the walk band")
         edge_group, edge_mat = "1KERB_sidewalk", "kerb"
-    elif cfg_raw.get("natural_ground"):
-        # NATURAL GROUND (Kevin, 2026-08-09, verbatim diagnosis: "you can't seem to generate
-        # natural ground... it's obvious how the terrain should meet the road when you look at
-        # it. There's a ton of extra terrain now just for you to cut it into a moat"). The lidar
-        # already recorded the real earthworks — real shoulders, ditches, cut faces are IN the
-        # 3DEP heights. So: NO constructed corridor. A plain two-point verge (road_shoulder's
-        # no-ground fallback: lip + 1 m verge, no sections, which also silences the ring
-        # annulus, the graded floor and the stone lips downstream), raw-grid grass everywhere,
-        # and a short blend band sewn in later where grass approaches the deck.
-        shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
-                                        ground_drop=GRASS_CLEARANCE_M)
+    else:
+        if cfg_raw.get("natural_ground"):
+            # NATURAL GROUND (Kevin, 2026-08-09, verbatim diagnosis: "you can't seem to generate
+            # natural ground... it's obvious how the terrain should meet the road when you look at
+            # it. There's a ton of extra terrain now just for you to cut it into a moat"). The lidar
+            # already recorded the real earthworks — real shoulders, ditches, cut faces are IN the
+            # 3DEP heights. So: NO constructed corridor. A plain two-point verge (road_shoulder's
+            # no-ground fallback: lip + 1 m verge, no sections, which also silences the ring
+            # annulus, the graded floor and the stone lips downstream), raw-grid grass everywhere,
+            # and a short blend band sewn in later where grass approaches the deck.
+            shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
+                                            ground_drop=GRASS_CLEARANCE_M, bank_hold=True)
+        else:
+            # CONSTRUCTED (the default): the verge drapes onto grass_surf and the construction
+            # selector grades each edge (fill_apron on tarmac keeps deep fills gentle). The
+            # natural_ground port (6f1c734, 2026-08-19) rewrote this `else:` as
+            # `elif natural_ground:`, so every track with neither a sidewalk nor natural ground
+            # died on an unbound edge_group (found on Milford, 2026-10-28).
+            shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
+                                            ground_drop=GRASS_CLEARANCE_M, ground=grass_surf,
+                                            fill_apron=(str(cfg_raw.get("road_surface", "tarmac"))
+                                                        == "tarmac"))
         edge_group, edge_mat = "1ROAD_shoulder", "road"
         _pav_reg(edge_group, shoulder, "shoulder")
         # CONNECTORS GET A DRAPED VERGE TOO. The main loop's shoulder extends a MANAGED corridor
@@ -1308,6 +1328,7 @@ def build(project_dir: str | Path) -> dict:
     kerb_cfg = cfg_raw.get("kerb", {})
     if kerb_cfg.get("enabled", True):
         kerb = kerbs.corner_kerbs(centerline, widths, bank_at=bnk, ground=grass_surf,
+                                  bank_hold=bool(cfg_raw.get("natural_ground")),
                                   kerb_h=float(kerb_cfg.get("height_m", 0.05)),
                                   kerb_w=float(kerb_cfg.get("width_m", 1.0)),
                                   top_frac=float(kerb_cfg.get("top_frac", 0.55)),
@@ -2982,20 +3003,51 @@ def build(project_dir: str | Path) -> dict:
         # pavement footprint cap: a floor sourced from a cross-road or inner edge must never
         # raise grass through pavement (audit B hit 61k the build this was missing). Nodes under
         # a pavement triangle cap at that surface − 0.06.
-        _ptW: dict = {}
-        for _sheetW in (road, runoff, kerb):    # NOT the shoulder: capping under its own descending face pins the floor away from the toe it exists to fill
+        # THE SHOULDER IS IN THE CAP (ledger 0060, Sand Creek 2026-10-29). It was left out ("capping
+        # under its own descending face pins the floor away from the toe it exists to fill"), but on a
+        # FILL the cap cannot bind: the face rises inboard from the meet at >= 22 % while the floor off
+        # that meet falls at 20 %, so the face is always above the floor and the cap (face − 0.06) is
+        # never the smaller. In a CUT it is the only thing standing between the floor and the deck: the
+        # ring edge (the meet) sits on natural ground 1.7–2.3 m ABOVE the road, the prefilter reads the
+        # pinned shoulder band beneath it as "low natural ground below the edge" and keeps the source,
+        # and the floor then lifts every grass node under the flat shoulder back to natural — 2 m of dirt
+        # over a 1ROAD_shoulder at deck height, poking through at the pavement lip (s 8047 at −5.97, s
+        # 8461 at −5.35: drive_test "ground on top"). Measured on the committed draft: the shoulder from
+        # 6.0 to 8.5 m out at deck +0.00, 1GRASS over it at +1.5 .. +2.3 along a 20 % line from the meet.
+        # TWO TABLES, because the CUT-EDGE pass below asks the same question for a different purpose:
+        # it sinks the grass node at a deck-edge face to pavement − 0.35, and with the shoulder in ITS
+        # table it dug 30,048 nodes (154 before) along every cut's shoulder edge — a 0.35 m ledge the
+        # measured-guard then fenced with 467 new stone lips and the gate read as 19 new far ledges
+        # (measured on the first rebuild). The weld's cap sees the shoulder; the excavation keeps the
+        # deck edge it was written for.
+        # ... AND NOT THE SHOULDER'S BURIED HEM. The sheet's last quad runs from the ground-meet 1 m
+        # out and 0.8 m INTO the dirt (ribbon.road_shoulder: "no grid-resolution mismatch can ever open
+        # daylight under the lip"). Counted as pavement, it capped the floor UNDER the ground for every
+        # grass node within 1 m beyond the meet, so the weld's 20 % apron off the toe was never built
+        # there: the top surface fell 0.12-0.14 m per 0.5 m onto the ring at every fill toe and the
+        # measured-guard fenced each one — 464 new lips and 19 new far ledges on the second rebuild
+        # (s 2147.9: 1GRASS_t at 6.31 / 6.24 / 6.14 beyond the meet before, 6.25 / — / 5.93 with the hem
+        # in the cap). That is the "toe it exists to fill" the old comment meant.
+        _hemW = set(shoulder.get("hem_idx", ()))
+        _ptW: dict = {}          # the deck: road, runoff, kerb (the cut-edge excavation's pavement)
+        _ptW_shW: dict = {}      # ... plus the shoulder less its hem (the seam-weld floor's cap)
+        for _sheetW in (road, runoff, kerb, shoulder):
             _svW = _sheetW.get("vertices", [])
             for _tW in _sheetW.get("tris", ()):
+                if _sheetW is shoulder and (_tW[0] in _hemW or _tW[1] in _hemW or _tW[2] in _hemW):
+                    continue
                 _triW = (_svW[_tW[0]], _svW[_tW[1]], _svW[_tW[2]])
                 _xsW = [_vW[0] for _vW in _triW]
                 _zsW = [_vW[2] for _vW in _triW]
                 for _ciW in range(int(min(_xsW) // 4.0), int(max(_xsW) // 4.0) + 1):
                     for _cjW in range(int(min(_zsW) // 4.0), int(max(_zsW) // 4.0) + 1):
-                        _ptW.setdefault((_ciW, _cjW), []).append(_triW)
+                        if _sheetW is not shoulder:
+                            _ptW.setdefault((_ciW, _cjW), []).append(_triW)
+                        _ptW_shW.setdefault((_ciW, _cjW), []).append(_triW)
 
-        def _pav_below_W(_pxW, _pzW, _refW):
+        def _pav_below_W(_pxW, _pzW, _refW, _tableW=None):
             _bW = None
-            for _AW, _BW, _CW in _ptW.get((int(_pxW // 4.0), int(_pzW // 4.0)), ()):
+            for _AW, _BW, _CW in (_ptW if _tableW is None else _tableW).get((int(_pxW // 4.0), int(_pzW // 4.0)), ()):
                 _dW2 = (_BW[2] - _CW[2]) * (_AW[0] - _CW[0]) + (_CW[0] - _BW[0]) * (_AW[2] - _CW[2])
                 if abs(_dW2) < 1e-12:
                     continue
@@ -3057,7 +3109,7 @@ def build(project_dir: str | Path) -> dict:
                             if _floorW is None or _fW > _floorW:
                                 _floorW = _fW
             if _floorW is not None and _gyW < _floorW - 0.01:
-                _pavW = _pav_below_W(_gxW, _gzW, _floorW)
+                _pavW = _pav_below_W(_gxW, _gzW, _floorW, _ptW_shW)     # the shoulder-inclusive cap
                 if _pavW is not None and _floorW > _pavW - 0.06:
                     _floorW = _pavW - 0.06
                 if _gyW < _floorW - 0.01:
@@ -3135,7 +3187,32 @@ def build(project_dir: str | Path) -> dict:
             _ib = _best[1]
             _dc = math.sqrt(_best[0])
             _de = _dc - widths[_ib] / 2.0
+            # PERPENDICULAR, not vertex, distance: vertices are ~3 m apart, so grass midway between two
+            # reads up to ~0.2 m farther out than it is and was eased toward raw ground while still
+            # under the deck edge, poking up through it (Exotics Racing s 975, 2026-10-28: 1-3 cm of
+            # 1GRASS over 1ROAD_main where a kerb ends on a widening road). Take the nearer of the two
+            # segments either side of the nearest vertex, with the width lerped along it.
+            for _jb in (_ib - 1, _ib + 1):
+                if 0 <= _jb < len(centerline):
+                    _ax, _az = centerline[_ib][0], centerline[_ib][2]
+                    _sx, _sz = centerline[_jb][0] - _ax, centerline[_jb][2] - _az
+                    _sl2 = _sx * _sx + _sz * _sz
+                    if _sl2 > 1e-9:
+                        _tt = max(0.0, min(1.0, ((_gx - _ax) * _sx + (_gz - _az) * _sz) / _sl2))
+                        _dp = math.hypot(_gx - (_ax + _sx * _tt), _gz - (_az + _sz * _tt))
+                        _de = min(_de, _dp - (widths[_ib] + (widths[_jb] - widths[_ib]) * _tt) / 2.0)
             _ey = centerline[_ib][1] + ROAD_LIFT_M
+            if bnk is not None:
+                # BANKED DECK: ease to the edge on THIS side, not the centreline. On a banked turn the
+                # inner edge rides o*tan(bank) below the centre; easing grass to the centre height
+                # built a berm beside it and left the raised outer shoulder a 0.5 m drop to the
+                # grass (Exotics Racing T2, 6 deg: drive_test excursions at s 300/450, 2026-10-28).
+                _pa, _pn = centerline[max(0, _ib - 1)], centerline[min(len(centerline) - 1, _ib + 1)]
+                _tl = math.hypot(_pn[0] - _pa[0], _pn[2] - _pa[2]) or 1.0
+                _lo = ((_gx - centerline[_ib][0]) * -(_pn[2] - _pa[2]) +
+                       (_gz - centerline[_ib][2]) * (_pn[0] - _pa[0])) / _tl   # left +ve, as road_ribbon
+                _hw = widths[_ib] / 2.0
+                _ey += max(-_hw, min(_hw, _lo)) * math.tan(bnk(_stp[_ib]))
             if abs(_gy - _ey) > 6.0:
                 continue                      # another leg / stacked geometry: leave it alone
             if _de <= 0.0:
@@ -3183,9 +3260,26 @@ def build(project_dir: str | Path) -> dict:
         _wmedH = sorted(widths)[len(widths) // 2]
         _guardH = 0
         _prev_endH = {1.0: None, -1.0: None}
+        # THE GATE'S SPAN EXEMPTION, MIRRORED (ledger 0060, Sand Creek 2026-10-29). drive_test's
+        # excursion sweep skips every crossing inside a DECLARED bridge span ± 20 m ("past the railing
+        # is a real drop, guarded"); this sweep did not, and on the 12 m approach between the fill's
+        # end and span 3 — where the levelled deck rides 6 m over the creek bank and the shoulder
+        # selector builds a 1:6 retaining-wall face — it walked DOWN the wall (1ROAD_shoulder is
+        # pavement, so built_edge followed the face and no lip could legally stand on it), reached the
+        # ring annulus at the toe 5.6 m below the deck, read the 0.3 m bank step beyond it as "a drop",
+        # and set a 3 m stone lip there: two of its feet over a bank falling 4 m along its own length,
+        # nothing drivable within 2.5 m beneath them — drive_test "floating furniture" 8, the only
+        # red on the track that the gates were right about. A lip is a deck-edge element: the second
+        # rule below refuses one whose inboard surface is already > 1.5 m under the deck (the car is
+        # not there; the face above it is the pavement's own and #17 owns its parapet).
+        _spansH = [(c - l / 2.0 - 20.0, c + l / 2.0 + 20.0) for c, l in (_bridges or [])]
+        _LIP_MAX_BELOW_DECK_M = 1.5
         for _iH in range(len(centerline)):
             if widths[_iH] > _wmedH + 1.5:      # flare mouths: the gate exempts them
                 _prev_endH[1.0] = _prev_endH[-1.0] = None
+                continue
+            if any(_aH <= _stp[min(_iH, len(_stp) - 1)] <= _bH for _aH, _bH in _spansH):
+                _prev_endH[1.0] = _prev_endH[-1.0] = None   # declared span ± 20 m: the gate does not look here
                 continue
             _xH, _yH0, _zH = centerline[_iH]
             _aH = centerline[max(0, _iH - 1)]
@@ -3207,7 +3301,8 @@ def build(project_dir: str | Path) -> dict:
                     _bandH = _builtH is not None and _offH <= _builtH + 4.0
                     _lipokH = False
                     if (_bandH and _tyH is not None and _prevH is not None
-                            and _prevH - _tyH > 0.115 and _offH > _weH - 0.5):
+                            and _prevH - _tyH > 0.115 and _offH > _weH - 0.5
+                            and _prevH >= _yH0 - _LIP_MAX_BELOW_DECK_M):
                         # A creditable lip needs a guard probe (0.5 m grid) strictly inboard of
                         # the drop (< off-0.25), clear of the pavement (>= built+0.15), AND clear
                         # of the gate's obstruction scan (obstacles within min(lane_half,6)+0.3

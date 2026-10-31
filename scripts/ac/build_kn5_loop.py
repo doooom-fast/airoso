@@ -3,10 +3,10 @@
 This is the San Diego (k10-san-diego) build philosophy, ported as an alternate front-end: the
 project's ``loop.blend`` is the source of truth (Kevin shapes it in Blender), and this pass CONSUMES
 it — renames the working meshes to AC surface conventions, gives them tiling UVs + PBR materials,
-welds/holes-fills the grass, drops the AC_START/PIT/TIME/HOTLAP dummies computed from the real
-centreline, packs textures, and saves ``blender/<slug>.blend``. ``export_kn5_addon`` then binds
-shaders + exports the real kn5 (tools/ship_track.sh runs this as its `prep` step; scripts/build_loop.sh
-is retired, 2026-10-28).
+welds/holes-fills the grass, drops the AC_START/PIT/TIME/HOTLAP dummies (a single layout: the engine
+draft's data/dummies.json, else computed from the real centreline; more than one layout: none — they
+ride in the per-layout spawn kn5s), packs textures, and saves ``blender/<slug>.blend``. ``export_kn5_addon`` then binds
+shaders + exports the real kn5 (see scripts/build_loop.sh for the full pipeline).
 
 THIS IS A DIFFERENT PROGRAM from scripts/ac/build_kn5.py (the OBJ-import pipeline). The two must
 never be merged: this one edits an existing hand-authored scene; that one assembles a scene from
@@ -137,17 +137,74 @@ def detect_bridge_spans(pts_xyz, origin_lonlat, bridge_ways, *, mirror_x=False,
     return spans
 
 
+FC_FRAME_KN5 = "kn5 (x, y, -z of the engine/OBJ frame) — the line the gates walk"
+
+
 def declare_bridge_spans(proj: Path) -> list[tuple[float, float]]:
-    """Detect the loop's real bridge spans and DECLARE them the way every other project does — write
-    data/bridge.spans.auto.json + data/finished_centerline.json so the kn5 ground gate applies its
-    standard declared-span exemption (a deck over the I-8 trench is SUPPOSED to ride high over the
-    grass; that is not a float). finished_centerline is written in the KN5 frame (x, y, -z of the
-    local frame): the Blender-first path has no OBJ stage, so the shipped-binary frame IS the
-    reference frame the gate samples in. Returns the spans (local stations, metres)."""
+    """Declare the loop's bridge spans and the GATE LINE — write data/bridge.spans.auto.json +
+    data/finished_centerline.json, the two files kn5_ground_check's declared-span exemption reads and
+    the line drive_test walks (via kn5_to_gate_obj's data/gate_centerline.json), verify_kn5 judges the
+    spawns against and write_ai_line draws from. finished_centerline is written in the KN5 frame (x, y,
+    -z of the local/OBJ frame): the Blender-first path has no OBJ stage, so the shipped-binary frame IS
+    the reference frame the gate samples in. Returns the spans (local stations, metres).
+
+    THE LINE IS THE ENGINE'S WHEN THERE IS ONE (ledger 0060, Sand Creek 2026-10-29). build_mesh persists
+    the line it actually swept the road along — corner-rounded, smoothed, its declared bridge decks
+    LEVELLED crest to crest (evidence.level_bridge_decks, up to 7.9 m above the bare-earth profile over
+    Sand Creek's creek) — as data/finished_centerline.json, frame "mesh …", with its auto-detected spans
+    in data/bridge.spans.auto.json. This prep used to overwrite both with the RAW centerline.local.json
+    line and an OSM-way span scan: drive_test's top_at(y_ref, window=2.5) then lost the deck wherever it
+    rode > 2.5 m above the raw line (the middle of every span: 127 "severe steps" of up to 1.75 m where
+    the deck left and re-entered the window, 12 "ground on top" + 12 "daylight gaps" at the one band
+    where the creek bed was inside it), and on Milford the raw corners put the wheel paths beside the
+    swept esses (15 lane steps on the chain against 8 on the draft). The engine's line is converted to
+    the KN5 frame and its spans kept; this prep's own earlier write (frame "kn5 …", a `--from prep`
+    re-run) is kept as it stands; without either (San Diego's assembler, whose prep IS the first stage)
+    the raw line is written as before, now marked. An unmarked finished_centerline beside an engine
+    draft is an earlier prep's raw line — the engine's is gone until the draft is rebuilt; said so."""
     local = json.loads((proj / "data" / "centerline.local.json").read_text())
     pts = [tuple(p) for p in local["points_xyz_m"]]
     widths = local.get("widths_m") or [7.0] * len(pts)
     cfg = json.loads((proj / "track.config.json").read_text())
+    fcp = proj / "data" / "finished_centerline.json"
+    autop = proj / "data" / "bridge.spans.auto.json"
+    prev, prev_frame = None, ""
+    if fcp.exists():
+        try:
+            prev = json.loads(fcp.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            prev = None
+        if isinstance(prev, dict) and prev.get("points_xyz_m"):
+            prev_frame = str(prev.get("frame") or "")
+        else:
+            prev = None
+    if prev is not None and prev_frame.startswith(("mesh", "kn5")):
+        if prev_frame.startswith("mesh"):
+            # build_mesh's swept line, OBJ frame (x=E, y=up, z=N; x already mirrored when mirror_x) -> KN5 frame
+            fc = {"frame": FC_FRAME_KN5,
+                  "source": "build_mesh finished_centerline (the swept line: corner-rounded, smoothed, bridge decks "
+                            "levelled) — the engine draft's",
+                  "points_xyz_m": [[round(p[0], 3), round(p[1], 3), round(-p[2], 3)] for p in prev["points_xyz_m"]],
+                  "widths_m": list(prev.get("widths_m") or widths)}
+            fcp.write_text(json.dumps(fc), encoding="utf-8")
+            how = "the engine's swept line (build_mesh finished_centerline) -> KN5 frame"
+        else:
+            how = "kept this prep's earlier line (a re-run from the prep)"
+        spans = []
+        if autop.exists():
+            try:
+                spans = [(float(a), float(b)) for a, b in json.loads(autop.read_text(encoding="utf-8"))]
+            except (OSError, ValueError, TypeError):
+                spans = []
+        else:
+            autop.write_text("[]", encoding="utf-8")
+        print(f"[build_kn5_loop] gate line: {how}; {len(spans)} bridge span(s) as the builder detected them: "
+              f"{[(round(a), round(b)) for a, b in spans]}")
+        return spans
+    if prev is not None and (proj / "data" / "underlay.report.json").exists():
+        print("[build_kn5_loop] WARNING gate line: data/finished_centerline.json beside an engine draft carries no frame "
+              "— an earlier prep's raw line; the engine's swept line is gone until the draft is rebuilt (run the chain "
+              "from the draft, not --from prep). The gates walk the raw centerline.local.json line this run.")
     bridges_p = proj / "data" / "bridges.cache.json"
     ways = json.loads(bridges_p.read_text()) if bridges_p.exists() else []
     o = local.get("origin") or {}
@@ -155,9 +212,10 @@ def declare_bridge_spans(proj: Path) -> list[tuple[float, float]]:
     if ways and "lon" in o:
         spans = detect_bridge_spans(pts, (o["lon"], o["lat"]), ways,
                                     mirror_x=bool(cfg.get("mirror_x", False)))
-    (proj / "data" / "bridge.spans.auto.json").write_text(
-        json.dumps([[round(a, 1), round(b, 1)] for a, b in spans]), encoding="utf-8")
-    (proj / "data" / "finished_centerline.json").write_text(json.dumps({
+    autop.write_text(json.dumps([[round(a, 1), round(b, 1)] for a, b in spans]), encoding="utf-8")
+    fcp.write_text(json.dumps({
+        "frame": FC_FRAME_KN5,
+        "source": "centerline.local.json (the raw line; no engine swept line in data/)",
         "points_xyz_m": [[round(x, 3), round(y, 3), round(-z, 3)] for x, y, z in pts],
         "widths_m": widths}), encoding="utf-8")
     print(f"[build_kn5_loop] declared {len(spans)} bridge span(s): "
@@ -865,7 +923,21 @@ def main():
     #     the footprint (subdividing the corridor first), spare the declared spans, and re-seat the
     #     props on the moved ground. Engine-owned so every future rebuild stays fixed.
     spans = declare_bridge_spans(proj)
-    _conform_and_reseat(proj, spans)
+    # An ENGINE DRAFT's ground is already conformed to its road (L3: build_mesh grades the embankment and drapes
+    # the shoulder; scripts/blender/underlay.py drops it in as GEN_terrain and records data/underlay.report.json).
+    # This conform was written for the SD assembler's independent terrain grid; on an engine draft its FEATHER
+    # pulls the fill slope up toward deck height for BAND_M + FEATHER_M and leaves a cliff at the end of it —
+    # Milford 2026-10-29: 2.45 M verts moved, 75 excursion drops > 20 cm at 10-12.5 m lateral where the V1 build
+    # had 1; High Plains 103 (ledger 0060). So: auto = skip when the underlay report exists; track.config.json
+    # prep.terrain_conform true / false overrides (an authored deck on an engine draft is the case for true).
+    _tc = (cfg.get("prep") or {}).get("terrain_conform", "auto")
+    if _tc == "auto":
+        _tc = not (proj / "data" / "underlay.report.json").exists()
+    if _tc:
+        _conform_and_reseat(proj, spans)
+    else:
+        print("[build_kn5_loop] terrain conform skipped: the ground is the engine draft's, conformed to the road by "
+              "build_mesh (data/underlay.report.json; track.config.json prep.terrain_conform forces it)")
 
     # split any mesh over the AC per-mesh vertex cap into uniquely-named tiles (big tracks: freeway terrain)
     for ob in list(o for o in bpy.data.objects if o.type == "MESH"):
@@ -1017,15 +1089,30 @@ def main():
         local = json.loads((proj / "data" / "centerline.local.json").read_text())
         cl = [tuple(p) for p in local["points_xyz_m"]]
         widths = local["widths_m"]
-        n_pits = 8
-        # The start is a CONTRACT (0026): when the config declares start_arc_m, the grid goes there —
-        # Kevin: "i prefer starting on alvarado toward college" (station 3,467 on the Lake Murray
-        # loop); the straightest-window heuristic had parked it on Navajo. Declared beats derived.
-        placed = dmod.place_dummies(cl, widths, n_sectors=3, n_pits=n_pits,
-                                    start_arc_m=cfg.get("start_arc_m"))
-        # start facing = travel direction pts[0]->pts[1], as a yaw about Blender Z(up)
-        tx, ty = cl[1][0] - cl[0][0], cl[1][2] - cl[0][2]          # Blender (E, N)
-        start_yaw = math.atan2(tx, ty)
+        mirror_x = bool(cfg.get("mirror_x", False))
+        # The engine draft's own placement first (scripts/geometry/build_mesh.py -> place_dummies on the
+        # FINISHED centreline: the pits on the road that mesh has, the loop's start). Recomputed here from
+        # centerline.local.json, Exotics Racing's 8 pits walked 14-45 m off the road (verify_kn5,
+        # 2026-10-29; ledger 0060). The recomputation stays for a scene with no draft (the assembler's path).
+        placed = dmod.load_draft(proj / "data" / "dummies.json")
+        from_draft = bool(placed)
+        if from_draft:
+            print(f"[build_kn5_loop] AC dummies: the draft's data/dummies.json ({len(placed)} placements)")
+        else:
+            n_pits = 8
+            # The start is a CONTRACT (0026): when the config declares start_arc_m, the grid goes there —
+            # Kevin: "i prefer starting on alvarado toward college" (station 3,467 on the Lake Murray
+            # loop); the straightest-window heuristic had parked it on Navajo. Declared beats derived.
+            placed = dmod.place_dummies(cl, widths, n_sectors=3, n_pits=n_pits,
+                                        start_arc_m=cfg.get("start_arc_m"))
+            print(f"[build_kn5_loop] AC dummies: placed from centerline.local.json ({len(placed)}; no draft dummies.json)")
+        # facing = the travel direction at AC_START_0, as a yaw about Blender Z(up): atan2(tx, -tz), the measured
+        # convention of the per-layout spawn scenes (tools/layout_dummies.yaw_deg, ledger 0047; the exporter's
+        # (x, z, -y) puts north at kn5 -Z, so an unrotated node faces south). The atan2(tx, tz) that stood here
+        # faced a north-bound grid backwards. A mirrored draft's tangent is mirrored with it (the chain refuses
+        # mirror_x: tools/ship_track.sh THE FRAME).
+        start_at = placed.get("AC_START_0") or placed.get("AC_HOTLAP_START_0") or cl[0]
+        start_yaw = dmod.facing_yaw(cl, start_at, mirror_x=mirror_x and from_draft)
         for name, (x, y, z) in placed.items():
             e = bpy.data.objects.new(name, None)
             e.empty_display_type = "ARROWS"; e.empty_display_size = 4.0

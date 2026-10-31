@@ -23,10 +23,18 @@ Writes, into --out-dir (default: the input blend's folder):
   split_manifest.json          what went where (objects, meshes, positions, materials, AC nodes per output)
                                + problems (exit 1 on any)
 
+A SINGLE-layout track (one layouts[] entry; the four of ledger 0060 — Exotics, Milford, High Plains, Sand Creek's
+first pass) has no spawn scenes: the prep bakes AC_START / AC_PIT / AC_TIME / AC_HOTLAP into the road scene
+(scripts/ac/build_kn5_loop.py, data/dummies.json) and verify_kn5's single-layout branch judges them in <slug>.kn5,
+so loop_main.blend KEEPS every AC_* object and a road scene without one is the PROBLEM. The race scenes exist only
+when a layout declares race_furniture: a track with none has no common set to find and no curb strip to demand
+(the Exotics run of 2026-10-29 stopped here on all three counts). The multi-layout rule above is unchanged.
+
 The manifest records a PROBLEM (exit 1) for: a closure whose name token no corridor declares; a retired
 centre-chain object (1WALL_race_kbar_*); an empty closure blend; a closure object in loop_race.blend (or another
 layout's closure in a closure blend); (race u closures) != every RACE object of the input; a material in a race
-or closure scene no kept object uses, or a non-RACE material there; AC_* nodes in any furniture scene.
+or closure scene no kept object uses, or a non-RACE material there; AC_* nodes in any furniture scene; a
+multi-layout road scene that kept an AC_* node, a single-layout one that has none.
 
 Why objects are REMOVED rather than deselected or moved between collections: the exporter that runs
 (exporter.kn5 — the AppData blender-assetto-corsa-tools 1.0.7) walks blend_data.objects, ignores the
@@ -180,11 +188,14 @@ def main():
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     layouts = [lo for lo in cfg.get("layouts", []) if (a["layouts"] is None or lo["id"] in a["layouts"])]
     race_ids = [str(lo["id"]) for lo in layouts if lo.get("race_furniture")]
+    # the prep's and verify_kn5's rule, on the CONFIG's layouts (never the --layouts selection): more than one entry =
+    # a spawn-free road scene + one spawn scene per layout; one entry = the AC_* ride in the road scene
+    multi = len([lo for lo in (cfg.get("layouts") or []) if isinstance(lo, dict) and lo.get("id")]) > 1
     LAP = rf._race_lap()
     # ledger 0054: the lap groups — the mainline's declaration (barrier_bands.json) and one per lap a race layout
-    # names (barrier_bands.<lap>.json); with no lap declared, the mainline's alone
+    # names (barrier_bands.<lap>.json); with no lap declared, the mainline's alone. No race layout = no common set.
     laps = LAP.lap_ids(cfg)
-    has_main = None in LAP.groups(cfg)
+    has_main = bool(race_ids) and None in LAP.groups(cfg)
     bands_of = {None: rf.load_bands(proj) or {}}
     for lap in laps:
         bands_of[lap] = rf.load_bands(proj, lap) or {}
@@ -216,14 +227,22 @@ def main():
         outputs[f"race_{lap}"] = out_dir / lap_blend_name(lap)
     for lid in tokens:
         outputs[f"closure_{lid}"] = out_dir / closure_blend_name(lid)
-    for lo in layouts:
-        outputs[f"spawn_{lo['id']}"] = out_dir / f"loop_spawn_{lo['id']}.blend"
+    if multi:
+        for lo in layouts:
+            outputs[f"spawn_{lo['id']}"] = out_dir / f"loop_spawn_{lo['id']}.blend"
     want_street = RC.has_street_kn5(cfg)
     if want_street:
         outputs["street"] = out_dir / "loop_street.blend"
     stale_street = out_dir / "loop_street.blend"
     if not want_street and stale_street.exists():
         stale_street.unlink()                       # a retired chicane's street set never rides along
+    # a scene this run does not write never rides along either: a race set after the race layouts went, a spawn set
+    # after a track became single-layout
+    if not has_main and (out_dir / "loop_race.blend").exists():
+        (out_dir / "loop_race.blend").unlink()
+    if not multi:
+        for stale in out_dir.glob("loop_spawn_*.blend"):
+            stale.unlink()
     for p in outputs.values():
         if p.resolve() == blend:
             raise SystemExit(f"[split] output {p} is the input — refusing")
@@ -241,8 +260,10 @@ def main():
         problems.append(f"input: {len(undeclared)} closure objects whose token no race layout declares "
                         f"(declared {sorted(tok_to_lid)}): {undeclared[:4]}")
     common_in = race - closures_in
-    if not race:
-        problems.append("input: no race furniture (run author_race_furniture_blend first)")
+    if race_ids and not race:
+        problems.append(f"input: layouts {race_ids} declare race_furniture but the scene has none (run author_race_furniture_blend first)")
+    if race and not race_ids:
+        problems.append(f"input: {len(race)} RACE objects but no layout declares race_furniture: {sorted(race)[:4]}")
     stray_lap = sorted(n for n in common_in if rf.race_lap(n) is not None and rf.race_lap(n) not in laps)
     if stray_lap:
         problems.append(f"input: {len(stray_lap)} lap common objects whose lap no layout names (laps {laps}): {stray_lap[:4]}")
@@ -260,12 +281,16 @@ def main():
     if street_in and not want_street:
         problems.append(f"input: {len(street_in)} street-only objects but no street-only span is declared {sorted(street_in)[:4]}")
 
-    # --- main: everything except race furniture + AC_* + the street-only set -----------------------
-    _remove(race | ac | street_in)
+    # --- main: everything except race furniture + the street-only set; + AC_* when every layout has its own spawn
+    #     scene (multi-layout), the AC_* kept when the prep baked them in (single layout) -----------------------
+    _remove(race | (ac if multi else set()) | street_in)
     c = _census()
     bad = [m for m in c["materials"] if rf.is_race_name(m)]
-    if c["ac_nodes"] or c["race_objects"] or bad:
+    if (multi and c["ac_nodes"]) or c["race_objects"] or bad:
         problems.append(f"main: ac={c['ac_nodes']} race={c['race_objects']} race_mats={bad}")
+    if not multi and not c["ac_nodes"]:
+        problems.append("main: single layout but no AC_* node in the prepped scene — the prep bakes AC_START / AC_PIT / "
+                        "AC_TIME / AC_HOTLAP there (scripts/ac/build_kn5_loop.py, data/dummies.json); the road kn5 would have no grid")
     if any(RC.is_street_only_name(nm) for nm in c["names"]):
         problems.append("main: a street-only object in loop_main.blend")
     _save(outputs["main"])
@@ -349,9 +374,12 @@ def main():
         problems.append(f"race u closures != every RACE object of the input: missing {sorted(input_race - kept_all)[:4]}, "
                         f"extra {sorted(kept_all - input_race)[:4]}")
 
-    # --- spawn per layout: AC_* empties only ------------------------------------------------------
-    pts_main, widths_main = rf.load_centerline(proj)
-    for lo in layouts:
+    # --- spawn per layout: AC_* empties only (multi-layout; a single layout's ride in loop_main.blend) -----------
+    if not multi:
+        print(f"[split] spawn: single layout — the {len(ac)} AC_* object(s) stay in loop_main.blend (the prep's "
+              f"data/dummies.json); no spawn scene")
+    pts_main, widths_main = rf.load_centerline(proj) if multi else (None, None)
+    for lo in (layouts if multi else []):
         lid = lo["id"]
         pts, widths = (pts_main, widths_main) if not lap_of.get(str(lid)) else rf.load_centerline(proj, lap_of[str(lid)])
         m = rf.unique_count(pts)

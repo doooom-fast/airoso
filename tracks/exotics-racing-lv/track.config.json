@@ -3,8 +3,8 @@
   "name": "Nevada Nights",
   "slug": "exotics_racing_lvms",
   "ui_series": "doooom Nevada",
-  "version": "0.1.0",
-  "mirror_x": true,
+  "version": "0.2.0",
+  "mirror_x": false,
   "loop": true,
   "default_width_m": 14.0,
   "location": {
@@ -16,7 +16,7 @@
     "_note": "Centroid of the traced lap. The circuit sits in the LVMS lots north-west of the drag strip, between I-15 (north) and Speedway Blvd (south-west); the Welcome Center is at 36.28087, -115.02109 on its south-west corner. Closed 2021-11-28; the ground went to Nuro (DOSSIER.md section 0)."
   },
   "origin": "centroid",
-  "true_north_rotation_deg": 180.0,
+  "true_north_rotation_deg": 0.0,
   "surfaces": {
     "road": "1ROAD",
     "grass": "GRASS",
@@ -4843,11 +4843,11 @@
         "name": "T2_bowl",
         "start_m": 215,
         "len_m": 310,
-        "bank_deg": -6.0,
+        "bank_deg": 6.0,
         "ramp_m": 85
       }
     ],
-    "_sign_doc": "NEGATIVE on purpose. profile.py's sign is in the BUILD frame (+ve raises the frame-left edge), and mirror_x swaps left/right: frame-left is the real-world RIGHT, which on this clockwise lap is T2's INSIDE. v0.1.0 builds ran +6.0 and banked the inside up (off-camber), checked by which side of the deck sits nearer the infield centre. -6.0 raises the real outside, as the lidar shows (corridor +offset = real left = outside, +10.5 %)."
+    "_sign_doc": "POSITIVE: profile.py's +ve banks a right-hander (frame-left / outside edge up) and T2 is a real right-hander driven clockwise. It was -6.0 while this config carried the V1 OBJ program's mirror_x (which swaps frame-left and right); the chain's frame is San Diego's, mirror_x false (ledger 0060, 2026-10-29), so the sign is the natural one. Check on the built deck: the OUTSIDE (left, east-side) edge of T2 must be the raised one."
   },
   "route": {
     "start_at": [

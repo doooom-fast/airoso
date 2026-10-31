@@ -43,6 +43,49 @@ def _tangent(pts: list[Vertex], i: int, loop: bool = True) -> tuple[float, float
     return dx / L, dz / L
 
 
+def load_draft(path) -> dict[str, Vertex]:
+    """The engine draft's ``data/dummies.json`` (build_mesh: :func:`place_dummies` on the FINISHED centreline, so the
+    pits stand on the road that mesh has) as ``{AC_* name: (x, y, z)}``; ``{}`` when the file is missing, empty, or
+    not a placement. Metadata keys and anything that is not a 3-vector are dropped. The loop prep
+    (scripts/ac/build_kn5_loop.py) takes these over its own recomputation: recomputed from centerline.local.json,
+    Exotics Racing's 8 pits walked 14-45 m off the road (verify_kn5, 2026-10-29; ledger 0060)."""
+    import json
+    from pathlib import Path
+    p = Path(path)
+    if not p.exists():
+        return {}
+    try:
+        raw = json.loads(p.read_text(encoding="utf-8"))
+    except ValueError:
+        return {}
+    if not isinstance(raw, dict):
+        return {}
+    out: dict[str, Vertex] = {}
+    for k, v in raw.items():
+        if not (isinstance(k, str) and k.startswith("AC_") and isinstance(v, (list, tuple)) and len(v) == 3):
+            continue
+        try:
+            out[k] = (float(v[0]), float(v[1]), float(v[2]))
+        except (TypeError, ValueError):
+            continue
+    return out
+
+
+def facing_yaw(centerline_m: list[Vertex], at, *, mirror_x: bool = False) -> float:
+    """The yaw about the up axis (Blender rotation_euler.z, radians) that makes an exported AC_START / AC_PIT /
+    AC_HOTLAP node face the travel direction at the centreline vertex nearest ``at`` (x, z):
+    ``atan2(east, -north)`` — the exporter's (x, z, -y) puts north at kn5 -Z, so an unrotated node faces south
+    (tools/layout_dummies.yaw_deg, the measured convention of ledger 0047). East is mirrored when the draft is
+    (build_mesh mirrors the ribbon, the dummies and so the facing; centerline.local.json is never mirrored)."""
+    sx = -1.0 if mirror_x else 1.0
+    pts = [(sx * float(p[0]), float(p[1]), float(p[2])) for p in centerline_m]
+    if len(pts) < 2:
+        return 0.0
+    k = min(range(len(pts)), key=lambda i: (pts[i][0] - at[0]) ** 2 + (pts[i][2] - at[2]) ** 2)
+    a, b = (pts[k], pts[k + 1]) if k + 1 < len(pts) else (pts[k - 1], pts[k])
+    return math.atan2(b[0] - a[0], -(b[2] - a[2]))
+
+
 def place_dummies(
     centerline_m: list[Vertex],
     widths_m: list[float],

@@ -510,8 +510,11 @@ def build_for_source(project_dir: str | Path) -> tuple[Path, dict]:
         track = src.get("track")
         if not track:
             raise SystemExit("source.type from_track needs source.track (the fixes file, relative to the project)")
+        # source.smooth_window: 5 (default) tames 1 Hz phone-GPS jitter; 0 for a node list (OSM nodes 18-585 m
+        # apart: High Plains), which the average would only distort (ledger 0060, 2026-10-29)
         return from_track.build_from_track(project_dir, [str(project_dir / track)], loop=bool(cfg.loop),
-                                           width_m=float(cfg.default_width_m))
+                                           width_m=float(cfg.default_width_m),
+                                           smooth_window=int(src.get("smooth_window", 5)))
     if kind == "aerial":
         raise SystemExit("source.type aerial: run the aerial front-end instead — python -m scripts.aerial.build_aerial "
                          f"{project_dir}")

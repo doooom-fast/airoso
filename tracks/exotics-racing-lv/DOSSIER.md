@@ -266,7 +266,7 @@ No mined mod content ships (REALISM §3). The Pellefred mod (§9) is a **referen
 
 1. **Draft (the engine, as a draft only).** `aerial` (`scripts.aerial.build_aerial` on `source/naip_2019_exr.png`
    with the two control points and the refined `trace_px`, measured widths per point) → `elev` (3DEP 1 m) →
-   `project` → `mesh` (`data/track.obj`: the ribbon with the −6.0° T2 bank from `road_profile`, kerbs, the
+   `project` → `mesh` (`data/track.obj`: the ribbon with the +6.0° T2 bank from `road_profile` (it read −6.0° while the config carried the V1 program's `mirror_x`; the chain's frame is unmirrored, ledger 0060 2026-10-29), kerbs, the
    natural-ground verge, ground) → **`underlay`** (`scripts/blender/underlay.py`: the OBJ into `loop.blend` as
    `GEN_road` / `GEN_kerb` / `GEN_wall` / `GEN_terrain` / `GEN_misc`, plus `GEN_refs`).
 2. **Author in Blender (`AUTH_*`, never regenerated).** First pass: nothing — the draft ships so the seat can

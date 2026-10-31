@@ -2,8 +2,8 @@
   "archetype": "race_circuit",
   "name": "Milford Road Course (unofficial)",
   "slug": "milford_road_course",
-  "version": "0.1.0",
-  "mirror_x": true,
+  "version": "0.2.0",
+  "mirror_x": false,
   "loop": true,
   "default_width_m": 11.0,
   "location": {
@@ -15,7 +15,7 @@
     "_note": "Centroid of the traced lap. The course sits in the SE corner of the Milford Proving Ground (Hickory Ridge Rd east, Commerce/Duana south), Oakland County side of the county line."
   },
   "origin": "centroid",
-  "true_north_rotation_deg": 180.0,
+  "true_north_rotation_deg": 0.0,
   "surfaces": {
     "road": "1ROAD",
     "grass": "GRASS",

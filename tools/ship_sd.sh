@@ -679,12 +679,14 @@ if [ "$INSTALL" = 1 ] && [ "$SCRATCH" = 1 ]; then
   echo "$PROJ/build/$SLUG (load it by hand if you mean to)."
 elif [ "$INSTALL" = 1 ]; then
   step "install: $AC/${SLUG}_v3 (three layouts; previous build parked in $ARCHIVE/<stamp>/)"
-  # Assetto Corsa or Content Manager holding the folder makes the park (mv) fail half-way: refuse while either runs
+  # Assetto Corsa holding the folder makes the park (mv) fail half-way: refuse while acs.exe runs. Content Manager may
+  # stay open — Kevin, 2026-10-27: "you can install when that's running just not while AC is driving the track" (CM
+  # does not lock the track files; a running acs.exe does). Until 2026-10-29 CM was refused too.
   if command -v tasklist >/dev/null 2>&1; then
-    RUNNING=$(tasklist //FO CSV //NH 2>/dev/null | grep -i -E '^"(acs[.]exe|acs_x86[.]exe|Content Manager[^"]*[.]exe)"' | cut -d, -f1 | tr '\n' ' ' || true)
-    if [ -n "$RUNNING" ]; then echo "NOT INSTALLED: close $RUNNING first (Assetto Corsa / Content Manager hold the track folder)"; exit 1; fi
+    RUNNING=$(tasklist //FO CSV //NH 2>/dev/null | grep -i -E '^"(acs[.]exe|acs_x86[.]exe)"' | cut -d, -f1 | tr '\n' ' ' || true)
+    if [ -n "$RUNNING" ]; then echo "NOT INSTALLED: close $RUNNING first (Assetto Corsa holds the track folder; Content Manager may stay open)"; exit 1; fi
   else
-    echo "(tasklist not found — make sure Assetto Corsa and Content Manager are closed)"
+    echo "(tasklist not found — make sure Assetto Corsa is not running; Content Manager may stay open)"
   fi
   B="$PROJ/build/$SLUG"
   for lid in $LAYOUT_IDS; do [ -f "$B/models_$lid.ini" ] || { echo "missing $B/models_$lid.ini"; exit 1; }; done

@@ -31,7 +31,7 @@ class TrackConfig:
     # Track identity for ui_track.json — versioned per track, independent of the builder
     # package version (pyproject.toml). Bump these when you re-release a track.
     version: str = "0.1"
-    author: str = "prodrive-ac-builder"
+    author: str = "doooom"            # "K10 is gone. doooom." (Kevin 2026-10-28); the builder's name is not an author
     year: int = 2026
     path: Path | None = None
     raw: dict[str, Any] = field(default_factory=dict)
@@ -119,7 +119,7 @@ def load_config(project_dir: str | Path) -> TrackConfig:
         width_overrides=raw.get("width_overrides", []),
         true_north_rotation_deg=raw.get("true_north_rotation_deg"),
         version=str(raw.get("version", "0.1")),
-        author=str(raw.get("author", "prodrive-ac-builder")),
+        author=str(raw.get("author", "doooom")),
         year=int(raw.get("year", 2026)),
         path=cfg_path,
         raw=raw,

@@ -151,6 +151,7 @@ def road_shoulder(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
     tris: list[tuple[int, int, int]] = []
     P = 4 if ground is not None else 2   # 4th point = the BURIED HEM (sheet edge sealed into dirt)
     sections: dict = {1.0: [], -1.0: []}   # per-station construction metadata (selector output)
+    hem_idx: list[int] = []                # the hem vertices: a pass that caps grass under "pavement" must skip them
     for side in (1.0, -1.0):
         rows: list[int] = []
         arc = 0.0
@@ -241,6 +242,7 @@ def road_shoulder(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
                 # or interp mismatch can ever open daylight under the lip.
                 oh = _cap(half + verge_w + extra + 1.0)
                 verts.append((x + nx * oh, ground(x + nx * oh, z + nz * oh) - 0.8, z + nz * oh))
+                hem_idx.append(len(verts) - 1)
                 uvs.append((1.0, arc / tile_m))
             else:
                 # bank_hold: the verge stays at the banked EDGE's height instead of carrying the bank
@@ -256,7 +258,7 @@ def road_shoulder(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
             for u in range(P - 1):
                 tris.append((p + u, p + u + 1, q + u + 1))
                 tris.append((p + u, q + u + 1, q + u))
-    return {"vertices": verts, "uvs": uvs, "tris": tris, "sections": sections}
+    return {"vertices": verts, "uvs": uvs, "tris": tris, "sections": sections, "hem_idx": hem_idx}
 
 
 def curb_sidewalk(centerline_m: list[Vertex], widths_m: list[float], *, lift: float = 0.1,
@@ -289,6 +291,7 @@ def curb_sidewalk(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
     verts: list[Vertex] = []
     uvs: list[tuple[float, float]] = []
     tris: list[tuple[int, int, int]] = []
+    hem_idx: list[int] = []                # as road_shoulder: the buried hem's vertices
     for side in (1.0, -1.0):
         rows: list[int] = []
         arc = 0.0
@@ -327,6 +330,7 @@ def curb_sidewalk(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
                 o5 = _cap(half + sidewalk_off + grade_w + 1.0) if callable(globals().get('_cap')) else o4 + 1.0
                 o5 = o4 + 1.0
                 verts.append((x + nx * o5, ground(x + nx * o5, z + nz * o5) - 0.8, z + nz * o5))
+                hem_idx.append(len(verts) - 1)
                 uvs.append((1.0, arc / tile_m))
                 uvs.append(((sidewalk_off + extra) / sidewalk_off, arc / tile_m))
             else:
@@ -341,7 +345,7 @@ def curb_sidewalk(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
             for p in range(P - 1):                      # curb face, sidewalk top, verge, embankment
                 tris.append((a + p, a + p + 1, b + p + 1))
                 tris.append((a + p, b + p + 1, b + p))
-    return {"vertices": verts, "uvs": uvs, "tris": tris}
+    return {"vertices": verts, "uvs": uvs, "tris": tris, "hem_idx": hem_idx}
 
 
 def _road_surface_samples(centerline_m: list[Vertex], widths_m: list[float] | None, bank_at=None):

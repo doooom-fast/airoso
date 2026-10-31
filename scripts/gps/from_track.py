@@ -46,17 +46,30 @@ def _load(paths: list[str]) -> list[tuple[str, float, float, float | None]]:
     return out
 
 
-def _smooth(pts: list[Vertex], window: int = 5) -> list[Vertex]:
+def _smooth(pts: list[Vertex], window: int = 5, *, loop: bool = False) -> list[Vertex]:
     """Moving-average smoother to tame consumer-GPS jitter (±several m at 1 Hz) without dropping turns —
-    the window (~5 s ≈ a short arc at city speed) is small enough to keep corners."""
+    the window (~5 s ≈ a short arc at city speed) is small enough to keep corners. ``window`` < 2 = none:
+    a node list (OSM nodes 18-585 m apart, High Plains) is not jitter, and averaging it cuts every corner
+    by a road width or two (measured 26.8 m, ledger 0060). On a ``loop`` the window wraps, so the ring's
+    two ends are smoothed against each other and stay together (un-wrapped, High Plains' closed ring came
+    apart by 466 m and was bridged with a chord)."""
     if window < 2 or len(pts) < window:
         return pts
     h = window // 2
+    n = len(pts)
+    closed = loop and n > 2 and pts[0] == pts[-1]
+    core = pts[:-1] if closed else pts          # a repeated closing vertex is not averaged twice
+    m = len(core)
     out = []
-    for i in range(len(pts)):
-        lo, hi = max(0, i - h), min(len(pts), i + h + 1)
-        seg = pts[lo:hi]
+    for i in range(m):
+        if loop:
+            seg = [core[(i + k) % m] for k in range(-h, h + 1)]
+        else:
+            lo, hi = max(0, i - h), min(m, i + h + 1)
+            seg = core[lo:hi]
         out.append((sum(p[0] for p in seg) / len(seg), sum(p[1] for p in seg) / len(seg)))
+    if closed:
+        out.append(out[0])
     return out
 
 
@@ -69,7 +82,7 @@ def build_from_track(project_dir: str | Path, track_paths: list[str], *,
         raise SystemExit(f"only {len(fixes)} usable fixes — need a longer track")
     # (lon, lat) ring to match the geojson convention; smooth then close then resample
     ring: list[Vertex] = [(lon, lat) for _t, lat, lon, _w in fixes]
-    ring = _smooth(ring, smooth_window)
+    ring = _smooth(ring, smooth_window, loop=loop)
     close_gap = haversine(ring[0], ring[-1])
     if loop and ring[0] != ring[-1]:
         ring.append(ring[0])                      # bridge the start/end gap into a closed circuit

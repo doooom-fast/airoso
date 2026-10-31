@@ -874,7 +874,20 @@ def fillet_corners(P, closed: bool, st: _Stations, ds: float, tol: float = RADIU
             clusters.pop()
         done = 0
         limit_hi = None                                   # windows are replaced from the last one back
-        for c0, c1 in reversed(clusters):
+        # THE SEAM CLUSTER GOES FIRST. Its indices straddle the array's end (c0 < 0 unwrapped), so any
+        # replacement made before it — every other cluster's, from the last one back — moves or shrinks
+        # the very points it refers to, while `wrap` and `assoc` still belong to the sweep's original n.
+        # Processed last (reversed(clusters) put it there) on Sand Creek 2026-10-29: 19 corners replaced,
+        # the line 20-odd points shorter, then `floor_at(wrap(i))` for the seam's negative i indexed past
+        # the new end (IndexError in build_line; ledger 0060). First, with `done` 0, its window is allowed,
+        # the splice `break`s and the next sweep re-measures everything else on the rotated line; if no
+        # window fits it, the others proceed as before.
+        order = list(reversed(clusters))
+        if closed and clusters and clusters[0][0] < 0:
+            order = [clusters[0]] + order[:-1]
+        for c0, c1 in order:
+            if closed and done and c0 < 0:
+                continue                                  # (unreachable with the order above; the guard that was missing)
             need = max(floor_at(wrap(i), assoc[wrap(i)]) for i in range(c0, c1 + 1)) * (1.0 + tol)
             windows = []
             for K in range(3, FOLD_SEARCH_PTS + 1, 2):
@@ -2867,6 +2880,8 @@ def main(argv: list[str] | None = None) -> None:
     # (the chord is 27-30 m on Alvarado): a contradiction is a build error, not a warning.
     if args.layout:
         dpath = data_dir / f"dummies_{args.layout}.json"
+        if not dpath.exists() and len(cfg.get("layouts") or []) <= 1 and (data_dir / "dummies.json").exists():
+            dpath = data_dir / "dummies.json"        # a single layout's grid rides in the road scene (ledger 0060)
         if dpath.exists():
             dums = {k: v for k, v in json.loads(dpath.read_text(encoding="utf-8")).items()
                     if not k.startswith("_")}

@@ -27,6 +27,16 @@ general form stopped at "no blend yet" for every other track; the underlay now e
 **What the engine is, from now on:** the draft steps and the gates. Nothing under `scripts/` produces a
 track. `scripts/build.sh` as a complete pipeline is retired by this plan (row 1 below).
 
+**The chain's frame (2026-10-29, ledger 0060).** The prep imports the draft's local (E, up, N) as Blender
+(E, N, up) and the exporter writes kn5 (E, up, −N): geographically right with **no mirror and no yaw** — Lake
+Murray 0.19.1 is `mirror_x: false`, `true_north_rotation_deg: 0`. The `mirror_x: true` + `180` that every
+V1-era config carries were the V1 OBJ program's own import convention (`(x, −z, y)`) and its sun fix: through
+this chain they ship a **mirrored** track (every turn the wrong way) with the sun 180° off, every gate
+self-consistent and blind to it. `tools/ship_track.sh` refuses that frame before any copy; a track coming to
+the chain sets both (and flips the sign of any banked `road_profile` camber, `scripts/geometry/profile.py`).
+The first four tracks were set on 2026-10-29; IMI, Pueblo, Aspen, Grand Junction, Pikes Peak, Second Creek
+still carry the V1 frame and will be refused until their turn.
+
 ## 2. Every other system, and what happens to it
 
 Legend: **RETIRE** = delete after its last dependent is gone (the row says which); **KEEP** = part of

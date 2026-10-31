@@ -16,6 +16,7 @@ Plain ``test_*`` for tests/run_tests.py (no pytest fixtures).
 
 from __future__ import annotations
 
+import itertools
 import json
 import math
 import struct
@@ -259,3 +260,63 @@ def test_a_point_half_a_metre_from_a_closure_face_is_refused():
     assert abs(near["min_clear_m"] - 0.5) < 1e-6 and near["min_clear_face"].startswith("y_hi"), near
     past = w.check_corridor(line(3.5), faces, closed=False)
     assert not past["ok"] and past["outside"] > 0 and past["min_clear_m"] < 0.0, past
+
+
+# --- fillets across the start seam (ledger 0060, Sand Creek 2026-10-29) --------------------------------
+
+def _dense_v_loop(seam_half=2, depth=4.0, k_notches=8, mult=3, jit=0.3):
+    """A closed 80 m circle (16 m lane) with `k_notches` over-sampled jagged V corners along it and one plain
+    V across the start seam. Each jagged corner is filleted into FEWER points, so by the time the seam
+    cluster was reached the line had shrunk under the seam's indices — the Sand Creek IndexError."""
+    R, n0 = 80.0, 240
+    pts = [[R * math.cos(2 * math.pi * i / n0), 0.0, R * math.sin(2 * math.pi * i / n0)] for i in range(n0)]
+    base, ws, ds, (dhs, ins) = w._resample([list(p) for p in pts], [16.0] * n0, 1.5, True, extra=[[0.0] * n0, [0.0] * n0])
+    tan = [w._unit_xz(t[0], t[2]) for t in w._tangents(base, True, ds, span=w.TANGENT_SPAN)]
+    lo, hi = w.lane_corridor(ws, dhs, ins, 0.7)
+    st = w._Stations(base, tan, lo, hi, w.road_radius(base, True), True, ds)
+    m = len(base)
+
+    def v_pts(P, at, half):
+        out = []
+        for d in range(-half, half + 1):
+            i = (at + d) % len(P)
+            f = depth * (1 - abs(d) / (half + 1))
+            x, z = P[i][0], P[i][2]
+            r = math.hypot(x, z)
+            out.append([x * (r - f) / r, P[i][1], z * (r - f) / r])
+        return out
+
+    P = [list(p) for p in base]
+    for j in range(k_notches, 0, -1):                       # highest index first: earlier indices stay valid
+        at = (m * j) // (k_notches + 1)
+        vp = v_pts(P, at, 4)
+        dense = []
+        for a, b in itertools.pairwise(vp):
+            for q in range(mult):
+                t = q / mult
+                p = [a[0] + (b[0] - a[0]) * t, a[1], a[2] + (b[2] - a[2]) * t]
+                if q:
+                    r = math.hypot(p[0], p[2])
+                    jj = jit if q % 2 else -jit
+                    p = [p[0] * (r + jj) / r, p[1], p[2] * (r + jj) / r]
+                dense.append(p)
+        dense.append(vp[-1])
+        P = P[:at - 4] + dense + P[at + 5:]
+    for d, p in zip(range(-seam_half, seam_half + 1), v_pts(P, 0, seam_half)):   # the seam corner, plain
+        P[d % len(P)] = p
+    return P, st, lo, hi, ds
+
+
+def test_fillet_corners_takes_the_seam_cluster_first_and_does_not_index_past_a_shrunk_line():
+    """Sand Creek's AI step died in fillet_corners: the cluster across the start seam (unwrapped to a negative
+    c0) was processed LAST, after every other corner's replacement had shrunk the line, and `wrap`/`assoc`
+    still used the sweep's original n — floor_at(wrap(i)) indexed past the new end. The seam cluster goes
+    first now (its window is allowed only as a sweep's first anyway); the others follow as before."""
+    for args in ((2, 4.0, 8, 3), (2, 3.0, 12, 4), (3, 5.0, 10, 3)):
+        P, st, lo, hi, ds = _dense_v_loop(*args)
+        out, fillets = w.fillet_corners([list(p) for p in P], True, st, ds)      # used to raise IndexError
+        assert len(fillets) >= args[2], (args, len(fillets))
+        assert any(abs(f["xz"][1]) < 6.0 and f["xz"][0] > 70.0 for f in fillets), \
+            ("the seam corner at angle 0 (x ~ 76, z ~ 0) is filleted", [f["xz"] for f in fillets])
+        for p, k in zip(out, st.associate(out)):
+            assert lo[k] - 1e-6 <= st.lat(p[0], p[2], k) <= hi[k] + 1e-6

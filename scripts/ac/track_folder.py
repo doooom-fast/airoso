@@ -140,12 +140,19 @@ def ui_track_json(cfg, layout: str, length_m: float, n_pits: int, width_m: float
     # in the in-game dropdown reads as its actual track, not the raw id.
     lo_meta = next((lo for lo in (cfg.raw.get("layouts", []) or []) if isinstance(lo, dict) and lo.get("id") == layout), {})
     lo_label = lo_meta.get("name") or layout
+    # the default description says where the road came from (source.type) and what the place is (archetype), so a
+    # closed circuit traced off aerial imagery is not called "a street circuit from OpenStreetMap" (Exotics' first
+    # install, 2026-10-29, ledger 0060); a track that wants other words declares ui_description
+    src_type = str((cfg.raw.get("source") or {}).get("type") or "osm")
+    src_text = {"aerial": "traced from USDA NAIP aerial imagery", "kml": "built from a mapped route over the real roads",
+                "from_track": "built from the real track's mapped outline"}.get(src_type, "built from OpenStreetMap")
+    what = {"race_circuit": "Real-world circuit", "street_circuit": "Racing loop on real streets",
+            "rally_stage": "Real-world stage"}.get(str(cfg.raw.get("archetype") or ""), "Real-world road course")
     desc = lo_meta.get("ui_description") or cfg.raw.get("ui_description") or (
         f"Open-world freeroam cruise of {city} — a real street network ({round(length_m/1000)} km) "
         f"merged from map exports, with real USGS terrain. Built with airoso. Just drive."
         if freeroam else
-        f"Real-world street circuit built from OpenStreetMap + USGS 3DEP with airoso "
-        f"({city}, {country}).")
+        f"{what} {src_text}, on USGS 3DEP elevation, with airoso ({city}, {country}).")
     # `loop: false` alone does NOT mean freeroam — a point-to-point rally stage is also not a loop,
     # and labelling it an open-world cruise is simply wrong. Let a track state its own tags.
     fictional = cfg.raw.get("archetype") == "street_circuit"

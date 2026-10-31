@@ -1292,16 +1292,22 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
         try:
             ej = json.loads(ep.read_text())
             zr = ej.get("z_raw_m") or []
+            e0 = 0.0
+            _lc9 = data / "centerline.local.json"
+            if _lc9.exists():
+                _lj9 = json.loads(_lc9.read_text())
+                e0 = float(_lj9.get("origin", {}).get("elev_m", 0.0))
+                # the elevation file is in centerline.geojson order; route.start_at / route.reverse re-ordered the
+                # local line in projection after it was written (High Plains 2026-10-29: 815 of 1,074 points, and
+                # this read 14.6 m against the real deck — ledger 0060). projection recorded the permutation.
+                from scripts.geometry.projection import in_local_order
+                zr = in_local_order(_lj9, zr)
             if _lap_rec is not None:
                 # the lap's mainline vertices take the mainline's measured height; connector / join vertices have none
                 zr = [(zr[sv[1]] if sv[0] == _race_lap.MAINLINE and sv[1] < len(zr) else None)
                       for sv in _lap_rec["source_by_vertex"]]
             if reverse:
                 zr = zr[::-1]
-            e0 = 0.0
-            _lc9 = data / "centerline.local.json"
-            if _lc9.exists():
-                e0 = float(json.loads(_lc9.read_text()).get("origin", {}).get("elev_m", 0.0))
             if zr and len(zr) >= 10:
                 m2 = min(len(zr), len(pts))
                 stq = 0.0

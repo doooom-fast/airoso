@@ -11,7 +11,9 @@ and on guard-only runs (bash exits before the first file operation; nothing is b
 - San Diego parity: the step headers tracks/san-diego-lake-murray/ship.json selects are tools/ship_sd.sh's, in
   its order (re-synced 2026-10-12 to ship_sd.sh after ledger 0046's tiered terrain; it must be re-synced whenever
   ship_sd.sh changes);
-- the Lariat: the paint centreline wired into the draft order; its dry run stops cleanly at "no blend yet".
+- the Lariat: the paint centreline wired into the draft order; its dry run stops cleanly at "no blend yet";
+- the four chain specs (ledger 0060) and the San Diego freeway network (ONE-CHAIN §4 row 8): the network's draft
+  steps (net, classify, network_elev, network_mesh) are data steps on "$PROJ", then the underlay.
 """
 from __future__ import annotations
 
@@ -627,3 +629,77 @@ def test_the_four_chain_specs_draft_the_engine_then_the_underlay_and_run_on_airo
     assert spec_mod.load(ROOT / "tracks" / "exotics-racing-lv" / "ship.json", "exotics-racing-lv")["steps"]["draft"][0] == "aerial"
     for t in ("milford-road-course", "sand-creek", "high-plains"):
         assert spec_mod.load(ROOT / "tracks" / t / "ship.json", t)["steps"]["draft"][0] == "gps", t
+
+
+# --- the San Diego freeway network through the chain (ONE-CHAIN §4 row 8; Kevin 2026-10-28: "rebuild, by an agent") ---
+NETWORK_SPECS = [ROOT / "tracks" / "san-diego-freeway" / "ship.json"]
+NETWORK_STEPS = {"net": "scripts.gps.network", "classify": "scripts.gps.classify",
+                 "network_elev": "scripts.elevation.network_elev", "network_mesh": "scripts.geometry.build_network_mesh"}
+
+
+def test_the_network_spec_drafts_the_network_then_the_underlay_and_runs_on_airosos_engine():
+    """The network's draft is build_network.sh's net -> classify -> elev -> mesh as chain steps, then the underlay;
+    everything after the draft is the four chain specs' shape (no authoring yet, no race layout, the street gates)."""
+    fns = _functions()
+    data_steps = TEXT[_first("is_data_step() {"):_first("SPEC_LINES=$(")]
+    for p in NETWORK_SPECS:
+        track = p.parent.name
+        s = spec_mod.load(p, track)
+        d = s["steps"]["draft"]
+        assert d == ["net", "classify", "network_elev", "network_mesh", "underlay"], (track, d)
+        for n in d[:-1]:
+            assert re.search(rf"\b{n}\b", data_steps), f"{track}: {n} must be a --draft-only data step"
+        everything = [x for ph in PHASES for x in s["steps"][ph]]
+        for n in ("gps", "elev", "project", "mesh", "build_loop_blend", "rebuild_loop_blend", "weld_mouths",
+                  "verify_mouths", "median", "route_connectors", "treefx", "export_race", "race_author"):
+            assert n not in everything, (track, n)
+        assert s["steps"]["author"] == [] and s["steps"]["prep"] == ["prep", "split"]
+        assert {"export_road", "ai", "verify_kn5", "road_obj", "track_folder", "verify_inis", "make_map"} <= set(s["steps"]["ship"])
+        assert s["steps"]["gate"] == ["drive_test_street", "audit_street", "kn5_ground"], (track, s["steps"]["gate"])
+        assert s["workshop"] == f"C:/Users/Owner/Documents/k10-workshops/{track}" and "airoso" not in s["workshop"].lower()
+        assert s["require_race_layout"] is False and s["street_ai_july"] == ""
+        assert s["ui_name_prefix"] == "doooom San Diego"
+        assert "loop.blend" in s["sync_out"]["required"] and "data/underlay.report.json" in s["sync_out"]["files"]
+        assert "source" in s["sync_in"]["dirs"] and "track.config.json" in s["sync_in"]["required"]
+        assert not any(f.endswith((".obj", ".blend")) for f in s["sync_out"]["files"]), "no generated mesh comes home"
+        # the config: the name set (ONE-CHAIN §3) and the network the shipped 0.5.0 was built from
+        cfg = json.loads((p.parent / "track.config.json").read_text(encoding="utf-8"))
+        assert cfg["slug"] == "san_diego_freeway" == cfg["install_folder"] == track.replace("-", "_")
+        assert cfg["ui_series"] == s["ui_name_prefix"] and cfg["name"].endswith("Free Roam")
+        assert len(cfg["layouts"]) == 1 and cfg["layouts"][0]["name"].endswith("Free Roam")
+        assert not any(lo.get("race_furniture") for lo in cfg["layouts"])
+        assert cfg["source"]["type"] == "osm-network" and cfg["source"]["refs"] == ["I 5", "I 8", "CA 52", "CA 163"]
+        assert cfg["mirror_x"] is False and cfg["loop"] is False and "K10" not in cfg["name"] + cfg["ui_series"]
+        assert cfg["_doc"].startswith("The San Diego freeway network") and "project_freeway_net" in cfg["_doc"]
+    # each network step runs its engine module on the absolute project, needs no Blender, and has a step header
+    for n, mod in NETWORK_STEPS.items():
+        body = fns[f"draft_{n}"]
+        assert f'(cd "$AIROSO" && python -m {mod} "$PROJ")' in body, n
+        assert '"$BL"' not in body and len(_headers(body)) == 1, n
+        assert _headers(body)[0].startswith("draft: "), n
+    # no generated furniture: the network's env stage is never a step
+    assert "build_network_env" not in "\n".join(ln for _, ln in _code_lines()), "no furniture in the draft"
+    assert not any(re.match(r"^(draft|author|prep|ship|gate)_(network_)?env$", f) for f in fns)
+    # the underlay's contract is unchanged: the network mesh writes data/track.obj, the file the underlay reads
+    nm = (ROOT / "scripts" / "geometry" / "build_network_mesh.py").read_text(encoding="utf-8")
+    assert 'write_obj(data / "track.obj"' in nm
+    ul = (ROOT / "scripts" / "blender" / "underlay.py").read_text(encoding="utf-8")
+    assert 'obj = proj / "data" / "track.obj"' in ul and 'parse_obj(proj / "data" / "track.obj")' in ul
+
+
+def test_is_data_step_takes_the_network_draft_and_stops_at_the_underlay():
+    """--draft-only runs exactly the data steps: the four network steps are, the underlay is not (run in bash on the
+    function's own text, nothing else of the script)"""
+    bash = shutil.which("bash")
+    if not bash:
+        print("  (no bash on PATH — skipped)")
+        return
+    fn = TEXT[_first("is_data_step() {"):_first("SPEC_LINES=$(")]
+    fn = fn[:fn.index("\n}\n") + 3]
+    probe = fn + 'for n in "$@"; do if is_data_step "$n"; then echo "$n data"; else echo "$n blender"; fi; done\n'
+    names = ["net", "classify", "network_elev", "network_mesh", "underlay", "build_loop_blend", "network_env"]
+    r = subprocess.run([bash, "-c", probe, "probe", *names], capture_output=True, text=True, timeout=30, check=False)
+    assert r.returncode == 0, r.stderr
+    got = dict(ln.split() for ln in r.stdout.split("\n") if ln.strip())
+    assert got == {"net": "data", "classify": "data", "network_elev": "data", "network_mesh": "data",
+                   "underlay": "blender", "build_loop_blend": "blender", "network_env": "blender"}, got

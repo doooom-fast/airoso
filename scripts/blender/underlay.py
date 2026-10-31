@@ -6,7 +6,10 @@ real widths and real 3DEP elevation: the road ribbon (``1ROAD_*``), the verge or
 (``1KERB_*``), the walls the engine stands where the data says a drop or a blind corner is (``1WALL_*``,
 ``BARRIER_*``, ``RETWALL_*``, ``ROCKCUT_*``), the painted markings (``YLINE``, ``ROADTEXT``, ``MARKINGS``) and the
 ground tiles (``1GRASS_*``) — becomes mesh objects in ``loop.blend``, one per OBJ group, under the ``GEN_*``
-collections of the collection contract:
+collections of the collection contract. A road NETWORK's draft (``scripts.geometry.build_network_mesh``: the
+same AC prefixes, tiled — ``1ROAD_part*``, ``1WALL_part*``, ``1RUNOFF_median*``, ``1GRASS_<i>_<j>`` tiles + ``1GRASS_skirt`` + ``1GRASS_verge*``, ``HWYSTRUCT_via*``,
+``MARKINGS_part*``) writes the same ``data/track.obj`` and needs nothing else here; it has no single centreline,
+so ``GEN_refs`` stays empty for it:
 
     GEN_road      1ROAD_* 1RUNOFF_*           GEN_kerb   1KERB_*
     GEN_terrain   1GRASS_* / GRASS*           GEN_wall   1WALL_* BARRIER_* RETWALL_* ROCKCUT_*
@@ -127,7 +130,8 @@ def plan(proj: Path) -> dict:
     obj = proj / "data" / "track.obj"
     if not obj.is_file():
         raise SystemExit(f"[underlay] {obj} is missing — the underlay is the engine's draft; run the draft's mesh "
-                         f"step first (python -m scripts.geometry.build_mesh {proj})")
+                         f"step first (python -m scripts.geometry.build_mesh {proj}; a road network: "
+                         f"scripts.geometry.build_network_mesh)")
     verts, _uvs, groups = parse_obj(obj)
     rows = []
     for name, faces in groups:

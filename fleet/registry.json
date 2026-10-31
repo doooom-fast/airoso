@@ -40,7 +40,8 @@
       "tracks_glob": [
         "tracks/lookout-lariat/track.config.json",
         "tracks/milford-road-course/track.config.json",
-        "tracks/exotics-racing-lv/track.config.json"
+        "tracks/exotics-racing-lv/track.config.json",
+        "tracks/san-diego-freeway/track.config.json"
       ],
       "_tracks_glob_doc": "Only the tracks that have MOVED here. The other tracks/ dirs are Phase-1 imports whose fleet entry still points at their retired repo, and globbing them now would discover every Colorado track twice (S7 slug collisions). Widen this glob as each track moves, and add its dir to the old repo's moved_out in the same edit. A list since 2026-10-28: Milford is the first track born here rather than moved.",
       "build": {
@@ -90,6 +91,9 @@
       "remote": "git@github.com:k10-motorsports/k10-san-diego.git",
       "role": "Lake Murray loop + the I-5/I-8/CA-52/CA-163 freeway network, shipped as one kn5",
       "tracks_glob": "project*/track.config.json",
+      "moved_out": {
+        "project_freeway_net": "airoso/tracks/san-diego-freeway (2026-10-29, docs/ONE-CHAIN.md §4 row 8): the freeway network's config of record carried over; this repo is retired and read-only, its copy is history, never built."
+      },
       "build": {
         "cmd": "scripts/build_kn5.sh",
         "arg": "track_dir",
@@ -229,6 +233,13 @@
       "fidelity": "real",
       "source": "aerial trace off USDA NAIP 2019-07-06 (0.6 m; 2013-09-28 cross-check), 3DEP 1 m elevation; T2 bank from the lidar cross-slope",
       "born_here": "2026-10-28, the second track created in airoso (dossier: tracks/exotics-racing-lv/DOSSIER.md); the 2015-2021 LVMS circuit, target A"
+    },
+    "airoso/san-diego-freeway": {
+      "kind": "street_port",
+      "fidelity": "real",
+      "source": "OSM motorway network in bbox, refs I-5/I-8/CA-52/CA-163 (Overpass live, no snapshot), 3DEP",
+      "network": true,
+      "moved_here": "2026-10-29 from k10-san-diego/project_freeway_net (its config of record at 64161fc; shipped as san_diego_freeway_v0.5.0); rebuilt through the chain, docs/ONE-CHAIN.md §4 row 8"
     }
   },
   "engine_projects": {

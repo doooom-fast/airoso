@@ -88,11 +88,19 @@ want() { [ -z "$STEP" ] || [ "$STEP" = "$1" ]; }
 # ---------------------------------------------------------------------------------------------------------------
 if want 1; then
   echo; echo "### STEP 1 — the public release home, with the current zips"
-  if exists_in "$NEW" "$RELEASE_REPO"; then
+  if [ "$YES" = 1 ] && exists_in "$NEW" "$RELEASE_REPO"; then
     note "$NEW/$RELEASE_REPO exists"
   else
-    run gh repo create "$NEW/$RELEASE_REPO" --public \
+    run gh repo create "$NEW/$RELEASE_REPO" --public --add-readme \
       --description "doooom track downloads: every Assetto Corsa track's release zips"
+  fi
+  # A release needs a tag and a tag needs a commit: an EMPTY repo cannot publish one — the first run created the repo
+  # without a README and `gh release edit --draft=false` answered "HTTP 422 Repository is empty" (2026-10-31). Give an
+  # empty repo its README (one commit on the default branch), then the draft's tag can be cut.
+  if [ "$YES" != 1 ] || [ "$(gh api "repos/$NEW/$RELEASE_REPO" --jq .size 2>/dev/null || echo 0)" = "0" ]; then
+    note "the repo is empty (or this is a dry run): one README commit so the release tag has something to point at"
+    run gh api -X PUT "repos/$NEW/$RELEASE_REPO/contents/README.md" -f message="doooom track downloads" \
+      -f content="$(printf '# doooom track downloads\n\nEvery Assetto Corsa track release zip, served to doooom.fast (docs/PUBLISHING.md in doooom-fast/airoso).\n' | base64 | tr -d '\n')" --silent
   fi
   note "the zips the website serves today: the LATEST release of $OLD/k10-san-diego (Lake Murray + the freeway) and of"
   note "$OLD/k10-colorado (the Colorado zips). The Lariat zip carries mined textures (Lariat V3-PLAN D0): it is NOT re-published."
@@ -101,8 +109,13 @@ if want 1; then
   run gh release download -R "$OLD/k10-colorado" --pattern '*.zip' --dir "$TMP" --clobber
   run bash -c "rm -f '$TMP'/*lariat*.zip '$TMP'/*Lariat*.zip; ls -la '$TMP'"
   note "one release carries every zip that must stay downloadable (PUBLISHING.md: only the latest release's assets show)"
-  run bash -c "gh release create '$RELEASE_TAG' -R '$NEW/$RELEASE_REPO' --draft --title 'doooom tracks $RELEASE_TAG' \
-    --notes 'The current doooom Assetto Corsa tracks. Moved here from k10-motorsports/k10-san-diego and k10-colorado on $(date -u +%Y-%m-%d); the Lariat zip is withdrawn (Lariat V3-PLAN D0).' '$TMP'/*.zip"
+  if [ "$YES" = 1 ] && gh release view "$RELEASE_TAG" -R "$NEW/$RELEASE_REPO" >/dev/null 2>&1; then
+    note "release $RELEASE_TAG already exists on $NEW/$RELEASE_REPO (a draft from an earlier run): not re-created"
+    run gh release upload "$RELEASE_TAG" -R "$NEW/$RELEASE_REPO" --clobber "$TMP"/*.zip
+  else
+    run bash -c "gh release create '$RELEASE_TAG' -R '$NEW/$RELEASE_REPO' --draft --title 'doooom tracks $RELEASE_TAG' \
+      --notes 'The current doooom Assetto Corsa tracks. Moved here from k10-motorsports/k10-san-diego and k10-colorado on $(date -u +%Y-%m-%d); the Lariat zip is withdrawn (Lariat V3-PLAN D0).' '$TMP'/*.zip"
+  fi
   note "check the draft on github.com/$NEW/$RELEASE_REPO/releases, then publish it:"
   run gh release edit "$RELEASE_TAG" -R "$NEW/$RELEASE_REPO" --draft=false
 fi

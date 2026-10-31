@@ -62,8 +62,8 @@ Coast Hwy). On such a track check 4/5 become:
 Pure-stdlib kn5 parse (no deps), reproducible on the Mac. Exit 0 = drivable, 1 = a check failed (with a
 report of exactly which mesh/dummy and why).
 
-    python -m scripts.ac.verify_kn5 projects/<slug>            (the kn5s: 1-6, a-f)
-    python -m scripts.ac.verify_kn5 projects/<slug> --inis     (g, on the packed build/<slug>/ folder)
+    python -m scripts.ac.verify_kn5 tracks/<slug>              (the kn5s: 1-6, a-f)
+    python -m scripts.ac.verify_kn5 tracks/<slug> --inis       (g, on the packed build/<slug>/ folder)
 """
 
 from __future__ import annotations

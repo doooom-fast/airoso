@@ -1,4 +1,5 @@
-"""Smoke tests for the loop front-end (scripts/ac/build_kn5_loop.py + scripts/build_loop.sh).
+"""Smoke tests for the loop front-end (scripts/ac/build_kn5_loop.py, run by tools/ship_track.sh as its prep step;
+scripts/build_loop.sh retired 2026-10-28, ONE-CHAIN §2 row 4).
 
 The loop program preps an EXISTING hand-authored loop.blend — a different program from the
 OBJ-import build_kn5.py — so these tests pin its contract without needing Blender: the AC rename
@@ -65,13 +66,23 @@ def test_overcap_guard_has_teeth():
         raise AssertionError("over-cap mesh did not abort the build")
 
 
-def test_build_loop_wrapper_wired_to_loop_program():
-    sh = ROOT / "scripts" / "build_loop.sh"
-    assert sh.exists()
-    body = sh.read_text(encoding="utf-8")
-    assert "build_kn5_loop.py" in body            # the loop program, not the OBJ program
-    assert "scripts/ac/build_kn5.py" not in body  # never merged / never cross-wired
-    assert "kn5_ground_check" in body and "verify_kn5" in body and "track_folder" in body
+def test_the_chain_wires_the_loop_program_and_the_draft_builds_no_track():
+    """2026-10-28 (ONE-CHAIN §2 rows 1, 3, 4; ledger 0060): the loop program is run by the chain's prep step; the OBJ
+    program (scripts/ac/build_kn5.py), the native writer path and scripts/build_loop.sh are gone; scripts/build.sh is the
+    draft alone (gps elev project mesh) and never exports, packs or gates."""
+    chain = (ROOT / "tools" / "ship_track.sh").read_text(encoding="utf-8")
+    assert '"$ENGINE/scripts/ac/build_kn5_loop.py"' in chain         # the loop program, not the OBJ program
+    assert "scripts/ac/build_kn5.py" not in chain and "kn5_write" not in chain and "kn5_native" not in chain
+    assert "kn5_ground_check" in chain and "verify_kn5" in chain and "track_folder" in chain
+    assert not (ROOT / "scripts" / "build_loop.sh").exists()
+    assert not (ROOT / "scripts" / "ac" / "build_kn5.py").exists() and not (ROOT / "scripts" / "ac" / "kn5_native.py").exists()
+    draft = (ROOT / "scripts" / "build.sh").read_text(encoding="utf-8")
+    code = "\n".join(ln for ln in draft.splitlines() if not ln.lstrip().startswith("#"))
+    assert "STAGES=(gps elev project mesh)" in code
+    for gone in ("build_env", "build_kn5", "export_kn5_addon", "kn5_write", "KN5_WRITER", "drive_test", "audit_mesh",
+                 "verify_kn5", "kn5_ground_check", "track_folder", "zipfile"):
+        assert gone not in code, f"build.sh must not run {gone}: the chain does"
+    assert "scripts.geometry.build_mesh" in code and "scripts.gps.centerline" in code
 
 
 def test_ground_check_kn5_internal_mode_without_objs():

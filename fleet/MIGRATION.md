@@ -110,8 +110,8 @@ consumes it through `scripts/game/export_seed.py` per its `PIPELINE_BRIDGE.md`. 
 engine moved that contract into this repo — the game repo's bridge doc now points at the wrong
 place and needs updating as part of M1.
 
-`ats-colorado-sample` and `dashcam-loop-0406` are test fixtures for the SCS and gps-track
-front-ends. They stay.
+`dashcam-loop-0406` is the gps-track front-end's test fixture (`tests/fixtures/`, ONE-CHAIN §2 row 9). It
+stays. `ats-colorado-sample` went with the SCS importer (row 7, 2026-10-29).
 
 ## ☐ M5 — Freeze `prodrive-ac-builder` *(needs Kevin's call)*
 

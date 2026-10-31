@@ -390,4 +390,4 @@ def _write_preview(path: Path, feats: list[dict], to_m) -> None:
 
 
 if __name__ == "__main__":
-    build_network(sys.argv[1] if len(sys.argv) > 1 else "projects/san-diego-cruise")
+    build_network(sys.argv[1] if len(sys.argv) > 1 else "tracks/san-diego-freeway")

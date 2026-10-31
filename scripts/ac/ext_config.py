@@ -11,7 +11,7 @@ match the kn5 exported from the FBX (pbr.py names materials ``<object>_mat``). S
 acc-extension-config wiki — VERIFY IN-GAME, the keys shift between CSP versions; this is a strong
 starting point, not a guaranteed-final file.
 
-Run:  python -m scripts.ac.ext_config projects/<slug>
+Run:  python -m scripts.ac.ext_config tracks/<slug>
 """
 
 from __future__ import annotations

@@ -1,7 +1,8 @@
 """Install a built track into a local Assetto Corsa ``content/tracks`` folder.
 
-This is the optional, end-of-pipeline step (phase 6, Windows): the headless build emits an
-installable folder under ``projects/<slug>/build/<slug>/`` plus a sibling ``build/<slug>.kn5``.
+This is the optional, end-of-pipeline step (phase 6, Windows): a build leaves an installable folder
+under ``tracks/<track>/build/<slug>/`` plus a sibling ``build/<slug>.kn5`` (the chain, tools/ship_track.sh,
+installs by itself; this module is for a build folder that is already there).
 This module finds the AC tracks directory, assembles the final folder (the build folder + the kn5
 dropped inside, where ``models_<layout>.ini`` expects it), and copies it to ``<tracks>/<slug>/``.
 
@@ -14,7 +15,7 @@ lets you choose which to install; with a project argument it installs just that 
 
 Run:
     python -m scripts.ac.install                 # pick from all built tracks (interactive)
-    python -m scripts.ac.install projects/sand-creek-raceway
+    python -m scripts.ac.install tracks/sand-creek
     python -m scripts.ac.install --list
     python -m scripts.ac.install sand_creek_raceway --tracks-dir "D:/SteamLibrary" --yes
     python -m scripts.ac.install --dry-run --force
@@ -174,7 +175,7 @@ class BuiltTrack:
     """A track folder produced by the build, ready (or nearly) to install."""
     slug: str
     name: str
-    folder: Path          # projects/<slug>/build/<slug>/
+    folder: Path          # tracks/<track>/build/<slug>/
     kn5: Path | None      # the model to drop into the installed folder, if built yet
     layouts: list[str]
 
@@ -207,9 +208,9 @@ def _built_track_at(build_folder: Path, project_dir: Path) -> BuiltTrack | None:
 
 
 def discover_tracks(repo_root: Path = REPO_ROOT) -> list[BuiltTrack]:
-    """Scan ``projects/*/build/<slug>/`` for installable track folders."""
+    """Scan ``tracks/*/build/<slug>/`` for installable track folders."""
     tracks: list[BuiltTrack] = []
-    projects = repo_root / "projects"
+    projects = repo_root / "tracks"
     if not projects.is_dir():
         return tracks
     for project_dir in sorted(p for p in projects.iterdir() if p.is_dir()):
@@ -224,10 +225,10 @@ def discover_tracks(repo_root: Path = REPO_ROOT) -> list[BuiltTrack]:
 
 
 def resolve_track(arg: str, repo_root: Path = REPO_ROOT) -> BuiltTrack | None:
-    """Resolve a project dir, project name, or slug to a single built track."""
+    """Resolve a track dir, track folder name, or slug to a single built track."""
     candidates = discover_tracks(repo_root)
     p = Path(arg)
-    project_dir = p if p.is_dir() else repo_root / "projects" / arg
+    project_dir = p if p.is_dir() else repo_root / "tracks" / arg
     if project_dir.is_dir():
         names = {project_dir.name, project_dir.name.replace("-", "_")}
         for t in candidates:

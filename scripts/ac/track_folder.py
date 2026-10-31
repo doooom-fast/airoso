@@ -38,7 +38,7 @@ The kn5s are produced by Blender (scripts/ac/build_kn5.py / export_kn5_addon.py 
 tools/make_map.py then redraws every map.png in the kn5 frame; the AI fast_lane is recorded
 in-game (Windows) or drafted by scripts/ac/write_ai_line.py.
 
-Run:  python -m scripts.ac.track_folder projects/<slug> [--allow-missing-kn5]
+Run:  python -m scripts.ac.track_folder tracks/<slug> [--allow-missing-kn5]
 """
 
 from __future__ import annotations
@@ -167,7 +167,7 @@ def ui_track_json(cfg, layout: str, length_m: float, n_pits: int, width_m: float
     width = lo_meta.get("ui_width_m") or cfg.raw.get("ui_width_m") or width_m or cfg.default_width_m
     # Content Manager display name: prefix the series so all K10 Colorado circuits group together in the
     # in-game list ("K10 Colorado - Sand Creek Raceway", ...). Override per track via `ui_series`.
-    series = cfg.raw.get("ui_series", "K10 Colorado")
+    series = cfg.raw.get("ui_series", "doooom")        # Kevin 2026-10-28: "K10 is gone. doooom."
     base_name = f"{series} - {cfg.name}" if series else cfg.name
     # Only append a layout label when the track actually HAS multiple layouts — a single-layout track
     # (e.g. IMI's one "full_course") shouldn't read "… — full_course".
@@ -834,7 +834,7 @@ def main() -> None:
 
     ap = argparse.ArgumentParser(prog="scripts.ac.track_folder",
                                  description="Generate the installable AC track folder.")
-    ap.add_argument("project_dir", help="projects/<slug>")
+    ap.add_argument("project_dir", help="tracks/<slug>")
     ap.add_argument("--install", action="store_true",
                     help="after generating, install into a local AC content/tracks folder "
                          "(auto-detects it, asks if it can't find it)")

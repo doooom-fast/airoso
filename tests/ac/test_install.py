@@ -14,8 +14,8 @@ from scripts.ac import install
 # --- helpers -------------------------------------------------------------------
 
 def _make_track(repo: Path, project: str, slug: str, layouts=("full",), with_kn5=True) -> Path:
-    """Create projects/<project>/build/<slug>/ with model inis + an optional sibling kn5."""
-    project_dir = repo / "projects" / project
+    """Create tracks/<project>/build/<slug>/ with model inis + an optional sibling kn5."""
+    project_dir = repo / "tracks" / project
     (project_dir).mkdir(parents=True, exist_ok=True)
     (project_dir / "track.config.json").write_text(
         json.dumps({"name": slug.replace("_", " ").title(), "slug": slug}), encoding="utf-8")
@@ -91,7 +91,7 @@ def test_discover_and_resolve():
                     layouts=("full", "short"), with_kn5=True)
         _make_track(repo, "no-model-yet", "no_model_yet", with_kn5=False)
         # a build dir that isn't a track (no models_*.ini) must be ignored
-        (repo / "projects" / "junk" / "build" / "junk").mkdir(parents=True)
+        (repo / "tracks" / "junk" / "build" / "junk").mkdir(parents=True)
 
         tracks = install.discover_tracks(repo)
         by_slug = {t.slug: t for t in tracks}
@@ -103,7 +103,7 @@ def test_discover_and_resolve():
         # resolve by slug, by hyphenated project name, and by project dir
         assert install.resolve_track("sand_creek_raceway", repo).slug == "sand_creek_raceway"
         assert install.resolve_track("sand-creek-raceway", repo).slug == "sand_creek_raceway"
-        assert install.resolve_track(str(repo / "projects" / "sand-creek-raceway"), repo).slug \
+        assert install.resolve_track(str(repo / "tracks" / "sand-creek-raceway"), repo).slug \
             == "sand_creek_raceway"
         assert install.resolve_track("does-not-exist", repo) is None
 
@@ -131,8 +131,8 @@ def test_install_dry_run_writes_nothing():
         repo = Path(d)
         _make_track(repo, "p", "trk")
         track = install.discover_tracks(repo)[0]
-        tracks_dir = repo / "tracks"
-        tracks_dir.mkdir()
+        tracks_dir = repo / "ac" / "tracks"          # the AC content/tracks dir, not the repo's tracks/
+        tracks_dir.mkdir(parents=True)
         install.assemble_and_install(track, tracks_dir, dry_run=True)
         assert not (tracks_dir / "trk").exists()
 
@@ -142,7 +142,7 @@ def test_install_overwrite_requires_force():
         repo = Path(d)
         _make_track(repo, "p", "trk")
         track = install.discover_tracks(repo)[0]
-        tracks_dir = repo / "tracks"
+        tracks_dir = repo / "ac" / "tracks"
         (tracks_dir / "trk").mkdir(parents=True)
         (tracks_dir / "trk" / "stale.txt").write_text("old", encoding="utf-8")
 
@@ -163,8 +163,8 @@ def test_install_missing_model_gated():
         repo = Path(d)
         _make_track(repo, "p", "trk", with_kn5=False)
         track = install.discover_tracks(repo)[0]
-        tracks_dir = repo / "tracks"
-        tracks_dir.mkdir()
+        tracks_dir = repo / "ac" / "tracks"          # the AC content/tracks dir, not the repo's tracks/
+        tracks_dir.mkdir(parents=True)
 
         try:
             install.assemble_and_install(track, tracks_dir)

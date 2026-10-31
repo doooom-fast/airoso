@@ -9,7 +9,7 @@ Outputs (data/): track.obj + track.mtl (1ROAD_* / 1GRASS_* groups), dummies.json
 Consumes: network.geojson (geometry+class+width), network.elevation.json (per-edge z), heightfield.npy.
 Writes back true_north_rotation_deg = 0 (the local frame is true-north aligned).
 
-Run:  python -m scripts.geometry.build_network_mesh projects/san-diego-cruise
+Run:  python -m scripts.geometry.build_network_mesh tracks/san-diego-freeway
 """
 
 from __future__ import annotations
@@ -1396,4 +1396,4 @@ def _write_mtl(path: Path) -> None:
 
 
 if __name__ == "__main__":
-    build(sys.argv[1] if len(sys.argv) > 1 else "projects/san-diego-cruise")
+    build(sys.argv[1] if len(sys.argv) > 1 else "tracks/san-diego-freeway")

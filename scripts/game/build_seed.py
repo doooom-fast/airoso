@@ -11,8 +11,8 @@ Every edge gets an OSM road class/name/width (``classify``) and real USGS 3DEP e
 (``network_elev``). The home->school *spine* is Dijkstra'd over the built network. Everything is
 projected into one ENU frame (X=east, Y=up, Z=north) and written to ``data/seed.local.json``.
 
-Run:  python -m scripts.game.build_seed projects/gala-seed
-Then: python -m scripts.game.export_seed projects/gala-seed <game-repo>/seed
+Run:  python -m scripts.game.build_seed contracts/gala-seed
+Then: python -m scripts.game.export_seed contracts/gala-seed <game-repo>/seed
 """
 
 from __future__ import annotations
@@ -363,7 +363,7 @@ def build(project_dir: str | Path) -> dict:
 
 def main() -> None:
     if len(sys.argv) < 2:
-        raise SystemExit("usage: python -m scripts.game.build_seed projects/<slug> [--landmarks-only]")
+        raise SystemExit("usage: python -m scripts.game.build_seed contracts/<slug> [--landmarks-only]")
     if "--landmarks-only" in sys.argv[2:]:
         refresh_landmarks(sys.argv[1])
     else:

@@ -11,8 +11,8 @@ Per corner it computes a radius from the smoothed curvature and banks by a subtl
 wiggles and gentle sweepers are ignored. Researched, known banking (e.g. a banked oval) is applied from
 ``grading.overrides`` verbatim instead of the procedural curve.
 
-    python -m scripts.geometry.grade_track projects/<slug>            # write cambers into the config
-    python -m scripts.geometry.grade_track projects/<slug> --dry-run  # print, don't write
+    python -m scripts.geometry.grade_track tracks/<slug>              # write cambers into the config
+    python -m scripts.geometry.grade_track tracks/<slug> --dry-run    # print, don't write
 
 Config (``grading`` block in track.config.json, all optional):
   max_bank_deg (5.0)  bank_scale (210)  r_max_m (260)  min_corner_deg (24)  min_bank_deg (0.9)
@@ -162,5 +162,5 @@ def grade(proj: Path, *, dry_run=False) -> dict:
 
 if __name__ == "__main__":
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    grade(Path(args[0]) if args else Path("projects/sand-creek-raceway"),
+    grade(Path(args[0]) if args else Path("tracks/sand-creek"),
           dry_run="--dry-run" in sys.argv)

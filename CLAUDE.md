@@ -16,7 +16,7 @@ remote (local k10-track-agents) is history only.
 **The V3 model (docs/V3-PLAN.md):** the engine emits first drafts; Claude hand-authors geometry
 (Blender / readable intermediates); deterministic gates judge every build; Kevin's drive test is
 the only ground truth. Do not write kn5 generators, do not reverse-engineer binaries, do not
-generate AI splines from GPS (docs/HANDOFF.md bans stand). Priority: San Diego — the Lake Murray network expansion, in phases (Kevin 2026-10-12: College → Waring → Princess View → Mission Gorge → Jackson; ledger 0054). Lookout Lariat is SHELVED until after a few Lake Murray phases (plan kept: `tracks/lookout-lariat/V3-PLAN.md`, ledger 0048). Then Sand Creek.
+generate AI splines from GPS (docs/history/HANDOFF.md bans stand). Priority: San Diego — the Lake Murray network expansion, in phases (Kevin 2026-10-12: College → Waring → Princess View → Mission Gorge → Jackson; ledger 0054). Lookout Lariat is SHELVED until after a few Lake Murray phases (plan kept: `tracks/lookout-lariat/V3-PLAN.md`, ledger 0048). Then Sand Creek.
 
 ---
 
@@ -109,7 +109,7 @@ The quality comes from the build → refute → repair loop, not from the top mo
 
 `.claude/skills/` — the pipeline skills (`gps-extraction`, `aerial-tracing`, `elevation`,
 `road-grounding`, `track-grading`, `mesh-audit`, `drive-test`, `ac-track-modding`, `lighting`,
-`route-tracing`, `scs-extraction`) plus **`track-feedback`** for filing into the ledger.
+`route-tracing`) plus **`track-feedback`** for filing into the ledger.
 
 ---
 
@@ -156,9 +156,11 @@ applies per track: a gravel/tarmac fork must be two installable tracks (L8).
 
 ### External contract
 
-`projects/gala-seed/` + `scripts/game/export_seed.py` are owed to the **`k10-1978`** game repo per
+`contracts/gala-seed/` + `scripts/game/export_seed.py` are owed to the **`k10-1978`** game repo per
 its `PIPELINE_BRIDGE.md`. Absorbing the engine moved that contract here — the game repo's bridge doc
-points at the old location and needs updating (MIGRATION M1).
+points at the old location (`projects/gala-seed/`) and needs updating (MIGRATION M1).
 
-`projects/` otherwise holds stale duplicates of tracks now owned by project repos. **Do not build
-from them** — see `fleet/registry.json` `engine_projects` for each one's disposition.
+`projects/` is retired (ONE-CHAIN §2 row 9, 2026-10-28): the seed moved to `contracts/`, the
+`dashcam-loop-0406` test fixture to `tests/fixtures/` (the SCS sample went with the importer, row 7), and the
+stale duplicates were deleted — the DEM answer-key configs of bathurst, nordschleife and the freeway loop are
+kept under `docs/history/projects/`. Tracks live in `tracks/<place>/`; see `fleet/registry.json` `engine_projects`.

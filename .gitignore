@@ -26,19 +26,6 @@ venv/
 # ...but the PUBLISHED, installable track folder IS committed (git-pullable into content/tracks).
 !tracks/**/*.kn5
 
-# Per-project working/output dirs (keep the folders via .gitkeep)
-projects/*/data/*
-projects/*/blender/*
-projects/*/build/*
-!projects/*/data/.gitkeep
-!projects/*/blender/.gitkeep
-!projects/*/build/.gitkeep
-# Keep the resolved OSM street map (per-vertex street names + leg breakdown): it's reference data
-# worth committing, and tracking it means the build reads it instead of re-querying live Overpass.
-!projects/*/data/street_labels.json
-# Keep the interior-grid connector roads (the 2nd layout's extra streets, projected) so the dual-layout
-# build is reproducible from a clean checkout.
-!projects/*/data/connectors.local.json
 
 # vendor/: ignore everything EXCEPT the io_import_accsv add-on — that's the WORKING headless kn5
 # exporter (scripts/ac/export_kn5_addon.py installs it), so it must be committed for a clean checkout
@@ -67,12 +54,6 @@ DerivedData/
 # Recorded session bundles are multi-GB and live outside git (like mined mod assets).
 apps/*/captures/
 *.prodrive-scan/
-
-# Mined mod assets are copyrighted / NOT redistributable (SRP, RT California Highway, etc.) and the
-# raw donor kn5 cache is hundreds of MB — both live outside git and are re-mined on demand (see the
-# project MANIFEST.md + the mod-mining flow). Reproducibility: re-run the mining, not a git checkout.
-projects/*/assets/_raw_kn5/
-projects/*/assets/props/
 
 # --- airoso V3 additions --------------------------------------------------------
 # Consumer-era engine checkouts (obsolete in the monorepo, may exist in old clones)

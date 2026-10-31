@@ -225,7 +225,7 @@ runs with a seat-to-surface sampler and both-ways faces (`scripts/geometry/build
 `scripts/environment/props.py:48-134`, `props.concrete_barriers` from the `street_circuit` archetype)
 — on the engine mesh path, not on the Blender loop path this track uses.
 
-**7. The AI-line rule.** `docs/HANDOFF.md:250-255`: the correct AI spline is recorded in-game; a
+**7. The AI-line rule.** `docs/history/HANDOFF.md:252-257` (moved 2026-10-28): the correct AI spline is recorded in-game; a
 generated one "loads but the AI can't follow properly". `scripts/ac/write_ai_line.py` can write a
 reversed draft (`--direction reverse`, 0026) and checks grid alignment against `dummies.json`
 (`:165-182`), but has **no lateral-offset option** — a race layout's line is the lane centre

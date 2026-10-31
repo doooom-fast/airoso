@@ -232,46 +232,16 @@
     }
   },
   "engine_projects": {
-    "_doc": "projects/ inside this repo, inherited from prodrive-ac-builder. Most are STALE duplicates now owned by a project repo (see track_annotations.owner_of). Kept, not deleted, until fleet/MIGRATION.md M4 verifies each. Do not build from these.",
-    "sand-creek-raceway": {
-      "status": "stale duplicate",
-      "engine_version": "0.15.3",
-      "live_version": "0.26.0 in k10-colorado/sand-creek"
-    },
-    "imi-motorsports": {
-      "status": "stale duplicate",
-      "engine_version": "0.1.0",
-      "live_version": "0.1.1 in k10-colorado/imi"
-    },
-    "san-diego-loop": {
-      "status": "stale duplicate",
-      "engine_version": "0.2.0",
-      "live_version": "0.15.0 in k10-san-diego/project"
-    },
-    "san-diego-freeway-loop": {
-      "status": "stale duplicate",
-      "engine_version": "0.5.0",
-      "live_version": "0.5.0 in k10-san-diego/project_freeway (itself retired)"
-    },
-    "k10-colorado": {
-      "status": "retired concept",
-      "note": "the unified connect-everything corridor; k10-colorado deliberately abandoned connectors"
-    },
-    "san-diego-cruise": {
-      "status": "retired concept",
-      "note": "predecessor of the SD loop work"
-    },
+    "_doc": "projects/ is retired (ONE-CHAIN §2 row 9, Kevin 2026-10-28). The eight stale duplicates / retired concepts were deleted; the DEM answer-key configs of bathurst, nordschleife and the freeway loop survive under docs/history/projects/.",
     "gala-seed": {
       "status": "ACTIVE — external contract",
-      "note": "owed to the k10-1978 game repo via scripts/game/export_seed.py + its PIPELINE_BRIDGE.md. Absorbing the engine moved this contract here. Do not delete or relocate without updating the game repo."
-    },
-    "ats-colorado-sample": {
-      "status": "fixture",
-      "note": "scs-extraction sample; the SCS seam is only partly implemented"
+      "path": "contracts/gala-seed",
+      "note": "owed to the k10-1978 game repo via scripts/game/export_seed.py + its PIPELINE_BRIDGE.md. Moved from projects/gala-seed/ (ONE-CHAIN §2 row 9); the game repo's bridge doc must point at the new path."
     },
     "dashcam-loop-0406": {
       "status": "fixture",
-      "note": "prototype of the any-drive -> track path via scripts/gps/from_track"
+      "path": "tests/fixtures/dashcam-loop-0406",
+      "note": "prototype of the any-drive -> track path via scripts/gps/from_track; moved from projects/ (ONE-CHAIN §2 row 9)"
     }
   }
 }

@@ -2,7 +2,7 @@
 truth). Every bundled binary asset must be CC0-1.0 / public domain; stock AC surface sounds are
 referenced by name (surfaces.ini WAV=), never redistributed. Pure stdlib.
 
-Run:  python -m scripts.ac.credits projects/<slug>
+Run:  python -m scripts.ac.credits tracks/<slug>
 """
 
 from __future__ import annotations

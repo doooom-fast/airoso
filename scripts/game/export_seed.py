@@ -1,6 +1,6 @@
 """Export the built seed as the bundle the game repo commits under ``seed/``.
 
-Reads ``projects/<slug>/data/`` (built by ``build_seed``) and writes:
+Reads ``contracts/<slug>/data/`` (built by ``build_seed``) and writes:
 
 - ``gala_seed.json``  — self-describing: ENU road network + the home->school spine + landmarks +
   projection origin + heightfield metadata + provenance (this repo's git SHA, config version).
@@ -10,7 +10,7 @@ Reads ``projects/<slug>/data/`` (built by ``build_seed``) and writes:
 The game (``GalaSeedImport``) — and the Mac previewer — consume exactly these two files and
 nothing else from this repo.
 
-Run:  python -m scripts.game.export_seed projects/gala-seed ../k10-1978/seed
+Run:  python -m scripts.game.export_seed contracts/gala-seed ../k10-1978/seed
 """
 
 from __future__ import annotations
@@ -95,7 +95,7 @@ def export(project_dir: str | Path, out_dir: str | Path) -> Path:
 
 def main() -> None:
     if len(sys.argv) < 3:
-        raise SystemExit("usage: python -m scripts.game.export_seed projects/<slug> <out-dir>")
+        raise SystemExit("usage: python -m scripts.game.export_seed contracts/<slug> <out-dir>")
     export(sys.argv[1], sys.argv[2])
 
 

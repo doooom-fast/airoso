@@ -18,6 +18,9 @@ from collections import defaultdict
 from pathlib import Path
 from urllib.request import urlopen
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from scripts.tls import https_context  # noqa: E402  (verification on, never disabled)
+
 LINKS = "https://minedbuildings.z5.web.core.windows.net/global-buildings/dataset-links.csv"
 CELL = 0.0005                   # degrees (~50 m): the lon/lat index cell
 
@@ -111,7 +114,7 @@ def main():
     if "--find" in sys.argv:
         keys = sorted({quadkey(lat, lon) for lat in (S, N) for lon in (W, E)})
         print("quadkeys at level 9 over the box:", keys)
-        with urlopen(LINKS, timeout=120) as f:
+        with urlopen(LINKS, timeout=120, context=https_context()) as f:
             for line in f.read().decode("utf-8").splitlines():
                 parts = line.split(",")
                 if len(parts) >= 5 and parts[1] in keys:

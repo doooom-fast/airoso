@@ -40,7 +40,7 @@ Through `tools/ship_track.sh del-mar --no-install` on the Windows box, workshop 
 of ≤7.9 cm, bumps 22.8/km, excursion drops 1 gated (0.20 m at s 301, the north boulevard crossing) / 2 far ledges,
 obstructed 0, replication 0.02 / 0.38 / 2.48 m), **`audit_mesh` CLEAN**, **`kn5_ground_check` PASS** (walls 106 /
 hovering 0, shoulder underside 100 %, deck-vs-mountain p95 +0.014, road-over-ground 3/581). kn5 124.4 MB, md5 d924754d….
-**Not installed** — Kevin's call.
+**Installed** 2026-11-01 15:50 MST (Kevin: "Install it"; `--from make_map`, every gate re-judged green) as "doooom California — Del Mar Grand Prix 0.1.0" at `content/tracks/del_mar_fairgrounds`. Not driven yet.
 
 ## Open, by design of an estimate
 

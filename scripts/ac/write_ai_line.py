@@ -894,7 +894,10 @@ def fillet_corners(P, closed: bool, st: _Stations, ds: float, tol: float = RADIU
                 s, e = c0 - K, c1 + K
                 if (not closed and (s < 2 or e > n - 3)) or e - s >= n - 4 \
                         or (limit_hi is not None and e >= limit_hi) \
-                        or (closed and done and (s < 0 or e >= n)):   # a seam window only as a sweep's first
+                        or (closed and done and (s < 2 or e + 2 >= n)):   # a seam window only as a sweep's first
+                    # (s < 2, not s < 0: the window's heading looks back two points, P[wrap(s - 2)], and after an
+                    # earlier splice this sweep shortened P while wrap still uses the sweep's n, a cluster at
+                    # index 3-4 wrapped that lookback past the new end: IndexError, Del Mar 2026-11-01)
                     break
                 Ps, Pe = P[wrap(s)], P[wrap(e)]
                 windows.append((s, e, Ps, Pe,

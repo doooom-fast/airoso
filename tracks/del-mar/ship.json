@@ -2,7 +2,7 @@
   "_doc": "Del Mar Grand Prix — the IMSA Camel GT temporary circuit on the Del Mar Fairgrounds (1987-1992), ESTIMATED layout (track.config.json source._note, DOSSIER.md), through the Lake Murray chain (tools/ship_track.sh). The draft is the engine's own off the north-up placement on the 2012 NAIP (source.type aerial: aerial -> elev -> project -> mesh), the underlay drops data/track.obj into loop.blend as GEN_* collections, the prep / exporter / spawn builder run from airoso's scripts/ac, the gates run on the BUILT kn5. The workshop lives OUTSIDE airoso.",
   "_owed": "First pass = the draft through the chain, no authoring. Dressing (DOSSIER section 8: K-rail + debris fence, bleachers on the straight and the hairpins, sponsor bridges as plain spans, palms, the Spanish tower) is bespoke work for a later pass. The layout itself is an estimate to be corrected against era imagery.",
   "track": "del-mar",
-  "workshop": "C:/Users/Owner/Documents/k10-workshops/del-mar",
+  "workshop": "D:/k10-workshops/del-mar",
   "workshop_project": "project",
   "require_race_layout": false,
   "ui_name_prefix": "doooom California",

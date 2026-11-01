@@ -79,6 +79,21 @@ Also: `road_profile` no longer writes `z_raw_local_m` (nothing read it; a reader
 rotate twice). Noted, not changed: `extract_kn5.parse(keep=)` cannot step over a SkinnedMesh (its layout is unknown,
 "not supported yet" stands); `crossfall.compose`'s roll-rate scans are O(n·|bad|) (2 s on the Lariat's 8,305 stations).
 
+### Same day — a road network's reference line: what the line gates judge, and what they do not (wiring, no threshold)
+
+`tools/ship_track.sh` gained the draft step `network_reference` (`scripts/geometry/network_reference.py`, opt-in on
+`track.config.json` `network.reference_line`): a road network's ship phase — the prep, `write_ai_line`, `make_map`,
+`verify_kn5`, `drive_test` — walks ONE declared real mainline resolved from the draft's own edges (the San Diego
+freeway: I 8 eastbound, end to end), never an invented line (L1). `scripts/gps/classify.py` records each edge's
+direction of travel from the OSM ways' order only when the block exists; `build_network_mesh` records every swept
+edge line (`data/network.edges.local.json`) only then. **The hole is named, never hidden:** `drive_test` writes a
+`reference_line` key (the edges judged, the km built, every unjudged edge by id and name) and prints the list;
+`make_map` draws every edge; `ship.json` `_owed` says "NOT JUDGED". No threshold moved; a track without the block
+writes every file byte for byte as before (`tests/geometry/test_network_reference.py`,
+`tests/ac/test_network_ship_contract.py`, `tests/gps/test_classify_travel_dir.py`). The stand-in rehearsal on Lake
+Murray's cached motorway ways also found a network-draft defect, owed to `scripts/elevation/network_elev.py`: a
+junction node gets two heights where two edges meet (0.13–0.60 m pavement steps at the mainline joints).
+
 ## 2026-10-29 — the split's single-layout rule; `--from <step>` never skips a gate (ledger 0060; wiring, no threshold)
 
 The first non-San-Diego chain run (Exotics Racing, the Windows workshop) passed the draft, the underlay and the prep

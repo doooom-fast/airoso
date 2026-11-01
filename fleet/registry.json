@@ -1,6 +1,6 @@
 {
   "_doc": [
-    "The fleet registry — the ONE place that knows which repos and tracks exist.",
+    "The fleet registry \u2014 the ONE place that knows which repos and tracks exist.",
     "Repos are declared here. Tracks are DISCOVERED by scanning each repo's tracks_glob, so this",
     "file can never go stale on a track that was added or renamed. Per-track annotations below are",
     "only for things a track.config.json cannot know about itself (its owning repo's build command,",
@@ -23,11 +23,11 @@
     }
   },
   "kinds": {
-    "_doc": "Kevin's four track types. Orthogonal to `archetype` (the construction philosophy in scripts/config.py ARCHETYPES) but they should agree — see fleet/STANDARDS.md S6.",
+    "_doc": "Kevin's four track types. Orthogonal to `archetype` (the construction philosophy in scripts/config.py ARCHETYPES) but they should agree \u2014 see fleet/STANDARDS.md S6.",
     "fictional_street_circuit": "A racing loop invented on top of real streets (Sand Creek Raceway). archetype: street_circuit",
     "street_port": "Real public road(s) ported as they exist, single route or whole network (Lookout Lariat, Lake Murray, SD freeway). archetype: real_road",
     "circuit_port": "A real purpose-built facility, extant or historical (IMI, High Plains, Second Creek, PPIR). archetype: race_circuit",
-    "rally_stage": "A real point-to-point special stage, gravel or the tarmac fiction (Rally Colorado). archetype: real_road TODAY (kerb/runoff off, which is right); a dedicated `rally_stage` archetype is PROPOSED, not implemented — see fleet/STANDARDS.md S6"
+    "rally_stage": "A real point-to-point special stage, gravel or the tarmac fiction (Rally Colorado). archetype: real_road TODAY (kerb/runoff off, which is right); a dedicated `rally_stage` archetype is PROPOSED, not implemented \u2014 see fleet/STANDARDS.md S6"
   },
   "repos": [
     {
@@ -38,12 +38,25 @@
       "role": "THE one repo (V3): the engine, the gates, the doctrine and the ledger, plus every track as its source of truth moves here",
       "engine_repo": true,
       "tracks_glob": [
+        "tracks/aspen/track.config.json",
+        "tracks/exotics-racing-lv/track.config.json",
+        "tracks/grand-junction/track.config.json",
+        "tracks/high-plains/track.config.json",
+        "tracks/imi/track.config.json",
         "tracks/lookout-lariat/track.config.json",
         "tracks/milford-road-course/track.config.json",
-        "tracks/exotics-racing-lv/track.config.json",
-        "tracks/san-diego-freeway/track.config.json"
+        "tracks/pikes-peak/track.config.json",
+        "tracks/pueblo/track.config.json",
+        "tracks/rally-dragon-tail-gravel/track.config.json",
+        "tracks/rally-dragon-tail-tarmac/track.config.json",
+        "tracks/rally-under-the-dragon-gravel/track.config.json",
+        "tracks/rally-under-the-dragon-tarmac/track.config.json",
+        "tracks/san-diego-freeway/track.config.json",
+        "tracks/san-diego-lake-murray/track.config.json",
+        "tracks/sand-creek/track.config.json",
+        "tracks/second-creek/track.config.json"
       ],
-      "_tracks_glob_doc": "Only the tracks that have MOVED here. The other tracks/ dirs are Phase-1 imports whose fleet entry still points at their retired repo, and globbing them now would discover every Colorado track twice (S7 slug collisions). Widen this glob as each track moves, and add its dir to the old repo's moved_out in the same edit. A list since 2026-10-28: Milford is the first track born here rather than moved.",
+      "_tracks_glob_doc": "Every track in tracks/ (2026-11-01, Kevin: 'a complete track list and installed by morning' \u2014 docs/TRACKS.md is the list, python3 -m fleet.cli tracks discovers it). Listed one by one, not globbed, so a stray folder is never a track; each retired repo lists its old copy under moved_out, so a track is discovered once, here. Before 2026-11-01 only the tracks whose source of truth had been declared moved were listed here (the Lariat, Milford, Exotics, the freeway); the four chain tracks, the five circuits, the rally stages and Lake Murray were still discovered at their retired repos, which this box does not even hold.",
       "build": {
         "cmd": null,
         "hold": "no fleet build: fleet.cli build is the retired multi-repo control plane (docs/ONE-CHAIN.md section 2 row 11). Every track here is built by the chain, tools/ship_track.sh <track> + tracks/<track>/ship.json, on the Windows box; scripts/build.sh is the draft alone. The Lariat's chain run is owed (started 2026-11-01, ledger 0048)."
@@ -59,7 +72,15 @@
       "role": "Colorado circuits + the Lookout Lariat street port",
       "tracks_glob": "tracks/*/track.config.json",
       "moved_out": {
-        "lookout-lariat": "airoso/tracks/lookout-lariat (2026-10-11, V3-PLAN P0 step 5, ledger 0048). This repo is retired and read-only; its copy is history, never built."
+        "lookout-lariat": "airoso/tracks/lookout-lariat (2026-10-11, V3-PLAN P0 step 5, ledger 0048). This repo is retired and read-only; its copy is history, never built.",
+        "imi": "airoso/tracks/imi (2026-11-01, the one-repo registry: docs/TRACKS.md). This repo is retired and read-only; its copy is history, never built.",
+        "pueblo": "airoso/tracks/pueblo (2026-11-01, the one-repo registry: docs/TRACKS.md). This repo is retired and read-only; its copy is history, never built.",
+        "aspen": "airoso/tracks/aspen (2026-11-01, the one-repo registry: docs/TRACKS.md). This repo is retired and read-only; its copy is history, never built.",
+        "grand-junction": "airoso/tracks/grand-junction (2026-11-01, the one-repo registry: docs/TRACKS.md). This repo is retired and read-only; its copy is history, never built.",
+        "pikes-peak": "airoso/tracks/pikes-peak (2026-11-01, the one-repo registry: docs/TRACKS.md). This repo is retired and read-only; its copy is history, never built.",
+        "second-creek": "airoso/tracks/second-creek (2026-11-01, the one-repo registry: docs/TRACKS.md). This repo is retired and read-only; its copy is history, never built.",
+        "high-plains": "airoso/tracks/high-plains (2026-11-01, the one-repo registry: docs/TRACKS.md). This repo is retired and read-only; its copy is history, never built.",
+        "sand-creek": "airoso/tracks/sand-creek (2026-11-01, the one-repo registry: docs/TRACKS.md). This repo is retired and read-only; its copy is history, never built."
       },
       "build": {
         "cmd": "./build.sh",
@@ -83,7 +104,13 @@
       },
       "method": "fully headless; engine-only (thinnest consumer, the reference shape)",
       "local_scripts_allowlist": [],
-      "notes": "Cleanest consumer: no local scripts/ at all, everything runs from .engine/. This is the target shape for the other two."
+      "notes": "Cleanest consumer: no local scripts/ at all, everything runs from .engine/. This is the target shape for the other two.",
+      "moved_out": {
+        "dragon-tail-gravel": "airoso/tracks/rally-dragon-tail-gravel (2026-11-01, the one-repo registry: docs/TRACKS.md). This repo is retired and read-only; its copy is history, never built.",
+        "dragon-tail-tarmac": "airoso/tracks/rally-dragon-tail-tarmac (2026-11-01, the one-repo registry: docs/TRACKS.md). This repo is retired and read-only; its copy is history, never built.",
+        "under-the-dragon-gravel": "airoso/tracks/rally-under-the-dragon-gravel (2026-11-01, the one-repo registry: docs/TRACKS.md). This repo is retired and read-only; its copy is history, never built.",
+        "under-the-dragon-tarmac": "airoso/tracks/rally-under-the-dragon-tarmac (2026-11-01, the one-repo registry: docs/TRACKS.md). This repo is retired and read-only; its copy is history, never built."
+      }
     },
     {
       "name": "k10-san-diego",
@@ -92,7 +119,8 @@
       "role": "Lake Murray loop + the I-5/I-8/CA-52/CA-163 freeway network, shipped as one kn5",
       "tracks_glob": "project*/track.config.json",
       "moved_out": {
-        "project_freeway_net": "airoso/tracks/san-diego-freeway (2026-10-29, docs/ONE-CHAIN.md §4 row 8): the freeway network's config of record carried over; this repo is retired and read-only, its copy is history, never built."
+        "project_freeway_net": "airoso/tracks/san-diego-freeway (2026-10-29, docs/ONE-CHAIN.md \u00a74 row 8): the freeway network's config of record carried over; this repo is retired and read-only, its copy is history, never built.",
+        "project": "airoso/tracks/san-diego-lake-murray (2026-11-01, the one-repo registry; its source of truth has lived in airoso since the 2026-08-19 salvage import, tracks/san-diego-lake-murray/README.md). This repo is retired and read-only."
       },
       "build": {
         "cmd": "scripts/build_kn5.sh",
@@ -119,13 +147,14 @@
   ],
   "track_annotations": {
     "_doc": "Keyed by <repo>/<track-dir>. `kind` is the taxonomy; `fidelity` records how honestly the geometry is sourced; `owner_of` marks a track that supersedes a stale copy elsewhere.",
-    "k10-colorado/sand-creek": {
+    "airoso/sand-creek": {
       "kind": "fictional_street_circuit",
       "fidelity": "real",
       "source": "KML + phone capture + textures",
       "owner_of": [
         "engine-legacy/projects/sand-creek-raceway"
-      ]
+      ],
+      "moved_from": "k10-colorado/sand-creek (2026-11-01, the one-repo registry)"
     },
     "airoso/milford-road-course": {
       "kind": "circuit_port",
@@ -139,78 +168,91 @@
       "source": "OSM route (named + ref: + id: ways)",
       "moved_from": "k10-colorado/tracks/lookout-lariat (retired twin; its blender/ files archived to D:/k10-track-archive/2026-10-11_lariat-july-blend/)"
     },
-    "k10-colorado/imi": {
+    "airoso/imi": {
       "kind": "circuit_port",
-      "fidelity": "real",
+      "fidelity": "FABRICATED (2026-11-01: a 33-point hand trace off a screenshot that misses the course; tracks/imi/track.config.json _chain_doc) \u2014 was 'real'",
       "source": "aerial trace, georeferenced",
       "owner_of": [
         "engine-legacy/projects/imi-motorsports"
-      ]
+      ],
+      "moved_from": "k10-colorado/imi (2026-11-01, the one-repo registry)",
+      "action": "BLOCKED on sourcing: a NAIP export of the site into source/, a trace off it by Exotics' method, control points from the image; left on the V1 frame so tools/ship_track.sh refuses it (L1)"
     },
-    "k10-colorado/aspen": {
+    "airoso/aspen": {
       "kind": "circuit_port",
       "fidelity": "real",
-      "source": "OSM highway=raceway way 192313782"
+      "source": "OSM highway=raceway way 192313782",
+      "moved_from": "k10-colorado/aspen (2026-11-01, the one-repo registry)"
     },
-    "k10-colorado/grand-junction": {
+    "airoso/grand-junction": {
       "kind": "circuit_port",
       "fidelity": "real",
-      "source": "OSM highway=raceway way 293789503"
+      "source": "OSM highway=raceway way 293789503",
+      "moved_from": "k10-colorado/grand-junction (2026-11-01, the one-repo registry)"
     },
-    "k10-colorado/pikes-peak": {
+    "airoso/pikes-peak": {
       "kind": "circuit_port",
       "fidelity": "real",
-      "source": "OSM highway=raceway way 1134026181 (D-oval)"
+      "source": "OSM highway=raceway way 1134026181 (D-oval)",
+      "moved_from": "k10-colorado/pikes-peak (2026-11-01, the one-repo registry)"
     },
-    "k10-colorado/pueblo": {
+    "airoso/pueblo": {
       "kind": "circuit_port",
       "fidelity": "real",
-      "source": "OSM highway=raceway ways 558378826+823+824"
+      "source": "OSM highway=raceway ways 558378826+823+824",
+      "moved_from": "k10-colorado/pueblo (2026-11-01, the one-repo registry)"
     },
-    "k10-colorado/high-plains": {
+    "airoso/high-plains": {
       "kind": "circuit_port",
       "fidelity": "real",
       "source": "OSM highway=raceway ways at Deer Trail (39.7353,-103.8980), closed 2.00 mi cycle",
-      "note": "Re-sourced 2026-07-26 from fabricated geometry. Full 2.55 mi course needs a 110 m aerial trace where OSM's north section dangles."
+      "note": "Re-sourced 2026-07-26 from fabricated geometry. Full 2.55 mi course needs a 110 m aerial trace where OSM's north section dangles.",
+      "moved_from": "k10-colorado/high-plains (2026-11-01, the one-repo registry)"
     },
-    "k10-colorado/second-creek": {
+    "airoso/second-creek": {
       "kind": "circuit_port",
       "fidelity": "FABRICATED",
       "historical": true,
       "source": "rough KML trace off the old unified map",
-      "action": "BLOCKED on sourcing. Verified against Overpass 2026-07-26: the circuit is NOT in OSM (only 'Second Creek Trail', a footpath, and the creek). It closed in the 2000s and the site was redeveloped, so no current imagery shows it either. Needs a georeferenced PRE-2008 aerial plus two control points, then the aerial-tracing skill. Until then its geometry is invented and it must not ship as a real port (L1)."
+      "action": "BLOCKED on sourcing. Verified against Overpass 2026-07-26: the circuit is NOT in OSM (only 'Second Creek Trail', a footpath, and the creek). It closed in the 2000s and the site was redeveloped, so no current imagery shows it either. Needs a georeferenced PRE-2008 aerial plus two control points, then the aerial-tracing skill. Until then its geometry is invented and it must not ship as a real port (L1).",
+      "moved_from": "k10-colorado/second-creek (2026-11-01, the one-repo registry)"
     },
-    "k10-colorado-rally/dragon-tail-gravel": {
+    "airoso/rally-dragon-tail-gravel": {
       "kind": "rally_stage",
       "fidelity": "real",
-      "source": "OSM County Road 116 (3 ways, unpaved)"
+      "source": "OSM County Road 116 (3 ways, unpaved)",
+      "moved_from": "k10-colorado-rally/dragon-tail-gravel (2026-11-01, the one-repo registry)"
     },
-    "k10-colorado-rally/dragon-tail-tarmac": {
+    "airoso/rally-dragon-tail-tarmac": {
       "kind": "rally_stage",
       "fidelity": "real geometry / fictional surface",
       "source": "same road as dragon-tail-gravel",
-      "status": "DEPRIORITISED — Kevin 2026-07-26: 'may be cancelled, not super interesting'",
-      "note": "Not deleted, but out of the installable target. Convenient: the tarmac variants are the only stages blocked on surface roughness (113 bumps/km against tarmac's 75 limit; gravel allows 150), so dropping them removes that from the critical path. The gravel stages carry the real geometry."
+      "status": "DEPRIORITISED \u2014 Kevin 2026-07-26: 'may be cancelled, not super interesting'",
+      "note": "Not deleted, but out of the installable target. Convenient: the tarmac variants are the only stages blocked on surface roughness (113 bumps/km against tarmac's 75 limit; gravel allows 150), so dropping them removes that from the critical path. The gravel stages carry the real geometry.",
+      "moved_from": "k10-colorado-rally/dragon-tail-tarmac (2026-11-01, the one-repo registry)"
     },
-    "k10-colorado-rally/under-the-dragon-gravel": {
+    "airoso/rally-under-the-dragon-gravel": {
       "kind": "rally_stage",
       "fidelity": "real",
-      "source": "OSM County Road 109 (10 ways, unpaved)"
+      "source": "OSM County Road 109 (10 ways, unpaved)",
+      "moved_from": "k10-colorado-rally/under-the-dragon-gravel (2026-11-01, the one-repo registry)"
     },
-    "k10-colorado-rally/under-the-dragon-tarmac": {
+    "airoso/rally-under-the-dragon-tarmac": {
       "kind": "rally_stage",
       "fidelity": "real geometry / fictional surface",
       "source": "same road as under-the-dragon-gravel",
-      "status": "DEPRIORITISED — Kevin 2026-07-26: 'may be cancelled, not super interesting'",
-      "note": "Not deleted, but out of the installable target. Convenient: the tarmac variants are the only stages blocked on surface roughness (113 bumps/km against tarmac's 75 limit; gravel allows 150), so dropping them removes that from the critical path. The gravel stages carry the real geometry."
+      "status": "DEPRIORITISED \u2014 Kevin 2026-07-26: 'may be cancelled, not super interesting'",
+      "note": "Not deleted, but out of the installable target. Convenient: the tarmac variants are the only stages blocked on surface roughness (113 bumps/km against tarmac's 75 limit; gravel allows 150), so dropping them removes that from the critical path. The gravel stages carry the real geometry.",
+      "moved_from": "k10-colorado-rally/under-the-dragon-tarmac (2026-11-01, the one-repo registry)"
     },
-    "k10-san-diego/project": {
+    "airoso/san-diego-lake-murray": {
       "kind": "street_port",
       "fidelity": "real",
       "source": "OSM network routing, 5 roads round the reservoir",
       "owner_of": [
         "engine-legacy/projects/san-diego-loop"
-      ]
+      ],
+      "moved_from": "k10-san-diego/project (2026-11-01, the one-repo registry)"
     },
     "k10-san-diego/project_freeway_net": {
       "kind": "street_port",
@@ -222,11 +264,11 @@
       "kind": "street_port",
       "fidelity": "real",
       "source": "single-ribbon freeway layout",
-      "status": "RETIRED — superseded by project_freeway_net"
+      "status": "RETIRED \u2014 superseded by project_freeway_net"
     },
     "second_creek": {
       "kind": "circuit_port",
-      "fidelity": "fitted — shape and length from the 1970s layout map (2741 m vs stated 1.7 mi); POSITION fitted to OSM street anchors (Buckley Rd, E 88th Ave) plus Kevin's east-of-Buckley confirmation, 2026-07-27. NOT surveyed, NOT traced from the aerial — the site is regraded and the scar is not distinguishable. Rotation about the site remains an open question. See tracks/second-creek/source/SOURCING.md."
+      "fidelity": "fitted \u2014 shape and length from the 1970s layout map (2741 m vs stated 1.7 mi); POSITION fitted to OSM street anchors (Buckley Rd, E 88th Ave) plus Kevin's east-of-Buckley confirmation, 2026-07-27. NOT surveyed, NOT traced from the aerial \u2014 the site is regraded and the scar is not distinguishable. Rotation about the site remains an open question. See tracks/second-creek/source/SOURCING.md."
     },
     "airoso/exotics-racing-lv": {
       "kind": "circuit_port",
@@ -239,20 +281,20 @@
       "fidelity": "real",
       "source": "OSM motorway network in bbox, refs I-5/I-8/CA-52/CA-163 (Overpass live, no snapshot), 3DEP",
       "network": true,
-      "moved_here": "2026-10-29 from k10-san-diego/project_freeway_net (its config of record at 64161fc; shipped as san_diego_freeway_v0.5.0); rebuilt through the chain, docs/ONE-CHAIN.md §4 row 8"
+      "moved_here": "2026-10-29 from k10-san-diego/project_freeway_net (its config of record at 64161fc; shipped as san_diego_freeway_v0.5.0); rebuilt through the chain, docs/ONE-CHAIN.md \u00a74 row 8"
     }
   },
   "engine_projects": {
-    "_doc": "projects/ is retired (ONE-CHAIN §2 row 9, Kevin 2026-10-28). The eight stale duplicates / retired concepts were deleted; the DEM answer-key configs of bathurst, nordschleife and the freeway loop survive under docs/history/projects/.",
+    "_doc": "projects/ is retired (ONE-CHAIN \u00a72 row 9, Kevin 2026-10-28). The eight stale duplicates / retired concepts were deleted; the DEM answer-key configs of bathurst, nordschleife and the freeway loop survive under docs/history/projects/.",
     "gala-seed": {
-      "status": "ACTIVE — external contract",
+      "status": "ACTIVE \u2014 external contract",
       "path": "contracts/gala-seed",
-      "note": "owed to the k10-1978 game repo via scripts/game/export_seed.py + its PIPELINE_BRIDGE.md. Moved from projects/gala-seed/ (ONE-CHAIN §2 row 9); the game repo's bridge doc must point at the new path."
+      "note": "owed to the k10-1978 game repo via scripts/game/export_seed.py + its PIPELINE_BRIDGE.md. Moved from projects/gala-seed/ (ONE-CHAIN \u00a72 row 9); the game repo's bridge doc must point at the new path."
     },
     "dashcam-loop-0406": {
       "status": "fixture",
       "path": "tests/fixtures/dashcam-loop-0406",
-      "note": "prototype of the any-drive -> track path via scripts/gps/from_track; moved from projects/ (ONE-CHAIN §2 row 9)"
+      "note": "prototype of the any-drive -> track path via scripts/gps/from_track; moved from projects/ (ONE-CHAIN \u00a72 row 9)"
     }
   }
 }

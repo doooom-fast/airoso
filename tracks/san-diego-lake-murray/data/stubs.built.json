@@ -35578,7 +35578,7 @@
  "curb_faces_removed_total": 1878,
  "terrain": {
   "edges_halved": 13660,
-  "verts_pinned": 14468
+  "verts_pinned": 14467
  },
  "tidy": {
   "orphan_curb_verts_deleted": 1252

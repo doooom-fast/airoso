@@ -1,22 +1,22 @@
 {
- "obj": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\data\\track.obj",
+ "obj": "D:\\k10-scratch\\lm_v4\\data\\track.obj",
  "lattice_nodes": 555668,
- "terrain_vertices": 557150,
+ "terrain_vertices": 564474,
  "near_m": 20.0,
  "thinned": {
-  "nodes_read_on_the_surface": 192879,
-  "line_vertices": 102144
+  "nodes_read_on_the_surface": 187039,
+  "line_vertices": 101249
  },
  "nyquist": {
   "rib_m": 2.0,
   "max": 100,
   "by_amplitude": {
    ">0.5m": {
-    "beyond_near": 5071,
-    "near_road": 569
+    "beyond_near": 5096,
+    "near_road": 571
    },
    ">1m": {
-    "beyond_near": 958,
+    "beyond_near": 957,
     "near_road": 199
    },
    ">2m": {
@@ -92,17 +92,17 @@
   ],
   "boxes": {},
   "coarse_cells_info": {
-   "20": 16428,
+   "20": 16427,
    "40": 18940
   },
   "straight_info": {
    ">0.5m": {
-    "beyond_near": 4327,
+    "beyond_near": 4320,
     "near_road": 188
    },
    ">1m": {
-    "beyond_near": 1359,
-    "near_road": 90
+    "beyond_near": 1360,
+    "near_road": 89
    },
    ">2m": {
     "beyond_near": 113,
@@ -207,7 +207,7 @@
   "max": 5,
   "by_amplitude": {
    ">2m": {
-    "beyond_near": 68,
+    "beyond_near": 69,
     "near_road": 11
    }
   },
@@ -274,7 +274,7 @@
    }
   ],
   "boxes": {},
-  "jogs_beyond_near": 68,
+  "jogs_beyond_near": 69,
   "gated": 4,
   "densest_at": [
    -1421.0,

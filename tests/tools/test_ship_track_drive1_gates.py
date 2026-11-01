@@ -62,7 +62,9 @@ def test_the_verdict_stops_a_red_install_unless_forced():
 
 def test_the_lariat_runs_both_gates_on_the_built_road_and_syncs_their_files():
     s = spec_mod.load(ROOT / "tracks" / "lookout-lariat" / "ship.json", "lookout-lariat")
-    g = s["steps"]["gate"]
+    # road_obj (the gate OBJ off the shipped kn5) is a SHIP step on main since 2026-10-11 (make_treefx / ext_config read
+    # the tile names off it before the track folder); the two gates follow it in the ship + gate order
+    g = s["steps"]["ship"] + s["steps"]["gate"]
     assert g.index("road_obj") < g.index("road_inventory") and g.index("road_obj") < g.index("stacked_legs")
     assert "pavement_exemptions.json" in s["sync_in"]["required"]
     for f in ("data/road_inventory.json", "data/stacked_legs.json"):

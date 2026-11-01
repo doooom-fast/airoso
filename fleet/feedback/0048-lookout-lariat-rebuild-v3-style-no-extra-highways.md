@@ -37,11 +37,43 @@ state. Nothing is built: T0 is claimed when `tools/ship_track.sh lookout-lariat`
   Reverse's four declared stretches stay under the gate while it is parked (GATES-CHANGELOG 2026-11-01).
 - **On paper:** `CLAUDE.md`'s priority line, ONE-CHAIN §4 row 5, DEFINITION-OF-DONE (the July T0 withdrawn: an
   engine-era build, ONE-CHAIN §4 — the row now reads "none, started"), the plan's header, `fleet/registry.json`.
-- **The unmerged P2 / Drive-1 branches of the SHELVED table are not on `doooom-fast/airoso`** (`git ls-remote`: none
-  of `worktree-wf_0b6149fb-898-*`); they exist on the Windows box only. Of them, the underlay (branch 2) landed on
-  main 2026-10-28. Branch 1 (profile by station, measured widths, footprint crossfall + roll-rate gate, the declared
-  lid, L13 for the span detectors) and branch 3 (road inventory, stacked legs, the kink ceiling) are still to be
-  re-checked against main there, or redone; the profile-by-station half of branch 1 is redone below.
+- **The P2 / Drive-1 branches came in the same day.** Kevin pushed `worktree-wf_0b6149fb-898-1..4` from the Windows
+  box after this section was first written ("P2 branches are pushed"). They carry the pre-rewrite history (no merge base
+  with main since the 2026-10-27 LFS rewrite), so each tip was cherry-picked onto this branch and reconciled against
+  main as it is now:
+  - **branch 1 `307a3b7` (P2 data stages) — in**, as `bfb2510`: `scripts/elevation/road_profile.py` (the profile by
+    station with the declared lid held straight; `--write` records `capture.bridges`), `scripts/gps/measured_widths.py`
+    (aerial > published > OSM, local frame, no flares or fold floors), `scripts/elevation/crossfall.py` footprint mode +
+    `tools/verify_crossfall.py` (the roll-rate gate, hard), the L13 seam rule in both span detectors (opt-in
+    `bridges.l13_seam_rule`), the config's `bridges` / `capture.bridges` / `route.measured_widths` /
+    `crossfall.method` blocks, their tests and changelog. The Lariat's draft is now gps → paint → remap → paint gate →
+    one-way gate → elev → **road_profile** → project → widths → **measured_widths** → **crossfall** →
+    **verify_crossfall** → mesh → underlay. Two reconciliations: `heightfield`'s own `profile_along` (above) stays —
+    `road_profile` re-smooths the same raw samples by station and adds the lid, so on the Lariat the two agree and
+    every other track is untouched; and drive_test keeps main's one replication mapping (`in_local_order` by the
+    permutation projection records, ledger 0060) rather than the branch's `z_raw_local_m` preference, which would have
+    rotated twice (`97a6e82`, the branch's test re-pinned).
+  - **branch 3 `5e5b760` (Drive-1 gates) — in**, as `1b8d78b`: `tools/verify_road_inventory.py`,
+    `tools/verify_stacked_legs.py`, `tools/calibrate_kinks.py` + `fleet/reference/MEASURED.md` §8 (the kink ceiling
+    19.49/km [std] on reference mountain roads), `tools/gate_route.py`, drive_test's opt-in kink ceiling
+    (`gates.drive_test.kinks_per_km_max`), `extract_kn5.parse(keep=)`, `pavement_exemptions.json`, the chain's
+    Drive-1 gate block. The two gates run after `road_obj` (a ship step on main) and before `kn5_ground`.
+  - **branch 2 `445c47c` (the underlay) — superseded, not merged.** Its `underlay_draft.py` drafted road, verge and a
+    placeholder terrain itself; main's `scripts/blender/underlay.py` (2026-10-28, four tracks through it) drops the
+    engine's `build_mesh` draft into `GEN_*`. Nothing of it is needed now; its D4 verge switch is redone below.
+  - **branch 4 `793441f` (the Drive-1 integration) — the parts that still apply, as `de6f06a`:** `tools/drive1_gates.py`
+    (the Drive-1 verdict: P5's set as gating vs recorded rows, the July reference for `--force-install`, on main's
+    report names), `gates.drive1` in the config, the verdict last in the gate list; and **`SHIP_VARIANT=<id>`** (D4 per
+    run) redone for main's draft: the variant's `road_profile.verge_m` is written into the workshop config and
+    `build_mesh` now reads that key for the shoulder's band and the grading band (2.5 m on every track without it), a
+    variant run must draft in full and never syncs back. Its `split_street` and kn5-internal `kn5_ground_check` steps
+    are not taken (main's split handles one layout; `kn5_ground` runs on the kn5 set). Its ledger section, the first
+    real-3DEP Drive-1 build (2026-10-12: built twice, every road gate green but severe steps, soft-top, the real
+    hairpins' corner rule, the lid's east end and the stacked legs red; not installed), is appended at the end of this
+    entry as the baseline.
+  - **branch 4's WIP `30b539a` — not merged**, as its own message says: `terrain_cutfill.py`, `overpass_decks.py`, a
+    repaired paint centreline and the data files that go with it, cut off mid-round and unverified. P3a / P3b items;
+    whoever lands them starts from that commit on the remote, not from memory.
 
 ### What ran on this box (no Overpass, no USGS, no Blender: the proxy refuses all three)
 
@@ -133,14 +165,20 @@ an open line keeps both ends. `centerline.elevation.json` records the path under
 ### The Windows run, in order
 
 1. `bash tools/ship_track.sh lookout-lariat --draft-only` — Overpass (the gps cache is current; `widths` fetches
-   live under the 7-day freshness rule) and USGS 3DEP along the paint line; read the `[elev] profile by station` line
-   and `data/bridge.spans.auto.json`, then `drive_test` + `audit_mesh` on `data/track.obj` as the four did on their
-   drafts (Sand Creek 2026-10-29), before any Blender time.
-2. `bash tools/ship_track.sh lookout-lariat` — underlay → prep → split → export → AI draft → verify_kn5 → folder → map →
-   the three street gates → install as "doooom Colorado - Street — Full" into `content/tracks/lookout_lariat` (July
-   parked in the archive). That completing is **T0**; the gates green on the built kn5 is **T1**.
-3. D4 B: the same with `road_profile.verge_m` 1.25 and `install_folder` `lookout_lariat_verge` swapped in, on a scratch
-   copy (`SHIP_PROJ`), its gate files copied by hand. Then Kevin drives both: Drive 1's questions are in the dossier §10.
+   live under the 7-day freshness rule) and USGS 3DEP along the paint line; read the `[elev] profile by station` line,
+   `road_profile`'s stats (steepest 20 m, the lid held), `measured_widths`' report, the roll-rate gate, and
+   `data/bridge.spans.auto.json` (with `bridges.l13_seam_rule` on, the 19th St run should be gone; the C-470 one is
+   P2 step 5's second suspect: declared dropped in the config, read what the detector says on real 3DEP); then
+   `drive_test` + `audit_mesh` on `data/track.obj` as the four did on their drafts, before any Blender time.
+2. `bash tools/ship_track.sh lookout-lariat` — the draft (verge 0.4 m, D4 A) → underlay → prep → split → export → AI
+   draft → verify_kn5 → folder → map → the three street gates → road inventory → stacked legs → kn5_ground → the
+   Drive-1 verdict → install as "doooom Colorado - Street — Full" into `content/tracks/lookout_lariat` (July parked in
+   the archive). That completing is **T0**; the verdict green is **T1**. The 2026-10-12 build's reds (below) are what
+   to expect first: the real hairpins trip drive_test's corner rule (Kevin's call, A2), and the stacked legs want
+   P3a's cut/fill. `--force-install` passes a red build only when the verdict reads no key worse than July.
+3. D4 B: `SHIP_VARIANT=b_verge bash tools/ship_track.sh lookout-lariat` — the same run with `road_profile.verge_m`
+   1.25 in the workshop config, installed as "doooom Colorado (verge) - Street — Full" into `lookout_lariat_verge`,
+   nothing synced back. Then Kevin drives both: Drive 1's questions are in the dossier §10.
 
 ### Tests
 
@@ -148,8 +186,14 @@ an open line keeps both ends. `centerline.elevation.json` records the path under
 ship list without `treefx` is allowed), `test_route_oneway_check.py` (reads the real config; the parked Reverse is
 judged), `test_remap_centreline_config.py`, `test_paint_centreline.py`, `test_verify_centreline_paint.py`,
 `test_fit_hairpins.py`, `test_layout_dummies.py`, `test_split_single_layout.py`, `tests/fleet/test_registry_moves.py`,
-`tests/elevation/` (the new file among them): all green here. `fleet.cli lint` is unchanged (the three retired repos
-absent from this box, S8 on airoso: both pre-existing).
+`tests/elevation/` (the new file among them); then, with the branches in: `tests/elevation/test_road_profile.py`,
+`test_crossfall_footprint.py`, `tests/gps/test_measured_widths.py`, `tests/geometry/test_bridge_seam.py`,
+`test_drive_test_raw_local.py` (re-pinned to main's mapping), `tests/tools/test_verify_road_inventory.py`,
+`test_verify_stacked_legs.py`, `test_calibrate_kinks.py`, `test_ship_track_drive1_gates.py` (the gate order across
+ship + gate; the verdict as the block's third function), `test_drive1_gates.py` (on main's report names): all green
+here (the full suite was green at `77e2816`, 1,001 tests, and is re-run on the final tree: a follow-up commit records it if
+anything moved). `fleet.cli lint` is unchanged (the three retired repos absent from this box, S8 on
+airoso: both pre-existing).
 
 ## SHELVED (Kevin, 2026-10-12)
 

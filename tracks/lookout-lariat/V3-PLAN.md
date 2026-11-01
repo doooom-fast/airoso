@@ -5,10 +5,12 @@
 > ledger 0048 "SHELVED".
 >
 > **UNSHELVED 2026-11-01 (Kevin): "Start the lariat."** Resumed at P2 through the chain: `ship.json` lists the draft
-> as gps → paint centreline → remap → the two centreline gates → elev → project → widths → **mesh** → underlay, on the one
-> `street_full` layout (Drive 1, A13); the state is in ledger 0048 "Started". The unmerged P2 / Drive-1 branches of the
-> SHELVED note exist on the Windows box only (none is on `doooom-fast/airoso`); of them, the underlay landed on main
-> 2026-10-28. The install folder follows ONE-CHAIN §3 (`lookout_lariat`, the chain parks July), which supersedes A11.
+> as gps → paint centreline → remap → the two centreline gates → elev → road_profile → project → widths →
+> measured_widths → crossfall → verify_crossfall → **mesh** → underlay, on the one `street_full` layout (Drive 1, A13);
+> the state is in ledger 0048 "Started". The P2 / Drive-1 branches of the SHELVED note were pushed the same day and
+> brought onto main there: branches 1 and 3 in, branch 2's underlay superseded by main's, branch 4's verdict and D4
+> variant redone for main's draft, its WIP left as it is. The install folder follows ONE-CHAIN §3 (`lookout_lariat`, the
+> chain parks July), which supersedes A11; D4 B is `SHIP_VARIANT=b_verge`.
 
 
 > **2026-10-11, revised twice the same day after review. This is a plan only: nothing is built

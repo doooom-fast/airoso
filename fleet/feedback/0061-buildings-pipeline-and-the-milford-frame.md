@@ -75,7 +75,50 @@ over ground triangles finer than 8 m, within 60 m of the lap, never over pavemen
 else as "floating 99" (31 columns on the College slope, then 2 on Mission Gorge's mouth fills).
 
 Result: `house_seat` PASS (554 judged, contact -0.36..-0.07 m, 0 floating / sunken / buried), the road kn5 89.8 MB against
-0.19.2's 94.4, every other gate line identical to 0.19.2 (the installed build), floating furniture 2 (two single columns of a collider on Mission Gorge at (-2633, 2106) and (-2172, 2171), "99" = nothing loaded under them; every column test so far has been that mechanism, this pair is not pinned down, 22 of the 554 near blocks carry a collider at all). The stills
+0.19.2's 94.4, every other gate line identical to 0.19.2 (the installed build), floating furniture 2 (two single columns of a collider on Mission Gorge at (-2633, 2106) and (-2172, 2171), "99" = nothing found under them; pinned the same day, see the second rehearsal below: the collider's one flat foot at the footprint's lowest ground stood 2.9 m under the grass at the high corner of a sloped lot; 22 of the 554 near blocks carried a collider at all). The stills
 (`tools/bespoke_lap_stills_blend.py` on the scratch split) show hip-roofed stucco houses with a window per bay, parapet commercial
 blocks and tilt-up industrial beside the lap, and OSM's 11-storey apartment block at College as a 35 m slab. **Not installed:
 Kevin's call after he sees them**; the installed 0.19.2 keeps the assembler's boxes.
+
+## Lake Murray rehearsal 2 (2026-11-01, not installed): Microsoft's footprints, the collider skirt
+
+Two things the first rehearsal left open, each measured before it was built.
+
+**The two floating columns.** `drive_test` keys every `1WALL` vertex by 0.6 m cell, takes the LOWEST vertex in the cell, and looks
+for a drivable surface within 2.5 m of it (`top_at`'s ±2.5 m window). A block's collider had one flat foot at the footprint's
+lowest ground less 0.15 m; on a sloped lot the high corner's ground stood 2.9 m above that foot (the built OBJ at (−2633.5,
+2105.7): `1WALL_TILTUP_0` from −48.44, `1GRASS_5` at −46.2..−44.9), outside the window — "99", floating. The 2 m rule meant to
+refuse that compared the ground with the walls' bottom (the prep's floor), not the collider's. The collider is a skirt now:
+`ring_points` every `COLLIDER_STEP_M` 3 m `[invented]`, each vertex `BOTTOM_UNDER_M` under its own ground; `COLLIDER_GROUND_M` is
+gone. Floating furniture 0 on every layout, 275 colliders where the first rehearsal stood 22.
+
+**The houses OSM lacks.** Microsoft GlobalMLBuildingFootprints (ODbL): `tools/msft_footprints.py --find` names the level-9
+quadkey tile over `source/naip_box.json` (`023013221`, 77.9 MB, 698,177 rows); `source/bespoke/msft_buildings.json` is the
+12,035 inside the box, 11,573 with the dataset's ML height. The self-check before trusting it: 10,549 stand where OSM has
+nothing and 19,153 of OSM's 20,649 have no Microsoft polygon — the two sets are nearly disjoint, the houses OSM lacks, not OSM's
+houses shifted (the overlay on the NAIP: OSM holds the commercial blocks and a few tracts, Microsoft the rest; of the 1,850 OSM
+footprints with a Microsoft centroid within 40 m, 902 are within 3 m, median offset −0.8 / 0.1 m). Its heights against OSM's:
+4.3 / 5.6 / 8.9 m at 1 / 2 / 3 `building:levels` (n 5 / 7 / 6), 23.7 m at 11 (the College slab). `tools/plan_buildings.py` reads
+its sources in order of trust and drops a later footprint whose centroid lies inside an earlier one (1,489 Microsoft on OSM, 19
+OSM on OSM), offering its height where the earlier has none (1,345 OSM houses took one); an untagged footprint that area alone
+would class commercial or industrial is a house when a known height puts it under 7.5 m and it is under 1,000 m²
+(`HOUSE_MAX_H_M`, `HOUSE_MAX_AREA_M2` `[invented]`: 1,225 of them, median 411 m², 6.6 m to the ridge). 30,240 planned (24,499
+houses, 2,507 commercial, 2,583 sheds, 533 industrial, 118 apartments; heights: 11,259 Microsoft, 398 OSM levels, 9 OSM height,
+18,574 class defaults `[invented]`). The shadow stage, with 996 known heights to check against now, read 0.59 of them and
+switched itself off.
+
+**The chain** (`SHIP_PROJ=D:/k10-scratch/lm_bespoke ENG=D:/k10-scratch/eng_rehearsal SD_BESPOKE=1 tools/ship_sd.sh --no-install`):
+7,600 blocks stood (6,922 Microsoft's; 1,361 far blocks; 275 colliders), 21,452 dropped as past 450 m of the lap, 1,188 refused
+for cause (the tool printed twelve: 7 relief over 2.5 m, 3 within 3 m of a road or wall, 2 on a road; it tallies every reason
+from now on). `house_seat` PASS: 6,239 judged, contact −0.39..−0.05 m, 0 without ground, 1,003 buried more than 30 % on the
+uphill side (the prep's floor rule, `PREP_SHOW` 0.5: a hillside house shows half its height on the high side), the least showing
+1.05 m (a shed). `drive_test`: every key of every layout identical to the installed 0.19.2's committed file, floating furniture
+0 (was 2). `audit_mesh`: wall verts 152,578 → 187,018 (the skirts), skirt-off-terrain 1,564 → 1,563. `kn5_ground_check` PASS:
+wall objects 49 → 312, wall seating median −0.50 → −0.62 m (the colliders' feet). Road kn5 110.1 MB against 0.19.2's 94.4 and
+the first rehearsal's 89.8. The stills (`tools/bespoke_lap_stills_blend.py`, six stations and the top) went to Kevin with this
+entry; they are not in the repo.
+
+**Open:** the hillside houses refused for relief over 2.5 m (`MAX_RELIEF_M`) — the real San Carlos houses on those lots are
+split-level; a stepped foundation would stand them. The ODbL attribution for Microsoft's footprints is owed in the track's
+credits when, and only when, the pipeline's buildings ship on Lake Murray (`assets/licenses.json`'s shared list credits every
+track at once, so it is not added there yet). **Still not installed: Kevin's call after he sees the stills.**

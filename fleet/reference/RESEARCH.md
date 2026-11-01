@@ -224,9 +224,14 @@ Three-layer model, so nothing is double-counted:
 - **NLCD Annual (1985–2024, 30 m):** land cover + **fractional impervious surface**, public
   domain. Classes 41–43 forest / 52 shrub / 71 grass / 81–82 ag / 21–24 developed drive
   tree-and-grass scattering; impervious fraction gates urban texture blending.
-- **Building footprints:** Microsoft GlobalMLBuildingFootprints (ODbL; US heights only on the old
-  9.8M subset) or Overture buildings (ODbL). **Heights: derive our own nDSM from the 3DEP point
-  cloud** (first return − ground) — self-consistent and clean.
+- **Building footprints:** Microsoft GlobalMLBuildingFootprints (ODbL) or Overture buildings (ODbL).
+  *Measured 2026-11-01 (ledger 0061, `tools/msft_footprints.py`):* the 2026-02-03 US release is tiled by
+  level-9 quadkey (Lake Murray's `023013221`, 77.9 MB, 698k rows) and carries an ML height on 96 % of
+  its rows there (11,573 of 12,035 in the box); against OSM's `building:levels` its heights ran
+  4.3 / 5.6 / 8.9 m at 1 / 2 / 3 levels. At Lake Murray it is nearly DISJOINT from OSM (10,549 of
+  12,035 where OSM has nothing; 19,153 of OSM's 20,649 without a Microsoft polygon): the houses OSM
+  lacks, not a second copy. **Heights: derive our own nDSM from the 3DEP point cloud** (first
+  return − ground) stays the clean option where a track needs more than an ML estimate.
 - **Google Photorealistic 3D Tiles: confirmed prohibited** (no offline use, no extraction, no
   machine analysis — display-only streaming). The blosm/RenderDoc rips modders use are ToS
   violations with real distribution risk for a published fleet. Our stack (NAIP + NLCD + lidar +

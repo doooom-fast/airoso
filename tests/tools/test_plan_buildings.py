@@ -91,8 +91,34 @@ def test_classes_from_tags_then_area():
         assert cls in pb.STOREY_M and cls in pb.DEFAULT_WALL_M and cls in pb.FORM
 
 
+def test_a_later_source_on_an_earlier_footprint_is_dropped_and_offers_its_height():
+    sq = lambda x, y, s: [[x, y], [x + s, y], [x + s, y + s], [x, y + s]]
+    recs = [
+        {"key": "osm1", "tag": "house", "levels": None, "height": None, "src": "OSM", "ring": sq(-117.0, 32.8, 0.0002)},
+        {"key": "osm2", "tag": "house", "levels": "2", "height": None, "src": "OSM", "ring": sq(-117.0, 32.801, 0.0002)},
+        {"key": "ms1", "tag": "yes", "levels": None, "height": 5.1, "src": "Microsoft tile", "ring": sq(-116.99995, 32.80005, 0.0001)},  # inside osm1
+        {"key": "ms2", "tag": "yes", "levels": None, "height": 7.0, "src": "Microsoft tile", "ring": sq(-116.99995, 32.80105, 0.0001)},  # inside osm2
+        {"key": "ms3", "tag": "yes", "levels": None, "height": 4.0, "src": "Microsoft tile", "ring": sq(-117.002, 32.8, 0.0002)},        # on its own
+    ]
+    kept = pb.dedupe(recs)
+    assert [r["key"] for r in kept] == ["osm1", "osm2", "ms3"]
+    assert kept[0]["alt_height"] == 5.1 and kept[0]["alt_src"] == "Microsoft tile"
+    assert "alt_height" not in kept[1]                    # it has levels of its own: nothing offered
+    assert pb.height_label("OSM") == "OSM height" and pb.height_label("Microsoft tile").startswith("Microsoft height")
+
+
+def test_an_untagged_footprint_with_a_low_known_height_is_a_house_not_a_commercial_block():
+    plan = {"yes_by_area": [[60, "shed"], [350, "house"], [1500, "commercial"], [1e9, "industrial"]]}
+    assert pb.classify({"tag": "yes", "area": 500, "height": 4.8}, plan)[0] == "house"
+    assert pb.classify({"tag": "yes", "area": 500, "alt_height": 4.8}, plan)[0] == "house"
+    assert pb.classify({"tag": "yes", "area": 500, "height": 12.0}, plan)[0] == "commercial"
+    assert pb.classify({"tag": "yes", "area": 500}, plan)[0] == "commercial"
+    assert pb.classify({"tag": "yes", "area": 40, "height": 3.0}, plan)[0] == "shed"
+    assert pb.classify({"tag": "yes", "area": 1200, "height": 4.0}, plan)[0] == "commercial"
+
+
 def test_every_planned_track_file_names_a_source_per_height():
-    for track in ("high-plains", "sand-creek", "exotics-racing-lv"):
+    for track in ("high-plains", "sand-creek", "exotics-racing-lv", "san-diego-lake-murray"):
         f = ROOT / "tracks" / track / "source" / "bespoke" / "buildings.json"
         if not f.exists():
             continue
@@ -100,6 +126,6 @@ def test_every_planned_track_file_names_a_source_per_height():
         assert rows
         for r in rows:
             assert r["_h"] and r["_class"] and r["form"] in ("hip", "gable", "flat", "flat_parapet")
-            assert ("OSM" in r["_h"]) or ("shadow" in r["_h"]) or ("[invented]" in r["_h"]), r["_h"]
+            assert any(w in r["_h"] for w in ("OSM", "shadow", "[invented]", "Microsoft height", "height from")), r["_h"]
             if r["form"] in ("hip", "gable"):
                 assert r["ridge_h_m"] > r["wall_h_m"] >= pb.MIN_WALL_M.get(r["class"], 2.6)

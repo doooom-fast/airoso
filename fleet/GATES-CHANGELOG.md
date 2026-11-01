@@ -14,6 +14,24 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-01 — the block collider is a skirt; Microsoft's footprints as a planner source; a big low footprint is a house
+
+No gate threshold changed. Lake Murray's second rehearsal (ledger 0061), not installed.
+
+- **The block collider's foot follows the ground** (`tools/author_bespoke_blend.py`: `COLLIDER_STEP_M` 3 m `[invented]`;
+  `COLLIDER_GROUND_M` removed). `drive_test` reads each `1WALL` vertex's lowest point against a surface within ±2.5 m of it; a
+  flat foot at the footprint's lowest ground stood 2.9 m under the grass at the high corner of a sloped lot — the two Mission
+  Gorge columns. A vertex every 3 m, each 0.15 m under its own ground: floating furniture 0 on every layout, 275 colliders where
+  the first rehearsal stood 22.
+- **`tools/plan_buildings.py` reads its footprint sources in order of trust and dedupes** (`DEDUPE_CELL`): a later footprint
+  whose centroid lies inside an earlier one is dropped and its height offered where the earlier has none. **Microsoft
+  GlobalMLBuildingFootprints** (`tools/msft_footprints.py`, ODbL) is Lake Murray's third source, checked before use: nearly
+  disjoint from OSM there (10,549 of 12,035 where OSM has nothing), heights 4.3 / 5.6 / 8.9 m at OSM's 1 / 2 / 3 levels.
+- **An untagged footprint that area alone would class commercial or industrial is a house when a known height puts it under
+  7.5 m and it is under 1,000 m²** (`HOUSE_MAX_H_M`, `HOUSE_MAX_AREA_M2` `[invented]`): 1,225 big single-storey houses at Lake
+  Murray that would have worn parapets.
+- The author step prints a tally of every drop reason, not the first twelve.
+
 ## 2026-10-31 (later) — `house_seat` on every chain track; the buildings pipeline's planner checks itself; a collider only on the fine ground; GrassFX zones off the aerial
 
 `tracks/milford-road-course`, `high-plains`, `sand-creek` and `exotics-racing-lv` `ship.json` all run `author_bespoke` and the
@@ -23,7 +41,9 @@ bought, all in `tools/author_bespoke_blend.py` and marked `[invented]` there:
 - **A collider only within 60 m of the lap, on `1GRASS` within 2 m of its foot** (`COLLIDER_REACH_M`, `COLLIDER_GROUND_M`).
   `drive_test` culls ground triangles by cell round a wall and reads a `1WALL` with nothing loaded under it as "floating 99":
   High Plains' corner-worker huts (8 columns) and Sand Creek's far warehouses (351, then 80, then 8 at 100 m) went red on it
-  three times before the reach fell to 60 m. Past that reach a building stands see-through; no car gets there.
+  three times before the reach fell to 60 m. Past that reach a building stands see-through; no car gets there. *(2026-11-01:
+  the 2 m foot rule measured the walls' bottom, not the collider's, and the collider's flat foot was the mechanism behind the
+  last two columns — replaced by the skirt below.)*
 - **A planned footprint with no built ground under it stands as a far block** (`FARBLOCK_*`, no collider, not `BUILDING` so
   never a GrassFX occluder) instead of being dropped.
 - **A block is authored at the prep's own floor** (`PREP_SINK_M` 0.4, `PREP_SHOW` 0.5: the prep's `house_seat` constants), so

@@ -15,6 +15,11 @@
   {
    "file": "data/buildings.traced.json",
    "kind": "cache"
+  },
+  {
+   "file": "source/bespoke/msft_buildings.json",
+   "kind": "cache",
+   "_note": "Microsoft GlobalMLBuildingFootprints 2026-02-03, UnitedStates quadkey 023013221, clipped to source/naip_box.json by tools/msft_footprints.py; ODbL. Its 12,035 footprints are nearly disjoint from OSM's 20,649 here (1,850 within 40 m of an OSM centroid): the houses OSM lacks, with the dataset's ML height on 11,573"
   }
  ],
  "out": "source/bespoke/buildings.json",

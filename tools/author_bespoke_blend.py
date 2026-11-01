@@ -57,6 +57,7 @@ from __future__ import annotations
 import json
 import math
 import random
+import re
 import sys
 from pathlib import Path
 
@@ -89,7 +90,7 @@ PREP_SEATS = False             # scenery.bespoke.prep_seats: the prep that follo
 SCRUB_ROAD_CLEAR_M = 4.0       # [invented] the imagery's clumps stand well off any pavement
 CARDS_PER_MESH = 64
 OFF_TERRAIN_SKIRT_M = 4.0      # [invented] a far backdrop's wall carries on this far below the nearest ground
-COLLIDER_GROUND_M = 2.0        # inside drive_test's 2.5 m window on the wall's foot
+COLLIDER_STEP_M = 3.0          # [invented] the collider's skirt follows the ground at this spacing (see the collider rule in blocks)
 FAR_REACH_M = 450.0            # [invented] a far block past this from the lap is dropped: unseen from the car, weight in the kn5
 COLLIDER_TRI_M = 8.0           # [invented] a collider stands only over ground triangles finer than this (see bvh / down_edge)
 COLLIDER_REACH_M = 60.0        # [invented] Sand Creek still read floating at 100 m; the corridor's fine terrain reaches at least this far off the lap
@@ -675,7 +676,7 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
             # Past that reach no lap is near it, so it is left see-through
             reach = min(math.hypot(x - q[0], y - q[2]) for x, y in ring[:: max(1, n // 4)] for q in lap[::4])
             footed = False
-            if not off and reach <= COLLIDER_REACH_M and all(g is not None and abs(g - bottom) <= COLLIDER_GROUND_M for g in near):
+            if not off and reach <= COLLIDER_REACH_M:
                 cx, cy = sum(p[0] for p in ring) / n, sum(p[1] for p in ring) / n
                 inset = []
                 for x, y in ring:
@@ -684,13 +685,22 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                 # drive_test reads every wall column (0.6 m cells) against the ground triangles whose centroid cell lies near the
                 # wall: over a coarse triangle (Lake Murray's slope beside College, osm_buildings3: 31 columns "floating 99") it
                 # finds nothing, so the collider stands only where ground finer than COLLIDER_TRI_M lies under EVERY 0.6 m of its
-                # ring: pavement under a ring (a mouth fill, a stub) is not that ground (two columns on Mission Gorge read 99 over it)
+                # ring: pavement under a ring (a mouth fill, a stub) is not that ground
                 footed = all((lambda e: e is not None and e <= COLLIDER_TRI_M)(down_edge(near_ground, x, y)) for x, y in ring_points(inset, 0.6)[0])
+                # and its foot follows the ground: the gate takes each wall vertex's LOWEST point and looks for ground within 2.5 m
+                # of it, so one flat foot at the footprint's lowest ground reads "floating 99" at the high corner of a sloped lot
+                # (Lake Murray's two Mission Gorge columns stood 2.9 m under the grass, ledger 0061). A skirt walked every
+                # COLLIDER_STEP_M, each vertex BOTTOM_UNDER_M under its own ground, is seated at every vertex the gate reads; the
+                # prep never seats a 1WALL, so this is the collider's own foot
+                skirt = ring_points(inset, COLLIDER_STEP_M)[0]
+                feet = [down(near_ground, x, y) for x, y in skirt]
+                footed = footed and all(g is not None for g in feet)
             if footed:
-                collider.room(2 * n)
-                collider.add([(x, y, lo - BOTTOM_UNDER_M) for x, y in inset] + [(x, y, eave) for x, y in inset],   # its own foot: the prep never seats a 1WALL
-                             [(i, (i + 1) % n, n + (i + 1) % n, n + i) for i in range(n)],
-                             [((0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0))] * n)
+                m = len(skirt)
+                collider.room(2 * m)
+                collider.add([(x, y, g - BOTTOM_UNDER_M) for (x, y), g in zip(skirt, feet)] + [(x, y, eave) for x, y in skirt],
+                             [(i, (i + 1) % m, m + (i + 1) % m, m + i) for i in range(m)],
+                             [((0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0))] * m)
             rows.append({"key": key, "skin": skin, "roof": rclass, "form": roof_note, "wall_h_m": wall_h, "ground": [round(lo, 2), round(hi, 2)],
                          "bottom": round(bottom, 2), "eave": round(eave, 2), "off_terrain": off, "collider": footed})
             if not auto:
@@ -698,8 +708,15 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
         n_kept, n_drop = len(rows) - kept0, len(dropped) - drop0
         if auto:
             print(f"[bespoke] {group['file']}: {n_kept} buildings stood, {n_drop} dropped ({beyond} of them past {FAR_REACH_M:.0f} m of the lap)")
-            for r in [d for d in dropped[drop0:] if "FAR_REACH_M" not in d][:12]:
+            for_cause = [d for d in dropped[drop0:] if "FAR_REACH_M" not in d]
+            for r in for_cause[:12]:
                 print(f"[bespoke]   dropped {r}")
+            tally = {}
+            for d in for_cause:
+                why_ = re.sub(r"[0-9.]+ m", "N m", d.split(": ", 1)[1])
+                tally[why_] = tally.get(why_, 0) + 1
+            if tally:
+                print("[bespoke]   drop reasons: " + ", ".join(f"{n} {w}" for w, n in sorted(tally.items(), key=lambda t: -t[1])))
             n_drop -= beyond
             beyond = 0
             if n_kept + n_drop and n_drop / (n_kept + n_drop) > AUTO_DROP_MAX:

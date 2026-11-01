@@ -32,7 +32,9 @@ siding; apartments = flat with a parapet, stucco; commercial = flat with a parap
 low gable, ribbed metal. Flat roofs take the colour class read off the NAIP (white / tan / dark); the parapet and pitch numbers are
 [invented] and said so below.
 
-HEIGHTS, in this order per building: OSM height; OSM building:levels x STOREY_M[class]; the shadow on the NAIP; the class default.
+HEIGHTS, in this order per building: the row's own height (OSM's tag, or Microsoft's ML estimate on a Microsoft footprint);
+OSM building:levels x STOREY_M[class]; a later source's height where its footprint stands on this one (dedupe); the shadow on
+the NAIP; the class default.
 The shadow stage: (1) the shadow DIRECTION is voted by every footprint (the darkest of 16 directions just outside its ring, against
 the opposite side), (2) the sun's azimuth is the opposite, and scripts/lighting/solar.py gives the time of day on the capture date
 that puts the sun there, and its ELEVATION, (3) each building's shadow LENGTH is the run of ground nearer the shadow's own darkness (read
@@ -133,7 +135,56 @@ def load_footprints(track, sources):
                 continue
             rec["ring"] = [[round(p[0], 7), round(p[1], 7)] for p in ring]
             out.append(rec)
-    return out
+    return dedupe(out)
+
+
+DEDUPE_CELL = 0.0005           # degrees (~50 m): the lon/lat index cell of the footprint-on-footprint test
+
+
+def dedupe(recs):
+    """Sources stand in the plan's order of trust. A footprint whose centroid lies inside an EARLIER source's footprint is
+    the same building seen twice (Microsoft's tile over OSM's houses: 1,486 of Lake Murray's 12,035), so it is dropped;
+    where the earlier footprint carries no height and no levels, the later one's height is offered to it as
+    rec["alt_height"] / rec["alt_src"] (Lake Murray: 1,424 OSM houses gain Microsoft's estimate)."""
+    kept, cells, dropped, offered = [], {}, {}, 0
+    for rec in recs:
+        xs, ys = [p[0] for p in rec["ring"]], [p[1] for p in rec["ring"]]
+        cx, cy = sum(xs) / len(xs), sum(ys) / len(ys)
+        host = None
+        for k in cells.get((int(cx / DEDUPE_CELL), int(cy / DEDUPE_CELL)), ()):
+            if in_ring(kept[k]["ring"], cx, cy):
+                host = kept[k]
+                break
+        if host is not None:
+            dropped[rec["src"]] = dropped.get(rec["src"], 0) + 1
+            if not host.get("height") and not host.get("levels") and not host.get("alt_height") and rec.get("height"):
+                host["alt_height"], host["alt_src"] = rec["height"], rec["src"]
+                offered += 1
+            continue
+        k = len(kept)
+        kept.append(rec)
+        for i in range(int(min(xs) / DEDUPE_CELL), int(max(xs) / DEDUPE_CELL) + 1):
+            for j in range(int(min(ys) / DEDUPE_CELL), int(max(ys) / DEDUPE_CELL) + 1):
+                cells.setdefault((i, j), []).append(k)
+    for src, n in dropped.items():
+        print(f"[buildings] {n} footprints from {src[:70]} stand on an earlier source's footprint: dropped")
+    if offered:
+        print(f"[buildings] {offered} earlier footprints with no height or levels take the dropped footprint's height")
+    return kept
+
+
+def height_label(src):
+    """where a footprint row's own height came from, for the row's _h"""
+    if src == "OSM":
+        return "OSM height"
+    if str(src).startswith("Microsoft"):
+        return f"Microsoft height ({src[:110]})"
+    return f"height from {src[:110]}"
+
+
+HOUSE_MAX_H_M = 7.5            # [invented] an untagged footprint with a known height under this (two storeys' ridge) and under
+HOUSE_MAX_AREA_M2 = 1000.0     # this area is a big house, not the commercial block its area alone would make it (Lake Murray's
+                               # Microsoft footprints: 1,170 of 10,324 read commercial / industrial by area at a median 4.8 m tall)
 
 
 def classify(rec, plan):
@@ -141,10 +192,19 @@ def classify(rec, plan):
     if tag in TAG_CLASS:
         return TAG_CLASS[tag], f"OSM building={tag}"
     a = rec["area"]
+    known = rec.get("height") or rec.get("alt_height")
+    try:
+        known = float(str(known).split()[0]) if known else None
+    except ValueError:
+        known = None
+    by_area = "industrial"
     for below, cls in plan.get("yes_by_area", [[60, "shed"], [350, "house"], [1500, "commercial"], [1e9, "industrial"]]):
         if a < below:
-            return cls, f"building={tag}, {a:.0f} m2 -> {cls} by area [invented rule]"
-    return "industrial", "by area"
+            by_area = cls
+            break
+    if by_area in ("commercial", "industrial") and known is not None and a < HOUSE_MAX_AREA_M2 and known <= HOUSE_MAX_H_M:
+        return "house", f"building={tag}, {a:.0f} m2 but {known:.1f} m tall -> house by height, not {by_area} by area [invented rule]"
+    return by_area, f"building={tag}, {a:.0f} m2 -> {by_area} by area [invented rule]"
 
 
 class Photo:
@@ -460,12 +520,12 @@ def main() -> int:
                 osm_h = None
             if L and osm_h and L * tan_el <= CAP_M[r["cls"]]:
                 checks.append((osm_h, L * tan_el, r["cls"]))
-        verdict = "unchecked: no OSM heights to compare"
+        verdict = "unchecked: no known heights to compare"
         trust = bool(sh.get("trust_unchecked", False))
         if len(checks) >= CHECK_MIN:
             ratios = sorted(s / o for o, s, _ in checks if o > 0)
             med = ratios[len(ratios) // 2]
-            verdict = f"checked against {len(checks)} OSM heights, shadow / OSM median {med:.2f}"
+            verdict = f"checked against {len(checks)} known heights (OSM tags and levels, Microsoft estimates), shadow / known median {med:.2f}"
             if not (CHECK_RANGE[0] <= med <= CHECK_RANGE[1]):
                 print(f"[buildings] shadow stage OFF: {verdict}, outside {CHECK_RANGE}: this photograph's dark bands are not this sun's shadows")
                 sun = None
@@ -480,11 +540,13 @@ def main() -> int:
         src = None
         try:
             if r.get("height"):
-                h, src = float(str(r["height"]).split()[0]), "OSM height"
+                h, src = float(str(r["height"]).split()[0]), height_label(r["src"])
             elif r.get("levels"):
                 lv = float(r["levels"])
                 st = STOREY_M[cls] if lv <= 1 or cls in ("house", "apartments", "shed") else STOREY_MULTI_M
                 h, src = lv * st, f"OSM building:levels {r['levels']} x {st} m"
+            elif r.get("alt_height"):
+                h, src = float(r["alt_height"]), height_label(r["alt_src"]) + ", its footprint standing on this one"
         except ValueError:
             h = None
         shadow_h, why = None, None

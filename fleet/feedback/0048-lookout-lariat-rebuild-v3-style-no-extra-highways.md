@@ -120,6 +120,60 @@ state. Nothing is built: T0 is claimed when `tools/ship_track.sh lookout-lariat`
      (the lips), every other class 0. Run 2's drive_test wrote `data/drive_test.json` (one layout), run 1's
      `drive_test.street_full.json` (four).
 
+### Rehearsal 3, the whole draft order (2026-11-01, after the branches came in)
+
+The same stand-in (July's corridor samples for 3DEP, July's widths snapshot re-keyed), the scratch copy, every stage
+through its own entry point in `ship.json`'s order, then the draft gates and the verdict. **What ran:** elev (max grade
+14.3 %) → `road_profile --write` (the lid `lid_19th_us6` at local st 24,349.4–24,387.6, 38.1 m, held straight at
++3.29 %, the raw profile moved ≤ 0.13 m; `capture.bridges` written; steepest 20 m +10.2 / −11.8 %, raw +12.0 / −12.9;
+0 segments at the 16 % cap) → project → widths (July's table) → `measured_widths` (the local ring rotated 14,442
+vertices, matched; 55 aerial points used, 7 refused; 8,986 vertices measured / 5,459 OSM; 84 OSM flare runs not laid;
+lap widths 5.0–22.0 m, median 6.75 m) → `crossfall` footprint (8,305 stations: crown 44.9 %, bench left 16.2 / right
+18.7 %, measured 20.1 %, deck 0.2 %; raw |tilt| p50 2.76 %, p95 12.33 %; final max plane 5.83 %) →
+`verify_crossfall` **PASS** (worst 3.59 % / 30 m, 0 swings) → mesh (crossfall's camber active on 20.1 % of the lap;
+**`bridges.l13_seam_rule` dropped 24,375–24,855 m** — "ends on the closing vertex without continuing from vertex 0" —
+and the C-470 pair did not appear: `bridge.spans.auto.json` is `[]`) → the gates.
+
+**Found and fixed, builder side:** the first mesh of this run printed `verge_m=0.4 … the shoulder band and the grading
+band are 0.4 m` and then `[grade_embankment] band 0.4 m < grid half-diagonal 2.6 m (3.7x3.6 m cells) -> widening to
+3.6 m`: the sheet's verge broke at 0.4 m while the ground shelf was held at road-edge height out to 3.6 m, so the shelf
+stood above the draped face — drive_test read **67 ground-on-top samples and 55 severe steps (worst 0.41 m) at ±2.8 m,
+the lane edge**, where runs 1 and 2 had 4 and 11 (the review's finding 2, confirmed by the build). `build_mesh` now
+floors the declared verge at the grid's representable band, once, for the sheet and the shelf alike, and says when the
+declared edge is narrower than the grid can carry; on this grid D4 A and B are the same 3.6 m draft (GATES-CHANGELOG
+2026-11-01, the verge note; the config's `drive1_variants` doc). The narrower edges are P3a's.
+
+**What the two Drive-1 gates read on main's draft (not stand-in artefacts):**
+- **Road inventory FAIL** — 83,611 of 202,244 pavement triangles (105,041 m²) lie beyond half-width + 2 m with no
+  exemption, every one of them `1ROAD_shoulder_*` (worst 13.5 m beyond at st 10,642); forbidden meshes 0; the lap
+  100.0 % paved. This is ledger 0061's sheet measured by P5's own gate: the engine's edge IS pavement off the route by
+  construction. The gate was written against the branch's underlay (a ≤ 1.25 m `1RUNOFF` verge). It stays red until
+  0061's fix lands (its option C, naming the face terrain-family, is the first step and turns this green).
+- **Stacked legs FAIL** — 10,594 pairs on 679 lap points (nearest 21.41 m; vertical gap 6.49–14.29 m, median 10.06);
+  **530 ground vertices closer in height to the other leg** (the branch's real-3DEP build read 137 on its placeholder
+  terrain). The draft's grading between stacked legs is L4's case; P3a's cut/fill by station is the plan's answer.
+- The verdict ran on main's report names: `verify_kn5` and `kn5_ground_check` red as "not run" (a draft has no kn5:
+  correct), lid ends PASS, one-way / paint / roll rate PASS, kinks 5.39/km under the 19.49 ceiling (printed),
+  undrivable corners 83 (the real hairpins; A2 is Kevin's call), `--force-install` refused (far ledges 401 > July 382;
+  soft-top and floating not 0).
+
+**Rehearsal 4 (the floor applied; the same data).** mesh: `verge_m=0.4 m declared; the grid's representable band is
+3.58 m (3.7x3.6 m cells) -> the shoulder band and the grading band are 3.58 m each side … the declared edge is narrower
+than this grid can carry`; the same L13 drop; measured-guard 1,137 lips (4,211 with the stagger, 1,475 in run 2).
+`drive_test` street_full: **ground on top 0** (67), **severe 44** (55 — now one cluster, st 5,383 across the whole
+width at up to 2.98 m: the climb's st 5,375–5,383 feature of every run, to be seen in the underlay), bumps 0.6/km, kinks
+4.43/km (ceiling 19.49), floating 35, daylight 0, excursion drops 53 (far ledges 97), obstruction 0, undrivable corners
+83 (C4–C10, C13: the real hairpins against drive_test's corner rule — A2 is Kevin's call), replication 0.05 / 0.20 /
+1.23 m; `audit_mesh` CLEAN; road inventory FAIL (173,127 of 202,244 pavement triangles off the route, 1.20 km²:
+the 3.58 m band plus the draped face, every one `1ROAD_shoulder_*` — ledger 0061's sheet, wider now that the band is
+the floor); stacked legs FAIL (491 of 5,140: 471 ground, 20 edge); the verdict red on drive_test, road inventory,
+stacked legs, and the two kn5 rows that a draft cannot have; `--force-install` refused (floating 35 > July 0).
+
+**What this says for the Windows run (in order of what to read):** the climb's st 5,383 step; the hairpin corner
+rule (A2); the sheet (0061) under the road-inventory gate; the stacked legs (P3a). None of the four is a stand-in
+artefact: all four are the engine's draft on this route.
+
+
 ### Found and fixed: the elevation profile read the 1 m climb as 3 m points
 
 `scripts/elevation/heightfield.py` `build()` handed `snap_to_ground` a hard-coded `spacing_m` of 3.0 — exact for every

@@ -420,8 +420,30 @@ on top 0, floating 0, severe 1 ([1275.0, +3.49, 0.066]), daylight 0, excursion d
 0.68]) with far ledges 7 — the baseline's 7**; `[seam-weld]` 391,244 raised (397,497: the cap bound on ~6 k nodes in
 the cuts), `[cut-edge]` **0** (154: nothing left for the band-aid), `[measured-guard]` 246 (255). Lips 472 → **457**: 14
 gone — the 13 at span 3's approach and span (bases 1.0–7.8 m under the deck) and one at s 2680 (base −1.58) — and 2
-new ordinary toe lips at s 9592 / 9598 (bases −0.81 / −0.63). Nothing else on the lap moved. Sand Creek's full chain
-run on `988166a` is owed on the Windows box (the draft must rebuild: `--from prep` would reuse the old one).
+new ordinary toe lips at s 9592 / 9598 (bases −0.81 / −0.63). Nothing else on the lap moved.
+
+**Sand Creek GREEN and INSTALLED — four of four (full run at 988166a on the Windows box; committed as `780e01f`:
+`loop.blend` in LFS, `ai/full/`, the gate files).** Every step clean: draft (mesh `[measured-guard] 246`, no
+`[cut-edge]` line; the underlay's source `track.obj` md5 861c083b), prep, split, export, AI (6,440 pts over 9,658 m, 9
+fillets R 12.6 m, min radius 12.21, self-crossings 0, start 0.001 m from AC_TIME_0), `verify_kn5` PASS, track folder,
+`verify_inis`, map, the lights check with no lamps. Gate OBJ 148 groups / 4,324,726 v / 7,791,562 tri. **`drive_test`
+PASS**: ground on top 0, floating furniture 0, undrivable 0, severe 1 ([1275.0, +3.49, 0.066]), bumps 1.14/km, kinks
+11.06/km, daylight 0, replication 0.01 / 0.06 / 4.08 m, excursion drops 2 gated with 7 far ledges (worst [7950.5,
+−12.5, 0.68]) — the numbers read here on the rebuilt draft, to the entry. **`audit_mesh` CLEAN** (A–K all 0).
+**`kn5_ground_check` PASS**: walls 219 / hovering 0, shoulder underside coverage 100 %, deck-vs-mountain p95 +0.014,
+road-over-ground 5/2,341 > 5 cm (p95 0.014). "installed: doooom Colorado — Sand Creek Raceway 0.28.0", kn5 md5
+2056119d…, the same in the build and the install; the 0.27.0 install (forward + reverse) parked in
+`D:/k10-track-archive/2026-10-29_100724/`. **T1** (DEFINITION-OF-DONE). Open, by decision not defect: 0.28.0 ships
+`ship.json`'s single `full` layout, so the reverse layout the 0.27.0 install had is not installed — parked until its
+start is declared (ONE-CHAIN; the PR). Still carried, not gated: the 2 gated excursion drops (worst [7950.5, −12.5,
+0.68], 12.5 m out beside a 12 m road), the one 6.6 cm step at s 1275, the 4.08 m replication max (the capture's own
+noise at the creek; `capture.use_elevation` is false).
+
+**Where the four stand, 2026-10-29 end of day:** Nevada Nights 0.2.0, Milford 0.2.0, High Plains 0.68.0, Sand Creek
+0.28.0 — every one built by `tools/ship_track.sh`, every gate green on the built kn5, every one installed on the
+Windows box from the chain, each at **T1**. None driven: the seat is the verdict (REALISM §3, DEFINITION-OF-DONE).
+Fourteen causes found and fixed along the way, every one reproduced before its fix and recorded above and in
+`fleet/GATES-CHANGELOG.md` 2026-10-29; no gate threshold moved.
 
 ## Verification
 

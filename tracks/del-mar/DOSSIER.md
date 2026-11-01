@@ -23,11 +23,20 @@
 | T7–T8 east lobe | across Jimmy Durante Blvd into the east lot, hairpin under I-5 | — | — | dirt/asphalt lot | video (8:07 "T.8") + **estimate: the lobe's extent is the least certain thing here** |
 | T9–T10 return | west along the north, the kink into the straight | — | — | lot | video (8:10 "T.9": tent and sponsor wall on open dirt) + sketch |
 
-Lap: **2387 m as estimated** against **2570 m published** (RSC "2.570 kms", Fastlane 2.579 km, Motor Sport "1.6 miles").
-The published length does not fit inside the grounds with the drawn shape (the sketch's 2:1 proportions put the
-lobe in the lagoon or the bottom in the river at 2570 m); the TV map's proportions are the suspect. L1 stands:
-no roads are invented — the whole course is on lots that exist, and the one public road it uses (Jimmy Durante
-Blvd) it crosses, as the "street circuit" billing says.
+Lap: **about 2.0 km as built** (engine's smoothed line 2006 m; the placed sketch 2170 m) against **2570 m published**
+(RSC "2.570 kms", Fastlane 2.579 km, Motor Sport "1.6 miles"). The published length does not fit inside the
+grounds with the drawn shape: at 2570 m the sketch's 2:1 proportions put the lobe in the lagoon or the bottom in
+the river, and each placement that cleared the fixed ground (the oval's rail, Jimmy Durante's river-side stretch
+where the boulevard sits on the bank) shortened it further. The TV map's proportions are the suspect; the course
+may also have used more of the north-east lot than the sketch shows. L1 stands: no roads are invented — the whole
+course is on lots that exist, and the one public road it uses (Jimmy Durante Blvd, crossed twice) is the
+"street" of the "street circuit" billing.
+
+Placement history (`source/estimate/placement.json`, all north-up, x-scale hairpin apex → east lobe apex, y-scale
+capped at the bottom): E2 apex (1280,430) bottom 1430 — hairpin arm on the oval's dirt, bottom on the river bank:
+drive_test red (severe steps + stone guard at s 1232–1242). E3 apex (1360,440) bottom 1360 — bottom still along
+the boulevard: red (s 1172–1193). **E4 apex (1360,440) bottom 1290 — draft drive_test PASS** (severe 7 at s
+1131–1137 of 7 cm, obstructed 0, floating 0); built 2026-11-01 run 4.
 
 ## 3. Elevation & drainage
 Flat river terrace, 3–5 m above the San Dieguito lagoon. Real USGS 3DEP elevation only (`elev` stage); no banking,

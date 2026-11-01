@@ -1,0 +1,190 @@
+{
+ "status": "GENERATED DRAFT from the built centreline \u2014 not an in-game recording (docs/HANDOFF.md :284, ledger 0023). Replace file-for-file with CSP's fast_lane.ai.candidate recorded in this layout.",
+ "layout": "full",
+ "direction": "forward",
+ "race_furniture": false,
+ "lane_offset": true,
+ "frame": "kn5 frame (median dist to centerline.local: engine 47.7 m / kn5 0.2 m)",
+ "points": 1308,
+ "spacing_m": 1.5,
+ "lap_m": 1962.0,
+ "lap_s_est": 87.1,
+ "offset_points": 125,
+ "offset_max_m": 3.217,
+ "clearance": {
+  "points": 1308,
+  "unmatched": 0,
+  "divider_stations": 0,
+  "right_side": 0,
+  "island_hits": 0,
+  "divider_hits": 0,
+  "divider_too_close": 0,
+  "edge_too_close": 0,
+  "min_divider_clear_m": null,
+  "min_edge_clear_m": 3.279113560600496,
+  "max_lat_m": 3.220886439399504,
+  "right_side_frac": null,
+  "ok": true
+ },
+ "geometry": {
+  "ramps": [],
+  "ramp_clamped": 0,
+  "corner_approach": [],
+  "folds": [],
+  "fillets": [
+   {
+    "xz": [
+     -205.09,
+     38.81
+    ],
+    "radius_m": 12.6,
+    "floor_m": 11.0,
+    "lane": "comfort",
+    "window_pts": 12,
+    "turn_deg": 61.1
+   },
+   {
+    "xz": [
+     -258.91,
+     231.4
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 36,
+    "turn_deg": -135.1
+   },
+   {
+    "xz": [
+     -66.89,
+     -191.97
+    ],
+    "radius_m": 12.6,
+    "floor_m": 6.69,
+    "lane": "comfort",
+    "window_pts": 12,
+    "turn_deg": -74.0
+   },
+   {
+    "xz": [
+     -33.41,
+     -194.79
+    ],
+    "radius_m": 12.6,
+    "floor_m": 5.25,
+    "lane": "comfort",
+    "window_pts": 18,
+    "turn_deg": -91.9
+   },
+   {
+    "xz": [
+     316.49,
+     128.97
+    ],
+    "radius_m": 12.6,
+    "floor_m": 10.56,
+    "lane": "comfort",
+    "window_pts": 19,
+    "turn_deg": -119.6
+   },
+   {
+    "xz": [
+     289.18,
+     97.25
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 12,
+    "turn_deg": 60.2
+   },
+   {
+    "xz": [
+     199.21,
+     88.72
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": -36.4
+   },
+   {
+    "xz": [
+     134.53,
+     -36.0
+    ],
+    "radius_m": 12.6,
+    "floor_m": 7.37,
+    "lane": "comfort",
+    "window_pts": 21,
+    "turn_deg": 104.5
+   },
+   {
+    "xz": [
+     -53.51,
+     -186.08
+    ],
+    "radius_m": 12.6,
+    "floor_m": 7.22,
+    "lane": "comfort",
+    "window_pts": 14,
+    "turn_deg": 37.9
+   },
+   {
+    "xz": [
+     110.39,
+     -22.51
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 17,
+    "turn_deg": -91.9
+   }
+  ],
+  "smoothing": [
+   {
+    "iterations": 0,
+    "violations_before": 0,
+    "violations_after": 0,
+    "moved_points": 0,
+    "corridor_clamps": 0
+   },
+   {
+    "iterations": 0,
+    "violations_before": 0,
+    "violations_after": 0,
+    "moved_points": 0,
+    "corridor_clamps": 0
+   }
+  ],
+  "start": {
+   "xz": [
+    303.311,
+    -27.618
+   ],
+   "dist_m": 0.007,
+   "requested_xz": [
+    303.318,
+    -27.62
+   ],
+   "source": "dummies.json AC_TIME_0 midpoint",
+   "index": 0,
+   "grid_index": 1288,
+   "grid_behind_line_m": 30.0,
+   "grid_off_line_m": 0.22
+  },
+  "min_radius_m": 12.23,
+  "min_radius_at": 265,
+  "radius_below_floor": 0,
+  "max_turn_deg": 7.0,
+  "turns_over_limit": 0,
+  "turns_over_limit_road_tight": 0,
+  "max_lateral_jump_m": 0.651,
+  "backward_steps": 0,
+  "self_crossings": 0,
+  "min_speed_kmh": 49.9,
+  "min_speed_at": 263
+ }
+}

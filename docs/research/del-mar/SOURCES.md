@@ -157,3 +157,13 @@ rail, lake, road junctions), then tracing the walls; a small HTML page can do it
   ties it to today's NAIP. Alternatively 8–10 oval-and-lake-only control points on the 8:07 frame, which is slower
   and less certain.
 - The sketch-based 45° overlay from the morning remains the only full-loop placement and is **not** to be built from.
+
+## Build record (2026-11-01, Kevin: "Commit and build to an estimated historical layout")
+
+- `tracks/del-mar/` scaffolded on the Exotics pattern (source.type aerial over the 2012 NAIP crop, trace_px = the
+  sketch loop placed; DOSSIER.md marks every fact measured / video / estimated).
+- Placements E2 → E4 (DOSSIER §2): each red drive_test pointed at the estimate touching fixed ground the course
+  could not have used (the oval's dirt, the boulevard's river-side bank); the engine's stone-lip guards and
+  wooden fences were the symptoms. E4 draft drive_test PASS. `scenery.fences: false` (the 1987 course was K-rail).
+- Engine fix on the way: `scripts/ac/write_ai_line.py` fillet window lookback (IndexError, run 1), a03cbc3.
+- Lap as built ~2.0 km vs 2.57 published: the open question for the correction pass (era imagery).

@@ -459,7 +459,7 @@ def test_track_folder_gives_each_lap_layout_its_laps_common_kn5_and_verify_kn5_a
     cfg.update({"ui_series": "", "version": "0.1", "default_width_m": 20.0, "origin": "centroid",
                 "location": {"lat": 32.78, "lon": -117.04, "timezone": "America/Los_Angeles", "city": "San Diego",
                              "country": "United States"}, "source": {"type": "osm"}, "surfaces": {"road": "1ROAD"},
-                "lighting": {}})
+                "lighting": {}, "road_markings": {"center_yellow": False}})   # ledger 0063: no t_street.kn5
     (d / "track.config.json").write_text(json.dumps(cfg, indent=1), encoding="utf-8")
     (d / "data" / "centerline.geojson").write_text(json.dumps({"features": [{"geometry": {
         "type": "LineString", "coordinates": [[-117.04, 32.78], [-117.03, 32.78]]}, "properties": {"length_m": 2411.0}}]}))

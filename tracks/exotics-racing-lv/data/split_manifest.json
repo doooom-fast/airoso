@@ -4,7 +4,7 @@
   "loop_main.blend": {
    "objects": 95,
    "meshes": 80,
-   "positions": 1743737,
+   "positions": 1744150,
    "max_positions": 29998,
    "materials": [
     "1GRASS_a_mat",
@@ -213,7 +213,7 @@
  "input_census": {
   "objects": 95,
   "meshes": 80,
-  "positions": 1743737,
+  "positions": 1744150,
   "max_positions": 29998,
   "materials": [
    "1GRASS_a_mat",

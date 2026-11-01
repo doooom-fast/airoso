@@ -2,7 +2,7 @@
   "archetype": "race_circuit",
   "name": "High Plains Raceway",
   "slug": "high_plains",
-  "version": "0.70.0",
+  "version": "0.71.0",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 12.0,

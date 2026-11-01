@@ -2,8 +2,8 @@
   "archetype": "race_circuit",
   "name": "Pueblo Motorsports Park",
   "slug": "pueblo_motorsports_park",
-  "version": "0.66.3",
-  "mirror_x": true,
+  "version": "0.67.0",
+  "mirror_x": false,
   "loop": true,
   "default_width_m": 12.0,
   "location": {
@@ -14,7 +14,7 @@
     "country": "United States"
   },
   "origin": "centroid",
-  "true_north_rotation_deg": 180.0,
+  "true_north_rotation_deg": 0.0,
   "surfaces": {
     "road": "1ROAD",
     "grass": "GRASS",
@@ -58,6 +58,8 @@
   "source": {
     "type": "from_track",
     "track": "source/osm_fixes.json",
+    "smooth_window": 0,
+    "_smooth_window_doc": "2026-11-01 (ledger 0060, High Plains' lesson): source/osm_fixes.json is a list of 128 OSM nodes (6 m apart on the corners, up to 504 m on the straights), not a 1 Hz GPS drive; from_track's 5-fix moving average put the line 1.75 m median / 3.64 p95 / 6.59 m max off the source polygon and shortened the lap 3,511 -> 3,460 m. 0 = no smoothing: the line is the OSM polygon resampled at 3 m (build_mesh still corner-rounds it for the sweep). The closing 350 m (last node -> first) is the front straight's own segment (0.0 / 6.7 deg turn at its ends), not a chord.",
     "_note": "Real 2.2-mi (~3510 m) paved ROAD COURSE at Pueblo Motorsports Park, 3733 N Pueblo Blvd, Pueblo CO. From OSM highway=raceway ways 558378826+558378823+558378824 (drag-strip staging spur excluded). Native ring winding is CW; fixes kept CW. Resampled to 3 m via scripts.gps.from_track. Flat/rolling road course — elevation from USGS 3DEP bare-earth (do NOT flatten); NO banking (not an oval)."
   },
   "road_profile": {
@@ -72,11 +74,16 @@
     ],
     "_orientation_doc": "Research 2026-07-20: Pueblo Motorsports Park is CLOCKWISE ONLY (track rules); our ring is already CW. S/F on the wide west-side front straight near its south end (~38.3000,-104.6774), raced NNW-bound. Pit lane: east of the front straight (driver's right), ~350 m."
   },
-  "terrain_cell_m": 2.0,
+  "terrain_cell_m": 1.5,
   "terrain_vertex_budget": 1500000,
   "corridor_refine_factor": 6,
   "_terrain_note": "L3b: cells finer than the road; excursion drops at the 5.0 default gated the v0.63.0 build (2026-08-07)",
   "ui_tags": [
     "circuit"
-  ]
+  ],
+  "install_folder": "pueblo_motorsports_park",
+  "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (Lariat plan A11; ONE-CHAIN §3: the slug, no suffixes); the previous install is parked in the archive",
+  "ui_series": "doooom Colorado",
+  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
+  "_chain_doc": "2026-11-01 (ONE-CHAIN §4 row 10; Kevin 2026-11-01: 'get a complete track list and installed by morning'): to the chain. mirror_x true -> false and true_north_rotation_deg 180 -> 0 (the chain's frame, ledger 0060; road_profile has no camber, so no sign to flip); version 0.66.3 -> 0.67.0 (versions keep counting, ONE-CHAIN §3); source.smooth_window 0 (an OSM node list); terrain_cell_m 2.0 -> 1.5 (L3b; Milford's drive_test failed at 2.0, 2026-10-28); ui_series 'doooom Colorado', install_folder = the slug (ONE-CHAIN §3); ui_tags already 'circuit'; the one layout already 'full'. route.start_at checked offline on the gps line + projection (zero-elevation stand-in): the ring rotates 952 points, vertex 0 lands 6.4 m from start_at on the west front straight heading 346 deg (NNW), clockwise, as _orientation_doc says; lap 3,511 m, 1,172 points from 128 nodes (published 2.2 mi = 3,541 m: -0.8 %). The engine-era T1 (v0.66.3 gate wave, ledger 0025) is withdrawn: the track enters at T0 through the chain."
 }

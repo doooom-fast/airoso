@@ -2,8 +2,8 @@
   "archetype": "race_circuit",
   "name": "Aspen Motorsports Park",
   "slug": "aspen_motorsports_park",
-  "version": "0.66.3",
-  "mirror_x": true,
+  "version": "0.67.0",
+  "mirror_x": false,
   "loop": true,
   "default_width_m": 9.0,
   "location": {
@@ -14,7 +14,7 @@
     "country": "United States"
   },
   "origin": "centroid",
-  "true_north_rotation_deg": 180.0,
+  "true_north_rotation_deg": 0.0,
   "surfaces": {
     "road": "1ROAD",
     "grass": "GRASS",
@@ -58,6 +58,8 @@
   "source": {
     "type": "from_track",
     "track": "source/osm_fixes.json",
+    "smooth_window": 0,
+    "_smooth_window_doc": "2026-11-01 (ledger 0060, High Plains' lesson): source/osm_fixes.json is a list of 64 OSM nodes (8 m apart on the corners, up to 302 m on the straights), not a 1 Hz GPS drive; from_track's 5-fix moving average put the line 3.33 m median / 6.30 p95 / 7.36 m max off the source polygon (corners cut by most of the 9 m road) and shortened the lap 1,676 -> 1,600 m. 0 = no smoothing: the line is the OSM polygon resampled at 3 m (build_mesh still corner-rounds it for the sweep).",
     "_note": "Real Aspen Motorsports Park (550 Raceway Rd, Woody Creek, CO). From OSM highway=raceway way 192313782 (1-mile road course), native CCW winding reversed to CW, resampled to 3 m via scripts.gps.from_track. Elevation from USGS 3DEP bare-earth (mountain site, do NOT flatten); NO banking (road course)."
   },
   "road_profile": {
@@ -77,5 +79,10 @@
   "terrain_vertex_budget": 1500000,
   "ui_tags": [
     "circuit"
-  ]
+  ],
+  "install_folder": "aspen_motorsports_park",
+  "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (Lariat plan A11; ONE-CHAIN §3: the slug, no suffixes); the previous install is parked in the archive",
+  "ui_series": "doooom Colorado",
+  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
+  "_chain_doc": "2026-11-01 (ONE-CHAIN §4 row 10; Kevin 2026-11-01: 'get a complete track list and installed by morning'): to the chain. mirror_x true -> false and true_north_rotation_deg 180 -> 0 (the chain's frame, ledger 0060; road_profile has no camber, so no sign to flip); version 0.66.3 -> 0.67.0 (versions keep counting, ONE-CHAIN §3); source.smooth_window 0 (an OSM node list); terrain_cell_m 1.5 and corridor_refine_factor 6 kept; ui_series 'doooom Colorado', install_folder = the slug (ONE-CHAIN §3); ui_tags already 'circuit'; the one layout already 'full'. route.start_at checked offline on the gps line + projection (zero-elevation stand-in): the ring rotates 382 points, vertex 0 lands 9.4 m from start_at on the N-S chute heading 179 deg (S; _orientation_doc says SSW), clockwise; lap 1,676 m, 561 points from 64 nodes (advertised '1-mile' = 1,609 m: +4.2 %, the OSM way as mapped). The engine-era T1 (v0.66.3 gate wave, ledger 0025) is withdrawn: the track enters at T0 through the chain."
 }

@@ -2,8 +2,8 @@
   "archetype": "race_circuit",
   "name": "Pikes Peak International Raceway",
   "slug": "pikes_peak_international_raceway",
-  "version": "0.2.2",
-  "mirror_x": true,
+  "version": "0.3.0",
+  "mirror_x": false,
   "loop": true,
   "default_width_m": 15.0,
   "location": {
@@ -14,7 +14,7 @@
     "country": "United States"
   },
   "origin": "centroid",
-  "true_north_rotation_deg": 180.0,
+  "true_north_rotation_deg": 0.0,
   "surfaces": {
     "road": "1ROAD",
     "grass": "GRASS",
@@ -58,27 +58,32 @@
   "source": {
     "type": "from_track",
     "track": "source/osm_oval_fixes.json",
+    "smooth_window": 0,
+    "_smooth_window_doc": "2026-11-01 (ledger 0060, High Plains' lesson): source/osm_oval_fixes.json is a list of 63 OSM nodes (5.6 m apart in the turns, up to 119 m on the straights), not a 1 Hz GPS drive; from_track's 5-fix moving average put the line 2.67 m median / 3.30 p95 / 3.69 m max off the source polygon. 0 = no smoothing: the line is the OSM polygon resampled at 3 m (build_mesh still corner-rounds it for the sweep). The closing 119 m (last node -> first) is a straight's own segment (0.0 deg turn at both ends), not a chord.",
     "_note": "Re-sourced from real OSM highway=raceway way 1134026181 at Fountain, CO (reversed to CW winding), resampled to 3 m via scripts.gps.from_track. Real 1.03-mi D-oval; elevation from USGS 3DEP (real ~2 m sunken bowl, do not flatten)."
   },
   "road_profile": {
     "_doc": "1.65 km paved oval/roval, engineered and near-flat. 3DEP sampled every 3 m over a lap this short is mostly DEM surface noise, and the 33 m default median cannot reject it: 130-236 kinks/km against a 3%-slope-change threshold, i.e. a jagged deck everywhere rather than a few bad spots. Same lever that fixed Second Creek. A graded racetrack is smooth by construction; the profile should be too.",
     "dips": [],
+    "ribbon_cols": 8,
+    "_ribbon_cols_doc": "2026-11-01: 8 lateral columns so the bank ramps' twist doesn't sag the deck between 3 m rows (ribbon.road_ribbon cols; absent = one edge-to-edge quad), Exotics' value: its v0.1.0 drive_test read 28 severe steps of up to 13 cm, all in its camber ramps, and the chain build with 8 cols (and 85 m ramps for its old 20 m) read 0. Here ledger 0018's V1 severe-step clusters (10 at s 240, 11 at s 640, 10 at s 1020, 12 at s 1400, on a 1,649 m lap) sit on the four ramps of the V1 arcs (231-281, 616-666, 1007-1057, 1392-1442) — if those arcs were in that build (dated 2026-07-20 in route._orientation_doc; the rewritten history cannot confirm the order here). A 15 m deck rolling 0 -> 10 deg over 50 m is the twist this column count exists for. Not a gate change; the Windows run's drive_test says whether it was the mechanism.",
     "cambers": [
       {
-        "name": "turn_arc_1",
-        "start_m": 231,
-        "len_m": 435,
-        "bank_deg": 10.0,
+        "name": "turns_1_2",
+        "start_m": 215,
+        "len_m": 515,
+        "bank_deg": -10.0,
         "ramp_m": 50
       },
       {
-        "name": "turn_arc_2",
-        "start_m": 1007,
-        "len_m": 435,
-        "bank_deg": 10.0,
+        "name": "turns_3_4",
+        "start_m": 960,
+        "len_m": 540,
+        "bank_deg": -10.0,
         "ramp_m": 50
       }
     ],
+    "_arcs_doc": "2026-11-01: what the two arcs cover. L10: PPIR is banked 10 deg in all four turns. A 1-mile oval's four turns are its two ends: T1-T2 is one continuous left-hand end, T3-T4 the other, so one arc per end, each covering two turns. Windows from the curvature of this config's own line (smooth_window 0, reversed, rotated to start_at; curvature over +/-15 m): T1-T2 turns in at s ~230 (2.2 -> 5.1 /km at s 210 -> 240) and out at s ~705 (4.7 -> 0.9 /km at s 690 -> 720), min R 118 m; T3-T4 in at s ~985 (0.0 -> 3.2 /km at s 960 -> 990, the back stretch dead straight 720-960) and out at s ~1475 (3.2 -> 1.9 /km at s 1470 -> 1500), min R 123 m. Each 50 m raised-cosine ramp is centred on the turn-in / turn-out, so full bank holds from s 265 to 680 and from 1010 to 1450. The V1 arcs (231 + 435, 1007 + 435) were cut on the smoothed line, 17 m shorter, and ended 40-60 m before the turns did. The straights stay flat: the front stretch's dogleg (~2 /km, R ~500 m, s 1500-230 across the start) and the back stretch carry no researched banking, and L10 says do not invent it. bank_deg is NEGATIVE: profile.py's +ve banks a right-hander (left edge up) in the chain's unmirrored frame; every PPIR turn is a left-hander (raced counterclockwise), so its outside, raised edge is the RIGHT one. Check on the built deck: the raised edge must be the outside (the one farther from the infield).",
     "despike_window_m": 90.0,
     "max_grade_pct": 4.0
   },
@@ -88,8 +93,17 @@
       38.591,
       -104.6785
     ],
-    "_orientation_doc": "Research 2026-07-20: PPIR oval raced COUNTERCLOCKWISE (NASCAR/IRL 1997-2005); S/F mid front stretch in front of the main grandstand (~38.5910,-104.6785), cars heading SSE. Our OSM ring was CW -> route.reverse. Cambers re-derived from curvature after reversal; bank sign flipped (+10) because outside/inside swap when direction reverses \u2014 verify outside-edge-up in Blender/game."
+    "_orientation_doc": "Research 2026-07-20: PPIR oval raced COUNTERCLOCKWISE (NASCAR/IRL 1997-2005); S/F mid front stretch in front of the main grandstand (~38.5910,-104.6785), cars heading SSE. Our OSM ring was CW -> route.reverse. Cambers re-derived from curvature after reversal; bank sign flipped (+10) because outside/inside swap when direction reverses — verify outside-edge-up in Blender/game."
   },
-  "terrain_cell_m": 2.0,
-  "terrain_vertex_budget": 1500000
+  "terrain_cell_m": 1.5,
+  "corridor_refine_factor": 6,
+  "terrain_vertex_budget": 1500000,
+  "ui_tags": [
+    "circuit"
+  ],
+  "install_folder": "pikes_peak_international_raceway",
+  "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (Lariat plan A11; ONE-CHAIN §3: the slug, no suffixes); the previous install is parked in the archive",
+  "ui_series": "doooom Colorado",
+  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
+  "_chain_doc": "2026-11-01 (ONE-CHAIN §4 row 10; Kevin 2026-11-01: 'get a complete track list and installed by morning'): to the chain. mirror_x true -> false and true_north_rotation_deg 180 -> 0 (the chain's frame, ledger 0060), and with it the two turn cambers' sign +10 -> -10 (profile.py: in the unmirrored frame +ve banks a right-hander, left edge up; PPIR is raced counterclockwise, every turn a left-hander, so the outside is the RIGHT edge and the sign is negative; +10 was the mirrored frame's sign); the arcs re-derived on the unsmoothed line (road_profile._arcs_doc); road_profile.ribbon_cols 8 added (Exotics' fix for a camber ramp's twist sagging the deck between rows; road_profile._ribbon_cols_doc); version 0.2.2 -> 0.3.0 (versions keep counting, ONE-CHAIN §3); source.smooth_window 0 (an OSM node list); terrain_cell_m 2.0 -> 1.5 (L3b) and corridor_refine_factor 6 added (ledger 0025 #7's fleet standard); despike_window_m 90 / max_grade_pct 4 kept (ledger 0018: not the fix); ui_series 'doooom Colorado', install_folder = the slug (pikes_peak_international_raceway, kept: it names every file; ONE-CHAIN §3); ui_tags 'circuit' added; the one layout already 'full'. route.reverse + start_at checked offline on the gps line + projection (zero-elevation stand-in): the lap is reversed to counterclockwise, the ring rotates 288 points, vertex 0 lands 6.5 m from start_at on the front stretch heading 151 deg (SSE), as _orientation_doc says; lap 1,666 m, 556 points from 63 nodes (PPIR's published 1 mile: +3.5 %, the OSM centreline as mapped)."
 }

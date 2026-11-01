@@ -58,7 +58,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageOps
+from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageOps, ImageStat
 
 AIROSO = Path(__file__).resolve().parents[1]
 TEX = AIROSO / "assets" / "textures"
@@ -591,6 +591,17 @@ TEX_FILES = ("fabric_white_diffuse.jpg", "fabric_white_normal.jpg", "traffic_con
 MODEL_FILES = ("traffic_cone.obj", "traffic_cone.json")
 
 
+CHECK_MEAN_DIFF = 0.25   # [invented] of 255, per channel. Pillow's encoders and resampling differ by a few pixels between
+                         # platforms (the Windows box, this Mac and the Linux CI runner), so the bytes can't be the test
+
+
+def _same_image(a: Path, b: Path) -> bool:
+    x, y = Image.open(a).convert("RGBA"), Image.open(b).convert("RGBA")
+    if x.size != y.size:
+        return False
+    return max(ImageStat.Stat(ImageChops.difference(x, y)).mean) <= CHECK_MEAN_DIFF
+
+
 def main() -> int:
     if "--check" not in sys.argv:
         write_all(TEX, MODELS)
@@ -599,8 +610,8 @@ def main() -> int:
     with tempfile.TemporaryDirectory() as d:
         t = Path(d)
         write_all(t, t)
-        bad = [n for n, root in [(f, TEX) for f in TEX_FILES] + [(f, MODELS) for f in MODEL_FILES]
-               if hashlib.md5((t / n).read_bytes()).digest() != hashlib.md5((root / n).read_bytes()).digest()]
+        bad = [f for f in TEX_FILES if not _same_image(t / f, TEX / f)]
+        bad += [f for f in MODEL_FILES if hashlib.md5((t / f).read_bytes()).digest() != hashlib.md5((MODELS / f).read_bytes()).digest()]
     if bad:
         print("differ from the generator:", bad)
         return 1

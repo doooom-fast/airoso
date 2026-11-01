@@ -1,7 +1,7 @@
 {
   "name": "Sand Creek Raceway",
   "slug": "sand_creek_raceway",
-  "version": "0.29.0",
+  "version": "0.30.0",
   "mirror_x": false,
   "osm_road_widths": true,
   "_osm_road_widths_doc": "Real street circuit — after the project stage, scripts.gps.widths_from_osm map-matches each centerline vertex to its OSM way and sets curb-to-curb widths from lanes (arterials ~2x a side street) + writes intersection pads at the real junctions. Racetracks (defined widths) leave this off.",
@@ -118,13 +118,6 @@
           "auto": true
         }
       ],
-      "cards": [
-        {
-          "file": "source/bespoke/trees.json",
-          "prefix": "TREECARD",
-          "clear_m": 5.0
-        }
-      ],
       "grassfx_zones": {
         "image": "source/naip_2023_sc.jpg",
         "webmerc": {
@@ -168,7 +161,8 @@
           }
         ]
       }
-    }
+    },
+    "treefx": {"_doc": "Ledger 0063: the NAIP points of source/bespoke/trees.json stand as TreeFX models (tools/make_treefx.py, planted), not as TREECARD cards. There is no cottonwood model: sycamores stand in, as the north_riparian zone does. Models are personal-use and stay on this machine.", "planted": {"file": "source/bespoke/trees.json", "clear_m": 5.0, "zones": {"3": "planted_cottonwood", "1": "planted_neighbourhood"}}}
   },
   "origin": "centroid",
   "true_north_rotation_deg": 0.0,
@@ -178,13 +172,47 @@
     "kerb": "1KERB"
   },
   "layouts": [
-    {
-      "id": "full",
-      "ai": "ai/full",
-      "uses_connectors": [],
-      "_doc": "Outer loop: Colorado -> 50th -> Dahlia -> 56th -> Sand Creek -> Quebec -> 45th -> 46th -> start. The 'interior' layout was dropped: its interior_grid connector was never defined, and layouts share one kn5 so a distinct interior circuit isn't achievable without splitting geometry."
-    }
-  ],
+  {
+    "id": "race",
+    "name": "Sand Creek Raceway",
+    "kind": "race",
+    "direction": "forward",
+    "race_furniture": false,
+    "ai": "ai/race",
+    "uses_connectors": [],
+    "start": {
+      "line_vertex": 2805,
+      "grid_vertex": 2795,
+      "sector_vertices": [
+        655,
+        1730
+      ],
+      "offset_right_m": 1.9
+    },
+    "run": "the lap, one-way: Colorado -> 50th -> Dahlia -> 56th -> Sand Creek -> Quebec -> 45th -> 46th -> start; no centre line (ledger 0063)",
+    "ui_description": "Sand Creek Raceway: a fictional street circuit on the real roads of Commerce City, Colorado, driven one way, without the centre line."
+  },
+  {
+    "id": "street",
+    "name": "Sand Creek Free Roam",
+    "kind": "street",
+    "direction": "forward",
+    "race_furniture": false,
+    "ai": "ai/street",
+    "uses_connectors": [],
+    "start": {
+      "line_vertex": 2805,
+      "grid_vertex": 2795,
+      "sector_vertices": [
+        655,
+        1730
+      ],
+      "offset_right_m": 1.9
+    },
+    "run": "the same roads open and two-way, the double yellow painted (ledger 0063)",
+    "ui_description": "Sand Creek Free Roam: the same Commerce City roads as they are, open and two-way, with the double yellow line."
+  }
+],
   "lighting": {
     "presets": [
       "morning",

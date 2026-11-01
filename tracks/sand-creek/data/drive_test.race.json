@@ -1,8 +1,8 @@
 {
  "lap_m": 9674.1,
- "layout": "full",
+ "layout": "race",
  "direction": "forward",
- "kind": "street",
+ "kind": "race",
  "race_furniture": false,
  "obj": "track.obj",
  "lane": "full width / island",

@@ -15,10 +15,11 @@ Writes, into --out-dir (default: the input blend's folder):
                                common set ONLY (1WALL_race_edge_lap<lap>_*, 1KERB_race_lap<lap>_*)  -> <slug>_race_<lap>.kn5
                                (loop_race.blend then holds the MAINLINE's common set alone; it is written only when a
                                race layout drives the mainline — always, while no layout names a lap)
-  loop_street.blend            (ledger 0055, only when race.chicanes declares a street-only island) the STREET-ONLY
-                               objects (their names carry race_chicane.STREET_TAG: the median island over a chicane's
-                               span, tools/author_median_blend.py) — never in loop_main.blend -> <slug>_street.kn5,
-                               loaded by every non-race layout only
+  loop_street.blend            (ledger 0055, when race.chicanes declares a street-only island; ledger 0063, when a track
+                               has both race and street layouts) the STREET-ONLY objects: names carrying
+                               race_chicane.STREET_TAG (the median island over a chicane's span, tools/
+                               author_median_blend.py) and the road's centre paint (YLINE*, not the I-8's) — never in
+                               loop_main.blend -> <slug>_street.kn5, loaded by every non-race layout only
   loop_spawn_<id>.blend        AC_* empties from data/dummies_<id>.json for each layouts[] id (nothing else)
   split_manifest.json          what went where (objects, meshes, positions, materials, AC nodes per output)
                                + problems (exit 1 on any)
@@ -276,10 +277,13 @@ def main():
     if street_in & race:
         problems.append(f"input: objects both race and street-only {sorted(street_in & race)[:4]}")
     if want_street and not street_in:
-        problems.append("input: race.chicanes declares a street-only island but no street-only object exists "
-                        "(tools/author_median_blend.py)")
-    if street_in and not want_street:
-        problems.append(f"input: {len(street_in)} street-only objects but no street-only span is declared {sorted(street_in)[:4]}")
+        problems.append("input: a street-only set is declared (race.chicanes street_only_island, or race and street layouts "
+                        "with a painted centre line) but no street-only object exists (tools/author_median_blend.py, YLINE*)")
+    # a track with one kind of layout keeps its YLINE in the road kn5: only a tagged object with no span is a stray
+    if not want_street:
+        street_in = {n for n in street_in if not RC.is_centre_paint_name(n)}
+        if street_in:
+            problems.append(f"input: {len(street_in)} street-only objects but no street-only span is declared {sorted(street_in)[:4]}")
 
     # --- main: everything except race furniture + the street-only set; + AC_* when every layout has its own spawn
     #     scene (multi-layout), the AC_* kept when the prep baked them in (single layout) -----------------------
@@ -291,7 +295,7 @@ def main():
     if not multi and not c["ac_nodes"]:
         problems.append("main: single layout but no AC_* node in the prepped scene — the prep bakes AC_START / AC_PIT / "
                         "AC_TIME / AC_HOTLAP there (scripts/ac/build_kn5_loop.py, data/dummies.json); the road kn5 would have no grid")
-    if any(RC.is_street_only_name(nm) for nm in c["names"]):
+    if want_street and any(RC.is_street_only_name(nm) for nm in c["names"]):
         problems.append("main: a street-only object in loop_main.blend")
     _save(outputs["main"])
     manifest["outputs"]["loop_main.blend"] = c

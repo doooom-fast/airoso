@@ -16,6 +16,7 @@
       "underlay"
     ],
     "author": [
+      "layout_dummies",
       "bespoke"
     ],
     "prep": [
@@ -24,13 +25,16 @@
     ],
     "ship": [
       "export_road",
+      "export_street",
+      "spawn_kn5",
       "ai",
       "verify_kn5",
       "road_obj",
       "grassfx_aerial",
       "track_folder",
       "verify_inis",
-      "make_map"
+      "make_map",
+      "treefx"
     ],
     "gate": [
       "drive_test_street",
@@ -78,7 +82,10 @@
       "data/drive_test.{id}.json",
       "data/bespoke.report.json",
       "data/house_seat_check.json",
-      "data/grassfx.aerial.json"
+      "data/grassfx.aerial.json",
+      "data/dummies_{id}.json",
+      "data/street_kn5.json",
+      "data/treefx.report.json"
     ],
     "map": [
       [

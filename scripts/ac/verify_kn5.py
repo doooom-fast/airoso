@@ -543,8 +543,8 @@ def _verify_layouts(project: Path, cfg: dict, slug: str, layouts: list, kn5_dir:
     sp = kn5_dir / _rc.street_kn5_name(cfg) if cfg.get("slug") else None
     if sp is not None and _rc.has_street_kn5(cfg):
         if not sp.exists():
-            fails.append(f"race.chicanes declares a street-only island but build/{sp.name} does not exist — Free Roam "
-                         f"would lose the median there")
+            fails.append(f"a street-only set is declared but build/{sp.name} does not exist — Free Roam would lose the "
+                         f"median there, or its centre line")
         else:
             _n, s_meshes, _m = _parse_full(sp)
             main_names = {m["name"] for m in main_meshes}
@@ -555,7 +555,7 @@ def _verify_layouts(project: Path, cfg: dict, slug: str, layouts: list, kn5_dir:
                 fails.append(f"build/{sp.name} carries spawn / timing nodes")
             print(f"  street-only kn5 {sp.name}: {len(s_meshes)} meshes {[m['name'] for m in s_meshes]}")
     elif sp is not None and sp.exists():
-        fails.append(f"stray street-only kn5 build/{sp.name} — race.chicanes declares no street-only island")
+        fails.append(f"stray street-only kn5 build/{sp.name} — no street-only island or centre paint is declared")
     # (a) exactly one spawn kn5 per id, no strays
     expected = {f"{slug}__{lid}.kn5" for lid in ids}
     present = {p.name for p in kn5_dir.glob(f"{slug}__*.kn5")}
@@ -656,12 +656,14 @@ def verify_inis(project_dir: str | Path, folder: str | Path | None = None) -> li
         got = _ini_files(ini.read_text(encoding="utf-8"))
         if lo.get("race_furniture"):
             want = [f"{slug}.kn5", race_kn5_name(slug, lo), closure_kn5_name(slug, lid), f"{slug}__{lid}.kn5"]
+        elif _rc.is_race_layout(lo):
+            want = [f"{slug}.kn5", f"{slug}__{lid}.kn5"]   # a race with no furniture (Sand Creek's lap): road + spawns alone
         else:
-            # ledger 0055: a street layout also loads the street-only island (<slug>_street.kn5) when one is declared
+            # ledger 0055: a street layout also loads the street-only set (<slug>_street.kn5) when one is declared
             want = [f"{slug}.kn5"] + ([street_kn5] if street_kn5 else []) + [f"{slug}__{lid}.kn5"]
-        if lo.get("race_furniture") and street_kn5 and street_kn5 in got:
-            fails.append(f"INI: {ini.name} lists {street_kn5} — the street-only island would stand in a race lane "
-                         f"(ledger 0055)")
+        if _rc.is_race_layout(lo) and street_kn5 and street_kn5 in got:
+            fails.append(f"INI: {ini.name} lists {street_kn5} — the street-only island and the centre line would stand "
+                         f"on a race layout (ledgers 0055, 0063)")
         others = [f for f in got if f in closures and closures[f] != lid]
         if others:
             fails.append(f"INI: {ini.name} lists another layout's closure {others} — loading both closures blocks both "

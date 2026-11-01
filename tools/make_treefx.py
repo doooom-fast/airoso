@@ -111,6 +111,10 @@ ZONES = {
                            ("PalmV1.bin", 0.6, 0.9, 1)],
     # E1, the tall grey-green belt on the NE side of Jackson's canyon (0040; Street View confirms the species)
     "north_gum_belt": [("Gum.bin", 0.8, 1.1, 5), ("Oak3.bin", 0.6, 0.9, 1)],
+    # PLANTED (ledger 0063, scenery.treefx.planted): a track's own measured points, each mix sized by the point's height.
+    # Sand Creek's cottonwoods off NAIP: there is no cottonwood model, so the sycamores, the riparian stand-in north_riparian_trees uses
+    "planted_cottonwood": [("SycamoreV1.bin", 0.8, 1.1, 3), ("SycamoreV2.bin", 0.8, 1.1, 2), ("SycamoreV3.bin", 0.8, 1.1, 2)],
+    "planted_neighbourhood": [("Oak3.bin", 0.6, 0.9, 3), ("SycamoreV2.bin", 0.6, 0.9, 1)],
     # Waring's planted median: small median trees (A2, st 250-550). The islands' LOW planting is not here: the
     # assembler (author_median_blend) already plants every raised island, north pieces included, and exports it as
     # scatter_positions.json median_planting (v0.19.0 shipped it)
@@ -474,7 +478,8 @@ def plan(project_dir, all_species=False, verbose=False):
     .bin changes which model a position gets, or drops a whole zone, never moves a position)."""
     proj = Path(project_dir)
     data = proj / "data"
-    pos = json.loads((data / "scatter_positions.json").read_text(encoding="utf-8"))
+    sp_ = data / "scatter_positions.json"
+    pos = json.loads(sp_.read_text(encoding="utf-8")) if sp_.exists() else {}
     # W1-6 signs (tools/place_signs.py): a plant inside 2.5 m of a sign post is dropped here, the sign never moves
     sp = data / "signs.local.json"
     excluded = {(e["zone"], e["index"]) for e in (json.loads(sp.read_text(encoding="utf-8")).get("exclude_plants", []) if sp.exists() else [])}
@@ -591,7 +596,7 @@ def plan(project_dir, all_species=False, verbose=False):
                         rejected_built_loop[why] += 1
                     continue
             s = _pick(species, i)
-            size = s[1] + (s[2] - s[1]) * _hash(i, 2)
+            size = s[1] + (s[2] - s[1]) * e.get("_size01", _hash(i, 2))
             angle = int(360 * _hash(i, 3))
             out.append(f"tree: {s[0]}; pos={e['x']:.2f}, {e['y']:.2f}, {-e['z']:.2f}; angle = {angle}; size = {size:.2f}")
             entries_out.append({"zone": zone_key, "model": s[0], "x": e["x"], "y": e["y"], "z": e["z"]})
@@ -603,10 +608,42 @@ def plan(project_dir, all_species=False, verbose=False):
     for zone in ("palms", "trees", "scrub", "median_planting"):
         emit_zone(zone, pos.get(zone, []), guard=(zone != "median_planting"))
 
+    # PLANTED (ledger 0063): the track's own points replace the scatter and the fill. Points are [lon, lat, cell, h, w]
+    # (tools/plan_bespoke_vegetation.py); y is only where the snap starts: TreeFX seats each tree on SURFACE_MATERIALS
+    planted = tcfg.get("planted")
+    hf, meta_p = data / "heightfield.npy", data / "heightfield.meta.json"
+    if planted:
+        d = json.loads((proj / planted["file"]).read_text(encoding="utf-8"))
+        o = local["origin"]
+        m_lon, m_lat = _mpd(o["lat"])
+        clear = float(planted.get("clear_m", 5.0))
+        hs = [p[3] for p in d["points"]]
+        h0, h1 = min(hs), max(hs)
+        by_zone, too_near = {}, 0
+        grid, ny, nx = _read_npy(hf)
+        s_, w_, n_, e_ = json.loads(meta_p.read_text(encoding="utf-8"))["bbox_swne"]
+
+        def ground_y(lon, lat):
+            j = min(ny - 1, max(0, round((n_ - lat) / (n_ - s_) * (ny - 1))))
+            i = min(nx - 1, max(0, round((lon - w_) / (e_ - w_) * (nx - 1))))
+            return float(grid[j][i]) - o["elev_m"]
+        for lon, lat, cell, h, _w in d["points"]:
+            x, z = (lon - o["lon"]) * m_lon, (lat - o["lat"]) * m_lat
+            if field.query(x, z)[0] < clear:
+                too_near += 1
+                continue
+            by_zone.setdefault(planted["zones"][str(cell)], []).append(
+                {"x": x, "y": ground_y(lon, lat), "z": z, "_size01": (h - h0) / max(h1 - h0, 1e-6)})
+        for k, zone in enumerate(sorted(by_zone)):
+            emit_zone(zone, by_zone[zone], idx_base=k * 100000)
+        rejected += too_near
+        if verbose:
+            print(f"[treefx] planted {planted['file']}: {sum(len(v) for v in by_zone.values())} of {len(d['points'])} points "
+                  f"clear of the roads by {clear} m -> {counts}")
+
     # density fill over the terrain grid
     north_stats = None
-    hf, meta_p = data / "heightfield.npy", data / "heightfield.meta.json"
-    if hf.exists() and meta_p.exists():
+    if hf.exists() and meta_p.exists() and not planted:
         grid, ny, nx = _read_npy(hf)
         meta = json.loads(meta_p.read_text(encoding="utf-8"))
         s_, w_, n_, e_ = meta["bbox_swne"]

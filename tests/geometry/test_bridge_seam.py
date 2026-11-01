@@ -107,3 +107,32 @@ def test_the_prep_detector_is_unchanged_on_an_open_road():
     assert detect_bridge_spans(pts, origin, [way], match_m=1.0, pad_m=8.0) == [(92.0, 158.0)]
     tail = _bridge_way(origin, 260.0, 0.0, 300.0, 0.0)          # reaching the open end: the pad runs past it
     assert detect_bridge_spans(pts, origin, [tail], match_m=1.0, pad_m=8.0) == [(252.0, 295.0 + 8.0)]
+
+
+def test_the_seam_rule_mirror_and_the_short_continuation():
+    pts = _ring()
+    n = len(pts)
+    st, gy = _ground_with_high_run(pts, 0, 30)                  # a run that STARTS on vertex 0, closing vertex low
+    gy[-1] = 0.0
+    _bridge_detector(pts, [[(0, 0, 0)]], raw_ground=(st, gy), seam_rule=True)
+    assert _bridge_detector.last_spans == []                     # the mirror of the July artefact: dropped
+    # a tail span that continues from vertex 0 into a run too short to be its own span: the run rides along
+    high = [False] * n
+    for i in range(n - 30, n):
+        high[i] = True
+    high[0] = high[1] = True                                      # 5 m past the seam, under BRIDGE_MIN_SPAN_M
+    kept, dropped = seam_rule_spans([(st[n - 30], st[n - 1])], st, high, closed=True)
+    assert dropped == [] and kept[0] == (0.0, st[1]) and kept[1] == (st[n - 30], st[n - 1])
+
+
+def test_the_prep_detector_wraps_a_head_pad_cut_off_at_the_seam():
+    import math
+    pts = _ring()
+    lap = sum(math.hypot(pts[i][0] - pts[i - 1][0], pts[i][2] - pts[i - 1][2]) for i in range(1, len(pts)))
+    origin = (-105.2, 39.7)
+    way = _bridge_way(origin, 2.0, 0.0, 20.0, 0.0)              # starts 2 m after vertex 0; vertex 0 itself is not near
+    spans = detect_bridge_spans(pts, origin, [way], match_m=1.0, pad_m=8.0)
+    heads = [s for s in spans if s[0] == 0.0]
+    tails = [s for s in spans if abs(s[1] - lap) < 1e-6]
+    assert heads and tails, spans                                 # (0, 20 + 8) and the 6 m of head pad before the seam
+    assert abs(tails[0][0] - (lap - 6.0)) < 5.0 + 1e-6, tails

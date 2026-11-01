@@ -232,11 +232,21 @@ def seam_rule_spans(spans: list[tuple[float, float]], st: list[float], high: lis
         return list(spans), []
     end = st[-1]
     kept, dropped = [], []
+    # the leading run of high stations from vertex 0 (the closing vertex IS vertex 0, so a tail span that reaches the
+    # seam continues into it); shorter than BRIDGE_MIN_SPAN_M it was never its own span, so it is merged here
+    j = 0
+    while j < len(high) and high[j]:
+        j += 1
+    head_run = (0.0, st[j - 1]) if j > 0 else None
     for a, b in spans:
         if abs(b - end) < 1e-9 and not high[0]:
-            dropped.append((a, b))
+            dropped.append((a, b))                      # ends on the closing vertex, vertex 0 low: the July artefact
+        elif abs(a) < 1e-9 and not high[-1]:
+            dropped.append((a, b))                      # the mirror: starts on vertex 0, the closing vertex low
         else:
             kept.append((a, b))
+    if head_run and any(abs(b - end) < 1e-9 for a, b in kept) and not any(abs(a) < 1e-9 for a, b in kept):
+        kept.insert(0, head_run)                        # the continuation past the seam, however short
     return kept, dropped
 
 
@@ -984,10 +994,24 @@ def build(project_dir: str | Path) -> dict:
     # the real width, then the real edge; B 1.25 m: a firm strip a wheel can use) AND of the grading band, which must
     # break at the same line (the comment above). The chain's SHIP_VARIANT swaps the value in per run. Every track
     # without the key keeps 2.5 m: byte-identical (ledger 0061 is where the 2.5 m sheet itself is on trial).
-    _verge_w = float((cfg_raw.get("road_profile") or {}).get("verge_m") or 2.5)
-    if _verge_w != 2.5:
-        print(f"[build_mesh] road_profile.verge_m={_verge_w} m declared -> the shoulder band and the grading band are "
-              f"{_verge_w} m each side (default 2.5)")
+    _verge_decl = (cfg_raw.get("road_profile") or {}).get("verge_m")
+    _verge_w = 2.5
+    if _verge_decl is not None:
+        # THE FLOOR. grade_embankment widens any band under the grid's half-diagonal + 1 m (a shelf narrower than
+        # the cell that represents it is a shelf no node samples); the sheet's verge must break on the SAME line or
+        # the ground shelf stands above the draped face (rehearsal 3, 2026-11-01: verge 0.4 vs band 3.6 m on 3.6 m
+        # cells -> 67 ground-on-top samples and 55 severe steps at the lane edge). So the declared verge is floored
+        # here, once, and the one value goes to both; a narrower edge than the grid can carry is P3a's to author.
+        _gdx = abs(grid_xyz[0][1][0] - grid_xyz[0][0][0]) if len(grid_xyz[0]) > 1 else 0.0
+        _gdz = abs(grid_xyz[1][0][2] - grid_xyz[0][0][2]) if len(grid_xyz) > 1 else 0.0
+        _floor = 0.5 * math.hypot(_gdx, _gdz) + 1.0
+        _verge_w = max(float(_verge_decl), _floor)
+        print(f"[build_mesh] road_profile.verge_m={float(_verge_decl)} m declared; the grid's representable band is "
+              f"{_floor:.2f} m ({_gdx:.1f}x{_gdz:.1f} m cells) -> the shoulder band and the grading band are "
+              f"{_verge_w:.2f} m each side (default 2.5)"
+              + ("" if _verge_w == float(_verge_decl) else
+                 "; the declared edge is narrower than this grid can carry: the draft builds the floor, the real "
+                 "edge is authored (P3a)"))
     _grade_band = ribbon.grade_embankment(grid_xyz, centerline, widths, bank_at=bnk, band=_verge_w,
                                           ratio=GRADE_RATIO,
                                           extra_roads=[(p, w) for _n, p, w in connectors],

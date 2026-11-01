@@ -46,9 +46,38 @@ reference (`z_raw_m`) is untouched. `centerline.elevation.json` records the path
 (V3-PLAN, 2026-10-11) builds the Lariat twice, at 0.4 m (the real width, then the real edge) and 1.25 m (a firm strip),
 and on the 2026-10-12 branch that width lived only in the branch's own underlay. Now `road_profile.verge_m`, when a
 track declares it, is that band in all three places and `SHIP_VARIANT` writes the variant's value into the workshop
-config per run; every track without the key keeps 2.5 m, byte-identical. The face that drapes from the band to the
-ground is unchanged — it is what ledger 0061 (2026-11-01, the paved-hillside edges on the four chain tracks) puts on
-trial, and it will move there, not here.
+config per run; every track without the key keeps 2.5 m, byte-identical. **Floored at the grid's representable band**
+(`grade_embankment`'s half-diagonal + 1 m, which it already enforced on its own band): the stand-in rehearsal of the
+full draft order read the stagger of a 0.4 m sheet against a 3.6 m shelf as 67 ground-on-top samples and 55 severe
+steps at the lane edge (rehearsal 3, ledger 0048 "Started"), so the one floored value goes to both, the build says
+when the declared edge is narrower than its grid can carry, and the narrower edge is P3a's to author — on the Lariat's
+7 × 7 km box at the 3 M-vertex budget (3.6 m cells) D4 A and B build the same 3.6 m band until then. The face that
+drapes from the band to the ground is unchanged — it is what ledger 0061 (2026-11-01, the paved-hillside edges on the
+four chain tracks) puts on trial, and it will move there, not here.
+
+### Same day — the review's fixes: widths in the local order, the seam rule both ways, the closed ring without its duplicate (builder side, no gate moved)
+
+A fresh-eyes review of the Lariat integration (ledger 0048 "Started") found four defects, each fixed with a test:
+- **`scripts/gps/widths_from_osm.py` wrote its per-vertex widths 1:1 by geojson index** into `centerline.local.json`,
+  whose ring projection re-orders to `route.start_at` / `route.reverse` after the geojson is written (High Plains: 815
+  of 1,074 points). Now it applies the permutation projection records (`in_local_order`, ledger 0060) and marks
+  `widths_order: "local"`; `scripts/gps/measured_widths.py` rotates only a file without the mark. No shipped track
+  changes: Sand Creek (the only chain track that runs `widths`) has no recorded permutation (identity), the Lariat's
+  `measured_widths` already undid the offset by matching. `tests/gps/test_widths_local_order.py`,
+  `test_measured_widths.py` (+1).
+- **`build_mesh.seam_rule_spans`** dropped only a span ending on the closing vertex with vertex 0 low; the mirror (a
+  span starting on vertex 0 with the closing vertex low) is the same self-disagreement and is dropped too, and a tail
+  span that continues from vertex 0 into a run too short to be its own span now carries that run with it.
+  `tests/geometry/test_bridge_seam.py` (+2).
+- **`build_kn5_loop.detect_bridge_spans`** clamped a span's head pad at 0 when the bridge began within `pad_m` of the
+  seam; on a closed lap the pad now continues before the seam like the tail pads do.
+- **`heightfield.profile_along`** forced the last grid value to vertex 0's for any `closed` line; a closed ring that
+  does not repeat its first vertex keeps its last vertex and the grid runs on round to vertex 0 (`close_seg_m`);
+  `road_profile.verge_m` of 0 is 0, not the 2.5 m default; one haversine pass instead of two.
+  `tests/elevation/test_profile_by_station.py` (+1).
+Also: `road_profile` no longer writes `z_raw_local_m` (nothing read it; a reader taking it beside `z_raw_m` would
+rotate twice). Noted, not changed: `extract_kn5.parse(keep=)` cannot step over a SkinnedMesh (its layout is unknown,
+"not supported yet" stands); `crossfall.compose`'s roll-rate scans are O(n·|bad|) (2 s on the Lariat's 8,305 stations).
 
 ## 2026-10-29 — the split's single-layout rule; `--from <step>` never skips a gate (ledger 0060; wiring, no threshold)
 

@@ -29,7 +29,8 @@ Its stations are written in both frames: the geojson's (from its v0) and the loc
 Writes (data/):
   centerline.elevation.json   z_smooth_m replaced (heightfield's own kept as z_smooth_heightfield_m); z_raw_m is
                               untouched (the 3DEP samples); z_held_m = the raw profile with the decks held;
-                              ``road_profile`` = the method, windows and stats
+                              ``road_profile`` = the method, windows and stats (no z_raw_local_m: the local
+                              order is projection's recorded permutation, applied by the readers)
   bridge.spans.json           the declared decks (both frames, footprint crossings, dip removed), the lap's own
                               OSM bridge ways (none expected), the dropped suspects from the config
 With ``--write`` it also records the decks as ``capture.bridges`` [{center_m, len_m}] (local stations) in
@@ -454,14 +455,11 @@ def build(project_dir, *, write=False, log=print) -> dict:
     ej.setdefault("z_smooth_heightfield_m", ej.get("z_smooth_m"))
     ej["z_smooth_m"] = [round(v, 2) for v in z_s]
     ej["z_held_m"] = [round(v, 2) for v in z_held]
-    # the raw 3DEP samples in the LOCAL index space too (projection rotates the ring by k): z_raw_m is per geojson
-    # vertex, centerline.local.json per local vertex; a gate pairing the two by index would compare points k apart
-    if closed and k:
-        m_u = len(z_raw) - 1
-        zl = [z_raw[(i + k) % m_u] for i in range(m_u)]
-        ej["z_raw_local_m"] = [round(v, 2) for v in zl + [zl[0]]]
-    else:
-        ej["z_raw_local_m"] = [round(v, 2) for v in z_raw]
+    # z_raw_m stays per geojson vertex and is written ONCE: main's readers map it into the local ring through the
+    # permutation projection records (scripts.geometry.projection.in_local_order, ledger 0060). This stage used to
+    # write a second, pre-rotated copy (z_raw_local_m, 2026-10-12); a reader taking both would rotate twice, so it
+    # no longer does (tests/geometry/test_drive_test_raw_local.py pins the one mapping).
+    ej.pop("z_raw_local_m", None)
     ej["stats"] = {**(ej.get("stats") or {}), **{k2: stats[k2] for k2 in
                    ("min_m", "max_m", "range_m", "total_climb_m", "mean_grade_pct", "lap_m")},
                    "max_grade_pct": stats["max_segment_grade_pct"]}

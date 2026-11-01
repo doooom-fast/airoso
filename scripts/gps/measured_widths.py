@@ -3,10 +3,11 @@
 Runs after ``scripts.gps.widths_from_osm`` (the ``route.width_profile`` table, e.g. ``mountain``). That stage
 leaves three things this one undoes or replaces, opt-in per track (nothing else calls this module):
 
-  * **frame**: it computes widths per vertex of ``data/centerline.geojson`` and writes them 1:1 into
-    ``centerline.local.json`` when the counts match, but projection rotated the local ring to ``route.start_at``
-    (k vertices; 2 on the Lariat's paint line), so every width sits k vertices off. Here the OSM widths are
-    rotated into the local frame (k is derived by matching the two point sets, never assumed);
+  * **frame**: it computes widths per vertex of ``data/centerline.geojson``; until 2026-11-01 it wrote them 1:1
+    into ``centerline.local.json``, whose ring projection rotated to ``route.start_at`` (k vertices; 2 on the
+    Lariat's paint line), so every width sat k vertices off. widths_from_osm now applies projection's recorded
+    permutation itself and marks ``widths_order: "local"``; a file without the mark (an older run) is rotated
+    here (k is derived by matching the two point sets, never assumed) and k maps the aerial's stations either way;
   * **invented widenings**: its junction flares, hard-corner flares (>= 14 m) and the automatic 10 m floor on
     every fold over 110 degrees. None is a measurement; on the Lariat the fold floor widens every hairpin, which
     plan A2 keeps off for Drive 1. The OSM base (``widths_base_m``, before any flare) is used, and the flares it
@@ -205,8 +206,14 @@ def build(project_dir, log=print) -> dict:
     if local.get("widths_frame") == "local":
         raise SystemExit("[measured_widths] centerline.local.json widths are already this stage's (re-run "
                          "projection + widths_from_osm first; this stage reads widths_from_osm's geojson-indexed output)")
-    osm_flared = rotate_ring(local["widths_m"], k)
-    osm = rotate_ring(local["widths_base_m"], k)
+    if local.get("widths_order") == "local":
+        # widths_from_osm already applied projection's recorded permutation (2026-11-01): the arrays are in this
+        # ring's order and must not be rotated again (k still maps the aerial's stations below)
+        osm_flared = list(local["widths_m"])
+        osm = list(local["widths_base_m"])
+    else:
+        osm_flared = rotate_ring(local["widths_m"], k)
+        osm = rotate_ring(local["widths_base_m"], k)
 
     osm_st = props.get("osm_station_m")
     if not osm_st or len(osm_st) != len(lonlat):

@@ -142,3 +142,23 @@ def test_touching_measured_stretches_taper_through_their_boundary():
         w = json.loads((proj / "data" / "centerline.local.json").read_text(encoding="utf-8"))["widths_m"]
         s = 500 - k                                                # between W300 (6.9) and W700 (11.0), linearly
         assert abs(w[s] - (6.9 + (11.0 - 6.9) * (500 - 300) / 400)) < 0.05, w[s]
+
+
+def test_widths_already_in_local_order_are_not_rotated_again():
+    """widths_from_osm applies projection's recorded permutation itself since 2026-11-01 (widths_order: local); the
+    same world written that way must give the same widths as the geojson-ordered file it used to write."""
+    with tempfile.TemporaryDirectory() as d1, tempfile.TemporaryDirectory() as d2:
+        a, _ka = _project(Path(d1), k=2)
+        b, _kb = _project(Path(d2), k=2)
+        lb = json.loads((b / "data" / "centerline.local.json").read_text(encoding="utf-8"))
+        m = len(lb["points_xyz_m"]) - 1
+        lb["source_index"] = [(i + 2) % m for i in range(m)] + [2 % m]
+        lb["widths_m"] = mw.rotate_ring(lb["widths_m"], 2)
+        lb["widths_base_m"] = mw.rotate_ring(lb["widths_base_m"], 2)
+        lb["widths_order"] = "local"
+        (b / "data" / "centerline.local.json").write_text(json.dumps(lb), encoding="utf-8")
+        mw.build(a, log=lambda *x: None)
+        mw.build(b, log=lambda *x: None)
+        wa = json.loads((a / "data" / "centerline.local.json").read_text(encoding="utf-8"))["widths_m"]
+        wb = json.loads((b / "data" / "centerline.local.json").read_text(encoding="utf-8"))["widths_m"]
+        assert wa == wb

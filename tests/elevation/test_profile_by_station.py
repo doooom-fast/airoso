@@ -72,6 +72,22 @@ def test_mixed_line_runs_by_station_and_caps_per_metre():
     assert max(a - b for a, b in zip(out, z)) < 0.6
 
 
+def test_closed_ring_without_the_repeated_vertex_keeps_its_last_vertex():
+    # a 1 m ring of 900 vertices, heights a gentle wave, NOT closed by a duplicate vertex: the last vertex is its own
+    # point 1 m before vertex 0 (close_seg_m = 1.0), never overwritten with vertex 0's height
+    n = 900
+    z = [1800.0 + 3.0 * math.sin(2 * math.pi * i / n) for i in range(n)]
+    seg = [1.0] * (n - 1)
+    out, info = profile_along(z, seg, grade_cap_pct=16.0, closed=True, close_seg_m=1.0)
+    assert info["by_station"] is True and info["grid_points"] == n + 1 and len(out) == n
+    assert abs(out[-1] - z[-1]) < 0.05 and abs(out[0] - z[0]) < 0.05
+    assert abs(z[-1] - z[0]) > 0.015 and abs(out[-1] - out[0]) > 0.01, "the last vertex is not vertex 0"
+    # the same ring WITH the repeated vertex: the duplicate is folded out and restored equal (L13)
+    z2 = z + [z[0]]
+    out2, info2 = profile_along(z2, seg + [1.0], grade_cap_pct=16.0, closed=True)
+    assert len(out2) == n + 1 and out2[-1] == out2[0] and info2["grid_points"] == n + 1
+
+
 def test_open_mixed_line_keeps_its_ends():
     z, seg = _mixed_line(16.0)
     z = z[:-1]; seg = seg[:-1]

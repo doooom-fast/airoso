@@ -170,8 +170,9 @@ def test_build_holds_the_lid_and_writes_capture_bridges_in_local_stations():
         assert ej["z_raw_m"][50] < 1800.0 + 0.02 * 150 - 4.0   # the raw samples are untouched
         # the raw samples in local index space: projection's ring starts 10 vertices (30 m) along
         assert ej["road_profile"]["local_rotation_vertices"] == 10
-        assert ej["z_raw_local_m"][0] == round(ej["z_raw_m"][10], 2) and ej["z_raw_local_m"][-1] == ej["z_raw_local_m"][0]
-        assert ej["z_raw_local_m"][40] == round(ej["z_raw_m"][50], 2)
+        # no second, pre-rotated copy of the raw samples: main's readers map z_raw_m once through projection's
+        # recorded permutation (in_local_order; tests/geometry/test_drive_test_raw_local.py)
+        assert "z_raw_local_m" not in ej and len(ej["z_raw_m"]) == len(ej["z_smooth_m"])
         cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
         assert cfg["capture"]["bridges"] == [{"id": "lid", "center_m": deck["center_m"], "len_m": deck["len_m"]}]
         rec = json.loads((proj / "data" / "bridge.spans.json").read_text(encoding="utf-8"))

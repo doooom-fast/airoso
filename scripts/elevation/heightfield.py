@@ -149,7 +149,8 @@ SHORT_SEGMENT_SHARE = 0.05   # more than this share of short segments -> the pro
 
 
 def profile_along(z_raw: list[float], seg_m: list[float], *, grade_cap_pct: float,
-                  median_m: float = MEDIAN_WINDOW_M, closed: bool = True) -> tuple[list[float], dict]:
+                  median_m: float = MEDIAN_WINDOW_M, closed: bool = True,
+                  close_seg_m: float | None = None) -> tuple[list[float], dict]:
     """snap_to_ground on a line whose points are NOT the gps stage's uniform 3 m.
 
     snap_to_ground turns its metre windows and its grade cap into POINTS through ``spacing_m``, and build()
@@ -164,7 +165,12 @@ def profile_along(z_raw: list[float], seg_m: list[float], *, grade_cap_pct: floa
     profile is read onto a uniform station grid (spacing = lap / round(lap), ~1 m, the closing vertex
     repeated on a closed lap), snap_to_ground runs there with that spacing, and the result is read back onto
     the line's own stations by linear interpolation. Every uniform 3 m line takes the old call unchanged
-    (byte-identical: tests/elevation/test_profile_by_station.py). Returns (z_smooth, info)."""
+    (byte-identical: tests/elevation/test_profile_by_station.py). Returns (z_smooth, info).
+
+    ``closed`` is the config's / the geojson's word; whether the ring REPEATS its first vertex is the geometry's.
+    A closed ring that repeats it (the gps stage's shape, L13) ends on vertex 0's own sample, which is folded out
+    and restored; a closed ring that does not (``close_seg_m`` = the length of its closing segment, last vertex
+    back to the first) keeps its last vertex as a point of its own and the grid runs on round to vertex 0."""
     n = len(z_raw)
     short_m = SHORT_SEGMENT_FRAC * CENTERLINE_SPACING_M
     n_short = sum(1 for d in seg_m if d < short_m)
@@ -176,10 +182,11 @@ def profile_along(z_raw: list[float], seg_m: list[float], *, grade_cap_pct: floa
     st = [0.0]
     for d in seg_m:
         st.append(st[-1] + d)
-    lap = st[-1]
+    repeats = closed and abs(z_raw[0] - z_raw[-1]) < 1e-9 and not close_seg_m
+    lap = st[-1] + (float(close_seg_m) if (closed and close_seg_m) else 0.0)
     m = max(2, round(lap))
     sp = lap / m
-    grid = [k * sp for k in range(m + 1)]        # grid[-1] == lap: the closing vertex on a closed lap
+    grid = [k * sp for k in range(m + 1)]        # grid[-1] == lap: vertex 0 again on a closed lap
 
     def _interp(xs, ys, x):
         import bisect
@@ -193,10 +200,10 @@ def profile_along(z_raw: list[float], seg_m: list[float], *, grade_cap_pct: floa
 
     zg = [_interp(st, z_raw, x) for x in grid]
     if closed:
-        zg[-1] = zg[0]                              # the duplicate snap_to_ground folds out (L13)
+        zg[-1] = zg[0]                              # vertex 0 again: the duplicate snap_to_ground folds out (L13)
     out_g = snap_to_ground(zg, spacing_m=sp, grade_cap_pct=grade_cap_pct, median_m=median_m, closed=closed)
     out = [_interp(grid, out_g, x) for x in st]
-    if closed and abs(z_raw[0] - z_raw[-1]) < 1e-9:
+    if repeats:
         out[-1] = out[0]
     info.update({"by_station": True, "spacing_m": sp, "grid_points": m + 1})
     return out, info
@@ -372,7 +379,9 @@ def build(project_dir: str | Path) -> dict:
     # The bumps barely moved, because they do not come from the centerline profile at all — that
     # was an offline proxy measuring the wrong quantity. Road touching ground takes precedence.
     _seg = [haversine(coords[i - 1], coords[i]) for i in range(1, len(coords))]
-    z_smooth, _prof = profile_along(z_raw, _seg, grade_cap_pct=_cap_pct, median_m=_med_m, closed=_closed)
+    _repeats = tuple(coords[0]) == tuple(coords[-1])
+    z_smooth, _prof = profile_along(z_raw, _seg, grade_cap_pct=_cap_pct, median_m=_med_m, closed=_closed,
+                                    close_seg_m=None if (_repeats or not _closed) else haversine(coords[-1], coords[0]))
     if _prof["by_station"]:
         print(f"  [elev] profile by station: {_prof['short_segments']} of {len(_seg)} segments are under "
               f"{_prof['short_m']:.1f} m (a 1 m resampled line), so the despike, mean and grade cap run on a "
@@ -384,10 +393,10 @@ def build(project_dir: str | Path) -> dict:
         fetch_corridor(coords, project_dir, elev_source=src)
 
     dist = [0.0]
-    for i in range(1, len(coords)):
-        dist.append(dist[-1] + haversine(coords[i - 1], coords[i]))
+    for d in _seg:
+        dist.append(dist[-1] + d)
 
-    grades = [abs(z_smooth[i] - z_smooth[i - 1]) / max(1e-6, haversine(coords[i - 1], coords[i])) * 100
+    grades = [abs(z_smooth[i] - z_smooth[i - 1]) / max(1e-6, _seg[i - 1]) * 100
               for i in range(1, len(coords))]
     climb = sum(max(0.0, z_smooth[i] - z_smooth[i - 1]) for i in range(1, len(z_smooth)))
     stats = {

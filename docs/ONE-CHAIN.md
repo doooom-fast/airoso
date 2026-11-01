@@ -76,7 +76,7 @@ One rule each; everything else follows from them.
 | Rally stages | **`<Stage> (Gravel)`** / **`<Stage> (Tarmac)`** as two tracks | L8: surface physics is per track |
 | A version | `track.config.json` `version`, per track, never reset | the chain keeps counting from where the engine era left off (Milford 0.2.0, Exotics 0.2.0, Sand Creek 0.28.0, High Plains 0.68.0, Lake Murray 0.20.0); the release notes say "chain" the first time. Resetting to 0.1.0 would collide with the retired installs |
 | A release | `<slug>_v<version>.zip` on the public release home | docs/PUBLISHING.md |
-| The workshop | `C:/Users/Owner/Documents/k10-workshops/<track>/project` | outside airoso (the sync rails). SD's `k10-sd-v021` moves there when row 6 lands |
+| The workshop | `D:/k10-workshops/<track>/project (moved from C: 2026-11-01 as each track next builds; a track not yet moved stays at C:/Users/Owner/Documents/k10-workshops/<track>/project)` | outside airoso (the sync rails). SD's `k10-sd-v021` moves there when row 6 lands |
 | A track's public title | `track.config.json` `name` | the place, or Kevin's title for it: **Nevada Nights** is the Exotics Racing LVMS circuit (Kevin, 2026-10-28; the Exotics Racing mark is registered). Folder and slug stay place-based |
 | Generations | **not a name** | "V1 / V2 / V3", "engine-july", "v021", "prodrive-ac-builder", "k10-track-agents" are history. They stay in `docs/history/` and in the ledger as dates, nowhere else |
 

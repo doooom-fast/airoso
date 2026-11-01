@@ -14,6 +14,21 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-01 — a race layout without furniture; the street-only kn5 carries the centre line (ledger 0063)
+
+No threshold moved. Three wiring changes, each so a new shape of track is judged on the kn5 set it loads:
+
+- `drive_test`: a layout of `kind: race` with no `race_furniture` (Sand Creek's lap) is judged on `data/track.obj`; it has no race or closure kn5 to
+  build a `track.race.obj` from. A furnished race layout's requirement is unchanged. `track.obj` here includes the street-only kn5's paint, and paint is
+  no obstruction (`PAINT`), so the drive reads the same.
+- `verify_kn5 --inis`: such a layout must list exactly the road kn5 and its spawn kn5, and no race layout may list `<slug>_street.kn5`.
+- `race_chicane.is_street_only_name` also matches the road's `YLINE*` (not the I-8's `YLINE_I8_*`), and `has_street_kn5` is true on any track with both kinds of
+  layout, so `check_street_kn5` and `verify_kn5` hold the yellow line to the street set.
+
+Not a gate, recorded because it decides what a gate measures: `corridor_refine_connectors: "ribbon"` (Sand Creek) refines the ground under a street's pavement and
+not under its verge, with `corridor_refine_factor` 4 where it was 6. Proven on the built kn5: lap numbers unchanged from 0.30.0 (severe 1, kinks 11.06 /km, fold bumps
+21, replication median 0.01), excursion drops 2 -> 3, far ledges 7 -> 9, and `kn5_ground_check` road-over-ground p95 0.049 m, double-sheet cells 0 -> 10.
+
 ## 2026-11-01 — the block collider is a skirt; Microsoft's footprints as a planner source; a big low footprint is a house
 
 No gate threshold changed. Lake Murray's second rehearsal (ledger 0062), not installed.

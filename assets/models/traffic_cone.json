@@ -1,0 +1,9 @@
+{
+ "name": "traffic_cone",
+ "height_m": 0.7112,
+ "base_m": 0.3556,
+ "footprint_radius_m": 0.2514,
+ "file": "traffic_cone.obj",
+ "vertices": 27,
+ "generator": "tools/make_bespoke_assets.py"
+}

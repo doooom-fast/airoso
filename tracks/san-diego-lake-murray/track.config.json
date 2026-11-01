@@ -4,7 +4,7 @@
   "ui_series": "",
   "_ui_series_doc": "Engine track_folder prefixes the CM display name with ui_series (default 'K10 Colorado'); empty = use the track name as-is (SD names already carry the K10 - San Diego branding).",
   "slug": "san_diego_lake_murray",
-  "version": "0.19.1",
+  "version": "0.19.2",
   "author": "k10-san-diego",
   "year": 2026,
   "_about": "A single drivable LOOP around Lake Murray (Kevin's childhood neighborhood). This repo is the standalone, Blender-first home for the track: the loop is mapped from the REAL roads (OpenStreetMap) at REAL elevation (USGS 3DEP), imported into Blender, and shaped there interactively (Kevin designs, Claude operates) BEFORE any kn5 export. Start point = just the 5-road main loop; everything else is added deliberately, in Blender.",
@@ -69,11 +69,64 @@
       "del_cerro_blvd"
     ],
     "_divided_connectors_doc": "Ledger 0039 (Kevin's seat, 2026-10-08: side streets 'not connecting correctly'). Del Cerro Boulevard is a divided boulevard whose two carriageways OSM stores as one out-and-back loop (the connector polyline parallels itself at 12-15 m for 0-475 / 625-1100); tools/divide_connectors.py collapses the legs into one trunk ribbon + median island (far loop kept as a plain ribbon) so it meets College as ONE mouth with a set-back nose.",
-    "_median_islands_doc": "Ledger 0037 (Kevin's seat, 2026-08-20): C1's single slab 'loses realism because that road doesn't look like that there' \u2014 the real streets are divided by raised landscaped medians ('flowers and barriers... grass etc... shrubs'). The rt_macau pattern (docs/JUNCTIONS.md): ONE continuous pavement slab, median standing ON it as a raised island. tools/median_envelope.py measures the real median from the OSM dual-carriageway geometry, re-centers the ribbon over the true middle and spans both carriageways; tools/author_median_blend.py authors the island (grass deck, shrub clumps, barrier runs) after build_loop_blend, gapped at every connector mouth.",
+    "_median_islands_doc": "Ledger 0037 (Kevin's seat, 2026-08-20): C1's single slab 'loses realism because that road doesn't look like that there' — the real streets are divided by raised landscaped medians ('flowers and barriers... grass etc... shrubs'). The rt_macau pattern (docs/JUNCTIONS.md): ONE continuous pavement slab, median standing ON it as a raised island. tools/median_envelope.py measures the real median from the OSM dual-carriageway geometry, re-centers the ribbon over the true middle and spans both carriageways; tools/author_median_blend.py authors the island (grass deck, shrub clumps, barrier runs) after build_loop_blend, gapped at every connector mouth.",
     "median_registration": [
       {
         "road": "College Avenue",
-        "points": [[1104, 0.0], [1190, 2.0], [1220, 2.6], [1250, 3.4], [1270, 4.2], [1300, 4.5], [1330, 4.7], [1355, 5.5], [1375, 5.5], [1400, 4.3], [1430, 3.75], [1485, 4.2], [1505, 0.0]],
+        "points": [
+          [
+            1104,
+            0.0
+          ],
+          [
+            1190,
+            2.0
+          ],
+          [
+            1220,
+            2.6
+          ],
+          [
+            1250,
+            3.4
+          ],
+          [
+            1270,
+            4.2
+          ],
+          [
+            1300,
+            4.5
+          ],
+          [
+            1330,
+            4.7
+          ],
+          [
+            1355,
+            5.5
+          ],
+          [
+            1375,
+            5.5
+          ],
+          [
+            1400,
+            4.3
+          ],
+          [
+            1430,
+            3.75
+          ],
+          [
+            1485,
+            4.2
+          ],
+          [
+            1505,
+            0.0
+          ]
+        ],
         "why": "ledger 0055 round 2"
       }
     ],
@@ -91,21 +144,41 @@
       "keep": [
         "del_cerro_blvd"
       ],
-      "_doc": "Ledger 0041 (Kevin's seat, 2026-10-08): side streets disjointed. The per-name connectors missed Madra Ave and Delaware Ave and never had Pennsylvania Lane; tools/route_connectors.py derives the side streets from airoso data/routes.json (tools/route_tracks.py \u2014 Kevin's confirmed routes as continuous OSM node paths): the medium/short routes' off-loop runs become connector pieces, cut at College / the Del Cerro trunk by trim_connectors. route.connectors above is now documentation of the old name-based set.",
-      "authored_take": {"north": ["A", "B", "C", "D"]},
+      "_doc": "Ledger 0041 (Kevin's seat, 2026-10-08): side streets disjointed. The per-name connectors missed Madra Ave and Delaware Ave and never had Pennsylvania Lane; tools/route_connectors.py derives the side streets from airoso data/routes.json (tools/route_tracks.py — Kevin's confirmed routes as continuous OSM node paths): the medium/short routes' off-loop runs become connector pieces, cut at College / the Del Cerro trunk by trim_connectors. route.connectors above is now documentation of the old name-based set.",
+      "authored_take": {
+        "north": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ]
+      },
       "_authored_take_doc": "Ledger 0054 P3 step 1 (2026-10-18): the north route is no longer HELD. tools/route_connectors.py takes the intermediate's four road PIECES whole (A Waring, B Princess View, C Mission Gorge, D Jackson north; tools/expansion_pieces.py): the pavement midline + curb-to-curb width per station (A3), A and D starting with P1's weld stubs W1 / W5 (so D runs J5 -> J4), B / C and the far ends of A / D ending exactly on the J2 / J3 / J4 pad arm cuts; the 3DEP profile through a local quadratic fit (the 11 % cap binds nowhere). P1's rehearsal took only the two weld stubs ([W1, W5])."
     },
-    "aprons": {"AP1": "data/expansion.north.json"},
-    "trim_blend_grade_cap": ["north_"],
-    "mouth_fill": ["north_"],
-    "weld_exact_deck": ["north_", "STUB_"],
+    "aprons": {
+      "AP1": "data/expansion.north.json"
+    },
+    "trim_blend_grade_cap": [
+      "north_"
+    ],
+    "mouth_fill": [
+      "north_"
+    ],
+    "weld_exact_deck": [
+      "north_",
+      "STUB_"
+    ],
     "tight_approach_host_grade": 0.06,
     "_tight_approach_doc": "Ledger 0054 P3 (2026-10-18; tools/seat_terrain_blend.py, opt-in): a side street whose mouth's host climbs at least 6 % [invented] has its whole approach's ground halved to 0.75 m (the seat's TIGHT_EDGE_M, as under a tight corner): the weld eases a 9 % host cross-fall to level over a 15 m stub's every row, and a 1.5 m grass facet across that twist stood 1-4 mm under the stub's road (verify_mouths APPROACH at Fontaine St / Princess View Way, P3's second build).",
-    "junction_pads": {"J2": "data/expansion.north.json", "J3": "data/expansion.north.json", "J4": "data/expansion.north.json"},
+    "junction_pads": {
+      "J2": "data/expansion.north.json",
+      "J3": "data/expansion.north.json",
+      "J4": "data/expansion.north.json"
+    },
     "_junction_pads_doc": "Ledger 0054 P3 step 2 (2026-10-18; EXPANSION-PLAN A4, docs/JUNCTIONS.md topology B): the three new crossroads J2 / J3 / J4 as one junction pad each (tools/junction_pad.py plan + tools/author_junction_pad_blend.py; gate tools/verify_pads.py): the deck welded onto every route arm's last row (seams 0.000 m), true-arc corners at the measured curb-return radii every 0.75 m, the curb + walk round every corner, and every unbuilt arm a Phase 5 closed stub (JUNCTIONS 18(d)): 15 m of real road to Kevin's K-rail, its far edge at 3DEP (data/pads.3dep.json).",
     "_north_welds_doc": "Ledger 0054 P3 step 3 (2026-10-18): P1's rehearsal delta (source/expansion/p1-proofs/rehearsal_delta.py, P1 fix round) made permanent: aprons {AP1} = J1's R 30 return (tools/author_aprons_blend.py); trim_blend_grade_cap [north_] = the welded pieces' blends onto the loop deck lengthened until they stay within the 11 % cap (Waring fell 14.8 % in 30 m: the loop stands 1.44 m over 3DEP at J1); mouth_fill [north_] = their strips over the loop's pavement replaced by one piece from the loop's own edge; weld_exact_deck [north_] = the weld reads the loop deck off its triangles (the J1 corner's fanned outer edge). Each key names connector-name prefixes: only the two north mouths (J1, J5) carry them (the phase-5 stubs are STUB_*), but for weld_exact_deck, which also names STUB_: the north network's side streets join hosts that climb up to 9.6 % round curves (Princess View), where the level-across host deck read 2-3 cm off the host's own triangles at the mouth (verify_mouths HOST LANE, Laura St, P3's first build); the weld, the seat's host-lane refinement and verify_mouths then read the host deck off its triangles there, as at J1 / J5.",
     "smooth_sigma_y_pts": 5.0,
-    "_smooth_sigma_y_doc": "Kevin 2026-10-09: 'smooth out the roughness'. The road profile is 3DEP sampled every 3 m (noise ~\u00b110 cm) and build_loop_blend's vertical smoothing was sigma 1.5 pts (~4.5 m) \u2014 every sample step is a felt event (fleet/reference/MEASURED.md). 5.0 pts (~15 m) rounds the sample noise while keeping the real grades (climbs are hundreds of metres long). Measured by drive_test bumps/km + kinks/km vs the locked build."
+    "_smooth_sigma_y_doc": "Kevin 2026-10-09: 'smooth out the roughness'. The road profile is 3DEP sampled every 3 m (noise ~±10 cm) and build_loop_blend's vertical smoothing was sigma 1.5 pts (~4.5 m) — every sample step is a felt event (fleet/reference/MEASURED.md). 5.0 pts (~15 m) rounds the sample noise while keeping the real grades (climbs are hundreds of metres long). Measured by drive_test bumps/km + kinks/km vs the locked build."
   },
   "loop": true,
   "mirror_x": false,
@@ -157,7 +230,7 @@
         "per_issue": "start_positions.json"
       },
       "run": "open two-way street; lap clockwise: Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest",
-      "ui_description": "Lake Murray Free Roam \u2014 Lake Murray as it is: the open two-way 13.5 km loop of Alvarado Road, College Avenue, Navajo Road, Jackson Drive and Lake Murray Boulevard around the reservoir (Kevin's childhood neighbourhood), from OpenStreetMap at real USGS 3DEP elevation, plus the 6.4 km north network joined to it at both ends: Waring Road from College/Navajo to Princess View Drive, Princess View down into Grantville, Mission Gorge Road east through the gorge under Cowles Mountain, and Jackson Drive north up the canyon back to Navajo \u2014 about 19.9 km of road in all, driven in both directions. Raised landscaped medians on College, Navajo and Waring, Mission Gorge's terracotta median, the real rock cuts on Mission Gorge and Jackson, street lamps, arrow signs at the tight corners, trees and the mapped buildings; the loop's side streets left open, the side streets off the north roads closed by concrete K-rail. No race furniture; lap clockwise from the line on Alvarado. The AI line is a generated draft, not an in-game recording.",
+      "ui_description": "Lake Murray Free Roam — Lake Murray as it is: the open two-way 13.5 km loop of Alvarado Road, College Avenue, Navajo Road, Jackson Drive and Lake Murray Boulevard around the reservoir (Kevin's childhood neighbourhood), from OpenStreetMap at real USGS 3DEP elevation, plus the 6.4 km north network joined to it at both ends: Waring Road from College/Navajo to Princess View Drive, Princess View down into Grantville, Mission Gorge Road east through the gorge under Cowles Mountain, and Jackson Drive north up the canyon back to Navajo — about 19.9 km of road in all, driven in both directions. Raised landscaped medians on College, Navajo and Waring, Mission Gorge's terracotta median, the real rock cuts on Mission Gorge and Jackson, street lamps, arrow signs at the tight corners, trees and the mapped buildings; the loop's side streets left open, the side streets off the north roads closed by concrete K-rail. No race furniture; lap clockwise from the line on Alvarado. The AI line is a generated draft, not an in-game recording.",
       "ai": "ai/street",
       "_doc": "Version 1 = today's loop: main kn5 only, open mouths, full width, no race furniture. Only its spawn moves (ledger 0047 Q3): grid A on Alvarado, line v300. start_positions.json `active` still moves START/HOTLAP/PIT for THIS layout only (Kevin 2026-08-20 per-issue spawns) via tools/layout_dummies.py --issue-spawn, never AC_TIME, never the race layouts."
     },
@@ -178,8 +251,8 @@
           3310
         ]
       },
-      "run": "clockwise, one-way: Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest \u2014 your own side of every road (an Alvarado-wide lane), the whole street on Alvarado and the I-8 bridge, the full intersection open at the five corners",
-      "ui_description": "Lake Murray Speedway (clockwise, the normal direction): the same 13.5 km of real Lake Murray roads as a one-way race track, run clockwise \u2014 Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest \u2014 on an Alvarado-wide lane on your own side of every road: concrete barriers along your curb and a second line closing off the opposite lanes (along the medians where there is one); the whole street on Alvarado and the I-8 bridge; the full intersection open at the five corners; side streets sealed; red/white kerbs at the corners. The AI line is a generated draft, not an in-game recording.",
+      "run": "clockwise, one-way: Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest — your own side of every road (an Alvarado-wide lane), the whole street on Alvarado and the I-8 bridge, the full intersection open at the five corners",
+      "ui_description": "Lake Murray Speedway (clockwise, the normal direction): the same 13.5 km of real Lake Murray roads as a one-way race track, run clockwise — Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest — on an Alvarado-wide lane on your own side of every road: concrete barriers along your curb and a second line closing off the opposite lanes (along the medians where there is one); the whole street on Alvarado and the I-8 bridge; the full intersection open at the five corners; side streets sealed; red/white kerbs at the corners. The AI line is a generated draft, not an in-game recording.",
       "ai": "ai/race_cw"
     },
     {
@@ -199,13 +272,13 @@
           1803
         ]
       },
-      "run": "anticlockwise, one-way: Alvarado eastbound, Lake Murray Blvd northeast, Jackson north, Navajo westbound, College southbound \u2014 your own side of every road (an Alvarado-wide lane), the whole street on Alvarado and the I-8 bridge, the full intersection open at the five corners",
-      "ui_description": "Lake Murray Speedway Reverse (anticlockwise): the same 13.5 km of real Lake Murray roads as a one-way race track, run anticlockwise \u2014 Alvarado eastbound, Lake Murray Blvd northeast, Jackson north, Navajo westbound, College southbound \u2014 on an Alvarado-wide lane on your own side of every road: concrete barriers along your curb and a second line closing off the opposite lanes (along the medians where there is one); the whole street on Alvarado and the I-8 bridge; the full intersection open at the five corners; side streets sealed; red/white kerbs at the corners. The AI line is a generated draft, not an in-game recording.",
+      "run": "anticlockwise, one-way: Alvarado eastbound, Lake Murray Blvd northeast, Jackson north, Navajo westbound, College southbound — your own side of every road (an Alvarado-wide lane), the whole street on Alvarado and the I-8 bridge, the full intersection open at the five corners",
+      "ui_description": "Lake Murray Speedway Reverse (anticlockwise): the same 13.5 km of real Lake Murray roads as a one-way race track, run anticlockwise — Alvarado eastbound, Lake Murray Blvd northeast, Jackson north, Navajo westbound, College southbound — on an Alvarado-wide lane on your own side of every road: concrete barriers along your curb and a second line closing off the opposite lanes (along the medians where there is one); the whole street on Alvarado and the I-8 bridge; the full intersection open at the five corners; side streets sealed; red/white kerbs at the corners. The AI line is a generated draft, not an in-game recording.",
       "ai": "ai/race_acw"
     }
   ],
   "race": {
-    "_doc": "Ledger 0049 (Kevin 2026-10-11: \"racetrack versions of these, we need full intersections available for turning. And the entire other lane blocked off from access.\" / \"more or less an Alvarado's width for the entire track with deviances in various areas\" / open boxes at the \"Corners the race turns at\", side streets sealed). Replaces 0047's shared centre chain: each race layout gets its OWN corridor \u2014 the curb strip on its race side plus one closure wall (the same K-rail strip) standing so the lane is race.corridor.clear_width_m wide, along the race-side curb of each median island instead of on it, pinned into the far curb strip at every box edge; the whole street on Alvarado and the I-8 deck (corridor.whole); the full intersection open in each corridor.boxes; both curb strips one closed loop per side, across all three bridge spans (edge_gaps none). Read by tools/barrier_bands.py (version 2: the corridor solve + self-gates + planned no_route; FAILS if centre_runs is present or closure_runs differ from the derived ones), tools/race_corridor.py (the closure line), tools/author_race_furniture_blend.py, tools/layout_dummies.py and scripts/ac/write_ai_line.py (the race AI lane = corridors.<id>.lane_by_vertex). Each race layout loads ONLY its own <slug>_closure_<id>.kn5 (layouts[].closure_token names its meshes): the clockwise closure stands in the anticlockwise lane. Constants marked INVENTED in fleet/GATES-CHANGELOG.md; clear_width_m 11.36 is MEASURED (Alvarado 13.00 m - 2 x 0.82 as raced).",
+    "_doc": "Ledger 0049 (Kevin 2026-10-11: \"racetrack versions of these, we need full intersections available for turning. And the entire other lane blocked off from access.\" / \"more or less an Alvarado's width for the entire track with deviances in various areas\" / open boxes at the \"Corners the race turns at\", side streets sealed). Replaces 0047's shared centre chain: each race layout gets its OWN corridor — the curb strip on its race side plus one closure wall (the same K-rail strip) standing so the lane is race.corridor.clear_width_m wide, along the race-side curb of each median island instead of on it, pinned into the far curb strip at every box edge; the whole street on Alvarado and the I-8 deck (corridor.whole); the full intersection open in each corridor.boxes; both curb strips one closed loop per side, across all three bridge spans (edge_gaps none). Read by tools/barrier_bands.py (version 2: the corridor solve + self-gates + planned no_route; FAILS if centre_runs is present or closure_runs differ from the derived ones), tools/race_corridor.py (the closure line), tools/author_race_furniture_blend.py, tools/layout_dummies.py and scripts/ac/write_ai_line.py (the race AI lane = corridors.<id>.lane_by_vertex). Each race layout loads ONLY its own <slug>_closure_<id>.kn5 (layouts[].closure_token names its meshes): the clockwise closure stands in the anticlockwise lane. Constants marked INVENTED in fleet/GATES-CHANGELOG.md; clear_width_m 11.36 is MEASURED (Alvarado 13.00 m - 2 x 0.82 as raced).",
     "barrier_profile_asset": "assets/models/concrete_barrier_4m.obj",
     "barrier_height_m": 1.2,
     "module_pitch_m": 4.04,
@@ -214,7 +287,7 @@
     "edge_gaps": "none",
     "mouths": "sealed",
     "corridor": {
-      "_doc": "Spec \u00a79.1 (scratchpad corridor/spec.md, ledger 0049). whole = I-8 deck -> v0 -> Alvarado -> hairpin box (v4454 .. v777); boxes = the place_signs corner PC-2..PT+2 at the three interior corners (the seam and hairpin lie inside whole); closure_runs PINNED (College, Navajo, Jackson, Lake Murray Blvd); rates are 1:x lateral per metre of travel. clear_width_source alvarado = re-measured median(w - 2 x 0.82) over v25-723, fails beyond 0.02 m of clear_width_m. Tune only after Kevin's drive (spec \u00a717).",
+      "_doc": "Spec §9.1 (scratchpad corridor/spec.md, ledger 0049). whole = I-8 deck -> v0 -> Alvarado -> hairpin box (v4454 .. v777); boxes = the place_signs corner PC-2..PT+2 at the three interior corners (the seam and hairpin lie inside whole); closure_runs PINNED (College, Navajo, Jackson, Lake Murray Blvd); rates are 1:x lateral per metre of travel. clear_width_source alvarado = re-measured median(w - 2 x 0.82) over v25-723, fails beyond 0.02 m of clear_width_m. Tune only after Kevin's drive (spec §17).",
       "clear_width_m": 11.36,
       "clear_width_source": "alvarado",
       "island_mode": "pavement",
@@ -275,7 +348,9 @@
       "clear_hard_min_m": 6.5,
       "pocket_min_m": 2.0
     },
-    "swept_mouths": ["north_"],
+    "swept_mouths": [
+      "north_"
+    ],
     "_swept_mouths_doc": "Ledger 0054 P3 step 6 (2026-10-18; P1's rehearsal delta made permanent): the two north mouths are declared where their swept edges open the loop edge, policy per vertex (A7): race_cw seals J1 with the far strip to the box pin v1521 and puts the rest behind its closure, race_acw with its race strip; J5 sealed_far_strip / sealed_race_strip.",
     "kerbs": {
       "min_turn_deg": 45,
@@ -412,7 +487,7 @@
   "terrain": {
     "_doc": "Ledger 0046 (Kevin 2026-10-10: 'more terrain near the roads, and the I-8 trench and adjacent causeway cut out'; 'I want to see cowles mountain at least and maybe more of the i8 corridor when I'm up on Navajo'). fleet/LAWS.md L3 as amended 2026-10-11 and 2026-10-13 (ledger 0054 D3): near-road relief is shaped to the road within the road's own construction zone, ~20-40 m; real relief beyond is never reshaped (clamp_corridor_m 20 / clamp_blend_m 40, _clamp_doc). The ground is ONE multi-resolution lattice sampled from USGS 3DEP AT every vertex (scripts/elevation/terrain_sample.py, cached in data/terrain.samples.json.gz), anchored on the 20 m grid the assembler grades (tier_options.frame): 5 m cells (split in four) within 60 m of a pavement, 20 m (split in four) to 500 m, 40 m beyond, the I-8 corridor at 5 m and Cowles' cone at 20 m, over the dossier's landmark box (far_extent). Under and beside the roads (keep_cells: the graded grid's own 20 m cells wherever a pavement is within 18 m) the ground is the v0.17.1 graded surface, triangle for triangle, so the seat and the kn5 prep reshape exactly what they always reshaped; past 20 m the kept cells themselves are refined to the 5 m sub-lattice and take the data, feathered by 36 m (keep_cells.refine, applied by the kn5 prep after it has reshaped the near-road ground). Within 250 m of a pavement (and every pocket that encloses) the ground is physical 1GRASS; the rest is the visual-only far ring GRASS_FAR (no physics, no gates, no GrassFX). The band clamp (+-terrain_band_m of the nearest road) holds in full only within clamp_corridor_m of a pavement and releases to the raw DEM by clamp_blend_m: Cowles, the Del Cerro hilltop and the valley walls are 3DEP, uncapped.",
     "ground_release": {
-      "_doc": "Ledger 0046 v0.18.0 integration fix round (the truth lens's criterion 4: seven rims within 20 m of a pavement, each on ground criterion 7 held to v0.17.1 and 2-9 m from the real earth). Inside each zone the near-road ground is the bare-earth 3DEP surface (tools/ground_release.py plans a 2 m lattice and reads 3DEP at every node, cached in data/ground_release.samples.json.gz; tools/ground_release_blend.py applies it to TERRAIN in the author stage, after the seat and before the bridge bodies, and puts a concrete rail on the kerb wherever the new ground drops within reach of a car, by drive_test's own excursion rule). A 'bank' zone releases the ground beside the road only (never under the pavement); a 'span' zone also releases it under the deck, never above the deck (min(3DEP, deck - 0.02)). Fix round 2 (2026-10-13, both lenses): no released FACE stands above any pavement anywhere over its area (capped per face, not per vertex: a 2.5 m facet with one corner over the kerb put grass 5 cm through Lake Murray Blvd's lane), and within reach of a pavement the released ground stands no steeper than an earth batter of 1.5 m per metre from the pavement's edge, up (a cut) or down (a fill, only beside pavement that sits on the ground), so a built sidewalk wider than the real one meets the creek bank as a steep bank, not a 3-4 m vertical curtain; the old 'never above the nearest pavement' cap is gone (it pinned the real 3.6 m terrace between Alvarado and College's south approach down to Alvarado's height). Fix round 2 adds four zones: college_i8_span and lmb_i8_span (each overcrossing's whole real span: the I-8 had climbed the ground the draft seated at the decks) and alvarado_college_terrace and college_approach_foot (the real terrace between Alvarado and College's south approach, which the build held at Alvarado's height out to 16 m and met the released terrace in a 3-4 m curtain). Stations s_m are on data/centerline.local.json; sides: left / right of the lap's travel (the street layout's direction); reach_m past the nominal pavement edge (40 m: past the kept cells' refinement band, 20 + 16 m, which the kn5 prep then leaves alone inside a zone, as it leaves its contact feather). Measured 2026-10-13 on fresh 3DEP 1 m: alvarado_creek_bank \u2014 Alvarado Creek and its bank drop 2-8 m within 2-20 m of Alvarado Road's south kerb (s 1752-1995), a bank rises 2 m 4-10 m off it (s 1632-1680); college_south_approach \u2014 the real road rides an earth embankment at road height to its abutment (s 2586), and the ground under the approach stood 6 m under the road; lmb_alvarado_creek \u2014 Lake Murray Blvd crosses Alvarado Creek on a bridge (bare earth 115.8-117.5 m under a 124 m road, s 13435-13457) that the build had filled solid.",
+      "_doc": "Ledger 0046 v0.18.0 integration fix round (the truth lens's criterion 4: seven rims within 20 m of a pavement, each on ground criterion 7 held to v0.17.1 and 2-9 m from the real earth). Inside each zone the near-road ground is the bare-earth 3DEP surface (tools/ground_release.py plans a 2 m lattice and reads 3DEP at every node, cached in data/ground_release.samples.json.gz; tools/ground_release_blend.py applies it to TERRAIN in the author stage, after the seat and before the bridge bodies, and puts a concrete rail on the kerb wherever the new ground drops within reach of a car, by drive_test's own excursion rule). A 'bank' zone releases the ground beside the road only (never under the pavement); a 'span' zone also releases it under the deck, never above the deck (min(3DEP, deck - 0.02)). Fix round 2 (2026-10-13, both lenses): no released FACE stands above any pavement anywhere over its area (capped per face, not per vertex: a 2.5 m facet with one corner over the kerb put grass 5 cm through Lake Murray Blvd's lane), and within reach of a pavement the released ground stands no steeper than an earth batter of 1.5 m per metre from the pavement's edge, up (a cut) or down (a fill, only beside pavement that sits on the ground), so a built sidewalk wider than the real one meets the creek bank as a steep bank, not a 3-4 m vertical curtain; the old 'never above the nearest pavement' cap is gone (it pinned the real 3.6 m terrace between Alvarado and College's south approach down to Alvarado's height). Fix round 2 adds four zones: college_i8_span and lmb_i8_span (each overcrossing's whole real span: the I-8 had climbed the ground the draft seated at the decks) and alvarado_college_terrace and college_approach_foot (the real terrace between Alvarado and College's south approach, which the build held at Alvarado's height out to 16 m and met the released terrace in a 3-4 m curtain). Stations s_m are on data/centerline.local.json; sides: left / right of the lap's travel (the street layout's direction); reach_m past the nominal pavement edge (40 m: past the kept cells' refinement band, 20 + 16 m, which the kn5 prep then leaves alone inside a zone, as it leaves its contact feather). Measured 2026-10-13 on fresh 3DEP 1 m: alvarado_creek_bank — Alvarado Creek and its bank drop 2-8 m within 2-20 m of Alvarado Road's south kerb (s 1752-1995), a bank rises 2 m 4-10 m off it (s 1632-1680); college_south_approach — the real road rides an earth embankment at road height to its abutment (s 2586), and the ground under the approach stood 6 m under the road; lmb_alvarado_creek — Lake Murray Blvd crosses Alvarado Creek on a bridge (bare earth 115.8-117.5 m under a 124 m road, s 13435-13457) that the build had filled solid.",
       "zones": [
         {
           "name": "alvarado_creek_bank",
@@ -544,7 +619,12 @@
       ],
       "auto_cuts": {
         "_doc": "Ledger 0054 P3 repair round 1 (2026-10-19, the truth lens; Kevin 2026-10-13: 'Why are we changing ridges?'; REALISM: lean in, never eject). Replaces the six hand-declared cut zones of P3 (mission_gorge_cut_1475_1560, jackson_cut_95_165 / 320_485 / 555_630 / 1005_1120 / 1225_1525 — P2's 50 m stretches, measured only on Mission Gorge's south side and Jackson's south-west side): fresh 3DEP showed the real walls run past their ends (planed flat at both end stations of every Jackson zone), stand at ten more places 20-50 m long on all four roads and both sides (97 of 249 stations with a 3 m+ wall kept less than half), and the 45 deg batter held Mission Gorge's ~1.5 m-per-metre rock face to half its height. tools/ground_release.py probes 3DEP beside every piece listed (every probe_step_m, each side, probe_from_curb_m..probe_to_curb_m past the curb) and declares a raise-only cut zone (bank, rails false, College's cut_reach_m / round_m) over every stretch where the real ground stands min_rise_m over the road, padded pad_m, its batter the p90 of the real face's own climb held to docs/ROAD-CONSTRUCTION.md's 1-2 m per metre. Every number is in tools/ground_release.AUTO_DEFAULTS [invented, fleet/GATES-CHANGELOG.md]; the zones and every probe station: data/ground_release.auto_cuts.json.",
-        "pieces": ["A", "B", "C", "D"]
+        "pieces": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ]
       }
     },
     "rock_faces": {
@@ -613,14 +693,30 @@
       "keep_feather_m": 16.0,
       "keep_batter": 3.5,
       "keep_feather_min_m": 8.0,
-      "antialias": {"cell_m": 5.0, "kernel": "tent", "far_max_move_m": 0.85},
-      "diagonals": {"rule": "min_dh", "beyond_m": 20.0},
-      "breaks": {"beyond_m": 20.0, "screen_m": 0.25, "tol_m": 0.4, "max_per_edge": 3, "min_spacing_m": 0.75, "corners": "filtered"},
+      "antialias": {
+        "cell_m": 5.0,
+        "kernel": "tent",
+        "far_max_move_m": 0.85
+      },
+      "diagonals": {
+        "rule": "min_dh",
+        "beyond_m": 20.0
+      },
+      "breaks": {
+        "beyond_m": 20.0,
+        "screen_m": 0.25,
+        "tol_m": 0.4,
+        "max_per_edge": 3,
+        "min_spacing_m": 0.75,
+        "corners": "filtered"
+      },
       "planned_pavement": {
-        "files": ["data/expansion.north.json"],
+        "files": [
+          "data/expansion.north.json"
+        ],
         "_doc": "Ledger 0054 P2 (2026-10-14; EXPANSION-PLAN P2 step 1: physical ground within 250 m of every new pavement, the enclosed pocket included, before the roads exist). The north network's authored intermediate (tools/author_expansion.py: the four pieces at their stations with the wider curb offset as half-width, the J2-J4 pad outlines, the six see-only stubs) marks the TIERS and the PHYSICAL ground exactly as a built pavement does (terrain_tiers.Topology plan_lines; terrain_sample.planned_inputs), so the ground over the expansion is planned, sampled from 3DEP and tiled now. It never marks keep_cells / refine and is never pavement for the break lines, the clamp or the feather: those follow the BUILT roads, which P3 adds (route_connectors takes the pieces; then this key is retired). The plan is stale when the intermediate changes (inputs_md5)."
       },
-      "_doc": "frame: the lattice is anchored on data/heightfield.meta.json upsampled x2 (the assembler's graded 20 m grid; ~20.07 x 19.98 m at Lake Murray), so cell_m 40 / 20 / 5 are 2, 1 and 1/4 of its cells. keep_cells: every grid cell within 18 m of a pavement keeps its own two triangles and graded heights (the seat moves ground <= 11.1 m past a connector's pavement and subdivides <= 15.1 m; the prep pins <= 9 m and subdivides <= 16 m of a road vertex), so near-road ground and every near-road gate are exactly v0.17.1's. x_split: a centre vertex, longest edge = the cell side (5.0 m, 20.1 m) \u2014 criterion 5's 7 m / 28.3 m. physical_within_m: the 1GRASS extent (drive_test sweeps <= 20 m off the road; TreeFX fills <= 200 m). keep_surface_m / keep_feather_m: the graded surface is kept to 20 m (the conform corridor) and feathered into the data over 16 m (the conform blend), by pavement distance. keep_cells.refine (ledger 0046 fix round, 2026-10-12): a kept 20 m cell reaches ~46 m out, so past the prep's reach it stayed 20 m graded facets (criterion 5) and smoothed the I-8 terrace walls beside Alvarado away; once the seat and the prep have reshaped the near-road ground, the prep (build_kn5_loop._refine_kept_terrain) halves every kept-cell edge over edge_m 5.5 m on faces reaching past move_beyond_m 20 m or centred past min_face_d_m 12 m (coplanar: on the 20 m grid the halving lands on the 5 m x-split sub-lattice), then moves every kept-cell vertex past 20 m onto the 3DEP sub-lattice (planned for every kept cell's 5 m sub-cells not wholly within beyond_m 10 m, sampled like any vertex, under the L3 clamp) feathered exactly as the lattice beside it \u2014 one field across the kept edge, so the kept-node feather of 2026-10-12 (which held the kept cells' outer edge on the graded surface) is retired. Within 20 m of a pavement nothing moves (criterion 7). antialias + diagonals (ledger 0046 fix round 2, 2026-10-13): the visual lens's washboard ribs (the concrete Alvarado Creek channel SE of the LMB overcrossing, ~7 m wide and 6 m deep, and a ~3 m ditch on the cut slope west of College) are real 3DEP features narrower than two 5 m cells, point-sampled every 5 m and folded by a fixed diagonal into a staircase. antialias: every 5 m-level vertex (and refine node) takes the tent-filtered 3DEP of the 2.5 m base lattice around it (weights 1/4 1/2 1/4 per axis, terrain_tiers.AA_TAPS) instead of one point — exact on a plane, it only moves vertices where the ground bends inside a cell; in the far ring the move is held to far_max_move_m 0.85 m of the vertex's own 3DEP point (criterion 6's 1 m less a 0.15 m margin, three times the 0.045 m a fresh 3DEP fetch drifts from the cache on steep far slopes: at 0.95 the truth lens read all 106,544 far vertices against fresh 3DEP at max 0.995 m, 152 over 0.95; at 1.0 a re-sample read 3 of 3,000 at 1.003-1.005 m). diagonals: every plain square cell more than beyond_m 20 m from a pavement is split along the diagonal whose corners differ least in height (terrain_tiers.data_diagonals); no vertex moves, kept cells and x-split fans are untouched. Measured by tools/rib_check.py. GATES-CHANGELOG 2026-10-11 / 2026-10-12 / 2026-10-13: 18 / 250 / 20 / 16, 10 / 5.5 / 20 / 12, the tent kernel, far_max_move_m 0.85 and 20 are invented within the ledger's ranges. breaks + keep_batter (ledger 0046 fix round 4, 2026-10-13): the visual lens still saw a washboard west of College — cut-slope benches, risers 4-6 m tall and ~1.5 m wide, running ~8 degrees off the lattice axis: a lattice can only put a riser BETWEEN two rows of nodes, so it sat between rows j and j+1 for ~35 m and then jumped a row (and in the far ring criterion 6 holds the tent to 0.85 m). breaks: on every edge of a plain 5 m cell (no x-split, no hanging node, not kept, all corners more than beyond_m 20 m from a pavement) whose base-lattice midpoint departs from its ends' line by screen_m 0.25 m and which climbs the ground at least as steeply as it crosses it, 3DEP is read every 0.5 m (cached as fine samples); up to max_per_edge 3 points where the lightly smoothed profile departs most from the polyline (tol_m 0.4 m, min_spacing_m 0.75 m) become vertices ON the edge, and the cell is triangulated through them (the least-squares triangulation of its boundary polygon) — the riser runs straight through the cell. corners filtered: the cell corners keep their anti-aliased height. Measured by tools/rib_check.py step_jogs. keep_batter 3.5 / keep_feather_min_m 8: past 20 m the graded surface returns to 3DEP within an earth batter's run of the gap between them (3.5 m per metre, held to 8-16 m; steepest 0.43, never steeper than the 16 m blend where the gap exceeds 4.6 m), so ground 29 m from the LMB approach is the data within criterion 4's 2 m (truth lens s 3800); per node, interpolated by the prep like D and d. All numbers invented, GATES-CHANGELOG 2026-10-13 fix round 4."
+      "_doc": "frame: the lattice is anchored on data/heightfield.meta.json upsampled x2 (the assembler's graded 20 m grid; ~20.07 x 19.98 m at Lake Murray), so cell_m 40 / 20 / 5 are 2, 1 and 1/4 of its cells. keep_cells: every grid cell within 18 m of a pavement keeps its own two triangles and graded heights (the seat moves ground <= 11.1 m past a connector's pavement and subdivides <= 15.1 m; the prep pins <= 9 m and subdivides <= 16 m of a road vertex), so near-road ground and every near-road gate are exactly v0.17.1's. x_split: a centre vertex, longest edge = the cell side (5.0 m, 20.1 m) — criterion 5's 7 m / 28.3 m. physical_within_m: the 1GRASS extent (drive_test sweeps <= 20 m off the road; TreeFX fills <= 200 m). keep_surface_m / keep_feather_m: the graded surface is kept to 20 m (the conform corridor) and feathered into the data over 16 m (the conform blend), by pavement distance. keep_cells.refine (ledger 0046 fix round, 2026-10-12): a kept 20 m cell reaches ~46 m out, so past the prep's reach it stayed 20 m graded facets (criterion 5) and smoothed the I-8 terrace walls beside Alvarado away; once the seat and the prep have reshaped the near-road ground, the prep (build_kn5_loop._refine_kept_terrain) halves every kept-cell edge over edge_m 5.5 m on faces reaching past move_beyond_m 20 m or centred past min_face_d_m 12 m (coplanar: on the 20 m grid the halving lands on the 5 m x-split sub-lattice), then moves every kept-cell vertex past 20 m onto the 3DEP sub-lattice (planned for every kept cell's 5 m sub-cells not wholly within beyond_m 10 m, sampled like any vertex, under the L3 clamp) feathered exactly as the lattice beside it — one field across the kept edge, so the kept-node feather of 2026-10-12 (which held the kept cells' outer edge on the graded surface) is retired. Within 20 m of a pavement nothing moves (criterion 7). antialias + diagonals (ledger 0046 fix round 2, 2026-10-13): the visual lens's washboard ribs (the concrete Alvarado Creek channel SE of the LMB overcrossing, ~7 m wide and 6 m deep, and a ~3 m ditch on the cut slope west of College) are real 3DEP features narrower than two 5 m cells, point-sampled every 5 m and folded by a fixed diagonal into a staircase. antialias: every 5 m-level vertex (and refine node) takes the tent-filtered 3DEP of the 2.5 m base lattice around it (weights 1/4 1/2 1/4 per axis, terrain_tiers.AA_TAPS) instead of one point — exact on a plane, it only moves vertices where the ground bends inside a cell; in the far ring the move is held to far_max_move_m 0.85 m of the vertex's own 3DEP point (criterion 6's 1 m less a 0.15 m margin, three times the 0.045 m a fresh 3DEP fetch drifts from the cache on steep far slopes: at 0.95 the truth lens read all 106,544 far vertices against fresh 3DEP at max 0.995 m, 152 over 0.95; at 1.0 a re-sample read 3 of 3,000 at 1.003-1.005 m). diagonals: every plain square cell more than beyond_m 20 m from a pavement is split along the diagonal whose corners differ least in height (terrain_tiers.data_diagonals); no vertex moves, kept cells and x-split fans are untouched. Measured by tools/rib_check.py. GATES-CHANGELOG 2026-10-11 / 2026-10-12 / 2026-10-13: 18 / 250 / 20 / 16, 10 / 5.5 / 20 / 12, the tent kernel, far_max_move_m 0.85 and 20 are invented within the ledger's ranges. breaks + keep_batter (ledger 0046 fix round 4, 2026-10-13): the visual lens still saw a washboard west of College — cut-slope benches, risers 4-6 m tall and ~1.5 m wide, running ~8 degrees off the lattice axis: a lattice can only put a riser BETWEEN two rows of nodes, so it sat between rows j and j+1 for ~35 m and then jumped a row (and in the far ring criterion 6 holds the tent to 0.85 m). breaks: on every edge of a plain 5 m cell (no x-split, no hanging node, not kept, all corners more than beyond_m 20 m from a pavement) whose base-lattice midpoint departs from its ends' line by screen_m 0.25 m and which climbs the ground at least as steeply as it crosses it, 3DEP is read every 0.5 m (cached as fine samples); up to max_per_edge 3 points where the lightly smoothed profile departs most from the polyline (tol_m 0.4 m, min_spacing_m 0.75 m) become vertices ON the edge, and the cell is triangulated through them (the least-squares triangulation of its boundary polygon) — the riser runs straight through the cell. corners filtered: the cell corners keep their anti-aliased height. Measured by tools/rib_check.py step_jogs. keep_batter 3.5 / keep_feather_min_m 8: past 20 m the graded surface returns to 3DEP within an earth batter's run of the gap between them (3.5 m per metre, held to 8-16 m; steepest 0.43, never steeper than the 16 m blend where the gap exceeds 4.6 m), so ground 29 m from the LMB approach is the data within criterion 4's 2 m (truth lens s 3800); per node, interpolated by the prep like D and d. All numbers invented, GATES-CHANGELOG 2026-10-13 fix round 4."
     },
     "far_extent": {
       "bbox_swne": [
@@ -629,7 +725,7 @@
         32.85,
         -116.998
       ],
-      "_doc": "The dossier's landmark box (ledger 0046 Project): Cowles summit + ~1 km north (32.822), the valley wall south of I-8 (32.755), the Cowles ridge east and the San Diego River gorge west; widened from the ledger's -117.085 / -117.00 to -117.0895 / -116.998 so criterion 3's faces at x <= -4000 and x >= 4500 exist (8.6 x 7.4 km). Note: the gorge floor is 3DEP 27-100 m abs (probe 2026-10-11) \u2014 real ground below the ledger's 'no vertex below 100 m' line, kept as data."
+      "_doc": "The dossier's landmark box (ledger 0046 Project): Cowles summit + ~1 km north (32.822), the valley wall south of I-8 (32.755), the Cowles ridge east and the San Diego River gorge west; widened from the ledger's -117.085 / -117.00 to -117.0895 / -116.998 so criterion 3's faces at x <= -4000 and x >= 4500 exist (8.6 x 7.4 km). Note: the gorge floor is 3DEP 27-100 m abs (probe 2026-10-11) — real ground below the ledger's 'no vertex below 100 m' line, kept as data."
     },
     "include": [
       {
@@ -745,17 +841,77 @@
       "cap_scale": 1.0,
       "_cap_scale_doc": "the north's caps = the loop's density (its caps over its own planted area) x the north's planted area x this. At 1.0 (2026-10-26 rehearsal) the aerial bins imply 8,528 trees and the cap keeps 1,489 (the loop's 7.3 trees/ha), so Jackson's woodland and the river belt stand at the loop's suburban rate, 3-6x Waring's; bushes 3,816 implied, 3,722 cap. Kevin's lever after Drive 2: 5.7 lets the north carry what the aerial shows.",
       "zones": [
-        {"piece": "A", "trees": "north_suburb_trees", "bushes": "north_suburb_bushes", "why": "Waring: houses both sides (canopy 5-14 %)"},
-        {"piece": "B", "trees": "north_canyon_trees", "bushes": "north_scrub", "why": "Princess View: the canyon sides, chaparral and coastal sage scrub"},
-        {"piece": "C", "side": "L", "s": [300, 1200], "trees": "north_riparian_trees", "bushes": "north_scrub", "why": "the river belt north of Mission Gorge: riparian woodland (willow / cottonwood / sycamore stand-ins)"},
-        {"piece": "C", "side": "R", "s": [500, 1000], "trees": "north_street_trees", "bushes": "north_suburb_bushes", "why": "the apartment frontage on Mission Gorge's south side: street trees"},
-        {"piece": "C", "trees": "north_canyon_trees", "bushes": "north_scrub", "why": "the gorge sides and Grantville's edge: scrub with natives"},
-        {"piece": "D", "side": "L", "s": [1000, 1400], "trees": "north_gum_belt", "bushes": "north_scrub", "why": "E1: the tall grey-green belt on the NE side of Jackson's canyon (0040; the Gum model until Street View confirms)"},
-        {"piece": "D", "trees": "north_canyon_trees", "bushes": "north_scrub", "why": "Jackson's canyon and its rims, as the aerial bins show (no palms)"}
+        {
+          "piece": "A",
+          "trees": "north_suburb_trees",
+          "bushes": "north_suburb_bushes",
+          "why": "Waring: houses both sides (canopy 5-14 %)"
+        },
+        {
+          "piece": "B",
+          "trees": "north_canyon_trees",
+          "bushes": "north_scrub",
+          "why": "Princess View: the canyon sides, chaparral and coastal sage scrub"
+        },
+        {
+          "piece": "C",
+          "side": "L",
+          "s": [
+            300,
+            1200
+          ],
+          "trees": "north_riparian_trees",
+          "bushes": "north_scrub",
+          "why": "the river belt north of Mission Gorge: riparian woodland (willow / cottonwood / sycamore stand-ins)"
+        },
+        {
+          "piece": "C",
+          "side": "R",
+          "s": [
+            500,
+            1000
+          ],
+          "trees": "north_street_trees",
+          "bushes": "north_suburb_bushes",
+          "why": "the apartment frontage on Mission Gorge's south side: street trees"
+        },
+        {
+          "piece": "C",
+          "trees": "north_canyon_trees",
+          "bushes": "north_scrub",
+          "why": "the gorge sides and Grantville's edge: scrub with natives"
+        },
+        {
+          "piece": "D",
+          "side": "L",
+          "s": [
+            1000,
+            1400
+          ],
+          "trees": "north_gum_belt",
+          "bushes": "north_scrub",
+          "why": "E1: the tall grey-green belt on the NE side of Jackson's canyon (0040; the Gum model until Street View confirms)"
+        },
+        {
+          "piece": "D",
+          "trees": "north_canyon_trees",
+          "bushes": "north_scrub",
+          "why": "Jackson's canyon and its rims, as the aerial bins show (no palms)"
+        }
       ],
-      "median_tree_types": ["planted"],
+      "median_tree_types": [
+        "planted"
+      ],
       "median_trees": [
-        {"piece": "A", "s": [250, 550], "zone": "north_median_trees", "why": "A2: Waring's planted raised median has trees at st 250-550"}
+        {
+          "piece": "A",
+          "s": [
+            250,
+            550
+          ],
+          "zone": "north_median_trees",
+          "why": "A2: Waring's planted raised median has trees at st 250-550"
+        }
       ]
     },
     "freeway": {
@@ -888,6 +1044,40 @@
         "_doc": "Ledger 0054 P4 step 2 (EXPANSION-PLAN D4, 2026-10-26): streetlights on the north pieces (A Waring, B Princess View, C Mission Gorge, D Jackson north; data/expansion.north.json as data/connectors.local.json carries them). scripts-v021 geometry/streetlights.py plans them inside build_loop_blend.build_streetlights, AFTER the loop's posts (which keep their numbers): the loop's spacing (spacing_m 55, min_gap_m 25 from every post, the loop's counted), alternating sides, the post ON the piece's walk (walk_offset_m 0.83 behind the pavement edge = the curb face 0.08 + half the 1.5 m walk, the rule lamp 77 stands by on J1's return), clear of every other pavement (the mainline, every connector and side-street stub with its curb returns, the junction pads' outlines and stub arms, every curb cut; GATES-CHANGELOG 'P4 lamps' for the clearances), a blocked station sliding 12 m before the other side is tried, then skipped with its reasons recorded (lights.local.json expansion.skipped). unlit: declared stretches (piece, s_from, s_to in the intermediate's station frame) get no post. osm_lamps_file: real OSM highway=street_lamp nodes (the P0 research, source/expansion/pipeline__osm_lamps_signals.json, synced in by ship_sd.sh) stand a post AT the node on its side and switch the loop's spacing off over their stretch; each post records its source, 'osm:<node id>' or 'authored' - today no OSM node stands within 745 m of any piece, so every stretch is authored. The lamps are the same led_cobra model, the same sodium light (lighting.streetlight unchanged); tools/author_lamps_blend.py re-seats EVERY post whose base is more than 1 m from the built ground under it and refuses a pole on any road, within 0.5 m of any wall / K-rail, or two lamps that would read as one CSP light; tools/check_lights_ini.py then proves one [LIGHT_N] per lamp at its lens on the written ext_config.ini. enabled false = the loop's lamps exactly as v0.19.0 (one key = the rollback)."
       },
       "_doc": "Ledger 0056 (Kevin 2026-10-14: 'make lighter lamp model' / 'more modern' / 'Taller too'). tools/author_lamps_blend.py stands this model at every post in data/lights.local.json (the post bases do not move). led_cobra = the modern San Diego arterial light from tools/make_streetlight_led.py (CC0): a 35 ft (10.67 m) galvanised tapered steel pole (Caltrans ES-6A Type 21), 12 ft (3.66 m) upswept mast arm, flat-bottom LED cobra head with a twist-lock photocell, flat LED lens at the 38'-9\" (11.81 m) ES-6A mounting height (the 2026-10 lamp's light stood 6.94 m over the road), 371 kn5 render points per lamp with its lens (rehearsal, 2026-10-14) against ~4,045. arms 2 = back-to-back heads, the configuration every 2026-10 lamp has (its lamp_post.obj is symmetric); only the road-ward head carries the emissive lens and the CSP light, as before; arms 1 = the single-arm cobra head. ROLLBACK (one key): model 'street_lamp_2026_10' = Kevin's decimated Street_Lamp (assets/models/lamp_post.obj, 11.5 m, 2 cm invisible lens marker) exactly as v0.18.0 shipped it. The light settings in lighting.streetlight are unchanged (see its _doc, 2026-10-14)."
+    },
+    "bespoke": {
+      "_doc": "Ledger 0062 REHEARSAL: read only when tools/ship_sd.sh runs with SD_BESPOKE=1 on a scratch copy (SHIP_PROJ). The buildings pipeline (tools/plan_buildings.py -> source/bespoke/buildings.json) stands every OSM footprint and the traced apartments as hip-roofed stucco houses, parapet commercial, tilt-up industrial, in place of the assembler's HOUSE / BUILDING boxes. The installed track keeps the assembler's boxes until Kevin sees the rehearsal stills",
+      "blocks": [
+        {
+          "file": "source/bespoke/buildings.json",
+          "auto": true,
+          "replace": [
+            "HOUSE",
+            "BUILDING"
+          ],
+          "_source": "OSM (data/buildings.cache.json + buildings.expansion.cache.json) and data/buildings.traced.json; heights: 408 from OSM levels / height, the rest class defaults [invented]; the 2022-04-25 NAIP's shadow stage voted a 09:44 sun at 44 deg but is unchecked (no usable OSM comparison) and unused"
+        }
+      ],
+      "names": {
+        "ground": [
+          "TERRAIN"
+        ],
+        "far": [
+          "GRASS_FAR"
+        ],
+        "paved": [
+          "ROAD",
+          "CURB",
+          "1ROAD",
+          "1KERB"
+        ],
+        "walls": [
+          "1WALL",
+          "BARRIER"
+        ],
+        "_doc": "the assembler's names at the author stage; the prep renames TERRAIN -> 1GRASS tiles, ROAD -> 1ROAD, CURB -> 1KERB"
+      },
+      "prep_seats": true
     }
   },
   "ui_description": "Lake Murray, San Diego (Kevin's childhood neighbourhood): the real 13.5 km loop of Alvarado Road, College Avenue, Navajo Road, Jackson Drive and Lake Murray Boulevard around the reservoir, from OpenStreetMap at real USGS 3DEP elevation, and the 6.4 km north network (Waring Road, Princess View Drive, Mission Gorge Road, Jackson Drive north) joined to it at College/Navajo and Navajo/Jackson. Three layouts: Lake Murray Free Roam (the open streets, about 19.9 km of road) and the Lake Murray Speedway, normal (clockwise) and Reverse (anticlockwise), on the 13.5 km loop.",
@@ -897,11 +1087,17 @@
     "loop",
     "real-roads"
   ],
-  "_ui_tags_doc": "Real public roads: never 'fictional' (the engine default before the 0047 fix round). track_folder prepends 'circuit' on every closed loop \u2014 Content Manager refuses Race / Track Day sessions without it, on the street layout as much as the race ones. CM's width is the narrowest declared width of the lap (Alvarado, 13.0 m), measured by track_folder from data/centerline.local.json.",
-  "drive_test": {"fold_fan_severe": "verify_fold_fans", "_doc": "Ledger 0054 P1 fix round, permanent in P3 (2026-10-18): a severe reading on a fixed-offset wheel path running backwards inside a levelled mainline fold fan is judged by tools/verify_fold_fans.py's real wheel paths (hard), filed here as fold_severe (scripts/geometry/drive_test.py module doc, FOLD SEVERE)."},
+  "_ui_tags_doc": "Real public roads: never 'fictional' (the engine default before the 0047 fix round). track_folder prepends 'circuit' on every closed loop — Content Manager refuses Race / Track Day sessions without it, on the street layout as much as the race ones. CM's width is the narrowest declared width of the lap (Alvarado, 13.0 m), measured by track_folder from data/centerline.local.json.",
+  "drive_test": {
+    "fold_fan_severe": "verify_fold_fans",
+    "_doc": "Ledger 0054 P1 fix round, permanent in P3 (2026-10-18): a severe reading on a fixed-offset wheel path running backwards inside a levelled mainline fold fan is judged by tools/verify_fold_fans.py's real wheel paths (hard), filed here as fold_severe (scripts/geometry/drive_test.py module doc, FOLD SEVERE)."
+  },
   "ai": {
     "_note": "ledger 0052: Kunos payload semantics, 2.5 m off the K-rail, faired, seated on and clamped at the BUILT gate OBJ; still GENERATED drafts (0023)",
-    "layouts": ["race_cw", "race_acw"],
+    "layouts": [
+      "race_cw",
+      "race_acw"
+    ],
     "payload": "kunos",
     "wall_clear_m": 2.5,
     "fair": true,

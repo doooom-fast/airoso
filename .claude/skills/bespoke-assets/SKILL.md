@@ -1,6 +1,6 @@
 ---
 name: bespoke-assets
-description: Model, texture and place bespoke (self-made, CC0) buildings, props, textures and vegetation for a track, and replace the borrowed assets the kn5s still carry — the mined TreeFX .bin trees, the LA Canyons asphalt, the Hamburg concrete — so the public package is complete and every licence line is true. Use when a dossier's §8 asset plan has a GAP row, when §5 names a building to stand (Exotics' two south-west buildings), when ledger 0005 or docs/PUBLISHING.md's borrowed list needs an owned replacement, or when Kevin says "make a lighter / more modern / our own X". Authoring runs on the Blender machine (astra); the chain and the gates prove the result on Windows.
+description: Model, texture and place bespoke (self-made, CC0) buildings, props, textures and vegetation for a track, and replace the borrowed assets the kn5s still carry — the mined TreeFX .bin trees, the LA Canyons asphalt, the Hamburg concrete — so the public package is complete and every licence line is true. Use when a dossier's §8 asset plan has a GAP row, when §5 names a building to stand (Exotics' two south-west buildings), when ledger 0005 or docs/PUBLISHING.md's borrowed list needs an owned replacement, or when Kevin says "make a lighter / more modern / our own X". Authoring runs on any machine with Blender 4.2 and Pillow, the Windows box included; the chain and the gates prove the result on Windows.
 ---
 
 # Bespoke assets
@@ -34,8 +34,12 @@ From `docs/PUBLISHING.md`, `assets/licenses.json`, `scripts/ac/pbr.py` and
 Buildings as **geometry** are a second front: Lake Murray's houses are OSM footprint boxes from the
 v021 assembler (`tools/fetch_buildings_cache.py` schema, `house_seat` in the prep) skinned with the
 Hamburg concrete; the chain tracks (Exotics, Milford, High Plains, Sand Creek) have **no building step
-at all** — their dossiers' §8 list buildings as `AUTH_` massing. The first bespoke building through the
-chain is Exotics' 2013 dressing: the two small south-west buildings, no Welcome Center (DOSSIER §8, §11).
+at all** — their dossiers' §8 list buildings as `AUTH_` massing. The first bespoke buildings through the
+chain are Exotics' 2013 dressing: the two small south-west buildings, no Welcome Center (DOSSIER §8, §11). The tool for
+them is `tools/author_bespoke_blend.py`, driven by `track.config.json` `scenery.bespoke` (buildings by footprint, cones by
+station, scrub by polygon), with `tools/make_bespoke_assets.py` as the generator and `tests/tools/test_bespoke_assets.py`
+pinning both: start the next track there. Buildings have their own pipeline since 2026-10-31
+(`.claude/skills/buildings/SKILL.md`: footprints, class, a shadow-measured height that checks itself, form and skin by class).
 
 ## 2. Three ways to own an asset, in order of preference
 
@@ -203,8 +207,8 @@ tests, and the records in §4 step 6.
 
 ## Open before the first asset
 
-- **astra** — assumed here to be the Blender authoring machine (`CLAUDE.md`: "astra and every machine
-  clone this"). If it is the Mac, the `bpy` module path applies; if it has Blender, the bridge.
+- **Where to author.** Kevin, 2026-10-31: "Let's do it here". The Windows box has Blender 4.2 and Pillow, so generators and
+  headless author tools run on it directly; nothing here needs astra.
 - Whether to swap the Hamburg concrete and the LA Canyons asphalt fleet-wide **now** (the CC0 swap
   bytes already exist in `_salvage/`) or per track as each ships — Kevin's call; the first makes every
   future full package CC0-clean at once.

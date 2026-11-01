@@ -23,6 +23,7 @@ sys.path.insert(0, str(ROOT))
 import ship_track_spec as spec_mod  # noqa: E402
 
 TRACKS = ("pueblo", "aspen", "grand-junction", "pikes-peak")
+BESPOKE_STEPS = {"grassfx_aerial", "house_seat"}   # High Plains has the bespoke pass; these four do not yet
 
 
 def _cfg(track):
@@ -36,8 +37,13 @@ def test_ship_json_is_high_plains_first_pass_shape():
         assert s["steps"]["draft"] == ["gps", "elev", "project", "mesh", "underlay"], track
         assert s["steps"]["author"] == [], track
         for ph in ("prep", "ship", "gate"):
-            assert s["steps"][ph] == hp["steps"][ph], (track, ph)
-        assert s["sync_in"] == hp["sync_in"] and s["sync_out"] == hp["sync_out"], track
+            assert s["steps"][ph] == [x for x in hp["steps"][ph] if x not in BESPOKE_STEPS], (track, ph)
+        for key in ("required", "dirs"):
+            assert s["sync_in"][key] == hp["sync_in"][key], (track, key)
+        assert set(s["sync_in"]["optional"]) <= set(hp["sync_in"]["optional"]), track
+        for key in ("required", "map", "dirs"):
+            assert s["sync_out"][key] == hp["sync_out"][key], (track, key)
+        assert set(s["sync_out"]["files"]) <= set(hp["sync_out"]["files"]), track
         assert s["workshop"] == f"C:/Users/Owner/Documents/k10-workshops/{track}", track
         assert s["ui_name_prefix"] == "doooom Colorado" and s["require_race_layout"] is False, track
         raw = json.loads((ROOT / "tracks" / track / "ship.json").read_text(encoding="utf-8"))

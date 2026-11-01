@@ -1,0 +1,46 @@
+{
+ "_source": "USDA NAIP 2023-09-25 (source/naip_2023_sc.jpg, two scenes joined): Sand Creek's cottonwood bottoms and the neighbourhood trees by the rule; heights and species share [invented]",
+ "image": "source/naip_2023_sc.jpg",
+ "webmerc": {
+  "z": 16,
+  "x0": 13663,
+  "y0": 24857
+ },
+ "track_box_lonlat": [
+  -104.942,
+  39.7775,
+  -104.9002,
+  39.7985
+ ],
+ "rule": {
+  "max_mean": 92,
+  "min_mean": 22,
+  "g_over_r": 1.02,
+  "g_over_b": 1.1
+ },
+ "step_m": 11.0,
+ "jitter_m": 3.5,
+ "edge_m": 40,
+ "interior_keep": 0.45,
+ "min_patch_px": 4,
+ "species": [
+  [
+   3,
+   0.7,
+   12,
+   22,
+   0.85
+  ],
+  [
+   1,
+   0.3,
+   8,
+   15,
+   0.8
+  ]
+ ],
+ "cols": 2,
+ "rows": 2,
+ "seed": 20230925,
+ "out": "source/bespoke/trees.json"
+}

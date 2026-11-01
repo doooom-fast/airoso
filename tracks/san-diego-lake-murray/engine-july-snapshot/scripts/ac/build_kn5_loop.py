@@ -1397,10 +1397,16 @@ def main():
         # u = arc / 4.04 m along the
         # vertical faces and the kerbs v = arc / 1 m — a top-down projection would smear them
         if not ob.name.upper().startswith(("PALM", "TREE", "SCRUB", "BUSHES", "CHAINLINK", "ROADTEXT",
-                                           "1WALL_RACE", "1KERB_RACE", "BRIDGESTRUCT", "1WALL_STUB")):
+                                           "1WALL_RACE", "1KERB_RACE", "BRIDGESTRUCT", "1WALL_STUB",
+                                           "BUILDING_FABRIC", "1WALL_FABRIC", "PROPCONE", "BUILDING_TILTUP", "BUILDING_METAL",
+                                           "BUILDING_STUCCO", "BUILDING_SIDING", "ROOFTOP", "1WALL_TILTUP", "1WALL_TECPRO",
+                                           "1WALL_KRAILBW", "GUARDRAIL", "PADAPRON", "BUILDING_DRYSTONE", "FARBLOCK")):
             planar_uv(me)
         bm = bmesh.new(); bm.from_mesh(me)
-        bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-4)
+        # ledger 0061: the bespoke shells are authored and never welded (ledger 0024's inside-out shells)
+        if not ob.name.upper().startswith(("BUILDING_FABRIC", "PROPCONE", "BUILDING_TILTUP", "BUILDING_METAL", "BUILDING_STUCCO",
+                                           "BUILDING_SIDING", "ROOFTOP", "GUARDRAIL", "BUILDING_DRYSTONE", "FARBLOCK")):
+            bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-4)
         if ob.name.upper().startswith("1GRASS"):
             bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=0.05)   # terrain must be watertight
             try:

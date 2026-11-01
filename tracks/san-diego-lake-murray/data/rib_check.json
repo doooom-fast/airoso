@@ -1,18 +1,18 @@
 {
  "obj": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\data\\track.obj",
  "lattice_nodes": 555668,
- "terrain_vertices": 552851,
+ "terrain_vertices": 557150,
  "near_m": 20.0,
  "thinned": {
-  "nodes_read_on_the_surface": 193976,
-  "line_vertices": 103627
+  "nodes_read_on_the_surface": 192879,
+  "line_vertices": 102144
  },
  "nyquist": {
   "rib_m": 2.0,
   "max": 100,
   "by_amplitude": {
    ">0.5m": {
-    "beyond_near": 5072,
+    "beyond_near": 5071,
     "near_road": 569
    },
    ">1m": {

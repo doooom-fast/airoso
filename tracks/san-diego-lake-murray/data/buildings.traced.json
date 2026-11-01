@@ -1,0 +1,170 @@
+[
+{
+"building": "apartments",
+"levels": "3",
+"height": null,
+"geom": [
+[
+-117.0717651,
+32.8079135
+],
+[
+-117.0712416,
+32.8079436
+],
+[
+-117.0711969,
+32.8076429
+],
+[
+-117.0717472,
+32.8076128
+],
+[
+-117.0717651,
+32.8079135
+]
+],
+"_source": "NAIP 2022-04-25 (ca_m_3211716_sw_11_060), read by eye to about 3 m; not in OSM. 3 levels [invented]: shadow length and the roof's courtyard form, no photo read"
+},
+{
+"building": "apartments",
+"levels": "3",
+"height": null,
+"geom": [
+[
+-117.0711074,
+32.8079887
+],
+[
+-117.0705928,
+32.8080752
+],
+[
+-117.0705168,
+32.8078008
+],
+[
+-117.0710403,
+32.807688
+],
+[
+-117.0711074,
+32.8079887
+]
+],
+"_source": "NAIP 2022-04-25 (ca_m_3211716_sw_11_060), read by eye to about 3 m; not in OSM. 3 levels [invented]: shadow length and the roof's courtyard form, no photo read"
+},
+{
+"building": "apartments",
+"levels": "3",
+"height": null,
+"geom": [
+[
+-117.0704586,
+32.8080827
+],
+[
+-117.0700022,
+32.8082143
+],
+[
+-117.0698546,
+32.8079323
+],
+[
+-117.0703691,
+32.8078008
+],
+[
+-117.0704586,
+32.8080827
+]
+],
+"_source": "NAIP 2022-04-25 (ca_m_3211716_sw_11_060), read by eye to about 3 m; not in OSM. 3 levels [invented]: shadow length and the roof's courtyard form, no photo read"
+},
+{
+"building": "apartments",
+"levels": "3",
+"height": null,
+"geom": [
+[
+-117.06934,
+32.8084586
+],
+[
+-117.0689821,
+32.8085789
+],
+[
+-117.0688031,
+32.8082143
+],
+[
+-117.0691387,
+32.8080639
+],
+[
+-117.06934,
+32.8084586
+]
+],
+"_source": "NAIP 2022-04-25 (ca_m_3211716_sw_11_060), read by eye to about 3 m; not in OSM. 3 levels [invented]: shadow length and the roof's courtyard form, no photo read"
+},
+{
+"building": "apartments",
+"levels": "3",
+"height": null,
+"geom": [
+[
+-117.0689239,
+32.8086842
+],
+[
+-117.0684899,
+32.808891
+],
+[
+-117.068311,
+32.8085714
+],
+[
+-117.068736,
+32.8084135
+],
+[
+-117.0689239,
+32.8086842
+]
+],
+"_source": "NAIP 2022-04-25 (ca_m_3211716_sw_11_060), read by eye to about 3 m; not in OSM. 3 levels [invented]: shadow length and the roof's courtyard form, no photo read"
+},
+{
+"building": "apartments",
+"levels": "3",
+"height": null,
+"geom": [
+[
+-117.0684094,
+32.8089662
+],
+[
+-117.0679754,
+32.8091917
+],
+[
+-117.0677964,
+32.8089098
+],
+[
+-117.0681767,
+32.8087143
+],
+[
+-117.0684094,
+32.8089662
+]
+],
+"_source": "NAIP 2022-04-25 (ca_m_3211716_sw_11_060), read by eye to about 3 m; not in OSM. 3 levels [invented]: shadow length and the roof's courtyard form, no photo read"
+}
+]

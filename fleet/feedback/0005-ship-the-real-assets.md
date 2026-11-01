@@ -72,3 +72,38 @@ regression case, since Rangely is sparse high desert and must NOT gain street fu
   gates itself).
 - kn5 size and AC load time stay within reach of the current build.
 - Kevin looks at Sand Creek and the furniture reads as real.
+
+## 2026-10-31: the first self-made batch (Nevada Nights 0.3.0)
+
+Kevin: "There should be instructions in here for Astra on how to create some assets for our tracks. Let's do it here." The
+instructions were `.claude/skills/bespoke-assets` on the unmerged branch `claude/skill-bespoke-assets`; they now live on this
+branch and were run on the Windows box.
+
+Built, all CC0, each with its source: two 2013 buildings from NAIP footprints (29.3 x 26.0 m flat, 54.1 x 20.4 m gabled),
+20 corner cones, 36 creosote / bursage clumps at the count measured on NAIP, and the caliche ground in its measured colour.
+`tools/make_bespoke_assets.py`, `tracks/exotics-racing-lv/textures/make_caliche_ground.py`, `tools/plan_cones.py`,
+`tools/author_bespoke_blend.py`, `tests/tools/test_bespoke_assets.py`. `fleet/DEFINITION-OF-DONE.md` has the gate numbers.
+
+Still borrowed in this kn5: `asphalt_cracked_*` (LA Canyons) and `building_*` (Hamburg, on `BARRIER_warning` only).
+Not built from DOSSIER section 8: the Tec-Pro line, the gravel trap, the LVMS grandstands, the fence. Not yet
+driven.
+
+## 2026-10-31 (later): the second batch, every chain track
+
+Kevin: "Keep going until you're done for all tracks", then "Add lariat to the list", "Are you also setting grassfx based on the
+aerials", "Work as long as you need, we want quality work over speed". Built and installed the same day, all CC0, each number with
+its source in the config or the planner's file: Milford 0.3.0, High Plains 0.69.0, Sand Creek 0.29.0, Nevada Nights 0.5.0
+(`fleet/DEFINITION-OF-DONE.md` has the gate numbers and md5s). New in `assets/textures/` (`tools/make_bespoke_assets.py`): tilt-up
+and ribbed-metal walls, stucco and lap-siding house bays with a window, three flat roofs and a shingle roof, a paddock pad, W-beam,
+Tec-Pro and K-rail skins, laid dry stone, and three card atlases (hardwoods, prairie, foothill conifers). Per track: a ground tile
+in the NAIP's measured colour (`tools/make_ground_tile.py`), GrassFX zones read off the aerial (`tools/plan_grassfx_aerial.py`),
+vegetation positions by a colour rule on the aerial (`tools/plan_bespoke_vegetation.py`), buildings by the pipeline below.
+
+Lookout Lariat has its ground tile and a wiring note (`tracks/lookout-lariat/textures/README.md`) and no build: its P2 road
+work is on the branches `worktree-wf_0b6149fb-898-1..4`, pushed 2026-10-31 for the cloud session. Lake Murray: the six Mission
+Gorge apartment blocks OSM lacks are traced in `data/buildings.traced.json` and carried into the assembler's cache by
+`tools/merge_traced_buildings.py` (0.19.2).
+
+Still borrowed on every chain track: `asphalt_cracked_*` (LA Canyons) on the road; the Hamburg concrete is off Milford and High
+Plains (`BARRIER` overridden to our tilt-up) and stays on Sand Creek's `1WALL_barrier` and Nevada's `BARRIER_warning`. The fleet-wide
+swap remains Kevin's call.

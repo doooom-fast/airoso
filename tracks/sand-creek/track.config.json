@@ -1,7 +1,7 @@
 {
   "name": "Sand Creek Raceway",
   "slug": "sand_creek_raceway",
-  "version": "0.28.0",
+  "version": "0.29.0",
   "mirror_x": false,
   "osm_road_widths": true,
   "_osm_road_widths_doc": "Real street circuit — after the project stage, scripts.gps.widths_from_osm map-matches each centerline vertex to its OSM way and sets curb-to-curb widths from lanes (arterials ~2x a side street) + writes intersection pads at the real junctions. Racetracks (defined widths) leave this off.",
@@ -110,7 +110,65 @@
       "enabled": false
     },
     "fence_auto": false,
-    "fences": false
+    "fences": false,
+    "bespoke": {
+      "blocks": [
+        {
+          "file": "source/bespoke/buildings.json",
+          "auto": true
+        }
+      ],
+      "cards": [
+        {
+          "file": "source/bespoke/trees.json",
+          "prefix": "TREECARD",
+          "clear_m": 5.0
+        }
+      ],
+      "grassfx_zones": {
+        "image": "source/naip_2023_sc.jpg",
+        "webmerc": {
+          "z": 16,
+          "x0": 13663,
+          "y0": 24857
+        },
+        "cell_m": 40,
+        "max_rects": 48,
+        "fade_m": 14,
+        "classes": [
+          {
+            "map": "B",
+            "mean": [
+              22,
+              92
+            ],
+            "g_over_r": [
+              1.02,
+              9
+            ],
+            "g_over_b": [
+              1.1,
+              9
+            ]
+          },
+          {
+            "map": "C",
+            "mean": [
+              125,
+              215
+            ],
+            "g_over_r": [
+              0,
+              0.99
+            ],
+            "g_over_b": [
+              1.1,
+              9
+            ]
+          }
+        ]
+      }
+    }
   },
   "origin": "centroid",
   "true_north_rotation_deg": 0.0,
@@ -133,7 +191,33 @@
       "noon",
       "golden_hour"
     ],
-    "grassfx": true,
+    "grassfx": {
+      "_doc": "Kevin's grass ground (the Lariat's) keeps its base look; the bare graded lots almost none and the creek bottoms taller, as NAIP 2023 shows them. VERIFY IN-GAME",
+      "mask": "open",
+      "shape_size": [
+        0.8,
+        1.2
+      ],
+      "shape_width": 0.6,
+      "trim_period": 365,
+      "texture": "grass_fx/highlands.dds",
+      "texture_grid": [
+        8,
+        3
+      ],
+      "configurations": {
+        "B": {
+          "shape_size": [
+            1.1,
+            1.5
+          ],
+          "shape_width": 0.7
+        },
+        "C": {
+          "texture_base_chance": 0.1
+        }
+      }
+    },
     "streetlight": {
       "_doc": "Wide DIM wash (Kevin: ~3x spread, no ground saturation). CSP RANGE scales deposited energy - widening range demands cutting intensity: 60 m range at 1.1, soft 155-deg cone, high gradient offset, damped specular.",
       "range_m": 60.0,

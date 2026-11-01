@@ -1,0 +1,6201 @@
+{
+ "buildings": [],
+ "blocks": [
+  {
+   "key": "osm204318965",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    24.18,
+    25.37
+   ],
+   "bottom": 24.03,
+   "eave": 32.35,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318966",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    32.87,
+    35.66
+   ],
+   "bottom": 32.72,
+   "eave": 41.36,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318968",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    28.08,
+    29.25
+   ],
+   "bottom": 27.93,
+   "eave": 36.28,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318969",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.27,
+    19.22
+   ],
+   "bottom": 18.12,
+   "eave": 26.33,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318970",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    21.17,
+    22.2
+   ],
+   "bottom": 21.02,
+   "eave": 29.12,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318971",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.88,
+    16.18
+   ],
+   "bottom": 15.62,
+   "eave": 23.62,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318972",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    30.92,
+    31.9
+   ],
+   "bottom": 30.77,
+   "eave": 38.92,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318973",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.42,
+    20.23
+   ],
+   "bottom": 18.27,
+   "eave": 26.95,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318974",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.86,
+    16.31
+   ],
+   "bottom": 15.69,
+   "eave": 23.69,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318975",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    30.87,
+    32.3
+   ],
+   "bottom": 30.72,
+   "eave": 39.1,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318977",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.47,
+    18.96
+   ],
+   "bottom": 18.21,
+   "eave": 26.21,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318978",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.38,
+    15.59
+   ],
+   "bottom": 15.08,
+   "eave": 23.08,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318982",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.49,
+    26.94
+   ],
+   "bottom": 25.34,
+   "eave": 33.5,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318983",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    14.49,
+    14.95
+   ],
+   "bottom": 14.32,
+   "eave": 22.32,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318984",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.36,
+    26.08
+   ],
+   "bottom": 25.16,
+   "eave": 33.16,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318985",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    29.08,
+    30.65
+   ],
+   "bottom": 28.93,
+   "eave": 37.42,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318986",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.54,
+    17.06
+   ],
+   "bottom": 16.39,
+   "eave": 24.41,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318987",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.05,
+    23.62
+   ],
+   "bottom": 22.9,
+   "eave": 30.93,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318988",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    29.28,
+    34.38
+   ],
+   "bottom": 29.13,
+   "eave": 38.64,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318989",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.08,
+    18.93
+   ],
+   "bottom": 17.93,
+   "eave": 26.06,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318990",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.01,
+    19.05
+   ],
+   "bottom": 17.86,
+   "eave": 26.07,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318991",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    31.41,
+    34.44
+   ],
+   "bottom": 31.26,
+   "eave": 39.97,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318992",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    24.46,
+    25.45
+   ],
+   "bottom": 24.31,
+   "eave": 32.52,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318993",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    20.92,
+    21.41
+   ],
+   "bottom": 20.77,
+   "eave": 25.31,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318994",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.46,
+    26.94
+   ],
+   "bottom": 25.31,
+   "eave": 33.67,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318995",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.53,
+    17.84
+   ],
+   "bottom": 17.33,
+   "eave": 25.33,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318996",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    13.9,
+    14.47
+   ],
+   "bottom": 13.75,
+   "eave": 21.8,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318997",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    20.26,
+    21.11
+   ],
+   "bottom": 20.11,
+   "eave": 28.3,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318998",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.54,
+    17.36
+   ],
+   "bottom": 16.39,
+   "eave": 24.55,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204318999",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.65,
+    15.92
+   ],
+   "bottom": 15.35,
+   "eave": 23.35,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319000",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    30.09,
+    31.07
+   ],
+   "bottom": 29.94,
+   "eave": 38.25,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319001",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.37,
+    18.71
+   ],
+   "bottom": 18.11,
+   "eave": 26.11,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319002",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.52,
+    20.97
+   ],
+   "bottom": 18.37,
+   "eave": 27.33,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319003",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    24.4,
+    25.88
+   ],
+   "bottom": 24.25,
+   "eave": 32.59,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319004",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.34,
+    23.63
+   ],
+   "bottom": 23.13,
+   "eave": 31.13,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319005",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.17,
+    18.9
+   ],
+   "bottom": 17.02,
+   "eave": 25.68,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319006",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.18,
+    16.93
+   ],
+   "bottom": 15.03,
+   "eave": 23.61,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319007",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.96,
+    16.37
+   ],
+   "bottom": 15.72,
+   "eave": 23.72,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319008",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.95,
+    17.56
+   ],
+   "bottom": 16.8,
+   "eave": 24.89,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319009",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.51,
+    16.0
+   ],
+   "bottom": 15.31,
+   "eave": 23.31,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319011",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    7.03,
+    8.47
+   ],
+   "bottom": 6.88,
+   "eave": 15.68,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319012",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    9.44,
+    10.45
+   ],
+   "bottom": 9.29,
+   "eave": 17.55,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319013",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.49,
+    15.99
+   ],
+   "bottom": 15.34,
+   "eave": 23.36,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319014",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    14.72,
+    15.15
+   ],
+   "bottom": 14.49,
+   "eave": 22.49,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319015",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    29.37,
+    29.93
+   ],
+   "bottom": 29.22,
+   "eave": 37.29,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319016",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.6,
+    20.09
+   ],
+   "bottom": 18.45,
+   "eave": 26.74,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319017",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    20.93,
+    21.69
+   ],
+   "bottom": 20.78,
+   "eave": 28.92,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319018",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.94,
+    20.03
+   ],
+   "bottom": 18.79,
+   "eave": 27.16,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319019",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.28,
+    18.09
+   ],
+   "bottom": 17.13,
+   "eave": 25.22,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319021",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.38,
+    19.47
+   ],
+   "bottom": 18.23,
+   "eave": 26.54,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319022",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    32.0,
+    33.79
+   ],
+   "bottom": 31.85,
+   "eave": 40.46,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319023",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    31.28,
+    32.39
+   ],
+   "bottom": 31.13,
+   "eave": 39.71,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319025",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.5,
+    18.27
+   ],
+   "bottom": 17.35,
+   "eave": 25.4,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319026",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.09,
+    23.81
+   ],
+   "bottom": 22.94,
+   "eave": 31.03,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319027",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    26.3,
+    30.25
+   ],
+   "bottom": 26.15,
+   "eave": 34.54,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319028",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    35.2,
+    36.86
+   ],
+   "bottom": 35.05,
+   "eave": 43.73,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319029",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.18,
+    15.37
+   ],
+   "bottom": 14.88,
+   "eave": 22.88,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319030",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.78,
+    19.02
+   ],
+   "bottom": 17.63,
+   "eave": 25.97,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319031",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.81,
+    19.8
+   ],
+   "bottom": 18.66,
+   "eave": 26.8,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319032",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.19,
+    16.92
+   ],
+   "bottom": 16.04,
+   "eave": 24.14,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319033",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    27.77,
+    29.09
+   ],
+   "bottom": 27.62,
+   "eave": 35.9,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319034",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    28.11,
+    30.38
+   ],
+   "bottom": 27.96,
+   "eave": 36.63,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319035",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    14.16,
+    15.73
+   ],
+   "bottom": 14.01,
+   "eave": 22.48,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319036",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.16,
+    18.6
+   ],
+   "bottom": 17.95,
+   "eave": 25.95,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319037",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    21.52,
+    22.9
+   ],
+   "bottom": 21.37,
+   "eave": 26.01,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319038",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.51,
+    20.8
+   ],
+   "bottom": 16.36,
+   "eave": 26.8,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319040",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.25,
+    17.52
+   ],
+   "bottom": 17.05,
+   "eave": 25.05,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319042",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    28.36,
+    29.53
+   ],
+   "bottom": 28.21,
+   "eave": 36.46,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319043",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    26.64,
+    27.33
+   ],
+   "bottom": 26.49,
+   "eave": 34.57,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319044",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    11.79,
+    12.07
+   ],
+   "bottom": 11.53,
+   "eave": 19.53,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319046",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.14,
+    16.87
+   ],
+   "bottom": 15.99,
+   "eave": 24.13,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319047",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.65,
+    11.0
+   ],
+   "bottom": 10.46,
+   "eave": 18.46,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319049",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    19.4,
+    20.84
+   ],
+   "bottom": 19.25,
+   "eave": 27.77,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319050",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.53,
+    17.21
+   ],
+   "bottom": 16.38,
+   "eave": 24.47,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319051",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    27.73,
+    29.04
+   ],
+   "bottom": 27.58,
+   "eave": 36.04,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319052",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    19.29,
+    21.19
+   ],
+   "bottom": 19.14,
+   "eave": 27.67,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319053",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    20.37,
+    21.28
+   ],
+   "bottom": 20.22,
+   "eave": 28.32,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319054",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.17,
+    18.59
+   ],
+   "bottom": 17.96,
+   "eave": 25.96,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319055",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    27.66,
+    31.12
+   ],
+   "bottom": 27.51,
+   "eave": 37.15,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319056",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    31.68,
+    33.13
+   ],
+   "bottom": 31.53,
+   "eave": 40.1,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319057",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    20.06,
+    20.72
+   ],
+   "bottom": 19.91,
+   "eave": 28.01,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319058",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.93,
+    26.99
+   ],
+   "bottom": 25.78,
+   "eave": 33.95,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319059",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    20.94,
+    21.38
+   ],
+   "bottom": 20.79,
+   "eave": 28.81,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319060",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.74,
+    16.33
+   ],
+   "bottom": 15.59,
+   "eave": 23.66,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319061",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    29.07,
+    29.55
+   ],
+   "bottom": 28.89,
+   "eave": 36.89,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319062",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.19,
+    15.7
+   ],
+   "bottom": 15.04,
+   "eave": 23.08,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319063",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.81,
+    24.76
+   ],
+   "bottom": 23.66,
+   "eave": 31.79,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319064",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    32.62,
+    38.48
+   ],
+   "bottom": 32.47,
+   "eave": 43.07,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319067",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.18,
+    10.72
+   ],
+   "bottom": 10.03,
+   "eave": 18.12,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319068",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    11.18,
+    11.44
+   ],
+   "bottom": 10.89,
+   "eave": 18.89,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319069",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    31.21,
+    32.9
+   ],
+   "bottom": 31.06,
+   "eave": 39.65,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319070",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.28,
+    10.58
+   ],
+   "bottom": 10.01,
+   "eave": 18.01,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319074",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.14,
+    24.25
+   ],
+   "bottom": 22.99,
+   "eave": 31.12,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319075",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    6.95,
+    8.39
+   ],
+   "bottom": 6.8,
+   "eave": 14.98,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319077",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.62,
+    26.32
+   ],
+   "bottom": 25.47,
+   "eave": 33.6,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319078",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.2,
+    16.55
+   ],
+   "bottom": 15.92,
+   "eave": 23.92,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319079",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.4,
+    18.98
+   ],
+   "bottom": 18.22,
+   "eave": 26.22,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319081",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    24.25,
+    25.31
+   ],
+   "bottom": 24.1,
+   "eave": 32.34,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319082",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    19.06,
+    20.45
+   ],
+   "bottom": 18.91,
+   "eave": 27.51,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319083",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.2,
+    18.71
+   ],
+   "bottom": 17.98,
+   "eave": 25.98,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319084",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    12.05,
+    13.58
+   ],
+   "bottom": 11.9,
+   "eave": 20.29,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319085",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    11.37,
+    11.67
+   ],
+   "bottom": 11.1,
+   "eave": 19.1,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319086",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    26.42,
+    26.69
+   ],
+   "bottom": 26.18,
+   "eave": 34.18,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319087",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    19.59,
+    19.79
+   ],
+   "bottom": 19.3,
+   "eave": 27.3,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319088",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.07,
+    16.31
+   ],
+   "bottom": 15.77,
+   "eave": 23.77,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319090",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.88,
+    16.32
+   ],
+   "bottom": 15.72,
+   "eave": 23.72,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319091",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.4,
+    24.62
+   ],
+   "bottom": 23.25,
+   "eave": 31.63,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319092",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.06,
+    17.51
+   ],
+   "bottom": 16.83,
+   "eave": 24.83,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319093",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    8.28,
+    9.4
+   ],
+   "bottom": 8.13,
+   "eave": 16.29,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319094",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    11.2,
+    11.68
+   ],
+   "bottom": 11.05,
+   "eave": 19.08,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319095",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.31,
+    16.65
+   ],
+   "bottom": 16.1,
+   "eave": 24.1,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319096",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.69,
+    10.93
+   ],
+   "bottom": 10.4,
+   "eave": 18.4,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319098",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.82,
+    17.31
+   ],
+   "bottom": 16.63,
+   "eave": 24.63,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319099",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    26.82,
+    32.6
+   ],
+   "bottom": 26.67,
+   "eave": 36.6,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319100",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.81,
+    27.54
+   ],
+   "bottom": 25.66,
+   "eave": 34.15,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319101",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    24.67,
+    30.51
+   ],
+   "bottom": 24.52,
+   "eave": 34.51,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319102",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.06,
+    19.09
+   ],
+   "bottom": 17.91,
+   "eave": 26.15,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319103",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    21.95,
+    23.64
+   ],
+   "bottom": 21.8,
+   "eave": 30.52,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319104",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.47,
+    25.69
+   ],
+   "bottom": 23.32,
+   "eave": 31.88,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319105",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.18,
+    26.07
+   ],
+   "bottom": 25.03,
+   "eave": 33.31,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319106",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    19.56,
+    21.03
+   ],
+   "bottom": 19.41,
+   "eave": 27.86,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319107",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.91,
+    17.47
+   ],
+   "bottom": 16.75,
+   "eave": 24.75,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319108",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    32.02,
+    32.8
+   ],
+   "bottom": 31.86,
+   "eave": 39.86,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319109",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.66,
+    19.02
+   ],
+   "bottom": 18.43,
+   "eave": 26.43,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319110",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    9.45,
+    10.37
+   ],
+   "bottom": 9.3,
+   "eave": 17.55,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319111",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.96,
+    20.03
+   ],
+   "bottom": 18.81,
+   "eave": 27.26,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319113",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    29.46,
+    29.9
+   ],
+   "bottom": 29.29,
+   "eave": 37.29,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319114",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.11,
+    23.71
+   ],
+   "bottom": 22.96,
+   "eave": 30.96,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319115",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    24.22,
+    25.47
+   ],
+   "bottom": 24.07,
+   "eave": 32.43,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319116",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    7.19,
+    7.84
+   ],
+   "bottom": 7.04,
+   "eave": 15.14,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319117",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    20.37,
+    21.11
+   ],
+   "bottom": 20.22,
+   "eave": 28.31,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319118",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    11.1,
+    11.23
+   ],
+   "bottom": 10.76,
+   "eave": 18.76,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319119",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    20.5,
+    22.07
+   ],
+   "bottom": 20.35,
+   "eave": 28.8,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319120",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.68,
+    24.15
+   ],
+   "bottom": 23.53,
+   "eave": 31.57,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319123",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.13,
+    15.64
+   ],
+   "bottom": 14.98,
+   "eave": 23.04,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319124",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    14.67,
+    15.16
+   ],
+   "bottom": 14.52,
+   "eave": 22.58,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319126",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    20.89,
+    21.49
+   ],
+   "bottom": 20.74,
+   "eave": 28.82,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319127",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.43,
+    19.11
+   ],
+   "bottom": 18.28,
+   "eave": 26.38,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319128",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    26.05,
+    26.4
+   ],
+   "bottom": 25.81,
+   "eave": 33.81,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319129",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.34,
+    11.02
+   ],
+   "bottom": 10.19,
+   "eave": 18.38,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319130",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    13.12,
+    14.65
+   ],
+   "bottom": 12.97,
+   "eave": 21.41,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319131",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.29,
+    15.64
+   ],
+   "bottom": 15.03,
+   "eave": 23.03,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319132",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.6,
+    16.81
+   ],
+   "bottom": 16.34,
+   "eave": 24.34,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319133",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.1,
+    18.49
+   ],
+   "bottom": 16.95,
+   "eave": 25.4,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319134",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.85,
+    18.78
+   ],
+   "bottom": 16.7,
+   "eave": 25.3,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319135",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    20.7,
+    22.42
+   ],
+   "bottom": 20.55,
+   "eave": 28.92,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319136",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.72,
+    18.14
+   ],
+   "bottom": 17.56,
+   "eave": 25.56,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319137",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.74,
+    16.33
+   ],
+   "bottom": 15.59,
+   "eave": 23.66,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319139",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    20.46,
+    22.9
+   ],
+   "bottom": 20.31,
+   "eave": 29.32,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319140",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.99,
+    11.07
+   ],
+   "bottom": 10.63,
+   "eave": 18.63,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319141",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.84,
+    11.29
+   ],
+   "bottom": 10.63,
+   "eave": 18.63,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319143",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    19.81,
+    21.7
+   ],
+   "bottom": 19.66,
+   "eave": 28.26,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319145",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    29.52,
+    30.87
+   ],
+   "bottom": 29.37,
+   "eave": 37.87,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319146",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.66,
+    18.49
+   ],
+   "bottom": 17.51,
+   "eave": 25.55,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204319147",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.49,
+    27.41
+   ],
+   "bottom": 25.34,
+   "eave": 34.09,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332219",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.81,
+    16.29
+   ],
+   "bottom": 15.64,
+   "eave": 23.64,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332221",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    33.88,
+    35.67
+   ],
+   "bottom": 33.73,
+   "eave": 42.38,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332222",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.5,
+    16.62
+   ],
+   "bottom": 16.17,
+   "eave": 24.17,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332225",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    8.04,
+    9.46
+   ],
+   "bottom": 7.89,
+   "eave": 16.72,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332226",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.35,
+    16.61
+   ],
+   "bottom": 16.13,
+   "eave": 24.13,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332229",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.16,
+    17.48
+   ],
+   "bottom": 16.91,
+   "eave": 24.91,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332240",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.3,
+    16.54
+   ],
+   "bottom": 16.03,
+   "eave": 24.03,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332242",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.77,
+    16.09
+   ],
+   "bottom": 15.56,
+   "eave": 23.56,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332243",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    5.93,
+    6.25
+   ],
+   "bottom": 5.71,
+   "eave": 13.71,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332244",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    26.25,
+    29.22
+   ],
+   "bottom": 26.1,
+   "eave": 36.14,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332245",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.58,
+    15.92
+   ],
+   "bottom": 15.34,
+   "eave": 23.34,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332250",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    19.9,
+    21.15
+   ],
+   "bottom": 19.75,
+   "eave": 28.16,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332251",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    6.58,
+    6.74
+   ],
+   "bottom": 6.26,
+   "eave": 14.26,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332253",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.47,
+    15.65
+   ],
+   "bottom": 15.19,
+   "eave": 23.19,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332255",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.94,
+    17.5
+   ],
+   "bottom": 16.79,
+   "eave": 24.82,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332257",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.0,
+    17.62
+   ],
+   "bottom": 16.85,
+   "eave": 24.91,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332258",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    5.56,
+    6.69
+   ],
+   "bottom": 5.41,
+   "eave": 13.54,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332259",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    5.83,
+    6.04
+   ],
+   "bottom": 5.5,
+   "eave": 13.5,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332260",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    33.23,
+    35.69
+   ],
+   "bottom": 33.08,
+   "eave": 42.16,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332262",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.87,
+    18.07
+   ],
+   "bottom": 17.55,
+   "eave": 25.55,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332264",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.06,
+    16.27
+   ],
+   "bottom": 15.76,
+   "eave": 23.76,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332265",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    13.75,
+    14.27
+   ],
+   "bottom": 13.6,
+   "eave": 21.63,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332267",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    5.28,
+    6.29
+   ],
+   "bottom": 5.13,
+   "eave": 13.44,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332270",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.46,
+    28.91
+   ],
+   "bottom": 25.31,
+   "eave": 35.54,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332274",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    13.72,
+    14.73
+   ],
+   "bottom": 13.57,
+   "eave": 21.75,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332275",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    33.97,
+    35.26
+   ],
+   "bottom": 33.82,
+   "eave": 42.31,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332279",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    13.9,
+    14.12
+   ],
+   "bottom": 13.62,
+   "eave": 21.62,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332281",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    34.41,
+    34.77
+   ],
+   "bottom": 34.19,
+   "eave": 42.19,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332285",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    6.46,
+    7.11
+   ],
+   "bottom": 6.31,
+   "eave": 14.4,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332288",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    28.68,
+    29.42
+   ],
+   "bottom": 28.53,
+   "eave": 36.71,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332289",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    13.97,
+    15.74
+   ],
+   "bottom": 13.82,
+   "eave": 22.34,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332290",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    21.23,
+    27.56
+   ],
+   "bottom": 21.08,
+   "eave": 31.99,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332291",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.1,
+    26.62
+   ],
+   "bottom": 24.95,
+   "eave": 33.33,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332293",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    32.83,
+    35.02
+   ],
+   "bottom": 32.68,
+   "eave": 41.71,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332295",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.19,
+    23.12
+   ],
+   "bottom": 22.04,
+   "eave": 30.19,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332296",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    13.17,
+    13.86
+   ],
+   "bottom": 13.02,
+   "eave": 21.13,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332297",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    13.85,
+    14.18
+   ],
+   "bottom": 13.63,
+   "eave": 21.63,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332300",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.68,
+    18.3
+   ],
+   "bottom": 16.53,
+   "eave": 25.53,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332301",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.46,
+    17.79
+   ],
+   "bottom": 17.21,
+   "eave": 25.21,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332303",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    6.04,
+    6.64
+   ],
+   "bottom": 5.89,
+   "eave": 14.02,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332306",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.13,
+    18.29
+   ],
+   "bottom": 17.78,
+   "eave": 25.78,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332307",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.92,
+    16.26
+   ],
+   "bottom": 15.67,
+   "eave": 23.67,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332308",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.44,
+    15.75
+   ],
+   "bottom": 15.24,
+   "eave": 23.24,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332309",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.16,
+    18.46
+   ],
+   "bottom": 17.94,
+   "eave": 25.94,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332310",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    13.72,
+    14.3
+   ],
+   "bottom": 13.57,
+   "eave": 21.7,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332312",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    12.89,
+    13.09
+   ],
+   "bottom": 12.55,
+   "eave": 20.55,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332316",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    31.98,
+    33.73
+   ],
+   "bottom": 31.83,
+   "eave": 40.71,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332317",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.52,
+    17.91
+   ],
+   "bottom": 17.35,
+   "eave": 25.35,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332319",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.64,
+    24.33
+   ],
+   "bottom": 23.49,
+   "eave": 31.58,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332321",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.4,
+    18.82
+   ],
+   "bottom": 18.21,
+   "eave": 26.21,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332324",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    28.52,
+    29.22
+   ],
+   "bottom": 28.37,
+   "eave": 36.5,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332326",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    6.02,
+    6.55
+   ],
+   "bottom": 5.83,
+   "eave": 13.83,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332328",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    34.44,
+    35.57
+   ],
+   "bottom": 34.29,
+   "eave": 42.42,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332330",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    12.67,
+    13.13
+   ],
+   "bottom": 12.5,
+   "eave": 20.5,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332331",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    30.63,
+    31.01
+   ],
+   "bottom": 30.46,
+   "eave": 38.46,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332332",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.86,
+    24.8
+   ],
+   "bottom": 23.71,
+   "eave": 31.91,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332333",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    5.91,
+    6.05
+   ],
+   "bottom": 5.55,
+   "eave": 13.55,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332335",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.23,
+    25.09
+   ],
+   "bottom": 22.08,
+   "eave": 30.33,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332339",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.14,
+    15.47
+   ],
+   "bottom": 14.91,
+   "eave": 22.91,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332341",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    14.52,
+    15.1
+   ],
+   "bottom": 14.32,
+   "eave": 22.32,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332346",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    18.14,
+    18.74
+   ],
+   "bottom": 17.99,
+   "eave": 22.65,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332351",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    6.95,
+    9.37
+   ],
+   "bottom": 6.8,
+   "eave": 16.41,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332359",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    13.97,
+    15.46
+   ],
+   "bottom": 13.82,
+   "eave": 22.17,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332361",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.01,
+    16.17
+   ],
+   "bottom": 15.69,
+   "eave": 23.69,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332364",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    5.55,
+    6.12
+   ],
+   "bottom": 5.4,
+   "eave": 13.51,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332366",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.94,
+    17.34
+   ],
+   "bottom": 16.79,
+   "eave": 24.81,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332367",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    33.51,
+    35.64
+   ],
+   "bottom": 33.36,
+   "eave": 42.29,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332374",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    15.41,
+    16.68
+   ],
+   "bottom": 15.26,
+   "eave": 20.36,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332376",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.96,
+    28.99
+   ],
+   "bottom": 25.81,
+   "eave": 35.21,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332382",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    19.22,
+    20.07
+   ],
+   "bottom": 19.07,
+   "eave": 27.24,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332384",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    24.31,
+    29.99
+   ],
+   "bottom": 24.16,
+   "eave": 35.56,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332386",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.73,
+    18.05
+   ],
+   "bottom": 17.51,
+   "eave": 25.51,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332390",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.6,
+    17.33
+   ],
+   "bottom": 16.45,
+   "eave": 24.54,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332400",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.41,
+    17.83
+   ],
+   "bottom": 17.23,
+   "eave": 25.23,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332403",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    28.6,
+    29.35
+   ],
+   "bottom": 28.45,
+   "eave": 36.6,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332409",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    6.81,
+    9.32
+   ],
+   "bottom": 6.66,
+   "eave": 15.46,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332411",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    21.74,
+    22.78
+   ],
+   "bottom": 21.59,
+   "eave": 29.94,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332413",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    6.12,
+    6.64
+   ],
+   "bottom": 5.97,
+   "eave": 14.07,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332416",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.77,
+    16.45
+   ],
+   "bottom": 15.62,
+   "eave": 23.74,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332417",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    32.65,
+    34.24
+   ],
+   "bottom": 32.5,
+   "eave": 40.94,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332421",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.31,
+    16.62
+   ],
+   "bottom": 16.06,
+   "eave": 24.06,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332423",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    14.15,
+    14.43
+   ],
+   "bottom": 13.92,
+   "eave": 21.92,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332424",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.66,
+    18.0
+   ],
+   "bottom": 17.41,
+   "eave": 25.41,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204332428",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    12.47,
+    13.01
+   ],
+   "bottom": 12.32,
+   "eave": 20.34,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204333852",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.01,
+    11.32
+   ],
+   "bottom": 9.86,
+   "eave": 18.13,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204333891",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    21.34,
+    27.19
+   ],
+   "bottom": 21.19,
+   "eave": 32.38,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204333908",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.65,
+    20.47
+   ],
+   "bottom": 18.5,
+   "eave": 27.6,
+   "off_terrain": false
+  },
+  {
+   "key": "osm204333913",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    4.99,
+    6.32
+   ],
+   "bottom": 4.84,
+   "eave": 13.15,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205249738",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.14,
+    26.25
+   ],
+   "bottom": 24.99,
+   "eave": 33.45,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205249739",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    20.58,
+    26.02
+   ],
+   "bottom": 20.43,
+   "eave": 30.93,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205249748",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.63,
+    26.57
+   ],
+   "bottom": 23.48,
+   "eave": 32.81,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205249750",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.99,
+    26.79
+   ],
+   "bottom": 23.84,
+   "eave": 33.13,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675417",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    20.2,
+    23.21
+   ],
+   "bottom": 20.05,
+   "eave": 29.62,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675457",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.5,
+    20.11
+   ],
+   "bottom": 17.35,
+   "eave": 26.59,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675476",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    21.42,
+    25.21
+   ],
+   "bottom": 21.27,
+   "eave": 31.38,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675489",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.44,
+    18.95
+   ],
+   "bottom": 16.29,
+   "eave": 25.44,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675512",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.73,
+    18.53
+   ],
+   "bottom": 15.58,
+   "eave": 24.84,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675516",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.01,
+    24.41
+   ],
+   "bottom": 22.86,
+   "eave": 31.33,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675521",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.37,
+    18.68
+   ],
+   "bottom": 16.22,
+   "eave": 24.9,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675526",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.11,
+    16.57
+   ],
+   "bottom": 15.92,
+   "eave": 23.92,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675535",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.27,
+    16.21
+   ],
+   "bottom": 15.12,
+   "eave": 23.32,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675536",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    19.96,
+    21.57
+   ],
+   "bottom": 19.81,
+   "eave": 28.31,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675537",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    19.43,
+    22.22
+   ],
+   "bottom": 19.28,
+   "eave": 28.69,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675540",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.98,
+    17.91
+   ],
+   "bottom": 16.83,
+   "eave": 24.96,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675542",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.12,
+    20.0
+   ],
+   "bottom": 17.97,
+   "eave": 26.77,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675563",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.98,
+    16.9
+   ],
+   "bottom": 15.83,
+   "eave": 24.06,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675594",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.7,
+    24.72
+   ],
+   "bottom": 22.55,
+   "eave": 31.37,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675595",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.05,
+    19.2
+   ],
+   "bottom": 16.9,
+   "eave": 25.73,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675597",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.23,
+    18.77
+   ],
+   "bottom": 17.08,
+   "eave": 25.29,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675607",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    14.95,
+    16.53
+   ],
+   "bottom": 14.8,
+   "eave": 23.53,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675621",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    19.72,
+    21.66
+   ],
+   "bottom": 19.57,
+   "eave": 28.52,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675626",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    19.49,
+    20.87
+   ],
+   "bottom": 19.34,
+   "eave": 27.74,
+   "off_terrain": false
+  },
+  {
+   "key": "osm205675692",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.46,
+    19.26
+   ],
+   "bottom": 18.31,
+   "eave": 26.57,
+   "off_terrain": false
+  },
+  {
+   "key": "osm218120514",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    11.61,
+    12.13
+   ],
+   "bottom": 11.44,
+   "eave": 19.44,
+   "off_terrain": false
+  },
+  {
+   "key": "osm218120516",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.95,
+    11.85
+   ],
+   "bottom": 10.8,
+   "eave": 18.95,
+   "off_terrain": false
+  },
+  {
+   "key": "osm218120518",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.99,
+    11.73
+   ],
+   "bottom": 10.84,
+   "eave": 18.88,
+   "off_terrain": false
+  },
+  {
+   "key": "osm218120519",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.57,
+    11.79
+   ],
+   "bottom": 10.42,
+   "eave": 18.73,
+   "off_terrain": false
+  },
+  {
+   "key": "osm223427031",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    18.75,
+    19.19
+   ],
+   "bottom": 18.6,
+   "eave": 23.1,
+   "off_terrain": false
+  },
+  {
+   "key": "osm223427034",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.43,
+    17.91
+   ],
+   "bottom": 17.28,
+   "eave": 25.31,
+   "off_terrain": false
+  },
+  {
+   "key": "osm257722924",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.1,
+    21.87
+   ],
+   "bottom": 17.95,
+   "eave": 27.62,
+   "off_terrain": false
+  },
+  {
+   "key": "osm432471924",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.66,
+    19.43
+   ],
+   "bottom": 18.51,
+   "eave": 26.73,
+   "off_terrain": false
+  },
+  {
+   "key": "osm432472360",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.78,
+    18.94
+   ],
+   "bottom": 16.63,
+   "eave": 25.68,
+   "off_terrain": false
+  },
+  {
+   "key": "osm432472362",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    17.09,
+    18.4
+   ],
+   "bottom": 16.94,
+   "eave": 25.46,
+   "off_terrain": false
+  },
+  {
+   "key": "osm432472363",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.2,
+    18.8
+   ],
+   "bottom": 18.05,
+   "eave": 26.07,
+   "off_terrain": false
+  },
+  {
+   "key": "osm572132595",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    3.37,
+    3.45
+   ],
+   "bottom": 3.01,
+   "eave": 11.01,
+   "off_terrain": false
+  },
+  {
+   "key": "osm572132596",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    2.99,
+    3.4
+   ],
+   "bottom": 2.82,
+   "eave": 10.82,
+   "off_terrain": false
+  },
+  {
+   "key": "osm572132597",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    3.39,
+    3.41
+   ],
+   "bottom": 3.0,
+   "eave": 11.0,
+   "off_terrain": false
+  },
+  {
+   "key": "osm572132599",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    3.95,
+    4.57
+   ],
+   "bottom": 3.8,
+   "eave": 11.93,
+   "off_terrain": false
+  },
+  {
+   "key": "osm572132603",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    3.31,
+    3.52
+   ],
+   "bottom": 3.04,
+   "eave": 11.04,
+   "off_terrain": false
+  },
+  {
+   "key": "osm572132606",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    3.44,
+    3.62
+   ],
+   "bottom": 3.13,
+   "eave": 11.13,
+   "off_terrain": false
+  },
+  {
+   "key": "osm572132610",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    3.24,
+    3.34
+   ],
+   "bottom": 2.91,
+   "eave": 10.91,
+   "off_terrain": false
+  },
+  {
+   "key": "osm572132611",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    3.19,
+    3.39
+   ],
+   "bottom": 2.89,
+   "eave": 10.89,
+   "off_terrain": false
+  },
+  {
+   "key": "osm572132612",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    3.07,
+    3.32
+   ],
+   "bottom": 2.82,
+   "eave": 10.82,
+   "off_terrain": false
+  },
+  {
+   "key": "osm572132613",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    3.28,
+    3.73
+   ],
+   "bottom": 3.11,
+   "eave": 11.11,
+   "off_terrain": false
+  },
+  {
+   "key": "osm572132616",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    3.34,
+    3.46
+   ],
+   "bottom": 3.0,
+   "eave": 11.0,
+   "off_terrain": false
+  },
+  {
+   "key": "osm572132617",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    3.38,
+    3.53
+   ],
+   "bottom": 3.07,
+   "eave": 11.07,
+   "off_terrain": false
+  },
+  {
+   "key": "osm572132618",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    4.09,
+    5.48
+   ],
+   "bottom": 3.94,
+   "eave": 12.13,
+   "off_terrain": false
+  },
+  {
+   "key": "osm572134355",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    0.92,
+    1.91
+   ],
+   "bottom": 0.77,
+   "eave": 9.1,
+   "off_terrain": false
+  },
+  {
+   "key": "osm573233251",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    6.11,
+    11.22
+   ],
+   "bottom": 5.96,
+   "eave": 16.33,
+   "off_terrain": false
+  },
+  {
+   "key": "osm573233254",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    6.54,
+    10.92
+   ],
+   "bottom": 6.39,
+   "eave": 16.63,
+   "off_terrain": false
+  },
+  {
+   "key": "osm573235387",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.22,
+    11.43
+   ],
+   "bottom": 10.07,
+   "eave": 18.5,
+   "off_terrain": false
+  },
+  {
+   "key": "osm573235388",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    8.31,
+    10.72
+   ],
+   "bottom": 8.16,
+   "eave": 17.36,
+   "off_terrain": false
+  },
+  {
+   "key": "osm573235389",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    9.27,
+    10.46
+   ],
+   "bottom": 9.12,
+   "eave": 17.54,
+   "off_terrain": false
+  },
+  {
+   "key": "osm573235390",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    9.05,
+    10.35
+   ],
+   "bottom": 8.9,
+   "eave": 17.39,
+   "off_terrain": false
+  },
+  {
+   "key": "osm573235391",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    8.59,
+    10.76
+   ],
+   "bottom": 8.44,
+   "eave": 17.49,
+   "off_terrain": false
+  },
+  {
+   "key": "osm573235392",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.77,
+    11.35
+   ],
+   "bottom": 10.62,
+   "eave": 18.71,
+   "off_terrain": false
+  },
+  {
+   "key": "osm580991412",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    5.85,
+    7.4
+   ],
+   "bottom": 5.7,
+   "eave": 14.23,
+   "off_terrain": false
+  },
+  {
+   "key": "osm580991416",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    7.81,
+    9.55
+   ],
+   "bottom": 7.66,
+   "eave": 16.29,
+   "off_terrain": false
+  },
+  {
+   "key": "osm580991418",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    4.5,
+    6.38
+   ],
+   "bottom": 4.35,
+   "eave": 13.07,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614618599",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.98,
+    30.42
+   ],
+   "bottom": 25.83,
+   "eave": 36.13,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614618600",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    31.94,
+    32.17
+   ],
+   "bottom": 31.64,
+   "eave": 39.64,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614618602",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.26,
+    25.68
+   ],
+   "bottom": 25.09,
+   "eave": 33.09,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614618605",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    26.35,
+    26.71
+   ],
+   "bottom": 26.13,
+   "eave": 34.13,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614618610",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.05,
+    25.23
+   ],
+   "bottom": 24.74,
+   "eave": 32.74,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614618611",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.59,
+    26.83
+   ],
+   "bottom": 25.44,
+   "eave": 33.67,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614618613",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.11,
+    25.67
+   ],
+   "bottom": 24.96,
+   "eave": 33.03,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614618615",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.19,
+    25.69
+   ],
+   "bottom": 25.04,
+   "eave": 33.04,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614618617",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.03,
+    25.19
+   ],
+   "bottom": 24.72,
+   "eave": 32.72,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614618621",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.05,
+    25.53
+   ],
+   "bottom": 24.85,
+   "eave": 32.85,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614618623",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    26.33,
+    27.57
+   ],
+   "bottom": 26.18,
+   "eave": 34.46,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614618624",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    26.0,
+    30.2
+   ],
+   "bottom": 25.85,
+   "eave": 34.76,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614618625",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.94,
+    32.34
+   ],
+   "bottom": 25.79,
+   "eave": 36.34,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614618629",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    30.3,
+    31.27
+   ],
+   "bottom": 30.15,
+   "eave": 38.6,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614618630",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    26.77,
+    27.15
+   ],
+   "bottom": 26.57,
+   "eave": 34.57,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614618631",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.21,
+    25.25
+   ],
+   "bottom": 24.83,
+   "eave": 32.83,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614620794",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.63,
+    23.29
+   ],
+   "bottom": 22.48,
+   "eave": 30.58,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614620796",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    24.32,
+    25.25
+   ],
+   "bottom": 24.17,
+   "eave": 32.32,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614620797",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    24.36,
+    25.05
+   ],
+   "bottom": 24.21,
+   "eave": 32.3,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614623618",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.06,
+    22.4
+   ],
+   "bottom": 21.83,
+   "eave": 29.83,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614623619",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.02,
+    22.46
+   ],
+   "bottom": 21.87,
+   "eave": 29.89,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614623620",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.84,
+    23.93
+   ],
+   "bottom": 23.48,
+   "eave": 31.48,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614623621",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.5,
+    23.85
+   ],
+   "bottom": 23.26,
+   "eave": 31.26,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614623622",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.91,
+    24.08
+   ],
+   "bottom": 22.76,
+   "eave": 31.22,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614629072",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.81,
+    27.07
+   ],
+   "bottom": 22.66,
+   "eave": 31.54,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614629081",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.32,
+    26.27
+   ],
+   "bottom": 25.17,
+   "eave": 33.4,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614629082",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    24.1,
+    28.54
+   ],
+   "bottom": 23.95,
+   "eave": 32.66,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614629084",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.15,
+    31.41
+   ],
+   "bottom": 25.0,
+   "eave": 35.41,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614629086",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.5,
+   "ground": [
+    25.09,
+    25.2
+   ],
+   "bottom": 24.75,
+   "eave": 27.25,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614629087",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.23,
+    22.28
+   ],
+   "bottom": 21.85,
+   "eave": 29.85,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614629088",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.1,
+    25.42
+   ],
+   "bottom": 21.95,
+   "eave": 30.24,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614629089",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.22,
+    25.79
+   ],
+   "bottom": 22.07,
+   "eave": 30.32,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614635966",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    21.96,
+    26.05
+   ],
+   "bottom": 21.81,
+   "eave": 30.51,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614635967",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.1,
+    22.17
+   ],
+   "bottom": 21.73,
+   "eave": 29.73,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614635969",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.1,
+    22.15
+   ],
+   "bottom": 21.72,
+   "eave": 29.72,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614635970",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.06,
+    22.13
+   ],
+   "bottom": 21.7,
+   "eave": 29.7,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614641128",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    21.58,
+    22.03
+   ],
+   "bottom": 21.4,
+   "eave": 29.4,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614657837",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    19.85,
+    21.91
+   ],
+   "bottom": 19.7,
+   "eave": 28.37,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614660876",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    19.01,
+    19.8
+   ],
+   "bottom": 18.86,
+   "eave": 26.98,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614660879",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    21.43,
+    22.88
+   ],
+   "bottom": 21.28,
+   "eave": 29.76,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614660881",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    21.55,
+    23.06
+   ],
+   "bottom": 21.4,
+   "eave": 30.24,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614660882",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.82,
+    22.99
+   ],
+   "bottom": 22.5,
+   "eave": 30.5,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614660883",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.4,
+    22.67
+   ],
+   "bottom": 22.12,
+   "eave": 30.12,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614660884",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.25,
+    23.43
+   ],
+   "bottom": 22.95,
+   "eave": 30.95,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614660885",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    19.46,
+    20.29
+   ],
+   "bottom": 19.31,
+   "eave": 27.48,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614660886",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.7,
+    22.97
+   ],
+   "bottom": 22.5,
+   "eave": 30.5,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614662042",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.38,
+    23.88
+   ],
+   "bottom": 23.23,
+   "eave": 31.27,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614662043",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.83,
+    25.93
+   ],
+   "bottom": 25.48,
+   "eave": 33.48,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614662044",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.15,
+    23.48
+   ],
+   "bottom": 22.9,
+   "eave": 30.9,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614665981",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    26.5,
+    27.84
+   ],
+   "bottom": 26.35,
+   "eave": 34.8,
+   "off_terrain": false
+  },
+  {
+   "key": "osm614665987",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    25.54,
+    26.52
+   ],
+   "bottom": 25.39,
+   "eave": 33.62,
+   "off_terrain": false
+  },
+  {
+   "key": "osm800206218",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    31.31,
+    32.98
+   ],
+   "bottom": 31.16,
+   "eave": 40.01,
+   "off_terrain": false
+  },
+  {
+   "key": "osm829904085",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    27.08,
+    27.63
+   ],
+   "bottom": 26.93,
+   "eave": 34.97,
+   "off_terrain": false
+  },
+  {
+   "key": "osm829904086",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    26.47,
+    26.9
+   ],
+   "bottom": 26.27,
+   "eave": 34.27,
+   "off_terrain": false
+  },
+  {
+   "key": "osm829904088",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    26.74,
+    27.08
+   ],
+   "bottom": 26.49,
+   "eave": 34.49,
+   "off_terrain": false
+  },
+  {
+   "key": "osm913759552",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    8.64,
+    11.18
+   ],
+   "bottom": 8.49,
+   "eave": 17.48,
+   "off_terrain": false
+  },
+  {
+   "key": "osm948519249",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    9.74,
+    10.98
+   ],
+   "bottom": 9.59,
+   "eave": 18.0,
+   "off_terrain": false
+  },
+  {
+   "key": "osm948519250",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    9.62,
+    10.87
+   ],
+   "bottom": 9.47,
+   "eave": 17.81,
+   "off_terrain": false
+  },
+  {
+   "key": "osm948519251",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    8.68,
+    9.6
+   ],
+   "bottom": 8.53,
+   "eave": 16.74,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977092820",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    24.17,
+    26.11
+   ],
+   "bottom": 24.02,
+   "eave": 32.51,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977092821",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.94,
+    25.09
+   ],
+   "bottom": 23.79,
+   "eave": 32.23,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977092823",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    24.08,
+    24.56
+   ],
+   "bottom": 23.93,
+   "eave": 31.94,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977092824",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 5.0,
+   "ground": [
+    29.98,
+    31.13
+   ],
+   "bottom": 29.83,
+   "eave": 35.17,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977092826",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 5.0,
+   "ground": [
+    27.21,
+    29.03
+   ],
+   "bottom": 27.06,
+   "eave": 32.72,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977094760",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 5.0,
+   "ground": [
+    23.59,
+    23.79
+   ],
+   "bottom": 23.29,
+   "eave": 28.29,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977094761",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 5.0,
+   "ground": [
+    13.94,
+    14.45
+   ],
+   "bottom": 13.79,
+   "eave": 18.84,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977094762",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    13.04,
+    13.36
+   ],
+   "bottom": 12.8,
+   "eave": 20.8,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977094763",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 5.0,
+   "ground": [
+    12.23,
+    12.72
+   ],
+   "bottom": 12.08,
+   "eave": 17.14,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977094764",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    6.59,
+    6.87
+   ],
+   "bottom": 6.31,
+   "eave": 14.31,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977094765",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 5.0,
+   "ground": [
+    6.25,
+    6.33
+   ],
+   "bottom": 5.88,
+   "eave": 10.88,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977094766",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 3.8,
+   "ground": [
+    6.84,
+    6.96
+   ],
+   "bottom": 6.48,
+   "eave": 10.28,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977094767",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 5.0,
+   "ground": [
+    6.53,
+    6.98
+   ],
+   "bottom": 6.38,
+   "eave": 11.38,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977094768",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    6.71,
+    6.98
+   ],
+   "bottom": 6.46,
+   "eave": 14.46,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977094769",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 3.8,
+   "ground": [
+    6.4,
+    6.73
+   ],
+   "bottom": 6.16,
+   "eave": 9.96,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977094770",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 5.0,
+   "ground": [
+    4.81,
+    6.9
+   ],
+   "bottom": 4.66,
+   "eave": 10.49,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977094771",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 5.0,
+   "ground": [
+    7.71,
+    8.32
+   ],
+   "bottom": 7.56,
+   "eave": 12.6,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977094772",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 5.0,
+   "ground": [
+    6.41,
+    7.12
+   ],
+   "bottom": 6.26,
+   "eave": 11.39,
+   "off_terrain": false
+  },
+  {
+   "key": "osm977094775",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 5.0,
+   "ground": [
+    19.98,
+    20.91
+   ],
+   "bottom": 19.83,
+   "eave": 25.1,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050318",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.73,
+    11.59
+   ],
+   "bottom": 10.58,
+   "eave": 18.81,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050319",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    3.58,
+    8.54
+   ],
+   "bottom": 3.43,
+   "eave": 13.64,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050320",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    11.97,
+    12.53
+   ],
+   "bottom": 11.77,
+   "eave": 19.77,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050321",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    12.39,
+    12.81
+   ],
+   "bottom": 12.18,
+   "eave": 20.18,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050322",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    9.93,
+    11.17
+   ],
+   "bottom": 9.78,
+   "eave": 18.11,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050323",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    9.77,
+    10.42
+   ],
+   "bottom": 9.62,
+   "eave": 17.71,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050324",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    8.82,
+    9.65
+   ],
+   "bottom": 8.67,
+   "eave": 16.9,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050325",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    9.61,
+    10.71
+   ],
+   "bottom": 9.46,
+   "eave": 17.86,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050326",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.44,
+    10.52
+   ],
+   "bottom": 10.09,
+   "eave": 18.09,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050327",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.79,
+    11.58
+   ],
+   "bottom": 10.64,
+   "eave": 18.87,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050328",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    11.65,
+    12.04
+   ],
+   "bottom": 11.48,
+   "eave": 19.48,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050329",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    12.56,
+    13.65
+   ],
+   "bottom": 12.41,
+   "eave": 20.66,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050330",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    12.32,
+    14.24
+   ],
+   "bottom": 12.17,
+   "eave": 20.71,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050331",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.08,
+    11.32
+   ],
+   "bottom": 9.93,
+   "eave": 18.28,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050332",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.51,
+    10.96
+   ],
+   "bottom": 10.33,
+   "eave": 18.33,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050333",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    8.4,
+    10.21
+   ],
+   "bottom": 8.25,
+   "eave": 16.91,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050334",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    8.14,
+    10.27
+   ],
+   "bottom": 7.99,
+   "eave": 16.97,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050335",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    8.87,
+    10.05
+   ],
+   "bottom": 8.72,
+   "eave": 17.15,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1031050337",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    8.84,
+    9.73
+   ],
+   "bottom": 8.69,
+   "eave": 16.89,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1200897949",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.91,
+    16.38
+   ],
+   "bottom": 15.72,
+   "eave": 23.72,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1256011973",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.59,
+    17.21
+   ],
+   "bottom": 15.44,
+   "eave": 24.25,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1256011974",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    16.21,
+    16.89
+   ],
+   "bottom": 16.06,
+   "eave": 20.73,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1256011975",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.86,
+    16.27
+   ],
+   "bottom": 15.66,
+   "eave": 23.66,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1256011976",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.76,
+    15.93
+   ],
+   "bottom": 15.42,
+   "eave": 23.42,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1256011977",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.8,
+    15.97
+   ],
+   "bottom": 15.47,
+   "eave": 23.47,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1256011978",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.71,
+    17.11
+   ],
+   "bottom": 16.49,
+   "eave": 24.49,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1256011979",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    16.27,
+    16.38
+   ],
+   "bottom": 15.92,
+   "eave": 23.92,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1256011980",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.55,
+    18.8
+   ],
+   "bottom": 18.29,
+   "eave": 26.29,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1256011981",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    18.43,
+    18.76
+   ],
+   "bottom": 18.21,
+   "eave": 26.21,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1256011982",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    15.56,
+    16.19
+   ],
+   "bottom": 15.41,
+   "eave": 20.04,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1256011986",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    7.21,
+    10.3
+   ],
+   "bottom": 7.06,
+   "eave": 16.18,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1256011987",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    10.42,
+    11.69
+   ],
+   "bottom": 10.27,
+   "eave": 18.71,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1256011988",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    5.85,
+    7.15
+   ],
+   "bottom": 5.7,
+   "eave": 14.07,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1256011990",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    3.85,
+    4.25
+   ],
+   "bottom": 3.69,
+   "eave": 11.69,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1256011992",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    2.9,
+    4.27
+   ],
+   "bottom": 2.75,
+   "eave": 11.32,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1256011993",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    4.28,
+    5.16
+   ],
+   "bottom": 4.13,
+   "eave": 12.29,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1256011995",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    3.03,
+    3.79
+   ],
+   "bottom": 2.88,
+   "eave": 11.06,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1283043521",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.2,
+   "ground": [
+    15.28,
+    15.59
+   ],
+   "bottom": 15.04,
+   "eave": 17.24,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1283043523",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    21.37,
+    21.8
+   ],
+   "bottom": 21.2,
+   "eave": 29.2,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1283043524",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.3,
+   "ground": [
+    21.69,
+    21.74
+   ],
+   "bottom": 21.31,
+   "eave": 23.61,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1283043525",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    21.16,
+    21.51
+   ],
+   "bottom": 20.96,
+   "eave": 28.96,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1283043526",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    20.25,
+    21.87
+   ],
+   "bottom": 20.1,
+   "eave": 28.58,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1283043527",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.3,
+    23.49
+   ],
+   "bottom": 22.99,
+   "eave": 30.99,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1283043528",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.3,
+    23.47
+   ],
+   "bottom": 22.98,
+   "eave": 30.98,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1283043529",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.1,
+    23.25
+   ],
+   "bottom": 22.78,
+   "eave": 30.78,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1283044091",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.45,
+    26.12
+   ],
+   "bottom": 22.3,
+   "eave": 31.96,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1283044092",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.5,
+    26.14
+   ],
+   "bottom": 22.35,
+   "eave": 31.99,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1283044093",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    22.53,
+    26.53
+   ],
+   "bottom": 22.38,
+   "eave": 32.17,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1283044094",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    26.32,
+    27.4
+   ],
+   "bottom": 26.17,
+   "eave": 34.46,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1283044095",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    26.29,
+    27.13
+   ],
+   "bottom": 26.14,
+   "eave": 34.32,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1283044096",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    26.26,
+    27.09
+   ],
+   "bottom": 26.11,
+   "eave": 34.29,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1283044097",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    27.12,
+    27.44
+   ],
+   "bottom": 26.89,
+   "eave": 34.89,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1283044098",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    27.21,
+    27.65
+   ],
+   "bottom": 27.04,
+   "eave": 35.04,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1283044099",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    27.22,
+    28.09
+   ],
+   "bottom": 27.07,
+   "eave": 35.33,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1283044100",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    27.4,
+    27.97
+   ],
+   "bottom": 27.25,
+   "eave": 35.26,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1365728966",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    18.56,
+    18.8
+   ],
+   "bottom": 18.29,
+   "eave": 22.79,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1370084535",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    19.46,
+    20.02
+   ],
+   "bottom": 19.31,
+   "eave": 27.4,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1518753604",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    23.3,
+    23.42
+   ],
+   "bottom": 22.96,
+   "eave": 30.96,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1518753605",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.91,
+    16.35
+   ],
+   "bottom": 15.72,
+   "eave": 23.72,
+   "off_terrain": false
+  },
+  {
+   "key": "osm1518753606",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    15.78,
+    16.26
+   ],
+   "bottom": 15.63,
+   "eave": 23.66,
+   "off_terrain": false
+  }
+ ],
+ "cards": [
+  {
+   "file": "source/bespoke/trees.json",
+   "prefix": "TREECARD",
+   "stood": 6673,
+   "dropped": 209
+  }
+ ]
+}

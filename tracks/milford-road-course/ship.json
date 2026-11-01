@@ -2,7 +2,7 @@
   "_doc": "Milford Road Course through the Lake Murray chain (tools/ship_track.sh; Kevin 2026-10-28: 'rebuild all four with the Lake Murray chain'). The draft is the engine's own on the NAIP-traced line (source.type from_track: gps -> elev -> project -> mesh), then the underlay drops data/track.obj into loop.blend as GEN_* collections (scripts/blender/underlay.py). Authoring happens in that blend (AUTH_*), the prep / exporter / spawn builder run from airoso's scripts/ac (never engine-july: San Diego's alone), the four gates run on the BUILT kn5. The workshop lives OUTSIDE airoso (the sync rails require it).",
   "_owed": "First pass = the draft through the chain, no authoring yet: no signs (signs.json), no lamps, no race layouts, no TreeFX (make_treefx reads SD-shaped zones; V3-PLAN P1 'other adapted tools'). The real 4-8 % corner banking is lidar fact the draft builds flat (DOSSIER Part D §3): an authoring item, never curvature-invented (L10).",
   "track": "milford-road-course",
-  "workshop": "C:/Users/Owner/Documents/k10-workshops/milford-road-course",
+  "workshop": "D:/k10-workshops/milford-road-course",
   "workshop_project": "project",
   "require_race_layout": false,
   "ui_name_prefix": "doooom Michigan",
@@ -74,7 +74,10 @@
       "data/drive_test.{id}.json",
       "data/bespoke.report.json",
       "data/house_seat_check.json",
-      "data/grassfx.aerial.json"
+      "data/grassfx.aerial.json",
+      "data/heightfield.npy",
+      "data/heightfield.meta.json",
+      "data/corridor.elev.json"
     ],
     "map": [
       [

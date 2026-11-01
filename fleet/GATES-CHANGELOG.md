@@ -14,6 +14,10 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-01 — BYPASS: Lake Murray v4 installed red on one gate, by Kevin's word (ledger 0065)
+
+`--force-install` on `san_diego_lake_murray_v4` 0.20.0, over the street layout's `drive_test` excursion drops alone: 96 against the limit of 13. Kevin's word: "Force". The count equals the installed 0.19.2's. No threshold changed; this is one install, not a rule. Every other gate on the proof build: soft top 0 / 0 / 0, audit 0 on all three layouts, race drive_test and no_route PASS, kn5_ground_check PASS, house seat floating / sunken / buried 0.
+
 ## 2026-11-01 — a race layout without furniture; the street-only kn5 carries the centre line (ledger 0063)
 
 No threshold moved. Three wiring changes, each so a new shape of track is judged on the kn5 set it loads:

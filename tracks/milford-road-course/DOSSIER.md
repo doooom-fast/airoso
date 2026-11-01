@@ -320,12 +320,12 @@ frames. `true_north_rotation_deg` is derived by `lighting` and written back (L2)
 ## 8. Asset plan: owned first
 | Need | Owned asset | Conversion notes | Placement | Or GAP |
 |---|---|---|---|---|
-| Guardrail / armco | `Barrier set` (`Barrier02.obj`, `Road_Barrier.blend`) | m / Y-up check, PoT textures | Per video-verified runs | Likely GAP: a true W-beam guardrail model |
+| Guardrail / armco | **bespoke** W-beam swept by `tools/author_bespoke_blend.py` over the draft's guard lips, skin `wbeam_rail_diffuse.png` (CC0) | AASHTO M 180 section, posts at 1.905 m | 85 runs, 145 m; the lips stay as the collider | Closed 2026-10-31; where the real course has rail and the draft no lip is still open |
 | Chain-link / security fence | procedural `make_chainlink` | — | Perimeter and paddock | — |
-| Deciduous hardwoods | — | — | Tree lines | **GAP**: oak/maple set |
-| Grass / verge | `textures-2/grass_path_2` 4K | EXR→PNG n/a, confirm CC0 | Verges | — |
+| Deciduous hardwoods | **bespoke** `assets/textures/deciduous_atlas.png` (`tools/make_bespoke_assets.py`, CC0) | Crossed cards, positions by `tools/plan_bespoke_vegetation.py` on NAIP 2022 | The woods as the photograph has them (4386 treecard cards) | Closed 2026-10-31 |
+| Grass / verge | **bespoke** `textures/turf_*.jpg` (`tools/make_ground_tile.py`, CC0), colour measured off NAIP 2022 | `texture_overrides` | Every ground mesh; GrassFX zones off the aerial | Closed 2026-10-31 |
 | Concrete (Carousel bowl, pads) | `textures-2/concrete_wall_008` 4K | PoT | Carousel surface | — |
-| Test garages | `ModularBuildings.blend1` (re-save first), `building_1.blend` | 1.23 GB backup file | Paddock | — |
+| Test garages | **bespoke**: the pad tent (gable, white fabric) on the pad, the two MPG plant blocks (tilt-up) as a far backdrop, the pad itself (`PADAPRON`) | footprints off NAIP 2022 on its true extent; heights `[invented]` | `AUTH_bespoke` | Closed 2026-10-31 |
 | Sky | `bloem_hill_02_4k.exr` | EXR→PNG for AC | — | — |
 
 ## 9. Data sources & capture assets

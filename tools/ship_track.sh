@@ -367,6 +367,16 @@ author_race_verify() {
   (cd "$AIROSO" && python tools/plot_race_furniture.py "$PROJ" | tail -3)   # data/race_plots/*.png
 }
 
+author_bespoke() {
+  step "author: the bespoke dressing the config declares -> AUTH_bespoke (tools/author_bespoke_blend.py: buildings, cones, scrub on the built ground; self-checked; none declared = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_bespoke_blend.py" -- "$PROJ" 2>&1 | grep "^\[bespoke\]\|Error\|Traceback" )
+}
+
+ship_grassfx_aerial() {
+  step "ship: GrassFX zones off the track's aerial (tools/plan_grassfx_aerial.py; none declared = no-op), read by the track folder's ext_config"
+  python "$AIROSO/tools/plan_grassfx_aerial.py" "$PROJ"
+}
+
 # --- prep: exactly these two, in this order ------------------------------------------------------------------
 prep_prep() {
   step "ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)"

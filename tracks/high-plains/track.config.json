@@ -2,7 +2,7 @@
   "archetype": "race_circuit",
   "name": "High Plains Raceway",
   "slug": "high_plains",
-  "version": "0.68.0",
+  "version": "0.69.0",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 12.0,
@@ -38,7 +38,174 @@
     "bush_off_span_m": 22,
     "bush_size_min_m": 1.0,
     "bush_size_span_m": 1.2,
-    "light_spacing_m": 90
+    "light_spacing_m": 90,
+    "bespoke": {
+      "blocks": [
+        {
+          "file": "source/bespoke/buildings.json",
+          "auto": true
+        },
+        {
+          "file": "source/bespoke/posts.json",
+          "auto": true
+        }
+      ],
+      "pads": [
+        {
+          "key": "paddock",
+          "quad_lonlat": [
+            [
+              -103.8948486,
+              39.736926
+            ],
+            [
+              -103.8911407,
+              39.7364508
+            ],
+            [
+              -103.8925621,
+              39.7346924
+            ],
+            [
+              -103.8950958,
+              39.7355954
+            ]
+          ],
+          "_source": "the paddock's paved and graded ground off NAIP 2023, read by eye to about 5 m: one sheet, the lots and lanes not told apart"
+        }
+      ],
+      "cards": [
+        {
+          "file": "source/bespoke/shrubs.json",
+          "prefix": "PRAIRIECARD",
+          "clear_m": 3.0
+        }
+      ],
+      "guardrail": {
+        "from": "1WALL_PARA"
+      },
+      "rails": [
+        {
+          "key": "infield_t",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.89226,
+              39.73441
+            ],
+            [
+              -103.89164,
+              39.7344
+            ],
+            [
+              -103.89091,
+              39.7345
+            ],
+            [
+              -103.89051,
+              39.73487
+            ]
+          ],
+          "_source": "the blue-and-white barrier run in the infield off NAIP 2023 at 0.3 m, read by eye to about 2 m"
+        },
+        {
+          "key": "pit_wall",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.8945,
+              39.73514
+            ],
+            [
+              -103.89281,
+              39.73488
+            ],
+            [
+              -103.89235,
+              39.7348
+            ]
+          ],
+          "_source": "as infield_t"
+        },
+        {
+          "key": "pit_paddock",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.8945,
+              39.73528
+            ],
+            [
+              -103.89264,
+              39.73499
+            ]
+          ],
+          "_source": "as infield_t"
+        },
+        {
+          "key": "paddock_east",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.89099,
+              39.73634
+            ],
+            [
+              -103.89195,
+              39.735
+            ]
+          ],
+          "_source": "as infield_t"
+        }
+      ],
+      "grassfx_zones": {
+        "image": "source/naip_2023_hp.jpg",
+        "webmerc": {
+          "z": 17,
+          "x0": 27704,
+          "y0": 49745
+        },
+        "cell_m": 30,
+        "max_rects": 48,
+        "fade_m": 10,
+        "classes": [
+          {
+            "map": "B",
+            "mean": [
+              35,
+              105
+            ],
+            "g_over_r": [
+              1.03,
+              9
+            ],
+            "g_over_b": [
+              1.3,
+              9
+            ]
+          },
+          {
+            "map": "C",
+            "mean": [
+              158,
+              255
+            ],
+            "g_over_r": [
+              0,
+              9
+            ],
+            "g_over_b": [
+              0,
+              9
+            ]
+          }
+        ]
+      }
+    }
   },
   "layouts": [
     {
@@ -53,7 +220,43 @@
       "noon",
       "golden_hour"
     ],
-    "grassfx": true
+    "grassfx": {
+      "_doc": "Dry shortgrass prairie as the base look, thin; the greener draws taller and full; the bright bare ground almost none, as NAIP 2023 shows them. mask open: the straw tile would miss the default mask's ceiling. VERIFY IN-GAME",
+      "mask": "open",
+      "shape_size": [
+        0.9,
+        1.2
+      ],
+      "shape_width": 0.5,
+      "trim_period": 365,
+      "texture": "grass_fx/highlands.dds",
+      "texture_grid": [
+        8,
+        3
+      ],
+      "configurations": {
+        "A": {
+          "texture_base_chance": 0.6
+        },
+        "B": {
+          "shape_size": [
+            1.1,
+            1.5
+          ],
+          "shape_width": 0.6,
+          "texture_base_chance": 1.0
+        },
+        "C": {
+          "texture_base_chance": 0.1
+        }
+      },
+      "adjustments": [
+        {
+          "map": "A",
+          "materials": "ALL_GRASS"
+        }
+      ]
+    }
   },
   "source": {
     "type": "from_track",
@@ -80,5 +283,27 @@
   "install_folder": "high_plains",
   "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (Lariat plan A11); the previous install is parked in the archive",
   "ui_series": "doooom Colorado",
-  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)"
+  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
+  "texture_overrides": {
+    "1GRASS": {
+      "diffuse": "textures/prairie_diffuse.jpg",
+      "normal": "textures/prairie_normal.jpg",
+      "_doc": "bespoke ground, the colour measured off the track's NAIP (textures/README.md; tools/make_ground_tile.py)"
+    },
+    "GRASS_FAR": {
+      "diffuse": "textures/prairie_diffuse.jpg",
+      "normal": "textures/prairie_normal.jpg",
+      "_doc": "bespoke ground, the colour measured off the track's NAIP (textures/README.md; tools/make_ground_tile.py)"
+    },
+    "SHOULDERUND": {
+      "diffuse": "textures/prairie_diffuse.jpg",
+      "normal": "textures/prairie_normal.jpg",
+      "_doc": "bespoke ground, the colour measured off the track's NAIP (textures/README.md; tools/make_ground_tile.py)"
+    },
+    "BARRIER": {
+      "diffuse": "assets/textures/tiltup_wall_diffuse.jpg",
+      "normal": "assets/textures/tiltup_wall_normal.jpg",
+      "_doc": "our own concrete in place of the Hamburg bytes"
+    }
+  }
 }

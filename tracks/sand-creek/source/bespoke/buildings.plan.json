@@ -1,0 +1,33 @@
+{
+ "image": "source/naip_2023_sc_z18.jpg",
+ "naip_date": "2023-09-25",
+ "footprints": [
+  {
+   "file": "source/bespoke/osm_buildings.json",
+   "kind": "overpass"
+  }
+ ],
+ "out": "source/bespoke/buildings.json",
+ "min_area_m2": 25,
+ "yes_by_area": [
+  [
+   60,
+   "shed"
+  ],
+  [
+   1000000000.0,
+   "industrial"
+  ]
+ ],
+ "house_skin": "siding",
+ "shadow": {
+  "enabled": true,
+  "max_m": 60
+ },
+ "webmerc": {
+  "z": 18,
+  "x0": 54655,
+  "y0": 99433
+ },
+ "utc_offset": "-06:00"
+}

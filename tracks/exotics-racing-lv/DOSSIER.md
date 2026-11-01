@@ -199,15 +199,16 @@ Furniture stands on true ground. The road comes down to the data, never the furn
 
 | Need (§5–§6) | Owned asset (Dropbox `/Blender`, ASSET-LIBRARY.md) | Conversion notes | Placement | Or GAP → candidate purchase |
 |---|---|---|---|---|
-| Tec-Pro barrier modules | `Barrier02.obj`, `Barrier_end01/02.obj`, `Barrier_circle.obj` (generic) | Metres, Y-up; retexture to Tec-Pro red/white or blue/white; ≤2K | Outside T2 and any other barrier line seen in imagery | **GAP**: a Tec-Pro-specific model |
+| Tec-Pro barrier modules | **bespoke** `1WALL_TECPRO` modules (`tools/author_bespoke_blend.py` rails, skin `tecpro_diffuse.png`, CC0) | 1.2 x 1.5 x 0.8 m `[invented]`, no drawing read | The red-brown line outside the north-west corner on NAIP 2013 (94 modules) | Closed 2026-10-31 |
 | Concrete wall / jersey | `Concrete Barrier 4 MTS + Transition` | As the library notes | Pit wall / paddock edge if the imagery shows one | — |
-| Traffic cones | none | — | Brake/apex/exit markers (an `AUTH_` cone set, non-collidable, or a 1WALL-free prop) | **GAP**: a simple cone, trivially authored in Blender |
-| Welcome Center + covered pit + 35 carports | `ModularBuildings.blend1`, `building_1.blend` | Re-save the .blend1 first; massing to the imagery footprint | `AUTH_` massing | — |
-| Oval grandstands (backdrop) | `Racetrack_1.blend` (617 MB kitbash) | Kitbash only; decimate | Far backdrop toward the oval | — |
+| Traffic cones | **bespoke** `assets/models/traffic_cone.obj` (`tools/make_bespoke_assets.py`, CC0) | — | Brake/apex/exit markers by the rule in `tools/plan_cones.py`; `AUTH_bespoke`, non-collidable | Closed 2026-10-31 |
+| Welcome Center + covered pit + 35 carports | `ModularBuildings.blend1`, `building_1.blend` | Re-save the .blend1 first; massing to the imagery footprint | `AUTH_` massing | Not built: Kevin's dressing is as in 2013 (section 11) |
+| The two 2013 south-west buildings | **bespoke**, generated from the footprint (`tools/author_bespoke_blend.py`, white fabric from `tools/make_bespoke_assets.py`, CC0) | Footprints and shadows off NAIP 2013: `source/trace/README.md` | `AUTH_bespoke` | Closed 2026-10-31. What they were made of is `[invented]`: a 2013 account has the cars under a tent, no photo found |
+| Oval grandstands (backdrop) | **bespoke** far blocks on the four OSM grandstand sections (`FARBLOCK_METAL`), 38 m `[invented]`, no seat step modelled; the LVMS campus and the Speedway Blvd warehouses as far blocks from OSM footprints (`tools/plan_buildings.py`) | plain massing | Far backdrop | Closed 2026-10-31 as massing; the look is open |
 | Chain-link fence | `Fence.FBX` / procedural `make_chainlink` | — | Campus perimeter per imagery | — |
 | Light poles | `Street_Lamp.zip` | Only if the imagery shows lot lighting | — | — |
-| Creosote / bursage shrubs | none (poplar and pine only) | — | Campus edge only | **GAP**: low desert shrub cards, CC0 |
-| Desert ground / caliche | `grass_path_2` (wrong biome) | — | — | **GAP**: a CC0 dry-dirt/caliche PBR set (Poly Haven class) |
+| Creosote / bursage shrubs | **bespoke** `assets/textures/desert_scrub_atlas.png` (`tools/make_bespoke_assets.py`, CC0) | Crossed cards | The strip north of the lap, the 36 clumps counted on NAIP 2019, a seeded scatter | Closed 2026-10-31 |
+| Desert ground / caliche | **bespoke** `textures/caliche_*.jpg` (`textures/make_caliche_ground.py`, CC0), colour measured off NAIP | `texture_overrides` | Every ground mesh | Closed 2026-10-31 |
 | Sky | `bloem_hill_02_4k.exr` (wrong biome) | EXR → PNG; CSP/Sol drives the sky | — | Sol default sky is fine |
 
 No mined mod content ships (REALISM §3). The Pellefred mod (§9) is a **reference only**.

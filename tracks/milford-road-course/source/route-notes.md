@@ -18,7 +18,7 @@ Oakland County side of the county line, so one lidar project covers it.
 | A paved road course with kerbs and run-off | — | the only one at MPG; every other `highway=raceway` there is a test road, the Circle Track or Black Lake | pass |
 | OSM | — | `highway=raceway`, `oneway=yes`, `access=private`: ways 72577419, 72577413, 1030539760, 72577375, 72577386, 72577423, 1030539761, 72577404 | topology agrees |
 
-**The length gap is not explained.** In the 2022 photo, every clockwise lap you can drive comes out
+**CORRECTED 2026-10-31 (`trace/unsquash_frame.py`, ledger 0061): the export had square-degree pixels and the trace was squashed north-south by 0.737; unsquashed, the lap is 4.90 km (+5 % on GM's figure) and OSM's outline was right all along. The paragraph below is what the squashed frame looked like.** The length gap is not explained. In the 2022 photo, every clockwise lap you can drive comes out
 between 4.0 and 4.4 km:
 
 - the full lap: 4.07 km

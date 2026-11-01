@@ -2,7 +2,7 @@
   "archetype": "race_circuit",
   "name": "Milford Road Course (unofficial)",
   "slug": "milford_road_course",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 11.0,
@@ -39,7 +39,168 @@
     "bush_off_span_m": 22,
     "bush_size_min_m": 1.0,
     "bush_size_span_m": 1.2,
-    "light_spacing_m": 90
+    "light_spacing_m": 90,
+    "bespoke": {
+      "buildings": [
+        {
+          "key": "pad_tent",
+          "footprint_lonlat": [
+            [
+              -83.6625,
+              42.56624
+            ],
+            [
+              -83.66225,
+              42.56624
+            ],
+            [
+              -83.66222,
+              42.56576
+            ],
+            [
+              -83.66247,
+              42.56576
+            ]
+          ],
+          "roof": "gable",
+          "eave_h_m": 3.5,
+          "ridge_h_m": 7.5,
+          "_source": "footprint off NAIP 2022 (20 x 53 m, white, on the pad); heights [invented]: its 1.5-2 m west shadow at a high August sun allows a low-eaved clearspan tent, nothing finer"
+        }
+      ],
+      "blocks": [
+        {
+          "key": "mpg_plant_a",
+          "footprint_lonlat": [
+            [
+              -83.66896,
+              42.575413
+            ],
+            [
+              -83.66762,
+              42.576268
+            ],
+            [
+              -83.66646,
+              42.575101
+            ],
+            [
+              -83.66792,
+              42.574314
+            ]
+          ],
+          "wall_h_m": 11.0,
+          "skin": "tiltup",
+          "roof": "white",
+          "off_terrain": true,
+          "_source": "footprint off NAIP 2022 (source/naip_2022_mrc.jpg on its true extent), read by eye to about 5 m, ground-level backdrop past the built ground; height [invented]"
+        },
+        {
+          "key": "mpg_plant_b",
+          "footprint_lonlat": [
+            [
+              -83.66677,
+              42.576444
+            ],
+            [
+              -83.6653,
+              42.577299
+            ],
+            [
+              -83.66426,
+              42.576322
+            ],
+            [
+              -83.66585,
+              42.575413
+            ]
+          ],
+          "wall_h_m": 11.0,
+          "skin": "tiltup",
+          "roof": "white",
+          "off_terrain": true,
+          "_source": "as mpg_plant_a"
+        }
+      ],
+      "pads": [
+        {
+          "key": "ride_pad",
+          "quad_lonlat": [
+            [
+              -83.66336,
+              42.56721
+            ],
+            [
+              -83.66224,
+              42.56725
+            ],
+            [
+              -83.6621,
+              42.56559
+            ],
+            [
+              -83.66322,
+              42.56558
+            ]
+          ],
+          "_source": "the paved pad inside the lap off NAIP 2022, read by eye to about 3 m"
+        }
+      ],
+      "cards": [
+        {
+          "file": "source/bespoke/trees.json",
+          "prefix": "TREECARD",
+          "clear_m": 5.0
+        }
+      ],
+      "guardrail": {
+        "from": "1WALL_PARA"
+      },
+      "grassfx_zones": {
+        "image": "source/naip_2022_mrc.jpg",
+        "bbox_lonlat": [
+          -83.67,
+          42.56050328638498,
+          -83.657,
+          42.57949671361502
+        ],
+        "cell_m": 30,
+        "max_rects": 48,
+        "fade_m": 10,
+        "classes": [
+          {
+            "map": "C",
+            "mean": [
+              18,
+              114
+            ],
+            "g_over_r": [
+              1.03,
+              9
+            ],
+            "g_over_b": [
+              1.04,
+              9
+            ]
+          },
+          {
+            "map": "B",
+            "mean": [
+              140,
+              215
+            ],
+            "g_over_r": [
+              0,
+              1.0
+            ],
+            "g_over_b": [
+              1.15,
+              9
+            ]
+          }
+        ]
+      }
+    }
   },
   "layouts": [
     {
@@ -54,12 +215,47 @@
       "noon",
       "golden_hour"
     ],
-    "grassfx": true
+    "grassfx": {
+      "_doc": "Mown proving-ground verges (the base look), the long unmown strips and the wood floors as NAIP 2022 shows them: tools/plan_grassfx_aerial.py binds B and C by rectangle. mask open: the turf tile is far brighter than the default mask's 0.35 ceiling, which would spawn nothing. VERIFY IN-GAME",
+      "mask": "open",
+      "shape_size": [
+        0.7,
+        1.1
+      ],
+      "shape_width": 0.7,
+      "shape_tidy": [
+        1,
+        0.6
+      ],
+      "shape_cut": [
+        1,
+        0.5
+      ],
+      "trim_period": "THURSDAY",
+      "texture": "grass_fx/highlands.dds",
+      "texture_grid": [
+        8,
+        3
+      ],
+      "configurations": {
+        "B": {
+          "shape_size": [
+            1.1,
+            1.5
+          ],
+          "shape_width": 0.8,
+          "trim_period": 365
+        },
+        "C": {
+          "texture_base_chance": 0.15
+        }
+      }
+    }
   },
   "source": {
     "type": "from_track",
     "track": "source/mrc_fixes.json",
-    "_note": "Traced 2026-10-28 off USDA NAIP 2022-08-16 (0.6 m native; tile m_4208327_ne_17_060_20220816), exported from the USGS NAIPImagery ImageServer as an EPSG:4326 north-up clip, bbox -83.6700,42.5630,-83.6570,42.5770 at 2130x3112 (0.5 m/px) = source/naip_2022_mrc.jpg. Paved surface classified by colour, centre line found by a centre-seeking shortest path between hand-placed waypoints (source/trace/F1.json), re-centred and width-measured by perpendicular scans every 2 m. Widths clamped 9-16 m (median 11; the west front straight 16). Tree-shadowed pavement on the east side added by colour (source/trace/shadow_patch.py). Re-run: source/trace/README.md. OSM has this course as highway=raceway (ways 72577419 + 72577413 + connectors) but its outer loop is mis-drawn ~190 m south of the asphalt, so OSM is topology only (L1). Identification: relief along the trace 39.7 m vs the SAE paper's 41 m; length 4,072 m vs GM's '2.9 mi' (4.67 km), -13 %, see source/route-notes.md."
+    "_note": "Traced 2026-10-28 off USDA NAIP 2022-08-16 (0.6 m native; tile m_4208327_ne_17_060_20220816), exported from the USGS NAIPImagery ImageServer as an EPSG:4326 north-up clip, bbox -83.6700,42.5630,-83.6570,42.5770 at 2130x3112 (0.5 m/px) = source/naip_2022_mrc.jpg. Paved surface classified by colour, centre line found by a centre-seeking shortest path between hand-placed waypoints (source/trace/F1.json), re-centred and width-measured by perpendicular scans every 2 m. Widths clamped 9-16 m (median 11; the west front straight 16). Tree-shadowed pavement on the east side added by colour (source/trace/shadow_patch.py). Re-run: source/trace/README.md. CORRECTED 2026-10-31 (source/trace/unsquash_frame.py): the export has square-degree pixels, its true extent is lat 42.56050..42.57950, and the trace had read it squashed north-south by 0.737; OSM's outline, which this note used to call mis-drawn, was right. Length now 4.91 km vs GM's '2.9 mi' (4.67 km), +5 %; see source/route-notes.md."
   },
   "road_profile": {
     "_doc": "No banking authored (L10). Deck follows bare-earth 3DEP; any real cross-slope comes from lidar sections, never from curvature. The lap IS banked: 1 m lidar sections read -4.3 % in the esses (s 620), -7.1 % at the U-turn (s 780, the likeliest Carousel), +8.0 % at s 995. Tried 2026-10-28: scripts.elevation.crossfall (measured, 6 % cap, 80 % of the lap banked) made drive_test WORSE than the flat deck (ground-on-top 14 -> 53, severe steps 7 -> 17, bumps 17.2 -> 89.7/km, excursion drops 31 -> 52), the ledger-0018 class (crossfall x width steps). data/crossfall.json removed; the banks are authoring work, not a flag.",
@@ -70,7 +266,7 @@
   },
   "route": {
     "start_at": [
-      42.57048,
+      42.570651,
       -83.667269
     ],
     "_orientation_doc": "Clockwise, per the OSM oneway tags on every raceway way here (unverified against onboard video). S/F on the 16 m west front straight about 2/3 of the way up, raced north; the grid sits on the ~250 m of straight behind it. The lap: west straight N -> NW corner -> right-hand hairpin off the apron -> esses south -> U-turn -> north -> east into the serpentine round the woods -> top straight E -> NE corner -> east side S -> sweeping bottom W -> SW corner. Unused pavement (later layouts over this kn5): the inner hairpin short-cut, the top-straight bypass, the SE back section + cross-connector + hook."
@@ -88,5 +284,27 @@
   "_ground_doc": "Constructed corridor, not natural_ground (2026-10-28). Natural ground (copied from IMI) left the lidar's real banks beside the pavement unguarded: drive_test counted 31 drops over 12 cm per 0.5 m within 4 m of the edge (limit 4), worst 49 cm, because the measured-guard lip pass and the shoulder drape only run in constructed mode. The other T1 circuits (Pueblo, Aspen, High Plains) are constructed.",
   "install_folder": "milford_road_course",
   "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (Lariat plan A11); the previous install is parked in the archive",
-  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)"
+  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
+  "texture_overrides": {
+    "1GRASS": {
+      "diffuse": "textures/turf_diffuse.jpg",
+      "normal": "textures/turf_normal.jpg",
+      "_doc": "bespoke ground, the colour measured off the track's NAIP (textures/README.md; tools/make_ground_tile.py)"
+    },
+    "GRASS_FAR": {
+      "diffuse": "textures/turf_diffuse.jpg",
+      "normal": "textures/turf_normal.jpg",
+      "_doc": "bespoke ground, the colour measured off the track's NAIP (textures/README.md; tools/make_ground_tile.py)"
+    },
+    "SHOULDERUND": {
+      "diffuse": "textures/turf_diffuse.jpg",
+      "normal": "textures/turf_normal.jpg",
+      "_doc": "bespoke ground, the colour measured off the track's NAIP (textures/README.md; tools/make_ground_tile.py)"
+    },
+    "BARRIER": {
+      "diffuse": "assets/textures/tiltup_wall_diffuse.jpg",
+      "normal": "assets/textures/tiltup_wall_normal.jpg",
+      "_doc": "our own concrete in place of the Hamburg bytes"
+    }
+  }
 }

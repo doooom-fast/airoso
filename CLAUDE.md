@@ -109,7 +109,7 @@ The quality comes from the build → refute → repair loop, not from the top mo
 
 `.claude/skills/` — the pipeline skills (`gps-extraction`, `aerial-tracing`, `elevation`,
 `road-grounding`, `track-grading`, `mesh-audit`, `drive-test`, `ac-track-modding`, `lighting`,
-`route-tracing`, `scs-extraction`) plus **`track-feedback`** for filing into the ledger.
+`route-tracing`, `scs-extraction`, `bespoke-assets`, `buildings`) plus **`track-feedback`** for filing into the ledger.
 
 ---
 

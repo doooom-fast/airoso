@@ -14,6 +14,61 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-10-31 (later) — `house_seat` on every chain track; the buildings pipeline's planner checks itself; a collider only on the fine ground; GrassFX zones off the aerial
+
+`tracks/milford-road-course`, `high-plains`, `sand-creek` and `exotics-racing-lv` `ship.json` all run `author_bespoke` and the
+`house_seat` gate now (`tests/tools/test_ship_track_chain.py` pins the pairing). No gate threshold changed. Three rules the batch
+bought, all in `tools/author_bespoke_blend.py` and marked `[invented]` there:
+
+- **A collider only within 60 m of the lap, on `1GRASS` within 2 m of its foot** (`COLLIDER_REACH_M`, `COLLIDER_GROUND_M`).
+  `drive_test` culls ground triangles by cell round a wall and reads a `1WALL` with nothing loaded under it as "floating 99":
+  High Plains' corner-worker huts (8 columns) and Sand Creek's far warehouses (351, then 80, then 8 at 100 m) went red on it
+  three times before the reach fell to 60 m. Past that reach a building stands see-through; no car gets there.
+- **A planned footprint with no built ground under it stands as a far block** (`FARBLOCK_*`, no collider, not `BUILDING` so
+  never a GrassFX occluder) instead of being dropped.
+- **A block is authored at the prep's own floor** (`PREP_SINK_M` 0.4, `PREP_SHOW` 0.5: the prep's `house_seat` constants), so
+  the prep's re-seat moves its walls by nothing and the roof, a separate object the prep never touches, stays on them; a
+  parapet carries on from the eave ring's own vertices, since the prep re-seats a `BUILDING*` mesh by ISLAND (on the Lake
+  Murray rehearsal every separate parapet island was pushed to the ground as a 0.7 m "building": 1,271 buried).
+- **The guard lips become `1WALL_GHOST_*`** (a transparent alpha-test skin) and keep standing as the collider the gates judged;
+  the W-beam `GUARDRAIL` over them is visual only. `scripts/ac/build_kn5_loop.py` exempts the new prefixes from the planar UV
+  and the weld as before.
+
+San Diego runs engine-july's prep and texture table: both changes are recorded as pending in
+`tracks/san-diego-lake-murray/engine-july-snapshot/PENDING-MIRROR.md5` (`scripts/ac/pbr.py` with the new rows; engine-july's
+`build_kn5_loop.py` with the two exemption tuples only, never airoso's chain prep), rehearsed on an engine scratch copy
+(`ENG=`), and the real engine-july is untouched until mirrored.
+
+`tools/plan_buildings.py` (the buildings pipeline, `.claude/skills/buildings`) is a planner, not a gate, but it refuses its own
+reading three ways, each `[invented]` in its header except the first: a sun under 30 deg (NAIP's own floor; a vote that needs
+one has found the camera's lean on tall walls — Sand Creek 2023 and Nevada 2013 both), a shadow / OSM median outside 0.6–1.6
+where five OSM heights exist, and an unchecked stage (no OSM heights) unless the plan's `shadow.trust_unchecked` says so after a
+`--debug` drawing was read. Every height row says its source.
+
+`tools/plan_grassfx_aerial.py` + `ship_grassfx_aerial` (before `track_folder`): GrassFX `[GRASS_FX_ADJUSTMENT]` world rectangles
+bound to the config's looks by a colour rule on the track's aerial, cells of 30–40 m, at most 48 rectangles, fade 10–14 m; the
+rule's bounds per track are `[invented]` by reading that photograph. The rectangle `CENTER` carries the lap's mid height; whether
+CSP reads the rectangle on the ground or by that height is **unverified in game**.
+
+Milford's trace was on a squashed frame (the USGS export has square-degree pixels; `source/trace/unsquash_frame.py`): the lap
+is 4.90 km, not 4.07, and the road now sits within 0.21 m of the measured line (`replication_vs_measured` max; it read 28 m
+on the first corrected run before the mesh was rebuilt). `drive_test` on the rebuilt track: severe steps 26
+(5.3/km, under the 12/km line), excursion drops 1, far ledges 33 (reported, not gated).
+
+---
+
+## 2026-10-31 — `house_seat` joins Nevada Nights' gates; the bespoke prefixes skip the prep's UV flatten and weld (no threshold changed)
+
+`tracks/exotics-racing-lv/ship.json` now stands two buildings (`steps.author` `bespoke`, `tools/author_bespoke_blend.py`),
+so it runs `gate_house_seat`, the existing `tools/house_seat_check.py` with its existing limits; no other chain track
+changes. `tests/tools/test_ship_track_chain.py` pins that a track gets this gate exactly when it has the author step.
+
+`scripts/ac/build_kn5_loop.py`: `BUILDING_FABRIC`, `1WALL_FABRIC` and `PROPCONE` keep their UVs (a top-down projection
+would smear a wall), `BUILDING_FABRIC` and `PROPCONE` are never welded (ledger 0024's inside-out shells). San Diego runs
+engine-july and is untouched. The author tool's own self-check limits are marked `[invented]` in its header.
+
+---
+
 ## 2026-10-29 — the split's single-layout rule; `--from <step>` never skips a gate (ledger 0060; wiring, no threshold)
 
 The first non-San-Diego chain run (Exotics Racing, the Windows workshop) passed the draft, the underlay and the prep

@@ -155,7 +155,7 @@ TRACK_TEXTURES="textures/chaparral_far_diffuse.jpg textures/sandstone_cut_diffus
 LAMP_RESEARCH="source/expansion/pipeline__osm_lamps_signals.json"
 # ledger 0054 P4 (buildings): the two OSM footprint caches the assembler's buildings pass reads — the old one dresses the
 # loop's own band exactly as v0.19.0, the expansion one (P0 step 7, provenance beside it) dresses the new band
-BUILDING_CACHES="data/buildings.cache.json data/buildings.expansion.cache.json data/buildings.expansion.cache.json.provenance.json"
+BUILDING_CACHES="data/buildings.cache.json data/buildings.expansion.cache.json data/buildings.expansion.cache.json.provenance.json data/buildings.traced.json"
 # P4 trees: the research make_treefx reads (scenery.treefx.veg_bins / rock_walls; ledger 0054 P4 step 3 / A9)
 TREEFX_RESEARCH="source/expansion/aerial__veg_bins.json source/expansion/p3-proofs/measure_p3.json"
 step() { echo; echo "=================== $1"; }
@@ -194,6 +194,12 @@ mkdir -p "$PROJ/source/trees" && cp "$SRC/source/trees/"*.bin "$PROJ/source/tree
 for f in $BUILDING_CACHES; do
   [ -f "$SRC/$f" ] && cp "$SRC/$f" "$PROJ/$f"
 done
+# the buildings OSM lacks, read off NAIP (data/buildings.traced.json), onto the workshop's copy; the committed cache stays OSM's bytes
+python "$AIROSO/tools/merge_traced_buildings.py" "$PROJ"
+# ledger 0061 REHEARSAL (SD_BESPOKE=1): the buildings pipeline's planned file for tools/author_bespoke_blend.py
+if [ "${SD_BESPOKE:-0}" = "1" ] && [ -f "$SRC/source/bespoke/buildings.json" ]; then
+  mkdir -p "$PROJ/source/bespoke" && cp "$SRC/source/bespoke/buildings.json" "$PROJ/source/bespoke/buildings.json"
+fi
 # PHASE 5 side-road stubs (ledger 0054), opt-in: a declaration is synced down with its 3DEP cache; without one, no stub
 # file of an earlier run survives in the project (the audit's barrier exemption reads stubs.built.json)
 STUBS="${STUBS:-$SRC/stubs.json}"
@@ -293,6 +299,12 @@ if [ "$SKIP_BLEND" = 0 ]; then
   if [ -f "$PROJ/data/stubs.plan.json" ]; then
     step "author: phase-5 stubs — curb returns, corner pavement, K-rail barrier (tools/author_stubs_blend.py, self-checked)"
     (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_stubs_blend.py" -- "$PROJ" --stage author 2>&1 | grep "^\[stubs\]\|Error\|Traceback" )
+  fi
+  # ledger 0061 REHEARSAL ONLY (SD_BESPOKE=1, pair with SHIP_PROJ): the buildings pipeline stands scenery.bespoke.blocks in place of the
+  # assembler's HOUSE / BUILDING boxes (tools/author_bespoke_blend.py "replace"). Off by default: the houses Kevin drives are the assembler's
+  if [ "${SD_BESPOKE:-0}" = "1" ]; then
+    echo; echo "=================== author (REHEARSAL, SD_BESPOKE=1, not a ship.json step): the buildings pipeline's blocks in place of the assembler's boxes (tools/author_bespoke_blend.py)"
+    (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_bespoke_blend.py" -- "$PROJ" 2>&1 | grep "^\[bespoke\]\|Error\|Traceback" )
   fi
   step "author: gap the mainline sidewalk at every mouth"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/gap_mouths_blend.py" -- "$PROJ" 2>&1 | grep "^\[gap" )

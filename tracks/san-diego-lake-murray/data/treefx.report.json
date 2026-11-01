@@ -1,6 +1,6 @@
 {
  "_doc": "tools/make_treefx.py: what trees.txt holds (counts per zone and per species; the north network per piece per species, its planted area, the loop's density and the area-scaled caps \u2014 ledger 0054 P4 / A9)",
- "total": 20463,
+ "total": 20431,
  "per_zone": {
   "palms": 890,
   "trees": 404,
@@ -11,27 +11,27 @@
   "fill_slope_trees": 1684,
   "fill_slope_bushes": 7028,
   "north_suburb_trees": 86,
-  "north_suburb_bushes": 821,
-  "north_canyon_trees": 1199,
-  "north_scrub": 2939,
+  "north_suburb_bushes": 805,
+  "north_canyon_trees": 1196,
+  "north_scrub": 2936,
   "north_riparian_trees": 105,
-  "north_street_trees": 70,
+  "north_street_trees": 60,
   "north_gum_belt": 73,
   "north_median_trees": 26
  },
  "per_species": {
   "Agave.bin": 1082,
-  "Bush.bin": 3794,
-  "Bush3.bin": 1827,
-  "Gum.bin": 1371,
-  "Oak3.bin": 1328,
-  "PalmV1.bin": 701,
+  "Bush.bin": 3787,
+  "Bush3.bin": 1820,
+  "Gum.bin": 1370,
+  "Oak3.bin": 1325,
+  "PalmV1.bin": 698,
   "PalmV2.bin": 274,
   "PalmV3.bin": 102,
-  "PepperV1.bin": 658,
+  "PepperV1.bin": 655,
   "Pine_Aleppo.bin": 1133,
-  "Sage.bin": 5526,
-  "SycamoreV1.bin": 482,
+  "Sage.bin": 5521,
+  "SycamoreV1.bin": 479,
   "SycamoreV2.bin": 89,
   "Yucca.bin": 2096
  },
@@ -40,7 +40,7 @@
   "rock": 10,
   "road": 0,
   "walk": 2,
-  "building": 696
+  "building": 728
  },
  "rejected_on_built_surface_loop_zones": {
   "rock": 0,
@@ -92,18 +92,18 @@
     "Bush.bin": 27
    },
    "C": {
-    "Bush.bin": 295,
-    "Bush3.bin": 178,
-    "Sage.bin": 504,
-    "Oak3.bin": 244,
-    "Gum.bin": 94,
+    "Bush.bin": 288,
+    "Bush3.bin": 171,
+    "Sage.bin": 499,
+    "Oak3.bin": 241,
+    "Gum.bin": 93,
     "Pine_Aleppo.bin": 141,
     "Yucca.bin": 217,
     "Agave.bin": 117,
     "SycamoreV2.bin": 24,
-    "SycamoreV1.bin": 67,
-    "PalmV1.bin": 17,
-    "PepperV1.bin": 26
+    "SycamoreV1.bin": 64,
+    "PalmV1.bin": 14,
+    "PepperV1.bin": 23
    },
    "D": {
     "Oak3.bin": 296,
@@ -130,7 +130,7 @@
   "per_piece_total": {
    "A": 683,
    "ring": 66,
-   "C": 1924,
+   "C": 1892,
    "D": 1574,
    "B": 1072
   }

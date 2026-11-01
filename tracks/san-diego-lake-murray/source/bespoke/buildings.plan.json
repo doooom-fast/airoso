@@ -1,0 +1,47 @@
+{
+ "image": "source/naip_2022_lm_z18.jpg",
+ "webmerc": {
+  "z": 18,
+  "x0": 45816,
+  "y0": 105749
+ },
+ "naip_date": "2022-04-25",
+ "utc_offset": "-07:00",
+ "footprints": [
+  {
+   "file": "source/bespoke/osm_buildings.cache.json",
+   "kind": "cache"
+  },
+  {
+   "file": "data/buildings.traced.json",
+   "kind": "cache"
+  }
+ ],
+ "out": "source/bespoke/buildings.json",
+ "min_area_m2": 25,
+ "yes_by_area": [
+  [
+   60,
+   "shed"
+  ],
+  [
+   350,
+   "house"
+  ],
+  [
+   1500,
+   "commercial"
+  ],
+  [
+   1000000000.0,
+   "industrial"
+  ]
+ ],
+ "house_skin": "stucco",
+ "shadow": {
+  "enabled": true,
+  "max_m": 60,
+  "trust_unchecked": false
+ },
+ "_note": "REHEARSAL (ledger 0061): the pipeline read over Lake Murray's two OSM caches + the traced apartments; the assembler still stands the houses Kevin drives"
+}

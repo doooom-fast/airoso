@@ -42,6 +42,13 @@ python -I refine_trace.py naip_2019_z18.png seeds.json trace
   each side, so `road_profile` uses 6.0° (10.5 %) over s 215–525 with 85 m ramps. It is negative
   in the config because the build frame is mirrored (`scripts/geometry/profile.py`).
 
+**The two 2013 buildings (`buildings_2013_measured.png`, 2026-10-31):** NAIP 2013-09-28 (1 m native), scene
+`nv_m_3611548_se_11_1_20130928_20131122`, fetched with `pc_tiles.py` over z18 tile origin x0 47314, y0 102685, read at 0.481
+m/px; the corners are in `track.config.json` `scenery.bespoke.buildings`, in lon/lat. A (red) is 29.3 x 26.0 m with a flat
+white roof; B (blue) is 54.1 x 20.4 m, gabled along its length. Heights come from the shadows: the poles' shadows run to azimuth about 302 deg,
+which `scripts/lighting/solar.py` puts at about 09:30 PDT, sun elevation 33 deg. The photo's 1 m pixel leaves about +-0.6 m
+on any height read this way, and each building's `_source` line says what was taken and why.
+
 **2013 cross-check (Kevin drove it in 2013):** `trace_on_2013.jpg` draws this trace onto USDA NAIP
 2013-09-28 (1 m), fetched over the same z18 tile grid. The circuit was already paved, edge-lined
 and kerbed, and the lap is unchanged. Only the buildings on the south-west corner differ: in 2013,

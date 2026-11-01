@@ -6,7 +6,7 @@
   "by_layout": {},
   "scenery_source": "trees: trees.txt (written); signs: data/signs.local.json",
   "scenery_items": {
-   "tree": 20463,
+   "tree": 20431,
    "sign": 29
   },
   "scenery_beside": 395,

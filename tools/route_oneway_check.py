@@ -20,7 +20,9 @@ How it works (pure Python, no network):
 3. One-way semantics from the way's tags: ``oneway=yes|true|1`` (node order), ``oneway=-1`` (against
    node order), ``junction=roundabout|circular`` (implied node order). ``reversible`` / ``alternating`` are
    listed, never judged. Everything else is two-way.
-4. Per layout (``layouts[]`` in ``track.config.json``): ``direction: forward`` drives increasing vertex
+4. Per layout (``layouts[]`` in ``track.config.json``, plus any layout parked in ``_layouts_v3_owed.layouts`` — judged
+   the same and marked ``parked`` in the report, so a declaration still holds on the day its layout returns):
+   ``direction: forward`` drives increasing vertex
    order, ``reverse`` the opposite. Consecutive segments on one way are merged into runs.
 
 The verdict, per **street** layout (race layouts are closed roads and are not checked):
@@ -262,7 +264,7 @@ def build_runs(matches, seg_len, stations, ways, direction):
 def check_layout(layout, runs, stretches):
     lid = layout.get("id", "?")
     kind = layout.get("kind", "street")
-    res = {"id": lid, "kind": kind, "direction": layout.get("direction", "forward")}
+    res = {"id": lid, "kind": kind, "direction": layout.get("direction", "forward"), "parked": bool(layout.get("parked"))}
     if kind == "race":
         res.update({"checked": False, "verdict": "SKIP",
                     "why": "race layouts are closed roads; one-way rules do not apply (V3-PLAN P0 step 8)"})
@@ -324,6 +326,12 @@ def run_check(project, *, centerline=None, snapshot=None, only=None, snap_m=SNAP
     for s in ((cfg.get("divided") or {}).get("stretches") or []):
         stretches[s["id"]] = {int(w) for w in s.get("ways") or []}
     layouts = [lo for lo in (cfg.get("layouts") or []) if isinstance(lo, dict)]
+    # a layout PARKED in _layouts_v3_owed (the chain's first pass ships one layout: Sand Creek 2026-10-28, the Lariat
+    # 2026-11-01, ledger 0048 "Started") keeps its against_oneway declaration and is judged beside the live ones, marked
+    # parked: the declaration must still hold on the day the layout returns, and the stretch ids it names must still exist
+    for lo in ((cfg.get("_layouts_v3_owed") or {}).get("layouts") or []):
+        if isinstance(lo, dict) and lo.get("id") not in {x.get("id") for x in layouts}:
+            layouts.append({**lo, "parked": True})
     if only:
         stale = [o for o in only if o not in {lo.get("id") for lo in layouts}]
         if stale:
@@ -414,7 +422,7 @@ def main(argv=None) -> int:
         if not res["checked"]:
             print(f"[oneway] {res['id']:15} {res['direction']:7} SKIP ({res['why']})")
             continue
-        print(f"[oneway] {res['id']:15} {res['direction']:7} {res['verdict']}: against one-ways "
+        print(f"[oneway] {res['id']:15} {res['direction']:7} {res['verdict']}{' (parked)' if res.get('parked') else ''}: against one-ways "
               f"{res['against_total_m']:.0f} m in {len(res['against_runs'])} run(s), undeclared "
               f"{res['undeclared_against_m']:.0f} m; declared {res['declared_stretches'] or 'none'}")
         for r in res["against_runs"]:

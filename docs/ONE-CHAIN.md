@@ -98,7 +98,7 @@ shape of the work per kind:
 | 2 | Milford Road Course | circuit_port | the hill course; draft data committed; Kevin's "build Milford first" | `ship.json` done; chain run owed |
 | 3 | High Plains | circuit_port | the "road signs" case; OSM raceway cycle | `ship.json` done; chain run owed |
 | 4 | Sand Creek | fictional_street_circuit | KML route; `full` first, `reverse` when its start is declared | `ship.json` done; chain run owed |
-| 5 | Lookout Lariat | street_port | the plan exists (`V3-PLAN.md`, shelved 2026-10-12); add `mesh` before `underlay` | plan |
+| 5 | Lookout Lariat | street_port | the plan exists (`V3-PLAN.md`; shelved 2026-10-12, **unshelved 2026-11-01**, Kevin: "Start the lariat"); `mesh` before `underlay` is in its `ship.json` | `ship.json` chain-ready (one layout, the name set, the frame already San Diego's); the data steps before `elev` reproduce the committed files offline; chain run owed on the Windows box (ledger 0048 "Started") |
 | 6 | Dragon Tail, Under the Dragon (gravel + tarmac) | rally_stage | four tracks, two surfaces | configs only |
 | 7 | Second Creek | circuit_port | geometry **fabricated** (registry `fidelity`). **Kevin: re-source.** First step: the NAIP export of the site on the Windows box into `source/`, then `aerial` → the chain | owed |
 | 8 | San Diego freeway network | street_port (network) | **Kevin: rebuild, by an agent.** The network draft (`build_network_mesh`) becomes draft steps of the chain and the 223 km network gets its own `tracks/san-diego-freeway/` + `ship.json` | agent spawned 2026-10-29 |

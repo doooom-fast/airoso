@@ -1,37 +1,35 @@
 {
-  "_doc": "Lookout Mountain Lariat V3 for tools/ship_track.sh (V3-PLAN P1; ledger 0048). The workshop lives OUTSIDE airoso (the sync rails require it). The draft order is plan P2 step 1 with the paint centreline wired in: gps (the OSM line; the paint line it overwrites is kept as data/centerline.previous.geojson first) -> paint_centreline (data/centerline.geojson becomes the paint line again) -> remap_config (--write: every vertex index and station in the config follows the line, by station matching) -> verify_centreline_paint (hard) -> route_oneway_check (hard) -> elev -> project -> widths, so no OSM geometry ever reaches elevation or projection. The prep, exporter and spawn builder run from airoso's scripts/ac (never engine-july: that is San Diego's alone). The underlay (scripts/blender/underlay.py, P2 step 3) landed 2026-10-28 (ledger 0060): the draft now ends in loop.blend, GEN_* collections from data/track.obj — add the engine's mesh step before it when this track resumes (steps.draft ... widths, mesh, underlay).",
-  "_owed": "Listed here as the plan's chain, not yet adapted for the Lariat (each still runs San Diego's shape and would fail or mis-build if reached; the chain cannot reach them before underlay exists): the race steps (race_bands / race_author / race_verify / race_scenery_gate / race_gates: SD's hard-coded STREETS become a config race block, P1 'race tools come from Lake Murray'); treefx (make_treefx reads zones, species and ground tiles from config); the P3 authoring steps (seat_terrain with station matching, cut/fill, edges, signs, lamps, buildings) are not listed at all yet.",
+  "_doc": "Lookout Mountain Lariat through the chain (tools/ship_track.sh; V3-PLAN P1, ledger 0048; unshelved 2026-11-01, Kevin: 'Start the lariat'). The draft is the engine's own on the OSM route with the paint centreline wired in, P2 step 1: gps (the OSM line from data/osm.cache.json; the paint line it overwrites is kept as data/centerline.previous.geojson first) -> paint_centreline (data/centerline.geojson becomes the paint line again: the OSM line moved onto the paint traced on NAIP 2019, the climb at 1 m) -> remap_config (--write: every vertex index and station in the config follows the line, by station matching; a no-op while the line's md5 matches centerline_frame) -> verify_centreline_paint (hard) -> route_oneway_check (hard; a parked street layout's declaration is judged too) -> elev (3DEP along the paint line + the 40 m grid + the 6 m x 5 m corridor samples, scripts.elevation.heightfield) -> project -> widths (OSM widths under the identity lock, the 'mountain' profile, width_overrides) -> mesh (scripts.geometry.build_mesh: 1ROAD / the verge / 1GRASS / the walls the data asks for; no furniture) -> underlay (data/track.obj into loop.blend as GEN_* collections, scripts/blender/underlay.py). Authoring happens in that blend (AUTH_*, V3-PLAN P3), the prep / exporter / spawn builder run from airoso's scripts/ac (never engine-july: that is San Diego's alone), the three street gates run on the BUILT kn5. The workshop lives OUTSIDE airoso (the sync rails require it). Offline on 2026-11-01 the five data steps before elev reproduced the committed centreline, config, remap and gate reports byte for byte from data/osm.cache.json; elev and widths fetch live (USGS 3DEP, Overpass) and are the first thing the Windows run does.",
+  "_owed": "First pass = Drive 1 (V3-PLAN A13): the road and the ground on the one layout the config declares, street_full, with road_profile.verge_m 0.4 (D4 A) into install_folder lookout_lariat; D4 B is a second run with verge_m 1.25 and install_folder lookout_lariat_verge swapped into the config (track.config.json drive1_variants). Parked in track.config.json _layouts_v3_owed until they return: street_reverse (Drive 3; then steps.author gains layout_dummies and steps.ship gains spawn_kn5 — the chain's multi-layout path, Lake Murray's) and race_acw / race_cw (the race steps race_bands / race_planned_gate / race_author / race_verify / export_race / race_scenery_gate / race_gates still run San Diego's hard-coded STREETS shape: P1 owed, 'the race tools come from Lake Murray'). Not listed because not adapted for this road yet: treefx (make_treefx from config zones), signs (author_signs reads signs.json; the Lariat's A5 pass is owed), lamps (author_lamps_blend from a positions file), the P3 authoring steps (seat_terrain with station matching, cut/fill, the edges, the stacked-leg and road-inventory gates of the unmerged Drive-1 branches, which live on the Windows box only: ledger 0048 SHELVED). The terrain tiers of P3a (track.config.json terrain.tiers) are not read by the engine's mesh step: the draft's ground is the 40 m 3DEP grid refined to terrain_cell_m near the road plus the corridor samples, as on the four chain tracks.",
   "track": "lookout-lariat",
   "workshop": "C:/Users/Owner/Documents/k10-workshops/lookout-lariat",
   "workshop_project": "project",
   "require_race_layout": false,
-  "ui_name_prefix": "K10 - Lookout Lariat (V3)",
+  "ui_name_prefix": "doooom Colorado",
   "steps": {
     "draft": ["gps", "paint_centreline", "remap_config", "verify_centreline_paint", "route_oneway_check",
-              "elev", "project", "widths", "underlay"],
-    "author": ["race_bands", "race_planned_gate", "layout_dummies", "race_author", "race_verify"],
+              "elev", "project", "widths", "mesh", "underlay"],
+    "author": [],
     "prep": ["prep", "split"],
-    "ship": ["export_road", "export_race", "spawn_kn5", "ai", "verify_kn5", "road_obj", "track_folder", "verify_inis",
-             "make_map", "treefx", "race_scenery_gate"],
-    "gate": ["drive_test_street", "audit_street", "race_gates"]
+    "ship": ["export_road", "ai", "verify_kn5", "road_obj", "track_folder", "verify_inis", "make_map"],
+    "gate": ["drive_test_street", "audit_street", "kn5_ground"]
   },
   "sync_in": {
     "required": ["track.config.json", "data/centerline.geojson", "data/centerline.osm.geojson", "data/osm.cache.json"],
-    "optional": ["data/centerline.previous.geojson"],
-    "dirs": ["data/aerial"]
+    "optional": ["data/centerline.previous.geojson", "data/centerline.elevation.json", "data/heightfield.npy",
+                 "data/heightfield.meta.json", "data/corridor.elev.json", "data/osm.widths.cache.json"],
+    "dirs": ["data/aerial", "source"]
   },
   "sync_out": {
     "required": ["loop.blend"],
     "files": ["track.config.json", "data/centerline.geojson", "data/centerline.osm.geojson", "data/centerline.previous.geojson",
               "data/centerline_remap.json", "data/aerial/paint_centreline.json", "data/aerial/paint_gate.json",
-              "data/oneway_check.json", "data/centerline.local.json", "data/finished_centerline.json",
-              "data/gate_centerline.json", "data/bridge.spans.auto.json", "data/dummies.json", "data/drive_test.json",
-              "data/audit.json", "data/barrier_bands.json", "data/race_authored.json", "data/race_verify.json",
-              "data/race_verify.scenery.json", "data/race_kn5.json",
-              "data/dummies_{id}.json", "data/drive_test.{id}.json",
-              "data/no_route.{race}.json", "data/no_route.{race}.planned.json", "data/audit.{race}.json",
-              "data/closure_{race}.kn5.json"],
+              "data/oneway_check.json", "data/centerline.elevation.json", "data/corridor.elev.json",
+              "data/osm.widths.cache.json", "data/osm.ways.json", "data/centerline.local.json",
+              "data/finished_centerline.json", "data/gate_centerline.json", "data/bridge.spans.auto.json",
+              "data/dummies.json", "data/underlay.report.json", "data/drive_test.json", "data/audit.json",
+              "data/kn5_ground_check.{id}.json", "data/drive_test.{id}.json"],
     "map": [["blender/split/split_manifest.json", "data/split_manifest.json"]],
-    "dirs": ["ai/{id}", "data/race_plots"]
+    "dirs": ["ai/{id}"]
   }
 }

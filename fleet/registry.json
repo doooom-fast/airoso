@@ -46,11 +46,11 @@
       "_tracks_glob_doc": "Only the tracks that have MOVED here. The other tracks/ dirs are Phase-1 imports whose fleet entry still points at their retired repo, and globbing them now would discover every Colorado track twice (S7 slug collisions). Widen this glob as each track moves, and add its dir to the old repo's moved_out in the same edit. A list since 2026-10-28: Milford is the first track born here rather than moved.",
       "build": {
         "cmd": null,
-        "hold": "no fleet build for the V3 Lariat yet. scripts/build.sh is the engine's whole draft pipeline: on this track its mesh stage failed drive_test at v0.66.3 (2026-08-09) and its environment stage lays the I-70/C-470 decks (ledger 0048), and V3 uses the engine for the first draft only. The V3 chain is tools/ship_track.sh + tracks/lookout-lariat/ship.json (V3-PLAN P1), not written yet."
+        "hold": "no fleet build: fleet.cli build is the retired multi-repo control plane (docs/ONE-CHAIN.md section 2 row 11). Every track here is built by the chain, tools/ship_track.sh <track> + tracks/<track>/ship.json, on the Windows box; scripts/build.sh is the draft alone. The Lariat's chain run is owed (started 2026-11-01, ledger 0048)."
       },
       "method": "V3: engine first draft -> Claude authors in Blender (AUTH_* layers) -> gates on the built kn5 -> Kevin's drive (docs/V3-PLAN.md, fleet/REALISM.md)",
       "local_scripts_allowlist": [],
-      "notes": "The Lariat moved here 2026-10-11 (tracks/lookout-lariat/V3-PLAN.md P0 step 5, ledger 0048). Its July derived data is restored, frame-free files only, in tracks/lookout-lariat/data/source-july/ (PROVENANCE.md there)."
+      "notes": "The Lariat moved here 2026-10-11 (tracks/lookout-lariat/V3-PLAN.md P0 step 5, ledger 0048), was shelved 2026-10-12 and unshelved 2026-11-01 (Kevin: 'Start the lariat'). Its July derived data is restored, frame-free files only, in tracks/lookout-lariat/data/source-july/ (PROVENANCE.md there)."
     },
     {
       "name": "k10-colorado",

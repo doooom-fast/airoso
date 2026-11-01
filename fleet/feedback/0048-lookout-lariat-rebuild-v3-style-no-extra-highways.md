@@ -7,6 +7,143 @@ layer: project
 train: -
 ---
 
+## Started (Kevin, 2026-11-01)
+
+> "Start the lariat"
+
+Unshelved. The order is ONE-CHAIN §4 as Kevin set it 2026-10-28: the four chain tracks (all four at T1 since
+2026-10-29, ledger 0060) → **the Lariat** → the rally stages → Second Creek → the freeway → the Lake Murray
+migration → the five circuits. The plan of record stays `tracks/lookout-lariat/V3-PLAN.md`; this section is the
+state. Nothing is built: T0 is claimed when `tools/ship_track.sh lookout-lariat` completes on the Windows box.
+
+### What this change does: the track is chain-ready
+
+- **`tracks/lookout-lariat/ship.json`** lists the chain's draft in P2 step 1's order with the engine's `mesh` step
+  before the underlay, as ONE-CHAIN §4 row 5 asked: gps → paint_centreline → remap_config → verify_centreline_paint →
+  route_oneway_check → elev → project → widths → **mesh** → underlay; `author` empty; the ship and gate lists of the
+  four chain tracks (export_road, ai, verify_kn5, road_obj, track_folder, verify_inis, make_map; drive_test_street,
+  audit_street, kn5_ground). The race steps, treefx, signs and lamps it listed "as the plan's chain, not yet adapted"
+  are out of the list and named in `_owed`. The sync lists carry the paint files, the one-way report, the widths
+  snapshot (`data/osm.widths.cache.json`, so the first live fetch becomes the route of record) and the gate files.
+- **`track.config.json`:** the name set of ONE-CHAIN §3 — `ui_series` "doooom Colorado" (`ui_name_prefix` the same),
+  `install_folder` **`lookout_lariat`** (the slug, no `_v3`: the chain parks the July install in the archive before
+  it writes, so A11's "July stays installed until T3" is superseded; `drive1_variants` B installs beside it as
+  `lookout_lariat_verge`). The frame was already the chain's since P0 (`mirror_x` false, true north 0). **One layout,
+  `street_full`** (Drive 1 = the road and the ground, A13); `street_reverse`, `race_acw`, `race_cw` are parked in
+  `_layouts_v3_owed` with their declared starts, Sand Creek's pattern, until Drive 3 and the race tools. With one
+  layout the prep takes the engine draft's `data/dummies.json` (the grid at `route.start_at`, the pylons), not the
+  declared start block.
+- **`tools/route_oneway_check.py` judges a parked layout too** (`_layouts_v3_owed.layouts`, marked `parked`), so Street
+  Reverse's four declared stretches stay under the gate while it is parked (GATES-CHANGELOG 2026-11-01).
+- **On paper:** `CLAUDE.md`'s priority line, ONE-CHAIN §4 row 5, DEFINITION-OF-DONE (the July T0 withdrawn: an
+  engine-era build, ONE-CHAIN §4 — the row now reads "none, started"), the plan's header, `fleet/registry.json`.
+- **The unmerged P2 / Drive-1 branches of the SHELVED table are not on `doooom-fast/airoso`** (`git ls-remote`: none
+  of `worktree-wf_0b6149fb-898-*`); they exist on the Windows box only. Of them, the underlay (branch 2) landed on
+  main 2026-10-28. Branch 1 (profile by station, measured widths, footprint crossfall + roll-rate gate, the declared
+  lid, L13 for the span detectors) and branch 3 (road inventory, stacked legs, the kink ceiling) are still to be
+  re-checked against main there, or redone; the profile-by-station half of branch 1 is redone below.
+
+### What ran on this box (no Overpass, no USGS, no Blender: the proxy refuses all three)
+
+1. **The five data steps before `elev`, on a scratch copy**, exactly as the chain runs them (the paint line kept as
+   `centerline.previous.geojson`, then `scripts.gps.centerline` from `data/osm.cache.json`, `paint_centreline`,
+   `remap_centreline_config --write`, `verify_centreline_paint`, `route_oneway_check`): `data/centerline.geojson`
+   (md5 `ef44db97…`), `data/centerline.osm.geojson` (`28dcc7b6…`), `data/centerline_remap.json` and
+   `track.config.json` come back **byte for byte**; the two gate reports differ only in the paths they record.
+   Paint gate PASS (5,813 medium+ paint points, 0 over 0.75 m, max 0.61 m; 7,114 climb points, 0 step / neighbour /
+   spacing fails; seam step 2.198° under 3.163°); one-way PASS (Full 0 m against; Reverse, parked, 4,486 m in 33 runs,
+   all on its four stretches; 92 m unmatched in 4 junction gaps). The remap says "already on centerline.geojson
+   (md5 ef44db97…): nothing to do".
+2. **A stand-in rehearsal of elev → project → widths → mesh → drive_test → audit_mesh, never committed** (the
+   scratch copy, outside the repo). The two fetches were replaced: USGS 3DEP by an inverse-distance read of July's
+   corridor samples (`data/source-july/corridor.elev.json`, 76,525 real 3DEP points ±60 m about the July line; a
+   plateau beyond it: 20,806 of 118,535 queried points, all in the 40 m grid's margin), Overpass widths by July's
+   `osm.widths.cache.json` re-keyed to the V3 query fingerprint (`d2f34a9f…`; July's `253170f5…`). Everything else
+   is the committed config (plus `terrain_cell_m` 1.5, the four chain tracks' value) and airoso's engine at HEAD. The
+   point is the chain's code paths on this route, not the ground: no number below is the Lariat's until real 3DEP
+   along the paint line says so.
+   - **Run 1 (the engine as merged).** elev: 1,782.7–2,288.6 m, 505.9 m of relief, 560 m of climb, "max grade
+     **30.2 %**" (below). project: 5,494 × 5,968 m, 14,445 points, the ring rotated by 14,442 points to the pylons.
+     widths: 14,445 vertices, 5.0 / 6.5 / 31.5 m (min / median / max), 100 % matched, 102 junctions flared; the 31.5 m
+     is v11,630–11,632, exit 259's flare, and 215 vertices read over 20 m — the engine's junction flares, which D2's
+     one-slab stretches and P3b's mouths replace in authoring. mesh (6 min): `terrain_cell_m` 1.5 is budget-capped
+     at **×11 ≈ 3.6 m cells** (2.72 M grass verts, split into 97 `1GRASS_*` meshes) for a 7 × 7 km box; the corridor
+     splice refines the near-road ground from the 6 × 5 m samples; **auto bridge spans 3: 20,847–21,039 m,
+     21,045–21,099 m, 24,364–24,838 m**; measured-guard 1,496 stone lips; 18 danger runs of barrier. `drive_test`
+     street_full **FAIL**: severe steps 11 (0.44/km; worst **2.445 m at st 5,375**, ±0.75 m — the July gate's worst
+     was 4.46 m at st 5,357), soft-top in lane 14, **obstruction 10** (`1WALL_PARA_stone` at st 10,620–10,625, Paradise
+     Rd), floating furniture 17, daylight 1, excursion drops 72 (far ledges 158), bumps 223.7/km, kinks 116/km,
+     replication vs the stand-in 0.03 / 0.19 / 1.26 m. `audit_mesh`: A 0, B 0, C 0, **D 28** (walls on a road: the
+     same lips), E 0, F 0, H 0, I 0, J 0, K 0.
+   - **Run 2 (after the fix below, the one-layout config).** elev prints `profile by station: 9211 of 14444
+     segments are under 2.4 m … a 1.000 m station grid (24901 points) … at the 3 m assumption the 16 % cap would
+     have been 48 % per metre`; max grade **14.3 %** (30.2 % in run 1), climb 558.8 m, the same relief. project and
+     widths identical to run 1. mesh: the same three auto spans; measured-guard 1,475 lips (1,496). The draft gates on
+     run 2 are recorded in the commit that follows this one (they were still running when this was written).
+
+### Found and fixed: the elevation profile read the 1 m climb as 3 m points
+
+`scripts/elevation/heightfield.py` `build()` handed `snap_to_ground` a hard-coded `spacing_m` of 3.0 — exact for every
+centreline the gps stage resamples (measured 2026-11-01 on all ten tracks with a `data/centerline.geojson`: no segment
+under 2.07 m), wrong for the paint centreline, which is **1 m over the climb and Paradise Rd (9,208 of 14,444 segments)**.
+The smoother turns its metre windows and its cap into points through that number, so on the 1 m stretches the 33 m
+despike was 11 m wide, the 9 m mean 3 m, and the **16 % grade cap 0.48 m per point = 48 % per metre** — which is why
+run 1's profile carried 25–30 % one-metre steps on Paradise Rd (the stand-in's sample noise, uncut), the measured-guard
+read them as in-band drops and stood ten stone lips in the lane at st 10,620, and the max-grade stat read 30.2 % where
+the dossier's worst 20 m is 11.5 %. Fix: `profile_along` — when more than 5 % of a line's segments are under 0.8 × 3 m,
+the raw profile is read onto a ~1 m station grid (lap / round(lap); the closing vertex repeated), `snap_to_ground` runs
+there with that spacing, and the result is read back onto the line's own stations; a uniform 3 m line takes the old
+call unchanged. `tests/elevation/test_profile_by_station.py`: byte-identical on 3 m (with the gps stage's corner
+jitter), four 1.0 m cliffs on a mixed line capped to ≤ 16.5 % per metre where the 3 m read let more than 25 % through,
+an open line keeps both ends. `centerline.elevation.json` records the path under `profile`. This is the
+"profile by station" item of the unmerged branch 1, redone on main (GATES-CHANGELOG 2026-11-01, builder side).
+
+### Found, not fixed — what the Windows run reads first
+
+- **The two suspect spans of P2 step 5 come back on this route.** The detector (`build_mesh._bridge_detector`,
+  `BRIDGE_MIN_H_M` 3.5 over `BRIDGE_MIN_SPAN_M` 12, on the raw 3DEP profile) minted 20,847–21,099 m (US-6 **under**
+  C-470: the lap passes under a bridge, not over one) and 24,364–24,838 m (from the lid at ~24,350 to 62 m before the
+  pylons: the real deck is the tens of metres over the US-6 tunnel ways 533503591 / 533679737, not 474 m of 19th St,
+  whose +5.7 % climb a level deck would erase). On the stand-in they may be the plateau's doing; on real 3DEP they
+  were July's. The remedy stays the plan's: declare the lid from the tunnel footprint and drop the auto spans unless
+  the aerial shows a lap bridge — the declared lid lives on the Windows-box branch; on main the only declaration is
+  `capture.bridges` (`scripts/capture/evidence.py`), which the prep's `declare_bridge_spans` and `kn5_ground_check`
+  read beside `bridge.spans.auto.json`. **Read `data/bridge.spans.auto.json` after the first `--draft-only` run before
+  anything else.**
+- **Terrain cells.** `terrain_cell_m` 1.5 is capped by `terrain_vertex_budget` (3,000,000) at ~3.6 m on this box's
+  7 × 7 km grid: under the 6.1–6.7 m road (L3b wants cells finer than the road; the four chain tracks run 1.25–1.5 m
+  on 1–3 km laps). The corridor splice and the contact pins carry the near-road ground; whether `kn5_ground_check`'s
+  5 cm p95 holds is the Windows run's to read, and `terrain_vertex_budget` is the knob if it does not. The config
+  does not declare `terrain_cell_m` yet: set it with the budget on the Windows box, where the mesh is timed.
+- **st 5,375 on the climb** (July's 5,357): a 2.4 m step in the stand-in's road at one station, the lap's worst in
+  both eras. The stand-in cannot say whether it is the stacked legs (C7–C10 are 20.5 m apart in plan), a cut face in
+  the corridor samples, or the plateau; the underlay will show it, and P3a's cut/fill by station is the plan's answer.
+- **The draft's walls are the engine's** (`1WALL_PARA_stone` lips from the measured-guard, `1WALL_CHAINL_warn` fences
+  at 18 blind corners): on the Lariat the real edge is 1913 stone, W-beam or open (A4, D7 item 4), authored in P3d.
+  They ride into `loop.blend` as `GEN_wall`, to be replaced, never promoted as they stand.
+- **The junction flares** (102, up to 31.5 m): the engine's; D2's slabs and P3b's mouths own those places.
+
+### The Windows run, in order
+
+1. `bash tools/ship_track.sh lookout-lariat --draft-only` — Overpass (the gps cache is current; `widths` fetches
+   live under the 7-day freshness rule) and USGS 3DEP along the paint line; read the `[elev] profile by station` line
+   and `data/bridge.spans.auto.json`, then `drive_test` + `audit_mesh` on `data/track.obj` as the four did on their
+   drafts (Sand Creek 2026-10-29), before any Blender time.
+2. `bash tools/ship_track.sh lookout-lariat` — underlay → prep → split → export → AI draft → verify_kn5 → folder → map →
+   the three street gates → install as "doooom Colorado - Street — Full" into `content/tracks/lookout_lariat` (July
+   parked in the archive). That completing is **T0**; the gates green on the built kn5 is **T1**.
+3. D4 B: the same with `road_profile.verge_m` 1.25 and `install_folder` `lookout_lariat_verge` swapped in, on a scratch
+   copy (`SHIP_PROJ`), its gate files copied by hand. Then Kevin drives both: Drive 1's questions are in the dossier §10.
+
+### Tests
+
+`tests/tools/test_ship_track_chain.py` (two pins moved with the change: the install folder is the slug; a first-pass
+ship list without `treefx` is allowed), `test_route_oneway_check.py` (reads the real config; the parked Reverse is
+judged), `test_remap_centreline_config.py`, `test_paint_centreline.py`, `test_verify_centreline_paint.py`,
+`test_fit_hairpins.py`, `test_layout_dummies.py`, `test_split_single_layout.py`, `tests/fleet/test_registry_moves.py`,
+`tests/elevation/` (the new file among them): all green here. `fleet.cli lint` is unchanged (the three retired repos
+absent from this box, S8 on airoso: both pre-existing).
+
 ## SHELVED (Kevin, 2026-10-12)
 
 > "i have another plan instead of the lariat rebuild so let's shelve that for now. we're going to expand college down waring to princess. view, princess view to mission gorge, and mission gorge to jackson, then extend jackson down to mission gorge. we'll add to the network map instead of building the lariat. save the plan for the lariat for after we've built a few phases of lake murray"

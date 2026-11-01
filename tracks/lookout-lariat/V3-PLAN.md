@@ -3,6 +3,12 @@
 > **SHELVED 2026-10-12 (Kevin):** "i have another plan instead of the lariat rebuild so let's shelve that for now. we're going to expand college down waring to princess. view, princess view to mission gorge, and mission gorge to jackson, then extend jackson down to mission gorge. we'll add to the network map instead of building the lariat. save the plan for the lariat for after we've built a few phases of lake murray"
 > This plan stays the plan of record for when the Lariat resumes. Unmerged P2 / Drive-1 branches and how to resume:
 > ledger 0048 "SHELVED".
+>
+> **UNSHELVED 2026-11-01 (Kevin): "Start the lariat."** Resumed at P2 through the chain: `ship.json` lists the draft
+> as gps → paint centreline → remap → the two centreline gates → elev → project → widths → **mesh** → underlay, on the one
+> `street_full` layout (Drive 1, A13); the state is in ledger 0048 "Started". The unmerged P2 / Drive-1 branches of the
+> SHELVED note exist on the Windows box only (none is on `doooom-fast/airoso`); of them, the underlay landed on main
+> 2026-10-28. The install folder follows ONE-CHAIN §3 (`lookout_lariat`, the chain parks July), which supersedes A11.
 
 
 > **2026-10-11, revised twice the same day after review. This is a plan only: nothing is built

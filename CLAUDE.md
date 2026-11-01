@@ -16,7 +16,7 @@ remote (local k10-track-agents) is history only.
 **The V3 model (docs/V3-PLAN.md):** the engine emits first drafts; Claude hand-authors geometry
 (Blender / readable intermediates); deterministic gates judge every build; Kevin's drive test is
 the only ground truth. Do not write kn5 generators, do not reverse-engineer binaries, do not
-generate AI splines from GPS (docs/history/HANDOFF.md bans stand). Priority: San Diego — the Lake Murray network expansion, in phases (Kevin 2026-10-12: College → Waring → Princess View → Mission Gorge → Jackson; ledger 0054). Lookout Lariat is SHELVED until after a few Lake Murray phases (plan kept: `tracks/lookout-lariat/V3-PLAN.md`, ledger 0048). Then Sand Creek.
+generate AI splines from GPS (docs/history/HANDOFF.md bans stand). Priority: San Diego — the Lake Murray network expansion, in phases (Kevin 2026-10-12: College → Waring → Princess View → Mission Gorge → Jackson; ledger 0054). Lookout Lariat is UNSHELVED (Kevin 2026-11-01: "Start the lariat"): the chain's next track, Drive 1 = the road and the ground on `street_full` (`tracks/lookout-lariat/V3-PLAN.md`, ledger 0048 "Started"); the rebuild order after it is docs/ONE-CHAIN.md §4.
 
 ---
 

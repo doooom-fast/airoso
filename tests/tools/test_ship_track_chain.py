@@ -291,7 +291,7 @@ def test_install_folder_from_config_parked_old_build_and_running_game_refused():
         cfg = json.loads((ROOT / "tracks" / track / "track.config.json").read_text(encoding="utf-8"))
         assert re.match(r"^[A-Za-z0-9_]+$", cfg["install_folder"]), cfg["install_folder"]
     assert json.loads((ROOT / "tracks" / "lookout-lariat" / "track.config.json").read_text(encoding="utf-8"))[
-        "install_folder"] == "lookout_lariat_v3"                                          # plan A11
+        "install_folder"] == "lookout_lariat"      # ONE-CHAIN §3: the slug, no suffix (supersedes plan A11's _v3; 2026-11-01)
     install = TEXT[_first('step "install: $AC/$INSTALL_FOLDER'):]
     assert 'mv "$AC/$old" "$ARCHIVE/$STAMP/$old"' in install and 'ARCHIVE="D:/k10-track-archive"' in TEXT
     assert "_prev\"" not in install.replace('"${INSTALL_FOLDER}_prev"', ""), "never a _prev left in content/tracks"
@@ -555,7 +555,9 @@ def test_sd_assembler_runs_through_the_v021_shim_as_in_ship_sd():
     # the road gate OBJ is a ship step before the track folder (make_treefx / ext_config read tile names off it)
     for spec in (SD_SPEC, LARIAT_SPEC):
         sh = _spec(spec)["steps"]["ship"]
-        assert sh.index("road_obj") < sh.index("track_folder") < sh.index("treefx"), spec
+        assert sh.index("road_obj") < sh.index("track_folder"), spec
+        if "treefx" in sh:          # the Lariat's first chain pass lists no treefx (2026-11-01, ledger 0048 "Started")
+            assert sh.index("track_folder") < sh.index("treefx"), spec
         assert "road_obj" not in _spec(spec)["steps"]["gate"], spec
 
 

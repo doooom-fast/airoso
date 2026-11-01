@@ -144,6 +144,64 @@ def snap_to_ground(z: list[float], *, spacing_m: float, grade_cap_pct: float,
     return out
 
 
+SHORT_SEGMENT_FRAC = 0.8     # a segment under this fraction of CENTERLINE_SPACING_M is "short" (a 1 m resampled stretch)
+SHORT_SEGMENT_SHARE = 0.05   # more than this share of short segments -> the profile runs by station
+
+
+def profile_along(z_raw: list[float], seg_m: list[float], *, grade_cap_pct: float,
+                  median_m: float = MEDIAN_WINDOW_M, closed: bool = True) -> tuple[list[float], dict]:
+    """snap_to_ground on a line whose points are NOT the gps stage's uniform 3 m.
+
+    snap_to_ground turns its metre windows and its grade cap into POINTS through ``spacing_m``, and build()
+    always handed it CENTERLINE_SPACING_M (3.0): every centreline the gps stage resamples is 3 m, so that was
+    exact. The Lariat's paint centreline (tools/paint_centreline.py, 2026-10-11) is 1 m over the climb and
+    Paradise Rd and 3 m elsewhere (9,208 of 14,444 segments under 2 m). Read as 3 m points, a 1 m stretch gets a
+    33 m median that is 11 m wide, a 9 m mean that is 3 m wide and a 16 % grade cap of 0.48 m per point: 48 %
+    per metre. The stand-in rehearsal of 2026-11-01 (ledger 0048 "Started") read 25-30 % one-metre steps on
+    Paradise Rd through the "capped" profile.
+
+    When more than SHORT_SEGMENT_SHARE of the segments are shorter than SHORT_SEGMENT_FRAC x 3 m, the raw
+    profile is read onto a uniform station grid (spacing = lap / round(lap), ~1 m, the closing vertex
+    repeated on a closed lap), snap_to_ground runs there with that spacing, and the result is read back onto
+    the line's own stations by linear interpolation. Every uniform 3 m line takes the old call unchanged
+    (byte-identical: tests/elevation/test_profile_by_station.py). Returns (z_smooth, info)."""
+    n = len(z_raw)
+    short_m = SHORT_SEGMENT_FRAC * CENTERLINE_SPACING_M
+    n_short = sum(1 for d in seg_m if d < short_m)
+    info = {"by_station": False, "short_segments": n_short, "short_m": short_m, "spacing_m": CENTERLINE_SPACING_M,
+            "grid_points": n}
+    if n < 3 or len(seg_m) != n - 1 or n_short <= SHORT_SEGMENT_SHARE * len(seg_m):
+        return snap_to_ground(z_raw, spacing_m=CENTERLINE_SPACING_M, grade_cap_pct=grade_cap_pct,
+                              median_m=median_m, closed=closed), info
+    st = [0.0]
+    for d in seg_m:
+        st.append(st[-1] + d)
+    lap = st[-1]
+    m = max(2, round(lap))
+    sp = lap / m
+    grid = [k * sp for k in range(m + 1)]        # grid[-1] == lap: the closing vertex on a closed lap
+
+    def _interp(xs, ys, x):
+        import bisect
+        k = bisect.bisect_right(xs, x)
+        if k <= 0:
+            return ys[0]
+        if k >= len(xs):
+            return ys[-1]
+        t = (x - xs[k - 1]) / max(1e-9, xs[k] - xs[k - 1])
+        return ys[k - 1] + t * (ys[k] - ys[k - 1])
+
+    zg = [_interp(st, z_raw, x) for x in grid]
+    if closed:
+        zg[-1] = zg[0]                              # the duplicate snap_to_ground folds out (L13)
+    out_g = snap_to_ground(zg, spacing_m=sp, grade_cap_pct=grade_cap_pct, median_m=median_m, closed=closed)
+    out = [_interp(grid, out_g, x) for x in st]
+    if closed and abs(z_raw[0] - z_raw[-1]) < 1e-9:
+        out[-1] = out[0]
+    info.update({"by_station": True, "spacing_m": sp, "grid_points": m + 1})
+    return out, info
+
+
 def smooth_profile(z: list[float], *, spacing_m: float, median_m: float = MEDIAN_WINDOW_M,
                    mean_m: float = SMOOTH_WINDOW_M, passes: int = SMOOTH_PASSES) -> list[float]:
     """Turn raw sampled elevations into a launch-free racing-line profile (closed loop).
@@ -313,8 +371,13 @@ def build(project_dir: str | Path) -> dict:
     #
     # The bumps barely moved, because they do not come from the centerline profile at all — that
     # was an offline proxy measuring the wrong quantity. Road touching ground takes precedence.
-    z_smooth = snap_to_ground(z_raw, spacing_m=CENTERLINE_SPACING_M, grade_cap_pct=_cap_pct,
-                              median_m=_med_m, closed=_closed)
+    _seg = [haversine(coords[i - 1], coords[i]) for i in range(1, len(coords))]
+    z_smooth, _prof = profile_along(z_raw, _seg, grade_cap_pct=_cap_pct, median_m=_med_m, closed=_closed)
+    if _prof["by_station"]:
+        print(f"  [elev] profile by station: {_prof['short_segments']} of {len(_seg)} segments are under "
+              f"{_prof['short_m']:.1f} m (a 1 m resampled line), so the despike, mean and grade cap run on a "
+              f"{_prof['spacing_m']:.3f} m station grid ({_prof['grid_points']} points) and are read back onto the line; "
+              f"at the 3 m assumption the {_cap_pct:.0f} % cap would have been {_cap_pct * CENTERLINE_SPACING_M:.0f} % per metre")
     if _med_m != MEDIAN_WINDOW_M:
         print(f"  [elev] despike window {_med_m:.0f} m (declared; default {MEDIAN_WINDOW_M:.0f} m)")
     if src is usgs_3dep:
@@ -334,7 +397,7 @@ def build(project_dir: str | Path) -> dict:
         "mean_grade_pct": round(sum(grades) / len(grades), 2), "lap_m": round(dist[-1], 1),
     }
     (data / "centerline.elevation.json").write_text(json.dumps({
-        "spacing_m": CENTERLINE_SPACING_M, "median_window_m": MEDIAN_WINDOW_M,
+        "spacing_m": CENTERLINE_SPACING_M, "profile": _prof, "median_window_m": MEDIAN_WINDOW_M,
         "smooth_window_m": SMOOTH_WINDOW_M, "smooth_passes": SMOOTH_PASSES, "point_count": len(coords),
         "distance_m": [round(x, 1) for x in dist],
         "z_raw_m": [round(v, 2) for v in z_raw], "z_smooth_m": [round(v, 2) for v in z_smooth],

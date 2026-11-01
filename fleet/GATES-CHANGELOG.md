@@ -14,6 +14,31 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-01 — the one-way gate judges a parked layout too (the Lariat started; ledger 0048 "Started"; wiring, no threshold)
+
+`tools/route_oneway_check.py` (a hard draft gate in the chain: `steps.draft route_oneway_check`) read `layouts[]`
+alone. The chain's first pass ships ONE layout and parks the others in `track.config.json` `_layouts_v3_owed`
+(Sand Creek's reverse 2026-10-28; the Lariat's `street_reverse`, `race_acw`, `race_cw` 2026-11-01), which would have
+taken Street Reverse's four declared against-the-arrows stretches (4,486.5 m, D2 a) out of the gate's sight for as long
+as it is parked. Now every layout under `_layouts_v3_owed.layouts` is judged beside the live ones, marked `parked` in
+`data/oneway_check.json` and on the printed line; a race layout stays SKIP as before. No number moved (`snap_m` 3.0,
+`min_cos` 0.7). Proven on the real Lariat (Full 0 m against, Reverse (parked) 4,486 m in 33 runs all on its four
+stretches, PASS) and by `tests/tools/test_route_oneway_check.py`, which reads the real config.
+
+### Same day — the elevation profile by station (the Lariat's 1 m paint centreline; builder side, no gate moved)
+
+`scripts/elevation/heightfield.py` `build()` handed `snap_to_ground` a hard-coded `spacing_m` of 3.0 (the gps stage's
+resample), which is how its 33 m despike, 9 m mean and grade cap become points. Every other track's centreline is
+3 m (measured 2026-11-01: ten tracks, no segment under 2.07 m); the Lariat's paint centreline is 1 m over the climb
+and Paradise Rd (9,208 of 14,444 segments), so there the 16 % cap was **48 % per metre** and the windows a third of
+their width. The stand-in rehearsal read 25–30 % one-metre steps on Paradise Rd through the "capped" profile, and
+`build_mesh`'s measured-guard then stood ten stone lips in the lane at st 10,620 (drive_test obstruction 10, audit D 28).
+Now `profile_along`: when more than 5 % of a line's segments are under 0.8 × 3 m, the raw profile is read onto a
+~1 m station grid, `snap_to_ground` runs there with that spacing, and the result is read back; a uniform 3 m line
+takes the old call unchanged (`tests/elevation/test_profile_by_station.py`: byte-identical on 3 m, four 1.0 m cliffs
+capped to ≤ 16.5 %/m where the 3 m read let 25 %+ through). No gate threshold moved; `drive_test`'s replication
+reference (`z_raw_m`) is untouched. `centerline.elevation.json` records the path taken under `profile`.
+
 ## 2026-10-29 — the split's single-layout rule; `--from <step>` never skips a gate (ledger 0060; wiring, no threshold)
 
 The first non-San-Diego chain run (Exotics Racing, the Windows workshop) passed the draft, the underlay and the prep

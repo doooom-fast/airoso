@@ -209,7 +209,7 @@
    "bottom": 10.56,
    "eave": 13.92,
    "off_terrain": false,
-   "collider": true
+   "collider": false
   },
   {
    "key": "post10",
@@ -254,7 +254,7 @@
    "bottom": 12.65,
    "eave": 15.49,
    "off_terrain": false,
-   "collider": true
+   "collider": false
   }
  ],
  "pads": [
@@ -273,8 +273,8 @@
   }
  ],
  "guardrail": {
-  "runs": 96,
-  "rail_m": 553.4,
-  "posts": 315
+  "runs": 99,
+  "rail_m": 560.6,
+  "posts": 320
  }
 }

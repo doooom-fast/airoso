@@ -3,7 +3,7 @@
  "existed": true,
  "blender": "4.2.22 LTS",
  "source_obj": "data/track.obj",
- "obj_md5": "50d1a02b70c6439c7ea5ecfaf90fa0eb",
+ "obj_md5": "bf151fb0007812bbb3626cd9092fbd3c",
  "frame": "local (E,up,N) -> Blender (E,N,up) as (x,y,z)->(x,z,y), faces re-wound",
  "groups": [
   {
@@ -583,8 +583,8 @@
   {
    "name": "MARKINGS",
    "collection": "GEN_misc",
-   "verts": 10296,
-   "faces": 5148,
+   "verts": 8584,
+   "faces": 4292,
    "uv": true
   },
   {
@@ -604,8 +604,8 @@
   {
    "name": "1WALL_PARA_stone",
    "collection": "GEN_wall",
-   "verts": 2112,
-   "faces": 2112,
+   "verts": 2152,
+   "faces": 2152,
    "uv": true
   },
   {
@@ -711,10 +711,24 @@
   "1GRASS_bx",
   "1GRASS_ring",
   "1WALL_CHAINL_warn",
-  "1WALL_PARA_stone",
+  "1WALL_GHOST_1WALL_PARA_stone",
   "BARRIER_warning"
  ],
- "auth_untouched": [],
+ "auth_untouched": [
+  "1WALL_KRAILBW_0",
+  "1WALL_KRAILBW_2",
+  "1WALL_KRAILBW_3",
+  "1WALL_TILTUP_0",
+  "BUILDING_METAL_0",
+  "GUARDRAIL_0",
+  "PADAPRON_0",
+  "PRAIRIECARD_0",
+  "PRAIRIECARD_1",
+  "PRAIRIECARD_2",
+  "ROOFTOP_DARK_0",
+  "ROOFTOP_TAN_0",
+  "ROOFTOP_WHITE_0"
+ ],
  "collections": [
   "GEN_road",
   "GEN_kerb",

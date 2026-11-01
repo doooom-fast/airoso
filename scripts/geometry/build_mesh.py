@@ -221,9 +221,39 @@ BRIDGE_MIN_H_M = 3.5       # road must ride this far above bare earth to earn a 
 BRIDGE_MIN_SPAN_M = 12.0   # ...over at least this long a run (a real span, not a one-vertex bump)
 
 
+def seam_rule_spans(spans: list[tuple[float, float]], st: list[float], high: list[bool],
+                    closed: bool) -> tuple[list[tuple[float, float]], list[tuple[float, float]]]:
+    """L13 for a detected span list: on a CLOSED lap a span may not end on the closing vertex unless it continues
+    from vertex 0. The closing vertex IS vertex 0, so a run that reaches it while vertex 0 is not high means the
+    predicate disagrees with itself at one physical point: two frames or two profiles met at the seam (the July
+    Lariat's 525 m [24,278-24,803] span, ledger 0048). Such a run is dropped. Returns (kept, dropped). Open roads
+    and spans that do continue from vertex 0 are kept as they are."""
+    if not closed or not spans or not st:
+        return list(spans), []
+    end = st[-1]
+    kept, dropped = [], []
+    # the leading run of high stations from vertex 0 (the closing vertex IS vertex 0, so a tail span that reaches the
+    # seam continues into it); shorter than BRIDGE_MIN_SPAN_M it was never its own span, so it is merged here
+    j = 0
+    while j < len(high) and high[j]:
+        j += 1
+    head_run = (0.0, st[j - 1]) if j > 0 else None
+    for a, b in spans:
+        if abs(b - end) < 1e-9 and not high[0]:
+            dropped.append((a, b))                      # ends on the closing vertex, vertex 0 low: the July artefact
+        elif abs(a) < 1e-9 and not high[-1]:
+            dropped.append((a, b))                      # the mirror: starts on vertex 0, the closing vertex low
+        else:
+            kept.append((a, b))
+    if head_run and any(abs(b - end) < 1e-9 for a, b in kept) and not any(abs(a) < 1e-9 for a, b in kept):
+        kept.insert(0, head_run)                        # the continuation past the seam, however short
+    return kept, dropped
+
+
 def _bridge_detector(centerline_m: list[Vertex], natural_grid: list[list[Vertex]],
                      raw_ground: tuple[list[float], list[float]] | None = None,
-                     paved_zones: list[tuple[float, float, float, float]] | None = None):
+                     paved_zones: list[tuple[float, float, float, float]] | None = None,
+                     seam_rule: bool = False):
     """Return ``bridge_of(station_m) -> bool``: True where the road rides a sustained height above the
     bare earth (a real gap to span — Sand Creek's creek). Those stations get NO embankment fill (the
     valley stays open under the deck) and a bridge structure instead. Returns a no-op if there are none.
@@ -274,6 +304,13 @@ def _bridge_detector(centerline_m: list[Vertex], natural_grid: list[list[Vertex]
         if st[j - 1] - st[i] >= BRIDGE_MIN_SPAN_M:
             spans.append((st[i], st[j - 1]))
         i = j
+    if seam_rule:   # opt-in per track (bridges.l13_seam_rule): every other track keeps the detector as it was
+        _closed = (len(centerline_m) > 2 and abs(centerline_m[0][0] - centerline_m[-1][0]) < 1e-6
+                   and abs(centerline_m[0][2] - centerline_m[-1][2]) < 1e-6)
+        spans, _dropped = seam_rule_spans(spans, st, high, _closed)
+        for a, b in _dropped:
+            print(f"  bridge spans: DROPPED {a:.0f}-{b:.0f}m — ends on the closing vertex without continuing "
+                  f"from vertex 0 (L13 wrap artefact)")
     if not spans:
         # A never-true predicate, NOT None. Six call sites below ask `bridge_of(station)` and only
         # one guarded it, so every bridgeless track crashed in build_mesh — which is every flat
@@ -926,7 +963,8 @@ def build(project_dir: str | Path) -> dict:
             # road point: an invented 549 m valley, a 'deck + piers, no fill' bridge over real ground,
             # kn5_ground_check road-over-ground p95 0.60 m (ledger 0060). in_local_order maps it.
             raw_ground = (_gst, [z - elev0 for z in in_local_order(local, _ej["z_raw_m"])])
-    bridge_of = _bridge_detector(centerline, natural_grid, raw_ground=raw_ground, paved_zones=_fillet_zones)
+    bridge_of = _bridge_detector(centerline, natural_grid, raw_ground=raw_ground, paved_zones=_fillet_zones,
+                                 seam_rule=bool((cfg_raw.get("bridges") or {}).get("l13_seam_rule", False)))
     # persist AUTO-detected spans for the kn5 gate: the builder exempts them from fill/pins,
     # so the gate must exempt the same stations (declared-only exemption read auto bridge
     # valleys as 7 m of 'road hover' and wrecked the deck-vs-mountain metric).
@@ -951,7 +989,30 @@ def build(project_dir: str | Path) -> dict:
     # window, so the pass that BUILDS the fill face and the passes that may cut it back agree on
     # what that face is (ledger 0019 — they did not, and a divided street lost its embankment).
     GRADE_RATIO = 2.0
-    _grade_band = ribbon.grade_embankment(grid_xyz, centerline, widths, bank_at=bnk, band=2.5,
+    # D4 (Lookout Lariat V3-PLAN, Kevin 2026-10-11 "build both, pick by driving"; ledger 0048 "Started" 2026-11-01):
+    # road_profile.verge_m, when a track declares it, is the width of the shoulder's gentle band each side (A 0.4 m:
+    # the real width, then the real edge; B 1.25 m: a firm strip a wheel can use) AND of the grading band, which must
+    # break at the same line (the comment above). The chain's SHIP_VARIANT swaps the value in per run. Every track
+    # without the key keeps 2.5 m: byte-identical (ledger 0061 is where the 2.5 m sheet itself is on trial).
+    _verge_decl = (cfg_raw.get("road_profile") or {}).get("verge_m")
+    _verge_w = 2.5
+    if _verge_decl is not None:
+        # THE FLOOR. grade_embankment widens any band under the grid's half-diagonal + 1 m (a shelf narrower than
+        # the cell that represents it is a shelf no node samples); the sheet's verge must break on the SAME line or
+        # the ground shelf stands above the draped face (rehearsal 3, 2026-11-01: verge 0.4 vs band 3.6 m on 3.6 m
+        # cells -> 67 ground-on-top samples and 55 severe steps at the lane edge). So the declared verge is floored
+        # here, once, and the one value goes to both; a narrower edge than the grid can carry is P3a's to author.
+        _gdx = abs(grid_xyz[0][1][0] - grid_xyz[0][0][0]) if len(grid_xyz[0]) > 1 else 0.0
+        _gdz = abs(grid_xyz[1][0][2] - grid_xyz[0][0][2]) if len(grid_xyz) > 1 else 0.0
+        _floor = 0.5 * math.hypot(_gdx, _gdz) + 1.0
+        _verge_w = max(float(_verge_decl), _floor)
+        print(f"[build_mesh] road_profile.verge_m={float(_verge_decl)} m declared; the grid's representable band is "
+              f"{_floor:.2f} m ({_gdx:.1f}x{_gdz:.1f} m cells) -> the shoulder band and the grading band are "
+              f"{_verge_w:.2f} m each side (default 2.5)"
+              + ("" if _verge_w == float(_verge_decl) else
+                 "; the declared edge is narrower than this grid can carry: the draft builds the floor, the real "
+                 "edge is authored (P3a)"))
+    _grade_band = ribbon.grade_embankment(grid_xyz, centerline, widths, bank_at=bnk, band=_verge_w,
                                           ratio=GRADE_RATIO,
                                           extra_roads=[(p, w) for _n, p, w in connectors],
                                           clearance=GRASS_CLEARANCE_M, bridge_of=bridge_of)
@@ -1229,7 +1290,7 @@ def build(project_dir: str | Path) -> dict:
             # no-ground fallback: lip + 1 m verge, no sections, which also silences the ring
             # annulus, the graded floor and the stone lips downstream), raw-grid grass everywhere,
             # and a short blend band sewn in later where grass approaches the deck.
-            shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
+            shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk, verge_w=_verge_w,
                                             ground_drop=GRASS_CLEARANCE_M, bank_hold=True)
         else:
             # CONSTRUCTED (the default): the verge drapes onto grass_surf and the construction
@@ -1237,7 +1298,7 @@ def build(project_dir: str | Path) -> dict:
             # natural_ground port (6f1c734, 2026-08-19) rewrote this `else:` as
             # `elif natural_ground:`, so every track with neither a sidewalk nor natural ground
             # died on an unbound edge_group (found on Milford, 2026-10-28).
-            shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
+            shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk, verge_w=_verge_w,
                                             ground_drop=GRASS_CLEARANCE_M, ground=grass_surf,
                                             fill_apron=(str(cfg_raw.get("road_surface", "tarmac"))
                                                         == "tarmac"))
@@ -1267,7 +1328,7 @@ def build(project_dir: str | Path) -> dict:
         # A verge sheds at most (verge width / fill ratio) of height across its own width, so two
         # decks further apart than that cannot drape to one ground: keep neither verge there and
         # let the graded fill face own the gap.
-        _VERGE_W = 2.5                              # road_shoulder's verge width (== the grading band)
+        _VERGE_W = _verge_w                         # road_shoulder's verge width (== the grading band; road_profile.verge_m when declared)
         _VERGE_DY = _VERGE_W / GRADE_RATIO
         _ph5: dict = {}
         for _ci5, (_n5, _p5, _w5) in enumerate(connectors):

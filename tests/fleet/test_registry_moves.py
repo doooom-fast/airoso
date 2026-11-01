@@ -109,17 +109,28 @@ def test_real_registry_puts_the_lariat_at_airoso_once():
     ann = reg["track_annotations"]
     assert "airoso/lookout-lariat" in ann and "k10-colorado/lookout-lariat" not in ann
     found = Repo("airoso", FLEET_ROOT, air, True).tracks()
-    # the glob is a list since Milford (2026-10-28), the first track born in airoso: each listed
-    # track is discovered exactly once, and nothing else under tracks/ comes along with it
-    assert [(t.key, t.slug) for t in found] == [("airoso/exotics-racing-lv", "exotics_racing_lvms"),
-                                                ("airoso/lookout-lariat", "lookout_lariat"),
-                                                ("airoso/milford-road-course", "milford_road_course"),
-                                                ("airoso/san-diego-freeway", "san_diego_freeway")], \
-        "discovered once each, in path order"
-    lariat = found[1]
-    assert lariat.project_dir == FLEET_ROOT / "tracks" / "lookout-lariat"
+    # the glob is a list since Milford (2026-10-28), the first track born in airoso; since 2026-11-01 (Kevin: "a
+    # complete track list") it names EVERY tracks/<dir>/track.config.json, one by one: each discovered exactly once, in
+    # path order, nothing else under tracks/ coming along (tracks/_reference has no config)
+    keys = [t.key for t in found]
+    assert keys == sorted(keys) and len(keys) == len(set(keys)), "discovered once each, in path order"
+    on_disk = sorted(f"airoso/{d.name}" for d in (FLEET_ROOT / "tracks").iterdir() if (d / "track.config.json").is_file())
+    assert keys == on_disk, (keys, on_disk)
+    assert len(keys) >= 17
+    by_key = {t.key: t for t in found}
+    lariat = by_key["airoso/lookout-lariat"]
+    assert lariat.project_dir == FLEET_ROOT / "tracks" / "lookout-lariat" and lariat.slug == "lookout_lariat"
     assert lariat.kind == "street_port"
-    assert found[0].kind == "circuit_port" and found[2].kind == "circuit_port"
+    assert by_key["airoso/exotics-racing-lv"].kind == "circuit_port" and by_key["airoso/milford-road-course"].kind == "circuit_port"
     # the freeway network (2026-10-29, ONE-CHAIN §4 row 8): moved from k10-san-diego/project_freeway_net
-    assert found[3].kind == "street_port" and ann["airoso/san-diego-freeway"]["network"] is True
+    assert by_key["airoso/san-diego-freeway"].kind == "street_port" and ann["airoso/san-diego-freeway"]["network"] is True
+    # every retired repo lists its old copy under moved_out, so nothing is discovered twice when those repos are present
+    for old_repo, dirs in (("k10-colorado", ("imi", "pueblo", "aspen", "grand-junction", "pikes-peak", "second-creek",
+                                             "high-plains", "sand-creek", "lookout-lariat")),
+                           ("k10-colorado-rally", ("dragon-tail-gravel", "dragon-tail-tarmac", "under-the-dragon-gravel",
+                                                   "under-the-dragon-tarmac")),
+                           ("k10-san-diego", ("project", "project_freeway_net"))):
+        for d in dirs:
+            assert d in by_name[old_repo]["moved_out"], (old_repo, d)
+    assert not any(k.startswith(("k10-colorado/", "k10-colorado-rally/")) for k in ann), "annotations keyed at airoso"
     assert "project_freeway_net" in by_name["k10-san-diego"]["moved_out"]

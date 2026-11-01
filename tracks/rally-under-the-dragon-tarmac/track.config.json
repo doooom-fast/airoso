@@ -1,10 +1,17 @@
 {
-  "name": "Rally Colorado - Under the Dragon (Tarmac)",
+  "_deprioritised": "Kevin 2026-07-26: may be cancelled, not super interesting (registry)",
+  "name": "Under the Dragon (Tarmac)",
+  "_name_doc": "ONE-CHAIN section 3 (Kevin 2026-10-28): rally stages are '<Stage> (Gravel)' / '<Stage> (Tarmac)', two tracks (L8: surfaces.ini is per track). The engine era called it 'Rally Colorado - Under the Dragon (Tarmac)'. Installed as 'doooom Colorado \u2014 Under the Dragon (Tarmac)' (tools/ship_track.sh: ship.json ui_name_prefix + the layout's name).",
   "slug": "rally_co_under_the_dragon_tarmac",
-  "version": "0.1.0",
+  "_slug_doc": "Kept from the engine era, as Sand Creek (sand_creek_raceway) and Exotics (exotics_racing_lvms) kept theirs: every kn5 is named for it and install_folder is it, so the chain's install parks the engine-era folder of the same name instead of standing beside it. ONE-CHAIN section 3's 'folder name with _' would be rally_under_the_dragon_tarmac; renaming is the main session's call (it orphans the old install).",
+  "install_folder": "rally_co_under_the_dragon_tarmac",
+  "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (= the slug, ONE-CHAIN section 3); the previous install is parked in the archive",
+  "version": "0.2.0",
+  "_version_doc": "Keeps counting (ONE-CHAIN section 3). 0.1.0 was the engine-era config (never packaged: DEFINITION-OF-DONE 'no packaged build'); 0.2.0 keeps the pair in step with its gravel twin. Nothing has been built at 0.2.0.",
   "author": "doooom",
   "year": 2026,
-  "ui_series": "K10 Colorado Rally",
+  "ui_series": "doooom Colorado",
+  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' (was 'K10 Colorado Rally'). Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
   "archetype": "real_road",
   "road_surface": "tarmac",
   "_road_surface_doc": "DELIBERATE FICTION - CR 109 is a dirt road in reality. Identical route, elevation and mesh to the gravel build; this key is the only difference.",
@@ -33,10 +40,32 @@
     "_start_at_doc": "No start_at: without the event GPX we don't know which end the rally starts from, so the stage runs the mapped road in its OSM order. Set start_at to the real start once the GPX is in hand and the build will orient itself.",
     "width_profile": "mountain",
     "_width_profile_doc": "Rural table (3.0 m lanes, no urban parking/turn allowances). A graded county road is one narrow two-way surface, not a laned highway.",
-    "connectors": {}
+    "connectors": {},
+    "wide_corners": [
+      {
+        "station_m": 740,
+        "width_m": 10.0,
+        "_doc": "117\u00b0 switchback at the stage's first climb. Gate-exact replication of drive_test's corner feasibility check (turn >110\u00b0, corner-core width <9 m) finds it at 6.5 m; a graded county hairpin is cut wider at the apex than the road it joins. 10 m per the Dragon Tail survey pattern. CORRECTED -31 m: stations were derived from gate output, which includes the lead-in; the engine adds _lead_offset assuming they do not. Measured flare centre landed at 802 for declared 771."
+      },
+      {
+        "station_m": 2477,
+        "width_m": 10.0,
+        "_doc": "The big Douglas Creek switchback, five gate hits 2498\u20132519 peaking 137\u00b0. One flare at the centre covers the full cluster (full width \u00b118 m). 10 m, not 12 \u2014 Dragon Tail's second switchback proved 12 m overhangs its own embankment. CORRECTED -31 m: stations were derived from gate output, which includes the lead-in; the engine adds _lead_offset assuming they do not. Measured flare centre landed at 2539 for declared 2508."
+      },
+      {
+        "station_m": 22500,
+        "width_m": 10.0,
+        "_doc": "113\u00b0 hairpin on the final descent. CORRECTED -31 m: stations were derived from gate output, which includes the lead-in; the engine adds _lead_offset assuming they do not. Measured flare centre landed at 22562 for declared 22531."
+      }
+    ]
   },
   "loop": false,
-  "_loop_doc": "POINT-TO-POINT. A rally stage has two ends and is driven once: the grid goes at the eastern start, AC_TIME_0 (AC's start/finish) goes at the western finish, and the splits divide the run between them. See CLAUDE.md.",
+  "mirror_x": false,
+  "true_north_rotation_deg": 0.0,
+  "_frame_doc": "The chain's frame (ONE-CHAIN section 1, ledger 0060): local ENU metres, no mirror, no yaw, as Lake Murray 0.19.1. Stated explicitly so tools/ship_track.sh's FRAME check reads 'False 0.0' from the config itself and scripts.geometry.projection never writes the key back.",
+  "natural_ground": false,
+  "_ground_doc": "Constructed corridor (false), not natural_ground, on this pass (2026-11-01) - against ONE-CHAIN section 4's rally_stage row, deliberately. The engine's natural path (build_mesh: ribbon.road_shoulder bank_hold, a 2 m blend band, 'corridor machinery OFF') skips the measured-guard lip pass and the shoulder drape; Milford tried it on 2026-10-28 and drive_test failed on 31 lidar banks at the pavement edge, which is why every chain circuit but Exotics runs constructed; and the constructed path is the one these stages passed all four gates on (ledger 0014). Rehearsed offline 2026-11-01 on Dragon Tail (Gravel)'s engine-era cached data (40 m grid, no corridor field), drive_test: constructed 0 ground-on-top, 237 severe steps, 64.5 bumps/km, FAIL on 2 floating parapet columns only; natural_ground 1,836 ground-on-top, 449 severe, 80.2 bumps/km. Flip this key once the Windows draft (with data/corridor.elev.json, the near-native 3DEP the natural path depends on) is green constructed, and compare.",
+  "_loop_doc": "POINT-TO-POINT. A rally stage has two ends and is driven once (L11): the grid goes at the start of the road (here the north-east end, CR 109's OSM order), AC_TIME_0 (AC's start/finish) goes at the far south-west end as the finish, and the splits divide the run between them (scripts/geometry/dummies.py).",
   "default_width_m": 6.5,
   "width_overrides": [],
   "osm_road_widths": false,
@@ -148,20 +177,27 @@
   "layouts": [
     {
       "id": "stage",
+      "name": "Under the Dragon (Tarmac)",
+      "run": "Point to point, north-east to south-west along County Road 109 (the mapped road's OSM order)",
       "ai": "ai/stage",
-      "_doc": "The stage as the rally runs it: east to west along CR 116."
+      "_doc": "The one layout: CR 109 in its OSM order, north-east (39.8628, -108.9059, toward Rangely) to south-west (39.7466, -109.0495). Which end the rally starts from is unknown without the event GPX (route._start_at_doc). ONE-CHAIN section 3: a rally stage's surfaces are two TRACKS (L8), never two layouts."
     }
   ],
   "ui_tags": [
+    "circuit",
     "rally",
     "stage",
     "point-to-point",
     "tarmac",
     "real-roads"
   ],
+  "_ui_tags_doc": "'circuit' first, deliberately: Content Manager refuses Race and Track Day sessions on a track not tagged 'circuit' (scripts/ac/track_folder.py ui_track_json adds it only on a loop), and L11's timing (the grid at the start, AC_TIME_0 at the finish) posts a stage time only in a session whose clock starts at the green: a one-lap Race. Practice / Hotlap arm the clock on the first AC_TIME_0 crossing, which on a stage is the finish. To be confirmed in the seat (does a 1-lap Race post the stage time?).",
   "ui_description": "Paved (fictional) point-to-point rally stage near Rangely, Colorado, built from real OpenStreetMap county-road geometry and USGS 3DEP elevation. Drive it once, start to finish - it is a stage, not a lap.",
   "terrain_cell_m": 8.0,
   "_terrain_cell_doc": "The road is 6.5 m wide; the engine default gives ~10 m cells here, so a terrain triangle can span the whole carriageway. 8 m target -> x5 upsample -> ~8 m cells and ~1.46 M verts. x7 (5.7 m cells, 2.87 M verts) ran the mesh build out of memory and left a truncated track.obj, so the budget is capped deliberately.",
   "terrain_vertex_budget": 1600000,
-  "true_north_rotation_deg": 0.0
+  "corridor_refine_factor": 7,
+  "corridor_stencil_factor": 0.32,
+  "readme_about": "Real roads from OpenStreetMap at real USGS 3DEP elevation: County Road 109 south-west of Rangely, Colorado, 25.7 km point to point (the rally's 'Under the Dragon - CR 109'). A stage is driven once, start to finish - not a lap.",
+  "_chain_doc": "2026-11-01, the chain pass (ONE-CHAIN section 4 row 6), DEPRIORITISED (_deprioritised). The engine-era tarmac config had drifted from its twin (no corridor_refine_factor, the ledger 0014 float fix; Under the Dragon also no route.wide_corners, so its three switchbacks would have been undrivable at 6.5 m); every geometry key is now the gravel twin's, and the pair differ only in what road_surface forks (L8, docs/RALLY-CONVENTIONS.md: name, slug, road_surface, road_markings, ui text and tags). Changed for the chain: name and ui_series (the name set), version 0.2.0, install_folder (= slug), the frame stated (mirror_x false, true_north_rotation_deg 0.0), natural_ground stated, one `stage` layout carrying its name and run text, 'circuit' in ui_tags (_ui_tags_doc), readme_about (the packed README otherwise says '... km a lap'). Unchanged and still read by the draft: source, route (roads, bbox, start_at, wide_corners), loop false (L11), default_width_m 6.5, road_profile.max_grade_pct 18, kerb / runoff / road_text off, road_markings, the terrain keys, texture_overrides, road_surface (scripts/ac/pbr.load_overrides forks the 1ROAD texture, track_folder.surfaces_ini the physics). INERT through the chain: scenery.* was read by the retired environment stage (scripts/environment/build_env.py), which the chain never runs - the pinyon-juniper woodland, rock cuts and everything else on the land are authoring (AUTH_* in loop.blend), owed. The rehearsal and what the Windows run reads first: ship.json _owed / _windows_first. Terrain (L3b): the 40 m 3DEP grid is 336 x 330 nodes (a 13 x 13 km box): x5 (2.76 M) and x4 (1.77 M) exceed terrain_vertex_budget 1.6 M, so build_mesh takes x3 = 13.3 m coarse cells (994 k verts); corridor_refine_factor 7 (corridor_stencil_factor 0.32) refines the 10,161 pavement quads to 1.9 m - finer than the 6.5 m road, near the chain circuits' 1.25-1.5 m. Left as the engine era tuned it (ledger 0014); raising the budget to 1.8 M would buy 10 m coarse cells at ~+0.8 M verts, not tried."
 }

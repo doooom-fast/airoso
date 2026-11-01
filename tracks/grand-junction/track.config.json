@@ -2,8 +2,8 @@
   "archetype": "race_circuit",
   "name": "Grand Junction Motor Speedway",
   "slug": "grand_junction",
-  "version": "0.1.1",
-  "mirror_x": true,
+  "version": "0.2.0",
+  "mirror_x": false,
   "loop": true,
   "default_width_m": 9.75,
   "location": {
@@ -14,7 +14,7 @@
     "country": "United States"
   },
   "origin": "centroid",
-  "true_north_rotation_deg": 180.0,
+  "true_north_rotation_deg": 0.0,
   "surfaces": {
     "road": "1ROAD",
     "grass": "GRASS",
@@ -58,6 +58,8 @@
   "source": {
     "type": "from_track",
     "track": "source/osm_fixes.json",
+    "smooth_window": 0,
+    "_smooth_window_doc": "2026-11-01 (ledger 0060, High Plains' lesson): source/osm_fixes.json is a list of 53 OSM nodes (5.7 m apart on the corners, up to 149 m on the straights), not a 1 Hz GPS drive; from_track's 5-fix moving average put the line 5.74 m median / 10.95 p95 / 14.36 m max off the source polygon, i.e. every one of the 11 corners cut by more than the 9.75 m road, and shortened the lap 1,321 -> 1,130 m (the V1 builds of ledger 0018 drove 1,032 m). 0 = no smoothing: the line is the OSM polygon resampled at 3 m (build_mesh still corner-rounds it for the sweep). The closing 127 m (last node -> first) is the east straight's own segment (0.4 / 3.1 deg turn at its ends), not a chord.",
     "_note": "Real OSM highway=raceway way 293789503 at 3002 N I-70 Frontage Rd, Grand Junction CO (Mesa County). Closed 54-node ring, native CCW winding reversed to CW. ROAD COURSE (~0.9 mi advertised, 11 turns, ~9.75 m/32 ft wide asphalt sprint/kart circuit). Flat mesa-top site north of I-70; elevation from USGS 3DEP bare-earth (do NOT flatten); NO banking. A '1.25-mi oval/banked' web claim was a conflation with other venues and is rejected."
   },
   "road_profile": {
@@ -75,5 +77,14 @@
     "_orientation_doc": "Research 2026-07-20: GJMS deliberately runs BOTH directions by event; CW is the default (LapMeta primary variation). Our ring is CW. S/F on the east-side main straight beside the paddock (~39.1087,-108.4918), CW = heading south into the SE hairpin. Pit lane parallel on the east (paddock) side, ~150 m, openings both ends. A CCW layout variant is a future option (reverse: true)."
   },
   "terrain_cell_m": 1.5,
-  "terrain_vertex_budget": 1500000
+  "corridor_refine_factor": 6,
+  "terrain_vertex_budget": 1500000,
+  "ui_tags": [
+    "circuit"
+  ],
+  "install_folder": "grand_junction",
+  "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (Lariat plan A11; ONE-CHAIN §3: the slug, no suffixes); the previous install is parked in the archive",
+  "ui_series": "doooom Colorado",
+  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
+  "_chain_doc": "2026-11-01 (ONE-CHAIN §4 row 10; Kevin 2026-11-01: 'get a complete track list and installed by morning'): to the chain. mirror_x true -> false and true_north_rotation_deg 180 -> 0 (the chain's frame, ledger 0060; road_profile has no camber, so no sign to flip); version 0.1.1 -> 0.2.0 (versions keep counting, ONE-CHAIN §3); source.smooth_window 0 (an OSM node list: the smoother had cut every corner, see _smooth_window_doc); terrain_cell_m 1.5 kept, corridor_refine_factor 6 added (the fleet standard of ledger 0025 #7, which this config never got); road_profile despike_window_m 90 / max_grade_pct 4 kept (ledger 0018: not the fix, kept as a graded circuit's profile); ui_series 'doooom Colorado', install_folder = the slug (ONE-CHAIN §3); ui_tags 'circuit' added; the one layout already 'full'. route.start_at checked offline on the gps line + projection (zero-elevation stand-in): the ring rotates 399 points, vertex 0 lands 4.6 m from start_at on the east main straight heading 170 deg (S, into the SE hairpin), clockwise, as _orientation_doc says; lap 1,321 m, 442 points from 53 nodes (advertised ~0.9 mi = 1,448 m: -8.8 %; road_profile._doc's '1.03 km' is the V1 smoothed line). Ledger 0018 / 0031's 'rough everywhere, mechanism not found' was measured on that corner-cut line; the chain's draft on the real polygon is the first new thing to try (ONE-CHAIN §4)."
 }

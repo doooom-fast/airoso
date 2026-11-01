@@ -14,6 +14,86 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-01 — the one-way gate judges a parked layout too (the Lariat started; ledger 0048 "Started"; wiring, no threshold)
+
+`tools/route_oneway_check.py` (a hard draft gate in the chain: `steps.draft route_oneway_check`) read `layouts[]`
+alone. The chain's first pass ships ONE layout and parks the others in `track.config.json` `_layouts_v3_owed`
+(Sand Creek's reverse 2026-10-28; the Lariat's `street_reverse`, `race_acw`, `race_cw` 2026-11-01), which would have
+taken Street Reverse's four declared against-the-arrows stretches (4,486.5 m, D2 a) out of the gate's sight for as long
+as it is parked. Now every layout under `_layouts_v3_owed.layouts` is judged beside the live ones, marked `parked` in
+`data/oneway_check.json` and on the printed line; a race layout stays SKIP as before. No number moved (`snap_m` 3.0,
+`min_cos` 0.7). Proven on the real Lariat (Full 0 m against, Reverse (parked) 4,486 m in 33 runs all on its four
+stretches, PASS) and by `tests/tools/test_route_oneway_check.py`, which reads the real config.
+
+### Same day — the elevation profile by station (the Lariat's 1 m paint centreline; builder side, no gate moved)
+
+`scripts/elevation/heightfield.py` `build()` handed `snap_to_ground` a hard-coded `spacing_m` of 3.0 (the gps stage's
+resample), which is how its 33 m despike, 9 m mean and grade cap become points. Every other track's centreline is
+3 m (measured 2026-11-01: ten tracks, no segment under 2.07 m); the Lariat's paint centreline is 1 m over the climb
+and Paradise Rd (9,208 of 14,444 segments), so there the 16 % cap was **48 % per metre** and the windows a third of
+their width. The stand-in rehearsal read 25–30 % one-metre steps on Paradise Rd through the "capped" profile, and
+`build_mesh`'s measured-guard then stood ten stone lips in the lane at st 10,620 (drive_test obstruction 10, audit D 28).
+Now `profile_along`: when more than 5 % of a line's segments are under 0.8 × 3 m, the raw profile is read onto a
+~1 m station grid, `snap_to_ground` runs there with that spacing, and the result is read back; a uniform 3 m line
+takes the old call unchanged (`tests/elevation/test_profile_by_station.py`: byte-identical on 3 m, four 1.0 m cliffs
+capped to ≤ 16.5 %/m where the 3 m read let 25 %+ through). No gate threshold moved; `drive_test`'s replication
+reference (`z_raw_m`) is untouched. `centerline.elevation.json` records the path taken under `profile`.
+
+### Same day — the D4 verge width from the config (`road_profile.verge_m`; builder side, no gate moved)
+
+`build_mesh` built the shoulder's gentle band and the grading band at a hard-coded 2.5 m each side (`ribbon.road_shoulder`
+`verge_w`, `grade_embankment` `band`, the connector trim's `_VERGE_W`: "must break at the same line"). Kevin's D4
+(V3-PLAN, 2026-10-11) builds the Lariat twice, at 0.4 m (the real width, then the real edge) and 1.25 m (a firm strip),
+and on the 2026-10-12 branch that width lived only in the branch's own underlay. Now `road_profile.verge_m`, when a
+track declares it, is that band in all three places and `SHIP_VARIANT` writes the variant's value into the workshop
+config per run; every track without the key keeps 2.5 m, byte-identical. **Floored at the grid's representable band**
+(`grade_embankment`'s half-diagonal + 1 m, which it already enforced on its own band): the stand-in rehearsal of the
+full draft order read the stagger of a 0.4 m sheet against a 3.6 m shelf as 67 ground-on-top samples and 55 severe
+steps at the lane edge (rehearsal 3, ledger 0048 "Started"), so the one floored value goes to both, the build says
+when the declared edge is narrower than its grid can carry, and the narrower edge is P3a's to author — on the Lariat's
+7 × 7 km box at the 3 M-vertex budget (3.6 m cells) D4 A and B build the same 3.6 m band until then. The face that
+drapes from the band to the ground is unchanged — it is what ledger 0061 (2026-11-01, the paved-hillside edges on the
+four chain tracks) puts on trial, and it will move there, not here.
+
+### Same day — the review's fixes: widths in the local order, the seam rule both ways, the closed ring without its duplicate (builder side, no gate moved)
+
+A fresh-eyes review of the Lariat integration (ledger 0048 "Started") found four defects, each fixed with a test:
+- **`scripts/gps/widths_from_osm.py` wrote its per-vertex widths 1:1 by geojson index** into `centerline.local.json`,
+  whose ring projection re-orders to `route.start_at` / `route.reverse` after the geojson is written (High Plains: 815
+  of 1,074 points). Now it applies the permutation projection records (`in_local_order`, ledger 0060) and marks
+  `widths_order: "local"`; `scripts/gps/measured_widths.py` rotates only a file without the mark. No shipped track
+  changes: Sand Creek (the only chain track that runs `widths`) has no recorded permutation (identity), the Lariat's
+  `measured_widths` already undid the offset by matching. `tests/gps/test_widths_local_order.py`,
+  `test_measured_widths.py` (+1).
+- **`build_mesh.seam_rule_spans`** dropped only a span ending on the closing vertex with vertex 0 low; the mirror (a
+  span starting on vertex 0 with the closing vertex low) is the same self-disagreement and is dropped too, and a tail
+  span that continues from vertex 0 into a run too short to be its own span now carries that run with it.
+  `tests/geometry/test_bridge_seam.py` (+2).
+- **`build_kn5_loop.detect_bridge_spans`** clamped a span's head pad at 0 when the bridge began within `pad_m` of the
+  seam; on a closed lap the pad now continues before the seam like the tail pads do.
+- **`heightfield.profile_along`** forced the last grid value to vertex 0's for any `closed` line; a closed ring that
+  does not repeat its first vertex keeps its last vertex and the grid runs on round to vertex 0 (`close_seg_m`);
+  `road_profile.verge_m` of 0 is 0, not the 2.5 m default; one haversine pass instead of two.
+  `tests/elevation/test_profile_by_station.py` (+1).
+Also: `road_profile` no longer writes `z_raw_local_m` (nothing read it; a reader taking it beside `z_raw_m` would
+rotate twice). Noted, not changed: `extract_kn5.parse(keep=)` cannot step over a SkinnedMesh (its layout is unknown,
+"not supported yet" stands); `crossfall.compose`'s roll-rate scans are O(n·|bad|) (2 s on the Lariat's 8,305 stations).
+
+### Same day — a road network's reference line: what the line gates judge, and what they do not (wiring, no threshold)
+
+`tools/ship_track.sh` gained the draft step `network_reference` (`scripts/geometry/network_reference.py`, opt-in on
+`track.config.json` `network.reference_line`): a road network's ship phase — the prep, `write_ai_line`, `make_map`,
+`verify_kn5`, `drive_test` — walks ONE declared real mainline resolved from the draft's own edges (the San Diego
+freeway: I 8 eastbound, end to end), never an invented line (L1). `scripts/gps/classify.py` records each edge's
+direction of travel from the OSM ways' order only when the block exists; `build_network_mesh` records every swept
+edge line (`data/network.edges.local.json`) only then. **The hole is named, never hidden:** `drive_test` writes a
+`reference_line` key (the edges judged, the km built, every unjudged edge by id and name) and prints the list;
+`make_map` draws every edge; `ship.json` `_owed` says "NOT JUDGED". No threshold moved; a track without the block
+writes every file byte for byte as before (`tests/geometry/test_network_reference.py`,
+`tests/ac/test_network_ship_contract.py`, `tests/gps/test_classify_travel_dir.py`). The stand-in rehearsal on Lake
+Murray's cached motorway ways also found a network-draft defect, owed to `scripts/elevation/network_elev.py`: a
+junction node gets two heights where two edges meet (0.13–0.60 m pavement steps at the mainline joints).
+
 ## 2026-10-29 — the split's single-layout rule; `--from <step>` never skips a gate (ledger 0060; wiring, no threshold)
 
 The first non-San-Diego chain run (Exotics Racing, the Windows workshop) passed the draft, the underlay and the prep
@@ -1657,6 +1737,200 @@ m2 and built 139,148 / 138,847 m2 PASS (leak 0, 0 / 406); verify_mouths x4, veri
 (2.544 / 2.386 m), verify_kn5 + --inis, check_race_kn5, verify_race (+ scenery), verify_signs (23 posts), rib_check,
 house_seat_check PASS. The terrain is round 4's but for 344 of 928,435 triangles beside the two decks, moved at most
 0.024 m.
+
+## 2026-10-12 — Lariat Drive-1 build: the Drive-1 verdict, the D4 variant per run (ledger 0048; from branch 793441f, carried onto main 2026-11-01 — the two chain steps it also added are not taken, see below)
+
+The integration of the three P2 parts (data stages, underlay, Drive-1 gates) into one Drive-1 chain
+(`tracks/lookout-lariat/ship.json`). Every value below is P5's own, carried with P5's tag; the one new value is the
+lid-end window. San Diego's chain is untouched: none of these steps is in its ship.json, the D4 helpers are no-ops
+without `SHIP_VARIANT` or `drive1_variants`, and `tests/tools/test_ship_track_chain.py`'s SD parity tests pass.
+
+### The Drive-1 verdict (new: `tools/drive1_gates.py`, step `drive1_verdict`, thresholds in `track.config.json gates.drive1`)
+
+| Row | Threshold | Flag |
+|---|---|---|
+| drive_test per street layout: soft-top in lane, obstruction, floating furniture, undrivable corners, daylight gaps | 0 each | [std: drive_test's existing count gates] |
+| drive_test: severe steps (≥ 6 cm) | **0** per layout | ⚠ [invented] (P5; drive_test's own line is > 12/km) |
+| drive_test: replication of the built road vs raw 3DEP | p95 ≤ **0.5 m**; not measured = red | ⚠ [invented in 0048] |
+| drive_test: kinks/km | ≤ `gates.drive_test.kinks_per_km_max` (19.49) | [std: MEASURED §8] (the gates part's entry above) |
+| drive_test: unguarded drops, far ledges, bumps/km, drive_test's own `fail` | recorded, not gating | P5 "recorded, not gating" (Drive 1 builds no edges) |
+| audit_mesh (street): A B D E G H I | 0 each | [std: audit_mesh's existing hard total] |
+| audit_mesh: F (curb not flush) | ≤ **15** | ⚠ [invented: Lake Murray V3's own count] (the street audit's own exit still gates F at 0 in ship_track.sh) |
+| kn5_ground_check | its own verdict (road over ground p95 ≤ 0.10 m [std]) | existing |
+| the lid: a severe step within **5 m** of either end of `capture.bridges` (each layout's own stations; reverse = lap − s) | ≤ **0.10 m** | 0.10 m ⚠ [invented in 0048]; the 5 m window ⚠ [invented] 2026-10-12 |
+| one-way, hairpin / paint, roll rate | the draft's own hard verdicts, re-read | existing (P0, P2) |
+| road inventory, stacked legs | their own verdicts | the gates part's entry above |
+| tier seams | n/a until P3a's tiers (GEN_terrain is the one-sheet placeholder) — never a pass | — |
+| verify_edges, verify_signs, TreeFX, sightline_check, race gates | recorded: Drive 2 / Drive 3 | P5 |
+
+A gating row whose report is missing is red ("not run"), never a pass. `--force-install` (P5, 0047): the verdict's
+`force_install_ok` is false when any street layout is worse than the July reference on any key
+(`gates.drive1.july_reference`: severe 253, kinks 68.3/km, drops 738, far ledges 382 [measured on v0.46.0]) or not 0
+on obstruction / floating furniture / soft-top; `tools/ship_track.sh` then refuses the forced install (before, the
+Drive-1 road gates passed `--force-install` on the caller's word alone).
+
+Proof: `tests/tools/test_drive1_gates.py` (7): all-green passes and the recorded rows never gate (drive_test's own
+`fail` from drops does not make its Drive-1 row red); each threshold flips exactly its own row (severe 1, p95 0.51,
+p95 absent, kinks 19.5 > 19.49, daylight, undrivable, B 3, F 16, kn5_ground_check FAIL, road inventory, stacked legs,
+roll rate, paint, one-way); the lid's ends in forward and reverse stations; every missing report is red; the July
+comparison key by key and the always-0 trio; input errors exit 2; the Lariat's declared values.
+
+### Not carried onto main (2026-11-01): the kn5-internal `kn5_ground_check` step and `split_street`
+
+Main's chain runs `kn5_ground` as the last gate on the kn5 set each layout loads (`data/kn5_ground_check.<id>.json`,
+EXPANSION-PLAN V5), and its split handles a single layout since 2026-10-29 (the entry above "the split's
+single-layout rule"); `tools/ship_track_spec.py` keeps `prep = [prep, split]`. The verdict reads the per-layout JSON.
+
+### The D4 variant per run (`SHIP_VARIANT`)
+
+`SHIP_VARIANT=<drive1_variants id>`: checked before anything is touched (exit 2), applied to the install folder and
+installed name (`drive1_variants.<id>.install_folder` / `ui_name_prefix`), and never synced back. No threshold. *On
+main (2026-11-01) the branch's `--variant` to its own underlay becomes `road_profile.verge_m` written into the workshop
+config, which `build_mesh` reads (the entry of 2026-11-01 below); the guard is that a variant run drafts in full
+(`--skip-blend` and `--from` refused), so no `loop.blend` drafted for the other edge is ever prepped.*
+
+### Measured on the first Drive-1 build (scratch, not installed; ledger 0048 "P2 integrated")
+
+D4 A / D4 B, Full / Reverse:
+- **Green:** kn5_ground_check p95 0.038 m; audit CLEAN; road inventory PASS (0 forbidden meshes, 0 of 57,776
+  pavement triangles off the route, 100.0 % paved); replication p95 0.04 m; kinks 6.8-7.0 /km; roll rate, paint and
+  one-way PASS.
+- **Red:**
+  - severe steps 40-53 (all at C12 / C13 / C14 / C18 / the lid's east end);
+  - soft-top 395-412 (ground above the lane: p50 5 mm, max 0.21 m at C13);
+  - undrivable corners 83, i.e. the real hairpins C4-C10 and C13 at their measured 6.8-8.3 m;
+  - the lid's east end 0.17 m;
+  - stacked legs 137 / 144 (placeholder ground).
+- `force_install_ok` is false (far ledges 923-947 > July 382; soft-top must be 0). No threshold was moved to change
+  any of this.
+
+## 2026-10-12 — Lariat P2 data stages: the roll-rate gate, footprint crossfall, measured widths, the profile by station, the declared lid, L13 for the span detectors (ledger 0048)
+
+The Lariat's draft now runs `elev -> road_profile -> project -> widths -> measured_widths -> crossfall ->
+verify_crossfall` (`tracks/lookout-lariat/ship.json`, one appended block of step functions in
+`tools/ship_track.sh`). Every engine change is opt-in or provably inert for other tracks (proof list below).
+
+| Gate / guard | Before | After | Flag |
+|---|---|---|---|
+| **roll rate (a)** (new, `tools/verify_crossfall.py`, hard in the Lariat draft) | — | on EACH half of the section (`left_pct`, `right_pct`; a legacy file is read as one plane), the tilt changes by **<= 4 %** between any two stations within **30 m**, the seam wrapped (L13) | ⚠ invented (V3-PLAN P5) |
+| **roll rate (b)** (new) | — | no swing from **>= +3 %** to **<= -3 %** (or back) within **30 m**: 0 | ⚠ invented (V3-PLAN P5) |
+| crossfall file honesty (new, same tool) | — | a `status` (`estimated` until a 3DEP source-lidar sample agrees), stations ascending in [0, lap), no gap over two steps, the seam included | a record check, no number |
+| crossfall method (`scripts/elevation/crossfall.py`, opt-in `road_profile.crossfall.method = "footprint"`) | `build`: a 3DEP pair 0.6 m inside each pavement edge every 2nd vertex (geojson stations), deadband 1.5 %, cap 6 %, median 9 + mean 5 vertices | `build_footprint` (local stations): 5 samples across the real-width footprint, the outermost **1.0 m** inside each edge (one 3DEP cell), every **3 m**; plane tilt by least squares; ground at **2 / 5 / 8 m** beyond each edge only to classify **bench** (one side rises **>= 1.0 m** above the road centre while the other rises **< 0.5 m**) vs crown, runs under **30 m** joined; measurement smoothed by a **30 m** median + **15 m** mean (length-weighted); kept only where **>= 2 %**, **<= 6 %**, not tilting INTO a curve tighter than **R 100 m** by more than 2 %, off a declared deck, outside **+-30 m** of a roll-rate failure of the measured series itself, and in a kept run **>= 30 m**; everything else the construction standard (**2 %** crown, or **2 %** toward the cut ditch on a bench); every change ramped at **0.12 % per metre** (the mean of the Lipschitz minorant and majorant: 3.6 % per 30 m, so the file passes (a) and (b) by construction) | 2 % is [std: docs/ROAD-CONSTRUCTION.md "Drainage"]; 6 % is the legacy cap's value; every other number ⚠ invented. `build` is byte-identical for every track that does not opt in (no track in airoso has a `crossfall.json`) |
+| measured widths (`scripts/gps/measured_widths.py`, new, opt-in by the ship step) | `widths_from_osm`: OSM lanes table, junction flares, hard-corner flares (>= 14 m), a **10 m** floor on every fold over 110°; geojson-indexed widths written 1:1 into the local ring | measured (aerial) > published (`width_overrides.width_m`) > OSM table, per top-level `width_overrides` stretch (touching measured stretches interpolate as one), measured = edge-line centre-to-centre **+ 0.10 m** (one stripe) or, on a town street with no edge lines, curb-to-curb; no flares, no fold floor; rotated into the local frame; changes rate-limited at **0.25 m/m** round the closed lap | 0.10 m [std: MUTCD 3A.05 normal line 4-6 in]; 0.25 m/m is `projection.slew_limit_widths`'s existing rate, now applied cyclically (L13). `widths_from_osm` itself is untouched |
+| road profile (`scripts/elevation/road_profile.py`, new, after heightfield) | heightfield's windows counted in vertices, sized for 3 m (on the Lariat's 1 m climb: an 11 m median, a 3 m mean, a 48 %-per-metre effective grade cap) | the same 33 m median, 9 m mean and cut-only grade cap, in METRES: windows by station, filters weighted by each vertex's length of road, the cap per real segment (L3) | no threshold moves. Proven equal to `heightfield.snap_to_ground` on uniform 3 m lines (open and closed); `heightfield.py` untouched |
+| declared deck (`bridges.declared`, new) | July: the height detector's spans | the 19th St lid from its OSM tunnel footprint (ways 533503591 + 533679737, each buffered by half its pavement width) plus **8 m** abutments each side, held straight in the raw profile before smoothing; recorded as `capture.bridges` (local stations) | 8 m ⚠ invented (copies the prep's `BRIDGE_PAD_M`) |
+| span seam rule, `build_mesh._bridge_detector` | a run of high stations reaching the closing vertex became a span (July's 525 m [24,278-24,803]) | opt-in `bridges.l13_seam_rule`: on a closed lap such a run is dropped unless vertex 0 is also high (it continues from vertex 0) | [std: L13]. Off by default: every other track's detector output is unchanged |
+| span seam rule, `build_kn5_loop.detect_bridge_spans` (the prep) | the last span ran `pad_m` past the lap's end; vertex 0's pad was cut at 0 | spans and pads wrap at the seam, clamped to [0, lap]; a span reaching the closing vertex always continues from vertex 0; open roads unchanged | [std: L13]. No shipping track preps with this file |
+| drive_test replication | `z_raw_m` (per geojson vertex) paired by index with the local ring | `z_raw_local_m` when present (written by `road_profile`: the same samples in the local index space), else `z_raw_m` as before | a frame fix, no number. On the Lariat the ring is rotated by 2 vertices (2-6 m along a climb of up to 10 %) |
+
+Proof:
+- `tests/elevation/test_road_profile.py` (10): equal to heightfield on uniform 3 m lines (open, closed); windows of
+  33 / 9 samples at 1 m; mixed 1 m / 3 m spacing leaves an 8 % ramp within 0.13 m (by vertex count: > 0.5 m off);
+  a closed lap's filters are rotation-invariant; the cap per real segment; a deck from a footprint, held straight
+  over a 6 m trench; a deck across the seam refused; `build --write` writes `capture.bridges` in local stations and
+  `z_raw_local_m` rotated by projection's k.
+- `tests/elevation/test_crossfall_footprint.py` (6): legacy `build` output byte-identical to airoso a0557e0's file;
+  CLI dispatch; the two roll-rate rules incl. across the seam; plane / crown fit; on a synthetic lap a flat road on
+  a bench takes -2 / -2 toward the cut (raw tilt < 0.01 %: the beside-the-road samples never enter a tilt), an
+  outsloped 4 % road keeps its measurement, flat ground the crown, a deck the standard, and the result passes.
+- `tests/gps/test_measured_widths.py` (4), `tests/geometry/test_bridge_seam.py` (6),
+  `tests/geometry/test_drive_test_raw_local.py` (1), `tests/tools/test_ship_track_chain.py` (+1).
+
+On the Lariat (clean scratch run, 3DEP and Overpass fetched live, TLS verified): see ledger 0048 "P2, the data
+stages" for the numbers. The roll-rate gate PASSES on the written file (worst 3.4 % / 30 m, 0 swings); on the raw
+in-footprint measurement it would fail at 1,836 stations with 36 swings, and on the smoothed measurement at 1,030
+with 18: the measurement alone is not a road surface, which is why the file is "estimated" and mostly standard.
+
+## 2026-10-12 — Lariat Drive-1 gates that do not wait for the terrain: road inventory, stacked legs, the kink ceiling (ledger 0048)
+
+V3-PLAN P5's Drive-1 set, the three parts that do not depend on the tiered terrain (ledger 0046's job). All three
+judge the BUILT artifact (L5): the gate OBJ `scripts.modkit.kn5_to_gate_obj` writes from the shipped kn5, walked
+along drive_test's own line (`gate_centerline.json` > `finished_centerline.json` > `centerline.local.json`,
+`tools/gate_route.py`). None has run on a Lariat build yet: there is none (the underlay, P2 step 3, is not written).
+
+### Road inventory (new: `tools/verify_road_inventory.py`; a separate tool, not a `verify_kn5` section, while the terrain job holds `scripts/ac/verify_kn5.py`)
+
+| Check | Threshold | Flag |
+|---|---|---|
+| `HIGHWAY*` / `HWYSTRUCT*` / `MOUNTAINS*` groups, with or without a `<digits><KEY>_` prefix | 0 | [std: Kevin's "no extra highways", 0048; MOUNTAINS: L1 as 0046 applies it to the sine ridge] |
+| pavement off the route: every triangle of a pavement group (prefixes from the exemption file; the Lariat's `1ROAD`, `AUTH_OVERPASS`) at its 3 vertices and centroid, each within the route's lerped half-width **+ 2.0 m** or inside a declared exemption polygon | 0 triangles | ⚠ 2.0 m [invented] (the plan's number) |
+| exemptions: `tracks/lookout-lariat/pavement_exemptions.json`, each naming the `AUTH_*` object it covers; `footprint` or `name_and_footprint` (the C-470 decks); lon/lat or OBJ-frame polygons | an entry with no polygon exempts NOTHING (listed as unmeasured); `active: false` (D2 b's route: Kevin chose D2 a) exempts nothing | not a bypass: today all 19 active entries are unmeasured, so nothing off the route is exempt until its object is authored and its polygon drawn |
+| the pavement is the lap: each layout's line walked at 1 m, pavement under it within drive_test's deck window (±2.5 m, its existing `top_at` window), share of the lap paved | ≥ 99 % (within 1 %) | ⚠ 1 % [invented] (the plan's number) |
+
+Exit 1 on any fail, 2 on an input error (no OBJ, no line, a malformed exemption file: an object not `AUTH_*`, a
+duplicate id, an unknown match). Proof: `tests/tools/test_verify_road_inventory.py` (10): a clean road passes and is
+100 % paved; each forbidden name fails, prefixed or not, and look-alikes (`GRASS_mountain`, `AUTH_overpass_*`) do
+not; a slab 1.5 m past the edge passes and 2.5 m fails (beyond 0.5 m reported); a lot passes only inside its
+polygon (OBJ frame or lon/lat), a half-covering polygon still fails; unmeasured and inactive exemptions exempt
+nothing; `name_and_footprint` exempts only its own group; a 10 m hole in 200 m fails, a 1 m hole passes; the
+`--kn5` path decodes a real kn5 to the same answer; the Lariat file declares the plan's whole list.
+
+### Stacked legs (new: `tools/verify_stacked_legs.py`, rule L4)
+
+| Check | Threshold | Flag |
+|---|---|---|
+| pair: two lap points (1 m) < **40 m** apart in plan and > **150 m** apart along the lap (cyclic) | — | ⚠ both [invented] (the plan's numbers) |
+| a ground / edge / sign / closure vertex at a pair (its own leg = the plan-nearest lap point, which has a partner; the other leg = the nearest lap point > 150 m along, within 40 m of the vertex and of its own point) sits closer in height to the other leg's BUILT road (the highest 1ROAD within ±2.5 m of the line) than to its own | **0** | ⚠ [invented] (the plan's number) |
+| a stacked lap point with no built road under it (cannot be judged) | 0 | new, a failure, never a skip |
+| crossings: where two lap segments > 150 m apart along the lap intersect in plan, vertices whose own and other point are both within **40 m** (along the lap) of the crossing are not judged (plan-nearest names neither road there); counted (`crossing_skipped`) and the crossing listed | — | ⚠ 40 m [invented] 2026-10-12. On the Lariat's paint line there is **no crossing**, so it skips nothing |
+
+Classes are group-name prefixes (closure first, so a `1WALL_closure` is a closure; the road is never tested);
+`track.config.json gates.stacked_legs.classes` can override them. `--line-only` measures pairs on the line's own
+heights and never passes (exit 0, `fail: null`).
+
+Measured (the plan's "the count is re-measured and recorded on the V3 line"), on 1 m resamples, heights from July's
+3DEP corridor samples (`data/source-july/corridor.elev.json`, IDW): the **paint centreline** has **10,659 pairs on
+680 lap points** in 12 stacked runs (st 2,493–3,152, Tiers of Zion; st 5,305–5,996, the upper hairpins), nearest
+**21.3 m** in plan, vertical gap **6.49–14.90 m (median 9.98 m)**, no crossing. The same tool on the July line:
+10,614 pairs, nearest 20.48 m, 6.51–14.85 m (median 10.09 m), no crossing — the plan's July figures (1,188 pairs on
+its 3 m line ≈ 10,614 / 9; 6.5–14.7 m, median 10.1 m, nearest 20.5 m) reproduce, so the definition is the plan's.
+
+Proof: `tests/tools/test_verify_stacked_legs.py` (8), on a synthetic 850 m switchback (legs 25 m apart, 10 m
+apart in height) and a figure of eight on a 7 m bridge: vertices beside their own leg pass; one beside leg A at leg
+B's height fails in every class (ground, `GEN_terrain`, `AUTH_cut`, edge, sign, closure) with its two stations; a
+vertex outside the stacked stretch (46.9 < z < 353.1, derived in the test) is never judged; a 20 m hole in the road
+under a stacked stretch fails; line-only reports nearest 25 m and gap 10 m and never passes; the bridge is
+reported at st 150 / 750 and its 6 footprint vertices skipped; a config class override works; no road / no OBJ is
+exit 2.
+
+### The kink ceiling (drive_test, opt-in per track; the Lariat's value)
+
+| Threshold | Before | After | Flag |
+|---|---|---|---|
+| kinks/km (slope change > 3 %-points per 1 m on the six interior paths) | reported, never gating (every track) | gates only where `track.config.json gates.drive_test.kinks_per_km_max` is declared; the report then carries `kinks_per_km_max` | wiring |
+| the Lariat's ceiling | V3-PLAN P5: ≤ 5/km [invented: Lake Murray V3's own 4.97/km] | **≤ 19.49/km** | [std: measured on reference mountain roads] |
+
+The calibration (`tools/calibrate_kinks.py`; `fleet/reference/MEASURED.md` §8; raw rows
+`fleet/reference/raw/kinks_*.json`): drive_test itself, run on each reference's physics road (read only) along its
+AI line moved to the lane centre — simtraxx Pikes Peak pp100ahc **19.49/km** (20.0 km, a coarse 2.75 m physics
+mesh), la_canyons mt_wilson_hillclimb **0.73** (6.8 km), simtraxx Targa Florio stage 1 **0.49** (14.2 km),
+la_canyons angeles_crest_east **0.00** (40.9 km). The ceiling is the kinkiest reference: a looser bar than the
+plan's invented 5, and the reason is written down: the dense (scan-class) references read 0–0.73, the coarse one
+19.5, so the metric reads mesh creases as much as road. July read 68.3/km (v0.46.0) and 108.9/km (v0.66.3). The
+scan-class alternative (0.73/km, also [std]) is recorded in MEASURED §8 for after Drive 1.
+
+Every other track: byte-identical. No other config declares `gates`; the key is read once, after every existing
+gate decided, and adds to the report only when present. Proof: `tests/tools/test_calibrate_kinks.py::
+test_drive_test_kink_ceiling_is_opt_in_per_track` (no key: no ceiling key and kinks never fail the run; a tight
+ceiling fails it; a loose one passes with a report equal key for key to the no-key report but for the ceiling),
+and a one-off parity run of HEAD's (a0557e0) drive_test against this one on the suite's straight and wall fixtures,
+the kink fixture and the real mt_wilson reference project: `drive_test.json` md5-identical on all four.
+
+### `scripts/modkit/extract_kn5.parse(keep=, textures=)` (no threshold)
+
+Two keyword arguments, both defaulting to today's full decode: `keep` steps over the vertex and index bytes of a
+mesh it rejects; `textures=False` steps over the blobs. Parity: `parse()` of la_canyons `main_roads.kn5` (196
+meshes, 11 textures) and Targa Florio `wall.kn5` (160 meshes) equals HEAD's `parse()` exactly; `keep=` equals the
+full parse filtered; `tests/tools/test_calibrate_kinks.py::test_parse_keep_returns_exactly_the_kept_meshes`.
+
+### Wiring (`tools/ship_track.sh`, Lariat only)
+
+`gate_road_inventory` and `gate_stacked_legs`, one marked block after the existing vocabulary; the Lariat's
+`ship.json` runs them after `road_obj` (the built gate OBJ), syncs `pavement_exemptions.json` in and both reports
+out. Exits collect in `D1_G`; red stops the install, and `--force-install` passes it exactly as it passes a red
+street drive_test / audit (the caller asserts no metric is worse than the reference). San Diego's `ship.json`
+names neither. Proof: `tests/tools/test_ship_track_drive1_gates.py` (4); `tests/tools/test_ship_track_chain.py`
+(19) unchanged and passing.
 
 ## 2026-10-12 — `verify_signs` (k) direction coverage, (j) read from signs.json, race furniture never the signs' ground (ledger 0051)
 

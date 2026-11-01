@@ -1,0 +1,174 @@
+{
+ "_doc": "drive_test's kink metric on a reference road (tools/calibrate_kinks.py; Lookout Lariat V3-PLAN P5, ledger 0048). A measurement, not a gate: kinks = slope change > KINK_PCT %-points between consecutive 1 m steps on drive_test's six interior wheel paths, per km of the lane centre.",
+ "track": "la_canyons",
+ "layout": "mt_wilson_hillclimb",
+ "ai_file": "mt_wilson_hillclimb\\ai\\fast_lane.ai",
+ "kn5": [
+  "la_canyons.kn5",
+  "layout_mt_wilson_hillclimb.kn5",
+  "main.kn5",
+  "main_bushes.kn5",
+  "main_pines.kn5",
+  "main_rails.kn5",
+  "main_rocky.kn5",
+  "main_signs.kn5",
+  "main_structures.kn5",
+  "main_trees.kn5",
+  "main_tyremarks.kn5",
+  "rc3.kn5",
+  "vip.kn5",
+  "vip_bushes.kn5",
+  "vip_pines.kn5",
+  "vip_rocky.kn5",
+  "vip_structures.kn5",
+  "vip_trees.kn5",
+  "main_roads.kn5"
+ ],
+ "kn5_listed_but_absent": [
+  "main_test_a.kn5",
+  "main_test_b.kn5",
+  "main_test_c.kn5",
+  "vip_test_a.kn5",
+  "vip_test_b.kn5",
+  "vip_test_c.kn5"
+ ],
+ "road_rx": "^ROAD",
+ "road": {
+  "kn5": [
+   {
+    "file": "la_canyons.kn5",
+    "road_meshes": 0
+   },
+   {
+    "file": "layout_mt_wilson_hillclimb.kn5",
+    "road_meshes": 0
+   },
+   {
+    "file": "main.kn5",
+    "road_meshes": 161
+   },
+   {
+    "file": "main_bushes.kn5",
+    "road_meshes": 0
+   },
+   {
+    "file": "main_pines.kn5",
+    "road_meshes": 0
+   },
+   {
+    "file": "main_rails.kn5",
+    "road_meshes": 0
+   },
+   {
+    "file": "main_rocky.kn5",
+    "road_meshes": 0
+   },
+   {
+    "file": "main_signs.kn5",
+    "road_meshes": 0
+   },
+   {
+    "file": "main_structures.kn5",
+    "road_meshes": 8
+   },
+   {
+    "file": "main_trees.kn5",
+    "road_meshes": 0
+   },
+   {
+    "file": "main_tyremarks.kn5",
+    "road_meshes": 0
+   },
+   {
+    "file": "rc3.kn5",
+    "road_meshes": 0
+   },
+   {
+    "file": "vip.kn5",
+    "road_meshes": 213
+   },
+   {
+    "file": "vip_bushes.kn5",
+    "road_meshes": 0
+   },
+   {
+    "file": "vip_pines.kn5",
+    "road_meshes": 0
+   },
+   {
+    "file": "vip_rocky.kn5",
+    "road_meshes": 0
+   },
+   {
+    "file": "vip_structures.kn5",
+    "road_meshes": 0
+   },
+   {
+    "file": "vip_trees.kn5",
+    "road_meshes": 0
+   },
+   {
+    "file": "main_roads.kn5",
+    "road_meshes": 5
+   }
+  ],
+  "meshes": 387,
+  "tris_read": 4237409,
+  "tris_kept": 287671
+ },
+ "lane": {
+  "ai_points": 4306,
+  "points_used": 4306,
+  "sign": -1,
+  "sign_votes": {
+   "+1": 732,
+   "-1": 1464
+  },
+  "centre_on_road_frac": 1.0,
+  "width_m": {
+   "p05": 8.83,
+   "median": 8.86,
+   "p95": 8.89
+  }
+ },
+ "kink_pct": 3.0,
+ "step_m": 1.0,
+ "lap_m": 6835.7,
+ "kinks": 5,
+ "kinks_per_km": 0.73,
+ "worst_kinks": [
+  [
+   1513.0,
+   3.71,
+   3.86
+  ],
+  [
+   1517.0,
+   3.71,
+   3.48
+  ],
+  [
+   1511.0,
+   -3.71,
+   3.29
+  ],
+  [
+   1511.0,
+   3.71,
+   3.25
+  ],
+  [
+   1512.0,
+   3.71,
+   3.21
+  ]
+ ],
+ "context": {
+  "steps_per_km": 4.1,
+  "severe_steps": 0,
+  "severe_per_km": 0.0,
+  "soft_top_in_lane": 0,
+  "off_pavement_stations": 0,
+  "daylight_gaps": 13374
+ }
+}

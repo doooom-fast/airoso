@@ -1028,7 +1028,9 @@ Rules:
    add the one-way check.
 2. **P1:** generalise the ship chain so a non-SD track can ship, race stages included, on the race
    tools Lake Murray's corridor run lands. SD's `ship_sd.sh` stays byte-identical. The prep fixes
-   are the frame bug, balanced tiling and station-matched seating.
+   are the frame bug, balanced tiling and station-matched seating. *2026-11-01 (Kevin: "Start the
+   lariat"): the chain is `tools/ship_track.sh` + `ship.json`, chain-ready on one layout; ledger 0048
+   "Started" has the state and the first Windows run's order.*
 3. **P2:** draft route-only.
    - The hairpin fit runs first.
    - The engine's route, elevation, re-measured crossfall and spans feed a new underlay builder,

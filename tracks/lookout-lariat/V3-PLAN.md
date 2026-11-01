@@ -3,6 +3,14 @@
 > **SHELVED 2026-10-12 (Kevin):** "i have another plan instead of the lariat rebuild so let's shelve that for now. we're going to expand college down waring to princess. view, princess view to mission gorge, and mission gorge to jackson, then extend jackson down to mission gorge. we'll add to the network map instead of building the lariat. save the plan for the lariat for after we've built a few phases of lake murray"
 > This plan stays the plan of record for when the Lariat resumes. Unmerged P2 / Drive-1 branches and how to resume:
 > ledger 0048 "SHELVED".
+>
+> **UNSHELVED 2026-11-01 (Kevin): "Start the lariat."** Resumed at P2 through the chain: `ship.json` lists the draft
+> as gps → paint centreline → remap → the two centreline gates → elev → road_profile → project → widths →
+> measured_widths → crossfall → verify_crossfall → **mesh** → underlay, on the one `street_full` layout (Drive 1, A13);
+> the state is in ledger 0048 "Started". The P2 / Drive-1 branches of the SHELVED note were pushed the same day and
+> brought onto main there: branches 1 and 3 in, branch 2's underlay superseded by main's, branch 4's verdict and D4
+> variant redone for main's draft, its WIP left as it is. The install folder follows ONE-CHAIN §3 (`lookout_lariat`, the
+> chain parks July), which supersedes A11; D4 B is `SHIP_VARIANT=b_verge`.
 
 
 > **2026-10-11, revised twice the same day after review. This is a plan only: nothing is built
@@ -443,6 +451,22 @@ boxes marked, and the two C-470 crossings marked, before any geometry (L12, show
    - Both are dropped unless the aerial shows a real lap bridge.
    - **Seam test (new):** the span detector gets an L13 test. A span may not end on the closing
      vertex unless it continues from vertex 0.
+> **2026-10-12, what landed for steps 1, 4 and 5 (ledger 0048 "P2, the data stages"; GATES-CHANGELOG 2026-10-12):**
+> - Draft order: … elev → `road_profile` → project → widths → `measured_widths` → `crossfall` → `verify_crossfall`
+>   (hard) → underlay. A clean `--draft-only` scratch run (3DEP + Overpass live, TLS on) passes every gate.
+> - **Elevation:** the 3DEP profile re-smoothed by station, length-weighted (heightfield's vertex windows assumed
+>   3 m): steepest 20 m +9.9 % / −11.4 % against raw +10.1 / −11.5 %; |smoothed − raw| p95 0.04 m, max 0.27 m.
+> - **Widths:** aerial measured > published > `mountain` OSM, in the local frame (widths_from_osm's were 2 vertices
+>   off), no OSM flares or 10 m fold floors: the climb 6.04–8.29 m (median 6.57), C1's apex 9.65 m, Paradise
+>   6.01–7.21 m; US-40, Golden's arterials, US-6, the ramp, 19th St, the summit and back side still OSM.
+> - **Crossfall:** footprint pairs only, the standard where the measurement is weaker than 2 % or fails;
+>   46.7 % crown, 31.9 % 2 % toward the cut, 21.3 % measured; roll-rate PASS (worst 3.40 % / 30 m, 0 swings);
+>   status **estimated**. The climb's benches read outsloped (0.9–1.7 % toward the drop): a question for the
+>   lidar check.
+> - **Spans:** the lid declared from the tunnel footprint, local st 24,349.4–24,387.6 (38.1 m), held straight at
+>   +3.44 % (3DEP already carries it: ≤ 0.11 m moved), written as `capture.bridges`; both July spans dropped; the
+>   L13 seam rule in both detectors (opt-in in `build_mesh`).
+
 6. **Not run:** `build_env` (no highways, no sine-wave mountains, no baked forest, no lamps).
 7. **Optional engine courtesy, off the critical path:** a `scenery.highways.enabled` key in
    `build_env`, defaulting on, so Sand Creek stays byte-identical and the switch exists for anyone

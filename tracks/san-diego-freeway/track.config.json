@@ -21,7 +21,7 @@
     "timezone": "America/Los_Angeles",
     "city": "San Diego",
     "country": "United States",
-    "_anchor": "I-8 in Mission Valley (straight WB stretch near the SR-163 stack) - AC_START snaps to the nearest freeway edge here."
+    "_anchor": "I-8 in Mission Valley (straight WB stretch near the SR-163 stack) - AC_START snaps to the nearest freeway edge here. (project_freeway_net's spawn rule, build_network_mesh._freeroam_dummies. Since 2026-11-01 the chain's network_reference step replaces that dummies.json: the grid at the START of network.reference_line, AC_TIME_0 at its finish, fleet/LAWS.md L11; lat/lon here still feed the lighting.)"
   },
   "source": {
     "type": "osm-network",
@@ -61,6 +61,15 @@
       "residential": 8.0,
       "service": 6.0,
       "default": 11.0
+    },
+    "reference_line": {
+      "_doc": "THE LINE THE SHIP PHASE WALKS (scripts.geometry.network_reference, the draft step network_reference; Kevin 2026-11-01: 'a complete track list installed by morning'). A network has no single centreline, and the prep / write_ai_line / make_map / verify_kn5 / drive_test read one (tracks/san-diego-freeway/README.md 'What the Windows run owes'). This declares ONE real mainline, never an invented one (fleet/LAWS.md L1): Interstate 8 eastbound, end to end inside source.bbox, chosen from the draft's OWN edges at draft time. ref 'I 8' is one of source.refs, the OSM ref tag scripts.gps.classify writes as a motorway edge's name; eastbound = the carriageway whose OSM ways are drawn west to east (classify travel_dir, recorded because this block exists), the right-hand one of the pair (checked: where I 8 westbound runs within 80 m it must lie on the line's left). The resolver takes the longest directed chain of non-ramp I 8 edges that continue each other at a shared node (no joint turning > max_joint_turn_deg); every point of the line is a vertex of a built edge. Edge ids are not written here: they are the draft's own and change with every net step on live OSM (the README: no snapshot of the July OSM exists); edge_ids may pin a list once a draft is read. Everything else the network builds (I 8 westbound, I 5, CA 52, CA 163, every ramp and connector) is in track.obj and the kn5 but walked by no line gate: data/network.reference.json lists it by id and name, drive_test prints it, ship.json _owed names the hole.",
+      "ref": "I 8",
+      "direction": "eastbound",
+      "edge_ids": null,
+      "bridge_max_edges": 2,
+      "_bridge_max_edges_doc": "[invented] At most 2 non-ramp freeway edges of ANOTHER name may sit INSIDE the chain (never at its ends; each named in network.reference.json 'bridged'): classify names a mainline piece by a nearest-way vote every 25 m, and a short I 8 piece passing under the CA 163 or I 5 stack can lose that vote. Only non-ramp freeway edges can bridge (OSM tags freeway-to-freeway connectors motorway_link, which classify makes ramps), only between two I 8 eastbound edges (the chain starts and ends on I 8), and only through joints turning <= max_joint_turn_deg. 0 = refuse instead.",
+      "max_joint_turn_deg": 45.0
     }
   },
   "loop": false,

@@ -1,10 +1,17 @@
 {
-  "name": "Rally Colorado - Dragon Tail (Tarmac)",
+  "_deprioritised": "Kevin 2026-07-26: may be cancelled, not super interesting (registry)",
+  "name": "Dragon Tail (Tarmac)",
+  "_name_doc": "ONE-CHAIN section 3 (Kevin 2026-10-28): rally stages are '<Stage> (Gravel)' / '<Stage> (Tarmac)', two tracks (L8: surfaces.ini is per track). The engine era called it 'Rally Colorado - Dragon Tail (Tarmac)'. Installed as 'doooom Colorado \u2014 Dragon Tail (Tarmac)' (tools/ship_track.sh: ship.json ui_name_prefix + the layout's name).",
   "slug": "rally_co_dragon_tail_tarmac",
-  "version": "0.1.0",
+  "_slug_doc": "Kept from the engine era, as Sand Creek (sand_creek_raceway) and Exotics (exotics_racing_lvms) kept theirs: every kn5 is named for it and install_folder is it, so the chain's install parks the engine-era folder of the same name instead of standing beside it. ONE-CHAIN section 3's 'folder name with _' would be rally_dragon_tail_tarmac; renaming is the main session's call (it orphans the old install).",
+  "install_folder": "rally_co_dragon_tail_tarmac",
+  "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (= the slug, ONE-CHAIN section 3); the previous install is parked in the archive",
+  "version": "0.2.0",
+  "_version_doc": "Keeps counting (ONE-CHAIN section 3). 0.1.0 was the engine-era config (never packaged: DEFINITION-OF-DONE 'no packaged build'); 0.2.0 keeps the pair in step with its gravel twin. Nothing has been built at 0.2.0.",
   "author": "doooom",
   "year": 2026,
-  "ui_series": "K10 Colorado Rally",
+  "ui_series": "doooom Colorado",
+  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' (was 'K10 Colorado Rally'). Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
   "archetype": "real_road",
   "road_surface": "tarmac",
   "_road_surface_doc": "DELIBERATE FICTION - CR 116 is a dirt road in reality. Identical route, identical USGS elevation, identical mesh to tracks/dragon-tail-gravel; this key is the ONLY difference, and it forks ROAD physics (FRICTION 0.99) and the 1ROAD texture (asphalt). Scenery is shared with the gravel build on purpose - the fiction is a paved surface, not a paved world.",
@@ -57,6 +64,11 @@
     ]
   },
   "loop": false,
+  "mirror_x": false,
+  "true_north_rotation_deg": 0.0,
+  "_frame_doc": "The chain's frame (ONE-CHAIN section 1, ledger 0060): local ENU metres, no mirror, no yaw, as Lake Murray 0.19.1. Stated explicitly so tools/ship_track.sh's FRAME check reads 'False 0.0' from the config itself and scripts.geometry.projection never writes the key back.",
+  "natural_ground": false,
+  "_ground_doc": "Constructed corridor (false), not natural_ground, on this pass (2026-11-01) - against ONE-CHAIN section 4's rally_stage row, deliberately. The engine's natural path (build_mesh: ribbon.road_shoulder bank_hold, a 2 m blend band, 'corridor machinery OFF') skips the measured-guard lip pass and the shoulder drape; Milford tried it on 2026-10-28 and drive_test failed on 31 lidar banks at the pavement edge, which is why every chain circuit but Exotics runs constructed; and the constructed path is the one these stages passed all four gates on (ledger 0014). Rehearsed offline 2026-11-01 on Dragon Tail (Gravel)'s engine-era cached data (40 m grid, no corridor field), drive_test: constructed 0 ground-on-top, 237 severe steps, 64.5 bumps/km, FAIL on 2 floating parapet columns only; natural_ground 1,836 ground-on-top, 449 severe, 80.2 bumps/km. Flip this key once the Windows draft (with data/corridor.elev.json, the near-native 3DEP the natural path depends on) is green constructed, and compare.",
   "_loop_doc": "POINT-TO-POINT. A rally stage has two ends and is driven once: the grid goes at the eastern start, AC_TIME_0 (AC's start/finish) goes at the western finish, and the splits divide the run between them. See CLAUDE.md.",
   "default_width_m": 6.5,
   "width_overrides": [],
@@ -169,19 +181,26 @@
   "layouts": [
     {
       "id": "stage",
+      "name": "Dragon Tail (Tarmac)",
+      "run": "Point to point, east to west along County Road 116",
       "ai": "ai/stage",
-      "_doc": "The stage as the rally runs it: east to west along CR 116."
+      "_doc": "The one layout: the stage as the rally runs it, east to west along CR 116 from route.start_at. ONE-CHAIN section 3: a rally stage's surfaces are two TRACKS (L8), never two layouts."
     }
   ],
   "ui_tags": [
+    "circuit",
     "rally",
     "stage",
     "point-to-point",
     "tarmac",
     "real-roads"
   ],
+  "_ui_tags_doc": "'circuit' first, deliberately: Content Manager refuses Race and Track Day sessions on a track not tagged 'circuit' (scripts/ac/track_folder.py ui_track_json adds it only on a loop), and L11's timing (the grid at the start, AC_TIME_0 at the finish) posts a stage time only in a session whose clock starts at the green: a one-lap Race. Practice / Hotlap arm the clock on the first AC_TIME_0 crossing, which on a stage is the finish. To be confirmed in the seat (does a 1-lap Race post the stage time?).",
   "ui_description": "Paved (fictional) point-to-point rally stage near Rangely, Colorado, built from real OpenStreetMap county-road geometry and USGS 3DEP elevation. Drive it once, start to finish - it is a stage, not a lap.",
   "terrain_cell_m": 8.0,
   "_terrain_cell_doc": "The road is 6.5 m wide; the engine default gives ~10 m cells here, so a terrain triangle can span the whole carriageway. 8 m target -> x5 upsample -> ~8 m cells and ~1.46 M verts. x7 (5.7 m cells, 2.87 M verts) ran the mesh build out of memory and left a truncated track.obj, so the budget is capped deliberately.",
-  "terrain_vertex_budget": 1600000
+  "terrain_vertex_budget": 1600000,
+  "corridor_refine_factor": 4,
+  "readme_about": "Real roads from OpenStreetMap at real USGS 3DEP elevation: County Road 116 near Rangely, Colorado, 25.2 km point to point (the CR 116 leg of the rally's 'Dragon Tail - CR 116/133 NW'; CR 133 is unmapped). A stage is driven once, start to finish - not a lap.",
+  "_chain_doc": "2026-11-01, the chain pass (ONE-CHAIN section 4 row 6), DEPRIORITISED (_deprioritised). The engine-era tarmac config had drifted from its twin (no corridor_refine_factor, the ledger 0014 float fix; Under the Dragon also no route.wide_corners, so its three switchbacks would have been undrivable at 6.5 m); every geometry key is now the gravel twin's, and the pair differ only in what road_surface forks (L8, docs/RALLY-CONVENTIONS.md: name, slug, road_surface, road_markings, ui text and tags). Changed for the chain: name and ui_series (the name set), version 0.2.0, install_folder (= slug), the frame stated (mirror_x false, true_north_rotation_deg 0.0), natural_ground stated, one `stage` layout carrying its name and run text, 'circuit' in ui_tags (_ui_tags_doc), readme_about (the packed README otherwise says '... km a lap'). Unchanged and still read by the draft: source, route (roads, bbox, start_at, wide_corners), loop false (L11), default_width_m 6.5, road_profile.max_grade_pct 18, kerb / runoff / road_text off, road_markings, the terrain keys, texture_overrides, road_surface (scripts/ac/pbr.load_overrides forks the 1ROAD texture, track_folder.surfaces_ini the physics). INERT through the chain: scenery.* was read by the retired environment stage (scripts/environment/build_env.py), which the chain never runs - the pinyon-juniper woodland, rock cuts and everything else on the land are authoring (AUTH_* in loop.blend), owed. The rehearsal and what the Windows run reads first: ship.json _owed / _windows_first. Terrain (L3b): terrain_cell_m 8.0 on the 40 m 3DEP grid (434 x 136 nodes, a 17 x 5 km box) gives x5 = 8.0 m coarse cells, 2166 x 676 = 1.46 M verts under terrain_vertex_budget 1.6 M, and corridor_refine_factor 4 subdivides the quads the pavement touches to 2.0 m (20,085 quads offline): the near-road cell is finer than the 6.5 m road and near the chain circuits' 1.25-1.5 m. Those circuits declare that size for their WHOLE grid because their sites are small; a uniform 1.5 m grid over this box would be ~39 M verts (the offline mesh peaked at ~7 GB RAM at 1.46 M), so the coarse cell stays 8 m and the fine cell is the refine's (ledger 0014's fix)."
 }

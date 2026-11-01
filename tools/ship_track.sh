@@ -71,6 +71,11 @@
 # ENG=<dir>       San Diego only: the engine-july tree the prep / exporter / spawn builder run from (default: the
 #                 real one) — a scratch COPY to rehearse an engine-july change before it is mirrored.
 # STREET_AI=draft|july  the street layouts' AI line; july needs ship.json street_ai_july (SD only).
+# SHIP_VARIANT=<id>  one of track.config.json drive1_variants (the Lariat's D4 builds, V3-PLAN; unset = the config as
+#                 written). Checked before anything is touched; the variant's road_profile.verge_m is written into the
+#                 WORKSHOP copy of the config (the draft's mesh reads it: build_mesh's shoulder band), its install_folder /
+#                 ui_name_prefix replace the run's; the draft must run in full in that invocation (no --skip-blend, no
+#                 --from: a loop.blend drafted for the other edge is never prepped); the run never syncs back.
 set -euo pipefail
 export PYTHONUTF8=1
 AIROSO="${AIROSO:-C:/Users/Owner/Documents/GitHub/airoso}"
@@ -79,6 +84,7 @@ BL="C:/Program Files/Blender Foundation/Blender 4.2/blender.exe"
 AC="D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks"
 ARCHIVE="D:/k10-track-archive"   # old installs live here, never in content/tracks (Kevin 2026-10-11: "clear old versions")
 STREET_AI="${STREET_AI:-draft}"
+VARIANT="${SHIP_VARIANT:-}"
 case "$STREET_AI" in draft|july) ;; *) echo "STREET_AI must be draft or july, got '$STREET_AI'"; exit 2;; esac
 TRACK=""; INSTALL=1; SKIP_BLEND=0; FORCE=0; DRY=0; DRAFT_ONLY=0; FROM=""; WANT_FROM=0
 for a in "$@"; do
@@ -206,6 +212,18 @@ draft_network_mesh() {
   step "draft: the network's draft geometry -> data/track.obj (scripts.geometry.build_network_mesh: 1ROAD / 1WALL / 1RUNOFF / 1GRASS tiles, OSM-layer flyover decks, no furniture)"
   (cd "$AIROSO" && python -m scripts.geometry.build_network_mesh "$PROJ")
 }
+# >>> NETWORK REFERENCE LINE (2026-11-01, tracks/san-diego-freeway): one block — this function — plus the one name
+# network_reference added to is_data_step's network row (the --draft-only data steps). A road network's ship phase walks ONE declared
+# real mainline (track.config.json network.reference_line); scripts.geometry.network_reference resolves it from the
+# draft's own edges and writes data/centerline.local.json, finished_centerline.json (frame "mesh …"), dummies.json
+# (grid at the start, AC_TIME_0 at the finish: L11) and network.reference.json (every built edge it does NOT judge).
+draft_network_reference() {
+  step "draft: the network's reference line (scripts.geometry.network_reference: network.reference_line, one real mainline from the draft's own edges -> data/centerline.local.json, finished_centerline.json, dummies.json; every other edge named unjudged)"
+  # a gate centreline left by the last run's kn5_to_gate_obj belongs to THAT kn5 (as draft_mesh: ledger 0060)
+  rm -f "$PROJ/data/gate_centerline.json"
+  (cd "$AIROSO" && python -m scripts.geometry.network_reference "$PROJ")
+}
+# <<< NETWORK REFERENCE LINE
 draft_underlay() {
   step "draft: underlay -> loop.blend (scripts/blender/underlay.py: data/track.obj into GEN_* collections, never AUTH_*, never a scene reset)"
   [ -f "$AIROSO/scripts/blender/underlay.py" ] || { echo "no blend yet: scripts/blender/underlay.py (V3-PLAN P2 step 3) is not written"; exit 1; }
@@ -607,11 +625,72 @@ gate_kn5_ground() {
   done
 }
 
+# =============================================================================================================
+# --- draft: the Lariat's data stages (V3-PLAN P2 steps 1, 4, 5; ledger 0048). One block, appended: the steps
+# above are untouched. Tools run from airoso on "$PROJ"; none needs Blender (is_data_step lists them).
+# =============================================================================================================
+draft_road_profile() {
+  step "draft: road profile by station + declared decks held straight (scripts.elevation.road_profile --write: capture.bridges)"
+  (cd "$AIROSO" && python -m scripts.elevation.road_profile "$PROJ" --write)
+}
+draft_measured_widths() {
+  step "draft: measured widths over the OSM table, local frame (scripts.gps.measured_widths: aerial > published > OSM)"
+  (cd "$AIROSO" && python -m scripts.gps.measured_widths "$PROJ")
+}
+draft_crossfall() {
+  step "draft: crossfall inside the real-width footprint, construction-standard fill (scripts.elevation.crossfall, estimated)"
+  (cd "$AIROSO" && python -m scripts.elevation.crossfall "$PROJ")
+}
+draft_verify_crossfall() {
+  step "gate: crossfall roll rate (tools/verify_crossfall.py: <= 4 % per 30 m, no +-3 % swing within 30 m — hard)"
+  (cd "$AIROSO" && python tools/verify_crossfall.py "$PROJ")
+}
+
+# =============================================================================================================
+# LARIAT DRIVE-1 GATES (V3-PLAN P5, ledger 0048; 2026-10-12). One block, kept apart from the vocabulary above:
+# the new road-and-ground gates that judge the BUILT road (data/track.obj, written by gate_road_obj from the
+# shipped kn5 — list them after road_obj). Their exits collect in D1_G, which the verdict reads beside the street
+# drive_test / audit exits: red stops the install, and --force-install covers it exactly as it covers those (the
+# caller asserts no metric is worse than the reference). The stale verdict file is removed first, so a gate that
+# dies reads as red, never as last run's pass.
+# =============================================================================================================
+D1_G=0
+D1_FORCE_OK=1   # the Drive-1 verdict's July comparison (tools/drive1_gates.py force_install_ok); 1 where no verdict step runs
+gate_road_inventory() {
+  local rc
+  step "gate: road inventory on the built road (tools/verify_road_inventory.py: no HIGHWAY*/HWYSTRUCT*/MOUNTAINS*, every pavement triangle on the route or in a declared exemption, the pavement is the lap — hard)"
+  rm -f "$PROJ/data/road_inventory.json"
+  rc=0; (cd "$AIROSO" && python tools/verify_road_inventory.py "$PROJ" 2>&1 | tail -24) || rc=$?
+  [ "$rc" = 0 ] || D1_G=$rc
+}
+gate_stacked_legs() {
+  local rc
+  step "gate: stacked legs on the built road (tools/verify_stacked_legs.py, L4: nothing between stacked legs seated to the other leg — hard)"
+  rm -f "$PROJ/data/stacked_legs.json"
+  rc=0; (cd "$AIROSO" && python tools/verify_stacked_legs.py "$PROJ" 2>&1 | tail -16) || rc=$?
+  [ "$rc" = 0 ] || D1_G=$rc
+}
+gate_drive1_verdict() {
+  # the Drive-1 verdict (V3-PLAN P5's Drive-1 set read off every report of THIS build; tools/drive1_gates.py, from
+  # branch 793441f 2026-10-12, on main's report names 2026-11-01): red stops the install with the road gates above, and
+  # its July comparison decides whether --force-install may pass a red build at all. List it LAST in steps.gate.
+  local rc
+  step "gate: the Drive-1 verdict (tools/drive1_gates.py: P5's Drive-1 set, gating vs recorded rows; the July reference for --force-install)"
+  rm -f "$PROJ/data/drive1_gates.json"
+  rc=0; (cd "$AIROSO" && python tools/drive1_gates.py "$PROJ") || rc=$?
+  [ "$rc" = 0 ] || D1_G=$rc
+  D1_FORCE_OK=$(pyq "import json,os,sys
+p=sys.argv[1]
+print(1 if os.path.exists(p) and json.load(open(p,encoding='utf-8')).get('force_install_ok') is True else 0)" "$PROJ/data/drive1_gates.json")
+  D1_FORCE_OK="${D1_FORCE_OK%$'\r'}"
+}
+
 # a draft step that needs no Blender (what --draft-only runs)
 is_data_step() {
   case "$1" in
     gps|aerial|paint_centreline|remap_config|verify_centreline_paint|route_oneway_check|elev|project|widths|mesh) return 0;;
-    net|classify|network_elev|network_mesh) return 0;;
+    road_profile|measured_widths|crossfall|verify_crossfall) return 0;;
+    net|classify|network_elev|network_mesh|network_reference) return 0;;
     deck_datum|median_envelope|route_connectors|divide_connectors|trim_connectors|terrain_sample|terrain_resample) return 0;;
     *) return 1;;
   esac
@@ -668,6 +747,17 @@ if [ -n "$FROM" ]; then
 fi
 
 # =============================================================================================================
+# SHIP_VARIANT: one of the track's drive1_variants, and a run that drafts in full (exit 2, nothing touched)
+if [ -n "$VARIANT" ]; then
+  case "$VARIANT" in *[!a-z0-9_]*) echo "SHIP_VARIANT '$VARIANT' is not a variant id"; exit 2;; esac
+  pyq "import json,sys
+t=json.load(open(sys.argv[1],encoding='utf-8')).get('drive1_variants') or {}
+known=sorted(k for k in t if not k.startswith('_'))
+if sys.argv[2] not in known: sys.exit('SHIP_VARIANT %r is not in track.config.json drive1_variants (known: %s)'%(sys.argv[2],known))" "$SRC/track.config.json" "$VARIANT" || exit 2
+  if [ "$SKIP_BLEND" = 1 ] || [ -n "$FROM" ]; then
+    echo "SHIP_VARIANT=$VARIANT drafts the blend for its own edge: --skip-blend and --from would prep a loop.blend drafted for another (D4)"; exit 2
+  fi
+fi
 # the rails: absolute paths, nothing inside airoso, scratch derived from the workshop path — all before any copy
 # =============================================================================================================
 WS_PROJ="$WS/$WS_SUB"        # the real workshop's project folder (ship.json workshop + workshop_project)
@@ -758,6 +848,27 @@ LAYOUT_IDS="${LAYOUT_IDS%$'\r'}"; RACE_IDS="${RACE_IDS%$'\r'}"; STREET_IDS="${ST
 case "$SLUG" in ""|*[!a-z0-9_]*) echo "track.config.json slug '$SLUG' is not a file-name slug"; exit 2;; esac
 case "$INSTALL_FOLDER" in ""|*[!A-Za-z0-9_]*) echo "track.config.json install_folder '$INSTALL_FOLDER' missing or not a folder name (plan A11)"; exit 2;; esac
 echo "layouts: $LAYOUT_IDS   (race furniture: $RACE_IDS; street: $STREET_IDS; street AI = $STREET_AI)"
+# a D4 variant run (SHIP_VARIANT): the variant's verge into the WORKSHOP config (never airoso's), its folder and name
+if [ -n "$VARIANT" ]; then
+  VLINES=$(pyq "import json,re,sys
+p=sys.argv[1]; d=json.load(open(p,encoding='utf-8')); v=d['drive1_variants'][sys.argv[2]]
+out=[]
+for k in ('install_folder','ui_name_prefix'):
+    s=str(v.get(k) or '')
+    if not re.fullmatch(r'[^\t\r\n\x00-\x1f]{0,240}',s): sys.exit('drive1_variants.%s.%s is not one line of text'%(sys.argv[2],k))
+    out.append(k+'\t'+s)
+w=v.get('road_profile.verge_m')
+if w is not None:
+    d.setdefault('road_profile',{})['verge_m']=float(w); out.append('verge_m\t%s'%float(w))
+    json.dump(d,open(p,'w',encoding='utf-8'),indent=2)
+print('\n'.join(out))" "$PROJ/track.config.json" "$VARIANT") || exit 2
+  while IFS=$'\t' read -r k v; do
+    v="${v%$'\r'}"
+    case "$k" in install_folder) [ -z "$v" ] || INSTALL_FOLDER="$v";; ui_name_prefix) [ -z "$v" ] || UI_PREFIX="$v";; verge_m) echo "  road_profile.verge_m $v m (the variant's) written into $PROJ/track.config.json";; esac
+  done <<< "$VLINES"
+  case "$INSTALL_FOLDER" in ""|*[!A-Za-z0-9_]*) echo "drive1_variants.$VARIANT.install_folder '$INSTALL_FOLDER' is not a folder name"; exit 2;; esac
+  echo "D4 variant $VARIANT: install folder $INSTALL_FOLDER, installed as '$UI_PREFIX - <layout>'; this run never syncs back"
+fi
 if [ -n "$FROM" ]; then echo "--from $FROM: every step before it is skipped (the sync-in ran above; every gate runs)"; fi
 if [ "$REQUIRE_RACE" = 1 ] && [ -z "$RACE_IDS" ]; then echo "no race layout declared — ship.json says this chain is the three-version chain (ledger 0047)"; exit 2; fi
 if [ -n "$RACE_IDS" ]; then
@@ -834,6 +945,11 @@ if [ "$SCRATCH" = 1 ]; then
   echo "stay in the scratch copy — only the workshop feeds $SRC."
 else
 step "sync outputs workshop -> airoso"
+if [ -n "$VARIANT" ]; then
+  # a D4 variant run (SHIP_VARIANT) never syncs back: its config carries the variant's verge, its outputs stay in the
+  # workshop; only the config's own build (no SHIP_VARIANT) feeds airoso
+  echo "SKIPPED: SHIP_VARIANT=$VARIANT — a D4 variant's build stays in the workshop ($PROJ); only the config's own build feeds $SRC."
+else
 for p in ${OUT_REQ[@]+"${OUT_REQ[@]}"}; do
   while IFS= read -r q; do mkdir -p "$(dirname "$SRC/$q")"; cp "$PROJ/$q" "$SRC/$q"; done < <(expand "$p")
 done
@@ -853,6 +969,7 @@ done
 for p in ${OUT_RM[@]+"${OUT_RM[@]}"}; do
   while IFS= read -r q; do rm -f "$SRC/$q"; done < <(expand "$p")
 done
+fi   # SHIP_VARIANT
 # gate OBJs (66-78 MB each, regenerable from the kn5s) are never in a sync_out list
 fi
 
@@ -866,6 +983,17 @@ if [ -n "$RACE_RED" ]; then
   echo "  NOT INSTALLED: race layout(s) $RACE_RED fail on their own gates (drive_test barrier_missing / obstruction,"
   echo "  the BUILT no_route containment fill) — no reference exists to be 'no worse than', so --force-install does not"
   echo "  apply (data/drive_test.<id>.json, data/no_route.<id>.json)"; exit 1
+fi
+# the Lariat Drive-1 road gates (the block above gate_road_inventory): red stops the install unless forced
+echo "  Drive-1 road gates (road inventory, stacked legs): exit $D1_G"
+if [ "$D1_G" != 0 ]; then
+  if [ "$FORCE" = 1 ] && [ "$D1_FORCE_OK" != 1 ]; then
+    echo "  NOT INSTALLED: --force-install refused — the Drive-1 verdict read this build WORSE than the July reference on a key, or obstruction / floating / soft-top not 0 (data/drive1_gates.json force_install_why_not)"; exit 1
+  elif [ "$FORCE" = 1 ]; then
+    echo "  --force-install: past the Drive-1 road gates RED (the verdict read no key worse than the July reference)"
+  else
+    echo "  NOT INSTALLED (Kevin never loads a build the machine failed): Drive-1 road gates red (data/road_inventory.json, data/stacked_legs.json)"; exit 1
+  fi
 fi
 if [ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ] || [ "$NR_R" != 0 ] || [ "$KG" != 0 ]; then
   if [ "$NR_R" != 0 ]; then

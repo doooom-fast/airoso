@@ -531,8 +531,16 @@ def build(project_dir: str | Path, *, allow_stale: bool = False, max_age_days: f
                        round(i * (len(widths_base_cl) - 1) / max(n_local - 1, 1)))] for i in range(n_local)]
     else:
         widths_base = widths_base_cl
-    local["widths_base_m"] = [round(w, 2) for w in widths_base]
-    local["widths_m"] = widths
+    # THE ORDER (2026-11-01, review of the Lariat integration; ledger 0048 "Started"). These arrays are per
+    # centerline.geojson vertex, but centerline.local.json's ring was re-ordered by projection (route.start_at /
+    # route.reverse: High Plains by 815 of 1,074 points) AFTER the geojson was written, so writing them 1:1 put every
+    # width k vertices off on a rotated ring. projection records the permutation (source_index); it is applied here
+    # once, and widths_order says so. A track with no recorded permutation (every track built before 2026-10-29, and
+    # any unrotated ring) is the identity: byte-identical but for the new key.
+    from scripts.geometry.projection import in_local_order
+    local["widths_base_m"] = [round(w, 2) for w in in_local_order(local, widths_base)]
+    local["widths_m"] = in_local_order(local, widths)
+    local["widths_order"] = "local"
     local["default_width_m"] = round(sum(widths) / len(widths), 2)
     (data / "centerline.local.json").write_text(json.dumps(local), encoding="utf-8")
     # the overlapping-pad approach is gone; remove any stale pad file so build_mesh lays none.

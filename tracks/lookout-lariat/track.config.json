@@ -6,8 +6,8 @@
   "_version_doc": "The V3 config (2026-10-11). Nothing has been built at this version; the installed July build is 0.15.0. ui_track.json stamps '[build <version>]' so a stale install is visible at a glance.",
   "author": "doooom",
   "year": 2026,
-  "ui_series": "K10 Colorado",
-  "_about": "V3 rebuild of the Lariat (ledger 0048; tracks/lookout-lariat/V3-PLAN.md and DOSSIER.md). Kevin approved the plan's defaults on 2026-10-11 ('Those changes are good'): D1 keep the Colfax double-back; D2 (a) one slab per divided stretch, Reverse drives them against the arrows and says so; D3 (a) a race version on the real narrow road (four layouts); D4 build both edge widths for Drive 1; D5 static C-470 bridges; D6 real relief beyond ~50-100 m (the L3 amendment shared with ledger 0046) and a Denver skyline after Drive 2; D7 all five July calls reversed; A1-A13 as written. The engine drafts route-only, Claude authors in Blender, the gates judge the built file, Kevin's drive decides. P0 is done; P2 has the centreline only: data/centerline.geojson is the paint centreline (tools/paint_centreline.py, 2026-10-11; the gps stage's OSM line is kept as data/centerline.osm.geojson). No elevation, mesh, kn5 or install yet. Stations below are metres along the V3 centreline in centerline.local.json's frame from local v0 = the pylons (scripts/geometry/projection.py; on the paint centreline local index = data/centerline.geojson index + 2, because projection's own start_at pick lands two 1 m vertices before geojson v0; it was + 1 on the OSM line). Every vertex index and station here was re-derived onto the paint centreline by station matching (tools/remap_centreline_config.py; data/centerline_remap.json lists each old and new value). The paint centreline is 8.5 m longer than the OSM line, so against the dossier its stations read -1 to +14 m (most of it from C4-C6, where OSM cut the hairpins short) up to exit 259, and up to a further +20 m after it (the A1 fixes).",
+  "ui_series": "doooom Colorado",
+  "_about": "V3 rebuild of the Lariat (ledger 0048; tracks/lookout-lariat/V3-PLAN.md and DOSSIER.md). Kevin approved the plan's defaults on 2026-10-11 ('Those changes are good'): D1 keep the Colfax double-back; D2 (a) one slab per divided stretch, Reverse drives them against the arrows and says so; D3 (a) a race version on the real narrow road (four layouts); D4 build both edge widths for Drive 1; D5 static C-470 bridges; D6 real relief beyond ~50-100 m (the L3 amendment shared with ledger 0046) and a Denver skyline after Drive 2; D7 all five July calls reversed; A1-A13 as written. The engine drafts route-only, Claude authors in Blender, the gates judge the built file, Kevin's drive decides. P0 is done; P2 has the centreline only: data/centerline.geojson is the paint centreline (tools/paint_centreline.py, 2026-10-11; the gps stage's OSM line is kept as data/centerline.osm.geojson). No elevation, mesh, kn5 or install yet. Stations below are metres along the V3 centreline in centerline.local.json's frame from local v0 = the pylons (scripts/geometry/projection.py; on the paint centreline local index = data/centerline.geojson index + 2, because projection's own start_at pick lands two 1 m vertices before geojson v0; it was + 1 on the OSM line). Every vertex index and station here was re-derived onto the paint centreline by station matching (tools/remap_centreline_config.py; data/centerline_remap.json lists each old and new value). The paint centreline is 8.5 m longer than the OSM line, so against the dossier its stations read -1 to +14 m (most of it from C4-C6, where OSM cut the hairpins short) up to exit 259, and up to a further +20 m after it (the A1 fixes). 2026-11-01, Kevin: 'Start the lariat' (ledger 0048 'Started'): unshelved. The first pass through the chain (tools/ship_track.sh + ship.json, ONE-CHAIN) is Drive 1 on one layout, street_full: the road and the ground; street_reverse and the two race layouts wait in _layouts_v3_owed, with their declared starts, until Drive 3 and the race tools (V3-PLAN A13, P1 owed).",
   "location": {
     "lat": 39.727,
     "lon": -105.225,
@@ -56,6 +56,13 @@
       533500102
     ],
     "_exclude_ids_doc": "Opt-in route key (scripts/gps/overpass.fetch_ways), applied when the payload is parsed: the query, its fingerprint and the snapshot are unchanged, and the snapshot keeps both ways for tools/route_oneway_check.py. Each id is the WRONG side of a divided piece that the stitcher keeps because it is shorter. 42005706 = exit 259's 4-lane south-west-bound side (A1: the July lap drove it 84 m against its arrows; the lap now takes the north-east-bound 119006778). 533500102 = 19th St's eastbound one-way side at the ramp terminal: with A1's ids alone the 19th St path still ran on it and the lap drove 59.6 m against its arrows (found by tools/route_oneway_check.py on 2026-10-11); dropping it puts the left turn on 1283267904 -> 1106864351 -> 533504135, the westbound side, as A1 intends. An id that is no longer in the snapshot (OSM re-split) fails the stage.",
+    "measured_widths": {
+      "aerial": "data/aerial/aerial_measurements.json",
+      "town_segments": [
+        "Golden"
+      ]
+    },
+    "_measured_widths_doc": "P2 step 1 (scripts/gps/measured_widths.py, after scripts.gps.widths_from_osm): the aerial pass's MEASURED widths (NAIP 2019: width stations, hairpin legs, hairpin apexes) override the published width_overrides, which override the 'mountain' OSM table, per top-level width_overrides stretch; a measured width is the painted travelled way (edge-line centre to centre + one 0.10 m stripe); in a town_segments stretch with no edge lines, the curb-to-curb pavement. widths_from_osm's junction flares, hard-corner flares and 10 m fold floors are not laid (not measurements; A2 keeps hairpin widening off, P3b authors the mouths). The record is data/widths.measured.json.",
     "connectors": {}
   },
   "hairpin_fit": {
@@ -301,20 +308,62 @@
     "crossfall": {
       "status": "estimated",
       "banking": false,
+      "method": "footprint",
+      "_method_doc": "scripts/elevation/crossfall.py build_footprint (P2 step 4): 3DEP pairs inside the real-width footprint only (the outermost 1.0 m inside each edge), ground beside the road used only to classify bench vs crown; the construction standard (2 % crown, or 2 % toward the cut ditch on a bench) everywhere the measurement is weaker than 2 %, over 6 %, banked into a curve, on a declared deck, or fails the roll-rate gate (tools/verify_crossfall.py: <= 4 % change per 30 m, no +3 % to -3 % swing within 30 m, both [invented]). data/crossfall.json carries status 'estimated'.",
       "_doc": "A6: the road is not tilted into the hairpins, because the real one isn't (L10; ledger 0003 stays open). July's data/crossfall.json was DEM-estimated, not measured (~10 % of stations sat at its 6 % cap, 19 % on US-40; 9 swings of >= 3 % each way within 30 m), and is not reused. P2 re-measures inside the real-width footprint with a roll-rate gate; until a 3DEP source-lidar sample agrees it is 'estimated', and failing stretches take the construction standard: 2 % crown, or 2 % toward the cut ditch on bench sections."
     },
     "verge_m": 0.4,
     "_verge_doc": "D4 (Kevin 2026-10-11: build both, pick by driving). The strip beside the pavement: A = 0.4 m (real width, then the real edge: rock cut, ditch or drop; 0.3-0.5 m gravel); B = 1.25 m (a 1-1.5 m firm gravel strip you can put a wheel on). Both builds are in drive1_variants. Replaces July's 6.4 m drivable 'shoulder' per side (22.6 m drivable in all, against the real 6.1-6.7 m). No rumble lips in either."
   },
+  "gates": {
+    "_doc": "Per-track gate values for the Lariat's Drive-1 set (V3-PLAN P5, ledger 0048). Read by the gates themselves; every other track has no such block, so its gates run exactly as before. Each value carries its tag; fleet/GATES-CHANGELOG.md has the entry.",
+    "drive_test": {
+      "kinks_per_km_max": 19.49,
+      "_kinks_doc": "[std: measured on reference mountain roads] (fleet/reference/MEASURED.md section 8, 2026-10-12): drive_test's own kink metric (slope change > 3 %-points between consecutive 1 m steps, six interior wheel paths) run by tools/calibrate_kinks.py on four reference mountain roads on this machine: simtraxx Pikes Peak pp100ahc 19.49/km (20.0 km), la_canyons mt_wilson_hillclimb 0.73/km (6.8 km), simtraxx Targa Florio stage 1 0.49/km (14.2 km), la_canyons angeles_crest_east 0.00/km (40.9 km). The ceiling is the kinkiest of them: a Lariat that reads more is kinkier than every reference mountain road. It replaces the plan's 5/km [invented: Lake Murray V3's own 4.97/km]. Kinks gate nowhere else (scripts/geometry/drive_test.py reads this key only when a track declares it)."
+    },
+    "stacked_legs": {
+      "_doc": "tools/verify_stacked_legs.py's thresholds are module constants (pairs < 40 m in plan and > 150 m along the lap, 0 failures, all [invented]); a 'classes' map here would override which built groups count as ground / edge / sign / closure (none set: the tool's defaults). Measured on the paint centreline with July's 3DEP corridor samples (2026-10-12): 10,659 pairs at 1 m on 680 lap points in 12 stacked runs (st 2,493-3,152 Tiers of Zion, 5,305-5,996 the upper hairpins), nearest 21.3 m in plan, vertical gap 6.49-14.90 m (median 9.98 m); no crossing."
+    },
+    "drive1": {
+      "_doc": "tools/drive1_gates.py: V3-PLAN P5's Drive-1 gate set, judged on the gate reports of one build (data/drive1_gates.json; gating vs recorded rows). Every value is P5's, tagged as P5 tags it; fleet/GATES-CHANGELOG.md 2026-10-12 'Drive-1 verdict'. The kink ceiling is gates.drive_test.kinks_per_km_max. Carried from branch 793441f (2026-10-12) onto main 2026-11-01: tools/drive1_gates.py reads main's report names (kn5_ground_check.<id>.json per layout).",
+      "drive_test": {
+        "severe_steps_max": 0,
+        "_severe_doc": "[invented] P5: severe steps (>= 6 cm, drive_test's own STEP_SEVERE_M, itself a flagged value) 0 per street layout; drive_test's own line is > 12/km.",
+        "replication_p95_max_m": 0.5,
+        "_replication_doc": "[invented in 0048] P5: the built road against the raw 3DEP profile, p95 <= 0.5 m.",
+        "_zero_doc": "soft-top in lane, obstruction, floating furniture, undrivable corners, daylight gaps: 0 each [std: drive_test's existing count gates] (constants in the tool, not values here)."
+      },
+      "audit": {
+        "f_curb_max": 15,
+        "_doc": "P5: hard classes A B D E G H I = 0 [std: audit_mesh's existing hard total]; F (curb not flush) <= 15 [invented: Lake Murray V3's own count]. J / K at the race-turn mouths are Drive 3. The street audit's own exit (hard total, F at 0) also gates in tools/ship_track.sh."
+      },
+      "kn5_ground_check": {
+        "lid_end_step_max_m": 0.1,
+        "_doc": "P5: road over ground p95 <= 0.10 m [std: the existing gate] (kn5_ground_check's own verdict); the lid: no step > 0.10 m at either end [invented in 0048], read from drive_test's severe-step list within 5 m of each end of capture.bridges."
+      },
+      "july_reference": {
+        "severe_steps": 253,
+        "kinks_per_km": 68.3,
+        "excursion_drops": 738,
+        "excursion_far_ledges": 382,
+        "obstruction_stations": 0,
+        "floating_furniture": 0,
+        "soft_top_in_lane": 0,
+        "_doc": "[measured on the installed July v0.46.0 build] (V3-PLAN P5 '--force-install rule', 0047): a red street run may still install with --force-install only if no worse than these on every key; obstruction, floating furniture and soft-top are always 0. tools/ship_track.sh refuses a forced install when data/drive1_gates.json force_install_ok is false."
+      }
+    }
+  },
   "drive1_variants": {
-    "_doc": "D4: two Drive-1 installs, identical apart from road_profile.verge_m. P1's ship chain (tools/ship_track.sh) builds each into its own folder.",
+    "_doc": "D4: two Drive-1 installs, identical apart from road_profile.verge_m. tools/ship_track.sh builds one per run: SHIP_VARIANT=<id> (unset = this config as written, i.e. a_real_edge) writes the variant's road_profile.verge_m into the WORKSHOP copy of this config (the draft's mesh reads it: build_mesh's shoulder band and grading band, 2026-11-01), installs under the variant's install_folder as '<ui_name_prefix> - <layout>', must draft in full (no --skip-blend / --from: a loop.blend drafted for the other edge is never prepped) and never syncs back. The config's own build (no SHIP_VARIANT) is the one that feeds airoso. FOUND 2026-11-01 (rehearsal 3, ledger 0048 'Started'): build_mesh floors the verge at the grid's representable band (half-diagonal + 1 m, grade_embankment's own rule), so on this track's 7 x 7 km box at the 3,000,000-vertex budget (3.6 m cells) both variants build a 3.6 m band and are the same draft; the 0.4 / 1.25 m edges are authored in P3a (cut/fill by station), where D4 is decided. SHIP_VARIANT stays the switch for when the grid or the authoring can carry it.",
     "a_real_edge": {
       "road_profile.verge_m": 0.4,
-      "install_folder": "lookout_lariat_v3"
+      "install_folder": "lookout_lariat",
+      "ui_name_prefix": "doooom Colorado"
     },
     "b_verge": {
       "road_profile.verge_m": 1.25,
-      "install_folder": "lookout_lariat_v3_verge"
+      "install_folder": "lookout_lariat_verge",
+      "ui_name_prefix": "doooom Colorado (verge)"
     }
   },
   "road_text": {
@@ -449,6 +498,39 @@
       }
     ]
   },
+  "bridges": {
+    "_doc": "P2 step 5 (V3-PLAN; ledger 0048). Decks on the lap are DECLARED from evidence, never left to a detector. scripts/elevation/road_profile.py finds each declared deck's stretch of the lap over its footprint ways (each OSM way's centreline buffered by half its pavement width, route.width_profile), adds abutment_m each side, holds the road straight across it in the raw 3DEP profile before smoothing, writes data/bridge.spans.json, and with --write records it as capture.bridges (local stations), the engine's declared-span key.",
+    "l13_seam_rule": true,
+    "_l13_seam_rule_doc": "Opt-in for scripts/geometry/build_mesh.py's height detector (_bridge_detector, the one that minted July's [24,278-24,803]): on a closed lap a run that reaches the closing vertex while vertex 0 is not on a span is a wrap artefact (L13) and is dropped. Other tracks keep the detector as it was. The V3 Lariat does not run build_mesh; the prep's OSM-way detector (scripts/ac/build_kn5_loop.py detect_bridge_spans) gets the same rule unconditionally.",
+    "declared": [
+      {
+        "id": "lid_19th_us6",
+        "kind": "lid",
+        "footprint_ways": [
+          533503591,
+          533679737
+        ],
+        "abutment_m": 8.0,
+        "_doc": "The 19th St lid over the US-6 tunnel (OSM ways 533503591 + 533679737, tunnel=yes, layer -1, 2 lanes each): the lap's stretch over the two tunnel footprints plus 8 m of abutment each side [invented: the prep's BRIDGE_PAD_M], held straight. ~550 m before the pylons, clear of the seam (L13)."
+      }
+    ],
+    "dropped": [
+      {
+        "july_span_m": [
+          24278,
+          24803
+        ],
+        "why": "July auto span (engine v0.46.0 build_mesh height detector, 24,802.6 m built frame): 525 m ending on the lap's last vertex without continuing from vertex 0, a wrap artefact (L13); holding it level would erase 19th St's real +5.7 % climb. The only structure in that stretch is the lid, declared above from its footprint. No V3 lap way there carries bridge=yes (data/bridge.spans.json lap_osm_bridge_ways)."
+      },
+      {
+        "july_span_m": [
+          20742,
+          21166
+        ],
+        "why": "July auto span containing the C-470 crossing on US-6 (aerial: C-470 way 84720905 crosses OVER the lap at OSM-line st 21,137.6, its deck measured across the lap in data/aerial/aerial_measurements.json c470): the lap passes UNDER a bridge there, not over one. No V3 lap way there carries bridge=yes."
+      }
+    ]
+  },
   "layouts": [
     {
       "id": "street_full",
@@ -471,77 +553,82 @@
       "ui_description": "Street \u2014 Full: 24.9 km of open two-way roads, anticlockwise seen from above. From the 1917 stone pylons on 19th St up the 1913 Lariat Trail's stacked hairpins (20 mph, double yellow, about 6.5 m wide), over Lookout Mountain past Buffalo Bill's grave, down Paradise Rd and Mt Vernon Canyon on US-40, and home through Golden on I-70 Business, Colfax, US-6 and its 19th St ramp, every one-way with its arrows. At the US-6/Colfax signal the lap turns back on itself (152 deg); whether that turn is legal there is unverified. Real roads from OpenStreetMap at real USGS 3DEP elevation; nothing closed. The AI line is a generated draft, not an in-game recording.",
       "ai": "ai/street_full",
       "_doc": "Kevin's 'Full' (D3 a): the July layout id 'full' is renamed because tools/layout_dummies.validate_layouts refuses 'full' and 'freeroam' (track_folder drops the Content Manager name suffix for them). direction is the flag every tool keys on, never the id."
-    },
-    {
-      "id": "street_reverse",
-      "name": "Street \u2014 Reverse",
-      "kind": "street",
-      "direction": "reverse",
-      "race_furniture": false,
-      "start": {
-        "line_vertex": 0,
-        "grid_vertex": 26,
-        "offset_right_m": 1.6,
-        "sector_vertices": [
-          11623,
-          7185
-        ]
-      },
-      "_start_doc": "As street_full's _start_doc, mirrored: grid v26 on Lookout Mountain Rd, 26 m behind the line in reverse travel, sectors in reverse driving order. Reverse has its OWN grid facing its own way (July's Reverse shared Full's grid and spawned facing forward). offset_right_m is provisional, as on street_full.",
-      "against_oneway": [
-        "exit259",
-        "colfax",
-        "us6_offramp",
-        "nineteenth"
-      ],
-      "_against_oneway_doc": "D2 (a): the four divided stretches, 4486.5 m in all, driven against the arrows; tools/route_oneway_check.py fails this layout on any other wrong-way run, and on a declared stretch it no longer drives against.",
-      "run": "clockwise: 19th St, the US-6 off-ramp and US-6, Colfax, I-70 Business, up Mt Vernon Canyon on US-40, Paradise Rd, over the top and down the Lariat Trail to the pylons",
-      "ui_description": "Street \u2014 Reverse: the same 24.9 km driven the other way, clockwise seen from above: 19th St, the US-6 off-ramp and US-6, Colfax, I-70 Business, up Mt Vernon Canyon on US-40, Paradise Rd, over the top and down the Lariat Trail's hairpins to the pylons. It drives four one-way pieces of divided road against their arrows, about 4.5 km in all: the US-6 carriageway with its off-ramp (4.0 km), 312 m of West Colfax, 54 m of 19th St at the ramp and 86 m at I-70 exit 259; the other side of each is beside you, not driven. At the US-6/Colfax signal the lap turns back on itself (152 deg); whether that turn is legal there is unverified. Real roads from OpenStreetMap at real USGS 3DEP elevation. The AI line is a generated draft, not an in-game recording.",
-      "ai": "ai/street_reverse"
-    },
-    {
-      "id": "race_acw",
-      "name": "Race \u2014 Anticlockwise",
-      "kind": "race",
-      "direction": "forward",
-      "race_furniture": true,
-      "closure_token": "acw",
-      "start": {
-        "line_vertex": 0,
-        "grid_vertex": 14417,
-        "offset_right_m": 0.0,
-        "sector_vertices": [
-          7185,
-          11623
-        ]
-      },
-      "_start_doc": "As street_full's _start_doc. offset_right_m 0.0: a one-way race uses the whole road, so the grid is centred (columns at +/-1.0 m, car edges 1.95 m from centre, inside a 6.1 m road).",
-      "run": "anticlockwise, one-way: up the Lariat Trail, over the top, Paradise Rd, down Mt Vernon Canyon, home through Golden; the whole mountain road edge to edge",
-      "ui_description": "Race \u2014 Anticlockwise: the Full direction as a closed one-way race on the real roads. The whole mountain road is yours edge to edge (about half Alvarado's width on the climb), with its real stone, steel and open edges and nothing added in it or along it. Every side road is barriered at its edge; the full intersection is open at the five corners where the race turns (the Paradise Rd tee, Paradise Rd onto US-40, exit 259, Colfax onto US-6, the ramp onto 19th St); Golden's multi-lane streets are narrowed to about Alvarado's width; on each divided road you race one side and the other is closed off. The AI line is a generated draft, not an in-game recording.",
-      "ai": "ai/race_acw"
-    },
-    {
-      "id": "race_cw",
-      "name": "Race \u2014 Clockwise",
-      "kind": "race",
-      "direction": "reverse",
-      "race_furniture": true,
-      "closure_token": "cw",
-      "start": {
-        "line_vertex": 0,
-        "grid_vertex": 26,
-        "offset_right_m": 0.0,
-        "sector_vertices": [
-          11623,
-          7185
-        ]
-      },
-      "_start_doc": "As street_reverse's (grid v26, sectors reversed); offset_right_m 0.0: centred grid on the whole one-way road.",
-      "run": "clockwise, one-way: 19th St, US-6, Colfax, up Mt Vernon Canyon, Paradise Rd, over the top and down the Lariat Trail; the whole mountain road edge to edge",
-      "ui_description": "Race \u2014 Clockwise: the Reverse direction as a closed one-way race on the real roads, the same closures and open boxes turned the other way. The whole mountain road is yours edge to edge (about half Alvarado's width on the descent), with its real stone, steel and open edges and nothing added in it or along it. Every side road is barriered at its edge; the full intersection is open at the five corners where the race turns; Golden's multi-lane streets are narrowed to about Alvarado's width; on each divided road you race one side and the other is closed off. One-way rules do not apply on a closed road. The AI line is a generated draft, not an in-game recording.",
-      "ai": "ai/race_cw"
     }
   ],
+  "_layouts_v3_owed": {
+    "_doc": "2026-11-01, the first chain pass (Kevin: 'Start the lariat'; ONE-CHAIN section 4 row 5): Drive 1 is the road and the ground on one layout (V3-PLAN A13), the way the four chain tracks of 2026-10-29 shipped (Sand Creek's reverse is parked the same way). The chain's multi-layout path (tools/layout_dummies.py -> data/dummies_<id>.json -> a spawn kn5 per layout; steps.author layout_dummies, steps.ship spawn_kn5; the prep then writes no AC_* node into the road kn5) and the race steps (race_bands / race_author / race_verify / export_race / race_gates, still San Diego's shape: V3-PLAN P1 owed) do not run until these return: street_reverse with Drive 3, race_acw / race_cw when the race tools are adapted. Nothing is lost: every layout shares the one kn5 (L8), each keeps its declared start (re-validated by layout_dummies on the real centerline.local.json when it returns, P4), and tools/route_oneway_check.py still judges a parked street layout's against_oneway declaration on every draft (marked parked in data/oneway_check.json). With one layout the prep takes the engine draft's own data/dummies.json (scripts/geometry/dummies.place_dummies at route.start_at, the pylons), not street_full's declared start block.",
+    "layouts": [
+      {
+        "id": "street_reverse",
+        "name": "Street \u2014 Reverse",
+        "kind": "street",
+        "direction": "reverse",
+        "race_furniture": false,
+        "start": {
+          "line_vertex": 0,
+          "grid_vertex": 26,
+          "offset_right_m": 1.6,
+          "sector_vertices": [
+            11623,
+            7185
+          ]
+        },
+        "_start_doc": "As street_full's _start_doc, mirrored: grid v26 on Lookout Mountain Rd, 26 m behind the line in reverse travel, sectors in reverse driving order. Reverse has its OWN grid facing its own way (July's Reverse shared Full's grid and spawned facing forward). offset_right_m is provisional, as on street_full.",
+        "against_oneway": [
+          "exit259",
+          "colfax",
+          "us6_offramp",
+          "nineteenth"
+        ],
+        "_against_oneway_doc": "D2 (a): the four divided stretches, 4486.5 m in all, driven against the arrows; tools/route_oneway_check.py fails this layout on any other wrong-way run, and on a declared stretch it no longer drives against.",
+        "run": "clockwise: 19th St, the US-6 off-ramp and US-6, Colfax, I-70 Business, up Mt Vernon Canyon on US-40, Paradise Rd, over the top and down the Lariat Trail to the pylons",
+        "ui_description": "Street \u2014 Reverse: the same 24.9 km driven the other way, clockwise seen from above: 19th St, the US-6 off-ramp and US-6, Colfax, I-70 Business, up Mt Vernon Canyon on US-40, Paradise Rd, over the top and down the Lariat Trail's hairpins to the pylons. It drives four one-way pieces of divided road against their arrows, about 4.5 km in all: the US-6 carriageway with its off-ramp (4.0 km), 312 m of West Colfax, 54 m of 19th St at the ramp and 86 m at I-70 exit 259; the other side of each is beside you, not driven. At the US-6/Colfax signal the lap turns back on itself (152 deg); whether that turn is legal there is unverified. Real roads from OpenStreetMap at real USGS 3DEP elevation. The AI line is a generated draft, not an in-game recording.",
+        "ai": "ai/street_reverse"
+      },
+      {
+        "id": "race_acw",
+        "name": "Race \u2014 Anticlockwise",
+        "kind": "race",
+        "direction": "forward",
+        "race_furniture": true,
+        "closure_token": "acw",
+        "start": {
+          "line_vertex": 0,
+          "grid_vertex": 14417,
+          "offset_right_m": 0.0,
+          "sector_vertices": [
+            7185,
+            11623
+          ]
+        },
+        "_start_doc": "As street_full's _start_doc. offset_right_m 0.0: a one-way race uses the whole road, so the grid is centred (columns at +/-1.0 m, car edges 1.95 m from centre, inside a 6.1 m road).",
+        "run": "anticlockwise, one-way: up the Lariat Trail, over the top, Paradise Rd, down Mt Vernon Canyon, home through Golden; the whole mountain road edge to edge",
+        "ui_description": "Race \u2014 Anticlockwise: the Full direction as a closed one-way race on the real roads. The whole mountain road is yours edge to edge (about half Alvarado's width on the climb), with its real stone, steel and open edges and nothing added in it or along it. Every side road is barriered at its edge; the full intersection is open at the five corners where the race turns (the Paradise Rd tee, Paradise Rd onto US-40, exit 259, Colfax onto US-6, the ramp onto 19th St); Golden's multi-lane streets are narrowed to about Alvarado's width; on each divided road you race one side and the other is closed off. The AI line is a generated draft, not an in-game recording.",
+        "ai": "ai/race_acw"
+      },
+      {
+        "id": "race_cw",
+        "name": "Race \u2014 Clockwise",
+        "kind": "race",
+        "direction": "reverse",
+        "race_furniture": true,
+        "closure_token": "cw",
+        "start": {
+          "line_vertex": 0,
+          "grid_vertex": 26,
+          "offset_right_m": 0.0,
+          "sector_vertices": [
+            11623,
+            7185
+          ]
+        },
+        "_start_doc": "As street_reverse's (grid v26, sectors reversed); offset_right_m 0.0: centred grid on the whole one-way road.",
+        "run": "clockwise, one-way: 19th St, US-6, Colfax, up Mt Vernon Canyon, Paradise Rd, over the top and down the Lariat Trail; the whole mountain road edge to edge",
+        "ui_description": "Race \u2014 Clockwise: the Reverse direction as a closed one-way race on the real roads, the same closures and open boxes turned the other way. The whole mountain road is yours edge to edge (about half Alvarado's width on the descent), with its real stone, steel and open edges and nothing added in it or along it. Every side road is barriered at its edge; the full intersection is open at the five corners where the race turns; Golden's multi-lane streets are narrowed to about Alvarado's width; on each divided road you race one side and the other is closed off. One-way rules do not apply on a closed road. The AI line is a generated draft, not an in-game recording.",
+        "ai": "ai/race_cw"
+      }
+    ]
+  },
   "race": {
     "_doc": "D3 (a), Kevin 2026-10-11: a race version on the real narrow road (dossier 4c), on the corridor rules of ledgers 0047 / 0049 (Lake Murray) adapted to this road: Kevin's brief asks for 'more or less an Alvarado's width for the entire track with deviances in various areas'; on the Lariat the deviation is most of the lap, because every layout drives the same road surface (L8) and the mountain road is 6.1-6.7 m. Read by the race tools AFTER P1 adapts them (SD's hard-coded STREETS become this block, SD byte-identical). Today's tools/barrier_bands.py is Lake Murray's and refuses this block loudly (no single 'whole' interval, no pinned closure_runs, clear_width_source is not a street in route.roads).",
     "rules": [
@@ -1457,8 +1544,8 @@
     "mountain"
   ],
   "_ui_tags_doc": "The installed July ui carried 'fictional' (an old engine default); this is a real road. track_folder adds 'circuit' on a loop so Content Manager allows Race / Track Day sessions.",
-  "install_folder": "lookout_lariat_v3",
-  "_install_folder_doc": "A11: every file inside is lookout_lariat; the folder on this machine is lookout_lariat_v3 while the July build stays installed (July is parked only after V3 reaches T3, three clean laps each way); the release zip's folder is lookout_lariat, so it replaces the old public copy. Drive 1's verge variant installs as lookout_lariat_v3_verge (drive1_variants).",
+  "install_folder": "lookout_lariat",
+  "_install_folder_doc": "ONE-CHAIN section 3 (Kevin 2026-10-28: the install folder is the slug, no _v3 / _ai suffixes): content/tracks/lookout_lariat, the folder the July build occupies. tools/ship_track.sh parks the previous install in D:/k10-track-archive/<stamp>/ before it writes, so the July build is recoverable, never deleted; A11's 'July stays installed until V3 reaches T3' is superseded by ONE-CHAIN section 4 (an engine-era build holds no tier). Every file inside is lookout_lariat, and the release zip's folder is lookout_lariat. Drive 1's verge variant (D4 B, drive1_variants) installs beside it as lookout_lariat_verge until Kevin picks a width; the one not picked is parked.",
   "_history": {
     "_doc": "July (v0.15.0) values this V3 config removed, kept short; the full July text is git show 30ad2a3:tracks/lookout-lariat/track.config.json. A2: the base-hairpin widening is OFF for Drive 1 and re-asked after Kevin drives the fitted curve; to switch it back on, copy route.wide_corners below into route.",
     "route.wide_corners": [
@@ -1510,5 +1597,15 @@
       "Paradise Rd '-14.5 %' (1 m 3DEP: -10.3 % over 100 m)",
       "installed ui: run 'clockwise' (Full is anticlockwise), tag 'fictional', author prodrive-ac-builder"
     ]
+  },
+  "capture": {
+    "bridges": [
+      {
+        "id": "lid_19th_us6",
+        "center_m": 24368.5,
+        "len_m": 38.1
+      }
+    ],
+    "_bridges_doc": "Written by scripts/elevation/road_profile.py --write from bridges.declared (local stations; data/bridge.spans.json has the footprint, the frames and the hold). The engine's declared-span key: drive_test's replication / obstruction exemptions and kn5_ground_check's railing feet read it. Do not edit by hand."
   }
 }

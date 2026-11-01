@@ -291,7 +291,7 @@ def test_install_folder_from_config_parked_old_build_and_running_game_refused():
         cfg = json.loads((ROOT / "tracks" / track / "track.config.json").read_text(encoding="utf-8"))
         assert re.match(r"^[A-Za-z0-9_]+$", cfg["install_folder"]), cfg["install_folder"]
     assert json.loads((ROOT / "tracks" / "lookout-lariat" / "track.config.json").read_text(encoding="utf-8"))[
-        "install_folder"] == "lookout_lariat_v3"                                          # plan A11
+        "install_folder"] == "lookout_lariat"      # ONE-CHAIN §3: the slug, no suffix (supersedes plan A11's _v3; 2026-11-01)
     install = TEXT[_first('step "install: $AC/$INSTALL_FOLDER'):]
     assert 'mv "$AC/$old" "$ARCHIVE/$STAMP/$old"' in install and 'ARCHIVE="D:/k10-track-archive"' in TEXT
     assert "_prev\"" not in install.replace('"${INSTALL_FOLDER}_prev"', ""), "never a _prev left in content/tracks"
@@ -555,7 +555,9 @@ def test_sd_assembler_runs_through_the_v021_shim_as_in_ship_sd():
     # the road gate OBJ is a ship step before the track folder (make_treefx / ext_config read tile names off it)
     for spec in (SD_SPEC, LARIAT_SPEC):
         sh = _spec(spec)["steps"]["ship"]
-        assert sh.index("road_obj") < sh.index("track_folder") < sh.index("treefx"), spec
+        assert sh.index("road_obj") < sh.index("track_folder"), spec
+        if "treefx" in sh:          # the Lariat's first chain pass lists no treefx (2026-11-01, ledger 0048 "Started")
+            assert sh.index("track_folder") < sh.index("treefx"), spec
         assert "road_obj" not in _spec(spec)["steps"]["gate"], spec
 
 
@@ -585,6 +587,30 @@ def test_lariat_draft_wires_the_paint_centreline_before_any_elevation():
     # every data step of the draft runs under --draft-only; underlay is where it stops
     for n in d[:-1]:
         assert re.search(rf"\b{n}\b", TEXT[_first("is_data_step() {"):_first("SPEC_LINES=$(")]), n
+
+
+def test_lariat_draft_runs_its_data_stages_in_order():
+    """P2 steps 1, 4, 5: the profile by station (decks held, capture.bridges written) before projection; the measured
+    widths after the OSM table; the crossfall on the real-width footprint after them; its roll-rate gate hard."""
+    d = spec_mod.load(LARIAT_SPEC, "lookout-lariat")["steps"]["draft"]
+    order = ["elev", "road_profile", "project", "widths", "measured_widths", "crossfall", "verify_crossfall", "underlay"]
+    assert [n for n in d if n in order] == order, d
+    fns = _functions()
+    assert "python -m scripts.elevation.road_profile \"$PROJ\" --write" in fns["draft_road_profile"]
+    assert "python -m scripts.gps.measured_widths \"$PROJ\"" in fns["draft_measured_widths"]
+    assert "python -m scripts.elevation.crossfall \"$PROJ\"" in fns["draft_crossfall"]
+    assert "python tools/verify_crossfall.py \"$PROJ\"" in fns["draft_verify_crossfall"]
+    for n in ("draft_road_profile", "draft_measured_widths", "draft_crossfall", "draft_verify_crossfall"):
+        assert "|| " not in fns[n], f"{n}: a failing stage must stop the chain (set -e)"
+    # the new block sits after every existing function (appended, nothing above it reordered)
+    assert _first("draft_road_profile() {") > _first("gate_race_gates() {")
+    cfg = json.loads((ROOT / "tracks" / "lookout-lariat" / "track.config.json").read_text(encoding="utf-8"))
+    assert cfg["road_profile"]["crossfall"]["method"] == "footprint"
+    assert cfg["bridges"]["declared"][0]["footprint_ways"] == [533503591, 533679737]
+    s = spec_mod.load(LARIAT_SPEC, "lookout-lariat")
+    for f in ("data/widths.measured.json", "data/bridge.spans.json", "data/crossfall.json", "data/crossfall_gate.json",
+              "data/osm.widths.cache.json"):
+        assert f in s["sync_out"]["files"], f
 
 
 def test_ship_sd_is_untouched_by_this_chain():
@@ -634,7 +660,8 @@ def test_the_four_chain_specs_draft_the_engine_then_the_underlay_and_run_on_airo
 # --- the San Diego freeway network through the chain (ONE-CHAIN §4 row 8; Kevin 2026-10-28: "rebuild, by an agent") ---
 NETWORK_SPECS = [ROOT / "tracks" / "san-diego-freeway" / "ship.json"]
 NETWORK_STEPS = {"net": "scripts.gps.network", "classify": "scripts.gps.classify",
-                 "network_elev": "scripts.elevation.network_elev", "network_mesh": "scripts.geometry.build_network_mesh"}
+                 "network_elev": "scripts.elevation.network_elev", "network_mesh": "scripts.geometry.build_network_mesh",
+                 "network_reference": "scripts.geometry.network_reference"}
 
 
 def test_the_network_spec_drafts_the_network_then_the_underlay_and_runs_on_airosos_engine():
@@ -646,7 +673,8 @@ def test_the_network_spec_drafts_the_network_then_the_underlay_and_runs_on_airos
         track = p.parent.name
         s = spec_mod.load(p, track)
         d = s["steps"]["draft"]
-        assert d == ["net", "classify", "network_elev", "network_mesh", "underlay"], (track, d)
+        # network_reference (2026-11-01): the ONE real mainline the ship phase walks, declared in the config
+        assert d == ["net", "classify", "network_elev", "network_mesh", "network_reference", "underlay"], (track, d)
         for n in d[:-1]:
             assert re.search(rf"\b{n}\b", data_steps), f"{track}: {n} must be a --draft-only data step"
         everything = [x for ph in PHASES for x in s["steps"][ph]]
@@ -671,6 +699,13 @@ def test_the_network_spec_drafts_the_network_then_the_underlay_and_runs_on_airos
         assert cfg["source"]["type"] == "osm-network" and cfg["source"]["refs"] == ["I 5", "I 8", "CA 52", "CA 163"]
         assert cfg["mirror_x"] is False and cfg["loop"] is False and "K10" not in cfg["name"] + cfg["ui_series"]
         assert cfg["_doc"].startswith("The San Diego freeway network") and "project_freeway_net" in cfg["_doc"]
+        # the reference line is a REAL mainline of the declared network (one of source.refs), driven one way, and the
+        # hole it leaves (every other edge unjudged by the line gates) is named in ship.json _owed
+        rl = cfg["network"]["reference_line"]
+        assert rl["ref"] in cfg["source"]["refs"] and rl["direction"] in ("eastbound", "westbound", "northbound",
+                                                                          "southbound") and rl["_doc"]
+        raw = json.loads(p.read_text(encoding="utf-8"))
+        assert "NOT JUDGED" in raw["_owed"] and "data/network.reference.json" in s["sync_out"]["files"]
     # each network step runs its engine module on the absolute project, needs no Blender, and has a step header
     for n, mod in NETWORK_STEPS.items():
         body = fns[f"draft_{n}"]
@@ -697,9 +732,10 @@ def test_is_data_step_takes_the_network_draft_and_stops_at_the_underlay():
     fn = TEXT[_first("is_data_step() {"):_first("SPEC_LINES=$(")]
     fn = fn[:fn.index("\n}\n") + 3]
     probe = fn + 'for n in "$@"; do if is_data_step "$n"; then echo "$n data"; else echo "$n blender"; fi; done\n'
-    names = ["net", "classify", "network_elev", "network_mesh", "underlay", "build_loop_blend", "network_env"]
+    names = ["net", "classify", "network_elev", "network_mesh", "network_reference", "underlay", "build_loop_blend",
+             "network_env"]
     r = subprocess.run([bash, "-c", probe, "probe", *names], capture_output=True, text=True, timeout=30, check=False)
     assert r.returncode == 0, r.stderr
     got = dict(ln.split() for ln in r.stdout.split("\n") if ln.strip())
     assert got == {"net": "data", "classify": "data", "network_elev": "data", "network_mesh": "data",
-                   "underlay": "blender", "build_loop_blend": "blender", "network_env": "blender"}, got
+                   "network_reference": "data", "underlay": "blender", "build_loop_blend": "blender", "network_env": "blender"}, got

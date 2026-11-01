@@ -119,6 +119,7 @@ def detect_bridge_spans(pts_xyz, origin_lonlat, bridge_ways, *, mirror_x=False,
         return False
 
     spans = []
+    raw_heads = []                                   # each span's unclamped head (open_a - pad_m), for the seam wrap
     st = 0.0
     open_a = None
     prev = pts_xyz[0]
@@ -132,9 +133,38 @@ def detect_bridge_spans(pts_xyz, origin_lonlat, bridge_ways, *, mirror_x=False,
             open_b = st
         elif open_a is not None:
             spans.append((max(0.0, open_a - pad_m), open_b + pad_m))
+            raw_heads.append(open_a - pad_m)
             open_a = None
     if open_a is not None:
         spans.append((max(0.0, open_a - pad_m), open_b + pad_m))
+        raw_heads.append(open_a - pad_m)
+    # L13 (V3-PLAN P2 step 5): on a CLOSED lap the closing vertex is vertex 0, so a span reaching it always
+    # continues from vertex 0 (the same point is near the same bridge). The pads must wrap the same way: a pad past
+    # either end of the lap continues on the other side of the seam, never past the lap's length or below 0
+    # (before: the last span ran pad_m past the lap and the first span's pad was cut off at 0). Open roads unchanged.
+    closed = (len(pts_xyz) > 2 and abs(pts_xyz[0][0] - pts_xyz[-1][0]) < 1e-6
+              and abs(pts_xyz[0][2] - pts_xyz[-1][2]) < 1e-6)
+    if closed and spans:
+        lap = st
+        pieces = list(spans)
+        if near_bridge(pts_xyz[0][0], pts_xyz[0][2]) and pieces[0][0] <= 0.0:
+            pieces.append((lap - pad_m, lap))             # vertex 0's pad, continued before the seam
+        for h in raw_heads:
+            if h < 0.0:                                   # a head pad cut off at 0: it continues before the seam
+                pieces.append((max(0.0, lap + h), lap))
+        wrapped = []
+        for a, b in pieces:
+            if b > lap:
+                wrapped += [(a, lap), (0.0, b - lap)]
+            else:
+                wrapped.append((a, b))
+        wrapped.sort()
+        spans = []
+        for a, b in wrapped:
+            if spans and a <= spans[-1][1]:
+                spans[-1] = (spans[-1][0], max(spans[-1][1], b))
+            else:
+                spans.append((a, b))
     return spans
 
 
@@ -182,13 +212,20 @@ def declare_bridge_spans(proj: Path) -> list[tuple[float, float]]:
     if prev is not None and prev_frame.startswith(("mesh", "kn5")):
         if prev_frame.startswith("mesh"):
             # build_mesh's swept line, OBJ frame (x=E, y=up, z=N; x already mirrored when mirror_x) -> KN5 frame
+            # (a road NETWORK's reference line, scripts.geometry.network_reference, is the same contract: the swept
+            # decks of the declared mainline's edges, frame "mesh (network reference line) …" — said so, same move)
+            _net = "network reference line" in prev_frame
             fc = {"frame": FC_FRAME_KN5,
-                  "source": "build_mesh finished_centerline (the swept line: corner-rounded, smoothed, bridge decks "
-                            "levelled) — the engine draft's",
+                  "source": (f"{prev.get('source')} — the network draft's reference line "
+                             f"(scripts.geometry.network_reference)" if _net else
+                             "build_mesh finished_centerline (the swept line: corner-rounded, smoothed, bridge decks "
+                             "levelled) — the engine draft's"),
                   "points_xyz_m": [[round(p[0], 3), round(p[1], 3), round(-p[2], 3)] for p in prev["points_xyz_m"]],
                   "widths_m": list(prev.get("widths_m") or widths)}
             fcp.write_text(json.dumps(fc), encoding="utf-8")
-            how = "the engine's swept line (build_mesh finished_centerline) -> KN5 frame"
+            how = ("the network's reference line (scripts.geometry.network_reference: the declared mainline's swept "
+                   "edges) -> KN5 frame" if _net else
+                   "the engine's swept line (build_mesh finished_centerline) -> KN5 frame")
         else:
             how = "kept this prep's earlier line (a re-run from the prep)"
         spans = []

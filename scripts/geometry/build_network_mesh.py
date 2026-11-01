@@ -762,6 +762,16 @@ def build(project_dir: str | Path) -> dict:
 
     fc = json.loads((data / "network.geojson").read_text())
     F = fc["features"]
+    # REFERENCE LINE (opt-in: network.reference_line, scripts.geometry.network_reference). The ship phase judges a
+    # network along ONE declared real mainline; it reads the line off the decks this build sweeps, so this build
+    # records every edge's swept line in data/network.edges.local.json. Anything an EARLIER draft left for the ship
+    # phase is removed first: a line from another draft must never be walked against this track.obj (ledger 0060).
+    want_edges = bool((cfg.raw.get("network") or {}).get("reference_line"))
+    edge_records: list[dict] = []
+    if want_edges:
+        for stale in ("network.edges.local.json", "network.reference.json", "centerline.local.json",
+                      "finished_centerline.json", "gate_centerline.json", "bridge.spans.auto.json"):
+            (data / stale).unlink(missing_ok=True)
     elev = json.loads((data / "network.elevation.json").read_text())
     zmap = {e["id"]: e["z_smooth_m"] for e in elev["edges"]}
 
@@ -925,6 +935,17 @@ def build(project_dir: str | Path) -> dict:
                 bank_at = (lambda a, arcs=arcs, bv=bv: bv[min(len(bv) - 1, _bisect.bisect_left(arcs, a))])
         rib = ribbon.road_ribbon(deck_pts, w_arr, tile_m=8.0, bank_at=bank_at)
         rib["vertices"] = [(x, y + ROAD_LIFT_M, z2) for x, y, z2 in rib["vertices"]]
+        if want_edges:
+            # the line this ribbon was swept along (its centre at the pavement surface: deck + ROAD_LIFT_M), the
+            # at-grade line under it (3DEP z_smooth), the per-vertex widths; trimmed ramps keep fewer vertices
+            _pr = f["properties"]
+            edge_records.append({
+                "id": _pr["id"], "name": _pr.get("name"), "road_class": _pr.get("road_class"),
+                "is_ramp": bool(_pr.get("is_ramp")), "lanes": _pr.get("lanes"), "width_m": w,
+                "travel_dir": _pr.get("travel_dir"), "n_geojson": len(c), "trimmed": len(deck_pts) != len(pts),
+                "surface_xyz_m": [[round(x, 3), round(y + ROAD_LIFT_M, 3), round(z2, 3)] for x, y, z2 in deck_pts],
+                "at_grade_xyz_m": [[round(x, 3), round(y, 3), round(z2, 3)] for x, y, z2 in pts],
+                "widths_m": [round(float(v), 3) for v in w_arr]})
         orient_up(rib)
         road_meshes.append((f"e{f['properties']['id']}", rib))
         # lane lines on MAINLINES only (a tapering ramp has no lanes to paint; keeps markings off the taper)
@@ -1294,6 +1315,16 @@ def build(project_dir: str | Path) -> dict:
     yaw = resolve_true_north(cfg)
     cfg.write_back(true_north_rotation_deg=yaw)
     _write_local_meta(data, origin, elev0, mirror_x, len(F), yaw)
+    if want_edges:
+        (data / "network.edges.local.json").write_text(json.dumps({
+            "frame": "mesh local metres (X=east, Y=up, Z=north; mirror_x=%s) — same frame as track.obj" % mirror_x,
+            "_doc": "every edge's swept line as built (scripts.geometry.build_network_mesh): surface_xyz_m = the ribbon "
+                    "centre at the pavement surface, at_grade_xyz_m = the 3DEP line under it, both index-aligned with "
+                    "network.geojson's coordinates unless trimmed (a ramp cut back at its merge). Read by "
+                    "scripts.geometry.network_reference (network.reference_line).",
+            "origin": {"lon": origin[0], "lat": origin[1], "elev_m": round(elev0, 2)}, "mirror_x": mirror_x,
+            "road_lift_m": ROAD_LIFT_M, "edges": edge_records}), encoding="utf-8")
+        print(f"  reference-line input: {len(edge_records)} swept edge lines -> data/network.edges.local.json")
 
     road_groups = sum(1 for g in groups if g[0].startswith("1ROAD"))
     grass_groups = sum(1 for g in groups if g[0].startswith("1GRASS"))

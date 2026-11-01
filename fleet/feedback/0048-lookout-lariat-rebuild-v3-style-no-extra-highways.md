@@ -7,6 +7,248 @@ layer: project
 train: -
 ---
 
+## Started (Kevin, 2026-11-01)
+
+> "Start the lariat"
+
+Unshelved. The order is ONE-CHAIN §4 as Kevin set it 2026-10-28: the four chain tracks (all four at T1 since
+2026-10-29, ledger 0060) → **the Lariat** → the rally stages → Second Creek → the freeway → the Lake Murray
+migration → the five circuits. The plan of record stays `tracks/lookout-lariat/V3-PLAN.md`; this section is the
+state. Nothing is built: T0 is claimed when `tools/ship_track.sh lookout-lariat` completes on the Windows box.
+
+### What this change does: the track is chain-ready
+
+- **`tracks/lookout-lariat/ship.json`** lists the chain's draft in P2 step 1's order with the engine's `mesh` step
+  before the underlay, as ONE-CHAIN §4 row 5 asked: gps → paint_centreline → remap_config → verify_centreline_paint →
+  route_oneway_check → elev → project → widths → **mesh** → underlay; `author` empty; the ship and gate lists of the
+  four chain tracks (export_road, ai, verify_kn5, road_obj, track_folder, verify_inis, make_map; drive_test_street,
+  audit_street, kn5_ground). The race steps, treefx, signs and lamps it listed "as the plan's chain, not yet adapted"
+  are out of the list and named in `_owed`. The sync lists carry the paint files, the one-way report, the widths
+  snapshot (`data/osm.widths.cache.json`, so the first live fetch becomes the route of record) and the gate files.
+- **`track.config.json`:** the name set of ONE-CHAIN §3 — `ui_series` "doooom Colorado" (`ui_name_prefix` the same),
+  `install_folder` **`lookout_lariat`** (the slug, no `_v3`: the chain parks the July install in the archive before
+  it writes, so A11's "July stays installed until T3" is superseded; `drive1_variants` B installs beside it as
+  `lookout_lariat_verge`). The frame was already the chain's since P0 (`mirror_x` false, true north 0). **One layout,
+  `street_full`** (Drive 1 = the road and the ground, A13); `street_reverse`, `race_acw`, `race_cw` are parked in
+  `_layouts_v3_owed` with their declared starts, Sand Creek's pattern, until Drive 3 and the race tools. With one
+  layout the prep takes the engine draft's `data/dummies.json` (the grid at `route.start_at`, the pylons), not the
+  declared start block.
+- **`tools/route_oneway_check.py` judges a parked layout too** (`_layouts_v3_owed.layouts`, marked `parked`), so Street
+  Reverse's four declared stretches stay under the gate while it is parked (GATES-CHANGELOG 2026-11-01).
+- **On paper:** `CLAUDE.md`'s priority line, ONE-CHAIN §4 row 5, DEFINITION-OF-DONE (the July T0 withdrawn: an
+  engine-era build, ONE-CHAIN §4 — the row now reads "none, started"), the plan's header, `fleet/registry.json`.
+- **The P2 / Drive-1 branches came in the same day.** Kevin pushed `worktree-wf_0b6149fb-898-1..4` from the Windows
+  box after this section was first written ("P2 branches are pushed"). They carry the pre-rewrite history (no merge base
+  with main since the 2026-10-27 LFS rewrite), so each tip was cherry-picked onto this branch and reconciled against
+  main as it is now:
+  - **branch 1 `307a3b7` (P2 data stages) — in**, as `bfb2510`: `scripts/elevation/road_profile.py` (the profile by
+    station with the declared lid held straight; `--write` records `capture.bridges`), `scripts/gps/measured_widths.py`
+    (aerial > published > OSM, local frame, no flares or fold floors), `scripts/elevation/crossfall.py` footprint mode +
+    `tools/verify_crossfall.py` (the roll-rate gate, hard), the L13 seam rule in both span detectors (opt-in
+    `bridges.l13_seam_rule`), the config's `bridges` / `capture.bridges` / `route.measured_widths` /
+    `crossfall.method` blocks, their tests and changelog. The Lariat's draft is now gps → paint → remap → paint gate →
+    one-way gate → elev → **road_profile** → project → widths → **measured_widths** → **crossfall** →
+    **verify_crossfall** → mesh → underlay. Two reconciliations: `heightfield`'s own `profile_along` (above) stays —
+    `road_profile` re-smooths the same raw samples by station and adds the lid, so on the Lariat the two agree and
+    every other track is untouched; and drive_test keeps main's one replication mapping (`in_local_order` by the
+    permutation projection records, ledger 0060) rather than the branch's `z_raw_local_m` preference, which would have
+    rotated twice (`97a6e82`, the branch's test re-pinned).
+  - **branch 3 `5e5b760` (Drive-1 gates) — in**, as `1b8d78b`: `tools/verify_road_inventory.py`,
+    `tools/verify_stacked_legs.py`, `tools/calibrate_kinks.py` + `fleet/reference/MEASURED.md` §8 (the kink ceiling
+    19.49/km [std] on reference mountain roads), `tools/gate_route.py`, drive_test's opt-in kink ceiling
+    (`gates.drive_test.kinks_per_km_max`), `extract_kn5.parse(keep=)`, `pavement_exemptions.json`, the chain's
+    Drive-1 gate block. The two gates run after `road_obj` (a ship step on main) and before `kn5_ground`.
+  - **branch 2 `445c47c` (the underlay) — superseded, not merged.** Its `underlay_draft.py` drafted road, verge and a
+    placeholder terrain itself; main's `scripts/blender/underlay.py` (2026-10-28, four tracks through it) drops the
+    engine's `build_mesh` draft into `GEN_*`. Nothing of it is needed now; its D4 verge switch is redone below.
+  - **branch 4 `793441f` (the Drive-1 integration) — the parts that still apply, as `de6f06a`:** `tools/drive1_gates.py`
+    (the Drive-1 verdict: P5's set as gating vs recorded rows, the July reference for `--force-install`, on main's
+    report names), `gates.drive1` in the config, the verdict last in the gate list; and **`SHIP_VARIANT=<id>`** (D4 per
+    run) redone for main's draft: the variant's `road_profile.verge_m` is written into the workshop config and
+    `build_mesh` now reads that key for the shoulder's band and the grading band (2.5 m on every track without it), a
+    variant run must draft in full and never syncs back. Its `split_street` and kn5-internal `kn5_ground_check` steps
+    are not taken (main's split handles one layout; `kn5_ground` runs on the kn5 set). Its ledger section, the first
+    real-3DEP Drive-1 build (2026-10-12: built twice, every road gate green but severe steps, soft-top, the real
+    hairpins' corner rule, the lid's east end and the stacked legs red; not installed), is appended at the end of this
+    entry as the baseline.
+  - **branch 4's WIP `30b539a` — not merged**, as its own message says: `terrain_cutfill.py`, `overpass_decks.py`, a
+    repaired paint centreline and the data files that go with it, cut off mid-round and unverified. P3a / P3b items;
+    whoever lands them starts from that commit on the remote, not from memory.
+
+### What ran on this box (no Overpass, no USGS, no Blender: the proxy refuses all three)
+
+1. **The five data steps before `elev`, on a scratch copy**, exactly as the chain runs them (the paint line kept as
+   `centerline.previous.geojson`, then `scripts.gps.centerline` from `data/osm.cache.json`, `paint_centreline`,
+   `remap_centreline_config --write`, `verify_centreline_paint`, `route_oneway_check`): `data/centerline.geojson`
+   (md5 `ef44db97…`), `data/centerline.osm.geojson` (`28dcc7b6…`), `data/centerline_remap.json` and
+   `track.config.json` come back **byte for byte**; the two gate reports differ only in the paths they record.
+   Paint gate PASS (5,813 medium+ paint points, 0 over 0.75 m, max 0.61 m; 7,114 climb points, 0 step / neighbour /
+   spacing fails; seam step 2.198° under 3.163°); one-way PASS (Full 0 m against; Reverse, parked, 4,486 m in 33 runs,
+   all on its four stretches; 92 m unmatched in 4 junction gaps). The remap says "already on centerline.geojson
+   (md5 ef44db97…): nothing to do".
+2. **A stand-in rehearsal of elev → project → widths → mesh → drive_test → audit_mesh, never committed** (the
+   scratch copy, outside the repo). The two fetches were replaced: USGS 3DEP by an inverse-distance read of July's
+   corridor samples (`data/source-july/corridor.elev.json`, 76,525 real 3DEP points ±60 m about the July line; a
+   plateau beyond it: 20,806 of 118,535 queried points, all in the 40 m grid's margin), Overpass widths by July's
+   `osm.widths.cache.json` re-keyed to the V3 query fingerprint (`d2f34a9f…`; July's `253170f5…`). Everything else
+   is the committed config (plus `terrain_cell_m` 1.5, the four chain tracks' value) and airoso's engine at HEAD. The
+   point is the chain's code paths on this route, not the ground: no number below is the Lariat's until real 3DEP
+   along the paint line says so.
+   - **Run 1 (the engine as merged).** elev: 1,782.7–2,288.6 m, 505.9 m of relief, 560 m of climb, "max grade
+     **30.2 %**" (below). project: 5,494 × 5,968 m, 14,445 points, the ring rotated by 14,442 points to the pylons.
+     widths: 14,445 vertices, 5.0 / 6.5 / 31.5 m (min / median / max), 100 % matched, 102 junctions flared; the 31.5 m
+     is v11,630–11,632, exit 259's flare, and 215 vertices read over 20 m — the engine's junction flares, which D2's
+     one-slab stretches and P3b's mouths replace in authoring. mesh (6 min): `terrain_cell_m` 1.5 is budget-capped
+     at **×11 ≈ 3.6 m cells** (2.72 M grass verts, split into 97 `1GRASS_*` meshes) for a 7 × 7 km box; the corridor
+     splice refines the near-road ground from the 6 × 5 m samples; **auto bridge spans 3: 20,847–21,039 m,
+     21,045–21,099 m, 24,364–24,838 m**; measured-guard 1,496 stone lips; 18 danger runs of barrier. `drive_test`
+     street_full **FAIL**: severe steps 11 (0.44/km; worst **2.445 m at st 5,375**, ±0.75 m — the July gate's worst
+     was 4.46 m at st 5,357), soft-top in lane 14, **obstruction 10** (`1WALL_PARA_stone` at st 10,620–10,625, Paradise
+     Rd), floating furniture 17, daylight 1, excursion drops 72 (far ledges 158), bumps 223.7/km, kinks 116/km,
+     replication vs the stand-in 0.03 / 0.19 / 1.26 m. `audit_mesh`: A 0, B 0, C 0, **D 28** (walls on a road: the
+     same lips), E 0, F 0, H 0, I 0, J 0, K 0.
+   - **Run 2 (after the fix below, the one-layout config).** elev prints `profile by station: 9211 of 14444
+     segments are under 2.4 m … a 1.000 m station grid (24901 points) … at the 3 m assumption the 16 % cap would
+     have been 48 % per metre`; max grade **14.3 %** (30.2 % in run 1), climb 558.8 m, the same relief. project and
+     widths identical to run 1. mesh: the same three auto spans; measured-guard 1,475 lips (1,496). `drive_test`
+     street_full still **FAIL**, but the profile's share of it is gone: bumps **1.05/km** (223.7 in run 1), kinks
+     **6.64/km** (116.0), soft-top in lane **4** (14), severe steps 11 (the same worst, 2.449 m at st 5,375), obstruction
+     10 (the same ten `1WALL_PARA_stone` lips at st 10,620–10,625: not the noise, then — Paradise Rd's steepest 20 m is
+     there, 12.4 %, and the measured-guard's in-band drop test is the next thing to read on real 3DEP), floating
+     furniture 27 (17), daylight 1, excursion drops 82 (far ledges 150; worst 4.03 m at st 5,700, 10 m out: the
+     stand-in's plateau beyond the July corridor), replication 0.05 / 0.20 / 1.23 m. `audit_mesh`: A 0, B 0, **D 28**
+     (the lips), every other class 0. Run 2's drive_test wrote `data/drive_test.json` (one layout), run 1's
+     `drive_test.street_full.json` (four).
+
+### Rehearsal 3, the whole draft order (2026-11-01, after the branches came in)
+
+The same stand-in (July's corridor samples for 3DEP, July's widths snapshot re-keyed), the scratch copy, every stage
+through its own entry point in `ship.json`'s order, then the draft gates and the verdict. **What ran:** elev (max grade
+14.3 %) → `road_profile --write` (the lid `lid_19th_us6` at local st 24,349.4–24,387.6, 38.1 m, held straight at
++3.29 %, the raw profile moved ≤ 0.13 m; `capture.bridges` written; steepest 20 m +10.2 / −11.8 %, raw +12.0 / −12.9;
+0 segments at the 16 % cap) → project → widths (July's table) → `measured_widths` (the local ring rotated 14,442
+vertices, matched; 55 aerial points used, 7 refused; 8,986 vertices measured / 5,459 OSM; 84 OSM flare runs not laid;
+lap widths 5.0–22.0 m, median 6.75 m) → `crossfall` footprint (8,305 stations: crown 44.9 %, bench left 16.2 / right
+18.7 %, measured 20.1 %, deck 0.2 %; raw |tilt| p50 2.76 %, p95 12.33 %; final max plane 5.83 %) →
+`verify_crossfall` **PASS** (worst 3.59 % / 30 m, 0 swings) → mesh (crossfall's camber active on 20.1 % of the lap;
+**`bridges.l13_seam_rule` dropped 24,375–24,855 m** — "ends on the closing vertex without continuing from vertex 0" —
+and the C-470 pair did not appear: `bridge.spans.auto.json` is `[]`) → the gates.
+
+**Found and fixed, builder side:** the first mesh of this run printed `verge_m=0.4 … the shoulder band and the grading
+band are 0.4 m` and then `[grade_embankment] band 0.4 m < grid half-diagonal 2.6 m (3.7x3.6 m cells) -> widening to
+3.6 m`: the sheet's verge broke at 0.4 m while the ground shelf was held at road-edge height out to 3.6 m, so the shelf
+stood above the draped face — drive_test read **67 ground-on-top samples and 55 severe steps (worst 0.41 m) at ±2.8 m,
+the lane edge**, where runs 1 and 2 had 4 and 11 (the review's finding 2, confirmed by the build). `build_mesh` now
+floors the declared verge at the grid's representable band, once, for the sheet and the shelf alike, and says when the
+declared edge is narrower than the grid can carry; on this grid D4 A and B are the same 3.6 m draft (GATES-CHANGELOG
+2026-11-01, the verge note; the config's `drive1_variants` doc). The narrower edges are P3a's.
+
+**What the two Drive-1 gates read on main's draft (not stand-in artefacts):**
+- **Road inventory FAIL** — 83,611 of 202,244 pavement triangles (105,041 m²) lie beyond half-width + 2 m with no
+  exemption, every one of them `1ROAD_shoulder_*` (worst 13.5 m beyond at st 10,642); forbidden meshes 0; the lap
+  100.0 % paved. This is ledger 0061's sheet measured by P5's own gate: the engine's edge IS pavement off the route by
+  construction. The gate was written against the branch's underlay (a ≤ 1.25 m `1RUNOFF` verge). It stays red until
+  0061's fix lands (its option C, naming the face terrain-family, is the first step and turns this green).
+- **Stacked legs FAIL** — 10,594 pairs on 679 lap points (nearest 21.41 m; vertical gap 6.49–14.29 m, median 10.06);
+  **530 ground vertices closer in height to the other leg** (the branch's real-3DEP build read 137 on its placeholder
+  terrain). The draft's grading between stacked legs is L4's case; P3a's cut/fill by station is the plan's answer.
+- The verdict ran on main's report names: `verify_kn5` and `kn5_ground_check` red as "not run" (a draft has no kn5:
+  correct), lid ends PASS, one-way / paint / roll rate PASS, kinks 5.39/km under the 19.49 ceiling (printed),
+  undrivable corners 83 (the real hairpins; A2 is Kevin's call), `--force-install` refused (far ledges 401 > July 382;
+  soft-top and floating not 0).
+
+**Rehearsal 4 (the floor applied; the same data).** mesh: `verge_m=0.4 m declared; the grid's representable band is
+3.58 m (3.7x3.6 m cells) -> the shoulder band and the grading band are 3.58 m each side … the declared edge is narrower
+than this grid can carry`; the same L13 drop; measured-guard 1,137 lips (4,211 with the stagger, 1,475 in run 2).
+`drive_test` street_full: **ground on top 0** (67), **severe 44** (55 — now one cluster, st 5,383 across the whole
+width at up to 2.98 m: the climb's st 5,375–5,383 feature of every run, to be seen in the underlay), bumps 0.6/km, kinks
+4.43/km (ceiling 19.49), floating 35, daylight 0, excursion drops 53 (far ledges 97), obstruction 0, undrivable corners
+83 (C4–C10, C13: the real hairpins against drive_test's corner rule — A2 is Kevin's call), replication 0.05 / 0.20 /
+1.23 m; `audit_mesh` CLEAN; road inventory FAIL (173,127 of 202,244 pavement triangles off the route, 1.20 km²:
+the 3.58 m band plus the draped face, every one `1ROAD_shoulder_*` — ledger 0061's sheet, wider now that the band is
+the floor); stacked legs FAIL (491 of 5,140: 471 ground, 20 edge); the verdict red on drive_test, road inventory,
+stacked legs, and the two kn5 rows that a draft cannot have; `--force-install` refused (floating 35 > July 0).
+
+**What this says for the Windows run (in order of what to read):** the climb's st 5,383 step; the hairpin corner
+rule (A2); the sheet (0061) under the road-inventory gate; the stacked legs (P3a). None of the four is a stand-in
+artefact: all four are the engine's draft on this route.
+
+
+### Found and fixed: the elevation profile read the 1 m climb as 3 m points
+
+`scripts/elevation/heightfield.py` `build()` handed `snap_to_ground` a hard-coded `spacing_m` of 3.0 — exact for every
+centreline the gps stage resamples (measured 2026-11-01 on all ten tracks with a `data/centerline.geojson`: no segment
+under 2.07 m), wrong for the paint centreline, which is **1 m over the climb and Paradise Rd (9,208 of 14,444 segments)**.
+The smoother turns its metre windows and its cap into points through that number, so on the 1 m stretches the 33 m
+despike was 11 m wide, the 9 m mean 3 m, and the **16 % grade cap 0.48 m per point = 48 % per metre** — which is why
+run 1's profile carried 25–30 % one-metre steps on Paradise Rd (the stand-in's sample noise, uncut), the measured-guard
+read them as in-band drops and stood ten stone lips in the lane at st 10,620, and the max-grade stat read 30.2 % where
+the dossier's worst 20 m is 11.5 %. Fix: `profile_along` — when more than 5 % of a line's segments are under 0.8 × 3 m,
+the raw profile is read onto a ~1 m station grid (lap / round(lap); the closing vertex repeated), `snap_to_ground` runs
+there with that spacing, and the result is read back onto the line's own stations; a uniform 3 m line takes the old
+call unchanged. `tests/elevation/test_profile_by_station.py`: byte-identical on 3 m (with the gps stage's corner
+jitter), four 1.0 m cliffs on a mixed line capped to ≤ 16.5 % per metre where the 3 m read let more than 25 % through,
+an open line keeps both ends. `centerline.elevation.json` records the path under `profile`. This is the
+"profile by station" item of the unmerged branch 1, redone on main (GATES-CHANGELOG 2026-11-01, builder side).
+
+### Found, not fixed — what the Windows run reads first
+
+- **The two suspect spans of P2 step 5 come back on this route.** The detector (`build_mesh._bridge_detector`,
+  `BRIDGE_MIN_H_M` 3.5 over `BRIDGE_MIN_SPAN_M` 12, on the raw 3DEP profile) minted 20,847–21,099 m (US-6 **under**
+  C-470: the lap passes under a bridge, not over one) and 24,364–24,838 m (from the lid at ~24,350 to 62 m before the
+  pylons: the real deck is the tens of metres over the US-6 tunnel ways 533503591 / 533679737, not 474 m of 19th St,
+  whose +5.7 % climb a level deck would erase). On the stand-in they may be the plateau's doing; on real 3DEP they
+  were July's. The remedy stays the plan's: declare the lid from the tunnel footprint and drop the auto spans unless
+  the aerial shows a lap bridge — the declared lid lives on the Windows-box branch; on main the only declaration is
+  `capture.bridges` (`scripts/capture/evidence.py`), which the prep's `declare_bridge_spans` and `kn5_ground_check`
+  read beside `bridge.spans.auto.json`. **Read `data/bridge.spans.auto.json` after the first `--draft-only` run before
+  anything else.**
+- **Terrain cells.** `terrain_cell_m` 1.5 is capped by `terrain_vertex_budget` (3,000,000) at ~3.6 m on this box's
+  7 × 7 km grid: under the 6.1–6.7 m road (L3b wants cells finer than the road; the four chain tracks run 1.25–1.5 m
+  on 1–3 km laps). The corridor splice and the contact pins carry the near-road ground; whether `kn5_ground_check`'s
+  5 cm p95 holds is the Windows run's to read, and `terrain_vertex_budget` is the knob if it does not. The config
+  does not declare `terrain_cell_m` yet: set it with the budget on the Windows box, where the mesh is timed.
+- **st 5,375 on the climb** (July's 5,357): a 2.4 m step in the stand-in's road at one station, the lap's worst in
+  both eras. The stand-in cannot say whether it is the stacked legs (C7–C10 are 20.5 m apart in plan), a cut face in
+  the corridor samples, or the plateau; the underlay will show it, and P3a's cut/fill by station is the plan's answer.
+- **The draft's walls are the engine's** (`1WALL_PARA_stone` lips from the measured-guard, `1WALL_CHAINL_warn` fences
+  at 18 blind corners): on the Lariat the real edge is 1913 stone, W-beam or open (A4, D7 item 4), authored in P3d.
+  They ride into `loop.blend` as `GEN_wall`, to be replaced, never promoted as they stand.
+- **The junction flares** (102, up to 31.5 m): the engine's; D2's slabs and P3b's mouths own those places.
+
+### The Windows run, in order
+
+1. `bash tools/ship_track.sh lookout-lariat --draft-only` — Overpass (the gps cache is current; `widths` fetches
+   live under the 7-day freshness rule) and USGS 3DEP along the paint line; read the `[elev] profile by station` line,
+   `road_profile`'s stats (steepest 20 m, the lid held), `measured_widths`' report, the roll-rate gate, and
+   `data/bridge.spans.auto.json` (with `bridges.l13_seam_rule` on, the 19th St run should be gone; the C-470 one is
+   P2 step 5's second suspect: declared dropped in the config, read what the detector says on real 3DEP); then
+   `drive_test` + `audit_mesh` on `data/track.obj` as the four did on their drafts, before any Blender time.
+2. `bash tools/ship_track.sh lookout-lariat` — the draft (verge 0.4 m, D4 A) → underlay → prep → split → export → AI
+   draft → verify_kn5 → folder → map → the three street gates → road inventory → stacked legs → kn5_ground → the
+   Drive-1 verdict → install as "doooom Colorado - Street — Full" into `content/tracks/lookout_lariat` (July parked in
+   the archive). That completing is **T0**; the verdict green is **T1**. The 2026-10-12 build's reds (below) are what
+   to expect first: the real hairpins trip drive_test's corner rule (Kevin's call, A2), and the stacked legs want
+   P3a's cut/fill. `--force-install` passes a red build only when the verdict reads no key worse than July.
+3. D4 B: `SHIP_VARIANT=b_verge bash tools/ship_track.sh lookout-lariat` — the same run with `road_profile.verge_m`
+   1.25 in the workshop config, installed as "doooom Colorado (verge) - Street — Full" into `lookout_lariat_verge`,
+   nothing synced back. Then Kevin drives both: Drive 1's questions are in the dossier §10.
+
+### Tests
+
+`tests/tools/test_ship_track_chain.py` (two pins moved with the change: the install folder is the slug; a first-pass
+ship list without `treefx` is allowed), `test_route_oneway_check.py` (reads the real config; the parked Reverse is
+judged), `test_remap_centreline_config.py`, `test_paint_centreline.py`, `test_verify_centreline_paint.py`,
+`test_fit_hairpins.py`, `test_layout_dummies.py`, `test_split_single_layout.py`, `tests/fleet/test_registry_moves.py`,
+`tests/elevation/` (the new file among them); then, with the branches in: `tests/elevation/test_road_profile.py`,
+`test_crossfall_footprint.py`, `tests/gps/test_measured_widths.py`, `tests/geometry/test_bridge_seam.py`,
+`test_drive_test_raw_local.py` (re-pinned to main's mapping), `tests/tools/test_verify_road_inventory.py`,
+`test_verify_stacked_legs.py`, `test_calibrate_kinks.py`, `test_ship_track_drive1_gates.py` (the gate order across
+ship + gate; the verdict as the block's third function), `test_drive1_gates.py` (on main's report names): all green
+here (the full suite was green at `77e2816`, 1,001 tests, and is re-run on the final tree: a follow-up commit records it if
+anything moved). `fleet.cli lint` is unchanged (the three retired repos absent from this box, S8 on
+airoso: both pre-existing).
+
 ## SHELVED (Kevin, 2026-10-12)
 
 > "i have another plan instead of the lariat rebuild so let's shelve that for now. we're going to expand college down waring to princess. view, princess view to mission gorge, and mission gorge to jackson, then extend jackson down to mission gorge. we'll add to the network map instead of building the lariat. save the plan for the lariat for after we've built a few phases of lake murray"
@@ -727,3 +969,195 @@ elevation, kn5 or Blender build of the Lariat; nothing installed. Status stays `
   `author_lamps_blend` (positions file);
 - station matching in `seat_terrain_blend`, `place_signs` and the edge and closure authoring;
 - the underlay (P2 step 3), which ends "no blend yet"; the draft sync-back is exercised only once it exists.
+
+## P2, the data stages (2026-10-12)
+
+Plan P2 steps 1, 4 and 5: the draft's data on the paint centreline. The Lariat draft is now gps -> paint_centreline
+-> remap_config -> verify_centreline_paint -> route_oneway_check -> elev -> **road_profile** -> project -> widths ->
+**measured_widths** -> **crossfall** -> **verify_crossfall** -> underlay (one appended block in `tools/ship_track.sh`;
+`tracks/lookout-lariat/ship.json`). A clean `--draft-only` run into a scratch project (3DEP and Overpass fetched
+live, TLS verified; nothing synced back or installed) passed every gate. Thresholds: `fleet/GATES-CHANGELOG.md`
+2026-10-12.
+
+**Elevation** (`scripts/elevation/road_profile.py`, new). heightfield's windows are counted in vertices and sized
+for 3 m; on the 1 m climb they shrank to an 11 m median and a 3 m mean, and its grade cap loosened to 48 % per
+metre. The profile is now re-smoothed from heightfield's own 3DEP samples with the same 33 m / 9 m / cut-only cap
+in metres, length-weighted (a count-weighted window lifted the road 0.70 m and invented a -12.3 % at the 1 m / 3 m
+change on Paradise Rd; weighted: 0.27 m max). The samples are on the painted centre line, never beside the road
+(L3b). On the 24,914 m lap: 1,782.7-2,288.6 m (505.9 m of relief), 558.8 m of climbing; steepest 20 m **+9.9 %**
+(raw 3DEP +10.1 %, the climb at C7, local st 5,410) and **-11.4 %** (raw -11.5 %, Paradise Rd); |smoothed - raw|
+p95 0.04 m, max 0.27 m; one 1 m segment touches the 16 % cap (A7: it still does not bind anywhere that matters).
+Per stretch, steepest 20 m: Lariat Trail +9.9 %, back side +8.3 / -5.4 %, Paradise Rd -11.3 %, US-40 -7.7 %,
+Colfax -6.3 %, US-6 +5.4 / -6.2 %, 19th St +8.5 %. Equal to heightfield on uniform 3 m lines (tests).
+
+**Widths** (`scripts/gps/measured_widths.py`, new, after the `mountain` table). Two defects in what
+`widths_from_osm` hands on, both undone here: its widths are per geojson vertex but written 1:1 into the local
+ring, which projection rotated by 2 vertices; and it lays 14 hard-corner flares (14-29.7 m), 102 junction flares
+and a 10 m floor on all ten hairpin folds, none of them measured (84 merged runs, listed in `data/widths.measured.json`
+for P3b). Now: measured (55 aerial points: width stations, hairpin legs, apexes; edge-line centre to centre + one
+0.10 m stripe; Golden's st 150 curb to curb) > published > OSM. Golden to the Lariat start 6.61-12.46 m (median
+7.30; the base hairpin C1 widens 7.3 -> **9.65** -> 7.5 m at its apex), the Lariat Trail 6.04-8.29 m (median
+6.57; apexes C2-C10 6.96-8.30 m), Paradise Rd 6.01-7.21 m (median 6.65). Still OSM, not measured: the summit and
+back side (6.5 m), US-40 (7.6-15.0, median 12.0), Colfax (9-21), US-6 (7.2-18), the ramp (5.0) and 19th St
+(5.6-12). The published 5.48 m at the Tiers of Zion loses to the aerial's 6.4-6.9 m edge lines there. Seven
+stations refused (six in tree shadow, W10400 pavement-only at a junction).
+
+**Crossfall** (`scripts/elevation/crossfall.py` footprint mode, opt-in; the legacy `build` is byte-identical).
+8,305 stations every 3 m: crown 46.7 %, 2 % toward a cut ditch 31.9 % (bench left 15.0, right 16.9), measured
+21.3 % (mostly US-6, Colfax, US-40 and 19th St; 5 % of the climb), the lid 0.2 %. Final max plane 5.97 %, worst
+change 3.40 % / 30 m, 0 swings, 0 stations banked into a curve: **roll-rate gate PASS**. Status **estimated**: no
+source-lidar sample has been compared. The raw in-footprint measurement alone would fail the gate at 1,836
+stations with 36 swings (|tilt| p50 2.2 %, p95 7.9 %, 11.9 % of stations >= 6 %), so most of the lap takes the
+construction standard. **For Kevin / the lidar check:** on the climb's bench sections the footprint reads the road
+tilting AWAY from the cut, toward the drop, by a median 0.9 % (cut on the left) and 1.7 % (cut on the right), the
+opposite sign to the construction standard's 2 % toward the cut ditch. Per station the noise (|p50| 2.7 %) is
+larger than that signal, so the file uses the standard; if the lidar sample confirms an outslope, the standard's
+sign is what changes.
+
+**Bridge spans.** The 19th St lid, declared from the US-6 tunnel footprint (ways 533503591 + 533679737, crossed at
+77.5° and 69.6°): local st **24,349.4-24,387.6** (38.1 m: 22.1 m over the two carriageways + 8 m abutments each
+side), held straight at +3.44 %. 3DEP already carries the lid (no trench under it): holding it moved the raw
+profile by at most 0.11 m. Recorded as `capture.bridges` [{center 24,368.5, len 38.1}] for drive_test and
+kn5_ground_check. No other lap way carries `bridge=yes`. Both July auto spans are dropped (config
+`bridges.dropped`): [24,278-24,803] ended on the closing vertex (L13) and [20,742-21,166] holds the C-470 crossing,
+where the lap passes UNDER the bridge (aerial). The L13 seam rule: `build_mesh._bridge_detector` (the detector
+that minted the 525 m span) drops a run that ends on the closing vertex without continuing from vertex 0, opt-in
+`bridges.l13_seam_rule` (other tracks unchanged); the prep's `detect_bridge_spans` wraps spans and pads at the
+seam (no shipping track preps with it).
+
+**Also:** `drive_test`'s replication paired `z_raw_m` (geojson index) with the local ring by index, 2 vertices
+off on the Lariat (2-6 m along a 10 % climb, ~0.2-0.3 m of false error against a p95 <= 0.5 m gate). `road_profile`
+now writes `z_raw_local_m` and drive_test prefers it; tracks without it are unchanged.
+
+**Tests:** `tests/run_tests.py` 576 passed, 2 failed: the same 2 engine-july CRLF failures as before (549 + 27 new).
+
+**Still owed from these steps:** the source-lidar sample that would turn "estimated" into "measured"; the
+roll-rate rules on the BUILT sections (P5's Drive-1 set) once the underlay exists; aerial widths for the summit,
+back side, US-40, Colfax, US-6, the ramp and 19th St; build_mesh's own raw-ground frame (same rotation bug as
+drive_test's, in a stage V3 does not run).
+
+## P2 integrated: the Drive-1 chain, built twice, gated (2026-10-12)
+
+> *Carried onto main 2026-11-01 from branch 793441f (ledger "Started"). The chain it describes — the branch's own underlay (`underlay_draft.py`: road + verge + a placeholder terrain), `split_street`, kn5-internal `kn5_ground_check` — is superseded by main's chain (the engine's `build_mesh` draft into `scripts/blender/underlay.py`, the split's single-layout rule, `kn5_ground` on the kn5 set); its data stages, its gates and its verdict are on main. The numbers below are the first real-3DEP Drive-1 build of this route and stay the baseline the next build is read against.*
+
+Kevin today: *"install them"* / *"do the work then"*. This entry records the first Drive-1 build. **Nothing is
+installed:** both builds failed the Drive-1 gate set, and the chain refuses to install a red build, forced or not
+(the numbers are below). Nothing was synced back into airoso.
+
+**What landed (one branch: the three P2 parts merged, plus the integration):**
+- **The data stages** (the entry above).
+- **The underlay**, `scripts/blender/underlay.py` + `scripts/geometry/underlay_draft.py` (P2 step 3). It writes only
+  `GEN_road` (`1ROAD_road`), `GEN_verge` (`1RUNOFF_verge`), `GEN_terrain` (`1GRASS_terrain_placeholder`: the
+  3DEP heightfield, pinned under the pavement, raw survey everywhere else, until P3a) and `GEN_refs`. It never
+  resets the scene and never touches `AUTH_*`.
+- **The Drive-1 gates that do not wait for the terrain:** road inventory, stacked legs (L4), and the kink ceiling
+  19.49/km [std, measured on reference mountain roads, `fleet/reference/MEASURED.md` §8].
+- **The Drive-1 chain** (`tracks/lookout-lariat/ship.json`):
+  - draft: the data stages, then the underlay;
+  - author: `layout_dummies` only;
+  - prep: the airoso prep, then `split_street`;
+  - ship: road kn5, spawn kn5s, `verify_kn5`, the track folder, `verify_inis`, the map;
+  - gates: `kn5_ground_check` (kn5-internal) -> gate OBJ -> drive_test per street layout -> `audit_mesh` -> road
+    inventory -> stacked legs -> the Drive-1 verdict (`tools/drive1_gates.py`).
+
+  The verdict reads every report and judges P5's Drive-1 thresholds (`track.config.json gates.drive1`), marking
+  each gating or recorded. It also checks the July reference, which `--force-install` may not be worse than.
+- **Street layouts only:** `race_acw` / `race_cw` are moved whole into `track.config.json layouts_parked`, not
+  deleted. The race block stays declared. The remap still moves their vertices. ship.json's `_drive3_steps` lists
+  the race steps for Drive 3. No AI line and no TreeFX are built: those come in Drive 3 and Drive 2 (A13).
+- **The two installs:** `SHIP_VARIANT=b_verge` builds `lookout_lariat_v3_verge` ("K10 - Lookout Lariat (V3,
+  verge)"); no variant builds `lookout_lariat_v3`. A blend drafted for the other edge is refused before the prep,
+  and a variant run never syncs back. Thresholds and proofs: `fleet/GATES-CHANGELOG.md` 2026-10-12
+  "Lariat Drive-1 build".
+
+**The run.** Both builds went into scratch copies of the (empty) workshop project, with `--no-install`.
+- **D4 A:** the whole chain for real: OSM snapshot, paint line, 3DEP live with TLS on. 1,068 s end to end.
+- **D4 B:** the A draft plus `underlay --variant b_verge`, then `SHIP_VARIANT=b_verge --skip-blend`. 170 s.
+- **Each build:**
+  - a road kn5 (34.8 MB for A, 35.2 MB for B) and two 2 KB spawn kn5s;
+  - a 34-35 MB track folder;
+  - lap 24,914.3 m, widths 5.0-21.0 m (median 6.75 m);
+  - crossfall: the data stage's file, 10,290 of 14,445 stations tilted (max 6.0 %), roll rate PASS.
+
+| Gate (P5 Drive-1 set) | D4 A (verge 0.4 m) | D4 B (verge 1.25 m) |
+|---|---|---|
+| one-way / hairpin-paint / roll rate (the draft's own gates) | PASS / PASS / PASS (worst 3.40 % per 30 m, 0 swings) | same data |
+| `verify_kn5`, `verify_inis` | PASS (17 facing nodes per layout, all along travel) | PASS |
+| `kn5_ground_check` (kn5-internal) | PASS: road over ground p95 **0.038 m**, max 0.060 m; 0 double-sheet cells | PASS, same |
+| `audit_mesh` (street) | CLEAN (every class 0) | CLEAN |
+| road inventory | **PASS**: 0 HIGHWAY / HWYSTRUCT / MOUNTAINS meshes; 57,776 pavement triangles, 0 off the route; both layouts 100.0 % paved | PASS |
+| drive_test, Full / Reverse: replication vs raw 3DEP | p50 0.01 m, **p95 0.04 m**, max 0.27 m (gate 0.5) | same |
+| drive_test: kinks | **7.02 / 6.78 per km** (ceiling 19.49; July 68.3) | 6.86 / 6.82 |
+| drive_test: severe steps (gate 0) | **42 / 52** (1.69 / 2.09 per km; July 253) — RED | 40 / 53 — RED |
+| drive_test: soft-top in lane (gate 0) | **400 / 395** — RED | 408 / 412 — RED |
+| drive_test: undrivable corners (gate 0) | **83 / 83** — RED | 83 / 83 — RED |
+| drive_test: obstruction, floating, daylight | 0, 0, 0 | 0, 0, 0 |
+| the lid's ends (no step > 0.10 m) | east end **0.17 m** (Full), 0.098 m (Reverse) — RED | same |
+| stacked legs | 10,659 pairs on 680 lap points; nearest 21.31 m; vertical gap 6.47-14.70 m (median 9.99 m); **137** of 2,992 ground vertices closer to the other leg — RED | 144 of 3,008 — RED |
+| recorded: unguarded drops / far ledges / bumps | 47 / 925 / 6.7 per km (Full); 44 / 947 / 5.66 (Reverse) | 49 / 923; 47 / 932 |
+| tier seams | n/a: placeholder terrain | n/a |
+| `--force-install` | **refused**: far ledges 925 > July 382, and soft-top must always be 0 | refused |
+
+**The drive_test baseline** (P2's done-when: "drive_test has been run once on the draft as a baseline (recorded,
+not gating)"): the drive_test rows above, `data/drive_test.street_{full,reverse}.json` of each build. P2's other two
+done-when items: road inventory **passes** on the draft, and the hairpin / paint gate **passes**.
+
+**What is red, and why** (measured on the A build):
+- **Undrivable corners (83 stations, 8 corners).** C4, C5, C6, C7, C8, C9, C10 and C13 trip drive_test's own
+  corner rule: a turn over 110° within ±15 m with the road under 9 m wide.
+  - Their measured widths are 6.8-8.3 m and the turns are 116-145°: this is the real road, not a build defect.
+  - C1 escapes only because its measured apex is 9.65 m.
+  - This rule is the one behind July's widening ("the turn on the mountain route is impossible"). P5 gates it at
+    0, so the real hairpins keep Drive 1 red by P5's own definition.
+  - **For Kevin:** drive the real width (the D4 question), or switch the July widening on (A2: one switch away).
+    The gate is not loosened here.
+- **Severe steps (42 / 52), clustered:**
+  - **C13, Paradise Rd bend (st 10,593-10,629):** 0.61 m, at most 18 stations. The OSM line turns 71.7° at one
+    vertex (v9007). C12 and C13 stay junction nodes for P3b, so nothing has smoothed that corner, and the ribbon
+    folds there.
+  - **C14, Paradise -> US-40 (st 11,698-11,702):** 0.18 m.
+  - **The lid's east end (st 24,383):** 0.17 m. The OSM width jumps 8.7 -> 10 m within 3 m there.
+  - **C18, ramp -> 19th St (st 24,330):** 0.11 m.
+  - **Elsewhere:** st 11,576 (0.09 m, a measured −3.6 % tilt), st 24,857 (Reverse only, 0.08 m, a crown change),
+    and C12 at st 9,753 (0.06 m).
+
+  All are junction, corner or deck-end geometry: P3b and P3c work.
+- **Soft-top (about 400 per layout).** On the built OBJ, 372 lane samples (every 0.25 m across) have ground above
+  the road: p50 5 mm, p95 4.6 cm, max 0.21 m.
+  - The large ones are the same places: C13 (0.21 m and 0.13 m), the lid's east end (0.04 m), C14 (0.03 m) and
+    st 11,566-11,578 (0.035 m).
+  - The rest are millimetres at the lane edges, where the road falls across the section (up to 4.8 %). A 2.5 m
+    grass triangle runs from a vertex pinned under the road to a vertex outside it, which the prep's contact band
+    holds at edge height − 0.02 m (`scripts/ac/build_kn5_loop.py` `_conform_and_reseat`). Its chord ends up a few
+    millimetres above a road that is still falling.
+  - Owed: a triangle-level anti-poke in the airoso prep, or a band that follows the section's outward fall.
+- **Stacked legs (137).** Every failure is placeholder ground between legs (e.g. at C7, st 5,436-5,437 against
+  5,618-5,619, 14-16 m above its own leg and 3-5 m from the other's). The placeholder is raw survey, and
+  `terrain_cutfill` + the station-matched seat (P3a) are what close it.
+- **The lid's ends:** the east-end step above. The lid as an authored object is P3b.
+
+**Stills** (Workbench, geometry only, from each build's gate OBJ; the 500 m border skirt is left out):
+`c1_base_hairpin_{a,verge}.png`, `c4_hairpin_{a,verge}.png`, `climb_stacked_legs_{a,verge}.png` in the session
+scratchpad `p2/integrate/stills/`. The stacked view is st 5,549 / 5,705 (21.5 m apart in plan, 9.5 m vertically).
+It shows the placeholder's sawtooth between the legs: 2.5 m corridor quads meeting 20 m ground.
+
+**Owed for Drive 1** (V3-PLAN "-> Drive 1"):
+- **P3a ground:**
+  - the tiered terrain (ledger 0046's job, merging after this);
+  - the seat with station matching;
+  - `terrain_cutfill` between stacked legs (A3), which is what turns the stacked-leg gate green;
+  - `overpass_decks` (D5, the C-470 bridges);
+  - the view tier.
+- **P3b junctions:**
+  - the five mouths (C12, C14, C15, C16, C18), with C12/C13 smoothed;
+  - side-road stubs;
+  - the lid, authored, with flat ends;
+  - each one's polygon drawn into `pavement_exemptions.json`, since all 19 are still unmeasured.
+- **P3c:** hairpin pads where the measured width calls for one. C1's 14 m pad is authored but hidden.
+- **The prep's edge band** (the millimetre soft-top above).
+- **Kevin's call on the corner rule** at the real hairpins (above).
+- **Verge look:** the 1RUNOFF verge renders with the asphalt_cracked tile (pbr binds 1RUNOFF to it). A gravel look
+  needs a `texture_overrides` entry once the terrain job releases `scripts/ac/pbr.py`.
+- **Then:** a real (non-scratch) run in the workshop, which syncs the draft's data into airoso; then
+  `bash tools/ship_track.sh lookout-lariat` and `SHIP_VARIANT=b_verge bash tools/ship_track.sh lookout-lariat`.
+  Each installs only when green.

@@ -212,6 +212,18 @@ draft_network_mesh() {
   step "draft: the network's draft geometry -> data/track.obj (scripts.geometry.build_network_mesh: 1ROAD / 1WALL / 1RUNOFF / 1GRASS tiles, OSM-layer flyover decks, no furniture)"
   (cd "$AIROSO" && python -m scripts.geometry.build_network_mesh "$PROJ")
 }
+# >>> NETWORK REFERENCE LINE (2026-11-01, tracks/san-diego-freeway): one block — this function — plus the one name
+# network_reference added to is_data_step's network row (the --draft-only data steps). A road network's ship phase walks ONE declared
+# real mainline (track.config.json network.reference_line); scripts.geometry.network_reference resolves it from the
+# draft's own edges and writes data/centerline.local.json, finished_centerline.json (frame "mesh …"), dummies.json
+# (grid at the start, AC_TIME_0 at the finish: L11) and network.reference.json (every built edge it does NOT judge).
+draft_network_reference() {
+  step "draft: the network's reference line (scripts.geometry.network_reference: network.reference_line, one real mainline from the draft's own edges -> data/centerline.local.json, finished_centerline.json, dummies.json; every other edge named unjudged)"
+  # a gate centreline left by the last run's kn5_to_gate_obj belongs to THAT kn5 (as draft_mesh: ledger 0060)
+  rm -f "$PROJ/data/gate_centerline.json"
+  (cd "$AIROSO" && python -m scripts.geometry.network_reference "$PROJ")
+}
+# <<< NETWORK REFERENCE LINE
 draft_underlay() {
   step "draft: underlay -> loop.blend (scripts/blender/underlay.py: data/track.obj into GEN_* collections, never AUTH_*, never a scene reset)"
   [ -f "$AIROSO/scripts/blender/underlay.py" ] || { echo "no blend yet: scripts/blender/underlay.py (V3-PLAN P2 step 3) is not written"; exit 1; }
@@ -678,7 +690,7 @@ is_data_step() {
   case "$1" in
     gps|aerial|paint_centreline|remap_config|verify_centreline_paint|route_oneway_check|elev|project|widths|mesh) return 0;;
     road_profile|measured_widths|crossfall|verify_crossfall) return 0;;
-    net|classify|network_elev|network_mesh) return 0;;
+    net|classify|network_elev|network_mesh|network_reference) return 0;;
     deck_datum|median_envelope|route_connectors|divide_connectors|trim_connectors|terrain_sample|terrain_resample) return 0;;
     *) return 1;;
   esac

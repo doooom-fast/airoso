@@ -660,7 +660,8 @@ def test_the_four_chain_specs_draft_the_engine_then_the_underlay_and_run_on_airo
 # --- the San Diego freeway network through the chain (ONE-CHAIN §4 row 8; Kevin 2026-10-28: "rebuild, by an agent") ---
 NETWORK_SPECS = [ROOT / "tracks" / "san-diego-freeway" / "ship.json"]
 NETWORK_STEPS = {"net": "scripts.gps.network", "classify": "scripts.gps.classify",
-                 "network_elev": "scripts.elevation.network_elev", "network_mesh": "scripts.geometry.build_network_mesh"}
+                 "network_elev": "scripts.elevation.network_elev", "network_mesh": "scripts.geometry.build_network_mesh",
+                 "network_reference": "scripts.geometry.network_reference"}
 
 
 def test_the_network_spec_drafts_the_network_then_the_underlay_and_runs_on_airosos_engine():
@@ -672,7 +673,8 @@ def test_the_network_spec_drafts_the_network_then_the_underlay_and_runs_on_airos
         track = p.parent.name
         s = spec_mod.load(p, track)
         d = s["steps"]["draft"]
-        assert d == ["net", "classify", "network_elev", "network_mesh", "underlay"], (track, d)
+        # network_reference (2026-11-01): the ONE real mainline the ship phase walks, declared in the config
+        assert d == ["net", "classify", "network_elev", "network_mesh", "network_reference", "underlay"], (track, d)
         for n in d[:-1]:
             assert re.search(rf"\b{n}\b", data_steps), f"{track}: {n} must be a --draft-only data step"
         everything = [x for ph in PHASES for x in s["steps"][ph]]
@@ -697,6 +699,13 @@ def test_the_network_spec_drafts_the_network_then_the_underlay_and_runs_on_airos
         assert cfg["source"]["type"] == "osm-network" and cfg["source"]["refs"] == ["I 5", "I 8", "CA 52", "CA 163"]
         assert cfg["mirror_x"] is False and cfg["loop"] is False and "K10" not in cfg["name"] + cfg["ui_series"]
         assert cfg["_doc"].startswith("The San Diego freeway network") and "project_freeway_net" in cfg["_doc"]
+        # the reference line is a REAL mainline of the declared network (one of source.refs), driven one way, and the
+        # hole it leaves (every other edge unjudged by the line gates) is named in ship.json _owed
+        rl = cfg["network"]["reference_line"]
+        assert rl["ref"] in cfg["source"]["refs"] and rl["direction"] in ("eastbound", "westbound", "northbound",
+                                                                          "southbound") and rl["_doc"]
+        raw = json.loads(p.read_text(encoding="utf-8"))
+        assert "NOT JUDGED" in raw["_owed"] and "data/network.reference.json" in s["sync_out"]["files"]
     # each network step runs its engine module on the absolute project, needs no Blender, and has a step header
     for n, mod in NETWORK_STEPS.items():
         body = fns[f"draft_{n}"]
@@ -723,9 +732,10 @@ def test_is_data_step_takes_the_network_draft_and_stops_at_the_underlay():
     fn = TEXT[_first("is_data_step() {"):_first("SPEC_LINES=$(")]
     fn = fn[:fn.index("\n}\n") + 3]
     probe = fn + 'for n in "$@"; do if is_data_step "$n"; then echo "$n data"; else echo "$n blender"; fi; done\n'
-    names = ["net", "classify", "network_elev", "network_mesh", "underlay", "build_loop_blend", "network_env"]
+    names = ["net", "classify", "network_elev", "network_mesh", "network_reference", "underlay", "build_loop_blend",
+             "network_env"]
     r = subprocess.run([bash, "-c", probe, "probe", *names], capture_output=True, text=True, timeout=30, check=False)
     assert r.returncode == 0, r.stderr
     got = dict(ln.split() for ln in r.stdout.split("\n") if ln.strip())
     assert got == {"net": "data", "classify": "data", "network_elev": "data", "network_mesh": "data",
-                   "underlay": "blender", "build_loop_blend": "blender", "network_env": "blender"}, got
+                   "network_reference": "data", "underlay": "blender", "build_loop_blend": "blender", "network_env": "blender"}, got

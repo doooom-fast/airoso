@@ -11,7 +11,7 @@ claimed through the chain, with its artifact, or not at all).
 | File | What |
 |---|---|
 | `track.config.json` | the network's config. Its `_doc` and `*_doc` keys say where every value came from |
-| `ship.json` | the chain spec: draft `net → classify → network_elev → network_mesh → underlay`, no authoring yet, prep/split, ship/gate as the four chain tracks |
+| `ship.json` | the chain spec: draft `net → classify → network_elev → network_mesh → network_reference → underlay`, no authoring yet, prep/split, ship/gate as the four chain tracks |
 | `source/` | `realworld_capture.json` (the concrete deck / wall / line texture overrides) and its four CC0 procedural textures, as shipped |
 
 `fleet/registry.json`: airoso's `tracks_glob` lists this config, `k10-san-diego` lists `project_freeway_net` under
@@ -92,6 +92,24 @@ Mission Bay's water) are kept as the record and are inert: the chain never runs 
      change: the network mesh writes `data/track.obj`, the file it reads.
    - **the prep then fails** — `scripts/ac/build_kn5_loop.py` `declare_bridge_spans` (line 146, from `main` line
      866) reads `data/centerline.local.json`, which no network draft writes (`FileNotFoundError`). See below.
+3. **The reference line on the same stand-in** (2026-11-01; recipe = item 2 with `source.bbox` = the heightfield's
+   `base_bbox_swne` and no `scenery.terrain` override, which reproduces item 2's numbers exactly; declared
+   `{"ref": "Mission Valley Freeway", "direction": "eastbound"}` because Lake Murray's cache has no `ref` tags — the
+   freeway's own `"I 8"` is REFUSED there, "edge names: ['Mission Valley Freeway']"). Without the block every draft
+   output is byte-identical to HEAD's code; with it `track.obj` is unchanged and classify adds `travel_dir`.
+   - `network_reference`: edges 9 → 10 → 12 → 15 → 14 (classify travel votes fwd:rev 0:21 / 50:0 / 26:0 / 2:21 / 27:0), 793 vertices,
+     3.96 km, joints 0.0 m, no deck span (no layer tags), side check could not run (the cache's other carriageway
+     falls outside the largest component); 25 edges (3.31 of 7.26 km) unjudged, all ramps;
+   - `drive_test` on `data/track.obj` along it: **FAIL** — ground on top 8 (the start tip, station 0, and 2,477),
+     severe steps 21 (the four joints above + the start tip), excursion drops 23 (limit 3), floating furniture 251
+     (walls near the western interchange), obstructions 0, bumps 1.8/km; `audit_mesh` A 0 B 0 C 0 D 12 E 0, H 0
+     (H now runs: it reads the line);
+   - `underlay --plan`: 9 GEN groups, `refs` 793 points / 8 stations / closed false;
+   - no Blender: the prep's data half (`declare_bridge_spans`, the dummies read) run on a copy — the line converted to
+     the KN5 frame, AC_START_0 at station 49 facing 92° (east), splits 1 / 2 at 1,346 / 2,645 m, AC_TIME_0 at
+     3,942 of 3,956 m; `write_ai_line --layout freeroam`: point-to-point, 2,639 pts, min radius 15.5 m, grid
+     FORWARD +0.97; `make_map`: the line + 25 other edges, kn5 frame. tests: `tests/geometry/test_network_reference.py`,
+     `tests/ac/test_network_ship_contract.py`, `tests/gps/test_classify_travel_dir.py`.
 
 ## What the Windows run owes
 
@@ -99,12 +117,22 @@ Mission Bay's water) are kept as the record and are inert: the chain never runs 
   `ship.json` `sync_out` on the first real ship, so the route of record lands in `tracks/san-diego-freeway/data/`
   (the heightfield `.npy` is gitignored and stays in the workshop). A snapshot cache in `scripts.gps.network` (as `overpass.fetch_ways` has) would make the route
   reproducible; it is not written.
-- **The ship phase for a network** (found by the stand-in, not fixed here): the prep (`build_kn5_loop.py`: lines
-  146, 228, 607, 1016), `scripts.ac.write_ai_line`, `tools/make_map.py` and `scripts.geometry.drive_test` all read
-  `data/centerline.local.json` or the prep's `data/finished_centerline.json`; a network draft writes
-  `network.geojson` + `network.local.json` instead. Until the prep and those steps learn a network (or the config
-  declares a reference line on the real road — never an invented one), `--dry-run` stops at `prep`. This is the
-  next engine change for this track.
+- **The ship phase walks ONE declared line** (2026-11-01). `track.config.json` `network.reference_line` declares a
+  real mainline — I 8 eastbound, end to end — and the draft step `network_reference` (after `network_mesh`, before the
+  underlay; `scripts/geometry/network_reference.py`) resolves it from THIS draft's own edges: classify records each
+  edge's direction of travel from the OSM ways' order (`travel_dir`, only because the block exists), the longest
+  directed chain of non-ramp `I 8` edges is taken, every point is a vertex of a built edge (the line
+  `build_network_mesh` swept, `data/network.edges.local.json`). It writes `centerline.local.json` (loop false),
+  `finished_centerline.json` (frame "mesh …"), `dummies.json` (grid at the start, AC_TIME_0 at the finish: L11),
+  `bridge.spans.auto.json` and `network.reference.json`. A declaration it cannot honour (no `I 8` eastbound in the
+  draft, a broken chain, an undecided direction, the westbound carriageway on the wrong side) is a REFUSAL that says
+  what to declare — `edge_ids` (this draft's ids, in driving order) pins a list. **Read `data/network.reference.json`
+  first**: the chain, its joints, the side check and every built edge the line gates do NOT drive (I 8 westbound,
+  I 5, CA 52, CA 163, every ramp), by id and name; drive_test prints the same list.
+- **Stand-in finding, owed to the engine** (2026-11-01, Lake Murray's I 8 eastbound, see below): the network draft gives
+  a junction node two heights where two edges meet — 0.60 / 0.17 / 0.34 / 0.13 m pavement steps at the four mainline
+  joints (`scripts.elevation.network_elev` smooths each edge open-ended), which drive_test reads as severe steps. Not
+  fixed here (`scripts/elevation/` was outside this change); expect the freeway's drive_test to read the same class.
 - **Blender 4.2 with the AC add-on** for the export, then the gates on the built kn5 and Kevin's seat. The
   launch-grade check k10-san-diego's audit carried (`H_grade_launch`) is not in airoso's gates.
 - **Authoring** (none yet): gantries, Mission Bay and the Pacific, lane-level detail — in `loop.blend` `AUTH_*`,

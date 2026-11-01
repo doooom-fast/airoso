@@ -59,6 +59,9 @@ def classify(project_dir: str | Path) -> None:
     # nearest-way vote to freeway OSM ways so a ramp running beside a frontage road is never mislabelled a
     # surface street (which would give it curbs floating on ground the network doesn't have).
     osm_net = cfg.source.get("type") == "osm-network"
+    # opt-in (a network that declares network.reference_line, scripts.geometry.network_reference): record each edge's
+    # direction of travel from the OSM ways' own order. Absent = no travel_dir key = network.geojson byte-identical.
+    want_travel = bool(net.get("reference_line"))
 
     netp = proj / "data" / "network.geojson"
     fc = json.loads(netp.read_text())
@@ -134,20 +137,37 @@ def classify(project_dir: str | Path) -> None:
         lane_samples = []
         acc = 0.0
         sample_pts = [pm[0]]
-        for a, b in zip(pm, pm[1:]):
+        sample_ix = [0]                      # the vertex each sample is (the opt-in travel vote's tangent)
+        for k, (a, b) in enumerate(zip(pm, pm[1:])):
             acc += math.hypot(b[0] - a[0], b[1] - a[1])
             if acc >= 25.0:
-                sample_pts.append(b); acc = 0.0
-        sample_pts.append(pm[-1])
-        for p in sample_pts:
+                sample_pts.append(b); sample_ix.append(k + 1); acc = 0.0
+        sample_pts.append(pm[-1]); sample_ix.append(len(pm) - 1)
+        dir_fwd = dir_rev = 0
+        for si, p in zip(sample_ix, sample_pts):
             ci, cj = int(p[0] // CELL), int(p[1] // CELL)
-            best_d, best = TOL, None
+            best_d, best, best_seg = TOL, None, None
             for di in (-1, 0, 1):
                 for dj in (-1, 0, 1):
                     for (a, b, cls, name, is_link, _layer, lanes) in buckets.get((ci + di, cj + dj), ()):
                         d, _t = _seg_dist(p, a, b)
                         if d < best_d:
-                            best_d, best = d, (cls, name, is_link, lanes)
+                            best_d, best, best_seg = d, (cls, name, is_link, lanes), (a, b)
+            if best is not None and want_travel:
+                # TRAVEL DIRECTION (opt-in, network.reference_line): an OSM motorway / motorway_link way is drawn in
+                # the direction of travel (oneway implied), and network.py stores each edge in node-id order, not
+                # travel order. Vote the edge's own tangent at the sample against the nearest way's segment;
+                # a crossing way (|cos| < 0.5) casts no vote.
+                q0, q1 = pm[max(0, si - 1)], pm[min(len(pm) - 1, si + 1)]
+                tx, ty = q1[0] - q0[0], q1[1] - q0[1]
+                sx_, sy_ = best_seg[1][0] - best_seg[0][0], best_seg[1][1] - best_seg[0][1]
+                nn = math.hypot(tx, ty) * math.hypot(sx_, sy_)
+                if nn > 1e-9:
+                    cosv = (tx * sx_ + ty * sy_) / nn
+                    if cosv >= 0.5:
+                        dir_fwd += 1
+                    elif cosv <= -0.5:
+                        dir_rev += 1
             if best is not None:
                 votes_cls[best[0]] += 1
                 if best[1]:
@@ -172,6 +192,13 @@ def classify(project_dir: str | Path) -> None:
         f["properties"]["road_class"] = cls
         f["properties"]["is_ramp"] = is_ramp
         f["properties"]["name"] = name
+        if want_travel:
+            # +1 = the edge's vertex order IS the direction of travel, -1 = reversed, 0 = undecided (fewer than 80 %
+            # of the votes agree, or none: scripts.geometry.network_reference refuses to drive an undecided edge)
+            tot = dir_fwd + dir_rev
+            f["properties"]["travel_dir"] = (1 if tot and dir_fwd >= 0.8 * tot else
+                                             -1 if tot and dir_rev >= 0.8 * tot else 0)
+            f["properties"]["travel_votes"] = [dir_fwd, dir_rev]
         # REAL LANE COUNT (median of the nearest OSM ways) -> real width = lanes*lane_w + shoulders. Falls
         # back to the class width table when OSM has no lanes tag (some ramps). Drives markings + ribbon width.
         lanes = 0

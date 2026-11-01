@@ -1435,6 +1435,25 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
         report["kinks_per_km_max"] = float(_kink_max)
         fail = fail or report["kinks_per_km"] > float(_kink_max)
     report["fail"] = fail
+    # NETWORK REFERENCE LINE (opt-in: data/network.reference.json, written by scripts.geometry.network_reference). On a
+    # road network this gate walks ONE declared mainline; every other built edge is unjudged by it, and says so here
+    # and in the report — a hole named, never hidden. No file = no key = the report byte-identical.
+    _nref_p = data / "network.reference.json"
+    _nref = None
+    if line is None and _nref_p.exists():
+        try:
+            _nref = json.loads(_nref_p.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            _nref = None
+        if isinstance(_nref, dict) and isinstance(_nref.get("line"), dict):
+            report["reference_line"] = {
+                "line": _nref["line"].get("label"), "edges": _nref["line"].get("edges"),
+                "judged_km": _nref.get("judged_km"), "built_km": _nref.get("built_km"),
+                "unjudged_edges": _nref.get("unjudged_edges"), "unjudged_km": _nref.get("unjudged_km"),
+                "unjudged": [[u.get("id"), u.get("name"), u.get("why"), u.get("length_m")]
+                             for u in _nref.get("unjudged") or []]}
+        else:
+            _nref = None
     (data / out_name).write_text(json.dumps(report, indent=1), encoding="utf-8")
     print(f"DRIVE TEST {cfg['slug']}{(' [' + lid + ' ' + direction + ' ' + kind + ']') if lid else ''}"
           f"{(' [line ' + line['id'] + ']') if line is not None else ''}  "
@@ -1480,6 +1499,15 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
                         ("obstruction", report["worst"]["obstructions"][:8])):
         for r in rows[:6]:
             print(f"    worst {label}: {r}")
+    if _nref is not None:
+        _rl = report["reference_line"]
+        print(f"  NETWORK: walked the reference line {_rl['line']!r} (edges {_rl['edges']}), {_rl['judged_km']} of "
+              f"{_rl['built_km']} km built — UNJUDGED by this gate: {_rl['unjudged_edges']} edge(s), "
+              f"{_rl['unjudged_km']} km (data/network.reference.json)")
+        for u in _rl["unjudged"][:40]:
+            print(f"    unjudged edge {u[0]} {u[1] or '(no name)'}: {u[2]}, {u[3]} m")
+        if len(_rl["unjudged"]) > 40:
+            print(f"    ... {len(_rl['unjudged']) - 40} more in data/network.reference.json")
     print(f"  => {'FAIL' if fail else 'PASS'}   (data/{out_name})")
     return {**report, "fail": fail}
 

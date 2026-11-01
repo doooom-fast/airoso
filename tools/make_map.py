@@ -68,6 +68,18 @@ def load_lines(project_dir):
     if cp.exists():
         for c in json.loads(cp.read_text(encoding="utf-8")).get("connectors", []):
             conns.append([(p[0], -p[2]) for p in c["points_xyz_m"]])  # engine -> kn5: z mirrored
+    # A ROAD NETWORK (opt-in: data/network.edges.local.json, written by build_network_mesh when the config declares
+    # network.reference_line): the mainline above is the ONE reference line the gates walk; Free Roam drives every
+    # built edge, so every other edge is drawn too (the swept surface line, mesh frame -> kn5: z mirrored).
+    ep = data / "network.edges.local.json"
+    if ep.exists():
+        on = set()
+        rp = data / "network.reference.json"
+        if rp.exists():
+            on = set((json.loads(rp.read_text(encoding="utf-8")).get("line") or {}).get("edges") or [])
+        for e in json.loads(ep.read_text(encoding="utf-8")).get("edges", []):
+            if e.get("id") not in on and len(e.get("surface_xyz_m") or []) >= 2:
+                conns.append([(p[0], -p[2]) for p in e["surface_xyz_m"]])
     return main, conns
 
 

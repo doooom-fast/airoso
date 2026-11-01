@@ -212,13 +212,20 @@ def declare_bridge_spans(proj: Path) -> list[tuple[float, float]]:
     if prev is not None and prev_frame.startswith(("mesh", "kn5")):
         if prev_frame.startswith("mesh"):
             # build_mesh's swept line, OBJ frame (x=E, y=up, z=N; x already mirrored when mirror_x) -> KN5 frame
+            # (a road NETWORK's reference line, scripts.geometry.network_reference, is the same contract: the swept
+            # decks of the declared mainline's edges, frame "mesh (network reference line) …" — said so, same move)
+            _net = "network reference line" in prev_frame
             fc = {"frame": FC_FRAME_KN5,
-                  "source": "build_mesh finished_centerline (the swept line: corner-rounded, smoothed, bridge decks "
-                            "levelled) — the engine draft's",
+                  "source": (f"{prev.get('source')} — the network draft's reference line "
+                             f"(scripts.geometry.network_reference)" if _net else
+                             "build_mesh finished_centerline (the swept line: corner-rounded, smoothed, bridge decks "
+                             "levelled) — the engine draft's"),
                   "points_xyz_m": [[round(p[0], 3), round(p[1], 3), round(-p[2], 3)] for p in prev["points_xyz_m"]],
                   "widths_m": list(prev.get("widths_m") or widths)}
             fcp.write_text(json.dumps(fc), encoding="utf-8")
-            how = "the engine's swept line (build_mesh finished_centerline) -> KN5 frame"
+            how = ("the network's reference line (scripts.geometry.network_reference: the declared mainline's swept "
+                   "edges) -> KN5 frame" if _net else
+                   "the engine's swept line (build_mesh finished_centerline) -> KN5 frame")
         else:
             how = "kept this prep's earlier line (a re-run from the prep)"
         spans = []

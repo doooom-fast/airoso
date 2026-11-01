@@ -78,8 +78,15 @@ state. Nothing is built: T0 is claimed when `tools/ship_track.sh lookout-lariat`
    - **Run 2 (after the fix below, the one-layout config).** elev prints `profile by station: 9211 of 14444
      segments are under 2.4 m … a 1.000 m station grid (24901 points) … at the 3 m assumption the 16 % cap would
      have been 48 % per metre`; max grade **14.3 %** (30.2 % in run 1), climb 558.8 m, the same relief. project and
-     widths identical to run 1. mesh: the same three auto spans; measured-guard 1,475 lips (1,496). The draft gates on
-     run 2 are recorded in the commit that follows this one (they were still running when this was written).
+     widths identical to run 1. mesh: the same three auto spans; measured-guard 1,475 lips (1,496). `drive_test`
+     street_full still **FAIL**, but the profile's share of it is gone: bumps **1.05/km** (223.7 in run 1), kinks
+     **6.64/km** (116.0), soft-top in lane **4** (14), severe steps 11 (the same worst, 2.449 m at st 5,375), obstruction
+     10 (the same ten `1WALL_PARA_stone` lips at st 10,620–10,625: not the noise, then — Paradise Rd's steepest 20 m is
+     there, 12.4 %, and the measured-guard's in-band drop test is the next thing to read on real 3DEP), floating
+     furniture 27 (17), daylight 1, excursion drops 82 (far ledges 150; worst 4.03 m at st 5,700, 10 m out: the
+     stand-in's plateau beyond the July corridor), replication 0.05 / 0.20 / 1.23 m. `audit_mesh`: A 0, B 0, **D 28**
+     (the lips), every other class 0. Run 2's drive_test wrote `data/drive_test.json` (one layout), run 1's
+     `drive_test.street_full.json` (four).
 
 ### Found and fixed: the elevation profile read the 1 m climb as 3 m points
 

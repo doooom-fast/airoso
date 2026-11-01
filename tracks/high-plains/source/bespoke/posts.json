@@ -1,0 +1,327 @@
+[
+ {
+  "key": "post0",
+  "footprint_lonlat": [
+   [
+    -103.8923971,
+    39.7345056
+   ],
+   [
+    -103.8923563,
+    39.7345056
+   ],
+   [
+    -103.8923563,
+    39.734537
+   ],
+   [
+    -103.8923971,
+    39.734537
+   ]
+  ],
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "_h": "position off NAIP 2023; 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
+ },
+ {
+  "key": "post1",
+  "footprint_lonlat": [
+   [
+    -103.8899499,
+    39.7345817
+   ],
+   [
+    -103.8899091,
+    39.7345817
+   ],
+   [
+    -103.8899091,
+    39.7346131
+   ],
+   [
+    -103.8899499,
+    39.7346131
+   ]
+  ],
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "_h": "position off NAIP 2023; 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
+ },
+ {
+  "key": "post2",
+  "footprint_lonlat": [
+   [
+    -103.8980825,
+    39.7338973
+   ],
+   [
+    -103.8980417,
+    39.7338973
+   ],
+   [
+    -103.8980417,
+    39.7339287
+   ],
+   [
+    -103.8980825,
+    39.7339287
+   ]
+  ],
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "_h": "position off NAIP 2023; 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
+ },
+ {
+  "key": "post3",
+  "footprint_lonlat": [
+   [
+    -103.9002331,
+    39.7339163
+   ],
+   [
+    -103.9001923,
+    39.7339163
+   ],
+   [
+    -103.9001923,
+    39.7339477
+   ],
+   [
+    -103.9002331,
+    39.7339477
+   ]
+  ],
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "_h": "position off NAIP 2023; 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
+ },
+ {
+  "key": "post4",
+  "footprint_lonlat": [
+   [
+    -103.9011477,
+    39.7357793
+   ],
+   [
+    -103.9011069,
+    39.7357793
+   ],
+   [
+    -103.9011069,
+    39.7358107
+   ],
+   [
+    -103.9011477,
+    39.7358107
+   ]
+  ],
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "_h": "position off NAIP 2023; 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
+ },
+ {
+  "key": "post5",
+  "footprint_lonlat": [
+   [
+    -103.9033972,
+    39.7361404
+   ],
+   [
+    -103.9033564,
+    39.7361404
+   ],
+   [
+    -103.9033564,
+    39.7361718
+   ],
+   [
+    -103.9033972,
+    39.7361718
+   ]
+  ],
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "_h": "position off NAIP 2023; 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
+ },
+ {
+  "key": "post6",
+  "footprint_lonlat": [
+   [
+    -103.8996275,
+    39.7363685
+   ],
+   [
+    -103.8995867,
+    39.7363685
+   ],
+   [
+    -103.8995867,
+    39.7363999
+   ],
+   [
+    -103.8996275,
+    39.7363999
+   ]
+  ],
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "_h": "position off NAIP 2023; 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
+ },
+ {
+  "key": "post7",
+  "footprint_lonlat": [
+   [
+    -103.8983668,
+    39.7365776
+   ],
+   [
+    -103.898326,
+    39.7365776
+   ],
+   [
+    -103.898326,
+    39.736609
+   ],
+   [
+    -103.8983668,
+    39.736609
+   ]
+  ],
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "_h": "position off NAIP 2023; 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
+ },
+ {
+  "key": "post8",
+  "footprint_lonlat": [
+   [
+    -103.8988241,
+    39.7360549
+   ],
+   [
+    -103.8987833,
+    39.7360549
+   ],
+   [
+    -103.8987833,
+    39.7360863
+   ],
+   [
+    -103.8988241,
+    39.7360863
+   ]
+  ],
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "_h": "position off NAIP 2023; 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
+ },
+ {
+  "key": "post9",
+  "footprint_lonlat": [
+   [
+    -103.8996893,
+    39.735247
+   ],
+   [
+    -103.8996485,
+    39.735247
+   ],
+   [
+    -103.8996485,
+    39.7352784
+   ],
+   [
+    -103.8996893,
+    39.7352784
+   ]
+  ],
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "_h": "position off NAIP 2023; 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
+ },
+ {
+  "key": "post10",
+  "footprint_lonlat": [
+   [
+    -103.8988859,
+    39.7385925
+   ],
+   [
+    -103.8988451,
+    39.7385925
+   ],
+   [
+    -103.8988451,
+    39.7386239
+   ],
+   [
+    -103.8988859,
+    39.7386239
+   ]
+  ],
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "_h": "position off NAIP 2023; 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
+ },
+ {
+  "key": "post11",
+  "footprint_lonlat": [
+   [
+    -103.8999612,
+    39.7383359
+   ],
+   [
+    -103.8999204,
+    39.7383359
+   ],
+   [
+    -103.8999204,
+    39.7383673
+   ],
+   [
+    -103.8999612,
+    39.7383673
+   ]
+  ],
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "_h": "position off NAIP 2023; 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
+ },
+ {
+  "key": "post12",
+  "footprint_lonlat": [
+   [
+    -103.9017657,
+    39.7349809
+   ],
+   [
+    -103.9017249,
+    39.7349809
+   ],
+   [
+    -103.9017249,
+    39.7350123
+   ],
+   [
+    -103.9017657,
+    39.7350123
+   ]
+  ],
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "_h": "position off NAIP 2023; 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
+ }
+]

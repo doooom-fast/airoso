@@ -119,7 +119,7 @@ def generate(project_dir: str | Path) -> Path:
     # prefix stays OUT (elevated freeway decks, the TDR lesson above): only this near-field, ground-draped name is in.
     OCCLUDE_PREFIXES = ("1ROAD", "1KERB", "1RUNOFF", "MARKINGS", "ROADTEXT",
                         "BUILDING", "HOUSE", "BRICK", "STUCCO", "WAREHOUSE", "WHMETAL",
-                        "ROOFS", "RFMETAL", "WATER", "HIGHWAY_I8_NEAR")
+                        "ROOFS", "RFMETAL", "WATER", "HIGHWAY_I8_NEAR", "PADAPRON")
     occluders = [g for g in groups if g.upper().startswith(OCCLUDE_PREFIXES)]
     # PREFIX matching everywhere, never exact: split_mesh_under_cap renames every over-cap mesh to
     # <name>_a.._n (LIGHTS -> LIGHTS_a..). v0.7.5 shipped BOTH street tracks with completely dead
@@ -148,6 +148,13 @@ def generate(project_dir: str | Path) -> Path:
     _gfx_raw = (cfg_raw.get("lighting", {}) or {}).get("grassfx", False)
     grassfx_on = bool(_gfx_raw) and (not isinstance(_gfx_raw, dict) or _gfx_raw.get("enabled", True))
     gfx_cfg = _gfx_raw if isinstance(_gfx_raw, dict) else {}
+    # tools/plan_grassfx_aerial.py: the world rectangles read off the track's aerial, bound to the config's looks
+    _gfx_aerial = data / "grassfx.aerial.json"
+    if grassfx_on and gfx_cfg.get("configurations") and _gfx_aerial.exists():
+        gfx_cfg = {**gfx_cfg, "adjustments": list(gfx_cfg.get("adjustments") or []) + json.loads(_gfx_aerial.read_text())["adjustments"]}
+    if isinstance(gfx_cfg.get("adjustments"), list):        # "ALL_GRASS": the tile names exist only after the split
+        gfx_cfg = {**gfx_cfg, "adjustments": [{**a, "materials": [f"{g}_mat" for g in grass_meshes]} if a.get("materials") == "ALL_GRASS" else a
+                                              for a in gfx_cfg["adjustments"]]}
     if grassfx_on and not groups:
         print("  [ext_config] grassfx: no data/track.obj or environment.obj - GRASS lists are placeholders "
               "(1GRASS); regenerate after the gate OBJ exists")

@@ -3,7 +3,7 @@
   "name": "Nevada Nights",
   "slug": "exotics_racing_lvms",
   "ui_series": "doooom Nevada",
-  "version": "0.2.0",
+  "version": "0.5.0",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 14.0,
@@ -41,7 +41,482 @@
     "bush_size_min_m": 0.6,
     "bush_size_span_m": 0.6,
     "light_spacing_m": 90,
-    "_note": "Mojave lot track: no trees, sparse low scrub only (DOSSIER section 6 / QA 6)."
+    "_note": "Mojave lot track: no trees, sparse low scrub only (DOSSIER section 6 / QA 6).",
+    "bespoke": {
+      "_doc": ".claude/skills/bespoke-assets, placed by tools/author_bespoke_blend.py into AUTH_bespoke. Kevin's dressing call (DOSSIER section 11): as in 2013, the two south-west buildings, no Welcome Center.",
+      "buildings": [
+        {
+          "key": "exr2013_a",
+          "roof": "flat",
+          "wall_h_m": 3.0,
+          "footprint_lonlat": [
+            [
+              -115.0212818,
+              36.2817148
+            ],
+            [
+              -115.0211209,
+              36.2815202
+            ],
+            [
+              -115.0213932,
+              36.2813721
+            ],
+            [
+              -115.0215541,
+              36.2815689
+            ]
+          ],
+          "_source": "Footprint read off USDA NAIP 2013-09-28 (1 m native, z18 = 0.481 m/px; source/trace/buildings_2013_measured.png, red): 29.3 x 26.0 m. Wall height: the north-west shadow is 3.2-3.9 m wide across that wall. Sun: shadow azimuth about 302 deg off the lot poles gives about 09:30 PDT, elevation 33 deg (scripts/lighting/solar.py), so 2.3-2.8 m; 3.0 taken, the imagery's own 1 m pixel covers the difference. White roof, no ridge shadow: flat [roof form read, not measured]. Fabric walls [invented]: a 2013 visitor's account has the cars under a tent (detailedimage.com), no photo of this building found."
+        },
+        {
+          "key": "exr2013_b",
+          "roof": "gable",
+          "eave_h_m": 2.6,
+          "ridge_h_m": 5.3,
+          "footprint_lonlat": [
+            [
+              -115.0209774,
+              36.281477
+            ],
+            [
+              -115.0208393,
+              36.281331
+            ],
+            [
+              -115.0213301,
+              36.2810607
+            ],
+            [
+              -115.0214736,
+              36.2812013
+            ]
+          ],
+          "_source": "Footprint as above (blue): 54.1 x 20.4 m, the ridge along the long axis, plain in the roof's two shades. Eave: the shadow is 2.6-3.4 m wide, 1.9-2.4 m by the same sun; 2.6 taken as the lowest door height a car hall needs [invented within the imagery's 1 m pixel]. Ridge: the two roof shades give a pitch of at least about 9 deg; 15 deg taken [invented], a usual clearspan tent."
+        }
+      ],
+      "cones": {
+        "_source": "DOSSIER section 5 [S19]: cones at the braking point, apex and exit of every corner. NAIP does not resolve them: positions by the rule in tools/plan_cones.py, every number there [invented].",
+        "stations": [
+          {
+            "corner": 1,
+            "role": "brake",
+            "s": 272.4,
+            "side": "L"
+          },
+          {
+            "corner": 1,
+            "role": "apex",
+            "s": 366.5,
+            "side": "R"
+          },
+          {
+            "corner": 1,
+            "role": "exit",
+            "s": 426.5,
+            "side": "L"
+          },
+          {
+            "corner": 2,
+            "role": "brake",
+            "s": 670.9,
+            "side": "L"
+          },
+          {
+            "corner": 2,
+            "role": "apex",
+            "s": 746.9,
+            "side": "R"
+          },
+          {
+            "corner": 2,
+            "role": "exit",
+            "s": 785.9,
+            "side": "L"
+          },
+          {
+            "corner": 3,
+            "role": "brake",
+            "s": 857.1,
+            "side": "R"
+          },
+          {
+            "corner": 3,
+            "role": "apex",
+            "s": 939.2,
+            "side": "L"
+          },
+          {
+            "corner": 3,
+            "role": "exit",
+            "s": 990.2,
+            "side": "R"
+          },
+          {
+            "corner": 4,
+            "role": "brake",
+            "s": 1099.9,
+            "side": "L"
+          },
+          {
+            "corner": 4,
+            "role": "apex",
+            "s": 1193.9,
+            "side": "R"
+          },
+          {
+            "corner": 4,
+            "role": "exit",
+            "s": 1238.9,
+            "side": "L"
+          },
+          {
+            "corner": 5,
+            "role": "brake",
+            "s": 1387.6,
+            "side": "R"
+          },
+          {
+            "corner": 5,
+            "role": "apex",
+            "s": 1451.6,
+            "side": "L"
+          },
+          {
+            "corner": 5,
+            "role": "exit",
+            "s": 1469.6,
+            "side": "R"
+          },
+          {
+            "corner": 6,
+            "role": "apex",
+            "s": 1490.6,
+            "side": "R"
+          },
+          {
+            "corner": 6,
+            "role": "exit",
+            "s": 1499.6,
+            "side": "L"
+          },
+          {
+            "corner": 7,
+            "role": "brake",
+            "s": 1531.5,
+            "side": "L"
+          },
+          {
+            "corner": 7,
+            "role": "apex",
+            "s": 1592.4,
+            "side": "R"
+          },
+          {
+            "corner": 7,
+            "role": "exit",
+            "s": 1631.4,
+            "side": "L"
+          }
+        ]
+      },
+      "scrub": {
+        "_source": "Polygon: the undisturbed strip north of the lap on NAIP 2019-07-06 (DOSSIER section 6: native scrub only beyond the campus edge, confirmed in the imagery). Count: 36 dark clumps counted in it (brightness at least 28 under the polygon's median, 3-60 px), median about 1.3 m across. Heights by the species (creosote about 1-2 m here, bursage half that) [from the plant's habit, not measured]; the scatter is seeded, not the real plants.",
+        "polygon_lonlat": [
+          [
+            -115.0211316,
+            36.2838888
+          ],
+          [
+            -115.0209439,
+            36.2841051
+          ],
+          [
+            -115.019871,
+            36.284624
+          ],
+          [
+            -115.0187579,
+            36.2850348
+          ],
+          [
+            -115.0187445,
+            36.2844942
+          ],
+          [
+            -115.0196028,
+            36.2841483
+          ],
+          [
+            -115.0201392,
+            36.2838997
+          ]
+        ],
+        "count": 36,
+        "seed": 20190706,
+        "creosote_share": 0.7,
+        "size_m": [
+          1.0,
+          2.0
+        ]
+      },
+      "rails": [
+        {
+          "key": "tecpro_t1",
+          "kind": "tecpro",
+          "polyline_lonlat": [
+            [
+              -115.02213,
+              36.28276
+            ],
+            [
+              -115.02165,
+              36.28302
+            ],
+            [
+              -115.02111,
+              36.28322
+            ],
+            [
+              -115.02071,
+              36.28334
+            ]
+          ],
+          "_source": "the red-brown line outside the north-west corner on NAIP 2013-09-28, read by eye to about 2 m; DOSSIER section 5 names Tec-Pro and gives no drawing, module size [invented]"
+        }
+      ],
+      "blocks": [
+        {
+          "key": "lvms_section1",
+          "footprint_lonlat": [
+            [
+              -115.0157283,
+              36.2717948
+            ],
+            [
+              -115.0157251,
+              36.2718009
+            ],
+            [
+              -115.0148441,
+              36.2735058
+            ],
+            [
+              -115.0147674,
+              36.2734798
+            ],
+            [
+              -115.0145328,
+              36.2734002
+            ],
+            [
+              -115.0140907,
+              36.2732366
+            ],
+            [
+              -115.0149574,
+              36.2715313
+            ],
+            [
+              -115.0152542,
+              36.2716304
+            ],
+            [
+              -115.0154035,
+              36.2716789
+            ],
+            [
+              -115.0155847,
+              36.2717378
+            ]
+          ],
+          "wall_h_m": 38.0,
+          "skin": "metal",
+          "roof": "dark",
+          "off_terrain": true,
+          "_source": "OSM way 265375511 (the oval's grandstand section), plain massing past the built ground; 38 m [invented]; no seat step or roofline modelled"
+        },
+        {
+          "key": "lvms_section2",
+          "footprint_lonlat": [
+            [
+              -115.0145468,
+              36.273717
+            ],
+            [
+              -115.0136266,
+              36.2746814
+            ],
+            [
+              -115.0126922,
+              36.2753034
+            ],
+            [
+              -115.0113261,
+              36.2758855
+            ],
+            [
+              -115.0112283,
+              36.2757682
+            ],
+            [
+              -115.011065,
+              36.2753895
+            ],
+            [
+              -115.0122883,
+              36.2748926
+            ],
+            [
+              -115.0131623,
+              36.2743042
+            ],
+            [
+              -115.0140019,
+              36.2734212
+            ],
+            [
+              -115.0144168,
+              36.273635
+            ]
+          ],
+          "wall_h_m": 38.0,
+          "skin": "metal",
+          "roof": "dark",
+          "off_terrain": true,
+          "_source": "OSM way 265375512 (the oval's grandstand section), plain massing past the built ground; 38 m [invented]; no seat step or roofline modelled"
+        },
+        {
+          "key": "lvms_section3",
+          "footprint_lonlat": [
+            [
+              -115.0108479,
+              36.2754275
+            ],
+            [
+              -115.0109493,
+              36.2758157
+            ],
+            [
+              -115.0109913,
+              36.2759948
+            ],
+            [
+              -115.011004,
+              36.2760492
+            ],
+            [
+              -115.0086748,
+              36.2764428
+            ],
+            [
+              -115.0079386,
+              36.276437
+            ],
+            [
+              -115.0079402,
+              36.276344
+            ],
+            [
+              -115.0079495,
+              36.2758225
+            ],
+            [
+              -115.0086071,
+              36.2758085
+            ],
+            [
+              -115.0099803,
+              36.275576
+            ]
+          ],
+          "wall_h_m": 38.0,
+          "skin": "metal",
+          "roof": "dark",
+          "off_terrain": true,
+          "_source": "OSM way 265375513 (the oval's grandstand section), plain massing past the built ground; 38 m [invented]; no seat step or roofline modelled"
+        },
+        {
+          "key": "lvms_section4",
+          "footprint_lonlat": [
+            [
+              -115.0054266,
+              36.2736574
+            ],
+            [
+              -115.00551,
+              36.2741387
+            ],
+            [
+              -115.0057269,
+              36.2746231
+            ],
+            [
+              -115.0060854,
+              36.2750415
+            ],
+            [
+              -115.0063594,
+              36.275261
+            ],
+            [
+              -115.0068864,
+              36.275559
+            ],
+            [
+              -115.0070987,
+              36.2756414
+            ],
+            [
+              -115.0076655,
+              36.2757863
+            ],
+            [
+              -115.0075062,
+              36.2761544
+            ],
+            [
+              -115.006905,
+              36.2759948
+            ],
+            [
+              -115.0062693,
+              36.2756982
+            ],
+            [
+              -115.0057365,
+              36.27528
+            ],
+            [
+              -115.0053326,
+              36.274787
+            ],
+            [
+              -115.0050811,
+              36.2742312
+            ],
+            [
+              -115.0049909,
+              36.2737012
+            ],
+            [
+              -115.0051365,
+              36.2736851
+            ]
+          ],
+          "wall_h_m": 38.0,
+          "skin": "metal",
+          "roof": "dark",
+          "off_terrain": true,
+          "_source": "OSM way 265375514 (the oval's grandstand section), plain massing past the built ground; 38 m [invented]; no seat step or roofline modelled"
+        },
+        {
+          "file": "source/bespoke/buildings.json",
+          "auto": true,
+          "_source": "the LVMS campus and the warehouses across Speedway Blvd, OSM footprints (tools/plan_buildings.py); none has built ground under it, so each stands as a far block at the nearest ground's height; heights are class defaults [invented], the 2013 photo's shadows were the camera's lean"
+        }
+      ]
+    }
   },
   "layouts": [
     {
@@ -4867,5 +5342,20 @@
   "install_folder": "exotics_racing_lvms",
   "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (Lariat plan A11); the previous install is parked in the archive",
   "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
-  "_name_doc": "Kevin 2026-10-28: 'Call it Nevada Nights.' The 2015-2021 Exotics Racing circuit at LVMS; 'Exotics Racing' is a registered mark, so the public title is this one. Folder and slug stay place-based (exotics-racing-lv / exotics_racing_lvms)."
+  "_name_doc": "Kevin 2026-10-28: 'Call it Nevada Nights.' The 2015-2021 Exotics Racing circuit at LVMS; 'Exotics Racing' is a registered mark, so the public title is this one. Folder and slug stay place-based (exotics-racing-lv / exotics_racing_lvms).",
+  "texture_overrides": {
+    "1GRASS": {
+      "diffuse": "textures/caliche_diffuse.jpg",
+      "normal": "textures/caliche_normal.jpg"
+    },
+    "GRASS_FAR": {
+      "diffuse": "textures/caliche_diffuse.jpg",
+      "normal": "textures/caliche_normal.jpg"
+    },
+    "SHOULDERUND": {
+      "diffuse": "textures/caliche_diffuse.jpg",
+      "normal": "textures/caliche_normal.jpg"
+    }
+  },
+  "_texture_overrides_doc": "The Mojave ground (DOSSIER section 11 step 2): textures/make_caliche_ground.py, CC0, colour measured off NAIP. 1GRASS keeps its physics."
 }

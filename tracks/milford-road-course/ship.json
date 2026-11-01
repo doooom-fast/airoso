@@ -14,7 +14,9 @@
       "mesh",
       "underlay"
     ],
-    "author": [],
+    "author": [
+      "bespoke"
+    ],
     "prep": [
       "prep",
       "split"
@@ -24,6 +26,7 @@
       "ai",
       "verify_kn5",
       "road_obj",
+      "grassfx_aerial",
       "track_folder",
       "verify_inis",
       "make_map"
@@ -31,7 +34,8 @@
     "gate": [
       "drive_test_street",
       "audit_street",
-      "kn5_ground"
+      "kn5_ground",
+      "house_seat"
     ]
   },
   "sync_in": {
@@ -43,7 +47,9 @@
       "data/centerline.elevation.json",
       "data/heightfield.npy",
       "data/heightfield.meta.json",
-      "data/corridor.elev.json"
+      "data/corridor.elev.json",
+      "textures/turf_diffuse.jpg",
+      "textures/turf_normal.jpg"
     ],
     "dirs": [
       "source"
@@ -65,7 +71,10 @@
       "data/drive_test.json",
       "data/audit.json",
       "data/kn5_ground_check.{id}.json",
-      "data/drive_test.{id}.json"
+      "data/drive_test.{id}.json",
+      "data/bespoke.report.json",
+      "data/house_seat_check.json",
+      "data/grassfx.aerial.json"
     ],
     "map": [
       [

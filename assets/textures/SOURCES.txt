@@ -5,6 +5,14 @@ Texture sources — all CC0 (public domain); credited as good practice. (machine
                                              close-up tiling. Road UV tile is 15 m (build_mesh.py).
   grass_diffuse.jpg   / grass_normal.jpg     ambientCG "Grass001" (2K)            https://ambientcg.com/view?id=Grass001
   kerb_diffuse.png                           generated (red/white stripe, scripts pipeline)
+  fabric_white_diffuse.jpg / _normal.jpg     generated (tools/make_bespoke_assets.py): white PVC tent panel, 5 m bay, CC0
+  traffic_cone_diffuse.png                   generated (tools/make_bespoke_assets.py): the cone's strip, MUTCD bands, CC0
+  desert_scrub_atlas.png                     generated (tools/make_bespoke_assets.py): creosote / bursage cards, CC0
+  tiltup_wall_* / metal_wall_* / stucco_wall_* / siding_wall_*   generated (tools/make_bespoke_assets.py): building skins, CC0
+  roof_white / roof_tan / roof_dark / shingle_roof_diffuse.jpg   generated: roofs by class, CC0
+  pad_asphalt_diffuse.jpg / wbeam_rail_diffuse.png / tecpro_diffuse.png / krail_bluewhite_diffuse.png / ghost_alpha.png   generated, CC0
+  drystone_diffuse.jpg / _normal.jpg          generated: laid dry stone (the Lariat), CC0
+  deciduous_atlas.png / prairie_atlas.png / conifer_foothill_atlas.png   generated: card atlases, CC0
   kerb_race_worn_diffuse.jpg / _normal.jpg   generated (tools/make_kerb_texture.py, ledger 0053): the race kerbs'
                                              worn atlas — 4 rubber-level columns x 8 m of 1 m blocks, CC0
   chainlink_diffuse.png                      generated (procedural alpha-cutout chain-link, scripts/environment/make_chainlink.py)

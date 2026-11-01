@@ -18,9 +18,9 @@
   "overridden": true
  },
  "bands": 16,
- "faces_in_bands": 149381,
- "steep_under_pavement_left_grass": 5206,
- "rock_raw": 13728,
+ "faces_in_bands": 152042,
+ "steep_under_pavement_left_grass": 5211,
+ "rock_raw": 13732,
  "boundary_smoothing": {
   "teeth_filled": 934,
   "teeth_eroded": 1682,
@@ -109,9 +109,9 @@
   "faces": 179,
   "components": 82
  },
- "patches_dropped": 3357,
+ "patches_dropped": 3363,
  "holes_filled": 0,
- "rock_faces": 9802,
+ "rock_faces": 9800,
  "rock_area_m2": 11935.7,
  "thin_triangles_in_bands_before_split": 1761,
  "meshes": [
@@ -124,8 +124,8 @@
   {
    "name": "1GRASS_ROCK_13",
    "from": "1GRASS_13",
-   "vertices": 825,
-   "faces": 1055
+   "vertices": 824,
+   "faces": 1053
   },
   {
    "name": "1GRASS_ROCK_14",
@@ -222,7 +222,7 @@
    "slope_max": 1.28
   },
   "auto_cut_D_right_25_1595": {
-   "faces": 4039,
+   "faces": 4037,
    "area_m2": 4181.3,
    "rise_max_m": 2.8,
    "slope_min": 0.34,

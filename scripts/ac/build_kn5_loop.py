@@ -989,7 +989,9 @@ def main():
         # ...and the race furniture (ledger 0047): the strips carry u = arc / 4.04 m along the
         # vertical faces and the kerbs v = arc / 1 m — a top-down projection would smear them
         if not ob.name.upper().startswith(("PALM", "TREE", "SCRUB", "BUSHES", "CHAINLINK", "ROADTEXT",
-                                           "1WALL_RACE", "1KERB_RACE", "BRIDGESTRUCT")):
+                                           "1WALL_RACE", "1KERB_RACE", "BRIDGESTRUCT", "BUILDING_FABRIC", "1WALL_FABRIC", "PROPCONE",
+                                           "BUILDING_TILTUP", "BUILDING_METAL", "BUILDING_STUCCO", "BUILDING_SIDING", "ROOFTOP", "1WALL_TILTUP", "1WALL_TECPRO", "1WALL_KRAILBW",
+                                           "GUARDRAIL", "PADAPRON", "BUILDING_DRYSTONE", "FARBLOCK")):
             planar_uv(me)
         bm = bmesh.new(); bm.from_mesh(me)
         # NEVER weld foliage/prop groups: their double-sided shells are duplicated face pairs at
@@ -998,7 +1000,8 @@ def main():
         # bushes (measured 15-16% on PALMTRUNK, 8% on SCRUB; ledger 0024, Kevin: "points are
         # closing with the wrong vectors"). Weld exists to clean GENERATED seams, not authored props.
         if not ob.name.upper().startswith(("PALM", "TREE", "SCRUB", "BUSHES", "CHAINLINK",
-                                           "1WALL", "RETWALL")):
+                                           "1WALL", "RETWALL", "BUILDING_FABRIC", "PROPCONE", "BUILDING_TILTUP", "BUILDING_METAL", "BUILDING_STUCCO", "BUILDING_SIDING",
+                                           "ROOFTOP", "GUARDRAIL", "BUILDING_DRYSTONE", "FARBLOCK")):
             bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-4)
         else:
             # REPAIR damage already baked into the source .blend (earlier welds): a lone inverted

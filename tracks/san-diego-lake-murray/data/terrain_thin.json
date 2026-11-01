@@ -25,19 +25,19 @@
  "tiles": {
   "1GRASS_0": {
    "vertices": [
-    51658,
-    31482
+    51657,
+    31483
    ],
    "faces": [
-    101776,
-    61424
+    101775,
+    61427
    ],
    "collapse": {
-    "vertices": 51658,
-    "removed": 20176,
+    "vertices": 51657,
+    "removed": 20174,
     "triangles": [
-     101776,
-     61424
+     101775,
+     61427
     ],
     "locked_steep": 312,
     "locked_flat_or_flipped": 0,
@@ -53,15 +53,15 @@
     28978
    ],
    "faces": [
-    101767,
-    56145
+    101766,
+    56144
    ],
    "collapse": {
     "vertices": 51789,
     "removed": 22811,
     "triangles": [
-     101766,
-     56144
+     101765,
+     56143
     ],
     "locked_steep": 39,
     "locked_flat_or_flipped": 0,
@@ -73,19 +73,19 @@
   },
   "1GRASS_10": {
    "vertices": [
-    51264,
-    27119
+    51263,
+    27118
    ],
    "faces": [
-    101800,
-    53510
+    101799,
+    53509
    ],
    "collapse": {
-    "vertices": 51264,
+    "vertices": 51263,
     "removed": 24145,
     "triangles": [
-     101800,
-     53510
+     101799,
+     53509
     ],
     "locked_steep": 0,
     "locked_flat_or_flipped": 0,
@@ -101,15 +101,15 @@
     28684
    ],
    "faces": [
-    101804,
-    56630
+    101803,
+    56629
    ],
    "collapse": {
     "vertices": 51271,
     "removed": 22587,
     "triangles": [
-     101804,
-     56630
+     101803,
+     56629
     ],
     "locked_steep": 0,
     "locked_flat_or_flipped": 0,
@@ -121,19 +121,19 @@
   },
   "1GRASS_12": {
    "vertices": [
-    51314,
-    25534
+    51321,
+    25544
    ],
    "faces": [
     101654,
-    50094
+    50100
    ],
    "collapse": {
-    "vertices": 51314,
-    "removed": 25780,
+    "vertices": 51321,
+    "removed": 25777,
     "triangles": [
      101654,
-     50094
+     50100
     ],
     "locked_steep": 41,
     "locked_flat_or_flipped": 0,
@@ -145,19 +145,19 @@
   },
   "1GRASS_13": {
    "vertices": [
-    51122,
-    21956
+    51125,
+    21965
    ],
    "faces": [
-    101476,
-    43144
+    101481,
+    43161
    ],
    "collapse": {
-    "vertices": 51122,
-    "removed": 29166,
+    "vertices": 51125,
+    "removed": 29160,
     "triangles": [
-     101476,
-     43144
+     101481,
+     43161
     ],
     "locked_steep": 37,
     "locked_flat_or_flipped": 0,
@@ -169,19 +169,19 @@
   },
   "1GRASS_14": {
    "vertices": [
-    51425,
-    25725
+    51429,
+    25738
    ],
    "faces": [
-    101804,
-    50404
+    101803,
+    50421
    ],
    "collapse": {
-    "vertices": 51425,
-    "removed": 25700,
+    "vertices": 51429,
+    "removed": 25691,
     "triangles": [
-     101804,
-     50404
+     101803,
+     50421
     ],
     "locked_steep": 12,
     "locked_flat_or_flipped": 0,
@@ -193,19 +193,19 @@
   },
   "1GRASS_15": {
    "vertices": [
-    51413,
-    25537
+    51415,
+    25536
    ],
    "faces": [
-    101720,
-    49968
+    101723,
+    49965
    ],
    "collapse": {
-    "vertices": 51413,
-    "removed": 25876,
+    "vertices": 51415,
+    "removed": 25879,
     "triangles": [
-     101719,
-     49967
+     101722,
+     49964
     ],
     "locked_steep": 48,
     "locked_flat_or_flipped": 0,
@@ -217,21 +217,21 @@
   },
   "1GRASS_2": {
    "vertices": [
-    51196,
-    16515
+    51191,
+    16510
    ],
    "faces": [
-    101718,
-    32356
+    101714,
+    32352
    ],
    "collapse": {
-    "vertices": 51196,
+    "vertices": 51191,
     "removed": 34681,
     "triangles": [
-     101717,
-     32355
+     101713,
+     32351
     ],
-    "locked_steep": 89,
+    "locked_steep": 86,
     "locked_flat_or_flipped": 0,
     "deviation_bound_m": [
      -0.1483,
@@ -241,19 +241,19 @@
   },
   "1GRASS_3": {
    "vertices": [
-    51617,
-    19758
+    51615,
+    19755
    ],
    "faces": [
-    101790,
-    38072
+    101789,
+    38069
    ],
    "collapse": {
-    "vertices": 51617,
-    "removed": 31859,
+    "vertices": 51615,
+    "removed": 31860,
     "triangles": [
-     101790,
-     38072
+     101789,
+     38069
     ],
     "locked_steep": 26,
     "locked_flat_or_flipped": 0,
@@ -265,21 +265,21 @@
   },
   "1GRASS_4": {
    "vertices": [
-    51128,
-    22323
+    51129,
+    22322
    ],
    "faces": [
-    101675,
+    101679,
     44065
    ],
    "collapse": {
-    "vertices": 51128,
-    "removed": 28805,
+    "vertices": 51129,
+    "removed": 28807,
     "triangles": [
-     101675,
+     101679,
      44065
     ],
-    "locked_steep": 47,
+    "locked_steep": 43,
     "locked_flat_or_flipped": 0,
     "deviation_bound_m": [
      -0.1483,
@@ -289,19 +289,19 @@
   },
   "1GRASS_5": {
    "vertices": [
-    51715,
-    24901
+    51714,
+    27162
    ],
    "faces": [
-    101786,
-    48158
+    101785,
+    52681
    ],
    "collapse": {
-    "vertices": 51715,
-    "removed": 26814,
+    "vertices": 51714,
+    "removed": 24552,
     "triangles": [
-     101786,
-     48158
+     101785,
+     52681
     ],
     "locked_steep": 40,
     "locked_flat_or_flipped": 0,
@@ -313,21 +313,21 @@
   },
   "1GRASS_6": {
    "vertices": [
-    51445,
-    24048
+    51448,
+    26063
    ],
    "faces": [
-    101538,
-    46744
+    101543,
+    50773
    ],
    "collapse": {
-    "vertices": 51445,
-    "removed": 27397,
+    "vertices": 51448,
+    "removed": 25385,
     "triangles": [
-     101538,
-     46744
+     101543,
+     50773
     ],
-    "locked_steep": 48,
+    "locked_steep": 44,
     "locked_flat_or_flipped": 0,
     "deviation_bound_m": [
      -0.15,
@@ -337,21 +337,21 @@
   },
   "1GRASS_7": {
    "vertices": [
-    51313,
-    23578
+    51314,
+    23571
    ],
    "faces": [
-    101480,
-    46010
+    101485,
+    45999
    ],
    "collapse": {
-    "vertices": 51313,
-    "removed": 27735,
+    "vertices": 51314,
+    "removed": 27743,
     "triangles": [
-     101480,
-     46010
+     101485,
+     45999
     ],
-    "locked_steep": 146,
+    "locked_steep": 148,
     "locked_flat_or_flipped": 0,
     "deviation_bound_m": [
      -0.15,
@@ -361,15 +361,15 @@
   },
   "1GRASS_8": {
    "vertices": [
-    51380,
-    27988
+    51378,
+    27986
    ],
    "faces": [
     101799,
     55015
    ],
    "collapse": {
-    "vertices": 51380,
+    "vertices": 51378,
     "removed": 23392,
     "triangles": [
      101799,
@@ -385,19 +385,19 @@
   },
   "1GRASS_9": {
    "vertices": [
-    51745,
-    29018
+    51744,
+    29016
    ],
    "faces": [
-    101804,
-    56350
+    101803,
+    56347
    ],
    "collapse": {
-    "vertices": 51745,
-    "removed": 22727,
+    "vertices": 51744,
+    "removed": 22728,
     "triangles": [
-     101804,
-     56350
+     101803,
+     56347
     ],
     "locked_steep": 0,
     "locked_flat_or_flipped": 0,
@@ -505,12 +505,12 @@
   }
  },
  "total_vertices": [
-  983294,
-  526315
+  983302,
+  530602
  ],
  "removed_vertex_offsets_m": [
   -0.15,
   0.15
  ],
- "removed_lattice_vertices": 297603
+ "removed_lattice_vertices": 295023
 }

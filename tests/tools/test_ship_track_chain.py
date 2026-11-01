@@ -637,7 +637,8 @@ def test_the_four_chain_specs_draft_the_engine_then_the_underlay_and_run_on_airo
             assert n not in [x for ph in PHASES for x in s["steps"][ph]], (track, n)
         assert s["steps"]["prep"] == ["prep", "split"]
         assert {"export_road", "ai", "verify_kn5", "road_obj", "track_folder", "verify_inis", "make_map"} <= set(s["steps"]["ship"])
-        assert s["steps"]["gate"] == ["drive_test_street", "audit_street", "kn5_ground"], (track, s["steps"]["gate"])
+        # a track that stands buildings (the bespoke author step) also gates them; nothing else joins this list unnoticed
+        assert s["steps"]["gate"] == ["drive_test_street", "audit_street", "kn5_ground"] + (["house_seat"] if "bespoke" in s["steps"]["author"] else []), (track, s["steps"]["gate"])
         assert s["workshop"] == f"C:/Users/Owner/Documents/k10-workshops/{track}" and "airoso" not in s["workshop"].lower()
         assert s["require_race_layout"] is False and s["street_ai_july"] == ""
         assert "loop.blend" in s["sync_out"]["required"] and "data/underlay.report.json" in s["sync_out"]["files"]

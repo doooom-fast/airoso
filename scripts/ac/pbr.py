@@ -81,12 +81,27 @@ TEXTURES = {
     # BRIDGESTRUCT: the loop's overcrossing bodies (soffit, fascia, abutment walls, pier bents; tools/author_bridges_blend.py,
     # ledger 0046 fix round 4). Visual only (no digit prefix) and NOT HWYSTRUCT, which the gates read as structure.
     "BRIDGESTRUCT": ("building_diffuse.jpg", "building_normal.jpg", 0.85, (0.66, 0.66, 0.63, 1), 0.0, False),
+    # .claude/skills/bespoke-assets, first batch (Nevada Nights): the 2013 tents. BUILDING_FABRIC BEFORE BUILDING: prefix
+    # order = match priority. tools/make_bespoke_assets.py (CC0); the shell tiles by real metres, so the prep keeps its UVs.
+    "BUILDING_FABRIC": ("fabric_white_diffuse.jpg", "fabric_white_normal.jpg", 0.70, (0.90, 0.90, 0.88, 1), 0.0, False),
+    "FARBLOCK_TILTUP": ("tiltup_wall_diffuse.jpg", "tiltup_wall_normal.jpg", 0.88, (0.66, 0.65, 0.62, 1), 0.0, False),  # a far backdrop's walls: not BUILDING, so never a GrassFX occluder
+    "FARBLOCK_METAL": ("metal_wall_diffuse.jpg", "metal_wall_normal.jpg", 0.55, (0.84, 0.84, 0.85, 1), 0.15, False),
+    "BUILDING_DRYSTONE": ("drystone_diffuse.jpg", "drystone_normal.jpg", 0.92, (0.52, 0.46, 0.38, 1), 0.0, False),  # laid dry stone, the Lariat's 1917 pylons and walls (CC0); before BUILDING
+    "BUILDING_STUCCO": ("stucco_wall_diffuse.jpg", "stucco_wall_normal.jpg", 0.90, (0.78, 0.72, 0.60, 1), 0.0, False),  # houses and apartments, a window per bay (tools/plan_buildings.py; CC0); before BUILDING
+    "BUILDING_SIDING": ("siding_wall_diffuse.jpg", "siding_wall_normal.jpg", 0.80, (0.88, 0.88, 0.86, 1), 0.0, False),  # lap-siding houses; before BUILDING
+    "BUILDING_TILTUP": ("tiltup_wall_diffuse.jpg", "tiltup_wall_normal.jpg", 0.88, (0.66, 0.65, 0.62, 1), 0.0, False),  # tilt-up concrete walls (tools/author_bespoke_blend.py blocks; CC0); before BUILDING, dict-ordered
+    "BUILDING_METAL": ("metal_wall_diffuse.jpg", "metal_wall_normal.jpg", 0.55, (0.84, 0.84, 0.85, 1), 0.15, False),  # ribbed steel siding, tiled by the rib bay (CC0); before BUILDING
     "BUILDING": ("building_diffuse.jpg", "building_normal.jpg", 0.88, (0.60, 0.60, 0.58, 1), 0.0, False),  # tilt-up concrete (mined Hamburg)
     "WAREHOUSE": ("warehouse_diffuse.jpg", "warehouse_normal.jpg", 0.90, (0.56, 0.56, 0.54, 1), 0.0, False),  # weathered concrete warehouse walls (mined Hamburg)
     "WHMETAL":  ("warehouse_metal_diffuse.jpg", "warehouse_metal_normal.jpg", 0.65, (0.58, 0.60, 0.62, 1), 0.10, False),  # corrugated-metal warehouse (CC0 CorrugatedSteel) — warehouse variety
     "BRICK":   ("brick_diffuse.jpg",   "brick_normal.jpg",   0.90, (0.45, 0.28, 0.22, 1), 0.0, False),  # red brick (mined Hamburg) — building variety
     "STUCCO":  ("stucco_diffuse.jpg",  "stucco_normal.jpg",  0.88, (0.62, 0.32, 0.28, 1), 0.0, False),  # painted stucco (mined Hamburg) — building variety
     "BARRIER": ("building_diffuse.jpg", "building_normal.jpg", 0.85, (0.74, 0.74, 0.72, 1), 0.0, False),  # concrete jersey K-rail
+    "1WALL_TILTUP": ("tiltup_wall_diffuse.jpg", "tiltup_wall_normal.jpg", 0.88, (0.66, 0.65, 0.62, 1), 0.0, False),  # a block's collider, just inside its walls; before 1WALL, dict-ordered
+    "1WALL_TECPRO": ("tecpro_diffuse.png", None, 0.70, (0.72, 0.16, 0.14, 1), 0.0, False),  # Tec-Pro modules, red / white by the atlas's two cells (CC0); before 1WALL
+    "1WALL_KRAILBW": ("krail_bluewhite_diffuse.png", None, 0.80, (0.50, 0.60, 0.72, 1), 0.0, False),  # High Plains' painted K-rail, blue / white by section (CC0); before 1WALL
+    "1WALL_GHOST": ("ghost_alpha.png", None, 0.90, (0.5, 0.5, 0.5, 1), 0.0, False),  # a guard lip kept as the collider behind a GUARDRAIL: transparent, alpha test (BILLBOARD); before 1WALL
+    "1WALL_FABRIC": ("fabric_white_diffuse.jpg", "fabric_white_normal.jpg", 0.70, (0.90, 0.90, 0.88, 1), 0.0, False),  # the tents' collider, just inside the shell (tools/author_bespoke_blend.py); before 1WALL, dict-ordered
     "1WALL_WOODF": ("wood_fence.png", "wood_fence_normal.png", 0.9, (0.42, 0.33, 0.24, 1), 0.0, False),  # wooden warning fences (must precede 1WALL — dict-ordered prefix match)
     "1WALL":   ("concrete_barrier_diffuse.png", "concrete_barrier_normal.png", 0.85, (0.72, 0.72, 0.70, 1), 0.0, False),  # Kevin's 4 m concrete barrier modules (props.concrete_barriers)
     "FENCEWOOD": ("ranch_fence_diffuse.png", "ranch_fence_normal.png", 0.9, (0.45, 0.35, 0.25, 1), 0.0, False),  # split-rail ranch fence panels (scenery.fences, right-of-way line)
@@ -100,6 +115,10 @@ TEXTURES = {
     "DANGERLITE": ("solid_red_glow.png", None, 0.3, (1.0, 0.10, 0.06, 1), 0.0, False),  # danger boards at extreme straight-into-hairpin entries (flashing model TBD from Kevin)
     "CONTAINER": ("container_diffuse.jpg", "container_normal.jpg", 0.70, (0.55, 0.30, 0.26, 1), 0.0, False),  # mined Hamburg shipping-container stacks (warehouse yards)
     "CHAINLINK": ("chainlink_diffuse.png", None, 0.60, (0.55, 0.56, 0.58, 1), 0.30, False),  # procedural alpha-cutout chain-link (warehouse yard fences)
+    "ROOFTOP_SHINGLE": ("shingle_roof_diffuse.jpg", None, 0.92, (0.38, 0.34, 0.31, 1), 0.0, False),  # the houses' hip roofs (CC0)
+    "ROOFTOP_WHITE": ("roof_white_diffuse.jpg", None, 0.80, (0.86, 0.86, 0.84, 1), 0.0, False),  # flat roofs by the class read off NAIP (tools/plan_buildings.py; CC0)
+    "ROOFTOP_TAN": ("roof_tan_diffuse.jpg", None, 0.85, (0.65, 0.57, 0.44, 1), 0.0, False),
+    "ROOFTOP_DARK": ("roof_dark_diffuse.jpg", None, 0.85, (0.33, 0.33, 0.35, 1), 0.0, False),
     "ROOF":    ("roof_diffuse.jpg",    "roof_normal.jpg",    0.55, (0.26, 0.32, 0.45, 1), 0.10, False),  # PVC membrane roof (mined Hamburg)
     "RFMETAL": ("warehouse_metal_diffuse.jpg", "warehouse_metal_normal.jpg", 0.60, (0.55, 0.57, 0.60, 1), 0.15, False),  # corrugated-metal roof (on metal warehouses)
     "WATER":   (None, None, 0.04, (0.02, 0.10, 0.20, 1), 0.0, True),
@@ -113,6 +132,10 @@ TEXTURES = {
     "PALMFROND": ("palm_frond.png", None, 0.72, (0.24, 0.40, 0.16, 1), 0.0, False),  # drooping fan-crown leaf cards (alpha cutout)
     "TREETRUNK": ("palm_bark.png", None, 0.92, (0.34, 0.26, 0.18, 1), 0.0, False),  # broadleaf shade-tree trunk (bark)
     "TREECANOPY": (None, None, 0.94, (0.21, 0.36, 0.16, 1), 0.0, False),            # opaque green shade canopy (off-road, in yards)
+    "TREECARD_CONIFER": ("conifer_foothill_atlas.png", None, 0.92, (0.12, 0.20, 0.10, 1), 0.0, False),  # ponderosa / Douglas-fir / juniper / mahogany cards (CC0); before TREECARD
+    "TREECARD": ("deciduous_atlas.png", None, 0.92, (0.20, 0.32, 0.14, 1), 0.0, False),  # oak / maple / hickory / cottonwood cards, alpha cutout (CC0)
+    "PRAIRIECARD": ("prairie_atlas.png", None, 0.95, (0.48, 0.46, 0.30, 1), 0.0, False),  # rabbitbrush / yucca / bunchgrass / snakeweed cards, alpha cutout (CC0)
+    "SCRUBCARD": ("desert_scrub_atlas.png", None, 0.95, (0.40, 0.42, 0.25, 1), 0.0, False),  # creosote / bursage cards, alpha cutout (tools/make_bespoke_assets.py, CC0); before SCRUB, dict-ordered
     "SCRUB":    (None, None, 0.95, (0.40, 0.42, 0.25, 1), 0.0, False),              # dry chaparral bush on the open hillsides
     "HOUSE": ("house_diffuse.png", None, 0.88, (0.60, 0.55, 0.48, 1), 0.0, False),  # plaster house props on residential streets (no normal map shipped — CC0 diffuse only)
     "BLDGPLAIN": (None, None, 0.90, (0.72, 0.71, 0.68, 1), 0.0, False),  # extruded OSM footprints, FLAT concrete colour, NO mined sample texture
@@ -127,6 +150,9 @@ TEXTURES = {
     "SIGNPOST": ("solid_metal_grey.png", None, 0.60, (0.45, 0.46, 0.48, 1), 0.0, False),      # grey metal posts — SOLID TEXTURE (texture-less renders black)
     "SIGNPLATE": ("solid_sign_yellow.png", None, 0.35, (1.0, 0.80, 0.0, 1), 0.0, False),   # W1-6 Large Arrow plate + OM1-3 diamond (tools/author_signs_blend.py) — SOLID TEXTURE: the arrow is geometry, the prep's planar UVs would collapse artwork
     "SIGNARROW": ("solid_sign_black.png", None, 0.45, (0.05, 0.05, 0.05, 1), 0.0, False),  # the black arrow + border standing 2-4 mm proud of that plate
+    "PADAPRON": ("pad_asphalt_diffuse.jpg", None, 0.92, (0.35, 0.35, 0.34, 1), 0.0, False),  # a draped paddock or parking pad, visual only (CC0)
+    "GUARDRAIL": ("wbeam_rail_diffuse.png", None, 0.45, (0.76, 0.77, 0.78, 1), 0.35, False),  # W-beam rail + posts over the draft's guard lips, visual only (CC0)
+    "PROPCONE": ("traffic_cone_diffuse.png", None, 0.60, (0.91, 0.33, 0.07, 1), 0.0, False),  # corner cones (tools/make_bespoke_assets.py, CC0): the strip's v runs up the cone
     "POLE":    (None, None, 0.85, (0.34, 0.24, 0.16, 1), 0.0, False),               # wooden utility/power pole
     "WIRE":    (None, None, 0.50, (0.06, 0.06, 0.07, 1), 0.0, False),               # overhead power cable
 }
@@ -134,7 +160,7 @@ TEXTURES = {
 # materials drawn as alpha-cutout — wire the texture alpha + clip the transparent bg (trees as
 # billboards; painted street names as flat road decals). The export addon also reads this set to set
 # ALPHATEST=1 on these materials so the kn5 cuts out the transparent background in-engine.
-BILLBOARD = {"TREES", "CONIFER", "ROADTEXT", "BUSHES", "CHAINLINK", "PALMS", "EUROSIGN", "PALMFROND"}
+BILLBOARD = {"TREES", "CONIFER", "ROADTEXT", "BUSHES", "CHAINLINK", "PALMS", "EUROSIGN", "PALMFROND", "SCRUBCARD", "TREECARD_CONIFER", "TREECARD", "PRAIRIECARD", "1WALL_GHOST"}
 
 # Shader property overrides written into the kn5 material (export_kn5_addon persistence INI).
 # WHY: materials shipped with NO properties -> AC falls back to shader defaults (ksDiffuse ~1.0).
@@ -145,6 +171,10 @@ BILLBOARD = {"TREES", "CONIFER", "ROADTEXT", "BUSHES", "CHAINLINK", "PALMS", "EU
 KS_PROPS = {
     "CONIFER":  {"ksAmbient": 0.55, "ksDiffuse": 0.10, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
     "TREES":    {"ksAmbient": 0.55, "ksDiffuse": 0.10, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
+    "SCRUBCARD": {"ksAmbient": 0.55, "ksDiffuse": 0.10, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
+    "TREECARD_CONIFER": {"ksAmbient": 0.55, "ksDiffuse": 0.10, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
+    "TREECARD": {"ksAmbient": 0.55, "ksDiffuse": 0.10, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
+    "PRAIRIECARD": {"ksAmbient": 0.55, "ksDiffuse": 0.10, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
     "BUSHES":   {"ksAmbient": 0.55, "ksDiffuse": 0.10, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
     "PALMS":    {"ksAmbient": 0.55, "ksDiffuse": 0.10, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},
     "PALMFROND": {"ksAmbient": 0.55, "ksDiffuse": 0.10, "ksSpecular": 0.0, "ksSpecularEXP": 1.0},

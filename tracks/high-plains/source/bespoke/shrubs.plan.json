@@ -1,0 +1,60 @@
+{
+ "_source": "USDA NAIP 2023-09-28 (source/naip_2023_hp.jpg): the darker green draws and gullies. Positions by the rule; species and heights [invented]: shortgrass-prairie regulars",
+ "image": "source/naip_2023_hp.jpg",
+ "webmerc": {
+  "z": 17,
+  "x0": 27704,
+  "y0": 49745
+ },
+ "track_box_lonlat": [
+  -103.9065,
+  39.7327,
+  -103.8885,
+  39.7378
+ ],
+ "rule": {
+  "max_mean": 105,
+  "min_mean": 35,
+  "g_over_r": 1.03,
+  "g_over_b": 1.3
+ },
+ "step_m": 7.0,
+ "jitter_m": 2.5,
+ "edge_m": 30,
+ "interior_keep": 0.8,
+ "min_patch_px": 8,
+ "species": [
+  [
+   0,
+   0.45,
+   0.7,
+   1.4,
+   1.0
+  ],
+  [
+   2,
+   0.35,
+   0.5,
+   0.9,
+   1.1
+  ],
+  [
+   3,
+   0.15,
+   0.3,
+   0.6,
+   1.3
+  ],
+  [
+   1,
+   0.05,
+   0.5,
+   0.9,
+   1.0
+  ]
+ ],
+ "cols": 2,
+ "rows": 2,
+ "seed": 20230928,
+ "out": "source/bespoke/shrubs.json"
+}

@@ -873,9 +873,9 @@ def crosswalk(centerline_m: list[Vertex], widths_m: list[float], *, at_idx: int 
 
 
 def road_markings(centerline_m: list[Vertex], widths_m: list[float], *, line_w: float = 0.14,
-                  edge_inset: float = 0.4, lift: float = 0.0, dash_on: float = 3.0,
-                  dash_gap: float = 4.5, tile_m: float = 1.0, bank_at=None) -> dict:
-    """Thin white lane lines along the road: solid edge lines (inset from the kerb) + a dashed centre.
+                  edge_inset: float = 0.4, lift: float = 0.0, tile_m: float = 1.0, bank_at=None) -> dict:
+    """A race circuit's paint: thin white solid edge lines (inset from the kerb) and no centre line
+    (Kevin 2026-11-01, ledger 0063: centre lines belong on actual roads).
     Visual-only (no ``1`` prefix). Sits ``lift`` above the road — build_mesh raises it with the ribbon.
     ``bank_at`` rolls each line with the cambered road (offset*tan(bank) added to Y)."""
     pts = centerline_m
@@ -894,14 +894,12 @@ def road_markings(centerline_m: list[Vertex], widths_m: list[float], *, line_w: 
     uvs: list[tuple[float, float]] = []
     tris: list[tuple[int, int, int]] = []
 
-    def add_line(offset_of, dashed):
+    def add_line(offset_of):
         for i in range(m):
             j = (i + 1) % m
             if not closed and j == 0:
                 break
             s0, s1 = stations[i], stations[j]
-            if dashed and (s0[6] % (dash_on + dash_gap)) > dash_on:
-                continue
             b = len(verts)
             for s in (s0, s1):
                 x, y, z, nx, nz, half, a = s
@@ -914,9 +912,8 @@ def road_markings(centerline_m: list[Vertex], widths_m: list[float], *, line_w: 
             tris.append((b, b + 1, b + 3))
             tris.append((b, b + 3, b + 2))
 
-    add_line(lambda s: 0.0, True)                    # centre line, dashed
-    add_line(lambda s: s[5] - edge_inset, False)     # left edge, solid
-    add_line(lambda s: -(s[5] - edge_inset), False)  # right edge, solid
+    add_line(lambda s: s[5] - edge_inset)     # left edge, solid
+    add_line(lambda s: -(s[5] - edge_inset))  # right edge, solid
     return {"vertices": verts, "uvs": uvs, "tris": tris}
 
 

@@ -1,0 +1,86 @@
+{
+  "_deprioritised": "Kevin 2026-07-26: may be cancelled, not super interesting (registry; track.config.json _deprioritised)",
+  "_doc": "Dragon Tail (Tarmac) through the chain (tools/ship_track.sh; ONE-CHAIN section 4 row 6, the rally_stage row: gps, elev, project, mesh, underlay). The draft is the engine's own on County Road 116 (source.type osm: gps fetches the named road from Overpass into data/osm.cache.json -> elev samples USGS 3DEP along it and in a 60 m corridor -> project -> mesh; no widths step: osm_road_widths is off, a graded county road carries no lane count), then the underlay drops data/track.obj into loop.blend as GEN_* collections (scripts/blender/underlay.py). loop false: a POINT-TO-POINT stage (L11) - build_mesh puts the grid 15 m into the road, AC_TIME_0 (the finish) 15 m into the 30 m lead-out past the far end, the two splits at the thirds, and nothing wraps. One layout (stage), so the prep bakes those dummies into the road kn5 (single-layout shape) and no layout_dummies / spawn_kn5 step runs. The prep / exporter run from airoso's scripts/ac, the gates run on the BUILT kn5. The workshop lives OUTSIDE airoso.",
+  "_owed": "DEPRIORITISED (Kevin 2026-07-26). Chain-ready so the list is complete; the fleet runner may skip it on _deprioritised. Same draft as the gravel twin (same road, same 3DEP) except where road_surface itself forks the engine: build_mesh's fill_apron (tarmac only), the lane paint (road_markings lane + centre yellow), surfaces.ini ROAD friction 0.99, and drive_test holds tarmac to 75 bumps/km and to the paved excursion rule (any >20 cm drop in the verge band, at most 1 per km) where gravel gets 150/km and the unpaved rule - so this track can go red on the gates where its twin is green. Everything owed on the gravel twin is owed here too.",
+  "_windows_first": "Run --draft-only first (gps needs Overpass, elev needs USGS 3DEP: neither reachable from the container that wrote this). Read, in order: the gps line count and length (expect ~8,400 points / County Road 116 ~25 km; a different length means OSM changed since 2026-07-24); the elev step's '[corridor] sampling' line (data/corridor.elev.json is the near-native 3DEP the mesh splices in; the committed heightfield is the 40 m grid alone); build_mesh's 'terrain_cell_m' / 'corridor] refine' / 'bridge spans' lines; then the full run. The drive_test verdict to read first: floating furniture and severe steps.",
+  "_rehearsal": "Offline 2026-11-01, a scratch copy (never this folder), airoso at the branch's HEAD, on the engine-era CACHED data/ (OSM 2026-07-24, the 40 m 3DEP grid, no data/corridor.elev.json - that data predates the 2026-10-27 history rewrite): projection -> build_mesh -> drive_test -> audit_mesh. Evidence that the engine at HEAD drafts this open road (lead-in/out, L11 dummies, no wrap) and of where it goes red; NOT a verdict on the Windows draft, which re-fetches OSM and 3DEP and splices the corridor field. drive_test's 'replication vs measured road' is misread on an open road (it indexes the elevation file against a line that carries the 10-vertex lead-in): the value re-indexed is given beside it. Same draft as the gravel twin plus the paint and fill_apron (2,414,074 verts; same span, same 2 warning runs). drive_test FAIL: bumps 64.5/km (limit 75 for tarmac: the registry's '113 against 75' no longer holds at HEAD), EXCURSION DROPS 87 gated (limit 25: the paved rule counts the verge drops the unpaved rule reads as surface), floating furniture 2 (the twin's lip at s ~6645), severe 237, ground on top 0. audit_mesh CLEAN.",
+  "track": "rally-dragon-tail-tarmac",
+  "workshop": "C:/Users/Owner/Documents/k10-workshops/rally-dragon-tail-tarmac",
+  "workshop_project": "project",
+  "require_race_layout": false,
+  "ui_name_prefix": "doooom Colorado",
+  "steps": {
+    "draft": [
+      "gps",
+      "elev",
+      "project",
+      "mesh",
+      "underlay"
+    ],
+    "author": [],
+    "prep": [
+      "prep",
+      "split"
+    ],
+    "ship": [
+      "export_road",
+      "ai",
+      "verify_kn5",
+      "road_obj",
+      "track_folder",
+      "verify_inis",
+      "make_map"
+    ],
+    "gate": [
+      "drive_test_street",
+      "audit_street",
+      "kn5_ground"
+    ]
+  },
+  "sync_in": {
+    "required": [
+      "track.config.json"
+    ],
+    "optional": [
+      "data/osm.cache.json",
+      "data/centerline.geojson",
+      "data/centerline.elevation.json",
+      "data/heightfield.npy",
+      "data/heightfield.meta.json",
+      "data/corridor.elev.json"
+    ]
+  },
+  "sync_out": {
+    "required": [
+      "loop.blend"
+    ],
+    "files": [
+      "data/osm.cache.json",
+      "data/centerline.geojson",
+      "data/centerline.elevation.json",
+      "data/heightfield.npy",
+      "data/heightfield.meta.json",
+      "data/corridor.elev.json",
+      "data/centerline.local.json",
+      "data/finished_centerline.json",
+      "data/gate_centerline.json",
+      "data/bridge.spans.auto.json",
+      "data/flat_zones.json",
+      "data/dummies.json",
+      "data/underlay.report.json",
+      "data/drive_test.json",
+      "data/audit.json",
+      "data/kn5_ground_check.{id}.json",
+      "data/drive_test.{id}.json"
+    ],
+    "map": [
+      [
+        "blender/split/split_manifest.json",
+        "data/split_manifest.json"
+      ]
+    ],
+    "dirs": [
+      "ai/{id}"
+    ]
+  }
+}

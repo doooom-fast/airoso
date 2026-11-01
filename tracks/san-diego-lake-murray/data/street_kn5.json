@@ -1,7 +1,7 @@
 {
  "file": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\build\\san_diego_lake_murray_street.kn5",
  "version": 5,
- "file_bytes": 872525,
+ "file_bytes": 3866947,
  "textures": [
   {
    "name": "building_diffuse.jpg",
@@ -10,6 +10,10 @@
   {
    "name": "building_normal.jpg",
    "bytes": 328479
+  },
+  {
+   "name": "line_yellow.png",
+   "bytes": 361
   }
  ],
  "materials": [
@@ -46,6 +50,34 @@
     [
      "txNormal",
      "building_normal.jpg"
+    ]
+   ]
+  },
+  {
+   "name": "YLINE_0_mat",
+   "shader": "ksPerPixel",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "line_yellow.png"
+    ]
+   ]
+  },
+  {
+   "name": "YLINE_1_mat",
+   "shader": "ksPerPixel",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "line_yellow.png"
     ]
    ]
   }
@@ -88,18 +120,36 @@
     18.6,
     350.0
    ]
+  },
+  {
+   "name": "YLINE_0",
+   "verts": 28043,
+   "tris": 24013,
+   "matid": 2,
+   "surface": null,
+   "renderable": true,
+   "radius_m": 2755.1
+  },
+  {
+   "name": "YLINE_1",
+   "verts": 35121,
+   "tris": 11707,
+   "matid": 3,
+   "surface": null,
+   "renderable": true,
+   "radius_m": 2345.1
   }
  ],
  "nodes": [
   "BlenderFile"
  ],
  "summary": {
-  "meshes": 2,
-  "verts": 6766,
-  "tris": 2352,
-  "textures": 2,
-  "texture_bytes": 559844,
-  "materials": 2,
+  "meshes": 4,
+  "verts": 69930,
+  "tris": 38072,
+  "textures": 3,
+  "texture_bytes": 560205,
+  "materials": 4,
   "surfaces": {
    "KERB": {
     "meshes": 1,
@@ -121,6 +171,10 @@
    }
   },
   "shaders_by_tris": {
+   "ksPerPixel": {
+    "meshes": 2,
+    "tris": 35720
+   },
    "ksPerPixelMultiMap": {
     "meshes": 2,
     "tris": 2352

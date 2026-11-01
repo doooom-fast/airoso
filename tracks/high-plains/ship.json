@@ -2,7 +2,7 @@
   "_doc": "High Plains Raceway through the Lake Murray chain (tools/ship_track.sh; Kevin 2026-10-28: 'rebuild all four with the Lake Murray chain'). The draft is the engine's own on the OSM raceway cycle (source.type from_track over source/osm_fixes.json: gps -> elev -> project -> mesh), then the underlay drops data/track.obj into loop.blend as GEN_* collections (scripts/blender/underlay.py). Authoring happens in that blend (AUTH_*), the prep / exporter run from airoso's scripts/ac, the four gates run on the BUILT kn5. The workshop lives OUTSIDE airoso.",
   "_owed": "First pass = the draft through the chain, no authoring yet. Kevin, 2026-10-28, on the engine-era build: 'High Plains has road signs, it looks terrible' — the V3 chain places no signs unless signs.json says so, which is the point. The north section (To Hell On A Bobsled / Ladder To Heaven) stays excluded as the config says.",
   "track": "high-plains",
-  "workshop": "C:/Users/Owner/Documents/k10-workshops/high-plains",
+  "workshop": "D:/k10-workshops/high-plains",
   "workshop_project": "project",
   "require_race_layout": false,
   "ui_name_prefix": "doooom Colorado",

@@ -2,7 +2,7 @@
   "_doc": "Nevada Nights — the Exotics Racing LVMS circuit (2015-2021, target A; Kevin 2026-10-28: 'Call it Nevada Nights') through the Lake Murray chain (tools/ship_track.sh; Kevin 2026-10-28: 'rebuild all four with the Lake Murray chain'). The draft is the engine's own off the georeferenced NAIP trace (source.type aerial: aerial -> elev -> project -> mesh), then the underlay drops data/track.obj into loop.blend as GEN_* collections (scripts/blender/underlay.py). Authoring happens in that blend (AUTH_*), the prep / exporter / spawn builder run from airoso's scripts/ac, the four gates run on the BUILT kn5. The workshop lives OUTSIDE airoso.",
   "_owed": "First pass = the draft through the chain, no authoring yet. Kevin's dressing call (DOSSIER, 2026-10-28): as in 2013 — the two smaller buildings on the south-west corner, no Welcome Center; the Mojave ground in place of the default grass. The T2 bank (+6.0 deg from the lidar; it was -6.0 under the V1 program's mirror_x, which this chain refuses — ledger 0060, 2026-10-29) is in the draft already via road_profile.",
   "track": "exotics-racing-lv",
-  "workshop": "C:/Users/Owner/Documents/k10-workshops/exotics-racing-lv",
+  "workshop": "D:/k10-workshops/exotics-racing-lv",
   "workshop_project": "project",
   "require_race_layout": false,
   "ui_name_prefix": "doooom Nevada",

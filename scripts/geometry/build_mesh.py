@@ -217,6 +217,7 @@ def _grid_bilinear(grid_xyz: list[list[Vertex]], x: float, z: float) -> float:
     return a * (1 - tj) + b * tj
 
 
+RENDER_ISO_MAX_TRIS = 2_000_000
 BRIDGE_MIN_H_M = 3.5       # road must ride this far above bare earth to earn a bridge (else it's an embankment)
 BRIDGE_MIN_SPAN_M = 12.0   # ...over at least this long a run (a real span, not a one-vertex bump)
 
@@ -2067,8 +2068,13 @@ def build(project_dir: str | Path) -> dict:
         # clamps under it), but the refine REGION was still main-loop-only — so terrain under a
         # connector got pinned at COARSE resolution, which is the 0014 float mechanism exactly.
         # Lake Murray: audit clean but p95 float 0.569 m with 43.5% of samples off the ground.
-        _pav_tris = [(_rv7[_t[0]], _rv7[_t[1]], _rv7[_t[2]]) for _t in road["tris"]] + _all8
-        _pav_tris += _pav_world_tris("connector", "verge")
+        _pav_tris = [(_rv7[_t[0]], _rv7[_t[1]], _rv7[_t[2]]) for _t in road["tris"]]
+        # corridor_refine_connectors false (ledger 0063, a free roam's flat street grid): only the lap's corridor refines; x6 over
+        # Sand Creek's 40 km of side streets took the ground from 4.1 M to 10 M vertices
+        if cfg_raw.get("corridor_refine_connectors", True):
+            _pav_tris += _all8 + _pav_world_tris("connector", "verge")
+        else:
+            _pav_tris += _pav_world_tris("shoulder", "runoff", "kerb")
         for _a, _b, _c in _pav_tris:
             _is = [ (_v[0] - _gx0) / _gdx for _v in (_a, _b, _c) ]
             _js = [ (_v[2] - _gz0) / _gdz for _v in (_a, _b, _c) ]
@@ -3454,7 +3460,11 @@ def build(project_dir: str | Path) -> dict:
         render_layers.append(("barrier", (0.92, 0.78, 0.20), barrier))   # warning guardrails in yellow
     for gname, cm in conn_meshes:
         render_layers.append((gname, (0.80, 0.55, 0.30), cm))   # interior-grid roads in amber
-    render_iso(render_layers, dummies, data / "track_render.svg")
+    # a debug picture: one polygon per triangle. Past this size it is tens of GB of SVG (ledger 0063: it filled the disk)
+    if sum(len(_m["tris"]) for _n, _c, _m in render_layers) <= RENDER_ISO_MAX_TRIS:
+        render_iso(render_layers, dummies, data / "track_render.svg")
+    else:
+        print(f"  track_render.svg skipped: over {RENDER_ISO_MAX_TRIS} triangles")
 
     return {"vertices": nv, "triangles": nf, "road_verts": len(rv), "kerb_verts": len(kerb["vertices"]),
             "shoulder_verts": len(shoulder["vertices"]), "runoff_verts": len(runoff["vertices"]),

@@ -38,7 +38,7 @@ def test_the_block_is_one_marked_block_after_the_existing_vocabulary():
     # every other vocabulary function still precedes the block
     names = re.findall(r"^((?:draft|author|prep|ship|gate)_[a-z0-9_]+)\(\) \{", TEXT, re.M)
     after = [n for n in names if TEXT.find(f"{n}() {{") > i]
-    assert after == ["gate_road_inventory", "gate_stacked_legs"], after
+    assert after == ["gate_road_inventory", "gate_stacked_legs", "gate_drive1_verdict"], after   # + the verdict (793441f, on main 2026-11-01)
 
 
 def test_each_gate_removes_its_stale_report_runs_its_tool_and_collects_its_exit():

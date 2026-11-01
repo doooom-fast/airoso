@@ -979,7 +979,16 @@ def build(project_dir: str | Path) -> dict:
     # window, so the pass that BUILDS the fill face and the passes that may cut it back agree on
     # what that face is (ledger 0019 — they did not, and a divided street lost its embankment).
     GRADE_RATIO = 2.0
-    _grade_band = ribbon.grade_embankment(grid_xyz, centerline, widths, bank_at=bnk, band=2.5,
+    # D4 (Lookout Lariat V3-PLAN, Kevin 2026-10-11 "build both, pick by driving"; ledger 0048 "Started" 2026-11-01):
+    # road_profile.verge_m, when a track declares it, is the width of the shoulder's gentle band each side (A 0.4 m:
+    # the real width, then the real edge; B 1.25 m: a firm strip a wheel can use) AND of the grading band, which must
+    # break at the same line (the comment above). The chain's SHIP_VARIANT swaps the value in per run. Every track
+    # without the key keeps 2.5 m: byte-identical (ledger 0061 is where the 2.5 m sheet itself is on trial).
+    _verge_w = float((cfg_raw.get("road_profile") or {}).get("verge_m") or 2.5)
+    if _verge_w != 2.5:
+        print(f"[build_mesh] road_profile.verge_m={_verge_w} m declared -> the shoulder band and the grading band are "
+              f"{_verge_w} m each side (default 2.5)")
+    _grade_band = ribbon.grade_embankment(grid_xyz, centerline, widths, bank_at=bnk, band=_verge_w,
                                           ratio=GRADE_RATIO,
                                           extra_roads=[(p, w) for _n, p, w in connectors],
                                           clearance=GRASS_CLEARANCE_M, bridge_of=bridge_of)
@@ -1257,7 +1266,7 @@ def build(project_dir: str | Path) -> dict:
             # no-ground fallback: lip + 1 m verge, no sections, which also silences the ring
             # annulus, the graded floor and the stone lips downstream), raw-grid grass everywhere,
             # and a short blend band sewn in later where grass approaches the deck.
-            shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
+            shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk, verge_w=_verge_w,
                                             ground_drop=GRASS_CLEARANCE_M, bank_hold=True)
         else:
             # CONSTRUCTED (the default): the verge drapes onto grass_surf and the construction
@@ -1265,7 +1274,7 @@ def build(project_dir: str | Path) -> dict:
             # natural_ground port (6f1c734, 2026-08-19) rewrote this `else:` as
             # `elif natural_ground:`, so every track with neither a sidewalk nor natural ground
             # died on an unbound edge_group (found on Milford, 2026-10-28).
-            shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk,
+            shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk, verge_w=_verge_w,
                                             ground_drop=GRASS_CLEARANCE_M, ground=grass_surf,
                                             fill_apron=(str(cfg_raw.get("road_surface", "tarmac"))
                                                         == "tarmac"))
@@ -1295,7 +1304,7 @@ def build(project_dir: str | Path) -> dict:
         # A verge sheds at most (verge width / fill ratio) of height across its own width, so two
         # decks further apart than that cannot drape to one ground: keep neither verge there and
         # let the graded fill face own the gap.
-        _VERGE_W = 2.5                              # road_shoulder's verge width (== the grading band)
+        _VERGE_W = _verge_w                         # road_shoulder's verge width (== the grading band; road_profile.verge_m when declared)
         _VERGE_DY = _VERGE_W / GRADE_RATIO
         _ph5: dict = {}
         for _ci5, (_n5, _p5, _w5) in enumerate(connectors):

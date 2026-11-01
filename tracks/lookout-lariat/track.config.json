@@ -323,17 +323,47 @@
     },
     "stacked_legs": {
       "_doc": "tools/verify_stacked_legs.py's thresholds are module constants (pairs < 40 m in plan and > 150 m along the lap, 0 failures, all [invented]); a 'classes' map here would override which built groups count as ground / edge / sign / closure (none set: the tool's defaults). Measured on the paint centreline with July's 3DEP corridor samples (2026-10-12): 10,659 pairs at 1 m on 680 lap points in 12 stacked runs (st 2,493-3,152 Tiers of Zion, 5,305-5,996 the upper hairpins), nearest 21.3 m in plan, vertical gap 6.49-14.90 m (median 9.98 m); no crossing."
+    },
+    "drive1": {
+      "_doc": "tools/drive1_gates.py: V3-PLAN P5's Drive-1 gate set, judged on the gate reports of one build (data/drive1_gates.json; gating vs recorded rows). Every value is P5's, tagged as P5 tags it; fleet/GATES-CHANGELOG.md 2026-10-12 'Drive-1 verdict'. The kink ceiling is gates.drive_test.kinks_per_km_max. Carried from branch 793441f (2026-10-12) onto main 2026-11-01: tools/drive1_gates.py reads main's report names (kn5_ground_check.<id>.json per layout).",
+      "drive_test": {
+        "severe_steps_max": 0,
+        "_severe_doc": "[invented] P5: severe steps (>= 6 cm, drive_test's own STEP_SEVERE_M, itself a flagged value) 0 per street layout; drive_test's own line is > 12/km.",
+        "replication_p95_max_m": 0.5,
+        "_replication_doc": "[invented in 0048] P5: the built road against the raw 3DEP profile, p95 <= 0.5 m.",
+        "_zero_doc": "soft-top in lane, obstruction, floating furniture, undrivable corners, daylight gaps: 0 each [std: drive_test's existing count gates] (constants in the tool, not values here)."
+      },
+      "audit": {
+        "f_curb_max": 15,
+        "_doc": "P5: hard classes A B D E G H I = 0 [std: audit_mesh's existing hard total]; F (curb not flush) <= 15 [invented: Lake Murray V3's own count]. J / K at the race-turn mouths are Drive 3. The street audit's own exit (hard total, F at 0) also gates in tools/ship_track.sh."
+      },
+      "kn5_ground_check": {
+        "lid_end_step_max_m": 0.1,
+        "_doc": "P5: road over ground p95 <= 0.10 m [std: the existing gate] (kn5_ground_check's own verdict); the lid: no step > 0.10 m at either end [invented in 0048], read from drive_test's severe-step list within 5 m of each end of capture.bridges."
+      },
+      "july_reference": {
+        "severe_steps": 253,
+        "kinks_per_km": 68.3,
+        "excursion_drops": 738,
+        "excursion_far_ledges": 382,
+        "obstruction_stations": 0,
+        "floating_furniture": 0,
+        "soft_top_in_lane": 0,
+        "_doc": "[measured on the installed July v0.46.0 build] (V3-PLAN P5 '--force-install rule', 0047): a red street run may still install with --force-install only if no worse than these on every key; obstruction, floating furniture and soft-top are always 0. tools/ship_track.sh refuses a forced install when data/drive1_gates.json force_install_ok is false."
+      }
     }
   },
   "drive1_variants": {
-    "_doc": "D4: two Drive-1 installs, identical apart from road_profile.verge_m. The chain reads road_profile.verge_m and install_folder from this file, so variant B is a second ship_track.sh run with those two values swapped in (verge_m 1.25, install_folder lookout_lariat_verge), never a second config file; the sync-back of the second run must not overwrite the first's data/ (run it with SHIP_PROJ, a scratch copy, and copy its gate files by hand).",
+    "_doc": "D4: two Drive-1 installs, identical apart from road_profile.verge_m. tools/ship_track.sh builds one per run: SHIP_VARIANT=<id> (unset = this config as written, i.e. a_real_edge) writes the variant's road_profile.verge_m into the WORKSHOP copy of this config (the draft's mesh reads it: build_mesh's shoulder band and grading band, 2026-11-01), installs under the variant's install_folder as '<ui_name_prefix> - <layout>', must draft in full (no --skip-blend / --from: a loop.blend drafted for the other edge is never prepped) and never syncs back. The config's own build (no SHIP_VARIANT) is the one that feeds airoso.",
     "a_real_edge": {
       "road_profile.verge_m": 0.4,
-      "install_folder": "lookout_lariat"
+      "install_folder": "lookout_lariat",
+      "ui_name_prefix": "doooom Colorado"
     },
     "b_verge": {
       "road_profile.verge_m": 1.25,
-      "install_folder": "lookout_lariat_verge"
+      "install_folder": "lookout_lariat_verge",
+      "ui_name_prefix": "doooom Colorado (verge)"
     }
   },
   "road_text": {

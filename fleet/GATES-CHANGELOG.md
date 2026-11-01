@@ -39,6 +39,17 @@ takes the old call unchanged (`tests/elevation/test_profile_by_station.py`: byte
 capped to ≤ 16.5 %/m where the 3 m read let 25 %+ through). No gate threshold moved; `drive_test`'s replication
 reference (`z_raw_m`) is untouched. `centerline.elevation.json` records the path taken under `profile`.
 
+### Same day — the D4 verge width from the config (`road_profile.verge_m`; builder side, no gate moved)
+
+`build_mesh` built the shoulder's gentle band and the grading band at a hard-coded 2.5 m each side (`ribbon.road_shoulder`
+`verge_w`, `grade_embankment` `band`, the connector trim's `_VERGE_W`: "must break at the same line"). Kevin's D4
+(V3-PLAN, 2026-10-11) builds the Lariat twice, at 0.4 m (the real width, then the real edge) and 1.25 m (a firm strip),
+and on the 2026-10-12 branch that width lived only in the branch's own underlay. Now `road_profile.verge_m`, when a
+track declares it, is that band in all three places and `SHIP_VARIANT` writes the variant's value into the workshop
+config per run; every track without the key keeps 2.5 m, byte-identical. The face that drapes from the band to the
+ground is unchanged — it is what ledger 0061 (2026-11-01, the paved-hillside edges on the four chain tracks) puts on
+trial, and it will move there, not here.
+
 ## 2026-10-29 — the split's single-layout rule; `--from <step>` never skips a gate (ledger 0060; wiring, no threshold)
 
 The first non-San-Diego chain run (Exotics Racing, the Windows workshop) passed the draft, the underlay and the prep
@@ -1682,6 +1693,72 @@ m2 and built 139,148 / 138,847 m2 PASS (leak 0, 0 / 406); verify_mouths x4, veri
 (2.544 / 2.386 m), verify_kn5 + --inis, check_race_kn5, verify_race (+ scenery), verify_signs (23 posts), rib_check,
 house_seat_check PASS. The terrain is round 4's but for 344 of 928,435 triangles beside the two decks, moved at most
 0.024 m.
+
+## 2026-10-12 — Lariat Drive-1 build: the Drive-1 verdict, the D4 variant per run (ledger 0048; from branch 793441f, carried onto main 2026-11-01 — the two chain steps it also added are not taken, see below)
+
+The integration of the three P2 parts (data stages, underlay, Drive-1 gates) into one Drive-1 chain
+(`tracks/lookout-lariat/ship.json`). Every value below is P5's own, carried with P5's tag; the one new value is the
+lid-end window. San Diego's chain is untouched: none of these steps is in its ship.json, the D4 helpers are no-ops
+without `SHIP_VARIANT` or `drive1_variants`, and `tests/tools/test_ship_track_chain.py`'s SD parity tests pass.
+
+### The Drive-1 verdict (new: `tools/drive1_gates.py`, step `drive1_verdict`, thresholds in `track.config.json gates.drive1`)
+
+| Row | Threshold | Flag |
+|---|---|---|
+| drive_test per street layout: soft-top in lane, obstruction, floating furniture, undrivable corners, daylight gaps | 0 each | [std: drive_test's existing count gates] |
+| drive_test: severe steps (≥ 6 cm) | **0** per layout | ⚠ [invented] (P5; drive_test's own line is > 12/km) |
+| drive_test: replication of the built road vs raw 3DEP | p95 ≤ **0.5 m**; not measured = red | ⚠ [invented in 0048] |
+| drive_test: kinks/km | ≤ `gates.drive_test.kinks_per_km_max` (19.49) | [std: MEASURED §8] (the gates part's entry above) |
+| drive_test: unguarded drops, far ledges, bumps/km, drive_test's own `fail` | recorded, not gating | P5 "recorded, not gating" (Drive 1 builds no edges) |
+| audit_mesh (street): A B D E G H I | 0 each | [std: audit_mesh's existing hard total] |
+| audit_mesh: F (curb not flush) | ≤ **15** | ⚠ [invented: Lake Murray V3's own count] (the street audit's own exit still gates F at 0 in ship_track.sh) |
+| kn5_ground_check | its own verdict (road over ground p95 ≤ 0.10 m [std]) | existing |
+| the lid: a severe step within **5 m** of either end of `capture.bridges` (each layout's own stations; reverse = lap − s) | ≤ **0.10 m** | 0.10 m ⚠ [invented in 0048]; the 5 m window ⚠ [invented] 2026-10-12 |
+| one-way, hairpin / paint, roll rate | the draft's own hard verdicts, re-read | existing (P0, P2) |
+| road inventory, stacked legs | their own verdicts | the gates part's entry above |
+| tier seams | n/a until P3a's tiers (GEN_terrain is the one-sheet placeholder) — never a pass | — |
+| verify_edges, verify_signs, TreeFX, sightline_check, race gates | recorded: Drive 2 / Drive 3 | P5 |
+
+A gating row whose report is missing is red ("not run"), never a pass. `--force-install` (P5, 0047): the verdict's
+`force_install_ok` is false when any street layout is worse than the July reference on any key
+(`gates.drive1.july_reference`: severe 253, kinks 68.3/km, drops 738, far ledges 382 [measured on v0.46.0]) or not 0
+on obstruction / floating furniture / soft-top; `tools/ship_track.sh` then refuses the forced install (before, the
+Drive-1 road gates passed `--force-install` on the caller's word alone).
+
+Proof: `tests/tools/test_drive1_gates.py` (7): all-green passes and the recorded rows never gate (drive_test's own
+`fail` from drops does not make its Drive-1 row red); each threshold flips exactly its own row (severe 1, p95 0.51,
+p95 absent, kinks 19.5 > 19.49, daylight, undrivable, B 3, F 16, kn5_ground_check FAIL, road inventory, stacked legs,
+roll rate, paint, one-way); the lid's ends in forward and reverse stations; every missing report is red; the July
+comparison key by key and the always-0 trio; input errors exit 2; the Lariat's declared values.
+
+### Not carried onto main (2026-11-01): the kn5-internal `kn5_ground_check` step and `split_street`
+
+Main's chain runs `kn5_ground` as the last gate on the kn5 set each layout loads (`data/kn5_ground_check.<id>.json`,
+EXPANSION-PLAN V5), and its split handles a single layout since 2026-10-29 (the entry above "the split's
+single-layout rule"); `tools/ship_track_spec.py` keeps `prep = [prep, split]`. The verdict reads the per-layout JSON.
+
+### The D4 variant per run (`SHIP_VARIANT`)
+
+`SHIP_VARIANT=<drive1_variants id>`: checked before anything is touched (exit 2), applied to the install folder and
+installed name (`drive1_variants.<id>.install_folder` / `ui_name_prefix`), and never synced back. No threshold. *On
+main (2026-11-01) the branch's `--variant` to its own underlay becomes `road_profile.verge_m` written into the workshop
+config, which `build_mesh` reads (the entry of 2026-11-01 below); the guard is that a variant run drafts in full
+(`--skip-blend` and `--from` refused), so no `loop.blend` drafted for the other edge is ever prepped.*
+
+### Measured on the first Drive-1 build (scratch, not installed; ledger 0048 "P2 integrated")
+
+D4 A / D4 B, Full / Reverse:
+- **Green:** kn5_ground_check p95 0.038 m; audit CLEAN; road inventory PASS (0 forbidden meshes, 0 of 57,776
+  pavement triangles off the route, 100.0 % paved); replication p95 0.04 m; kinks 6.8-7.0 /km; roll rate, paint and
+  one-way PASS.
+- **Red:**
+  - severe steps 40-53 (all at C12 / C13 / C14 / C18 / the lid's east end);
+  - soft-top 395-412 (ground above the lane: p50 5 mm, max 0.21 m at C13);
+  - undrivable corners 83, i.e. the real hairpins C4-C10 and C13 at their measured 6.8-8.3 m;
+  - the lid's east end 0.17 m;
+  - stacked legs 137 / 144 (placeholder ground).
+- `force_install_ok` is false (far ledges 923-947 > July 382; soft-top must be 0). No threshold was moved to change
+  any of this.
 
 ## 2026-10-12 — Lariat P2 data stages: the roll-rate gate, footprint crossfall, measured widths, the profile by station, the declared lid, L13 for the span detectors (ledger 0048)
 

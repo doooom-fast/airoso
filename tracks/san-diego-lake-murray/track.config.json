@@ -4,7 +4,7 @@
   "ui_series": "",
   "_ui_series_doc": "Engine track_folder prefixes the CM display name with ui_series (default 'K10 Colorado'); empty = use the track name as-is (SD names already carry the K10 - San Diego branding).",
   "slug": "san_diego_lake_murray",
-  "version": "0.19.3",
+  "version": "0.21.0",
   "author": "k10-san-diego",
   "year": 2026,
   "_about": "A single drivable LOOP around Lake Murray (Kevin's childhood neighborhood). This repo is the standalone, Blender-first home for the track: the loop is mapped from the REAL roads (OpenStreetMap) at REAL elevation (USGS 3DEP), imported into Blender, and shaped there interactively (Kevin designs, Claude operates) BEFORE any kn5 export. Start point = just the 5-road main loop; everything else is added deliberately, in Blender.",
@@ -15,10 +15,7 @@
     "city": "San Diego",
     "country": "United States"
   },
-  "source": {
-    "type": "osm",
-    "_doc": "The loop is stitched from the named roads below along the real OSM drivable network (route.stitch='network'), then sampled for real elevation. data/network.cache.json is a cached OSM fetch so re-derivation never depends on a live Overpass call."
-  },
+  "source": {"type": "from_track", "track": "source/lm_authored_fixes.json", "_note": "v5 redraft candidate (ledger 0065): the authored 13.5 km loop as the engine draft's source line, widths included; the OSM stitch gives 22.5 km and another origin"},
   "route": {
     "bbox": [
       32.76,
@@ -184,7 +181,7 @@
   "mirror_x": false,
   "default_width_m": 12.0,
   "width_overrides": [],
-  "origin": "centroid",
+  "origin": {"lon": -117.04666413020487, "lat": 32.78835571285328, "elev_m": 100.8},
   "true_north_rotation_deg": 0.0,
   "surfaces": {
     "road": "1ROAD",
@@ -1103,6 +1100,6 @@
     "fair": true,
     "surface": "gate_obj"
   },
-  "install_folder": "san_diego_lake_murray_v3",
+  "install_folder": "san_diego_lake_murray_v5",
   "_install_folder_doc": "The folder under content/tracks this track installs as. tools/ship_sd.sh spells it \"${SLUG}_v3\"; track_folder names it in the root README.txt; tests/tools/test_ship_sd_chain.py pins the two together."
 }

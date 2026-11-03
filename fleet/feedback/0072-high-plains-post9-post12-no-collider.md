@@ -1,5 +1,5 @@
 ---
-id: 0068
+id: 0072
 title: High Plains post9 and post12 had no collider
 status: fixed-awaiting-rebuild
 scope: tracks/high-plains

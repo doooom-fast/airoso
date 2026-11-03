@@ -1,7 +1,7 @@
 """The bespoke collider's fine-ground rule (tools/author_bespoke_blend.py collider_ground_ok) and High Plains' override.
 
 High Plains 0.71.0: post9 and post12 stood over 1GRASS_ring seating-fan slivers 12.2-12.3 m long, over the 8 m
-COLLIDER_TRI_M, so the block was built without its 1WALL_TILTUP collider (ledger 0068). stdlib only: bpy and mathutils are
+COLLIDER_TRI_M, so the block was built without its 1WALL_TILTUP collider (ledger 0072). stdlib only: bpy and mathutils are
 stubbed so the module imports outside Blender.
 """
 

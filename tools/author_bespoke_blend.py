@@ -163,7 +163,7 @@ def down_edge(tree, x, y):
 def collider_ground_ok(edges, limit):
     """a collider may stand when every sampled ground polygon under its ring exists and has no edge longer than ``limit`` m.
     ``edges`` is down_edge() per sample (None = no ground). ``limit`` is COLLIDER_TRI_M unless the block group declares
-    ``collider_tri_m`` (High Plains: its 1GRASS_ring seating fans put 12 m-long slivers under two posts, ledger 0068)"""
+    ``collider_tri_m`` (High Plains: its 1GRASS_ring seating fans put 12 m-long slivers under two posts, ledger 0072)"""
     return all(e is not None and e <= limit for e in edges)
 
 

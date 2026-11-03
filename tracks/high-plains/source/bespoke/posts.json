@@ -125,31 +125,6 @@
   "_h": "position off NAIP 2023; 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
  },
  {
-  "key": "post5",
-  "footprint_lonlat": [
-   [
-    -103.9033972,
-    39.7361404
-   ],
-   [
-    -103.9033564,
-    39.7361404
-   ],
-   [
-    -103.9033564,
-    39.7361718
-   ],
-   [
-    -103.9033972,
-    39.7361718
-   ]
-  ],
-  "wall_h_m": 2.8,
-  "skin": "metal",
-  "roof": "white",
-  "_h": "position off NAIP 2023; 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
- },
- {
   "key": "post6",
   "footprint_lonlat": [
    [

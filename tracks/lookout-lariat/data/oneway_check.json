@@ -2,13 +2,13 @@
  "tool": "tools/route_oneway_check.py",
  "frame": "input lon/lat (WGS84); matching in local ENU metres (x=E, y=N) about the centreline's own centroid, WGS84 metres-per-degree series; stations = metres along the centreline in increasing-vertex (forward) order from v0",
  "centerline": {
-  "path": "tracks\\lookout-lariat\\data\\centerline.geojson",
+  "path": "D:\\k10-workshops\\lookout-lariat\\project\\data\\centerline.geojson",
   "points": 14445,
   "length_m": 24914.2,
   "closed": true
  },
  "snapshot": {
-  "path": "tracks\\lookout-lariat\\data\\osm.cache.json",
+  "path": "D:\\k10-workshops\\lookout-lariat\\project\\data\\osm.cache.json",
   "query_fingerprint": "93e1c28d8828c2f2",
   "fetched_utc": "2026-10-11T19:29:58Z",
   "osm_base": "2026-10-11T19:28:01Z",
@@ -1279,6 +1279,7 @@
    "id": "street_full",
    "kind": "street",
    "direction": "forward",
+   "parked": false,
    "checked": true,
    "verdict": "PASS",
    "declared_stretches": [],
@@ -2053,6 +2054,7 @@
    "id": "street_reverse",
    "kind": "street",
    "direction": "reverse",
+   "parked": true,
    "checked": true,
    "verdict": "PASS",
    "declared_stretches": [
@@ -2837,6 +2839,7 @@
    "id": "race_acw",
    "kind": "race",
    "direction": "forward",
+   "parked": true,
    "checked": false,
    "verdict": "SKIP",
    "why": "race layouts are closed roads; one-way rules do not apply (V3-PLAN P0 step 8)"
@@ -2845,6 +2848,7 @@
    "id": "race_cw",
    "kind": "race",
    "direction": "reverse",
+   "parked": true,
    "checked": false,
    "verdict": "SKIP",
    "why": "race layouts are closed roads; one-way rules do not apply (V3-PLAN P0 step 8)"

@@ -1,0 +1,9 @@
+{
+ "ok": true,
+ "n_lamps": 0,
+ "n_lights": 0,
+ "matched": 0,
+ "problems": [],
+ "ini": "D:\\k10-workshops\\lookout-lariat\\project\\build\\lookout_lariat\\extension\\ext_config.ini",
+ "lamps": null
+}

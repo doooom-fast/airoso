@@ -1,0 +1,417 @@
+{
+ "_doc": "Lariat Drive-1 stacked-leg check (tools/verify_stacked_legs.py; V3-PLAN P5, L4, ledger 0048).",
+ "line": "gate_centerline.json",
+ "lap_m": 24856.8,
+ "closed": true,
+ "thresholds": {
+  "pair_plan_m": 40.0,
+  "pair_along_m": 150.0,
+  "max_failures": 0,
+  "crossing_zone_m": 40.0,
+  "road_window_m": 2.5,
+  "_tags": "all [invented] (V3-PLAN P5, ledger 0048; crossing zone 2026-10-12) \u2014 fleet/GATES-CHANGELOG.md"
+ },
+ "mode": "built",
+ "obj": "track.obj",
+ "heights": "the built 1ROAD under each lap point",
+ "lap_points_without_road": 0,
+ "stacked_points_without_road": 0,
+ "stacked_points_without_road_st": [],
+ "pairs": 10594,
+ "stacked_points": 679,
+ "stacked_runs": [
+  [
+   2494.0,
+   2543.0
+  ],
+  [
+   2670.0,
+   2720.0
+  ],
+  [
+   2734.0,
+   2784.0
+  ],
+  [
+   2888.0,
+   2962.0
+  ],
+  [
+   3081.0,
+   3153.0
+  ],
+  [
+   5305.0,
+   5367.0
+  ],
+  [
+   5430.0,
+   5469.0
+  ],
+  [
+   5487.0,
+   5565.0
+  ],
+  [
+   5590.0,
+   5628.0
+  ],
+  [
+   5686.0,
+   5738.0
+  ],
+  [
+   5763.0,
+   5818.0
+  ],
+  [
+   5948.0,
+   5996.0
+  ]
+ ],
+ "nearest_plan_m": 21.41,
+ "vertical_gap_m": {
+  "min": 6.48,
+  "median": 10.18,
+  "max": 15.44
+ },
+ "crossings": [],
+ "crossing_skipped": 0,
+ "tested": {
+  "ground": 1210,
+  "edge": 1295
+ },
+ "tested_total": 2505,
+ "failures": 287,
+ "failures_by_class": {
+  "ground": 287
+ },
+ "worst": [
+  {
+   "class": "ground",
+   "group": "1GRASS_i",
+   "x": -1011.2,
+   "y": 371.7,
+   "z": 645.08,
+   "own_station_m": 5994.0,
+   "other_station_m": 5766.0,
+   "dy_own_m": 16.69,
+   "dy_other_m": 2.6,
+   "plan_own_m": 15.65,
+   "plan_other_m": 24.25
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_i",
+   "x": -1017.89,
+   "y": 372.46,
+   "z": 645.08,
+   "own_station_m": 5995.0,
+   "other_station_m": 5767.0,
+   "dy_own_m": 15.98,
+   "dy_other_m": 1.91,
+   "plan_own_m": 9.17,
+   "plan_other_m": 30.94
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_i",
+   "x": -1017.89,
+   "y": 373.1,
+   "z": 651.75,
+   "own_station_m": 5989.0,
+   "other_station_m": 5773.0,
+   "dy_own_m": 15.01,
+   "dy_other_m": 1.63,
+   "plan_own_m": 7.66,
+   "plan_other_m": 30.58
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_i",
+   "x": -1011.2,
+   "y": 372.17,
+   "z": 651.75,
+   "own_station_m": 5988.0,
+   "other_station_m": 5773.0,
+   "dy_own_m": 15.88,
+   "dy_other_m": 2.56,
+   "plan_own_m": 14.22,
+   "plan_other_m": 23.89
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_ring_f",
+   "x": -976.21,
+   "y": 357.02,
+   "z": 593.87,
+   "own_station_m": 5714.0,
+   "other_station_m": 5541.0,
+   "dy_own_m": 16.27,
+   "dy_other_m": 3.14,
+   "plan_own_m": 8.55,
+   "plan_other_m": 16.45
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_ring_f",
+   "x": -974.93,
+   "y": 357.36,
+   "z": 593.08,
+   "own_station_m": 5713.0,
+   "other_station_m": 5541.0,
+   "dy_own_m": 15.72,
+   "dy_other_m": 2.8,
+   "plan_own_m": 9.86,
+   "plan_other_m": 14.95
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_ring_f",
+   "x": -973.84,
+   "y": 356.25,
+   "z": 594.72,
+   "own_station_m": 5715.0,
+   "other_station_m": 5540.0,
+   "dy_own_m": 16.71,
+   "dy_other_m": 3.81,
+   "plan_own_m": 10.89,
+   "plan_other_m": 14.95
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_ring_f",
+   "x": -979.4,
+   "y": 358.92,
+   "z": 593.32,
+   "own_station_m": 5713.0,
+   "other_station_m": 5542.0,
+   "dy_own_m": 14.16,
+   "dy_other_m": 1.34,
+   "plan_own_m": 5.39,
+   "plan_other_m": 18.94
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_i",
+   "x": -950.95,
+   "y": 346.42,
+   "z": 591.74,
+   "own_station_m": 5527.0,
+   "other_station_m": 5331.0,
+   "dy_own_m": 12.76,
+   "dy_other_m": 0.09,
+   "plan_own_m": 0.92,
+   "plan_other_m": 31.14
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_h",
+   "x": -1017.89,
+   "y": 373.76,
+   "z": 658.42,
+   "own_station_m": 5983.0,
+   "other_station_m": 5780.0,
+   "dy_own_m": 14.0,
+   "dy_other_m": 1.38,
+   "plan_own_m": 6.45,
+   "plan_other_m": 30.25
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_h",
+   "x": -1011.2,
+   "y": 372.65,
+   "z": 658.42,
+   "own_station_m": 5982.0,
+   "other_station_m": 5779.0,
+   "dy_own_m": 15.05,
+   "dy_other_m": 2.43,
+   "plan_own_m": 13.05,
+   "plan_other_m": 23.57
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_i",
+   "x": -1017.89,
+   "y": 373.76,
+   "z": 658.42,
+   "own_station_m": 5983.0,
+   "other_station_m": 5780.0,
+   "dy_own_m": 14.0,
+   "dy_other_m": 1.38,
+   "plan_own_m": 6.45,
+   "plan_other_m": 30.25
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_i",
+   "x": -1011.2,
+   "y": 372.65,
+   "z": 658.42,
+   "own_station_m": 5982.0,
+   "other_station_m": 5779.0,
+   "dy_own_m": 15.05,
+   "dy_other_m": 2.43,
+   "plan_own_m": 13.05,
+   "plan_other_m": 23.57
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_i",
+   "x": -977.72,
+   "y": 356.12,
+   "z": 591.74,
+   "own_station_m": 5712.0,
+   "other_station_m": 5542.0,
+   "dy_own_m": 16.76,
+   "dy_other_m": 4.14,
+   "plan_own_m": 7.14,
+   "plan_other_m": 16.71
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_ring_f",
+   "x": -975.88,
+   "y": 354.35,
+   "z": 591.42,
+   "own_station_m": 5712.0,
+   "other_station_m": 5542.0,
+   "dy_own_m": 18.53,
+   "dy_other_m": 5.91,
+   "plan_own_m": 9.0,
+   "plan_other_m": 14.94
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_ring_f",
+   "x": -977.2,
+   "y": 355.93,
+   "z": 592.13,
+   "own_station_m": 5712.0,
+   "other_station_m": 5542.0,
+   "dy_own_m": 16.95,
+   "dy_other_m": 4.33,
+   "plan_own_m": 7.64,
+   "plan_other_m": 16.43
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_ring_f",
+   "x": -975.06,
+   "y": 357.69,
+   "z": 595.59,
+   "own_station_m": 5716.0,
+   "other_station_m": 5540.0,
+   "dy_own_m": 14.98,
+   "dy_other_m": 2.37,
+   "plan_own_m": 9.66,
+   "plan_other_m": 16.45
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_i",
+   "x": -944.25,
+   "y": 346.42,
+   "z": 591.74,
+   "own_station_m": 5522.0,
+   "other_station_m": 5331.0,
+   "dy_own_m": 12.65,
+   "dy_other_m": 0.09,
+   "plan_own_m": 3.48,
+   "plan_other_m": 24.45
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_i",
+   "x": -937.56,
+   "y": 344.15,
+   "z": 591.74,
+   "own_station_m": 5519.0,
+   "other_station_m": 5331.0,
+   "dy_own_m": 14.9,
+   "dy_other_m": 2.36,
+   "plan_own_m": 8.2,
+   "plan_other_m": 17.77
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_ring_f",
+   "x": -978.06,
+   "y": 356.86,
+   "z": 590.41,
+   "own_station_m": 5711.0,
+   "other_station_m": 5543.0,
+   "dy_own_m": 15.8,
+   "dy_other_m": 3.49,
+   "plan_own_m": 6.89,
+   "plan_other_m": 16.43
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_i",
+   "x": -950.95,
+   "y": 346.42,
+   "z": 585.07,
+   "own_station_m": 5525.0,
+   "other_station_m": 5337.0,
+   "dy_own_m": 12.7,
+   "dy_other_m": 0.46,
+   "plan_own_m": 5.68,
+   "plan_other_m": 31.51
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_i",
+   "x": -930.86,
+   "y": 342.94,
+   "z": 585.07,
+   "own_station_m": 5513.0,
+   "other_station_m": 5338.0,
+   "dy_own_m": 16.1,
+   "dy_other_m": 3.99,
+   "plan_own_m": 11.18,
+   "plan_other_m": 11.46
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_ring_f",
+   "x": -976.7,
+   "y": 350.62,
+   "z": 589.77,
+   "own_station_m": 5710.0,
+   "other_station_m": 5543.0,
+   "dy_own_m": 21.85,
+   "dy_other_m": 9.74,
+   "plan_own_m": 8.28,
+   "plan_other_m": 14.93
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_i",
+   "x": -944.25,
+   "y": 346.62,
+   "z": 585.07,
+   "own_station_m": 5518.0,
+   "other_station_m": 5338.0,
+   "dy_own_m": 12.43,
+   "dy_other_m": 0.32,
+   "plan_own_m": 1.15,
+   "plan_other_m": 24.83
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_i",
+   "x": -937.56,
+   "y": 345.47,
+   "z": 585.07,
+   "own_station_m": 5515.0,
+   "other_station_m": 5338.0,
+   "dy_own_m": 13.58,
+   "dy_other_m": 1.47,
+   "plan_own_m": 4.85,
+   "plan_other_m": 18.14
+  }
+ ],
+ "fail": true
+}

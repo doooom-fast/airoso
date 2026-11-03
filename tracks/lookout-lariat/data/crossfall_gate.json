@@ -1,0 +1,35 @@
+{
+ "gate": "roll rate (V3-PLAN P2 step 4 / P5)",
+ "status_of_file": "estimated",
+ "rules": {
+  "max_change_pct_per_window": 4.0,
+  "window_m": 30.0,
+  "swing_pct": 3.0,
+  "flags": "[invented] both (fleet/GATES-CHANGELOG.md)"
+ },
+ "stations": 8305,
+ "lap_m": 24914.3,
+ "halves": {
+  "left": {
+   "change_fail_stations": 0,
+   "swing_fail_stations": 0,
+   "swings": 0,
+   "worst_change_pct": 3.22,
+   "worst_at_m": 14364.0,
+   "first_change_fail_m": [],
+   "first_swing_fail_m": []
+  },
+  "right": {
+   "change_fail_stations": 0,
+   "swing_fail_stations": 0,
+   "swings": 0,
+   "worst_change_pct": 3.404,
+   "worst_at_m": 14310.0,
+   "first_change_fail_m": [],
+   "first_swing_fail_m": []
+  }
+ },
+ "banked_into_curve_stations_reported": 0,
+ "problems": [],
+ "fail": false
+}

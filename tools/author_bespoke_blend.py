@@ -90,6 +90,7 @@ PREP_SEATS = False             # scenery.bespoke.prep_seats: the prep that follo
 SCRUB_ROAD_CLEAR_M = 4.0       # [invented] the imagery's clumps stand well off any pavement
 CARDS_PER_MESH = 64
 OFF_TERRAIN_SKIRT_M = 4.0      # [invented] a far backdrop's wall carries on this far below the nearest ground
+BLOCK_RIM_STEP_M = 1.0         # [invented] the rim sampled for a block's lowest ground: 2.0 m stepped over a 0.27 m dip in the fine ground beside a street (ledger 0063)
 COLLIDER_STEP_M = 3.0          # [invented] the collider's skirt follows the ground at this spacing (see the collider rule in blocks)
 FAR_REACH_M = 450.0            # [invented] a far block past this from the lap is dropped: unseen from the car, weight in the kn5
 COLLIDER_TRI_M = 8.0           # [invented] a collider stands only over ground triangles finer than this (see bvh / down_edge)
@@ -561,7 +562,7 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
         for b in items:
             key, why = b["key"], None
             ring = inward_ring([to_xy(p) for p in b["footprint_lonlat"]])
-            rim, inner = ring_points(ring)
+            rim, inner = ring_points(ring, BLOCK_RIM_STEP_M)
             gs = [down(ground, x, y) for x, y in rim]
             wall_h = float(b["wall_h_m"])
             near = [down(near_ground, x, y) for x, y in ring]

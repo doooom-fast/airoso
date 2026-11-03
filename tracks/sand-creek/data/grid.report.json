@@ -1,0 +1,35 @@
+{
+ "_doc": "tools/grid_connectors.py: the free roam's street grid, real OSM ways only (L1)",
+ "ways_taken": 394,
+ "joined_lines": 169,
+ "per_class": {
+  "unclassified": {
+   "pieces": 40,
+   "km": 12.74
+  },
+  "tertiary": {
+   "pieces": 26,
+   "km": 11.18
+  },
+  "primary": {
+   "pieces": 23,
+   "km": 8.01
+  },
+  "secondary": {
+   "pieces": 5,
+   "km": 2.07
+  },
+  "residential": {
+   "pieces": 14,
+   "km": 6.02
+  }
+ },
+ "pieces": 108,
+ "km": 40.02,
+ "dropped": {
+  "short": 20,
+  "parallel": 3,
+  "outside": 21
+ },
+ "meetings_eased": 148
+}

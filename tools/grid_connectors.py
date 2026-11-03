@@ -10,6 +10,7 @@ Reads track.config.json route.grid:
     on_lap_pad_m   a point within the lap's half width + this is on the lap
     parallel_m     a piece whose median distance from the lap is under this is the lap's other carriageway: dropped
     terrain_inset_m  the terrain grid must reach this far past a piece (heightfield.meta.json bbox_swne)
+    exclude        piece names left out, each with its reason in the config (a piece the kn5 gate shows cutting a graded bank)
 
 Ways meeting end to end are joined first, so an OSM way split at a tag change is one road. Each piece keeps one on-lap point at
 each end so it reaches the lap's pavement; build_mesh levels that end onto the lap. Heights are USGS 3DEP along the piece's own
@@ -224,7 +225,10 @@ def build(project_dir):
         cache_p.write_text(json.dumps(cache), encoding="utf-8")
 
     conns, per_class = [], {}
+    exclude = set(spec.get("exclude") or [])
     for k, (cls, run) in enumerate(sorted(runs, key=lambda r: (-_length(r[1]), r[0]))):
+        if f"grid_{cls}_{k}" in exclude:
+            continue
         zs = [cache[f"{p[0]},{p[1]}"] - elev0 for p in (lonlat_of(x, z) for x, z in run)]
         ys = _despike_smooth_cap(zs, RESAMPLE_M)
         conns.append({"name": f"grid_{cls}_{k}", "kind": "connector",

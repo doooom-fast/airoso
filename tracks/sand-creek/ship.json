@@ -2,7 +2,7 @@
   "_doc": "Sand Creek Raceway through the Lake Murray chain (tools/ship_track.sh; Kevin 2026-10-28: 'rebuild all four with the Lake Murray chain'). The draft is the engine's own on the KML route over the real streets (source.type kml: gps -> elev -> project -> widths (osm_road_widths) -> mesh), then the underlay drops data/track.obj into loop.blend as GEN_* collections (scripts/blender/underlay.py). Authoring happens in that blend (AUTH_*), the prep / exporter run from airoso's scripts/ac, the four gates run on the BUILT kn5. The workshop lives OUTSIDE airoso.",
   "_owed": "First pass = the 'full' layout's draft through the chain. The reverse layout is parked in track.config.json _layouts_v3_owed until its start is declared on the V3 centreline (layouts[].start -> tools/layout_dummies.py -> a spawn kn5; then steps.author gains layout_dummies and steps.ship gains spawn_kn5). No signs, lamps, race furniture or TreeFX yet. The Colorado rebuild session's NAIP width (10.5 m on the straights, 2026-10-28) is on the Mac, not committed: carry it into width_overrides before the draft runs.",
   "track": "sand-creek",
-  "workshop": "C:/Users/Owner/Documents/k10-workshops/sand-creek",
+  "workshop": "D:/k10-workshops/sand-creek",
   "workshop_project": "project",
   "require_race_layout": false,
   "ui_name_prefix": "doooom Colorado",
@@ -12,6 +12,7 @@
       "elev",
       "project",
       "widths",
+      "grid",
       "mesh",
       "underlay"
     ],
@@ -55,7 +56,9 @@
       "data/corridor.elev.json",
       "data/street_labels.json",
       "data/osm.cache.json",
-      "data/connectors.local.json"
+      "data/connectors.local.json",
+      "data/osm.ways.json",
+      "data/grid.3dep.json"
     ],
     "dirs": [
       "source"
@@ -85,7 +88,9 @@
       "data/grassfx.aerial.json",
       "data/dummies_{id}.json",
       "data/street_kn5.json",
-      "data/treefx.report.json"
+      "data/treefx.report.json",
+      "data/grid.3dep.json",
+      "data/grid.report.json"
     ],
     "map": [
       [

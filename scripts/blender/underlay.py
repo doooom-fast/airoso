@@ -46,9 +46,13 @@ AUTH_PREFIX = "AUTH_"
 COLLECTIONS = ("GEN_road", "GEN_kerb", "GEN_terrain", "GEN_wall", "GEN_misc", "GEN_refs")
 REF_STATION_M = 500.0
 REPORT = "underlay.report.json"
-# the prep's DOUBLE_SIDE rule (build_kn5_loop.py): barriers render and collide from both sides. The
-# underlay does NOT duplicate faces — the prep does, at prep time, on the same names — so a GEN_ object is
-# exactly one copy of the engine's geometry and an author edits one sheet, not two.
+# A GEN_ object is exactly the faces of its OBJ group, nothing added: the underlay never duplicates a face, and
+# NOTHING downstream does either. The prep's DOUBLE_SIDE (build_kn5_loop.py) appends reversed faces only in
+# _add_obj_meshes, its import of extra OBJs (data/track_*.obj, data/env_*.obj: a merged freeway network);
+# objects that come from this blend never pass through it (ledgers 0070 C1, 0071). So the engine must wind every face the way it should render: a closed solid (a
+# barrier module, a stone lip) once and OUTWARD, a sheet seen from both sides (a fence) twice on SEPARATE
+# vertices. A face and its reverse on the SAME vertices is a duplicate to Mesh.validate() below, which deletes
+# one of the pair, and which one survives is arbitrary; the report counts what validate() dropped per group.
 
 
 # --- pure helpers (no bpy) -------------------------------------------------------------------------------------
@@ -280,7 +284,9 @@ def build(proj: Path) -> dict:
         bverts, bfaces, buvs, has_uv = group_to_mesh(verts, uvs, faces)
         ob = _add_group(bpy, cols[collection_for(name)], name, bverts, bfaces, buvs, has_uv)
         built.append({"name": ob.name, "collection": collection_for(name), "verts": len(ob.data.vertices),
-                      "faces": len(ob.data.polygons), "uv": has_uv})
+                      "faces": len(ob.data.polygons), "uv": has_uv,
+                      # faces Mesh.validate() deleted (duplicates, degenerates): 0 for a clean draft (ledger 0071)
+                      "validate_dropped": len(bfaces) - len(ob.data.polygons)})
     n_refs = _add_refs(bpy, cols["GEN_refs"], proj, bool(cfg.get("loop", True)))
     bpy.ops.wm.save_as_mainfile(filepath=str(blend))
     report = {"written": "loop.blend", "existed": existed, "blender": bpy.app.version_string,
@@ -294,6 +300,10 @@ def build(proj: Path) -> dict:
     print(f"[underlay] {'refreshed' if existed else 'created'} {blend}: {len(built)} GEN objects "
           f"({', '.join(f'{k} {v}' for k, v in sorted(by_col.items()))}) + {n_refs} refs; "
           f"{len(removed)} old GEN objects replaced; {len(auth)} AUTH_* objects untouched")
+    dropped = {b["name"]: b["validate_dropped"] for b in built if b["validate_dropped"]}
+    if dropped:
+        print(f"[underlay] Mesh.validate() dropped faces (duplicate or degenerate) in {len(dropped)} groups: "
+              + ", ".join(f"{k} {v}" for k, v in sorted(dropped.items())))
     print(f"[underlay] source data/track.obj md5 {p['obj_md5']} -> data/{REPORT}")
     return report
 

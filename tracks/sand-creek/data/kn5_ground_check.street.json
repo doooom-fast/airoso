@@ -6,19 +6,19 @@
   "sand_creek_raceway_street.kn5"
  ],
  "fidelity": "skipped: gate OBJ written from this kn5",
- "double_sheet_cells": 10,
+ "double_sheet_cells": 0,
  "seating": {
   "walls": {
    "objects": 289,
    "no_ground_pct": 0.0,
-   "median_m": -0.55,
-   "p95_m": -0.267,
+   "median_m": -0.536,
+   "p95_m": -0.272,
    "hovering": 0
   }
  },
  "road_over_ground": {
   "over": 680,
-  "samples": 13679,
+  "samples": 13682,
   "p95_m": 0.049,
   "max_m": 3.078
  }

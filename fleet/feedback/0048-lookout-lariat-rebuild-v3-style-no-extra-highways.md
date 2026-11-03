@@ -7,6 +7,153 @@ layer: project
 train: -
 ---
 
+## Drive 1 on the Mac: A2 and P3a (2026-11-03, config 0.17.0)
+
+The first full chain run on the PC (D4 A, `street_full`, 24,856.8 m; records in `c5722f2`) was red on almost every
+Drive-1 row. This section takes it toward a green Drive-1 build with V3-PLAN's next two steps, **A2** (hairpins as fitted
+curves) and **P3a** (terrain tiers, cut/fill for the stacked legs), proven on the Mac with the engine's draft
+(`scripts.geometry.build_mesh` on the PC's own draft data: its 3DEP profile, heightfield, corridor samples, widths and
+crossfall, nothing re-fetched) and the Drive-1 gates. Nothing was built on the PC and nothing was installed.
+
+**The Mac draft reproduces the PC's run.** Built from the committed data with the 0.16.0 config, the draft's
+`data/track.obj` reads drive_test severe 417, kinks 21.6 /km, floating 462, undrivable corners 83, excursion drops 121,
+far ledges 223 (the PC's numbers exactly); audit D 2 (PC 3), E 228, H 1; road inventory 172,272 off-route triangles
+(PC 172,258); stacked legs 395 (PC 287: its gate OBJ is the kn5's, whose prep welds and renames the tiles). And
+`scripts.ac.kn5_ground_check.check()` run on the draft OBJ in place of the kn5 (its two readers swapped for an OBJ reader,
+the check in its kn5-internal mode, as on the chain's gate OBJ) reads road-over-ground 3,769 / 3,899, p95 0.934 m,
+double-sheet 7, 711 walls (PC 3,766 / 3,902, 0.932 m, 7, 711). So every number below is the Drive-1 gate code on the
+draft the chain would export, except `verify_kn5`, which needs the kn5 (the Mac does not export: no AC add-on refresh,
+nothing installed).
+
+### What the first run's reds were
+
+- **The severe clusters (2,250-2,950 and 5,250-5,750) were the shoulder sheet, not the hairpins.** On every station
+  `ribbon.road_shoulder` drapes a `1ROAD_shoulder` face from the verge to the ground, at 4.5:1 on a fill (`fill_apron`,
+  tarmac) up to 60 m out; between stacked legs 20 m apart it crossed the other leg: at st 5,625 the upper leg's face
+  stood 1.8 m over the lower lane, at st 2,432 a 4.8 m step. 1.37 km² of it was the road inventory's off-route pavement
+  (ledger 0061's sheet) and its faces the stacked-leg failures.
+- **Road-over-ground p95 0.93 m** is L3b: the declared `verge_m` 0.4 had been floored to the 6.7 m grid's representable
+  band (5.72 m, the mesh log's "the declared edge is narrower than this grid can carry"), no `terrain_cell_m` was
+  declared, and on a 6-8 m road 6.7 m cells cannot follow the bench; refinement alone (`corridor_refine_factor` 4) took
+  it to median 0.04 but left the severe steps untouched (417, unchanged).
+- **Floating 462, audit E 228 / D 3** were the engine's own walls: 1,810 measured-guard stone lips, 18 warning fences,
+  18 concrete warning runs.
+- **The fold treatment re-profiled the fitted hairpins**: 10 fold apexes each got a +-40 m level plateau (the road up to
+  1.07 m off its 3DEP profile at C1, C4-C10, C13) and one a fold-pad disc.
+- **Undrivable corners 83** are drive_test's corner rule (a turn over 110 deg within +-15 m with the road under 9 m) at
+  C4-C10 on their measured 6.8-8.3 m: the real hairpins, as the 2026-10-12 build found. Fitting does not change a turn or
+  a width (below).
+
+### A2: the hairpins as fitted curves
+
+- **C1-C10 were already curves.** The paint centreline (`tools/paint_centreline.py`) is curvature-continuous through the
+  climb at 1 m and passes the plan's step gate on all 7,114 climb points (`data/aerial/paint_gate.json`); its tightest
+  radius per hairpin is within 0.6 m of the aerial (`paint_centreline.json`: C4 9.73 vs 10.25, C9 10.36 vs 11.31 ...).
+  What spoiled them was the engine: **`road_profile.fold_plateaus: false`** (new, opt-in) keeps the fitted hairpins on
+  their real profile, and **`road_profile.fold_pads: false`** (ledger 0074's switch, `claude/aspen-profile-kink`, carried
+  here) drops the disc. Replication vs 3DEP: max 1.13 -> 0.73 m (1.00 m with the arcs below), p95 0.07 -> 0.04 m.
+- **C12 and C13 are now arcs.** They were junction nodes (the paint line keeps the node: an arc at the aerial radius
+  overruns the traced arm paint), and the engine's rounding left C13 at a ~2.4 m centreline radius, where the ribbon
+  folded (severe at st 10,593-10,629). **`hairpin_fit.mesh_fit: ["C12", "C13"]`** (new, opt-in;
+  `scripts/geometry/corner_arcs.py`) sweeps each as clothoid 8 m - arc - clothoid 8 m at the aerial `radius_m`, on the
+  line build_mesh sweeps (`finished_centerline`), vertex count and heights kept, the arms eased onto their fitted lines;
+  the plan's step gate runs on the result and a failing corner stops the mesh step. Record `data/corner_arcs.json`:
+  - C12: R 14.9 m, turn 91.4 deg (the aerial's inside edges read 87.4 deg), arc 15.8 m, st 9,728-9,765, moved <= 4.81 m;
+    max step 3.30 deg, adjacent 0.35 deg, 0 fails;
+  - C13: R 16.08 m, turn 100.5 deg (aerial 100.4 deg), arc 20.2 m, st 10,589-10,637, moved <= 8.54 m (an arc of that
+    radius passes R(sec 50 deg - 1) = 8.9 m inside the node); max step 2.69 deg, adjacent 0.98 deg, 0 fails.
+  `data/centerline.geojson` is unchanged and the paint gate still judges it; the fit is the mesh's.
+- **C1's 14 m widening stays off** (`_history`), as the plan says.
+
+### P3a: the ground
+
+**The section** (`terrain.cross_section.build: true`, `scripts/geometry/cutfill.py`): at each station of the swept
+line, the pavement, the 0.4 m verge (as declared now: no floor), a bench at the edge's height, then rock cut 0.25:1 up or
+fill 1.5:1 down until the face meets the natural 3DEP ground. It grades the grid (in place of `grade_embankment`), it is
+the height of every refined corridor node, and the shoulder sheet lands on it: the sheet's verge strip stays
+`1ROAD_shoulder` (0.4 m of pavement), its face becomes `1GRASS_cutfill` (ground, ledger 0061 option C) and is capped at
+the medial line toward any other stretch of the lap, so no face drapes across another leg. The ring annulus, the bend
+through the meet line and the curvature charge on the face are off in this mode (the meet is on the section already).
+
+**Stacked legs (A3: cut above, fill below).** Every ground point belongs to the lap point nearest it in plan, read the
+way the stacked-leg gate reads it (the line at 1 m, cm-rounded; the other leg the nearest point > 150 m along). Between
+stacked legs (683 lap points on the climb) it is held on its own leg's side of the midpoint height, 0.3 m clear
+[invented]; the sheet's meet and buried hem too. The first cut (hold by the swept line's vertices, 0.05 m clear) left 1
+failure, a point 4e-5 m from equidistant that the gate gave to the other leg; reading ownership as the gate does took it
+to 0. No walls were authored: the section closes everywhere at these slopes.
+
+**The tiers and the budget.** Physical tiers in the engine draft: MEDIUM = the whole box at 13.3 m (`terrain_cell_m`
+13.4 -> the 40 m 3DEP grid x3, 203 k nodes; the plan's medium tier is 15-20 m, the x3 upsample is the nearest);
+CORRIDOR = every 13.3 m quad the pavement or its sheet touches refined x12 to **1.11 m** (`corridor_refine_factor` 12,
+`corridor_refine_margin` 0 (new key, default 1 = unchanged): 4,256 quads, ~0.61 M sub-nodes). 1.11 m because the
+gates need flush ground under a 6-8 m road edge: a cell can only follow a cut it is smaller than (L3b), and audit H reads
+ground 2 m off the edge. `corridor_stencil_factor` 0.05 (default 0.25): the pin's window charged slope x 0.28 m and
+left the deck 5 cm proud on the climb's grades. **Total: 1.39 M OBJ vertices (ground 0.95 M) against the PC run's
+1.63 M (ground 1.09 M; 1.40 M kn5 positions).** That is lighter than what the PC built, so no frame-rate cost against the
+run Kevin was going to drive, but the plan's budget gives corridor + medium ground 150-250 k of a 0.65-1.1 M road kn5
+(Drive 2 adds stone works, lamps, signs, buildings): the question is below. The VIEW / FAR / PLAINS tiers are
+visual-only, Drive 2's backdrop kn5, not built here (the tier-seam row stays n/a).
+
+**The benches** [invented, from the gates' geometry]: fill 1.2 m (one 1.11 m cell's diagonal, 1.57 m, less the verge:
+flush ground under the road edge for kn5_ground_check); cut 3.2 m (audit H's sample 2 m off the edge plus that
+diagonal, less the verge: H counted 297 rock-cut chords at 1.6 m). The real section is a 0.4 x 1.2 m V ditch at the cut's
+toe, 1.6 m off the edge, and ROAD-CONSTRUCTION's catchment of 0.4-0.5 x the face height: the draft's 3.6 m flat strip
+beside a cut is wider than that below ~7 m faces. The V ditch itself, the soil-cut slope and the 8 m fill -> wall
+trigger are not modelled (P3d).
+
+**No engine walls** (`road_edge.draft_walls: false`, new, opt-in): the Drive-1 draft writes no measured-guard lips,
+parapets, warning fences or concrete warning runs; the edges are P3d's (Drive 2).
+
+### The Drive-1 gate set, baseline -> after (Mac draft, the gate code on data/track.obj)
+
+| Row | PC run 1 / Mac baseline (0.16.0) | Mac after (0.17.0) |
+|---|---|---|
+| drive_test severe steps (0) | 417 | **8** (C14 st 11,676-11,677: 2; st 16,599: 1; C18 st 24,309-24,313: 5) |
+| drive_test kinks (<= 19.49 /km) | 21.6 | **3.06** |
+| drive_test floating / obstruction / soft-top / daylight (0) | 462 / 0 / 0 / 0 | **0 / 0 / 0 / 0** |
+| drive_test undrivable corners (0) | 83 | **80** (C4-C10: the real hairpins; C13 left the list) |
+| drive_test replication p95 (<= 0.5 m) | 0.07 (max 1.13) | **0.04** (max 1.00) |
+| audit_mesh A B D E G H I (0) | D 2, E 228, H 1 | **all 0** |
+| kn5_ground_check: road over ground p95 (<= 0.10 m), double sheet | 0.934 m, 7 | **0.064 m, 0** (PASS) |
+| verify_kn5 | PC PASS | not run (no kn5 on the Mac) |
+| road inventory | FAIL (172,272 tris, 1.37 km² off the route) | **PASS** (0 off the route; lap 100 % paved) |
+| stacked legs (0) | 395 (PC 287) | **0** of 15,398 tested |
+| one-way / paint / roll rate / lid ends | PASS | PASS (unchanged data) |
+| tier seams | n/a | n/a (Drive 2's visual tiers) |
+| recorded: excursion drops / far ledges | 121 / 223 | 427 / 1,045 (the walls are gone and the real drops are open) |
+| `--force-install` vs July | refused (severe 417 > 253, floating 462) | refused: far ledges 1,045 > July 382 |
+
+`tools/drive1_gates.py` on the after-build: red on drive_test (undrivable corners 80, severe 8) and verify_kn5 (not run);
+every other gating row green.
+
+### What is left red, and whose call it is
+
+- **Undrivable corners 80 (Kevin).** C4-C10 at their measured 6.8-8.3 m trip the corner rule (> 110 deg within +-15 m,
+  under 9 m). No fit changes that: the turn is the road's and so is the width. Options: (a) keep the real width and
+  record the rule as red for Drive 1, Kevin's seat deciding (the plan asks "is the base hairpin still impossible?");
+  (b) widen the hairpin apices to >= 9 m (P3c pads at the 1913 design's 7.3-7.9 m do not reach 9 m; this would be
+  invented width); (c) declare the Lariat's measured hairpins exempt from the corner rule (a gate change). The default
+  here is (a): the gate is not loosened.
+- **Severe 8 at three junction mouths (P3b).** C14 (Paradise -> US-40, 0.07 m), st 16,599 (0.07 m) and C18 (ramp ->
+  19th St, inside the engine's junction fillet, 0.06-0.11 m): the five drivable mouths are P3b's, authored in Blender,
+  and none has an aerial radius to fit the way C12 / C13 were.
+- **Far ledges 1,045 > July 382 (Kevin, the force rule).** With no walls the real drops are open; they are recorded, not
+  gating, in Drive 1, but the 0047 force rule compares them with July's walled build, so a forced install is refused
+  until P3d's edges exist or the rule's July row is set aside for Drive 1.
+- **The ground budget (Kevin).** 0.95 M ground vertices for Drive 1 vs the plan's 150-250 k. Options: (a) keep 1.11 m
+  corridor cells (flush edges, all gates green on the Mac); (b) 1.67 m (x8): ~0.35 M fewer, benches widen to fill
+  2.0 m / cut 4.0 m to keep the same gates; (c) decide after Drive 1 on the frame rate the PC reads.
+
+### What a PC build still has to show
+
+`bash tools/ship_track.sh lookout-lariat --no-install` from the draft (the data is unchanged, so `--from mesh` is
+enough): the mesh log's `[corner arcs] C12: PASS` / `C13: PASS` and `[cutfill]` lines; then on the kn5: verify_kn5, the
+prep's weld and tiling on 1GRASS_cutfill and the 1.11 m tiles (balanced halving, <= 50 k positions), kn5_ground_check
+on the real kn5 (p95 0.064 on the Mac's OBJ), stacked legs on the gate OBJ (the prep renames tiles; 0 on the Mac's
+OBJ), and the Drive-1 verdict. Then the D4 B variant (`SHIP_VARIANT=b_verge`, verge 1.25 m). On the Mac the B draft
+reads the same as A on every row (severe 8 at the same three mouths, undrivable 80, kinks 3.06, audit 0, inventory PASS,
+stacked legs 0 of 16,375, road-over-ground p95 0.027 m on the obj proxy; far ledges 839), 1.46 M OBJ vertices.
+
 ## Started (Kevin, 2026-11-01)
 
 > "Start the lariat"

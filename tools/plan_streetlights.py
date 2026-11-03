@@ -11,7 +11,8 @@ track has them, the junction pads' outlines (data/pads.plan.json).
 
 THE RULES (ported; every [invented] number is in fleet/GATES-CHANGELOG.md "engine-draft lamps"):
   * the loop's walk (build_streetlights): a station every SPACING_M (55 m) from START_M, alternating sides, the post
-    SIDE_OFF_M past the pavement edge, the head ARM_M (1.8 m) road-ward of it at HEAD_OVER_GROUND_M (8.8 m) over the
+    SIDE_OFF_M past the pavement edge — or further out, in OUT_STEP_M steps up to MAX_SIDE_OFF_M, where the draft's
+    1ROAD shoulder sheet runs on down an embankment (ribbon.road_shoulder drapes it to the ground) — the head ARM_M (1.8 m) road-ward of it at HEAD_OVER_GROUND_M (8.8 m) over the
     draft ground under the post — exactly the record author_lamps_blend.py's base rule reads back (road-ward = head ->
     nearest centreline vertex; the head lies on the segment from the base to that vertex, so the author finds the same
     base);
@@ -49,8 +50,10 @@ MIN_GAP_M = 25.0          # build_streetlights: no two posts closer than this
 ARM_M = 1.8               # build_streetlights arm; author_lamps_blend.ARM_M
 HEAD_OVER_GROUND_M = 8.8  # build_streetlights head rule; author_lamps_blend.HEAD_OVER_GROUND_M
 CUT_WALL_M = 6.0          # build_streetlights: road more than this over the ground under the post = a cut wall / a deck
-SIDE_OFF_M = 3.6          # [invented] post axis past the pavement edge: build_mesh's 2.5 m verge sheet (1ROAD_shoulder)
-#                           + the footprint ring (0.124 + 0.46) + 0.5 m to spare
+SIDE_OFF_M = 3.6          # [invented] post axis past the pavement edge: build_mesh's 2.5 m verge (1ROAD_shoulder)
+#                           + the footprint ring (0.124 + 0.46) + 0.5 m to spare — the first spot tried
+OUT_STEP_M = 0.5          # [invented] where the shoulder sheet runs on down an embankment, the post steps out by this
+MAX_SIDE_OFF_M = 10.0     # [invented] ... up to this past the pavement edge (further, and it lights the verge, not the road)
 SLIDE_M = 12.0            # streetlights.py SLIDE_M [invented there]
 SLIDE_STEP_M = 2.0        # streetlights.py SLIDE_STEP_M [invented there]
 WALL_CLEAR_M = 0.5        # author_lamps_blend.WALL_CLEAR_M: the pole >= 0.5 m clear of a barrier
@@ -249,7 +252,7 @@ def plan(lap: Lap, surf: Surfaces, *, spans=(), pads=(), rules=None):
     """The posts along the lap. ``spans`` = [(s0, s1)] deck stations; ``pads`` = [(id, outline_xz)]. Returns
     {"lamps": [...], "skipped": [...], "rules": {...}} — each lamp: head [x, y, z], base_xz, roadward_xz, vertex (the
     nearest centreline vertex, which the author's road-ward rule reads), station_m, side, ground_y, road_y."""
-    R = dict(spacing_m=SPACING_M, min_gap_m=MIN_GAP_M, side_off_m=SIDE_OFF_M, arm_m=ARM_M,
+    R = dict(spacing_m=SPACING_M, min_gap_m=MIN_GAP_M, side_off_m=SIDE_OFF_M, max_side_off_m=MAX_SIDE_OFF_M, arm_m=ARM_M,
              head_over_ground_m=HEAD_OVER_GROUND_M, cut_wall_m=CUT_WALL_M, slide_m=SLIDE_M, slide_step_m=SLIDE_STEP_M,
              wall_clear_m=WALL_CLEAR_M, pad_clear_m=PAD_CLEAR_M, bridge_pad_m=BRIDGE_PAD_M,
              footprint_radius_m=round(MAST_RADIUS_M + ROAD_SETBACK_M, 4), mast_radius_m=MAST_RADIUS_M)
@@ -257,13 +260,26 @@ def plan(lap: Lap, surf: Surfaces, *, spans=(), pads=(), rules=None):
     ring = R["footprint_radius_m"]
     placed, lamps, skipped = [], [], []
 
+    def off_road(bx, bz):
+        foot = [(bx, bz)] + [(bx + ring * math.cos(2 * math.pi * k / FOOTPRINT_DIRS),
+                              bz + ring * math.sin(2 * math.pi * k / FOOTPRINT_DIRS)) for k in range(FOOTPRINT_DIRS)]
+        return not any(surf.road_at(x, z) for x, z in foot)
+
     def candidate(s, side):
+        """the post SIDE_OFF_M past the pavement edge, or further out (OUT_STEP_M steps, up to MAX_SIDE_OFF_M) until its
+        footprint is off every road surface: an engine draft's 1ROAD shoulder sheet runs on down its embankment to the
+        ground (ribbon.road_shoulder), and the author refuses a pole on it. Returns (bx, bz, road y, offset or None)"""
         p, (nx, nz), w = lap.at(s)
         off = w / 2.0 + R["side_off_m"]
-        bx, bz = p[0] + nx * side * off, p[2] + nz * side * off
-        return bx, bz, p[1]
+        while off <= w / 2.0 + R["max_side_off_m"] + 1e-9:
+            bx, bz = p[0] + nx * side * off, p[2] + nz * side * off
+            if off_road(bx, bz):
+                return bx, bz, p[1], off - w / 2.0
+            off += OUT_STEP_M
+        off = w / 2.0 + R["side_off_m"]
+        return p[0] + nx * side * off, p[2] + nz * side * off, p[1], None
 
-    def why_blocked(s, side, bx, bz, road_y):
+    def why_blocked(s, side, bx, bz, road_y, off):
         why = []
         for a, b in spans:
             if a - R["bridge_pad_m"] <= s <= b + R["bridge_pad_m"]:
@@ -272,9 +288,7 @@ def plan(lap: Lap, surf: Surfaces, *, spans=(), pads=(), rules=None):
             if (px - bx) ** 2 + (pz - bz) ** 2 < R["min_gap_m"] ** 2:
                 why.append("gap")
                 break
-        foot = [(bx, bz)] + [(bx + ring * math.cos(2 * math.pi * k / FOOTPRINT_DIRS),
-                              bz + ring * math.sin(2 * math.pi * k / FOOTPRINT_DIRS)) for k in range(FOOTPRINT_DIRS)]
-        if any(surf.road_at(x, z) for x, z in foot):
+        if off is None:
             why.append("road")
         g = surf.ground_y(bx, bz)
         if g is None:
@@ -288,7 +302,7 @@ def plan(lap: Lap, surf: Surfaces, *, spans=(), pads=(), rules=None):
                 why.append(f"pad:{pid}")
         return why
 
-    def place(s, side, bx, bz):
+    def place(s, side, bx, bz, off):
         k = lap.nearest_vertex(bx, bz)
         c = lap.pts[k]
         dx, dz = c[0] - bx, c[2] - bz
@@ -299,6 +313,7 @@ def plan(lap: Lap, surf: Surfaces, *, spans=(), pads=(), rules=None):
         lamps.append({"head": [round(hx, 3), round(g + R["head_over_ground_m"], 3), round(hz, 3)],
                       "base_xz": [round(bx, 3), round(bz, 3)], "roadward_xz": [round(rx, 5), round(rz, 5)],
                       "vertex": k, "station_m": round(s, 1), "side": "L" if side > 0 else "R",
+                      "off_edge_m": round(off, 2),
                       "ground_y": round(g, 3), "road_y": round(c[1], 3)})
         placed.append((bx, bz))
 
@@ -311,10 +326,13 @@ def plan(lap: Lap, surf: Surfaces, *, spans=(), pads=(), rules=None):
                     ss = s + du
                     if ss <= 0.0 or ss >= lap.length:
                         continue
-                    bx, bz, ry = candidate(ss, sd)
-                    why = why_blocked(ss, sd, bx, bz, ry)
+                    if any(a - R["bridge_pad_m"] <= ss <= b + R["bridge_pad_m"] for a, b in spans):
+                        why = ["deck"]
+                    else:
+                        bx, bz, ry, off = candidate(ss, sd)
+                        why = why_blocked(ss, sd, bx, bz, ry, off)
                     if not why:
-                        done = (ss, sd, bx, bz)
+                        done = (ss, sd, bx, bz, off)
                         break
                     reasons.append(why)
                     if why == ["deck"]:
@@ -388,7 +406,7 @@ def run(project, plot=None):
         print("[lamps_plan] scenery.streetlights.planner is not \"engine_draft\": nothing planned (an assembler track "
               "writes its own data/lights.local.json)")
         return None
-    rules = {k: float(sl[k]) for k in ("spacing_m", "min_gap_m", "side_off_m") if k in sl}
+    rules = {k: float(sl[k]) for k in ("spacing_m", "min_gap_m", "side_off_m", "max_side_off_m") if k in sl}
     global MAST_RADIUS_M
     MAST_RADIUS_M = _mast_radius()
     lap, surf, spans, pads, counts = load(project)

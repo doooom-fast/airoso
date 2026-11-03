@@ -1,4 +1,4 @@
-"""Ledger 0070 D-pads — route.padded_corners: an authored junction pad owns a corner's pavement, so
+"""Ledger 0070 D — route.corner_flare_off: a corner an authored junction pad owns (or a slip merge), where
 scripts/gps/widths_from_osm.detect_turn_corners sweeps no corner flare there (opt-in; absent = byte-identical)."""
 from __future__ import annotations
 
@@ -28,15 +28,15 @@ def _corner_world():
     return cl, ways, corner
 
 
-def test_a_corner_flares_unless_padded():
+def test_a_corner_flares_unless_declared_off():
     cl, ways, corner = _corner_world()
     base = W.detect_turn_corners(ways, cl)
     assert len(base) == 1 and abs(base[0]["idx"] - 50) <= 6, base
-    # padded at the corner node: no flare
-    assert W.detect_turn_corners(ways, cl, padded=[(corner[0], corner[1], 30.0)]) == []
+    # declared at the corner node: no flare
+    assert W.detect_turn_corners(ways, cl, flare_off=[(corner[0], corner[1], 30.0)]) == []
     # a pad elsewhere (200 m away) leaves this corner flared exactly as before
     far = (corner[0] + _dlon(200.0), corner[1])
-    assert W.detect_turn_corners(ways, cl, padded=[(far[0], far[1], 30.0)]) == base
+    assert W.detect_turn_corners(ways, cl, flare_off=[(far[0], far[1], 30.0)]) == base
     # empty / None: byte-identical
-    assert W.detect_turn_corners(ways, cl, padded=[]) == base
-    assert W.detect_turn_corners(ways, cl, padded=None) == base
+    assert W.detect_turn_corners(ways, cl, flare_off=[]) == base
+    assert W.detect_turn_corners(ways, cl, flare_off=None) == base

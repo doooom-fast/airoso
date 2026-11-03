@@ -329,12 +329,12 @@ def detect_junctions(ways: list[dict], cl: list[Vertex], *, near_m: float = 16.0
     return out
 
 
-PADDED_RADIUS_M = 30.0   # [invented] route.padded_corners' default reach: a flare whose vertex is this near the corner node
+FLARE_OFF_RADIUS_M = 30.0   # [invented] route.corner_flare_off's default reach: a flare this near the declared node is off
 
 
 def detect_turn_corners(ways: list[dict], cl: list[Vertex], *, profile: str = "urban",
                         kink_deg: float = 45.0, near_m: float = 16.0,
-                        padded: list | None = None) -> list[dict]:
+                        flare_off: list | None = None) -> list[dict]:
     """Corners where the LAP ITSELF turns street-to-street hard — junction-grade pavement
     regardless of road class. detect_junctions gates on >=2 ARTERIAL ways, which misses a
     minor-street corner mouth entirely (Kevin: "a corner at the bottom of the hill that is
@@ -343,9 +343,11 @@ def detect_turn_corners(ways: list[dict], cl: list[Vertex], *, profile: str = "u
     is a paved corner — flare it like an intersection. Mountain hairpins never trigger:
     they are one way bending back on itself, not two ways sharing a node.
 
-    ``padded`` (ledger 0070 D-pads, opt-in per track: route.padded_corners): [(lon, lat, radius_m)] — a corner whose
-    vertex lies within radius_m of one is NOT flared: an authored junction pad owns that pavement (REALISM §8), and a
-    flare swept under it is a second, overlapping surface. Absent or empty: byte-identical to before."""
+    ``flare_off`` (ledger 0070 D, opt-in per track: route.corner_flare_off): [(lon, lat, radius_m)] — a corner whose
+    vertex lies within radius_m of one is NOT flared. Two reasons a track declares one: an authored junction pad owns
+    that pavement (REALISM §8: a flare swept under it is a second, overlapping surface), or the "corner" is a slip
+    lane's merge, which has no crossing pavement to stand for (Sand Creek's 56th slip, ledgers 0073 / 0070).
+    Absent or empty: byte-identical to before."""
     from collections import defaultdict
     lat0 = sum(p[1] for p in cl) / len(cl)
     kx = 111320.0 * math.cos(math.radians(lat0)); ky = 110540.0
@@ -387,8 +389,8 @@ def detect_turn_corners(ways: list[dict], cl: list[Vertex], *, profile: str = "u
             px, pz = xs[i], zs[i]
             near = [ws for (qx, qz), ws in shared if (qx - px) ** 2 + (qz - pz) ** 2 <= near_m * near_m]
             if near:
-                if any((lo * kx - px) ** 2 + (la * ky - pz) ** 2 <= r * r for lo, la, r in (padded or ())):
-                    i = j1 + 5  # a padded corner: the pad is its pavement, no flare (route.padded_corners)
+                if any((lo * kx - px) ** 2 + (la * ky - pz) ** 2 <= r * r for lo, la, r in (flare_off or ())):
+                    i = j1 + 5  # a declared corner: no flare (route.corner_flare_off)
                     continue
                 wset = set().union(*near)
                 two = sorted((pavement_width(ways[w], profile) for w in wset), reverse=True)[:2]
@@ -500,20 +502,21 @@ def build(project_dir: str | Path, *, allow_stale: bool = False, max_age_days: f
     widths_base_cl = widths_cl[:]        # pre-flare: the street's own line (sidewalks follow THIS)
     lanes_cl = [lanes_tag(ways[wi] if wi >= 0 else None) for wi in idx]   # B2: the paint's lane count per vertex
     junctions = detect_junctions(ways, cl, profile=profile)
-    # ledger 0070 D-pads (opt-in): route.padded_corners [{"name", "at": [lat, lon], "radius_m"}] — an authored junction
-    # pad owns the pavement there, so neither flare is swept under it (the corner's, nor a junction node's inside it)
-    padded = [(float(c["at"][1]), float(c["at"][0]), float(c.get("radius_m", PADDED_RADIUS_M)))
-              for c in (route.get("padded_corners") or [])]
-    if padded:
+    # ledger 0070 D (opt-in): route.corner_flare_off [{"name", "at": [lat, lon], "radius_m", "why"}] — an authored
+    # junction pad owns the pavement there, or it is a slip's merge: neither flare is swept (the corner's, nor a junction
+    # node's inside the radius)
+    flare_off = [(float(c["at"][1]), float(c["at"][0]), float(c.get("radius_m", FLARE_OFF_RADIUS_M)))
+              for c in (route.get("corner_flare_off") or [])]
+    if flare_off:
         _lat0p = sum(p[1] for p in cl) / len(cl)
         _kxp = 111320.0 * math.cos(math.radians(_lat0p)); _kyp = 110540.0
         _n0 = len(junctions)
         junctions = [j for j in junctions
                      if not any(((cl[j["idx"]][0] - lo) * _kxp) ** 2 + ((cl[j["idx"]][1] - la) * _kyp) ** 2 <= r * r
-                                for lo, la, r in padded)]
-        print(f"  [widths_from_osm] route.padded_corners: {len(padded)} padded corner(s) — no corner flare there, "
+                                for lo, la, r in flare_off)]
+        print(f"  [widths_from_osm] route.corner_flare_off: {len(flare_off)} corner(s) — no corner flare there, "
               f"{_n0 - len(junctions)} junction flare(s) inside them dropped")
-    corners = detect_turn_corners(ways, cl, profile=profile, padded=padded)
+    corners = detect_turn_corners(ways, cl, profile=profile, flare_off=flare_off)
     if corners:
         print(f"  [widths_from_osm] {len(corners)} hard route corners flared to junction grade "
               f"(sizes {[c['size'] for c in corners]})")

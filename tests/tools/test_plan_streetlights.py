@@ -86,10 +86,16 @@ def test_no_footprint_on_a_road_a_side_street_pushes_the_post_along():
 
 
 def test_the_shoulder_sheet_is_road_too():
-    # a 4 m shoulder sheet reaches past SIDE_OFF_M's assumption: every candidate is on it -> skipped, reason "road"
+    # a 5 m shoulder sheet (an embankment face) reaches past SIDE_OFF_M: the post steps out until its footprint is off it
     res = PS.plan(_lap(), _world(shoulder=5.0))
-    assert not res["lamps"]
-    assert res["skipped"] and all("road" in s["why"] for s in res["skipped"])
+    assert res["lamps"] and not res["skipped"]
+    for l in res["lamps"]:
+        assert 5.0 + PS.MAST_RADIUS_M + PS.ROAD_SETBACK_M <= l["off_edge_m"] <= 5.0 + 0.584 + PS.OUT_STEP_M + 1e-6, l
+        assert abs(abs(l["base_xz"][1]) - (W / 2 + l["off_edge_m"])) < 1e-6
+    # a sheet wider than MAX_SIDE_OFF_M: every candidate is on it -> skipped, reason "road"
+    res2 = PS.plan(_lap(), _world(shoulder=PS.MAX_SIDE_OFF_M + 1.0))
+    assert not res2["lamps"]
+    assert res2["skipped"] and all("road" in s["why"] for s in res2["skipped"])
 
 
 def test_wall_clearance():

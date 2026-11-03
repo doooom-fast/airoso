@@ -277,10 +277,16 @@ Three engine defects stack: a double-sided stamp that the underlay's `validate()
 
 ## Needs Kevin's decision
 
+All four answered. Kevin, 2026-11-03: "sand creek: same lamps as lake murray, race curbs, no sidewalks, authored pad junctions". Question 2 was answered first: "Re-source from OSM" (ledger 0073).
+
 1. **"Textured curbing"**: worn race kerbs at Sand Creek's race corners (needs a race corridor; also brings the Lake Murray K-rail), or concrete street curbs (reverses "no sidewalks", 2026-07-26), or both?
+   **Answered (2026-11-03): "race curbs, no sidewalks".** Race kerbs; no street curbs, so the 2026-07-26 rule stands.
 2. **The line**: re-source from OSM (L1; it moves every station, absorbs or replaces 0068's E 45th nudge, and re-keys the 0066 camber), or keep Google's route and only smooth it?
+   **Answered (2026-11-03): "Re-source from OSM".** Done in 0.33.0 (ledger 0073).
 3. **The junction corners** (42 m at Dahlia → 56th, 34 m at Sand Creek Dr → Quebec, 33 m at Colorado → 50th): keep engine flares slew-limited (B3), or author junction pads in Blender as Lake Murray does?
+   **Answered (2026-11-03): "authored pad junctions".** Pads, not engine flares.
 4. **Lamps**: which fixture? Commerce City's real one, researched, or Lake Murray's `led_cobra` as a stand-in?
+   **Answered (2026-11-03): "same lamps as lake murray".** Lake Murray's current fixture, `led_cobra` (ledger 0056).
 
 ## Fixed (B1, B2): Sand Creek 0.34.0, built and gated on the PC, NOT installed (2026-11-03)
 

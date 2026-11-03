@@ -2,7 +2,7 @@
   "archetype": "race_circuit",
   "name": "Aspen Motorsports Park",
   "slug": "aspen_motorsports_park",
-  "version": "0.67.0",
+  "version": "0.67.1",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 9.0,
@@ -65,7 +65,9 @@
   "road_profile": {
     "_doc": "Flat road course — no banking. dips/cambers intentionally empty; deck follows bare-earth 3DEP.",
     "dips": [],
-    "cambers": []
+    "cambers": [],
+    "fold_pads": false,
+    "_fold_pads_doc": "2026-11-03 (ledger 0074): the engine reads the 160 deg final hairpin (apex at lap 1,573 m) as a fold and, its +-60 m chord grade reading 0.9 %, laid a paved disc and a w/2+16 = 20.5 m flat zone that snapped every pavement vertex to the apex height. The corner itself climbs ~2.4 % (3DEP), so the zone rims were steps: +0.23 m at the entry and -0.20 m at the exit inside one 3 m segment, all 17 severe steps at 1,551-1,557 and 1,597-1,599 m. The ribbon sweeps this corner without folding (R 12.6 m at 9 m wide), so no pad: the engine's +-40 m fold plateau stays."
   },
   "route": {
     "start_at": [

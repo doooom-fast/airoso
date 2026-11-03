@@ -1,4 +1,4 @@
-"""road_profile.fold_pads: false drops the fold pad and its flat zone, and nothing else (ledger 0074).
+"""Fold pads are OFF by default; road_profile.fold_pads: true opts in (ledger 0074). Off drops the pad and its flat zone, and nothing else.
 
 At a fold apex build_mesh plateaus the profile over +-40 m and, where the +-60 m chord grade is under 2.5 %, lays a
 paved disc and a w/2 + 16 m flat zone that snaps every pavement vertex inside it to the apex height. On Aspen's final
@@ -27,13 +27,23 @@ def _for_loops_over(fn: ast.FunctionDef, target: str) -> list[ast.For]:
             and n.target.id == target]
 
 
-def test_switch_defaults_on():
+def test_switch_defaults_off():
     from scripts.geometry.build_mesh import fold_pads_enabled
-    assert fold_pads_enabled({}) is True
-    assert fold_pads_enabled({"road_profile": None}) is True
-    assert fold_pads_enabled({"road_profile": {}}) is True
-    assert fold_pads_enabled({"road_profile": {"fold_pads": True}}) is True
+    assert fold_pads_enabled({}) is False
+    assert fold_pads_enabled({"road_profile": None}) is False
+    assert fold_pads_enabled({"road_profile": {}}) is False
     assert fold_pads_enabled({"road_profile": {"fold_pads": False}}) is False
+    # false is the same as the default
+    assert fold_pads_enabled({"road_profile": {"fold_pads": False}}) == fold_pads_enabled({})
+    assert fold_pads_enabled({"road_profile": {"fold_pads": True}}) is True
+
+
+def test_on_path_is_the_old_path():
+    # with the switch on, the selection walks every apex and the disc + flat-zone code is the old code
+    src = ast.unparse(_build_fn())
+    assert "_apexes if _pads_on else []" in src
+    assert "abs(centerline[_i1d][1] - centerline[_i0d][1]) / _run_m < 0.025" in src
+    assert "_cy + 0.028" in src and "_NS = 28" in src
 
 
 def test_only_the_disc_selection_is_gated():

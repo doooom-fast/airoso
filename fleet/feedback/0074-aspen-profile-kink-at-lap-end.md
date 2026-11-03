@@ -99,3 +99,23 @@ owed. Doing it would change those tracks' bytes.
 A PC build of Aspen 0.67.1 through the chain (`tools/ship_track.sh aspen`). It should show severe 0 on the built
 kn5's gate OBJ, the build log's `[fold pads] discs at 0/1 apexes ...; road_profile.fold_pads false` line, and the
 rest of drive_test no worse than above. Then Kevin's drive through the final hairpin. Status moves on after that.
+
+## Default flipped (2026-11-03)
+
+Fold pads are now OFF unless a track sets `road_profile.fold_pads: true` (`fold_pads_enabled` returns True only for an
+explicit `true`). Aspen keeps its explicit `false`; the +-40 m fold levelling is untouched.
+
+Why the pads existed: build_mesh's own comments (absorbed from k10-colorado rc14 in 41d3d7e, 2026-07-23; older history
+is not in this clone) say the swept ribbon's fans double-cover at a >105 deg fold with pleated heights, so a flat paved
+disc 1 cm proud became the one drivable plane there. Discs were kept only where the +-60 m grade is under 2.5 %
+("valley junctions: rims meet the plateau cleanly; the U-complex bin vanished with discs"). No ledger entry bought
+them, and no track config relies on them (nothing sets `fold_pads` but Aspen).
+
+Why off: every track whose build laid a disc stepped at its rim. Aspen 1/1 apexes (17 severe), Grand Junction 4/4
+(41 severe). Tracks without discs were clean or stepped for other reasons.
+
+Census of the latest installed builds, "[fold pads] discs at N/M": Nevada 0/0, High Plains 0/0, Milford 0/0, Sand Creek
+0/0, Pueblo 0/0, Pikes Peak 0/0, LM v5-bare 0/0 (it uses `route.fold_treatment "pinch"`). Aspen opts out. So no
+installed track's build changes. Tracks that do change: Grand Junction, Lookout Lariat (1/10 apexes) and future drafts;
+Under the Dragon (one pad apex at 2,498 m, above) also loses its pad on its next build. No track was given an
+explicit `true`.

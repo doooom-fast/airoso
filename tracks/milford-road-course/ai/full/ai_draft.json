@@ -5,14 +5,14 @@
  "race_furniture": false,
  "lane_offset": true,
  "frame": "kn5 frame (median dist to centerline.local: engine 50.0 m / kn5 0.0 m)",
- "points": 3272,
+ "points": 3268,
  "spacing_m": 1.5,
- "lap_m": 4908.5,
- "lap_s_est": 139.4,
- "offset_points": 21,
- "offset_max_m": 0.78,
+ "lap_m": 4901.9,
+ "lap_s_est": 141.8,
+ "offset_points": 13,
+ "offset_max_m": 0.836,
  "clearance": {
-  "points": 3272,
+  "points": 3268,
   "unmatched": 0,
   "divider_stations": 0,
   "right_side": 0,
@@ -21,8 +21,8 @@
   "divider_too_close": 0,
   "edge_too_close": 0,
   "min_divider_clear_m": null,
-  "min_edge_clear_m": 4.485546594936496,
-  "max_lat_m": 0.791284829732928,
+  "min_edge_clear_m": 4.491741248450545,
+  "max_lat_m": 0.8442610083817526,
   "right_side_frac": null,
   "ok": true
  },
@@ -34,25 +34,14 @@
   "fillets": [
    {
     "xz": [
-     -237.84,
-     -114.54
+     -239.13,
+     -110.28
     ],
     "radius_m": 12.6,
     "floor_m": 12.0,
     "lane": "comfort",
-    "window_pts": 16,
-    "turn_deg": 92.7
-   },
-   {
-    "xz": [
-     -162.43,
-     399.4
-    ],
-    "radius_m": 12.6,
-    "floor_m": 12.0,
-    "lane": "comfort",
-    "window_pts": 8,
-    "turn_deg": -36.3
+    "window_pts": 14,
+    "turn_deg": 80.2
    }
   ],
   "smoothing": [
@@ -73,30 +62,30 @@
   ],
   "start": {
    "xz": [
-    341.888,
-    -448.106
+    341.329,
+    -448.75
    ],
-   "dist_m": 0.005,
+   "dist_m": 0.006,
    "requested_xz": [
-    341.892,
-    -448.109
+    341.334,
+    -448.753
    ],
    "source": "dummies.json AC_TIME_0 midpoint",
    "index": 0,
-   "grid_index": 3252,
+   "grid_index": 3248,
    "grid_behind_line_m": 30.0,
-   "grid_off_line_m": 0.01
+   "grid_off_line_m": 0.0
   },
-  "min_radius_m": 12.58,
-  "min_radius_at": 1490,
+  "min_radius_m": 12.57,
+  "min_radius_at": 1491,
   "radius_below_floor": 0,
   "max_turn_deg": 6.8,
   "turns_over_limit": 0,
   "turns_over_limit_road_tight": 0,
-  "max_lateral_jump_m": 0.214,
+  "max_lateral_jump_m": 0.248,
   "backward_steps": 0,
   "self_crossings": 0,
   "min_speed_kmh": 50.6,
-  "min_speed_at": 1488
+  "min_speed_at": 1489
  }
 }

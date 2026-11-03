@@ -246,6 +246,14 @@ BRIDGE_MIN_H_M = 3.5       # road must ride this far above bare earth to earn a 
 BRIDGE_MIN_SPAN_M = 12.0   # ...over at least this long a run (a real span, not a one-vertex bump)
 
 
+def bridge_detector_on(cfg_raw: dict) -> bool:
+    """Whether the height detector may mint bridge spans. Default on; ``bridges.detector: false`` turns it off for a track
+    whose decks are all declared (ledger 0048, the Lariat: on real 3DEP it minted 24,374-24,835 m from the 19th St lid
+    along 461 m of the street's +5.7 % climb, a level 'deck + piers, no fill' where the road climbs on the ground). A
+    declared deck is held by scripts/elevation/road_profile.py and read by the prep and the gates from capture.bridges."""
+    return (cfg_raw.get("bridges") or {}).get("detector", True) is not False
+
+
 def seam_rule_spans(spans: list[tuple[float, float]], st: list[float], high: list[bool],
                     closed: bool) -> tuple[list[tuple[float, float]], list[tuple[float, float]]]:
     """L13 for a detected span list: on a CLOSED lap a span may not end on the closing vertex unless it continues
@@ -986,6 +994,11 @@ def build(project_dir: str | Path) -> dict:
             raw_ground = (_gst, [z - elev0 for z in in_local_order(local, _ej["z_raw_m"])])
     bridge_of = _bridge_detector(centerline, natural_grid, raw_ground=raw_ground, paved_zones=_fillet_zones,
                                  seam_rule=bool((cfg_raw.get("bridges") or {}).get("l13_seam_rule", False)))
+    if not bridge_detector_on(cfg_raw):    # bridges.detector false: every deck is declared (ledger 0048)
+        if getattr(_bridge_detector, "last_spans", []):
+            print(f"  bridge spans: detector off (bridges.detector false) - dropped {_bridge_detector.last_spans}")
+        _bridge_detector.last_spans = []
+        bridge_of = lambda station_m: False   # noqa: E731
     # persist AUTO-detected spans for the kn5 gate: the builder exempts them from fill/pins,
     # so the gate must exempt the same stations (declared-only exemption read auto bridge
     # valleys as 7 m of 'road hover' and wrecked the deck-vs-mountain metric).

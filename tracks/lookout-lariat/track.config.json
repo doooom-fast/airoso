@@ -500,7 +500,7 @@
   },
   "bridges": {
     "_doc": "P2 step 5 (V3-PLAN; ledger 0048). Decks on the lap are DECLARED from evidence, never left to a detector. scripts/elevation/road_profile.py finds each declared deck's stretch of the lap over its footprint ways (each OSM way's centreline buffered by half its pavement width, route.width_profile), adds abutment_m each side, holds the road straight across it in the raw 3DEP profile before smoothing, writes data/bridge.spans.json, and with --write records it as capture.bridges (local stations), the engine's declared-span key.",
-    "l13_seam_rule": true,
+    "l13_seam_rule": true, "detector": false, "_detector_doc": "2026-11-03, the first Windows draft (ledger 0048 step 1): on real 3DEP the height detector minted 24,374-24,835 m, from the 19th St lid along 461 m of the street's +5.7 % climb - the suspect span the ledger named. Every deck on this lap is declared (bridges.declared -> capture.bridges); the detector is off so no undeclared deck is laid.",
     "_l13_seam_rule_doc": "Opt-in for scripts/geometry/build_mesh.py's height detector (_bridge_detector, the one that minted July's [24,278-24,803]): on a closed lap a run that reaches the closing vertex while vertex 0 is not on a span is a wrap artefact (L13) and is dropped. Other tracks keep the detector as it was. The V3 Lariat does not run build_mesh; the prep's OSM-way detector (scripts/ac/build_kn5_loop.py detect_bridge_spans) gets the same rule unconditionally.",
     "declared": [
       {

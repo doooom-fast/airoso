@@ -121,6 +121,84 @@ def write_obj(path: Path, mtl_name: str, groups: list[tuple[str, str, dict]]) ->
     return nv, nf
 
 
+# The stone on 1WALL_PARA_stone (stone_tan.png) tiles once per 1.25 m, the scale the RETWALL_face / ROCKCUT_face
+# skins already use. The prep's top-down planar_uv skips 1WALL_PARA (ledger 0071), so these UVs are what AC renders.
+STONE_TILE_M = 1.25
+
+
+def stone_lip_box(mesh: dict, start: Vertex, end: Vertex, lateral: tuple[float, float],
+                  height: float = 0.7, tile: float = STONE_TILE_M) -> None:
+    """Append one measured-guard stone lip (``1WALL_PARA_stone``, ledger 0025) to ``mesh``: a box whose inner
+    bottom edge runs ``start`` -> ``end`` (local x, y, z), ``lateral`` = (lx, lz) from its inner (road) face to
+    its outer face, ``height`` tall. Ends open, as before.
+
+    Wound OUTWARD on either side of the road (ledger 0071). The old inline box used one winding for both sides;
+    with lateral = n * thickness and n = (-tz * side, tx * side) the +1 side came out inside out (Sand Creek's
+    PC-built loop.blend: 141 of its 296 lips, 282 of 592 top faces pointing down; tools/author_bespoke_blend.py
+    guardrail reads lip tops as faces whose normal points up). UVs run u = metres along the lip and v = metres up
+    on the side faces; the top has its own four vertices so its v runs across the lip instead of collapsing."""
+    sx, sy, sz = start
+    ex, ey, ez = end
+    lx, lz = lateral
+    run = math.hypot(ex - sx, ez - sz)
+    th = math.hypot(lx, lz)
+    b = len(mesh["vertices"])
+    # 0 start/inner/foot 1 start/outer/foot 2 start/inner/top 3 start/outer/top, 4..7 the same at the end
+    for (qx, qy, qz), s in (((sx, sy, sz), 0.0), ((ex, ey, ez), run)):
+        for dy in (0.0, height):
+            mesh["vertices"].append((qx, qy + dy, qz))
+            mesh["vertices"].append((qx + lx, qy + dy, qz + lz))
+            mesh["uvs"].append((s / tile, dy / tile))
+            mesh["uvs"].append((s / tile, dy / tile))
+    # 8 start/inner 9 start/outer 10 end/inner 11 end/outer: the top's own vertices
+    for (qx, qy, qz), s in (((sx, sy, sz), 0.0), ((ex, ey, ez), run)):
+        mesh["vertices"].append((qx, qy + height, qz))
+        mesh["vertices"].append((qx + lx, qy + height, qz + lz))
+        mesh["uvs"].append((s / tile, 0.0))
+        mesh["uvs"].append((s / tile, th / tile))
+    tris = ((0, 4, 6), (0, 6, 2),        # inner face (road side)
+            (1, 7, 5), (1, 3, 7),        # outer face
+            (8, 10, 11), (8, 11, 9),     # top: two triangles, in order (the bespoke guardrail reads them so)
+            (0, 5, 4), (0, 1, 5))        # foot
+    # the inner face as wound points along (end - start) x up = (-dz, 0, dx); it must point AWAY from lateral
+    flip = (-(ez - sz) * lx + (ex - sx) * lz) > 0.0
+    for p, q, r in tris:
+        mesh["tris"].append((b + p, b + r, b + q) if flip else (b + p, b + q, b + r))
+
+
+def stone_parapet_run(mesh: dict, rows: list[tuple[Vertex, tuple[float, float], float]]) -> None:
+    """Append one #17 stone parapet run to ``mesh``: ``rows`` = [(verge (x, y, z), n (nx, nz) pointing away from
+    the road, arc m)], in arc order. 0.4 m wide, from 0.15 m below the verge to 0.5 m above it, end caps closed.
+
+    Wound OUTWARD on either side of the road (ledger 0071): the old inline sweep used one winding for both sides,
+    and with the side-signed n of ribbon.py's sections the -1 side came out inside out (and its start cap faced
+    into the run on both sides)."""
+    if len(rows) < 2:
+        return
+    b = len(mesh["vertices"])
+    for (vx, vy, vz), (nx, nz), arc in rows:
+        for off, hy in ((-0.2, -0.15), (-0.2, 0.5), (0.2, 0.5), (0.2, -0.15)):
+            mesh["vertices"].append((vx + nx * off, vy + hy, vz + nz * off))
+            mesh["uvs"].append((arc / 0.75, (hy + 0.15) / 0.65))
+    tris = []
+    for q in range(len(rows) - 1):
+        r0, r1 = b + q * 4, b + (q + 1) * 4
+        for f0, f1 in ((0, 1), (1, 2), (2, 3)):   # inner face, cap, outer face
+            tris.append((r0 + f0, r0 + f1, r1 + f1))
+            tris.append((r0 + f0, r1 + f1, r1 + f0))
+    # end caps, wound opposite ways: the old sweep wound both alike, so one of the two always faced into the run
+    tris += [(b, b + 2, b + 1), (b, b + 3, b + 2)]
+    e0 = b + (len(rows) - 1) * 4
+    tris += [(e0, e0 + 1, e0 + 2), (e0, e0 + 2, e0 + 3)]
+    # the inner face as wound points along up x (next - this) = (dz, 0, -dx); it must point AWAY from n
+    vote = 0.0
+    for ((ax, _, az), (nx, nz), _), ((cx, _, cz), _, _) in zip(rows, rows[1:]):
+        vote += (cz - az) * nx - (cx - ax) * nz
+    if vote > 0.0:
+        tris = [(p, r, q) for p, q, r in tris]
+    mesh["tris"].extend(tris)
+
+
 def _chunk_suffix(i: int) -> str:
     """Chunk suffix: a, b, ... z, aa, ab, ... — spreadsheet-column style.
 
@@ -2479,26 +2557,11 @@ def build(project_dir: str | Path) -> dict:
         for _run in _runs17(lambda sc: (not sc["cutting"]) and sc["drop"] > 1.2,
                             exit_flag=lambda sc: (not sc["cutting"]) and sc["drop"] > 0.9,
                             min_run=10, max_gap=4):
-            _bs17 = len(para_mesh["vertices"])
             # smooth the cap line: a parapet is coursed masonry, its top runs fair, not jittery
             _vys = [_secs[_q]["verge"][1] for _q in _run]
             _vys = [sum(_vys[max(0, k - 2):k + 3]) / len(_vys[max(0, k - 2):k + 3]) for k in range(len(_vys))]
-            for _qi, _q in enumerate(_run):
-                _sc = _secs[_q]
-                _vx, _vy, _vz = _sc["verge"][0], _vys[_qi], _sc["verge"][2]
-                _nx17, _nz17 = _sc["n"]
-                for _off17, _hy17 in ((-0.2, -0.15), (-0.2, 0.5), (0.2, 0.5), (0.2, -0.15)):
-                    para_mesh["vertices"].append((_vx + _nx17 * _off17, _vy + _hy17, _vz + _nz17 * _off17))
-                    para_mesh["uvs"].append((_sc["arc"] / 0.75, (_hy17 + 0.15) / 0.65))
-            for _q in range(len(_run) - 1):
-                _r0, _r1 = _bs17 + _q * 4, _bs17 + (_q + 1) * 4
-                for _f0, _f1 in ((0, 1), (1, 2), (2, 3)):   # inner face, cap, outer face
-                    para_mesh["tris"].append((_r0 + _f0, _r0 + _f1, _r1 + _f1))
-                    para_mesh["tris"].append((_r0 + _f0, _r1 + _f1, _r1 + _f0))
-            # end caps
-            for _e0 in (_bs17, _bs17 + (len(_run) - 1) * 4):
-                para_mesh["tris"].append((_e0, _e0 + 1, _e0 + 2))
-                para_mesh["tris"].append((_e0, _e0 + 2, _e0 + 3))
+            stone_parapet_run(para_mesh, [((_secs[_q]["verge"][0], _vys[_qi], _secs[_q]["verge"][2]),
+                                           _secs[_q]["n"], _secs[_q]["arc"]) for _qi, _q in enumerate(_run)])
         # face skins: quad strip verge->meet pushed 5 cm out, stone on walls / granite on rock cuts
         for _skin, _flag, _xflag in (
                 (wallskin, lambda sc: sc.get("wall"), lambda sc: (not sc["cutting"]) and sc["drop"] > 3.2),
@@ -2645,6 +2708,7 @@ def build(project_dir: str | Path) -> dict:
         # Same guards as before: span-max offsets, footprint-min seating, 3.5 m layer window,
         # exact pavement rejection (a segment with either end over pavement breaks the strip).
         _FH = 1.8
+        from scripts.environment import props as _props_f
         # SAMPLING-CONSISTENCY LAW: seat fence bottoms on the RENDERED grass tris, not the coarse
         # grid — grid_xyz chords over a gully ~4 m above the fine spliced surface that ships
         # (audit E: posts floating +3.7 m at (-1388,-3140) while the grass dips beneath them).
@@ -2728,22 +2792,25 @@ def build(project_dir: str | Path) -> dict:
                         if _sy is None or abs(_sy - _cy) > 6.0:   # layer window vs own chord
                             _sy = _cy
                         _sa = _pa0 + _seg * _t
-                        _b = len(fence_wood["vertices"])
-                        for vx, vy, vz in ((_lx, _ly, _lz), (_sx, _sy, _sz),
-                                           (_sx, _sy + _FH, _sz), (_lx, _ly + _FH, _lz)):
-                            fence_wood["vertices"].append((vx, vy, vz))
                         _u0, _u1 = _la / 3.0, _sa / 3.0
-                        fence_wood["uvs"].extend([(_u0, 0), (_u1, 0), (_u1, 1), (_u0, 1)])
-                        fence_wood["tris"].extend([(_b, _b + 1, _b + 2), (_b, _b + 2, _b + 3),
-                                                   (_b, _b + 2, _b + 1), (_b, _b + 3, _b + 2)])
+                        # double-sided on SEPARATE vertices (props.append_sheet): the back faces
+                        # used to share the front's four, the underlay's validate() deleted one of
+                        # each pair, and the fence shipped single-sided (ledger 0071)
+                        _props_f.append_sheet(fence_wood,
+                                              [(_lx, _ly, _lz), (_sx, _sy, _sz), (_sx, _sy + _FH, _sz), (_lx, _ly + _FH, _lz)],
+                                              [(_u0, 0), (_u1, 0), (_u1, 1), (_u0, 1)],
+                                              [(0, 1, 2), (0, 2, 3)])
                         _lx, _ly, _lz, _la = _sx, _sy, _sz, _sa
                 _prev = (_fx, _gyF, _fz, _arcF)
     if cfg_raw.get("props", {}).get("concrete_barriers"):
         # Kevin's 4 m concrete barrier modules replace the procedural swept jersey — real geometry,
         # instanced along the SAME warning-barrier runs, shipped physical as 1WALL_* (collidable).
         from scripts.environment import props as props_mod
+        # keep_seams: one vertex per (v, vt) — the module's unwrap ships, and the prep's planar_uv
+        # skips 1WALL_barrier (ledger 0071), so these UVs are what AC renders
         _mod = props_mod.load_module(Path(cfg_raw["props"].get(
-            "barrier_obj", str(Path(__file__).resolve().parents[2] / "assets" / "models" / "concrete_barrier_4m.obj"))))
+            "barrier_obj", str(Path(__file__).resolve().parents[2] / "assets" / "models" / "concrete_barrier_4m.obj"))),
+            keep_seams=True)
         # edge-surface sampler: road + shoulder tri tops, so barrier bases meet the pavement bench
         from collections import defaultdict as _bdd
         _bc2: dict = _bdd(list)
@@ -2829,17 +2896,11 @@ def build(project_dir: str | Path) -> dict:
                 if _gy2 is None or abs(_gy2 - _cy2) > 4.0:
                     continue
                 _tx2, _tz2 = -math.sin(_a2), math.cos(_a2)         # tangent along the arc
-                _bb2 = len(barrier["vertices"]) if barrier.get("vertices") else 0
-                # stamp the module along the arc tangent
-                _base2 = len(_mod["vertices"])
-                _b0v = len(barrier["vertices"])
-                for _mx2, _my2, _mz2 in _mod["vertices"]:
-                    barrier["vertices"].append((_bx2 + _tx2 * _mz2 + math.cos(_a2) * _mx2,
-                                                max(_gy2, _cy2 - 0.05) + _my2,
-                                                _bz2 + _tz2 * _mz2 + math.sin(_a2) * _mx2))
-                barrier["uvs"].extend(_mod["uvs"])
-                barrier["tris"].extend((a3 + _b0v, b3 + _b0v, c3 + _b0v) for a3, b3, c3 in _mod["tris"])
-                barrier["tris"].extend((a3 + _b0v, c3 + _b0v, b3 + _b0v) for a3, b3, c3 in _mod["tris"])
+                # stamp the module along the arc tangent: each face once, wound outward
+                # (props.module_tris; ledger 0071 — the old both-windings stamp on shared
+                # vertices was halved at random by the underlay's validate())
+                props_mod.place_module(barrier, _mod, (_bx2, max(_gy2, _cy2 - 0.05), _bz2),
+                                       (math.cos(_a2), math.sin(_a2)), (_tx2, _tz2))
         barrier_spots = [_sp for _sp, _ in _line_spots]
         barrier2 = props_mod.instance_barriers(centerline, widths, barrier_spots, _mod,
                                               station_skip=lambda i: bridge_of(_stb[min(i, len(_stb) - 1)]),
@@ -3416,16 +3477,7 @@ def build(project_dir: str | Path) -> dict:
                         _ezH = _vzH + _tzH * 1.5
                         _thH = (_offH - 0.25) - _inH
                         _lxH, _lzH = _nxH * _thH, _nzH * _thH
-                        _b0H = len(para_mesh["vertices"])
-                        for (_qxH, _qyH, _qzH) in ((_sxH, _syH, _szH), (_exH, _vyH, _ezH)):
-                            for _dyH in (0.0, 0.7):
-                                para_mesh["vertices"].append((_qxH, _qyH + _dyH, _qzH))
-                                para_mesh["vertices"].append((_qxH + _lxH, _qyH + _dyH, _qzH + _lzH))
-                                para_mesh["uvs"].append((0.0, _dyH))
-                                para_mesh["uvs"].append((0.5, _dyH))
-                        for (_qaH, _qbH, _qcH) in ((0, 4, 6), (0, 6, 2), (1, 7, 5), (1, 3, 7),
-                                                   (2, 6, 7), (2, 7, 3), (0, 5, 4), (0, 1, 5)):
-                            para_mesh["tris"].append((_b0H + _qaH, _b0H + _qbH, _b0H + _qcH))
+                        stone_lip_box(para_mesh, (_sxH, _syH, _szH), (_exH, _vyH, _ezH), (_lxH, _lzH))
                         _prev_endH[_sideH] = (_exH, _vyH, _ezH)
                         _guardH += 1
                         break        # one lip per crossing: it guards every drop outboard of it

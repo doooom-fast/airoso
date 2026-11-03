@@ -67,7 +67,9 @@ def test_the_name_set_the_frame_and_one_point_to_point_layout():
         assert [lo["id"] for lo in cfg["layouts"]] == ["stage"] and cfg["layouts"][0]["name"] == name
         assert not any(lo.get("race_furniture") for lo in cfg["layouts"])
         assert "circuit" in cfg["ui_tags"] and road in cfg["ui_tags"]
-        assert cfg["version"] == "0.2.0" and cfg["_chain_doc"].startswith("2026-11-01")
+        # Dragon Tail 0.2.1 (ledger 0076: the engine's lip feet and the stage's replication read; the twins move together)
+        assert cfg["version"] == ("0.2.1" if "dragon-tail" in track else "0.2.0"), (track, cfg["version"])
+        assert cfg["_chain_doc"].startswith("2026-11-01")
 
 
 def test_tarmac_twins_share_the_gravel_geometry_and_are_marked_deprioritised():

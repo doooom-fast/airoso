@@ -14,6 +14,17 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-03 — drive_test: replication on an open stage compares each vertex with its own measurement (ledger 0076)
+
+`drive_test`'s "replication vs measured road" (reported, never gating) indexed `centerline.elevation.json`'s `z_raw_m`
+against the gate line vertex for vertex. On a point-to-point stage the gate line carries build_mesh's lead-in/out (10
+vertices, 30 m, at each end) and the elevation file does not, so vertex i was read against the road 30 m on: Dragon Tail
+(Gravel) 0.96 / 3.41 / 9.66 m (median / p95 / max), aligned 0.02 / 0.21 / 7.16 m. `pad_for_lead_in` pads the
+measurements with k Nones at each end only when the line is exactly 2k longer and its vertex k sits on the local line's
+first point; a closed lap or any equal-length line is compared exactly as before. No threshold, bypass or exclusion
+changed; no verdict can change (the metric does not gate). Proven on the Mac draft of Dragon Tail (Gravel); test
+`tests/geometry/test_lip_feet_and_stage_replication.py`.
+
 ## 2026-11-03 — BYPASS: Lake Murray 0.19.4 (the buildings rehearsal) installed red on 0.19.2's inherited keys, by Kevin's word (ledgers 0062, 0065)
 
 The chain's `--force-install` rule, applied by hand to a scratch build: `D:/k10-scratch/lm_bespoke` (rehearsal 2, `SD_BESPOKE=1`,

@@ -572,6 +572,43 @@ def finished_centerline(raw_pts: list[Vertex], cfg_raw: dict, *, mirror_x: bool,
     return centerline, dip_of, bank_at, profile_active
 
 
+LIP_HALF_LEN_M = 1.5        # a measured-guard stone lip runs this far either side of its crossing
+LIP_FOOT_STEP_M = 0.25      # a foot over a drop is pulled back toward the crossing in these steps
+LIP_FOOT_MAX_GAP_M = 0.8    # drive_test's furniture-seating rule: a 1WALL column's base within 0.8 m of the surface under it
+
+
+def lip_foot_gap(ground_at, x: float, z: float, base_y: float) -> float:
+    """How far a wall foot at (x, z) with its base at ``base_y`` stands above the surface directly beneath it,
+    read the way drive_test's FURNITURE SEATING reads a 1WALL column: the highest surface within
+    [base - 3.0, base + 2.0], else within base +- 2.5; no surface at all is floating (99.0). ``ground_at(x, z,
+    lo, hi)`` returns the highest surface height in [lo, hi] at (x, z), or None. Negative = the foot is buried."""
+    g = ground_at(x, z, base_y - 3.0, base_y + 2.0)
+    if g is None:
+        g = ground_at(x, z, base_y - 2.5, base_y + 2.5)
+    return 99.0 if g is None else base_y - g
+
+
+def lip_foot_reach(ground_at, vx: float, vz: float, tx: float, tz: float, lx: float, lz: float, base_y: float,
+                   direction: float, half_len: float = LIP_HALF_LEN_M, step: float = LIP_FOOT_STEP_M,
+                   max_gap: float = LIP_FOOT_MAX_GAP_M) -> float:
+    """How far (<= ``half_len``) a measured-guard lip can run from its crossing (vx, vz) along ``direction`` * the
+    unit tangent (tx, tz) and still stand on its support: both corners of the foot there — the inboard one and the
+    outboard one, (lx, lz) across — within ``max_gap`` of the surface under them (``lip_foot_gap``). The lip was
+    seated at the crossing only and laid flat 1.5 m either way, so where the ground falls ALONG the road's edge
+    (Dragon Tail (Gravel) s 6,645, the exit of the second switchback: 2.4 m over the lip's 3 m) one foot hung
+    1.84 m in the air and drive_test failed the stage on "floating furniture" (ledger 0076). Full length wherever
+    both feet stand (every lip that was seated before is unchanged); otherwise pulled back toward the crossing in
+    ``step`` metres, down to 0 (the lip then ends at its crossing on that side)."""
+    r = half_len
+    while r > 1e-9:
+        fx, fz = vx + tx * direction * r, vz + tz * direction * r
+        if (lip_foot_gap(ground_at, fx, fz, base_y) <= max_gap
+                and lip_foot_gap(ground_at, fx + lx, fz + lz, base_y) <= max_gap):
+            return r
+        r = round(r - step, 6)
+    return 0.0
+
+
 def build(project_dir: str | Path) -> dict:
     project_dir = Path(project_dir)
     data = project_dir / "data"
@@ -3345,6 +3382,22 @@ def build(project_dir: str | Path) -> dict:
                         _bH, _boH = _yH, _clH
             return _bH, _boH
 
+        def _ground_H(_pxH, _pzH, _loH, _hiH):
+            # the highest surface in [lo, hi] at (x, z) — lip_foot_gap's reader (ledger 0076)
+            _bH = None
+            for _AH, _BH, _CH, _clH in _mgH.get((int(_pxH // 4.0), int(_pzH // 4.0)), ()):
+                _dH = (_BH[2] - _CH[2]) * (_AH[0] - _CH[0]) + (_CH[0] - _BH[0]) * (_AH[2] - _CH[2])
+                if abs(_dH) < 1e-12:
+                    continue
+                _w0H = ((_BH[2] - _CH[2]) * (_pxH - _CH[0]) + (_CH[0] - _BH[0]) * (_pzH - _CH[2])) / _dH
+                _w1H = ((_CH[2] - _AH[2]) * (_pxH - _CH[0]) + (_AH[0] - _CH[0]) * (_pzH - _CH[2])) / _dH
+                _w2H = 1.0 - _w0H - _w1H
+                if _w0H >= -1e-6 and _w1H >= -1e-6 and _w2H >= -1e-6:
+                    _yH = _w0H * _AH[1] + _w1H * _BH[1] + _w2H * _CH[1]
+                    if _loH <= _yH <= _hiH and (_bH is None or _yH > _bH):
+                        _bH = _yH
+            return _bH
+
         _wmedH = sorted(widths)[len(widths) // 2]
         _guardH = 0
         _prev_endH = {1.0: None, -1.0: None}
@@ -3407,15 +3460,21 @@ def build(project_dir: str | Path) -> dict:
                         _vxH = _xH + _nxH * _inH
                         _vzH = _zH + _nzH * _inH
                         _vyH = min(_prevH, _yH0 + 1.8) - 0.2
+                        _thH = (_offH - 0.25) - _inH
+                        _lxH, _lzH = _nxH * _thH, _nzH * _thH
+                        # EVERY FOOT ON ITS SUPPORT (ledger 0076): the lip is seated at the crossing; a foot
+                        # 1.5 m up or down the edge can hang over ground falling along it — pull it back
+                        _reH = lip_foot_reach(_ground_H, _vxH, _vzH, _txH, _tzH, _lxH, _lzH, _vyH, 1.0)
                         _pH = _prev_endH[_sideH]
                         if _pH is not None and math.hypot(_vxH - _pH[0], _vzH - _pH[2]) <= 6.0:
                             _sxH, _syH, _szH = _pH
                         else:
-                            _sxH, _syH, _szH = _vxH - _txH * 1.5, _vyH, _vzH - _tzH * 1.5
-                        _exH = _vxH + _txH * 1.5
-                        _ezH = _vzH + _tzH * 1.5
-                        _thH = (_offH - 0.25) - _inH
-                        _lxH, _lzH = _nxH * _thH, _nzH * _thH
+                            _rsH = lip_foot_reach(_ground_H, _vxH, _vzH, _txH, _tzH, _lxH, _lzH, _vyH, -1.0)
+                            if _rsH + _reH <= 1e-9:
+                                break        # no foot can stand anywhere along it: no lip at this crossing
+                            _sxH, _syH, _szH = _vxH - _txH * _rsH, _vyH, _vzH - _tzH * _rsH
+                        _exH = _vxH + _txH * _reH
+                        _ezH = _vzH + _tzH * _reH
                         _b0H = len(para_mesh["vertices"])
                         for (_qxH, _qyH, _qzH) in ((_sxH, _syH, _szH), (_exH, _vyH, _ezH)):
                             for _dyH in (0.0, 0.7):

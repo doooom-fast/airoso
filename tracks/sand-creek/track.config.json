@@ -46,8 +46,8 @@
     "cambers": [],
     "crossfall": {
       "method": "lidar",
-      "spans_m": [[2491, 2690]],
-      "_spans_doc": "0.33.0 (ledger 0073): [2491, 2690] on the OSM line's finished stations is the same stretch of road as 0.31.1's [2540, 2740], re-keyed by position (stations below in this note are the old line's). 0.31.1: the measured camber at the 56th Ave -> Sand Creek Drive turn only, flat elsewhere as 0.30.1. The whole-lap file (0.31.0) took kinks 11 -> 27 /km at the road edges and steps and drops on E 45th Ave (6,270-6,450 m), where the line likely rides the embankment, not the pavement. Widen once those are checked.",
+      "spans_m": [[2540, 2690]],
+      "_spans_doc": "0.33.0 (ledger 0073): re-keyed by position, 0.31.1's [2540, 2740] is [2491, 2690] on the OSM line's finished stations; the span now STARTS at 2540, just past the 56th slip's merge into Sand Creek Dr, because a Mac A/B showed the measured roll-in (+1.9 -> +5.1 % over 2,519-2,537) laid across the merge's 5.5 -> 23 m width flare made all 4 severe steps (2,529-2,532, 6.3-6.9 cm): starting at 2540 they are 0 (zeroing 2,515-2,545 only: also 0, but the camber rolls in, out and in again). The roll-in now reads +1.3 % at 2,529 to +4.1 % at 2,556, then 2.4 to 4.9 % through to 2,619. Stations below in this note are the old line's. 0.31.1: the measured camber at the 56th Ave -> Sand Creek Drive turn only, flat elsewhere as 0.30.1. The whole-lap file (0.31.0) took kinks 11 -> 27 /km at the road edges and steps and drops on E 45th Ave (6,270-6,450 m), where the line likely rides the embankment, not the pavement. Widen once those are checked.",
       "_doc": "Ledger 0066, Kevin 2026-11-03 (\"Yes, build it\"): the road's real side-to-side tilt, measured off the 2020 USGS source lidar by tools/lidar_crossfall.py into data/crossfall.json (status measured), which build_mesh rolls every road section by. scripts.elevation.crossfall leaves a lidar file alone. Rerun the tool when the line moves: its cache data/crossfall.lidar.json is keyed to centerline.local.json.",
       "source": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"
     }

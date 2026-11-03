@@ -122,7 +122,7 @@ frames: `centerline.local.json` (draft, 9,697.6 m) and the 0.31.1 `finished_cent
 | `capture.bridges[e56th]` profile_m, profile_ramp_m | metres from the deck's start | unchanged | unchanged | heights absolute |
 | `capture.bridges[quebec]` center_m / len_m | draft | 5950 / 130 | 5887 / 128 | 0.6 / 0.2 m |
 | `capture.bridges[e46th_leg]` center_m / len_m | draft | 6549 / 110 | 6484 / 110 | 1.1 / 1.5 m |
-| `road_profile.crossfall.spans_m` | swept | [[2540, 2740]] | [[2491, 2690]] | 1.1 / 0.0 m |
+| `road_profile.crossfall.spans_m` | swept | [[2540, 2740]] | [[2491, 2690]] by position (1.1 / 0.0 m), then started at 2540: see the camber section | |
 | `route.grid.exclude` | piece name | grid_tertiary_94 | grid_tertiary_93 | the same OSM piece, matched by geometry (mean distance 0.0 m): pieces are numbered by length, and the lap change renumbered them |
 
 - **offset_right_m kept at 1.9.** Kept on the ground, the pole would be 2.31 m right of the new line (the old line ran
@@ -145,10 +145,27 @@ frames: `centerline.local.json` (draft, 9,697.6 m) and the 0.31.1 `finished_cent
 ## The camber at the 56th Ave turn, re-measured
 
 `tools/lidar_crossfall.py tracks/sand-creek`, a full refetch (208 EPT nodes) along the new swept line: 3,219 stations,
-236 not a road fit. Over the span (new 2,491-2,690): +1.0 % at 2,496 to +4.1 % at 2,532 (the roll-in, 0.2 %/m), then
+236 not a road fit. Over the re-keyed span (new 2,491-2,690), as measured: +1.0 % at 2,496 to +4.1 % at 2,532 (the roll-in, 0.2 %/m), then
 4.3 to 5.1 % to 2,574, 2.4 to 4.9 % to 2,616, easing to flat by 2,664. 0.31.1 read +1.2 -> +4.2 % over its roll-in and
 2.6 to 4.5 % through. The shape holds; the peak is 5.11 % (2,538) against 4.56 %: the fit now centres on the slip's
 OSM line, not Google's, and the raw reading there is 6.3 %.
+
+**But laid as measured it made four severe steps** (2,529-2,532, 6.3-6.9 cm, on the centre wheel paths): the roll-in
+(+1.9 -> +5.1 % over 2,519-2,537) runs across the slip's merge into Sand Creek Dr, where the ribbon flares 5.5 -> 23 m
+(2,516-2,525) on a 5 % fall. A Mac A/B of the same draft proved it:
+
+| crossfall span | camber at the merge | severe | kinks /km | steps /km |
+|---|---|---|---|---|
+| [[2491, 2690]], as re-keyed | rolls +1.9 -> +5.1 % across the flare | 4 | 9.42 | 2.28 |
+| [[2491, 2515], [2545, 2690]] (zeroed across the flare) | 1.4 % -> 0.2 % -> back up: in, out and in again | 0 | 5.90 | 1.55 |
+| **[[2540, 2690]] (starts just past the merge): chosen** | 0.4 -> 1.3 % across the flare | **0** | **6.63** | **2.07** |
+
+So the span now starts at 2,540, the least invasive change the evidence supports (config only, no tool or gate
+change; the zeroed variant reads a little smoother but makes the camber roll in, out and in again, which the real road
+does not). The turn reads +1.3 % at 2,529 rolling to +4.1 % at 2,556 (the 0.2 %/m limit, from about 20 m later than the
+road's own roll-in), then 2.4 to 4.9 % through to 2,619, flat by 2,664; max 4.93 %. What it gives up: the measured
++3.5 to +5.1 % at 2,529-2,540, the first 20 m of the real roll-in, is laid at 1.3 to 2.2 %. The cure that keeps it is
+0070 B's (no 23 m flare at a slip merge), not a crossfall rule.
 
 ## Before and after (Mac drafts: gps, elev, project, widths, grid, build_mesh, drive_test, audit_mesh)
 
@@ -165,10 +182,10 @@ Baseline: 0.32.0 (the camber, main's terrain-mirror fix and 0068's measured deck
 | swept vertices under R 10 m / 15 m | 19 / 25 | 4 / 19 |
 | vertices where the flared half width >= the local radius (the pleat guard's case) | 24 | 17 (at the 33-34 m corner flares: 0070 B) |
 | drive_test race / street | PASS / PASS | PASS / PASS |
-| severe steps | 1 (s 1,275) | 4 (s 2,529-2,532, +-0.75 m, 6.3-6.9 cm) |
-| kinks /km | 14.89 (15.61) | 9.42 |
-| steps /km | 2.79 | 2.28 |
-| fold bumps / vertex bumps (reported) | 23 (21) / 9 | 20 / 7 |
+| severe steps | 1 (s 1,275) | 0 |
+| kinks /km | 14.89 (15.61) | 6.63 |
+| steps /km | 2.79 | 2.07 |
+| fold bumps / vertex bumps (reported) | 23 (21) / 9 | 20 / 6 |
 | excursion drops / far ledges | 4 / 10 | 7 / 8 |
 | soft top in lane, obstruction, floating furniture, ground on top, daylight | 0, 0, 0, 0, 0 | 0, 0, 0, 0, 0 |
 | replication max | 0.57 m (4.08) | 0.52 m |
@@ -176,10 +193,8 @@ Baseline: 0.32.0 (the camber, main's terrain-mirror fix and 0068's measured deck
 
 Both layouts read the same numbers (one road kn5; neither declares race furniture).
 
-- **The four severe steps** are one place: the 56th slip's merge into Sand Creek Dr, where the measured camber rolls in
-  (+1.9 -> +5.1 % over 2,519-2,537) across the junction flare (5.5 -> 23 m over 2,516-2,525) on a 5 % fall. 0.32.0 had
-  the same flare over the same roll (5.5 -> 23 m at 2,564-2,576, +1.3 -> +4.2 %) and no step over 6 cm; the new peak
-  camber is 0.5 % higher. Most likely the two together; not shown by an A/B.
+- The OSM line with the re-keyed span as measured read 4 severe steps (kinks 9.42 /km, steps 2.28 /km), all at the
+  slip's merge; the A/B above found the cause and the span start removed them. Every other number is the same in both.
 - **Excursion drops 4 -> 7**: verge ledges 11 to 12.5 m off the line, six of them 0.12-0.13 m; the worst, 0.52 m at
   7,803 (E 45th North Dr by I-70), is 0.32.0's 0.35 m at 7,951, the same embankment edge, now nearer the line.
 - The baseline's one severe step (1,275, the E 50th -> Dahlia approach) and its three terrain pokes are gone.
@@ -200,4 +215,4 @@ without `route.fillet` is stitched as before. `tests/tools/test_lidar_crossfall.
 - **Kevin's drive**: the corners (Colorado -> 50th, the Ash jog, 50th -> Dahlia, Dahlia -> 56th, Sand Creek Dr ->
   Quebec, 48th -> Colorado), the 56th slip and its camber, E 45th at the ramp split.
 - Not done here: 0070 B (the flares and the paint), C (barriers), D (dressing). The pleat guard at the 33-34 m corner
-  flares and the slip's severe steps are B's to look at first.
+  flares, and giving the slip's camber back its first 20 m (2,520-2,540) once the merge has no 23 m flare, are B's.

@@ -85,3 +85,26 @@ third crossing (likely on the embankment), and how the engine joins a tilted roa
 - Sand Creek 0.31.1 through the chain, every gate on the built kn5, ride numbers no worse than 0.30.1 outside the turn,
   then installed: a build on the PC.
 - Kevin's drive of the 56th Ave turn. The bridge deck's crown is the next piece if the turn-in still reads flat.
+
+## Built 2026-11-03: 0.31.2 installed on the Windows box (not driven)
+
+0.31.1's camber (73837fa) on the corrected corridor splice (ledger 0067, main eaf85b0) and the seam weld's connector cap
+(PR 20), through `tools/ship_track.sh sand-creek --from mesh`. The first 0.31.2 build went red on `audit_mesh` B alone
+(3 samples, +0.45 m where grid_tertiary_104 joins the lap in a cut: the weld's floor lifted the grass through the
+street's deck, PR 20); with the cap the weld moved one node (181,914 -> 181,913 raised) and every gate went green.
+
+| street (race identical) | 0.30.1 | 0.31.0 (installed until today) | 0.31.2 |
+|---|---|---|---|
+| severe steps | 1 | 16 | 1 |
+| kinks /km | 11.06 | 34.32 | 15.61 |
+| steps /km | 1.14 | 14.47 | 2.79 |
+| fold bumps | 21 | 19 | 21 |
+| vertex bumps (reported, not gated) | 0 | 28 | 9 |
+| apron steps | 28 | 72 | 28 |
+| excursion drops / far ledges | 3 / 9 | 9 / 13 | 4 / 10 |
+| kn5_ground_check double-sheet cells | 10 | 9 | 0 |
+
+The bar was 0.30.1 (0.31.0 was the seam-keyed build): severe, fold bumps and the zero counts equal; the kinks and steps
+rise is the turn's camber, the Mac A/B's own 15.61; drops and ledges move with the corrected ground. `audit_mesh` CLEAN,
+`kn5_ground_check` PASS, `house_seat` PASS. kn5 md5 `951da8acf57a2160d4bdbbaa0128aa87` (road), `f758e56b46ff2bf7b5b4e8c42894781d`
+(street); 0.31.0 parked in `D:/k10-track-archive/2026-11-03_130730/`. The proof owed above is Kevin's drive of the turn.

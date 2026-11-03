@@ -58,7 +58,8 @@
       "data/osm.cache.json",
       "data/connectors.local.json",
       "data/osm.ways.json",
-      "data/grid.3dep.json"
+      "data/grid.3dep.json",
+      "data/crossfall.json"
     ],
     "dirs": [
       "source"

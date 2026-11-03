@@ -1,7 +1,7 @@
 {
   "name": "Sand Creek Raceway",
   "slug": "sand_creek_raceway",
-  "version": "0.30.1",
+  "version": "0.31.0",
   "mirror_x": false,
   "osm_road_widths": true,
   "_osm_road_widths_doc": "Real street circuit — after the project stage, scripts.gps.widths_from_osm map-matches each centerline vertex to its OSM way and sets curb-to-curb widths from lanes (arterials ~2x a side street) + writes intersection pads at the real junctions. Racetracks (defined widths) leave this off.",
@@ -38,7 +38,12 @@
   "road_profile": {
     "_doc": "Corkscrew dips/cambers REMOVED — Sand Creek elevation now comes from real USGS 3DEP + capture (user: the hand-authored corkscrew sucks). Re-add dips/cambers here to bring it back.",
     "dips": [],
-    "cambers": []
+    "cambers": [],
+    "crossfall": {
+      "method": "lidar",
+      "_doc": "Ledger 0066, Kevin 2026-11-03 (\"Yes, build it\"): the road's real side-to-side tilt, measured off the 2020 USGS source lidar by tools/lidar_crossfall.py into data/crossfall.json (status measured), which build_mesh rolls every road section by. scripts.elevation.crossfall leaves a lidar file alone. Rerun the tool when the line moves: its cache data/crossfall.lidar.json is keyed to centerline.local.json.",
+      "source": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"
+    }
   },
   "location": {
     "lat": 39.7839155,

@@ -33,3 +33,12 @@ scripts, not engine code: they run once per re-trace, from a scratch directory.
 Check every re-trace by overlaying the path on the image, especially at junctions. The first
 pass took the left fork at the serpentine exit and made a 14 m hook onto the top straight, which
 showed up as the tightest corner on the lap. The trace's 3DEP relief must stay 40 ± 2 m.
+
+Two one-run corrections sit on top of step 5's output, in this order; a re-trace must apply both
+(or fix their causes in `to_fixes.py`):
+
+- `unsquash_frame.py` (2026-10-31, ledger 0062): the export's true latitude extent.
+- `apron_corner.py` (2026-11-03, ledger 0069): the scans read the run-off apron outside the
+  left-hander at about s 1,000 as road (21 m wide, the line on the asphalt's outer edge). The
+  apron rule in step 5 (over 22 m) did not catch it: in the squashed frame it read 15.7 m.
+  Check every corner whose traced width jumps above its approaches the same way.

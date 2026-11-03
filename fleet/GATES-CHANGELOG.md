@@ -14,6 +14,29 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-03 — BYPASS (declared, per build): the Lariat's Drive-1 force covers the real hairpins' corner rule and the open drops, by Kevin's word (ledger 0048)
+
+Asked "Install the Lariat for Drive 1 at real hairpin widths, with open drops?", Kevin, 2026-11-03: **"Yes, force it"**.
+That covers two rows of the 0.17.0 PC run, nothing else: undrivable corners 80 (drive_test's corner rule, > 110 deg
+within +-15 m on a road under 9 m, at C4-C10's measured 6.8-8.3 m) and excursion far ledges 1,045 against the July
+reference's 382 (the real drops, open until P3d's edges). No threshold changed; this is how --force-install may pass them.
+
+| What | Where | Value | Flag |
+|---|---|---|---|
+| declared exemption block | `track.config.json gates.drive1.force_exemptions` (the Lariat 0.17.1) | `versions` ["0.17.1"]: active only for a build whose config `version` is listed | per build, never standing |
+| undrivable corners | same, `keys.undrivable_corners` | every undrivable station (drive_test's `worst.undrivable_all`) within **40 m** of C4-C10's `hairpin_fit.corners[].st_m`, and the drive_test row red for that reason ALONE | 40 m ⚠ invented; the count is Kevin's |
+| far ledges vs July | same, `keys.excursion_far_ledges` | exempt from the July comparison up to **1,045** | [measured: the 0.17.0 PC run Kevin was shown] |
+| the STRICT rule (new, `tools/drive1_gates.py`, a track declaring the block) | `force_install_ok` | false when ANY red gating row is not fully covered by a declared exemption (severe steps, kinks, replication, daylight, audit, verify_kn5, kn5_ground_check, the lid, one-way, paint, roll rate, road inventory, stacked legs), any other July key is worse, or obstruction / floating / soft-top > 0; an exemption naming any other key is an input error (exit 2) | stricter than 0047's July rule, which a track without the block keeps unchanged |
+| `drive_test` report | `worst.undrivable_all` (station, turn, width) | written only for a track declaring `gates.drive1.force_exemptions` | report field; every other report byte-identical |
+
+The junction-mouth severe steps (8 at C14, the exit-259 signals and C18) are NOT exempt: they are engine artifacts, to be
+fixed. `tools/ship_track.sh`'s summary line now prints each Drive-1 gate's own exit (road inventory, stacked legs, the
+verdict) where it printed the aggregate beside the first two. Proof: `tests/tools/test_drive1_gates.py`
+(`test_declared_exemptions_force_exactly_the_two_rows`, `test_every_other_red_row_stays_a_hard_refusal`: 20 rows,
+each refuses the force on its own; another build version refuses both; `test_only_the_two_rows_can_be_declared`;
+`test_the_lariat_declares_kevins_two_rows_for_this_build`), `tests/tools/test_ship_track_drive1_gates.py`
+(`test_the_summary_line_names_each_gates_own_exit`).
+
 ## 2026-11-03 — Lariat Drive 1: the corner-arc step gate in the mesh step, and the builder values behind A2 / P3a (ledger 0048 "Drive 1 on the Mac")
 
 No existing gate threshold moved. One new hard check, and the builder values the new opt-in modes use, every one of

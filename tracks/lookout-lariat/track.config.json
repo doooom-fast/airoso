@@ -2,7 +2,8 @@
   "archetype": "real_road",
   "name": "Lookout Mountain Lariat",
   "slug": "lookout_lariat",
-  "version": "0.17.0",
+  "version": "0.17.1",
+  "_version_0_17_1_doc": "0.17.1 (2026-11-03, ledger 0048 'Drive 1 on the Mac'): gates.drive1.force_exemptions, Kevin's 'Yes, force it' for the real hairpins' corner rule and the open drops, for this build only; the chain's Drive-1 summary line names each gate's own exit. The ground and road geometry are 0.17.0's.",
   "_version_0_17_doc": "0.17.0 (2026-11-03, ledger 0048 'Drive 1 on the Mac'): A2's C12 / C13 arcs at the mesh (hairpin_fit.mesh_fit), no fold plateaus or pads on the fitted hairpins (road_profile.fold_plateaus / fold_pads false), no engine walls in the Drive-1 draft (road_edge.draft_walls false), and P3a's ground: the road-building cross-section by station with stacked legs held to their own leg (terrain.cross_section.build), on a 13.3 m medium grid refined to 1.11 m in the corridor (terrain_cell_m, corridor_refine_*). Built and gated on the Mac's engine draft only; not yet through the PC chain.",
   "_version_doc": "The V3 config (2026-10-11). Nothing has been built at this version; the installed July build is 0.15.0. ui_track.json stamps '[build <version>]' so a stale install is visible at a glance.",
   "author": "doooom",
@@ -366,6 +367,17 @@
         "floating_furniture": 0,
         "soft_top_in_lane": 0,
         "_doc": "[measured on the installed July v0.46.0 build] (V3-PLAN P5 '--force-install rule', 0047): a red street run may still install with --force-install only if no worse than these on every key; obstruction, floating furniture and soft-top are always 0. tools/ship_track.sh refuses a forced install when data/drive1_gates.json force_install_ok is false."
+      },
+      "force_exemptions": {
+        "versions": ["0.17.1"],
+        "approved": "Kevin 2026-11-03, asked 'Install the Lariat for Drive 1 at real hairpin widths, with open drops?': \"Yes, force it\"",
+        "keys": {
+          "undrivable_corners": {"corners": ["C4", "C5", "C6", "C7", "C8", "C9", "C10"], "window_m": 40.0,
+                                 "_doc": "the real hairpins at their measured 6.8-8.3 m (V3-PLAN D4 / A2: the corner rule's 9 m is not the road's); every undrivable station must lie within window_m [invented] of one of these corners' hairpin_fit.corners[].st_m"},
+          "excursion_far_ledges": {"max": 1045,
+                                   "_doc": "the open drops, the real edges without walls until P3d (Drive 2): exempt from the July comparison up to 1,045, the count of the 0.17.0 PC run Kevin was shown [measured]"}
+        },
+        "_doc": "tools/drive1_gates.py STRICT force rule (fleet/GATES-CHANGELOG.md 2026-11-03): with this block declared, --force-install passes a red Drive-1 build only where every red reason is one of these two, and only for the build versions listed (a per-build exemption). Every other red row (severe steps included: the junction-mouth steps are engine artifacts, not forced) and every other July key, and obstruction / floating / soft-top, refuse the force."
       }
     }
   },

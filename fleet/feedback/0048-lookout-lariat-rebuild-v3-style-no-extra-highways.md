@@ -154,6 +154,46 @@ OBJ), and the Drive-1 verdict. Then the D4 B variant (`SHIP_VARIANT=b_verge`, ve
 reads the same as A on every row (severe 8 at the same three mouths, undrivable 80, kinks 3.06, audit 0, inventory PASS,
 stacked legs 0 of 16,375, road-over-ground p95 0.027 m on the obj proxy; far ledges 839), 1.46 M OBJ vertices.
 
+### The PC's 0.17.0 build, Kevin's force, and the mouths (0.17.1, 2026-11-03)
+
+**The PC built 0.17.0** (PR 32 at `57a2a81`; records on `claude/lariat-0170-run1`) and it matched the Mac draft: the
+mesh log's `[corner arcs]` C12 / C13 PASS and `[cutfill]` lines; verify_kn5 PASS; kn5_ground_check PASS (p95 0.064 m,
+double-sheet 0); stacked legs 0 of 15,398; road inventory PASS; audit all 0; drive_test red on undrivable corners 80,
+far ledges 1,045 and severe 8 (worst 0.114 m: C18 st 24,309-24,313 ×5, C14 st 11,676-11,677 ×2, the exit-259 signals
+st 16,599 ×1); gate OBJ 1,501,696 v. Not installed: the force was refused on the far ledges.
+
+**Kevin, 2026-11-03**, asked "Install the Lariat for Drive 1 at real hairpin widths, with open drops?": *"Yes, force
+it"*. That covers undrivable corners and far ledges only. 0.17.1 declares exactly that (`gates.drive1.force_exemptions`,
+active for build 0.17.1 alone): every undrivable station must lie within 40 m of C4-C10 and the row red for that reason
+alone; far ledges exempt from the July comparison up to 1,045. A track declaring the block runs `tools/drive1_gates.py`'s
+STRICT rule: every other red row refuses the force (the severe steps included), as do obstruction / floating / soft-top
+and every other July key (fleet/GATES-CHANGELOG.md 2026-11-03, tests). On the Mac's 0.17.1 draft the verdict reads
+"covered: nothing" and refuses, correctly, on the 8 severe steps (and the missing kn5); with the severe steps cleared
+and a kn5 present, the same reports read "covered: undrivable corners 80, every one at a measured hairpin (C4-C10)" and
+allow it. The chain's summary line now names each Drive-1 gate's exit: the PC's "Drive-1 road gates (road inventory,
+stacked legs): exit 1" was the verdict's exit printed beside two gates that had passed.
+
+**The three mouths: stopped, for the plan's routing (P3b).** All three are junction nodes the engine's corner rounding
+leaves at a 4.7-7.6 m centreline radius under a 7-10 m ribbon (C14 st 11,673-11,681: 13 / 25 / 21 deg per 3 m; the
+exit-259 signals st 16,593-16,600: 16 / 26 / 22 deg; C18 st 24,305-24,316, partly inside the engine's own junction
+fillet), and the 6-11 cm steps are on the inner wheel paths: C12 / C13's mechanism. C12 / C13 were fixed with the aerial
+radius (A2); these three have none, and V3-PLAN routes them to P3b ("Drivable mouths at the five corners ... by hand in
+Blender as on Lake Murray"). Two engine-side attempts, recorded and not taken:
+- **The aerial pass's own junction fit** (`tools/aerial/junction.py`, run on fresh NAIP 2019 windows at C14 / C15 / C18,
+  scratch only): it reproduces C12 / C13 (R 14.73 / 16.41 m against the recorded 14.9 / 16.08) but finds no inside
+  arm edge at C14 or C15 (the junctions are wide multi-lane signals), and at C18 returns R_fillet 2.4 m with a 1.6 m
+  median residual: no usable radius. A radius there needs the survey's manual seeds (dossier §12), i.e. authored
+  observation.
+- **The engine junction fillet's own floor** (R 10 m, `max(10, 0.6 w + 3)`) through `hairpin_fit.mesh_fit`: all three
+  FAIL the plan's step gate (max step 15.5-19.1 deg) because the lap there is 3 m points, and C18's apex search lands
+  on the engine fillet's exit (turn 51.8 deg). Making it pass means resampling the line (the vertex count changes) at an
+  invented radius.
+
+So the 8 severe steps stay red on 0.17.1, unforced, and the install waits on one of: (a) the P3b mouths authored in
+Blender on the PC (the plan's route), (b) a survey pass with manual seeds giving C14 / C15 / C18 aerial radii, then the
+same mesh arcs with the line resampled at 1 m through them (engine change), or (c) Kevin accepting an engine-rule radius
+(invented) for the three as a Drive-1 interim.
+
 ## Started (Kevin, 2026-11-01)
 
 > "Start the lariat"

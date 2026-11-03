@@ -13,7 +13,8 @@
    ],
    "bottom": 24.03,
    "eave": 32.35,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318966",
@@ -26,8 +27,9 @@
     35.66
    ],
    "bottom": 32.72,
-   "eave": 41.36,
-   "off_terrain": false
+   "eave": 41.37,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318968",
@@ -41,7 +43,8 @@
    ],
    "bottom": 27.93,
    "eave": 36.28,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318969",
@@ -55,7 +58,8 @@
    ],
    "bottom": 18.12,
    "eave": 26.33,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318970",
@@ -69,7 +73,8 @@
    ],
    "bottom": 21.02,
    "eave": 29.12,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318971",
@@ -83,7 +88,8 @@
    ],
    "bottom": 15.62,
    "eave": 23.62,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318972",
@@ -97,7 +103,8 @@
    ],
    "bottom": 30.77,
    "eave": 38.92,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318973",
@@ -110,8 +117,9 @@
     20.23
    ],
    "bottom": 18.27,
-   "eave": 26.95,
-   "off_terrain": false
+   "eave": 26.94,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318974",
@@ -125,7 +133,8 @@
    ],
    "bottom": 15.69,
    "eave": 23.69,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318975",
@@ -134,12 +143,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    30.87,
-    32.3
+    30.14,
+    32.31
    ],
-   "bottom": 30.72,
-   "eave": 39.1,
-   "off_terrain": false
+   "bottom": 29.99,
+   "eave": 39.05,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318977",
@@ -153,7 +163,8 @@
    ],
    "bottom": 18.21,
    "eave": 26.21,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318978",
@@ -167,7 +178,8 @@
    ],
    "bottom": 15.08,
    "eave": 23.08,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318982",
@@ -181,7 +193,8 @@
    ],
    "bottom": 25.34,
    "eave": 33.5,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318983",
@@ -195,7 +208,8 @@
    ],
    "bottom": 14.32,
    "eave": 22.32,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318984",
@@ -204,12 +218,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    25.36,
+    25.28,
     26.08
    ],
-   "bottom": 25.16,
-   "eave": 33.16,
-   "off_terrain": false
+   "bottom": 25.13,
+   "eave": 33.15,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318985",
@@ -218,12 +233,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    29.08,
+    28.58,
     30.65
    ],
-   "bottom": 28.93,
-   "eave": 37.42,
-   "off_terrain": false
+   "bottom": 28.43,
+   "eave": 37.31,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318986",
@@ -237,7 +253,8 @@
    ],
    "bottom": 16.39,
    "eave": 24.41,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318987",
@@ -247,11 +264,12 @@
    "wall_h_m": 8.0,
    "ground": [
     23.05,
-    23.62
+    23.63
    ],
    "bottom": 22.9,
    "eave": 30.93,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm204318988",
@@ -265,7 +283,8 @@
    ],
    "bottom": 29.13,
    "eave": 38.64,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318989",
@@ -279,7 +298,8 @@
    ],
    "bottom": 17.93,
    "eave": 26.06,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318990",
@@ -292,8 +312,9 @@
     19.05
    ],
    "bottom": 17.86,
-   "eave": 26.07,
-   "off_terrain": false
+   "eave": 26.06,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318991",
@@ -307,7 +328,8 @@
    ],
    "bottom": 31.26,
    "eave": 39.97,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318992",
@@ -321,7 +343,8 @@
    ],
    "bottom": 24.31,
    "eave": 32.52,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318993",
@@ -335,7 +358,8 @@
    ],
    "bottom": 20.77,
    "eave": 25.31,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318994",
@@ -349,7 +373,8 @@
    ],
    "bottom": 25.31,
    "eave": 33.67,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm204318995",
@@ -363,7 +388,8 @@
    ],
    "bottom": 17.33,
    "eave": 25.33,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318996",
@@ -377,7 +403,8 @@
    ],
    "bottom": 13.75,
    "eave": 21.8,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318997",
@@ -391,7 +418,8 @@
    ],
    "bottom": 20.11,
    "eave": 28.3,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318998",
@@ -405,7 +433,8 @@
    ],
    "bottom": 16.39,
    "eave": 24.55,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204318999",
@@ -419,7 +448,8 @@
    ],
    "bottom": 15.35,
    "eave": 23.35,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319000",
@@ -433,7 +463,8 @@
    ],
    "bottom": 29.94,
    "eave": 38.25,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319001",
@@ -447,7 +478,8 @@
    ],
    "bottom": 18.11,
    "eave": 26.11,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319002",
@@ -456,12 +488,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    18.52,
+    17.15,
     20.97
    ],
-   "bottom": 18.37,
-   "eave": 27.33,
-   "off_terrain": false
+   "bottom": 17.0,
+   "eave": 27.19,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319003",
@@ -474,8 +507,9 @@
     25.88
    ],
    "bottom": 24.25,
-   "eave": 32.59,
-   "off_terrain": false
+   "eave": 32.57,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319004",
@@ -489,7 +523,8 @@
    ],
    "bottom": 23.13,
    "eave": 31.13,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319005",
@@ -503,7 +538,8 @@
    ],
    "bottom": 17.02,
    "eave": 25.68,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319006",
@@ -517,7 +553,8 @@
    ],
    "bottom": 15.03,
    "eave": 23.61,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319007",
@@ -531,7 +568,8 @@
    ],
    "bottom": 15.72,
    "eave": 23.72,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319008",
@@ -544,8 +582,9 @@
     17.56
    ],
    "bottom": 16.8,
-   "eave": 24.89,
-   "off_terrain": false
+   "eave": 24.88,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319009",
@@ -559,7 +598,8 @@
    ],
    "bottom": 15.31,
    "eave": 23.31,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319011",
@@ -572,8 +612,9 @@
     8.47
    ],
    "bottom": 6.88,
-   "eave": 15.68,
-   "off_terrain": false
+   "eave": 15.67,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319012",
@@ -587,7 +628,8 @@
    ],
    "bottom": 9.29,
    "eave": 17.55,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319013",
@@ -601,7 +643,8 @@
    ],
    "bottom": 15.34,
    "eave": 23.36,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319014",
@@ -615,7 +658,8 @@
    ],
    "bottom": 14.49,
    "eave": 22.49,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319015",
@@ -629,7 +673,8 @@
    ],
    "bottom": 29.22,
    "eave": 37.29,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319016",
@@ -643,7 +688,8 @@
    ],
    "bottom": 18.45,
    "eave": 26.74,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319017",
@@ -656,8 +702,9 @@
     21.69
    ],
    "bottom": 20.78,
-   "eave": 28.92,
-   "off_terrain": false
+   "eave": 28.91,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319018",
@@ -671,7 +718,8 @@
    ],
    "bottom": 18.79,
    "eave": 27.16,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319019",
@@ -685,7 +733,8 @@
    ],
    "bottom": 17.13,
    "eave": 25.22,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319021",
@@ -695,11 +744,12 @@
    "wall_h_m": 8.0,
    "ground": [
     18.38,
-    19.47
+    19.46
    ],
    "bottom": 18.23,
    "eave": 26.54,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm204319022",
@@ -708,12 +758,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    32.0,
-    33.79
+    31.56,
+    33.8
    ],
-   "bottom": 31.85,
-   "eave": 40.46,
-   "off_terrain": false
+   "bottom": 31.41,
+   "eave": 40.29,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319023",
@@ -727,7 +778,8 @@
    ],
    "bottom": 31.13,
    "eave": 39.71,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319025",
@@ -741,7 +793,8 @@
    ],
    "bottom": 17.35,
    "eave": 25.4,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319026",
@@ -755,7 +808,8 @@
    ],
    "bottom": 22.94,
    "eave": 31.03,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319027",
@@ -765,11 +819,12 @@
    "wall_h_m": 8.0,
    "ground": [
     26.3,
-    30.25
+    28.32
    ],
    "bottom": 26.15,
-   "eave": 34.54,
-   "off_terrain": false
+   "eave": 34.34,
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm204319028",
@@ -782,8 +837,9 @@
     36.86
    ],
    "bottom": 35.05,
-   "eave": 43.73,
-   "off_terrain": false
+   "eave": 43.74,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319029",
@@ -797,7 +853,8 @@
    ],
    "bottom": 14.88,
    "eave": 22.88,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319030",
@@ -811,7 +868,8 @@
    ],
    "bottom": 17.63,
    "eave": 25.97,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319031",
@@ -825,7 +883,8 @@
    ],
    "bottom": 18.66,
    "eave": 26.8,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319032",
@@ -839,7 +898,8 @@
    ],
    "bottom": 16.04,
    "eave": 24.14,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319033",
@@ -849,11 +909,12 @@
    "wall_h_m": 8.0,
    "ground": [
     27.77,
-    29.09
+    29.1
    ],
    "bottom": 27.62,
-   "eave": 35.9,
-   "off_terrain": false
+   "eave": 35.91,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319034",
@@ -867,7 +928,8 @@
    ],
    "bottom": 27.96,
    "eave": 36.63,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319035",
@@ -876,12 +938,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    14.16,
+    14.15,
     15.73
    ],
-   "bottom": 14.01,
+   "bottom": 14.0,
    "eave": 22.48,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319036",
@@ -895,7 +958,8 @@
    ],
    "bottom": 17.95,
    "eave": 25.95,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319037",
@@ -909,7 +973,8 @@
    ],
    "bottom": 21.37,
    "eave": 26.01,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm204319038",
@@ -919,11 +984,12 @@
    "wall_h_m": 8.0,
    "ground": [
     16.51,
-    20.8
+    20.82
    ],
    "bottom": 16.36,
-   "eave": 26.8,
-   "off_terrain": false
+   "eave": 26.81,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319040",
@@ -937,7 +1003,8 @@
    ],
    "bottom": 17.05,
    "eave": 25.05,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319042",
@@ -947,11 +1014,12 @@
    "wall_h_m": 8.0,
    "ground": [
     28.36,
-    29.53
+    29.54
    ],
    "bottom": 28.21,
    "eave": 36.46,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319043",
@@ -965,7 +1033,8 @@
    ],
    "bottom": 26.49,
    "eave": 34.57,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319044",
@@ -979,7 +1048,8 @@
    ],
    "bottom": 11.53,
    "eave": 19.53,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319046",
@@ -993,7 +1063,8 @@
    ],
    "bottom": 15.99,
    "eave": 24.13,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319047",
@@ -1007,7 +1078,8 @@
    ],
    "bottom": 10.46,
    "eave": 18.46,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319049",
@@ -1017,11 +1089,12 @@
    "wall_h_m": 8.0,
    "ground": [
     19.4,
-    20.84
+    20.85
    ],
    "bottom": 19.25,
-   "eave": 27.77,
-   "off_terrain": false
+   "eave": 27.78,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319050",
@@ -1035,7 +1108,8 @@
    ],
    "bottom": 16.38,
    "eave": 24.47,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319051",
@@ -1044,12 +1118,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    27.73,
+    26.65,
     29.04
    ],
-   "bottom": 27.58,
-   "eave": 36.04,
-   "off_terrain": false
+   "bottom": 26.5,
+   "eave": 35.87,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319052",
@@ -1063,7 +1138,8 @@
    ],
    "bottom": 19.14,
    "eave": 27.67,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319053",
@@ -1072,12 +1148,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    20.37,
-    21.28
+    20.07,
+    21.3
    ],
-   "bottom": 20.22,
-   "eave": 28.32,
-   "off_terrain": false
+   "bottom": 19.92,
+   "eave": 28.29,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319054",
@@ -1091,7 +1168,8 @@
    ],
    "bottom": 17.96,
    "eave": 25.96,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319055",
@@ -1105,7 +1183,8 @@
    ],
    "bottom": 27.51,
    "eave": 37.15,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319056",
@@ -1115,11 +1194,12 @@
    "wall_h_m": 8.0,
    "ground": [
     31.68,
-    33.13
+    33.14
    ],
    "bottom": 31.53,
-   "eave": 40.1,
-   "off_terrain": false
+   "eave": 40.11,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319057",
@@ -1133,7 +1213,8 @@
    ],
    "bottom": 19.91,
    "eave": 28.01,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319058",
@@ -1147,7 +1228,8 @@
    ],
    "bottom": 25.78,
    "eave": 33.95,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319059",
@@ -1161,7 +1243,8 @@
    ],
    "bottom": 20.79,
    "eave": 28.81,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319060",
@@ -1175,7 +1258,8 @@
    ],
    "bottom": 15.59,
    "eave": 23.66,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319061",
@@ -1185,11 +1269,12 @@
    "wall_h_m": 8.0,
    "ground": [
     29.07,
-    29.55
+    29.56
    ],
    "bottom": 28.89,
    "eave": 36.89,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319062",
@@ -1203,7 +1288,8 @@
    ],
    "bottom": 15.04,
    "eave": 23.08,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319063",
@@ -1217,7 +1303,8 @@
    ],
    "bottom": 23.66,
    "eave": 31.79,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319064",
@@ -1231,7 +1318,8 @@
    ],
    "bottom": 32.47,
    "eave": 43.07,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319067",
@@ -1244,8 +1332,9 @@
     10.72
    ],
    "bottom": 10.03,
-   "eave": 18.12,
-   "off_terrain": false
+   "eave": 18.13,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319068",
@@ -1259,7 +1348,8 @@
    ],
    "bottom": 10.89,
    "eave": 18.89,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319069",
@@ -1273,7 +1363,8 @@
    ],
    "bottom": 31.06,
    "eave": 39.65,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319070",
@@ -1287,7 +1378,8 @@
    ],
    "bottom": 10.01,
    "eave": 18.01,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319074",
@@ -1301,7 +1393,8 @@
    ],
    "bottom": 22.99,
    "eave": 31.12,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319075",
@@ -1311,11 +1404,12 @@
    "wall_h_m": 8.0,
    "ground": [
     6.95,
-    8.39
+    8.4
    ],
    "bottom": 6.8,
    "eave": 14.98,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm204319077",
@@ -1329,7 +1423,8 @@
    ],
    "bottom": 25.47,
    "eave": 33.6,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319078",
@@ -1343,7 +1438,8 @@
    ],
    "bottom": 15.92,
    "eave": 23.92,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319079",
@@ -1352,12 +1448,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    18.4,
+    18.37,
     18.98
    ],
    "bottom": 18.22,
    "eave": 26.22,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319081",
@@ -1371,7 +1468,8 @@
    ],
    "bottom": 24.1,
    "eave": 32.34,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319082",
@@ -1385,7 +1483,8 @@
    ],
    "bottom": 18.91,
    "eave": 27.51,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm204319083",
@@ -1399,7 +1498,8 @@
    ],
    "bottom": 17.98,
    "eave": 25.98,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319084",
@@ -1409,11 +1509,12 @@
    "wall_h_m": 8.0,
    "ground": [
     12.05,
-    13.58
+    13.6
    ],
    "bottom": 11.9,
-   "eave": 20.29,
-   "off_terrain": false
+   "eave": 20.3,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319085",
@@ -1427,7 +1528,8 @@
    ],
    "bottom": 11.1,
    "eave": 19.1,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319086",
@@ -1441,7 +1543,8 @@
    ],
    "bottom": 26.18,
    "eave": 34.18,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319087",
@@ -1450,12 +1553,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    19.59,
+    18.87,
     19.79
    ],
-   "bottom": 19.3,
-   "eave": 27.3,
-   "off_terrain": false
+   "bottom": 18.72,
+   "eave": 27.18,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319088",
@@ -1465,11 +1569,12 @@
    "wall_h_m": 8.0,
    "ground": [
     16.07,
-    16.31
+    16.32
    ],
    "bottom": 15.77,
    "eave": 23.77,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319090",
@@ -1483,7 +1588,8 @@
    ],
    "bottom": 15.72,
    "eave": 23.72,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319091",
@@ -1497,7 +1603,8 @@
    ],
    "bottom": 23.25,
    "eave": 31.63,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319092",
@@ -1511,7 +1618,8 @@
    ],
    "bottom": 16.83,
    "eave": 24.83,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319093",
@@ -1525,7 +1633,8 @@
    ],
    "bottom": 8.13,
    "eave": 16.29,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319094",
@@ -1535,11 +1644,12 @@
    "wall_h_m": 8.0,
    "ground": [
     11.2,
-    11.68
+    11.69
    ],
    "bottom": 11.05,
    "eave": 19.08,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319095",
@@ -1553,7 +1663,8 @@
    ],
    "bottom": 16.1,
    "eave": 24.1,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319096",
@@ -1567,7 +1678,8 @@
    ],
    "bottom": 10.4,
    "eave": 18.4,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319098",
@@ -1576,12 +1688,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    16.82,
+    16.81,
     17.31
    ],
    "bottom": 16.63,
    "eave": 24.63,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319099",
@@ -1591,11 +1704,12 @@
    "wall_h_m": 8.0,
    "ground": [
     26.82,
-    32.6
+    32.61
    ],
    "bottom": 26.67,
-   "eave": 36.6,
-   "off_terrain": false
+   "eave": 36.61,
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm204319100",
@@ -1605,11 +1719,12 @@
    "wall_h_m": 8.0,
    "ground": [
     25.81,
-    27.54
+    27.55
    ],
    "bottom": 25.66,
    "eave": 34.15,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319101",
@@ -1618,12 +1733,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    24.67,
-    30.51
+    24.22,
+    30.52
    ],
-   "bottom": 24.52,
-   "eave": 34.51,
-   "off_terrain": false
+   "bottom": 24.07,
+   "eave": 34.52,
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm204319102",
@@ -1633,11 +1749,12 @@
    "wall_h_m": 8.0,
    "ground": [
     18.06,
-    19.09
+    19.1
    ],
    "bottom": 17.91,
-   "eave": 26.15,
-   "off_terrain": false
+   "eave": 26.14,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319103",
@@ -1651,7 +1768,8 @@
    ],
    "bottom": 21.8,
    "eave": 30.52,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319104",
@@ -1660,12 +1778,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    23.47,
-    25.69
+    23.05,
+    25.7
    ],
-   "bottom": 23.32,
-   "eave": 31.88,
-   "off_terrain": false
+   "bottom": 22.9,
+   "eave": 31.86,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319105",
@@ -1675,11 +1794,12 @@
    "wall_h_m": 8.0,
    "ground": [
     25.18,
-    26.07
+    26.08
    ],
    "bottom": 25.03,
    "eave": 33.31,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319106",
@@ -1689,11 +1809,12 @@
    "wall_h_m": 8.0,
    "ground": [
     19.56,
-    21.03
+    21.04
    ],
    "bottom": 19.41,
-   "eave": 27.86,
-   "off_terrain": false
+   "eave": 27.87,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319107",
@@ -1707,7 +1828,8 @@
    ],
    "bottom": 16.75,
    "eave": 24.75,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319108",
@@ -1721,7 +1843,8 @@
    ],
    "bottom": 31.86,
    "eave": 39.86,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319109",
@@ -1735,7 +1858,8 @@
    ],
    "bottom": 18.43,
    "eave": 26.43,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319110",
@@ -1749,7 +1873,8 @@
    ],
    "bottom": 9.3,
    "eave": 17.55,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319111",
@@ -1763,7 +1888,8 @@
    ],
    "bottom": 18.81,
    "eave": 27.26,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319113",
@@ -1773,11 +1899,12 @@
    "wall_h_m": 8.0,
    "ground": [
     29.46,
-    29.9
+    29.91
    ],
    "bottom": 29.29,
    "eave": 37.29,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319114",
@@ -1791,7 +1918,8 @@
    ],
    "bottom": 22.96,
    "eave": 30.96,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319115",
@@ -1805,7 +1933,8 @@
    ],
    "bottom": 24.07,
    "eave": 32.43,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319116",
@@ -1818,8 +1947,9 @@
     7.84
    ],
    "bottom": 7.04,
-   "eave": 15.14,
-   "off_terrain": false
+   "eave": 15.12,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319117",
@@ -1833,7 +1963,8 @@
    ],
    "bottom": 20.22,
    "eave": 28.31,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319118",
@@ -1847,7 +1978,8 @@
    ],
    "bottom": 10.76,
    "eave": 18.76,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319119",
@@ -1861,7 +1993,8 @@
    ],
    "bottom": 20.35,
    "eave": 28.8,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319120",
@@ -1870,12 +2003,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    23.68,
+    23.44,
     24.15
    ],
-   "bottom": 23.53,
-   "eave": 31.57,
-   "off_terrain": false
+   "bottom": 23.29,
+   "eave": 31.56,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319123",
@@ -1889,7 +2023,8 @@
    ],
    "bottom": 14.98,
    "eave": 23.04,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319124",
@@ -1903,7 +2038,8 @@
    ],
    "bottom": 14.52,
    "eave": 22.58,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319126",
@@ -1917,7 +2053,8 @@
    ],
    "bottom": 20.74,
    "eave": 28.82,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319127",
@@ -1931,7 +2068,8 @@
    ],
    "bottom": 18.28,
    "eave": 26.38,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319128",
@@ -1945,7 +2083,8 @@
    ],
    "bottom": 25.81,
    "eave": 33.81,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319129",
@@ -1959,7 +2098,8 @@
    ],
    "bottom": 10.19,
    "eave": 18.38,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319130",
@@ -1968,12 +2108,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    13.12,
+    13.1,
     14.65
    ],
-   "bottom": 12.97,
+   "bottom": 12.95,
    "eave": 21.41,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319131",
@@ -1987,7 +2128,8 @@
    ],
    "bottom": 15.03,
    "eave": 23.03,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319132",
@@ -2001,7 +2143,8 @@
    ],
    "bottom": 16.34,
    "eave": 24.34,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319133",
@@ -2010,12 +2153,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    17.1,
+    17.09,
     18.49
    ],
-   "bottom": 16.95,
+   "bottom": 16.94,
    "eave": 25.4,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319134",
@@ -2029,7 +2173,8 @@
    ],
    "bottom": 16.7,
    "eave": 25.3,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319135",
@@ -2043,7 +2188,8 @@
    ],
    "bottom": 20.55,
    "eave": 28.92,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319136",
@@ -2057,7 +2203,8 @@
    ],
    "bottom": 17.56,
    "eave": 25.56,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319137",
@@ -2071,7 +2218,8 @@
    ],
    "bottom": 15.59,
    "eave": 23.66,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319139",
@@ -2085,7 +2233,8 @@
    ],
    "bottom": 20.31,
    "eave": 29.32,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm204319140",
@@ -2099,7 +2248,8 @@
    ],
    "bottom": 10.63,
    "eave": 18.63,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319141",
@@ -2113,7 +2263,8 @@
    ],
    "bottom": 10.63,
    "eave": 18.63,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319143",
@@ -2127,7 +2278,8 @@
    ],
    "bottom": 19.66,
    "eave": 28.26,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319145",
@@ -2140,8 +2292,9 @@
     30.87
    ],
    "bottom": 29.37,
-   "eave": 37.87,
-   "off_terrain": false
+   "eave": 37.88,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319146",
@@ -2155,7 +2308,8 @@
    ],
    "bottom": 17.51,
    "eave": 25.55,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204319147",
@@ -2169,7 +2323,8 @@
    ],
    "bottom": 25.34,
    "eave": 34.09,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332219",
@@ -2183,7 +2338,8 @@
    ],
    "bottom": 15.64,
    "eave": 23.64,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332221",
@@ -2192,12 +2348,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    33.88,
-    35.67
+    33.87,
+    35.68
    ],
-   "bottom": 33.73,
+   "bottom": 33.72,
    "eave": 42.38,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332222",
@@ -2211,7 +2368,8 @@
    ],
    "bottom": 16.17,
    "eave": 24.17,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332225",
@@ -2225,7 +2383,8 @@
    ],
    "bottom": 7.89,
    "eave": 16.72,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332226",
@@ -2234,12 +2393,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    16.35,
+    15.94,
     16.61
    ],
-   "bottom": 16.13,
-   "eave": 24.13,
-   "off_terrain": false
+   "bottom": 15.79,
+   "eave": 24.0,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332229",
@@ -2253,7 +2413,8 @@
    ],
    "bottom": 16.91,
    "eave": 24.91,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332240",
@@ -2263,11 +2424,12 @@
    "wall_h_m": 8.0,
    "ground": [
     16.3,
-    16.54
+    16.55
    ],
    "bottom": 16.03,
    "eave": 24.03,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332242",
@@ -2281,7 +2443,8 @@
    ],
    "bottom": 15.56,
    "eave": 23.56,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332243",
@@ -2295,7 +2458,8 @@
    ],
    "bottom": 5.71,
    "eave": 13.71,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332244",
@@ -2309,7 +2473,8 @@
    ],
    "bottom": 26.1,
    "eave": 36.14,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332245",
@@ -2323,7 +2488,8 @@
    ],
    "bottom": 15.34,
    "eave": 23.34,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332250",
@@ -2336,8 +2502,9 @@
     21.15
    ],
    "bottom": 19.75,
-   "eave": 28.16,
-   "off_terrain": false
+   "eave": 28.15,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332251",
@@ -2351,7 +2518,8 @@
    ],
    "bottom": 6.26,
    "eave": 14.26,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm204332253",
@@ -2365,7 +2533,8 @@
    ],
    "bottom": 15.19,
    "eave": 23.19,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332255",
@@ -2379,7 +2548,8 @@
    ],
    "bottom": 16.79,
    "eave": 24.82,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332257",
@@ -2389,11 +2559,12 @@
    "wall_h_m": 8.0,
    "ground": [
     17.0,
-    17.62
+    17.63
    ],
    "bottom": 16.85,
    "eave": 24.91,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332258",
@@ -2403,11 +2574,12 @@
    "wall_h_m": 8.0,
    "ground": [
     5.56,
-    6.69
+    6.71
    ],
    "bottom": 5.41,
    "eave": 13.54,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332259",
@@ -2421,7 +2593,8 @@
    ],
    "bottom": 5.5,
    "eave": 13.5,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332260",
@@ -2431,11 +2604,12 @@
    "wall_h_m": 8.0,
    "ground": [
     33.23,
-    35.69
+    35.7
    ],
    "bottom": 33.08,
    "eave": 42.16,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332262",
@@ -2449,7 +2623,8 @@
    ],
    "bottom": 17.55,
    "eave": 25.55,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332264",
@@ -2463,7 +2638,8 @@
    ],
    "bottom": 15.76,
    "eave": 23.76,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332265",
@@ -2477,7 +2653,8 @@
    ],
    "bottom": 13.6,
    "eave": 21.63,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332267",
@@ -2486,12 +2663,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    5.28,
+    5.27,
     6.29
    ],
-   "bottom": 5.13,
+   "bottom": 5.12,
    "eave": 13.44,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332270",
@@ -2504,8 +2682,9 @@
     28.91
    ],
    "bottom": 25.31,
-   "eave": 35.54,
-   "off_terrain": false
+   "eave": 35.46,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332274",
@@ -2519,7 +2698,8 @@
    ],
    "bottom": 13.57,
    "eave": 21.75,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332275",
@@ -2533,7 +2713,8 @@
    ],
    "bottom": 33.82,
    "eave": 42.31,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332279",
@@ -2547,7 +2728,8 @@
    ],
    "bottom": 13.62,
    "eave": 21.62,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332281",
@@ -2556,12 +2738,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    34.41,
+    34.13,
     34.77
    ],
-   "bottom": 34.19,
-   "eave": 42.19,
-   "off_terrain": false
+   "bottom": 33.98,
+   "eave": 42.07,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332285",
@@ -2575,7 +2758,8 @@
    ],
    "bottom": 6.31,
    "eave": 14.4,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332288",
@@ -2584,12 +2768,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    28.68,
+    27.52,
     29.42
    ],
-   "bottom": 28.53,
-   "eave": 36.71,
-   "off_terrain": false
+   "bottom": 27.37,
+   "eave": 36.58,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332289",
@@ -2603,7 +2788,8 @@
    ],
    "bottom": 13.82,
    "eave": 22.34,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332290",
@@ -2617,7 +2803,8 @@
    ],
    "bottom": 21.08,
    "eave": 31.99,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332291",
@@ -2627,11 +2814,12 @@
    "wall_h_m": 8.0,
    "ground": [
     25.1,
-    26.62
+    26.63
    ],
    "bottom": 24.95,
    "eave": 33.33,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332293",
@@ -2641,11 +2829,12 @@
    "wall_h_m": 8.0,
    "ground": [
     32.83,
-    35.02
+    35.03
    ],
    "bottom": 32.68,
    "eave": 41.71,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332295",
@@ -2655,11 +2844,12 @@
    "wall_h_m": 8.0,
    "ground": [
     22.19,
-    23.12
+    23.13
    ],
    "bottom": 22.04,
    "eave": 30.19,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332296",
@@ -2673,7 +2863,8 @@
    ],
    "bottom": 13.02,
    "eave": 21.13,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332297",
@@ -2687,7 +2878,8 @@
    ],
    "bottom": 13.63,
    "eave": 21.63,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332300",
@@ -2701,7 +2893,8 @@
    ],
    "bottom": 16.53,
    "eave": 25.53,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332301",
@@ -2715,7 +2908,8 @@
    ],
    "bottom": 17.21,
    "eave": 25.21,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332303",
@@ -2725,11 +2919,12 @@
    "wall_h_m": 8.0,
    "ground": [
     6.04,
-    6.64
+    6.65
    ],
    "bottom": 5.89,
    "eave": 14.02,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332306",
@@ -2743,7 +2938,8 @@
    ],
    "bottom": 17.78,
    "eave": 25.78,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332307",
@@ -2757,7 +2953,8 @@
    ],
    "bottom": 15.67,
    "eave": 23.67,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332308",
@@ -2771,7 +2968,8 @@
    ],
    "bottom": 15.24,
    "eave": 23.24,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332309",
@@ -2785,7 +2983,8 @@
    ],
    "bottom": 17.94,
    "eave": 25.94,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332310",
@@ -2799,7 +2998,8 @@
    ],
    "bottom": 13.57,
    "eave": 21.7,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332312",
@@ -2813,7 +3013,8 @@
    ],
    "bottom": 12.55,
    "eave": 20.55,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332316",
@@ -2826,8 +3027,9 @@
     33.73
    ],
    "bottom": 31.83,
-   "eave": 40.71,
-   "off_terrain": false
+   "eave": 40.72,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332317",
@@ -2841,7 +3043,8 @@
    ],
    "bottom": 17.35,
    "eave": 25.35,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332319",
@@ -2855,7 +3058,8 @@
    ],
    "bottom": 23.49,
    "eave": 31.58,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332321",
@@ -2865,11 +3069,12 @@
    "wall_h_m": 8.0,
    "ground": [
     18.4,
-    18.82
+    18.81
    ],
    "bottom": 18.21,
    "eave": 26.21,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332324",
@@ -2878,12 +3083,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    28.52,
+    27.75,
     29.22
    ],
-   "bottom": 28.37,
-   "eave": 36.5,
-   "off_terrain": false
+   "bottom": 27.6,
+   "eave": 36.42,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332326",
@@ -2897,7 +3103,8 @@
    ],
    "bottom": 5.83,
    "eave": 13.83,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm204332328",
@@ -2906,12 +3113,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    34.44,
+    34.24,
     35.57
    ],
-   "bottom": 34.29,
+   "bottom": 34.09,
    "eave": 42.42,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332330",
@@ -2923,9 +3131,10 @@
     12.67,
     13.13
    ],
-   "bottom": 12.5,
-   "eave": 20.5,
-   "off_terrain": false
+   "bottom": 12.51,
+   "eave": 20.51,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332331",
@@ -2939,7 +3148,8 @@
    ],
    "bottom": 30.46,
    "eave": 38.46,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332332",
@@ -2953,7 +3163,8 @@
    ],
    "bottom": 23.71,
    "eave": 31.91,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332333",
@@ -2967,7 +3178,8 @@
    ],
    "bottom": 5.55,
    "eave": 13.55,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332335",
@@ -2977,11 +3189,12 @@
    "wall_h_m": 8.0,
    "ground": [
     22.23,
-    25.09
+    25.1
    ],
    "bottom": 22.08,
    "eave": 30.33,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332339",
@@ -2995,7 +3208,8 @@
    ],
    "bottom": 14.91,
    "eave": 22.91,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332341",
@@ -3009,7 +3223,8 @@
    ],
    "bottom": 14.32,
    "eave": 22.32,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332346",
@@ -3019,11 +3234,12 @@
    "wall_h_m": 4.5,
    "ground": [
     18.14,
-    18.74
+    18.75
    ],
    "bottom": 17.99,
    "eave": 22.65,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332351",
@@ -3032,12 +3248,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    6.95,
+    6.94,
     9.37
    ],
-   "bottom": 6.8,
+   "bottom": 6.79,
    "eave": 16.41,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332359",
@@ -3051,7 +3268,8 @@
    ],
    "bottom": 13.82,
    "eave": 22.17,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332361",
@@ -3065,7 +3283,8 @@
    ],
    "bottom": 15.69,
    "eave": 23.69,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332364",
@@ -3079,7 +3298,8 @@
    ],
    "bottom": 5.4,
    "eave": 13.51,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm204332366",
@@ -3088,12 +3308,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    16.94,
+    16.92,
     17.34
    ],
-   "bottom": 16.79,
+   "bottom": 16.77,
    "eave": 24.81,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332367",
@@ -3103,11 +3324,12 @@
    "wall_h_m": 8.0,
    "ground": [
     33.51,
-    35.64
+    35.65
    ],
    "bottom": 33.36,
-   "eave": 42.29,
-   "off_terrain": false
+   "eave": 42.23,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332374",
@@ -3121,7 +3343,8 @@
    ],
    "bottom": 15.26,
    "eave": 20.36,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332376",
@@ -3135,7 +3358,8 @@
    ],
    "bottom": 25.81,
    "eave": 35.21,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332382",
@@ -3149,7 +3373,8 @@
    ],
    "bottom": 19.07,
    "eave": 27.24,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332384",
@@ -3162,8 +3387,9 @@
     29.99
    ],
    "bottom": 24.16,
-   "eave": 35.56,
-   "off_terrain": false
+   "eave": 35.57,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332386",
@@ -3177,7 +3403,8 @@
    ],
    "bottom": 17.51,
    "eave": 25.51,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332390",
@@ -3186,12 +3413,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    16.6,
+    16.59,
     17.33
    ],
-   "bottom": 16.45,
+   "bottom": 16.44,
    "eave": 24.54,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332400",
@@ -3205,7 +3433,8 @@
    ],
    "bottom": 17.23,
    "eave": 25.23,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332403",
@@ -3214,12 +3443,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    28.6,
+    28.24,
     29.35
    ],
-   "bottom": 28.45,
-   "eave": 36.6,
-   "off_terrain": false
+   "bottom": 28.09,
+   "eave": 36.56,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332409",
@@ -3232,8 +3462,9 @@
     9.32
    ],
    "bottom": 6.66,
-   "eave": 15.46,
-   "off_terrain": false
+   "eave": 15.45,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332411",
@@ -3243,11 +3474,12 @@
    "wall_h_m": 8.0,
    "ground": [
     21.74,
-    22.78
+    22.79
    ],
    "bottom": 21.59,
-   "eave": 29.94,
-   "off_terrain": false
+   "eave": 29.93,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332413",
@@ -3261,7 +3493,8 @@
    ],
    "bottom": 5.97,
    "eave": 14.07,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332416",
@@ -3270,12 +3503,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    15.77,
+    15.76,
     16.45
    ],
-   "bottom": 15.62,
+   "bottom": 15.61,
    "eave": 23.74,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332417",
@@ -3284,12 +3518,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    32.65,
+    32.64,
     34.24
    ],
-   "bottom": 32.5,
+   "bottom": 32.49,
    "eave": 40.94,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332421",
@@ -3298,12 +3533,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    16.31,
-    16.62
+    16.19,
+    16.63
    ],
-   "bottom": 16.06,
-   "eave": 24.06,
-   "off_terrain": false
+   "bottom": 16.04,
+   "eave": 24.05,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332423",
@@ -3313,11 +3549,12 @@
    "wall_h_m": 8.0,
    "ground": [
     14.15,
-    14.43
+    14.41
    ],
-   "bottom": 13.92,
-   "eave": 21.92,
-   "off_terrain": false
+   "bottom": 13.88,
+   "eave": 21.88,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332424",
@@ -3331,7 +3568,8 @@
    ],
    "bottom": 17.41,
    "eave": 25.41,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204332428",
@@ -3345,7 +3583,8 @@
    ],
    "bottom": 12.32,
    "eave": 20.34,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204333852",
@@ -3359,7 +3598,8 @@
    ],
    "bottom": 9.86,
    "eave": 18.13,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204333891",
@@ -3372,8 +3612,9 @@
     27.19
    ],
    "bottom": 21.19,
-   "eave": 32.38,
-   "off_terrain": false
+   "eave": 32.4,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm204333908",
@@ -3382,12 +3623,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    18.65,
-    20.47
+    18.26,
+    20.48
    ],
-   "bottom": 18.5,
-   "eave": 27.6,
-   "off_terrain": false
+   "bottom": 18.11,
+   "eave": 27.23,
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm204333913",
@@ -3401,7 +3643,8 @@
    ],
    "bottom": 4.84,
    "eave": 13.15,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205249738",
@@ -3414,8 +3657,9 @@
     26.25
    ],
    "bottom": 24.99,
-   "eave": 33.45,
-   "off_terrain": false
+   "eave": 33.44,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205249739",
@@ -3428,8 +3672,9 @@
     26.02
    ],
    "bottom": 20.43,
-   "eave": 30.93,
-   "off_terrain": false
+   "eave": 30.94,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205249748",
@@ -3442,8 +3687,9 @@
     26.57
    ],
    "bottom": 23.48,
-   "eave": 32.81,
-   "off_terrain": false
+   "eave": 32.83,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205249750",
@@ -3456,8 +3702,9 @@
     26.79
    ],
    "bottom": 23.84,
-   "eave": 33.13,
-   "off_terrain": false
+   "eave": 33.12,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205675417",
@@ -3467,11 +3714,12 @@
    "wall_h_m": 8.0,
    "ground": [
     20.2,
-    23.21
+    23.22
    ],
    "bottom": 20.05,
    "eave": 29.62,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205675457",
@@ -3484,8 +3732,9 @@
     20.11
    ],
    "bottom": 17.35,
-   "eave": 26.59,
-   "off_terrain": false
+   "eave": 26.6,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205675476",
@@ -3498,8 +3747,9 @@
     25.21
    ],
    "bottom": 21.27,
-   "eave": 31.38,
-   "off_terrain": false
+   "eave": 31.37,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205675489",
@@ -3513,7 +3763,8 @@
    ],
    "bottom": 16.29,
    "eave": 25.44,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205675512",
@@ -3526,8 +3777,9 @@
     18.53
    ],
    "bottom": 15.58,
-   "eave": 24.84,
-   "off_terrain": false
+   "eave": 24.83,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205675516",
@@ -3541,7 +3793,8 @@
    ],
    "bottom": 22.86,
    "eave": 31.33,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205675521",
@@ -3554,8 +3807,9 @@
     18.68
    ],
    "bottom": 16.22,
-   "eave": 24.9,
-   "off_terrain": false
+   "eave": 24.89,
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm205675526",
@@ -3569,7 +3823,8 @@
    ],
    "bottom": 15.92,
    "eave": 23.92,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205675535",
@@ -3579,11 +3834,12 @@
    "wall_h_m": 8.0,
    "ground": [
     15.27,
-    16.21
+    16.22
    ],
    "bottom": 15.12,
    "eave": 23.32,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205675536",
@@ -3592,12 +3848,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    19.96,
+    19.93,
     21.57
    ],
-   "bottom": 19.81,
+   "bottom": 19.78,
    "eave": 28.31,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm205675537",
@@ -3611,7 +3868,8 @@
    ],
    "bottom": 19.28,
    "eave": 28.69,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205675540",
@@ -3625,7 +3883,8 @@
    ],
    "bottom": 16.83,
    "eave": 24.96,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm205675542",
@@ -3635,11 +3894,12 @@
    "wall_h_m": 8.0,
    "ground": [
     18.12,
-    20.0
+    20.02
    ],
    "bottom": 17.97,
-   "eave": 26.77,
-   "off_terrain": false
+   "eave": 26.78,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205675563",
@@ -3648,12 +3908,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    15.98,
+    15.97,
     16.9
    ],
-   "bottom": 15.83,
+   "bottom": 15.82,
    "eave": 24.06,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205675594",
@@ -3663,11 +3924,12 @@
    "wall_h_m": 8.0,
    "ground": [
     22.7,
-    24.72
+    24.74
    ],
    "bottom": 22.55,
    "eave": 31.37,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205675595",
@@ -3677,11 +3939,12 @@
    "wall_h_m": 8.0,
    "ground": [
     17.05,
-    19.2
+    19.22
    ],
    "bottom": 16.9,
-   "eave": 25.73,
-   "off_terrain": false
+   "eave": 25.71,
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm205675597",
@@ -3690,12 +3953,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    17.23,
-    18.77
+    16.83,
+    18.73
    ],
-   "bottom": 17.08,
-   "eave": 25.29,
-   "off_terrain": false
+   "bottom": 16.68,
+   "eave": 25.14,
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm205675607",
@@ -3705,11 +3969,12 @@
    "wall_h_m": 8.0,
    "ground": [
     14.95,
-    16.53
+    16.54
    ],
    "bottom": 14.8,
    "eave": 23.53,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205675621",
@@ -3723,7 +3988,8 @@
    ],
    "bottom": 19.57,
    "eave": 28.52,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm205675626",
@@ -3737,7 +4003,8 @@
    ],
    "bottom": 19.34,
    "eave": 27.74,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm205675692",
@@ -3751,7 +4018,8 @@
    ],
    "bottom": 18.31,
    "eave": 26.57,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm218120514",
@@ -3761,11 +4029,12 @@
    "wall_h_m": 8.0,
    "ground": [
     11.61,
-    12.13
+    12.15
    ],
    "bottom": 11.44,
    "eave": 19.44,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm218120516",
@@ -3775,11 +4044,12 @@
    "wall_h_m": 8.0,
    "ground": [
     10.95,
-    11.85
+    11.84
    ],
    "bottom": 10.8,
    "eave": 18.95,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm218120518",
@@ -3793,7 +4063,8 @@
    ],
    "bottom": 10.84,
    "eave": 18.88,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm218120519",
@@ -3807,7 +4078,8 @@
    ],
    "bottom": 10.42,
    "eave": 18.73,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm223427031",
@@ -3821,7 +4093,8 @@
    ],
    "bottom": 18.6,
    "eave": 23.1,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm223427034",
@@ -3835,7 +4108,8 @@
    ],
    "bottom": 17.28,
    "eave": 25.31,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm257722924",
@@ -3848,8 +4122,9 @@
     21.87
    ],
    "bottom": 17.95,
-   "eave": 27.62,
-   "off_terrain": false
+   "eave": 27.63,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm432471924",
@@ -3863,7 +4138,8 @@
    ],
    "bottom": 18.51,
    "eave": 26.73,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm432472360",
@@ -3876,8 +4152,9 @@
     18.94
    ],
    "bottom": 16.63,
-   "eave": 25.68,
-   "off_terrain": false
+   "eave": 25.69,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm432472362",
@@ -3887,11 +4164,12 @@
    "wall_h_m": 8.0,
    "ground": [
     17.09,
-    18.4
+    18.39
    ],
    "bottom": 16.94,
    "eave": 25.46,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm432472363",
@@ -3905,7 +4183,8 @@
    ],
    "bottom": 18.05,
    "eave": 26.07,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm572132595",
@@ -3919,7 +4198,8 @@
    ],
    "bottom": 3.01,
    "eave": 11.01,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm572132596",
@@ -3933,7 +4213,8 @@
    ],
    "bottom": 2.82,
    "eave": 10.82,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm572132597",
@@ -3947,7 +4228,8 @@
    ],
    "bottom": 3.0,
    "eave": 11.0,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm572132599",
@@ -3961,7 +4243,8 @@
    ],
    "bottom": 3.8,
    "eave": 11.93,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm572132603",
@@ -3975,7 +4258,8 @@
    ],
    "bottom": 3.04,
    "eave": 11.04,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm572132606",
@@ -3989,7 +4273,8 @@
    ],
    "bottom": 3.13,
    "eave": 11.13,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm572132610",
@@ -4003,7 +4288,8 @@
    ],
    "bottom": 2.91,
    "eave": 10.91,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm572132611",
@@ -4017,7 +4303,8 @@
    ],
    "bottom": 2.89,
    "eave": 10.89,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm572132612",
@@ -4031,7 +4318,8 @@
    ],
    "bottom": 2.82,
    "eave": 10.82,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm572132613",
@@ -4045,7 +4333,8 @@
    ],
    "bottom": 3.11,
    "eave": 11.11,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm572132616",
@@ -4059,7 +4348,8 @@
    ],
    "bottom": 3.0,
    "eave": 11.0,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm572132617",
@@ -4073,7 +4363,8 @@
    ],
    "bottom": 3.07,
    "eave": 11.07,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm572132618",
@@ -4087,7 +4378,8 @@
    ],
    "bottom": 3.94,
    "eave": 12.13,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm572134355",
@@ -4100,8 +4392,9 @@
     1.91
    ],
    "bottom": 0.77,
-   "eave": 9.1,
-   "off_terrain": false
+   "eave": 9.09,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm573233251",
@@ -4115,7 +4408,8 @@
    ],
    "bottom": 5.96,
    "eave": 16.33,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm573233254",
@@ -4129,7 +4423,8 @@
    ],
    "bottom": 6.39,
    "eave": 16.63,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm573235387",
@@ -4139,11 +4434,12 @@
    "wall_h_m": 8.0,
    "ground": [
     10.22,
-    11.43
+    11.45
    ],
    "bottom": 10.07,
    "eave": 18.5,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm573235388",
@@ -4157,7 +4453,8 @@
    ],
    "bottom": 8.16,
    "eave": 17.36,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm573235389",
@@ -4167,11 +4464,12 @@
    "wall_h_m": 8.0,
    "ground": [
     9.27,
-    10.46
+    10.47
    ],
    "bottom": 9.12,
    "eave": 17.54,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm573235390",
@@ -4185,7 +4483,8 @@
    ],
    "bottom": 8.9,
    "eave": 17.39,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm573235391",
@@ -4199,7 +4498,8 @@
    ],
    "bottom": 8.44,
    "eave": 17.49,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm573235392",
@@ -4213,7 +4513,8 @@
    ],
    "bottom": 10.62,
    "eave": 18.71,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm580991412",
@@ -4227,7 +4528,8 @@
    ],
    "bottom": 5.7,
    "eave": 14.23,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm580991416",
@@ -4240,8 +4542,9 @@
     9.55
    ],
    "bottom": 7.66,
-   "eave": 16.29,
-   "off_terrain": false
+   "eave": 16.28,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm580991418",
@@ -4254,8 +4557,9 @@
     6.38
    ],
    "bottom": 4.35,
-   "eave": 13.07,
-   "off_terrain": false
+   "eave": 13.06,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614618599",
@@ -4268,8 +4572,9 @@
     30.42
    ],
    "bottom": 25.83,
-   "eave": 36.13,
-   "off_terrain": false
+   "eave": 36.11,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614618600",
@@ -4283,7 +4588,8 @@
    ],
    "bottom": 31.64,
    "eave": 39.64,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614618602",
@@ -4293,11 +4599,12 @@
    "wall_h_m": 8.0,
    "ground": [
     25.26,
-    25.68
+    25.64
    ],
-   "bottom": 25.09,
-   "eave": 33.09,
-   "off_terrain": false
+   "bottom": 25.07,
+   "eave": 33.07,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614618605",
@@ -4311,7 +4618,8 @@
    ],
    "bottom": 26.13,
    "eave": 34.13,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm614618610",
@@ -4325,7 +4633,8 @@
    ],
    "bottom": 24.74,
    "eave": 32.74,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614618611",
@@ -4339,7 +4648,8 @@
    ],
    "bottom": 25.44,
    "eave": 33.67,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614618613",
@@ -4348,12 +4658,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    25.11,
-    25.67
+    25.05,
+    25.64
    ],
-   "bottom": 24.96,
-   "eave": 33.03,
-   "off_terrain": false
+   "bottom": 24.9,
+   "eave": 32.95,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614618615",
@@ -4362,12 +4673,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    25.19,
+    24.75,
     25.69
    ],
-   "bottom": 25.04,
-   "eave": 33.04,
-   "off_terrain": false
+   "bottom": 24.6,
+   "eave": 32.97,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614618617",
@@ -4376,12 +4688,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    25.03,
+    25.02,
     25.19
    ],
-   "bottom": 24.72,
-   "eave": 32.72,
-   "off_terrain": false
+   "bottom": 24.71,
+   "eave": 32.71,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614618621",
@@ -4395,7 +4708,8 @@
    ],
    "bottom": 24.85,
    "eave": 32.85,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614618623",
@@ -4404,12 +4718,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    26.33,
+    26.32,
     27.57
    ],
-   "bottom": 26.18,
-   "eave": 34.46,
-   "off_terrain": false
+   "bottom": 26.17,
+   "eave": 34.45,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614618624",
@@ -4419,25 +4734,12 @@
    "wall_h_m": 8.0,
    "ground": [
     26.0,
-    30.2
+    27.91
    ],
    "bottom": 25.85,
-   "eave": 34.76,
-   "off_terrain": false
-  },
-  {
-   "key": "osm614618625",
-   "skin": "TILTUP",
-   "roof": "WHITE",
-   "form": "flat",
-   "wall_h_m": 8.0,
-   "ground": [
-    25.94,
-    32.34
-   ],
-   "bottom": 25.79,
-   "eave": 36.34,
-   "off_terrain": false
+   "eave": 34.27,
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm614618629",
@@ -4450,8 +4752,9 @@
     31.27
    ],
    "bottom": 30.15,
-   "eave": 38.6,
-   "off_terrain": false
+   "eave": 38.61,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614618630",
@@ -4465,7 +4768,8 @@
    ],
    "bottom": 26.57,
    "eave": 34.57,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614618631",
@@ -4479,7 +4783,8 @@
    ],
    "bottom": 24.83,
    "eave": 32.83,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614620794",
@@ -4493,7 +4798,8 @@
    ],
    "bottom": 22.48,
    "eave": 30.58,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614620796",
@@ -4502,12 +4808,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    24.32,
+    24.31,
     25.25
    ],
-   "bottom": 24.17,
+   "bottom": 24.16,
    "eave": 32.32,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614620797",
@@ -4521,7 +4828,8 @@
    ],
    "bottom": 24.21,
    "eave": 32.3,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614623618",
@@ -4535,7 +4843,8 @@
    ],
    "bottom": 21.83,
    "eave": 29.83,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614623619",
@@ -4548,8 +4857,9 @@
     22.46
    ],
    "bottom": 21.87,
-   "eave": 29.89,
-   "off_terrain": false
+   "eave": 29.9,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614623620",
@@ -4563,7 +4873,8 @@
    ],
    "bottom": 23.48,
    "eave": 31.48,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614623621",
@@ -4577,7 +4888,8 @@
    ],
    "bottom": 23.26,
    "eave": 31.26,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614623622",
@@ -4587,11 +4899,12 @@
    "wall_h_m": 8.0,
    "ground": [
     22.91,
-    24.08
+    24.09
    ],
    "bottom": 22.76,
    "eave": 31.22,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614629072",
@@ -4604,8 +4917,9 @@
     27.07
    ],
    "bottom": 22.66,
-   "eave": 31.54,
-   "off_terrain": false
+   "eave": 31.55,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614629081",
@@ -4619,7 +4933,8 @@
    ],
    "bottom": 25.17,
    "eave": 33.4,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm614629082",
@@ -4633,7 +4948,8 @@
    ],
    "bottom": 23.95,
    "eave": 32.66,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm614629084",
@@ -4647,7 +4963,8 @@
    ],
    "bottom": 25.0,
    "eave": 35.41,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm614629086",
@@ -4661,7 +4978,8 @@
    ],
    "bottom": 24.75,
    "eave": 27.25,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614629087",
@@ -4675,7 +4993,8 @@
    ],
    "bottom": 21.85,
    "eave": 29.85,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614629088",
@@ -4685,11 +5004,12 @@
    "wall_h_m": 8.0,
    "ground": [
     22.1,
-    25.42
+    25.43
    ],
    "bottom": 21.95,
-   "eave": 30.24,
-   "off_terrain": false
+   "eave": 30.25,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614629089",
@@ -4699,11 +5019,12 @@
    "wall_h_m": 8.0,
    "ground": [
     22.22,
-    25.79
+    25.8
    ],
    "bottom": 22.07,
-   "eave": 30.32,
-   "off_terrain": false
+   "eave": 30.33,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614635966",
@@ -4717,7 +5038,8 @@
    ],
    "bottom": 21.81,
    "eave": 30.51,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614635967",
@@ -4731,7 +5053,8 @@
    ],
    "bottom": 21.73,
    "eave": 29.73,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614635969",
@@ -4745,7 +5068,8 @@
    ],
    "bottom": 21.72,
    "eave": 29.72,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614635970",
@@ -4759,7 +5083,8 @@
    ],
    "bottom": 21.7,
    "eave": 29.7,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614641128",
@@ -4773,7 +5098,8 @@
    ],
    "bottom": 21.4,
    "eave": 29.4,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614657837",
@@ -4782,12 +5108,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    19.85,
+    19.84,
     21.91
    ],
-   "bottom": 19.7,
+   "bottom": 19.69,
    "eave": 28.37,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614660876",
@@ -4800,8 +5127,9 @@
     19.8
    ],
    "bottom": 18.86,
-   "eave": 26.98,
-   "off_terrain": false
+   "eave": 26.99,
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm614660879",
@@ -4815,7 +5143,8 @@
    ],
    "bottom": 21.28,
    "eave": 29.76,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614660881",
@@ -4829,7 +5158,8 @@
    ],
    "bottom": 21.4,
    "eave": 30.24,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614660882",
@@ -4843,7 +5173,8 @@
    ],
    "bottom": 22.5,
    "eave": 30.5,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614660883",
@@ -4857,7 +5188,8 @@
    ],
    "bottom": 22.12,
    "eave": 30.12,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614660884",
@@ -4871,7 +5203,8 @@
    ],
    "bottom": 22.95,
    "eave": 30.95,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614660885",
@@ -4884,8 +5217,9 @@
     20.29
    ],
    "bottom": 19.31,
-   "eave": 27.48,
-   "off_terrain": false
+   "eave": 27.49,
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm614660886",
@@ -4899,7 +5233,8 @@
    ],
    "bottom": 22.5,
    "eave": 30.5,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614662042",
@@ -4912,8 +5247,9 @@
     23.88
    ],
    "bottom": 23.23,
-   "eave": 31.27,
-   "off_terrain": false
+   "eave": 31.28,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614662043",
@@ -4927,7 +5263,8 @@
    ],
    "bottom": 25.48,
    "eave": 33.48,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614662044",
@@ -4936,12 +5273,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    23.15,
+    23.14,
     23.48
    ],
    "bottom": 22.9,
    "eave": 30.9,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614665981",
@@ -4955,7 +5293,8 @@
    ],
    "bottom": 26.35,
    "eave": 34.8,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm614665987",
@@ -4969,7 +5308,8 @@
    ],
    "bottom": 25.39,
    "eave": 33.62,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm800206218",
@@ -4978,12 +5318,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    31.31,
+    31.3,
     32.98
    ],
-   "bottom": 31.16,
+   "bottom": 31.15,
    "eave": 40.01,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm829904085",
@@ -4997,7 +5338,8 @@
    ],
    "bottom": 26.93,
    "eave": 34.97,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm829904086",
@@ -5007,25 +5349,12 @@
    "wall_h_m": 8.0,
    "ground": [
     26.47,
-    26.9
+    26.88
    ],
    "bottom": 26.27,
    "eave": 34.27,
-   "off_terrain": false
-  },
-  {
-   "key": "osm829904088",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 8.0,
-   "ground": [
-    26.74,
-    27.08
-   ],
-   "bottom": 26.49,
-   "eave": 34.49,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm913759552",
@@ -5039,7 +5368,8 @@
    ],
    "bottom": 8.49,
    "eave": 17.48,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm948519249",
@@ -5053,7 +5383,8 @@
    ],
    "bottom": 9.59,
    "eave": 18.0,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm948519250",
@@ -5067,7 +5398,8 @@
    ],
    "bottom": 9.47,
    "eave": 17.81,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm948519251",
@@ -5081,7 +5413,8 @@
    ],
    "bottom": 8.53,
    "eave": 16.74,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm977092820",
@@ -5095,7 +5428,8 @@
    ],
    "bottom": 24.02,
    "eave": 32.51,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": true
   },
   {
    "key": "osm977092821",
@@ -5109,7 +5443,8 @@
    ],
    "bottom": 23.79,
    "eave": 32.23,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm977092823",
@@ -5123,7 +5458,8 @@
    ],
    "bottom": 23.93,
    "eave": 31.94,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm977092824",
@@ -5137,7 +5473,8 @@
    ],
    "bottom": 29.83,
    "eave": 35.17,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm977092826",
@@ -5150,8 +5487,9 @@
     29.03
    ],
    "bottom": 27.06,
-   "eave": 32.72,
-   "off_terrain": false
+   "eave": 32.71,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm977094760",
@@ -5165,7 +5503,8 @@
    ],
    "bottom": 23.29,
    "eave": 28.29,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm977094761",
@@ -5179,7 +5518,8 @@
    ],
    "bottom": 13.79,
    "eave": 18.84,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm977094762",
@@ -5193,7 +5533,8 @@
    ],
    "bottom": 12.8,
    "eave": 20.8,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm977094763",
@@ -5207,7 +5548,8 @@
    ],
    "bottom": 12.08,
    "eave": 17.14,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm977094764",
@@ -5221,7 +5563,8 @@
    ],
    "bottom": 6.31,
    "eave": 14.31,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm977094765",
@@ -5235,7 +5578,8 @@
    ],
    "bottom": 5.88,
    "eave": 10.88,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm977094766",
@@ -5249,7 +5593,8 @@
    ],
    "bottom": 6.48,
    "eave": 10.28,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm977094767",
@@ -5263,7 +5608,8 @@
    ],
    "bottom": 6.38,
    "eave": 11.38,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm977094768",
@@ -5277,7 +5623,8 @@
    ],
    "bottom": 6.46,
    "eave": 14.46,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm977094769",
@@ -5291,7 +5638,8 @@
    ],
    "bottom": 6.16,
    "eave": 9.96,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm977094770",
@@ -5301,11 +5649,12 @@
    "wall_h_m": 5.0,
    "ground": [
     4.81,
-    6.9
+    6.89
    ],
    "bottom": 4.66,
-   "eave": 10.49,
-   "off_terrain": false
+   "eave": 10.51,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm977094771",
@@ -5314,12 +5663,13 @@
    "form": "flat",
    "wall_h_m": 5.0,
    "ground": [
-    7.71,
-    8.32
+    7.62,
+    7.92
    ],
-   "bottom": 7.56,
-   "eave": 12.6,
-   "off_terrain": false
+   "bottom": 7.33,
+   "eave": 12.33,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm977094772",
@@ -5333,7 +5683,8 @@
    ],
    "bottom": 6.26,
    "eave": 11.39,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm977094775",
@@ -5342,12 +5693,13 @@
    "form": "flat",
    "wall_h_m": 5.0,
    "ground": [
-    19.98,
+    19.95,
     20.91
    ],
-   "bottom": 19.83,
+   "bottom": 19.8,
    "eave": 25.1,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050318",
@@ -5361,7 +5713,8 @@
    ],
    "bottom": 10.58,
    "eave": 18.81,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050319",
@@ -5371,11 +5724,12 @@
    "wall_h_m": 8.0,
    "ground": [
     3.58,
-    8.54
+    8.55
    ],
    "bottom": 3.43,
-   "eave": 13.64,
-   "off_terrain": false
+   "eave": 13.66,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050320",
@@ -5389,7 +5743,8 @@
    ],
    "bottom": 11.77,
    "eave": 19.77,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050321",
@@ -5403,7 +5758,8 @@
    ],
    "bottom": 12.18,
    "eave": 20.18,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050322",
@@ -5417,7 +5773,8 @@
    ],
    "bottom": 9.78,
    "eave": 18.11,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050323",
@@ -5431,7 +5788,8 @@
    ],
    "bottom": 9.62,
    "eave": 17.71,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050324",
@@ -5441,11 +5799,12 @@
    "wall_h_m": 8.0,
    "ground": [
     8.82,
-    9.65
+    9.66
    ],
    "bottom": 8.67,
    "eave": 16.9,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050325",
@@ -5459,7 +5818,8 @@
    ],
    "bottom": 9.46,
    "eave": 17.86,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050326",
@@ -5468,12 +5828,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    10.44,
+    9.95,
     10.52
    ],
-   "bottom": 10.09,
-   "eave": 18.09,
-   "off_terrain": false
+   "bottom": 9.8,
+   "eave": 17.93,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050327",
@@ -5487,7 +5848,8 @@
    ],
    "bottom": 10.64,
    "eave": 18.87,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050328",
@@ -5501,7 +5863,8 @@
    ],
    "bottom": 11.48,
    "eave": 19.48,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050329",
@@ -5511,11 +5874,12 @@
    "wall_h_m": 8.0,
    "ground": [
     12.56,
-    13.65
+    13.64
    ],
    "bottom": 12.41,
-   "eave": 20.66,
-   "off_terrain": false
+   "eave": 20.63,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050330",
@@ -5524,12 +5888,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    12.32,
-    14.24
+    11.83,
+    15.04
    ],
-   "bottom": 12.17,
-   "eave": 20.71,
-   "off_terrain": false
+   "bottom": 11.68,
+   "eave": 20.94,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050331",
@@ -5543,7 +5908,8 @@
    ],
    "bottom": 9.93,
    "eave": 18.28,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050332",
@@ -5557,7 +5923,8 @@
    ],
    "bottom": 10.33,
    "eave": 18.33,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050333",
@@ -5570,8 +5937,9 @@
     10.21
    ],
    "bottom": 8.25,
-   "eave": 16.91,
-   "off_terrain": false
+   "eave": 16.9,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050334",
@@ -5585,7 +5953,8 @@
    ],
    "bottom": 7.99,
    "eave": 16.97,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050335",
@@ -5599,7 +5968,8 @@
    ],
    "bottom": 8.72,
    "eave": 17.15,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1031050337",
@@ -5612,8 +5982,9 @@
     9.73
    ],
    "bottom": 8.69,
-   "eave": 16.89,
-   "off_terrain": false
+   "eave": 16.88,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1200897949",
@@ -5623,11 +5994,12 @@
    "wall_h_m": 8.0,
    "ground": [
     15.91,
-    16.38
+    16.4
    ],
    "bottom": 15.72,
    "eave": 23.72,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1256011973",
@@ -5641,7 +6013,8 @@
    ],
    "bottom": 15.44,
    "eave": 24.25,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1256011974",
@@ -5655,7 +6028,8 @@
    ],
    "bottom": 16.06,
    "eave": 20.73,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1256011975",
@@ -5665,11 +6039,12 @@
    "wall_h_m": 8.0,
    "ground": [
     15.86,
-    16.27
+    16.28
    ],
    "bottom": 15.66,
    "eave": 23.66,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1256011976",
@@ -5678,12 +6053,13 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    15.76,
+    15.75,
     15.93
    ],
    "bottom": 15.42,
    "eave": 23.42,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1256011977",
@@ -5697,7 +6073,8 @@
    ],
    "bottom": 15.47,
    "eave": 23.47,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1256011978",
@@ -5711,7 +6088,8 @@
    ],
    "bottom": 16.49,
    "eave": 24.49,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1256011979",
@@ -5725,7 +6103,8 @@
    ],
    "bottom": 15.92,
    "eave": 23.92,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1256011980",
@@ -5739,7 +6118,8 @@
    ],
    "bottom": 18.29,
    "eave": 26.29,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1256011981",
@@ -5753,7 +6133,8 @@
    ],
    "bottom": 18.21,
    "eave": 26.21,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1256011982",
@@ -5767,7 +6148,8 @@
    ],
    "bottom": 15.41,
    "eave": 20.04,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1256011986",
@@ -5780,8 +6162,9 @@
     10.3
    ],
    "bottom": 7.06,
-   "eave": 16.18,
-   "off_terrain": false
+   "eave": 16.19,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1256011987",
@@ -5794,8 +6177,9 @@
     11.69
    ],
    "bottom": 10.27,
-   "eave": 18.71,
-   "off_terrain": false
+   "eave": 18.7,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1256011988",
@@ -5808,8 +6192,9 @@
     7.15
    ],
    "bottom": 5.7,
-   "eave": 14.07,
-   "off_terrain": false
+   "eave": 14.08,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1256011990",
@@ -5823,7 +6208,8 @@
    ],
    "bottom": 3.69,
    "eave": 11.69,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1256011992",
@@ -5837,7 +6223,8 @@
    ],
    "bottom": 2.75,
    "eave": 11.32,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1256011993",
@@ -5847,11 +6234,12 @@
    "wall_h_m": 8.0,
    "ground": [
     4.28,
-    5.16
+    5.17
    ],
    "bottom": 4.13,
    "eave": 12.29,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1256011995",
@@ -5864,8 +6252,9 @@
     3.79
    ],
    "bottom": 2.88,
-   "eave": 11.06,
-   "off_terrain": false
+   "eave": 11.07,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1283043521",
@@ -5879,7 +6268,8 @@
    ],
    "bottom": 15.04,
    "eave": 17.24,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1283043523",
@@ -5889,11 +6279,12 @@
    "wall_h_m": 8.0,
    "ground": [
     21.37,
-    21.8
+    21.81
    ],
    "bottom": 21.2,
    "eave": 29.2,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1283043524",
@@ -5907,7 +6298,8 @@
    ],
    "bottom": 21.31,
    "eave": 23.61,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1283043525",
@@ -5921,7 +6313,8 @@
    ],
    "bottom": 20.96,
    "eave": 28.96,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1283043526",
@@ -5934,8 +6327,9 @@
     21.87
    ],
    "bottom": 20.1,
-   "eave": 28.58,
-   "off_terrain": false
+   "eave": 28.57,
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1283043527",
@@ -5949,7 +6343,8 @@
    ],
    "bottom": 22.99,
    "eave": 30.99,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1283043528",
@@ -5963,7 +6358,8 @@
    ],
    "bottom": 22.98,
    "eave": 30.98,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1283043529",
@@ -5977,7 +6373,8 @@
    ],
    "bottom": 22.78,
    "eave": 30.78,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1283044091",
@@ -5991,7 +6388,8 @@
    ],
    "bottom": 22.3,
    "eave": 31.96,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1283044092",
@@ -6005,7 +6403,8 @@
    ],
    "bottom": 22.35,
    "eave": 31.99,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1283044093",
@@ -6019,7 +6418,8 @@
    ],
    "bottom": 22.38,
    "eave": 32.17,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1283044094",
@@ -6033,7 +6433,8 @@
    ],
    "bottom": 26.17,
    "eave": 34.46,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1283044095",
@@ -6047,7 +6448,8 @@
    ],
    "bottom": 26.14,
    "eave": 34.32,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1283044096",
@@ -6061,7 +6463,8 @@
    ],
    "bottom": 26.11,
    "eave": 34.29,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1283044097",
@@ -6075,7 +6478,8 @@
    ],
    "bottom": 26.89,
    "eave": 34.89,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1283044098",
@@ -6089,7 +6493,8 @@
    ],
    "bottom": 27.04,
    "eave": 35.04,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1283044099",
@@ -6103,7 +6508,8 @@
    ],
    "bottom": 27.07,
    "eave": 35.33,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1283044100",
@@ -6117,7 +6523,8 @@
    ],
    "bottom": 27.25,
    "eave": 35.26,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1365728966",
@@ -6131,7 +6538,8 @@
    ],
    "bottom": 18.29,
    "eave": 22.79,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1370084535",
@@ -6145,7 +6553,8 @@
    ],
    "bottom": 19.31,
    "eave": 27.4,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1518753604",
@@ -6159,7 +6568,8 @@
    ],
    "bottom": 22.96,
    "eave": 30.96,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1518753605",
@@ -6173,7 +6583,8 @@
    ],
    "bottom": 15.72,
    "eave": 23.72,
-   "off_terrain": false
+   "off_terrain": false,
+   "collider": false
   },
   {
    "key": "osm1518753606",
@@ -6187,15 +6598,8 @@
    ],
    "bottom": 15.63,
    "eave": 23.66,
-   "off_terrain": false
-  }
- ],
- "cards": [
-  {
-   "file": "source/bespoke/trees.json",
-   "prefix": "TREECARD",
-   "stood": 6673,
-   "dropped": 209
+   "off_terrain": false,
+   "collider": false
   }
  ]
 }

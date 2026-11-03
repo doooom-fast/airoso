@@ -1,0 +1,58 @@
+{
+ "file": "D:\\k10-workshops\\sand-creek\\project\\build\\sand_creek_raceway_street.kn5",
+ "version": 5,
+ "file_bytes": 1747971,
+ "textures": [
+  {
+   "name": "line_yellow.png",
+   "bytes": 361
+  }
+ ],
+ "materials": [
+  {
+   "name": "YLINE_mat",
+   "shader": "ksPerPixel",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "line_yellow.png"
+    ]
+   ]
+  }
+ ],
+ "meshes": [
+  {
+   "name": "YLINE",
+   "verts": 37948,
+   "tris": 12920,
+   "matid": 0,
+   "surface": null,
+   "renderable": true,
+   "radius_m": 1781.3
+  }
+ ],
+ "nodes": [
+  "BlenderFile"
+ ],
+ "summary": {
+  "meshes": 1,
+  "verts": 37948,
+  "tris": 12920,
+  "textures": 1,
+  "texture_bytes": 361,
+  "materials": 1,
+  "surfaces": {},
+  "shaders_by_tris": {
+   "ksPerPixel": {
+    "meshes": 1,
+    "tris": 12920
+   }
+  },
+  "near_vert_cap": [],
+  "non_pot_textures": []
+ }
+}

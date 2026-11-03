@@ -2,10 +2,32 @@
  "multi_layout": true,
  "_doc": "per-layout drive tests (ledger 0047): every layouts[] id is driven on the kn5 set it loads; the full report of each is data/drive_test.<id>.json. fail = any layout fails; a layout not yet run has fail null.",
  "ran": [
-  "full"
+  "street"
  ],
  "layouts": {
-  "full": {
+  "race": {
+   "fail": false,
+   "direction": "forward",
+   "kind": "race",
+   "race_furniture": false,
+   "obj": "track.obj",
+   "lane": "full width / island",
+   "lap_m": 9674.1,
+   "soft_top_in_lane": 0,
+   "obstruction_stations": 0,
+   "barrier_missing": 0,
+   "barrier_stations": 0,
+   "floating_furniture": 0,
+   "daylight_gaps": 0,
+   "excursion_drops": 3,
+   "undrivable_corners": 0,
+   "severe_steps": 1,
+   "severe_per_km": 0.1,
+   "steps_per_km": 1.14,
+   "kinks_per_km": 11.06,
+   "file": "drive_test.race.json"
+  },
+  "street": {
    "fail": false,
    "direction": "forward",
    "kind": "street",
@@ -19,13 +41,13 @@
    "barrier_stations": 0,
    "floating_furniture": 0,
    "daylight_gaps": 0,
-   "excursion_drops": 2,
+   "excursion_drops": 3,
    "undrivable_corners": 0,
    "severe_steps": 1,
    "severe_per_km": 0.1,
    "steps_per_km": 1.14,
    "kinks_per_km": 11.06,
-   "file": "drive_test.full.json"
+   "file": "drive_test.street.json"
   }
  },
  "fail": false,

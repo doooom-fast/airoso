@@ -309,7 +309,7 @@ def test_install_folder_from_config_parked_old_build_and_running_game_refused():
     assert 'for lid in $LAYOUT_IDS; do [ -f "$B/models_$lid.ini" ]' in install
     assert "if len(layouts)==1:" in install and "os.path.join(sys.argv[2],'ui','ui_track.json')" in install
     assert "lo.get('name') or cfg.get('name') or lo['id']" in install, "a single layout is named by the track when undeclared"
-    for track in ("exotics-racing-lv", "milford-road-course", "high-plains", "sand-creek"):
+    for track in ("exotics-racing-lv", "milford-road-course", "high-plains"):  # Sand Creek has a race layout and a Free Roam since ledger 0063
         cfg = json.loads((ROOT / "tracks" / track / "track.config.json").read_text(encoding="utf-8"))
         assert len(cfg["layouts"]) == 1, track
 
@@ -634,12 +634,13 @@ def test_the_four_chain_specs_draft_the_engine_then_the_underlay_and_run_on_airo
             assert re.search(rf"\b{n}\b", data_steps), f"{track}: {n} must be a --draft-only data step"
         for n in ("build_loop_blend", "rebuild_loop_blend", "weld_mouths", "verify_mouths", "median", "route_connectors",
                   "treefx", "export_race", "race_author"):
-            assert n not in [x for ph in PHASES for x in s["steps"][ph]], (track, n)
+            if not (track == "sand-creek" and n == "treefx"):  # ledger 0063: its trees are TreeFX models on its planted points
+                assert n not in [x for ph in PHASES for x in s["steps"][ph]], (track, n)
         assert s["steps"]["prep"] == ["prep", "split"]
         assert {"export_road", "ai", "verify_kn5", "road_obj", "track_folder", "verify_inis", "make_map"} <= set(s["steps"]["ship"])
         # a track that stands buildings (the bespoke author step) also gates them; nothing else joins this list unnoticed
         assert s["steps"]["gate"] == ["drive_test_street", "audit_street", "kn5_ground"] + (["house_seat"] if "bespoke" in s["steps"]["author"] else []), (track, s["steps"]["gate"])
-        assert s["workshop"] == f"C:/Users/Owner/Documents/k10-workshops/{track}" and "airoso" not in s["workshop"].lower()
+        assert s["workshop"] in (f"C:/Users/Owner/Documents/k10-workshops/{track}", f"D:/k10-workshops/{track}") and "airoso" not in s["workshop"].lower()
         assert s["require_race_layout"] is False and s["street_ai_july"] == ""
         assert "loop.blend" in s["sync_out"]["required"] and "data/underlay.report.json" in s["sync_out"]["files"]
         assert "source" in s["sync_in"]["dirs"] and "track.config.json" in s["sync_in"]["required"]
@@ -685,7 +686,7 @@ def test_the_network_spec_drafts_the_network_then_the_underlay_and_runs_on_airos
         assert s["steps"]["author"] == [] and s["steps"]["prep"] == ["prep", "split"]
         assert {"export_road", "ai", "verify_kn5", "road_obj", "track_folder", "verify_inis", "make_map"} <= set(s["steps"]["ship"])
         assert s["steps"]["gate"] == ["drive_test_street", "audit_street", "kn5_ground"], (track, s["steps"]["gate"])
-        assert s["workshop"] == f"C:/Users/Owner/Documents/k10-workshops/{track}" and "airoso" not in s["workshop"].lower()
+        assert s["workshop"] in (f"C:/Users/Owner/Documents/k10-workshops/{track}", f"D:/k10-workshops/{track}") and "airoso" not in s["workshop"].lower()
         assert s["require_race_layout"] is False and s["street_ai_july"] == ""
         assert s["ui_name_prefix"] == "doooom San Diego"
         assert "loop.blend" in s["sync_out"]["required"] and "data/underlay.report.json" in s["sync_out"]["files"]

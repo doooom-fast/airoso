@@ -25,6 +25,7 @@ def _config(layouts):
                          "city": "San Diego", "country": "United States"},
             "source": {"type": "osm"}, "loop": True, "mirror_x": False, "default_width_m": 12.0,
             "origin": "centroid", "surfaces": {"road": "1ROAD"}, "lighting": {},
+            "road_markings": {"center_yellow": False},   # no centre paint, so no <slug>_street.kn5 (ledger 0063)
             "layouts": layouts}
 
 
@@ -142,6 +143,26 @@ def test_race_layout_without_the_race_kn5_is_a_hard_error():
         info = tf.generate(d, strict_kn5=False)
         assert info["models"]["race_cw"] == [f"{SLUG}.kn5", f"{SLUG}_race.kn5", f"{SLUG}__race_cw.kn5"]
         assert not (d / "build" / SLUG / f"{SLUG}_race.kn5").exists()
+
+
+def test_a_mixed_track_that_paints_a_centre_line_needs_its_street_kn5_and_only_street_loads_it():
+    """ledger 0063: the centre line is Free Roam's, so it rides in <slug>_street.kn5, and no race layout lists that"""
+    kn5s = (f"{SLUG}.kn5", f"{SLUG}_race.kn5", f"{SLUG}__street.kn5", f"{SLUG}__race_cw.kn5", f"{SLUG}__race_acw.kn5")
+    with tempfile.TemporaryDirectory() as td:
+        d = _project(Path(td), _THREE, kn5s=kn5s, dummies_for=("street", "race_cw", "race_acw"))
+        cfg = json.loads((d / "track.config.json").read_text(encoding="utf-8"))
+        del cfg["road_markings"]                                            # the default paints the yellow
+        (d / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
+        try:
+            tf.generate(d)
+        except FileNotFoundError as e:
+            assert f"{SLUG}_street.kn5" in str(e)
+        else:
+            raise AssertionError("Free Roam must not pack silently without its centre line")
+        (d / "build" / f"{SLUG}_street.kn5").write_bytes(b"sc6969")
+        models = tf.generate(d)["models"]
+        assert f"{SLUG}_street.kn5" in models["street"]
+        assert f"{SLUG}_street.kn5" not in models["race_cw"] + models["race_acw"]
 
 
 def test_declared_spawn_set_without_its_kn5_is_a_hard_error():

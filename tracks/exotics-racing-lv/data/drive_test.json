@@ -12,7 +12,7 @@
    "race_furniture": false,
    "obj": "track.obj",
    "lane": "full width / island",
-   "lap_m": 1821.9,
+   "lap_m": 1819.2,
    "soft_top_in_lane": 0,
    "obstruction_stations": 0,
    "barrier_missing": 0,
@@ -24,7 +24,7 @@
    "severe_steps": 0,
    "severe_per_km": 0.0,
    "steps_per_km": 0.0,
-   "kinks_per_km": 6.59,
+   "kinks_per_km": 0.0,
    "file": "drive_test.full.json"
   }
  },

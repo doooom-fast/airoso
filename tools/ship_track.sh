@@ -181,6 +181,10 @@ draft_aerial() {
   step "draft: aerial trace -> data/centerline.geojson (scripts.aerial.build_aerial: the asphalt off the georeferenced image; source.control_points, source.trace_px)"
   (cd "$AIROSO" && python -m scripts.aerial.build_aerial "$PROJ")
 }
+draft_grid() {
+  step "draft: the free roam's street grid from real OSM ways (tools/grid_connectors.py: route.grid -> data/connectors.local.json; 3DEP cached; none declared = no-op)"
+  (cd "$AIROSO" && python tools/grid_connectors.py "$PROJ")
+}
 draft_mesh() {
   # the engine's draft geometry — road ribbon, kerbs, verge, the walls the data asks for, the ground — is the underlay's
   # input (fleet/REALISM.md §2 Job 1: the engine prepares truth, regenerable and unprecious). No furniture: build_env is
@@ -467,6 +471,15 @@ ship_export_race() {
     (cd "$AIROSO" && python tools/check_race_kn5.py "$PROJ/data/closure_$lid.kn5.json" --role closure --owner "$tok")
   done
 }
+ship_export_street() {
+  # ledgers 0055, 0063, as tools/ship_sd.sh: what stands in the street layouts alone (the centre line, a chicane's island)
+  rm -f "$PROJ/build/${SLUG}_street.kn5" "$PROJ/data/street_kn5.json"   # a retired street set never rides along
+  [ -f "$PROJ/blender/split/loop_street.blend" ] || { echo; echo "(no street-only set: export_street skipped)"; return 0; }
+  step "ship: export the STREET-ONLY kn5 (the centre line, a chicane's island; the non-race layouts alone)"
+  "$BL" --background --python-exit-code 1 --python "$ENGINE/scripts/ac/export_kn5_addon.py" -- "$PROJ" --blend "$PROJ/blender/split/loop_street.blend" --out "${SLUG}_street.kn5" 2>&1 | grep "KN5 EXISTS\|INI materials"
+  (cd "$AIROSO" && python -m scripts.modkit.inspect_kn5 "$PROJ/build/${SLUG}_street.kn5" --json "$PROJ/data/street_kn5.json" >/dev/null)
+  (cd "$AIROSO" && python tools/check_street_kn5.py "$PROJ/data/street_kn5.json")
+}
 ship_spawn_kn5() {
   step "ship: spawn kn5 per layout (nodes only: AC_START/PIT/HOTLAP/TIME from data/dummies_<id>.json)"
   "$BL" --background --python-exit-code 1 --python "$ENGINE/scripts/ac/build_spawn_kn5.py" -- "$PROJ" 2>&1 | grep "^\[spawn_kn5\]"
@@ -512,7 +525,10 @@ ship_road_obj() {
   # written BEFORE the track folder (ledger 0046): ext_config's GrassFX lists and make_treefx's SURFACE_MATERIALS read
   # the mesh names off it, and the 1GRASS tile count follows the terrain
   step "gate: road kn5 -> gate OBJ (engine frame) + gate centreline"
-  (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5")
+  # (+ the street-only kn5 when there is one, as tools/ship_sd.sh: data/track.obj is the STREET layout's kn5 set)
+  local sk=""
+  [ -f "$PROJ/build/${SLUG}_street.kn5" ] && sk="--kn5 $PROJ/build/${SLUG}_street.kn5"
+  (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" $sk)
 }
 ship_track_folder() {
   step "ship: track folder (models_<id>.ini per layout, ui/<id>/, <id>/{map,data,ai}; a race layout without its closure kn5 is a HARD error)"
@@ -628,6 +644,7 @@ gate_kn5_ground() {
   for lid in $LAYOUT_IDS; do
     rm -f "$PROJ/data/kn5_ground_check.$lid.json"
     if [[ " $RACE_IDS " == *" $lid "* ]]; then KX="--kn5 $PROJ/build/${SLUG}_race.kn5 --kn5 $PROJ/build/${SLUG}_closure_$lid.kn5"
+    elif [[ " $BARE_RACE_IDS " == *" $lid "* ]]; then KX=""   # a race with no furniture loads the road and its spawns alone
     elif [ -f "$PROJ/build/${SLUG}_street.kn5" ]; then KX="--kn5 $PROJ/build/${SLUG}_street.kn5"; else KX=""; fi
     rc=0; (cd "$AIROSO" && python -m scripts.ac.kn5_ground_check "$PROJ" $KX --json "$PROJ/data/kn5_ground_check.$lid.json" 2>&1 | tail -14) || rc=$?
     echo "  kn5_ground_check $lid: exit $rc"
@@ -698,7 +715,7 @@ print(1 if os.path.exists(p) and json.load(open(p,encoding='utf-8')).get('force_
 # a draft step that needs no Blender (what --draft-only runs)
 is_data_step() {
   case "$1" in
-    gps|aerial|paint_centreline|remap_config|verify_centreline_paint|route_oneway_check|elev|project|widths|mesh) return 0;;
+    gps|aerial|paint_centreline|remap_config|verify_centreline_paint|route_oneway_check|elev|project|widths|grid|mesh) return 0;;
     road_profile|measured_widths|crossfall|verify_crossfall) return 0;;
     net|classify|network_elev|network_mesh|network_reference) return 0;;
     deck_datum|median_envelope|route_connectors|divide_connectors|trim_connectors|terrain_sample|terrain_resample) return 0;;
@@ -852,6 +869,8 @@ done
 LAYOUT_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts']))" "$PROJ/track.config.json")
 RACE_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts'] if l.get('race_furniture')))" "$PROJ/track.config.json")
 STREET_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts'] if not l.get('race_furniture')))" "$PROJ/track.config.json")
+BARE_RACE_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts'] if l.get('kind')=='race' and not l.get('race_furniture')))" "$PROJ/track.config.json")
+BARE_RACE_IDS="${BARE_RACE_IDS%$'\r'}"
 SLUG=$(pyq "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8'))['slug'])" "$PROJ/track.config.json")
 INSTALL_FOLDER=$(pyq "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8')).get('install_folder') or '')" "$PROJ/track.config.json")
 LAYOUT_IDS="${LAYOUT_IDS%$'\r'}"; RACE_IDS="${RACE_IDS%$'\r'}"; STREET_IDS="${STREET_IDS%$'\r'}"; SLUG="${SLUG%$'\r'}"; INSTALL_FOLDER="${INSTALL_FOLDER%$'\r'}"

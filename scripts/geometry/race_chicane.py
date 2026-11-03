@@ -36,7 +36,7 @@ EASE = 0.35  # [invented] each end of a leg eases its slope in / out over this f
 #              steepest slope = mean / (1 - EASE) = 1.54 x mean; the wall's plan curvature stays finite (no kink).
 #              0.2 (an 18 m ramp on a 90 m leg) bunched the AI line's turn-in into a curvature peak narrower than
 #              verify_ai_line's +-6 m car scale: 57 'spurious dip' points at College's out leg (0055, first rehearsal)
-STREET_KN5_SUFFIX = "_street"   # <slug>_street.kn5: the street-only island pieces (loaded by every non-race layout)
+STREET_KN5_SUFFIX = "_street"   # <slug>_street.kn5: the street-only island pieces + the centre paint (loaded by every non-race layout)
 STREET_TAG = "_streetonly"      # object-name tag the island author gives every street-only piece (split routes on it)
 ISLAND_NOSE_VERTS = 3           # tools/author_median_blend.NOSE_VERTS (MEASURED): an island run's nose taper, vertices
 
@@ -147,17 +147,39 @@ def island_pieces(i: int, j: int, spans) -> list[tuple[int, int, bool]]:
     return out
 
 
+def is_race_layout(layout: dict) -> bool:
+    """a race layout: it declares race furniture or kind "race" (Sand Creek's lap has no furniture and is still a race)"""
+    return bool(layout.get("race_furniture")) or layout.get("kind") == "race"
+
+
+def centre_paint_is_street_only(cfg: dict) -> bool:
+    """a track with both kinds of layout keeps its centre line in the street layouts alone (ledger 0063, Kevin 2026-11-01:
+    "only keep for actual roads ... keep only on freeroam"); a track that paints no yellow line has nothing to route"""
+    layouts = [lo for lo in (cfg.get("layouts") or []) if isinstance(lo, dict)]
+    if not (any(is_race_layout(lo) for lo in layouts) and any(not is_race_layout(lo) for lo in layouts)):
+        return False
+    mk = cfg.get("road_markings") or {}
+    return mk.get("style") != "none" and mk.get("center_yellow", True) is not False
+
+
 def has_street_kn5(cfg: dict) -> bool:
     """does the track ship a street-only kn5 (<slug>_street.kn5, every non-race layout loads it)?"""
-    return bool(street_only_spans(cfg))
+    return bool(street_only_spans(cfg)) or centre_paint_is_street_only(cfg)
 
 
 def street_kn5_name(cfg: dict) -> str:
     return f"{cfg['slug']}{STREET_KN5_SUFFIX}.kn5"
 
 
+def is_centre_paint_name(name: str) -> bool:
+    """the road's own double yellow (YLINE, YLINE_<tile>). The I-8's YLINE_I8_* is the freeway's median edge line, scenery
+    every layout looks at, not a centre line on a road a race layout drives"""
+    up = str(name).upper()
+    return up.startswith("YLINE") and not up.startswith("YLINE_I8")
+
+
 def is_street_only_name(name: str) -> bool:
-    return STREET_TAG in str(name).lower()
+    return STREET_TAG in str(name).lower() or is_centre_paint_name(name)
 
 
 def legs_in_travel(ch: dict, direction: str) -> tuple[list[int], list[int]]:

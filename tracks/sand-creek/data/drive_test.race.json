@@ -1,8 +1,8 @@
 {
  "lap_m": 9674.1,
- "layout": "full",
+ "layout": "race",
  "direction": "forward",
- "kind": "street",
+ "kind": "race",
  "race_furniture": false,
  "obj": "track.obj",
  "lane": "full width / island",
@@ -28,13 +28,13 @@
  "fold_bumps": 21,
  "vertex_bumps": 0,
  "vertex_bumps_worst": [],
- "excursion_drops": 2,
- "excursion_far_ledges": 7,
+ "excursion_drops": 3,
+ "excursion_far_ledges": 9,
  "worst_excursions": [
   [
    7950.5,
    -12.5,
-   0.68,
+   0.44,
    true
   ],
   [
@@ -46,7 +46,7 @@
   [
    8253.0,
    12.5,
-   0.17,
+   0.18,
    false
   ],
   [
@@ -57,19 +57,25 @@
   ],
   [
    9451.8,
-   14.5,
+   14.0,
    0.16,
    false
   ],
   [
    9451.8,
-   14.0,
-   0.15,
+   14.5,
+   0.16,
    false
   ],
   [
    302.2,
    -15.0,
+   0.13,
+   false
+  ],
+  [
+   5252.0,
+   -12.5,
    0.13,
    false
   ],
@@ -80,8 +86,20 @@
    false
   ],
   [
-   4651.5,
-   -11.0,
+   9451.8,
+   -12.5,
+   0.13,
+   true
+  ],
+  [
+   7201.9,
+   -13.0,
+   0.12,
+   false
+  ],
+  [
+   8102.7,
+   9.0,
    0.12,
    true
   ]
@@ -90,12 +108,18 @@
   [
    7950.5,
    -12.5,
-   0.68,
+   0.44,
    true
   ],
   [
-   4651.5,
-   -11.0,
+   9451.8,
+   -12.5,
+   0.13,
+   true
+  ],
+  [
+   8102.7,
+   9.0,
    0.12,
    true
   ]

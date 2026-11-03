@@ -5,11 +5,11 @@ scripts/modkit/inspect_kn5.py's --json of <slug>_street.kn5:
     python tools/check_street_kn5.py <file>                                     (exit 1 on a FAIL)
 
 <slug>_street.kn5 holds what stands in the street layout ONLY: the median island over each declared chicane's span
-(track.config.json race.chicanes, street_only_island; tools/author_median_blend.py authors it, tools/
-split_exports_blend.py routes it by name). Every non-race layout loads it beside the road kn5; no race layout does
-(scripts/ac/track_folder.py, verified by scripts/ac/verify_kn5.py --inis). The guard:
-  * at least one mesh, and EVERY mesh name carries scripts/geometry/race_chicane.STREET_TAG (a road, race or
-    closure mesh here would be doubled in Free Roam or missing from a Speedway);
+(track.config.json race.chicanes, street_only_island; tools/author_median_blend.py authors it) and the road's centre
+line (YLINE*, ledger 0063); tools/split_exports_blend.py routes both by name. Every non-race layout loads it beside the
+road kn5; no race layout does (scripts/ac/track_folder.py, verified by scripts/ac/verify_kn5.py --inis). The guard:
+  * at least one mesh, and EVERY mesh name is street-only (scripts/geometry/race_chicane.is_street_only_name: a road,
+    race or closure mesh here would be doubled in Free Roam or missing from a Speedway);
   * no node named AC_* (spawns ride in the per-layout spawn kn5s, L8 as amended);
   * every material binds a txDiffuse that is EMBEDDED with > 0 bytes (a texture-less kn5 material renders black, L7);
   * every mesh under the 65,535-vertex cap; no non-power-of-two texture (L7).
@@ -41,7 +41,7 @@ def check(parsed: dict) -> dict:
         fails.append("no mesh — an empty street-only kn5")
     alien = [m["name"] for m in meshes if not rc.is_street_only_name(m["name"])]
     if alien:
-        fails.append(f"{len(alien)} meshes are not street-only (no {rc.STREET_TAG!r} in the name): {alien[:4]}")
+        fails.append(f"{len(alien)} meshes are not street-only (no {rc.STREET_TAG!r} in the name, not centre paint): {alien[:4]}")
     ac = [n for n in (parsed.get("nodes") or []) if str(n).upper().startswith("AC_")]
     if ac:
         fails.append(f"AC_* nodes in a street-only kn5: {ac[:4]}")

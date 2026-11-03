@@ -464,8 +464,10 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
         except (json.JSONDecodeError, OSError):
             _corridor_decl = False
     # ledger 0049: each race layout loads road + common race + ITS closure kn5 -> its own gate OBJ
-    obj_name = obj or ((f"track.{lid}.obj" if _corridor_decl else "track.race.obj") if kind == "race" else "track.obj")
-    if kind == "race" and not (data / obj_name).exists():
+    # a race with no furniture (ledger 0063, Sand Creek's lap) has no such set: it drives the road, track.obj (paint is no obstruction)
+    _furnished = kind == "race" and race
+    obj_name = obj or ((f"track.{lid}.obj" if _corridor_decl else "track.race.obj") if _furnished else "track.obj")
+    if _furnished and not (data / obj_name).exists():
         raise SystemExit(f"drive_test: layout {lid!r} is kind 'race' but data/{obj_name} does not exist — "
                          f"a race layout is judged on the kn5 set it loads (main + race furniture"
                          f"{' + its closure' if _corridor_decl else ''}), never on track.obj alone "

@@ -2,9 +2,9 @@
  "input": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\blender\\san_diego_lake_murray.blend",
  "outputs": {
   "loop_main.blend": {
-   "objects": 109,
-   "meshes": 109,
-   "positions": 884685,
+   "objects": 107,
+   "meshes": 107,
+   "positions": 846114,
    "max_positions": 62202,
    "materials": [
     "1GRASS_0_mat",
@@ -113,9 +113,7 @@
     "MARKINGS_1_mat",
     "SIGNARROW_0_mat",
     "SIGNPLATE_0_mat",
-    "SIGNPOST_0_mat",
-    "YLINE_0_mat",
-    "YLINE_1_mat"
+    "SIGNPOST_0_mat"
    ],
    "orphan_materials": [],
    "ac_nodes": [],
@@ -229,9 +227,7 @@
     "MARKINGS_1",
     "SIGNARROW_0",
     "SIGNPLATE_0",
-    "SIGNPOST_0",
-    "YLINE_0",
-    "YLINE_1"
+    "SIGNPOST_0"
    ]
   },
   "loop_race.blend": {
@@ -438,13 +434,15 @@
    ]
   },
   "loop_street.blend": {
-   "objects": 2,
-   "meshes": 2,
-   "positions": 1606,
-   "max_positions": 844,
+   "objects": 4,
+   "meshes": 4,
+   "positions": 40177,
+   "max_positions": 26254,
    "materials": [
     "1KERB_sidewalk_streetonly_median_mat",
-    "1WALL_guard_streetonly_median_mat"
+    "1WALL_guard_streetonly_median_mat",
+    "YLINE_0_mat",
+    "YLINE_1_mat"
    ],
    "orphan_materials": [],
    "ac_nodes": [],
@@ -453,7 +451,9 @@
    "sign_objects": [],
    "names": [
     "1KERB_sidewalk_streetonly_median",
-    "1WALL_guard_streetonly_median"
+    "1WALL_guard_streetonly_median",
+    "YLINE_0",
+    "YLINE_1"
    ]
   },
   "loop_spawn_street.blend": {
@@ -1043,6 +1043,6 @@
   "common": 27,
   "race_cw": 8,
   "race_acw": 8,
-  "street": 2
+  "street": 4
  }
 }

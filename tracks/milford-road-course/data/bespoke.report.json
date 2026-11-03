@@ -30,7 +30,8 @@
    ],
    "bottom": 8.57,
    "eave": 19.57,
-   "off_terrain": true
+   "off_terrain": true,
+   "collider": false
   },
   {
    "key": "mpg_plant_b",
@@ -44,7 +45,8 @@
    ],
    "bottom": -0.31,
    "eave": 10.69,
-   "off_terrain": true
+   "off_terrain": true,
+   "collider": false
   }
  ],
  "pads": [

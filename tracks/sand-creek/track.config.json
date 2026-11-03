@@ -1,7 +1,7 @@
 {
   "name": "Sand Creek Raceway",
   "slug": "sand_creek_raceway",
-  "version": "0.29.0",
+  "version": "0.30.1",
   "mirror_x": false,
   "osm_road_widths": true,
   "_osm_road_widths_doc": "Real street circuit — after the project stage, scripts.gps.widths_from_osm map-matches each centerline vertex to its OSM way and sets curb-to-curb widths from lanes (arterials ~2x a side street) + writes intersection pads at the real junctions. Racetracks (defined widths) leave this off.",
@@ -53,6 +53,7 @@
     "kml_overrides": []
   },
   "route": {
+    "grid": {"_doc": "Ledger 0063, Kevin 2026-11-01: fill out the grid around Sand Creek for its free roam. tools/grid_connectors.py: real OSM ways of data/osm.ways.json only (L1); widths [invented], the cache carries no lanes. The road kn5 is shared (L8), so these streets stand in both layouts.", "classes": {"primary": 9.5, "secondary": 10.0, "tertiary": 10.0, "unclassified": 8.0, "residential": 8.0}, "min_piece_m": 40, "on_lap_pad_m": 6, "parallel_m": 25, "terrain_inset_m": 60, "exclude": ["grid_tertiary_94"], "_exclude_doc": "grid_tertiary_94, 80 m at the lap's east end: its smoothed line runs up to 2.57 m under the lap's graded bank; 186 of the first build's 191 kn5 terrain pokes"},
     "bbox": [
       39.773,
       -104.945,
@@ -118,13 +119,6 @@
           "auto": true
         }
       ],
-      "cards": [
-        {
-          "file": "source/bespoke/trees.json",
-          "prefix": "TREECARD",
-          "clear_m": 5.0
-        }
-      ],
       "grassfx_zones": {
         "image": "source/naip_2023_sc.jpg",
         "webmerc": {
@@ -168,7 +162,8 @@
           }
         ]
       }
-    }
+    },
+    "treefx": {"_doc": "Ledger 0063: the NAIP points of source/bespoke/trees.json stand as TreeFX models (tools/make_treefx.py, planted), not as TREECARD cards. There is no cottonwood model: sycamores stand in, as the north_riparian zone does. Models are personal-use and stay on this machine.", "planted": {"file": "source/bespoke/trees.json", "clear_m": 5.0, "zones": {"3": "planted_cottonwood", "1": "planted_neighbourhood"}}}
   },
   "origin": "centroid",
   "true_north_rotation_deg": 0.0,
@@ -178,13 +173,47 @@
     "kerb": "1KERB"
   },
   "layouts": [
-    {
-      "id": "full",
-      "ai": "ai/full",
-      "uses_connectors": [],
-      "_doc": "Outer loop: Colorado -> 50th -> Dahlia -> 56th -> Sand Creek -> Quebec -> 45th -> 46th -> start. The 'interior' layout was dropped: its interior_grid connector was never defined, and layouts share one kn5 so a distinct interior circuit isn't achievable without splitting geometry."
-    }
-  ],
+  {
+    "id": "race",
+    "name": "Sand Creek Raceway",
+    "kind": "race",
+    "direction": "forward",
+    "race_furniture": false,
+    "ai": "ai/race",
+    "uses_connectors": [],
+    "start": {
+      "line_vertex": 2805,
+      "grid_vertex": 2795,
+      "sector_vertices": [
+        655,
+        1730
+      ],
+      "offset_right_m": 1.9
+    },
+    "run": "the lap, one-way: Colorado -> 50th -> Dahlia -> 56th -> Sand Creek -> Quebec -> 45th -> 46th -> start; no centre line (ledger 0063)",
+    "ui_description": "Sand Creek Raceway: a fictional street circuit on the real roads of Commerce City, Colorado, driven one way, without the centre line."
+  },
+  {
+    "id": "street",
+    "name": "Sand Creek Free Roam",
+    "kind": "street",
+    "direction": "forward",
+    "race_furniture": false,
+    "ai": "ai/street",
+    "uses_connectors": [],
+    "start": {
+      "line_vertex": 2805,
+      "grid_vertex": 2795,
+      "sector_vertices": [
+        655,
+        1730
+      ],
+      "offset_right_m": 1.9
+    },
+    "run": "the same roads open and two-way, the double yellow painted (ledger 0063)",
+    "ui_description": "Sand Creek Free Roam: the same Commerce City roads as they are, open and two-way, with the double yellow line."
+  }
+],
   "lighting": {
     "presets": [
       "morning",
@@ -276,7 +305,8 @@
     }
   },
   "terrain_cell_m": 1.5,
-  "corridor_refine_factor": 6,
+  "corridor_refine_factor": 4,
+  "corridor_refine_connectors": "ribbon",
   "terrain_vertex_budget": 1500000,
   "install_folder": "sand_creek_raceway",
   "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (Lariat plan A11); the previous install is parked in the archive",

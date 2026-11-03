@@ -3,7 +3,7 @@
  "existed": true,
  "blender": "4.2.22 LTS",
  "source_obj": "data/track.obj",
- "obj_md5": "397bd16dde31f188c9e03936bf6430e4",
+ "obj_md5": "9c8f3b2277282d34749e93f33d766c20",
  "frame": "local (E,up,N) -> Blender (E,N,up) as (x,y,z)->(x,z,y), faces re-wound",
  "groups": [
   {
@@ -450,8 +450,8 @@
   {
    "name": "MARKINGS",
    "collection": "GEN_misc",
-   "verts": 5828,
-   "faces": 2914,
+   "verts": 4856,
+   "faces": 2428,
    "uv": true
   },
   {
@@ -551,7 +551,21 @@
   "1WALL_CHAINL_warn",
   "BARRIER_warning"
  ],
- "auth_untouched": [],
+ "auth_untouched": [
+  "1WALL_FABRIC_exr2013_a",
+  "1WALL_FABRIC_exr2013_b",
+  "1WALL_TECPRO_0",
+  "1WALL_TILTUP_0",
+  "BUILDING_FABRIC_exr2013_a",
+  "BUILDING_FABRIC_exr2013_b",
+  "BUILDING_TILTUP_0",
+  "FARBLOCK_METAL_0",
+  "PROPCONE_0",
+  "ROOFTOP_DARK_0",
+  "ROOFTOP_TAN_0",
+  "ROOFTOP_WHITE_0",
+  "SCRUBCARD_0"
+ ],
  "collections": [
   "GEN_road",
   "GEN_kerb",

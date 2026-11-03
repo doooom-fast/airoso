@@ -238,7 +238,8 @@ def race_kn5_name(cfg, layout: dict) -> str:
 
 def street_kn5_name(cfg) -> str | None:
     """``<slug>_street.kn5`` when the track declares a street-only island (race.chicanes, ledger 0055 — the median over
-    a Speedway chicane's span stands in the street layouts only), else None. Loaded by every NON-race layout."""
+    a Speedway chicane's span stands in the street layouts only) or has both kinds of layout (ledger 0063 — the centre
+    line is Free Roam's), else None. Loaded by every NON-race layout."""
     from scripts.geometry import race_chicane as _rc
     raw = cfg.raw if hasattr(cfg, "raw") else cfg
     if not _rc.has_street_kn5(raw):
@@ -277,8 +278,9 @@ def layout_kn5s(cfg, layout: dict | str, project_dir: Path, *, single: bool,
             out.append((name, src if src.exists() else None))
     elif lo.get("closure_token"):
         closure_kn5_name(cfg, lo)                          # raises: a token on a non-race layout
-    if not lo.get("race_furniture") and isinstance(layout, dict):
-        sk = street_kn5_name(cfg)                          # ledger 0055: the street-only island (Free Roam only)
+    from scripts.geometry import race_chicane as _rc
+    if not _rc.is_race_layout(lo) and isinstance(layout, dict):
+        sk = street_kn5_name(cfg)                          # ledgers 0055, 0063: the street-only island + centre line (Free Roam only)
         if sk:
             src = build / sk
             if not src.exists():

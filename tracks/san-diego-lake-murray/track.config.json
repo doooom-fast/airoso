@@ -15,8 +15,9 @@
     "city": "San Diego",
     "country": "United States"
   },
-  "source": {"type": "from_track", "track": "source/lm_authored_fixes.json", "_note": "v5 redraft candidate (ledger 0065): the authored 13.5 km loop as the engine draft's source line, widths included; the OSM stitch gives 22.5 km and another origin"},
+  "source": {"type": "from_track", "track": "source/lm_authored_fixes.json", "smooth_window": 0, "_note": "v5 redraft candidate (ledger 0065): the authored 13.5 km loop as the engine draft's source line, widths included; the OSM stitch gives 22.5 km and another origin"},
   "route": {
+    "fold_treatment": "pinch", "_fold_treatment_doc": "v5 redraft (ledger 0065): the four junction corners keep their real profile (College / Alvarado is the hump Kevin asked for, ledger 0057); the inside edge is levelled (ribbon.fold_level_deltas, ledger 0050), not plateaued under a flat disc",
     "bbox": [
       32.76,
       -117.082,
@@ -209,71 +210,33 @@
     "network_walls": true
   },
   "_layout_names_doc": "Kevin 2026-10-12: \"this will be called lake murray free roam vs the lake murray speedways (clockwise is normal, counterclockwise is reverse)\" and \"we may add mission gorge speedway etc\". Scheme: <Area> Free Roam = the open network; <Area> Speedway = a race layout, clockwise the normal direction, anticlockwise <Area> Speedway Reverse. Layout ids (street / race_cw / race_acw) are folder names and stay, so saved setups and lap records survive.",
+  "road_profile": {"max_grade_pct": 10.0, "_doc": "v5 redraft (ledger 0065): the authored profile peaks at 8.9 % (Jackson, s 3330-3390); the cap is a launch net, not a flattener"},
+  "capture": {"_doc": "v5 redraft (ledger 0065): the three real decks (road_datum.decks, ledger 0057) on the redraft's stations, as build_mesh detects them: College over I-8, Lake Murray Blvd over I-8 and over Alvarado Creek. Their rails are authored (owed: M4)", "use_elevation": false, "bridges": [{"center_m": 2625.5, "len_m": 81.0}, {"center_m": 13367.5, "len_m": 63.0}, {"center_m": 13426.0, "len_m": 18.0}]},
+  "corridor_refine_factor": 4,
+  "road_edge": {"profile": "shoulder", "_sidewalk_tried": "sidewalk: the walk stood up to 1.7 m over the falling yards, 281 excursion drops (ledger 0065); sidewalks come as authoring", "grade_w": 2.5, "ratio": 4.5, "_grade_doc": "the walk's back falls 0.5 m to below the grass: over 2.5 m, then 4.5:1 to the ground, it stays under the drive gate's 0.12 m per 0.5 m (ledger 0025's rule for a fill toe); 1.0 m and 2:1 read 343 excursion drops", "_doc": "v5 redraft (ledger 0065): Lake Murray's streets have sidewalks; the engine's curb -> walk -> verge -> embankment sweep (ribbon.curb_sidewalk)"},
   "layouts": [
-    {
-      "id": "street",
-      "name": "Lake Murray Free Roam",
-      "kind": "street",
-      "direction": "forward",
-      "race_furniture": false,
-      "start": {
-        "line_vertex": 300,
-        "grid_vertex": 291,
-        "offset_right_m": 3.25,
-        "sector_vertices": [
-          1803,
-          3310
-        ],
-        "per_issue": "start_positions.json"
-      },
-      "run": "open two-way street; lap clockwise: Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest",
-      "ui_description": "Lake Murray Free Roam — Lake Murray as it is: the open two-way 13.5 km loop of Alvarado Road, College Avenue, Navajo Road, Jackson Drive and Lake Murray Boulevard around the reservoir (Kevin's childhood neighbourhood), from OpenStreetMap at real USGS 3DEP elevation, plus the 6.4 km north network joined to it at both ends: Waring Road from College/Navajo to Princess View Drive, Princess View down into Grantville, Mission Gorge Road east through the gorge under Cowles Mountain, and Jackson Drive north up the canyon back to Navajo — about 19.9 km of road in all, driven in both directions. Raised landscaped medians on College, Navajo and Waring, Mission Gorge's terracotta median, the real rock cuts on Mission Gorge and Jackson, street lamps, arrow signs at the tight corners, trees and the mapped buildings; the loop's side streets left open, the side streets off the north roads closed by concrete K-rail. No race furniture; lap clockwise from the line on Alvarado. The AI line is a generated draft, not an in-game recording.",
-      "ai": "ai/street",
-      "_doc": "Version 1 = today's loop: main kn5 only, open mouths, full width, no race furniture. Only its spawn moves (ledger 0047 Q3): grid A on Alvarado, line v300. start_positions.json `active` still moves START/HOTLAP/PIT for THIS layout only (Kevin 2026-08-20 per-issue spawns) via tools/layout_dummies.py --issue-spawn, never AC_TIME, never the race layouts."
+  {
+    "id": "street",
+    "name": "Lake Murray Free Roam",
+    "kind": "street",
+    "direction": "forward",
+    "race_furniture": false,
+    "start": {
+      "line_vertex": 300,
+      "grid_vertex": 291,
+      "offset_right_m": 3.25,
+      "sector_vertices": [
+        1803,
+        3310
+      ],
+      "per_issue": "start_positions.json"
     },
-    {
-      "id": "race_cw",
-      "name": "Lake Murray Speedway",
-      "kind": "race",
-      "direction": "forward",
-      "race_furniture": true,
-      "closure_token": "cw",
-      "map": "lap",
-      "start": {
-        "line_vertex": 300,
-        "grid_vertex": 291,
-        "offset_right_m": 3.25,
-        "sector_vertices": [
-          1803,
-          3310
-        ]
-      },
-      "run": "clockwise, one-way: Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest — your own side of every road (an Alvarado-wide lane), the whole street on Alvarado and the I-8 bridge, the full intersection open at the five corners",
-      "ui_description": "Lake Murray Speedway (clockwise, the normal direction): the same 13.5 km of real Lake Murray roads as a one-way race track, run clockwise — Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest — on an Alvarado-wide lane on your own side of every road: concrete barriers along your curb and a second line closing off the opposite lanes (along the medians where there is one); the whole street on Alvarado and the I-8 bridge; the full intersection open at the five corners; side streets sealed; red/white kerbs at the corners. The AI line is a generated draft, not an in-game recording.",
-      "ai": "ai/race_cw"
-    },
-    {
-      "id": "race_acw",
-      "name": "Lake Murray Speedway Reverse",
-      "kind": "race",
-      "direction": "reverse",
-      "race_furniture": true,
-      "closure_token": "acw",
-      "map": "lap",
-      "start": {
-        "line_vertex": 300,
-        "grid_vertex": 310,
-        "offset_right_m": 3.25,
-        "sector_vertices": [
-          3310,
-          1803
-        ]
-      },
-      "run": "anticlockwise, one-way: Alvarado eastbound, Lake Murray Blvd northeast, Jackson north, Navajo westbound, College southbound — your own side of every road (an Alvarado-wide lane), the whole street on Alvarado and the I-8 bridge, the full intersection open at the five corners",
-      "ui_description": "Lake Murray Speedway Reverse (anticlockwise): the same 13.5 km of real Lake Murray roads as a one-way race track, run anticlockwise — Alvarado eastbound, Lake Murray Blvd northeast, Jackson north, Navajo westbound, College southbound — on an Alvarado-wide lane on your own side of every road: concrete barriers along your curb and a second line closing off the opposite lanes (along the medians where there is one); the whole street on Alvarado and the I-8 bridge; the full intersection open at the five corners; side streets sealed; red/white kerbs at the corners. The AI line is a generated draft, not an in-game recording.",
-      "ai": "ai/race_acw"
-    }
-  ],
+    "run": "open two-way street; lap clockwise: Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest",
+    "ui_description": "Lake Murray Free Roam — Lake Murray as it is: the open two-way 13.5 km loop of Alvarado Road, College Avenue, Navajo Road, Jackson Drive and Lake Murray Boulevard around the reservoir (Kevin's childhood neighbourhood), from OpenStreetMap at real USGS 3DEP elevation, plus the 6.4 km north network joined to it at both ends: Waring Road from College/Navajo to Princess View Drive, Princess View down into Grantville, Mission Gorge Road east through the gorge under Cowles Mountain, and Jackson Drive north up the canyon back to Navajo — about 19.9 km of road in all, driven in both directions. Raised landscaped medians on College, Navajo and Waring, Mission Gorge's terracotta median, the real rock cuts on Mission Gorge and Jackson, street lamps, arrow signs at the tight corners, trees and the mapped buildings; the loop's side streets left open, the side streets off the north roads closed by concrete K-rail. No race furniture; lap clockwise from the line on Alvarado. The AI line is a generated draft, not an in-game recording.",
+    "ai": "ai/street",
+    "_doc": "Version 1 = today's loop: main kn5 only, open mouths, full width, no race furniture. Only its spawn moves (ledger 0047 Q3): grid A on Alvarado, line v300. start_positions.json `active` still moves START/HOTLAP/PIT for THIS layout only (Kevin 2026-08-20 per-issue spawns) via tools/layout_dummies.py --issue-spawn, never AC_TIME, never the race layouts."
+  }
+],
   "race": {
     "_doc": "Ledger 0049 (Kevin 2026-10-11: \"racetrack versions of these, we need full intersections available for turning. And the entire other lane blocked off from access.\" / \"more or less an Alvarado's width for the entire track with deviances in various areas\" / open boxes at the \"Corners the race turns at\", side streets sealed). Replaces 0047's shared centre chain: each race layout gets its OWN corridor — the curb strip on its race side plus one closure wall (the same K-rail strip) standing so the lane is race.corridor.clear_width_m wide, along the race-side curb of each median island instead of on it, pinned into the far curb strip at every box edge; the whole street on Alvarado and the I-8 deck (corridor.whole); the full intersection open in each corridor.boxes; both curb strips one closed loop per side, across all three bridge spans (edge_gaps none). Read by tools/barrier_bands.py (version 2: the corridor solve + self-gates + planned no_route; FAILS if centre_runs is present or closure_runs differ from the derived ones), tools/race_corridor.py (the closure line), tools/author_race_furniture_blend.py, tools/layout_dummies.py and scripts/ac/write_ai_line.py (the race AI lane = corridors.<id>.lane_by_vertex). Each race layout loads ONLY its own <slug>_closure_<id>.kn5 (layouts[].closure_token names its meshes): the clockwise closure stands in the anticlockwise lane. Constants marked INVENTED in fleet/GATES-CHANGELOG.md; clear_width_m 11.36 is MEASURED (Alvarado 13.00 m - 2 x 0.82 as raced).",
     "barrier_profile_asset": "assets/models/concrete_barrier_4m.obj",
@@ -829,6 +792,7 @@
     "_assembler_smooth_doc": "the assembler of record's smoothing module, read by tools/deck_datum.py's fold-fan fit to predict the centreline build_loop_blend will build (plan smoothing + per-window sigma_y): the fit judges the ribbon the build will carry, not the pre-median line (ledger 0057 fix round)"
   },
   "scenery": {
+    "warning_barriers": false, "fences": false, "parapets": false,
     "treefx": {
       "_doc": "Ledger 0054 P4 step 3 (EXPANSION-PLAN A9, 'trees by zone, not one uniform mix'; DOSSIER-EXPANSION-NORTH §6). Read by tools/make_treefx.py: the heightfield cells P2's growth added are planted here (the loop's own cells keep their trees byte for byte). veg_bins = the aerial lens's vegetation bins (project-relative, synced in by the ship chain: per piece A-D, per 250 m bin, per side L/R of the forward direction, [other, canopy, water, scrub] NAIP CIR pixels of the 10-40 m band); pieces = the readable intermediate (stations, curbs, medians). zones: first rule whose piece / side / s match a sub-cell wins; its tree and bush species mixes are make_treefx ZONES. Density per sub-cell = the bin's canopy and scrub shares (make_treefx NORTH_* [invented]); the caps scale with planted area at the loop's own density. Nothing on a pad, a rock cut face (rock_walls = P3's measurement of record of the real walls 3 m or more, 12-20 m off the pavement: Mission Gorge's south face and Jackson's, bare from the curb to 20 m; the lower banks are soil and get their scrub), within 6 m of any pavement, or on a terracotta / painted / hatched median. The raised islands' low planting is the assembler's (author_median_blend plants every island, north pieces included; export_scatter_blend ships it as median_planting, v0.19.0 already carries it); median_trees = Waring's real median trees on top (A2), on the median types in median_tree_types. Eucalyptus beyond E1 stays ledger 0040's later request.",
       "veg_bins": "source/expansion/aerial__veg_bins.json",

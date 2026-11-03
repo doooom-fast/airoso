@@ -7,151 +7,96 @@
  "frame": "kn5 frame (median dist to centerline.local: engine 50.0 m / kn5 0.0 m)",
  "points": 8984,
  "spacing_m": 1.5,
- "lap_m": 13476.7,
- "lap_s_est": 309.3,
- "offset_points": 2239,
- "offset_max_m": 12.142,
+ "lap_m": 13475.7,
+ "lap_s_est": 297.1,
+ "offset_points": 72,
+ "offset_max_m": 0.673,
  "clearance": {
   "points": 8984,
   "unmatched": 0,
-  "divider_stations": 1890,
-  "right_side": 1890,
+  "divider_stations": 0,
+  "right_side": 0,
   "island_hits": 0,
   "divider_hits": 0,
   "divider_too_close": 0,
   "edge_too_close": 0,
-  "min_divider_clear_m": 4.209425935021061,
-  "min_edge_clear_m": 0.6304400855243983,
-  "max_lat_m": 12.141950737102233,
-  "right_side_frac": 1.0,
+  "min_divider_clear_m": null,
+  "min_edge_clear_m": 5.9341740928336515,
+  "max_lat_m": 0.8158259071663484,
+  "right_side_frac": null,
   "ok": true
  },
  "geometry": {
-  "ramps": [
-   {
-    "kind": "hold",
-    "station": 2143,
-    "from_m": 8.72,
-    "to_m": 8.09,
-    "gap_m": 66.0,
-    "len_m": 67.5
-   },
-   {
-    "kind": "hold",
-    "station": 2975,
-    "from_m": 9.32,
-    "to_m": 7.71,
-    "gap_m": 148.5,
-    "len_m": 150.0
-   },
-   {
-    "kind": "leave",
-    "station": 3478,
-    "from_m": 5.92,
-    "to_m": 0.0,
-    "len_m": 60.0
-   },
-   {
-    "kind": "enter",
-    "station": 4364,
-    "from_m": 0.0,
-    "to_m": 6.43,
-    "len_m": 64.5
-   },
-   {
-    "kind": "leave",
-    "station": 4596,
-    "from_m": 7.05,
-    "to_m": 0.0,
-    "len_m": 72.0
-   },
-   {
-    "kind": "enter",
-    "station": 1683,
-    "from_m": 0.0,
-    "to_m": 6.86,
-    "len_m": 69.0
-   }
-  ],
+  "ramps": [],
   "ramp_clamped": 0,
   "corner_approach": [],
-  "folds": [
-   {
-    "kind": "extend",
-    "xz": [
-     -1966.62,
-     596.21
-    ],
-    "removed": 7,
-    "corner_turn_deg": -73.6
-   }
-  ],
+  "folds": [],
   "fillets": [
    {
     "xz": [
-     2614.42,
-     518.67
+     6.71,
+     -1661.06
     ],
     "radius_m": 12.6,
-    "floor_m": 8.15,
+    "floor_m": 9.77,
     "lane": "comfort",
-    "window_pts": 17,
-    "turn_deg": -86.7
+    "window_pts": 12,
+    "turn_deg": -70.7
    },
    {
     "xz": [
-     51.58,
-     1722.93
+     2614.0,
+     516.43
     ],
     "radius_m": 12.6,
-    "floor_m": 7.58,
+    "floor_m": 9.92,
     "lane": "comfort",
-    "window_pts": 21,
-    "turn_deg": -117.7
+    "window_pts": 12,
+    "turn_deg": -77.3
    },
    {
     "xz": [
-     -1966.06,
-     595.18
+     54.96,
+     1721.23
     ],
     "radius_m": 12.6,
-    "floor_m": 7.38,
-    "lane": "hard",
-    "window_pts": 23,
-    "turn_deg": -105.6
-   },
-   {
-    "xz": [
-     -1989.78,
-     -1276.26
-    ],
-    "radius_m": 12.6,
-    "floor_m": 6.53,
+    "floor_m": 9.14,
     "lane": "comfort",
-    "window_pts": 19,
-    "turn_deg": -102.1
+    "window_pts": 18,
+    "turn_deg": -103.4
    },
    {
     "xz": [
-     -1963.97,
-     -1281.03
+     -1973.55,
+     598.96
+    ],
+    "radius_m": 12.6,
+    "floor_m": 9.9,
+    "lane": "comfort",
+    "window_pts": 14,
+    "turn_deg": -84.9
+   },
+   {
+    "xz": [
+     -1990.63,
+     -1272.04
+    ],
+    "radius_m": 12.6,
+    "floor_m": 8.59,
+    "lane": "comfort",
+    "window_pts": 22,
+    "turn_deg": -103.8
+   },
+   {
+    "xz": [
+     -1959.03,
+     -1278.14
     ],
     "radius_m": 12.6,
     "floor_m": 12.0,
     "lane": "comfort",
-    "window_pts": 10,
-    "turn_deg": -50.1
-   },
-   {
-    "xz": [
-     6.08,
-     -1662.15
-    ],
-    "radius_m": 12.6,
-    "floor_m": 8.87,
-    "lane": "comfort",
-    "window_pts": 14,
-    "turn_deg": -78.4
+    "window_pts": 12,
+    "turn_deg": -57.6
    }
   ],
   "smoothing": [
@@ -172,13 +117,13 @@
   ],
   "start": {
    "xz": [
-    -761.98,
-    -1276.1
+    -766.19,
+    -1275.281
    ],
-   "dist_m": 0.0,
+   "dist_m": 0.001,
    "requested_xz": [
-    -761.98,
-    -1276.1
+    -766.19,
+    -1275.28
    ],
    "source": "dummies_street.json AC_TIME_0 midpoint",
    "index": 0,
@@ -186,16 +131,16 @@
    "grid_behind_line_m": 27.0,
    "grid_off_line_m": 3.25
   },
-  "min_radius_m": 12.44,
-  "min_radius_at": 8391,
+  "min_radius_m": 12.45,
+  "min_radius_at": 926,
   "radius_below_floor": 0,
   "max_turn_deg": 6.9,
   "turns_over_limit": 0,
   "turns_over_limit_road_tight": 0,
-  "max_lateral_jump_m": 0.888,
+  "max_lateral_jump_m": 0.26,
   "backward_steps": 0,
   "self_crossings": 0,
   "min_speed_kmh": 50.3,
-  "min_speed_at": 8389
+  "min_speed_at": 924
  }
 }

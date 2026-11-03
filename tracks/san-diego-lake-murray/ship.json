@@ -3,8 +3,8 @@
   "track": "san-diego-lake-murray",
   "workshop": "D:/k10-scratch",
   "workshop_project": "lm_v5",
-  "require_race_layout": true,
-  "ui_name_prefix": "K10 - San Diego CANDIDATE v5 redraft",
+  "require_race_layout": false,
+  "ui_name_prefix": "K10 - San Diego v5 BARE (no sidewalks, no bridge rails)",
   "street_ai_july": "D:/k10-track-archive/2026-10-11/san_diego_lake_murray/ai",
   "audit_note": "the regression floor — D 0 / K 20 / I 20 / F 13 since v0.18.0: the I-8 deck rails stand on the curb, 0.15 m off the pavement; D 512 while they stood on its edge, since the 2026-10-11 mouth weld + fold mend, was 512 / 154 / 145 / 15",
   "steps": {
@@ -12,16 +12,12 @@
       "gps",
       "elev",
       "project",
+      "profile",
       "mesh",
       "underlay"
     ],
     "author": [
-      "race_bands",
-      "race_planned_gate",
-      "layout_dummies",
-      "race_author",
-      "race_verify",
-      "signs"
+      "layout_dummies"
     ],
     "prep": [
       "prep",
@@ -29,29 +25,20 @@
     ],
     "ship": [
       "export_road",
-      "export_race",
+      "export_street",
       "spawn_kn5",
       "ai",
       "verify_kn5",
       "road_obj",
       "track_folder",
       "verify_inis",
-      "make_map",
-      "treefx",
-      "race_scenery_gate"
+      "make_map"
     ],
     "gate": [
-      "verify_mouths",
-      "verify_stubs",
-      "verify_pads",
-      "rib_check",
-      "house_seat",
       "drive_test_street",
-      "drive_test_lines",
       "audit_street",
-      "race_gates",
-      "fold_fans",
-      "kn5_ground"
+      "kn5_ground",
+      "house_seat"
     ]
   },
   "sync_in": {

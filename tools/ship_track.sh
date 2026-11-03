@@ -181,6 +181,10 @@ draft_aerial() {
   step "draft: aerial trace -> data/centerline.geojson (scripts.aerial.build_aerial: the asphalt off the georeferenced image; source.control_points, source.trace_px)"
   (cd "$AIROSO" && python -m scripts.aerial.build_aerial "$PROJ")
 }
+draft_profile() {
+  step "draft: the source fixes' road heights onto the projected line (tools/profile_from_fixes.py; fixes without ele = no-op)"
+  (cd "$AIROSO" && python tools/profile_from_fixes.py "$PROJ")
+}
 draft_grid() {
   step "draft: the free roam's street grid from real OSM ways (tools/grid_connectors.py: route.grid -> data/connectors.local.json; 3DEP cached; none declared = no-op)"
   (cd "$AIROSO" && python tools/grid_connectors.py "$PROJ")
@@ -715,7 +719,7 @@ print(1 if os.path.exists(p) and json.load(open(p,encoding='utf-8')).get('force_
 # a draft step that needs no Blender (what --draft-only runs)
 is_data_step() {
   case "$1" in
-    gps|aerial|paint_centreline|remap_config|verify_centreline_paint|route_oneway_check|elev|project|widths|grid|mesh) return 0;;
+    gps|aerial|paint_centreline|remap_config|verify_centreline_paint|route_oneway_check|elev|project|profile|widths|grid|mesh) return 0;;
     road_profile|measured_widths|crossfall|verify_crossfall) return 0;;
     net|classify|network_elev|network_mesh|network_reference) return 0;;
     deck_datum|median_envelope|route_connectors|divide_connectors|trim_connectors|terrain_sample|terrain_resample) return 0;;

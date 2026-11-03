@@ -609,6 +609,27 @@ def lip_foot_reach(ground_at, vx: float, vz: float, tx: float, tz: float, lx: fl
     return 0.0
 
 
+def end_apron_cap(px: float, pz: float, tips, reach: float):
+    """The deck height a terrain node just past an OPEN road end must stay under, or None (ledger 0076, Under the
+    Dragon (Gravel) s 25,706). ``tips`` holds one (cx, cy, cz, tx, tz, half_width) per open end: the end row's centre,
+    its deck height, the unit tangent pointing OUT of the road, and the deck half-width there. A node counts when it lies
+    past that end row (0 < along <= reach) and within half_width + reach of the axis — close enough that a grass
+    triangle from it can reach back over the deck. Beside the road the verge is capped by the shoulder over it; past an
+    end there is no pavement over the node, so nothing capped it and the seam-weld's 20 % floor raised one 0.88 m above
+    the deck, lifting the grass 2.4 cm over the last pavement row. The lowest matching end's deck wins."""
+    cap = None
+    for cx, cy, cz, tx, tz, hw in tips:
+        dx, dz = px - cx, pz - cz
+        along = dx * tx + dz * tz
+        if not (0.0 < along <= reach):
+            continue
+        if abs(-dx * tz + dz * tx) > hw + reach:
+            continue
+        if cap is None or cy < cap:
+            cap = cy
+    return cap
+
+
 def build(project_dir: str | Path) -> dict:
     project_dir = Path(project_dir)
     data = project_dir / "data"
@@ -1203,6 +1224,7 @@ def build(project_dir: str | Path) -> dict:
     # Fix: hand the clamp a short apron of virtual road verts continuing past each open end, at the
     # end's own deck height, so the terrain there is held under the deck plane like anywhere else.
     _end_apron: list = []
+    _end_tips: list = []       # (cx, cy, cz, tx, tz, deck half-width) per open end — end_apron_cap's (0076)
     if not cfg_raw.get("loop", True) and len(centerline) > 2:
         for _tip, _inw in ((0, 1), (len(centerline) - 1, -2)):
             _cx, _cy, _cz = centerline[_tip]
@@ -1210,6 +1232,7 @@ def build(project_dir: str | Path) -> dict:
             _tdx, _tdz = _cx - _px, _cz - _pz          # outward tangent at this tip
             _tl = math.hypot(_tdx, _tdz) or 1.0
             _tdx, _tdz = _tdx / _tl, _tdz / _tl
+            _end_tips.append((_cx, _cy, _cz, _tdx, _tdz, widths[_tip] / 2.0))
             _hw = widths[_tip] / 2.0 + 1.0
             for _step in range(1, 13):                 # 12 x 2.5 m = 30 m of apron past the tip
                 _ax, _az = _cx + _tdx * 2.5 * _step, _cz + _tdz * 2.5 * _step
@@ -3219,6 +3242,9 @@ def build(project_dir: str | Path) -> dict:
         _rhW = _rh2W
         print(f"  [seam-weld] drop-edge prefilter: {_keptW} floor sources kept, {_dropdW} silenced")
         _weldW = 0
+        # OPEN-END CAP (ledger 0076): the cap below is the pavement OVER a node; past an open road end there is
+        # none, so a node there takes the end row's deck instead, within one grass cell's diagonal of the end
+        _reachE = math.sqrt(2.0) * (_sN if _RN > 1 else float(meta["spacing_m"]))
         for _giW in range(len(_gvW)):
             _gxW, _gyW, _gzW = _gvW[_giW]
             _gyW = _gy0W[_giW]
@@ -3235,6 +3261,8 @@ def build(project_dir: str | Path) -> dict:
                                 _floorW = _fW
             if _floorW is not None and _gyW < _floorW - 0.01:
                 _pavW = _pav_below_W(_gxW, _gzW, _floorW, _ptW_shW)     # the shoulder-inclusive cap
+                if _pavW is None and _end_tips:
+                    _pavW = end_apron_cap(_gxW, _gzW, _end_tips, _reachE)
                 if _pavW is not None and _floorW > _pavW - 0.06:
                     _floorW = _pavW - 0.06
                 if _gyW < _floorW - 0.01:

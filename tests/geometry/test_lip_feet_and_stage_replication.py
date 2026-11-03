@@ -7,6 +7,9 @@
 2. drive_test's replication compared the gate line's vertex i with measured height i, but an open stage's gate line
    carries build_mesh's 10-vertex lead-in: every vertex was read against the road 30 m on (0.96 m median; aligned
    0.02 m). pad_for_lead_in aligns them and leaves every other line alone.
+3. Under the Dragon (Gravel), same ledger: past an open road end no pavement caps the seam-weld's 20 % floor, so a node
+   at the lead-out's end corner rose 0.88 m over the deck and its triangle put grass 2.4 cm over the last pavement row
+   (drive_test ground on top, 4 hits at 25,705-25,706 m). end_apron_cap gives such a node the end row's deck as its cap.
 """
 
 from __future__ import annotations
@@ -70,6 +73,35 @@ def test_gap_reads_the_gate_window():
         ys = [y for y in (99.5, 102.5) if lo <= y <= hi]
         return max(ys) if ys else None
     assert abs(lip_foot_gap(two, 0.0, 0.0, 100.0) - 0.5) < 1e-9
+
+
+# END APRON (ledger 0076, Under the Dragon (Gravel) s 25,706): the road ends at the origin running +x (outward
+# tangent +x), deck 10.54, half-width 3.25; one grass cell's diagonal of reach (1.913 m x sqrt 2, the stage's x7 refine)
+_TIP = [(0.0, 10.54, 0.0, 1.0, 0.0, 3.25)]
+_REACH = 2.705
+
+
+def test_end_apron_caps_the_node_at_the_end_corner():
+    from scripts.geometry.build_mesh import end_apron_cap
+    # the node that rose 0.88 m: 0.08 m past the end row, 3.81 m off the axis (just outside the deck corner)
+    assert end_apron_cap(0.08, -3.81, _TIP, _REACH) == 10.54
+    assert end_apron_cap(2.0, 0.0, _TIP, _REACH) == 10.54
+
+
+def test_end_apron_leaves_the_road_and_its_verges_alone():
+    from scripts.geometry.build_mesh import end_apron_cap
+    assert end_apron_cap(-0.5, 0.0, _TIP, _REACH) is None          # on the deck: the pavement cap's job
+    assert end_apron_cap(-5.0, 4.5, _TIP, _REACH) is None          # beside the road: under the shoulder
+    assert end_apron_cap(0.0, 0.0, _TIP, _REACH) is None           # ON the end row: not past it
+    assert end_apron_cap(_REACH + 0.1, 0.0, _TIP, _REACH) is None  # too far out for a triangle to reach back
+    assert end_apron_cap(1.0, 3.25 + _REACH + 0.1, _TIP, _REACH) is None
+    assert end_apron_cap(1.0, 0.0, [], _REACH) is None             # a closed lap has no ends
+
+
+def test_end_apron_two_ends_lowest_deck_wins():
+    from scripts.geometry.build_mesh import end_apron_cap
+    tips = _TIP + [(1.5, 9.0, 0.0, -1.0, 0.0, 3.25)]   # another end facing back over the same ground
+    assert end_apron_cap(1.0, 0.0, tips, _REACH) == 9.0
 
 
 def _line(n, x0=0.0):

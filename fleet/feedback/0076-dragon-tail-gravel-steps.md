@@ -2,7 +2,7 @@
 id: 0076
 title: Dragon Tail (Gravel) failed drive_test on one floating stone lip, not on its steps
 status: fixed-awaiting-rebuild
-scope: tracks/rally-dragon-tail-gravel (and every constructed-corridor track's measured-guard lips; every open stage's replication read)
+scope: tracks/rally-dragon-tail-gravel, tracks/rally-under-the-dragon-gravel (and every constructed-corridor track's measured-guard lips; every open stage's replication read and end aprons)
 layer: engine
 train: -
 ---
@@ -136,12 +136,59 @@ Mac A/B (`build_mesh` + `drive_test`, no `loop.blend`):
 - The other four ground-on-top hits are at the very end of the lead-out, 25,705-25,706 m of 25,706.1, ~15 m past
   AC_TIME_0: at offset +2.1 to +2.85 the grass end apron rises 2.4 cm over the last pavement row (`1GRASS_az` 10.564
   over `1ROAD_main` 10.540). drive_test's open-end skip only covers stations with no pavement at the centre. Pads off
-  leaves these, so Under the Dragon still fails without a further fix (engine end apron, or the gate's end skip);
-  owed, not done here. Dragon Tail's ends do not show it.
+  leaves these. Fixed in the engine, below ("The end apron"); the gate's skip is unchanged.
 - Under the Dragon's 804-807 m cluster (33 m past the 771 m apex) is not a plateau rim: all 7 are under 6 cm on own
   travel (vertex hop, R ~28 m at 11 %). Its other clusters (1,176-1,182, 4,293-4,718, 13,636-13,667, 14,435-14,443,
   23,169-23,189 ...) are Dragon Tail's group a: of 170 severe steps on curves, 80 are under 2.5 cm and 64 are 2.5-6 cm
   on own travel.
+
+### The end apron (second commit, coordinator 2026-11-03: "fix ... in the engine, not in the gate")
+
+**Mechanism, traced vertex by vertex** (a scratch copy of build_mesh printing the grass vertex at each pass). The proud
+triangle is (10.19, 10.53, 11.42) over the last pavement row; its high corner is a refined grass node at (-7,874.249,
+-6,008.919), 0.08 m past the lead-out's end row and 3.81 m off the axis (0.56 m outside the 3.25 m deck edge).
+`_fine_height` seats it at 10.525, 1.5 cm under the deck. Then the SEAM-WELD 20 % floor (0025) raises it to 11.423 off a
+ring source up the right-hand cut bank. That floor is capped by the pavement OVER a node (`_pavW - 0.06`); beside the
+road the shoulder is over the verge, so the verge is capped. Past an open end nothing is over the node, so nothing
+capped it, and its triangle reached back over the end row. The coarse clamp's virtual end apron (`[end aprons] 72
+virtual verts`) does not reach this pass.
+
+**Fix.** `build_mesh.end_apron_cap`: a grass node past an open end row (0 < along <= one grass cell's diagonal, and
+within the deck half-width + that reach of the axis) with no pavement over it takes the end row's deck as its seam-weld
+cap, deck - 0.06, the same cap the rest of the verge gets from the shoulder. The tips are recorded beside the existing
+end-apron block. Closed laps have no tips, so nothing changes there. drive_test is unchanged.
+
+**Every open stage** (`loop: false`: Dragon Tail and Under the Dragon, gravel and tarmac; the San Diego freeway is the
+only other one and builds through `build_network_mesh`, which this does not touch). A = this branch's first commit,
+B = with the cap, both drafted on the Mac with PR 25's switch in a scratch engine for the pads-off runs:
+
+| stage | `track.obj` A -> B | what moved | drive_test A -> B |
+|---|---|---|---|
+| Dragon Tail (Gravel) | identical (`fb4f2cdf...`) | nothing: no node past either end was raised | PASS -> PASS |
+| Dragon Tail (Tarmac) | identical (`4ef6bc77...`) | nothing | unchanged (FAIL on tarmac excursion drops, the known rehearsal red) |
+| Under the Dragon (Gravel), pads off | 13 lines | END: 3 grass nodes (11.423 -> 10.525, 11.449 -> 10.480, and 10.190 -> 10.530, which the cut-edge pass no longer digs); START: 2 grass nodes past the start row, 169.825 / 170.168 -> 169.420, 0.35 / 0.69 m over the deck before but not under any wheel path; one end stone lip re-set 6 m further out by the measured-guard pass | **FAIL -> PASS** |
+| Under the Dragon (Tarmac), pads off | the same 13 lines | the same | ground on top 4 -> 0; still FAIL on tarmac excursion drops 27, unchanged A -> B |
+
+So the start apron was proud too, on Under the Dragon only, but it did not reach a wheel path. Nothing else at the lap
+ends moved: this is the end apron only, not terrain seating at the ends in general.
+
+Under the Dragon (Gravel), the full drive_test, Mac draft on the committed data, `fold_pads` false (PR 29's default):
+
+| | A: lip + replication | B: + end-apron cap |
+|---|---|---|
+| verdict | FAIL | **PASS** |
+| ground on top mid-lane | 4 (25,705-25,706 m) | **0** |
+| floating furniture / undrivable / obstructed / daylight | 0 / 0 / 0 / 0 | 0 / 0 / 0 / 0 |
+| severe steps (/km) | 197 (7.66) | 195 (7.59) |
+| bumps /km (limit 150) | 12.29 | 12.29 |
+| kinks /km | 43.45 | 43.37 |
+| fold / vertex bumps (reported) | 4 / 1,014 | 4 / 1,014 |
+| excursion drops / far ledges | 0 / 99 | 0 / 99 |
+| replication (median / p95 / max) | 0.01 / 0.12 / 3.39 | 0.01 / 0.12 / 3.39 |
+
+Regression: Milford's `track.obj` is byte-identical (`4789ac20...`, PASS). Dragon Tail (Gravel)'s `track.obj` did not
+change at all. Tests: three more in `tests/geometry/test_lip_feet_and_stage_replication.py` (the corner node is capped;
+the deck, the verges, the end row itself, nodes out of reach and a closed lap are not; the lowest of two ends wins).
 
 ## Owed
 
@@ -151,3 +198,6 @@ bumps 27.87 /km, excursion drops 0); audit and kn5_ground_check as run 1. Then K
 6,394 / 6,595 / 7,455 m (group b) and the crests at 20,855 / 21,444 m (group c) the places to feel. Not done here and
 owed to the engine: drive_test's severe count applies no own-travel re-measure (group a is 71 of 182), and the grade cap
 draws tents where 3DEP reads a bank (group c); both change other tracks' numbers and want their own entries.
+
+Under the Dragon (Gravel) on the PC once PR 29 (fold pads off by default) and this branch are both in: ground on top 0,
+severe about 195, the end-apron nodes at 25,706 m seated under the deck. Its config is not changed here.

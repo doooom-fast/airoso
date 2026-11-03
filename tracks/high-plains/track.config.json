@@ -47,7 +47,8 @@
         },
         {
           "file": "source/bespoke/posts.json",
-          "auto": true
+          "auto": true,
+          "collider_tri_m": 14.0
         }
       ],
       "pads": [

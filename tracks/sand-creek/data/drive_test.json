@@ -19,12 +19,12 @@
    "barrier_stations": 0,
    "floating_furniture": 0,
    "daylight_gaps": 0,
-   "excursion_drops": 3,
+   "excursion_drops": 4,
    "undrivable_corners": 0,
    "severe_steps": 1,
    "severe_per_km": 0.1,
-   "steps_per_km": 1.14,
-   "kinks_per_km": 11.06,
+   "steps_per_km": 2.79,
+   "kinks_per_km": 15.61,
    "file": "drive_test.race.json"
   },
   "street": {
@@ -41,12 +41,12 @@
    "barrier_stations": 0,
    "floating_furniture": 0,
    "daylight_gaps": 0,
-   "excursion_drops": 3,
+   "excursion_drops": 4,
    "undrivable_corners": 0,
    "severe_steps": 1,
    "severe_per_km": 0.1,
-   "steps_per_km": 1.14,
-   "kinks_per_km": 11.06,
+   "steps_per_km": 2.79,
+   "kinks_per_km": 15.61,
    "file": "drive_test.street.json"
   }
  },

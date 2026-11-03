@@ -123,5 +123,8 @@ entry; they are not in the repo.
 
 **Open:** the hillside houses refused for relief over 2.5 m (`MAX_RELIEF_M`) — the real San Carlos houses on those lots are
 split-level; a stepped foundation would stand them. The ODbL attribution for Microsoft's footprints is owed in the track's
-credits when, and only when, the pipeline's buildings ship on Lake Murray (`assets/licenses.json`'s shared list credits every
-track at once, so it is not added there yet). **Still not installed: Kevin's call after he sees the stills.**
+credits before any release of a build carrying them (`assets/licenses.json`'s shared list credits every track at once, so it is
+not added there yet; a local install is not a release).
+
+**Installed 2026-11-03 as 0.19.4 over 0.19.2** (Kevin: "Over 0.19.2"; ledger 0065 has the install, the bypass is in
+`fleet/GATES-CHANGELOG.md`). Not driven.

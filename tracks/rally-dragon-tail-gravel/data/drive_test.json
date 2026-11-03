@@ -6,7 +6,7 @@
  ],
  "layouts": {
   "stage": {
-   "fail": true,
+   "fail": false,
    "direction": "forward",
    "kind": "street",
    "race_furniture": false,
@@ -17,7 +17,7 @@
    "obstruction_stations": 0,
    "barrier_missing": 0,
    "barrier_stations": 0,
-   "floating_furniture": 2,
+   "floating_furniture": 0,
    "daylight_gaps": 0,
    "excursion_drops": 0,
    "undrivable_corners": 0,
@@ -28,6 +28,6 @@
    "file": "drive_test.stage.json"
   }
  },
- "fail": true,
+ "fail": false,
  "not_run": []
 }

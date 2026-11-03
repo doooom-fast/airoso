@@ -18,12 +18,12 @@
  "obstruction_stations": 0,
  "daylight_gaps": 0,
  "replication_vs_measured": {
-  "median": 0.96,
-  "p95": 3.41,
-  "max": 9.66
+  "median": 0.02,
+  "p95": 0.21,
+  "max": 7.16
  },
  "undrivable_corners": 0,
- "floating_furniture": 2,
+ "floating_furniture": 0,
  "apron_steps": 49,
  "fold_bumps": 6,
  "vertex_bumps": 1141,
@@ -1219,5 +1219,5 @@
   ],
   "obstructions": []
  },
- "fail": true
+ "fail": false
 }

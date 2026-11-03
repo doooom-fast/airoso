@@ -14,6 +14,16 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-03 — BYPASS: Lake Murray 0.19.4 (the buildings rehearsal) installed red on 0.19.2's inherited keys, by Kevin's word (ledgers 0062, 0065)
+
+The chain's `--force-install` rule, applied by hand to a scratch build: `D:/k10-scratch/lm_bespoke` (rehearsal 2, `SD_BESPOKE=1`,
+`--no-install`) installed over 0.19.2 as `san_diego_lake_murray_v3` 0.19.4. Kevin's word: "Over 0.19.2". Red as 0.19.2 is red, on
+the street and race `drive_test` and `audit_mesh` exits, with no key worse than the installed 0.19.2's committed files: every
+`drive_test` key of every layout identical (floating furniture 0), `audit_mesh` skirt-off-terrain 1,564 → 1,563, the rest of
+the audit's classes unchanged; `kn5_ground_check`, `no_route`, `house_seat`, `rib_check` and `verify_kn5` PASS. A `SHIP_PROJ`
+scratch build never installs itself, so the chain's install step (park, copy, ui names) was replayed by hand with the
+version written 0.19.4. No threshold changed.
+
 ## 2026-11-01 — BYPASS: Lake Murray v4 installed red on one gate, by Kevin's word (ledger 0065)
 
 `--force-install` on `san_diego_lake_murray_v4` 0.20.0, over the street layout's `drive_test` excursion drops alone: 96 against the limit of 13. Kevin's word: "Force". The count equals the installed 0.19.2's. No threshold changed; this is one install, not a rule. Every other gate on the proof build: soft top 0 / 0 / 0, audit 0 on all three layouts, race drive_test and no_route PASS, kn5_ground_check PASS, house seat floating / sunken / buried 0.

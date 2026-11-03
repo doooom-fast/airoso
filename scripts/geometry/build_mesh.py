@@ -59,6 +59,58 @@ def corridor_row_height(row, lat, half_l, step_l):
     return z1 * (1 - to) + z2 * to
 
 
+def seam_weld_tables(deck_sheets, shoulder: dict, connector_tris=(), cell: float = 4.0) -> tuple[dict, dict]:
+    """The seam weld's two pavement tables, (cell i, cell j) -> triangles, both on ``cell`` m plan cells.
+
+    ``deck``: the deck sheets (road, runoff, kerb), what the cut-edge excavation sinks a deck edge against.
+    ``cap``: the deck, the shoulder less its buried hem, and every connector deck: what the floor off the ring
+    edge must stay under. Ledger 0067 (Sand Creek 0.31.2): the cap held the lap's own sheets only, so where a
+    street joins the lap in a cut the floor lifted the grass through the street's deck (grid_tertiary_104:
+    1GRASS at 28.53 over the deck at 28.11, audit B +0.45 m). With no connectors both tables are what they were."""
+    hem = set(shoulder.get("hem_idx", ()))
+    deck: dict = {}
+    cap: dict = {}
+
+    def _cells(tri):
+        xs = [v[0] for v in tri]
+        zs = [v[2] for v in tri]
+        for ci in range(int(min(xs) // cell), int(max(xs) // cell) + 1):
+            for cj in range(int(min(zs) // cell), int(max(zs) // cell) + 1):
+                yield ci, cj
+
+    for sheet in (*deck_sheets, shoulder):
+        sv = sheet.get("vertices", [])
+        for t in sheet.get("tris", ()):
+            if sheet is shoulder and (t[0] in hem or t[1] in hem or t[2] in hem):
+                continue
+            tri = (sv[t[0]], sv[t[1]], sv[t[2]])
+            for k in _cells(tri):
+                if sheet is not shoulder:
+                    deck.setdefault(k, []).append(tri)
+                cap.setdefault(k, []).append(tri)
+    for tri in connector_tris:
+        for k in _cells(tri):
+            cap.setdefault(k, []).append(tri)
+    return deck, cap
+
+
+def pavement_below(table: dict, px: float, pz: float, ref: float, window: float = 4.0, cell: float = 4.0) -> float | None:
+    """The lowest pavement surface of ``table`` directly over (px, pz) within ``window`` m of ``ref``; None if none."""
+    lo = None
+    for a, b, c in table.get((int(px // cell), int(pz // cell)), ()):
+        d = (b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2])
+        if abs(d) < 1e-12:
+            continue
+        w0 = ((b[2] - c[2]) * (px - c[0]) + (c[0] - b[0]) * (pz - c[2])) / d
+        w1 = ((c[2] - a[2]) * (px - c[0]) + (a[0] - c[0]) * (pz - c[2])) / d
+        w2 = 1.0 - w0 - w1
+        if w0 >= -1e-6 and w1 >= -1e-6 and w2 >= -1e-6:
+            y = w0 * a[1] + w1 * b[1] + w2 * c[1]
+            if abs(y - ref) <= window and (lo is None or y < lo):
+                lo = y
+    return lo
+
+
 def read_npy(path: Path) -> list[list[float]]:
     """Minimal float64 2D .npy reader (matches the writer in elevation/heightfield.py)."""
     with open(path, "rb") as f:
@@ -3116,37 +3168,12 @@ def build(project_dir: str | Path) -> dict:
         # measured-guard fenced each one — 464 new lips and 19 new far ledges on the second rebuild
         # (s 2147.9: 1GRASS_t at 6.31 / 6.24 / 6.14 beyond the meet before, 6.25 / — / 5.93 with the hem
         # in the cap). That is the "toe it exists to fill" the old comment meant.
-        _hemW = set(shoulder.get("hem_idx", ()))
-        _ptW: dict = {}          # the deck: road, runoff, kerb (the cut-edge excavation's pavement)
-        _ptW_shW: dict = {}      # ... plus the shoulder less its hem (the seam-weld floor's cap)
-        for _sheetW in (road, runoff, kerb, shoulder):
-            _svW = _sheetW.get("vertices", [])
-            for _tW in _sheetW.get("tris", ()):
-                if _sheetW is shoulder and (_tW[0] in _hemW or _tW[1] in _hemW or _tW[2] in _hemW):
-                    continue
-                _triW = (_svW[_tW[0]], _svW[_tW[1]], _svW[_tW[2]])
-                _xsW = [_vW[0] for _vW in _triW]
-                _zsW = [_vW[2] for _vW in _triW]
-                for _ciW in range(int(min(_xsW) // 4.0), int(max(_xsW) // 4.0) + 1):
-                    for _cjW in range(int(min(_zsW) // 4.0), int(max(_zsW) // 4.0) + 1):
-                        if _sheetW is not shoulder:
-                            _ptW.setdefault((_ciW, _cjW), []).append(_triW)
-                        _ptW_shW.setdefault((_ciW, _cjW), []).append(_triW)
+        # ... AND THE CONNECTORS' DECKS in the cap (ledger 0067): a street joining the lap in a cut runs through the
+        # floor's 5 m apron, and the floor lifted the grass through it. The excavation's table keeps the lap's deck alone.
+        _ptW, _ptW_shW = seam_weld_tables((road, runoff, kerb), shoulder, _pav_world_tris("connector"))
 
         def _pav_below_W(_pxW, _pzW, _refW, _tableW=None):
-            _bW = None
-            for _AW, _BW, _CW in (_ptW if _tableW is None else _tableW).get((int(_pxW // 4.0), int(_pzW // 4.0)), ()):
-                _dW2 = (_BW[2] - _CW[2]) * (_AW[0] - _CW[0]) + (_CW[0] - _BW[0]) * (_AW[2] - _CW[2])
-                if abs(_dW2) < 1e-12:
-                    continue
-                _w0W = ((_BW[2] - _CW[2]) * (_pxW - _CW[0]) + (_CW[0] - _BW[0]) * (_pzW - _CW[2])) / _dW2
-                _w1W = ((_CW[2] - _AW[2]) * (_pxW - _CW[0]) + (_AW[0] - _CW[0]) * (_pzW - _CW[2])) / _dW2
-                _w2W = 1.0 - _w0W - _w1W
-                if _w0W >= -1e-6 and _w1W >= -1e-6 and _w2W >= -1e-6:
-                    _yyW = _w0W * _AW[1] + _w1W * _BW[1] + _w2W * _CW[1]
-                    if abs(_yyW - _refW) <= 4.0 and (_bW is None or _yyW < _bW):
-                        _bW = _yyW
-            return _bW
+            return pavement_below(_ptW if _tableW is None else _tableW, _pxW, _pzW, _refW)
 
         _gvW = grass["vertices"]
         # DROP-EDGE PREFILTER: only an edge whose nearby natural grass sits BELOW it may emit a

@@ -100,7 +100,7 @@
       "_doc": "Physical concrete barrier along both edges of every freeway-class edge (build_network_mesh -> 1WALL_*). height_m tall enough to stop a launched car; offset_m past the shoulder outer lip.",
       "enabled": true,
       "height_m": 1.1,
-      "offset_m": 3.2
+      "offset_m": 0.5
     },
     "viaduct": {
       "_doc": "Real 3DEP carries the terrain grades; OSM bridge LAYER tags carry the flyovers. So the synthetic dip-bridge is OFF (max_lift_m 0) - only layer_height_m raises OSM-tagged flyover decks so interchanges grade-separate.",

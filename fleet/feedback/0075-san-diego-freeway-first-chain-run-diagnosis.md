@@ -116,3 +116,35 @@ leaves the grid.
 2. `_wall` on the deck edge and seated at grade (1, with 3's merge share).
 3. `network_elev`: shared nodes pinned, deck lift ramped across joints (2).
 4. The skirt (5); C's merge classification (4).
+
+## Addendum 2026-11-03: four barrier experiments (mechanism 1), then handed to a Mac agent
+
+Re-gated on the Windows box from `network_mesh`, each against the same draft. The branch `claude/freeway-fixes` carries
+experiment 1 only; the patch scripts of 2-4 are in `tracks/san-diego-freeway/source/experiments/` (not applied).
+
+| | baseline (offset 3.2) | 1: offset 0.5 | 2: drape, deck barrier 0.35 m inside the edge | 3: drape, 0.05 m outside | 4: + 0.6 m 1KERB parapet base |
+|---|---|---|---|---|---|
+| floating furniture | 22,475 | 13,234 | 4,466 | 13,421 | not reached |
+| audit D walls on a road | 1,724 | 1,311 | 90,101 | 1,276 | 453 (draft OBJ) |
+| obstructed stations | 0 | 3 | 334 | 4 | - |
+| audit E walls floating | 46 | 7 | 3 | 4 | 6 (draft OBJ) |
+| excursion drops | 53 | 22 | 19 | 20 | - |
+| verify_kn5 | pass | pass | pass | pass | FAIL: 39 terrain pokes (worst 0.85 m); draft audit K 463 kerbs in the carriageway (worst +1.19 m), F 51 |
+
+- **Experiment 1** puts the at-grade barrier on the 3 m graded shoulder and takes 41 % of the floating columns. It is
+  config only (`scenery.walls.offset_m` 0.5).
+- **About 9,000 of the rest are barriers on elevated stretches.** Inside the pavement edge they stand on the road (D,
+  obstruction); just outside it they hang over the valley (the shoulder drops away in centimetres). A real viaduct
+  carries its parapet on a slab beyond the travelled way: experiment 4.
+- **Experiment 4 failed for two reasons, both mine:**
+  - "on a deck" was read as the centreline more than 1.5 m over the raw 3DEP ground under it, which takes embankments and
+    low fills too, where the sloping terrain rises through the strip;
+  - at merges and diverges on decks one edge's strip lies over the neighbouring ramp's pavement.
+
+**Plan for the agent:**
+1. Classify decks from `data/network.viaduct.json`: per edge, per vertex, the deck's lift over at-grade, 0 at grade and
+   9 m or more on the flyovers. Embankments then take the at-grade drape.
+2. Clip the parapet strip, and gap the barrier, wherever another edge's pavement lies under the strip's footprint
+   (merges and gores), as at crossings.
+3. Re-gate. Severe 90, soft top 151 and daylight 602 never moved in any experiment: they are mechanism 2 (the joints,
+   `network_elev`), next after the barrier.

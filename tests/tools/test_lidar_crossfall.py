@@ -136,6 +136,21 @@ def test_the_camber_is_keyed_to_the_swept_line_not_the_draft():
         assert cf["station_m"][-1] < lap <= cf["station_m"][-1] + lc.STEP_M
 
 
+def test_a_draft_swept_line_is_read_in_its_own_mesh_frame():
+    """Ledger 0073: straight after a Mac draft, finished_centerline.json is build_mesh's (frame "mesh ...": z = north),
+    not the prep's kn5 frame (z = -north). Read as kn5 it put every station on the line's north-south mirror image."""
+    with tempfile.TemporaryDirectory() as td:
+        d = Path(td)
+        _ring_project(d)
+        draft = json.loads((d / "data" / "centerline.local.json").read_text())["points_xyz_m"]
+        (d / "data" / "finished_centerline.json").write_text(json.dumps(
+            {"frame": "mesh (mirrored) local metres — same frame as track.obj", "points_xyz_m": draft}))
+        pts, _ = lc.line_points(d, {})
+        assert all(abs(p[0] - q[0]) < 1e-9 and abs(p[1] - q[2]) < 1e-9 for p, q in zip(pts, draft))
+        pts_m, _ = lc.line_points(d, {"mirror_x": True})          # mirror_x: the mesh's x is mirrored, east = -x
+        assert abs(pts_m[50][0] + draft[50][0]) < 1e-9 and abs(pts_m[50][1] - draft[50][2]) < 1e-9
+
+
 def test_declared_spans_keep_the_camber_and_flatten_the_rest():
     raw = [3.0] * 200
     out = lc.compose(raw, spans=[(150.0, 300.0)])

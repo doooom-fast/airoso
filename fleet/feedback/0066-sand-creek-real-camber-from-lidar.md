@@ -1,6 +1,6 @@
 ---
 id: 0066
-title: Sand Creek's corners are flatter than the real road; its camber is now measured off the source lidar
+title: Sand Creek's corners are flatter than the real road; its camber is now measured off the source lidar (the 56th Ave turn first)
 status: fixed-awaiting-drive
 scope: tracks/sand-creek (the tool is general: any street lap with 3DEP source lidar)
 layer: project + engine (tools/lidar_crossfall.py; L10 amended)
@@ -61,7 +61,27 @@ Renders: `1_corner_topdown.png`, `4_profile.png`, `5_camber.png` (sent to Kevin 
 - The tool's own numbers are [invented] and listed in its header (HALF_M 4.5 m, MAX_SD_M 0.08 m, MAX_READ_PCT 8 %,
   MAX_GAP_M 30 m, SMOOTH_M 9 m, ROLL_RATE 0.2 %/m).
 
+## 0.31.0 on the PC, and why 0.31.1 is the corner alone
+
+0.31.0 (79715c6, whole-lap camber) built green with no force and was installed (0.30.1 parked at
+D:/k10-track-archive/2026-11-03_105526), but its lap drive test against 0.30.1: severe steps 1 -> 16, kinks 11.06 ->
+34.32 /km, steps 1.14 -> 14.47 /km, excursion drops 3 -> 9. Two causes:
+
+- **The tool keyed the draft line** (`centerline.local.json`, 9,697 m) where build_mesh sweeps and keys bank by the
+  finished line (9,674 m, corner-rounded and smoothed): the camber drifted along the lap (about 6 m at the turn, 15 m
+  on E 45th Ave, 23 m at the end) and jumped at the seam (kinks to 22.7 %, a 0.086 m step at 9,646 to 9,673 m). Fixed:
+  the tool measures along `finished_centerline.json` when it exists (`line_points`; a seam test).
+- **Whole-lap camber still costs ride numbers.** A Mac A/B of the draft mesh (build_mesh + drive_test, which reproduces
+  0.30.1's numbers exactly with no camber): re-keyed whole-lap camber gives kinks 26.67 /km (most at the 6 m wheel
+  path, where the tilted road meets the verge), 4 severe steps on E 45th Ave at 6,271 to 6,274 m, and excursion drops 15
+  against the limit of 13 (6,450 m and 2,851 m): drive_test FAIL.
+
+So 0.31.1 keeps the measured camber at the turn Kevin drove, `road_profile.crossfall.spans_m` [[2540, 2740]], ramped
+in and out at 0.2 %/m, flat elsewhere as in 0.30.1 (max 4.56 %). Widening it waits on: the line on E 45th Ave by the
+third crossing (likely on the embankment), and how the engine joins a tilted road to its verge.
+
 ## Proof owed
 
-- Sand Creek 0.31.0 through the chain, every gate on the built kn5, then installed: a build on the PC.
+- Sand Creek 0.31.1 through the chain, every gate on the built kn5, ride numbers no worse than 0.30.1 outside the turn,
+  then installed: a build on the PC.
 - Kevin's drive of the 56th Ave turn. The bridge deck's crown is the next piece if the turn-in still reads flat.

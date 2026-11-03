@@ -73,7 +73,7 @@ def _ring_project(d: Path, bridges=()):
     (d / "data" / "centerline.local.json").write_text(json.dumps(
         {"origin": {"lon": -104.9, "lat": 39.8, "elev_m": 1500.0}, "points_xyz_m": pts}))
     (d / "track.config.json").write_text(json.dumps({"capture": {"bridges": list(bridges)}}))
-    return lc.stations(json.loads((d / "data" / "centerline.local.json").read_text()))[0]
+    return lc.stations([(p[0], p[2]) for p in pts])[0]
 
 
 def test_build_from_the_cache_writes_build_meshs_legacy_shape():
@@ -114,3 +114,32 @@ def test_the_dem_tool_leaves_a_lidar_file_alone():
         (d / "data" / "crossfall.json").write_text('{"status": "measured"}')
         assert cfm.main([str(d)]) == 0
         assert json.loads((d / "data" / "crossfall.json").read_text()) == {"status": "measured"}
+
+
+def test_the_camber_is_keyed_to_the_swept_line_not_the_draft():
+    """0.31.0's first build keyed the draft line (23 m longer round Sand Creek) and its camber drifted along the lap and
+    broke at the seam: with a finished_centerline.json the stations are its own, so the last one meets the first."""
+    with tempfile.TemporaryDirectory() as td:
+        d = Path(td)
+        _ring_project(d)
+        draft = json.loads((d / "data" / "centerline.local.json").read_text())["points_xyz_m"]
+        fin = [[p[0] * 0.98, p[1], -p[2] * 0.98] for p in draft]          # kn5 frame, a shorter swept line
+        (d / "data" / "finished_centerline.json").write_text(json.dumps({"points_xyz_m": fin}))
+        pts, line = lc.line_points(d, {})
+        assert line == "finished_centerline.json" and abs(pts[10][1] - draft[10][2] * 0.98) < 1e-9
+        sts, lap = lc.stations(pts)
+        fits = [[[2.0 + (i % 7) * 0.1, 0.02, 50], None] for i in range(len(sts))]
+        (d / "data" / "crossfall.lidar.json").write_text(json.dumps(
+            {"fingerprint": lc._fingerprint(lc.EPT_DEFAULT, sts), "fits": fits}))
+        cf = lc.build(d, log=lambda *_: None)
+        assert cf["line"] == "finished_centerline.json"
+        assert cf["station_m"][-1] < lap <= cf["station_m"][-1] + lc.STEP_M
+
+
+def test_declared_spans_keep_the_camber_and_flatten_the_rest():
+    raw = [3.0] * 200
+    out = lc.compose(raw, spans=[(150.0, 300.0)])
+    assert abs(out[75] - 3.0) < 1e-9                    # inside (225 m)
+    assert abs(out[10]) < 1e-9 and abs(out[150]) < 1e-9  # well outside, flat
+    st = [3.0 * i for i in range(200)]
+    assert lc.roll_worst(st, out, 600.0) <= 30.0 * lc.ROLL_RATE + 1e-6

@@ -224,3 +224,13 @@ def test_the_prep_seats_by_station_not_by_a_vertical_window():
     assert "pick_same_leg(hits, vleg, legs)" in conform and "vleg = legs.locate(x, y)" in conform
     assert "deck = _deck_same_leg(x, y, vleg)" in conform and "near3 = _near_same_leg(x, y, z, vleg)" in conform
     assert "road_bvh.find_nearest" not in conform, "the contact band seats on its own leg, not the nearest in 3D"
+
+
+def test_the_corridor_carve_leaves_race_kerbs_alone():
+    """0020's Rule 1 carves street kerbs / sidewalks out of carriageways; a race kerb rides the lane edge by design
+    (Lake Murray v5: the carve emptied two race kerbs and the race kn5 failed to export)."""
+    assert bk.corridor_carves_kerb("1KERB_sidewalk") and bk.corridor_carves_kerb("1KERB_kerb_3")
+    assert not bk.corridor_carves_kerb("1KERB_race_766_in") and not bk.corridor_carves_kerb("1KERB_RACE_LAP2_1_out")
+    assert not bk.corridor_carves_kerb("1ROAD_main") and not bk.corridor_carves_kerb("TREETRUNK_0")
+    src = Path(bk.__file__).read_text(encoding="utf-8")
+    assert "if corridor_carves_kerb(ob.name):" in src, "the bpy pass asks the rule, not its own prefix test"

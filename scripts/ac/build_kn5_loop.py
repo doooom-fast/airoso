@@ -878,6 +878,17 @@ def _conform_and_reseat(proj: Path, spans):
           f"{n_rel} props rode the terrain delta")
 
 
+def corridor_carves_kerb(name: str) -> bool:
+    """Whether 0020's Rule 1 (no kerb face inside ANY carriageway) applies to a mesh. A street kerb or sidewalk
+    inside a carriageway is the sweep-through-junction artifact it was written for. A RACE kerb (1KERB_RACE_*,
+    tools/author_race_furniture_blend.py) is laid on the lane's edge at a corner ON PURPOSE: the carve took 2,450 of
+    the 2,775 race-kerb faces on Lake Murray v5 (the engine ribbon; engine-july, which v4 prepped on, has no carve),
+    emptying two kerbs and failing the race kn5's export. Race kerbs are judged by verify_race (E: under another ROAD
+    sheet; O: another deck over the ring) and the race layouts' drive_test instead."""
+    up = name.upper()
+    return up.startswith("1KERB") and not up.startswith("1KERB_RACE")
+
+
 def _corridor_hash(proj):
     """0020's corridor discipline needs 'is this point inside ANY carriageway, and how high is the
     deck there' answered ~200k times. Spatial hash over every road polyline (mainline + the
@@ -1030,7 +1041,7 @@ def main():
         # Rule 2: no vegetation in the driving corridor below 5.2 m clearance (the canopy that
         # stood at station 10,545). Both use the same layered corridor query (deck-height guarded).
         upname = ob.name.upper()
-        if upname.startswith("1KERB"):
+        if corridor_carves_kerb(ob.name):
             doomed = []
             for f in bm.faces:
                 c = f.calc_center_median()

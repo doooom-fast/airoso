@@ -14,6 +14,7 @@ train: -
 > "do both as separate versions"
 
 0.19.2 stays installed and untouched, as do the repo's `loop.blend` and `tools/ship_sd.sh`, until Kevin picks a winner in the seat. 0.19.3 stays built and held.
+*(2026-11-03: the installed V3 is now 0.19.4, rehearsal 2 over 0.19.2 on Kevin's word — see the last section. The repo's `loop.blend` and `tools/ship_sd.sh` are still untouched.)*
 
 ## v4, keep the roads: 0.20.0, installed as `san_diego_lake_murray_v4`, not driven yet
 
@@ -49,3 +50,30 @@ The underlay only empties `GEN_*`, and Lake Murray's blend has none, so a redraf
 The bare mainline's first gates are red, as expected with none of the authoring: severe steps up to 0.43 m around s 2254, ground on top around s 1782-1904, a 3.64 m gated drop at s 2102, audit 6 (walls on the road).
 
 Estimate: 3-5 days of runs, because the authoring tools expect the v021 ribbon.
+
+## 2026-11-03: 0.19.2 replaced by the buildings rehearsal, installed as 0.19.4
+
+> Kevin, asked whether rehearsal 2 (ledger 0062) should go side by side or over 0.19.2, knowing its buildings already ride in
+> v4 and that this section's opening kept 0.19.2 as the baseline: "Over 0.19.2".
+
+What is installed in `san_diego_lake_murray_v3` now: the scratch build `D:/k10-scratch/lm_bespoke/build/san_diego_lake_murray`
+from 2026-11-01 08:32, i.e. 0.19.2's chain with `SD_BESPOKE=1` — the assembler's HOUSE / BUILDING boxes replaced by the
+pipeline's 7,600 blocks, nothing else changed. Every installed file is byte-identical to that build except the three
+`ui/<id>/ui_track.json`, which carry the chain's own names ("K10 - San Diego (V3) — <layout>") and version **0.19.4** (0.19.3 is
+the held yellow-line build; 0.19.4 does not carry it). Road kn5 md5 05de4201…, 110.1 MB. The chain's install step was replayed
+by hand (a `SHIP_PROJ` scratch build never installs itself): acs.exe not running, 0.19.2 parked in
+`D:/k10-track-archive/2026-11-03_113243/san_diego_lake_murray_v3` (kn5 b170d319…), the build copied in, the ui names written.
+
+Its gates, all on the built kn5 (ledger 0062 has the detail): every `drive_test` key of every layout identical to 0.19.2's
+committed files, floating furniture 0; `audit_mesh` red as 0.19.2 (skirt-off-terrain 1,564 → 1,563); `kn5_ground_check`,
+`no_route`, `house_seat` (6,239 judged), `rib_check` PASS (its counts within a few of 0.19.2's: nyquist > 0.5 m beyond 20 m of a
+pavement 5,071 → 5,096). Installed red on the inherited keys under the chain's `--force-install` rule, no key worse than the
+reference: recorded in `fleet/GATES-CHANGELOG.md`.
+
+Not from the repo: the installed V3 was built from the scratch project, whose source (its `loop.blend`, `track.config.json`,
+`data/*.json`, `ai/`, the planned `buildings.json`) is copied to `D:/k10-track-archive/2026-11-03_113243/lm_0.19.4_source/`. The
+repo's `loop.blend` and `tools/ship_sd.sh` still build 0.19.2 / 0.19.3: a plain `tools/ship_sd.sh` run would put the
+assembler's boxes back. v4 and v5 now compare against an installed V3 that has the buildings; 0.19.2's own gate files are still
+the repo's `data/`, and its `drive_test` numbers are 0.19.4's.
+
+Not driven. Owed before any release: the ODbL credit for Microsoft's footprints.

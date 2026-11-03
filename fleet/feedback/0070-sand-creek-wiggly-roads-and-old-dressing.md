@@ -361,3 +361,285 @@ Both regressions are B1 removing a flare that had been hiding something the brie
 - (a) the slip corner's exit: B3 (`route.width_slew_m_per_m`), or authored junction pads in place of the corner flares (decision 3 above);
 - (b) ledger 0076's lip-foot fix (PR 31) merged under Sand Creek.
 - Then one chain from `widths`.
+
+## Dressing (D, Kevin's answers): planned on the Mac, 2026-11-03, for the PC's 0.35.0
+
+Kevin's answers (above): lamps = Lake Murray's, race kerbs, no sidewalks, authored pads. Branch `claude/sand-creek-dressing`
+(0.33.0 + this ledger + `claude/sand-creek-paint`, 0.34.0, merged in). The version is not bumped; the PC sets 0.35.0.
+
+**What is ready, and what is not.**
+
+| | state | why |
+|---|---|---|
+| Lamps (D1) | **ready**: planned, wired, tested | a new planner for engine drafts; Lake Murray's author and fixture unchanged |
+| The 56th slip merge (0.34.0's 8 severe steps) | **ready**: `route.corner_flare_off` on the merge | a merge has no crossing pavement; the flare was the defect, not a stand-in for a pad |
+| Junction pads (D, decision 3) | **blocked: needs a new Blender author** | the pad tools serve Lake Murray's v021 scene only (below) |
+| Race kerbs (D2) | **blocked: three decisions for Kevin** | `race_furniture` brings K-rail along both curbs of the whole lap and a closure kn5 (below) |
+| Signs (D3) | not started | not asked for in this round |
+
+### The junctions: where the lap meets a street the draft builds
+
+`data/connectors.local.json` (the grid, 106 pieces) against the lap of 0.34.0: every grid piece that ends on the lap,
+grouped per lap node. Recommendation per JUNCTIONS §2.0: a **pad** where the lap turns street-to-street at a crossroads or
+T (topology B); **ribbon-through** (topology A: the lap's ribbon unchanged, the side arm butt-welded, rule 8) where the lap
+runs straight across. Picture: `tracks/sand-creek/source/dressing/junctions_overview.jpg`.
+
+| node | station | lap street | built street(s) there | width as built / street's own | recommendation | why |
+|---|---|---|---|---|---|---|
+| v95 | 285 | North Colorado Boulevard | North Colorado Boulevard Frontage East (unclassified) | 16.5 / 16.5 m | **no pad** | Colorado Frontage East: a minor frontage-road mouth (T) on the straight; ribbon-through + butt weld (JUNCTIONS 2.0 A, rule 8) |
+| v116 | 347 | North Colorado Boulevard | East 50th Avenue (unclassified) | 17.3 / 17.3 m | **pad (with v139)** | E 50th Ave west: the west arm of the Colorado / 50th crossroads, 23 m before the turn; one pad with v139 |
+| v139 | 416 | North Colorado Boulevard | North Colorado Boulevard (primary), North Colorado Boulevard Frontage East (unclassified), North Colorado Boulevard Frontage West (unclassified) | 32.9 / 15.6 m | **PAD (required)** | Colorado Blvd → E 50th Ave: the lap turns at a crossroads; arms Colorado north, both frontage roads, 50th west |
+| v185 | 555 | East 50th Avenue | North Ash Street (unclassified) | 18.0 / 10.0 m | **PAD (required)** | E 50th Ave → N Ash St: the lap turns; Ash St runs on north as a grid street (a T) |
+| v410 | 1,231 | East 50th Avenue | East 50th Avenue (unclassified), North Dahlia Street (tertiary) | 18.9 / 10.4 m | **PAD (required)** | E 50th Ave → Dahlia St: the lap turns at a crossroads; arms Dahlia south, 50th east |
+| v479 | 1,438 | North Dahlia Street | East 51st Avenue (unclassified) | 11.0 / 11.0 m | **no pad** | E 51st Ave: a minor T on the straight; ribbon-through |
+| v558 | 1,674 | North Dahlia Street | East 52nd Avenue (tertiary) | 14.0 / 11.0 m | **no pad (ribbon-through)** | E 52nd Ave crosses Dahlia, both tertiary; the lap runs straight through: the pros' topology A (Dahlia's ribbon unchanged, the side arms butt-welded), B1's 14 m flare as the interim |
+| v779 | 2,337 | Dahlia Street | East 56th Avenue (primary) | 42.3 / 15.2 m | **PAD (required)** | Dahlia St → E 56th Ave: the lap turns; E 56th runs on west (a T) |
+| v847 | 2,541 | the 56th slip | East 56th Avenue (primary) | 23.0 / 5.5 m | **no pad: flare OFF (merge)** | the 56th → Sand Creek Dr slip merges at 26 deg; no crossing pavement; E 56th's grid piece ends near it. route.corner_flare_off (why merge) removes the 23 m junction flare that made 0.34.0's 8 severe steps |
+| v1902 | 5,710 | Sand Creek Drive South | East 47th Avenue Drive (tertiary) | 21.0 / 16.4 m | **no pad (ribbon-through)** | E 47th Ave Drive: a T on Sand Creek Dr's straight; B1's 21 m flare as the interim |
+| v1936 | 5,812 | Sand Creek Drive South | North Northfield Quebec Street (primary) | 32.4 / 18.0 m | **PAD (required)** | Sand Creek Dr S → Quebec St: the lap turns; Quebec runs on north (a T at a skew) |
+| v2316 | 6,953 | East 45th Avenue | North Monaco Street (secondary), North Monaco Street (unclassified) | 22.0 / 12.0 m | **no pad (ribbon-through); pad candidate later** | N Monaco St (secondary) crosses E 45th: a full crossroads on the straight; B1's 22 m flare as the interim |
+| v2406 | 7,224 | East 45th Avenue | North Leyden Street (unclassified) | 12.0 / 12.0 m | **no pad** | N Leyden St: a minor T |
+| v2522 | 7,573 | East 45th Avenue | North Ivy Street (unclassified) | 15.5 / 15.5 m | **no pad** | N Ivy St: a minor T |
+| v2581 | 7,750 | East 45th Avenue | North Holly Street (tertiary) | 22.0 / 19.0 m | **no pad (ribbon-through)** | N Holly St (tertiary) crosses E 45th: a crossroads on the straight; B1's flare as the interim |
+| v2656 | 7,976 | East 45th North Drive | North Grape Street (unclassified) | 12.0 / 12.0 m | **no pad** | N Grape St: a minor T |
+| v2691 | 8,081 | East 45th North Drive | North Glencoe Street (unclassified) | 7.5 / 7.5 m | **no pad** | N Glencoe St: a minor T |
+| v2725 | 8,183 | East 45th North Drive | North Forest Street (unclassified) | 7.5 / 7.5 m | **no pad** | N Forest St: a minor T |
+| v2791 | 8,381 | East 45th North Drive | East 46th Avenue (unclassified) | 7.5 / 7.5 m | **no pad** | E 46th Ave (unclassified, east): a minor T |
+| v2859 | 8,586 | East 46th Avenue | North Dahlia Street (tertiary) | 17.5 / 11.0 m | **no pad (ribbon-through)** | N Dahlia St crosses E 46th: a crossroads on the straight; B1's flare as the interim |
+| v3184 | 9,562 | East 46th Avenue Access | East 48th Avenue (tertiary) | 14.0 / 11.0 m | **pad (second wave)** | E 46th Ave Access → E 48th Ave: the lap turns (a 19.8 m corner flare); E 48th runs on east; not one of the six fillet corners (OSM draws it node by node) |
+| v3198 | 9,604 | East 48th Avenue | East 48th Avenue (tertiary), North Colorado Boulevard (primary), North Colorado Boulevard Frontage East (unclassified) | 32.9 / 11.0 m | **PAD (required)** | E 48th Ave → Colorado Blvd: the lap turns at a crossroads; arms Colorado south, the frontage, 48th west |
+| v207 | 621 | N Ash St | none | 18.0 / 10.0 m | **no pad** | Ash St -> E 50th Ave: the lap's own L-turn; no other street built there. Its 18 m corner flare stays (not a fillet corner). |
+
+The required six are the `route.fillet` corners (v139, v185, v410, v779, v1936, v3198). v116 is v139's west arm, so it
+joins that pad. v3184 (46th Ave Access -> 48th) is a turning T with a built arm and a 19.8 m corner flare; it is the
+seventh pad, second wave. Every straight-through crossroads (v558, v1902, v2316, v2581, v2859) keeps B1's junction flare
+as the interim; the pros' answer there is topology A, not a pad.
+
+**Curb-return radii.** The six required corners' inside returns are 0073's NAIP reads (`route.fillet.corners[].curb_radius_m`:
+6, 3, 3, 15, 6, 4 m). A pad needs every corner of its crossroads (Colorado / 50th has four returns, 50th / Dahlia four,
+48th / Colorado four). Those were not read: a pad that cannot be authored has no use for them yet, and reading them
+off NAIP is the first step of the pad work below.
+
+### Why the pads are blocked
+
+`tools/junction_pad.py`, `tools/author_junction_pad_blend.py` and `tools/verify_pads.py` cannot serve an engine draft
+without a real rewrite:
+
+- **The plan** (`junction_pad.plan`) builds each pad from `tools/expansion_pieces.py` pieces (`ep.load(<intermediate>)`,
+  `ep.PIECE_CONN`, `author_expansion.build_pad`). A route arm is a **connector piece's end** standing on the pad's cut. At a
+  Sand Creek corner both main arms are the **lap itself**, cut twice. There is no piece and no intermediate format for that.
+- **The author** opens `loop.blend` and requires objects `ROAD`, `CURB` and `TERRAIN`, a `mouth_weld` stamp from
+  `weld_mouths_blend` (the v021 assembler, run through `V021_SHIM`) and `mouth_weld.mesh_layout`'s row order
+  (`_road_total`). Sand Creek's blend is the underlay's: `GEN_*` collections holding `1ROAD_main`, `1ROAD_shoulder`,
+  `SHOULDERUND`, `MARKINGS`, `YLINE`, `1ROAD_grid_*` and the `1GRASS_*` tiles. None of those names exist, and nothing is
+  welded.
+- **What a pad on an engine draft needs that neither tool does:** cut the lap ribbon and every sheet that rides on it
+  (`1ROAD_main`, `1ROAD_shoulder`, `SHOULDERUND`, `MARKINGS`, `YLINE`) at two transverse lines; cut each grid arm at a
+  third; lay the deck between them with a **shoulder** edge, not the author's `1KERB_sidewalk_pad` curb + walk ("no
+  sidewalks"); seat the `1GRASS_*` tiles under it (the author seats `TERRAIN`); and re-key the painted lines across the
+  deck. That is terrain and deck work beyond `author_junction_pad_blend`.
+- **What carries over:** `junction_pad`'s pure geometry (`outline_as_built`, `run_stations`, `fit_quadratic`,
+  `screened_heights`, the ground guide) and `verify_pads`' checks on the built OBJ.
+
+The opt-out that hands a corner to a pad is written and tested: `route.corner_flare_off` (below). It is **not** set on the
+six corners, because without a pad it would leave each crossroads' outside corner unpaved. The pictures
+`source/dressing/corner_*.png` show it: the cyan edge is the corner without its flare, the white lines the grid arms.
+
+### The slip merge: 0.34.0's 8 severe steps
+
+- **What made the flare.** In 0.34.0 the 23 m flare at 2,522-2,546 m is a **junction** flare (`detect_junctions`: E 56th and
+  Sand Creek Dr meet there, two distinct arterials; size 20 + 3 m). It is not a `detect_turn_corners` flare as the "Fixed (B1,
+  B2)" section reads it. Measured: in the Mac A/B below, the 8 corner flares are the same 8 with and without the
+  opt-out (sizes 32.9, 18, 18, 18.9, 42.3, 34.2, 19.8, 32.9), and the opt-out reports "1 junction flare inside dropped".
+- **What it is.** A right-turn slip lane (OSM `primary_link`, one lane, 5.5 m) leaving E 56th and merging into Sand Creek Dr
+  at 26 deg, past a grass gore (`source/dressing/slip_merge_flare_off.png`). A merge has no crossing pavement for a flare
+  to stand for. Ledger 0073 already named the cure: "no 23 m flare at a slip merge, not a crossfall rule".
+- **The decision (pad vs crossfall).** Neither a pad nor a crossfall change: the flare comes off, so the slip keeps its own
+  5.5 m and ramps to Sand Creek Dr's 11 m over 2,550-2,580 m (`_smooth(9)`'s ramp). 0066's measured span keeps its start at
+  2,540 m. Of the three ways a pad and the camber could meet:
+  - *a flat pad then the roll-in*, or *a pad taking the measured tilt*, both need a pad, and there is no author (above);
+  - *the span starting past the pad's last row* is today's 2,540 start, so it needs nothing.
+  The one width step left under the roll-in is the street's own lane-count ramp, 5.5 -> 11 m over 30 m (1:11 a side).
+- **The config.** `route.corner_flare_off: [{"name": "the 56th -> Sand Creek Dr slip's merge", "at": [39.797452,
+  -104.93138], "radius_m": 30, "why": "merge"}]` (the lap's v846 on 0.34.0's line).
+
+### The Mac drafts: drive_test against 0.33.0 and 0.34.0
+
+Same as ledgers 0066 / 0073: scratch copies of this branch's `tracks/sand-creek`, run on the Mac as `widths -> [grid] -> build_mesh ->
+drive_test -> audit_mesh`, with this branch's engine (0.34.0's B1 + B2 + `route.corner_flare_off`). The race and street
+layouts read the same in every row: one road kn5, no race furniture.
+
+- **0.33.0** reproduces 0073's numbers exactly.
+- **0.34.0 as built** reproduces the PC's 0.34.0: the same 8 severe steps at 2,550-2,551 m, 6.9-8.6 cm, and the same
+  floating lip.
+
+| | 0.33.0 | 0.34.0 as built | **+ slip merge flare off (this branch's config)** | + slip + the six fillet corners off (what pads would allow) |
+|---|---|---|---|---|
+| steps re-run | mesh | widths, mesh | **widths, grid, mesh** | widths, mesh |
+| severe steps | 0 | 8 (2,550-2,551 m) | **0** | 0 |
+| floating furniture | 0 | 1 (the stone lip, 8,572 m) | **1** (the same lip; PR 31) | 1 (the same) |
+| slope kinks /km | 6.63 | 6.52 | **1.45** | 0.21 |
+| bumps > 2.5 cm /km | 2.07 | 1.86 | **0.00** | 0.00 |
+| fold bumps / vertex bumps (reported) | 20 / 6 | 20 / 3 | **20 / 0** | 4 / 0 |
+| apron steps (reported) | 3 | 6 | **3** | 0 |
+| excursion drops / far ledges | 7 / 8 | 7 / 8 | **7 / 8** | 7 / 8 |
+| soft top, obstruction, daylight, undrivable | 0 | 0 | **0** | 0 |
+| replication max | 0.52 m | 0.52 m | **0.52 m** | 0.52 m |
+| audit_mesh | CLEAN | CLEAN | **CLEAN** | CLEAN |
+| drive_test verdict | PASS | FAIL (severe, floating) | **FAIL on the lip alone** | FAIL on the lip alone |
+
+- **What the flare-off changes.** It changes the widths at v840-852 only (the slip keeps 5.5 m to v850, then 6.7 -> 11 m by v860); every other vertex is byte-identical to 0.34.0.
+  - With the flare gone, `grid_connectors` keeps E 56th's grid piece (`grid_primary_80`) a few metres longer, because a
+    point is "on the lap" within the lap's half width + 6 m. The grid is 39.83 km against 39.81.
+  - Every number in column 3 is the same whether or not the grid step re-ran (two runs: with it and without it).
+- **Where the kinks went.** 0.34.0's 6.52 /km had its worst at the slip's crease (8.6 %). The 1.45 /km left starts at
+  1,229 m (50th -> Dahlia, 6.5 %, the 18.9 m corner flare's edge), which the pads would take.
+- **The six corners off, without pads**, reads the smoothest: 0.21 /km kinks, 4 fold bumps. That is the case for the pads in
+  numbers. It is not this branch's config: the grid arms there would end in the open (`corner_*.png`).
+- **The one red key left is PR 31's.** See the runbook.
+
+### The race kerbs: why they are not declared (D2)
+
+The trial: a 0049 declaration on 0.34.0's line in a scratch copy (`tools/barrier_bands.py --no-planned-route`). Nothing
+from it is committed.
+
+- **The tool works on an engine draft once the corner flares are gone.** With the six fillet corners and the slip flare
+  off, the curb strips close with 0 trimmed corners and the detector lays 16 kerbs at 8 corners: v140, v185, v207, v411,
+  v778, v1943, v3196, v3205. These are the six fillet corners plus the two curves OSM draws node by node.
+  `source/dressing/corner_*.png` draws them, red and white.
+  - On 0.34.0 as built it stops at Colorado -> 50th: "edge fold at v137..v143: no trim ... author this corner by hand". That
+    is the 32.9 m corner flare folding the strip's inside edge.
+  - So the race kerbs wait on the pads too.
+- **What `race_furniture: true` brings besides the kerbs.** It is more than "race curbs":
+  1. **K-rail along both curbs of the whole lap.** `barrier_bands` writes `edge_strip_by_vertex` all 1, so both curb strips
+     are always swept, 0.82 m inside each pavement edge. On the 7.5 m frontage roads (E 45th North Dr, E 46th) that
+     leaves a 5.86 m lane.
+     - It also fails the grid: at v2739 a car stands -0.92 m past a strip face (limit +0.30), for both layouts. The start
+       is on the 7.5 m E 46th, `offset_right_m` 1.9 + the 1.0 m stagger.
+     - **Decision A:** K-rail both sides of the whole lap, yes or no? If yes, where does the race grid go?
+  2. **A closure kn5 per race layout.** `split_exports_blend` fails an empty closure blend, `track_folder` makes a missing
+     `_closure_<id>.kn5` a hard error, and `check_race_kn5 --role closure` needs at least one mesh. So the race layout
+     must close something.
+     - Under 0049's rule ("whole street" where the base width is under 15.67 m) the candidates are the wide two-way
+       streets: E 56th (23.5 m, 5 lanes) and parts of Sand Creek Dr (14.5-18 m).
+     - A trial closure on E 56th failed the clear-width and pin-rate self-gates. It needs designing.
+     - **Decision B:** close the far lanes of E 56th (and Sand Creek Dr?), or keep the whole street everywhere?
+       Keeping the whole street needs the closure requirement lifted in four tools: a tool change, not config.
+  3. **Decision C:** keep the instanced concrete barriers (`props.concrete_barriers`) under the K-rail strips, or let the
+     strips replace them?
+     - **Swapping looks easy for the race layout:** set `props.concrete_barriers: false` and the strips are the walls.
+     - But the barriers are in the shared road kn5, so the free roam (street layout) would lose them. Not done here.
+- **Kerb names, for the PC's carve exemption** (`claude/race-kerb-carve-exempt`, ledger 0020 rule 1 carved Lake Murray v5's race kerbs): the author names them `1KERB_race_<apex>_<in|out>`
+  (`tools/race_furniture.py` `RACE_PREFIXES` tests the upper-cased name against `1KERB_RACE`).
+  `build_kn5_loop.corridor_carves_kerb()`'s exemption must compare the upper-cased name.
+  That branch is a prerequisite of any build that declares them. It was not on origin on 2026-11-03.
+
+### The lamps (D1): ready
+
+- **`tools/plan_streetlights.py`** (new, pure). Opt-in `scenery.streetlights.planner: "engine_draft"`; ship step
+  `lamps_plan` (a data step, after `mesh`). It ports the loop's walk (`build_streetlights`: 55 m, alternating sides, 25 m
+  gap, the 1.8 m arm, head 8.8 m over the ground, the 6 m cut-wall skip) and the pieces' rules
+  (`streetlights.py`: slide 12 m, then the other side, then skip with the reason; 3 m off a pad).
+  - It reads the draft's own `data/track.obj`, so the posts are checked against the surfaces the author will check:
+    the footprint (axis + a 0.584 m ring) on no `1ROAD*` triangle, >= 0.5 m + mast radius from every `1WALL*`,
+    the ground under it from `1GRASS*`.
+  - The engine's `1ROAD_shoulder` sheet runs down each embankment to the ground (median 2.7 m, p75 6 m past the edge), and
+    `author_lamps_blend` refuses a pole on any `1ROAD` surface. So a post steps out in 0.5 m steps until it is clear, at most 10 m.
+  - Writes `data/lights.local.json` in the assembler's shape (`lampheads`, + `lamps` with base / road-ward / station /
+    side / offset, + `skipped` with reasons).
+- **The author and the fixture are unchanged.** `lamps` (after `underlay`): `tools/author_lamps_blend.py` with
+  `scenery.streetlights.model "led_cobra"`, `arms 2`, Lake Murray's block. Its self-check (footprint off every road,
+  >= 0.5 m from walls, foot in the earth, no two lenses within 2 m) still decides, exit 1.
+  - `track_folder`'s `check_lights_ini` then proves one `[LIGHT_N]` per lens.
+  - The CSP light stays Sand Creek's own `lighting.streetlight` (Kevin's wide dim wash). It is not Lake Murray's 80s sodium.
+- **Retired** (read only by `build_env.py`, never a chain step): `scenery.light_spacing_m` 96, `lamp_model`,
+  `lamp_height_m`, and the `LIGHTPOST` / `LAMPHEAD` texture overrides. Those overrides would have re-skinned the LED
+  pole with `street_lamp_new.png`.
+- **On the Mac draft:** 169 posts on the 9,662 m lap (every 55 m, both sides; 112 left, 57 right: the right side is often an embankment or the I-70 frontage, wider than 10 m, so its station goes left), 6 stations skipped, all at the three deck spans; posts 6.1-9.6 m past the pavement edge (median 6.6 m, the shoulder sheet's width); nearest two posts 40.9 m apart; 0 skipped for a wall, a road or a cut. Pictures: `source/dressing/lamps_overview.png`, and the posts in every
+  `corner_*.png`.
+
+### Files
+
+- `scripts/gps/widths_from_osm.py`: `route.corner_flare_off`, inside `detect_turn_corners` (`flare_off`) and at its call
+  site (the junction flares within the radius). Absent = byte-identical.
+- `tools/plan_streetlights.py` (new); `tools/ship_track.sh`: `draft_lamps_plan` + `is_data_step`.
+- `tracks/sand-creek/track.config.json`: `scenery.streetlights`, `route.corner_flare_off` (the slip), the dead lamp keys
+  retired.
+- `tracks/sand-creek/ship.json`: draft `... mesh, lamps_plan, underlay, lamps`; sync out `data/lights.local.json`,
+  `data/lights_ini_check.json`.
+- Tests: `tests/tools/test_plan_streetlights.py` (7), `tests/gps/test_corner_flare_off.py` (1),
+  `tests/tools/test_ship_track_chain.py` (the four chain specs may author `lamps` after the underlay, with `lamps_plan`
+  before it).
+- `fleet/GATES-CHANGELOG.md`: the invented numbers.
+- Pictures: `tracks/sand-creek/source/dressing/`.
+
+### PC runbook: Sand Creek 0.35.0
+
+0.35.0 = this branch, which already holds `claude/sand-creek-paint` (0.34.0, 71482ab, merged as e7574fb), plus the engine
+prerequisites below. It ships the lamps and the slip fix. It does **not** ship pads or race kerbs (both blocked, above).
+
+**1. Prerequisites, in this order, on a fresh branch from `claude/sand-creek-dressing`** (`GIT_LFS_SKIP_SMUDGE=1` is not
+wanted here: the PC needs loop.blend).
+
+- **a. 0.34.0's head.** If `claude/sand-creek-paint` has moved past 71482ab, `git merge origin/claude/sand-creek-paint`
+  first. It merged cleanly at 71482ab.
+- **b. PR 31's lip-foot fix** (ledger 0076, `lip_foot_reach`). Without it the stone lip at 8,572 m floats 1.18 m and
+  drive_test is red.
+  - `git fetch origin && git merge-base --is-ancestor origin/claude/dragon-tail-steps origin/main`.
+  - If that exits 0 (PR 31 has landed): `git merge origin/main`. Otherwise: `git merge origin/claude/dragon-tail-steps`.
+  - **Expect one conflict** in `scripts/geometry/build_mesh.py`, at the stone lip's crossing (`_sxH ... _prev_endH`,
+    ~line 3520). This branch has 0071's `stone_lip_box(para_mesh, start, end, (lx, lz))`; PR 31 has its own inline box with
+    `lip_foot_reach`'s `_rsH` / `_reH`. Keep `stone_lip_box` and give it PR 31's reaches:
+    - start = `_vH - t * _rsH` (with PR 31's `break` when `_rsH + _reH <= 1e-9`);
+    - end = `_vH + t * _reH`;
+    - the lateral = PR 31's.
+  - Also expect `fleet/GATES-CHANGELOG.md`: keep both entries, newest first.
+  - Trial-merged here on 2026-11-03 and aborted. Not resolved on the Mac: it is engine code the PR's owner should
+    resolve.
+- **c. `claude/race-kerb-carve-exempt`** (the prep's corridor carve skips `1KERB_RACE_*`): merge it if it has landed. 0.35.0
+  declares no race kerbs, so it is not needed for this build. It is a hard prerequisite of the first build that does.
+  It was not on origin when this was written.
+- **d.** `tests/run_tests.py`: green on the PC (Git Bash 5).
+  - On the Mac, 2 of `test_ship_track_chain.py`'s 27 fail on macOS bash 3.2 (`${p,,}`). That is the environment; they
+    fail the same without this branch.
+  - The new tests pass: `test_plan_streetlights.py` 7/7, `test_corner_flare_off.py` 1/1.
+
+**2. The version.** `tracks/sand-creek/track.config.json` `version` -> `0.35.0`.
+
+**3. The chain.** Assetto Corsa closed (Content Manager may stay open):
+
+```
+bash tools/ship_track.sh sand-creek
+```
+
+- A full run, from `gps`. **Not** `--skip-blend` and **not** `--from`: the widths change (the slip), the grid follows them,
+  and `lamps_plan` / `lamps` are draft steps.
+- Draft: `gps, elev, project, widths, grid, mesh, lamps_plan, underlay, lamps`.
+- Rehearse first if wanted: `SHIP_PROJ=<a scratch copy of D:/k10-workshops/sand-creek/project> bash tools/ship_track.sh sand-creek --no-install`.
+
+**4. What each step and gate must show** (0070 "Verification D", plus the slip). The Mac draft's numbers are in brackets.
+
+| step / gate | must show |
+|---|---|
+| `widths` | `route.corner_flare_off: 1 corner(s) — no corner flare there, 1 junction flare(s) inside them dropped`; `8 hard route corners flared` (32.9, 18.0, 18.0, 18.9, 42.3, 34.2, 19.8, 32.9); `widths_m` = the slip's own 5.5 m to v850, ramping 6.7 -> 11 m by v860 |
+| `grid` | 106 pieces, ~39.83 km |
+| `lamps_plan` | `169 posts ... 6 stations skipped {'deck': 6}` [Mac: 169; skipped 2,365 / 2,420 / 2,475 (E 56th deck), 5,885 / 5,940 (Quebec), 6,490 (E 45th)]; posts 6.1-9.6 m past the pavement edge (median 6.6: the shoulder sheet) |
+| `lamps` (the author's self-check, exit 1 = loop.blend not saved) | `169 lamps ... [led_cobra]`; seat check: footprints on a road **0**, wall clearance min **>= 0.5 m**, every foot in the earth, no two lenses within 2 m |
+| `track_folder` -> `check_lights_ini` | PASS: one `[LIGHT_N]` per lens (2 per lamp with `arms 2`), at its lens |
+| `drive_test_street` (+ the race layout's file) | **severe 0** (none at 2,540-2,560); **floating furniture 0** (needs 1b); kinks /km <= 0.34.0's 6.52 [Mac 1.45]; bumps /km <= 1.86 [0.00]; excursion drops <= 7 [7]; soft top, obstruction, daylight, undrivable 0 |
+| `audit_street` | CLEAN [CLEAN] |
+| `kn5_ground` (both layouts) | PASS; the lamp masts seated (its LIGHTPOST mast check) |
+| `house_seat` | PASS (unchanged) |
+| `verify_pads` / `verify_race` | **not run**: no pad and no race furniture is declared (neither is in ship.json's gates). They join when the pads and the race kerbs are built |
+
+- Red on any row: do not install. Report the row; do not force.
+- Green: the chain installs over 0.33.0 (0.34.0 was never installed).
+- Then Kevin's drive:
+  - the slip and its camber (2,520-2,620 m);
+  - the lamps at night;
+  - the six corners, still flared, as before.
+
+**5. What the PC cannot do from this runbook alone.**
+
+- The pads: they need a new Blender author for engine drafts (above).
+- The race kerbs: they need Kevin's decisions A, B and C (above).

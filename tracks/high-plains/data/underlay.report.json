@@ -3,7 +3,7 @@
  "existed": true,
  "blender": "4.2.22 LTS",
  "source_obj": "data/track.obj",
- "obj_md5": "bf151fb0007812bbb3626cd9092fbd3c",
+ "obj_md5": "55d72f91873df0d2c07a203e756d5114",
  "frame": "local (E,up,N) -> Blender (E,N,up) as (x,y,z)->(x,z,y), faces re-wound",
  "groups": [
   {
@@ -87,91 +87,91 @@
    "name": "1GRASS_l",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55578,
+   "faces": 55573,
    "uv": true
   },
   {
    "name": "1GRASS_m",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55738,
+   "faces": 55733,
    "uv": true
   },
   {
    "name": "1GRASS_n",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55846,
+   "faces": 55856,
    "uv": true
   },
   {
    "name": "1GRASS_o",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55908,
+   "faces": 55918,
    "uv": true
   },
   {
    "name": "1GRASS_p",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56016,
+   "faces": 56026,
    "uv": true
   },
   {
    "name": "1GRASS_q",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56146,
+   "faces": 56156,
    "uv": true
   },
   {
    "name": "1GRASS_r",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56241,
+   "faces": 56236,
    "uv": true
   },
   {
    "name": "1GRASS_s",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56266,
+   "faces": 56264,
    "uv": true
   },
   {
    "name": "1GRASS_t",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56254,
+   "faces": 56261,
    "uv": true
   },
   {
    "name": "1GRASS_u",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56216,
+   "faces": 56213,
    "uv": true
   },
   {
    "name": "1GRASS_v",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56076,
+   "faces": 56073,
    "uv": true
   },
   {
    "name": "1GRASS_w",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55918,
+   "faces": 55893,
    "uv": true
   },
   {
    "name": "1GRASS_x",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55786,
+   "faces": 55761,
    "uv": true
   },
   {
@@ -255,28 +255,28 @@
    "name": "1GRASS_aj",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54830,
+   "faces": 54845,
    "uv": true
   },
   {
    "name": "1GRASS_ak",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54940,
+   "faces": 54948,
    "uv": true
   },
   {
    "name": "1GRASS_al",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54973,
+   "faces": 54990,
    "uv": true
   },
   {
    "name": "1GRASS_am",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55023,
+   "faces": 55043,
    "uv": true
   },
   {
@@ -290,35 +290,35 @@
    "name": "1GRASS_ao",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55203,
+   "faces": 55218,
    "uv": true
   },
   {
    "name": "1GRASS_ap",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55323,
+   "faces": 55348,
    "uv": true
   },
   {
    "name": "1GRASS_aq",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55388,
+   "faces": 55398,
    "uv": true
   },
   {
    "name": "1GRASS_ar",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55438,
+   "faces": 55428,
    "uv": true
   },
   {
    "name": "1GRASS_as",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55573,
+   "faces": 55563,
    "uv": true
   },
   {
@@ -367,14 +367,14 @@
    "name": "1GRASS_az",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56494,
+   "faces": 56479,
    "uv": true
   },
   {
    "name": "1GRASS_ba",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56454,
+   "faces": 56439,
    "uv": true
   },
   {
@@ -458,14 +458,14 @@
    "name": "1GRASS_bm",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 51627,
+   "faces": 51645,
    "uv": true
   },
   {
    "name": "1GRASS_bn",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 51710,
+   "faces": 51732,
    "uv": true
   },
   {
@@ -521,21 +521,21 @@
    "name": "1GRASS_bv",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 57830,
+   "faces": 57828,
    "uv": true
   },
   {
    "name": "1GRASS_bw",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 57828,
+   "faces": 57830,
    "uv": true
   },
   {
    "name": "1GRASS_bx",
    "collection": "GEN_terrain",
-   "verts": 15881,
-   "faces": 26055,
+   "verts": 15492,
+   "faces": 25277,
    "uv": true
   },
   {
@@ -604,8 +604,8 @@
   {
    "name": "1WALL_PARA_stone",
    "collection": "GEN_wall",
-   "verts": 2152,
-   "faces": 2152,
+   "verts": 2280,
+   "faces": 2280,
    "uv": true
   },
   {

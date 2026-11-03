@@ -1,0 +1,604 @@
+{
+ "status": "GENERATED DRAFT from the built centreline \u2014 not an in-game recording (docs/HANDOFF.md :284, ledger 0023). Replace file-for-file with CSP's fast_lane.ai.candidate recorded in this layout.",
+ "layout": "stage",
+ "direction": "forward",
+ "race_furniture": false,
+ "lane_offset": true,
+ "frame": "kn5 frame (median dist to centerline.local: engine 50.0 m / kn5 0.0 m)",
+ "points": 17154,
+ "spacing_m": 1.5,
+ "lap_m": 25729.9,
+ "lap_s_est": 966.3,
+ "offset_points": 287,
+ "offset_max_m": 1.527,
+ "clearance": {
+  "points": 17154,
+  "unmatched": 0,
+  "divider_stations": 0,
+  "right_side": 0,
+  "island_hits": 0,
+  "divider_hits": 0,
+  "divider_too_close": 0,
+  "edge_too_close": 0,
+  "min_divider_clear_m": null,
+  "min_edge_clear_m": 1.7430163531940552,
+  "max_lat_m": 2.005452386836674,
+  "right_side_frac": null,
+  "ok": true
+ },
+ "geometry": {
+  "ramps": [],
+  "ramp_clamped": 0,
+  "corner_approach": [],
+  "folds": [],
+  "fillets": [
+   {
+    "xz": [
+     -7356.73,
+     -5416.1
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": -31.0
+   },
+   {
+    "xz": [
+     -7307.9,
+     -5354.27
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": 39.2
+   },
+   {
+    "xz": [
+     -7192.95,
+     -5287.86
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": 32.1
+   },
+   {
+    "xz": [
+     -7154.25,
+     -5288.37
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": -37.9
+   },
+   {
+    "xz": [
+     -6449.69,
+     -5139.22
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 6,
+    "turn_deg": -24.7
+   },
+   {
+    "xz": [
+     -6391.4,
+     -5074.95
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": 43.5
+   },
+   {
+    "xz": [
+     -6367.3,
+     -5082.36
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 6,
+    "turn_deg": 23.0
+   },
+   {
+    "xz": [
+     -6333.74,
+     -5113.69
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": -41.1
+   },
+   {
+    "xz": [
+     -6175.83,
+     -5071.48
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": -41.7
+   },
+   {
+    "xz": [
+     -5983.6,
+     -4772.55
+    ],
+    "radius_m": 12.6,
+    "floor_m": 10.88,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": -47.0
+   },
+   {
+    "xz": [
+     -5692.04,
+     -4415.61
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 6,
+    "turn_deg": -30.2
+   },
+   {
+    "xz": [
+     -5754.89,
+     -4304.0
+    ],
+    "radius_m": 12.6,
+    "floor_m": 5.27,
+    "lane": "comfort",
+    "window_pts": 18,
+    "turn_deg": 89.6
+   },
+   {
+    "xz": [
+     -5472.38,
+     -4210.91
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 6,
+    "turn_deg": -30.3
+   },
+   {
+    "xz": [
+     -5025.57,
+     -3979.81
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 6,
+    "turn_deg": 34.8
+   },
+   {
+    "xz": [
+     -4831.77,
+     -4264.5
+    ],
+    "radius_m": 12.6,
+    "floor_m": 10.36,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": -51.0
+   },
+   {
+    "xz": [
+     -4212.77,
+     -3660.09
+    ],
+    "radius_m": 12.6,
+    "floor_m": 10.17,
+    "lane": "comfort",
+    "window_pts": 10,
+    "turn_deg": -53.6
+   },
+   {
+    "xz": [
+     -2274.84,
+     -1265.52
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 6,
+    "turn_deg": 36.6
+   },
+   {
+    "xz": [
+     -1056.94,
+     -135.33
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 6,
+    "turn_deg": 31.0
+   },
+   {
+    "xz": [
+     -1023.14,
+     -140.31
+    ],
+    "radius_m": 12.6,
+    "floor_m": 10.79,
+    "lane": "comfort",
+    "window_pts": 11,
+    "turn_deg": 51.0
+   },
+   {
+    "xz": [
+     -794.17,
+     -379.25
+    ],
+    "radius_m": 12.6,
+    "floor_m": 7.02,
+    "lane": "comfort",
+    "window_pts": 14,
+    "turn_deg": -68.9
+   },
+   {
+    "xz": [
+     -295.66,
+     -164.44
+    ],
+    "radius_m": 12.6,
+    "floor_m": 6.9,
+    "lane": "comfort",
+    "window_pts": 14,
+    "turn_deg": -71.3
+   },
+   {
+    "xz": [
+     113.06,
+     -129.32
+    ],
+    "radius_m": 12.6,
+    "floor_m": 11.92,
+    "lane": "comfort",
+    "window_pts": 10,
+    "turn_deg": -46.2
+   },
+   {
+    "xz": [
+     1190.35,
+     -377.9
+    ],
+    "radius_m": 12.6,
+    "floor_m": 9.59,
+    "lane": "comfort",
+    "window_pts": 10,
+    "turn_deg": -53.8
+   },
+   {
+    "xz": [
+     1744.75,
+     -93.46
+    ],
+    "radius_m": 12.6,
+    "floor_m": 11.37,
+    "lane": "comfort",
+    "window_pts": 7,
+    "turn_deg": 42.1
+   },
+   {
+    "xz": [
+     1827.7,
+     -144.93
+    ],
+    "radius_m": 12.6,
+    "floor_m": 8.77,
+    "lane": "comfort",
+    "window_pts": 10,
+    "turn_deg": -58.5
+   },
+   {
+    "xz": [
+     4093.95,
+     1726.01
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 6,
+    "turn_deg": 38.0
+   },
+   {
+    "xz": [
+     4590.68,
+     2241.58
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 7,
+    "turn_deg": -42.6
+   },
+   {
+    "xz": [
+     4776.95,
+     2761.29
+    ],
+    "radius_m": 12.6,
+    "floor_m": 8.29,
+    "lane": "comfort",
+    "window_pts": 12,
+    "turn_deg": -63.4
+   },
+   {
+    "xz": [
+     4711.03,
+     3786.04
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 6,
+    "turn_deg": 34.1
+   },
+   {
+    "xz": [
+     4835.39,
+     3940.12
+    ],
+    "radius_m": 12.6,
+    "floor_m": 9.58,
+    "lane": "comfort",
+    "window_pts": 10,
+    "turn_deg": 54.8
+   },
+   {
+    "xz": [
+     4867.15,
+     3948.04
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 6,
+    "turn_deg": -32.4
+   },
+   {
+    "xz": [
+     4933.83,
+     4075.76
+    ],
+    "radius_m": 12.6,
+    "floor_m": 8.86,
+    "lane": "comfort",
+    "window_pts": 10,
+    "turn_deg": 56.7
+   },
+   {
+    "xz": [
+     4987.17,
+     4049.27
+    ],
+    "radius_m": 12.6,
+    "floor_m": 11.62,
+    "lane": "comfort",
+    "window_pts": 10,
+    "turn_deg": -47.9
+   },
+   {
+    "xz": [
+     5032.31,
+     4077.83
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 6,
+    "turn_deg": -37.0
+   },
+   {
+    "xz": [
+     5038.8,
+     4150.32
+    ],
+    "radius_m": 12.6,
+    "floor_m": 10.94,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": 47.2
+   },
+   {
+    "xz": [
+     5111.76,
+     4187.98
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 7,
+    "turn_deg": -42.4
+   },
+   {
+    "xz": [
+     5297.78,
+     4785.47
+    ],
+    "radius_m": 12.6,
+    "floor_m": 6.1,
+    "lane": "comfort",
+    "window_pts": 16,
+    "turn_deg": -78.4
+   },
+   {
+    "xz": [
+     4991.33,
+     5664.59
+    ],
+    "radius_m": 12.6,
+    "floor_m": 11.13,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": -47.4
+   },
+   {
+    "xz": [
+     4871.12,
+     5646.94
+    ],
+    "radius_m": 12.6,
+    "floor_m": 10.7,
+    "lane": "comfort",
+    "window_pts": 12,
+    "turn_deg": 54.1
+   },
+   {
+    "xz": [
+     4857.3,
+     5657.02
+    ],
+    "radius_m": 8.15,
+    "floor_m": 5.46,
+    "lane": "comfort",
+    "window_pts": 9,
+    "turn_deg": 85.8
+   },
+   {
+    "xz": [
+     4974.01,
+     6395.12
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 6,
+    "turn_deg": -36.6
+   },
+   {
+    "xz": [
+     4950.83,
+     6408.05
+    ],
+    "radius_m": 12.6,
+    "floor_m": 11.94,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": -42.8
+   },
+   {
+    "xz": [
+     4487.54,
+     6328.91
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": 33.3
+   },
+   {
+    "xz": [
+     4473.61,
+     6449.22
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 6,
+    "turn_deg": -34.4
+   },
+   {
+    "xz": [
+     4455.73,
+     6462.41
+    ],
+    "radius_m": 12.6,
+    "floor_m": 10.63,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": -51.9
+   },
+   {
+    "xz": [
+     4374.18,
+     6269.7
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 6,
+    "turn_deg": 27.8
+   },
+   {
+    "xz": [
+     4359.3,
+     6253.32
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": 41.6
+   },
+   {
+    "xz": [
+     4338.29,
+     6255.71
+    ],
+    "radius_m": 12.6,
+    "floor_m": 8.72,
+    "lane": "comfort",
+    "window_pts": 16,
+    "turn_deg": 82.6
+   },
+   {
+    "xz": [
+     4489.04,
+     6846.45
+    ],
+    "radius_m": 12.6,
+    "floor_m": 11.44,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": -46.7
+   }
+  ],
+  "smoothing": [
+   {
+    "iterations": 16,
+    "violations_before": 2,
+    "violations_after": 0,
+    "moved_points": 24,
+    "corridor_clamps": 0
+   },
+   {
+    "iterations": 0,
+    "violations_before": 0,
+    "violations_after": 0,
+    "moved_points": 0,
+    "corridor_clamps": 0
+   }
+  ],
+  "start": null,
+  "min_radius_m": 8.11,
+  "min_radius_at": 1676,
+  "radius_below_floor": 0,
+  "max_turn_deg": 10.6,
+  "turns_over_limit": 0,
+  "turns_over_limit_road_tight": 6,
+  "max_lateral_jump_m": 0.572,
+  "backward_steps": 0,
+  "self_crossings": 0,
+  "min_speed_kmh": 40.6,
+  "min_speed_at": 1674
+ }
+}

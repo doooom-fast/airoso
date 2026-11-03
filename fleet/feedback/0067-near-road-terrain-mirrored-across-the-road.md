@@ -41,3 +41,23 @@ Lake Murray 0.19.x and v4 are built by the authored assembler, not by this splic
 ## Owed
 
 Rebuilding Sand Creek, Milford, High Plains and Nevada Nights waits on Kevin's word. No track data was touched. Status moves on after a rebuild and a drive.
+
+## Rebuilt 2026-11-03 (Kevin: "Yes, rebuild all four"), three installed, not driven
+
+Each rebuilt from its draft mesh on the corrected splice through `tools/ship_track.sh <track> --from mesh` on the Windows box, installed
+only with every gate green and no force, and with severe steps, kinks/km, steps/km and fold bumps no worse than the build it replaced.
+Each replaced build is parked whole in `D:/k10-track-archive/<stamp>/`.
+
+| Track | Installed | kn5 md5 | severe | kinks /km | steps /km | fold bumps | excursion drops | far ledges | parked |
+|---|---|---|---|---|---|---|---|---|---|
+| Nevada Nights | 0.7.0 -> **0.8.0** | deb60e23c06926ea1b25d2f4653e0fb5 | 0 -> 0 | 0.0 -> 0.0 | 0.0 -> 0.0 | 3 -> 3 | 0 -> 0 | 8 -> 0 | 2026-11-03_120339 |
+| High Plains | 0.71.0 -> **0.72.0** | c798d5dfd44dcb9386e1a7e4cbb4b400 | 0 -> 0 | 7.77 -> 7.77 | 1.24 -> 1.24 | 0 -> 0 | 0 -> 1 | 13 -> 16 | 2026-11-03_123313 |
+| Milford | 0.4.0 -> **0.5.0** | 8da5df6a3ab609776f1f141003d71290 | 26 -> 26 | 30.99 -> 30.99 | 2.45 -> 2.45 | 0 -> 0 | 1 -> 0 | 33 -> 29 | 2026-11-03_124243 |
+
+- **Milford**: `kn5_ground_check` double-sheet terrain cells 7 -> 0 (the mirror's folds); road-over-ground 1/1401 on both, its one sample 0.229 -> 0.38 m.
+- **High Plains**: the corrected ground beside the paddock corner (E -505 N 131) is a real drop, and the measured-guard set a stone lip there.
+  The planned shelter `post5` and the OSM shed `osm289314487` both stood 1.2-2.0 m from it and the bespoke step refused them; `post5` was
+  the same building drawn twice (its ring inside the shed's footprint, both standing one inside the other in 0.71.0), so it left the
+  plan and the posts plan loses 4 of 12 (post0-post3, on the pavement since the plan was written). 13 buildings stand where 15 did.
+- **Sand Creek** is on its own branch: its first rebuild (0.31.2) went red on `audit_mesh` B, the seam weld lifting the grass through a
+  grid street's deck where the street joins the lap in a cut; the fix is `seam_weld_tables` (the connectors' decks in the floor's cap).

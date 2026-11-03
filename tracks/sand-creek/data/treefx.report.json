@@ -2,14 +2,14 @@
  "_doc": "tools/make_treefx.py: what trees.txt holds (counts per zone and per species; the north network per piece per species, its planted area, the loop's density and the area-scaled caps \u2014 ledger 0054 P4 / A9)",
  "total": 6108,
  "per_zone": {
-  "planted_cottonwood": 4196,
-  "planted_neighbourhood": 1912
+  "planted_cottonwood": 4194,
+  "planted_neighbourhood": 1914
  },
  "per_species": {
-  "Oak3.bin": 1479,
-  "SycamoreV1.bin": 1808,
-  "SycamoreV2.bin": 1590,
-  "SycamoreV3.bin": 1231
+  "Oak3.bin": 1473,
+  "SycamoreV1.bin": 1818,
+  "SycamoreV2.bin": 1597,
+  "SycamoreV3.bin": 1220
  },
  "rejected_in_corridor": 511,
  "rejected_on_built_surface": {

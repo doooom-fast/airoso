@@ -35,6 +35,30 @@ ROAD_LIFT_M = 0.0001  # 0.1 mm (Kevin: zero visible ledge anywhere)
 GRASS_CLEARANCE_M = 0.01  # Kevin: "0.01" — the world sits ONE CENTIMETER under the deck
 
 
+def corridor_lateral(tx, tz, dx, dz, mirror_x):
+    """Signed lateral of a point from a corridor station, LEFT of travel positive.
+
+    heightfield.fetch_corridor writes each station row from -half_l..+half_l along the LEFT normal
+    (-tz, tx) of the real (east, north) tangent, so + = left. (tx, tz) is the unit tangent and
+    (dx, dz) the node's offset from the station, both in the local frame, where x is mirrored when
+    mirror_x. Mirroring flips the cross product's sign, so it is undone here: the result is
+    left-positive in the real world either way (ledger 0067)."""
+    left = -tz * dx + tx * dz
+    return -left if mirror_x else left
+
+
+def corridor_row_height(row, lat, half_l, step_l):
+    """Height from one corridor row (offsets -half_l..+half_l, left positive) at signed lateral lat;
+    None where either neighbouring sample is missing."""
+    fo = (lat + half_l) / float(step_l)
+    io = max(0, min(len(row) - 2, int(fo)))
+    to = max(0.0, min(1.0, fo - io))
+    z1, z2 = row[io], row[io + 1]
+    if z1 is None or z2 is None:
+        return None
+    return z1 * (1 - to) + z2 * to
+
+
 def read_npy(path: Path) -> list[list[float]]:
     """Minimal float64 2D .npy reader (matches the writer in elevation/heightfield.py)."""
     with open(path, "rb") as f:
@@ -920,19 +944,15 @@ def build(project_dir: str | Path) -> dict:
                 _tx, _tz = _tx / _L, _tz / _L
                 _dxn = _gx - _cpts[_ci][0]
                 _dzn = _gz - _cpts[_ci][1]
-                _lat = -( -_tz * _dxn + _tx * _dzn) * _sxc   # signed lateral (mirror-aware)
+                _lat = corridor_lateral(_tx, _tz, _dxn, _dzn, mirror_x)
                 _lon_s = _dxn * _tx + _dzn * _tz             # along-track residual
                 if abs(_lat) > _half_l or abs(_lon_s) > 9.0:
                     continue
                 # lateral bilinear in the corridor row (station rows are ~6 m apart; use nearest)
-                _fo = (_lat + _half_l) / float(_cor["step_l"])
-                _io = max(0, min(len(_coffs) - 2, int(_fo)))
-                _to = max(0.0, min(1.0, _fo - _io))
-                _z1 = _cz[_ci][_io]
-                _z2v = _cz[_ci][_io + 1]
-                if _z1 is None or _z2v is None:
+                _zc = corridor_row_height(_cz[_ci], _lat, _half_l, float(_cor["step_l"]))
+                if _zc is None:
                     continue
-                _zc = (_z1 * (1 - _to) + _z2v * _to) - elev0
+                _zc -= elev0
                 _edge = min(1.0, (_half_l - abs(_lat)) / 10.0)   # blend the outer 10 m
                 _row[_k] = (_gx, _gy * (1 - _edge) + _zc * _edge, _gz)
                 _n_over += 1

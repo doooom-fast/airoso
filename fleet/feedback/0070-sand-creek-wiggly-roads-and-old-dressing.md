@@ -281,3 +281,77 @@ Three engine defects stack: a double-sided stamp that the underlay's `validate()
 2. **The line**: re-source from OSM (L1; it moves every station, absorbs or replaces 0068's E 45th nudge, and re-keys the 0066 camber), or keep Google's route and only smooth it?
 3. **The junction corners** (42 m at Dahlia → 56th, 34 m at Sand Creek Dr → Quebec, 33 m at Colorado → 50th): keep engine flares slew-limited (B3), or author junction pads in Blender as Lake Murray does?
 4. **Lamps**: which fixture? Commerce City's real one, researched, or Lake Murray's `led_cobra` as a stand-in?
+
+## Fixed (B1, B2): Sand Creek 0.34.0, built and gated on the PC, NOT installed (2026-11-03)
+
+**What changed (engine).**
+- **B1.** `widths_from_osm.detect_junctions` keeps a node only where the arterial ways there carry two or more distinct road identities. `road_ident` is `detect_turn_corners`' name / ref / way test, now shared by both. Minor side streets were already outside `MAJOR`.
+- **B2.**
+  - `widths_from_osm` writes `lanes_osm` (the way's OSM `lanes`, None where untagged) beside `widths_base_m`.
+  - `build_mesh` paints the edge lines at `min(widths_base_m, widths_m)` and deletes the 27 m rolling median. With no `widths_base_m` (or a different count), the paint keeps the pavement width.
+  - `ribbon.lane_markings` takes `lanes`: OSM `lanes // 2` lanes a side where tagged, the width-derived count where not. Every marking offset goes through `_cap_offset`.
+- **Not touched:** `detect_turn_corners`, `width_slew_m_per_m`, any gate threshold.
+- **Tests:**
+  - `tests/gps/test_junctions_distinct_roads.py` (a bare way split, a minor side street, two distinct arterials, the identity);
+  - `tests/geometry/test_paint_follows_street.py` (the untagged fallback equals the old output, OSM lanes set the dividers, a tight corner holds the lines 0.9 R out);
+  - `tests/gps tests/geometry`: 243 pass.
+
+**Verification B, 0.33.0 → 0.34.0** (measured on each build's own workshop data; the same scratch tool both times):
+
+| | 0.33.0 | 0.34.0 |
+|---|---|---|
+| Flared junction nodes (`detect_junctions`) | 64 | **14**: the 14 two-arterial junctions; 0 of the 32 way splits, 0 of the 18 minor side streets |
+| Corner flares (`detect_turn_corners`, untouched) | 8 | 8 |
+| Flared vertices | 616 | 214 |
+| Edge line off the street at a flared vertex | 613 of 616, up to 15.65 m a side | **0 of 214** (max 0.00 m) |
+| Painted lanes = OSM `lanes`, tagged stations | 0 of 2,892 | **2,892 of 2,892** (496 are one-lane tags: edge lines, no divider) |
+| Dashed divider starts / stops per lap (one side) | 77 | **12**: 11 at an OSM lane-count change, 4 touching an untagged station (the width fallback) |
+| Paint pleats (an offset past 0.9 R) | 20 | **0** |
+
+**Regression proofs.**
+- **Lookout Lariat:** `widths_m` is byte-identical: md5 `f9d184ebcd4f`, the same from the old engine, the new engine and the D4 A workshop. B1 cuts `widths_from_osm`'s raw junction flares there from 111 to 22, but `measured_widths` sets the final widths from `widths_base_m`. The only new key is `lanes_osm`.
+- **Tarmac rally stages' markings mesh:** byte-identical.
+  - `rally-dragon-tail-tarmac`: white `d655a233dba6`, yellow `b115d679ddf0`.
+  - `rally-under-the-dragon-tarmac`: white `4318d945a25c`, yellow `9b2107e67c79`.
+
+**The barrier trim (C, brief).** The lone barrier slab is gone with B1, so `instance_barriers` is not changed. Open barrier edges standing over the surface, 0.33.0 → 0.34.0:
+- 0.33.0: 57 open edges, 29 standing more than 8 cm, one cluster at (−1485.8, 178.0) up to 1.26 m.
+- 0.34.0: 18 open edges, none standing more than 8 cm (one between 2 and 8 cm).
+
+**drive_test, 0.33.0 → 0.34.0** (race and street read the same): RED, so not installed. 0.33.0 stays in `sand_creek`.
+
+| | 0.33.0 | 0.34.0 |
+|---|---|---|
+| severe steps | 0 | **8** |
+| floating furniture | 0 | **1** |
+| apron steps | 3 | **6** |
+| bumps /km | 2.07 | 1.86 |
+| slope kinks /km | 6.63 | 6.52 |
+| vertex bumps | 6 | 3 |
+| fold bumps | 20 | 20 |
+| excursion drops / far ledges | 7 / 8 | 7 / 8 |
+| obstruction, daylight, undrivable, soft top, barrier missing | 0 | 0 |
+
+Both regressions are B1 removing a flare that had been hiding something the brief kept out of scope.
+
+- **Severe 8, at 2,550–2,551 m:** 6.9–8.6 cm, on all four inner wheel paths (±1.86 m, ±3.36 m).
+  - The 56th → Sand Creek Dr slip is a one-lane `primary_link` (base 5.5 m). `detect_turn_corners` flares its corner to 23.0 m from 2,522 to 2,546 m.
+  - In 0.33.0 a way-split "junction" flare just past it (+3 m, 15.6 → 15.0 m at 2,552–2,570 m) stretched that corner flare's exit over about 30 m (22 → 15.6 → 11 m). B1 removes that way split, as it should.
+  - The corner flare now drops 23 → 7.3 m in about 12 m: 21.7 → 7.8 m between the sections at 2,546 and 2,552 m.
+  - That is exactly where ledger 0066's measured crossfall span begins (2,540–2,690 m): the tilt ramps 2.8 → 3.75 % across 2,541–2,553 m.
+  - A rolled section 21.7 m wide meeting a differently rolled one 7.8 m wide 6 m later puts a crease of several centimetres across the road. 0.33.0 already showed it at reduced size: a 4.55 % kink at 2,551 m, 4.43 m left.
+  - The centreline height is unchanged: 5.44 → 5.40 m in both builds.
+- **Floating furniture 1:** `1WALL_PARA_stone` (a measured-guard stone lip) near 8,572 m, at engine (−746.8, −685.6), its foot 1.18 m over the ground (the rule is 0.8 m).
+  - B1 drops a way-split flare there (21.0 → 17.5 m), so the road edge, and the lip with it, moves about 1.75 m inward over lower ground.
+  - This is the failure class ledger 0076 fixes in the engine (Dragon Tail Gravel, PR 31, `lip_foot_reach`: a lip foot over a drop is pulled back until it stands).
+- **Apron steps 3 → 6:** reported, not gated.
+
+**Stills** (`tracks/sand-creek/source/feedback-0070/paint_0330_site{1,2,3}.png` vs `paint_0340_site{1,2,3}.png`), workbench obliques at the three worst 0.33.0 flare sites, the yellow centre line shown: (−902.0, 1102.6) 2,324 m, (−1494.4, −298.4) 9,604 m, (−777.0, 1197.9) 2,486 m.
+- The edge lines hold the street through every flare, with the flare pavement outside them as an apron.
+- The phantom dividers are gone.
+- Where OSM steps from 4 lanes to 2 (site 3), the edge lines move in over `widths_base_m`'s own ~25 m ramp. That is the street's step, not a flare.
+
+**What would let it install** (not done; the brief kept these out of 0.34.0):
+- (a) the slip corner's exit: B3 (`route.width_slew_m_per_m`), or authored junction pads in place of the corner flares (decision 3 above);
+- (b) ledger 0076's lip-foot fix (PR 31) merged under Sand Creek.
+- Then one chain from `widths`.

@@ -767,6 +767,12 @@ def build(project_dir: str | Path) -> dict:
     _max_grade = float(cfg_raw.get("road_profile", {}).get("max_grade_pct", 6.0)) / 100.0
     raw_pts = evidence.cap_grade(raw_pts, max_grade=_max_grade)
     widths = local["widths_m"]
+    # THE STREET'S OWN LINE (ledger 0070 B2): widths_from_osm writes the pre-flare width and the OSM lanes beside the
+    # pavement width; the paint reads them. Absent (or a different count): the paint keeps the pavement width.
+    _base_w = local.get("widths_base_m")
+    _base_w = list(_base_w) if _base_w and len(_base_w) == len(widths) else None
+    _lanes_v = local.get("lanes_osm")
+    _lanes_v = list(_lanes_v) if _lanes_v and len(_lanes_v) == len(widths) else None
     # NO SAWTOOTH EDGES. OSM lane-derived widths step instantly at junction pads (Lake Murray's
     # College Avenue: 13 -> 30 m across one 3 m vertex), and a swept ribbon turns that into a
     # visible sawtooth on a road that should stay wide. Cap the rate of change, not the value —
@@ -803,6 +809,10 @@ def build(project_dir: str | Path) -> dict:
                 _sink.append((_cx + _dx * _lead_step * _k, _cy, _cz + _dz * _lead_step * _k))
         raw_pts = list(reversed(_head)) + list(raw_pts) + _tail
         widths = [widths[0]] * _n_lead + list(widths) + [widths[-1]] * _n_lead
+        if _base_w is not None:
+            _base_w = [_base_w[0]] * _n_lead + _base_w + [_base_w[-1]] * _n_lead
+        if _lanes_v is not None:
+            _lanes_v = [_lanes_v[0]] * _n_lead + _lanes_v + [_lanes_v[-1]] * _n_lead
         _lead_offset = _lead_m
         print(f"  [lead-in/out] {_n_lead} verts ({_lead_m:.0f} m) of road past each open end")
 
@@ -1669,13 +1679,12 @@ def build(project_dir: str | Path) -> dict:
                                     grid_spacing=float(meta["spacing_m"]),
                                     fill_ratio=GRADE_RATIO, band=_grade_band, layer_ref=_graded_y)
     mk_cfg = cfg_raw.get("road_markings", {}) or {}
-    # EDGE LINES FOLLOW THE LANE, not the pavement boundary (Kevin: "why don't outer lines
-    # follow centerline?"): a rolling-median width line, clamped inside the real pavement —
-    # flare pavement stays OUTSIDE the stripe like a real apron.
-    _mkw = 4
-    _mk_line = [sorted(widths[max(0, i - _mkw):i + _mkw + 1])[len(widths[max(0, i - _mkw):i + _mkw + 1]) // 2]
-                for i in range(len(widths))]
-    _mk_widths = [min(m0, w0) for m0, w0 in zip(_mk_line, widths)]
+    # EDGE LINES FOLLOW THE STREET, not the pavement boundary (Kevin: "why don't outer lines follow centerline?";
+    # ledger 0070 B2): the street's own width (widths_base_m, before the junction flares; smoothed in widths_from_osm),
+    # clamped inside the real pavement, so flare pavement stays OUTSIDE the stripe like a real apron. It replaces the
+    # 27 m rolling median of the pavement width, which passed every flare longer than 27 m straight into the edge line
+    # (Sand Creek 0.33.0: 613 of 616 flared vertices, by up to 15.65 m a side). Without a street width: the pavement's.
+    _mk_widths = [min(b0, w0) for b0, w0 in zip(_base_w, widths)] if _base_w is not None else list(widths)
     if mk_cfg.get("style") == "none":
         # Unpaved road: nobody paints lane lines on graded dirt. Without this the else-branch below
         # lays track-style stripes down a gravel rally stage.
@@ -1685,7 +1694,7 @@ def build(project_dir: str | Path) -> dict:
         # Lake Murray-style painted lines: solid double-yellow centre (two-way), solid white edge
         # lines, dashed dividers where width allows (ported ribbon.lane_markings)
         _lm = ribbon.lane_markings(centerline, _mk_widths, bank_at=bnk,
-                                   center_yellow=bool(mk_cfg.get("center_yellow", True)))
+                                   center_yellow=bool(mk_cfg.get("center_yellow", True)), lanes=_lanes_v)
         marks, yline = _lm["white"], _lm["yellow"]
     else:
         marks = ribbon.road_markings(centerline, _mk_widths, bank_at=bnk)

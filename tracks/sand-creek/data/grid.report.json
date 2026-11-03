@@ -9,7 +9,7 @@
   },
   "tertiary": {
    "pieces": 26,
-   "km": 11.18
+   "km": 11.19
   },
   "primary": {
    "pieces": 21,
@@ -25,10 +25,10 @@
   }
  },
  "pieces": 106,
- "km": 39.81,
+ "km": 39.82,
  "dropped": {
   "short": 21,
-  "parallel": 3,
+  "parallel": 2,
   "outside": 22
  },
  "meetings_eased": 146

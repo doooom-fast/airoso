@@ -346,7 +346,7 @@ Both regressions are B1 removing a flare that had been hiding something the brie
   - This is the failure class ledger 0076 fixes in the engine (Dragon Tail Gravel, PR 31, `lip_foot_reach`: a lip foot over a drop is pulled back until it stands).
 - **Apron steps 3 → 6:** reported, not gated.
 
-**Stills**, 0.33.0 vs 0.34.0 workbench obliques at the three worst 0.33.0 flare sites, the yellow centre line shown: (−902.0, 1102.6) 2,324 m, (−1494.4, −298.4) 9,604 m, (−777.0, 1197.9) 2,486 m.
+**Stills** (`tracks/sand-creek/source/feedback-0070/paint_0330_site{1,2,3}.png` vs `paint_0340_site{1,2,3}.png`), workbench obliques at the three worst 0.33.0 flare sites, the yellow centre line shown: (−902.0, 1102.6) 2,324 m, (−1494.4, −298.4) 9,604 m, (−777.0, 1197.9) 2,486 m.
 - The edge lines hold the street through every flare, with the flare pavement outside them as an apron.
 - The phantom dividers are gone.
 - Where OSM steps from 4 lanes to 2 (site 3), the edge lines move in over `widths_base_m`'s own ~25 m ramp. That is the street's step, not a flare.

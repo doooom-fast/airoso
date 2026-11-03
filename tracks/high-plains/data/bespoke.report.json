@@ -179,7 +179,7 @@
    "bottom": 10.92,
    "eave": 13.72,
    "off_terrain": false,
-   "collider": false
+   "collider": true
   },
   {
    "key": "post10",
@@ -224,7 +224,7 @@
    "bottom": 13.57,
    "eave": 16.37,
    "off_terrain": false,
-   "collider": false
+   "collider": true
   }
  ],
  "pads": [

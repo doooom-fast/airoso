@@ -28,3 +28,13 @@ Bespoke step re-run on a scratch copy of `loop.blend` (Blender 5.1 here): post9 
 ## Owed
 
 A High Plains rebuild on the PC to confirm `drive_test` floating furniture stays 0 against the real `track.obj`, then a drive through both posts. The 8 m rule was written before the collider's ground-following skirt (ledger 0062, 2026-11-01); it may be redundant now. Retiring it for Lake Murray and Sand Creek waits on a rebuild of each. The slivers may also change when the ledger 0067 terrain fix is rebuilt.
+
+## Built 2026-11-03: High Plains 0.72.1 installed on the PC (not driven)
+
+On the installed 0.72.0 (the ledger 0067 rebuild, PR 18), `tools/ship_track.sh high-plains --from bespoke`: every gate green,
+no force. `bespoke.report.json`: post9 and post12 `collider` true (both false in 0.72.0), every other block as it was;
+post10 and post11 stay false as in 0.72.0 (ground at -0.4 and -3.3 m, a different place). `drive_test` floating
+furniture 0; severe 0, kinks 7.77 /km, steps 1.24 /km, fold bumps 0, equal to 0.72.0. In the kn5, the merged collider
+mesh `1WALL_TILTUP_0` (544 -> 578 verts) carries 16 verts inside post9's footprint and 18 inside post12's, where 0.72.0's
+carried none; post4, the control, 16 in both. kn5 md5 `ceacafc7d1f9b8281a970fc3ca739e0e`; 0.72.0
+(`c798d5dfd44dcb9386e1a7e4cbb4b400`) parked in `D:/k10-track-archive/2026-11-03_131424/`. Owed: the drive through both posts.

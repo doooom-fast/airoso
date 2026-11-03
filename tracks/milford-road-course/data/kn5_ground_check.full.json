@@ -5,13 +5,13 @@
   "milford_road_course.kn5"
  ],
  "fidelity": "skipped: gate OBJ written from this kn5",
- "double_sheet_cells": 7,
+ "double_sheet_cells": 0,
  "seating": {
   "walls": {
-   "objects": 224,
+   "objects": 222,
    "no_ground_pct": 0.0,
-   "median_m": -0.594,
-   "p95_m": -0.293,
+   "median_m": -0.566,
+   "p95_m": -0.213,
    "hovering": 0
   }
  },
@@ -19,6 +19,6 @@
   "over": 1,
   "samples": 1401,
   "p95_m": 0.015,
-  "max_m": 0.229
+  "max_m": 0.38
  }
 }

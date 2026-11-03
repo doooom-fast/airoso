@@ -1,10 +1,10 @@
 {
- "input": "C:\\Users\\Owner\\Documents\\k10-workshops\\high-plains\\project\\blender\\high_plains.blend",
+ "input": "D:\\k10-workshops\\high-plains\\project\\blender\\high_plains.blend",
  "outputs": {
   "loop_main.blend": {
-   "objects": 115,
-   "meshes": 100,
-   "positions": 2362714,
+   "objects": 114,
+   "meshes": 99,
+   "positions": 2362790,
    "max_positions": 29998,
    "materials": [
     "1GRASS_a_mat",
@@ -103,7 +103,6 @@
     "PRAIRIECARD_0_mat",
     "PRAIRIECARD_1_mat",
     "PRAIRIECARD_2_mat",
-    "ROOFTOP_DARK_0_mat",
     "ROOFTOP_TAN_0_mat",
     "ROOFTOP_WHITE_0_mat",
     "SHOULDERUND_mat"
@@ -241,7 +240,6 @@
     "PRAIRIECARD_0",
     "PRAIRIECARD_1",
     "PRAIRIECARD_2",
-    "ROOFTOP_DARK_0",
     "ROOFTOP_TAN_0",
     "ROOFTOP_WHITE_0",
     "SHOULDERUND"
@@ -251,9 +249,9 @@
  "problems": [],
  "tokens": {},
  "input_census": {
-  "objects": 115,
-  "meshes": 100,
-  "positions": 2362714,
+  "objects": 114,
+  "meshes": 99,
+  "positions": 2362790,
   "max_positions": 29998,
   "materials": [
    "1GRASS_a_mat",
@@ -352,7 +350,6 @@
    "PRAIRIECARD_0_mat",
    "PRAIRIECARD_1_mat",
    "PRAIRIECARD_2_mat",
-   "ROOFTOP_DARK_0_mat",
    "ROOFTOP_TAN_0_mat",
    "ROOFTOP_WHITE_0_mat",
    "SHOULDERUND_mat"
@@ -490,7 +487,6 @@
    "PRAIRIECARD_0",
    "PRAIRIECARD_1",
    "PRAIRIECARD_2",
-   "ROOFTOP_DARK_0",
    "ROOFTOP_TAN_0",
    "ROOFTOP_WHITE_0",
    "SHOULDERUND"

@@ -442,7 +442,7 @@ def round_sharp_corners(pts: list[Vertex], *, angle_thr: float = 28.0,
 
 
 def finished_centerline(raw_pts: list[Vertex], cfg_raw: dict, *, mirror_x: bool,
-                        widths: list | None = None):
+                        widths: list | None = None, origin_elev_m: float | None = None):
     """The exact centerline the road is swept over: corner-rounded, mirrored to the AC frame, and with the
     hand-authored ``road_profile`` dip (the Sand Creek corkscrew) baked into Y.
 
@@ -569,6 +569,18 @@ def finished_centerline(raw_pts: list[Vertex], cfg_raw: dict, *, mirror_x: bool,
         print(f"  [junction fillet] {_nfill} stitched V-junction(s) swept as real turning arcs "
               f"(R {[round(z[3], 1) for z in _fillet_zones]} m zones)")
     finished_centerline.last_fillet_zones = _fillet_zones
+    # MEASURED BRIDGE DECKS (ledger 0068, opt-in per bridge: capture.bridges[].profile_m). level_bridge_decks
+    # gave every declared deck one straight grade between its bank crests; where the source lidar measured the
+    # deck itself, lay that profile on HERE, on the finished line its stations are keyed to. No profile
+    # declared -> nothing runs, and the line is exactly as before.
+    _decks = evidence.deck_profiles(cfg_raw)
+    if _decks:
+        if origin_elev_m is None:
+            raise ValueError("capture.bridges[].profile_m heights are absolute: finished_centerline needs "
+                             "origin_elev_m (centerline.local.json origin elev_m)")
+        centerline = evidence.apply_deck_profiles(centerline, _decks, origin_elev_m=origin_elev_m)
+        print(f"  elevation: measured deck profile on {len(_decks)} bridge(s) "
+              f"({', '.join(d['name'] or '?' for d in _decks)})")
     return centerline, dip_of, bank_at, profile_active
 
 
@@ -669,7 +681,7 @@ def build(project_dir: str | Path) -> dict:
     # keyed by lap station (metres from pts[0]); bank rolls every swept cross-section, the dip is baked
     # into the centerline Y so the terrain grade, the grass conform and the dummies all follow it.
     centerline, dip_of, bank_at, profile_active = finished_centerline(raw_pts, cfg_raw, mirror_x=mirror_x,
-                                                                      widths=widths)
+                                                                      widths=widths, origin_elev_m=elev0)
     _fillet_zones = getattr(finished_centerline, "last_fillet_zones", [])
     # U-TURN PLATEAU: where the route folds back on itself (>110 deg within +-15 m), the swept
     # ribbon self-overlaps, and the fans differ by grade x arc across the fold — a real ~0.5-1 m

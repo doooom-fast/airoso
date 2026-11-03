@@ -204,10 +204,9 @@ def fetch_fits(ept_url: str, origin: dict, sts, log=print) -> list:
     import laspy
     from pyproj import Transformer
     from scipy.spatial import cKDTree
-    ctx = https_context()
 
     def get(url):
-        with urllib.request.urlopen(url, timeout=180, context=ctx) as r:
+        with urllib.request.urlopen(url, timeout=180, context=https_context()) as r:
             return r.read()
     ept = json.loads(get(ept_url))
     base = ept_url.rsplit("/", 1)[0]

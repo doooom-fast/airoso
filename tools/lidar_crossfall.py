@@ -10,7 +10,10 @@ Why not ``scripts.elevation.crossfall``: its footprint mode keeps a tilt only wh
 so this corner would come out flat in the turn. Here the lidar IS the research L10 asks for (amended, ledger 0066), so
 the measurement is used as measured, capped at the legacy 6 %.
 
-Method, per station every ``STEP_M`` along ``data/centerline.local.json`` (the stations build_mesh keys bank by):
+Method, per station every ``STEP_M`` along the line build_mesh sweeps the road over and keys bank by:
+``data/finished_centerline.json`` (corner-rounded and smoothed, 23 m shorter round Sand Creek than the draft line; the
+first 0.31.0 keyed the draft line and its camber drifted up to 23 m along the lap and broke at the seam), or
+``data/centerline.local.json`` before the first build:
   - the source lidar's points within ``HALF_M`` of the line across and ``ALONG_M`` along it: bridge-deck points
     (class 17) on the track's declared bridges (``capture.bridges``), ground points (class 2) everywhere else, so a
     deck overhead (an overpass) or a creek bed underneath never enters a road's fit;
@@ -21,6 +24,8 @@ Method, per station every ``STEP_M`` along ``data/centerline.local.json`` (the s
     ``MAX_READ_PCT``; anything else (an embankment, a median, a curb run) is dropped and the gap filled straight
     between its good neighbours, or held flat where the gap is longer than ``MAX_GAP_M``;
   - a ``SMOOTH_M`` along-lap median then mean, only enough to take the fit's noise out;
+  - flat outside the track's ``road_profile.crossfall.spans_m`` when it declares any (the measured camber only where
+    it has been checked against the seat), ramping in and out at ROLL_RATE;
   - capped at ``CAP_PCT``, then every change limited to ``ROLL_RATE`` per metre (scripts.elevation.crossfall's
     ``runoff``): the 56th Ave turn rolls in at about 0.16 %/m and passes untouched, where the DEM tool's 0.12 %/m
     flattened it; a reading that flips -7 % to +9 % inside 40 m (E 45th Ave by the creek, the line on an embankment
@@ -101,7 +106,8 @@ def _cyc(vals: list[float], k: int, reducer) -> list[float]:
     return [reducer([vals[(i + d) % n] for d in range(-k, k + 1)]) for i in range(n)]
 
 
-def compose(raw: list[float | None], step_m: float = STEP_M) -> list[float]:
+def compose(raw: list[float | None], step_m: float = STEP_M, lap_m: float | None = None,
+            spans: list[tuple[float, float]] | None = None) -> list[float]:
     """Fill each run of missing fits straight between its good neighbours (round the closed lap), or flat where the run
     is longer than MAX_GAP_M; smooth by SMOOTH_M (median then mean); cap at CAP_PCT; limit every change to ROLL_RATE
     per metre. % per station, + = left higher."""
@@ -124,9 +130,11 @@ def compose(raw: list[float | None], step_m: float = STEP_M) -> list[float]:
     med = _cyc(filled, k, lambda w: sorted(w)[len(w) // 2])
     mean = _cyc(med, k, lambda w: sum(w) / len(w))
     capped = [max(-CAP_PCT, min(CAP_PCT, v)) for v in mean]
-    from scripts.elevation.crossfall import runoff
     st = [step_m * i for i in range(n)]
-    return runoff(capped, st, step_m * n, ROLL_RATE, closed=True)
+    if spans:
+        capped = [v if any(a <= s <= b for a, b in spans) else 0.0 for v, s in zip(capped, st)]
+    from scripts.elevation.crossfall import runoff
+    return runoff(capped, st, lap_m or step_m * n, ROLL_RATE, closed=True)
 
 
 def roll_worst(st: list[float], tilt: list[float], lap: float, window_m: float = 30.0) -> float:
@@ -145,9 +153,20 @@ def roll_worst(st: list[float], tilt: list[float], lap: float, window_m: float =
     return worst
 
 
-def stations(lc: dict, step_m: float = STEP_M):
-    """[(station m, east, north, left-normal east, left-normal north)] every step_m along the local line."""
-    pts = [(p[0], p[2]) for p in lc["points_xyz_m"]]
+def line_points(project: Path, cfg: dict) -> tuple[list[tuple[float, float]], str]:
+    """(east, north) of the line the road is swept over, and which file it came from. finished_centerline.json is in
+    the kn5 frame (x, y, -z of the local ENU frame, x mirrored with ``mirror_x``); centerline.local.json is ENU."""
+    data = project / "data"
+    fin = data / "finished_centerline.json"
+    if fin.exists():
+        sx = -1.0 if cfg.get("mirror_x") else 1.0
+        return [(sx * p[0], -p[2]) for p in json.loads(fin.read_text(encoding="utf-8"))["points_xyz_m"]], fin.name
+    lc = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
+    return [(p[0], p[2]) for p in lc["points_xyz_m"]], "centerline.local.json"
+
+
+def stations(pts: list[tuple[float, float]], step_m: float = STEP_M):
+    """[(station m, east, north, left-normal east, left-normal north)] every step_m along the line, and its length."""
     st_v = [0.0]
     for i in range(1, len(pts)):
         st_v.append(st_v[-1] + math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]))
@@ -272,7 +291,8 @@ def build(project_dir, *, ept_url: str = EPT_DEFAULT, refetch: bool = False, log
     lc = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
     cfgp = project / "track.config.json"
     cfg = json.loads(cfgp.read_text(encoding="utf-8")) if cfgp.exists() else {}
-    sts, lap = stations(lc)
+    pts, line = line_points(project, cfg)
+    sts, lap = stations(pts)
     fp = _fingerprint(ept_url, sts)
     cache = data / "crossfall.lidar.json"
     fits = None
@@ -290,7 +310,8 @@ def build(project_dir, *, ept_url: str = EPT_DEFAULT, refetch: bool = False, log
     on_deck = [any(a <= s[0] <= b2 for a, b2 in decks) for s in sts]
     chosen = [f[1] if d else f[0] for f, d in zip(fits, on_deck)]
     raw = [c[0] if is_road(c) else None for c in chosen]
-    tilt = compose(raw)
+    spans = [tuple(map(float, s)) for s in ((cfg.get("road_profile") or {}).get("crossfall") or {}).get("spans_m") or []]
+    tilt = compose(raw, lap_m=lap, spans=spans or None)
     st = [round(s[0], 1) for s in sts]
     dropped = sum(1 for v in raw if v is None)
     at = sorted(abs(v) for v in tilt)
@@ -299,12 +320,12 @@ def build(project_dir, *, ept_url: str = EPT_DEFAULT, refetch: bool = False, log
         "status": "measured",
         "_status_doc": "3DEP source lidar, measured at every station (ledger 0066); not estimated from the DEM",
         "method": "lidar", "tool": "tools/lidar_crossfall.py", "source": ept_url,
-        "frame": "local stations (centerline.local.json); + = left side higher",
+        "frame": f"stations along {line} (build_mesh's bank keys); + = left side higher", "line": line,
         "params": {"STEP_M": STEP_M, "HALF_M": HALF_M, "ALONG_M": ALONG_M, "GROUND": GROUND, "DECK": DECK,
                    "TRIM_PASSES": TRIM_PASSES, "TRIM_MIN_M": TRIM_MIN_M, "MIN_POINTS": MIN_POINTS,
                    "MAX_SD_M": MAX_SD_M, "MAX_READ_PCT": MAX_READ_PCT, "MAX_GAP_M": MAX_GAP_M,
                    "SMOOTH_M": SMOOTH_M, "CAP_PCT": CAP_PCT, "ROLL_RATE": ROLL_RATE},
-        "deck_spans_m": decks,
+        "deck_spans_m": decks, "spans_m": spans,
         "station_m": st,
         "bank_rad": [round(math.atan(v / 100.0), 5) for v in tilt],
         "tilt_pct": [round(v, 3) for v in tilt],

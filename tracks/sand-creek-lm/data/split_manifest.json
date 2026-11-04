@@ -1,11 +1,11 @@
 {
- "input": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/ws/sand_creek_lm/blender/sand_creek_raceway_lm.blend",
+ "input": "D:\\k10-scratch\\sand_creek_lm\\blender\\sand_creek_raceway_lm.blend",
  "outputs": {
   "loop_main.blend": {
    "objects": 24,
    "meshes": 24,
-   "positions": 239647,
-   "max_positions": 36086,
+   "positions": 231887,
+   "max_positions": 34571,
    "materials": [
     "1GRASS_0_mat",
     "1GRASS_1_mat",
@@ -211,8 +211,8 @@
  "input_census": {
   "objects": 25,
   "meshes": 25,
-  "positions": 252515,
-  "max_positions": 36086,
+  "positions": 244755,
+  "max_positions": 34571,
   "materials": [
    "1GRASS_0_mat",
    "1GRASS_1_mat",

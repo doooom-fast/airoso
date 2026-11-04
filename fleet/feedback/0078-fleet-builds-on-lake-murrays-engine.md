@@ -294,6 +294,61 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
 
    The Mac ran what it can: "Lake Murray unchanged (Mac)" under The plan.
 
+## PC: the three ports installed side by side (2026-11-03)
+
+**The rehearsals (285854e) found one piece of hidden state.** The rehearsal ran with `SHIP_PROJ`, `eng_sclm`, and an empty
+scratch workshop. It stopped at `ship: track folder`: `scripts/ac/track_folder.py` reads `data/centerline.geojson`
+(`length_m`), and nothing in the port wrote one.
+- The intake reads the source track's copy, and ship.json synced in only `track.config.json`.
+- The Mac's workshop already held the file.
+
+With the source track's file put into the scratch workshops by hand, all three rehearsals were SHIP OK on the Mac's numbers.
+The fix (870fbf5): the intake writes `data/centerline.geojson` (and `osm.ways.json`), refuses a source without it, and a test
+runs the intake into an empty workshop.
+
+**The real runs (870fbf5; 0a68e4a adds only this runbook's audit text).**
+- Each track ran `tools/ship_track.sh <track>` into a fresh EMPTY workshop (`D:/k10-scratch/sand_creek_lm`,
+  `high_plains_lm`, `exotics_lm`, holding only an empty `data/`), seeded by the chain alone.
+- Each ran on its own ENG copy: `eng_repro` plus exactly 0078's textures. The md5s were checked after the copy and are in
+  each copy's `STAGED_TEXTURES.md5`.
+- All gates were green with no force, and each installed beside the live track.
+- Every material slot in each road kn5 names an embedded texture. None is drawn untextured, Lake Murray 0.20.0's house fault.
+
+| | Sand Creek (`sand_creek_raceway_lm`) | High Plains (`high_plains_lm`) | Nevada Nights (`exotics_racing_lvms_lm`) |
+|---|---|---|---|
+| layouts | race + street | full | full |
+| drive_test | PASS ×2: severe 0, bumps 0/km, kinks 0.41/km, drops 0 | PASS: severe 0, bumps 0, kinks 1.87/km, drops 0 | PASS: severe 0, bumps 0, kinks 0.0/km, drops 0 (far ledges 3, reported) |
+| audit / kn5_ground / house_seat | CLEAN / 0 of 4,644 over 5 cm, p95 +0.021 / PASS (450) | CLEAN / 0 of 1,908, p95 +0.021 / PASS (19) | CLEAN / 0 of 1,422, p95 +0.021 / PASS (29) |
+| road kn5 | 39,276,120 B, md5 2a31af735886 | 14,908,511 B, md5 4d48a96da405 | 12,502,750 B, md5 df7ad3f7620c |
+| other kn5s | `_street` 1,776,527 B, c447efda85f3; spawns 2,104 B, c6ffbc6fd76e | — | — |
+| meshes / vertices (road) | 24 / 339,449 | 30 / 183,439 (`1KERB_circuit` 1,710) | 23 / 132,776 (`1KERB_circuit` 2,826) |
+| materials / embedded textures | 24 / 16 | 30 / 18 | 23 / 20 |
+
+The edge reports (`tools/edge_report.py`) give, at 1 m past the edge, kerb / ground; the rise within 2 m (p95); paved past
+the edge (p95); and the ground under the deck at 3 m / 6 m / 10 m (median, p5):
+
+| | at 1 m kerb / ground | rise 2 m p95 | paved past edge | ground 3 m | ground 6 m | ground 10 m |
+|---|---|---|---|---|---|---|
+| Sand Creek (1,608 side stations) | 31.0 % / 69.0 % | 0.000 | 0 | −0.038 (−0.177) | −0.103 (−0.177) | −0.178 (−0.197) |
+| High Plains (536) | 24.4 % / 75.6 % | 0.014 | 0 | −0.029 (−0.052) | −0.107 (−0.205) | −0.184 (−0.305) |
+| Nevada Nights (304) | 41.8 % / 58.2 % | 0.076 | 0 | −0.028 (−0.064) | −0.126 (−0.322) | −0.200 (−0.458) |
+
+Nothing is a wall, a lane or nothing at 1 m, and no ground is more than 1 m off at 3, 6 or 10 m.
+
+Against the rehearsals at 285854e, the gates read the same. The road kn5s shrank, because `seat_edges` is now adaptive to the
+bank:
+- High Plains: 1GRASS 317,592 -> 60,801 vertices, 29.2 -> 14.9 MB.
+- Nevada: 191,540 -> 84,676, 18.4 -> 12.5 MB.
+- Sand Creek: 144,053 -> 139,213.
+
+High Plains and Nevada also gained the traced circuit kerbs.
+
+The chain's sync-back (its outputs into `tracks/<track>/`, `loop.blend` included) is committed with this entry. Every gate
+JSON the Mac committed came back byte-identical, except Sand Creek's `audit.json` `grass_verts` (the same adaptive cut) and
+`house_seat_check.json` / `split_manifest.json` (paths).
+
+The frame rate cannot be read on the PC: the session does not drive AC. Kevin's first drive is the judge. Not driven yet.
+
 ## Owed
 
 - Racing kerbs and run-off outlines for the circuits, measured off NAIP / lidar; race kerbs at Sand Creek's race corners.

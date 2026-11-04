@@ -47,7 +47,29 @@ def test_the_committed_intermediate_is_reproduced_offline_byte_for_byte_but_the_
     want = dict(_doc())
     fresh.pop("written_utc")
     want.pop("written_utc")
-    assert json.loads(json.dumps(fresh)) == want
+    fresh = json.loads(json.dumps(fresh))
+    # ledger 0054 Phase 2 step 2c: Princess View's MD7 was corrected at the source from NAIP by
+    # source/expansion/phase2/fix_pv_median.py, which records every row it changed ([before, after]). The author builds
+    # exactly the BEFORE values; the committed file holds the AFTER values and the corrected MD7 (polygon, width, record).
+    md7 = next(m for m in want["medians"] if m["id"] == "MD7")
+    rows = {float(r["s"]): r for r in md7.get("correction", {}).get("rows", [])}
+    if rows:
+        wp, fp = (next(p for p in d["pieces"] if p["id"] == "B") for d in (want, fresh))
+        cols = wp["columns"]
+        iw, io = cols.index("median_w_m"), cols.index("median_off_m")
+        for wr, fr in zip(wp["stations"], fp["stations"]):
+            ch = rows.get(float(wr[0]))
+            if ch is None:
+                continue
+            assert (fr[iw], fr[io]) == (ch["median_w_m"][0], ch["median_off_m"][0]), (wr[0], fr[iw], fr[io], ch)
+            assert (wr[iw], wr[io]) == (ch["median_w_m"][1], ch["median_off_m"][1]), (wr[0], wr[iw], wr[io], ch)
+            fr[iw], fr[io] = wr[iw], wr[io]
+        fmd = next(m for m in fresh["medians"] if m["id"] == "MD7")
+        for k in ("polygon_xz", "width_m", "correction"):
+            fmd.pop(k, None)
+            md7_k = md7.pop(k)
+            assert k == "correction" or md7_k
+    assert fresh == want
 
 
 def test_offline_refuses_to_fetch_a_missing_sample():

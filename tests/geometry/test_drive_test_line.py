@@ -60,3 +60,20 @@ def test_main_with_line_flag_runs_the_lines_only():
     d = _proj()
     assert dt.main([str(d), "--line", "expansion"]) == 0
     assert not (d / "data" / "drive_test.json").exists()
+
+
+def test_a_line_reports_where_its_bumps_stand_and_a_lap_run_does_not():
+    """ledger 0054 step 2e: --line writes steps_at [s, lateral, step, x, z] for every bump it counts (the 0.20.2 rise in
+    steps/km could not be placed); a lap run's report carries no such key (byte-identical)"""
+    d = _proj()
+    obj = d / "data" / "track.obj"
+    txt = obj.read_text()
+    n = sum(1 for ln in txt.splitlines() if ln.startswith("v "))
+    h = 0.04                                         # a 4 cm plate across the line's road at z 100-102
+    plate = [f"v {x} {h} {z}" for x, z in ((294.0, 100.0), (306.0, 100.0), (306.0, 102.0), (294.0, 102.0))]
+    obj.write_text(txt + "o 1ROAD_plate\n" + "\n".join(plate) + f"\nf {n + 1} {n + 4} {n + 3}\nf {n + 1} {n + 3} {n + 2}\n")
+    dt.run_lines(d, "expansion")
+    r = json.loads((d / "data" / "drive_test.line.expansion_fwd.json").read_text())
+    assert r["steps_at"], r.get("steps_per_km")
+    assert all(abs(p[3] - 300.0) <= 6.0 and 99.0 <= p[4] <= 105.0 for p in r["steps_at"]), r["steps_at"][:4]
+    assert "steps_at" not in dt.run(d)

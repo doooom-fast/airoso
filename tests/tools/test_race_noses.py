@@ -136,6 +136,20 @@ def _plan():
     return _C["plan"]
 
 
+def test_compose_on_a_composed_config_replaces_the_layouts_not_appends():
+    """step 2e: plan_north in a composed tree (the PC's 0.20.2 branch) read each north layout twice ("closure_token
+    'ncw' is also north_cw's") — compose is idempotent now"""
+    sys.path.insert(0, str(PHASE2))
+    import plan_north  # noqa: E402
+    base = json.loads((plan_north.PROJECT / "track.config.json").read_text(encoding="utf-8"))
+    decl = json.loads((PHASE2 / "race.north.declaration.json").read_text(encoding="utf-8"))
+    once = plan_north.compose(base, decl)
+    assert plan_north.compose(once, decl) == once
+    ids = [str(lo["id"]) for lo in once["layouts"]]
+    assert len(ids) == len(set(ids)) and {"north_cw", "north_acw"} <= set(ids)
+    assert [lo for lo in once["layouts"] if lo["id"] not in ("north_cw", "north_acw")] == base["layouts"]
+
+
 def _lap(out):
     lap = json.loads((out / "data" / "lap.north.json").read_text())
     return [tuple(p) for p in lap["points_xyz_m"]], [float(w) for w in lap["widths_m"]], lap["island_w_by_vertex"]
@@ -157,27 +171,27 @@ def test_the_north_k_rails_stand_across_the_far_carriageway_at_the_three_noses()
     b = json.loads((out / "data" / "barrier_bands.north.json").read_text())
     pts, widths, _iw = _lap(out)
     assert [(x["end"], x["median"], x["pin"]) for x in b["zones"]["noses"]] == [(2, 8, 7), (316, 315, 316), (712, 718, 717),
-                                                                                      (1452, 1451, 1452), (1472, 1490, 1489)]
+                                                                                      (1452, 1451, 1452), (1472, 1478, 1477)]
     sc = b["params"]["edge_inset_m"] - b["params"]["barrier_half_m"]
     for lid, c in b["corridors"].items():
         e = -1.0 if c["race_side"] == "R" else 1.0
         walls = {w["vertex"]: w for w in c["nose_walls"]}
-        assert sorted(walls) == [7, 316, 717, 1452, 1489], lid
+        assert sorted(walls) == [7, 316, 717, 1452, 1477], lid
         for k, w in walls.items():
             assert c["zone_by_vertex"][k] == "pin" and k in c["pins"]
             assert abs(w["y_to"] - (-e * (widths[k] / 2.0 - sc))) < 1e-3, (lid, k)            # on the far strip
             assert abs(w["y_from"] - (c["closure_y_by_vertex"][k] + e * b["params"]["barrier_half_m"])) < 1e-3
             lo, hi = c["lane_by_vertex"][k]                       # the lane at the pin is the closure's, not the street
             assert hi - lo < widths[k] - 2 * b["params"]["edge_inset_m"] - 1.0, (lid, k, lo, hi)
-            assert 11.0 < w["length_m"] < 19.5, (lid, k, w["length_m"])
+            assert 10.0 < w["length_m"] < 19.5, (lid, k, w["length_m"])     # Jackson 10.75 (its nose 3.6 m right)
         ends = [en for r in c["runs"] for en in r["ends"]]
-        assert sorted(en["vertex"] for en in ends if en["joins"] == "nose") == [7, 316, 717, 1452, 1489], lid
+        assert sorted(en["vertex"] for en in ends if en["joins"] == "nose") == [7, 316, 717, 1452, 1477], lid
         # the box edges the noses replace carry no closure; the open walk to the pin is box-like, its lane the whole
         # street but for the one vertex before the K-rail, which takes the closure's lane (a lerped lane never sweeps
         # the K-rail: drive_test, write_ai_line)
-        for v in (2, 5, 6, 712, 716, 1472, 1480, 1488):
+        for v in (2, 5, 6, 712, 716, 1472, 1474, 1476):
             assert c["closure_y_by_vertex"][v] is None and c["zone_by_vertex"][v] == "box", (lid, v)
-        for k, nb, far in ((7, 6, 5), (316, 317, 318), (717, 716, 715), (1452, 1453, 1454), (1489, 1488, 1487)):
+        for k, nb, far in ((7, 6, 5), (316, 317, 318), (717, 716, 715), (1452, 1453, 1454), (1477, 1476, 1475)):
             assert c["lane_by_vertex"][nb] == c["lane_by_vertex"][k], (lid, nb)
             lo, hi = c["lane_by_vertex"][far]
             assert hi - lo > widths[far] - 2 * b["params"]["edge_inset_m"] - 0.01, (lid, far)
@@ -202,7 +216,7 @@ def test_the_kerbs_stand_clear_of_the_k_rails_and_j1_j5_insides_stay_held():
     plans = [p for lid in sorted(b["corridors"]) for p in rf.closure_plans(pts, widths, b, lid)]
     noses = [p for p in plans if p.get("wall") == "nose"]
     assert sorted(rf.object_name(p) for p in noses) == sorted(f"1WALL_race_close_{t}_nose_{k}_0" for t in ("nacw", "ncw")
-                                                              for k in (7, 316, 717, 1452, 1489))
+                                                              for k in (7, 316, 717, 1452, 1477))
     for p in noses:
         assert all(math.dist(rf._strip_xz(a), rf._strip_xz(q)) <= rf.NOSE_RING_M + 1e-6 for a, q in zip(p["rings"], p["rings"][1:]))
         assert [x["joins"] for x in p["pins"]] == ["closure", "edge_" + p["side"]]
@@ -335,6 +349,11 @@ def test_the_north_lap_takes_its_medians_where_they_stand():
     assert iw[7] == 0 and iw[8] > 0 and abs(off[8] + 1.3) < 0.05
     assert all(w > 0 for w in iw[8:316]) and iw[316] == 0
     assert abs(off[315] - 1.7) < 0.05 and abs(iw[315] - 2.0) < 0.05
+    # step 2e: Jackson's median (offset_aware, one point per connector vertex) is read by index, past the snap: its 1.5 m
+    # nose 3.57 m right of the line at v1478, unbroken from there (the 2.5 m snap had dropped v1478-1489 and the lane
+    # ran onto its curb)
+    assert iw[1477] == 0 and abs(iw[1478] - 1.5) < 0.05 and abs(off[1478] + 3.57) < 0.05
+    assert all(w > 0 for w in iw[1478:1500]) and all(o < -2.0 for o in off[1478:1490])
     # without the key the lap is the 1.0 m-snap lap: centred, fragmented, and no offset row
     d = json.loads((PHASE2 / "race.north.declaration.json").read_text())
     s = d["laps"]["north"]

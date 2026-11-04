@@ -691,7 +691,7 @@
   "north_cw": {
    "fail": false,
    "leak_m2": 0,
-   "reached_m2": 89060,
+   "reached_m2": 88417,
    "door_clusters": 0,
    "blocked": [],
    "forbidden_reached": [],
@@ -700,7 +700,7 @@
   "north_acw": {
    "fail": false,
    "leak_m2": 0,
-   "reached_m2": 92139,
+   "reached_m2": 91688,
    "door_clusters": 0,
    "blocked": [],
    "forbidden_reached": [],
@@ -712,11 +712,11 @@
    "north_cw": {
     "token": "ncw",
     "closure_runs": 6,
-    "closure_m": 7882.9,
-    "island_vertices": 1431,
-    "island_m": 4255.6,
+    "closure_m": 7917.2,
+    "island_vertices": 1446,
+    "island_m": 4298.8,
     "clear_min_m": 6.705,
-    "clear_median_m": 10.896,
+    "clear_median_m": 10.886,
     "pin_rates": [
      [
       7,
@@ -731,7 +731,7 @@
       6.0
      ],
      [
-      1489,
+      1477,
       6.0
      ],
      [
@@ -767,13 +767,13 @@
       3.4
      ]
     ],
-    "below_floor_vertices": 1202,
+    "below_floor_vertices": 1218,
     "min_radius_m": 23.0,
     "probes": 325,
     "planned_no_route": {
      "fail": false,
      "leak_m2": 0,
-     "reached_m2": 89060,
+     "reached_m2": 88417,
      "door_clusters": 0,
      "blocked": [],
      "forbidden_reached": [],
@@ -784,11 +784,11 @@
    "north_acw": {
     "token": "nacw",
     "closure_runs": 6,
-    "closure_m": 7882.9,
-    "island_vertices": 1431,
-    "island_m": 4255.6,
+    "closure_m": 7917.2,
+    "island_vertices": 1446,
+    "island_m": 4298.8,
     "clear_min_m": 6.86,
-    "clear_median_m": 11.238,
+    "clear_median_m": 11.241,
     "pin_rates": [
      [
       2926,
@@ -823,7 +823,7 @@
       3.55
      ],
      [
-      1489,
+      1477,
       6.0
      ],
      [
@@ -839,13 +839,13 @@
       6.0
      ]
     ],
-    "below_floor_vertices": 989,
+    "below_floor_vertices": 991,
     "min_radius_m": 21.1,
     "probes": 325,
     "planned_no_route": {
      "fail": false,
      "leak_m2": 0,
-     "reached_m2": 92139,
+     "reached_m2": 91688,
      "door_clusters": 0,
      "blocked": [],
      "forbidden_reached": [],
@@ -854,7 +854,7 @@
     }
    }
   },
-  "mirror_max_m": 4.019,
+  "mirror_max_m": 6.215,
   "mirror_running_max_m": 3.393,
   "edge_verts": 2937,
   "edge_gaps": 0,
@@ -927,7 +927,7 @@
     ],
     "to": [
      1453,
-     1481
+     1476
     ],
     "by": [
      "north_cw"
@@ -978,10 +978,6 @@
    ],
    [
     531,
-    531
-   ],
-   [
-    534,
     559
    ],
    [
@@ -997,7 +993,7 @@
     1451
    ],
    [
-    1490,
+    1478,
     1506
    ],
    [
@@ -1015,7 +1011,6 @@
    460,
    504,
    531,
-   534,
    559,
    718,
    758,
@@ -1023,7 +1018,7 @@
    767,
    773,
    1451,
-   1490,
+   1478,
    1506,
    2151,
    2265,
@@ -1071,9 +1066,9 @@
   "1KERB_race_lapnorth_1463_out": {
    "run": [
     1453,
-    1481
+    1476
    ],
-   "stations": 227,
+   "stations": 178,
    "column_advance_min_m": 0.2134,
    "spans_under": 0
   },

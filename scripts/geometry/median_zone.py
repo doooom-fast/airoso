@@ -291,6 +291,34 @@ class MedianZone:
             return None
         return zone
 
+    @classmethod
+    def road_islands(cls, project_dir, layout) -> "MedianZone | None":
+        """The road kn5's OWN islands beside a layout that runs on a LAP (ledger 0054 step 2e): the mainline line's
+        island_w_by_vertex (as a race layout meets it: scripts/geometry/race_chicane.race_island_w) plus the divided
+        connectors' islands, island kind only. A lap's gate OBJ is the whole road kn5 + the lap's race kn5 + its
+        closure, so it carries every mainline median while load(layout=<lap layout>) zones only the lap's — the
+        mainline's island curbs and posts then read as D / K / I. None for a layout on no lap (load() already
+        zones the mainline) and for a track without median_bands.json."""
+        project = Path(project_dir)
+        data = project / "data"
+        bands = data / "median_bands.json"
+        _cp = project / "track.config.json"
+        cfg = json.loads(_cp.read_text(encoding="utf-8")) if _cp.exists() else {}
+        from scripts.geometry import race_lap as _rl
+        if layout is None or not _rl.lap_of_layout(cfg, layout) or not bands.exists():
+            return None
+        pts, _w = _load_pts(project)
+        mj = json.loads(bands.read_text(encoding="utf-8"))
+        iw = mj.get("island_w_by_vertex", [])
+        if len(iw) != len(pts):
+            print(f"  [median-zone] road islands: bands ({len(iw)}) vs centreline ({len(pts)}) length mismatch — none")
+            return None
+        from scripts.geometry import race_chicane as _rc
+        extra = [([tuple(p) for p in ci["points_xyz_m"]], ci["island_w_by_point"])
+                 for ci in mj.get("connector_islands", [])]
+        zone = cls(pts, _rc.race_island_w(iw, cfg), extra)
+        return zone if zone.n_island else None
+
     # ---- per-vertex lookups (index into the mainline the gate walks) -----------------------
     def island_half_at(self, i: int) -> float:
         if 0 <= i < len(self.island_w):

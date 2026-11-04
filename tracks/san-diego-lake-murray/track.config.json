@@ -4,7 +4,7 @@
   "ui_series": "",
   "_ui_series_doc": "Engine track_folder prefixes the CM display name with ui_series (default 'K10 Colorado'); empty = use the track name as-is (SD names already carry the K10 - San Diego branding).",
   "slug": "san_diego_lake_murray",
-  "version": "0.19.3",
+  "version": "0.20.0",
   "author": "k10-san-diego",
   "year": 2026,
   "_about": "A single drivable LOOP around Lake Murray (Kevin's childhood neighborhood). This repo is the standalone, Blender-first home for the track: the loop is mapped from the REAL roads (OpenStreetMap) at REAL elevation (USGS 3DEP), imported into Blender, and shaped there interactively (Kevin designs, Claude operates) BEFORE any kn5 export. Start point = just the 5-road main loop; everything else is added deliberately, in Blender.",
@@ -205,6 +205,52 @@
     "GRASS_FAR": {
       "diffuse": "textures/chaparral_far_diffuse.jpg",
       "_doc": "Ledger 0046 fix round (visual verify, 2026-10-12): the far ring wore pbr's stock ground_dry tile, a neutral grey gravel (mean RGB 139/132/122) - Cowles read as bare rock beside the green turf. This is grey-olive sage scrub over tan soil (mean 93/93/66), derived from the owned grass + ground_dry tiles (tracks/san-diego-lake-murray/textures/README.md); project-relative, synced into the workshop by tools/ship_sd.sh (TRACK_TEXTURES)."
+    },
+    "BUILDING_STUCCO": {
+      "diffuse": "assets/textures/stucco_wall_diffuse.jpg",
+      "normal": "assets/textures/stucco_wall_normal.jpg",
+      "_doc": "Ledger 0065 (Lake Murray v4 is the line; Kevin 2026-11-03: \"Add textures, and restart\"): v4's houses shipped untextured because engine-july's assets/textures lacks every file the pbr rows for the blocks name, so the exporter staged none and AC drew its default. These keys name the SAME rows' files under airoso's assets/textures (CC0, tools/make_bespoke_assets.py), copied into the workshop project by ship.json sync_in.assets; pbr.load_overrides resolves 'assets/textures/<f>' against the engine's root first and the project's copy when the engine lacks it, so the prep binds them and the exporter stages and embeds them. FARBLOCK_STUCCO has no pbr row: its ksPerPixel slots stay untextured, as built."
+    },
+    "BUILDING_TILTUP": {
+      "diffuse": "assets/textures/tiltup_wall_diffuse.jpg",
+      "normal": "assets/textures/tiltup_wall_normal.jpg",
+      "_doc": "ledger 0065: the house textures, see BUILDING_STUCCO's _doc"
+    },
+    "BUILDING_METAL": {
+      "diffuse": "assets/textures/metal_wall_diffuse.jpg",
+      "normal": "assets/textures/metal_wall_normal.jpg",
+      "_doc": "ledger 0065: the house textures, see BUILDING_STUCCO's _doc"
+    },
+    "FARBLOCK_TILTUP": {
+      "diffuse": "assets/textures/tiltup_wall_diffuse.jpg",
+      "normal": "assets/textures/tiltup_wall_normal.jpg",
+      "_doc": "ledger 0065: the house textures, see BUILDING_STUCCO's _doc"
+    },
+    "FARBLOCK_METAL": {
+      "diffuse": "assets/textures/metal_wall_diffuse.jpg",
+      "normal": "assets/textures/metal_wall_normal.jpg",
+      "_doc": "ledger 0065: the house textures, see BUILDING_STUCCO's _doc"
+    },
+    "1WALL_TILTUP": {
+      "diffuse": "assets/textures/tiltup_wall_diffuse.jpg",
+      "normal": "assets/textures/tiltup_wall_normal.jpg",
+      "_doc": "ledger 0065: the house textures, see BUILDING_STUCCO's _doc"
+    },
+    "ROOFTOP_SHINGLE": {
+      "diffuse": "assets/textures/shingle_roof_diffuse.jpg",
+      "_doc": "ledger 0065: the house textures, see BUILDING_STUCCO's _doc"
+    },
+    "ROOFTOP_WHITE": {
+      "diffuse": "assets/textures/roof_white_diffuse.jpg",
+      "_doc": "ledger 0065: the house textures, see BUILDING_STUCCO's _doc"
+    },
+    "ROOFTOP_TAN": {
+      "diffuse": "assets/textures/roof_tan_diffuse.jpg",
+      "_doc": "ledger 0065: the house textures, see BUILDING_STUCCO's _doc"
+    },
+    "ROOFTOP_DARK": {
+      "diffuse": "assets/textures/roof_dark_diffuse.jpg",
+      "_doc": "ledger 0065: the house textures, see BUILDING_STUCCO's _doc"
     }
   },
   "pbr": {
@@ -1046,7 +1092,7 @@
       "_doc": "Ledger 0056 (Kevin 2026-10-14: 'make lighter lamp model' / 'more modern' / 'Taller too'). tools/author_lamps_blend.py stands this model at every post in data/lights.local.json (the post bases do not move). led_cobra = the modern San Diego arterial light from tools/make_streetlight_led.py (CC0): a 35 ft (10.67 m) galvanised tapered steel pole (Caltrans ES-6A Type 21), 12 ft (3.66 m) upswept mast arm, flat-bottom LED cobra head with a twist-lock photocell, flat LED lens at the 38'-9\" (11.81 m) ES-6A mounting height (the 2026-10 lamp's light stood 6.94 m over the road), 371 kn5 render points per lamp with its lens (rehearsal, 2026-10-14) against ~4,045. arms 2 = back-to-back heads, the configuration every 2026-10 lamp has (its lamp_post.obj is symmetric); only the road-ward head carries the emissive lens and the CSP light, as before; arms 1 = the single-arm cobra head. ROLLBACK (one key): model 'street_lamp_2026_10' = Kevin's decimated Street_Lamp (assets/models/lamp_post.obj, 11.5 m, 2 cm invisible lens marker) exactly as v0.18.0 shipped it. The light settings in lighting.streetlight are unchanged (see its _doc, 2026-10-14)."
     },
     "bespoke": {
-      "_doc": "Ledger 0062 REHEARSAL: read only when tools/ship_sd.sh runs with SD_BESPOKE=1 on a scratch copy (SHIP_PROJ). The buildings pipeline (tools/plan_buildings.py -> source/bespoke/buildings.json) stands every OSM footprint and the traced apartments as hip-roofed stucco houses, parapet commercial, tilt-up industrial, in place of the assembler's HOUSE / BUILDING boxes. The installed track keeps the assembler's boxes until Kevin sees the rehearsal stills",
+      "_doc": "Ledger 0065 (Lake Murray v4 is the line, Kevin 2026-11-03: \"Lake Murray v4 should be what we build the rest from\"; \"Lake Murray v4 had many more houses I[n] it this time, don't lose those\"). Read by tools/ship_track.sh's draft step 'bespoke' (ship.json steps.draft, after stubs_author, before gap_mouths: where tools/ship_sd.sh's SD_BESPOKE=1 rehearsal stood them, ledger 0062) and still by ship_sd.sh with SD_BESPOKE=1. The buildings pipeline (tools/plan_buildings.py -> source/bespoke/buildings.json, 30,240 footprints) stands every footprint as a hip-roofed stucco house, parapet commercial or tilt-up / metal industrial, in place of the assembler's HOUSE / BUILDING boxes: v4's 7,600 blocks (6,239 near: stucco 5,795, metal 226, tilt-up 218; 1,361 far) and 275 colliders. rim_step_m 2.0 is the rim walk those blocks were stood with (tools/author_bespoke_blend.py before ledger 0063 moved its default to 1.0 m). house_gate: the floors tools/house_gate.py holds the BUILT road kn5 to (ship.json steps.gate 'houses'), v4's own counts. A --skip-blend run keeps loop.blend's blocks as they are.",
       "blocks": [
         {
           "file": "source/bespoke/buildings.json",
@@ -1055,7 +1101,8 @@
             "HOUSE",
             "BUILDING"
           ],
-          "_source": "OSM (data/buildings.cache.json + buildings.expansion.cache.json) and data/buildings.traced.json; heights: 408 from OSM levels / height, the rest class defaults [invented]; the 2022-04-25 NAIP's shadow stage voted a 09:44 sun at 44 deg but is unchecked (no usable OSM comparison) and unused"
+          "_source": "OSM (data/buildings.cache.json + buildings.expansion.cache.json) and data/buildings.traced.json; heights: 408 from OSM levels / height, the rest class defaults [invented]; the 2022-04-25 NAIP's shadow stage voted a 09:44 sun at 44 deg but is unchecked (no usable OSM comparison) and unused",
+          "rim_step_m": 2.0
         }
       ],
       "names": {
@@ -1077,7 +1124,13 @@
         ],
         "_doc": "the assembler's names at the author stage; the prep renames TERRAIN -> 1GRASS tiles, ROAD -> 1ROAD, CURB -> 1KERB"
       },
-      "prep_seats": true
+      "prep_seats": true,
+      "house_gate": {
+        "roofs": 7600,
+        "blocks": 7600,
+        "colliders": 275,
+        "_doc": "Ledger 0065, Kevin 2026-11-03: \"Lake Murray v4 had many more houses I[n] it this time, don't lose those\". v4 0.20.0's road kn5 (55f2026c), counted on the PC as connected shells: 7,600 ROOFTOP_*; 6,239 BUILDING_* (STUCCO 5,795 + METAL 226 + TILTUP 218) + 1,361 FARBLOCK_* = 7,600; 275 1WALL_TILTUP. A floor, not a target: more passes, fewer fails (fleet/GATES-CHANGELOG.md)."
+      }
     }
   },
   "ui_description": "Lake Murray, San Diego (Kevin's childhood neighbourhood): the real 13.5 km loop of Alvarado Road, College Avenue, Navajo Road, Jackson Drive and Lake Murray Boulevard around the reservoir, from OpenStreetMap at real USGS 3DEP elevation, and the 6.4 km north network (Waring Road, Princess View Drive, Mission Gorge Road, Jackson Drive north) joined to it at College/Navajo and Navajo/Jackson. Three layouts: Lake Murray Free Roam (the open streets, about 19.9 km of road) and the Lake Murray Speedway, normal (clockwise) and Reverse (anticlockwise), on the 13.5 km loop.",
@@ -1103,6 +1156,6 @@
     "fair": true,
     "surface": "gate_obj"
   },
-  "install_folder": "san_diego_lake_murray_v3",
+  "install_folder": "san_diego_lake_murray_v4",
   "_install_folder_doc": "The folder under content/tracks this track installs as. tools/ship_sd.sh spells it \"${SLUG}_v3\"; track_folder names it in the root README.txt; tests/tools/test_ship_sd_chain.py pins the two together."
 }

@@ -18419,7 +18419,7 @@
   "layout_plates": 4
  },
  "blender": {
-  "blend": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\loop.blend",
+  "blend": "D:\\k10-scratch\\lm_v4\\loop.blend",
   "ground_objects": [
    "1KERB_sidewalk_apAP1",
    "1KERB_sidewalk_padJ2",
@@ -18480,7 +18480,7 @@
   "walls": {
    "RACE": 15,
    "acw": 8,
-   "all": 65,
+   "all": 66,
    "cw": 8
   },
   "removed_existing": 3,

@@ -1,11 +1,11 @@
 {
  "gate": "verify_ai_line (ledger 0052)",
  "layout": "race_acw",
- "ai": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\ai\\race_acw\\fast_lane.ai",
+ "ai": "D:\\k10-scratch\\lm_v4\\ai\\race_acw\\fast_lane.ai",
  "built": {
-  "obj": "C:\\Users\\Owner\\Documents\\GitHub\\k10-sd-v021\\project\\data\\track.race_acw.obj",
+  "obj": "D:\\k10-scratch\\lm_v4\\data\\track.race_acw.obj",
   "header": "gate OBJ extracted from san_diego_lake_murray.kn5 + san_diego_lake_murray_race.kn5 + san_diego_lake_murray_closure_race_acw.kn5 (kn5->engine frame, z mirrored, winding reversed)",
-  "wall_segments": 394614,
+  "wall_segments": 400355,
   "road_tris": 51854
  },
  "thresholds": {

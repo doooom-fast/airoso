@@ -1,5 +1,5 @@
 {
- "blend": "C:/Users/Owner/Documents/GitHub/k10-sd-v021/project/loop.blend",
+ "blend": "D:/k10-scratch/lm_v4/loop.blend",
  "road_objects": [
   "1ROAD_apron_AP1",
   "1ROAD_mouthfill_0",
@@ -60,7 +60,7 @@
  "walls": {
   "RACE": 15,
   "acw": 8,
-  "all": 65,
+  "all": 66,
   "cw": 8
  },
  "scan": "5-degree polar, 0.25 m steps, bisected; ROAD top vs CURB/SIDEWALK/TERRAIN top; ground = top hit at the base (SIGN* excluded); plate normals = Mesh.polygons[].normal of the vertical SIGNPLATE faces within 1.2 m of the post; plate bottom = lowest SIGNPLATE vertex 0.5-0.75 m off the post axis; post base = lowest SIGNPOST vertex within 0.1 m of it; walk_behind_m = the ground profile from the base toward the nearest pavement (> 0 behind the walk, < 0 on it); wall_m = the nearest 1WALL* face 0.6 m up the post; a layout plate: layout_wall_m = the nearest face of the walls its layout loads (RACE + RACE_CLOSE_<TOKEN>), on_wall = a wall top over the deck at the base, ground_y = the highest of ROAD / ground under it",

@@ -26,8 +26,11 @@ Schema (unknown keys are refused, so a typo is never silently ignored):
   authoring that edit loop.blend); ``author`` = the steps every ship runs (layout dummies + the race
   furniture, idempotent); ``prep`` = exactly prep then split (the ``--dry-run`` stop comes after split);
   ``ship`` = exports, AI, packer, map, trees; ``gate`` = the gates on the built kn5.
-- ``sync_in`` : ``{"required": [...], "optional": [...], "globs": [...], "dirs": [...]}`` paths relative to
-  ``tracks/<track>/`` copied into the workshop project before the chain runs.
+- ``sync_in`` : ``{"required": [...], "optional": [...], "globs": [...], "dirs": [...], "assets": [...]}`` paths
+  relative to ``tracks/<track>/`` copied into the workshop project before the chain runs. ``assets`` alone is
+  relative to airoso's root and must lie under ``assets/``: each file is copied to the SAME relative path in the
+  project, every one required (Lake Murray v4's house textures, ledger 0065: a config ``texture_overrides`` path
+  ``assets/textures/<f>`` resolves to the engine's own file first and to the project's copy when the engine lacks it).
 - ``sync_out``: ``{"required": [...], "files": [...], "map": [[from, to], ...], "dirs": [...], "remove": [...]}``
   paths relative to the workshop project copied back into ``tracks/<track>/`` after the gates (the real
   workshop only). ``{id}`` expands to every layout id, ``{race}`` to every race layout id.
@@ -56,7 +59,7 @@ TEXT_RE = re.compile(r"^[^\t\r\n\x00-\x1f]{0,240}$")
 TOP = {"track", "workshop", "workshop_project", "require_race_layout", "ui_name_prefix", "street_ai_july",
        "audit_note", "engine", "steps", "sync_in", "sync_out"}
 ENGINES = ("airoso", "lm-v4")
-SYNC_IN = {"required", "optional", "globs", "dirs"}
+SYNC_IN = {"required", "optional", "globs", "dirs", "assets"}
 SYNC_OUT = {"required", "files", "map", "dirs", "remove"}
 
 
@@ -154,8 +157,12 @@ def load(path, track: str) -> dict:
     out["sync_in"] = {"required": [_rel(p, "sync_in.required") for p in _list(si, "required", "sync_in")],
                       "optional": [_rel(p, "sync_in.optional") for p in _list(si, "optional", "sync_in")],
                       "globs": [_rel(p, "sync_in.globs", glob=True) for p in _list(si, "globs", "sync_in")],
-                      "dirs": [_rel(p, "sync_in.dirs") for p in _list(si, "dirs", "sync_in")]}
-    for k in ("required", "optional", "dirs"):
+                      "dirs": [_rel(p, "sync_in.dirs") for p in _list(si, "dirs", "sync_in")],
+                      "assets": [_rel(p, "sync_in.assets") for p in _list(si, "assets", "sync_in")]}
+    for p in out["sync_in"]["assets"]:
+        if not p.startswith("assets/"):
+            raise SpecError(f"sync_in.assets: {p!r} is not under airoso's assets/")
+    for k in ("required", "optional", "dirs", "assets"):
         for p in out["sync_in"][k]:
             if "{" in p:
                 raise SpecError(f"sync_in.{k}: {p!r}: templates are for sync_out only")
@@ -182,7 +189,7 @@ def lines(spec: dict) -> list[str]:
         out.append(f"engine\t{spec['engine']}")      # only when declared: every older spec's lines are unchanged
     for ph in PHASES:
         out += [f"step.{ph}\t{n}" for n in spec["steps"][ph]]
-    for k in ("required", "optional", "globs", "dirs"):
+    for k in ("required", "optional", "globs", "dirs", "assets"):
         out += [f"in.{k}\t{p}" for p in spec["sync_in"][k]]
     for k in ("required", "files", "dirs", "remove"):
         out += [f"out.{k}\t{p}" for p in spec["sync_out"][k]]

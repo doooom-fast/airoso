@@ -35,6 +35,8 @@ y = N, z = up). The collection is emptied first, so the tool is idempotent, and 
   cards       [{"file", "prefix": "TREECARD", "clear_m"}]: {"cols", "rows", "points": [[lon, lat, cell, h, w], ...]}; crossed
               double-sided cards on the ground, anything within clear_m of pavement or a wall dropped and counted -> <prefix>_<k>
   (blocks group key) "collider_tri_m": the longest ground-polygon edge a collider may stand over (default COLLIDER_TRI_M, 8 m)
+  (blocks group key) "rim_step_m": the rim walk that finds a block's ground (default BLOCK_RIM_STEP_M, 1 m; Lake Murray v4's 7,600
+              blocks were stood at 2.0 m, the walk before ledger 0063, and its config keeps that: ledger 0065)
   guardrail   {"from": "1WALL_PARA"}: a W-beam rail and posts along the draft's guard lips (RAIL_* below), road side. The
               lips keep their shape and are renamed 1WALL_GHOST_*, a transparent skin: the collider the gates judged stays
   prep_seats  true where the prep that follows is engine-july's (Lake Murray): it re-seats every BUILDING* island itself, so a
@@ -570,7 +572,7 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
         for b in items:
             key, why = b["key"], None
             ring = inward_ring([to_xy(p) for p in b["footprint_lonlat"]])
-            rim, inner = ring_points(ring, BLOCK_RIM_STEP_M)
+            rim, inner = ring_points(ring, float(group.get("rim_step_m", BLOCK_RIM_STEP_M)))
             gs = [down(ground, x, y) for x, y in rim]
             wall_h = float(b["wall_h_m"])
             near = [down(near_ground, x, y) for x, y in ring]

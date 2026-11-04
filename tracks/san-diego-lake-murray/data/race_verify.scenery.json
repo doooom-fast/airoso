@@ -6,7 +6,7 @@
   "by_layout": {},
   "scenery_source": "trees: trees.txt (written); signs: data/signs.local.json",
   "scenery_items": {
-   "tree": 20431,
+   "tree": 21111,
    "sign": 29
   },
   "scenery_beside": 395,
@@ -15,7 +15,7 @@
    "race_cw": {
     "layout": "race_cw",
     "kind": "tree",
-    "id": "Bush.bin#2390",
+    "id": "Bush.bin#2445",
     "vertex": 1196,
     "lat_m": -2.696,
     "xz": [
@@ -28,7 +28,7 @@
    "race_acw": {
     "layout": "race_acw",
     "kind": "tree",
-    "id": "Sage.bin#2331",
+    "id": "Sage.bin#2386",
     "vertex": 1054,
     "lat_m": 2.694,
     "xz": [

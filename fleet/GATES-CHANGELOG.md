@@ -14,6 +14,30 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-03 — NEW GATE: `houses`, Lake Murray v4's blocks counted on the built road kn5 (ledger 0065)
+
+Kevin, 2026-11-03, to the PC: "Lake Murray v4 had many more houses I[n] it this time, don't lose those". v4 is the line
+("I prefer v4"), and its 7,600 blocks were stood by a step only `tools/ship_sd.sh` ran, under `SD_BESPOKE=1`; any full
+`tools/ship_track.sh` redraft would have rebuilt `loop.blend` with the assembler's old HOUSE / BUILDING boxes and passed every
+gate. Now the chain stands them (ship.json draft `bespoke`, where the rehearsal stood them) and this gate holds them.
+
+- **What it reads.** `tools/house_gate.py` on `build/<slug>.kn5` (L5: the artifact): every mesh by name class, counted as
+  connected shells (triangles joined through positions welded at 1 mm; the exporter splits vertices at every UV seam).
+  `roofs` = ROOFTOP_* shells, `blocks` = BUILDING_<skin> + FARBLOCK_<skin> shells, `colliders` = 1WALL_TILTUP shells.
+- **Thresholds.** Floors, per track, in `track.config.json scenery.bespoke.house_gate`; Lake Murray's are v4 0.20.0's own counts
+  (road kn5 55f2026c, counted on the PC): roofs 7,600, blocks 7,600 (6,239 near + 1,361 far), colliders 275. Not invented and not
+  a target: a count above passes. ⚠ The floor is calibrated on our own output by design — it guards what Kevin picked, it does not
+  judge whether 7,600 is the right number of houses.
+- **Wiring.** ship.json `steps.gate` after `house_seat`; hard (exit 1 stops the chain; `--force-install` does not cover it);
+  no floor declared = skipped (exit 0), so no other track changes.
+- **Proof.** `tests/tools/test_house_gate.py`: a split box is one shell; a fixture kn5 passes at its floor and fails with one
+  house (walls + roof) or one collider fewer; v4's counts pass, one fewer of any key fails. The counting rule matches v4: the
+  same weld on the 23 `AUTH_bespoke` batches of v4's `loop.blend` gives 7,600 / 6,239 + 1,361 / 275, the PC's numbers off the kn5.
+
+Not a gate, recorded with it: `tools/author_bespoke_blend.py` blocks take `rim_step_m` per group (default 1.0 m, ledger 0063's
+walk); Lake Murray declares 2.0 m, the walk v4's blocks were stood with. At 1.0 m the same plan on the same blend stands 7,601,
+a different set.
+
 ## 2026-11-03 — the edge report, report-only; the LM-engine port's invented numbers (ledger 0078; no threshold, no bypass)
 
 No gate threshold changed and nothing is bypassed. `tools/edge_report.py` (chain step `edge_report`) reports what stands

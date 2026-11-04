@@ -206,6 +206,70 @@ descends 0.05 m under the edge over its 1.0 m [invented] and a coarse ground tri
 needs legs of ~0.27 m); the fix owed is a cut ALONG the strip's outer edge (one ground vertex per ribbon row, seated just
 under it), or the strip read off the aerial and met by the run-off as it really is.
 
+### Round 4: the next circuits (Mac)
+
+The installed builds' records came in by merge: `claude/pikes-peak-banking` (Pueblo 0.67.0, Pikes Peak 0.4.0 with the lidar
+banking windows), `claude/grand-junction-chain` (0.3.0), `claude/milford-0.6.0`, `claude/lidar-camber-survey` (the G10
+surveys; `build_mesh.py`'s one conflict kept both sides). Each port is `tracks/<live>-lm` (the same shape as High Plains'),
+built by `tools/ship_track.sh` itself from an EMPTY workshop.
+
+| | Milford port | Milford 0.6.0 | Pikes Peak port | Pikes Peak 0.4.0 |
+|---|---|---|---|---|
+| chain | SHIP OK | | SHIP OK | |
+| soft top / severe | 0 / **18** | 0 / 15 | 0 / 0 | 0 / 0 |
+| kinks /km | **38.1** | 16.3 | 0 | 0 |
+| vertex bumps | **37** | 23 | 0 | 0 |
+| gated drops / far ledges | 1 / 17 | 1 / 25 | 0 / **42** | 0 / 0 |
+| audit / kn5_ground / verify / house_seat | CLEAN / PASS / PASS / PASS | | CLEAN / PASS / PASS / PASS | |
+| camber vs the lidar (whole lap) | median 0.00, max 0.30 %-pts (11.87 %) | | median 0.00, max 0.07 %-pts (17.76 %) | 0.4.0's windows |
+| steepest over 10 m | 14.89 % (measured; 0.6.0's cap was 32 %) | | 2.0 % | |
+| TERRAIN before → after seat_edges, kn5 | 13,753 → 327,420, 35.0 MB | | 7,181 → 157,447, 19.6 MB | |
+| 1 m past the edge (edge report) | strip 41.9 %, ground 58.1 % | | strip 72.3 %, ground 27.7 % | |
+
+**Milford got worse and is not ready to drive as a replacement.** The new kinks sit at s 2,589-2,590 (both edges, ~20 %),
+s 4,239 (both edges) and s 986-993 (the left edge: ledger 0069's left-hander on the 15 % descent, where 0.6.0's own worst
+kinks are too). The centreline profile and the lidar bank are both smooth at s 2,589 (0.5 %-pts per 3 m; 7.5-7.6 % bank), so
+the kink is in the ribbon: `densify_ribbon`'s worst crease is 177 mm at its 8-column cap (Nevada's is 18 mm). Owed: the
+diagnosis there. No kerbs at Milford: the reader's 9 hits are tree shadow along the east straight (NAIP 2022, the committed
+frame with ledger 0062's true latitude extent), and none is visible by eye.
+
+**Pikes Peak needed its outer wall.** Without one the port FAILED on 10 gated drops off the high side of the 10° banking (s 303,
+453, 1,050, 1,652; 13-14.5 m right), which 0.4.0 had guarded with build_mesh's draft guard lips (`1WALL_PARA_stone`, the
+drop analysis). NAIP 2019 at nine stations shows the oval's outer retaining wall on the live line's right (outside) edge all
+round (`tracks/pikes-peak/source/edges/outer_wall_zoom.jpg`), so it stands there: a bespoke rail, the K-rail module (0.81 m:
+the collidable concrete module the engine has; PPIR's wall height was not measured), plain concrete, 1.4 m [invented] past
+the edge (over the edge strip: the port's `bespoke.names.paved` is the lane only), resampled every 3.02 m along its own arc
+(points every 3 m of centreline left 0.2 m segments that laid no module, and the drops showed through the gaps). Then every
+gate is green; the far ledges behind the wall (42) are reported, not gated. No painted kerbs on the oval (the red / white
+ones are on the infield course, not the installed line).
+
+**Aspen, Pueblo, Grand Junction: every gate green, better than installed except Aspen's kinks.** None of the three commits a
+heightfield (its elevation stage's grid lives in the PC's workshop); USGS 3DEP returned 504s for an hour, then the Mac's
+fetch came through and each port carries its own grid. Kerbs: Aspen 4 red / white runs, 145 m traced, 149 m built (s 233-262
+left, 838-862 right, 1,017-1,038 left, 1,495-1,566 left), read by eye off station-labelled 6x zooms of NAIP 2019
+(`tracks/aspen/source/edges/`; the colour reader found 2: the s 1,025 kerb and a blue car); Pueblo and Grand Junction show
+no painted kerbs on NAIP 2019 at 0.6 m.
+
+| | Aspen port / 0.67.1 | Pueblo port / 0.67.0 | Grand Junction port / 0.3.0 |
+|---|---|---|---|
+| chain | SHIP OK | SHIP OK | SHIP OK |
+| soft top / severe | 0 / 0 both | 0 / 0 both | 0 / 0 both |
+| kinks /km | **13.26** / 12.57 | 8.01 / 12.83 | 17.31 / 35.27 |
+| vertex bumps | 41 / 52 | 12 / 26 | 4 / 24 |
+| fold bumps | 0 / 0 | 0 / 0 | 0 / 2 |
+| far ledges (gated drops 0 everywhere) | 0 / 6 | 0 / 5 | 0 / 4 |
+| audit / kn5_ground / verify / house_seat | CLEAN / PASS / PASS / PASS | same | same |
+| camber | flat (no usable lidar) | flat (no usable lidar) | lidar: median 0.02, max 0.25 %-pts (3.53 %) |
+| steepest over 10 m (built) | 5.67 % / 5.78 % | **8.60 %** / 6.05 % (build_mesh's 6 % cap) | 5.92 % / 6.51 % |
+| kn5 | 7.6 MB | 10.0 MB | 9.2 MB (TERRAIN 3,017 → 38,065) |
+| 1 m past the edge | strip 13.2 % (kerbs incl.), ground 86.8 % | strip 6.7 %, ground 93.3 % | strip 19.7 %, ground 80.3 % |
+
+The flat ports have no `seat_edges` (no camber file), so engine-july's coarse ground covers the edge strip's outer half more
+still (the size cost above, here with no fine cut at all).
+
+NAIP note: the ImageServer's EPSG:4326 export holds the requested box only with square-degree pixels (h = w * dlat / dlon);
+metre-square pixels squash it (ledger 0062's Milford finding, and Aspen's first fetch here, 35 m off at the ends).
+
 ## PC runbooks
 
 **ENG**: never the live `D:\k10\engine-july`. Keep `D:/k10-scratch/eng_repro` (the repo-only v4 engine) clean; each build
@@ -251,6 +315,22 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
    Expect the Mac's numbers above: every gate green; the edge report prints (no verdict).
 4. Install side by side (no force needed): drop `--no-install`. They land as `content/tracks/sand_creek_raceway_lm`,
    `high_plains_lm`, `exotics_racing_lvms_lm`, beside the live folders. AC closed (CM may stay open).
+4b. The round-4 circuits, the same way (an empty workshop is enough), one ENG copy each from `eng_repro` with the textures
+   below (airoso's tracked `assets/textures`, md5-checked after the copy):
+   - **Milford** (`milford-road-course-lm`, workshop `milford_lm`, ENG `eng_mflm`, installs as `milford_road_course_lm`):
+     `deciduous_atlas.png` 944b6530c93ffd148fb9b7ec801d5015, `fabric_white_diffuse.jpg` ccb08653cd715b19c85cfbbcf0f36d85,
+     `fabric_white_normal.jpg` b95a9c9e983f7575b520f1ce9ce2504a, `pad_asphalt_diffuse.jpg` 6a3fdee42ff037d6e08aed8c9351a128,
+     `roof_white_diffuse.jpg` 4d681c06dcebfdba461bfb81528d1ec3, `tiltup_wall_diffuse.jpg` 7a4ed52a856098256fd63b6e23a71de1,
+     `tiltup_wall_normal.jpg` 2e7a85baf12bc77e0dd39ddeef12ea9e (the ground tile `turf_*` is the track's own; the intake
+     copies it). Expect the Mac's numbers (below, "Round 4: the next circuits"): every gate green, worse than 0.6.0 on
+     severe steps and kinks: drive it against 0.6.0 before anything else is built on it.
+   - **Pikes Peak** (`pikes-peak-lm`, workshop `ppir_lm`, ENG = a plain copy of `eng_repro`: every texture it uses is in
+     REFERENCED.md5, `concrete_barrier_*` included; installs as `pikes_peak_international_raceway_lm`). The port's 3DEP grid is
+     its own (`tracks/pikes-peak-lm/data/heightfield.*`, synced in).
+   - **Aspen, Pueblo, Grand Junction** (`aspen-lm` / `pueblo-lm` / `grand-junction-lm`, workshops `aspen_lm`, `pueblo_lm`,
+     `grand_junction_lm`; installs as `aspen_motorsports_park_lm`, `pueblo_motorsports_park_lm`, `grand_junction_lm`): ENG =
+     plain copies of `eng_repro` (every texture they use is in REFERENCED.md5); Aspen's kerb texture
+     (`textures/kerb_redwhite.png`) and each port's 3DEP grid sync in from the port folder.
 5. Lake Murray unchanged, apples to apples (the PC's check, 2026-11-03; it replaces a redraft-and-compare-to-v4 check that
    would have redrafted Lake Murray without its houses). Both branches carry v4's chain since the merge of
    `claude/lm-v4-line` (e78fe44): Lake Murray's `ship.json` and `track.config.json` are lm-v4-line's byte for byte, the

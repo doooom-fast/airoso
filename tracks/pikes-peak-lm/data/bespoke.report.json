@@ -1,0 +1,12 @@
+{
+ "buildings": [],
+ "rails": [
+  {
+   "key": "outer_wall",
+   "kind": "krail",
+   "modules": 569,
+   "left_out": 0,
+   "length_m": 1718.3
+  }
+ ]
+}

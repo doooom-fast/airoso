@@ -48,6 +48,11 @@ with one row per track: the draft's exit, the full run's exit, installed or not,
 | 16 | IMI Motorsports Complex (`imi`) | — | circuit_port, a hand-traced placeholder off a screenshot | **not chain-ready, on purpose** (left on the V1 frame so the chain refuses it): the 33-point trace cuts across the infield and misses the course, the KML is the same placeholder, the georeference is estimated — L1: fabricated geometry is a defect, not a status (`tracks/imi/track.config.json` `_chain_doc`) | no | owed before the chain: a NAIP export of the site into `source/`, a trace off it by Exotics' method, control points from the image |
 | 17 | Second Creek (`second-creek`) | — | circuit_port, historical, closed in the 2000s | **not chain-ready**: fabricated (registry `fidelity: FABRICATED`; "must not ship as a real port", L1); re-source first (ONE-CHAIN §4 row 7: a georeferenced pre-2008 aerial + two control points, then the aerial trace) | no | nothing to run; the sourcing is the whole task |
 
+The Lake Murray v4 engine ports (ledger 0078, `docs/ENGINE-LM-V4.md`): `sand-creek-lm`, `high-plains-lm`,
+`exotics-racing-lv-lm`, `milford-road-course-lm`, `aspen-lm`, `pueblo-lm`, `grand-junction-lm`, `pikes-peak-lm`. Each is
+its live track's line and data through Lake Murray v4's engine (ship.json `"engine": "lm-v4"`), installing beside the live
+folder (`<slug>_lm`) for the A/B drive; not in the morning runner's order. Listed in `fleet/registry.json` with the rest.
+
 Not tracks: Nordschleife and Bathurst are the DEM answer keys under `docs/history/projects/` (calibration, never products).
 
 ## What the morning run is expected to do

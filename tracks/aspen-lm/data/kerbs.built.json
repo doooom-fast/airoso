@@ -1,0 +1,33 @@
+{
+ "height_m": 0.08,
+ "runs": [
+  {
+   "k": 0,
+   "side": "left",
+   "rows": 10,
+   "length_m": 27.8,
+   "width_m": 1.5
+  },
+  {
+   "k": 1,
+   "side": "right",
+   "rows": 9,
+   "length_m": 24.7,
+   "width_m": 1.5
+  },
+  {
+   "k": 2,
+   "side": "left",
+   "rows": 8,
+   "length_m": 23.2,
+   "width_m": 1.5
+  },
+  {
+   "k": 3,
+   "side": "left",
+   "rows": 25,
+   "length_m": 73.4,
+   "width_m": 1.5
+  }
+ ]
+}

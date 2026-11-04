@@ -1,0 +1,38 @@
+{
+ "source_track": "milford-road-course",
+ "points": 1635,
+ "lap_m": 4901.9,
+ "closed": true,
+ "widths_m": [
+  9.0,
+  13.31,
+  21.71
+ ],
+ "bridges_levelled": [],
+ "max_grade_pct": null,
+ "measured_max_grade_pct": 14.89,
+ "y_changed_points": 0,
+ "y_change_max_m": 0.0,
+ "connectors": false,
+ "bespoke_files": [
+  "source/bespoke/trees.json",
+  "textures/turf_diffuse.jpg",
+  "textures/turf_normal.jpg"
+ ],
+ "crossfall": {
+  "stations": 1624,
+  "max_pct": 11.87
+ },
+ "profile": {
+  "cap_was_pct": 32.0,
+  "reproduced_within_m": 0.0067,
+  "points_moved": 0,
+  "max_move_m": 0.0
+ },
+ "grid_upsample": 2,
+ "md5": {
+  "source_centerline": "f46d2f9b3e3ab4641e6ea2d1ac6a6bcd",
+  "heightfield.npy": "5f86445a8846bc11a512dae247ac4fbf",
+  "centerline.local.json": "ac5a5973d38a30b0a034636754c864da"
+ }
+}

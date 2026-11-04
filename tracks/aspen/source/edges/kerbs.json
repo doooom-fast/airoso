@@ -1,0 +1,371 @@
+{
+ "_doc": "Racing kerbs traced off the aerial for the Lake Murray engine port (ledger 0078). Each run is the lane edge it lies along, as lon/lat, plus where its paint sits across that edge (in_m / out_m: metres past the lane edge of the live line's widths, - = inside). The build places the kerb OUTSIDE the lane edge (tools/author_kerbs_blend.py); its profile is the track config's kerb, NOT measured (a 1 m DEM cannot read a kerb).",
+ "imagery": "USDA NAIP m_3910641_se_13_060_20190914 (2019-09-14, 0.6 m), USGS NAIP ImageServer exportImage in EPSG:4326 with square-degree pixels (the box held exactly; corners W,N,E,S -106.88306156,39.26820288,-106.87823919,39.26223671)",
+ "method": "tools/aerial_edges.py colour reader first (2 runs: one the kerb at s 1025, one a blue car at s 225, rejected); every run then read by eye off 6x zooms with the live line's edges and 5 m station ticks drawn; in_m / out_m [invented]: the blocks straddle the edge, about 1.5 m wide. Not seen: kerbs at the top hairpin's exit and the south-east hairpin (white edge marks only, no blocks).",
+ "line": "data/gate_centerline.json of the live track (engine frame)",
+ "kerbs": [
+  {
+   "side": "left",
+   "s0": 233.0,
+   "s1": 262.0,
+   "in_m": -0.5,
+   "out_m": 1.0,
+   "colour": "red_white",
+   "how": "eye, station-labelled 6x zooms of the NAIP (the right-hander after the pit-out bend: white and faded-red blocks on the left edge)",
+   "edge_lonlat": [
+    [
+     -106.87899053,
+     39.2652498
+    ],
+    [
+     -106.87899053,
+     39.2652498
+    ],
+    [
+     -106.87898636,
+     39.26522223
+    ],
+    [
+     -106.87898264,
+     39.26519422
+    ],
+    [
+     -106.87898264,
+     39.26519422
+    ],
+    [
+     -106.87897987,
+     39.2651658
+    ],
+    [
+     -106.8789788,
+     39.26513728
+    ],
+    [
+     -106.8789788,
+     39.26513728
+    ],
+    [
+     -106.8789793,
+     39.26510926
+    ],
+    [
+     -106.87898096,
+     39.2650817
+    ],
+    [
+     -106.87898096,
+     39.2650817
+    ],
+    [
+     -106.87898295,
+     39.26505459
+    ],
+    [
+     -106.87898504,
+     39.26502757
+    ],
+    [
+     -106.87898504,
+     39.26502757
+    ],
+    [
+     -106.87898713,
+     39.26500063
+    ]
+   ]
+  },
+  {
+   "side": "right",
+   "s0": 838.0,
+   "s1": 862.0,
+   "in_m": -0.5,
+   "out_m": 1.0,
+   "colour": "red_white",
+   "how": "eye, station-labelled 6x zooms of the NAIP (the west leg into the U: white / red blocks on the right edge)",
+   "edge_lonlat": [
+    [
+     -106.88154213,
+     39.26386623
+    ],
+    [
+     -106.88154595,
+     39.26383861
+    ],
+    [
+     -106.8815493,
+     39.26381069
+    ],
+    [
+     -106.8815493,
+     39.26381069
+    ],
+    [
+     -106.88155182,
+     39.26378236
+    ],
+    [
+     -106.88155277,
+     39.26375398
+    ],
+    [
+     -106.88155277,
+     39.26375398
+    ],
+    [
+     -106.88155239,
+     39.26372601
+    ],
+    [
+     -106.88155085,
+     39.26369844
+    ],
+    [
+     -106.88155085,
+     39.26369844
+    ],
+    [
+     -106.8815491,
+     39.26367138
+    ],
+    [
+     -106.88154712,
+     39.26364435
+    ],
+    [
+     -106.88154712,
+     39.26364435
+    ]
+   ]
+  },
+  {
+   "side": "left",
+   "s0": 1017.0,
+   "s1": 1038.0,
+   "in_m": -0.5,
+   "out_m": 1.0,
+   "colour": "red_white",
+   "how": "eye, station-labelled 6x zooms of the NAIP (the south-west hairpin's entry: red and white blocks on the outside (left) edge)",
+   "edge_lonlat": [
+    [
+     -106.88239469,
+     39.26289638
+    ],
+    [
+     -106.88240566,
+     39.26292636
+    ],
+    [
+     -106.88241187,
+     39.26295701
+    ],
+    [
+     -106.88241374,
+     39.26298785
+    ],
+    [
+     -106.88241374,
+     39.26298785
+    ],
+    [
+     -106.88241142,
+     39.26301877
+    ],
+    [
+     -106.8824049,
+     39.26304961
+    ],
+    [
+     -106.8824049,
+     39.26304961
+    ],
+    [
+     -106.8823937,
+     39.2630798
+    ],
+    [
+     -106.88237796,
+     39.26310796
+    ],
+    [
+     -106.88237796,
+     39.26310796
+    ]
+   ]
+  },
+  {
+   "side": "left",
+   "s0": 1495.0,
+   "s1": 1566.0,
+   "in_m": -0.5,
+   "out_m": 1.0,
+   "colour": "red_white",
+   "how": "eye, station-labelled 6x zooms of the NAIP (the run up to the top hairpin: white blocks (the red reads faded) on the left edge)",
+   "edge_lonlat": [
+    [
+     -106.88077265,
+     39.26701983
+    ],
+    [
+     -106.88076222,
+     39.2670456
+    ],
+    [
+     -106.8807519,
+     39.26707136
+    ],
+    [
+     -106.8807519,
+     39.26707136
+    ],
+    [
+     -106.88074146,
+     39.26709707
+    ],
+    [
+     -106.88073104,
+     39.26712282
+    ],
+    [
+     -106.88073104,
+     39.26712282
+    ],
+    [
+     -106.88072061,
+     39.26714858
+    ],
+    [
+     -106.8807102,
+     39.2671743
+    ],
+    [
+     -106.8807102,
+     39.2671743
+    ],
+    [
+     -106.88069976,
+     39.26720008
+    ],
+    [
+     -106.88068945,
+     39.26722584
+    ],
+    [
+     -106.88068945,
+     39.26722584
+    ],
+    [
+     -106.88067901,
+     39.26725155
+    ],
+    [
+     -106.88066858,
+     39.2672773
+    ],
+    [
+     -106.88066858,
+     39.2672773
+    ],
+    [
+     -106.88065815,
+     39.26730306
+    ],
+    [
+     -106.88064774,
+     39.26732878
+    ],
+    [
+     -106.88064774,
+     39.26732878
+    ],
+    [
+     -106.88063731,
+     39.26735454
+    ],
+    [
+     -106.880627,
+     39.26738031
+    ],
+    [
+     -106.880627,
+     39.26738031
+    ],
+    [
+     -106.88061655,
+     39.26740611
+    ],
+    [
+     -106.8806061,
+     39.26743184
+    ],
+    [
+     -106.8806061,
+     39.26743184
+    ],
+    [
+     -106.88059557,
+     39.26745786
+    ],
+    [
+     -106.88058477,
+     39.26748413
+    ],
+    [
+     -106.88058477,
+     39.26748413
+    ],
+    [
+     -106.88057314,
+     39.2675108
+    ],
+    [
+     -106.88056044,
+     39.26753761
+    ],
+    [
+     -106.88056044,
+     39.26753761
+    ],
+    [
+     -106.88054587,
+     39.2675646
+    ],
+    [
+     -106.88052873,
+     39.26759202
+    ],
+    [
+     -106.88052873,
+     39.26759202
+    ],
+    [
+     -106.88050764,
+     39.26761928
+    ],
+    [
+     -106.8804809,
+     39.26764431
+    ]
+   ]
+  }
+ ],
+ "runoff": {
+  "built": [],
+  "note": "No paved run-off: the reader's 'asphalt' runs past the edge are the access road, the pit apron and the infield dirt tracks where they meet the lap; none is a run-off area."
+ },
+ "colour_reader": {
+  "tool": "tools/aerial_edges.py",
+  "params": {
+   "STEP_M": 1.0,
+   "SCAN_M": 14.0,
+   "KERB_BAND_M": 2.5,
+   "KERB_WIN_M": 3.0,
+   "MIN_KERB_M": 5.0,
+   "GAP_M": 8.0,
+   "BREAK_M": 1.0,
+   "MIN_RUNOFF_W_M": 1.5,
+   "MIN_RUNOFF_M": 10.0
+  },
+  "m_per_px": 0.5
+ }
+}

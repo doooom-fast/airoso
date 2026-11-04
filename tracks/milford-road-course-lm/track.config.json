@@ -1,0 +1,368 @@
+{
+  "_doc": "Milford Road Course (unofficial) through Lake Murray v4's engine (ledger 0078). The line, widths and profile are tracks/milford-road-course's (installed 0.6.0), read by tools/lm_engine_intake.py; the profile is the measured one with the elevation stage's grade cap undone; the camber is the G10 lidar survey (source/lidar/camber-survey/crossfall.json); the edge is the circuit's (no curb, no sidewalk). Every other key is the live track's, copied; the live config is untouched.",
+  "archetype": "race_circuit",
+  "name": "Milford Road Course (unofficial) (LM engine)",
+  "slug": "milford_road_course_lm",
+  "version": "0.1.0",
+  "mirror_x": false,
+  "loop": true,
+  "default_width_m": 11.0,
+  "location": {
+    "lat": 42.570024,
+    "lon": -83.6636,
+    "timezone": "America/Detroit",
+    "city": "Milford",
+    "country": "United States",
+    "_note": "Centroid of the traced lap. The course sits in the SE corner of the Milford Proving Ground (Hickory Ridge Rd east, Commerce/Duana south), Oakland County side of the county line."
+  },
+  "origin": "centroid",
+  "true_north_rotation_deg": 0.0,
+  "surfaces": {
+    "road": "1ROAD",
+    "grass": "GRASS",
+    "kerb": "1KERB"
+  },
+  "kerb": {
+    "height_m": 0.08,
+    "width_m": 1.2,
+    "top_frac": 0.6,
+    "edge_ramp": 0.4
+  },
+  "scenery": {
+    "corridor_margin_m": 3.0,
+    "tree_step_m": 45,
+    "tree_cap": 150,
+    "tree_atlas_cols": 3,
+    "tree_atlas_rows": 2,
+    "bush_spacing_m": 9,
+    "bush_density": 0.25,
+    "bush_off_min_m": 6,
+    "bush_off_span_m": 22,
+    "bush_size_min_m": 1.0,
+    "bush_size_span_m": 1.2,
+    "light_spacing_m": 90,
+    "bespoke": {
+      "buildings": [
+        {
+          "key": "pad_tent",
+          "footprint_lonlat": [
+            [
+              -83.6625,
+              42.56624
+            ],
+            [
+              -83.66225,
+              42.56624
+            ],
+            [
+              -83.66222,
+              42.56576
+            ],
+            [
+              -83.66247,
+              42.56576
+            ]
+          ],
+          "roof": "gable",
+          "eave_h_m": 3.5,
+          "ridge_h_m": 7.5,
+          "_source": "footprint off NAIP 2022 (20 x 53 m, white, on the pad); heights [invented]: its 1.5-2 m west shadow at a high August sun allows a low-eaved clearspan tent, nothing finer"
+        }
+      ],
+      "blocks": [
+        {
+          "key": "mpg_plant_a",
+          "footprint_lonlat": [
+            [
+              -83.66896,
+              42.575413
+            ],
+            [
+              -83.66762,
+              42.576268
+            ],
+            [
+              -83.66646,
+              42.575101
+            ],
+            [
+              -83.66792,
+              42.574314
+            ]
+          ],
+          "wall_h_m": 11.0,
+          "skin": "tiltup",
+          "roof": "white",
+          "off_terrain": true,
+          "_source": "footprint off NAIP 2022 (source/naip_2022_mrc.jpg on its true extent), read by eye to about 5 m, ground-level backdrop past the built ground; height [invented]"
+        },
+        {
+          "key": "mpg_plant_b",
+          "footprint_lonlat": [
+            [
+              -83.66677,
+              42.576444
+            ],
+            [
+              -83.6653,
+              42.577299
+            ],
+            [
+              -83.66426,
+              42.576322
+            ],
+            [
+              -83.66585,
+              42.575413
+            ]
+          ],
+          "wall_h_m": 11.0,
+          "skin": "tiltup",
+          "roof": "white",
+          "off_terrain": true,
+          "_source": "as mpg_plant_a"
+        }
+      ],
+      "pads": [
+        {
+          "key": "ride_pad",
+          "quad_lonlat": [
+            [
+              -83.66336,
+              42.56721
+            ],
+            [
+              -83.66224,
+              42.56725
+            ],
+            [
+              -83.6621,
+              42.56559
+            ],
+            [
+              -83.66322,
+              42.56558
+            ]
+          ],
+          "_source": "the paved pad inside the lap off NAIP 2022, read by eye to about 3 m"
+        }
+      ],
+      "cards": [
+        {
+          "file": "source/bespoke/trees.json",
+          "prefix": "TREECARD",
+          "clear_m": 5.0
+        }
+      ],
+      "grassfx_zones": {
+        "image": "source/naip_2022_mrc.jpg",
+        "bbox_lonlat": [
+          -83.67,
+          42.56050328638498,
+          -83.657,
+          42.57949671361502
+        ],
+        "cell_m": 30,
+        "max_rects": 48,
+        "fade_m": 10,
+        "classes": [
+          {
+            "map": "C",
+            "mean": [
+              18,
+              114
+            ],
+            "g_over_r": [
+              1.03,
+              9
+            ],
+            "g_over_b": [
+              1.04,
+              9
+            ]
+          },
+          {
+            "map": "B",
+            "mean": [
+              140,
+              215
+            ],
+            "g_over_r": [
+              0,
+              1.0
+            ],
+            "g_over_b": [
+              1.15,
+              9
+            ]
+          }
+        ]
+      },
+      "_guardrail_dropped": "the live track's W-beam rail follows airoso's draft guard lips (1WALL_PARA), which the v021 assembler does not lay; not ported (ledger 0078)",
+      "names": {
+        "ground": [
+          "TERRAIN"
+        ],
+        "far": [
+          "GRASS_FAR"
+        ],
+        "paved": [
+          "ROAD",
+          "CURB",
+          "1ROAD",
+          "1KERB"
+        ],
+        "track_edge": [
+          "ROAD",
+          "CURB"
+        ],
+        "cone_ground": [
+          "TERRAIN",
+          "CURB"
+        ],
+        "walls": [
+          "1WALL",
+          "BARRIER"
+        ],
+        "_doc": "the assembler's names at the author stage (Lake Murray's)"
+      },
+      "prep_seats": true
+    },
+    "draft_lamps": false,
+    "_draft_lamps_doc": "a circuit has no streetlight down its edge every 55 m: the v021 assembler's draft posts are off (ledger 0078)"
+  },
+  "layouts": [
+    {
+      "id": "full",
+      "ai": "ai/full",
+      "uses_connectors": []
+    }
+  ],
+  "lighting": {
+    "presets": [
+      "morning",
+      "noon",
+      "golden_hour"
+    ],
+    "grassfx": {
+      "_doc": "Mown proving-ground verges (the base look), the long unmown strips and the wood floors as NAIP 2022 shows them: tools/plan_grassfx_aerial.py binds B and C by rectangle. mask open: the turf tile is far brighter than the default mask's 0.35 ceiling, which would spawn nothing. VERIFY IN-GAME",
+      "mask": "open",
+      "shape_size": [
+        0.7,
+        1.1
+      ],
+      "shape_width": 0.7,
+      "shape_tidy": [
+        1,
+        0.6
+      ],
+      "shape_cut": [
+        1,
+        0.5
+      ],
+      "trim_period": "THURSDAY",
+      "texture": "grass_fx/highlands.dds",
+      "texture_grid": [
+        8,
+        3
+      ],
+      "configurations": {
+        "B": {
+          "shape_size": [
+            1.1,
+            1.5
+          ],
+          "shape_width": 0.8,
+          "trim_period": 365
+        },
+        "C": {
+          "texture_base_chance": 0.15
+        }
+      }
+    }
+  },
+  "source": {
+    "type": "from_track",
+    "track": "source/mrc_fixes.json",
+    "_note": "Traced 2026-10-28 off USDA NAIP 2022-08-16 (0.6 m native; tile m_4208327_ne_17_060_20220816), exported from the USGS NAIPImagery ImageServer as an EPSG:4326 north-up clip, bbox -83.6700,42.5630,-83.6570,42.5770 at 2130x3112 (0.5 m/px) = source/naip_2022_mrc.jpg. Paved surface classified by colour, centre line found by a centre-seeking shortest path between hand-placed waypoints (source/trace/F1.json), re-centred and width-measured by perpendicular scans every 2 m. Widths clamped 9-16 m (median 11; the west front straight 16). Tree-shadowed pavement on the east side added by colour (source/trace/shadow_patch.py). Re-run: source/trace/README.md. CORRECTED 2026-10-31 (source/trace/unsquash_frame.py): the export has square-degree pixels, its true extent is lat 42.56050..42.57950, and the trace had read it squashed north-south by 0.737; OSM's outline, which this note used to call mis-drawn, was right. Length now 4.91 km vs GM's '2.9 mi' (4.67 km), +5 %; see source/route-notes.md. CORRECTED 2026-11-03 (source/trace/apron_corner.py, ledger 0069): at the left-hander about s 1,000 the scans had read the concrete run-off apron outside the corner as road (up to 21.4 m wide, the line on the asphalt's outer edge); fixes 383-424 keep their inner edge and take the road's own 11.28 m, the centre moving up to 4.7 m inside. Lap 4.90 km."
+  },
+  "road_profile": {
+    "_doc": "No banking authored (L10). Deck follows bare-earth 3DEP; any real cross-slope comes from lidar sections, never from curvature. The lap IS banked: 1 m lidar sections read -4.3 % in the esses (s 620), -7.1 % at the U-turn (s 780, the likeliest Carousel), +8.0 % at s 995. Tried 2026-10-28: scripts.elevation.crossfall (measured, 6 % cap, 80 % of the lap banked) made drive_test WORSE than the flat deck (ground-on-top 14 -> 53, severe steps 7 -> 17, bumps 17.2 -> 89.7/km, excursion drops 31 -> 52), the ledger-0018 class (crossfall x width steps). data/crossfall.json removed; the banks are authoring work, not a flag.",
+    "_ribbon_cols_doc": "2026-11-03, ledger 0069: 4 lateral columns, so a row's quad cannot twist on a tight corner that descends. The left-hander at s 1,000 drops 13-15 % round a 13 m radius; with one quad per row the inside edge's rows bunch towards the turning centre while each row drops the full 0.4 m, and the quad's diagonal laid that drop across the centre wheel paths as a step every 3 m (drive_test: the lap's severe steps and most of its kinks). Unbanked: build_mesh honours the key on a flat road since 0069. Not a gate change.",
+    "dips": [],
+    "cambers": [],
+    "max_grade_pct": 32.0,
+    "_max_grade_doc": "Set so it never binds (L3; Kevin: real hills are never reshaped). At the 9 % default the cap shaved the real hill: the deck sat up to 5.96 m under the lidar at the SW corner and 1.6 m in the esses, and drive_test failed on grass over the pavement lip and drops off the edge (2026-10-28). The despiked 3DEP profile climbs 26.6 % over 21 m at s 3,650 (31 % over one 3 m step): the climb from the bottom sweeper to the front straight, cut into a hillside (lidar cross-sections: ground 2-3 m lower 20 m left, 1-2 m higher 20 m right, both edges climbing with the line). The 2 m dip at s 3,605 is the service-road underpass, removed by the 33 m despike.",
+    "_ribbon_cols_dropped": "the live track's build_mesh ribbon columns (ledger 0069); the v021 assembler never reads the key (its twist answer is tools/densify_ribbon_blend.py), so the port does not carry it (ledger 0078)"
+  },
+  "route": {
+    "start_at": [
+      42.570651,
+      -83.667269
+    ],
+    "_orientation_doc": "Clockwise, per the OSM oneway tags on every raceway way here (unverified against onboard video). S/F on the 16 m west front straight about 2/3 of the way up, raced north; the grid sits on the ~250 m of straight behind it. The lap: west straight N -> NW corner -> right-hand hairpin off the apron -> esses south -> U-turn -> north -> east into the serpentine round the woods -> top straight E -> NE corner -> east side S -> sweeping bottom W -> SW corner. Unused pavement (later layouts over this kn5): the inner hairpin short-cut, the top-straight bypass, the SE back section + cross-connector + hook.",
+    "smooth_sigma_pts": 2.0,
+    "smooth_passes": 2,
+    "smooth_sigma_y_pts": 1.5,
+    "divided_double": false,
+    "lane_dividers": false,
+    "edge": {
+      "curb_h": 0.0,
+      "curb_face_w": 0.1,
+      "sidewalk_w": 0.2,
+      "connector_sidewalk_w": 0.2,
+      "grade_w": 1.0,
+      "grass_clearance": 0.05,
+      "_doc": "the circuit edge (ledger 0078): no curb, no sidewalk. The asphalt edge is held at road height for 0.30 m and the run-off ground meets it 0.15 m lower over 1.0 m [invented: the flush meet the drive gate reads as no drop]; the ground beyond is the assembler's conform to the road, then the 3DEP surface: the real run-off level."
+    },
+    "crossfall_file": "data/crossfall.lm.json"
+  },
+  "terrain_cell_m": 1.25,
+  "terrain_vertex_budget": 1500000,
+  "corridor_refine_factor": 6,
+  "_terrain_note": "L3b: 1.25 m as IMI. At Pueblo's 2.0 m, drive_test failed (2026-10-28): 28 grass-on-top hits at the pavement lip and 20 drops over 20 cm, all on the infield's 19-33 m corners",
+  "ui_tags": [
+    "circuit"
+  ],
+  "ui_series": "doooom Michigan",
+  "ui_description": "Unofficial reconstruction of the Milford Road Course, Michigan: the private proving-ground road course, traced from USDA NAIP 2022 aerial imagery onto USGS 3DEP 1 m lidar (40 m of real relief, 27 % at its steepest). Clockwise. Not an official or endorsed product.",
+  "author": "airoso",
+  "_ground_doc": "Constructed corridor, not natural_ground (2026-10-28). Natural ground (copied from IMI) left the lidar's real banks beside the pavement unguarded: drive_test counted 31 drops over 12 cm per 0.5 m within 4 m of the edge (limit 4), worst 49 cm, because the measured-guard lip pass and the shoulder drape only run in constructed mode. The other T1 circuits (Pueblo, Aspen, High Plains) are constructed.",
+  "install_folder": "milford_road_course_lm",
+  "_install_folder_doc": "beside milford_road_course for the A/B drive (ledger 0078)",
+  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
+  "texture_overrides": {
+    "1GRASS": {
+      "diffuse": "textures/turf_diffuse.jpg",
+      "normal": "textures/turf_normal.jpg",
+      "_doc": "bespoke ground, the colour measured off the track's NAIP (textures/README.md; tools/make_ground_tile.py)"
+    },
+    "GRASS_FAR": {
+      "diffuse": "textures/turf_diffuse.jpg",
+      "normal": "textures/turf_normal.jpg",
+      "_doc": "bespoke ground, the colour measured off the track's NAIP (textures/README.md; tools/make_ground_tile.py)"
+    },
+    "SHOULDERUND": {
+      "diffuse": "textures/turf_diffuse.jpg",
+      "normal": "textures/turf_normal.jpg",
+      "_doc": "bespoke ground, the colour measured off the track's NAIP (textures/README.md; tools/make_ground_tile.py)"
+    },
+    "BARRIER": {
+      "diffuse": "assets/textures/tiltup_wall_diffuse.jpg",
+      "normal": "assets/textures/tiltup_wall_normal.jpg",
+      "_doc": "our own concrete in place of the Hamburg bytes"
+    }
+  },
+  "lm_intake": {
+    "source_track": "milford-road-course",
+    "connectors": false,
+    "profile": "uncapped",
+    "crossfall": "source/lidar/camber-survey/crossfall.json",
+    "grid_upsample": 2,
+    "_doc": "the measured profile (the elevation stage's cap undone), the G10 lidar camber, the 40 m 3DEP grid pre-divided to 20 m (the same samples)"
+  },
+  "terrain": {
+    "terrain_band_m": 22.0,
+    "_doc": "the v021 assembler's band clamp (Lake Murray's 22 m)"
+  }
+}

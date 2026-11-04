@@ -76,7 +76,9 @@ def test_pikes_peak_banks_the_outside_edge_of_its_left_handers():
     c = _cfg("pikes-peak")
     assert c["route"]["reverse"] is True, "raced counterclockwise (route._orientation_doc)"
     cambers = c["road_profile"]["cambers"]
-    assert [cm["bank_deg"] for cm in cambers] == [-10.0, -10.0], "L10: 10 deg; negative = left-hander unmirrored"
+    assert [cm["bank_deg"] for cm in cambers] == [-7.2, -7.2, -10.0, -3.0, -10.0], (
+        "L10: turns 10 deg (researched; lidar 9.7), straights as the 2018 lidar measured them (ledger 0077); "
+        "negative = left-hander unmirrored")
     assert int(c["road_profile"]["ribbon_cols"]) == 8
     _dip, bank_at, active = profile.build_profile(c["road_profile"])
     assert active
@@ -96,9 +98,10 @@ def test_pikes_peak_banks_the_outside_edge_of_its_left_handers():
         assert math.hypot(hi[0], hi[2]) > math.hypot(lo[0], lo[2]), (s, hi, lo)
         checked += 1
     assert checked > 200, checked
-    # the straights stay flat (no researched banking for them: L10)
-    for s in (100.0, 850.0, 1600.0):
-        assert bank_at(s) == 0.0, s
+    # the straights bank as the lidar measured them (ledger 0077): the front dogleg 7.2 deg either side of s 0, the
+    # back stretch 3 deg, outside edge up like the turns
+    for s, deg in ((100.0, -7.2), (850.0, -3.0), (1600.0, -7.2)):
+        assert abs(math.degrees(bank_at(s)) - deg) < 0.05, (s, math.degrees(bank_at(s)))
 
 
 def test_imi_stays_off_the_chain_while_its_trace_is_the_placeholder():

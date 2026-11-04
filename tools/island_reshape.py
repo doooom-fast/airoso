@@ -76,9 +76,17 @@ def island_vertices(pts, iw):
     return out
 
 
-def moves(old_pts, old_iw, new_pts, new_iw, tol=1e-9):
+def moves(old_pts, old_iw, new_pts, new_iw, tol=1e-9, move_deck=True):
     """[(object, old blend point, new blend point)] for every island vertex that moves; ValueError when the two islands'
-    runs differ (the topology would change: re-author instead)"""
+    runs differ (the topology would change: re-author instead).
+
+    ``move_deck=False`` (tools/reshape_island_blend.py's default since ledger 0054 Phase 2 step 2f) moves the CURB only and
+    leaves the deck (TERRAIN, -> 1GRASS) exactly as authored. The deck is ground UNDER the road slab: the prep pins every
+    deck vertex to the road - 0.02 (measured on v4's prepped Princess View: 28 of 28), so the island's visible top is the
+    slab, whatever the deck's width. But the deck is terrain the prep READS. Moving it carries deck edges across the
+    prep's CORRIDOR_EDGE_M (4 more corridor splits on Princess View) and moves deck face centres across the 1GRASS tile
+    cuts, which are median bisections of every face centre. Either way every later cut moves, and the per-tile thinning
+    re-meshes ground kilometres away (the 0.20.2 road kn5: 16 of 20 tiles)."""
     so, sn = segments(old_iw), segments(new_iw)
     if so != sn:
         raise ValueError(f"the island runs differ ({so} -> {sn}): its vertex count would change — re-author it instead")
@@ -86,6 +94,8 @@ def moves(old_pts, old_iw, new_pts, new_iw, tol=1e-9):
     out = []
     for seg in so:
         for part, obj in (("curb", "CURB"), ("deck", "TERRAIN")):
+            if part == "deck" and not move_deck:
+                continue
             for k, ring in vo[seg][part].items():
                 for a, b in zip(ring, vn[seg][part][k]):
                     if max(abs(a[0] - b[0]), abs(a[1] - b[1]), abs(a[2] - b[2])) > tol:

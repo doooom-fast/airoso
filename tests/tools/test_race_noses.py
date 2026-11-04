@@ -404,6 +404,23 @@ def test_island_reshape_moves_only_the_island_and_refuses_another_topology():
         raise AssertionError("a changed island run must be refused")
 
 
+def test_the_reshape_keeps_the_deck_by_default_so_the_prep_reads_v4s_terrain():
+    """step 2f: the deck is ground under the slab (the prep pins it to the road - 0.02); a moved deck re-tiled the whole
+    road kn5 (0.20.2). moves(move_deck=False) moves the curb exactly as before and no TERRAIN vertex"""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import island_reshape as ir
+    pts = [(float(k) * 3.0, 1.0, 0.0) for k in range(12)]
+    iw = [0.0] + [4.0] * 10 + [0.0]
+    new = [0.0] + [5.3] * 10 + [0.0]
+    both = ir.moves(pts, iw, pts, new)
+    curb = ir.moves(pts, iw, pts, new, move_deck=False)
+    assert {o for o, *_ in both} == {"CURB", "TERRAIN"} and {o for o, *_ in curb} == {"CURB"}
+    assert curb == [m for m in both if m[0] == "CURB"]
+    rec = json.loads((PHASE2 / "proofs" / "reshape_pv_2f_mac.json").read_text())
+    assert rec["moved"] == {"CURB": 78, "TERRAIN": 0} and rec["paint_vertices_moved"]["YLINE"] == 88
+    assert rec["deck"].startswith("kept")
+
+
 # --- J4's inside kerb (step 2d, 2026-11-04) ---------------------------------------------------------------------------
 def _kerbs(out, trims_keep=True):
     """the north kerb plans of the plan's out dir, with or without the declared J4 inside pull-back"""

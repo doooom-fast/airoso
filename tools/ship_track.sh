@@ -744,12 +744,14 @@ draft_verify_crossfall() {
 # dies reads as red, never as last run's pass.
 # =============================================================================================================
 D1_G=0
+D1_RI=-; D1_SL=-; D1_V=-   # each Drive-1 gate's own exit for the summary line ('-' = not run); D1_G = any of them red
 D1_FORCE_OK=1   # the Drive-1 verdict's July comparison (tools/drive1_gates.py force_install_ok); 1 where no verdict step runs
 gate_road_inventory() {
   local rc
   step "gate: road inventory on the built road (tools/verify_road_inventory.py: no HIGHWAY*/HWYSTRUCT*/MOUNTAINS*, every pavement triangle on the route or in a declared exemption, the pavement is the lap — hard)"
   rm -f "$PROJ/data/road_inventory.json"
   rc=0; (cd "$AIROSO" && python tools/verify_road_inventory.py "$PROJ" 2>&1 | tail -24) || rc=$?
+  D1_RI=$rc
   [ "$rc" = 0 ] || D1_G=$rc
 }
 gate_stacked_legs() {
@@ -757,6 +759,7 @@ gate_stacked_legs() {
   step "gate: stacked legs on the built road (tools/verify_stacked_legs.py, L4: nothing between stacked legs seated to the other leg — hard)"
   rm -f "$PROJ/data/stacked_legs.json"
   rc=0; (cd "$AIROSO" && python tools/verify_stacked_legs.py "$PROJ" 2>&1 | tail -16) || rc=$?
+  D1_SL=$rc
   [ "$rc" = 0 ] || D1_G=$rc
 }
 gate_drive1_verdict() {
@@ -767,6 +770,7 @@ gate_drive1_verdict() {
   step "gate: the Drive-1 verdict (tools/drive1_gates.py: P5's Drive-1 set, gating vs recorded rows; the July reference for --force-install)"
   rm -f "$PROJ/data/drive1_gates.json"
   rc=0; (cd "$AIROSO" && python tools/drive1_gates.py "$PROJ") || rc=$?
+  D1_V=$rc
   [ "$rc" = 0 ] || D1_G=$rc
   D1_FORCE_OK=$(pyq "import json,os,sys
 p=sys.argv[1]
@@ -1095,14 +1099,16 @@ if [ -n "$RACE_RED" ]; then
   echo "  apply (data/drive_test.<id>.json, data/no_route.<id>.json)"; exit 1
 fi
 # the Lariat Drive-1 road gates (the block above gate_road_inventory): red stops the install unless forced
-echo "  Drive-1 road gates (road inventory, stacked legs): exit $D1_G"
+# each gate's own exit (2026-11-03, ledger 0048: the one D1_G exit printed beside "road inventory, stacked legs" read as
+# theirs when only the verdict was red)
+echo "  Drive-1 road gates: road inventory exit $D1_RI, stacked legs exit $D1_SL, the Drive-1 verdict exit $D1_V ('-' = not run)"
 if [ "$D1_G" != 0 ]; then
   if [ "$FORCE" = 1 ] && [ "$D1_FORCE_OK" != 1 ]; then
-    echo "  NOT INSTALLED: --force-install refused — the Drive-1 verdict read this build WORSE than the July reference on a key, or obstruction / floating / soft-top not 0 (data/drive1_gates.json force_install_why_not)"; exit 1
+    echo "  NOT INSTALLED: --force-install refused — the Drive-1 verdict read this build WORSE than the July reference on a key, or obstruction / floating / soft-top not 0, or (a track declaring gates.drive1.force_exemptions) a red row no declared exemption covers (data/drive1_gates.json force_install_why_not)"; exit 1
   elif [ "$FORCE" = 1 ]; then
-    echo "  --force-install: past the Drive-1 road gates RED (the verdict read no key worse than the July reference)"
+    echo "  --force-install: past the Drive-1 road gates RED (the verdict allows it: no key worse than the July reference, or every red reason a declared exemption — data/drive1_gates.json force_exemptions)"
   else
-    echo "  NOT INSTALLED (Kevin never loads a build the machine failed): Drive-1 road gates red (data/road_inventory.json, data/stacked_legs.json)"; exit 1
+    echo "  NOT INSTALLED (Kevin never loads a build the machine failed): Drive-1 road gates red (data/road_inventory.json, data/stacked_legs.json, data/drive1_gates.json)"; exit 1
   fi
 fi
 if [ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ] || [ "$NR_R" != 0 ] || [ "$KG" != 0 ]; then

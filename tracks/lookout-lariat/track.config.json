@@ -2,7 +2,9 @@
   "archetype": "real_road",
   "name": "Lookout Mountain Lariat",
   "slug": "lookout_lariat",
-  "version": "0.16.0",
+  "version": "0.17.1",
+  "_version_0_17_1_doc": "0.17.1 (2026-11-03, ledger 0048 'Drive 1 on the Mac'): gates.drive1.force_exemptions, Kevin's 'Yes, force it' for the real hairpins' corner rule and the open drops, for this build only; the chain's Drive-1 summary line names each gate's own exit. The ground and road geometry are 0.17.0's.",
+  "_version_0_17_doc": "0.17.0 (2026-11-03, ledger 0048 'Drive 1 on the Mac'): A2's C12 / C13 arcs at the mesh (hairpin_fit.mesh_fit), no fold plateaus or pads on the fitted hairpins (road_profile.fold_plateaus / fold_pads false), no engine walls in the Drive-1 draft (road_edge.draft_walls false), and P3a's ground: the road-building cross-section by station with stacked legs held to their own leg (terrain.cross_section.build), on a 13.3 m medium grid refined to 1.11 m in the corridor (terrain_cell_m, corridor_refine_*). Built and gated on the Mac's engine draft only; not yet through the PC chain.",
   "_version_doc": "The V3 config (2026-10-11). Nothing has been built at this version; the installed July build is 0.15.0. ui_track.json stamps '[build <version>]' so a stale install is visible at a glance.",
   "author": "doooom",
   "year": 2026,
@@ -66,6 +68,8 @@
     "connectors": {}
   },
   "hairpin_fit": {
+    "mesh_fit": ["C12", "C13"],
+    "_mesh_fit_doc": "A2's C12-C13 half (2026-11-03, ledger 0048 'Drive 1 on the Mac'): the two junction-node corners are swept as clothoid (8 m) - arc - clothoid (8 m) at their aerial radius_m (14.9 / 16.08 m) by build_mesh on the line it sweeps (data/finished_centerline.json; scripts/geometry/corner_arcs.py), vertex count and heights kept; the plan's step gate runs on the result and a failing corner stops the mesh step. The paint centreline keeps the node (the arc overruns the traced arm paint, above), so the fit is the mesh's, not the route's: data/centerline.geojson is unchanged and the paint gate still judges it. Record: data/corner_arcs.json. The climb's hairpins C1-C10 are already curves in the paint line (0 step-gate fails on 7,114 climb points) and are not refitted. Transition length 8 m [invented: the plan's adjacent-step rule needs >= 2.6 m at R 14.9; 8 m keeps the arc between them 12-13 m].",
     "_doc": "A2 / P2 step 2. WHERE the line runs is judged by tools/verify_centreline_paint.py against the paint traced on NAIP 2019 (data/aerial/paint_traces.json), not against OSM: the fitter's former 1.5 m-from-OSM ceiling (max_move_m) passed fits 7.3 m and 4.4 m off the paint at C4 and C10, where OSM itself cuts the hairpins, and failed C9, where OSM was right; it was removed on 2026-10-11. The Lariat's centreline is tools/paint_centreline.py's: the OSM line (data/centerline.osm.geojson) moved onto the traced paint, OSM kept where the paint is in shadow (C7's apex, C11, the upper climb), blended between, the climb resampled at 1 m as one curvature-continuous line; it is data/centerline.geojson, the file every later stage reads. tools/fit_hairpins.py stays as the clothoid-arc-clothoid library and a per-corner radius check (its step gate only). st_m = each corner's apex station on data/centerline.geojson (metres from v0, the pylons), re-found within 40 m; re-derived onto the paint centreline by station matching on 2026-10-11 (tools/remap_centreline_config.py). climb_st_m is on the OSM source line: the paint tools map it through each vertex's osm_station_m, so it is never remapped. radius_m: the aerial pass (dossier 12; NAIP 2019, data/aerial/aerial_measurements.json, reproduced by tools/aerial_measure.py) for C1-C6, C8-C10, C12 and C13; null = centreline-derived (C7: low aerial confidence; C11: not measurable on that flight); each corner's _doc says which and why. The paint centreline follows the paint, whose yellow-line circle carries each hairpin's radius; data/aerial/paint_centreline.json compares the line's tightest radius with radius_m per corner. C12 and C13 are junction nodes (one OSM node holds most of the turn); their radius_m is the aerial junction measurement, for P3b's junction mouth: an arc at that radius needs ~12.5 m tangents, but the traced arm paint (the double yellow up to the stop line) runs to within 9-15 m of the node, so the paint centreline keeps the node, on the paint-anchored arms. The ~90-111 deg bends at OSM-line st ~1,752 / 4,102 / 4,960 / 6,809 / 6,982 are not in the dossier's corner table and are not declared; the paint centreline follows their paint where it is traced (st ~6,809: OSM was 3.9 m off).",
     "gate": {
       "step_slack_deg": 1.0,
@@ -313,8 +317,21 @@
       "_doc": "A6: the road is not tilted into the hairpins, because the real one isn't (L10; ledger 0003 stays open). July's data/crossfall.json was DEM-estimated, not measured (~10 % of stations sat at its 6 % cap, 19 % on US-40; 9 swings of >= 3 % each way within 30 m), and is not reused. P2 re-measures inside the real-width footprint with a roll-rate gate; until a 3DEP source-lidar sample agrees it is 'estimated', and failing stretches take the construction standard: 2 % crown, or 2 % toward the cut ditch on bench sections."
     },
     "verge_m": 0.4,
-    "_verge_doc": "D4 (Kevin 2026-10-11: build both, pick by driving). The strip beside the pavement: A = 0.4 m (real width, then the real edge: rock cut, ditch or drop; 0.3-0.5 m gravel); B = 1.25 m (a 1-1.5 m firm gravel strip you can put a wheel on). Both builds are in drive1_variants. Replaces July's 6.4 m drivable 'shoulder' per side (22.6 m drivable in all, against the real 6.1-6.7 m). No rumble lips in either."
+    "_verge_doc": "D4 (Kevin 2026-10-11: build both, pick by driving). The strip beside the pavement: A = 0.4 m (real width, then the real edge: rock cut, ditch or drop; 0.3-0.5 m gravel); B = 1.25 m (a 1-1.5 m firm gravel strip you can put a wheel on). Both builds are in drive1_variants. Replaces July's 6.4 m drivable 'shoulder' per side (22.6 m drivable in all, against the real 6.1-6.7 m). No rumble lips in either. Since 0.17.0 (terrain.cross_section.build) the declared value is built as declared, no grid floor: the verge is the only pavement beside the lane (1ROAD_shoulder), and the ground beyond it is the section (1GRASS_cutfill and the grid).",
+    "fold_plateaus": false,
+    "fold_pads": false,
+    "_fold_doc": "A2 (2026-11-03): the climb's hairpins are fitted curves (the paint centreline, R 9.7-15 m on a 6-8 m road: the ribbon's inner edge stays at R >= 5.7 m, no fold), so build_mesh's fold treatment is off for them. fold_plateaus false: the +-40 m level plateau it laid at each of the 10 fold apexes moved the road up to 1.07 m off its real 3DEP profile (replication max 1.13 -> 0.73 m without it). fold_pads false (ledger 0074's switch): no paved disc or flat zone (one was laid, at a flat-grade apex). Both read only by build_mesh."
   },
+  "road_edge": {
+    "draft_walls": false,
+    "_doc": "V3-PLAN A4 / A13 / P3d (2026-11-03): the Lariat's edges are the surveyed 1913 stone, W-beam or open ground, authored in P3d for Drive 2; Drive 1 is the road and the ground. So the draft writes none of the engine's rule-placed walls: no 1WALL_PARA_stone / measured-guard lips (1,810 on the PC's run), no 1WALL_CHAINL_warn fences, no BARRIER_warning concrete. They were the 462 floating-furniture hits and audit E 228 / D 3 of the first full chain run (2026-11-03). Read only by build_mesh (draft_walls_enabled)."
+  },
+  "terrain_cell_m": 13.4,
+  "terrain_vertex_budget": 3000000,
+  "corridor_refine_factor": 12,
+  "corridor_refine_margin": 0,
+  "corridor_stencil_factor": 0.05,
+  "_terrain_grid_doc": "P3a's physical tiers in the engine draft (2026-11-03, ledger 0048 'Drive 1 on the Mac'). MEDIUM: terrain_cell_m 13.4 -> the 40 m 3DEP grid upsampled x3 = 13.3 m cells over the whole box (433 x 469 = 203 k nodes; the plan's medium tier is 15-20 m: 13.3 m is the nearest the x3 upsample gives, and 20 m (x2) leaves 1.11 m sub-cells at x18). CORRIDOR: every 13.3 m quad the pavement or its sheet touches is refined x12 = 1.11 m (corridor_refine_margin 0: no extra ring of quads; their neighbours are fanned through the hanging nodes, so no crack), and each refined node takes the section's height (terrain.cross_section) or, under the deck, the deck. 1.11 m is finer than the 6.1-8.3 m road and than the 1.2 m fill bench (L3b: a cell can only follow a cut it is smaller than). corridor_stencil_factor 0.05 (default 0.25): the pin's window radius 6 cm, not 28 cm, since the curvature charge already keeps chords under a crest; the 0.25 window charged slope x 0.28 m and left the deck 5 cm proud on the climb's grades (road-over-ground median 0.048 -> 0.020 m, p95 0.131 -> 0.065 m on the Mac draft). Total ground: ~0.95 M OBJ vertices (the PC's first run: 0.98 M on 6.7 m cells everywhere). The VIEW / FAR / PLAINS tiers of terrain.tiers are visual-only and Drive 2's (the backdrop kn5); not built here.",
   "gates": {
     "_doc": "Per-track gate values for the Lariat's Drive-1 set (V3-PLAN P5, ledger 0048). Read by the gates themselves; every other track has no such block, so its gates run exactly as before. Each value carries its tag; fleet/GATES-CHANGELOG.md has the entry.",
     "drive_test": {
@@ -350,6 +367,17 @@
         "floating_furniture": 0,
         "soft_top_in_lane": 0,
         "_doc": "[measured on the installed July v0.46.0 build] (V3-PLAN P5 '--force-install rule', 0047): a red street run may still install with --force-install only if no worse than these on every key; obstruction, floating furniture and soft-top are always 0. tools/ship_track.sh refuses a forced install when data/drive1_gates.json force_install_ok is false."
+      },
+      "force_exemptions": {
+        "versions": ["0.17.1"],
+        "approved": "Kevin 2026-11-03, asked 'Install the Lariat for Drive 1 at real hairpin widths, with open drops?': \"Yes, force it\"",
+        "keys": {
+          "undrivable_corners": {"corners": ["C4", "C5", "C6", "C7", "C8", "C9", "C10"], "window_m": 40.0,
+                                 "_doc": "the real hairpins at their measured 6.8-8.3 m (V3-PLAN D4 / A2: the corner rule's 9 m is not the road's); every undrivable station must lie within window_m [invented] of one of these corners' hairpin_fit.corners[].st_m"},
+          "excursion_far_ledges": {"max": 1045,
+                                   "_doc": "the open drops, the real edges without walls until P3d (Drive 2): exempt from the July comparison up to 1,045, the count of the 0.17.0 PC run Kevin was shown [measured]"}
+        },
+        "_doc": "tools/drive1_gates.py STRICT force rule (fleet/GATES-CHANGELOG.md 2026-11-03): with this block declared, --force-install passes a red Drive-1 build only where every red reason is one of these two, and only for the build versions listed (a per-build exemption). Every other red row (severe steps included: the junction-mouth steps are engine artifacts, not forced) and every other July key, and obstruction / floating / soft-top, refuse the force."
       }
     }
   },
@@ -500,7 +528,7 @@
   },
   "bridges": {
     "_doc": "P2 step 5 (V3-PLAN; ledger 0048). Decks on the lap are DECLARED from evidence, never left to a detector. scripts/elevation/road_profile.py finds each declared deck's stretch of the lap over its footprint ways (each OSM way's centreline buffered by half its pavement width, route.width_profile), adds abutment_m each side, holds the road straight across it in the raw 3DEP profile before smoothing, writes data/bridge.spans.json, and with --write records it as capture.bridges (local stations), the engine's declared-span key.",
-    "l13_seam_rule": true,
+    "l13_seam_rule": true, "detector": false, "_detector_doc": "2026-11-03, the first Windows draft (ledger 0048 step 1): on real 3DEP the height detector minted 24,374-24,835 m, from the 19th St lid along 461 m of the street's +5.7 % climb - the suspect span the ledger named. Every deck on this lap is declared (bridges.declared -> capture.bridges); the detector is off so no undeclared deck is laid.",
     "_l13_seam_rule_doc": "Opt-in for scripts/geometry/build_mesh.py's height detector (_bridge_detector, the one that minted July's [24,278-24,803]): on a closed lap a run that reaches the closing vertex while vertex 0 is not on a span is a wrap artefact (L13) and is dropped. Other tracks keep the detector as it was. The V3 Lariat does not run build_mesh; the prep's OSM-way detector (scripts/ac/build_kn5_loop.py detect_bridge_spans) gets the same rule unconditionally.",
     "declared": [
       {
@@ -1027,7 +1055,11 @@
         1.2
       ],
       "fill_slope": "1.5:1 (hand-placed rock)",
-      "fill_to_wall_trigger_m": 8.0
+      "fill_to_wall_trigger_m": 8.0,
+      "build": true,
+      "fill_bench_m": 1.2,
+      "cut_bench_m": 3.2,
+      "_build_doc": "P3a terrain_cutfill (2026-11-03, ledger 0048 'Drive 1 on the Mac'): build_mesh grades the ground to this section by station (scripts/geometry/cutfill.py): the pavement, the verge (road_profile.verge_m), a bench held at the road edge's height, then rock cut 0.25:1 up or fill 1.5:1 down until the face meets the natural 3DEP ground. Each ground point belongs to the lap point nearest it in plan; between stacked legs (another leg > 150 m along within 40 m: 683 lap points on the climb) it is held on its own leg's side of the midpoint height, 0.3 m clear [invented], the stacked-leg gate's own test. The road_shoulder sheet lands on the same section, capped at the medial line toward any other leg; its verge strip stays 1ROAD_shoulder (pavement) and its face is 1GRASS_cutfill (ground: ledger 0061 option C). BENCHES [invented, from the gates' geometry, not from the survey]: fill_bench_m 1.2 = one 1.11 m terrain cell's diagonal (1.57 m) less the 0.4 m verge, so the ground under the road edge is flush (L3b; kn5_ground_check); cut_bench_m 3.2 = audit H's sample 2 m off the pavement edge plus that diagonal less the verge, so no ground stands over the deck inside H's band. The real section has a 0.4 x 1.2 m V ditch at the cut's toe (1.6 m from the edge, ROAD-CONSTRUCTION) and a catchment of 0.4-0.5 x the face height; the draft's 3.6 m flat strip is wider than that below ~7 m faces (Kevin's call, ledger 0048). Not modelled: the V ditch itself, the soil-cut slope, the 8 m fill -> wall trigger (P3d)."
     },
     "stacked_legs": {
       "pair_max_plan_m": 40,

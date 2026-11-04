@@ -58,7 +58,7 @@ def test_only_the_disc_selection_is_gated():
     plateau = [n for n in _for_loops_over(fn, "_ax") if "_t * _t * (3.0 - 2.0 * _t)" in ast.unparse(n)
                and "centerline[_i] =" in ast.unparse(n)]
     assert len(plateau) == 1, "the fold plateau loop not found"
-    assert ast.unparse(plateau[0].iter) == "_apexes", ast.unparse(plateau[0].iter)
+    assert ast.unparse(plateau[0].iter) == "_apexes if _plateaus_on else []", ast.unparse(plateau[0].iter)  # fold_plateaus (0048)
     # the flat zones are built from the disc set alone, so no disc means no snap
     assert "_flat_zones = [(centerline[_ax][0], centerline[_ax][2], centerline[_ax][1], widths[_ax] / 2.0 + 16.0) " \
            "for _ax in _disc_apexes]" in src

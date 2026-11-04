@@ -73,3 +73,14 @@ def test_the_lariat_runs_both_gates_on_the_built_road_and_syncs_their_files():
     # San Diego's chain is not touched by the block (its ship.json never names these gates)
     sd = spec_mod.load(ROOT / "tracks" / "san-diego-lake-murray" / "ship.json", "san-diego-lake-murray")
     assert "road_inventory" not in sd["steps"]["gate"] and "stacked_legs" not in sd["steps"]["gate"]
+
+
+def test_the_summary_line_names_each_gates_own_exit():
+    # 2026-11-03 (ledger 0048): "Drive-1 road gates (road inventory, stacked legs): exit 1" printed the verdict's exit
+    # beside two gates that had both passed
+    assert 'echo "  Drive-1 road gates (road inventory, stacked legs): exit $D1_G"' not in TEXT
+    assert "road inventory exit $D1_RI, stacked legs exit $D1_SL, the Drive-1 verdict exit $D1_V" in TEXT
+    for fn, var in (("gate_road_inventory", "D1_RI"), ("gate_stacked_legs", "D1_SL"), ("gate_drive1_verdict", "D1_V")):
+        b = _body(fn)
+        assert f"{var}=$rc" in b and '[ "$rc" = 0 ] || D1_G=$rc' in b, fn
+    assert TEXT.find("D1_RI=-; D1_SL=-; D1_V=-") < TEXT.find('for n in ${GATE[@]+"${GATE[@]}"}; do "gate_$n"; done')

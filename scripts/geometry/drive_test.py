@@ -1403,6 +1403,10 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
             "obstructions": problems["obstructions"][:16],
         },
     }
+    if ((cfg.get("gates") or {}).get("drive1") or {}).get("force_exemptions"):
+        # opt-in only (a track declaring gates.drive1.force_exemptions: the Lariat, ledger 0048): every undrivable corner
+        # with its station, so tools/drive1_gates.py can check a declared exemption covers each one by place
+        report["worst"]["undrivable_all"] = problems["undrivable_corners"][:2000]
     if _fold_severe_defer:
         # opt-in only (absent the key the report is byte-identical): the severe readings handed to verify_fold_fans
         report["fold_severe"] = len(problems.get("fold_severe", []))

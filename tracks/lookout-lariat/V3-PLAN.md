@@ -480,6 +480,14 @@ boxes marked, and the two C-470 crossings marked, before any geometry (L12, show
 ### P3 — Author in Blender (scripted tools, `AUTH_*` collections)
 
 **3a. Ground: seating, cut/fill, tiers, overpasses.**
+
+> **2026-11-03, what landed on the Mac (ledger 0048 "Drive 1 on the Mac"; config 0.17.0; not yet through the PC chain):**
+> `terrain_cutfill` as an engine opt-in (`terrain.cross_section.build`, `scripts/geometry/cutfill.py`): the section by
+> station on the swept line, rock cut 0.25:1 / fill 1.5:1, stacked legs held to their own leg; the physical tiers as a
+> 13.3 m medium grid with the corridor refined to 1.11 m; the shoulder face named ground. A2's C12 / C13 are arcs at the
+> aerial radii (`hairpin_fit.mesh_fit`). On the Mac draft every Drive-1 row is green except drive_test (the real
+> hairpins' corner rule, 80; 8 severe steps at the C14 / C15 / C18 mouths, P3b) and verify_kn5 (no kn5 on the Mac).
+> Not done: `overpass_decks`, the view / far / plains tiers, the toe ditch, the authored walls.
 - **adapted `seat_terrain_blend`**: covers the mainline, with station matching (P1 precondition 3).
 - **new `terrain_cutfill`**: the road-building cross-section from `docs/ROAD-CONSTRUCTION.md`.
   - The section, uphill to downhill:

@@ -14,6 +14,31 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-04 (later) — Sand Creek round B: the street wiring, the pad declarations, the tree lidar (ledger 0079 round B)
+
+No gate threshold changed. These changes alter what a gate or a self-check sees:
+- **`tools/trim_connectors.py`.** A mouth whose piece was dropped (under the existing `MIN_PIECE_M` 15 m) is left out of
+  `mouths.json` instead of failing the weld. Lake Murray has none: its committed inputs through origin's trim and this
+  branch's give byte-identical `connectors.local.json`, `mouths.json` and `median_bands.json`.
+- **`tools/strip_seam_blend.py`.** Lap rows inside a side-street mouth (the `mouth_weld.gap_window` that gap_mouths deletes)
+  are not seamed. They are also not counted in `MAX_MISS_SHARE` 0.01's denominator. With no mouth on the lap, every row is
+  seamed as before.
+- **`tools/seat_terrain_blend.py`.** `route.seat_edge_m` = how far the ground is pinned under the edge. Absent = 3.1 m, the
+  old constant. Sand Creek sets 1.8 m: its `route.edge` strip, 0.1 + 0.2 + 1.5 m, the 1.5 m grade itself [invented in
+  ledger 0078].
+- **New numbers, all [invented], none a gate:**
+  - `tools/pad_boxes.py`, where a pad is measured, by rule:
+    - `CUT_M` **30 m** (within rule 4's 5-30 m);
+    - `BOX_PAD_M` **3 m**;
+    - `ARM_NEAR_M` **30 m**;
+    - `ARM_PAST_M` **6 m**.
+  - `tools/lidar_buildings.py --trees`:
+    - `TREE_MIN_R_M` **1.5 m**;
+    - `TREE_RING_M` **3 m**;
+    - `MIN_CANOPY_PTS` **4**.
+  - `plan_bespoke_vegetation.py` `LIDAR_TREE_H` **2-35 m**.
+  - `tools/grid_meetings.py` `END_M` **6 m** (a T vs an X; a report only).
+
 ## 2026-11-04 — Sand Creek's assets: the `textures` gate, the houses floor, and the reading thresholds of round A (ledger 0079)
 
 - **New gate `textures`** (`tools/verify_textures.py`, chain step `gate_textures`, hard). On every kn5 the track folder

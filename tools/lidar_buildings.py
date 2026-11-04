@@ -19,6 +19,7 @@ Needs laspy (with a LAZ backend: lazrs or laszip), pyproj and numpy: the PC's en
 has no LAZ reader and installs nothing.
 
     python tools/lidar_buildings.py tracks/<track> [--plan source/bespoke/buildings.plan.json] [--ept <ept.json url>]
+                                    [--trees source/bespoke/trees.plan.json [--trees-out source/bespoke/lidar_trees.json]]
                                     [--res 1.0] [--out source/bespoke/lidar_roofs.json]
 """
 from __future__ import annotations
@@ -40,6 +41,9 @@ EPT = "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.
 SHRINK_M = 0.6          # [invented] roof points this far inside the footprint: the eave overhang and the wall line kept out
 RING_IN_M, RING_OUT_M = 1.5, 6.0   # [invented] the ground ring round the footprint
 MIN_ROOF_PTS = 8        # [invented] fewer roof points than this: no measurement
+TREE_MIN_R_M = 1.5      # [invented] the smallest crown radius read for canopy returns
+TREE_RING_M = 3.0       # [invented] the ground read this far past the crown radius
+MIN_CANOPY_PTS = 4      # [invented] fewer canopy returns than this: no measurement
 NOT_ROOF = {2, 7, 9, 18}
 
 
@@ -129,11 +133,19 @@ def main(argv=None) -> int:
     ap.add_argument("--ept", default=EPT)
     ap.add_argument("--res", type=float, default=1.0)
     ap.add_argument("--out", default="source/bespoke/lidar_roofs.json")
+    ap.add_argument("--trees", default=None, help="a crowns plan (source/bespoke/trees.plan.json): canopy heights too, same read")
+    ap.add_argument("--trees-out", default="source/bespoke/lidar_trees.json")
     a = ap.parse_args(argv)
     track = Path(a.track)
     plan = json.loads((track / a.plan).read_text(encoding="utf-8"))
     rows = json.loads((track / plan["out"]).read_text(encoding="utf-8"))
     to_merc = Transformer.from_crs(4326, 3857, always_xy=True)
+    crowns = []
+    if a.trees:
+        tplan = json.loads((track / a.trees).read_text(encoding="utf-8"))
+        tpts = json.loads((track / tplan["out"]).read_text(encoding="utf-8"))["points"]
+        cx_, cy_ = to_merc.transform([p[0] for p in tpts], [p[1] for p in tpts])
+        crowns = [(p, x, y) for p, x, y in zip(tpts, cx_, cy_)]
     rings = []
     for r in rows:
         xs, ys = to_merc.transform([p[0] for p in r["footprint_lonlat"]], [p[1] for p in r["footprint_lonlat"]])
@@ -141,7 +153,8 @@ def main(argv=None) -> int:
         if ring[0] == ring[-1]:
             ring = ring[:-1]
         rings.append(ring)
-    allx = [p[0] for g in rings for p in g]; ally = [p[1] for g in rings for p in g]
+    allx = [p[0] for g in rings for p in g] + [c[1] for c in crowns]
+    ally = [p[1] for g in rings for p in g] + [c[2] for c in crowns]
     pad = RING_OUT_M + 2.0
     box = (min(allx) - pad, min(ally) - pad, max(allx) + pad, max(ally) + pad)
     ept = json.loads(_get(a.ept))
@@ -202,6 +215,29 @@ def main(argv=None) -> int:
     (track / a.out).write_text(json.dumps(rep, separators=(",", ":")), encoding="utf-8")
     print(f"[lidar_buildings] {len(out)} of {len(rows)} footprints measured ({n_none} with < {MIN_ROOF_PTS} roof points or no "
           f"ground) -> {a.out}")
+    if crowns:
+        # THE TREES (--trees; ledger 0079 round B): each NAIP crown's canopy top = the p95 of the non-ground first returns
+        # within its crown radius (at least TREE_MIN_R_M), its ground = the median class-2 return within that radius +
+        # TREE_RING_M; height = the difference. The planner's crowns mode takes it before its [invented] width ratio
+        trees, t_none = {}, 0
+        for p, x, y in crowns:
+            rad = max(TREE_MIN_R_M, p[4] / 2.0)
+            idx = rt.query_ball_point((x, y), rad)
+            gi = gt.query_ball_point((x, y), rad + TREE_RING_M)
+            if len(idx) < MIN_CANOPY_PTS or not gi:
+                t_none += 1
+                continue
+            top = float(np.percentile(rZ[idx], 95)); gnd = float(np.median(gZ[gi]))
+            trees[f"{p[0]:.7f},{p[1]:.7f}"] = {"h_m": round(top - gnd, 2), "n_canopy": len(idx), "n_ground": len(gi)}
+        trep = {"_source": f"USGS 3DEP lidar, {a.ept}, read by tools/lidar_buildings.py --trees {time.strftime('%Y-%m-%d')}: "
+                           f"canopy = p95 of non-ground first returns within the crown radius (>= {TREE_MIN_R_M} m), ground = "
+                           f"median class 2 within the radius + {TREE_RING_M} m; keyed 'lon,lat' as the crowns file writes them",
+                "crowns": len(crowns), "measured": len(trees), "unmeasured": t_none, "trees": trees}
+        (track / a.trees_out).write_text(json.dumps(trep, separators=(",", ":")), encoding="utf-8")
+        hs = sorted(v["h_m"] for v in trees.values())
+        print(f"[lidar_buildings] trees: {len(trees)} of {len(crowns)} crowns measured ({t_none} with < {MIN_CANOPY_PTS} canopy "
+              f"points or no ground); height p10 / p50 / p90 "
+              f"{[hs[int(f * (len(hs) - 1))] for f in (0.1, 0.5, 0.9)] if hs else []} m -> {a.trees_out}")
     return 0
 
 

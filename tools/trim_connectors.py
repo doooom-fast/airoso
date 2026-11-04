@@ -439,8 +439,15 @@ def build(project_dir):
     first = _trim_against(conns.get("connectors", []), [("MAINLINE", main, local["widths_m"])], mouths, deltas,
                           capped=capped)
     # pass 2: non-host pieces vs the divided trunks (host = any piece of a divided connector, not its _loop)
+    # route.connector_hosts (ledger 0079 round B, Sand Creek's grid): connectors that are HOSTS without being divided — the
+    # arterials every other street is cut against (a name, a name#k piece, or a "prefix*"). Absent = the divided trunks
+    # alone, as before (Lake Murray declares none)
+    plain_hosts = [str(x) for x in (cfg.get("route", {}).get("connector_hosts") or [])]
+
     def is_host(c):
-        return any(c["name"] == d or c["name"].startswith(d + "#") for d in divided)
+        return (any(c["name"] == d or c["name"].startswith(d + "#") for d in divided)
+                or any(c["name"].startswith(h[:-1]) if h.endswith("*") else (c["name"] == h or c["name"].startswith(h + "#"))
+                       for h in plain_hosts))
     hosts = [(c["name"], [tuple(p) for p in c["points_xyz_m"]], c["widths_m"]) for c in first if is_host(c)]
     hosts_set = {h[0] for h in hosts}
     rest = [c for c in first if c["name"] not in hosts_set and not any(c["name"].startswith(d + "_loop") for d in divided)]
@@ -463,6 +470,11 @@ def build(project_dir):
     unresolved = [f"{mo['connector']}@{mo['host']}:{mo['host_vertex']}" for mo in mouths if mo["piece"] is None]
     if unresolved:
         print(f"[trim] WARNING: {len(unresolved)} mouth(s) whose piece was dropped (< {MIN_PIECE_M} m): {unresolved}")
+        # ledger 0079 round B: a dropped piece has no end to weld, so its mouth is not a mouth (Sand Creek: a frontage road's
+        # stub between the lap and a host arterial, cut twice, under 15 m); tools/weld_mouths_blend.py refused the whole set
+        # on it. A set with none unresolved (Lake Murray) is untouched
+        mouths[:] = [mo for mo in mouths if mo["piece"] is not None]
+        print(f"[trim] {len(unresolved)} such mouth(s) left out of mouths.json")
 
     # island gaps on trunk hosts at every mouth; the trunk's blend applied to its island's heights
     bands_path = data / "median_bands.json"

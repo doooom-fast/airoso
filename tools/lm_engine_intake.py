@@ -619,6 +619,10 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     if want_conn and conn.exists():
         shutil.copyfile(conn, data / "connectors.local.json")
         (data / "mouths.json").unlink(missing_ok=True)       # tools/trim_connectors.py writes it for these connectors
+        # ledger 0079 round B: trim / divide / route re-read their .pre-* snapshot when one exists, so a snapshot an earlier
+        # run left would re-trim the OLD set: the fresh copy is the only source
+        for suf in (".pre-trim", ".pre-divide", ".pre-route"):
+            (data / ("connectors.local.json" + suf)).unlink(missing_ok=True)
     else:
         # the lap alone: an EMPTY side-street set, so the assembler sweeps none and tools/weld_mouths_blend.py (the
         # mainline fold mend, ledger 0050) runs on the mainline alone — it reads both files

@@ -148,11 +148,161 @@ Research on the Lake Murray junction tools (file:line in the round's notes):
   chain step stands street-name blades from OSM names. Only airoso's `build_env` does (`scripts/environment/signs.py`), and
   it is not a chain step.
 
+## Round B (Mac): the parts that do not wait on Kevin's three decisions
+
+The coordinator, 2026-11-04 (Kevin's calls on street-to-street junctions, the light colour and the signs are pending):
+seat_terrain's sidewalk becomes config; seat_terrain goes before densify; the grid streets go as far as the existing junction
+code takes them, and their size is measured; the pad module; tree heights from lidar; then 0.2.1 when the PC pushes the
+roofs.
+
+### 1-2. seat_terrain on Sand Creek's chain (committed; Lake Murray's chain as it was)
+
+- **The new key.** `route.seat_edge_m` (`tools/seat_terrain_blend.py`) is how far past the lane the ground is pinned under
+  the edge. Absent = the old constant, 3.1 m (Lake Murray's curb + walk + grade). Sand Creek sets **1.8 m**: its no-curb strip,
+  0.1 + 0.2 + 1.5 m. No sidewalk.
+- **The chain.** Sand Creek's ship.json runs `seat_terrain` after `weld_mouths` and before `densify_ribbon`, because seat
+  asserts the assembler's ROAD vertex count, which densify changes.
+- **The build** (empty workshop, Mac): **every gate identical to 0.2.0**:
+  - drive_test both layouts: kinks 0.41, fold bumps 4, drops 0, far ledges 1;
+  - audit CLEAN; kn5_ground_check PASS; house_seat PASS;
+  - houses 2,261 / 2,261 / 0; textures 0 untextured;
+  - road kn5 48.4 MB.
+
+  Changed:
+  - grass 212,722 → 213,461 vertices;
+  - 1,056 terrain faces cleared from under the mended folds;
+  - strip-seam misses 19 of 6,434 (0.1.1: 24).
+
+### 3. The 106 grid streets, as far as the existing junction code goes (scratch run, NOT committed to the chain)
+
+**Run setup.** A scratch track folder (a copy of the port, never committed). Its config:
+- `lm_intake.connectors` true;
+- `route.connector_hosts ["grid_primary*", "grid_secondary*"]` (new in `tools/trim_connectors.py`: hosts that are not
+  divided; absent = as before);
+- `route.seat_edge_m` 1.8;
+- `strip_seam.scope` local;
+- `scenery.streetlights.drop_on_road`.
+
+Chain: lm_intake → build_loop_blend → trim_connectors → rebuild_loop_blend → weld_mouths → seat_terrain → densify_ribbon →
+seat_edges → strip_seam → gap_mouths → lamps → (author) layout_dummies, bespoke → prep → … → gates + verify_mouths.
+
+**Fixes the run needed, all general, all opt-in or a no-op on Lake Murray:**
+- **trim.** A mouth whose piece trim dropped is no longer a mouth. A frontage stub cut twice, between the lap and
+  Colorado, left 2 orphan mouths that failed the weld. Lake Murray's committed inputs through origin's trim and this
+  branch's give byte-identical outputs.
+- **strip_seam.** It skips lap rows inside a mouth (the very rows gap_mouths deletes): 236 rows at 36 lap mouths. The
+  global scope still missed 94 of 6,198 on the subdivided ground; the local scope (the Lariat's) joins all 6,170 with
+  **0 missed**.
+- **gap_mouths** runs after strip_seam. strip_seam reads the CURB layout that gap_mouths changes.
+- **lamps.** `drop_on_road` leaves out a draft post that a later road stands on, and records it in `lights.local.json`
+  `dropped_on_road`. 2 posts (7, 151). author_lamps' self-check had refused them.
+
+**Results (BUILT kn5):**
+
+| | 0.2.0 + seat_terrain (committed) | **with the grid streets (scratch)** |
+|---|---|---|
+| road kn5 | 48.4 MB | **63.7 MB** |
+| street-only kn5 | 1.8 MB | **6.9 MB** (the streets' centre lines) |
+| total against ~120 MB | 50.2 | **70.6 MB** |
+| mouths | 0 | 52 cut, 50 welded (36 on the lap, 14 on arterial hosts) |
+| drive_test race / street | PASS | **PASS** |
+| kn5_ground_check | PASS | PASS |
+| textures | PASS | PASS |
+| audit_mesh | CLEAN | **525: I 292 (strip isolating pavement), K 233 (strip in a carriageway)**, worst 1.02 m |
+| verify_mouths (new on the track) | - | **FAIL, 11 of 50 mouths** (below) |
+| houses | 2,261 | 2,245 (16 blocks now stand on a street ribbon and are dropped; the floor would be re-set for a streets build) |
+| lamps | 175 | 173 (2 dropped on a street) |
+| roads / grass vertices | 39,380 / 213,461 | 50,123 / 335,253 |
+
+**verify_mouths, by place.** 7 of the 11 failing mouths are at the authored pad junctions, where the lap corner, the
+frontage roads and Colorado crowd one box. The pads replace exactly those mouths.
+- 48th/Colorado: `grid_primary_49`, `grid_primary_52`, `grid_tertiary_98`, `grid_unclassified_67`.
+- Sand Creek Dr/Quebec: `grid_primary_78`, `grid_primary_80`.
+- Colorado/50th: `grid_unclassified_9`.
+
+The other 4:
+- `grid_tertiary_5`: approach grade change 3.9 %/m;
+- `grid_tertiary_16` on Colorado: the approach changes 29 %/m (the host's own deck);
+- `grid_unclassified_27` on Quebec: the host lane 0.43 m over the deck and a 21 %/m approach;
+- `grid_unclassified_77`: the notch, the host's strip left across it.
+
+The audit's I / K (525) are the streets' edge strips where two streets overlap and where a strip crosses a host's
+carriageway. That is the street-to-street weld the coordinator held for Kevin.
+
+**The 146 street-to-street meetings** (`tracks/sand-creek-lm/data/grid_meetings.json`, `tools/grid_meetings.py`: every
+meeting with its pieces, kind, shape, local x / z and lon / lat). With the arterials as hosts:
+- **19 become mouths:** arterial/minor, 14 L + 5 T;
+- **127 stay overlaps:**
+  - arterial/arterial: 17 L (two hosts are never cut against each other);
+  - minor/minor: 53 L, 40 T, 17 X.
+
+"L" is two pieces ending at one node: OSM ways split at a junction, so the through street is two pieces.
+
+### 4. The pads: declared and ready to measure; the author with street arms is not built
+
+- **The outline tool.** `tools/draft_pad_outline.py` was not in this branch. It is the Lariat's (origin/claude/lariat-pads-wip,
+  4970fca5, "P3b method 1"), brought here unchanged except that it also reads an LM port's `lm_pads.pads`. It measures the
+  asphalt outline from the CO_DRCOG_2_2020 lidar intensity edge and the deck from class-2 ground (±0.4 m). It needs the LAZ
+  stack, so it runs on the PC. Its `aerial` (NAIP) source kind was never built.
+- **The declarations.** New `tools/pad_boxes.py` writes `lm_pads.pads` from `lm_pads.plan`: ledger 0070's six nodes and
+  0073's NAIP curb returns. For each pad:
+  - node = the nearest lap vertex;
+  - cuts 30 m of arc either side;
+  - the junction box out to half width + curb return + 6 m [invented];
+  - the street arms and their cut lines.
+
+  The six:
+  - **colorado_50th:** v140, cuts 129 / 151, arms unclassified_9, unclassified_10, primary_51, primary_53, unclassified_76;
+  - **50th_ash:** v186, unclassified_17;
+  - **50th_dahlia:** v411, unclassified_0, tertiary_44;
+  - **dahlia_56th:** v780, primary_35;
+  - **sandcreek_quebec:** v1942, primary_78, primary_84;
+  - **48th_colorado:** v3205, cuts 3193 / 3216, primary_49, primary_52, tertiary_98.
+
+  The 48th/Colorado out cut stops at the lap seam (L13: no cut wraps), 33 m past its node.
+- **The PC.** Runbook 4g step 3 now measures the six outlines on the rehearsal workshop, together with the roofs and trees.
+- **Not built: the author with street arms.**
+  - `tools/lm_pads_blend.py` cuts the lap and lays the deck, but closes every road the lap does not take with a K-rail. The
+    free roam needs those roads welded to the deck instead: each arm's ribbon cut on its line and its end row welded to the
+    deck edge.
+  - That extension and verify_pads' no-curb shape cannot be checked on the Mac before the outlines exist.
+  - It is the next piece of work once the PC pushes `source/pads/*.json`.
+
+### 5. Tree heights from lidar (for the PC)
+
+`tools/lidar_buildings.py --trees source/bespoke/trees.plan.json` measures the crowns in the same EPT read as the roofs:
+- canopy = the p95 of the non-ground first returns within the crown radius (at least 1.5 m);
+- ground = the median class-2 return within the radius + 3 m.
+
+The crowns planner's new `lidar` key takes the height before the [invented] width ratio, inside 2-35 m. Tested on a synthetic
+crown. Runbook 4g step 3 runs roofs, trees and pad outlines as one job.
+
+### Lake Murray unchanged (round B)
+
+- **trim.** Its committed trim inputs through origin's and this branch's `trim_connectors.py` give byte-identical
+  `connectors.local.json`, `mouths.json` and `median_bands.json` (`664da93b…`, `b73b70f4…`, `f0c97952…`).
+- **seat_terrain.** With `route.seat_edge_m` absent, the only new code is a config read; the constant stays 3.1 (a test pins
+  it).
+  - I tried an A/B on Lake Murray's committed `loop.blend`. Both versions refused to seat it identically: the committed
+    blend is post-stubs and post-pads, so it is not the layout seat runs on.
+  - The real A/B is the PC's step 5(a) (`--dry-run` through both branches, `blend_digest` + `draft_equiv`). It now covers
+    this change and should be re-run.
+- **Other changed tools.**
+  - `strip_seam`, `author_lamps`' `drop_on_road` and `pad_boxes`: Lake Murray never runs `strip_seam` or `pad_boxes`, and it
+    does not set `drop_on_road`.
+  - `gap_mouths` is unchanged.
+- **Spec lines.** Lake Murray's ship.json and spec lines are unchanged.
+- **Tests:** `test_sand_creek_lm_assets.py` 10 pass (round B keys absent from Lake Murray; host matching; lidar tree
+  heights; the six declarations validate); `test_draft_pads.py` 13 pass.
+
 ## Owed
 
-- **The lidar roofs** (the PC, runbook 4g step 1): `tools/lidar_buildings.py`. Then re-plan, rebuild 0.2.1 and set the
-  houses floor again.
-- Round B: a street-to-street trim / weld (or Kevin's word on arterials as the only hosts), `seat_terrain`'s strip width
-  from `route.edge`, and the pad module with street arms.
-- Round C: the race corridor and closures over the grid mouths; the race kerbs; street-name blades as a chain step.
-- `colliders 0`: no block stands within 60 m of the lap on fine ground (as in 0.1.1).
+- **The lidar job** (the PC, runbook 4g step 3): the roofs, the tree heights and the six pad outlines, in one job. Then the Mac
+  re-plans, rebuilds 0.2.1 and sets the houses floor again.
+- **The pad author with street arms** (round B item 4): lm_pads' deck, with every grid street at a pad welded to it instead
+  of a K-rail across it. Then verify_pads on the no-curb pads. It waits on the PC's `source/pads/*.json`.
+- **The grid streets into the chain** (round B item 3). It waits on Kevin's call on street-to-street meetings (127
+  overlaps), then on the pads, which own 7 of the 11 failing mouths. The 4 others are owed regardless: 2 approaches that
+  change grade too fast on the host's own deck, a host lane 0.43 m over the deck, and a notch.
+- **Round C:** the race corridor and closures over the grid mouths; the race kerbs; street-name blades as a chain step.
+- **`colliders 0`:** no block stands within 60 m of the lap on fine ground (as in 0.1.1).

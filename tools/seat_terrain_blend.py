@@ -256,6 +256,17 @@ def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:]
     proj = Path(argv[0])
     data = proj / "data"
+    # THE EDGE'S WIDTH (ledger 0079 round B): track.config.json route.seat_edge_m = the lane edge -> grass lip width the
+    # ground is pinned under (curb face + walk + grade of the track's route.edge). Absent = SIDEWALK_M, Lake Murray's
+    # 3.1 m (its 0.08 + 1.8 + 1.2 curb + walk + grade), so Lake Murray's run is byte-for-byte the old one. Sand Creek
+    # ("no sidewalks"): its 0.1 + 0.2 + 1.5 m edge strip, 1.8 m
+    global SIDEWALK_M
+    _cfgp0 = proj / "track.config.json"
+    if _cfgp0.exists():
+        _se = (json.loads(_cfgp0.read_text(encoding="utf-8")).get("route") or {}).get("seat_edge_m")
+        if _se is not None:
+            SIDEWALK_M = float(_se)
+            print(f"[seat] route.seat_edge_m: the ground pinned under the edge to {SIDEWALK_M} m past the lane (default 3.1)")
     local = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
     main_pts = [tuple(p) for p in local["points_xyz_m"]]
     cp = data / "connectors.local.json"

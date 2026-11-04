@@ -373,7 +373,9 @@
       "_doc": "Kevin 2026-11-03 (ledger 0070 Q1): \"race curbs, no sidewalks\" = race kerbs at the race corners (owed: they come with a race corridor), no street curbs, no sidewalks. The v021 edge strip with no curb: the lane edge stays at road height for 0.30 m, then meets the ground 0.20 m lower over 1.5 m [invented: the shortest run under the drive gate's 0.12 m per 0.5 m]. The strip keeps the assembler's four profile points a side, which tools/weld_mouths_blend.py reads."
     },
     "crossfall_file": "data/crossfall.lm.json",
-    "_crossfall_doc": "ledger 0066's lidar camber at the 56th -> Sand Creek Dr turn (tracks/sand-creek/data/crossfall.json), written by position by tools/lm_engine_intake.py and keyed to the assembler's own line"
+    "_crossfall_doc": "ledger 0066's lidar camber at the 56th -> Sand Creek Dr turn (tracks/sand-creek/data/crossfall.json), written by position by tools/lm_engine_intake.py and keyed to the assembler's own line",
+    "seat_edge_m": 1.8,
+    "_seat_edge_doc": "ledger 0079 round B: tools/seat_terrain_blend.py pins the ground under the edge this far past the lane: the no-curb edge strip (0.1 face + 0.2 + 1.5 m grade), no sidewalk (Kevin: \"no sidewalks\"); absent = Lake Murray's 3.1 m curb + walk + grade"
   },
   "loop": true,
   "default_width_m": 9.0,
@@ -401,7 +403,9 @@
       "model": "led_cobra",
       "arms": 2,
       "planner": "engine_draft",
-      "_doc": "Ledger 0070 D1, Kevin 2026-11-03: \"same lamps as lake murray\". The fixture is Lake Murray's current one (ledger 0056: tools/make_streetlight_led.py's led_cobra, two back-to-back arms, as Lake Murray's scenery.streetlights), stood by tools/author_lamps_blend.py (ship.json draft step lamps). planner engine_draft: the posts are planned by tools/plan_streetlights.py (draft step lamps_plan, after mesh) on the draft's own built surfaces — the loop's walk (every 55 m, alternating sides), the footprint off every road surface (the 1ROAD shoulder sheet included, so a post steps out past an embankment), >= 0.5 m + the mast radius from every wall, none on a deck span or a pad. Retired with this block (read only by scripts/environment/build_env.py, never a chain step): light_spacing_m 96, lamp_model street_lamp_new.obj, lamp_height_m 5.5, and the LIGHTPOST / LAMPHEAD texture_overrides (they would have re-skinned the LED pole with the old lamp's texture). The CSP light itself stays Sand Creek's own lighting.streetlight (Kevin's wide dim wash), not Lake Murray's 80s sodium."
+      "_doc": "Ledger 0070 D1, Kevin 2026-11-03: \"same lamps as lake murray\". The fixture is Lake Murray's current one (ledger 0056: tools/make_streetlight_led.py's led_cobra, two back-to-back arms, as Lake Murray's scenery.streetlights), stood by tools/author_lamps_blend.py (ship.json draft step lamps). planner engine_draft: the posts are planned by tools/plan_streetlights.py (draft step lamps_plan, after mesh) on the draft's own built surfaces — the loop's walk (every 55 m, alternating sides), the footprint off every road surface (the 1ROAD shoulder sheet included, so a post steps out past an embankment), >= 0.5 m + the mast radius from every wall, none on a deck span or a pad. Retired with this block (read only by scripts/environment/build_env.py, never a chain step): light_spacing_m 96, lamp_model street_lamp_new.obj, lamp_height_m 5.5, and the LIGHTPOST / LAMPHEAD texture_overrides (they would have re-skinned the LED pole with the old lamp's texture). The CSP light itself stays Sand Creek's own lighting.streetlight (Kevin's wide dim wash), not Lake Murray's 80s sodium.",
+      "drop_on_road": true,
+      "_drop_on_road_doc": "ledger 0079 round B: a draft post (the assembler's every-55 m rule) that a later road stands on is left out and recorded in lights.local.json dropped_on_road, never moved to an unmeasured spot (tools/author_lamps_blend.py)"
     },
     "signs": {
       "_doc": "Street-name blade signs at each major junction (from data/street_labels.json, same legs as the painted road decals). enabled=false drops them. flip_read/flip_up are one-bit fixes if the text reads mirrored or upside-down in-game (verify on the first Windows drive).",
@@ -730,5 +734,565 @@
   "terrain": {
     "terrain_band_m": 22.0,
     "_doc": "the v021 assembler's band clamp (Lake Murray's 22 m); no tiers on the pilot (the 20 m graded grid)"
+  },
+  "lm_pads": {
+    "_doc": "Ledger 0079 round B (Kevin 2026-11-03: \"authored pad junctions\"; ledger 0070's six required corners). plan = where (the node positions and NAIP curb returns of ledger 0070's pad table, 0073's reads); pads = the declarations tools/pad_boxes.py writes from it (node, cuts, box, arms; rule, not measurement); the outline and deck are measured by tools/draft_pad_outline.py off CO_DRCOG_2_2020 (the PC: runbook 4g step 3) into source/pads/<id>.json. The author with street arms is owed (ledger 0079 round B); no draft step reads these yet",
+    "source": "source/pads",
+    "plan": [
+      {
+        "id": "colorado_50th",
+        "node_xz": [
+          -1507.9,
+          166.6
+        ],
+        "curb_return_m": 6
+      },
+      {
+        "id": "50th_ash",
+        "node_xz": [
+          -1364.0,
+          156.1
+        ],
+        "curb_return_m": 3
+      },
+      {
+        "id": "50th_dahlia",
+        "node_xz": [
+          -759.4,
+          68.0
+        ],
+        "curb_return_m": 3
+      },
+      {
+        "id": "dahlia_56th",
+        "node_xz": [
+          -909.8,
+          1119.8
+        ],
+        "curb_return_m": 15
+      },
+      {
+        "id": "sandcreek_quebec",
+        "node_xz": [
+          1795.4,
+          -488.9
+        ],
+        "curb_return_m": 6
+      },
+      {
+        "id": "48th_colorado",
+        "node_xz": [
+          -1511.1,
+          -297.4
+        ],
+        "curb_return_m": 4
+      }
+    ],
+    "pads": [
+      {
+        "id": "colorado_50th",
+        "node": 140,
+        "cuts": [
+          129,
+          151
+        ],
+        "box": [
+          [
+            -1521.38,
+            129.14
+          ],
+          [
+            -1495.38,
+            128.75
+          ],
+          [
+            -1486.97,
+            135.9
+          ],
+          [
+            -1472.98,
+            135.76
+          ],
+          [
+            -1471.41,
+            149.88
+          ],
+          [
+            -1468.72,
+            165.65
+          ],
+          [
+            -1474.16,
+            181.27
+          ],
+          [
+            -1488.13,
+            180.28
+          ],
+          [
+            -1495.38,
+            187.37
+          ],
+          [
+            -1510.86,
+            188.11
+          ],
+          [
+            -1511.69,
+            179.75
+          ],
+          [
+            -1523.19,
+            182.51
+          ],
+          [
+            -1527.18,
+            180.43
+          ],
+          [
+            -1528.25,
+            169.45
+          ]
+        ],
+        "arms": [
+          {
+            "connector": "grid_unclassified_9",
+            "cut": [
+              [
+                -1528.25,
+                169.45
+              ],
+              [
+                -1523.19,
+                182.51
+              ]
+            ]
+          },
+          {
+            "connector": "grid_unclassified_10",
+            "cut": [
+              [
+                -1488.13,
+                180.28
+              ],
+              [
+                -1474.16,
+                181.27
+              ]
+            ]
+          },
+          {
+            "connector": "grid_primary_51",
+            "cut": [
+              [
+                -1527.18,
+                180.43
+              ],
+              [
+                -1511.69,
+                179.75
+              ]
+            ]
+          },
+          {
+            "connector": "grid_primary_53",
+            "cut": [
+              [
+                -1510.86,
+                188.11
+              ],
+              [
+                -1495.38,
+                187.37
+              ]
+            ]
+          },
+          {
+            "connector": "grid_unclassified_76",
+            "cut": [
+              [
+                -1472.98,
+                135.76
+              ],
+              [
+                -1486.97,
+                135.9
+              ]
+            ]
+          }
+        ],
+        "half_m": 45.0,
+        "source": {
+          "kind": "lidar_ept",
+          "ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"
+        },
+        "edge": "shoulder",
+        "_by": "tools/pad_boxes.py from lm_pads.plan colorado_50th: node v140 nearest [-1507.9, 166.6], cuts 30 m of arc either side, box reach 28.4 m (half width 16.4 + curb return 6 + 6.0) [rule, invented pads], 5 street arm(s)"
+      },
+      {
+        "id": "50th_ash",
+        "node": 186,
+        "cuts": [
+          175,
+          197
+        ],
+        "box": [
+          [
+            -1397.99,
+            146.07
+          ],
+          [
+            -1371.98,
+            120.13
+          ],
+          [
+            -1355.98,
+            120.17
+          ],
+          [
+            -1353.7,
+            166.94
+          ],
+          [
+            -1367.7,
+            166.84
+          ],
+          [
+            -1398.26,
+            162.07
+          ]
+        ],
+        "arms": [
+          {
+            "connector": "grid_unclassified_17",
+            "cut": [
+              [
+                -1353.7,
+                166.94
+              ],
+              [
+                -1367.7,
+                166.84
+              ]
+            ]
+          }
+        ],
+        "half_m": 45.0,
+        "source": {
+          "kind": "lidar_ept",
+          "ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"
+        },
+        "edge": "shoulder",
+        "_by": "tools/pad_boxes.py from lm_pads.plan 50th_ash: node v186 nearest [-1364.0, 156.1], cuts 30 m of arc either side, box reach 16.3 m (half width 7.3 + curb return 3 + 6.0) [rule, invented pads], 1 street arm(s)"
+      },
+      {
+        "id": "50th_dahlia",
+        "node": 411,
+        "cuts": [
+          400,
+          422
+        ],
+        "box": [
+          [
+            -793.72,
+            59.61
+          ],
+          [
+            -765.59,
+            55.71
+          ],
+          [
+            -749.59,
+            55.68
+          ],
+          [
+            -748.46,
+            80.02
+          ],
+          [
+            -748.6,
+            94.02
+          ],
+          [
+            -750.83,
+            102.96
+          ],
+          [
+            -767.83,
+            103.0
+          ],
+          [
+            -793.87,
+            75.61
+          ]
+        ],
+        "arms": [
+          {
+            "connector": "grid_unclassified_0",
+            "cut": [
+              [
+                -748.46,
+                80.02
+              ],
+              [
+                -748.6,
+                94.02
+              ]
+            ]
+          },
+          {
+            "connector": "grid_tertiary_44",
+            "cut": [
+              [
+                -765.59,
+                55.71
+              ],
+              [
+                -749.59,
+                55.68
+              ]
+            ]
+          }
+        ],
+        "half_m": 45.0,
+        "source": {
+          "kind": "lidar_ept",
+          "ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"
+        },
+        "edge": "shoulder",
+        "_by": "tools/pad_boxes.py from lm_pads.plan 50th_dahlia: node v411 nearest [-759.4, 68.0], cuts 30 m of arc either side, box reach 16.9 m (half width 8.0 + curb return 3 + 6.0) [rule, invented pads], 2 street arm(s)"
+      },
+      {
+        "id": "dahlia_56th",
+        "node": 780,
+        "cuts": [
+          769,
+          791
+        ],
+        "box": [
+          [
+            -941.22,
+            1109.26
+          ],
+          [
+            -912.26,
+            1075.58
+          ],
+          [
+            -879.16,
+            1090.14
+          ],
+          [
+            -866.91,
+            1117.94
+          ],
+          [
+            -878.6,
+            1145.02
+          ],
+          [
+            -942.33,
+            1124.72
+          ]
+        ],
+        "arms": [
+          {
+            "connector": "grid_primary_35",
+            "cut": [
+              [
+                -941.22,
+                1109.26
+              ],
+              [
+                -942.33,
+                1124.72
+              ]
+            ]
+          }
+        ],
+        "half_m": 57.15,
+        "source": {
+          "kind": "lidar_ept",
+          "ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"
+        },
+        "edge": "shoulder",
+        "_by": "tools/pad_boxes.py from lm_pads.plan dahlia_56th: node v780 nearest [-909.8, 1119.8], cuts 30 m of arc either side, box reach 42.1 m (half width 21.1 + curb return 15 + 6.0) [rule, invented pads], 1 street arm(s)"
+      },
+      {
+        "id": "sandcreek_quebec",
+        "node": 1942,
+        "cuts": [
+          1931,
+          1953
+        ],
+        "box": [
+          [
+            1767.21,
+            -510.12
+          ],
+          [
+            1785.82,
+            -522.76
+          ],
+          [
+            1825.27,
+            -484.07
+          ],
+          [
+            1812.57,
+            -475.18
+          ],
+          [
+            1814.51,
+            -469.13
+          ],
+          [
+            1801.69,
+            -460.42
+          ],
+          [
+            1795.12,
+            -453.28
+          ],
+          [
+            1771.75,
+            -458.77
+          ]
+        ],
+        "arms": [
+          {
+            "connector": "grid_primary_78",
+            "cut": [
+              [
+                1814.51,
+                -469.13
+              ],
+              [
+                1801.69,
+                -460.42
+              ]
+            ]
+          },
+          {
+            "connector": "grid_primary_84",
+            "cut": [
+              [
+                1812.57,
+                -475.18
+              ],
+              [
+                1825.27,
+                -484.07
+              ]
+            ]
+          }
+        ],
+        "half_m": 45.0,
+        "source": {
+          "kind": "lidar_ept",
+          "ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"
+        },
+        "edge": "shoulder",
+        "_by": "tools/pad_boxes.py from lm_pads.plan sandcreek_quebec: node v1942 nearest [1795.4, -488.9], cuts 30 m of arc either side, box reach 29.1 m (half width 17.1 + curb return 6 + 6.0) [rule, invented pads], 2 street arm(s)"
+      },
+      {
+        "id": "48th_colorado",
+        "node": 3205,
+        "cuts": [
+          3193,
+          3216
+        ],
+        "box": [
+          [
+            -1534.24,
+            -305.81
+          ],
+          [
+            -1530.77,
+            -315.81
+          ],
+          [
+            -1515.27,
+            -315.72
+          ],
+          [
+            -1515.01,
+            -321.24
+          ],
+          [
+            -1499.51,
+            -321.12
+          ],
+          [
+            -1494.49,
+            -315.36
+          ],
+          [
+            -1469.58,
+            -308.64
+          ],
+          [
+            -1499.67,
+            -261.39
+          ],
+          [
+            -1522.17,
+            -261.12
+          ],
+          [
+            -1534.3,
+            -289.81
+          ]
+        ],
+        "arms": [
+          {
+            "connector": "grid_primary_49",
+            "cut": [
+              [
+                -1515.27,
+                -315.72
+              ],
+              [
+                -1530.77,
+                -315.81
+              ]
+            ]
+          },
+          {
+            "connector": "grid_primary_52",
+            "cut": [
+              [
+                -1499.51,
+                -321.12
+              ],
+              [
+                -1515.01,
+                -321.24
+              ]
+            ]
+          },
+          {
+            "connector": "grid_tertiary_98",
+            "cut": [
+              [
+                -1534.24,
+                -305.81
+              ],
+              [
+                -1534.3,
+                -289.81
+              ]
+            ]
+          }
+        ],
+        "half_m": 45.0,
+        "source": {
+          "kind": "lidar_ept",
+          "ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"
+        },
+        "edge": "shoulder",
+        "_by": "tools/pad_boxes.py from lm_pads.plan 48th_colorado: node v3205 nearest [-1511.1, -297.4], cuts 30 m of arc either side, box reach 26.4 m (half width 16.4 + curb return 4 + 6.0) [rule, invented pads], 3 street arm(s)"
+      }
+    ]
   }
 }

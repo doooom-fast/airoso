@@ -66,10 +66,28 @@ def main():
         raise SystemExit(f"[strip-seam] FATAL: CURB has {len(curb.data.vertices)} verts, the assembler's layout says "
                          f"{lay['_curb_total']}")
     CV = curb.data.vertices
+    # THE MOUTHS (ledger 0079 round B, Sand Creek's grid streets): where a side street meets the lap, tools/gap_mouths_blend.py
+    # deletes the strip across the mouth (mouth_weld.gap_window, the same window here) and the street's own ribbon stands on
+    # the ground there: no lip to seam. Those rows are left out (not counted, not seamed). No mouth on the lap = every row
+    gapped = {1: set(), -1: set()}
+    mp = data / "mouths.json"
+    mouths = json.loads(mp.read_text(encoding="utf-8")).get("mouths", []) if mp.exists() else []
+    hpts = [tuple(p) for p in local["points_xyz_m"]]
+    for mo in mouths:
+        if mo.get("host") != "MAINLINE" or "host_seg" not in mo:
+            continue
+        gapped[int(mo["side"])].update(mw.gap_window(hpts, rows, closed, int(mo["host_seg"]), float(mo["host_t"]),
+                                                     float(mo["connector_width_m"]), float(mo.get("angle_deg") or 90.0)))
+    if any(gapped.values()):
+        print(f"[strip-seam] {sum(len(v) for v in gapped.values())} lap rows inside side-street mouths left unseamed "
+              f"({sum(1 for mo in mouths if mo.get('host') == 'MAINLINE')} mouths on the lap)")
     seams = []
     for side in (1, -1):
         pts = []
         for r in range(rows):
+            if r in gapped[side]:
+                pts.append(None)
+                continue
             o = CV[mw.curb_index(lay, "MAINLINE", r, side, 3)].co
             e = CV[mw.curb_index(lay, "MAINLINE", r, side, 0)].co
             dx, dy = e.x - o.x, e.y - o.y
@@ -118,7 +136,11 @@ def main():
     total = 0
     for pts in seams:
         verts = []
-        for x, y in pts:
+        for q in pts:
+            if q is None:                              # a lap row inside a side-street mouth (above): not seamed
+                verts.append(None)
+                continue
+            x, y = q
             total += 1
             f, z = locate(x, y)
             if f is None:
@@ -464,9 +486,10 @@ def seam_local(proj, terr, seams, closed):
     total = joined = miss = chunks = widened = refused = 0
     for pts in seams:
         n = len(pts)
-        total += n
+        total += sum(1 for q in pts if q is not None)
         gidx = [None] * n
         pairs = [(i, i + 1) for i in range(n - 1)] + ([(n - 1, 0)] if closed else [])
+        pairs = [(i, j) for i, j in pairs if pts[i] is not None and pts[j] is not None]   # a mouth's rows: not seamed
         for c0 in range(0, len(pairs), CHUNK_ROWS):
             cp = pairs[c0:c0 + CHUNK_ROWS]
             idxs = sorted({i for p in cp for i in p})

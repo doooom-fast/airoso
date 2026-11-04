@@ -86,3 +86,50 @@ def test_texture_gate_on_the_spawn_free_road_kn5_shape():
     import verify_textures as vt
     with tempfile.TemporaryDirectory() as t:
         assert vt.main([t]) == 2                          # no config: an input error, never a pass
+
+
+def test_round_b_keys_are_absent_from_lake_murray():
+    cfg = json.loads((LM / "track.config.json").read_text(encoding="utf-8"))
+    route = cfg.get("route") or {}
+    for k in ("connector_hosts", "seat_edge_m"):
+        assert k not in route
+    assert "lm_pads" not in cfg
+    src = (ROOT / "tools" / "seat_terrain_blend.py").read_text(encoding="utf-8")
+    assert "SIDEWALK_M = 3.1 " in src                     # the default the absent key keeps
+
+
+def test_hosts_match_names_pieces_and_prefixes():
+    import grid_meetings as gm
+    assert gm.host_match("grid_primary_51#0", ["grid_primary*"])
+    assert gm.host_match("grid_secondary_8", ["grid_secondary_8"])
+    assert not gm.host_match("grid_tertiary_4", ["grid_primary*", "grid_secondary*"])
+
+
+def test_crowns_take_lidar_heights_before_the_ratio():
+    from PIL import Image, ImageDraw
+    import plan_bespoke_vegetation as pv
+    with tempfile.TemporaryDirectory() as t:
+        t = Path(t)
+        im = Image.new("RGB", (200, 200), (160, 150, 130))
+        ImageDraw.Draw(im).ellipse((89, 89, 111, 111), fill=(70, 95, 60))
+        im.save(t / "img.png")
+        plan = {"place": "crowns", "image": "img.png", "bbox_lonlat": [-104.0, 39.0, -103.99892, 39.00083],
+                "track_box_lonlat": [-104.0, 39.0, -103.99892, 39.00083],
+                "rule": {"max_mean": 100, "min_mean": 30, "g_over_r": 1.15, "g_over_b": 1.2, "min_exg": 38},
+                "crowns": {"min_crown_m2": 7.0, "smooth_m": 1.2, "min_sep_m": 3.5, "edge_m_min": 0.8, "max_radius_m": 7.0,
+                           "wood_cell": 3, "single_cell": 1, "w_over_h": {"3": 0.85, "1": 0.8}},
+                "cols": 2, "rows": 2, "out": "trees.json", "lidar": {"file": "lidar_trees.json"}}
+        pv.crowns(t, plan)
+        p = json.loads((t / "trees.json").read_text())["points"][0]
+        (t / "lidar_trees.json").write_text(json.dumps({"trees": {f"{p[0]:.7f},{p[1]:.7f}": {"h_m": 13.7}}}))
+        pv.crowns(t, plan)
+        assert json.loads((t / "trees.json").read_text())["points"][0][3] == 13.7
+
+
+def test_pad_declarations_validate_and_sit_between_their_cuts():
+    import draft_pads as dp
+    cfg = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
+    pads = dp.declarations({"route": {"draft_pads": cfg["lm_pads"]["pads"]}})
+    assert [p["id"] for p in pads] == ["colorado_50th", "50th_ash", "50th_dahlia", "dahlia_56th", "sandcreek_quebec",
+                                       "48th_colorado"]
+    assert all(p["cuts"][1] <= 3216 and len(p["box"]) >= 4 for p in pads)

@@ -45,6 +45,9 @@ def geo(plan, w, h):
     return f
 
 
+LIDAR_TREE_H = (2.0, 35.0)   # [invented] a canopy "height" outside this is a roof, a wire or noise, not a tree top
+
+
 def crowns(track: Path, plan: dict) -> int:
     """plan "place": "crowns" (ledger 0079, Sand Creek on Lake Murray's engine; Kevin 2026-11-04: trees from measured
     positions, no invented scatter). ONE TREE PER CROWN READ OFF THE PHOTOGRAPH, no grid, no jitter, no thinning, no
@@ -129,6 +132,12 @@ def crowns(track: Path, plan: dict) -> int:
         segs = [((p[0] - W) * m_lon, (p[1] - S) * m_lat, (q[0] - W) * m_lon, (q[1] - S) * m_lat)
                 for wy in ways for p, q in zip(wy["lonlat"], wy["lonlat"][1:])]
         wood_segs = tuple(np.array(v) for v in zip(*segs)) if segs else None
+    # "lidar": {"file": <tools/lidar_buildings.py --trees output>} (ledger 0079 round B): each crown's canopy height measured
+    # off the lidar, keyed "lon,lat" as written here, taken before the [invented] width ratio; absent = the ratio for all.
+    # The crown positions are the photograph's either way, so the keys match the file the lidar step read
+    lidar_h, n_lidar = {}, 0
+    if plan.get("lidar") and (track / plan["lidar"]["file"]).exists():
+        lidar_h = json.loads((track / plan["lidar"]["file"]).read_text(encoding="utf-8"))["trees"]
     points, by_cell, drawn = [], {}, []
     for k, (tx, ty) in enumerate(tops):
         ix, iy = int(tx), int(ty)
@@ -155,6 +164,10 @@ def crowns(track: Path, plan: dict) -> int:
             t = np.clip(((qx - ax) * dx + (qy - ay) * dy) / np.maximum(dx * dx + dy * dy, 1e-9), 0.0, 1.0)
             if float(np.min(np.hypot(ax + t * dx - qx, ay + t * dy - qy))) <= float(c["wood_near"]["within_m"]):
                 cell = cells["wood"]
+        lt = lidar_h.get(f"{round(lon, 7):.7f},{round(lat, 7):.7f}")
+        if lt is not None and LIDAR_TREE_H[0] <= lt["h_m"] <= LIDAR_TREE_H[1]:
+            hh = lt["h_m"]                          # measured canopy over the ground (tools/lidar_buildings.py --trees)
+            n_lidar += 1
         points.append([round(lon, 7), round(lat, 7), cell, round(hh, 2), round(wd, 2)])
         drawn.append((tx, ty))
         by_cell[cell] = by_cell.get(cell, 0) + 1
@@ -164,7 +177,7 @@ def crowns(track: Path, plan: dict) -> int:
                               separators=(",", ":")), encoding="utf-8", newline="\n")
     share = float(mask[valid].mean()) if valid.any() else 0.0
     print(f"{track.name}: {len(points)} crowns read ({by_cell} by cell), {share:.1%} of the box is canopy by the rule, "
-          f"{m_per_px:.2f} m/px; crown width p10/p50/p90 "
+          f"{m_per_px:.2f} m/px; heights off the lidar {n_lidar} (the rest by the ratio); crown width p10/p50/p90 "
           f"{np.percentile([p[4] for p in points], [10, 50, 90]).round(1).tolist() if points else []} m -> {out.relative_to(track)}")
     if plan.get("overview"):
         crop = img.crop((x0, y0, x1, y1))

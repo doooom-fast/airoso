@@ -887,17 +887,31 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
       `SycamoreV2.bin` and `SycamoreV3.bin`, copied from wherever the live Sand Creek build takes them. They are
       personal-use and gitignored, so never commit them. Without them the log reads `[lm_intake] tree models: 0` and
       `[treefx] 0 trees`; that is not the build to install.
-   3. **The lidar roofs: AFTER step 6, as its own job** (recommended; the measured heights the Mac cannot read). From the worktree:
+   3. **The lidar job, run AFTER step 6 as its own job** (recommended). It reads what the Mac cannot: measured roof and tree
+      heights and the six pad outlines (ledger 0079 rounds A and B). From the worktree at the branch head (`git pull` first):
       ```bash
-      PYTHONUTF8=1 python tools/lidar_buildings.py tracks/sand-creek-lm
+      git lfs pull --include tracks/sand-creek/source/naip_2023_sc_z18.jpg
+      PYTHONUTF8=1 python tools/lidar_buildings.py tracks/sand-creek-lm --trees source/bespoke/trees.plan.json
       PYTHONUTF8=1 python tools/plan_buildings.py tracks/sand-creek-lm tracks/sand-creek-lm/source/bespoke/buildings.plan.json
+      PYTHONUTF8=1 python tools/plan_bespoke_vegetation.py tracks/sand-creek-lm tracks/sand-creek-lm/source/bespoke/trees.plan.json
+      for P in colorado_50th 50th_ash 50th_dahlia dahlia_56th sandcreek_quebec 48th_colorado; do
+        PYTHONUTF8=1 python tools/draft_pad_outline.py D:/k10-scratch/sand_creek_lm_a_reh $P; done
       ```
-      - The first command reads CO_DRCOG_2_2020's EPT, 1,769 nodes to depth 11, over the 2,321 footprints. Its log prints
-        `N of 2321 footprints measured`.
-      - The second needs `git lfs pull --include tracks/sand-creek/source/naip_2023_sc_z18.jpg`. Its log prints
-        `lidar roofs: N measured footprints` and `heights by source {'lidar': N, ...}`.
-      - Commit `source/bespoke/lidar_roofs.json` and the re-planned `buildings.lm.json`, push, and stop. The Mac rebuilds
-        that as 0.2.1 and sets the houses floor again. **Do not install the re-planned build as 0.2.0.**
+      - **Roofs and trees.** `lidar_buildings.py` reads CO_DRCOG_2_2020's EPT once (1,769 nodes to depth 11) and measures
+        both the 2,321 footprints and the 5,615 crowns. Expect `N of 2321 footprints measured` and
+        `trees: N of 5615 crowns measured; height p10 / p50 / p90 ...`.
+      - **Re-planning.** The two planners then print `heights by source {'lidar': N, ...}` (buildings) and
+        `heights off the lidar N` (trees).
+      - **Pad outlines.** `draft_pad_outline.py` runs on step 5's REHEARSAL workshop, because it reads the assembler's
+        smoothed `data/centerline.local.json`. The pads are declared in `lm_pads.pads` on that line's vertices
+        (`tools/pad_boxes.py`). Each run writes `source/pads/<id>.json`, `.png` and `.lidar.npz` into the workshop.
+      - **Commit and push:**
+        - `source/bespoke/lidar_roofs.json` and `lidar_trees.json`;
+        - the re-planned `buildings.lm.json` and `trees.lm.json`;
+        - each pad's `.json` and `.png`, copied into `tracks/sand-creek-lm/source/pads/` (never the `.npz`).
+
+        Then stop. The Mac rebuilds that as 0.2.1 and sets the houses floor again. **Do not install the re-planned build as
+        0.2.0.**
    4. **ENG** = a plain copy of `eng_repro` (`D:/k10-scratch/eng_sclm_a`). No texture has to be added to ENG: the blocks'
       textures come in through ship.json `sync_in.assets` into the workshop. Check their md5s in the workshop after the
       sync-in (`<ws>/assets/textures/`):

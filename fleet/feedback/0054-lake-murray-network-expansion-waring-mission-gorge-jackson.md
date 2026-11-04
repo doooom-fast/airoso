@@ -1891,6 +1891,45 @@ v4's −0.020 (unmoved −0.022 / −0.020); v534 +0.026 (v4 +0.031 there) and v
 to 0.20.1's (21,111). **Joins on the built road:** all five PASS; strip faces 0 / 524 on a curb (worst +0.011 J2,
 +0.017 J3, +0.021 J4).
 
+### Phase 2 — 0.20.2 run on step 2f (PC, 2026-11-04, d1dbe5b merged into `claude/lm-phase2-0202`): two rows left
+
+2e's rebuild was stopped for 2f (its first try had stopped at verify_race G on the workshop's stale signs.local.json:
+verify_race reads the file before the sign step rewrites it, so a re-used workshop carries the last run's plates — v4's
+29-sign file was restored first). Workshop as before; loop.v4.blend = lm_v4's (sha256 0656308e…).
+
+- **Step 4 again (curb only):** 592 found (0.00 mm); CURB 78, **TERRAIN 0**, YLINE 88; stations [200, 212]; 1.287 m;
+  deck "kept". plan_north from the line's config: PLANNED / exit 0; compose once (0.20.2).
+- **The chain** (`ship_2f.log`) reaches its GATES line: street drive_test exit 1, street audit 0, race drive_test 0,
+  **race audit exit 1**, race no_route 0, kn5_ground_check 0; NOT INSTALLED. The prep prints v4's numbers (terrain conform
+  80,161 / 177,586 / 49,992 / 125,428; split 1GRASS 817,802 -> 16 tiles). Signs 29 posts / 29 plates (4 mainline layout
+  plates, none @north). verify_fold_fans prints the north skips and passes.
+- **race audit exit 1 = audit_mesh north_cw / north_acw D 32 each** (I / K 0; the lap islands line printed). All 32 are
+  verts of the lap's own `1WALL_race_edge_lapnorth_L_navajo_2130_1` at J1: x −1980.7..−1962.3, z 589.6..593.4, ~14 m off
+  lap v2931, bases at the road ±0.07 m, tops +1.15 m — the lap's left edge wall where its band does not cover it.
+- **The road kn5 against 0.20.1 (`--list`): 6 meshes** — 1KERB_sidewalk_0 (the island, ≤ 3.9 m from the lap) and
+  1GRASS_1 / 2 / 4 / 13 / 15 (triangles in / out within 4.8-27.3 m of the lap: J1 / J5 on Navajo, J2, J4); no far tile, no
+  rock, no building. `_street`: YLINE_0, every moved corner in the island box. `_race` and both closures equivalent; the
+  three spawns byte-identical. Prepped tiles (proofs/prep_tile_dump + cmp vs 0.20.1's prepped blend): 28 / 28, the same
+  names, 0 faces differing inside the island box, 574 outside in 1GRASS_1 / 2 / 4 / 13 / 15 (sampled 6.6-26.8 m from the lap).
+- **Existing layouts against 0.20.1:** drive_test street / race_cw / race_acw, kn5_ground_check x3, verify_mouths / stubs /
+  pads, house gate (7,600 / 7,600 / 275) and **house_seat: every key equal** (the three houses back). audit and rib_check:
+  counts only (curb −5, grass +3, F side −2; terrain_vertices +3). **Built no_route race_cw / race_acw: pass, but
+  `local_deck_cells` 166 each, wall_cells +166, reached_m2 and allowed_m2 −2** — the cells at mainline v760-779 (6),
+  v1060-1089 (88), v1510-1519 (16), v2320-2329 (56).
+- **North:** built no_route PASS both (leak 0, 0 / 325 probes; local_deck_cells 4,830 / 4,831). drive_test north_cw: fail
+  false, barrier_missing 0, obstruction 0, severe 5 (s 6322, 8725-8726) — **v1478-1479 clear**; north_acw: fail false,
+  severe 12 (its s 15, 2419, 4348). kn5_ground_check pass.
+- **drive_test --line expansion fwd 0.48 (rev 0.16): the line, not the road.** drive_lines.expansion.json is regenerated
+  from the synced north data: v4 / 0.20.1 6e3db835…, both controls and 0.20.2 de1b21a2…. 0.20.2's road driven on v4's line
+  reads 0.32 — the same two steps as 0.20.1 (s 2 at J1, s 949 at J2). The third (s 4342, lat +3.46, 0.045 m, at J4 ~5.5 m
+  off lap v1476) exists only on the new line, where it crosses the J4 pad / Jackson ribbon seam (a smooth 3-5 % grade at
+  0.25 m). Not at Princess View. (0.20.1's committed drive_test.expansion.json was last written at b79dafe, v0.19.0.)
+- **Joins on the built road:** all five PASS; strip faces 0 / 524 on a curb (worst +0.011 / +0.017 / +0.021).
+- **Princess View:** the ring at v538 [−3.43, +1.75] (−3.43..−3.45 v535-v542); the moved faces' seat median −0.017 m (v4
+  −0.020; v534 +0.026 where v4 had +0.031, v535 +0.007); TreeFX trees.txt identical to 0.20.1's, the six plants inside
+  the ring (≥ 1.80 m from the moved face).
+- **kn5 MB:** road 102.4, _race 11.2, _race_north 8.8, closures race 5.3 / 5.3, north 4.5 / 4.5, _street 3.7, spawns ~0.
+
 ### Open questions for Kevin (Phase 2)
 
 - **Princess View's wide median: closed — measured, noise, fixed at the source; no gate change** (step 2c).

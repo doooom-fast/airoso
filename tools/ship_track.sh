@@ -862,7 +862,7 @@ case "$PROJ" in
   *) echo "SHIP_PROJ must be an absolute path, got '$PROJ'"; exit 2;;
 esac
 # compare paths the way Windows does: one spelling (cygpath -m: C:/...), forward slashes, any case
-norm() { local p; p=$(cygpath -m "$1" 2>/dev/null || printf '%s' "$1"); p="${p//\\//}"; p="${p%/}"; printf '%s' "${p,,}"; }
+norm() { local p; p=$(cygpath -m "$1" 2>/dev/null || printf '%s' "$1"); p="${p//\\//}"; p="${p%/}"; printf '%s' "$p" | tr '[:upper:]' '[:lower:]'; }   # tr, not ${p,,}: macOS /bin/bash is 3.2
 for root in "$AIROSO" "$AIROSO_MAIN"; do
   case "$(norm "$PROJ")" in
     "$(norm "$root")"|"$(norm "$root")"/*) echo "SHIP_PROJ '$PROJ' is inside airoso — use a scratch copy outside the repo"; exit 2;;

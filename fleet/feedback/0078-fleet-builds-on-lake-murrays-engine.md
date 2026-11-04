@@ -78,10 +78,15 @@ the decks, the bank, the paint (lane dividers), the draft lamps.
   rally stages → the SD freeway network.
 - **This week's airoso work**: lidar camber carries over (wired, three tracks); the OSM line carries over; a pad module on
   build_mesh's ribbon is superseded for ported tracks; Dragon Tail's lip fix keeps Dragon Tail valid until it ports.
-- **Lake Murray unchanged**: Lake Murray's own committed inputs through origin/main's assembler + weld and through this
-  branch's give identical meshes, all 46 (23 after the assembler, 23 after the weld, 32 mouths welded), on the final code;
-  no diff in its snapshot, ship.json, config or data; its spec lines md5 `71243207…` before and after;
-  `tests/tools/test_lm_engine_port.py`. The PC proves the whole chain with `tools/kn5_equiv.py` (step 7).
+- **Lake Murray unchanged (Mac)**, re-run after the merge of `claude/lm-v4-line` (e78fe44): Lake Murray's own committed
+  inputs through lm-v4-line's assembler + weld and through this branch's give identical meshes, all 46 (23 after the
+  assembler, 23 after the weld, 32 mouths welded, 1,028,084 vertices), and `tools/draft_equiv.py` on the two projects reads
+  SAME (366 data files, the one difference `terrain.tiers.json.gz`'s `_provenance.written_utc`; 23 objects by
+  `tools/blend_digest.py`). Lake Murray's `ship.json`, `track.config.json`, data and engine-july snapshot equal lm-v4-line's;
+  its spec lines through either branch's `ship_track_spec.py` md5 `372dfc9c…` (v4's chain; `71243207…` was the 0.19.x chain).
+  The Mac stops there: it has no `lm_v4` workshop, and macOS /bin/bash is 3.2 (the path guard's `${p,,}` is now `tr`, so the
+  guard and every chain test run here; the closure export's `${tok^^}` stays, its header is pinned by the ship_sd parity
+  test). The PC proves the rest with step 5 (a) and (b).
 
 ## The pilot (Mac): Sand Creek 0.35.0's line — every gate green
 
@@ -182,13 +187,48 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
    Expect the Mac's numbers above: every gate green; the edge report prints (no verdict).
 4. Install side by side (no force needed): drop `--no-install`. They land as `content/tracks/sand_creek_raceway_lm`,
    `high_plains_lm`, `exotics_racing_lvms_lm`, beside the live folders. AC closed (CM may stay open).
-5. Lake Murray unchanged: `python tools/snapshot_engine_july.py --check`; then from a copy of lm_v4,
-   `SHIP_PROJ=D:/k10-scratch/lm_v4_check AIROSO=D:/k10-worktrees/fleet-lm-engine ENG=D:/k10-scratch/eng_repro bash tools/ship_track.sh san-diego-lake-murray --no-install`
-   (from the draft, so the changed assembler and weld run) and, for every kn5 in `build/` (road, `_race`, `_street`, each
-   `_closure_*`, each spawn), against v4's: `python tools/kn5_equiv.py <v4 kn5> <rebuilt kn5> --tol 1e-6` (from
-   `claude/lm-v4-0.20.1`). Exit 0 = byte-identical or differing only in vertex tangents within 1e-6. Do **not** judge by
-   md5 (Blender's tangent pass is not bit-stable). Gate OBJs and gate JSONs are compared exactly. The kn5s are written
-   before the gates, so v4's known reds do not stop the comparison.
+5. Lake Murray unchanged, apples to apples (the PC's check, 2026-11-03; it replaces a redraft-and-compare-to-v4 check that
+   would have redrafted Lake Murray without its houses). Both branches carry v4's chain since the merge of
+   `claude/lm-v4-line` (e78fe44): Lake Murray's `ship.json` and `track.config.json` are lm-v4-line's byte for byte, the
+   chain keeps draft `bespoke`, gate `houses`, `red_repairs` and `sync_in.assets`. First `python tools/snapshot_engine_july.py --check`
+   and 0065's md5 check of the workshop-only inputs (this check runs in copies; nothing is pushed or overwritten by it).
+
+   **(a) The same draft on both branches.** Two fresh copies of `lm_v4`, one per branch, the same ENG for both:
+   ```bash
+   cp -r D:/k10-scratch/lm_v4 D:/k10-scratch/lm_eq_line; cp -r D:/k10-scratch/lm_v4 D:/k10-scratch/lm_eq_fleet
+   git -C D:/k10-worktrees/lm-v4-line lfs pull; git -C D:/k10-worktrees/fleet-lm-engine lfs pull
+   # from each worktree, its own copy:
+   SHIP_PROJ=D:/k10-scratch/lm_eq_line  AIROSO=D:/k10-worktrees/lm-v4-line      ENG=D:/k10-scratch/eng_repro bash tools/ship_track.sh san-diego-lake-murray --dry-run
+   SHIP_PROJ=D:/k10-scratch/lm_eq_fleet AIROSO=D:/k10-worktrees/fleet-lm-engine ENG=D:/k10-scratch/eng_repro bash tools/ship_track.sh san-diego-lake-murray --dry-run
+   ```
+   `--dry-run`, not `--draft-only`: on Lake Murray `--draft-only` stops before `build_loop_blend`, the first draft step that
+   needs Blender (only `deck_datum`, `median_envelope`, `terrain_sample` run), so it drafts no blend to compare. `--dry-run`
+   runs the whole draft (bespoke included), the author phase and prep + split, then stops: nothing exported, synced back or
+   installed. Then, from the fleet-lm-engine worktree, digest every blend each run left (`loop.blend`, the prepped
+   `blender/san_diego_lake_murray.blend`, each `blender/split/*.blend`) and compare:
+   ```bash
+   S=D:/k10-scratch
+   for P in lm_eq_line lm_eq_fleet; do for B in $S/$P/loop.blend $S/$P/blender/san_diego_lake_murray.blend $S/$P/blender/split/*.blend; do
+     blender --background "$B" --python tools/blend_digest.py -- --json "$S/$P.$(basename "$B" .blend).digest.json"; done; done
+   D=""; for f in $S/lm_eq_line.*.digest.json; do n=${f#$S/lm_eq_line.}; D="$D --digest $f $S/lm_eq_fleet.$n"; done
+   python tools/draft_equiv.py $S/lm_eq_line $S/lm_eq_fleet $D
+   ```
+   Pass = `[draft-equiv] => SAME`: no data file differs (a text file that differs only by the copy's own path is listed as
+   path-only and is not a difference) and no object in any blend differs in vertex / face count, position / face / UV md5,
+   world matrix or materials. **There should be none**; any line it prints is a change this branch made to Lake Murray.
+
+   **(b) v4's blend through this branch's chain, against 0.20.1.** A third copy, from the fleet-lm-engine worktree:
+   ```bash
+   cp -r D:/k10-scratch/lm_v4 D:/k10-scratch/lm_eq_skip
+   SHIP_PROJ=D:/k10-scratch/lm_eq_skip AIROSO=D:/k10-worktrees/fleet-lm-engine ENG=D:/k10-scratch/eng_repro bash tools/ship_track.sh san-diego-lake-murray --skip-blend --no-install
+   ```
+   then for every kn5 in `build/` (road, `_race`, `_street`, each `_closure_*`, each spawn), against **0.20.1's** kn5 of the
+   same name: `python tools/kn5_equiv.py <0.20.1 kn5> <lm_eq_skip kn5> --tol 1e-6` (the tool is on `claude/lm-v4-0.20.1`).
+   Exit 0 = byte-identical or differing only in vertex tangents within 1e-6 (Blender's tangent pass is not bit-stable; never
+   md5). The house gate must PASS (`data/house_gate.json`: roofs 7,600 / blocks 7,600 / colliders 275), and every other gate
+   JSON must equal 0.20.1's. Once `claude/lm-v4-0.20.1` is on origin it is merged here too, and (a) and (b) are re-run.
+
+   The Mac ran what it can: "Lake Murray unchanged (Mac)" under The plan.
 
 ## Owed
 

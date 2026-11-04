@@ -1957,6 +1957,20 @@ untouched). Forced past the inherited street drops 96 alone, on Kevin's word.
 - 0.20.1 parked in `D:/k10-track-archive/2026-11-04_113801/san_diego_lake_murray_v4`.
 - The workshop that builds 0.20.2 is the scratch `D:/k10-scratch/lm_phase2/project` (the reshaped loop.blend, the corrected
   data); lm_v4 still holds v4's own. The config change to the line is the coordinator's step.
+- **The blend that built 0.20.2, committed** (`tracks/san-diego-lake-murray/loop.blend`, LFS): the workshop's loop.blend as
+  2f's chain left it (step 4's curb-only reshape of v4's blend, then the race step's furniture, mainline and north, saved
+  before the prep read it). Old (v4's): md5 3d840db1ab7eada45ecd6b24d9381f5c, sha256 0656308e…, 176,916,960 B. New: md5
+  ef4d0ca3298d23d02c604b1482ec3609, sha256 3f13b887446e6fe9…, 189,063,384 B. The house gate on its build: roofs 7,600 /
+  blocks 7,600 / colliders 275, the floors, unchanged. lm_v4 is not written.
+- **The workshop against this branch** (track.config.json, ship.json, data/, source/): track.config.json and every sync_in
+  input are identical (the three corrected data files included); ship.json is the repo's (the chain reads it there). What
+  differs is the run's records — 16 sync_out files (audit, barrier_bands, drive_lines / drive_test.expansion, drive_test,
+  house_gate, house_seat_check, lights_ini_check, race_authored, race_kn5, race_verify, rib_check, rock_faces, signs.local,
+  signs_measured, verify_fold_fans) and the unlisted per-layout reports (ai_verify, audit.race_*, no_route.*, closure_*.kn5,
+  street_kn5, terrain_thin, signs_plots, the north layouts' files, race_plots, the gate OBJs) — plus the 16
+  source/trees/*.bin (the personal-use TreeFX models, never committed) and four of v4's own drafting files identical to
+  lm_v4's (buildings.traced.json, connectors.local.json.pre-divide / .pre-route, stubs.json), which no --skip-blend step
+  reads. No other input was built from, so the blend is the one file added.
 
 ### Open questions for Kevin (Phase 2)
 

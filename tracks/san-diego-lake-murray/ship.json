@@ -1,5 +1,5 @@
 {
-  "_doc": "San Diego's chain as data for tools/ship_track.sh (V3-PLAN P1, Lariat plan). tools/ship_sd.sh stays the chain of record (not a shim); this file reproduces its step sequence, re-synced 2026-10-13 to ship_sd.sh after ledger 0046 and v0.18.0 (0052: the race gate OBJ extracted before the AI writer + verify_ai_line; 0050: verify_fold_fans after the race gates; 0046 integration fix round: deck_datum first, ground_release after the triangulation, the I-8 pavement inside prep_prep before the split; 2026-10-26 ledger 0054 P4: the rock faces inside prep_prep after the I-8 pavement, the building caches and the sandstone tile synced in) (tiered terrain: terrain_sample / terrain_resample around the trim, triangulate_terrain after the seat, slim_far_terrain retired, the road gate OBJ before the track folder, the 3DEP cache + I-8 corridor synced in and out); tests/tools/test_ship_track_chain.py diffs the step headers. The assembler runs from tracks/san-diego-lake-murray/scripts-v021 through V021_SHIM, as in ship_sd.sh. engine-july runs the prep / exporter / spawn builder for this track only (tools/ship_track.sh decides that from the track name; ENG=<dir> points it at a scratch copy, as in ship_sd.sh; no key here can).",
+  "_doc": "San Diego's chain as data for tools/ship_track.sh (V3-PLAN P1, Lariat plan). tools/ship_sd.sh stays the chain of record (not a shim); this file reproduces its step sequence, re-synced 2026-10-13 to ship_sd.sh after ledger 0046 and v0.18.0 (0052: the race gate OBJ extracted before the AI writer + verify_ai_line; 0050: verify_fold_fans after the race gates; 0046 integration fix round: deck_datum first, ground_release after the triangulation, the I-8 pavement inside prep_prep before the split; 2026-10-26 ledger 0054 P4: the rock faces inside prep_prep after the I-8 pavement, the building caches and the sandstone tile synced in) (tiered terrain: terrain_sample / terrain_resample around the trim, triangulate_terrain after the seat, slim_far_terrain retired, the road gate OBJ before the track folder, the 3DEP cache + I-8 corridor synced in and out); tests/tools/test_ship_track_chain.py diffs the step headers. The assembler runs from tracks/san-diego-lake-murray/scripts-v021 through V021_SHIM, as in ship_sd.sh. engine-july runs the prep / exporter / spawn builder for this track only (tools/ship_track.sh decides that from the track name; ENG=<dir> points it at a scratch copy, as in ship_sd.sh; no key here can). 2026-11-03, ledger 0065 (v4 is Lake Murray's line): this file is v4's chain of record (tools/ship_sd.sh stays the 0.19.x chain: v4 = its steps + the terrain thin, the red repairs, the street-only kn5, the bespoke blocks and the house gate); draft 'bespoke' stands the buildings pipeline's blocks where ship_sd.sh's SD_BESPOKE=1 rehearsal did, gate 'houses' holds the built road kn5 to v4's 7,600 blocks, sync_in.assets brings the house textures engine-july lacks, and every prep input that lived only in the workshop (red_repairs.plan.json, terrain.tiers.json.gz, terrain.refine.json.gz, bridges.cache.json) and the draft's caches now cross both ways.",
   "track": "san-diego-lake-murray",
   "workshop": "D:/k10-scratch",
   "workshop_project": "lm_v4",
@@ -29,6 +29,7 @@
       "ground_release",
       "median",
       "stubs_author",
+      "bespoke",
       "gap_mouths",
       "stubs_tidy",
       "bridges",
@@ -67,6 +68,7 @@
       "verify_pads",
       "rib_check",
       "house_seat",
+      "houses",
       "drive_test_street",
       "drive_test_lines",
       "audit_street",
@@ -101,11 +103,34 @@
       "textures/sandstone_cut_normal.jpg",
       "source/expansion/pipeline__osm_lamps_signals.json",
       "source/expansion/aerial__veg_bins.json",
-      "source/expansion/p3-proofs/measure_p3.json"
+      "source/expansion/p3-proofs/measure_p3.json",
+      "data/red_repairs.plan.json",
+      "data/terrain.tiers.json.gz",
+      "data/terrain.refine.json.gz",
+      "data/bridges.cache.json",
+      "data/network.cache.json",
+      "data/road_lanes.cache.json",
+      "data/osm.expansion.json",
+      "data/expansion.north.samples.json.gz",
+      "source/bespoke/buildings.json"
     ],
     "globs": [
       "source/trees/*.bin"
-    ]
+    ],
+    "assets": [
+      "assets/textures/stucco_wall_diffuse.jpg",
+      "assets/textures/stucco_wall_normal.jpg",
+      "assets/textures/tiltup_wall_diffuse.jpg",
+      "assets/textures/tiltup_wall_normal.jpg",
+      "assets/textures/metal_wall_diffuse.jpg",
+      "assets/textures/metal_wall_normal.jpg",
+      "assets/textures/shingle_roof_diffuse.jpg",
+      "assets/textures/roof_white_diffuse.jpg",
+      "assets/textures/roof_tan_diffuse.jpg",
+      "assets/textures/roof_dark_diffuse.jpg"
+    ],
+    "_assets_doc": "ledger 0065: the house textures the pbr rows for the blocks name, which engine-july's assets/textures lacks; track.config.json texture_overrides points the same rows at these copies (same bytes as airoso's tracked files)",
+    "_optional_doc": "2026-11-03 (ledger 0065, the PC's coverage trace of v4): red_repairs.plan.json (tools/red_repairs.py, read by the prep's red repairs), terrain.tiers.json.gz (the thin step, rib_check, the assembler), terrain.refine.json.gz (the prep's RefineField, ground_release_blend) and bridges.cache.json (the prep's bridge spans, author_bridges, bridge_level) lived only in the workshop; network.cache.json, road_lanes.cache.json, osm.expansion.json, expansion.north.samples.json.gz are the draft's caches; source/bespoke/buildings.json is the planned blocks"
   },
   "sync_out": {
     "required": [
@@ -173,7 +198,18 @@
       "data/no_route.{race}.planned.json",
       "data/audit.{race}.json",
       "data/closure_{race}.kn5.json",
-      "data/ai_verify.{race}.json"
+      "data/ai_verify.{race}.json",
+      "data/red_repairs.plan.json",
+      "data/terrain.tiers.json.gz",
+      "data/terrain.refine.json.gz",
+      "data/bridges.cache.json",
+      "data/network.cache.json",
+      "data/road_lanes.cache.json",
+      "data/osm.expansion.json",
+      "data/expansion.north.samples.json.gz",
+      "data/bridge.spans.auto.json",
+      "data/bespoke.report.json",
+      "data/house_gate.json"
     ],
     "map": [
       [

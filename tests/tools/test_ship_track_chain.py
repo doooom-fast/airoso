@@ -8,9 +8,10 @@ and on guard-only runs (bash exits before the first file operation; nothing is b
 - the scratch rails (SHIP_PROJ / SHIP_SPEC never sync back or install; nothing inside airoso), the install
   folder from config, the install refusing while AC / Content Manager runs, the old build parked in the archive;
 - engine-july only when the slug is san-diego-lake-murray;
-- San Diego parity: the step headers tracks/san-diego-lake-murray/ship.json selects are tools/ship_sd.sh's, in
-  its order (re-synced 2026-10-12 to ship_sd.sh after ledger 0046's tiered terrain; it must be re-synced whenever
-  ship_sd.sh changes);
+- San Diego parity: tracks/san-diego-lake-murray/ship.json is Lake Murray v4's chain of record since 2026-11-03
+  (ledger 0065, Kevin: "Lake Murray v4 should be what we build the rest from"); tools/ship_sd.sh stays the 0.19.x
+  chain. Every ship_sd.sh step header is still in v4's, in its order, and v4's own steps are exactly the named
+  extras (V4_EXTRAS) — anything else in either chain fails until this list follows;
 - the Lariat: the paint centreline wired into the draft order; its dry run stops cleanly at "no blend yet";
 - the four chain specs (ledger 0060) and the San Diego freeway network (ONE-CHAIN §4 row 8): the network's draft
   steps (net, classify, network_elev, network_mesh) are data steps on "$PROJ", then the underlay.
@@ -472,6 +473,32 @@ def test_engine_rule_and_no_blend_yet_on_guard_runs():
 
 
 # --- San Diego parity ------------------------------------------------------------------------------------------
+# Lake Murray v4's steps that tools/ship_sd.sh (the 0.19.x chain) does not run as steps, each with its ledger
+V4_EXTRAS = {
+    ("prep_prep", "ship: thin the terrain, every vertex where the chain put it (tools/thin_terrain_blend.py; self-checked)"):
+        "ledger 0054 P3 repair round 3: an echo in ship_sd.sh, a step here",
+    ("prep_prep", "ship: red repairs (tools/red_repairs_blend.py: the named kerb faces, the named ground slivers; self-checked)"):
+        "ledger 0065: v4's named repairs of the standing reds",
+    ("draft_bespoke", "author: the buildings pipeline's blocks in place of the assembler's boxes (tools/author_bespoke_blend.py: scenery.bespoke.blocks, self-checked)"):
+        "ledger 0065: v4's 7,600 blocks (ship_sd.sh stands them only under SD_BESPOKE=1, an echo there)",
+    ("ship_export_street", "ship: export the STREET-ONLY kn5 (the centre line, a chicane's island; the non-race layouts alone)"):
+        "ledger 0063: the street-only kn5",
+    ("gate_houses", "gate: the houses on the built road kn5 (tools/house_gate.py: ROOFTOP / BUILDING + FARBLOCK / 1WALL_TILTUP shells against scenery.bespoke.house_gate — hard)"):
+        "ledger 0065: Kevin, \"don't lose those\"",
+}
+
+
+def _parity(sd, mine):
+    """sd's headers matched in order inside mine [(function, header)]; returns (n matched, the unmatched (fn, header)s)"""
+    i, extras = 0, []
+    for fn, h in mine:
+        if i < len(sd) and h == sd[i]:
+            i += 1
+        else:
+            extras.append((fn, h))
+    return i, extras
+
+
 def _sd_headers(text, start, end):
     seg = text[start:end]
     return re.findall(r'^\s*step "([^"]*)"', seg, re.M)
@@ -479,18 +506,20 @@ def _sd_headers(text, start, end):
 
 def test_sd_spec_reproduces_ship_sd_step_sequence_before_the_dry_stop():
     """tools/ship_sd.sh (pinned on its text by test_ship_sd_chain.py): its step headers up to the --dry-run stop,
-    every branch, in text order == the headers of the steps tracks/san-diego-lake-murray/ship.json selects, in its
-    order. Re-synced 2026-10-12 after ledger 0046 (terrain_sample / terrain_resample, triangulate_terrain,
-    slim_far_terrain retired, the ENG override); RE-SYNC whenever ship_sd.sh changes — this test fails until
-    ship.json and the vocabulary follow."""
+    every branch, in text order, all inside the headers of the steps tracks/san-diego-lake-murray/ship.json selects,
+    in the same order; v4's other headers are exactly V4_EXTRAS. Re-synced 2026-10-12 after ledger 0046; 2026-11-03
+    v4 became the line (ledger 0065). RE-SYNC whenever either chain changes."""
     sd = _sd_headers(SD_TEXT, 0, _first("DRY RUN: stopping before the kn5 exports", SD_TEXT))
     s = spec_mod.load(SD_SPEC, "san-diego-lake-murray")
     fns = _functions()
-    mine = ["sync inputs airoso -> workshop ($PROJ)"]
+    mine = [("sync", "sync inputs airoso -> workshop ($PROJ)")]
     for ph in ("draft", "author", "prep"):
         for n in s["steps"][ph]:
-            mine += _headers(fns[f"{ph}_{n}"])
-    assert mine == sd, "\n".join(f"{a!r:110} | {b!r}" for a, b in zip(mine + [""] * 40, sd + [""] * 40) if a != b)
+            mine += [(f"{ph}_{n}", h) for h in _headers(fns[f"{ph}_{n}"])]
+    n, extras = _parity(sd, mine)
+    assert n == len(sd), f"ship_sd.sh's header {sd[n]!r} is not in v4's chain in order"
+    known = {k for k in V4_EXTRAS if k[0].split("_", 1)[0] in ("draft", "author", "prep")}
+    assert set(extras) == known and len(extras) == len(known), sorted(set(extras) ^ known)
 
 
 def test_sd_spec_reproduces_ship_sd_step_sequence_after_the_dry_stop():
@@ -506,18 +535,22 @@ def test_sd_spec_reproduces_ship_sd_step_sequence_after_the_dry_stop():
             hs = _headers(fns[f"{ph}_{n}"])
             if n == "audit_street":
                 hs = [hs[0].replace("$AUDIT_NOTE", s["audit_note"])]
-            mine += hs
+            mine += [(f"{ph}_{n}", h) for h in hs]
     sd = [h.replace("models_<id>.ini x3", "models_<id>.ini per layout") for h in sd]
-    assert mine == sd, "\n".join(f"{x!r:110} | {y!r}" for x, y in zip(mine + [""] * 40, sd + [""] * 40) if x != y)
+    n, extras = _parity(sd, mine)
+    assert n == len(sd), f"ship_sd.sh's header {sd[n]!r} is not in v4's chain in order"
+    known = {k for k in V4_EXTRAS if k[0].split("_", 1)[0] in ("ship", "gate")}
+    assert set(extras) == known and len(extras) == len(known), sorted(set(extras) ^ known)
 
 
 def test_sd_spec_carries_ship_sds_sync_lists_and_names():
     s = spec_mod.load(SD_SPEC, "san-diego-lake-murray")
-    assert s["workshop"] == "C:/Users/Owner/Documents/GitHub/k10-sd-v021" and s["workshop_project"] == "project"
+    # v4's workshop and name (ledger 0065); ship_sd.sh keeps the 0.19.x workshop and the V3 name
+    assert s["workshop"] == "D:/k10-scratch" and s["workshop_project"] == "lm_v4"
     assert 'WS="C:/Users/Owner/Documents/GitHub/k10-sd-v021"' in SD_TEXT and 'WS_PROJ="$WS/project"' in SD_TEXT
     assert s["require_race_layout"] is True
     assert s["street_ai_july"] == "D:/k10-track-archive/2026-10-11/san_diego_lake_murray/ai"
-    assert 'K10 - San Diego (V3) \\u2014 ' in SD_TEXT and s["ui_name_prefix"] == "K10 - San Diego (V3)"
+    assert 'K10 - San Diego (V3) \\u2014 ' in SD_TEXT and s["ui_name_prefix"].startswith("K10 - San Diego")
     sync = SD_TEXT[_first('step "sync outputs workshop -> airoso"\n', SD_TEXT):_first("never synced.\nfi\n", SD_TEXT)]
     for f in ("centerline.local.json", "centerline.raw.local.json", "median_bands.json", "dummies.json",
               "finished_centerline.json", "gate_centerline.json", "lights.local.json", "connectors.local.json",

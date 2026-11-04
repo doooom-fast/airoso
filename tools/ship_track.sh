@@ -336,6 +336,14 @@ draft_stubs_author() {
     (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_stubs_blend.py" -- "$PROJ" --stage author 2>&1 | grep "^\[stubs\]\|Error\|Traceback" )
   fi
 }
+draft_bespoke() {
+  # ledger 0065 (Lake Murray v4 is the line, Kevin 2026-11-03: "don't lose those"): the buildings pipeline's planned blocks
+  # (track.config.json scenery.bespoke.blocks -> source/bespoke/buildings.json) in place of the assembler's HOUSE / BUILDING
+  # boxes, at the point tools/ship_sd.sh's SD_BESPOKE=1 rehearsal stood them (after the stubs, before the mouths are gapped),
+  # so a full redraft stands v4's 7,600 blocks again; gate_houses counts them on the built road kn5. Exit 1 = loop.blend not saved
+  step "author: the buildings pipeline's blocks in place of the assembler's boxes (tools/author_bespoke_blend.py: scenery.bespoke.blocks, self-checked)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_bespoke_blend.py" -- "$PROJ" 2>&1 | grep "^\[bespoke\]\|Error\|Traceback" )
+}
 draft_stubs_tidy() {
   if [ -f "$PROJ/data/stubs.plan.json" ]; then
     (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_stubs_blend.py" -- "$PROJ" --stage tidy 2>&1 | grep "^\[stubs\]\|Error\|Traceback" )
@@ -597,6 +605,14 @@ gate_house_seat() {
   step "gate: houses on the built ground (tools/house_seat_check.py: floating, sunken or buried buildings — hard)"
   (cd "$AIROSO" && python tools/house_seat_check.py "$PROJ" --json "$PROJ/data/house_seat_check.json")
 }
+gate_houses() {
+  # ledger 0065 (Kevin 2026-11-03: "Lake Murray v4 had many more houses I[n] it this time, don't lose those"): the blocks
+  # counted as connected shells on the BUILT road kn5 against the floors in track.config.json scenery.bespoke.house_gate
+  # (v4's own counts); hard — exit 1 stops the chain, --force-install does not cover it
+  step "gate: the houses on the built road kn5 (tools/house_gate.py: ROOFTOP / BUILDING + FARBLOCK / 1WALL_TILTUP shells against scenery.bespoke.house_gate — hard)"
+  rm -f "$PROJ/data/house_gate.json"
+  (cd "$AIROSO" && python tools/house_gate.py "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --json "$PROJ/data/house_gate.json")
+}
 gate_drive_test_street() {
   local lid rc
   step "gate: drive_test, street layout (hard)"
@@ -741,7 +757,7 @@ is_data_step() {
 SPEC_LINES=$(cd "$AIROSO" && python tools/ship_track_spec.py "$SPEC" "$TRACK") || { echo "ship.json refused (above): $SPEC"; exit 2; }
 WS=""; WS_SUB=""; REQUIRE_RACE=0; UI_PREFIX=""; AUDIT_NOTE=""; JULY_AI=""
 DRAFT=(); AUTHOR=(); PREP=(); SHIP=(); GATE=()
-IN_REQ=(); IN_OPT=(); IN_GLOB=(); IN_DIR=()
+IN_REQ=(); IN_OPT=(); IN_GLOB=(); IN_DIR=(); IN_ASSET=()
 OUT_REQ=(); OUT_FILE=(); OUT_DIR=(); OUT_RM=(); OUT_MAP_FROM=(); OUT_MAP_TO=()
 while IFS=$'\t' read -r k v w; do
   v="${v%$'\r'}"; w="${w%$'\r'}"
@@ -761,6 +777,7 @@ while IFS=$'\t' read -r k v w; do
     in.optional) IN_OPT+=("$v");;
     in.globs) IN_GLOB+=("$v");;
     in.dirs) IN_DIR+=("$v");;
+    in.assets) IN_ASSET+=("$v");;
     out.required) OUT_REQ+=("$v");;
     out.files) OUT_FILE+=("$v");;
     out.dirs) OUT_DIR+=("$v");;
@@ -876,6 +893,12 @@ for g in ${IN_GLOB[@]+"${IN_GLOB[@]}"}; do      # e.g. the TreeFX models (gitign
 done
 for d in ${IN_DIR[@]+"${IN_DIR[@]}"}; do
   [ -d "$SRC/$d" ] && { mkdir -p "$PROJ/$d"; cp -r "$SRC/$d/." "$PROJ/$d/"; }
+done
+# airoso's own assets a track names (ship.json sync_in.assets, under assets/): the same relative path in the project, every
+# one required — Lake Murray's house textures, which its engine does not carry (ledger 0065; track.config.json texture_overrides)
+for f in ${IN_ASSET[@]+"${IN_ASSET[@]}"}; do
+  [ -f "$AIROSO/$f" ] || { echo "ship.json sync_in.assets names $f but airoso has no $AIROSO/$f"; exit 1; }
+  mkdir -p "$(dirname "$PROJ/$f")"; cp "$AIROSO/$f" "$PROJ/$f"
 done
 # the declared layouts drive every per-layout step below (never a hand-typed list)
 LAYOUT_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts']))" "$PROJ/track.config.json")

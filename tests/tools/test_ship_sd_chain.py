@@ -344,7 +344,9 @@ def test_install_folder_is_one_name_in_the_config_and_the_chain():
     cfg = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
     slug = cfg["slug"]
     assert 'SLUG="%s"' % slug in TEXT
-    assert cfg["install_folder"] == f"{slug}_v3"
+    # 2026-11-03 (ledger 0065): v4 is Lake Murray's line and installs as <slug>_v4 through tools/ship_track.sh, which
+    # reads install_folder from the config; this script (the 0.19.x chain) still installs the V3 folder Kevin keeps 0.19.4 in
+    assert cfg["install_folder"] == f"{slug}_v4"
     assert 'cp -r "$B" "$AC/${SLUG}_v3"' in TEXT
 
 

@@ -144,6 +144,27 @@ def _bvh(name, keep=None):
     return tree
 
 
+def _bvh_union(names):
+    """one BVH over several objects' faces in world space (a lap's deck: ROAD plus the junction pads, mouth fills and
+    aprons that the drafts author as their own 1ROAD_* objects)"""
+    bm = bmesh.new()
+    for name in names:
+        ob = bpy.data.objects.get(name)
+        if ob is None or ob.type != "MESH":
+            continue
+        part = bmesh.new()
+        part.from_mesh(ob.data)
+        part.transform(ob.matrix_world)
+        me = bpy.data.meshes.new("_deck_tmp")
+        part.to_mesh(me)
+        part.free()
+        bm.from_mesh(me)
+        bpy.data.meshes.remove(me)
+    tree = BVHTree.FromBMesh(bm)
+    bm.free()
+    return tree
+
+
 def _cast(bvh, x, z_north, y0, up):
     loc, _n, _i, _d = bvh.ray_cast(Vector((x, z_north, y0)), Vector((0.0, 0.0, 1.0 if up else -1.0)), RAY_LEN_M)
     return None if loc is None else float(loc.z)
@@ -400,7 +421,7 @@ def _plan_group(proj, cfg, lap, a, race_cfg, height):
             "plans": plans}
 
 
-def _author_group(G, data, height, removed, road_main, road_any, curb_bvh):
+def _author_group(G, data, height, removed, road_main, road_any, curb_bvh, lap_any=None):
     """emit one group's plans into the open blend; returns (report-in-progress, seaters, failed_runs, hard, objects,
     totals, per_layout, ...) as a dict — the mainline group's records are exactly the pre-lap author's"""
     lap, mode, pts, widths, bands = G["lap"], G["mode"], G["pts"], G["widths"], G["bands"]
@@ -409,10 +430,14 @@ def _author_group(G, data, height, removed, road_main, road_any, curb_bvh):
     col_close = {lid: _collection(rf.closure_collection(tokens[lid])) for lid in race_ids}
     # the mainline seats on the MAINLINE rows of ROAD (unchanged); a lap runs on connectors too, which the ribbon
     # merges into ROAD after the mainline rows (build_loop_blend.py) — it seats on every ROAD face
-    seat_bvh = road_main if lap is None else road_any
-    strips = Seater(seat_bvh, road_any, rf.BURY_M)
+    # (ledger 0054 Phase 2, 2026-11-04, the PC's 0.20.2 run): a lap's junction boxes stand on the pads' own 1ROAD_pad_*
+    # decks (and J1 / J5 on the mouth fills), never on ROAD: 785 of 12,397 north rings found no deck and were
+    # interpolated. A lap seats on ROAD plus every other 1ROAD_* deck (lap_any); the mainline group is untouched.
+    any_bvh = road_any if lap is None or lap_any is None else lap_any
+    seat_bvh = road_main if lap is None else any_bvh
+    strips = Seater(seat_bvh, any_bvh, rf.BURY_M)
     walk = Seater(curb_bvh, curb_bvh, rf.BURY_M) if mode == "walk" else strips
-    kerbs = Seater(seat_bvh, road_any, KERB_SINK_M)
+    kerbs = Seater(seat_bvh, any_bvh, KERB_SINK_M)
     objects, centres, frames = [], {}, {}
     tot = {"edge_len": 0.0, "edge_cl": 0.0, "edge_rings": 0, "kerb_len": 0.0, "kerb_stations": 0, "positions": 0,
            "triangles": 0, "render_verts_est": 0, "densified": 0, "spacing_max": 0.0, "chord_max": 0.0}
@@ -515,7 +540,7 @@ def _author_group(G, data, height, removed, road_main, road_any, curb_bvh):
                                                                rf.KERB_W / 2.0)),
                    "seated": {"hit": kerbs.hit - h0, "near": kerbs.near - n0, "interpolated": kerbs.interp - i0},
                    "seat_gap_max_m": 0.0,
-                   "under_road": _kerb_under_road(road_any, plan["stations"], sgn),
+                   "under_road": _kerb_under_road(any_bvh, plan["stations"], sgn),
                    "wear": {"m_by_level": wear["m_by_level"], "seams": wear["seams"],
                             "heavy_spans_m_from_apex": wear["heavy_spans_m_from_apex"],
                             "joints": len(wear["joints"]), "real_length_m": round(wear["arcs_m"][-1], 2),
@@ -802,8 +827,14 @@ def main():
     road_any = _bvh(road_name)
     curb_name = "CURB" if bpy.data.objects.get("CURB") else "1KERB_sidewalk"
     curb_bvh = _bvh(curb_name) if any(G["mode"] == "walk" for G in groups) else None
+    lap_any = None
+    if any(G["lap"] is not None for G in groups):
+        decks = [road_name] + sorted(o.name for o in bpy.data.objects
+                                     if o.type == "MESH" and o.name.startswith("1ROAD_") and o.name != road_name)
+        lap_any = _bvh_union(decks)
+        print(f"[race] lap deck: {', '.join(decks)}")
     removed = _remove_existing()
-    results = [_author_group(G, data, height, removed, road_main, road_any, curb_bvh) for G in groups]
+    results = [_author_group(G, data, height, removed, road_main, road_any, curb_bvh, lap_any) for G in groups]
 
     if out_blend != blend:
         bpy.ops.wm.save_as_mainfile(filepath=str(out_blend))

@@ -505,7 +505,8 @@ def _author_group(G, data, height, removed, road_main, road_any, curb_bvh, lap_a
                    "fold_skipped_run": plan.get("fold_skipped", 0),
                    "densified": plan.get("densified", 0), "spacing_max_m": round(sp, 3), "chord_max_m": round(ch, 4),
                    "fold_spans": folds, "fold_corners": plan.get("fold_corners", []),
-                   "inside_out_spans": len(rf.inside_out_spans(plan["rings"], rf._strip_xz, rf.BARRIER_HALF_W))}
+                   # ledger 0054 Phase 2 step 2d: on the record verify_race I reads (0.01 m centres), not the unrounded plan
+                   "inside_out_spans": len(rf.recorded_inside_out(plan["rings"], rf._strip_xz, rf.BARRIER_HALF_W))}
             centres[name] = [[round(x, 2), round(r["y"], 2), round(z, 2)] for r in plan["rings"] for (x, z) in (xz(r),)]
             # the ring frames verify_race I rebuilds the profile columns from (tangent + lateral scale)
             frames[name] = [[round(r["tx"], 5), round(r["tz"], 5), round(r.get("ls", 1.0), 4)] for r in plan["rings"]]
@@ -536,8 +537,8 @@ def _author_group(G, data, height, removed, road_main, road_any, curb_bvh, lap_a
                    "stations": len(plan["stations"]), "length_m": round(klen, 1), "declared_length_m": plan["length_m"],
                    "clip": plan.get("clip"), "declared": bool(plan.get("declared")),
                    "fold_skipped": plan.get("fold_skipped", 0), "fold_corners": plan.get("fold_corners", []),
-                   "inside_out_spans": len(rf.inside_out_spans(plan["stations"], lambda s_, g=sgn: rf.kerb_mid_xz(s_, g),
-                                                               rf.KERB_W / 2.0)),
+                   "inside_out_spans": len(rf.recorded_inside_out(plan["stations"], lambda s_, g=sgn: rf.kerb_mid_xz(s_, g),
+                                                                  rf.KERB_W / 2.0)),
                    "seated": {"hit": kerbs.hit - h0, "near": kerbs.near - n0, "interpolated": kerbs.interp - i0},
                    "seat_gap_max_m": 0.0,
                    "under_road": _kerb_under_road(any_bvh, plan["stations"], sgn),

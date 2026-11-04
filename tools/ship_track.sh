@@ -37,13 +37,18 @@
 #
 # THE ENGINE. The prep / exporter / spawn builder run from engine-july (SD's build of record, pinned by
 # tracks/san-diego-lake-murray/engine-july-snapshot) ONLY when the track is san-diego-lake-murray; every other
-# track runs airoso's own scripts/ac/. ship.json cannot name an engine (no such key). As in tools/ship_sd.sh, ENG=<dir>
-# points San Diego's engine at a scratch COPY of engine-july (a change rehearsed before it is mirrored, recorded in
-# the snapshot's PENDING-MIRROR.md5); it means nothing for any other track.
+# track runs airoso's own scripts/ac/ - unless its ship.json declares "engine": "lm-v4" (ledger 0078, Kevin 2026-11-03: "Lake
+# Murray v4 should be what we build the rest from"), which builds it exactly as San Diego is built: engine-july for the
+# prep / exporter / spawn builder and San Diego's loop assembler (below). As in tools/ship_sd.sh, ENG=<dir> points that
+# engine at a scratch COPY of engine-july (a change rehearsed before it is mirrored, recorded in the snapshot's
+# PENDING-MIRROR.md5), or at the snapshot itself plus assets/textures (tracks/san-diego-lake-murray/engine-july-snapshot,
+# the canonical v4 engine); it means nothing for a track on airoso's engine.
 #
 # SAN DIEGO'S ASSEMBLER runs from airoso's tracks/<track>/scripts-v021 (the tooling of record), registered as the
 # `scripts` package inside Blender (V021_SHIM, as tools/ship_sd.sh) so its `from scripts.geometry import ...` can
-# resolve neither to airoso's engine nor to anything beside the project.
+# resolve neither to airoso's engine nor to anything beside the project. A track with "engine": "lm-v4" and no
+# scripts-v021 of its own runs San Diego's (tracks/san-diego-lake-murray/scripts-v021), never a per-track copy: the
+# assembler must stay at <airoso>/tracks/<x>/scripts-v021/blender/ (it loads airoso's terrain_tiers.py by parents[4]).
 #
 # --skip-blend    resume from the authored loop.blend (skips the draft phase; the author phase still runs).
 # --dry-run       stop right after the prep + split: nothing exported, synced back or installed. Pair with
@@ -110,12 +115,8 @@ SRC="$AIROSO/tracks/$TRACK"
 SPEC="${SHIP_SPEC:-$SRC/ship.json}"
 if [ -n "${SHIP_SPEC:-}" ]; then REHEARSAL=1; else REHEARSAL=0; fi
 [ -f "$SPEC" ] || { echo "no ship.json for $TRACK ($SPEC)"; exit 2; }
-# the engine the prep / exporter / spawn builder run from: engine-july is San Diego's alone
-if [ "$TRACK" = "san-diego-lake-murray" ]; then
-  ENGINE="${ENG:-C:/Users/Owner/Documents/GitHub/engine-july}"
-else
-  ENGINE="$AIROSO"
-fi
+# the engine the prep / exporter / spawn builder run from: decided once ship.json is read (its optional "engine" key)
+ENGINE=""
 
 step() { echo; echo "=================== $1"; }
 pyq() { (cd "$AIROSO" && python -c "$@"); }
@@ -251,6 +252,10 @@ draft_terrain_sample() {
 draft_build_loop_blend() {
   step "draft: build loop.blend (scene regen — GEN layer)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$V021_SHIM" --python "$V021/blender/build_loop_blend.py" -- "$PROJ" 2>&1 | grep "^\[blend\]\|Error\|Traceback" | tail -6)
+}
+draft_lm_intake() {
+  step "draft: the track's line, widths and 3DEP into Lake Murray v4's assembler inputs (tools/lm_engine_intake.py; ledger 0078)"
+  (cd "$AIROSO" && python tools/lm_engine_intake.py "$PROJ")
 }
 draft_route_connectors() {
   step "draft: side streets from Kevin's routes (airoso data/routes.json)"
@@ -719,6 +724,7 @@ is_data_step() {
     road_profile|measured_widths|crossfall|verify_crossfall) return 0;;
     net|classify|network_elev|network_mesh|network_reference) return 0;;
     deck_datum|median_envelope|route_connectors|divide_connectors|trim_connectors|terrain_sample|terrain_resample) return 0;;
+    lm_intake) return 0;;
     *) return 1;;
   esac
 }
@@ -727,7 +733,7 @@ is_data_step() {
 # ship.json -> variables (tools/ship_track_spec.py validates; nothing read here is ever executed)
 # =============================================================================================================
 SPEC_LINES=$(cd "$AIROSO" && python tools/ship_track_spec.py "$SPEC" "$TRACK") || { echo "ship.json refused (above): $SPEC"; exit 2; }
-WS=""; WS_SUB=""; REQUIRE_RACE=0; UI_PREFIX=""; AUDIT_NOTE=""; JULY_AI=""
+WS=""; WS_SUB=""; REQUIRE_RACE=0; UI_PREFIX=""; AUDIT_NOTE=""; JULY_AI=""; SPEC_ENGINE="airoso"
 DRAFT=(); AUTHOR=(); PREP=(); SHIP=(); GATE=()
 IN_REQ=(); IN_OPT=(); IN_GLOB=(); IN_DIR=()
 OUT_REQ=(); OUT_FILE=(); OUT_DIR=(); OUT_RM=(); OUT_MAP_FROM=(); OUT_MAP_TO=()
@@ -740,6 +746,7 @@ while IFS=$'\t' read -r k v w; do
     ui_name_prefix) UI_PREFIX="$v";;
     audit_note) AUDIT_NOTE="$v";;
     street_ai_july) JULY_AI="$v";;
+    engine) SPEC_ENGINE="$v";;
     step.draft) DRAFT+=("$v");;
     step.author) AUTHOR+=("$v");;
     step.prep) PREP+=("$v");;
@@ -764,6 +771,12 @@ for n in ${AUTHOR[@]+"${AUTHOR[@]}"}; do declare -F "author_$n" >/dev/null || { 
 for n in ${PREP[@]+"${PREP[@]}"}; do declare -F "prep_$n" >/dev/null || { echo "ship.json steps.prep: unknown step '$n' (no prep_$n in tools/ship_track.sh)"; exit 2; }; done
 for n in ${SHIP[@]+"${SHIP[@]}"}; do declare -F "ship_$n" >/dev/null || { echo "ship.json steps.ship: unknown step '$n' (no ship_$n in tools/ship_track.sh)"; exit 2; }; done
 for n in ${GATE[@]+"${GATE[@]}"}; do declare -F "gate_$n" >/dev/null || { echo "ship.json steps.gate: unknown step '$n' (no gate_$n in tools/ship_track.sh)"; exit 2; }; done
+# the engine (ledger 0078): engine-july for San Diego (always) and for a track whose ship.json says "engine": "lm-v4"
+if [ "$TRACK" = "san-diego-lake-murray" ] || [ "$SPEC_ENGINE" = "lm-v4" ]; then
+  ENGINE="${ENG:-C:/Users/Owner/Documents/GitHub/engine-july}"
+else
+  ENGINE="$AIROSO"
+fi
 if [ "$STREET_AI" = july ] && [ -z "$JULY_AI" ]; then echo "STREET_AI=july: ship.json names no street_ai_july for $TRACK"; exit 2; fi
 # --from names a step of THIS ship.json's draft / author / prep / ship phases; never a gate (the gates always run)
 if [ -n "$FROM" ]; then
@@ -808,6 +821,9 @@ if [ "$REHEARSAL" = 0 ] && [ "$(norm "$PROJ")" = "$(norm "$WS_PROJ")" ]; then SC
 # before --python) registers `scripts` as the track's scripts-v021 package FIRST, so every `scripts.*` import inside
 # them resolves there — never to airoso's engine, never to a scripts/ beside the project (as tools/ship_sd.sh)
 V021="$SRC/scripts-v021"
+if [ ! -f "$V021/blender/build_loop_blend.py" ] && [ "$SPEC_ENGINE" = "lm-v4" ]; then
+  V021="$AIROSO/tracks/san-diego-lake-murray/scripts-v021"     # Lake Murray v4's assembler, never a per-track copy (ledger 0078)
+fi
 V021_SHIM="import sys, importlib.util as u; s=u.spec_from_file_location('scripts', r'$V021/__init__.py', submodule_search_locations=[r'$V021']); m=u.module_from_spec(s); sys.modules['scripts']=m; s.loader.exec_module(m)"
 for n in ${DRAFT[@]+"${DRAFT[@]}"}; do case "$n" in build_loop_blend|rebuild_loop_blend|weld_mouths)
   [ -f "$V021/blender/build_loop_blend.py" ] || { echo "ship.json steps.draft names $n but there is no assembler at $V021/blender/build_loop_blend.py"; exit 2; };;

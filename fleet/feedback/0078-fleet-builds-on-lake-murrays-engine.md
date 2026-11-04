@@ -811,6 +811,20 @@ Merging c36f023 and 6d81520 into the records branch conflicted only on run recor
 The frame rate is not readable on the PC: the session does not drive AC. None of the round-4 or 0.1.1 builds has been
 driven yet.
 
+### Runbook 4d (PC, 2026-11-04): the Lookout Lariat installed on Kevin's force
+
+Merged ca70a08 (dc7741e, no conflicts), LFS pulled. ENG `D:/k10-scratch/eng_lalm` = eng_repro + gravel_road_diffuse.png
+6babc2255987b6bbd8292aca6cedd69b OK, gravel_road_normal.png addd8f823f03ca80648b6ef96a06a73b OK (STAGED_TEXTURES.md5).
+- **Rehearsal** (empty `D:/k10-scratch/lariat_lm_reh`, --no-install) reproduced run 5 on every gated row: soft top 0, severe
+  0, undrivable corners 79 (C4-C10), far ledges 136 (<= 1,045), gated drops 45, replication p95 0.36 / max 0.64, stacked
+  legs 0 (of 10,698 tested; the Mac 10,695), audit CLEAN, kn5_ground_check PASS (p95 0.022, 9 / 9,826, max 0.091), the
+  other road gates PASS; `[cutfill]` 158,703 / 131, `[lm-pads] 2 pad(s) built`, `[strip-seam] ... 28888 ... 0 missed`
+  (6,877 knifed; the Mac 6,873), `[hold] 118 ... 3.63 m`, `--force-install would be allowed`; kn5 85.6 MB.
+- **Kevin, 2026-11-04: "Yes, install both".** `ship_track.sh lookout-lariat-lm --force-install` from an empty real
+  workshop `D:/k10-scratch/lariat_lm`: the same rows, the strict rule allowed it (the declared 0.1.0 exemption alone),
+  **installed `content/tracks/lookout_lariat_lm` ("doooom Colorado — Street — Full 0.1.0"), SHIP OK**; nothing parked (no
+  earlier folder). The installed kn5 equals the build's (85.6 MB). Watch the frame rate on the climb's overlooks.
+
 ## Owed
 
 - The Lariat's C18 pad (parked, Round 7 item 4): which surface the ramp end follows into the lid; then C12 / C16's mouths.

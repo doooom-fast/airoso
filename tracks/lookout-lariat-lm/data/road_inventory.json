@@ -2,7 +2,7 @@
  "_doc": "Lariat Drive-1 road inventory (tools/verify_road_inventory.py; V3-PLAN P5, ledger 0048), on the built gate OBJ (L5).",
  "obj": "track.obj",
  "line": "gate_centerline.json",
- "exemptions_file": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/ws_empty/lookout-lariat-lm/pavement_exemptions.json",
+ "exemptions_file": "D:\\k10-scratch\\lariat_lm\\pavement_exemptions.json",
  "thresholds": {
   "corridor_margin_m": 2.0,
   "lap_tol": 0.01,

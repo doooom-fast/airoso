@@ -352,9 +352,9 @@
       "normal": "assets/textures/tiltup_wall_normal.jpg",
       "_doc": "our own concrete in place of the Hamburg bytes"
     },
-    "1KERB_RACE": {
+    "1KERB": {
       "diffuse": "textures/kerb_bluewhite.png",
-      "_doc": "the kerb paint the aerial shows (blue and white), a flat two-band stripe (this port's own file)"
+      "_doc": "the kerb paint the aerial shows (blue and white), a flat two-band stripe (this port's own file). Keyed 1KERB, the row the traced kerbs (1KERB_circuit_*, tools/author_kerbs_blend.py) bind; not 1KERB_RACE, which the split routes to the race kn5 as race furniture"
     }
   },
   "lm_intake": {

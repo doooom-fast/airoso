@@ -5404,9 +5404,9 @@
       "diffuse": "textures/caliche_diffuse.jpg",
       "normal": "textures/caliche_normal.jpg"
     },
-    "1KERB_RACE": {
+    "1KERB": {
       "diffuse": "textures/kerb_redwhite.png",
-      "_doc": "the kerb paint the aerial shows (red and white), a flat two-band stripe (this port's own file)"
+      "_doc": "the kerb paint the aerial shows (red and white), a flat two-band stripe (this port's own file). Keyed 1KERB, the row the traced kerbs (1KERB_circuit_*, tools/author_kerbs_blend.py) bind; not 1KERB_RACE, which the split routes to the race kn5 as race furniture"
     }
   },
   "_texture_overrides_doc": "The Mojave ground (DOSSIER section 11 step 2): textures/make_caliche_ground.py, CC0, colour measured off NAIP. 1GRASS keeps its physics.",

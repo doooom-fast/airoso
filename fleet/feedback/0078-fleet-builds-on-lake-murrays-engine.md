@@ -142,12 +142,69 @@ street lamps; the live tracks' bespoke dressing (High Plains' W-beam rail except
 | road physics past the edge (median / p95) | 4.5 / 5.0 m | 0 / 0 | 2.0 / 2.5 m | 0 / 0 |
 | ground 10 m out (p5 / median / p95) | -1.05 / -0.51 / +0.32 | -0.30 / -0.18 / -0.16 | -0.34 / +0.02 / +0.31 | -0.46 / -0.20 / -0.17 |
 
-**What got worse or went missing:** the racing kerbs (installed at ~11 % of side-stations, placed by build_mesh's corner
-detector; no measured kerb line is committed, so none is invented: owed, read off NAIP / lidar); the paved shoulders and
+**What got worse or went missing (round 3; round 4 below):** the racing kerbs (installed at ~11 % of side-stations, placed by
+build_mesh's corner detector; no measured kerb line was committed, so none was invented: traced off NAIP in round 4); the paved shoulders and
 `1RUNOFF` (build_mesh's construct; the real run-off outline is owed the same way); High Plains' chain-link fences,
 warning barriers and W-beam rail; and size (High Plains' terrain 9 k → 292 k vertices, kn5 29 MB; Nevada 7.6 k → 176 k,
 18 MB: the fine ground along every banked edge; a coarser cut under 2 % bank is owed). **No gate metric got worse.**
 High Plains' installed hill was capped at 6 %; the port's is the measured 8.3 %.
+
+### Round 4 (Mac): the kerbs traced off NAIP, the run-off and fences as they are, the size
+
+**Kerbs.** `tools/aerial_edges.py` reads the kerb paint across each lane edge of a georeferenced aerial (colour classes,
+GATES-CHANGELOG 2026-11-03 round 4); every run is checked by eye on the overview and written as the lane edge it follows in
+lon/lat (`tracks/<live>/source/edges/kerbs.json`, with `edges.traced.json` and `edges_overview.jpg`):
+
+| | imagery | runs traced | built | 1 m past the edge (port) |
+|---|---|---|---|---|
+| High Plains | USDA NAIP `co_m_3910317_ne_13_030_20230928` (2023-09-28), z18 | 12, 289 m (blue / white) | 12, 243 m | kerb 24.4 %, ground 75.6 % |
+| Nevada Nights | NAIP 2019 crop (the reader missed the faint red; traced by eye) | 6, 475 m (red / white) | 6, 439 m | kerb 41.8 %, ground 58.2 % |
+
+`tools/author_kerbs_blend.py` (draft step `kerbs`) lays each run on the v021 ribbon's own edge vertices, outside the lane:
+lip 3 mm, up to the config's `kerb.height_m` 0.08 m over 0.25 m, flat across the traced paint width (1.0 to 1.75 m at High
+Plains, 1.5 m at Nevada), then down to 0.05 m under the edge over 1.0 m past the paint. The height is the config's: a 1 m DEM
+cannot read a kerb, and no point-cloud fit was made. Two findings on the way:
+- the kerbs are `1KERB_circuit_<k>`, not `1KERB_RACE_*`: split_exports_blend routes RACE names to the race kn5 as race furniture
+  (High Plains' first kn5 shipped without them; Nevada's split refused them, no race layout). Their stripe UVs are their own
+  active layer (`KerbUV`): engine-july's prep writes its planar UVs into a layer named `UVMap`, and the exporter writes the
+  active layer, so the stripe survives (checked on both split blends; the kn5 binds `kerb_bluewhite.png` / `kerb_redwhite.png`
+  through `texture_overrides["1KERB"]`; the edge strip keeps its own `1KERB_SIDEWALK` row);
+- a 0.6 m back fall inside the paint read as one gated 0.12 m excursion drop on Nevada at s 300 (the kerb's back between two
+  0.5 m probes); the fall now runs 1.0 m past the paint and the drop is gone.
+
+**Run-off: none built, none invented.** High Plains: the reader's paved run-off (asphalt past the edge) was rejected by eye
+(dark dirt and shadow read as asphalt); the installed `1RUNOFF` and paved shoulders were build_mesh's construct. Nevada: the
+2019 imagery shows the whole lot paved (the track was built as 2013), so there is no run-off outline to trace there.
+
+**Fences and barriers.** Kept: High Plains' four K-rail runs (`scenery.bespoke.rails`, read off NAIP 2023 at 0.3 m by eye,
+measured) and Nevada's tecpro / tents (bespoke). Not ported: High Plains' W-beam rail (`scenery.bespoke.guardrail: {"from":
+"1WALL_PARA"}` follows the draft's guard lips, build_mesh's drop analysis, not a measured line; the v021 draft makes no lips),
+its chain-link fences (`1WALL_CHAINL_warn`) and warning barriers (`kerbs.warning_barriers`), both placed by build_mesh rules:
+invented, so not carried over. Re-measuring them is owed: NAIP at 0.3-0.6 m does not resolve a chain-link fence, and a
+W-beam line wants a lidar or a ground photo; a measured line goes in as a bespoke rail / wall, free-standing.
+
+**Size** (adaptive `seat_edges`: t = 0.04 / tan(bank), between 0.6 m and the prep's 4.5 m):
+
+| | TERRAIN before seat_edges | round 3 (fixed 0.6 m) | round 4 (adaptive) | kn5 round 3 → 4 | ground on top |
+|---|---|---|---|---|---|
+| High Plains port | 9,373 | 292,133 | 49,407 | 29 MB → 14.9 MB | 0 |
+| Nevada port | 7,561 | 176,137 | 72,337 | 18 MB → 12.5 MB | 0 |
+| Sand Creek pilot | 85,793 | 103,033 | 97,022 | 39.3 MB | 0 |
+
+Every gate still passes on both ports with the kerbs in the road kn5 (drive_test: soft top 0, severe 0, bumps 0; High Plains
+kinks 1.87 /km, vertex bumps 2; Nevada excursion drops 0 / far ledges 3; audit CLEAN; kn5_ground_check PASS, road over
+ground p95 0.021 m both; verify_kn5 PASS; house_seat PASS). The camber against the lidar, whole lap: High Plains median 0.00,
+p95 0.04, max 0.11 %-pts; Nevada median 0.00, p95 0.06, max 0.11 %-pts. The edge report's rise within 2 m (p95) grows with the
+kerbs, as it should: High Plains 0.009 → 0.014 m, Nevada 0.033 → 0.076 m.
+
+**What the size cost (worse, not gated):** the coarser ground covers the circuit edge strip's outer half more often. At the
+edge report's 1 m probe the strip (or a kerb) is the top surface at High Plains 60.6 % → 24.4 %, Nevada 57.2 % → 41.8 %; probed
+at exact offsets past the lane edge on the built OBJ, the ground is on top at +0.5 m on 39.4 % (High Plains) / 17.0 % (Nevada) of
+side-stations, at +0.25 m on 0 % / 0.1 %. The lane is untouched (ground on top mid-lane 0, kn5_ground_check PASS): the strip
+descends 0.05 m under the edge over its 1.0 m [invented] and a coarse ground triangle from under the strip to engine-july's
+3 m shelf at edge height lies over that descent. Uniform cuts cannot fix it cheaply (following a 0.15 m-in-1 m descent to 1 cm
+needs legs of ~0.27 m); the fix owed is a cut ALONG the strip's outer edge (one ground vertex per ribbon row, seated just
+under it), or the strip read off the aerial and met by the run-off as it really is.
 
 ## PC runbooks
 

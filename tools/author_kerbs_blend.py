@@ -6,12 +6,18 @@ Each run is keyed to THIS build's line (every traced point to its nearest mainli
 first and the last) and swept OUTSIDE the lane edge, its base on the ROAD mesh's own edge vertex of each row (bank, weld and
 all), so no kerb stands in the lane and none floats. Cross-section, metres past the edge / over the edge:
 
-    (0, KERB_LIP_M) -> (RAMP_IN_M, h) -> (w - RAMP_OUT_M, h) -> (w, -DROP_M)
+    (0, KERB_LIP_M) -> (RAMP_IN_M, h) -> (w, h) -> (w + RAMP_OUT_M, -DROP_M)
+
+the painted width w is the top; the back falls past it (round 4: a 0.6 m fall inside w read as one 0.12 m excursion
+drop on Nevada at s 300, the kerb's back between two 0.5 m probes).
 
 h = track.config.json kerb.height_m (the config's, NOT measured: a 1 m DEM cannot read a 5-8 cm kerb); w = the traced paint
-width (out_m - in_m), clamped to [MIN_W_M, MAX_W_M]. One mesh per run, 1KERB_RACE_<k> (kerb physics; engine-july's prep keeps
-its UVs: u across, v = arc / STRIPE_M so the texture's two bands alternate every STRIPE_M / 2 m). The texture is the track's
-(texture_overrides["1KERB_RACE"]). Self-check, exit 1 and loop.blend not saved: a run that keys to fewer than 2 rows.
+width (out_m - in_m), clamped to [MIN_W_M, MAX_W_M]. One mesh per run, 1KERB_circuit_<k>: kerb physics, in the ROAD kn5 (a
+1KERB_RACE name is race furniture: split_exports_blend routes it to the race kn5, and a track with no race layout refuses
+it). Its UVs (u across, v = arc / STRIPE_M, so the texture's two bands alternate every STRIPE_M / 2 m) are the mesh's only and
+active layer, UV_LAYER: engine-july's prep writes its top-down planar UVs into a layer named "UVMap" (created when absent, never
+made active), and the kn5 exporter writes the ACTIVE layer, so the stripe survives the prep. The texture is the track's
+(texture_overrides["1KERB"]; the ports carry no other 1KERB mesh). Self-check, exit 1 and loop.blend not saved: a run that keys to fewer than 2 rows.
 
     blender --background --python-exit-code 1 --python tools/author_kerbs_blend.py -- <project-dir>
 """
@@ -29,10 +35,13 @@ import mouth_weld as mw  # noqa: E402
 
 KERB_LIP_M = 0.003    # [invented] the kerb's inner edge this far over the lane edge: no z-fight, no step a wheel feels
 RAMP_IN_M = 0.25      # [invented] the rise from the lane edge to the kerb's top
-RAMP_OUT_M = 0.6      # [invented] the fall at the back, long enough to stay under drive_test's 0.12 m per 0.5 m
+RAMP_OUT_M = 1.0      # [invented] the fall at the back, past the paint: (h + DROP_M) / 2 per 0.5 m probe, well under
+                      # drive_test's 0.12 m excursion step
 DROP_M = 0.05         # [invented] the back lands this far under the lane edge (into the edge strip / ground)
 MIN_W_M, MAX_W_M = 0.9, 2.0   # [invented] a traced paint width outside these is read as the reader's noise
 STRIPE_M = 2.0        # one white + one colour stripe; racing kerbs are painted in ~1 m blocks
+PREFIX = "1KERB_circuit_"
+UV_LAYER = "KerbUV"   # not "UVMap": the prep's planar pass writes that one
 
 
 def mpd(lat0):
@@ -62,7 +71,7 @@ def main():
     m_lon, m_lat = mpd(lat0)
     bpy.ops.wm.open_mainfile(filepath=str(proj / "loop.blend"))
     road = bpy.data.objects.get("ROAD")
-    for ob in [o for o in bpy.data.objects if o.name.startswith("1KERB_RACE_")]:
+    for ob in [o for o in bpy.data.objects if o.name.startswith((PREFIX, "1KERB_RACE_"))]:
         bpy.data.objects.remove(ob, do_unlink=True)          # idempotent
     V = road.data.vertices
 
@@ -87,7 +96,7 @@ def main():
             a, b = b, a
         span = [(a + i) % rows for i in range(((b - a) % rows if closed else b - a) + 1)]
         w = max(MIN_W_M, min(MAX_W_M, float(run.get("out_m", 1.2)) - float(run.get("in_m", 0.0))))
-        prof = [(0.0, KERB_LIP_M), (RAMP_IN_M, h), (w - RAMP_OUT_M, h), (w, -DROP_M)]
+        prof = [(0.0, KERB_LIP_M), (RAMP_IN_M, h), (w, h), (w + RAMP_OUT_M, -DROP_M)]
         verts, faces, uvs = [], [], []
         arc = 0.0
         prev = None
@@ -109,14 +118,14 @@ def main():
                 q0, q1 = i * P + p, (i + 1) * P + p
                 f = (q0, q0 + 1, q1 + 1, q1) if side == 2 else (q0, q1, q1 + 1, q0 + 1)
                 faces.append(f)
-        me = bpy.data.meshes.new(f"1KERB_RACE_{k}")
+        me = bpy.data.meshes.new(f"{PREFIX}{k}")
         me.from_pydata(verts, [], faces)
         me.validate(); me.update()
-        uvl = me.uv_layers.new(name="UVMap")
+        uvl = me.uv_layers.new(name=UV_LAYER)
         for poly in me.polygons:
             for li in poly.loop_indices:
                 uvl.data[li].uv = uvs[me.loops[li].vertex_index]
-        ob = bpy.data.objects.new(f"1KERB_RACE_{k}", me)
+        ob = bpy.data.objects.new(f"{PREFIX}{k}", me)
         bpy.context.scene.collection.objects.link(ob)
         report.append({"k": k, "side": run["side"], "rows": len(span), "length_m": round(arc, 1), "width_m": round(w, 2)})
     (data / "kerbs.built.json").write_text(json.dumps({"height_m": h, "runs": report}, indent=1), encoding="utf-8")

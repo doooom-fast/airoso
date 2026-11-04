@@ -16,6 +16,7 @@
  "connectors": false,
  "bespoke_files": [
   "source/bespoke/buildings.json",
+  "source/edges/kerbs.json",
   "textures/caliche_diffuse.jpg",
   "textures/caliche_normal.jpg"
  ],

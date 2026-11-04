@@ -99,3 +99,19 @@ def test_intake_npy_round_trip_and_upsample_keeps_samples():
         for i in range(3):
             assert up[2 * j][2 * i] == grid[j][i]
     assert up[0][1] == 1.5 and up[1][0] == 2.0
+
+
+def test_traced_kerbs_ship_in_the_road_kn5_with_their_own_uvs():
+    """The traced kerbs are 1KERB_circuit_* (kerb physics, the ROAD kn5), never 1KERB_RACE_* (race furniture: the split
+    routes it to the race kn5 and a track with no race layout refuses it); their stripe UVs are a layer that is not
+    "UVMap" (engine-july's prep writes its planar UVs into "UVMap"); each port's kerb texture binds the 1KERB row."""
+    src = (ROOT / "tools" / "author_kerbs_blend.py").read_text(encoding="utf-8")
+    tree = ast.parse(src)
+    consts = {t.id: n.value.value for n in tree.body if isinstance(n, ast.Assign) for t in n.targets
+              if isinstance(t, ast.Name) and isinstance(n.value, ast.Constant)}
+    assert consts["PREFIX"] == "1KERB_circuit_" and not consts["PREFIX"].upper().startswith(("1KERB_RACE", "1KERB_SIDEWALK"))
+    assert consts["UV_LAYER"] != "UVMap"
+    for t in ("high-plains-lm", "exotics-racing-lv-lm"):
+        cfg = json.loads((ROOT / "tracks" / t / "track.config.json").read_text(encoding="utf-8"))
+        assert "1KERB" in cfg["texture_overrides"] and "1KERB_RACE" not in cfg["texture_overrides"]
+        assert (ROOT / "tracks" / t / cfg["texture_overrides"]["1KERB"]["diffuse"]).exists()

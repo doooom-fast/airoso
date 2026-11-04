@@ -50,6 +50,17 @@ v4, v5-bare, Sand Creek 0.35.0 and the pilot with it. New ⚠ invented numbers, 
 edge strip (the shortest runs under drive_test's 0.12 m per 0.5 m). The grade caps are now per track and off for ports (`route.connector_max_grade_pct`, `lm_intake.max_grade_pct`; Lake Murray keeps
 11 % on its connectors).
 
+Round 4 (same day, same ledger; still no threshold, no bypass). New ⚠ invented numbers, none a gate:
+`tools/seat_edges_blend.py` cuts each face near a banked lane edge to t = `CHORD_M` / tan(bank) (`CHORD_M` 0.04: a grass chord
+stands at most 1 cm over the lane, half the prep's 0.02 m clearance), between `MAX_EDGE_M` and `PREP_EDGE_M` 4.5 (engine-july's
+own corridor split, not invented), the bank read within `BANK_REACH_M` 15 of the face; `tools/author_kerbs_blend.py` (the
+traced racing kerbs) `KERB_LIP_M` 0.003, `RAMP_IN_M` 0.25, `RAMP_OUT_M` 1.0 (the back falls past the painted width),
+`DROP_M` 0.05, width clamp `MIN_W_M` 0.9 / `MAX_W_M` 2.0, `STRIPE_M` 2.0, height = the track's `kerb.height_m` (0.08, the
+config's: a 1 m DEM cannot read a kerb); `tools/aerial_edges.py` colour classes (blue B > R + 25 and B > G; red R > G + 25 and
+R > B + 20; white mean >= 160, spread <= 50, B >= R - 45; asphalt max < 125, spread < 28), `STEP_M` 1, `SCAN_M` 14,
+`KERB_BAND_M` 2.5, `KERB_WIN_M` 3.0, `MIN_KERB_M` 5, `GAP_M` 8, `BREAK_M` 1, run-off `MIN_RUNOFF_W_M` 1.5 / `MIN_RUNOFF_M` 10
+(read and reported; no run-off is built from it). `tools/draft_equiv.py` ignores JSON keys `written_utc` and `check_date` (write times).
+
 ## 2026-11-03 — EXCLUSION: race kerbs leave the prep's 0020 carve (ledger 0020 Rule 1; Lake Murray v5 race, ledger 0065)
 
 `scripts/ac/build_kn5_loop.py`: 0020's Rule 1 deletes any 1KERB face whose centre stands more than 0.15 m inside a carriageway

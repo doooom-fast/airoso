@@ -18,6 +18,7 @@
   "source/bespoke/buildings.json",
   "source/bespoke/posts.json",
   "source/bespoke/shrubs.json",
+  "source/edges/kerbs.json",
   "textures/prairie_diffuse.jpg",
   "textures/prairie_normal.jpg"
  ],

@@ -46,23 +46,23 @@
   "at_1m": {
    "lane": 0.0,
    "shoulder": 0.0,
-   "kerb": 0.572,
-   "ground": 0.428,
+   "kerb": 0.418,
+   "ground": 0.582,
    "wall": 0.0,
    "none": 0.0,
    "other": 0.0
   },
   "rise_2m_m": {
-   "median": 0.0,
-   "p95": 0.033
+   "median": 0.006,
+   "p95": 0.076
   },
   "paved_past_edge_m": {
    "median": 0.0,
    "p95": 0.0
   },
   "ground_3m": {
-   "p5": -0.056,
-   "median": -0.021,
+   "p5": -0.064,
+   "median": -0.028,
    "p95": 0.01,
    "share_below_1m": 0.0,
    "share_above_1m": 0.0
@@ -70,7 +70,7 @@
   "ground_6m": {
    "p5": -0.322,
    "median": -0.126,
-   "p95": -0.093,
+   "p95": -0.096,
    "share_below_1m": 0.0,
    "share_above_1m": 0.0
   },

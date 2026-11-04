@@ -878,6 +878,17 @@ def _conform_and_reseat(proj: Path, spans):
           f"{n_rel} props rode the terrain delta")
 
 
+def corridor_carves_kerb(name: str) -> bool:
+    """Whether 0020's Rule 1 (no kerb face inside ANY carriageway) applies to a mesh. A street kerb or sidewalk
+    inside a carriageway is the sweep-through-junction artifact it was written for. A RACE kerb (1KERB_RACE_*,
+    tools/author_race_furniture_blend.py) is laid on the lane's edge at a corner ON PURPOSE: the carve took 2,450 of
+    the 2,775 race-kerb faces on Lake Murray v5 (the engine ribbon; engine-july, which v4 prepped on, has no carve),
+    emptying two kerbs and failing the race kn5's export. Race kerbs are judged by verify_race (E: under another ROAD
+    sheet; O: another deck over the ring) and the race layouts' drive_test instead."""
+    up = name.upper()
+    return up.startswith("1KERB") and not up.startswith("1KERB_RACE")
+
+
 def _corridor_hash(proj):
     """0020's corridor discipline needs 'is this point inside ANY carriageway, and how high is the
     deck there' answered ~200k times. Spatial hash over every road polyline (mainline + the
@@ -988,10 +999,21 @@ def main():
         # props / billboards carry authored UVs — don't flatten (freeway BUSHES/CHAINLINK too)
         # ...and the race furniture (ledger 0047): the strips carry u = arc / 4.04 m along the
         # vertical faces and the kerbs v = arc / 1 m — a top-down projection would smear them
+        # ...and the engine draft's own vertical walls (ledger 0071): on a vertical face u = x / 4 m,
+        # v = y / 4 m is one texel column top to bottom, so the texture smears into vertical streaks.
+        #   1WALL_BARRIER     Kevin's 4 m concrete module (props.concrete_barriers: Sand Creek), its own
+        #                     unwrap, loaded seam-split (props.load_module keep_seams)
+        #   1WALL_PARA        the stone lips / parapets (Sand Creek, High Plains, Milford): u along the run,
+        #                     v up, 1.25 m / 0.75 m stone tiles (build_mesh.stone_lip_box / stone_parapet_run)
+        #   1WALL_CHAINL      the chain-link warning fences (Exotics, High Plains, Milford): u = arc / 3 m,
+        #                     v = 0..1 over the 1.8 m panel, so the mesh pattern stands upright
+        #   BARRIER_WARNING   the swept jersey on warning runs (Exotics, High Plains, Milford): u around the
+        #                     profile, v = arc / 3.5 m (kerbs.warning_barriers)
         if not ob.name.upper().startswith(("PALM", "TREE", "SCRUB", "BUSHES", "CHAINLINK", "ROADTEXT",
                                            "1WALL_RACE", "1KERB_RACE", "BRIDGESTRUCT", "BUILDING_FABRIC", "1WALL_FABRIC", "PROPCONE",
                                            "BUILDING_TILTUP", "BUILDING_METAL", "BUILDING_STUCCO", "BUILDING_SIDING", "ROOFTOP", "1WALL_TILTUP", "1WALL_TECPRO", "1WALL_KRAILBW",
-                                           "GUARDRAIL", "PADAPRON", "BUILDING_DRYSTONE", "FARBLOCK")):
+                                           "GUARDRAIL", "PADAPRON", "BUILDING_DRYSTONE", "FARBLOCK",
+                                           "1WALL_BARRIER", "1WALL_PARA", "1WALL_CHAINL", "BARRIER_WARNING")):
             planar_uv(me)
         bm = bmesh.new(); bm.from_mesh(me)
         # NEVER weld foliage/prop groups: their double-sided shells are duplicated face pairs at
@@ -1030,7 +1052,7 @@ def main():
         # Rule 2: no vegetation in the driving corridor below 5.2 m clearance (the canopy that
         # stood at station 10,545). Both use the same layered corridor query (deck-height guarded).
         upname = ob.name.upper()
-        if upname.startswith("1KERB"):
+        if corridor_carves_kerb(ob.name):
             doomed = []
             for f in bm.faces:
                 c = f.calc_center_median()

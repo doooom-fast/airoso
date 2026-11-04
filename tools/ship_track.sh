@@ -650,6 +650,13 @@ gate_verify_pads() {
     (cd "$AIROSO" && python tools/verify_pads.py "$PROJ")
   fi
 }
+gate_textures() {
+  # ledger 0079 (Kevin 2026-11-04: "Add textures"): every visible mesh of every kn5 the folder packs binds an EMBEDDED diffuse
+  # (LAWS L7: a texture-less material renders black / AC's flat default); hard — exit 1 stops the chain
+  step "gate: textures on everything (tools/verify_textures.py: every visible mesh of every packed kn5 binds an embedded diffuse — hard)"
+  rm -f "$PROJ/data/verify_textures.json"
+  (cd "$AIROSO" && python tools/verify_textures.py "$PROJ" --json "$PROJ/data/verify_textures.json")
+}
 gate_edge_report() {
   # ledger 0078: what stands beside the lane (the kerb or shoulder 1 m out, its rise, the ground 3 / 6 / 10 m out) on the
   # BUILT road. REPORT ONLY: no threshold exists, so it never sets a gate's exit code

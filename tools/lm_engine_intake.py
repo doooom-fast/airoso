@@ -125,8 +125,17 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     # a source track whose heightfield is not committed (High Plains: the elev stage's output lives in its workshop) may
     # have it fetched into the PORT track (scripts.elevation.heightfield on a copy of the source; synced in by ship.json):
     # then the project's own copy is used, and its provenance is the port track's
-    hf_own = (not need[1].exists() and (proj / "data" / "heightfield.npy").exists()
+    # lm_intake.heightfield "port" (ledger 0079, Sand Creek): the port track's OWN grid even where the source commits one —
+    # a wider 3DEP grid on the source's lattice (the buildings and the grid streets past the source's 150 m margin), synced
+    # in by ship.json. Absent = the source's grid whenever it has one (every port before 0079; Lake Murray never runs this)
+    want_own = li.get("heightfield") == "port"
+    if li.get("heightfield") not in (None, "port"):
+        raise SystemExit(f"[lm_intake] lm_intake.heightfield {li.get('heightfield')!r}: only \"port\" (or absent)")
+    hf_own = ((want_own or not need[1].exists()) and (proj / "data" / "heightfield.npy").exists()
               and (proj / "data" / "heightfield.meta.json").exists())
+    if want_own and not hf_own:
+        raise SystemExit("[lm_intake] lm_intake.heightfield \"port\": the project has no data/heightfield.npy + .meta.json "
+                         "(ship.json sync_in.optional must carry the port track's grid)")
     if hf_own:
         need = need[:1]
     need.append(sdata / "centerline.geojson")              # the track folder reads it (written into the port below)
@@ -694,6 +703,17 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         (proj / rel).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(sp, proj / rel)
         copied.append(rel)
+    # THE TREE MODELS (lm_intake.tree_models true; ledger 0079): the source track's TreeFX models (source/trees/*.bin,
+    # personal-use, gitignored, present only on the machine that holds them) into the project's source/trees, where
+    # tools/make_treefx.py resolves its species; none there = every species dropped, [TREES] skipped (L7). Absent = nothing
+    if li.get("tree_models"):
+        n_bin = 0
+        for b in sorted((src / "source" / "trees").glob("*.bin")):
+            (proj / "source" / "trees").mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(b, proj / "source" / "trees" / b.name)
+            n_bin += 1
+        print(f"[lm_intake] tree models: {n_bin} TreeFX .bin from tracks/{src_track}/source/trees"
+              f"{'' if n_bin else ' (none on this machine: make_treefx drops every species)'}")
     # THE LINE'S OWN RECORDS (lm_intake.carry_records [paths under the source's data/]; ledger 0078 round 6, the Lariat).
     # Gates that re-read the draft's records of the LINE (tools/drive1_gates.py: the one-way check, the paint-centreline /
     # hairpin gate; drive_test's replication against the raw 3DEP in centerline.elevation.json) find them in the workshop;

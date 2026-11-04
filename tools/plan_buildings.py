@@ -534,17 +534,50 @@ def main() -> int:
             sun = None
         elif sun:
             print(f"[buildings] shadow stage: {verdict}")
+    # plan "lidar": {"file": ...} (ledger 0079): roofs MEASURED off 3DEP lidar by tools/lidar_buildings.py, keyed by footprint:
+    # first of every source. Flat roofs take the median roof return over the ground ring; pitched ones the p95 as the ridge
+    # and the p10 as the eave. Absent (every plan before 0079) = nothing read
+    lidar_roofs, lidar_src = {}, None
+    if plan.get("lidar") and (track / plan["lidar"]["file"]).exists():
+        lj = json.loads((track / plan["lidar"]["file"]).read_text(encoding="utf-8"))
+        lidar_roofs, lidar_src = lj["roofs"], lj.get("_source", plan["lidar"]["file"])
+        print(f"[buildings] lidar roofs: {len(lidar_roofs)} measured footprints ({plan['lidar']['file']})")
+    lidar_over_cap = 0
+    ml_check, ml_rejected = plan.get("ml_height_check"), 0
     for r in kept:
         cls = r["cls"]
         h = None
         src = None
+        lidar_eave = None
+        lr = lidar_roofs.get(r["key"])
+        if lr:
+            top = (lr["roof_p95"] if FORM[cls] in ("hip", "gable") else lr["roof_p50"]) - lr["ground_m"]
+            if 0.0 < top <= CAP_M[cls]:
+                h = top
+                src = (f"lidar {'p95' if FORM[cls] in ('hip', 'gable') else 'p50'} roof over the ground ring, n {lr['n_roof']} "
+                       f"({lidar_src[:90]})")
+                lidar_eave = lr["roof_p10"] - lr["ground_m"]
+            else:
+                lidar_over_cap += 1
         try:
-            if r.get("height"):
+            if h is not None:
+                pass
+            elif r.get("height") and ml_check and str(r["src"]).startswith("Microsoft") and not (
+                    float(ml_check["min_m"]) <= float(str(r["height"]).split()[0]) <= CAP_M[cls]):
+                # plan "ml_height_check" (ledger 0079): Microsoft's ML estimate outside [min_m, the class cap] is not a
+                # measurement (Sand Creek: industrial blocks at 0.7 m, 60 m2 sheds at 24 m); the next source stands
+                ml_rejected += 1
+                h = None
+            elif r.get("height"):
                 h, src = float(str(r["height"]).split()[0]), height_label(r["src"])
             elif r.get("levels"):
                 lv = float(r["levels"])
                 st = STOREY_M[cls] if lv <= 1 or cls in ("house", "apartments", "shed") else STOREY_MULTI_M
                 h, src = lv * st, f"OSM building:levels {r['levels']} x {st} m"
+            elif r.get("alt_height") and ml_check and str(r.get("alt_src")).startswith("Microsoft") and not (
+                    float(ml_check["min_m"]) <= float(r["alt_height"]) <= CAP_M[cls]):
+                ml_rejected += 1                       # the same check on a deduped Microsoft footprint's height
+                h = None
             elif r.get("alt_height"):
                 h, src = float(r["alt_height"]), height_label(r["alt_src"]) + ", its footprint standing on this one"
         except ValueError:
@@ -572,10 +605,16 @@ def main() -> int:
             ys = [p[1] * 111320.0 for p in r["ring"]]
             short = min(max(xs) - min(xs), max(ys) - min(ys))
             rise = PITCH[form] * short / 2.0
-            wall = max(MIN_WALL_M.get(cls, 2.6), h - rise)
-            row["wall_h_m"] = round(wall, 1)
-            row["ridge_h_m"] = round(wall + rise, 1)
-            row["_form"] = f"{form} at {PITCH[form]:.2f} pitch [invented by class]; wall = top - rise {rise:.1f} m, floored at {MIN_WALL_M.get(cls, 2.6)} m"
+            if lidar_eave is not None and MIN_WALL_M.get(cls, 2.6) <= lidar_eave < h:
+                # both ends measured: the eave at the roof returns' p10, the ridge at their p95
+                row["wall_h_m"] = round(lidar_eave, 1)
+                row["ridge_h_m"] = round(h, 1)
+                row["_form"] = f"{form}: eave and ridge off the lidar roof returns (p10 / p95)"
+            else:
+                wall = max(MIN_WALL_M.get(cls, 2.6), h - rise)
+                row["wall_h_m"] = round(wall, 1)
+                row["ridge_h_m"] = round(wall + rise, 1)
+                row["_form"] = f"{form} at {PITCH[form]:.2f} pitch [invented by class]; wall = top - rise {rise:.1f} m, floored at {MIN_WALL_M.get(cls, 2.6)} m"
         out.append(row)
         by_src.setdefault(src.split(" ")[0] + (" default" if "default" in src else ""), 0)
         by_src[src.split(" ")[0] + (" default" if "default" in src else "")] += 1
@@ -603,6 +642,10 @@ def main() -> int:
     classes = {}
     for row in out:
         classes[row["class"]] = classes.get(row["class"], 0) + 1
+    if lidar_roofs:
+        print(f"[buildings] lidar roofs past the class cap (not used): {lidar_over_cap}")
+    if ml_check:
+        print(f"[buildings] Microsoft heights outside [{ml_check['min_m']} m, the class cap]: {ml_rejected}, not used")
     print(f"[buildings] {len(out)} footprints -> {plan['out']}; left out {left}; classes {classes}; heights by source {by_src}")
     return 0
 

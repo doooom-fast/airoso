@@ -2,7 +2,7 @@
   "_doc": "Sand Creek Raceway through Lake Murray v4's engine (ledger 0078, Kevin 2026-11-03: \"Lake Murray v4 should be what we build the rest from\"). The PILOT: Sand Creek 0.35.0's line (OSM centrelines, its widths, its 3DEP profile, tracks/sand-creek/data) fed by tools/lm_engine_intake.py into the v021 loop assembler (tracks/san-diego-lake-murray/scripts-v021/blender/build_loop_blend.py), prepped / exported / spawned by engine-july (the snapshot in tracks/san-diego-lake-murray/engine-july-snapshot), gated by the same gates. Its own slug and install folder so it installs beside sand_creek_raceway. Every other key is Sand Creek's own (copied from tracks/sand-creek/track.config.json at 0.35.0); the assembler reads route.smooth_*, route.divided_double, terrain.terrain_band_m and scenery.* only.",
   "name": "Sand Creek Raceway (LM engine)",
   "slug": "sand_creek_raceway_lm",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "mirror_x": false,
   "osm_road_widths": true,
   "_osm_road_widths_doc": "Real street circuit — after the project stage, scripts.gps.widths_from_osm map-matches each centerline vertex to its OSM way and sets curb-to-curb widths from lanes (arterials ~2x a side street) + writes intersection pads at the real junctions. Racetracks (defined widths) leave this off.",
@@ -427,12 +427,13 @@
     "bespoke": {
       "blocks": [
         {
-          "file": "source/bespoke/buildings.json",
+          "file": "source/bespoke/buildings.lm.json",
           "auto": true,
           "replace": [
             "HOUSE",
             "BUILDING"
-          ]
+          ],
+          "_source": "ledger 0079: Lake Murray's buildings pipeline over Sand Creek's surroundings (source/bespoke/buildings.plan.json): OSM way[building] (1,237, source/bespoke/osm_buildings.cache.json, 2026-11-04) + Microsoft GlobalMLBuildingFootprints (2,326 in the box, 1,213 where OSM has none; source/bespoke/msft_buildings.json, ODbL) -> tools/plan_buildings.py -> 2,321 planned. Heights: Microsoft's ML estimate on 2,153, OSM building:levels on 23, class default [invented] on 145; the NAIP shadow stage voted the camera's lean (no sun matches) and is unused. The lidar heights are owed (ledger 0079)"
         }
       ],
       "grassfx_zones": {
@@ -478,7 +479,7 @@
           }
         ]
       },
-      "_doc": "Lake Murray v4's buildings (Kevin 2026-11-03: \"Lake Murray v4 had many more houses in it this time, don't lose those\"): the footprint plan (tools/plan_buildings.py -> source/bespoke/buildings.json, Sand Creek's, copied in by tools/lm_engine_intake.py) stood by tools/author_bespoke_blend.py in place of the assembler's HOUSE / BUILDING boxes, with Lake Murray's author-stage names and prep_seats (engine-july re-seats every BUILDING* island)",
+      "_doc": "Lake Murray v4's buildings (Kevin 2026-11-03: \"Lake Murray v4 had many more houses in it this time, don't lose those\"): the footprint plan (ledger 0079: the port's own, source/bespoke/buildings.lm.json, synced in by ship.json) stood by tools/author_bespoke_blend.py in place of the assembler's HOUSE / BUILDING boxes, with Lake Murray's author-stage names and prep_seats (engine-july re-seats every BUILDING* island)",
       "names": {
         "ground": [
           "TERRAIN"
@@ -498,12 +499,18 @@
         ],
         "_doc": "the assembler's names at the author stage; the prep renames TERRAIN -> 1GRASS, ROAD -> 1ROAD, CURB -> 1KERB"
       },
-      "prep_seats": true
+      "prep_seats": true,
+      "house_gate": {
+        "roofs": 2261,
+        "blocks": 2261,
+        "colliders": 0,
+        "_doc": "Ledger 0079: the first 0.2.0 build (Mac, empty workshop), counted off the BUILT road kn5 as connected shells by tools/house_gate.py: 2,261 ROOFTOP_*, 2,261 BUILDING_* (no FARBLOCK: the port ground reaches every stood block), 0 1WALL_TILTUP (no block within COLLIDER_REACH_M 60 m of the lap on fine ground, as 0.1.1). 0.1.1 stood 451. A floor at the count built, not a target: more passes, fewer fails"
+      }
     },
     "treefx": {
-      "_doc": "Ledger 0063: the NAIP points of source/bespoke/trees.json stand as TreeFX models (tools/make_treefx.py, planted), not as TREECARD cards. There is no cottonwood model: sycamores stand in, as the north_riparian zone does. Models are personal-use and stay on this machine.",
+      "_doc": "Ledger 0079 (Kevin 2026-11-04: measured positions, no invented scatter): one tree per crown read off NAIP 2023 z18 (tools/plan_bespoke_vegetation.py place crowns, source/bespoke/trees.plan.json; every crown drawn on source/bespoke/trees_overview.jpg), planted as TreeFX models (tools/make_treefx.py, ship step treefx). Riparian crowns (within 60 m of OSM's Sand Creek) are zone 3 (cottonwood; no cottonwood model, sycamores stand in), the rest zone 1. Models are personal-use and stay on the PC (lm_intake.tree_models copies them in)",
       "planted": {
-        "file": "source/bespoke/trees.json",
+        "file": "source/bespoke/trees.lm.json",
         "clear_m": 5.0,
         "zones": {
           "3": "planted_cottonwood",
@@ -647,6 +654,47 @@
       "diffuse": "assets/textures/grass_diffuse.jpg",
       "normal": "assets/textures/grass_normal.jpg",
       "_doc": "Kevin: the Lariat's alpine grass look on Sand Creek too"
+    },
+    "BUILDING_SIDING": {
+      "diffuse": "assets/textures/siding_wall_diffuse.jpg",
+      "normal": "assets/textures/siding_wall_normal.jpg",
+      "_doc": "ledger 0079, as Lake Murray's ledger 0065 rows: the blocks' pbr rows pointed at airoso's tracked copies (assets/textures, CC0, tools/make_bespoke_assets.py), copied into the workshop by ship.json sync_in.assets, so the kn5 embeds them whatever engine-july's own assets/textures holds. Sand Creek's houses are lap siding (the dossier's skin, BUILDING_SIDING); the rest are Lake Murray's rows"
+    },
+    "BUILDING_STUCCO": {
+      "diffuse": "assets/textures/stucco_wall_diffuse.jpg",
+      "normal": "assets/textures/stucco_wall_normal.jpg"
+    },
+    "BUILDING_TILTUP": {
+      "diffuse": "assets/textures/tiltup_wall_diffuse.jpg",
+      "normal": "assets/textures/tiltup_wall_normal.jpg"
+    },
+    "BUILDING_METAL": {
+      "diffuse": "assets/textures/metal_wall_diffuse.jpg",
+      "normal": "assets/textures/metal_wall_normal.jpg"
+    },
+    "FARBLOCK_TILTUP": {
+      "diffuse": "assets/textures/tiltup_wall_diffuse.jpg",
+      "normal": "assets/textures/tiltup_wall_normal.jpg"
+    },
+    "FARBLOCK_METAL": {
+      "diffuse": "assets/textures/metal_wall_diffuse.jpg",
+      "normal": "assets/textures/metal_wall_normal.jpg"
+    },
+    "1WALL_TILTUP": {
+      "diffuse": "assets/textures/tiltup_wall_diffuse.jpg",
+      "normal": "assets/textures/tiltup_wall_normal.jpg"
+    },
+    "ROOFTOP_SHINGLE": {
+      "diffuse": "assets/textures/shingle_roof_diffuse.jpg"
+    },
+    "ROOFTOP_WHITE": {
+      "diffuse": "assets/textures/roof_white_diffuse.jpg"
+    },
+    "ROOFTOP_TAN": {
+      "diffuse": "assets/textures/roof_tan_diffuse.jpg"
+    },
+    "ROOFTOP_DARK": {
+      "diffuse": "assets/textures/roof_dark_diffuse.jpg"
     }
   },
   "terrain_cell_m": 1.5,
@@ -673,7 +721,11 @@
     "crossfall": true,
     "grid_upsample": 2,
     "_grid_doc": "the 40 m 3DEP grid pre-divided to 20 m (bilinear, the same samples) so the assembler's terrain is 10 m facets and engine-july's corridor split reaches the slip after E 56th's deck (ledger 0078: 64 ground-on-top samples where a 10 m grass chord stood over the deck's ramp sag)",
-    "_doc": "tools/lm_engine_intake.py: the source track's projected line + widths + 3DEP grid, capture.bridges decks levelled and the road_profile grade net (Y only), into data/. connectors false: the pilot is the lap alone; the free roam's 106 grid streets need the LM chain's junction tools (route/trim connectors, weld_mouths, gap_mouths), owed (ledger 0078)."
+    "_doc": "tools/lm_engine_intake.py: the source track's projected line + widths + 3DEP grid, capture.bridges decks levelled and the road_profile grade net (Y only), into data/. connectors false: the pilot is the lap alone; the free roam's 106 grid streets need the LM chain's junction tools (route/trim connectors, weld_mouths, gap_mouths), owed (ledger 0078).",
+    "heightfield": "port",
+    "_heightfield_doc": "ledger 0079: the port's own 3DEP grid (data/heightfield.*, synced in): margin 470 m = 150 + 8 x 40 on the source's lattice (every one of the source grid's 5,400 samples is a sample of this one, 0.000 m apart), so the ground reaches the buildings within 450 m of the lap and the grid streets; fetched by scripts.elevation.heightfield.build_heightfield",
+    "tree_models": true,
+    "_tree_models_doc": "ledger 0079: the source's TreeFX models (tracks/sand-creek/source/trees/*.bin, personal use, on the PC only) into the project"
   },
   "terrain": {
     "terrain_band_m": 22.0,

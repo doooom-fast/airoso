@@ -1,5 +1,5 @@
 {
-  "_doc": "Sand Creek Raceway through Lake Murray v4's engine — the fleet pilot (ledger 0078, Kevin 2026-11-03: \"Lake Murray v4 should be what we build the rest from\"). engine lm-v4: the loop assembler is tracks/san-diego-lake-murray/scripts-v021 (V021_SHIM, never a per-track copy) and the prep / exporter / spawn builder are engine-july (ENG=<dir>: the real tree, a scratch copy, or the snapshot tracks/san-diego-lake-murray/engine-july-snapshot with assets/textures beside it). The draft starts from Sand Creek 0.35.0's line as airoso's data stages left it (tracks/sand-creek/data: the OSM centrelines, osm widths, 3DEP), read by tools/lm_engine_intake.py; then Lake Murray's own draft and author steps that serve a lap with no side streets: the assembler, the fold weld (weld_mouths, mainline only), Kevin's lamp model, the bespoke buildings in place of the assembler's boxes. The free roam's 106 grid streets wait for the junction steps (route/trim connectors, weld mouths, gap mouths, pads). The workshop is outside airoso and beside Lake Murray's.",
+  "_doc": "Sand Creek Raceway through Lake Murray v4's engine — the fleet pilot (ledger 0078, Kevin 2026-11-03: \"Lake Murray v4 should be what we build the rest from\"). engine lm-v4: the loop assembler is tracks/san-diego-lake-murray/scripts-v021 (V021_SHIM, never a per-track copy) and the prep / exporter / spawn builder are engine-july (ENG=<dir>: the real tree, a scratch copy, or the snapshot tracks/san-diego-lake-murray/engine-july-snapshot with assets/textures beside it). The draft starts from Sand Creek 0.35.0's line as airoso's data stages left it (tracks/sand-creek/data: the OSM centrelines, osm widths, 3DEP), read by tools/lm_engine_intake.py; then Lake Murray's own draft and author steps that serve a lap with no side streets: the assembler, the fold weld (weld_mouths, mainline only), Kevin's lamp model, the bespoke buildings in place of the assembler's boxes. Ledger 0079 adds Lake Murray's dressing as chain steps: the buildings pipeline's blocks at the surroundings' real density (the port's wider ground), the crowns read off NAIP as TreeFX (treefx), the houses gate. The free roam's 106 grid streets wait for the junction steps (route/trim connectors, weld mouths, gap mouths, pads). The workshop is outside airoso and beside Lake Murray's.",
   "track": "sand-creek-lm",
   "engine": "lm-v4",
   "workshop": "D:/k10-scratch",
@@ -33,20 +33,45 @@
       "road_obj",
       "track_folder",
       "verify_inis",
-      "make_map"
+      "make_map",
+      "treefx"
     ],
     "gate": [
       "drive_test_street",
       "audit_street",
       "kn5_ground",
       "house_seat",
+      "houses",
+      "textures",
       "edge_report"
     ]
   },
   "sync_in": {
     "required": [
       "track.config.json"
-    ]
+    ],
+    "optional": [
+      "data/heightfield.npy",
+      "data/heightfield.meta.json",
+      "source/bespoke/buildings.lm.json",
+      "source/bespoke/trees.lm.json"
+    ],
+    "_optional_doc": "ledger 0079: the port's own inputs (tools/lm_engine_intake.py uses a port file the source track lacks): its wider 3DEP grid (lm_intake.heightfield port), the buildings pipeline's blocks and the crowns read off NAIP",
+    "assets": [
+      "assets/textures/siding_wall_diffuse.jpg",
+      "assets/textures/siding_wall_normal.jpg",
+      "assets/textures/stucco_wall_diffuse.jpg",
+      "assets/textures/stucco_wall_normal.jpg",
+      "assets/textures/tiltup_wall_diffuse.jpg",
+      "assets/textures/tiltup_wall_normal.jpg",
+      "assets/textures/metal_wall_diffuse.jpg",
+      "assets/textures/metal_wall_normal.jpg",
+      "assets/textures/shingle_roof_diffuse.jpg",
+      "assets/textures/roof_white_diffuse.jpg",
+      "assets/textures/roof_tan_diffuse.jpg",
+      "assets/textures/roof_dark_diffuse.jpg"
+    ],
+    "_assets_doc": "ledger 0079, as Lake Murray's (ledger 0065): the textures the blocks' pbr rows name, copied into the workshop and named by track.config.json texture_overrides, so the kn5 embeds them whatever the ENG copy holds"
   },
   "sync_out": {
     "required": [
@@ -70,7 +95,10 @@
       "data/house_seat_check.json",
       "data/street_kn5.json",
       "data/crossfall.lm.json",
-      "data/edge_report.json"
+      "data/edge_report.json",
+      "data/house_gate.json",
+      "data/treefx.report.json",
+      "data/verify_textures.json"
     ],
     "map": [
       [

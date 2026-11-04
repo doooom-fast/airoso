@@ -1,0 +1,27 @@
+{
+ "_source": "USDA NAIP 2023-09-25 (co_m_3910409_se_13_030_20230925, z18, tracks/sand-creek/source/naip_2023_sc_z18.jpg): one tree per crown read off the photograph (tools/plan_bespoke_vegetation.py place crowns, ledger 0079); positions and crown widths measured, heights from the width by an [invented] ratio, species by patch size [invented threshold]",
+ "_doc": "Ledger 0079 (Kevin 2026-11-04: Sand Creek's trees from measured positions, no invented scatter). Replaces Sand Creek's grid-with-jitter plan (tracks/sand-creek/source/bespoke/trees.plan.json: an 11 m grid, 3.5 m random jitter, 45 % random interior keep) with the crowns mode, and the colour rule re-read on the z18 scene (_rule_doc).",
+ "place": "crowns",
+ "image": "../sand-creek/source/naip_2023_sc_z18.jpg",
+ "webmerc": {"z": 18, "x0": 54655, "y0": 99433},
+ "track_box_lonlat": [-104.9425, 39.7745, -104.8990, 39.8020],
+ "rule": {"max_mean": 100, "min_mean": 30, "g_over_r": 1.15, "g_over_b": 1.2, "min_exg": 38},
+ "_rule_doc": "re-read on this z18 scene (ledger 0079): sampled sunlit crowns read mean 66-83, g/r 1.19-1.37, g/b 1.26-1.73, excess green 44-54; a dark lawn g/r 1.08, a street g/r 1.07 and mean 116, a dirt lot g/r 0.96; the old z16 rule (g/r 1.02, g/b 1.1) took lawns, lots and the crowns' shadows as canopy",
+ "crowns": {
+  "min_crown_m2": 7.0,
+  "smooth_m": 1.2,
+  "min_sep_m": 3.5,
+  "edge_m_min": 0.8,
+  "max_radius_m": 7.0,
+  "wood_near": {"file": "source/bespoke/waterways.osm.json", "within_m": 60.0},
+  "wood_cell": 3,
+  "single_cell": 1,
+  "w_over_h": {"3": 0.85, "1": 0.8},
+  "_doc": "min_crown_m2: a 3 m crown (smaller blobs are shrubs or shadow); smooth_m / min_sep_m: two tops closer than 3.5 m are one crown; max_radius_m: a 14 m crown, a big plains cottonwood; wood_near: a crown within 60 m of a mapped creek (OSM waterway, source/bespoke/waterways.osm.json) is the riparian wood, cottonwood [the 60 m is invented]; w_over_h: the old plan's species ratios (cottonwood 0.85, street tree 0.8) [invented]"
+ },
+ "cols": 2,
+ "rows": 2,
+ "out": "source/bespoke/trees.lm.json",
+ "overview": "source/bespoke/trees_overview.jpg",
+ "overview_px": 4200
+}

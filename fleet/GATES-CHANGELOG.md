@@ -14,6 +14,34 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-04 — Sand Creek's assets: the `textures` gate, the houses floor, and the reading thresholds of round A (ledger 0079)
+
+- **New gate `textures`** (`tools/verify_textures.py`, chain step `gate_textures`, hard). On every kn5 the track folder
+  packs, every renderable mesh with vertices must bind a `txDiffuse` that is embedded with bytes. The threshold is 0. That is
+  LAWS L7's rule ("every material needs a texture"), not a tuned number.
+  - Proven: Sand Creek 0.1.1's kn5s read 0 untextured (24 meshes); 0.2.0 reads 0 (29).
+  - Lake Murray's ship.json does not list it.
+- **houses floor on Sand Creek's port** (`scenery.bespoke.house_gate`): roofs 2,261 / blocks 2,261 / colliders 0. These are
+  the first 0.2.0 build's own counts off the BUILT road kn5. A floor, as Lake Murray's: more passes, fewer fails.
+- **Reading thresholds, all [invented]; none of them is a gate:**
+  - `plan_buildings.py` `ml_height_check.min_m` **2.5 m**: a Microsoft ML height under a room's height, or past the
+    planner's class cap (`CAP_M`, already invented), is not taken as a measurement. On Sand Creek 345 were rejected. It is
+    the reason 11 blocks stopped reading "buried" (house_seat) without touching the gate.
+  - `lidar_buildings.py` (PC):
+    - `SHRINK_M` **0.6 m** inside the footprint for roof returns;
+    - ground ring **1.5-6 m**;
+    - `MIN_ROOF_PTS` **8**.
+  - `plan_bespoke_vegetation.py` crowns (Sand Creek's plan):
+    - `min_crown_m2` **7**;
+    - `smooth_m` **1.2**;
+    - `min_sep_m` **3.5**;
+    - `edge_m_min` **0.8**;
+    - `max_radius_m` **7**;
+    - riparian reach **60 m**;
+    - height / width ratios **0.85 / 0.8**.
+  - The z18 colour rule (g/r 1.15, g/b 1.2, excess green 38) is read off sampled pixels of the scene (ledger 0079), not
+    tuned against a gate.
+
 ## 2026-11-03 — COMPARISON RULE: "unchanged" kn5s are judged by `tools/kn5_equiv.py`, not md5 (ledger 0065)
 
 Blender's tangent pass is not bit-stable. Lake Murray v4's own workshop, rebuilt from the prep on the PC with the same engine,

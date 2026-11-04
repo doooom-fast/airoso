@@ -1,0 +1,41 @@
+{
+ "image": "../sand-creek/source/naip_2023_sc_z18.jpg",
+ "naip_date": "2023-09-25",
+ "footprints": [
+  {
+   "file": "source/bespoke/osm_buildings.cache.json",
+   "kind": "cache",
+   "_note": "OSM way[building] over source/naip_box.json, fetched 2026-11-04 by tools/fetch_buildings_cache.py (provenance beside it)"
+  },
+  {
+   "file": "source/bespoke/msft_buildings.json",
+   "kind": "cache",
+   "_note": "Microsoft GlobalMLBuildingFootprints 2026-02-03, UnitedStates quadkey 023101030, clipped to source/naip_box.json by tools/msft_footprints.py; ODbL"
+  }
+ ],
+ "out": "source/bespoke/buildings.lm.json",
+  "ml_height_check": {"min_m": 2.5, "_doc": "ledger 0079: a Microsoft ML height under 2.5 m [invented: under a room] or past the class cap (CAP_M) is not a measurement; the next source (the class default [invented]) stands until the lidar roofs replace both"},
+ "lidar": {"file": "source/bespoke/lidar_roofs.json", "_doc": "ledger 0079: roofs measured off CO_DRCOG_2_2020 by tools/lidar_buildings.py (the PC: runbook 4g); absent = not yet measured, the next sources stand"},
+ "min_area_m2": 25,
+ "yes_by_area": [
+  [
+   60,
+   "shed"
+  ],
+  [
+   1000000000.0,
+   "industrial"
+  ]
+ ],
+ "house_skin": "siding",
+ "shadow": {
+  "enabled": true,
+  "max_m": 60
+ },
+ "webmerc": {
+  "z": 18,
+  "x0": 54655,
+  "y0": 99433
+ },
+ "utc_offset": "-06:00"
+}

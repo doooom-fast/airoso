@@ -877,6 +877,59 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
      `grand_junction_lm`; installs as `aspen_motorsports_park_lm`, `pueblo_motorsports_park_lm`, `grand_junction_lm`): ENG =
      plain copies of `eng_repro` (every texture they use is in REFERENCED.md5); Aspen's kerb texture
      (`textures/kerb_redwhite.png`) and each port's 3DEP grid sync in from the port folder.
+4g. **Sand Creek 0.2.0, Lake Murray's assets** (ledger 0079 round A: 2,261 buildings, 5,567 NAIP-crown trees, the port's
+   wider ground, the textures gate). Branch `claude/sand-creek-lm-assets`. It installs as `sand_creek_raceway_lm` 0.2.0,
+   replacing 0.1.1 (the chain parks 0.1.1 in the archive). **Ask Kevin before installing.**
+   1. **Worktree:**
+      `git fetch && git worktree add D:/k10-worktrees/sclm-assets origin/claude/sand-creek-lm-assets`
+   2. **Tree models.** The intake (`lm_intake.tree_models`) copies `tracks/sand-creek/source/trees/*.bin` into the
+      project. Make sure the worktree's `tracks/sand-creek/source/trees/` holds `Oak3.bin`, `SycamoreV1.bin`,
+      `SycamoreV2.bin` and `SycamoreV3.bin`, copied from wherever the live Sand Creek build takes them. They are
+      personal-use and gitignored, so never commit them. Without them the log reads `[lm_intake] tree models: 0` and
+      `[treefx] 0 trees`; that is not the build to install.
+   3. **The lidar roofs: AFTER step 6, as its own job** (recommended; the measured heights the Mac cannot read). From the worktree:
+      ```bash
+      PYTHONUTF8=1 python tools/lidar_buildings.py tracks/sand-creek-lm
+      PYTHONUTF8=1 python tools/plan_buildings.py tracks/sand-creek-lm tracks/sand-creek-lm/source/bespoke/buildings.plan.json
+      ```
+      - The first command reads CO_DRCOG_2_2020's EPT, 1,769 nodes to depth 11, over the 2,321 footprints. Its log prints
+        `N of 2321 footprints measured`.
+      - The second needs `git lfs pull --include tracks/sand-creek/source/naip_2023_sc_z18.jpg`. Its log prints
+        `lidar roofs: N measured footprints` and `heights by source {'lidar': N, ...}`.
+      - Commit `source/bespoke/lidar_roofs.json` and the re-planned `buildings.lm.json`, push, and stop. The Mac rebuilds
+        that as 0.2.1 and sets the houses floor again. **Do not install the re-planned build as 0.2.0.**
+   4. **ENG** = a plain copy of `eng_repro` (`D:/k10-scratch/eng_sclm_a`). No texture has to be added to ENG: the blocks'
+      textures come in through ship.json `sync_in.assets` into the workshop. Check their md5s in the workshop after the
+      sync-in (`<ws>/assets/textures/`):
+
+      | file | md5 |
+      |---|---|
+      | siding_wall_diffuse.jpg | ca60031f81cc4a1ef10876b8b34e33dd |
+      | siding_wall_normal.jpg | 0626bd936a6d6519b5f366aaca31dd4d |
+      | stucco_wall_diffuse.jpg | e0f8fbb4fc465cae65a39b15a6582cad |
+      | stucco_wall_normal.jpg | 151abcffcd938d4cd12ebe3f74b32fff |
+      | tiltup_wall_diffuse.jpg | 7a4ed52a856098256fd63b6e23a71de1 |
+      | tiltup_wall_normal.jpg | 2e7a85baf12bc77e0dd39ddeef12ea9e |
+      | metal_wall_diffuse.jpg | 326b3841477610400a7926a577926ee7 |
+      | metal_wall_normal.jpg | 5a1721de1b28d55e11b86908b27e2936 |
+      | shingle_roof_diffuse.jpg | ae9bc7a55cbb7bff2ed751808561ee64 |
+      | roof_white_diffuse.jpg | 4d681c06dcebfdba461bfb81528d1ec3 |
+      | roof_tan_diffuse.jpg | 247c5d4f295e6cf8fab875bcd21b0596 |
+      | roof_dark_diffuse.jpg | 270e354eca5ece8a56833d1663a0b481 |
+
+   5. **Rehearse from an EMPTY workshop:**
+      `SHIP_PROJ=D:/k10-scratch/sand_creek_lm_a_reh AIROSO=D:/k10-worktrees/sclm-assets ENG=D:/k10-scratch/eng_sclm_a bash tools/ship_track.sh sand-creek-lm --no-install`
+      Expect the Mac's 0.2.0 (ledger 0079):
+      - log lines: `[lm_intake] heightfield: the project's own`, `[bespoke] ... 2261 buildings stood, 60 dropped` and
+        `[treefx] planted source/bespoke/trees.lm.json: 5569 of 5615 points`;
+      - TreeFX: 5,567 trees (Oak3 3,425, SycamoreV2 1,358, SycamoreV1 461, SycamoreV3 323);
+      - drive_test both layouts PASS (kinks 0.41, fold bumps 4, drops 0, far ledges 1);
+      - audit CLEAN; kn5_ground_check PASS;
+      - house_seat PASS (2,261 judged); houses PASS (2,261 / 2,261 / 0); textures PASS (0 untextured);
+      - road kn5 48.4 MB, `_street` 1.8 MB.
+   6. **Install, with Kevin's word:** the same command without `SHIP_PROJ` and without `--no-install`, into
+      `D:/k10-scratch/sand_creek_lm`. AC closed (CM may stay open).
+
 5. Lake Murray unchanged, apples to apples (the PC's check, 2026-11-03; it replaces a redraft-and-compare-to-v4 check that
    would have redrafted Lake Murray without its houses). Both branches carry v4's chain since the merge of
    `claude/lm-v4-line` (e78fe44): Lake Murray's `ship.json` and `track.config.json` are lm-v4-line's byte for byte, the

@@ -2,7 +2,7 @@
   "archetype": "race_circuit",
   "name": "Milford Road Course (unofficial)",
   "slug": "milford_road_course",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 11.0,
@@ -255,10 +255,12 @@
   "source": {
     "type": "from_track",
     "track": "source/mrc_fixes.json",
-    "_note": "Traced 2026-10-28 off USDA NAIP 2022-08-16 (0.6 m native; tile m_4208327_ne_17_060_20220816), exported from the USGS NAIPImagery ImageServer as an EPSG:4326 north-up clip, bbox -83.6700,42.5630,-83.6570,42.5770 at 2130x3112 (0.5 m/px) = source/naip_2022_mrc.jpg. Paved surface classified by colour, centre line found by a centre-seeking shortest path between hand-placed waypoints (source/trace/F1.json), re-centred and width-measured by perpendicular scans every 2 m. Widths clamped 9-16 m (median 11; the west front straight 16). Tree-shadowed pavement on the east side added by colour (source/trace/shadow_patch.py). Re-run: source/trace/README.md. CORRECTED 2026-10-31 (source/trace/unsquash_frame.py): the export has square-degree pixels, its true extent is lat 42.56050..42.57950, and the trace had read it squashed north-south by 0.737; OSM's outline, which this note used to call mis-drawn, was right. Length now 4.91 km vs GM's '2.9 mi' (4.67 km), +5 %; see source/route-notes.md."
+    "_note": "Traced 2026-10-28 off USDA NAIP 2022-08-16 (0.6 m native; tile m_4208327_ne_17_060_20220816), exported from the USGS NAIPImagery ImageServer as an EPSG:4326 north-up clip, bbox -83.6700,42.5630,-83.6570,42.5770 at 2130x3112 (0.5 m/px) = source/naip_2022_mrc.jpg. Paved surface classified by colour, centre line found by a centre-seeking shortest path between hand-placed waypoints (source/trace/F1.json), re-centred and width-measured by perpendicular scans every 2 m. Widths clamped 9-16 m (median 11; the west front straight 16). Tree-shadowed pavement on the east side added by colour (source/trace/shadow_patch.py). Re-run: source/trace/README.md. CORRECTED 2026-10-31 (source/trace/unsquash_frame.py): the export has square-degree pixels, its true extent is lat 42.56050..42.57950, and the trace had read it squashed north-south by 0.737; OSM's outline, which this note used to call mis-drawn, was right. Length now 4.91 km vs GM's '2.9 mi' (4.67 km), +5 %; see source/route-notes.md. CORRECTED 2026-11-03 (source/trace/apron_corner.py, ledger 0069): at the left-hander about s 1,000 the scans had read the concrete run-off apron outside the corner as road (up to 21.4 m wide, the line on the asphalt's outer edge); fixes 383-424 keep their inner edge and take the road's own 11.28 m, the centre moving up to 4.7 m inside. Lap 4.90 km."
   },
   "road_profile": {
     "_doc": "No banking authored (L10). Deck follows bare-earth 3DEP; any real cross-slope comes from lidar sections, never from curvature. The lap IS banked: 1 m lidar sections read -4.3 % in the esses (s 620), -7.1 % at the U-turn (s 780, the likeliest Carousel), +8.0 % at s 995. Tried 2026-10-28: scripts.elevation.crossfall (measured, 6 % cap, 80 % of the lap banked) made drive_test WORSE than the flat deck (ground-on-top 14 -> 53, severe steps 7 -> 17, bumps 17.2 -> 89.7/km, excursion drops 31 -> 52), the ledger-0018 class (crossfall x width steps). data/crossfall.json removed; the banks are authoring work, not a flag.",
+    "ribbon_cols": 4,
+    "_ribbon_cols_doc": "2026-11-03, ledger 0069: 4 lateral columns, so a row's quad cannot twist on a tight corner that descends. The left-hander at s 1,000 drops 13-15 % round a 13 m radius; with one quad per row the inside edge's rows bunch towards the turning centre while each row drops the full 0.4 m, and the quad's diagonal laid that drop across the centre wheel paths as a step every 3 m (drive_test: the lap's severe steps and most of its kinks). Unbanked: build_mesh honours the key on a flat road since 0069. Not a gate change.",
     "dips": [],
     "cambers": [],
     "max_grade_pct": 32.0,

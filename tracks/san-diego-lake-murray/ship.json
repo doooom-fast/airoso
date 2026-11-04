@@ -41,8 +41,8 @@
       "race_planned_gate",
       "layout_dummies",
       "race_author",
-      "race_verify",
-      "signs"
+      "signs",
+      "race_verify"
     ],
     "prep": [
       "prep",

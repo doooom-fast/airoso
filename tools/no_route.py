@@ -77,6 +77,8 @@ WALL_LO_M, WALL_HI_M = 0.20, 0.90   # INVENTED: a wall must span this band above
 DECK_LIFT_M = 0.10       # the road ribbon rides +0.10 over the centreline y (race_furniture.LIFT)
 HBIN_M = 0.05            # height-bin size of the span test
 DECK_BUCKET_M = 2.0      # the deck index's bucket (a lookup grid, not a judgment)
+DECK_REACH_M = WALL_HI_M - WALL_LO_M   # 0.70, derived: a deck nearer the line's deck than the band's own height keeps
+#                                       the wall's band (from its deck) overlapping the line's band — the same level
 EDGE_SAMPLE_M = 0.10     # wall triangle edges sampled this often
 BARRIER_HALF_DEFAULT = 0.335
 EDGE_INSET_DEFAULT = 0.82
@@ -651,7 +653,8 @@ def _read_obj_walls(path: Path, mirror: float, decks: list | None = None):
 class _Decks:
     """The 1ROAD surfaces under the walls (ledger 0054 step 2e): a wall triangle's band is measured from the deck
     it stands on — the 1ROAD triangle under its xz centroid whose height is nearest the triangle's foot (its
-    lowest vertex). Only the DECK_BUCKET_M buckets the walls stand in are indexed."""
+    lowest vertex); since step 2g only among the sheets within DECK_REACH_M of the line's own deck (run()'s deck_of).
+    Only the DECK_BUCKET_M buckets the walls stand in are indexed."""
 
     def __init__(self, verts, tris, need: set):
         self.v = verts
@@ -672,8 +675,9 @@ class _Decks:
     def bucket(x, z):
         return int(math.floor(x / DECK_BUCKET_M)), int(math.floor(z / DECK_BUCKET_M))
 
-    def under(self, x, z, foot):
-        """the height of the 1ROAD surface at (x, z) nearest ``foot``, or None where no deck stands"""
+    def under(self, x, z, foot, lo=-1e30, hi=1e30):
+        """the height of the 1ROAD surface at (x, z) nearest ``foot`` among those within [lo, hi], or None where no
+        such deck stands"""
         v = self.v
         best = None
         for (i0, i1, i2) in self.grid.get(self.bucket(x, z), ()):
@@ -689,6 +693,8 @@ class _Decks:
             if wa < -1e-9 or wb < -1e-9 or wc < -1e-9:
                 continue
             h = wa * ya + wb * yb + wc * yc
+            if not lo <= h <= hi:
+                continue
             if best is None or abs(h - foot) < abs(best - foot):
                 best = h
         return best
@@ -761,6 +767,7 @@ def run(project_dir, layout_id: str, *, planned: bool = False, obj: str | None =
     # 2. walls
     wall_tris = 0
     local_cells: list = []
+    local_walls: list = []
     if planned:
         raw = set()
         for _kind, poly in corr.wall_polylines():
@@ -804,12 +811,25 @@ def run(project_dir, layout_id: str, *, planned: bool = False, obj: str | None =
                 return ((verts[3 * i0] + verts[3 * i1] + verts[3 * i2]) / 3.0,
                         (verts[3 * i0 + 2] + verts[3 * i1 + 2] + verts[3 * i2 + 2]) / 3.0)
             decks = _Decks(verts, deck_tris, {_Decks.bucket(*foot_xz(t)) for _n, tris in groups for t in tris})
+
+            def deck_of(cx, cz, foot):
+                """the deck a wall triangle stands on, as a car on THIS line meets it (step 2g): of the 1ROAD sheets
+                under it within DECK_REACH_M of the line's own deck there (the wall's band from that deck still
+                overlaps the line's band), the one nearest the triangle's foot. A sheet further off is another road
+                (the I-8 under a bridge, an overpass above): its barriers are not this line's walls (0.20.2: the
+                median guardrail over the I-8 sealed 104 cells on decks -3.8..+7.2 m off the line's). None: the
+                line's deck, as the first pass."""
+                pr = line.project(cx, cz)
+                if pr is None:
+                    return None
+                ref = pr[3] + DECK_LIFT_M
+                return decks.under(cx, cz, foot, ref - DECK_REACH_M, ref + DECK_REACH_M)
             for _name, tris in groups:
                 for t in tris:
                     i0, i1, i2 = t
                     ys = (verts[3 * i0 + 1], verts[3 * i1 + 1], verts[3 * i2 + 1])
                     cx, cz = foot_xz(t)
-                    h = decks.under(cx, cz, min(ys))
+                    h = deck_of(cx, cz, min(ys))
                     r0, r1, r2 = rel(i0), rel(i1), rel(i2)      # (also fills y_cache)
                     lo, hi = (min(r0, r1, r2), max(r0, r1, r2)) if h is None else (min(ys) - h, max(ys) - h)
                     mask = _bins(lo, hi)
@@ -820,6 +840,48 @@ def run(project_dir, layout_id: str, *, planned: bool = False, obj: str | None =
             cells = cells + local_cells
             R.hmask.clear()
             R.touched.clear()
+            if local_cells:
+                # step 2g: WHAT the deck frame sealed — every wall object with a triangle in band touching a deck-frame
+                # cell (or its 8 neighbours, the span test's own reach): its cells, how far the deck under it stands
+                # from the line's deck, its base / top over that deck, and the line vertices it stands beside
+                near = {(cx_ + dx, cz_ + dz) for cx_, cz_ in local_cells for dx in (-1, 0, 1) for dz in (-1, 0, 1)}
+                own = {c: set() for c in local_cells}
+                rows: dict = {}
+                for name, tris in groups:
+                    for t in tris:
+                        i0, i1, i2 = t
+                        ys = (verts[3 * i0 + 1], verts[3 * i1 + 1], verts[3 * i2 + 1])
+                        cx, cz = foot_xz(t)
+                        h = deck_of(cx, cz, min(ys))
+                        if h is None:
+                            continue
+                        if not _bins(min(ys) - h, max(ys) - h):
+                            continue
+                        hit = [c for c in R.tri_cells(y_cache[i0], y_cache[i1], y_cache[i2]) if c in near]
+                        if not hit:
+                            continue
+                        pr = line.project(cx, cz)
+                        cl_deck = (pr[3] + DECK_LIFT_M) if pr is not None else h
+                        row = rows.setdefault(name, {"object": name, "cells": set(), "deck_minus_line_m": [9e9, -9e9],
+                                                     "base_m": 9e9, "top_m": -9e9, "vertices": [10 ** 9, -1]})
+                        for c in hit:
+                            for dx in (-1, 0, 1):
+                                for dz in (-1, 0, 1):
+                                    q = (c[0] + dx, c[1] + dz)
+                                    if q in own:
+                                        own[q].add(name)
+                                        row["cells"].add(q)
+                        row["deck_minus_line_m"] = [min(row["deck_minus_line_m"][0], h - cl_deck),
+                                                    max(row["deck_minus_line_m"][1], h - cl_deck)]
+                        row["base_m"] = min(row["base_m"], min(ys) - h)
+                        row["top_m"] = max(row["top_m"], max(ys) - h)
+                        if pr is not None:
+                            row["vertices"] = [min(row["vertices"][0], pr[0]), max(row["vertices"][1], pr[0])]
+                local_walls = sorted(({"object": r["object"], "cells": len(r["cells"]),
+                                       "deck_minus_line_m": [round(v, 3) for v in r["deck_minus_line_m"]],
+                                       "base_m": round(r["base_m"], 3), "top_m": round(r["top_m"], 3),
+                                       "vertices": r["vertices"]} for r in rows.values() if r["cells"]),
+                                     key=lambda r: (r["vertices"][0], r["object"]))
     R.stamp_walls(cells)
     say(f"[no_route] walls: {wall_tris if not planned else 'declared polylines'} -> {len(cells)} wall cells, dilated "
         f"{PROBE_R_M} m ({time.time() - t0:.1f} s)")
@@ -894,6 +956,7 @@ def run(project_dir, layout_id: str, *, planned: bool = False, obj: str | None =
         "wall_cells": len(cells),
         "wall_tris_in_band": wall_tris,
         **({} if planned else {"local_deck_cells": len(local_cells)}),
+        **({"local_deck_walls": local_walls} if local_walls else {}),
         "door_clusters": len(res["doors"]),
         "doors": res["doors"],
         "doors_by_class": res["by_class"],
@@ -914,6 +977,12 @@ def run(project_dir, layout_id: str, *, planned: bool = False, obj: str | None =
     say(f"[no_route] {layout_id}: {'FAIL' if fails else 'PASS'} — leak {out['leak_m2']} m2, {len(res['doors'])} doors, "
         f"{len(forbidden)}/{len(corr.probes)} probes reached, {len(blocked)} blocked spans, {len(spawns_missed)} spawns "
         f"unreached ({out['seconds']} s)")
+    if local_cells:
+        say(f"[no_route]   the deck frame sealed {len(local_cells)} cells more:")
+        for w in local_walls[:40]:
+            say(f"[no_route]     {w['object']}: {w['cells']} cells at v{w['vertices'][0]}-v{w['vertices'][1]}, its deck "
+                f"{w['deck_minus_line_m'][0]:+.2f}..{w['deck_minus_line_m'][1]:+.2f} m off the line's, standing "
+                f"{w['base_m']:+.2f}..{w['top_m']:+.2f} m over it")
     for d in res["doors"][:40]:
         say(f"[no_route]   door {_door_str(d)}: {d['cells']} cells, lat {d['lat'][0]:+.1f}..{d['lat'][1]:+.1f}, "
             f"gap ~{d['gap_m']:.1f} m, {d['class']}{', escapes to the open map' if d['escapes'] else ''}")

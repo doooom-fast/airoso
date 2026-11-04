@@ -1812,6 +1812,38 @@ AI: the chain writes lane-offset drafts only; the real lines are recorded in gam
 
 Until then nothing is installed. Kevin's drive and publishing approval remain required.
 
+### Phase 2 — step 4/5 run (PC, 2026-11-04, on 58f8c05): the island reshaped; 0.20.2 stops at J4's inside kerb
+
+Branch `claude/lm-phase2-0202` (worktree `D:/k10-worktrees/lm-phase2-0202`, LFS pulled); workshop
+`D:/k10-scratch/lm_phase2/project` (robocopy of lm_v4 without build/, the three corrected data files from the repo). lm_v4 is
+untouched. Nothing installed.
+
+**Step 4: PASS, the Mac's numbers exactly.** `reshape_island_blend.py` (Blender 4.2) read 592 island vertices from the OLD
+data, 592 found (worst 0.00 mm); moved CURB 78, TERRAIN 26, stations [200, 212], largest move 1.287 m, YLINE 88, MARKINGS 0.
+loop.blend swapped (v4's kept as loop.v4.blend). Report: `D:/k10-scratch/lm_phase2/reshape_pv.json`.
+
+**Step 5: the config composed** (plan_north.compose, version 0.20.2), then `ship_track.sh --skip-blend --no-install`
+(ENG = eng_repro, SHIP_PROJ = the workshop):
+- **Run 1: FAIL at the race furniture.** 785 of 12,397 north rings had no deck (> 1 %); `1KERB_race_lapnorth_1463_in`
+  had none at all. Every one stands over `1ROAD_pad_J2/J3/J4` or `1ROAD_mouthfill_0/1` (probed in the blend): the author
+  seated a lap on ROAD alone. Fixed in the author for lap groups (GATES-CHANGELOG 2026-11-04 WIRING); the mainline report
+  is identical leaf for leaf.
+- **Run 2: FAIL at verify_race I (hard), north only.** The north lap seats 12,487 hit / 0 near / 0 interpolated; the
+  mainline verify passes; every other north check passes (C' / J pins 44, gap max 0.008 m; H chord max 0.080 m; F spawn
+  clearance 2.48 m; G lamps and scenery clear). The one failure: **2 inside-out spans in `1KERB_race_lapnorth_1463_in`
+  (spans 44, 46)**, J4's inside kerb at the apex.
+  - Why: J4's refit apex is R 15.38 m (v1463) / 15.51 m (v1464) by the three-point radius (15.7 m on the ±6 m stencil),
+    on a road w/2 = 14.41 / 14.31 m. The inside curb line turns on about 1.0-1.2 m. The kerb's footprint (KERB_W 1.0 + ramp
+    0.10, 0.05 m off the strip's road face at w/2 − 0.82) runs from w/2 − 1.97 to w/2 − 0.87, so its inner column passes
+    about 1.8 m from the corner's centre on a ~2 m polyline turning ~7.5° per vertex: two kerb stations step backwards.
+  - Not authored or forced here: J4's corner (its radius floor, or a race.kerbs.trims entry for the inside kerb, as J1 /
+    J5's) is the plan's call. The gate matrix, kn5s and step 5's other checks wait for a passing run.
+- **Princess View's two extra checks** (on the data; the built read waits for the passing run):
+  - scatter plants at lap v530-v545: 6, all `median_planting` (0.36-0.68 m), every one inside both v4's island and the
+    corrected one; none on pavement or on the curb;
+  - v4's own curb-ring seat (the baseline for the moved faces): base vertices sit at median −0.020 m (unmoved right
+    v543-v558 −0.027..−0.019; left −0.071..+0.009).
+
 ### Open questions for Kevin (Phase 2)
 
 - **Princess View's wide median: closed — measured, noise, fixed at the source; no gate change** (step 2c).

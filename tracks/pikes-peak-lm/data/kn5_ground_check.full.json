@@ -1,0 +1,24 @@
+{
+ "fail": false,
+ "reasons": [],
+ "kn5": [
+  "pikes_peak_international_raceway_lm.kn5"
+ ],
+ "fidelity": "skipped: gate OBJ written from this kn5",
+ "double_sheet_cells": 0,
+ "seating": {
+  "walls": {
+   "objects": 1,
+   "no_ground_pct": 0.0,
+   "median_m": -1.881,
+   "p95_m": -1.881,
+   "hovering": 0
+  }
+ },
+ "road_over_ground": {
+  "over": 0,
+  "samples": 1218,
+  "p95_m": 0.02,
+  "max_m": 0.021
+ }
+}

@@ -1,0 +1,34 @@
+{
+ "source_track": "pikes-peak",
+ "points": 556,
+ "lap_m": 1665.9,
+ "closed": true,
+ "widths_m": [
+  15.0,
+  15.0,
+  15.0
+ ],
+ "bridges_levelled": [],
+ "max_grade_pct": null,
+ "measured_max_grade_pct": 2.0,
+ "y_changed_points": 0,
+ "y_change_max_m": 0.0,
+ "connectors": false,
+ "bespoke_files": [],
+ "crossfall": {
+  "stations": 556,
+  "max_pct": 17.76
+ },
+ "profile": {
+  "cap_was_pct": 4.0,
+  "reproduced_within_m": 0.0067,
+  "points_moved": 0,
+  "max_move_m": 0.0
+ },
+ "grid_upsample": 2,
+ "md5": {
+  "source_centerline": "8e207afea7568030c66f29af20f81bc1",
+  "heightfield.npy": "fb1692c71ec888b13902e4b3b34af3ee",
+  "centerline.local.json": "9acde4a90c879d8bd553de8551da7471"
+ }
+}

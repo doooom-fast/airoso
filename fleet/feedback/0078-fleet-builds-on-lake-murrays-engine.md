@@ -251,6 +251,15 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
    Expect the Mac's numbers above: every gate green; the edge report prints (no verdict).
 4. Install side by side (no force needed): drop `--no-install`. They land as `content/tracks/sand_creek_raceway_lm`,
    `high_plains_lm`, `exotics_racing_lvms_lm`, beside the live folders. AC closed (CM may stay open).
+4b. The round-4 circuits, the same way (an empty workshop is enough), one ENG copy each from `eng_repro` with the textures
+   below (airoso's tracked `assets/textures`, md5-checked after the copy):
+   - **Milford** (`milford-road-course-lm`, workshop `milford_lm`, ENG `eng_mflm`, installs as `milford_road_course_lm`):
+     `deciduous_atlas.png` 944b6530c93ffd148fb9b7ec801d5015, `fabric_white_diffuse.jpg` ccb08653cd715b19c85cfbbcf0f36d85,
+     `fabric_white_normal.jpg` b95a9c9e983f7575b520f1ce9ce2504a, `pad_asphalt_diffuse.jpg` 6a3fdee42ff037d6e08aed8c9351a128,
+     `roof_white_diffuse.jpg` 4d681c06dcebfdba461bfb81528d1ec3, `tiltup_wall_diffuse.jpg` 7a4ed52a856098256fd63b6e23a71de1,
+     `tiltup_wall_normal.jpg` 2e7a85baf12bc77e0dd39ddeef12ea9e (the ground tile `turf_*` is the track's own; the intake
+     copies it). Expect the Mac's numbers (below, "Round 4: the next circuits"): every gate green, worse than 0.6.0 on
+     severe steps and kinks: drive it against 0.6.0 before anything else is built on it.
 5. Lake Murray unchanged, apples to apples (the PC's check, 2026-11-03; it replaces a redraft-and-compare-to-v4 check that
    would have redrafted Lake Murray without its houses). Both branches carry v4's chain since the merge of
    `claude/lm-v4-line` (e78fe44): Lake Murray's `ship.json` and `track.config.json` are lm-v4-line's byte for byte, the

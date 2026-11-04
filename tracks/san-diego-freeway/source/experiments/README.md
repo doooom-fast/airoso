@@ -1,5 +1,11 @@
 # Freeway barrier experiments (ledger 0075 addendum, 2026-11-03), NOT applied
 
+**Superseded (2026-11-03, the Mac agent, ledger 0075 second addendum):** `scenery.walls.seat: "seated"` in
+`scripts/geometry/build_network_mesh.py` (`_wall_seated`, `_deck_edge`) is the fix these experiments pointed at, built
+the way the addendum asked: decks from the network's own viaduct lift (plus the spans the mesh already builds slab +
+piers under), the at-grade base reaching the BUILT ground, the barrier gapped and the deck-edge slab clipped wherever
+another edge's pavement lies under them. The scripts below are kept as the record; do not apply them.
+
 Two patch scripts from the Windows box, kept so the next agent can read them. Neither is in `scripts/`; the branch
 carries only `scenery.walls.offset_m` 3.2 -> 0.5 (experiment 1).
 

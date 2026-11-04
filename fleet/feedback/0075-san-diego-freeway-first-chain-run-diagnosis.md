@@ -1,7 +1,7 @@
 ---
 id: 0075
 title: San Diego freeway, first chain run red - five mechanisms, diagnosed, not fixed
-status: diagnosed
+status: in-progress — five engine fixes, opt-in, proven on the Mac's network draft (audit green; drive_test red on one line-start artefact, see the second addendum); a PC build and Kevin's drive close it
 scope: tracks/san-diego-freeway (scripts/geometry/build_network_mesh.py, scripts/elevation/network_elev.py, scripts/geometry/drive_test.py)
 layer: engine (network draft) + one gate note
 train: -
@@ -148,3 +148,118 @@ experiment 1 only; the patch scripts of 2-4 are in `tracks/san-diego-freeway/sou
    (merges and gores), as at crossings.
 3. Re-gate. Severe 90, soft top 151 and daylight 602 never moved in any experiment: they are mechanism 2 (the joints,
    `network_elev`), next after the barrier.
+
+## Second addendum 2026-11-03: five fixes on the Mac, draft re-gated (branch `claude/freeway-network-fixes`)
+
+**How it was proven.** The chain's draft steps ran on the Mac from the repo root (net, classify, network_elev, network_mesh,
+network_reference), then `drive_test --layout freeroam` and `audit_mesh` on that draft's `data/track.obj`. No kn5, nothing
+installed. Live Overpass and 3DEP reproduced the PC's committed `network.geojson`, `network.elevation.json` and
+`heightfield.npy` byte for byte, so the PC's data is the baseline. Re-meshed here with exp1's config, it reads exp1's
+drive_test numbers within noise:
+- floating 13,223 (PC 13,234); soft top 151; severe 90; daylight 602; excursions 22; obstruction 3;
+- kinks 35.9 /km (PC 36.18).
+
+The audit's C 9 and E 7 match. Its D (469, PC 1,311) and J (14, PC 23) count vertices, and the PC's gate OBJ comes from
+the kn5, which carries per-corner vertices. That explains section 3's open question, why the prep multiplies D.
+
+Every fix is opt-in by config, and without its key the build is byte for byte as before. Checked: the default-seat
+`track.obj` md5, default `net` + `classify` md5 against the committed graph, and `_smooth_edge` on all 612 edges. Only
+the freeway sets the keys. Per-fix numbers, every row re-gated with the final `scripts/`, are in
+`tracks/san-diego-freeway/data/mac_draft_gates.log`:
+
+| | floating | soft top | severe (/km) | daylight | excursions | obstructed | D | E | J | K (not gating) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 0: exp1 (PC data, Mac draft) | 13,223 | 151 | 90 (8.44) | 602 | 22 | 3 | 469 | 7 | 14 | 0 |
+| 1: + `scenery.walls.seat` "seated" | 5 | 107 | 92 (8.62) | 0 | 11 | 9 | 0 | 0 | 14 | 34 |
+| 2: + terrain bbox east -117.115 | 1 | 107 | 92 (8.62) | 0 | 11 | 9 | 0 | 0 | 0 | 34 |
+| 3: + `network.join_nodes` | 1 | 98 | 46 (4.31) | 0 | 13 | 4 | 0 | 0 | 0 | 6 |
+| 4: + `network.stable_snap` (final) | **0** | **5** | 37 (3.47) | **0** | 9 (limit 10) | **0** | 0 | 0 | 0 | 2 |
+
+Final audit: A 0, B 0, C 8 (not gating), D 0, E 0, F 0, H 0, I 0, J 0, K 2 (not gating). The audit exits 0. drive_test
+exits 1 on soft top 5 and nothing else.
+
+**1. The barrier seated (`build_network_mesh._wall_seated`, `_deck_edge`; mechanisms 1 and 3 and the PC's plan steps 1-2).**
+- **Decks.** A deck is the network's own viaduct lift (≥ 1 m, the mesh's own lifted-deck threshold), or a span the mesh
+  already builds slab + piers under (deck > 2.8 m over the carved ground, its bridge-run rule).
+  - Not centreline height over raw 3DEP: that is what failed exp4.
+  - On a deck the barrier stands 0.7 m past the pavement edge on a 1 m `1KERB_deckedge` slab at pavement height.
+  - A slab vertex closer than 0.3 m over the built ground is not a deck there, so terrain can never poke it.
+  - The slab runs one segment past a deck run and 0.5 m past an edge's end node. A barrier column on the slab's very
+    edge read floating by OBJ millimetre rounding.
+- **At grade.** The barrier stands `offset_m` out, with its base 0.5 m under the built ground at the barrier: the final
+  carved grid, triangle-exact.
+- **Over other pavement.** Wherever another edge's pavement lies under the barrier or the slab, the barrier is gapped and
+  the slab clipped, per side.
+  - The test is triangle-exact against every built ribbon, the same footprint test as audit D.
+  - A slab flush with or under a neighbour's lanes stays: a lane gain or a merging ramp at a joint. Clipping it opened 7
+    daylight gaps at 3,379 m.
+- **Width.** The barrier follows the ribbon's own per-vertex width, a ramp's merge taper included.
+- **Crossing gap.** The old centreline gap is kept, but at 1 m past a neighbour's edge instead of 3.5 m. At 3.5 m it left
+  the median and gore sides open over 0.13-0.24 m shoulder ledges (on the final draft, excursions 14 → 9). At 0 m,
+  ramps' barriers stood in the line's corridor at gores (obstructed 6).
+- **Shoulder.** A grass-shoulder triangle lying over a neighbour's lanes (2 cm over them at 6,465 m) is dropped.
+- **A trap found on the way.** `for pr, p, _w in edge_local` rebound `_w`, the heightfield's west bound `terr_y` reads, so
+  `terr_y` returned garbage after that line. Renamed. Nothing in the default flow calls `terr_y` after it.
+
+**2. Terrain grid east to -117.115 (config; mechanism 5).** The edges run to -117.1224, 250 m past the old grid. The
+800 m skirt lay over their pavement, and their barriers stood over the skirt. J 14 → 0. The last floating columns were
+there.
+
+**3. One height per shared node (`network.join_nodes`; `scripts/geometry/network_joins.py`; mechanism 2a/2b).**
+- **The cause at grade** is bigger than the diagnosis said. `network_elev._smooth_edge` grade-caps FORWARD only, so an
+  edge's END drifts from 3DEP: 334 of 365 shared nodes disagreed by more than 6 cm, 169 by more than 0.5 m, the worst by
+  19.86 m.
+- **The rule.** Each node takes the mean of its THROUGH pair: the two ends that continue each other straightest,
+  mainline before ramp. A ramp branching off takes the mainline's value.
+- **At grade** (network_elev) each edge is capped at 5 % with both ends pinned to their nodes. Where the pins are further
+  apart than the cap allows, the edge takes one straight grade.
+- **The deck lift** (build_network_mesh) is joined the same way and ramped back over max(40 m, |d| / 4 %). The deck's
+  6.5 % cap then runs with both ends held.
+
+**4. One coordinate, one node (`network.stable_snap`; `scripts/gps/network.py`, `scripts/gps/classify.py`; mechanism 2c).**
+The three 6.1-6.7 m holes were not dropped stubs: a stub collapse was written, run, found nothing and was removed. The
+greedy snap is the cause:
+- `_NodeGrid.assign` moves a cluster's centre by running mean, so a vertex two OSM ways share, met again in a later way,
+  can land in a different cluster. The ways then end at two nodes a few metres apart, with no link.
+- 101 such end pairs in this network; none with the key.
+- With the key every point is mapped to its nearest FINAL centre and placed at the node's seed point.
+- It also snaps only within one OSM layer; an exactly shared coordinate still joins across layers. The layer-blind snap
+  had merged a layer-3 flyover's vertices into the layer-2 I 8 node it passes over, a junction that does not exist. That
+  is the PC draft's 2.406 m step at 3,190 m. Joined, it pulled the flyovers 4 m down into the mainline's corridor
+  (severe 5 m, 24 obstructed stations, until the layer rule).
+- classify's travel vote then reads an edge's interior samples, or a short edge's middle vertex. A node's point can be a
+  ramp's vertex at a gore, and an 18.7 m I 8 piece came out undecided, so network_reference refused the line.
+- The graph is now 563 edges. The line's 19 joints all have a 0.0 m gap, soft top 98 → 5, and its ids changed (live
+  data; `edge_ids` stays null).
+
+**What is still red, and why.**
+- **drive_test soft top 5, and with it the 0.8 m severe at s 2.** These are the reference line's FIRST station, s 0,
+  which lies exactly on the ribbon's end row, where I 8 eastbound is cut by `source.bbox` (a dead end). Five wheel-path
+  points fall a hair past that row, and the grass 0.84 m below reads "on top".
+  - drive_test's own off-pavement guard at a line's ends exists for exactly this, but it asks only the station's
+    centre point, which lands on the ribbon.
+  - The grid spawns 45 m in, so no car meets it.
+  - Not forced. This is a gate-precision question, or an engine dead-end cap, for Kevin.
+- **Excursions 9 (passes, limit 10).**
+  - Two are real viaduct drops at 3,155 and 3,305 m, inside the 3,002-3,379 m span: nothing within 8 m below the slab,
+    behind its barrier. drive_test's "no surface" branch gates without asking for a guard, and it exempts only spans
+    declared in `capture.bridges`; this config declares none.
+  - The rest are 0.13-0.24 m shoulder and median-fill ledges, plus a 1.14 m one at 10,054 m where a median strip ends.
+- **Not gating:** severe 3.47 /km (limit 12), C 8 (merges at shared nodes, the PC's step 4, not touched), K 2.
+- **Unjudged:** 543 more edges are built and unjudged (no line gate walks them).
+
+**For Kevin.**
+- **(a)** The line-start soft top. Options:
+  - i. drive_test's end guard asks per wheel path (a gate change, GATES-CHANGELOG);
+  - ii. the engine caps network dead ends (a barrier across, an authoring item);
+  - iii. accept it red until the line is authored.
+- **(b)** Should the network's own spans (`data/bridge.spans.auto.json`, written by network_reference) feed drive_test's
+  bridge exemption, as `capture.bridges` does for a loop? That is gate wiring, so his call.
+
+**What a PC build still has to show.**
+- The same chain through prep/export/kn5, with the gates on the BUILT gate OBJ. Expect D and J to scale by the kn5's
+  per-corner vertices.
+- verify_kn5: the new `1KERB_deckedge` slab is face-up and must not trip the terrain-poke check that exp4 failed.
+- kn5_ground_check.
+- The underlay into `loop.blend`.
+- Kevin's drive of I 8, and of the unjudged network.

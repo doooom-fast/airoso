@@ -14,6 +14,20 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-04 — WIRING: a lap's race furniture seats on every 1ROAD deck, not ROAD alone (ledger 0054 Phase 2, no threshold moved)
+
+`tools/author_race_furniture_blend.py` seated a lap's rings and kerb stations on the `ROAD` object only. The north lap's
+junction boxes stand on the pads' own decks (`1ROAD_pad_J2/J3/J4`) and J1 / J5 on the mouth fills, which the drafts author
+as separate `1ROAD_*` objects. So the PC's first 0.20.2 run (58f8c05) found no deck under 785 of 12,397 north rings, every
+one inside J2 v317-331, J3 v687-710, J4 v1455-1476 or on the J1 / J5 mouth fills, and failed the run with no deck at all
+(`1KERB_race_lapnorth_1463_in`) and the 1 % interpolation ceiling.
+
+- **The change.** A lap group seats on ROAD plus every other `1ROAD_*` mesh (one world-space BVH, `lap_any`), for the seat,
+  the other-deck-above test and the kerbs' under-road test. The mainline group keeps `road_main` / `road_any` exactly.
+- **Thresholds.** INTERP_MAX_FRAC 1 %, OTHER_DECK_M, the sinks and the near probe are unchanged.
+- **Proven.** Run 2: the north lap is 12,487 hit / 0 near / 0 interpolated. The mainline group's `race_authored.json`
+  is identical to run 1's leaf for leaf (106,789 leaves; `seconds`, `blend`, `removed_existing` aside): 17,381 hit / 0 / 0.
+
 ## 2026-11-04 — MEASUREMENT-BUG FIX: the north joins' judge re-seats a moved lane band (ledger 0054 Phase 2, no threshold moved)
 
 `tracks/san-diego-lake-murray/source/expansion/phase2/judge_joins_built.py` read a "step" between a lateral path's sample and

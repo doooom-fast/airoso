@@ -147,7 +147,10 @@ def test_compose_on_a_composed_config_replaces_the_layouts_not_appends():
     assert plan_north.compose(once, decl) == once
     ids = [str(lo["id"]) for lo in once["layouts"]]
     assert len(ids) == len(set(ids)) and {"north_cw", "north_acw"} <= set(ids)
-    assert [lo for lo in once["layouts"] if lo["id"] not in ("north_cw", "north_acw")] == base["layouts"]
+    # the repo config is itself composed since 0.20.2: every other layout is kept as it was, in its order
+    north = ("north_cw", "north_acw")
+    assert [lo for lo in once["layouts"] if lo["id"] not in north] == \
+        [lo for lo in base["layouts"] if lo["id"] not in north]
 
 
 def _lap(out):

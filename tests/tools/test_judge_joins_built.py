@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -52,25 +53,33 @@ def _plan(tmp, shift):
     return tmp / "plan"
 
 
-def _judge(tmp, obj, plan, monkeypatch):
-    monkeypatch.setattr(J, "frame_check", lambda p: (0.0, None))
-    out = tmp / "out.json"
-    J.main(["--obj", str(obj), "--gate-centerline", str(tmp / "gate.json"), "--plan", str(plan), "--json", str(out)])
-    return json.loads(out.read_text())["rows"][0]["layouts"]["north_cw"]
+def _judge(tmp, obj, plan, reseat_m=None):
+    saved = J.frame_check, J.RESEAT_M
+    J.frame_check = lambda p: (0.0, None)
+    if reseat_m is not None:
+        J.RESEAT_M = reseat_m
+    try:
+        out = tmp / "out.json"
+        J.main(["--obj", str(obj), "--gate-centerline", str(tmp / "gate.json"), "--plan", str(plan), "--json", str(out)])
+        return json.loads(out.read_text())["rows"][0]["layouts"]["north_cw"]
+    finally:
+        J.frame_check, J.RESEAT_M = saved
 
 
-def test_a_lane_band_that_moves_through_a_join_is_not_a_step(tmp_path, monkeypatch):
-    obj = tmp_path / "road.obj"
+def test_a_lane_band_that_moves_through_a_join_is_not_a_step():
+    tmp = Path(tempfile.mkdtemp())
+    obj = tmp / "road.obj"
     _write_obj(obj)
-    plan = _plan(tmp_path, shift=True)
-    assert _judge(tmp_path, obj, plan, monkeypatch)["severe_steps"] == 0
-    monkeypatch.setattr(J, "RESEAT_M", 1e9)                 # without the re-seat: the stale 11 m compare reads as a step
-    assert _judge(tmp_path, obj, plan, monkeypatch)["severe_steps"] > 0
+    plan = _plan(tmp, shift=True)
+    assert _judge(tmp, obj, plan)["severe_steps"] == 0
+    # without the re-seat: the stale 11 m compare reads as a step
+    assert _judge(tmp, obj, plan, reseat_m=1e9)["severe_steps"] > 0
 
 
-def test_a_real_step_is_still_a_step(tmp_path, monkeypatch):
-    obj = tmp_path / "road.obj"
+def test_a_real_step_is_still_a_step():
+    tmp = Path(tempfile.mkdtemp())
+    obj = tmp / "road.obj"
     _write_obj(obj, slab_from_x=30)                          # a 0.15 m curb across the lane at x = 30
-    plan = _plan(tmp_path, shift=False)
-    v = _judge(tmp_path, obj, plan, monkeypatch)
+    plan = _plan(tmp, shift=False)
+    v = _judge(tmp, obj, plan)
     assert v["severe_steps"] > 0 and v["fail"]

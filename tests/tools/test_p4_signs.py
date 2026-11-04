@@ -355,7 +355,9 @@ def test_make_map_draws_a_lap_layout_alone_and_the_network_elsewhere():
     else:
         raise AssertionError("an unknown map scope must be refused")
     cfg = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
-    assert mm.layout_scopes(cfg) == {"street": "network", "race_cw": "lap", "race_acw": "lap"}
+    # 0.20.2 (ledger 0054 Phase 2): the Mission Gorge Speedway's north_cw / north_acw draw their own lap too
+    assert mm.layout_scopes(cfg) == {"street": "network", "race_cw": "lap", "race_acw": "lap",
+                                     "north_cw": "lap", "north_acw": "lap"}
 
 
 # --- the chain -------------------------------------------------------------------------------------------------------

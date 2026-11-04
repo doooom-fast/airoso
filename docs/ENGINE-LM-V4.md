@@ -249,8 +249,11 @@ The chain change (`tools/ship_track.sh`, `tools/ship_track_spec.py`): ship.json 
   fallback, the pilot spec); the SD-parity tests pass unchanged.
 - PC check (the Mac cannot run v4's chain): `python tools/snapshot_engine_july.py --check`, then
   `SHIP_PROJ=D:/k10-scratch/lm_v4_check AIROSO=<this worktree> ENG=D:/k10-scratch/eng_rehearsal bash tools/ship_track.sh
-  san-diego-lake-murray --skip-blend --force-install --no-install` from a copy of lm_v4, and compare the road kn5's md5 with
-  v4's (ledger 0065: 55f2026c…).
+  san-diego-lake-murray --skip-blend --no-install` from a copy of lm_v4, then judge every kn5 (road, `_race`, `_street`,
+  each closure, each spawn) against v4's with `python tools/kn5_equiv.py <v4 kn5> <rebuilt kn5> --tol 1e-6` (the PC's
+  tool, `claude/lm-v4-0.20.1`), **not md5**: Blender's tangent pass is not bit-stable run to run (a rebuild of v4's own
+  workshop moved only vertex tangents, max 5.66e-7), so "identical" = byte-identical or differing only in tangents within
+  1e-6. The gate OBJs and gate JSONs are compared exactly.
 
 ---
 

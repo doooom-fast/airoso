@@ -115,8 +115,13 @@ mended fold. No threshold moved.
    "doooom Colorado - Sand Creek Raceway (LM engine)" / "... Free Roam (LM engine)". AC must be closed (CM may stay open).
 7. Lake Murray byte-identical check: `python tools/snapshot_engine_july.py --check`; then from a copy of lm_v4,
    `SHIP_PROJ=D:/k10-scratch/lm_v4_check AIROSO=D:/k10-worktrees/fleet-lm-engine ENG=D:/k10-scratch/eng_rehearsal bash tools/ship_track.sh san-diego-lake-murray --skip-blend --no-install`
-   and compare `build/san_diego_lake_murray.kn5`'s md5 with v4's road kn5 (55f2026c…, ledger 0065). The kn5s are written
-   before the gates, so v4's known reds (the 96 forced drops) do not stop the comparison.
+   then, for every kn5 in `build/` (road, `_race`, `_street`, each `_closure_*`, each spawn), against v4's:
+   `python tools/kn5_equiv.py <v4 kn5> <rebuilt kn5> --tol 1e-6` (from `claude/lm-v4-0.20.1`; merge it into this worktree
+   or run it from that checkout). Exit 0 = byte-identical or differing only in vertex tangents within 1e-6. Do **not**
+   judge by md5: Blender's tangent pass is not bit-stable (a rebuild of v4's own workshop moved only tangents, max
+   5.66e-7). The gate OBJs (`kn5_to_gate_obj`) and the gate JSONs (drive_test / audit / kn5_ground_check per layout) are
+   compared exactly. The kn5s are written before the gates, so v4's known reds (the 96 forced drops) do not stop the
+   comparison.
 
 Needs from the PC (not guessed here): the live engine-july tree's state, ship_sd.sh's old workshop, and whether the
 26 bespoke textures are already beside eng_rehearsal.

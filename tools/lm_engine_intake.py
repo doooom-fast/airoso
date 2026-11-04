@@ -120,6 +120,13 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     src = AIROSO / "tracks" / src_track
     sdata = src / "data"
     need = [sdata / "centerline.local.json", sdata / "heightfield.npy", sdata / "heightfield.meta.json"]
+    # a source track whose heightfield is not committed (High Plains: the elev stage's output lives in its workshop) may
+    # have it fetched into the PORT track (scripts.elevation.heightfield on a copy of the source; synced in by ship.json):
+    # then the project's own copy is used, and its provenance is the port track's
+    hf_own = (not need[1].exists() and (proj / "data" / "heightfield.npy").exists()
+              and (proj / "data" / "heightfield.meta.json").exists())
+    if hf_own:
+        need = need[:1]
     missing = [str(p) for p in need if not p.exists()]
     if missing:
         raise SystemExit(f"[lm_intake] the source track lacks {missing} — run its gps / elev / project / widths stages first")
@@ -137,6 +144,49 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     closed = math.hypot(pts[0][0] - pts[-1][0], pts[0][2] - pts[-1][2]) < 1e-6
     if loop and not closed:
         raise SystemExit("[lm_intake] the source is a loop but its line does not repeat point 0 last (L13)")
+    # THE MEASURED PROFILE, UNCAPPED (lm_intake.profile "uncapped"; Kevin 2026-11-03: "I just want real"). airoso's elevation
+    # stage (scripts.elevation.heightfield.build) writes centerline.local.json's Y as profile_along(z_raw): a 33 m median
+    # despike, a light mean, then a GRADE CAP (road_profile.max_grade_pct, 9 % by default). The despike and the mean remove
+    # DEM artefacts; the cap reshapes the hill. Here the same profile is recomputed from the stage's own raw 3DEP samples
+    # (centerline.elevation.json z_raw_m) with the cap off, after first reproducing the committed profile WITH the cap to
+    # prove the inputs are the ones that built it (exit 2 otherwise), and put on the line in its own order (projection's
+    # source_index, scripts.geometry.projection.in_local_order).
+    prof_rep = None
+    if li.get("profile") == "uncapped":
+        from scripts.elevation import heightfield as hf
+        from scripts.geometry.projection import in_local_order
+        from scripts.gps.centerline import haversine
+        ej = json.loads((sdata / "centerline.elevation.json").read_text(encoding="utf-8"))
+        gj = json.loads((sdata / "centerline.geojson").read_text(encoding="utf-8"))
+        full = next(f for f in gj["features"] if f["properties"].get("kind") == "full")
+        coords = [(lon, lat) for lon, lat in full["geometry"]["coordinates"]]
+        z_raw = ej["z_raw_m"]
+        if len(z_raw) != len(coords) or len(coords) != len(pts):
+            raise SystemExit(f"[lm_intake] profile uncapped: {len(z_raw)} raw samples, {len(coords)} geojson points, "
+                             f"{len(pts)} line points")
+        seg = [haversine(coords[i - 1], coords[i]) for i in range(1, len(coords))]
+        rp = scfg.get("road_profile") or {}
+        cap_was = float(rp.get("max_grade_pct", 9.0))
+        med = float(rp.get("despike_window_m", hf.MEDIAN_WINDOW_M))
+        closed_g = bool(full["properties"].get("closed", scfg.get("loop", True)))
+        repeats = tuple(coords[0]) == tuple(coords[-1])
+        kw = dict(median_m=med, closed=closed_g,
+                  close_seg_m=None if (repeats or not closed_g) else haversine(coords[-1], coords[0]))
+        z_was, _ = hf.profile_along(z_raw, seg, grade_cap_pct=cap_was, **kw)
+        dev = max(abs(a - b) for a, b in zip(z_was, ej["z_smooth_m"]))
+        if dev > 0.0101:                                # z_smooth_m is written to 0.01 m
+            raise SystemExit(f"[lm_intake] profile uncapped: the stage's own profile does not reproduce from its raw "
+                             f"samples (max {dev:.3f} m off) — rerun the source track's elev stage")
+        z_new, _ = hf.profile_along(z_raw, seg, grade_cap_pct=1e9, **kw)
+        z_loc = in_local_order(local, z_new)
+        z_old_loc = in_local_order(local, z_was)
+        elev0 = float(local["origin"]["elev_m"])
+        moved = [abs(a - b) for a, b in zip(z_loc, z_old_loc)]
+        pts = [(p[0], z - elev0, p[2]) for p, z in zip(pts, z_loc)]
+        prof_rep = {"cap_was_pct": cap_was, "reproduced_within_m": round(dev, 4),
+                    "points_moved": sum(1 for d in moved if d > 0.005), "max_move_m": round(max(moved), 3)}
+        print(f"[lm_intake] profile uncapped: the stage's {cap_was:.0f} % cap undone ({prof_rep['points_moved']} points, "
+              f"max {prof_rep['max_move_m']} m); its despike ({med:.0f} m median) and mean kept")
     # Y-only evidence: the declared decks (a data fact); no grade cap unless one is declared (ledger 0078: "I just want real")
     y0 = [p[1] for p in pts]
     bridges = [(float(b["center_m"]), float(b["len_m"])) for b in ((scfg.get("capture") or {}).get("bridges") or [])]
@@ -158,8 +208,11 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     (data / "centerline.local.json").write_text(json.dumps(out), encoding="utf-8")
     # the assembler smooths from its first-run snapshot: a stale one would smooth the OLD line
     (data / "centerline.raw.local.json").unlink(missing_ok=True)
-    for f in ("heightfield.npy", "heightfield.meta.json"):
-        shutil.copyfile(sdata / f, data / f)
+    if not hf_own:
+        for f in ("heightfield.npy", "heightfield.meta.json"):
+            shutil.copyfile(sdata / f, data / f)
+    else:
+        print("[lm_intake] heightfield: the project's own (the port track's fetched 3DEP grid; the source commits none)")
     # FINER FACETS, SAME SAMPLES (lm_intake.grid_upsample, default 1 = the source grid as is). The assembler halves the
     # grid once (40 -> 20 m, build_loop_blend.py upsample_grid(.., 2)); engine-july's prep then splits terrain edges near the
     # road at most 4 times. On a 20 m grid that leaves edges up to ~10 m under a narrow road, and where the deck sags
@@ -171,6 +224,8 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     if up > 1:
         hgrid = _read_npy(data / "heightfield.npy")
         meta = json.loads((data / "heightfield.meta.json").read_text(encoding="utf-8"))
+        if "lm_intake_upsample" in meta:
+            raise SystemExit("[lm_intake] data/heightfield.npy is already an upsampled grid: re-sync the source grid first")
         hgrid, meta2 = _upsample(hgrid, meta, up)
         _write_npy(data / "heightfield.npy", hgrid)
         meta2["lm_intake_upsample"] = {"factor": up, "source_spacing_m": meta["spacing_m"],
@@ -193,7 +248,12 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     cf_rep = None
     cf_out = data / "crossfall.lm.json"
     if li.get("crossfall"):
-        cfp, glp = sdata / "crossfall.json", sdata / "gate_centerline.json"
+        # true = the source's data/crossfall.json; a string = a path inside the source track (a survey's file, e.g.
+        # source/lidar/camber-survey/crossfall.json on High Plains / Nevada Nights, keyed to the same finished line)
+        rel_cf = li["crossfall"] if isinstance(li["crossfall"], str) else "data/crossfall.json"
+        if rel_cf.startswith(("/", "\\")) or ".." in Path(rel_cf).parts:
+            raise SystemExit(f"[lm_intake] lm_intake.crossfall {rel_cf!r} must be a plain path inside the source track")
+        cfp, glp = src / rel_cf, sdata / "gate_centerline.json"
         if not cfp.exists() or not glp.exists():
             raise SystemExit("[lm_intake] lm_intake.crossfall: the source track has no data/crossfall.json + gate_centerline.json")
         cf = json.loads(cfp.read_text(encoding="utf-8"))
@@ -228,15 +288,31 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     # footprint plan the config's scenery.bespoke.blocks names (tools/plan_buildings.py's output, source/bespoke/...) comes
     # from the source track; tools/author_bespoke_blend.py stands it in place of the assembler's HOUSE / BUILDING boxes
     copied = []
-    for blk in ((cfg.get("scenery") or {}).get("bespoke") or {}).get("blocks") or []:
-        rel = blk.get("file") if isinstance(blk, dict) else None
-        if not rel:
-            continue
+    # every file the bespoke dressing names (blocks / cards / ... "file"), and every project-relative texture the config's
+    # texture_overrides name (a track's own ground tile, e.g. High Plains' prairie): the source track's files, copied
+    rels = []
+
+    def _files(node):
+        if isinstance(node, dict):
+            for k, v in node.items():
+                if k == "file" and isinstance(v, str):
+                    rels.append(v)
+                elif not k.startswith("_"):
+                    _files(v)
+        elif isinstance(node, list):
+            for v in node:
+                _files(v)
+    _files(((cfg.get("scenery") or {}).get("bespoke") or {}))
+    for row in (cfg.get("texture_overrides") or {}).values():
+        for v in (row or {}).values() if isinstance(row, dict) else ():
+            if isinstance(v, str) and v.startswith("textures/"):
+                rels.append(v)
+    for rel in dict.fromkeys(rels):
         if rel.startswith(("/", "\\")) or ".." in Path(rel).parts:
-            raise SystemExit(f"[lm_intake] scenery.bespoke.blocks file {rel!r} must be a plain path inside the track")
+            raise SystemExit(f"[lm_intake] {rel!r} must be a plain path inside the track")
         sp = src / rel
         if not sp.exists():
-            raise SystemExit(f"[lm_intake] scenery.bespoke.blocks names {rel} but tracks/{src_track}/{rel} does not exist")
+            raise SystemExit(f"[lm_intake] the config names {rel} but tracks/{src_track}/{rel} does not exist")
         (proj / rel).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(sp, proj / rel)
         copied.append(rel)
@@ -272,9 +348,9 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
            "measured_max_grade_pct": round(100.0 * _max_grade(pts, 10.0), 2),
            "y_changed_points": sum(1 for d in dy if abs(d) > 1e-6),
            "y_change_max_m": round(max((abs(d) for d in dy), default=0.0), 3),
-           "connectors": bool(want_conn and conn.exists()), "bespoke_files": copied, "crossfall": cf_rep,
+           "connectors": bool(want_conn and conn.exists()), "bespoke_files": copied, "crossfall": cf_rep, "profile": prof_rep,
            "grid_upsample": up,
-           "md5": {"source_centerline": _md5(need[0]), "heightfield.npy": _md5(need[1]),
+           "md5": {"source_centerline": _md5(need[0]), "heightfield.npy": _md5(data / "heightfield.npy"),
                    "centerline.local.json": _md5(data / "centerline.local.json")}}
     (data / "lm_intake.json").write_text(json.dumps(rep, indent=1), encoding="utf-8")
     print(f"[lm_intake] {src_track}: {len(pts)} pts, lap {lap:.0f} m, widths {rep['widths_m']} m, "

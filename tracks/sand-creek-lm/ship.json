@@ -11,6 +11,7 @@
       "lm_intake",
       "build_loop_blend",
       "weld_mouths",
+      "densify_ribbon",
       "seat_edges",
       "lamps"
     ],

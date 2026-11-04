@@ -28,7 +28,8 @@ import bpy
 MAX_EDGE_M = 0.6     # [invented] chord legs this short keep tan(5 %) x a b / (a + b) under 1 cm, half the prep's clearance
 BAND_M = 1.5         # [invented] either side of each lane edge line: the legs of every chord that crosses it
 PAD_M = 10.0         # [invented] past each end of the banked run, where the bank rolls in
-ROUNDS = 8
+SKIRT_M = 60.0       # a face with an edge longer than this is the terrain skirt, not ground beside a lane
+MAX_CUTS = 16        # [invented] cuts per edge at most (a 10 m cell -> 0.6 m)
 
 
 def main():
@@ -72,9 +73,14 @@ def main():
             for gz in range(int(min(az, bz) // B) - 1, int(max(az, bz) // B) + 2):
                 grid.setdefault((gx, gz), []).append(k)
 
-    def d_edge(x, z):
+    def d_edge(x, z, reach=0.0):
         best = 1e18
-        for k in grid.get((int(x // B), int(z // B)), ()):
+        r = int(math.ceil(reach / B)) + 1          # every bucket a segment within `reach` can sit in
+        ks = set()
+        for gx in range(int(x // B) - r, int(x // B) + r + 1):
+            for gz in range(int(z // B) - r, int(z // B) + r + 1):
+                ks.update(grid.get((gx, gz), ()))
+        for k in ks:
             (ax, az), (bx, bz) = segs[k]
             dx, dz = bx - ax, bz - az
             L2 = dx * dx + dz * dz
@@ -88,20 +94,26 @@ def main():
         raise SystemExit("[seat-edges] no TERRAIN mesh in loop.blend (run after the assembler, before the prep)")
     bm = bmesh.new(); bm.from_mesh(ob.data)
     n0 = len(bm.verts)
+    # ONE pass: every face that reaches within BAND_M of a lane edge is grid-filled with its edges cut to <= MAX_EDGE_M
+    # (an iterative halving fans a long edge to the opposite vertex every round and does not converge in useful time)
+    faces = []
+    longest = 0.0
+    for f in bm.faces:
+        if max(e.calc_length() for e in f.edges) > SKIRT_M:
+            continue                                     # the grid's far skirt (grass_terrain's 500 m apron), never near a lane
+        c = f.calc_center_median()
+        rad = max((v.co - c).length for v in f.verts)
+        if d_edge(c.x, c.y, BAND_M + rad) <= BAND_M + rad:
+            faces.append(f)
+            longest = max(longest, max(e.calc_length() for e in f.edges))
     n_split = 0
-    for _r in range(ROUNDS):
-        todo = []
-        for e in bm.edges:
-            if e.calc_length() <= MAX_EDGE_M:
-                continue
-            m = (e.verts[0].co + e.verts[1].co) / 2     # Blender x = E, y = N
-            if d_edge(m.x, m.y) <= BAND_M + e.calc_length() / 2:
-                todo.append(e)
-        if not todo:
-            break
-        bmesh.ops.subdivide_edges(bm, edges=todo, cuts=1)
-        n_split += len(todo)
-    bmesh.ops.triangulate(bm, faces=bm.faces)
+    if faces:
+        cuts = min(MAX_CUTS, max(1, math.ceil(longest / MAX_EDGE_M) - 1))
+        edges = list({e for f in faces for e in f.edges})
+        bmesh.ops.subdivide_edges(bm, edges=edges, cuts=cuts, use_grid_fill=True)
+        bmesh.ops.triangulate(bm, faces=[f for f in bm.faces if len(f.verts) > 3])
+        n_split = len(edges)
+        print(f"[seat-edges] {len(faces)} terrain faces within the band, longest edge {longest:.1f} m -> {cuts} cuts each")
     bm.to_mesh(ob.data); bm.free(); ob.data.update()
     print(f"[seat-edges] {len(near)} banked line stations, {len(segs)} lane-edge segments: {n_split} terrain edges split "
           f"(<= {MAX_EDGE_M} m within {BAND_M} m of an edge), TERRAIN {n0} -> {len(ob.data.vertices)} verts")

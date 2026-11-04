@@ -1,0 +1,40 @@
+{
+ "source_track": "high-plains",
+ "points": 1074,
+ "lap_m": 3222.8,
+ "closed": true,
+ "widths_m": [
+  12.0,
+  12.0,
+  12.0
+ ],
+ "bridges_levelled": [],
+ "max_grade_pct": null,
+ "measured_max_grade_pct": 8.7,
+ "y_changed_points": 0,
+ "y_change_max_m": 0.0,
+ "connectors": false,
+ "bespoke_files": [
+  "source/bespoke/buildings.json",
+  "source/bespoke/posts.json",
+  "source/bespoke/shrubs.json",
+  "textures/prairie_diffuse.jpg",
+  "textures/prairie_normal.jpg"
+ ],
+ "crossfall": {
+  "stations": 1073,
+  "max_pct": 3.03
+ },
+ "profile": {
+  "cap_was_pct": 9.0,
+  "reproduced_within_m": 0.0067,
+  "points_moved": 1,
+  "max_move_m": 0.01
+ },
+ "grid_upsample": 2,
+ "md5": {
+  "source_centerline": "c61a046a44c373a75d755ccbc436b029",
+  "heightfield.npy": "b355a847214d3f0424cdcbe0e5411ea8",
+  "centerline.local.json": "f4c12a9e93c85d69b2f1b1696f255aca"
+ }
+}

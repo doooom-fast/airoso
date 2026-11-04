@@ -1,0 +1,24 @@
+{
+ "fail": false,
+ "reasons": [],
+ "kn5": [
+  "high_plains_lm.kn5"
+ ],
+ "fidelity": "skipped: gate OBJ written from this kn5",
+ "double_sheet_cells": 0,
+ "seating": {
+  "walls": {
+   "objects": 6,
+   "no_ground_pct": 0.0,
+   "median_m": -0.236,
+   "p95_m": -0.191,
+   "hovering": 0
+  }
+ },
+ "road_over_ground": {
+  "over": 0,
+  "samples": 1908,
+  "p95_m": 0.02,
+  "max_m": 0.021
+ }
+}

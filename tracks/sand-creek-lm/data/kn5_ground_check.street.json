@@ -20,7 +20,7 @@
  "lamp_orphans": 0,
  "road_over_ground": {
   "over": 0,
-  "samples": 4640,
+  "samples": 4644,
   "p95_m": 0.021,
   "max_m": 0.031
  }

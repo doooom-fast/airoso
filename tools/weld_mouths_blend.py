@@ -126,12 +126,20 @@ def main():
     if cfgp.exists():
         exact_prefixes = [str(x) for x in (json.loads(cfgp.read_text(encoding="utf-8")).get("route", {})
                                            .get("weld_exact_deck") or [])]
+    # ledger 0078: the connectors' edge is the assembler's own (route.edge; absent = Lake Murray's curb + 1.5 m walk)
+    cfg_route = (json.loads(cfgp.read_text(encoding="utf-8")).get("route") or {}) if cfgp.exists() else {}
+    _edge_main, edge_conn = wr.edge_profile(cfg_route)
     main_pts = [tuple(p) for p in local["points_xyz_m"]]
     lay = mw.mesh_layout(main_pts, conns)
     cdict = {c["name"]: c for c in conns}
 
     bpy.ops.wm.open_mainfile(filepath=str(proj / "loop.blend"))
     obs = {n: bpy.data.objects.get(n) for n in ("ROAD", "CURB", "MARKINGS", "YLINE")}
+    # ledger 0078: a track that paints no centre line (route.divided_double false, a circuit) has no YLINE at all — the
+    # assembler skips an empty mesh. Every connector then paints none either (its yellow block is empty), so the weld has
+    # nothing to move there. Lake Murray always has one.
+    if obs["YLINE"] is None and cfg_route.get("divided_double", True) is False:
+        obs.pop("YLINE")
     for n, ob in obs.items():
         if ob is None:
             raise SystemExit(f"[weld] FATAL: no {n} object in loop.blend")
@@ -139,6 +147,8 @@ def main():
         raise SystemExit("[weld] FATAL: loop.blend is already welded (ROAD carries the mouth_weld stamp) — rebuild "
                          "it with build_loop_blend first; the weld runs once per rebuild")
     V = {n: _read(ob) for n, ob in obs.items()}
+    if "YLINE" not in V:
+        V["YLINE"] = np.empty((0, 3), dtype=np.float64)
     if len(V["ROAD"]) != lay["_road_total"] or len(V["CURB"]) != lay["_curb_total"]:
         raise SystemExit(f"[weld] FATAL: ROAD {len(V['ROAD'])} / CURB {len(V['CURB'])} verts, the assembler's layout "
                          f"says {lay['_road_total']} / {lay['_curb_total']} — the row order changed; not welding")
@@ -154,8 +164,7 @@ def main():
         cpts = ws.smooth_centerline(cpts, sigma_pts=1.5, passes=1, sigma_y_pts=1.0)
         cw = list(c["widths_m"])
         rib = [(x, y + 0.10, z) for (x, y, z) in wr.road_ribbon(cpts, cw)["vertices"]]
-        ker = wr.curb_sidewalk(cpts, cw, lift=0.10, curb_h=0.14, curb_face_w=0.08, sidewalk_w=1.5, grade_w=1.2,
-                               grass_clearance=0.10)["vertices"]
+        ker = wr.curb_sidewalk(cpts, cw, **edge_conn)["vertices"]   # the assembler's own connector edge (route.edge)
         cmk = wr.connector_markings(cpts, cw, c.get("stub"), c.get("paint"))     # the assembler's own call (a phase-5 stub: its street's paint; a P3 piece: its authored paint)
         mk = {"MARKINGS": [(x, y + 0.115, z) for (x, y, z) in cmk["white"]["vertices"]],
               "YLINE": [(x, y + 0.115, z) for (x, y, z) in cmk["yellow"]["vertices"]]}

@@ -450,6 +450,24 @@ def test_engine_july_only_for_san_diego():
             '  V021="$AIROSO/tracks/san-diego-lake-murray/scripts-v021"') in TEXT
 
 
+def test_the_circuit_port_specs():
+    """High Plains and Nevada Nights on Lake Murray v4's engine (ledger 0078): own slugs, engine lm-v4, the intake first,
+    the weld, the column densify and the edge seat after the assembler, the edge report among the gates."""
+    for t, live in (("high-plains-lm", "high-plains"), ("exotics-racing-lv-lm", "exotics-racing-lv")):
+        spec = spec_mod.load(ROOT / "tracks" / t / "ship.json", t)
+        assert spec["engine"] == "lm-v4"
+        d = spec["steps"]["draft"]
+        assert d[0] == "lm_intake" and d.index("weld_mouths") < d.index("densify_ribbon") < d.index("seat_edges")
+        assert "edge_report" in spec["steps"]["gate"]
+        for ph, names in spec["steps"].items():
+            for n in names:
+                assert re.search(rf"^{ph}_{n}\(\) \{{", TEXT, re.M), (ph, n)
+        cfg = json.loads((ROOT / "tracks" / t / "track.config.json").read_text(encoding="utf-8"))
+        lc = json.loads((ROOT / "tracks" / live / "track.config.json").read_text(encoding="utf-8"))
+        assert cfg["slug"] != lc["slug"] and cfg["install_folder"] != lc["install_folder"]
+        assert cfg["lm_intake"]["source_track"] == live and cfg["lm_intake"]["profile"] == "uncapped"
+
+
 def test_the_lm_engine_pilot_spec():
     """Sand Creek through Lake Murray v4's engine (ledger 0078): its own track folder and slug, engine lm-v4, the intake
     first, the v021 assembler and its weld, the bespoke buildings, engine-july's prep."""

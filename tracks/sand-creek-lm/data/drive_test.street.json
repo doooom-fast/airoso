@@ -9,7 +9,7 @@
  "barrier_stations": 0,
  "barrier_missing": 0,
  "barrier_missing_runs": [],
- "soft_top_in_lane": 1,
+ "soft_top_in_lane": 0,
  "off_pavement_stations": 0,
  "severe_steps": 0,
  "severe_per_km": 0.0,
@@ -30,13 +30,7 @@
  "worst_gated_excursions": [],
  "obstruction_by_mesh": {},
  "worst": {
-  "soft_top": [
-   [
-    2562.0,
-    -5.1,
-    "1GRASS_1"
-   ]
-  ],
+  "soft_top": [],
   "severe_steps": [],
   "severe_all": [],
   "kinks": [
@@ -63,5 +57,5 @@
   ],
   "obstructions": []
  },
- "fail": true
+ "fail": false
 }

@@ -169,8 +169,8 @@
   "at_1m": {
    "lane": 0.0,
    "shoulder": 0.0,
-   "kerb": 0.305,
-   "ground": 0.695,
+   "kerb": 0.318,
+   "ground": 0.682,
    "wall": 0.0,
    "none": 0.0,
    "other": 0.0
@@ -185,7 +185,7 @@
   },
   "ground_3m": {
    "p5": -0.177,
-   "median": -0.038,
+   "median": -0.037,
    "p95": -0.022,
    "share_below_1m": 0.0,
    "share_above_1m": 0.0

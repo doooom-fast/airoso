@@ -34,10 +34,11 @@
   "stations": 60,
   "max_pct": 4.93
  },
+ "profile": null,
  "grid_upsample": 2,
  "md5": {
   "source_centerline": "0bbfe1453bd32b4ae2cd637da3931e08",
-  "heightfield.npy": "2c6b0f52859d106a1f579f471a2271ee",
+  "heightfield.npy": "650fc0c88387e3ea3ebc8aee2ac7d18a",
   "centerline.local.json": "7f0661fde7c595b6ae8ad63d9de33a29"
  }
 }

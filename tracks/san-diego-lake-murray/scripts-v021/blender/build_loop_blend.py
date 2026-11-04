@@ -1149,27 +1149,6 @@ def _profile_sigma_windows(cfg, data, raw_centerline):
     return out
 
 
-# ledger 0078 (the fleet on Lake Murray v4's engine): the street edge per track. Every key defaults to Lake Murray's own
-# value, so a config without route.edge sweeps exactly the curb + walk it always swept (byte-identical floats).
-EDGE_DEFAULTS = {"lift": 0.10, "curb_h": 0.14, "curb_face_w": 0.08, "sidewalk_w": 1.8, "connector_sidewalk_w": 1.5,
-                 "grade_w": 1.2, "grass_clearance": 0.10}
-
-
-def edge_profile(route):
-    """track.config.json route.edge -> the curb_sidewalk keyword set (mainline, connectors). Lake Murray declares none."""
-    e = dict(EDGE_DEFAULTS)
-    for k, v in ((route or {}).get("edge") or {}).items():
-        if k.startswith("_"):
-            continue
-        if k not in EDGE_DEFAULTS:
-            raise SystemExit(f"[blend] route.edge.{k}: unknown key (known: {sorted(EDGE_DEFAULTS)})")
-        e[k] = float(v)
-    main = {"lift": e["lift"], "curb_h": e["curb_h"], "curb_face_w": e["curb_face_w"], "sidewalk_w": e["sidewalk_w"],
-            "grade_w": e["grade_w"], "grass_clearance": e["grass_clearance"]}
-    conn = dict(main, sidewalk_w=e["connector_sidewalk_w"])
-    return main, conn
-
-
 def crossfall_bank(proj, route, centerline):
     """ledger 0078: the mainline's measured crossfall as the ribbon's bank (opt-in, route.crossfall_file, a project path:
     {"points_xz": [[x, z], ...], "bank_rad": [...]} — tools/lm_engine_intake.py writes it from a lidar crossfall.json).
@@ -1199,6 +1178,13 @@ def crossfall_bank(proj, route, centerline):
     keyed.sort()
     if len(keyed) < 2:
         raise SystemExit(f"[blend] route.crossfall_file {rel}: fewer than 2 points within 4 m of the line")
+    # A whole-lap survey on a closed loop runs through the seam (L13): its last station and its first are neighbours
+    # across the closing segment, so they are joined there instead of falling to 0 (High Plains: a 19 m flat gap at the
+    # seam twisted the ribbon). A run that stops short of the seam (Sand Creek's one corner) is left alone.
+    closed = abs(centerline[0][0] - centerline[-1][0]) < 1e-6 and abs(centerline[0][2] - centerline[-1][2]) < 1e-6
+    lap = st[-1]
+    if closed and keyed[0][0] <= 30.0 and keyed[-1][0] >= lap - 30.0:
+        keyed = [(s - lap, b) for s, b in keyed[-2:]] + keyed + [(s + lap, b) for s, b in keyed[:2]]
     ks = [k[0] for k in keyed]
     import bisect
 
@@ -1301,7 +1287,7 @@ def main():
     (data / "centerline.local.json").write_text(json.dumps(local))
 
     # --- road + kerbs (tight to real elevation) ---
-    edge_main, edge_conn = edge_profile(route)
+    edge_main, edge_conn = ribbon.edge_profile(route)   # route.edge (ledger 0078)
     bank_at, _cf_rep = crossfall_bank(proj, route, centerline)
     _bk = {"bank_at": bank_at} if bank_at is not None else {}     # absent = the calls exactly as before
     road = ribbon.road_ribbon(centerline, widths, **_bk)
@@ -1311,7 +1297,9 @@ def main():
     # lip lands on the terrain, so road/curb/sidewalk/grass share heights with no floating edge.
     kerb = ribbon.curb_sidewalk(centerline, widths, **edge_main, **_bk)   # route.edge (ledger 0078); LM's values by default
     marks = ribbon.lane_markings(centerline, widths,   # painted lines: white edges/dashes + (two-way) yellow centre
-                                 center_yellow=route.get("divided_double", True), **_bk)
+                                 center_yellow=route.get("divided_double", True), **_bk,
+                                 # ledger 0078: a circuit paints its edge lines only (route.lane_dividers false); absent = as before
+                                 **({"max_lanes_side": 0} if route.get("lane_dividers", True) is False else {}))
     for mk in marks.values():
         mk["vertices"] = [(x, y + 0.115, z) for (x, y, z) in mk["vertices"]]  # 1.5 cm above the road top
 
@@ -1372,6 +1360,9 @@ def main():
         centerline, widths, i8, grid_xyz,
         piece_planner=lambda placed: plan_piece_streetlights(proj, cfg, data, centerline, widths, connectors,
                                                              conn_records, grid_xyz, placed))
+    if (cfg.get("scenery") or {}).get("draft_lamps", True) is False:
+        # ledger 0078: a circuit has no streetlight every 55 m down its edge (scenery.draft_lamps false); absent = as before
+        lights, lampheads, piece_plan = {"vertices": [], "uvs": [], "tris": []}, [], None
     lights_rec = {"lampheads": lampheads}                          # -> CSP [LIGHT_N]
     if piece_plan is not None:
         # the pieces' posts carry their base and road-ward unit (the author's "head -> nearest MAINLINE point" rule has

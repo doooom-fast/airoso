@@ -30,8 +30,17 @@ def _assembler_funcs(*names):
     return ns
 
 
+def _v021_ribbon():
+    import importlib.util
+    p = ROOT / "tracks" / "san-diego-lake-murray" / "scripts-v021" / "geometry" / "ribbon.py"
+    spec = importlib.util.spec_from_file_location("_v021_ribbon", p)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
 def test_edge_defaults_are_lake_murrays_literals():
-    ns = _assembler_funcs("EDGE_DEFAULTS", "edge_profile")
+    ns = vars(_v021_ribbon())
     main, conn = ns["edge_profile"]({})
     assert main == {"lift": 0.10, "curb_h": 0.14, "curb_face_w": 0.08, "sidewalk_w": 1.8, "grade_w": 1.2,
                     "grass_clearance": 0.10}
@@ -39,6 +48,7 @@ def test_edge_defaults_are_lake_murrays_literals():
     # Lake Murray's route block declares no edge and no crossfall file
     cfg = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
     assert "edge" not in cfg.get("route", {}) and "crossfall_file" not in cfg.get("route", {})
+    assert "lane_dividers" not in cfg.get("route", {}) and "draft_lamps" not in cfg.get("scenery", {})
     assert ns["edge_profile"](cfg.get("route"))[0] == main
     # an unknown key is refused, never silently ignored
     try:
@@ -55,6 +65,19 @@ def test_no_crossfall_file_no_bank():
     text = ASM.read_text(encoding="utf-8")
     # absent: every call is made exactly as before (no bank_at keyword at all)
     assert '_bk = {"bank_at": bank_at} if bank_at is not None else {}' in text
+
+
+def test_every_opt_in_is_absent_from_lake_murray_and_guarded_in_the_assembler():
+    text = ASM.read_text(encoding="utf-8")
+    assert 'route.get("lane_dividers", True) is False' in text
+    assert '(cfg.get("scenery") or {}).get("draft_lamps", True) is False' in text
+    assert "edge_main, edge_conn = ribbon.edge_profile(route)" in text
+    weld = (ROOT / "tools" / "weld_mouths_blend.py").read_text(encoding="utf-8")
+    assert "_edge_main, edge_conn = wr.edge_profile(cfg_route)" in weld and "curb_h=0.14" not in weld
+    # the ports' tools are steps Lake Murray's ship.json never names
+    sd = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "ship.json").read_text(encoding="utf-8"))
+    names = {n for ph in sd["steps"].values() for n in ph}
+    assert not names & {"lm_intake", "densify_ribbon", "seat_edges", "edge_report"}
 
 
 def test_route_connectors_cap_default_is_lake_murrays():

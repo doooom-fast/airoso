@@ -352,15 +352,8 @@ if bad: raise SystemExit('PLANNED no_route: '+'; '.join(bad))" "$PROJ/data" $RAC
 (cd "$AIROSO" && python tools/layout_dummies.py "$PROJ")         # data/dummies_<id>.json x3 (engine frame + _yaw_deg); exit 1 on validation
 step "author: race furniture -> loop.blend: RACE (curb strips + kerbs, common) + RACE_CLOSE_<TOKEN> (one closure per race layout)"
 (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_race_furniture_blend.py" -- "$PROJ" 2>&1 | grep "^\[race\]\|Error\|Traceback" )
-step "author: verify the authored furniture against its declaration (tools/verify_race.py, hard: common set + each layout)"
-if [ "$HAS_MAIN" = 1 ]; then
-(cd "$AIROSO" && python tools/verify_race.py "$PROJ")            # data/race_verify.json; exit 1
-fi
-for lap in $LAP_IDS; do                                          # ledger 0054: each lap's group on its own line
-  (cd "$AIROSO" && python tools/verify_race.py "$PROJ" --lap "$lap")   # data/race_verify.<lap>.json; exit 1
-done
-(cd "$AIROSO" && python tools/plot_race_furniture.py "$PROJ" | tail -3)   # data/race_plots/*.png
 # --- P4 signs (ledger 0054 P4 step 1, EXPANSION-PLAN A8 / A7): the signs AFTER the race furniture, every ship ---------
+# (and BEFORE verify_race since ledger 0054 Phase 2 step 2g: its scenery check G reads data/signs.local.json, this run's)
 # The shared W1-6 plates (the road kn5) and, for a signs.json per_layout corner (M3 at J1, M4 at J5: straight on is a
 # real road in Free Roam), each race layout's OWN plates behind its sealing wall, built into RACE_CLOSE_<TOKEN> as
 # SIGN*_<token>_<k> and shipped in that layout's closure kn5 alone. They live in the furniture's collections, which
@@ -372,6 +365,14 @@ step "author: W1-6 large-arrow signs at every tight corner (SIGNPLATE + SIGNARRO
 (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_signs_blend.py" -- "$PROJ" 2>&1 | grep "^\[signs\]\|Error\|Traceback" )
 (cd "$AIROSO" && python tools/verify_signs.py "$PROJ" --blend "$PROJ/loop.blend" --blender "$BL" | tail -8)
 (cd "$AIROSO" && PYTHONUTF8=1 python tools/plot_signs.py "$PROJ")
+step "author: verify the authored furniture against its declaration (tools/verify_race.py, hard: common set + each layout)"
+if [ "$HAS_MAIN" = 1 ]; then
+(cd "$AIROSO" && python tools/verify_race.py "$PROJ")            # data/race_verify.json; exit 1
+fi
+for lap in $LAP_IDS; do                                          # ledger 0054: each lap's group on its own line
+  (cd "$AIROSO" && python tools/verify_race.py "$PROJ" --lap "$lap")   # data/race_verify.<lap>.json; exit 1
+done
+(cd "$AIROSO" && python tools/plot_race_furniture.py "$PROJ" | tail -3)   # data/race_plots/*.png
 
 step "ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)"
 "$BL" --background --python-exit-code 1 --python "$ENG/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS\|split GRASS_FAR\|terrain tiles\|terrain conform\|T-junctions\|kept-cell refinement\|house seat\|multi-layout\|Error\|Traceback" | cut -c1-200

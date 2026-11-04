@@ -14,6 +14,60 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-04 (step 2g) — MEASUREMENT-BUG FIX: the edge band between two vertices is the offset curve the strip follows (audit_mesh D; ledger 0054 Phase 2; no threshold moved)
+
+`scripts/geometry/median_zone.py` made a declared band continuous between consecutive vertices with the straight CHORD
+between their band points. `race_furniture.densify_rings` puts the strip's rings on the declared OFFSET CURVE there: the
+centres, the tangents and the laterals lerped. On a gentle line the two agree. Round the outside of the north lap's J1
+(R 8.3 m at v2932, a 30 m box) the band points stand 11-13 m apart, and the curve bows ~1 m off the chord. So the lap's
+own `1WALL_race_edge_lapnorth_L_navajo_2130_1` read D 32 in both north audits (x −1980.7..−1962.3, z 589.6..593.4,
+~14 m off v2931): the wall stands where the bands put it, and the zone missed it.
+
+- **The fix.** A band point is also continuous with its neighbours along that curve (`_curve_dist`, CURVE_SAMPLES 16 =
+  race_furniture.DENSIFY_SAMPLES), as well as the chord. The reach is the same: barrier half + MARGIN_M.
+- **Who sees it.** Only `contains(..., ALL_KINDS)` reads barrier kinds, and only audit_mesh's D asks for them. The test
+  only ADDS exemption, so the mainline's D (0) cannot rise.
+- **Proven.** Every ring of the north lap's edge strips, at both wall faces (17,793 points per layout), sits inside the
+  band: 7 sat outside before, every one on navajo_2130_1 at v2930-2931, the PC's box. Test:
+  `tests/geometry/test_median_zone_kinds.py::test_the_edge_band_follows_the_offset_curve_round_a_tight_corner` (J1's own
+  vertices; the chord alone misses the curve there).
+
+## 2026-11-04 (step 2g) — no_route's deck frame reads only decks at the line's level, and lists what it sealed (ledger 0054 Phase 2; tightens step 2e, no threshold moved)
+
+Step 2e's deck frame measured a wall triangle from the 1ROAD sheet under it nearest its foot, whatever road that was. The
+PC's 0.20.2 run gave race_cw / race_acw `local_deck_cells` 166 each (wall_cells +166, reached_m2 / allowed_m2 −2). On the
+Mac the same run on v4's own prepped scene (the gate OBJ exported from it) gives 163. Of those, 104 were `1WALL_guard_0`,
+the median guardrail, measured from decks −3.79..+7.15 m off the line's: the I-8 under a bridge, an overpass above. A
+car on this line never meets those barriers, and in plan they stood over its own deck.
+
+- **The fix.** Only sheets within `DECK_REACH_M` of the line's own deck count; of those, the one nearest the wall's foot.
+  DECK_REACH_M = WALL_HI_M − WALL_LO_M = 0.70 m is derived, not chosen: within it, the wall's band from its deck still
+  overlaps the line's band, so they are the same level. The report adds `local_deck_walls`: each object behind a
+  deck-frame cell, with its cells, its deck's offset from the line's, its base / top over that deck and the line
+  vertices beside it.
+- **What remains on the mainline is real:** v4's prepped scene, race_cw: 59 cells.
+  - `1WALL_race_edge_R_college_774_0`: 8 cells, v763-776, deck −0.13..+0.01 m.
+  - `1WALL_race_edge_R_navajo_1517_0`: 10 cells, v2314-2323 (J1), deck −0.24..+0.24 m.
+  - `1WALL_race_edge_R_jackson_2324_0`: 47 cells, v2324-2327 (J5), deck −0.24..−0.14 m.
+
+  Each stands +0.00..+1.25 m over its own deck. These are the mainline's race curb strips on the J1 / J5 mouth fills and
+  a College mouth, decks below the line: the measurement fix doing its job. Against the centreline frame alone:
+  wall_cells 594,840 → 594,899, reached_m2 / allowed_m2 138,758 → 138,757, every verdict key equal. The PC records its
+  own numbers from the gate re-run (step 2g).
+- **Proven.** `tests/tools/test_no_route.py`: the pad wall is listed (deck −0.24, 0..0.97 m over it). A wall on a deck 3 m
+  under the line, another road, seals nothing and the door stays.
+
+## 2026-11-04 (step 2g) — WIRING: the signs are authored before verify_race reads them (ledger 0054 Phase 2)
+
+verify_race's scenery check G reads `data/signs.local.json`, and the signs step writes it. Both chains ran signs after
+race_verify, so a re-used workshop judged the last run's plates: the PC's first 2e rebuild stopped at G on 0.20.2's 33.
+- `tracks/san-diego-lake-murray/ship.json` steps.author now reads … race_author, signs, race_verify. The signs need the
+  RACE_CLOSE collections race_author fills, and nothing else from it.
+- `tools/ship_sd.sh` moves its signs block the same way.
+- `tools/ship_track.sh` refuses (exit 2) a ship.json that lists race_verify before signs.
+- No threshold, no gate result moved. The end-of-chain scenery gate (verify_race --scenery-only) always read this run's
+  file.
+
 ## 2026-11-04 (step 2e) — MEASUREMENT-BUG FIX: built no_route measures a wall from the deck it stands on (ledger 0054 Phase 2; no threshold moved)
 
 `tools/no_route.py` BUILT mode counted a wall cell only where the 1WALL triangles standing on it (and on its 8 neighbours) span

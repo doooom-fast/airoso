@@ -309,6 +309,21 @@ def test_a_wall_on_a_pad_below_the_line_is_measured_from_the_pad():
     r = nr.run(_project(walls=padded), "race_cw", verbose=False)
     assert r["fail"] is False and r["leak_cells"] == 0, r["fails"]
     assert r["local_deck_cells"] > 0
+    # step 2g: what sealed them — the wall on the pad, its deck 0.24 m under the line's, standing 0..0.97 m over it
+    w = {x["object"]: x for x in r["local_deck_walls"]}
+    pad = w["1WALL_race_close_cw_pad"]
+    assert pad["cells"] > 0 and abs(pad["deck_minus_line_m"][0] + 0.24) < 1e-3 and abs(pad["deck_minus_line_m"][1] + 0.24) < 1e-3
+    assert abs(pad["base_m"]) < 1e-3 and abs(pad["top_m"] - 0.97) < 1e-3 and k0 - 2 <= pad["vertices"][0] <= pad["vertices"][1] <= k1 + 2
+    assert sum(x["cells"] for x in r["local_deck_walls"]) >= r["local_deck_cells"]
+    # ...but a wall on ANOTHER road's deck (3 m under the line: the I-8 under a bridge) is not this line's wall: only
+    # decks within DECK_REACH_M (0.70 = the band's own height) of the line's deck count
+    low = DECK - 3.0
+    far = [_prism("1WALL_race_close_cw_a", _band(CLOSE, 0, k0)),
+           _prism("1WALL_freeway", _band(CLOSE, k0, k1), y0=low, y1=low + 0.97),
+           _prism("1WALL_race_close_cw_b", _band(CLOSE, k1, N - 1)),
+           _deck("1ROAD_freeway", CLOSE - 2.0, CLOSE + 2.0, low, k0 - 2, k1 + 2)]
+    rf = nr.run(_project(walls=edges + far), "race_cw", verbose=False)
+    assert rf["fail"] and rf["local_deck_cells"] == 0 and "local_deck_walls" not in rf
 
 
 def test_walls_on_the_lines_own_deck_are_unchanged_by_the_deck_frame():

@@ -366,9 +366,14 @@ def test_signs_step_runs_after_the_race_furniture_in_every_chain():
     header = 'step "author: W1-6 large-arrow signs at every tight corner (SIGNPLATE + SIGNARROW + SIGNPOST; the race layouts\' own plates into RACE_CLOSE_<TOKEN>)"'
     assert sd.count("tools/author_signs_blend.py") == 1 and sd.count(header) == 1
     i_sign = sd.index("tools/author_signs_blend.py")
-    assert sd.index("tools/author_race_furniture_blend.py") < sd.index("tools/plot_race_furniture.py") < i_sign < sd.index("scripts/ac/build_kn5_loop.py")
+    # ledger 0054 Phase 2 step 2g: after the furniture, BEFORE verify_race (its scenery check G reads this run's
+    # data/signs.local.json — after it, a re-used workshop judged the last run's plates)
+    assert sd.index("tools/author_race_furniture_blend.py") < i_sign < sd.index("tools/verify_race.py") \
+        < sd.index("tools/plot_race_furniture.py") < sd.index("scripts/ac/build_kn5_loop.py")
     assert i_sign > sd.index('if [ "$SKIP_BLEND" = 0 ]; then') and sd.index("tools/verify_signs.py") > i_sign and sd.index("tools/plot_signs.py") > i_sign
-    assert "signs" not in spec["steps"]["draft"] and spec["steps"]["author"][-2:] == ["race_verify", "signs"]
+    au = spec["steps"]["author"]
+    assert "signs" not in spec["steps"]["draft"] and au[-3:] == ["race_author", "signs", "race_verify"]
+    assert '*" race_verify "*" signs "*)' in tr                  # the chain refuses the old order
     assert "author_signs() {" in tr and "draft_signs() {" not in tr and tr.count(header) == 1
     # the map step says what a lap layout gets
     assert 'map = lap gets its lap alone' in sd and 'map = lap gets its lap alone' in tr

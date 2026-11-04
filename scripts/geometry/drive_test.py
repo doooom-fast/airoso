@@ -978,7 +978,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
                             else:
                                 problems["steps"].append((round(s, 1), round(off, 2), round(step, 3)))
                                 problems.setdefault("steps_xz", []).append(
-                                    (round(s, 1), round(off, 2), round(step, 3), round(px, 1), round(pz, 1)))
+                                    (round(s, 3), round(off, 3), round(step, 4), round(px, 3), round(pz, 3)))
                 prev_slope[pi] = slope
             prev_adv[pi] = adv
             prev_d[pi] = d_now

@@ -2284,3 +2284,89 @@ python tools/kn5_equiv.py "$L201" D:/k10-scratch/lm_phase2/project/build/san_die
 - **Everything else as step 2e.**
 
 Install only on Kevin's word.
+
+### Phase 2 — step 2g (Mac, 2026-11-04, `claude/lm-phase2-build`): the 0.20.2-on-2f run's four rows
+
+The PC's run on d1dbe5b (`claude/lm-phase2-0202` 2d7cf23, section "0.20.2 run on step 2f") left four rows. Each is
+answered at its cause; no threshold moved. plan_north is PLANNED with its report equal to step 2e's (timings aside), and
+`prove_nose_off` matches `proofs/nose_off_md5.json` (24 keys).
+
+1. **audit_mesh north D 32: the zone, not the wall.** `1WALL_race_edge_lapnorth_L_navajo_2130_1` stands where the lap's
+   bands put it. It is the lap's left edge on the offset curve round the outside of J1: R 8.3 m at v2932, a 30 m box,
+   band points 11-13 m apart.
+   - **Cause.** `median_zone` joined consecutive band points with the straight chord. The strip follows the curve
+     (`race_furniture.densify_rings`), which bows ~1 m off the chord there.
+   - **Fix.** The band is that curve too, at the same reach. Before, 7 ring points of the lap's 17,793 sat outside the band
+     per layout, all on navajo_2130_1 at v2930-2931 (x −1980.65..−1962.30, z 589.57..593.38, the PC's box). Now 0.
+   - Only audit_mesh's D reads barrier bands, and the change only adds exemption: the mainline's D stays 0.
+2. **no_route race_cw / race_acw `local_deck_cells` 166: 104 of them were another road.**
+   - **Reproduced on the Mac** on v4's own prepped scene (a gate OBJ exported from it): 163 cells. 104 of them were
+     `1WALL_guard_0`, the median guardrail, measured from decks −3.79..+7.15 m off the line's: the I-8 under the bridge, an
+     overpass. Step 2e's deck frame took the 1ROAD sheet nearest a wall's foot, whatever road it was.
+   - **Fix.** Only sheets within DECK_REACH_M = WALL_HI_M − WALL_LO_M = 0.70 m of the line's deck count (derived: within it,
+     the two bands overlap). The report now lists what the deck frame sealed (`local_deck_walls`).
+   - **What remains** (Mac, race_cw): 59 cells, all mainline race curb strips standing on decks below the line. They are
+     `college_774` (v763-776, −0.13..+0.01 m), `navajo_1517` (J1 mouth, v2314-2323, ±0.24 m) and `jackson_2324` (J5 mouth,
+     v2324-2327, −0.24..−0.14 m). These are real walls, so the key change is the measurement fix doing its job: wall_cells
+     594,840 → 594,899, reached / allowed 138,758 → 138,757 m², every verdict key equal. Recorded in GATES-CHANGELOG.
+   - Step 5's pass now expects it: built race_cw / race_acw keys equal to 0.20.1's except wall_cells (+ local_deck_cells)
+     and reached_m2 / allowed_m2 (≤ a few m² down), with every `local_deck_walls` object a `1WALL_race_*` on a deck within
+     ±0.70 m.
+3. **The expansion line: right as regenerated, and J4 is fine.** Reproduced on the Mac on v4's own road, driven on both
+   lines: v4's line reads fwd 0.32 (s 2, s 949), the regenerated one 0.48 (+ s 4342, 0.0452 at (−1192.680, 3152.387)).
+   - **The diff.** The regenerated line (`tools/expansion_lines.py` on the corrected data, de1b21a2…) differs from v4's
+     (6e3db835…) only at Princess View: fwd points 520-540 (s 1556-1616, up to 0.21 m, widths up to 0.48 m), rev
+     1574-1590 (≤ 1 mm). That is where the median data changed. Everywhere else the points and widths are equal, and the
+     stations after Princess View shift 7.6 mm (the line is that much shorter there).
+   - **The J4 step is a sampling artefact.** The +3.46 m wheel path hops across line vertex 1450: that metre covers 0.497 m
+     of plan. drive_test re-measures such a hop on the path's own travel (VERTEX BUMPS): v4's line reads 0.02486 m, filed
+     as a vertex bump and not counted; the new one 0.02546 m, over STEP_BUMP_M 0.025, counted. The difference is the 7.6 mm
+     station shift.
+   - **The surface there is smooth.** `proofs/probe_seam.py` walks that path every 2 mm over ±1.2 m, ±3 cm across. The J4
+     pad / Jackson ribbon seam is continuous: 1ROAD_pad_J4 → 1ROAD_road at dh 0.1 mm, no gap, no jump over 5 mm. The real
+     grade change there is ~1.9 %-points on the path's own travel.
+   - **Nothing shipped reads the file.** Only drive_test --line reads it; place_signs / verify_signs recompute the lines in
+     memory (signs 29 / 29 as 0.20.1), and no AI draft or verify_ai_line uses it.
+   - `steps_at` now carries mm precision.
+   - (0.20.1's committed `data/drive_test.expansion.json` was last written at b79dafe, v0.19.0: not a 0.20.1 reading.)
+4. **Stale signs in a re-used workshop: the chain order.**
+   - `ship.json` steps.author is now … race_author, **signs, race_verify**, and `tools/ship_sd.sh` is moved the same way.
+   - `tools/ship_track.sh` refuses a ship.json that lists race_verify before signs.
+   - The signs step already unlinks the last run's `signs.local.json` at its start, so verify now reads this run's plates.
+
+Tests:
+- test_median_zone_kinds (the J1 curve), test_no_route (the listed pad wall; a wall on another road's deck seals nothing),
+  test_drive_test_line and the ship chain suites pass, apart from the four bash-4 guard runs that fail on the Mac.
+- The full tools + geometry run: 877 pass. The 5 failures are the four bash-4 guard runs and `test_ship_fleet` (the rally tarmac pair; not this branch's).
+
+**The PC's re-run: gate re-runs only, on the existing 2f build** (`D:/k10-scratch/lm_phase2/project`; no rebuild: neither
+the race step nor the blend changes). In the claude/lm-phase2-0202 worktree, merged with this push:
+
+```bash
+cd <the claude/lm-phase2-0202 worktree>
+git fetch origin && git merge origin/claude/lm-phase2-build
+P=D:/k10-scratch/lm_phase2/project
+# 1. audit_mesh, every layout (the gate OBJs the chain wrote are still there)
+python -m scripts.geometry.audit_mesh "$P"                         # street: CLEAN, equal to 0.20.1
+for lid in race_cw race_acw north_cw north_acw; do python -m scripts.geometry.audit_mesh "$P" --layout "$lid" | tail -18; done
+# 2. built no_route, every race layout
+for lid in race_cw race_acw north_cw north_acw; do python tools/no_route.py "$P" --layout "$lid"; done
+# 3. the expansion line's bumps placed at mm, and the J4 seam probed on the built street OBJ
+python -m scripts.geometry.drive_test "$P" --line expansion
+python tracks/san-diego-lake-murray/source/expansion/phase2/proofs/probe_seam.py "$P/data/track.obj" \
+  "$P/data/drive_lines.expansion.json" fwd -1192.680 3152.387 3.46 --band 0.03 --half 1.2
+```
+
+**Pass:**
+- **audit_mesh.** north_cw / north_acw D 0 (I / K 0); street / race_cw / race_acw CLEAN and equal to 0.20.1.
+- **no_route race_cw / race_acw.** PASS, with `local_deck_walls` listing only `1WALL_race_*` objects at about v760-779 /
+  v2310-2329 (the College mouth, J1 and J5 mouth fills), each on a deck within ±0.70 m. `1WALL_guard*` must be gone.
+  - Every key equals 0.20.1's except wall_cells (+ local_deck_cells) and reached_m2 / allowed_m2 (a few m² down). Record the
+    numbers.
+- **no_route north_cw / north_acw.** PASS, as 2f.
+- **drive_test --line expansion.** fwd's third bump at s 4342 lat +3.46, `steps_at` 0.045 m, at about (−1192.680, 3152.387).
+- **probe_seam.** It reads the seam continuous (no gap, no jump over 5 mm), as on the Mac. A gap or a jump there is a seam
+  defect: bring it back.
+
+Then step 5's held state stands. The next full run, whenever there is one, authors signs before race_verify by itself.
+Install only on Kevin's word.

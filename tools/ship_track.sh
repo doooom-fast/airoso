@@ -984,6 +984,11 @@ if [ "$REQUIRE_RACE" = 1 ] && [ -z "$RACE_IDS" ]; then echo "no race layout decl
 if [ -n "$RACE_IDS" ]; then
   case " ${AUTHOR[*]:-} " in *" race_author "*) ;; *) echo "layouts $RACE_IDS declare race_furniture but ship.json steps.author has no race_author — they would ship without it"; exit 2;; esac
 fi
+# ledger 0054 Phase 2 step 2g: verify_race's scenery check (G) reads data/signs.local.json, which the signs step writes —
+# signs after race_verify judged the LAST run's plates (the PC's re-used workshop stopped at G on 33 stale plates)
+case " ${AUTHOR[*]:-} " in
+  *" race_verify "*" signs "*) echo "ship.json steps.author: race_verify runs before signs — it would read the last run's data/signs.local.json; list signs before race_verify"; exit 2;;
+esac
 
 if [ "$SKIP_BLEND" = 0 ]; then
   for n in ${DRAFT[@]+"${DRAFT[@]}"}; do

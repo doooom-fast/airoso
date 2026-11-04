@@ -25,8 +25,15 @@
  "vertex_bumps": 0,
  "vertex_bumps_worst": [],
  "excursion_drops": 0,
- "excursion_far_ledges": 0,
- "worst_excursions": [],
+ "excursion_far_ledges": 1,
+ "worst_excursions": [
+  [
+   9601.3,
+   -16.5,
+   0.13,
+   false
+  ]
+ ],
  "worst_gated_excursions": [],
  "obstruction_by_mesh": {},
  "worst": {

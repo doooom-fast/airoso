@@ -4,8 +4,8 @@
   "loop_main.blend": {
    "objects": 20,
    "meshes": 4,
-   "positions": 52262,
-   "max_positions": 45363,
+   "positions": 57752,
+   "max_positions": 50853,
    "materials": [
     "1GRASS_mat",
     "1KERB_sidewalk_mat",
@@ -63,8 +63,8 @@
  "input_census": {
   "objects": 20,
   "meshes": 4,
-  "positions": 52262,
-  "max_positions": 45363,
+  "positions": 57752,
+  "max_positions": 50853,
   "materials": [
    "1GRASS_mat",
    "1KERB_sidewalk_mat",

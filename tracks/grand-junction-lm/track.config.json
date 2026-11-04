@@ -3,7 +3,7 @@
   "archetype": "race_circuit",
   "name": "Grand Junction Motor Speedway (LM engine)",
   "slug": "grand_junction_lm",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 9.75,

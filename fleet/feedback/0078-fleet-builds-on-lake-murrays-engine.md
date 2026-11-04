@@ -664,6 +664,70 @@ Runbook 4e stays on hold (the PC rehearses only a green stage). Lake Murray is u
 the intake changes sit under keys only the stage ports set, and `tools/road_seek.py` / `tools/switchback_measure.py` are
 port-only tools.
 
+### Round 10 (Mac): the switchbacks built as measured; two of them fail the corner / drop rules as measured — Kevin's call
+
+**The measured-circle fit (`tools/switchback_fit.py`, new; `lm_intake.switchback_fit`).** Each switchback of more than
+100 deg (the turns drive_test's corner rule judges) whose platform `data/switchbacks.json` measures (both edges, circle
+rms <= 1.0 m) is rebuilt on its measured centre arc. The leg point nearest the apex whose tangent to the circle leaves
+along the leg's own heading (within 12 deg; the assembler smooths the join) is joined by tangent, arc and tangent, the
+vertices re-spaced along it (count kept), the heights carried by fraction of length, and the width on the arc is the
+platform's. The fit is proved on its own result, or the turn is left as mapped: every step forward, the swept inside
+edge R - w/2 >= 1.0 m, the centre arc between the platform's measured inside and outside circles. It is fitted on
+road_seek's line without the bench-centre shift (the line the platforms were measured on); the shift eases out over 10
+stations into each join. The Lariat's `corner_arcs.fit_corners` is unchanged; Lake Murray never runs any of it.
+
+| stage | switchback | turn | R (centre arc) | platform width | inside edge R | joins (m before / after) | fit |
+|---|---|---|---|---|---|---|---|
+| Dragon Tail | s 5,946 | 105 deg | 22.85 m | 6.51 m | 19.60 m | 26.8 / 29.9 | PASS |
+| Dragon Tail | **switchback 1, s 6,381** | 134 deg | **13.75 m** | **6.94 m** | 10.28 m | 18.0 / 26.8 | PASS |
+| Dragon Tail | **switchback 2, s 6,590** | 168 deg | **12.50 m** | **10.82 m** | 7.09 m | 17.7 / 23.8 | PASS |
+| Under the Dragon | **s 22,542 (the gate's s 22,414)** | 125 deg | **15.93 m** | **6.82 m** | 12.52 m | 33.1 / 28.7 | PASS |
+
+**Item 4 (s 22,413):** not missed by the measurement, only by the station: it is the platform measured at s 22,542 on the
+source line (the gate's line is the assembler's smoothed one); now fitted.
+
+**Item 2 (Dragon Tail switchback 3, s 7,453; Douglas Creek, s 2,482-2,500): not measured.** USGS has 3DEP lidar there
+(CO_NWCO_1_2020's EPT covers -109.07..-107.02, 39.64..41.01: both stages), but this Mac has no LAZ reader (`laspy` /
+`lazrs` are not installed, and installing packages needs Kevin's or the operator's word). The PC (where 0.17.2's pad
+outlines were read from lidar) can read it. The NAIP alone does not show the inside edge at either turn at its 0.6 m.
+Both are left as mapped.
+
+**Item 3 (the off-road line, Under the Dragon s 14,337): tried, not kept.** A trigger on the DEM cross-section's own
+evidence (the line's cost exceeding the best strip within 15 m by a margin, for 30-45 m) either fired over kilometres of
+correct line (a graded road's crown and ditches make a strip beside it read flatter) or, strict enough not to, missed s
+14,337. The evidence there is in the aerial (the graded road ~10 m east, NAIP), which road_seek does not score (its road
+is lighter or darker than the soil from stretch to stretch). Owed: an aerial road-edge trace for level stretches.
+
+**The Mac builds (from empty workshops, `--no-install`):**
+
+| row | DT installed 0.2.1 | **DT `_lm` (round 10)** | UtD installed 0.2.0 | **UtD `_lm` (round 10)** |
+|---|---|---|---|---|
+| severe steps (/km) | 182 (7.21) | 127 (5.05) | 195 (7.59) | 90 (3.52) |
+| soft top in lane | 0 | **22** (s 6,355-6,367; 6,559-6,567) | 0 | **4** (s 14,334-14,339; 22,998; 23,056) |
+| undrivable corners | 0 | **3** (s 6,356-6,366: switchback 1, 6.9 m) | 0 | **2** (s 2,456 Douglas Creek, 7.7 m, unmeasured; s 22,414, 6.8 m) |
+| gated drops | 0 | **4** (s 6,600, switchback 2's outside, 0.54-1.09 m) | 0 | **2** (s 2,403, 0.28-0.32 m) |
+| floating / obstructed / daylight | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 |
+| replication (median / p95) | 0.02 / 0.21 m | 0.02 / 0.11 m | — | 0.01 / 0.11 m |
+| audit / kn5_ground_check | CLEAN / PASS | CLEAN / PASS | CLEAN / PASS | CLEAN / PASS |
+| road kn5 | — | 39.3 MB | — | 50.8 MB |
+
+**For Kevin (the coordinator's stop rule: a switchback built as measured still fails the rule).**
+- **Dragon Tail switchback 1 (s 6,381):** a 134 deg turn on a measured R 13.75 m centre arc, its graded platform **6.94
+  m** wide (DEM bench edges: outside R 17.22 m, inside R 10.28 m). drive_test's corner rule reads 112-119 deg at 6.9 m
+  against its **11 m**: 3 undrivable corners. The real road there is narrower than the rule allows.
+- **Under the Dragon s 22,542 (gate s 22,414):** 125 deg on R 15.93 m, platform **6.82 m** (outside R 19.34, inside
+  12.52): 1 undrivable corner, 113 deg at 6.8 m against **11 m**.
+- **Dragon Tail switchback 2 (s 6,590):** built as measured (R 12.5 m, 10.82 m wide, inside edge R 7.09 m), its
+  outside falls 0.54-1.09 m at 11.5-13 m off the line (the fill below the platform's outside edge, R 17.91 m): 4 gated
+  drops against the drop rule's 0.2 m at the edge. The installed 0.2.1 carried that edge with a measured-guard stone
+  lip (an invented guard).
+These are not bent to pass. What is still ours, not Kevin's: the soft tops round the two Dragon Tail switchbacks and
+Under the Dragon's 22,998 / 23,056 (ground chords over the rebuilt decks), s 14,337 (the line off its road), and the two
+unmeasured turns (lidar on the PC).
+
+Runbook 4e stays on hold. Lake Murray unchanged: no file of its chain changed; the new intake key and both new tools are
+port-only.
+
 ## PC runbooks
 
 **ENG**: never the live `D:\k10\engine-july`. Keep `D:/k10-scratch/eng_repro` (the repo-only v4 engine) clean; each build

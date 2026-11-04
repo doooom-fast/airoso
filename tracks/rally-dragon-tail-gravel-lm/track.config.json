@@ -232,7 +232,8 @@
     "road_seek": "data/road_seek.json",
     "road_seek_widths": true,
     "width_taper": 0.1,
-    "_corner_arcs_doc": "round 9: data/switchbacks.json measures each switchback's graded platform in the 1 m DEM (tools/switchback_measure.py); not fitted yet (the corner-arc fit's arms do not take a 168 deg turn on 15 m legs: ledger 0078 round 9)",
+    "switchback_fit": "data/switchbacks.json",
+    "_switchback_fit_doc": "round 10: each switchback over 100 deg whose graded platform the 1 m DEM measures (tools/switchback_measure.py) built on its measured centre arc and width (tools/switchback_fit.py)",
     "_width_taper_doc": "Milford's taper (ledger 0078 round 5), 0.1 m per m a side, widening only: a graded bench appears in a few stations (a switchback platform, a pull-out) and drive_test's width-relative wheel paths re-seat across it",
     "_doc": "the measured profile (the elevation stage's grade cap undone: the grades are the real road's), the 40 m 3DEP grid as it is (the assembler halves it to 20 m; the prep splits it to 4.5 m within 16 m of the road); the raw 3DEP record drive_test replicates against; the line onto the graded road tools/road_seek.py found in 3DEP 1 m cross-sections, heights from that road, and its width where the DEM bounds its graded bench (data/road_seek.json; ledger 0078 round 8)"
   },

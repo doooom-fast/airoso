@@ -39,6 +39,7 @@ from pathlib import Path
 
 AIROSO = Path(__file__).resolve().parents[1]
 SWITCHBACK_RMS_M = 1.0   # [invented] round 9: a measured switchback is fitted only where both edge circles fit within this
+SWITCHBACK_TURN_DEG = 100.0  # round 10: the turns drive_test's corner rule judges (>100 deg); a measured platform round a gentler bend is not refitted
 if str(AIROSO) not in sys.path:
     sys.path.insert(0, str(AIROSO))
 
@@ -265,6 +266,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
                 print(f"[lm_intake] road_seek widths: the graded bench measured at {nb} of {n_} stations; widths now "
                       f"{min(widths):.2f}..{max(widths):.2f} m (the source's {min(w_was):.2f}..{max(w_was):.2f})")
             from tools import road_seek as _rsk
+            pts0_src = list(pts)
             moved_pts, n_relaxed = _rsk.moved_line(pts, st_, shift)       # untangled where it would step backwards
             prof_rep["road_seek_relaxed_points"] = n_relaxed
             seg_l = [math.hypot(moved_pts[i][0] - moved_pts[i - 1][0], moved_pts[i][2] - moved_pts[i - 1][2])
@@ -272,6 +274,40 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
             z_rs, _ = hf.profile_along([float(s_["z_m"]) for s_ in st_], seg_l, grade_cap_pct=1e9, median_m=med,
                                        closed=closed_g, close_seg_m=None)
             pts = [(q[0], z - elev0, q[2]) for q, z in zip(moved_pts, z_rs)]
+            # THE SWITCHBACKS AS MEASURED (lm_intake.switchback_fit, the port's data/switchbacks.json; round 10): each
+            # measured platform's centre arc taken as given and joined to the legs as they are (tools/switchback_fit.py),
+            # its width the platform's; a turn whose fit fails its proofs is left as it was, and reported
+            sbf = li.get("switchback_fit")
+            if sbf:
+                from tools import switchback_fit as _sbf
+                swb = json.loads((proj / sbf).read_text(encoding="utf-8"))
+                use = [c for c in swb["corners"] if c.get("measured") and c.get("turn_deg", 0) > SWITCHBACK_TURN_DEG
+                       and c.get("rms_outside_m", 9) <= SWITCHBACK_RMS_M
+                       and c.get("rms_inside_m", 9) <= SWITCHBACK_RMS_M]
+                # on the line the platforms were measured on (road_seek's, without the bench-centre shift, which wobbles
+                # a switchback's legs by up to ~2 m); outside each fitted span the shifted line stays
+                base0, _n0 = _rsk.moved_line(pts0_src, st_, None)
+                pts0 = [(q[0], z - elev0, q[2]) for q, z in zip(base0, z_rs)]
+                fit_p, fit_w, sb_rep = _sbf.fit_all(pts0, list(widths), use)
+                for r_ in sb_rep:
+                    if r_["status"] == "PASS":
+                        a_, b_ = r_["span_i"]
+                        for k_ in range(a_ + 1, b_):
+                            pts[k_] = fit_p[k_]
+                            widths[k_] = fit_w[k_]
+                        # the bench-centre shift eased out over BLEND stations into each join (no lateral step there)
+                        BLEND = 10
+                        for d_ in range(0, BLEND + 1):
+                            f_ = d_ / BLEND                          # 0 at the join: the unshifted line; 1: the shifted
+                            for k_ in (a_ - d_, b_ + d_):
+                                if 0 <= k_ < len(pts):
+                                    p1, p0 = pts[k_], pts0[k_]
+                                    pts[k_] = (p0[0] + (p1[0] - p0[0]) * f_, p1[1], p0[2] + (p1[2] - p0[2]) * f_)
+                prof_rep["switchbacks"] = sb_rep
+                for r_ in sb_rep:
+                    print(f"[lm_intake] switchback {r_['id']} s {r_['st_m']:.0f}: {r_['status']} R {r_['radius_m']} m, "
+                          f"width {r_['width_m']} m, inside edge R {r_.get('inside_edge_r_m')} m, joins "
+                          f"{r_.get('join_m')} m, back steps {r_.get('back_steps')}" + (f" ({r_['why']})" if r_.get("why") else ""))
             offs_ = sorted(abs(float(s_["offset_m"])) for s_ in st_)
             prof_rep["road_seek"] = {"file": rs_rel, "offset_abs_m": {"median": round(offs_[len(offs_) // 2], 2),
                                                                        "max": round(offs_[-1], 2)},

@@ -40,7 +40,8 @@
   "sync_in": {
     "required": [
       "track.config.json",
-      "data/road_seek.json"
+      "data/road_seek.json",
+      "data/switchbacks.json"
     ]
   },
   "sync_out": {

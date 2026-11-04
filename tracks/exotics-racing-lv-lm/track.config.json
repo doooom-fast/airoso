@@ -5375,7 +5375,9 @@
       "grass_clearance": 0.05,
       "_doc": "the circuit edge (ledger 0078): no curb, no sidewalk (neither track has one). The asphalt edge is held at road height for 0.30 m and the run-off ground meets it 0.15 m lower over 1.0 m [invented: the flush meet the drive gate reads as no drop]; the ground beyond is the assembler's conform to the road (20 m + 16 m blend), then the 3DEP surface: the real run-off level. Racing kerbs and paved run-off are NOT built: no measured kerb line or run-off outline is committed for either track (owed: read off the NAIP / lidar)."
     },
-    "crossfall_file": "data/crossfall.lm.json"
+    "crossfall_file": "data/crossfall.lm.json",
+    "kerbs_file": "source/edges/kerbs.json",
+    "_kerbs_doc": "the racing kerbs traced off the aerial (tracks/exotics-racing-lv/source/edges/kerbs.json: imagery, method, the eye check); built by tools/author_kerbs_blend.py outside the lane edge, the config's kerb profile"
   },
   "terrain_cell_m": 1.25,
   "terrain_vertex_budget": 1500000,
@@ -5401,6 +5403,10 @@
     "SHOULDERUND": {
       "diffuse": "textures/caliche_diffuse.jpg",
       "normal": "textures/caliche_normal.jpg"
+    },
+    "1KERB_RACE": {
+      "diffuse": "textures/kerb_redwhite.png",
+      "_doc": "the kerb paint the aerial shows (red and white), a flat two-band stripe (this port's own file)"
     }
   },
   "_texture_overrides_doc": "The Mojave ground (DOSSIER section 11 step 2): textures/make_caliche_ground.py, CC0, colour measured off NAIP. 1GRASS keeps its physics.",

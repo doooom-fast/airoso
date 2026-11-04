@@ -314,6 +314,10 @@ draft_densify_ribbon() {
   step "author: more columns where the mainline ribbon twists (tools/densify_ribbon_blend.py; ledger 0078; after the weld, no crease = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/densify_ribbon_blend.py" -- "$PROJ" 2>&1 | grep "^\[densify\]\|FATAL\|Error\|Traceback" )
 }
+draft_kerbs() {
+  step "author: racing kerbs from the traced runs on the ribbon's lane edge (tools/author_kerbs_blend.py; ledger 0078; no route.kerbs_file = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_kerbs_blend.py" -- "$PROJ" 2>&1 | grep "^\[kerbs\]\|FATAL\|Error\|Traceback" )
+}
 draft_seat_edges() {
   step "author: finer ground along the lane edges of the banked stretch (tools/seat_edges_blend.py; ledger 0078; no route.crossfall_file = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/seat_edges_blend.py" -- "$PROJ" 2>&1 | grep "^\[seat-edges\]\|Error\|Traceback" )

@@ -28,6 +28,9 @@ import bpy
 MAX_EDGE_M = 0.6     # [invented] chord legs this short keep tan(5 %) x a b / (a + b) under 1 cm, half the prep's clearance
 BAND_M = 1.5         # [invented] either side of each lane edge line: the legs of every chord that crosses it
 PAD_M = 10.0         # [invented] past each end of the banked run, where the bank rolls in
+CHORD_M = 0.04       # [invented] tan(bank) x leg / 4 <= 1 cm: half the prep's 0.02 m clearance
+PREP_EDGE_M = 4.5    # engine-july's own corridor split (build_kn5_loop.CORRIDOR_EDGE_M): no finer cut needed past this
+BANK_REACH_M = 15.0  # [invented] the measured bank a face answers for: the steepest within this of it
 SKIRT_M = 60.0       # a face with an edge longer than this is the terrain skirt, not ground beside a lane
 MAX_CUTS = 16        # [invented] cuts per edge at most (a 10 m cell -> 0.6 m)
 
@@ -44,6 +47,20 @@ def main():
     P, W = loc["points_xyz_m"], loc["widths_m"]
     cf = json.loads((proj / rel).read_text(encoding="utf-8"))
     banked = [tuple(p) for p, b in zip(cf["points_xz"], cf["bank_rad"]) if abs(b) > 1e-6]
+    # the bank each face must answer for: the steepest measured within BANK_REACH_M of it (a 10 m grid of the points)
+    bgrid = {}
+    for (bx, bz), b in zip(cf["points_xz"], cf["bank_rad"]):
+        bgrid.setdefault((int(bx // 10), int(bz // 10)), []).append((bx, bz, abs(b)))
+
+    def bank_near(x, z):
+        best = 0.0
+        r = int(BANK_REACH_M // 10) + 1
+        for gx in range(int(x // 10) - r, int(x // 10) + r + 1):
+            for gz in range(int(z // 10) - r, int(z // 10) + r + 1):
+                for bx, bz, b in bgrid.get((gx, gz), ()):
+                    if (bx - x) ** 2 + (bz - z) ** 2 <= BANK_REACH_M ** 2:
+                        best = max(best, b)
+        return best
     # the lane-edge segments of every line station within PAD_M of a banked point
     near = set()
     for i, p in enumerate(P):
@@ -96,24 +113,33 @@ def main():
     n0 = len(bm.verts)
     # ONE pass: every face that reaches within BAND_M of a lane edge is grid-filled with its edges cut to <= MAX_EDGE_M
     # (an iterative halving fans a long edge to the opposite vertex every round and does not converge in useful time)
-    faces = []
-    longest = 0.0
+    # ADAPTIVE (ledger 0078, the kn5 size): a grass chord across a banked low edge stands at most tan(bank) x t / 4 over
+    # the lane for legs of t, so each face near a lane edge is cut to t = CHORD_M / tan(bank), between MAX_EDGE_M and
+    # PREP_EDGE_M (what engine-july's corridor split already reaches); a face whose bank needs no more is left alone.
+    groups = {}
     for f in bm.faces:
-        if max(e.calc_length() for e in f.edges) > SKIRT_M:
+        lng = max(e.calc_length() for e in f.edges)
+        if lng > SKIRT_M:
             continue                                     # the grid's far skirt (grass_terrain's 500 m apron), never near a lane
         c = f.calc_center_median()
         rad = max((v.co - c).length for v in f.verts)
-        if d_edge(c.x, c.y, BAND_M + rad) <= BAND_M + rad:
-            faces.append(f)
-            longest = max(longest, max(e.calc_length() for e in f.edges))
+        if d_edge(c.x, c.y, BAND_M + rad) > BAND_M + rad:
+            continue
+        tb = math.tan(bank_near(c.x, c.y))
+        t = max(MAX_EDGE_M, min(PREP_EDGE_M, CHORD_M / tb)) if tb > 1e-6 else PREP_EDGE_M
+        cuts = min(MAX_CUTS, math.ceil(lng / t) - 1)
+        if cuts >= 1:
+            groups.setdefault(cuts, []).append(f)
     n_split = 0
-    if faces:
-        cuts = min(MAX_CUTS, max(1, math.ceil(longest / MAX_EDGE_M) - 1))
-        edges = list({e for f in faces for e in f.edges})
+    for cuts in sorted(groups, reverse=True):          # the finest first; a coarser neighbour shares only edges
+        fs = [f for f in groups[cuts] if f.is_valid]
+        edges = list({e for f in fs for e in f.edges if e.is_valid})
+        if not edges:
+            continue
         bmesh.ops.subdivide_edges(bm, edges=edges, cuts=cuts, use_grid_fill=True)
-        bmesh.ops.triangulate(bm, faces=[f for f in bm.faces if len(f.verts) > 3])
-        n_split = len(edges)
-        print(f"[seat-edges] {len(faces)} terrain faces within the band, longest edge {longest:.1f} m -> {cuts} cuts each")
+        n_split += len(edges)
+    bmesh.ops.triangulate(bm, faces=[f for f in bm.faces if len(f.verts) > 3])
+    print(f"[seat-edges] faces cut by bank: " + ", ".join(f"{c} cuts x {len(g)}" for c, g in sorted(groups.items())))
     bm.to_mesh(ob.data); bm.free(); ob.data.update()
     print(f"[seat-edges] {len(near)} banked line stations, {len(segs)} lane-edge segments: {n_split} terrain edges split "
           f"(<= {MAX_EDGE_M} m within {BAND_M} m of an edge), TERRAIN {n0} -> {len(ob.data.vertices)} verts")

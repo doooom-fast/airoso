@@ -303,6 +303,8 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
             for v in node:
                 _files(v)
     _files(((cfg.get("scenery") or {}).get("bespoke") or {}))
+    if (cfg.get("route") or {}).get("kerbs_file"):
+        rels.append(cfg["route"]["kerbs_file"])           # the traced kerb runs (tools/aerial_edges.py, ledger 0078)
     for row in (cfg.get("texture_overrides") or {}).values():
         for v in (row or {}).values() if isinstance(row, dict) else ():
             if isinstance(v, str) and v.startswith("textures/"):
@@ -312,6 +314,8 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
             raise SystemExit(f"[lm_intake] {rel!r} must be a plain path inside the track")
         sp = src / rel
         if not sp.exists():
+            if (proj / rel).exists():                      # the port's own file (e.g. its kerb texture), synced in by ship.json
+                continue
             raise SystemExit(f"[lm_intake] the config names {rel} but tracks/{src_track}/{rel} does not exist")
         (proj / rel).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(sp, proj / rel)

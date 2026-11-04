@@ -317,7 +317,9 @@
       "grass_clearance": 0.05,
       "_doc": "the circuit edge (ledger 0078): no curb, no sidewalk (neither track has one). The asphalt edge is held at road height for 0.30 m and the run-off ground meets it 0.15 m lower over 1.0 m [invented: the flush meet the drive gate reads as no drop]; the ground beyond is the assembler's conform to the road (20 m + 16 m blend), then the 3DEP surface: the real run-off level. Racing kerbs and paved run-off are NOT built: no measured kerb line or run-off outline is committed for either track (owed: read off the NAIP / lidar)."
     },
-    "crossfall_file": "data/crossfall.lm.json"
+    "crossfall_file": "data/crossfall.lm.json",
+    "kerbs_file": "source/edges/kerbs.json",
+    "_kerbs_doc": "the racing kerbs traced off the aerial (tracks/high-plains/source/edges/kerbs.json: imagery, method, the eye check); built by tools/author_kerbs_blend.py outside the lane edge, the config's kerb profile"
   },
   "terrain_cell_m": 1.5,
   "corridor_refine_factor": 6,
@@ -349,6 +351,10 @@
       "diffuse": "assets/textures/tiltup_wall_diffuse.jpg",
       "normal": "assets/textures/tiltup_wall_normal.jpg",
       "_doc": "our own concrete in place of the Hamburg bytes"
+    },
+    "1KERB_RACE": {
+      "diffuse": "textures/kerb_bluewhite.png",
+      "_doc": "the kerb paint the aerial shows (blue and white), a flat two-band stripe (this port's own file)"
     }
   },
   "lm_intake": {

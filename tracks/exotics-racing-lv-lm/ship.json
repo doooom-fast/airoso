@@ -12,7 +12,8 @@
       "build_loop_blend",
       "weld_mouths",
       "densify_ribbon",
-      "seat_edges"
+      "seat_edges",
+      "kerbs"
     ],
     "author": [
       "bespoke"
@@ -44,7 +45,8 @@
     ],
     "optional": [
       "data/heightfield.npy",
-      "data/heightfield.meta.json"
+      "data/heightfield.meta.json",
+      "textures/kerb_redwhite.png"
     ]
   },
   "sync_out": {
@@ -67,7 +69,8 @@
       "data/audit.json",
       "data/kn5_ground_check.{id}.json",
       "data/house_seat_check.json",
-      "data/edge_report.json"
+      "data/edge_report.json",
+      "data/kerbs.built.json"
     ],
     "map": [
       [

@@ -1,9 +1,9 @@
 {
  "gate": "verify_ai_line (ledger 0052)",
  "layout": "race_cw",
- "ai": "D:\\k10-scratch\\lm_v4\\ai\\race_cw\\fast_lane.ai",
+ "ai": "D:\\k10-scratch\\lm_v4_0201\\ai\\race_cw\\fast_lane.ai",
  "built": {
-  "obj": "D:\\k10-scratch\\lm_v4\\data\\track.race_cw.obj",
+  "obj": "D:\\k10-scratch\\lm_v4_0201\\data\\track.race_cw.obj",
   "header": "gate OBJ extracted from san_diego_lake_murray.kn5 + san_diego_lake_murray_race.kn5 + san_diego_lake_murray_closure_race_cw.kn5 (kn5->engine frame, z mirrored, winding reversed)",
   "wall_segments": 400381,
   "road_tris": 51854

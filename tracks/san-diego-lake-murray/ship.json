@@ -108,6 +108,7 @@
       "data/terrain.tiers.json.gz",
       "data/terrain.refine.json.gz",
       "data/bridges.cache.json",
+      "data/scatter_positions.json",
       "data/network.cache.json",
       "data/road_lanes.cache.json",
       "data/osm.expansion.json",
@@ -130,7 +131,7 @@
       "assets/textures/roof_dark_diffuse.jpg"
     ],
     "_assets_doc": "ledger 0065: the house textures the pbr rows for the blocks name, which engine-july's assets/textures lacks; track.config.json texture_overrides points the same rows at these copies (same bytes as airoso's tracked files)",
-    "_optional_doc": "2026-11-03 (ledger 0065, the PC's coverage trace of v4): red_repairs.plan.json (tools/red_repairs.py, read by the prep's red repairs), terrain.tiers.json.gz (the thin step, rib_check, the assembler), terrain.refine.json.gz (the prep's RefineField, ground_release_blend) and bridges.cache.json (the prep's bridge spans, author_bridges, bridge_level) lived only in the workshop; network.cache.json, road_lanes.cache.json, osm.expansion.json, expansion.north.samples.json.gz are the draft's caches; source/bespoke/buildings.json is the planned blocks"
+    "_optional_doc": "2026-11-03 (ledger 0065, the PC's coverage trace of v4): red_repairs.plan.json (tools/red_repairs.py, read by the prep's red repairs), terrain.tiers.json.gz (the thin step, rib_check, the assembler), terrain.refine.json.gz (the prep's RefineField, ground_release_blend) and bridges.cache.json (the prep's bridge spans, author_bridges, bridge_level) lived only in the workshop; scatter_positions.json (the draft's palm / tree / scrub / median-planting positions, read by make_treefx and the race_verify scenery gate: without it v4's 21,111 TreeFX trees are 17,728, the PC's 0.20.1 run) the same; network.cache.json, road_lanes.cache.json, osm.expansion.json, expansion.north.samples.json.gz are the draft's caches; source/bespoke/buildings.json is the planned blocks"
   },
   "sync_out": {
     "required": [
@@ -186,6 +187,7 @@
       "data/ground_release.samples.json.gz",
       "data/freeway_i8.samples.json.gz",
       "data/deck_datum.json",
+      "data/scatter_positions.json",
       "data/ground_release.json",
       "data/ground_release.report.json",
       "data/ground_release.auto_cuts.json",

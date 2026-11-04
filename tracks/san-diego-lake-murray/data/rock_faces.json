@@ -13,8 +13,8 @@
  },
  "texture": {
   "key": "1GRASS_ROCK",
-  "diffuse": "D:\\k10-scratch\\lm_v4\\textures\\sandstone_cut_diffuse.jpg",
-  "normal": "D:\\k10-scratch\\lm_v4\\textures\\sandstone_cut_normal.jpg",
+  "diffuse": "D:\\k10-scratch\\lm_v4_0201\\textures\\sandstone_cut_diffuse.jpg",
+  "normal": "D:\\k10-scratch\\lm_v4_0201\\textures\\sandstone_cut_normal.jpg",
   "overridden": true
  },
  "bands": 16,

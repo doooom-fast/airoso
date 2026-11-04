@@ -154,6 +154,26 @@ def _own_travel_step(dh1, dh0, d1, d0):
     return abs(dh1 / d1 - dh0 / d0) * 2.0 * STEP_M * STEP_M / (d0 + d1)
 
 
+def pad_for_lead_in(z_meas, line_pts, local_pts, tol_m=1.5):
+    """REPLICATION ON AN OPEN STAGE (ledger 0076). build_mesh sweeps a lead-in and a lead-out of road past each open
+    end (``[lead-in/out] 10 verts (30 m)`` on Dragon Tail), so the gate line holds k extra vertices at each end that
+    centerline.local.json — and the measured heights indexed by it — do not. Compared index for index, every vertex
+    was read against the measurement 30 m up the road: 0.96 m median "replication error" on Dragon Tail (Gravel),
+    where aligned it is 0.02 m. Returns ``z_meas`` with k Nones at each end when the line is exactly 2k longer and its
+    vertex k (or, driven in reverse, its vertex len-1-k) sits within ``tol_m`` of the local line's first point (x
+    either sign: a mirror_x track's mesh frame); otherwise unchanged —
+    a closed lap, or any line of the same length, is compared exactly as before."""
+    n, m = len(line_pts), len(z_meas)
+    if n <= m or (n - m) % 2 or not local_pts:
+        return z_meas
+    k = (n - m) // 2
+    x0, z0 = local_pts[0][0], local_pts[0][2]
+    if not any(math.hypot(line_pts[j][0] - sx * x0, line_pts[j][2] - z0) <= tol_m
+               for j in (k, n - 1 - k) for sx in (1.0, -1.0)):     # -x: a mirror_x track's mesh frame
+        return z_meas
+    return [None] * k + list(z_meas) + [None] * k
+
+
 WHEEL_HALF_TRACK = 0.75      # wheel offset around each driving line
 CELL = 3.0                   # spatial hash cell (m)
 
@@ -1311,6 +1331,10 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
                 # the lap's mainline vertices take the mainline's measured height; connector / join vertices have none
                 zr = [(zr[sv[1]] if sv[0] == _race_lap.MAINLINE and sv[1] < len(zr) else None)
                       for sv in _lap_rec["source_by_vertex"]]
+            elif _lc9.exists():
+                # an open stage's gate line carries build_mesh's lead-in/out road past each end; the measured
+                # heights do not (ledger 0076) — pad them so vertex i is compared with its own measurement
+                zr = pad_for_lead_in(zr, pts, _lj9.get("points_xyz_m") or [])
             if reverse:
                 zr = zr[::-1]
             if zr and len(zr) >= 10:

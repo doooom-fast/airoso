@@ -3632,6 +3632,21 @@
    "collider": false
   },
   {
+   "key": "osm204333839",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    6.4,
+    6.95
+   ],
+   "bottom": 6.25,
+   "eave": 14.27,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
    "key": "osm204333852",
    "skin": "TILTUP",
    "roof": "WHITE",
@@ -3987,7 +4002,7 @@
     17.65
    ],
    "bottom": 16.8,
-   "eave": 24.89,
+   "eave": 24.9,
    "off_terrain": false,
    "collider": true
   },
@@ -4613,7 +4628,7 @@
    "form": "flat",
    "wall_h_m": 8.0,
    "ground": [
-    25.94,
+    25.95,
     26.06
    ],
    "bottom": 25.6,

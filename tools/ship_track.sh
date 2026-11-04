@@ -359,6 +359,13 @@ draft_scatter_strip() {
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/export_scatter_blend.py" -- "$PROJ" 2>&1 | grep "^\[scatter" )
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/strip_scenery_blend.py" -- "$PROJ" 2>&1 | grep "^\[strip" | cut -c1-160 )
 }
+draft_lamps_plan() {
+  # ledger 0070 D1: an ENGINE-DRAFT track's lamp posts (no assembler writes them): the loop's walk + the clearance rules,
+  # read on the draft's own built surfaces (data/track.obj) -> data/lights.local.json; opt-in, scenery.streetlights.planner
+  # "engine_draft" (absent = nothing read or written). After mesh, before the underlay; `lamps` stands the model on it
+  step "draft: lamp posts for the engine draft (tools/plan_streetlights.py: every 55 m alternating sides, off every road surface, >= 0.5 m from walls, no deck / pad -> data/lights.local.json; not opted in = no-op)"
+  (cd "$AIROSO" && python tools/plan_streetlights.py "$PROJ")
+}
 draft_lamps() {
   step "author: Kevin's lamp model at every streetlight (LIGHTPOST + LIGHTS lens)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_lamps_blend.py" -- "$PROJ" 2>&1 | grep "^\[lamps\]\|Error\|Traceback" )
@@ -721,6 +728,7 @@ print(1 if os.path.exists(p) and json.load(open(p,encoding='utf-8')).get('force_
 is_data_step() {
   case "$1" in
     gps|aerial|paint_centreline|remap_config|verify_centreline_paint|route_oneway_check|elev|project|widths|grid|mesh) return 0;;
+    lamps_plan) return 0;;
     road_profile|measured_widths|crossfall|verify_crossfall) return 0;;
     net|classify|network_elev|network_mesh|network_reference) return 0;;
     deck_datum|median_envelope|route_connectors|divide_connectors|trim_connectors|terrain_sample|terrain_resample) return 0;;

@@ -1,7 +1,7 @@
 {
   "name": "Sand Creek Raceway",
   "slug": "sand_creek_raceway",
-  "version": "0.33.0",
+  "version": "0.35.0",
   "mirror_x": false,
   "osm_road_widths": true,
   "_osm_road_widths_doc": "Real street circuit — after the project stage, scripts.gps.widths_from_osm map-matches each centerline vertex to its OSM way and sets curb-to-curb widths from lanes (arterials ~2x a side street) + writes intersection pads at the real junctions. Racetracks (defined widths) leave this off.",
@@ -97,6 +97,11 @@
         {"name": "E 48th Ave -> Colorado Blvd", "at": [39.78377, -104.940434], "radius_m": 10.9, "curb_radius_m": 4.0, "half_widths_m": [5.5, 8.25], "_doc": "NE return at the island tip"}
       ]
     },
+    "corner_flare_off": [
+      {"name": "the 56th -> Sand Creek Dr slip's merge", "at": [39.797452, -104.93138], "radius_m": 30.0, "why": "merge",
+       "_doc": "Ledger 0070 D (2026-11-03): the slip (OSM primary_link 628649529, one lane, 5.5 m) leaves E 56th and merges into Sand Creek Dr at 26 deg; a merge has no crossing pavement, so no flare stands for one. 0.34.0 swept a 23 m junction flare here (E 56th x Sand Creek Dr, two distinct arterials) that fell to 7.8 m in 6 m at 2,546-2,552 m, under the start of ledger 0066's measured camber (2,540 m): 8 severe steps. With it off the slip keeps its own 5.5 m and ramps to Sand Creek Dr's 11 m over 2,550-2,580 m; the camber span keeps its 2,540 start. at = the lap's v846 on 0.34.0's line."}
+    ],
+    "_corner_flare_off_doc": "scripts/gps/widths_from_osm.py: a declared node gets no corner flare (detect_turn_corners) and no junction flare within radius_m. The six route.fillet corners join this list when their authored junction pads exist (Kevin 2026-11-03: \"authored pad junctions\"; ledger 0070 \"Dressing\"): until then their flares stay, because without a pad the crossroads' outside corner would be unpaved.",
     "grid": {"_doc": "Ledger 0063, Kevin 2026-11-01: fill out the grid around Sand Creek for its free roam. tools/grid_connectors.py: real OSM ways of data/osm.ways.json only (L1); widths [invented], the cache carries no lanes. The road kn5 is shared (L8), so these streets stand in both layouts.", "classes": {"primary": 9.5, "secondary": 10.0, "tertiary": 10.0, "unclassified": 8.0, "residential": 8.0}, "min_piece_m": 40, "on_lap_pad_m": 6, "parallel_m": 25, "terrain_inset_m": 60, "exclude": ["grid_tertiary_93"], "_exclude_doc": "grid_tertiary_93 (0.33.0; grid_tertiary_94 on the 0.31/0.32 line: the same OSM piece, matched by geometry, ledger 0073; the names number pieces by length, so a lap change renumbers them), 80 m at the lap's east end: its smoothed line runs up to 2.57 m under the lap's graded bank; 186 of the first build's 191 kn5 terrain pokes"},
     "bbox": [
       39.773,
@@ -131,16 +136,19 @@
     "bush_off_span_m": 33.0,
     "bush_size_min_m": 1.2,
     "bush_size_span_m": 1.4,
-    "light_spacing_m": 96,
     "powerline_spacing_m": 52.0,
+    "streetlights": {
+      "model": "led_cobra",
+      "arms": 2,
+      "planner": "engine_draft",
+      "_doc": "Ledger 0070 D1, Kevin 2026-11-03: \"same lamps as lake murray\". The fixture is Lake Murray's current one (ledger 0056: tools/make_streetlight_led.py's led_cobra, two back-to-back arms, as Lake Murray's scenery.streetlights), stood by tools/author_lamps_blend.py (ship.json draft step lamps). planner engine_draft: the posts are planned by tools/plan_streetlights.py (draft step lamps_plan, after mesh) on the draft's own built surfaces — the loop's walk (every 55 m, alternating sides), the footprint off every road surface (the 1ROAD shoulder sheet included, so a post steps out past an embankment), >= 0.5 m + the mast radius from every wall, none on a deck span or a pad. Retired with this block (read only by scripts/environment/build_env.py, never a chain step): light_spacing_m 96, lamp_model street_lamp_new.obj, lamp_height_m 5.5, and the LIGHTPOST / LAMPHEAD texture_overrides (they would have re-skinned the LED pole with the old lamp's texture). The CSP light itself stays Sand Creek's own lighting.streetlight (Kevin's wide dim wash), not Lake Murray's 80s sodium."
+    },
     "signs": {
       "_doc": "Street-name blade signs at each major junction (from data/street_labels.json, same legs as the painted road decals). enabled=false drops them. flip_read/flip_up are one-bit fixes if the text reads mirrored or upside-down in-game (verify on the first Windows drive).",
       "enabled": true,
       "flip_read": false,
       "flip_up": false
     },
-    "lamp_model": "street_lamp_new.obj",
-    "lamp_height_m": 5.5,
     "forest3d": {
       "module": "poplar",
       "spacing_m": 42.0,
@@ -340,13 +348,6 @@
       "diffuse": "assets/textures/grass_diffuse.jpg",
       "normal": "assets/textures/grass_normal.jpg",
       "_doc": "Kevin: the Lariat's alpine grass look on Sand Creek too"
-    },
-    "LIGHTPOST": {
-      "diffuse": "assets/textures/street_lamp_new.png",
-      "_doc": "the purpose-modeled lamp's own skin (emissive baked, opacity alpha)"
-    },
-    "LAMPHEAD": {
-      "diffuse": "assets/textures/street_lamp_new.png"
     }
   },
   "terrain_cell_m": 1.5,

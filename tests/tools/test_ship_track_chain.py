@@ -626,8 +626,12 @@ def test_the_four_chain_specs_draft_the_engine_then_the_underlay_and_run_on_airo
     for p in CHAIN_SPECS:
         track = p.parent.name
         s = spec_mod.load(p, track)
-        d = s["steps"]["draft"]
-        assert d[-1] == "underlay" and d[-2] == "mesh", (track, d)
+        d_all = s["steps"]["draft"]
+        # the engine draft's data steps end at the underlay; what follows it is scripted authoring on the blend, and only
+        # the steps an engine-draft track can serve (ledger 0070 D1: Sand Creek's lamps, planned by lamps_plan after mesh)
+        d, after = d_all[:d_all.index("underlay") + 1], d_all[d_all.index("underlay") + 1:]
+        assert set(after) <= {"lamps"} and (not after or "lamps_plan" in d), (track, d_all)
+        assert d[-1] == "underlay" and (d[-2] == "mesh" or (d[-2] == "lamps_plan" and d[-3] == "mesh")), (track, d)
         assert d[0] in ("gps", "aerial") and "elev" in d and "project" in d, (track, d)
         assert d.index("elev") < d.index("project") < d.index("mesh"), (track, d)
         for n in d[:-1]:

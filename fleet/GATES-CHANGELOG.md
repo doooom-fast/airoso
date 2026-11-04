@@ -27,6 +27,36 @@ Race kerbs stay judged by `verify_race` E (a kerb under another ROAD sheet) and 
 `tests/ac/test_build_kn5_loop_prep.py::test_the_corridor_carve_leaves_race_kerbs_alone`, and the v5 race chain past its race kn5
 export. It reaches the next track with race kerbs on airoso's engine: Sand Creek 0.35.0's race curbs.
 
+
+## 2026-11-03 — engine-draft lamps and the declared corner-flare opt-out (ledger 0070 D, Sand Creek's dressing; wiring, no threshold)
+
+No gate threshold changed and nothing is bypassed. Two new opt-ins, each with its invented numbers:
+
+- **`tools/plan_streetlights.py`** (opt-in `scenery.streetlights.planner: "engine_draft"`; ship step `lamps_plan`): the lamp
+  plan an engine draft lacked, ported from `build_loop_blend.build_streetlights` (spacing 55 m, min gap 25 m, arm 1.8 m, head
+  8.8 m over the ground, the 6 m cut-wall skip: not invented) and `scripts-v021/geometry/streetlights.py` (slide 12 m in 2 m
+  steps, the other side, then skip with the reason; pad clearance 3 m: invented there). New, ⚠ invented:
+  `SIDE_OFF_M` 3.6 (the first spot tried past the pavement edge: build_mesh's 2.5 m verge + the footprint ring + 0.5 m),
+  `OUT_STEP_M` 0.5 and `MAX_SIDE_OFF_M` 10 (where the 1ROAD shoulder sheet runs on down an embankment the post steps out,
+  never further than 10 m), `BRIDGE_PAD_M` 10 (no post within 10 m of a deck span's ends). The road / wall checks are
+  the lamp author's own self-check (`tools/author_lamps_blend.py` `ROAD_SETBACK_M`, `WALL_CLEAR_M`, `FOOTPRINT_DIRS`, the
+  LED mast radius), read early on the draft's `data/track.obj` so the author's hard check does not meet a pole it must
+  refuse. The author's self-check is unchanged and still decides.
+- **`route.corner_flare_off`** (`scripts/gps/widths_from_osm.py`, `detect_turn_corners` and its call site): a declared node
+  (an authored junction pad's, or a slip lane's merge) gets no corner flare and no junction flare within `radius_m`
+  (default `FLARE_OFF_RADIUS_M` 30, ⚠ invented: the flares it must catch sit 0-25 m from their node). Absent: byte-identical.
+
+## 2026-11-03 — drive_test: replication on an open stage compares each vertex with its own measurement (ledger 0076)
+
+`drive_test`'s "replication vs measured road" (reported, never gating) indexed `centerline.elevation.json`'s `z_raw_m`
+against the gate line vertex for vertex. On a point-to-point stage the gate line carries build_mesh's lead-in/out (10
+vertices, 30 m, at each end) and the elevation file does not, so vertex i was read against the road 30 m on: Dragon Tail
+(Gravel) 0.96 / 3.41 / 9.66 m (median / p95 / max), aligned 0.02 / 0.21 / 7.16 m. `pad_for_lead_in` pads the
+measurements with k Nones at each end only when the line is exactly 2k longer and its vertex k sits on the local line's
+first point; a closed lap or any equal-length line is compared exactly as before. No threshold, bypass or exclusion
+changed; no verdict can change (the metric does not gate). Proven on the Mac draft of Dragon Tail (Gravel); test
+`tests/geometry/test_lip_feet_and_stage_replication.py`.
+
 ## 2026-11-03 — BYPASS: Lake Murray 0.19.4 (the buildings rehearsal) installed red on 0.19.2's inherited keys, by Kevin's word (ledgers 0062, 0065)
 
 The chain's `--force-install` rule, applied by hand to a scratch build: `D:/k10-scratch/lm_bespoke` (rehearsal 2, `SD_BESPOKE=1`,

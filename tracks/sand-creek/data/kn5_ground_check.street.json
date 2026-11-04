@@ -9,17 +9,26 @@
  "double_sheet_cells": 0,
  "seating": {
   "walls": {
-   "objects": 292,
+   "objects": 297,
    "no_ground_pct": 0.0,
-   "median_m": -0.51,
-   "p95_m": -0.271,
+   "median_m": -0.518,
+   "p95_m": -0.269,
+   "hovering": 0
+  },
+  "lampposts": {
+   "objects": 169,
+   "no_ground_pct": 0.0,
+   "median_m": -3.254,
+   "p95_m": -2.879,
    "hovering": 0
   }
  },
+ "lamp_heads": 201,
+ "lamp_orphans": 0,
  "road_over_ground": {
-  "over": 675,
-  "samples": 13647,
-  "p95_m": 0.049,
+  "over": 695,
+  "samples": 13644,
+  "p95_m": 0.052,
   "max_m": 2.513
  }
 }

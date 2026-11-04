@@ -36,6 +36,10 @@ from scripts.geometry import cutfill  # noqa: E402
 
 CORRIDOR_EDGE_M = 4.5   # engine-july build_kn5_loop.CORRIDOR_EDGE_M: the prep splits corridor edges down to this
 REACH_M = 16.0          # engine-july's split reach: FEATHER_M (6) + 10 m from the nearest road vertex
+FINE_EDGE_M = 1.5        # round 11: under a fitted switchback the ground's edges at most the road's half row spacing
+FINE_PAD_ROWS = 10       # tools/lm_engine_intake.py's BLEND: the shift's easing rows either side of a fitted span
+FINE_TURN_M = 40.0       # [invented] an unfitted switchback's rows this far either side of its apex
+FINE_REACH_M = 6.0       # ... within this of its rows (the platform's half width and the 3 m contact band)
 PASSES = 16             # [invented] bisection passes (each halves the longest edges; 13.3 m cells need ~4)
 CLEARANCE_M = 0.02      # engine-july's GROUND_CLEAR: the ground under the deck's edge
 
@@ -102,20 +106,19 @@ def main():
     bmesh.ops.triangulate(bm, faces=[f for f in bm.faces if len(f.verts) > 3])
     nat = bm.verts.layers.float.new("cutfill_natural")      # the natural ground, interpolated into every split vertex
 
-    def bisect(need=None):
-        """one pass: every corridor edge over CORRIDOR_EDGE_M (3-D, as the prep measures it) [that need() picks],
-        longest first"""
+    def bisect(need=None, limit=CORRIDOR_EDGE_M):
+        """one pass: every corridor edge over limit (3-D, as the prep measures it) [that need() picks], longest first"""
         n = 0
         todo = []
         for e in bm.edges:
-            if e.calc_length() <= CORRIDOR_EDGE_M:
+            if e.calc_length() <= limit:
                 continue
             m = (e.verts[0].co + e.verts[1].co) / 2
             if near_road(m.x, m.y) and (need is None or need(e)):
                 todo.append(e)
         todo.sort(key=lambda e: -e.calc_length())
         for e in todo:
-            if not e.is_valid or e.calc_length() <= CORRIDOR_EDGE_M:
+            if not e.is_valid or e.calc_length() <= limit:
                 continue
             tris = [(f, next(v for v in f.verts if v not in e.verts)) for f in e.link_faces if len(f.verts) == 3]
             va, vb = e.verts
@@ -134,6 +137,52 @@ def main():
         n_split += k
         if not k:
             break
+    # THE GROUND UNDER A REBUILT SWITCHBACK (round 11): tools/switchback_fit.py lays a switchback's road on its measured
+    # circle with ~3 m rows that fan round a 12.5-16 m radius, so the deck's facets turn ~13 deg a row; the prep pins
+    # ground vertices to the deck where they stand and a 4.5 m ground edge between two pins spans two deck facets and
+    # stands over the crease (Dragon Tail's soft tops at s 6,355-6,367 and 6,559-6,567). Under each fitted span (its
+    # rows, the lm_intake record's switchbacks span_i) the ground is split to the rows' own spacing (FINE_EDGE_M), so
+    # every pin pair sits within one facet's reach: the ground follows the deck, no offset invented
+    fine_n = 0
+    li_rec = proj / "data" / "lm_intake.json"
+    spans = []
+    if li_rec.exists():
+        prof = (json.loads(li_rec.read_text(encoding="utf-8")).get("profile") or {})
+        # each fitted span, and the BLEND rows either side where the bench-centre shift eases back in
+        spans = [[max(0, r["span_i"][0] - FINE_PAD_ROWS), r["span_i"][1] + FINE_PAD_ROWS]
+                 for r in (prof.get("switchbacks") or []) if r.get("status") == "PASS" and r.get("span_i")]
+    # and every switchback the gate judges (over 100 deg) that is not fitted (its platform unmeasured yet: Dragon Tail's
+    # switchback 3, Under the Dragon's Douglas Creek): its rows within FINE_TURN_M of the measured apex
+    sbp = proj / "data" / "switchbacks.json"
+    if sbp.exists():
+        stl = [0.0]
+        for p_, q_ in zip(local["points_xyz_m"], local["points_xyz_m"][1:]):
+            stl.append(stl[-1] + math.hypot(q_[0] - p_[0], q_[2] - p_[2]))
+        for c_ in json.loads(sbp.read_text(encoding="utf-8"))["corners"]:
+            if c_.get("turn_deg", 0) > 100.0:
+                rows_ = [k_ for k_, sv in enumerate(stl) if abs(sv - c_["st_m"]) <= FINE_TURN_M]
+                if rows_:
+                    spans.append([rows_[0], rows_[-1]])
+    spans = [[a_, min(b_, rows - 1)] for a_, b_ in spans]
+    if spans:
+        fk = kdtree.KDTree(sum(b - a + 1 for a, b in spans) * 3)
+        q_ = 0
+        for a_, b_ in spans:
+            for r_ in range(a_, b_ + 1):
+                for col in (0, 1, 2):
+                    co = RV[mw.road_index(lay, "MAINLINE", r_, col)].co
+                    fk.insert((co.x, co.y, 0.0), q_); q_ += 1
+        fk.balance()
+
+        def under_fit(e):
+            m = (e.verts[0].co + e.verts[1].co) / 2
+            co, _i, d = fk.find((m.x, m.y, 0.0))
+            return co is not None and d <= FINE_REACH_M
+        for _pass in range(PASSES):
+            k = bisect(under_fit, FINE_EDGE_M)
+            fine_n += k
+            if not k:
+                break
     moved = 0
     graded = set()
 
@@ -155,6 +204,7 @@ def main():
     print(f"[cutfill] section: verge {verge} m, benches fill {cs.fill_bench} / cut {cs.cut_bench} m; "
           f"{sum(cs.stacked)} stacked lap points; {n_split} corridor edges split to <= {CORRIDOR_EDGE_M} m first, "
           f"{left} longer than that once graded (the prep splits those; tools/hold_stacked_blend.py holds after it) "
+          f"{fine_n} more under {len(spans)} fitted switchback(s) to <= {FINE_EDGE_M} m "
           f"(TERRAIN {n0} -> {len(terr.data.vertices)} verts); {moved} ground points moved {dict(cs.stats)}; saved loop.blend")
     bpy.ops.wm.save_as_mainfile(filepath=str(proj / "loop.blend"))
 

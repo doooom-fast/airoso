@@ -728,6 +728,44 @@ unmeasured turns (lidar on the PC).
 Runbook 4e stays on hold. Lake Murray unchanged: no file of its chain changed; the new intake key and both new tools are
 port-only.
 
+### Round 11 (Mac): the ground under the rebuilt switchbacks; the lidar step for the PC; the aerial trace owed
+
+1. **Soft tops at the fitted switchbacks: the ground's resolution, not the cut / fill or the hold.** The cut / fill runs on the ROAD as built (the
+   fitted line, not the pre-fit one) and the hold had nothing to hold there. The strip seam's points follow the rebuilt
+   CURB rows. The cause was the ground's own resolution: the switchback fit lays the road on its measured circle with ~3 m rows that fan
+   round a 12.5-16 m radius, so the deck's facets turn ~13 deg a row, and a 4.5 m ground edge (the prep's corridor
+   size) between two pinned ground vertices spans two facets and stands over the crease. `tools/cutfill_blend.py` now
+   splits the ground under every judged switchback (each fitted span and the 10 rows either side where the bench
+   shift eases back in; every unfitted turn over 100 deg within 40 m of its apex) to 1.5 m, by the same longest-edge
+   bisection, graded from the natural ground like every other vertex. The ground follows the deck, and no offset is
+   invented. Dragon Tail's soft tops 22 -> **4**: switchback 1's are gone; what is left is the
+   switchback-2 entry, s 6,566-6,567. Under the Dragon's soft tops at s 22,998 and 23,056 are not at a switchback: they sit on road_seek's steep descent
+   (s 22,276-23,934) and are unexplained yet.
+2. **The aerial road-edge trace (Under the Dragon s 14,337): not built this round.** Round 10 showed the DEM cross-section
+   cannot separate a level off-road line from a correct one (a graded road's crown and ditches read rougher than a strip
+   beside it). The trace has to read the NAIP. That is owed, with the coordinator's proof: run over both whole stages,
+   list every place it would act, and keep only the clear ones.
+3. **Lidar at the two unmeasured turns: `tools/lidar_turns.py` (new, run on the PC; runbook 4f).** It reads CO_NWCO_1_2020's
+   class-2 ground within 60 m of each named turn and writes `data/lidar/<source>_<id>.npz` (a 0.5 m grid, local frame). `tools/switchback_measure.py` now measures a turn's bench edges on that grid
+   where one covers it, and records which ground it read. Dragon Tail switchback 3 is `S6`; Douglas Creek is `S3` / `S4`.
+
+**The Mac builds (empty workshops, `--no-install`):**
+
+| row | DT installed 0.2.1 | **DT `_lm` (round 11)** | UtD installed 0.2.0 | **UtD `_lm` (round 11)** |
+|---|---|---|---|---|
+| severe steps (/km) | 182 (7.21) | 125 (4.97) | 195 (7.59) | 90 (3.52) |
+| soft top in lane | 0 | **4 (s 6,566, 6,567)** | 0 | **4 (s 14,334, 14,339, 22,998, 23,056)** |
+| undrivable corners | 0 | 3 (switchback 1: Kevin's question) | 0 | 2 (s 22,414: Kevin's question; Douglas Creek: lidar) |
+| gated drops | 0 | 4 (switchback 2's fill: Kevin's question) | 0 | 2 (s 2,403, Douglas Creek: lidar) |
+| floating / obstructed / daylight | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 |
+| replication (median / p95) | 0.02 / 0.21 m | 0.02 / 0.11 m | — | 0.01 / 0.11 m |
+| audit / kn5_ground_check | CLEAN / PASS | CLEAN / PASS | CLEAN / PASS | CLEAN / PASS |
+| road kn5 | — | 40.0 MB | — | 51.5 MB |
+
+Kevin's three measured rows are untouched and nothing is declared. Runbook 4e stays on hold; 4f is for the PC. Lake Murray is
+unchanged: no file of its chain changed, and the cut / fill addition reads only port records (`data/switchbacks.json`, the
+intake's switchback spans) that Lake Murray never writes.
+
 ## PC runbooks
 
 **ENG**: never the live `D:\k10\engine-july`. Keep `D:/k10-scratch/eng_repro` (the repo-only v4 engine) clean; each build
@@ -802,6 +840,22 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
    0.01 / 0.11, kn5 50.8 MB. The log lines to see: `[lm_intake] road_seek: ...`, `[lm_intake]
    road_seek widths: ...`, `[stage-dummies] point-to-point: ...` (the grid at 45-47 m), `[strip-seam] local scope: ... 0
    missed`. Install only after round 9's switchbacks turn both green.
+4f. **Lidar ground at two Rangely turns** (round 11; the Mac has no LAZ reader and installs nothing). From the
+   fleet-lm-engine worktree on the PC (its Python already reads LAZ for the Lariat's pads: `laspy` with `lazrs` or
+   `laszip`, `pyproj`, `numpy`), fetching from USGS's public EPT, `CO_NWCO_1_2020`
+   (https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_NWCO_1_2020/ept.json, the default; nothing to download
+   by hand):
+   ```bash
+   PYTHONUTF8=1 python tools/lidar_turns.py tracks/rally-dragon-tail-gravel-lm --turns S6
+   PYTHONUTF8=1 python tools/lidar_turns.py tracks/rally-under-the-dragon-gravel-lm --turns S3,S4
+   ```
+   S6 is Dragon Tail's switchback 3 (s ~7,453); S3 / S4 are Under the Dragon's Douglas Creek switchback (s ~2,482 /
+   2,500), the ids in each port's `data/switchbacks.json`. Each turn writes `data/lidar/<source-track>_<id>.npz`: a
+   240 x 240 grid of 0.5 m cells (120 m square round the apex), the mean class-2 height in the port's local frame, NaN
+   where no ground point fell. Expect tens of thousands of class-2 points per turn and **~0.1-0.3 MB per file**; the
+   log line prints the point count, the cells with ground and the size. Commit the three files on the branch and push.
+   On the Mac, `tools/switchback_measure.py` then measures those turns' bench edges on the lidar ground instead of the
+   DEM (`"ground"` in switchbacks.json says which), and round 12 rebuilds both stages.
 4c. **Sand Creek, Pueblo, Grand Junction, Aspen 0.1.1** (round 6, after their 0.1.0 is installed from 29c1069): the same
    commands from the new head, the same ENG copies (no new texture), replacing 0.1.0 in the same folders
    (`sand_creek_raceway_lm`, `pueblo_motorsports_park_lm`, `grand_junction_lm`, `aspen_motorsports_park_lm`). Expect the

@@ -60,7 +60,59 @@ def _kasa(pts):
     return cx, cz, r, rms
 
 
-def measure(P, seek):
+class LidarGround:
+    """a tools/lidar_turns.py grid: the mean class-2 height of each 0.5 m cell, local frame"""
+
+    def __init__(self, f):
+        import numpy as np
+        d = np.load(f)
+        self.g, self.x0, self.z0, self.c = d["ground"], float(d["x0"]), float(d["z0"]), float(d["cell_m"])
+        self.st_m = float(d["st_m"])
+        self.n = self.g.shape[0]
+
+    def covers(self, x, z):
+        return self.x0 <= x < self.x0 + self.n * self.c and self.z0 <= z < self.z0 + self.n * self.c
+
+    def at(self, x, z):
+        i, j = int((x - self.x0) / self.c), int((z - self.z0) / self.c)
+        if not (0 <= i < self.n and 0 <= j < self.n):
+            return None
+        v = float(self.g[j, i])
+        return None if v != v else v
+
+
+def bench_on(G, q, nx, nz):
+    """road_seek's bench, read on lidar ground: the road's plane fitted BENCH_CORE_M either side of the centre q, how far
+    the ground stays within BENCH_TOL_M of it each way, an end measured only where it is a face (FACE_DROP_M off within
+    FACE_RUN_M); [-left, right] with BENCH_MAX_M for an unmeasured side"""
+    import road_seek as rs
+    ts, hs = [], []
+    t = -rs.BENCH_CORE_M
+    while t <= rs.BENCH_CORE_M + 1e-9:
+        v = G.at(q[0] + nx * t, q[1] + nz * t)
+        if v is not None:
+            ts.append(t); hs.append(v)
+        t += 0.5
+    if len(ts) < 3:
+        return [-BENCH_MAX_M, BENCH_MAX_M]
+    a, b, _r = rs._fit(ts, hs)
+    ext = []
+    for sgn in (-1.0, 1.0):
+        e = 0.0
+        while e < rs.BENCH_MAX_M:
+            v = G.at(q[0] + nx * sgn * (e + 0.5), q[1] + nz * sgn * (e + 0.5))
+            if v is None or abs(v - (a + b * sgn * (e + 0.5))) >= rs.BENCH_TOL_M:
+                break
+            e += 0.5
+        tq = sgn * (e + rs.FACE_RUN_M)
+        v = G.at(q[0] + nx * tq, q[1] + nz * tq)
+        if e >= rs.BENCH_MAX_M or v is None or abs(v - (a + b * tq)) < rs.FACE_DROP_M:
+            e = BENCH_MAX_M
+        ext.append(e)
+    return [-ext[0], ext[1]]
+
+
+def measure(P, seek, lidar=()):
     import road_seek
     Q, _relaxed = road_seek.moved_line(P, seek)
     n = len(Q)
@@ -100,19 +152,26 @@ def measure(P, seek):
         apex = max(range(i, j), key=lambda k: abs(turn[k]))
         sgn = 1.0 if turn[apex] > 0 else -1.0           # + = turning left (the inside is the left)
         ins, outs = [], []
+        src_lidar = False
         for k in range(idx_at(st[apex] - EDGE_HALF_M), idx_at(st[apex] + EDGE_HALF_M) + 1):
             a, b = Q[max(k - 1, 0)], Q[min(k + 1, n - 1)]
             tx, tz = b[0] - a[0], b[2] - a[2]
             L = math.hypot(tx, tz) or 1.0
             nx, nz = -tz / L, tx / L
-            lo, hi = seek[k].get("bench_m") or [-BENCH_MAX_M, BENCH_MAX_M]
+            G = next((g for g in lidar if g.covers(Q[k][0], Q[k][2])), None)
+            if G is not None:                                   # the turn's lidar ground (tools/lidar_turns.py) first
+                lo, hi = bench_on(G, (Q[k][0], Q[k][2]), nx, nz)
+                src_lidar = True
+            else:
+                lo, hi = seek[k].get("bench_m") or [-BENCH_MAX_M, BENCH_MAX_M]
             for t_, side in ((lo, -1.0), (hi, 1.0)):
                 if abs(t_) >= BENCH_MAX_M - 1e-6:
                     continue
                 pt = (Q[k][0] + nx * t_, Q[k][2] + nz * t_)
                 (ins if side == sgn else outs).append(pt)
         rec = {"id": f"S{len(out) + 1}", "st_m": round(st[apex], 1), "turn_deg": round(abs(turn[apex]) * 180 / math.pi, 1),
-               "points_outside": len(outs), "points_inside": len(ins), "measured": False}
+               "points_outside": len(outs), "points_inside": len(ins), "measured": False,
+               "ground": "3DEP lidar class 2 (tools/lidar_turns.py)" if src_lidar else "3DEP 1 m DEM (road_seek bench)"}
         fo = _kasa(outs) if len(outs) >= MIN_POINTS else None
         fi = _kasa(ins) if len(ins) >= MIN_POINTS else None
         if fo:
@@ -139,7 +198,9 @@ def main(argv=None):
     local = json.loads((src / "data" / "centerline.local.json").read_text(encoding="utf-8"))
     seek = json.loads((port / "data" / "road_seek.json").read_text(encoding="utf-8"))["stations"]
     P = [tuple(p) for p in local["points_xyz_m"]]
-    corners = measure(P, seek)
+    lidar = [LidarGround(f) for f in sorted((port / "data" / "lidar").glob("*.npz"))] \
+        if (port / "data" / "lidar").is_dir() else []
+    corners = measure(P, seek, lidar)
     rec = {"_doc": "tools/switchback_measure.py (ledger 0078 round 9): each switchback's graded platform from the 1 m DEM "
                    "(road_seek's bench edges round the turn, a circle fitted to each; the road's centre arc between them)",
            "params": {"TURN_DEG": TURN_DEG, "TURN_HALF_M": TURN_HALF_M, "EDGE_HALF_M": EDGE_HALF_M, "MIN_POINTS": MIN_POINTS},

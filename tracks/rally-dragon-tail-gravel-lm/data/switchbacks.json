@@ -14,6 +14,7 @@
    "points_outside": 16,
    "points_inside": 15,
    "measured": true,
+   "ground": "3DEP 1 m DEM (road_seek bench)",
    "r_outside_m": 26.11,
    "rms_outside_m": 0.9,
    "r_inside_m": 19.59,
@@ -32,6 +33,7 @@
    "points_outside": 8,
    "points_inside": 18,
    "measured": false,
+   "ground": "3DEP 1 m DEM (road_seek bench)",
    "r_outside_m": 103.12,
    "rms_outside_m": 0.11,
    "r_inside_m": 17.57,
@@ -45,6 +47,7 @@
    "points_outside": 4,
    "points_inside": 16,
    "measured": false,
+   "ground": "3DEP 1 m DEM (road_seek bench)",
    "r_inside_m": 19.18,
    "rms_inside_m": 0.46,
    "why": "the outside edge is not bounded by a face in the DEM"
@@ -56,6 +59,7 @@
    "points_outside": 17,
    "points_inside": 15,
    "measured": true,
+   "ground": "3DEP 1 m DEM (road_seek bench)",
    "r_outside_m": 17.22,
    "rms_outside_m": 0.92,
    "r_inside_m": 10.28,
@@ -74,6 +78,7 @@
    "points_outside": 12,
    "points_inside": 16,
    "measured": true,
+   "ground": "3DEP 1 m DEM (road_seek bench)",
    "r_outside_m": 17.91,
    "rms_outside_m": 0.77,
    "r_inside_m": 7.09,
@@ -92,6 +97,7 @@
    "points_outside": 14,
    "points_inside": 3,
    "measured": false,
+   "ground": "3DEP 1 m DEM (road_seek bench)",
    "r_outside_m": 20.34,
    "rms_outside_m": 1.85,
    "why": "the inside edge is not bounded by a face in the DEM (or the circles disagree)"
@@ -103,6 +109,7 @@
    "points_outside": 11,
    "points_inside": 10,
    "measured": true,
+   "ground": "3DEP 1 m DEM (road_seek bench)",
    "r_outside_m": 59.81,
    "rms_outside_m": 0.49,
    "r_inside_m": 27.85,
@@ -121,6 +128,7 @@
    "points_outside": 2,
    "points_inside": 4,
    "measured": false,
+   "ground": "3DEP 1 m DEM (road_seek bench)",
    "why": "the outside edge is not bounded by a face in the DEM"
   },
   {
@@ -130,6 +138,7 @@
    "points_outside": 9,
    "points_inside": 1,
    "measured": false,
+   "ground": "3DEP 1 m DEM (road_seek bench)",
    "r_outside_m": 22.73,
    "rms_outside_m": 0.96,
    "why": "the inside edge is not bounded by a face in the DEM (or the circles disagree)"

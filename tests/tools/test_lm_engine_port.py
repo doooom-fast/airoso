@@ -77,7 +77,11 @@ def test_every_opt_in_is_absent_from_lake_murray_and_guarded_in_the_assembler():
     # the ports' tools are steps Lake Murray's ship.json never names
     sd = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "ship.json").read_text(encoding="utf-8"))
     names = {n for ph in sd["steps"].values() for n in ph}
-    assert not names & {"lm_intake", "densify_ribbon", "seat_edges", "edge_report"}
+    assert not names & {"lm_intake", "densify_ribbon", "seat_edges", "strip_seam", "kerbs", "edge_report"}
+    lm = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
+    assert "densify" not in (lm.get("route") or {}) and "lm_intake" not in lm
+    bes = (lm.get("scenery") or {}).get("bespoke") or {}
+    assert "rails" not in bes and "pads" not in bes       # round 5's rail height_m and strip pads never reach it
 
 
 def test_route_connectors_cap_default_is_lake_murrays():
@@ -176,5 +180,27 @@ def test_the_intake_into_an_empty_workshop_leaves_every_file_the_chain_reads():
             assert not missing, (port, missing)
             gj = json.loads((ws / "data" / "centerline.geojson").read_text(encoding="utf-8"))
             assert float(gj["features"][0]["properties"]["length_m"]) > 0      # what the track folder reads
+        finally:
+            shutil.rmtree(ws, ignore_errors=True)
+
+
+def test_the_round_5_intake_options_report_what_they_did():
+    """Milford's width taper widens only and its rows are re-cut every 1.5 m; Pikes Peak's right edge sits on the lidar wall
+    (ledger 0078 round 5). Each option is the declaring track's alone."""
+    import shutil
+    import lm_engine_intake as L
+    for port, check in (("milford-road-course-lm", "mf"), ("pikes-peak-lm", "pp")):
+        ws = Path(tempfile.mkdtemp(prefix=f"r5_{port}_"))
+        try:
+            _sync_in(port, ws)
+            rep = L.intake(ws)
+            if check == "mf":
+                assert rep["width_taper"]["points_widened"] > 0 and rep["width_taper"]["rate_m_per_m"] == 0.1
+                assert rep["resample"]["spacing_m"] == 1.5 and rep["resample"]["points_after"] > rep["resample"]["points_before"]
+                assert rep["edge_on_wall"] is None
+            else:
+                e = rep["edge_on_wall"]
+                assert e["side"] == "right" and e["face_offset_m"]["min"] < -2.0 and e["width_m"][0] < 15.0
+                assert rep["width_taper"] is None and rep["resample"] is None
         finally:
             shutil.rmtree(ws, ignore_errors=True)

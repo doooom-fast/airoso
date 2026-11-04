@@ -1096,5 +1096,77 @@
    "off_terrain": false,
    "collider": false
   }
+ ],
+ "pads": [
+  {
+   "key": "runoff_left_345",
+   "cells": 108,
+   "left_out": 11
+  },
+  {
+   "key": "runoff_left_639",
+   "cells": 112,
+   "left_out": 23
+  },
+  {
+   "key": "runoff_left_966",
+   "cells": 16,
+   "left_out": 30
+  },
+  {
+   "key": "runoff_left_1119",
+   "cells": 184,
+   "left_out": 32
+  },
+  {
+   "key": "runoff_left_1452",
+   "cells": 132,
+   "left_out": 9
+  },
+  {
+   "key": "runoff_left_1785",
+   "cells": 20,
+   "left_out": 4
+  },
+  {
+   "key": "runoff_right_0",
+   "cells": 51,
+   "left_out": 11
+  },
+  {
+   "key": "runoff_right_165",
+   "cells": 29,
+   "left_out": 21
+  },
+  {
+   "key": "runoff_right_831",
+   "cells": 16,
+   "left_out": 5
+  },
+  {
+   "key": "runoff_right_900",
+   "cells": 30,
+   "left_out": 9
+  },
+  {
+   "key": "runoff_right_1221",
+   "cells": 6,
+   "left_out": 20
+  },
+  {
+   "key": "runoff_right_1314",
+   "cells": 10,
+   "left_out": 10
+  },
+  {
+   "key": "runoff_right_1404",
+   "cells": 5,
+   "left_out": 87
+  },
+  {
+   "key": "runoff_right_1698",
+   "cells": 98,
+   "left_out": 12
+  }
  ]
 }

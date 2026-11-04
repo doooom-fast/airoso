@@ -45,6 +45,7 @@ SEARCH_M = 8.0       # [invented] how far past the edge a wall is looked for
 TRIM_M = 0.05        # [invented] ground returns further than this off the plane are not road
 WALL_LO_M, WALL_HI_M = 0.3, 2.5   # [invented] a return this high over the road plane, past the edge, is wall
 FACE_PCT = 10        # [invented] the inner face: the 10th percentile lateral of the wall returns
+STRUCT_LO_M, STRUCT_HI_M = 0.2, 4.0   # [invented] a non-ground return this high over its local ground is a structure
 TOP_BAND_M = 0.8     # [invented] the wall's top: returns within this of the face
 TOP_PCT = 90         # [invented]
 MIN_PTS = 5          # [invented]
@@ -70,7 +71,14 @@ def stations(pts, widths, step=STEP_M):
     return out
 
 
-def measure(project: Path, side: str, ept_url: str, log=print) -> dict:
+def measure(project: Path, side: str, ept_url: str, log=print, search_m: float | None = None,
+            face_in_m: float | None = None) -> dict:
+    global SEARCH_M, FACE_IN_M, EDGE_IN_M
+    if search_m is not None:
+        SEARCH_M = float(search_m)
+    if face_in_m is not None:
+        FACE_IN_M = float(face_in_m)
+        EDGE_IN_M = FACE_IN_M + PLANE_W_M + 0.5
     import numpy as np
     import laspy
     from pyproj import Transformer
@@ -146,7 +154,21 @@ def measure(project: Path, side: str, ept_url: str, log=print) -> dict:
         if q % 25 == 0:
             log(f"  node {q + 1}/{len(keys)}")
     rows = []
+    structures = []                             # --structures: the NON-ground returns over their own local ground
     for (s, *_), (la, zz, cc) in zip(sts, per):
+        la_a, zz_a, cc_a = np.array(la), np.array(zz), np.array(cc)
+        gm = cc_a == 2
+        if gm.sum() >= 6:
+            order = np.argsort(la_a[gm]); gl, gz = la_a[gm][order], zz_a[gm][order]
+            pts_s = []
+            for x_, z_, c_ in zip(la_a[~gm].tolist(), zz_a[~gm].tolist(), cc_a[~gm].tolist()):
+                k0, k1 = np.searchsorted(gl, x_ - 0.75), np.searchsorted(gl, x_ + 0.75)
+                if k1 - k0 < 2:
+                    continue
+                hg = z_ - float(np.median(gz[k0:k1]))
+                if STRUCT_LO_M <= hg <= STRUCT_HI_M:
+                    pts_s.append([round(x_, 2), round(hg, 2), int(c_)])
+            structures.append({"s": s, "returns": pts_s})
         la, zz, cc = np.array(la), np.array(zz), np.array(cc)
         g = (cc == 2) & (la <= -FACE_IN_M + 0.5) & (la >= -FACE_IN_M - PLANE_W_M)
         row = {"s": s, "wall": None}
@@ -184,7 +206,7 @@ def measure(project: Path, side: str, ept_url: str, log=print) -> dict:
             "params": {"STEP_M": STEP_M, "ALONG_M": ALONG_M, "EDGE_IN_M": EDGE_IN_M, "PLANE_W_M": PLANE_W_M,
                        "SEARCH_M": SEARCH_M, "TRIM_M": TRIM_M, "WALL_LO_M": WALL_LO_M, "WALL_HI_M": WALL_HI_M,
                        "FACE_PCT": FACE_PCT, "FACE_IN_M": FACE_IN_M, "TOP_BAND_M": TOP_BAND_M, "TOP_PCT": TOP_PCT, "MIN_PTS": MIN_PTS},
-            "summary": summ, "stations": rows}
+            "summary": summ, "stations": rows, "structures": structures}
 
 
 def main(argv=None) -> int:
@@ -193,8 +215,10 @@ def main(argv=None) -> int:
     ap.add_argument("--side", choices=("right", "left"), required=True)
     ap.add_argument("--ept", default=EPT_DEFAULT)
     ap.add_argument("--out", type=Path, default=None)
+    ap.add_argument("--search", type=float, default=None, help="how far past the edge to look (default SEARCH_M)")
+    ap.add_argument("--face-in", type=float, default=None, help="how far inside the edge a face may stand (default FACE_IN_M)")
     a = ap.parse_args(argv)
-    rep = measure(a.project, a.side, a.ept)
+    rep = measure(a.project, a.side, a.ept, search_m=a.search, face_in_m=a.face_in)
     out = a.out or (a.project / "source" / "lidar" / "wall-survey" / f"wall_{a.side}.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(rep, indent=1), encoding="utf-8")

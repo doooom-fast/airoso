@@ -2,7 +2,7 @@
   "archetype": "race_circuit",
   "name": "Grand Junction Motor Speedway",
   "slug": "grand_junction",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 9.75,
@@ -66,6 +66,8 @@
     "_doc": "1.03 km purpose-built circuit on flat Grand Valley ground. 3DEP sampled every 3 m over a lap this short is mostly DEM surface noise, and the 33 m default median cannot reject it: 130-236 kinks/km against a 3%-slope-change threshold, i.e. a jagged deck everywhere rather than a few bad spots. Same lever that fixed Second Creek. A graded racetrack is smooth by construction; the profile should be too.",
     "dips": [],
     "cambers": [],
+    "fold_pads": false,
+    "_fold_pads_doc": "2026-11-03 (ledger 0074, Aspen's mechanism): the first chain run laid fold pads at all 4 hairpin apexes (flat zones r 20.88 m at apex heights 0.64 / 1.35 / 3.92 / 5.52 m) and their rims were steps - severe 41 at 569-575 and 1,008-1,014 m, kinks 116.5 /km, steps 60.6 /km. No disc, no flat zone; the engine's +-40 m fold plateau stays.",
     "despike_window_m": 90.0,
     "max_grade_pct": 4.0
   },

@@ -1,0 +1,221 @@
+{
+ "status": "GENERATED DRAFT from the built centreline \u2014 not an in-game recording (docs/HANDOFF.md :284, ledger 0023). Replace file-for-file with CSP's fast_lane.ai.candidate recorded in this layout.",
+ "layout": "full",
+ "direction": "forward",
+ "race_furniture": false,
+ "lane_offset": true,
+ "frame": "kn5 frame (median dist to centerline.local: engine 13.8 m / kn5 0.0 m)",
+ "points": 871,
+ "spacing_m": 1.5,
+ "lap_m": 1306.9,
+ "lap_s_est": 69.1,
+ "offset_points": 141,
+ "offset_max_m": 2.514,
+ "clearance": {
+  "points": 871,
+  "unmatched": 0,
+  "divider_stations": 0,
+  "right_side": 0,
+  "island_hits": 0,
+  "divider_hits": 0,
+  "divider_too_close": 0,
+  "edge_too_close": 0,
+  "min_divider_clear_m": null,
+  "min_edge_clear_m": 2.3608219335462324,
+  "max_lat_m": 2.5141780664537676,
+  "right_side_frac": null,
+  "ok": true
+ },
+ "geometry": {
+  "ramps": [],
+  "ramp_clamped": 0,
+  "corner_approach": [],
+  "folds": [],
+  "fillets": [
+   {
+    "xz": [
+     82.56,
+     85.57
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": -37.7
+   },
+   {
+    "xz": [
+     50.08,
+     95.01
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 8,
+    "turn_deg": -40.7
+   },
+   {
+    "xz": [
+     33.99,
+     70.2
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 12,
+    "turn_deg": 52.9
+   },
+   {
+    "xz": [
+     57.99,
+     -5.02
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 18,
+    "turn_deg": 98.7
+   },
+   {
+    "xz": [
+     -54.83,
+     -14.15
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 12,
+    "turn_deg": 63.6
+   },
+   {
+    "xz": [
+     -86.88,
+     11.22
+    ],
+    "radius_m": 12.6,
+    "floor_m": 11.65,
+    "lane": "comfort",
+    "window_pts": 13,
+    "turn_deg": 79.7
+   },
+   {
+    "xz": [
+     -96.94,
+     51.08
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 12,
+    "turn_deg": -47.5
+   },
+   {
+    "xz": [
+     -139.52,
+     63.81
+    ],
+    "radius_m": 12.6,
+    "floor_m": 8.2,
+    "lane": "comfort",
+    "window_pts": 26,
+    "turn_deg": -130.7
+   },
+   {
+    "xz": [
+     47.18,
+     -99.61
+    ],
+    "radius_m": 12.6,
+    "floor_m": 9.52,
+    "lane": "comfort",
+    "window_pts": 14,
+    "turn_deg": -86.6
+   },
+   {
+    "xz": [
+     110.44,
+     -123.26
+    ],
+    "radius_m": 12.6,
+    "floor_m": 9.19,
+    "lane": "comfort",
+    "window_pts": 18,
+    "turn_deg": -105.0
+   },
+   {
+    "xz": [
+     20.8,
+     64.25
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 10,
+    "turn_deg": 43.8
+   },
+   {
+    "xz": [
+     -63.77,
+     6.87
+    ],
+    "radius_m": 12.6,
+    "floor_m": 9.82,
+    "lane": "comfort",
+    "window_pts": 18,
+    "turn_deg": -85.3
+   }
+  ],
+  "smoothing": [
+   {
+    "iterations": 225,
+    "violations_before": 5,
+    "violations_after": 1,
+    "moved_points": 36,
+    "corridor_clamps": 0,
+    "rolled_back_to_iteration": 25,
+    "worst_after": {
+     "xz": [
+      67.46,
+      -40.14
+     ],
+     "radius_m": 6.86,
+     "floor_m": 6.8
+    }
+   },
+   {
+    "iterations": 0,
+    "violations_before": 0,
+    "violations_after": 0,
+    "moved_points": 0,
+    "corridor_clamps": 0
+   }
+  ],
+  "start": {
+   "xz": [
+    -16.2,
+    -75.81
+   ],
+   "dist_m": 0.0,
+   "requested_xz": [
+    -16.2,
+    -75.809
+   ],
+   "source": "dummies.json AC_TIME_0 midpoint",
+   "index": 0,
+   "grid_index": 851,
+   "grid_behind_line_m": 30.0,
+   "grid_off_line_m": 0.03
+  },
+  "min_radius_m": 6.88,
+  "min_radius_at": 809,
+  "radius_below_floor": 0,
+  "max_turn_deg": 12.5,
+  "turns_over_limit": 0,
+  "turns_over_limit_road_tight": 10,
+  "max_lateral_jump_m": 0.442,
+  "backward_steps": 0,
+  "self_crossings": 0,
+  "min_speed_kmh": 37.4,
+  "min_speed_at": 807
+ }
+}

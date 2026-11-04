@@ -2,7 +2,7 @@
   "archetype": "race_circuit",
   "name": "Pikes Peak International Raceway",
   "slug": "pikes_peak_international_raceway",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 15.0,
@@ -69,21 +69,47 @@
     "_ribbon_cols_doc": "2026-11-01: 8 lateral columns so the bank ramps' twist doesn't sag the deck between 3 m rows (ribbon.road_ribbon cols; absent = one edge-to-edge quad), Exotics' value: its v0.1.0 drive_test read 28 severe steps of up to 13 cm, all in its camber ramps, and the chain build with 8 cols (and 85 m ramps for its old 20 m) read 0. Here ledger 0018's V1 severe-step clusters (10 at s 240, 11 at s 640, 10 at s 1020, 12 at s 1400, on a 1,649 m lap) sit on the four ramps of the V1 arcs (231-281, 616-666, 1007-1057, 1392-1442) — if those arcs were in that build (dated 2026-07-20 in route._orientation_doc; the rewritten history cannot confirm the order here). A 15 m deck rolling 0 -> 10 deg over 50 m is the twist this column count exists for. Not a gate change; the Windows run's drive_test says whether it was the mechanism.",
     "cambers": [
       {
+        "name": "front_dogleg_in",
+        "start_m": 1420,
+        "len_m": 400,
+        "bank_deg": -7.2,
+        "ramp_m": 150,
+        "_source": "source/lidar/camber-survey/crossfall.json (the G10 survey, branch claude/lidar-camber-survey 7d01d15: USGS 3DEP CO_Eastern_ElPaso_2018 EPT, tools/lidar_crossfall.py, 556 stations every 3 m, class-2 plane fits, residual sd median 1.2 cm, + = left edge up): the front stretch's dogleg reads -12.5 to -12.8 % (7.1-7.3 deg) over s 1560-1665; it rolls in from turn 4 between s 1430 (-9.95 deg) and 1560 (-7.11 deg). This window runs past the lap's end (1665.2 m) so the plateau holds across the start line; its ramp-out is never reached."
+      },
+      {
+        "name": "front_dogleg_out",
+        "start_m": -245.2,
+        "len_m": 545.2,
+        "bank_deg": -7.2,
+        "ramp_m": 150,
+        "_source": "source/lidar/camber-survey/crossfall.json (the G10 survey, branch claude/lidar-camber-survey 7d01d15: USGS 3DEP CO_Eastern_ElPaso_2018 EPT, tools/lidar_crossfall.py, 556 stations every 3 m, class-2 plane fits, residual sd median 1.2 cm, + = left edge up): the dogleg's other half, -12.5 to -12.7 % over s 0-150; it rolls on into turn 1 between s 150 (-7.25 deg) and 285 (-9.99 deg). Starts 1,665.2 m before front_dogleg_in's start (the lap's own length), so the two are one plateau across s 0; its ramp-in is never reached."
+      },
+      {
         "name": "turns_1_2",
-        "start_m": 215,
-        "len_m": 515,
+        "start_m": 150,
+        "len_m": 640,
         "bank_deg": -10.0,
-        "ramp_m": 50
+        "ramp_m": 150,
+        "_source": "source/lidar/camber-survey/crossfall.json (the G10 survey, branch claude/lidar-camber-survey 7d01d15: USGS 3DEP CO_Eastern_ElPaso_2018 EPT, tools/lidar_crossfall.py, 556 stations every 3 m, class-2 plane fits, residual sd median 1.2 cm, + = left edge up): the plateau reads -17.0 to -17.7 % (9.6-10.0 deg) over s 285-624; L10's researched 10 deg holds (lidar within 0.4 deg). Ramps measured: in s 150 -> 285 (135 m), out s 624 -> 790 (165 m); 150 m each."
+      },
+      {
+        "name": "back_stretch",
+        "start_m": 640,
+        "len_m": 416,
+        "bank_deg": -3.0,
+        "ramp_m": 150,
+        "_source": "source/lidar/camber-survey/crossfall.json (the G10 survey, branch claude/lidar-camber-survey 7d01d15: USGS 3DEP CO_Eastern_ElPaso_2018 EPT, tools/lidar_crossfall.py, 556 stations every 3 m, class-2 plane fits, residual sd median 1.2 cm, + = left edge up): -5.1 to -5.3 % (2.9-3.1 deg) over s 790-900 (the config had it flat). Its ramps coincide with turns_1_2's ramp-out (640-790) and turns_3_4's ramp-in (906-1056), so the sum rolls 10 -> 3 -> 10 deg as measured (624 -> 790 and 900 -> 1056)."
       },
       {
         "name": "turns_3_4",
-        "start_m": 960,
-        "len_m": 540,
+        "start_m": 906,
+        "len_m": 664,
         "bank_deg": -10.0,
-        "ramp_m": 50
+        "ramp_m": 150,
+        "_source": "source/lidar/camber-survey/crossfall.json (the G10 survey, branch claude/lidar-camber-survey 7d01d15: USGS 3DEP CO_Eastern_ElPaso_2018 EPT, tools/lidar_crossfall.py, 556 stations every 3 m, class-2 plane fits, residual sd median 1.2 cm, + = left edge up): the plateau reads -16.7 to -17.7 % (9.5-10.0 deg) over s 1056-1430; L10's 10 deg holds. Ramps measured: in s 900 -> 1056 (156 m), out s 1430 -> 1560 (130 m); 150 m each."
       }
     ],
-    "_arcs_doc": "2026-11-01: what the two arcs cover. L10: PPIR is banked 10 deg in all four turns. A 1-mile oval's four turns are its two ends: T1-T2 is one continuous left-hand end, T3-T4 the other, so one arc per end, each covering two turns. Windows from the curvature of this config's own line (smooth_window 0, reversed, rotated to start_at; curvature over +/-15 m): T1-T2 turns in at s ~230 (2.2 -> 5.1 /km at s 210 -> 240) and out at s ~705 (4.7 -> 0.9 /km at s 690 -> 720), min R 118 m; T3-T4 in at s ~985 (0.0 -> 3.2 /km at s 960 -> 990, the back stretch dead straight 720-960) and out at s ~1475 (3.2 -> 1.9 /km at s 1470 -> 1500), min R 123 m. Each 50 m raised-cosine ramp is centred on the turn-in / turn-out, so full bank holds from s 265 to 680 and from 1010 to 1450. The V1 arcs (231 + 435, 1007 + 435) were cut on the smoothed line, 17 m shorter, and ended 40-60 m before the turns did. The straights stay flat: the front stretch's dogleg (~2 /km, R ~500 m, s 1500-230 across the start) and the back stretch carry no researched banking, and L10 says do not invent it. bank_deg is NEGATIVE: profile.py's +ve banks a right-hander (left edge up) in the chain's unmirrored frame; every PPIR turn is a left-hander (raced counterclockwise), so its outside, raised edge is the RIGHT one. Check on the built deck: the raised edge must be the outside (the one farther from the infield).",
+    "_arcs_doc": "2026-11-01: what the two arcs cover. L10: PPIR is banked 10 deg in all four turns. A 1-mile oval's four turns are its two ends: T1-T2 is one continuous left-hand end, T3-T4 the other, so one arc per end, each covering two turns. Windows from the curvature of this config's own line (smooth_window 0, reversed, rotated to start_at; curvature over +/-15 m): T1-T2 turns in at s ~230 (2.2 -> 5.1 /km at s 210 -> 240) and out at s ~705 (4.7 -> 0.9 /km at s 690 -> 720), min R 118 m; T3-T4 in at s ~985 (0.0 -> 3.2 /km at s 960 -> 990, the back stretch dead straight 720-960) and out at s ~1475 (3.2 -> 1.9 /km at s 1470 -> 1500), min R 123 m. Each 50 m raised-cosine ramp is centred on the turn-in / turn-out, so full bank holds from s 265 to 680 and from 1010 to 1450. The V1 arcs (231 + 435, 1007 + 435) were cut on the smoothed line, 17 m shorter, and ended 40-60 m before the turns did. The straights stay flat: the front stretch's dogleg (~2 /km, R ~500 m, s 1500-230 across the start) and the back stretch carry no researched banking, and L10 says do not invent it. bank_deg is NEGATIVE: profile.py's +ve banks a right-hander (left edge up) in the chain's unmirrored frame; every PPIR turn is a left-hander (raced counterclockwise), so its outside, raised edge is the RIGHT one. Check on the built deck: the raised edge must be the outside (the one farther from the infield). 2026-11-03, 0.4.0 (ledger 0077): the lidar survey (source/lidar/camber-survey) measured what the research lacked. The straights are banked too (front dogleg ~7.2 deg, back stretch ~3.0 deg), and the rolls run over 130-165 m, not 50. So the cambers are five plateau windows whose 150 m ramps coincide, each entry with its _source: researched + measured, plateaus and ramps only (L10), not the per-station profile.",
     "despike_window_m": 90.0,
     "max_grade_pct": 4.0
   },

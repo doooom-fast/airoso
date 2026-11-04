@@ -2,9 +2,9 @@
  "input": "D:\\k10-workshops\\pikes-peak\\project\\blender\\pikes_peak_international_raceway.blend",
  "outputs": {
   "loop_main.blend": {
-   "objects": 68,
-   "meshes": 53,
-   "positions": 1362096,
+   "objects": 67,
+   "meshes": 52,
+   "positions": 1324423,
    "max_positions": 29998,
    "materials": [
     "1GRASS_a_mat",
@@ -26,7 +26,6 @@
     "1GRASS_ap_mat",
     "1GRASS_aq_mat",
     "1GRASS_ar_mat",
-    "1GRASS_as_mat",
     "1GRASS_b_mat",
     "1GRASS_c_mat",
     "1GRASS_d_mat",
@@ -102,7 +101,6 @@
     "1GRASS_ap",
     "1GRASS_aq",
     "1GRASS_ar",
-    "1GRASS_as",
     "1GRASS_b",
     "1GRASS_c",
     "1GRASS_d",
@@ -157,9 +155,9 @@
  "problems": [],
  "tokens": {},
  "input_census": {
-  "objects": 68,
-  "meshes": 53,
-  "positions": 1362096,
+  "objects": 67,
+  "meshes": 52,
+  "positions": 1324423,
   "max_positions": 29998,
   "materials": [
    "1GRASS_a_mat",
@@ -181,7 +179,6 @@
    "1GRASS_ap_mat",
    "1GRASS_aq_mat",
    "1GRASS_ar_mat",
-   "1GRASS_as_mat",
    "1GRASS_b_mat",
    "1GRASS_c_mat",
    "1GRASS_d_mat",
@@ -257,7 +254,6 @@
    "1GRASS_ap",
    "1GRASS_aq",
    "1GRASS_ar",
-   "1GRASS_as",
    "1GRASS_b",
    "1GRASS_c",
    "1GRASS_d",

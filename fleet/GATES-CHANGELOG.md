@@ -78,7 +78,10 @@ traced racing kerbs) `KERB_LIP_M` 0.003, `RAMP_IN_M` 0.25, `RAMP_OUT_M` 1.0 (the
 config's: a 1 m DEM cannot read a kerb); `tools/aerial_edges.py` colour classes (blue B > R + 25 and B > G; red R > G + 25 and
 R > B + 20; white mean >= 160, spread <= 50, B >= R - 45; asphalt max < 125, spread < 28), `STEP_M` 1, `SCAN_M` 14,
 `KERB_BAND_M` 2.5, `KERB_WIN_M` 3.0, `MIN_KERB_M` 5, `GAP_M` 8, `BREAK_M` 1, run-off `MIN_RUNOFF_W_M` 1.5 / `MIN_RUNOFF_M` 10
-(read and reported; no run-off is built from it). `tools/draft_equiv.py` ignores JSON keys `written_utc` and `check_date` (write times).
+(read and reported; no run-off is built from it). Pikes Peak's port: the outer wall's rail 1.4 m past the right lane edge and
+its 3.02 m resampling (config data, `tracks/pikes-peak-lm/track.config.json` `scenery.bespoke.rails`; the wall's place is
+read off NAIP, the offset is invented), and `bespoke.names.paved` the lane only on that port (a rail module may stand on the
+edge strip). Still no gate changed: Pikes Peak's drops went from FAIL to PASS because a wall now stands where NAIP shows one. `tools/draft_equiv.py` ignores JSON keys `written_utc` and `check_date` (write times).
 
 ## 2026-11-03 — EXCLUSION: race kerbs leave the prep's 0020 carve (ledger 0020 Rule 1; Lake Murray v5 race, ledger 0065)
 

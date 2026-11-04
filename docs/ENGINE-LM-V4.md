@@ -257,31 +257,23 @@ The chain change (`tools/ship_track.sh`, `tools/ship_track_spec.py`): ship.json 
 
 ### Lake Murray stays byte-identical
 
-- `tracks/san-diego-lake-murray/`: engine-july-snapshot, ship.json, config and data have **no diff** against origin/main.
-  scripts-v021 changed in two files: `geometry/ribbon.py` gained `edge_profile` (EDGE_DEFAULTS = the literals the assembler
-  always swept) and `blender/build_loop_blend.py` reads `route.edge`, `route.crossfall_file`, `route.lane_dividers`,
-  `scenery.draft_lamps` (each absent = the call exactly as before). `tools/weld_mouths_blend.py` reads the connector edge
-  from `route.edge` and tolerates a missing YLINE only when `divided_double` is false.
-- **Proof on Lake Murray's own inputs, on the Mac:** its committed data (centreline, the 30-odd side streets and north
-  pieces, the tiered 3DEP terrain re-planned from `terrain.samples.json.gz`, buildings, I-8, pads) through origin/main's
-  assembler + weld and through this branch's: all 23 meshes after the assembler and all 23 after the weld (32 mouths
-  welded) hash identically (vertex coordinates + face indices, md5 per mesh), 46 / 46, on the final code.
-  `tests/tools/test_lm_engine_port.py` pins the defaults, Lake Murray's config (none of the new keys) and that its
-  ship.json names none of the new steps. The PC proves the whole v4 chain with `tools/kn5_equiv.py` (ledger 0078 runbook).
-- `tools/ship_track_spec.py`: Lake Murray's spec emits the same lines, md5 `71243207d44b720815666b5c1fb4711d` before and
-  after (the `engine` line is written only when declared).
-- `tools/ship_track.sh`: for `san-diego-lake-murray` the engine is the same expression (`${ENG:-…/engine-july}`) and V021
-  is `$SRC/scripts-v021` (the fallback fires only for an lm-v4 track without one).
-- `tools/route_connectors.py`: absent key → `MAX_GRADE = 0.11`, the same clamp code.
-- Tests: `tests/tools/test_ship_track_chain.py` pins all of it (engine rule, SD lines carry no engine line, the V021
-  fallback, the pilot spec); the SD-parity tests pass unchanged.
-- PC check (the Mac cannot run v4's chain): `python tools/snapshot_engine_july.py --check`, then
-  `SHIP_PROJ=D:/k10-scratch/lm_v4_check AIROSO=<this worktree> ENG=D:/k10-scratch/eng_rehearsal bash tools/ship_track.sh
-  san-diego-lake-murray --skip-blend --no-install` from a copy of lm_v4, then judge every kn5 (road, `_race`, `_street`,
-  each closure, each spawn) against v4's with `python tools/kn5_equiv.py <v4 kn5> <rebuilt kn5> --tol 1e-6` (the PC's
-  tool, `claude/lm-v4-0.20.1`), **not md5**: Blender's tangent pass is not bit-stable run to run (a rebuild of v4's own
-  workshop moved only vertex tangents, max 5.66e-7), so "identical" = byte-identical or differing only in tangents within
-  1e-6. The gate OBJs and gate JSONs are compared exactly.
+- Since 2026-11-03 this branch carries Lake Murray v4's chain of record: `claude/lm-v4-line` is merged (e78fe44, then its
+  0.20.1 head 6f96224 in 21327c4). `tracks/san-diego-lake-murray/` equals lm-v4-line's (ship.json, config, data, the
+  engine-july snapshot) except two opt-in scripts-v021 files: `geometry/ribbon.py` gained `edge_profile` (EDGE_DEFAULTS =
+  the literals the assembler always swept) and `blender/build_loop_blend.py` reads `route.edge`, `route.crossfall_file`,
+  `route.lane_dividers`, `scenery.draft_lamps` (each absent = the call exactly as before). `tools/weld_mouths_blend.py` reads
+  the connector edge from `route.edge` and tolerates a missing YLINE only when `divided_double` is false.
+- `tools/ship_track.sh` keeps both sides: the engine selection (ship.json `"engine": "lm-v4"`) and the port steps
+  (lm_intake, densify_ribbon, seat_edges, kerbs, edge_report), and v4's draft `bespoke`, gate `houses`, `red_repairs` and
+  `sync_in.assets`. Lake Murray's spec lines are the same through either branch's `ship_track_spec.py` (md5 `372dfc9c…`).
+- **Mac proof, on the merge:** Lake Murray's own committed inputs through lm-v4-line's assembler + weld and through this
+  branch's: 46 / 46 meshes identical, and `tools/draft_equiv.py` reads the two projects SAME (366 data files; 23 objects by
+  `tools/blend_digest.py`). `tests/tools/test_lm_engine_port.py` pins the defaults and that Lake Murray names none of the
+  new keys or steps.
+- **PC proof (ledger 0078 runbook step 5):** (a) the same `--dry-run` on lm-v4-line and here, each in its own copy of
+  lm_v4, judged by `blend_digest.py` + `draft_equiv.py` (no data file, no blend object may differ); (b) `--skip-blend` on
+  v4's blend through this chain, every kn5 against 0.20.1's with `tools/kn5_equiv.py --tol 1e-6` (never md5: Blender's
+  tangent pass is not bit-stable), the house gate PASS (7,600 / 7,600 / 275).
 
 ---
 
@@ -406,3 +398,12 @@ layout (engine-july's prep lays the AC_* nodes in the road kn5). Inputs:
   edges are seated; a coarser cut where the bank is under 2 % would save most of it (owed, measured against the gate).
 
 Nothing got worse on any gate: every drive_test key is equal or better, every gate PASS / CLEAN.
+
+## 6. Round 4 (Mac): kerbs off the aerial, the size, the next circuits
+
+Ledger 0078 has the numbers. In short: traced kerbs ship in the road kn5 as `1KERB_circuit_<k>` (`tools/aerial_edges.py`
+reads them, `tools/author_kerbs_blend.py` lays them; High Plains 12 runs, Nevada 6, Aspen 4; none at Milford, Pueblo,
+Grand Junction, or on Pikes Peak's oval); no run-off is built (none measured as run-off); `seat_edges` cuts by the measured
+bank (High Plains' kn5 29 → 14.9 MB) at the cost of ground over the edge strip's outer half; every port ships from an
+empty workshop (the intake writes `centerline.geojson`); Pikes Peak is green with its outer wall read off NAIP; Milford
+ships but is worse than 0.6.0 (kinks, severe steps); Aspen, Pueblo and Grand Junction wait on their 3DEP grids.

@@ -236,6 +236,13 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
 
 1. Worktree: `git fetch && git worktree add D:/k10-worktrees/fleet-lm-engine origin/claude/fleet-lm-engine`.
 2. Workshops (ship.json `workshop` D:/k10-scratch): `sand_creek_lm`, `high_plains_lm`, `exotics_lm` (`mkdir -p <ws>/data`).
+   An EMPTY workshop is enough (2026-11-03, after the PC's Sand Creek rehearsal stopped at the track folder on a
+   `data/centerline.geojson` only the Mac's old workshop held; the intake now writes it, 870fbf5): on the Mac,
+   `tools/ship_track.sh` itself (Blender path swapped) from an empty `SHIP_PROJ` ships all three, SHIP OK, every gate as
+   above (Sand Creek kinks 0.41, severe 0, drops 0; High Plains / Nevada kn5s the same bytes as the port runs). The one
+   file a step looked for and did not find, `data/median_bands.json` (the AI writer's median island), is Lake Murray's own
+   (its `median_envelope` step); no port has a median, and the old workshops did not have one either.
+   `tests/tools/test_lm_engine_port.py::test_the_intake_into_an_empty_workshop_leaves_every_file_the_chain_reads` holds it.
    The chain syncs `track.config.json` in (and High Plains' fetched `heightfield.*`); the intake reads the live track's
    data from the same worktree.
 3. Rehearse each into a scratch copy, then the real run:

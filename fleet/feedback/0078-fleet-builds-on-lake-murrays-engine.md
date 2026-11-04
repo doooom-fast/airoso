@@ -592,6 +592,63 @@ JSON the Mac committed came back byte-identical, except Sand Creek's `audit.json
 
 The frame rate cannot be read on the PC: the session does not drive AC. Kevin's first drive is the judge. Not driven yet.
 
+## PC: round 4 and the 0.1.1 updates, installed side by side (2026-11-04)
+
+Every build ran from a fresh EMPTY workshop seeded by the chain alone, on its own ENG copy: plain `eng_repro` for Pueblo,
+Grand Junction, Aspen and Pikes Peak; `eng_repro` plus 4b's seven md5-checked textures for Milford. Every one was installed
+by the chain's own install block with all gates green and no force. Every material slot in every road kn5 names an embedded
+texture.
+
+**Round 4: 0.1.0, the first install of each.** Pueblo, Grand Junction and Aspen were built at 29c1069; Milford and Pikes
+Peak at cf401bf.
+
+| track (folder) | severe | bumps /km | vertex bumps | kinks /km | drops (far ledges) | kn5_ground over 5 cm | road kn5 |
+|---|---|---|---|---|---|---|---|
+| Pueblo (`pueblo_motorsports_park_lm`) | 0 | 0.29 | 12 | 8.01 | 0 (0) | 0 / 2,008 | 10,002,234 B |
+| Grand Junction (`grand_junction_lm`) | 0 | 0 | 4 | 17.31 | 0 (0) | 0 / 1,000 | 9,201,710 B |
+| Aspen (`aspen_motorsports_park_lm`) | 0 | 0.6 | 41 | 13.26 | 0 (0) | 0 / 960 | 7,561,368 B |
+| Milford (`milford_road_course_lm`) | 0 | 0 | 16 | 6.34 | 0 (22) | 7 / 9,314 (max 0.086 m; the check records no positions) | 38,156,879 B |
+| Pikes Peak (`pikes_peak_international_raceway_lm`) | 0 | 0 | — | 0.0 | 0 (37) | 0 / 1,211 | 20,083,052 B |
+
+All five audits are CLEAN.
+
+The edge report at 1 m past the edge, then the ground at 3 / 6 / 10 m (medians):
+- Pueblo: kerb / strip 6.7 %, ground 93.3 %; -0.032 / -0.102 / -0.178.
+- Grand Junction: 19.7 / 80.3 %.
+- Aspen: 13.2 / 86.8 %.
+- Milford: strip 99.9 %; rise within 2 m p95 0.053.
+- Pikes Peak: strip 99.6 %, wall 0.4 %; rise p95 0.429 m, the measured wall's face, as built.
+
+Nothing paved past the edge, and no ground more than 1 m off.
+
+**0.1.1.** High Plains and Nevada Nights were built at c36f023 (lidar rails / NAIP apron pads, strip_seam). Sand Creek,
+Pueblo, Grand Junction and Aspen were built at 6d81520 (strip_seam). Each was installed over its own `-lm` folder; the
+chain parked each 0.1.0 in `D:/k10-track-archive/<stamp>/`.
+
+| track | strip on top at 1 m (0.1.0 -> 0.1.1) | gates vs 0.1.0 | road kn5 |
+|---|---|---|---|
+| High Plains | 24.4 % -> 100 % | the same: kinks 1.87, drops 0, CLEAN; 34 materials (the rails) | 15,561,059 B |
+| Nevada Nights | 41.8 % -> 100 % | the same: kinks 0.0, drops 0 (far 3), CLEAN; 37 materials (the pads) | 13,328,116 B |
+| Sand Creek | 31.0 % -> 99.7 % | the same (kinks 0.41, drops 0); far ledges 0 -> 1, reported | 40,980,896 B |
+| Pueblo | 6.7 % -> 100 % | the same | 10,572,602 B |
+| Grand Junction | 19.7 % -> 100 % | the same | 9,586,100 B |
+| Aspen | 13.2 % -> 99.6 % | the same | 7,847,326 B |
+
+**A wrong build, caught and replaced.** The PC's first High Plains / Nevada "0.1.1" run merged c36f023 without fetching
+it. The merge failed and the script carried on, so the two were rebuilt from cf401bf, still versioned 0.1.0. They were green
+and installed over their own -lm folders, with the 870fbf5 0.1.0 builds parked first. Their records were discarded, never
+committed. The batch scripts now fetch, refuse an unfetched sha, and stop unless the target is in HEAD after the merge.
+
+The real 0.1.1 runs then parked that build:
+- the 870fbf5 0.1.0 builds are in `2026-11-04_003738` / `_003944`;
+- the cf401bf rebuilds are in `_004419` / `_004625`.
+
+Merging c36f023 and 6d81520 into the records branch conflicted only on run records (`split_manifest`, `house_seat_check`,
+`audit`, `edge_report`, `kn5_ground_check`). The incoming side was taken; each build then rewrote them.
+
+The frame rate is not readable on the PC: the session does not drive AC. None of the round-4 or 0.1.1 builds has been
+driven yet.
+
 ## Owed
 
 - Racing kerbs and run-off outlines for the circuits, measured off NAIP / lidar; race kerbs at Sand Creek's race corners.

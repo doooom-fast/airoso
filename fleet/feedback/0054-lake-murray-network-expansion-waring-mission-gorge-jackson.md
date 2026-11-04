@@ -1930,6 +1930,22 @@ verify_race reads the file before the sign step rewrites it, so a re-used worksh
   the ring (≥ 1.80 m from the moved face).
 - **kn5 MB:** road 102.4, _race 11.2, _race_north 8.8, closures race 5.3 / 5.3, north 4.5 / 4.5, _street 3.7, spawns ~0.
 
+### Phase 2 — gate re-runs on step 2g (PC, 2026-11-04, 5b6dbff merged; the 2f build unchanged): every row passes
+
+On `D:/k10-scratch/lm_phase2/project` (no rebuild, nothing installed; 2f's gate records kept in `run2f/`; log `gates_2g.log`):
+- **audit_mesh:** street, race_cw, race_acw, north_cw, north_acw all CLEAN (north D 0, I 0, K 0; the lap islands line
+  prints). Against 0.20.1 only counts move: curb_verts −5 (the island ring), grass_verts +3, F side faces −2.
+- **Built no_route race_cw / race_acw:** PASS (leak 0, 0 / 439 probes). `local_deck_cells` 62 each (the Mac read 59);
+  `local_deck_walls` = 1WALL_race_edge_R_college_774_0 (6 cells, v763-776, deck −0.131..+0.014 m),
+  1WALL_race_edge_R_navajo_1517_0 (10, v2314-2323, −0.241..+0.244), 1WALL_race_edge_R_jackson_2324_0 (52, v2324-2327,
+  −0.244..−0.131); no 1WALL_guard. Against 0.20.1 only wall_cells (+62), local_deck_cells and reached / allowed_m2 (−2).
+- **Built no_route north_cw / north_acw:** PASS (leak 0); local_deck_cells 3,846 / 3,847 over 29 / 28 walls (the stubs and
+  the lap's own edge walls, decks −0.54..+0.35 m).
+- **drive_test --line expansion:** fwd 0.48 / rev 0.16; the third fwd bump at s 4342, lat +3.46, 0.0452 m, (−1192.680,
+  3152.387). **probe_seam at J4:** 0 paths with a gap, 0 with a jump, widest gap 0.0, largest jump 0.0 — continuous.
+
+0.20.2 is held for Kevin's install decision (--force-install for the inherited street drops 96, on his word only).
+
 ### Open questions for Kevin (Phase 2)
 
 - **Princess View's wide median: closed — measured, noise, fixed at the source; no gate change** (step 2c).

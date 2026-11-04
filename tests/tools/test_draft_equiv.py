@@ -73,3 +73,35 @@ def test_a_json_written_at_another_time_is_the_same(tmp_path):
         doc = {"_provenance": {"written_utc": t}, "z": [1, 2]}
         (tmp_path / k / "data" / "t.json.gz").write_bytes(gzip.compress(json.dumps(doc).encode()))
     assert de.main([str(tmp_path / "a"), str(tmp_path / "b")]) == 0
+
+
+def test_terrain_noise_allows_exactly_the_written_list(tmp_path):
+    """--terrain-noise (ledger 0078 step 5): TERRAIN and the ground tiles may differ, a house only in its positions,
+    the terrain-stage reports and any "seconds"; a road object or any other file still makes it DIFFERENT"""
+    import json as _j
+    for side, z, secs in (("a", 0.0, 4.9), ("b", 0.01, 6.3)):
+        d = tmp_path / side
+        (d / "data").mkdir(parents=True)
+        (d / "data" / "ground_release.report.json").write_text(_j.dumps({"welded": 6963 if side == "a" else 7014}))
+        (d / "data" / "race_authored.json").write_text(_j.dumps({"rings": 4498, "seconds": secs}))
+        (d / "data" / "mouths.json").write_text(_j.dumps({"mouths": 32}))
+        objs = {"TERRAIN": {"verts": 632014 if side == "a" else 631989, "co_md5": side},
+                "BUILDING_STUCCO_0": {"verts": 100, "co_md5": side},
+                "1ROAD_road": {"verts": 50, "co_md5": "same"}}
+        (tmp_path / f"{side}.digest.json").write_text(_j.dumps({"objects": objs}))
+    a, b = tmp_path / "a", tmp_path / "b"
+    da, db = str(tmp_path / "a.digest.json"), str(tmp_path / "b.digest.json")
+    assert de.main([str(a), str(b), "--digest", da, db]) == 1                       # strict: different
+    assert de.main([str(a), str(b), "--digest", da, db, "--terrain-noise"]) == 0    # only the written list
+    (b / "data" / "mouths.json").write_text(_j.dumps({"mouths": 31}))                # any other file: still a difference
+    assert de.main([str(a), str(b), "--digest", da, db, "--terrain-noise"]) == 1
+    (b / "data" / "mouths.json").write_text(_j.dumps({"mouths": 32}))
+    objs = _j.loads((tmp_path / "b.digest.json").read_text())["objects"]
+    objs["BUILDING_STUCCO_0"]["verts"] = 101                                         # a house's COUNT is not noise
+    (tmp_path / "b.digest.json").write_text(_j.dumps({"objects": objs}))
+    assert de.main([str(a), str(b), "--digest", da, db, "--terrain-noise"]) == 1
+    objs["BUILDING_STUCCO_0"]["verts"] = 100
+    objs["1ROAD_road"]["co_md5"] = "moved"                                           # nor any road object
+    (tmp_path / "b.digest.json").write_text(_j.dumps({"objects": objs}))
+    assert de.main([str(a), str(b), "--digest", da, db, "--terrain-noise"]) == 1
+

@@ -424,6 +424,50 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
 
    The Mac ran what it can: "Lake Murray unchanged (Mac)" under The plan.
 
+   **(a)'s pass rule: draft_equiv with `--terrain-noise`.** Lake Murray's draft terrain stage is not bit-stable. Pass =
+   `[draft-equiv] => SAME` or `=> SAME (terrain-stage noise only: ...)`. The allowed noise is a written list
+   (`tools/draft_equiv.py` TERRAIN_NOISE), not "anything goes":
+   - files: `data/ground_release.report.json`, `data/terrain_thin.json`, `data/terrain_thin.nodes.json.gz`,
+     `data/rock_faces.json`; the split manifest's two position censuses; any JSON key named `seconds` (wall clock);
+   - objects: `TERRAIN` and every `1GRASS*` tile (rock faces included), any change; the house meshes (`BUILDING_*`,
+     `ROOFTOP_*`, `FARBLOCK_*`, `1WALL_TILTUP*`) in their vertex positions only, with the same counts, faces, UVs,
+     materials and matrix.
+
+   Every road / curb / marking / race / closure / spawn / street object and every other data file must still be identical.
+   Run it as `python tools/draft_equiv.py ... --terrain-noise`; without the flag the comparison stays strict.
+
+   **The PC's result (2026-11-04).** fleet-lm-engine 0a68e4a (+ the installs' records) against lm-v4-line 6f96224,
+   `ENG=eng_repro`, three copies of `lm_v4`.
+
+   The pre-checks:
+   - `snapshot_engine_july.py --check` read "DRIFT" on `assets/textures/guardrail_diffuse.png` / `guardrail_normal.png`:
+     named by the snapshot's pbr rows, present in ENG, missing from REFERENCED.md5. They are now pinned (2b915ed6…,
+     389,444 B; 593030b0…, 337,739 B; the same bytes in engine-july, eng_rehearsal and airoso's tracked copies), and the
+     check reads OK.
+   - 0065's md5 check: only `track.config.json` differs from `lm_v4` (version 0.20.1 + the texture overrides).
+
+   (b) PASS:
+   - The road, `_race`, `_street` and both closures are kn5_equiv-EQUIVALENT to 0.20.1's (tangents only, max 2.4e-7);
+     the three spawns are byte-identical.
+   - The house gate reads 7,600 / 7,600 / 275, PASS. Trees 21,111.
+   - Every gate JSON equals 0.20.1's, except paths and race_verify.json's author-time tree count. That count depends on
+     whether the workshop already holds a gate OBJ (ledger 0065): this copy reads 21,111, and 0.20.1's fresh run 21,171.
+
+   (a), strict: DIFFERENT, on 8 files and 82 objects, every one terrain-side. It reads TERRAIN 632,014 vs 632,010
+   vertices; 13 house meshes re-seated; 16 1GRASS tiles and 5 rock meshes in the prepped scene; ground_release welding
+   6,963 vs 7,014 coincident vertices, its face caps listed in another order.
+
+   The control was lm-v4-line drafted a SECOND time, against itself. It differs in the same kinds of files and objects
+   (9 files, 86 objects; TERRAIN 632,014 vs 631,989), and the port branch's differences are a subset of those kinds. So the
+   terrain stage is not bit-stable run to run. The branch's code changes that Lake Murray's draft runs are all opt-in:
+   `build_loop_blend` crossfall_bank / route.edge / lane_dividers / draft_lamps, `ribbon.py`, `weld_mouths_blend`,
+   `route_connectors`. Absent keys mean the calls run exactly as before. ground_release_blend, triangulate_terrain and
+   seat_terrain are unchanged on the branch.
+
+   With `--terrain-noise`, both line vs fleet and line vs line2 read `=> SAME (terrain-stage noise only: 90 / 95 allowed
+   differences)`. **Lake Murray is unchanged by this branch.** Owed (not a gate): find what makes ground_release's weld
+   order vary, a set or dict iteration or a worker split, so the draft becomes bit-stable and the list can go.
+
 ## PC: the three ports installed side by side (2026-11-03)
 
 **The rehearsals (285854e) found one piece of hidden state.** The rehearsal ran with `SHIP_PROJ`, `eng_sclm`, and an empty

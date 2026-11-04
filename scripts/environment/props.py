@@ -17,12 +17,82 @@ from pathlib import Path
 Vertex = tuple[float, float, float]
 
 
-def load_module(path: str | Path) -> dict:
-    """Minimal OBJ loader: v/vt/f (triangulates fans). Returns {vertices, uvs, tris} with uvs
-    parallel to vertices (last-seen vt per vertex — fine for these unwrapped props)."""
+def triangulate(pts: list[Vertex]) -> list[tuple[int, int, int]]:
+    """Triangles (indices into ``pts``) for one planar polygon, wound like the polygon.
+
+    A fan from the first vertex when that is valid (every fan triangle faces the polygon's own
+    Newell normal), so convex faces load exactly as they always have. Otherwise ear clipping: a fan
+    over a CONCAVE polygon folds triangles back over it, reversed and outside the outline. The 4 m
+    barrier's end faces are concave 8- to 16-gons (the jersey profile); fanned, 41 of its 493
+    triangles faced into the module (ledger 0071)."""
+    n = len(pts)
+    if n < 3:
+        return []
+    nx = ny = nz = 0.0                                   # Newell normal
+    for i in range(n):
+        (x0, y0, z0), (x1, y1, z1) = pts[i], pts[(i + 1) % n]
+        nx += (y0 - y1) * (z0 + z1)
+        ny += (z0 - z1) * (x0 + x1)
+        nz += (x0 - x1) * (y0 + y1)
+    fan = [(0, k, k + 1) for k in range(1, n - 1)]
+    if n == 3:
+        return fan
+    eps = 1e-12 * (nx * nx + ny * ny + nz * nz) ** 0.5
+
+    def facing(a, b, c):
+        (ax, ay, az), (bx, by, bz), (cx, cy, cz) = pts[a], pts[b], pts[c]
+        ux, uy, uz, vx, vy, vz = bx - ax, by - ay, bz - az, cx - ax, cy - ay, cz - az
+        return (uy * vz - uz * vy) * nx + (uz * vx - ux * vz) * ny + (ux * vy - uy * vx) * nz
+
+    if all(facing(*t) >= -eps for t in fan):
+        return fan
+    # ear clipping in the polygon's plane: drop the normal's largest axis, keep the winding CCW
+    ax_ = max(range(3), key=lambda k: abs((nx, ny, nz)[k]))
+    keep = [(1, 2), (2, 0), (0, 1)][ax_]
+    sgn = 1.0 if (nx, ny, nz)[ax_] > 0 else -1.0
+    p2 = [(p[keep[0]], p[keep[1]] * sgn) for p in pts]
+
+    def cross(o, a, b):
+        return (p2[a][0] - p2[o][0]) * (p2[b][1] - p2[o][1]) - (p2[a][1] - p2[o][1]) * (p2[b][0] - p2[o][0])
+
+    rest = list(range(n))
+    out: list[tuple[int, int, int]] = []
+    while len(rest) > 3:
+        m = len(rest)
+        for k in range(m):
+            a, b, c = rest[k - 1], rest[k], rest[(k + 1) % m]
+            if cross(a, b, c) <= 0.0:
+                continue                                  # reflex (or flat): not an ear
+            if any(cross(a, b, q) >= 0.0 and cross(b, c, q) >= 0.0 and cross(c, a, q) >= 0.0
+                   for q in rest if q not in (a, b, c) and p2[q] not in (p2[a], p2[b], p2[c])):
+                continue                                  # another vertex inside: not an ear
+            out.append((a, b, c))
+            rest.pop(k)
+            break
+        else:                                             # numerically stuck: clip the most convex corner
+            k = max(range(m), key=lambda j: cross(rest[j - 1], rest[j], rest[(j + 1) % m]))
+            out.append((rest[k - 1], rest[k], rest[(k + 1) % m]))
+            rest.pop(k)
+    out.append(tuple(rest))
+    return out
+
+
+def load_module(path: str | Path, *, keep_seams: bool = False) -> dict:
+    """Minimal OBJ loader: v/vt/f, polygons triangulated by ``triangulate``. Returns {vertices,
+    uvs, tris} with uvs parallel to vertices.
+
+    keep_seams=False: one vertex per OBJ ``v``, carrying the LAST ``vt`` any face gave it, so every
+    UV seam collapses (the trees, lamps and fence panels build_env stamps still load this way).
+    keep_seams=True: one vertex per distinct (v, vt) pair, which is how Blender and the kn5 store a
+    mesh, so the module's own unwrap survives. Kevin's 4 m concrete barrier has 439 UVs on 249
+    positions: 159 positions carry more than one, and 141 of its 183 faces touch a seam (ledgers 0070
+    C3, 0071)."""
     vs: list[Vertex] = []
     vts: list[tuple[float, float]] = []
     uvs_per_v: dict[int, tuple[float, float]] = {}
+    split: dict[tuple[int, int | None], int] = {}     # keep_seams: (v, vt) -> output vertex
+    out_v: list[Vertex] = []
+    out_uv: list[tuple[float, float]] = []
     tris: list[tuple[int, int, int]] = []
     for ln in open(path, errors="replace"):
         if ln.startswith("v "):
@@ -36,13 +106,78 @@ def load_module(path: str | Path) -> dict:
             for tok in ln.split()[1:]:
                 parts = tok.split("/")
                 vi = int(parts[0]) - 1
-                if len(parts) > 1 and parts[1]:
-                    uvs_per_v[vi] = vts[int(parts[1]) - 1]
+                ti = int(parts[1]) - 1 if len(parts) > 1 and parts[1] else None
+                if keep_seams:
+                    key = (vi, ti)
+                    if key not in split:
+                        split[key] = len(out_v)
+                        out_v.append(vs[vi])
+                        out_uv.append(vts[ti] if ti is not None else (0.0, 0.0))
+                    idx.append(split[key])
+                    continue
+                if ti is not None:
+                    uvs_per_v[vi] = vts[ti]
                 idx.append(vi)
-            for k in range(1, len(idx) - 1):
-                tris.append((idx[0], idx[k], idx[k + 1]))
+            pos = out_v if keep_seams else vs
+            tris.extend((idx[a], idx[b], idx[c]) for a, b, c in triangulate([pos[i] for i in idx]))
+    if keep_seams:
+        return {"vertices": out_v, "uvs": out_uv, "tris": tris}
     uvs = [uvs_per_v.get(i, (0.0, 0.0)) for i in range(len(vs))]
     return {"vertices": vs, "uvs": uvs, "tris": tris}
+
+
+def module_tris(module: dict, base: int, x_axis: tuple[float, float],
+                z_axis: tuple[float, float]) -> list[tuple[int, int, int]]:
+    """The module's faces for ONE placement, re-indexed from ``base``, each written ONCE.
+
+    The placement maps module +X to the horizontal unit vector ``x_axis`` = (x, z), module +Y to up
+    and module +Z to ``z_axis``. When that basis is a reflection (det < 0: the outward side vector
+    of a run on the +1 side, ``(-tz, tx)``, with the tangent as +Z), the image of every face turns
+    inside out, so its winding is reversed here and the stamped normals stay the rigid image of the
+    module's authored ones (all 183 of the barrier's agree with its winding, and its signed volume
+    is positive, so authored = outward).
+
+    This replaced writing every face twice, once per winding, on the SAME vertices (ledger 0071).
+    A face and its reverse share a vertex set, Blender's Mesh.validate() in the underlay deletes one
+    of each such pair, and which one survives is arbitrary: about half of every module came out
+    inside out (639 and 837 of 1,479 faces on a 3-module run per side, ledger 0070 C1)."""
+    ax, az = x_axis
+    bx, bz = z_axis
+    if ax * bz - az * bx >= 0.0:            # det[x_axis, up, z_axis]: +1 rotation, -1 reflection
+        return [(a + base, b + base, c + base) for a, b, c in module["tris"]]
+    return [(a + base, c + base, b + base) for a, b, c in module["tris"]]
+
+
+def place_module(out: dict, module: dict, origin: Vertex, x_axis: tuple[float, float],
+                 z_axis: tuple[float, float]) -> int:
+    """Append one copy of ``module`` to the mesh dict ``out``: module (mx, my, mz) lands at
+    origin + z_axis*mz + x_axis*mx (horizontal) and origin.y + my, wound by ``module_tris``.
+    Returns the copy's first vertex index (the copy is one contiguous block, len(module verts))."""
+    ox, oy, oz = origin
+    ax, az = x_axis
+    bx, bz = z_axis
+    base = len(out["vertices"])
+    for mx, my, mz in module["vertices"]:
+        out["vertices"].append((ox + bx * mz + ax * mx, oy + my, oz + bz * mz + az * mx))
+    out["uvs"].extend(module["uvs"])
+    out["tris"].extend(module_tris(module, base, x_axis, z_axis))
+    return base
+
+
+def append_sheet(out: dict, verts: list[Vertex], uvs: list[tuple[float, float]],
+                 tris: list[tuple[int, int, int]]) -> None:
+    """A thin sheet seen from both sides (a chain-link fence panel): the front faces on ``verts``,
+    the back faces, reversed, on a SECOND copy of them. Sharing one set of vertices made every back
+    face a duplicate of its front (same vertex set), and the underlay's Mesh.validate() deletes one
+    of each pair, which left the fences single-sided (Exotics 172 verts / 86 faces, ledger 0071)."""
+    for copy in (0, 1):
+        base = len(out["vertices"])
+        out["vertices"].extend(verts)
+        out["uvs"].extend(uvs)
+        if copy == 0:
+            out["tris"].extend((a + base, b + base, c + base) for a, b, c in tris)
+        else:
+            out["tris"].extend((a + base, c + base, b + base) for a, b, c in tris)
 
 
 def instance_barriers(centerline_m: list[Vertex], widths_m: list[float], placements: list[dict],
@@ -50,6 +185,7 @@ def instance_barriers(centerline_m: list[Vertex], widths_m: list[float], placeme
                       base_sink: float = 0.05, surface_y=None, on_pavement=None,
                       station_skip=None) -> dict:
     """Stamp the barrier module end-to-end along each warning-barrier run, on the run's OUTSIDE.
+    Load the module with ``load_module(..., keep_seams=True)`` so its UVs survive.
 
     ``surface_y(x, z) -> y|None`` seats each module on the BUILT edge surface (road+shoulder tops).
     Seating at centerline height floats the whole run wherever the verge falls away — every fill
@@ -122,18 +258,10 @@ def instance_barriers(centerline_m: list[Vertex], widths_m: list[float], placeme
                 if sy is None:
                     continue                 # nothing built under this spot — skip, never float
                 y = sy + base_sink           # seat ON the built surface (sink re-subtracted below)
-            base = len(out["vertices"])
-            # module: length along local Z, width X, up Y, base at y=0
-            for mx, my, mz in module["vertices"]:
-                wx = bx + tx * mz + nx * mx
-                wz = bz + tz * mz + nz * mx
-                out["vertices"].append((wx, y - base_sink + my, wz))
-            out["uvs"].extend(module["uvs"])
-            # DOUBLE-SIDED stamping: mirrored bases flip winding, module normals are mixed, and
-            # "some barriers are still inside out" survived two winding fixes — end the class:
-            # every face ships both ways. Barrier tri counts are tiny; correctness wins.
-            out["tris"].extend((a + base, b + base, c + base) for a, b, c in module["tris"])
-            out["tris"].extend((a + base, c + base, b + base) for a, b, c in module["tris"])
+            # module: length along local Z, width X, up Y, base at y=0. Each face ONCE, wound
+            # outward for this placement's handedness (module_tris; ledger 0071). The old
+            # double-sided stamp shared vertices, and the underlay's validate() halved it at random.
+            place_module(out, module, (bx, y - base_sink, bz), (nx, nz), (tx, tz))
     return out
 
 

@@ -1,7 +1,7 @@
 {
  "file": "D:\\k10-workshops\\sand-creek\\project\\build\\sand_creek_raceway_street.kn5",
  "version": 5,
- "file_bytes": 1747971,
+ "file_bytes": 1763235,
  "textures": [
   {
    "name": "line_yellow.png",
@@ -27,12 +27,12 @@
  "meshes": [
   {
    "name": "YLINE",
-   "verts": 37948,
-   "tris": 12920,
+   "verts": 38302,
+   "tris": 12868,
    "matid": 0,
    "surface": null,
    "renderable": true,
-   "radius_m": 1781.3
+   "radius_m": 1782.5
   }
  ],
  "nodes": [
@@ -40,8 +40,8 @@
  ],
  "summary": {
   "meshes": 1,
-  "verts": 37948,
-  "tris": 12920,
+  "verts": 38302,
+  "tris": 12868,
   "textures": 1,
   "texture_bytes": 361,
   "materials": 1,
@@ -49,7 +49,7 @@
   "shaders_by_tris": {
    "ksPerPixel": {
     "meshes": 1,
-    "tris": 12920
+    "tris": 12868
    }
   },
   "near_vert_cap": [],

@@ -2,7 +2,7 @@
 
 - ``road_profile.fold_plateaus: false`` (V3-PLAN A2, ledger 0048): a fitted hairpin is a graded corner, kept on its
   real profile; the +-40 m plateau loop is skipped. Absent: unchanged.
-- ``road_profile.fold_pads: false`` (ledger 0074, the Aspen branch's switch, carried here): no disc, no flat zone.
+- ``road_profile.fold_pads`` (ledger 0074): off by default since #29; the Lariat states false: no disc, no flat zone.
 - ``road_edge.draft_walls: false`` (V3-PLAN A13 / P3d): the draft writes none of the engine's rule-placed walls.
 - ``terrain.cross_section.build: true`` (V3-PLAN P3a): the road-building section grades the ground (cutfill.py).
 
@@ -39,7 +39,7 @@ def test_switches_default_to_the_old_build():
     for cfg in ({}, {"road_profile": None, "road_edge": None, "terrain": None}, {"road_profile": {}, "road_edge": {}},
                 {"terrain": {"cross_section": {}}}):
         assert fold_plateaus_enabled(cfg) is True
-        assert fold_pads_enabled(cfg) is True
+        assert fold_pads_enabled(cfg) is False   # main's default since #29 (ledger 0074): pads off
         assert draft_walls_enabled(cfg) is True
         assert section_enabled(cfg) is False
     # only an explicit value flips each one

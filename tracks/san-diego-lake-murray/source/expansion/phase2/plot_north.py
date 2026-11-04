@@ -107,6 +107,8 @@ def draw(view, plan, lap, bands, lines, title, label_exits=False, pads=()):
             run.append(view(P[k][0] + nrm[k][0] * y, P[k][2] + nrm[k][1] * y))
         if len(run) > 1:
             d.line(run, fill=col, width=3)
+        for w in bands["corridors"][lid].get("nose_walls") or []:     # the K-rails across the far carriageway (noses)
+            d.line([view(p[0], p[2]) for p in w["polyline_xyz_m"]], fill=col, width=4)
     for mo in plan["exits"]:                     # the 34 exit probes
         if mo.get("probe_xz"):
             x, z = mo["probe_xz"]

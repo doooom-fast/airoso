@@ -281,6 +281,11 @@ class MedianZone:
                                          f"vs centreline ({len(pts)}) - re-run tools/barrier_bands.py")
                     kw.update({"closure_y": cy, "lane": lane, "zone_kind": cor.get("zone_by_vertex"),
                                "layout": str(layout), "race_wall_y": cor.get("race_wall_y_by_vertex")})
+                    if cor.get("nose_walls"):
+                        # ledger 0054 Phase 2 (opt-in): THIS layout's K-rails across the far carriageway at the declared
+                        # median noses are declared bands too, segment bands like the sealed-mouth lines (D / drive_test
+                        # exempt a wall standing on them, as on a closure) — absent on every declaration without noses
+                        kw["mouths"] = kw["mouths"] + [w.get("polyline_xyz_m", []) for w in cor["nose_walls"]]
         zone = cls(pts, iw, extra, widths=widths, **kw)
         if zone.n_island == 0 and zone.n_barrier == 0 and zone.n_edge == 0 and zone.n_closure == 0:
             return None

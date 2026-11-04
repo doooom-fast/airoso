@@ -1284,7 +1284,45 @@ def closure_plans(pts, widths, bands, layout_id, height=BARRIER_H):
         for part in _count_inserted(split_plan(whole)):
             part["fold_corners"], part["fold_skipped"] = [], 0
             plans.append(part)
+    # ledger 0054 Phase 2 (opt-in: corridors.<id>.nose_walls, absent on every declaration before it): the K-rail across
+    # the far carriageway at each declared median nose, in this layout's closure kn5
+    for w in c.get("nose_walls") or []:
+        plans.append(nose_wall_plan(w, pts, m, st, tok, layout_id, side, height))
     return plans
+
+
+NOSE_RING_M = 1.0   # INVENTED (ledger 0054 Phase 2): a nose K-rail's rings at most this far apart, so its base follows the
+#                     road's crown across the carriageway (a closure's rings follow the centreline's own vertices)
+
+
+def nose_wall_plan(w, pts, m, st, tok, layout_id, side, height=BARRIER_H):
+    """ONE nose K-rail as a closure plan (wall "nose"): a straight swept jersey strip along its declared
+    polyline_xyz_m — from the closure's race face at the pin vertex to the far curb strip's centre — rings every
+    <= NOSE_RING_M, both ends full height and width ('pin': its first end holds the closure's end cap inside its
+    footprint, its last is buried in the far strip). Named 1WALL_race_close_<token>_nose_<pin vertex>_0."""
+    k = int(w["vertex"]) % m
+    (ax, _ay, az), (bx, _by, bz) = w["polyline_xyz_m"][0], w["polyline_xyz_m"][-1]
+    length = math.hypot(bx - ax, bz - az)
+    if length < 2 * BARRIER_HALF_W:
+        raise SystemExit(f"[race] corridors.{layout_id} nose K-rail at v{k}: {length:.2f} m long — a declaration error")
+    tx, tz = (bx - ax) / length, (bz - az) / length
+    nseg = max(1, math.ceil(length / NOSE_RING_M - 1e-9))
+    rings = []
+    for q in range(nseg + 1):
+        u = q / nseg
+        rings.append({"k": k, "u": 0.0, "s": st[k], "cx": ax + (bx - ax) * u, "cz": az + (bz - az) * u,
+                      "y_hint": pts[k][1] + LIFT, "tx": tx, "tz": tz, "lat": 0.0, "ls": 1.0, "h": height,
+                      "arc": length * u, "seg_chord_m": 0.0 if q < nseg else None})
+    far = "edge_" + side
+    plan = {"kind": "close", "street": "nose", "side": side, "run": (k, k), "rings": rings, "start_kind": "pin",
+            "end_kind": "pin", "token": tok, "layout": layout_id, "wall": "nose", "closed_loop": False,
+            "pins": [{"vertex": k, "y": round(float(w["y_from"]), 4), "joins": "closure"},
+                     {"vertex": k, "y": round(float(w["y_to"]), 4), "joins": far}],
+            "nose": {"vertex": k, "median": int(w["median"]), "end": int(w["end"])},
+            "run_length_m": round(length, 1)}
+    part = dict(plan, cap_start=True, cap_end=True, part=0, densified=0)
+    part["fold_corners"], part["fold_skipped"] = [], 0
+    return part
 
 
 # ---------------------------------------------------------------------------------------------

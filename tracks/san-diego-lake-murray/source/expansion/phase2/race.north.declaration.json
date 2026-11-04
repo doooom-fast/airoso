@@ -116,7 +116,27 @@
           ]
         ],
         "pin_rate": {},
-        "_pin_rate_doc": "none declared. Tried 695: 5.0 / 1470: 4.5 (2026-11-03): the solver still misses the declared rate by the same share, so the pin-zone misses at v683-685 and v1477-1479 are part of the junction-approach class below, not a key to tune"
+        "_pin_rate_doc": "none declared. Tried 695: 5.0 / 1470: 4.5 (2026-11-03): the solver still misses the declared rate by the same share. The cause (2026-11-04) was the smoothing, not the rate: see smooth_window",
+        "noses": [
+          {
+            "end": 2,
+            "median": 11,
+            "why": "Waring's raised median starts 30 m after the J1 box (v11, 1.5 m wide); a closure pinned on the far curb strip at v2 could only reach its race face at 1:1.8. The closure ends at the nose (pin v10) and a K-rail crosses the far carriageway there: your own side of the road (Kevin's call, ledger 0054)"
+          },
+          {
+            "end": 314,
+            "median": 306,
+            "why": "Waring's median ends 24 m before the J2 box (v306, 3.0 m wide at its tail); from the far strip at v314 the closure crossed to it at 1:1.9. It ends at the tail (pin v307) with a K-rail across the far carriageway"
+          },
+          {
+            "end": 713,
+            "median": 718,
+            "why": "Mission Gorge's splitter island starts 15 m after the J3 box (v718); from the far strip at v713 the closure crossed 16.6 m at 1:0.92, R 12 m. It ends at the nose (pin v717) with a K-rail across the far carriageway"
+          }
+        ],
+        "_noses_doc": "tools/barrier_bands.py race.corridor.noses (ledger 0054 Phase 2): each closure-run end (a box edge) that ends at a median nose instead of the far curb strip; the pin is the vertex beside the nose, on the island's race face, and the K-rail runs from the closure's race face to the far curb strip, in that layout's closure kn5",
+        "smooth_window": "station",
+        "_smooth_window_doc": "the closure's smoothing Gaussian over +-3 sigma of STATION with trapezoid weights (tools/race_corridor.py). The lap mixes 2 m curved joins with 3 m streets; the default +-4-vertex window is lopsided where they meet and pulled the closure off its own pin-zone envelope at v683-685 (1:5.49 of 1:6) and v1477-1479 (1:4.62 of 1:5.01). Not a threshold: the rates and limits are unchanged"
       },
       "kerbs": {
         "trims": [

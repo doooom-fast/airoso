@@ -4005,3 +4005,26 @@ the walk east of the Jackson-north mouth), M4-rev@race_acw (1.62 m, the mouth's 
 leaves pavement" (College into Waring), M3-rev "ray runs 16 m down north_J1_waring#0 (a through road)", M4-fwd / M4-rev
 "apex 13 m from the J5 mouth". (m): street M1 M2 M5 + M3 / M4 skipped by the rule; race_cw / race_acw every corner.
 verify_signs PASS. The rehearsal of the full chain is in ledger 0054 "P4 signs" (its numbers below once it ran).
+
+## 2026-11-04 — the race corridor's NOSE end and station smoothing (ledger 0054 Phase 2, opt-in; no threshold moved)
+
+The Mission Gorge Speedway's declaration (`race.laps.north.corridor`) was refused by 16 corridor self-gate lines. 12 came
+from closures pinned on the far curb strip at a box edge 15-30 m from a median nose (Waring at J1 / J2, Mission Gorge at J3:
+1:0.92-1:1.90 against the 1:3 hard limit, R 12 m against 20 m). 4 came from the smoothing (v683-685, v1477-1479: 1:5.49 /
+1:4.62 against pin-zone limits of 1:6 / 1:5.01), where the lap's 2 m curved joins meet its 3 m streets. Both fixes are
+declared per corridor. With neither key, every tool's output on the existing Lake Murray Speedways is byte-identical:
+`source/expansion/phase2/proofs/nose_off_md5.json`, old tree vs new.
+
+| What | Before | After (only where declared) |
+|---|---|---|
+| `race.corridor.noses` [{end, median, why}] (tools/race_corridor.py, tools/barrier_bands.py) | every closure-run end pinned ON the far curb strip at a box edge | the declared end ends at the island NOSE: pin P = the vertex beside the nose toward the box, L = U = the island's enveloped race face + the strip centre (`nose_pin_g`); the walk from the box edge to P stands open (zone `box`), its lane narrowing to the closure's one vertex before P; `corridors.<id>.nose_walls` declares a K-rail at P from the closure's race face to the far strip centre |
+| self-gate 14 `noses` (barrier_bands) | — | the nose is the first / last vertex of an authored island run (>= 6) inside that run, with no island between it and the box edge; P != the box edge; the K-rail stands >= ISLAND_CLEAR_M (0.15 m, existing) off the nose along the road; the closure at P is on the race face within PIN_TOL_M (0.01, existing); the K-rail starts on the closure's race face and ends on the far strip centre within PIN_TOL_M, on a real strip ring, outside any declared box; the lane at P >= clear_hard_min_m (6.5, existing) |
+| tools/race_furniture.py + the Blender author | — | each K-rail as a closure object `1WALL_race_close_<tok>_nose_<P>_0` (wall `nose`) in its layout's closure kn5, rings <= NOSE_RING_M = 1.0 m apart (INVENTED: the base follows the road's crown); it clips the kerbs like any closure |
+| tools/verify_race.py C' / J | the closure's end rings on the far strip line | C': a nose end ring on its declared K-rail's line, every K-rail ring within CLOSE_TOL_M of its declared line, its last ring on the far strip line and its first on the closure's race face (PIN_TOL_M, existing); J: the same on the authored centres; H skips the K-rail (a straight line C' judges ring by ring) |
+| tools/no_route.py | the declared polylines | + each K-rail in the planned fill; the open walk in front of it allowed at the street's full width |
+| scripts/geometry/median_zone.py | the sealed-mouth lines are segment bands | + that layout's K-rails (audit D / drive_test exempt a wall standing on them, as on a closure) |
+| `race.corridor.smooth_window` "station" (tools/race_corridor.py) | the smoothing Gaussian (sigma 4 m) over +-4 vertices | over +-3 sigma of station with trapezoid weights. The fixed vertex window was lopsided where the spacing changes. The rates and their limits are unchanged |
+
+Teeth: tests/tools/test_race_noses.py (synthetic + the north plan: every self-gate clear, 34 / 34 exits sealed both ways,
+planned no_route PASS, no_route leaking without the K-rails, verify_race passing the planned K-rails and refusing one
+0.4 m short of the far strip).

@@ -29,7 +29,8 @@ Schema (unknown keys are refused, so a typo is never silently ignored):
   ``assets/textures/<f>`` resolves to the engine's own file first and to the project's copy when the engine lacks it).
 - ``sync_out``: ``{"required": [...], "files": [...], "map": [[from, to], ...], "dirs": [...], "remove": [...]}``
   paths relative to the workshop project copied back into ``tracks/<track>/`` after the gates (the real
-  workshop only). ``{id}`` expands to every layout id, ``{race}`` to every race layout id.
+  workshop only). ``{id}`` expands to every layout id, ``{race}`` to every race layout id, ``{lap}`` to every lap a
+  race layout names (ledger 0054: layouts[].lap; none on a config without laps, so the path expands to nothing).
 - keys starting with ``_`` are documentation and are ignored.
 
 Exit 0 with the lines on stdout; exit 2 with the reason on stderr.
@@ -47,7 +48,7 @@ PHASES = ("draft", "author", "prep", "ship", "gate")
 STEP_RE = re.compile(r"^[a-z][a-z0-9_]{0,40}$")
 NAME_RE = re.compile(r"^[A-Za-z0-9_.-]{1,64}$")
 TRACK_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
-# a relative path: plain segments, optional {id} / {race} templates, a '*' only in globs
+# a relative path: plain segments, optional {id} / {race} / {lap} templates, a '*' only in globs
 REL_RE = re.compile(r"^[A-Za-z0-9_.{}-]+(/[A-Za-z0-9_.{}-]+)*$")
 GLOB_RE = re.compile(r"^[A-Za-z0-9_.{}-]+(/[A-Za-z0-9_.{}-]+)*/[A-Za-z0-9_.-]*\*[A-Za-z0-9_.-]*$")
 ABS_RE = re.compile(r"^[A-Za-z]:/[A-Za-z0-9_. /()-]*$")
@@ -68,8 +69,8 @@ def _rel(p, what, glob=False):
     if any(seg in (".", "..") for seg in p.split("/")):
         raise SpecError(f"{what}: {p!r} climbs out of its folder")
     for t in re.findall(r"\{([^}]*)\}", p):
-        if t not in ("id", "race"):
-            raise SpecError(f"{what}: {p!r} has an unknown template {{{t}}} (only {{id}} and {{race}})")
+        if t not in ("id", "race", "lap"):
+            raise SpecError(f"{what}: {p!r} has an unknown template {{{t}}} (only {{id}}, {{race}} and {{lap}})")
     return p
 
 

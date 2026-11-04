@@ -104,6 +104,7 @@
       "source/expansion/pipeline__osm_lamps_signals.json",
       "source/expansion/aerial__veg_bins.json",
       "source/expansion/p3-proofs/measure_p3.json",
+      "source/expansion/race.north.joins.json",
       "data/red_repairs.plan.json",
       "data/terrain.tiers.json.gz",
       "data/terrain.refine.json.gz",
@@ -130,6 +131,7 @@
       "assets/textures/roof_tan_diffuse.jpg",
       "assets/textures/roof_dark_diffuse.jpg"
     ],
+    "_joins_doc": "ledger 0054 Phase 2: source/expansion/race.north.joins.json is race.laps.north's joins_file (scripts/geometry/race_lap.stitch reads it from the project); unused while no layout names the lap",
     "_assets_doc": "ledger 0065: the house textures the pbr rows for the blocks name, which engine-july's assets/textures lacks; track.config.json texture_overrides points the same rows at these copies (same bytes as airoso's tracked files)",
     "_optional_doc": "2026-11-03 (ledger 0065, the PC's coverage trace of v4): red_repairs.plan.json (tools/red_repairs.py, read by the prep's red repairs), terrain.tiers.json.gz (the thin step, rib_check, the assembler), terrain.refine.json.gz (the prep's RefineField, ground_release_blend) and bridges.cache.json (the prep's bridge spans, author_bridges, bridge_level) lived only in the workshop; scatter_positions.json (the draft's palm / tree / scrub / median-planting positions, read by make_treefx and the race_verify scenery gate: without it v4's 21,111 TreeFX trees are 17,728, the PC's 0.20.1 run) the same; network.cache.json, road_lanes.cache.json, osm.expansion.json, expansion.north.samples.json.gz are the draft's caches; source/bespoke/buildings.json is the planned blocks"
   },
@@ -211,8 +213,15 @@
       "data/expansion.north.samples.json.gz",
       "data/bridge.spans.auto.json",
       "data/bespoke.report.json",
-      "data/house_gate.json"
+      "data/house_gate.json",
+      "data/lap.{lap}.json",
+      "data/barrier_bands.{lap}.json",
+      "data/race_authored.{lap}.json",
+      "data/race_verify.{lap}.json",
+      "data/race_verify.scenery.{lap}.json",
+      "data/race_{lap}.kn5.json"
     ],
+    "_files_lap_doc": "ledger 0054 Phase 2: each lap's line, declaration and reports, as tools/ship_sd.sh syncs them ({lap}: every lap a race layout names; none in this config, so nothing)",
     "map": [
       [
         "blender/split/split_manifest.json",

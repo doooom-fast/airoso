@@ -162,6 +162,8 @@ class Corridor:
             ry = cor.get("race_wall_y_by_vertex") or [None] * n
             self.race_wall_y = [None if v is None else float(v) for v in ry[:m]]
             self.zone = list((cor.get("zone_by_vertex") or ["whole"] * n)[:m])
+            # ledger 0054 Phase 2 (opt-in): the K-rails across the far carriageway at the declared median noses
+            self.nose_walls = [w for w in cor.get("nose_walls") or [] if len(w.get("polyline_xyz_m") or []) >= 2]
             nr = cor.get("no_route") or {}
             self.probes = [(int(p["vertex"]), float(p["y"]), str(p.get("why", ""))) for p in nr.get("forbidden_probes", [])]
             # a lap's branch probe stands ON the abandoned line (barrier_bands: "xz"), not at a lateral of its vertex
@@ -171,6 +173,7 @@ class Corridor:
         else:
             self.lane, self.closure_y, self.zone = self._lanes_v1()
             self.race_wall_y = [None] * m
+            self.nose_walls = []
             self.probes = []
             self.probe_xz = {}
             self.semantics = "v1 (centre chain / islands, the 0047 install)"
@@ -247,6 +250,9 @@ class Corridor:
             k1 = (k + 1) % m
             if yw[k] is not None and yw[k1] is not None and (self.closed or k1 != 0):
                 out.append(("chicane", [self.at(k, yw[k]), self.at(k1, yw[k1])]))
+        # ledger 0054 Phase 2: each declared nose K-rail, closure race face -> far curb strip, as declared
+        for w in self.nose_walls:
+            out.append(("nose", [(float(p[0]), float(p[2])) for p in w["polyline_xyz_m"]]))
         cw = [float(v) for v in (self.bands.get("centre_w_by_vertex") or [])[:m]]
         if len(cw) == m and any(v > 0 for v in cw):          # a v1 declaration's centre chain, on the centreline
             for k in range(m):
@@ -887,6 +893,17 @@ def _allowed(R: Raster, corr: Corridor):
             continue
         R.fill_quad(R.allowed, corr.at(k, lat_lo(k)), corr.at(k1, lat_lo(k1)), corr.at(k1, lat_hi(k1)),
                     corr.at(k, lat_hi(k)), create=True)
+    # ledger 0054 Phase 2: in front of a nose K-rail (the open walk from its box edge to its pin P) the far carriageway is
+    # open up to the K-rail — allowed at the street's full width on every segment of that walk (the declared lane
+    # narrows to the closure's one vertex early, barrier_bands._corridor_record; the lane at P is the closure's)
+    for w in getattr(corr, "nose_walls", []):
+        p, md, e = int(w["vertex"]) % m, int(w["median"]) % m, int(w["end"]) % m
+        ks = [e]
+        while ks[-1] != p:
+            ks.append((ks[-1] + (1 if (md - p) % m == 1 else -1)) % m)
+        for a, b in zip(ks, ks[1:]):
+            fa, fb = corr.widths[a] / 2.0 - corr.inset + TOL_M, corr.widths[b] / 2.0 - corr.inset + TOL_M
+            R.fill_quad(R.allowed, corr.at(a, -fa), corr.at(b, -fb), corr.at(b, fb), corr.at(a, fa), create=True)
     for c in corr.corners:
         sgn = 1.0 if c["side"] == "L" else -1.0
         # only where this layout's lane reaches the strip on that side (a closure lane stops short of it)

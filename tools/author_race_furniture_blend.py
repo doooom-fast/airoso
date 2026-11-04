@@ -560,7 +560,18 @@ def _author_group(G, data, height, removed, road_main, road_any, curb_bvh):
             ring = plan["rings"][0 if idx == 0 else -1]
             c = cs[0 if idx == 0 else -1]
             e = {"vertex": ring["k"], "h": round(ring["h"], 4), "ls": round(ring.get("ls", 1.0), 4)}
-            if o["kind"] == "close" and cap:
+            if o["kind"] == "close" and cap and plan["pins"][idx]["joins"] in ("nose", "closure"):
+                # ledger 0054 Phase 2: a closure end at a median nose sits ON its K-rail's centre line (gap = the distance
+                # to it); the K-rail's first end sits on the closure's race FACE (gap = |distance to its centre - half|)
+                pin = plan["pins"][idx]
+                to_nose = pin["joins"] == "nose"
+                mates = [centres[q["name"]] for q in strip_recs if q is not o and q["kind"] == "close"
+                         and q.get("owner") == o.get("owner") and (q.get("wall") == "nose") == to_nose
+                         and q.get("wall") != "chicane"]
+                d = _poly_dist(xz2(c), [[xz2(q) for q in p] for p in mates])
+                e.update(kind="pin", vertex=pin["vertex"], y=pin["y"], joins=pin["joins"],
+                         gap_m=round(d if to_nose else abs(d - rf.BARRIER_HALF_W), 3))
+            elif o["kind"] == "close" and cap:
                 pin = plan["pins"][idx]
                 far = pin["joins"]
                 e.update(kind="pin", vertex=pin["vertex"], y=pin["y"], joins=far,

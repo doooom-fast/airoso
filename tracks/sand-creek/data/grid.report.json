@@ -13,7 +13,7 @@
   },
   "primary": {
    "pieces": 21,
-   "km": 7.84
+   "km": 7.85
   },
   "secondary": {
    "pieces": 5,
@@ -25,9 +25,9 @@
   }
  },
  "pieces": 106,
- "km": 39.82,
+ "km": 39.83,
  "dropped": {
-  "short": 21,
+  "short": 23,
   "parallel": 2,
   "outside": 22
  },

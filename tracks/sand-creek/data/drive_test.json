@@ -6,7 +6,7 @@
  ],
  "layouts": {
   "race": {
-   "fail": true,
+   "fail": false,
    "direction": "forward",
    "kind": "race",
    "race_furniture": false,
@@ -17,18 +17,18 @@
    "obstruction_stations": 0,
    "barrier_missing": 0,
    "barrier_stations": 0,
-   "floating_furniture": 1,
+   "floating_furniture": 0,
    "daylight_gaps": 0,
    "excursion_drops": 7,
    "undrivable_corners": 0,
-   "severe_steps": 8,
-   "severe_per_km": 0.83,
-   "steps_per_km": 1.86,
-   "kinks_per_km": 6.52,
+   "severe_steps": 0,
+   "severe_per_km": 0.0,
+   "steps_per_km": 0.0,
+   "kinks_per_km": 1.45,
    "file": "drive_test.race.json"
   },
   "street": {
-   "fail": true,
+   "fail": false,
    "direction": "forward",
    "kind": "street",
    "race_furniture": false,
@@ -39,17 +39,17 @@
    "obstruction_stations": 0,
    "barrier_missing": 0,
    "barrier_stations": 0,
-   "floating_furniture": 1,
+   "floating_furniture": 0,
    "daylight_gaps": 0,
    "excursion_drops": 7,
    "undrivable_corners": 0,
-   "severe_steps": 8,
-   "severe_per_km": 0.83,
-   "steps_per_km": 1.86,
-   "kinks_per_km": 6.52,
+   "severe_steps": 0,
+   "severe_per_km": 0.0,
+   "steps_per_km": 0.0,
+   "kinks_per_km": 1.45,
    "file": "drive_test.street.json"
   }
  },
- "fail": true,
+ "fail": false,
  "not_run": []
 }

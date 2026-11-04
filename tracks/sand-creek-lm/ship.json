@@ -1,5 +1,5 @@
 {
-  "_doc": "Sand Creek Raceway through Lake Murray v4's engine \u2014 the fleet pilot (ledger 0078, Kevin 2026-11-03: \"Lake Murray v4 should be what we build the rest from\"). engine lm-v4: the loop assembler is tracks/san-diego-lake-murray/scripts-v021 (V021_SHIM, never a per-track copy) and the prep / exporter / spawn builder are engine-july (ENG=<dir>: the real tree, a scratch copy, or the snapshot tracks/san-diego-lake-murray/engine-july-snapshot with assets/textures beside it). The draft starts from Sand Creek 0.35.0's line as airoso's data stages left it (tracks/sand-creek/data: the OSM centrelines, osm widths, 3DEP), read by tools/lm_engine_intake.py; then Lake Murray's own draft and author steps that serve a lap with no side streets: the assembler, the fold weld (weld_mouths, mainline only), Kevin's lamp model, the bespoke buildings in place of the assembler's boxes. The free roam's 106 grid streets wait for the junction steps (route/trim connectors, weld mouths, gap mouths, pads). The workshop is outside airoso and beside Lake Murray's.",
+  "_doc": "Sand Creek Raceway through Lake Murray v4's engine — the fleet pilot (ledger 0078, Kevin 2026-11-03: \"Lake Murray v4 should be what we build the rest from\"). engine lm-v4: the loop assembler is tracks/san-diego-lake-murray/scripts-v021 (V021_SHIM, never a per-track copy) and the prep / exporter / spawn builder are engine-july (ENG=<dir>: the real tree, a scratch copy, or the snapshot tracks/san-diego-lake-murray/engine-july-snapshot with assets/textures beside it). The draft starts from Sand Creek 0.35.0's line as airoso's data stages left it (tracks/sand-creek/data: the OSM centrelines, osm widths, 3DEP), read by tools/lm_engine_intake.py; then Lake Murray's own draft and author steps that serve a lap with no side streets: the assembler, the fold weld (weld_mouths, mainline only), Kevin's lamp model, the bespoke buildings in place of the assembler's boxes. The free roam's 106 grid streets wait for the junction steps (route/trim connectors, weld mouths, gap mouths, pads). The workshop is outside airoso and beside Lake Murray's.",
   "track": "sand-creek-lm",
   "engine": "lm-v4",
   "workshop": "D:/k10-scratch",
@@ -13,6 +13,7 @@
       "weld_mouths",
       "densify_ribbon",
       "seat_edges",
+      "strip_seam",
       "lamps"
     ],
     "author": [

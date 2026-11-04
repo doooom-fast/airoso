@@ -1,0 +1,22 @@
+{
+ "island": "north_princess_view",
+ "blend_in": "/Volumes/Drive/codex/airoso/.claude/worktrees/agent-a36ee4703cbad686f/tracks/san-diego-lake-murray/loop.blend",
+ "blend_out": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/loop_pv_keep.blend",
+ "old_bands": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/median_bands.v4.json",
+ "island_vertices": 592,
+ "found_worst_mm": 0.0,
+ "moved": {
+  "CURB": 78,
+  "TERRAIN": 0
+ },
+ "stations_moved": [
+  200,
+  212
+ ],
+ "largest_move_m": 1.287,
+ "paint_vertices_moved": {
+  "YLINE": 88,
+  "MARKINGS": 0
+ },
+ "deck": "kept (v4's, under the slab)"
+}

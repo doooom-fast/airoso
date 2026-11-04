@@ -3,7 +3,7 @@ step 4, 2026-11-04: Princess View's median, whose right face the automatic aeria
 
     blender --background --python-exit-code 1 --python tools/reshape_island_blend.py -- <project-dir> \
         --island north_princess_view --old-bands <the median_bands.json the blend was authored from> \
-        --out-blend <scratch .blend> [--blend <loop.blend>] [--new-bands <file>] [--report <json>]
+        --out-blend <scratch .blend> [--blend <loop.blend>] [--new-bands <file>] [--report <json>] [--move-deck]
 
 Why not re-run the draft: an LM v4 chain without --skip-blend rebuilds loop.blend and loses its 7,600 bespoke houses, and
 tools/author_median_blend.py joins its islands INTO CURB / TERRAIN (re-running it would author every island twice). This
@@ -13,7 +13,11 @@ moves only the island's own vertices:
      OLD data and from the NEW data — the same runs, so the same vertex count and order.
   2. Every OLD vertex must be found in the blend (CURB / TERRAIN, within MATCH_TOL_M, one blend vertex each), else exit 1:
      the blend was not authored from that data, and nothing is saved.
-  3. Each found vertex moves to its NEW position. Faces, vertex order and every other vertex of the blend stay as they are.
+  3. Each found CURB vertex moves to its NEW position. Faces, vertex order and every other vertex of the blend stay as they
+     are. THE DECK STAYS (ledger 0054 Phase 2 step 2f; --move-deck moves it too, as step 4 did): it is terrain under the
+     road slab that the prep pins to the road - 0.02, so the island's visible top does not depend on it. But the prep's
+     corridor subdivision and its 1GRASS tile cuts read it, so a moved deck re-tiles and re-thins the ground across the map
+     (island_reshape.moves).
   4. The island's two yellow edge lines (connectors.local.json paint, MEDIAN_EDGE_M off each face, in YLINE / MARKINGS)
      follow their face: a paint vertex within PAINT_BAND_M of an OLD edge line, inside the stations that changed, moves
      across the road by that face's change.
@@ -43,12 +47,16 @@ MEDIAN_EDGE_M = 0.30     # tools/expansion_pieces.MEDIAN_EDGE_M
 
 def _args():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
-    a = {"project": None, "island": None, "old": None, "new": None, "blend": None, "out": None, "report": None}
+    a = {"project": None, "island": None, "old": None, "new": None, "blend": None, "out": None, "report": None,
+         "move_deck": False}
     keys = {"--island": "island", "--old-bands": "old", "--new-bands": "new", "--blend": "blend", "--out-blend": "out",
             "--report": "report"}
     i = 0
     while i < len(argv):
-        if argv[i] in keys:
+        if argv[i] == "--move-deck":
+            a["move_deck"] = True
+            i += 1
+        elif argv[i] in keys:
             a[keys[argv[i]]] = argv[i + 1]
             i += 2
         elif a["project"] is None:
@@ -81,7 +89,7 @@ def main():
     old_pts, old_iw = _island(a["old"], a["island"])
     new_pts, new_iw = _island(a["new"] or proj / "data" / "median_bands.json", a["island"])
     try:
-        mv = ir.moves(old_pts, old_iw, new_pts, new_iw)
+        mv = ir.moves(old_pts, old_iw, new_pts, new_iw, move_deck=a["move_deck"])
     except ValueError as e:
         raise SystemExit(f"[reshape] REFUSED: {e}")
     bpy.ops.wm.open_mainfile(filepath=str(blend))
@@ -172,7 +180,7 @@ def main():
     rep = {"island": a["island"], "blend_in": str(blend), "blend_out": str(out), "old_bands": a["old"],
            "island_vertices": n_all, "found_worst_mm": round(worst * 1000, 3), "moved": moved,
            "stations_moved": [min(stations), max(stations)] if stations else None, "largest_move_m": round(big, 3),
-           "paint_vertices_moved": paint}
+           "paint_vertices_moved": paint, "deck": "moved" if a["move_deck"] else "kept (v4's, under the slab)"}
     print("[reshape] " + json.dumps(rep))
     if a["report"]:
         Path(a["report"]).write_text(json.dumps(rep, indent=1) + "\n", encoding="utf-8")

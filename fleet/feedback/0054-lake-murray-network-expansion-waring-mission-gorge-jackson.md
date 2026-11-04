@@ -2156,3 +2156,92 @@ python -c "import json; [print(k, r) for k in ('fwd','rev') for r in json.load(o
   the island box only), the closures and spawns as before).
 
 Install only on Kevin's word.
+
+### Phase 2 — step 2f (Mac, 2026-11-04, `claude/lm-phase2-build`): the island reshape leaves the prep's terrain as v4 had it
+
+**Why the ground moved** (step 2e, item 6). Step 4's reshape moved the island's curb (CURB, 78 vertices) and its deck
+(TERRAIN, 26 vertices). The deck is terrain, and the prep reads it.
+- **The deck sits under the road slab.** Measured on v4's prepped scene at all 28 Princess View deck vertices, the grass
+  stands 0.020 m under the road. The prep pins every deck vertex to the road − 0.02, so the island's visible top is the
+  slab whatever the deck's width.
+- **The moved deck.** Four of its cross edges grew past CORRIDOR_EDGE_M (3.30-3.88 → 4.56-4.61 m), and its face centres
+  moved by up to 1.3 m. The prep halves terrain edges longer than 4.5 m near a road, and tiles 1GRASS by MEDIAN bisection of
+  every face centre. So one face more, or one centre across a cut, moves every later cut, and the per-tile thinning re-meshes
+  ground kilometres away.
+
+**The cure.** `tools/reshape_island_blend.py` now moves the CURB (and the paint) and leaves the deck exactly as v4 authored
+it (`island_reshape.moves(move_deck=False)`; `--move-deck` restores step 4's behaviour). Nothing visible changes:
+- The deck is pinned under the slab, and the curb, the yellow edge lines and the TreeFX ring are what you see.
+- At v207-208 and v211 the deck's left edge stands 0.23-0.27 m outside the new curb base, under the carriageway, pinned
+  0.02 m under it. That is ground under pavement, which no gate reads as on top.
+
+A first cure tried a narrower deck, which kept the four edges under 4.5 m. It held the corridor split (80,161 edges, v4's
+count) but still moved four tiles (1GRASS_4-7, 2,036 faces outside the island, tile 6 −8 vertices). The narrowed deck's face
+centres crossed a bisection cut. Keeping the deck removes both mechanisms.
+
+**Proven on the Mac** (Blender 5.1.2, the engine-july snapshot's `build_kn5_loop.py` run whole on scratch copies of the
+project; v4's loop.blend is LFS 0656308e):
+
+| Prep run | Corridor edges split | 1GRASS verts before the split | Terrain tiles | Faces differing from v4 (outside / inside the island box) |
+|---|---|---|---|---|
+| v4, run twice | 80,161 / 80,161 | 817,802 | 20 / 20 | 0 / 0 (the prep is deterministic) |
+| step 4's reshape (deck moved) | 80,165 | 817,806 | 20 | **4,278** / 98, in all 16 1GRASS tiles: the 0.20.2 spread, reproduced |
+| deck narrowed under 4.5 m | 80,161 | 817,802 | 20 | 2,036 / 82, in 1GRASS_4-7 |
+| **deck kept (this cure)** | 80,161 | 817,802 | 20 | **0** / 0 |
+
+With the deck kept, every terrain face of the prepped scene equals v4's to 0.1 mm, inside the island box too. The moved
+curb changes no ground there: the prep's anti-poke already held the ground 0.02 m under the slab. The same holds after
+`tools/thin_terrain_blend.py`: 983,287 → 541,820 vertices in both, and 1,060,989 thinned faces identical, tile for tile.
+So with the island alone, the road kn5's 1GRASS / rock tiles stay 0.20.1's, and only the curb (1KERB_sidewalk) and the
+paint (`_street`'s YLINE) change, inside the island box. Proof record: `proofs/island_prep_2f_mac.json`. The tools are
+`proofs/prep_tile_dump.py` and `proofs/prep_tile_cmp.py`; the PC can run the same on its prepped
+`blender/san_diego_lake_murray.blend` against 0.20.1's.
+
+**Blend digest, v4 → the cured reshape:** 145 objects in both, the same set; only CURB and YLINE differ, in positions only
+(the topology, UVs, materials and transforms are equal); TERRAIN is identical, byte for byte. The island deck's longest edge
+is 5.417 m, v4's own (5 deck edges over 4.5 m on v4, the same 5 now). Report: `proofs/reshape_pv_2f_mac.json`
+(592 found, 0.00 mm; CURB 78, TERRAIN 0; stations 200-212; largest move 1.287 m; YLINE 88).
+
+**The PC's re-run.** Step 4 is redone from v4's blend, followed by the rebuild. Run it in the claude/lm-phase2-0202
+worktree. Nothing is installed.
+
+```bash
+cd <the claude/lm-phase2-0202 worktree>
+git fetch origin && git merge origin/claude/lm-phase2-build
+# step 4 again, from v4's own blend (the workshop kept it as loop.v4.blend; it must be lm_v4's loop.blend byte for byte)
+certutil -hashfile D:/k10-scratch/lm_phase2/project/loop.v4.blend SHA256      # = certutil of D:/k10-scratch/lm_v4/loop.blend
+"C:/Program Files/Blender Foundation/Blender 4.2/blender.exe" --background --python-exit-code 1 \
+  --python tools/reshape_island_blend.py -- D:/k10-scratch/lm_phase2/project --island north_princess_view \
+  --old-bands D:/k10-scratch/lm_v4/data/median_bands.json --blend D:/k10-scratch/lm_phase2/project/loop.v4.blend \
+  --out-blend D:/k10-scratch/lm_phase2/project/loop.pv2f.blend --report D:/k10-scratch/lm_phase2/reshape_pv_2f.json
+mv D:/k10-scratch/lm_phase2/project/loop.pv2f.blend D:/k10-scratch/lm_phase2/project/loop.blend
+# the config, the plan before the compose (as step 2e)
+git checkout origin/claude/lm-phase2-build -- tracks/san-diego-lake-murray/track.config.json
+python tracks/san-diego-lake-murray/source/expansion/phase2/plan_north.py D:/k10-scratch/lm_phase2/north-plan-2f   # PLANNED
+python -c "import json,sys; sys.path.insert(0,'tracks/san-diego-lake-murray/source/expansion/phase2'); import plan_north as p
+b=json.load(open(p.PROJECT/'track.config.json',encoding='utf-8')); d=json.load(open(p.HERE/'race.north.declaration.json',encoding='utf-8'))
+c=p.compose(b,d); c['version']='0.20.2'
+open(p.PROJECT/'track.config.json','w',encoding='utf-8').write(json.dumps(c,indent=2,ensure_ascii=False)+'\n')"
+AIROSO=<this worktree> ENG=D:/k10-scratch/eng_repro SHIP_PROJ=D:/k10-scratch/lm_phase2/project \
+  bash tools/ship_track.sh san-diego-lake-murray --skip-blend --no-install 2>&1 | tee D:/k10-scratch/lm_phase2/ship_2f.log
+python tools/kn5_equiv.py "$L201" D:/k10-scratch/lm_phase2/project/build/san_diego_lake_murray.kn5 --list
+```
+
+**Pass**, on top of step 2e's list:
+- **The reshape report** reads 592 found (worst ≤ 0.5 mm), moved CURB 78 / TERRAIN 0, stations [200, 212], largest move
+  1.287 m, YLINE 88, deck "kept".
+- **The prep** prints v4's numbers in `terrain conform` and `split 1GRASS`. 0.20.1's log has them.
+- **The road kn5 `--list` against 0.20.1** names only:
+  - meshes whose box lies inside the island's kn5-frame box x −3001.7..−2968.3, z −1592.1..−1537.9;
+  - the north lap's own kerb seating at J2, J1 and J4 (1GRASS_2 / 3 / 13);
+  - 1GRASS_1 / 4 / 15's handful of triangles, as the island-only control against 0.20.2 named them, each moved box
+    within 60 m of the lap.
+
+  No tile far from both. `kn5_surface_delta` is then recorded as in step 2e, and outside the island box and the lap's band it
+  must read 0.
+- **drive_test `--line expansion`:** fwd steps/km back to 0.32 (rev 0.16), or every new `steps_at` entry inside the island
+  box at the moved curb face. The ground is v4's now, so the curb is the only thing there that moved.
+- **house_seat:** the three houses back to 0.20.1's rows.
+- **Everything else as step 2e.**
+
+Install only on Kevin's word.

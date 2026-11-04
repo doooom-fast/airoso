@@ -1,5 +1,5 @@
 {
- "input": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/ws_empty/pikes-peak-lm/blender/pikes_peak_international_raceway_lm.blend",
+ "input": "D:\\k10-scratch\\ppir_lm\\blender\\pikes_peak_international_raceway_lm.blend",
  "outputs": {
   "loop_main.blend": {
    "objects": 24,

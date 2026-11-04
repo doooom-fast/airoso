@@ -48,7 +48,10 @@ def compose(base: dict, decl: dict) -> dict:
     cor.update({k: v for k, v in spec["corridor"].items() if not k.startswith("_")})
     spec["corridor"] = cor
     cfg["race"].setdefault("laps", {})[lap_id] = spec
-    cfg["layouts"] += copy.deepcopy(decl["layouts"])
+    # idempotent (step 2e): a base that already holds the lap's layouts (a composed tree, the PC's 0.20.2 branch) gets them
+    # replaced, not appended twice ("closure_token 'ncw' is also north_cw's"); on the line's own config nothing differs
+    ids = {str(lo.get("id")) for lo in decl["layouts"]}
+    cfg["layouts"] = [lo for lo in cfg["layouts"] if str(lo.get("id")) not in ids] + copy.deepcopy(decl["layouts"])
     return cfg
 
 

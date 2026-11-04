@@ -977,6 +977,8 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
                                     (round(s, 1), round(off, 2), round(step, 3), round(own, 4)))
                             else:
                                 problems["steps"].append((round(s, 1), round(off, 2), round(step, 3)))
+                                problems.setdefault("steps_xz", []).append(
+                                    (round(s, 1), round(off, 2), round(step, 3), round(px, 1), round(pz, 1)))
                 prev_slope[pi] = slope
             prev_adv[pi] = adv
             prev_d[pi] = d_now
@@ -1456,6 +1458,10 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
                              for u in _nref.get("unjudged") or []]}
         else:
             _nref = None
+    if line is not None:
+        # ledger 0054 step 2e (--line only, reported, not gated): WHERE each bump > STEP_BUMP_M stands — [s, lateral, step,
+        # x, z] (engine frame); steps_per_km alone could not say the 0.20.2 rise sat at Princess View's island
+        report["steps_at"] = [list(r) for r in problems.get("steps_xz", [])]
     (data / out_name).write_text(json.dumps(report, indent=1), encoding="utf-8")
     print(f"DRIVE TEST {cfg['slug']}{(' [' + lid + ' ' + direction + ' ' + kind + ']') if lid else ''}"
           f"{(' [line ' + line['id'] + ']') if line is not None else ''}  "

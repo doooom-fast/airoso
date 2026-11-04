@@ -247,14 +247,18 @@ def offset_islands(proj, line: dict, name: str, snap_m: float) -> tuple[list[flo
         if str(ci.get("name", "")).split("#", 1)[0] != base:
             continue
         ip, iwp = ci.get("points_xyz_m") or [], ci.get("island_w_by_point") or []
+        # an offset_aware island (tools/expansion_pieces.decorate) carries ONE point per connector vertex, in order: vertex
+        # k's island is point k, however far off the line it stands (step 2e: Jackson's median nose stands 2.6-3.6 m off
+        # its line at lap v1478-1489, past any snap, and the lane ran onto its curb); any other island is snapped
+        indexed = bool(ci.get("offset_aware")) and len(ip) == n == len(iwp)
         for k, p in enumerate(pts):
             a, b = pts[max(0, k - 1)], pts[min(n - 1, k + 1)]
             tx, tz = b[0] - a[0], b[2] - a[2]
             L = math.hypot(tx, tz) or 1.0
             best, got = snap_m, None
-            for q, w in zip(ip, iwp):
+            for q, w in ([(ip[k], iwp[k])] if indexed else zip(ip, iwp)):
                 d = math.hypot(p[0] - q[0], p[2] - q[2])
-                if d <= best:
+                if indexed or d <= best:
                     best, got = d, (float(w), ((q[0] - p[0]) * -tz + (q[2] - p[2]) * tx) / L)
             if got is not None and got[0] > iw[k]:
                 iw[k], io[k] = got

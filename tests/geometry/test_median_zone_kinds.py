@@ -150,6 +150,23 @@ def test_closed_lap_seam_band_is_vertex_0s():
     assert not MedianZone.load(_project()).closed
 
 
+def test_road_islands_zone_the_mainline_medians_for_a_lap_layout_only():
+    """ledger 0054 step 2e: a layout on a LAP is zoned on its lap, but its gate OBJ carries the whole road kn5 —
+    road_islands() gives the mainline's own medians (island kind) for it, and None for every other layout"""
+    d = _project()
+    cfg = {"slug": "t", "mirror_x": False,
+           "layouts": [{"id": "street", "kind": "street"},
+                       {"id": "race_cw", "kind": "race", "race_furniture": True},
+                       {"id": "north_cw", "kind": "race", "race_furniture": True, "lap": "north"}]}
+    (d / "track.config.json").write_text(json.dumps(cfg))
+    z = MedianZone.road_islands(d, "north_cw")
+    assert z is not None and z.n_island == 11 and not z.has_barrier
+    assert z.contains(0.0, 75.0)                          # v15: the mainline island
+    assert not z.contains(0.0, 150.0, ALL_KINDS)          # the mainline's race bands are not the lap's
+    for lid in (None, "street", "race_cw"):
+        assert MedianZone.road_islands(d, lid) is None
+
+
 def test_a_trimmed_corner_band_runs_through_its_corner_not_the_folded_offsets():
     """2026-10-11: barrier_bands.json `edge_corners` — on that side the removed vertices have NO band point and
     the band is the polyline in_vertex band point -> X -> out_vertex band point (what the author sweeps), so

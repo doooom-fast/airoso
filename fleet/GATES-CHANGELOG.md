@@ -14,6 +14,65 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-04 (step 2e) — MEASUREMENT-BUG FIX: built no_route measures a wall from the deck it stands on (ledger 0054 Phase 2; no threshold moved)
+
+`tools/no_route.py` BUILT mode counted a wall cell only where the 1WALL triangles standing on it (and on its 8 neighbours) span
+[deck + 0.20, deck + 0.90], with the deck read as the CENTRELINE's height + 0.10 at the cell's projection. The PC's 0.20.2 run on
+the north lap: `1WALL_race_edge_lapnorth_L_princessview` stands unbroken over J3 v688-703, 1.2 m tall, on the J3 pad 0.21-0.27 m
+below the centreline. In the centreline frame its top falls 3-7 cm short of the band, so it read as a ~17 m door that flooded all
+16 forbidden probes in both north layouts.
+
+- **The fix.** The span test runs a second time with each wall triangle measured from the deck under it: the 1ROAD triangle under
+  its plan centroid whose height is nearest the triangle's foot (its lowest vertex); where no 1ROAD stands under it, the centreline
+  deck as before. A cell is a wall when it seals in EITHER frame. Every centreline-frame wall stays a wall, so no existing seal can
+  open, and a build whose walls all stand on the line's own deck is unchanged. The report adds `local_deck_cells`, the cells only
+  the deck frame seals. 0 there means every other key equals the old reading by construction.
+- **Thresholds.** WALL_LO_M 0.20, WALL_HI_M 0.90, HBIN_M, PROBE_R_M, TOL_M and the cell are unchanged. The wall is not made taller.
+  DECK_BUCKET_M 2.0 is a lookup grid, not a judgment.
+- **Proven.** `tests/tools/test_no_route.py`: a closure stretch on a pad 0.24 m below the line reads as a door without the pad in
+  the OBJ (the old reading; this reaches the bug) and seals with it (`local_deck_cells` > 0). Walls on a deck at the line's own
+  height give every key equal and `local_deck_cells` 0. On the PC: race_cw / race_acw built keys equal to 0.20.1, with
+  `local_deck_cells` read and recorded (step 2e runbook).
+
+## 2026-11-04 (step 2e) — WIRING: audit_mesh on a lap layout exempts the road kn5's own medians (ledger 0054 Phase 2; no threshold moved)
+
+`scripts/geometry/audit_mesh.py --layout north_*` zoned the layout on its lap: the lap's barrier_bands.north.json bands, the lap's
+islands and the divided connectors' islands (MedianZone.load, since b8705a0). But a lap layout's gate OBJ is the whole road kn5
+plus the lap's race kn5 plus its closure, so it carries every mainline median too. Their island curbs, noses and posts are
+exempt in the street audit, but here they read as D 14,106 and I-K 2,007.
+
+- **The change.** `MedianZone.road_islands(project, layout)` gives the mainline line's own islands (as a race layout meets them:
+  race_chicane.race_island_w) plus the connectors' islands, island kind only, for a layout on a LAP. For every other layout it
+  returns None. For a lap layout, audit_mesh exempts D / K / I on the lap's zone OR those islands. Mainline audits (street,
+  race_cw, race_acw) take no new branch and read exactly as before.
+- **Thresholds.** MARGIN_M, ALONG_M, KERB_STAND_M and every count limit are unchanged. The mainline's race bands are not added
+  (its race kn5 is not in a lap's gate OBJ).
+- **Proven.** `tests/geometry/test_median_zone_kinds.py::test_road_islands_zone_the_mainline_medians_for_a_lap_layout_only`.
+  The north numbers come from the PC (step 2e runbook).
+
+## 2026-11-04 (step 2e) — WIRING: layout plates stay on their own line; the lap reads a median by index (ledger 0054 Phase 2; no threshold moved)
+
+- **`tools/place_signs.py` `race_layouts` / `tools/verify_signs.py` `driven_directions`.** A layout on its own lap
+  (`layouts[].lap`) no longer gets the MAINLINE corners' per_layout plates (M3 / M4). The 0.20.2 run stood `M3-fwd@north_cw` in
+  north_cw's lane at lap v0 (scenery gate red; drive_test north_cw obstruction 9). The north lap gets no plates unless its
+  declaration asks for them. Proven: on the line's config place_signs gives byte-identical output; on the composed config, 29 signs
+  and race_cw / race_acw's four plates (it gave 33 with the north clones). Tests: test_p4_signs, test_place_signs.
+- **`scripts/geometry/race_lap.offset_islands`.** An `offset_aware` connector island (one point per connector vertex) is read by
+  index, however far off the line its point stands. Any other island keeps the snap_m search. Jackson's median nose stands
+  2.6-3.6 m right of its line at lap v1478-1489, past the 2.5 m snap. The lap dropped it and the corridor ran north_cw's full lane
+  over its curb (drive_test severe 9, 0.17 m at s 4375-4378, lat −3.2). The Jackson nose moves to median v1478, pin v1477.
+  Mainline: no lap, no change. Tests: test_race_noses (Jackson's nose at v1478, 1.5 m, −3.57 m).
+
+## 2026-11-04 (step 2e) — reported, not gated: drive_test --line places its bumps; the ground compared as a surface
+
+- `scripts/geometry/drive_test.py`: a `--line` run's report adds `steps_at` [s, lateral, step, x, z] (engine frame) for every bump
+  it counts. A lap or layout run's report is byte-identical (no key). No threshold, no verdict change.
+- `tools/kn5_surface_delta.py` (new, a measurement): two kn5s' 1GRASS* ground differenced as surfaces on a plan grid (highest
+  sheet, b − a), overall, per tile of a, for the rock meshes, and by distance to a line. It answers whether re-tiling or
+  re-thinning moved the ground, which `kn5_equiv --list` cannot tell from moved vertices. Tests: test_kn5_surface_delta.
+- `tools/verify_fold_fans.py`: the printer skips a lap layout's `skipped` record. It read `rows` off it and crashed with a
+  KeyError on the north run. The written record is unchanged.
+
 ## 2026-11-04 — WIRING: a lap's race furniture seats on every 1ROAD deck, not ROAD alone (ledger 0054 Phase 2, no threshold moved)
 
 `tools/author_race_furniture_blend.py` seated a lap's rings and kerb stations on the `ROAD` object only. The north lap's

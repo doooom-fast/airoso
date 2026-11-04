@@ -52,7 +52,7 @@
         ],
         "snap_m": 2.5
       },
-      "_island_offsets_doc": "scripts/geometry/race_lap.py (ledger 0054 Phase 2, 2026-11-04): every north piece's raised median where it really stands. median_bands connector_islands carry each median's own centre line (offset_aware), one point per connector vertex; the default 1.0 m snap dropped every point more than 1 m off the connector line, which cut the medians into fragments (Waring v188-264, Mission Gorge v14-70 among others) and moved their ends (Waring's start 30 m after J1 at v11 was really v8, 1.3 m right; its tail before J2 at v315, 1.7 m left, 2.0 m wide). Each vertex takes its nearest island point within 2.5 m (the points stand ~3 m apart along the road) and that point's lateral offset; race_corridor puts the closure on the offset island's race face",
+      "_island_offsets_doc": "scripts/geometry/race_lap.py (ledger 0054 Phase 2, 2026-11-04): every north piece's raised median where it really stands. median_bands connector_islands carry each median's own centre line (offset_aware), one point per connector vertex; the default 1.0 m snap dropped every point more than 1 m off the connector line, which cut the medians into fragments (Waring v188-264, Mission Gorge v14-70 among others) and moved their ends (Waring's start 30 m after J1 at v11 was really v8, 1.3 m right; its tail before J2 at v315, 1.7 m left, 2.0 m wide). Each vertex takes its nearest island point within 2.5 m (the points stand ~3 m apart along the road) and that point's lateral offset; race_corridor puts the closure on the offset island's race face. Since step 2e (2026-11-04) an offset_aware island (one point per connector vertex) is read by index, however far its point stands off the line (Jackson's nose 2.6-3.6 m at lap v1478-1489); snap_m is the fallback for any other island",
       "_joins_doc": "J2, J3, J4: cubic curves off the roads' own approach tangents (832facf), a reference line through each pad, never an AI spline and never road geometry. J5 (11.6 m) and J1 (14.6 m) stay straight joins: both lie inside the mainline's own junction box (Navajo/Jackson, College/Navajo), whose pavement is built",
       "junction_pads": [
         "J2",
@@ -150,8 +150,8 @@
           },
           {
             "end": 1472,
-            "median": 1490,
-            "why": "Jackson's median starts 49 m after the J4 box (v1490): from the far strip at v1472 the closure reached its race face only at 1:2.96 (the 1:3 limit). The closure ends at the nose (pin v1489) with a K-rail across the far carriageway"
+            "median": 1478,
+            "why": "Jackson's median starts 15 m after the J4 box (v1478, a 1.5 m nose 3.6 m right of the line: its points stand past any snap, so the lap takes them by index since step 2e; the 0.20.2 run's north_cw drove onto its curb at v1478-1479). The closure ends at the nose (pin v1477) with a K-rail across the far carriageway"
           }
         ],
         "_noses_doc": "tools/barrier_bands.py race.corridor.noses (ledger 0054 Phase 2): each closure-run end (a box edge) that ends at a median nose instead of the far curb strip; the pin is the vertex beside the nose, on the island's race face, and the K-rail runs from the closure's race face to the far curb strip, in that layout's closure kn5",

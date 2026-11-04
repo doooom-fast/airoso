@@ -34,6 +34,7 @@ FACE = W / 2 - 0.82          # 7.18: the curb strip's road face
 EDGE = W / 2 - 0.485         # 7.515: the curb strip's centre
 CLOSE = 1.0                  # race_cw's closure centre, 1 m LEFT of the centreline
 BH = 0.335
+DECK = nr.DECK_LIFT_M         # the deck rides 0.10 over the centreline y
 
 
 def _centreline(step=2.0, R=30.0):
@@ -277,3 +278,44 @@ def test_cli_exit_codes():
     assert nr.main([str(d2), "--layout", "race_cw"]) == 1
     d3 = _project(walls=_sealed_walls(), seed=_at(10, -EDGE))
     assert nr.main([str(d3), "--layout", "race_cw"]) == 2
+
+
+def _deck(name, y_lo, y_hi, h, k0=0, k1=N - 1):
+    """a flat 1ROAD strip between laterals y_lo..y_hi at height h: (name, verts, tris)"""
+    v, t = [], []
+    for k in range(k0, k1 + 1):
+        (xa, za), (xb, zb) = _at(k, y_lo), _at(k, y_hi)
+        v += [(xa, h, za), (xb, h, zb)]
+    for r in range(k1 - k0):
+        a = 2 * r
+        t += [(a, a + 1, a + 3), (a, a + 3, a + 2)]
+    return name, v, t
+
+
+def test_a_wall_on_a_pad_below_the_line_is_measured_from_the_pad():
+    """ledger 0054 step 2e (MEASUREMENT-BUG FIX): a closure stretch standing on a pad 0.24 m below the line's deck
+    reads [-0.24, +0.73] in the centreline frame — short of the 0.90 band top, a door. Measured from the pad it
+    stands on it spans [0, 0.97] and seals. Without the pad in the OBJ it is still a door (no deck, centreline)."""
+    pad_h = DECK - 0.24
+    k0, k1 = 40, 60
+    close = [_prism("1WALL_race_close_cw_a", _band(CLOSE, 0, k0)),
+             _prism("1WALL_race_close_cw_pad", _band(CLOSE, k0, k1), y0=pad_h, y1=pad_h + 0.97),
+             _prism("1WALL_race_close_cw_b", _band(CLOSE, k1, N - 1))]
+    edges = [_prism("1WALL_race_edge_L", _band(EDGE)), _prism("1WALL_race_edge_R", _band(-EDGE))]
+    bare = nr.run(_project(walls=edges + close), "race_cw", verbose=False)
+    assert bare["fail"] and any(x["class"] == "opposite" for x in bare["doors"]), bare["doors"]
+    assert bare["local_deck_cells"] == 0
+    padded = edges + close + [_deck("1ROAD_pad", CLOSE - 2.0, CLOSE + 2.0, pad_h, k0 - 2, k1 + 2)]
+    r = nr.run(_project(walls=padded), "race_cw", verbose=False)
+    assert r["fail"] is False and r["leak_cells"] == 0, r["fails"]
+    assert r["local_deck_cells"] > 0
+
+
+def test_walls_on_the_lines_own_deck_are_unchanged_by_the_deck_frame():
+    """the second frame only ADDS: walls standing on a 1ROAD deck at the line's own height give the same cells"""
+    walls = _sealed_walls()
+    r0 = nr.run(_project(walls=walls), "race_cw", verbose=False)
+    r1 = nr.run(_project(walls=walls + [_deck("1ROAD_main", -W / 2, W / 2, DECK)]), "race_cw", verbose=False)
+    for key in ("wall_cells", "wall_tris_in_band", "reached_m2", "allowed_m2", "leak_cells", "door_clusters", "fail"):
+        assert r0[key] == r1[key], key
+    assert r1["local_deck_cells"] == 0

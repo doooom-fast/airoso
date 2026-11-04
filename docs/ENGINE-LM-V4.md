@@ -72,6 +72,23 @@ line, 1,123 stations x both sides, top physical surface every 0.5 m out to 30 m.
 7. **Not the cause:** crossfall (both flat: crown 0.000 m median in both; v5 had no `road_profile.cambers` and no
    `crossfall.json`), widths (median |dw| 0.00 m, p95 0.59), heights (p95 0.03 m), plan line (median 0.20 m).
 
+**The edge and the near-road ground, as one report** (`tools/edge_report.py`, ledger 0078: REPORT ONLY, no threshold —
+one would be invented). Every ~10 m of each build's own line, both sides; the first three and `pilot (blend)` read the
+pre-prep blend (the built OBJs of v4 / v5 / 0.35.0 are not on the Mac), `pilot (built)` the pilot kn5s' gate OBJ.
+
+| | LM v4 | LM v5-bare | Sand Creek 0.35.0 | pilot (blend) | pilot (built) |
+|---|---|---|---|---|---|
+| 1 m past the lane edge | kerb 99.2 % | shoulder 99.8 % | shoulder 99.7 % | edge strip 99.8 % | ground 69.5 %, edge strip 30.5 % |
+| rise within 2 m (median / p95) | 0.14 / 0.14 m | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| road physics past the edge (median / p95) | 0 / 0 m | 5.0 / 9.0 m | 5.0 / 24.5 m | 0 / 0 | 0 / 0 |
+| ground 10 m out vs the edge (p5 / median / p95) | -1.07 / -0.18 / +0.75 | -1.94 / -0.77 / +3.79 | -1.68 / -0.73 / +1.24 | -0.20 / -0.18 / -0.17 | -0.20 / -0.18 / -0.16 |
+| 10 m out: > 1 m below / above | 5.6 % / 4.3 % | 29.2 % / 13.5 % | 36.3 % / 5.8 % | 0 / 0 | 0 / 0 |
+
+Sand Creek 0.35.0 (airoso's engine) has v5's edge: a paved embankment to 24.5 m (p95) and a third of the lap with the
+ground over a metre below 10 m out. The pilot holds the ground near road level like v4 and, per Kevin's "no sidewalks",
+has no curb (the built OBJ reads "ground" 1 m out where engine-july's 3 m contact shelf at the edge height covers the edge
+strip's grade).
+
 **The gates don't see 1-3.** v5-bare's lane numbers are as good as v4's or better (severe 0 / 0, kinks 2.52 vs 2.67 /km,
 excursion drops 18 vs 96, audit CLEAN vs 0). drive_test walks the lane and the first metres past it; what made v5 feel
 bad is what stands (or doesn't) beside the lane. A gate for "a curb or a wall within N m of the lane edge" and "ground
@@ -156,7 +173,9 @@ engine a port needs and nothing here touches them.
 
 **Counts, the 29 on-path pieces: (a) 18, (b) 8, (c) 3.** (a) = 1-3, 5, 6, 10, 15, 17, 18, 20-25, 27-29; (b) = 4, 7, 8,
 12, 14, 16, 19, 26; (c) = 9, 11, 13. The (b) pieces that bite a port first are 4 (the urban curb on every road) and 7
-(the ±22 m clamp on a mountain); 19 and 26 are handled for the pilot (decks from `capture.bridges`, textures staged).
+(the ±22 m clamp on a mountain). Generalised on this branch: 4 (`route.edge`, Lake Murray's values the defaults), 19
+(decks from `capture.bridges` as the prep's bridge cache), and the ribbon's bank (row 3: `route.crossfall_file`); 26 is
+handled by staging (the per-build ENG copy below).
 
 ---
 
@@ -221,11 +240,11 @@ The chain change (`tools/ship_track.sh`, `tools/ship_track_spec.py`): ship.json 
 
 ### This week's airoso engine work
 
-- **Lidar camber** (ledger 0066, `tools/lidar_crossfall.py`, `data/crossfall.json`): **carries over as data.** v021's
-  `road_ribbon` / `curb_sidewalk` / `lane_markings` all take `bank_at`; the assembler calls them without it
-  (`build_loop_blend.py:1237-1245`). Owed: an opt-in `route.crossfall_file` read in the assembler (absent = no bank,
-  Lake Murray byte-identical) — the stations must be re-keyed onto the v021 line (crossfall.json is keyed to
-  build_mesh's finished line).
+- **Lidar camber** (ledger 0066, `tools/lidar_crossfall.py`, `data/crossfall.json`): **carries over, wired.** The intake
+  (`lm_intake.crossfall`) writes each measured station as a position (`data/crossfall.lm.json`), the assembler keys it to
+  its own smoothed line and banks the ribbon, the edge, the paint and the conform (`route.crossfall_file`,
+  `build_loop_blend.crossfall_bank`; absent = no `bank_at` passed at all, Lake Murray as it was). On the pilot the built
+  deck's tilt at the 56th → Sand Creek Dr turn matches the lidar to median 0.06 / max 0.19 %-pts (§4).
 - **The OSM line** (Sand Creek 0.33.0+, `scripts/gps/centerline.py` + `fillet`, `widths_from_osm` corner-flare-off):
   **carries over whole** — it is the intake's source (the pilot ran on it).
 - **The pad module the PC is writing:** if it builds pads on build_mesh's 2-row ribbon / the underlay's GEN_*, it is
@@ -238,8 +257,13 @@ The chain change (`tools/ship_track.sh`, `tools/ship_track_spec.py`): ship.json 
 
 ### Lake Murray stays byte-identical
 
-- `tracks/san-diego-lake-murray/` (scripts-v021, engine-july-snapshot, ship.json, config, data): **no diff** against
-  origin/main.
+- `tracks/san-diego-lake-murray/`: engine-july-snapshot, ship.json, config and data have **no diff** against origin/main.
+  scripts-v021 has one: `blender/build_loop_blend.py` gained `route.edge` (EDGE_DEFAULTS = the literals it always swept)
+  and `route.crossfall_file` (absent = no `bank_at` keyword passed). Proof on the Mac: the assembler's six meshes on the
+  same project, before and after the change, hash identically (vertex coordinates + face indices, md5 per mesh: CURB
+  8825c1a8…, ROAD dffe66ba…, TERRAIN f925772b…, MARKINGS 531bbb22…, YLINE 8ba9d11b…, LIGHTS 88c7e32f…), and
+  `tests/tools/test_lm_engine_port.py` pins the defaults against the old literals and Lake Murray's config (no `edge`, no
+  `crossfall_file`). The PC proves the whole v4 chain with `tools/kn5_equiv.py` (ledger 0078 runbook).
 - `tools/ship_track_spec.py`: Lake Murray's spec emits the same lines, md5 `71243207d44b720815666b5c1fb4711d` before and
   after (the `engine` line is written only when declared).
 - `tools/ship_track.sh`: for `san-diego-lake-murray` the engine is the same expression (`${ENG:-…/engine-july}`) and V021
@@ -263,43 +287,63 @@ Branch `claude/fleet-lm-engine` (origin/main + `claude/sand-creek-dressing` merg
 `tracks/sand-creek-lm` (slug `sand_creek_raceway_lm`, install folder `sand_creek_raceway_lm`; Sand Creek's live config
 untouched). Workshop: a scratch project outside airoso. Blender 4.2.9 (`~/.cache/prodrive-ac-builder/Blender4.2.9.app`,
 the `scripts/bootstrap_blender.sh` pin). ENG on the Mac = the snapshot's `scripts/` + `vendor/` with airoso's
-`assets/textures` beside it (all 26 bespoke-material textures present); the kn5 writer is the installed
-blender-assetto-corsa-tools.
+`assets/textures` beside it; the kn5 writer is the installed blender-assetto-corsa-tools.
 
-Chain as run (the same steps as `tracks/sand-creek-lm/ship.json`): `lm_intake` → `build_loop_blend` (v021, V021_SHIM) →
-`weld_mouths` (mainline folds: 16 line cuts at rows 134-141 and 3,202-3,206, two curb pinches levelled ≤ 0.046 m) →
-`lamps` (175 led_cobra) → `layout_dummies` → `bespoke` (451 blocks replace the assembler's boxes) → EJ prep (3 declared
-deck spans) → `split_exports` → EJ export (road 34.1 MB, street-only YLINE, 2 spawn kn5s) → `kn5_to_gate_obj` → gates.
+Chain (`tracks/sand-creek-lm/ship.json`): `lm_intake` (0.35.0's OSM line, widths, 3DEP; the three `capture.bridges`
+decks levelled and declared to the prep; the 40 m grid pre-divided to 20 m; the lidar camber as positions; the bespoke
+plan; no grade cap) → `build_loop_blend` (v021; `route.edge`: no curb, no sidewalk; `route.crossfall_file`) →
+`weld_mouths` (mainline folds) → `seat_edges` (finer ground along the lane edges of the banked stretch) → `lamps` (175
+led_cobra) → `layout_dummies` → `bespoke` (451 blocks) → engine-july prep (3 deck spans) → `split_exports` →
+engine-july export → `kn5_to_gate_obj` → gates + `edge_report`. The assembler took a non-Lake-Murray line with no rewrite.
 
-**The assembler took a non-Lake-Murray line with no code change.**
+| Gate (BUILT kn5) | Sand Creek 0.35.0 (airoso) | pilot, first run | **pilot now** |
+|---|---|---|---|
+| soft top in lane (ground on top) | 0 | 64 | **1** (s 2,562, 5.1 m right) |
+| severe steps | 0 | 0 | 0 |
+| kinks /km | 1.45 | 2.07 | **0.41** |
+| bumps > 2.5 cm /km | 0 | 0.31 | 0 |
+| fold bumps (reported) | 20 | 4 | 4 |
+| vertex bumps (reported) | 0 | 1 | 0 |
+| excursion drops (limit 13) | 7 | 86 | **0** |
+| audit_mesh | CLEAN | K 2 | **CLEAN** |
+| kn5_ground_check | PASS | PASS | PASS (road-over-ground 0 / 4,640, max deck-vs-ground 0.031 m) |
+| verify_kn5 | PASS | PASS | PASS |
+| house_seat | PASS | PASS | PASS (450 blocks) |
+| max grade / 10 m | 6.01 % (6 % cap) | 6.72 % | measured 6.84 % at the intake, **6.72 %** built (σ_y 1.5 pts) |
+| camber at 56th → Sand Creek Dr | lidar, 4.93 % max | none | lidar: built vs measured median 0.06, max 0.19 %-pts |
+| drive_test verdict | PASS | FAIL | **FAIL (the one sample)** |
 
-| Gate (BUILT kn5) | Sand Creek 0.35.0 (airoso) | Pilot, LM engine |
-|---|---|---|
-| soft top in lane (ground on top) | 0 | **64** (s 2,524-2,526 only) |
-| severe steps | 0 | 0 |
-| kinks /km | 1.45 | 2.07 |
-| bumps > 2.5 cm /km | 0 | 0.31 |
-| fold bumps (reported) | 20 | 4 |
-| vertex bumps (reported) | 0 | 1 |
-| excursion drops (limit 13) | 7 | **86** (all 0.14 m: the sidewalk's back bevel, v4's own signature — v4 forced 96) |
-| audit_mesh | CLEAN | **2** (K: kerb in carriageway, worst 0.14 m) |
-| kn5_ground_check | PASS | PASS (road-over-ground p95 0.022 m, max deck-vs-ground 0.072) |
-| verify_kn5 | PASS | PASS |
-| house_seat | PASS | PASS (450 blocks, 0 floating / sunken / buried) |
-| max grade over 10 m | 6.01 % (capped at 6 %) | 6.84 % measured at the intake, **6.72 %** built (the assembler's σ_y 1.5 pts); s 1,563 / 6,235 / 1,626 |
-| drive_test verdict | PASS | FAIL (soft top, drops) |
+What each fix did:
 
-Reds, reported as they are (no threshold moved):
+- **Ground on top at s 2,524-2,526 (64 → 0).** Not the bridge cache. The prep pins every grass vertex under the road to
+  the deck − 0.02 but splits terrain edges at most four times; on the assembler's 20 m grid that left a 10.3 m grass
+  edge under the 5.5 m slip, on the raised-cosine ramp down from E 56th's levelled deck, and the straight chord between
+  two pinned vertices stood over the deck's sag (probed: grass +0.100 vs road +0.100; the assembler had it 0.24 m under).
+  Fix in the intake: `lm_intake.grid_upsample: 2` (the same 3DEP samples, bilinear, so the assembler meshes 10 m facets
+  and the prep's split reaches 1.25 m).
+- **The edge (86 drops → 0, K 2 → 0).** `route.edge` per track. Kevin's own answer, ledger 0070 Q1, 2026-11-03: "race
+  curbs, no sidewalks", recorded there as *race kerbs; no street curbs* (the 2026-07-26 "no sidewalks" rule stands). So the
+  pilot has no street curb and no sidewalk: the lane edge holds road height for 0.30 m, then meets the ground 0.20 m lower
+  over 1.5 m. **The coordinator asked for a 0.15 m street curb**; that variant was built too (curb 0.15 over 0.08, 0.15 m
+  top, ground 2.0 m back): soft top 4, **severe 1**, kinks 2.07, drops 0, **audit 28** (K 26 curbs in the carriageway at
+  the corners, I 2). The no-curb edge is what is committed; Kevin's call which he meant. Race kerbs at the race corners
+  are owed (a race corridor, ledger 0049). Real sidewalks: the NAIP 2023 corner stills in `tracks/sand-creek/source/
+  dressing/` show dirt verges and no sidewalk at Dahlia → E 56th; along Colorado Blvd at E 50th a pale strip at the
+  road's edge may be a sidewalk — not measured, not built.
+- **The camber.** Wired (§3). Built tilt vs `crossfall.json` over s 2,495-2,695: median 0.06, p95 0.18, max 0.19 %-pts;
+  measured max 4.93 %, built 4.92 %. Banking first put 5 grass samples over the low edge (engine-july's 3 m shelf is flat
+  at the edge height, so a grass chord across the low edge of a banked lane stands over it); `tools/seat_edges_blend.py`
+  splits the ground to 0.6 m within 1.5 m of the lane edges of the banked stretch only (+1,873 vertices).
 
-- **Ground on top, s 2,524-2,526** (the 5.5 m slip after E 56th's deck, R 68 m, the deck's 30 m ramp-down). The
-  assembler leaves TERRAIN 0.24 m under the lane there (probed in `loop.blend`); after EJ's prep `1GRASS` sits at the
-  deck's own height (+0.100 vs +0.100). Declaring the three decks to the prep did not change it. Cause in the prep's
-  conform near a levelled deck end: owed.
-- **Excursion drops 86**: the curb profile's 1.2 m grade back to the grass falls 0.14 m in the sweep's 0.5 m sample
-  (limit 0.12). Lake Murray v4 installs the same edge forced (96). A gentler `grade_w` is (b)4's per-track key.
-- **Audit K 2** (0.14 m): the curb on the inside of a tight corner where the weld's fold mend leaves the curb line in
-  the lane edge; worst 0.14 m.
-- Kinks 2.07 /km: the worst (s 2,289-2,291, ±6 m, 28 %-pts) is a fixed-offset wheel path crossing the curb face where
-  the road narrows 12 → 11 m (an OSM width step); the curb is real, the step in width is the data.
+**The one red left: 1 ground-on-top sample at s 2,562, 5.1 m right of centre** (grass 3 mm over the lane). It is where
+the measured camber peaks (4.9 %) while the lane widens 8.6 → 11 m (the merge flare). The v021 ribbon has one quad per
+half-width (left / centre / right rows), so a rolling bank on a widening lane twists that quad into a crease, and a grass
+chord pinned to the deck − 0.02 on either side of the crease stands over it. Finer ground does not cure it (0.35 m edges
+gave 2 samples, 0.6 m gave 1). The cure is in the ribbon: more columns per row on a banked stretch (airoso's
+`road_ribbon(cols=)` answer), which the mouth / weld tools must then read (they key on 3 vertices a row,
+`tools/mouth_weld.mesh_layout`). Owed; no threshold moved, no bank smoothed.
+
+**What a forced install would cover**, if Kevin says so: exactly that one drive_test sample (`soft_top_in_lane` 1, both
+layouts); every other gate is green. Without his word it is not installed.
 
 PC runbook and the side-by-side install: ledger `fleet/feedback/0078-fleet-builds-on-lake-murrays-engine.md`.

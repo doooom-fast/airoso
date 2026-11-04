@@ -310,6 +310,10 @@ draft_seat_terrain() {
   step "author: seat the terrain under every road (verge finer than the road)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/seat_terrain_blend.py" -- "$PROJ" 2>&1 | grep "^\[seat\]\|Error\|Traceback" )
 }
+draft_seat_edges() {
+  step "author: finer ground along the lane edges of the banked stretch (tools/seat_edges_blend.py; ledger 0078; no route.crossfall_file = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/seat_edges_blend.py" -- "$PROJ" 2>&1 | grep "^\[seat-edges\]\|Error\|Traceback" )
+}
 draft_aprons() {
   step "author: corner aprons (route.aprons: the return pavement, its curb + walk, the ground under it; self-checked; none declared = no-op)"
   # ledger 0054 P1 fix round: corner aprons (tools/author_aprons_blend.py; track.config.json route.aprons, absent = no-op)
@@ -588,6 +592,12 @@ gate_verify_pads() {
     step "gate: verify_pads on the built road (every junction pad: present, single coverage, seams <= 10 mm, no grass / curb on the deck, barriers, node height vs 3DEP — hard)"
     (cd "$AIROSO" && python tools/verify_pads.py "$PROJ")
   fi
+}
+gate_edge_report() {
+  # ledger 0078: what stands beside the lane (the kerb or shoulder 1 m out, its rise, the ground 3 / 6 / 10 m out) on the
+  # BUILT road. REPORT ONLY: no threshold exists, so it never sets a gate's exit code
+  step "report: the road edge and the near-road ground on the built road (tools/edge_report.py; ledger 0078; not a gate)"
+  (cd "$AIROSO" && python tools/edge_report.py "$PROJ") || echo "  (edge_report did not run; it gates nothing)"
 }
 gate_rib_check() {
   step "gate: terrain ribbing on the built ground (tools/rib_check.py: sub-cell features folded into staircases — hard)"

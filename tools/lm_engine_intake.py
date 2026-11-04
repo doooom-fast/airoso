@@ -48,6 +48,55 @@ def _md5(p: Path) -> str:
     return hashlib.md5(p.read_bytes()).hexdigest()
 
 
+def _read_npy(path: Path) -> list[list[float]]:
+    """a 2-D little-endian float64 .npy (the heightfield; stdlib only, as the assembler's own reader)"""
+    import ast
+    import struct
+    with open(path, "rb") as f:
+        if f.read(6) != b"\x93NUMPY":
+            raise SystemExit(f"[lm_intake] {path} is not a .npy")
+        major = f.read(2)[0]
+        hlen = struct.unpack("<H" if major == 1 else "<I", f.read(2 if major == 1 else 4))[0]
+        header = ast.literal_eval(f.read(hlen).decode("latin1"))
+        if header.get("descr") != "<f8" or header.get("fortran_order") or len(header["shape"]) != 2:
+            raise SystemExit(f"[lm_intake] {path}: expected a C-order <f8 2-D array, got {header}")
+        ny, nx = header["shape"]
+        data = struct.unpack(f"<{ny * nx}d", f.read(8 * ny * nx))
+    return [list(data[j * nx:(j + 1) * nx]) for j in range(ny)]
+
+
+def _write_npy(path: Path, grid: list[list[float]]) -> None:
+    import struct
+    ny, nx = len(grid), len(grid[0])
+    header = "{'descr': '<f8', 'fortran_order': False, 'shape': (%d, %d), }" % (ny, nx)
+    pad = 64 - (10 + len(header) + 1) % 64
+    header = header + " " * pad + "\n"
+    with open(path, "wb") as f:
+        f.write(b"\x93NUMPY\x01\x00" + struct.pack("<H", len(header)) + header.encode("latin1"))
+        f.write(struct.pack(f"<{ny * nx}d", *[v for row in grid for v in row]))
+
+
+def _upsample(grid, meta, factor):
+    """bilinear, corners kept (the assembler's scripts-v021 ribbon.upsample_grid, the same rule)"""
+    ny, nx = len(grid), len(grid[0])
+    by, bx = (ny - 1) * factor + 1, (nx - 1) * factor + 1
+    out = []
+    for jj in range(by):
+        fy = jj / factor
+        j0 = min(ny - 1, int(fy)); j1 = min(ny - 1, j0 + 1); ty = fy - j0
+        row = []
+        for ii in range(bx):
+            fx = ii / factor
+            i0 = min(nx - 1, int(fx)); i1 = min(nx - 1, i0 + 1); tx = fx - i0
+            a = grid[j0][i0] * (1 - tx) + grid[j0][i1] * tx
+            b = grid[j1][i0] * (1 - tx) + grid[j1][i1] * tx
+            row.append(a * (1 - ty) + b * ty)
+        out.append(row)
+    m2 = dict(meta)
+    m2["nx"], m2["ny"], m2["spacing_m"] = bx, by, meta["spacing_m"] / factor
+    return out, m2
+
+
 def _max_grade(pts, over_m: float) -> float:
     """the steepest grade of a line over a horizontal run of ``over_m`` (the same reading for the intake and the build)"""
     st = [0.0]
@@ -111,6 +160,22 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     (data / "centerline.raw.local.json").unlink(missing_ok=True)
     for f in ("heightfield.npy", "heightfield.meta.json"):
         shutil.copyfile(sdata / f, data / f)
+    # FINER FACETS, SAME SAMPLES (lm_intake.grid_upsample, default 1 = the source grid as is). The assembler halves the
+    # grid once (40 -> 20 m, build_loop_blend.py upsample_grid(.., 2)); engine-july's prep then splits terrain edges near the
+    # road at most 4 times. On a 20 m grid that leaves edges up to ~10 m under a narrow road, and where the deck sags
+    # (a levelled deck's raised-cosine ramp back to the road: Sand Creek s 2,524, the slip after E 56th) the straight grass
+    # chord between two pinned vertices stands over the curved deck: 64 "ground on top" samples. Pre-dividing the 3DEP grid
+    # here (bilinear, as the assembler's own upsample: no new heights, the same surface in finer facets) gives the prep
+    # vertices to pin. Lake Murray never runs this tool.
+    up = int(li.get("grid_upsample", 1))
+    if up > 1:
+        hgrid = _read_npy(data / "heightfield.npy")
+        meta = json.loads((data / "heightfield.meta.json").read_text(encoding="utf-8"))
+        hgrid, meta2 = _upsample(hgrid, meta, up)
+        _write_npy(data / "heightfield.npy", hgrid)
+        meta2["lm_intake_upsample"] = {"factor": up, "source_spacing_m": meta["spacing_m"],
+                                       "_doc": "bilinear from the source 3DEP grid (tools/lm_engine_intake.py)"}
+        (data / "heightfield.meta.json").write_text(json.dumps(meta2), encoding="utf-8")
     want_conn = li.get("connectors", False) if connectors is None else connectors
     conn = sdata / "connectors.local.json"
     if want_conn and conn.exists():
@@ -121,6 +186,44 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         # mainline fold mend, ledger 0050) runs on the mainline alone — it reads both files
         (data / "connectors.local.json").write_text(json.dumps({"connectors": []}), encoding="utf-8")
         (data / "mouths.json").write_text(json.dumps({"mouths": []}), encoding="utf-8")
+    # THE MEASURED CAMBER (lm_intake.crossfall true; ledger 0066's lidar crossfall). The source's data/crossfall.json is
+    # keyed to stations of ITS finished line (build_mesh's); those stations mean nothing on the assembler's line, so each
+    # banked station is written as a POSITION (the source's gate_centerline.json, engine frame = this frame) with its bank,
+    # and the assembler keys it to its own smoothed line (build_loop_blend.crossfall_bank, route.crossfall_file).
+    cf_rep = None
+    cf_out = data / "crossfall.lm.json"
+    if li.get("crossfall"):
+        cfp, glp = sdata / "crossfall.json", sdata / "gate_centerline.json"
+        if not cfp.exists() or not glp.exists():
+            raise SystemExit("[lm_intake] lm_intake.crossfall: the source track has no data/crossfall.json + gate_centerline.json")
+        cf = json.loads(cfp.read_text(encoding="utf-8"))
+        if cf.get("status") != "measured":
+            raise SystemExit(f"[lm_intake] {cfp}: status {cf.get('status')!r}, only a measured crossfall is taken")
+        gl = json.loads(glp.read_text(encoding="utf-8"))["points_xyz_m"]
+        gst = [0.0]
+        for a, b in zip(gl, gl[1:]):
+            gst.append(gst[-1] + math.hypot(b[0] - a[0], b[2] - a[2]))
+        cst, cbk = cf["station_m"], cf["bank_rad"]
+        keep = set()
+        for k, v in enumerate(cbk):
+            if abs(v) > 1e-9:
+                keep.update((k - 1, k, k + 1))                  # each banked run with a flat station either side
+        import bisect
+        pxz, pbk = [], []
+        for k in sorted(i for i in keep if 0 <= i < len(cst)):
+            s = cst[k]
+            j = min(len(gst) - 1, max(1, bisect.bisect_left(gst, s)))
+            t = (s - gst[j - 1]) / ((gst[j] - gst[j - 1]) or 1.0)
+            pxz.append([round(gl[j - 1][0] + (gl[j][0] - gl[j - 1][0]) * t, 3),
+                        round(gl[j - 1][2] + (gl[j][2] - gl[j - 1][2]) * t, 3)])
+            pbk.append(cbk[k])
+        cf_out.write_text(json.dumps({"points_xz": pxz, "bank_rad": pbk, "source": f"tracks/{src_track}/data/crossfall.json",
+                                      "source_frame": cf.get("frame"), "source_status": cf.get("status"),
+                                      "_doc": "+ = the left edge (of travel) higher; keyed by position (ledger 0078)"}),
+                          encoding="utf-8")
+        cf_rep = {"stations": len(pbk), "max_pct": round(100 * math.tan(max(abs(b) for b in pbk)), 2) if pbk else 0.0}
+    else:
+        cf_out.unlink(missing_ok=True)
     # THE BUILDINGS (Kevin 2026-11-03: "Lake Murray v4 had many more houses in it this time, don't lose those"): the
     # footprint plan the config's scenery.bespoke.blocks names (tools/plan_buildings.py's output, source/bespoke/...) comes
     # from the source track; tools/author_bespoke_blend.py stands it in place of the assembler's HOUSE / BUILDING boxes
@@ -169,7 +272,8 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
            "measured_max_grade_pct": round(100.0 * _max_grade(pts, 10.0), 2),
            "y_changed_points": sum(1 for d in dy if abs(d) > 1e-6),
            "y_change_max_m": round(max((abs(d) for d in dy), default=0.0), 3),
-           "connectors": bool(want_conn and conn.exists()), "bespoke_files": copied,
+           "connectors": bool(want_conn and conn.exists()), "bespoke_files": copied, "crossfall": cf_rep,
+           "grid_upsample": up,
            "md5": {"source_centerline": _md5(need[0]), "heightfield.npy": _md5(need[1]),
                    "centerline.local.json": _md5(data / "centerline.local.json")}}
     (data / "lm_intake.json").write_text(json.dumps(rep, indent=1), encoding="utf-8")

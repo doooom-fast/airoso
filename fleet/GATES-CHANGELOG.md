@@ -14,6 +14,17 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-03 — the edge report, report-only; the LM-engine port's invented numbers (ledger 0078; no threshold, no bypass)
+
+No gate threshold changed and nothing is bypassed. `tools/edge_report.py` (chain step `edge_report`) reports what stands
+beside the lane on the built road (the surface 1 m past the edge, its rise, road physics past the edge, the ground 3 / 6
+/ 10 m out). It has **no threshold and never sets an exit code**: one would be invented; ledger 0078 compares Lake Murray
+v4, v5-bare, Sand Creek 0.35.0 and the pilot with it. New ⚠ invented numbers, none a gate: `tools/seat_edges_blend.py`
+`MAX_EDGE_M` 0.6, `BAND_M` 1.5, `PAD_M` 10 (finer ground along a banked lane's edges); the pilot's `route.edge` grade
+1.5 m (no curb) and the street-curb variant's 2.0 m (the shortest runs under drive_test's 0.12 m per 0.5 m). The grade
+caps are now per track and off for ports (`route.connector_max_grade_pct`, `lm_intake.max_grade_pct`; Lake Murray keeps
+11 % on its connectors).
+
 ## 2026-11-03 — EXCLUSION: race kerbs leave the prep's 0020 carve (ledger 0020 Rule 1; Lake Murray v5 race, ledger 0065)
 
 `scripts/ac/build_kn5_loop.py`: 0020's Rule 1 deletes any 1KERB face whose centre stands more than 0.15 m inside a carriageway

@@ -363,7 +363,17 @@
     "smooth_passes": 2,
     "smooth_sigma_y_pts": 1.5,
     "divided_double": true,
-    "_lm_smooth_doc": "the v021 assembler's corner rounding and profile smoothing, Lake Murray's values (its defaults)"
+    "_lm_smooth_doc": "the v021 assembler's corner rounding and profile smoothing, Lake Murray's values (its defaults)",
+    "edge": {
+      "curb_h": 0.0,
+      "curb_face_w": 0.1,
+      "sidewalk_w": 0.2,
+      "connector_sidewalk_w": 0.2,
+      "grade_w": 1.5,
+      "_doc": "Kevin 2026-11-03 (ledger 0070 Q1): \"race curbs, no sidewalks\" = race kerbs at the race corners (owed: they come with a race corridor), no street curbs, no sidewalks. The v021 edge strip with no curb: the lane edge stays at road height for 0.30 m, then meets the ground 0.20 m lower over 1.5 m [invented: the shortest run under the drive gate's 0.12 m per 0.5 m]. The strip keeps the assembler's four profile points a side, which tools/weld_mouths_blend.py reads."
+    },
+    "crossfall_file": "data/crossfall.lm.json",
+    "_crossfall_doc": "ledger 0066's lidar camber at the 56th -> Sand Creek Dr turn (tracks/sand-creek/data/crossfall.json), written by position by tools/lm_engine_intake.py and keyed to the assembler's own line"
   },
   "loop": true,
   "default_width_m": 9.0,
@@ -660,6 +670,9 @@
   "lm_intake": {
     "source_track": "sand-creek",
     "connectors": false,
+    "crossfall": true,
+    "grid_upsample": 2,
+    "_grid_doc": "the 40 m 3DEP grid pre-divided to 20 m (bilinear, the same samples) so the assembler's terrain is 10 m facets and engine-july's corridor split reaches the slip after E 56th's deck (ledger 0078: 64 ground-on-top samples where a 10 m grass chord stood over the deck's ramp sag)",
     "_doc": "tools/lm_engine_intake.py: the source track's projected line + widths + 3DEP grid, capture.bridges decks levelled and the road_profile grade net (Y only), into data/. connectors false: the pilot is the lap alone; the free roam's 106 grid streets need the LM chain's junction tools (route/trim connectors, weld_mouths, gap_mouths), owed (ledger 0078)."
   },
   "terrain": {

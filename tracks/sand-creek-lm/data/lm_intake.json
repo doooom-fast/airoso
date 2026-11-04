@@ -30,6 +30,11 @@
  "bespoke_files": [
   "source/bespoke/buildings.json"
  ],
+ "crossfall": {
+  "stations": 60,
+  "max_pct": 4.93
+ },
+ "grid_upsample": 2,
  "md5": {
   "source_centerline": "0bbfe1453bd32b4ae2cd637da3931e08",
   "heightfield.npy": "2c6b0f52859d106a1f579f471a2271ee",

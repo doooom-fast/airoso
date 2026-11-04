@@ -1,0 +1,208 @@
+{
+ "_doc": "tools/edge_report.py summaries (ledger 0078, REPORT ONLY, no threshold). lake_murray_v4 / lake_murray_v5_bare / sand_creek_0.35.0 / pilot_blend read their pre-prep blends (loop.blend at claude/lm-v4, claude/lm-v5, Sand Creek 0.35.0, the pilot) on their own gate_centerline.json; pilot_built reads the pilot kn5s' gate OBJ (data/track.obj). The first three's built OBJs are not on the Mac.",
+ "lake_murray_v4": {
+  "side_stations": 2246,
+  "at_1m": {
+   "lane": 0.007,
+   "shoulder": 0.0,
+   "kerb": 0.992,
+   "ground": 0.002,
+   "wall": 0.0,
+   "none": 0.0,
+   "other": 0.0
+  },
+  "rise_2m_m": {
+   "median": 0.14,
+   "p95": 0.14
+  },
+  "paved_past_edge_m": {
+   "median": 0.0,
+   "p95": 0.0
+  },
+  "ground_3m": {
+   "p5": -0.221,
+   "median": -0.177,
+   "p95": -0.106,
+   "share_below_1m": 0.012,
+   "share_above_1m": 0.0
+  },
+  "ground_6m": {
+   "p5": -0.951,
+   "median": -0.182,
+   "p95": 0.219,
+   "share_below_1m": 0.049,
+   "share_above_1m": 0.036
+  },
+  "ground_10m": {
+   "p5": -1.068,
+   "median": -0.179,
+   "p95": 0.752,
+   "share_below_1m": 0.056,
+   "share_above_1m": 0.043
+  }
+ },
+ "lake_murray_v5_bare": {
+  "side_stations": 2246,
+  "at_1m": {
+   "lane": 0.002,
+   "shoulder": 0.998,
+   "kerb": 0.0,
+   "ground": 0.0,
+   "wall": 0.0,
+   "none": 0.0,
+   "other": 0.0
+  },
+  "rise_2m_m": {
+   "median": 0.0,
+   "p95": 0.0
+  },
+  "paved_past_edge_m": {
+   "median": 5.0,
+   "p95": 9.0
+  },
+  "ground_3m": {
+   "p5": -0.164,
+   "median": -0.037,
+   "p95": 0.139,
+   "share_below_1m": 0.018,
+   "share_above_1m": 0.0
+  },
+  "ground_6m": {
+   "p5": -0.951,
+   "median": -0.325,
+   "p95": 1.074,
+   "share_below_1m": 0.048,
+   "share_above_1m": 0.054
+  },
+  "ground_10m": {
+   "p5": -1.94,
+   "median": -0.773,
+   "p95": 3.791,
+   "share_below_1m": 0.292,
+   "share_above_1m": 0.135
+  }
+ },
+ "sand_creek_0.35.0": {
+  "side_stations": 1608,
+  "at_1m": {
+   "lane": 0.002,
+   "shoulder": 0.997,
+   "kerb": 0.0,
+   "ground": 0.001,
+   "wall": 0.0,
+   "none": 0.0,
+   "other": 0.0
+  },
+  "rise_2m_m": {
+   "median": 0.0,
+   "p95": 0.0
+  },
+  "paved_past_edge_m": {
+   "median": 5.0,
+   "p95": 24.5
+  },
+  "ground_3m": {
+   "p5": -0.125,
+   "median": -0.04,
+   "p95": 0.024,
+   "share_below_1m": 0.024,
+   "share_above_1m": 0.0
+  },
+  "ground_6m": {
+   "p5": -0.799,
+   "median": -0.354,
+   "p95": 0.176,
+   "share_below_1m": 0.025,
+   "share_above_1m": 0.031
+  },
+  "ground_10m": {
+   "p5": -1.68,
+   "median": -0.732,
+   "p95": 1.236,
+   "share_below_1m": 0.363,
+   "share_above_1m": 0.058
+  }
+ },
+ "pilot_blend": {
+  "side_stations": 1608,
+  "at_1m": {
+   "lane": 0.0,
+   "shoulder": 0.0,
+   "kerb": 0.998,
+   "ground": 0.002,
+   "wall": 0.0,
+   "none": 0.0,
+   "other": 0.0
+  },
+  "rise_2m_m": {
+   "median": 0.0,
+   "p95": 0.0
+  },
+  "paved_past_edge_m": {
+   "median": 0.0,
+   "p95": 0.0
+  },
+  "ground_3m": {
+   "p5": -0.199,
+   "median": -0.18,
+   "p95": -0.169,
+   "share_below_1m": 0.0,
+   "share_above_1m": 0.0
+  },
+  "ground_6m": {
+   "p5": -0.198,
+   "median": -0.18,
+   "p95": -0.169,
+   "share_below_1m": 0.0,
+   "share_above_1m": 0.0
+  },
+  "ground_10m": {
+   "p5": -0.2,
+   "median": -0.18,
+   "p95": -0.167,
+   "share_below_1m": 0.0,
+   "share_above_1m": 0.0
+  }
+ },
+ "pilot_built": {
+  "side_stations": 1608,
+  "at_1m": {
+   "lane": 0.0,
+   "shoulder": 0.0,
+   "kerb": 0.305,
+   "ground": 0.695,
+   "wall": 0.0,
+   "none": 0.0,
+   "other": 0.0
+  },
+  "rise_2m_m": {
+   "median": 0.0,
+   "p95": 0.0
+  },
+  "paved_past_edge_m": {
+   "median": 0.0,
+   "p95": 0.0
+  },
+  "ground_3m": {
+   "p5": -0.177,
+   "median": -0.038,
+   "p95": -0.022,
+   "share_below_1m": 0.0,
+   "share_above_1m": 0.0
+  },
+  "ground_6m": {
+   "p5": -0.177,
+   "median": -0.103,
+   "p95": -0.087,
+   "share_below_1m": 0.0,
+   "share_above_1m": 0.0
+  },
+  "ground_10m": {
+   "p5": -0.197,
+   "median": -0.178,
+   "p95": -0.16,
+   "share_below_1m": 0.0,
+   "share_above_1m": 0.0
+  }
+ }
+}

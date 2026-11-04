@@ -532,6 +532,82 @@ as a v4 extra that never fires on Lake Murray). `tools/strip_seam_blend.py`'s wh
 circuit ports shipped it; the local scope is a config key only the Lariat sets. Round 6's draft_equiv / kn5_equiv proof
 therefore stands; the PC proof below is unchanged.
 
+### Round 8 (Mac): the Rangely gravel stages on Lake Murray's engine — not green yet; the red rows are at the switchbacks
+
+Kevin's order after the Lariat: Dragon Tail (Gravel), then Under the Dragon (Gravel), each a side-by-side `_lm` port
+(`tracks/rally-dragon-tail-gravel-lm`, `tracks/rally-under-the-dragon-gravel-lm`; installs as
+`rally_co_dragon_tail_gravel_lm` / `rally_co_under_the_dragon_gravel_lm` beside the installed 0.2.1 / 0.2.0). Gravel
+physics and texture come from `road_surface` (L8): the geometry draft is built once per stage, and a tarmac twin forks
+from it later by config, with no rebuild. The tarmac twins are not built this round. **No row is forced and neither
+stage is installable yet.**
+
+**"I just want real": the road where the ground says it is (`tools/road_seek.py`, new).** With the 18 % cap undone, Dragon
+Tail's profile read 30-73 % "grades" over 10 m in 13 places. They are not road: at s ~20,700-21,700 the mapped CR 116 is
+the OLD alignment across the hillside, and the graded road is up to 36 m south of it (NAIP and the 1 m DEM agree). The
+tool fetches 3DEP 1 m and NAIP as 400 m tiles over the corridor and reads them ACROSS the line. Where the mapped line's own
+DEM profile is not a road (a grade over 20 % over 10 m, after the profile's own despike and mean), it seeks the graded road
+within 40 m: flat across its own width in the DEM, and continuous along it (a Viterbi pass; a station-to-station grade
+over 20 % costs, a cliff is impossible). Each point of the line moves onto it and takes the DEM's height there. Elsewhere
+the mapped line stands. The aerial is the check, not a score: this road is darker than the white soil beside it in one
+stretch and lighter than the scrub in the next. Dragon Tail: 4 stretches (s 4,793-5,460, 20,448-21,725, 22,040-22,668,
+23,645-24,407), up to 36 m off the map; steepest 10 m now **24.6 %**, the measured road's own (it was 72.6 % uncapped). Under
+the Dragon: 2 stretches, up to 13 m; steepest **20.9 %**. drive_test replicates against that road (the port's
+`centerline.elevation.json` carries it as `z_raw_m`, documented in the file). The tool also measures the **graded bench**:
+from the road's own plane, how far the DEM stays within 0.25 m of it. That is a measured width only where both ends are
+faces (cut, fill or ditch, 0.5 m off within 2 m); on level ground it says nothing. With `lm_intake.road_seek_widths` the
+port takes that width and its centre where measured (Dragon Tail's switchback platforms 11-12.5 m, its hillside straights
+7-8 m), and the source's 6.5 m elsewhere. Widening is tapered at Milford's 0.1 m per m. The installed stages' 10-11 m
+`wide_corners` flares were declared, not measured; they are not used. Tests: `tests/tools/test_road_seek.py` (a bank on
+the mapped line, a bench beside it: found; a road-like line: left alone).
+
+**The engine side, all opt-in, none on Lake Murray:**
+- **The start of a stage.** engine-july's prep places a lap's dummies (the grid on the straightest window anywhere:
+  Dragon Tail's at 59 %, facing back up the stage; the AI step refused it). `tools/stage_dummies_blend.py` runs inside
+  `prep_prep`, only for an lm-v4 port whose config says `loop` false. It replaces them with airoso's point-to-point set:
+  the grid 45 m in, AC_TIME_0 the finish 15 m short of the end, the splits between, the same placement the installed
+  stages' draft used.
+- **The ground grid.** The 3DEP grid as it is (`grid_upsample` 1, 20 m after the assembler). The Lariat's x3 made Dragon
+  Tail's terrain 2.1 M vertices and its kn5 145 MB.
+- **Reused from the Lariat:** the local strip seam (Dragon Tail 16,826 seam points, 0 missed), cut / fill with the Lariat's
+  section and the stacked-leg hold (Dragon Tail: 0 stacked lap points; Under the Dragon: 22, and 19 ground vertices
+  held back after the prep), the strip split.
+  No junction pads: neither stage has a measured junction.
+
+**The Mac builds (`tools/ship_track.sh` from an empty workshop, `--no-install`):**
+
+| row | Dragon Tail installed 0.2.1 | **Dragon Tail `_lm` 0.1.0** | Under the Dragon installed 0.2.0 | **Under the Dragon `_lm` 0.1.0** |
+|---|---|---|---|---|
+| verdict | PASS | **FAIL** | PASS | **FAIL** |
+| road kn5 | — | 39.3 MB | — | 50.8 MB |
+| severe steps (/km, gravel limit 12) | 182 (7.21) | **153 (6.08)** | 195 (7.59) | **105 (4.11)** |
+| bumps /km (limit 150) | 27.91 | 3.42 | — | 1.29 |
+| ground on top (soft top) in lane | 0 | **35** (switchback 1, s 6,358-6,365) | 0 | **9 (s 14337, 14339, 22419, 22421, 22994, 22999)** |
+| undrivable corners | 0 (declared flares) | **0** (measured benches) | 0 (declared flares) | **2** |
+| excursion drops (gated) | 0 | **5** (switchback 2's outside, s 6,601, 0.53 m) | 0 | **2 (s 2403, 0.32 m)** |
+| floating / obstructed / daylight | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 |
+| replication vs the measured road (median / p95) | 0.02 / 0.21 m | **0.02 / 0.11 m** | — / — | **0.01 / 0.11 m** |
+| audit / kn5_ground_check | CLEAN / PASS | CLEAN / PASS (p95 0.021 m, 0 of 3,606 over 5 cm) | CLEAN / PASS | CLEAN / PASS (p95 0.021 m, 0 of 3676 over 5 cm) |
+
+On Dragon Tail every red row is at a switchback: 35 soft tops inside switchback 1's turn and 5 gated drops off switchback
+2's outside. The 153 severe steps are 6.1 /km, under the gravel limit and fewer than installed; 123 of them are at the
+three switchbacks too. On Under the Dragon: 2 undrivable corner(s), 9 soft tops (s 14337, 14339, 22419, 22421, 22994, 22999), 2 gated drops (s 2403); the big Douglas Creek switchback is s ~2,400-2,520 and the final descent's s ~22,400-23,060. At the switchbacks the cause is the same everywhere: these
+switchbacks are 116-150° turns whose mapped centreline has a 7 m radius, so an 11 m ribbon swept along it folds its inside
+edge (radius 7 - 5.5 = 1.5 m). The installed stages carried that with a declared 10-11 m flare, a ±40 m fold plateau and
+measured-guard stone lips. The real fix is the switchback's own geometry: its centreline radius off the DEM bench / NAIP (the
+Lariat's corner-arc fit, `lm_intake.corner_arcs`, takes a measured radius), or the platform as a pad from the DEM bench (the
+round-7 pad tooling takes an outline and a deck grid). Owed as round 9. Nothing here needs Kevin's force yet; if the measured
+switchbacks still fail the gate's 11 m corner rule or its drop rule, those rows go to him.
+
+**Lake Murray unchanged, as in round 7.** No file of its chain changed (`tracks/san-diego-lake-murray`, `scripts/`, the
+weld, the pad and stub tools). `tools/ship_track.sh` gains the stage dummies inside `prep_prep`, only for an lm-v4 port
+whose config says `loop` false (Lake Murray is a loop and not a port; the freeway, `loop` false, is not lm-v4).
+`test_ship_track_chain` lists its header as a v4 extra that never fires on Lake Murray, and `test_lm_engine_port` asserts
+that Lake Murray's config carries no `road_seek`. `tools/lm_engine_intake.py` changes only under keys Lake Murray does
+not set.
+
+**fleet.cli lint S8** ("build path never runs drive_test, kn5_ground_check", on airoso): the same FAIL on an `origin/main`
+snapshot (0558c47), so it predates this branch. Noted, not changed.
+
 ## PC runbooks
 
 **ENG**: never the live `D:\k10\engine-july`. Keep `D:/k10-scratch/eng_repro` (the repo-only v4 engine) clean; each build
@@ -591,6 +667,21 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
    points ... 0 missed`, `[hold] 118 ground vertices ... held back`. Then, with Kevin's word only (his force covers the
    two rows, for 0.1.0): `bash tools/ship_track.sh lookout-lariat-lm --force-install` into the real workshop. The kn5 is
    85.6 MB (the frame-rate note under Round 7, item 6: watch the climb's overlooks).
+4e. **The Rangely gravel stages on the LM engine** (round 8; `rally-dragon-tail-gravel-lm` and
+   `rally-under-the-dragon-gravel-lm` 0.1.0; workshops `dragon_tail_gravel_lm`, `under_the_dragon_gravel_lm`; install
+   folders `rally_co_dragon_tail_gravel_lm`, `rally_co_under_the_dragon_gravel_lm` beside the installed 0.2.1 / 0.2.0).
+   **RED, do not install: a rehearsal only**, to prove the PC reproduces the Mac. ENG = a copy of `eng_repro` plus three
+   of airoso's tracked textures, md5-checked after the copy: `assets/textures/gravel_road_diffuse.png`
+   6babc2255987b6bbd8292aca6cedd69b, `gravel_road_normal.png` addd8f823f03ca80648b6ef96a06a73b, `ground_dry_diffuse.jpg`
+   374c994011c9c86ac417843749407b8f (copy `D:/k10-scratch/eng_rally`). From an EMPTY workshop (the intake writes every
+   input; `data/road_seek.json` is synced in, committed; the PC fetches nothing): `SHIP_PROJ=D:/k10-scratch/<ws>_reh
+   AIROSO=D:/k10-worktrees/fleet-lm-engine ENG=D:/k10-scratch/eng_rally bash tools/ship_track.sh <track> --no-install`.
+   It must reproduce the Mac's rows (Round 8 table): Dragon Tail severe 153, soft top 35, undrivable 0, gated drops 5,
+   replication 0.02 / 0.11, audit CLEAN, kn5_ground_check PASS, kn5 39.3 MB; Under the Dragon severe
+   105, soft top 9, undrivable 2, gated drops 2, replication
+   0.01 / 0.11, kn5 50.8 MB. The log lines to see: `[lm_intake] road_seek: ...`, `[lm_intake]
+   road_seek widths: ...`, `[stage-dummies] point-to-point: ...` (the grid at 45-47 m), `[strip-seam] local scope: ... 0
+   missed`. Install only after round 9's switchbacks turn both green.
 4c. **Sand Creek, Pueblo, Grand Junction, Aspen 0.1.1** (round 6, after their 0.1.0 is installed from 29c1069): the same
    commands from the new head, the same ENG copies (no new texture), replacing 0.1.0 in the same folders
    (`sand_creek_raceway_lm`, `pueblo_motorsports_park_lm`, `grand_junction_lm`, `aspen_motorsports_park_lm`). Expect the
@@ -657,8 +748,15 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
 
 ## Owed
 
-- The Lariat's C18 pad (parked, Round 7 item 4): which surface the ramp end follows into the lid; then C12 / C16's mouths.
-- The Lariat's tiered terrain (Round 7 item 6): far cells at the 3DEP grid's 40 m, if the drive finds the frame rate.
+- **The Rangely stages' switchbacks (round 9):** each switchback's own geometry from the DEM bench and NAIP (a measured
+  centreline radius through `lm_intake.corner_arcs`, or the platform as a pad from the bench outline and the DEM), then
+  Dragon Tail's soft tops (s 6,358-6,365) and drops (s 6,601), and Under the Dragon's corners (s 2,456, 22,413), soft
+  tops and drops. Then Under the Dragon's corner at s 14,337. Then runbook 4e installs.
+- **Lariat 0.1.1, after Kevin drives 0.1.0:**
+  - **C18 (decided, round 8, under "I just want real"): the ramp follows the measured road.** The lap line moves onto
+    the lidar ramp it runs off today (its measured asphalt, CO_DRCOG_2_2020), with heights from the lidar ramp, not the
+    line's 3DEP profile; then the pad is unparked. Not built yet. Then C12 / C16's mouths.
+  - Tiered terrain (Round 7 item 6): far cells at the 3DEP grid's 40 m, whatever the drive finds of the frame rate.
 
 - Racing kerbs and run-off outlines for the circuits, measured off NAIP / lidar; race kerbs at Sand Creek's race corners.
 - A coarser `seat_edges` cut where the bank is under ~2 % (size).

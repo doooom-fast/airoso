@@ -216,6 +216,73 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
                     "points_moved": sum(1 for d in moved if d > 0.005), "max_move_m": round(max(moved), 3)}
         print(f"[lm_intake] profile uncapped: the stage's {cap_was:.0f} % cap undone ({prof_rep['points_moved']} points, "
               f"max {prof_rep['max_move_m']} m); its despike ({med:.0f} m median) and mean kept")
+        # THE ROAD WHERE THE DEM SAYS IT IS (lm_intake.road_seek, the port's data/road_seek.json from tools/road_seek.py;
+        # ledger 0078 round 8). Where the mapped line sits off the graded road, 3DEP read along it reads a cut bank or a
+        # fill slope; road_seek found the road's centre in 3DEP cross-sections. Each point moves onto it (along the line's
+        # own normal) and takes the road's height there; the profile is then the same despike and mean, cap off.
+        rs_rel = li.get("road_seek")
+        if rs_rel:
+            rs = json.loads((proj / rs_rel).read_text(encoding="utf-8"))
+            st_ = rs["stations"]
+            if len(st_) != len(pts) or rs.get("source_track") != src_track:
+                raise SystemExit(f"[lm_intake] road_seek: {rs_rel} was measured for another line ({len(st_)} stations, "
+                                 f"this line {len(pts)}; source {rs.get('source_track')})")
+            n_ = len(pts)
+            # THE GRADED BENCH'S WIDTH (lm_intake.road_seek_widths; round 8): where the DEM bounds the road's graded
+            # surface on both sides (a hillside: the cut and the fill), that width and its centre are the road's, the
+            # measured switchback platforms included; on level ground (unbounded) the source's width and centre stay.
+            # Both smoothed along the line (a Gaussian of 2 stations) so a width never steps.
+            shift = [0.0] * n_
+            if li.get("road_seek_widths"):
+                tw, tc = [], []
+                for w_, s_ in zip(widths, st_):
+                    bl, bh = (s_.get("bench_m") or [0.0, 0.0])
+                    if s_.get("bench_bounded"):
+                        tw.append(bh - bl); tc.append((bh + bl) / 2.0)
+                    else:
+                        tw.append(w_); tc.append(0.0)
+                sg_ = 2.0                                  # [invented] stations (6 m): a switchback platform keeps its width
+                rr = int(3 * sg_)
+                kern = [math.exp(-0.5 * (q / sg_) ** 2) for q in range(-rr, rr + 1)]
+
+                def _sm(v):
+                    out_ = []
+                    for i in range(n_):
+                        num = den = 0.0
+                        for q, kw_ in zip(range(i - rr, i + rr + 1), kern):
+                            if 0 <= q < n_:
+                                num += kw_ * v[q]; den += kw_
+                        out_.append(num / den)
+                    return out_
+                w_was = list(widths)
+                widths = [round(w, 3) for w in _sm(tw)]
+                shift = _sm(tc)
+                nb = sum(1 for s_ in st_ if s_.get("bench_bounded"))
+                prof_rep["road_seek_widths"] = {"bounded_stations": nb, "width_m": [round(min(widths), 2),
+                                                                                    round(max(widths), 2)],
+                                                "changed_by_m_max": round(max(abs(a - b) for a, b in zip(widths, w_was)), 2)}
+                print(f"[lm_intake] road_seek widths: the graded bench measured at {nb} of {n_} stations; widths now "
+                      f"{min(widths):.2f}..{max(widths):.2f} m (the source's {min(w_was):.2f}..{max(w_was):.2f})")
+            moved_pts = []
+            for i, (p, s_) in enumerate(zip(pts, st_)):
+                a_, b_ = pts[max(i - 1, 0)], pts[min(i + 1, n_ - 1)]
+                tx_, tz_ = b_[0] - a_[0], b_[2] - a_[2]
+                L_ = math.hypot(tx_, tz_) or 1.0
+                o_ = float(s_["offset_m"]) + shift[i]
+                moved_pts.append((p[0] - tz_ / L_ * o_, p[1], p[2] + tx_ / L_ * o_))
+            seg_l = [math.hypot(moved_pts[i][0] - moved_pts[i - 1][0], moved_pts[i][2] - moved_pts[i - 1][2])
+                     for i in range(1, n_)]
+            z_rs, _ = hf.profile_along([float(s_["z_m"]) for s_ in st_], seg_l, grade_cap_pct=1e9, median_m=med,
+                                       closed=closed_g, close_seg_m=None)
+            pts = [(q[0], z - elev0, q[2]) for q, z in zip(moved_pts, z_rs)]
+            offs_ = sorted(abs(float(s_["offset_m"])) for s_ in st_)
+            prof_rep["road_seek"] = {"file": rs_rel, "offset_abs_m": {"median": round(offs_[len(offs_) // 2], 2),
+                                                                       "max": round(offs_[-1], 2)},
+                                     "steepest_10m_pct": round(100.0 * _max_grade(pts, 10.0), 2)}
+            print(f"[lm_intake] road_seek: {n_} points onto the graded road found in 3DEP cross-sections (off the mapped "
+                  f"line median {prof_rep['road_seek']['offset_abs_m']['median']} m, max "
+                  f"{prof_rep['road_seek']['offset_abs_m']['max']} m); steepest 10 m now "
+                  f"{prof_rep['road_seek']['steepest_10m_pct']} %")
     # Y-only evidence: the declared decks (a data fact); no grade cap unless one is declared (ledger 0078: "I just want real")
     y0 = [p[1] for p in pts]
     bridges = [(float(b["center_m"]), float(b["len_m"])) for b in ((scfg.get("capture") or {}).get("bridges") or [])]
@@ -599,6 +666,24 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         (data / rel).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(sdata / rel, data / rel)
         carried.append(rel)
+    # THE MEASURED ROAD THE GATES REPLICATE AGAINST (round 8): with lm_intake.road_seek the line stands on the road
+    # road_seek found, so the carried raw record's heights become that road's (drive_test's replication reads z_raw_m;
+    # against the mapped line's own DEM it would read the hillside the line was moved off). geojson order, by the
+    # source's own permutation (projection.in_local_order).
+    if li.get("road_seek") and (data / "centerline.elevation.json").exists():
+        ejp = data / "centerline.elevation.json"
+        ej2 = json.loads(ejp.read_text(encoding="utf-8"))
+        st2 = json.loads((proj / li["road_seek"]).read_text(encoding="utf-8"))["stations"]
+        zr2 = list(ej2["z_raw_m"])
+        sidx = local.get("source_index") or list(range(len(zr2)))
+        if len(sidx) == len(st2) == len(zr2):
+            for i, s_ in enumerate(st2):
+                zr2[sidx[i]] = float(s_["z_m"])
+            ej2["z_raw_m"] = zr2
+            ej2["_road_seek_doc"] = (f"z_raw_m: the road tools/road_seek.py found ({li['road_seek']}), not the mapped "
+                                     "line's own DEM samples (ledger 0078 round 8)")
+            ejp.write_text(json.dumps(ej2), encoding="utf-8")
+            carried.append("centerline.elevation.json (z_raw_m: the road_seek road)")
     # THE SOURCE'S MEASUREMENTS (lm_intake.carry_source [paths under the source track's source/]; round 7): the lidar
     # pad outlines tools/lm_pads_blend.py builds the lap's junction pads from, copied to the same path in the project
     for rel in li.get("carry_source") or []:

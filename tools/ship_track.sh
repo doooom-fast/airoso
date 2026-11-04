@@ -483,6 +483,13 @@ prep_prep() {
     step "ship: the stacked-leg hold again on the prepped ground (tools/hold_stacked_blend.py; self-checked)"
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/hold_stacked_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[hold\]\|FATAL\|Error\|Traceback"
   fi
+  # ledger 0078 round 8: a point-to-point stage's start, splits and finish (engine-july's prep places a lap's); only an
+  # lm-v4 port whose config says loop false (the Rangely stage ports; never Lake Murray, never the freeway), no header
+  # otherwise. Part of prep (steps.prep stays prep, split)
+  if [ "$SPEC_ENGINE" = "lm-v4" ] && [ "$(pyq "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8')).get('loop', True) is False)" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "ship: a point-to-point stage's start, splits and finish on the prepped scene (tools/stage_dummies_blend.py; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/stage_dummies_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[stage-dummies\]\|FATAL\|Error\|Traceback"
+  fi
   rm -f "$PROJ/data/terrain_thin.json" "$PROJ/data/terrain_thin.nodes.json.gz"
   if [ -f "$PROJ/data/terrain.tiers.json.gz" ]; then
     step "ship: thin the terrain, every vertex where the chain put it (tools/thin_terrain_blend.py; self-checked)"

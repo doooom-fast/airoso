@@ -1,0 +1,74 @@
+{
+  "_doc": "Under the Dragon (Gravel) on Lake Murray v4's engine (ledger 0078 round 8): engine lm-v4, the intake from tracks/rally-under-the-dragon-gravel, Lake Murray's assembler, densify by the true warp, the local strip seam, the strip cut under AC's cap, engine-july's prep / export, the source's own gates (drive_test, audit, kn5_ground_check) + edge_report.",
+  "track": "rally-under-the-dragon-gravel-lm",
+  "engine": "lm-v4",
+  "workshop": "D:/k10-scratch",
+  "workshop_project": "under_the_dragon_gravel_lm",
+  "require_race_layout": false,
+  "ui_name_prefix": "doooom Colorado",
+  "steps": {
+    "draft": [
+      "lm_intake",
+      "build_loop_blend",
+      "weld_mouths",
+      "densify_ribbon",
+      "cutfill",
+      "strip_seam",
+      "split_strip"
+    ],
+    "author": [],
+    "prep": [
+      "prep",
+      "split"
+    ],
+    "ship": [
+      "export_road",
+      "ai",
+      "verify_kn5",
+      "road_obj",
+      "track_folder",
+      "verify_inis",
+      "make_map"
+    ],
+    "gate": [
+      "drive_test_street",
+      "audit_street",
+      "kn5_ground",
+      "edge_report"
+    ]
+  },
+  "sync_in": {
+    "required": [
+      "track.config.json",
+      "data/road_seek.json"
+    ]
+  },
+  "sync_out": {
+    "required": [
+      "loop.blend"
+    ],
+    "files": [
+      "data/lm_intake.json",
+      "data/centerline.local.json",
+      "data/centerline.raw.local.json",
+      "data/finished_centerline.json",
+      "data/gate_centerline.json",
+      "data/bridge.spans.auto.json",
+      "data/dummies.json",
+      "data/drive_test.json",
+      "data/drive_test.{id}.json",
+      "data/audit.json",
+      "data/kn5_ground_check.{id}.json",
+      "data/edge_report.json"
+    ],
+    "map": [
+      [
+        "blender/split/split_manifest.json",
+        "data/split_manifest.json"
+      ]
+    ],
+    "dirs": [
+      "ai/{id}"
+    ]
+  }
+}

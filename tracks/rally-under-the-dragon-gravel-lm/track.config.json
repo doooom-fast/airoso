@@ -69,6 +69,11 @@
       "grade_w": 0.3,
       "grass_clearance": 0.05,
       "_doc": "a graded county road's edge: the gravel held 0.10 m, then 0.30 m down to the ground (the Lariat's recipe); no curb, no sidewalk"
+    },
+    "densify": {
+      "measure": "warp",
+      "max_cols": 64,
+      "_doc": "ledger 0078 round 13: the true out-of-plane warp (Milford's measure, round 5), not the crease formula, which reads 0 on this ribbon's level-across rows however much they turn on a grade (Dragon Tail s 6,562-6,567: 278-297 mm warps read 0; Under the Dragon s 14,333-14,340 up to 179 mm, s 22,996-23,004 and 23,049-23,057 up to 78 / 127 mm), so the grass pinned 0.02 m under the deck stood over the valley crease (the four soft-top places). max_cols is set so the cap never binds (the worst quad needs 60 / 36 columns): CREASE_TOL_M's 5 mm is the only rule"
     }
   },
   "loop": false,
@@ -232,7 +237,11 @@
     "switchback_fit": "data/switchbacks.json",
     "_switchback_fit_doc": "round 10: each switchback over 100 deg whose graded platform the 1 m DEM measures (tools/switchback_measure.py) built on its measured centre arc and width (tools/switchback_fit.py)",
     "_width_taper_doc": "Milford's taper (ledger 0078 round 5), 0.1 m per m a side, widening only: a graded bench appears in a few stations (a switchback platform, a pull-out) and drive_test's width-relative wheel paths re-seat across it",
-    "_doc": "the measured profile (the elevation stage's grade cap undone: the grades are the real road's), the 40 m 3DEP grid as it is (the assembler halves it to 20 m; the prep splits it to 4.5 m within 16 m of the road); the raw 3DEP record drive_test replicates against; the line onto the graded road tools/road_seek.py found in 3DEP 1 m cross-sections, heights from that road, and its width where the DEM bounds its graded bench (data/road_seek.json; ledger 0078 round 8)"
+    "_doc": "the measured profile (the elevation stage's grade cap undone: the grades are the real road's), the 40 m 3DEP grid as it is (the assembler halves it to 20 m; the prep splits it to 4.5 m within 16 m of the road); the raw 3DEP record drive_test replicates against; the line onto the graded road tools/road_seek.py found in 3DEP 1 m cross-sections, heights from that road, and its width where the DEM bounds its graded bench (data/road_seek.json; ledger 0078 round 8)",
+    "pad_widths": [
+      "source/pads/DC.json"
+    ],
+    "_pad_widths_doc": "round 13: between the Douglas Creek pad's cuts the lane is the widest one centred on the line that the platform's measured edges allow (tools/bench_pad.py's lap record), tapered at width_taper from the cut rows: drive_test reads the platform the deck is built on"
   },
   "terrain": {
     "cross_section": {
@@ -271,5 +280,22 @@
   "strip_seam": {
     "scope": "local",
     "_doc": "tools/strip_seam_blend.py at local scope (ledger 0078 round 7): a 25 km stage's terrain"
+  },
+  "lm_pads": {
+    "_doc": "tools/lm_pads_blend.py (ledger 0078 round 13): the Douglas Creek switchback (S3 / S4, s ~2,430-2,515) as one deck out to its measured outline: tools/bench_pad.py on the lidar class-2 grids (data/lidar/rally-under-the-dragon-gravel_S3/S4.npz, CO_NWCO_1_2020): the graded surface within 0.25 m of the road's plane, bounded by its cut and fill faces, by the gravel's NAIP edge where no face bounds it (the gully's level fan outside the apex, the hairpin's level inside); the deck the class-2 ground's plane fits. The lap cut at its own rows v816 / v848; no sealed side road, no box",
+    "source": "source/pads",
+    "pads": [
+      {
+        "id": "DC",
+        "node": 829,
+        "cuts": [
+          816,
+          848
+        ],
+        "sealed": [],
+        "seam": "row",
+        "_seam_doc": "round 13: a switchback, so each seam fades from its own row (draft_pads.seam_offset near_row): the hairpin's other leg lies behind the in-cut row's line and took its whole 0.2 m departure beside the out-cut (a 0.2 m severe step at s 2,514-2,516, run u2)"
+      }
+    ]
   }
 }

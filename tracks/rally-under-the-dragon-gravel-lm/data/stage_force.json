@@ -1,8 +1,6 @@
 {
  "force_install_ok": false,
  "why_not": [
-  "stage: soft_top_in_lane 4 (not forced)",
-  "stage: undrivable corner at s 2456 (122 deg, 7.7 m) outside every forced window",
   "stage: gated drop at s 2403 (0.32 m) outside every forced window",
   "stage: gated drop at s 2403 (0.28 m) outside every forced window"
  ],

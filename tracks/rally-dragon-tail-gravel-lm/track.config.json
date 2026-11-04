@@ -73,6 +73,11 @@
       "grade_w": 0.3,
       "grass_clearance": 0.05,
       "_doc": "a graded county road's edge: the gravel held 0.10 m, then 0.30 m down to the ground (the Lariat's recipe); no curb, no sidewalk"
+    },
+    "densify": {
+      "measure": "warp",
+      "max_cols": 64,
+      "_doc": "ledger 0078 round 13: the true out-of-plane warp (Milford's measure, round 5), not the crease formula, which reads 0 on this ribbon's level-across rows however much they turn on a grade (Dragon Tail s 6,562-6,567: 278-297 mm warps read 0; Under the Dragon s 14,333-14,340 up to 179 mm, s 22,996-23,004 and 23,049-23,057 up to 78 / 127 mm), so the grass pinned 0.02 m under the deck stood over the valley crease (the four soft-top places). max_cols is set so the cap never binds (the worst quad needs 60 / 36 columns): CREASE_TOL_M's 5 mm is the only rule"
     }
   },
   "loop": false,

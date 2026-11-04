@@ -13,6 +13,7 @@
       "weld_mouths",
       "densify_ribbon",
       "cutfill",
+      "lm_pads",
       "strip_seam",
       "split_strip"
     ],
@@ -42,7 +43,8 @@
     "required": [
       "track.config.json",
       "data/road_seek.json",
-      "data/switchbacks.json"
+      "data/switchbacks.json",
+      "source/pads/DC.json"
     ]
   },
   "sync_out": {
@@ -61,7 +63,8 @@
       "data/drive_test.{id}.json",
       "data/audit.json",
       "data/kn5_ground_check.{id}.json",
-      "data/edge_report.json"
+      "data/edge_report.json",
+      "data/pads.built.json"
     ],
     "map": [
       [

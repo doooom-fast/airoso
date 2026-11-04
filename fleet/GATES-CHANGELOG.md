@@ -14,6 +14,26 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-04 — Rangely stage ports, round 13: the true warp, a measured pad, an aerial trace (ledger 0078 round 13; no gate threshold moved, no bypass)
+
+No gate threshold, exemption or force changed; Kevin's three-row force (below) is untouched and covers nothing new.
+What the two `_lm` ports now declare, and the numbers behind it:
+
+- **`route.densify.measure "warp"`** on both ports (Milford's measure, ledger 0078 round 5; `tools/densify_ribbon_blend.py`
+  unchanged). `max_cols` 64 is set so the cap never binds (the worst quads need 60 / 36 columns): the step's existing
+  `CREASE_TOL_M` 5 mm [invented, round 5] is the only rule. Lake Murray never runs the step.
+- **`lm_pads.pads` DC + `lm_intake.pad_widths`** on Under the Dragon: the Douglas Creek switchback as a measured pad
+  (`tools/lm_pads_blend.py`'s existing numbers) from `tools/bench_pad.py` (new). Its own numbers: road_seek's bench rule
+  as it is (0.25 m / 0.5 m face / 2 m), `EDGE_MEDIAN` 5 rays ⚠ [invented], `NAIP_RUN` 3 samples, `NAIP_MIN_CONTRAST` 20
+  grey levels, `NAIP_REACH_M` 20 ⚠ [invented]; the mask / smoothing / deck numbers are draft_pad_outline.py's. The lane
+  between the cuts is never wider than measured (2 x the nearer measured edge) and tapers at the port's existing
+  `width_taper`. drive_test's corner rule (9 m) reads that lane unchanged. The pad declares `seam: "row"`
+  (`draft_pads.seam_offset`, opt-in; the Lariat's pads declare nothing and are unchanged): beyond a row's own ends its
+  seam fades from the row, not from its infinite line (a hairpin's other leg lies behind the in-cut's line).
+- **`tools/aerial_trace.py`** (new, report-only: nothing reads its record): `BAND_W_M` 5-12 m, `NOISE_GREY` 5, `ROAD_E` 3,
+  `OFF_MIN_M` 1, `LINE_SD_GREY` 15, `RUN_MIN_M` 30, `GAP_STATIONS` 2 ⚠ [invented]; `SEEK_HALF_M` 15 (the coordinator's),
+  `ROUGH_M` / `MAX_SHIFT_M` / `SHOULDER_M` road_seek's. Round 13 drew every run it would act on and applied none.
+
 ## 2026-11-04 — DECLARED FORCE: three measured rows on the Rangely stage ports (ledger 0078 round 12; no threshold moved)
 
 Kevin, 2026-11-04, asked about the three rows the measured switchbacks fail as measured: **"Yes, force those 3"**.

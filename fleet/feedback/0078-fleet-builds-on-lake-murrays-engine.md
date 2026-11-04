@@ -813,52 +813,103 @@ intake's switchback spans) that Lake Murray never writes.
 
 Lake Murray is unchanged (the same empty diff over its chain; nothing it runs reads the new key or tool). Runbook 4e stays on hold.
 
-### Round 12 (Mac): Kevin's three-row force declared by place; the lidar at the three turns; both stages still red on our side
+### Round 13 (Mac): the soft tops were the ribbon's true warp; Douglas Creek as a measured pad; the aerial trace drawn and kept for nothing
 
-1. **Kevin's force, 2026-11-04: "Yes, force those 3".** Declared per port, by place and row type, in each port's
-   `gates.drive1.force_exemptions.stage` (versions 0.1.0), as the Lariat's two rows were in round 7. It is read by
-   `tools/stage_force.py` (new gate step `stage_force`, last in steps.gate; it records and exits 0). It covers:
-   - Dragon Tail undrivable corners at s 6,340-6,400 (switchback 1);
-   - Dragon Tail gated drops at s 6,570-6,630 (switchback 2's real fill);
-   - Under the Dragon undrivable corners at s 22,400-22,560.
-   `--force-install` passes only when every red row is one of those at its place. GATES-CHANGELOG 2026-11-04. Not covered:
-   Douglas Creek, any soft top, s 14.3 km. Run 10 read it correctly. Dragon Tail: 3 corners and 4 drops covered,
-   soft top 4 not, so the force is REFUSED.
-2. **The lidar at the three turns (the PC's runbook 4f, 13eaf50).** `tools/switchback_measure.py` reads a turn's bench
-   on its lidar grid. It reads the mean of the cells with ground in the 3x3 block (else the 5x5) round each point: ~3.8 class-2
-   points a square metre leave a third of the 0.5 m cells empty, and a bench read stopped at the first gap: the first
-   pass found 0-1 edge points a turn.
-   | turn | ground read | outside R / rms | inside R / rms | centre arc | width | fitted? |
-   |---|---|---|---|---|---|---|
-   | Dragon Tail switchback 3 (S6, s 7,453) | 3DEP lidar class 2 | 20.48 / 1.41 m | 10.86 / 0.30 m | R 15.67 m | 9.62 m | no: outside rms over the 1.0 m fit-quality rule |
-   | Douglas Creek S3 (s 2,482) | 3DEP lidar class 2 | 19.55 | 11.13 | — | — | no: the two circles disagree (centres apart) |
-   | Douglas Creek S4 (s 2,500) | 3DEP lidar class 2 | 24.73 / 1.57 m | 12.74 / 0.56 m | R 18.74 m | 11.99 m | no: outside rms over 1.0 m |
-   The lidar now bounds all three platforms. On it, Douglas Creek reads ~12 m wide at S4, which is wide enough for the 11 m corner rule if built.
-   But the outside edges are rougher circles than the 1.0 m rule the fit takes (that rule is unchanged), so the turns stay as mapped, and
-   **Douglas Creek's corner (s 2,456) and drop (s 2,403) are still red,
-   not forced.** Next: the outside edge read as the platform's own outline (a pad from the bench outline, round 7's lm_pads way) rather than as a circle.
-3. **Not done this round:** the NAIP road-edge trace for Under the Dragon s 14,334-14,339; the cause of the soft tops at
-   Under the Dragon s 22,998 / 23,056; Dragon Tail s 6,566-6,567 (ground 2-9 mm over the road at the lane edge, -4.2 to
-   -4.4 m, on alternate rows at switchback 2's entry, 15-20 m before the fit's join: cause not yet found).
+1. **The soft tops, all four places: one cause, the road's own crease, not the ground.** The assembler sweeps 3 vertices a
+   row, level across; where rows turn against each other on a grade, each half-quad is warped (its fourth corner off the
+   plane of the other three) and its diagonal is a valley crease. `densify_ribbon` was running with its default `crease`
+   measure, `|(a + c) - (b + d)| / 2`, which reads **0** on level-across rows however much they turn; Milford's `warp`
+   measure (round 5) reads the real thing:
+   | place | the line there | worst half-quad warp (crease formula) |
+   |---|---|---|
+   | Dragon Tail s 6,562-6,567 (switchback 2's entry) | 14.2 deg a 2.5 m row, +10.8 % (R ~10 m) | **297 mm** (0) |
+   | Under the Dragon s 14,333-14,340 | 11.9 deg a 2.5 m row, -12.8 % (R ~12 m) | **179 mm** (0) |
+   | Under the Dragon s 22,996-23,004 | 6.2 deg a row, -14.9 % | **78 mm** (0) |
+   | Under the Dragon s 23,049-23,057 | 9.7 deg a row, -12.8 % | **127 mm** (0) |
+   These are the four soft-top places, and the stage's worst warps. **Checked and ruled out:** engine-july's ground
+   shelf / nearest-road pin (in the prepped Dragon Tail blend, all 29 ground vertices within 2.2 m of s 6,566.5 at -4.4 m
+   sit 0.019-0.021 m under the road at their own x, z: the pin is exact; a planar grass triangle bridges the road's
+   valley diagonal, ~6 deg between the two faces of one half-quad); the longitudinal sag (~3 mm, as the coordinator
+   computed); a data ledge. At Under the Dragon s 22,998 / 23,056 the bends are the mapped road's own OSM vertices
+   (+20 deg at v7718, -28 deg at v7732, -14.5 deg at v7742, smoothed by the assembler); road_seek's offsets there are
+   0.5-1.9 m and smooth, no point was relaxed, and the bench-centre shift moves the heading by at most ~3 deg: the line
+   corrections make no sag or crease. **Fix:** both ports declare `route.densify.measure "warp"`; `max_cols` 64 so the
+   cap never binds (the worst quads need 60 / 36 columns: CREASE_TOL_M's 5 mm is the only rule). Dragon Tail: 3,615
+   half-quads re-cut (8,799 row vertices); Under the Dragon: 3,290 (8,224). The new vertices lie on the row lines:
+   nothing is invented. Result below: **soft top 0 on both stages**, and the severe steps fall with it (the inside wheel
+   path no longer crosses the creases: Dragon Tail 125 -> 99, Under the Dragon 90 -> 73; the soft tops at Under the
+   Dragon s 14,334-14,339 went, its worst severe steps there did not: see below).
+2. **Under the Dragon s 14,334-14,339 is not a line off its road.** Round 9's "the graded road about 10 m east of the
+   mapped line" was read at SOURCE s 14,292-14,301 (`naip_window.py` labels the source line's s); the gate's s 14,334 is
+   source s 14,445 (v4817): the line moved by road_seek is ~110 m shorter there. At v4800-4840 NAIP reads the gravel
+   (luminance 195) across the line itself; the line follows the road through an R ~12 m bend on -12.8 %, and the red
+   rows there were item 1's crease.
+3. **The aerial road-edge trace (`tools/aerial_trace.py`, new; report-only).** At every source station NAIP is read across
+   road_seek's line and the most even band of road width within 15 m is found (contrast with EACH shoulder over its own
+   spread); a station is a candidate where that band is a road, the line is off it entirely, the line's own band is
+   uneven in NAIP and the DEM under the line is rough. Run over both whole stages (`data/aerial_trace.json` in each
+   port, every run listed):
+   - Under the Dragon: 371 candidate stations in 118 runs; 11 long enough to act (>= 30 m): source s 216-255, 345-378,
+     522-588, 2,763-2,796, 2,865-2,901, 3,573-3,612, 9,343-9,376, 17,477-17,537, 18,171-18,201, 21,008-21,050,
+     21,146-21,182 (the road's centre 3.5-6.5 m off the line). **None near source s 14,445 (gate s 14,334).**
+   - Dragon Tail: 285 candidate stations in 143 runs; 4 long enough: source s 691-742, 793-841, 1,977-2,007,
+     17,703-17,742 (6-7 m). (2 of its 91 NAIP tiles are not in the cache; those stations are skipped.)
+   All 15 were drawn on NAIP (the source line, road_seek's line and the trace's centre). **Kept: none.** Every one is the
+   line riding the edge of a gravel road wider than the lane (8-12 m), the trace's run a 30-65 m piece of a longer
+   offset; moving those pieces alone would put a 4-7 m jog into the line at each end. None sits at a red row. Nothing reads
+   the record.
+4. **Douglas Creek as a pad from its measured outline (`tools/bench_pad.py`, new; `lm_pads` DC, `lm_intake.pad_widths`).**
+   Across the line at every vertex v816-v848 (and 3 rays between each), on the PC's lidar class-2 grids (S3 + S4,
+   merged): road_seek's bench (the road's plane fitted +-2 m, the ground within 0.25 m of it) ends at a face (cut or fill,
+   0.5 m off 2 m on) or, where no face bounds it, at the gravel's edge in NAIP if that comes first (the gully's level fan
+   outside the apex, the hairpin's level inside), else where the bench ends. Of 258 ray sides: 153 lidar faces, 39 bench
+   ends, 66 NAIP edges, 0 unmeasured. Each side's edge is the running median of 5 rays (~3 m), the rays' quads rasterised
+   at 0.25 m, traced and smoothed (draft_pad_outline.py's 1 m), clipped at the two lap cuts. **The platform: 947 m2,
+   6.2-19.2 m across** (19 m at the apex, where NAIP and the lidar both show the gravel apron where the gully comes in).
+   The deck: class-2 plane fits (2 m radius) on the graded surface only, 0.5 m grid. `tools/lm_pads_blend.py` builds it
+   unchanged: the lap cut at v816 / v848, rows welded at v816 (3 vertices) / v848 (5), deck 975 vertices / 1,692 faces, 950 m2, the seams' departures from the lidar (up to 0.234 m: the line's DEM profile under the lidar's road) faded in, 0 m2 of this line's ribbon united (its lane lies on the measured outline everywhere), the ground under it split (3,125 edges) and held under it. **The lane** (`lm_intake.pad_widths`): drive_test reads the line's
+   widths, so between the cuts the lane is the widest one CENTRED ON THE LINE that both measured edges allow (2 x the
+   nearer), tapered at the port's 0.1 m per m from the cut rows: 4.0-10.7 m (the ribbon's 5.7-10.3 m). The line is not
+   moved (it runs nearer the inside edge on the entry, hence 4.0 m there). **One fix in the shared pad code, opt-in:** the
+   first clean build (run u2) read 0.17-0.23 m severe steps at s 2,514-2,516, the out-cut: `draft_pads.seam_offset` fades
+   each seam's departure from its row's infinite line, and on a hairpin the out leg lies behind the in-cut row's line, so
+   it took that row's whole +0.2 m departure right beside the out-cut's own row. A pad that declares `seam: "row"` now
+   fades from the row itself beyond the row's ends (`tests/tools/test_bench_pad.py`); the Lariat's pads declare nothing
+   and build as before.
+   - **Corner row (s 2,456): **green.** Between the cuts the corner rule now reads the platform's lane, 10.7 m within +-7 vertices of every turn over 110 deg there (122-144 deg at s 2,456-2,474; it read 7.7 m on the ribbon). The only undrivable corner left on the stage is s 22,414, Kevin's forced row.**
+   - **Drop row (s 2,403): **still red, and it is real ground.** s 2,402.8 is 24 m before the pad's in-cut (v808), 12.5-13.0 m left of the line, where the lower leg's fill falls away between the hairpin's legs. The gate's unpaved rule trips on the cumulative fall past the road edge (over 3.0 m within the band; the single steps are 0.28 and 0.32 m). The built ground falls 3.33 m from the edge (4.4 m) to 13 m; the lidar's own class-2 ground falls **3.76 m** over the same 8.6 m (199.33 -> 195.57 m, a ~1:2.3 slope; the 3DEP DEM: 3.85 m). Nothing invented is put back to clear it (no lip, no wall). Not forced: **Kevin's call.****
 
-**The Mac builds (empty workshops, `--no-install`, with the lidar measurements):**
+**The Mac builds (`tools/ship_track.sh` from empty workshops, `--no-install`):**
 
-| row | DT installed 0.2.1 | **DT `_lm`** | UtD installed 0.2.0 | **UtD `_lm`** |
-|---|---|---|---|---|
-| severe steps (/km) | 182 (7.21) | 125 (4.97) | 195 (7.59) | 90 (3.52) |
-| soft top in lane | 0 | **4 (s 6,566, 6,567)** | 0 | **4 (s 14,334, 14,339, 22,998, 23,056)** |
-| undrivable corners | 0 | 3 (all forced) | 0 | 2 (s 22,414 forced; Douglas Creek not) |
-| gated drops | 0 | 4 (all forced) | 0 | 2 (Douglas Creek, not forced) |
-| replication (median / p95) | 0.02 / 0.21 m | 0.02 / 0.11 m | — | 0.01 / 0.11 m |
-| audit / kn5_ground_check | CLEAN / PASS | CLEAN / PASS | CLEAN / PASS | CLEAN / PASS |
-| road kn5 | — | 40.0 MB | — | 51.5 MB |
-| `--force-install` | — | REFUSED | — | REFUSED |
+| row | DT installed 0.2.1 | DT `_lm` r12 | **DT `_lm` r13** | UtD installed 0.2.0 | UtD `_lm` r12 | **UtD `_lm` r13** |
+|---|---|---|---|---|---|---|
+| severe steps (/km, limit 12) | 182 (7.21) | 125 (4.97) | **99 (3.94)** | 195 (7.59) | 90 (3.52) | **73 (2.86)** |
+| soft top in lane | 0 | 4 | **0** | 0 | 4 | **0** |
+| undrivable corners | 0 | 3 (forced) | **3 (forced, switchback 1)** | 0 | 2 | **1 (forced, s 22,414)** |
+| gated drops | 0 | 4 (forced) | **4 (forced, switchback 2)** | 0 | 2 | **2 (s 2,403: real ground, not forced)** |
+| floating / obstructed / daylight | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 |
+| replication (median / p95) | 0.02 / 0.21 m | 0.02 / 0.11 | 0.02 / 0.11 m | — | 0.01 / 0.11 | 0.01 / 0.11 m |
+| audit / kn5_ground_check | CLEAN / PASS | CLEAN / PASS | **CLEAN / PASS** (p95 0.027 m) | CLEAN / PASS | CLEAN / PASS | **CLEAN / PASS (p95 0.028 m)** |
+| road kn5 | — | 40.0 MB | 40.5 MB | — | 51.5 MB | 52.3 MB |
+| `--force-install` | — | REFUSED | **allowed** | — | REFUSED | **REFUSED (s 2,403 only)** |
 
-**Red once the forced rows are set aside:**
-- Dragon Tail: soft top 4.
-- Under the Dragon: soft top 4, Douglas Creek's undrivable corner and its gated drops.
+Under the Dragon's 73 severe steps: 2 at the pad (0.061 / 0.066 m, s 2,464 / 2,475, on the measured deck); the worst are still s 14,336-14,341 at -3.7 to -3.85 m (0.12-0.145 m, inside the R ~12 m bend on -12.8 %), which the warp columns did not take out (they were 0.11-0.17 m in round 12): not explained this round, and under the gravel limit (12 /km).
 
-Lake Murray is unchanged (the same empty diff over its chain; nothing it runs reads the new key or tool). Runbook 4e stays on hold.
+**Red once Kevin's forced rows are set aside:**
+- Dragon Tail: **nothing.** `--force-install` would be allowed (3 corners at switchback 1, 4 drops at switchback 2: all his).
+- Under the Dragon: the 2 gated drops at s 2,403 (the real fill slope above). `--force-install` is refused on those alone.
+
+Runbook 4e stays on hold (the coordinator's rule: un-hold only when both pass). Kevin's call: force Under the Dragon's s 2,403 drops as measured (the window s 2,395-2,410, gated drops), or install Dragon Tail alone first.
+
+**Lake Murray unchanged.** `git diff ca70a08` over `tracks/san-diego-lake-murray`, `scripts/`, the weld, mouth, junction
+pad and stub tools: empty; this round touches none of `tools/ship_track.sh` / `ship_track_spec.py` either. The new keys are
+read only by steps Lake Murray's ship.json never names (`route.densify` by `densify_ribbon`, `lm_intake.pad_widths` by
+`lm_intake`, `lm_pads` by `lm_pads`; `tests/tools/test_lm_engine_port.py` pins that its config carries none of them);
+`tools/bench_pad.py` and `tools/aerial_trace.py` run in no chain; `tools/draft_pads.py`'s change is behind the pad
+key `seam: "row"`, and only `lm_pads_blend.py` and `bench_pad.py` import it (Lake Murray's `junction_pad.py` /
+`author_junction_pad_blend.py` do not). Tests: `tests/tools` + `tests/geometry` **932 passed**
+with the venv's `python` on PATH (new: `test_bench_pad.py`, `test_aerial_trace.py`); without it 5 chain tests fail, at
+f97fd15b too (the chain calls a bare `python`).
 
 ## PC runbooks
 
@@ -919,21 +970,9 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
    points ... 0 missed`, `[hold] 118 ground vertices ... held back`. Then, with Kevin's word only (his force covers the
    two rows, for 0.1.0): `bash tools/ship_track.sh lookout-lariat-lm --force-install` into the real workshop. The kn5 is
    85.6 MB (the frame-rate note under Round 7, item 6: watch the climb's overlooks).
-4e. **ON HOLD (coordinator, round 9: the PC rehearses only a green stage).** **The Rangely gravel stages on the LM engine** (round 8; `rally-dragon-tail-gravel-lm` and
-   `rally-under-the-dragon-gravel-lm` 0.1.0; workshops `dragon_tail_gravel_lm`, `under_the_dragon_gravel_lm`; install
-   folders `rally_co_dragon_tail_gravel_lm`, `rally_co_under_the_dragon_gravel_lm` beside the installed 0.2.1 / 0.2.0).
-   **RED, do not install: a rehearsal only**, to prove the PC reproduces the Mac. ENG = a copy of `eng_repro` plus three
-   of airoso's tracked textures, md5-checked after the copy: `assets/textures/gravel_road_diffuse.png`
-   6babc2255987b6bbd8292aca6cedd69b, `gravel_road_normal.png` addd8f823f03ca80648b6ef96a06a73b, `ground_dry_diffuse.jpg`
-   374c994011c9c86ac417843749407b8f (copy `D:/k10-scratch/eng_rally`). From an EMPTY workshop (the intake writes every
-   input; `data/road_seek.json` is synced in, committed; the PC fetches nothing): `SHIP_PROJ=D:/k10-scratch/<ws>_reh
-   AIROSO=D:/k10-worktrees/fleet-lm-engine ENG=D:/k10-scratch/eng_rally bash tools/ship_track.sh <track> --no-install`.
-   It must reproduce the Mac's rows (Round 8 table): Dragon Tail severe 153, soft top 35, undrivable 0, gated drops 5,
-   replication 0.02 / 0.11, audit CLEAN, kn5_ground_check PASS, kn5 39.3 MB; Under the Dragon severe
-   105, soft top 9, undrivable 2, gated drops 2, replication
-   0.01 / 0.11, kn5 50.8 MB. The log lines to see: `[lm_intake] road_seek: ...`, `[lm_intake]
-   road_seek widths: ...`, `[stage-dummies] point-to-point: ...` (the grid at 45-47 m), `[strip-seam] local scope: ... 0
-   missed`. Install only after round 9's switchbacks turn both green.
+4e. **ON HOLD (coordinator: un-hold only when both stages pass `--force-install`; round 13: Dragon Tail passes, Under the Dragon is refused on its s 2,403 drops, Kevin's call).** **The Rangely gravel stages on the LM engine** (`rally-dragon-tail-gravel-lm` and `rally-under-the-dragon-gravel-lm` 0.1.0, the GRAVEL `_lm` twins only: per L8 the tarmac twins are separate installs and stay unbuilt; workshops `dragon_tail_gravel_lm`, `under_the_dragon_gravel_lm`; install folders `rally_co_dragon_tail_gravel_lm`, `rally_co_under_the_dragon_gravel_lm` beside the installed 0.2.1 / 0.2.0). ENG = a copy of `eng_repro` plus three of airoso's tracked textures, md5-checked after the copy: `assets/textures/gravel_road_diffuse.png` 6babc2255987b6bbd8292aca6cedd69b, `gravel_road_normal.png` addd8f823f03ca80648b6ef96a06a73b, `ground_dry_diffuse.jpg` 374c994011c9c86ac417843749407b8f (copy `D:/k10-scratch/eng_rally`). From an EMPTY workshop (the intake writes every input; `data/road_seek.json`, `data/switchbacks.json` and Under the Dragon's `source/pads/DC.json` are synced in, committed; the PC fetches nothing):
+   1. Rehearsal, each stage: `SHIP_PROJ=D:/k10-scratch/<ws>_reh AIROSO=D:/k10-worktrees/fleet-lm-engine ENG=D:/k10-scratch/eng_rally bash tools/ship_track.sh <track> --no-install`. It must reproduce the Mac's round-13 rows: Dragon Tail severe 99, soft top 0, undrivable 3 (s 6,356-6,366), gated drops 4 (s 6,600), replication 0.02 / 0.11, audit CLEAN, kn5_ground_check PASS, kn5 40.5 MB, `[stage-force] --force-install would be allowed`; Under the Dragon severe 73, soft top 0, undrivable 1 (s 22,414), gated drops 2 (s 2,403), replication 0.01 / 0.11, audit CLEAN, kn5_ground_check PASS, kn5 52.3 MB, `[stage-force] --force-install would be REFUSED` (the s 2,403 drops). The log lines to see: `[densify] 3615` (Dragon Tail) / `3290` (Under the Dragon) `mainline half-quads re-cut`, `[lm_intake] pad DC ... 4.0..10.69 m`, `[lm-pads] DC: rows v816 (3 verts) / v848 (5) ... 950.3 m2`, `[stage-dummies] point-to-point`, `[strip-seam] local scope: ... 0 missed`.
+   2. **Ask Kevin before installing anything.** Dragon Tail installs on his force (the three rows of 2026-11-04) once he says so: `bash tools/ship_track.sh rally-dragon-tail-gravel-lm --force-install` into the real workshop. Under the Dragon waits for his answer on s 2,403.
 4f. **Lidar ground at two Rangely turns** (round 11; the Mac has no LAZ reader and installs nothing). From the
    fleet-lm-engine worktree on the PC (its Python already reads LAZ for the Lariat's pads: `laspy` with `lazrs` or
    `laszip`, `pyproj`, `numpy`), fetching from USGS's public EPT, `CO_NWCO_1_2020`
@@ -1016,10 +1055,10 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
 
 ## Owed
 
-- **The Rangely stages' switchbacks (round 9 measured them, round 10 builds them):** a fit that takes data/switchbacks.json's own circle (centre, R) with clothoids into the legs as they are; a road_seek trigger that also catches a level line off its road (Under the Dragon s 14,337). Then: each switchback's own geometry from the DEM bench and NAIP (a measured
-  centreline radius through `lm_intake.corner_arcs`, or the platform as a pad from the bench outline and the DEM), then
-  Dragon Tail's soft tops (s 6,358-6,365) and drops (s 6,601), and Under the Dragon's corners (s 2,456, 22,413), soft
-  tops and drops. Then Under the Dragon's corner at s 14,337. Then runbook 4e installs.
+- **The Rangely stages (round 13):** Kevin's answer on Under the Dragon s 2,403 (the real fill slope, 3.76 m fall in
+  8.6 m), then runbook 4e (rehearse, then install on his word). Not explained yet: Under the Dragon's worst severe steps
+  at s 14,336-14,341 (-3.8 m, 0.12-0.145 m). Not acted on: the aerial trace's 15 runs (the line along the edge of a
+  wider road), which want a whole-stretch centring on NAIP, not 30-65 m pieces.
 - **Lariat 0.1.1, after Kevin drives 0.1.0:**
   - **C18 (decided, round 8, under "I just want real"): the ramp follows the measured road.** The lap line moves onto
     the lidar ramp it runs off today (its measured asphalt, CO_DRCOG_2_2020), with heights from the lidar ramp, not the

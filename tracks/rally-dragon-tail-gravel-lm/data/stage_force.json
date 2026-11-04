@@ -1,8 +1,6 @@
 {
- "force_install_ok": false,
- "why_not": [
-  "stage: soft_top_in_lane 4 (not forced)"
- ],
+ "force_install_ok": true,
+ "why_not": [],
  "covered": [
   "stage: undrivable corner s 6356 (112 deg at 6.9 m) \u2014 switchback 1",
   "stage: undrivable corner s 6361 (119 deg at 6.9 m) \u2014 switchback 1",

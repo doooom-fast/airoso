@@ -7,9 +7,9 @@
  "fidelity": "skipped: gate OBJ written from this kn5",
  "double_sheet_cells": 0,
  "road_over_ground": {
-  "over": 0,
-  "samples": 3606,
-  "p95_m": 0.021,
-  "max_m": 0.033
+  "over": 98,
+  "samples": 4863,
+  "p95_m": 0.027,
+  "max_m": 0.106
  }
 }

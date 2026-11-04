@@ -22,7 +22,21 @@ Declared (opt-in) in track.config.json:
                           "corridor": {... race.corridor's schema, keyed on LAP vertices ...},
                           "kerbs": {"trims": [...]},      (optional; every other race.kerbs key is inherited)
                           "roads": ["street names in driving order from the lap's v0"],   (optional)
-                          "join_spacing_m": 3.0}          (optional; default the pieces' median spacing)
+                          "join_spacing_m": 3.0,          (optional; default the pieces' median spacing)
+                          "joins_file": "<project-relative json>" | "joins": [...],   (optional, Phase 2)
+                          "junction_pads": ["J2", ...]}   (optional, Phase 2)
+
+    joins / joins_file: DECLARED joins {"id", "from": [line, v], "to": [line, v], "points_xyz_m": [[x, y, z], ...]}
+    whose first and last points are the two piece ends (within JOIN_END_TOL_M): the interior points replace the
+    straight resampled join between exactly those two piece ends (a curve through a junction, read off the roads'
+    own approach tangents; still a reference line, never an AI spline). A declared join no consecutive pair uses
+    is refused.
+    junction_pads: the junction pads (data/pads.plan.json, tools/junction_pad.py) the lap drives THROUGH. Each must
+    join two consecutive pieces by its two route arms (the arm's connector and end are the pieces' ends); every
+    other arm of the pad (its stub arms) is pavement the lap turns away from: a mouth of kind "pad_arm", probed
+    PAD_ARM_PROBE_M into the stub from the middle of its mouth line along its bearing (before the stub's end
+    barrier, so the Speedway's own seal is judged, never the Free Roam end wall alone). A declared pad that is
+    missing, used twice or does not connect consecutive pieces is refused.
     layouts[].lap = "<lap id>"   on a race layout (absent = today's mainline, byte-identical)
 
 The lap id is a lower-case [a-z0-9]+ token: it rides in file names (data/lap.<id>.json,
@@ -51,6 +65,8 @@ BRANCH_PROBE_M = 10.0      # tools/barrier_bands.MOUTH_PROBE_M: the branch probe
 CONNECTOR_ISLAND_SNAP_M = 1.0   # a connector vertex takes the island width of the nearest connector-island point
 #                                 within this (median_bands connector_islands are a separate polyline of the road)
 BRANCH_ON_LAP_PAD_M = 1.0  # a "branch" whose probe point lies within half-width + this of the lap is the lap itself
+JOIN_END_TOL_M = 0.05      # a declared join's end points must be the piece ends they join
+PAD_ARM_PROBE_M = 10.0     # a pad's stub arm is probed this far into the stub from its mouth line (before its barrier)
 
 
 def lap_file(lap_id: str) -> str:
@@ -262,8 +278,74 @@ def _walk_line(line: dict, v: int, step: int, dist: float):
         k = k2
 
 
+def declared_joins(proj, s: dict) -> list:
+    """race.laps.<id>.joins (inline) + the joins of race.laps.<id>.joins_file (project-relative)"""
+    out = list(s.get("joins") or [])
+    jf = s.get("joins_file")
+    if jf:
+        p = Path(proj) / str(jf)
+        if not p.exists():
+            raise SystemExit(f"[lap] joins_file {jf} not found in the project")
+        out += list(json.loads(p.read_text(encoding="utf-8")).get("joins") or [])
+    return out
+
+
+def _pad_arm_mouths(proj, lap_id, pad_ids, walked, P, W, m, tangent, pads=None) -> list:
+    """the stub arms of every declared junction pad, as lap mouths with a probe PAD_ARM_PROBE_M into the stub"""
+    if len(set(pad_ids)) != len(pad_ids):
+        raise SystemExit(f"[lap] race.laps.{lap_id}.junction_pads names a pad twice: {pad_ids}")
+    if pads is None:
+        pp = Path(proj) / "data" / "pads.plan.json"
+        if not pp.exists():
+            raise SystemExit(f"[lap] race.laps.{lap_id}.junction_pads {pad_ids}: no data/pads.plan.json (tools/junction_pad.py)")
+        pads = json.loads(pp.read_text(encoding="utf-8")).get("pads") or []
+    by_id = {str(p.get("id")): p for p in pads}
+    # the lap's piece ends, as (connector, "start" | "end") of an open source line, in driving order
+    ends = []
+    for name, vs, _step in walked:
+        ends.append((name, vs[0], vs[-1]))
+    out = []
+    for pid in pad_ids:
+        pad = by_id.get(pid)
+        if pad is None:
+            raise SystemExit(f"[lap] race.laps.{lap_id}.junction_pads: pad {pid} is not in data/pads.plan.json ({sorted(by_id)})")
+        route = [a for a in pad.get("arms") or [] if a.get("kind") == "route"]
+        stubs = [a for a in pad.get("arms") or [] if a.get("kind") != "route"]
+        ok = False
+        for i in range(len(walked)):
+            a_name, _a0, a1 = ends[i]
+            b_name, b0, _b1 = ends[(i + 1) % len(walked)]
+            got = {(str(r.get("connector")), str(r.get("end"))) for r in route}
+            want = set()
+            for nm, v in ((a_name, a1), (b_name, b0)):
+                want.add((nm, "start" if v == 0 else "end"))
+            if len(route) == 2 and got == want and a_name != b_name:
+                ok = True
+                break
+        if not ok:
+            raise SystemExit(f"[lap] race.laps.{lap_id}.junction_pads: pad {pid}'s route arms "
+                             f"{sorted((r.get('connector'), r.get('end')) for r in route)} do not join two consecutive pieces of the lap")
+        for arm in stubs:
+            ml = arm.get("cut_line_xz") or (pad.get("stubs", {}).get(arm.get("stub"), {}) or {}).get("mouth_line_xz")
+            st = (pad.get("stubs") or {}).get(arm.get("stub")) or {}
+            brg = st.get("bearing_out_deg")
+            if not ml or brg is None:
+                raise SystemExit(f"[lap] pad {pid} arm {arm.get('name')!r}: no mouth line / bearing in data/pads.plan.json")
+            cx, cz = (ml[0][0] + ml[1][0]) / 2.0, (ml[0][1] + ml[1][1]) / 2.0
+            b = math.radians(float(brg))
+            px, pz = cx + PAD_ARM_PROBE_M * math.sin(b), cz + PAD_ARM_PROBE_M * math.cos(b)
+            k = min(range(m), key=lambda q: (P[q][0] - cx) ** 2 + (P[q][2] - cz) ** 2)
+            tx, tz = tangent(k)
+            dx, dz = px - P[k][0], pz - P[k][2]
+            side = 1 if (tx * dz - tz * dx) > 0 else -1
+            out.append({"connector": f"{pid}:{arm.get('stub')} {arm.get('name')}", "piece": f"pad {pid}", "host": "LAP",
+                        "host_vertex": k, "side": side, "connector_width_m": st.get("width_m"), "kind": "pad_arm",
+                        "probe_xz": [round(px, 3), round(pz, 3)], "pad": pid, "stub": arm.get("stub")})
+    return out
+
+
 def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: list | None = None,
-           spans: list | None = None) -> dict:
+           spans: list | None = None, pads: list | None = None) -> dict:
     """The lap line of race.laps.<lap_id> (see the module doc). `lines` / `mouths` / `spans` default to the
     project's own files (tests pass them in memory)."""
     if not LAP_TOKEN_RE.match(str(lap_id)):
@@ -284,6 +366,17 @@ def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: l
         P = lines[name]["pts"]
         gaps += [math.hypot(P[b][0] - P[a][0], P[b][2] - P[a][2]) for a, b in zip(vs, vs[1:])]
     spacing = float(s.get("join_spacing_m") or _median(gaps) or 3.0)
+    declared = {}
+    for dj in declared_joins(proj, s):
+        try:
+            key = ((str(dj["from"][0]), int(dj["from"][1])), (str(dj["to"][0]), int(dj["to"][1])))
+            pts_ = [tuple(float(c) for c in q) for q in dj["points_xyz_m"]]
+        except (KeyError, TypeError, ValueError, IndexError):
+            raise SystemExit(f"[lap] race.laps.{lap_id}: declared join {dj.get('id')!r} needs from / to [line, v] and points_xyz_m")
+        if len(pts_) < 2 or key in declared:
+            raise SystemExit(f"[lap] race.laps.{lap_id}: declared join {dj.get('id')!r} is empty or declared twice")
+        declared[key] = (str(dj.get("id") or ""), pts_)
+    used_joins = set()
     P, W, IW, SRC, joins = [], [], [], [], []
 
     def _join(a_src, b_src):
@@ -294,8 +387,28 @@ def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: l
         if d < DEDUPE_M:
             return False
         k = len(joins)
-        n_ins = max(0, int(math.ceil(d / spacing)) - 1)
         wa, wb = lines[la]["widths"][va], lines[lb]["widths"][vb]
+        dj = declared.get(((la, va), (lb, vb)))
+        if dj is not None:
+            jid, jp = dj
+            for end, src in ((jp[0], A), (jp[-1], B)):
+                if math.hypot(end[0] - src[0], end[2] - src[2]) > JOIN_END_TOL_M:
+                    raise SystemExit(f"[lap] race.laps.{lap_id}: declared join {jid} ends {math.hypot(end[0] - src[0], end[2] - src[2]):.3f} m "
+                                     f"off its piece end {la} v{va} -> {lb} v{vb} (tolerance {JOIN_END_TOL_M} m)")
+            arc = [0.0]
+            for q in range(1, len(jp)):
+                arc.append(arc[-1] + math.hypot(jp[q][0] - jp[q - 1][0], jp[q][2] - jp[q - 1][2]))
+            for q in range(1, len(jp) - 1):
+                t = arc[q] / arc[-1] if arc[-1] > 0 else 0.0
+                P.append(jp[q])
+                W.append(wa + (wb - wa) * t)
+                IW.append(0.0)
+                SRC.append(["join", k])
+            used_joins.add(((la, va), (lb, vb)))
+            joins.append({"from": [la, va], "to": [lb, vb], "length_m": round(arc[-1], 3), "chord_m": round(d, 3),
+                          "points": len(jp) - 2, "declared": jid})
+            return True
+        n_ins = max(0, int(math.ceil(d / spacing)) - 1)
         for q in range(1, n_ins + 1):
             t = q / (n_ins + 1)
             P.append((A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t))
@@ -333,6 +446,9 @@ def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: l
     m = len(P)
     if m < 8:
         raise SystemExit(f"[lap] race.laps.{lap_id}: {m} vertices — not a lap")
+    unused = sorted(declared[k][0] for k in set(declared) - used_joins)
+    if unused:
+        raise SystemExit(f"[lap] race.laps.{lap_id}: declared join(s) {unused} join no consecutive piece ends of this lap")
     # the lap's mouths: every side street of a piece's line inside the lap, and the abandoned branch at every junction
     lap_index = {}
     for k, sv in enumerate(SRC):
@@ -404,6 +520,10 @@ def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: l
             lap_mouths.append({"connector": f"{name} {end} v{v}", "piece": name, "host": "LAP",
                                "host_vertex": k, "side": side, "connector_width_m": round(ln["widths"][v], 3),
                                "kind": "branch", "probe_xz": [round(px, 3), round(pz, 3)]})
+    # the junction pads the lap drives through: every arm that is not one of the lap's two route arms is a pad arm
+    pad_ids = [str(x) for x in (s.get("junction_pads") or [])]
+    if pad_ids:
+        lap_mouths += _pad_arm_mouths(proj, lap_id, pad_ids, walked, P, W, m, tangent, pads=pads)
     lap_mouths.sort(key=lambda r: (r["host_vertex"], r["connector"]))
     # bridge spans (mainline stations) -> lap stations over the mainline vertices the lap shares
     if spans is None:

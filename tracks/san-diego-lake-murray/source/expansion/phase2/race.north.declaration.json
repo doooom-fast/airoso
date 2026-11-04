@@ -1,0 +1,182 @@
+{
+  "_doc": "Ledger 0054 Phase 2 (Mission Gorge Speedway), step 2: the HELD race declaration of the north loop, on Lake Murray v4's committed intermediates (ledger 0065: v4 is the line). NOT in track.config.json and NOT enabled: plan_north.py beside this file merges it into a SCRATCH copy of the config and runs the race tools' plan modes (race_lap.stitch, layout_dummies, barrier_bands with the planned no_route). Everything here is keyed on the LAP's own vertices (data/lap.north.json, 2,936 unique vertices, 8,732.7 m with the declared J2-J4 curves): no mainline vertex number, no race.chicanes (College's crossover chicane is the mainline's, ledger 0055). Corridor limits are the existing Speedway's, unchanged (copied from race.corridor by plan_north.py except whole / boxes / closure_runs / pin_rate, which are the lap's own); clear_width_source none (the lap has no Alvarado to re-measure on). Activating it means copying lap + layouts into track.config.json AFTER the PC's authoring and built gates (ledger 0054 'Phase 2 - step 1..4').",
+  "status": "held",
+  "lap": "north",
+  "built_on": "Lake Murray v4 0.20.0 intermediates (claude/lm-v4-line): data/centerline.local.json, connectors.local.json, mouths.json, median_bands.json, pads.plan.json",
+  "laps": {
+    "north": {
+      "pieces": [
+        {
+          "line": "north_J1_waring#0",
+          "from": 0,
+          "to": 317
+        },
+        {
+          "line": "north_princess_view",
+          "from": 0,
+          "to": 355
+        },
+        {
+          "line": "north_mission_gorge",
+          "from": 0,
+          "to": 745
+        },
+        {
+          "line": "north_J5_jackson_north#0",
+          "from": 651,
+          "to": 0
+        },
+        {
+          "line": "MAINLINE",
+          "from": 2317,
+          "to": 1517,
+          "reverse": true
+        }
+      ],
+      "roads": [
+        "Waring Road",
+        "Princess View Drive",
+        "Mission Gorge Road",
+        "Jackson Drive",
+        "Navajo Road",
+        "Waring Road J1"
+      ],
+      "_roads_doc": "street per vertex (barrier_bands._streets): v0 then each detected corner apex in order (J2 v320, J3 v707, J4 v1458, J5 v2130, J1 v2932), six spans: Waring from v0, Princess View, Mission Gorge, Jackson, Navajo, and the J1 turn from v2932 back to v0 (named apart: object names are per street)",
+      "joins_file": "source/expansion/race.north.joins.json",
+      "_joins_doc": "J2, J3, J4: cubic curves off the roads' own approach tangents (832facf), a reference line through each pad, never an AI spline and never road geometry. J5 (11.6 m) and J1 (14.6 m) stay straight joins: both lie inside the mainline's own junction box (Navajo/Jackson, College/Navajo), whose pavement is built",
+      "junction_pads": [
+        "J2",
+        "J3",
+        "J4"
+      ],
+      "_junction_pads_doc": "the three pads the lap drives through; their six stub arms (Mound Ave, Waring SW = the future Zion link, Mission Gorge W = the future Zion link, the quarry drive, Mission Gorge E, the MTRP entrance) become pad_arm mouths probed 10 m into the stub, before the Free Roam end barrier",
+      "corridor": {
+        "whole": [
+          2426,
+          2616
+        ],
+        "_whole_doc": "Navajo westbound, mainline v2022..v1832 (undivided, 17.0 m): the whole street for the grid and the start / finish, 190 m",
+        "boxes": [
+          {
+            "apex": 320,
+            "i": 314,
+            "j": 334,
+            "_corner": "J2 Waring / Princess View / Mound (pad J2), R 19.6 m, D -82.4"
+          },
+          {
+            "apex": 707,
+            "i": 695,
+            "j": 713,
+            "_corner": "J3 Princess View / Mission Gorge (pad J3), R 17.0 m, D -63.0"
+          },
+          {
+            "apex": 1458,
+            "i": 1452,
+            "j": 1470,
+            "_corner": "J4 Mission Gorge / Jackson north (pad J4), R 19.8 m, D -51.6; j PT+4 so the pad's Mission Gorge east arm (lap v1468) stands inside the box, sealed by the far strip"
+          },
+          {
+            "apex": 2130,
+            "i": 2121,
+            "j": 2136,
+            "_corner": "J5 Jackson / Navajo (mainline v2317 box), R 9.1 m, D -90.1"
+          },
+          {
+            "apex": 2932,
+            "i": 2926,
+            "j": 2,
+            "_corner": "J1 Navajo / College / Waring (mainline v1517 box), R 8.3 m, D -78.3; j PT+4 (the box ends past the seam)"
+          }
+        ],
+        "_boxes_doc": "PC-2 .. PT+2 of the five corners barrier_bands detects on the lap (place_signs' detector, min turn 45 deg), the mainline's rule; exactly five, one per junction",
+        "closure_runs": [
+          [
+            2,
+            314
+          ],
+          [
+            334,
+            695
+          ],
+          [
+            713,
+            1452
+          ],
+          [
+            1470,
+            2121
+          ],
+          [
+            2136,
+            2426
+          ],
+          [
+            2616,
+            2926
+          ]
+        ],
+        "pin_rate": {},
+        "_pin_rate_doc": "none declared. Tried 695: 5.0 / 1470: 4.5 (2026-11-03): the solver still misses the declared rate by the same share, so the pin-zone misses at v683-685 and v1477-1479 are part of the junction-approach class below, not a key to tune"
+      },
+      "kerbs": {
+        "trims": [
+          {
+            "apex": 2130,
+            "kind": "inside",
+            "drop": true,
+            "why": "Held until the PC authors the J5 connection (Phase 2 step 1): the lap's J5 corner is an 11.6 m straight join inside the mainline's Navajo/Jackson box, R 9.1 m; its inside kerb folds on itself (race_furniture: no trim resolves it) and the mainline drops its own inside kerb here for the ribbon fold (race.kerbs.trims apex 2319). Re-declared once the corner surface is authored and measured on the built road"
+          },
+          {
+            "apex": 2932,
+            "kind": "inside",
+            "drop": true,
+            "why": "Held until the PC authors the J1 connection (Phase 2 step 1, coordinated with ledger 0055): the lap's J1 corner is a 14.6 m straight join inside the mainline's College/Navajo box, R 8.3 m, the same fold class; the mainline drops its own inside kerb here (apex 1514). Re-declared once the corner surface is authored and measured"
+          }
+        ]
+      }
+    }
+  },
+  "layouts": [
+    {
+      "id": "north_cw",
+      "name": "Mission Gorge Speedway",
+      "kind": "race",
+      "direction": "forward",
+      "race_furniture": true,
+      "closure_token": "ncw",
+      "lap": "north",
+      "map": "lap",
+      "start": {
+        "line_vertex": 2536,
+        "grid_vertex": 2527,
+        "offset_right_m": 3.25,
+        "sector_vertices": [
+          584,
+          1565
+        ]
+      },
+      "run": "one-way: Waring Road north, Princess View Drive, Mission Gorge Road east through the gorge, Jackson Drive south, Navajo Road west; your own side of every road, the whole street on Navajo at the start, the full junction open at the five corners"
+    },
+    {
+      "id": "north_acw",
+      "name": "Mission Gorge Speedway Reverse",
+      "kind": "race",
+      "direction": "reverse",
+      "race_furniture": true,
+      "closure_token": "nacw",
+      "lap": "north",
+      "map": "lap",
+      "start": {
+        "line_vertex": 2536,
+        "grid_vertex": 2546,
+        "offset_right_m": 3.25,
+        "sector_vertices": [
+          1565,
+          584
+        ]
+      },
+      "run": "one-way, the other way round: Navajo Road east, Jackson Drive north, Mission Gorge Road west, Princess View Drive, Waring Road south"
+    }
+  ],
+  "_sectors_doc": "a third and two thirds of the lap from the start line by station (v579 s 1709 m on Princess View, v1565 s 4620 m on Jackson north)"
+}

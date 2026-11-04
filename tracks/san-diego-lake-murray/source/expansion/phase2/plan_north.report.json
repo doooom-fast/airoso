@@ -1,0 +1,1144 @@
+{
+ "_doc": "plan_north.py: the held Mission Gorge Speedway planned on v4's intermediates (ledger 0054 Phase 2 step 2). PLANNED only: no built-artifact gate ran.",
+ "status": "REFUSED",
+ "lap_m": 8732.7,
+ "unique_vertices": 2936,
+ "joins": [
+  {
+   "from": [
+    "north_J1_waring#0",
+    317
+   ],
+   "to": [
+    "north_princess_view",
+    0
+   ],
+   "length_m": 30.162,
+   "chord_m": 27.992,
+   "points": 13,
+   "declared": "J2"
+  },
+  {
+   "from": [
+    "north_princess_view",
+    355
+   ],
+   "to": [
+    "north_mission_gorge",
+    0
+   ],
+   "length_m": 49.215,
+   "chord_m": 46.039,
+   "points": 23,
+   "declared": "J3"
+  },
+  {
+   "from": [
+    "north_mission_gorge",
+    745
+   ],
+   "to": [
+    "north_J5_jackson_north#0",
+    651
+   ],
+   "length_m": 43.931,
+   "chord_m": 41.995,
+   "points": 20,
+   "declared": "J4"
+  },
+  {
+   "from": [
+    "north_J5_jackson_north#0",
+    0
+   ],
+   "to": [
+    "MAINLINE",
+    2317
+   ],
+   "length_m": 11.614,
+   "points": 3
+  },
+  {
+   "from": [
+    "MAINLINE",
+    1517
+   ],
+   "to": [
+    "north_J1_waring#0",
+    0
+   ],
+   "length_m": 14.6,
+   "points": 4
+  }
+ ],
+ "pieces": [
+  {
+   "line": "north_J1_waring#0",
+   "from": 0,
+   "to": 317,
+   "step": 1,
+   "lap_from": 0,
+   "lap_to": 317,
+   "vertices": 318
+  },
+  {
+   "line": "north_princess_view",
+   "from": 0,
+   "to": 355,
+   "step": 1,
+   "lap_from": 331,
+   "lap_to": 686,
+   "vertices": 356
+  },
+  {
+   "line": "north_mission_gorge",
+   "from": 0,
+   "to": 745,
+   "step": 1,
+   "lap_from": 710,
+   "lap_to": 1455,
+   "vertices": 746
+  },
+  {
+   "line": "north_J5_jackson_north#0",
+   "from": 651,
+   "to": 0,
+   "step": -1,
+   "lap_from": 1476,
+   "lap_to": 2127,
+   "vertices": 652
+  },
+  {
+   "line": "MAINLINE",
+   "from": 2317,
+   "to": 1517,
+   "step": -1,
+   "lap_from": 2131,
+   "lap_to": 2931,
+   "vertices": 801
+  }
+ ],
+ "corners": [
+  {
+   "apex": 320,
+   "PC": 316,
+   "PT": 332,
+   "apex_station_m": 942,
+   "PC_station_m": 932,
+   "PT_station_m": 969,
+   "sign": -1,
+   "R_apex_m": 19.64,
+   "D_deg": -82.35,
+   "arc_m": 37
+  },
+  {
+   "apex": 707,
+   "PC": 697,
+   "PT": 711,
+   "apex_station_m": 2075,
+   "PC_station_m": 2055,
+   "PT_station_m": 2084,
+   "sign": -1,
+   "R_apex_m": 16.98,
+   "D_deg": -63.0,
+   "arc_m": 29
+  },
+  {
+   "apex": 1458,
+   "PC": 1454,
+   "PT": 1466,
+   "apex_station_m": 4321,
+   "PC_station_m": 4312,
+   "PT_station_m": 4338,
+   "sign": -1,
+   "R_apex_m": 19.81,
+   "D_deg": -51.56,
+   "arc_m": 26
+  },
+  {
+   "apex": 2130,
+   "PC": 2123,
+   "PT": 2134,
+   "apex_station_m": 6311,
+   "PC_station_m": 6292,
+   "PT_station_m": 6322,
+   "sign": -1,
+   "R_apex_m": 9.08,
+   "D_deg": -90.14,
+   "arc_m": 30
+  },
+  {
+   "apex": 2932,
+   "PC": 2928,
+   "PT": 2934,
+   "apex_station_m": 8722,
+   "PC_station_m": 8711,
+   "PT_station_m": 8726,
+   "sign": -1,
+   "R_apex_m": 8.31,
+   "D_deg": -78.34,
+   "arc_m": 15
+  }
+ ],
+ "exits": [
+  {
+   "exit": "STUB_galewood_street_5984405_L",
+   "kind": "side_street",
+   "lap_vertex": 36,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  },
+  {
+   "exit": "STUB_galewood_street_5984405_R",
+   "kind": "side_street",
+   "lap_vertex": 36,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   }
+  },
+  {
+   "exit": "STUB_eldridge_street_6013754_L",
+   "kind": "side_street",
+   "lap_vertex": 135,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  },
+  {
+   "exit": "STUB_eldridge_street_6013754_R",
+   "kind": "side_street",
+   "lap_vertex": 135,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   }
+  },
+  {
+   "exit": "STUB_birchwood_street_1370375341_R",
+   "kind": "side_street",
+   "lap_vertex": 224,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   }
+  },
+  {
+   "exit": "J2:S1 Mound Avenue",
+   "kind": "pad_arm",
+   "lap_vertex": 320,
+   "probe_xz": [
+    -2723.198,
+    965.31
+   ],
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_far_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  },
+  {
+   "exit": "J2:S2 Waring Road (south-west, off route)",
+   "kind": "pad_arm",
+   "lap_vertex": 326,
+   "probe_xz": [
+    -2765.208,
+    969.103
+   ],
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_far_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  },
+  {
+   "exit": "STUB_glenroy_street_663868618_L",
+   "kind": "side_street",
+   "lap_vertex": 352,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  },
+  {
+   "exit": "STUB_glenroy_street_663868622_R",
+   "kind": "side_street",
+   "lap_vertex": 352,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   }
+  },
+  {
+   "exit": "STUB_princess_view_court_5998286_R",
+   "kind": "side_street",
+   "lap_vertex": 385,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   }
+  },
+  {
+   "exit": "STUB_princess_view_place_5998259_R",
+   "kind": "side_street",
+   "lap_vertex": 432,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   }
+  },
+  {
+   "exit": "STUB_princess_view_way_6018734_R",
+   "kind": "side_street",
+   "lap_vertex": 455,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   }
+  },
+  {
+   "exit": "STUB_fontaine_street_5986946_L",
+   "kind": "side_street",
+   "lap_vertex": 509,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  },
+  {
+   "exit": "STUB_fontaine_street_5986946_R",
+   "kind": "side_street",
+   "lap_vertex": 509,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   }
+  },
+  {
+   "exit": "STUB_laura_street_6042836_R",
+   "kind": "side_street",
+   "lap_vertex": 565,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   }
+  },
+  {
+   "exit": "J3:S3 Mission Gorge Road (west, off route)",
+   "kind": "pad_arm",
+   "lap_vertex": 696,
+   "probe_xz": [
+    -3063.121,
+    2020.674
+   ],
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_far_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  },
+  {
+   "exit": "J3:S4 quarry drive (OSM 'Tierrasanta Boulevard (Proposed)')",
+   "kind": "pad_arm",
+   "lap_vertex": 706,
+   "probe_xz": [
+    -3041.09,
+    2073.459
+   ],
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_far_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  },
+  {
+   "exit": "STUB_conestoga_way_6042936_R",
+   "kind": "side_street",
+   "lap_vertex": 848,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   }
+  },
+  {
+   "exit": "STUB_margerum_avenue_135149732_R",
+   "kind": "side_street",
+   "lap_vertex": 1072,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   }
+  },
+  {
+   "exit": "STUB_mission_vista_drive_5977531_L",
+   "kind": "side_street",
+   "lap_vertex": 1072,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  },
+  {
+   "exit": "STUB_mission_montana_drive_5988290_L",
+   "kind": "side_street",
+   "lap_vertex": 1176,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  },
+  {
+   "exit": "STUB_mission_vista_drive_5977531_L_560",
+   "kind": "side_street",
+   "lap_vertex": 1270,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  },
+  {
+   "exit": "STUB_deerfield_crescent_638144640_L",
+   "kind": "side_street",
+   "lap_vertex": 1379,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  },
+  {
+   "exit": "STUB_deerfield_street_6055959_R",
+   "kind": "side_street",
+   "lap_vertex": 1380,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   }
+  },
+  {
+   "exit": "J4:S6 MTRP visitor-centre entrance (OSM service way 60516202)",
+   "kind": "pad_arm",
+   "lap_vertex": 1458,
+   "probe_xz": [
+    -1221.486,
+    3222.699
+   ],
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_far_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  },
+  {
+   "exit": "J4:S5 Mission Gorge Road (east, the gorge; Phase 2)",
+   "kind": "pad_arm",
+   "lap_vertex": 1468,
+   "probe_xz": [
+    -1167.663,
+    3199.999
+   ],
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_far_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  },
+  {
+   "exit": "STUB_doreen_road_5955946_L",
+   "kind": "side_street",
+   "lap_vertex": 1525,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   }
+  },
+  {
+   "exit": "STUB_hemingway_drive_6045093_L",
+   "kind": "side_street",
+   "lap_vertex": 1633,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   }
+  },
+  {
+   "exit": "STUB_winding_creek_drive_5968105_R",
+   "kind": "side_street",
+   "lap_vertex": 1681,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  },
+  {
+   "exit": "STUB_tuxedo_road_6051501_R",
+   "kind": "side_street",
+   "lap_vertex": 1730,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  },
+  {
+   "exit": "STUB_park_ridge_boulevard_1224664714_L",
+   "kind": "side_street",
+   "lap_vertex": 2008,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   }
+  },
+  {
+   "exit": "STUB_birchcreek_road_6024742_R",
+   "kind": "side_street",
+   "lap_vertex": 2068,
+   "probe_xz": null,
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "behind_closure"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  },
+  {
+   "exit": "MAINLINE before v2317",
+   "kind": "branch",
+   "lap_vertex": 2131,
+   "probe_xz": [
+    62.975,
+    1710.492
+   ],
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_far_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  },
+  {
+   "exit": "MAINLINE beyond v1517",
+   "kind": "branch",
+   "lap_vertex": 2931,
+   "probe_xz": [
+    -1967.898,
+    582.149
+   ],
+   "north_cw": {
+    "planned": "sealed",
+    "policy": "sealed_far_strip"
+   },
+   "north_acw": {
+    "planned": "sealed",
+    "policy": "sealed_race_strip"
+   }
+  }
+ ],
+ "exit_counts": {
+  "side_street": 26,
+  "pad_arm": 6,
+  "branch": 2
+ },
+ "planned_no_route": {
+  "north_cw": {
+   "fail": false,
+   "leak_m2": 0,
+   "reached_m2": 93149,
+   "door_clusters": 0,
+   "blocked": [],
+   "forbidden_reached": [],
+   "file": "no_route.north_cw.planned.json"
+  },
+  "north_acw": {
+   "fail": false,
+   "leak_m2": 0,
+   "reached_m2": 93148,
+   "door_clusters": 0,
+   "blocked": [],
+   "forbidden_reached": [],
+   "file": "no_route.north_acw.planned.json"
+  }
+ },
+ "summary": {
+  "layouts": {
+   "north_cw": {
+    "token": "ncw",
+    "closure_runs": 6,
+    "closure_m": 7958.5,
+    "island_vertices": 924,
+    "island_m": 2724.2,
+    "clear_min_m": 6.86,
+    "clear_median_m": 11.271,
+    "pin_rates": [
+     [
+      2,
+      1.82
+     ],
+     [
+      334,
+      6.0
+     ],
+     [
+      713,
+      0.92
+     ],
+     [
+      1470,
+      5.01
+     ],
+     [
+      2136,
+      3.55
+     ],
+     [
+      2616,
+      6.0
+     ],
+     [
+      314,
+      1.9
+     ],
+     [
+      695,
+      6.0
+     ],
+     [
+      1452,
+      6.0
+     ],
+     [
+      2121,
+      6.0
+     ],
+     [
+      2426,
+      6.0
+     ],
+     [
+      2926,
+      3.4
+     ]
+    ],
+    "below_floor_vertices": 842,
+    "min_radius_m": 12.0,
+    "probes": 332,
+    "planned_no_route": {
+     "fail": false,
+     "leak_m2": 0,
+     "reached_m2": 93149,
+     "door_clusters": 0,
+     "blocked": [],
+     "forbidden_reached": [],
+     "seconds": 2.4,
+     "file": "no_route.north_cw.planned.json"
+    }
+   },
+   "north_acw": {
+    "token": "nacw",
+    "closure_runs": 6,
+    "closure_m": 7958.5,
+    "island_vertices": 924,
+    "island_m": 2724.2,
+    "clear_min_m": 6.86,
+    "clear_median_m": 11.268,
+    "pin_rates": [
+     [
+      2926,
+      3.4
+     ],
+     [
+      2426,
+      6.0
+     ],
+     [
+      2121,
+      6.0
+     ],
+     [
+      1452,
+      6.0
+     ],
+     [
+      695,
+      6.0
+     ],
+     [
+      314,
+      1.9
+     ],
+     [
+      2616,
+      6.0
+     ],
+     [
+      2136,
+      3.55
+     ],
+     [
+      1470,
+      5.01
+     ],
+     [
+      713,
+      0.92
+     ],
+     [
+      334,
+      6.0
+     ],
+     [
+      2,
+      1.82
+     ]
+    ],
+    "below_floor_vertices": 836,
+    "min_radius_m": 12.0,
+    "probes": 332,
+    "planned_no_route": {
+     "fail": false,
+     "leak_m2": 0,
+     "reached_m2": 93148,
+     "door_clusters": 0,
+     "blocked": [],
+     "forbidden_reached": [],
+     "seconds": 2.3,
+     "file": "no_route.north_acw.planned.json"
+    }
+   }
+  },
+  "mirror_max_m": 2.171,
+  "mirror_running_max_m": 0.024,
+  "edge_verts": 2937,
+  "edge_gaps": 0,
+  "edge_corners": 3,
+  "kerbs": 8,
+  "kerbs_dropped": [
+   [
+    2130,
+    "inside"
+   ],
+   [
+    2932,
+    "inside"
+   ]
+  ],
+  "kerb_trims": [],
+  "kerb_clips": [
+   {
+    "apex": 320,
+    "side": "L",
+    "kind": "outside",
+    "from": [
+     305,
+     343
+    ],
+    "to": [
+     315,
+     333
+    ],
+    "by": [
+     "north_cw"
+    ]
+   },
+   {
+    "apex": 707,
+    "side": "L",
+    "kind": "outside",
+    "from": [
+     684,
+     721
+    ],
+    "to": [
+     696,
+     712
+    ],
+    "by": [
+     "north_cw"
+    ]
+   },
+   {
+    "apex": 1458,
+    "side": "L",
+    "kind": "outside",
+    "from": [
+     1444,
+     1479
+    ],
+    "to": [
+     1453,
+     1469
+    ],
+    "by": [
+     "north_cw"
+    ]
+   },
+   {
+    "apex": 2130,
+    "side": "L",
+    "kind": "outside",
+    "from": [
+     2116,
+     2140
+    ],
+    "to": [
+     2122,
+     2135
+    ],
+    "by": [
+     "north_cw"
+    ]
+   },
+   {
+    "apex": 2932,
+    "side": "L",
+    "kind": "outside",
+    "from": [
+     2922,
+     5
+    ],
+    "to": [
+     2927,
+     1
+    ],
+    "by": [
+     "north_cw"
+    ]
+   }
+  ],
+  "corners": 5,
+  "island_runs": [
+   [
+    11,
+    187
+   ],
+   [
+    265,
+    306
+   ],
+   [
+    460,
+    476
+   ],
+   [
+    479,
+    486
+   ],
+   [
+    503,
+    504
+   ],
+   [
+    535,
+    537
+   ],
+   [
+    540,
+    541
+   ],
+   [
+    549,
+    554
+   ],
+   [
+    718,
+    723
+   ],
+   [
+    725,
+    725
+   ],
+   [
+    734,
+    735
+   ],
+   [
+    737,
+    738
+   ],
+   [
+    740,
+    740
+   ],
+   [
+    743,
+    743
+   ],
+   [
+    745,
+    745
+   ],
+   [
+    748,
+    751
+   ],
+   [
+    753,
+    754
+   ],
+   [
+    758,
+    758
+   ],
+   [
+    764,
+    764
+   ],
+   [
+    767,
+    767
+   ],
+   [
+    775,
+    775
+   ],
+   [
+    778,
+    778
+   ],
+   [
+    781,
+    854
+   ],
+   [
+    875,
+    1109
+   ],
+   [
+    1381,
+    1415
+   ],
+   [
+    1498,
+    1506
+   ],
+   [
+    2151,
+    2265
+   ],
+   [
+    2709,
+    2908
+   ]
+  ],
+  "nose_vertices": [
+   11,
+   187,
+   265,
+   306,
+   460,
+   476,
+   479,
+   486,
+   503,
+   504,
+   535,
+   537,
+   540,
+   541,
+   549,
+   554,
+   718,
+   723,
+   725,
+   734,
+   735,
+   737,
+   738,
+   740,
+   743,
+   745,
+   748,
+   751,
+   753,
+   754,
+   758,
+   764,
+   767,
+   775,
+   778,
+   781,
+   854,
+   875,
+   1109,
+   1381,
+   1415,
+   1498,
+   1506,
+   2151,
+   2265,
+   2709,
+   2908
+  ]
+ },
+ "mainline_declaration_unchanged": true,
+ "mainline_keys_differing_from_committed": [
+  "bridge_spans_m"
+ ],
+ "source_unchanged": true,
+ "fails": [
+  "north: rates north_cw: run v2-v314 pin rate 1:1.82 is steeper than 1:3",
+  "north: rates north_cw: run v2-v314 pin rate 1:1.90 is steeper than 1:3",
+  "north: rates north_cw: v2->v3 moves 1:1.82 \u2014 steeper than 1:3",
+  "north: rates north_cw: v683->v684 1:5.67 in a pin zone (limit 1:6.00)",
+  "north: rates north_cw: run v713-v1452 pin rate 1:0.92 is steeper than 1:3",
+  "north: rates north_cw: v713->v714 moves 1:0.92 \u2014 steeper than 1:3",
+  "north: shape north_cw: run v713-v1452 plan radius 12.0 m at v718 < 20.0 m",
+  "north: rates north_cw: v1477->v1478 1:4.62 in a pin zone (limit 1:5.01)",
+  "north: rates north_acw: v1479->v1478 1:4.75 in a pin zone (limit 1:5.01)",
+  "north: rates north_acw: run v713-v1452 pin rate 1:0.92 is steeper than 1:3",
+  "north: rates north_acw: v718->v717 moves 1:0.92 \u2014 steeper than 1:3",
+  "north: shape north_acw: run v713-v1452 plan radius 12.0 m at v718 < 20.0 m",
+  "north: rates north_acw: v685->v684 1:5.49 in a pin zone (limit 1:6.00)",
+  "north: rates north_acw: run v2-v314 pin rate 1:1.90 is steeper than 1:3",
+  "north: rates north_acw: run v2-v314 pin rate 1:1.82 is steeper than 1:3",
+  "north: rates north_acw: v314->v313 moves 1:1.90 \u2014 steeper than 1:3"
+ ]
+}

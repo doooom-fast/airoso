@@ -14,6 +14,21 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-04 — MEASUREMENT-BUG FIX: the north joins' judge re-seats a moved lane band (ledger 0054 Phase 2, no threshold moved)
+
+`tracks/san-diego-lake-murray/source/expansion/phase2/judge_joins_built.py` read a "step" between a lateral path's sample and
+its last one, however far back that was. Through a join the lane band (`lane_by_vertex`) moves, so an offset leaves the lane
+and comes back metres later. On v4's built road every "severe step" it reported at J1-J5 (14 / 48 / 156-158 / 74-118 / 23)
+compared samples 10-51 m apart in plan: 0.15-0.55 m of plain grade.
+
+- **The fix.** A path whose last sample is more than `RESEAT_M = 3 × STEP_M` (1.5 m) away is re-seated, not judged. This is
+  drive_test's own rule where "the lane moved … the lateral re-seat is not a bump".
+- **Thresholds.** STEP_SEVERE_M, STEP_BUMP_M, the samples and the classes are unchanged.
+- **Result on v4.** J1 and J5 pass; J2 / J3 / J4 keep 7 / 8 / 5 real steps, each within 1.5 m, where the planned lane's
+  face clips a pad corner's curb return. Those are fixed in the plan (ledger 0054), not here.
+- **Proven.** `tests/tools/test_judge_joins_built.py`: a band that shifts through a synthetic join on a 3 % grade counts no
+  step, and counts one with the re-seat disabled (the test reaches the bug); a 0.15 m curb across the lane still counts.
+
 ## 2026-11-03 — COMPARISON RULE: "unchanged" kn5s are judged by `tools/kn5_equiv.py`, not md5 (ledger 0065)
 
 Blender's tangent pass is not bit-stable. Lake Murray v4's own workshop, rebuilt from the prep on the PC with the same engine,

@@ -8,7 +8,9 @@ shrunk by EDGE_KEEP_M off each face; the full street inside the junction boxes),
   road      the top drivable surface is 1ROAD / 1KERB (drive_test DRIVABLE minus SOFT); none = a hole, SOFT on top = ground
             through the road (soft top)
   steps     along every lateral path, |dh| between consecutive samples at least MIN_ADVANCE_M apart along the travel > drive_test STEP_SEVERE_M = severe (fail),
-            > STEP_BUMP_M = a bump (reported)
+            > STEP_BUMP_M = a bump (reported). A path whose last sample is more than RESEAT_M away in plan is re-seated, not
+            judged: the lane band moved (a lateral offset that leaves the lane through a join and comes back later), as
+            drive_test re-seats where "the lane moved ... the lateral re-seat is not a bump" 
   kinks     the grade change per metre along the reference line > drive_test KINK_PCT (reported)
   clear     no non-drivable, non-paint triangle (walls, posts, signs, buildings) within drive_test OBST_CLEAR_M of a sample, from
             0.05 m over the deck to drive_test OBST_HEIGHT_M (fail)
@@ -42,6 +44,8 @@ LAT_STEP_M = 0.5
 APPROACH_M = 10.0
 MIN_ADVANCE_M = 0.25       # [invented] a lateral path inside a tight corner barely moves (or runs backwards past the
 #                            corner's centre): its step is read only once it has advanced this far along the travel
+RESEAT_M = 3 * STEP_M      # a path's last sample further than this in plan is not a neighbour: re-seat (2026-11-04, the PC: through
+#                            J1-J5 on v4 every "severe step" compared samples 10-51 m apart, 0.15-0.55 m of plain grade)
 EDGE_KEEP_M = 0.5          # [invented] a sample stays this far inside each lane face (the strip / closure stands on it)
 FRAME_TOL_M = 0.05
 ZONE_PAD_M = 30.0
@@ -235,6 +239,8 @@ def main(argv=None):
                         if hs and max(hs) > top + 0.01:
                             softs.append([round(ss, 1), key, round(max(hs) - top, 3)])
                         pv = prev.get(key)
+                        if pv is not None and math.hypot(px - pv[1], pz - pv[2]) > RESEAT_M:
+                            pv = None                  # the lane band moved: re-seat this path here (module doc, steps)
                         moved = pv is not None and ((px - pv[1]) * tx + (pz - pv[2]) * tz) / L >= MIN_ADVANCE_M
                         if moved:
                             dh = abs(top - pv[0])

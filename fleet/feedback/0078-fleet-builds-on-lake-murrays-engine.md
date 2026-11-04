@@ -381,6 +381,61 @@ terrain vertex). `tools/strip_seam_blend.py` now seats a midpoint seam vertex an
 levels [invented]: 24 misses (0.4 %, under the 1 % refusal). This changes the seam only where a join used to fail (High
 Plains 2, Milford 11, Pikes Peak 0, Nevada 0 misses in round 5); those ports' records stand as built at cf401bf / c36f023.
 
+### Round 6 (Mac): the Lookout Lariat on Lake Murray's engine (`lookout-lariat-lm` 0.1.0): to the kn5, red on two rows
+
+**The data.** PR 32 (`claude/lariat-drive1`, 0.17.1) merged here for the live track's measured data (the paint-fitted line
+with its hairpin fits, `widths.measured.json`'s real hairpin widths in the line's widths, the 3DEP grid, the declared
+lid deck, the stacked-leg declaration, Kevin's force), plus the 0.17.2 lidar-intensity pad outlines
+(`tracks/lookout-lariat/source/pads/C14|C15|C18.*`, from `claude/lariat-pads-wip`). New, all opt-in in the intake:
+- **the measured profile, no cap:** the Lariat's profile is `scripts/elevation/road_profile.py`'s (metre windows, the lid
+  held straight); the intake runs that tool on a scratch copy at the live cap (it reproduces the committed profile:
+  0.000 m) and with the cap off; the deck stays as road_profile held it (`decks_held`, not re-levelled);
+- **the measured C12 / C13 arcs** (`lm_intake.corner_arcs`): PR 32's `hairpin_fit.mesh_fit` corners (R 14.9 / 16.08 m off
+  the aerial) fitted with `scripts/geometry/corner_arcs.fit_corners` on the line the assembler sweeps (build_mesh fitted
+  them on its own line). C12 passes on its span; two adjacent-step readings of the raw arms outside it (1.62 / 1.60 deg
+  against 1.5) are reported, not fatal (the assembler's smoothing takes the arms' facets out). Kept by index as build_mesh
+  keeps them, the heights make the steepest 10 m 15.48 % at the arcs (11.82 % without them): 3DEP read along the arcs is owed;
+- **the line's own records** (`lm_intake.carry_records`: the one-way check, the paint-centreline / hairpin gate, the raw
+  3DEP for drive_test's replication) and a flat roll-rate record (`roll_record: "flat"`: the port tilts nothing; the live
+  crossfall is DEM-estimated, A6 keeps the hairpins untilted).
+
+**The engine side.** `tools/split_strip_blend.py` (draft step `split_strip`, opt-in): a 24.9 km lap's edge strip (115,552
+vertices) cut along the line into pieces under AC's cap before the prep (engine-july's prep cut it in axis bands and
+refused one of 76,510). The live track's terrain tiers are the V3 plan's spec, not Lake Murray's format, and Lake
+Murray's `terrain_sample` fetches 3DEP per vertex: the port builds on the 3DEP grid pre-divided x3 (13.3 m, the live
+draft's medium cell); a tiered port is owed. `strip_seam` is not on the Lariat (a 0.4 m verge; its joins scale with the
+whole terrain: 28,890 seam points did not finish in 25 minutes; a local seam is owed). The 0.4 m gravel verge is
+`route.edge`, skinned with airoso's gravel tile.
+
+**Kevin's force, carried for the two rows only:** `gates.drive1.force_exemptions` on the port's own config, `versions
+["0.1.0"]`, the same corners (C4-C10, 40 m windows) and the same far-ledge ceiling (1,045). `tools/drive1_gates.py` reads it
+ACTIVE for this build.
+
+**The Mac build (`tools/ship_track.sh` itself, from an empty workshop through the draft, resumed at the prep after the
+strip split; `--no-install`):**
+
+| Drive-1 row | port 0.1.0 | |
+|---|---|---|
+| road kn5 | 77.8 MB | |
+| drive_test: severe steps / kinks | **0** / 0.4 per km (ceiling 19.49) | the live 0.17.0 Mac draft read 42 severe |
+| drive_test: soft top in lane | **16** | RED, not exempt: the climb's hairpin insides (C5 s 2,839-2,841, C7-C9 s 5,411-5,610), 0.2-0.5 m inside the lane edge |
+| drive_test: undrivable corners | 79 | Kevin's row: the real hairpins C4-C10 at their measured widths |
+| drive_test: far ledges / gated drops | 31 / 3 | Kevin's row (<= 1,045) / under the lap's 24 |
+| replication vs the raw 3DEP | median 0.13, p95 0.36, max 0.64 m (gate p95 0.5) | PASS |
+| audit / kn5_ground_check / verify_kn5 / lid ends | CLEAN / PASS (p95 0.021 m, 1 of 6,123 over 5 cm) / PASS / PASS | |
+| one-way / hairpin-paint / roll rate / road inventory | PASS / PASS / PASS / PASS | |
+| stacked legs | **101** of 7,274 ground vertices seated to the other leg | RED: ground between the climb's legs (C7-C9) that follows the other leg's height (e.g. 9.8 m from its own leg in plan, 9.9 m off it, 1.9 m off the other). PR 32 graded it with station-matched cut / fill (`scripts/geometry/cutfill.py`, P3a); engine-july's prep feathers to the nearest road in plan. Owed: that cut / fill as a draft step on this engine |
+| edge report, 1 m past the edge | ground 100 % | the 0.4 m verge ends before 1 m, as the real road |
+
+`--force-install` is REFUSED by the strict rule (soft top 16 and stacked legs are not Kevin's rows): **not installable**.
+
+**Junctions: not yet through Lake Murray's junction pads.** Lake Murray's pads (`tools/junction_pad.py`,
+`author_junction_pad_blend.py`) weld connector pieces (route arms) and stubs at declared cuts on its north network's
+authored intermediate; the Lariat's mouths (C14, C15, C18, and C12 / C16) sit ON the lap, with no connectors. The port
+builds the lap through them as plain ribbon (no severe step there on this build). Owed: a MAINLINE arm in the pad
+tooling (the lap cut at two of its own rows, the deck between them over the lidar outline the 0.17.2 files carry,
+the side roads as stubs), then the five mouths declared.
+
 ## PC runbooks
 
 **ENG**: never the live `D:\k10\engine-july`. Keep `D:/k10-scratch/eng_repro` (the repo-only v4 engine) clean; each build
@@ -429,6 +484,11 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
 4a. **High Plains 0.1.1 and Nevada 0.1.1** (round 5): the same commands as steps 2-4 from the new head, the same ENG copies
    (`eng_hplm`, `eng_nvlm`: no new texture; Nevada's run-off pads wear `building_*`, in REFERENCED.md5). They replace the
    0.1.0 ports in the same folders (`high_plains_lm`, `exotics_racing_lvms_lm`). Expect the Mac's 0.1.1 numbers (Round 5, above).
+4d. **Lookout Lariat on the LM engine** (`lookout-lariat-lm` 0.1.0; workshop `lariat_lm`; installs as `lookout_lariat_lm`
+   beside the live folders; **red, do not install**): ENG = a copy of `eng_repro` plus airoso's `assets/textures/gravel_road_
+   diffuse.png` (6babc2255987b6bbd8292aca6cedd69b) and `gravel_road_normal.png` (addd8f823f03ca80648b6ef96a06a73b). A
+   rehearsal (`--no-install`) reproduces the Mac's rows (Round 6, the Lariat): every row green except soft top 16 and
+   stacked legs 101; `--force-install` is refused by design until those two are fixed.
 4c. **Sand Creek, Pueblo, Grand Junction, Aspen 0.1.1** (round 6, after their 0.1.0 is installed from 29c1069): the same
    commands from the new head, the same ENG copies (no new texture), replacing 0.1.0 in the same folders
    (`sand_creek_raceway_lm`, `pueblo_motorsports_park_lm`, `grand_junction_lm`, `aspen_motorsports_park_lm`). Expect the

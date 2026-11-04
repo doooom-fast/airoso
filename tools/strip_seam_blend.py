@@ -81,7 +81,11 @@ def main():
         put(f)
 
     def locate(x, y):
-        for f in grid.get((int(x // CELL_M), int(y // CELL_M)), ()):
+        key = (int(x // CELL_M), int(y // CELL_M))
+        cell = grid.get(key)
+        if cell and len(cell) > 64:                       # drop the faces a poke or a cut replaced (a 25 km lap, the Lariat)
+            cell[:] = [f for f in cell if f.is_valid]
+        for f in cell or ():
             if not f.is_valid or len(f.verts) != 3:
                 continue
             a, b, c = (v.co for v in f.verts)

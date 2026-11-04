@@ -326,6 +326,10 @@ draft_strip_seam() {
   step "author: a ground seam along the edge strip's outer lip (tools/strip_seam_blend.py; ledger 0078; self-checked)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/strip_seam_blend.py" -- "$PROJ" 2>&1 | grep "^\[strip-seam\]\|Error\|Traceback" )
 }
+draft_split_strip() {
+  step "author: a long lap's edge strip cut along the line under AC's vertex cap (tools/split_strip_blend.py; ledger 0078; under the cap = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/split_strip_blend.py" -- "$PROJ" 2>&1 | grep "^\[split-strip\]\|Error\|Traceback" )
+}
 draft_aprons() {
   step "author: corner aprons (route.aprons: the return pavement, its curb + walk, the ground under it; self-checked; none declared = no-op)"
   # ledger 0054 P1 fix round: corner aprons (tools/author_aprons_blend.py; track.config.json route.aprons, absent = no-op)

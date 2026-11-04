@@ -1,0 +1,417 @@
+{
+ "_doc": "Lariat Drive-1 stacked-leg check (tools/verify_stacked_legs.py; V3-PLAN P5, L4, ledger 0048).",
+ "line": "gate_centerline.json",
+ "lap_m": 24851.1,
+ "closed": true,
+ "thresholds": {
+  "pair_plan_m": 40.0,
+  "pair_along_m": 150.0,
+  "max_failures": 0,
+  "crossing_zone_m": 40.0,
+  "road_window_m": 2.5,
+  "_tags": "all [invented] (V3-PLAN P5, ledger 0048; crossing zone 2026-10-12) \u2014 fleet/GATES-CHANGELOG.md"
+ },
+ "mode": "built",
+ "obj": "track.obj",
+ "heights": "the built 1ROAD under each lap point",
+ "lap_points_without_road": 0,
+ "stacked_points_without_road": 0,
+ "stacked_points_without_road_st": [],
+ "pairs": 10393,
+ "stacked_points": 674,
+ "stacked_runs": [
+  [
+   2492.0,
+   2540.0
+  ],
+  [
+   2667.0,
+   2717.0
+  ],
+  [
+   2731.0,
+   2781.0
+  ],
+  [
+   2885.0,
+   2958.0
+  ],
+  [
+   3077.0,
+   3149.0
+  ],
+  [
+   5300.0,
+   5362.0
+  ],
+  [
+   5424.0,
+   5463.0
+  ],
+  [
+   5482.0,
+   5558.0
+  ],
+  [
+   5584.0,
+   5621.0
+  ],
+  [
+   5679.0,
+   5731.0
+  ],
+  [
+   5756.0,
+   5811.0
+  ],
+  [
+   5940.0,
+   5988.0
+  ]
+ ],
+ "nearest_plan_m": 21.59,
+ "vertical_gap_m": {
+  "min": 6.5,
+  "median": 10.01,
+  "max": 14.66
+ },
+ "crossings": [],
+ "crossing_skipped": 0,
+ "tested": {
+  "ground": 2380,
+  "edge": 4894
+ },
+ "tested_total": 7274,
+ "failures": 101,
+ "failures_by_class": {
+  "ground": 101
+ },
+ "worst": [
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -950.95,
+   "y": 363.92,
+   "z": 478.38,
+   "own_station_m": 5429.0,
+   "other_station_m": 5610.0,
+   "dy_own_m": 9.44,
+   "dy_other_m": 1.44,
+   "plan_own_m": 34.34,
+   "plan_other_m": 39.27
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -929.19,
+   "y": 356.97,
+   "z": 585.07,
+   "own_station_m": 5333.0,
+   "other_station_m": 5507.0,
+   "dy_own_m": 9.92,
+   "dy_other_m": 1.99,
+   "plan_own_m": 9.79,
+   "plan_other_m": 12.94
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -929.19,
+   "y": 356.96,
+   "z": 583.4,
+   "own_station_m": 5335.0,
+   "other_station_m": 5506.0,
+   "dy_own_m": 9.79,
+   "dy_other_m": 1.93,
+   "plan_own_m": 9.87,
+   "plan_other_m": 12.5
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -937.56,
+   "y": 349.07,
+   "z": 603.41,
+   "own_station_m": 5517.0,
+   "other_station_m": 5315.0,
+   "dy_own_m": 10.51,
+   "dy_other_m": 3.12,
+   "plan_own_m": 17.15,
+   "plan_other_m": 17.2
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -939.23,
+   "y": 349.14,
+   "z": 605.08,
+   "own_station_m": 5518.0,
+   "other_station_m": 5313.0,
+   "dy_own_m": 10.51,
+   "dy_other_m": 3.31,
+   "plan_own_m": 17.73,
+   "plan_other_m": 18.83
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -929.19,
+   "y": 356.59,
+   "z": 578.4,
+   "own_station_m": 5340.0,
+   "other_station_m": 5503.0,
+   "dy_own_m": 9.09,
+   "dy_other_m": 2.09,
+   "plan_own_m": 10.13,
+   "plan_other_m": 11.66
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -929.19,
+   "y": 356.59,
+   "z": 576.74,
+   "own_station_m": 5342.0,
+   "other_station_m": 5502.0,
+   "dy_own_m": 8.95,
+   "dy_other_m": 2.02,
+   "plan_own_m": 10.22,
+   "plan_other_m": 11.53
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -1006.18,
+   "y": 378.08,
+   "z": 660.09,
+   "own_station_m": 5972.0,
+   "other_station_m": 5774.0,
+   "dy_own_m": 9.58,
+   "dy_other_m": 2.77,
+   "plan_own_m": 17.79,
+   "plan_other_m": 18.46
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -1006.18,
+   "y": 378.17,
+   "z": 658.43,
+   "own_station_m": 5974.0,
+   "other_station_m": 5772.0,
+   "dy_own_m": 9.61,
+   "dy_other_m": 2.98,
+   "plan_own_m": 18.03,
+   "plan_other_m": 18.55
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -932.54,
+   "y": 349.62,
+   "z": 591.74,
+   "own_station_m": 5511.0,
+   "other_station_m": 5326.0,
+   "dy_own_m": 9.58,
+   "dy_other_m": 3.0,
+   "plan_own_m": 12.57,
+   "plan_other_m": 12.76
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -1006.18,
+   "y": 378.32,
+   "z": 666.76,
+   "own_station_m": 5966.0,
+   "other_station_m": 5781.0,
+   "dy_own_m": 9.0,
+   "dy_other_m": 2.57,
+   "plan_own_m": 16.97,
+   "plan_other_m": 18.04
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -1006.18,
+   "y": 378.41,
+   "z": 665.09,
+   "own_station_m": 5968.0,
+   "other_station_m": 5779.0,
+   "dy_own_m": 9.03,
+   "dy_other_m": 2.79,
+   "plan_own_m": 17.15,
+   "plan_other_m": 18.16
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -966.01,
+   "y": 363.18,
+   "z": 606.74,
+   "own_station_m": 5719.0,
+   "other_station_m": 5528.0,
+   "dy_own_m": 8.98,
+   "dy_other_m": 2.82,
+   "plan_own_m": 18.85,
+   "plan_other_m": 19.26
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -1006.18,
+   "y": 378.57,
+   "z": 673.43,
+   "own_station_m": 5961.0,
+   "other_station_m": 5788.0,
+   "dy_own_m": 8.46,
+   "dy_other_m": 2.36,
+   "plan_own_m": 16.44,
+   "plan_other_m": 17.37
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -929.19,
+   "y": 356.16,
+   "z": 571.74,
+   "own_station_m": 5347.0,
+   "other_station_m": 5498.0,
+   "dy_own_m": 8.17,
+   "dy_other_m": 2.14,
+   "plan_own_m": 10.48,
+   "plan_other_m": 11.49
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -929.19,
+   "y": 356.17,
+   "z": 570.07,
+   "own_station_m": 5348.0,
+   "other_station_m": 5499.0,
+   "dy_own_m": 8.12,
+   "dy_other_m": 2.2,
+   "plan_own_m": 10.57,
+   "plan_other_m": 11.88
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -1006.18,
+   "y": 378.66,
+   "z": 671.76,
+   "own_station_m": 5962.0,
+   "other_station_m": 5786.0,
+   "dy_own_m": 8.43,
+   "dy_other_m": 2.59,
+   "plan_own_m": 16.54,
+   "plan_other_m": 17.57
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -930.86,
+   "y": 355.89,
+   "z": 586.74,
+   "own_station_m": 5332.0,
+   "other_station_m": 5508.0,
+   "dy_own_m": 8.91,
+   "dy_other_m": 3.13,
+   "plan_own_m": 11.37,
+   "plan_other_m": 11.89
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_10",
+   "x": -776.89,
+   "y": 220.84,
+   "z": 2123.83,
+   "own_station_m": 3138.0,
+   "other_station_m": 2894.0,
+   "dy_own_m": 8.32,
+   "dy_other_m": 2.58,
+   "plan_own_m": 17.71,
+   "plan_other_m": 20.14
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -1006.18,
+   "y": 378.81,
+   "z": 680.1,
+   "own_station_m": 5955.0,
+   "other_station_m": 5795.0,
+   "dy_own_m": 7.84,
+   "dy_other_m": 2.15,
+   "plan_own_m": 16.31,
+   "plan_other_m": 16.44
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_10",
+   "x": -775.22,
+   "y": 220.92,
+   "z": 2123.83,
+   "own_station_m": 3140.0,
+   "other_station_m": 2892.0,
+   "dy_own_m": 8.35,
+   "dy_other_m": 2.74,
+   "plan_own_m": 18.28,
+   "plan_other_m": 19.98
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -972.7,
+   "y": 363.21,
+   "z": 591.74,
+   "own_station_m": 5705.0,
+   "other_station_m": 5534.0,
+   "dy_own_m": 8.04,
+   "dy_other_m": 2.46,
+   "plan_own_m": 12.17,
+   "plan_other_m": 12.55
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -972.7,
+   "y": 363.3,
+   "z": 593.41,
+   "own_station_m": 5707.0,
+   "other_station_m": 5534.0,
+   "dy_own_m": 8.08,
+   "dy_other_m": 2.56,
+   "plan_own_m": 12.11,
+   "plan_other_m": 13.47
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -1006.18,
+   "y": 378.91,
+   "z": 678.43,
+   "own_station_m": 5956.0,
+   "other_station_m": 5794.0,
+   "dy_own_m": 7.8,
+   "dy_other_m": 2.32,
+   "plan_own_m": 16.3,
+   "plan_other_m": 16.69
+  },
+  {
+   "class": "ground",
+   "group": "1GRASS_8",
+   "x": -969.36,
+   "y": 368.72,
+   "z": 596.74,
+   "own_station_m": 5531.0,
+   "other_station_m": 5710.0,
+   "dy_own_m": 8.15,
+   "dy_other_m": 2.87,
+   "plan_own_m": 13.06,
+   "plan_other_m": 15.36
+  }
+ ],
+ "fail": true
+}

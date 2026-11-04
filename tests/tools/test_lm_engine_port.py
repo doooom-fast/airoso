@@ -128,7 +128,8 @@ def test_traced_kerbs_ship_in_the_road_kn5_with_their_own_uvs():
 # (the files the config names), the prep (bridges.cache.json when the config declares decks).
 WORKSHOP_INPUTS = ("track.config.json", "data/centerline.local.json", "data/centerline.geojson", "data/heightfield.npy",
                    "data/heightfield.meta.json", "data/connectors.local.json", "data/mouths.json", "data/lm_intake.json")
-PORTS = ("sand-creek-lm", "high-plains-lm", "exotics-racing-lv-lm", "milford-road-course-lm", "pikes-peak-lm")
+PORTS = ("sand-creek-lm", "high-plains-lm", "exotics-racing-lv-lm", "milford-road-course-lm", "pikes-peak-lm",
+         "lookout-lariat-lm")
 
 
 def _sync_in(port: str, ws: Path):

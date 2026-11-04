@@ -1,0 +1,55 @@
+{
+ "source_track": "lookout-lariat",
+ "points": 14445,
+ "lap_m": 24897.1,
+ "closed": true,
+ "widths_m": [
+  5.0,
+  8.18,
+  21.0
+ ],
+ "bridges_levelled": [
+  [
+   24368.5,
+   38.1
+  ]
+ ],
+ "max_grade_pct": null,
+ "measured_max_grade_pct": 15.48,
+ "y_changed_points": 0,
+ "y_change_max_m": 0.0,
+ "connectors": false,
+ "bespoke_files": [],
+ "crossfall": null,
+ "profile": {
+  "cap_was_pct": 16.0,
+  "reproduced_within_m": 0.0,
+  "points_moved": 1,
+  "max_move_m": 0.01
+ },
+ "width_taper": null,
+ "resample": null,
+ "edge_on_wall": null,
+ "corner_arcs": [
+  {
+   "id": "C12",
+   "status": "PASS (arm facets outside the span: v8093 1.62 deg, v8174 1.6 deg)",
+   "radius_m": 14.9,
+   "turn_deg": 91.4,
+   "max_move_m": 5.4
+  },
+  {
+   "id": "C13",
+   "status": "PASS",
+   "radius_m": 16.08,
+   "turn_deg": -100.1,
+   "max_move_m": 9.18
+  }
+ ],
+ "grid_upsample": 3,
+ "md5": {
+  "source_centerline": "583e98b2fc38d8483188183cb59d8a8d",
+  "heightfield.npy": "e948bf0ca44a07f953e1634dc53462b2",
+  "centerline.local.json": "8848beee4032223ae370d14838c2899a"
+ }
+}

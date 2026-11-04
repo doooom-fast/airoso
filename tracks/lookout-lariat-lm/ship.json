@@ -9,12 +9,11 @@
   "steps": {
     "draft": [
       "lm_intake",
-      "terrain_sample",
       "build_loop_blend",
       "weld_mouths",
       "densify_ribbon",
       "seat_edges",
-      "strip_seam"
+      "split_strip"
     ],
     "author": [],
     "prep": [
@@ -77,5 +76,6 @@
     "dirs": [
       "ai/{id}"
     ]
-  }
+  },
+  "_strip_seam_doc": "not on the Lariat (ledger 0078 round 6): its verge is 0.4 m, and strip_seam's bmesh joins scale with the whole terrain (a 25 km lap's 28,890 seam points did not finish in 25 minutes); a local seam is owed"
 }

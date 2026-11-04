@@ -1004,77 +1004,6 @@
       ],
       "blend_to_survey": "within a few hundred metres"
     },
-    "tiers": [
-      {
-        "name": "corridor",
-        "cell_m": 3.0,
-        "extent": "~20-25 m past the pavement edge",
-        "physics": true,
-        "prefix": "1GRASS",
-        "grassfx": true,
-        "_doc": "cells smaller than the 6.1 m road (L3b); shaped by cross_section; every point seated to its own leg by station (L4)"
-      },
-      {
-        "name": "medium",
-        "cell_m": [
-          15,
-          20
-        ],
-        "extent_m": 500,
-        "physics": true,
-        "prefix": "1GRASS",
-        "grassfx": true
-      },
-      {
-        "name": "view",
-        "cell_m": [
-          20,
-          30
-        ],
-        "extent_m": 3000,
-        "sides": [
-          "N",
-          "E"
-        ],
-        "physics": false,
-        "prefix": null,
-        "grassfx": false,
-        "kn5": "backdrop",
-        "_doc": "the view side: the Clear Creek mouth (-11.8 deg from Wildcat Point, 1.5-2.2 km), Golden (1.6-2.9 km), Mount Zion and the M, North Table Mountain, Mount Galbraith; at far-tier cells a canyon a few hundred metres wide smears away"
-      },
-      {
-        "name": "far",
-        "cell_m": [
-          60,
-          100
-        ],
-        "extent_m": 10000,
-        "sides": [
-          "W",
-          "S",
-          "N"
-        ],
-        "physics": false,
-        "prefix": null,
-        "grassfx": false,
-        "kn5": "backdrop",
-        "_doc": "real, unflattened 3DEP: Genesee, Mount Morrison, Mount Galbraith, North Table Mountain, the Clear Creek Canyon walls"
-      },
-      {
-        "name": "plains",
-        "cell_m": 250,
-        "extent_m": 25000,
-        "sides": [
-          "E"
-        ],
-        "physics": false,
-        "prefix": null,
-        "grassfx": false,
-        "kn5": "backdrop",
-        "_doc": "a coarse, nearly flat plane out to ~25 km east"
-      }
-    ],
-    "_tiers_doc": "Visual-only tiers carry no digit prefix, so physics, GrassFX and the gates never touch them; they ship in their own backdrop kn5, listed in every layout. Confirm in game (Drive 2) that AC/CSP draws terrain at 10-25 km and trim the far tier to what draws.",
     "seams": {
       "coincide_within_m": 0.05,
       "or": "skirted down",
@@ -1105,7 +1034,8 @@
       "enabled": false,
       "when": "after Drive 2 (D6 ii)",
       "_doc": "a low-poly Denver skyline extruded from OSM building heights at its real bearing, 19.6-23.2 km east, one visual-only mesh in the backdrop kn5 (sourced, so L1 allows it); visible from the lower hairpins up, blocked from the pylons by South Table Mountain's shoulder"
-    }
+    },
+    "_tiers_dropped": "ledger 0078 round 6: the live track's tiers are the V3 plan's spec, not Lake Murray's executable format, and Lake Murray's terrain_sample fetches 3DEP per vertex (a 25 km corridor: hundreds of thousands of getSamples). The port builds on the 3DEP grid itself, pre-divided x3 (40 -> 13.3 m, the live draft's medium cell, terrain_cell_m 13.4); a tiered port is owed"
   },
   "scenery": {
     "_doc": "V3 never runs the engine's environment stage (scripts/environment/build_env.py): no I-70 / C-470 decks (the 'wavy ribbons', ~40 km of 22 m deck, ledger 0048), no sine-wave MOUNTAINS, no creek ribbons, no unverified power-line run, no baked forest. Each block below is read by a V3 authoring tool (V3-PLAN P1-P3).",
@@ -1686,9 +1616,16 @@
     "source_track": "lookout-lariat",
     "connectors": false,
     "profile": "uncapped",
-    "grid_upsample": 2,
+    "grid_upsample": 3,
     "_doc": "the measured profile (the elevation stage's 16 % cap undone: the grades are the real road's), the 40 m 3DEP grid pre-divided to 20 m (the same samples)",
     "corner_arcs": true,
-    "_corner_arcs_doc": "PR 32's measured C12 / C13 arcs (hairpin_fit.mesh_fit, R 14.9 / 16.08 m off the aerial), fitted on the line the assembler sweeps"
+    "_corner_arcs_doc": "PR 32's measured C12 / C13 arcs (hairpin_fit.mesh_fit, R 14.9 / 16.08 m off the aerial), fitted on the line the assembler sweeps",
+    "carry_records": [
+      "oneway_check.json",
+      "aerial/paint_gate.json",
+      "centerline.elevation.json"
+    ],
+    "roll_record": "flat",
+    "_records_doc": "the line's own draft records the Drive-1 verdict re-reads (one-way, the paint centreline / hairpin gate) and the raw 3DEP drive_test replicates against; the roll-rate record written flat (the port tilts nothing)"
   }
 }

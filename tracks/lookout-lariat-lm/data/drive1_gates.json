@@ -1,0 +1,317 @@
+{
+ "tool": "tools/drive1_gates.py",
+ "plan": "V3-PLAN P5, the Drive-1 gate set (road + ground only)",
+ "verge_m": 0.4,
+ "street_layouts": [
+  "street_full"
+ ],
+ "rows": [
+  {
+   "gate": "drive_test street_full",
+   "kind": "gating",
+   "pass": false,
+   "numbers": {
+    "soft_top_in_lane": 16,
+    "obstruction_stations": 0,
+    "floating_furniture": 0,
+    "undrivable_corners": 79,
+    "daylight_gaps": 0,
+    "severe_steps": 0,
+    "severe_per_km": 0.0,
+    "replication_p95_m": 0.36,
+    "replication_median_m": 0.13,
+    "replication_max_m": 0.64,
+    "kinks_per_km": 0.4,
+    "kinks_per_km_max": 19.49,
+    "lap_m": 24851.1
+   },
+   "note": "soft_top_in_lane; undrivable_corners"
+  },
+  {
+   "gate": "drive_test street_full (recorded)",
+   "kind": "recorded",
+   "pass": null,
+   "numbers": {
+    "excursion_drops": 3,
+    "excursion_far_ledges": 31,
+    "steps_per_km": 0.12,
+    "apron_steps": 0,
+    "drive_test_own_fail": true
+   },
+   "note": "unguarded drop-offs are recorded, not gating, in Drive 1 (no edges are built); drive_test's own pass line counts them, so its own 'fail' is recorded here too"
+  },
+  {
+   "gate": "audit_mesh",
+   "kind": "gating",
+   "pass": true,
+   "numbers": {
+    "A_supports_in_road": 0,
+    "B_terrain_poke": 0,
+    "D_wall_on_road": 0,
+    "E_wall_floating": 0,
+    "G_prop_floating": null,
+    "H_ground_above_deck": null,
+    "I_sidewalk_isolating": 0,
+    "F_curb_not_flush": 0,
+    "J_terrain_span": 0,
+    "K_kerb_in_carriageway": 0,
+    "C_junction_crossings": 0,
+    "worst_poke_m": 0.0,
+    "worst_ground_cut_m": 0.0
+   },
+   "note": "J / K gate at the race-turn mouths (Drive 3): recorded"
+  },
+  {
+   "gate": "verify_kn5",
+   "kind": "gating",
+   "pass": true,
+   "numbers": {
+    "road_kn5": "lookout_lariat_lm.kn5",
+    "exists": true
+   },
+   "note": "hard in the ship phase: tools/ship_track.sh stops on red before any gate runs, so a build that reached this verdict passed it"
+  },
+  {
+   "gate": "kn5_ground_check street_full",
+   "kind": "gating",
+   "pass": true,
+   "numbers": {
+    "road_over_ground_p95_m": 0.021,
+    "road_over_ground_max_m": 0.054,
+    "samples_over_gap": 1,
+    "samples": 6123,
+    "double_sheet_cells": 0,
+    "walls_hovering": null,
+    "fidelity": "skipped: gate OBJ written from this kn5",
+    "fail": false
+   }
+  },
+  {
+   "gate": "lid ends (no step > 0.1 m)",
+   "kind": "gating",
+   "pass": true,
+   "numbers": {
+    "decks": [
+     {
+      "layout": "street_full",
+      "deck": "lid_19th_us6",
+      "ends_m": [
+       24349.5,
+       24387.5
+      ],
+      "worst_step_m": null,
+      "severe_steps_at_ends": 0
+     }
+    ]
+   }
+  },
+  {
+   "gate": "one-way",
+   "kind": "gating",
+   "pass": true,
+   "numbers": {
+    "verdict": "PASS",
+    "fails": [],
+    "layouts": {
+     "street_full": {
+      "verdict": "PASS",
+      "against_total_m": 0,
+      "undeclared_against_m": 0
+     },
+     "street_reverse": {
+      "verdict": "PASS",
+      "against_total_m": 4486.3,
+      "undeclared_against_m": 0
+     }
+    }
+   }
+  },
+  {
+   "gate": "hairpin / paint centreline",
+   "kind": "gating",
+   "pass": true,
+   "numbers": {
+    "a_paint": true,
+    "b_curvature": true,
+    "c_topology": true,
+    "d_closure": true
+   }
+  },
+  {
+   "gate": "roll rate",
+   "kind": "gating",
+   "pass": true,
+   "numbers": {
+    "status_of_file": "none: the port is flat across (lm_intake takes no crossfall)",
+    "stations": 0,
+    "worst_change_pct": 0,
+    "swings": 0
+   }
+  },
+  {
+   "gate": "road inventory",
+   "kind": "gating",
+   "pass": true,
+   "numbers": {
+    "_doc": "Lariat Drive-1 road inventory (tools/verify_road_inventory.py; V3-PLAN P5, ledger 0048), on the built gate OBJ (L5).",
+    "obj": "track.obj",
+    "line": "gate_centerline.json",
+    "exemptions_file": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/ws_empty/lookout-lariat-lm/pavement_exemptions.json",
+    "forbidden_meshes": 0,
+    "pavement_groups": 1,
+    "pavement_tris": 57776,
+    "off_route_tris": 0,
+    "off_route_area_m2": 0.0,
+    "fail": false,
+    "lap": {
+     "street_full": {
+      "line": "gate_centerline.json",
+      "lap_m": 24851.1,
+      "paved_m": 24851.1,
+      "ratio": 1.0,
+      "pass": true,
+      "unpaved_runs": []
+     }
+    }
+   }
+  },
+  {
+   "gate": "stacked legs",
+   "kind": "gating",
+   "pass": false,
+   "numbers": {
+    "_doc": "Lariat Drive-1 stacked-leg check (tools/verify_stacked_legs.py; V3-PLAN P5, L4, ledger 0048).",
+    "line": "gate_centerline.json",
+    "lap_m": 24851.1,
+    "closed": true,
+    "mode": "built",
+    "obj": "track.obj",
+    "heights": "the built 1ROAD under each lap point",
+    "lap_points_without_road": 0,
+    "stacked_points_without_road": 0,
+    "pairs": 10393,
+    "stacked_points": 674,
+    "nearest_plan_m": 21.59,
+    "crossing_skipped": 0,
+    "tested_total": 7274,
+    "failures": 101,
+    "fail": true
+   }
+  },
+  {
+   "gate": "tier seams",
+   "kind": "n/a",
+   "pass": null,
+   "numbers": {
+    "underlay_obj_md5": null,
+    "groups": 0
+   },
+   "note": "not applicable: the draft's ground is the engine's one grid (build_mesh, data/track.obj into GEN_terrain) until P3a's tiers land (V3-PLAN P3a); this is NOT a pass"
+  },
+  {
+   "gate": "verify_edges",
+   "kind": "recorded",
+   "pass": null,
+   "numbers": {},
+   "note": "Drive 2: no edges built"
+  },
+  {
+   "gate": "verify_signs",
+   "kind": "recorded",
+   "pass": null,
+   "numbers": {},
+   "note": "Drive 2: no signs built"
+  },
+  {
+   "gate": "TreeFX check",
+   "kind": "recorded",
+   "pass": null,
+   "numbers": {},
+   "note": "Drive 2: no trees"
+  },
+  {
+   "gate": "sightline_check",
+   "kind": "recorded",
+   "pass": null,
+   "numbers": {},
+   "note": "Drive 2: the far tiers"
+  },
+  {
+   "gate": "race gates",
+   "kind": "recorded",
+   "pass": null,
+   "numbers": {
+    "race_layouts_declared": []
+   },
+   "note": "Drive 3: the race layouts are parked (track.config.json _layouts_v3_owed)"
+  }
+ ],
+ "red": [
+  "drive_test street_full",
+  "stacked legs"
+ ],
+ "fail": true,
+ "force_install_ok": false,
+ "force_install_why_not": [
+  "street_full: soft_top_in_lane 16 > July 0",
+  "street_full: soft_top_in_lane 16 (always 0, red or not)",
+  "drive_test street_full: red, and no declared exemption covers it (only undrivable corners at the measured hairpins and the far ledges are exempt)",
+  "stacked legs: red, and no declared exemption covers it (only undrivable corners at the measured hairpins and the far ledges are exempt)"
+ ],
+ "july_reference": {
+  "severe_steps": 253.0,
+  "kinks_per_km": 68.3,
+  "excursion_drops": 738.0,
+  "excursion_far_ledges": 382.0,
+  "obstruction_stations": 0.0,
+  "floating_furniture": 0.0,
+  "soft_top_in_lane": 0.0
+ },
+ "force_exemptions": {
+  "declared_versions": [
+   "0.1.0"
+  ],
+  "build_version": "0.1.0",
+  "active": true,
+  "approved": "Kevin 2026-11-03, asked 'Install the Lariat for Drive 1 at real hairpin widths, with open drops?': \"Yes, force it\"",
+  "covered": {},
+  "far_ledges_max": 1045,
+  "hairpin_windows": [
+   [
+    "C4",
+    2574.0,
+    2654.0
+   ],
+   [
+    "C5",
+    2818.0,
+    2898.0
+   ],
+   [
+    "C6",
+    2978.0,
+    3058.0
+   ],
+   [
+    "C7",
+    5395.0,
+    5475.0
+   ],
+   [
+    "C8",
+    5493.0,
+    5573.0
+   ],
+   [
+    "C9",
+    5593.0,
+    5673.0
+   ],
+   [
+    "C10",
+    5848.0,
+    5928.0
+   ]
+  ]
+ }
+}

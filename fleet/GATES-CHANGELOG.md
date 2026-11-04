@@ -94,7 +94,9 @@ none a gate: `tools/lidar_wall.py` structure band 0.2-4.0 m over the local groun
 returns, >= 30 m); High Plains' lidar rails smoothed over 5 stations, their height the 90th percentile of their returns;
 Nevada's run-off reader (pavement |R - B| <= 12 or bluer at mean >= 120, asphalt mean < 115; tan R - B > 16; 0.5 m steps to
 20 m, a 1.5 m break, runs >= 3 m for >= 12 m, a 5-station median) and its pads from 1.35 m, built only where the median run
-is >= 4 m. Round 6: `tools/strip_seam_blend.py` `JOIN_DEPTH` 3 (midpoint levels a failed seam join may try). `tools/draft_equiv.py` ignores JSON keys `written_utc` and `check_date` (write times).
+is >= 4 m. Round 6: `tools/strip_seam_blend.py` `JOIN_DEPTH` 3 (midpoint levels a failed seam join may try). `tools/split_strip_blend.py` `PIECE_VERTS`
+50,000 (under engine-july's 60,000 split cap). The Lariat port's force exemptions are Kevin's declared block re-versioned
+(`versions ["0.1.0"]`), the same two keys and values: no threshold or exemption changed. `tools/draft_equiv.py` ignores JSON keys `written_utc` and `check_date` (write times).
 
 ## 2026-11-03 — EXCLUSION: race kerbs leave the prep's 0020 carve (ledger 0020 Rule 1; Lake Murray v5 race, ledger 0065)
 

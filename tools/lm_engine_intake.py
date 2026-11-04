@@ -513,6 +513,29 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         (proj / rel).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(sp, proj / rel)
         copied.append(rel)
+    # THE LINE'S OWN RECORDS (lm_intake.carry_records [paths under the source's data/]; ledger 0078 round 6, the Lariat).
+    # Gates that re-read the draft's records of the LINE (tools/drive1_gates.py: the one-way check, the paint-centreline /
+    # hairpin gate; drive_test's replication against the raw 3DEP in centerline.elevation.json) find them in the workshop;
+    # the port's line is the source's, so the source's records are the port's. lm_intake.roll_record "flat": a port that
+    # tilts nothing writes its own roll-rate record (no crossfall: nothing rolls), not the source's.
+    carried = []
+    for rel in li.get("carry_records") or []:
+        if rel.startswith(("/", "\\")) or ".." in Path(rel).parts:
+            raise SystemExit(f"[lm_intake] carry_records {rel!r} must be a plain path under the source's data/")
+        if not (sdata / rel).exists():
+            raise SystemExit(f"[lm_intake] carry_records: tracks/{src_track}/data/{rel} does not exist")
+        (data / rel).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(sdata / rel, data / rel)
+        carried.append(rel)
+    if li.get("roll_record") == "flat":
+        if li.get("crossfall"):
+            raise SystemExit("[lm_intake] roll_record flat on a port that takes a crossfall")
+        (data / "crossfall_gate.json").write_text(json.dumps({
+            "_doc": "tools/lm_engine_intake.py (ledger 0078): this port takes no crossfall, so nothing rolls",
+            "status_of_file": "none: the port is flat across (lm_intake takes no crossfall)", "stations": 0,
+            "halves": {"left": {"worst_change_pct": 0.0, "swings": 0}, "right": {"worst_change_pct": 0.0, "swings": 0}},
+            "problems": [], "fail": False}, indent=1), encoding="utf-8")
+        carried.append("crossfall_gate.json (written: flat)")
     # THE DECKS FOR THE PREP. engine-july's prep (build_kn5_loop.declare_bridge_spans) spares the ground under a bridge
     # from its conform only where data/bridges.cache.json (OSM bridge ways, Lake Murray's fetch) puts one on the line.
     # A track without that cache declares its decks in capture.bridges instead: each becomes one way along the line's
@@ -546,7 +569,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
            "y_changed_points": sum(1 for d in dy if abs(d) > 1e-6),
            "y_change_max_m": round(max((abs(d) for d in dy), default=0.0), 3),
            "connectors": bool(want_conn and conn.exists()), "bespoke_files": copied, "crossfall": cf_rep, "profile": prof_rep,
-           "width_taper": taper_rep, "resample": resample_rep, "edge_on_wall": wall_rep, "corner_arcs": arcs_rep,
+           "width_taper": taper_rep, "resample": resample_rep, "edge_on_wall": wall_rep, "corner_arcs": arcs_rep, "carried": carried,
            "grid_upsample": up,
            "md5": {"source_centerline": _md5(need[0]), "heightfield.npy": _md5(data / "heightfield.npy"),
                    "centerline.local.json": _md5(data / "centerline.local.json")}}

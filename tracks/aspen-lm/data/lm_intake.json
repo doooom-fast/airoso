@@ -1,0 +1,33 @@
+{
+ "source_track": "aspen",
+ "points": 561,
+ "lap_m": 1676.3,
+ "closed": true,
+ "widths_m": [
+  9.0,
+  9.0,
+  9.0
+ ],
+ "bridges_levelled": [],
+ "max_grade_pct": null,
+ "measured_max_grade_pct": 6.05,
+ "y_changed_points": 0,
+ "y_change_max_m": 0.0,
+ "connectors": false,
+ "bespoke_files": [
+  "source/edges/kerbs.json"
+ ],
+ "crossfall": null,
+ "profile": {
+  "cap_was_pct": 9.0,
+  "reproduced_within_m": 0.0067,
+  "points_moved": 0,
+  "max_move_m": 0.0
+ },
+ "grid_upsample": 2,
+ "md5": {
+  "source_centerline": "1210067ee3805569b284b43717516ada",
+  "heightfield.npy": "09ffce62fd5de838165e1bd3390ddb6c",
+  "centerline.local.json": "ac7544c1e6775a67e1ebac5fe65daaee"
+ }
+}

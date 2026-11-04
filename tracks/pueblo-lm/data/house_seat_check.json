@@ -1,0 +1,32 @@
+{
+ "obj": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/ws_empty/pueblo-lm/data/track.obj",
+ "buildings": 0,
+ "no_ground": 0,
+ "floating": 0,
+ "sunken": 0,
+ "buried": 0,
+ "limits": {
+  "FLOAT_M": 0.1,
+  "SUNK_M": 1.0,
+  "MIN_SHOW_M": 1.0,
+  "STEP_M": 1.5,
+  "MAX_FLOATING": 0,
+  "MAX_SUNKEN": 0,
+  "MAX_BURIED": 0
+ },
+ "contact_m": {
+  "min": null,
+  "max": null
+ },
+ "show_m_min": null,
+ "lens_buried_share": {
+  "over_30pct": 0,
+  "over_50pct": 0,
+  "p95": null
+ },
+ "worst_floating": [],
+ "worst_sunken": [],
+ "worst_buried": [],
+ "verdict": "PASS",
+ "rows": []
+}

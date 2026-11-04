@@ -383,3 +383,44 @@ def test_island_reshape_moves_only_the_island_and_refuses_another_topology():
         assert "re-author" in str(e)
     else:
         raise AssertionError("a changed island run must be refused")
+
+
+# --- J4's inside kerb (step 2d, 2026-11-04) ---------------------------------------------------------------------------
+def _kerbs(out, trims_keep=True):
+    """the north kerb plans of the plan's out dir, with or without the declared J4 inside pull-back"""
+    cfg = json.loads((out / "track.config.json").read_text())
+    if not trims_keep:
+        cfg = copy.deepcopy(cfg)
+        k = cfg["race"]["laps"]["north"]["kerbs"]
+        k["trims"] = [t for t in k["trims"] if t["apex"] != 1463]
+        p = out / "track.config.untrimmed.json"
+        p.write_text(json.dumps(cfg))
+        b = bands.build(out, lap="north", config_path=p, write=False, planned_no_route=False)
+        b = {k_: v for k_, v in b.items() if not k_.startswith("_")}
+    else:
+        b = json.loads((out / "data" / "barrier_bands.north.json").read_text())
+    pts, _w, _iw, plans, _c = rf.plan_all(out, b, "road", lap="north")
+    return pts, {rf.object_name(p): p for p in plans if p["kind"] == "kerb"}
+
+
+def test_the_author_pre_check_reads_what_verify_race_i_reads_and_the_j4_pull_back_is_the_kerbs_own():
+    _r, rep, out = _plan()
+    pts, raw = _kerbs(out, trims_keep=False)
+    k = raw["1KERB_race_lapnorth_1463_in"]
+    g = -1.0 if k["side"] == "R" else 1.0
+    # the unrounded column test read 0 (the author before step 2d), the record reads verify_race I's 2 (the PC's run)
+    assert rf.inside_out_spans(k["stations"], lambda s: rf.kerb_mid_xz(s, g), rf.KERB_W / 2.0) == []
+    assert [s for s, _o in rf.recorded_inside_out(k["stations"], lambda s: rf.kerb_mid_xz(s, g), rf.KERB_W / 2.0)] == [44, 46]
+    cs = [[round(x, 2), 0.0, round(z, 2)] for s in k["stations"] for (x, z) in (rf.kerb_mid_xz(s, g),)]
+    fr = [[round(s["tx"], 5), round(s["tz"], 5), round(s.get("ls", 1.0), 4)] for s in k["stations"]]
+    assert vr.inside_out_spans(cs, fr, 0.5) == [44, 46]
+    mg, under = rf.kerb_column_margin(k)
+    assert mg < rf.COLUMN_ADVANCE_MIN_M and len(under) == 11
+    assert rf.kerb_standing_run(k, rf.stations(pts))[:2] == (1457, 1462)
+    # declared: the pull-back stands, on the record too; every other north kerb clears the record's resolution
+    _p, kept = _kerbs(out)
+    k = kept["1KERB_race_lapnorth_1463_in"]
+    assert k["run"] == [1457, 1462] and rf.recorded_inside_out(k["stations"], lambda s: rf.kerb_mid_xz(s, g), 0.5) == []
+    for nm, kp in kept.items():
+        assert rf.kerb_column_margin(kp)[0] >= rf.COLUMN_ADVANCE_MIN_M, nm
+    assert all(m["spans_under"] == 0 for m in rep["kerb_column_margins"].values()) and len(rep["kerb_column_margins"]) == 8

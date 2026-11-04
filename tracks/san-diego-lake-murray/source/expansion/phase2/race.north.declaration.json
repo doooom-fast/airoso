@@ -161,6 +161,13 @@
       "kerbs": {
         "trims": [
           {
+            "apex": 1463,
+            "kind": "inside",
+            "i": 1457,
+            "j": 1462,
+            "why": "Pulled back by the kerb's own geometry (ledger 0054 Phase 2 step 2d; plan_north.py checks every north kerb with race_furniture.kerb_column_margin and names this run, race_furniture.kerb_standing_run): at the refit J4 apex the lap's radius (R 15.4 m at v1463) barely clears w/2 (14.4 m), so the inside kerb's outer column swings round about 1.8 m from the corner's centre and advances only 2-9 mm per 0.3 m station over v1463-v1464 (11 spans under the author's 0.01 m record resolution, 0.0141 m; the PC's 0.20.2 run read 2 of them inside-out, verify_race I). The longest station run that stands ends 0.3 m before v1463 (12.6 m); rounded in to its vertices it is v1457-v1462 (11.2 m of the detected 26.9 m, the turn-in up to the apex), column margin 0.0147 m. The exit side v1465-v1469 stands too, but a declared kerb is one run. J4's radius floor is not raised: the strips already stand 0.025 m inside the pad there"
+          },
+          {
             "apex": 2130,
             "kind": "inside",
             "drop": true,

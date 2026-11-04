@@ -4094,3 +4094,14 @@ is now 6.90-6.93 m. clear_hard_min_m stays 6.5 m.
 
 Teeth: tests/tools/test_race_noses.py (the corrected median on the lap and its lane, island_reshape's moves and its refusal),
 tests/tools/test_kn5_equiv.py (`--list`).
+
+## 2026-11-04 (step 2d) — the author's inside-out pre-check reads verify_race I's record; the lap's kerb column check (ledger 0054 Phase 2; no threshold moved)
+
+| What | Before | After |
+|---|---|---|
+| tools/author_race_furniture_blend.py `inside_out_spans` (author-time, reported) | counted on the unrounded plan (J4's inside kerb: 0) | counted on the record it writes and verify_race I reads (centres 0.01 m, frames 5 / 4 decimals; race_furniture.recorded_inside_out): the same 2 the gate read. The mainline's 37 objects read 0 either way, so race_authored.json is unchanged |
+| plan_north.py (the north lap only, a self-check) | — | every north kerb's columns advance >= race_furniture.COLUMN_ADVANCE_MIN_M = 0.01 x sqrt(2) m per span (the record's resolution, derived, not invented), else refused, naming the pull-back race_furniture.kerb_standing_run finds |
+
+Not a mainline gate: the mainline's 0_in kerb sits at 0.0140 m and passes verify_race I on its record.
+Teeth: tests/tools/test_race_noses.py (the record reads 2 / the plan 0 on J4's inside kerb before the trim; the pull-back is
+v1457-v1462; every north kerb clears after).

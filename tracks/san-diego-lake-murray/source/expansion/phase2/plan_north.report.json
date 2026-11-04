@@ -777,7 +777,7 @@
      "door_clusters": 0,
      "blocked": [],
      "forbidden_reached": [],
-     "seconds": 2.4,
+     "seconds": 2.5,
      "file": "no_route.north_cw.planned.json"
     }
    },
@@ -870,7 +870,20 @@
     "inside"
    ]
   ],
-  "kerb_trims": [],
+  "kerb_trims": [
+   {
+    "apex": 1463,
+    "kind": "inside",
+    "from": [
+     1457,
+     1469
+    ],
+    "to": [
+     1457,
+     1462
+    ]
+   }
+  ],
   "kerb_clips": [
    {
     "apex": 326,
@@ -1017,6 +1030,80 @@
    2709,
    2908
   ]
+ },
+ "kerb_column_margins": {
+  "1KERB_race_lapnorth_326_out": {
+   "run": [
+    317,
+    332
+   ],
+   "stations": 115,
+   "column_advance_min_m": 0.2525,
+   "spans_under": 0
+  },
+  "1KERB_race_lapnorth_326_in": {
+   "run": [
+    317,
+    331
+   ],
+   "stations": 105,
+   "column_advance_min_m": 0.0964,
+   "spans_under": 0
+  },
+  "1KERB_race_lapnorth_705_out": {
+   "run": [
+    692,
+    716
+   ],
+   "stations": 191,
+   "column_advance_min_m": 0.2846,
+   "spans_under": 0
+  },
+  "1KERB_race_lapnorth_705_in": {
+   "run": [
+    693,
+    710
+   ],
+   "stations": 123,
+   "column_advance_min_m": 0.0858,
+   "spans_under": 0
+  },
+  "1KERB_race_lapnorth_1463_out": {
+   "run": [
+    1453,
+    1481
+   ],
+   "stations": 227,
+   "column_advance_min_m": 0.2134,
+   "spans_under": 0
+  },
+  "1KERB_race_lapnorth_1463_in": {
+   "run": [
+    1457,
+    1462
+   ],
+   "stations": 38,
+   "column_advance_min_m": 0.0147,
+   "spans_under": 0
+  },
+  "1KERB_race_lapnorth_2130_out": {
+   "run": [
+    2122,
+    2135
+   ],
+   "stations": 122,
+   "column_advance_min_m": 0.0964,
+   "spans_under": 0
+  },
+  "1KERB_race_lapnorth_2932_out": {
+   "run": [
+    2927,
+    5
+   ],
+   "stations": 131,
+   "column_advance_min_m": 0.1646,
+   "spans_under": 0
+  }
  },
  "mainline_declaration_unchanged": true,
  "mainline_keys_differing_from_committed": [],

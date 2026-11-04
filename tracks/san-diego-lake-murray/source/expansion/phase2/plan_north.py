@@ -28,6 +28,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 import barrier_bands as bands  # noqa: E402
 import layout_dummies as dummies  # noqa: E402
+import race_furniture as rf  # noqa: E402
 from scripts.geometry import race_lap  # noqa: E402
 
 INPUTS = ("centerline.local.json", "connectors.local.json", "median_bands.json", "mouths.json", "pads.plan.json",
@@ -109,6 +110,26 @@ def main(argv=None) -> int:
         res = {"fails": [f"refused: {e}"], "corridors": {}, "corners": None, "summary": None}
     fails += [f"{lap_id}: {f}" for f in res["fails"]]
 
+    # every north kerb's own geometry (ledger 0054 Phase 2 step 2d): each span's columns advance by at least the author's
+    # record resolution (race_furniture.COLUMN_ADVANCE_MIN_M), else verify_race I can read the built kerb inside-out —
+    # a refusal names the pull-back the kerb's geometry allows (race_furniture.kerb_standing_run), for race.kerbs.trims
+    kerb_margins = {}
+    if res.get("corridors"):
+        nb = json.loads((data / f"barrier_bands.{lap_id}.json").read_text(encoding="utf-8"))
+        _p, _w, _iw, kplans, _c = rf.plan_all(out, nb, (nb.get("params") or {}).get("edge_mode", "road"), lap=lap_id)
+        for kp in kplans:
+            if kp["kind"] != "kerb":
+                continue
+            mg, under = rf.kerb_column_margin(kp)
+            nm = rf.object_name(kp)
+            kerb_margins[nm] = {"run": list(kp["run"]), "stations": len(kp["stations"]),
+                                "column_advance_min_m": round(mg, 4), "spans_under": len(under)}
+            if under:
+                sr = rf.kerb_standing_run(kp, rf.stations(_p))
+                fails.append(f"{lap_id}: kerb {nm} v{kp['run'][0]}-v{kp['run'][1]}: {len(under)} spans advance under "
+                             f"{rf.COLUMN_ADVANCE_MIN_M:.4f} m (min {mg:.4f} m) — "
+                             + (f"the run that stands is v{sr[0]}-v{sr[1]} ({sr[4]} m): declare that pull-back in "
+                                f"race.kerbs.trims" if sr else "no run stands: drop it in race.kerbs.trims"))
     exits = []
     for mo in rec["mouths"]:
         row = {"exit": mo["connector"], "kind": mo["kind"], "lap_vertex": mo["host_vertex"],
@@ -137,6 +158,7 @@ def main(argv=None) -> int:
         "exit_counts": {k: sum(1 for e in exits if e["kind"] == k) for k in ("side_street", "pad_arm", "branch")},
         "planned_no_route": planned,
         "summary": res.get("summary"),
+        "kerb_column_margins": kerb_margins,
         "mainline_declaration_unchanged": main_same,
         "mainline_keys_differing_from_committed": vs_committed,
         "source_unchanged": same_src,

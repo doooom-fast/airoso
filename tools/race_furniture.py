@@ -1760,6 +1760,86 @@ def trim_folded_stations(sts, sgn, search=FOLD_SEARCH_STATIONS):
     return _trim_folds(sts, lambda s: kerb_mid_xz(s, sgn), place, KERB_W / 2.0, search, "kerb")
 
 
+RECORD_ROUND_M = 0.01      # the author records ring / station centres to 0.01 m (race_authored ring_centres); verify_race
+#                            judges inside-out (I) on THAT record, so a column must advance by more than two roundings
+COLUMN_ADVANCE_MIN_M = RECORD_ROUND_M * math.sqrt(2.0)   # the worst a 0.01 m-rounded pair can move a difference in plan
+
+
+def recorded_inside_out(recs, pos, half):
+    """inside_out_spans on the record the author WRITES and verify_race I READS (centres rounded to RECORD_ROUND_M,
+    frames to 5 / 4 decimals): the author-time pre-check then reads exactly what the gate reads (ledger 0054 Phase 2
+    step 2d: J4's inside kerb advanced 2 mm per station unrounded, 0 inside-out spans, and 2 on the record)"""
+    rr = []
+    for r in recs:
+        x, z = pos(r)
+        rr.append({"tx": round(r["tx"], 5), "tz": round(r["tz"], 5), "ls": round(r.get("ls", 1.0), 4),
+                   "_xz": (round(x, 2), round(z, 2))})
+    return inside_out_spans(rr, lambda q: q["_xz"], half)
+
+
+def column_advance(recs, pos, half):
+    """[min over the two extreme columns of the plan distance each moves along the span's mean tangent] per span
+    (metres; <= 0 = inside-out, < COLUMN_ADVANCE_MIN_M = inside-out or not on the 0.01 m record)"""
+    out = []
+    for i in range(len(recs) - 1):
+        a, b = recs[i], recs[i + 1]
+        tm = (a["tx"] + b["tx"], a["tz"] + b["tz"])
+        L = math.hypot(*tm) or 1.0
+        pa, pb = pos(a), pos(b)
+        la, lb = left_normal(a["tx"], a["tz"]), left_normal(b["tx"], b["tz"])
+        sa, sb = half * a.get("ls", 1.0), half * b.get("ls", 1.0)
+        best = float("inf")
+        for o in (-1.0, 1.0):
+            dx = (pb[0] + lb[0] * o * sb) - (pa[0] + la[0] * o * sa)
+            dz = (pb[1] + lb[1] * o * sb) - (pa[1] + la[1] * o * sa)
+            best = min(best, (dx * tm[0] + dz * tm[1]) / L)
+        out.append(best)
+    return out
+
+
+def kerb_column_margin(plan):
+    """(smallest column advance of a kerb plan's spans, [span indices under COLUMN_ADVANCE_MIN_M]) — its stations' own
+    geometry, the inside-out measure with the record's resolution"""
+    sgn = 1.0 if plan["side"] == "L" else -1.0
+    adv = column_advance(plan["stations"], lambda s, g=sgn: kerb_mid_xz(s, g), KERB_W / 2.0)
+    return (min(adv) if adv else float("inf")), [i for i, a in enumerate(adv) if a < COLUMN_ADVANCE_MIN_M]
+
+
+def kerb_standing_run(plan, cum):
+    """the pull-back a kerb's own geometry allows: the longest run of its stations whose every span advances by at least
+    COLUMN_ADVANCE_MIN_M, as the vertex run it covers rounded inward (i = the first vertex at or after its first station,
+    j = the last at or before its last; cum = the line's vertex stations, the frame the stations' `s` live in) —
+    (i, j, first station, last station, metres), or None when no run of two vertices stands (drop the kerb). A declared
+    race.kerbs.trims pull-back is this run (ledger 0054 Phase 2 step 2d)"""
+    sgn = 1.0 if plan["side"] == "L" else -1.0
+    sts = plan["stations"]
+    adv = column_advance(sts, lambda s, g=sgn: kerb_mid_xz(s, g), KERB_W / 2.0)
+    best, a = None, None
+    for i, ok in enumerate([x >= COLUMN_ADVANCE_MIN_M for x in adv] + [False]):
+        if ok and a is None:
+            a = i
+        if not ok and a is not None:
+            if best is None or sts[i]["s"] - sts[a]["s"] > best[1] - best[0]:
+                best = (sts[a]["s"], sts[i]["s"], a, i)
+            a = None
+    if best is None:
+        return None
+    s0, s1, a, b = best
+    run = [int(v) for v in plan["run"]]
+    n = len(cum)
+    vs = [run[0]]
+    while vs[-1] != run[1]:
+        vs.append((vs[-1] + 1) % n)
+    inside = [v for v in vs if s0 - 1e-6 <= cum[v] <= s1 + 1e-6]
+    if a == 0:
+        inside = [run[0]] + [v for v in inside if v != run[0]]
+    if b == len(sts) - 1:
+        inside = [v for v in inside if v != run[1]] + [run[1]]
+    if len(inside) < 2:
+        return None
+    return inside[0], inside[-1], a, b, round(s1 - s0, 2)
+
+
 def kerb_mid_xz(s, sgn):
     """the kerb's mid-line point of a station (lip + sgn KERB_W / 2) — the polyline the trim works on"""
     lx, lz = left_normal(s["tx"], s["tz"])

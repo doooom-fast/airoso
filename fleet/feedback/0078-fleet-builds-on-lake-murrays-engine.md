@@ -243,11 +243,30 @@ the edge (over the edge strip: the port's `bespoke.names.paved` is the lane only
 gate is green; the far ledges behind the wall (42) are reported, not gated. No painted kerbs on the oval (the red / white
 ones are on the infield course, not the installed line).
 
-**Aspen, Pueblo, Grand Junction: built up to the 3DEP grid, then waiting.** None of the three commits a heightfield (its
-elevation stage's grid lives in the PC's workshop) and USGS 3DEP returned 504s to every corridor request from the Mac
-this evening (Pikes Peak's came through). Kerbs: Aspen 4 red / white runs, 145 m (s 233-262 left, 838-862 right, 1,017-1,038
-left, 1,495-1,566 left), read by eye off station-labelled 6x zooms of NAIP 2019 (`tracks/aspen/source/edges/`; the colour
-reader found 2: the s 1,025 kerb and a blue car); Pueblo and Grand Junction show no painted kerbs on NAIP 2019 at 0.6 m.
+**Aspen, Pueblo, Grand Junction: every gate green, better than installed except Aspen's kinks.** None of the three commits a
+heightfield (its elevation stage's grid lives in the PC's workshop); USGS 3DEP returned 504s for an hour, then the Mac's
+fetch came through and each port carries its own grid. Kerbs: Aspen 4 red / white runs, 145 m traced, 149 m built (s 233-262
+left, 838-862 right, 1,017-1,038 left, 1,495-1,566 left), read by eye off station-labelled 6x zooms of NAIP 2019
+(`tracks/aspen/source/edges/`; the colour reader found 2: the s 1,025 kerb and a blue car); Pueblo and Grand Junction show
+no painted kerbs on NAIP 2019 at 0.6 m.
+
+| | Aspen port / 0.67.1 | Pueblo port / 0.67.0 | Grand Junction port / 0.3.0 |
+|---|---|---|---|
+| chain | SHIP OK | SHIP OK | SHIP OK |
+| soft top / severe | 0 / 0 both | 0 / 0 both | 0 / 0 both |
+| kinks /km | **13.26** / 12.57 | 8.01 / 12.83 | 17.31 / 35.27 |
+| vertex bumps | 41 / 52 | 12 / 26 | 4 / 24 |
+| fold bumps | 0 / 0 | 0 / 0 | 0 / 2 |
+| far ledges (gated drops 0 everywhere) | 0 / 6 | 0 / 5 | 0 / 4 |
+| audit / kn5_ground / verify / house_seat | CLEAN / PASS / PASS / PASS | same | same |
+| camber | flat (no usable lidar) | flat (no usable lidar) | lidar: median 0.02, max 0.25 %-pts (3.53 %) |
+| steepest over 10 m (built) | 5.67 % / 5.78 % | **8.60 %** / 6.05 % (build_mesh's 6 % cap) | 5.92 % / 6.51 % |
+| kn5 | 7.6 MB | 10.0 MB | 9.2 MB (TERRAIN 3,017 → 38,065) |
+| 1 m past the edge | strip 13.2 % (kerbs incl.), ground 86.8 % | strip 6.7 %, ground 93.3 % | strip 19.7 %, ground 80.3 % |
+
+The flat ports have no `seat_edges` (no camber file), so engine-july's coarse ground covers the edge strip's outer half more
+still (the size cost above, here with no fine cut at all).
+
 NAIP note: the ImageServer's EPSG:4326 export holds the requested box only with square-degree pixels (h = w * dlat / dlon);
 metre-square pixels squash it (ledger 0062's Milford finding, and Aspen's first fetch here, 35 m off at the ends).
 
@@ -308,10 +327,10 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
    - **Pikes Peak** (`pikes-peak-lm`, workshop `ppir_lm`, ENG = a plain copy of `eng_repro`: every texture it uses is in
      REFERENCED.md5, `concrete_barrier_*` included; installs as `pikes_peak_international_raceway_lm`). The port's 3DEP grid is
      its own (`tracks/pikes-peak-lm/data/heightfield.*`, synced in).
-   - **Aspen, Pueblo, Grand Junction**: owed from the PC first: push each workshop's `data/heightfield.npy` +
-     `heightfield.meta.json` (the elevation stage's grid, which the live tracks never committed) into
-     `tracks/<aspen|pueblo|grand-junction>-lm/data/`, or the Mac fetches them when USGS answers; then the same runs
-     (`aspen_lm`, `pueblo_lm`, `grand_junction_lm`).
+   - **Aspen, Pueblo, Grand Junction** (`aspen-lm` / `pueblo-lm` / `grand-junction-lm`, workshops `aspen_lm`, `pueblo_lm`,
+     `grand_junction_lm`; installs as `aspen_motorsports_park_lm`, `pueblo_motorsports_park_lm`, `grand_junction_lm`): ENG =
+     plain copies of `eng_repro` (every texture they use is in REFERENCED.md5); Aspen's kerb texture
+     (`textures/kerb_redwhite.png`) and each port's 3DEP grid sync in from the port folder.
 5. Lake Murray unchanged, apples to apples (the PC's check, 2026-11-03; it replaces a redraft-and-compare-to-v4 check that
    would have redrafted Lake Murray without its houses). Both branches carry v4's chain since the merge of
    `claude/lm-v4-line` (e78fe44): Lake Murray's `ship.json` and `track.config.json` are lm-v4-line's byte for byte, the

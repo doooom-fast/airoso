@@ -406,4 +406,4 @@ reads them, `tools/author_kerbs_blend.py` lays them; High Plains 12 runs, Nevada
 Grand Junction, or on Pikes Peak's oval); no run-off is built (none measured as run-off); `seat_edges` cuts by the measured
 bank (High Plains' kn5 29 → 14.9 MB) at the cost of ground over the edge strip's outer half; every port ships from an
 empty workshop (the intake writes `centerline.geojson`); Pikes Peak is green with its outer wall read off NAIP; Milford
-ships but is worse than 0.6.0 (kinks, severe steps); Aspen, Pueblo and Grand Junction wait on their 3DEP grids.
+ships but is worse than 0.6.0 (kinks, severe steps); Aspen, Pueblo and Grand Junction are green and, but for Aspen's kinks, better than installed.

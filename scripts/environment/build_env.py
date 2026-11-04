@@ -531,7 +531,7 @@ def build(project_dir: str | Path) -> dict:
     # dip). Without this the scenery anchored to the raw loop — poles/signs/bridge floated ~2 m over the
     # dipped road through the corkscrew. dip_of feeds the terrain bowl below.
     loop, dip_of, _bank_at, profile_active = finished_centerline(loop, cfg.raw, mirror_x=mirror_x,
-                                                                 widths=widths)
+                                                                 widths=widths, origin_elev_m=elev0)
 
     grid = read_npy(data / "heightfield.npy")
     meta = json.loads((data / "heightfield.meta.json").read_text())

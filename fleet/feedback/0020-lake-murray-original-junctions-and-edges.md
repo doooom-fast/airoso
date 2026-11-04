@@ -99,6 +99,13 @@ work. The residual K/I ≈900 with worst +1.18 m is the junction-mouth SHAPES: t
 (REALISM §8), which this entry stays open for. Installed same day with the full presentation
 stack (grid, frame-fixed AI, traffic lanes, 39 TV cameras, GrassFX).
 
+## Race kerbs leave Rule 1's carve (2026-11-03)
+
+Rule 1 (no kerb face inside any carriageway) is for street kerbs and sidewalks. A race kerb (`1KERB_RACE_*`) is laid on the lane's edge
+at a corner on purpose. On Lake Murray v5's engine ribbon the carve emptied two of them and broke the race kn5 export. The prep now
+skips `1KERB_RACE_*` (`build_kn5_loop.corridor_carves_kerb`); verify_race E/O and the race layouts' drive_test judge them instead.
+fleet/GATES-CHANGELOG.md, 2026-11-03.
+
 ## Verification
 
 - No sidewalk/curb geometry inside any junction mouth on the loop (0013's criterion, now on this

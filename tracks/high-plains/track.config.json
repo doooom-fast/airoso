@@ -2,7 +2,7 @@
   "archetype": "race_circuit",
   "name": "High Plains Raceway",
   "slug": "high_plains",
-  "version": "0.71.0",
+  "version": "0.72.1",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 12.0,
@@ -47,7 +47,8 @@
         },
         {
           "file": "source/bespoke/posts.json",
-          "auto": true
+          "auto": true,
+          "collider_tri_m": 14.0
         }
       ],
       "pads": [

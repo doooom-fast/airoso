@@ -944,3 +944,33 @@ def test_plot_writes_one_folder_per_race_layout():
         assert "overview.png" in files and "pin_40.png" in files and "pin_190.png" in files, files
         assert "nose_60.png" in files and "nose_70.png" in files, files
     assert not (out / "street").exists()
+
+
+def test_a_z_fold_at_the_lap_seam_is_extended_never_hooked():
+    """Lake Murray v5 (2026-11-03): the road narrows 27.5 -> 17.0 m in one vertex at the lap seam's 105 deg corner, so
+    the R strip's offset jumps 5 m inward there (a Z-fold). The loop search took the backward jump itself as the in-leg
+    ('loop' at v4489/v1, one ring dropped): the strip ran on to v4489, stepped 4.9 m BACK to X and turned, a hook of wall
+    the race_cw AI line passed 1.26 m from. The in-leg is searched from the segment before the backward step (as
+    write_ai_line.trim_loops does), so the legs are extended to meet ahead of the in-leg."""
+    rings = json.loads((ROOT / "tests" / "tools" / "fixtures" / "lm_v5_seam_zfold_rings.json").read_text(encoding="utf-8"))["rings"]
+    out, dropped, corners = rf.trim_folded_rings([dict(r) for r in rings])
+    assert [(c["kind"], c["in_vertex"], c["out_vertex"], c["n_removed"]) for c in corners] == [("extend", 4487, 4, 6)], corners
+    i = next(q for q, r in enumerate(out) if r.get("corner"))
+    a, b, X = rf._strip_xz(out[i - 2]), rf._strip_xz(out[i - 1]), corners[0]["xz"]
+    assert (X[0] - b[0]) * (b[0] - a[0]) + (X[1] - b[1]) * (b[1] - a[1]) > 0.0      # X ahead of the in-leg: no step back
+    assert rf.inside_out_spans(out, rf._strip_xz, rf.BARRIER_HALF_W) == []
+
+
+def test_a_width_step_inside_a_swallowtail_still_finds_its_crossing():
+    """the same search fault on a synthetic corner: R 8 m, the inside strip 13.0 m off before the apex and 9.0 m after.
+    Taking the backward step as the in-leg put X 0.7 m short of the mitre and refused the corner; the real legs cross."""
+    R = 8.0
+    pts = _right_hander(R)
+    n = len(pts)
+    apex = int(40 / 3) + max(2, int(math.ceil(R * math.pi / 2 / 3))) // 2
+    st = rf.stations(pts)
+    plan = rf._plan_run(pts + [pts[0]], [2 * (13.0 + 0.485)] * (n + 1), n, st, list(range(1, n - 1)),
+                        lambda k: -(13.0 if k <= apex else 9.0), "free", "free", rf.BARRIER_H, "edge", "t", "R", (1, n - 2))
+    out, dropped, corners = rf.trim_folded_rings([dict(r) for r in plan["rings"]])
+    assert [(c["kind"], c["n_removed"]) for c in corners] == [("loop", 7)], corners
+    assert rf.inside_out_spans(out, rf._strip_xz, rf.BARRIER_HALF_W) == []

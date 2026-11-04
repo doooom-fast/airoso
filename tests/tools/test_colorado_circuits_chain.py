@@ -44,7 +44,7 @@ def test_ship_json_is_high_plains_first_pass_shape():
         for key in ("required", "map", "dirs"):
             assert s["sync_out"][key] == hp["sync_out"][key], (track, key)
         assert set(s["sync_out"]["files"]) <= set(hp["sync_out"]["files"]), track
-        assert s["workshop"] == f"C:/Users/Owner/Documents/k10-workshops/{track}", track
+        assert s["workshop"] in (f"C:/Users/Owner/Documents/k10-workshops/{track}", f"D:/k10-workshops/{track}"), track
         assert s["ui_name_prefix"] == "doooom Colorado" and s["require_race_layout"] is False, track
         raw = json.loads((ROOT / "tracks" / track / "ship.json").read_text(encoding="utf-8"))
         assert raw.get("_doc") and raw.get("_owed"), track

@@ -179,6 +179,12 @@ Real banking, per track, looked up: PPIR oval is 10° in all four turns; High Pl
 a deliberately off-camber Turn 1. A road course gets **none**. Public streets are not superelevated
 — they get real elevation only.
 
+*Amended 2026-11-03, ledger 0066:* a public street's tilt **measured off the source lidar** is research, and is
+built as measured, into a curve included (capped at 6 %). Sand Creek's 56th Ave → Sand Creek Drive turn rolls from
++1 % to +4 % over 24 m and holds 2.5–4.5 % through the turn; the DEM-estimated crossfall would have held it flat, and
+Kevin drove the real one ("it dips and turns dramatically for a passenger road"; asked to put it in: "Yes, build
+it"). Unmeasured streets still get none.
+
 Where a corner's banking is genuinely unknown, derive it from the racing line's own curvature
 (`track-grading`) — and only on purpose-built circuits.
 

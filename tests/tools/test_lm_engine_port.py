@@ -115,3 +115,66 @@ def test_traced_kerbs_ship_in_the_road_kn5_with_their_own_uvs():
         cfg = json.loads((ROOT / "tracks" / t / "track.config.json").read_text(encoding="utf-8"))
         assert "1KERB" in cfg["texture_overrides"] and "1KERB_RACE" not in cfg["texture_overrides"]
         assert (ROOT / "tracks" / t / cfg["texture_overrides"]["1KERB"]["diffuse"]).exists()
+
+
+# Every file a port's chain reads from its workshop after the intake, that only the intake or ship.json's sync_in provides
+# (2026-11-03, the PC's Sand Creek rehearsal: the track folder read data/centerline.geojson, which only the Mac's old
+# workshop held). The later steps that read them: the assembler (centerline.local, heightfield, connectors, crossfall),
+# the weld (connectors, mouths), the track folder (centerline.geojson; osm.ways.json optional), the bespoke / kerb authors
+# (the files the config names), the prep (bridges.cache.json when the config declares decks).
+WORKSHOP_INPUTS = ("track.config.json", "data/centerline.local.json", "data/centerline.geojson", "data/heightfield.npy",
+                   "data/heightfield.meta.json", "data/connectors.local.json", "data/mouths.json", "data/lm_intake.json")
+PORTS = ("sand-creek-lm", "high-plains-lm", "exotics-racing-lv-lm")
+
+
+def _sync_in(port: str, ws: Path):
+    """ship.json's sync_in, as tools/ship_track.sh does it, into an EMPTY workshop"""
+    spec = json.loads((ROOT / "tracks" / port / "ship.json").read_text(encoding="utf-8"))
+    src = ROOT / "tracks" / port
+    sin = spec.get("sync_in") or {}
+    for rel in sin.get("required", []):
+        (ws / rel).parent.mkdir(parents=True, exist_ok=True)
+        (ws / rel).write_bytes((src / rel).read_bytes())
+    for rel in sin.get("optional", []):
+        if (src / rel).exists():
+            (ws / rel).parent.mkdir(parents=True, exist_ok=True)
+            (ws / rel).write_bytes((src / rel).read_bytes())
+
+
+def test_the_intake_into_an_empty_workshop_leaves_every_file_the_chain_reads():
+    import shutil
+    import lm_engine_intake as L
+    for port in PORTS:
+        ws = Path(tempfile.mkdtemp(prefix=f"empty_{port}_"))
+        try:
+            _sync_in(port, ws)
+            L.intake(ws)
+            cfg = json.loads((ws / "track.config.json").read_text(encoding="utf-8"))
+            want = list(WORKSHOP_INPUTS)
+            if (cfg.get("lm_intake") or {}).get("crossfall"):
+                want.append("data/crossfall.lm.json")
+            if (cfg.get("route") or {}).get("kerbs_file"):
+                want.append(cfg["route"]["kerbs_file"])
+            if (cfg.get("capture") or {}).get("bridges"):
+                want.append("data/bridges.cache.json")
+            rels = []
+
+            def _files(node):
+                if isinstance(node, dict):
+                    for k, v in node.items():
+                        if k == "file" and isinstance(v, str):
+                            rels.append(v)
+                        elif not k.startswith("_"):
+                            _files(v)
+                elif isinstance(node, list):
+                    for v in node:
+                        _files(v)
+            _files((cfg.get("scenery") or {}).get("bespoke") or {})
+            for row in (cfg.get("texture_overrides") or {}).values():
+                rels += [v for v in (row or {}).values() if isinstance(v, str) and v.startswith("textures/")]
+            missing = [r for r in want + rels if not (ws / r).exists()]
+            assert not missing, (port, missing)
+            gj = json.loads((ws / "data" / "centerline.geojson").read_text(encoding="utf-8"))
+            assert float(gj["features"][0]["properties"]["length_m"]) > 0      # what the track folder reads
+        finally:
+            shutil.rmtree(ws, ignore_errors=True)

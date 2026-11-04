@@ -127,6 +127,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
               and (proj / "data" / "heightfield.meta.json").exists())
     if hf_own:
         need = need[:1]
+    need.append(sdata / "centerline.geojson")              # the track folder reads it (written into the port below)
     missing = [str(p) for p in need if not p.exists()]
     if missing:
         raise SystemExit(f"[lm_intake] the source track lacks {missing} — run its gps / elev / project / widths stages first")
@@ -208,6 +209,16 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     (data / "centerline.local.json").write_text(json.dumps(out), encoding="utf-8")
     # the assembler smooths from its first-run snapshot: a stale one would smooth the OLD line
     (data / "centerline.raw.local.json").unlink(missing_ok=True)
+    # THE LINE AS GEOJSON (2026-11-03, the PC's Sand Creek rehearsal: the track folder read data/centerline.geojson's
+    # features[0].properties.length_m from a file only the Mac's workshop held). The port's line IS the source's line in
+    # lon / lat (only its heights change, above), so the source's file is the port's; its OSM ways cache (the track
+    # folder's CM preview, optional) rides along when the source has one. Nothing a later step reads may come from an old
+    # workshop: tests/tools/test_lm_engine_port.py runs this into an empty dir and checks every such file (WORKSHOP_INPUTS).
+    shutil.copyfile(sdata / "centerline.geojson", data / "centerline.geojson")
+    if (sdata / "osm.ways.json").exists():
+        shutil.copyfile(sdata / "osm.ways.json", data / "osm.ways.json")
+    else:
+        (data / "osm.ways.json").unlink(missing_ok=True)
     if not hf_own:
         for f in ("heightfield.npy", "heightfield.meta.json"):
             shutil.copyfile(sdata / f, data / f)

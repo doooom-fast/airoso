@@ -714,6 +714,22 @@ def finished_centerline(raw_pts: list[Vertex], cfg_raw: dict, *, mirror_x: bool,
     return centerline, dip_of, bank_at, profile_active
 
 
+def fold_pads_enabled(cfg: dict) -> bool:
+    """Whether build() lays fold PADS at the flat-grade fold apexes (ledger 0074). Default False (off); a track
+    opts in with ``road_profile.fold_pads: true``.
+
+    At every fold apex (a >110 deg turn within +-15 m of arc) the engine plateaus the profile over +-40 m with
+    a smoothstep, and where the +-60 m chord grade is under 2.5 % it also lays a paved disc and a flat zone of
+    radius w/2 + 16 m, inside which every pavement vertex is SNAPPED to the apex plane. The snap is hard-edged
+    and the plateau is only at half weight 20 m out, so where the corner itself is graded the zone's rim is a
+    step: Aspen's 160 deg final hairpin climbs ~2.4 % through the corner while its +-60 m chord reads 0.9 %,
+    and the snap lifted the entry 0.23 m and dropped the exit 0.20 m inside one 3 m segment (17 severe steps,
+    every one of them at the two rims). Every track whose build laid a disc stepped at its rim (Aspen 1/1 apexes,
+    Grand Junction 4/4), so the pads are off unless a track sets ``road_profile.fold_pads: true``. Off keeps the
+    +-40 m plateau and drops the disc and the flat zone. Only an explicit ``true`` turns it on."""
+    return ((cfg.get("road_profile") or {}).get("fold_pads", False)) is True
+
+
 def build(project_dir: str | Path) -> dict:
     project_dir = Path(project_dir)
     data = project_dir / "data"
@@ -891,13 +907,15 @@ def build(project_dir: str | Path) -> dict:
     # cleanly; the U-complex bin vanished with discs) and hurt on GRADED mountain folds (rims
     # step against residual camber: +6/km when every fold got one). Grade decides.
     _disc_apexes = []
-    for _ax in _apexes:
+    _pads_on = fold_pads_enabled(cfg_raw)      # road_profile.fold_pads true = disc + flat zone; default off (0074)
+    for _ax in (_apexes if _pads_on else []):
         _i0d = min(range(len(centerline)), key=lambda k: abs(_stp[k] - max(0.0, _stp[_ax] - 60.0)))
         _i1d = min(range(len(centerline)), key=lambda k: abs(_stp[k] - min(_stp[-1], _stp[_ax] + 60.0)))
         _run_m = max(1.0, _stp[_i1d] - _stp[_i0d])
         if abs(centerline[_i1d][1] - centerline[_i0d][1]) / _run_m < 0.025:
             _disc_apexes.append(_ax)
-    print(f"  [fold pads] discs at {len(_disc_apexes)}/{len(_apexes)} apexes (flat zones only)")
+    print(f"  [fold pads] discs at {len(_disc_apexes)}/{len(_apexes)} apexes (flat zones only)"
+          + ("" if _pads_on else "; road_profile.fold_pads off (default): no disc, no flat zone (ledger 0074)"))
     # junction FLAT ZONES = the flat-grade fold apexes (disc set): terrain AND pavement grade to
     # one plane there (the mound in the mouth + the proud exit-ribbon lip both die here)
     _flat_zones = [(centerline[_ax][0], centerline[_ax][2], centerline[_ax][1],

@@ -190,3 +190,94 @@ def test_the_lariat_declares_the_drive1_thresholds():
     for doc in (g["drive_test"]["_severe_doc"], g["drive_test"]["_replication_doc"], g["audit"]["_doc"],
                 g["kn5_ground_check"]["_doc"], g["july_reference"]["_doc"]):
         assert "[invented" in doc or "[std" in doc or "[measured" in doc, doc
+
+
+# --- the declared, per-build force exemptions (Kevin 2026-11-03 "Yes, force it"; the strict rule) -------------------
+FX = {"versions": ["1.0.1"], "approved": "test",
+      "keys": {"undrivable_corners": {"corners": ["H1", "H2"], "window_m": 40.0},
+               "excursion_far_ledges": {"max": 1045}}}
+
+
+def _fx_proj(mut=None, *, version="1.0.1"):
+    """One street layout (forward), red ONLY on what the exemptions cover: 3 undrivable corners at the declared
+    hairpins (st 200 and 600) and far ledges 1,000 > July 382."""
+    def base(f):
+        c = f["track.config.json"]
+        c["version"] = version
+        c["gates"]["drive1"]["force_exemptions"] = copy.deepcopy(FX)
+        c["hairpin_fit"] = {"corners": [{"id": "H1", "st_m": 200.0}, {"id": "H2", "st_m": 600.0}]}
+        c["layouts"] = [c["layouts"][0]]
+        d = f["data/drive_test.fwd.json"]
+        d.update(undrivable_corners=3, excursion_far_ledges=1000)
+        d["worst"]["undrivable_all"] = [[190.0, 130.0, 7.0], [214.0, 128.0, 7.1], [631.0, 120.0, 8.0]]
+        if mut:
+            mut(f)
+    return _proj(base, skip=("data/drive_test.rev.json", "data/kn5_ground_check.rev.json"))
+
+
+def test_declared_exemptions_force_exactly_the_two_rows():
+    rep = d1.judge(_fx_proj())
+    assert rep["red"] == ["drive_test fwd"] and rep["force_install_ok"] is True, rep["force_install_why_not"]
+    assert rep["force_exemptions"]["active"] is True and "drive_test fwd" in rep["force_exemptions"]["covered"]
+    # the same build without the block: the 0047 July rule refuses on the far ledges
+    def no_fx(f):
+        f["track.config.json"]["gates"]["drive1"].pop("force_exemptions")
+    rep = d1.judge(_fx_proj(no_fx))
+    assert rep["force_install_ok"] is False and any("excursion_far_ledges 1000 > July 382" in w
+                                                    for w in rep["force_install_why_not"])
+
+
+def test_every_other_red_row_stays_a_hard_refusal():
+    def dt(key, val):
+        return lambda f: f["data/drive_test.fwd.json"].__setitem__(key, val)
+    cases = [
+        ("severe steps (the mouth steps are fixed, not forced)", dt("severe_steps", 8)),
+        ("kinks", dt("kinks_per_km", 19.5)),
+        ("replication", dt("replication_vs_measured", {"median": 0.1, "p95": 0.51, "max": 1.0})),
+        ("daylight", dt("daylight_gaps", 1)),
+        ("obstruction", dt("obstruction_stations", 1)),
+        ("floating", dt("floating_furniture", 1)),
+        ("soft-top", dt("soft_top_in_lane", 1)),
+        ("far ledges over the declared max", dt("excursion_far_ledges", 1046)),
+        ("another July key", dt("excursion_drops", 739)),
+        ("an undrivable corner away from the hairpins",
+         lambda f: f["data/drive_test.fwd.json"]["worst"]["undrivable_all"].__setitem__(2, [900.0, 120.0, 8.0])),
+        ("no station list to check", lambda f: f["data/drive_test.fwd.json"]["worst"].pop("undrivable_all")),
+        ("audit", lambda f: f["data/audit.json"].__setitem__("H_ground_above_deck", 1)),
+        ("verify_kn5", None),
+        ("kn5_ground_check", lambda f: f["data/kn5_ground_check.fwd.json"].update(fail=True, reasons=["x"])),
+        ("road inventory", lambda f: f["data/road_inventory.json"].__setitem__("fail", True)),
+        ("stacked legs", lambda f: f["data/stacked_legs.json"].__setitem__("fail", True)),
+        ("roll rate", lambda f: f["data/crossfall_gate.json"].__setitem__("fail", True)),
+        ("paint", lambda f: f["data/aerial/paint_gate.json"].__setitem__("pass", False)),
+        ("one-way", lambda f: f["data/oneway_check.json"].update(verdict="FAIL", fails=["x"])),
+        ("the lid", lambda f: f["data/drive_test.fwd.json"]["worst"].__setitem__("severe_all", [[381.0, 0.0, 0.12]])),
+    ]
+    for what, mut in cases:
+        p = _fx_proj(mut)
+        if what == "verify_kn5":
+            (p / "build" / "toy.kn5").unlink()
+        rep = d1.judge(p)
+        assert rep["force_install_ok"] is False, (what, rep["force_install_why_not"])
+    # another build version: the exemption is not active, and the strict rule refuses both rows
+    rep = d1.judge(_fx_proj(version="1.0.2"))
+    assert rep["force_exemptions"]["active"] is False and rep["force_install_ok"] is False
+
+
+def test_only_the_two_rows_can_be_declared():
+    def bad(f):
+        f["track.config.json"]["gates"]["drive1"]["force_exemptions"]["keys"]["severe_steps"] = {"max": 8}
+    assert d1.main([str(_fx_proj(bad))]) == 2
+
+
+def test_the_lariat_declares_kevins_two_rows_for_this_build():
+    cfg = json.loads((ROOT / "tracks" / "lookout-lariat" / "track.config.json").read_text(encoding="utf-8"))
+    fx = cfg["gates"]["drive1"]["force_exemptions"]
+    assert cfg["version"] in fx["versions"] and "Yes, force it" in fx["approved"] and "2026-11-03" in fx["approved"]
+    assert sorted(k for k in fx["keys"] if not k.startswith("_")) == ["excursion_far_ledges", "undrivable_corners"]
+    assert fx["keys"]["undrivable_corners"]["corners"] == ["C4", "C5", "C6", "C7", "C8", "C9", "C10"]
+    assert fx["keys"]["excursion_far_ledges"]["max"] == 1045
+    # drive_test writes the station list the exemption is checked against, for a track declaring the block only
+    src = (ROOT / "scripts" / "geometry" / "drive_test.py").read_text(encoding="utf-8")
+    assert 'if ((cfg.get("gates") or {}).get("drive1") or {}).get("force_exemptions"):' in src
+    assert 'report["worst"]["undrivable_all"] = problems["undrivable_corners"][:2000]' in src

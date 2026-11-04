@@ -77,9 +77,11 @@ def test_every_opt_in_is_absent_from_lake_murray_and_guarded_in_the_assembler():
     # the ports' tools are steps Lake Murray's ship.json never names
     sd = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "ship.json").read_text(encoding="utf-8"))
     names = {n for ph in sd["steps"].values() for n in ph}
-    assert not names & {"lm_intake", "densify_ribbon", "seat_edges", "strip_seam", "kerbs", "edge_report"}
+    assert not names & {"lm_intake", "densify_ribbon", "seat_edges", "strip_seam", "kerbs", "edge_report", "cutfill",
+                        "lm_pads", "split_strip"}
     lm = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
     assert "densify" not in (lm.get("route") or {}) and "lm_intake" not in lm
+    assert "lm_pads" not in lm and "strip_seam" not in lm      # round 7's pads and local seam scope never reach it
     bes = (lm.get("scenery") or {}).get("bespoke") or {}
     assert "rails" not in bes and "pads" not in bes       # round 5's rail height_m and strip pads never reach it
 
@@ -128,7 +130,8 @@ def test_traced_kerbs_ship_in_the_road_kn5_with_their_own_uvs():
 # (the files the config names), the prep (bridges.cache.json when the config declares decks).
 WORKSHOP_INPUTS = ("track.config.json", "data/centerline.local.json", "data/centerline.geojson", "data/heightfield.npy",
                    "data/heightfield.meta.json", "data/connectors.local.json", "data/mouths.json", "data/lm_intake.json")
-PORTS = ("sand-creek-lm", "high-plains-lm", "exotics-racing-lv-lm", "milford-road-course-lm", "pikes-peak-lm")
+PORTS = ("sand-creek-lm", "high-plains-lm", "exotics-racing-lv-lm", "milford-road-course-lm", "pikes-peak-lm",
+         "lookout-lariat-lm")
 
 
 def _sync_in(port: str, ws: Path):
@@ -204,3 +207,23 @@ def test_the_round_5_intake_options_report_what_they_did():
                 assert rep["width_taper"] is None and rep["resample"] is None
         finally:
             shutil.rmtree(ws, ignore_errors=True)
+
+
+def test_the_lariat_arcs_read_the_ground_and_the_pad_outlines_come_with_it():
+    """Round 7: the C12 / C13 arcs' heights are 3DEP where the arcs stand (the steepest 10 m is not the index-kept
+    15.48 %), and the 0.17.2 lidar pad outlines the pad step reads are carried into the workshop."""
+    import shutil
+    import lm_engine_intake as L
+    ws = Path(tempfile.mkdtemp(prefix="r7_lariat_"))
+    try:
+        _sync_in("lookout-lariat-lm", ws)
+        rep = L.intake(ws)
+        assert all(r.get("heights", "").startswith("3DEP along the arc") for r in rep["corner_arcs"])
+        loc = json.loads((ws / "data" / "centerline.local.json").read_text(encoding="utf-8"))
+        assert L._max_grade([tuple(p) for p in loc["points_xyz_m"]], 10.0) < 0.15
+        cfg = json.loads((ws / "track.config.json").read_text(encoding="utf-8"))
+        for d in cfg["lm_pads"]["pads"]:
+            rec = json.loads((ws / "source" / "pads" / f"{d['id']}.json").read_text(encoding="utf-8"))
+            assert rec["cuts"] == d["cuts"] and rec["node"] == d["node"]
+    finally:
+        shutil.rmtree(ws, ignore_errors=True)

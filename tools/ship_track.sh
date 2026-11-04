@@ -326,6 +326,18 @@ draft_strip_seam() {
   step "author: a ground seam along the edge strip's outer lip (tools/strip_seam_blend.py; ledger 0078; self-checked)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/strip_seam_blend.py" -- "$PROJ" 2>&1 | grep "^\[strip-seam\]\|Error\|Traceback" )
 }
+draft_cutfill() {
+  step "author: the ground graded to the road's built section, stacked legs held on their own side (tools/cutfill_blend.py; ledger 0078; terrain.cross_section.build false = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/cutfill_blend.py" -- "$PROJ" 2>&1 | grep "^\[cutfill\]\|FATAL\|Error\|Traceback" )
+}
+draft_lm_pads() {
+  step "author: the lap's junction pads, the mainline arm (tools/lm_pads_blend.py: the lap cut at two rows, the measured deck, K-rails across the roads not taken; ledger 0078; self-checked; none declared = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/lm_pads_blend.py" -- "$PROJ" 2>&1 | grep "^\[lm-pads\]\|FATAL\|Error\|Traceback" )
+}
+draft_split_strip() {
+  step "author: a long lap's edge strip cut along the line under AC's vertex cap (tools/split_strip_blend.py; ledger 0078; under the cap = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/split_strip_blend.py" -- "$PROJ" 2>&1 | grep "^\[split-strip\]\|Error\|Traceback" )
+}
 draft_aprons() {
   step "author: corner aprons (route.aprons: the return pavement, its curb + walk, the ground under it; self-checked; none declared = no-op)"
   # ledger 0054 P1 fix round: corner aprons (tools/author_aprons_blend.py; track.config.json route.aprons, absent = no-op)
@@ -465,6 +477,12 @@ prep_prep() {
   # off = no data/freeway_i8.json = nothing runs). Part of prep: the split follows it (steps.prep stays prep, split)
   # a tiered terrain's prepped tiles carry far more vertices than their surface needs (ledger 0054 P3 repair round 3, as tools/ship_sd.sh):
   # thinned by error-bounded half-edge collapse, no vertex moves; no tier plan = no-op. Before the freeway drape, which reads this ground
+  # ledger 0078 round 7: the stacked-leg hold again on the prepped ground (the draft step cutfill wrote its line; none = no
+  # cutfill = nothing runs, no header: Lake Murray's chain is unchanged). Part of prep (steps.prep stays prep, split)
+  if [ -f "$PROJ/data/cutfill.line.json" ]; then
+    step "ship: the stacked-leg hold again on the prepped ground (tools/hold_stacked_blend.py; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/hold_stacked_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[hold\]\|FATAL\|Error\|Traceback"
+  fi
   rm -f "$PROJ/data/terrain_thin.json" "$PROJ/data/terrain_thin.nodes.json.gz"
   if [ -f "$PROJ/data/terrain.tiers.json.gz" ]; then
     step "ship: thin the terrain, every vertex where the chain put it (tools/thin_terrain_blend.py; self-checked)"
@@ -744,12 +762,14 @@ draft_verify_crossfall() {
 # dies reads as red, never as last run's pass.
 # =============================================================================================================
 D1_G=0
+D1_RI=-; D1_SL=-; D1_V=-   # each Drive-1 gate's own exit for the summary line ('-' = not run); D1_G = any of them red
 D1_FORCE_OK=1   # the Drive-1 verdict's July comparison (tools/drive1_gates.py force_install_ok); 1 where no verdict step runs
 gate_road_inventory() {
   local rc
   step "gate: road inventory on the built road (tools/verify_road_inventory.py: no HIGHWAY*/HWYSTRUCT*/MOUNTAINS*, every pavement triangle on the route or in a declared exemption, the pavement is the lap — hard)"
   rm -f "$PROJ/data/road_inventory.json"
   rc=0; (cd "$AIROSO" && python tools/verify_road_inventory.py "$PROJ" 2>&1 | tail -24) || rc=$?
+  D1_RI=$rc
   [ "$rc" = 0 ] || D1_G=$rc
 }
 gate_stacked_legs() {
@@ -757,6 +777,7 @@ gate_stacked_legs() {
   step "gate: stacked legs on the built road (tools/verify_stacked_legs.py, L4: nothing between stacked legs seated to the other leg — hard)"
   rm -f "$PROJ/data/stacked_legs.json"
   rc=0; (cd "$AIROSO" && python tools/verify_stacked_legs.py "$PROJ" 2>&1 | tail -16) || rc=$?
+  D1_SL=$rc
   [ "$rc" = 0 ] || D1_G=$rc
 }
 gate_drive1_verdict() {
@@ -767,6 +788,7 @@ gate_drive1_verdict() {
   step "gate: the Drive-1 verdict (tools/drive1_gates.py: P5's Drive-1 set, gating vs recorded rows; the July reference for --force-install)"
   rm -f "$PROJ/data/drive1_gates.json"
   rc=0; (cd "$AIROSO" && python tools/drive1_gates.py "$PROJ") || rc=$?
+  D1_V=$rc
   [ "$rc" = 0 ] || D1_G=$rc
   D1_FORCE_OK=$(pyq "import json,os,sys
 p=sys.argv[1]
@@ -1095,14 +1117,16 @@ if [ -n "$RACE_RED" ]; then
   echo "  apply (data/drive_test.<id>.json, data/no_route.<id>.json)"; exit 1
 fi
 # the Lariat Drive-1 road gates (the block above gate_road_inventory): red stops the install unless forced
-echo "  Drive-1 road gates (road inventory, stacked legs): exit $D1_G"
+# each gate's own exit (2026-11-03, ledger 0048: the one D1_G exit printed beside "road inventory, stacked legs" read as
+# theirs when only the verdict was red)
+echo "  Drive-1 road gates: road inventory exit $D1_RI, stacked legs exit $D1_SL, the Drive-1 verdict exit $D1_V ('-' = not run)"
 if [ "$D1_G" != 0 ]; then
   if [ "$FORCE" = 1 ] && [ "$D1_FORCE_OK" != 1 ]; then
-    echo "  NOT INSTALLED: --force-install refused — the Drive-1 verdict read this build WORSE than the July reference on a key, or obstruction / floating / soft-top not 0 (data/drive1_gates.json force_install_why_not)"; exit 1
+    echo "  NOT INSTALLED: --force-install refused — the Drive-1 verdict read this build WORSE than the July reference on a key, or obstruction / floating / soft-top not 0, or (a track declaring gates.drive1.force_exemptions) a red row no declared exemption covers (data/drive1_gates.json force_install_why_not)"; exit 1
   elif [ "$FORCE" = 1 ]; then
-    echo "  --force-install: past the Drive-1 road gates RED (the verdict read no key worse than the July reference)"
+    echo "  --force-install: past the Drive-1 road gates RED (the verdict allows it: no key worse than the July reference, or every red reason a declared exemption — data/drive1_gates.json force_exemptions)"
   else
-    echo "  NOT INSTALLED (Kevin never loads a build the machine failed): Drive-1 road gates red (data/road_inventory.json, data/stacked_legs.json)"; exit 1
+    echo "  NOT INSTALLED (Kevin never loads a build the machine failed): Drive-1 road gates red (data/road_inventory.json, data/stacked_legs.json, data/drive1_gates.json)"; exit 1
   fi
 fi
 if [ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ] || [ "$NR_R" != 0 ] || [ "$KG" != 0 ]; then

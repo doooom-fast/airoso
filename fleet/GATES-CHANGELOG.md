@@ -94,7 +94,9 @@ none a gate: `tools/lidar_wall.py` structure band 0.2-4.0 m over the local groun
 returns, >= 30 m); High Plains' lidar rails smoothed over 5 stations, their height the 90th percentile of their returns;
 Nevada's run-off reader (pavement |R - B| <= 12 or bluer at mean >= 120, asphalt mean < 115; tan R - B > 16; 0.5 m steps to
 20 m, a 1.5 m break, runs >= 3 m for >= 12 m, a 5-station median) and its pads from 1.35 m, built only where the median run
-is >= 4 m. Round 6: `tools/strip_seam_blend.py` `JOIN_DEPTH` 3 (midpoint levels a failed seam join may try). `tools/draft_equiv.py` ignores JSON keys `written_utc` and `check_date` (write times).
+is >= 4 m. Round 6: `tools/strip_seam_blend.py` `JOIN_DEPTH` 3 (midpoint levels a failed seam join may try). `tools/split_strip_blend.py` `PIECE_VERTS`
+50,000 (under engine-july's 60,000 split cap). The Lariat port's force exemptions are Kevin's declared block re-versioned
+(`versions ["0.1.0"]`), the same two keys and values: no threshold or exemption changed. `tools/draft_equiv.py` ignores JSON keys `written_utc` and `check_date` (write times).
 
 ## 2026-11-03 — EXCLUSION: race kerbs leave the prep's 0020 carve (ledger 0020 Rule 1; Lake Murray v5 race, ledger 0065)
 
@@ -138,6 +140,55 @@ measurements with k Nones at each end only when the line is exactly 2k longer an
 first point; a closed lap or any equal-length line is compared exactly as before. No threshold, bypass or exclusion
 changed; no verdict can change (the metric does not gate). Proven on the Mac draft of Dragon Tail (Gravel); test
 `tests/geometry/test_lip_feet_and_stage_replication.py`.
+
+## 2026-11-03 — BYPASS (declared, per build): the Lariat's Drive-1 force covers the real hairpins' corner rule and the open drops, by Kevin's word (ledger 0048)
+
+Asked "Install the Lariat for Drive 1 at real hairpin widths, with open drops?", Kevin, 2026-11-03: **"Yes, force it"**.
+That covers two rows of the 0.17.0 PC run, nothing else: undrivable corners 80 (drive_test's corner rule, > 110 deg
+within +-15 m on a road under 9 m, at C4-C10's measured 6.8-8.3 m) and excursion far ledges 1,045 against the July
+reference's 382 (the real drops, open until P3d's edges). No threshold changed; this is how --force-install may pass them.
+
+| What | Where | Value | Flag |
+|---|---|---|---|
+| declared exemption block | `track.config.json gates.drive1.force_exemptions` (the Lariat 0.17.1) | `versions` ["0.17.1"]: active only for a build whose config `version` is listed | per build, never standing |
+| undrivable corners | same, `keys.undrivable_corners` | every undrivable station (drive_test's `worst.undrivable_all`) within **40 m** of C4-C10's `hairpin_fit.corners[].st_m`, and the drive_test row red for that reason ALONE | 40 m ⚠ invented; the count is Kevin's |
+| far ledges vs July | same, `keys.excursion_far_ledges` | exempt from the July comparison up to **1,045** | [measured: the 0.17.0 PC run Kevin was shown] |
+| the STRICT rule (new, `tools/drive1_gates.py`, a track declaring the block) | `force_install_ok` | false when ANY red gating row is not fully covered by a declared exemption (severe steps, kinks, replication, daylight, audit, verify_kn5, kn5_ground_check, the lid, one-way, paint, roll rate, road inventory, stacked legs), any other July key is worse, or obstruction / floating / soft-top > 0; an exemption naming any other key is an input error (exit 2) | stricter than 0047's July rule, which a track without the block keeps unchanged |
+| `drive_test` report | `worst.undrivable_all` (station, turn, width) | written only for a track declaring `gates.drive1.force_exemptions` | report field; every other report byte-identical |
+
+The junction-mouth severe steps (8 at C14, the exit-259 signals and C18) are NOT exempt: they are engine artifacts, to be
+fixed. `tools/ship_track.sh`'s summary line now prints each Drive-1 gate's own exit (road inventory, stacked legs, the
+verdict) where it printed the aggregate beside the first two. Proof: `tests/tools/test_drive1_gates.py`
+(`test_declared_exemptions_force_exactly_the_two_rows`, `test_every_other_red_row_stays_a_hard_refusal`: 20 rows,
+each refuses the force on its own; another build version refuses both; `test_only_the_two_rows_can_be_declared`;
+`test_the_lariat_declares_kevins_two_rows_for_this_build`), `tests/tools/test_ship_track_drive1_gates.py`
+(`test_the_summary_line_names_each_gates_own_exit`).
+
+## 2026-11-03 — Lariat Drive 1: the corner-arc step gate in the mesh step, and the builder values behind A2 / P3a (ledger 0048 "Drive 1 on the Mac")
+
+No existing gate threshold moved. One new hard check, and the builder values the new opt-in modes use, every one of
+them read only by a track that opts in (the Lariat 0.17.0); every other track builds byte-identically (Milford's draft
+`data/track.obj`, `finished_centerline.json` and `dummies.json` md5-identical before / after, below).
+
+| Gate / value | Where | Value | Flag |
+|---|---|---|---|
+| **corner-arc step gate** (new, hard: the mesh step exits on a failing corner) | `scripts/geometry/corner_arcs.py` via `build_mesh.finished_centerline` (`hairpin_fit.mesh_fit`) | on the fitted span +- 5 vertices of the SWEPT line: heading change <= spacing / R x 57.3 deg + **1 deg**; neighbours differ <= **1.5 deg** | the plan's P2 step 2 values, ⚠ invented there; the 5-vertex margin ⚠ invented |
+| corner transition length | same | **8 m** clothoids each side of the arc | ⚠ invented (the 1.5 deg rule needs >= 2.6 m at R 14.9 m) |
+| corner arm lines | same | least squares through **16-40 m** before / after the apex; apex searched within **40 m** of `st_m`, window **+-15 m** | ⚠ invented |
+| cross-section slopes | `scripts/geometry/cutfill.py` (`terrain.cross_section.build`) | rock cut **0.25:1**, fill **1.5:1** | [std: docs/ROAD-CONSTRUCTION.md, the Lariat's section] |
+| fill bench / cut bench | same | **1.2 m / 3.2 m** beyond the verge | ⚠ invented: one 1.11 m cell's diagonal less the verge (kn5_ground_check's flush edge, L3b); audit H's 2 m sample plus that diagonal less the verge |
+| stacked-leg hold | same | ground held **0.3 m** clear of the midpoint height on its own leg's side; legs < **2 m** apart in height not held | ⚠ invented; the pair rule is the stacked-leg gate's own (40 m / 150 m) |
+| `corridor_refine_margin` (new key) | `build_mesh` corridor refinement | default **1** (unchanged); the Lariat **0** | wiring, no threshold |
+| `corridor_stencil_factor` | existing key | the Lariat **0.05** (default 0.25) | ⚠ invented per track (measured: road-over-ground p95 0.131 -> 0.065 m) |
+| `road_profile.fold_plateaus` / `fold_pads`, `road_edge.draft_walls` | `build_mesh` | the Lariat **false** each (default on) | switches, no threshold |
+
+Proof: `tests/geometry/test_corner_arcs.py` (4: a 78.5 / -76 deg node fitted at R 14.9 / 16.08 m passes the gate with
+the vertex count, the heights and everything outside the arms unchanged; a closed lap keeps its seam; a radius too large
+for the arms is skipped, never forced), `test_cutfill.py` (6: both slopes, the crossfall at the edge, the stacked hold on
+both sides, the lateral cap at the medial line, the grid grading), `test_lariat_drive1_switches.py` (5: every switch
+defaults to the old build; the loops and branches it gates, read from `build()`'s source; the Lariat opts in; no other
+track does). Byte identity: Milford's draft built with the engine at `c5722f2` and with this change: the three files
+md5-identical and the two mesh logs identical.
 
 ## 2026-11-03 — BYPASS: Lake Murray 0.19.4 (the buildings rehearsal) installed red on 0.19.2's inherited keys, by Kevin's word (ledgers 0062, 0065)
 

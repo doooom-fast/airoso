@@ -36,6 +36,19 @@ reference on every drive_test key it has (``gates.drive1.july_reference`` [measu
 floating furniture and soft-top are 0. ``force_install_ok`` carries that; tools/ship_track.sh refuses a forced
 install when it is false.
 
+DECLARED FORCE EXEMPTIONS (``gates.drive1.force_exemptions``; the Lariat, Kevin 2026-11-03 "Yes, force it"; fleet/
+GATES-CHANGELOG.md). A track that declares the block runs the STRICT rule: --force-install may pass a red build only
+where every red reason is one the block exempts, for the build versions it names (``versions``, matched against
+track.config.json ``version``: a per-build exemption, never a standing one). Two exemptions exist, and nothing else can
+be exempted:
+  undrivable_corners     a red drive_test row whose ONLY reason is undrivable corners, every one of them (drive_test's
+                         ``worst.undrivable_all``, written for such a track) inside ``window_m`` of a listed corner's
+                         ``hairpin_fit.corners[].st_m`` (the measured hairpins; reverse layouts in their own stations);
+  excursion_far_ledges   the July comparison for that key alone, up to ``max`` (the count Kevin was shown).
+Every other red gating row (severe steps, kinks, replication, audit, verify_kn5, kn5_ground_check, the lid, one-way,
+paint, roll rate, road inventory, stacked legs) and every other July key, and obstruction / floating / soft-top, stay a
+hard refusal. Without the block the 0047 rule above is unchanged.
+
     python tools/drive1_gates.py <project-dir>          exit 0 green, 1 red, 2 input error
 """
 from __future__ import annotations
@@ -98,6 +111,26 @@ def judge(project_dir) -> dict:
     if not street:
         raise InputError("no street layout declared")
     rows, force_why = [], []
+    fx = d1.get("force_exemptions")
+    strict = isinstance(fx, dict)
+    fx_versions = [str(v) for v in (fx or {}).get("versions") or []]
+    fx_active = strict and str(cfg.get("version")) in fx_versions
+    fx_keys = ((fx or {}).get("keys") or {}) if fx_active else {}
+    unknown = sorted(k for k in fx_keys if not k.startswith("_") and k not in ("undrivable_corners", "excursion_far_ledges"))
+    if unknown:
+        raise InputError(f"gates.drive1.force_exemptions.keys: only undrivable_corners and excursion_far_ledges can be "
+                         f"exempted, not {unknown}")
+    exempt_rows = {}            # gating row name -> the exemption that covers it (strict rule only)
+    hp_windows = []
+    if "undrivable_corners" in fx_keys:
+        u = fx_keys["undrivable_corners"]
+        st_of = {c.get("id"): c.get("st_m") for c in ((cfg.get("hairpin_fit") or {}).get("corners") or [])}
+        win = float(u.get("window_m", 40.0))
+        for cid in u.get("corners") or []:
+            if st_of.get(cid) is None:
+                raise InputError(f"gates.drive1.force_exemptions: corner {cid} has no hairpin_fit.corners[].st_m")
+            hp_windows.append((cid, float(st_of[cid]) - win, float(st_of[cid]) + win))
+    far_max = (fx_keys.get("excursion_far_ledges") or {}).get("max") if "excursion_far_ledges" in fx_keys else None
 
     # --- drive_test, per street layout ------------------------------------------------------------------------
     lid_spans = [(b.get("center_m", 0.0) - b.get("len_m", 0.0) / 2.0, b.get("center_m", 0.0) + b.get("len_m", 0.0) / 2.0,
@@ -126,6 +159,19 @@ def judge(project_dir) -> dict:
         if kink_max is not None and (r.get("kinks_per_km") or 0) > float(kink_max):
             why.append(f"kinks {r.get('kinks_per_km')}/km > {kink_max}/km")
         rows.append(_row(name, "gating", not why, nums, "; ".join(why)))
+        if why == ["undrivable_corners"] and hp_windows:
+            lap_l = float(r.get("lap_m") or 0.0)
+            und = (r.get("worst") or {}).get("undrivable_all")
+            rev = r.get("direction") == "reverse"
+            outside = None if und is None else [
+                u for u in und if not any(a <= ((lap_l - float(u[0])) if rev else float(u[0])) <= b
+                                          for _c, a, b in hp_windows)]
+            if und is not None and len(und) == int(r.get("undrivable_corners") or 0) and not outside:
+                exempt_rows[name] = (f"undrivable corners {len(und)}, every one at a measured hairpin "
+                                     f"({', '.join(c for c, _a, _b in hp_windows)}): exempt for build {cfg.get('version')}")
+            else:
+                force_why.append(f"{lid}: undrivable corners not all at the declared hairpins "
+                                 f"({'no station list in the report' if und is None else str(outside[:4])})")
         rows.append(_row(f"drive_test {lid} (recorded)", "recorded", None,
                          {"excursion_drops": r.get("excursion_drops"), "excursion_far_ledges": r.get("excursion_far_ledges"),
                           "steps_per_km": r.get("steps_per_km"), "apron_steps": r.get("apron_steps"),
@@ -138,6 +184,8 @@ def judge(project_dir) -> dict:
             if v is None:
                 force_why.append(f"{lid}: {k} not reported")
             elif float(v) > ref:
+                if k == "excursion_far_ledges" and far_max is not None and float(v) <= float(far_max):
+                    continue        # declared exemption (strict rule): the open drops Kevin accepted, up to max
                 force_why.append(f"{lid}: {k} {v} > July {ref:g}")
         for k in ALWAYS_ZERO:
             if (r.get(k) or 0) > 0:
@@ -248,12 +296,24 @@ def judge(project_dir) -> dict:
 
     gating = [x for x in rows if x["kind"] == "gating"]
     red = [x["gate"] for x in gating if not x["pass"]]
+    if strict:
+        # the strict rule: a red gating row refuses the force unless a declared exemption covers it in full
+        for g in red:
+            if g in exempt_rows:
+                continue
+            if not any(w.startswith(f"{g.split(' ')[-1]}: undrivable") for w in force_why if g.startswith("drive_test ")):
+                force_why.append(f"{g}: red, and no declared exemption covers it (only undrivable corners at the "
+                                 f"measured hairpins and the far ledges are exempt)")
     return {
         "tool": "tools/drive1_gates.py", "plan": "V3-PLAN P5, the Drive-1 gate set (road + ground only)",
         "verge_m": ((cfg.get("road_profile") or {}).get("verge_m")),
         "street_layouts": street, "rows": rows, "red": red, "fail": bool(red),
         "force_install_ok": not force_why, "force_install_why_not": force_why,
         "july_reference": july,
+        "force_exemptions": None if not strict else {
+            "declared_versions": fx_versions, "build_version": cfg.get("version"), "active": fx_active,
+            "approved": (fx or {}).get("approved"), "covered": exempt_rows,
+            "far_ledges_max": far_max, "hairpin_windows": [[c, round(a, 1), round(b, 1)] for c, a, b in hp_windows]},
     }
 
 
@@ -277,7 +337,13 @@ def main(argv=None) -> int:
         print(f"[drive1]   {mark} {r['kind']:9} {r['gate']:34} {nums[:150]}")
         if r.get("note") and r["pass"] is False:
             print(f"[drive1]        {r['note'][:200]}")
-    print(f"[drive1] --force-install would be {'allowed' if rep['force_install_ok'] else 'REFUSED'} (July reference"
+    fx = rep.get("force_exemptions")
+    if fx:
+        print(f"[drive1] declared force exemptions for build(s) {fx['declared_versions']} (this build "
+              f"{fx['build_version']}: {'ACTIVE' if fx['active'] else 'not active'}); covered: "
+              f"{'; '.join(fx['covered'].values()) or 'nothing'}")
+    print(f"[drive1] --force-install would be {'allowed' if rep['force_install_ok'] else 'REFUSED'} "
+          f"({'strict rule: declared exemptions only' if fx else 'July reference'}"
           f"{'' if rep['force_install_ok'] else ': ' + '; '.join(rep['force_install_why_not'][:6])})")
     print(f"[drive1] {'FAIL: ' + ', '.join(rep['red']) if rep['fail'] else 'PASS'} -> {out}")
     return 1 if rep["fail"] else 0

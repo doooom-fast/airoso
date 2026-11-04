@@ -381,6 +381,157 @@ terrain vertex). `tools/strip_seam_blend.py` now seats a midpoint seam vertex an
 levels [invented]: 24 misses (0.4 %, under the 1 % refusal). This changes the seam only where a join used to fail (High
 Plains 2, Milford 11, Pikes Peak 0, Nevada 0 misses in round 5); those ports' records stand as built at cf401bf / c36f023.
 
+### Round 6 (Mac): the Lookout Lariat on Lake Murray's engine (`lookout-lariat-lm` 0.1.0): to the kn5, red on two rows
+
+**The data.** PR 32 (`claude/lariat-drive1`, 0.17.1) merged here for the live track's measured data (the paint-fitted line
+with its hairpin fits, `widths.measured.json`'s real hairpin widths in the line's widths, the 3DEP grid, the declared
+lid deck, the stacked-leg declaration, Kevin's force), plus the 0.17.2 lidar-intensity pad outlines
+(`tracks/lookout-lariat/source/pads/C14|C15|C18.*`, from `claude/lariat-pads-wip`). New, all opt-in in the intake:
+- **the measured profile, no cap:** the Lariat's profile is `scripts/elevation/road_profile.py`'s (metre windows, the lid
+  held straight); the intake runs that tool on a scratch copy at the live cap (it reproduces the committed profile:
+  0.000 m) and with the cap off; the deck stays as road_profile held it (`decks_held`, not re-levelled);
+- **the measured C12 / C13 arcs** (`lm_intake.corner_arcs`): PR 32's `hairpin_fit.mesh_fit` corners (R 14.9 / 16.08 m off
+  the aerial) fitted with `scripts/geometry/corner_arcs.fit_corners` on the line the assembler sweeps (build_mesh fitted
+  them on its own line). C12 passes on its span; two adjacent-step readings of the raw arms outside it (1.62 / 1.60 deg
+  against 1.5) are reported, not fatal (the assembler's smoothing takes the arms' facets out). Kept by index as build_mesh
+  keeps them, the heights make the steepest 10 m 15.48 % at the arcs (11.82 % without them): 3DEP read along the arcs is owed;
+- **the line's own records** (`lm_intake.carry_records`: the one-way check, the paint-centreline / hairpin gate, the raw
+  3DEP for drive_test's replication) and a flat roll-rate record (`roll_record: "flat"`: the port tilts nothing; the live
+  crossfall is DEM-estimated, A6 keeps the hairpins untilted).
+
+**The engine side.** `tools/split_strip_blend.py` (draft step `split_strip`, opt-in): a 24.9 km lap's edge strip (115,552
+vertices) cut along the line into pieces under AC's cap before the prep (engine-july's prep cut it in axis bands and
+refused one of 76,510). The live track's terrain tiers are the V3 plan's spec, not Lake Murray's format, and Lake
+Murray's `terrain_sample` fetches 3DEP per vertex: the port builds on the 3DEP grid pre-divided x3 (13.3 m, the live
+draft's medium cell); a tiered port is owed. `strip_seam` is not on the Lariat (a 0.4 m verge; its joins scale with the
+whole terrain: 28,890 seam points did not finish in 25 minutes; a local seam is owed). The 0.4 m gravel verge is
+`route.edge`, skinned with airoso's gravel tile.
+
+**Kevin's force, carried for the two rows only:** `gates.drive1.force_exemptions` on the port's own config, `versions
+["0.1.0"]`, the same corners (C4-C10, 40 m windows) and the same far-ledge ceiling (1,045). `tools/drive1_gates.py` reads it
+ACTIVE for this build.
+
+**The Mac build (`tools/ship_track.sh` itself, from an empty workshop through the draft, resumed at the prep after the
+strip split; `--no-install`):**
+
+| Drive-1 row | port 0.1.0 | |
+|---|---|---|
+| road kn5 | 77.8 MB | |
+| drive_test: severe steps / kinks | **0** / 0.4 per km (ceiling 19.49) | the live 0.17.0 Mac draft read 42 severe |
+| drive_test: soft top in lane | **16** | RED, not exempt: the climb's hairpin insides (C5 s 2,839-2,841, C7-C9 s 5,411-5,610), 0.2-0.5 m inside the lane edge |
+| drive_test: undrivable corners | 79 | Kevin's row: the real hairpins C4-C10 at their measured widths |
+| drive_test: far ledges / gated drops | 31 / 3 | Kevin's row (<= 1,045) / under the lap's 24 |
+| replication vs the raw 3DEP | median 0.13, p95 0.36, max 0.64 m (gate p95 0.5) | PASS |
+| audit / kn5_ground_check / verify_kn5 / lid ends | CLEAN / PASS (p95 0.021 m, 1 of 6,123 over 5 cm) / PASS / PASS | |
+| one-way / hairpin-paint / roll rate / road inventory | PASS / PASS / PASS / PASS | |
+| stacked legs | **101** of 7,274 ground vertices seated to the other leg | RED: ground between the climb's legs (C7-C9) that follows the other leg's height (e.g. 9.8 m from its own leg in plan, 9.9 m off it, 1.9 m off the other). PR 32 graded it with station-matched cut / fill (`scripts/geometry/cutfill.py`, P3a); engine-july's prep feathers to the nearest road in plan. Owed: that cut / fill as a draft step on this engine |
+| edge report, 1 m past the edge | ground 100 % | the 0.4 m verge ends before 1 m, as the real road |
+
+`--force-install` is REFUSED by the strict rule (soft top 16 and stacked legs are not Kevin's rows): **not installable**.
+
+**Junctions: not yet through Lake Murray's junction pads.** Lake Murray's pads (`tools/junction_pad.py`,
+`author_junction_pad_blend.py`) weld connector pieces (route arms) and stubs at declared cuts on its north network's
+authored intermediate; the Lariat's mouths (C14, C15, C18, and C12 / C16) sit ON the lap, with no connectors. The port
+builds the lap through them as plain ribbon (no severe step there on this build). Owed: a MAINLINE arm in the pad
+tooling (the lap cut at two of its own rows, the deck between them over the lidar outline the 0.17.2 files carry,
+the side roads as stubs), then the five mouths declared.
+
+### Round 7 (Mac): the Lariat port toward installable (`lookout-lariat-lm` 0.1.0, Kevin's two-row force)
+
+Round 6 left two red rows beyond Kevin's force (soft top 16, stacked legs 101) and three things owed (the arcs' heights,
+the junction pads, a strip seam that finishes). All new steps are opt-in; Lake Murray runs none of them.
+
+1. **Stacked legs 101 -> 0: PR 32's cut / fill as a draft step, and its hold once more after the prep.**
+   `tools/cutfill_blend.py` (draft step `cutfill`, after `seat_edges`) grades the assembler's TERRAIN with
+   `scripts/geometry/cutfill.CrossSection` on the line the ROAD was swept along (its mainline centre row): the verge,
+   the benches, rock cut 0.25:1 / fill 1.5:1 to the natural 3DEP, and between stacked legs every point held 0.3 m on its
+   own leg's side of the midpoint height, owned the way `tools/verify_stacked_legs.py` reads it. Before grading, the
+   ground near every road is split to the prep's own 4.5 m (its corridor predicate) by longest-edge bisection (a first
+   try that repeated the prep's subdivide-then-triangulate left 80,946 duplicate and 110,842 zero-area ground faces).
+   **Does the prep undo it?** The pin, the 3 m contact band and the feather move a point toward its NEAREST road, so they
+   keep an upper leg's ground above the midpoint and a lower leg's below. What does not keep it is the prep's corridor
+   split: an edge over 4.5 m (3-D) is halved at the average of its two ends, and the hold is discontinuous at the medial
+   line between two legs (held low on one side, high on the other), so the edges that cross it stay long whatever is
+   pre-split (Lake Murray's way, `seat_terrain` before its prep, is the pre-split; it has no stacked legs). Run 4: 26
+   such midpoints, the gate's whole count. So `tools/hold_stacked_blend.py` re-applies the hold to the prepped 1GRASS
+   tiles inside the `prep` step (only where cutfill wrote `data/cutfill.line.json`; `steps.prep` stays prep, split): a
+   point on the wrong side goes back to its own side by the margin; nothing on its own side moves, so the pinned, banded
+   and feathered ground stays as the prep put it. Run 5: 131 graded edges left for the prep, 118 vertices held back
+   (largest move 3.63 m, all between C7-C9's legs), **stacked legs 0 of 10,695**.
+2. **Soft top 16 -> 0.** Cut / fill alone (run 1) took C5's three out (the hairpin inside graded to the section) and left
+   6 at C7 / C9 (s 5,410-5,411, 5,610, 3.1-3.6 m left of the line). The built surface there: ground 0.003-0.015 m over
+   the lane's edge from 3.0 to 4.5 m out, where the strip should read (1KERB at 4.0 m on every other station): a ground
+   triangle from under the lane to the contact band past the 0.4 m verge, its band end set by the prep at the nearest
+   footprint's height, higher on a hairpin's climbing inside. The strip seam's case (round 5): with the seam back on the
+   Lariat (task 5) no ground triangle spans the strip's lip. Run 5: **soft top 0**. Not densify's warp (0 severe steps
+   throughout) and not the inside edge (1ROAD reads to the lane edge at every probed station).
+3. **C12 / C13 arc heights from the ground.** `lm_intake.corner_arcs` now reads 3DEP where each moved point stands (the
+   source's `corridor.elev.json`, native 3DEP every 6 m along x 5 m across, inverse-distance over the 4 nearest), then
+   re-smooths the profile on the new stations with `road_profile`'s own windows (33 m median, 9 m mean), cap off, within
+   their 42 m reach of the moved points: 129 points read, 302 heights re-smoothed, **steepest 10 m 13.74 %** (15.48 %
+   index-kept; 11.82 % without the arcs). Test: `test_the_lariat_arcs_read_the_ground_and_the_pad_outlines_come_with_it`.
+4. **The junction mouths through pads: the mainline arm.** `tools/lm_pads_blend.py` (draft step `lm_pads`, after
+   `cutfill`; config `lm_pads`, 0.17.2's declarations unchanged; the outlines carried by `lm_intake.carry_source`):
+   the lap cut at two of its own ROAD rows (by index, plus any densify column on the row line; ROAD and CURB keep their
+   vertices so every later index reader still works), one deck out to the 0.17.2 lidar-intensity outline spliced to the
+   rows (`tools/draft_pads.py`, now the shared pure half), the measured deck grid + each seam's departure faded in, the
+   lap's own ribbon surface where only the ribbon paves (this line's ribbon is united into the outline where its lane
+   would leave the asphalt), the ground under it split to 1.4 m and held 0.04 m under (0.17.2's numbers), and Kevin's
+   K-rail (`tools/stub_geom`, Lake Murray's stub barrier) across every road the lap does not take where the measurement
+   closed it (the declared sealed cuts and box edges; a box edge running beside the lap's own lane is not a mouth). The
+   barriers are written as `stubs` in `data/pads.built.json`, the record `audit_mesh`'s D rule already reads.
+   **C14 and C15 are built** (decks 2,305 and 2,729 m2, rows welded at v9995 / v10020 and v11627 / v11655, seam
+   departures up to 0.36 m faded in; K-rails C14 18.9 + 34.3 m, C15 25.8 + 12.1 m), and the build reads 0 severe steps
+   and 0 soft tops at both. **C18 is parked** (`lm_pads.parked`, the tool builds it): on its measured deck it read 8
+   severe steps (0.08-0.13 m) and 2 soft tops at s 24,263-24,326 (run 5, all three pads), and 13 severe steps with the
+   lap's own ribbon heights inside the ribbon instead (an experiment, not kept). C18 is the ramp end at 19th St / US-6:
+   this line runs along the measured ramp's west edge, off it, and its out-cut stands 0.84 m over the measured road on
+   the climb to the lid, so the deck has to change height across the lane between the line's profile and the lidar's.
+   The lap runs C18 as plain ribbon, as 0.1.0 did (0 severe there). Which surface the ramp should follow there, the
+   line's 3DEP profile into the lid or the lidar, is the question C18 waits on.
+5. **A local strip seam.** `strip_seam.scope: "local"` (config): the same pokes and cuts, 120 seam points at a time, on a
+   small mesh of the terrain within 8 m of them, written back into the terrain's arrays (every bmesh operator allocates
+   a flag layer over the whole mesh: that, not the joins, was why a 25 km lap's seam never finished). An edge the small
+   mesh shares with a face outside it must come back whole, or the chunk is redone wider; where bmesh's
+   `connect_vert_pair` finds no path the segment is knifed face by face. The Lariat: **28,888 seam points, 0 missed, 41 s**
+   (6,873 knifed). The four circuit ports keep the whole-terrain seam they shipped with (no `strip_seam` key).
+6. **Tiered terrain: not this round. The frame-rate risk, for Kevin to judge on the drive.** The road kn5 is
+   85.6 MB: 1,494,832 vertices / 2,487,091 triangles in 47 meshes, of which the ground is 32 tiles (<= 33,302
+   vertices each, ~1.06 M in all: the 3DEP grid pre-divided x3 to 13.3 m everywhere, plus the corridor split near every
+   road). For scale on this Mac's builds: Sand Creek's port 41 MB, Milford's 38 MB, Pikes Peak's 20 MB, High Plains' 15.5
+   MB. AC draws every tile in the view frustum with no LOD, so the far ground (beyond ~100 m of any road, the bulk of the
+   1.06 M) costs as much per triangle as the near; a tiered port (far cells at the 3DEP grid's own 40 m) would cut the
+   ground to roughly a third. Not measured in AC: if the frame rate drops on the climb's overlooks (the widest views of
+   the most ground), that is this.
+
+**The Mac build (`tools/ship_track.sh` itself from an empty workshop, `--no-install`, run 5):**
+
+| Drive-1 row | 0.1.0 (round 6) | run 5 | |
+|---|---|---|---|
+| road kn5 | 77.8 MB | 85.6 MB | |
+| drive_test: soft top in lane | 16 | **0** | |
+| drive_test: severe steps | 0 | **0** | |
+| drive_test: undrivable corners | 79 | 79 | Kevin's row: the measured hairpins C4-C10 |
+| drive_test: far ledges / gated drops (recorded) | 31 / 3 | 136 / 45 | Kevin's row (<= 1,045) / recorded, not gating in Drive 1: the drops off the 0.4 m verge's outer edge now that the seam lets the strip show (0.13-0.14 m each) |
+| replication vs the raw 3DEP | p95 0.36 m | p95 0.36 m, max 0.64 m | PASS |
+| audit / kn5_ground_check / verify_kn5 / lid ends | CLEAN / PASS / PASS / PASS | CLEAN / PASS (p95 0.022 m; 9 of 9,826 over 5 cm, max 0.091 m, at the pads' edges) / PASS / PASS | |
+| one-way / hairpin-paint / roll rate / road inventory | PASS x4 | PASS x4 | |
+| stacked legs | 101 | **0** | |
+| edge report, 1 m past the edge | ground 100 % | ground 100 % | |
+
+`--force-install` would be **allowed** by the strict rule: the one red gating row is undrivable corners 79, every one
+at a measured hairpin (C4-C10), and the far ledges (136) are under Kevin's 1,045; both are his two rows, declared for
+0.1.0. **Installable on Kevin's force; not installed** (runbook 4d). A no-pad build of the same chain (run 5, its
+control) read the same rows (soft top 0, severe 0, stacked legs 0), 80.9 MB.
+
+**Lake Murray unchanged.** No file of its chain changed this round (`git diff a3a9e09` over
+`tracks/san-diego-lake-murray`, `scripts/`, the weld, the junction-pad and stub tools: empty). `tools/ship_track.sh` gains
+`draft_cutfill` and `draft_lm_pads` (Lake Murray's ship.json names neither; `test_lm_engine_port` asserts it) and the
+hold inside `prep_prep`, which runs only where `data/cutfill.line.json` exists (`test_ship_track_chain` lists its header
+as a v4 extra that never fires on Lake Murray). `tools/strip_seam_blend.py`'s whole-terrain path is as the four
+circuit ports shipped it; the local scope is a config key only the Lariat sets. Round 6's draft_equiv / kn5_equiv proof
+therefore stands; the PC proof below is unchanged.
+
 ## PC runbooks
 
 **ENG**: never the live `D:\k10\engine-july`. Keep `D:/k10-scratch/eng_repro` (the repo-only v4 engine) clean; each build
@@ -429,6 +580,17 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
 4a. **High Plains 0.1.1 and Nevada 0.1.1** (round 5): the same commands as steps 2-4 from the new head, the same ENG copies
    (`eng_hplm`, `eng_nvlm`: no new texture; Nevada's run-off pads wear `building_*`, in REFERENCED.md5). They replace the
    0.1.0 ports in the same folders (`high_plains_lm`, `exotics_racing_lvms_lm`). Expect the Mac's 0.1.1 numbers (Round 5, above).
+4d. **Lookout Lariat on the LM engine** (`lookout-lariat-lm` 0.1.0, round 7; workshop `lariat_lm`; installs as
+   `lookout_lariat_lm` beside the live folders): ENG = a copy of `eng_repro` plus airoso's `assets/textures/gravel_road_
+   diffuse.png` (6babc2255987b6bbd8292aca6cedd69b) and `gravel_road_normal.png` (addd8f823f03ca80648b6ef96a06a73b). From
+   an EMPTY workshop (the intake carries the lidar pad files): first a rehearsal, `SHIP_PROJ=D:/k10-scratch/lariat_lm_reh
+   ... bash tools/ship_track.sh lookout-lariat-lm --no-install`, which must reproduce the Mac's run 5 (Round 7, the
+   Lariat): soft top 0, severe steps 0, stacked legs 0, undrivable corners 79, far ledges 136 (<= 1,045), audit CLEAN,
+   kn5_ground_check PASS, `[drive1] --force-install would be allowed`. The steps to see in the log: `[cutfill]` (158,703
+   corridor edges split, 131 longer once graded), `[lm-pads] 2 pad(s) built`, `[strip-seam] local scope: 28888 seam
+   points ... 0 missed`, `[hold] 118 ground vertices ... held back`. Then, with Kevin's word only (his force covers the
+   two rows, for 0.1.0): `bash tools/ship_track.sh lookout-lariat-lm --force-install` into the real workshop. The kn5 is
+   85.6 MB (the frame-rate note under Round 7, item 6: watch the climb's overlooks).
 4c. **Sand Creek, Pueblo, Grand Junction, Aspen 0.1.1** (round 6, after their 0.1.0 is installed from 29c1069): the same
    commands from the new head, the same ENG copies (no new texture), replacing 0.1.0 in the same folders
    (`sand_creek_raceway_lm`, `pueblo_motorsports_park_lm`, `grand_junction_lm`, `aspen_motorsports_park_lm`). Expect the
@@ -650,6 +812,9 @@ The frame rate is not readable on the PC: the session does not drive AC. None of
 driven yet.
 
 ## Owed
+
+- The Lariat's C18 pad (parked, Round 7 item 4): which surface the ramp end follows into the lid; then C12 / C16's mouths.
+- The Lariat's tiered terrain (Round 7 item 6): far cells at the 3DEP grid's 40 m, if the drive finds the frame rate.
 
 - Racing kerbs and run-off outlines for the circuits, measured off NAIP / lidar; race kerbs at Sand Creek's race corners.
 - A coarser `seat_edges` cut where the bank is under ~2 % (size).

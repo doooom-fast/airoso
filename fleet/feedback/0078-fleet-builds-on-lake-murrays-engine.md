@@ -608,6 +608,62 @@ not set.
 **fleet.cli lint S8** ("build path never runs drive_test, kn5_ground_check", on airoso): the same FAIL on an `origin/main`
 snapshot (0558c47), so it predates this branch. Noted, not changed.
 
+### Round 9 (Mac): the switchbacks measured; not yet built from the measurement; both stages still red
+
+The coordinator's order: build each switchback from its measured geometry, either its centre arc through the corner-arc
+fit or a pad from its measured outline. The bar is unchanged. **Neither stage is green.** What this round did, and what
+it found:
+
+1. **The moved line no longer steps backwards.** Where road_seek moves the line further than the radius of the OSM bend
+   it is moved across, consecutive points stepped back along it: Dragon Tail s 20,827 (161°), 21,206, 22,319, 23,894 and
+   24,098, and Under the Dragon s 23,586. Each is a fold in the ribbon. `road_seek.moved_line` now relaxes those points
+   toward their neighbours' mean, in plan only, until every step runs at least 0.5 m forward along the source line (23
+   points relaxed on Dragon Tail, 14 on Under the Dragon). The intake uses it.
+2. **The switchbacks, measured** (`tools/switchback_measure.py`, new; `data/switchbacks.json` in each port). Round each
+   turn of more than 90° within ±15 m, road_seek's bench edges trace the graded platform's outside and inside. A circle is
+   fitted to each (least squares), and the road's centre arc lies between them:
+
+   | stage | turn (s) | turn | centre-arc R | platform width | outside R / rms | inside R / rms |
+   |---|---|---|---|---|---|---|
+   | Dragon Tail | 5,946 | 105° | 22.85 m | 6.51 m | 26.11 / 0.90 | 19.59 / 0.52 |
+   | Dragon Tail | **6,381 (switchback 1)** | 134° | **13.75 m** | 6.94 m | 17.22 / 0.92 | 10.28 / 0.67 |
+   | Dragon Tail | **6,590 (switchback 2)** | 168° | **12.50 m** | **10.82 m** | 17.91 / 0.77 | 7.09 / 0.80 |
+   | Dragon Tail | 7,453 (switchback 3) | 121° | — | — | 20.34 | inside not bounded by a face |
+   | Under the Dragon | 1,009 | 94° | 25.52 m | 8.42 m | 29.73 / 0.30 | 21.30 / 0.53 |
+   | Under the Dragon | 2,482-2,500 (Douglas Creek) | 126-141° | — | — | 19.61-22.35 | the circles disagree |
+   | Under the Dragon | 22,542 | 125° | 15.93 m | 6.82 m | 19.34 / 0.62 | 12.52 / 0.55 |
+
+   The mapped line's ~7 m kink becomes a 12.5-13.75 m centre arc at switchbacks 1 and 2. Neither folds: an arc of
+   R 12.5 m at a 10.8 m width keeps its inside edge at R 7.1 m, so neither needs a pad.
+3. **Not yet built from the measurement.** The corner-arc fit (`scripts/geometry/corner_arcs.fit_corners`: arcs between
+   least-squares arms 16-40 m out, and its own step gate) refuses them. Switchback 2 is 168° on legs of ~15 m: "curve ends
+   fall outside the arms ... R 12.5 too large". Switchback 1, the 105° turn at s 5,946 and Under the Dragon's two read its
+   1.5° adjacent-step rule on the arms' facets (2.2-5.3°). `lm_intake.corner_arcs` now takes the port's measurement file;
+   the ports don't declare it yet. Next: a switchback fit that takes the measured circle itself, its centre and radius
+   from `switchbacks.json`, with tangent clothoids into the legs as they are, rather than arms fitted 16-40 m out.
+4. **Under the Dragon s 14,337 is not a switchback.** The NAIP shows the graded road about 10 m east of the mapped line
+   through a curve; the line cuts the curve's inside across scrub. road_seek leaves it there, because the line's own profile
+   reads as a road (its trigger is grades, not position). The fix is the same kind, the line onto the road it names: a
+   seek trigger that also reads the aerial, or the bench, where the line is level but off the road. s 2,403-2,456 is the
+   Douglas Creek switchback (above: its DEM inside edge is not a face, so its circles disagree); s 22,413 is a 113° corner
+   that the ±15 m turn window does not reach.
+
+**The Mac builds after item 1** (`tools/ship_track.sh` from an empty workshop, `--no-install`; no corner fit):
+
+| row | Dragon Tail 0.2.1 installed | **DT `_lm` (round 9)** | Under the Dragon 0.2.0 installed | **UtD `_lm` (round 9)** |
+|---|---|---|---|---|
+| severe steps (/km) | 182 (7.21) | 152 (6.04) | 195 (7.59) | 99 (3.88) |
+| soft top in lane | 0 | **34** (switchback 1) | 0 | **9 (s 14,334-14,339; 22,419-23,051)** |
+| undrivable corners | 0 | 0 | 0 | **2 (s 2,456 at 7.7 m; s 22,413 at 6.5 m)** |
+| gated drops | 0 | **5** (switchback 2, s 6,601) | 0 | **2 (s 2,403, 0.32 m)** |
+| replication (median / p95) | 0.02 / 0.21 m | 0.02 / 0.11 m | — | 0.01 / 0.11 m |
+| audit / kn5_ground_check | CLEAN / PASS | CLEAN / PASS | CLEAN / PASS | CLEAN / PASS |
+| road kn5 | — | 39.3 MB | — | 50.8 MB |
+
+Runbook 4e stays on hold (the PC rehearses only a green stage). Lake Murray is unchanged: no file of its chain changed;
+the intake changes sit under keys only the stage ports set, and `tools/road_seek.py` / `tools/switchback_measure.py` are
+port-only tools.
+
 ## PC runbooks
 
 **ENG**: never the live `D:\k10\engine-july`. Keep `D:/k10-scratch/eng_repro` (the repo-only v4 engine) clean; each build
@@ -667,7 +723,7 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
    points ... 0 missed`, `[hold] 118 ground vertices ... held back`. Then, with Kevin's word only (his force covers the
    two rows, for 0.1.0): `bash tools/ship_track.sh lookout-lariat-lm --force-install` into the real workshop. The kn5 is
    85.6 MB (the frame-rate note under Round 7, item 6: watch the climb's overlooks).
-4e. **The Rangely gravel stages on the LM engine** (round 8; `rally-dragon-tail-gravel-lm` and
+4e. **ON HOLD (coordinator, round 9: the PC rehearses only a green stage).** **The Rangely gravel stages on the LM engine** (round 8; `rally-dragon-tail-gravel-lm` and
    `rally-under-the-dragon-gravel-lm` 0.1.0; workshops `dragon_tail_gravel_lm`, `under_the_dragon_gravel_lm`; install
    folders `rally_co_dragon_tail_gravel_lm`, `rally_co_under_the_dragon_gravel_lm` beside the installed 0.2.1 / 0.2.0).
    **RED, do not install: a rehearsal only**, to prove the PC reproduces the Mac. ENG = a copy of `eng_repro` plus three
@@ -748,7 +804,7 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
 
 ## Owed
 
-- **The Rangely stages' switchbacks (round 9):** each switchback's own geometry from the DEM bench and NAIP (a measured
+- **The Rangely stages' switchbacks (round 9 measured them, round 10 builds them):** a fit that takes data/switchbacks.json's own circle (centre, R) with clothoids into the legs as they are; a road_seek trigger that also catches a level line off its road (Under the Dragon s 14,337). Then: each switchback's own geometry from the DEM bench and NAIP (a measured
   centreline radius through `lm_intake.corner_arcs`, or the platform as a pad from the bench outline and the DEM), then
   Dragon Tail's soft tops (s 6,358-6,365) and drops (s 6,601), and Under the Dragon's corners (s 2,456, 22,413), soft
   tops and drops. Then Under the Dragon's corner at s 14,337. Then runbook 4e installs.

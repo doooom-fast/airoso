@@ -1,0 +1,157 @@
+{
+ "_doc": "tools/switchback_measure.py (ledger 0078 round 9): each switchback's graded platform from the 1 m DEM (road_seek's bench edges round the turn, a circle fitted to each; the road's centre arc between them)",
+ "params": {
+  "TURN_DEG": 90.0,
+  "TURN_HALF_M": 15.0,
+  "EDGE_HALF_M": 25.0,
+  "MIN_POINTS": 5
+ },
+ "corners": [
+  {
+   "id": "S1",
+   "st_m": 745.8,
+   "turn_deg": 129.9,
+   "points_outside": 12,
+   "points_inside": 4,
+   "measured": false,
+   "r_outside_m": 20.6,
+   "rms_outside_m": 0.75,
+   "why": "the inside edge is not bounded by a face in the DEM (or the circles disagree)"
+  },
+  {
+   "id": "S2",
+   "st_m": 1009.1,
+   "turn_deg": 94.1,
+   "points_outside": 7,
+   "points_inside": 18,
+   "measured": true,
+   "r_outside_m": 29.73,
+   "rms_outside_m": 0.3,
+   "r_inside_m": 21.3,
+   "rms_inside_m": 0.53,
+   "radius_m": 25.52,
+   "width_m": 8.42,
+   "centre_xz": [
+    4452.21,
+    6437.05
+   ]
+  },
+  {
+   "id": "S3",
+   "st_m": 2481.7,
+   "turn_deg": 126.3,
+   "points_outside": 9,
+   "points_inside": 9,
+   "measured": false,
+   "r_outside_m": 19.61,
+   "rms_outside_m": 0.93,
+   "r_inside_m": 9.45,
+   "rms_inside_m": 0.38,
+   "why": "the inside edge is not bounded by a face in the DEM (or the circles disagree)"
+  },
+  {
+   "id": "S4",
+   "st_m": 2499.7,
+   "turn_deg": 140.7,
+   "points_outside": 9,
+   "points_inside": 7,
+   "measured": false,
+   "r_outside_m": 22.35,
+   "rms_outside_m": 1.28,
+   "r_inside_m": 17.09,
+   "rms_inside_m": 0.55,
+   "why": "the inside edge is not bounded by a face in the DEM (or the circles disagree)"
+  },
+  {
+   "id": "S5",
+   "st_m": 3659.8,
+   "turn_deg": 91.2,
+   "points_outside": 9,
+   "points_inside": 10,
+   "measured": false,
+   "r_outside_m": 19.76,
+   "rms_outside_m": 1.31,
+   "r_inside_m": 36.72,
+   "rms_inside_m": 0.61,
+   "why": "the inside edge is not bounded by a face in the DEM (or the circles disagree)"
+  },
+  {
+   "id": "S6",
+   "st_m": 13649.8,
+   "turn_deg": 112.5,
+   "points_outside": 8,
+   "points_inside": 6,
+   "measured": true,
+   "r_outside_m": 24.89,
+   "rms_outside_m": 2.38,
+   "r_inside_m": 10.89,
+   "rms_inside_m": 0.39,
+   "radius_m": 17.89,
+   "width_m": 14.0,
+   "centre_xz": [
+    -291.97,
+    -147.73
+   ]
+  },
+  {
+   "id": "S7",
+   "st_m": 13673.3,
+   "turn_deg": 112.8,
+   "points_outside": 11,
+   "points_inside": 9,
+   "measured": true,
+   "r_outside_m": 27.98,
+   "rms_outside_m": 2.08,
+   "r_inside_m": 13.61,
+   "rms_inside_m": 1.24,
+   "radius_m": 20.79,
+   "width_m": 14.37,
+   "centre_xz": [
+    -293.81,
+    -145.29
+   ]
+  },
+  {
+   "id": "S8",
+   "st_m": 21370.0,
+   "turn_deg": 90.1,
+   "points_outside": 3,
+   "points_inside": 10,
+   "measured": false,
+   "r_inside_m": 17.39,
+   "rms_inside_m": 0.4,
+   "why": "the outside edge is not bounded by a face in the DEM"
+  },
+  {
+   "id": "S9",
+   "st_m": 22542.1,
+   "turn_deg": 125.2,
+   "points_outside": 12,
+   "points_inside": 7,
+   "measured": true,
+   "r_outside_m": 19.34,
+   "rms_outside_m": 0.62,
+   "r_inside_m": 12.52,
+   "rms_inside_m": 0.55,
+   "radius_m": 15.93,
+   "width_m": 6.82,
+   "centre_xz": [
+    -5738.94,
+    -4302.92
+   ]
+  },
+  {
+   "id": "S10",
+   "st_m": 22564.8,
+   "turn_deg": 96.0,
+   "points_outside": 15,
+   "points_inside": 13,
+   "measured": false,
+   "r_outside_m": 30.14,
+   "rms_outside_m": 2.93,
+   "r_inside_m": 39.96,
+   "rms_inside_m": 0.9,
+   "why": "the inside edge is not bounded by a face in the DEM (or the circles disagree)"
+  }
+ ]
+}

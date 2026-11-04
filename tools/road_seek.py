@@ -66,6 +66,8 @@ BENCH_TOL_M = 0.25       # [invented] the graded bench: the DEM within this of t
 FACE_RUN_M = 2.0         # [invented] a bench's end is an edge when the DEM this far past it ...
 FACE_DROP_M = 0.5        # [invented] ... stands this far off the road's plane (a face steeper than ~1:4)
 BENCH_MAX_M = 15.0       # [invented] a bench running on past this either way is level ground, not a measured edge
+UNTANGLE_ROUNDS = 400    # relaxation rounds at most for a moved line that steps backwards
+MIN_STEP_M = 0.5         # [invented] every moved step runs at least this far forward along the source line
 SMOOTH_STATIONS = 4.0    # [invented] Gaussian sigma (stations) of the chosen offsets
 
 
@@ -147,6 +149,38 @@ class Raster:
         if not (-500.0 < out[0] < 9000.0):
             return None, out[1]
         return out[0], out[1]
+
+
+def moved_line(P, stations, shift=None):
+    """the line moved onto the found road: each point along the source line's own normal by its offset (+ shift), then
+    UNTANGLED: where the offset exceeds the radius of the bend it is moved across (Dragon Tail s 20,827: 34 m off a
+    tighter OSM bend), consecutive moved points can step backwards; each such point and its neighbours are relaxed toward
+    their neighbours' mean (plan only) until every step runs forward along the source line (UNTANGLE_ROUNDS at most).
+    Returns (points, relaxed point count)."""
+    n = len(P)
+    Q = []
+    T = []
+    for i, (p, s) in enumerate(zip(P, stations)):
+        a, b = P[max(i - 1, 0)], P[min(i + 1, n - 1)]
+        tx, tz = b[0] - a[0], b[2] - a[2]
+        L = math.hypot(tx, tz) or 1.0
+        o = float(s["offset_m"]) + (shift[i] if shift else 0.0)
+        Q.append([p[0] - tz / L * o, p[1], p[2] + tx / L * o])
+        T.append((tx / L, tz / L))
+    relaxed = set()
+    for _ in range(UNTANGLE_ROUNDS):
+        bad = [i for i in range(1, n) if (Q[i][0] - Q[i - 1][0]) * T[i][0] + (Q[i][2] - Q[i - 1][2]) * T[i][1]
+               < MIN_STEP_M]
+        if not bad:
+            break
+        idx = sorted({k for i in bad for k in range(i - 2, i + 2) if 0 < k < n - 1})
+        new = {}
+        for k in idx:
+            new[k] = ((Q[k - 1][0] + Q[k + 1][0]) / 2.0, (Q[k - 1][2] + Q[k + 1][2]) / 2.0)
+        for k, (x, z) in new.items():
+            Q[k][0], Q[k][2] = x, z
+            relaxed.add(k)
+    return [tuple(q) for q in Q], len(relaxed)
 
 
 def _fit(ts, hs):

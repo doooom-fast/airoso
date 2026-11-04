@@ -1,7 +1,7 @@
 {
  "source_track": "rally-under-the-dragon-gravel",
  "points": 8576,
- "lap_m": 25719.3,
+ "lap_m": 25712.4,
  "closed": false,
  "widths_m": [
   4.22,
@@ -29,6 +29,7 @@
    ],
    "changed_by_m_max": 9.01
   },
+  "road_seek_relaxed_points": 14,
   "road_seek": {
    "file": "data/road_seek.json",
    "offset_abs_m": {
@@ -40,7 +41,7 @@
  },
  "width_taper": {
   "rate_m_per_m": 0.1,
-  "points_widened": 902,
+  "points_widened": 906,
   "max_widening_m": 5.17
  },
  "resample": null,
@@ -54,6 +55,6 @@
  "md5": {
   "source_centerline": "57c1c45c8a4ec1bf224166a1ac0be20e",
   "heightfield.npy": "83276580a96741aa852b35c3c3a4cd81",
-  "centerline.local.json": "17384b3246929f21cf796bced6c26741"
+  "centerline.local.json": "3e22daad3dd0326c57ccdab022807e51"
  }
 }

@@ -1,5 +1,5 @@
 {
- "lap_m": 25155.9,
+ "lap_m": 25155.8,
  "layout": "stage",
  "direction": "forward",
  "kind": "street",
@@ -9,12 +9,12 @@
  "barrier_stations": 0,
  "barrier_missing": 0,
  "barrier_missing_runs": [],
- "soft_top_in_lane": 35,
+ "soft_top_in_lane": 34,
  "off_pavement_stations": 1,
- "severe_steps": 153,
- "severe_per_km": 6.08,
- "steps_per_km": 3.42,
- "kinks_per_km": 31.48,
+ "severe_steps": 152,
+ "severe_per_km": 6.04,
+ "steps_per_km": 3.26,
+ "kinks_per_km": 31.32,
  "obstruction_stations": 0,
  "daylight_gaps": 0,
  "replication_vs_measured": {
@@ -24,9 +24,9 @@
  },
  "undrivable_corners": 0,
  "floating_furniture": 0,
- "apron_steps": 63,
+ "apron_steps": 61,
  "fold_bumps": 0,
- "vertex_bumps": 630,
+ "vertex_bumps": 628,
  "vertex_bumps_worst": [
   [
    6551.0,
@@ -47,21 +47,9 @@
    0.0249
   ],
   [
-   21600.0,
-   -3.05,
-   0.034,
-   0.0246
-  ],
-  [
    6374.0,
    1.81,
    0.055,
-   0.0245
-  ],
-  [
-   20735.0,
-   3.8,
-   0.046,
    0.0245
   ],
   [
@@ -69,12 +57,6 @@
    3.32,
    0.04,
    0.0244
-  ],
-  [
-   21600.0,
-   -0.75,
-   0.026,
-   0.0242
   ],
   [
    5401.0,
@@ -89,16 +71,34 @@
    0.0239
   ],
   [
-   20719.0,
-   -2.33,
-   0.031,
-   0.0239
-  ],
-  [
    5934.0,
    -2.31,
    0.05,
    0.0238
+  ],
+  [
+   7089.0,
+   2.83,
+   0.037,
+   0.0235
+  ],
+  [
+   20757.0,
+   3.84,
+   0.038,
+   0.0232
+  ],
+  [
+   9850.0,
+   2.9,
+   0.056,
+   0.023
+  ],
+  [
+   6594.0,
+   3.69,
+   0.051,
+   0.0229
   ]
  ],
  "excursion_drops": 5,
@@ -1079,11 +1079,6 @@
    [
     19219.0,
     -2.96,
-    0.061
-   ],
-   [
-    20738.0,
-    2.73,
     0.061
    ],
    [

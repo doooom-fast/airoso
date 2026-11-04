@@ -38,6 +38,7 @@ import sys
 from pathlib import Path
 
 AIROSO = Path(__file__).resolve().parents[1]
+SWITCHBACK_RMS_M = 1.0   # [invented] round 9: a measured switchback is fitted only where both edge circles fit within this
 if str(AIROSO) not in sys.path:
     sys.path.insert(0, str(AIROSO))
 
@@ -263,13 +264,9 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
                                                 "changed_by_m_max": round(max(abs(a - b) for a, b in zip(widths, w_was)), 2)}
                 print(f"[lm_intake] road_seek widths: the graded bench measured at {nb} of {n_} stations; widths now "
                       f"{min(widths):.2f}..{max(widths):.2f} m (the source's {min(w_was):.2f}..{max(w_was):.2f})")
-            moved_pts = []
-            for i, (p, s_) in enumerate(zip(pts, st_)):
-                a_, b_ = pts[max(i - 1, 0)], pts[min(i + 1, n_ - 1)]
-                tx_, tz_ = b_[0] - a_[0], b_[2] - a_[2]
-                L_ = math.hypot(tx_, tz_) or 1.0
-                o_ = float(s_["offset_m"]) + shift[i]
-                moved_pts.append((p[0] - tz_ / L_ * o_, p[1], p[2] + tx_ / L_ * o_))
+            from tools import road_seek as _rsk
+            moved_pts, n_relaxed = _rsk.moved_line(pts, st_, shift)       # untangled where it would step backwards
+            prof_rep["road_seek_relaxed_points"] = n_relaxed
             seg_l = [math.hypot(moved_pts[i][0] - moved_pts[i - 1][0], moved_pts[i][2] - moved_pts[i - 1][2])
                      for i in range(1, n_)]
             z_rs, _ = hf.profile_along([float(s_["z_m"]) for s_ in st_], seg_l, grade_cap_pct=1e9, median_m=med,
@@ -338,9 +335,17 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     arcs_rep = None
     if li.get("corner_arcs"):
         from scripts.geometry import corner_arcs
-        hfit = scfg.get("hairpin_fit") or {}
-        mf = set(hfit.get("mesh_fit") or [])
-        decl = [c for c in (hfit.get("corners") or []) if c.get("id") in mf and c.get("radius_m")]
+        if isinstance(li["corner_arcs"], str):
+            # round 9: the port's own measured switchbacks (tools/switchback_measure.py: the graded platform's centre arc
+            # from the 1 m DEM), the ones both of whose edges the DEM bounds and fits within SWITCHBACK_RMS_M
+            swb = json.loads((proj / li["corner_arcs"]).read_text(encoding="utf-8"))
+            decl = [{"id": c["id"], "st_m": c["st_m"], "radius_m": c["radius_m"]} for c in swb["corners"]
+                    if c.get("measured") and c.get("rms_outside_m", 9) <= SWITCHBACK_RMS_M
+                    and c.get("rms_inside_m", 9) <= SWITCHBACK_RMS_M]
+        else:
+            hfit = scfg.get("hairpin_fit") or {}
+            mf = set(hfit.get("mesh_fit") or [])
+            decl = [c for c in (hfit.get("corners") or []) if c.get("id") in mf and c.get("radius_m")]
         if not decl:
             raise SystemExit("[lm_intake] lm_intake.corner_arcs: the source declares no hairpin_fit.mesh_fit corner with a radius")
         new_line, arep = corner_arcs.fit_corners([tuple(p) for p in pts], decl)
@@ -355,8 +360,9 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
                 r["status"] = "PASS (arm facets outside the span: " + ", ".join(
                     f"v{f['v']} {f.get('adjacent_diff_deg', f.get('step_deg'))} deg" for f in r["gate"]["fails"]) + ")"
         bad = [r["id"] for r in arep if not str(r["status"]).startswith("PASS")]
-        if bad or len(arep) != len(mf):
-            raise SystemExit(f"[lm_intake] corner arcs {sorted(mf)}: not fitted or failing the step gate: {bad}")
+        if bad or len(arep) != len(decl):
+            raise SystemExit(f"[lm_intake] corner arcs {[c['id'] for c in decl]}: not fitted or failing the step gate: "
+                             f"{[(r['id'], r['status'], r.get('why'), (r.get('gate') or {}).get('fails', [])[:3]) for r in arep if r['id'] in bad]}")
         old_pts = pts
         pts = [tuple(p) for p in new_line]
         arcs_rep = [{k: r[k] for k in ("id", "status", "radius_m", "turn_deg", "max_move_m") if k in r} for r in arep]

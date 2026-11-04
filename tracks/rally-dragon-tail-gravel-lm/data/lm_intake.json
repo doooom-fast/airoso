@@ -1,7 +1,7 @@
 {
  "source_track": "rally-dragon-tail-gravel",
  "points": 8413,
- "lap_m": 25303.9,
+ "lap_m": 25291.7,
  "closed": false,
  "widths_m": [
   4.48,
@@ -29,6 +29,7 @@
    ],
    "changed_by_m_max": 8.44
   },
+  "road_seek_relaxed_points": 23,
   "road_seek": {
    "file": "data/road_seek.json",
    "offset_abs_m": {
@@ -40,7 +41,7 @@
  },
  "width_taper": {
   "rate_m_per_m": 0.1,
-  "points_widened": 922,
+  "points_widened": 924,
   "max_widening_m": 4.63
  },
  "resample": null,
@@ -54,6 +55,6 @@
  "md5": {
   "source_centerline": "d78764cf7bb623d64a856abf0e1771be",
   "heightfield.npy": "cb7addf0a4e4df7e792073fc5ac902e7",
-  "centerline.local.json": "428ec45022aa71e786c198bf1c891fb1"
+  "centerline.local.json": "f53b842ec73043afff6b4d1e0cb7c7e4"
  }
 }
